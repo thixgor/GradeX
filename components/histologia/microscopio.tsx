@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import {
+  ChevronDown,
+  ChevronUp,
   Contrast,
   Crosshair,
   Eye,
@@ -13,6 +15,7 @@ import {
   Move,
   RotateCcw,
   Sun,
+  X,
   ZoomIn,
   ZoomOut,
 } from 'lucide-react'
@@ -71,6 +74,22 @@ import { PALETA, RETICULA } from './tema'
  * simulação declarada do que acontece quando o plano focal sai do corte, e o
  * rótulo diz "simulado". Iluminação e contraste são filtros CSS sobre a mesma
  * pilha. Nenhum deles finge ser óptica: são modelos, e a interface os nomeia.
+ *
+ * ## Onde ficam as camadas de marcação
+ *
+ * O seletor de estruturas fica **colado ao palco**, imediatamente abaixo da
+ * imagem. Destacar uma estrutura é o gesto mais repetido do módulo — numa aula,
+ * dezenas de vezes seguidas — e enterrá-lo no fim de uma coluna de controles
+ * obrigava a rolar a tela para trás e para frente a cada troca, com a lâmina
+ * saindo do campo de visão justamente no instante em que se quer olhar para
+ * ela.
+ *
+ * O que está destacado é dito **em texto**, em dois lugares: uma tarja sobre o
+ * palco (visível na tela cheia e em qualquer projeção) e o cabeçalho do
+ * seletor. Cor sozinha não informa: a camada vermelha do acervo pode cair sobre
+ * um campo eosinofílico e desaparecer, e quem chega depois na sala não tem como
+ * saber o que o professor ligou. Uma região `aria-live` anuncia a mesma troca
+ * para leitor de tela.
  */
 
 export interface LaminaDoMicroscopio {
@@ -128,6 +147,11 @@ export function Microscopio({
   const [campoCircular, setCampoCircular] = useState(false)
   const [telaCheia, setTelaCheia] = useState(false)
   const [atalhosVisiveis, setAtalhosVisiveis] = useState(false)
+
+  const [filtroDeEstrutura, setFiltroDeEstrutura] = useState('')
+  const [listaExpandida, setListaExpandida] = useState(false)
+  const [transbordo, setTransbordo] = useState(false)
+  const listaRef = useRef<HTMLUListElement | null>(null)
 
   const estruturas = useMemo(
     () => lamina.overlays.filter((o) => o.classe === 'estrutura'),
@@ -193,11 +217,36 @@ export function Microscopio({
     setAtivos(new Set())
     setModoOverlay('nenhum')
     setFoco(0)
+    setFiltroDeEstrutura('')
+    setListaExpandida(false)
   }, [lamina.rota])
 
-  // A estrutura destacada vem da busca e muda sem trocar de lâmina.
+  /*
+   * Espelho de `ativos` para leitura dentro de efeitos.
+   *
+   * A sincronização com o pai precisa saber o que já está ligado sem depender
+   * de `ativos`: colocá-lo no array de dependências faria o efeito rodar a cada
+   * clique numa camada e desfazer o acúmulo com Shift.
+   */
+  const ativosRef = useRef(ativos)
+  ativosRef.current = ativos
+
+  /**
+   * A estrutura destacada pode vir de fora — da busca, ou da lista lateral da
+   * página da lâmina — e muda sem trocar de lâmina.
+   *
+   * Além de selecionar, **acende a camada**: pedir destaque e receber só um
+   * dossiê aberto, com a lâmina intocada, era a queixa mais direta de quem
+   * usava a lista lateral. Quando a camada já está acesa (caso do eco de volta
+   * do próprio microscópio, inclusive com Shift), nada é reescrito — é o que
+   * impede o acúmulo de ser desfeito no retorno.
+   */
   useEffect(() => {
-    setSelecionado(overlayInicial ?? null)
+    const id = overlayInicial ?? null
+    setSelecionado(id)
+    if (!id || ativosRef.current.has(id)) return
+    setAtivos(new Set([id]))
+    setModoOverlay('individual')
   }, [overlayInicial])
 
   /**
@@ -348,6 +397,30 @@ export function Microscopio({
       case 'L':
         evento.preventDefault()
         return alternarTodos()
+      case 'n':
+      case 'N':
+        evento.preventDefault()
+        return percorrerEstruturas(1)
+      case 'p':
+      case 'P':
+        evento.preventDefault()
+        return percorrerEstruturas(-1)
+      case 'Escape':
+        // Com o painel de atalhos aberto, Esc é dele: fechar o diálogo vem
+        // antes de qualquer outra coisa.
+        if (atalhosVisiveis) return
+        // Primeiro apaga as camadas; só sai da tela cheia quando não há mais o
+        // que apagar. Assim Esc nunca tira a lâmina da tela por engano no meio
+        // de uma demonstração.
+        if (ativos.size > 0) {
+          evento.preventDefault()
+          return limparDestaque()
+        }
+        if (telaCheia) {
+          evento.preventDefault()
+          return setTelaCheia(false)
+        }
+        return
       case 'f':
       case 'F':
         evento.preventDefault()
@@ -391,6 +464,39 @@ export function Microscopio({
     onSelecionarOverlay?.(novoSelecionado)
   }
 
+  /** Apaga todas as camadas de uma vez, sem caçar o botão que está aceso. */
+  const limparDestaque = useCallback(() => {
+    setModoOverlay('nenhum')
+    setAtivos(new Set())
+    setSelecionado(null)
+    onSelecionarOverlay?.(null)
+  }, [onSelecionarOverlay])
+
+  /**
+   * Percorre as estruturas uma a uma, isolando cada uma.
+   *
+   * É o gesto de aula: com a lâmina projetada, passar por todas as marcações em
+   * sequência sem tirar a mão do teclado nem a lâmina do enquadramento.
+   */
+  const percorrerEstruturas = useCallback(
+    (passo: 1 | -1) => {
+      if (estruturas.length === 0) return
+      const atual = estruturas.findIndex((o) => o.id === selecionado)
+      const indice =
+        atual < 0
+          ? passo > 0
+            ? 0
+            : estruturas.length - 1
+          : (atual + passo + estruturas.length) % estruturas.length
+      const alvo = estruturas[indice]
+      setModoOverlay('individual')
+      setAtivos(new Set([alvo.id]))
+      setSelecionado(alvo.id)
+      onSelecionarOverlay?.(alvo.id)
+    },
+    [estruturas, selecionado, onSelecionarOverlay],
+  )
+
   const trocarObjetivo = (objetivo: Objetivo) => {
     if (!imagem) return
     setCampo((c) => aplicarObjetivo(c, objetivo, imagem, container))
@@ -404,6 +510,66 @@ export function Microscopio({
   const fatorAtual = limite ? campo.escala / limite.ajuste : 1
 
   const overlaySelecionado = estruturas.find((o) => o.id === selecionado) ?? null
+
+  /*
+   * No modo prova a estrutura é anônima — dizer o nome na tarja entregaria a
+   * resposta que a questão está pedindo. O número da marcação continua ali,
+   * porque é ele que a questão cita.
+   */
+  const nomeDaEstrutura = useCallback(
+    (overlay: Overlay) => (modo === 'prova' ? `Estrutura ${overlay.ordem}` : overlay.rotulo),
+    [modo],
+  )
+
+  const destacadas = useMemo(
+    () => estruturas.filter((o) => ativos.has(o.id)),
+    [estruturas, ativos],
+  )
+
+  /** Frase única do que está aceso, para a tarja, o cabeçalho e o `aria-live`. */
+  const resumoDoDestaque = useMemo(() => {
+    if (destacadas.length === 0) return null
+    if (destacadas.length === estruturas.length && estruturas.length > 1) {
+      return `Todas as ${estruturas.length} estruturas`
+    }
+    const nomes = destacadas.map(nomeDaEstrutura)
+    if (nomes.length === 1) return nomes[0]
+    if (nomes.length === 2) return `${nomes[0]} e ${nomes[1]}`
+    return `${nomes[0]}, ${nomes[1]} e mais ${nomes.length - 2}`
+  }, [destacadas, estruturas.length, nomeDaEstrutura])
+
+  const estruturasFiltradas = useMemo(() => {
+    const termo = filtroDeEstrutura.trim()
+    if (!termo) return estruturas
+    // Busca sem acento e sem caixa: "epitelio" precisa achar "epitélio", porque
+    // ninguém digita acento com uma das mãos no mouse.
+    const semAcento = (v: string) =>
+      v.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+    const alvo = semAcento(termo)
+    return estruturas.filter(
+      (o) =>
+        semAcento(o.rotulo).includes(alvo) ||
+        semAcento(o.rotuloOriginal).includes(alvo) ||
+        String(o.ordem) === termo,
+    )
+  }, [estruturas, filtroDeEstrutura])
+
+  /**
+   * Descobre se a lista de estruturas está cortada pela altura máxima.
+   *
+   * Medir é a única forma honesta: o número de linhas depende do comprimento
+   * dos rótulos e da largura da tela, e "mais de N estruturas" acerta no
+   * desktop e erra no celular, onde três nomes longos já transbordam.
+   */
+  useEffect(() => {
+    const alvo = listaRef.current
+    if (!alvo || listaExpandida) return
+    const medir = () => setTransbordo(alvo.scrollHeight > alvo.clientHeight + 2)
+    medir()
+    const observador = new ResizeObserver(medir)
+    observador.observe(alvo)
+    return () => observador.disconnect()
+  }, [listaExpandida, estruturasFiltradas])
 
   /**
    * Filtro aplicado à pilha inteira. O desfoque do micrômetro é multiplicado
@@ -448,9 +614,17 @@ export function Microscopio({
 
   return (
     <section
+      /*
+       * Na tela cheia o fundo é `bg-card`, não o preto do palco: só o palco é
+       * escuro. Com o preto no contêiner inteiro, a barra de instrumentos e o
+       * painel de estruturas ficavam com texto escuro sobre fundo escuro no
+       * tema claro — ilegíveis exatamente no modo usado para projetar em sala.
+       * `overflow-y-auto` garante que bandeja e créditos continuem alcançáveis
+       * quando não cabem na altura da tela.
+       */
       className={
         telaCheia
-          ? 'fixed inset-0 z-50 flex flex-col bg-[#0d1210]'
+          ? 'fixed inset-0 z-50 flex flex-col overflow-y-auto bg-card'
           : 'overflow-hidden rounded-xl border border-border bg-card'
       }
       aria-label={`Microscópio virtual: ${lamina.titulo}`}
@@ -555,7 +729,7 @@ export function Microscopio({
       </div>
 
       {/* ══════════ Palco ══════════ */}
-      <div className={telaCheia ? 'relative flex-1' : 'relative'}>
+      <div className={telaCheia ? 'relative min-h-[55vh] flex-1' : 'relative'}>
         <div
           ref={palcoRef}
           tabIndex={0}
@@ -664,6 +838,40 @@ export function Microscopio({
             />
           )}
 
+          {/*
+            Tarja do destaque.
+            Fica sobre o palco porque é ali que o olho está, e porque na tela
+            cheia e na projeção em sala o painel de baixo simplesmente não
+            existe no campo de visão. `pointer-events-none` no contêiner
+            preserva o arrasto da lâmina sob ela; só o botão de limpar volta a
+            receber o ponteiro.
+          */}
+          {resumoDoDestaque && (
+            <div className="pointer-events-none absolute left-3 top-3 z-[2] flex max-w-[min(85%,28rem)] items-start gap-2 rounded-lg border border-violet-400/45 bg-black/65 py-1.5 pl-2.5 pr-1.5 backdrop-blur-sm">
+              <span
+                aria-hidden
+                className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-violet-400 ring-2 ring-violet-400/30"
+              />
+              <span className="min-w-0">
+                <span className="block text-[9px] font-bold uppercase tracking-wider text-white/60">
+                  Destacando agora
+                </span>
+                <span className="block truncate text-[11px] font-semibold leading-snug text-white">
+                  {resumoDoDestaque}
+                </span>
+              </span>
+              <button
+                type="button"
+                onClick={limparDestaque}
+                title="Apagar o destaque (Esc)"
+                aria-label="Apagar o destaque"
+                className="pointer-events-auto -mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-white/70 transition-colors hover:bg-white/15 hover:text-white"
+              >
+                <X className="h-4 w-4" aria-hidden />
+              </button>
+            </div>
+          )}
+
           {carregandoBase && !erroDeMidia && (
             <div className="absolute inset-0 overflow-hidden bg-[#0d1210]">
               {/*
@@ -762,9 +970,195 @@ export function Microscopio({
       <p id={`${idBase}-instrucoes`} className="sr-only">
         Arraste para deslocar a lâmina, use a roda do mouse ou o gesto de pinça para o zoom. Pelo
         teclado: setas deslocam, mais e menos aproximam e afastam, zero enquadra a lâmina inteira,
-        teclas 1 a 4 trocam de objetivo, L alterna todas as camadas, F alterna a tela cheia e ponto
+        teclas 1 a 4 trocam de objetivo, L alterna todas as camadas, N e P passam de uma estrutura
+        marcada para a seguinte ou a anterior, Esc apaga o destaque, F alterna a tela cheia e ponto
         de interrogação abre a lista de atalhos.
       </p>
+
+      {/*
+        O mesmo estado dito para quem não vê a tarja. `polite` porque a troca de
+        camada não interrompe o que o leitor de tela estiver dizendo.
+      */}
+      <p aria-live="polite" className="sr-only">
+        {resumoDoDestaque
+          ? `Destacando na lâmina: ${resumoDoDestaque}.`
+          : 'Nenhuma estrutura destacada na lâmina.'}
+      </p>
+
+      {/* ══════════ Estruturas marcadas — coladas ao palco ══════════ */}
+      {estruturas.length > 0 && (
+        <div className="border-t border-border bg-muted/25 px-3 py-2.5">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              Estruturas marcadas
+            </p>
+
+            {/* O estado em texto, na altura dos olhos de quem acabou de clicar. */}
+            <p
+              className={`inline-flex min-w-0 max-w-full items-center gap-1.5 rounded-full border px-2 py-0.5 text-[11px] ${
+                resumoDoDestaque
+                  ? 'border-violet-500/45 bg-violet-500/10 font-semibold text-violet-800 dark:text-violet-200'
+                  : 'border-border text-muted-foreground'
+              }`}
+            >
+              <span aria-hidden className="font-mono text-[10px]">
+                {resumoDoDestaque ? '●' : '○'}
+              </span>
+              <span className="truncate">
+                {resumoDoDestaque
+                  ? `Destacando: ${resumoDoDestaque}`
+                  : 'Nenhuma estrutura destacada'}
+              </span>
+            </p>
+
+            <div className="ml-auto flex items-center gap-1.5">
+              <span className="hidden text-[11px] text-muted-foreground sm:inline">
+                {ativos.size} de {estruturas.length}
+              </span>
+              <button
+                type="button"
+                onClick={alternarTodos}
+                aria-pressed={modoOverlay === 'todos'}
+                title="Mostrar ou ocultar todas as camadas (L)"
+                className={`inline-flex min-h-[36px] items-center gap-1.5 rounded-md border px-2.5 text-xs font-bold transition-colors ${
+                  modoOverlay === 'todos'
+                    ? 'border-violet-600 bg-violet-600 text-white'
+                    : 'border-border bg-card hover:border-violet-500/50'
+                }`}
+              >
+                {modoOverlay === 'todos' ? (
+                  <EyeOff className="h-3.5 w-3.5" aria-hidden />
+                ) : (
+                  <Eye className="h-3.5 w-3.5" aria-hidden />
+                )}
+                {modoOverlay === 'todos' ? 'Ocultar todas' : 'Mostrar todas'}
+                <span className="sr-only"> — atalho L</span>
+              </button>
+              {ativos.size > 0 && (
+                <button
+                  type="button"
+                  onClick={limparDestaque}
+                  title="Apagar o destaque (Esc)"
+                  className="inline-flex min-h-[36px] items-center gap-1.5 rounded-md border border-border bg-card px-2.5 text-xs font-semibold text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  <X className="h-3.5 w-3.5" aria-hidden />
+                  Limpar
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/*
+            O filtro só aparece quando a lista deixa de caber na varredura
+            visual. Em lâmina de seis marcações ele seria mobília.
+          */}
+          {estruturas.length > 8 && (
+            <div className="mt-2">
+              <label htmlFor={`${idBase}-filtro`} className="sr-only">
+                Filtrar estruturas desta lâmina
+              </label>
+              <input
+                id={`${idBase}-filtro`}
+                type="search"
+                value={filtroDeEstrutura}
+                onChange={(e) => setFiltroDeEstrutura(e.target.value)}
+                placeholder={`Filtrar entre ${estruturas.length} estruturas (sem acento também funciona)`}
+                className="h-9 w-full rounded-md border border-border bg-background px-2.5 text-xs outline-none focus-visible:ring-2 focus-visible:ring-teal-500"
+              />
+            </div>
+          )}
+
+          {/*
+            Altura limitada por padrão: a lista não pode empurrar a lâmina para
+            fora da tela, que é justamente o problema que este painel resolve.
+            O botão abaixo devolve a lista inteira a quem precisar dela.
+          */}
+          <ul
+            ref={listaRef}
+            className={`mt-2 flex flex-wrap gap-1.5 ${
+              listaExpandida ? '' : 'max-h-[6.75rem] overflow-y-auto overscroll-contain'
+            } ${
+              // A máscara esfuma a última linha só quando há mesmo mais lista
+              // abaixo: sem ela o corte parece o fim, e metade das estruturas
+              // some sem deixar rastro. Aplicá-la numa lista que cabe inteira
+              // apagaria a borda inferior de chips perfeitamente visíveis.
+              !listaExpandida && transbordo
+                ? '[mask-image:linear-gradient(to_bottom,#000_calc(100%-1.5rem),transparent)]'
+                : ''
+            }`}
+          >
+            {estruturasFiltradas.map((overlay) => {
+              const ativo = ativos.has(overlay.id)
+              return (
+                <li key={overlay.id}>
+                  <button
+                    type="button"
+                    onClick={(e) => alternarUm(overlay.id, !e.shiftKey)}
+                    aria-pressed={ativo}
+                    title={
+                      modo === 'prova'
+                        ? `Estrutura ${overlay.ordem}`
+                        : `${overlay.rotulo} — clique para isolar, Shift+clique para somar`
+                    }
+                    className={`inline-flex min-h-[36px] items-center gap-1.5 rounded-full border px-3 text-xs font-medium transition-colors ${
+                      ativo
+                        ? 'border-violet-600 bg-violet-600 text-white'
+                        : 'border-border bg-card hover:border-violet-500/50'
+                    }`}
+                  >
+                    {/* Marcador de estado que não depende só de cor. */}
+                    <span aria-hidden className="font-mono text-[10px]">
+                      {ativo ? '●' : '○'}
+                    </span>
+                    {modo === 'prova' ? `Estrutura ${overlay.ordem}` : overlay.rotulo}
+                  </button>
+                </li>
+              )
+            })}
+            {estruturasFiltradas.length === 0 && (
+              <li className="px-1 py-2 text-[11px] text-muted-foreground">
+                Nenhuma estrutura corresponde a “{filtroDeEstrutura}”.
+              </li>
+            )}
+          </ul>
+
+          <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
+            <p className="text-[10px] text-muted-foreground">
+              Clique para isolar uma estrutura; Shift+clique soma camadas; N e P percorrem a lista.
+            </p>
+            {(transbordo || listaExpandida) && (
+              <button
+                type="button"
+                onClick={() => setListaExpandida((v) => !v)}
+                aria-expanded={listaExpandida}
+                className="ml-auto inline-flex min-h-[36px] items-center gap-1 rounded-md px-1.5 text-[11px] font-semibold text-muted-foreground transition-colors hover:text-foreground"
+              >
+                {listaExpandida ? (
+                  <ChevronUp className="h-3.5 w-3.5" aria-hidden />
+                ) : (
+                  <ChevronDown className="h-3.5 w-3.5" aria-hidden />
+                )}
+                {listaExpandida ? 'Recolher lista' : `Ver todas as ${estruturas.length}`}
+              </button>
+            )}
+          </div>
+
+          {ativos.size > 0 && (
+            <div className="mt-2 max-w-sm">
+              <Deslizante
+                id={`${idBase}-opacidade`}
+                rotulo="Opacidade das camadas"
+                icone={<Layers className="h-3.5 w-3.5" aria-hidden />}
+                valor={Math.round(opacidade * 100)}
+                minimo={20}
+                maximo={100}
+                aoMudar={(v) => setOpacidade(v / 100)}
+                formatar={(v) => `${v}%`}
+              />
+            </div>
+          )}
+        </div>
+      )}
 
       {/* ══════════ Controles ══════════ */}
       <div className="grid gap-4 border-t border-border p-3 sm:grid-cols-2">
@@ -803,45 +1197,15 @@ export function Microscopio({
         </div>
 
         <div className="space-y-2.5">
-          <div className="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onClick={alternarTodos}
-              aria-pressed={modoOverlay === 'todos'}
-              className={`inline-flex min-h-[36px] items-center gap-1.5 rounded-md border px-3 text-xs font-bold transition-colors ${
-                modoOverlay === 'todos'
-                  ? 'border-violet-600 bg-violet-600 text-white'
-                  : 'border-border bg-card hover:border-violet-500/50'
-              }`}
-            >
-              {modoOverlay === 'todos' ? (
-                <EyeOff className="h-3.5 w-3.5" aria-hidden />
-              ) : (
-                <Eye className="h-3.5 w-3.5" aria-hidden />
-              )}
-              {modoOverlay === 'todos' ? 'Ocultar camadas' : 'Mostrar todas'}
-              <span className="sr-only"> — atalho L</span>
-            </button>
-            <span className="text-[11px] text-muted-foreground">
-              {ativos.size} de {estruturas.length} camadas
-            </span>
-          </div>
-
-          {ativos.size > 0 && (
-            <Deslizante
-              id={`${idBase}-opacidade`}
-              rotulo="Opacidade das camadas"
-              icone={<Layers className="h-3.5 w-3.5" aria-hidden />}
-              valor={Math.round(opacidade * 100)}
-              minimo={20}
-              maximo={100}
-              aoMudar={(v) => setOpacidade(v / 100)}
-              formatar={(v) => `${v}%`}
-            />
-          )}
-
-          {modo === 'estudo' && overlaySelecionado && (
+          {modo === 'estudo' && overlaySelecionado ? (
             <DossieDaEstrutura overlay={overlaySelecionado} />
+          ) : (
+            estruturas.length > 0 && (
+              <p className="rounded-lg border border-dashed border-border bg-muted/20 p-3 text-[11px] leading-relaxed text-muted-foreground">
+                Destaque uma estrutura acima para ver aqui o que ela é, como reconhecê-la e o que
+                muda quando ela adoece.
+              </p>
+            )
           )}
         </div>
       </div>
@@ -893,43 +1257,6 @@ export function Microscopio({
               )
             })}
           </ul>
-        </div>
-      )}
-
-      {/* ══════════ Lista de estruturas ══════════ */}
-      {estruturas.length > 0 && (
-        <div className="border-t border-border p-3">
-          <p className="mb-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-            Estruturas marcadas nesta lâmina
-          </p>
-          <ul className="flex flex-wrap gap-1.5">
-            {estruturas.map((overlay) => {
-              const ativo = ativos.has(overlay.id)
-              return (
-                <li key={overlay.id}>
-                  <button
-                    type="button"
-                    onClick={(e) => alternarUm(overlay.id, !e.shiftKey)}
-                    aria-pressed={ativo}
-                    className={`inline-flex min-h-[36px] items-center gap-1.5 rounded-full border px-3 text-xs font-medium transition-colors ${
-                      ativo
-                        ? 'border-violet-600 bg-violet-600 text-white'
-                        : 'border-border bg-card hover:border-violet-500/50'
-                    }`}
-                  >
-                    {/* Marcador de estado que não depende só de cor. */}
-                    <span aria-hidden className="font-mono text-[10px]">
-                      {ativo ? '●' : '○'}
-                    </span>
-                    {modo === 'prova' ? `Estrutura ${overlay.ordem}` : overlay.rotulo}
-                  </button>
-                </li>
-              )
-            })}
-          </ul>
-          <p className="mt-2 text-[10px] text-muted-foreground">
-            Clique para isolar uma estrutura; Shift+clique acumula camadas.
-          </p>
         </div>
       )}
 
@@ -1118,6 +1445,8 @@ const ATALHOS: Array<[string, string]> = [
   ['0', 'Enquadrar a lâmina inteira'],
   ['1 – 4', 'Trocar de objetivo (4×, 10×, 40×, 100×)'],
   ['L', 'Mostrar ou ocultar todas as camadas'],
+  ['N / P', 'Próxima e anterior estrutura marcada'],
+  ['Esc', 'Apagar o destaque (e sair da tela cheia)'],
   ['F', 'Tela cheia'],
   ['Shift + clique', 'Acumular camadas em vez de isolar'],
   ['?', 'Abrir e fechar esta lista'],

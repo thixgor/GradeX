@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   BookMarked,
   Check,
@@ -14,6 +14,7 @@ import {
   Pencil,
   Star,
   Target,
+  X,
 } from 'lucide-react'
 
 import { descricaoDaLamina, type DescricaoDeLamina } from '@/lib/histologia/laminas'
@@ -88,6 +89,32 @@ export function Lamina({ pagina, vizinhas, bandeja, quizzes, estruturaInicial }:
   }, [estruturas, filtroDeEstrutura])
 
   const selecionada = estruturas.find((o) => o.id === overlaySelecionado) ?? null
+
+  const microscopioRef = useRef<HTMLElement | null>(null)
+
+  /**
+   * Escolher uma estrutura na lista lateral destaca a camada na lâmina.
+   *
+   * Antes a lista só abria o dossiê: a marcação continuava apagada e o aluno
+   * ficava olhando a mesma imagem, sem entender por que "destacar" não
+   * destacava nada. O estado agora desce para o microscópio pela mesma
+   * propriedade que a busca usa.
+   *
+   * E se a lâmina já saiu do campo de visão — o caso do celular, onde a lista
+   * fica abaixo do palco — ela volta. Destacar algo que não está na tela é o
+   * mesmo que não destacar.
+   */
+  const destacarEstrutura = useCallback((id: string | null) => {
+    setOverlaySelecionado(id)
+    if (!id) return
+    const alvo = microscopioRef.current
+    if (!alvo) return
+    const caixa = alvo.getBoundingClientRect()
+    const foraDeVista = caixa.bottom < 120 || caixa.top > window.innerHeight - 160
+    if (!foraDeVista) return
+    const reduzido = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    alvo.scrollIntoView({ behavior: reduzido ? 'auto' : 'smooth', block: 'start' })
+  }, [])
 
   useEffect(() => {
     marcarVisita(rota, pagina.titulo)
@@ -211,7 +238,7 @@ export function Lamina({ pagina, vizinhas, bandeja, quizzes, estruturaInicial }:
       <OQueEstaLaminaMostra pagina={pagina} />
 
       {/* ── 4. Microscópio virtual ── */}
-      <section className="mb-6" aria-labelledby="secao-microscopio">
+      <section ref={microscopioRef} className="mb-6 scroll-mt-4" aria-labelledby="secao-microscopio">
         <h2 id="secao-microscopio" className="sr-only">
           Microscópio virtual
         </h2>
@@ -223,7 +250,7 @@ export function Lamina({ pagina, vizinhas, bandeja, quizzes, estruturaInicial }:
             overlays: pagina.overlays,
           }}
           bandeja={bandeja}
-          overlayInicial={estruturaInicial}
+          overlayInicial={overlaySelecionado ?? undefined}
           onSelecionarOverlay={(id) => {
             setOverlaySelecionado(id)
             if (id) registrarEvento({ nome: 'overlay_usado', setor: pagina.caminho[0] })
@@ -342,6 +369,33 @@ export function Lamina({ pagina, vizinhas, bandeja, quizzes, estruturaInicial }:
                 <h2 id="secao-estruturas" className="mb-2 text-xs font-bold">
                   Estruturas desta lâmina
                 </h2>
+                {/* Também aqui o estado é dito em texto, não só pela cor do item. */}
+                <p
+                  className={`mb-2 flex items-center gap-1.5 rounded-md border px-2 py-1 text-[11px] leading-snug ${
+                    selecionada
+                      ? 'border-violet-500/45 bg-violet-500/10 font-semibold text-violet-800 dark:text-violet-200'
+                      : 'border-border text-muted-foreground'
+                  }`}
+                >
+                  <span aria-hidden className="font-mono text-[10px]">
+                    {selecionada ? '●' : '○'}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    {selecionada
+                      ? `Destacando: ${selecionada.rotulo}`
+                      : 'Nenhuma estrutura destacada'}
+                  </span>
+                  {selecionada && (
+                    <button
+                      type="button"
+                      onClick={() => destacarEstrutura(null)}
+                      aria-label="Apagar o destaque"
+                      className="-my-1 -mr-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded opacity-70 transition hover:bg-violet-500/15 hover:opacity-100"
+                    >
+                      <X className="h-3.5 w-3.5" aria-hidden />
+                    </button>
+                  )}
+                </p>
                 <label htmlFor="filtro-estrutura" className="sr-only">
                   Filtrar estruturas
                 </label>
@@ -361,7 +415,7 @@ export function Lamina({ pagina, vizinhas, bandeja, quizzes, estruturaInicial }:
                     <li key={overlay.id}>
                       <button
                         type="button"
-                        onClick={() => setOverlaySelecionado(ativo ? null : overlay.id)}
+                        onClick={() => destacarEstrutura(ativo ? null : overlay.id)}
                         aria-pressed={ativo}
                         className={`flex w-full min-h-[40px] items-center gap-2 rounded-md px-2.5 py-2 text-left text-xs transition-colors ${
                           ativo ? 'bg-violet-600 text-white' : 'hover:bg-muted'
