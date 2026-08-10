@@ -152,6 +152,18 @@ describe('cobertura e integridade referencial', () => {
     expect(soma).toBe(relatorio.catalogo.midias)
   })
 
+  it('os contadores visuais excluem registros sem lâmina elegível', () => {
+    const capitulosComLamina = todasAsEntradas.filter(
+      (entrada: { midiasElegiveis: number }) => entrada.midiasElegiveis > 0,
+    )
+    const totalNosSistemas = ler('sistemas.json').reduce(
+      (total: number, sistema: { entradas: number }) => total + sistema.entradas,
+      0,
+    )
+    expect(totalNosSistemas).toBe(capitulosComLamina.length)
+    expect(capitulosComLamina.length).toBeLessThan(todasAsEntradas.length)
+  })
+
   it('toda doença aponta para entradas catalogadas reais', () => {
     const ids = new Set(todasAsEntradas.map((e: { id: string }) => e.id))
     for (const arquivo of readdirSync(path.join(DADOS, 'doencas'))) {

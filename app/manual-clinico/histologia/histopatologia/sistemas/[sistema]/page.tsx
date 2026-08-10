@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ArrowLeft, ArrowRight, BookOpen, ChevronLeft, ChevronRight, Images } from 'lucide-react'
+import { ArrowLeft, ArrowRight, BookOpen, ChevronLeft, ChevronRight, Layers } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
 import { CartaoDeDoenca } from '@/components/histopatologia/cartao-doenca'
@@ -68,7 +68,8 @@ export default async function PaginaDoSistema({ params, searchParams }: Props) {
   if (!sistema) notFound()
 
   const doencas = doencasDoSistema(sistema.id)
-  const inventario = await obterInventario(sistema.id)
+  const inventarioCompleto = await obterInventario(sistema.id)
+  const inventario = inventarioCompleto.filter((entrada) => entrada.midiasElegiveis > 0)
   const capituloSelecionado = searchParams.capitulo
     ? obterCapituloDoAtlas(searchParams.capitulo)
     : undefined
@@ -156,7 +157,7 @@ export default async function PaginaDoSistema({ params, searchParams }: Props) {
 
           <section aria-labelledby="inventario-sistema">
             <div className="mb-2 flex items-center gap-2">
-              <Images className="h-5 w-5 text-violet-700 dark:text-violet-400" aria-hidden />
+              <Layers className="h-5 w-5 text-violet-700 dark:text-violet-400" aria-hidden />
               <h2 id="inventario-sistema" className="font-heading text-lg font-semibold">
                 Capítulos visuais do atlas
               </h2>

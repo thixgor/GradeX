@@ -328,6 +328,7 @@ const resumoDeEntrada = (entrada) => {
   const nomeCompleto = tituloEditorialDaEntrada(
     entrada.nomeCatalogado,
     entrada.descricaoCatalogada,
+    entrada.paginasFonte,
   )
   const sistemaId = sistemaEditorialDaEntrada(
     entrada,
@@ -524,6 +525,7 @@ buscaCliente.sort((a, b) => a.u.localeCompare(b.u))
 const buscaServidor = buscaCliente.slice()
 for (const entrada of patologias) {
   const resumo = resumoDeEntrada(entrada)
+  if (resumo.midiasElegiveis === 0) continue
   buscaServidor.push({
     t: 'c',
     u: semPrefixo(rotaDaEntradaCatalogada(entrada.id)),
@@ -544,10 +546,11 @@ for (const item of [...buscaCliente, ...buscaServidor]) {
 
 const sistemasComContagem = SISTEMAS.map((sistema) => {
   const inventario = inventarioPorSistema.get(sistema.id) ?? []
+  const capitulosVisuais = inventario.filter((entrada) => entrada.midiasElegiveis > 0)
   return {
     ...sistema,
-    entradas: inventario.length,
-    midias: inventario.reduce((n, e) => n + e.midias, 0),
+    entradas: capitulosVisuais.length,
+    midias: capitulosVisuais.reduce((n, entrada) => n + entrada.midiasElegiveis, 0),
     doencas: resumosDeDoenca.filter((d) => d.sistemaId === sistema.id).length,
   }
 })

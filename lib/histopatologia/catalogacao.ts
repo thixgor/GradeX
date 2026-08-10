@@ -162,14 +162,62 @@ const SERIES: Record<string, string> = {
 }
 
 const TITULOS_EXATOS: Record<string, string> = {
+  'abdominal mesothelioma': 'Mesotelioma abdominal',
+  'adenocarcinoma of ampulla of vater': 'Adenocarcinoma da ampola de Vater',
+  'alcian blue/periodic acid–schiff': 'Azul de Alcian/PAS',
+  'anthracosis, anthracotic pigment': 'Antracose — pigmento antracótico',
   biinflhelicobacter: 'Helicobacter pylori — coloração de Warthin-Starry',
   bineugliomatronco: 'Glioma do tronco encefálico',
+  'brain mucormycosis gms': 'Mucormicose cerebral — Grocott',
+  'brain mucormycosis he': 'Mucormicose cerebral — HE',
+  'brain, metastatic hepatoblastoma': 'Cérebro — metástase de hepatoblastoma',
+  'brown fat': 'Tecido adiposo marrom',
+  'cholesterol polyp': 'Pólipo de colesterol',
+  'congo red birefringence': 'Birrefringência pelo vermelho Congo',
+  'congo red stain for amyloidosis': 'Vermelho Congo para amiloidose',
+  'extramural venous invasion': 'Invasão venosa extramural',
+  'extramural venous invasion in adenocarcinoma':
+    'Invasão venosa extramural em adenocarcinoma',
+  'gallbladder adenomyoma': 'Adenomioma da vesícula biliar',
+  'gallbladder pathology': 'Patologia da vesícula biliar',
+  'gallbladder rokitansky-aschoff sinus': 'Seio de Rokitansky-Aschoff da vesícula biliar',
+  'granular cell tumor in esophagus': 'Tumor de células granulares do esôfago',
   hacettepecom: 'Coleção de histopatologia',
+  'ischemic colitis': 'Colite isquêmica',
+  'keloid - skar': 'Queloide',
+  'melanosis coli': 'Melanose do cólon',
+  'melanosis coli pas': 'Melanose do cólon — PAS',
+  'metastatic carcinoma, omentum': 'Carcinoma metastático no omento',
+  'nasopharyngeal carcinoma, nonkeratinizing squamous cell carcinoma':
+    'Carcinoma escamoso não queratinizante da nasofaringe',
+  'pediatric autopsy': 'Autópsia pediátrica',
+  'pediatric autopsy, brain': 'Autópsia pediátrica — cérebro',
+  'stomach signet ring cell carcinoma': 'Carcinoma gástrico de células em anel de sinete',
   templateen: 'Material complementar',
+  'venous invasion': 'Invasão venosa',
 }
 
-const GENERICO = /^(?:anterior|pr[oó]xim[oa]|seguinte|voltar|mais|recidivar|sem contraste|com contraste|p[aá]gina(?: [ií]ndice)?|mais imagens|he|ihq|histologia|macroscopicamente|microscopicamente|mecanismos|miniresumo|neuroimagem|neuropatologia|literatura)$/i
-const CODIGO_DE_LAMINA = /^(?:\*?a\.?\s*[\d/]+[a-z]*|bs\d+[a-z]*|[a-z]{3,}\d+[a-z0-9-]*|\d{1,4}(?:\s*(?:[–—/-]|e)\s*\d{1,4})*)$/i
+const TITULOS_POR_PAGINA: Record<string, string> = {
+  bineuangioressovennla: 'Angiorressonância venosa normal',
+  bineuleucodist5: 'Leucodistrofia — substância branca occipital',
+  lamdc13: 'Infarto cerebral antigo',
+  lamdc5a: 'Necrose centrolobular hepática',
+  lamdegn10: 'Amiloidose glomerular avançada',
+  lamdegn4a: 'Lâmina A. 271a — visão panorâmica',
+  lamgin16: 'Epitélio mülleriano seroso — lâmina A. 104',
+  laminfl30: 'Glomerulonefrite difusa aguda — lâmina A. 140',
+  lamneo20a: 'Leiomioma — arquitetura fasciculada',
+  lampele3: 'Paracoccidioidomicose — aspecto em roda de leme',
+  pecasdc6: 'Infarto antigo com fibrose',
+  pecasneo31: 'Linfangite carcinomatosa por carcinoma mamário',
+  'rpgmeningiomat1.3': 'Meningioma calcificado frontal — caso 1.3',
+  'rpgmeningiomat1.5': 'Meningioma maligno frontal — caso 1.5',
+  'rpgmeningiomat6.2': 'Meningioma infiltrativo do esfenoide — caso 6.2',
+  tanecrose2: 'Calcificação — mecanismos',
+}
+
+const GENERICO = /^(?:anterior|pr[oó]xim[oa]|seguinte|voltar|mais|recidivar|sem contraste|com contraste|p[aá]gina(?: [ií]ndice)?|mais imagens|he|ihq|histologia|macroscopicamente|microscopicamente|mecanismos|miniresumo|neuroimagem|neuropatologia|literatura|this (?:page|section)(?: in english)?|click for (?:video|full screen wsi)|see microscopy with viewer:)$/i
+const CODIGO_DE_LAMINA = /^(?:\*?a\.?\s*[\d/]+[a-z]*|[a-z]{1,5}-?\d+[a-z0-9-]*|\d{1,4}(?:\s*(?:[–—/-]|e)\s*\d{1,4})*)$/i
 
 function limpar(valor: string): string {
   return valor
@@ -211,6 +259,35 @@ function tituloDaSerie(codigo: string): string | null {
   return nome + ' — caso ' + caso.toLocaleUpperCase('pt-BR')
 }
 
+function tituloDeCasoCatalogado(codigo: string): string | null {
+  const hacettepe = codigo.match(/^hacettepe-com-case-(\d+)$/i)
+  if (hacettepe) return `Série Hacettepe — caso ${hacettepe[1]}`
+
+  const caso = codigo.match(/^case-(\d+)$/i)
+  if (caso) return `Caso didático ${caso[1]}`
+
+  const banco = codigo.match(/^bs-?(\d+)$/i)
+  if (banco) return `Banco de casos — lâmina ${banco[1]}`
+
+  return null
+}
+
+function tituloPeloEndereco(paginasFonte: readonly string[]): string | null {
+  for (const pagina of paginasFonte) {
+    try {
+      const arquivo = new URL(pagina).pathname.split('/').pop()?.replace(/\.[a-z0-9]+$/i, '') ?? ''
+      const titulo =
+        TITULOS_POR_PAGINA[arquivo.toLowerCase()] ??
+        tituloDaSerie(arquivo) ??
+        tituloDeCasoCatalogado(arquivo)
+      if (titulo) return titulo
+    } catch {
+      // Endereço inválido permanece apenas na proveniência; não vira título.
+    }
+  }
+  return null
+}
+
 function tituloDaDescricao(descricao?: string): string | null {
   if (!descricao) return null
   const limpa = limpar(descricao)
@@ -233,17 +310,29 @@ function tituloDaDescricao(descricao?: string): string | null {
   )
 }
 
-export function tituloEditorialDaEntrada(nomeCatalogado: string, descricaoCatalogada?: string): string {
+export function tituloEditorialDaEntrada(
+  nomeCatalogado: string,
+  descricaoCatalogada?: string,
+  paginasFonte: readonly string[] = [],
+): string {
   const original = limpar(nomeCatalogado)
   const exato = TITULOS_EXATOS[original.toLowerCase()]
   if (exato) return exato
   const serie = tituloDaSerie(original)
   if (serie) return serie
+  const casoCatalogado = tituloDeCasoCatalogado(original)
+  if (casoCatalogado) return casoCatalogado
 
   const pareceCodigo = CODIGO_DE_LAMINA.test(original) && !ACRONIMOS.has(original.toLowerCase())
-  if (pareceCodigo || GENERICO.test(original) || original.length > 100) {
+  if (pareceCodigo || GENERICO.test(original) || original.length > 80) {
+    const pelaPagina = tituloPeloEndereco(paginasFonte)
+    if (pelaPagina) return pelaPagina
     const pelaDescricao = tituloDaDescricao(descricaoCatalogada)
     if (pelaDescricao) return pelaDescricao
+  }
+
+  if (CODIGO_DE_LAMINA.test(original)) {
+    return `Lâmina ${restaurarAcronimos(original.toLocaleUpperCase('pt-BR'))}`
   }
 
   return formatarTextoCatalogado(original)
@@ -272,6 +361,12 @@ export function sistemaEditorialDaEntrada(
   const texto = semAcento(entrada.nomeCatalogado + ' ' + (entrada.descricaoCatalogada ?? ''))
 
   if (/\/(?:npt|rpg|bineu|radneu|neupat)/.test(url)) return 'sistema-nervoso'
+  if (/anatpat\.unicamp\.br\/(?:nerv|rad|taneu|textotu|neu)/.test(url)) return 'sistema-nervoso'
+  if (/anatpat\.unicamp\.br\/mus/.test(url)) return 'ossos-partes-moles'
+  if (/anatpat\.unicamp\.br\/(?:egin|liliana)/.test(url)) return 'ginecologico-placenta'
+  if (/anatpat\.unicamp\.br\/ehemo/.test(url)) return 'hematolinfoide'
+  if (/anatpat\.unicamp\.br\/efig/.test(url)) return 'hepatobiliopancreatico'
+  if (/anatpat\.unicamp\.br\/bicard/.test(url)) return 'cardiovascular'
   if (/\/(?:lam|pecas)(?:uro|rim)/.test(url)) return 'urinario-genital-masculino'
   if (/\/(?:lam|pecas)gin/.test(url)) return 'ginecologico-placenta'
   if (/\/(?:lam|pecas)(?:pulm|resp)/.test(url)) return 'respiratorio'
@@ -283,24 +378,40 @@ export function sistemaEditorialDaEntrada(
   if (/\/(?:lam|pecas)endo/.test(url)) return 'endocrino'
   if (/\/(?:lam|pecas)mama/.test(url)) return 'mama'
   if (/\/(?:lam|pecas)(?:osso|partesmoles)/.test(url)) return 'ossos-partes-moles'
+  if (/histopathologyatlas\.com\/(?:ampulla-vater|gallbladder|liver)/.test(url)) {
+    return 'hepatobiliopancreatico'
+  }
+  if (/histopathologyatlas\.com\/(?:esophagus|stomach|colon|appendix|benign)/.test(url)) {
+    return 'gastrointestinal'
+  }
+  if (/histopathologyatlas\.com\/kidney/.test(url)) return 'urinario-genital-masculino'
+  if (/histopathologyatlas\.com\/(?:lung|pleura|nasopharynx|ear)/.test(url)) {
+    return 'respiratorio'
+  }
 
   if (sistemaPadrao !== 'nao-classificado') return sistemaPadrao
 
   const regras: Array<[string, RegExp]> = [
-    ['sistema-nervoso', /\b(?:cerebr|cerebel|encefal|mening|glio|astrocit|ependim|hipofis|medula espinal|nervo)\w*/],
-    ['cardiovascular', /\b(?:miocard|cardiac|coracao|arteri|aorta|vascular|tromboangi|valva)\w*/],
-    ['respiratorio', /\b(?:pulmao|pulmonar|pleur|bronqu|alveol|laringe|nasofaring)\w*/],
-    ['gastrointestinal', /\b(?:esofag|gastric|estomago|duoden|jejuno|ileon|colon|retal|apendic|intestinal)\w*/],
-    ['hepatobiliopancreatico', /\b(?:figado|hepatic|biliar|colang|pancrea|cirrose)\w*/],
-    ['urinario-genital-masculino', /\b(?:renal|rim\b|glomerul|urotel|bexiga|prostat|testicul|seminifer)\w*/],
-    ['ginecologico-placenta', /\b(?:uter|endometr|ovari|placent|vilosite|corioamn|cervi)\w*/],
-    ['mama', /\b(?:mama|mamari|fibroadenoma)\w*/],
-    ['endocrino', /\b(?:tireoi|paratireoi|suprarrenal|adrenal|hipofis)\w*/],
-    ['pele', /\b(?:epider|cutane|pele\b|nevocelular|bowen|hanseniase)\w*/],
-    ['hematolinfoide', /\b(?:linfoma|linfonodo|leucem|timo\b|medula ossea|plasmocit)\w*/],
-    ['ossos-partes-moles', /\b(?:osso\b|osse|cartilag|osteos|condros|rabdomio|leiomio|tecido mole)\w*/],
+    ['sistema-nervoso', /\b(?:brain|cerebr|cerebel|encefal|mening|glio|astrocit|ependim|hipofis|spinal|medula espinal|nerv|pineal)\w*/],
+    ['cardiovascular', /\b(?:heart|cardiac|miocard|coracao|arteri|aorta|vascular|tromboangi|valva)\w*/],
+    ['respiratorio', /\b(?:lung|pulmao|pulmonar|pleur|bronqu|alveol|laringe|nasopharyn|nasofaring)\w*/],
+    ['gastrointestinal', /\b(?:esophag|esofag|gastric|stomach|estomago|duoden|jejuno|ileon|colon|rectal|retal|appendi|apendic|intestinal)\w*/],
+    ['hepatobiliopancreatico', /\b(?:liver|gallbladder|ampulla|figado|hepatic|biliar|colang|pancrea|cirrose)\w*/],
+    ['urinario-genital-masculino', /\b(?:kidney|renal|rim\b|glomerul|urotel|bladder|bexiga|prostat|testicul|seminifer)\w*/],
+    ['ginecologico-placenta', /\b(?:gynec|ginecolog|uter|endometr|ovari|placent|vilosite|corioamn|cervi|vulva)\w*/],
+    ['mama', /\b(?:breast|mama|mamari|fibroadenoma)\w*/],
+    ['endocrino', /\b(?:thyroid|tireoi|paratireoi|suprarrenal|adrenal|hipofis)\w*/],
+    ['pele', /\b(?:skin|epider|cutane|pele\b|nevocelular|bowen|hanseniase)\w*/],
+    ['hematolinfoide', /\b(?:lymph|spleen|linfoma|linfonodo|leucem|timo\b|medula ossea|plasmocit)\w*/],
+    ['ossos-partes-moles', /\b(?:bone|muscle|soft tissue|osso\b|osse|muscul|cartilag|osteos|condros|rabdomio|leiomio|tecido mole)\w*/],
   ]
-  return regras.find(([, padrao]) => padrao.test(texto))?.[0] ?? sistemaPadrao
+  const sistemaPeloTexto = regras.find(([, padrao]) => padrao.test(texto))?.[0]
+  if (sistemaPeloTexto) return sistemaPeloTexto
+
+  // As duas coleções têm páginas gerais, técnicas e índices que não pertencem
+  // a um órgão. Mantê-las em Patologia Geral evita um agrupamento residual sem nome.
+  if (/anatpat\.unicamp\.br|histopathologyatlas\.com/.test(url)) return 'patologia-geral'
+  return sistemaPadrao
 }
 
 export function capituloEditorialDaEntrada(entrada: {
@@ -311,7 +422,9 @@ export function capituloEditorialDaEntrada(entrada: {
   temLaminaVirtual: boolean
 }): (typeof CAPITULOS_DO_ATLAS)[number] {
   const nomeOriginal = limpar(entrada.nomeCatalogado)
-  const codigoDeSerie = /^(?:rpg|npt|bineu|radneu)[a-z]+\d+[a-z0-9-]*$/i.test(nomeOriginal)
+  const codigoDeSerie = /^(?:(?:rpg|npt|bineu|radneu)[a-z]+\d+[a-z0-9-]*|hacettepe-com-case-\d+|case-\d+|bs-?\d+)$/i.test(
+    nomeOriginal,
+  )
   const titulo = semAcento(
     tituloEditorialDaEntrada(entrada.nomeCatalogado, entrada.descricaoCatalogada),
   )

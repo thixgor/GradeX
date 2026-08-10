@@ -27,7 +27,7 @@ export const revalidate = 86400
 export const metadata = metadadosDoModulo({
   titulo: 'Atlas de lâminas',
   descricao:
-    `${TOTAIS.entradasCatalogadas} capítulos visuais e ` +
+    `${TOTAIS.capitulosVisuais} capítulos visuais e ` +
     `${TOTAIS.referenciasDeMidia} referências de lâmina organizadas para estudo no Domine Aqui.`,
   caminho: `${BASE}/atlas`,
 })
@@ -47,7 +47,7 @@ export default function PaginaDoAtlas() {
           <header className="mb-5">
             <p className="editorial-mark mb-2">Atlas</p>
             <h1 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
-              {TOTAIS.entradasCatalogadas.toLocaleString('pt-BR')} capítulos visuais
+              {TOTAIS.capitulosVisuais.toLocaleString('pt-BR')} capítulos visuais
             </h1>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
               Explore doenças, lesões, controles, colorações, marcadores, peças e casos dos atlas da

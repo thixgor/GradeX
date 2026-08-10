@@ -218,8 +218,8 @@ export function BuscaDaHistopatologia({
         <div className="mt-3" aria-live="polite">
           {resultados.length === 0 ? (
             <p className="rounded-lg border border-dashed border-border bg-muted/30 p-3 text-xs leading-relaxed text-muted-foreground">
-              Nada encontrado para “{termo}”. O acervo tem 2.917 entradas catalogadas, mas muitas
-              usam o título exato da página de origem — tente o nome do órgão ou do mecanismo.
+              Nada encontrado para “{termo}”. Tente o nome da doença, do órgão, da coloração ou do
+              mecanismo patológico.
             </p>
           ) : (
             <ul className="divide-y divide-border overflow-hidden rounded-lg border border-border bg-card">

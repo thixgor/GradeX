@@ -75,7 +75,7 @@ export default function HomeDaHistopatologia() {
             <ul className="mt-6 flex flex-wrap items-center gap-2.5 text-xs">
               <Indicador icone={<ScrollText className="h-3.5 w-3.5" aria-hidden />}>
                 {TOTAIS.doencas} aprofundados ·{' '}
-                {TOTAIS.entradasCatalogadas.toLocaleString('pt-BR')} capítulos visuais
+                {TOTAIS.capitulosVisuais.toLocaleString('pt-BR')} capítulos visuais
               </Indicador>
               <Indicador icone={<Library className="h-3.5 w-3.5" aria-hidden />}>
                 FCM/Unicamp + Histopathology Atlas
@@ -109,7 +109,7 @@ export default function HomeDaHistopatologia() {
                 <Atalho
                   href={rotaDoAtlas()}
                   titulo="Atlas de lâminas"
-                  descricao={`${TOTAIS.entradasCatalogadas.toLocaleString('pt-BR')} capítulos visuais organizados por sistema, com abertura e ampliação dentro do Domine Aqui.`}
+                  descricao={`${TOTAIS.capitulosVisuais.toLocaleString('pt-BR')} capítulos visuais com lâminas disponíveis, organizados por sistema e abertos dentro do Domine Aqui.`}
                   icone={<Library className="h-5 w-5" aria-hidden />}
                 />
               </li>

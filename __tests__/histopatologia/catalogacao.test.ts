@@ -30,6 +30,30 @@ describe('títulos editoriais do atlas', () => {
       tituloEditorialDaEntrada('A. 100', 'Infarto do miocárdio em fase de reabsorção. Lam. A. 100'),
     ).toBe('Infarto do miocárdio em fase de reabsorção')
   })
+
+  it('promove diagnósticos escondidos por códigos e nomeia séries externas', () => {
+    expect(tituloEditorialDaEntrada('TGI-110', 'Sarcoma de Kaposi em TGI')).toBe(
+      'Sarcoma de Kaposi em TGI',
+    )
+    expect(tituloEditorialDaEntrada('A. 10')).toBe('Lâmina A. 10')
+    expect(tituloEditorialDaEntrada('hacettepe-com-case-17', 'Click for Video')).toBe(
+      'Série Hacettepe — caso 17',
+    )
+    expect(
+      tituloEditorialDaEntrada(
+        'Cortes sagitais extensos descrevendo o estudo radiológico e seus principais achados no exame',
+        'Descrição detalhada do caso',
+        ['https://anatpat.unicamp.br/rpgastropilo18c.html'],
+      ),
+    ).toBe('Astrocitoma pilocítico — caso 18C')
+  })
+
+  it('localiza nomes clínicos frequentes do acervo internacional', () => {
+    expect(tituloEditorialDaEntrada('Abdominal mesothelioma')).toBe('Mesotelioma abdominal')
+    expect(tituloEditorialDaEntrada('Gallbladder Adenomyoma')).toBe(
+      'Adenomioma da vesícula biliar',
+    )
+  })
 })
 
 describe('organização editorial do atlas', () => {
@@ -44,6 +68,18 @@ describe('organização editorial do atlas', () => {
         'gastrointestinal',
       ),
     ).toBe('sistema-nervoso')
+  })
+
+  it('coloca páginas gerais das coleções em Patologia Geral', () => {
+    expect(
+      sistemaEditorialDaEntrada(
+        {
+          nomeCatalogado: 'Material complementar',
+          paginasFonte: ['https://histopathologyatlas.com/introduction.html'],
+        },
+        'nao-classificado',
+      ),
+    ).toBe('patologia-geral')
   })
 
   it('distribui técnicas e casos em capítulos próprios', () => {

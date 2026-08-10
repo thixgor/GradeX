@@ -48,6 +48,7 @@ export const RELATORIO = relatorioBruto as unknown as Relatorio
 
 export const TOTAIS = {
   entradasCatalogadas: RELATORIO.catalogo.patologias,
+  capitulosVisuais: SISTEMAS_COM_CONTAGEM.reduce((total, sistema) => total + sistema.entradas, 0),
   referenciasDeMidia: RELATORIO.catalogo.midias,
   fragmentos: RELATORIO.catalogo.fragmentos,
   doencas: DOENCAS_RESUMIDAS.length,

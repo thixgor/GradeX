@@ -130,7 +130,9 @@ export function paraExibicao(
     coloracao: midia.coloracao,
     descricao: midia.descricao ? resumir(midia.descricao, 420) : '',
     descricaoRevisada: false,
-    nomeCatalogado: tituloEditorialDaEntrada(midia.patologia, midia.descricao),
+    nomeCatalogado: tituloEditorialDaEntrada(midia.patologia, midia.descricao, [
+      midia.urlPaginaFonte,
+    ]),
     urlPaginaFonte: midia.urlPaginaFonte,
     estadoDeDireitos: decisao.estado,
     urlImagem: podeApontar ? (urls.imagem ?? urls.miniatura) : undefined,

@@ -31,7 +31,6 @@ export const INVENTARIO_POR_SISTEMA: Record<string, Carregador> = {
   "hematolinfoide": () => import('@/data/histopatologia/inventario/hematolinfoide.json'),
   "hepatobiliopancreatico": () => import('@/data/histopatologia/inventario/hepatobiliopancreatico.json'),
   "mama": () => import('@/data/histopatologia/inventario/mama.json'),
-  "nao-classificado": () => import('@/data/histopatologia/inventario/nao-classificado.json'),
   "ossos-partes-moles": () => import('@/data/histopatologia/inventario/ossos-partes-moles.json'),
   "patologia-geral": () => import('@/data/histopatologia/inventario/patologia-geral.json'),
   "pele": () => import('@/data/histopatologia/inventario/pele.json'),
