@@ -50,6 +50,15 @@ describe('títulos editoriais do atlas', () => {
 
   it('localiza nomes clínicos frequentes do acervo internacional', () => {
     expect(tituloEditorialDaEntrada('Abdominal mesothelioma')).toBe('Mesotelioma abdominal')
+    expect(tituloEditorialDaEntrada('Erosion in Gastric Mucosa')).toBe(
+      'Erosão da mucosa gástrica',
+    )
+    expect(tituloEditorialDaEntrada('Acute Perforated Appendicitis')).toBe(
+      'Apendicite aguda perfurada',
+    )
+    expect(tituloEditorialDaEntrada('Cervix Squamous Cell Carcinoma')).toBe(
+      'Carcinoma escamoso do colo uterino',
+    )
     expect(tituloEditorialDaEntrada('Gallbladder Adenomyoma')).toBe(
       'Adenomioma da vesícula biliar',
     )
