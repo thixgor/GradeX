@@ -74,10 +74,11 @@ export default function HomeDaHistopatologia() {
 
             <ul className="mt-6 flex flex-wrap items-center gap-2.5 text-xs">
               <Indicador icone={<ScrollText className="h-3.5 w-3.5" aria-hidden />}>
-                {TOTAIS.doencas} capítulos · {TOTAIS.doencasEmRevisao} em revisão médica
+                {TOTAIS.doencas} aprofundados ·{' '}
+                {TOTAIS.entradasCatalogadas.toLocaleString('pt-BR')} capítulos visuais
               </Indicador>
               <Indicador icone={<Library className="h-3.5 w-3.5" aria-hidden />}>
-                {TOTAIS.entradasCatalogadas.toLocaleString('pt-BR')} entradas catalogadas
+                FCM/Unicamp + Histopathology Atlas
               </Indicador>
               <Indicador icone={<Layers className="h-3.5 w-3.5" aria-hidden />}>
                 {TOTAIS.referenciasDeMidia.toLocaleString('pt-BR')} referências de lâmina
@@ -107,8 +108,8 @@ export default function HomeDaHistopatologia() {
               <li>
                 <Atalho
                   href={rotaDoAtlas()}
-                  titulo="Atlas de referências"
-                  descricao={`${TOTAIS.entradasCatalogadas.toLocaleString('pt-BR')} entradas catalogadas dos dois atlas, pesquisáveis e filtráveis, com crédito e link para a origem.`}
+                  titulo="Atlas de lâminas"
+                  descricao={`${TOTAIS.entradasCatalogadas.toLocaleString('pt-BR')} capítulos visuais organizados por sistema, com abertura e ampliação dentro do Domine Aqui.`}
                   icone={<Library className="h-5 w-5" aria-hidden />}
                 />
               </li>
@@ -131,10 +132,8 @@ export default function HomeDaHistopatologia() {
                 {TOTAIS.doencas} capítulos aprofundados
               </h2>
               <p className="mt-1.5 max-w-3xl text-sm leading-relaxed text-muted-foreground">
-                Conjunto piloto, deliberadamente pequeno e variado: inflamação aguda, infecção
-                granulomatosa, distúrbio hemodinâmico, acúmulo intracelular, proliferação benigna e
-                neoplasia maligna, em cinco sistemas. Todos aguardam revisão de profissional
-                habilitado — o estado aparece em cada cartão.
+                Conteúdo aprofundado com mecanismo, roteiro microscópico e correlação clínica. O
+                atlas visual complementa estes capítulos com toda a coleção de lâminas.
               </p>
             </div>
             <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -154,10 +153,8 @@ export default function HomeDaHistopatologia() {
                 {TOTAIS.sistemas} sistemas
               </h2>
               <p className="mt-1.5 max-w-3xl text-sm leading-relaxed text-muted-foreground">
-                Os contadores são do inventário real, incluindo as{' '}
-                {TOTAIS.entradasSemCuradoria.toLocaleString('pt-BR')} entradas ainda sem curadoria
-                editorial. Um sistema com muitas lâminas e nenhum capítulo é acervo esperando
-                trabalho — não conteúdo escondido.
+                Entre por sistema para estudar os capítulos aprofundados e percorrer as coleções
+                visuais já organizadas por doenças, controles, técnicas, imagens e casos.
               </p>
             </div>
             <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
@@ -172,8 +169,8 @@ export default function HomeDaHistopatologia() {
                       {sistema.descricao}
                     </span>
                     <span className="mt-2 text-[11px] text-muted-foreground">
-                      {sistema.entradas.toLocaleString('pt-BR')} entradas ·{' '}
-                      {sistema.midias.toLocaleString('pt-BR')} referências
+                      {sistema.entradas.toLocaleString('pt-BR')} capítulos visuais ·{' '}
+                      {sistema.midias.toLocaleString('pt-BR')} lâminas
                       {sistema.doencas > 0 && (
                         <span className="font-bold text-teal-700 dark:text-teal-400">
                           {' '}
@@ -221,15 +218,12 @@ export default function HomeDaHistopatologia() {
           </section>
 
           <footer className="mt-14 border-t border-border pt-6">
-            <p className="text-xs leading-relaxed text-muted-foreground">
-              Nenhuma imagem deste módulo é copiada, armazenada ou reprocessada pelo Domine Aqui. O
-              catálogo guarda endereços e metadados; quando a exibição for autorizada, o arquivo
-              continua sendo servido pela instituição de origem.{' '}
-              <Link href={rotaDosCreditos()} className="font-bold underline">
-                Créditos, proveniência e direitos
-              </Link>
-              .
-            </p>
+            <Link
+              href={rotaDosCreditos()}
+              className="text-xs font-bold text-muted-foreground underline transition-colors hover:text-foreground"
+            >
+              Créditos e fontes das lâminas
+            </Link>
           </footer>
         </div>
       </div>

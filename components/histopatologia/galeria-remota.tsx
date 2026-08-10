@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight, Filter } from 'lucide-react'
 
 import type { MidiaExibivel } from '@/lib/histopatologia/esquemas'
 import { MIDIAS_POR_PAGINA } from '@/lib/histopatologia/midia'
-import { ImagemHistopatologicaRemota } from './imagem-remota'
+import { ImagemHistopatologicaRemota, VisualizadorDeLamina } from './imagem-remota'
 
 /**
  * Galeria de referências remotas, filtrável e paginada.
@@ -42,6 +42,7 @@ export function GaleriaRemota({
   const [modalidade, setModalidade] = useState<string>('')
   const [coloracao, setColoracao] = useState<string>('')
   const [pagina, setPagina] = useState(1)
+  const [midiaAbertaId, setMidiaAbertaId] = useState<string | null>(null)
 
   const facetas = useMemo(() => {
     const modalidades = new Set<string>()
@@ -68,6 +69,10 @@ export function GaleriaRemota({
   const totalDePaginas = Math.max(1, Math.ceil(filtradas.length / porPagina))
   const paginaAtual = Math.min(pagina, totalDePaginas)
   const visiveis = filtradas.slice((paginaAtual - 1) * porPagina, paginaAtual * porPagina)
+  const indiceAberto = midiaAbertaId
+    ? filtradas.findIndex((midia) => midia.id === midiaAbertaId)
+    : -1
+  const midiaAberta = indiceAberto >= 0 ? filtradas[indiceAberto] : undefined
 
   const trocarFiltro = (aplicar: () => void) => {
     aplicar()
@@ -77,9 +82,7 @@ export function GaleriaRemota({
   if (midias.length === 0) {
     return (
       <p className="rounded-xl border border-dashed border-border bg-muted/30 p-4 text-sm leading-relaxed text-muted-foreground">
-        Nenhuma referência de mídia elegível para esta seleção. Isso não significa que o acervo não
-        tenha lâminas do assunto — significa que as referências catalogadas não passaram pela
-        allowlist de domínios da fonte ou ainda não foram curadas.
+        Nenhuma lâmina disponível nesta seleção.
       </p>
     )
   }
@@ -144,7 +147,10 @@ export function GaleriaRemota({
         >
           {visiveis.map((midia) => (
             <li key={midia.id}>
-              <ImagemHistopatologicaRemota midia={midia} />
+              <ImagemHistopatologicaRemota
+                midia={midia}
+                onAbrir={midia.urlImagem ? () => setMidiaAbertaId(midia.id) : undefined}
+              />
             </li>
           ))}
         </ul>
@@ -177,6 +183,24 @@ export function GaleriaRemota({
             <ChevronRight className="h-4 w-4" aria-hidden />
           </button>
         </nav>
+      )}
+
+      {midiaAberta && (
+        <VisualizadorDeLamina
+          midia={midiaAberta}
+          onFechar={() => setMidiaAbertaId(null)}
+          onAnterior={
+            indiceAberto > 0
+              ? () => setMidiaAbertaId(filtradas[indiceAberto - 1].id)
+              : undefined
+          }
+          onProxima={
+            indiceAberto < filtradas.length - 1
+              ? () => setMidiaAbertaId(filtradas[indiceAberto + 1].id)
+              : undefined
+          }
+          posicao={`${indiceAberto + 1} de ${filtradas.length}`}
+        />
       )}
     </div>
   )

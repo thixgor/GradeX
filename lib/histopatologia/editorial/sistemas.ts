@@ -12,9 +12,9 @@ import type { Sistema } from '../esquemas'
  *   a ingestão. A correção acontece por mapeamento, aqui, e a proveniência
  *   original continua legível na página de inventário.
  *
- * `nao-classificado` existe porque 1.643 das 2.917 entradas caíram nessa
- * gaveta na coleta. Escondê-la daria a impressão de um acervo mais organizado do
- * que é; mostrá-la é o que permite a alguém abrir a gaveta e reclassificar.
+ * `nao-classificado` continua sendo o id técnico estável. Na interface ele é
+ * apresentado como trabalho em organização editorial, sem transformar uma
+ * limitação da coleta no nome de um capítulo para o aluno.
  */
 export const SISTEMAS: Sistema[] = [
   {
@@ -133,12 +133,11 @@ export const SISTEMAS: Sistema[] = [
   },
   {
     id: 'nao-classificado',
-    nome: 'Não classificado',
+    nome: 'Em organização editorial',
     sistemasCatalogados: ['Não classificado'],
     descricao:
-      'Entradas cuja classificação automatizada da coleta não identificou sistema. Permanecem ' +
-      'visíveis e pesquisáveis: são o trabalho editorial que ainda não foi feito, não um acervo ' +
-      'que não existe.',
+      'Coleções transversais e registros que ainda estão sendo distribuídos entre os sistemas. ' +
+      'Todos permanecem pesquisáveis e abrem normalmente como capítulos visuais.',
   },
 ]
 

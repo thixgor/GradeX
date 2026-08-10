@@ -584,10 +584,22 @@ export type ResumoDeDoenca = z.infer<typeof esquemaResumoDeDoenca>
 export const esquemaResumoDeEntrada = z.object({
   id: z.string(),
   fonteId: esquemaFonteId,
+  /** Título editorial exibido primeiro no Domine Aqui. */
   nome: z.string(),
   nomeCompleto: z.string(),
+  /** Valor literal preservado do catálogo-fonte. */
+  nomeOriginal: z.string(),
+  descricao: z.string().optional(),
   sistemaId: z.string(),
   sistemaCatalogado: z.string(),
+  capituloId: z.enum([
+    'diagnosticos-e-lesoes',
+    'anatomia-e-controles',
+    'tecnicas-e-marcadores',
+    'macroscopia-e-imagem',
+    'casos-e-series',
+  ]),
+  capituloNome: z.string(),
   midias: z.number().int().nonnegative(),
   /** Mídias em domínio da allowlist da fonte — as únicas exibíveis. */
   midiasElegiveis: z.number().int().nonnegative(),

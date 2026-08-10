@@ -1,10 +1,19 @@
 'use client'
 
-import { useState } from 'react'
-import { AlertTriangle, ExternalLink, ImageOff, Microscope } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import {
+  AlertTriangle,
+  ChevronLeft,
+  ChevronRight,
+  ExternalLink,
+  ImageOff,
+  Maximize2,
+  Microscope,
+  X,
+} from 'lucide-react'
 
 import type { MidiaExibivel } from '@/lib/histopatologia/esquemas'
-import { AVISO_DESCRICAO, AVISO_MIDIA_REMOTA, podeIncorporar } from '@/lib/histopatologia/midia'
+import { AVISO_DESCRICAO, podeIncorporar } from '@/lib/histopatologia/midia'
 import { EXPLICACAO_DE_DIREITOS } from '@/lib/histopatologia/direitos'
 import { MARCA_DE_DIREITOS } from './tema'
 
@@ -45,16 +54,26 @@ export interface ImagemRemotaProps {
   midia: MidiaExibivel
   /** `cartao` na galeria; `principal` na figura de destaque da doença. */
   variante?: 'cartao' | 'principal'
+  /** Abre a mídia no visualizador interno da galeria. */
+  onAbrir?: () => void
 }
 
-export function ImagemHistopatologicaRemota({ midia, variante = 'cartao' }: ImagemRemotaProps) {
+export function ImagemHistopatologicaRemota({
+  midia,
+  variante = 'cartao',
+  onAbrir,
+}: ImagemRemotaProps) {
   const [falhou, setFalhou] = useState(false)
   const marca = MARCA_DE_DIREITOS[midia.estadoDeDireitos]
   const incorporar = podeIncorporar(midia) && !falhou
 
   return (
     <figure className="flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card">
-      <div className="relative aspect-[4/3] w-full shrink-0 bg-muted/60">
+      <div
+        className={`relative w-full shrink-0 bg-muted/60 ${
+          variante === 'principal' ? 'aspect-[16/9]' : 'aspect-[4/3]'
+        }`}
+      >
         {incorporar ? (
           /*
            * `<img>` nativo, deliberadamente.
@@ -65,16 +84,30 @@ export function ImagemHistopatologicaRemota({ midia, variante = 'cartao' }: Imag
            * reprocessamento de mídia de terceiros — proibido pela política do
            * módulo, independentemente de estado de direitos.
            */
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={midia.urlImagem}
-            alt={midia.alt}
-            loading="lazy"
-            decoding="async"
-            referrerPolicy="strict-origin-when-cross-origin"
-            className="h-full w-full object-cover"
-            onError={() => setFalhou(true)}
-          />
+          <button
+            type="button"
+            onClick={onAbrir}
+            disabled={!onAbrir}
+            className="group relative h-full min-h-[44px] w-full cursor-zoom-in overflow-hidden disabled:cursor-default"
+            aria-label={onAbrir ? `Abrir ${midia.nomeCatalogado} no Domine Aqui` : undefined}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={midia.urlImagem}
+              alt={midia.alt}
+              loading="lazy"
+              decoding="async"
+              referrerPolicy="strict-origin-when-cross-origin"
+              className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.02] motion-reduce:transition-none"
+              onError={() => setFalhou(true)}
+            />
+            {onAbrir && (
+              <span className="absolute bottom-2 right-2 inline-flex items-center gap-1 rounded-md bg-black/75 px-2 py-1 text-[10px] font-bold text-white">
+                <Maximize2 className="h-3 w-3" aria-hidden />
+                Ampliar aqui
+              </span>
+            )}
+          </button>
         ) : (
           <SemImagem
             estado={midia.estadoDeDireitos}
@@ -114,28 +147,26 @@ export function ImagemHistopatologicaRemota({ midia, variante = 'cartao' }: Imag
         )}
 
         <div className="mt-auto flex flex-wrap gap-1.5 pt-1">
+          {incorporar && onAbrir && (
+            <button
+              type="button"
+              onClick={onAbrir}
+              className="inline-flex min-h-[36px] items-center gap-1.5 rounded-md bg-teal-700 px-2.5 text-[11px] font-bold text-white transition-colors hover:bg-teal-800"
+            >
+              <Maximize2 className="h-3.5 w-3.5" aria-hidden />
+              Abrir no Domine Aqui
+            </button>
+          )}
           <a
             href={midia.urlPaginaFonte}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex min-h-[36px] items-center gap-1.5 rounded-md border border-border bg-card px-2.5 text-[11px] font-bold transition-colors hover:border-teal-600/50"
+            className="inline-flex min-h-[36px] items-center gap-1.5 px-1.5 text-[11px] font-semibold text-muted-foreground underline transition-colors hover:text-foreground"
           >
             <ExternalLink className="h-3.5 w-3.5" aria-hidden />
-            Abrir página de origem
+            Fonte e crédito
             <span className="sr-only"> de {midia.nomeCatalogado}</span>
           </a>
-          {midia.urlImagem && (
-            <a
-              href={midia.urlImagem}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex min-h-[36px] items-center gap-1.5 rounded-md border border-border bg-card px-2.5 text-[11px] font-bold transition-colors hover:border-teal-600/50"
-            >
-              <ImageOff className="h-3.5 w-3.5" aria-hidden />
-              Abrir imagem na fonte
-              <span className="sr-only"> de {midia.nomeCatalogado}</span>
-            </a>
-          )}
           {midia.urlVisualizador && (
             <a
               href={midia.urlVisualizador}
@@ -156,11 +187,140 @@ export function ImagemHistopatologicaRemota({ midia, variante = 'cartao' }: Imag
           CREDITOS_E_DIREITOS.md.
         */}
         <p className="border-t border-border pt-2 text-[10px] leading-relaxed text-muted-foreground">
-          {midia.creditoCurto}
-          {incorporar && <> · {AVISO_MIDIA_REMOTA}</>}
+          Crédito: {midia.creditoCurto}
+          {incorporar && <> · exibição remota no Domine Aqui</>}
         </p>
       </figcaption>
     </figure>
+  )
+}
+
+interface VisualizadorDeLaminaProps {
+  midia: MidiaExibivel
+  onFechar: () => void
+  onAnterior?: () => void
+  onProxima?: () => void
+  posicao?: string
+}
+
+/** Visualizador em tela cheia: a lâmina permanece na plataforma durante o estudo. */
+export function VisualizadorDeLamina({
+  midia,
+  onFechar,
+  onAnterior,
+  onProxima,
+  posicao,
+}: VisualizadorDeLaminaProps) {
+  const [falhou, setFalhou] = useState(false)
+  const url = midia.urlImagem
+
+  useEffect(() => {
+    const aoPressionar = (evento: KeyboardEvent) => {
+      if (evento.key === 'Escape') onFechar()
+      if (evento.key === 'ArrowLeft') onAnterior?.()
+      if (evento.key === 'ArrowRight') onProxima?.()
+    }
+    const overflowAnterior = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', aoPressionar)
+    return () => {
+      document.body.style.overflow = overflowAnterior
+      window.removeEventListener('keydown', aoPressionar)
+    }
+  }, [onAnterior, onFechar, onProxima])
+
+  if (!podeIncorporar(midia) || !url) return null
+
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-3 sm:p-6"
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Visualizador — ${midia.nomeCatalogado}`}
+    >
+      <button
+        type="button"
+        onClick={onFechar}
+        className="absolute inset-0 min-h-[44px] w-full cursor-default"
+        aria-label="Fechar visualizador"
+      />
+
+      <div className="relative z-10 flex max-h-full w-full max-w-7xl flex-col overflow-hidden rounded-xl border border-white/15 bg-zinc-950 shadow-2xl">
+        <header className="flex items-center justify-between gap-3 border-b border-white/10 px-3 py-2 text-white sm:px-4">
+          <div className="min-w-0">
+            <p className="truncate text-sm font-bold">{midia.nomeCatalogado}</p>
+            <p className="text-[11px] text-zinc-400">
+              {midia.modalidade}
+              {midia.coloracao && midia.coloracao !== 'Não informado'
+                ? ` · ${midia.coloracao}`
+                : ''}
+              {posicao ? ` · ${posicao}` : ''}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onFechar}
+            autoFocus
+            className="inline-flex min-h-[40px] min-w-[40px] items-center justify-center rounded-md border border-white/20 bg-white/10 transition-colors hover:bg-white/20"
+            aria-label="Fechar visualizador"
+          >
+            <X className="h-5 w-5" aria-hidden />
+          </button>
+        </header>
+
+        <div className="relative flex min-h-0 flex-1 items-center justify-center bg-black">
+          {falhou ? (
+            <div className="p-10 text-center text-sm text-zinc-300">
+              Não foi possível carregar esta lâmina agora.
+            </div>
+          ) : (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={url}
+              alt={midia.alt}
+              decoding="async"
+              referrerPolicy="strict-origin-when-cross-origin"
+              className="max-h-[76vh] w-auto max-w-full object-contain"
+              onError={() => setFalhou(true)}
+            />
+          )}
+
+          {onAnterior && (
+            <button
+              type="button"
+              onClick={onAnterior}
+              className="absolute left-2 inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full bg-black/70 text-white transition-colors hover:bg-black/90"
+              aria-label="Lâmina anterior"
+            >
+              <ChevronLeft className="h-6 w-6" aria-hidden />
+            </button>
+          )}
+          {onProxima && (
+            <button
+              type="button"
+              onClick={onProxima}
+              className="absolute right-2 inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full bg-black/70 text-white transition-colors hover:bg-black/90"
+              aria-label="Próxima lâmina"
+            >
+              <ChevronRight className="h-6 w-6" aria-hidden />
+            </button>
+          )}
+        </div>
+
+        <footer className="flex flex-wrap items-center justify-between gap-2 border-t border-white/10 px-3 py-2 text-[11px] text-zinc-400 sm:px-4">
+          <span>Crédito: {midia.creditoCurto}</span>
+          <a
+            href={midia.urlPaginaFonte}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-[36px] items-center gap-1.5 underline hover:text-white"
+          >
+            <ExternalLink className="h-3.5 w-3.5" aria-hidden />
+            Consultar fonte
+          </a>
+        </footer>
+      </div>
+    </div>
   )
 }
 
@@ -182,8 +342,7 @@ function SemImagem({
         <AlertTriangle className="h-6 w-6 text-amber-600 dark:text-amber-400" aria-hidden />
         <p className="text-xs font-semibold">A imagem não carregou</p>
         <p className="text-[11px] leading-relaxed text-muted-foreground">
-          O servidor da instituição de origem não respondeu. Use o botão abaixo para abrir a página
-          original.
+          O servidor da coleção não respondeu. Tente novamente ou consulte o link de crédito.
         </p>
       </div>
     )

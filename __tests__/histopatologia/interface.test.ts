@@ -57,7 +57,9 @@ function semComentarios(fonte: string): string {
 }
 
 const ARQUIVOS = arquivosDoModulo()
-const FONTES = new Map(ARQUIVOS.map((a) => [path.relative(RAIZ, a), readFileSync(a, 'utf8')]))
+const FONTES = new Map(
+  ARQUIVOS.map((a) => [path.relative(RAIZ, a).split(path.sep).join('/'), readFileSync(a, 'utf8')]),
+)
 const CODIGO = new Map([...FONTES].map(([nome, fonte]) => [nome, semComentarios(fonte)]))
 const PIPELINE = semComentarios(
   readFileSync(path.join(RAIZ, 'scripts/histopatologia/construir-dados.mjs'), 'utf8'),
@@ -129,10 +131,17 @@ describe('a mídia remota só monta <img> quando os direitos permitem', () => {
     expect(componente).toMatch(/aspect-\[4\/3\]/)
   })
 
-  it('há fallback com descrição e link, e erro recuperável', () => {
+  it('há fallback com descrição e erro recuperável', () => {
     expect(componente).toContain('onError={() => setFalhou(true)}')
     expect(componente).toContain('A imagem não carregou')
-    expect(componente).toContain('Abrir página de origem')
+    expect(componente).toContain('Fonte e crédito')
+  })
+
+  it('a abertura principal acontece no visualizador do Domine Aqui', () => {
+    expect(componente).toContain('Abrir no Domine Aqui')
+    expect(componente).toContain('role="dialog"')
+    expect(componente).toContain('aria-modal="true"')
+    expect(componente).not.toContain('Abrir imagem na fonte')
   })
 
   it('o crédito fica na mesma unidade visual da mídia', () => {

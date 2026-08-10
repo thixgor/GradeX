@@ -1,13 +1,17 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { AlertTriangle, ArrowLeft, ExternalLink } from 'lucide-react'
+import { ArrowLeft, ExternalLink } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
 import { GaleriaRemota } from '@/components/histopatologia/galeria-remota'
 import { AVISO_ACERVO_INDISPONIVEL, inventarioDaEntrada } from '@/lib/histopatologia/acervo'
 import { FONTES } from '@/lib/histopatologia/direitos'
-import { obterEntradaCatalogada, resumoDaDoenca } from '@/lib/histopatologia/repositorio'
+import {
+  obterEntradaCatalogada,
+  obterSistemaComContagem,
+  resumoDaDoenca,
+} from '@/lib/histopatologia/repositorio'
 import {
   BASE,
   rotaDaDoenca,
@@ -52,8 +56,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return metadadosDoModulo({
     titulo: entrada.nome,
     descricao:
-      `Entrada catalogada em ${FONTES[entrada.fonteId].nome}, com ` +
-      `${entrada.midias} referências de mídia. Inventário de proveniência; conteúdo médico não revisado.`,
+      `Capítulo visual em ${FONTES[entrada.fonteId].nome}, com ` +
+      `${entrada.midias} lâminas para estudo no Domine Aqui.`,
     caminho: rotaDaEntradaCatalogada(entrada.id),
     // Inventário nunca é indexável: são 2.917 páginas sem conteúdo editorial.
     estadoDeRevisao: 'rascunho',
@@ -73,6 +77,7 @@ export default async function PaginaDaEntradaCatalogada({ params, searchParams }
   })
 
   const fonte = FONTES[entrada.fonteId]
+  const sistema = obterSistemaComContagem(entrada.sistemaId)
   const doenca = entrada.doencaSlug ? resumoDaDoenca(entrada.doencaSlug) : undefined
   const totalDePaginas = Math.max(1, Math.ceil(inventario.total / POR_PAGINA))
 
@@ -99,38 +104,31 @@ export default async function PaginaDaEntradaCatalogada({ params, searchParams }
                   href={rotaDoSistema(entrada.sistemaId)}
                   className="transition-colors hover:text-foreground"
                 >
-                  {entrada.sistemaCatalogado}
+                  {sistema?.nome ?? entrada.sistemaCatalogado}
                 </Link>
               </li>
             </ol>
           </nav>
 
           <header className="mb-5">
-            <p className="editorial-mark mb-2">Entrada catalogada · {fonte.creditoCurto}</p>
+            <p className="editorial-mark mb-2">Capítulo visual · {entrada.capituloNome}</p>
             <h1 className="font-heading text-2xl font-semibold tracking-tight">
               {entrada.nomeCompleto}
             </h1>
 
-            {!entrada.tituloConfiavel && (
-              <p className="mt-2 inline-flex items-start gap-2 rounded-lg border border-amber-500/30 bg-amber-500/5 p-2.5 text-xs leading-relaxed">
-                <AlertTriangle
-                  className="mt-0.5 h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400"
-                  aria-hidden
-                />
-                <span>
-                  Este título é longo e foi extraído do corpo da página de origem — ele não é o nome
-                  de uma entidade nosológica. Está preservado exatamente como veio, por
-                  proveniência.
-                </span>
+            {entrada.descricao && (
+              <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">
+                {entrada.descricao}
               </p>
             )}
 
             <ul className="mt-3 flex flex-wrap gap-1.5 text-[11px]">
               <li className="rounded-full border border-border bg-card px-2.5 py-1 font-semibold">
-                {entrada.midias.toLocaleString('pt-BR')} referências catalogadas
+                {entrada.midias.toLocaleString('pt-BR')}{' '}
+                {entrada.midias === 1 ? 'lâmina catalogada' : 'lâminas catalogadas'}
               </li>
               <li className="rounded-full border border-border bg-card px-2.5 py-1 font-semibold">
-                {entrada.midiasElegiveis.toLocaleString('pt-BR')} elegíveis para exibição
+                {entrada.midiasElegiveis.toLocaleString('pt-BR')} disponíveis no Domine Aqui
               </li>
               {entrada.temLaminaVirtual && (
                 <li className="rounded-full border border-violet-500/40 bg-violet-500/10 px-2.5 py-1 font-semibold text-violet-800 dark:text-violet-300">
@@ -157,40 +155,9 @@ export default async function PaginaDaEntradaCatalogada({ params, searchParams }
             </aside>
           )}
 
-          <section aria-labelledby="proveniencia-entrada" className="mb-6">
-            <h2 id="proveniencia-entrada" className="mb-2 font-heading text-lg font-semibold">
-              Proveniência
-            </h2>
-            <div className="rounded-xl border border-border bg-card p-3.5 text-xs leading-relaxed">
-              <p>
-                <span className="font-bold">Fonte: </span>
-                {fonte.nome} — {fonte.atribuicaoCatalogada}
-              </p>
-              <p className="mt-1.5">
-                <span className="font-bold">Classificação de origem: </span>
-                {entrada.sistemaCatalogado}
-              </p>
-              <ul className="mt-2 space-y-1">
-                {entrada.paginasFonte.map((url) => (
-                  <li key={url}>
-                    <a
-                      href={url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex min-h-[36px] items-center gap-1.5 font-bold underline"
-                    >
-                      <ExternalLink className="h-3.5 w-3.5" aria-hidden />
-                      Abrir página de origem
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </section>
-
           <section aria-labelledby="referencias-entrada">
             <h2 id="referencias-entrada" className="mb-2 font-heading text-lg font-semibold">
-              Referências de mídia
+              Lâminas no Domine Aqui
             </h2>
 
             {!inventario.acervoDisponivel ? (
@@ -201,14 +168,11 @@ export default async function PaginaDaEntradaCatalogada({ params, searchParams }
               <>
                 <p className="mb-3 text-xs leading-relaxed text-muted-foreground">
                   Mostrando {inventario.itens.length} de {inventario.total.toLocaleString('pt-BR')}{' '}
-                  referências elegíveis.
+                  lâminas disponíveis para abrir e ampliar aqui.
                   {inventario.descartadasPorAllowlist > 0 && (
                     <>
                       {' '}
-                      {inventario.descartadasPorAllowlist.toLocaleString('pt-BR')} referências desta
-                      entrada apontam para domínios fora da allowlist da fonte (selos, contadores de
-                      visita e conteúdo de terceiros capturados junto das lâminas) e não são
-                      exibidas.
+                      Itens técnicos sem imagem foram omitidos.
                     </>
                   )}
                 </p>
@@ -252,6 +216,43 @@ export default async function PaginaDaEntradaCatalogada({ params, searchParams }
                 )}
               </nav>
             )}
+          </section>
+
+          <section
+            aria-labelledby="fonte-entrada"
+            className="mt-10 border-t border-border pt-5"
+          >
+            <h2 id="fonte-entrada" className="font-heading text-base font-semibold">
+              Fonte e crédito
+            </h2>
+            <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+              {fonte.nome} · {fonte.atribuicaoCatalogada}
+            </p>
+            {entrada.nomeOriginal !== entrada.nomeCompleto && (
+              <p className="mt-1 text-xs text-muted-foreground">
+                <span className="font-bold">Nome original do catálogo: </span>
+                {entrada.nomeOriginal}
+              </p>
+            )}
+            <p className="mt-1 text-xs text-muted-foreground">
+              <span className="font-bold">Classificação original: </span>
+              {entrada.sistemaCatalogado}
+            </p>
+            <ul className="mt-2 flex flex-wrap gap-2">
+              {entrada.paginasFonte.map((url) => (
+                <li key={url}>
+                  <a
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex min-h-[36px] items-center gap-1.5 text-[11px] font-semibold text-muted-foreground underline transition-colors hover:text-foreground"
+                  >
+                    <ExternalLink className="h-3.5 w-3.5" aria-hidden />
+                    Consultar fonte original
+                  </a>
+                </li>
+              ))}
+            </ul>
           </section>
         </div>
       </div>

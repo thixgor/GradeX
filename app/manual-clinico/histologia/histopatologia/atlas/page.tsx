@@ -25,11 +25,10 @@ import { metadadosDoModulo } from '@/lib/histopatologia/seo'
 export const revalidate = 86400
 
 export const metadata = metadadosDoModulo({
-  titulo: 'Atlas de referências catalogadas',
+  titulo: 'Atlas de lâminas',
   descricao:
-    `Índice pesquisável de ${TOTAIS.entradasCatalogadas} entradas catalogadas e ` +
-    `${TOTAIS.referenciasDeMidia} referências de lâmina dos atlas da FCM/Unicamp e do ` +
-    'Histopathology Atlas, com crédito e link para a página de origem.',
+    `${TOTAIS.entradasCatalogadas} capítulos visuais e ` +
+    `${TOTAIS.referenciasDeMidia} referências de lâmina organizadas para estudo no Domine Aqui.`,
   caminho: `${BASE}/atlas`,
 })
 
@@ -48,17 +47,13 @@ export default function PaginaDoAtlas() {
           <header className="mb-5">
             <p className="editorial-mark mb-2">Atlas</p>
             <h1 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
-              {TOTAIS.entradasCatalogadas.toLocaleString('pt-BR')} entradas catalogadas
+              {TOTAIS.entradasCatalogadas.toLocaleString('pt-BR')} capítulos visuais
             </h1>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-              Este é o inventário bruto dos dois atlas de origem, preservado como foi encontrado.
-              Ele inclui doenças, variantes, técnicas de coloração, casos individuais e recortes
-              anatômicos — e{' '}
-              <strong>não deve ser lido como uma lista de {TOTAIS.entradasCatalogadas} diagnósticos</strong>.
-              Os {TOTAIS.doencas} capítulos escritos consolidam{' '}
-              {TOTAIS.entradasConsolidadas.toLocaleString('pt-BR')} dessas entradas; as outras{' '}
-              {TOTAIS.entradasSemCuradoria.toLocaleString('pt-BR')} continuam aqui como inventário,
-              com crédito e link para a fonte.
+              Explore doenças, lesões, controles, colorações, marcadores, peças e casos dos atlas da
+              FCM/Unicamp e do Histopathology Atlas. Os títulos foram normalizados para leitura e as
+              imagens abrem primeiro dentro do Domine Aqui; a identificação original permanece na
+              área de crédito de cada capítulo.
             </p>
           </header>
 
@@ -74,10 +69,8 @@ export default function PaginaDoAtlas() {
               Por sistema
             </h2>
             <p className="mb-3 max-w-2xl text-xs leading-relaxed text-muted-foreground">
-              A classificação por sistema veio da coleta e foi remapeada pela edição para uma
-              taxonomia estável. As {SISTEMAS_COM_CONTAGEM.find((s) => s.id === 'nao-classificado')?.entradas.toLocaleString('pt-BR')}{' '}
-              entradas em “não classificado” continuam visíveis: escondê-las daria a impressão de um
-              acervo mais organizado do que ele é.
+              A organização editorial combina sistema, assunto e tipo de material. Cada sistema
+              abre um sumário paginado de capítulos visuais.
             </p>
             <ul className="grid gap-2 sm:grid-cols-2">
               {SISTEMAS_COM_CONTAGEM.map((sistema) => (
@@ -88,7 +81,7 @@ export default function PaginaDoAtlas() {
                   >
                     <span className="text-sm font-semibold">{sistema.nome}</span>
                     <span className="shrink-0 text-[11px] text-muted-foreground">
-                      {sistema.entradas.toLocaleString('pt-BR')} entradas
+                      {sistema.entradas.toLocaleString('pt-BR')} capítulos
                       <ArrowRight className="ml-1 inline h-3 w-3" aria-hidden />
                     </span>
                   </Link>
@@ -118,7 +111,7 @@ export default function PaginaDoAtlas() {
                     rel="noopener noreferrer"
                     className="mt-2 inline-flex min-h-[36px] items-center gap-1.5 rounded-md border border-border bg-background px-2.5 text-[11px] font-bold transition-colors hover:border-teal-600/50"
                   >
-                    Abrir {fonte.url}
+                    Consultar acervo original
                   </a>
                 </li>
               ))}

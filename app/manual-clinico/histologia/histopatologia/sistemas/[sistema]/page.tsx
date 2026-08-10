@@ -1,10 +1,11 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ArrowLeft, ArrowRight } from 'lucide-react'
+import { ArrowLeft, ArrowRight, BookOpen, ChevronLeft, ChevronRight, Images } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
 import { CartaoDeDoenca } from '@/components/histopatologia/cartao-doenca'
+import { CAPITULOS_DO_ATLAS, obterCapituloDoAtlas } from '@/lib/histopatologia/catalogacao'
 import {
   SISTEMAS_COM_CONTAGEM,
   doencasDoSistema,
@@ -35,10 +36,11 @@ import { metadadosDoModulo } from '@/lib/histopatologia/seo'
 
 export const revalidate = 86400
 
-const ENTRADAS_VISIVEIS = 60
+const ENTRADAS_POR_PAGINA = 48
 
 interface Props {
   params: { sistema: string }
+  searchParams: { pagina?: string; capitulo?: string }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -61,13 +63,36 @@ export function generateStaticParams() {
   return SISTEMAS_COM_CONTAGEM.map((s) => ({ sistema: s.id }))
 }
 
-export default async function PaginaDoSistema({ params }: Props) {
+export default async function PaginaDoSistema({ params, searchParams }: Props) {
   const sistema = obterSistemaComContagem(params.sistema)
   if (!sistema) notFound()
 
   const doencas = doencasDoSistema(sistema.id)
   const inventario = await obterInventario(sistema.id)
-  const visiveis = inventario.slice(0, ENTRADAS_VISIVEIS)
+  const capituloSelecionado = searchParams.capitulo
+    ? obterCapituloDoAtlas(searchParams.capitulo)
+    : undefined
+  const filtradas = capituloSelecionado
+    ? inventario.filter((entrada) => entrada.capituloId === capituloSelecionado.id)
+    : inventario
+  const totalDePaginas = Math.max(1, Math.ceil(filtradas.length / ENTRADAS_POR_PAGINA))
+  const pagina = Math.min(totalDePaginas, Math.max(1, Number(searchParams.pagina) || 1))
+  const visiveis = filtradas.slice(
+    (pagina - 1) * ENTRADAS_POR_PAGINA,
+    pagina * ENTRADAS_POR_PAGINA,
+  )
+  const grupos = CAPITULOS_DO_ATLAS.map((capitulo) => ({
+    ...capitulo,
+    entradas: visiveis.filter((entrada) => entrada.capituloId === capitulo.id),
+  })).filter((capitulo) => capitulo.entradas.length > 0)
+
+  const rotaDaListagem = (novaPagina: number, capitulo = capituloSelecionado?.id) => {
+    const consulta = new URLSearchParams()
+    if (capitulo) consulta.set('capitulo', capitulo)
+    if (novaPagina > 1) consulta.set('pagina', String(novaPagina))
+    const sufixo = consulta.toString()
+    return `${rotaDoSistema(sistema.id)}${sufixo ? `?${sufixo}` : ''}`
+  }
 
   return (
     <AppShell allowGuest showHeader={false} guestNotice={false}>
@@ -90,10 +115,10 @@ export default async function PaginaDoSistema({ params }: Props) {
             </p>
             <ul className="mt-3 flex flex-wrap gap-1.5 text-[11px]">
               <li className="rounded-full border border-border bg-card px-2.5 py-1 font-semibold">
-                {sistema.entradas.toLocaleString('pt-BR')} entradas catalogadas
+                {sistema.entradas.toLocaleString('pt-BR')} capítulos visuais
               </li>
               <li className="rounded-full border border-border bg-card px-2.5 py-1 font-semibold">
-                {sistema.midias.toLocaleString('pt-BR')} referências de mídia
+                {sistema.midias.toLocaleString('pt-BR')} lâminas
               </li>
               <li className="rounded-full border border-border bg-card px-2.5 py-1 font-semibold">
                 {sistema.doencas} {sistema.doencas === 1 ? 'capítulo escrito' : 'capítulos escritos'}
@@ -111,18 +136,14 @@ export default async function PaginaDoSistema({ params }: Props) {
             )}
           </header>
 
-          <section aria-labelledby="capitulos-sistema" className="mb-10">
-            <h2 id="capitulos-sistema" className="mb-3 font-heading text-lg font-semibold">
-              Capítulos
-            </h2>
-            {doencas.length === 0 ? (
-              <p className="rounded-xl border border-dashed border-border bg-muted/30 p-4 text-sm leading-relaxed text-muted-foreground">
-                Nenhum capítulo escrito para este sistema ainda. O acervo tem{' '}
-                {sistema.midias.toLocaleString('pt-BR')} referências aqui — o que falta é curadoria
-                e revisão médica, não material. Enquanto isso, o inventário abaixo continua
-                pesquisável, com crédito e link para a origem.
-              </p>
-            ) : (
+          {doencas.length > 0 && (
+            <section aria-labelledby="capitulos-sistema" className="mb-10">
+              <div className="mb-3 flex items-center gap-2">
+                <BookOpen className="h-5 w-5 text-teal-700 dark:text-teal-400" aria-hidden />
+                <h2 id="capitulos-sistema" className="font-heading text-lg font-semibold">
+                  Capítulos aprofundados
+                </h2>
+              </div>
               <ul className="grid gap-3 sm:grid-cols-2">
                 {doencas.map((doenca) => (
                   <li key={doenca.slug}>
@@ -130,64 +151,137 @@ export default async function PaginaDoSistema({ params }: Props) {
                   </li>
                 ))}
               </ul>
-            )}
-          </section>
+            </section>
+          )}
 
           <section aria-labelledby="inventario-sistema">
-            <h2 id="inventario-sistema" className="mb-2 font-heading text-lg font-semibold">
-              Inventário catalogado
-            </h2>
-            <p className="mb-3 max-w-2xl text-xs leading-relaxed text-muted-foreground">
-              Títulos exatamente como aparecem nos atlas de origem, ordenados por volume de
-              referências. Um título aqui pode ser uma doença, uma variante, uma técnica ou um caso
-              — a coleta não distinguiu, e a edição não presume.
-              {inventario.length > ENTRADAS_VISIVEIS && (
-                <>
-                  {' '}
-                  Mostrando as {ENTRADAS_VISIVEIS} maiores de{' '}
-                  {inventario.length.toLocaleString('pt-BR')}; use a{' '}
-                  <Link href={rotaDoAtlas()} className="font-bold underline">
-                    busca do atlas
-                  </Link>{' '}
-                  para alcançar as demais.
-                </>
-              )}
+            <div className="mb-2 flex items-center gap-2">
+              <Images className="h-5 w-5 text-violet-700 dark:text-violet-400" aria-hidden />
+              <h2 id="inventario-sistema" className="font-heading text-lg font-semibold">
+                Capítulos visuais do atlas
+              </h2>
+            </div>
+            <p className="mb-4 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+              {inventario.length.toLocaleString('pt-BR')} capítulos organizados por assunto, com
+              títulos legíveis e as lâminas abertas primeiro dentro do Domine Aqui. Para procurar
+              em todos os sistemas, use a{' '}
+              <Link href={rotaDoAtlas()} className="font-bold underline">
+                busca geral do atlas
+              </Link>
+              .
             </p>
+
+            <nav aria-label="Filtrar capítulos visuais" className="mb-6 flex flex-wrap gap-2">
+              <Link
+                href={rotaDaListagem(1, undefined)}
+                aria-current={!capituloSelecionado ? 'page' : undefined}
+                className="inline-flex min-h-[40px] items-center rounded-full border border-border bg-card px-3 text-xs font-bold transition-colors hover:border-teal-600/50 aria-[current=page]:border-teal-600 aria-[current=page]:bg-teal-500/10"
+              >
+                Todos · {inventario.length.toLocaleString('pt-BR')}
+              </Link>
+              {CAPITULOS_DO_ATLAS.map((capitulo) => {
+                const total = inventario.filter(
+                  (entrada) => entrada.capituloId === capitulo.id,
+                ).length
+                if (total === 0) return null
+                return (
+                  <Link
+                    key={capitulo.id}
+                    href={rotaDaListagem(1, capitulo.id)}
+                    aria-current={capituloSelecionado?.id === capitulo.id ? 'page' : undefined}
+                    className="inline-flex min-h-[40px] items-center rounded-full border border-border bg-card px-3 text-xs font-bold transition-colors hover:border-teal-600/50 aria-[current=page]:border-teal-600 aria-[current=page]:bg-teal-500/10"
+                  >
+                    {capitulo.nome} · {total.toLocaleString('pt-BR')}
+                  </Link>
+                )
+              })}
+            </nav>
 
             {visiveis.length === 0 ? (
               <p className="rounded-xl border border-dashed border-border bg-muted/30 p-4 text-sm text-muted-foreground">
-                Nenhuma entrada catalogada neste sistema.
+                Nenhum capítulo visual nesta seleção.
               </p>
             ) : (
-              <ul className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-card">
-                {visiveis.map((entrada) => (
-                  <li key={entrada.id}>
-                    <Link
-                      href={rotaDaEntradaCatalogada(entrada.id)}
-                      className="flex min-h-[44px] flex-col gap-0.5 p-3 transition-colors hover:bg-muted/50"
-                    >
-                      <span className="text-sm font-semibold">{entrada.nome}</span>
-                      <span className="text-[11px] text-muted-foreground">
-                        {entrada.fonteId === 'unicamp' ? 'FCM/Unicamp' : 'Histopathology Atlas'} ·{' '}
-                        {entrada.midias.toLocaleString('pt-BR')} referências
-                        {entrada.modalidades.length > 0 && <> · {entrada.modalidades.join(', ')}</>}
-                        {entrada.doencaSlug && (
-                          <span className="font-bold text-teal-700 dark:text-teal-400">
-                            {' '}
-                            · consolidada em capítulo
-                          </span>
-                        )}
-                        {!entrada.tituloConfiavel && (
-                          <span className="text-amber-700 dark:text-amber-400">
-                            {' '}
-                            · título extraído do corpo da página
-                          </span>
-                        )}
-                      </span>
-                    </Link>
-                  </li>
+              <div className="space-y-8">
+                {grupos.map((grupo) => (
+                  <section key={grupo.id} aria-labelledby={`grupo-${grupo.id}`}>
+                    <div className="mb-3">
+                      <h3 id={`grupo-${grupo.id}`} className="font-heading text-base font-semibold">
+                        {grupo.nome}
+                      </h3>
+                      <p className="mt-0.5 text-xs text-muted-foreground">{grupo.descricao}</p>
+                    </div>
+                    <ul className="grid gap-3 sm:grid-cols-2">
+                      {grupo.entradas.map((entrada) => (
+                        <li key={entrada.id}>
+                          <Link
+                            href={rotaDaEntradaCatalogada(entrada.id)}
+                            className="group flex h-full min-h-[112px] flex-col rounded-xl border border-border bg-card p-4 transition-colors hover:border-teal-600/50"
+                          >
+                            <span className="font-heading text-base font-semibold leading-snug">
+                              {entrada.nome}
+                            </span>
+                            {entrada.descricao && (
+                              <span className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
+                                {entrada.descricao}
+                              </span>
+                            )}
+                            <span className="mt-auto flex flex-wrap items-center gap-1.5 pt-3 text-[11px] text-muted-foreground">
+                              <span>
+                                {entrada.midias.toLocaleString('pt-BR')}{' '}
+                                {entrada.midias === 1 ? 'lâmina' : 'lâminas'}
+                              </span>
+                              {entrada.temLaminaVirtual && <span>· lâmina virtual</span>}
+                              {entrada.doencaSlug && (
+                                <span className="font-bold text-teal-700 dark:text-teal-400">
+                                  · aprofundado
+                                </span>
+                              )}
+                              <ArrowRight
+                                className="ml-auto h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5"
+                                aria-hidden
+                              />
+                            </span>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
                 ))}
-              </ul>
+              </div>
+            )}
+
+            {totalDePaginas > 1 && (
+              <nav
+                aria-label="Paginação dos capítulos visuais"
+                className="mt-8 flex items-center justify-between gap-3 border-t border-border pt-5"
+              >
+                {pagina > 1 ? (
+                  <Link
+                    href={rotaDaListagem(pagina - 1)}
+                    className="inline-flex min-h-[40px] items-center gap-1.5 rounded-md border border-border bg-card px-3 text-xs font-bold transition-colors hover:border-teal-600/50"
+                  >
+                    <ChevronLeft className="h-4 w-4" aria-hidden />
+                    Anterior
+                  </Link>
+                ) : (
+                  <span />
+                )}
+                <span className="text-xs font-semibold text-muted-foreground">
+                  Página {pagina} de {totalDePaginas}
+                </span>
+                {pagina < totalDePaginas ? (
+                  <Link
+                    href={rotaDaListagem(pagina + 1)}
+                    className="inline-flex min-h-[40px] items-center gap-1.5 rounded-md border border-border bg-card px-3 text-xs font-bold transition-colors hover:border-teal-600/50"
+                  >
+                    Próxima
+                    <ChevronRight className="h-4 w-4" aria-hidden />
+                  </Link>
+                ) : (
+                  <span />
+                )}
+              </nav>
             )}
           </section>
         </div>

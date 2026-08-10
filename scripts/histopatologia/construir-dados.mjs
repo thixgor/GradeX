@@ -54,6 +54,12 @@ import {
   validarPublicacao,
 } from '../../lib/histopatologia/esquemas.ts'
 import { FONTES, hostPermitido, resolverDireitos } from '../../lib/histopatologia/direitos.ts'
+import {
+  capituloEditorialDaEntrada,
+  descricaoEditorialDaEntrada,
+  sistemaEditorialDaEntrada,
+  tituloEditorialDaEntrada,
+} from '../../lib/histopatologia/catalogacao.ts'
 import { chaveDeIndice, pareceTituloDeEntidade, resumir } from '../../lib/histopatologia/texto.ts'
 import {
   DOENCAS,
@@ -317,17 +323,39 @@ const resumoDeEntrada = (entrada) => {
     coloracoes: new Set(),
     temLaminaVirtual: false,
   }
+  const modalidades = [...contadores.modalidades].sort()
+  const coloracoes = [...contadores.coloracoes].sort().slice(0, 12)
+  const nomeCompleto = tituloEditorialDaEntrada(
+    entrada.nomeCatalogado,
+    entrada.descricaoCatalogada,
+  )
+  const sistemaId = sistemaEditorialDaEntrada(
+    entrada,
+    sistemaIdDoCatalogado(entrada.sistemaCatalogado),
+  )
+  const capitulo = capituloEditorialDaEntrada({
+    ...entrada,
+    modalidades,
+    coloracoes,
+    temLaminaVirtual: contadores.temLaminaVirtual,
+  })
+  const descricao = descricaoEditorialDaEntrada(entrada.descricaoCatalogada)
+
   return {
     id: entrada.id,
     fonteId: entrada.fonteId,
-    nome: resumir(entrada.nomeCatalogado, 120),
-    nomeCompleto: entrada.nomeCatalogado,
-    sistemaId: sistemaIdDoCatalogado(entrada.sistemaCatalogado),
+    nome: resumir(nomeCompleto, 120),
+    nomeCompleto,
+    nomeOriginal: entrada.nomeCatalogado,
+    ...(descricao && descricao !== nomeCompleto ? { descricao } : {}),
+    sistemaId,
     sistemaCatalogado: entrada.sistemaCatalogado,
+    capituloId: capitulo.id,
+    capituloNome: capitulo.nome,
     midias: contadores.total,
     midiasElegiveis: contadores.elegiveis,
-    modalidades: [...contadores.modalidades].sort(),
-    coloracoes: [...contadores.coloracoes].sort().slice(0, 12),
+    modalidades,
+    coloracoes,
     temLaminaVirtual: contadores.temLaminaVirtual,
     ...(doencaPorCatalogoId.has(entrada.id) ? { doencaSlug: doencaPorCatalogoId.get(entrada.id) } : {}),
     tituloConfiavel: pareceTituloDeEntidade(entrada.nomeCatalogado),
@@ -344,8 +372,13 @@ for (const entrada of patologias) {
   inventarioPorSistema.set(resumo.sistemaId, lista)
 }
 for (const lista of inventarioPorSistema.values()) {
-  // Ordenação didática: mais mídias primeiro, desempate alfabético estável.
-  lista.sort((a, b) => b.midias - a.midias || a.id.localeCompare(b.id))
+  // Sumário didático: capítulo e título antes de volume bruto de mídia.
+  lista.sort(
+    (a, b) =>
+      a.capituloNome.localeCompare(b.capituloNome, 'pt-BR') ||
+      a.nome.localeCompare(b.nome, 'pt-BR') ||
+      a.id.localeCompare(b.id),
+  )
 }
 
 for (const sistemaId of inventarioPorSistema.keys()) {
@@ -490,12 +523,15 @@ buscaCliente.sort((a, b) => a.u.localeCompare(b.u))
  */
 const buscaServidor = buscaCliente.slice()
 for (const entrada of patologias) {
+  const resumo = resumoDeEntrada(entrada)
   buscaServidor.push({
     t: 'c',
     u: semPrefixo(rotaDaEntradaCatalogada(entrada.id)),
-    n: resumir(entrada.nomeCatalogado, 120),
-    b: entrada.sistemaCatalogado,
-    k: chaveDeIndice(`${entrada.nomeCatalogado} ${entrada.descricaoCatalogada ?? ''}`),
+    n: resumo.nome,
+    b: resumo.capituloNome,
+    k: chaveDeIndice(
+      `${resumo.nomeCompleto} ${entrada.nomeCatalogado} ${entrada.descricaoCatalogada ?? ''}`,
+    ),
   })
 }
 buscaServidor.sort((a, b) => a.u.localeCompare(b.u))

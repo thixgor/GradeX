@@ -1,4 +1,5 @@
 import type { MidiaCatalogada, MidiaExibivel, Modalidade } from './esquemas'
+import { tituloEditorialDaEntrada } from './catalogacao'
 import {
   AVISO_DESCRICAO_NAO_REVISADA,
   FONTES,
@@ -129,7 +130,7 @@ export function paraExibicao(
     coloracao: midia.coloracao,
     descricao: midia.descricao ? resumir(midia.descricao, 420) : '',
     descricaoRevisada: false,
-    nomeCatalogado: midia.patologia,
+    nomeCatalogado: tituloEditorialDaEntrada(midia.patologia, midia.descricao),
     urlPaginaFonte: midia.urlPaginaFonte,
     estadoDeDireitos: decisao.estado,
     urlImagem: podeApontar ? (urls.imagem ?? urls.miniatura) : undefined,
