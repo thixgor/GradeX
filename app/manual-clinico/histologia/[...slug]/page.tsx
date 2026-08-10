@@ -4,6 +4,8 @@ import { notFound } from 'next/navigation'
 import { AppShell } from '@/components/app-shell'
 import { Lamina } from '@/components/histologia/lamina'
 import { SecaoDoCurriculo } from '@/components/histologia/secao'
+import { DoencasRelacionadas } from '@/components/histopatologia/doencas-relacionadas'
+import { doencasRelacionadasA } from '@/lib/histopatologia/repositorio'
 import { buildJsonLd } from '@/lib/seo'
 import {
   LARGURA_LAMINA,
@@ -74,6 +76,16 @@ export default async function PaginaDoCurriculo({ params, searchParams }: Props)
 
   const no = obterNo(params.slug)
 
+  /*
+   * Metade "normal → patológico" do vínculo bidirecional.
+   *
+   * Derivada do que cada doença declara como histologia normal de referência, e
+   * não de um segundo mapa mantido à mão — que discordaria do primeiro na
+   * primeira doença nova. Quando nada aponta para esta rota, o bloco não
+   * renderiza nada: sem cabeçalho vazio, sem espaço reservado.
+   */
+  const relacionadas = doencasRelacionadasA(params.slug)
+
   /* ── Nó de índice: 204 páginas do acervo não são lâminas ── */
   if (pagina.tipo === 'secao') {
     return (
@@ -84,6 +96,7 @@ export default async function PaginaDoCurriculo({ params, searchParams }: Props)
             filhos={no?.filhos ?? []}
             miniaturas={await miniaturasDe(params.slug)}
           />
+          <DoencasRelacionadas doencas={relacionadas} />
           <DadosEstruturados dados={jsonLdDeTrilha(pagina.trilha)} />
         </div>
       </AppShell>
@@ -138,6 +151,7 @@ export default async function PaginaDoCurriculo({ params, searchParams }: Props)
               : undefined
           }
         />
+        <DoencasRelacionadas doencas={relacionadas} />
         <DadosEstruturados dados={jsonLdDeLamina(pagina, imagem)} />
         <DadosEstruturados dados={jsonLdDeTrilha(pagina.trilha)} />
       </div>

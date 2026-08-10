@@ -50,6 +50,28 @@ const nextConfig = {
 
   // Habilitar otimização de pacotes pesados
   experimental: {
+    /**
+     * Catálogo da Histopatologia no bundle das funções que o leem.
+     *
+     * `lib/histopatologia/acervo.ts` descompacta os fragmentos `.json.gz` do
+     * catálogo em tempo de requisição, para servir o inventário das 2.892
+     * entradas que ainda não têm curadoria editorial. Arquivos em `public/` são
+     * servidos estaticamente, mas **não entram** no bundle das funções
+     * serverless — sem esta declaração o `readFile` funcionaria em
+     * desenvolvimento e devolveria ENOENT em produção.
+     *
+     * São 5,7 MB de texto comprimido. A alternativa — expandir as 202.593
+     * referências em derivados JSON versionados — custaria dezenas de megabytes
+     * de dado duplicado no repositório.
+     */
+    outputFileTracingIncludes: {
+      '/manual-clinico/histologia/histopatologia/atlas/[id]': [
+        './public/patologia/catalogo/**/*.json.gz',
+      ],
+      '/api/manual-clinico/histopatologia/acervo/[id]': [
+        './public/patologia/catalogo/**/*.json.gz',
+      ],
+    },
     optimizePackageImports: [
       'lucide-react',
       'date-fns',
