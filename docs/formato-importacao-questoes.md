@@ -1,6 +1,6 @@
 # Formato de Importação de Questões via TXT
 
-Este documento descreve o formato de arquivo `.txt` utilizado para importar questões na criação de Provas Gerais no sistema DomineAqui/GradeX.
+Este documento descreve o formato de arquivo `.txt` utilizado para importar questões na criação de Provas Gerais no sistema Domine Aqui.
 
 ## Estrutura Geral
 

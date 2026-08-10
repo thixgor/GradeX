@@ -1,6 +1,6 @@
 # Pacote de implementação — Histopatologia
 
-Este diretório é a entrada editorial e técnica para a nova área de **Histopatologia** do Manual de Histologia do GradeX.
+Este diretório é a entrada editorial e técnica para a nova área de **Histopatologia** do Manual de Histologia do Domine Aqui.
 
 Ele contém o plano de implementação, um prompt operacional para o Claude Code e o catálogo normalizado das lâminas. O catálogo guarda **URLs e metadados**; nenhuma imagem, miniatura ou lâmina virtual foi baixada ou incluída no repositório.
 

@@ -2,7 +2,7 @@
 
 ## O que é este formato?
 
-Este documento descreve o formato padrão de texto para importar **fármacos** (medicamentos) na seção de **Farmacologia** do Manual Clínico do GradeX. Cada fármaco pertence a uma **classe principal** e a uma **subclasse**. Ao seguir este formato, você pode colar o texto (ou enviar um arquivo `.txt`) e importar um ou vários fármacos de uma só vez.
+Este documento descreve o formato padrão de texto para importar **fármacos** (medicamentos) na seção de **Farmacologia** do Manual Clínico do Domine Aqui. Cada fármaco pertence a uma **classe principal** e a uma **subclasse**. Ao seguir este formato, você pode colar o texto (ou enviar um arquivo `.txt`) e importar um ou vários fármacos de uma só vez.
 
 Este arquivo também serve de guia para um LLM gerar conteúdo de importação automaticamente.
 

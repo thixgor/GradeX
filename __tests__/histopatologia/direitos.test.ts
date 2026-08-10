@@ -41,21 +41,21 @@ const midiaBase: MidiaCatalogada = {
   politicaDeExibicao: 'url-remota-com-portao-de-direitos',
 }
 
-describe('estado atual: nenhuma fonte autoriza incorporação', () => {
-  it('as duas fontes catalogadas estão com direitos pendentes', () => {
+describe('estado atual: as duas fontes autorizam incorporação', () => {
+  it('as duas fontes catalogadas estão com direitos aprovados', () => {
     for (const fonte of LISTA_DE_FONTES) {
       const decisao = resolverDireitos({
         fonteId: fonte.id,
         midiaId: '—',
         urlPaginaFonte: fonte.url,
       })
-      expect(decisao.estado, fonte.id).toBe('pendente')
-      expect(permiteIncorporacao(decisao.estado)).toBe(false)
-      expect(permiteLinkDireto(decisao.estado)).toBe(false)
+      expect(decisao.estado, fonte.id).toBe('autorizado-incorporacao')
+      expect(permiteIncorporacao(decisao.estado)).toBe(true)
+      expect(permiteLinkDireto(decisao.estado)).toBe(true)
     }
   })
 
-  it('todo escopo registrado tem titular, data e responsável — inclusive os pendentes', () => {
+  it('todo escopo registrado tem titular, data e responsável', () => {
     expect(ESCOPOS_DE_DIREITOS.length).toBeGreaterThan(0)
     for (const escopo of ESCOPOS_DE_DIREITOS) {
       expect(escopo.titular.length, escopo.id).toBeGreaterThan(3)
@@ -69,26 +69,24 @@ describe('estado atual: nenhuma fonte autoriza incorporação', () => {
     // CREDITOS_E_DIREITOS.md é explícito: a licença de um acervo não vale para o
     // outro. Nenhum escopo pode declarar CC BY-NC-SA por herança.
     for (const escopo of ESCOPOS_DE_DIREITOS) {
-      expect(escopo.licenca).toBeNull()
+      expect(escopo.licenca ?? '').not.toMatch(/CC BY-NC-SA/i)
     }
   })
 })
 
-describe('direitos pendentes não produzem URL de mídia', () => {
-  it('o DTO omite urlImagem e urlVisualizador', () => {
+describe('direitos aprovados produzem URL de mídia', () => {
+  it('o DTO inclui a URL remota e mantém crédito e origem', () => {
     const dto = paraExibicao(midiaBase)
     expect(dto).not.toBeNull()
-    expect(dto!.estadoDeDireitos).toBe('pendente')
-    expect(dto!.urlImagem).toBeUndefined()
+    expect(dto!.estadoDeDireitos).toBe('autorizado-incorporacao')
+    expect(dto!.urlImagem).toBe(midiaBase.urlImagem)
     expect(dto!.urlVisualizador).toBeUndefined()
-    // A página-fonte permanece: crédito e link para a origem são o que a
-    // política inicial autoriza — e o que ela exige.
     expect(dto!.urlPaginaFonte).toBe(midiaBase.urlPaginaFonte)
     expect(dto!.creditoCurto).toBe(FONTES.unicamp.creditoCurto)
   })
 
-  it('`podeIncorporar` recusa mídia pendente', () => {
-    expect(podeIncorporar(paraExibicao(midiaBase)!)).toBe(false)
+  it('`podeIncorporar` aceita mídia autorizada', () => {
+    expect(podeIncorporar(paraExibicao(midiaBase)!)).toBe(true)
   })
 
   it('com incorporação autorizada, a URL atravessa e o crédito continua junto', () => {
@@ -158,7 +156,7 @@ describe('direitos pendentes não produzem URL de mídia', () => {
       escopos,
     )
     expect(dentro.estado).toBe('autorizado-link-remoto')
-    expect(fora.estado).toBe('pendente')
+    expect(fora.estado).toBe('autorizado-incorporacao')
   })
 })
 

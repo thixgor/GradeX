@@ -2,7 +2,7 @@
 
 ## O que e este formato?
 
-Este documento descreve o formato padrao de texto para importar patologias no Manual Clinico do GradeX. Ao seguir este formato, voce pode criar um arquivo `.txt` (ou colar o texto diretamente no painel) e importar uma ou varias patologias de uma so vez.
+Este documento descreve o formato padrao de texto para importar patologias no Manual Clinico do Domine Aqui. Ao seguir este formato, voce pode criar um arquivo `.txt` (ou colar o texto diretamente no painel) e importar uma ou varias patologias de uma so vez.
 
 ---
 

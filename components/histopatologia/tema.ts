@@ -55,7 +55,7 @@ export const MARCA_DE_DIREITOS: Record<EstadoDeDireitos, Marca> = {
     classe: 'border-sky-500/40 bg-sky-500/10 text-sky-800 dark:text-sky-300',
   },
   'autorizado-incorporacao': {
-    rotulo: 'Incorporação autorizada',
+    rotulo: 'Direitos aprovados',
     simbolo: '●',
     classe: 'border-emerald-500/40 bg-emerald-500/10 text-emerald-800 dark:text-emerald-300',
   },

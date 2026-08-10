@@ -2,7 +2,7 @@
 
 ## 📋 Resumo
 
-Este documento descreve o **MVP (Minimum Viable Product)** do sistema de monitoramento de provas implementado no GradeX. O sistema permite que administradores configurem monitoramento por câmera, áudio e transmissão de tela durante as provas.
+Este documento descreve o **MVP (Minimum Viable Product)** do sistema de monitoramento de provas implementado no Domine Aqui. O sistema permite que administradores configurem monitoramento por câmera, áudio e transmissão de tela durante as provas.
 
 ---
 
@@ -304,7 +304,7 @@ Este é um **MVP (Minimum Viable Product)** focado em demonstrar a estrutura e l
 ## 📝 Estrutura de Arquivos
 
 ```
-/home/user/GradeX/
+/home/user/Domine Aqui/
 ├── app/
 │   ├── admin/
 │   │   ├── exams/

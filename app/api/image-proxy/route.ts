@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
 
   // Suporte a If-None-Match / If-Modified-Since para 304 cache hit.
   const upstreamHeaders: Record<string, string> = {
-    'User-Agent': 'Mozilla/5.0 (compatible; GradeX-PDF/1.0)',
+    'User-Agent': 'Mozilla/5.0 (compatible; Domine-Aqui-PDF/1.0)',
     'Accept': 'image/*,*/*',
   }
   const inm = request.headers.get('if-none-match')

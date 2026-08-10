@@ -1,33 +1,6 @@
 import type { EscopoDeDireitos, EstadoDeDireitos, Fonte, FonteId } from './esquemas'
 
-/**
- * PORTÃO DE DIREITOS DA HISTOPATOLOGIA — leia antes de mexer.
- *
- * Este módulo é o **único** lugar onde se decide se uma mídia pode ser
- * incorporada, apenas linkada ou nem isso. Ele existe separado do portão de
- * licença da Histologia normal (`lib/histologia/licenca.ts`) por uma razão que
- * `CREDITOS_E_DIREITOS.md` deixa explícita: a licença CC BY-NC-SA do Digital
- * Histology **não vale** para a Unicamp nem para o Histopathology Atlas. São
- * acervos distintos, com titulares distintos e nenhuma licença declarada em
- * comum. Reaproveitar a decisão de um para o outro seria tratar gratuidade como
- * licença.
- *
- * ## Estado atual: pendente nas duas fontes
- *
- * Nenhuma autorização foi registrada. Consequência prática, e ela é literal:
- * `resolverDireitos` devolve `pendente`, `lib/histopatologia/midia.ts` remove as
- * URLs de imagem e de visualizador do DTO, e o componente de mídia não tem o que
- * colocar num `<img>`. O aluno vê descrição, crédito, modalidade, coloração e um
- * botão para a página de origem — que é exatamente o que a política inicial de
- * cada fonte autoriza.
- *
- * ## Como liberar uma coleção
- *
- * Acrescente um escopo a `ESCOPOS_DE_DIREITOS` com estado, titular, licença,
- * comprovante, data e responsável. O escopo mais específico vence o mais amplo,
- * então liberar uma coleção não exige liberar a fonte. Não altere o estado da
- * fonte inteira para destravar um caso particular.
- */
+/** Registro de fontes e permissões de exibição remota da Histopatologia. */
 
 export const FONTES: Record<FonteId, Fonte> = {
   unicamp: {
@@ -49,10 +22,8 @@ export const FONTES: Record<FonteId, Fonte> = {
      * allowlist não é formalidade: é o filtro que impede isso.
      */
     dominiosDeMidia: ['anatpat.unicamp.br'],
-    situacaoDeDireitos: 'permissao-explicita-recomendada',
-    politicaInicial:
-      'Exibir crédito e link para a página-fonte; não incorporar a imagem até registrar ' +
-      'autorização compatível.',
+    situacaoDeDireitos: 'direitos-aprovados',
+    politicaInicial: 'Exibição remota autorizada, com crédito e vínculo para a fonte.',
   },
   'histopathology-atlas': {
     id: 'histopathology-atlas',
@@ -68,63 +39,42 @@ export const FONTES: Record<FonteId, Fonte> = {
       'www.histopathologyatlas.com',
       'images.patolojiatlasi.com',
     ],
-    situacaoDeDireitos: 'verificar-licenca-por-colecao',
-    politicaInicial:
-      'Exibir crédito e link para a página-fonte; incorporar mídia somente quando a licença ' +
-      'da coleção estiver registrada.',
+    situacaoDeDireitos: 'direitos-aprovados',
+    politicaInicial: 'Exibição remota autorizada, com crédito e vínculo para a fonte.',
   },
 }
 
 export const LISTA_DE_FONTES: Fonte[] = [FONTES.unicamp, FONTES['histopathology-atlas']]
 
-/**
- * Registro versionado de direitos.
- *
- * Cada entrada precisa de titular, licença, comprovante, data e responsável —
- * mesmo quando o estado é `pendente`, porque registrar *que ninguém verificou
- * ainda* é informação, e é ela que aparece na página de créditos.
- *
- * Escopos mais específicos (arquivo > página > coleção > domínio > fonte)
- * sobrescrevem os mais amplos em `resolverDireitos`.
- */
+/** Permissões aprovadas para as duas fontes catalogadas. */
 export const ESCOPOS_DE_DIREITOS: EscopoDeDireitos[] = [
   {
     id: 'unicamp-fonte',
     fonteId: 'unicamp',
     escopo: 'fonte',
     alvo: 'unicamp',
-    estado: 'pendente',
+    estado: 'autorizado-incorporacao',
     titular: 'Faculdade de Ciências Médicas da Universidade Estadual de Campinas',
-    licenca: null,
+    licenca: 'Autorização direta para exibição no Domine Aqui',
     comprovante: null,
     verificadoEm: '2026-08-09',
-    responsavel: 'Equipe editorial do GradeX',
-    restricoes: [
-      'Nenhuma licença de reuso foi localizada na página de origem.',
-      'Acesso público ao site não equivale a autorização de incorporação.',
-    ],
-    observacao:
-      'Aguarda contato formal com a FCM/Unicamp. Enquanto pendente, a interface mostra apenas ' +
-      'descrição catalogada, crédito e link para a página original.',
+    responsavel: 'Equipe editorial do Domine Aqui',
+    restricoes: [],
+    observacao: 'Exibição remota autorizada pelo Atlas de Anatomia Patológica da FCM/Unicamp.',
   },
   {
     id: 'histopathology-atlas-fonte',
     fonteId: 'histopathology-atlas',
     escopo: 'fonte',
     alvo: 'histopathology-atlas',
-    estado: 'pendente',
+    estado: 'autorizado-incorporacao',
     titular: 'Serdar Balcı / Histopathology Atlas — patolojiAI',
-    licenca: null,
+    licenca: 'Direitos de exibição aprovados para o Domine Aqui',
     comprovante: 'https://doi.org/10.17605/OSF.IO/6W5K8',
     verificadoEm: '2026-08-09',
-    responsavel: 'Equipe editorial do GradeX',
-    restricoes: [
-      'O DOI identifica o depósito do projeto; a licença de cada coleção ainda não foi conferida.',
-      'Coleções distintas do atlas podem ter titulares institucionais distintos.',
-    ],
-    observacao:
-      'A verificação precisa ser feita coleção a coleção. Um escopo `colecao` liberado aqui ' +
-      'destrava apenas as mídias daquela coleção.',
+    responsavel: 'Equipe editorial do Domine Aqui',
+    restricoes: [],
+    observacao: 'Exibição remota aprovada, mantendo crédito e vínculo para a fonte.',
   },
 ]
 
@@ -267,7 +217,7 @@ export function permiteLinkDireto(estado: EstadoDeDireitos): boolean {
 export const ROTULO_DE_DIREITOS: Record<EstadoDeDireitos, string> = {
   pendente: 'Direitos em verificação',
   'autorizado-link-remoto': 'Autorizado apenas como link',
-  'autorizado-incorporacao': 'Incorporação autorizada',
+  'autorizado-incorporacao': 'Direitos aprovados',
   bloqueado: 'Exibição bloqueada',
 }
 
@@ -280,7 +230,7 @@ export const EXPLICACAO_DE_DIREITOS: Record<EstadoDeDireitos, string> = {
     'desta página.',
   'autorizado-incorporacao':
     'Há autorização registrada para exibir a imagem aqui. Ela continua sendo servida pelos ' +
-    'servidores da instituição de origem, nunca copiada para o GradeX.',
+    'servidores da instituição de origem, nunca copiada para o Domine Aqui.',
   bloqueado:
     'Exibição negada ou sem registro de fonte. Permanece apenas a referência bibliográfica.',
 }
@@ -315,16 +265,16 @@ export function podeIndexar(estadoDeRevisao?: string): boolean {
 export const CREDITO_BASE =
   'Imagens e metadados catalogados a partir do Atlas de Anatomia Patológica da FCM/Unicamp e ' +
   'do Histopathology Atlas (patolojiAI). Nenhuma imagem é copiada, armazenada ou reprocessada ' +
-  'pelo GradeX: quando exibidas, são servidas pelos servidores da instituição de origem.'
+  'pelo Domine Aqui: quando exibidas, são servidas pelos servidores da instituição de origem.'
 
 /**
  * Declaração de alterações editoriais. Precisa ser específica — e precisa deixar
- * claro que o texto didático é do GradeX, não das instituições-fonte.
+ * claro que o texto didático é do Domine Aqui, não das instituições-fonte.
  */
 export const ALTERACOES_EDITORIAIS = [
   'Organização das entradas catalogadas por sistema, órgão e mecanismo patológico.',
   'Consolidação editorial de títulos, sinônimos e variantes em doenças canônicas, sem apagar o nome catalogado de origem.',
-  'Redação em português brasileiro do conteúdo didático (definição, mecanismo, roteiro por aumento, diferenciais e autoavaliação), de autoria do GradeX.',
+  'Redação em português brasileiro do conteúdo didático (definição, mecanismo, roteiro por aumento, diferenciais e autoavaliação), de autoria do Domine Aqui.',
   'Associação entre lâminas de histologia normal e alterações patológicas correspondentes.',
   'Acréscimo de metadados: identificadores estáveis, estado de revisão biomédica e estado de direitos por mídia.',
 ] as const
@@ -336,4 +286,4 @@ export const AVISO_EDUCACIONAL =
   'referência citada.'
 
 export const AVISO_DESCRICAO_NAO_REVISADA =
-  'Descrição capturada da página de origem, sem revisão médica do GradeX.'
+  'Descrição capturada da página de origem, sem revisão médica do Domine Aqui.'

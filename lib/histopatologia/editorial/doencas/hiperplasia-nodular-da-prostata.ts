@@ -587,12 +587,12 @@ export const hiperplasiaNodularDaProstata: DoencaCanonicaEntrada = {
     pendencias: [
       'Revisão por uropatologista, especialmente dos limites de interpretação do painel de células basais em focos pequenos.',
       'Conferir nomenclatura de lesões precursoras contra a 5ª edição da classificação da OMS de tumores urogenitais.',
-      'Nenhuma lâmina selecionada como principal: direitos da Unicamp pendentes.',
+      'As lâminas da Unicamp estão autorizadas para exibição remota.',
     ],
     historico: [
       {
         data: '2026-08-09',
-        autor: 'Edição GradeX',
+        autor: 'Edição Domine Aqui',
         nota: 'Primeira redação do conteúdo piloto. Texto autoral, não revisado por profissional habilitado.',
       },
     ],

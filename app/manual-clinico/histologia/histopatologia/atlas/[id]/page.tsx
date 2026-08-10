@@ -144,7 +144,7 @@ export default async function PaginaDaEntradaCatalogada({ params, searchParams }
             <aside className="mb-6 rounded-xl border border-teal-600/30 bg-teal-500/5 p-4">
               <p className="text-sm font-bold">Esta entrada foi consolidada num capítulo</p>
               <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                A edição do GradeX reuniu esta e outras entradas sob o nome canônico{' '}
+                A edição do Domine Aqui reuniu esta e outras entradas sob o nome canônico{' '}
                 <strong>{doenca.nome}</strong>. O capítulo traz mecanismo, roteiro por aumento e
                 diferenciais; esta página continua sendo o registro de proveniência.
               </p>

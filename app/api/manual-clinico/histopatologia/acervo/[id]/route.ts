@@ -19,7 +19,7 @@ import { obterEntradaCatalogada } from '@/lib/histopatologia/repositorio'
  *
  * Não busca imagem alguma. Devolve metadados e — só quando os direitos
  * autorizam — a URL remota, que o navegador do aluno usa diretamente. O servidor
- * do GradeX nunca vê um byte de imagem.
+ * do Domine Aqui nunca vê um byte de imagem.
  *
  * O `id` vem da URL e é entrada não confiável: ele é resolvido contra o índice
  * catalogado antes de qualquer leitura de arquivo, e o nome do fragmento usado

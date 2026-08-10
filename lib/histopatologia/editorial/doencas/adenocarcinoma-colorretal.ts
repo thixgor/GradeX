@@ -709,12 +709,12 @@ export const adenocarcinomaColorretal: DoencaCanonicaEntrada = {
       'Revisão por patologista gastrointestinal, com conferência do estadiamento contra a edição vigente do AJCC.',
       'Confirmar se a graduação em dois níveis descrita corresponde à prática institucional adotada.',
       'Definir critérios de brotamento tumoral (contagem e área) conforme o consenso adotado, hoje não especificados no texto.',
-      'Nenhuma lâmina selecionada como principal: direitos das duas fontes pendentes.',
+      'As lâminas das duas fontes estão autorizadas para exibição remota.',
     ],
     historico: [
       {
         data: '2026-08-09',
-        autor: 'Edição GradeX',
+        autor: 'Edição Domine Aqui',
         nota: 'Primeira redação do conteúdo piloto. Texto autoral, não revisado por profissional habilitado.',
       },
     ],

@@ -16,7 +16,7 @@ async function createAdmin() {
   const client = new MongoClient(uri)
 
   try {
-    console.log('🚀 GradeX - Criar Usuário Administrador\n')
+    console.log('🚀 Domine Aqui - Criar Usuário Administrador\n')
 
     const name = await question('Nome completo: ')
     const email = await question('Email: ')

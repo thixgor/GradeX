@@ -45,11 +45,9 @@ export function metadadosDoModulo({
       title: `${titulo} — Histopatologia`,
       description: limpo,
       url,
-      siteName: 'DomineAqui',
+      siteName: 'Domine Aqui',
       locale: 'pt_BR',
-      // Sem `images`: as únicas imagens do módulo são remotas, de terceiros e
-      // com direitos pendentes. Anunciá-las como imagem de compartilhamento
-      // seria redistribuí-las sob a marca do GradeX.
+      // Sem `images`: o módulo não define uma imagem editorial própria para compartilhamento.
     },
     twitter: {
       card: 'summary',
@@ -100,10 +98,10 @@ export function jsonLdDeDoenca(doenca: DoencaCanonica) {
     ],
     teaches: doenca.conteudo.objetivos.slice(0, 12),
     citation: doenca.conteudo.referencias.slice(0, 10).map((r) => r.citacao),
-    publisher: { '@type': 'Organization', name: 'DomineAqui' },
+    publisher: { '@type': 'Organization', name: 'Domine Aqui' },
     disclaimer: AVISO_EDUCACIONAL,
     copyrightNotice: CREDITO_BASE,
-    /** Obrigação de transparência: o que é trabalho editorial do GradeX. */
+    /** Obrigação de transparência: o que é trabalho editorial do Domine Aqui. */
     creditText: ALTERACOES_EDITORIAIS.join(' '),
   }
 }

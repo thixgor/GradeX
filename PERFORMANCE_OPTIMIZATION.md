@@ -1,4 +1,4 @@
-# GradeX Performance Optimization Guide
+# Domine Aqui Performance Optimization Guide
 
 ## Executive Summary
 

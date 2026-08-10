@@ -18,7 +18,7 @@ const ACERVO = path.join(RAIZ, 'public/Manual-Histologia')
 describe('portão de licença', () => {
   /**
    * O teste que impede o acidente mais caro deste módulo: publicar conteúdo
-   * CC BY-NC-SA atrás do paywall do GradeX. Enquanto `AUTORIZACAO.decisao` for
+   * CC BY-NC-SA atrás do paywall do Domine Aqui. Enquanto `AUTORIZACAO.decisao` for
    * 'pendente', nada disso pode ir a produção nem ser indexado.
    *
    * Quando a decisão for registrada (ver docs/adr/0001), este teste passa a

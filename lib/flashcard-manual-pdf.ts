@@ -133,7 +133,7 @@ async function fetchImageAsDataUrlUncached(url: string, origin: string): Promise
       signal: controller.signal,
       headers: {
         Accept: 'image/*,*/*',
-        'User-Agent': 'GradeX-Flashcard-PDF/1.0',
+        'User-Agent': 'Domine-Aqui-Flashcard-PDF/1.0',
       },
     }).finally(() => clearTimeout(timeout))
 

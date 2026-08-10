@@ -11,7 +11,7 @@
 **Abra um terminal e rode:**
 
 ```bash
-cd /home/user/GradeX
+cd /home/user/Domine Aqui
 npm run dev:all
 ```
 

@@ -4,7 +4,7 @@
  * A paleta não é escolhida por gosto: ela vem do que se vê na bancada.
  *
  * - **marfim de lâmina** — o fundo quente do vidro sobre a luz transmitida. É
- *   também o `--background` do GradeX, então o módulo pousa no aplicativo sem
+ *   também o `--background` do Domine Aqui, então o módulo pousa no aplicativo sem
  *   emenda;
  * - **grafite** — o corpo do microscópio, usado nas superfícies do visualizador;
  * - **hematoxilina** — o violeta-azulado dos núcleos. Identifica navegação,

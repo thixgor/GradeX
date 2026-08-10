@@ -14,7 +14,8 @@ import { BASE, metadadosDoModulo } from '@/lib/histopatologia/seo'
  *    existe (é preciso poder revisar); em produção exige
  *    `HISTOPATOLOGIA_HABILITADO=1`;
  * 2. **`resolverDireitos`** decide, mídia a mídia, se a imagem pode ser exibida.
- *    Ele continua fechado mesmo com o módulo aberto — hoje, para as duas fontes.
+ *    As duas fontes catalogadas estão autorizadas, mas a validação continua
+ *    independente da disponibilidade da rota.
  *
  * Habilitar o módulo não libera imagem nenhuma. Foi desenhado assim de propósito:
  * a decisão de publicar a área é editorial e a de exibir mídia é jurídica, e uma
@@ -41,14 +42,8 @@ export default function LayoutDaHistopatologia({ children }: { children: React.R
   }
 
   /*
-   * Sem `preconnect` para os atlas de origem.
-   *
-   * No módulo de Histologia normal o `preconnect` faz sentido: as lâminas vêm
-   * daquele host em toda página. Aqui, enquanto os direitos estiverem pendentes,
-   * **nenhuma** imagem remota é requisitada — abrir conexão TLS com anatpat e
-   * patolojiatlasi em toda visita revelaria a navegação do aluno a servidores de
-   * terceiros sem que nada fosse buscado deles. Quando a incorporação for
-   * autorizada, este é o lugar de acrescentar as duas linhas.
+   * As imagens são requisitadas somente nas páginas que realmente exibem uma
+   * galeria; o layout não antecipa conexões em todas as rotas do módulo.
    */
   return <div className="histologia-superficie min-h-screen">{children}</div>
 }

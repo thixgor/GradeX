@@ -3,7 +3,7 @@
  *
  * O acervo do Digital Histology (Virginia Commonwealth University) está sob
  * CC BY-NC-SA 4.0. A cláusula NãoComercial é, por padrão, incompatível com
- * paywall, assinatura, promoção de produto e CTA comercial contextual. O GradeX
+ * paywall, assinatura, promoção de produto e CTA comercial contextual. O Domine Aqui
  * tem fluxo Plus+/assinatura. Logo, este módulo **não pode ir ao ar** enquanto
  * uma destas duas rotas não estiver registrada em `AUTORIZACAO`:
  *

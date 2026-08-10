@@ -33,7 +33,7 @@ A cláusula **NãoComercial** (NC) é, por padrão, incompatível com:
 - uso do conteúdo como argumento de venda de um produto pago;
 - CTA comercial contextual dentro da experiência.
 
-O GradeX opera fluxos pagos (Plus+, compra avulsa do Manual Clínico, checkout).
+O Domine Aqui opera fluxos pagos (Plus+, compra avulsa do Manual Clínico, checkout).
 O módulo de Tomografia, por exemplo, usa `useAcessoTomografia()` para barrar quem
 não assina. Aplicar o mesmo padrão à Histologia colocaria conteúdo NC atrás de
 pagamento.

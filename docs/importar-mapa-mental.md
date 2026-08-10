@@ -1,7 +1,7 @@
 # Importar Mapa Mental (JSON) — Guia completo para IA e usuários
 
 > Use esta referência para gerar mapas mentais em JSON (com o **Claude**, ChatGPT, Gemini etc.)
-> e importá-los prontos no GradeX pela página **`/mapa-mental`** → botão **“Importar JSON”**.
+> e importá-los prontos no Domine Aqui pela página **`/mapa-mental`** → botão **“Importar JSON”**.
 > O formato é **exatamente o mesmo** que o editor gera em **Exportar → JSON**, então você pode
 > exportar um mapa, editar o JSON e reimportar.
 
@@ -265,7 +265,7 @@ Resultado: mapa no tema **Rosé**, raiz “Sistema Cardiovascular” com 3 ramos
 
 Copie e cole no Claude (ajuste o tema/assunto):
 
-> Gere um **mapa mental** no formato JSON do GradeX sobre **[SEU ASSUNTO]**.
+> Gere um **mapa mental** no formato JSON do Domine Aqui sobre **[SEU ASSUNTO]**.
 > Regras:
 > - Responda **apenas** com o JSON, sem texto ao redor.
 > - Estrutura: `{ "title", "style": { "theme", "edgeStyle", "nodeShape" }, "nodes": [...] }`.

@@ -5,8 +5,8 @@
     "url": "https://anatpat.unicamp.br/",
     "creditoCurto": "Atlas de Anatomia Patológica — FCM/Unicamp",
     "atribuicaoCatalogada": "Atlas de Anatomia Patológica da Faculdade de Ciências Médicas da Unicamp; consulte os créditos da página original.",
-    "situacaoDeDireitos": "permissao-explicita-recomendada",
-    "politicaInicial": "Exibir crédito e link para a página-fonte; não incorporar a imagem até registrar autorização compatível."
+    "situacaoDeDireitos": "direitos-aprovados",
+    "politicaInicial": "Exibição remota autorizada, com crédito e vínculo para a fonte."
   },
   {
     "id": "histopathology-atlas",
@@ -15,7 +15,7 @@
     "doi": "10.17605/OSF.IO/6W5K8",
     "creditoCurto": "Histopathology Atlas / patolojiAI",
     "atribuicaoCatalogada": "Histopathology Atlas / patolojiAI — Serdar Balcı, Memorial Pathology e instituições colaboradoras, conforme a página original.",
-    "situacaoDeDireitos": "verificar-licenca-por-colecao",
-    "politicaInicial": "Exibir crédito e link para a página-fonte; incorporar mídia somente quando a licença da coleção estiver registrada."
+    "situacaoDeDireitos": "direitos-aprovados",
+    "politicaInicial": "Exibição remota autorizada, com crédito e vínculo para a fonte."
   }
 ]

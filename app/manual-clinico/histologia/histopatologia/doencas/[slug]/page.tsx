@@ -583,7 +583,7 @@ export default async function PaginaDaDoenca({ params }: Props) {
                   </h3>
                   <p className="mb-2 text-xs leading-relaxed text-muted-foreground">
                     O nome exato encontrado na fonte é preservado. A consolidação é trabalho
-                    editorial do GradeX e não é atribuída às instituições de origem.
+                    editorial do Domine Aqui e não é atribuída às instituições de origem.
                   </p>
                   <ul className="space-y-1.5">
                     {entradas.map((entrada) => (

@@ -1,4 +1,4 @@
-# GradeX - Plataforma de Provas
+# Domine Aqui - Plataforma de Provas
 
 Plataforma completa para criação e realização de provas de múltipla escolha com suporte a **TRI (Teoria de Resposta ao Item)**.
 
@@ -52,7 +52,7 @@ Plataforma completa para criação e realização de provas de múltipla escolha
 1. Clone o repositório:
 ```bash
 git clone <repository-url>
-cd GradeX
+cd Domine Aqui
 ```
 
 2. Instale as dependências:
@@ -153,7 +153,7 @@ A nota final é convertida para escala de 0 a 1000 pontos (padrão ENEM).
 ## 📁 Estrutura do Projeto
 
 ```
-GradeX/
+Domine Aqui/
 ├── app/
 │   ├── api/              # API Routes
 │   │   ├── auth/         # Autenticação

@@ -636,12 +636,12 @@ export const esteatoseHepatica: DoencaCanonicaEntrada = {
     pendencias: [
       'Revisão por hepatopatologista, com atenção à nomenclatura: a terminologia MASLD/MASH substituiu NAFLD/NASH em consenso de 2023 e o texto precisa ser conferido contra a versão adotada institucionalmente.',
       'Definir se o sistema de graduação e estadiamento (NAS/SAF) entra na página e em qual nível de leitura.',
-      'Nenhuma lâmina selecionada como principal: direitos das duas fontes pendentes.',
+      'As lâminas das duas fontes estão autorizadas para exibição remota.',
     ],
     historico: [
       {
         data: '2026-08-09',
-        autor: 'Edição GradeX',
+        autor: 'Edição Domine Aqui',
         nota: 'Primeira redação do conteúdo piloto. Texto autoral, não revisado por profissional habilitado.',
       },
     ],

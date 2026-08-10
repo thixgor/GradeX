@@ -86,7 +86,7 @@ export function altDaMidia(midia: MidiaCatalogada, legendaEditorial?: string): s
     midia.coloracao && midia.coloracao !== 'Não informado' ? `, ${midia.coloracao}` : ''
   return (
     `${tipo}${coloracao}, catalogada em ${FONTES[midia.fonteId].creditoCurto} sob o título ` +
-    `“${resumir(midia.patologia, 80)}”. Conteúdo não revisado pelo GradeX.`
+    `“${resumir(midia.patologia, 80)}”. Conteúdo não revisado pelo Domine Aqui.`
   )
 }
 
@@ -210,7 +210,7 @@ export const MIDIAS_POR_PAGINA = 24
 export const MIDIAS_PRINCIPAIS_MAXIMO = 12
 
 export const AVISO_MIDIA_REMOTA =
-  'Imagem servida diretamente pelos servidores da instituição de origem. O GradeX não ' +
+  'Imagem servida diretamente pelos servidores da instituição de origem. O Domine Aqui não ' +
   'armazena, converte nem redistribui o arquivo.'
 
 export const AVISO_DESCRICAO = AVISO_DESCRICAO_NAO_REVISADA

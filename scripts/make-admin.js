@@ -19,7 +19,7 @@ async function makeAdmin() {
   const client = new MongoClient(uri)
 
   try {
-    console.log('🚀 GradeX - Promover Conta a Administrador\n')
+    console.log('🚀 Domine Aqui - Promover Conta a Administrador\n')
 
     // Email pode vir por argumento (npm run make-admin -- email@x.com) ou ser perguntado
     let email = process.argv[2]

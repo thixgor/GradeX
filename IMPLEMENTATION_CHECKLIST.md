@@ -28,23 +28,23 @@
 
 - [ ] Copy `lib/api-client.ts` to your codebase
   ```bash
-  cp lib/api-client.ts E:\GradeX\lib\
+  cp lib/api-client.ts E:\Domine Aqui\lib\
   ```
 
 - [ ] Create hooks directory and files:
   ```bash
-  mkdir -p E:\GradeX\hooks
-  cp hooks/use-api.ts E:\GradeX\hooks/
-  cp hooks/use-auth-user.ts E:\GradeX\hooks/
-  cp hooks/use-user-tier.ts E:\GradeX\hooks/
-  cp hooks/use-notifications.ts E:\GradeX\hooks/
-  cp hooks/index.ts E:\GradeX\hooks/
+  mkdir -p E:\Domine Aqui\hooks
+  cp hooks/use-api.ts E:\Domine Aqui\hooks/
+  cp hooks/use-auth-user.ts E:\Domine Aqui\hooks/
+  cp hooks/use-user-tier.ts E:\Domine Aqui\hooks/
+  cp hooks/use-notifications.ts E:\Domine Aqui\hooks/
+  cp hooks/index.ts E:\Domine Aqui\hooks/
   ```
 
 - [ ] Deploy bootstrap endpoint:
   ```bash
-  mkdir -p E:\GradeX\app\api\bootstrap
-  cp app/api/bootstrap/route.ts E:\GradeX\app\api\bootstrap/
+  mkdir -p E:\Domine Aqui\app\api\bootstrap
+  cp app/api/bootstrap/route.ts E:\Domine Aqui\app\api\bootstrap/
   ```
 
 ### Step 2: Test Foundation

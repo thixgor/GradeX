@@ -2,7 +2,7 @@
 
 ## 🎉 Resumo
 
-O sistema de monitoramento de provas está **100% FUNCIONAL** conforme solicitado! Todas as funcionalidades foram implementadas e integradas ao GradeX.
+O sistema de monitoramento de provas está **100% FUNCIONAL** conforme solicitado! Todas as funcionalidades foram implementadas e integradas ao Domine Aqui.
 
 ---
 

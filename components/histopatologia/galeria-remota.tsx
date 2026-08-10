@@ -10,14 +10,11 @@ import { ImagemHistopatologicaRemota } from './imagem-remota'
 /**
  * Galeria de referências remotas, filtrável e paginada.
  *
- * ## Por que paginar mesmo sem incorporação
+ * ## Por que paginar
  *
- * Uma entrada do catálogo chega a 5.369 referências. Hoje nenhuma delas vira
- * `<img>` — os direitos estão pendentes —, então não há custo de rede a
- * economizar. Ainda assim a galeria pagina, por duas razões que não dependem de
- * direitos: 5.369 cartões são 5.369 nós de DOM, e uma lista que ninguém
- * consegue percorrer não é acesso ao acervo, é a aparência dele. Quando a
- * incorporação for autorizada, o mesmo teto passa a controlar também o tráfego.
+ * Uma entrada do catálogo chega a 5.369 referências. A paginação limita tanto
+ * o número de nós no DOM quanto o tráfego das imagens remotas, sem transformar
+ * o acervo em uma lista impraticável.
  *
  * ## Filtro no cliente
  *

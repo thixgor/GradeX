@@ -573,12 +573,12 @@ export const tromboseVenosa: DoencaCanonicaEntrada = {
     pendencias: [
       'Revisão por patologista, com atenção especial aos critérios de datação morfológica — área com implicação médico-legal.',
       'Definir se a página deve se desdobrar em trombose arterial e venosa separadamente após a revisão.',
-      'Nenhuma lâmina selecionada como principal: direitos da Unicamp pendentes.',
+      'As lâminas da Unicamp estão autorizadas para exibição remota.',
     ],
     historico: [
       {
         data: '2026-08-09',
-        autor: 'Edição GradeX',
+        autor: 'Edição Domine Aqui',
         nota: 'Primeira redação do conteúdo piloto. Texto autoral, não revisado por profissional habilitado.',
       },
     ],

@@ -7,13 +7,11 @@ import {
   Library,
   Microscope,
   ScrollText,
-  ShieldAlert,
 } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
 import { BuscaDaHistopatologia } from '@/components/histopatologia/busca'
 import { CartaoDeDoenca } from '@/components/histopatologia/cartao-doenca'
-import { LISTA_DE_FONTES, ROTULO_DE_DIREITOS, resolverDireitos } from '@/lib/histopatologia/direitos'
 import {
   BASE_HISTOLOGIA,
   rotaDoAtlas,
@@ -92,11 +90,8 @@ export default function HomeDaHistopatologia() {
         </header>
 
         <div className="container mx-auto max-w-6xl px-4 py-8">
-          {/* ══════════ Aviso de direitos, no topo ══════════ */}
-          <AvisoDeDireitos />
-
           {/* ══════════ Modos de navegação ══════════ */}
-          <section aria-labelledby="modos" className="mt-8">
+          <section aria-labelledby="modos">
             <h2 id="modos" className="sr-only">
               Modos de navegação
             </h2>
@@ -227,7 +222,7 @@ export default function HomeDaHistopatologia() {
 
           <footer className="mt-14 border-t border-border pt-6">
             <p className="text-xs leading-relaxed text-muted-foreground">
-              Nenhuma imagem deste módulo é copiada, armazenada ou reprocessada pelo GradeX. O
+              Nenhuma imagem deste módulo é copiada, armazenada ou reprocessada pelo Domine Aqui. O
               catálogo guarda endereços e metadados; quando a exibição for autorizada, o arquivo
               continua sendo servido pela instituição de origem.{' '}
               <Link href={rotaDosCreditos()} className="font-bold underline">
@@ -239,51 +234,6 @@ export default function HomeDaHistopatologia() {
         </div>
       </div>
     </AppShell>
-  )
-}
-
-function AvisoDeDireitos() {
-  const estados = LISTA_DE_FONTES.map((fonte) => ({
-    fonte,
-    decisao: resolverDireitos({ fonteId: fonte.id, midiaId: '—', urlPaginaFonte: fonte.url }),
-  }))
-  const algumaLiberada = estados.some((e) => e.decisao.estado === 'autorizado-incorporacao')
-
-  return (
-    <aside
-      aria-labelledby="estado-direitos"
-      className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-4"
-    >
-      <h2
-        id="estado-direitos"
-        className="inline-flex items-center gap-2 text-sm font-bold"
-      >
-        <ShieldAlert className="h-4 w-4 text-amber-600 dark:text-amber-400" aria-hidden />
-        As lâminas ainda não são exibidas aqui
-      </h2>
-      <p className="mt-1.5 max-w-3xl text-xs leading-relaxed">
-        {algumaLiberada
-          ? 'Parte das coleções já tem autorização registrada; as demais aparecem apenas como descrição, crédito e link para a origem.'
-          : 'Nenhuma das duas fontes declarou licença de reuso, e nenhuma autorização foi registrada. Até que isso mude, cada referência aparece com descrição, modalidade, coloração, crédito e um botão para abrir a página original — que é exatamente o que a política inicial de cada acervo permite.'}
-      </p>
-      <ul className="mt-2.5 flex flex-wrap gap-2 text-[11px]">
-        {estados.map(({ fonte, decisao }) => (
-          <li
-            key={fonte.id}
-            className="rounded-full border border-border bg-card px-2.5 py-1 font-semibold"
-          >
-            {fonte.creditoCurto} — {ROTULO_DE_DIREITOS[decisao.estado]}
-          </li>
-        ))}
-      </ul>
-      <Link
-        href={rotaDosCreditos()}
-        className="mt-2.5 inline-flex min-h-[36px] items-center gap-1.5 text-[11px] font-bold underline"
-      >
-        Ver o registro completo de direitos
-        <ArrowRight className="h-3.5 w-3.5" aria-hidden />
-      </Link>
-    </aside>
   )
 }
 

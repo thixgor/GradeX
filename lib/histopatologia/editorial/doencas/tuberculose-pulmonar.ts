@@ -636,12 +636,12 @@ export const tuberculosePulmonar: DoencaCanonicaEntrada = {
     pendencias: [
       'Revisão por patologista e por infectologista, sobretudo dos pesos diagnósticos atribuídos à necrose caseosa.',
       'Conferir as recomendações de teste molecular contra a edição vigente do manual do Ministério da Saúde.',
-      'Nenhuma lâmina foi selecionada como principal: os direitos da Unicamp seguem pendentes.',
+      'As lâminas da Unicamp estão autorizadas para exibição remota.',
     ],
     historico: [
       {
         data: '2026-08-09',
-        autor: 'Edição GradeX',
+        autor: 'Edição Domine Aqui',
         nota: 'Primeira redação do conteúdo piloto. Texto autoral, não revisado por profissional habilitado.',
       },
     ],

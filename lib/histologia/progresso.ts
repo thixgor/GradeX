@@ -5,7 +5,7 @@
  *
  * ## Por que armazenamento local
  *
- * O GradeX tem backend, mas o Manual da Histologia é gratuito e sem login
+ * O Domine Aqui tem backend, mas o Manual da Histologia é gratuito e sem login
  * (ver `docs/adr/0001-licenca-manual-histologia.md`): amarrá-lo a conta criaria
  * exatamente o vínculo com benefício pago que a licença NãoComercial proíbe.
  * Então o progresso vive no dispositivo, com três garantias que o `localStorage`

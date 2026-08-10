@@ -1,6 +1,6 @@
-# Prompt para o Claude Code — implementar Histopatologia no GradeX
+# Prompt para o Claude Code — implementar Histopatologia no Domine Aqui
 
-Você está trabalhando no repositório **GradeX**, uma aplicação Next.js 14. Implemente uma nova área de **Histopatologia (Anatomia Patológica)** dentro do Manual de Histologia atual.
+Você está trabalhando no repositório **Domine Aqui**, uma aplicação Next.js 14. Implemente uma nova área de **Histopatologia (Anatomia Patológica)** dentro do Manual de Histologia atual.
 
 O conteúdo deve ser em **português brasileiro**, aprofundado, cientificamente organizado, muito didático e centrado na relação entre mecanismo e morfologia. Não faça uma página genérica nem uma galeria desconectada: implemente a base arquitetural capaz de atender todo o catálogo já preparado.
 

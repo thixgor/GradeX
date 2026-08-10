@@ -181,7 +181,7 @@ export const esquemaMidiaExibivel = z.object({
   creditoCurto: z.string().min(1),
   /** Aumento didático atribuído editorialmente, quando houver. */
   aumento: z.enum(['panoramica', 'pequeno', 'medio', 'grande', 'macroscopia']).optional(),
-  /** Legenda escrita pela edição do GradeX, quando houver. */
+  /** Legenda escrita pela edição do Domine Aqui, quando houver. */
   legendaEditorial: z.string().optional(),
 })
 export type MidiaExibivel = z.infer<typeof esquemaMidiaExibivel>

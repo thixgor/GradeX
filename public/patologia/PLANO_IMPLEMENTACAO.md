@@ -2,13 +2,13 @@
 
 ## 1. Objetivo final
 
-Implementar uma área de **Histopatologia (Anatomia Patológica)** integrada ao Manual de Histologia atual do GradeX, em português brasileiro, gratuita, altamente didática e cientificamente responsável.
+Implementar uma área de **Histopatologia (Anatomia Patológica)** integrada ao Manual de Histologia atual do Domine Aqui, em português brasileiro, gratuita, altamente didática e cientificamente responsável.
 
 A nova área deve permitir que o estudante percorra a cadeia causal completa:
 
 > histologia normal → agressão/etiologia → mecanismo patológico geral → mecanismo específico da doença → alteração macro e microscópica → disfunção do órgão → manifestação clínica → raciocínio diferencial.
 
-O catálogo já preparado deve ser usado como fonte organizada de imagens e lâminas. Nenhuma imagem deve ser baixada, copiada para o repositório, enviada para Vercel Blob, convertida ou processada pelo servidor do GradeX. O produto trabalha com **ponteiros remotos**, proveniência, crédito e portão de direitos.
+O catálogo já preparado deve ser usado como fonte organizada de imagens e lâminas. Nenhuma imagem deve ser baixada, copiada para o repositório, enviada para Vercel Blob, convertida ou processada pelo servidor do Domine Aqui. O produto trabalha com **ponteiros remotos**, proveniência, crédito e portão de direitos.
 
 ## 2. Escopo desta entrega
 
@@ -27,7 +27,7 @@ O Claude Code deverá implementar:
 
 O catálogo completo deve estar consultável desde a primeira versão, mas conteúdo médico aprofundado só pode aparecer como publicado quando tiver passado pelo fluxo de revisão. Não preencher lacunas científicas com texto genérico ou inferências não verificadas.
 
-## 3. Compatibilidade com a arquitetura atual do GradeX
+## 3. Compatibilidade com a arquitetura atual do Domine Aqui
 
 O repositório já possui um módulo maduro de Histologia:
 
@@ -508,7 +508,7 @@ Metas iniciais:
 - primeira renderização não requisita imagem fora do viewport;
 - catálogo completo nunca entra no bundle cliente;
 - navegação básica funciona mesmo quando a fonte de mídia está indisponível;
-- o servidor do GradeX não processa bytes de imagem;
+- o servidor do Domine Aqui não processa bytes de imagem;
 - lista de doenças usa índice derivado leve;
 - galerias longas usam paginação ou virtualização;
 - build valida dados, mas não faz 202 mil requisições remotas.
@@ -537,7 +537,7 @@ Texto alternativo não deve afirmar um diagnóstico além do que a revisão da m
 - páginas em revisão devem usar `noindex`;
 - páginas publicadas podem usar `MedicalWebPage`/`LearningResource` com cautela;
 - incluir `dateModified` e estado editorial;
-- não declarar autoria das imagens como GradeX;
+- não declarar autoria das imagens como Domine Aqui;
 - canonical por doença, não por título duplicado do catálogo;
 - sitemap apenas para conteúdo publicado;
 - não expor 2.917 páginas vazias ao buscador.
@@ -647,7 +647,7 @@ A implementação só está pronta quando:
 - Não criar proxy de imagens.
 - Não usar o otimizador do Next para as novas fontes.
 - Não tratar gratuidade como licença.
-- Não atribuir o texto editorial do GradeX aos atlas.
+- Não atribuir o texto editorial do Domine Aqui aos atlas.
 - Não criar diagnóstico ou descrição científica a partir apenas do nome do arquivo.
 - Não transformar títulos brutos em doenças canônicas sem curadoria.
 - Não publicar conteúdo gerado sem estado de revisão.

@@ -10,7 +10,7 @@ import type { DoencaCanonicaEntrada } from '../../esquemas'
  * em que a morfologia decide conduta — a presença de neutrófilos na muscular
  * própria é o critério, não a impressão macroscópica.
  *
- * Estado: `revisao-medica`. O texto é autoral do GradeX e ainda **não** foi
+ * Estado: `revisao-medica`. O texto é autoral do Domine Aqui e ainda **não** foi
  * validado por patologista; as pendências estão registradas em `revisao`.
  */
 export const apendiciteAguda: DoencaCanonicaEntrada = {
@@ -600,12 +600,12 @@ export const apendiciteAguda: DoencaCanonicaEntrada = {
     pendencias: [
       'Revisão por patologista com registro profissional ativo, especialmente dos critérios de fase (supurativa, gangrenosa, perfurada).',
       'Conferência da nomenclatura de apendicite granulomatosa contra a edição vigente da classificação da OMS.',
-      'Seleção editorial das lâminas: nenhuma mídia foi indicada como principal, pois os direitos das duas fontes seguem pendentes.',
+      'As lâminas das duas fontes estão autorizadas para exibição remota.',
     ],
     historico: [
       {
         data: '2026-08-09',
-        autor: 'Edição GradeX',
+        autor: 'Edição Domine Aqui',
         nota: 'Primeira redação do conteúdo piloto. Texto autoral, não revisado por profissional habilitado.',
       },
     ],

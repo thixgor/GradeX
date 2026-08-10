@@ -48,7 +48,7 @@ export function PainelDeRevisao({ revisao }: { revisao: RevisaoBiomedica }) {
 
       {!publicado && (
         <p className="mt-2.5 text-xs leading-relaxed">
-          Este texto foi escrito pela edição do GradeX e{' '}
+          Este texto foi escrito pela edição do Domine Aqui e{' '}
           <strong>ainda não passou por revisão de profissional habilitado</strong>. Use-o para
           estudar o raciocínio morfológico, não como referência para conduta ou laudo.
         </p>

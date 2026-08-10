@@ -38,7 +38,7 @@ RECAPTCHA_SECRET_KEY=your-recaptcha-secret-key
 1. Acesse [Google reCAPTCHA Admin](https://www.google.com/recaptcha/admin)
 2. Clique em "+" para adicionar novo site
 3. Preencha:
-   - **Label:** Nome do seu projeto (ex: GradeX Production)
+   - **Label:** Nome do seu projeto (ex: Domine Aqui Production)
    - **reCAPTCHA type:** reCAPTCHA v3
    - **Domains:** Seu domínio (ex: gradex.com, localhost para desenvolvimento)
    - **Owners:** Seu email

@@ -107,11 +107,10 @@ Use `midiasBloqueadas` na doença, com `midiaId` e um motivo de pelo menos oito
 caracteres. É o caminho para retirar uma lâmina cuja legenda de origem afirma um
 diagnóstico que a revisão não sustenta, sem retirar a entrada inteira.
 
-## Liberar direitos de uma coleção
+## Direitos das fontes
 
-Veja a seção final da [ADR 0002](../../docs/adr/0002-direitos-de-midia-da-histopatologia.md).
-Resumo: acrescente um escopo em `ESCOPOS_DE_DIREITOS` com o comprovante
-arquivado. Não altere o estado da fonte inteira para destravar um caso.
+As duas fontes catalogadas estão aprovadas para exibição remota. A decisão e os
+créditos estão registrados na [ADR 0002](../../docs/adr/0002-direitos-de-midia-da-histopatologia.md).
 
 ## Atualizar uma classificação
 
@@ -123,5 +122,4 @@ Quando a edição de referência for substituída, marque a doença como
 ## Disponibilidade em produção
 
 Além do portão da Histologia normal (`HISTOLOGIA_HABILITADO=1`), este módulo
-exige `HISTOPATOLOGIA_HABILITADO=1`. A flag governa a rota, não os direitos de
-mídia: habilitar não libera imagem nenhuma.
+exige `HISTOPATOLOGIA_HABILITADO=1`. A flag governa somente a disponibilidade da rota.
