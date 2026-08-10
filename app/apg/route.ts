@@ -29,6 +29,12 @@ const PERIOD_META: Record<number, Meta> = {
       'As 26 APGs do 2º período, do sistema nervoso ao renal. Cada objetivo desdobrado em tópicos e aprofundado, sem buraco pra tapar na véspera da prova.',
     canonical: `${SITE}/apg?periodo=2`,
   },
+  3: {
+    title: 'APGs de SOI III: 26 APGs, 1.012 páginas | DomineAqui',
+    description:
+      'As 26 APGs do 3º período, do cardiovascular ao tegumentar. 1.012 páginas abrindo cada objetivo da fisiopatologia ao tratamento, prontas pra tutoria e prova.',
+    canonical: `${SITE}/apg?periodo=3`,
+  },
   4: {
     title: 'APGs de SOI IV: 34 APGs, 3.312 páginas | DomineAqui',
     description:
