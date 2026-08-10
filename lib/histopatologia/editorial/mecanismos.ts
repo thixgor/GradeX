@@ -1,0 +1,262 @@
+import type { MecanismoGeral, MecanismoGeralEntrada } from '../esquemas'
+
+/**
+ * Mecanismos patológicos gerais.
+ *
+ * A separação entre mecanismo **geral** e mecanismo **específico** é a espinha
+ * dorsal didática do módulo, e ela só funciona se o geral for realmente
+ * reutilizável: nada aqui menciona órgão, doença ou caso. "Inflamação
+ * granulomatosa" é o mesmo conceito na tuberculose pulmonar, na sarcoidose e na
+ * reação a corpo estranho; o que muda — o agente, a célula, a sequência temporal
+ * e a consequência funcional — mora na página da doença, em
+ * `mecanismoPatologicoGeral[].aplicacao`.
+ *
+ * `assinaturaMorfologica` é o elo com a lâmina: é o que o mecanismo *deixa
+ * escrito* no tecido e, portanto, o que o aluno vai procurar no microscópio.
+ */
+export const MECANISMOS: MecanismoGeralEntrada[] = [
+  {
+    id: 'adaptacao-celular',
+    nome: 'Adaptação celular',
+    sinonimos: ['hipertrofia', 'hiperplasia', 'atrofia', 'metaplasia'],
+    familia: 'lesao-celular',
+    conceito:
+      'Diante de uma demanda persistente que ainda não excede a capacidade da célula, o tecido ' +
+      'muda de tamanho, de número ou de fenótipo para operar num novo estado estável. A adaptação ' +
+      'é reversível por definição: retirado o estímulo, o tecido tende a voltar. Seu preço é ' +
+      'trocar uma função especializada por resistência — e é justamente essa troca que cria ' +
+      'terreno para lesões posteriores.',
+    assinaturaMorfologica: [
+      'aumento de volume celular sem aumento de número (hipertrofia)',
+      'aumento do número de células com arquitetura preservada (hiperplasia)',
+      'substituição de um tipo epitelial maduro por outro tipo maduro (metaplasia)',
+      'redução do volume celular e do citoplasma com preservação da arquitetura (atrofia)',
+    ],
+  },
+  {
+    id: 'acumulo-intracelular',
+    nome: 'Acúmulo intracelular',
+    sinonimos: ['degeneração', 'esteatose', 'sobrecarga celular'],
+    familia: 'lesao-celular',
+    conceito:
+      'A célula passa a conter mais de alguma substância do que consegue metabolizar ou exportar. ' +
+      'Isso acontece por três caminhos: a oferta aumenta, a via de processamento falha, ou a via ' +
+      'de exportação trava. O acúmulo em si costuma ser reversível; ele importa porque desloca ' +
+      'organelas, distorce a arquitetura e sinaliza qual etapa metabólica quebrou.',
+    assinaturaMorfologica: [
+      'vacúolos citoplasmáticos que deslocam o núcleo',
+      'granulações ou pigmentos citoplasmáticos anômalos',
+      'aumento de volume celular com citoplasma opticamente vazio em cortes de parafina',
+    ],
+  },
+  {
+    id: 'necrose-coagulativa',
+    nome: 'Necrose coagulativa',
+    sinonimos: ['necrose isquêmica'],
+    familia: 'lesao-celular',
+    conceito:
+      'Morte celular acidental em que a desnaturação das proteínas — inclusive das enzimas ' +
+      'lisossomais — supera a proteólise. O tecido morre mas mantém o contorno por dias: o ' +
+      '"fantasma" da arquitetura permanece legível, sem núcleos. É o padrão típico da isquemia em ' +
+      'órgãos sólidos, exceto no sistema nervoso central.',
+    assinaturaMorfologica: [
+      'perda de núcleos com preservação do contorno celular e tecidual',
+      'citoplasma intensamente eosinofílico e homogêneo',
+      'faixa de neutrófilos e congestão na interface com o tecido viável',
+    ],
+  },
+  {
+    id: 'necrose-caseosa',
+    nome: 'Necrose caseosa',
+    sinonimos: ['necrose de caseificação'],
+    familia: 'lesao-celular',
+    conceito:
+      'Forma de necrose em que nem o contorno tecidual nem a estrutura celular se preservam: o ' +
+      'material resultante é amorfo, granular e acelular. Ela ocorre no centro de reações ' +
+      'granulomatosas contra agentes de parede lipídica difícil de degradar, onde a atividade ' +
+      'microbicida do macrófago destrói tecido junto com o agente.',
+    assinaturaMorfologica: [
+      'material eosinofílico amorfo e granular, sem contornos celulares reconhecíveis',
+      'debris nucleares (cariorrexe) na periferia do foco',
+      'coroa de macrófagos epitelioides delimitando o centro necrótico',
+    ],
+  },
+  {
+    id: 'inflamacao-aguda',
+    nome: 'Inflamação aguda',
+    sinonimos: ['resposta inflamatória aguda', 'supuração'],
+    familia: 'inflamacao',
+    conceito:
+      'Resposta vascular e celular rápida, de horas a poucos dias, a uma agressão. Três eventos a ' +
+      'definem: vasodilatação, aumento de permeabilidade com extravasamento de proteína, e ' +
+      'recrutamento de neutrófilos. É uma resposta desenhada para diluir, conter e destruir — e ' +
+      'que destrói tecido do hospedeiro no processo, pelo conteúdo dos grânulos neutrofílicos.',
+    assinaturaMorfologica: [
+      'infiltrado de neutrófilos permeando o tecido e as camadas da parede',
+      'edema, congestão vascular e exsudato fibrinoso na superfície serosa ou mucosa',
+      'necrose liquefativa focal quando a supuração se organiza em abscesso',
+    ],
+  },
+  {
+    id: 'inflamacao-cronica',
+    nome: 'Inflamação crônica',
+    sinonimos: ['inflamação persistente'],
+    familia: 'inflamacao',
+    conceito:
+      'Quando o agente não é eliminado, o infiltrado muda de composição: linfócitos, plasmócitos e ' +
+      'macrófagos substituem os neutrófilos, e destruição e reparo passam a acontecer ao mesmo ' +
+      'tempo, no mesmo lugar. Essa simultaneidade é o que produz fibrose e deformidade — o dano ' +
+      'crônico é obra tanto do agente quanto da resposta.',
+    assinaturaMorfologica: [
+      'infiltrado mononuclear (linfócitos, plasmócitos, macrófagos)',
+      'neovascularização e tecido de granulação em atividade',
+      'fibrose progressiva com distorção da arquitetura original',
+    ],
+  },
+  {
+    id: 'inflamacao-granulomatosa',
+    nome: 'Inflamação granulomatosa',
+    sinonimos: ['granuloma'],
+    familia: 'inflamacao',
+    conceito:
+      'Padrão de inflamação crônica em que o macrófago, incapaz de digerir o agente, muda de ' +
+      'fenótipo e se organiza. Linfócitos T ativados sustentam essa mudança por citocinas; ' +
+      'macrófagos se tornam epitelioides, fundem-se em células gigantes multinucleadas e formam ' +
+      'um agregado compacto. O granuloma é uma solução de contenção: ele isola o que não se ' +
+      'consegue eliminar, ao custo de ocupar e destruir o tecido onde se instala.',
+    assinaturaMorfologica: [
+      'agregado nodular de macrófagos epitelioides com citoplasma abundante e limites indistintos',
+      'células gigantes multinucleadas do tipo Langhans ou corpo estranho',
+      'coroa de linfócitos e, com o tempo, fibrose periférica',
+    ],
+  },
+  {
+    id: 'trombose',
+    nome: 'Trombose',
+    sinonimos: ['tríade de Virchow'],
+    familia: 'hemodinamica',
+    conceito:
+      'Formação de um coágulo dentro de um vaso íntegro, em vida. Depende de três condições que ' +
+      'se somam: lesão endotelial, alteração do fluxo (estase ou turbulência) e hipercoagulabilidade. ' +
+      'O trombo é um evento com história: ele cresce, se organiza, recanaliza ou se desprende — e ' +
+      'a morfologia registra em que ponto dessa história o material foi retirado.',
+    assinaturaMorfologica: [
+      'massa intraluminal aderida à parede, com camadas alternadas de fibrina e plaquetas',
+      'entremeio de hemácias e leucócitos, sem o aspecto homogêneo do coágulo post mortem',
+      'organização por tecido de granulação e recanalização por neovasos nos trombos antigos',
+    ],
+  },
+  {
+    id: 'isquemia-infarto',
+    nome: 'Isquemia e infarto',
+    sinonimos: ['necrose isquêmica', 'enfarte'],
+    familia: 'hemodinamica',
+    conceito:
+      'Redução do aporte de oxigênio e de substratos abaixo do necessário para manter a produção ' +
+      'de ATP. A célula perde as bombas iônicas antes de perder a integridade da membrana, e é por ' +
+      'isso que a lesão isquêmica tem uma janela reversível. Ultrapassada a janela, instala-se ' +
+      'necrose; a área resultante é delimitada pelo território de irrigação, não pelos limites ' +
+      'anatômicos do órgão.',
+    assinaturaMorfologica: [
+      'área de necrose com forma de cunha, base voltada para a superfície do órgão',
+      'demarcação nítida entre tecido necrótico e viável',
+      'substituição progressiva por tecido de granulação e depois cicatriz fibrosa',
+    ],
+  },
+  {
+    id: 'reparo-fibrose',
+    nome: 'Reparo e fibrose',
+    sinonimos: ['cicatrização', 'tecido de granulação'],
+    familia: 'reparo-fibrose',
+    conceito:
+      'Quando o parênquima perdido não pode ser reposto — porque as células não se dividem, porque ' +
+      'a matriz de suporte foi destruída, ou porque a agressão persiste — o tecido é substituído ' +
+      'por colágeno. O reparo restaura a continuidade, não a função. Fibrose é reparo que não ' +
+      'sabe parar, e o custo é rigidez, retração e distorção arquitetural permanente.',
+    assinaturaMorfologica: [
+      'tecido de granulação: neovasos, fibroblastos e infiltrado inflamatório em matriz frouxa',
+      'deposição de colágeno maduro, evidenciada por tricrômico',
+      'retração e distorção dos compartimentos originais do órgão',
+    ],
+  },
+  {
+    id: 'infeccao-persistente',
+    nome: 'Infecção persistente',
+    sinonimos: ['agente intracelular', 'evasão imune'],
+    familia: 'infeccao',
+    conceito:
+      'Agentes que sobrevivem dentro de fagócitos ou em nichos protegidos impõem uma resposta ' +
+      'prolongada. A morfologia resultante fala mais da estratégia de evasão do agente do que de ' +
+      'sua identidade: quem bloqueia a fusão fagolisossomal produz granuloma; quem lisa a célula ' +
+      'produz supuração. Identificar o agente exige coloração especial, cultura ou biologia ' +
+      'molecular — a morfologia sugere, raramente prova.',
+    assinaturaMorfologica: [
+      'padrão inflamatório desproporcional ao tempo de evolução clínica',
+      'agentes visíveis apenas com colorações específicas',
+      'coexistência de destruição tecidual e reparo em campos vizinhos',
+    ],
+  },
+  {
+    id: 'displasia',
+    nome: 'Displasia',
+    sinonimos: ['neoplasia intraepitelial', 'atipia'],
+    familia: 'neoplasia',
+    conceito:
+      'Proliferação epitelial com perda de maturação e atipia citológica, ainda contida pela ' +
+      'membrana basal. Displasia não é câncer, mas é a expressão morfológica das primeiras ' +
+      'alterações genéticas clonais: é o ponto do processo em que o desfecho ainda é evitável, e ' +
+      'por isso é o alvo dos programas de rastreamento.',
+    assinaturaMorfologica: [
+      'perda da polaridade e da maturação de superfície do epitélio',
+      'núcleos aumentados, hipercromáticos e pseudoestratificados',
+      'mitoses acima da camada basal, sem invasão da membrana basal',
+    ],
+  },
+  {
+    id: 'invasao-neoplasica',
+    nome: 'Invasão neoplásica',
+    sinonimos: ['carcinoma invasor', 'transição epitélio-mesênquima'],
+    familia: 'neoplasia',
+    conceito:
+      'A célula neoplásica rompe a membrana basal e passa a ocupar o estroma. Isso exige perder ' +
+      'adesão, degradar matriz por proteases e adquirir motilidade. A invasão é o critério que ' +
+      'separa carcinoma in situ de carcinoma invasor, e é o que abre as rotas linfática, vascular ' +
+      'e perineural — ou seja, o que torna a doença sistêmica.',
+    assinaturaMorfologica: [
+      'ninhos ou glândulas neoplásicas além da membrana basal, no estroma',
+      'reação desmoplásica: estroma fibroso denso induzido pelo tumor',
+      'invasão de espaços linfovasculares e de bainhas nervosas',
+    ],
+  },
+  {
+    id: 'proliferacao-benigna',
+    nome: 'Proliferação benigna',
+    sinonimos: ['hiperplasia nodular', 'adenoma'],
+    familia: 'neoplasia',
+    conceito:
+      'Aumento de massa por proliferação que preserva a organização básica do tecido e respeita ' +
+      'limites. O crescimento é expansivo e comprime o que está em volta, em vez de infiltrar. O ' +
+      'dano, quando existe, é mecânico: obstrução, compressão ou sangramento — não invasão nem ' +
+      'metástase.',
+    assinaturaMorfologica: [
+      'nódulos delimitados que comprimem e deslocam o tecido adjacente',
+      'manutenção da relação entre epitélio e estroma, com camadas celulares preservadas',
+      'ausência de invasão da membrana basal e de atipia citológica significativa',
+    ],
+  },
+]
+
+export function obterMecanismo(id: string): MecanismoGeralEntrada | undefined {
+  return MECANISMOS.find((m) => m.id === id)
+}
+
+export const FAMILIAS_DE_MECANISMO: Array<{ id: MecanismoGeral['familia']; nome: string }> = [
+  { id: 'lesao-celular', nome: 'Lesão e morte celular' },
+  { id: 'inflamacao', nome: 'Inflamação' },
+  { id: 'hemodinamica', nome: 'Distúrbios hemodinâmicos' },
+  { id: 'imunopatologia', nome: 'Imunopatologia' },
+  { id: 'infeccao', nome: 'Infecção' },
+  { id: 'reparo-fibrose', nome: 'Reparo e fibrose' },
+  { id: 'genetica', nome: 'Alterações genéticas' },
+  { id: 'neoplasia', nome: 'Neoplasia' },
+]

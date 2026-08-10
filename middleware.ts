@@ -162,6 +162,10 @@ function isPublicRoute(pathname: string): boolean {
   // segmentos de profundidade — e as rotas de dados que ele consome.
   if (/^\/manual-clinico\/histologia(\/[a-z0-9-]+)*$/.test(pathname)) return true
   if (/^\/api\/manual-clinico\/histologia\//.test(pathname)) return true
+  // As rotas de dados da Histopatologia (índice de busca, busca e inventário do
+  // acervo) são consumidas pelas mesmas páginas públicas e seguem gratuitas e
+  // sem login. O portão do módulo é aplicado dentro de cada handler.
+  if (/^\/api\/manual-clinico\/histopatologia\//.test(pathname)) return true
   if (/^\/api\/mindmaps\/[^/]+\/version$/.test(pathname)) return true
   if (
     pathname === '/api/mindmaps' ||

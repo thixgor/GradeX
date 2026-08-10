@@ -2,11 +2,13 @@ import Link from 'next/link'
 import {
   ArrowLeft,
   ArrowRight,
+  Columns2,
   FlaskConical,
   Layers,
   ListChecks,
   Microscope,
   Search,
+  Stethoscope,
   Target,
 } from 'lucide-react'
 
@@ -153,6 +155,9 @@ export default async function HomeDaHistologia() {
         </header>
 
         <div className="container mx-auto max-w-6xl px-4 py-8">
+          {/* ══════════ Escolha do caminho ══════════ */}
+          <EscolhaDeCaminho />
+
           {/* ══════════ Continuar estudando ══════════ */}
           <ContinuarEstudando />
 
@@ -286,6 +291,77 @@ export default async function HomeDaHistologia() {
         </div>
       </div>
     </AppShell>
+  )
+}
+
+/**
+ * Escolha entre normal e patológico.
+ *
+ * Acrescentada na home sem mexer nas rotas existentes, como o plano pede (§4).
+ * A ordem é deliberada: o normal primeiro, porque é pré-requisito — quem não
+ * reconhece a arquitetura saudável não tem como perceber o que mudou. O
+ * comparador fecha a linha porque é o ponto de entrada da aprendizagem visual.
+ */
+function EscolhaDeCaminho() {
+  return (
+    <section aria-labelledby="escolha-caminho">
+      <h2 id="escolha-caminho" className="sr-only">
+        Escolha um caminho de estudo
+      </h2>
+      <ul className="grid gap-3 sm:grid-cols-3">
+        <li>
+          <Link
+            href={`${BASE}/atlas`}
+            className="group flex h-full min-h-[44px] flex-col rounded-xl border border-border bg-card p-4 transition-colors hover:border-teal-600/50"
+          >
+            <Microscope className="mb-2 h-5 w-5 text-teal-700 dark:text-teal-400" aria-hidden />
+            <p className="text-sm font-bold leading-snug">Histologia normal</p>
+            <p className="mt-1 flex-1 text-xs leading-relaxed text-muted-foreground">
+              Estrutura e função do tecido saudável, em {TOTAIS.laminas.toLocaleString('pt-BR')}{' '}
+              lâminas com estruturas marcadas.
+            </p>
+            <span className="mt-2.5 inline-flex items-center gap-1 text-[11px] font-bold text-teal-700 dark:text-teal-400">
+              Explorar o atlas
+              <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" aria-hidden />
+            </span>
+          </Link>
+        </li>
+        <li>
+          <Link
+            href={`${BASE}/histopatologia`}
+            className="group flex h-full min-h-[44px] flex-col rounded-xl border border-border bg-card p-4 transition-colors hover:border-rose-500/50"
+          >
+            <Stethoscope className="mb-2 h-5 w-5 text-rose-600 dark:text-rose-400" aria-hidden />
+            <p className="text-sm font-bold leading-snug">Histopatologia</p>
+            <p className="mt-1 flex-1 text-xs leading-relaxed text-muted-foreground">
+              Mecanismos de doença e padrões morfológicos: da agressão ao achado na lâmina, e do
+              achado ao sintoma.
+            </p>
+            <span className="mt-2.5 inline-flex items-center gap-1 text-[11px] font-bold text-rose-700 dark:text-rose-400">
+              Abrir a área nova
+              <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" aria-hidden />
+            </span>
+          </Link>
+        </li>
+        <li>
+          <Link
+            href={`${BASE}/histopatologia#capitulos`}
+            className="group flex h-full min-h-[44px] flex-col rounded-xl border border-border bg-card p-4 transition-colors hover:border-violet-600/50"
+          >
+            <Columns2 className="mb-2 h-5 w-5 text-violet-700 dark:text-violet-400" aria-hidden />
+            <p className="text-sm font-bold leading-snug">Comparar normal × patológico</p>
+            <p className="mt-1 flex-1 text-xs leading-relaxed text-muted-foreground">
+              Cada capítulo de patologia abre lado a lado com a lâmina normal correspondente, e diz
+              o que exatamente mudou.
+            </p>
+            <span className="mt-2.5 inline-flex items-center gap-1 text-[11px] font-bold text-violet-700 dark:text-violet-400">
+              Ver os capítulos
+              <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" aria-hidden />
+            </span>
+          </Link>
+        </li>
+      </ul>
+    </section>
   )
 }
 

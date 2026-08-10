@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next'
 import { CANONICAL_ORIGIN } from '@/lib/seo'
 import { TODAS_SUBSECOES } from '@/lib/tomografia'
 import { entradasDaHistologia } from '@/lib/histologia/sitemap'
+import { entradasDaHistopatologia } from '@/lib/histopatologia/sitemap'
 
 function canonical(path = '/') {
   return `${CANONICAL_ORIGIN}${path.startsWith('/') ? path : `/${path}`}`
@@ -75,5 +76,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // O Manual da Histologia devolve lista vazia enquanto o portão de licença
   // estiver pendente — um sitemap é convite explícito à indexação, e oferecê-lo
   // para conteúdo bloqueado contornaria o próprio bloqueio.
-  return [...staticRoutes, ...tomografia, ...entradasDaHistologia(now)]
+  // A Histopatologia segue a mesma regra, com um portão a mais: só doenças com
+  // revisão médica concluída entram. Hoje isso é lista vazia.
+  return [
+    ...staticRoutes,
+    ...tomografia,
+    ...entradasDaHistologia(now),
+    ...entradasDaHistopatologia(now),
+  ]
 }
