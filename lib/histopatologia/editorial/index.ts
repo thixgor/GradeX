@@ -2,8 +2,14 @@ import type { DoencaCanonicaEntrada } from '../esquemas'
 
 import { adenocarcinomaColorretal } from './doencas/adenocarcinoma-colorretal.ts'
 import { apendiciteAguda } from './doencas/apendicite-aguda.ts'
+import { carcinomaEscamosoDoColoUterino } from './doencas/carcinoma-escamoso-do-colo-uterino.ts'
+import { carcinomaHepatocelular } from './doencas/carcinoma-hepatocelular.ts'
+import { doencaCeliaca } from './doencas/doenca-celiaca.ts'
 import { esteatoseHepatica } from './doencas/esteatose-hepatica.ts'
+import { glioblastoma } from './doencas/glioblastoma.ts'
 import { hiperplasiaNodularDaProstata } from './doencas/hiperplasia-nodular-da-prostata.ts'
+import { linfomaDeHodgkin } from './doencas/linfoma-de-hodgkin.ts'
+import { pielonefriteCronica } from './doencas/pielonefrite-cronica.ts'
 import { tromboseVenosa } from './doencas/trombose-venosa.ts'
 import { tuberculosePulmonar } from './doencas/tuberculose-pulmonar.ts'
 
@@ -31,12 +37,11 @@ import { tuberculosePulmonar } from './doencas/tuberculose-pulmonar.ts'
  *
  * ## O que ele deliberadamente não faz
  *
- * Não tenta cobrir o catálogo. Seis doenças piloto, escolhidas para exercitar
- * padrões diferentes (inflamação aguda, infecção granulomatosa, distúrbio
- * hemodinâmico, acúmulo intracelular, proliferação benigna e neoplasia maligna),
- * em cinco sistemas distintos. A curadoria do restante é trabalho editorial
- * humano, e o módulo foi construído para que ele seja incremental: acrescentar
- * uma doença é acrescentar um arquivo aqui e rodar o pipeline.
+ * Não tenta promover automaticamente todo o catálogo. O núcleo inicial de seis
+ * doenças foi ampliado para doze capítulos aprofundados, cobrindo também
+ * enteropatia imunomediada, doença renal cicatricial e neoplasias hepática,
+ * neural, linfoide e ginecológica. A curadoria do restante é incremental:
+ * acrescentar uma doença é acrescentar um arquivo aqui e rodar o pipeline.
  *
  * ## Versionamento
  *
@@ -44,15 +49,21 @@ import { tuberculosePulmonar } from './doencas/tuberculose-pulmonar.ts'
  * consolidação muda de forma que altere as rotas ou o vínculo entre doença e
  * entradas catalogadas — é o que permite auditar por que um derivado mudou.
  */
-export const VERSAO_DO_MAPA = 1
+export const VERSAO_DO_MAPA = 2
 
 export const DOENCAS: DoencaCanonicaEntrada[] = [
   apendiciteAguda,
+  doencaCeliaca,
   tuberculosePulmonar,
   tromboseVenosa,
   esteatoseHepatica,
+  pielonefriteCronica,
   hiperplasiaNodularDaProstata,
   adenocarcinomaColorretal,
+  carcinomaHepatocelular,
+  glioblastoma,
+  linfomaDeHodgkin,
+  carcinomaEscamosoDoColoUterino,
 ]
 
 /**

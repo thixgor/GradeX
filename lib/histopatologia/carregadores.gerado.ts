@@ -17,8 +17,14 @@ type Carregador = () => Promise<{ default: unknown }>
 export const FRAGMENTOS_DE_DOENCA: Record<string, Carregador> = {
   "adenocarcinoma-colorretal": () => import('@/data/histopatologia/doencas/adenocarcinoma-colorretal.json'),
   "apendicite-aguda": () => import('@/data/histopatologia/doencas/apendicite-aguda.json'),
+  "carcinoma-escamoso-do-colo-uterino": () => import('@/data/histopatologia/doencas/carcinoma-escamoso-do-colo-uterino.json'),
+  "carcinoma-hepatocelular": () => import('@/data/histopatologia/doencas/carcinoma-hepatocelular.json'),
+  "doenca-celiaca": () => import('@/data/histopatologia/doencas/doenca-celiaca.json'),
   "esteatose-hepatica": () => import('@/data/histopatologia/doencas/esteatose-hepatica.json'),
+  "glioblastoma": () => import('@/data/histopatologia/doencas/glioblastoma.json'),
   "hiperplasia-nodular-da-prostata": () => import('@/data/histopatologia/doencas/hiperplasia-nodular-da-prostata.json'),
+  "linfoma-de-hodgkin": () => import('@/data/histopatologia/doencas/linfoma-de-hodgkin.json'),
+  "pielonefrite-cronica": () => import('@/data/histopatologia/doencas/pielonefrite-cronica.json'),
   "trombose-venosa": () => import('@/data/histopatologia/doencas/trombose-venosa.json'),
   "tuberculose-pulmonar": () => import('@/data/histopatologia/doencas/tuberculose-pulmonar.json'),
 }
