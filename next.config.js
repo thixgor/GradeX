@@ -24,21 +24,6 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'digitalhistology.org',
       },
-      // Atlas de Raio-X do Manual de Radiologia. São PNGs originais servidos por
-      // um host único no Canadá, sem CDN e sem cache-control útil: a radiografia
-      // base e as ~10 sobreposições de cada estudo chegavam ao aluno em tamanho
-      // integral, uma requisição transcontinental por vez — dava para *ver* cada
-      // imagem sendo pintada.
-      //
-      // Passando pelo otimizador, cada arquivo vira WebP (PNG de linha e osso
-      // comprime muito bem), é redimensionado para a largura em que realmente
-      // aparece na tela e passa a viver no edge cache por 30 dias. A busca ao
-      // servidor de origem acontece uma vez por variante, no servidor, e não
-      // uma vez por aluno, no navegador.
-      {
-        protocol: 'https',
-        hostname: 'www.clinicalanatomy.ca',
-      },
     ],
     // WebP, e não AVIF.
     //

@@ -209,6 +209,7 @@ export function EstudoRaioXView({ estudo }: { estudo: EstudoRaioX }) {
                           larguraDesktop={1080}
                           qualidade={78}
                           segundoPlano
+                          otimizar={false}
                           className="h-full w-full object-contain"
                         />
                       </div>

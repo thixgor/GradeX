@@ -5,16 +5,16 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 /**
  * Camada de imagem do Atlas de Raio-X.
  *
- * O problema original: cada radiografia e cada uma das ~10 sobreposições era um
- * PNG integral buscado direto de `clinicalanatomy.ca` pelo navegador do aluno —
- * host único, sem CDN, sem cache útil. Dava para ver a imagem sendo pintada.
+ * Radiografias e demarcações vivem em `/public/img/radiologia/raio-x/v1` e são
+ * servidas pelo edge da aplicação com cache imutável. Não há dependência do
+ * servidor de origem durante o estudo.
  *
  * A correção tem três partes, e as três moram aqui:
  *
- * 1. **Otimizador.** Toda URL passa por `/_next/image`, que converte para WebP,
- *    reduz para a largura em que a imagem realmente aparece e serve do edge
- *    cache por 30 dias. A ida ao servidor de origem passa a ser uma por
- *    variante, no servidor — não uma por aluno, no navegador.
+ * 1. **Otimizador seletivo.** Radiografias-base passam por `/_next/image`, que
+ *    converte para WebP e reduz para a largura de exibição. Sobreposições ficam
+ *    no PNG original: o acervo inteiro de demarcações tem só 1,54 MB e assim a
+ *    transparência e o alinhamento permanecem pixel-perfect.
  * 2. **Larguras fixas.** Em vez de deixar o `srcset` gerar uma variante por
  *    viewport, cada uso declara duas larguras (celular e telas maiores). Menos
  *    variantes significa mais acertos de cache — inclusive entre alunos
@@ -44,6 +44,8 @@ interface FilmeImagemProps {
   prioritaria?: boolean
   /** Deixa a rede priorizar outra coisa (usado nas sobreposições). */
   segundoPlano?: boolean
+  /** Desativa WebP/redimensionamento; ideal para demarcações PNG transparentes. */
+  otimizar?: boolean
   /** Some com o fade de entrada — usado quando o pai já controla a transição. */
   semTransicao?: boolean
   /**
@@ -63,12 +65,13 @@ export function FilmeImagem({
   className = '',
   prioritaria = false,
   segundoPlano = false,
+  otimizar = true,
   semTransicao = false,
   comEsqueleto = false,
   onPronta,
 }: FilmeImagemProps) {
   const [pronta, setPronta] = useState(false)
-  const [semOtimizador, setSemOtimizador] = useState(false)
+  const [otimizadorFalhou, setOtimizadorFalhou] = useState(false)
   const ref = useRef<HTMLImageElement | null>(null)
 
   const marcarPronta = useCallback(() => {
@@ -80,16 +83,18 @@ export function FilmeImagem({
   // esta checagem ela ficaria invisível para sempre atrás do fade.
   useEffect(() => {
     if (ref.current?.complete && ref.current.naturalWidth > 0) marcarPronta()
-  }, [marcarPronta, semOtimizador])
+  }, [marcarPronta, otimizadorFalhou, otimizar])
 
   // Se o otimizador falhar (origem fora do ar, transformação recusada), a
   // imagem original ainda carrega. Degradar é melhor que sumir.
   const aoFalhar = useCallback(() => {
-    setSemOtimizador((atual) => {
+    setOtimizadorFalhou((atual) => {
       if (atual) return atual
       return true
     })
   }, [])
+
+  const usarOriginal = !otimizar || otimizadorFalhou
 
   const classes = [
     className,
@@ -120,13 +125,12 @@ export function FilmeImagem({
           }`}
         />
       )}
-      {semOtimizador ? (
+      {usarOriginal ? (
         <img
           {...comuns}
-          key="bruta"
+          key="original"
           src={src}
-          referrerPolicy="no-referrer"
-          loading={prioritaria ? 'eager' : 'lazy'}
+          loading={prioritaria || segundoPlano ? 'eager' : 'lazy'}
         />
       ) : (
         // `display: contents` tira o <picture> da árvore de caixas: o <img>

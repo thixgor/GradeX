@@ -387,9 +387,9 @@ function DetalheRegiao({
 function CardEstudo({ estudo, indice }: { estudo: EstudoRaioX; indice: number }) {
   const aquecido = useRef(false)
 
-  // O `prefetch` do Link busca o HTML; a radiografia continuaria começando do
-  // zero no clique. Passar o mouse sobre o card já puxa o filme na resolução do
-  // viewer, então abrir o estudo costuma encontrá-lo pronto no cache.
+  // O `prefetch` do Link busca o HTML; passar o mouse sobre o card também aquece
+  // a variante WebP local usada pelo viewer, então o estudo costuma abrir com
+  // a radiografia já pronta no cache do navegador.
   const aquecerFilme = useCallback(() => {
     if (aquecido.current) return
     aquecido.current = true

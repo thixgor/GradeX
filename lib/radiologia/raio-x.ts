@@ -54,7 +54,13 @@ export interface GuiaRegiaoRaioX {
   quandoAvancar: string
 }
 
-const ROOT = 'https://www.clinicalanatomy.ca/radiology'
+/**
+ * Assets versionados: `/img/*` recebe cache imutável de um ano no Next.js.
+ * Quando alguma imagem mudar, publique uma nova pasta (`v2`, `v3`...) em vez
+ * de reutilizar o mesmo URL e deixar navegadores com uma cópia antiga.
+ */
+const ROOT_ASSETS = '/img/radiologia/raio-x/v1'
+const ROOT_SOURCE = 'https://www.clinicalanatomy.ca/radiology'
 
 type EstruturaBruta = [arquivo: string, nome: string, original: string]
 
@@ -94,8 +100,8 @@ function montarEstudo({
     camada,
     resumo,
     foco,
-    imagem: `${ROOT}/${pasta}/${imagem}`,
-    fonte: `${ROOT}/${id}.html`,
+    imagem: `${ROOT_ASSETS}/${pasta}/${imagem}`,
+    fonte: `${ROOT_SOURCE}/${id}.html`,
     estruturas: estruturas.map(([arquivo, nome, original]) => {
       const base = slugEstrutura(nome)
       const repetido = usados.get(base) ?? 0
@@ -103,7 +109,7 @@ function montarEstudo({
       return {
         nome,
         original,
-        sobreposicao: `${ROOT}/${pasta}/${arquivo}`,
+        sobreposicao: `${ROOT_ASSETS}/${pasta}/${arquivo}`,
         slug: repetido ? `${base}-${repetido + 1}` : base,
       }
     }),
@@ -929,7 +935,7 @@ export function descricaoEstrutura(estudo: EstudoRaioX, estrutura: EstruturaRaio
 
 export const CREDITO_CLINICAL_ANATOMY = {
   nome: 'ClinicalAnatomy - RADIOLOGICAL ATLAS',
-  url: `${ROOT}.html`,
+  url: `${ROOT_SOURCE}.html`,
   autorizacao: 'AUTH-CA-RA-2026-0811-V2',
   nota: 'Imagens, demarcações e nomenclatura-base reproduzidas e adaptadas com autorização formal. Tradução, organização e aprofundamento didático: DomineAqui.',
 }

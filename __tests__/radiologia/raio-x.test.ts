@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'vitest'
+import { createHash } from 'node:crypto'
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { NOTAS_ESTRUTURAS } from '@/lib/radiologia/estruturas'
 import {
   CREDITO_CLINICAL_ANATOMY,
@@ -19,17 +22,42 @@ describe('catálogo de Raio-X', () => {
     expect(new Set(ESTUDOS_RAIO_X.map((estudo) => estudo.id)).size).toBe(28)
   })
 
-  it('mantém fonte, imagem e sobreposição para cada estrutura', () => {
+  it('mantém a fonte e serve imagem e sobreposição pelo acervo local versionado', () => {
     expect(TOTAL_ESTRUTURAS_RAIO_X).toBeGreaterThan(150)
     for (const estudo of ESTUDOS_RAIO_X) {
       expect(estudo.fonte).toBe(`https://www.clinicalanatomy.ca/radiology/${estudo.id}.html`)
-      expect(estudo.imagem).toMatch(/^https:\/\/www\.clinicalanatomy\.ca\/radiology\//)
+      expect(estudo.imagem).toMatch(/^\/img\/radiologia\/raio-x\/v1\//)
       expect(estudo.estruturas.length).toBeGreaterThan(1)
       for (const estrutura of estudo.estruturas) {
         expect(estrutura.nome.trim()).not.toBe('')
         expect(estrutura.original.trim()).not.toBe('')
-        expect(estrutura.sobreposicao).toMatch(/^https:\/\/www\.clinicalanatomy\.ca\/radiology\//)
+        expect(estrutura.sobreposicao).toMatch(/^\/img\/radiologia\/raio-x\/v1\//)
       }
+    }
+  })
+
+  it('mantém os 247 assets locais sincronizados com tamanho e SHA-256 do manifesto', () => {
+    const manifest = JSON.parse(
+      readFileSync(join(process.cwd(), 'scripts/radiologia/assets-raio-x.json'), 'utf8'),
+    ) as {
+      publicRoot: string
+      files: { path: string; bytes: number; sha256: string }[]
+    }
+    const prefix = `${manifest.publicRoot}/`
+    const usados = new Set<string>()
+    for (const estudo of ESTUDOS_RAIO_X) {
+      usados.add(estudo.imagem.slice(prefix.length))
+      for (const estrutura of estudo.estruturas) usados.add(estrutura.sobreposicao.slice(prefix.length))
+    }
+
+    expect(manifest.files).toHaveLength(247)
+    expect(manifest.files.map((asset) => asset.path).sort()).toEqual([...usados].sort())
+
+    const raizPublica = join(process.cwd(), 'public', ...manifest.publicRoot.split('/').filter(Boolean))
+    for (const asset of manifest.files) {
+      const bytes = readFileSync(join(raizPublica, ...asset.path.split('/')))
+      expect(bytes.length, asset.path).toBe(asset.bytes)
+      expect(createHash('sha256').update(bytes).digest('hex'), asset.path).toBe(asset.sha256)
     }
   })
 
@@ -102,7 +130,7 @@ describe('navegação por região', () => {
     expect(somaEstruturas).toBe(TOTAL_ESTRUTURAS_RAIO_X)
     for (const regiao of REGIOES_RAIO_X) {
       expect(regiao.resumo.length).toBeGreaterThan(20)
-      expect(regiao.capa).toMatch(/^https:\/\//)
+      expect(regiao.capa).toMatch(/^\/img\/radiologia\/raio-x\/v1\//)
       expect(estudosDaRegiao(regiao.id)).toHaveLength(regiao.totalEstudos)
     }
   })
