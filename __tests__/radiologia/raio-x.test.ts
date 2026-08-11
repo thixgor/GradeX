@@ -47,6 +47,6 @@ describe('catálogo de Raio-X', () => {
   })
 
   it('expõe a referência formal da autorização', () => {
-    expect(CREDITO_CLINICAL_ANATOMY.autorizacao).toBe('AUTH-CA-RA-2026-0811')
+    expect(CREDITO_CLINICAL_ANATOMY.autorizacao).toBe('AUTH-CA-RA-2026-0811-V2')
   })
 })

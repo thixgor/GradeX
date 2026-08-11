@@ -52,6 +52,7 @@ import { AREAS_SAUDE, SISTEMAS_FISIOLOGICOS, type AreaSaude, type SistemaFisiolo
 import { clearAllManualHighlights, hasAnyManualHighlights } from '@/lib/manual-clinico-highlights'
 import { trackMeta } from '@/lib/meta-pixel'
 import { GuidedTour, type TourStep } from '@/components/manual-clinico/guided-tour'
+import { LogoRadiologia } from '@/components/radiologia/logo'
 import { PricingEventCountdown } from '@/components/pricing-events/PricingEventCountdown'
 import { usePricingEventState } from '@/components/pricing-events/usePricingEventState'
 import { PLUS_LABEL } from '@/lib/account-tier'
@@ -1132,11 +1133,7 @@ function ManualClinicoContent() {
             <div className="flex items-center justify-between gap-3">
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
-                  <div aria-label="Manual de Radiologia" className="leading-none">
-                    <span className="block text-[8px] font-black uppercase tracking-[0.24em] text-sky-600 dark:text-sky-400">Manual de</span>
-                    <span className="mt-1 block font-heading text-2xl font-black tracking-tight">Radiologia</span>
-                    <span className="mt-1 block text-[8px] font-bold uppercase tracking-[0.16em] text-muted-foreground">DomineAqui</span>
-                  </div>
+                  <LogoRadiologia className="!max-w-[180px]" />
                   <span className="inline-flex items-center gap-1 rounded-md border border-amber-300/25 bg-amber-400/10 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-amber-700 dark:text-amber-200">
                     <Crown className="h-2.5 w-2.5" /> {PLUS_LABEL}
                   </span>

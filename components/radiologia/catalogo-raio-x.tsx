@@ -2,12 +2,11 @@
 
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, ArrowRight, ExternalLink, ImageIcon, Search, Target, X } from 'lucide-react'
+import { ArrowLeft, ArrowRight, ImageIcon, Search, Target, X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { LogoRadiologia } from '@/components/radiologia/logo'
 import {
   buscarEstudosRaioX,
-  CREDITO_CLINICAL_ANATOMY,
   REGIOES_RAIO_X,
   TOTAL_ESTRUTURAS_RAIO_X,
   type RegiaoRaioX,
@@ -80,11 +79,6 @@ export function CatalogoRaioX() {
         ) : (
           <div className="rounded-2xl border border-dashed border-border py-16 text-center"><Search className="mx-auto h-8 w-8 text-muted-foreground/30" /><p className="mt-3 text-sm text-muted-foreground">Nenhuma incidência ou estrutura corresponde aos filtros.</p></div>
         )}
-
-        <div className="mt-10 rounded-xl border border-sky-500/20 bg-sky-500/[0.05] p-4 text-xs leading-relaxed text-muted-foreground">
-          <p className="font-bold text-foreground">Fonte visual e autorização</p>
-          <p className="mt-1">{CREDITO_CLINICAL_ANATOMY.nota} Documento {CREDITO_CLINICAL_ANATOMY.autorizacao}. <a href={CREDITO_CLINICAL_ANATOMY.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-semibold text-sky-600 underline underline-offset-2">Abrir atlas original <ExternalLink className="h-3 w-3" /></a></p>
-        </div>
       </main>
     </div>
   )

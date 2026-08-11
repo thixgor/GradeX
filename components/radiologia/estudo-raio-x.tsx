@@ -2,9 +2,9 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, BookOpen, CheckCircle2, ExternalLink, Eye, Info, Lightbulb, ListChecks, RotateCcw, ShieldAlert, Target } from 'lucide-react'
+import { ArrowLeft, BookOpen, CheckCircle2, Eye, Info, Lightbulb, ListChecks, RotateCcw, ShieldAlert, Target } from 'lucide-react'
 import { AreaRadiologia } from '@/components/radiologia/area-radiologia'
-import { CREDITO_CLINICAL_ANATOMY, descricaoEstrutura, GUIAS_RAIO_X, type EstudoRaioX } from '@/lib/radiologia/raio-x'
+import { descricaoEstrutura, GUIAS_RAIO_X, type EstudoRaioX } from '@/lib/radiologia/raio-x'
 
 export function EstudoRaioXView({ estudo }: { estudo: EstudoRaioX }) {
   const [indice, setIndice] = useState<number | null>(0)
@@ -82,9 +82,8 @@ export function EstudoRaioXView({ estudo }: { estudo: EstudoRaioX }) {
           </section>
 
           <section className="mt-8 rounded-xl border border-sky-500/20 bg-sky-500/[0.05] p-4 text-xs leading-relaxed text-muted-foreground">
-            <p className="font-bold text-foreground">Crédito, adaptação e escopo</p>
-            <p className="mt-1">Radiografia e demarcações: <a href={estudo.fonte} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-semibold text-sky-600 underline underline-offset-2">{CREDITO_CLINICAL_ANATOMY.nome} <ExternalLink className="h-3 w-3" /></a>. {CREDITO_CLINICAL_ANATOMY.nota} Documento {CREDITO_CLINICAL_ANATOMY.autorizacao}.</p>
-            <p className="mt-2">Material educacional de anatomia radiográfica. Não substitui laudo médico, avaliação clínica, protocolos institucionais nem a escolha do método de imagem apropriado.</p>
+            <p className="font-bold text-foreground">Escopo educacional</p>
+            <p className="mt-1">Material educacional de anatomia radiográfica. Não substitui laudo médico, avaliação clínica, protocolos institucionais nem a escolha do método de imagem apropriado.</p>
           </section>
         </main>
       </div>

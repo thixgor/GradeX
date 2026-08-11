@@ -479,6 +479,6 @@ export function buscarEstudosRaioX(termo: string, regiao?: RegiaoRaioX | 'todas'
 export const CREDITO_CLINICAL_ANATOMY = {
   nome: 'ClinicalAnatomy - RADIOLOGICAL ATLAS',
   url: `${ROOT}.html`,
-  autorizacao: 'AUTH-CA-RA-2026-0811',
+  autorizacao: 'AUTH-CA-RA-2026-0811-V2',
   nota: 'Imagens, demarcações e nomenclatura-base reproduzidas e adaptadas com autorização formal. Tradução, organização e aprofundamento didático: DomineAqui.',
 }
