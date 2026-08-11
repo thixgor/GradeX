@@ -48,6 +48,40 @@ describe('títulos editoriais do atlas', () => {
     ).toBe('Astrocitoma pilocítico — caso 18C')
   })
 
+  it('substitui rótulos administrativos e códigos por entidades clinicopatológicas', () => {
+    expect(
+      tituloEditorialDaEntrada(
+        'Additions of 2004 to 2006',
+        undefined,
+        ['https://anatpat.unicamp.br/epathadditions04-06.html'],
+      ),
+    ).toBe('Coleção de neuropatologia — novos casos (2004–2006)')
+
+    expect(
+      tituloEditorialDaEntrada('C-75', undefined, [
+        'https://anatpat.unicamp.br/pecascard13.html',
+      ]),
+    ).toBe('Dissecção crônica da aorta com luz de reentrada')
+
+    expect(
+      tituloEditorialDaEntrada('Lâm. A. 111', undefined, [
+        'https://anatpat.unicamp.br/lamcard13.html',
+      ]),
+    ).toBe('Miocardite chagásica crônica')
+
+    expect(
+      tituloEditorialDaEntrada('Lâm. A. 319', undefined, [
+        'https://anatpat.unicamp.br/lamcard12.html',
+      ]),
+    ).toBe('Miocardite chagásica aguda')
+
+    expect(
+      tituloEditorialDaEntrada('AE1AE3', 'Antígeno epitelial de membrana', [
+        'https://anatpat.unicamp.br/nptatrt2b.html',
+      ]),
+    ).toBe('Tumor teratoide/rabdoide atípico — caso 2B — AE1/AE3')
+  })
+
   it('localiza nomes clínicos frequentes do acervo internacional', () => {
     expect(tituloEditorialDaEntrada('Abdominal mesothelioma')).toBe('Mesotelioma abdominal')
     expect(tituloEditorialDaEntrada('Erosion in Gastric Mucosa')).toBe(

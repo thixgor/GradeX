@@ -161,7 +161,79 @@ const SERIES: Record<string, string> = {
   xantoastro: 'Xantoastrocitoma pleomórfico',
 }
 
+/** Séries identificadas na auditoria integral de 2026-08-11. */
+const SERIES_COMPLEMENTARES: Record<string, string> = {
+  abscesso: 'Abscesso cerebral',
+  adem: 'Encefalomielite aguda disseminada',
+  anemiafalc: 'Doença falciforme',
+  asper: 'Aspergilose do sistema nervoso central',
+  astrodesmo: 'Astrocitoma desmoplásico',
+  cahipof: 'Carcinoma hipofisário',
+  caneuroend: 'Carcinoma neuroendócrino sinonasal',
+  cistarac: 'Cisto aracnoide',
+  cistneuroent: 'Cisto neuroentérico',
+  cistoplexo: 'Cisto do plexo coroide',
+  cjd: 'Doença de Creutzfeldt-Jakob',
+  coa: 'Cisto ósseo aneurismático',
+  condroblastoma: 'Condroblastoma',
+  condroma: 'Condroma',
+  displasiafibrosa: 'Displasia fibrosa',
+  encefalocele: 'Encefalocele',
+  ependimoblastoma: 'Ependimoblastoma',
+  equinococose: 'Equinococose',
+  fibrocondromixo: 'Fibroma condromixoide',
+  gbmmultifocal: 'Glioblastoma multifocal',
+  gliomacongen: 'Glioma congênito',
+  gliomacord: 'Glioma cordoide',
+  gliomalinhamedia: 'Glioma difuso da linha média',
+  gliomamen: 'Glioma leptomeníngeo primário',
+  gliomangio: 'Glioma angiocêntrico',
+  granrepcelsgigs: 'Granuloma reparador de células gigantes',
+  hemangioma: 'Hemangioma',
+  hemimegalo: 'Hemimegalencefalia',
+  hiperplexo: 'Hiperplasia do plexo coroide',
+  hpericit: 'Hemangiopericitoma',
+  leucodist: 'Leucodistrofia',
+  leiomioma: 'Leiomioma',
+  lipoma: 'Lipoma',
+  liponeurocitoma: 'Liponeurocitoma',
+  melanocitoma: 'Melanocitoma',
+  menangio: 'Meningioangiomatose',
+  meningiomat: 'Meningioma',
+  mielolipoma: 'Mielolipoma',
+  mielomen: 'Meningomielocele',
+  mixoma: 'Mixoma intracraniano',
+  mpnst: 'Tumor maligno da bainha do nervo periférico',
+  mucor: 'Mucormicose rino-órbito-cerebral',
+  neurofibroma: 'Neurofibroma',
+  neuroma: 'Neuroma traumático',
+  osteossarcoma: 'Osteossarcoma',
+  pituicitoma: 'Pituicitoma',
+  sturgeweber: 'Síndrome de Sturge-Weber',
+  tcg: 'Tumor de células gigantes',
+  telang: 'Telangiectasia capilar cerebral',
+  teratoma: 'Teratoma',
+  trm: 'Tumor rabdoide maligno',
+  tumiofibro: 'Tumor miofibroblástico inflamatório',
+  tumormarrom: 'Tumor marrom do hiperparatireoidismo',
+}
+
 const TITULOS_EXATOS: Record<string, string> = {
+  'heart pathology': 'Patologia cardiovascular — atlas de lâminas',
+  'endocrine pathology': 'Patologia endócrina — atlas de lâminas',
+  'endocrine glands pathology': 'Patologia endócrina — atlas de lâminas',
+  'gastrointestinal pathology': 'Patologia gastrointestinal — atlas de lâminas',
+  'female genital tract pathology': 'Patologia do trato genital feminino — atlas de lâminas',
+  'male genital tract pathology': 'Patologia do trato genital masculino — atlas de lâminas',
+  'hemopoietic pathology': 'Patologia hematolinfoide — atlas de lâminas',
+  'hemopoietic organs pathology': 'Patologia hematolinfoide — atlas de lâminas',
+  'bone pathology': 'Patologia óssea — atlas de lâminas',
+  'skin pathology': 'Patologia cutânea — atlas de lâminas',
+  'lung pathology': 'Patologia pulmonar — atlas de lâminas',
+  'neuropathology case studies': 'Estudos de caso em neuropatologia',
+  'neuroimaging case studies': 'Estudos de caso em neuroimagem',
+  '📋 neuropathology case studies': 'Estudos de caso em neuropatologia',
+  '🖥️ neuroimaging case studies': 'Estudos de caso em neuroimagem',
   'abdominal mesothelioma': 'Mesotelioma abdominal',
   'adenocarcinoma of ampulla of vater': 'Adenocarcinoma da ampola de Vater',
   'alcian blue/periodic acid–schiff': 'Azul de Alcian/PAS',
@@ -190,8 +262,8 @@ const TITULOS_EXATOS: Record<string, string> = {
   'metastatic carcinoma, omentum': 'Carcinoma metastático no omento',
   'nasopharyngeal carcinoma, nonkeratinizing squamous cell carcinoma':
     'Carcinoma escamoso não queratinizante da nasofaringe',
-  'pediatric autopsy': 'Autópsia pediátrica',
-  'pediatric autopsy, brain': 'Autópsia pediátrica — cérebro',
+  'pediatric autopsy': 'Autópsia pediátrica — coleção GBD, caso 2',
+  'pediatric autopsy, brain': 'Autópsia pediátrica do encéfalo — coleção GBD, caso 1',
   'stomach signet ring cell carcinoma': 'Carcinoma gástrico de células em anel de sinete',
   templateen: 'Material complementar',
   'venous invasion': 'Invasão venosa',
@@ -261,7 +333,7 @@ const TITULOS_EXATOS: Record<string, string> = {
   fibrosis: 'Fibrose',
   'ganglioneuroma in adrenal gland': 'Ganglioneuroma da glândula adrenal',
   'gastritis cystica profunda': 'Gastrite cística profunda',
-  gbd3: 'Lâmina GBD3',
+  gbd3: 'Coleção GBD — caso 3 (lâmina virtual)',
   giardiasis: 'Giardíase',
   'giardiasis, duodenum': 'Giardíase duodenal',
   'glycogen storage disease in liver biopsy':
@@ -349,18 +421,103 @@ const TITULOS_EXATOS: Record<string, string> = {
 }
 
 const TITULOS_POR_PAGINA: Record<string, string> = {
+  ecard: 'Patologia cardiovascular — atlas de lâminas',
+  eendo: 'Patologia endócrina — atlas de lâminas',
+  'epathadditions04-06': 'Coleção de neuropatologia — novos casos (2004–2006)',
+  eresp: 'Patologia pulmonar — atlas de lâminas',
+  erim: 'Patologia do trato genital masculino — atlas de lâminas',
+  eosso: 'Patologia óssea — atlas de lâminas',
+  epele: 'Patologia cutânea — atlas de lâminas',
+  etgi: 'Patologia gastrointestinal — atlas de lâminas',
+  egin: 'Patologia do trato genital feminino — atlas de lâminas',
+  ehemo: 'Patologia hematolinfoide — atlas de lâminas',
+  enptneominis: 'Estudos de caso em neuropatologia',
+  erpgneominis: 'Estudos de caso em neuroimagem',
+  atlasneuropatoindice: 'Atlas de neuropatologia — índice de estruturas',
+  bineuarteriatemporalnl: 'Artéria temporal normal — fibras elásticas',
+  bineufiloterminalnl: 'Filo terminal humano normal — histologia',
+  bineumeningioma: 'Meningioma — banco de imagens',
+  bineuoligodendroglioma: 'Oligodendroglioma — banco de imagens',
+  bineucerebrocoronalindice: 'Anatomia seccional coronal do encéfalo — índice',
+  bineucerebrosagital2: 'Anatomia seccional sagital do encéfalo — formação hipocampal',
+  'bineufatcoronal-12a': 'Anatomia seccional coronal da cabeça — couro cabeludo e órbita',
+  bineuhemorragia: 'Hemorragias intracranianas hipertensivas — banco de imagens',
+  bineuherniaamigdalas: 'Hérnia de tonsilas cerebelares com extrusão subaracnóidea espinal',
+  bineuescletuber: 'Esclerose tuberosa e astrocitoma subependimário de células gigantes',
+  biinflparacoco4: 'Paracoccidioidomicose — cortes semifinos com azul de toluidina',
+  biinflcromomic1b: 'Cromomicose — coloração de Grocott',
+  lamcard12: 'Miocardite chagásica aguda',
+  lamcard13: 'Miocardite chagásica crônica',
+  lamdegn20: 'Atrofia de fibras musculares esqueléticas',
+  lamdegn21: 'Atrofia dos túbulos seminíferos na hanseníase',
+  lamdegn6a: 'Nefrosclerose benigna com hialinose arteriolar',
+  lamdc6a: 'Hemorragia antiga com macrófagos siderófagos',
+  lamfig3: 'Hepatite crônica em evolução para cirrose',
+  lamfig4: 'Hepatite B crônica',
+  lamfig6: 'Esteato-hepatite alcoólica',
+  lamfig7: 'Cirrose pós-necrótica',
+  lamfig8: 'Colestase hepatocelular',
+  lamfig9: 'Esquistossomose hepática com fibrose periportal',
+  lamfig11: 'Esquistossomose hepatoesplênica com esplenomegalia fibrocongestiva',
+  lamgin2: 'Metaplasia escamosa atípica da endocérvice',
+  lamneo15a: 'Adenocarcinoma intramucoso',
+  nervhansenv: 'Hanseníase virchowiana — neuropatia periférica',
+  neupatadicoes: 'Neuropatologia — casos adicionados recentemente',
+  'neupatadicoes04-06': 'Coleção de neuropatologia — novos casos (2004–2006)',
+  'neupatadicoes07-08': 'Coleção de neuropatologia — novos casos (2007–2008)',
+  'neupatadicoes09-10': 'Coleção de neuropatologia — novos casos (2009–2010)',
+  'neupatadicoes11-12': 'Coleção de neuropatologia — novos casos (2011–2012)',
+  'neupatadicoes13-14': 'Coleção de neuropatologia — novos casos (2013–2014)',
+  'neupatadicoes15-16': 'Coleção de neuropatologia — novos casos (2015–2016)',
+  'neupatadicoes17-18': 'Coleção de neuropatologia — novos casos (2017–2018)',
+  neupatimagemlista: 'Correlação clinicorradiológica em neuropatologia — coleção de casos',
+  npthansen1: 'Hanseníase neural — inflamação e perda axonal em nervo periférico',
+  npthipofisite1: 'Hipofisite linfocitária — histologia e imuno-histoquímica',
+  nptneominisorig: 'Estudos de caso em neuropatologia — versão original',
+  nptneominisvasc: 'Neuropatologia vascular — coleção de casos',
+  nptneominis: 'Estudos de caso em neuropatologia',
+  rpgneominis: 'Estudos de caso em neuroimagem',
+  neurorotaulasgeral: 'Neuropatologia geral — roteiro didático',
+  neurorotaulasvasc: 'Doenças vasculares do sistema nervoso — roteiro didático',
+  nptganglioglioma32a: 'Ganglioglioma da medula espinal — caso 32A',
+  nptganglioglioma37a: 'Ganglioglioma — caso 37A — segunda amostra',
+  rpgganglioglioma5a: 'Ganglioglioma recidivado — caso 5A',
+  nptpnet8d: 'Tumor neuroectodérmico primitivo — caso 8D — EMA',
+  nptsarcoma3g: 'Sarcoma intracraniano — caso 3G — índice proliferativo Ki-67',
+  nptatrt2b: 'Tumor teratoide/rabdoide atípico — caso 2B — AE1/AE3',
+  nptganglioglioma44d: 'Ganglioglioma — caso 44D — S100',
+  nptcaplexo4c: 'Carcinoma do plexo coroide — caso 4C — Ki-67 heterogêneo',
+  nptneurocitoma5: 'Neurocitoma central — caso 5 — CD34 restrito aos vasos',
+  pecascard13: 'Dissecção crônica da aorta com luz de reentrada',
+  pecasgin28: 'Adenocarcinoma invasivo da mama — macroscopia',
+  pecastgi13: 'Linfoma gástrico — macroscopia',
+  pecasfig4: 'Cirrose hepática micronodular',
+  pecaspele5: 'Melanoma maligno primário da pele',
+  pecaspele6: 'Melanoma maligno do pé',
+  taatrofia: 'Atrofia simples por redução do volume celular',
+  textotfshpc: 'Tumor fibroso solitário/hemangiopericitoma — classificação',
   bineuangioressovennla: 'Angiorressonância venosa normal',
   bineuleucodist5: 'Leucodistrofia — substância branca occipital',
+  bicard: 'Banco de imagens de patologia cardiovascular',
+  biinfl: 'Banco de imagens de inflamações e doenças infecciosas',
+  bineudmc1: 'Distrofia muscular associada a leucodistrofia — biópsia muscular',
+  bineuhipocamponlsnf: 'Hipocampo normal — distribuição da sinaptofisina',
   lamdc13: 'Infarto cerebral antigo',
+  lamdc19: 'Dano alveolar difuso — membranas hialinas e regeneração de pneumócitos',
   lamdc5a: 'Necrose centrolobular hepática',
   lamdegn10: 'Amiloidose glomerular avançada',
-  lamdegn4a: 'Lâmina A. 271a — visão panorâmica',
+  lamdegn4a: 'Carcinoma gástrico de células em anel de sinete',
   lamgin16: 'Epitélio mülleriano seroso — lâmina A. 104',
   laminfl30: 'Glomerulonefrite difusa aguda — lâmina A. 140',
   lamneo20a: 'Leiomioma — arquitetura fasciculada',
   lampele3: 'Paracoccidioidomicose — aspecto em roda de leme',
   pecasdc6: 'Infarto antigo com fibrose',
   pecasneo31: 'Linfangite carcinomatosa por carcinoma mamário',
+  radlacunaris1: 'Infartos lacunares dos núcleos da base — RM T2',
+  rpghemangioma1: 'Hemangioma cervical — macroscopia e ressonância magnética',
+  rpghistoplasmose1a: 'Histoplasmose cerebral — caso 1A — ressonância magnética',
+  rpgmalform7: 'Malformação do corpo caloso com esquizencefalia — RM T1',
+  lamneuro13: 'Astrocitoma fibrilar bem diferenciado',
   'rpgmeningiomat1.3': 'Meningioma calcificado frontal — caso 1.3',
   'rpgmeningiomat1.5': 'Meningioma maligno frontal — caso 1.5',
   'rpgmeningiomat6.2': 'Meningioma infiltrativo do esfenoide — caso 6.2',
@@ -402,10 +559,10 @@ export function formatarTextoCatalogado(valor: string): string {
 }
 
 function tituloDaSerie(codigo: string): string | null {
-  const correspondencia = codigo.toLowerCase().match(/^(?:rpg|npt)([a-z]+?)(\d+[a-z0-9-]*)$/)
+  const correspondencia = codigo.toLowerCase().match(/^(?:rpg|npt)([a-z]+?)(\d+[a-z0-9.-]*)$/)
   if (!correspondencia) return null
   const [, serie, caso] = correspondencia
-  const nome = SERIES[serie]
+  const nome = SERIES[serie] ?? SERIES_COMPLEMENTARES[serie]
   if (!nome) return null
   return nome + ' — caso ' + caso.toLocaleUpperCase('pt-BR')
 }
@@ -461,6 +618,74 @@ function tituloDaDescricao(descricao?: string): string | null {
   )
 }
 
+const ROTULO_EDITORIAL = /^(?:mais\s+sobre|sobre|textos?\b|banco de imagens|o mesmo|os tumores|macroscopicamente|microscopicamente|cortes?\b|peça\b|amostra\b|neuroimagem\b|neuropatologia\b|últimas adições)/i
+
+const ROTULO_OPERACIONAL = /^(?:(?:fem|masc|f|m|homem|mulher)[.,]?\s*\d+|(?:cortes?|imagem|figura|l[aâ]m(?:ina)?|peça|espécime|biópsia|amostra|detalhes?|anterior|abaixo|acima|aqui|esta|este|o material|a superfície|aprenda|banco de imagens|mais sobre|sobre|textos?|idem|para página|para mais|já na classificação)|(?:cd\d+|ki-?67|p53|map2|nf|pas(?:-d)?|grocott|he|ihq|tc|rm|t1|t2|flair)\b|(?:additions?|adições|últimas adições|patologia|pathology|página|page|índice|coleção|collection|material complementar)|(?:[a-z]-?\d+(?:\s*[;,]\s*[a-z]-?\d+)+)|(?:\d+[a-z]?[.)]\s+)|(?:\d{1,2}[/-]\d{1,2}[/-]\d{2,4}|20\d{2}(?:\s*[,–—/-]\s*20\d{2})?))\b/i
+
+function retirarIdentificacaoDePaciente(valor: string): string {
+  return valor
+    .replace(
+      /^(?:(?:fem(?:inino)?|masc(?:ulino)?|f|m|homem|mulher)[.,]?\s*\d+(?:\s*a(?:nos?)?\.?)(?:\s*\d+\s*m(?:eses?)?\.?)?)[,;:.]?\s*/i,
+      '',
+    )
+    .trim()
+}
+
+function retirarCodigoDeLamina(valor: string): string {
+  return valor
+    .replace(/^[A-Z]\)\s+/i, '')
+    .replace(/\s*[([]?\s*(?:l[aâ]m(?:ina)?\.?\s*)?\bA\.?\s*\d+(?:\s*\/\s*\d+)?[a-z]?\s*[)\]]?/gi, '')
+    .replace(/\s+(?:1[ªa]|2[ªa]|3[ªa])\s+l[aâ]mina\s*$/i, '')
+    .replace(/\s{2,}/g, ' ')
+    .replace(/\s+([,.;:])/g, '$1')
+    .replace(/[.,;:\s]+$/, '')
+    .trim()
+}
+
+function detalheComContexto(tituloBase: string, original: string): string {
+  const semPaciente = retirarIdentificacaoDePaciente(original)
+  if (!semPaciente || (semPaciente === original && GENERICO.test(semPaciente))) return tituloBase
+
+  if (ROTULO_EDITORIAL.test(semPaciente)) return tituloBase
+
+  const detalhe = retirarCodigoDeLamina(formatarTextoCatalogado(semPaciente))
+  if (!detalhe || detalhe.length < 4 || detalhe.length > 100 || GENERICO.test(detalhe)) {
+    return tituloBase
+  }
+
+  const baseNormalizada = semAcento(tituloBase)
+  const detalheNormalizado = semAcento(detalhe)
+  if (baseNormalizada.includes(detalheNormalizado)) return tituloBase
+
+  const marcador = detalheNormalizado.match(/^(?:ae1ae3|s100|cd\d+|ki-?67|p53|map2|nf|pas(?:-d)?|grocott|he|ihq)\b/)?.[0]
+  if (
+    marcador &&
+    baseNormalizada.replace(/[^a-z0-9]/g, '').includes(marcador.replace(/[^a-z0-9]/g, ''))
+  ) {
+    return tituloBase
+  }
+
+  const termosGenericos = new Set(['tumor', 'doenca', 'sindrome', 'carcinoma', 'colecao', 'patologia', 'atlas'])
+  const primeiroTermoClinico = baseNormalizada
+    .split(/\s+/)
+    .find((termo) => termo.length >= 5 && !termosGenericos.has(termo))
+
+  // Um nome clínico específico capturado depois de sexo/idade é melhor que o
+  // rótulo genérico da série (p. ex. “Meningioma petroclival…”). Palavras
+  // genéricas como “tumor” nunca bastam para promover o texto bruto.
+  if (primeiroTermoClinico && detalheNormalizado.includes(primeiroTermoClinico)) {
+    return detalhe
+  }
+
+  // Técnicas e achados curtos ganham o diagnóstico como contexto. Rótulos de
+  // navegação, datas e frases de apresentação não viram subtítulo.
+  if (/^(?:cd\d+|ki-?67|p53|map2|nf|pas(?:-d)?|grocott|he|ihq|tc|rm|t1|t2|flair|cortes?|ressonância|tomografia|imuno|coloração)\b/i.test(detalhe)) {
+    return tituloBase + ' — ' + detalhe
+  }
+
+  return tituloBase
+}
+
 export function tituloEditorialDaEntrada(
   nomeCatalogado: string,
   descricaoCatalogada?: string,
@@ -468,26 +693,42 @@ export function tituloEditorialDaEntrada(
 ): string {
   const original = limpar(nomeCatalogado)
   const exato = TITULOS_EXATOS[original.toLowerCase()]
-  if (exato) return exato
+  if (exato) return retirarCodigoDeLamina(exato)
+
   const serie = tituloDaSerie(original)
   if (serie) return serie
   const casoCatalogado = tituloDeCasoCatalogado(original)
   if (casoCatalogado) return casoCatalogado
 
+  const pelaPagina = tituloPeloEndereco(paginasFonte)
   const pareceCodigo = CODIGO_DE_LAMINA.test(original) && !ACRONIMOS.has(original.toLowerCase())
-  if (pareceCodigo || GENERICO.test(original) || original.length > 80) {
-    const pelaPagina = tituloPeloEndereco(paginasFonte)
-    if (pelaPagina) return pelaPagina
+  const marcadorOuTecnica = /^(?:AE1AE3|S100|CD\d+|Ki-?67|P53|MAP2|NF|PAS(?:-D)?|Grocott|HE|IHQ|TC|RM|T1|T2|FLAIR)\b/i.test(original)
+  const identificacaoDemografica = /^(?:Fem|Masc|F|M|Homem|Mulher)[.,]?\s*\d+/i.test(original)
+  const precisaDeContexto =
+    pareceCodigo ||
+    marcadorOuTecnica ||
+    identificacaoDemografica ||
+    GENERICO.test(original) ||
+    ROTULO_OPERACIONAL.test(original) ||
+    ROTULO_EDITORIAL.test(original) ||
+    original.length > 80
+
+  if (pelaPagina && precisaDeContexto) {
+    return detalheComContexto(retirarCodigoDeLamina(pelaPagina), original)
+  }
+
+  if (precisaDeContexto) {
     const pelaDescricao = tituloDaDescricao(descricaoCatalogada)
-    if (pelaDescricao) return pelaDescricao
+    if (pelaDescricao) return retirarCodigoDeLamina(pelaDescricao)
   }
 
   if (CODIGO_DE_LAMINA.test(original)) {
-    return `Lâmina ${restaurarAcronimos(original.toLocaleUpperCase('pt-BR'))}`
+    return 'Lâmina ' + restaurarAcronimos(original.toLocaleUpperCase('pt-BR'))
   }
 
-  return formatarTextoCatalogado(original)
+  return retirarCodigoDeLamina(formatarTextoCatalogado(original))
 }
+
 
 export function descricaoEditorialDaEntrada(descricaoCatalogada?: string): string | undefined {
   if (!descricaoCatalogada) return undefined
