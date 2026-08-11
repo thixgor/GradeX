@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { ArrowLeft, ArrowRight, BookOpen, Crown, Images, Layers3, ScanLine, ShieldCheck, Target } from 'lucide-react'
+import { ArrowLeft, ArrowRight, BookOpen, Crown, ImageIcon, Layers3, ScanLine, ShieldCheck, Target } from 'lucide-react'
 import { AreaRadiologia } from '@/components/radiologia/area-radiologia'
 import { LogoRadiologia } from '@/components/radiologia/logo'
 import { SECOES, TOTAL_CORTES, TOTAL_ESTRUTURAS, TOTAL_SUBSECOES, caminhoDoCorte } from '@/lib/tomografia'
@@ -72,7 +72,7 @@ export default function RadiologiaPage() {
                     <h2 className="font-heading text-xl font-semibold">Atlas radiográfico guiado</h2>
                     <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{ESTUDOS_RAIO_X.length} incidências por região, {TOTAL_ESTRUTURAS_RAIO_X} demarcações interativas, tradução pt-BR e explicação aprofundada de técnica e leitura.</p>
                   </div>
-                  <Images className="h-6 w-6 shrink-0 text-sky-500" />
+                  <ImageIcon className="h-6 w-6 shrink-0 text-sky-500" />
                 </div>
                 <span className="mt-5 inline-flex items-center gap-1 text-sm font-bold text-sky-600 dark:text-sky-400">Abrir seção de Raio-X <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" /></span>
               </div>

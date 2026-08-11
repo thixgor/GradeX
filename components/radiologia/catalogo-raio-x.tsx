@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, ArrowRight, ExternalLink, Images, Search, Target, X } from 'lucide-react'
+import { ArrowLeft, ArrowRight, ExternalLink, ImageIcon, Search, Target, X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { LogoRadiologia } from '@/components/radiologia/logo'
 import {
@@ -35,7 +35,7 @@ export function CatalogoRaioX() {
                 Cada estudo inclui tradução pt-BR, técnica, critérios de qualidade, roteiro sistemático e armadilhas.
               </p>
               <div className="mt-4 flex flex-wrap gap-2 text-xs font-bold text-muted-foreground">
-                <span className="rounded-full border border-border bg-card px-3 py-1.5"><Images className="mr-1.5 inline h-3.5 w-3.5 text-sky-500" />28 incidências</span>
+                <span className="rounded-full border border-border bg-card px-3 py-1.5"><ImageIcon className="mr-1.5 inline h-3.5 w-3.5 text-sky-500" />28 incidências</span>
                 <span className="rounded-full border border-border bg-card px-3 py-1.5"><Target className="mr-1.5 inline h-3.5 w-3.5 text-sky-500" />{TOTAL_ESTRUTURAS_RAIO_X} demarcações</span>
               </div>
             </div>
