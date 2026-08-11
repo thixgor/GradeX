@@ -4,6 +4,7 @@ import { useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { TiltCard } from '@/components/tilt-card'
 import { FloatingMenu } from '@/components/floating-menu'
+import { CoverImage } from '@/components/cover-image'
 import {
   MoreHorizontal,
   FolderPlus,
@@ -128,20 +129,22 @@ export function GroupCard({
         >
           {/* Cover */}
           <div className="relative h-24 sm:h-28 flex-shrink-0 overflow-hidden">
-            {group.imageUrl ? (
-              <img
-                src={group.imageUrl}
-                alt=""
-                className="h-full w-full object-cover transition-transform duration-500 group-hover/card:scale-105"
-              />
-            ) : (
-              <div
-                className="flex h-full w-full items-center justify-center text-4xl transition-transform duration-500 group-hover/card:scale-105"
-                style={{ background: `linear-gradient(135deg, ${accentColor}33, ${accentColor}0d)` }}
-              >
-                <span>{group.icon && group.icon !== '📁' ? group.icon : '📁'}</span>
-              </div>
-            )}
+            <CoverImage
+              src={group.imageUrl}
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 320px"
+              // Só a primeira fileira da grade nasce visível; o resto entra por
+              // rolagem e é carregado sob demanda.
+              priority={index < 4}
+              className="transition-transform duration-500 group-hover/card:scale-105"
+              fallback={
+                <div
+                  className="flex h-full w-full items-center justify-center text-4xl transition-transform duration-500 group-hover/card:scale-105"
+                  style={{ background: `linear-gradient(135deg, ${accentColor}33, ${accentColor}0d)` }}
+                >
+                  <span>{group.icon && group.icon !== '📁' ? group.icon : '📁'}</span>
+                </div>
+              }
+            />
             <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/0 to-black/0" />
 
             {highlighted && (

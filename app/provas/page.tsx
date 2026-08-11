@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ExamContextMenu } from '@/components/exam-context-menu'
 import { ExamGroup } from '@/components/exam-group'
 import { GroupCard } from '@/components/group-card'
+import { CoverImage } from '@/components/cover-image'
 import { FileUpload } from '@/components/file-upload'
 import { PremiumPdfCtaModal } from '@/components/premium-pdf-cta-modal'
 import { canDownloadExamPdf } from '@/lib/tier-limits'
@@ -635,11 +636,13 @@ function ProvasContent() {
         }}
       >
         {exam.coverImage && (
-          <div className="h-32 overflow-hidden">
-            <img
+          <div className="relative h-32 overflow-hidden">
+            <CoverImage
               src={exam.coverImage}
               alt={exam.title}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 420px"
+              priority={index < 3}
+              className="group-hover:scale-105 transition-transform duration-500"
             />
           </div>
         )}
@@ -1558,8 +1561,10 @@ function ProvasContent() {
         )}>
           <div className="flex items-start gap-4">
             {currentGroup.imageUrl ? (
-              <div className="w-14 h-14 rounded-2xl overflow-hidden border border-border/40 flex-shrink-0">
-                <img src={currentGroup.imageUrl} alt="" className="w-full h-full object-cover" />
+              <div className="relative w-14 h-14 rounded-2xl overflow-hidden border border-border/40 flex-shrink-0">
+                {/* Cabeçalho da pasta aberta: está no topo da tela, então entra
+                    junto com o resto em vez de esperar o observer. */}
+                <CoverImage src={currentGroup.imageUrl} sizes="96px" priority />
               </div>
             ) : (
               <div

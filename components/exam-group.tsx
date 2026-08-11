@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { TiltCard } from '@/components/tilt-card'
+import { CoverImage } from '@/components/cover-image'
 import { ChevronDown, Trash2, Edit2, FolderPlus, MoreHorizontal, ArrowUp, ArrowDown, Share2, Download, FileDown, ArrowDownAZ, BookOpen, ChevronRight } from 'lucide-react'
 import { Exam } from '@/lib/types'
 import { cn } from '@/lib/utils'
@@ -233,10 +234,11 @@ export function ExamGroup({
       {/* Group avatar */}
       {group.imageUrl ? (
         <div className={cn(
-          'flex-shrink-0 rounded-xl overflow-hidden border border-border/40 transition-transform duration-300 group-hover/header:scale-105',
+          'relative flex-shrink-0 rounded-xl overflow-hidden border border-border/40 transition-transform duration-300 group-hover/header:scale-105',
           depth === 0 ? 'w-10 h-10' : 'w-8 h-8'
         )}>
-          <img src={group.imageUrl} alt="" className="w-full h-full object-cover" />
+          {/* 40 px na tela: pedir 64 px cobre telas 1,5×/2× sem baixar o original. */}
+          <CoverImage src={group.imageUrl} sizes="64px" />
         </div>
       ) : (
         <div
