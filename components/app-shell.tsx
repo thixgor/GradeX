@@ -215,6 +215,13 @@ export function AppShell({
     if (!media.matches) return
 
     const scrollY = window.scrollY
+    // Rota em que a trava foi aplicada. Clicar num item da sidebar navega E
+    // fecha a sidebar ao mesmo tempo, então a limpeza abaixo rodava já na
+    // página nova e devolvia o scroll da página ANTIGA — a pessoa abria a nova
+    // página no meio dela (quase sempre no rodapé). Só restauramos a posição
+    // quando a rota continua sendo a mesma; se mudou, a página nova começa no
+    // topo (o <ScrollToTop /> do layout cuida disso).
+    const lockedPathname = window.location.pathname
     const previous = {
       overflow: document.body.style.overflow,
       position: document.body.style.position,
@@ -235,7 +242,12 @@ export function AppShell({
       document.body.style.top = previous.top
       document.body.style.width = previous.width
       document.documentElement.style.overscrollBehavior = previous.overscrollBehavior
-      window.scrollTo(0, scrollY)
+
+      if (window.location.pathname === lockedPathname) {
+        window.scrollTo(0, scrollY)
+      } else {
+        window.scrollTo(0, 0)
+      }
     }
   }, [sidebarOpen])
 
