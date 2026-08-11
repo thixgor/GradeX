@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
-import { getPaymentConfig, maskToken } from '@/lib/payments'
-import { getMarketplaceConnection } from '@/lib/payments/mercado-pago/marketplace-store'
+import { getPaymentConfig, getPaymentConfigWarnings, maskToken } from '@/lib/payments'
+import {
+  getEffectiveMpPublicKey,
+  getMarketplaceConnection,
+} from '@/lib/payments/mercado-pago/marketplace-store'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -28,11 +31,26 @@ export async function GET() {
 
   const webhookUrl = cfg.mp.notificationUrl
   const conn = await getMarketplaceConnection()
+  const effectiveKey = await getEffectiveMpPublicKey()
+
+  // Alertas acionáveis: cada item aqui quebra o cartão sem quebrar Pix/boleto,
+  // então a plataforma parece saudável enquanto perde toda venda no cartão.
+  const warnings = getPaymentConfigWarnings(cfg)
+  if (effectiveKey.fellBackToEnv) {
+    warnings.push(
+      'O marketplace está conectado mas a conexão não trouxe Public Key, então o cartão está sendo tokenizado com a chave do ambiente — que não pareia com o token da cobrança. Reconecte o marketplace para restaurar o pagamento por cartão.'
+    )
+  }
 
   return NextResponse.json({
     configured: !!cfg.mp.accessToken,
     env: cfg.mp.env,
-    publicKey: cfg.mp.publicKey || null,
+    // Chave EFETIVA (a que o checkout realmente usa), não a do ambiente: com o
+    // marketplace conectado as duas divergem, e mostrar a do ambiente aqui
+    // escondia justamente o descasamento que derrubava o cartão.
+    publicKey: effectiveKey.publicKey || null,
+    publicKeySource: effectiveKey.source,
+    warnings,
     accessTokenMasked: maskToken(cfg.mp.accessToken),
     webhookUrl,
     webhookSecretConfigured: !!cfg.mp.webhookSecret,

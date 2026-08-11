@@ -46,6 +46,9 @@ interface MercadoPagoStatus {
   configured: boolean
   env?: 'sandbox' | 'production'
   publicKey?: string
+  publicKeySource?: 'marketplace' | 'env'
+  /** Inconsistências de credencial que quebram o cartão sem quebrar Pix/boleto. */
+  warnings?: string[]
   accessTokenMasked?: string
   webhookUrl?: string
   webhookSecretConfigured?: boolean
@@ -719,9 +722,28 @@ export default function SettingsPage() {
                 </div>
               )}
 
+              {(mpStatus?.warnings?.length ?? 0) > 0 && (
+                <div className="flex gap-2 p-3 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg">
+                  <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                  <div className="text-sm text-amber-900 dark:text-amber-100 space-y-1">
+                    <p className="font-semibold">Pagamento por cartão em risco</p>
+                    {mpStatus!.warnings!.map((warning, index) => (
+                      <p key={index}>{warning}</p>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
-                  <Label>Public Key</Label>
+                  <Label>
+                    Public Key
+                    {mpStatus?.publicKeySource === 'marketplace' && (
+                      <span className="ml-2 text-xs font-normal text-muted-foreground">
+                        (do marketplace conectado)
+                      </span>
+                    )}
+                  </Label>
                   <Input value={mpStatus?.publicKey || '—'} readOnly className="font-mono text-xs" />
                 </div>
                 <div>

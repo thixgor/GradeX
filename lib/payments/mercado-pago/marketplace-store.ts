@@ -92,11 +92,57 @@ export interface EffectiveMpAuth {
   collectorId?: number
 }
 
+export interface EffectiveMpPublicKey {
+  publicKey: string
+  /** De onde saiu a chave: a conexão de marketplace ou o ambiente. */
+  source: 'marketplace' | 'env'
+  /**
+   * true quando há conexão de marketplace mas ela não trouxe public key, e
+   * caímos na do ambiente. Nesse estado a chave NÃO pareia com o token — o
+   * cartão falha; Pix e boleto seguem funcionando.
+   */
+  fellBackToEnv: boolean
+}
+
+/**
+ * Resolve a public key que o NAVEGADOR deve usar para tokenizar o cartão.
+ *
+ * Precisa parear com o access token que `getEffectiveMpAuth()` devolve: o
+ * token do cartão é criado no navegador com esta chave e cobrado no servidor
+ * com aquele token. Se os dois vierem de aplicações diferentes (ex.: chave do
+ * ambiente + token de marketplace), o Mercado Pago recusa a cobrança com
+ * "Invalid credentials" — e o sintoma engana, porque Pix e boleto continuam
+ * funcionando (eles não passam por tokenização de cartão).
+ *
+ * Diferente do access token, a public key não expira — por isso esta função
+ * NÃO dispara refresh de token. Ela é chamada por um endpoint público, e
+ * renovar credencial ali seria efeito colateral indevido.
+ */
+export async function getEffectiveMpPublicKey(): Promise<EffectiveMpPublicKey> {
+  const cfg = getPaymentConfig()
+  const conn = await getMarketplaceConnection()
+
+  if (!conn?.accessToken) {
+    return { publicKey: cfg.mp.publicKey, source: 'env', fellBackToEnv: false }
+  }
+  if (conn.publicKey) {
+    return { publicKey: conn.publicKey, source: 'marketplace', fellBackToEnv: false }
+  }
+
+  // Conectado porém sem public key salva (o OAuth do MP marca o campo como
+  // opcional). Mantemos a do ambiente para não derrubar Pix/boleto junto, mas
+  // sinalizamos — o admin precisa reconectar para o cartão voltar.
+  return { publicKey: cfg.mp.publicKey, source: 'marketplace', fellBackToEnv: true }
+}
+
 /**
  * Resolve o access token que a camada de pagamento deve usar:
  *  - se houver conexão de marketplace salva, usa o token dela (renovando se
  *    estiver perto de expirar);
  *  - caso contrário, cai no MERCADOPAGO_ACCESS_TOKEN do ambiente.
+ *
+ * Ao tokenizar cartão no navegador, use SEMPRE `getEffectiveMpPublicKey()`:
+ * as duas credenciais formam um par e precisam sair da mesma aplicação.
  */
 export async function getEffectiveMpAuth(): Promise<EffectiveMpAuth> {
   const cfg = getPaymentConfig()
