@@ -21,6 +21,8 @@ import {
   type SidebarSectionOrder,
   type SidebarSectionSettings,
 } from '@/lib/sidebar-sections'
+import { normalizeSidebarIcons, type SidebarSectionIcons } from '@/lib/sidebar-icons'
+import { SidebarIconPicker } from '@/components/admin/sidebar-icon-picker'
 
 interface User {
   id: string
@@ -43,6 +45,7 @@ interface LandingSettings {
   aiKeys?: AIKeySettings
   sidebarSections?: SidebarSectionSettings
   sidebarSectionOrder?: SidebarSectionOrder
+  sidebarSectionIcons?: SidebarSectionIcons
 }
 
 interface MercadoPagoStatus {
@@ -103,6 +106,7 @@ export default function SettingsPage() {
     },
     sidebarSections: normalizeSidebarSections(),
     sidebarSectionOrder: normalizeSidebarOrder(),
+    sidebarSectionIcons: normalizeSidebarIcons(),
   })
   const [mpStatus, setMpStatus] = useState<MercadoPagoStatus | null>(null)
   const [mpEvents, setMpEvents] = useState<MercadoPagoEvent[]>([])
@@ -228,6 +232,7 @@ export default function SettingsPage() {
           },
           sidebarSections: normalizeSidebarSections(data.sidebarSections),
           sidebarSectionOrder: normalizeSidebarOrder(data.sidebarSectionOrder),
+          sidebarSectionIcons: normalizeSidebarIcons(data.sidebarSectionIcons),
         }
         setSettings(settings)
       }
@@ -363,6 +368,16 @@ export default function SettingsPage() {
       sidebarSections: {
         ...currentSections,
         [sectionKey]: !currentSections[sectionKey],
+      },
+    })
+  }
+
+  function setSidebarSectionIcon(sectionKey: SidebarSectionKey, iconName: string) {
+    setSettings({
+      ...settings,
+      sidebarSectionIcons: {
+        ...normalizeSidebarIcons(settings.sidebarSectionIcons),
+        [sectionKey]: iconName,
       },
     })
   }
@@ -557,9 +572,9 @@ export default function SettingsPage() {
             <CardHeader>
               <CardTitle>Seções do Sidebar Geral</CardTitle>
               <CardDescription>
-                Controle quais áreas aparecem para usuários comuns e em que ordem. A ordem
-                definida aqui vale para o menu lateral e para o carrossel do início.
-                Administradores continuam com acesso completo.
+                Controle quais áreas aparecem para usuários comuns, em que ordem e com
+                qual ícone. Ordem e ícone valem para o menu lateral e para o carrossel do
+                início. Administradores continuam com acesso completo.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -590,6 +605,11 @@ export default function SettingsPage() {
                           <ArrowDown className="h-3.5 w-3.5" />
                         </button>
                       </div>
+                      <SidebarIconPicker
+                        value={normalizeSidebarIcons(settings.sidebarSectionIcons)[section.key]}
+                        sectionLabel={section.label}
+                        onChange={(iconName) => setSidebarSectionIcon(section.key, iconName)}
+                      />
                       <div className="space-y-1 flex-1 min-w-0">
                         <Label className="text-base font-semibold">
                           <span className="mr-2 text-xs font-mono text-muted-foreground">{index + 1}.</span>

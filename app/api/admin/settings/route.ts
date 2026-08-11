@@ -8,6 +8,7 @@ import {
   type SidebarSectionOrder,
   type SidebarSectionSettings,
 } from '@/lib/sidebar-sections'
+import { normalizeSidebarIcons, type SidebarSectionIcons } from '@/lib/sidebar-icons'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -33,6 +34,7 @@ interface LandingSettings {
   aiKeys?: AIKeySettings
   sidebarSections?: SidebarSectionSettings
   sidebarSectionOrder?: SidebarSectionOrder
+  sidebarSectionIcons?: SidebarSectionIcons
 }
 
 const DEFAULT_LANDING_SETTINGS: LandingSettings = {
@@ -47,6 +49,7 @@ const DEFAULT_LANDING_SETTINGS: LandingSettings = {
   },
   sidebarSections: normalizeSidebarSections(),
   sidebarSectionOrder: normalizeSidebarOrder(),
+  sidebarSectionIcons: normalizeSidebarIcons(),
 }
 
 // GET - Obter configurações (público)
@@ -66,6 +69,7 @@ export async function GET(req: NextRequest) {
         ...settings,
         sidebarSections: normalizeSidebarSections(settings.sidebarSections),
         sidebarSectionOrder: normalizeSidebarOrder(settings.sidebarSectionOrder),
+        sidebarSectionIcons: normalizeSidebarIcons(settings.sidebarSectionIcons),
       },
       { headers: NO_STORE_HEADERS }
     )
@@ -92,6 +96,7 @@ export async function PUT(req: NextRequest) {
       ...body,
       sidebarSections: normalizeSidebarSections(body.sidebarSections),
       sidebarSectionOrder: normalizeSidebarOrder(body.sidebarSectionOrder),
+      sidebarSectionIcons: normalizeSidebarIcons(body.sidebarSectionIcons),
     }
 
     const db = await getDb()
@@ -118,6 +123,7 @@ export async function PUT(req: NextRequest) {
         ...updatedSettings,
         sidebarSections: normalizeSidebarSections(updatedSettings?.sidebarSections),
         sidebarSectionOrder: normalizeSidebarOrder(updatedSettings?.sidebarSectionOrder),
+        sidebarSectionIcons: normalizeSidebarIcons(updatedSettings?.sidebarSectionIcons),
       },
       { headers: NO_STORE_HEADERS }
     )

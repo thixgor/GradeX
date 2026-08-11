@@ -42,6 +42,8 @@ import {
   type SidebarSectionOrder,
   type SidebarSectionSettings,
 } from '@/lib/sidebar-sections'
+import { normalizeSidebarIcons, type SidebarSectionIcons } from '@/lib/sidebar-icons'
+import { getSidebarIconComponent } from '@/components/sidebar-icon-map'
 import { isPlusAccount } from '@/lib/account-tier'
 import { useLiteMode } from '@/hooks/use-lite-mode'
 
@@ -64,6 +66,7 @@ interface SidebarProps {
   onCollapse?: (collapsed: boolean) => void
   sidebarSections?: SidebarSectionSettings | null
   sidebarSectionOrder?: SidebarSectionOrder | null
+  sidebarSectionIcons?: SidebarSectionIcons | null
 }
 
 interface NavItem {
@@ -74,27 +77,6 @@ interface NavItem {
   badge?: string
   variant?: 'default' | 'primary' | 'gradient'
   sectionKey?: SidebarSectionKey
-}
-
-/** Ícone de cada seção. O TypeScript obriga a cobrir toda chave nova. */
-const SECTION_ICONS: Record<SidebarSectionKey, React.ReactNode> = {
-  provas: <FileText className="h-5 w-5" />,
-  bancoQuestoes: <Database className="h-5 w-5" />,
-  aulas: <Video className="h-5 w-5" />,
-  flashcards: <Brain className="h-5 w-5" />,
-  mapaMental: <Network className="h-5 w-5" />,
-  cronogramas: <BookMarked className="h-5 w-5" />,
-  forum: <MessageCircle className="h-5 w-5" />,
-  games: <Gamepad2 className="h-5 w-5" />,
-  manualClinico: <HeartPulse className="h-5 w-5" />,
-  ferramentasClinicas: <Calculator className="h-5 w-5" />,
-  farmacologia: <Pill className="h-5 w-5" />,
-  anatomia3d: <Box className="h-5 w-5" />,
-  manualHistologia: <Microscope className="h-5 w-5" />,
-  manualRadiologia: <ScanLine className="h-5 w-5" />,
-  manualEletro: <Activity className="h-5 w-5" />,
-  materiais: <BookOpen className="h-5 w-5" />,
-  rifas: <Ticket className="h-5 w-5" />,
 }
 
 /** Selo fixo ao lado do rótulo. `undefined` = sem selo. */
@@ -365,6 +347,7 @@ export function Sidebar({
   onCollapse,
   sidebarSections,
   sidebarSectionOrder,
+  sidebarSectionIcons,
 }: SidebarProps) {
   const router = useRouter()
   const pathname = usePathname()
@@ -391,11 +374,15 @@ export function Sidebar({
   // fica só o metadado visual de cada seção. Antes esta lista era fixa no
   // componente, o que travava a ordem do menu e obrigava a editar código para
   // acrescentar uma área.
+  const resolvedIcons = normalizeSidebarIcons(sidebarSectionIcons)
+
   const mainNavItems: NavItem[] = [
     { icon: <Home className="h-5 w-5" />, label: 'Início', href: '/dashboard' },
     ...getVisibleSidebarSections(sidebarSections, sidebarSectionOrder, isAdmin).map(
-      (section): NavItem => ({
-        icon: SECTION_ICONS[section.key],
+      (section): NavItem => {
+        const Icon = getSidebarIconComponent(resolvedIcons[section.key])
+        return {
+        icon: <Icon className="h-5 w-5" />,
         label: section.label,
         href: section.href,
         badge:
@@ -405,7 +392,8 @@ export function Sidebar({
               : undefined
             : SECTION_BADGES[section.key],
         sectionKey: section.key,
-      })
+        }
+      }
     ),
   ]
 

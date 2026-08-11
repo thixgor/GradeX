@@ -27,6 +27,8 @@ import {
 } from 'lucide-react'
 import { useAppShell } from '@/components/app-shell'
 import { getVisibleSidebarSections, type SidebarSectionKey } from '@/lib/sidebar-sections'
+import { normalizeSidebarIcons } from '@/lib/sidebar-icons'
+import { getSidebarIconComponent } from '@/components/sidebar-icon-map'
 import { cn } from '@/lib/utils'
 
 /**
@@ -93,7 +95,8 @@ function statFor(key: SidebarSectionKey, stats?: ExperienceStats): string | null
 }
 
 export function ExperienceCarousel({ stats }: { stats?: ExperienceStats }) {
-  const { sidebarSections, sidebarSectionOrder, isAdmin } = useAppShell()
+  const { sidebarSections, sidebarSectionOrder, sidebarSectionIcons, isAdmin } = useAppShell()
+  const resolvedIcons = normalizeSidebarIcons(sidebarSectionIcons)
   const railRef = useRef<HTMLDivElement>(null)
   const slideRefs = useRef<(HTMLAnchorElement | null)[]>([])
   const [active, setActive] = useState(0)
@@ -188,7 +191,9 @@ export function ExperienceCarousel({ stats }: { stats?: ExperienceStats }) {
       >
         {sections.map((section, index) => {
           const visual = VISUALS[section.key]
-          const Icon = visual.icon
+          // A cor e o selo continuam vindo daqui; o desenho passa a ser o que o
+          // admin escolheu em /admin/settings, para o card bater com o menu.
+          const Icon = getSidebarIconComponent(resolvedIcons[section.key])
           const stat = statFor(section.key, stats)
           return (
             <Link

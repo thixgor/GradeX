@@ -18,6 +18,7 @@ import {
   type SidebarSectionOrder,
   type SidebarSectionSettings,
 } from '@/lib/sidebar-sections'
+import { normalizeSidebarIcons, type SidebarSectionIcons } from '@/lib/sidebar-icons'
 
 /** Fixed valid ObjectId used by the mock session (does not need to exist in Mongo). */
 export const DEV_MOCK_USER_ID = '000000000000000000000001'
@@ -47,6 +48,7 @@ export function getDevMockSession(): TokenPayload {
 export function getDevMockBootstrap() {
   const sidebarSections: SidebarSectionSettings = { ...DEFAULT_SIDEBAR_SECTIONS }
   const sidebarSectionOrder: SidebarSectionOrder = [...DEFAULT_SIDEBAR_ORDER]
+  const sidebarSectionIcons: SidebarSectionIcons = normalizeSidebarIcons()
 
   return {
     user: {
@@ -105,6 +107,7 @@ export function getDevMockBootstrap() {
     notificationCount: 0,
     sidebarSections,
     sidebarSectionOrder,
+    sidebarSectionIcons,
     /** Marker so the client can show a small “dev bypass” badge if desired */
     _devBypass: true as const,
   }

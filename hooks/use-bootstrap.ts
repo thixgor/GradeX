@@ -21,6 +21,7 @@ import { useRouter } from 'next/navigation'
 import { fetchWithTimeout, invalidateCache, clearCache } from '@/lib/api-client'
 import { clearPageCache } from '@/lib/page-cache'
 import type { SidebarSectionOrder, SidebarSectionSettings } from '@/lib/sidebar-sections'
+import type { SidebarSectionIcons } from '@/lib/sidebar-icons'
 import { isPlusAccount } from '@/lib/account-tier'
 
 // Types matching the bootstrap endpoint response
@@ -114,6 +115,7 @@ export interface BootstrapResponse {
   notificationCount: number
   sidebarSections: SidebarSectionSettings
   sidebarSectionOrder: SidebarSectionOrder
+  sidebarSectionIcons: SidebarSectionIcons
 }
 
 // Global state for sharing across components
@@ -451,6 +453,7 @@ export function useBootstrap(options: {
     // Sidebar sections
     sidebarSections: data?.sidebarSections ?? null,
     sidebarSectionOrder: data?.sidebarSectionOrder ?? null,
+    sidebarSectionIcons: data?.sidebarSectionIcons ?? null,
   }
 }
 

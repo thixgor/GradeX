@@ -22,6 +22,7 @@ import {
   type SidebarSectionOrder,
   type SidebarSectionSettings,
 } from '@/lib/sidebar-sections'
+import { normalizeSidebarIcons, type SidebarSectionIcons } from '@/lib/sidebar-icons'
 import { normalizeAccountType } from '@/lib/account-tier'
 import { getMissingProfileFields } from '@/lib/profile-completeness'
 
@@ -105,6 +106,7 @@ interface BootstrapResponse {
   notificationCount: number
   sidebarSections: SidebarSectionSettings
   sidebarSectionOrder: SidebarSectionOrder
+  sidebarSectionIcons: SidebarSectionIcons
 }
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
@@ -190,7 +192,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       ),
       db.collection('landing_settings').findOne(
         {},
-        { projection: { sidebarSections: 1, sidebarSectionOrder: 1 } }
+        { projection: { sidebarSections: 1, sidebarSectionOrder: 1, sidebarSectionIcons: 1 } }
       ),
       db.collection('exam_submissions').aggregate([
         { $match: { userId, createdAt: { $gte: startOfMonth } } },
@@ -284,6 +286,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       notificationCount,
       sidebarSections: normalizeSidebarSections(landingSettings?.sidebarSections),
       sidebarSectionOrder: normalizeSidebarOrder(landingSettings?.sidebarSectionOrder),
+      sidebarSectionIcons: normalizeSidebarIcons(landingSettings?.sidebarSectionIcons),
     }
 
     // User/session-specific data must never survive logout/account switches.
