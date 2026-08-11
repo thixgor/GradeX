@@ -5,7 +5,9 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { AnimatePresence } from 'framer-motion'
 import {
   Check,
+  Compass,
   FolderOpen,
+  Library,
   Package,
   RefreshCw,
   Search,
@@ -34,7 +36,10 @@ import { PreviewModal } from '@/components/materiais/preview-modal'
 import {
   MATERIAIS_PANEL_ID,
   MateriaisToolbar,
+  scopeOfTab,
+  type MateriaisScope,
   type MateriaisTab,
+  type OwnedTypeFilter,
   type PriceFilter,
   type SortKey,
 } from '@/components/materiais/materiais-toolbar'
@@ -76,6 +81,33 @@ const ROOT_FOLDER_KEY = 'root'
 
 /** Quantos cards a grade revela por vez. Ver `revealMore`. */
 const PAGE_SIZE = 24
+
+/**
+ * Onde o aluno estava da última vez (só o nível 1, não a seção exata).
+ *
+ * Quem já comprou volta muito mais para reler o que tem do que para garimpar
+ * catálogo — devolver a pessoa para "Meus materiais" evita o clique perdido
+ * toda visita. Guardamos apenas o escopo: reabrir direto na "Loja" porque
+ * alguém espiou os impressos uma vez seria previsível demais.
+ */
+const SCOPE_STORAGE_KEY = 'materiais:scope'
+
+function readStoredScope(): MateriaisScope | null {
+  try {
+    const value = window.localStorage.getItem(SCOPE_STORAGE_KEY)
+    return value === 'mine' || value === 'browse' ? value : null
+  } catch {
+    return null
+  }
+}
+
+/** Formato do material para o filtro de "Meus materiais". */
+function ownedTypeOf(material: Material): OwnedTypeFilter | null {
+  if (material.type === 'flashcard_deck') return 'flashcard'
+  if (material.type === 'video' || material.type === 'video_embed') return 'video'
+  if (material.type === 'pdf' || material._hasPdf) return 'pdf'
+  return null
+}
 
 function getBrowseKey(folderId: string | null, search: string, filter: string) {
   return [
@@ -147,6 +179,7 @@ function MateriaisContent() {
   const [search, setSearch] = useState('')
   const debouncedSearch = useDebounce(search, 350)
   const [activeFilter, setActiveFilter] = useState<PriceFilter>('all')
+  const [ownedType, setOwnedType] = useState<OwnedTypeFilter>('all')
   const [sort, setSort] = useState<SortKey>('relevance')
   const [currentFolderId, setCurrentFolderId] = useState<string | null>(null)
   const [folderPath, setFolderPath] = useState<Folder[]>([])
@@ -170,6 +203,10 @@ function MateriaisContent() {
   const highlightRef = useRef<HTMLDivElement | null>(null)
   const sentinelRef = useRef<HTMLDivElement | null>(null)
   const requestSeqRef = useRef(0)
+  // Voltar de "Meus materiais" para "Explorar" tem que devolver a pessoa à
+  // seção e à pasta onde ela estava — não jogá-la na raiz do catálogo.
+  const lastBrowseTabRef = useRef<MateriaisTab>('materials')
+  const lastFolderIdRef = useRef<string | null>(null)
   const browseCacheRef = useRef<Map<string, BrowseSnapshot>>(new Map())
   const inflightBrowseRef = useRef<Map<string, Promise<BrowseSnapshot>>>(new Map())
   const allFoldersCacheRef = useRef<Folder[] | null>(null)
@@ -363,10 +400,27 @@ function MateriaisContent() {
     const packageParam = searchParams.get('package')
     const tabParam = searchParams.get('tab')
 
-    if (tabParam === 'packages') setActiveTab('packages')
-    if (tabParam === 'mine') setActiveTab('mine')
-    if (tabParam === 'loja') setActiveTab('loja')
-    if (folderParam) setCurrentFolderId(folderParam)
+    const initialTab: MateriaisTab =
+      tabParam === 'packages' || tabParam === 'mine' || tabParam === 'loja' ? tabParam : 'materials'
+
+    if (initialTab !== 'mine') lastBrowseTabRef.current = initialTab
+    if (folderParam) {
+      lastFolderIdRef.current = folderParam
+      // Pasta só faz sentido dentro de "Materiais": as outras seções ignoram o
+      // recorte de pasta (era por isso que "Meus materiais" aberto de dentro de
+      // uma pasta mostrava só um pedaço da biblioteca do aluno).
+      if (initialTab === 'materials') setCurrentFolderId(folderParam)
+    }
+
+    // Sem nada na URL, devolve o aluno para o nível onde ele estava.
+    if (!tabParam && !folderParam && readStoredScope() === 'mine') {
+      setActiveTab('mine')
+      // `replaceState` (e não push) para o botão Voltar continuar saindo de
+      // /materiais em vez de alternar entre as abas.
+      window.history.replaceState(null, '', '/materiais?tab=mine')
+    } else if (initialTab !== 'materials') {
+      setActiveTab(initialTab)
+    }
     // Links antigos de compartilhamento vão para a página individual
     if (materialParam) { router.replace(`/materiais/${materialParam}`); return }
     if (packageParam) { router.replace(`/pacotes/${packageParam}`); return }
@@ -388,6 +442,7 @@ function MateriaisContent() {
       const nextTab: MateriaisTab = tabParam === 'packages' || tabParam === 'mine' || tabParam === 'loja' ? tabParam : 'materials'
       const nextFolderId = nextTab === 'materials' ? folderId : null
       const cached = browseCacheRef.current.get(getBrowseKey(nextFolderId, debouncedSearch, activeFilter))
+      if (nextTab !== 'mine') lastBrowseTabRef.current = nextTab
 
       startRouteTransition(() => {
         setActiveTab(nextTab)
@@ -423,7 +478,7 @@ function MateriaisContent() {
   // Qualquer mudança de contexto reinicia a revelação incremental.
   useEffect(() => {
     setVisibleCount(PAGE_SIZE)
-  }, [activeTab, currentFolderId, debouncedSearch, activeFilter, sort])
+  }, [activeTab, currentFolderId, debouncedSearch, activeFilter, ownedType, sort])
 
   // Rola até o item destacado
   useEffect(() => {
@@ -502,10 +557,32 @@ function MateriaisContent() {
     fetchData(folderId, debouncedSearch, activeFilter, { prefetchOnly: true }).catch(() => {})
   }, [activeFilter, debouncedSearch, fetchData])
 
+  // Enquanto o aluno navega o catálogo, guardamos a pasta para devolvê-la
+  // quando ele voltar de "Meus materiais" / "Pacotes" / "Loja".
+  useEffect(() => {
+    if (activeTab === 'materials') lastFolderIdRef.current = currentFolderId
+  }, [activeTab, currentFolderId])
+
+  useEffect(() => {
+    try { window.localStorage.setItem(SCOPE_STORAGE_KEY, scopeOfTab(activeTab)) } catch {}
+  }, [activeTab])
+
   const handleTabChange = useCallback((tab: MateriaisTab) => {
-    setActiveTab(tab)
-    updateBrowserUrl(tab === 'materials' ? currentFolderId : null, tab)
-  }, [currentFolderId, updateBrowserUrl])
+    if (tab !== 'mine') lastBrowseTabRef.current = tab
+    // Fora de "Materiais" a consulta precisa ser da biblioteca inteira: manter
+    // a pasta ativa fazia "Meus materiais" listar só os adquiridos daquela
+    // pasta — a queixa de "sumiram meus materiais" vinha daqui.
+    const nextFolderId = tab === 'materials' ? lastFolderIdRef.current : null
+    startRouteTransition(() => {
+      setActiveTab(tab)
+      setCurrentFolderId(nextFolderId)
+    })
+    updateBrowserUrl(nextFolderId, tab)
+  }, [updateBrowserUrl])
+
+  const handleScopeChange = useCallback((scope: MateriaisScope) => {
+    handleTabChange(scope === 'mine' ? 'mine' : lastBrowseTabRef.current)
+  }, [handleTabChange])
 
   // ─── Copiar link ─────────────────────────────────────────
   const origin = typeof window !== 'undefined' ? window.location.origin : ''
@@ -785,9 +862,27 @@ function MateriaisContent() {
     () => sortItems(materials.filter(m => !m.isFeatured || currentFolderId), sort),
     [currentFolderId, materials, sort]
   )
+  const ownedMaterials = useMemo(() => materials.filter(m => m._hasAccess), [materials])
   const myMaterials = useMemo(
-    () => sortItems(materials.filter(m => m._hasAccess), sort),
-    [materials, sort]
+    () => sortItems(
+      ownedType === 'all' ? ownedMaterials : ownedMaterials.filter(m => ownedTypeOf(m) === ownedType),
+      sort
+    ),
+    [ownedMaterials, ownedType, sort]
+  )
+  const ownedTypeCounts = useMemo(() => {
+    const counts: Partial<Record<OwnedTypeFilter, number>> = { all: ownedMaterials.length }
+    for (const material of ownedMaterials) {
+      const kind = ownedTypeOf(material)
+      if (kind) counts[kind] = (counts[kind] || 0) + 1
+    }
+    return counts
+  }, [ownedMaterials])
+  // Pacotes adquiridos aparecem junto da biblioteca: o aluno lembra que comprou
+  // "o pacote de SOI III", não os doze materiais soltos que vieram nele.
+  const ownedPackages = useMemo(
+    () => packages.filter(p => p._isPurchased ?? purchasedPackageIds.includes(p._id)),
+    [packages, purchasedPackageIds]
   )
   // O chip de preço agora aparece na aba Pacotes, então precisa realmente
   // filtrar — a query do servidor só aplica `pricing` a materiais.
@@ -820,11 +915,14 @@ function MateriaisContent() {
     ? (allFolders.find(folder => folder._id === currentFolderId) || folderPath[folderPath.length - 1] || null)
     : null
   const isSoftLoading = refreshing || isRoutePending
-  const hasQuery = !!debouncedSearch.trim() || activeFilter !== 'all'
+  const hasQuery = !!debouncedSearch.trim()
+    || activeFilter !== 'all'
+    || (activeTab === 'mine' && ownedType !== 'all')
 
   const clearFilters = useCallback(() => {
     setSearch('')
     setActiveFilter('all')
+    setOwnedType('all')
   }, [])
 
   // Lista realmente renderizada na aba atual (revelação incremental). A Loja
@@ -954,8 +1052,12 @@ function MateriaisContent() {
           onSearchChange={setSearch}
           activeTab={activeTab}
           onTabChange={handleTabChange}
+          onScopeChange={handleScopeChange}
           priceFilter={activeFilter}
           onPriceFilterChange={setActiveFilter}
+          ownedType={ownedType}
+          onOwnedTypeChange={setOwnedType}
+          ownedTypeCounts={ownedTypeCounts}
           sort={sort}
           onSortChange={setSort}
           counts={{
@@ -975,6 +1077,13 @@ function MateriaisContent() {
             <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5">
               <FolderOpen className="h-3.5 w-3.5 text-primary" />
               {currentFolder ? currentFolder.name : 'Biblioteca principal'}
+            </span>
+          )}
+          {activeTab === 'mine' && !loading && !browseError && (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5">
+              <Library className="h-3.5 w-3.5 text-primary" />
+              Tudo que você já tem — {ownedMaterials.length} {ownedMaterials.length === 1 ? 'material' : 'materiais'}
+              {ownedPackages.length > 0 && ` · ${ownedPackages.length} ${ownedPackages.length === 1 ? 'pacote' : 'pacotes'}`}
             </span>
           )}
           {!loading && !browseError && hasQuery && activeTab !== 'loja' && (
@@ -1145,28 +1254,89 @@ function MateriaisContent() {
               <MaterialGridSkeleton count={6} />
             ) : browseError ? (
               browseErrorState
-            ) : myMaterials.length === 0 ? (
+            ) : !isAuthenticated ? (
+              <EmptyCallout
+                icon={<Library className="h-6 w-6" />}
+                title="Entre para ver seus materiais"
+                hint="Seus materiais adquiridos ficam salvos na sua conta — faça login para acessá-los de qualquer aparelho."
+                cta={
+                  <>
+                    <Button onClick={() => router.push(`/auth/login?redirect=${encodeURIComponent('/materiais?tab=mine')}`)} size="sm">
+                      Entrar na minha conta
+                    </Button>
+                    <Button onClick={() => handleScopeChange('browse')} variant="outline" size="sm">
+                      Explorar catálogo
+                    </Button>
+                  </>
+                }
+              />
+            ) : myMaterials.length === 0 && ownedPackages.length === 0 ? (
               <EmptyCallout
                 icon={<Check className="h-6 w-6" />}
-                title={hasQuery ? 'Nada aqui com esses critérios' : 'Nenhum material ainda'}
+                title={hasQuery ? 'Nada aqui com esses critérios' : 'Sua biblioteca está vazia'}
                 hint={hasQuery
                   ? 'Nenhum dos seus materiais corresponde à busca ou ao filtro atual.'
-                  : 'Você ainda não adquiriu nenhum material.'}
+                  : 'Assim que você adquirir um material, ele aparece aqui — pronto para ler ou baixar quando quiser.'}
                 cta={hasQuery ? noResultsCta : (
-                  <Button onClick={() => handleTabChange('materials')} variant="outline" size="sm">
-                    Ver todos os materiais
+                  <Button onClick={() => handleScopeChange('browse')} size="sm">
+                    <Compass className="mr-2 h-4 w-4" /> Ver o que posso adquirir
                   </Button>
                 )}
               />
             ) : (
               <>
-                <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
-                  {myMaterials.slice(0, visibleCount).map((material, idx) => renderMaterial(material, idx))}
-                </div>
+                {/* Pacotes primeiro: são a compra que o aluno lembra ter feito. */}
+                {ownedPackages.length > 0 && ownedType === 'all' && (
+                  <section className="mb-8">
+                    <h2 className="mb-3 flex items-center gap-2 font-heading text-lg font-bold tracking-[-0.02em]">
+                      <Package className="h-4 w-4 text-primary" /> Seus pacotes
+                    </h2>
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                      {ownedPackages.map((pkg, idx) => renderPackage(pkg, idx))}
+                    </div>
+                  </section>
+                )}
+
+                {myMaterials.length > 0 ? (
+                  <section>
+                    {ownedPackages.length > 0 && ownedType === 'all' && (
+                      <h2 className="mb-3 flex items-center gap-2 font-heading text-lg font-bold tracking-[-0.02em]">
+                        <Library className="h-4 w-4 text-primary" /> Seus materiais
+                      </h2>
+                    )}
+                    <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
+                      {myMaterials.slice(0, visibleCount).map((material, idx) => renderMaterial(material, idx))}
+                    </div>
+                  </section>
+                ) : (
+                  <EmptyCallout
+                    icon={<Search className="h-6 w-6" />}
+                    title="Nenhum material com esse recorte"
+                    hint="Você tem pacotes adquiridos, mas nenhum material solto corresponde à busca ou ao formato selecionado."
+                    cta={noResultsCta}
+                  />
+                )}
+
                 {canRevealMore && (
                   <div ref={sentinelRef} className="mt-6 flex justify-center">
                     <Button onClick={() => setVisibleCount(c => c + PAGE_SIZE)} variant="outline">
                       Carregar mais ({myMaterials.length - visibleCount} restantes)
+                    </Button>
+                  </div>
+                )}
+
+                {/* Saída para o catálogo no fim da lista: quem chegou até aqui
+                    já viu tudo que tem e é onde a próxima compra faz sentido. */}
+                {!canRevealMore && (
+                  <div className="mt-8 flex flex-col items-start gap-3 rounded-xl border border-primary/20 bg-primary/5 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <h3 className="font-heading text-sm font-bold tracking-[-0.01em]">Procurando outro material?</h3>
+                      <p className="text-xs text-muted-foreground">
+                        Veja o que ainda dá para adquirir — materiais avulsos, pacotes com desconto e impressos.
+                      </p>
+                    </div>
+                    <Button onClick={() => handleScopeChange('browse')} size="sm" className="shrink-0">
+                      <Compass className="mr-2 h-4 w-4" /> Explorar catálogo
                     </Button>
                   </div>
                 )}
