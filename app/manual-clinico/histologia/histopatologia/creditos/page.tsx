@@ -50,8 +50,16 @@ export default function PaginaDeCreditos() {
                 <li key={fonte.id} className="rounded-xl border border-border bg-card p-4">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <p className="text-sm font-bold">{fonte.creditoCurto}</p>
-                    <span className="rounded-full border border-emerald-600/30 bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700 dark:text-emerald-400">
-                      Direitos aprovados
+                    <span
+                      className={`rounded-full border px-2.5 py-0.5 text-[11px] font-bold ${
+                        fonte.situacaoDeDireitos === 'direitos-aprovados'
+                          ? 'border-emerald-600/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400'
+                          : 'border-sky-600/30 bg-sky-500/10 text-sky-700 dark:text-sky-400'
+                      }`}
+                    >
+                      {fonte.situacaoDeDireitos === 'direitos-aprovados'
+                        ? 'Direitos aprovados'
+                        : fonte.situacaoDeDireitos}
                     </span>
                   </div>
                   <p className="mt-1 text-xs leading-relaxed text-muted-foreground">

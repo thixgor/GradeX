@@ -8,6 +8,7 @@ import { Autoavaliacao } from '@/components/histopatologia/autoavaliacao'
 import { CadeiaFisiopatologica, EmPreparacao } from '@/components/histopatologia/cadeia-fisiopatologica'
 import { GaleriaRemota } from '@/components/histopatologia/galeria-remota'
 import { PainelDeRevisao } from '@/components/histopatologia/painel-revisao'
+import { ReferenciasVisuaisExternas } from '@/components/histopatologia/referencias-visuais-externas'
 import { CartaoDeAchado, RoteiroMicroscopico } from '@/components/histopatologia/roteiro-microscopico'
 import {
   ProvedorDeProfundidade,
@@ -20,6 +21,7 @@ import {
 import { MARCA_DE_NATUREZA, MARCA_DE_REVISAO } from '@/components/histopatologia/tema'
 import type { AplicacaoDeMecanismoResolvida } from '@/components/histopatologia/tipos'
 import { LISTA_DE_FONTES } from '@/lib/histopatologia/direitos'
+import { referenciasVisuaisDaDoenca } from '@/lib/histopatologia/editorial/referencias-visuais'
 import { MIDIAS_PRINCIPAIS_MAXIMO, paraExibicao } from '@/lib/histopatologia/midia'
 import {
   MECANISMOS_PUBLICADOS,
@@ -121,6 +123,7 @@ export default async function PaginaDaDoenca({ params }: Props) {
     .filter((m) => selecionadas.has(m.id))
     .slice(0, MIDIAS_PRINCIPAIS_MAXIMO)
   const restantes = midiasExibiveis.filter((m) => !selecionadas.has(m.id))
+  const referenciasVisuaisExternas = referenciasVisuaisDaDoenca(doenca.slug)
 
   const trilha = [
     { titulo: 'Manual da Histologia', caminho: BASE_HISTOLOGIA },
@@ -324,6 +327,8 @@ export default async function PaginaDaDoenca({ params }: Props) {
                     </p>
                   )
                 )}
+
+                <ReferenciasVisuaisExternas referencias={referenciasVisuaisExternas} />
               </Secao>
 
               {/* ── 11. Exames complementares ── */}
@@ -609,22 +614,26 @@ export default async function PaginaDaDoenca({ params }: Props) {
                 <div className="rounded-xl border border-border bg-card p-3.5">
                   <h3 className="mb-1.5 text-sm font-bold">Crédito das fontes</h3>
                   <ul className="space-y-1.5 text-[11px] leading-relaxed text-muted-foreground">
-                    {LISTA_DE_FONTES.filter((f) => entradas.some((e) => e.fonteId === f.id)).map(
-                      (fonte) => (
-                        <li key={fonte.id}>
-                          <span className="font-bold">{fonte.creditoCurto}</span> —{' '}
-                          {fonte.atribuicaoCatalogada}{' '}
-                          <a
-                            href={fonte.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="underline"
-                          >
-                            {fonte.url}
-                          </a>
-                        </li>
-                      ),
-                    )}
+                    {LISTA_DE_FONTES.filter(
+                      (fonte) =>
+                        entradas.some((entrada) => entrada.fonteId === fonte.id) ||
+                        referenciasVisuaisExternas.some(
+                          (referencia) => referencia.fonteId === fonte.id,
+                        ),
+                    ).map((fonte) => (
+                      <li key={fonte.id}>
+                        <span className="font-bold">{fonte.creditoCurto}</span> —{' '}
+                        {fonte.atribuicaoCatalogada}{' '}
+                        <a
+                          href={fonte.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="underline"
+                        >
+                          {fonte.url}
+                        </a>
+                      </li>
+                    ))}
                   </ul>
                   <Link
                     href={rotaDosCreditos()}

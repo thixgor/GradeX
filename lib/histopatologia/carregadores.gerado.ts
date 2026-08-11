@@ -17,6 +17,7 @@ type Carregador = () => Promise<{ default: unknown }>
 export const FRAGMENTOS_DE_DOENCA: Record<string, Carregador> = {
   "adenocarcinoma-colorretal": () => import('@/data/histopatologia/doencas/adenocarcinoma-colorretal.json'),
   "apendicite-aguda": () => import('@/data/histopatologia/doencas/apendicite-aguda.json'),
+  "broncopneumonia": () => import('@/data/histopatologia/doencas/broncopneumonia.json'),
   "carcinoma-escamoso-do-colo-uterino": () => import('@/data/histopatologia/doencas/carcinoma-escamoso-do-colo-uterino.json'),
   "carcinoma-hepatocelular": () => import('@/data/histopatologia/doencas/carcinoma-hepatocelular.json'),
   "carcinoma-papilifero-da-tireoide": () => import('@/data/histopatologia/doencas/carcinoma-papilifero-da-tireoide.json'),
@@ -34,7 +35,10 @@ export const FRAGMENTOS_DE_DOENCA: Record<string, Carregador> = {
   "meningioma-grau-1": () => import('@/data/histopatologia/doencas/meningioma-grau-1.json'),
   "osteomielite-cronica": () => import('@/data/histopatologia/doencas/osteomielite-cronica.json'),
   "osteossarcoma": () => import('@/data/histopatologia/doencas/osteossarcoma.json'),
+  "pericardite-fibrinosa": () => import('@/data/histopatologia/doencas/pericardite-fibrinosa.json'),
   "pielonefrite-cronica": () => import('@/data/histopatologia/doencas/pielonefrite-cronica.json'),
+  "poliarterite-nodosa": () => import('@/data/histopatologia/doencas/poliarterite-nodosa.json'),
+  "seminoma": () => import('@/data/histopatologia/doencas/seminoma.json'),
   "trombose-venosa": () => import('@/data/histopatologia/doencas/trombose-venosa.json'),
   "tuberculose-pulmonar": () => import('@/data/histopatologia/doencas/tuberculose-pulmonar.json'),
 }

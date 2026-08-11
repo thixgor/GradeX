@@ -109,8 +109,12 @@ diagnóstico que a revisão não sustenta, sem retirar a entrada inteira.
 
 ## Direitos das fontes
 
-As duas fontes catalogadas estão aprovadas para exibição remota. A decisão e os
-créditos estão registrados na [ADR 0002](../../docs/adr/0002-direitos-de-midia-da-histopatologia.md).
+As duas fontes do catálogo incorporado estão aprovadas para exibição remota. As
+referências selecionadas de Pathology Outlines, WebPathology e WebPath/Utah são
+**somente links para a página original**: o Domine Aqui traduz o título e oferece
+um roteiro autoral de observação, mas não copia, incorpora nem enquadra a mídia.
+A decisão e os créditos estão registrados na
+[ADR 0002](../../docs/adr/0002-direitos-de-midia-da-histopatologia.md).
 
 ## Atualizar uma classificação
 

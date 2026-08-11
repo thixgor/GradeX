@@ -42,9 +42,51 @@ export const FONTES: Record<FonteId, Fonte> = {
     situacaoDeDireitos: 'direitos-aprovados',
     politicaInicial: 'Exibição remota autorizada, com crédito e vínculo para a fonte.',
   },
+  'pathology-outlines': {
+    id: 'pathology-outlines',
+    nome: 'Pathology Outlines',
+    url: 'https://www.pathologyoutlines.com/',
+    creditoCurto: 'Pathology Outlines',
+    atribuicaoCatalogada:
+      'PathologyOutlines.com, Inc. — consulta externa vinculada; nenhum texto, imagem ou banco de dados é reproduzido pelo Domine Aqui.',
+    dominiosDeMidia: ['www.pathologyoutlines.com', 'pathologyoutlines.com'],
+    situacaoDeDireitos: 'Somente consulta externa',
+    politicaInicial:
+      'A política permite hiperlinks, mas exige autorização específica para reprodução em outro site e proíbe extração automatizada.',
+  },
+  webpathology: {
+    id: 'webpathology',
+    nome: 'WebPathology',
+    url: 'https://www.webpathology.com/',
+    creditoCurto: 'WebPathology',
+    atribuicaoCatalogada:
+      'WebPathology, LLC / Dharam M. Ramnani, MD — páginas visuais consultadas por hiperlink em tela cheia.',
+    dominiosDeMidia: ['www.webpathology.com', 'webpathology.com'],
+    situacaoDeDireitos: 'Somente consulta externa',
+    politicaInicial:
+      'A fonte permite links, mas veda copiar, republicar, enquadrar ou exibir seus materiais sem autorização escrita.',
+  },
+  'webpath-utah': {
+    id: 'webpath-utah',
+    nome: 'WebPath — University of Utah',
+    url: 'https://webpath.med.utah.edu/',
+    creditoCurto: 'WebPath — University of Utah',
+    atribuicaoCatalogada:
+      'WebPath, Edward C. Klatt, MD, hospedado pela Eccles Health Sciences Library da University of Utah.',
+    dominiosDeMidia: ['webpath.med.utah.edu'],
+    situacaoDeDireitos: 'Somente consulta externa',
+    politicaInicial:
+      'Materiais protegidos; o Domine Aqui mantém apenas hiperlinks para as páginas públicas e conteúdo didático próprio.',
+  },
 }
 
-export const LISTA_DE_FONTES: Fonte[] = [FONTES.unicamp, FONTES['histopathology-atlas']]
+export const LISTA_DE_FONTES: Fonte[] = [
+  FONTES.unicamp,
+  FONTES['histopathology-atlas'],
+  FONTES['pathology-outlines'],
+  FONTES.webpathology,
+  FONTES['webpath-utah'],
+]
 
 /** Permissões aprovadas para as duas fontes catalogadas. */
 export const ESCOPOS_DE_DIREITOS: EscopoDeDireitos[] = [
@@ -75,6 +117,52 @@ export const ESCOPOS_DE_DIREITOS: EscopoDeDireitos[] = [
     responsavel: 'Equipe editorial do Domine Aqui',
     restricoes: [],
     observacao: 'Exibição remota aprovada, mantendo crédito e vínculo para a fonte.',
+  },
+  {
+    id: 'pathology-outlines-fonte',
+    fonteId: 'pathology-outlines',
+    escopo: 'fonte',
+    alvo: 'pathology-outlines',
+    estado: 'autorizado-link-remoto',
+    titular: 'PathologyOutlines.com, Inc.',
+    licenca: 'Hiperlinks permitidos; reprodução e processamento automatizado não autorizados',
+    comprovante: 'https://www.pathologyoutlines.com/copyrightinfo.html',
+    verificadoEm: '2026-08-10',
+    responsavel: 'Equipe editorial do Domine Aqui',
+    restricoes: [
+      'Não copiar imagens ou texto.',
+      'Não incorporar páginas ou mídias.',
+      'Não realizar extração automatizada do conteúdo.',
+    ],
+    observacao: 'A integração limita-se ao vínculo para a página pública da fonte.',
+  },
+  {
+    id: 'webpathology-fonte',
+    fonteId: 'webpathology',
+    escopo: 'fonte',
+    alvo: 'webpathology',
+    estado: 'autorizado-link-remoto',
+    titular: 'Dharam M. Ramnani, MD / WebPathology, LLC',
+    licenca: 'Hiperlinks permitidos com abertura em tela cheia',
+    comprovante: 'https://www.webpathology.com/terms-of-use',
+    verificadoEm: '2026-08-10',
+    responsavel: 'Equipe editorial do Domine Aqui',
+    restricoes: ['Não copiar, reproduzir, republicar, enquadrar ou incorporar os materiais.'],
+    observacao: 'Cada referência abre a página original em nova aba, sem iframe ou hotlink.',
+  },
+  {
+    id: 'webpath-utah-fonte',
+    fonteId: 'webpath-utah',
+    escopo: 'fonte',
+    alvo: 'webpath-utah',
+    estado: 'autorizado-link-remoto',
+    titular: 'Edward C. Klatt, MD',
+    licenca: 'Hiperlink para página pública, sem reprodução de material',
+    comprovante: 'https://webpath.med.utah.edu/',
+    verificadoEm: '2026-08-10',
+    responsavel: 'Equipe editorial do Domine Aqui',
+    restricoes: ['Não modificar, copiar, distribuir, transmitir, exibir ou publicar os materiais.'],
+    observacao: 'O Domine Aqui mantém somente o endereço da página e texto didático próprio.',
   },
 ]
 
@@ -263,9 +351,9 @@ export function podeIndexar(estadoDeRevisao?: string): boolean {
 }
 
 export const CREDITO_BASE =
-  'Imagens e metadados catalogados a partir do Atlas de Anatomia Patológica da FCM/Unicamp e ' +
-  'do Histopathology Atlas (patolojiAI). Nenhuma imagem é copiada, armazenada ou reprocessada ' +
-  'pelo Domine Aqui: quando exibidas, são servidas pelos servidores da instituição de origem.'
+  'O acervo combina imagens remotas autorizadas da FCM/Unicamp e do Histopathology Atlas com ' +
+  'referências visuais externas do Pathology Outlines, WebPathology e WebPath/University of Utah. ' +
+  'Nenhuma imagem é copiada, armazenada ou reprocessada pelo Domine Aqui.'
 
 /**
  * Declaração de alterações editoriais. Precisa ser específica — e precisa deixar

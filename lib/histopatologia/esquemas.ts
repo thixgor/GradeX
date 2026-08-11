@@ -22,7 +22,13 @@ import { z } from 'zod'
 
 /* ═══════════════════════ Fontes e direitos ═══════════════════════ */
 
-export const esquemaFonteId = z.enum(['unicamp', 'histopathology-atlas'])
+export const esquemaFonteId = z.enum([
+  'unicamp',
+  'histopathology-atlas',
+  'pathology-outlines',
+  'webpathology',
+  'webpath-utah',
+])
 export type FonteId = z.infer<typeof esquemaFonteId>
 
 /**

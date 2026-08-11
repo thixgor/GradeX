@@ -41,9 +41,9 @@ const midiaBase: MidiaCatalogada = {
   politicaDeExibicao: 'url-remota-com-portao-de-direitos',
 }
 
-describe('estado atual: as duas fontes autorizam incorporação', () => {
-  it('as duas fontes catalogadas estão com direitos aprovados', () => {
-    for (const fonte of LISTA_DE_FONTES) {
+describe('estado atual: incorporação e consulta externa são separadas', () => {
+  it('as duas fontes catalogadas estão com incorporação aprovada', () => {
+    for (const fonte of [FONTES.unicamp, FONTES['histopathology-atlas']]) {
       const decisao = resolverDireitos({
         fonteId: fonte.id,
         midiaId: '—',
@@ -53,6 +53,27 @@ describe('estado atual: as duas fontes autorizam incorporação', () => {
       expect(permiteIncorporacao(decisao.estado)).toBe(true)
       expect(permiteLinkDireto(decisao.estado)).toBe(true)
     }
+  })
+
+  it('as três fontes complementares permitem somente abrir a página original', () => {
+    for (const fonte of [
+      FONTES['pathology-outlines'],
+      FONTES.webpathology,
+      FONTES['webpath-utah'],
+    ]) {
+      const decisao = resolverDireitos({
+        fonteId: fonte.id,
+        midiaId: '—',
+        urlPaginaFonte: fonte.url,
+      })
+      expect(decisao.estado, fonte.id).toBe('autorizado-link-remoto')
+      expect(permiteIncorporacao(decisao.estado)).toBe(false)
+      expect(permiteLinkDireto(decisao.estado)).toBe(true)
+    }
+  })
+
+  it('as cinco fontes têm registro editorial', () => {
+    expect(LISTA_DE_FONTES).toHaveLength(5)
   })
 
   it('todo escopo registrado tem titular, data e responsável', () => {
