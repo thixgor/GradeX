@@ -1,13 +1,12 @@
 'use client'
 
 import Link from 'next/link'
-import { ArrowLeft, ArrowRight, BookOpen, Crown, ImageIcon, Layers3, ScanLine, ShieldCheck, Target } from 'lucide-react'
+import { ArrowLeft, ArrowRight, BookOpen, Crown, ImageIcon, Layers3, ScanLine, Target } from 'lucide-react'
 import { AreaRadiologia } from '@/components/radiologia/area-radiologia'
 import { LogoRadiologia } from '@/components/radiologia/logo'
 import { SECOES, TOTAL_CORTES, TOTAL_ESTRUTURAS, TOTAL_SUBSECOES, caminhoDoCorte } from '@/lib/tomografia'
 import { FilmeImagem } from '@/components/radiologia/filme'
 import {
-  CREDITO_CLINICAL_ANATOMY,
   ESTUDOS_RAIO_X,
   REGIOES_RAIO_X,
   TOTAL_ESTRUTURAS_RAIO_X,
@@ -96,16 +95,12 @@ export default function RadiologiaPage() {
             {[
               [BookOpen, 'Conteúdo aprofundado', 'Cada exame traz técnica, critérios de qualidade e roteiro de leitura na ordem clínica.'],
               [Target, 'Anatomia demarcada', 'Clique na estrutura para acender a sobreposição fornecida pelo atlas autorizado.'],
-              [ShieldCheck, 'Fonte e direitos claros', 'Crédito visível, link para a fonte e referência formal da autorização em cada estudo.'],
+              [ScanLine, 'Leitura sistemática', 'Técnica, critérios de qualidade e sequência de análise para estudar cada incidência com método.'],
             ].map(([Icon, titulo, texto]) => {
               const C = Icon as typeof BookOpen
               return <div key={String(titulo)} className="rounded-xl border border-border bg-card p-4"><C className="mb-2 h-5 w-5 text-sky-500" /><h3 className="text-sm font-bold">{String(titulo)}</h3><p className="mt-1 text-xs leading-relaxed text-muted-foreground">{String(texto)}</p></div>
             })}
           </section>
-
-          <p className="mt-8 text-center text-xs leading-relaxed text-muted-foreground">
-            Imagens de Raio-X: <a href={CREDITO_CLINICAL_ANATOMY.url} target="_blank" rel="noreferrer" className="font-semibold underline underline-offset-2">{CREDITO_CLINICAL_ANATOMY.nome}</a>. {CREDITO_CLINICAL_ANATOMY.nota} Referência: {CREDITO_CLINICAL_ANATOMY.autorizacao}.
-          </p>
         </main>
       </div>
     </AreaRadiologia>

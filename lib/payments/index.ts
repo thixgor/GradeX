@@ -21,4 +21,4 @@ export function randomIdempotencyKey(): string {
 }
 
 export * from './types'
-export { getPaymentConfig, maskToken } from './config'
+export { getPaymentConfig, getPaymentConfigWarnings, maskToken } from './config'

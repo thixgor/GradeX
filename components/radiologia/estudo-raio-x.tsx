@@ -13,7 +13,6 @@ import {
   ChevronRight,
   Contrast,
   Crosshair,
-  ExternalLink,
   Eye,
   EyeOff,
   Info,
@@ -32,7 +31,6 @@ import {
 import { AreaRadiologia } from '@/components/radiologia/area-radiologia'
 import { CantosFilme, FilmeImagem } from '@/components/radiologia/filme'
 import {
-  CREDITO_CLINICAL_ANATOMY,
   estudosDaRegiao,
   GUIAS_RAIO_X,
   notaEstrutura,
@@ -334,7 +332,7 @@ export function EstudoRaioXView({ estudo }: { estudo: EstudoRaioX }) {
 
           <GuiaRegiao guia={guia} regiaoTitulo={estudo.regiaoTitulo} />
 
-          <Rodape estudo={estudo} />
+          <Rodape />
         </main>
       </div>
     </AreaRadiologia>
@@ -753,23 +751,11 @@ function Lista({ itens, tom = 'padrao' }: { itens: string[]; tom?: 'padrao' | 'a
 
 /* ─────────────────────────────── Rodapé ─────────────────────────────── */
 
-function Rodape({ estudo }: { estudo: EstudoRaioX }) {
+function Rodape() {
   return (
     <section className="mt-8 rounded-xl border border-sky-500/20 bg-sky-500/[0.04] p-4 text-xs leading-relaxed text-muted-foreground">
-      <p className="font-bold text-foreground">Crédito, adaptação e escopo</p>
+      <p className="font-bold text-foreground">Escopo educacional</p>
       <p className="mt-1">
-        Radiografia e demarcações:{' '}
-        <a
-          href={estudo.fonte}
-          target="_blank"
-          rel="noreferrer"
-          className="inline-flex items-center gap-1 font-semibold text-sky-600 underline underline-offset-2 dark:text-sky-400"
-        >
-          {CREDITO_CLINICAL_ANATOMY.nome} <ExternalLink className="h-3 w-3" />
-        </a>
-        . {CREDITO_CLINICAL_ANATOMY.nota} Documento {CREDITO_CLINICAL_ANATOMY.autorizacao}.
-      </p>
-      <p className="mt-2">
         Material educacional de anatomia radiográfica. Não substitui laudo médico, avaliação
         clínica, protocolos institucionais nem a escolha do método de imagem apropriado.
       </p>

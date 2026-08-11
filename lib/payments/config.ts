@@ -78,10 +78,6 @@ export function getPaymentConfig(): PaymentConfig {
   if (env === 'sandbox' && accessToken && !accessToken.startsWith('TEST-')) {
     throw new Error('MERCADOPAGO_ENV=sandbox mas o ACCESS_TOKEN parece ser de produção (não começa com TEST-). Isso causa "Unauthorized use of live credentials".')
   }
-  if (env === 'sandbox' && publicKey && !publicKey.startsWith('TEST-')) {
-    // Não lança exceção mas avisa fortemente — este é o erro mais comum
-    console.error('[payments] ATENÇÃO: MERCADOPAGO_ENV=sandbox mas MERCADOPAGO_PUBLIC_KEY não começa com TEST-. Isso causa "Unauthorized use of live credentials". Troque pela Public Key de teste.')
-  }
 
   // Split de pagamentos (marketplace) — opcional, desligado por padrão.
   const splitEnabled = /^(1|true|yes|on)$/i.test(process.env.MERCADOPAGO_SPLIT_ENABLED || '')
@@ -117,7 +113,67 @@ export function getPaymentConfig(): PaymentConfig {
       oauth: { clientId, clientSecret, redirectUri },
     },
   }
+
+  // Problemas que não impedem o boot mas quebram um meio de pagamento. Logados
+  // uma vez (o config é cacheado) e expostos no painel via /api/admin/mercado-pago/status.
+  for (const warning of getPaymentConfigWarnings(cached)) {
+    console.error(`[payments] ATENÇÃO: ${warning}`)
+  }
+
   return cached
+}
+
+/** 'TEST-' = credencial de teste, 'APP_USR-' = credencial de produção. */
+function credentialKind(value: string): 'test' | 'production' | 'unknown' {
+  if (!value) return 'unknown'
+  if (value.startsWith('TEST-')) return 'test'
+  if (value.startsWith('APP_USR-')) return 'production'
+  return 'unknown'
+}
+
+/**
+ * Inconsistências de credencial que derrubam o pagamento por CARTÃO sem
+ * derrubar Pix/boleto — o que torna a falha difícil de reconhecer, porque a
+ * plataforma parece estar vendendo normalmente.
+ *
+ * A public key tokeniza o cartão no navegador e o access token cobra no
+ * servidor; se as duas não forem da mesma aplicação/ambiente, o Mercado Pago
+ * responde "Invalid credentials" na criação do pagamento.
+ *
+ * Não lança: derrubar o boot deixaria Pix e boleto (que funcionam) fora do ar
+ * junto. O caminho certo é gritar no log e no painel.
+ */
+export function getPaymentConfigWarnings(cfg: PaymentConfig = getPaymentConfig()): string[] {
+  const warnings: string[] = []
+  const { env, publicKey, accessToken } = cfg.mp
+
+  if (!publicKey) {
+    warnings.push(
+      'MERCADOPAGO_PUBLIC_KEY não configurada — o pagamento por cartão não funciona (Pix e boleto seguem normais).'
+    )
+    return warnings
+  }
+
+  const keyKind = credentialKind(publicKey)
+  const tokenKind = credentialKind(accessToken)
+
+  if (env === 'production' && keyKind === 'test') {
+    warnings.push(
+      'MERCADOPAGO_ENV=production mas MERCADOPAGO_PUBLIC_KEY é de teste (TEST-). O cartão falha com "Invalid credentials"; Pix e boleto seguem funcionando. Troque pela Public Key de produção (APP_USR-).'
+    )
+  }
+  if (env === 'sandbox' && keyKind !== 'test') {
+    warnings.push(
+      'MERCADOPAGO_ENV=sandbox mas MERCADOPAGO_PUBLIC_KEY não começa com TEST-. Isso causa "Unauthorized use of live credentials". Troque pela Public Key de teste.'
+    )
+  }
+  if (keyKind !== 'unknown' && tokenKind !== 'unknown' && keyKind !== tokenKind) {
+    warnings.push(
+      `MERCADOPAGO_PUBLIC_KEY (${keyKind}) e MERCADOPAGO_ACCESS_TOKEN (${tokenKind}) são de ambientes diferentes. As duas credenciais precisam ser do mesmo par.`
+    )
+  }
+
+  return warnings
 }
 
 /** Mascarar token para exibição: APP_USR-1234567890abcdef -> APP_USR-****cdef */

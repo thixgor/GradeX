@@ -7,7 +7,6 @@ import {
   ArrowRight,
   ChevronRight,
   CornerDownLeft,
-  ExternalLink,
   ImageIcon,
   LayoutGrid,
   ScanLine,
@@ -20,7 +19,6 @@ import { CantosFilme, FilmeImagem, urlFilme } from '@/components/radiologia/film
 import {
   buscarEstruturasRaioX,
   buscarEstudosRaioX,
-  CREDITO_CLINICAL_ANATOMY,
   ESTUDOS_RAIO_X,
   estudosDaRegiao,
   GUIAS_RAIO_X,
@@ -118,8 +116,6 @@ export function CatalogoRaioX() {
         ) : (
           <GradeRegioes onEscolher={escolherRegiao} />
         )}
-
-        <Creditos />
       </main>
     </div>
   )
@@ -523,27 +519,6 @@ function ResultadosBusca({
           </div>
         </section>
       )}
-    </div>
-  )
-}
-
-/* ─────────────────────────────── Créditos ─────────────────────────────── */
-
-function Creditos() {
-  return (
-    <div className="mt-12 rounded-xl border border-sky-500/20 bg-sky-500/[0.04] p-4 text-xs leading-relaxed text-muted-foreground">
-      <p className="font-bold text-foreground">Fonte visual e autorização</p>
-      <p className="mt-1">
-        {CREDITO_CLINICAL_ANATOMY.nota} Documento {CREDITO_CLINICAL_ANATOMY.autorizacao}.{' '}
-        <a
-          href={CREDITO_CLINICAL_ANATOMY.url}
-          target="_blank"
-          rel="noreferrer"
-          className="inline-flex items-center gap-1 font-semibold text-sky-600 underline underline-offset-2 dark:text-sky-400"
-        >
-          Abrir atlas original <ExternalLink className="h-3 w-3" />
-        </a>
-      </p>
     </div>
   )
 }
