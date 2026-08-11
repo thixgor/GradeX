@@ -10,7 +10,6 @@ import {
   rotaDeComparacao,
   rotaDoCapituloWebPathUtah,
   rotaDoMecanismo,
-  rotaDoWebPathUtah,
   rotaDoSistema,
   rotaNormal,
 } from '@/lib/histopatologia/rotas'
@@ -344,8 +343,7 @@ describe('rotas', () => {
     expect(rotaDaDoenca('apendicite-aguda')).toBe(`${BASE}/doencas/apendicite-aguda`)
     expect(rotaDoSistema('gastrointestinal')).toBe(`${BASE}/sistemas/gastrointestinal`)
     expect(rotaDoMecanismo('inflamacao-aguda')).toBe(`${BASE}/mecanismos/inflamacao-aguda`)
-    expect(rotaDoWebPathUtah()).toBe(`${BASE}/webpath-utah`)
-    expect(rotaDoCapituloWebPathUtah('renal')).toBe(`${BASE}/webpath-utah/renal`)
+    expect(rotaDoCapituloWebPathUtah('renal')).toBe(`${BASE}/atlas/webpath-utah/renal`)
     expect(rotaNormal(['tecidos', 'epitelio'])).toBe(`${BASE_HISTOLOGIA}/tecidos/epitelio`)
     expect(rotaDeComparacao('apendicite-aguda', ['a', 'b'])).toBe(
       `${BASE}/comparar/apendicite-aguda/a/b`,
@@ -373,6 +371,7 @@ describe('rotas', () => {
       'creditos/page.tsx',
       'webpath-utah/page.tsx',
       'webpath-utah/[capitulo]/page.tsx',
+      'atlas/webpath-utah/[capitulo]/page.tsx',
     ]) {
       expect(statSync(path.join(raiz, relativo)).isFile(), relativo).toBe(true)
     }

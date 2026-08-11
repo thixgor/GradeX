@@ -1,18 +1,23 @@
 import Link from 'next/link'
-import { ArrowLeft, ArrowRight } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Microscope } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
 import { BuscaDaHistopatologia } from '@/components/histopatologia/busca'
 import { LISTA_DE_FONTES } from '@/lib/histopatologia/direitos'
 import { SISTEMAS_COM_CONTAGEM, TOTAIS } from '@/lib/histopatologia/repositorio'
-import { BASE, rotaDoSistema } from '@/lib/histopatologia/rotas'
+import { BASE, rotaDoCapituloWebPathUtah, rotaDoSistema } from '@/lib/histopatologia/rotas'
 import { metadadosDoModulo } from '@/lib/histopatologia/seo'
+import {
+  CAPITULOS_WEBPATH_UTAH,
+  TOTAL_ENTRADAS_WEBPATH_UTAH,
+} from '@/lib/histopatologia/webpath-utah/catalogo'
 
 /**
  * Atlas de inventário.
  *
- * O que esta página é: um índice honesto de 2.917 entradas catalogadas, com
- * busca e navegação por sistema. O que ela **não** é: uma galeria. Renderizar
+ * O que esta página é: um índice único das entradas catalogadas em todas as
+ * coleções, com busca e navegação por sistema e capítulo. O que ela **não** é:
+ * uma galeria carregada de uma vez. Renderizar
  * 202 mil cartões de mídia não é acesso ao acervo, é a aparência dele — e as
  * mídias de cada entrada são carregadas sob demanda, na página da entrada.
  *
@@ -24,11 +29,13 @@ import { metadadosDoModulo } from '@/lib/histopatologia/seo'
 
 export const revalidate = 86400
 
+const TOTAL_DE_ITENS_DO_ATLAS = TOTAIS.capitulosVisuais + TOTAL_ENTRADAS_WEBPATH_UTAH
+
 export const metadata = metadadosDoModulo({
   titulo: 'Atlas de lâminas',
   descricao:
-    `${TOTAIS.capitulosVisuais} capítulos visuais e ` +
-    `${TOTAIS.referenciasDeMidia} referências de lâmina organizadas para estudo no Domine Aqui.`,
+    `${TOTAL_DE_ITENS_DO_ATLAS} capítulos e referências visuais, incluindo ` +
+    `${TOTAL_ENTRADAS_WEBPATH_UTAH} registros do WebPath/Utah no mesmo atlas do Domine Aqui.`,
   caminho: `${BASE}/atlas`,
 })
 
@@ -47,13 +54,13 @@ export default function PaginaDoAtlas() {
           <header className="mb-5">
             <p className="editorial-mark mb-2">Atlas</p>
             <h1 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
-              {TOTAIS.capitulosVisuais.toLocaleString('pt-BR')} capítulos visuais
+              {TOTAL_DE_ITENS_DO_ATLAS.toLocaleString('pt-BR')} itens de atlas
             </h1>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
               Explore doenças, lesões, controles, colorações, marcadores, peças e casos dos atlas da
-              FCM/Unicamp e do Histopathology Atlas. Os títulos foram normalizados para leitura e as
-              imagens abrem primeiro dentro do Domine Aqui; a identificação original permanece na
-              área de crédito de cada capítulo.
+              FCM/Unicamp, Histopathology Atlas e WebPath/Utah em um único índice. Os títulos foram
+              normalizados para leitura, e cada item preserva identificação e crédito da coleção
+              responsável.
             </p>
           </header>
 
@@ -63,6 +70,49 @@ export default function PaginaDoAtlas() {
             autoFoco
             placeholder="adenocarcinoma, granuloma, necrose coagulativa, HE…"
           />
+
+          <section aria-labelledby="capitulos-webpath" className="mt-10">
+            <h2 id="capitulos-webpath" className="mb-2 font-heading text-lg font-semibold">
+              Mais capítulos no Atlas de lâminas
+            </h2>
+            <p className="mb-3 max-w-3xl text-xs leading-relaxed text-muted-foreground">
+              As {TOTAL_ENTRADAS_WEBPATH_UTAH.toLocaleString('pt-BR')} referências patológicas do
+              WebPath/Utah estão indexadas aqui junto às demais coleções. Abra um capítulo para
+              pesquisar títulos traduzidos, separar macro e microscopia e estudar o roteiro
+              morfológico no Domine Aqui.
+            </p>
+            <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              {CAPITULOS_WEBPATH_UTAH.map((capitulo) => (
+                <li key={capitulo.id}>
+                  <Link
+                    href={rotaDoCapituloWebPathUtah(capitulo.id)}
+                    className="group flex h-full min-h-[112px] flex-col rounded-xl border border-border bg-card p-3.5 transition-colors hover:border-teal-600/50"
+                  >
+                    <span className="flex items-start justify-between gap-3">
+                      <Microscope
+                        className="h-4 w-4 shrink-0 text-teal-700 dark:text-teal-400"
+                        aria-hidden
+                      />
+                      <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-bold text-muted-foreground">
+                        {capitulo.total} referências
+                      </span>
+                    </span>
+                    <span className="mt-2 text-sm font-bold leading-snug">{capitulo.nome}</span>
+                    <span className="mt-1 flex-1 text-[11px] leading-relaxed text-muted-foreground">
+                      {capitulo.descricao}
+                    </span>
+                    <span className="mt-2 inline-flex items-center gap-1 text-[11px] font-bold text-teal-700 dark:text-teal-400">
+                      Abrir capítulo
+                      <ArrowRight
+                        className="h-3 w-3 transition-transform group-hover:translate-x-0.5"
+                        aria-hidden
+                      />
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
 
           <section aria-labelledby="por-sistema" className="mt-10">
             <h2 id="por-sistema" className="mb-2 font-heading text-lg font-semibold">

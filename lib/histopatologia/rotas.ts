@@ -17,12 +17,8 @@ export function rotaDoAtlas(): string {
   return `${BASE}/atlas`
 }
 
-export function rotaDoWebPathUtah(): string {
-  return `${BASE}/webpath-utah`
-}
-
 export function rotaDoCapituloWebPathUtah(id: string): string {
-  return `${rotaDoWebPathUtah()}/${encodeURIComponent(id)}`
+  return `${rotaDoAtlas()}/webpath-utah/${encodeURIComponent(id)}`
 }
 
 /** Página de inventário de uma entrada catalogada (não é doença canônica). */

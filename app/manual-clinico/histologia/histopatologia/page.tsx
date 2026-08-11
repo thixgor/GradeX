@@ -15,7 +15,6 @@ import { CartaoDeDoenca } from '@/components/histopatologia/cartao-doenca'
 import {
   BASE_HISTOLOGIA,
   rotaDoAtlas,
-  rotaDoWebPathUtah,
   rotaDosCreditos,
   rotaDosMecanismos,
   rotaDoSistema,
@@ -77,13 +76,15 @@ export default function HomeDaHistopatologia() {
             <ul className="mt-6 flex flex-wrap items-center gap-2.5 text-xs">
               <Indicador icone={<ScrollText className="h-3.5 w-3.5" aria-hidden />}>
                 {TOTAIS.doencas} aprofundados ·{' '}
-                {TOTAIS.capitulosVisuais.toLocaleString('pt-BR')} capítulos visuais
+                {(TOTAIS.capitulosVisuais + TOTAL_ENTRADAS_WEBPATH_UTAH).toLocaleString('pt-BR')}{' '}
+                itens de atlas
               </Indicador>
               <Indicador icone={<Library className="h-3.5 w-3.5" aria-hidden />}>
                 FCM/Unicamp + Histopathology Atlas + WebPath/Utah
               </Indicador>
               <Indicador icone={<Layers className="h-3.5 w-3.5" aria-hidden />}>
-                {TOTAIS.referenciasDeMidia.toLocaleString('pt-BR')} referências de lâmina
+                {(TOTAIS.referenciasDeMidia + TOTAL_ENTRADAS_WEBPATH_UTAH).toLocaleString('pt-BR')}{' '}
+                referências de lâmina
               </Indicador>
               <Indicador icone={<Microscope className="h-3.5 w-3.5" aria-hidden />}>
                 {TOTAIS.mecanismos} mecanismos gerais
@@ -98,7 +99,7 @@ export default function HomeDaHistopatologia() {
             <h2 id="modos" className="sr-only">
               Modos de navegação
             </h2>
-            <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <ul className="grid gap-3 sm:grid-cols-3">
               <li>
                 <Atalho
                   href={rotaDosMecanismos()}
@@ -112,14 +113,6 @@ export default function HomeDaHistopatologia() {
                   href={rotaDoAtlas()}
                   titulo="Atlas de lâminas"
                   descricao={`${TOTAIS.capitulosVisuais.toLocaleString('pt-BR')} capítulos visuais com lâminas disponíveis, organizados por sistema e abertos dentro do Domine Aqui.`}
-                  icone={<Library className="h-5 w-5" aria-hidden />}
-                />
-              </li>
-              <li>
-                <Atalho
-                  href={rotaDoWebPathUtah()}
-                  titulo="WebPath/Utah traduzido"
-                  descricao={`${TOTAL_ENTRADAS_WEBPATH_UTAH.toLocaleString('pt-BR')} referências patológicas de macro e microscopia, com leitura guiada em português por capítulo.`}
                   icone={<Library className="h-5 w-5" aria-hidden />}
                 />
               </li>

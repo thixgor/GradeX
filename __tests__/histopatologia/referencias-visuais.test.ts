@@ -35,12 +35,17 @@ describe('referências visuais externas', () => {
     }
   })
 
-  it('guarda somente links de páginas permitidas, nunca URLs de imagens', () => {
+  it('incorpora somente imagens WebPath autorizadas e mantém as demais como links', () => {
     for (const { referencia } of entradas) {
       expect(referencia.urlPaginaFonte).toMatch(/^https:\/\//)
       expect(hostPermitido(referencia.fonteId, referencia.urlPaginaFonte), referencia.id).toBe(true)
       expect(FONTES[referencia.fonteId]).toBeDefined()
-      expect(referencia).not.toHaveProperty('urlImagem')
+      if (referencia.fonteId === 'webpath-utah') {
+        expect(referencia.urlImagem, referencia.id).toMatch(/^https:\/\/webpath\.med\.utah\.edu\/jpeg\d+\/.+\.jpg$/i)
+        expect(hostPermitido(referencia.fonteId, referencia.urlImagem), referencia.id).toBe(true)
+      } else {
+        expect(referencia).not.toHaveProperty('urlImagem')
+      }
       expect(referencia).not.toHaveProperty('urlVisualizador')
     }
   })

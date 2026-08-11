@@ -70,13 +70,13 @@ export const FONTES: Record<FonteId, Fonte> = {
     id: 'webpath-utah',
     nome: 'WebPath — University of Utah',
     url: 'https://webpath.med.utah.edu/',
-    creditoCurto: 'WebPath — University of Utah',
+    creditoCurto: 'WebPath® — © 1994–2026 Edward C. Klatt, M.D. All rights reserved.',
     atribuicaoCatalogada:
-      'WebPath, Edward C. Klatt, MD, hospedado pela Eccles Health Sciences Library da University of Utah.',
+      'WebPath® — © 1994–2026 Edward C. Klatt, M.D. All rights reserved.',
     dominiosDeMidia: ['webpath.med.utah.edu'],
-    situacaoDeDireitos: 'Somente consulta externa',
+    situacaoDeDireitos: 'Direitos aprovados para o Domine Aqui',
     politicaInicial:
-      'Materiais protegidos; o Domine Aqui mantém título factual, hiperlink para a página pública e conteúdo didático próprio.',
+      'Autorização escrita para exibir, hospedar por referência remota e incorporar imagens no Domine Aqui, com visualizador interno e ampliação.',
   },
 }
 
@@ -88,7 +88,7 @@ export const LISTA_DE_FONTES: Fonte[] = [
   FONTES['webpath-utah'],
 ]
 
-/** Permissões aprovadas para as duas fontes catalogadas. */
+/** Permissões e limitações registradas para todas as fontes catalogadas. */
 export const ESCOPOS_DE_DIREITOS: EscopoDeDireitos[] = [
   {
     id: 'unicamp-fonte',
@@ -155,14 +155,19 @@ export const ESCOPOS_DE_DIREITOS: EscopoDeDireitos[] = [
     fonteId: 'webpath-utah',
     escopo: 'fonte',
     alvo: 'webpath-utah',
-    estado: 'autorizado-link-remoto',
+    estado: 'autorizado-incorporacao',
     titular: 'Edward C. Klatt, MD',
-    licenca: 'Hiperlink para página pública, sem reprodução de material',
-    comprovante: 'https://webpath.med.utah.edu/',
+    licenca: 'Autorização escrita para exibição direta no Domine Aqui e seus subdomínios',
+    comprovante: 'WebPath_Authorization_DomineAqui.pdf · WP-AUTH-DOMINEAQUI-2026-08-11 · SHA-256 D244CCEE9453347BF35310B45F5813C78A4CB9E98FCE122E6082FB17ACC35CC0',
     verificadoEm: '2026-08-11',
     responsavel: 'Equipe editorial do Domine Aqui',
-    restricoes: ['Não modificar, copiar, distribuir, transmitir, exibir ou publicar os materiais.'],
-    observacao: 'O Domine Aqui mantém somente o título factual, o endereço da página e texto didático próprio.',
+    restricoes: [
+      'Uso gratuito, pessoal, educacional e não comercial.',
+      'Não modificar, redistribuir nem republicar os arquivos fora da exibição autorizada.',
+      'Não sugerir endosso, patrocínio ou afiliação da WebPath com o Domine Aqui.',
+      'Autorização válida até eventual revogação por escrito.',
+    ],
+    observacao: 'A autorização inclui incorporação, apresentação direta e visualizador interno com ampliação. Crédito recomendado mantido em cada imagem.',
   },
 ]
 
@@ -351,8 +356,8 @@ export function podeIndexar(estadoDeRevisao?: string): boolean {
 }
 
 export const CREDITO_BASE =
-  'O acervo combina imagens remotas autorizadas da FCM/Unicamp e do Histopathology Atlas com ' +
-  'referências visuais externas do Pathology Outlines, WebPathology e WebPath/University of Utah. ' +
+  'O acervo combina imagens remotas autorizadas da FCM/Unicamp, do Histopathology Atlas e da WebPath com ' +
+  'referências visuais externas do Pathology Outlines e WebPathology. ' +
   'Nenhuma imagem é copiada, armazenada ou reprocessada pelo Domine Aqui.'
 
 /**

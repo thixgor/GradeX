@@ -110,18 +110,20 @@ diagnóstico que a revisão não sustenta, sem retirar a entrada inteira.
 
 ## Direitos das fontes
 
-As duas fontes do catálogo incorporado estão aprovadas para exibição remota. As
-referências selecionadas de Pathology Outlines, WebPathology e WebPath/Utah são
-**somente links para a página original**: o Domine Aqui traduz o título e oferece
-um roteiro autoral de observação, mas não copia, incorpora nem enquadra a mídia.
+FCM/Unicamp, Histopathology Atlas e WebPath estão aprovados para exibição remota.
+Pathology Outlines e WebPathology permanecem **somente como links para a página
+original**. Na WebPath, a autorização escrita permite imagem direta e visualizador
+interno com ampliação; o Domine Aqui mantém crédito, página-fonte e roteiro autoral.
 A decisão e os créditos estão registrados na
 [ADR 0002](../../docs/adr/0002-direitos-de-midia-da-histopatologia.md).
 
 O catálogo complementar do WebPath/Utah fica em
 `data/histopatologia/webpath-utah/`: são 1.325 páginas de macroscopia ou
-microscopia patológica, separadas em 19 fragmentos. A interface carrega somente
+microscopia patológica e suas URLs remotas de imagem, separadas em 19 fragmentos.
+Nenhum JPEG é copiado para o projeto. A interface carrega somente
 o capítulo aberto, pagina 24 referências por vez e gera a tradução e a leitura
-guiada a partir de texto editorial próprio.
+guiada a partir de texto editorial próprio, com zoom de 100% a 400%. Esses capítulos fazem parte do
+índice e da busca do Atlas de lâminas; não constituem um módulo separado.
 
 ## Atualizar uma classificação
 

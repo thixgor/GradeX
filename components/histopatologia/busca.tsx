@@ -171,8 +171,8 @@ export function BuscaDaHistopatologia({
       </div>
 
       <p id={`${idCampo}-ajuda`} className="mt-1.5 text-[11px] text-muted-foreground">
-        Funciona sem acento e tolera plural. Sinônimos em inglês encontram quando foram cadastrados
-        pela edição — não traduzimos títulos automaticamente.
+        Funciona sem acento e tolera plural. Títulos catalogados em português ou inglês participam
+        do mesmo índice dos atlas.
       </p>
 
       {filtrosVisiveis && (

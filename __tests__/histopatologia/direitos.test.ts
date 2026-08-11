@@ -42,8 +42,8 @@ const midiaBase: MidiaCatalogada = {
 }
 
 describe('estado atual: incorporação e consulta externa são separadas', () => {
-  it('as duas fontes catalogadas estão com incorporação aprovada', () => {
-    for (const fonte of [FONTES.unicamp, FONTES['histopathology-atlas']]) {
+  it('as três fontes autorizadas estão com incorporação aprovada', () => {
+    for (const fonte of [FONTES.unicamp, FONTES['histopathology-atlas'], FONTES['webpath-utah']]) {
       const decisao = resolverDireitos({
         fonteId: fonte.id,
         midiaId: '—',
@@ -55,12 +55,8 @@ describe('estado atual: incorporação e consulta externa são separadas', () =>
     }
   })
 
-  it('as três fontes complementares permitem somente abrir a página original', () => {
-    for (const fonte of [
-      FONTES['pathology-outlines'],
-      FONTES.webpathology,
-      FONTES['webpath-utah'],
-    ]) {
+  it('as duas fontes sem autorização permitem somente abrir a página original', () => {
+    for (const fonte of [FONTES['pathology-outlines'], FONTES.webpathology]) {
       const decisao = resolverDireitos({
         fonteId: fonte.id,
         midiaId: '—',

@@ -8,6 +8,8 @@ export interface ReferenciaVisualExterna {
   titulo: string
   tituloOriginal: string
   urlPaginaFonte: string
+  /** URL remota exibível apenas quando a fonte possui autorização registrada. */
+  urlImagem?: string
   aumento: AumentoVisualExterno
   modalidade: string
   descricaoDidatica: string
@@ -15,12 +17,11 @@ export interface ReferenciaVisualExterna {
 }
 
 /**
- * Referências externas selecionadas manualmente, sem copiar imagem ou legenda.
+ * Referências visuais selecionadas manualmente, sem copiar imagem ou legenda.
  *
  * `descricaoDidatica` e `oQueObservar` são redação original do Domine Aqui. Os
- * URLs levam à página pública que contém a imagem; não existe URL de arquivo de
- * mídia neste modelo, portanto esta camada não pode ser usada para hotlink ou
- * incorporação acidental.
+ * Para WebPath, a autorização escrita permite registrar a URL remota do arquivo
+ * e exibi-lo no Domine Aqui. As demais fontes continuam limitadas à página pública.
  */
 export const REFERENCIAS_VISUAIS_EXTERNAS: Record<string, ReferenciaVisualExterna[]> = {
   'carcinoma-papilifero-da-tireoide': [
@@ -74,6 +75,7 @@ export const REFERENCIAS_VISUAIS_EXTERNAS: Record<string, ReferenciaVisualExtern
       titulo: 'Carcinoma papilífero da tireoide — peça macroscópica',
       tituloOriginal: 'Thyroid, papillary carcinoma, gross',
       urlPaginaFonte: 'https://webpath.med.utah.edu/ENDOHTML/ENDO063.html',
+      urlImagem: 'https://webpath.med.utah.edu/jpeg4/ENDO063.jpg',
       aumento: 'macroscopia',
       modalidade: 'Macroscopia',
       descricaoDidatica: 'Use a peça para mapear limites, multifocalidade e relação com a cápsula. Áreas firmes, esbranquiçadas e eventualmente calcificadas orientam a amostragem, mas a aparência isolada não define subtipo.',
@@ -85,6 +87,7 @@ export const REFERENCIAS_VISUAIS_EXTERNAS: Record<string, ReferenciaVisualExtern
       titulo: 'Carcinoma papilífero — visão em pequeno aumento',
       tituloOriginal: 'Thyroid, papillary carcinoma, low power microscopic',
       urlPaginaFonte: 'https://webpath.med.utah.edu/ENDOHTML/ENDO026.html',
+      urlImagem: 'https://webpath.med.utah.edu/jpeg4/ENDO026.jpg',
       aumento: 'pequeno',
       modalidade: 'Histologia — HE',
       descricaoDidatica: 'A visão panorâmica estabelece se a lesão é infiltrativa, encapsulada, papilífera ou predominantemente folicular. Essa leitura antecede a procura de detalhes nucleares.',
@@ -96,6 +99,7 @@ export const REFERENCIAS_VISUAIS_EXTERNAS: Record<string, ReferenciaVisualExtern
       titulo: 'Carcinoma papilífero — detalhe nuclear',
       tituloOriginal: 'Thyroid, papillary carcinoma, high power microscopic',
       urlPaginaFonte: 'https://webpath.med.utah.edu/ENDOHTML/ENDO027.html',
+      urlImagem: 'https://webpath.med.utah.edu/jpeg4/ENDO027.jpg',
       aumento: 'grande',
       modalidade: 'Histologia — HE',
       descricaoDidatica: 'Campo complementar para treinar o conjunto nuclear em população celular, não em célula isolada. A distribuição difusa das alterações pesa mais que uma pseudoinclusão ocasional.',
@@ -153,6 +157,7 @@ export const REFERENCIAS_VISUAIS_EXTERNAS: Record<string, ReferenciaVisualExtern
       titulo: 'Melanoma cutâneo — aspecto macroscópico',
       tituloOriginal: 'Melanoma, skin, gross',
       urlPaginaFonte: 'https://webpath.med.utah.edu/NEOHTML/NEOPL024.html',
+      urlImagem: 'https://webpath.med.utah.edu/jpeg3/SKIN097.jpg',
       aumento: 'macroscopia',
       modalidade: 'Macroscopia clínica',
       descricaoDidatica: 'A macroscopia treina assimetria, borda irregular, variação de cor e áreas nodulares. Esses sinais escolhem a lesão para biópsia; o diagnóstico e o estadiamento permanecem histológicos.',
@@ -164,6 +169,7 @@ export const REFERENCIAS_VISUAIS_EXTERNAS: Record<string, ReferenciaVisualExtern
       titulo: 'Melanoma — melanossomos à microscopia eletrônica',
       tituloOriginal: 'Melanosomes from a malignant melanoma, electron micrograph',
       urlPaginaFonte: 'https://webpath.med.utah.edu/HISTHTML/EM/EM029.html',
+      urlImagem: 'https://webpath.med.utah.edu/jpeg3/SKIN034.jpg',
       aumento: 'especial',
       modalidade: 'Microscopia eletrônica',
       descricaoDidatica: 'Referência ultraestrutural para relacionar o pigmento castanho da HE a organelas especializadas. Hoje a microscopia eletrônica raramente é necessária no diagnóstico, mas esclarece a biologia melanocítica.',
@@ -221,6 +227,7 @@ export const REFERENCIAS_VISUAIS_EXTERNAS: Record<string, ReferenciaVisualExtern
       titulo: 'Osteossarcoma — peça macroscópica',
       tituloOriginal: 'Osteosarcoma of bone, gross',
       urlPaginaFonte: 'https://webpath.med.utah.edu/NEOHTML/NEOPL049.html',
+      urlImagem: 'https://webpath.med.utah.edu/jpeg3/BONE001.jpg',
       aumento: 'macroscopia',
       modalidade: 'Macroscopia',
       descricaoDidatica: 'Observe a massa metafisária destrutiva, a substituição da medula e a extensão através do córtex para partes moles. Esses eixos orientam amostragem, resposta terapêutica e margens.',
@@ -232,6 +239,7 @@ export const REFERENCIAS_VISUAIS_EXTERNAS: Record<string, ReferenciaVisualExtern
       titulo: 'Osteossarcoma — visão microscópica intermediária',
       tituloOriginal: 'Osteosarcoma of bone, medium power microscopic',
       urlPaginaFonte: 'https://webpath.med.utah.edu/NEOHTML/NEOPL050.html',
+      urlImagem: 'https://webpath.med.utah.edu/jpeg3/BONE004.jpg',
       aumento: 'medio',
       modalidade: 'Histologia — HE',
       descricaoDidatica: 'Campo para integrar matriz e citologia: primeiro confirme que o material róseo é osteoide e depois demonstre que as próprias células produtoras são malignas.',
@@ -289,6 +297,7 @@ export const REFERENCIAS_VISUAIS_EXTERNAS: Record<string, ReferenciaVisualExtern
       titulo: 'Seminoma testicular — peça de orquiectomia',
       tituloOriginal: 'Testis, seminoma, gross',
       urlPaginaFonte: 'https://webpath.med.utah.edu/MALEHTML/MALE084.html',
+      urlImagem: 'https://webpath.med.utah.edu/jpeg1/MALE084.jpg',
       aumento: 'macroscopia',
       modalidade: 'Macroscopia',
       descricaoDidatica: 'Use a peça para reconhecer substituição do parênquima por massa sólida e planejar amostragem de hilo, rede testicular, túnicas e cordão. A extensão anatômica interfere no estadiamento.',
@@ -300,6 +309,7 @@ export const REFERENCIAS_VISUAIS_EXTERNAS: Record<string, ReferenciaVisualExtern
       titulo: 'Seminoma — visão em pequeno aumento',
       tituloOriginal: 'Testis, seminoma, low power microscopic',
       urlPaginaFonte: 'https://webpath.med.utah.edu/MALEHTML/MALE096.html',
+      urlImagem: 'https://webpath.med.utah.edu/jpeg1/MALE096.jpg',
       aumento: 'pequeno',
       modalidade: 'Histologia — HE',
       descricaoDidatica: 'A panorâmica evidencia lóbulos tumorais separados por septos. Antes de ampliar, procure túbulos seminíferos residuais na periferia para avaliar neoplasia germinativa in situ.',
@@ -311,6 +321,7 @@ export const REFERENCIAS_VISUAIS_EXTERNAS: Record<string, ReferenciaVisualExtern
       titulo: 'Seminoma — visão em aumento intermediário',
       tituloOriginal: 'Testis, seminoma, medium power microscopic',
       urlPaginaFonte: 'https://webpath.med.utah.edu/MALEHTML/MALE087.html',
+      urlImagem: 'https://webpath.med.utah.edu/jpeg1/MALE087.jpg',
       aumento: 'medio',
       modalidade: 'Histologia — HE',
       descricaoDidatica: 'Campo para comparar uniformidade das células neoplásicas, clareza citoplasmática e resposta linfoide. Áreas com maior pleomorfismo ou outras matrizes exigem busca de componente misto.',
@@ -357,6 +368,7 @@ export const REFERENCIAS_VISUAIS_EXTERNAS: Record<string, ReferenciaVisualExtern
       titulo: 'Poliarterite nodosa — artéria muscular em corte transversal',
       tituloOriginal: 'Muscular artery, polyarteritis nodosa, microscopic',
       urlPaginaFonte: 'https://webpath.med.utah.edu/CVHTML/SKIN117.html',
+      urlImagem: 'https://webpath.med.utah.edu/jpeg3/SKIN117.jpg',
       aumento: 'medio',
       modalidade: 'Histologia — HE',
       descricaoDidatica: 'Referência para reconhecer vasculite necrosante de artéria de médio calibre. A ausência de capilarite glomerular e de inflamação de pequenas vênulas ajuda a separar PAN de vasculites ANCA-associadas.',
@@ -370,6 +382,7 @@ export const REFERENCIAS_VISUAIS_EXTERNAS: Record<string, ReferenciaVisualExtern
       titulo: 'Pericardite fibrinosa — esquema do padrão',
       tituloOriginal: 'Fibrinous pericarditis, diagram',
       urlPaginaFonte: 'https://webpath.med.utah.edu/CVHTML/CV044.html',
+      urlImagem: 'https://webpath.med.utah.edu/jpeg5/CV044.jpg',
       aumento: 'especial',
       modalidade: 'Esquema anatomopatológico',
       descricaoDidatica: 'O esquema ajuda a entender por que o aumento de permeabilidade deposita fibrina sobre as superfícies pericárdicas. A fricção entre folhetos ásperos produz o atrito auscultatório.',
@@ -381,6 +394,7 @@ export const REFERENCIAS_VISUAIS_EXTERNAS: Record<string, ReferenciaVisualExtern
       titulo: 'Pericardite fibrinosa — aspecto macroscópico',
       tituloOriginal: 'Fibrinous pericarditis, gross',
       urlPaginaFonte: 'https://webpath.med.utah.edu/CVHTML/CV045.html',
+      urlImagem: 'https://webpath.med.utah.edu/jpeg5/CV045.jpg',
       aumento: 'macroscopia',
       modalidade: 'Macroscopia',
       descricaoDidatica: 'A superfície perde o brilho e recebe filamentos amarelados de fibrina. O aspecto viloso clássico descreve a textura, mas não identifica sozinho a causa clínica.',
@@ -392,6 +406,7 @@ export const REFERENCIAS_VISUAIS_EXTERNAS: Record<string, ReferenciaVisualExtern
       titulo: 'Pericardite fibrinosa — distribuição sobre o epicárdio',
       tituloOriginal: 'Fibrinous pericarditis, gross',
       urlPaginaFonte: 'https://webpath.med.utah.edu/CVHTML/CV046.html',
+      urlImagem: 'https://webpath.med.utah.edu/jpeg5/CV046.jpg',
       aumento: 'macroscopia',
       modalidade: 'Macroscopia',
       descricaoDidatica: 'Compare áreas recobertas e preservadas e procure extensão difusa. A distribuição ajuda a diferenciar reação sistêmica de foco contíguo localizado.',
@@ -403,6 +418,7 @@ export const REFERENCIAS_VISUAIS_EXTERNAS: Record<string, ReferenciaVisualExtern
       titulo: 'Pericardite fibrinosa — microscopia',
       tituloOriginal: 'Fibrinous pericarditis, microscopic',
       urlPaginaFonte: 'https://webpath.med.utah.edu/CVHTML/CV048.html',
+      urlImagem: 'https://webpath.med.utah.edu/jpeg5/CV048.jpg',
       aumento: 'medio',
       modalidade: 'Histologia — HE',
       descricaoDidatica: 'A fibrina forma rede eosinofílica superficial sobre mesotélio lesado, acompanhada por inflamação variável. Em evolução, fibroblastos e capilares organizam o exsudato em aderência fibrosa.',
@@ -416,6 +432,7 @@ export const REFERENCIAS_VISUAIS_EXTERNAS: Record<string, ReferenciaVisualExtern
       titulo: 'Broncopneumonia — consolidações multifocais',
       tituloOriginal: 'Lung, bronchopneumonia, gross',
       urlPaginaFonte: 'https://webpath.med.utah.edu/LUNGHTML/LUNG006.html',
+      urlImagem: 'https://webpath.med.utah.edu/jpeg1/LUNG006.jpg',
       aumento: 'macroscopia',
       modalidade: 'Macroscopia',
       descricaoDidatica: 'Os focos supurativos distribuem-se ao redor de bronquíolos e podem confluir. O padrão lobular, irregular e bilateral contrasta com a consolidação uniforme de um lobo inteiro.',
@@ -427,6 +444,7 @@ export const REFERENCIAS_VISUAIS_EXTERNAS: Record<string, ReferenciaVisualExtern
       titulo: 'Broncopneumonia abscedada',
       tituloOriginal: 'Lung, abscessing bronchopneumonia, gross',
       urlPaginaFonte: 'https://webpath.med.utah.edu/LUNGHTML/LUNG013.html',
+      urlImagem: 'https://webpath.med.utah.edu/jpeg1/LUNG013.jpg',
       aumento: 'macroscopia',
       modalidade: 'Macroscopia',
       descricaoDidatica: 'A necrose liquefativa transforma o foco de pneumonia em cavidade purulenta. Procure comunicação com via aérea e tecido hemorrágico ou necrótico ao redor.',
@@ -438,6 +456,7 @@ export const REFERENCIAS_VISUAIS_EXTERNAS: Record<string, ReferenciaVisualExtern
       titulo: 'Broncopneumonia — visão em pequeno aumento',
       tituloOriginal: 'Lung, bronchopneumonia, low power microscopic',
       urlPaginaFonte: 'https://webpath.med.utah.edu/LUNGHTML/LUNG014.html',
+      urlImagem: 'https://webpath.med.utah.edu/jpeg1/LUNG014.jpg',
       aumento: 'pequeno',
       modalidade: 'Histologia — HE',
       descricaoDidatica: 'A baixa magnificação demonstra preenchimento alveolar centrado em bronquíolo, com transição abrupta para parênquima menos comprometido. Essa geografia sustenta o padrão broncopneumônico.',
@@ -449,6 +468,7 @@ export const REFERENCIAS_VISUAIS_EXTERNAS: Record<string, ReferenciaVisualExtern
       titulo: 'Broncopneumonia — exsudato neutrofílico alveolar',
       tituloOriginal: 'Lung, bronchopneumonia, high power microscopic',
       urlPaginaFonte: 'https://webpath.med.utah.edu/LUNGHTML/LUNG015.html',
+      urlImagem: 'https://webpath.med.utah.edu/jpeg1/LUNG015.jpg',
       aumento: 'grande',
       modalidade: 'Histologia — HE',
       descricaoDidatica: 'Em grande aumento, o espaço aéreo contém neutrófilos, fibrina e edema. A parede alveolar deve ser examinada para necrose, dano difuso associado ou organização.',

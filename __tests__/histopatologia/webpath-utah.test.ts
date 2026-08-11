@@ -54,14 +54,17 @@ describe('catálogo WebPath/Utah', () => {
     }
   })
 
-  it('usa páginas HTTPS da fonte e não armazena arquivo de imagem', () => {
+  it('usa páginas e imagens HTTPS da fonte sem armazenar os arquivos', () => {
     for (const capitulo of CAPITULOS) {
       const urls = new Set<string>()
       for (const entrada of capitulo.entradas) {
         const url = new URL(entrada.url)
         expect(url.protocol).toBe('https:')
         expect(url.host).toBe('webpath.med.utah.edu')
-        expect(entrada).not.toHaveProperty('urlImagem')
+        const imagem = new URL(entrada.urlImagem)
+        expect(imagem.protocol).toBe('https:')
+        expect(imagem.host).toBe('webpath.med.utah.edu')
+        expect(imagem.pathname).toMatch(/^\/jpeg\d+\/.+\.jpg$/i)
         expect(entrada).not.toHaveProperty('urlVisualizador')
         expect(urls.has(entrada.url), entrada.url).toBe(false)
         urls.add(entrada.url)

@@ -9,7 +9,10 @@ import {
   ImageOff,
   Maximize2,
   Microscope,
+  RotateCcw,
   X,
+  ZoomIn,
+  ZoomOut,
 } from 'lucide-react'
 
 import type { MidiaExibivel } from '@/lib/histopatologia/esquemas'
@@ -56,12 +59,18 @@ export interface ImagemRemotaProps {
   variante?: 'cartao' | 'principal'
   /** Abre a mídia no visualizador interno da galeria. */
   onAbrir?: () => void
+  nomeOriginal?: string
+  secao?: string
+  pontosDeObservacao?: string[]
 }
 
 export function ImagemHistopatologicaRemota({
   midia,
   variante = 'cartao',
   onAbrir,
+  nomeOriginal,
+  secao,
+  pontosDeObservacao,
 }: ImagemRemotaProps) {
   const [falhou, setFalhou] = useState(false)
   const marca = MARCA_DE_DIREITOS[midia.estadoDeDireitos]
@@ -135,6 +144,12 @@ export function ImagemHistopatologicaRemota({
         {/* Nome catalogado: texto puro, nunca HTML. */}
         <p className="text-xs font-semibold leading-snug">{midia.nomeCatalogado}</p>
 
+        {nomeOriginal && (
+          <p className="text-[10px] leading-relaxed text-muted-foreground" lang="en">
+            Título na fonte: {nomeOriginal}
+          </p>
+        )}
+
         {midia.legendaEditorial ? (
           <p className="text-xs leading-relaxed text-muted-foreground">{midia.legendaEditorial}</p>
         ) : (
@@ -144,6 +159,19 @@ export function ImagemHistopatologicaRemota({
               <span className="mt-1 block text-[10px] italic">{AVISO_DESCRICAO}</span>
             </p>
           )
+        )}
+
+        {pontosDeObservacao && pontosDeObservacao.length > 0 && (
+          <div className="rounded-lg bg-muted/45 p-3">
+            <p className="text-[11px] font-bold">
+              Ao ampliar, procure{secao ? ` em ${secao.toLocaleLowerCase('pt-BR')}` : ''}:
+            </p>
+            <ul className="mt-1 list-disc space-y-1 pl-4 text-[11px] leading-relaxed text-muted-foreground">
+              {pontosDeObservacao.map((ponto) => (
+                <li key={ponto}>{ponto}</li>
+              ))}
+            </ul>
+          </div>
         )}
 
         <div className="mt-auto flex flex-wrap gap-1.5 pt-1">
@@ -212,7 +240,13 @@ export function VisualizadorDeLamina({
   posicao,
 }: VisualizadorDeLaminaProps) {
   const [falhou, setFalhou] = useState(false)
+  const [zoom, setZoom] = useState(1)
   const url = midia.urlImagem
+
+  useEffect(() => {
+    setFalhou(false)
+    setZoom(1)
+  }, [midia.id])
 
   useEffect(() => {
     const aoPressionar = (evento: KeyboardEvent) => {
@@ -257,32 +291,70 @@ export function VisualizadorDeLamina({
               {posicao ? ` · ${posicao}` : ''}
             </p>
           </div>
-          <button
-            type="button"
-            onClick={onFechar}
-            autoFocus
-            className="inline-flex min-h-[40px] min-w-[40px] items-center justify-center rounded-md border border-white/20 bg-white/10 transition-colors hover:bg-white/20"
-            aria-label="Fechar visualizador"
-          >
-            <X className="h-5 w-5" aria-hidden />
-          </button>
+          <div className="flex shrink-0 items-center gap-1">
+            <button
+              type="button"
+              onClick={() => setZoom((valor) => Math.max(1, valor - 0.5))}
+              disabled={zoom <= 1}
+              className="inline-flex min-h-[40px] min-w-[40px] items-center justify-center rounded-md border border-white/20 bg-white/10 transition-colors hover:bg-white/20 disabled:opacity-35"
+              aria-label="Reduzir ampliação"
+            >
+              <ZoomOut className="h-4 w-4" aria-hidden />
+            </button>
+            <span className="min-w-[48px] text-center text-[11px] font-bold" aria-live="polite">
+              {Math.round(zoom * 100)}%
+            </span>
+            <button
+              type="button"
+              onClick={() => setZoom((valor) => Math.min(4, valor + 0.5))}
+              disabled={zoom >= 4}
+              className="inline-flex min-h-[40px] min-w-[40px] items-center justify-center rounded-md border border-white/20 bg-white/10 transition-colors hover:bg-white/20 disabled:opacity-35"
+              aria-label="Aumentar ampliação"
+            >
+              <ZoomIn className="h-4 w-4" aria-hidden />
+            </button>
+            <button
+              type="button"
+              onClick={() => setZoom(1)}
+              className="hidden min-h-[40px] min-w-[40px] items-center justify-center rounded-md border border-white/20 bg-white/10 transition-colors hover:bg-white/20 sm:inline-flex"
+              aria-label="Restaurar ampliação"
+            >
+              <RotateCcw className="h-4 w-4" aria-hidden />
+            </button>
+            <button
+              type="button"
+              onClick={onFechar}
+              autoFocus
+              className="inline-flex min-h-[40px] min-w-[40px] items-center justify-center rounded-md border border-white/20 bg-white/10 transition-colors hover:bg-white/20"
+              aria-label="Fechar visualizador"
+            >
+              <X className="h-5 w-5" aria-hidden />
+            </button>
+          </div>
         </header>
 
-        <div className="relative flex min-h-0 flex-1 items-center justify-center bg-black">
+        <div className="relative min-h-0 flex-1 overflow-auto bg-black">
           {falhou ? (
             <div className="p-10 text-center text-sm text-zinc-300">
               Não foi possível carregar esta lâmina agora.
             </div>
           ) : (
             // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={url}
-              alt={midia.alt}
-              decoding="async"
-              referrerPolicy="strict-origin-when-cross-origin"
-              className="max-h-[76vh] w-auto max-w-full object-contain"
-              onError={() => setFalhou(true)}
-            />
+            <div className="flex min-h-[76vh] min-w-full items-center justify-center p-2">
+              <img
+                src={url}
+                alt={midia.alt}
+                decoding="async"
+                referrerPolicy="strict-origin-when-cross-origin"
+                className="h-auto object-contain"
+                style={
+                  zoom === 1
+                    ? { maxHeight: '76vh', maxWidth: '100%', width: 'auto' }
+                    : { maxWidth: 'none', width: `${zoom * 100}%` }
+                }
+                onError={() => setFalhou(true)}
+              />
+            </div>
           )}
 
           {onAnterior && (

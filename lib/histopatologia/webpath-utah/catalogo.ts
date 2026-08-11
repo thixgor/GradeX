@@ -5,6 +5,7 @@ export interface EntradaWebPathUtahBruta {
   secaoOriginal: string
   tituloOriginal: string
   url: string
+  urlImagem: string
 }
 
 export interface CapituloWebPathUtahBruto {

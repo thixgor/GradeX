@@ -14,7 +14,7 @@ import { BASE, metadadosDoModulo } from '@/lib/histopatologia/seo'
  *    existe (é preciso poder revisar); em produção exige
  *    `HISTOPATOLOGIA_HABILITADO=1`;
  * 2. **`resolverDireitos`** decide, mídia a mídia, se a imagem pode ser exibida.
- *    As duas fontes catalogadas estão autorizadas, mas a validação continua
+ *    As fontes incorporadas estão autorizadas, mas a validação continua
  *    independente da disponibilidade da rota.
  *
  * Habilitar o módulo não libera imagem nenhuma. Foi desenhado assim de propósito:
