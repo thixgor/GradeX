@@ -3046,3 +3046,215 @@
     hsl(var(--muted-foreground) / 0.07) 10px
   );
 }
+
+/* ==========================================================================
+   Atlas de Raio-X — linguagem visual "negatoscópio"
+
+   Tudo aqui anima apenas `opacity`, `transform` e `background-position`, que
+   o compositor resolve sem relayout. O viewer precisa continuar fluido em
+   celular enquanto uma radiografia de 1080 px é decodificada ao lado, e a
+   grade do catálogo precisa entrar sem travar o scroll.
+   ========================================================================== */
+
+.rx {
+  --rx-luz: 56 189 248;
+  --rx-luz-alta: 165 243 252;
+}
+
+/* Fundo do painel: um negatoscópio visto de frente, com a lâmpada atrás. */
+.rx-painel {
+  background:
+    radial-gradient(120% 95% at 50% -15%, rgb(var(--rx-luz) / 0.18), transparent 62%),
+    radial-gradient(80% 60% at 90% 110%, rgb(var(--rx-luz) / 0.08), transparent 60%),
+    linear-gradient(180deg, #060c17 0%, #03060d 100%);
+}
+
+/* Retícula técnica, com máscara radial para não virar papel quadriculado. */
+.rx-grade::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgb(var(--rx-luz) / 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(var(--rx-luz) / 0.07) 1px, transparent 1px);
+  background-size: 46px 46px;
+  -webkit-mask-image: radial-gradient(ellipse 85% 75% at 50% 25%, #000 20%, transparent 78%);
+  mask-image: radial-gradient(ellipse 85% 75% at 50% 25%, #000 20%, transparent 78%);
+  animation: rx-deriva 26s linear infinite;
+}
+
+@keyframes rx-deriva {
+  to {
+    background-position: 46px 46px, 46px 46px;
+  }
+}
+
+/* Varredura contínua do cabeçalho: a lâmina de luz descendo pelo filme. */
+.rx-varredura::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 38%;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgb(var(--rx-luz-alta) / 0.06) 42%,
+    rgb(var(--rx-luz-alta) / 0.16) 50%,
+    rgb(var(--rx-luz-alta) / 0.06) 58%,
+    transparent
+  );
+  animation: rx-varrer 6.5s cubic-bezier(0.55, 0, 0.45, 1) infinite;
+}
+
+@keyframes rx-varrer {
+  0% {
+    transform: translateY(-110%);
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  88% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(300%);
+    opacity: 0;
+  }
+}
+
+/* Varredura de disparo único: remontada por `key` a cada troca de estrutura. */
+.rx-disparo {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 46%;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgb(var(--rx-luz-alta) / 0.1) 45%,
+    rgb(var(--rx-luz-alta) / 0.24) 50%,
+    rgb(var(--rx-luz-alta) / 0.1) 55%,
+    transparent
+  );
+  animation: rx-varrer 0.85s cubic-bezier(0.22, 1, 0.36, 1) 1 forwards;
+}
+
+/* Placeholder do filme: o aluno vê um estado desenhado, nunca um PNG meio pintado. */
+.rx-esqueleto {
+  background-color: #06080f;
+  background-image: linear-gradient(
+    100deg,
+    #06080f 22%,
+    #101a2b 42%,
+    #16233a 50%,
+    #101a2b 58%,
+    #06080f 78%
+  );
+  background-size: 260% 100%;
+  animation: rx-brilho 1.5s linear infinite;
+}
+
+@keyframes rx-brilho {
+  from {
+    background-position: 150% 0;
+  }
+  to {
+    background-position: -50% 0;
+  }
+}
+
+/* Entrada em cascata das grades. O atraso vem de `--rx-i` no style inline. */
+.rx-entra {
+  opacity: 0;
+  animation: rx-entra 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: calc(var(--rx-i, 0) * 42ms);
+}
+
+@keyframes rx-entra {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Realce fosforescente do item selecionado. */
+.rx-ativo {
+  box-shadow:
+    0 0 0 1px rgb(var(--rx-luz) / 0.6),
+    0 0 26px -8px rgb(var(--rx-luz) / 0.65),
+    inset 0 0 22px -14px rgb(var(--rx-luz) / 0.9);
+}
+
+.rx-pulso {
+  animation: rx-pulso 3s ease-in-out infinite;
+}
+
+@keyframes rx-pulso {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.74;
+  }
+}
+
+/* Cantos do porta-filme. */
+.rx-canto {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-color: rgb(var(--rx-luz) / 0.5);
+  pointer-events: none;
+}
+
+/* Barra de rolagem discreta nos painéis escuros do atlas. */
+.rx-rolagem {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(var(--rx-luz) / 0.35) transparent;
+}
+
+.rx-rolagem::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.rx-rolagem::-webkit-scrollbar-thumb {
+  background: rgb(var(--rx-luz) / 0.3);
+  border-radius: 999px;
+}
+
+.rx-rolagem::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rx-grade::before,
+  .rx-varredura::after,
+  .rx-disparo,
+  .rx-esqueleto,
+  .rx-pulso {
+    animation: none !important;
+  }
+
+  .rx-disparo {
+    display: none;
+  }
+
+  .rx-entra {
+    animation: none !important;
+    opacity: 1;
+    transform: none;
+  }
+}

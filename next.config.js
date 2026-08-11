@@ -24,6 +24,21 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'digitalhistology.org',
       },
+      // Atlas de Raio-X do Manual de Radiologia. São PNGs originais servidos por
+      // um host único no Canadá, sem CDN e sem cache-control útil: a radiografia
+      // base e as ~10 sobreposições de cada estudo chegavam ao aluno em tamanho
+      // integral, uma requisição transcontinental por vez — dava para *ver* cada
+      // imagem sendo pintada.
+      //
+      // Passando pelo otimizador, cada arquivo vira WebP (PNG de linha e osso
+      // comprime muito bem), é redimensionado para a largura em que realmente
+      // aparece na tela e passa a viver no edge cache por 30 dias. A busca ao
+      // servidor de origem acontece uma vez por variante, no servidor, e não
+      // uma vez por aluno, no navegador.
+      {
+        protocol: 'https',
+        hostname: 'www.clinicalanatomy.ca',
+      },
     ],
     // WebP, e não AVIF.
     //
@@ -40,7 +55,10 @@ const nextConfig = {
     // natural dentro do microscópio virtual e o aluno amplia sobre elas, então
     // limitar a 1200 destruiria o detalhe justamente no uso principal.
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256],
+    // 384 serve as miniaturas do catálogo de Raio-X: é a maior largura que um
+    // card ocupa em qualquer breakpoint, e fixá-la mantém uma única variante em
+    // cache por radiografia em vez de uma por viewport.
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     // Minimizar reprocessamento no build
     minimumCacheTTL: 60 * 60 * 24 * 30, // 30 dias
   },

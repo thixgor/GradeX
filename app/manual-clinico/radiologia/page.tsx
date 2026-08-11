@@ -5,7 +5,13 @@ import { ArrowLeft, ArrowRight, BookOpen, Crown, ImageIcon, Layers3, ScanLine, S
 import { AreaRadiologia } from '@/components/radiologia/area-radiologia'
 import { LogoRadiologia } from '@/components/radiologia/logo'
 import { SECOES, TOTAL_CORTES, TOTAL_ESTRUTURAS, TOTAL_SUBSECOES, caminhoDoCorte } from '@/lib/tomografia'
-import { CREDITO_CLINICAL_ANATOMY, ESTUDOS_RAIO_X, TOTAL_ESTRUTURAS_RAIO_X } from '@/lib/radiologia/raio-x'
+import { FilmeImagem } from '@/components/radiologia/filme'
+import {
+  CREDITO_CLINICAL_ANATOMY,
+  ESTUDOS_RAIO_X,
+  REGIOES_RAIO_X,
+  TOTAL_ESTRUTURAS_RAIO_X,
+} from '@/lib/radiologia/raio-x'
 
 export default function RadiologiaPage() {
   const primeiraSerie = SECOES[0]?.subsecoes[0]
@@ -63,7 +69,14 @@ export default function RadiologiaPage() {
 
             <Link href="/manual-clinico/radiologia/raio-x" className="group overflow-hidden rounded-2xl border border-sky-500/25 bg-card shadow-sm transition hover:-translate-y-0.5 hover:border-sky-500/55 hover:shadow-md">
               <div className="relative aspect-[16/9] overflow-hidden bg-black">
-                <img src="https://www.clinicalanatomy.ca/radiology/thorax/thoraxPA.png" alt="Radiografia de tórax em incidência PA" className="h-full w-full object-contain transition duration-500 group-hover:scale-[1.03]" referrerPolicy="no-referrer" />
+                <FilmeImagem
+                  src={REGIOES_RAIO_X[0].capa}
+                  alt="Radiografia de tórax em incidência PA"
+                  larguraMobile={640}
+                  larguraDesktop={640}
+                  qualidade={68}
+                  className="h-full w-full object-contain transition duration-500 group-hover:scale-[1.03]"
+                />
                 <div className="absolute left-4 top-4 rounded-full border border-white/15 bg-sky-500/90 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-white shadow backdrop-blur">Novo · Raio-X</div>
               </div>
               <div className="p-5 sm:p-6">
