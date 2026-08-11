@@ -94,6 +94,31 @@ const nextConfig = {
     ],
   },
 
+  /**
+   * A Tomografia nasceu antes do Manual de Radiologia e ficou na raiz do Manual
+   * Clínico (`/manual-clinico/tomografia`). Agora que Radiologia é a seção que
+   * abriga as modalidades, o caminho canônico é `/manual-clinico/radiologia/
+   * tomografia` — e o antigo redireciona em 308, preservando link externo,
+   * histórico do aluno e o que já foi indexado.
+   *
+   * Redirects de `next.config` rodam antes do middleware, então o visitante sem
+   * sessão é levado ao endereço novo sem passar pelo portão de autenticação.
+   */
+  async redirects() {
+    return [
+      {
+        source: '/manual-clinico/tomografia',
+        destination: '/manual-clinico/radiologia/tomografia',
+        permanent: true,
+      },
+      {
+        source: '/manual-clinico/tomografia/:slug',
+        destination: '/manual-clinico/radiologia/tomografia/:slug',
+        permanent: true,
+      },
+    ]
+  },
+
   async headers() {
     return [
       {

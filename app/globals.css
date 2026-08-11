@@ -3258,3 +3258,159 @@
     transform: none;
   }
 }
+
+/* ==========================================================================
+   Tira de filme — a fita perfurada do cabeçalho da home de Radiologia.
+
+   As perfurações são gradientes, não imagens: a tira acompanha qualquer
+   largura sem pedir um asset a mais nem um segundo request.
+   ========================================================================== */
+
+.rx-tira {
+  background:
+    linear-gradient(180deg, rgba(3, 6, 13, 0.9), rgba(3, 6, 13, 0.75)),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 14px,
+      rgba(148, 163, 184, 0.16) 14px 24px,
+      transparent 24px 38px
+    );
+  background-size: 100% 100%, 38px 7px;
+  background-position: 0 0, 0 0;
+  background-repeat: no-repeat, repeat-x;
+  box-shadow: inset 0 7px 0 -6px rgba(148, 163, 184, 0.1);
+}
+
+.rx-tira::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 7px;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0 14px,
+    rgba(148, 163, 184, 0.16) 14px 24px,
+    transparent 24px 38px
+  );
+}
+
+/* ==========================================================================
+   Caderno radiográfico
+
+   O caderninho que radiologista carrega no bolso do jaleco, desenhado em CSS:
+   capa de couro, espiral metálica, papel pautado com margem vermelha e letra
+   manuscrita. O papel é claro nos dois temas de propósito — caderno é caderno,
+   e a folha branca contra o painel escuro do negatoscópio é justamente o
+   contraste que faz a anotação saltar.
+   ========================================================================== */
+
+.cad-manuscrito {
+  font-family: var(--font-manuscrito), 'Segoe Script', 'Bradley Hand', cursive;
+  letter-spacing: 0.01em;
+}
+
+/* Lombada saindo da borda da tela: papel kraft com um fio de sombra. */
+.cad-aba {
+  background: linear-gradient(135deg, #f6e7c8 0%, #e8d3a8 55%, #d9c191 100%);
+}
+
+.cad-gaveta {
+  animation: cad-entrar 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: -18px 0 46px -18px rgba(0, 0, 0, 0.6);
+}
+
+@keyframes cad-entrar {
+  from {
+    transform: translateX(18px);
+    opacity: 0;
+  }
+}
+
+/* Capa: couro escuro com o brilho de cima, como um moleskine de plantão. */
+.cad-capa {
+  background:
+    radial-gradient(120% 140% at 20% -20%, rgba(255, 255, 255, 0.14), transparent 60%),
+    linear-gradient(180deg, #3f2d18 0%, #2a1d0f 100%);
+}
+
+/* Folha pautada. A pauta tem 26px — o mesmo leading do texto manuscrito, para
+   que a escrita caia sobre a linha em vez de flutuar entre elas. */
+.cad-papel {
+  background-color: #fdfaf1;
+  background-image:
+    linear-gradient(90deg, transparent 0 29px, rgba(220, 38, 38, 0.35) 29px 30px, transparent 30px),
+    repeating-linear-gradient(
+      180deg,
+      transparent 0 25px,
+      rgba(37, 99, 235, 0.13) 25px 26px
+    );
+  background-attachment: local;
+}
+
+/* Espiral: furos na margem e o arame passando por eles. */
+.cad-espiral::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 22px;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.09), transparent),
+    repeating-linear-gradient(
+      180deg,
+      transparent 0 12px,
+      rgba(120, 90, 40, 0.45) 12px 16px,
+      transparent 16px 34px
+    );
+  background-size: 100% 100%, 100% 34px;
+  border-right: 1px solid rgba(120, 90, 40, 0.16);
+}
+
+.cad-espiral::after {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    180deg,
+    transparent 0 12px,
+    rgba(255, 255, 255, 0.75) 12px 13px,
+    rgba(90, 65, 25, 0.5) 13px 16px,
+    transparent 16px 34px
+  );
+  border-radius: 999px;
+}
+
+/* Fichas: papel levemente sobreposto, com a cor do marca-texto ao fundo. */
+.cad-ficha {
+  border: 1px solid rgba(120, 90, 40, 0.18);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 1px 3px -1px rgba(0, 0, 0, 0.14);
+}
+
+.cad-cor-papel {
+  background: rgba(255, 255, 255, 0.72);
+}
+.cad-cor-amarelo {
+  background: rgba(253, 224, 71, 0.42);
+}
+.cad-cor-verde {
+  background: rgba(110, 231, 183, 0.4);
+}
+.cad-cor-azul {
+  background: rgba(125, 211, 252, 0.4);
+}
+.cad-cor-rosa {
+  background: rgba(249, 168, 212, 0.4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cad-gaveta {
+    animation: none;
+  }
+}

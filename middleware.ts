@@ -50,11 +50,12 @@ const publicRoutes = [
   '/api/amostra',
   '/manual-clinico',
   '/manual-clinico/farmacologia',
-  // Manual de Tomografia: a página é pública para exibir a vitrine de vendas a
-  // quem não assina; o atlas em si é privativo e quem decide é o handler
-  // /api/manual-clinico/tomografia. As séries (/tomografia/<slug>) entram pela
-  // regex em isPublicRoute, com a mesma lógica.
-  '/manual-clinico/tomografia',
+  // Manual de Radiologia (tomografia + raio-x): as páginas são públicas para
+  // exibir a landing de vendas a quem não assina; o atlas em si é privativo e
+  // quem decide é o handler /api/manual-clinico/tomografia. Toda a árvore
+  // (/radiologia/tomografia/<slug>, /radiologia/raio-x/<slug>) entra pela regex
+  // em isPublicRoute, com a mesma lógica.
+  '/manual-clinico/radiologia',
   // Manual do Eletrocardiograma: página pública que exibe o paywall a visitantes;
   // o acesso ao simulador é validado no handler /api/manual-clinico/eletrocardiograma.
   '/manual-clinico/eletrocardiograma',
@@ -153,8 +154,14 @@ function isPublicRoute(pathname: string): boolean {
   if (/^\/mapa-mental\/[^/]+$/.test(pathname)) return true
   if (/^\/api\/mindmaps\/[^/]+$/.test(pathname)) return true
   if (/^\/api\/mindmaps\/[^/]+\/unlock$/.test(pathname)) return true
-  // Séries do Manual de Tomografia (/manual-clinico/tomografia/<slug>).
-  if (/^\/manual-clinico\/tomografia\/[a-z0-9-]+$/.test(pathname)) return true
+  // Toda a árvore do Manual de Radiologia: séries de tomografia
+  // (/radiologia/tomografia/<slug>) e incidências do atlas de Raio-X
+  // (/radiologia/raio-x/<slug>). O paywall é decidido no cliente a partir do
+  // veredito do servidor, então a rota precisa abrir para visitante.
+  // `\w` e não `[a-z0-9-]`: os ids das incidências vêm do atlas original em
+  // camelCase (`thoraxBones`, `skullLat`), e uma regex só-minúsculas mandava o
+  // visitante para o login em vez de mostrar a landing de vendas.
+  if (/^\/manual-clinico\/radiologia(\/[\w-]+){0,2}$/.test(pathname)) return true
   // Áreas das Ferramentas Clínicas (/manual-clinico/ferramentas/<slug>).
   if (/^\/manual-clinico\/ferramentas\/[a-z0-9-]+$/.test(pathname)) return true
 

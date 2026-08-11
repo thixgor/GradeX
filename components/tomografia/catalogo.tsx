@@ -2,100 +2,45 @@
 
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { AppShell, useAppShell } from '@/components/app-shell'
-import { Input } from '@/components/ui/input'
 import {
   ArrowLeft,
   ArrowRight,
-  Search,
-  X,
-  Layers3,
-  ScanLine,
-  MousePointerClick,
-  GraduationCap,
-  Target,
   BookOpen,
-  Sparkles,
   Crown,
-  Loader2,
+  GraduationCap,
+  Layers3,
+  MousePointerClick,
+  ScanLine,
+  Search,
+  Sparkles,
+  Target,
+  X,
 } from 'lucide-react'
-import {
-  SECOES,
-  TOTAL_SUBSECOES,
-  TOTAL_ESTRUTURAS,
-  TOTAL_CORTES,
-  TOTAL_QUESTOES,
-  buscarEstruturas,
-  caminhoDoCorte,
-} from '@/lib/tomografia'
-import { ICONES, ICONE_PADRAO, tema, COR_CATEGORIA, ROTULO_CATEGORIA } from '@/components/tomografia/tema'
+import { Input } from '@/components/ui/input'
 import { LogoTomografia } from '@/components/tomografia/logo'
-import { PaywallTomografia } from '@/components/tomografia/paywall'
-import { useAcessoTomografia } from '@/components/tomografia/use-acesso'
+import {
+  COR_CATEGORIA,
+  ICONES,
+  ICONE_PADRAO,
+  ROTULO_CATEGORIA,
+  tema,
+} from '@/components/tomografia/tema'
+import { buscarNoIndice } from '@/lib/tomografia/catalogo'
+import type { CatalogoTC, EstruturaIndexada, SecaoResumo, SerieResumo } from '@/lib/tomografia/catalogo'
 import { PLUS_LABEL } from '@/lib/account-tier'
 
-export default function TomografiaPage() {
-  return (
-    <AppShell allowGuest showHeader={false} guestNotice={false}>
-      <TomografiaConteudo />
-    </AppShell>
-  )
-}
-
-function TomografiaConteudo() {
-  const router = useRouter()
+/**
+ * Índice do atlas de tomografia.
+ *
+ * Recebe do servidor o recorte do acervo — títulos, capas, contagens e o índice
+ * de busca. O conteúdo das fichas, os roteiros e os quizzes ficam onde sempre
+ * estiveram: nas páginas de série, carregados quando o aluno realmente abre uma.
+ */
+export function CatalogoTomografia({ catalogo }: { catalogo: CatalogoTC }) {
   const [busca, setBusca] = useState('')
-  const { user, loading: carregandoShell } = useAppShell()
-  const { dados, carregado } = useAcessoTomografia()
 
-  const resultados = useMemo(() => buscarEstruturas(busca), [busca])
+  const resultados = useMemo(() => buscarNoIndice(catalogo.indice, busca), [catalogo.indice, busca])
   const buscando = busca.trim().length >= 2
-
-  const pronto = carregado && !carregandoShell
-  const temAcesso = dados?.access?.hasFullAccess === true
-
-  // O middleware manda quem não tem sessão para /comprar (venda por Serial Key,
-  // sem conta). Duplicar essa decisão aqui só criaria outro lugar para
-  // desencontrar da regra do servidor.
-  function irParaCheckout() {
-    router.push('/manual-clinico/checkout')
-  }
-
-  if (!pronto) {
-    return (
-      <div className="surface-page flex min-h-screen items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    )
-  }
-
-  if (!temAcesso) {
-    return (
-      <div className="surface-page min-h-screen">
-        <div className="border-b border-border bg-muted/30">
-          <div className="container mx-auto max-w-6xl px-4 pb-4 pt-6">
-            <button
-              onClick={() => router.push('/manual-clinico/radiologia')}
-              className="-m-3 inline-flex items-center gap-1.5 rounded-lg p-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
-            >
-              <ArrowLeft className="h-4 w-4" /> Voltar ao Manual de Radiologia
-            </button>
-          </div>
-        </div>
-        <div className="container mx-auto max-w-6xl px-4 py-8">
-          <PaywallTomografia
-            onCheckout={irParaCheckout}
-            isAuthenticated={!!user}
-            planos={dados?.product?.plans || []}
-            precoAvulso={dados?.product?.currentPrice ?? 0}
-            produtoAtivo={dados?.product?.isActive !== false}
-            resumo={dados?.resumo}
-          />
-        </div>
-      </div>
-    )
-  }
 
   return (
     <div className="surface-page min-h-screen">
@@ -117,12 +62,12 @@ function TomografiaConteudo() {
         />
 
         <div className="container relative z-10 mx-auto max-w-6xl px-4 pb-10 pt-8">
-          <button
-            onClick={() => router.push('/manual-clinico/radiologia')}
+          <Link
+            href="/manual-clinico/radiologia"
             className="-m-3 mb-3 inline-flex items-center gap-1.5 rounded-lg p-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             <ArrowLeft className="h-4 w-4" /> Voltar ao Manual de Radiologia
-          </button>
+          </Link>
 
           <div className="max-w-3xl">
             <p className="editorial-mark mb-3">Manual de Radiologia · Tomografia computadorizada</p>
@@ -142,16 +87,16 @@ function TomografiaConteudo() {
               </span>
               <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 text-xs font-bold text-primary">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
-                {TOTAL_CORTES} cortes reais
+                {catalogo.totais.cortes} cortes reais
               </span>
               <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-bold text-muted-foreground">
-                <Target className="h-3.5 w-3.5 text-primary" /> {TOTAL_ESTRUTURAS} estruturas
+                <Target className="h-3.5 w-3.5 text-primary" /> {catalogo.totais.estruturas} estruturas
               </span>
               <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-bold text-muted-foreground">
-                <Layers3 className="h-3.5 w-3.5 text-primary" /> {TOTAL_SUBSECOES} séries
+                <Layers3 className="h-3.5 w-3.5 text-primary" /> {catalogo.totais.series} séries
               </span>
               <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-bold text-muted-foreground">
-                <GraduationCap className="h-3.5 w-3.5 text-primary" /> {TOTAL_QUESTOES} questões
+                <GraduationCap className="h-3.5 w-3.5 text-primary" /> {catalogo.totais.questoes} questões
               </span>
             </div>
 
@@ -192,7 +137,7 @@ function TomografiaConteudo() {
           <>
             <ComoUsar />
             <div className="mt-12 space-y-14">
-              {SECOES.map((secao) => (
+              {catalogo.secoes.map((secao) => (
                 <SecaoBloco key={secao.id} secao={secao} />
               ))}
             </div>
@@ -251,11 +196,9 @@ function ComoUsar() {
 
 /* ────────────────────────── Seção ────────────────────────── */
 
-function SecaoBloco({ secao }: { secao: (typeof SECOES)[number] }) {
+function SecaoBloco({ secao }: { secao: SecaoResumo }) {
   const t = tema(secao.cor)
   const Icone = ICONES[secao.icone] || ICONE_PADRAO
-  const estruturas = secao.subsecoes.reduce((n, s) => n + s.estruturas.length, 0)
-  const cortes = secao.subsecoes.reduce((n, s) => n + s.totalCortes, 0)
 
   return (
     <section id={`secao-${secao.id}`} className="scroll-mt-20">
@@ -268,44 +211,43 @@ function SecaoBloco({ secao }: { secao: (typeof SECOES)[number] }) {
             {secao.titulo}
           </h2>
           <p className="mt-0.5 text-xs font-medium text-muted-foreground">
-            {secao.subsecoes.length} séries · {estruturas} estruturas · {cortes} cortes
+            {secao.series.length} séries · {secao.totalEstruturas} estruturas · {secao.totalCortes} cortes
           </p>
           <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">{secao.descricao}</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        {secao.subsecoes.map((sub, i) => (
-          <CardSubsecao key={sub.id} sub={sub} index={i} />
+        {secao.series.map((serie, i) => (
+          <CardSerie key={serie.id} serie={serie} index={i} />
         ))}
       </div>
     </section>
   )
 }
 
-function CardSubsecao({ sub, index }: { sub: (typeof SECOES)[number]['subsecoes'][number]; index: number }) {
-  const t = tema(sub.cor)
-  const Icone = ICONES[sub.icone] || ICONE_PADRAO
-  // Miniatura: um corte do meio da série, que costuma ser o mais representativo
-  const capa = caminhoDoCorte(sub, Math.max(1, Math.round(sub.totalCortes / 2)))
+function CardSerie({ serie, index }: { serie: SerieResumo; index: number }) {
+  const t = tema(serie.cor)
+  const Icone = ICONES[serie.icone] || ICONE_PADRAO
 
   return (
     <Link
-      href={`/manual-clinico/tomografia/${sub.id}`}
+      href={`/manual-clinico/radiologia/tomografia/${serie.id}`}
       prefetch={false}
       style={{ animationDelay: `${Math.min(index, 10) * 40}ms` }}
       className={`group relative flex animate-fade-in-up flex-col overflow-hidden rounded-xl border border-border bg-card opacity-0 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-md ${t.hoverBorder}`}
     >
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-black">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={capa}
+          src={serie.capa}
           alt=""
           loading="lazy"
           decoding="async"
           className="h-full w-full object-contain opacity-90 transition duration-500 group-hover:scale-105 group-hover:opacity-100"
         />
         <div className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full border border-white/15 bg-black/50 px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wider text-white/90 backdrop-blur">
-          <Layers3 className="h-3 w-3" /> {sub.totalCortes} cortes
+          <Layers3 className="h-3 w-3" /> {serie.totalCortes} cortes
         </div>
         <div className={`absolute right-3 top-3 rounded-lg border border-white/10 ${t.bg} p-2 backdrop-blur-sm`}>
           <Icone className={`h-4 w-4 ${t.text}`} />
@@ -313,11 +255,11 @@ function CardSubsecao({ sub, index }: { sub: (typeof SECOES)[number]['subsecoes'
       </div>
 
       <div className="flex flex-1 flex-col p-4">
-        <h3 className="font-semibold leading-snug transition-colors group-hover:text-foreground">{sub.titulo}</h3>
-        <p className="mt-1 line-clamp-2 flex-1 text-sm leading-relaxed text-muted-foreground">{sub.subtitulo}</p>
+        <h3 className="font-semibold leading-snug transition-colors group-hover:text-foreground">{serie.titulo}</h3>
+        <p className="mt-1 line-clamp-2 flex-1 text-sm leading-relaxed text-muted-foreground">{serie.subtitulo}</p>
         <div className="mt-3 flex items-center justify-between">
           <span className="text-[11px] font-medium text-muted-foreground/60">
-            {sub.estruturas.length} estruturas
+            {serie.totalEstruturas} estruturas
           </span>
           <span className={`inline-flex items-center gap-1 text-xs font-bold ${t.text}`}>
             Abrir série <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
@@ -330,13 +272,7 @@ function CardSubsecao({ sub, index }: { sub: (typeof SECOES)[number]['subsecoes'
 
 /* ────────────────────────── Busca ────────────────────────── */
 
-function ResultadosBusca({
-  termo,
-  resultados,
-}: {
-  termo: string
-  resultados: ReturnType<typeof buscarEstruturas>
-}) {
+function ResultadosBusca({ termo, resultados }: { termo: string; resultados: EstruturaIndexada[] }) {
   if (resultados.length === 0) {
     return (
       <div className="py-16 text-center">
@@ -356,12 +292,12 @@ function ResultadosBusca({
         {resultados.length} estrutura{resultados.length !== 1 ? 's' : ''} para &ldquo;{termo}&rdquo;
       </p>
       <div className="grid gap-2.5">
-        {resultados.map(({ estrutura, subsecao }) => {
+        {resultados.map((estrutura) => {
           const t = tema(COR_CATEGORIA[estrutura.categoria])
           return (
             <Link
-              key={`${subsecao.id}-${estrutura.id}`}
-              href={`/manual-clinico/tomografia/${subsecao.id}?estrutura=${estrutura.id}`}
+              key={`${estrutura.serieId}-${estrutura.id}`}
+              href={`/manual-clinico/radiologia/tomografia/${estrutura.serieId}?estrutura=${estrutura.id}`}
               prefetch={false}
               className="group flex items-start gap-3 rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/40"
             >
@@ -375,7 +311,7 @@ function ResultadosBusca({
                 <p className="mt-0.5 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
                   {estrutura.resumo}
                 </p>
-                <p className="mt-1.5 text-[11px] font-medium text-muted-foreground/60">{subsecao.titulo}</p>
+                <p className="mt-1.5 text-[11px] font-medium text-muted-foreground/60">{estrutura.serieTitulo}</p>
               </div>
               <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-muted-foreground/40 transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
             </Link>

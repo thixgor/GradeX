@@ -61,13 +61,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // próprios (ver o generateMetadata da rota), então vale indexar uma a uma.
   const tomografia: MetadataRoute.Sitemap = [
     {
-      url: canonical('/manual-clinico/tomografia'),
+      url: canonical('/manual-clinico/radiologia/tomografia'),
       lastModified: now,
       changeFrequency: 'monthly',
       priority: 0.7,
     },
     ...TODAS_SUBSECOES.map((sub) => ({
-      url: canonical(`/manual-clinico/tomografia/${sub.id}`),
+      url: canonical(`/manual-clinico/radiologia/tomografia/${sub.id}`),
       lastModified: now,
       changeFrequency: 'monthly' as const,
       priority: 0.6,

@@ -43,7 +43,8 @@ import {
   ROTULO_CATEGORIA,
   tema,
 } from '@/components/tomografia/tema'
-import { PaywallTomografia } from '@/components/tomografia/paywall'
+import { VitrineRadiologia } from '@/components/radiologia/vitrine'
+import { CadernoRadiologico } from '@/components/radiologia/caderno'
 import { useAcessoTomografia } from '@/components/tomografia/use-acesso'
 import { PLUS_LABEL } from '@/lib/account-tier'
 
@@ -194,6 +195,16 @@ function SerieConteudo() {
     return [...mapa.entries()]
   }, [sub.estruturas, filtro])
 
+  const secoesDoCaderno = useMemo(
+    () => [
+      { id: 'geral', rotulo: 'Série inteira' },
+      { id: 'protocolo', rotulo: 'Protocolo do exame' },
+      { id: 'roteiro', rotulo: 'Roteiro de leitura' },
+      ...sub.estruturas.map((e) => ({ id: e.id, rotulo: e.nome })),
+    ],
+    [sub],
+  )
+
   const progresso = sub.estruturas.length
     ? Math.round((sub.estruturas.filter((e) => estudadas.has(e.id)).length / sub.estruturas.length) * 100)
     : 0
@@ -227,14 +238,14 @@ function SerieConteudo() {
           </div>
         </div>
         <div className="container mx-auto max-w-6xl px-4 py-8">
-          <PaywallTomografia
+          <VitrineRadiologia
             onCheckout={() => router.push('/manual-clinico/checkout')}
             isAuthenticated={!!user}
             planos={dados?.product?.plans || []}
             precoAvulso={dados?.product?.currentPrice ?? 0}
             produtoAtivo={dados?.product?.isActive !== false}
             resumo={dados?.resumo}
-            serieAlvo={secao ? `${sub.titulo} (${secao.titulo})` : sub.titulo}
+            alvo={secao ? `A série ${sub.titulo} (${secao.titulo})` : `A série ${sub.titulo}`}
           />
         </div>
       </div>
@@ -505,7 +516,7 @@ function SerieConteudo() {
         <div className="mt-10 grid gap-3 border-t border-border pt-6 sm:grid-cols-2">
           {anterior ? (
             <Link
-              href={`/manual-clinico/tomografia/${anterior.id}`}
+              href={`/manual-clinico/radiologia/tomografia/${anterior.id}`}
               prefetch={false}
               className="group flex items-center gap-3 rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/35"
             >
@@ -520,7 +531,7 @@ function SerieConteudo() {
           )}
           {proxima && (
             <Link
-              href={`/manual-clinico/tomografia/${proxima.id}`}
+              href={`/manual-clinico/radiologia/tomografia/${proxima.id}`}
               prefetch={false}
               className="group flex items-center justify-end gap-3 rounded-xl border border-border bg-card p-4 text-right transition-colors hover:border-primary/35"
             >
@@ -534,12 +545,25 @@ function SerieConteudo() {
         </div>
 
         <button
-          onClick={() => router.push('/manual-clinico/tomografia')}
+          onClick={() => router.push('/manual-clinico/radiologia/tomografia')}
           className="-m-3 mt-1 inline-flex items-center gap-1.5 rounded-lg p-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
         >
           <ArrowLeft className="h-4 w-4" /> Todas as séries
         </button>
       </div>
+
+      {/* ══════════ CADERNO RADIOGRÁFICO ══════════ */}
+      {/* Uma folha por série, com a ficha ancorada na estrutura selecionada —
+          o protocolo e o roteiro entram como seções próprias porque são o que
+          o aluno mais reescreve com as próprias palavras. */}
+      <CadernoRadiologico
+        escopo="tomografia"
+        chave={sub.id}
+        titulo={sub.titulo}
+        subtitulo={secao ? `${secao.titulo} · ${sub.totalCortes} cortes` : `${sub.totalCortes} cortes`}
+        secoes={secoesDoCaderno}
+        secaoAtual={selecionada?.id}
+      />
 
       {/* ══════════ FICHA COMO FOLHA INFERIOR (celular) ══════════ */}
       {selecionada && folhaAberta && (

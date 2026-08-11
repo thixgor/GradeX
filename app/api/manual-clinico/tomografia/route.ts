@@ -7,17 +7,19 @@ import {
   serializeManualClinicoProduct,
 } from '@/lib/manual-clinico-product'
 import { SECOES, TOTAL_CORTES, TOTAL_ESTRUTURAS, TOTAL_QUESTOES, TOTAL_SUBSECOES } from '@/lib/tomografia'
+import { ESTUDOS_RAIO_X, REGIOES_RAIO_X, TOTAL_ESTRUTURAS_RAIO_X } from '@/lib/radiologia/raio-x'
 
 export const dynamic = 'force-dynamic'
 
 /**
- * Resumo do atlas para a página de vendas: quantos cortes, estruturas e séries
- * existem, e como estão distribuídos entre tórax, abdome e crânio.
+ * Resumo do Manual de Radiologia para a landing de vendas: quantos cortes,
+ * incidências, estruturas e séries existem, e como estão distribuídos entre as
+ * duas modalidades.
  *
  * É calculado no servidor a partir do próprio conteúdo, e não escrito à mão,
  * para que os números da vitrine nunca desencontrem do que o produto entrega.
- * Só os totais atravessam a rede — o conteúdo das fichas é justamente o que
- * está do outro lado do muro.
+ * Só os totais e os títulos atravessam a rede — o conteúdo das fichas é
+ * justamente o que está do outro lado do muro.
  */
 const RESUMO = {
   cortes: TOTAL_CORTES,
@@ -33,6 +35,17 @@ const RESUMO = {
     // Nomes das séries: dizem o que se compra sem entregar o conteúdo.
     titulosSeries: s.subsecoes.map((sub) => sub.titulo),
   })),
+  raioX: {
+    estudos: ESTUDOS_RAIO_X.length,
+    estruturas: TOTAL_ESTRUTURAS_RAIO_X,
+    regioes: REGIOES_RAIO_X.map((r) => ({
+      id: r.id,
+      titulo: r.titulo,
+      estudos: r.totalEstudos,
+      estruturas: r.totalEstruturas,
+      incidencias: r.incidencias,
+    })),
+  },
 }
 
 /**

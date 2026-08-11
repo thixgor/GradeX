@@ -30,34 +30,62 @@ import {
 } from 'lucide-react'
 import { AreaRadiologia } from '@/components/radiologia/area-radiologia'
 import { CantosFilme, FilmeImagem } from '@/components/radiologia/filme'
-import {
-  estudosDaRegiao,
-  GUIAS_RAIO_X,
-  notaEstrutura,
-  type EstruturaRaioX,
-  type EstudoRaioX,
+import { CadernoRadiologico } from '@/components/radiologia/caderno'
+import type { IrmaoEstudo } from '@/lib/radiologia/catalogo'
+import type {
+  EstruturaRaioX,
+  EstudoRaioX,
+  GuiaRegiaoRaioX,
+  NotaEstrutura,
 } from '@/lib/radiologia/raio-x'
 
 /** Intervalo do modo automático de revisão. */
 const PASSO_TOUR_MS = 2800
 
-export function EstudoRaioXView({ estudo }: { estudo: EstudoRaioX }) {
+/**
+ * Quantas demarcações vizinhas entram na rede junto com a atual.
+ *
+ * Carregar as ~30 sobreposições de um exame de uma vez custava alguns megabytes
+ * no primeiro segundo — no celular isso concorre com a própria radiografia e
+ * atrasa justamente o que o aluno está esperando. Uma janela em volta do índice
+ * atual cobre o passo a passo e as setas do teclado; o restante entra depois,
+ * quando o navegador estiver ocioso.
+ */
+const JANELA_PRECARGA = 2
+
+export interface EstudoRaioXViewProps {
+  estudo: EstudoRaioX
+  /** Guia de leitura da região — montado no servidor para não vir no bundle. */
+  guia: GuiaRegiaoRaioX
+  /** Outras incidências da mesma região, para a trilha do cabeçalho. */
+  irmaos: IrmaoEstudo[]
+  /** Dossiê de cada estrutura deste exame, indexado pelo slug. */
+  notas: Record<string, NotaEstrutura>
+}
+
+/**
+ * Visualizador de uma incidência.
+ *
+ * Tudo o que ele precisa saber chega por prop. Antes o componente importava
+ * `lib/radiologia/raio-x` para pegar três coisas — o guia da região, as
+ * incidências vizinhas e o dossiê da estrutura — e por causa disso arrastava o
+ * atlas inteiro (os 28 exames e as ~200 fichas aprofundadas) para o bundle de
+ * cada uma das 28 páginas. Agora o servidor recorta só o que é desta página.
+ */
+export function EstudoRaioXView({ estudo, guia, irmaos, notas }: EstudoRaioXViewProps) {
   const [indice, setIndice] = useState(0)
   const [marcando, setMarcando] = useState(true)
   const [invertido, setInvertido] = useState(false)
   const [tour, setTour] = useState(false)
   const [filtro, setFiltro] = useState('')
   const [basePronta, setBasePronta] = useState(false)
-  // As sobreposições só entram na rede depois que a radiografia base chega —
-  // e entram todas de uma vez. A partir daí, trocar de estrutura é uma
-  // transição de opacidade sobre bytes que já estão no navegador: nunca mais
-  // se vê uma demarcação "carregando".
+  // As sobreposições só entram na rede depois que a radiografia base chega. A
+  // partir daí, trocar de estrutura é uma transição de opacidade sobre bytes
+  // que já estão no navegador: nunca mais se vê uma demarcação "carregando".
   const [precarregarTodas, setPrecarregarTodas] = useState(false)
 
-  const guia = GUIAS_RAIO_X[estudo.regiao]
-  const irmaos = useMemo(() => estudosDaRegiao(estudo.regiao), [estudo.regiao])
   const estrutura = estudo.estruturas[indice]
-  const nota = useMemo(() => notaEstrutura(estudo, estrutura), [estudo, estrutura])
+  const nota = notas[estrutura.slug]
   const total = estudo.estruturas.length
 
   // Deep-link vindo da busca do catálogo (`?estrutura=escafoide`). Lido do
@@ -74,12 +102,21 @@ export function EstudoRaioXView({ estudo }: { estudo: EstudoRaioX }) {
 
   // Rede de segurança: se a base demorar ou falhar, as sobreposições entram
   // assim mesmo — o aluno não fica preso a um viewer que não responde ao clique.
+  //
+  // O acervo inteiro do exame só é liberado quando o navegador fica ocioso, e
+  // nunca antes da radiografia base: até lá vale a janela em volta do índice
+  // atual, que já cobre o clique e as setas.
   useEffect(() => {
-    if (basePronta) {
-      setPrecarregarTodas(true)
-      return
+    if (!basePronta) {
+      const relogio = window.setTimeout(() => setPrecarregarTodas(true), 2500)
+      return () => window.clearTimeout(relogio)
     }
-    const relogio = window.setTimeout(() => setPrecarregarTodas(true), 1500)
+    const ocioso = window.requestIdleCallback
+    if (typeof ocioso === 'function') {
+      const id = ocioso(() => setPrecarregarTodas(true), { timeout: 2000 })
+      return () => window.cancelIdleCallback?.(id)
+    }
+    const relogio = window.setTimeout(() => setPrecarregarTodas(true), 600)
     return () => window.clearTimeout(relogio)
   }, [basePronta])
 
@@ -140,6 +177,16 @@ export function EstudoRaioXView({ estudo }: { estudo: EstudoRaioX }) {
     return () => window.removeEventListener('keydown', aoTeclar)
   }, [irPara])
 
+  // Seções do caderno: o exame inteiro, o roteiro da região e cada estrutura.
+  const secoesDoCaderno = useMemo(
+    () => [
+      { id: 'geral', rotulo: 'Exame inteiro' },
+      { id: 'leitura', rotulo: 'Roteiro e técnica' },
+      ...estudo.estruturas.map((item) => ({ id: item.slug, rotulo: item.nome })),
+    ],
+    [estudo],
+  )
+
   const consulta = filtro.trim().toLowerCase()
   const visiveis = consulta
     ? estudo.estruturas
@@ -150,7 +197,9 @@ export function EstudoRaioXView({ estudo }: { estudo: EstudoRaioX }) {
     : estudo.estruturas.map((item, posicao) => ({ item, posicao }))
 
   return (
-    <AreaRadiologia>
+    // Quem chega por link direto sem acesso vê a landing nomeando a incidência
+    // que tentou abrir — é quando a intenção está mais clara.
+    <AreaRadiologia alvo={`A incidência ${estudo.titulo} (${estudo.incidencia})`}>
       <div className="rx surface-page min-h-screen">
         <CabecalhoEstudo estudo={estudo} irmaos={irmaos} />
 
@@ -192,7 +241,11 @@ export function EstudoRaioXView({ estudo }: { estudo: EstudoRaioX }) {
 
                   {estudo.estruturas.map((item, posicao) => {
                     const selecionada = posicao === indice
-                    if (!precarregarTodas && !selecionada) return null
+                    // Distância circular: no fim da lista a janela continua na
+                    // primeira estrutura, que é para onde a seta leva.
+                    const bruta = Math.abs(posicao - indice)
+                    const distancia = Math.min(bruta, total - bruta)
+                    if (!precarregarTodas && distancia > JANELA_PRECARGA) return null
                     const visivel = marcando && selecionada
                     return (
                       <div
@@ -335,6 +388,17 @@ export function EstudoRaioXView({ estudo }: { estudo: EstudoRaioX }) {
 
           <Rodape />
         </main>
+
+        {/* O caderno acompanha o exame: a folha é desta incidência e a ficha
+            nasce ancorada na estrutura que está acesa no filme. */}
+        <CadernoRadiologico
+          escopo="raio-x"
+          chave={estudo.id}
+          titulo={estudo.titulo}
+          subtitulo={`${estudo.regiaoTitulo} · ${estudo.incidencia}`}
+          secoes={secoesDoCaderno}
+          secaoAtual={estrutura.slug}
+        />
       </div>
     </AreaRadiologia>
   )
@@ -342,7 +406,7 @@ export function EstudoRaioXView({ estudo }: { estudo: EstudoRaioX }) {
 
 /* ─────────────────────────────── Cabeçalho ─────────────────────────────── */
 
-function CabecalhoEstudo({ estudo, irmaos }: { estudo: EstudoRaioX; irmaos: EstudoRaioX[] }) {
+function CabecalhoEstudo({ estudo, irmaos }: { estudo: EstudoRaioX; irmaos: IrmaoEstudo[] }) {
   return (
     <header className="rx-painel rx-grade relative overflow-hidden border-b border-sky-400/15">
       <div className="container relative mx-auto max-w-7xl px-4 pb-5 pt-5">
@@ -566,7 +630,7 @@ function DossieEstrutura({
   className = '',
 }: {
   estrutura: EstruturaRaioX
-  nota: ReturnType<typeof notaEstrutura>
+  nota: NotaEstrutura
   className?: string
 }) {
   return (
@@ -632,7 +696,7 @@ function GuiaRegiao({
   guia,
   regiaoTitulo,
 }: {
-  guia: (typeof GUIAS_RAIO_X)[keyof typeof GUIAS_RAIO_X]
+  guia: GuiaRegiaoRaioX
   regiaoTitulo: string
 }) {
   return (

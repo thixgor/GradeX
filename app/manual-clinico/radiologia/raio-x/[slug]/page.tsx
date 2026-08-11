@@ -1,7 +1,14 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { EstudoRaioXView } from '@/components/radiologia/estudo-raio-x'
-import { ESTUDOS_RAIO_X, getEstudoRaioX } from '@/lib/radiologia/raio-x'
+import { irmaosDoEstudo } from '@/lib/radiologia/catalogo'
+import {
+  ESTUDOS_RAIO_X,
+  GUIAS_RAIO_X,
+  getEstudoRaioX,
+  notaEstrutura,
+  type NotaEstrutura,
+} from '@/lib/radiologia/raio-x'
 
 /**
  * As 28 incidências são um catálogo estático em código: pré-renderizá-las tira
@@ -24,5 +31,22 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
 export default function EstudoRaioXPage({ params }: { params: { slug: string } }) {
   const estudo = getEstudoRaioX(params.slug)
   if (!estudo) notFound()
-  return <EstudoRaioXView estudo={estudo} />
+
+  // O recorte é feito aqui, no servidor. O visualizador é um componente de
+  // cliente: se ele mesmo fosse buscar o guia, as incidências vizinhas e os
+  // dossiês, importaria `lib/radiologia/raio-x` e levaria o atlas inteiro —
+  // 28 exames e ~200 fichas — para o bundle de cada uma das 28 páginas.
+  const notas: Record<string, NotaEstrutura> = {}
+  for (const estrutura of estudo.estruturas) {
+    notas[estrutura.slug] = notaEstrutura(estudo, estrutura)
+  }
+
+  return (
+    <EstudoRaioXView
+      estudo={estudo}
+      guia={GUIAS_RAIO_X[estudo.regiao]}
+      irmaos={irmaosDoEstudo(estudo.regiao)}
+      notas={notas}
+    />
+  )
 }

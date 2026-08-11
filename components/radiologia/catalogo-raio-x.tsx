@@ -16,42 +16,49 @@ import {
 } from 'lucide-react'
 import { LogoRadiologia } from '@/components/radiologia/logo'
 import { CantosFilme, FilmeImagem, urlFilme } from '@/components/radiologia/filme'
-import {
-  buscarEstruturasRaioX,
-  buscarEstudosRaioX,
-  ESTUDOS_RAIO_X,
-  estudosDaRegiao,
-  GUIAS_RAIO_X,
-  REGIOES_RAIO_X,
-  TOTAL_ESTRUTURAS_RAIO_X,
-  type EstudoRaioX,
-  type RegiaoRaioX,
-} from '@/lib/radiologia/raio-x'
+import { filtrarEstruturas, filtrarEstudos } from '@/lib/radiologia/busca-catalogo'
+import type {
+  AchadoEstrutura,
+} from '@/lib/radiologia/busca-catalogo'
+import type {
+  CatalogoRaioX as Catalogo,
+  EstudoResumo,
+  RegiaoResumo,
+} from '@/lib/radiologia/catalogo'
 
-const REGIOES_VALIDAS = new Set(REGIOES_RAIO_X.map((regiao) => regiao.id))
+type IdRegiao = RegiaoResumo['id']
 
-function regiaoDaUrl(): RegiaoRaioX | null {
-  if (typeof window === 'undefined') return null
-  const bruta = new URLSearchParams(window.location.search).get('regiao')
-  return bruta && REGIOES_VALIDAS.has(bruta as RegiaoRaioX) ? (bruta as RegiaoRaioX) : null
-}
-
-export function CatalogoRaioX() {
+/**
+ * O catálogo chega pronto do servidor.
+ *
+ * Antes este componente importava `lib/radiologia/raio-x`, e com ele os 172 KB
+ * do acervo — inclusive o dossiê aprofundado de cada uma das ~200 estruturas,
+ * que a tela de catálogo nunca exibe. Tudo isso era baixado, analisado e
+ * executado pelo navegador antes do primeiro pixel. Agora o servidor manda só
+ * o recorte que a navegação usa, e este arquivo não carrega dado nenhum.
+ */
+export function CatalogoRaioX({ catalogo }: { catalogo: Catalogo }) {
   const [busca, setBusca] = useState('')
-  const [regiao, setRegiao] = useState<RegiaoRaioX | null>(null)
+  const [regiao, setRegiao] = useState<IdRegiao | null>(null)
   const campoBusca = useRef<HTMLInputElement | null>(null)
+
+  const lerRegiaoDaUrl = useCallback((): IdRegiao | null => {
+    if (typeof window === 'undefined') return null
+    const bruta = new URLSearchParams(window.location.search).get('regiao')
+    return bruta && catalogo.regioes.some((item) => item.id === bruta) ? (bruta as IdRegiao) : null
+  }, [catalogo])
 
   // A região vive na URL para o botão "voltar" do navegador funcionar depois de
   // entrar num estudo. `history` direto em vez do router: trocar de região é
   // filtro local e não deve custar um round-trip ao servidor.
   useEffect(() => {
-    setRegiao(regiaoDaUrl())
-    const aoVoltar = () => setRegiao(regiaoDaUrl())
+    setRegiao(lerRegiaoDaUrl())
+    const aoVoltar = () => setRegiao(lerRegiaoDaUrl())
     window.addEventListener('popstate', aoVoltar)
     return () => window.removeEventListener('popstate', aoVoltar)
-  }, [])
+  }, [lerRegiaoDaUrl])
 
-  const escolherRegiao = useCallback((proxima: RegiaoRaioX | null) => {
+  const escolherRegiao = useCallback((proxima: IdRegiao | null) => {
     setRegiao(proxima)
     setBusca('')
     const url = proxima ? `?regiao=${proxima}` : window.location.pathname
@@ -62,16 +69,19 @@ export function CatalogoRaioX() {
   const termo = busca.trim()
   const buscando = termo.length > 0
   const estudosEncontrados = useMemo(
-    () => (buscando ? buscarEstudosRaioX(termo, 'todas') : []),
-    [buscando, termo],
+    () => (buscando ? filtrarEstudos(catalogo, termo) : []),
+    [buscando, catalogo, termo],
   )
   const estruturasEncontradas = useMemo(
-    () => (buscando ? buscarEstruturasRaioX(termo) : []),
-    [buscando, termo],
+    () => (buscando ? filtrarEstruturas(catalogo, termo) : []),
+    [buscando, catalogo, termo],
   )
 
-  const regiaoAtual = regiao ? REGIOES_RAIO_X.find((item) => item.id === regiao) : null
-  const estudosDaRegiaoAtual = regiao ? estudosDaRegiao(regiao) : []
+  const regiaoAtual = regiao ? catalogo.regioes.find((item) => item.id === regiao) ?? null : null
+  const estudosDaRegiaoAtual = useMemo(
+    () => (regiao ? catalogo.estudos.filter((estudo) => estudo.regiao === regiao) : []),
+    [catalogo, regiao],
+  )
 
   // "/" foca a busca, como em qualquer ferramenta de consulta.
   useEffect(() => {
@@ -91,6 +101,7 @@ export function CatalogoRaioX() {
   return (
     <div className="rx surface-page min-h-screen">
       <Cabecalho
+        catalogo={catalogo}
         busca={busca}
         onBusca={setBusca}
         campoBusca={campoBusca}
@@ -106,15 +117,14 @@ export function CatalogoRaioX() {
             estudos={estudosEncontrados}
             onLimpar={() => setBusca('')}
           />
-        ) : regiao && regiaoAtual ? (
+        ) : regiaoAtual ? (
           <DetalheRegiao
-            regiao={regiao}
-            titulo={regiaoAtual.titulo}
+            regiao={regiaoAtual}
             estudos={estudosDaRegiaoAtual}
             onVoltar={() => escolherRegiao(null)}
           />
         ) : (
-          <GradeRegioes onEscolher={escolherRegiao} />
+          <GradeRegioes regioes={catalogo.regioes} onEscolher={escolherRegiao} />
         )}
       </main>
     </div>
@@ -124,17 +134,19 @@ export function CatalogoRaioX() {
 /* ─────────────────────────────── Cabeçalho ─────────────────────────────── */
 
 function Cabecalho({
+  catalogo,
   busca,
   onBusca,
   campoBusca,
   regiao,
   onRegiao,
 }: {
+  catalogo: Catalogo
   busca: string
   onBusca: (valor: string) => void
   campoBusca: React.MutableRefObject<HTMLInputElement | null>
-  regiao: RegiaoRaioX | null
-  onRegiao: (regiao: RegiaoRaioX | null) => void
+  regiao: IdRegiao | null
+  onRegiao: (regiao: IdRegiao | null) => void
 }) {
   return (
     <header className="rx-painel rx-grade rx-varredura relative overflow-hidden border-b border-sky-400/15">
@@ -164,9 +176,9 @@ function Cabecalho({
             </p>
 
             <div className="mt-5 flex flex-wrap gap-2 text-[11px] font-bold text-sky-100/70">
-              <Selo icone={LayoutGrid} texto={`${REGIOES_RAIO_X.length} regiões`} />
-              <Selo icone={ImageIcon} texto={`${ESTUDOS_RAIO_X.length} incidências`} />
-              <Selo icone={Target} texto={`${TOTAL_ESTRUTURAS_RAIO_X} demarcações`} />
+              <Selo icone={LayoutGrid} texto={`${catalogo.regioes.length} regiões`} />
+              <Selo icone={ImageIcon} texto={`${catalogo.estudos.length} incidências`} />
+              <Selo icone={Target} texto={`${catalogo.totalEstruturas} demarcações`} />
             </div>
           </div>
 
@@ -207,7 +219,7 @@ function Cabecalho({
         </div>
       </div>
 
-      <TrilhaRegioes regiao={regiao} onRegiao={onRegiao} />
+      <TrilhaRegioes regioes={catalogo.regioes} regiao={regiao} onRegiao={onRegiao} />
     </header>
   )
 }
@@ -222,11 +234,13 @@ function Selo({ icone: Icone, texto }: { icone: typeof Target; texto: string }) 
 }
 
 function TrilhaRegioes({
+  regioes,
   regiao,
   onRegiao,
 }: {
-  regiao: RegiaoRaioX | null
-  onRegiao: (regiao: RegiaoRaioX | null) => void
+  regioes: RegiaoResumo[]
+  regiao: IdRegiao | null
+  onRegiao: (regiao: IdRegiao | null) => void
 }) {
   return (
     <nav
@@ -238,7 +252,7 @@ function TrilhaRegioes({
           <BotaoTrilha ativo={regiao === null} onClick={() => onRegiao(null)}>
             Todas as regiões
           </BotaoTrilha>
-          {REGIOES_RAIO_X.map((item) => (
+          {regioes.map((item) => (
             <BotaoTrilha key={item.id} ativo={regiao === item.id} onClick={() => onRegiao(item.id)}>
               {item.titulo}
               <span className="ml-1.5 font-clinical text-[10px] opacity-60">
@@ -279,7 +293,13 @@ function BotaoTrilha({
 
 /* ──────────────────────────── Nível 1: regiões ──────────────────────────── */
 
-function GradeRegioes({ onEscolher }: { onEscolher: (regiao: RegiaoRaioX) => void }) {
+function GradeRegioes({
+  regioes,
+  onEscolher,
+}: {
+  regioes: RegiaoResumo[]
+  onEscolher: (regiao: IdRegiao) => void
+}) {
   return (
     <section>
       <div className="mb-5 flex items-end justify-between gap-4">
@@ -295,7 +315,7 @@ function GradeRegioes({ onEscolher }: { onEscolher: (regiao: RegiaoRaioX) => voi
       </div>
 
       <div className="grid gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
-        {REGIOES_RAIO_X.map((item, indice) => (
+        {regioes.map((item, indice) => (
           <button
             key={item.id}
             type="button"
@@ -344,17 +364,13 @@ function GradeRegioes({ onEscolher }: { onEscolher: (regiao: RegiaoRaioX) => voi
 
 function DetalheRegiao({
   regiao,
-  titulo,
   estudos,
   onVoltar,
 }: {
-  regiao: RegiaoRaioX
-  titulo: string
-  estudos: EstudoRaioX[]
+  regiao: RegiaoResumo
+  estudos: EstudoResumo[]
   onVoltar: () => void
 }) {
-  const guia = GUIAS_RAIO_X[regiao]
-
   return (
     <section>
       <button
@@ -368,10 +384,10 @@ function DetalheRegiao({
       <div className="rx-entra mb-6 rounded-2xl border border-sky-500/20 bg-sky-500/[0.04] p-5">
         <p className="editorial-mark">Passo 2 de 2 · {estudos.length} incidências</p>
         <h2 className="mt-1.5 font-heading text-xl font-semibold tracking-tight sm:text-2xl">
-          {titulo}
+          {regiao.titulo}
         </h2>
         <p className="mt-2.5 max-w-3xl text-sm leading-relaxed text-muted-foreground">
-          {guia.contexto}
+          {regiao.contexto}
         </p>
       </div>
 
@@ -384,7 +400,7 @@ function DetalheRegiao({
   )
 }
 
-function CardEstudo({ estudo, indice }: { estudo: EstudoRaioX; indice: number }) {
+function CardEstudo({ estudo, indice }: { estudo: EstudoResumo; indice: number }) {
   const aquecido = useRef(false)
 
   // O `prefetch` do Link busca o HTML; passar o mouse sobre o card também aquece
@@ -452,8 +468,8 @@ function ResultadosBusca({
   onLimpar,
 }: {
   termo: string
-  estruturas: ReturnType<typeof buscarEstruturasRaioX>
-  estudos: EstudoRaioX[]
+  estruturas: AchadoEstrutura[]
+  estudos: EstudoResumo[]
   onLimpar: () => void
 }) {
   const vazio = estruturas.length === 0 && estudos.length === 0
