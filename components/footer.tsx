@@ -12,38 +12,36 @@ const INSTAGRAM_URL = 'https://instagram.com/domineaqui.br'
 const DISCORD_URL = 'https://discord.gg/vdfHcvDdMw'
 const CONTACT_EMAIL = 'contato@domineaqui.com.br'
 
-// Rotas onde este rodapé de marketing NÃO deve aparecer:
-//  - '/' e '/auth': landing e telas de login já têm layout/rodapé próprios.
-//    O bloco grande de canais aparecia por cima da landing na entrada do
-//    site (antes do loading), então fica de fora aqui.
-//  - Rotas internas (pós-login) que usam o AppShell com sidebar fixa em tela
-//    cheia: além de não fazer sentido no app logado, o rodapé ficaria atrás
-//    da sidebar e piscava durante o carregamento.
-const HIDDEN_EXACT = ['/']
-const HIDDEN_PREFIXES = [
-  '/auth',
-  '/admin',
-  '/aulas',
-  '/banco-questoes',
-  '/buy',
-  '/cronogramas',
-  '/dashboard',
-  '/flashcards',
-  '/forum',
-  '/games',
-  '/manual-clinico',
-  '/mapa-mental',
-  '/materiais',
-  '/pacotes',
-  '/profile',
-  '/provas',
+// Rotas onde este rodapé de marketing DEVE aparecer.
+//
+// Isto é uma LISTA DE PERMISSÃO — antes era o contrário (uma lista de rotas
+// bloqueadas), e o efeito colateral era que TODA rota nova nascia com o bloco
+// gigante de canais de comunicação colado embaixo: prova finalizada, formulário
+// enviado, loja, checkout, páginas de lead que já têm rodapé próprio... Em telas
+// curtas esse bloco vira quase a página inteira, e quem termina uma prova cai
+// direto nele em vez de ver o resultado. Agora o rodapé só aparece onde foi
+// pensado para aparecer.
+//
+// Fora daqui ficam, de propósito:
+//  - '/' e '/auth': landing e login já têm layout/rodapé próprios.
+//  - '/lead/*': as páginas de lead trazem o próprio rodapé (era rodapé dobrado).
+//  - Todo o app pós-login (AppShell com sidebar), provas, checkouts e afins.
+const FOOTER_EXACT_ROUTES = [
+  '/equipe',
+  '/termos-de-servico',
+  '/politica-de-privacidade',
+  '/amostra',
+  '/comprar',
 ]
+const FOOTER_PREFIX_ROUTES = ['/rifas']
 
-function isHiddenRoute(pathname: string | null): boolean {
+function showsFooter(pathname: string | null): boolean {
   // fail-closed: sem pathname conhecido, não renderiza (evita flash no loading).
-  if (!pathname) return true
-  if (HIDDEN_EXACT.includes(pathname)) return true
-  return HIDDEN_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`))
+  if (!pathname) return false
+  if (FOOTER_EXACT_ROUTES.includes(pathname)) return true
+  return FOOTER_PREFIX_ROUTES.some(
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
+  )
 }
 
 export function Footer() {
@@ -57,7 +55,7 @@ export function Footer() {
   // fazia os canais de comunicação "piscarem" no centro da tela junto com o
   // loading. Só mostramos o rodapé depois que a página montou no cliente E
   // temos certeza de que é uma rota pública de conteúdo.
-  if (!mounted || isHiddenRoute(pathname)) {
+  if (!mounted || !showsFooter(pathname)) {
     return null
   }
 

@@ -33,6 +33,7 @@ import {
     Gift
 } from 'lucide-react'
 import { PageLoading } from '@/components/page-loading'
+import { useScrollToTopWhen } from '@/components/scroll-to-top'
 import { Badge } from '@/components/ui/badge'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { useAuthUser } from '@/hooks/use-auth-user'
@@ -118,12 +119,10 @@ export default function PublicFormPage() {
     // (longo) pela tela de sucesso (curta) — senão o navegador começa a animar
     // o "smooth scroll" ainda com a altura antiga e trava na altura nova, que
     // cai bem em cima do rodapé (WhatsApp/Discord) por causa da colisão de
-    // layout. Rodar no useEffect garante que o DOM já encolheu antes de rolar.
-    useEffect(() => {
-        if (submitted) {
-            window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior })
-        }
-    }, [submitted])
+    // layout. O hook sobe para o topo e segura a posição enquanto a tela de
+    // sucesso termina de montar (as animações de entrega mudam a altura de
+    // novo logo depois), soltando assim que a pessoa rolar.
+    useScrollToTopWhen(submitted)
 
     useEffect(() => {
         const mq = window.matchMedia('(max-width: 640px)')

@@ -35,6 +35,7 @@ import { ArrowLeft, Check, X, Send, FileDown, Clock, User, CheckCircle2, AlertCi
 import { ImageModal } from '@/components/image-modal'
 import { PremiumPdfCtaModal } from '@/components/premium-pdf-cta-modal'
 import { canDownloadExamPdf } from '@/lib/tier-limits'
+import { useScrollToTopWhen } from '@/components/scroll-to-top'
 
 export default function ExamPage({ params }: { params: { id: string } }) {
   const { id } = params
@@ -432,6 +433,12 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     // Pre-warm PDF assets in background
     import('@/lib/pdf-generator').then(m => m.prewarmPDFAssets()).catch(() => {})
   }, [id])
+
+  // Ao finalizar, a tela de resultado entra no lugar da prova sem trocar de
+  // rota. Como a prova é longa e a pessoa termina lá embaixo (última questão),
+  // sem isto o resultado abria no fim da página — não na nota, que é o que
+  // interessa. Sobe para o topo assim que a submissão é confirmada.
+  useScrollToTopWhen(submitted)
 
   useEffect(() => {
     if (!exam) return

@@ -4,6 +4,7 @@ import './globals.css'
 import './globals-button-feedback.css'
 import { ThemeProvider } from '@/components/theme-provider'
 import { Footer } from '@/components/footer'
+import { ScrollToTop } from '@/components/scroll-to-top'
 import { ImageProtectionProvider } from '@/components/image-protection-provider'
 import { VerifyEmailBanner } from '@/components/verify-email-banner'
 import { AppChrome } from '@/components/app-chrome'
@@ -227,6 +228,7 @@ export default function RootLayout({
           <MaterialCartProvider>
            <ShopCartProvider>
             <FloatingDockProvider>
+             <ScrollToTop />
              <VerifyEmailBanner />
              <ImageProtectionProvider>
                <div className="flex-1 flex flex-col">
