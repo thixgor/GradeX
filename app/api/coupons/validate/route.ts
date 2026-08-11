@@ -13,13 +13,14 @@ import {
   MANUAL_CLINICO_PRODUCT_ID,
 } from '@/lib/manual-clinico-product'
 import { getPricingEventStateById } from '@/lib/pricing-events'
+import { resolveSerialKeyProduct } from '@/lib/serial-keys'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 
 const Schema = z.object({
   code: z.string().min(1),
-  itemType: z.enum(['material', 'package', 'manual_clinico']).optional(),
+  itemType: z.enum(['material', 'package', 'manual_clinico', 'plus']).optional(),
   itemId: z.string().min(1).optional(),
   // Plano selecionado do Manual Clínico (restrição por plano + preço correto).
   planKey: z.enum(['semestral', 'anual', 'vitalicio']).optional(),
@@ -130,6 +131,61 @@ export async function POST(request: NextRequest) {
         amountAfterCoupon: validation.amountAfterCoupon,
         stackWithTier: validation.coupon.stackWithTier === true,
         tierDiscountAmount,
+        items: validation.items.map((item) => ({
+          itemType: item.itemType,
+          itemId: item.itemId,
+          itemTitle: item.itemTitle,
+          kind: item.kind,
+          discountAmount: item.discountAmount,
+          amountAfterDiscount: item.amountAfterDiscount,
+        })),
+      })
+    }
+
+    const isPlusCheckout = parsed.data.itemType === 'plus'
+
+    if (isPlusCheckout) {
+      if (!parsed.data.itemId) {
+        return NextResponse.json({ error: 'Informe o plano.' }, { status: 400 })
+      }
+
+      // Preço vem sempre da mesma fonte autoritativa usada no checkout de
+      // Serial Key (`resolveSerialKeyProduct`) — nunca do valor exibido no
+      // client, que só reflete o que o servidor mandou mostrar.
+      let resolved
+      try {
+        resolved = await resolveSerialKeyProduct(db, { productType: 'plus', productId: parsed.data.itemId })
+      } catch (err: any) {
+        return NextResponse.json({ error: err?.message || 'Plano indisponível.' }, { status: 400 })
+      }
+
+      const amount = Number(resolved.amount || 0)
+      if (amount <= 0) {
+        return NextResponse.json({ error: 'Cupom só pode ser aplicado a compras pagas.' }, { status: 400 })
+      }
+
+      const validation = await validateCouponForCheckout(db, {
+        code: parsed.data.code,
+        amountBeforeCoupon: amount,
+        userId: session?.userId,
+        userEmail: session?.email || parsed.data.buyerEmail,
+        items: [{
+          itemType: 'plus',
+          itemId: resolved.productId,
+          itemTitle: resolved.productTitle,
+          price: amount,
+        }],
+      })
+
+      return NextResponse.json({
+        couponId: validation.couponId,
+        code: validation.code,
+        label: validation.label,
+        amountBeforeCoupon: validation.amountBeforeCoupon,
+        eligibleAmount: validation.eligibleAmount,
+        discountAmount: validation.discountAmount,
+        amountAfterCoupon: validation.amountAfterCoupon,
+        stackWithTier: false,
         items: validation.items.map((item) => ({
           itemType: item.itemType,
           itemId: item.itemId,

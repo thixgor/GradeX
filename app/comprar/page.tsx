@@ -9,6 +9,7 @@ import { PricingEventCountdown } from '@/components/pricing-events/PricingEventC
 import { PublicPageShell } from '@/components/public-page-shell'
 import { CheckoutAccountNotice } from '@/components/checkout/checkout-account-notice'
 import { PackageContents } from '@/components/shop/package-contents'
+import { isPlusAccount } from '@/lib/account-tier'
 import Link from 'next/link'
 
 interface AppliedCoupon {
@@ -671,8 +672,8 @@ function GenericComprarContent({ productType }: { productType: string }) {
   const [couponCode, setCouponCode] = useState('')
   const [couponLoading, setCouponLoading] = useState(false)
   const [couponError, setCouponError] = useState('')
-  const couponEligible = productType === 'material' || productType === 'package' || productType === 'flashcard'
-  const couponItemType = productType === 'package' ? 'package' : 'material'
+  const couponEligible = productType === 'material' || productType === 'package' || productType === 'flashcard' || isPlusAccount(productType)
+  const couponItemType: 'package' | 'material' | 'plus' = productType === 'package' ? 'package' : isPlusAccount(productType) ? 'plus' : 'material'
 
   useEffect(() => {
     if (!productType) { setError('Produto não informado.'); setLoading(false); return }

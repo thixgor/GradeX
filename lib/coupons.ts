@@ -3,16 +3,16 @@ import type { ManualClinicoPlanKey, ManualClinicoPurchase, MaterialPurchase, Use
 import { MANUAL_CLINICO_PURCHASES_COLLECTION } from '@/lib/manual-clinico-product'
 
 export type CouponDiscountType = 'percentage' | 'fixed'
-export type CouponScope = 'all' | 'materials' | 'flashcards' | 'manual_clinico' | 'specific'
+export type CouponScope = 'all' | 'materials' | 'flashcards' | 'manual_clinico' | 'plus' | 'specific'
 export type CouponDurationUnit = 'hours' | 'days' | 'weeks' | 'months'
-export type CouponProductType = 'material' | 'package' | 'manual_clinico'
+export type CouponProductType = 'material' | 'package' | 'manual_clinico' | 'plus'
 export type CouponRedemptionStatus = 'reserved' | 'approved' | 'released'
 
 export interface CouponProductRef {
   itemType: CouponProductType
   itemId: string
   title?: string
-  kind?: 'material' | 'flashcard' | 'package' | 'product'
+  kind?: 'material' | 'flashcard' | 'package' | 'product' | 'plan'
 }
 
 export interface Coupon {
@@ -80,7 +80,7 @@ export interface CouponCheckoutItem {
 }
 
 export interface CouponRedemptionItem extends CouponCheckoutItem {
-  kind: 'material' | 'flashcard' | 'package' | 'product'
+  kind: 'material' | 'flashcard' | 'package' | 'product' | 'plan'
   discountAmount: number
   amountAfterDiscount: number
 }
@@ -127,7 +127,8 @@ export function addCouponDuration(createdAt: Date, value: number, unit: CouponDu
   return expiresAt
 }
 
-export function getCouponItemKind(item: Pick<CouponCheckoutItem, 'itemType' | 'materialType'>): 'material' | 'flashcard' | 'package' | 'product' {
+export function getCouponItemKind(item: Pick<CouponCheckoutItem, 'itemType' | 'materialType'>): 'material' | 'flashcard' | 'package' | 'product' | 'plan' {
+  if (item.itemType === 'plus') return 'plan'
   if (item.itemType === 'manual_clinico') return 'product'
   if (item.itemType === 'package') return 'package'
   return item.materialType === 'flashcard_deck' ? 'flashcard' : 'material'
@@ -144,6 +145,12 @@ export function isCouponUsageExhausted(coupon: Coupon) {
 }
 
 export function isCouponItemEligible(coupon: Coupon, item: CouponCheckoutItem) {
+  // Assinatura Plus+ é um produto à parte (recorrente, fora do catálogo de
+  // materiais) — só cupons criados explicitamente com escopo `plus` a
+  // alcançam. Sem esta guarda, um cupom `all` (pensado só para materiais,
+  // flashcards e produtos avulsos) passaria a descontar assinaturas também,
+  // um alcance que nenhum cupom existente foi criado esperando ter.
+  if (item.itemType === 'plus') return coupon.scope === 'plus'
   const kind = getCouponItemKind(item)
   if (coupon.scope === 'all') return true
   if (coupon.scope === 'materials') return kind === 'material' || kind === 'package'

@@ -246,16 +246,19 @@ export async function POST(request: NextRequest) {
     resolved.productType === 'material' ||
     resolved.productType === 'flashcard' ||
     resolved.productType === 'package' ||
-    resolved.productType === 'manual_clinico'
+    resolved.productType === 'manual_clinico' ||
+    isPlusAccount(resolved.productType)
   let couponDiscountAmount = 0
   if (data.couponCode && couponEligibleType && amount > 0) {
     if (resolved.productType === 'manual_clinico' && resolved.allowCoupons === false) {
       return NextResponse.json({ error: 'Cupons não estão habilitados para este produto.' }, { status: 400 })
     }
-    const couponItemType: 'material' | 'package' | 'manual_clinico' =
+    const couponItemType: 'material' | 'package' | 'manual_clinico' | 'plus' =
       resolved.productType === 'manual_clinico'
         ? 'manual_clinico'
-        : (resolved.grant.itemType === 'package' ? 'package' : 'material')
+        : isPlusAccount(resolved.productType)
+          ? 'plus'
+          : (resolved.grant.itemType === 'package' ? 'package' : 'material')
     try {
       couponValidation = await validateCouponForCheckout(db, {
         code: data.couponCode,

@@ -30,7 +30,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { INSTITUTION_UNITS } from '@/lib/institution-units'
 
-type CouponScope = 'all' | 'materials' | 'flashcards' | 'manual_clinico' | 'specific'
+type CouponScope = 'all' | 'materials' | 'flashcards' | 'manual_clinico' | 'plus' | 'specific'
 type DiscountType = 'percentage' | 'fixed'
 type ManualPlanKey = 'semestral' | 'anual' | 'vitalicio'
 type ExpirationMode = 'none' | 'date' | 'duration'
@@ -88,6 +88,7 @@ const scopeLabels: Record<CouponScope, string> = {
   materials: 'Todos os Materiais',
   flashcards: 'Todos os Flashcards',
   manual_clinico: 'Somente Manual Clínico',
+  plus: 'Somente Assinatura Plus+',
   specific: 'Itens específicos',
 }
 
@@ -550,6 +551,15 @@ export default function AdminCouponsPage() {
                   <BookOpen className="mt-0.5 h-4 w-4 flex-none" />
                   <span>
                     O cupom valerá exclusivamente para o <strong>Manual Clínico</strong> — aplicável tanto em <strong>/comprar</strong> (compra sem login) quanto em <strong>/manual-clinico/checkout</strong>. Certifique-se de que os cupons estão habilitados nas configurações do Manual Clínico.
+                  </span>
+                </div>
+              ) : null}
+
+              {form.scope === 'plus' ? (
+                <div className="flex items-start gap-2.5 rounded-lg border border-amber-300/25 bg-amber-400/10 p-3 text-xs text-amber-800 dark:text-amber-200">
+                  <UserCheck className="mt-0.5 h-4 w-4 flex-none" />
+                  <span>
+                    O cupom valerá exclusivamente para a <strong>Assinatura Plus+</strong>, aplicável em <strong>/comprar</strong> (compra sem login). Nenhum outro cupom (mesmo com escopo &quot;Todos&quot;) desconta a assinatura — este é o único jeito de criar promoção para o Plus+.
                   </span>
                 </div>
               ) : null}
