@@ -1,40 +1,45 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
-import { User } from '@/lib/types'
-import { transporter } from '@/lib/mail'
-import { getMarketingEmailTemplate, personalize } from '@/lib/comms/email-render'
+import { drainQueueNow } from '@/lib/comms/process'
+import {
+    createAndEnqueueCampaign,
+    getCampaignProgress,
+    resolveRecipients,
+} from '@/lib/comms/email-campaigns'
+import type { RecipientSpec } from '@/lib/comms/email-campaigns'
 
 export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+export const maxDuration = 60
 
 interface EmailPayload {
-    recipients: {
-        userIds?: string[]
-        additionalEmails?: string[]
-        selectAll?: boolean
-    }
+    recipients: RecipientSpec
     subject: string
     content: string
     previewText?: string
+    /** Nome da campanha no histórico (default: o assunto). */
+    name?: string
 }
 
-interface Recipient {
-    email: string
-    name: string
-}
-
-const FROM = process.env.SMTP_FROM || '"DomineAqui" <no-reply@domineaqui.com.br>'
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+// Quanto tempo gastamos tentando enviar dentro da própria requisição. O resto
+// da fila fica pendente e sai no próximo tick do cron. Folga sob o maxDuration
+// de 60s para sobrar tempo de montar a resposta — é justamente o que faltava
+// antes, quando o handler enviava tudo em linha e o gateway devolvia 504 com
+// corpo em HTML (que o front não conseguia ler como JSON).
+const DRAIN_BUDGET_MS = 35_000
 
 /**
- * Disparo de campanha por e-mail — envio DIRETO, sem fila.
+ * Disparo de campanha por e-mail.
  *
- * O transporter (lib/mail) é pooled e com rate-limit (poucas conexões,
- * ~3 msg/seg), então mandar direto daqui NÃO estoura o "auth limit" da
- * Hostinger — o próprio pool serializa e segura o ritmo. Sem outbox, sem
- * cron, sem "na fila": clicou, mandou, e a resposta já traz o resultado real
- * (quantos foram e quantos falharam). Ideal para os envios do dia a dia
- * (dezenas de destinatários), que cabem folgado no tempo da função.
+ * Fluxo: resolve os destinatários → grava a campanha → enfileira uma mensagem
+ * por pessoa na outbox → drena o que couber no orçamento de tempo → responde
+ * com o estado REAL por destinatário.
+ *
+ * A resposta sempre traz `campaignId` e a lista de quem entrou na campanha, de
+ * modo que a UI possa continuar acompanhando (polling em
+ * `/api/admin/emails/campaigns/[campaignId]`) mesmo quando a fila não esvazia
+ * dentro da requisição. Nada é perdido: o que fica pendente tem retry, backoff
+ * e registro de erro por destinatário.
  */
 export async function POST(request: NextRequest) {
     try {
@@ -46,101 +51,81 @@ export async function POST(request: NextRequest) {
         const body: EmailPayload = await request.json()
         const { recipients, subject, content, previewText } = body
 
-        if (!subject || !content) {
+        if (!subject?.trim() || !content?.trim()) {
             return NextResponse.json(
                 { error: 'Assunto e conteúdo são obrigatórios' },
-                { status: 400 }
+                { status: 400 },
             )
         }
 
-        const db = await getDb()
-        const usersCollection = db.collection<User>('users')
-
-        let recipientList: Recipient[] = []
-
-        if (recipients.selectAll) {
-            const allUsers = await usersCollection.find({}).project({ email: 1, name: 1 }).toArray()
-            recipientList = allUsers.map(u => ({ email: u.email, name: u.name || '' }))
-        } else if (recipients.userIds && recipients.userIds.length > 0) {
-            const { ObjectId } = await import('mongodb')
-            const selectedUsers = await usersCollection
-                .find({ _id: { $in: recipients.userIds.map(id => new ObjectId(id)) } })
-                .project({ email: 1, name: 1 })
-                .toArray()
-            recipientList = selectedUsers.map(u => ({ email: u.email, name: u.name || '' }))
-        }
-
-        // Adicionar e-mails extras (sem nome cadastrado)
-        if (recipients.additionalEmails && recipients.additionalEmails.length > 0) {
-            const validExtras = recipients.additionalEmails
-                .filter(email => EMAIL_RE.test(email))
-                .map(email => ({ email, name: '' }))
-            recipientList = [...recipientList, ...validExtras]
-        }
-
-        // Remover duplicatas e endereços inválidos
-        const seen = new Set<string>()
-        recipientList = recipientList.filter(r => {
-            if (!r.email || !EMAIL_RE.test(r.email)) return false
-            if (seen.has(r.email)) return false
-            seen.add(r.email)
-            return true
-        })
-
+        const recipientList = await resolveRecipients(recipients || {})
         if (recipientList.length === 0) {
             return NextResponse.json(
                 { error: 'Nenhum destinatário válido encontrado' },
-                { status: 400 }
+                { status: 400 },
             )
         }
 
-        // Envia DIRETO pelo transporter pooled. O pool respeita o rate-limit e o
-        // número de conexões configurados em lib/mail, então disparar tudo de uma
-        // vez aqui não gera rajada — as mensagens saem no ritmo seguro do SMTP.
-        const results = await Promise.allSettled(
-            recipientList.map(async (r) => {
-                const html = personalize(
-                    getMarketingEmailTemplate(content, previewText),
-                    r.name,
-                )
-                await transporter.sendMail({
-                    from: FROM,
-                    to: r.email,
-                    subject: personalize(subject, r.name),
-                    html,
-                })
-            })
-        )
-
-        const failures: { email: string; error: string }[] = []
-        results.forEach((res, i) => {
-            if (res.status === 'rejected') {
-                const reason = res.reason
-                failures.push({
-                    email: recipientList[i].email,
-                    error: reason instanceof Error ? reason.message : String(reason),
-                })
-            }
+        const { campaignId } = await createAndEnqueueCampaign({
+            recipients: recipientList,
+            content: { subject, content, previewText },
+            name: body.name,
+            source: 'manual',
+            createdBy: session.userId,
         })
 
-        const total = recipientList.length
-        const failed = failures.length
-        const sent = total - failed
+        // Envia o que der dentro do orçamento; o restante fica na fila.
+        await drainQueueNow(['email'], { timeBudgetMs: DRAIN_BUDGET_MS })
+
+        const progress = await getCampaignProgress(campaignId)
+        const stats = progress?.stats ?? {
+            total: recipientList.length,
+            sent: 0,
+            pending: recipientList.length,
+            failed: 0,
+            dead: 0,
+            skipped: 0,
+        }
+
+        const errors = (progress?.recipients ?? [])
+            .filter(r => r.status === 'dead' || (r.status === 'failed' && r.error))
+            .slice(0, 20)
+            .map(r => `${r.email}: ${r.error || 'falha desconhecida'}`)
 
         return NextResponse.json({
             success: true,
-            message:
-                failed > 0
-                    ? `Enviado para ${sent} de ${total}. ${failed} falhou${failed > 1 ? 'ram' : ''}.`
-                    : `Enviado para ${sent} ${sent > 1 ? 'pessoas' : 'pessoa'}. ✅`,
-            stats: { total, sent, failed },
-            errors: failures.slice(0, 20).map(f => `${f.email}: ${f.error}`),
+            campaignId,
+            message: buildMessage(stats),
+            stats,
+            done: progress?.done ?? false,
+            recipients: progress?.recipients ?? recipientList.map(r => ({
+                email: r.email,
+                name: r.name,
+                status: 'pending' as const,
+                attempts: 0,
+            })),
+            errors,
         })
     } catch (error) {
         console.error('Send email error:', error)
         return NextResponse.json(
             { error: error instanceof Error ? error.message : 'Erro ao enviar e-mails' },
-            { status: 500 }
+            { status: 500 },
         )
     }
+}
+
+function buildMessage(stats: {
+    total: number
+    sent: number
+    pending: number
+    dead: number
+    skipped: number
+}): string {
+    const parts: string[] = []
+    parts.push(`${stats.sent} de ${stats.total} enviado${stats.sent === 1 ? '' : 's'}`)
+    if (stats.pending > 0) parts.push(`${stats.pending} na fila (continua em segundo plano)`)
+    if (stats.dead > 0) parts.push(`${stats.dead} com falha definitiva`)
+    if (stats.skipped > 0) parts.push(`${stats.skipped} ignorado(s)`)
+    return parts.join(' · ')
 }

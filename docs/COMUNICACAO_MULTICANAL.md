@@ -6,8 +6,14 @@ elas só enfileiram, e o próprio endpoint de envio drena a fila na hora (sem
 depender de Vercel Cron, que não é usado por este projeto).
 
 Esta é a **Fase 0 + Fase 1 (e-mail) + adapter/worker de WhatsApp** do plano. As
-fases seguintes (central "Social-Media", leads com UUID/metatag, sequências de
-persuasão) reaproveitam esta mesma fila.
+demais features (campanhas de e-mail em `/admin/emails`, leads com
+UUID/metatag, sequências de persuasão) reaproveitam esta mesma fila.
+
+> **A central "Social-Media" foi removida.** As campanhas de e-mail agora vivem
+> só em `/admin/emails` — incluindo agendamento automático, documentado em
+> [`EMAIL_AGENDAMENTO_CRONJOB.md`](./EMAIL_AGENDAMENTO_CRONJOB.md). O canal de
+> WhatsApp continua existindo na fila (usado pelas jornadas de lead), apenas
+> sem painel de disparo manual.
 
 ---
 
@@ -47,8 +53,11 @@ MongoDB: outbox_messages   ← fila + log de auditoria por destinatário
 | `lib/comms/email-render.ts` | Template de marketing + `personalize` (compartilhado) |
 | `lib/comms/registry.ts` | Mapa canal → adapter (adicionar SMS/push aqui) |
 | `lib/comms/dispatch.ts` | `dispatch`/`dispatchBulk`: enfileira nos canais escolhidos |
-| `app/api/cron/comms-dispatcher/route.ts` | Endpoint de processamento (**não** agendado no Vercel Cron) |
-| `app/api/admin/social-media/dispatch-now/route.ts` | Botão "Processar fila agora" (admin) |
+| `lib/comms/email-campaigns.ts` | Campanhas de `/admin/emails`: resolve destinatários, enfileira e reporta progresso |
+| `lib/comms/email-schedules.ts` | Agendamentos de e-mail (recorrência + fuso) |
+| `lib/comms/email-scheduler.ts` | Execução dos agendamentos vencidos |
+| `app/api/cron/comms-dispatcher/route.ts` | Processamento de todos os canais (**não** agendado no Vercel Cron) |
+| `app/api/cron/email-scheduler/route.ts` | Agendamentos + drenagem da fila de e-mail (alvo do cron-job.org) |
 | `server/whatsapp-worker.js` | Cliente Baileys **always-on** (fora da Vercel) |
 
 ### Coleções MongoDB (criadas sob demanda)
@@ -171,14 +180,18 @@ usa o teto de cron jobs com as outras rotinas do sistema (subscriptions-sweeper,
 manual-clinico-expirations, raffles-sweeper, revisao-espacada), e adicionar
 mais um quebrava o deploy. Em vez de cron, o processamento acontece assim:
 
-1. **Instantâneo (padrão):** todo envio pela Central Social-Media já drena a
-   própria fila antes de responder (`drainQueueNow`, até ~20s de orçamento) —
-   cobre a grande maioria dos casos sem nenhuma configuração extra.
-2. **Botão "Processar fila agora"** (aba Histórico de `/admin/social-media`):
-   drena manualmente o que sobrou de lotes grandes. Sempre disponível, admin-autenticado.
-3. **Ticker externo (opcional):** se quiser processamento contínuo mesmo sem
-   ninguém no admin (ex.: para as jornadas de nurturing avançarem sozinhas),
-   rode o ticker num host sempre-ligado:
+1. **Instantâneo (padrão):** todo envio por `/admin/emails` já drena a própria
+   fila antes de responder (`drainQueueNow`, ~35s de orçamento) — cobre a
+   grande maioria dos casos sem nenhuma configuração extra.
+2. **Botão "Continuar envio agora"** (painel da campanha em `/admin/emails`):
+   drena manualmente o que sobrou de lotes grandes. Admin-autenticado.
+3. **Cron externo (recomendado):** `cron-job.org` batendo em
+   `/api/cron/email-scheduler` de minuto em minuto — roda os agendamentos e
+   drena a fila de e-mail. Ver
+   [`EMAIL_AGENDAMENTO_CRONJOB.md`](./EMAIL_AGENDAMENTO_CRONJOB.md).
+4. **Ticker externo (opcional):** se quiser processamento contínuo de **todos**
+   os canais (ex.: para as jornadas de nurturing com WhatsApp avançarem
+   sozinhas), rode o ticker num host sempre-ligado:
    ```bash
    export APP_URL="https://domineaqui.com.br"
    export CRON_SECRET="<mesmo do .env>"
@@ -190,25 +203,28 @@ mais um quebrava o deploy. Em vez de cron, o processamento acontece assim:
    cron-job.org) apontando pra `POST https://SEU_APP/api/cron/comms-dispatcher`
    com header `Authorization: Bearer <CRON_SECRET>`.
 
-Sem nenhuma das duas últimas opções configuradas, as jornadas de nurturing
-(que dependem de `advanceSequences()` rodando periodicamente) só avançam
-quando alguém aciona o processamento manualmente ou faz um novo envio pela
-Central. Para jornadas 100% automáticas, configure o ticker.
+Sem nenhuma das opções externas configuradas, as jornadas de nurturing (que
+dependem de `advanceSequences()` rodando periodicamente) só avançam quando
+alguém faz um novo envio. Para automação de verdade, configure o cron externo.
 
 ## Operação
 
-- **Envio instantâneo:** desde esta versão, `POST /api/admin/social-media/send`
-  não só enfileira — ele mesmo drena a fila recém-criada antes de responder
-  (`lib/comms/process.ts`, `drainQueueNow`), então o admin já vê "Enviado: X de
-  Y" na hora, sem depender do cron/ticker para lotes pequenos/médios. Só o que
-  não couber no orçamento de tempo da função (20s no envio, para caber nos 60s
-  do plano Hobby) fica "pending" à espera do próximo processamento.
-- **"Processar fila agora"** (botão na aba Histórico de `/admin/social-media`,
-  ou `POST /api/admin/social-media/dispatch-now`, admin-autenticado): drena o
-  que sobrou manualmente, sem precisar do CRON_SECRET.
-- **Forçar processamento via curl** (equivalente ao ticker, sem instalar nada):
+- **Envio instantâneo:** `POST /api/admin/emails/send` enfileira a campanha e
+  drena a fila recém-criada antes de responder (`lib/comms/process.ts`,
+  `drainQueueNow`), então o admin já vê quem recebeu na hora. Só o que não
+  couber no orçamento de tempo da função (35s, para caber nos 60s do plano
+  Hobby) fica "pending" à espera do próximo tick — e a UI continua acompanhando
+  por `GET /api/admin/emails/campaigns/[campaignId]`.
+- **"Continuar envio agora"** (`POST /api/admin/emails/campaigns/[campaignId]`,
+  admin-autenticado): drena o que sobrou manualmente, sem precisar do CRON_SECRET.
+- **Forçar processamento via curl:**
   ```bash
-  curl -X POST https://SEU_APP/api/cron/comms-dispatcher \
+  # E-mail (agendamentos + fila)
+  curl -X POST "https://SEU_APP/api/cron/email-scheduler" \
+       -H "Authorization: Bearer $CRON_SECRET"
+
+  # Todos os canais (inclui WhatsApp e jornadas)
+  curl -X POST "https://SEU_APP/api/cron/comms-dispatcher" \
        -H "Authorization: Bearer $CRON_SECRET"
   ```
 - **Auditar envios**: consultar `outbox_messages` por `status`, `campaignId`,
@@ -220,31 +236,25 @@ Central. Para jornadas 100% automáticas, configure o ticker.
 
 ---
 
-## Parte 3 — Central "Social-Media" (unificada)
+## Campanhas de e-mail (`/admin/emails`)
 
-- **UI:** `app/admin/social-media` — abas *Nova comunicação* (escolhe canal:
-  e-mail, WhatsApp ou ambos; público: contatos/usuários/campanha/**lista
-  manual**), *Histórico* unificado e *Jornadas* (com cancelamento de matrículas).
-  Card no painel admin.
-- **APIs:** `POST /api/admin/social-media/send` (enfileira multicanal),
-  `POST /api/admin/social-media/preview` (renderiza sem enviar),
-  `GET /api/admin/social-media/history` (auditoria a partir da outbox),
-  `GET|POST /api/admin/social-media/sequences` (listar / criar jornada padrão),
-  `GET|POST /api/admin/social-media/enrollments` (listar/cancelar matrículas),
-  `POST /api/admin/social-media/dispatch-now` (drena a fila sob demanda).
-- **Editor visual de e-mail (blocos):** o composer de e-mail agora tem dois
-  modos — *Blocos* (padrão) e *HTML avançado*. No modo Blocos, monta-se o
-  e-mail com os mesmos tipos de bloco de `/admin/emails` (título, texto,
-  destaque, lista, botão, imagem, citação); o HTML final usa as mesmas classes
-  CSS do template de marketing (`lib/comms/email-blocks.ts`, compartilhado).
-  Trocar para HTML avançado dá acesso ao HTML bruto para quem precisar de algo
-  fora dos blocos padrão.
+- **UI:** `app/admin/emails` — editor visual em blocos, seleção de
+  destinatários (todos / filtrados por tipo de conta, período e materiais
+  comprados / e-mails avulsos), rascunhos, acompanhamento por destinatário e
+  aba de **agendamentos**.
+- **APIs:**
+  `POST /api/admin/emails/send` (cria a campanha, enfileira e drena),
+  `GET /api/admin/emails/campaigns` (histórico),
+  `GET|POST /api/admin/emails/campaigns/[campaignId]` (progresso / continuar envio),
+  `GET|POST /api/admin/emails/schedules` (listar / criar agendamento),
+  `PATCH|DELETE|POST /api/admin/emails/schedules/[id]` (editar / excluir / executar agora),
+  `GET|POST /api/admin/emails/drafts` (rascunhos),
+  `GET /api/admin/emails/templates` (biblioteca de templates).
 - **Templates de WhatsApp:** biblioteca com ~13 mensagens prontas
   (`lib/comms/whatsapp-templates.ts`), organizadas por categoria de persuasão
   (reciprocidade, check-in, prova social, autoridade, compromisso, escassez,
-  reengajamento). Seletor disponível no composer do Social-Media e no campo
-  "Mensagem do 1º toque" das campanhas de leads — insere o texto pronto, que
-  o admin pode editar livremente antes de enviar.
+  reengajamento). Usadas no campo "Mensagem do 1º toque" das campanhas de leads
+  — insere o texto pronto, que o admin pode editar livremente antes de enviar.
 - **Personalização:** botões de token (`{{firstName}}`, `{{cidade}}`,
   `{{persuasiveTag}}`, `{{totalStudents}}`, `{{campaignLeads}}`,
   `{{campaignName}}`, `{{authority}}`) inserem a variável no cursor do campo

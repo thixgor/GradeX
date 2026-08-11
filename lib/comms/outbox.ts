@@ -227,18 +227,29 @@ export async function markFailed(
 
 /**
  * Devolve uma mensagem reservada para a fila SEM contar como tentativa/falha.
- * Usado quando o worker para por orçamento de tempo (não por erro de envio):
- * a mensagem volta a ser elegível imediatamente, sem backoff nem consumir uma
+ * Usado quando o worker para por orçamento de tempo ou por rate-limit (não por
+ * erro de envio): a mensagem volta a ser elegível sem backoff nem consumir uma
  * das `maxAttempts` — senão lotes grandes esvaziariam as tentativas só por
- * timeout e cairiam em dead-letter sem nunca terem sido enviados.
+ * timeout/throttle e cairiam em dead-letter sem nunca terem sido enviados.
+ *
+ * `delayMs` adia a reelegibilidade. É o que evita o worker ficar em loop
+ * apertado reivindicando e devolvendo a mesma mensagem enquanto o token bucket
+ * está vazio.
  */
-export async function releaseClaim(id: OutboxMessage['_id']): Promise<void> {
+export async function releaseClaim(
+    id: OutboxMessage['_id'],
+    delayMs = 0,
+): Promise<void> {
     const col = await collection()
     const now = new Date()
     await col.updateOne(
         { _id: id },
         {
-            $set: { status: 'pending', nextAttemptAt: now, updatedAt: now },
+            $set: {
+                status: 'pending',
+                nextAttemptAt: new Date(now.getTime() + delayMs),
+                updatedAt: now,
+            },
             $unset: { leaseUntil: '' },
         },
     )

@@ -66,10 +66,13 @@
     "app/api/cron/comms-dispatcher/route.ts": {
       "maxDuration": 60
     },
-    "app/api/admin/social-media/send/route.ts": {
+    "app/api/admin/emails/campaigns/[campaignId]/route.ts": {
       "maxDuration": 60
     },
-    "app/api/admin/social-media/dispatch-now/route.ts": {
+    "app/api/admin/emails/schedules/[id]/route.ts": {
+      "maxDuration": 60
+    },
+    "app/api/cron/email-scheduler/route.ts": {
       "maxDuration": 60
     }
   },

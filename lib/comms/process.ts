@@ -1,8 +1,8 @@
 // ────────────────────────────────────────────────────────────────────────────
 // Núcleo do processamento da fila — extraído do cron para ser reaproveitado
-// tanto pelo worker agendado (app/api/cron/comms-dispatcher) quanto por
-// disparo imediato sob demanda (app/api/admin/social-media/dispatch-now, e o
-// próprio endpoint de envio, que processa uma leva na hora após enfileirar).
+// tanto pelos workers agendados (app/api/cron/comms-dispatcher e
+// app/api/cron/email-scheduler) quanto pelo disparo imediato sob demanda (o
+// próprio endpoint de envio processa uma leva na hora após enfileirar).
 //
 // Por que isso importa: no plano Hobby da Vercel o Cron só roda 1x/dia, então
 // depender só dele deixa toda mensagem "pending" por até 24h. Processar aqui,
@@ -29,6 +29,11 @@ export interface ChannelProcessResult {
 // para caber no maxDuration da função serverless (Hobby: até 60s).
 const BATCH_PER_CHANNEL = Number(process.env.COMMS_BATCH_PER_CHANNEL) || 40
 
+// Quanto adiar uma mensagem devolvida à fila por falta de token de rate-limit.
+// Curto o bastante para o envio seguir fluido, longo o bastante para o worker
+// não ficar girando em falso enquanto o bucket reabastece.
+const THROTTLE_RETRY_MS = 1_000
+
 /** Processa (envia de fato) até `limit` mensagens pendentes de UM canal. */
 export async function processChannel(
     channel: CommChannel,
@@ -45,6 +50,10 @@ export async function processChannel(
 
     const batch = await claimBatch(channel, limit)
 
+    // Uma vez que o bucket esvazia, o resto do lote é devolvido direto: não vale
+    // consultar o token para cada um sabendo que não há.
+    let outOfTokens = false
+
     for (const msg of batch) {
         // Estourou o orçamento de tempo: devolve o restante do lote para a fila
         // sem contar como tentativa/falha (não foi erro de envio, só não deu
@@ -53,11 +62,16 @@ export async function processChannel(
             await releaseClaim(msg._id)
             continue
         }
-        // Respeita o ritmo do provedor. Sem token: devolve à fila (status volta a
-        // ser elegível assim que o lease expirar).
-        const allowed = await takeToken(channel)
-        if (!allowed) {
-            await markFailed(msg, 'rate-limited (aguardando token)', false)
+
+        // Respeita o ritmo do provedor. Sem token, a mensagem volta para a fila
+        // SEM contar tentativa: ficar sem token não é falha de envio. (Antes isso
+        // chamava `markFailed`, então uma campanha grande gastava as 5 tentativas
+        // só esperando o bucket encher e ia parar em dead-letter sem nunca ter
+        // sido tentada de verdade.) O atraso curto evita o worker girar em falso
+        // enquanto o bucket reabastece.
+        if (!outOfTokens && !(await takeToken(channel))) outOfTokens = true
+        if (outOfTokens) {
+            await releaseClaim(msg._id, THROTTLE_RETRY_MS)
             result.throttled++
             continue
         }
@@ -113,8 +127,10 @@ export async function drainQueueNow(
     }
 
     // Repete em rodadas curtas até não sobrar nada elegível ou o tempo acabar.
+    let wasThrottled = false
     while (Date.now() < deadline) {
-        let anyProcessed = false
+        let progressed = false
+        let throttledNow = false
         for (const channel of channels) {
             // Passa o deadline: o envio para no meio do lote se o tempo acabar,
             // em vez de só verificar entre rodadas (um lote de 40 envios a 3/seg
@@ -125,10 +141,31 @@ export async function drainQueueNow(
             acc.failed += round.failed
             acc.dead += round.dead
             acc.throttled += round.throttled
-            if (round.sent + round.failed + round.dead + round.throttled > 0) anyProcessed = true
+            if (round.sent + round.failed + round.dead > 0) progressed = true
+            if (round.throttled > 0) throttledNow = true
         }
-        if (!anyProcessed) break // fila (deste lote) esvaziada
+
+        if (progressed) {
+            wasThrottled = throttledNow
+            continue
+        }
+
+        // Nada saiu nesta rodada. Se foi por rate-limit (agora ou na rodada
+        // anterior), as mensagens devolvidas voltam a ficar elegíveis em ~1s:
+        // vale esperar em vez de encerrar o drain com a fila cheia.
+        if (throttledNow || wasThrottled) {
+            wasThrottled = false
+            if (Date.now() + THROTTLE_RETRY_MS >= deadline) break
+            await sleep(THROTTLE_RETRY_MS)
+            continue
+        }
+
+        break // fila esvaziada
     }
 
     return Array.from(totals.values())
+}
+
+function sleep(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms))
 }

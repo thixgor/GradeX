@@ -66,7 +66,6 @@ const KNOWN_ROUTES = new Set<string>([
   '/admin/rifas',
   '/admin/rifas/new',
   '/admin/settings',
-  '/admin/social-media',
   '/admin/stats',
   '/admin/study-playlists',
   '/admin/tickets',

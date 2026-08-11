@@ -83,7 +83,7 @@ export default function NewLeadCampaignPage() {
     const [sequences, setSequences] = useState<{ key: string; name: string }[]>([])
 
     useEffect(() => {
-        fetch('/api/admin/social-media/sequences', { cache: 'no-store' })
+        fetch('/api/admin/leads/sequences', { cache: 'no-store' })
             .then((r) => r.json())
             .then((d) => setSequences(d.sequences || []))
             .catch(() => {})

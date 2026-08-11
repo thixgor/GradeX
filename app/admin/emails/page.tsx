@@ -7,6 +7,7 @@ import {
     ArrowLeft,
     BarChart3,
     BookOpen,
+    CalendarClock,
     Check,
     ChevronDown,
     ChevronUp,
@@ -21,9 +22,12 @@ import {
     Loader2,
     Mail,
     MessageSquareQuote,
+    Pause,
     Paperclip,
+    Play,
     Plus,
     Save,
+    Terminal,
     Search,
     Send,
     Sparkles,
@@ -117,17 +121,55 @@ interface AttachmentBlock {
     imageUrl?: string
 }
 
+interface RecipientStatus {
+    email: string
+    name: string
+    /** pending | processing | sent | delivered | failed | dead | skipped */
+    status: string
+    attempts: number
+    error?: string
+    sentAt?: string
+}
+
+interface CampaignStats {
+    total: number
+    sent: number
+    pending: number
+    failed: number
+    dead: number
+    skipped: number
+}
+
 interface SendResult {
-    success: boolean
+    success?: boolean
+    campaignId?: string
     message: string
-    stats: {
-        total: number
-        sent: number
-        failed: number
-        pending?: number
-        queued?: number
-    }
+    stats: CampaignStats
+    /** true quando não há mais nada pendente na fila desta campanha. */
+    done?: boolean
+    recipients?: RecipientStatus[]
     errors?: string[]
+}
+
+type ScheduleFrequency = 'once' | 'daily' | 'weekly' | 'monthly'
+
+interface EmailSchedule {
+    _id: string
+    name: string
+    subject: string
+    frequency: ScheduleFrequency
+    time: string
+    timezone: string
+    weekdays?: number[]
+    dayOfMonth?: number
+    date?: string
+    isActive: boolean
+    nextRunAt: string | null
+    lastRunAt?: string
+    lastStatus?: 'ok' | 'error' | 'empty'
+    lastError?: string
+    lastRecipientCount?: number
+    runCount: number
 }
 
 type AttachmentType = 'none' | 'material' | 'flashcard' | 'link'
@@ -171,6 +213,66 @@ interface VisualPreset {
 }
 
 const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://domineaqui.com.br'
+
+const WEEKDAY_LABELS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
+
+const FREQUENCY_LABELS: Record<ScheduleFrequency, string> = {
+    once: 'Uma vez',
+    daily: 'Todo dia',
+    weekly: 'Toda semana',
+    monthly: 'Todo mês',
+}
+
+/** Rótulo e cor de cada status da fila, para a lista de destinatários. */
+const RECIPIENT_STATUS: Record<string, { label: string; className: string }> = {
+    sent: { label: 'Enviado', className: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400' },
+    delivered: { label: 'Entregue', className: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400' },
+    pending: { label: 'Na fila', className: 'bg-amber-500/15 text-amber-700 dark:text-amber-400' },
+    processing: { label: 'Enviando', className: 'bg-sky-500/15 text-sky-700 dark:text-sky-400' },
+    failed: { label: 'Retentando', className: 'bg-orange-500/15 text-orange-700 dark:text-orange-400' },
+    dead: { label: 'Falhou', className: 'bg-red-500/15 text-red-700 dark:text-red-400' },
+    skipped: { label: 'Ignorado', className: 'bg-slate-500/15 text-slate-600 dark:text-slate-400' },
+}
+
+function formatDateTime(value?: string | null): string {
+    if (!value) return '—'
+    const date = new Date(value)
+    if (Number.isNaN(date.getTime())) return '—'
+    return date.toLocaleString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        timeZone: 'America/Sao_Paulo',
+    })
+}
+
+// Endpoint que o cron externo precisa chamar. O segredo fica de fora
+// deliberadamente — ele nunca é exposto ao navegador; o admin cola o valor de
+// CRON_SECRET no lugar do placeholder.
+const cronEndpoint = `${appUrl.replace(/\/$/, '')}/api/cron/email-scheduler`
+const cronUrl = `${cronEndpoint}?token=SEU_SEGREDO`
+const cronCurl = `curl -X POST "${cronEndpoint}" -H "Authorization: Bearer SEU_SEGREDO"`
+
+/** Descrição legível da recorrência, para a lista de agendamentos. */
+function describeSchedule(schedule: EmailSchedule): string {
+    const at = `às ${schedule.time}`
+    switch (schedule.frequency) {
+        case 'once':
+            return `Uma vez em ${schedule.date?.split('-').reverse().join('/') || '—'} ${at}`
+        case 'daily':
+            return `Todo dia ${at}`
+        case 'weekly': {
+            const days = (schedule.weekdays || []).map(d => WEEKDAY_LABELS[d]).join(', ')
+            return `Toda semana (${days || '—'}) ${at}`
+        }
+        case 'monthly':
+            return `Todo dia ${schedule.dayOfMonth || 1} do mês ${at}`
+        default:
+            return at
+    }
+}
 
 const blockOptions: Array<{ type: EmailBlockType; label: string; icon: typeof Type }> = [
     { type: 'hero', label: 'Titulo', icon: Type },
@@ -595,15 +697,45 @@ export default function AdminEmailsPage() {
     const [showDrafts, setShowDrafts] = useState(false)
     const [savingDraft, setSavingDraft] = useState(false)
     const [sendResult, setSendResult] = useState<SendResult | null>(null)
+    const [showRecipientReport, setShowRecipientReport] = useState(false)
+    const [continuingSend, setContinuingSend] = useState(false)
+
+    // Agendamentos
+    const [schedules, setSchedules] = useState<EmailSchedule[]>([])
+    const [showSchedules, setShowSchedules] = useState(false)
+    const [savingSchedule, setSavingSchedule] = useState(false)
+    const [scheduleName, setScheduleName] = useState('')
+    const [scheduleFrequency, setScheduleFrequency] = useState<ScheduleFrequency>('once')
+    const [scheduleTime, setScheduleTime] = useState('09:00')
+    const [scheduleDate, setScheduleDate] = useState('')
+    const [scheduleWeekdays, setScheduleWeekdays] = useState<number[]>([1])
+    const [scheduleDayOfMonth, setScheduleDayOfMonth] = useState(1)
+    // 'fixed' congela quem está selecionado agora; 'dynamic' reavalia os filtros
+    // a cada execução (alcança quem entrou na base depois).
+    const [scheduleAudience, setScheduleAudience] = useState<'fixed' | 'dynamic'>('fixed')
+
     const [toast, setToast] = useState<{ open: boolean; message: string; type?: 'success' | 'error' | 'info' }>({ open: false, message: '' })
 
     const showToast = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
         setToast({ open: true, message, type })
     }
 
+    const reloadSchedules = useCallback(async () => {
+        try {
+            const res = await fetch('/api/admin/emails/schedules', { cache: 'no-store' })
+            if (res.ok) {
+                const data = await res.json()
+                setSchedules(data.schedules || [])
+            }
+        } catch (error) {
+            console.error('Reload schedules error:', error)
+        }
+    }, [])
+
     useEffect(() => {
         loadData()
-    }, [])
+        reloadSchedules()
+    }, [reloadSchedules])
 
     async function loadData() {
         try {
@@ -997,6 +1129,29 @@ export default function AdminEmailsPage() {
     `
     }, [finalContent])
 
+    /** Especificação de destinatários enviada ao servidor (envio e agendamento). */
+    const buildRecipientSpec = useCallback((audience: 'fixed' | 'dynamic' = 'fixed') => {
+        if (audience === 'dynamic') {
+            // Parte da base inteira (`selectAll`) e aplica os filtros por cima — o
+            // servidor os reavalia a cada execução, que é o que faz um agendamento
+            // recorrente alcançar quem se cadastrou depois. Sem o `selectAll`, com
+            // os dois filtros em "todos" não sobraria ninguém para filtrar.
+            return {
+                selectAll: true,
+                additionalEmails,
+                filter: {
+                    accountType: filterAccountType,
+                    periodo: filterPeriodo,
+                },
+            }
+        }
+        return {
+            userIds: selectAll ? undefined : Array.from(selectedUserIds),
+            additionalEmails,
+            selectAll,
+        }
+    }, [additionalEmails, filterAccountType, filterPeriodo, selectAll, selectedUserIds])
+
     const sendEmail = async () => {
         if (!subject.trim()) {
             showToast('Informe o assunto do e-mail', 'error')
@@ -1019,11 +1174,7 @@ export default function AdminEmailsPage() {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    recipients: {
-                        userIds: selectAll ? undefined : Array.from(selectedUserIds),
-                        additionalEmails,
-                        selectAll,
-                    },
+                    recipients: buildRecipientSpec('fixed'),
                     subject,
                     content: finalContent,
                     previewText,
@@ -1039,7 +1190,7 @@ export default function AdminEmailsPage() {
             } catch {
                 if (res.status === 504) {
                     throw new Error(
-                        'O envio demorou demais e o servidor encerrou a conexão. Parte dos e-mails pode ter saído. Tente enviar para menos destinatários por vez (até ~50).'
+                        'O servidor demorou demais para responder. Os e-mails ficaram na fila e continuam saindo em segundo plano — confira o andamento em "Agendamentos e envios".'
                     )
                 }
                 throw new Error(
@@ -1052,12 +1203,177 @@ export default function AdminEmailsPage() {
             }
 
             setSendResult(data)
-            showToast(data.message, 'success')
+            showToast(data.message, data.stats?.dead ? 'info' : 'success')
         } catch (error) {
             const err = error as Error
             showToast(err.message, 'error')
         } finally {
             setSending(false)
+        }
+    }
+
+    // Acompanha a campanha até a fila esvaziar. Sem isso, campanhas grandes (que
+    // não cabem no orçamento de tempo de uma requisição) ficariam paradas em "na
+    // fila" na tela, mesmo continuando a sair no servidor.
+    useEffect(() => {
+        const campaignId = sendResult?.campaignId
+        if (!campaignId || sendResult?.done) return
+
+        let cancelled = false
+        const timer = setInterval(async () => {
+            try {
+                const res = await fetch(`/api/admin/emails/campaigns/${campaignId}`, { cache: 'no-store' })
+                if (!res.ok) return
+                const progress = await res.json()
+                if (cancelled) return
+                setSendResult(prev => (prev?.campaignId === campaignId
+                    ? {
+                        ...prev,
+                        stats: progress.stats,
+                        done: progress.done,
+                        recipients: progress.recipients,
+                        message: progress.done
+                            ? `${progress.stats.sent} de ${progress.stats.total} enviado(s).`
+                            : `${progress.stats.sent} de ${progress.stats.total} enviado(s) — ${progress.stats.pending} na fila...`,
+                    }
+                    : prev))
+            } catch {
+                // Falha de rede num tick não é motivo para parar o acompanhamento.
+            }
+        }, 5000)
+
+        return () => {
+            cancelled = true
+            clearInterval(timer)
+        }
+    }, [sendResult?.campaignId, sendResult?.done])
+
+    /** Drena mais uma leva da fila sem esperar o cron. */
+    const continueSending = async () => {
+        const campaignId = sendResult?.campaignId
+        if (!campaignId) return
+
+        setContinuingSend(true)
+        try {
+            const res = await fetch(`/api/admin/emails/campaigns/${campaignId}`, { method: 'POST' })
+            const data = await res.json()
+            if (!res.ok) throw new Error(data.error || 'Erro ao continuar o envio')
+            setSendResult(prev => (prev?.campaignId === campaignId
+                ? {
+                    ...prev,
+                    stats: data.stats,
+                    done: data.done,
+                    recipients: data.recipients,
+                    message: `${data.stats.sent} de ${data.stats.total} enviado(s).`,
+                }
+                : prev))
+        } catch (error) {
+            showToast((error as Error).message, 'error')
+        } finally {
+            setContinuingSend(false)
+        }
+    }
+
+    // ── Agendamentos ────────────────────────────────────────────────────────
+
+    const openScheduleDialog = () => {
+        if (!subject.trim() || !plainContent.trim()) {
+            showToast('Monte o e-mail (assunto e conteúdo) antes de agendar', 'error')
+            return
+        }
+        if (recipientCount === 0 && scheduleAudience === 'fixed') {
+            showToast('Selecione pelo menos um destinatário', 'error')
+            return
+        }
+        setScheduleName(prev => prev || subject.trim())
+        setShowSchedules(true)
+        reloadSchedules()
+    }
+
+    const createSchedule = async () => {
+        setSavingSchedule(true)
+        try {
+            const res = await fetch('/api/admin/emails/schedules', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: scheduleName.trim() || subject.trim(),
+                    subject,
+                    previewText,
+                    content: finalContent,
+                    blocks,
+                    recipients: buildRecipientSpec(scheduleAudience),
+                    frequency: scheduleFrequency,
+                    time: scheduleTime,
+                    date: scheduleDate,
+                    weekdays: scheduleWeekdays,
+                    dayOfMonth: scheduleDayOfMonth,
+                    isActive: true,
+                }),
+            })
+            const data = await res.json()
+            if (!res.ok) throw new Error(data.error || 'Erro ao criar agendamento')
+
+            await reloadSchedules()
+            showToast(
+                `Agendado! Próximo envio em ${formatDateTime(data.schedule?.nextRunAt)}`,
+                'success',
+            )
+        } catch (error) {
+            showToast((error as Error).message, 'error')
+        } finally {
+            setSavingSchedule(false)
+        }
+    }
+
+    const toggleSchedule = async (schedule: EmailSchedule) => {
+        try {
+            const res = await fetch(`/api/admin/emails/schedules/${schedule._id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ isActive: !schedule.isActive }),
+            })
+            const data = await res.json()
+            if (!res.ok) throw new Error(data.error || 'Erro ao atualizar agendamento')
+            await reloadSchedules()
+            showToast(schedule.isActive ? 'Agendamento pausado' : 'Agendamento reativado', 'success')
+        } catch (error) {
+            showToast((error as Error).message, 'error')
+        }
+    }
+
+    const removeSchedule = async (schedule: EmailSchedule) => {
+        if (!confirm(`Excluir o agendamento "${schedule.name}"?`)) return
+        try {
+            const res = await fetch(`/api/admin/emails/schedules/${schedule._id}`, { method: 'DELETE' })
+            const data = await res.json().catch(() => ({}))
+            if (!res.ok) throw new Error(data.error || 'Erro ao excluir agendamento')
+            await reloadSchedules()
+            showToast('Agendamento excluído', 'success')
+        } catch (error) {
+            showToast((error as Error).message, 'error')
+        }
+    }
+
+    const runScheduleNow = async (schedule: EmailSchedule) => {
+        if (!confirm(`Disparar "${schedule.name}" agora? Os e-mails serão enviados de verdade.`)) return
+        try {
+            const res = await fetch(`/api/admin/emails/schedules/${schedule._id}`, { method: 'POST' })
+            const data = await res.json()
+            if (!res.ok) throw new Error(data.error || 'Erro ao executar agendamento')
+            await reloadSchedules()
+            if (data.campaignId) {
+                setSendResult({
+                    campaignId: data.campaignId,
+                    message: `Disparo manual de "${schedule.name}" em andamento...`,
+                    stats: { total: data.recipients, sent: 0, pending: data.recipients, failed: 0, dead: 0, skipped: 0 },
+                    done: false,
+                })
+                setShowSchedules(false)
+            }
+            showToast(`Disparado para ${data.recipients} destinatário(s)`, 'success')
+        } catch (error) {
+            showToast((error as Error).message, 'error')
         }
     }
 
@@ -1907,28 +2223,85 @@ export default function AdminEmailsPage() {
                                 </div>
 
                                 {sendResult && (
-                                    <div className={`rounded-lg p-4 ${sendResult.stats.failed > 0 ? 'bg-yellow-50 dark:bg-yellow-950/20' : 'bg-green-50 dark:bg-green-950/20'}`}>
+                                    <div
+                                        className={`rounded-lg border p-4 ${sendResult.stats.dead > 0
+                                            ? 'border-yellow-300 bg-yellow-50 dark:border-yellow-900 dark:bg-yellow-950/20'
+                                            : 'border-emerald-300 bg-emerald-50 dark:border-emerald-900 dark:bg-emerald-950/20'
+                                            }`}
+                                    >
                                         <div className="flex items-start gap-3">
-                                            {sendResult.stats.failed > 0 ? (
-                                                <AlertCircle className="mt-0.5 h-5 w-5 text-yellow-600" />
+                                            {!sendResult.done ? (
+                                                <Loader2 className="mt-0.5 h-5 w-5 shrink-0 animate-spin text-sky-600" />
+                                            ) : sendResult.stats.dead > 0 ? (
+                                                <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-yellow-600" />
                                             ) : (
-                                                <Check className="mt-0.5 h-5 w-5 text-green-600" />
+                                                <Check className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
                                             )}
-                                            <div>
+                                            <div className="min-w-0 flex-1">
                                                 <p className="font-medium">{sendResult.message}</p>
-                                                <p className="text-sm text-muted-foreground">
+
+                                                <div className="mt-2 h-2 overflow-hidden rounded-full bg-black/10 dark:bg-white/10">
+                                                    <div
+                                                        className="h-full rounded-full bg-emerald-600 transition-all"
+                                                        style={{
+                                                            width: `${sendResult.stats.total > 0
+                                                                ? Math.round((sendResult.stats.sent / sendResult.stats.total) * 100)
+                                                                : 0}%`,
+                                                        }}
+                                                    />
+                                                </div>
+
+                                                <p className="mt-2 text-sm text-muted-foreground">
                                                     {`Enviados: ${sendResult.stats.sent}`}
-                                                    {sendResult.stats.pending
-                                                        ? ` | Na fila: ${sendResult.stats.pending}`
-                                                        : ''}
-                                                    {` | Falhas: ${sendResult.stats.failed}`}
+                                                    {sendResult.stats.pending > 0 ? ` · Na fila: ${sendResult.stats.pending}` : ''}
+                                                    {sendResult.stats.dead > 0 ? ` · Falharam: ${sendResult.stats.dead}` : ''}
+                                                    {sendResult.stats.skipped > 0 ? ` · Ignorados: ${sendResult.stats.skipped}` : ''}
                                                 </p>
+
+                                                {!sendResult.done && (
+                                                    <p className="mt-1 text-xs text-muted-foreground">
+                                                        O restante continua saindo em segundo plano, no ritmo seguro do servidor de e-mail.
+                                                    </p>
+                                                )}
+
+                                                <div className="mt-3 flex flex-wrap gap-2">
+                                                    {sendResult.recipients && sendResult.recipients.length > 0 && (
+                                                        <Button
+                                                            type="button"
+                                                            variant="outline"
+                                                            size="sm"
+                                                            onClick={() => setShowRecipientReport(true)}
+                                                        >
+                                                            <Users className="mr-2 h-4 w-4" />
+                                                            Ver quem recebeu ({sendResult.recipients.length})
+                                                        </Button>
+                                                    )}
+                                                    {!sendResult.done && sendResult.campaignId && (
+                                                        <Button
+                                                            type="button"
+                                                            variant="outline"
+                                                            size="sm"
+                                                            onClick={continueSending}
+                                                            disabled={continuingSend}
+                                                        >
+                                                            {continuingSend ? (
+                                                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                                            ) : (
+                                                                <Send className="mr-2 h-4 w-4" />
+                                                            )}
+                                                            Continuar envio agora
+                                                        </Button>
+                                                    )}
+                                                </div>
+
                                                 {sendResult.errors && sendResult.errors.length > 0 && (
-                                                    <details className="mt-2">
-                                                        <summary className="cursor-pointer text-sm text-destructive">Ver erros ({sendResult.errors.length})</summary>
+                                                    <details className="mt-3">
+                                                        <summary className="cursor-pointer text-sm text-destructive">
+                                                            Ver erros ({sendResult.errors.length})
+                                                        </summary>
                                                         <ul className="mt-1 space-y-1 text-xs">
                                                             {sendResult.errors.map((err, index) => (
-                                                                <li key={index} className="text-destructive">{err}</li>
+                                                                <li key={index} className="break-all text-destructive">{err}</li>
                                                             ))}
                                                         </ul>
                                                     </details>
@@ -1996,11 +2369,26 @@ export default function AdminEmailsPage() {
                                             </>
                                         )}
                                     </Button>
+                                    <Button
+                                        type="button"
+                                        variant="secondary"
+                                        onClick={openScheduleDialog}
+                                        className="h-11"
+                                    >
+                                        <CalendarClock className="mr-2 h-4 w-4" />
+                                        Agendar envio
+                                        {schedules.length > 0 && (
+                                            <Badge variant="outline" className="ml-2">
+                                                {schedules.filter(s => s.isActive).length} ativo(s)
+                                            </Badge>
+                                        )}
+                                    </Button>
                                 </div>
 
                                 {recipientCount > 50 && (
                                     <p className="text-center text-xs text-muted-foreground">
-                                        Envios em massa são processados em lotes e podem levar alguns minutos.
+                                        Envios em massa saem em lotes, no ritmo seguro do servidor de e-mail. A tela continua
+                                        acompanhando quem já recebeu, mesmo que leve alguns minutos.
                                     </p>
                                 )}
                             </CardContent>
@@ -2105,6 +2493,362 @@ export default function AdminEmailsPage() {
                             ))}
                         </div>
                     )}
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={showRecipientReport} onOpenChange={setShowRecipientReport}>
+                <DialogContent className="max-h-[85vh] max-w-3xl overflow-y-auto">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2">
+                            <Users className="h-5 w-5" />
+                            Destinatários da campanha
+                        </DialogTitle>
+                        <DialogDescription>
+                            Status de cada pessoa, direto da fila de envio. Atualiza sozinho enquanto houver pendências.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    {sendResult && (
+                        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                            {[
+                                { label: 'Total', value: sendResult.stats.total },
+                                { label: 'Enviados', value: sendResult.stats.sent },
+                                { label: 'Na fila', value: sendResult.stats.pending },
+                                { label: 'Falharam', value: sendResult.stats.dead },
+                            ].map(item => (
+                                <div key={item.label} className="rounded-lg border p-3 text-center">
+                                    <p className="text-xs text-muted-foreground">{item.label}</p>
+                                    <p className="text-xl font-bold">{item.value}</p>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    <div className="max-h-[45vh] divide-y overflow-y-auto rounded-lg border">
+                        {(sendResult?.recipients || []).map(recipient => {
+                            const status = RECIPIENT_STATUS[recipient.status] || {
+                                label: recipient.status,
+                                className: 'bg-slate-500/15 text-slate-600',
+                            }
+                            return (
+                                <div key={recipient.email} className="flex items-start justify-between gap-3 p-3">
+                                    <div className="min-w-0 flex-1">
+                                        <p className="truncate text-sm font-medium">
+                                            {recipient.name || recipient.email}
+                                        </p>
+                                        {recipient.name && (
+                                            <p className="truncate text-xs text-muted-foreground">{recipient.email}</p>
+                                        )}
+                                        {recipient.error && (
+                                            <p className="mt-1 break-all text-xs text-destructive">{recipient.error}</p>
+                                        )}
+                                    </div>
+                                    <div className="shrink-0 text-right">
+                                        <span className={`inline-block rounded-full px-2 py-0.5 text-[11px] font-medium ${status.className}`}>
+                                            {status.label}
+                                        </span>
+                                        {recipient.sentAt && (
+                                            <p className="mt-1 text-[10px] text-muted-foreground">
+                                                {formatDateTime(recipient.sentAt)}
+                                            </p>
+                                        )}
+                                    </div>
+                                </div>
+                            )
+                        })}
+                        {(sendResult?.recipients || []).length === 0 && (
+                            <div className="p-8 text-center text-sm text-muted-foreground">
+                                Nenhum destinatário para mostrar.
+                            </div>
+                        )}
+                    </div>
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={showSchedules} onOpenChange={setShowSchedules}>
+                <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2">
+                            <CalendarClock className="h-5 w-5" />
+                            Agendar envio automático
+                        </DialogTitle>
+                        <DialogDescription>
+                            O e-mail montado agora é salvo junto com a recorrência. Horários em Brasília.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <div className="space-y-4">
+                        <div>
+                            <label className="mb-2 block text-sm font-medium">Nome do agendamento</label>
+                            <Input
+                                value={scheduleName}
+                                onChange={(event) => setScheduleName(event.target.value)}
+                                placeholder="Ex: Resumo semanal de novidades"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="mb-2 block text-sm font-medium">Frequência</label>
+                            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                                {(Object.keys(FREQUENCY_LABELS) as ScheduleFrequency[]).map(frequency => (
+                                    <Button
+                                        key={frequency}
+                                        type="button"
+                                        size="sm"
+                                        variant={scheduleFrequency === frequency ? 'default' : 'outline'}
+                                        onClick={() => setScheduleFrequency(frequency)}
+                                    >
+                                        {FREQUENCY_LABELS[frequency]}
+                                    </Button>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="grid gap-3 sm:grid-cols-2">
+                            <div>
+                                <label className="mb-2 block text-sm font-medium">Horário</label>
+                                <Input
+                                    type="time"
+                                    value={scheduleTime}
+                                    onChange={(event) => setScheduleTime(event.target.value)}
+                                />
+                            </div>
+
+                            {scheduleFrequency === 'once' && (
+                                <div>
+                                    <label className="mb-2 block text-sm font-medium">Data</label>
+                                    <Input
+                                        type="date"
+                                        value={scheduleDate}
+                                        onChange={(event) => setScheduleDate(event.target.value)}
+                                    />
+                                </div>
+                            )}
+
+                            {scheduleFrequency === 'monthly' && (
+                                <div>
+                                    <label className="mb-2 block text-sm font-medium">Dia do mês</label>
+                                    <Input
+                                        type="number"
+                                        min={1}
+                                        max={31}
+                                        value={scheduleDayOfMonth}
+                                        onChange={(event) => setScheduleDayOfMonth(Number(event.target.value) || 1)}
+                                    />
+                                </div>
+                            )}
+                        </div>
+
+                        {scheduleFrequency === 'weekly' && (
+                            <div>
+                                <label className="mb-2 block text-sm font-medium">Dias da semana</label>
+                                <div className="flex flex-wrap gap-2">
+                                    {WEEKDAY_LABELS.map((label, index) => (
+                                        <Button
+                                            key={label}
+                                            type="button"
+                                            size="sm"
+                                            variant={scheduleWeekdays.includes(index) ? 'default' : 'outline'}
+                                            onClick={() => setScheduleWeekdays(prev => (
+                                                prev.includes(index)
+                                                    ? prev.filter(day => day !== index)
+                                                    : [...prev, index].sort()
+                                            ))}
+                                        >
+                                            {label}
+                                        </Button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        <div>
+                            <label className="mb-2 block text-sm font-medium">Quem recebe</label>
+                            <div className="grid gap-2 sm:grid-cols-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setScheduleAudience('fixed')}
+                                    className={`rounded-lg border p-3 text-left text-sm transition ${scheduleAudience === 'fixed' ? 'border-primary bg-primary/10' : 'hover:bg-muted/50'}`}
+                                >
+                                    <p className="font-medium">Lista fixa ({recipientCount})</p>
+                                    <p className="mt-1 text-xs text-muted-foreground">
+                                        Exatamente quem está selecionado agora, em todos os envios.
+                                    </p>
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setScheduleAudience('dynamic')}
+                                    className={`rounded-lg border p-3 text-left text-sm transition ${scheduleAudience === 'dynamic' ? 'border-primary bg-primary/10' : 'hover:bg-muted/50'}`}
+                                >
+                                    <p className="font-medium">Filtros dinâmicos</p>
+                                    <p className="mt-1 text-xs text-muted-foreground">
+                                        Reavalia tipo de conta ({filterAccountType}) e período ({filterPeriodo}) a cada
+                                        envio — alcança quem se cadastrar depois.
+                                    </p>
+                                </button>
+                            </div>
+                        </div>
+
+                        <Button
+                            type="button"
+                            className="w-full"
+                            onClick={createSchedule}
+                            disabled={savingSchedule}
+                        >
+                            {savingSchedule ? (
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            ) : (
+                                <CalendarClock className="mr-2 h-4 w-4" />
+                            )}
+                            Criar agendamento
+                        </Button>
+                    </div>
+
+                    <div className="mt-2 space-y-3">
+                        <h3 className="text-sm font-semibold">Agendamentos existentes</h3>
+                        {schedules.length === 0 ? (
+                            <div className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
+                                Nenhum agendamento criado ainda.
+                            </div>
+                        ) : (
+                            <div className="space-y-2">
+                                {schedules.map(schedule => (
+                                    <div
+                                        key={schedule._id}
+                                        className={`rounded-lg border p-3 ${schedule.isActive ? '' : 'opacity-60'}`}
+                                    >
+                                        <div className="flex items-start justify-between gap-3">
+                                            <div className="min-w-0 flex-1">
+                                                <div className="flex flex-wrap items-center gap-2">
+                                                    <p className="truncate text-sm font-semibold">{schedule.name}</p>
+                                                    <Badge variant={schedule.isActive ? 'default' : 'outline'} className="text-[10px]">
+                                                        {schedule.isActive ? 'Ativo' : 'Pausado'}
+                                                    </Badge>
+                                                </div>
+                                                <p className="mt-1 text-xs text-muted-foreground">
+                                                    {describeSchedule(schedule)}
+                                                </p>
+                                                <p className="mt-1 text-xs">
+                                                    <span className="text-muted-foreground">Próximo envio: </span>
+                                                    <span className="font-medium">
+                                                        {schedule.isActive ? formatDateTime(schedule.nextRunAt) : 'pausado'}
+                                                    </span>
+                                                </p>
+                                                {schedule.lastRunAt && (
+                                                    <p className="mt-1 text-[11px] text-muted-foreground">
+                                                        Última execução: {formatDateTime(schedule.lastRunAt)}
+                                                        {schedule.lastStatus === 'ok' && ` · ${schedule.lastRecipientCount ?? 0} destinatário(s)`}
+                                                        {schedule.lastStatus === 'empty' && ' · nenhum destinatário'}
+                                                        {schedule.lastStatus === 'error' && ` · erro: ${schedule.lastError || 'desconhecido'}`}
+                                                    </p>
+                                                )}
+                                            </div>
+                                            <div className="flex shrink-0 gap-1">
+                                                <Button
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="h-8 w-8"
+                                                    title="Executar agora"
+                                                    onClick={() => runScheduleNow(schedule)}
+                                                >
+                                                    <Send className="h-4 w-4" />
+                                                </Button>
+                                                <Button
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="h-8 w-8"
+                                                    title={schedule.isActive ? 'Pausar' : 'Reativar'}
+                                                    onClick={() => toggleSchedule(schedule)}
+                                                >
+                                                    {schedule.isActive ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                                                </Button>
+                                                <Button
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="h-8 w-8 text-destructive"
+                                                    title="Excluir"
+                                                    onClick={() => removeSchedule(schedule)}
+                                                >
+                                                    <Trash2 className="h-4 w-4" />
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-900 dark:bg-amber-950/30">
+                        <div className="flex items-start gap-3">
+                            <Terminal className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
+                            <div className="min-w-0 flex-1">
+                                <p className="text-sm font-semibold text-amber-900 dark:text-amber-200">
+                                    Falta ligar o gatilho (uma vez só)
+                                </p>
+                                <p className="mt-1 text-xs text-amber-800 dark:text-amber-300">
+                                    Os agendamentos só disparam se algo chamar o app periodicamente. Crie um cronjob
+                                    gratuito em <strong>cron-job.org</strong> apontando para a URL abaixo, a cada 1 minuto.
+                                    Troque <code>SEU_SEGREDO</code> pelo valor de <code>CRON_SECRET</code>.
+                                </p>
+
+                                <div className="mt-3 space-y-2">
+                                    <div>
+                                        <p className="mb-1 text-[11px] font-medium text-amber-900 dark:text-amber-200">
+                                            URL (cole em cron-job.org)
+                                        </p>
+                                        <div className="flex gap-2">
+                                            <code className="min-w-0 flex-1 overflow-x-auto rounded bg-amber-100 px-2 py-1.5 font-mono text-[11px] dark:bg-amber-900/60">
+                                                {cronUrl}
+                                            </code>
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                size="icon"
+                                                className="h-8 w-8 shrink-0"
+                                                onClick={() => {
+                                                    navigator.clipboard.writeText(cronUrl)
+                                                    showToast('URL copiada', 'success')
+                                                }}
+                                            >
+                                                <Copy className="h-3.5 w-3.5" />
+                                            </Button>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <p className="mb-1 text-[11px] font-medium text-amber-900 dark:text-amber-200">
+                                            Ou via curl (para testar / usar no crontab)
+                                        </p>
+                                        <div className="flex gap-2">
+                                            <code className="min-w-0 flex-1 overflow-x-auto whitespace-pre rounded bg-amber-100 px-2 py-1.5 font-mono text-[11px] dark:bg-amber-900/60">
+                                                {cronCurl}
+                                            </code>
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                size="icon"
+                                                className="h-8 w-8 shrink-0"
+                                                onClick={() => {
+                                                    navigator.clipboard.writeText(cronCurl)
+                                                    showToast('Comando copiado', 'success')
+                                                }}
+                                            >
+                                                <Copy className="h-3.5 w-3.5" />
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <p className="mt-3 text-[11px] text-amber-700 dark:text-amber-400">
+                                    Passo a passo completo em <code>docs/EMAIL_AGENDAMENTO_CRONJOB.md</code>.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 </DialogContent>
             </Dialog>
 
