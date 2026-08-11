@@ -32,4 +32,7 @@ O filtro de domínios permanece ativo para impedir que selos, rastreadores e out
 - `lib/histopatologia/midia.ts` libera a URL remota apenas para fontes aprovadas e domínios permitidos.
 - `lib/histopatologia/editorial/referencias-visuais.ts` registra links externos,
   títulos traduzidos e roteiros de observação sem armazenar URL de imagem.
+- `data/histopatologia/webpath-utah/` registra 1.325 links de páginas visuais em
+  19 fragmentos; não contém URL de imagem. A rota `/webpath-utah/[capitulo]`
+  acrescenta tradução, busca, paginação e leitura guiada dentro do Domine Aqui.
 - A revisão biomédica do texto didático continua independente da autorização das imagens.

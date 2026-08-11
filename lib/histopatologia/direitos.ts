@@ -76,7 +76,7 @@ export const FONTES: Record<FonteId, Fonte> = {
     dominiosDeMidia: ['webpath.med.utah.edu'],
     situacaoDeDireitos: 'Somente consulta externa',
     politicaInicial:
-      'Materiais protegidos; o Domine Aqui mantém apenas hiperlinks para as páginas públicas e conteúdo didático próprio.',
+      'Materiais protegidos; o Domine Aqui mantém título factual, hiperlink para a página pública e conteúdo didático próprio.',
   },
 }
 
@@ -159,10 +159,10 @@ export const ESCOPOS_DE_DIREITOS: EscopoDeDireitos[] = [
     titular: 'Edward C. Klatt, MD',
     licenca: 'Hiperlink para página pública, sem reprodução de material',
     comprovante: 'https://webpath.med.utah.edu/',
-    verificadoEm: '2026-08-10',
+    verificadoEm: '2026-08-11',
     responsavel: 'Equipe editorial do Domine Aqui',
     restricoes: ['Não modificar, copiar, distribuir, transmitir, exibir ou publicar os materiais.'],
-    observacao: 'O Domine Aqui mantém somente o endereço da página e texto didático próprio.',
+    observacao: 'O Domine Aqui mantém somente o título factual, o endereço da página e texto didático próprio.',
   },
 ]
 

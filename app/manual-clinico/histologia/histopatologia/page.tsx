@@ -15,6 +15,7 @@ import { CartaoDeDoenca } from '@/components/histopatologia/cartao-doenca'
 import {
   BASE_HISTOLOGIA,
   rotaDoAtlas,
+  rotaDoWebPathUtah,
   rotaDosCreditos,
   rotaDosMecanismos,
   rotaDoSistema,
@@ -25,6 +26,7 @@ import {
   SISTEMAS_COM_CONTAGEM,
   TOTAIS,
 } from '@/lib/histopatologia/repositorio'
+import { TOTAL_ENTRADAS_WEBPATH_UTAH } from '@/lib/histopatologia/webpath-utah/catalogo'
 
 /**
  * Home da Histopatologia.
@@ -78,7 +80,7 @@ export default function HomeDaHistopatologia() {
                 {TOTAIS.capitulosVisuais.toLocaleString('pt-BR')} capítulos visuais
               </Indicador>
               <Indicador icone={<Library className="h-3.5 w-3.5" aria-hidden />}>
-                FCM/Unicamp + Histopathology Atlas
+                FCM/Unicamp + Histopathology Atlas + WebPath/Utah
               </Indicador>
               <Indicador icone={<Layers className="h-3.5 w-3.5" aria-hidden />}>
                 {TOTAIS.referenciasDeMidia.toLocaleString('pt-BR')} referências de lâmina
@@ -96,7 +98,7 @@ export default function HomeDaHistopatologia() {
             <h2 id="modos" className="sr-only">
               Modos de navegação
             </h2>
-            <ul className="grid gap-3 sm:grid-cols-3">
+            <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               <li>
                 <Atalho
                   href={rotaDosMecanismos()}
@@ -110,6 +112,14 @@ export default function HomeDaHistopatologia() {
                   href={rotaDoAtlas()}
                   titulo="Atlas de lâminas"
                   descricao={`${TOTAIS.capitulosVisuais.toLocaleString('pt-BR')} capítulos visuais com lâminas disponíveis, organizados por sistema e abertos dentro do Domine Aqui.`}
+                  icone={<Library className="h-5 w-5" aria-hidden />}
+                />
+              </li>
+              <li>
+                <Atalho
+                  href={rotaDoWebPathUtah()}
+                  titulo="WebPath/Utah traduzido"
+                  descricao={`${TOTAL_ENTRADAS_WEBPATH_UTAH.toLocaleString('pt-BR')} referências patológicas de macro e microscopia, com leitura guiada em português por capítulo.`}
                   icone={<Library className="h-5 w-5" aria-hidden />}
                 />
               </li>

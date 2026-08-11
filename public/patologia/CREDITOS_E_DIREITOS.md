@@ -36,6 +36,9 @@
 - O catálogo registra apenas o hiperlink e uma leitura guiada autoral em
   português; os recursos visuais permanecem exclusivamente no site de origem.
 - Aviso de direitos consultado: https://webpath.med.utah.edu/
+- Cobertura catalogada em 11 de agosto de 2026: 19 índices, 1.553 subpáginas
+  examinadas e 1.325 referências mantidas após filtrar apenas macroscopia e
+  microscopia patológica e excluir anatomia normal, diagramas e tabelas.
 
 O Domine Aqui organiza o catálogo e produz o conteúdo didático em português. As imagens permanecem hospedadas nas fontes originais e não são copiadas para este projeto. Somente as duas fontes com autorização registrada são incorporadas à interface; as outras três são abertas externamente.
 

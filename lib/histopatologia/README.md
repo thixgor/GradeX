@@ -39,6 +39,7 @@ lib/histopatologia/
     └── doencas/*.ts     uma doença canônica por arquivo
 
 data/histopatologia/     GERADO por scripts/histopatologia/construir-dados.mjs
+                         + 19 fragmentos de referências WebPath/Utah
 public/patologia/        acervo-fonte, imutável para a ingestão
 ```
 
@@ -115,6 +116,12 @@ referências selecionadas de Pathology Outlines, WebPathology e WebPath/Utah sã
 um roteiro autoral de observação, mas não copia, incorpora nem enquadra a mídia.
 A decisão e os créditos estão registrados na
 [ADR 0002](../../docs/adr/0002-direitos-de-midia-da-histopatologia.md).
+
+O catálogo complementar do WebPath/Utah fica em
+`data/histopatologia/webpath-utah/`: são 1.325 páginas de macroscopia ou
+microscopia patológica, separadas em 19 fragmentos. A interface carrega somente
+o capítulo aberto, pagina 24 referências por vez e gera a tradução e a leitura
+guiada a partir de texto editorial próprio.
 
 ## Atualizar uma classificação
 
