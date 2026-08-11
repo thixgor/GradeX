@@ -16,7 +16,12 @@ import { NextRequest, NextResponse } from 'next/server'
 import { secureApiEndpoint } from '@/lib/api-security'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
-import { normalizeSidebarSections, type SidebarSectionSettings } from '@/lib/sidebar-sections'
+import {
+  normalizeSidebarOrder,
+  normalizeSidebarSections,
+  type SidebarSectionOrder,
+  type SidebarSectionSettings,
+} from '@/lib/sidebar-sections'
 import { normalizeAccountType } from '@/lib/account-tier'
 import { getMissingProfileFields } from '@/lib/profile-completeness'
 
@@ -99,6 +104,7 @@ interface BootstrapResponse {
   }
   notificationCount: number
   sidebarSections: SidebarSectionSettings
+  sidebarSectionOrder: SidebarSectionOrder
 }
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
@@ -184,7 +190,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       ),
       db.collection('landing_settings').findOne(
         {},
-        { projection: { sidebarSections: 1 } }
+        { projection: { sidebarSections: 1, sidebarSectionOrder: 1 } }
       ),
       db.collection('exam_submissions').aggregate([
         { $match: { userId, createdAt: { $gte: startOfMonth } } },
@@ -277,6 +283,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       percentageUsed,
       notificationCount,
       sidebarSections: normalizeSidebarSections(landingSettings?.sidebarSections),
+      sidebarSectionOrder: normalizeSidebarOrder(landingSettings?.sidebarSectionOrder),
     }
 
     // User/session-specific data must never survive logout/account switches.

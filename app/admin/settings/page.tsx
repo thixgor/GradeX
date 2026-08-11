@@ -14,9 +14,11 @@ import { PlanConfig } from '@/lib/types'
 import { PLUS_LABEL, normalizeAccountType } from '@/lib/account-tier'
 import { PlusGuardPanel } from '@/components/admin/plus-guard-panel'
 import {
-  SIDEBAR_SECTION_DEFINITIONS,
+  getOrderedSidebarSections,
+  normalizeSidebarOrder,
   normalizeSidebarSections,
   type SidebarSectionKey,
+  type SidebarSectionOrder,
   type SidebarSectionSettings,
 } from '@/lib/sidebar-sections'
 
@@ -40,6 +42,7 @@ interface LandingSettings {
   registrationBlockedMessage?: string
   aiKeys?: AIKeySettings
   sidebarSections?: SidebarSectionSettings
+  sidebarSectionOrder?: SidebarSectionOrder
 }
 
 interface MercadoPagoStatus {
@@ -99,6 +102,7 @@ export default function SettingsPage() {
       flashcards: ''
     },
     sidebarSections: normalizeSidebarSections(),
+    sidebarSectionOrder: normalizeSidebarOrder(),
   })
   const [mpStatus, setMpStatus] = useState<MercadoPagoStatus | null>(null)
   const [mpEvents, setMpEvents] = useState<MercadoPagoEvent[]>([])
@@ -223,6 +227,7 @@ export default function SettingsPage() {
             flashcards: ''
           },
           sidebarSections: normalizeSidebarSections(data.sidebarSections),
+          sidebarSectionOrder: normalizeSidebarOrder(data.sidebarSectionOrder),
         }
         setSettings(settings)
       }
@@ -360,6 +365,18 @@ export default function SettingsPage() {
         [sectionKey]: !currentSections[sectionKey],
       },
     })
+  }
+
+  /** Sobe (-1) ou desce (+1) uma seção na ordem do menu. */
+  function moveSidebarSection(sectionKey: SidebarSectionKey, direction: -1 | 1) {
+    const order = normalizeSidebarOrder(settings.sidebarSectionOrder)
+    const from = order.indexOf(sectionKey)
+    const to = from + direction
+    if (from === -1 || to < 0 || to >= order.length) return
+
+    const next = [...order]
+    ;[next[from], next[to]] = [next[to], next[from]]
+    setSettings({ ...settings, sidebarSectionOrder: next })
   }
 
   async function handleSave() {
@@ -540,19 +557,44 @@ export default function SettingsPage() {
             <CardHeader>
               <CardTitle>Seções do Sidebar Geral</CardTitle>
               <CardDescription>
-                Controle quais áreas aparecem para usuários comuns. Administradores continuam com acesso completo.
+                Controle quais áreas aparecem para usuários comuns e em que ordem. A ordem
+                definida aqui vale para o menu lateral e para o carrossel do início.
+                Administradores continuam com acesso completo.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid gap-3">
-                {SIDEBAR_SECTION_DEFINITIONS.map((section) => {
+                {getOrderedSidebarSections(settings.sidebarSectionOrder).map((section, index, list) => {
                   const sidebarSections = normalizeSidebarSections(settings.sidebarSections)
                   const enabled = sidebarSections[section.key]
 
                   return (
                     <div key={section.key} className="flex items-center justify-between gap-4 p-4 border rounded-lg hover:bg-muted/50 transition-colors">
-                      <div className="space-y-1">
-                        <Label className="text-base font-semibold">{section.label}</Label>
+                      <div className="flex flex-col gap-1 shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => moveSidebarSection(section.key, -1)}
+                          disabled={index === 0}
+                          aria-label={`Mover ${section.label} para cima`}
+                          className="rounded-md border p-1.5 transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-30"
+                        >
+                          <ArrowUp className="h-3.5 w-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => moveSidebarSection(section.key, 1)}
+                          disabled={index === list.length - 1}
+                          aria-label={`Mover ${section.label} para baixo`}
+                          className="rounded-md border p-1.5 transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-30"
+                        >
+                          <ArrowDown className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                      <div className="space-y-1 flex-1 min-w-0">
+                        <Label className="text-base font-semibold">
+                          <span className="mr-2 text-xs font-mono text-muted-foreground">{index + 1}.</span>
+                          {section.label}
+                        </Label>
                         <p className="text-sm text-muted-foreground">{section.description}</p>
                         <p className="text-xs text-muted-foreground font-mono">{section.href}</p>
                       </div>
@@ -580,6 +622,9 @@ export default function SettingsPage() {
               <div className="p-4 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg">
                 <p className="text-sm text-amber-900 dark:text-amber-100">
                   Ao desabilitar uma seção, usuários comuns deixam de vê-la no menu lateral e são redirecionados caso tentem abrir a rota diretamente.
+                  As áreas do Manual Clínico (Ferramentas, Farmacologia, Anatomia 3D, Histologia,
+                  Radiologia e Eletrocardiograma) vêm desligadas: ligue apenas as que quiser
+                  promover a atalho de primeiro nível no menu.
                 </p>
               </div>
 

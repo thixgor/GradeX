@@ -24,7 +24,7 @@ import { FocusSessionButton } from '@/components/focus-session-button'
 import { useUIPreferences } from '@/hooks/use-ui-preferences'
 import { useLiteMode } from '@/hooks/use-lite-mode'
 import { MotionConfig } from 'framer-motion'
-import type { SidebarSectionSettings } from '@/lib/sidebar-sections'
+import type { SidebarSectionOrder, SidebarSectionSettings } from '@/lib/sidebar-sections'
 
 /**
  * AppShell Component - Optimized Version
@@ -67,6 +67,7 @@ interface AppShellContextType {
   loading: boolean
   sidebarCollapsed: boolean
   sidebarSections: SidebarSectionSettings | null
+  sidebarSectionOrder: SidebarSectionOrder | null
 }
 
 const AppShellContext = createContext<AppShellContextType | null>(null)
@@ -147,6 +148,7 @@ export function AppShell({
     isAuthenticated,
     isAdmin,
     sidebarSections,
+    sidebarSectionOrder,
     refetch: refetchBootstrap,
   } = useBootstrap({
     redirectOnUnauth: !allowGuest, // Auto-redirect to login if not authenticated
@@ -287,6 +289,7 @@ export function AppShell({
     loading,
     sidebarCollapsed,
     sidebarSections,
+    sidebarSectionOrder,
   }
 
   if (isGuest) {
@@ -370,6 +373,7 @@ export function AppShell({
           collapsed={sidebarCollapsed}
           onCollapse={handleSidebarCollapse}
           sidebarSections={sidebarSections}
+          sidebarSectionOrder={sidebarSectionOrder}
         />
 
         {/* Floating controls when shell header is hidden */}

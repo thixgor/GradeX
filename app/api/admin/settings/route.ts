@@ -3,7 +3,9 @@ import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
 import { PlanConfig, AdminSettings } from '@/lib/types'
 import {
+  normalizeSidebarOrder,
   normalizeSidebarSections,
+  type SidebarSectionOrder,
   type SidebarSectionSettings,
 } from '@/lib/sidebar-sections'
 
@@ -30,6 +32,7 @@ interface LandingSettings {
   registrationBlockedMessage?: string
   aiKeys?: AIKeySettings
   sidebarSections?: SidebarSectionSettings
+  sidebarSectionOrder?: SidebarSectionOrder
 }
 
 const DEFAULT_LANDING_SETTINGS: LandingSettings = {
@@ -43,6 +46,7 @@ const DEFAULT_LANDING_SETTINGS: LandingSettings = {
     flashcards: ''
   },
   sidebarSections: normalizeSidebarSections(),
+  sidebarSectionOrder: normalizeSidebarOrder(),
 }
 
 // GET - Obter configurações (público)
@@ -61,6 +65,7 @@ export async function GET(req: NextRequest) {
         ...DEFAULT_LANDING_SETTINGS,
         ...settings,
         sidebarSections: normalizeSidebarSections(settings.sidebarSections),
+        sidebarSectionOrder: normalizeSidebarOrder(settings.sidebarSectionOrder),
       },
       { headers: NO_STORE_HEADERS }
     )
@@ -86,6 +91,7 @@ export async function PUT(req: NextRequest) {
     const sanitizedBody: Partial<LandingSettings> = {
       ...body,
       sidebarSections: normalizeSidebarSections(body.sidebarSections),
+      sidebarSectionOrder: normalizeSidebarOrder(body.sidebarSectionOrder),
     }
 
     const db = await getDb()
@@ -111,6 +117,7 @@ export async function PUT(req: NextRequest) {
         message: 'Configurações atualizadas com sucesso',
         ...updatedSettings,
         sidebarSections: normalizeSidebarSections(updatedSettings?.sidebarSections),
+        sidebarSectionOrder: normalizeSidebarOrder(updatedSettings?.sidebarSectionOrder),
       },
       { headers: NO_STORE_HEADERS }
     )

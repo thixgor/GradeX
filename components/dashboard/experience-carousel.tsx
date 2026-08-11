@@ -3,10 +3,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import {
+  Activity,
   ArrowRight,
   BookMarked,
   BookOpen,
+  Box,
   Brain,
+  Calculator,
   ChevronLeft,
   ChevronRight,
   Database,
@@ -14,13 +17,16 @@ import {
   Gamepad2,
   HeartPulse,
   MessageCircle,
+  Microscope,
   Network,
+  Pill,
+  ScanLine,
   Ticket,
   Video,
   type LucideIcon,
 } from 'lucide-react'
 import { useAppShell } from '@/components/app-shell'
-import { SIDEBAR_SECTION_DEFINITIONS, type SidebarSectionKey } from '@/lib/sidebar-sections'
+import { getVisibleSidebarSections, type SidebarSectionKey } from '@/lib/sidebar-sections'
 import { cn } from '@/lib/utils'
 
 /**
@@ -49,6 +55,12 @@ const VISUALS: Record<SidebarSectionKey, { icon: LucideIcon; color: string; badg
   forum: { icon: MessageCircle, color: '#ec4899' },
   games: { icon: Gamepad2, color: '#f97316', badge: 'Novo' },
   manualClinico: { icon: HeartPulse, color: '#ef4444' },
+  ferramentasClinicas: { icon: Calculator, color: '#0d9488' },
+  farmacologia: { icon: Pill, color: '#7c3aed' },
+  anatomia3d: { icon: Box, color: '#0891b2' },
+  manualHistologia: { icon: Microscope, color: '#2563eb' },
+  manualRadiologia: { icon: ScanLine, color: '#0ea5e9' },
+  manualEletro: { icon: Activity, color: '#e11d48' },
   materiais: { icon: BookOpen, color: '#6366f1', badge: 'Novo' },
   rifas: { icon: Ticket, color: '#d946ef', badge: 'Novo' },
 }
@@ -81,17 +93,16 @@ function statFor(key: SidebarSectionKey, stats?: ExperienceStats): string | null
 }
 
 export function ExperienceCarousel({ stats }: { stats?: ExperienceStats }) {
-  const { sidebarSections, isAdmin } = useAppShell()
+  const { sidebarSections, sidebarSectionOrder, isAdmin } = useAppShell()
   const railRef = useRef<HTMLDivElement>(null)
   const slideRefs = useRef<(HTMLAnchorElement | null)[]>([])
   const [active, setActive] = useState(0)
 
+  // Mesma ordem e mesma filtragem do menu lateral — as duas superfícies listam
+  // as mesmas áreas, e divergir aqui confundiria quem acabou de reordenar.
   const sections = useMemo(
-    () =>
-      SIDEBAR_SECTION_DEFINITIONS.filter(
-        section => isAdmin || sidebarSections?.[section.key] !== false,
-      ),
-    [isAdmin, sidebarSections],
+    () => getVisibleSidebarSections(sidebarSections, sidebarSectionOrder, isAdmin),
+    [isAdmin, sidebarSectionOrder, sidebarSections],
   )
 
   // Slide ativo por IntersectionObserver, não por listener de scroll: durante a

@@ -29,8 +29,19 @@ import {
   Network,
   Ticket,
   Zap,
+  Calculator,
+  Pill,
+  Box,
+  Microscope,
+  ScanLine,
+  Activity,
 } from 'lucide-react'
-import type { SidebarSectionKey, SidebarSectionSettings } from '@/lib/sidebar-sections'
+import {
+  getVisibleSidebarSections,
+  type SidebarSectionKey,
+  type SidebarSectionOrder,
+  type SidebarSectionSettings,
+} from '@/lib/sidebar-sections'
 import { isPlusAccount } from '@/lib/account-tier'
 import { useLiteMode } from '@/hooks/use-lite-mode'
 
@@ -52,6 +63,7 @@ interface SidebarProps {
   collapsed?: boolean
   onCollapse?: (collapsed: boolean) => void
   sidebarSections?: SidebarSectionSettings | null
+  sidebarSectionOrder?: SidebarSectionOrder | null
 }
 
 interface NavItem {
@@ -62,6 +74,35 @@ interface NavItem {
   badge?: string
   variant?: 'default' | 'primary' | 'gradient'
   sectionKey?: SidebarSectionKey
+}
+
+/** Ícone de cada seção. O TypeScript obriga a cobrir toda chave nova. */
+const SECTION_ICONS: Record<SidebarSectionKey, React.ReactNode> = {
+  provas: <FileText className="h-5 w-5" />,
+  bancoQuestoes: <Database className="h-5 w-5" />,
+  aulas: <Video className="h-5 w-5" />,
+  flashcards: <Brain className="h-5 w-5" />,
+  mapaMental: <Network className="h-5 w-5" />,
+  cronogramas: <BookMarked className="h-5 w-5" />,
+  forum: <MessageCircle className="h-5 w-5" />,
+  games: <Gamepad2 className="h-5 w-5" />,
+  manualClinico: <HeartPulse className="h-5 w-5" />,
+  ferramentasClinicas: <Calculator className="h-5 w-5" />,
+  farmacologia: <Pill className="h-5 w-5" />,
+  anatomia3d: <Box className="h-5 w-5" />,
+  manualHistologia: <Microscope className="h-5 w-5" />,
+  manualRadiologia: <ScanLine className="h-5 w-5" />,
+  manualEletro: <Activity className="h-5 w-5" />,
+  materiais: <BookOpen className="h-5 w-5" />,
+  rifas: <Ticket className="h-5 w-5" />,
+}
+
+/** Selo fixo ao lado do rótulo. `undefined` = sem selo. */
+const SECTION_BADGES: Partial<Record<SidebarSectionKey, string>> = {
+  mapaMental: 'Novo',
+  games: 'Novo',
+  materiais: 'Novo',
+  rifas: 'Novo',
 }
 
 // Shared easing & duration for all sidebar collapse animations
@@ -323,6 +364,7 @@ export function Sidebar({
   collapsed,
   onCollapse,
   sidebarSections,
+  sidebarSectionOrder,
 }: SidebarProps) {
   const router = useRouter()
   const pathname = usePathname()
@@ -344,33 +386,28 @@ export function Sidebar({
   const isAdmin = user?.role === 'admin'
   const isCollapsed = !!collapsed && canCollapse
 
-  const sectionIsVisible = (sectionKey?: SidebarSectionKey) => {
-    if (!sectionKey || isAdmin) return true
-    return sidebarSections?.[sectionKey] !== false
-  }
-
-  const configuredMainNavItems: NavItem[] = [
+  // Label, href e ordem vêm das definições compartilhadas (lib/sidebar-sections),
+  // que também são lidas no servidor e por isso não podem importar lucide. Aqui
+  // fica só o metadado visual de cada seção. Antes esta lista era fixa no
+  // componente, o que travava a ordem do menu e obrigava a editar código para
+  // acrescentar uma área.
+  const mainNavItems: NavItem[] = [
     { icon: <Home className="h-5 w-5" />, label: 'Início', href: '/dashboard' },
-    { icon: <FileText className="h-5 w-5" />, label: 'Provas', href: '/provas', sectionKey: 'provas' },
-    {
-      icon: <Database className="h-5 w-5" />,
-      label: 'Banco de Questões',
-      href: '/banco-questoes',
-      badge: !isPlusAccount(user?.accountType) && !isAdmin ? '5 Questões' : undefined,
-      sectionKey: 'bancoQuestoes',
-    },
-    { icon: <Video className="h-5 w-5" />, label: 'Aulas', href: '/aulas', sectionKey: 'aulas' },
-    { icon: <Brain className="h-5 w-5" />, label: 'Flashcards', href: '/flashcards', sectionKey: 'flashcards' },
-    { icon: <Network className="h-5 w-5" />, label: 'Mapas Mentais', href: '/mapa-mental', badge: 'Novo', sectionKey: 'mapaMental' },
-    { icon: <BookMarked className="h-5 w-5" />, label: 'Cronogramas', href: '/cronogramas', sectionKey: 'cronogramas' },
-    { icon: <MessageCircle className="h-5 w-5" />, label: 'Fórum', href: '/forum', sectionKey: 'forum' },
-    { icon: <Gamepad2 className="h-5 w-5" />, label: 'Games', href: '/games', badge: 'Novo', sectionKey: 'games' },
-    { icon: <HeartPulse className="h-5 w-5" />, label: 'Manual Clínico', href: '/manual-clinico', sectionKey: 'manualClinico' },
-    { icon: <BookOpen className="h-5 w-5" />, label: 'Materiais', href: '/materiais', badge: 'Novo', sectionKey: 'materiais' },
-    { icon: <Ticket className="h-5 w-5" />, label: 'Rifas & Sorteios', href: '/rifas', badge: 'Novo', sectionKey: 'rifas' },
+    ...getVisibleSidebarSections(sidebarSections, sidebarSectionOrder, isAdmin).map(
+      (section): NavItem => ({
+        icon: SECTION_ICONS[section.key],
+        label: section.label,
+        href: section.href,
+        badge:
+          section.key === 'bancoQuestoes'
+            ? !isPlusAccount(user?.accountType) && !isAdmin
+              ? '5 Questões'
+              : undefined
+            : SECTION_BADGES[section.key],
+        sectionKey: section.key,
+      })
+    ),
   ]
-
-  const mainNavItems = configuredMainNavItems.filter(item => sectionIsVisible(item.sectionKey))
 
   const secondaryNavItems: NavItem[] = [
     { icon: <UserIcon className="h-5 w-5" />, label: 'Meu Perfil', href: '/profile' },

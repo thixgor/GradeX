@@ -13,7 +13,9 @@
 
 import type { TokenPayload } from '@/lib/auth'
 import {
+  DEFAULT_SIDEBAR_ORDER,
   DEFAULT_SIDEBAR_SECTIONS,
+  type SidebarSectionOrder,
   type SidebarSectionSettings,
 } from '@/lib/sidebar-sections'
 
@@ -44,6 +46,7 @@ export function getDevMockSession(): TokenPayload {
 /** Full `/api/bootstrap` payload so AppShell mounts without Mongo/login. */
 export function getDevMockBootstrap() {
   const sidebarSections: SidebarSectionSettings = { ...DEFAULT_SIDEBAR_SECTIONS }
+  const sidebarSectionOrder: SidebarSectionOrder = [...DEFAULT_SIDEBAR_ORDER]
 
   return {
     user: {
@@ -101,6 +104,7 @@ export function getDevMockBootstrap() {
     },
     notificationCount: 0,
     sidebarSections,
+    sidebarSectionOrder,
     /** Marker so the client can show a small “dev bypass” badge if desired */
     _devBypass: true as const,
   }
