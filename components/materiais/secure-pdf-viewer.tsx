@@ -51,6 +51,15 @@ import {
   onFullscreenChange,
   requestAppFullscreen,
 } from '@/lib/fullscreen'
+import {
+  SCROLL_EDGE_TOLERANCE,
+  type SwipeStart,
+  isSwipeAllowed,
+  lockSwipeAxis,
+  readScrollEdges,
+  resolveSwipe,
+  rubberBand,
+} from '@/lib/pdf-viewer-swipe'
 
 type ViewerMode = 'single' | 'width' | 'continuous'
 // Folhas do celular. O cabeçalho antigo empilhava até cinco linhas de rolagem
@@ -62,7 +71,7 @@ type MobileSheet = null | 'nav' | 'tools' | 'mode' | 'goto' | 'more'
 // quem já conhece leitores de PDF; o público aqui não conhece.
 const MODE_OPTIONS: Array<{ value: ViewerMode; label: string; hint: string }> = [
   { value: 'continuous', label: 'Rolagem contínua', hint: 'Deslize para baixo, como numa página comum' },
-  { value: 'single', label: 'Uma página por vez', hint: 'Vira de página em página' },
+  { value: 'single', label: 'Uma página por vez', hint: 'Deslize o dedo para o lado ou para cima' },
   { value: 'width', label: 'Largura da tela', hint: 'Ajusta a página à largura do aparelho' },
 ]
 
@@ -815,6 +824,13 @@ const TOUR_STEPS: ViewerTourStep[] = [
     body: 'Este número mostra a página atual e o total. Toque nele para pular direto para qualquer página.',
   },
   {
+    // Só no celular/tablet: no desktop este alvo não existe e o passo some
+    // sozinho (ver findVisibleTourTarget) — o gesto também não faz sentido lá.
+    targets: ['[data-tour="viewer-pagenav-mobile"]'],
+    title: 'Vire a página com o dedo',
+    body: 'Não precisa mirar nas setinhas: deslize o dedo para o lado — ou para cima e para baixo, no modo "uma página por vez" — e a página vira. Se a página estiver ampliada, o dedo primeiro arrasta o que falta ver; ao chegar na borda, o próximo gesto vira.',
+  },
+  {
     targets: ['[data-tour="viewer-zoom"]'],
     title: 'Deixe a letra do seu tamanho',
     body: 'Aumente ou diminua o texto quando quiser. Ampliado, a página fica mais larga que a tela e você arrasta para o lado para ler — aparece um aviso embaixo com o tamanho atual, e um toque nele volta ao normal.',
@@ -1198,28 +1214,83 @@ function useResizeWidth(ref: React.RefObject<HTMLElement>, deps: React.Dependenc
 //
 // Sobrou só o swipe para virar página: um dedo, sem disputa com o pinch, e
 // apenas com a ferramenta "navegar" ativa — desenhar não pode virar página.
-const SWIPE_MIN_DISTANCE = 60
+//
+// O swipe vale nos DOIS eixos, como no GoodNotes: para o lado sempre, e para
+// cima/baixo quando não há mais o que rolar naquele eixo (página inteira na
+// tela, ou já no fim/começo de uma página ampliada). A regra "só vira quando
+// não há rolagem disponível" é o que evita o pior dos dois mundos: virar
+// página no meio de uma leitura rolando, ou travar a rolagem por causa do
+// gesto de virar.
+//
+// As medidas e a decisão do gesto moram em `lib/pdf-viewer-swipe.ts` (sem DOM,
+// testável sozinho). Aqui fica só a ponte com os eventos de ponteiro.
+
+// Quem realmente rola na vertical sob o dedo: o ancestral com overflow próprio
+// (é o caso da tela cheia, onde o shell vira o contêiner de rolagem) ou, na
+// falta dele, o documento. Sem isso o gesto vertical se comportaria diferente
+// dentro e fora da tela cheia.
+function findVerticalScroller(target: EventTarget | null): Element | null {
+  let node = target instanceof HTMLElement ? target : null
+  while (node) {
+    const overflowY = window.getComputedStyle(node).overflowY
+    if ((overflowY === 'auto' || overflowY === 'scroll') && node.scrollHeight > node.clientHeight + SCROLL_EDGE_TOLERANCE) {
+      return node
+    }
+    node = node.parentElement
+  }
+  return document.scrollingElement || document.documentElement
+}
 
 function useViewerGestures(
   ref: React.RefObject<HTMLElement>,
   {
     enabled,
+    horizontal,
+    vertical,
     onSwipe,
+    trackRef,
   }: {
     enabled: boolean
+    horizontal: boolean
+    vertical: boolean
     onSwipe: (direction: 1 | -1) => void
+    trackRef?: React.RefObject<HTMLElement>
   }
 ) {
-  const swipeStartRef = useRef<{ x: number; y: number; t: number; canPan: boolean } | null>(null)
+  const swipeStartRef = useRef<SwipeStart | null>(null)
   const activePointersRef = useRef(0)
+  const pointerIdRef = useRef<number | null>(null)
   const onSwipeRef = useRef(onSwipe)
   onSwipeRef.current = onSwipe
+  const axesRef = useRef({ horizontal, vertical })
+  axesRef.current = { horizontal, vertical }
 
   useEffect(() => {
     const element = ref.current
     if (!element || !enabled) return
 
     activePointersRef.current = 0
+    pointerIdRef.current = null
+
+    // Feedback visual direto no DOM: a cada quadro do dedo um setState
+    // re-renderizaria a página inteira (canvas incluso) — caro e trêmulo.
+    const setTrackOffset = (dx: number, dy: number, animated: boolean) => {
+      const track = trackRef?.current
+      if (!track) return
+      track.style.transition = animated ? 'transform 180ms cubic-bezier(0.22, 1, 0.36, 1)' : ''
+      track.style.transform = dx === 0 && dy === 0 ? '' : `translate3d(${dx}px, ${dy}px, 0)`
+    }
+
+    const resetTrack = (animated: boolean) => {
+      const track = trackRef?.current
+      if (!track) return
+      if (!animated) {
+        track.style.transition = ''
+        track.style.transform = ''
+        return
+      }
+      setTrackOffset(0, 0, true)
+    }
 
     const onPointerDown = (event: PointerEvent) => {
       if (event.pointerType !== 'touch') return
@@ -1227,56 +1298,134 @@ function useViewerGestures(
       if (activePointersRef.current > 1) {
         // Dois dedos = pinça do navegador. Nada de swipe.
         swipeStartRef.current = null
+        pointerIdRef.current = null
+        resetTrack(false)
         return
       }
+      // O contador vale para a tela inteira (senão um dedo no cabeçalho e
+      // outro na página passariam por gesto de um dedo só), mas o gesto em si
+      // só começa quando o toque nasce sobre as páginas.
+      const target = event.target as Node | null
+      if (!target || !element.contains(target)) return
+
+      const { horizontal: allowX, vertical: allowY } = axesRef.current
       // Numa página ampliada, arrastar na horizontal é panorâmica (a linha da
-      // página rola), não virada de página. Marcamos no início do gesto se a
-      // linha tocada tem rolagem horizontal disponível.
+      // página rola), não virada de página — a não ser que a linha já esteja
+      // encostada na borda, e aí o gesto seguinte é claramente "virar".
       const row = (event.target as HTMLElement | null)?.closest?.('[data-pdf-page-row]') as HTMLElement | null
-      const canPan = !!row && row.scrollWidth > row.clientWidth + 1
-      swipeStartRef.current = { x: event.clientX, y: event.clientY, t: Date.now(), canPan }
+      const rowEdges = readScrollEdges({
+        scrollStart: row?.scrollLeft ?? 0,
+        viewport: row?.clientWidth ?? 0,
+        content: row?.scrollWidth ?? 0,
+      })
+      const scroller = findVerticalScroller(event.target)
+      const pageEdges = readScrollEdges({
+        scrollStart: scroller?.scrollTop ?? 0,
+        viewport: scroller?.clientHeight ?? 0,
+        content: scroller?.scrollHeight ?? 0,
+      })
+
+      pointerIdRef.current = event.pointerId
+      swipeStartRef.current = {
+        x: event.clientX,
+        y: event.clientY,
+        t: Date.now(),
+        // "next" = dedo para a esquerda / para cima.
+        allowNext: { x: allowX && rowEdges.atEnd, y: allowY && pageEdges.atEnd },
+        allowPrev: { x: allowX && rowEdges.atStart, y: allowY && pageEdges.atStart },
+        axis: null,
+        dropped: false,
+      }
+      resetTrack(false)
+    }
+
+    const onPointerMove = (event: PointerEvent) => {
+      if (event.pointerType !== 'touch') return
+      const start = swipeStartRef.current
+      if (!start || start.dropped || pointerIdRef.current !== event.pointerId) return
+
+      const dx = event.clientX - start.x
+      const dy = event.clientY - start.y
+
+      if (!start.axis) {
+        start.axis = lockSwipeAxis(dx, dy)
+        if (!start.axis) return
+      }
+
+      const delta = start.axis === 'x' ? dx : dy
+      if (!isSwipeAllowed(start, start.axis, delta)) {
+        // Aquele eixo é da rolagem/panorâmica nativa neste gesto. Solta o
+        // gesto de vez para não virar página quando o dedo voltar.
+        start.dropped = true
+        resetTrack(true)
+        return
+      }
+      setTrackOffset(
+        start.axis === 'x' ? rubberBand(dx) : 0,
+        start.axis === 'y' ? rubberBand(dy) : 0,
+        false
+      )
     }
 
     const finishPointer = (event: PointerEvent) => {
       if (event.pointerType !== 'touch') return
       activePointersRef.current = Math.max(0, activePointersRef.current - 1)
-      if (activePointersRef.current > 0) {
+      const start = swipeStartRef.current
+      if (activePointersRef.current > 0 || pointerIdRef.current !== event.pointerId) {
+        // Dedo que não era o do gesto (ou que sobrou de uma pinça): só desfaz o
+        // que houver. Sem o `start` nada foi deslocado, e mexer no estilo do
+        // track em todo toque da tela seria trabalho à toa.
+        if (start) resetTrack(true)
         swipeStartRef.current = null
+        pointerIdRef.current = null
         return
       }
 
-      const start = swipeStartRef.current
       swipeStartRef.current = null
-      if (!start || start.canPan) return
+      pointerIdRef.current = null
 
-      const dx = event.clientX - start.x
-      const dy = event.clientY - start.y
-      const elapsed = Date.now() - start.t
-
-      // Horizontal claro, e claramente mais horizontal que vertical — senão
-      // qualquer rolagem em diagonal viraria virada de página.
-      if (Math.abs(dx) > SWIPE_MIN_DISTANCE && Math.abs(dx) > Math.abs(dy) * 2 && elapsed < 800) {
-        onSwipeRef.current(dx < 0 ? 1 : -1)
-      }
+      const direction = resolveSwipe(start, {
+        x: event.clientX,
+        y: event.clientY,
+        t: Date.now(),
+        cancelled: event.type === 'pointercancel',
+      })
+      // Virou página: o deslocamento sai NA HORA, sem transição. Quem vai
+      // posicionar a nova página (scrollIntoView / scrollTo) mede o elemento no
+      // quadro seguinte, e um track ainda deslocado deslocaria a conta junto.
+      // Sem virada, o gesto volta ao lugar com uma animação curta.
+      resetTrack(direction === null)
+      if (direction !== null) onSwipeRef.current(direction)
     }
 
-    element.addEventListener('pointerdown', onPointerDown, { passive: true })
-    element.addEventListener('pointerup', finishPointer, { passive: true })
-    element.addEventListener('pointercancel', finishPointer, { passive: true })
+    // Tudo na janela, não no elemento: o dedo que sai da área das páginas antes
+    // de levantar (é o que acontece justamente nos gestos longos) entregaria o
+    // `pointerup` a outro elemento. Preso no elemento, o contador de dedos
+    // nunca voltava a zero e o swipe parava de funcionar até recarregar.
+    window.addEventListener('pointerdown', onPointerDown, { passive: true })
+    window.addEventListener('pointermove', onPointerMove, { passive: true })
+    window.addEventListener('pointerup', finishPointer, { passive: true })
+    window.addEventListener('pointercancel', finishPointer, { passive: true })
     return () => {
-      element.removeEventListener('pointerdown', onPointerDown)
-      element.removeEventListener('pointerup', finishPointer)
-      element.removeEventListener('pointercancel', finishPointer)
+      window.removeEventListener('pointerdown', onPointerDown)
+      window.removeEventListener('pointermove', onPointerMove)
+      window.removeEventListener('pointerup', finishPointer)
+      window.removeEventListener('pointercancel', finishPointer)
+      resetTrack(false)
       swipeStartRef.current = null
+      pointerIdRef.current = null
       activePointersRef.current = 0
     }
-  }, [enabled, ref])
+  }, [enabled, ref, trackRef])
 }
 
 export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const router = useRouter()
   const viewerRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLElement>(null)
+  // Coluna das páginas. Só o gesto de swipe escreve nela (transform), para a
+  // página acompanhar o dedo sem passar por re-render a cada quadro.
+  const pagesTrackRef = useRef<HTMLDivElement>(null)
   const zoomTouchedRef = useRef(false)
   // O leitor já escolheu um modo de leitura à mão? Se sim, não sobrescrevemos.
   const modeTouchedRef = useRef(false)
@@ -2002,15 +2151,48 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   // ── Gestos ──────────────────────────────────────────────────────────────
   const handleSwipe = useCallback((direction: 1 | -1) => {
     stepPage(direction)
+    // Confirmação tátil onde existe (Android/PWA). No iOS não faz nada e não
+    // custa nada — não vale um caminho separado.
+    try {
+      navigator.vibrate?.(8)
+    } catch {}
   }, [stepPage])
 
-  const gesturesEnabled = tool === 'cursor'
+  // `!loading && !error && access` não é detalhe: enquanto o material carrega,
+  // o componente retorna a tela de espera e a área das páginas NEM EXISTE no
+  // DOM. Sem esta condição nas dependências do efeito, ele rodava uma única vez
+  // (com o container ainda nulo), não reagia à montagem das páginas e o swipe
+  // simplesmente nunca era ligado — sobrava virar página só nas setinhas.
+  const gesturesEnabled = tool === 'cursor' && !loading && !error && !!access
   useViewerGestures(contentRef, {
     enabled: gesturesEnabled,
-    // Swipe só faz sentido em "uma página por vez"; nos modos de rolagem o
-    // gesto natural é o scroll vertical, que continua nativo.
-    onSwipe: mode === 'single' && gesturesEnabled ? handleSwipe : () => {},
+    // Para o lado vale em qualquer modo: nada no leitor usa arrasto horizontal
+    // além da panorâmica da página ampliada, e essa o próprio gesto respeita
+    // (só vira quando a página já está encostada na borda).
+    horizontal: true,
+    // Para cima/baixo só em "uma página por vez". Nos modos de rolagem o
+    // vertical É a leitura — virar página ali brigaria com o scroll o tempo
+    // todo. Dentro do modo página única o gesto ainda espera a página chegar
+    // ao fim (ou ao começo) antes de virar, então página ampliada continua
+    // rolando normalmente.
+    vertical: mode === 'single',
+    onSwipe: handleSwipe,
+    trackRef: pagesTrackRef,
   })
+
+  // Com o swipe vertical, o mesmo movimento que vira página no topo da leitura
+  // é o "puxar para atualizar" do Android/PWA — que recarregaria o material no
+  // meio do gesto. `overscroll-behavior` precisa estar em quem ROLA (o
+  // documento), não neste componente, por isso vai no elemento raiz e volta ao
+  // que era quando o leitor sai.
+  useEffect(() => {
+    const root = document.documentElement
+    const previous = root.style.overscrollBehaviorY
+    root.style.overscrollBehaviorY = 'contain'
+    return () => {
+      root.style.overscrollBehaviorY = previous
+    }
+  }, [])
 
   // ── Tutorial ────────────────────────────────────────────────────────────
   // Resolve cada passo para o alvo visível daquele tamanho de tela (ver
@@ -2668,7 +2850,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                 : showThumbs ? 'lg:col-span-2' : 'lg:col-span-3'
             }`}
           >
-            <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-5">
+            <div ref={pagesTrackRef} className="mx-auto flex w-full max-w-6xl flex-col items-center gap-5">
               {fillerTopHeight > 0 && (
                 <div aria-hidden style={{ height: fillerTopHeight }} className="w-full shrink-0" />
               )}
@@ -5202,7 +5384,7 @@ const AnnotationsPanel = memo(function AnnotationsPanel({
 
 function ToolGuide() {
   const guideItems = [
-    { icon: <MousePointer2 className="h-4 w-4" />, title: 'Navegar', text: 'Move pelo PDF, seleciona anotacoes e abre editar com duplo toque em textos e notas.' },
+    { icon: <MousePointer2 className="h-4 w-4" />, title: 'Navegar', text: 'Move pelo PDF, seleciona anotacoes e abre editar com duplo toque em textos e notas. No celular e no tablet, deslize o dedo para o lado (ou para cima e para baixo, no modo uma pagina por vez) para virar a pagina.' },
     { icon: <Highlighter className="h-4 w-4" />, title: 'Marca texto', text: 'Arraste para grifar uma area. Um toque cria um grifo rapido na linha.' },
     { icon: <PenLine className="h-4 w-4" />, title: 'Caneta', text: 'Desenhe com mouse, dedo ou Apple Pencil. Escolha cor, grossura, pincel, linha, tracejado ou circulo.' },
     { icon: <Zap className="h-4 w-4" />, title: 'Caneta laser', text: 'Aponte durante a leitura: o traco brilha e some sozinho, como um laser. Nao fica salvo.' },
@@ -5386,8 +5568,9 @@ function ShortcutsDialog({ onClose }: { onClose: () => void }) {
           </div>
         ))}
         <p className="text-[11px] text-white/40">
-          No celular: deslize para os lados para virar de página (no modo &quot;uma página por vez&quot;)
-          e use os botões de tamanho em &quot;Modo&quot; para aumentar a letra.
+          No celular e no tablet: deslize o dedo para os lados para virar de página — e também para
+          cima ou para baixo no modo &quot;uma página por vez&quot;, quando a página já chegou ao fim
+          ou ao começo. Para aumentar a letra, use os botões de tamanho em &quot;Modo&quot;.
         </p>
       </div>
     </ViewerDialog>
