@@ -359,7 +359,7 @@ const resumoDeEntrada = (entrada) => {
     coloracoes,
     temLaminaVirtual: contadores.temLaminaVirtual,
     ...(doencaPorCatalogoId.has(entrada.id) ? { doencaSlug: doencaPorCatalogoId.get(entrada.id) } : {}),
-    tituloConfiavel: pareceTituloDeEntidade(entrada.nomeCatalogado),
+    tituloConfiavel: pareceTituloDeEntidade(nomeCompleto),
     paginasFonte: entrada.paginasFonte.slice(0, 4),
     fragmentosDeMidia: entrada.fragmentosDeMidia,
   }
