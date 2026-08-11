@@ -24,7 +24,7 @@ import {
 import { usePricingEventState } from '@/components/pricing-events/usePricingEventState'
 import { PricingEventCountdown } from '@/components/pricing-events/PricingEventCountdown'
 import { PLUS_LABEL } from '@/lib/account-tier'
-import { LogoTomografia } from './logo'
+import { LogoRadiologia } from '@/components/radiologia/logo'
 import { PreviaCine } from './previa'
 import { tema } from './tema'
 
@@ -161,7 +161,7 @@ const CAMPOS_FICHA = [
 ]
 
 /**
- * Página de vendas do Manual de Tomografia.
+ * Página de vendas do Manual de Radiologia.
  *
  * Duas decisões de conteúdo guiam o layout. A primeira: o produto se vende pelo
  * gesto, não pela lista de recursos — por isso a prévia interativa vem antes de
@@ -228,19 +228,19 @@ export function PaywallTomografia({
               <Crown className="h-3.5 w-3.5" /> {PLUS_LABEL} · incluso no Manual Clínico
             </span>
 
-            <h1 className="sr-only">Manual de Tomografia</h1>
-            <LogoTomografia className="mt-4 w-full max-w-[320px] sm:max-w-[400px]" />
+            <h1 className="sr-only">Manual de Radiologia</h1>
+            <LogoRadiologia className="mt-4" />
 
             {serieAlvo ? (
               <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
                 A série <strong className="font-semibold text-foreground">{serieAlvo}</strong> faz parte do
-                Manual de Tomografia — o atlas de TC do Manual Clínico. Ele é privativo de assinantes: não entra
+                Manual de Radiologia — o atlas de imagem do Manual Clínico. Ele é privativo de assinantes: não entra
                 no teste grátis e não é vendido à parte.
               </p>
             ) : (
               <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-                Três exames de tomografia computadorizada reais, cortados como no aparelho: você rola o scroll e
-                a pilha avança corte a corte, do ápice pulmonar à pelve, do forame magno ao vértice.
+                Tomografia computadorizada e Raio-X em um único atlas: percorra pilhas de TC corte a corte e
+                acenda estruturas diretamente sobre 28 incidências radiográficas organizadas por região.
               </p>
             )}
 
@@ -258,7 +258,7 @@ export function PaywallTomografia({
                 <Check className="h-4 w-4" /> Já assina o Manual Clínico ou tem {PLUS_LABEL}?
               </p>
               <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
-                Então o Manual de Tomografia já é seu — sem custo extra, sem comprar de novo. Basta entrar na
+                Então o Manual de Radiologia já é seu — sem custo extra, sem comprar de novo. Basta entrar na
                 sua conta que o atlas abre inteiro.
               </p>
             </div>
@@ -444,11 +444,11 @@ export function PaywallTomografia({
                 <Sparkles className="h-3.5 w-3.5" /> Um pagamento, três manuais
               </p>
               <h2 className="mt-2 font-heading text-xl font-semibold tracking-tight sm:text-2xl">
-                O Manual de Tomografia vem junto com o Manual Clínico
+                O Manual de Radiologia vem junto com o Manual Clínico
               </h2>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                 O mesmo acesso libera as 300+ patologias do Manual Clínico, o Manual do Eletrocardiograma com
-                simulador de 12 derivações e este atlas de TC. Não há venda avulsa nem teste gratuito do atlas —
+                simulador de 12 derivações e este atlas de TC e Raio-X. Não há venda avulsa nem teste gratuito do atlas —
                 ele é indivisível.
               </p>
             </div>
@@ -464,8 +464,8 @@ export function PaywallTomografia({
         </section>
 
         <p className="mt-8 text-center text-xs leading-relaxed text-muted-foreground">
-          Material educacional. As imagens são cortes de exames reais usados para ensino de anatomia tomográfica
-          e não substituem laudo, avaliação clínica ou protocolo institucional.
+          Material educacional. As imagens são usadas para ensino de anatomia radiológica e não substituem laudo,
+          avaliação clínica, escolha do método de imagem ou protocolo institucional.
         </p>
       </div>
 

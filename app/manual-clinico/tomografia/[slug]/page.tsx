@@ -219,10 +219,10 @@ function SerieConteudo() {
         <div className="border-b border-border bg-muted/30">
           <div className="container mx-auto max-w-6xl px-4 pb-4 pt-6">
             <Link
-              href="/manual-clinico/tomografia"
+              href="/manual-clinico/radiologia"
               className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
-              <ArrowLeft className="h-4 w-4" /> Manual de Tomografia
+              <ArrowLeft className="h-4 w-4" /> Manual de Radiologia
             </Link>
           </div>
         </div>
@@ -254,8 +254,8 @@ function SerieConteudo() {
               Manual Clínico
             </Link>
             <ChevronRight className="h-3 w-3 opacity-40" />
-            <Link href="/manual-clinico/tomografia" className="-my-1.5 rounded py-1.5 transition-colors hover:text-foreground">
-              Tomografia
+            <Link href="/manual-clinico/radiologia" className="-my-1.5 rounded py-1.5 transition-colors hover:text-foreground">
+              Radiologia
             </Link>
             <ChevronRight className="h-3 w-3 opacity-40" />
             <span className="font-medium text-foreground/70">{secao?.titulo}</span>

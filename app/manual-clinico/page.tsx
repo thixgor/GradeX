@@ -369,8 +369,8 @@ const TOUR_STEPS: TourStep[] = [
   },
   {
     target: '[data-tour="tomografia"]',
-    title: 'Manual de Tomografia',
-    body: 'Atlas de TC interativo: role o scroll e percorra os cortes como no aparelho, troque a janela e estude cada estrutura em profundidade — tórax, abdome e crânio. Exclusivo de assinantes.',
+    title: 'Manual de Radiologia',
+    body: 'Atlas de diagnóstico por imagem com duas modalidades: percorra os cortes de TC como no aparelho e estude radiografias com demarcações anatômicas interativas, técnica e roteiro de leitura. Exclusivo de assinantes.',
   },
   {
     target: '[data-tour="ecg"]',
@@ -1122,32 +1122,29 @@ function ManualClinicoContent() {
           </button>
         )}
 
-        {/* ══════════ TOMOGRAFIA ENTRY ══════════ */}
+        {/* ══════════ RADIOLOGIA ENTRY ══════════ */}
         {!busca && (
           <button
-            onClick={() => router.push('/manual-clinico/tomografia')}
+            onClick={() => router.push('/manual-clinico/radiologia')}
             data-tour="tomografia"
             className="group mb-3 w-full overflow-hidden rounded-lg border border-sky-500/20 bg-gradient-to-r from-sky-500/[0.06] to-card p-4 text-left transition-colors hover:border-sky-500/40"
           >
             <div className="flex items-center justify-between gap-3">
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
-                  <img
-                    src="/logo_manual_tomografia_domineaqui.svg"
-                    alt="Manual de Tomografia"
-                    width={945}
-                    height={265}
-                    className="block h-auto w-full max-w-[190px] dark:[filter:invert(1)_hue-rotate(180deg)_brightness(1.15)]"
-                  />
+                  <div aria-label="Manual de Radiologia" className="leading-none">
+                    <span className="block text-[8px] font-black uppercase tracking-[0.24em] text-sky-600 dark:text-sky-400">Manual de</span>
+                    <span className="mt-1 block font-heading text-2xl font-black tracking-tight">Radiologia</span>
+                    <span className="mt-1 block text-[8px] font-bold uppercase tracking-[0.16em] text-muted-foreground">DomineAqui</span>
+                  </div>
                   <span className="inline-flex items-center gap-1 rounded-md border border-amber-300/25 bg-amber-400/10 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-amber-700 dark:text-amber-200">
                     <Crown className="h-2.5 w-2.5" /> {PLUS_LABEL}
                   </span>
                 </div>
                 <p className="mt-1.5 text-xs text-muted-foreground">
-                  Atlas tomográfico interativo: TC de tórax, abdome e crânio com os cortes percorridos por
-                  scroll, como no aparelho. Troca de janela, salto para a estrutura, 272 estruturas com
-                  densidade em UH, como identificar, clínica e alterações — com quiz e modo treino.
-                  Privativo para assinantes.
+                  Tomografia e Raio-X no mesmo atlas. Percorra TCs de tórax, abdome e crânio corte a corte;
+                  nas 28 incidências radiográficas, acenda as estruturas sobre a imagem e estude técnica,
+                  critérios de qualidade, roteiro sistemático e armadilhas. Privativo para assinantes.
                 </p>
               </div>
               <ArrowRight className="h-5 w-5 shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5 group-hover:text-sky-500" />

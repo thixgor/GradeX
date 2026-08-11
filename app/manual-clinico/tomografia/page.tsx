@@ -76,10 +76,10 @@ function TomografiaConteudo() {
         <div className="border-b border-border bg-muted/30">
           <div className="container mx-auto max-w-6xl px-4 pb-4 pt-6">
             <button
-              onClick={() => router.push('/manual-clinico')}
+              onClick={() => router.push('/manual-clinico/radiologia')}
               className="-m-3 inline-flex items-center gap-1.5 rounded-lg p-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
-              <ArrowLeft className="h-4 w-4" /> Voltar ao Manual Clínico
+              <ArrowLeft className="h-4 w-4" /> Voltar ao Manual de Radiologia
             </button>
           </div>
         </div>
@@ -118,15 +118,15 @@ function TomografiaConteudo() {
 
         <div className="container relative z-10 mx-auto max-w-6xl px-4 pb-10 pt-8">
           <button
-            onClick={() => router.push('/manual-clinico')}
+            onClick={() => router.push('/manual-clinico/radiologia')}
             className="-m-3 mb-3 inline-flex items-center gap-1.5 rounded-lg p-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
-            <ArrowLeft className="h-4 w-4" /> Voltar ao Manual Clínico
+            <ArrowLeft className="h-4 w-4" /> Voltar ao Manual de Radiologia
           </button>
 
           <div className="max-w-3xl">
-            <p className="editorial-mark mb-3">Manual Clínico · Atlas tomográfico interativo</p>
-            <h1 className="sr-only">Manual de Tomografia</h1>
+            <p className="editorial-mark mb-3">Manual de Radiologia · Tomografia computadorizada</p>
+            <h1 className="sr-only">Tomografia Computadorizada - Manual de Radiologia</h1>
             <LogoTomografia className="mt-1 w-full max-w-[340px] sm:max-w-[420px]" />
 
             <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
