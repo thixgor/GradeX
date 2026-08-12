@@ -8,6 +8,7 @@ import { secureApiEndpoint, canAdminModifyUser } from '@/lib/api-security'
 import { getPaymentProvider } from '@/lib/payments'
 import { normalizePeriodo, getCurrentSemesterRef } from '@/lib/user-periodo'
 import { isPlusAccount } from '@/lib/account-tier'
+import { revokePlusClaims, restorePlusClaims } from '@/lib/plus-claims'
 
 export const dynamic = 'force-dynamic'
 
@@ -153,6 +154,8 @@ export async function PATCH(
 
     let updateData: Partial<User> = {}
     let successMessage = ''
+    /** Resgates do Plus+ a suspender/devolver após gravar o novo cargo. */
+    let plusClaimsAction: 'revoke' | 'restore' | null = null
 
     if (action === 'ban') {
       if (!banReason) {
@@ -185,6 +188,11 @@ export async function PATCH(
       if (!accountType || !VALID_TYPES.includes(accountType)) {
         return NextResponse.json({ error: 'Tipo de conta inválido' }, { status: 400 })
       }
+
+      // Os materiais resgatados pelo Plus+ acompanham o cargo: caem quando o
+      // admin rebaixa, voltam quando ele concede. Aplicado depois do update do
+      // usuário, para não suspender nada se a gravação falhar.
+      plusClaimsAction = isPlusAccount(accountType) ? 'restore' : 'revoke'
 
       const newQuota = getPersonalExamsQuota(accountType as AccountType)
 
@@ -312,6 +320,16 @@ export async function PATCH(
         ...(unsetKeys.length > 0 ? { $unset: cleanUnset } : {}),
       }
     )
+
+    if (plusClaimsAction === 'revoke') {
+      await revokePlusClaims(id, 'admin_tier_downgrade', db).catch(err =>
+        console.error('[admin] revogar resgates Plus+ falhou:', err)
+      )
+    } else if (plusClaimsAction === 'restore') {
+      await restorePlusClaims(id, 'admin_tier_grant', db).catch(err =>
+        console.error('[admin] restaurar resgates Plus+ falhou:', err)
+      )
+    }
 
     return NextResponse.json({ success: true, message: successMessage })
   } catch (error) {

@@ -21,6 +21,7 @@ import { audit } from './payments/audit'
 import { isPlusAccount, normalizeAccountType, PLUS_ACCOUNT_TYPES, PLUS_LABEL, PLUS_TIER } from './account-tier'
 import { getPersonalExamsQuota } from './tier-limits'
 import { grantMaterialCartItems, type MaterialCartResolvedItem } from './material-cart'
+import { restorePlusClaims } from './plus-claims'
 import {
   getManualClinicoConfig,
   getManualClinicoPlan,
@@ -644,12 +645,26 @@ export async function grantSerialKeyProduct(
           },
         }
       )
+      // A key devolveu o Plus+: os resgates suspensos de uma assinatura
+      // anterior voltam junto.
+      const restoredClaims = await restorePlusClaims(target.userId, 'serial_key_activated', db)
+        .catch(err => {
+          console.error('[serial-keys] restaurar resgates Plus+ falhou:', err)
+          return { count: 0, items: [] }
+        })
+
       await audit({
         action: 'role_granted',
         targetUserId: target.userId,
         resourceType: 'serial_key',
         resourceId: String(serial._id),
-        metadata: { role, planId: grant.planId, expiresAt, via: 'serial_key' },
+        metadata: {
+          role,
+          planId: grant.planId,
+          expiresAt,
+          via: 'serial_key',
+          plusClaimsRestored: restoredClaims.count,
+        },
       })
       return {
         productLabel: serial.productTitle || `Assinatura ${PLUS_LABEL}`,

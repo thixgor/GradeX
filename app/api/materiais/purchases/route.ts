@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { MANUAL_CLINICO_PURCHASES_COLLECTION } from '@/lib/manual-clinico-product'
+import { PLUS_CLAIM_REVOKED_STATUS } from '@/lib/plus-claims'
 
 export const dynamic = 'force-dynamic'
 
@@ -16,11 +17,14 @@ export async function GET() {
     const db = await getDb()
 
     const [materialPurchases, manualPurchases] = await Promise.all([
+      // Inclui os resgates suspensos pela queda do Plus+: o item não dá mais
+      // acesso, mas continua listado como "renove para reativar" em vez de
+      // sumir sem explicação. Compra avulsa nunca fica nesse estado.
       db
       .collection('material_purchases')
       .find({
         userId: session.userId,
-        status: 'completed',
+        status: { $in: ['completed', PLUS_CLAIM_REVOKED_STATUS] },
       })
       .sort({ purchasedAt: -1 })
         .toArray(),
@@ -39,6 +43,8 @@ export async function GET() {
         ...purchase,
         _id: String(purchase._id),
         purchaseType: 'material',
+        /** Resgate do Plus+ à espera de renovação — sem acesso no momento. */
+        plusRevoked: purchase.status === PLUS_CLAIM_REVOKED_STATUS,
       })),
       ...manualPurchases.map((purchase: any) => ({
         ...purchase,

@@ -5,6 +5,7 @@ import { User } from '@/lib/types'
 import { getPersonalExamsQuota } from '@/lib/tier-limits'
 import { ObjectId } from 'mongodb'
 import { isPlusAccount } from '@/lib/account-tier'
+import { revokePlusClaims } from '@/lib/plus-claims'
 
 export const dynamic = 'force-dynamic'
 
@@ -25,6 +26,7 @@ export async function GET(request: NextRequest) {
 
     const now = new Date()
     let updated = false
+    let plusExpired = false
     let updateData: Partial<User> = {}
 
     // Verificar expiração do Plus+
@@ -43,6 +45,7 @@ export async function GET(request: NextRequest) {
           lastDailyReset: new Date()
         }
         updated = true
+        plusExpired = true
       }
     }
 
@@ -69,6 +72,14 @@ export async function GET(request: NextRequest) {
       await usersCollection.updateOne(
         { _id: new ObjectId(session.userId) },
         { $set: updateData }
+      )
+    }
+
+    // Plus+ vencido: suspende os materiais resgatados pela assinatura. Ficam
+    // guardados e voltam na renovação; compra avulsa continua intacta.
+    if (plusExpired) {
+      await revokePlusClaims(session.userId, 'plan_expired', db).catch(err =>
+        console.error('[check-plan-expiration] revogar resgates Plus+ falhou:', err)
       )
     }
 

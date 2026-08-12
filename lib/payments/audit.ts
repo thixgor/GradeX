@@ -25,6 +25,8 @@ export type AuditAction =
   | 'raffle_numbers_released'
   | 'raffle_drawn'
   | 'plus_guard_action'
+  | 'plus_claims_revoked'
+  | 'plus_claims_restored'
 
 export interface AuditLogEntry {
   action: AuditAction

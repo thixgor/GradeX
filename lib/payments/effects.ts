@@ -31,6 +31,7 @@ import { recordOrderCheckoutEvent } from '../analytics'
 import { sendMetaCapiEvent } from '../meta-capi'
 import { approveCouponRedemption, releaseCouponRedemption } from '../coupons'
 import { grantMaterialCartItems, type MaterialCartResolvedItem } from '../material-cart'
+import { restorePlusClaims } from '../plus-claims'
 import { buildAutoEmailPdfAttachments, type PdfEmailItem } from '../material-pdf-email'
 import {
   getManualClinicoConfig,
@@ -200,7 +201,7 @@ async function runRevocationEffects(order: PaymentOrder, newStatus: PaymentStatu
     const { applyPlusRefundClawback } = await import('../plus-guard')
     const clawback = await applyPlusRefundClawback(order.userId, newStatus).catch(err => {
       console.error('[effects] clawback Plus+ falhou:', err)
-      return { revoked: false, downloadsInWindow: 0 }
+      return { revoked: false, downloadsInWindow: 0, claimsRevoked: 0 }
     })
 
     await audit({
@@ -215,6 +216,8 @@ async function runRevocationEffects(order: PaymentOrder, newStatus: PaymentStatu
         // para contestar o estorno junto ao provedor de pagamento.
         downloadsInRefundWindow: clawback.downloadsInWindow,
         revoked: clawback.revoked,
+        // Resgates suspensos junto com o cargo (voltam se reassinar).
+        plusClaimsRevoked: clawback.claimsRevoked,
       },
     })
   }
@@ -333,12 +336,24 @@ async function applyPlanPurchase(order: PaymentOrder) {
     }
   )
 
+  // Assinou de novo: devolve os materiais que tinham sido resgatados numa
+  // assinatura anterior e foram suspensos quando ela caiu.
+  const restored = await restorePlusClaims(order.userId, 'plan_purchased').catch(err => {
+    console.error('[effects] restaurar resgates Plus+ falhou:', err)
+    return { count: 0, items: [] }
+  })
+
   await audit({
     action: 'role_granted',
     targetUserId: order.userId,
     resourceType: 'plan',
     resourceId: order.refId,
-    metadata: { orderId: String(order._id), amount: order.amount, expiresAt },
+    metadata: {
+      orderId: String(order._id),
+      amount: order.amount,
+      expiresAt,
+      plusClaimsRestored: restored.count,
+    },
   })
 
   sendPlanPurchasedEmail(
@@ -857,11 +872,21 @@ async function applySubscriptionPayment(order: PaymentOrder) {
     }
   )
 
+  // Renovou: os resgates suspensos por um período que venceu voltam inteiros.
+  const restored = await restorePlusClaims(sub.userId, 'subscription_renewed').catch(err => {
+    console.error('[effects] restaurar resgates Plus+ falhou:', err)
+    return { count: 0, items: [] }
+  })
+
   await audit({
     action: 'subscription_renewed',
     targetUserId: sub.userId,
     resourceType: 'subscription',
     resourceId: sub.providerSubscriptionId,
-    metadata: { orderId: String(order._id), nextBillingAt: newPeriodEnd },
+    metadata: {
+      orderId: String(order._id),
+      nextBillingAt: newPeriodEnd,
+      plusClaimsRestored: restored.count,
+    },
   })
 }
