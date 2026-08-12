@@ -77,10 +77,33 @@ function useIsActiveAnnotator(questionId: string) {
     activeListeners.add(listener)
     return () => { activeListeners.delete(listener) }
   }, [])
+  // Sair do modo anotação quando a questão sai da tela (troca de questão no
+  // modo paginado ou desmontagem), senão o estado global fica preso numa
+  // questão que ninguém mais está vendo.
+  useEffect(() => {
+    return () => { if (activeQuestionId === questionId) setActiveQuestion(null) }
+  }, [questionId])
   const isActive = activeQuestionId === questionId
   const activate = useCallback(() => setActiveQuestion(questionId), [questionId])
   const deactivate = useCallback(() => { if (activeQuestionId === questionId) setActiveQuestion(null) }, [questionId])
   return { isActive, activate, deactivate }
+}
+
+/**
+ * `true` enquanto QUALQUER questão estiver em modo anotação.
+ *
+ * Serve para o resto da tela sair da frente (ex.: o botão flutuante do mapa
+ * de questões) enquanto a pessoa está desenhando.
+ */
+export function useAnnotationModeActive(): boolean {
+  const [active, setActive] = useState(false)
+  useEffect(() => {
+    const listener = () => setActive(activeQuestionId !== null)
+    activeListeners.add(listener)
+    listener()
+    return () => { activeListeners.delete(listener) }
+  }, [])
+  return active
 }
 
 interface InlineAnnotationCanvasProps {
@@ -824,7 +847,16 @@ export function InlineAnnotationCanvas({
   const selectionCount = selectedStrokeIds.length + selectedTextIds.length
 
   return (
-    <div ref={wrapperRef} className={cn('relative', className)}>
+    <div
+      ref={wrapperRef}
+      className={cn(
+        'relative transition-shadow duration-200',
+        // Moldura discreta enquanto o modo anotação está ligado: deixa claro
+        // que a questão está "em modo desenho" e não simplesmente travada.
+        isActive && 'rounded-2xl ring-2 ring-primary/30 ring-offset-4 ring-offset-background',
+        className
+      )}
+    >
       {children}
 
       <canvas
@@ -1058,9 +1090,33 @@ function Toolbar(props: ToolbarProps) {
   const shapeIcons: Record<string, typeof Square> = { line: Minus, rectangle: Square, ellipse: Circle, arrow: ArrowUpRight }
   const ShapeIcon = isShapeTool(tool) ? shapeIcons[tool] : Shapes
 
+  // Dica de saída: some sozinha depois de alguns segundos (ou assim que a
+  // pessoa abre um popover da barra), para não ficar poluindo a tela.
+  const [showHint, setShowHint] = useState(true)
+  useEffect(() => {
+    const t = setTimeout(() => setShowHint(false), 4500)
+    return () => clearTimeout(t)
+  }, [])
+
   return (
-    <div className="fixed inset-x-0 bottom-0 z-[250] flex justify-center px-3 pb-[max(env(safe-area-inset-bottom),0.75rem)] pointer-events-none">
-      <div className="relative pointer-events-auto">
+    <div className="fixed inset-x-0 bottom-0 z-[250] flex flex-col items-center px-3 pb-[max(env(safe-area-inset-bottom),0.75rem)] pointer-events-none">
+      {/* Dica de saída — aparece ao entrar no modo anotação e some sozinha */}
+      <AnimatePresence>
+        {showHint && !showCustomize && !showShapePicker && (
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 4 }}
+            className="mb-2 max-w-full rounded-full glass-page-card glass-rim shadow-lg px-3.5 py-1.5 text-[11px] text-muted-foreground text-center"
+          >
+            Modo anotação ativo — toque em{' '}
+            <span className="font-semibold text-emerald-600 dark:text-emerald-400">Concluir</span>
+            <span className="hidden sm:inline"> (ou aperte Esc)</span> para voltar à prova
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div className="relative pointer-events-auto flex items-end gap-2 max-w-full">
         {showCustomize && (
           <CustomizePopover {...props} onClose={() => setShowCustomize(false)} />
         )}
@@ -1081,7 +1137,9 @@ function Toolbar(props: ToolbarProps) {
           </div>
         )}
 
-        <div className="flex items-center gap-0.5 p-1.5 rounded-2xl glass-page-card glass-rim shadow-2xl max-w-[94vw] overflow-x-auto scrollbar-hide">
+        {/* Só as ferramentas rolam na horizontal — o botão de sair fica fora
+            desse trilho, então nunca some da tela num celular. */}
+        <div className="min-w-0 flex items-center gap-0.5 p-1.5 rounded-2xl glass-page-card glass-rim shadow-2xl overflow-x-auto scrollbar-hide">
           <ToolBtn active={tool === 'pen'} onClick={() => setTool('pen')} icon={Pencil} label="Caneta" />
           <ToolBtn active={tool === 'highlighter'} onClick={() => setTool('highlighter')} icon={Highlighter} label="Marca-texto" />
           <ToolBtn active={tool === 'laser'} onClick={() => { setTool('laser'); setShowCustomize(false) }} icon={Flashlight} label="Caneta laser" />
@@ -1102,11 +1160,23 @@ function Toolbar(props: ToolbarProps) {
             <ToolBtn active={false} onClick={props.onDeleteSelection} icon={Trash2} label={`Excluir (${props.selectionCount})`} tone="danger" />
           )}
 
-          <div className="w-px h-6 bg-border/60 mx-0.5 flex-shrink-0" />
-
           <ToolBtn active={false} disabled={!props.hasInk} onClick={props.onClear} icon={Trash2} label="Limpar tudo" tone="danger" />
-          <ToolBtn active={false} onClick={props.onDone} icon={Check} label="Concluir" tone="success" />
         </div>
+
+        {/* Saída sempre visível, rotulada e destacada */}
+        <motion.button
+          onClick={props.onDone}
+          title="Concluir anotação (Esc)"
+          aria-label="Concluir anotação e voltar à prova"
+          initial={{ opacity: 0, scale: 0.9, y: 6 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          whileTap={{ scale: 0.94 }}
+          transition={{ type: 'spring', stiffness: 420, damping: 24 }}
+          className="flex-shrink-0 flex items-center gap-1.5 h-12 pl-3 pr-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-2xl shadow-emerald-900/25 transition-colors"
+        >
+          <Check className="h-4 w-4" />
+          Concluir
+        </motion.button>
       </div>
     </div>
   )

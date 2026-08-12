@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { LayoutGrid, X, CheckCircle2, Circle, StickyNote, Lock } from 'lucide-react'
+import { useAnnotationModeActive } from '@/components/inline-annotation-canvas'
 
 export interface PaletteQuestion {
   id: string
@@ -24,6 +25,9 @@ interface ExamQuestionPaletteProps {
 
 export function ExamQuestionPalette({ questions, currentIndex, onJump }: ExamQuestionPaletteProps) {
   const [open, setOpen] = useState(false)
+  // Enquanto a pessoa está desenhando, o botão flutuante sai da frente — a
+  // barra de anotação já ocupa esse canto da tela.
+  const annotating = useAnnotationModeActive()
 
   // Close on Escape
   useEffect(() => {
@@ -33,6 +37,10 @@ export function ExamQuestionPalette({ questions, currentIndex, onJump }: ExamQue
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [])
+
+  useEffect(() => {
+    if (annotating) setOpen(false)
+  }, [annotating])
 
   const answered = questions.filter(q => q.answered).length
   const total = questions.length
@@ -44,7 +52,10 @@ export function ExamQuestionPalette({ questions, currentIndex, onJump }: ExamQue
       <button
         onClick={() => setOpen(true)}
         aria-label="Mapa de questões"
-        className="fixed right-3 sm:right-5 bottom-20 sm:bottom-24 z-50 group flex items-center gap-2 pl-3 pr-3.5 py-2.5 rounded-2xl bg-background/95 backdrop-blur-md border border-border/60 shadow-lg shadow-black/5 hover:shadow-xl hover:scale-[1.03] transition-all"
+        className={cn(
+          'fixed right-3 sm:right-5 bottom-20 sm:bottom-24 z-50 group flex items-center gap-2 pl-3 pr-3.5 py-2.5 rounded-2xl bg-background/95 backdrop-blur-md border border-border/60 shadow-lg shadow-black/5 hover:shadow-xl hover:scale-[1.03] transition-all',
+          annotating && 'pointer-events-none opacity-0 translate-y-2'
+        )}
       >
         <div className="relative">
           <LayoutGrid className="h-4 w-4 text-primary" />

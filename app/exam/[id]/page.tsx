@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -772,7 +772,10 @@ export default function ExamPage({ params }: { params: { id: string } }) {
           const nextQuestion = exam.questions[nextIndex]
           const element = document.getElementById(`question-${nextQuestion.id}`)
           if (element) {
-            element.scrollIntoView({ behavior: 'smooth', block: 'center' })
+            // 'start' (e não 'center'): a questão precisa começar pelo enunciado,
+            // no topo da tela — centralizar deixava o começo do texto acima da
+            // área visível. O `scroll-mt-28` do card cobre o header sticky.
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' })
           }
         }, 100)
       }
@@ -792,6 +795,37 @@ export default function ExamPage({ params }: { params: { id: string } }) {
       initializeQuestionTimer(currentQuestionIndex)
     }
   }, [currentQuestionIndex, started, exam])
+
+  // ─── Modo paginado: trocar de questão volta para o topo do enunciado ───
+  // Os botões "Anterior/Próxima" ficam no rodapé do card. Sem isto, a questão
+  // seguinte entra no lugar mantendo a rolagem antiga: a pessoa continua lá
+  // embaixo, olhando para as últimas alternativas da nova questão, e precisa
+  // subir na mão toda vez para ler o enunciado.
+  const questionCardRef = useRef<HTMLDivElement>(null)
+  const isPaginatedMode = !!exam && exam.navigationMode !== 'scroll'
+  useEffect(() => {
+    if (!started || submitted || !isPaginatedMode) return
+    if (typeof window === 'undefined') return
+    // O body vira `position: fixed` quando a sidebar mobile está aberta —
+    // mexer no scroll ali só bagunçaria a posição restaurada depois.
+    if (document.body.style.position === 'fixed') return
+
+    const scrollToQuestionTop = () => {
+      const card = questionCardRef.current
+      // O header é sticky: descontar a altura dele para o título da questão
+      // não nascer escondido atrás da barra.
+      const headerHeight = document.querySelector('header')?.getBoundingClientRect().height ?? 0
+      const top = card
+        ? Math.max(0, window.scrollY + card.getBoundingClientRect().top - headerHeight - 12)
+        : 0
+      const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+      window.scrollTo({ top, behavior: prefersReducedMotion ? 'auto' : 'smooth' })
+    }
+
+    // rAF: espera o card da nova questão já estar no DOM antes de medir.
+    const frame = requestAnimationFrame(scrollToQuestionTop)
+    return () => cancelAnimationFrame(frame)
+  }, [currentQuestionIndex, started, submitted, isPaginatedMode])
 
   function handleSelectAlternative(questionId: string, alternativeId: string) {
     // Não permitir mudança se questão está bloqueada
@@ -3005,7 +3039,7 @@ ${respostaAluno}`
           </div>
         ) : (
           /* Modo Paginado - Uma questão por vez */
-          <Card className="rounded-2xl border-border/60 bg-card/95 shadow-sm">
+          <Card ref={questionCardRef} className="rounded-2xl border-border/60 bg-card/95 shadow-sm scroll-mt-28">
           <CardHeader className="rounded-t-2xl border-b border-border/50 bg-muted/20 pb-4">
             <div className="flex items-center justify-between">
               <CardTitle className="text-xl">Questão {currentQuestion.number}</CardTitle>
@@ -3536,7 +3570,9 @@ ${respostaAluno}`
                             // Em modo scroll, rolar até a questão
                             const element = document.getElementById(`question-${question.id}`)
                             if (element) {
-                              element.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                              // 'start': a questão começa pelo enunciado, no topo
+                              // da tela (o `scroll-mt-28` cobre o header sticky).
+                              element.scrollIntoView({ behavior: 'smooth', block: 'start' })
                               setShowUnansweredModal(false)
                             }
                           } else {
