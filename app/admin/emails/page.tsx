@@ -22,6 +22,7 @@ import {
     Loader2,
     Mail,
     MessageSquareQuote,
+    Monitor,
     Pause,
     Paperclip,
     Play,
@@ -30,9 +31,11 @@ import {
     Terminal,
     Search,
     Send,
+    Smartphone,
     Sparkles,
     Target,
     Trash2,
+    TrendingUp,
     Type,
     Users,
     Wand2,
@@ -63,6 +66,11 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
 import { ToastAlert } from '@/components/ui/toast-alert'
+import {
+    getMarketingEmailTemplate,
+    renderEmailButton,
+    renderEmailStats,
+} from '@/lib/comms/email-render'
 import { PERIODO_OPTIONS, computeCurrentPeriodo, formatPeriodoLabel } from '@/lib/user-periodo'
 
 interface User {
@@ -173,7 +181,12 @@ interface EmailSchedule {
 }
 
 type AttachmentType = 'none' | 'material' | 'flashcard' | 'link'
-type EmailBlockType = 'hero' | 'text' | 'highlight' | 'list' | 'button' | 'image' | 'quote'
+type EmailBlockType = 'hero' | 'text' | 'highlight' | 'list' | 'button' | 'image' | 'quote' | 'stats'
+
+interface EmailStat {
+    value: string
+    label: string
+}
 
 interface EmailBlock {
     id: string
@@ -186,6 +199,12 @@ interface EmailBlock {
     alt?: string
     items?: string[]
     author?: string
+    /** hero: rótulo curto acima do título (ex.: "NOVIDADE"). */
+    eyebrow?: string
+    /** button: frase curta abaixo do botão (ex.: "Leva 2 minutos"). */
+    hint?: string
+    /** stats: prova social em números. */
+    stats?: EmailStat[]
 }
 
 interface EmailDraft {
@@ -215,6 +234,14 @@ interface VisualPreset {
 const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://domineaqui.com.br'
 
 const WEEKDAY_LABELS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
+
+type MobileTab = 'templates' | 'content' | 'send'
+
+const MOBILE_TABS: Array<{ id: MobileTab; label: string; icon: typeof Mail }> = [
+    { id: 'templates', label: 'Modelos', icon: Wand2 },
+    { id: 'content', label: 'Conteúdo', icon: FileText },
+    { id: 'send', label: 'Enviar', icon: Send },
+]
 
 const FREQUENCY_LABELS: Record<ScheduleFrequency, string> = {
     once: 'Uma vez',
@@ -255,6 +282,24 @@ const cronEndpoint = `${appUrl.replace(/\/$/, '')}/api/cron/email-scheduler`
 const cronUrl = `${cronEndpoint}?token=SEU_SEGREDO`
 const cronCurl = `curl -X POST "${cronEndpoint}" -H "Authorization: Bearer SEU_SEGREDO"`
 
+const ACCOUNT_TYPE_LABELS: Record<string, string> = {
+    admin: 'admins',
+    premium: 'assinantes Plus+',
+    trial: 'contas em trial',
+    gratuito: 'contas gratuitas',
+}
+
+/** Frase legível do público de um agendamento dinâmico (sem expor 'all'). */
+function describeAudienceFilter(accountType: string, periodo: string): string {
+    const audience = accountType === 'all'
+        ? 'Todos os usuários'
+        : `Usuários: ${ACCOUNT_TYPE_LABELS[accountType] || accountType}`
+
+    if (periodo === 'all') return audience
+    if (periodo === 'none') return `${audience}, sem período definido`
+    return `${audience}, do ${periodo}º período`
+}
+
 /** Descrição legível da recorrência, para a lista de agendamentos. */
 function describeSchedule(schedule: EmailSchedule): string {
     const at = `às ${schedule.time}`
@@ -281,17 +326,19 @@ const blockOptions: Array<{ type: EmailBlockType; label: string; icon: typeof Ty
     { type: 'list', label: 'Lista', icon: List },
     { type: 'button', label: 'Botao', icon: Link2 },
     { type: 'image', label: 'Imagem', icon: ImageIcon },
-    { type: 'quote', label: 'Citacao', icon: MessageSquareQuote },
+    { type: 'quote', label: 'Citação', icon: MessageSquareQuote },
+    { type: 'stats', label: 'Números', icon: TrendingUp },
 ]
 
 const blockLabels: Record<EmailBlockType, string> = {
-    hero: 'Titulo principal',
+    hero: 'Título principal',
     text: 'Texto',
     highlight: 'Destaque',
     list: 'Lista',
-    button: 'Botao',
+    button: 'Botão',
     image: 'Imagem',
-    quote: 'Citacao',
+    quote: 'Citação',
+    stats: 'Números (prova social)',
 }
 
 function newId() {
@@ -304,16 +351,30 @@ function makeBlock(type: EmailBlockType, data: Partial<EmailBlock> = {}): EmailB
         text: { id: newId(), type: 'text', text: 'Escreva um paragrafo curto, claro e orientado para acao.' },
         highlight: { id: newId(), type: 'highlight', title: 'Destaque', text: 'O principal motivo para o usuario clicar.' },
         list: { id: newId(), type: 'list', title: 'O que voce recebe', items: ['Beneficio 1', 'Beneficio 2', 'Proximo passo'] },
-        button: { id: newId(), type: 'button', buttonText: 'Acessar agora', url: appUrl },
+        button: { id: newId(), type: 'button', buttonText: 'Acessar agora', url: appUrl, hint: '' },
         image: { id: newId(), type: 'image', imageUrl: '', alt: 'Imagem do e-mail' },
         quote: { id: newId(), type: 'quote', text: 'Insira uma prova social, depoimento ou frase curta.', author: 'Nome do autor' },
+        stats: {
+            id: newId(),
+            type: 'stats',
+            stats: [
+                { value: '+12 mil', label: 'estudantes na plataforma' },
+                { value: '4,9', label: 'nota média dos materiais' },
+                { value: '24h', label: 'acesso liberado na hora' },
+            ],
+        },
     }
 
     return { ...defaults[type], id: newId(), ...data }
 }
 
 function cloneBlocks(blocks: EmailBlock[]) {
-    return blocks.map(block => ({ ...block, id: newId(), items: block.items ? [...block.items] : undefined }))
+    return blocks.map(block => ({
+        ...block,
+        id: newId(),
+        items: block.items ? [...block.items] : undefined,
+        stats: block.stats ? block.stats.map(stat => ({ ...stat })) : undefined,
+    }))
 }
 
 function escapeHtml(value = '') {
@@ -379,6 +440,7 @@ function renderBlocksHtml(blocks: EmailBlock[]) {
             case 'hero':
                 return `
                   <div class="hero-block">
+                    ${block.eyebrow ? `<span class="hero-eyebrow">${escapeHtml(block.eyebrow)}</span>` : ''}
                     <h1>${escapeHtml(block.title || '')}</h1>
                     ${block.text ? `<p>${escapeHtml(block.text)}</p>` : ''}
                   </div>
@@ -396,20 +458,29 @@ function renderBlocksHtml(blocks: EmailBlock[]) {
                 return `
                   <div class="list-block">
                     ${block.title ? `<h2>${escapeHtml(block.title)}</h2>` : ''}
-                    <ul>
-                      ${(block.items || []).filter(Boolean).map(item => `<li>${applyInline(escapeHtml(item))}</li>`).join('')}
+                    <ul class="check-list">
+                      ${(block.items || []).filter(Boolean).map(item => `<li><span class="check-icon" style="color:#1a6b4d;font-weight:800;padding-right:10px;">&#10003;</span>${applyInline(escapeHtml(item))}</li>`).join('')}
                     </ul>
                   </div>
                 `
             case 'button': {
                 const href = normalizeHref(block.url)
                 if (!href) return ''
-                return `
-                  <div class="button-block">
-                    <a href="${escapeHtml(href)}" class="cta-button" target="_blank">${escapeHtml(block.buttonText || 'Acessar agora')}</a>
-                  </div>
-                `
+                // Botão em tabela: um <a> com padding é ignorado pelo Outlook,
+                // que renderizaria só o texto sem a pílula laranja.
+                return renderEmailButton(
+                    escapeHtml(href),
+                    escapeHtml(block.buttonText || 'Acessar agora'),
+                    block.hint ? escapeHtml(block.hint) : undefined,
+                )
             }
+            case 'stats':
+                return renderEmailStats(
+                    (block.stats || []).map(stat => ({
+                        value: escapeHtml(stat.value || ''),
+                        label: escapeHtml(stat.label || ''),
+                    })),
+                )
             case 'image':
                 if (!block.imageUrl) return ''
                 return `
@@ -445,9 +516,7 @@ function renderAttachmentHtml(attachment: AttachmentBlock | null) {
         <p class="resource-badge">${escapeHtml(attachment.badge)}</p>
         <h2>${escapeHtml(attachment.title)}</h2>
         <p>${escapeHtml(attachment.description)}</p>
-        <div class="button-block">
-          <a href="${escapeHtml(attachment.url)}" class="cta-button" target="_blank">${escapeHtml(attachment.ctaText)}</a>
-        </div>
+        ${renderEmailButton(escapeHtml(attachment.url), escapeHtml(attachment.ctaText))}
       </div>
     `
 }
@@ -691,7 +760,12 @@ export default function AdminEmailsPage() {
     const [customLinkDescription, setCustomLinkDescription] = useState('')
     const [attachmentCtaText, setAttachmentCtaText] = useState('Acessar agora')
 
+    // Aba visível abaixo de xl. No desktop as três colunas aparecem juntas e
+    // este estado é ignorado.
+    const [mobileTab, setMobileTab] = useState<MobileTab>('content')
+
     const [showPreview, setShowPreview] = useState(false)
+    const [previewDevice, setPreviewDevice] = useState<'mobile' | 'desktop'>('mobile')
     const [drafts, setDrafts] = useState<EmailDraft[]>([])
     const [currentDraftId, setCurrentDraftId] = useState<string | null>(null)
     const [showDrafts, setShowDrafts] = useState(false)
@@ -951,6 +1025,30 @@ export default function AdminEmailsPage() {
         }))
     }
 
+    const updateBlockStat = (blockId: string, index: number, updates: Partial<EmailStat>) => {
+        setBlocks(prev => prev.map(block => {
+            if (block.id !== blockId) return block
+            const stats = [...(block.stats || [])]
+            stats[index] = { ...stats[index], ...updates }
+            return { ...block, stats }
+        }))
+    }
+
+    const addBlockStat = (blockId: string) => {
+        setBlocks(prev => prev.map(block => (
+            block.id === blockId
+                ? { ...block, stats: [...(block.stats || []), { value: '', label: '' }] }
+                : block
+        )))
+    }
+
+    const removeBlockStat = (blockId: string, index: number) => {
+        setBlocks(prev => prev.map(block => {
+            if (block.id !== blockId) return block
+            return { ...block, stats: (block.stats || []).filter((_, statIndex) => statIndex !== index) }
+        }))
+    }
+
     const addBlock = (type: EmailBlockType) => {
         setBlocks(prev => [...prev, makeBlock(type)])
         showToast('Bloco adicionado', 'success')
@@ -1013,121 +1111,20 @@ export default function AdminEmailsPage() {
         setSubject(templateSubject(template))
         setPreviewText(templatePreview(template))
         setBlocks(blocksFromTemplate(template))
+        // No celular, escolher um modelo é o passo anterior a editá-lo: sem
+        // trocar de aba o admin ficaria olhando a lista de modelos sem sinal de
+        // que algo aconteceu fora da tela.
+        setMobileTab('content')
         showToast(`Template "${template.name}" carregado`, 'success')
     }
 
-    const getPreviewHtml = useCallback(() => {
-        const logoUrl = 'https://www.domineaqui.com.br/logo.png'
-
-        return `
-      <!DOCTYPE html>
-      <html lang="pt-BR">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="color-scheme" content="light dark">
-        <meta name="supported-color-schemes" content="light dark">
-        <style>
-          :root { color-scheme: light dark; supported-color-schemes: light dark; }
-          body { margin: 0; padding: 28px 14px; background: #eef3f0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
-          .email-container { max-width: 600px; margin: 0 auto; background: #fff; border-radius: 18px; overflow: hidden; box-shadow: 0 18px 48px rgba(15, 61, 46, .14); }
-          .header { background: linear-gradient(135deg, #0b3326 0%, #14533d 55%, #1a6b4d 100%); padding: 34px 20px; text-align: center; }
-          .header img { max-height: 58px; }
-          .header-accent { height: 4px; background: linear-gradient(90deg, #f57c00 0%, #ffb74d 50%, #f57c00 100%); }
-          .content { padding: 42px 34px; line-height: 1.6; color: #1f2933; }
-          .hero-block { text-align: center; margin-bottom: 30px; }
-          .hero-block h1 { color: #0f3d2e; font-size: 29px; font-weight: 800; line-height: 1.18; letter-spacing: -0.4px; margin: 0 0 14px; }
-          .hero-block p { color: #43505c; font-size: 17px; margin: 0; }
-          .content h2 { color: #0f3d2e; font-size: 22px; font-weight: 700; line-height: 1.28; margin: 0 0 14px; }
-          .content p, .content li { color: #43505c; font-size: 16px; }
-          .content p { margin: 0 0 16px; }
-          .text-block { margin: 18px 0; }
-          .list-block { margin: 26px 0; }
-          .list-block ul { padding-left: 22px; margin: 0; }
-          .list-block li { margin: 9px 0; }
-          .image-block { text-align: center; margin: 26px 0; }
-          .image-block img { max-width: 100%; border-radius: 14px; }
-          .button-block { text-align: center; margin: 28px 0; }
-          .cta-button { display: inline-block; background: linear-gradient(135deg, #f57c00 0%, #ff9b21 100%); color: #fff !important; text-decoration: none; padding: 16px 38px; border-radius: 999px; font-weight: 800; letter-spacing: 0.2px; box-shadow: 0 8px 20px rgba(245, 124, 0, 0.32); }
-          .highlight-box { background: linear-gradient(135deg, #fff4d6 0%, #ffe6a8 100%); border-left: 5px solid #f57c00; padding: 22px 24px; margin: 28px 0; border-radius: 14px; box-shadow: 0 6px 18px rgba(245, 124, 0, 0.12); }
-          .highlight-box p { margin: 0 0 8px; color: #4a2f10; font-size: 16px; font-weight: 500; }
-          .highlight-box p:last-child { margin-bottom: 0; }
-          .highlight-box strong { color: #3a2408; font-weight: 800; }
-          .quote-block { position: relative; background: #f4fbf7; border-left: 5px solid #1a6b4d; border-radius: 14px; margin: 28px 0; padding: 26px 28px 24px; }
-          .quote-block .quote-mark { display: block; font-family: Georgia, 'Times New Roman', serif; font-size: 52px; line-height: 0.4; color: #1a6b4d; opacity: .35; margin-bottom: 8px; }
-          .quote-block .quote-text { margin: 0; color: #2d3b34; font-style: italic; font-size: 18px; line-height: 1.55; }
-          .quote-block .quote-author { margin: 16px 0 0; color: #0f3d2e; font-style: normal; font-weight: 700; font-size: 15px; }
-          .quote-block .quote-author:before { content: "— "; color: #1a6b4d; }
-          .resource-card { border: 1px solid #d4e7dc; background: linear-gradient(135deg, #f4fbf7 0%, #ffffff 100%); border-radius: 18px; padding: 26px; margin: 30px 0; }
-          .resource-card h2 { margin-top: 0; }
-          .resource-badge { display: inline-block; margin: 0 0 12px 0; padding: 6px 12px; border-radius: 999px; background: #e4f6ec; color: #0f3d2e !important; font-size: 12px !important; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; }
-          .divider { height: 1px; background: linear-gradient(90deg, transparent, #d9e3dd, transparent); margin: 32px 0; }
-          .footer { background: #f6f9f7; padding: 30px; text-align: center; border-top: 1px solid #e4ece8; }
-          .footer p { margin: 5px 0; font-size: 13px; color: #6a7b73; }
-          .social-link { color: #f57c00; font-weight: bold; text-decoration: none; }
-          @media only screen and (max-width: 600px) {
-            body { padding: 14px 8px; }
-            .content { padding: 28px 22px; }
-            .hero-block h1 { font-size: 25px; }
-            .cta-button { display: block; padding: 15px 24px; }
-          }
-          @media (prefers-color-scheme: dark) {
-            body { background: #0c1411 !important; }
-            .email-container { background: #15211c !important; box-shadow: none !important; }
-            .content { background: #15211c !important; }
-            .hero-block h1, .content h2 { color: #58d6a0 !important; }
-            .content p, .content li, .hero-block p, .text-block, .list-block li { color: #cdd9d3 !important; }
-            .highlight-box { background: #3d2f10 !important; border-left-color: #ffb74d !important; box-shadow: none !important; }
-            .highlight-box p { color: #ffe9c2 !important; }
-            .highlight-box strong { color: #ffd98a !important; }
-            .quote-block { background: #1b2a23 !important; border-left-color: #58d6a0 !important; }
-            .quote-block .quote-mark { color: #58d6a0 !important; }
-            .quote-block .quote-text { color: #e2ebe6 !important; }
-            .quote-block .quote-author { color: #58d6a0 !important; }
-            .quote-block .quote-author:before { color: #58d6a0 !important; }
-            .resource-card { background: #1b2a23 !important; border-color: #2c3f36 !important; }
-            .resource-badge { background: #173329 !important; color: #58d6a0 !important; }
-            .divider { background: linear-gradient(90deg, transparent, #2a3a33, transparent) !important; }
-            .footer { background: #101a16 !important; border-top-color: #1f2d27 !important; }
-            .footer p { color: #849991 !important; }
-          }
-          /* Clients that ignore prefers-color-scheme and recolor automatically
-             (Gmail, Outlook.com) inject [data-ogsc]/[data-ogsb]; override their
-             partial inversion so the highlight text isn't left dark-on-dark. */
-          u + .body .highlight-box,
-          [data-ogsc] .highlight-box,
-          [data-ogsb] .highlight-box { background: #3d2f10 !important; border-left-color: #ffb74d !important; box-shadow: none !important; }
-          u + .body .highlight-box p,
-          [data-ogsc] .highlight-box p { color: #ffe9c2 !important; }
-          u + .body .highlight-box strong,
-          [data-ogsc] .highlight-box strong { color: #ffd98a !important; }
-          u + .body .quote-block,
-          [data-ogsc] .quote-block,
-          [data-ogsb] .quote-block { background: #1b2a23 !important; border-left-color: #58d6a0 !important; }
-          [data-ogsc] .quote-block .quote-mark { color: #58d6a0 !important; }
-          [data-ogsc] .quote-block .quote-text { color: #e2ebe6 !important; }
-          [data-ogsc] .quote-block .quote-author,
-          [data-ogsc] .quote-block .quote-author:before { color: #58d6a0 !important; }
-        </style>
-      </head>
-      <body class="body">
-        <div class="email-container">
-          <div class="header">
-            <img src="${logoUrl}" alt="DomineAqui">
-          </div>
-          <div class="header-accent"></div>
-          <div class="content">
-            ${finalContent || '<p style="color: #999; text-align: center;">Seu conteudo aparecera aqui...</p>'}
-          </div>
-          <div class="footer">
-            <p>Siga-nos no Instagram: <a href="https://instagram.com/domineaqui.br" class="social-link">@domineaqui.br</a></p>
-            <p>&copy; ${new Date().getFullYear()} DomineAqui. Todos os direitos reservados.</p>
-          </div>
-        </div>
-      </body>
-      </html>
-    `
-    }, [finalContent])
+    // O preview usa exatamente o mesmo template do envio real. Antes esta
+    // função carregava uma cópia do CSS do e-mail, que já tinha divergido do
+    // original — o admin aprovava um layout e o destinatário recebia outro.
+    const getPreviewHtml = useCallback(
+        () => getMarketingEmailTemplate(finalContent, previewText),
+        [finalContent, previewText],
+    )
 
     /** Especificação de destinatários enviada ao servidor (envio e agendamento). */
     const buildRecipientSpec = useCallback((audience: 'fixed' | 'dynamic' = 'fixed') => {
@@ -1442,7 +1439,7 @@ export default function AdminEmailsPage() {
         setSubject(draft.subject || '')
         setPreviewText(draft.previewText || '')
         setBlocks(Array.isArray(draft.blocks) && draft.blocks.length > 0
-            ? draft.blocks.map(block => ({ ...block, id: newId(), items: block.items ? [...block.items] : undefined }))
+            ? cloneBlocks(draft.blocks)
             : cloneBlocks(visualTemplatePresets.empty.blocks))
         setAttachmentType((draft.attachmentType as AttachmentType) || 'none')
         setSelectedMaterialId(draft.selectedMaterialId || '')
@@ -1480,44 +1477,78 @@ export default function AdminEmailsPage() {
     return (
         <AppShell headerTitle="Central de E-mails" headerSubtitle="Campanhas administrativas com editor visual">
             <BanChecker />
-            <div className="container mx-auto max-w-[1500px] px-4 py-7">
-                <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                    <div className="flex items-start gap-3">
-                        <Button variant="ghost" size="icon" onClick={() => router.push('/admin')} className="mt-1 shrink-0">
+            <div className="container mx-auto max-w-[1500px] px-3 pb-28 pt-5 sm:px-4 sm:py-7 xl:pb-7">
+                <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                    <div className="flex items-start gap-2 sm:gap-3">
+                        <Button variant="ghost" size="icon" onClick={() => router.push('/admin')} className="mt-0.5 shrink-0">
                             <ArrowLeft className="h-5 w-5" />
                         </Button>
-                        <div>
+                        <div className="min-w-0">
                             <div className="flex flex-wrap items-center gap-2">
-                                <h1 className="text-2xl font-bold text-slate-950 dark:text-white">Criar e-mail</h1>
+                                <h1 className="text-xl font-bold text-slate-950 sm:text-2xl dark:text-white">Criar e-mail</h1>
                                 <Badge variant="outline" className="gap-1">
                                     <Sparkles className="h-3.5 w-3.5 text-amber-500" />
                                     {templates.length} templates
                                 </Badge>
                             </div>
-                            <p className="mt-1 text-sm text-muted-foreground">
+                            {/* No celular as abas logo abaixo já dizem o caminho;
+                                a frase só empurraria o conteúdo para baixo. */}
+                            <p className="mt-1 hidden text-sm text-muted-foreground sm:block">
                                 Escolha um template, edite os blocos e envie com preview.
                             </p>
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-2 sm:min-w-[460px]">
-                        <div className="rounded-lg border bg-white p-3 text-center shadow-sm dark:bg-slate-950">
-                            <p className="text-xs text-muted-foreground">Destinatários</p>
-                            <p className="text-xl font-bold">{recipientCount}</p>
+                    <div className="grid grid-cols-3 gap-2 lg:min-w-[460px]">
+                        <div className="rounded-lg border bg-white p-2.5 text-center shadow-sm sm:p-3 dark:bg-slate-950">
+                            <p className="text-[11px] text-muted-foreground sm:text-xs">Destinatários</p>
+                            <p className="text-lg font-bold sm:text-xl">{recipientCount}</p>
                         </div>
-                        <div className="rounded-lg border bg-white p-3 text-center shadow-sm dark:bg-slate-950">
-                            <p className="text-xs text-muted-foreground">Template</p>
-                            <p className="truncate text-sm font-semibold">{selectedTemplate?.name || 'Livre'}</p>
+                        <div className="rounded-lg border bg-white p-2.5 text-center shadow-sm sm:p-3 dark:bg-slate-950">
+                            <p className="text-[11px] text-muted-foreground sm:text-xs">Template</p>
+                            <p className="truncate text-xs font-semibold sm:text-sm">{selectedTemplate?.name || 'Livre'}</p>
                         </div>
-                        <div className="rounded-lg border bg-white p-3 text-center shadow-sm dark:bg-slate-950">
-                            <p className="text-xs text-muted-foreground">Anexo</p>
-                            <p className="truncate text-sm font-semibold">{currentAttachment?.badge || 'Nenhum'}</p>
+                        <div className="rounded-lg border bg-white p-2.5 text-center shadow-sm sm:p-3 dark:bg-slate-950">
+                            <p className="text-[11px] text-muted-foreground sm:text-xs">Anexo</p>
+                            <p className="truncate text-xs font-semibold sm:text-sm">{currentAttachment?.badge || 'Nenhum'}</p>
                         </div>
                     </div>
                 </div>
 
+                {/* Abas de navegação — só abaixo de xl. As três colunas do desktop
+                    empilhavam no celular, e a lista de templates (alta, com scroll
+                    próprio) ficava na frente de tudo: era preciso rolar muito para
+                    chegar ao conteúdo e mais ainda para chegar ao envio. */}
+                <div className="sticky top-0 z-30 -mx-3 mb-4 border-b bg-background/95 px-3 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/80 sm:-mx-4 sm:px-4 xl:hidden">
+                    <div className="grid grid-cols-3 gap-1.5">
+                        {MOBILE_TABS.map(tab => {
+                            const Icon = tab.icon
+                            const active = mobileTab === tab.id
+                            return (
+                                <button
+                                    key={tab.id}
+                                    type="button"
+                                    onClick={() => setMobileTab(tab.id)}
+                                    className={`flex min-h-[44px] items-center justify-center gap-1.5 rounded-lg border px-2 text-sm font-medium transition ${active
+                                        ? 'border-primary bg-primary text-primary-foreground'
+                                        : 'bg-background text-muted-foreground hover:bg-muted/60'
+                                        }`}
+                                >
+                                    <Icon className="h-4 w-4 shrink-0" />
+                                    <span className="truncate">{tab.label}</span>
+                                    {tab.id === 'send' && recipientCount > 0 && (
+                                        <span className={`rounded-full px-1.5 text-[10px] font-bold ${active ? 'bg-white/25' : 'bg-primary/15 text-primary'}`}>
+                                            {recipientCount}
+                                        </span>
+                                    )}
+                                </button>
+                            )
+                        })}
+                    </div>
+                </div>
+
                 <div className="grid gap-5 xl:grid-cols-[360px_minmax(0,1fr)_390px]">
-                    <div className="space-y-5">
+                    <div className={`min-w-0 space-y-5 ${mobileTab === 'templates' ? '' : 'hidden'} xl:block`}>
                         <Card className="overflow-hidden">
                             <CardHeader className="pb-4">
                                 <CardTitle className="flex items-center gap-2 text-lg">
@@ -1552,7 +1583,7 @@ export default function AdminEmailsPage() {
                                     ))}
                                 </div>
 
-                                <div className="max-h-[530px] space-y-2 overflow-y-auto pr-1">
+                                <div className="max-h-[60vh] space-y-2 overflow-y-auto pr-1 xl:max-h-[530px]">
                                     {visibleTemplates.map(template => (
                                         <button
                                             key={template.id}
@@ -1582,7 +1613,7 @@ export default function AdminEmailsPage() {
                         </Card>
                     </div>
 
-                    <div className="space-y-5">
+                    <div className={`min-w-0 space-y-5 ${mobileTab === 'content' ? '' : 'hidden'} xl:block`}>
                         <Card>
                             <CardHeader className="pb-4">
                                 <CardTitle className="flex items-center gap-2 text-lg">
@@ -1612,14 +1643,22 @@ export default function AdminEmailsPage() {
                                     </div>
                                 </div>
 
-                                <div className="flex flex-wrap items-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-300">
-                                    <span className="font-semibold">Variáveis de personalização:</span>
-                                    <code className="rounded bg-amber-100 px-1.5 py-0.5 font-mono dark:bg-amber-900/60">%nome%</code>
-                                    <span className="text-amber-600 dark:text-amber-400">— primeiro nome</span>
-                                    <span className="mx-1 text-amber-300 dark:text-amber-700">|</span>
-                                    <code className="rounded bg-amber-100 px-1.5 py-0.5 font-mono dark:bg-amber-900/60">%nome completo%</code>
-                                    <span className="text-amber-600 dark:text-amber-400">— nome completo</span>
-                                    <span className="ml-auto text-amber-500 dark:text-amber-500">Funciona no assunto, preview e conteúdo</span>
+                                <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2.5 text-xs text-amber-800 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-300">
+                                    <p className="font-semibold">Variáveis de personalização</p>
+                                    <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1.5">
+                                        {[
+                                            { token: '%nome%', description: 'primeiro nome' },
+                                            { token: '%nome completo%', description: 'nome completo' },
+                                        ].map(item => (
+                                            <span key={item.token} className="flex items-center gap-1.5">
+                                                <code className="rounded bg-amber-100 px-1.5 py-0.5 font-mono dark:bg-amber-900/60">{item.token}</code>
+                                                <span className="text-amber-600 dark:text-amber-400">{item.description}</span>
+                                            </span>
+                                        ))}
+                                    </div>
+                                    <p className="mt-1.5 text-amber-500 dark:text-amber-500">
+                                        Funciona no assunto, no preview e no conteúdo.
+                                    </p>
                                 </div>
 
                                 <div className="rounded-lg border bg-slate-50 p-4 dark:bg-slate-900">
@@ -1649,7 +1688,11 @@ export default function AdminEmailsPage() {
                                 <CardDescription>Edite cada bloco sem escrever código.</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <div className="grid gap-2 sm:grid-cols-4 lg:grid-cols-7">
+                                {/* Flex em vez de grid: a coluna do meio muda muito
+                                    de largura entre celular, tablet e desktop com a
+                                    sidebar aberta, e um número fixo de colunas
+                                    espremia os rótulos até se sobreporem. */}
+                                <div className="flex flex-wrap gap-2">
                                     {blockOptions.map(option => {
                                         const Icon = option.icon
                                         return (
@@ -1691,8 +1734,9 @@ export default function AdminEmailsPage() {
                                             <CardContent className="space-y-3 p-4 pt-0">
                                                 {block.type === 'hero' && (
                                                     <>
-                                                        <Input value={block.title || ''} onChange={(event) => updateBlock(block.id, { title: event.target.value })} placeholder="Titulo principal" />
-                                                        <Textarea value={block.text || ''} onChange={(event) => updateBlock(block.id, { text: event.target.value })} placeholder="Subtitulo curto" className="min-h-[86px]" />
+                                                        <Input value={block.eyebrow || ''} onChange={(event) => updateBlock(block.id, { eyebrow: event.target.value })} placeholder="Etiqueta acima do título (opcional) — ex: NOVIDADE" />
+                                                        <Input value={block.title || ''} onChange={(event) => updateBlock(block.id, { title: event.target.value })} placeholder="Título principal" />
+                                                        <Textarea value={block.text || ''} onChange={(event) => updateBlock(block.id, { text: event.target.value })} placeholder="Subtítulo curto" className="min-h-[86px]" />
                                                     </>
                                                 )}
 
@@ -1728,9 +1772,12 @@ export default function AdminEmailsPage() {
                                                 )}
 
                                                 {block.type === 'button' && (
-                                                    <div className="grid gap-3 md:grid-cols-[220px_minmax(0,1fr)]">
-                                                        <Input value={block.buttonText || ''} onChange={(event) => updateBlock(block.id, { buttonText: event.target.value })} placeholder="Texto do botao" />
-                                                        <Input value={block.url || ''} onChange={(event) => updateBlock(block.id, { url: event.target.value })} placeholder="https://..." />
+                                                    <div className="space-y-3">
+                                                        <div className="grid gap-3 md:grid-cols-[220px_minmax(0,1fr)]">
+                                                            <Input value={block.buttonText || ''} onChange={(event) => updateBlock(block.id, { buttonText: event.target.value })} placeholder="Texto do botão" />
+                                                            <Input value={block.url || ''} onChange={(event) => updateBlock(block.id, { url: event.target.value })} placeholder="https://..." />
+                                                        </div>
+                                                        <Input value={block.hint || ''} onChange={(event) => updateBlock(block.id, { hint: event.target.value })} placeholder="Frase abaixo do botão (opcional) — ex: Leva 2 minutos" />
                                                     </div>
                                                 )}
 
@@ -1743,8 +1790,51 @@ export default function AdminEmailsPage() {
 
                                                 {block.type === 'quote' && (
                                                     <div className="space-y-2">
-                                                        <Textarea value={block.text || ''} onChange={(event) => updateBlock(block.id, { text: event.target.value })} placeholder="Citacao ou prova social" className="min-h-[100px]" />
-                                                        <Input value={block.author || ''} onChange={(event) => updateBlock(block.id, { author: event.target.value })} placeholder="Autor da citacao (ex: Maria, aluna aprovada)" />
+                                                        <Textarea value={block.text || ''} onChange={(event) => updateBlock(block.id, { text: event.target.value })} placeholder="Citação ou prova social" className="min-h-[100px]" />
+                                                        <Input value={block.author || ''} onChange={(event) => updateBlock(block.id, { author: event.target.value })} placeholder="Autor da citação (ex: Maria, aluna aprovada)" />
+                                                    </div>
+                                                )}
+
+                                                {block.type === 'stats' && (
+                                                    <div className="space-y-2">
+                                                        <p className="text-xs text-muted-foreground">
+                                                            Números curtos criam prova social. No celular eles empilham, um por linha.
+                                                        </p>
+                                                        {(block.stats || []).map((stat, statIndex) => (
+                                                            <div key={`${block.id}-stat-${statIndex}`} className="flex gap-2">
+                                                                <Input
+                                                                    value={stat.value}
+                                                                    onChange={(event) => updateBlockStat(block.id, statIndex, { value: event.target.value })}
+                                                                    placeholder="+12 mil"
+                                                                    className="w-28 shrink-0 font-semibold"
+                                                                />
+                                                                <Input
+                                                                    value={stat.label}
+                                                                    onChange={(event) => updateBlockStat(block.id, statIndex, { label: event.target.value })}
+                                                                    placeholder="estudantes na plataforma"
+                                                                />
+                                                                <Button
+                                                                    type="button"
+                                                                    variant="ghost"
+                                                                    size="icon"
+                                                                    className="shrink-0 text-destructive"
+                                                                    onClick={() => removeBlockStat(block.id, statIndex)}
+                                                                    disabled={(block.stats || []).length <= 1}
+                                                                >
+                                                                    <X className="h-4 w-4" />
+                                                                </Button>
+                                                            </div>
+                                                        ))}
+                                                        <Button
+                                                            type="button"
+                                                            variant="outline"
+                                                            size="sm"
+                                                            onClick={() => addBlockStat(block.id)}
+                                                            disabled={(block.stats || []).length >= 4}
+                                                        >
+                                                            <Plus className="mr-2 h-4 w-4" />
+                                                            Adicionar número
+                                                        </Button>
                                                     </div>
                                                 )}
                                             </CardContent>
@@ -1863,7 +1953,7 @@ export default function AdminEmailsPage() {
                         </Card>
                     </div>
 
-                    <div className="space-y-5">
+                    <div className={`min-w-0 space-y-5 ${mobileTab === 'send' ? '' : 'hidden'} xl:block`}>
                         <Card>
                             <CardHeader className="pb-4">
                                 <CardTitle className="flex items-center gap-2 text-lg">
@@ -2397,46 +2487,108 @@ export default function AdminEmailsPage() {
                 </div>
             </div>
 
+            {/* Barra de ação fixa (mobile). O botão de enviar fica no fim de uma
+                página muito longa; sem isso, no celular era preciso rolar tudo de
+                novo a cada ajuste só para disparar ou ver o preview. */}
+            <div className="pwa-safe-bottom fixed inset-x-0 bottom-0 z-30 border-t bg-background/95 px-3 py-2.5 backdrop-blur supports-[backdrop-filter]:bg-background/85 xl:hidden">
+                {/* O dock flutuante global (components/mobile-floating-dock) fica
+                    fixo no canto inferior direito até lg; a folga à direita evita
+                    que ele cubra o botão de enviar. */}
+                <div className="flex items-center gap-2 pr-[68px] lg:pr-0">
+                    <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        className="h-11 w-11 shrink-0"
+                        onClick={() => setShowPreview(true)}
+                        title="Visualizar e-mail"
+                    >
+                        <Eye className="h-5 w-5" />
+                    </Button>
+                    <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        className="h-11 w-11 shrink-0"
+                        onClick={openScheduleDialog}
+                        title="Agendar envio"
+                    >
+                        <CalendarClock className="h-5 w-5" />
+                    </Button>
+                    <Button
+                        type="button"
+                        onClick={sendEmail}
+                        disabled={sending || recipientCount === 0 || !subject.trim() || !plainContent.trim()}
+                        className="h-11 flex-1"
+                    >
+                        {sending ? (
+                            <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Enviando...
+                            </>
+                        ) : (
+                            <>
+                                <Send className="mr-2 h-4 w-4" />
+                                Enviar
+                                {recipientCount > 0 && ` (${recipientCount})`}
+                            </>
+                        )}
+                    </Button>
+                </div>
+            </div>
+
             <Dialog open={showPreview} onOpenChange={setShowPreview}>
                 <DialogContent className="max-h-[92vh] max-w-5xl overflow-y-auto">
-                    <DialogHeader>
+                    <DialogHeader className="p-4 pb-3 sm:p-6 sm:pb-4">
                         <DialogTitle className="flex items-center gap-2">
                             <Eye className="h-5 w-5" />
                             Preview do e-mail
                         </DialogTitle>
-                        <DialogDescription>{subject || 'Sem assunto definido'}</DialogDescription>
+                        <DialogDescription className="truncate">{subject || 'Sem assunto definido'}</DialogDescription>
                     </DialogHeader>
-                    <div className="grid gap-4 lg:grid-cols-[280px_minmax(0,1fr)]">
-                        <div className="space-y-3 rounded-lg border bg-muted/40 p-4">
-                            <div className="flex items-center gap-2 text-sm font-semibold">
-                                <BarChart3 className="h-4 w-4 text-blue-600" />
-                                Resumo
+
+                    <div className="px-4 pb-4 sm:px-6 sm:pb-6">
+                        {/* Alternar largura simula como o e-mail chega no celular —
+                            é onde a maioria abre, e onde os problemas de layout
+                            aparecem primeiro. */}
+                        <div className="mb-3 flex items-center justify-between gap-2">
+                            <div className="inline-flex rounded-lg border p-0.5">
+                                {([
+                                    { id: 'mobile' as const, label: 'Celular', icon: Smartphone },
+                                    { id: 'desktop' as const, label: 'Computador', icon: Monitor },
+                                ]).map(option => {
+                                    const Icon = option.icon
+                                    return (
+                                        <button
+                                            key={option.id}
+                                            type="button"
+                                            onClick={() => setPreviewDevice(option.id)}
+                                            className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition ${previewDevice === option.id
+                                                ? 'bg-primary text-primary-foreground'
+                                                : 'text-muted-foreground hover:bg-muted'
+                                                }`}
+                                        >
+                                            <Icon className="h-3.5 w-3.5" />
+                                            {option.label}
+                                        </button>
+                                    )
+                                })}
                             </div>
-                            <div className="space-y-3 text-sm">
-                                <div>
-                                    <p className="text-xs text-muted-foreground">Destinatários</p>
-                                    <p className="font-semibold">{recipientCount}</p>
-                                </div>
-                                <div>
-                                    <p className="text-xs text-muted-foreground">Template</p>
-                                    <p className="font-semibold">{selectedTemplate?.name || 'Composição livre'}</p>
-                                </div>
-                                <div>
-                                    <p className="text-xs text-muted-foreground">Blocos</p>
-                                    <p className="font-semibold">{blocks.length}</p>
-                                </div>
-                                <div>
-                                    <p className="text-xs text-muted-foreground">Anexo</p>
-                                    <p className="font-semibold">{currentAttachment?.title || 'Nenhum'}</p>
-                                </div>
-                                <div>
-                                    <p className="text-xs text-muted-foreground">Checklist</p>
-                                    <p className="font-semibold">{readinessScore}/{readinessChecks.length}</p>
-                                </div>
+                            <div className="hidden items-center gap-3 text-xs text-muted-foreground sm:flex">
+                                <span>{recipientCount} destinatário(s)</span>
+                                <span>·</span>
+                                <span>{blocks.length} blocos</span>
+                                <span>·</span>
+                                <span>Checklist {readinessScore}/{readinessChecks.length}</span>
                             </div>
                         </div>
-                        <div className="overflow-hidden rounded-lg border">
-                            <iframe srcDoc={getPreviewHtml()} className="h-[680px] w-full" title="Email Preview" />
+
+                        <div className="flex justify-center overflow-hidden rounded-lg border bg-muted/40 p-2 sm:p-3">
+                            <iframe
+                                srcDoc={getPreviewHtml()}
+                                title="Email Preview"
+                                className={`h-[65vh] rounded-md bg-white transition-all sm:h-[70vh] ${previewDevice === 'mobile' ? 'w-full max-w-[390px]' : 'w-full'}`}
+                            />
                         </div>
                     </div>
                 </DialogContent>
@@ -2444,7 +2596,7 @@ export default function AdminEmailsPage() {
 
             <Dialog open={showDrafts} onOpenChange={setShowDrafts}>
                 <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto">
-                    <DialogHeader>
+                    <DialogHeader className="p-4 pb-3 sm:p-6 sm:pb-4">
                         <DialogTitle className="flex items-center gap-2">
                             <FolderOpen className="h-5 w-5" />
                             Rascunhos salvos
@@ -2453,52 +2605,54 @@ export default function AdminEmailsPage() {
                             Continue de onde parou ou exclua rascunhos antigos.
                         </DialogDescription>
                     </DialogHeader>
-                    {drafts.length === 0 ? (
-                        <div className="rounded-lg border border-dashed p-10 text-center text-sm text-muted-foreground">
-                            Nenhum rascunho salvo ainda.
-                        </div>
-                    ) : (
-                        <div className="space-y-2">
-                            {drafts.map(draft => (
-                                <div
-                                    key={draft._id}
-                                    className={`flex items-start justify-between gap-3 rounded-lg border p-3 ${currentDraftId === draft._id ? 'border-primary bg-primary/5' : ''}`}
-                                >
-                                    <div className="min-w-0 flex-1">
-                                        <p className="truncate text-sm font-semibold">{draft.name || 'Rascunho sem título'}</p>
-                                        <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
-                                            {draft.subject || 'Sem assunto'}
-                                        </p>
-                                        {draft.updatedAt && (
-                                            <p className="mt-1 text-[11px] text-muted-foreground">
-                                                Atualizado em {new Date(draft.updatedAt).toLocaleString('pt-BR')}
+                    <div className="px-4 pb-4 sm:px-6 sm:pb-6">
+                        {drafts.length === 0 ? (
+                            <div className="rounded-lg border border-dashed p-10 text-center text-sm text-muted-foreground">
+                                Nenhum rascunho salvo ainda.
+                            </div>
+                        ) : (
+                            <div className="space-y-2">
+                                {drafts.map(draft => (
+                                    <div
+                                        key={draft._id}
+                                        className={`flex items-start justify-between gap-3 rounded-lg border p-3 ${currentDraftId === draft._id ? 'border-primary bg-primary/5' : ''}`}
+                                    >
+                                        <div className="min-w-0 flex-1">
+                                            <p className="truncate text-sm font-semibold">{draft.name || 'Rascunho sem título'}</p>
+                                            <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
+                                                {draft.subject || 'Sem assunto'}
                                             </p>
-                                        )}
+                                            {draft.updatedAt && (
+                                                <p className="mt-1 text-[11px] text-muted-foreground">
+                                                    Atualizado em {new Date(draft.updatedAt).toLocaleString('pt-BR')}
+                                                </p>
+                                            )}
+                                        </div>
+                                        <div className="flex shrink-0 gap-1">
+                                            <Button type="button" size="sm" onClick={() => loadDraft(draft)}>
+                                                Abrir
+                                            </Button>
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-8 w-8 text-destructive"
+                                                onClick={() => deleteDraft(draft._id)}
+                                            >
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
+                                        </div>
                                     </div>
-                                    <div className="flex shrink-0 gap-1">
-                                        <Button type="button" size="sm" onClick={() => loadDraft(draft)}>
-                                            Abrir
-                                        </Button>
-                                        <Button
-                                            type="button"
-                                            variant="ghost"
-                                            size="icon"
-                                            className="h-8 w-8 text-destructive"
-                                            onClick={() => deleteDraft(draft._id)}
-                                        >
-                                            <Trash2 className="h-4 w-4" />
-                                        </Button>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
+                                ))}
+                            </div>
+                        )}
+                    </div>
                 </DialogContent>
             </Dialog>
 
             <Dialog open={showRecipientReport} onOpenChange={setShowRecipientReport}>
                 <DialogContent className="max-h-[85vh] max-w-3xl overflow-y-auto">
-                    <DialogHeader>
+                    <DialogHeader className="p-4 pb-3 sm:p-6 sm:pb-4">
                         <DialogTitle className="flex items-center gap-2">
                             <Users className="h-5 w-5" />
                             Destinatários da campanha
@@ -2507,67 +2661,69 @@ export default function AdminEmailsPage() {
                             Status de cada pessoa, direto da fila de envio. Atualiza sozinho enquanto houver pendências.
                         </DialogDescription>
                     </DialogHeader>
+                    <div className="px-4 pb-4 sm:px-6 sm:pb-6">
 
-                    {sendResult && (
-                        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                            {[
-                                { label: 'Total', value: sendResult.stats.total },
-                                { label: 'Enviados', value: sendResult.stats.sent },
-                                { label: 'Na fila', value: sendResult.stats.pending },
-                                { label: 'Falharam', value: sendResult.stats.dead },
-                            ].map(item => (
-                                <div key={item.label} className="rounded-lg border p-3 text-center">
-                                    <p className="text-xs text-muted-foreground">{item.label}</p>
-                                    <p className="text-xl font-bold">{item.value}</p>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-
-                    <div className="max-h-[45vh] divide-y overflow-y-auto rounded-lg border">
-                        {(sendResult?.recipients || []).map(recipient => {
-                            const status = RECIPIENT_STATUS[recipient.status] || {
-                                label: recipient.status,
-                                className: 'bg-slate-500/15 text-slate-600',
-                            }
-                            return (
-                                <div key={recipient.email} className="flex items-start justify-between gap-3 p-3">
-                                    <div className="min-w-0 flex-1">
-                                        <p className="truncate text-sm font-medium">
-                                            {recipient.name || recipient.email}
-                                        </p>
-                                        {recipient.name && (
-                                            <p className="truncate text-xs text-muted-foreground">{recipient.email}</p>
-                                        )}
-                                        {recipient.error && (
-                                            <p className="mt-1 break-all text-xs text-destructive">{recipient.error}</p>
-                                        )}
+                        {sendResult && (
+                            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                                {[
+                                    { label: 'Total', value: sendResult.stats.total },
+                                    { label: 'Enviados', value: sendResult.stats.sent },
+                                    { label: 'Na fila', value: sendResult.stats.pending },
+                                    { label: 'Falharam', value: sendResult.stats.dead },
+                                ].map(item => (
+                                    <div key={item.label} className="rounded-lg border p-3 text-center">
+                                        <p className="text-xs text-muted-foreground">{item.label}</p>
+                                        <p className="text-xl font-bold">{item.value}</p>
                                     </div>
-                                    <div className="shrink-0 text-right">
-                                        <span className={`inline-block rounded-full px-2 py-0.5 text-[11px] font-medium ${status.className}`}>
-                                            {status.label}
-                                        </span>
-                                        {recipient.sentAt && (
-                                            <p className="mt-1 text-[10px] text-muted-foreground">
-                                                {formatDateTime(recipient.sentAt)}
-                                            </p>
-                                        )}
-                                    </div>
-                                </div>
-                            )
-                        })}
-                        {(sendResult?.recipients || []).length === 0 && (
-                            <div className="p-8 text-center text-sm text-muted-foreground">
-                                Nenhum destinatário para mostrar.
+                                ))}
                             </div>
                         )}
+
+                        <div className="max-h-[45vh] divide-y overflow-y-auto rounded-lg border">
+                            {(sendResult?.recipients || []).map(recipient => {
+                                const status = RECIPIENT_STATUS[recipient.status] || {
+                                    label: recipient.status,
+                                    className: 'bg-slate-500/15 text-slate-600',
+                                }
+                                return (
+                                    <div key={recipient.email} className="flex items-start justify-between gap-3 p-3">
+                                        <div className="min-w-0 flex-1">
+                                            <p className="truncate text-sm font-medium">
+                                                {recipient.name || recipient.email}
+                                            </p>
+                                            {recipient.name && (
+                                                <p className="truncate text-xs text-muted-foreground">{recipient.email}</p>
+                                            )}
+                                            {recipient.error && (
+                                                <p className="mt-1 break-all text-xs text-destructive">{recipient.error}</p>
+                                            )}
+                                        </div>
+                                        <div className="shrink-0 text-right">
+                                            <span className={`inline-block rounded-full px-2 py-0.5 text-[11px] font-medium ${status.className}`}>
+                                                {status.label}
+                                            </span>
+                                            {recipient.sentAt && (
+                                                <p className="mt-1 text-[10px] text-muted-foreground">
+                                                    {formatDateTime(recipient.sentAt)}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+                                )
+                            })}
+                            {(sendResult?.recipients || []).length === 0 && (
+                                <div className="p-8 text-center text-sm text-muted-foreground">
+                                    Nenhum destinatário para mostrar.
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </DialogContent>
             </Dialog>
 
             <Dialog open={showSchedules} onOpenChange={setShowSchedules}>
                 <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
-                    <DialogHeader>
+                    <DialogHeader className="p-4 pb-3 sm:p-6 sm:pb-4">
                         <DialogTitle className="flex items-center gap-2">
                             <CalendarClock className="h-5 w-5" />
                             Agendar envio automático
@@ -2576,276 +2732,278 @@ export default function AdminEmailsPage() {
                             O e-mail montado agora é salvo junto com a recorrência. Horários em Brasília.
                         </DialogDescription>
                     </DialogHeader>
+                    <div className="px-4 pb-4 sm:px-6 sm:pb-6">
 
-                    <div className="space-y-4">
-                        <div>
-                            <label className="mb-2 block text-sm font-medium">Nome do agendamento</label>
-                            <Input
-                                value={scheduleName}
-                                onChange={(event) => setScheduleName(event.target.value)}
-                                placeholder="Ex: Resumo semanal de novidades"
-                            />
-                        </div>
-
-                        <div>
-                            <label className="mb-2 block text-sm font-medium">Frequência</label>
-                            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                                {(Object.keys(FREQUENCY_LABELS) as ScheduleFrequency[]).map(frequency => (
-                                    <Button
-                                        key={frequency}
-                                        type="button"
-                                        size="sm"
-                                        variant={scheduleFrequency === frequency ? 'default' : 'outline'}
-                                        onClick={() => setScheduleFrequency(frequency)}
-                                    >
-                                        {FREQUENCY_LABELS[frequency]}
-                                    </Button>
-                                ))}
-                            </div>
-                        </div>
-
-                        <div className="grid gap-3 sm:grid-cols-2">
+                        <div className="space-y-4">
                             <div>
-                                <label className="mb-2 block text-sm font-medium">Horário</label>
+                                <label className="mb-2 block text-sm font-medium">Nome do agendamento</label>
                                 <Input
-                                    type="time"
-                                    value={scheduleTime}
-                                    onChange={(event) => setScheduleTime(event.target.value)}
+                                    value={scheduleName}
+                                    onChange={(event) => setScheduleName(event.target.value)}
+                                    placeholder="Ex: Resumo semanal de novidades"
                                 />
                             </div>
 
-                            {scheduleFrequency === 'once' && (
-                                <div>
-                                    <label className="mb-2 block text-sm font-medium">Data</label>
-                                    <Input
-                                        type="date"
-                                        value={scheduleDate}
-                                        onChange={(event) => setScheduleDate(event.target.value)}
-                                    />
-                                </div>
-                            )}
-
-                            {scheduleFrequency === 'monthly' && (
-                                <div>
-                                    <label className="mb-2 block text-sm font-medium">Dia do mês</label>
-                                    <Input
-                                        type="number"
-                                        min={1}
-                                        max={31}
-                                        value={scheduleDayOfMonth}
-                                        onChange={(event) => setScheduleDayOfMonth(Number(event.target.value) || 1)}
-                                    />
-                                </div>
-                            )}
-                        </div>
-
-                        {scheduleFrequency === 'weekly' && (
                             <div>
-                                <label className="mb-2 block text-sm font-medium">Dias da semana</label>
-                                <div className="flex flex-wrap gap-2">
-                                    {WEEKDAY_LABELS.map((label, index) => (
+                                <label className="mb-2 block text-sm font-medium">Frequência</label>
+                                <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                                    {(Object.keys(FREQUENCY_LABELS) as ScheduleFrequency[]).map(frequency => (
                                         <Button
-                                            key={label}
+                                            key={frequency}
                                             type="button"
                                             size="sm"
-                                            variant={scheduleWeekdays.includes(index) ? 'default' : 'outline'}
-                                            onClick={() => setScheduleWeekdays(prev => (
-                                                prev.includes(index)
-                                                    ? prev.filter(day => day !== index)
-                                                    : [...prev, index].sort()
-                                            ))}
+                                            variant={scheduleFrequency === frequency ? 'default' : 'outline'}
+                                            onClick={() => setScheduleFrequency(frequency)}
                                         >
-                                            {label}
+                                            {FREQUENCY_LABELS[frequency]}
                                         </Button>
                                     ))}
                                 </div>
                             </div>
-                        )}
 
-                        <div>
-                            <label className="mb-2 block text-sm font-medium">Quem recebe</label>
-                            <div className="grid gap-2 sm:grid-cols-2">
-                                <button
-                                    type="button"
-                                    onClick={() => setScheduleAudience('fixed')}
-                                    className={`rounded-lg border p-3 text-left text-sm transition ${scheduleAudience === 'fixed' ? 'border-primary bg-primary/10' : 'hover:bg-muted/50'}`}
-                                >
-                                    <p className="font-medium">Lista fixa ({recipientCount})</p>
-                                    <p className="mt-1 text-xs text-muted-foreground">
-                                        Exatamente quem está selecionado agora, em todos os envios.
-                                    </p>
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => setScheduleAudience('dynamic')}
-                                    className={`rounded-lg border p-3 text-left text-sm transition ${scheduleAudience === 'dynamic' ? 'border-primary bg-primary/10' : 'hover:bg-muted/50'}`}
-                                >
-                                    <p className="font-medium">Filtros dinâmicos</p>
-                                    <p className="mt-1 text-xs text-muted-foreground">
-                                        Reavalia tipo de conta ({filterAccountType}) e período ({filterPeriodo}) a cada
-                                        envio — alcança quem se cadastrar depois.
-                                    </p>
-                                </button>
-                            </div>
-                        </div>
-
-                        <Button
-                            type="button"
-                            className="w-full"
-                            onClick={createSchedule}
-                            disabled={savingSchedule}
-                        >
-                            {savingSchedule ? (
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            ) : (
-                                <CalendarClock className="mr-2 h-4 w-4" />
-                            )}
-                            Criar agendamento
-                        </Button>
-                    </div>
-
-                    <div className="mt-2 space-y-3">
-                        <h3 className="text-sm font-semibold">Agendamentos existentes</h3>
-                        {schedules.length === 0 ? (
-                            <div className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
-                                Nenhum agendamento criado ainda.
-                            </div>
-                        ) : (
-                            <div className="space-y-2">
-                                {schedules.map(schedule => (
-                                    <div
-                                        key={schedule._id}
-                                        className={`rounded-lg border p-3 ${schedule.isActive ? '' : 'opacity-60'}`}
-                                    >
-                                        <div className="flex items-start justify-between gap-3">
-                                            <div className="min-w-0 flex-1">
-                                                <div className="flex flex-wrap items-center gap-2">
-                                                    <p className="truncate text-sm font-semibold">{schedule.name}</p>
-                                                    <Badge variant={schedule.isActive ? 'default' : 'outline'} className="text-[10px]">
-                                                        {schedule.isActive ? 'Ativo' : 'Pausado'}
-                                                    </Badge>
-                                                </div>
-                                                <p className="mt-1 text-xs text-muted-foreground">
-                                                    {describeSchedule(schedule)}
-                                                </p>
-                                                <p className="mt-1 text-xs">
-                                                    <span className="text-muted-foreground">Próximo envio: </span>
-                                                    <span className="font-medium">
-                                                        {schedule.isActive ? formatDateTime(schedule.nextRunAt) : 'pausado'}
-                                                    </span>
-                                                </p>
-                                                {schedule.lastRunAt && (
-                                                    <p className="mt-1 text-[11px] text-muted-foreground">
-                                                        Última execução: {formatDateTime(schedule.lastRunAt)}
-                                                        {schedule.lastStatus === 'ok' && ` · ${schedule.lastRecipientCount ?? 0} destinatário(s)`}
-                                                        {schedule.lastStatus === 'empty' && ' · nenhum destinatário'}
-                                                        {schedule.lastStatus === 'error' && ` · erro: ${schedule.lastError || 'desconhecido'}`}
-                                                    </p>
-                                                )}
-                                            </div>
-                                            <div className="flex shrink-0 gap-1">
-                                                <Button
-                                                    type="button"
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="h-8 w-8"
-                                                    title="Executar agora"
-                                                    onClick={() => runScheduleNow(schedule)}
-                                                >
-                                                    <Send className="h-4 w-4" />
-                                                </Button>
-                                                <Button
-                                                    type="button"
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="h-8 w-8"
-                                                    title={schedule.isActive ? 'Pausar' : 'Reativar'}
-                                                    onClick={() => toggleSchedule(schedule)}
-                                                >
-                                                    {schedule.isActive ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-                                                </Button>
-                                                <Button
-                                                    type="button"
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="h-8 w-8 text-destructive"
-                                                    title="Excluir"
-                                                    onClick={() => removeSchedule(schedule)}
-                                                >
-                                                    <Trash2 className="h-4 w-4" />
-                                                </Button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-
-                    <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-900 dark:bg-amber-950/30">
-                        <div className="flex items-start gap-3">
-                            <Terminal className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
-                            <div className="min-w-0 flex-1">
-                                <p className="text-sm font-semibold text-amber-900 dark:text-amber-200">
-                                    Falta ligar o gatilho (uma vez só)
-                                </p>
-                                <p className="mt-1 text-xs text-amber-800 dark:text-amber-300">
-                                    Os agendamentos só disparam se algo chamar o app periodicamente. Crie um cronjob
-                                    gratuito em <strong>cron-job.org</strong> apontando para a URL abaixo, a cada 1 minuto.
-                                    Troque <code>SEU_SEGREDO</code> pelo valor de <code>CRON_SECRET</code>.
-                                </p>
-
-                                <div className="mt-3 space-y-2">
-                                    <div>
-                                        <p className="mb-1 text-[11px] font-medium text-amber-900 dark:text-amber-200">
-                                            URL (cole em cron-job.org)
-                                        </p>
-                                        <div className="flex gap-2">
-                                            <code className="min-w-0 flex-1 overflow-x-auto rounded bg-amber-100 px-2 py-1.5 font-mono text-[11px] dark:bg-amber-900/60">
-                                                {cronUrl}
-                                            </code>
-                                            <Button
-                                                type="button"
-                                                variant="outline"
-                                                size="icon"
-                                                className="h-8 w-8 shrink-0"
-                                                onClick={() => {
-                                                    navigator.clipboard.writeText(cronUrl)
-                                                    showToast('URL copiada', 'success')
-                                                }}
-                                            >
-                                                <Copy className="h-3.5 w-3.5" />
-                                            </Button>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <p className="mb-1 text-[11px] font-medium text-amber-900 dark:text-amber-200">
-                                            Ou via curl (para testar / usar no crontab)
-                                        </p>
-                                        <div className="flex gap-2">
-                                            <code className="min-w-0 flex-1 overflow-x-auto whitespace-pre rounded bg-amber-100 px-2 py-1.5 font-mono text-[11px] dark:bg-amber-900/60">
-                                                {cronCurl}
-                                            </code>
-                                            <Button
-                                                type="button"
-                                                variant="outline"
-                                                size="icon"
-                                                className="h-8 w-8 shrink-0"
-                                                onClick={() => {
-                                                    navigator.clipboard.writeText(cronCurl)
-                                                    showToast('Comando copiado', 'success')
-                                                }}
-                                            >
-                                                <Copy className="h-3.5 w-3.5" />
-                                            </Button>
-                                        </div>
-                                    </div>
+                            <div className="grid gap-3 sm:grid-cols-2">
+                                <div>
+                                    <label className="mb-2 block text-sm font-medium">Horário</label>
+                                    <Input
+                                        type="time"
+                                        value={scheduleTime}
+                                        onChange={(event) => setScheduleTime(event.target.value)}
+                                    />
                                 </div>
 
-                                <p className="mt-3 text-[11px] text-amber-700 dark:text-amber-400">
-                                    Passo a passo completo em <code>docs/EMAIL_AGENDAMENTO_CRONJOB.md</code>.
-                                </p>
+                                {scheduleFrequency === 'once' && (
+                                    <div>
+                                        <label className="mb-2 block text-sm font-medium">Data</label>
+                                        <Input
+                                            type="date"
+                                            value={scheduleDate}
+                                            onChange={(event) => setScheduleDate(event.target.value)}
+                                        />
+                                    </div>
+                                )}
+
+                                {scheduleFrequency === 'monthly' && (
+                                    <div>
+                                        <label className="mb-2 block text-sm font-medium">Dia do mês</label>
+                                        <Input
+                                            type="number"
+                                            min={1}
+                                            max={31}
+                                            value={scheduleDayOfMonth}
+                                            onChange={(event) => setScheduleDayOfMonth(Number(event.target.value) || 1)}
+                                        />
+                                    </div>
+                                )}
+                            </div>
+
+                            {scheduleFrequency === 'weekly' && (
+                                <div>
+                                    <label className="mb-2 block text-sm font-medium">Dias da semana</label>
+                                    <div className="flex flex-wrap gap-2">
+                                        {WEEKDAY_LABELS.map((label, index) => (
+                                            <Button
+                                                key={label}
+                                                type="button"
+                                                size="sm"
+                                                variant={scheduleWeekdays.includes(index) ? 'default' : 'outline'}
+                                                onClick={() => setScheduleWeekdays(prev => (
+                                                    prev.includes(index)
+                                                        ? prev.filter(day => day !== index)
+                                                        : [...prev, index].sort()
+                                                ))}
+                                            >
+                                                {label}
+                                            </Button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            <div>
+                                <label className="mb-2 block text-sm font-medium">Quem recebe</label>
+                                <div className="grid gap-2 sm:grid-cols-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => setScheduleAudience('fixed')}
+                                        className={`rounded-lg border p-3 text-left text-sm transition ${scheduleAudience === 'fixed' ? 'border-primary bg-primary/10' : 'hover:bg-muted/50'}`}
+                                    >
+                                        <p className="font-medium">Lista fixa ({recipientCount})</p>
+                                        <p className="mt-1 text-xs text-muted-foreground">
+                                            Exatamente quem está selecionado agora, em todos os envios.
+                                        </p>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setScheduleAudience('dynamic')}
+                                        className={`rounded-lg border p-3 text-left text-sm transition ${scheduleAudience === 'dynamic' ? 'border-primary bg-primary/10' : 'hover:bg-muted/50'}`}
+                                    >
+                                        <p className="font-medium">Filtros dinâmicos</p>
+                                        <p className="mt-1 text-xs text-muted-foreground">
+                                            {describeAudienceFilter(filterAccountType, filterPeriodo)} — reavaliado a cada
+                                            envio, então alcança quem se cadastrar depois.
+                                        </p>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <Button
+                                type="button"
+                                className="w-full"
+                                onClick={createSchedule}
+                                disabled={savingSchedule}
+                            >
+                                {savingSchedule ? (
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                ) : (
+                                    <CalendarClock className="mr-2 h-4 w-4" />
+                                )}
+                                Criar agendamento
+                            </Button>
+                        </div>
+
+                        <div className="mt-2 space-y-3">
+                            <h3 className="text-sm font-semibold">Agendamentos existentes</h3>
+                            {schedules.length === 0 ? (
+                                <div className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
+                                    Nenhum agendamento criado ainda.
+                                </div>
+                            ) : (
+                                <div className="space-y-2">
+                                    {schedules.map(schedule => (
+                                        <div
+                                            key={schedule._id}
+                                            className={`rounded-lg border p-3 ${schedule.isActive ? '' : 'opacity-60'}`}
+                                        >
+                                            <div className="flex items-start justify-between gap-3">
+                                                <div className="min-w-0 flex-1">
+                                                    <div className="flex flex-wrap items-center gap-2">
+                                                        <p className="truncate text-sm font-semibold">{schedule.name}</p>
+                                                        <Badge variant={schedule.isActive ? 'default' : 'outline'} className="text-[10px]">
+                                                            {schedule.isActive ? 'Ativo' : 'Pausado'}
+                                                        </Badge>
+                                                    </div>
+                                                    <p className="mt-1 text-xs text-muted-foreground">
+                                                        {describeSchedule(schedule)}
+                                                    </p>
+                                                    <p className="mt-1 text-xs">
+                                                        <span className="text-muted-foreground">Próximo envio: </span>
+                                                        <span className="font-medium">
+                                                            {schedule.isActive ? formatDateTime(schedule.nextRunAt) : 'pausado'}
+                                                        </span>
+                                                    </p>
+                                                    {schedule.lastRunAt && (
+                                                        <p className="mt-1 text-[11px] text-muted-foreground">
+                                                            Última execução: {formatDateTime(schedule.lastRunAt)}
+                                                            {schedule.lastStatus === 'ok' && ` · ${schedule.lastRecipientCount ?? 0} destinatário(s)`}
+                                                            {schedule.lastStatus === 'empty' && ' · nenhum destinatário'}
+                                                            {schedule.lastStatus === 'error' && ` · erro: ${schedule.lastError || 'desconhecido'}`}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                                <div className="flex shrink-0 gap-1">
+                                                    <Button
+                                                        type="button"
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8"
+                                                        title="Executar agora"
+                                                        onClick={() => runScheduleNow(schedule)}
+                                                    >
+                                                        <Send className="h-4 w-4" />
+                                                    </Button>
+                                                    <Button
+                                                        type="button"
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8"
+                                                        title={schedule.isActive ? 'Pausar' : 'Reativar'}
+                                                        onClick={() => toggleSchedule(schedule)}
+                                                    >
+                                                        {schedule.isActive ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                                                    </Button>
+                                                    <Button
+                                                        type="button"
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8 text-destructive"
+                                                        title="Excluir"
+                                                        onClick={() => removeSchedule(schedule)}
+                                                    >
+                                                        <Trash2 className="h-4 w-4" />
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-900 dark:bg-amber-950/30">
+                            <div className="flex items-start gap-3">
+                                <Terminal className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
+                                <div className="min-w-0 flex-1">
+                                    <p className="text-sm font-semibold text-amber-900 dark:text-amber-200">
+                                        Falta ligar o gatilho (uma vez só)
+                                    </p>
+                                    <p className="mt-1 text-xs text-amber-800 dark:text-amber-300">
+                                        Os agendamentos só disparam se algo chamar o app periodicamente. Crie um cronjob
+                                        gratuito em <strong>cron-job.org</strong> apontando para a URL abaixo, a cada 1 minuto.
+                                        Troque <code>SEU_SEGREDO</code> pelo valor de <code>CRON_SECRET</code>.
+                                    </p>
+
+                                    <div className="mt-3 space-y-2">
+                                        <div>
+                                            <p className="mb-1 text-[11px] font-medium text-amber-900 dark:text-amber-200">
+                                                URL (cole em cron-job.org)
+                                            </p>
+                                            <div className="flex gap-2">
+                                                <code className="min-w-0 flex-1 overflow-x-auto rounded bg-amber-100 px-2 py-1.5 font-mono text-[11px] dark:bg-amber-900/60">
+                                                    {cronUrl}
+                                                </code>
+                                                <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    size="icon"
+                                                    className="h-8 w-8 shrink-0"
+                                                    onClick={() => {
+                                                        navigator.clipboard.writeText(cronUrl)
+                                                        showToast('URL copiada', 'success')
+                                                    }}
+                                                >
+                                                    <Copy className="h-3.5 w-3.5" />
+                                                </Button>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <p className="mb-1 text-[11px] font-medium text-amber-900 dark:text-amber-200">
+                                                Ou via curl (para testar / usar no crontab)
+                                            </p>
+                                            <div className="flex gap-2">
+                                                <code className="min-w-0 flex-1 overflow-x-auto whitespace-pre rounded bg-amber-100 px-2 py-1.5 font-mono text-[11px] dark:bg-amber-900/60">
+                                                    {cronCurl}
+                                                </code>
+                                                <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    size="icon"
+                                                    className="h-8 w-8 shrink-0"
+                                                    onClick={() => {
+                                                        navigator.clipboard.writeText(cronCurl)
+                                                        showToast('Comando copiado', 'success')
+                                                    }}
+                                                >
+                                                    <Copy className="h-3.5 w-3.5" />
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <p className="mt-3 text-[11px] text-amber-700 dark:text-amber-400">
+                                        Passo a passo completo em <code>docs/EMAIL_AGENDAMENTO_CRONJOB.md</code>.
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
