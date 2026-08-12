@@ -10,6 +10,7 @@ import {
   CornerDownLeft,
   ImageIcon,
   LayoutGrid,
+  Play,
   ScanLine,
   Search,
   Target,
@@ -120,6 +121,16 @@ export function CatalogoRaioX({ catalogo }: { catalogo: Catalogo }) {
               <span className="mt-1.5 block max-w-3xl text-xs leading-relaxed text-muted-foreground sm:text-sm">Cardiomegalia, edema pulmonar, pneumotórax, câncer, mediastino, colapsos, variantes e dispositivos em filmes limpos e marcados, com comparação interativa.</span>
             </span>
             <span className="inline-flex items-center gap-1 text-xs font-bold text-sky-600 dark:text-sky-400">Abrir casos <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" /></span>
+          </Link>
+        )}
+        {!buscando && !regiaoAtual && (
+          <Link href="/manual-clinico/radiologia/raio-x/quiz" className="group mb-8 flex flex-wrap items-center gap-3 rounded-2xl border border-border bg-card p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-sky-500/50 hover:shadow-lg hover:shadow-sky-500/10 sm:flex-nowrap sm:p-5">
+            <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400"><Play className="h-[18px] w-[18px]" /></span>
+            <span className="min-w-0 flex-1">
+              <strong className="block font-heading text-base font-semibold sm:text-lg">Quizzes: identifique a estrutura marcada</strong>
+              <span className="mt-1 block text-xs leading-relaxed text-muted-foreground sm:text-sm">As mesmas demarcações, no sentido inverso — o filme abre com a estrutura acesa e você diz o nome, com resposta comentada aprofundada e o porquê de cada alternativa errada.</span>
+            </span>
+            <span className="inline-flex shrink-0 items-center gap-1 text-xs font-bold text-sky-600 dark:text-sky-400">Treinar <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" /></span>
           </Link>
         )}
         {buscando ? (
@@ -401,6 +412,18 @@ function DetalheRegiao({
         <p className="mt-2.5 max-w-3xl text-sm leading-relaxed text-muted-foreground">
           {regiao.contexto}
         </p>
+
+        {/* O quiz de região só existe onde há mais de uma incidência — com uma
+            só, ele seria idêntico ao quiz da própria incidência. */}
+        <Link
+          href={`/manual-clinico/radiologia/raio-x/quiz/${estudos.length > 1 ? regiao.id : estudos[0]?.id ?? ''}`}
+          prefetch={false}
+          className="group mt-4 inline-flex items-center gap-2 rounded-lg border border-sky-500/40 bg-card px-3.5 py-2 text-xs font-bold text-sky-700 transition hover:bg-sky-500/10 dark:text-sky-300"
+        >
+          <Play className="h-3.5 w-3.5" />
+          Testar {regiao.titulo.toLowerCase()}: {regiao.totalEstruturas} estruturas marcadas
+          <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
+        </Link>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

@@ -53,6 +53,7 @@ export default function RadiologiaPage() {
             { valor: String(TOTAL_ESTRUTURAS_RAIO_X), rotulo: 'demarcações' },
           ],
           itens: [
+            'Quizzes de identificação: a marcação acende e você nomeia, com resposta comentada',
             'Casos e alterações do tórax com filme limpo, marcações e comparação interativa',
             'Dossiê por estrutura: o que é, como identificar, o que avaliar e a armadilha',
             'Técnica, critérios de qualidade e roteiro de leitura de cada região',

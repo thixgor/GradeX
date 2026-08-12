@@ -439,6 +439,21 @@ function CabecalhoEstudo({ estudo, irmaos }: { estudo: EstudoRaioX; irmaos: Irma
             </h1>
             <p className="mt-2 max-w-3xl text-sm leading-relaxed text-sky-100/60">{estudo.foco}</p>
           </div>
+
+          {/* O quiz é o mesmo acervo no sentido inverso: a marcação acende e o
+              nome é o que falta. O atalho fica aqui porque é onde o aluno
+              percebe que já percorreu a lista e quer saber se fixou. */}
+          <Link
+            href={`/manual-clinico/radiologia/raio-x/quiz/${estudo.id}`}
+            prefetch={false}
+            className="group inline-flex shrink-0 items-center gap-2 rounded-xl border border-sky-400/40 bg-sky-400/10 px-4 py-2.5 text-xs font-bold text-sky-100 transition hover:border-sky-400/70 hover:bg-sky-400/20"
+          >
+            <Play className="h-4 w-4" />
+            Testar sem a legenda
+            <span className="font-clinical text-[10px] font-normal text-sky-200/60">
+              {estudo.estruturas.length} questões
+            </span>
+          </Link>
         </div>
 
         {irmaos.length > 1 && (
