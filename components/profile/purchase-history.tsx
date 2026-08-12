@@ -117,7 +117,7 @@ export function PurchaseHistory({
               </p>
               {p.plusRevoked && (
                 <p className="mt-0.5 text-[11px] font-medium text-amber-600 dark:text-amber-400">
-                  Resgate do Plus+ suspenso — renove a assinatura para reativar
+                  Resgate do Plus+ suspenso — renove a assinatura para reativar ou compre o item avulso
                 </p>
               )}
               <p className="mt-0.5 text-xs text-muted-foreground">
@@ -159,6 +159,18 @@ export function PurchaseHistory({
                 onClick={() => router.push('/manual-clinico')}
               >
                 Acessar Manual
+              </Button>
+            )}
+            {/* Suspenso: a página do item traz as duas saídas — assinar de novo
+                (e recuperar tudo de uma vez) ou comprar só este avulso. */}
+            {p.plusRevoked && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="hidden h-8 text-xs sm:inline-flex"
+                onClick={() => router.push(`${p.itemType === 'package' ? '/pacotes' : '/materiais'}/${p.itemId}`)}
+              >
+                Ver opções
               </Button>
             )}
             <div className="flex-shrink-0 text-right">
