@@ -313,6 +313,14 @@ const PAGE_BYTES_CACHE_MAX_ENTRIES = 36
 function pageBytesBudget() {
   return isLowMemoryDevice() ? 12 * 1024 * 1024 : isMobileViewport() ? 20 * 1024 * 1024 : 80 * 1024 * 1024
 }
+// Domínio da assinatura no rodapé do celular. Sai da MESMA variável que o resto
+// do app já usa (lib/serial-keys.ts faz igual), sem protocolo nem "www": ali é
+// assinatura de marca, não link clicável.
+const BRAND_DOMAIN = (process.env.NEXT_PUBLIC_APP_URL || 'https://www.domineaqui.com.br')
+  .replace(/^https?:\/\//, '')
+  .replace(/^www\./, '')
+  .replace(/\/+$/, '')
+
 const COLOR_SWATCHES = ['#22c55e', '#0ea5e9', '#f59e0b', '#ef4444', '#8b5cf6', '#111827']
 const HIGHLIGHT_SWATCHES = ['#facc15', '#fb923c', '#86efac', '#93c5fd', '#f9a8d4']
 const NOTE_SWATCHES = ['#fde68a', '#bbf7d0', '#bfdbfe', '#fecdd3', '#ddd6fe']
@@ -2964,12 +2972,11 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
             elemento sticky recalcula a cada quadro da rolagem, que era outra
             fonte de flicker (o deck de flashcards já tinha documentado isso).
             `translateZ(0)` dá camada própria de composição.
-            O padding usa max(): `.pwa-safe-bottom` aplica env() puro, que
-            colapsa para 0 em aparelho sem notch e cola os botões na borda. */}
+            A área segura (a faixa do indicador de home, ~34pt no iPhone) deixou
+            de ser padding vazio e virou a assinatura da casa — ver abaixo. */}
         <div
           className="sticky bottom-0 z-40 border-t border-white/15 bg-zinc-950 lg:hidden"
           style={{
-            paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))',
             transform: 'translateZ(0)',
             backfaceVisibility: 'hidden',
           }}
@@ -3035,6 +3042,36 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                 Marcar
               </button>
             )}
+          </div>
+
+          {/* Assinatura da casa, na área segura do aparelho.
+              Aquela faixa preta embaixo dos botões não era decisão de desenho:
+              é o `env(safe-area-inset-bottom)` do iPhone (~34pt reservados para
+              o indicador de home) e estava indo embora como padding vazio. A
+              linha abaixo a ocupa sem empurrar nada — a barra continua com a
+              mesma altura.
+              Por que a marca e o endereço, e não mais um controle: print de
+              material é o jeito nº 1 de o conteúdo circular fora daqui. A
+              página em si já sai carimbada com nome, e-mail, UID e QR de quem
+              abriu (ver lib/material-pdf-viewer.ts) — isso identifica QUEM
+              vazou, mas não diz a quem RECEBEU onde arrumar o material. O
+              endereço no rodapé faz cada print virar vitrine, e o escudo repete
+              em silêncio o que o carimbo da página já diz: esta cópia tem dono.
+              NÃO é clicável de propósito: um alvo de toque bem em cima do
+              indicador de home seria acionado sem querer a cada gesto de sair
+              do app — e sair do leitor no meio da leitura é o pior desfecho
+              possível para quem só queria voltar à tela inicial. */}
+          <div
+            aria-hidden
+            className="pointer-events-none flex select-none items-center justify-center gap-1.5 pt-2"
+            // O `max()` é o mesmo cuidado de antes: em aparelho sem notch o
+            // env() vale 0 e a assinatura ficaria colada na borda da tela.
+            style={{ paddingBottom: 'max(0.5rem, calc(env(safe-area-inset-bottom) - 0.75rem))' }}
+          >
+            <ShieldCheck className="h-3 w-3 shrink-0 text-emerald-400/40" />
+            <span className="text-[10px] font-semibold tracking-wide text-white/30">DomineAqui</span>
+            <span className="text-[10px] text-white/15">·</span>
+            <span className="text-[10px] tracking-wide text-white/25">{BRAND_DOMAIN}</span>
           </div>
         </div>
 
