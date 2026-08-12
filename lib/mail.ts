@@ -1204,6 +1204,8 @@ export async function sendSerialKeyPurchaseEmail(input: {
   materialAttachments?: MaterialEmailAttachment[]
   // Quando true, informa que a ativação é restrita ao e-mail da compra.
   restrictActivationToBuyerEmail?: boolean
+  /** Compra de uma versão por tempo limitado (o prazo começa na ativação). */
+  timedAccess?: { versionLabel?: string; durationLabel: string }
 }) {
   const firstName = input.buyerName ? input.buyerName.split(' ')[0] : 'Comprador'
   const dateStr = new Intl.DateTimeFormat('pt-BR', {
@@ -1220,6 +1222,18 @@ export async function sendSerialKeyPurchaseEmail(input: {
     ${hasMaterialPdf ? `<p>Seu material já está disponível: ele segue em anexo, em PDF, para acesso imediato — sem precisar fazer login.</p>${materialAttachmentsBlock(materialPdfs, { deliveredToEmail: input.email, ...(input.restrictActivationToBuyerEmail ? { restrictedEmail: input.email } : {}) })}<hr>` : ''}
 
     <p>Guarde sua Serial Key com segurança e use o botão abaixo para ativar seu produto${hasMaterialPdf ? ' na plataforma' : ''}.</p>
+
+    ${input.timedAccess ? `
+    <div style="background-color: #e0f2fe; border-left: 4px solid #0284c7; padding: 15px; margin: 20px 0; border-radius: 4px;">
+      <p style="margin: 0 0 6px 0; color: #075985; font-size: 14px; font-weight: 700;">
+        ${input.timedAccess.versionLabel || 'Acesso temporário'} — ${input.timedAccess.durationLabel}
+      </p>
+      <p style="margin: 0; color: #0c4a6e; font-size: 13px; line-height: 1.6;">
+        A contagem <strong>só começa quando você ativar esta Serial Key</strong> — comprar hoje e ativar depois
+        não consome o seu prazo. Esta modalidade é de leitura no visualizador protegido da plataforma,
+        <strong>sem download</strong>. O tempo restante fica visível na página do produto e dentro do leitor.
+      </p>
+    </div>` : ''}
 
     <!-- Serial Key em destaque -->
     <div style="background: linear-gradient(135deg, #0f3d2e, #1a5c45); border-radius: 12px; padding: 22px 20px; margin: 24px 0; text-align: center;">
@@ -1257,6 +1271,7 @@ export async function sendSerialKeyPurchaseEmail(input: {
         <tr><td style="padding: 3px 0; color: #718096;">Status</td><td style="padding: 3px 0; text-align: right; font-weight: 600; color: #059669;">${input.paymentStatusLabel}</td></tr>
         ${input.transactionId ? `<tr><td style="padding: 3px 0; color: #718096;">ID da transação</td><td style="padding: 3px 0; text-align: right; font-weight: 600;">${input.transactionId}</td></tr>` : ''}
         <tr><td style="padding: 3px 0; color: #718096;">Data e hora</td><td style="padding: 3px 0; text-align: right; font-weight: 600;">${dateStr}</td></tr>
+        <tr><td style="padding: 3px 0; color: #718096;">Acesso</td><td style="padding: 3px 0; text-align: right; font-weight: 600;">${input.timedAccess ? `${input.timedAccess.durationLabel} a partir da ativação` : 'Vitalício'}</td></tr>
       </table>
     </div>
 
@@ -1318,6 +1333,8 @@ export async function sendSerialKeyCartPurchaseEmail(input: {
     activationUrl: string
     amount: number
     qrBuffer?: Buffer
+    /** Aviso da modalidade quando o item foi comprado por tempo limitado. */
+    accessNotice?: string
   }>
   receiptText: string
   pdfBuffer?: Buffer
@@ -1345,6 +1362,7 @@ export async function sendSerialKeyCartPurchaseEmail(input: {
       <div style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px 20px; margin: 0 0 16px 0; background: #f8fafc;">
         <p style="margin: 0 0 4px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #d97706; font-weight: 700;">${item.productTypeLabel}</p>
         <p style="margin: 0 0 10px 0; font-size: 16px; font-weight: 700; color: #0f3d2e;">${item.productTitle}</p>
+        ${item.accessNotice ? `<p style="margin: -4px 0 10px 0; font-size: 12px; line-height: 1.5; color: #075985; background: #e0f2fe; border-left: 3px solid #0284c7; border-radius: 4px; padding: 8px 10px;">${item.accessNotice}</p>` : ''}
         <div style="background: linear-gradient(135deg, #0f3d2e, #1a5c45); border-radius: 10px; padding: 14px; text-align: center; margin-bottom: 12px;">
           <p style="margin: 0 0 4px 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: #a7f3d0; font-weight: 700;">Serial Key</p>
           <p style="margin: 0; font-family: 'Courier New', Courier, monospace; font-size: 18px; font-weight: 800; color: #ffffff; letter-spacing: 1px; word-break: break-all;">${item.serialKey}</p>

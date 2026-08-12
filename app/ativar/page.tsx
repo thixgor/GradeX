@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import {
-  Loader2, KeyRound, CheckCircle2, LogIn, UserPlus, ArrowRight, AlertCircle, ShieldCheck,
+  Loader2, KeyRound, CheckCircle2, Clock, LogIn, UserPlus, ArrowRight, AlertCircle, ShieldCheck,
 } from 'lucide-react'
 
 const pageStyle: React.CSSProperties = {
@@ -49,6 +49,11 @@ interface KeyInfo {
   alreadyActivated?: boolean
   cancelled?: boolean
   restrictActivationToBuyerEmail?: boolean
+  // Acesso por tempo: o prazo só passa a correr a partir desta ativação.
+  accessMode?: 'lifetime' | 'timed'
+  accessVersionLabel?: string | null
+  accessDurationLabel?: string | null
+  accessExpiresAt?: string | null
 }
 
 function ActivarContent() {
@@ -121,9 +126,27 @@ function ActivarContent() {
         <div style={{ textAlign: 'center' }}>
           <CheckCircle2 size={56} style={{ color: '#34d399', margin: '0 auto 16px' }} />
           <h1 style={{ fontSize: '22px', fontWeight: 800, color: 'white', marginBottom: '10px' }}>Produto ativado! 🎉</h1>
-          <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.65)', marginBottom: '22px' }}>
+          <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.65)', marginBottom: info?.accessMode === 'timed' ? '14px' : '22px' }}>
             <strong style={{ color: '#34d399' }}>{done.label}</strong> foi liberado na sua conta.
           </p>
+          {info?.accessMode === 'timed' && info.accessDurationLabel && (
+            <p style={{
+              fontSize: '13px',
+              lineHeight: 1.6,
+              color: 'rgba(255,255,255,0.7)',
+              background: 'rgba(56,189,248,0.08)',
+              border: '1px solid rgba(56,189,248,0.28)',
+              borderRadius: '12px',
+              padding: '12px 14px',
+              marginBottom: '22px',
+              textAlign: 'left',
+            }}>
+              <strong style={{ color: '#7dd3fc' }}>Seu prazo começou agora:</strong> você tem{' '}
+              <strong style={{ color: 'white' }}>{info.accessDurationLabel}</strong> de acesso, para leitura no
+              visualizador protegido da plataforma (sem download). O tempo restante aparece na página do produto
+              e dentro do leitor.
+            </p>
+          )}
           <a href={done.redirectTo} style={primaryBtn}>Acessar agora <ArrowRight size={16} /></a>
         </div>
       </div>
@@ -162,6 +185,28 @@ function ActivarContent() {
         <div style={{ background: 'rgba(52,211,153,0.06)', border: '1px solid rgba(52,211,153,0.15)', borderRadius: '12px', padding: '16px', marginBottom: '18px' }}>
           <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.45)', marginBottom: '4px' }}>Produto</p>
           <p style={{ fontSize: '16px', fontWeight: 700, color: 'white' }}>{info.productTitle || 'Produto'}</p>
+        </div>
+      )}
+
+      {info?.accessMode === 'timed' && info.accessDurationLabel && !cancelled && (
+        <div style={{ display: 'flex', gap: '10px', padding: '12px 16px', background: 'rgba(56,189,248,0.08)', border: '1px solid rgba(56,189,248,0.28)', borderRadius: '10px', color: 'rgba(255,255,255,0.75)', fontSize: '13px', marginBottom: '16px' }}>
+          <Clock size={16} style={{ flexShrink: 0, marginTop: '1px', color: '#7dd3fc' }} />
+          <span>
+            {already && info.accessExpiresAt ? (
+              <>
+                Acesso por tempo limitado ({info.accessVersionLabel || info.accessDurationLabel}): vale até{' '}
+                <strong style={{ color: 'white' }}>
+                  {new Date(info.accessExpiresAt).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                </strong>, para leitura na plataforma, sem download.
+              </>
+            ) : (
+              <>
+                Esta key libera <strong style={{ color: 'white' }}>{info.accessVersionLabel || 'acesso temporário'}</strong>: a contagem de{' '}
+                <strong style={{ color: 'white' }}>{info.accessDurationLabel}</strong> começa <strong style={{ color: 'white' }}>agora</strong>, ao ativar.
+                Leitura no visualizador protegido, sem download.
+              </>
+            )}
+          </span>
         </div>
       )}
 

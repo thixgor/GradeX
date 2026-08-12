@@ -7,6 +7,7 @@ import { applyPaymentResult } from '@/lib/payments/effects'
 import {
   SERIAL_KEYS_COLLECTION,
   serializeSerialKeyPublic,
+  serializeGrantAccess,
   productTypeLabel,
   paymentStatusLabel,
   getActivationUrl,
@@ -127,6 +128,8 @@ export async function GET(request: NextRequest, { params }: { params: { orderId:
       status: serial.status,
       activationUrl,
       qrDataUrl,
+      // Acesso por tempo: duração comprada e, se já ativada, a data de fim.
+      ...serializeGrantAccess(serial),
     }
   }))
 
@@ -139,6 +142,8 @@ export async function GET(request: NextRequest, { params }: { params: { orderId:
     serialKeyStatus: primary.status,
     activationUrl: serialKeys[0]?.activationUrl,
     qrDataUrl: serialKeys[0]?.qrDataUrl,
+    // Compra de item único: o acesso da primeira key também na raiz.
+    ...serializeGrantAccess(primary),
     serialKeys,
     isCart: serialKeys.length > 1,
     public: serializeSerialKeyPublic(primary),

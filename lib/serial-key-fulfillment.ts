@@ -21,6 +21,7 @@ import {
 } from './serial-key-receipt'
 import { sendSerialKeyPurchaseEmail, sendSerialKeyCartPurchaseEmail, type MaterialEmailAttachment } from './mail'
 import { buildAutoEmailPdfAttachments } from './material-pdf-email'
+import { formatDurationMinutes } from './material-timed-access'
 import type { PaymentOrder, SerialKey, SerialKeyEmailLog } from './types'
 import type { ProviderOrder } from './payments/types'
 
@@ -134,6 +135,16 @@ export function getFulfillmentEmailState(keys: SerialKey[]): {
   return { hasKeys: keys.length > 0, alreadySent, failedAttempts, lastAttemptAt, lastError }
 }
 
+/** Modalidade de acesso da key, quando a compra foi por tempo limitado. */
+function timedAccessOf(serial: SerialKey): SerialKeyReceiptData['timedAccess'] {
+  const grant = serial.grant
+  if (grant?.accessMode !== 'timed' || !grant.accessDurationMinutes) return undefined
+  return {
+    versionLabel: grant.accessVersionLabel,
+    durationLabel: formatDurationMinutes(grant.accessDurationMinutes),
+  }
+}
+
 function buildReceiptData(serial: SerialKey, paymentMethod?: string): SerialKeyReceiptData {
   const activationUrl = serial.activationToken ? getActivationUrl(serial.activationToken) : ''
   return {
@@ -149,6 +160,7 @@ function buildReceiptData(serial: SerialKey, paymentMethod?: string): SerialKeyR
     purchasedAt: serial.generatedAt ? new Date(serial.generatedAt) : new Date(),
     serialKey: serial.key,
     activationUrl,
+    timedAccess: timedAccessOf(serial),
   }
 }
 
@@ -198,6 +210,7 @@ export async function sendSerialKeyEmail(
       purchasedAt: receipt.purchasedAt,
       serialKey: serial.key,
       activationUrl: receipt.activationUrl,
+      timedAccess: receipt.timedAccess,
       receiptText: buildReceiptText(receipt),
       pdfBuffer,
       qrBuffer,
@@ -243,6 +256,7 @@ export async function sendSerialKeyCartEmail(
       const qrBuffer = activationUrl
         ? await generateActivationQrBuffer(activationUrl).catch(() => undefined)
         : undefined
+      const timed = timedAccessOf(k)
       return {
         productTitle: k.productTitle || 'Produto',
         productTypeLabel: productTypeLabel(k.productType),
@@ -250,6 +264,10 @@ export async function sendSerialKeyCartEmail(
         activationUrl,
         amount: k.amount || 0,
         qrBuffer,
+        // Aviso por item: o carrinho pode misturar vitalício e por tempo.
+        accessNotice: timed
+          ? `${timed.versionLabel || 'Acesso temporário'} — ${timed.durationLabel} a partir da ativação desta key, sem download.`
+          : undefined,
       }
     }))
 

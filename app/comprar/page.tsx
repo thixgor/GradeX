@@ -7,6 +7,7 @@ import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout
 import { usePricingEventState, usePricingEventStates } from '@/components/pricing-events/usePricingEventState'
 import { PricingEventCountdown } from '@/components/pricing-events/PricingEventCountdown'
 import { PublicPageShell } from '@/components/public-page-shell'
+import { TimedAccessNotice } from '@/components/materiais/timed-access'
 import { CheckoutAccountNotice } from '@/components/checkout/checkout-account-notice'
 import { PackageContents } from '@/components/shop/package-contents'
 import { isPlusAccount } from '@/lib/account-tier'
@@ -47,6 +48,12 @@ interface Product {
   coverImageUrl?: string
   productDescription?: string
   pricingEventId?: string | null
+  // Acesso por tempo limitado (quando a compra é de uma versão com prazo).
+  accessMode?: 'lifetime' | 'timed'
+  accessVersionId?: string | null
+  accessVersionLabel?: string | null
+  accessDurationLabel?: string | null
+  accessNotice?: string | null
 }
 
 function isEmail(v: string) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) }
@@ -655,6 +662,8 @@ function GenericComprarContent({ productType }: { productType: string }) {
   const productId = params.get('productId') || ''
   const planKey = params.get('planKey') || ''
   const itemType = params.get('itemType') || ''
+  // Versão de acesso por tempo escolhida na página do material/pacote.
+  const accessVersionId = params.get('accessVersionId') || ''
 
   const [product, setProduct] = useState<Product | null>(null)
   const [publicKey, setPublicKey] = useState('')
@@ -681,6 +690,7 @@ function GenericComprarContent({ productType }: { productType: string }) {
     if (productId) qs.set('productId', productId)
     if (planKey) qs.set('planKey', planKey)
     if (itemType) qs.set('itemType', itemType)
+    if (accessVersionId) qs.set('accessVersionId', accessVersionId)
     Promise.all([
       fetch(`/api/serial-keys/checkout?${qs.toString()}`).then(r => r.json()),
       fetch('/api/payments/public-key').then(r => r.json()),
@@ -692,7 +702,7 @@ function GenericComprarContent({ productType }: { productType: string }) {
       })
       .catch(() => setError('Falha ao carregar o produto.'))
       .finally(() => setLoading(false))
-  }, [productType, productId, planKey, itemType])
+  }, [productType, productId, planKey, itemType, accessVersionId])
 
   // Lote dinâmico (pricing event) do material/pacote/flashcard. O servidor é a
   // fonte autoritativa do preço; aqui só espelhamos para exibir o valor correto.
@@ -719,9 +729,10 @@ function GenericComprarContent({ productType }: { productType: string }) {
   const extraBody = useMemo(() => ({
     productType, productId: productId || undefined, planKey: planKey || undefined,
     itemType: itemType || undefined,
+    accessVersionId: accessVersionId || undefined,
     buyerName: name.trim(), buyerEmail: email.trim().toLowerCase(), buyerPhone: phone.trim(),
     couponCode: appliedCoupon?.code,
-  }), [productType, productId, planKey, itemType, name, email, phone, appliedCoupon])
+  }), [productType, productId, planKey, itemType, accessVersionId, name, email, phone, appliedCoupon])
 
   const applyCoupon = async () => {
     const normalized = couponCode.trim()
@@ -857,6 +868,17 @@ function GenericComprarContent({ productType }: { productType: string }) {
                 </p>
               ) : null}
             </div>
+
+            {/* Acesso por tempo limitado: a regra fica ao lado do preço, antes
+                de pagar — duração, quando o relógio começa e o "sem download". */}
+            {product.accessMode === 'timed' && product.accessDurationLabel && (
+              <TimedAccessNotice
+                durationLabel={product.accessDurationLabel}
+                versionLabel={product.accessVersionLabel || undefined}
+                viaSerialKey
+                className="mt-3.5"
+              />
+            )}
 
             {hasActiveTier && pricingEventState ? (
               <div className="mt-3.5">

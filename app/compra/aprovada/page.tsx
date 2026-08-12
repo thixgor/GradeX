@@ -21,7 +21,15 @@ const glassCard: React.CSSProperties = {
   borderRadius: '20px',
 }
 
-interface Purchase {
+interface TimedAccessInfo {
+  accessMode?: 'lifetime' | 'timed'
+  accessVersionLabel?: string | null
+  accessDurationLabel?: string | null
+  /** Só existe depois da ativação — antes dela o prazo nem começou. */
+  accessExpiresAt?: string | null
+}
+
+interface Purchase extends TimedAccessInfo {
   approved: boolean
   status: string
   statusLabel: string
@@ -44,7 +52,7 @@ interface Purchase {
     amount?: number
     activationUrl?: string
     qrDataUrl?: string
-  }>
+  } & TimedAccessInfo>
   transactionId?: string
   createdAt?: string
   paidAt?: string
@@ -68,6 +76,44 @@ function CopyButton({ text, label = 'Copiar' }: { text: string; label?: string }
       {copied ? <Check size={14} /> : <Copy size={14} />}
       {copied ? 'Copiado!' : label}
     </button>
+  )
+}
+
+/**
+ * Aviso de acesso por tempo no comprovante. Enquanto a key não é ativada, a
+ * data de fim ainda não existe — e é exatamente isso que o comprador precisa
+ * ler: o prazo não corre enquanto ele não ativar.
+ */
+function TimedAccessReceiptNote({
+  durationLabel,
+  versionLabel,
+  expiresAt,
+}: {
+  durationLabel: string
+  versionLabel?: string | null
+  expiresAt?: string | null
+}) {
+  const expiresLabel = expiresAt
+    ? new Date(expiresAt).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+    : ''
+  return (
+    <div style={{
+      background: 'rgba(56,189,248,0.08)',
+      border: '1px solid rgba(56,189,248,0.28)',
+      borderRadius: '12px',
+      padding: '12px 14px',
+      textAlign: 'left',
+    }}>
+      <p style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 800, color: '#7dd3fc', marginBottom: '6px' }}>
+        <Clock size={13} /> {versionLabel || 'Acesso temporário'} · {durationLabel}
+      </p>
+      <p style={{ fontSize: '12px', lineHeight: 1.6, color: 'rgba(255,255,255,0.7)', margin: 0 }}>
+        {expiresLabel
+          ? <>Seu acesso já está ativo e vai até <strong style={{ color: 'white' }}>{expiresLabel}</strong>.</>
+          : <>A contagem de <strong style={{ color: 'white' }}>{durationLabel}</strong> começa quando você <strong style={{ color: 'white' }}>ativar esta Serial Key</strong> — comprar hoje e ativar depois não consome o seu prazo.</>}
+        {' '}Esta modalidade é de leitura no visualizador protegido da plataforma, <strong style={{ color: 'white' }}>sem download</strong>.
+      </p>
+    </div>
   )
 }
 
@@ -124,7 +170,14 @@ function ApprovedView({ data }: { data: Purchase }) {
             {data.serialKeys.map((sk, i) => (
               <div key={i} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px' }}>
                 <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.45)', marginBottom: '2px' }}>{sk.productTypeLabel}</p>
-                <p style={{ fontSize: '15px', fontWeight: 700, color: 'white', marginBottom: '12px' }}>{sk.productTitle}</p>
+                <p style={{ fontSize: '15px', fontWeight: 700, color: 'white', marginBottom: sk.accessMode === 'timed' ? '6px' : '12px' }}>{sk.productTitle}</p>
+                {sk.accessMode === 'timed' && sk.accessDurationLabel && (
+                  <TimedAccessReceiptNote
+                    durationLabel={sk.accessDurationLabel}
+                    versionLabel={sk.accessVersionLabel}
+                    expiresAt={sk.accessExpiresAt}
+                  />
+                )}
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', alignItems: 'center' }}>
                   {sk.qrDataUrl && <img src={sk.qrDataUrl} alt="QR" style={{ width: '110px', height: '110px', borderRadius: '10px', background: 'white', padding: '6px' }} />}
                   <div style={{ flex: 1, minWidth: '220px' }}>
@@ -162,6 +215,15 @@ function ApprovedView({ data }: { data: Purchase }) {
               <CopyButton text={data.serialKey || ''} label="Copiar Serial Key" />
               {data.activationUrl && <CopyButton text={data.activationUrl} label="Copiar link de ativação" />}
             </div>
+            {data.accessMode === 'timed' && data.accessDurationLabel && (
+              <div style={{ marginTop: '14px' }}>
+                <TimedAccessReceiptNote
+                  durationLabel={data.accessDurationLabel}
+                  versionLabel={data.accessVersionLabel}
+                  expiresAt={data.accessExpiresAt}
+                />
+              </div>
+            )}
           </div>
 
           {/* QR + ativar */}
@@ -201,6 +263,12 @@ function ApprovedView({ data }: { data: Purchase }) {
         <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'white', marginBottom: '12px' }}>Resumo da compra</h3>
         <SummaryRow label="Produto" value={`${data.productTitle || ''}${data.productTypeLabel ? ` (${data.productTypeLabel})` : ''}`} />
         <SummaryRow label="Valor pago" value={data.amount != null ? `R$ ${data.amount.toFixed(2).replace('.', ',')}` : undefined} />
+        <SummaryRow
+          label="Modalidade de acesso"
+          value={data.accessMode === 'timed' && data.accessDurationLabel
+            ? `${data.accessVersionLabel || 'Acesso temporário'} — ${data.accessDurationLabel} a partir da ativação, sem download`
+            : 'Acesso vitalício'}
+        />
         <SummaryRow label="Status do pagamento" value={data.statusLabel} />
         <SummaryRow label="Data e hora" value={dateStr} />
         <SummaryRow label="Nome completo" value={data.buyerName} />

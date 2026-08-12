@@ -12,6 +12,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Circle,
+  Clock,
   Eraser,
   Eye,
   HelpCircle,
@@ -44,6 +45,7 @@ import {
   Zap,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useRemainingTime, type TimedAccessView } from '@/components/materiais/timed-access'
 import { GuidedTour, type TourStep } from '@/components/manual-clinico/guided-tour'
 import {
   exitAppFullscreen,
@@ -139,6 +141,11 @@ interface ViewerAccess {
     navigation?: NavEntry[]
   }
   preview?: PreviewInfo | null
+  /**
+   * Prazo restante quando o acesso veio de uma versão por tempo limitado.
+   * `null` = acesso vitalício. Presente ⇒ leitura só aqui, sem download.
+   */
+  timedAccess?: TimedAccessView | null
 }
 
 interface PdfAnnotation {
@@ -1511,6 +1518,9 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   // de páginas que ele pode ver; toda a navegação é presa a esse conjunto. O
   // bloqueio real é no servidor — isto é só para não oferecer o proibido.
   const previewActive = access?.preview?.active === true
+  // Acesso por tempo: contagem viva no cabeçalho do leitor.
+  const timedAccess = access?.timedAccess || null
+  const timedRemaining = useRemainingTime(timedAccess?.expiresAt)
   const allowedPages = useMemo(() => {
     if (!previewActive) return [] as number[]
     const list = (access?.preview?.pages ?? []).filter((p) => Number.isFinite(p) && p >= 1)
@@ -2813,6 +2823,30 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
           </div>
         </header>
 
+        {/* Acesso por tempo limitado: a contagem fica fixa abaixo do cabeçalho,
+            no mesmo lugar onde a prévia avisa o seu limite. */}
+        {timedAccess?.isTimed && (
+          <div className="border-b border-sky-300/25 bg-sky-500/10 px-3 py-2">
+            <div className="mx-auto flex max-w-6xl flex-col items-center gap-2 text-center sm:flex-row sm:justify-between sm:text-left">
+              <p className="flex items-center gap-2 text-xs font-semibold text-sky-100 sm:text-[13px]">
+                <Clock className="h-4 w-4 shrink-0" />
+                {timedRemaining.expired ? (
+                  <>Seu acesso a este material terminou.</>
+                ) : (
+                  <>
+                    Acesso por tempo limitado — restam{' '}
+                    <strong className="text-white">{timedRemaining.label || timedAccess.remainingLabel}</strong>
+                    {timedAccess.expiresAtLabel ? ` (até ${timedAccess.expiresAtLabel})` : ''}
+                  </>
+                )}
+              </p>
+              <span className="text-[11px] font-medium text-sky-200/80">
+                Leitura na plataforma · sem download
+              </span>
+            </div>
+          </div>
+        )}
+
         {previewActive && (
           <div className="border-b border-amber-300/30 bg-gradient-to-r from-amber-500/95 via-amber-400/95 to-amber-500/95 px-3 py-2 text-amber-950 shadow-lg">
             <div className="mx-auto flex max-w-6xl flex-col items-center gap-2 sm:flex-row sm:justify-between">
@@ -3274,7 +3308,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
             )}
             <SheetAction icon={<Sparkles className="h-4 w-4" />} label="Ver o tutorial de novo" onClick={() => { setMobileSheet(null); startTour() }} />
             <SheetAction icon={<Keyboard className="h-4 w-4" />} label="Atalhos do teclado" onClick={() => { setMobileSheet(null); setShowShortcuts(true) }} />
-            {!previewActive && !access.material.downloadEnabled && (
+            {!previewActive && (!access.material.downloadEnabled || timedAccess?.isTimed) && (
               <SheetAction icon={<Lock className="h-4 w-4" />} label="Por que não posso baixar?" onClick={() => { setMobileSheet(null); setShowDownloadInfo(true) }} />
             )}
           </div>
@@ -3311,7 +3345,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                 label="Atalhos do teclado"
                 onClick={() => { setHelpMenuOpen(false); setShowShortcuts(true) }}
               />
-              {!previewActive && !access.material.downloadEnabled && (
+              {!previewActive && (!access.material.downloadEnabled || timedAccess?.isTimed) && (
                 <SheetAction
                   icon={<Lock className="h-4 w-4" />}
                   label="Por que não posso baixar?"
@@ -3323,7 +3357,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
         )}
 
         {showShortcuts && <ShortcutsDialog onClose={() => setShowShortcuts(false)} />}
-        {showDownloadInfo && <DownloadInfoDialog onClose={() => setShowDownloadInfo(false)} />}
+        {showDownloadInfo && <DownloadInfoDialog onClose={() => setShowDownloadInfo(false)} timedAccess={timedAccess} />}
 
         <GuidedTour
           open={tourOpen}
@@ -5867,7 +5901,7 @@ function ShortcutsDialog({ onClose }: { onClose: () => void }) {
 // não deixar o leitor com a sensação de que faltou alguma coisa: dizer por que
 // é assim e mostrar o que o leitor faz no lugar. Nada aqui promete acesso
 // offline — o leitor precisa de internet, e afirmar o contrário seria mentira.
-function DownloadInfoDialog({ onClose }: { onClose: () => void }) {
+function DownloadInfoDialog({ onClose, timedAccess }: { onClose: () => void; timedAccess?: TimedAccessView | null }) {
   const points = [
     ['Continua de onde parou', 'Ao voltar, o material abre exatamente na página em que você estava.'],
     ['Suas marcas ficam salvas', 'Grifos, notas, desenhos e marcadores ficam na sua conta e aparecem em qualquer aparelho onde você entrar.'],
@@ -5876,6 +5910,20 @@ function DownloadInfoDialog({ onClose }: { onClose: () => void }) {
 
   return (
     <ViewerDialog title="Por que não posso baixar?" onClose={onClose} wide>
+      {timedAccess?.isTimed && (
+        <div className="mb-3 rounded-xl border border-sky-300/25 bg-sky-500/10 p-3">
+          <p className="flex items-center gap-1.5 text-xs font-bold text-sky-200">
+            <Clock className="h-3.5 w-3.5" />
+            Você adquiriu {timedAccess.label || 'a versão por tempo limitado'}
+            {timedAccess.durationLabel ? ` (${timedAccess.durationLabel})` : ''}
+          </p>
+          <p className="mt-1 text-xs leading-relaxed text-white/70">
+            Essa modalidade dá leitura completa aqui no leitor até{' '}
+            <strong className="text-white">{timedAccess.expiresAtLabel || 'o fim do prazo'}</strong>, sem download.
+            Para ficar com o material para sempre, adquira o acesso vitalício na página do material.
+          </p>
+        </div>
+      )}
       <p className="text-sm leading-relaxed text-white/75">
         Este material é protegido: cada página que você abre recebe uma marca d&apos;água com os
         seus dados. É isso que permite ao autor disponibilizar o conteúdo aqui — por isso a

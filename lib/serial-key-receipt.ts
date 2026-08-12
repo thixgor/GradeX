@@ -21,6 +21,15 @@ export interface SerialKeyReceiptData {
   serialKey: string
   activationUrl: string
   supportEmail?: string
+  /**
+   * Preenchido quando a compra foi de uma versão por tempo limitado. A data de
+   * término não entra aqui de propósito: no momento da compra o prazo ainda não
+   * começou — ele só passa a correr na ativação da key.
+   */
+  timedAccess?: {
+    versionLabel?: string
+    durationLabel: string
+  }
 }
 
 const BRAND_GREEN: [number, number, number] = [15, 61, 46] // #0f3d2e
@@ -79,6 +88,9 @@ export function buildReceiptText(data: SerialKeyReceiptData): string {
     data.paymentMethodLabel ? `Forma de pagamento: ${data.paymentMethodLabel}` : '',
     data.transactionId ? `ID da transação: ${data.transactionId}` : '',
     `Data/hora: ${formatDateTimeBR(data.purchasedAt)}`,
+    data.timedAccess
+      ? `Modalidade: ${data.timedAccess.versionLabel || 'Acesso temporário'} — ${data.timedAccess.durationLabel} a partir da ATIVAÇÃO da key, sem download (leitura no visualizador protegido).`
+      : 'Modalidade: Acesso vitalício.',
     '-----------------------------------',
     `Serial Key: ${data.serialKey}`,
     `Link de ativação: ${data.activationUrl}`,
@@ -147,6 +159,12 @@ export async function generateReceiptPdf(data: SerialKeyReceiptData): Promise<Bu
   if (data.paymentMethodLabel) row('Forma de pagamento', data.paymentMethodLabel)
   if (data.transactionId) row('ID da transação', data.transactionId)
   row('Data e hora', formatDateTimeBR(data.purchasedAt))
+  row(
+    'Modalidade de acesso',
+    data.timedAccess
+      ? `${data.timedAccess.versionLabel || 'Acesso temporário'} — ${data.timedAccess.durationLabel}, contados a partir da ativação da Serial Key. Leitura no visualizador protegido, sem download.`
+      : 'Acesso vitalício'
+  )
 
   // Divisor
   y += 2
