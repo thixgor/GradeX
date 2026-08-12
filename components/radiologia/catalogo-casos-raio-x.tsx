@@ -123,7 +123,7 @@ export function CatalogoCasosRaioX({
     <div className="rx surface-page min-h-screen">
       {/* ══════════════════ Cabeçalho negatoscópio ══════════════════ */}
       <header className="rx-painel rx-grade rx-varredura relative overflow-hidden border-b border-sky-400/15 text-white">
-        <div className="container relative mx-auto max-w-6xl px-4 pb-8 pt-5 sm:pb-10 sm:pt-6">
+        <div className="rx-abaixo-flutuantes container relative mx-auto max-w-6xl px-4 pb-8 pt-5 sm:pb-10 sm:pt-6">
           <Link
             href="/manual-clinico/radiologia/raio-x"
             className="-m-2 inline-flex items-center gap-1.5 rounded-lg p-2 text-sm text-sky-100/55 transition hover:text-white"
@@ -187,7 +187,8 @@ export function CatalogoCasosRaioX({
       {/* ══════════════════ Barra de capítulos ══════════════════ */}
       <nav
         aria-label="Capítulos de casos"
-        className="sticky top-0 z-30 border-b border-border bg-background/90 shadow-sm backdrop-blur-md"
+        data-rx-barra
+        className="rx-fixo-topo sticky z-30 border-b border-border bg-background/95 shadow-sm backdrop-blur-md"
       >
         <div className="container mx-auto flex max-w-6xl items-center gap-2 px-4 py-2">
           <div className="rx-rolagem -mx-1 flex flex-1 snap-x snap-mandatory gap-1.5 overflow-x-auto px-1 py-1 [mask-image:linear-gradient(90deg,#000_calc(100%-28px),transparent)]">
@@ -305,8 +306,8 @@ export function CatalogoCasosRaioX({
             const Icone = ICONES[guia.id]
             const cor = PALETA[guia.id]
             return (
-              <section key={guia.id} id={`capitulo-${guia.id}`} className="scroll-mt-20 pt-3">
-                <div className="sticky top-[3.25rem] z-20 -mx-4 mb-4 border-b border-border bg-background/90 px-4 py-2.5 backdrop-blur-md">
+              <section key={guia.id} id={`capitulo-${guia.id}`} className="rx-ancora pt-3">
+                <div className="rx-fixo-abaixo sticky z-20 -mx-4 mb-4 border-b border-border bg-background/95 px-4 py-2.5 backdrop-blur-md">
                   <div className="flex items-center gap-2.5">
                     <span className={`grid h-7 w-7 shrink-0 place-items-center rounded-lg border ${cor.chip}`}>
                       <Icone className="h-3.5 w-3.5" />

@@ -74,9 +74,13 @@ export function CasoRaioXImagem({
     requestAnimationFrame(() => {
       const alvo = visor.current
       if (!alvo) return
+      // A régua é a barra fixa da página: abaixo dela é o que está de fato
+      // visível, e ela já desce o quanto os botões flutuantes do shell pedem.
+      const barra = document.querySelector('[data-rx-barra]')
+      const folga = (barra ? barra.getBoundingClientRect().bottom : 0) + 12
       const topo = alvo.getBoundingClientRect().top
-      if (topo >= 68 && topo < window.innerHeight * 0.55) return
-      window.scrollTo({ top: window.scrollY + topo - 68, behavior: 'smooth' })
+      if (topo >= folga && topo < window.innerHeight * 0.55) return
+      window.scrollTo({ top: window.scrollY + topo - folga, behavior: 'smooth' })
     })
   }, [])
 
@@ -181,7 +185,7 @@ export function CasoRaioXImagem({
     <section
       ref={visor}
       aria-labelledby={tituloId}
-      className={`rx-visor relative flex scroll-mt-20 flex-col overflow-hidden border border-white/10 bg-[#05070d] text-white shadow-2xl ${
+      className={`rx-visor relative rx-ancora flex flex-col overflow-hidden border border-white/10 bg-[#05070d] text-white shadow-2xl ${
         ampliada ? 'h-full w-full rounded-none' : 'rounded-2xl'
       }`}
     >

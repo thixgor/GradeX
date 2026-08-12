@@ -3059,6 +3059,46 @@
 .rx {
   --rx-luz: 56 189 248;
   --rx-luz-alta: 165 243 252;
+
+  /* --------------------------------------------------------------------
+     Faixa dos controles flutuantes do AppShell.
+
+     Com `showHeader={false}` o shell solta três botões `fixed` no topo da
+     janela — menu, modo leve e tema — em z-40/z-60. Qualquer barra fixa
+     nossa em `top: 0` fica *embaixo* deles e deixa de ser clicável nas
+     pontas. Estes tokens reservam a faixa que eles ocupam (12px de topo +
+     40px de botão + folga) e mantêm um único lugar para ajustar caso o
+     shell mude os botões de posição.
+     -------------------------------------------------------------------- */
+  --rx-flutuantes: calc(3.5rem + env(safe-area-inset-top));
+  --rx-barra: 2.875rem;
+}
+
+/* Barra fixa principal: encosta logo abaixo dos botões do shell. */
+.rx-fixo-topo {
+  top: var(--rx-flutuantes);
+}
+
+/* Segunda camada fixa (cabeçalho de capítulo) — abaixo da primeira. */
+.rx-fixo-abaixo {
+  top: calc(var(--rx-flutuantes) + var(--rx-barra));
+}
+
+/* Coluna lateral que acompanha a rolagem no desktop. */
+.rx-lateral-fixa {
+  top: calc(var(--rx-flutuantes) + var(--rx-barra) + 0.5rem);
+}
+
+/* Âncoras de seção param abaixo das duas barras, nunca atrás delas. */
+.rx-ancora {
+  scroll-margin-top: calc(var(--rx-flutuantes) + var(--rx-barra) + 0.75rem);
+}
+
+/* Topo de cabeçalho editorial: o primeiro link não pode nascer sob o menu. */
+@media (max-width: 1023.98px) {
+  .rx-abaixo-flutuantes {
+    padding-top: var(--rx-flutuantes);
+  }
 }
 
 /* Fundo do painel: um negatoscópio visto de frente, com a lâmpada atrás. */

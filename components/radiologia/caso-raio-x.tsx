@@ -105,7 +105,7 @@ export function CasoRaioXPagina({
     <div className="rx surface-page min-h-screen">
       {/* ══════════════════ Cabeçalho ══════════════════ */}
       <header className="rx-painel rx-grade relative overflow-hidden border-b border-sky-400/15 text-white">
-        <div className="container relative mx-auto max-w-7xl px-4 pb-7 pt-4 sm:pb-8 sm:pt-5">
+        <div className="rx-abaixo-flutuantes container relative mx-auto max-w-7xl px-4 pb-7 pt-4 sm:pb-8 sm:pt-5">
           <nav aria-label="Trilha de navegação" className="flex flex-wrap items-center gap-1.5 text-xs text-sky-100/50 sm:text-sm">
             <Link
               href="/manual-clinico/radiologia/raio-x/casos"
@@ -140,10 +140,11 @@ export function CasoRaioXPagina({
       {/* ══════════════════ Sumário fixo ══════════════════ */}
       <nav
         aria-label="Seções do caso"
-        className="sticky top-0 z-30 border-b border-border bg-background/90 backdrop-blur-md"
+        data-rx-barra
+        className="rx-fixo-topo sticky z-30 border-b border-border bg-background/95 backdrop-blur-md"
       >
         <span aria-hidden className="absolute inset-x-0 bottom-0 h-px bg-sky-500/70 transition-[width] duration-150" style={{ width: `${progresso}%` }} />
-        <div className="rx-rolagem container mx-auto flex max-w-7xl gap-1 overflow-x-auto px-4 py-2">
+        <div className="rx-rolagem container mx-auto flex max-w-7xl snap-x gap-1 overflow-x-auto px-4 py-2 [mask-image:linear-gradient(90deg,#000_calc(100%-24px),transparent)] sm:[mask-image:none]">
           {secoes.map((secao) => {
             const Icone = secao.icone
             const ativo = ativa === secao.id
@@ -168,7 +169,7 @@ export function CasoRaioXPagina({
 
       <main ref={conteudo} className="container mx-auto max-w-7xl px-4 py-7 sm:py-10">
         {/* ══════════════════ Panorama ══════════════════ */}
-        <section id="panorama" className="scroll-mt-20">
+        <section id="panorama" className="rx-ancora">
           <div className="grid gap-4 lg:grid-cols-[1.35fr_0.65fr]">
             <article className="rounded-2xl border border-border bg-card p-5 sm:p-6">
               <p className="editorial-mark">Entenda o padrão</p>
@@ -216,7 +217,7 @@ export function CasoRaioXPagina({
         </section>
 
         {/* ══════════════════ Filmes ══════════════════ */}
-        <section id="filmes" className="mt-10 scroll-mt-20 sm:mt-12">
+        <section id="filmes" className="mt-10 rx-ancora sm:mt-12">
           <CabecalhoSecao
             marca="Negatoscópio"
             titulo={caso.imagens.length === 1 ? 'O filme deste caso' : `${caso.imagens.length} filmes para treinar`}
@@ -233,7 +234,7 @@ export function CasoRaioXPagina({
                 >
                   <CasoRaioXImagem imagem={imagem} marcacoes={marcacoes} prioridade={indice === 0} />
 
-                  <div className="space-y-4 xl:sticky xl:top-16">
+                  <div className="space-y-4 rx-lateral-fixa xl:sticky">
                     <div className="rounded-2xl border border-border bg-card p-5">
                       <p className="font-clinical text-[10px] font-black uppercase tracking-widest text-sky-600 dark:text-sky-400">
                         Exemplo {indice + 1} de {caso.imagens.length}
@@ -289,7 +290,7 @@ export function CasoRaioXPagina({
 
         {/* ══════════════════ Estruturas ══════════════════ */}
         {detalhe && detalhe.estruturas.length > 0 && (
-          <section id="estruturas" className="mt-12 scroll-mt-20">
+          <section id="estruturas" className="mt-12 rx-ancora">
             <CabecalhoSecao
               marca="Anatomia aplicada"
               titulo="Cada estrutura, uma a uma"
@@ -329,7 +330,7 @@ export function CasoRaioXPagina({
         )}
 
         {/* ══════════════════ Roteiro ══════════════════ */}
-        <section id="roteiro" className="mt-12 scroll-mt-20">
+        <section id="roteiro" className="mt-12 rx-ancora">
           <CabecalhoSecao
             marca="Método"
             titulo={`Roteiro de ${guia.titulo.toLowerCase()}`}
@@ -380,7 +381,7 @@ export function CasoRaioXPagina({
         </section>
 
         {/* ══════════════════ Conduta ══════════════════ */}
-        <section id="conduta" className="mt-12 scroll-mt-20">
+        <section id="conduta" className="mt-12 rx-ancora">
           <CabecalhoSecao
             marca="Depois da imagem"
             titulo="O que a radiografia não resolve"
