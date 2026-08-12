@@ -3239,12 +3239,122 @@
   background: transparent;
 }
 
+/* --------------------------------------------------------------------------
+   Visor de casos — o negatoscópio interativo
+
+   Ligar "Marcadores" faz duas coisas ao mesmo tempo: a lâmina de luz desce
+   revelando o filme anotado (`rx-revela`) e a lista de alterações acende no
+   topo, item a item (`rx-achado`). O tempo dos dois é casado de propósito —
+   a leitura acompanha a varredura, como quem lê o filme junto com o residente.
+   -------------------------------------------------------------------------- */
+
+.rx-visor {
+  box-shadow:
+    0 0 0 1px rgba(56, 189, 248, 0.08),
+    0 26px 70px -34px rgba(56, 189, 248, 0.4),
+    0 18px 40px -28px rgba(0, 0, 0, 0.9);
+}
+
+/* O filme marcado não troca: ele é revelado de cima para baixo. */
+.rx-revela {
+  animation: rx-revela 0.62s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes rx-revela {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.rx-achados {
+  animation: rx-achados 0.34s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes rx-achados {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -8px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.rx-achado {
+  opacity: 0;
+  animation: rx-achado 0.42s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: calc(var(--rx-i, 0) * 80ms + 140ms);
+}
+
+@keyframes rx-achado {
+  from {
+    opacity: 0;
+    transform: translate3d(-10px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Cartões do catálogo de casos
+
+   A miniatura guarda os dois frames do sprite. No hover (só onde há mouse),
+   o frame marcado emerge por baixo de uma varredura — o cartão vira uma
+   prévia do que o caso ensina, sem carregar um único byte a mais.
+   -------------------------------------------------------------------------- */
+
+.rx-cartao-marcada {
+  opacity: 0;
+  transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (hover: hover) {
+  .rx-cartao:hover .rx-cartao-marcada,
+  .rx-cartao:focus-visible .rx-cartao-marcada {
+    opacity: 1;
+  }
+
+  .rx-cartao:hover .rx-cartao-lamina {
+    animation: rx-varrer 1.1s cubic-bezier(0.55, 0, 0.45, 1);
+  }
+}
+
+.rx-cartao-lamina {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 45%;
+  opacity: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgba(165, 243, 252, 0.14) 45%,
+    rgba(165, 243, 252, 0.3) 50%,
+    rgba(165, 243, 252, 0.14) 55%,
+    transparent
+  );
+}
+
+/* Trilha lateral do sumário do caso. */
+.rx-trilho-ativo {
+  box-shadow: inset 2px 0 0 0 rgb(14 165 233);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .rx-grade::before,
   .rx-varredura::after,
   .rx-disparo,
   .rx-esqueleto,
-  .rx-pulso {
+  .rx-pulso,
+  .rx-cartao-lamina {
     animation: none !important;
   }
 
@@ -3252,10 +3362,14 @@
     display: none;
   }
 
-  .rx-entra {
+  .rx-entra,
+  .rx-achados,
+  .rx-achado,
+  .rx-revela {
     animation: none !important;
     opacity: 1;
     transform: none;
+    clip-path: none;
   }
 }
 
