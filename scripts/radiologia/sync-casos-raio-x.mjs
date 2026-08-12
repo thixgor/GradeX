@@ -20,7 +20,7 @@ import { fileURLToPath } from 'node:url'
 
 const ROOT = fileURLToPath(new URL('../..', import.meta.url))
 const OUTPUT = join(ROOT, 'public', 'img', 'radiologia', 'casos-raio-x', 'v1')
-const MANIFEST = join(ROOT, 'scripts', 'radiologia', 'casos-raio-x-assets.json')
+const MANIFEST = join(ROOT, 'data', 'radiologia', 'casos-raio-x-assets.json')
 const BASE = 'https://www.radiologymasterclass.co.uk'
 
 export const PAGINAS = [

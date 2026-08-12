@@ -1,4 +1,4 @@
-import manifesto from '@/scripts/radiologia/casos-raio-x-assets.json'
+import manifesto from '@/data/radiologia/casos-raio-x-assets.json'
 
 export type CategoriaCasoRaioX =
   | 'cardiovascular'
