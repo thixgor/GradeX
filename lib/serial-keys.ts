@@ -23,6 +23,12 @@ import { getPersonalExamsQuota } from './tier-limits'
 import { grantMaterialCartItems, type MaterialCartResolvedItem } from './material-cart'
 import { restorePlusClaims } from './plus-claims'
 import {
+  findTimedAccessVersion,
+  formatDurationMinutes,
+  timedAccessDisclaimer,
+  versionDurationMinutes,
+} from './material-timed-access'
+import {
   getManualClinicoConfig,
   getManualClinicoPlan,
   grantManualClinicoAccess,
@@ -188,6 +194,14 @@ export interface ResolvedSerialKeyProduct {
   productDescription?: string
   /** Quando true, o item não entra na comissão do sócio (split marketplace). */
   excludeFromCommission?: boolean
+  /** Versão de acesso por tempo escolhida (quando houver). */
+  accessMode?: 'lifetime' | 'timed'
+  accessVersionId?: string
+  accessVersionLabel?: string
+  accessDurationMinutes?: number
+  accessDurationLabel?: string
+  /** Aviso pronto para o checkout ("acesso por X, sem download…"). */
+  accessNotice?: string
 }
 
 export function isSerialKeyProductType(v: unknown): v is SerialKeyProductType {
@@ -236,6 +250,8 @@ export async function resolveSerialKeyProduct(
     productId?: string
     planKey?: string
     itemType?: 'material' | 'package'
+    /** Versão de acesso por tempo pedida — validada aqui contra o item. */
+    accessVersionId?: string
   }
 ): Promise<ResolvedSerialKeyProduct> {
   const { productType } = input
@@ -305,27 +321,55 @@ export async function resolveSerialKeyProduct(
   if (item.pricing === 'free' || !item.price || Number(item.price) <= 0) {
     throw new Error('Este item é gratuito e não requer compra.')
   }
-  const amount = Number(item.price)
+  // Versão por tempo limitada: preço próprio, e a duração viaja na grant para
+  // ser convertida em data de fim só na ATIVAÇÃO da key.
+  const timedVersion = findTimedAccessVersion(item, input.accessVersionId)
+  const durationMinutes = timedVersion ? versionDurationMinutes(timedVersion) : 0
+  const durationLabel = durationMinutes ? formatDurationMinutes(durationMinutes) : ''
+  const amount = timedVersion ? Number(timedVersion.price) : Number(item.price)
+  if (timedVersion && (!Number.isFinite(amount) || amount <= 0)) {
+    throw new Error('Esta versão de acesso não está disponível.')
+  }
   const isFlashcard =
     productType === 'flashcard' ||
     item.materialType === 'flashcard_deck' ||
     Boolean(item.linkedDeckSlug)
+  const resolvedTitle = String(item.title || 'Material')
   return {
     productType: itemType === 'package' ? 'package' : (isFlashcard ? 'flashcard' : 'material'),
     productId: String(input.productId),
-    productTitle: item.title || 'Material',
+    productTitle: timedVersion ? `${resolvedTitle} — ${timedVersion.label}` : resolvedTitle,
     amount,
-    description: item.title || 'Material',
+    description: timedVersion ? `${resolvedTitle} — ${timedVersion.label}` : resolvedTitle,
     coverImageUrl: item.coverImage || undefined,
     productDescription: item.description || undefined,
-    pricingEventId: item.pricingEventId ? String(item.pricingEventId) : null,
+    // Lote dinâmico não se aplica ao passe temporário: o preço já é o da versão.
+    pricingEventId: timedVersion ? null : (item.pricingEventId ? String(item.pricingEventId) : null),
     excludeFromCommission: item.excludeFromCommission === true,
+    ...(timedVersion
+      ? {
+          accessMode: 'timed' as const,
+          accessVersionId: timedVersion.id,
+          accessVersionLabel: timedVersion.label,
+          accessDurationMinutes: durationMinutes,
+          accessDurationLabel: durationLabel,
+          accessNotice: timedAccessDisclaimer(durationLabel, { viaSerialKey: true }),
+        }
+      : {}),
     grant: {
       productType: itemType === 'package' ? 'package' : (isFlashcard ? 'flashcard' : 'material'),
       itemType,
       itemId: String(input.productId),
-      itemTitle: item.title || 'Material',
+      itemTitle: resolvedTitle,
       linkedDeckSlug: item.linkedDeckSlug ? String(item.linkedDeckSlug) : undefined,
+      ...(timedVersion
+        ? {
+            accessMode: 'timed' as const,
+            accessVersionId: timedVersion.id,
+            accessVersionLabel: timedVersion.label,
+            accessDurationMinutes: durationMinutes,
+          }
+        : {}),
     },
   }
 }
@@ -711,6 +755,17 @@ export async function grantSerialKeyProduct(
         originalPrice: serial.amount || 0,
         discountApplied: 0,
         ownedMaterialIds: [],
+        // A contagem do acesso por tempo nasce aqui: `grantMaterialCartItems`
+        // usa `accessStartsAt` (agora = ativação) para calcular o fim.
+        ...(grant.accessMode === 'timed' && grant.accessDurationMinutes
+          ? {
+              accessMode: 'timed' as const,
+              accessVersionId: grant.accessVersionId,
+              accessVersionLabel: grant.accessVersionLabel,
+              accessDurationMinutes: grant.accessDurationMinutes,
+              accessDurationLabel: formatDurationMinutes(grant.accessDurationMinutes),
+            }
+          : {}),
       }
       await grantMaterialCartItems(
         db,
@@ -719,6 +774,7 @@ export async function grantSerialKeyProduct(
         {
           providerOrderId: serial.orderId,
           providerPaymentId: serial.providerPaymentId,
+          accessStartsAt: new Date(),
           auditMetadata: { via: 'serial_key', serialKeyId: String(serial._id) },
         }
       )
@@ -817,6 +873,7 @@ export function serializeSerialKeyPublic(serial: SerialKey) {
     activatedAt: serial.activatedAt,
     createdAt: serial.generatedAt,
     orderId: serial.orderId,
+    ...serializeGrantAccess(serial),
   }
 }
 
@@ -832,5 +889,32 @@ export function serializeSerialKeyForActivation(serial: SerialKey) {
     alreadyActivated: serial.status === 'activated' || serial.used,
     cancelled: serial.status === 'cancelled',
     restrictActivationToBuyerEmail: serial.restrictActivationToBuyerEmail === true,
+    ...serializeGrantAccess(serial),
+  }
+}
+
+/**
+ * Dados do acesso por tempo prontos para a interface. Enquanto a key não é
+ * ativada não existe data de fim — só a duração, porque o relógio ainda nem
+ * começou. É essa a promessa que o comprador precisa ver no comprovante.
+ */
+export function serializeGrantAccess(serial: SerialKey) {
+  const grant = serial.grant
+  if (grant?.accessMode !== 'timed' || !grant.accessDurationMinutes) {
+    return { accessMode: 'lifetime' as const }
+  }
+  const durationLabel = formatDurationMinutes(grant.accessDurationMinutes)
+  const activatedAt = serial.activatedAt ? new Date(serial.activatedAt) : null
+  return {
+    accessMode: 'timed' as const,
+    accessVersionId: grant.accessVersionId,
+    accessVersionLabel: grant.accessVersionLabel,
+    accessDurationMinutes: grant.accessDurationMinutes,
+    accessDurationLabel: durationLabel,
+    accessNotice: timedAccessDisclaimer(durationLabel, { viaSerialKey: true }),
+    /** Só existe depois da ativação — antes dela, o prazo não corre. */
+    accessExpiresAt: activatedAt
+      ? new Date(activatedAt.getTime() + grant.accessDurationMinutes * 60_000).toISOString()
+      : null,
   }
 }

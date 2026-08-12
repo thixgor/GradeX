@@ -31,6 +31,11 @@ import { recordOrderCheckoutEvent } from '../analytics'
 import { sendMetaCapiEvent } from '../meta-capi'
 import { approveCouponRedemption, releaseCouponRedemption } from '../coupons'
 import { grantMaterialCartItems, type MaterialCartResolvedItem } from '../material-cart'
+import {
+  buildTimedPurchaseFieldsFromMinutes,
+  formatDurationMinutes,
+  type TimedAccessPurchaseFields,
+} from '../material-timed-access'
 import { restorePlusClaims } from '../plus-claims'
 import { buildAutoEmailPdfAttachments, type PdfEmailItem } from '../material-pdf-email'
 import {
@@ -483,6 +488,18 @@ async function applyMaterialPurchase(order: PaymentOrder, result?: ProviderOrder
           originalPrice: Number(item.originalPrice || item.price || 0),
           discountApplied: Number(item.discountApplied || 0),
           ownedMaterialIds: Array.isArray(item.ownedMaterialIds) ? item.ownedMaterialIds.map(String) : [],
+          // Versão por tempo escolhida no checkout: o prazo passa a correr
+          // agora, que é quando o acesso é de fato liberado nesta compra
+          // logada (na compra com serial key, quem libera é a ativação).
+          ...(item.accessMode === 'timed' && Number(item.accessDurationMinutes) > 0
+            ? {
+                accessMode: 'timed' as const,
+                accessVersionId: item.accessVersionId ? String(item.accessVersionId) : undefined,
+                accessVersionLabel: item.accessVersionLabel ? String(item.accessVersionLabel) : undefined,
+                accessDurationMinutes: Number(item.accessDurationMinutes),
+                accessDurationLabel: formatDurationMinutes(Number(item.accessDurationMinutes)),
+              }
+            : {}),
         }
       })
       .filter(Boolean) as MaterialCartResolvedItem[]
@@ -524,7 +541,7 @@ async function applyMaterialPurchase(order: PaymentOrder, result?: ProviderOrder
           userEmail: order.payerEmail,
           userId: order.userId || String(order._id),
           orderId: orderIdWm,
-        }).catch(err => {
+        }, { timedAccess: item.accessMode === 'timed' }).catch(err => {
           console.error('[effects] preparar PDF automático (carrinho) falhou:', err)
           return { items: [] as PdfEmailItem[], eligible: false }
         })
@@ -553,6 +570,20 @@ async function applyMaterialPurchase(order: PaymentOrder, result?: ProviderOrder
   const item = await db.collection(collection).findOne({ _id: new ObjectId(order.refId) })
   if (!item) return
 
+  // Compra de uma versão por tempo: o acesso vence em `accessExpiresAt` e nunca
+  // libera download (ver `lib/material-timed-access`).
+  const timedDurationMinutes = Number(order.metadata?.accessDurationMinutes) || 0
+  const timedFields: Partial<TimedAccessPurchaseFields> = order.metadata?.accessMode === 'timed' && timedDurationMinutes > 0
+    ? buildTimedPurchaseFieldsFromMinutes(
+        {
+          id: order.metadata?.accessVersionId ? String(order.metadata.accessVersionId) : undefined,
+          label: order.metadata?.accessVersionLabel ? String(order.metadata.accessVersionLabel) : undefined,
+          durationMinutes: timedDurationMinutes,
+        },
+        new Date()
+      )
+    : {}
+
   await db.collection<MaterialPurchase>('material_purchases').updateOne(
     {
       userId: order.userId,
@@ -574,6 +605,7 @@ async function applyMaterialPurchase(order: PaymentOrder, result?: ProviderOrder
         providerPaymentId: result?.providerOrderId || order.providerPaymentId,
         status: 'completed',
         purchasedAt: new Date(),
+        ...timedFields,
       },
     },
     { upsert: true }
@@ -589,7 +621,17 @@ async function applyMaterialPurchase(order: PaymentOrder, result?: ProviderOrder
     targetUserId: order.userId,
     resourceType: itemType,
     resourceId: order.refId,
-    metadata: { orderId: String(order._id), amount: order.amount },
+    metadata: {
+      orderId: String(order._id),
+      amount: order.amount,
+      ...(timedFields.accessMode === 'timed'
+        ? {
+            accessMode: 'timed',
+            accessVersionLabel: timedFields.accessVersionLabel,
+            accessExpiresAt: timedFields.accessExpiresAt,
+          }
+        : {}),
+    },
   })
 
   if (order.payerEmail) {
@@ -604,7 +646,8 @@ async function applyMaterialPurchase(order: PaymentOrder, result?: ProviderOrder
         userEmail: order.payerEmail,
         userId: order.userId || String(order._id),
         orderId: result?.providerOrderId || order.providerPaymentId || String(order._id),
-      }
+      },
+      { timedAccess: timedFields.accessMode === 'timed' }
     ).catch(err => {
       console.error('[effects] preparar PDF automático falhou:', err)
       return { items: [] as PdfEmailItem[], eligible: false }

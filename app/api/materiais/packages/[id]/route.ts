@@ -5,6 +5,11 @@ import { ObjectId } from 'mongodb'
 import { computeEffectivePackagePrice } from '@/lib/material-package-pricing'
 import { getPricingEventStateById, serializePricingEventState } from '@/lib/pricing-events'
 import { isPlusAccount } from '@/lib/account-tier'
+import {
+  activeAccessFilter,
+  serializeTimedAccessVersions,
+  summarizeTimedAccess,
+} from '@/lib/material-timed-access'
 
 export const dynamic = 'force-dynamic'
 
@@ -85,6 +90,18 @@ export async function GET(
     // ─── Verificar compras do usuário ─────────────────────────
     let purchasedMaterialIds: string[] = []
     let isPackagePurchased = false
+    /** Prazo restante quando a compra do pacote foi por tempo limitado. */
+    let timedAccess: ReturnType<typeof summarizeTimedAccess> = null
+    const accessProjection = {
+      itemId: 1,
+      itemType: 1,
+      accessMode: 1,
+      accessVersionId: 1,
+      accessVersionLabel: 1,
+      accessDurationMinutes: 1,
+      accessStartsAt: 1,
+      accessExpiresAt: 1,
+    }
 
     if (isAdmin) {
       isPackagePurchased = true
@@ -93,8 +110,10 @@ export async function GET(
 
       // Single query covering both itemTypes via $or, plus a fallback
       // by-email query (mirrors the pattern used in other materiais routes).
+      // Compras por tempo já vencidas não contam como posse.
       const baseFilter: any = {
         status: 'completed',
+        ...activeAccessFilter(),
         $or: [
           { itemType: 'package', itemId: id },
           ...(matIdsStr.length > 0
@@ -106,7 +125,7 @@ export async function GET(
       const byUserId = await db
         .collection('material_purchases')
         .find({ ...baseFilter, userId: session.userId })
-        .project({ itemId: 1, itemType: 1 })
+        .project(accessProjection)
         .toArray()
 
       let byEmail: any[] = []
@@ -118,18 +137,26 @@ export async function GET(
         byEmail = await db
           .collection('material_purchases')
           .find({ ...baseFilter, userEmail: { $regex: emailRegex } })
-          .project({ itemId: 1, itemType: 1 })
+          .project(accessProjection)
           .toArray()
       }
 
       const combined = [...byUserId, ...byEmail]
+      let hasLifetimePackage = false
       for (const p of combined) {
         if (p.itemType === 'package' && String(p.itemId) === id) {
           isPackagePurchased = true
+          const status = summarizeTimedAccess(p)
+          // Vitalício vence qualquer prazo; entre prazos, vale o maior.
+          if (!status) hasLifetimePackage = true
+          else if (!timedAccess || status.remainingMs > timedAccess.remainingMs) {
+            timedAccess = status
+          }
         } else if (p.itemType === 'material') {
           purchasedMaterialIds.push(String(p.itemId))
         }
       }
+      if (hasLifetimePackage) timedAccess = null
       purchasedMaterialIds = Array.from(new Set(purchasedMaterialIds))
     }
 
@@ -208,7 +235,9 @@ export async function GET(
         isFeatured: !!pkg.isFeatured,
         createdAt: pkg.createdAt,
         pricingEventId: pkg.pricingEventId ? String(pkg.pricingEventId) : null,
+        _timedAccessVersions: serializeTimedAccessVersions(pkg),
       },
+      timedAccess,
       pricingEventState: serializePricingEventState(pricingEventState),
       materials: materialsForClient,
       access: {

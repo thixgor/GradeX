@@ -18,6 +18,7 @@ const Schema = z.object({
   items: z.array(z.object({
     itemType: z.enum(['material', 'package']),
     itemId: z.string().min(1),
+    accessVersionId: z.string().max(40).optional(),
   })).min(1).max(MAX_MATERIAL_CART_ITEMS),
 })
 

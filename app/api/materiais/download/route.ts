@@ -26,6 +26,7 @@ import { applyWatermark } from '@/lib/pdf-watermark'
 import { checkPlusDownloadAllowance, recordPlusDownload } from '@/lib/plus-guard'
 import { matchesAccessGroups, isPlusAccount } from '@/lib/account-tier'
 import { emailFingerprint } from '@/lib/watermark-fingerprint'
+import { activeAccessFilter, summarizeTimedAccess } from '@/lib/material-timed-access'
 
 export const dynamic = 'force-dynamic'
 
@@ -131,11 +132,14 @@ async function createMaterialPdfDownloadResponse(request: NextRequest, materialI
               'i'
             )
           : null
+        // Acesso por tempo vencido não vale mais nem para leitura, muito
+        // menos para download.
         const purchase = await db.collection('material_purchases').findOne({
           userId: session.userId,
           itemId: materialId,
           itemType: 'material',
           status: 'completed',
+          ...activeAccessFilter(),
         })
 
         if (purchase) {
@@ -149,6 +153,7 @@ async function createMaterialPdfDownloadResponse(request: NextRequest, materialI
               itemId: materialId,
               itemType: 'material',
               status: 'completed',
+              ...activeAccessFilter(),
             })
             hasAccess = !!byEmail
             purchaseForAudit = byEmail
@@ -166,6 +171,7 @@ async function createMaterialPdfDownloadResponse(request: NextRequest, materialI
                 itemType: 'package',
                 itemId: { $in: packageIds },
                 status: 'completed',
+                ...activeAccessFilter(),
               }
               const packageByUserId = await db.collection('material_purchases').findOne({
                 ...packageFilter,
@@ -217,6 +223,22 @@ async function createMaterialPdfDownloadResponse(request: NextRequest, materialI
       }
       return NextResponse.json(
         { error: 'Acesso negado. Adquira o material para fazer o download.' },
+        { status: 403 }
+      )
+    }
+
+    // ── 5a. Acesso por tempo limitado: leitura sim, download não ──────────
+    // A versão temporária é vendida como "leia dentro da plataforma". Baixar o
+    // PDF criaria uma cópia que sobrevive ao fim do prazo — exatamente o que a
+    // modalidade não vende. O leitor protegido continua liberado.
+    const timedAccess = summarizeTimedAccess(purchaseForAudit)
+    if (timedAccess && !isAdmin) {
+      return NextResponse.json(
+        {
+          error: `Seu acesso é a versão por tempo limitado (${timedAccess.label || timedAccess.durationLabel || 'temporária'}), que não inclui download. Leia o material no visualizador protegido — você ainda tem ${timedAccess.remainingLabel}.`,
+          timedAccess,
+          downloadBlocked: true,
+        },
         { status: 403 }
       )
     }

@@ -193,9 +193,13 @@ export async function buildAutoEmailPdfAttachments(
   db: Db,
   itemType: string,
   itemId: string,
-  identity: WatermarkIdentity
+  identity: WatermarkIdentity,
+  options: { timedAccess?: boolean } = {}
 ): Promise<{ items: PdfEmailItem[]; eligible: boolean }> {
   try {
+    // Versão por tempo limitado não inclui download — e o PDF por e-mail é um
+    // download que sobreviveria ao fim do prazo. Nunca anexa nesse caso.
+    if (options.timedAccess) return { items: [], eligible: false }
     // Pacote: entrega o PDF de TODOS os materiais incluídos (quando elegível).
     // Material avulso/flashcard: entrega apenas se o próprio material está
     // marcado para envio automático.

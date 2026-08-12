@@ -6,6 +6,11 @@ import { TokenPayload } from './auth'
 import { getDb } from './mongodb'
 import { isPdfBuffer } from './pdf-watermark'
 import { emailFingerprint } from './watermark-fingerprint'
+import {
+  activeAccessFilter,
+  summarizeTimedAccess,
+  type TimedAccessStatus,
+} from './material-timed-access'
 
 export type MaterialPdfAccessLevel = 'full' | 'preview'
 
@@ -22,6 +27,12 @@ export type MaterialPdfAccessResult =
       // acesso vendo apenas as páginas de prévia liberadas pelo admin.
       accessLevel: MaterialPdfAccessLevel
       previewRanges: PreviewRange[]
+      /**
+       * Prazo restante quando o acesso veio de uma versão por tempo limitado.
+       * `null` = acesso vitalício. O leitor usa isso para avisar o usuário e
+       * para nunca oferecer download.
+       */
+      timedAccess: TimedAccessStatus | null
     }
   | {
       ok: false
@@ -315,6 +326,7 @@ export async function validateMaterialPdfAccess(
   }
 
   let hasAccess = isAdmin
+  let timedAccess: TimedAccessStatus | null = null
   const userGroups: string[] = []
 
   // Sem sessão (visitante): nunca há acesso pleno — pula toda a checagem de
@@ -326,7 +338,13 @@ export async function validateMaterialPdfAccess(
     // Plus+ não abre o leitor sozinho: o assinante resgata o material antes
     // (POST /api/materiais/resgatar), o que grava a purchase encontrada aqui.
     if (material.pricing === 'paid') {
-      const baseFilter = { itemId: materialId, itemType: 'material', status: 'completed' }
+      // Compra por tempo vencida deixa de abrir o leitor.
+      const baseFilter = {
+        itemId: materialId,
+        itemType: 'material',
+        status: 'completed',
+        ...activeAccessFilter(),
+      }
       const emailRegex = session.email
         ? new RegExp(
             `^${session.email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`,
@@ -340,12 +358,14 @@ export async function validateMaterialPdfAccess(
 
       if (byUserId) {
         hasAccess = true
+        timedAccess = summarizeTimedAccess(byUserId)
       } else if (emailRegex) {
         const byEmail = await db.collection('material_purchases').findOne({
           ...baseFilter,
           userEmail: { $regex: emailRegex },
         })
         hasAccess = !!byEmail
+        if (byEmail) timedAccess = summarizeTimedAccess(byEmail)
       }
 
       if (!hasAccess) {
@@ -360,6 +380,7 @@ export async function validateMaterialPdfAccess(
             itemType: 'package',
             itemId: { $in: packageIds },
             status: 'completed',
+            ...activeAccessFilter(),
           }
           const packageByUserId = await db.collection('material_purchases').findOne({
             ...packageFilter,
@@ -368,12 +389,14 @@ export async function validateMaterialPdfAccess(
 
           if (packageByUserId) {
             hasAccess = true
+            timedAccess = summarizeTimedAccess(packageByUserId)
           } else if (emailRegex) {
             const packageByEmail = await db.collection('material_purchases').findOne({
               ...packageFilter,
               userEmail: { $regex: emailRegex },
             })
             hasAccess = !!packageByEmail
+            if (packageByEmail) timedAccess = summarizeTimedAccess(packageByEmail)
           }
         }
       }
@@ -401,6 +424,7 @@ export async function validateMaterialPdfAccess(
         hasAccess: false,
         accessLevel: 'preview',
         previewRanges: preview.ranges,
+        timedAccess: null,
       }
     }
     return { ok: false, status: 403, error: 'Voce nao tem acesso a este material' }
@@ -416,6 +440,7 @@ export async function validateMaterialPdfAccess(
     hasAccess: true,
     accessLevel: 'full',
     previewRanges: preview.ranges,
+    timedAccess,
   }
 }
 

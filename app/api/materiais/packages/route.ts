@@ -5,6 +5,12 @@ import { ObjectId } from 'mongodb'
 import { computeEffectivePackagePrice } from '@/lib/material-package-pricing'
 import { getPricingEventStatesByIds, serializePricingEventState } from '@/lib/pricing-events'
 import { expandUserAccessGroups, isPlusAccount } from '@/lib/account-tier'
+import {
+  activeAccessFilter,
+  sanitizeTimedAccessVersions,
+  serializeTimedAccessVersions,
+  summarizeTimedAccess,
+} from '@/lib/material-timed-access'
 
 export const dynamic = 'force-dynamic'
 
@@ -64,8 +70,21 @@ export async function GET(request: NextRequest) {
     // Two separate queries (userId and userEmail) to avoid any $or index quirks.
     let purchasedPackageIds: string[] = []
     let purchasedMaterialIds: string[] = []
+    /** packageId → prazo restante, quando a compra foi por tempo limitado. */
+    const timedAccessByPackageId: Record<string, any> = {}
     if (session && !isAdmin) {
-      const baseFilter = { status: 'completed' }
+      // Compra por tempo vencida não conta como posse.
+      const baseFilter = { status: 'completed', ...activeAccessFilter() }
+      const accessProjection = {
+        itemId: 1,
+        itemType: 1,
+        accessMode: 1,
+        accessVersionId: 1,
+        accessVersionLabel: 1,
+        accessDurationMinutes: 1,
+        accessStartsAt: 1,
+        accessExpiresAt: 1,
+      }
 
       const byUserId = await db
         .collection('material_purchases')
@@ -74,7 +93,7 @@ export async function GET(request: NextRequest) {
           userId: session.userId,
           itemType: { $in: ['package', 'material'] },
         })
-        .project({ itemId: 1, itemType: 1 })
+        .project(accessProjection)
         .toArray()
 
       let byEmail: any[] = []
@@ -87,7 +106,7 @@ export async function GET(request: NextRequest) {
             userEmail: { $regex: emailRegex },
             itemType: { $in: ['package', 'material'] },
           })
-          .project({ itemId: 1, itemType: 1 })
+          .project(accessProjection)
           .toArray()
       }
 
@@ -102,6 +121,16 @@ export async function GET(request: NextRequest) {
           .filter((p: any) => p.itemType === 'material')
           .map((p: any) => String(p.itemId))
       )]
+
+      for (const purchase of purchases.filter((p: any) => p.itemType === 'package')) {
+        const status = summarizeTimedAccess(purchase)
+        if (!status) continue
+        const key = String(purchase.itemId)
+        const current = timedAccessByPackageId[key]
+        if (!current || status.remainingMs > current.remainingMs) {
+          timedAccessByPackageId[key] = status
+        }
+      }
     }
 
     // Server is the source of truth for access — attach flags per package
@@ -152,6 +181,8 @@ export async function GET(request: NextRequest) {
         _includedInPlus: includedInPlus,
         _pricing: pricing,
         _pricingEventState: serializePricingEventState(pricingEventState),
+        _timedAccessVersions: serializeTimedAccessVersions(pkg),
+        _timedAccess: timedAccessByPackageId[idStr] || null,
       }
     })
 
@@ -192,6 +223,7 @@ export async function POST(request: NextRequest) {
       price: body.pricing === 'paid' ? (body.price || 0) : 0,
       originalPrice: body.originalPrice || 0,
       pricingEventId: body.pricingEventId ? String(body.pricingEventId) : null,
+      timedAccessVersions: sanitizeTimedAccessVersions(body.timedAccessVersions),
       stripePriceId: body.stripePriceId || '',
       excludeFromCommission: body.excludeFromCommission === true,
       downloadCount: 0,
@@ -242,6 +274,9 @@ export async function PUT(request: NextRequest) {
     }
     if ('excludeFromCommission' in updates) {
       updates.excludeFromCommission = updates.excludeFromCommission === true
+    }
+    if ('timedAccessVersions' in updates) {
+      updates.timedAccessVersions = sanitizeTimedAccessVersions(updates.timedAccessVersions)
     }
 
     await db.collection('material_packages').updateOne(

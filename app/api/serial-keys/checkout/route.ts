@@ -66,6 +66,8 @@ const Schema = z.object({
   productId: z.string().max(80).optional(),
   planKey: z.string().max(40).optional(),
   itemType: z.enum(['material', 'package']).optional(),
+  /** Versão de acesso por tempo escolhida (revalidada no servidor). */
+  accessVersionId: z.string().max(40).optional(),
   // Comprador (obrigatório neste fluxo)
   buyerName: z.string().max(140),
   buyerEmail: z.string().max(180),
@@ -101,6 +103,7 @@ const CartSchema = z.object({
   cart: z.array(z.object({
     itemType: z.enum(['material', 'package']),
     itemId: z.string().min(1),
+    accessVersionId: z.string().max(40).optional(),
   })).min(1).max(MAX_MATERIAL_CART_ITEMS),
   ...buyerFields,
   ...paymentFields,
@@ -136,6 +139,7 @@ export async function GET(request: NextRequest) {
       productId: searchParams.get('productId') || undefined,
       planKey: searchParams.get('planKey') || undefined,
       itemType: (searchParams.get('itemType') as 'material' | 'package') || undefined,
+      accessVersionId: searchParams.get('accessVersionId') || undefined,
     })
     return NextResponse.json({
       productType: resolved.productType,
@@ -147,6 +151,12 @@ export async function GET(request: NextRequest) {
       coverImageUrl: resolved.coverImageUrl,
       productDescription: resolved.productDescription,
       pricingEventId: resolved.pricingEventId || null,
+      accessMode: resolved.accessMode || 'lifetime',
+      accessVersionId: resolved.accessVersionId || null,
+      accessVersionLabel: resolved.accessVersionLabel || null,
+      accessDurationMinutes: resolved.accessDurationMinutes || null,
+      accessDurationLabel: resolved.accessDurationLabel || null,
+      accessNotice: resolved.accessNotice || null,
     }, { headers: { 'Cache-Control': 'public, max-age=30, stale-while-revalidate=120' } })
   } catch (err: any) {
     return NextResponse.json({ error: err?.message || 'Produto indisponível' }, { status: 400 })
@@ -215,6 +225,7 @@ export async function POST(request: NextRequest) {
       productId: data.productId,
       planKey: data.planKey,
       itemType: data.itemType,
+      accessVersionId: data.accessVersionId,
     })
   } catch (err: any) {
     return NextResponse.json({ error: err?.message || 'Produto indisponível' }, { status: 400 })
@@ -323,6 +334,14 @@ export async function POST(request: NextRequest) {
       serialKeyPurchase: true,
       serialKeyGrant: resolved.grant,
       productType: resolved.productType,
+      ...(resolved.accessMode === 'timed'
+        ? {
+            accessMode: 'timed',
+            accessVersionId: resolved.accessVersionId,
+            accessVersionLabel: resolved.accessVersionLabel,
+            accessDurationMinutes: resolved.accessDurationMinutes,
+          }
+        : {}),
       itemType: data.itemType,
       itemTitle: resolved.productTitle,
       buyerName: buyer.name,
@@ -558,8 +577,21 @@ async function handleCartCheckout(
       itemId: item.itemId,
       itemTitle: item.itemTitle,
       linkedDeckSlug: item.linkedDeckSlug,
+      // Duração viaja na grant; a data de fim nasce na ativação da key.
+      ...(item.accessMode === 'timed' && item.accessDurationMinutes
+        ? {
+            accessMode: 'timed' as const,
+            accessVersionId: item.accessVersionId,
+            accessVersionLabel: item.accessVersionLabel,
+            accessDurationMinutes: item.accessDurationMinutes,
+          }
+        : {}),
     }
-    return { grant, productTitle: item.itemTitle, amount: Math.max(0, Math.round(item.price * 100) / 100) }
+    return {
+      grant,
+      productTitle: item.accessVersionLabel ? `${item.itemTitle} — ${item.accessVersionLabel}` : item.itemTitle,
+      amount: Math.max(0, Math.round(item.price * 100) / 100),
+    }
   })
 
   const amount = Math.round(serialKeyCart.reduce((s, i) => s + i.amount, 0) * 100) / 100

@@ -5,6 +5,7 @@ import { resolveDeckAccess, getUserGroups } from './flashcard-manual'
 import { FlashcardManualDeck } from './types'
 import { ReviewTargetType } from './reviews'
 import { matchesAccessGroups } from './account-tier'
+import { activeAccessFilter } from './material-timed-access'
 
 export type AccessReason =
   | 'admin'
@@ -92,8 +93,14 @@ async function checkMaterialAccess(
     return { allowed: true, reason: 'group_free', isPurchased: false }
   }
 
-  // Verifica compra direta
-  const baseFilter = { itemId: materialId, itemType: 'material', status: 'completed' }
+  // Verifica compra direta. Compra por tempo vencida não conta — o filtro
+  // descarta o que passou da data de expiração.
+  const baseFilter = {
+    itemId: materialId,
+    itemType: 'material',
+    status: 'completed',
+    ...activeAccessFilter(),
+  }
   const byUserId = await db.collection('material_purchases').findOne({
     ...baseFilter,
     userId: session.userId,
@@ -125,6 +132,7 @@ async function checkMaterialAccess(
       itemType: 'package',
       itemId: { $in: packageIds },
       status: 'completed',
+      ...activeAccessFilter(),
     }
     const packageByUserId = await db.collection('material_purchases').findOne({
       ...packageFilter,

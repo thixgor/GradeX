@@ -156,9 +156,15 @@ export async function GET(
             : undefined,
           pageCount: totalPages,
           viewerEnabled: access.material.pdfViewerEnabled === true,
-          // Prévia nunca permite download do arquivo completo.
-          downloadEnabled: isPreview ? false : access.material.pdfDownloadEnabled !== false,
+          // Prévia nunca permite download do arquivo completo — e o acesso por
+          // tempo limitado também não: essa versão é só para ler aqui dentro.
+          downloadEnabled: isPreview || access.timedAccess
+            ? false
+            : access.material.pdfDownloadEnabled !== false,
         },
+        // Prazo restante do acesso (null = vitalício). O leitor mostra o
+        // contador no cabeçalho e bloqueia o download quando presente.
+        timedAccess: access.timedAccess,
         audit: {
           openedAt: now.toISOString(),
         },

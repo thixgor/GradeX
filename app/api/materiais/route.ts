@@ -6,6 +6,12 @@ import { getPricingEventStatesByIds, serializePricingEventState } from '@/lib/pr
 import { FLASHCARD_MANUAL_COLLECTIONS } from '@/lib/flashcard-manual'
 import { normalizePreviewRanges } from '@/lib/material-pdf-viewer'
 import { expandUserAccessGroups, isPlusAccount } from '@/lib/account-tier'
+import {
+  activeAccessFilter,
+  sanitizeTimedAccessVersions,
+  serializeTimedAccessVersions,
+  summarizeTimedAccess,
+} from '@/lib/material-timed-access'
 
 export const dynamic = 'force-dynamic'
 
@@ -236,14 +242,27 @@ export async function GET(request: NextRequest) {
     // Two separate queries (userId and userEmail) then merge, to avoid any $or
     // index quirks and ensure manual admin grants are always detected.
     let purchasedIds: string[] = []
+    /** materialId → prazo restante, quando a compra foi por tempo limitado. */
+    const timedAccessByMaterialId: Record<string, any> = {}
     if (session && !isAdmin) {
-      const baseFilter = { itemType: 'material', status: 'completed' }
+      // Compras vencidas (acesso por tempo) não contam como posse — o filtro
+      // deixa passar apenas o que ainda está no prazo.
+      const baseFilter = { itemType: 'material', status: 'completed', ...activeAccessFilter() }
+      const accessProjection = {
+        itemId: 1,
+        accessMode: 1,
+        accessVersionId: 1,
+        accessVersionLabel: 1,
+        accessDurationMinutes: 1,
+        accessStartsAt: 1,
+        accessExpiresAt: 1,
+      }
 
       // Query by userId (primary — always present)
       const byUserId = await db
         .collection('material_purchases')
         .find({ ...baseFilter, userId: session.userId })
-        .project({ itemId: 1 })
+        .project(accessProjection)
         .toArray()
 
       // Query by userEmail as fallback (covers edge-cases where userId wasn't stored)
@@ -253,18 +272,28 @@ export async function GET(request: NextRequest) {
         byEmail = await db
           .collection('material_purchases')
           .find({ ...baseFilter, userEmail: { $regex: emailRegex } })
-          .project({ itemId: 1 })
+          .project(accessProjection)
           .toArray()
       }
 
       // Merge, deduplicate and normalise to plain strings
       purchasedIds = [...new Set([...byUserId, ...byEmail].map((p: any) => String(p.itemId)))]
+      for (const purchase of [...byUserId, ...byEmail]) {
+        const status = summarizeTimedAccess(purchase)
+        if (!status) continue
+        const key = String(purchase.itemId)
+        // Duas compras do mesmo item: vale a que dura mais.
+        const current = timedAccessByMaterialId[key]
+        if (!current || status.remainingMs > current.remainingMs) {
+          timedAccessByMaterialId[key] = status
+        }
+      }
 
-      const packageBaseFilter = { itemType: 'package', status: 'completed' }
+      const packageBaseFilter = { itemType: 'package', status: 'completed', ...activeAccessFilter() }
       const packageByUserId = await db
         .collection('material_purchases')
         .find({ ...packageBaseFilter, userId: session.userId })
-        .project({ itemId: 1 })
+        .project(accessProjection)
         .toArray()
 
       let packageByEmail: any[] = []
@@ -273,11 +302,17 @@ export async function GET(request: NextRequest) {
         packageByEmail = await db
           .collection('material_purchases')
           .find({ ...packageBaseFilter, userEmail: { $regex: emailRegex } })
-          .project({ itemId: 1 })
+          .project(accessProjection)
           .toArray()
       }
 
       const purchasedPackageIds = [...new Set([...packageByUserId, ...packageByEmail].map((p: any) => String(p.itemId)))]
+      /** packageId → prazo, para propagar aos materiais que vêm pelo pacote. */
+      const timedByPackageId = new Map<string, any>()
+      for (const purchase of [...packageByUserId, ...packageByEmail]) {
+        const status = summarizeTimedAccess(purchase)
+        if (status) timedByPackageId.set(String(purchase.itemId), status)
+      }
       if (purchasedPackageIds.length > 0) {
         const packageObjectIds = purchasedPackageIds
           .map((pkgId) => {
@@ -294,6 +329,21 @@ export async function GET(request: NextRequest) {
             Array.isArray(pkg.materialIds) ? pkg.materialIds.map(String) : []
           )
           purchasedIds = [...new Set([...purchasedIds, ...packageMaterialIds])]
+
+          // Material herdado de um pacote por tempo herda o prazo do pacote —
+          // a não ser que o usuário já tenha uma posse melhor do mesmo item.
+          for (const pkg of ownedPackages as any[]) {
+            const pkgStatus = timedByPackageId.get(String(pkg._id))
+            for (const materialId of (pkg.materialIds || []).map(String)) {
+              if (!pkgStatus) {
+                delete timedAccessByMaterialId[materialId]
+                continue
+              }
+              const current = timedAccessByMaterialId[materialId]
+              if (current && current.remainingMs >= pkgStatus.remainingMs) continue
+              timedAccessByMaterialId[materialId] = pkgStatus
+            }
+          }
         }
       }
     }
@@ -438,6 +488,10 @@ export async function GET(request: NextRequest) {
         ...(htmlFileMeta && { _htmlFile: htmlFileMeta }),
         ...(m.type === 'flashcard_deck' && { _cardCount: cardCountByMaterialId[idStr] ?? 0 }),
         _pricingEventState: serializePricingEventState(pricingEventState),
+        // Versões por tempo publicadas (para o catálogo mostrar "a partir de").
+        _timedAccessVersions: serializeTimedAccessVersions(m),
+        // Prazo da posse atual, quando ela veio de uma versão por tempo.
+        _timedAccess: timedAccessByMaterialId[idStr] || null,
       }
     })
 
@@ -483,6 +537,7 @@ export async function POST(request: NextRequest) {
       stripePriceId: body.stripePriceId || '',
       excludeFromCommission: body.excludeFromCommission === true,
       allowedGroups: body.allowedGroups || [],
+      timedAccessVersions: sanitizeTimedAccessVersions(body.timedAccessVersions),
       pdfViewerEnabled: body.pdfViewerEnabled === true,
       pdfDownloadEnabled: body.pdfDownloadEnabled !== false,
       autoEmailPdfOnPurchase: body.autoEmailPdfOnPurchase === true,
@@ -535,6 +590,9 @@ export async function PUT(request: NextRequest) {
     }
     if ('pdfViewerConfig' in updates) {
       updates.pdfViewerConfig = sanitizePdfViewerConfig(updates.pdfViewerConfig) || { summary: [], navigation: [], preview: { enabled: false, ranges: [] } }
+    }
+    if ('timedAccessVersions' in updates) {
+      updates.timedAccessVersions = sanitizeTimedAccessVersions(updates.timedAccessVersions)
     }
     if ('htmlViewerEnabled' in updates) {
       updates.htmlViewerEnabled = updates.htmlViewerEnabled === true

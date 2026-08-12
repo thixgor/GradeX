@@ -4,6 +4,11 @@ import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { getPricingEventStateById, serializePricingEventState } from '@/lib/pricing-events'
 import { isPlusAccount } from '@/lib/account-tier'
+import {
+  activeAccessFilter,
+  serializeTimedAccessVersions,
+  summarizeTimedAccess,
+} from '@/lib/material-timed-access'
 
 export const dynamic = 'force-dynamic'
 
@@ -67,22 +72,27 @@ export async function GET(
     // (userId OR userEmail) + 1 query packages. Quando há pacotes que
     // contêm o material, busca compras de pacote em uma segunda rodada.
     let isPurchased = false
+    /** Prazo restante quando a posse veio de uma versão por tempo limitado. */
+    let timedAccess: ReturnType<typeof summarizeTimedAccess> = null
     if (session && !isAdmin) {
       const emailFilter = session.email
         ? { userEmail: new RegExp(`^${session.email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') }
         : null
 
+      // `activeAccessFilter` derruba a compra cujo prazo já venceu: o registro
+      // continua no histórico, mas não abre mais o material.
       const [directPurchase, candidatePackages] = await Promise.all([
         db.collection('material_purchases').findOne(
           {
             itemId: id,
             itemType: 'material',
             status: 'completed',
+            ...activeAccessFilter(),
             ...(emailFilter
               ? { $or: [{ userId: session.userId }, emailFilter] }
               : { userId: session.userId }),
           },
-          { projection: { _id: 1 } }
+          { projection: { _id: 1, accessMode: 1, accessVersionId: 1, accessVersionLabel: 1, accessDurationMinutes: 1, accessStartsAt: 1, accessExpiresAt: 1 } }
         ),
         db.collection('material_packages')
           .find({ materialIds: id, isHidden: { $ne: true } }, { projection: { _id: 1 } })
@@ -91,21 +101,33 @@ export async function GET(
 
       if (directPurchase) {
         isPurchased = true
+        timedAccess = summarizeTimedAccess(directPurchase)
       } else {
         const packageIds = candidatePackages.map((pkg: any) => String(pkg._id))
         if (packageIds.length > 0) {
-          const pkgPurchase = await db.collection('material_purchases').findOne(
+          const pkgPurchases = await db.collection('material_purchases').find(
             {
               itemType: 'package',
               itemId: { $in: packageIds },
               status: 'completed',
+              ...activeAccessFilter(),
               ...(emailFilter
                 ? { $or: [{ userId: session.userId }, emailFilter] }
                 : { userId: session.userId }),
             },
-            { projection: { _id: 1 } }
-          )
-          isPurchased = !!pkgPurchase
+            { projection: { _id: 1, accessMode: 1, accessVersionId: 1, accessVersionLabel: 1, accessDurationMinutes: 1, accessStartsAt: 1, accessExpiresAt: 1 } }
+          ).toArray()
+          isPurchased = pkgPurchases.length > 0
+          if (isPurchased) {
+            // Vários pacotes cobrindo o mesmo material: vale o de maior prazo,
+            // e qualquer pacote vitalício encerra a contagem.
+            const statuses = pkgPurchases.map((p: any) => summarizeTimedAccess(p))
+            timedAccess = statuses.some((s) => !s)
+              ? null
+              : statuses.reduce((best, current) =>
+                  !best || (current && current.remainingMs > best.remainingMs) ? current : best
+                , null as ReturnType<typeof summarizeTimedAccess>)
+          }
         }
       }
     }
@@ -259,7 +281,9 @@ export async function GET(
         pricingEventId: material.pricingEventId ? String(material.pricingEventId) : null,
         ...(_hasPdf && material.pdfFile?.pageCount ? { _pageCount: material.pdfFile.pageCount } : {}),
         ...(material.type === 'flashcard_deck' ? { _cardCount: _cardCount ?? 0 } : {}),
+        _timedAccessVersions: serializeTimedAccessVersions(material),
       },
+      timedAccess,
       complementaryItems,
       folderName,
       hasAccess: canAccess,

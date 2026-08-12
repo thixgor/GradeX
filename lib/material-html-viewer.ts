@@ -18,6 +18,7 @@ import { Db, ObjectId } from 'mongodb'
 import { TokenPayload } from './auth'
 import { getDb } from './mongodb'
 import { emailFingerprint } from './watermark-fingerprint'
+import { activeAccessFilter } from './material-timed-access'
 
 export type MaterialHtmlAccessResult =
   | {
@@ -91,7 +92,13 @@ export async function validateMaterialHtmlAccess(
     // Plus+ não abre o leitor sozinho: o assinante resgata o material antes,
     // o que grava a purchase encontrada aqui.
     if (material.pricing === 'paid') {
-      const baseFilter = { itemId: materialId, itemType: 'material', status: 'completed' }
+      // Acesso por tempo vencido não abre mais o leitor.
+      const baseFilter = {
+        itemId: materialId,
+        itemType: 'material',
+        status: 'completed',
+        ...activeAccessFilter(),
+      }
       const emailRegex = session.email
         ? new RegExp(`^${session.email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i')
         : null
@@ -123,6 +130,7 @@ export async function validateMaterialHtmlAccess(
             itemType: 'package',
             itemId: { $in: packageIds },
             status: 'completed',
+            ...activeAccessFilter(),
           }
           const packageByUserId = await db.collection('material_purchases').findOne({
             ...packageFilter,

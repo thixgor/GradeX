@@ -46,7 +46,7 @@ async function buildSerialMaterialAttachments(
     userEmail: serial.buyerEmail,
     userId: String(serial._id),
     orderId: serial.providerPaymentId || serial.orderId || String(serial._id),
-  })
+  }, { timedAccess: grant.accessMode === 'timed' })
   return { attachments: items, eligible }
 }
 

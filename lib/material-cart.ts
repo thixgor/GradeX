@@ -3,12 +3,25 @@ import { computeEffectivePackagePrice, type EffectivePackagePrice } from './mate
 import { audit } from './payments/audit'
 import type { MaterialPurchase } from './types'
 import { isPlusAccount } from './account-tier'
+import {
+  buildTimedPurchaseFieldsFromMinutes,
+  findTimedAccessVersion,
+  formatDurationMinutes,
+  lifetimeOwnershipFilter,
+  versionDurationMinutes,
+  type TimedAccessVersion,
+} from './material-timed-access'
 
 export type MaterialCartItemType = 'material' | 'package'
 
 export interface MaterialCartItemInput {
   itemType: MaterialCartItemType
   itemId: string
+  /**
+   * Versão de acesso por tempo escolhida. Ausente = versão vitalícia (padrão).
+   * O id é sempre revalidado contra o material/pacote no servidor.
+   */
+  accessVersionId?: string
 }
 
 export interface MaterialCartSession {
@@ -33,6 +46,12 @@ export interface MaterialCartResolvedItem {
   pricingEventId?: string | null
   /** Quando true, este item não entra na comissão do sócio (split marketplace). */
   excludeFromCommission?: boolean
+  // ── Acesso por tempo limitado (quando o comprador escolheu uma versão) ──
+  accessMode?: 'lifetime' | 'timed'
+  accessVersionId?: string
+  accessVersionLabel?: string
+  accessDurationMinutes?: number
+  accessDurationLabel?: string
 }
 
 export interface MaterialCartSkippedItem {
@@ -95,6 +114,7 @@ function normalizeInputItems(items: MaterialCartItemInput[]) {
   for (const raw of items.slice(0, MAX_MATERIAL_CART_ITEMS)) {
     const itemType = raw?.itemType
     const itemId = String(raw?.itemId || '')
+    const accessVersionId = raw?.accessVersionId ? String(raw.accessVersionId).slice(0, 40) : undefined
     if ((itemType !== 'material' && itemType !== 'package') || !ObjectId.isValid(itemId)) {
       skippedItems.push({
         itemType: itemType === 'package' ? 'package' : 'material',
@@ -110,7 +130,7 @@ function normalizeInputItems(items: MaterialCartItemInput[]) {
       continue
     }
     seen.add(key)
-    normalized.push({ itemType, itemId })
+    normalized.push({ itemType, itemId, accessVersionId })
   }
 
   return { normalized, skippedItems }
@@ -132,9 +152,13 @@ async function getCompletedPurchases(
   db: Db,
   session: MaterialCartSession
 ): Promise<Array<{ itemType?: string; itemId?: string }>> {
+  // Só a posse VITALÍCIA bloqueia uma nova compra e vale como crédito no
+  // desconto proporcional de pacote. Quem tem a versão por tempo pode comprar
+  // de novo (renovar o prazo ou migrar para o acesso definitivo).
   const baseFilter = {
     status: 'completed',
     itemType: { $in: ['material', 'package'] },
+    ...lifetimeOwnershipFilter(),
   }
 
   const byUserId = await db.collection<MaterialPurchase>('material_purchases')
@@ -156,6 +180,22 @@ async function getCompletedPurchases(
   return [...byUserId, ...byEmail]
 }
 
+/**
+ * Campos de versão por tempo de um item resolvido. O preço da versão substitui
+ * o preço cheio — e, no caso de pacote, também o desconto proporcional: o passe
+ * temporário é um valor fechado, não uma fração do acervo.
+ */
+function timedFieldsFor(version: TimedAccessVersion) {
+  const minutes = versionDurationMinutes(version)
+  return {
+    accessMode: 'timed' as const,
+    accessVersionId: version.id,
+    accessVersionLabel: version.label,
+    accessDurationMinutes: minutes,
+    accessDurationLabel: formatDurationMinutes(minutes),
+  }
+}
+
 export async function resolveMaterialCart(
   db: Db,
   session: MaterialCartSession,
@@ -171,13 +211,13 @@ export async function resolveMaterialCart(
     materialIds.length
       ? db.collection('materials')
           .find({ _id: { $in: materialIds.map(id => new ObjectId(id)) } })
-          .project({ title: 1, pricing: 1, price: 1, type: 1, linkedDeckSlug: 1, allowedGroups: 1, pricingEventId: 1, excludeFromCommission: 1 })
+          .project({ title: 1, pricing: 1, price: 1, type: 1, linkedDeckSlug: 1, allowedGroups: 1, pricingEventId: 1, excludeFromCommission: 1, timedAccessVersions: 1 })
           .toArray()
       : Promise.resolve([]),
     packageIds.length
       ? db.collection('material_packages')
           .find({ _id: { $in: packageIds.map(id => new ObjectId(id)) } })
-          .project({ title: 1, pricing: 1, price: 1, materialIds: 1, allowedGroups: 1, pricingEventId: 1, excludeFromCommission: 1 })
+          .project({ title: 1, pricing: 1, price: 1, materialIds: 1, allowedGroups: 1, pricingEventId: 1, excludeFromCommission: 1, timedAccessVersions: 1 })
           .toArray()
       : Promise.resolve([]),
     getCompletedPurchases(db, session),
@@ -294,11 +334,14 @@ export async function resolveMaterialCart(
       })
     }
 
-    const price = pkg.pricing === 'free' || !pkg.price || Number(pkg.price) <= 0
-      ? 0
-      : pricingMeta.effectivePrice
+    const timedVersion = findTimedAccessVersion(pkg, requested.accessVersionId)
+    const price = timedVersion
+      ? roundMoney(timedVersion.price)
+      : pkg.pricing === 'free' || !pkg.price || Number(pkg.price) <= 0
+        ? 0
+        : pricingMeta.effectivePrice
 
-    if (pkg.pricing === 'paid' && price <= 0 && pricingMeta.totalPaidIndividualValue > 0 && pricingMeta.ownedValue >= pricingMeta.totalPaidIndividualValue) {
+    if (!timedVersion && pkg.pricing === 'paid' && price <= 0 && pricingMeta.totalPaidIndividualValue > 0 && pricingMeta.ownedValue >= pricingMeta.totalPaidIndividualValue) {
       skippedItems.push({
         ...requested,
         reason: 'already_owned',
@@ -313,11 +356,14 @@ export async function resolveMaterialCart(
       itemTitle: pkg.title || 'Pacote',
       materialIds: materialIdsInPackage,
       price: roundMoney(price),
-      originalPrice: pricingMeta.originalPackagePrice,
-      discountApplied: pricingMeta.discountApplied,
-      ownedMaterialIds: pricingMeta.ownedMaterialIds,
-      pricingEventId: pkg.pricingEventId ? String(pkg.pricingEventId) : null,
+      originalPrice: timedVersion ? roundMoney(pkg.price || 0) : pricingMeta.originalPackagePrice,
+      discountApplied: timedVersion ? 0 : pricingMeta.discountApplied,
+      ownedMaterialIds: timedVersion ? [] : pricingMeta.ownedMaterialIds,
+      // Lote dinâmico não incide sobre o passe temporário — o preço da versão
+      // já é o preço final dela.
+      pricingEventId: timedVersion ? null : (pkg.pricingEventId ? String(pkg.pricingEventId) : null),
       excludeFromCommission: pkg.excludeFromCommission === true,
+      ...(timedVersion ? timedFieldsFor(timedVersion) : {}),
     })
 
     for (const materialId of materialIdsInPackage) {
@@ -363,9 +409,11 @@ export async function resolveMaterialCart(
       continue
     }
 
-    const price = material.pricing === 'free' || !material.price || Number(material.price) <= 0
+    const timedVersion = findTimedAccessVersion(material, requested.accessVersionId)
+    const fullPrice = material.pricing === 'free' || !material.price || Number(material.price) <= 0
       ? 0
       : Number(material.price)
+    const price = timedVersion ? roundMoney(timedVersion.price) : fullPrice
 
     acceptedItems.push({
       itemType: 'material',
@@ -374,11 +422,12 @@ export async function resolveMaterialCart(
       materialType: material.type,
       linkedDeckSlug: material.linkedDeckSlug,
       price: roundMoney(price),
-      originalPrice: roundMoney(price),
+      originalPrice: roundMoney(timedVersion ? fullPrice : price),
       discountApplied: 0,
       ownedMaterialIds: [],
-      pricingEventId: material.pricingEventId ? String(material.pricingEventId) : null,
+      pricingEventId: timedVersion ? null : (material.pricingEventId ? String(material.pricingEventId) : null),
       excludeFromCommission: material.excludeFromCommission === true,
+      ...(timedVersion ? timedFieldsFor(timedVersion) : {}),
     })
   }
 
@@ -409,6 +458,15 @@ export function serializeMaterialCartItem(item: MaterialCartResolvedItem) {
     ownedMaterialIds: item.ownedMaterialIds,
     pricingEventId: item.pricingEventId || null,
     excludeFromCommission: item.excludeFromCommission === true,
+    ...(item.accessMode === 'timed'
+      ? {
+          accessMode: 'timed' as const,
+          accessVersionId: item.accessVersionId,
+          accessVersionLabel: item.accessVersionLabel,
+          accessDurationMinutes: item.accessDurationMinutes,
+          accessDurationLabel: item.accessDurationLabel,
+        }
+      : {}),
   }
 }
 
@@ -420,13 +478,26 @@ export async function grantMaterialCartItems(
     providerOrderId?: string
     providerPaymentId?: string
     auditMetadata?: Record<string, any>
+    /** Início da contagem do acesso por tempo. Padrão: agora. */
+    accessStartsAt?: Date
   } = {}
 ) {
+  // O relógio da versão por tempo começa AQUI — no momento em que o acesso é
+  // de fato liberado. Numa compra com serial key, isso é a ativação da key
+  // (grantSerialKeyProduct chama esta função), nunca o pagamento.
+  const grantedAt = options.accessStartsAt || new Date()
+
   for (const item of items) {
     const collection = item.itemType === 'package' ? 'material_packages' : 'materials'
     const providerFilter = options.providerOrderId
       ? { providerOrderId: options.providerOrderId }
       : { status: 'completed' }
+    // Uma concessão por tempo nunca deve sobrescrever a linha de uma compra
+    // vitalícia do mesmo item (e vice-versa) — elas convivem como registros
+    // separados e o acesso vale pelo melhor dos dois.
+    const versionFilter = item.accessMode === 'timed'
+      ? { accessVersionId: item.accessVersionId }
+      : { accessVersionId: { $exists: false } }
     const purchaseSet: Partial<MaterialPurchase> = {
       userId: session.userId,
       userName: session.name || '',
@@ -438,6 +509,16 @@ export async function grantMaterialCartItems(
       provider: 'mercado_pago',
       status: 'completed',
       purchasedAt: new Date(),
+      ...(item.accessMode === 'timed' && item.accessDurationMinutes
+        ? buildTimedPurchaseFieldsFromMinutes(
+            {
+              id: item.accessVersionId,
+              label: item.accessVersionLabel,
+              durationMinutes: item.accessDurationMinutes,
+            },
+            grantedAt
+          )
+        : {}),
     }
 
     if (options.providerOrderId) purchaseSet.providerOrderId = options.providerOrderId
@@ -448,6 +529,7 @@ export async function grantMaterialCartItems(
         userId: session.userId,
         itemType: item.itemType,
         itemId: item.itemId,
+        ...versionFilter,
         ...providerFilter,
       } as any,
       {
@@ -472,6 +554,15 @@ export async function grantMaterialCartItems(
         amount: item.price,
         itemTitle: item.itemTitle,
         providerOrderId: options.providerOrderId,
+        ...(item.accessMode === 'timed'
+          ? {
+              accessMode: 'timed',
+              accessVersionId: item.accessVersionId,
+              accessVersionLabel: item.accessVersionLabel,
+              accessDurationMinutes: item.accessDurationMinutes,
+              accessStartsAt: grantedAt,
+            }
+          : {}),
         ...(options.auditMetadata || {}),
       },
     })

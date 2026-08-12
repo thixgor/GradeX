@@ -614,6 +614,15 @@ export interface SerialKeyGrant {
   role?: AccountType
   planId?: string
   durationMonths?: number
+  /**
+   * Versão de acesso por tempo comprada (material/pacote). O prazo só começa a
+   * correr quando a key é ativada — por isso a data de fim não é gravada aqui,
+   * e sim calculada na ativação a partir de `accessDurationMinutes`.
+   */
+  accessMode?: import('./material-timed-access').MaterialAccessMode
+  accessVersionId?: string
+  accessVersionLabel?: string
+  accessDurationMinutes?: number
 }
 
 /** Registro de um envio de e-mail relacionado à serial key. */
@@ -1601,6 +1610,13 @@ export interface Material {
   /** Lote dinâmico por evento (pricingEvent._id). Quando setado, aplica desconto progressivo. */
   pricingEventId?: string | null
 
+  /**
+   * Versões de acesso por tempo limitado (opcionais). O mesmo conteúdo por um
+   * preço menor, válido por X dias/horas contados a partir da ativação. Compra
+   * por tempo nunca libera download — ver `lib/material-timed-access`.
+   */
+  timedAccessVersions?: import('./material-timed-access').TimedAccessVersion[]
+
   // Estatísticas
   downloadCount: number
   viewCount: number
@@ -1641,6 +1657,9 @@ export interface MaterialPackage {
 
   /** Lote dinâmico por evento (pricingEvent._id). */
   pricingEventId?: string | null
+
+  /** Versões de acesso por tempo limitado (ver `Material.timedAccessVersions`). */
+  timedAccessVersions?: import('./material-timed-access').TimedAccessVersion[]
 
   // Estatísticas
   downloadCount: number
@@ -1696,6 +1715,20 @@ export interface MaterialPurchase {
   plusRevokedReason?: string
   /** Quando o resgate voltou por renovação do Plus+. */
   plusRestoredAt?: Date
+
+  // ── Acesso por tempo limitado ──────────────────────────────────────────────
+  /** `'timed'` = comprou uma versão com prazo. Ausente/`'lifetime'` = para sempre. */
+  accessMode?: import('./material-timed-access').MaterialAccessMode
+  /** Versão de acesso comprada (`Material.timedAccessVersions[].id`). */
+  accessVersionId?: string
+  accessVersionLabel?: string
+  accessDurationMinutes?: number
+  /** Início da contagem — a ativação da serial key, não o pagamento. */
+  accessStartsAt?: Date
+  /** Fim do acesso. Ausente = vitalício. Passada a data, não dá mais acesso. */
+  accessExpiresAt?: Date
+  /** Compra por tempo: o PDF só pode ser lido no viewer, nunca baixado. */
+  downloadDisabled?: boolean
 }
 
 // ─── Loja física (produtos físicos / impressos) ──────────────────

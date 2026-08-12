@@ -34,6 +34,11 @@ import {
 import type { PaymentOrder, MaterialPurchase } from '@/lib/types'
 import { buildPhysicalShopOrder } from '@/lib/shop-order'
 import { isPlusAccount } from '@/lib/account-tier'
+import {
+  findTimedAccessVersion,
+  lifetimeOwnershipFilter,
+  versionDurationMinutes,
+} from '@/lib/material-timed-access'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -65,6 +70,8 @@ const paymentFields = {
 const Schema = z.object({
   itemType: z.enum(['material', 'package']),
   itemId: z.string().min(1),
+  /** Versão de acesso por tempo escolhida. Revalidada aqui contra o item. */
+  accessVersionId: z.string().max(40).optional(),
   ...paymentFields,
 })
 
@@ -72,6 +79,7 @@ const CartSchema = z.object({
   items: z.array(z.object({
     itemType: z.enum(['material', 'package']),
     itemId: z.string().min(1),
+    accessVersionId: z.string().max(40).optional(),
   })).min(1).max(MAX_MATERIAL_CART_ITEMS),
   ...paymentFields,
 })
@@ -105,6 +113,11 @@ export async function POST(request: NextRequest) {
   const item = await db.collection(collection).findOne({ _id: new ObjectId(data.itemId) })
   if (!item) return NextResponse.json({ error: 'Item não encontrado' }, { status: 404 })
 
+  // Versão de acesso por tempo escolhida (opcional). Validada na fonte: um id
+  // inválido/desligado cai silenciosamente na versão vitalícia.
+  const timedVersion = findTimedAccessVersion(item, data.accessVersionId)
+  const timedDurationMinutes = timedVersion ? versionDurationMinutes(timedVersion) : 0
+
   const userPurchaseOr: any[] = [{ userId: session.userId }]
   if (session.email) {
     userPurchaseOr.push({
@@ -119,6 +132,10 @@ export async function POST(request: NextRequest) {
     : data.itemType === 'package'
       ? `/pacotes/${data.itemId}`
       : `/materiais/${data.itemId}`
+
+  if (timedVersion && item.pricing === 'free') {
+    return NextResponse.json({ error: 'Este item é gratuito e não tem versão por tempo.' }, { status: 400 })
+  }
 
   if (session.role === 'admin') {
     return NextResponse.json({
@@ -147,10 +164,13 @@ export async function POST(request: NextRequest) {
   }
 
   // Bloqueia recompra
+  // Só a posse VITALÍCIA bloqueia. Quem só tem a versão por tempo pode comprar
+  // de novo — para renovar o prazo ou trocar pelo acesso definitivo.
   const existing = await db.collection<MaterialPurchase>('material_purchases').findOne({
     itemType: data.itemType,
     itemId: data.itemId,
     status: 'completed',
+    ...lifetimeOwnershipFilter(),
     $or: userPurchaseOr,
   })
   if (existing) {
@@ -176,6 +196,7 @@ export async function POST(request: NextRequest) {
         itemType: 'package',
         itemId: { $in: packageIds },
         status: 'completed',
+        ...lifetimeOwnershipFilter(),
         $or: userPurchaseOr,
       } as any)
 
@@ -193,10 +214,12 @@ export async function POST(request: NextRequest) {
   // Se o usuário já comprou algum material que faz parte do pacote,
   // descontamos proporcionalmente. Calculamos no servidor — nunca confiamos
   // em valores enviados pelo cliente.
-  let effectivePrice = Number(item.price || 0)
+  let effectivePrice = timedVersion ? Number(timedVersion.price || 0) : Number(item.price || 0)
   let pricingMeta: ReturnType<typeof computeEffectivePackagePrice> | null = null
 
-  if (data.itemType === 'package' && Array.isArray(item.materialIds) && item.materialIds.length > 0) {
+  // O passe temporário é um valor fechado: não entra no desconto proporcional
+  // do pacote (que existe para não cobrar duas vezes pelo acesso definitivo).
+  if (!timedVersion && data.itemType === 'package' && Array.isArray(item.materialIds) && item.materialIds.length > 0) {
     const materialObjectIds = (item.materialIds as string[])
       .map((mid) => { try { return new ObjectId(mid) } catch { return null } })
       .filter(Boolean) as ObjectId[]
@@ -289,7 +312,7 @@ export async function POST(request: NextRequest) {
   let couponValidation: CouponValidationResult | null = null
 
   // Lote dinâmico por evento — aplica desconto progressivo se houver evento ativo.
-  const pricingEventState = item.pricingEventId
+  const pricingEventState = item.pricingEventId && !timedVersion
     ? await getPricingEventStateById(db, String(item.pricingEventId))
     : null
   let tierDiscountAmount = 0
@@ -381,7 +404,7 @@ export async function POST(request: NextRequest) {
 
   // Free path — só quando digital gratuito E sem parte física a pagar.
   const digitalFree =
-    item.pricing === 'free' ||
+    (!timedVersion && item.pricing === 'free') ||
     !item.price ||
     item.price <= 0 ||
     effectivePrice <= 0 ||
@@ -484,7 +507,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: methodDisabled }, { status: 400 })
   }
 
-  const description = item.title
+  const description = timedVersion ? `${item.title} — ${timedVersion.label}` : item.title
   const paidAmount = Math.round((amount + physicalTotal) * 100) / 100
 
   // Comissão do sócio (split marketplace): se este material/pacote está marcado
@@ -511,6 +534,14 @@ export async function POST(request: NextRequest) {
     metadata: {
       itemType: data.itemType,
       itemTitle: item.title,
+      ...(timedVersion
+        ? {
+            accessMode: 'timed',
+            accessVersionId: timedVersion.id,
+            accessVersionLabel: timedVersion.label,
+            accessDurationMinutes: timedDurationMinutes,
+          }
+        : {}),
       ...(physicalShopOrderId ? { shopOrderId: physicalShopOrderId } : {}),
       ...(pricingMeta && pricingMeta.discountApplied > 0
         ? {
