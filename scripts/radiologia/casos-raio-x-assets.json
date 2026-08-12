@@ -1,0 +1,1750 @@
+{
+  "version": 1,
+  "generatedAt": "2026-08-12T02:40:11.037Z",
+  "pages": [
+    {
+      "category": "cardiovascular",
+      "slug": "cardiomegalia",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/cardiac_disease/cardiomegaly",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/cardiovascular/cardiomegalia/01-cardiomegaly-mild.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-cardiac/cardiomegaly_mild.jpg?mtime=20210304211314&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 423,
+          "bytes": 69312,
+          "sha256": "b4979aae37a2904c8bd54d5457fe96024d4b4d81c2305438d977befc515acba8"
+        },
+        {
+          "index": 2,
+          "file": "/img/radiologia/casos-raio-x/v1/cardiovascular/cardiomegalia/02-cardiomegaly.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-cardiac/cardiomegaly.jpg?mtime=20210304211314&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 449,
+          "bytes": 120708,
+          "sha256": "fb55582d52b738f828553c07260797e2e087311c4811daffe4cbeb6a7b1de20f"
+        },
+        {
+          "index": 3,
+          "file": "/img/radiologia/casos-raio-x/v1/cardiovascular/cardiomegalia/03-la.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-cardiac/la.jpg?mtime=20210304211314&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 451,
+          "bytes": 74717,
+          "sha256": "d7077ef6cca6d452538c788238fff97554449c227285a59bd1b19ccd89126959"
+        }
+      ]
+    },
+    {
+      "category": "cardiovascular",
+      "slug": "redistribuicao-vascular",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/cardiac_disease/upper_zone_prominence",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/cardiovascular/redistribuicao-vascular/01-upper-zone.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-cardiac/upper_zone.jpg?mtime=20210304211315&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 384,
+          "bytes": 101350,
+          "sha256": "a03c7a40b0de9050b9429caedebd10188fde7bcab31d85b81ef128c6a04c1a00"
+        }
+      ]
+    },
+    {
+      "category": "cardiovascular",
+      "slug": "edema-intersticial",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/cardiac_disease/kerley_b_lines",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/cardiovascular/edema-intersticial/01-septal-1.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-cardiac/septal_1.jpg?mtime=20210304211315&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 539,
+          "bytes": 127572,
+          "sha256": "324d018419d4aa71ca6d45ae06a0fdded27ebf6267a3e093b209204deb142f31"
+        },
+        {
+          "index": 2,
+          "file": "/img/radiologia/casos-raio-x/v1/cardiovascular/edema-intersticial/02-septal-2.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-cardiac/septal_2.jpg?mtime=20210304211315&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 530,
+          "bytes": 123203,
+          "sha256": "42eee09720c36629ca57fd932c5fd91ca8f51cdfb648d2f6d4cc13ec48bb680d"
+        },
+        {
+          "index": 3,
+          "file": "/img/radiologia/casos-raio-x/v1/cardiovascular/edema-intersticial/03-septal-3.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-cardiac/septal_3.jpg?mtime=20210304211315&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 532,
+          "bytes": 126667,
+          "sha256": "69a09d40d8e320dc7881914bb0eaf2b9d0a7b149f3dbefb87a77da363cd81f8f"
+        }
+      ]
+    },
+    {
+      "category": "cardiovascular",
+      "slug": "edema-alveolar",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/cardiac_disease/pulmonary_oedema",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/cardiovascular/edema-alveolar/01-bats-wing.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-cardiac/bats_wing.jpg?mtime=20210304211314&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 491,
+          "bytes": 97396,
+          "sha256": "25ecbd29f7e9a9eaabf1ef6dcea96e1e23f86e7d25444287265adefeb9587313"
+        },
+        {
+          "index": 2,
+          "file": "/img/radiologia/casos-raio-x/v1/cardiovascular/edema-alveolar/02-bats-asymmetric.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-cardiac/bats_asymmetric.jpg?mtime=20210304211314&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 489,
+          "bytes": 81782,
+          "sha256": "b2cbf9738a9edd94b43c95f3de74dee885da293097f89c06c38d08ddbf3cf62d"
+        },
+        {
+          "index": 3,
+          "file": "/img/radiologia/casos-raio-x/v1/cardiovascular/edema-alveolar/03-pulm-odema-slump.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-cardiac/pulm_odema_slump.jpg?mtime=20210304211315&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 377,
+          "bytes": 64331,
+          "sha256": "3e5a49bf4e206b59e76b6b0a272976495deb4cce0a40994a2e80538a169a5de5"
+        },
+        {
+          "index": 4,
+          "file": "/img/radiologia/casos-raio-x/v1/cardiovascular/edema-alveolar/04-non-cardio.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-cardiac/non-cardio.jpg?mtime=20210304211314&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 401,
+          "bytes": 109528,
+          "sha256": "1473a7618669b399fe786dd0663aec421add7c14ef8dbba2974f66a7b9fb60aa"
+        }
+      ]
+    },
+    {
+      "category": "cardiovascular",
+      "slug": "derrame-pleural",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/cardiac_disease/pleural_effusion",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/cardiovascular/derrame-pleural/01-effusions-1.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-cardiac/effusions_1.jpg?mtime=20210304211314&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 413,
+          "bytes": 66998,
+          "sha256": "d536571e5fea35b63507c03bb70bf650a6d4be4a1d88bbd49e2e9f61f7dd7428"
+        },
+        {
+          "index": 2,
+          "file": "/img/radiologia/casos-raio-x/v1/cardiovascular/derrame-pleural/02-effusions-2.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-cardiac/effusions_2.jpg?mtime=20210304211314&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 420,
+          "bytes": 104031,
+          "sha256": "fabb33d134987fe98538386cc56269934f54541e84498554790f503eac4e3097"
+        }
+      ]
+    },
+    {
+      "category": "cardiovascular",
+      "slug": "derrame-pericardico",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/cardiac_disease/pericardial_effusion",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/cardiovascular/derrame-pericardico/01-pericardial-2.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-cardiac/pericardial_2.jpg?mtime=20210304211315&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 445,
+          "bytes": 113241,
+          "sha256": "79014419df8bb0526e387bae4c371ec310f691e9089a5de672be6febe83938f1"
+        },
+        {
+          "index": 2,
+          "file": "/img/radiologia/casos-raio-x/v1/cardiovascular/derrame-pericardico/02-pericardial-1.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-cardiac/pericardial_1.jpg?mtime=20210304211315&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 449,
+          "bytes": 112117,
+          "sha256": "a267cc472b8a5312915ee70667157b3dd19c28385d053a86dbcf276c62d8d8be"
+        },
+        {
+          "index": 3,
+          "file": "/img/radiologia/casos-raio-x/v1/cardiovascular/derrame-pericardico/03-pericardial-3.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-cardiac/pericardial_3.jpg?mtime=20210304211315&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 463,
+          "bytes": 73025,
+          "sha256": "4669de7bb4a9a51b6ca2ec313ffaf86cc9cb645344b188262b3487a702825506"
+        }
+      ]
+    },
+    {
+      "category": "cardiovascular",
+      "slug": "calcificacoes-cardiacas",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/cardiac_disease/cardiac_calcification",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/cardiovascular/calcificacoes-cardiacas/01-lv-aneurysm.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-cardiac/lv_aneurysm.jpg?mtime=20210304211314&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 486,
+          "bytes": 121420,
+          "sha256": "df4efd31e13496e198faa9f39f6ed1eee5c42f2f58bfa4943262291102a88ce3"
+        },
+        {
+          "index": 2,
+          "file": "/img/radiologia/casos-raio-x/v1/cardiovascular/calcificacoes-cardiacas/02-pericardial-calc.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-cardiac/pericardial_calc.jpg?mtime=20210304211315&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 461,
+          "bytes": 117689,
+          "sha256": "6e7fe655dd2ec07b4ae1e1dffac23b5df4158821ef81b9fd8d80d489944d3468"
+        },
+        {
+          "index": 3,
+          "file": "/img/radiologia/casos-raio-x/v1/cardiovascular/calcificacoes-cardiacas/03-mv-calc.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-cardiac/mv_calc.jpg?mtime=20210304211315&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 433,
+          "bytes": 108114,
+          "sha256": "a4878f4632112d577eebe8cea653307ec82cf4b4810e6cb73831ed33ff463947"
+        }
+      ]
+    },
+    {
+      "category": "cardiovascular",
+      "slug": "cardiopatias-congenitas",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/cardiac_disease/congenital_heart_disease",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/cardiovascular/cardiopatias-congenitas/01-asd.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-cardiac/asd.jpg?mtime=20210304211314&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 496,
+          "bytes": 86430,
+          "sha256": "f76f30be91cf29858d212bca24b0a9e8a4389755c9d423471f737726736be0fa"
+        },
+        {
+          "index": 2,
+          "file": "/img/radiologia/casos-raio-x/v1/cardiovascular/cardiopatias-congenitas/02-pda.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-cardiac/pda.jpg?mtime=20210304211315&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 467,
+          "bytes": 74385,
+          "sha256": "5f37f8f20b3905d21a4956f21f622c0b9c0a55087ef0841099148d01ffe474ae"
+        },
+        {
+          "index": 3,
+          "file": "/img/radiologia/casos-raio-x/v1/cardiovascular/cardiopatias-congenitas/03-tof.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-cardiac/tof.jpg?mtime=20210304211315&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 456,
+          "bytes": 127070,
+          "sha256": "c333955a3febef820ed2da37baa809564a6283b837b6938557e6691aba368b10"
+        }
+      ]
+    },
+    {
+      "category": "cardiovascular",
+      "slug": "marcapassos",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/cardiac_disease/pacemakers",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/cardiovascular/marcapassos/01-pacemaker.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-cardiac/pacemaker.jpg?mtime=20210304211315&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 529,
+          "bytes": 158122,
+          "sha256": "c30659b5676e9c09dd4b695b812190e5c85dd45be1fbbf4f2010b80b763d550c"
+        },
+        {
+          "index": 2,
+          "file": "/img/radiologia/casos-raio-x/v1/cardiovascular/marcapassos/02-pacemaker-pneumothorax.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-cardiac/pacemaker_pneumothorax.jpg?mtime=20210304211315&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 519,
+          "bytes": 145987,
+          "sha256": "3b800f879e4b17f1cc17fee1b64e715d0fc7c07bc926239e530709db025d241e"
+        },
+        {
+          "index": 3,
+          "file": "/img/radiologia/casos-raio-x/v1/cardiovascular/marcapassos/03-defibrilator.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-cardiac/defibrilator.jpg?mtime=20210304211314&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 411,
+          "bytes": 115285,
+          "sha256": "85d04a03a9c829ef29ee1133336eb27234ea305193a357eae355d4888a89c313"
+        }
+      ]
+    },
+    {
+      "category": "cardiovascular",
+      "slug": "artefatos-cirurgia-cardiaca",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/cardiac_disease/surgical_artifacts",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/cardiovascular/artefatos-cirurgia-cardiaca/01-post-surg.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-cardiac/post_surg.jpg?mtime=20210304211315&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 428,
+          "bytes": 108720,
+          "sha256": "d37c8e2dbc43693e5b494691e8a1576e08b5489da862da5bf1f1a799fc6349e1"
+        },
+        {
+          "index": 2,
+          "file": "/img/radiologia/casos-raio-x/v1/cardiovascular/artefatos-cirurgia-cardiaca/02-clips.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-cardiac/clips.jpg?mtime=20210304211314&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 471,
+          "bytes": 130848,
+          "sha256": "a8c613312d132a1bc66c1a6cc9570575a42ebd46a4d915a41bf54d568d8105fb"
+        },
+        {
+          "index": 3,
+          "file": "/img/radiologia/casos-raio-x/v1/cardiovascular/artefatos-cirurgia-cardiaca/03-valves-pulm-oedema.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-cardiac/valves_pulm_oedema.jpg?mtime=20210304211315&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 429,
+          "bytes": 123290,
+          "sha256": "dc7b72cde32a0cb1dc5ba411ab6f11fcbccb3ae7acc20b51dcd28b113ebe5e4d"
+        }
+      ]
+    },
+    {
+      "category": "cardiovascular",
+      "slug": "outros-artefatos-cardiacos",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/cardiac_disease/artifacts",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/cardiovascular/outros-artefatos-cardiacos/01-stent.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-cardiac/stent.jpg?mtime=20210304211315&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 460,
+          "bytes": 123815,
+          "sha256": "9c71945ff5f5f64480571f1b7c22cfd587bbe523e27dae57762c6b25e285962d"
+        },
+        {
+          "index": 2,
+          "file": "/img/radiologia/casos-raio-x/v1/cardiovascular/outros-artefatos-cardiacos/02-ecg-buttons.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-cardiac/ecg_buttons.jpg?mtime=20210304211314&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 462,
+          "bytes": 120993,
+          "sha256": "c919430785877b39c47dc20418fb666acb5618da89915285af13b33c05a8b2ef"
+        },
+        {
+          "index": 3,
+          "file": "/img/radiologia/casos-raio-x/v1/cardiovascular/outros-artefatos-cardiacos/03-monitoring-leads.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-cardiac/monitoring_leads.jpg?mtime=20210304211314&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 370,
+          "bytes": 120600,
+          "sha256": "62983ae8c5f5016838475a4421de3907b3a7b9bddbe699b51e61b7242b1b0ac7"
+        }
+      ]
+    },
+    {
+      "category": "variantes",
+      "slug": "dextrocardia",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/variants/dextocardia_x-ray",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/variantes/dextrocardia/01-cxr-dextrocardia.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-variants/cxr_dextrocardia.jpg?mtime=20210304211319&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 406,
+          "bytes": 124285,
+          "sha256": "568c2288d7e9c2fb8d489bfe68dd2e564e3571e7f0af5d24fcf580447774a8a9"
+        },
+        {
+          "index": 2,
+          "file": "/img/radiologia/casos-raio-x/v1/variantes/dextrocardia/02-pseudo-dextro.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-variants/pseudo_dextro.jpg?mtime=20210304211319&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 493,
+          "bytes": 120817,
+          "sha256": "b43f78425f20ba592cbdb1413907745b22265f5d575f6d6f9d14a966226f96bf"
+        }
+      ]
+    },
+    {
+      "category": "variantes",
+      "slug": "arco-aortico-direito",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/variants/right_aortic_arch",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/variantes/arco-aortico-direito/01-right-aorta.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-variants/right_aorta.jpg?mtime=20210304211319&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 422,
+          "bytes": 140796,
+          "sha256": "4cccc2ab63b2fc53f87eaecd7756b854140732d067149f97df8989efe7aa35f6"
+        },
+        {
+          "index": 2,
+          "file": "/img/radiologia/casos-raio-x/v1/variantes/arco-aortico-direito/02-cxr-right-aorta.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-variants/cxr_right_aorta.jpg?mtime=20210304211319&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 410,
+          "bytes": 165843,
+          "sha256": "5922ffdaa2d49212e5a5789e46e98e51f42650d2b91ddc2ebcf0985d1e52f7ea"
+        }
+      ]
+    },
+    {
+      "category": "variantes",
+      "slug": "fissura-azigos",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/variants/azygos_fissure_x-ray",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/variantes/fissura-azigos/01-azygous.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-variants/azygous.jpg?mtime=20210304211319&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 538,
+          "bytes": 219322,
+          "sha256": "5558ce2cc1b31885b405117700598ffcd346bddb57b7a0508c7843154340ff7e"
+        }
+      ]
+    },
+    {
+      "category": "variantes",
+      "slug": "fissura-acessoria",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/variants/accessory_fissure",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/variantes/fissura-acessoria/01-fissure.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-variants/fissure.jpg?mtime=20210304211319&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 518,
+          "bytes": 151060,
+          "sha256": "31e5ac31728cc47b3b8e73d3c7d733b9775c7e2dc52de10bce23061a559441c1"
+        }
+      ]
+    },
+    {
+      "category": "variantes",
+      "slug": "costela-cervical",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/variants/cervical_rib",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/variantes/costela-cervical/01-cervical-rib.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-variants/cervical_rib.jpg?mtime=20210304211319&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 260,
+          "bytes": 121771,
+          "sha256": "15842f9edd8246132d32422e00d17475908ee29d85b7b422d6e0582a78cd0bb9"
+        },
+        {
+          "index": 2,
+          "file": "/img/radiologia/casos-raio-x/v1/variantes/costela-cervical/02-cervical-rib-2.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-variants/cervical_rib_2.jpg?mtime=20210304211319&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 530,
+          "bytes": 139515,
+          "sha256": "565040645139ada35228e724d6d69bb9d48a195c23acecfc442a5a2061f2c9ac"
+        }
+      ]
+    },
+    {
+      "category": "variantes",
+      "slug": "variantes-costais",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/variants/bifid_rib",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/variantes/variantes-costais/01-bifid-rib.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-variants/bifid_rib.jpg?mtime=20210304211319&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 505,
+          "bytes": 128623,
+          "sha256": "a79e106cadccb6603295e37238fe609aa0d2b24440ee051ea0fdb05d98963f22"
+        },
+        {
+          "index": 2,
+          "file": "/img/radiologia/casos-raio-x/v1/variantes/variantes-costais/02-fused-ribs.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-variants/fused_ribs.jpg?mtime=20210304211319&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 495,
+          "bytes": 262158,
+          "sha256": "c0ad1f43cd9b056056df253738a0d535d55b74d92ca2bf495ed280883fdc9b75"
+        },
+        {
+          "index": 3,
+          "file": "/img/radiologia/casos-raio-x/v1/variantes/variantes-costais/03-hypoplastic-rib.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-variants/hypoplastic_rib.jpg?mtime=20210304211319&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 304,
+          "bytes": 132700,
+          "sha256": "e7e8334209804878fb2d0049ef4d5f89162ba55ed5c27761df69b6087d19b357"
+        }
+      ]
+    },
+    {
+      "category": "variantes",
+      "slug": "calcificacao-costocondral",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/variants/costochondral_calcification",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/variantes/calcificacao-costocondral/01-chondral-calcification.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-variants/chondral_calcification.jpg?mtime=20210304211319&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 407,
+          "bytes": 114833,
+          "sha256": "05bd560893c04016855c983adbe437020f60526982913d29ed21988b679c0a41"
+        }
+      ]
+    },
+    {
+      "category": "variantes",
+      "slug": "pectus-excavatum",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/variants/pectus_excavatum",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/variantes/pectus-excavatum/01-cxr-pectus-ap.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-variants/cxr_pectus_ap.jpg?mtime=20210304211319&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 402,
+          "bytes": 129949,
+          "sha256": "dc2159cf60a21bd89a2f2ede498b29ba4eab35c339c635cf2fe953cfdb1304b9"
+        },
+        {
+          "index": 2,
+          "file": "/img/radiologia/casos-raio-x/v1/variantes/pectus-excavatum/02-cxr-pectus-lat.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-variants/cxr_pectus_lat.jpg?mtime=20210304211319&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 600,
+          "bytes": 148528,
+          "sha256": "f67cb9a902d331f3897ee15590fe1de028c695521bd38331d9cb58cec9b35c6a"
+        },
+        {
+          "index": 3,
+          "file": "/img/radiologia/casos-raio-x/v1/variantes/pectus-excavatum/03-pectus-ct.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-variants/pectus_ct.jpg?mtime=20210304211319&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 271,
+          "bytes": 115303,
+          "sha256": "b1f1691ed7b4582c05fa05f973fb47901cc90cd6b78b7ac98de98a483eb6f529"
+        }
+      ]
+    },
+    {
+      "category": "variantes",
+      "slug": "escoliose",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/variants/scoliosis",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/variantes/escoliose/01-scoliosis-2.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-variants/scoliosis_2.jpg?mtime=20210304211319&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 433,
+          "bytes": 190619,
+          "sha256": "f147ffe490084b2f13e3fe3fb67192752f971d70d94f339c8ad67639c5627292"
+        }
+      ]
+    },
+    {
+      "category": "vias-aereas",
+      "slug": "fibrose-pos-radioterapia",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/airways/airways_b",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/vias-aereas/fibrose-pos-radioterapia/01-rad-fibrosis-tracheal-deviation.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-airways/rad_fibrosis_tracheal_deviation.jpg?mtime=20210304211314&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 429,
+          "bytes": 147700,
+          "sha256": "dd1dc0912c311b88f3da378c49a5593908a18e696319619b9d5b3617f4e7bae8"
+        }
+      ]
+    },
+    {
+      "category": "vias-aereas",
+      "slug": "pneumonectomia",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/airways/airways_c",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/vias-aereas/pneumonectomia/01-pneumonectomy.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-airways/pneumonectomy.jpg?mtime=20210304211314&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 436,
+          "bytes": 126725,
+          "sha256": "ca7c03af3dfaeb6c0f7e95abf73459a6e69c065bf9c885f138be917a2ee4d1a9"
+        }
+      ]
+    },
+    {
+      "category": "vias-aereas",
+      "slug": "grande-derrame-pleural",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/airways/airways_d",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/vias-aereas/grande-derrame-pleural/01-meso-pushed-trachea.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-airways/meso_pushed_trachea.jpg?mtime=20210304211314&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 412,
+          "bytes": 133720,
+          "sha256": "35f248c73a6ae611f040ff1833c767c575323e857d8e7e4e5507960d11e65ef4"
+        }
+      ]
+    },
+    {
+      "category": "vias-aereas",
+      "slug": "derrame-e-colapso",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/airways/airways_e",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/vias-aereas/derrame-e-colapso/01-copd-collapse-effusion.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-airways/copd_collapse_effusion.jpg?mtime=20210304211314&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 509,
+          "bytes": 150734,
+          "sha256": "c58ff246c5526e46146fc48edb70e86fb674c4a301f2bf1c0def6bf775428613"
+        }
+      ]
+    },
+    {
+      "category": "vias-aereas",
+      "slug": "colapso-lobo-inferior-direito",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/airways/airways_g",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/vias-aereas/colapso-lobo-inferior-direito/01-vol-loss-hilar-mass.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-airways/vol_loss_hilar_mass.jpg?mtime=20210304211314&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 423,
+          "bytes": 125539,
+          "sha256": "2fba2be96771e9d564027939b14e8f32bf903cad4df0e8764a9fa06bb1dd4c17"
+        }
+      ]
+    },
+    {
+      "category": "vias-aereas",
+      "slug": "colapso-lobo-inferior-esquerdo",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/airways/airways_h",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/vias-aereas/colapso-lobo-inferior-esquerdo/01-left-low-lobe-col.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-airways/left_low_lobe_col.jpg?mtime=20210304211314&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 408,
+          "bytes": 118682,
+          "sha256": "cf3090916eab832f7fc1e0d76448622665ec09a8f91486dffea249fed0d03bb6"
+        }
+      ]
+    },
+    {
+      "category": "vias-aereas",
+      "slug": "colapso-lobo-superior-direito",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/airways/airways_i",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/vias-aereas/colapso-lobo-superior-direito/01-rul-collapse.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-airways/rul_collapse.jpg?mtime=20210304211314&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 430,
+          "bytes": 99521,
+          "sha256": "8a4796dd4bc11a7201a9c54f10355b14d64fcb7635a03a9f478c5aee4214f9d9"
+        }
+      ]
+    },
+    {
+      "category": "vias-aereas",
+      "slug": "paralisia-frenica",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/airways/airways_j",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/vias-aereas/paralisia-frenica/01-vol-loss-mass-phrenic-palsy.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-airways/vol_loss_mass_phrenic_palsy.jpg?mtime=20210304211314&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 452,
+          "bytes": 153192,
+          "sha256": "ec5b6753754f15ad060af61057ef42b804fd129c9a386e0c9063afdd8848233d"
+        }
+      ]
+    },
+    {
+      "category": "vias-aereas",
+      "slug": "colapso-lobo-superior-esquerdo",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/airways/airways_k",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/vias-aereas/colapso-lobo-superior-esquerdo/01-lul-collapse-mass.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-airways/lul_collapse_mass.jpg?mtime=20210304211314&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 479,
+          "bytes": 117306,
+          "sha256": "e7bd7f71429e604318391c1342c250ac78e5065b0d8c814694cc9d77a8298c8b"
+        }
+      ]
+    },
+    {
+      "category": "dispositivos",
+      "slug": "pneumocistose-e-piercing",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/chestdev/chestdev_b",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/dispositivos/pneumocistose-e-piercing/01-pcp.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-devices/pcp.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 368,
+          "bytes": 117621,
+          "sha256": "b923220a95545e7c8538206ce67dd8dfb55d6faab70a517d93f0259508eff289"
+        }
+      ]
+    },
+    {
+      "category": "dispositivos",
+      "slug": "cateter-jugular-tunelizado",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/chestdev/chestdev_c",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/dispositivos/cateter-jugular-tunelizado/01-chemo-line.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-devices/chemo_line.jpg?mtime=20210304211315&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 480,
+          "bytes": 127682,
+          "sha256": "8dd87d58eb5092c358df1a7364321b221079874536af3fd4e3e330f09b6888c9"
+        }
+      ]
+    },
+    {
+      "category": "dispositivos",
+      "slug": "port-a-cath",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/chestdev/chestdev_d",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/dispositivos/port-a-cath/01-portocath.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-devices/portocath.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 423,
+          "bytes": 134541,
+          "sha256": "3d40837c358eeb9596937d58bd689f9b145623740488f67d85a47b4352f1a1e1"
+        }
+      ]
+    },
+    {
+      "category": "dispositivos",
+      "slug": "cateter-tunelizado",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/chestdev/chestdev_e",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/dispositivos/cateter-tunelizado/01-left-hickman.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-devices/left_hickman.jpg?mtime=20210304211315&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 474,
+          "bytes": 139364,
+          "sha256": "47a26d1384f46c0b7215605d81015337bb028d878a2e43694a513081b35ee217"
+        }
+      ]
+    },
+    {
+      "category": "dispositivos",
+      "slug": "stent-esofagico",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/chestdev/chestdev_f",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/dispositivos/stent-esofagico/01-oes-stent.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-devices/oes_stent.jpg?mtime=20210304211315&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 376,
+          "bytes": 113618,
+          "sha256": "3f3cc863ccce62cbe41a31a4627e678e67189b2072d47c6cf9e27257c6f56b1d"
+        }
+      ]
+    },
+    {
+      "category": "dispositivos",
+      "slug": "tubo-endotraqueal-mal-posicionado",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/chestdev/chestdev_g",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/dispositivos/tubo-endotraqueal-mal-posicionado/01-ett-mis.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-devices/ett_mis.jpg?mtime=20210304211315&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 385,
+          "bytes": 112862,
+          "sha256": "cf584131c0546c053f4fe817efa61b8792651b7d7ccda83cde50b0c2e6bb48a9"
+        }
+      ]
+    },
+    {
+      "category": "dispositivos",
+      "slug": "artefatos-de-cirurgia-cardiaca",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/chestdev/chestdev_h",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/dispositivos/artefatos-de-cirurgia-cardiaca/01-stern-wires.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-devices/stern_wires.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 427,
+          "bytes": 143665,
+          "sha256": "0448a166e7529afc7210e6f5feadcf5815df77009b0196a7225bbed3c8b3988e"
+        }
+      ]
+    },
+    {
+      "category": "dispositivos",
+      "slug": "protese-valvar-mitral",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/chestdev/chestdev_i",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/dispositivos/protese-valvar-mitral/01-mv-scout.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-devices/mv_scout.jpg?mtime=20210304211315&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 453,
+          "bytes": 167742,
+          "sha256": "3d85e6d8c2ab3c3c0c4e0b9b51c1679ba6f8b624537be17bbec9b20ac0c2124c"
+        }
+      ]
+    },
+    {
+      "category": "dispositivos",
+      "slug": "marcapasso-ocultando-massa",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/chestdev/chestdev_j",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/dispositivos/marcapasso-ocultando-massa/01-pace-one.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-devices/pace_one.jpg?mtime=20210304211315&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 419,
+          "bytes": 117961,
+          "sha256": "8edf507356bc76be2efe4b1386f5fd155e8c8a90065d3b2bebe97ffceb1b3776"
+        }
+      ]
+    },
+    {
+      "category": "dispositivos",
+      "slug": "marcapasso-com-massa-pulmonar",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/chestdev/chestdev_k",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/dispositivos/marcapasso-com-massa-pulmonar/01-pace-two.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-devices/pace_two.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 455,
+          "bytes": 143259,
+          "sha256": "0b6d8689279766d1cca74bd542ad144d595ce3f63da4deb00273d667a48a5239"
+        }
+      ]
+    },
+    {
+      "category": "dispositivos",
+      "slug": "eletrodo-de-marcapasso-fraturado",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/chestdev/chestdev_l",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/dispositivos/eletrodo-de-marcapasso-fraturado/01-pace-broken.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-devices/pace_broken.jpg?mtime=20210304211315&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 452,
+          "bytes": 112468,
+          "sha256": "30da4853a2ba8218af68a0bf4778fef004471679c2fd3d74b17f685e4a6fef01"
+        }
+      ]
+    },
+    {
+      "category": "pneumotorax",
+      "slug": "pneumotorax-hipertensivo",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/pneumothorax/pneumothorax_b",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/pneumotorax/pneumotorax-hipertensivo/01-cxr-gall-adb.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-pneumothorax/cxr_gall_adb.jpg?mtime=20210304211317&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 448,
+          "bytes": 109686,
+          "sha256": "1f4c7414bfc5610a58ffe4f1fa638c44d9e4203dba36376618e8816223c7080d"
+        }
+      ]
+    },
+    {
+      "category": "pneumotorax",
+      "slug": "tamanho-do-pneumotorax",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/pneumothorax/pneumothorax_c",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/pneumotorax/tamanho-do-pneumotorax/01-cxr-pneumothorax-large.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-pneumothorax/cxr_pneumothorax_large.jpg?mtime=20210304211317&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 481,
+          "bytes": 207439,
+          "sha256": "16cf6b01acec35c0741c82b2e1a11f13a212f59160a5cd2d01c1010793ddb0b5"
+        },
+        {
+          "index": 2,
+          "file": "/img/radiologia/casos-raio-x/v1/pneumotorax/tamanho-do-pneumotorax/02-cxr-gall-adc.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-pneumothorax/cxr_gall_adc.jpg?mtime=20210304211317&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 514,
+          "bytes": 239750,
+          "sha256": "5e62f7160908a7f6d9fa173ced4946278f85f58d8bfcdf5442bd3a2e08b41483"
+        },
+        {
+          "index": 3,
+          "file": "/img/radiologia/casos-raio-x/v1/pneumotorax/tamanho-do-pneumotorax/03-cxr-pneumothorax-large-2.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-pneumothorax/cxr_pneumothorax_large_2.jpg?mtime=20210304211317&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 548,
+          "bytes": 236440,
+          "sha256": "72e72b469de6daadca83281b8c2808b4b46625239ea73645c88f52ce3ba94745"
+        }
+      ]
+    },
+    {
+      "category": "pneumotorax",
+      "slug": "pneumotorax-sutil",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/pneumothorax/pneumothorax_d",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/pneumotorax/pneumotorax-sutil/01-cxr-gall-add.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-pneumothorax/cxr_gall_add.jpg?mtime=20210304211317&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 445,
+          "bytes": 133694,
+          "sha256": "8a07eb05abe548256f5c8b16be4ea0c19bb90ba488e0aebaf4d761ae93284d31"
+        }
+      ]
+    },
+    {
+      "category": "pneumotorax",
+      "slug": "grande-pneumotorax-tensao-inicial",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/pneumothorax/pneumothorax_e",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/pneumotorax/grande-pneumotorax-tensao-inicial/01-cxr-gall-ade.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-pneumothorax/cxr_gall_ade.jpg?mtime=20210304211317&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 400,
+          "bytes": 85234,
+          "sha256": "b2d0e658f853e01682946b8ec8d9866632a6f341773fc823603037e0ec0b1891"
+        }
+      ]
+    },
+    {
+      "category": "pneumotorax",
+      "slug": "dreno-toracico",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/pneumothorax/pneumothorax_f",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/pneumotorax/dreno-toracico/01-cxr-gall-adf.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-pneumothorax/cxr_gall_adf.jpg?mtime=20210304211317&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 357,
+          "bytes": 87019,
+          "sha256": "a16cd6e2da21e80f59ec10bcc268bb531f2baad38d47b911e2677f2eeb408f90"
+        }
+      ]
+    },
+    {
+      "category": "pneumotorax",
+      "slug": "enfisema-subcutaneo",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/pneumothorax/pneumothorax_g",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/pneumotorax/enfisema-subcutaneo/01-cxr-gall-adg.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-pneumothorax/cxr_gall_adg.jpg?mtime=20210304211317&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 391,
+          "bytes": 98355,
+          "sha256": "f48e5b5bfec6542ddc4d977a4ad695031b58b5da995555896220a2495f191264"
+        }
+      ]
+    },
+    {
+      "category": "pneumotorax",
+      "slug": "pneumotorax-iatrogenico",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/pneumothorax/pneumothorax_h",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/pneumotorax/pneumotorax-iatrogenico/01-cxr-gall-adh.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-pneumothorax/cxr_gall_adh.jpg?mtime=20210304211317&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 449,
+          "bytes": 90887,
+          "sha256": "40b5d6c1fafe924a7d27428e3f5aa26cf7e6978a7e1b921fd0386a9f2c43cccc"
+        }
+      ]
+    },
+    {
+      "category": "pneumotorax",
+      "slug": "pneumotorax-bilateral-na-dpoc",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/pneumothorax/pneumothorax_j",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/pneumotorax/pneumotorax-bilateral-na-dpoc/01-cxr-gall-adj.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-pneumothorax/cxr_gall_adj.jpg?mtime=20210304211317&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 450,
+          "bytes": 107416,
+          "sha256": "89f21ec608e616114e985502dfb701f5063bebd5b8103cecc66d7b2a4d58cfeb"
+        }
+      ]
+    },
+    {
+      "category": "pneumotorax",
+      "slug": "pseudopneumotorax-bolha",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/pneumothorax/pneumothorax_l",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/pneumotorax/pseudopneumotorax-bolha/01-cxr-gall-adl.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-pneumothorax/cxr_gall_adl.jpg?mtime=20210304211317&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 512,
+          "bytes": 96850,
+          "sha256": "963a7ca0dd85a86a220383761bf1b4cdf4ac59906be17b8701df42f8734b317b"
+        }
+      ]
+    },
+    {
+      "category": "cancer-pulmao",
+      "slug": "massa-versus-consolidacao",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/lung_cancer/mass_consolidation",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/cancer-pulmao/massa-versus-consolidacao/01-mass.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-lung-cancer/mass.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 473,
+          "bytes": 116343,
+          "sha256": "efbad569b1c47eea6d850cfd866d2295d766f3fa1e8f889fb7e4798eb8feff0f"
+        },
+        {
+          "index": 2,
+          "file": "/img/radiologia/casos-raio-x/v1/cancer-pulmao/massa-versus-consolidacao/02-nsclc-consolid.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-lung-cancer/nsclc_consolid.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 412,
+          "bytes": 106391,
+          "sha256": "94bf64738d238242ae4951695ad68831ed2c7911a1a3fae6b0c01fb36c5e9cae"
+        }
+      ]
+    },
+    {
+      "category": "cancer-pulmao",
+      "slug": "massa-hilar-e-derrame",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/lung_cancer/hilar_mass",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/cancer-pulmao/massa-hilar-e-derrame/01-hilar.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-lung-cancer/hilar.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 482,
+          "bytes": 125496,
+          "sha256": "9c181641bb82f61b81dff54a5b7bf2976a03ca34567e361a387274484b2a4c6c"
+        }
+      ]
+    },
+    {
+      "category": "cancer-pulmao",
+      "slug": "massa-cavitada",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/lung_cancer/cavitated_lung_mass",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/cancer-pulmao/massa-cavitada/01-nsclc-cavity.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-lung-cancer/nsclc_cavity.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 497,
+          "bytes": 135811,
+          "sha256": "130feb6a04324d5afd2b9f58134fcdf9c62c00bdd3f5dd70a7ddc19afd93a8cd"
+        },
+        {
+          "index": 2,
+          "file": "/img/radiologia/casos-raio-x/v1/cancer-pulmao/massa-cavitada/02-nsclc-cavity-ct.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-lung-cancer/nsclc_cavity_ct.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 440,
+          "bytes": 110655,
+          "sha256": "015498adf01aa1129dfb672d36601820e183156e3d02889059b570e95765cd64"
+        }
+      ]
+    },
+    {
+      "category": "cancer-pulmao",
+      "slug": "colapso-lobar-sinal-s-dourado",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/lung_cancer/lobar_collapse",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/cancer-pulmao/colapso-lobar-sinal-s-dourado/01-golden.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-lung-cancer/golden.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 487,
+          "bytes": 130714,
+          "sha256": "44ecb7dc32aaed0bba9b85b6504db2a5f80ff10c629a6419dc9a18730decfe32"
+        },
+        {
+          "index": 2,
+          "file": "/img/radiologia/casos-raio-x/v1/cancer-pulmao/colapso-lobar-sinal-s-dourado/02-lul-collapse.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-lung-cancer/lul_collapse.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 448,
+          "bytes": 124197,
+          "sha256": "bb11d7d08d556e2b8d3aa34a92ed1af1dbd82fe4a42bf2b90e1b33e1cbd1221b"
+        }
+      ]
+    },
+    {
+      "category": "cancer-pulmao",
+      "slug": "paralisia-do-nervo-frenico",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/lung_cancer/phrenic_nerve_palsy",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/cancer-pulmao/paralisia-do-nervo-frenico/01-phrenic-1.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-lung-cancer/phrenic_1.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 442,
+          "bytes": 60921,
+          "sha256": "e5c0406e960fe177763e50bcb529e4bfe201cf7f85471f51c11ef7865a7c9e6b"
+        },
+        {
+          "index": 2,
+          "file": "/img/radiologia/casos-raio-x/v1/cancer-pulmao/paralisia-do-nervo-frenico/02-phrenic-2.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-lung-cancer/phrenic_2.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 440,
+          "bytes": 78864,
+          "sha256": "cd39858d82d7ff7c09672e7f16351aacba4b79067de1b46f4333abd13570ab02"
+        }
+      ]
+    },
+    {
+      "category": "cancer-pulmao",
+      "slug": "destruicao-ossea",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/lung_cancer/bone_disease",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/cancer-pulmao/destruicao-ossea/01-rib-destroyed.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-lung-cancer/rib_destroyed.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 534,
+          "bytes": 151560,
+          "sha256": "ed87d70c1d35124b528c42e9e5402a09120d6978eff83ca3c713c04737ab3ed4"
+        },
+        {
+          "index": 2,
+          "file": "/img/radiologia/casos-raio-x/v1/cancer-pulmao/destruicao-ossea/02-rib-destroyed-ct.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-lung-cancer/rib_destroyed_ct.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 324,
+          "bytes": 80212,
+          "sha256": "c83e078b26a842538747fd9e6bc4827dc9b87f24c4249b045be1d981fda0c173"
+        }
+      ]
+    },
+    {
+      "category": "cancer-pulmao",
+      "slug": "resposta-a-radioterapia",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/lung_cancer/lung_cancer_radiotherapy",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/cancer-pulmao/resposta-a-radioterapia/01-radio-1.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-lung-cancer/radio_1.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 472,
+          "bytes": 127822,
+          "sha256": "ef16791285f016589096a3080e29708b8bc916b6389e85278ff72794c0fe830c"
+        },
+        {
+          "index": 2,
+          "file": "/img/radiologia/casos-raio-x/v1/cancer-pulmao/resposta-a-radioterapia/02-radio-2.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-lung-cancer/radio_2.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 496,
+          "bytes": 131287,
+          "sha256": "a1b8f5565f9df710d6ce8871d2f7b6f2f7d62842af4ce676dfde8e8e3f61c364"
+        },
+        {
+          "index": 3,
+          "file": "/img/radiologia/casos-raio-x/v1/cancer-pulmao/resposta-a-radioterapia/03-radio-3.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-lung-cancer/radio_3.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 493,
+          "bytes": 135475,
+          "sha256": "8c1e7b7701b3d22070a023aec16d8b719372773997f6dd1a4f97fda5a6ad5208"
+        }
+      ]
+    },
+    {
+      "category": "cancer-pulmao",
+      "slug": "progressao-da-doenca",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/lung_cancer/lung_cancer_progression",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/cancer-pulmao/progressao-da-doenca/01-progress-1.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-lung-cancer/progress_1.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 422,
+          "bytes": 104220,
+          "sha256": "7b4ffe47dff0e6291d0543bbceba6e8f40b3b862f6f9ccaff94f6c35b2d37cf9"
+        },
+        {
+          "index": 2,
+          "file": "/img/radiologia/casos-raio-x/v1/cancer-pulmao/progressao-da-doenca/02-progress-2.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-lung-cancer/progress_2.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 406,
+          "bytes": 107092,
+          "sha256": "b93fe31ab87bf272ffcdab49281c26d4a9811a8b5bdb702bd4ad933818a82419"
+        },
+        {
+          "index": 3,
+          "file": "/img/radiologia/casos-raio-x/v1/cancer-pulmao/progressao-da-doenca/03-progress-3.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-lung-cancer/progress_3.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 419,
+          "bytes": 107978,
+          "sha256": "cf81a941e29c2c7e4f183b07f2bed79811f2cdbffcc812d279263115d209274d"
+        },
+        {
+          "index": 4,
+          "file": "/img/radiologia/casos-raio-x/v1/cancer-pulmao/progressao-da-doenca/04-progress-4.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-lung-cancer/progress_4.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 430,
+          "bytes": 108210,
+          "sha256": "d3f3cad3facb5f453e14a9b0dd7af759b45ca5887e0ac69cf37ac3e752e6caec"
+        },
+        {
+          "index": 5,
+          "file": "/img/radiologia/casos-raio-x/v1/cancer-pulmao/progressao-da-doenca/05-progress-5.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-lung-cancer/progress_5.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 448,
+          "bytes": 102513,
+          "sha256": "9096e75a6100f2e8421a3f35796983b408d315157e378ded87e5402494e86e1d"
+        }
+      ]
+    },
+    {
+      "category": "cancer-pulmao",
+      "slug": "metastases-do-pulmao",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/lung_cancer/lung_cancer_mets",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/cancer-pulmao/metastases-do-pulmao/01-lung-ca-mets.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-lung-cancer/lung_ca_mets.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 424,
+          "bytes": 114364,
+          "sha256": "a4e51b76dfc580b5f24ec669c15c90fc9033ee0af7e904ea15fa5b5534f9b0e7"
+        },
+        {
+          "index": 2,
+          "file": "/img/radiologia/casos-raio-x/v1/cancer-pulmao/metastases-do-pulmao/02-nsclc-lung-rib.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-lung-cancer/nsclc_lung_rib.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 420,
+          "bytes": 100938,
+          "sha256": "a8e70cb6f4cc883459925af4c6679eb9ab8108b28d8267d9814c657a247b0e16"
+        },
+        {
+          "index": 3,
+          "file": "/img/radiologia/casos-raio-x/v1/cancer-pulmao/metastases-do-pulmao/03-nsclc-lung-rib-ct.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-lung-cancer/nsclc_lung_rib_ct.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 502,
+          "bytes": 88328,
+          "sha256": "ce22f33222baa2171fd5149c309e6ffed9286ad0cc0d86bfc782ffefb9f994a3"
+        }
+      ]
+    },
+    {
+      "category": "cancer-pulmao",
+      "slug": "metastases-para-o-pulmao",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/lung_cancer/lung_cancer_metastases",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/cancer-pulmao/metastases-para-o-pulmao/01-mets-cholangio.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-lung-cancer/mets_cholangio.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 514,
+          "bytes": 154560,
+          "sha256": "103b1f78bad616a935ee0dedc56b853859a49a5a5e03a2e655d3d5d4e6ff36b3"
+        },
+        {
+          "index": 2,
+          "file": "/img/radiologia/casos-raio-x/v1/cancer-pulmao/metastases-para-o-pulmao/02-rcc-cannonball-mets.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-lung-cancer/rcc_cannonball_mets.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 403,
+          "bytes": 97577,
+          "sha256": "685800241e14c8809417b59fa1dd48274e3454a3f82c92bf957f6a41c005899c"
+        }
+      ]
+    },
+    {
+      "category": "cancer-pulmao",
+      "slug": "armadilha-massa-retrocardiaca",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/lung_cancer/lung_cancer_xray_pitfall_1",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/cancer-pulmao/armadilha-massa-retrocardiaca/01-behind-heart.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-lung-cancer/behind_heart.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 459,
+          "bytes": 112263,
+          "sha256": "ba47336b33bae96d1b9d67a6a2bb00e615b092163fbde957869d9e01e92847da"
+        },
+        {
+          "index": 2,
+          "file": "/img/radiologia/casos-raio-x/v1/cancer-pulmao/armadilha-massa-retrocardiaca/02-behind-heart-ct.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-lung-cancer/behind_heart_ct.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 389,
+          "bytes": 103165,
+          "sha256": "b383dbf0c39e7d89f9e92ff62b5a2f4a22d26be7275ee9ae28eb8af8b7e2eebf"
+        }
+      ]
+    },
+    {
+      "category": "cancer-pulmao",
+      "slug": "armadilha-massa-subdiafragmatica",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/lung_cancer/lung_cancer_xray_pitfall_2",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/cancer-pulmao/armadilha-massa-subdiafragmatica/01-below-diaph-1.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-lung-cancer/below_diaph_1.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 511,
+          "bytes": 126930,
+          "sha256": "73d15424045280fc3e5cf2dc9cd8e9d972813f786c781ad375edfb2ebea1c634"
+        },
+        {
+          "index": 2,
+          "file": "/img/radiologia/casos-raio-x/v1/cancer-pulmao/armadilha-massa-subdiafragmatica/02-below-diaph-2.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-lung-cancer/below_diaph_2.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 513,
+          "bytes": 121365,
+          "sha256": "e2e6c465ee5716e02ce6946a05c11e3893b9c948132bc6374a046dd2fd1ed9aa"
+        },
+        {
+          "index": 3,
+          "file": "/img/radiologia/casos-raio-x/v1/cancer-pulmao/armadilha-massa-subdiafragmatica/03-below-diaph-3.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-lung-cancer/below_diaph_3.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 522,
+          "bytes": 125091,
+          "sha256": "e5064d2984a3e0aa36ac96c8aaa7347704c3d2ae61fd214ec1a395902f4a124e"
+        }
+      ]
+    },
+    {
+      "category": "mediastino",
+      "slug": "massa-mediastinal-anterior",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/mediastinum_hilum/anterior_mediastinum",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/mediastino/massa-mediastinal-anterior/01-ant-mass.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-mediastinum/ant_mass.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 471,
+          "bytes": 134989,
+          "sha256": "919aa4561b7bc16acfa9585ef44ffb02d4ec52d186ad4d773b53ebda1acca181"
+        },
+        {
+          "index": 2,
+          "file": "/img/radiologia/casos-raio-x/v1/mediastino/massa-mediastinal-anterior/02-goitre.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-mediastinum/goitre.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 444,
+          "bytes": 126879,
+          "sha256": "37fd040e5b40349fdf2dc72179ee93a3cc550027447872eddbe3a83b1da41704"
+        }
+      ]
+    },
+    {
+      "category": "mediastino",
+      "slug": "massa-mediastinal-superior",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/mediastinum_hilum/mediastinal_mass",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/mediastino/massa-mediastinal-superior/01-mid-mass.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-mediastinum/mid_mass.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 523,
+          "bytes": 118639,
+          "sha256": "0f0317ccb54c45cb5db81561d28582d19785c68490129285a837f70c8ecab357"
+        }
+      ]
+    },
+    {
+      "category": "mediastino",
+      "slug": "massa-mediastinal-posterior",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/mediastinum_hilum/retrocardiac_mass",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/mediastino/massa-mediastinal-posterior/01-post-mass.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-mediastinum/post_mass.jpg?mtime=20210304211317&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 440,
+          "bytes": 109692,
+          "sha256": "125e1c6b560f937a3882aa9319ba32981588d01b1d9121505c2ef2ab2cc5c7f2"
+        }
+      ]
+    },
+    {
+      "category": "mediastino",
+      "slug": "aumento-hilar-unilateral",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/mediastinum_hilum/unilateral_hilar_enlargement",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/mediastino/aumento-hilar-unilateral/01-hilar-mass.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-mediastinum/hilar_mass.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 505,
+          "bytes": 108673,
+          "sha256": "737d2d64947a44027f18d359d5fb0b7932669ecde22f010c8257019aa1b476d2"
+        }
+      ]
+    },
+    {
+      "category": "mediastino",
+      "slug": "aumento-hilar-bilateral",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/mediastinum_hilum/bilateral_hilar_enlargement",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/mediastino/aumento-hilar-bilateral/01-bhl.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-mediastinum/bhl.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 421,
+          "bytes": 107383,
+          "sha256": "cc98a8e71703d73665786518e94c5df79160ae2753dbafafeef97dc0d81a0ef0"
+        },
+        {
+          "index": 2,
+          "file": "/img/radiologia/casos-raio-x/v1/mediastino/aumento-hilar-bilateral/02-bhl-2.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-mediastinum/bhl_2.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 445,
+          "bytes": 107238,
+          "sha256": "987fb806784b89f57e8a3a391ee9232cc83090bdcd024abb927048daff0de3d3"
+        }
+      ]
+    },
+    {
+      "category": "mediastino",
+      "slug": "fibrose-pos-radioterapia-mediastinal",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/mediastinum_hilum/radiation_fibrosis",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/mediastino/fibrose-pos-radioterapia-mediastinal/01-rad-fibrosis.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-mediastinum/rad_fibrosis.jpg?mtime=20210304211317&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 441,
+          "bytes": 112742,
+          "sha256": "cab9a5eca9c79df15414df368f13e7464d6d461313b7676819575dc942f7f007"
+        }
+      ]
+    },
+    {
+      "category": "mediastino",
+      "slug": "aumento-da-aorta",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/mediastinum_hilum/thoracic_aneurysm",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/mediastino/aumento-da-aorta/01-aorta-desc.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-mediastinum/aorta_desc.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 497,
+          "bytes": 117397,
+          "sha256": "4f8d8107ff3c0bf80825e769e3535fd444710996be91fb28037743911ed87fa4"
+        },
+        {
+          "index": 2,
+          "file": "/img/radiologia/casos-raio-x/v1/mediastino/aumento-da-aorta/02-aorta-asc.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-mediastinum/aorta_asc.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 436,
+          "bytes": 97776,
+          "sha256": "2941948662fffd3cd892b9f01185c06e5c86dd6674acd024f9793b7820ac96cf"
+        }
+      ]
+    },
+    {
+      "category": "mediastino",
+      "slug": "desenrolamento-da-aorta",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/mediastinum_hilum/unfolded_aorta",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/mediastino/desenrolamento-da-aorta/01-aorta-unfold.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-mediastinum/aorta_unfold.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 440,
+          "bytes": 117952,
+          "sha256": "152eb4f20a2738a55baba3ee0746881db88512a4d65512df964267d2f2a6aeb9"
+        }
+      ]
+    },
+    {
+      "category": "mediastino",
+      "slug": "coarctacao-da-aorta",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/mediastinum_hilum/coarctation",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/mediastino/coarctacao-da-aorta/01-coarct-1.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-mediastinum/coarct_1.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 449,
+          "bytes": 107649,
+          "sha256": "9b02215a2b6e75bcafba14271239b5a2ec88d36718cf6c266994d0e2829aa7ae"
+        },
+        {
+          "index": 2,
+          "file": "/img/radiologia/casos-raio-x/v1/mediastino/coarctacao-da-aorta/02-coarct-2.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-mediastinum/coarct_2.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 482,
+          "bytes": 111654,
+          "sha256": "c97478aeadaddb4c307f79f8e70575c95b4a02c10a4c2b65126d6628e1e05947"
+        },
+        {
+          "index": 3,
+          "file": "/img/radiologia/casos-raio-x/v1/mediastino/coarctacao-da-aorta/03-coarct-3.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-mediastinum/coarct_3.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 509,
+          "bytes": 131117,
+          "sha256": "58231121eccbe16d1c9f030359f097644497530460426963fb4e544358955f29"
+        }
+      ]
+    },
+    {
+      "category": "mediastino",
+      "slug": "hernia-hiatal",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/mediastinum_hilum/hiatus_hernia",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/mediastino/hernia-hiatal/01-hernia-1.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-mediastinum/hernia_1.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 443,
+          "bytes": 129620,
+          "sha256": "a912b946d83e06e1fa78760f88a23eb5119cba5bc435b5c511fcd2b0b6be2644"
+        },
+        {
+          "index": 2,
+          "file": "/img/radiologia/casos-raio-x/v1/mediastino/hernia-hiatal/02-hernia-2.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-mediastinum/hernia_2.jpg?mtime=20210304211316&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 452,
+          "bytes": 125544,
+          "sha256": "2e87c848b784faede105bc4147cb5635b714fc64d22156f1b43c1ddd3efb949c"
+        }
+      ]
+    },
+    {
+      "category": "mediastino",
+      "slug": "pneumomediastino",
+      "sourcePage": "https://www.radiologymasterclass.co.uk/gallery/chest/mediastinum_hilum/pneumomediastinum",
+      "images": [
+        {
+          "index": 1,
+          "file": "/img/radiologia/casos-raio-x/v1/mediastino/pneumomediastino/01-pneumomediatinum.jpg",
+          "sourceUrl": "https://www.radiologymasterclass.co.uk/images/chest-images/gallery-mediastinum/pneumomediatinum.jpg?mtime=20210304211317&focal=none",
+          "spriteWidth": 900,
+          "frameWidth": 450,
+          "height": 531,
+          "bytes": 140498,
+          "sha256": "32d1615d4f1f466e1dcc9dabba94730d3b0020aaae4140f075ad4ae0ea19336c"
+        }
+      ]
+    }
+  ]
+}

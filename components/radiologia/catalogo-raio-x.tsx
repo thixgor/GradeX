@@ -5,6 +5,7 @@ import Link from 'next/link'
 import {
   ArrowLeft,
   ArrowRight,
+  BookOpenCheck,
   ChevronRight,
   CornerDownLeft,
   ImageIcon,
@@ -110,6 +111,17 @@ export function CatalogoRaioX({ catalogo }: { catalogo: Catalogo }) {
       />
 
       <main className="container mx-auto max-w-6xl px-4 pb-16 pt-7 sm:pt-9">
+        {!buscando && !regiaoAtual && (
+          <Link href="/manual-clinico/radiologia/raio-x/casos" className="group mb-8 grid gap-4 overflow-hidden rounded-2xl border border-sky-500/25 bg-gradient-to-br from-sky-500/[0.09] via-card to-violet-500/[0.07] p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-sky-500/50 hover:shadow-lg hover:shadow-sky-500/10 sm:grid-cols-[auto_1fr_auto] sm:items-center sm:p-6">
+            <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-sky-500 text-white shadow-lg shadow-sky-500/20"><BookOpenCheck className="h-5 w-5" /></span>
+            <span>
+              <span className="block text-[10px] font-black uppercase tracking-widest text-sky-600 dark:text-sky-400">Nova seção · tórax</span>
+              <strong className="mt-1 block font-heading text-lg font-semibold sm:text-xl">Casos e alterações no Raio-X</strong>
+              <span className="mt-1.5 block max-w-3xl text-xs leading-relaxed text-muted-foreground sm:text-sm">Cardiomegalia, edema pulmonar, pneumotórax, câncer, mediastino, colapsos, variantes e dispositivos em filmes limpos e marcados, com comparação interativa.</span>
+            </span>
+            <span className="inline-flex items-center gap-1 text-xs font-bold text-sky-600 dark:text-sky-400">Abrir casos <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" /></span>
+          </Link>
+        )}
         {buscando ? (
           <ResultadosBusca
             termo={termo}
