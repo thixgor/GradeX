@@ -15,9 +15,26 @@
  *
  * Resultado: revisitas e navegação dentro da PWA pegam JS/CSS/fontes do disco,
  * sem rede — e nenhum risco de conteúdo desatualizado.
+ *
+ * Uma exceção entrou depois, por causa do app instalado no Android: a
+ * NAVEGAÇÃO passa pelo SW para poder cair na página offline quando não há
+ * rede (dentro de um app em tela cheia, a tela de erro do navegador parece
+ * defeito nosso). O custo disso é pago com navigation preload — o browser
+ * dispara a requisição em paralelo com a subida do SW —, então a regra de
+ * "não atrapalhar o caminho normal" continua valendo na prática.
  */
 
-const CACHE_VERSION = 'da-static-v1'
+const CACHE_VERSION = 'da-static-v2'
+
+// Página mostrada quando a navegação falha por falta de rede. Ela existe por
+// causa do app instalado: no navegador, cair na tela de erro é normal; dentro
+// de um app que abre em tela cheia, a tela de dinossauro do Chrome parece o
+// app ter quebrado. Guardamos uma cópia no install e servimos essa cópia.
+const PAGINA_OFFLINE = '/offline'
+
+// Guardados junto com a página offline: sem rede, o que não estiver no cache
+// não aparece. O ícone é o que faz a tela continuar sendo o DomineAqui.
+const ASSETS_DA_PAGINA_OFFLINE = [PAGINA_OFFLINE, '/icon-192.png']
 
 // Só caminhos cujo conteúdo é imutável para uma dada URL.
 function isImmutableAsset(url) {
@@ -29,7 +46,19 @@ function isImmutableAsset(url) {
   )
 }
 
-self.addEventListener('install', () => {
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    (async () => {
+      const cache = await caches.open(CACHE_VERSION)
+      await Promise.all(
+        ASSETS_DA_PAGINA_OFFLINE.map((caminho) =>
+          // Um a um, com catch individual: sem rede na hora do install,
+          // seguimos sem fallback em vez de impedir o SW de ativar.
+          cache.add(new Request(caminho, { cache: 'reload' })).catch(() => {})
+        )
+      )
+    })()
+  )
   // Ativa a nova versão imediatamente, sem esperar abas antigas fecharem.
   self.skipWaiting()
 })
@@ -37,6 +66,19 @@ self.addEventListener('install', () => {
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     (async () => {
+      // Navigation preload: o browser dispara a requisição da navegação EM
+      // PARALELO com a subida do service worker. É o que permite ter fallback
+      // offline sem devolver ao usuário a latência de acordar o SW a cada
+      // navegação — a preocupação que motivou este arquivo a não interceptar
+      // navegação nenhuma até aqui.
+      if (self.registration.navigationPreload) {
+        try {
+          await self.registration.navigationPreload.enable()
+        } catch {
+          /* navegador sem suporte: cai no fetch normal */
+        }
+      }
+
       // Remove caches de versões anteriores, preservando o atual.
       const keys = await caches.keys()
       await Promise.all(
@@ -60,9 +102,46 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  // Outra origem, ou não é asset imutável → não intercepta. Sem respondWith o
-  // navegador trata a requisição normalmente, sem custo de service worker.
   if (url.origin !== self.location.origin) return
+
+  // Navegação (abrir/trocar de página): vai para a rede como sempre, usando a
+  // resposta que o navigation preload já começou a baixar. A única diferença é
+  // o `catch`: sem rede, entregamos a página offline em vez da tela de erro.
+  if (request.mode === 'navigate') {
+    event.respondWith(
+      (async () => {
+        try {
+          const preload = await event.preloadResponse
+          if (preload) return preload
+          return await fetch(request)
+        } catch {
+          const cache = await caches.open(CACHE_VERSION)
+          const offline = await cache.match(PAGINA_OFFLINE)
+          if (offline) return offline
+          throw new Error('offline sem página de fallback')
+        }
+      })()
+    )
+    return
+  }
+
+  // O ícone da página offline: rede primeiro (ele não é versionado por URL,
+  // então não pode virar cache-first), cache só quando a rede falha. Sem isto,
+  // a tela offline abriria com o ícone quebrado mesmo tendo a cópia guardada.
+  if (ASSETS_DA_PAGINA_OFFLINE.includes(url.pathname)) {
+    event.respondWith(
+      fetch(request).catch(async () => {
+        const cache = await caches.open(CACHE_VERSION)
+        const guardado = await cache.match(url.pathname)
+        if (guardado) return guardado
+        throw new Error('asset offline indisponível')
+      })
+    )
+    return
+  }
+
+  // Não é asset imutável → não intercepta. Sem respondWith o navegador trata a
+  // requisição normalmente, sem custo de service worker.
   if (!isImmutableAsset(url)) return
 
   event.respondWith(
