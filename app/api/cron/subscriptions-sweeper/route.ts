@@ -5,6 +5,8 @@ import { getPaymentProvider } from '@/lib/payments'
 import { mapMpPreapprovalStatus } from '@/lib/payments/mercado-pago/status-mapper'
 import { audit } from '@/lib/payments/audit'
 import { sendSubscriptionCancelledEmail } from '@/lib/mail'
+import { revokePlusClaims } from '@/lib/plus-claims'
+import { PLUS_ACCOUNT_TYPES } from '@/lib/account-tier'
 import type { SubscriptionRecord, User, AccountType } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -28,7 +30,7 @@ export async function GET(request: NextRequest) {
   const usersCol = db.collection<User>('users')
 
   const now = new Date()
-  const stats = { reconciled: 0, expired: 0, errors: 0 }
+  const stats = { reconciled: 0, expired: 0, claimsRevoked: 0, errors: 0 }
 
   // 1) Reconciliar todas as ativas/pendentes (best-effort, em lotes)
   const candidates = await subsCol
@@ -97,18 +99,75 @@ export async function GET(request: NextRequest) {
       )
       stats.expired++
 
+      // O cargo caiu: os materiais resgatados pela assinatura caem junto. Ficam
+      // guardados como 'plus_revoked' e voltam inteiros se a pessoa renovar.
+      // Compra avulsa não é tocada.
+      const revoked = await revokePlusClaims(sub.userId, 'subscription_period_ended', db)
+      stats.claimsRevoked += revoked.count
+
       await audit({
         action: 'role_revoked',
         targetUserId: sub.userId,
         resourceType: 'subscription',
         resourceId: sub.providerSubscriptionId,
-        metadata: { reason: 'period_ended', byCron: true },
+        metadata: { reason: 'period_ended', byCron: true, plusClaimsRevoked: revoked.count },
       })
 
       sendSubscriptionCancelledEmail(user.email, user.name).catch(() => {})
     } catch (err) {
       stats.errors++
       console.error('[cron-subs] expire fail', sub.providerSubscriptionId, err)
+    }
+  }
+
+  // 3) Rede de segurança: contas com Plus+ vencido que não têm registro de
+  //    assinatura correspondente (plano avulso, key com prazo, grant do admin).
+  //    Antes isso só era corrigido no próximo login — quem parava de usar o site
+  //    ficava com o cargo e com os materiais resgatados por tempo indeterminado.
+  const staleCandidates = await usersCol
+    .find({
+      accountType: { $in: [...PLUS_ACCOUNT_TYPES] },
+      premiumExpiresAt: { $lt: now },
+    })
+    .limit(500)
+    .toArray()
+
+  for (const staleUser of staleCandidates) {
+    const userId = String(staleUser._id)
+    try {
+      // Assinatura recorrente ativa manda mais que a data: o webhook de
+      // renovação pode ter atrasado.
+      const activeSub = await subsCol.findOne({
+        userId,
+        status: 'authorized',
+        cancelAtPeriodEnd: { $ne: true },
+      })
+      if (activeSub) continue
+
+      await usersCol.updateOne(
+        { _id: staleUser._id as any },
+        {
+          $set: {
+            accountType: 'gratuito' as AccountType,
+            premiumPlanType: undefined as any,
+            premiumExpiresAt: undefined as any,
+            mercadoPagoPreapprovalId: undefined as any,
+          },
+        }
+      )
+      const revoked = await revokePlusClaims(userId, 'plan_expired', db)
+      stats.expired++
+      stats.claimsRevoked += revoked.count
+
+      await audit({
+        action: 'role_revoked',
+        targetUserId: userId,
+        resourceType: 'plan',
+        metadata: { reason: 'premium_expired', byCron: true, plusClaimsRevoked: revoked.count },
+      })
+    } catch (err) {
+      stats.errors++
+      console.error('[cron-subs] expirar plano vencido falhou', userId, err)
     }
   }
 

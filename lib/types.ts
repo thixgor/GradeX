@@ -1673,7 +1673,12 @@ export interface MaterialPurchase {
   provider?: 'mercado_pago'
   providerOrderId?: string    // payment_orders._id
   providerPaymentId?: string  // payments.providerPaymentId
-  status: 'pending' | 'completed' | 'refunded'
+  /**
+   * `'plus_revoked'`: resgate do Plus+ suspenso porque a assinatura caiu. O
+   * registro fica guardado para a renovação devolvê-lo — ver `lib/plus-claims`.
+   * Só ocorre em documentos com `source: 'plus'`; compra avulsa nunca chega aqui.
+   */
+  status: 'pending' | 'completed' | 'refunded' | 'plus_revoked'
   purchasedAt: Date
   refundedAt?: Date
   /**
@@ -1685,6 +1690,12 @@ export interface MaterialPurchase {
   source?: 'purchase' | 'plus'
   /** Quando o item foi resgatado pela assinatura (source = 'plus'). */
   claimedAt?: Date
+  /** Quando o resgate foi suspenso pela queda do Plus+. */
+  plusRevokedAt?: Date
+  /** Motivo da suspensão (expiração, cancelamento, reembolso, admin). */
+  plusRevokedReason?: string
+  /** Quando o resgate voltou por renovação do Plus+. */
+  plusRestoredAt?: Date
 }
 
 // ─── Loja física (produtos físicos / impressos) ──────────────────

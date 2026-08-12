@@ -7,6 +7,7 @@ import { checkRateLimit } from '@/lib/rate-limit'
 import { audit } from '@/lib/payments/audit'
 import { isPlusAccount, PLUS_LABEL } from '@/lib/account-tier'
 import { checkPlusDownloadAllowance, recordPlusDownload } from '@/lib/plus-guard'
+import { PLUS_CLAIM_REVOKED_STATUS } from '@/lib/plus-claims'
 import type { MaterialPurchase, User } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -29,6 +30,10 @@ export const runtime = 'nodejs'
  * O registro criado é um `material_purchases` com `price: 0` e
  * `source: 'plus'` — reaproveita todo o caminho de acesso já existente
  * (leitor, download, "Meus materiais") sem duplicar lógica.
+ *
+ * O resgate vale enquanto a assinatura valer: quando o Plus+ cai, o registro é
+ * suspenso (`status: 'plus_revoked'`) e volta na renovação — ver
+ * `lib/plus-claims`. Compra avulsa é vitalícia e não passa por aqui.
  */
 const Schema = z.object({
   itemType: z.enum(['material', 'package']),
@@ -96,13 +101,33 @@ export async function POST(request: NextRequest) {
     userId: session.userId,
     itemType,
     itemId,
-    status: 'completed',
-  })
-  if (existing) {
+    status: { $in: ['completed', PLUS_CLAIM_REVOKED_STATUS] },
+  } as any)
+  if (existing?.status === 'completed') {
     return NextResponse.json({
       success: true,
       alreadyOwned: true,
       message: 'Você já tem este item na sua conta.',
+    })
+  }
+
+  // Resgate de uma assinatura anterior, suspenso quando ela caiu. A renovação
+  // já devolve tudo automaticamente; este caminho cobre o registro que tenha
+  // escapado. Reativa sem consumir cota: o conteúdo já saiu da plataforma uma
+  // vez, não é uma extração nova.
+  if (existing) {
+    await db.collection<MaterialPurchase>('material_purchases').updateOne(
+      { _id: existing._id as any },
+      {
+        $set: { status: 'completed', plusRestoredAt: new Date() },
+        $unset: { plusRevokedAt: '', plusRevokedReason: '' },
+      } as any,
+    )
+    return NextResponse.json({
+      success: true,
+      claimed: true,
+      restored: true,
+      message: `Resgate reativado com o ${PLUS_LABEL}. O item voltou para Meus materiais.`,
     })
   }
 

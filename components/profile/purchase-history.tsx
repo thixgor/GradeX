@@ -51,7 +51,12 @@ export function PurchaseHistory({
     setGeneratingReceipt(true)
     try {
       const { generatePurchaseReceiptPDF, downloadPDF } = await import('@/lib/pdf-generator')
-      const blob = await generatePurchaseReceiptPDF(purchases, { id: userId, name: userName, email: userEmail })
+      // Resgate suspenso não entra no comprovante: no momento não é um item da
+      // conta (volta se o Plus+ for renovado).
+      const blob = await generatePurchaseReceiptPDF(
+        purchases.filter((p: any) => !p.plusRevoked),
+        { id: userId, name: userName, email: userEmail },
+      )
       downloadPDF(blob, `Comprovante-DomineAqui-${new Date().toISOString().slice(0, 10)}.pdf`, {
         type: 'exam_pdf',
         resourceId: userId,
@@ -107,7 +112,14 @@ export function PurchaseHistory({
               )}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium">{p.itemTitle}</p>
+              <p className={cn('truncate text-sm font-medium', p.plusRevoked && 'text-muted-foreground')}>
+                {p.itemTitle}
+              </p>
+              {p.plusRevoked && (
+                <p className="mt-0.5 text-[11px] font-medium text-amber-600 dark:text-amber-400">
+                  Resgate do Plus+ suspenso — renove a assinatura para reativar
+                </p>
+              )}
               <p className="mt-0.5 text-xs text-muted-foreground">
                 {new Date(p.purchasedAt).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' })}
                 {' · '}

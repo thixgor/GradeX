@@ -13,7 +13,8 @@ import {
   logSerialKeySecurity,
   maskSerialKey,
 } from '@/lib/serial-keys'
-import { PLUS_TIER } from '@/lib/account-tier'
+import { PLUS_TIER, isPlusAccount } from '@/lib/account-tier'
+import { restorePlusClaims } from '@/lib/plus-claims'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -222,6 +223,14 @@ export async function POST(request: NextRequest) {
 
     if (updateResult.matchedCount === 0) {
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
+    }
+
+    // Key legada que concede Plus+: devolve os resgates suspensos de uma
+    // assinatura anterior.
+    if (isPlusAccount(accountType)) {
+      await restorePlusClaims(session.userId, 'serial_key_activated', db).catch(err =>
+        console.error('[serial-keys] restaurar resgates Plus+ falhou:', err)
+      )
     }
 
     await keysCollection.updateOne(

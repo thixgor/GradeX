@@ -3,6 +3,7 @@ import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
 import { User } from '@/lib/types'
 import { ObjectId } from 'mongodb'
+import { revokePlusClaims } from '@/lib/plus-claims'
 
 export const dynamic = 'force-dynamic'
 
@@ -35,6 +36,13 @@ export async function POST(request: NextRequest) {
         { status: 404 }
       )
     }
+
+    // A conta virou gratuita agora: os materiais resgatados pelo Plus+ são
+    // suspensos junto. Continuam guardados e voltam se a pessoa reassinar.
+    // Materiais comprados avulso permanecem na conta.
+    await revokePlusClaims(session.userId, 'subscription_cancelled_by_user', db).catch(err =>
+      console.error('[cancel-subscription] revogar resgates Plus+ falhou:', err)
+    )
 
     return NextResponse.json({
       success: true,

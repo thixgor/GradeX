@@ -9,6 +9,7 @@ import { audit } from '@/lib/payments/audit'
 import { getRequestAnalyticsMeta, recordSubscriptionCheckoutEvent } from '@/lib/analytics'
 import { DEFAULT_PAYMENT_METHODS } from '@/lib/payment-methods'
 import { checkRefundCooldown } from '@/lib/plus-guard'
+import { restorePlusClaims } from '@/lib/plus-claims'
 import { normalizeAccountType } from '@/lib/account-tier'
 import type { SubscriptionRecord, User } from '@/lib/types'
 
@@ -159,12 +160,20 @@ export async function POST(request: NextRequest) {
       resourceId: sub.providerSubscriptionId,
       metadata: { planId, amount, months },
     })
+    // Reassinou: os materiais resgatados numa assinatura anterior, suspensos
+    // quando ela caiu, voltam para a conta.
+    const restoredClaims = await restorePlusClaims(session.userId, 'subscription_created', db)
+      .catch(err => {
+        console.error('[subscriptions] restaurar resgates Plus+ falhou:', err)
+        return { count: 0, items: [] }
+      })
+
     await audit({
       action: 'role_granted',
       targetUserId: session.userId,
       resourceType: 'plan',
       resourceId: planId,
-      metadata: { source: 'subscription' },
+      metadata: { source: 'subscription', plusClaimsRestored: restoredClaims.count },
     })
     await recordSubscriptionCheckoutEvent('payment_approved', subDoc as SubscriptionRecord, {
       name: session.name,

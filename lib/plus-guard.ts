@@ -436,14 +436,14 @@ export async function applyPlusRefundClawback(
   userId: string,
   reason: string,
   db?: Db,
-): Promise<{ revoked: boolean; downloadsInWindow: number }> {
+): Promise<{ revoked: boolean; downloadsInWindow: number; claimsRevoked: number }> {
   const database = db ?? (await getDb())
   const settings = await getPlusGuardSettings(database)
-  if (!ObjectId.isValid(userId)) return { revoked: false, downloadsInWindow: 0 }
+  if (!ObjectId.isValid(userId)) return { revoked: false, downloadsInWindow: 0, claimsRevoked: 0 }
 
   const users = database.collection<User>('users')
   const user = await users.findOne({ _id: new ObjectId(userId) as any })
-  if (!user) return { revoked: false, downloadsInWindow: 0 }
+  if (!user) return { revoked: false, downloadsInWindow: 0, claimsRevoked: 0 }
 
   const downloadsInWindow = await database
     .collection<PlusDownloadLog>('plus_download_logs')
@@ -454,7 +454,8 @@ export async function applyPlusRefundClawback(
       { _id: new ObjectId(userId) as any },
       { $set: { plusRefundedAt: new Date() }, $inc: { plusRefundCount: 1 } },
     )
-    return { revoked: false, downloadsInWindow }
+    // `revokeOnRefund` desligado: o cargo fica, então os resgates ficam também.
+    return { revoked: false, downloadsInWindow, claimsRevoked: 0 }
   }
 
   await users.updateOne(
@@ -480,7 +481,16 @@ export async function applyPlusRefundClawback(
     { $set: { status: 'cancelled', cancelReason: `refund:${reason}`, updatedAt: new Date() } },
   )
 
-  return { revoked: true, downloadsInWindow }
+  // Devolveu o dinheiro, devolve o acervo: os materiais resgatados pela
+  // assinatura são suspensos. Compra avulsa não entra nisso — é receita própria,
+  // estornada (se for o caso) pelo fluxo de reembolso do próprio material.
+  const { revokePlusClaims } = await import('./plus-claims')
+  const claims = await revokePlusClaims(userId, `refund:${reason}`, database).catch(err => {
+    console.error('[plus-guard] revogar resgates no clawback falhou:', err)
+    return { count: 0, items: [] }
+  })
+
+  return { revoked: true, downloadsInWindow, claimsRevoked: claims.count }
 }
 
 /**
