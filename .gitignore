@@ -58,3 +58,7 @@ public/Manual-Histologia/derivadas-webp/
 # regenerar os dados sem ele quando o CDN está servindo WebP — ver a guarda em
 # scripts/histologia/construir-dados.mjs.
 public/Manual-Histologia/dados/manifesto-derivadas.json
+
+# Cache do Python (scripts/pwa/gerar-icones-android.py)
+__pycache__/
+*.pyc

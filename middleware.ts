@@ -26,6 +26,13 @@ const publicRoutes = [
   '/auth/verify',
   '/politica-de-privacidade',
   '/termos-de-servico',
+  // Instalação do app (PWA): a página é o endereço que mandamos para quem
+  // pergunta "tem app pra Samsung?" — precisa abrir sem login.
+  '/instalar',
+  // Tela servida pelo service worker quando não há rede. Redirecionar para o
+  // login aqui seria absurdo: quem chega nela está justamente sem conexão, e o
+  // service worker precisa conseguir baixá-la para guardar no cache.
+  '/offline',
   '/buy',
   '/comprar',
   '/ativar',

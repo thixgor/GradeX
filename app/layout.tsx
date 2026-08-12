@@ -9,7 +9,7 @@ import { ImageProtectionProvider } from '@/components/image-protection-provider'
 import { VerifyEmailBanner } from '@/components/verify-email-banner'
 import { AppChrome } from '@/components/app-chrome'
 import { RegisterSW } from '@/components/pwa/register-sw'
-import { IosInstallPrompt } from '@/components/pwa/ios-install-prompt'
+import { InstallPrompt } from '@/components/pwa/install-prompt'
 import { MobileFloatingDock } from '@/components/mobile-floating-dock'
 import { MobileBackButton } from '@/components/mobile-back-button'
 import { TactileFeedback } from '@/components/tactile-feedback'
@@ -20,6 +20,7 @@ import { MetaPixel } from '@/components/meta-pixel'
 import { LiteModeProvider } from '@/context/LiteModeContext'
 import { LiteModePrompt } from '@/components/lite-mode-prompt'
 import { LITE_BOOTSTRAP_SCRIPT } from '@/lib/lite-mode'
+import { SCRIPT_CAPTURA_INSTALACAO } from '@/lib/pwa/instalacao'
 import { UIPreferencesProvider } from '@/context/UIPreferencesContext'
 import { MaterialCartProvider } from '@/context/MaterialCartContext'
 import { ShopCartProvider } from '@/context/ShopCartContext'
@@ -120,6 +121,13 @@ export const metadata: Metadata = {
   },
   other: {
     'google-site-verification': process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || '',
+    // Equivalente Android do `apple-mobile-web-app-capable`: garante a abertura
+    // em tela cheia no Chrome e no Samsung Internet quando o atalho é criado
+    // pelo caminho antigo ("Adicionar à tela inicial"), sem passar pelo
+    // instalador que lê o manifest.
+    'mobile-web-app-capable': 'yes',
+    // Cor da barra de tarefas/status no Samsung Internet em modo app.
+    'msapplication-TileColor': '#0B1F1A',
   },
 }
 
@@ -206,6 +214,11 @@ export default function RootLayout({
         {/* Modo Lite resolvido antes da primeira pintura: aparelho fraco já
             recebe a versão leve, sem flash da versão pesada. */}
         <script dangerouslySetInnerHTML={{ __html: LITE_BOOTSTRAP_SCRIPT }} />
+        {/* O Android dispara `beforeinstallprompt` logo depois do load, muitas
+            vezes ANTES de o React hidratar. Este script segura o evento para o
+            botão "Instalar" já existir na primeira visita — sem ele, o convite
+            do Samsung/Chrome só apareceria depois de um recarregamento. */}
+        <script dangerouslySetInnerHTML={{ __html: SCRIPT_CAPTURA_INSTALACAO }} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: buildJsonLd(organizationJsonLd) }}
@@ -239,7 +252,7 @@ export default function RootLayout({
                <MobileFloatingDock />
                <MobileBackButton />
                <RegisterSW />
-               <IosInstallPrompt />
+               <InstallPrompt />
                <TactileFeedback />
                <LiteModePrompt />
              </ImageProtectionProvider>

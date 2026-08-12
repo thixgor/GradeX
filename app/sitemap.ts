@@ -44,6 +44,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.7,
     },
     {
+      url: canonical('/instalar'),
+      lastModified: now,
+      changeFrequency: 'monthly',
+      priority: 0.6,
+    },
+    {
       url: canonical('/termos-de-servico'),
       lastModified: now,
       changeFrequency: 'yearly',
