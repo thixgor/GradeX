@@ -57,6 +57,13 @@ import {
   writeSavedPosition,
 } from '@/lib/material-reading-progress'
 import {
+  buildSummaryOutline,
+  findActiveSummaryId,
+  outlineAncestors,
+  visibleOutlineNodes,
+  type SummaryOutlineNode,
+} from '@/lib/pdf-summary-outline'
+import {
   SCROLL_EDGE_TOLERANCE,
   type SwipeStart,
   isSwipeAllowed,
@@ -853,7 +860,7 @@ const TOUR_STEPS: ViewerTourStep[] = [
   {
     targets: ['[data-tour="viewer-summary"]', '[data-tour="viewer-summary-strip"]'],
     title: 'Pule direto para o capítulo',
-    body: 'O sumário lista as seções do material. Um toque e você já está lá — não precisa procurar rolando.',
+    body: 'O sumário lista os tópicos do material. Um toque no título e você já está lá; a setinha ao lado abre os subtópicos daquele tópico, então a lista fica curta mesmo em material grande.',
   },
   {
     targets: ['[data-tour="viewer-thumbs"]', '[data-tour="viewer-nav-mobile"]'],
@@ -1494,14 +1501,10 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const hasSummary = summary.length > 0
 
   // Seção do sumário em que o leitor está agora, para o indicador "você está em".
+  // Mesma regra que o painel usa para destacar a linha — daí o helper comum.
   const activeSummaryEntry = useMemo(() => {
-    let active: SummaryEntry | null = null
-    for (const entry of summary) {
-      if (entry.page <= currentPage && (!active || entry.page > active.page)) {
-        active = entry
-      }
-    }
-    return active
+    const activeId = findActiveSummaryId(summary, currentPage)
+    return activeId ? summary.find((entry) => entry.id === activeId) ?? null : null
   }, [summary, currentPage])
 
   // Modo prévia: usuário sem acesso pleno. `allowedPages` é a lista (ordenada)
@@ -3506,15 +3509,16 @@ const SidePanel = memo(function SidePanel({
   )
 })
 
-// A partir de quantas seções o sumário passa a pular o layout do que está fora
-// da tela (`content-visibility`). Sumário curto — a maioria dos materiais —
-// continua exatamente como era, sem nenhuma aproximação de altura; a conta só
-// entra quando há linhas o bastante para ela valer a pena.
-const SUMMARY_SKIP_LAYOUT_FROM = 60
-// Altura de reserva de uma linha do sumário enquanto ela está fora da tela. É
-// só o palpite INICIAL: com `contain-intrinsic-size: auto`, o navegador passa a
-// usar a altura real assim que a linha é desenhada uma vez.
-const SUMMARY_ROW_HEIGHT = 40
+// Quantas linhas o sumário monta de uma vez.
+//
+// Antes, a lista inteira era montada na abertura e as linhas fora da tela
+// ficavam com `content-visibility: auto` para adiar o custo. Só que adiar a
+// PINTURA é justamente o que aparecia no celular: a linha entrava vazia (o
+// fundo escuro da folha) e o texto surgia depois, enquanto o dedo rolava. Agora
+// não há nada adiado — o que está na lista está pintado — e o teto é de
+// montagem: com os subtópicos fechados a lista já começa curta, e o botão
+// "mostrar mais" estende quando alguém expande tudo num material enorme.
+const SUMMARY_WINDOW = 120
 
 const SummaryList = memo(function SummaryList({
   summary,
@@ -3528,24 +3532,78 @@ const SummaryList = memo(function SummaryList({
   const activeItemRef = useRef<HTMLButtonElement | null>(null)
   const didAutoScroll = useRef(false)
 
+  // Árvore: tópicos (nível 0) com os subtópicos (níveis 1 e 2) pendurados.
+  const outline = useMemo(() => buildSummaryOutline(summary), [summary])
   // Entrada "ativa": a de maior página que ainda é <= página atual.
-  const activeId = useMemo(() => {
-    let id = ''
-    let bestPage = -1
-    for (const entry of summary) {
-      if (entry.page <= currentPage && entry.page > bestPage) {
-        bestPage = entry.page
-        id = entry.id
-      }
-    }
-    return id
-  }, [summary, currentPage])
+  const activeId = useMemo(() => findActiveSummaryId(summary, currentPage), [summary, currentPage])
 
-  // Sumário longo: as linhas fora da tela ficam com layout e pintura adiadas.
-  // Um material com centenas de seções media e desenhava TODAS as linhas assim
-  // que a folha abria — texto que quebra em várias linhas, borda, distintivo de
-  // página — e o primeiro toque no dedo chegava depois disso.
-  const skipOffscreenLayout = summary.length >= SUMMARY_SKIP_LAYOUT_FROM
+  // Nós abertos = os que o LEITOR abriu (ficam abertos até ele fechar) + o
+  // caminho até a seção em que ele está agora (esse a lista abre e fecha
+  // sozinha). Assim o "você está em" nunca fica escondido, e ler o material
+  // inteiro não vai abrindo tópico atrás de tópico até a lista virar a parede
+  // que ela era antes.
+  const userExpandedRef = useRef<Set<string>>(new Set())
+  const [expanded, setExpanded] = useState<Set<string>>(
+    () => new Set(outlineAncestors(outline, activeId))
+  )
+  const [limit, setLimit] = useState(SUMMARY_WINDOW)
+
+  // Outro material (ou sumário recarregado): volta tudo ao estado inicial. Na
+  // primeira montagem não faz nada — o `useState` acima já abriu o ramo certo.
+  // Depois de zerar, o efeito seguinte reabre o ramo da seção atual.
+  const revealedRef = useRef<string | null>(null)
+  const outlineRef = useRef(outline)
+  useEffect(() => {
+    if (outlineRef.current === outline) return
+    outlineRef.current = outline
+    revealedRef.current = null
+    userExpandedRef.current = new Set()
+    setExpanded(new Set())
+    setLimit(SUMMARY_WINDOW)
+  }, [outline])
+
+  // Rolar o material troca a seção ativa: abrimos o caminho até ela e fechamos
+  // o ramo que a lista tinha aberto sozinha antes. Só quando a seção MUDA —
+  // quem fecha um ramo de propósito não o vê reabrir no mesmo lugar.
+  useEffect(() => {
+    if (!activeId || revealedRef.current === activeId) return
+    revealedRef.current = activeId
+    const ancestors = outlineAncestors(outline, activeId)
+    setExpanded((current) => {
+      const next = new Set(userExpandedRef.current)
+      for (const id of ancestors) next.add(id)
+      if (next.size === current.size && Array.from(next).every((id) => current.has(id))) return current
+      return next
+    })
+  }, [activeId, outline])
+
+  const toggleNode = useCallback((id: string) => {
+    setExpanded((current) => {
+      const next = new Set(current)
+      if (next.delete(id)) userExpandedRef.current.delete(id)
+      else {
+        next.add(id)
+        userExpandedRef.current.add(id)
+      }
+      return next
+    })
+  }, [])
+
+  const hasBranches = outline.branchIds.length > 0
+  const allExpanded = hasBranches && outline.branchIds.every((id) => expanded.has(id))
+  const toggleAll = useCallback(() => {
+    userExpandedRef.current = allExpanded ? new Set() : new Set(outline.branchIds)
+    setExpanded(new Set(userExpandedRef.current))
+  }, [allExpanded, outline])
+
+  const visible = useMemo(() => visibleOutlineNodes(outline, expanded), [outline, expanded])
+
+  // A seção atual precisa estar montada mesmo que caia fora da janela — é ela
+  // que a lista rola para o centro ao abrir.
+  const activeIndex = activeId ? visible.findIndex((node) => node.id === activeId) : -1
+  const shownCount = Math.max(limit, activeIndex + 1)
+  const shown = visible.length > shownCount ? visible.slice(0, shownCount) : visible
+  const hiddenAfter = visible.length - shown.length
 
   useEffect(() => {
     if (didAutoScroll.current) return
@@ -3555,24 +3613,44 @@ const SummaryList = memo(function SummaryList({
 
   return (
     <div>
-      <div className="mb-2 flex items-center justify-between px-1">
-        <span className="text-[11px] font-semibold uppercase tracking-wide text-white/40">Sumário</span>
-        <span className="text-[11px] text-white/40">{summary.length} {summary.length === 1 ? 'seção' : 'seções'}</span>
+      <div className="mb-2 flex items-center justify-between gap-2 px-1">
+        <span className="min-w-0 truncate text-[11px] font-semibold uppercase tracking-wide text-white/40">
+          Sumário · {summary.length} {summary.length === 1 ? 'seção' : 'seções'}
+        </span>
+        {hasBranches && (
+          <button
+            type="button"
+            onClick={toggleAll}
+            className="shrink-0 rounded-md px-1.5 py-0.5 text-[11px] font-semibold text-white/55 transition-colors hover:bg-white/10 hover:text-white"
+          >
+            {allExpanded ? 'Recolher tudo' : 'Expandir tudo'}
+          </button>
+        )}
       </div>
       <div className="space-y-0.5">
-        {summary.map((entry) => (
+        {shown.map((node) => (
           <SummaryRow
-            key={entry.id}
-            entry={entry}
-            active={entry.id === activeId}
-            skipOffscreenLayout={skipOffscreenLayout}
+            key={node.id}
+            node={node}
+            active={node.id === activeId}
+            expanded={expanded.has(node.id)}
+            onToggle={toggleNode}
             onGoTo={onGoTo}
             // Só a linha ativa recebe a ref (as outras recebem `undefined`, que
             // é estável e não quebra a memoização delas).
-            activeRef={entry.id === activeId ? activeItemRef : undefined}
+            activeRef={node.id === activeId ? activeItemRef : undefined}
           />
         ))}
       </div>
+      {hiddenAfter > 0 && (
+        <button
+          type="button"
+          onClick={() => setLimit(shownCount + SUMMARY_WINDOW)}
+          className="mt-2 w-full rounded-xl border border-white/10 bg-white/5 py-2 text-[11px] font-semibold text-white/70 hover:bg-white/10"
+        >
+          Mostrar mais {Math.min(hiddenAfter, SUMMARY_WINDOW)} seções
+        </button>
+      )}
     </div>
   )
 })
@@ -3581,36 +3659,35 @@ const SummaryList = memo(function SummaryList({
 // seção ativa, e sem isto CADA troca re-renderizava as centenas de linhas da
 // lista. Agora re-renderizam duas — a que perdeu o destaque e a que ganhou.
 const SummaryRow = memo(function SummaryRow({
-  entry,
+  node,
   active,
-  skipOffscreenLayout,
+  expanded,
+  onToggle,
   onGoTo,
   activeRef,
 }: {
-  entry: SummaryEntry
+  node: SummaryOutlineNode
   active: boolean
-  skipOffscreenLayout: boolean
+  expanded: boolean
+  onToggle: (id: string) => void
   onGoTo: (page: number) => void
   activeRef?: React.MutableRefObject<HTMLButtonElement | null>
 }) {
-  const level = Math.min(2, Math.max(0, entry.level || 0))
+  const { entry, depth, descendantCount } = node
+  const hasChildren = node.childIds.length > 0
+  // Peso do texto pela profundidade REAL, não pelo nível declarado: num sumário
+  // que começa em `##` o primeiro nível continua com cara de tópico.
+  const rank = Math.min(2, depth)
 
   return (
-    <button
-      ref={activeRef}
-      type="button"
-      onClick={() => onGoTo(entry.page)}
-      title={entry.title}
-      style={{
-        paddingLeft: `${0.75 + level * 0.9}rem`,
-        ...(skipOffscreenLayout
-          ? { contentVisibility: 'auto', containIntrinsicSize: `auto ${SUMMARY_ROW_HEIGHT}px` }
-          : null),
-      }}
+    <div
+      // O recuo vem da profundidade REAL na árvore, não do nível declarado:
+      // subtópico de um sumário que começa em `##` não fica recuado à toa.
+      style={{ marginLeft: `${rank}rem` }}
       // `transition-colors` e não `transition-all`: só a cor muda aqui, e
       // `all` põe padding/borda/tamanho na conta da animação — em lista longa
       // é recálculo de layout à toa a cada troca de seção ativa.
-      className={`group relative flex w-full items-start gap-2 rounded-lg border py-2 pr-2 text-left transition-colors ${
+      className={`group relative flex items-stretch rounded-lg border transition-colors ${
         active
           ? 'border-emerald-300/50 bg-emerald-400/15 text-white'
           : 'border-transparent text-white/70 hover:border-white/10 hover:bg-white/5'
@@ -3619,21 +3696,59 @@ const SummaryRow = memo(function SummaryRow({
       {active && (
         <span className="absolute inset-y-1.5 left-0 w-[3px] rounded-full bg-emerald-300" aria-hidden />
       )}
-      <span
-        className={`min-w-0 flex-1 whitespace-normal break-words leading-snug ${
-          level === 0 ? 'text-[13px] font-semibold' : level === 1 ? 'text-xs' : 'text-[11px] text-white/60'
-        }`}
+      {hasChildren ? (
+        // Alvo próprio para o dedo: abrir o tópico e ir até ele são ações
+        // diferentes, e no celular elas não podem disputar o mesmo toque.
+        <button
+          type="button"
+          onClick={() => onToggle(entry.id)}
+          aria-expanded={expanded}
+          aria-label={expanded ? `Recolher ${entry.title}` : `Expandir ${entry.title}`}
+          title={expanded ? 'Recolher subtópicos' : 'Expandir subtópicos'}
+          className="flex w-8 shrink-0 items-center justify-center rounded-l-lg text-white/50 transition-colors hover:bg-white/10 hover:text-white"
+        >
+          <ChevronRight
+            className={`h-3.5 w-3.5 transition-transform duration-150 ${expanded ? 'rotate-90' : ''}`}
+            aria-hidden
+          />
+        </button>
+      ) : (
+        // Mesma largura da coluna do chevron: com ou sem filhos, os títulos de
+        // um mesmo nível começam alinhados, e o recuo lido na lista é só a
+        // profundidade do tópico.
+        <span className="w-8 shrink-0" aria-hidden />
+      )}
+      <button
+        ref={activeRef}
+        type="button"
+        onClick={() => onGoTo(entry.page)}
+        title={entry.title}
+        className="flex min-w-0 flex-1 items-start gap-2 py-2 pr-2 text-left"
       >
-        {entry.title}
-      </span>
-      <span
-        className={`shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-medium transition-colors ${
-          active ? 'bg-emerald-300/25 text-white' : 'bg-white/10 text-white/65'
-        }`}
-      >
-        {entry.page}
-      </span>
-    </button>
+        <span
+          className={`min-w-0 flex-1 whitespace-normal break-words leading-snug ${
+            rank === 0 ? 'text-[13px] font-semibold' : rank === 1 ? 'text-xs' : 'text-[11px] text-white/60'
+          }`}
+        >
+          {entry.title}
+        </span>
+        {hasChildren && !expanded && (
+          <span
+            className="shrink-0 rounded-md bg-white/5 px-1.5 py-0.5 text-[10px] font-medium text-white/45"
+            title={`${descendantCount} ${descendantCount === 1 ? 'subtópico' : 'subtópicos'}`}
+          >
+            +{descendantCount}
+          </span>
+        )}
+        <span
+          className={`shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-medium transition-colors ${
+            active ? 'bg-emerald-300/25 text-white' : 'bg-white/10 text-white/65'
+          }`}
+        >
+          {entry.page}
+        </span>
+      </button>
+    </div>
   )
 })
 
