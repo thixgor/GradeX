@@ -3,6 +3,7 @@ import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { MANUAL_CLINICO_PURCHASES_COLLECTION } from '@/lib/manual-clinico-product'
 import { PLUS_CLAIM_REVOKED_STATUS } from '@/lib/plus-claims'
+import { summarizeTimedAccess } from '@/lib/material-timed-access'
 
 export const dynamic = 'force-dynamic'
 
@@ -45,6 +46,8 @@ export async function GET() {
         purchaseType: 'material',
         /** Resgate do Plus+ à espera de renovação — sem acesso no momento. */
         plusRevoked: purchase.status === PLUS_CLAIM_REVOKED_STATUS,
+        /** Prazo restante quando a compra foi de uma versão por tempo. */
+        timedAccess: summarizeTimedAccess(purchase),
       })),
       ...manualPurchases.map((purchase: any) => ({
         ...purchase,

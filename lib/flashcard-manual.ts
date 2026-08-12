@@ -1,6 +1,11 @@
 import { Db, ObjectId } from 'mongodb'
 import { FlashcardManualDeck, FlashcardManualCard, FlashcardManualFolder, MaterialAccessGroup } from './types'
 import { expandUserAccessGroups } from './account-tier'
+import {
+  activeAccessFilter,
+  summarizeTimedAccess,
+  type TimedAccessStatus,
+} from './material-timed-access'
 
 export const FLASHCARD_MANUAL_COLLECTIONS = {
   decks: 'flashcardManualDecks',
@@ -65,6 +70,12 @@ export interface DeckAccessResult {
   includedInPlus: boolean
   reason: DeckAccessReason | null
   reasons: DeckAccessReason[]
+  /**
+   * Prazo restante quando a compra foi de uma versão por tempo limitado.
+   * `null` = acesso sem prazo. Deck não tem PDF, então aqui a versão apenas
+   * limita o período de uso — a interface mostra o contador.
+   */
+  timedAccess: TimedAccessStatus | null
 }
 
 interface ResolveDeckAccessParams {
@@ -88,6 +99,7 @@ export async function resolveDeckAccess({
   isPlus = false,
 }: ResolveDeckAccessParams): Promise<DeckAccessResult> {
   const reasons: DeckAccessReason[] = []
+  let timedAccess: TimedAccessStatus | null = null
   const isOwner = !!userId && deck.ownerId === userId
   if (isOwner) reasons.push('owner')
   if (isAdmin) reasons.push('admin')
@@ -95,14 +107,24 @@ export async function resolveDeckAccess({
   // Compras (apenas decks de admin com pricing=paid e linkedMaterialId)
   let isPurchased = false
   if (deck.pricing === 'paid' && deck.linkedMaterialId && userId) {
-    const baseFilter = { itemType: 'material', itemId: deck.linkedMaterialId, status: 'completed' }
+    // Compra por tempo vencida não abre mais o deck.
+    const baseFilter = {
+      itemType: 'material',
+      itemId: deck.linkedMaterialId,
+      status: 'completed',
+      ...activeAccessFilter(),
+    }
     const byUserId = await db.collection('material_purchases').findOne({ ...baseFilter, userId })
     if (byUserId) {
       isPurchased = true
+      timedAccess = summarizeTimedAccess(byUserId)
     } else if (userEmail) {
       const emailRegex = new RegExp(`^${userEmail.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i')
       const byEmail = await db.collection('material_purchases').findOne({ ...baseFilter, userEmail: { $regex: emailRegex } })
-      if (byEmail) isPurchased = true
+      if (byEmail) {
+        isPurchased = true
+        timedAccess = summarizeTimedAccess(byEmail)
+      }
     }
 
     if (!isPurchased) {
@@ -117,14 +139,19 @@ export async function resolveDeckAccess({
           itemType: 'package',
           itemId: { $in: packageIds },
           status: 'completed',
+          ...activeAccessFilter(),
         }
         const packageByUserId = await db.collection('material_purchases').findOne({ ...packageFilter, userId })
         if (packageByUserId) {
           isPurchased = true
+          timedAccess = summarizeTimedAccess(packageByUserId)
         } else if (userEmail) {
           const emailRegex = new RegExp(`^${userEmail.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i')
           const packageByEmail = await db.collection('material_purchases').findOne({ ...packageFilter, userEmail: { $regex: emailRegex } })
-          if (packageByEmail) isPurchased = true
+          if (packageByEmail) {
+            isPurchased = true
+            timedAccess = summarizeTimedAccess(packageByEmail)
+          }
         }
       }
     }
@@ -181,6 +208,8 @@ export async function resolveDeckAccess({
     includedInPlus,
     reason: reasons[0] || null,
     reasons,
+    // Só vale quando o acesso veio da compra; dono/admin/grupo não têm prazo.
+    timedAccess: isOwner || isAdmin ? null : timedAccess,
   }
 }
 

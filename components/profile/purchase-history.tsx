@@ -128,6 +128,21 @@ export function PurchaseHistory({
                 </span>
                 {p.couponCode ? <> {' · '}<span>Cupom {p.couponCode}</span></> : null}
               </p>
+              {p.timedAccess?.isTimed && (
+                <p className={cn(
+                  'mt-0.5 text-[11px] font-medium',
+                  p.timedAccess.expired
+                    ? 'text-red-600 dark:text-red-400'
+                    : p.timedAccess.endingSoon
+                      ? 'text-amber-600 dark:text-amber-400'
+                      : 'text-sky-600 dark:text-sky-400',
+                )}>
+                  {p.timedAccess.label || 'Acesso temporário'}
+                  {p.timedAccess.expired
+                    ? ` · encerrado em ${p.timedAccess.expiresAtLabel || '—'}`
+                    : ` · restam ${p.timedAccess.remainingLabel} (até ${p.timedAccess.expiresAtLabel})`}
+                </p>
+              )}
               {p.itemType === 'manual_clinico' && (p.planLabel || p.expiresAt || p.accessType) && (
                 <p className="mt-0.5 text-[11px] text-muted-foreground/80">
                   {p.planLabel ? (

@@ -79,6 +79,11 @@ import {
 } from '@/components/pricing-events/PricingEventCountdown'
 import { PricingEventBadge } from '@/components/pricing-events/PricingEventBadge'
 import { PLUS_LABEL } from '@/lib/account-tier'
+import {
+  TimedAccessBanner,
+  TimedAccessPill,
+  type TimedAccessView,
+} from '@/components/materiais/timed-access'
 
 interface AccessFlags {
   hasAccess: boolean
@@ -89,6 +94,8 @@ interface AccessFlags {
   /** Assinante Plus+ leva sem custo, mas ainda precisa resgatar. */
   includedInPlus: boolean
   reasons: string[]
+  /** Prazo restante quando a compra foi de uma versão por tempo limitado. */
+  timedAccess?: TimedAccessView | null
 }
 
 interface DeckResponse {
@@ -1267,7 +1274,9 @@ export default function DeckPage() {
                   <PricingEventBadge state={eventState} size="xs" />
                 )}
                 {access.isPurchased && (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/90 px-2.5 py-0.5"><CheckCircle2 className="h-3 w-3" /> Adquirido</span>
+                  access.timedAccess?.isTimed
+                    ? <TimedAccessPill access={access.timedAccess} className="rounded-full px-2.5 py-0.5" />
+                    : <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/90 px-2.5 py-0.5"><CheckCircle2 className="h-3 w-3" /> Adquirido</span>
                 )}
               </div>
               {folderPath && (
@@ -1484,6 +1493,12 @@ export default function DeckPage() {
             </div>
           </div>
         </div>
+
+        {/* Acesso por tempo limitado: deck não tem PDF, então aqui a versão só
+            limita o período de uso — o contador é o aviso. */}
+        {!isLocked && access.timedAccess?.isTimed && (
+          <TimedAccessBanner access={access.timedAccess} itemLabel="deck" className="mb-4" />
+        )}
 
         {hasTier && !access.includedInPlus && isLocked && eventState && (
           <div className="mb-4">

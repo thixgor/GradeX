@@ -90,6 +90,20 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       return NextResponse.json({ error: 'Sem acesso ao deck' }, { status: 403 })
     }
 
+    // Acesso por tempo limitado não inclui download: um PDF exportado
+    // sobreviveria ao fim do prazo, que é justamente o que essa modalidade
+    // não vende. O estudo no deck segue liberado até a data.
+    if (access.timedAccess && !isAdmin) {
+      return NextResponse.json(
+        {
+          error: `Seu acesso é a versão por tempo limitado (${access.timedAccess.label || access.timedAccess.durationLabel || 'temporária'}), que não inclui exportar em PDF. Estude pelo deck — você ainda tem ${access.timedAccess.remainingLabel}.`,
+          timedAccess: access.timedAccess,
+          downloadBlocked: true,
+        },
+        { status: 403 },
+      )
+    }
+
     // Plus+ Guard: cota antiabuso de downloads.
     const allowance = await checkPlusDownloadAllowance({ userId: session.userId, user, isAdmin, db })
     if (!allowance.allowed) {

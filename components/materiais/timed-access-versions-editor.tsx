@@ -53,7 +53,7 @@ export function TimedAccessVersionsEditor({
   /** Quando falso, o aviso explica que o limite é só de tempo (sem PDF). */
   hasPdf?: boolean
 }) {
-  const list = versions || []
+  const list = useMemo(() => versions || [], [versions])
 
   const totalMinutesOf = (version: TimedAccessVersionForm) =>
     Math.max(0, Math.floor(version.durationDays || 0)) * 24 * 60 +
