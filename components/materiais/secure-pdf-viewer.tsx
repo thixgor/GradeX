@@ -2027,13 +2027,26 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
       // forma INSTANTÂNEA — o scroll suave atravessaria todas as páginas do
       // caminho, disparando o carregamento de cada uma. Passos curtos
       // (próxima/anterior) mantêm o scroll suave, que é agradável e barato.
-      const behavior: ScrollBehavior = Math.abs(next - currentPageRef.current) <= 2 ? 'smooth' : 'auto'
+      const isJump = Math.abs(next - currentPageRef.current) > 2
+      const behavior: ScrollBehavior = isJump ? 'auto' : 'smooth'
       // Num salto longo a página de destino pode ainda não existir no DOM: ela
       // só entra quando o React re-renderiza com a nova janela de páginas
       // materializadas. Tentamos por alguns quadros em vez de uma vez só —
       // senão um clique no sumário para uma seção distante não sairia do lugar.
+      //
+      // E, durante essas tentativas, o foco por rolagem fica SUSPENSO (mesmo
+      // mecanismo da retomada). Enquanto a janela de páginas se reposiciona, os
+      // espaçadores que cruzam a faixa central do caminho reportam foco e
+      // puxam `currentPage` de volta — cada um desses puxões re-renderiza o
+      // leitor inteiro e remexe a âncora no meio do salto. Era o que fazia um
+      // toque no sumário parecer engasgado antes de assentar no destino.
       let frame = 0
+      const holdFocus = () => {
+        if (!isJump) return
+        suppressFocusUntilRef.current = Math.max(suppressFocusUntilRef.current, Date.now() + 260)
+      }
       const scrollToTarget = () => {
+        holdFocus()
         const element = document.getElementById(`pdf-page-${next}`)
         if (element) {
           element.scrollIntoView({ behavior, block: 'start' })
@@ -2041,6 +2054,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
         }
         if (frame++ < 10) requestAnimationFrame(scrollToTarget)
       }
+      holdFocus()
       requestAnimationFrame(scrollToTarget)
     } else {
       // Em modo página única, sobe suavemente para o topo da nova página.
@@ -2501,9 +2515,22 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
         className="pdf-viewer-shell min-h-screen overflow-x-clip text-white select-none"
         style={{ WebkitUserSelect: 'none', userSelect: 'none', touchAction: 'pan-x pan-y pinch-zoom' }}
       >
-        {/* /95 e não /82: opacidade fora da escala do Tailwind não vira regra
-            nenhuma, e o cabeçalho ficava sem fundo sobre página branca. */}
-        <header className="sticky top-0 z-40 border-b border-white/10 bg-zinc-950/95 shadow-xl shadow-black/25 backdrop-blur-2xl">
+        {/* Fundo OPACO e sem `backdrop-blur`, pela mesma razão já documentada na
+            barra inferior do celular: `backdrop-filter` num elemento STICKY é
+            recalculado a cada quadro da rolagem, porque o que está atrás dele
+            muda o tempo todo. Aqui o custo era o pior de todos — o cabeçalho
+            atravessa a tela inteira e fica por cima justamente das páginas em
+            rolagem, então o Safari do iOS reamostrava e reborrava uma faixa de
+            largura total a 120 Hz. Sobre um fundo escuro, `/95` com blur e
+            opaco sem blur são indistinguíveis a olho nu; o que sai é só a
+            conta. `translateZ(0)` dá camada própria de composição, para a
+            rolagem das páginas não repintar o cabeçalho junto.
+            (/95 e não /82: opacidade fora da escala do Tailwind não vira regra
+            nenhuma, e o cabeçalho ficava sem fundo sobre página branca.) */}
+        <header
+          className="sticky top-0 z-40 border-b border-white/10 bg-zinc-950 shadow-xl shadow-black/25"
+          style={{ transform: 'translateZ(0)', backfaceVisibility: 'hidden' }}
+        >
           {/* Progresso de leitura. Uma linha fina no topo responde à pergunta
               "quanto falta?" sem ocupar espaço nenhum. */}
           <div className="h-0.5 w-full bg-white/5">
@@ -2809,8 +2836,13 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
               : 'lg:grid-cols-[11.5rem_minmax(0,1fr)_22rem]'
           }`}
         >
+          {/* Sem `backdrop-blur` na coluna abaixo: atrás dela só existe o
+              degradê fixo do leitor, que não muda — o blur não tinha o que
+              borrar e ainda assim obrigava a recompor a coluna inteira a cada
+              rolagem da lista de miniaturas/sumário. Um preto um pouco mais
+              fechado dá o mesmo resultado na tela. */}
           {showThumbs && (
-            <aside className="hidden border-r border-white/10 bg-black/15 p-3 backdrop-blur-xl lg:sticky lg:top-[132px] lg:col-start-1 lg:block lg:h-[calc(100vh-132px)] lg:overflow-hidden">
+            <aside className="hidden border-r border-white/10 bg-black/30 p-3 lg:sticky lg:top-[132px] lg:col-start-1 lg:block lg:h-[calc(100vh-132px)] lg:overflow-hidden">
               <SidePanel
                 tab={sidePanelTab}
                 onTabChange={setSidePanelTab}
@@ -3125,7 +3157,11 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
               pageList={previewActive ? allowedPages : undefined}
               currentPage={currentPage}
               coverPage={coverPage}
-              onGoTo={(page) => { navigateTo(page); setMobileSheet(null) }}
+              // `navigateTo` JÁ fecha a folha, e é uma referência estável. A
+              // closure que estava aqui era recriada a cada render do leitor
+              // (isto é, a cada mudança de página), o que anulava o `memo` do
+              // painel e mandava a lista inteira do sumário re-renderizar.
+              onGoTo={navigateTo}
             />
           </div>
         </ViewerSheet>
@@ -3382,7 +3418,17 @@ const SidePanel = memo(function SidePanel({
         </div>
       )}
 
-      <div className="clean-scrollbar min-h-0 flex-1 overflow-y-auto pr-1">
+      {/* `overscroll-behavior: contain`: no celular esta lista vive dentro da
+          folha inferior, e sem isto a inércia do dedo continuava no documento
+          ao chegar no fim — o material rolava por baixo, trocava a página
+          atual e re-renderizava o leitor inteiro no meio do gesto. Era a maior
+          fonte do "trava um pouco pra navegar no sumário".
+          `contain: paint`: o que sai da caixa não precisa ser considerado na
+          pintura, então rolar aqui não repinta o resto da tela. */}
+      <div
+        className="clean-scrollbar min-h-0 flex-1 overflow-y-auto pr-1"
+        style={{ overscrollBehavior: 'contain', WebkitOverflowScrolling: 'touch', contain: 'paint' }}
+      >
         {activeTab === 'summary' && hasSummary ? (
           <SummaryList summary={summary} currentPage={currentPage} onGoTo={onGoTo} />
         ) : (
@@ -3423,6 +3469,16 @@ const SidePanel = memo(function SidePanel({
   )
 })
 
+// A partir de quantas seções o sumário passa a pular o layout do que está fora
+// da tela (`content-visibility`). Sumário curto — a maioria dos materiais —
+// continua exatamente como era, sem nenhuma aproximação de altura; a conta só
+// entra quando há linhas o bastante para ela valer a pena.
+const SUMMARY_SKIP_LAYOUT_FROM = 60
+// Altura de reserva de uma linha do sumário enquanto ela está fora da tela. É
+// só o palpite INICIAL: com `contain-intrinsic-size: auto`, o navegador passa a
+// usar a altura real assim que a linha é desenhada uma vez.
+const SUMMARY_ROW_HEIGHT = 40
+
 const SummaryList = memo(function SummaryList({
   summary,
   currentPage,
@@ -3448,6 +3504,12 @@ const SummaryList = memo(function SummaryList({
     return id
   }, [summary, currentPage])
 
+  // Sumário longo: as linhas fora da tela ficam com layout e pintura adiadas.
+  // Um material com centenas de seções media e desenhava TODAS as linhas assim
+  // que a folha abria — texto que quebra em várias linhas, borda, distintivo de
+  // página — e o primeiro toque no dedo chegava depois disso.
+  const skipOffscreenLayout = summary.length >= SUMMARY_SKIP_LAYOUT_FROM
+
   useEffect(() => {
     if (didAutoScroll.current) return
     didAutoScroll.current = true
@@ -3461,45 +3523,80 @@ const SummaryList = memo(function SummaryList({
         <span className="text-[11px] text-white/40">{summary.length} {summary.length === 1 ? 'seção' : 'seções'}</span>
       </div>
       <div className="space-y-0.5">
-        {summary.map((entry) => {
-          const level = Math.min(2, Math.max(0, entry.level || 0))
-          const isActive = entry.id === activeId
-          return (
-            <button
-              key={entry.id}
-              ref={isActive ? activeItemRef : undefined}
-              type="button"
-              onClick={() => onGoTo(entry.page)}
-              title={entry.title}
-              style={{ paddingLeft: `${0.75 + level * 0.9}rem` }}
-              className={`group relative flex w-full items-start gap-2 rounded-lg border py-2 pr-2 text-left transition-all ${
-                isActive
-                  ? 'border-emerald-300/50 bg-emerald-400/15 text-white'
-                  : 'border-transparent text-white/70 hover:border-white/10 hover:bg-white/5'
-              }`}
-            >
-              {isActive && (
-                <span className="absolute inset-y-1.5 left-0 w-[3px] rounded-full bg-emerald-300" aria-hidden />
-              )}
-              <span
-                className={`min-w-0 flex-1 whitespace-normal break-words leading-snug ${
-                  level === 0 ? 'text-[13px] font-semibold' : level === 1 ? 'text-xs' : 'text-[11px] text-white/60'
-                }`}
-              >
-                {entry.title}
-              </span>
-              <span
-                className={`shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-medium transition-colors ${
-                  isActive ? 'bg-emerald-300/25 text-white' : 'bg-white/10 text-white/65'
-                }`}
-              >
-                {entry.page}
-              </span>
-            </button>
-          )
-        })}
+        {summary.map((entry) => (
+          <SummaryRow
+            key={entry.id}
+            entry={entry}
+            active={entry.id === activeId}
+            skipOffscreenLayout={skipOffscreenLayout}
+            onGoTo={onGoTo}
+            // Só a linha ativa recebe a ref (as outras recebem `undefined`, que
+            // é estável e não quebra a memoização delas).
+            activeRef={entry.id === activeId ? activeItemRef : undefined}
+          />
+        ))}
       </div>
     </div>
+  )
+})
+
+// Linha do sumário em componente próprio e memoizado: rolar o material troca a
+// seção ativa, e sem isto CADA troca re-renderizava as centenas de linhas da
+// lista. Agora re-renderizam duas — a que perdeu o destaque e a que ganhou.
+const SummaryRow = memo(function SummaryRow({
+  entry,
+  active,
+  skipOffscreenLayout,
+  onGoTo,
+  activeRef,
+}: {
+  entry: SummaryEntry
+  active: boolean
+  skipOffscreenLayout: boolean
+  onGoTo: (page: number) => void
+  activeRef?: React.MutableRefObject<HTMLButtonElement | null>
+}) {
+  const level = Math.min(2, Math.max(0, entry.level || 0))
+
+  return (
+    <button
+      ref={activeRef}
+      type="button"
+      onClick={() => onGoTo(entry.page)}
+      title={entry.title}
+      style={{
+        paddingLeft: `${0.75 + level * 0.9}rem`,
+        ...(skipOffscreenLayout
+          ? { contentVisibility: 'auto', containIntrinsicSize: `auto ${SUMMARY_ROW_HEIGHT}px` }
+          : null),
+      }}
+      // `transition-colors` e não `transition-all`: só a cor muda aqui, e
+      // `all` põe padding/borda/tamanho na conta da animação — em lista longa
+      // é recálculo de layout à toa a cada troca de seção ativa.
+      className={`group relative flex w-full items-start gap-2 rounded-lg border py-2 pr-2 text-left transition-colors ${
+        active
+          ? 'border-emerald-300/50 bg-emerald-400/15 text-white'
+          : 'border-transparent text-white/70 hover:border-white/10 hover:bg-white/5'
+      }`}
+    >
+      {active && (
+        <span className="absolute inset-y-1.5 left-0 w-[3px] rounded-full bg-emerald-300" aria-hidden />
+      )}
+      <span
+        className={`min-w-0 flex-1 whitespace-normal break-words leading-snug ${
+          level === 0 ? 'text-[13px] font-semibold' : level === 1 ? 'text-xs' : 'text-[11px] text-white/60'
+        }`}
+      >
+        {entry.title}
+      </span>
+      <span
+        className={`shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-medium transition-colors ${
+          active ? 'bg-emerald-300/25 text-white' : 'bg-white/10 text-white/65'
+        }`}
+      >
+        {entry.page}
+      </span>
+    </button>
   )
 })
 
@@ -5329,7 +5426,13 @@ const AnnotationsPanel = memo(function AnnotationsPanel({
   onDeleteAll: () => void
 }) {
   return (
-    <aside className="overflow-y-auto border-t border-white/10 bg-black/20 p-3 backdrop-blur-xl lg:sticky lg:top-[132px] lg:col-start-3 lg:h-[calc(100vh-132px)] lg:border-l lg:border-t-0">
+    <aside
+      // Sem `backdrop-blur` (mesmo motivo da coluna de navegação) e com a
+      // rolagem contida: no celular este painel fica logo abaixo das páginas, e
+      // a inércia ao chegar no fim da lista continuava no documento.
+      className="overflow-y-auto border-t border-white/10 bg-black/30 p-3 lg:sticky lg:top-[132px] lg:col-start-3 lg:h-[calc(100vh-132px)] lg:border-l lg:border-t-0"
+      style={{ overscrollBehavior: 'contain' }}
+    >
       {showGuide && <ToolGuide />}
 
       <div className="mb-3 mt-3 flex items-center justify-between gap-2">
@@ -5442,16 +5545,40 @@ function ViewerSheet({
 
   return (
     <div className="fixed inset-0 z-[70] lg:hidden" role="dialog" aria-modal="true" aria-label={title}>
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      {/* Fundo opaco: `bg-zinc-950/97` não gerava regra (fora da escala de
+      {/* Sem `backdrop-blur`: o véu cobre a tela inteira e o que está atrás dele
+          é o material — canvas que termina de rasterizar, página que rola. Cada
+          mudança ali obriga o Safari do iOS a reborrar a tela toda, no mesmo
+          quadro em que o dedo está arrastando a lista da folha. Um preto mais
+          fechado dá o mesmo recuo visual de graça.
+          `touch-action: none`: arrastar no véu não deve rolar o material que
+          está atrás — sem isso, o gesto vazava para o documento, trocava a
+          página atual e disparava a re-renderização do leitor inteiro por baixo
+          da folha aberta. */}
+      <div
+        className="absolute inset-0 bg-black/75"
+        style={{ touchAction: 'none' }}
+        onClick={onClose}
+      />
+      {/* Altura em PORCENTAGEM do véu (que é `fixed inset-0`), não em `vh`. No
+          Safari do iOS `vh` mede o viewport GRANDE — o de barras escondidas —
+          então `78vh` com a barra à mostra empurrava o topo da folha para fora
+          da tela e comia as primeiras seções do sumário. A porcentagem resolve
+          contra a área realmente visível, sem depender de `dvh`.
+          `translateZ(0)`: camada própria de composição, para rolar a lista não
+          repintar o material atrás (mesmo motivo da barra inferior).
+          Fundo opaco: `bg-zinc-950/97` não gerava regra (fora da escala de
           opacidade do Tailwind) e a folha aparecia transparente por cima da
           página. O padding usa max() porque `.pwa-safe-bottom` aplica env()
           puro, que vale 0 em aparelho sem notch. */}
       <div
         className={`absolute inset-x-0 bottom-0 flex flex-col rounded-t-2xl border-t border-white/15 bg-zinc-950 shadow-2xl ${
-          tall ? 'h-[78vh]' : 'max-h-[80vh]'
+          tall ? 'h-[78%]' : 'max-h-[85%]'
         }`}
-        style={{ paddingBottom: 'max(0.25rem, env(safe-area-inset-bottom))' }}
+        style={{
+          paddingBottom: 'max(0.25rem, env(safe-area-inset-bottom))',
+          transform: 'translateZ(0)',
+          backfaceVisibility: 'hidden',
+        }}
       >
         <div className="flex shrink-0 items-center justify-between border-b border-white/10 px-4 py-3">
           <h2 className="text-sm font-bold text-white">{title}</h2>
@@ -5464,7 +5591,19 @@ function ViewerSheet({
             <X className="h-4 w-4" />
           </button>
         </div>
-        <div className="min-h-0 flex-1 overflow-y-auto p-4">{children}</div>
+        {/* Folha `tall` = o filho (o painel de navegação) tem a própria área de
+            rolagem. Dois contêineres roláveis aninhados no iOS é o clássico
+            "a lista trava e depois anda sozinha": o toque começa no de dentro,
+            e ao chegar no fim a inércia é entregue ao de fora e daí ao
+            documento. Aqui o de fora não rola.
+            `overscroll-behavior: contain` no que rola: a rolagem por inércia
+            para na borda da lista em vez de continuar no material atrás. */}
+        <div
+          className={`min-h-0 flex-1 p-4 ${tall ? 'overflow-hidden' : 'overflow-y-auto'}`}
+          style={{ overscrollBehavior: 'contain', WebkitOverflowScrolling: 'touch' }}
+        >
+          {children}
+        </div>
       </div>
     </div>
   )
