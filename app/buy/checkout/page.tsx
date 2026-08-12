@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Loader2, ChevronLeft, CreditCard, Zap, CheckCircle2, Star } from 'lucide-react'
+import { Loader2, ChevronLeft, CreditCard, Zap, CheckCircle2, Star, Percent, X } from 'lucide-react'
 import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
 import type { PlanConfig } from '@/lib/types'
 import { AppShell } from '@/components/app-shell'
@@ -10,6 +10,19 @@ import { CheckoutAccountNotice } from '@/components/checkout/checkout-account-no
 import { cn } from '@/lib/utils'
 
 type PayMode = 'subscription' | 'one_time'
+
+interface AppliedCoupon {
+  couponId: string
+  code: string
+  label?: string
+  amountBeforeCoupon: number
+  discountAmount: number
+  amountAfterCoupon: number
+}
+
+function formatBRL(value: number): string {
+  return `R$ ${value.toFixed(2).replace('.', ',')}`
+}
 
 export default function BuyCheckoutPage() {
   return (
@@ -29,6 +42,17 @@ function BuyCheckoutContent() {
   const [error, setError] = useState<string | null>(null)
   const [isRecurring, setIsRecurring] = useState(false)
   const [payMode, setPayMode] = useState<PayMode>('subscription')
+
+  // Cupom: só se aplica ao pagamento único — a assinatura recorrente cobra o
+  // cartão pelo mesmo valor fixo em toda renovação (preapproval do Mercado
+  // Pago), e não existe hoje um jeito de descontar só a primeira cobrança sem
+  // o desconto voltar sozinho no mês seguinte. Aplicar o cupom ali venderia um
+  // preço que a cobrança real não respeitaria.
+  const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null)
+  const [couponCode, setCouponCode] = useState('')
+  const [couponLoading, setCouponLoading] = useState(false)
+  const [couponError, setCouponError] = useState('')
+  const couponSupported = payMode === 'one_time'
 
   useEffect(() => {
     if (!planId) {
@@ -109,6 +133,38 @@ function BuyCheckoutContent() {
   const months = plan.durationMonths || 0
   const periodLabel = plan.periodo || (months === 1 ? 'Mensal' : months === 3 ? 'Trimestral' : months === 12 ? 'Anual' : 'Vitalício')
 
+  const baseAmount = Number(plan.preco) || 0
+  const couponDiscountAmount = couponSupported && appliedCoupon ? appliedCoupon.discountAmount : 0
+  const payableAmount = Math.max(0, Math.round((baseAmount - couponDiscountAmount) * 100) / 100)
+
+  const applyCoupon = async () => {
+    const normalized = couponCode.trim()
+    if (!normalized) return
+    setCouponLoading(true)
+    setCouponError('')
+    try {
+      const res = await fetch('/api/coupons/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: normalized, itemType: 'plus', itemId: plan.tipo }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Cupom inválido')
+      setAppliedCoupon(data)
+      setCouponCode(data.code || normalized.toUpperCase())
+    } catch (err: any) {
+      setCouponError(err?.message || 'Erro ao aplicar cupom')
+    } finally {
+      setCouponLoading(false)
+    }
+  }
+
+  const removeCoupon = () => {
+    setAppliedCoupon(null)
+    setCouponCode('')
+    setCouponError('')
+  }
+
   return (
     <div className="surface-page min-h-full px-4 py-6 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-5xl">
@@ -145,15 +201,76 @@ function BuyCheckoutContent() {
                 <Star className="h-5 w-5 shrink-0 text-primary" />
               </div>
 
-              <div className="mb-5 rounded-lg border border-primary/15 bg-primary/5 p-4">
+              <div className="mb-3.5 rounded-lg border border-primary/15 bg-primary/5 p-4">
                 <p className="text-xs font-medium text-muted-foreground">Valor</p>
+                {baseAmount > payableAmount && (
+                  <p className="mb-0.5 text-sm text-muted-foreground line-through">
+                    {formatBRL(baseAmount)}
+                  </p>
+                )}
                 <p className="font-heading text-3xl font-semibold tabular-nums tracking-tight text-primary">
-                  R$ {plan.preco.toFixed(2).replace('.', ',')}
+                  {formatBRL(payableAmount)}
                 </p>
                 {months > 0 && payMode === 'subscription' && (
                   <p className="mt-1 text-xs text-muted-foreground">
                     cobrado a cada {months === 1 ? 'mês' : months === 3 ? '3 meses' : '12 meses'}
                   </p>
+                )}
+                {appliedCoupon && couponSupported && (
+                  <p className="mt-1 text-xs font-bold text-primary">
+                    Cupom {appliedCoupon.code}: − {formatBRL(appliedCoupon.discountAmount)}
+                  </p>
+                )}
+              </div>
+
+              <div className="mb-5 rounded-lg border border-border bg-background p-3.5">
+                <div className="mb-2.5 flex items-center gap-2 text-sm font-bold text-foreground">
+                  <Percent className="h-4 w-4 text-primary" /> Cupom de desconto
+                </div>
+                {!couponSupported ? (
+                  <p className="text-xs leading-relaxed text-muted-foreground">
+                    {appliedCoupon
+                      ? `Cupom ${appliedCoupon.code} guardado — escolha "Pagamento único" ao lado para aplicá-lo.`
+                      : 'Disponível para quem escolher "Pagamento único" ao lado — a assinatura recorrente cobra sempre o valor cheio.'}
+                  </p>
+                ) : appliedCoupon ? (
+                  <div className="flex items-center justify-between gap-2.5">
+                    <div className="min-w-0">
+                      <p className="text-sm font-extrabold text-primary">{appliedCoupon.code} aplicado</p>
+                      <p className="text-xs text-muted-foreground">
+                        {formatBRL(appliedCoupon.discountAmount)} de desconto
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={removeCoupon}
+                      className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-destructive/25 bg-destructive/10 px-2.5 py-1.5 text-xs font-extrabold text-destructive"
+                    >
+                      <X className="h-3.5 w-3.5" /> Remover
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <div className="flex gap-2">
+                      <input
+                        value={couponCode}
+                        onChange={(e) => { setCouponCode(e.target.value.toUpperCase()); setCouponError('') }}
+                        onKeyDown={(e) => { if (e.key === 'Enter') applyCoupon() }}
+                        disabled={couponLoading}
+                        placeholder="Digite seu cupom"
+                        className="h-9 min-w-0 flex-1 rounded-lg border border-border bg-card px-3 text-sm uppercase text-foreground outline-none focus:border-primary/45 focus:ring-2 focus:ring-primary/15"
+                      />
+                      <button
+                        type="button"
+                        onClick={applyCoupon}
+                        disabled={couponLoading || !couponCode.trim()}
+                        className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-secondary px-3.5 text-xs font-black text-secondary-foreground disabled:cursor-not-allowed disabled:opacity-55"
+                      >
+                        {couponLoading && <Loader2 className="h-3.5 w-3.5 animate-spin" />} Aplicar
+                      </button>
+                    </div>
+                    {couponError ? <p className="mt-2 text-xs text-destructive">{couponError}</p> : null}
+                  </>
                 )}
               </div>
 
@@ -268,11 +385,16 @@ function BuyCheckoutContent() {
               <SubscriptionCheckout plan={plan} publicKey={publicKey} months={months as 1 | 3 | 12} />
             ) : (
               <MercadoPagoCheckout
+                key={`buy-${payableAmount}-${appliedCoupon?.code || 'sem-cupom'}`}
                 publicKey={publicKey}
-                amount={plan.preco}
+                amount={payableAmount}
                 description={`${plan.nome} — ${periodLabel}`}
                 endpoint="/api/payments/orders"
-                extraBody={{ type: 'plan', refId: plan.tipo }}
+                extraBody={{
+                  type: 'plan',
+                  refId: plan.tipo,
+                  couponCode: appliedCoupon?.code,
+                }}
                 analytics={{
                   productId: plan.tipo,
                   productTitle: plan.nome,

@@ -9,6 +9,14 @@ import { applyPaymentResult } from '@/lib/payments/effects'
 import { audit } from '@/lib/payments/audit'
 import { getRequestAnalyticsMeta, recordOrderCheckoutEvent } from '@/lib/analytics'
 import { DEFAULT_PAYMENT_METHODS } from '@/lib/payment-methods'
+import {
+  CouponError,
+  couponAnalyticsMetadata,
+  reserveCouponRedemption,
+  releaseCouponRedemption,
+  validateCouponForCheckout,
+  type CouponValidationResult,
+} from '@/lib/coupons'
 import type { PaymentOrder, MaterialPurchase } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -37,6 +45,8 @@ const Schema = z.object({
   issuer: z.string().optional(),
   payerDocumentType: z.enum(['CPF', 'CNPJ']).optional(),
   payerDocumentNumber: z.string().optional(),
+  // Só tem efeito para type: 'plan' — pagamento único de um plano Plus+/premium.
+  couponCode: z.string().max(80).optional(),
 })
 
 export async function POST(request: NextRequest) {
@@ -100,12 +110,37 @@ export async function POST(request: NextRequest) {
   // Comissão do sócio (split): materiais/pacotes marcados ficam de fora.
   let commissionExcluded = false
 
+  let couponValidation: CouponValidationResult | null = null
+
   if (data.type === 'plan') {
     const settings = await db.collection('admin_settings').findOne({})
     const plano = (settings?.planos || []).find((p: any) => p.tipo === data.refId)
     if (!plano) return NextResponse.json({ error: 'Plano não encontrado' }, { status: 400 })
     amount = Number(plano.preco)
     description = `${plano.nome} — ${plano.periodo || 'Plano'}`
+
+    if (data.couponCode && amount > 0) {
+      try {
+        couponValidation = await validateCouponForCheckout(db, {
+          code: data.couponCode,
+          amountBeforeCoupon: amount,
+          userId: session!.userId,
+          userEmail: session!.email,
+          items: [{
+            itemType: 'plus',
+            itemId: plano.tipo,
+            itemTitle: plano.nome,
+            price: amount,
+          }],
+        })
+        amount = couponValidation.amountAfterCoupon
+      } catch (err: any) {
+        if (err instanceof CouponError) {
+          return NextResponse.json({ error: err.message }, { status: err.status })
+        }
+        throw err
+      }
+    }
   } else if (data.type === 'material') {
     if (!data.itemType) return NextResponse.json({ error: 'itemType obrigatório' }, { status: 400 })
     const col = data.itemType === 'package' ? 'material_packages' : 'materials'
@@ -147,6 +182,7 @@ export async function POST(request: NextRequest) {
     idempotencyKey: '', // preenchido abaixo
     metadata: {
       itemType: data.itemType,
+      ...couponAnalyticsMetadata(couponValidation),
     },
     createdAt: now,
     updatedAt: now,
@@ -158,6 +194,28 @@ export async function POST(request: NextRequest) {
     { _id: inserted.insertedId },
     { $set: { idempotencyKey } }
   )
+
+  if (couponValidation) {
+    try {
+      await reserveCouponRedemption(db, {
+        validation: couponValidation,
+        userId: orderUserId!,
+        userName: payerName,
+        userEmail: payerEmail,
+        orderId,
+      })
+    } catch (err: any) {
+      await db.collection<PaymentOrder>('payment_orders').updateOne(
+        { _id: inserted.insertedId },
+        { $set: { status: 'rejected', statusDetail: 'coupon_unavailable', updatedAt: new Date() } }
+      )
+      if (err instanceof CouponError) {
+        return NextResponse.json({ error: err.message }, { status: err.status })
+      }
+      throw err
+    }
+  }
+
   await recordOrderCheckoutEvent('order_created', { ...orderDoc, _id: inserted.insertedId, idempotencyKey } as PaymentOrder, {
     paymentMethod: data.paymentMethodId,
     ...getRequestAnalyticsMeta(request),
@@ -185,6 +243,7 @@ export async function POST(request: NextRequest) {
         orderId,
         type: data.type,
         ...(data.itemType ? { itemType: data.itemType } : {}),
+        ...(couponValidation ? { couponCode: couponValidation.code } : {}),
       },
     })
 
@@ -197,7 +256,12 @@ export async function POST(request: NextRequest) {
       targetUserId: orderUserId,
       resourceType: data.type,
       resourceId: orderId,
-      metadata: { amount, paymentMethod: data.paymentMethodId, providerPaymentId: result.providerOrderId },
+      metadata: {
+        amount,
+        paymentMethod: data.paymentMethodId,
+        providerPaymentId: result.providerOrderId,
+        ...couponAnalyticsMetadata(couponValidation),
+      },
       ip,
     })
 
@@ -213,6 +277,9 @@ export async function POST(request: NextRequest) {
     })
   } catch (err: any) {
     console.error('[orders] erro ao criar payment:', err)
+    if (couponValidation) {
+      await releaseCouponRedemption(db, orderId, 'provider_error')
+    }
     await db.collection<PaymentOrder>('payment_orders').updateOne(
       { _id: inserted.insertedId },
       { $set: { status: 'rejected', statusDetail: 'provider_error', updatedAt: new Date() } }
