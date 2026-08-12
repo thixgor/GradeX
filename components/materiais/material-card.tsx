@@ -12,6 +12,7 @@ import {
   FileText,
   Gift,
   Info,
+  Clock,
   Play,
   ShieldAlert,
   ShoppingCart,
@@ -22,9 +23,11 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { PricingEventBadge } from '@/components/pricing-events/PricingEventBadge'
 import { PLUS_LABEL } from '@/lib/account-tier'
+import { TimedAccessPill } from './timed-access'
 import {
   CardPrice,
   CopyLinkBtn,
+  formatBRL,
   GROUP_META,
   LockedGroupOverlay,
   formatDuration,
@@ -109,6 +112,10 @@ export const MaterialCard = memo(function MaterialCard({
   const featured = variant === 'featured'
   const href = `/materiais/${material._id}`
   const hasEvent = !isFree && !!material._pricingEventState?.activeTier && material._pricingEventState.isActive
+  // Versão por tempo mais barata — vira o "ou R$X por 30 dias" abaixo do preço.
+  const cheapestTimedVersion = (material._timedAccessVersions || [])
+    .slice()
+    .sort((a, b) => a.price - b.price)[0] || null
 
   const metrics: { key: string; node: React.ReactNode }[] = []
   if (metricSettings.showDownloads) {
@@ -309,18 +316,22 @@ export const MaterialCard = memo(function MaterialCard({
               </button>
             ) : canAccess ? (
               <>
-                {isPurchased && (
+                {material._timedAccess?.isTimed ? (
+                  // Posse por tempo: o selo vira contagem regressiva — é a
+                  // informação que o usuário precisa antes de abrir o material.
+                  <TimedAccessPill access={material._timedAccess} />
+                ) : isPurchased ? (
                   <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
                     <Check className="h-3.5 w-3.5" /> Adquirido
                   </span>
-                )}
+                ) : null}
                 {canViewPdf && (
                   <Button onClick={onViewPdf} size="sm" variant="outline" className="h-10 w-full text-xs font-semibold">
                     <Eye className="mr-1.5 h-3.5 w-3.5" />
                     Visualizar PDF
                   </Button>
                 )}
-                {(!canViewPdf || !pdfDownloadBlocked) && (
+                {(!canViewPdf || !pdfDownloadBlocked) && !(material._timedAccess?.isTimed && canViewPdf) && (
                   <Button onClick={onDownload} size="sm" className="cta-raised h-10 w-full text-xs font-semibold">
                     {isEmbed
                       ? <><Play className="mr-1.5 h-3.5 w-3.5 fill-current" /> Assistir</>
@@ -358,6 +369,12 @@ export const MaterialCard = memo(function MaterialCard({
             ) : (
               <>
                 <CardPrice price={material.price} isFree={false} state={material._pricingEventState} />
+                {cheapestTimedVersion && (
+                  <p className="flex items-center gap-1 text-[11px] font-medium text-sky-600 dark:text-sky-400">
+                    <Clock className="h-3 w-3" />
+                    ou {formatBRL(cheapestTimedVersion.price)} por {cheapestTimedVersion.durationLabel}
+                  </p>
+                )}
                 <div className="flex gap-2">
                   <Button onClick={onBuyNow} disabled={loading} size="sm" className="cta-raised h-10 flex-1 text-xs font-semibold">
                     {loading ? <InlineSpinner /> : null}

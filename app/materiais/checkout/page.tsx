@@ -2,8 +2,9 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { AlertCircle, Check, ChevronLeft, FileText, Flame, Loader2, Package, Percent, ShoppingCart, Sparkles, Trash2, X } from 'lucide-react'
+import { AlertCircle, Check, ChevronLeft, Clock, FileText, Flame, Loader2, Package, Percent, ShoppingCart, Sparkles, Trash2, X } from 'lucide-react'
 import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
+import { TimedAccessNotice, type TimedAccessVersionView } from '@/components/materiais/timed-access'
 import { CheckoutAddonOffers } from '@/components/shop/checkout-addon-offers'
 import { UnifiedCheckoutPayment } from '@/components/shop/unified-checkout-payment'
 import { CheckoutAccountNotice } from '@/components/checkout/checkout-account-notice'
@@ -280,6 +281,9 @@ export default function MateriaisCheckoutPage() {
   const isCartMode = params.get('cart') === '1'
   const itemType = (params.get('type') as 'material' | 'package') || 'material'
   const itemId = params.get('id') || ''
+  // Versão de acesso por tempo escolhida na página do produto (o servidor
+  // revalida o id e cobra o preço da versão).
+  const accessVersionId = params.get('accessVersionId') || ''
   const couponFromQuery = params.get('coupon') || ''
   const { items: cartItems, clearCart, removeItem, addItem } = useMaterialCart()
 
@@ -311,17 +315,22 @@ export default function MateriaisCheckoutPage() {
     return () => { active = false }
   }, [])
 
-  const cartPayload = cartItems.map(item => ({ itemType: item.itemType, itemId: item.itemId }))
-  const cartPayloadKey = cartPayload.map(item => `${item.itemType}:${item.itemId}`).join('|')
+  const cartPayload = cartItems.map(item => ({
+    itemType: item.itemType,
+    itemId: item.itemId,
+    ...(item.accessVersionId ? { accessVersionId: item.accessVersionId } : {}),
+  }))
+  const cartPayloadKey = cartPayload.map(item => `${item.itemType}:${item.itemId}:${item.accessVersionId || ''}`).join('|')
 
   // Visitante em compra de item único → usa o checkout de Serial Key (/comprar),
   // que mantém preço e fluxo consistentes. O carrinho é tratado nesta página.
   useEffect(() => {
     if (isGuest && !isCartMode && item?._id) {
       const pt = itemType === 'package' ? 'package' : (item.type === 'flashcard_deck' ? 'flashcard' : 'material')
-      router.replace(`/comprar?productType=${pt}&productId=${item._id}&itemType=${itemType}`)
+      const versionQuery = accessVersionId ? `&accessVersionId=${encodeURIComponent(accessVersionId)}` : ''
+      router.replace(`/comprar?productType=${pt}&productId=${item._id}&itemType=${itemType}${versionQuery}`)
     }
-  }, [isGuest, isCartMode, item, itemType, router])
+  }, [isGuest, isCartMode, item, itemType, accessVersionId, router])
 
   useEffect(() => {
     setAppliedCoupon(null)
@@ -849,6 +858,20 @@ export default function MateriaisCheckoutPage() {
                           <p style={{ fontSize: '14px', fontWeight: 700, color: 'white', lineHeight: 1.35 }}>
                             {previewItem.itemTitle}
                           </p>
+                          {(previewItem as any).accessMode === 'timed' && (
+                            <p style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '5px',
+                              marginTop: '4px',
+                              fontSize: '11px',
+                              fontWeight: 700,
+                              color: '#7dd3fc',
+                            }}>
+                              <Clock size={11} />
+                              {(previewItem as any).accessVersionLabel || 'Acesso temporário'} · {(previewItem as any).accessDurationLabel} · sem download
+                            </p>
+                          )}
                           {previewItem.discountApplied > 0 && (
                             <p style={{ fontSize: '12px', color: '#34d399', marginTop: '3px' }}>
                               Desconto aplicado: {formatBRL(previewItem.discountApplied)}
@@ -1212,13 +1235,22 @@ export default function MateriaisCheckoutPage() {
     )
   }
 
-  const originalPrice = Number(item.originalPackagePrice ?? item.price ?? 0)
-  const priceBeforeTier = Number(item.effectivePrice ?? item.price ?? 0)
-  const discountApplied = Number(item.discountApplied ?? 0)
-  const hasOverlapDiscount = itemType === 'package' && discountApplied > 0
+  // Versão de acesso por tempo escolhida (quando houver). O preço dela é fechado:
+  // não recebe desconto de lote nem o abatimento proporcional de pacote.
+  const timedVersion: TimedAccessVersionView | null =
+    (item._timedAccessVersions || []).find((v: TimedAccessVersionView) => v.id === accessVersionId) || null
+
+  const originalPrice = timedVersion
+    ? Number(item.price ?? 0)
+    : Number(item.originalPackagePrice ?? item.price ?? 0)
+  const priceBeforeTier = timedVersion
+    ? Number(timedVersion.price ?? 0)
+    : Number(item.effectivePrice ?? item.price ?? 0)
+  const discountApplied = timedVersion ? 0 : Number(item.discountApplied ?? 0)
+  const hasOverlapDiscount = !timedVersion && itemType === 'package' && discountApplied > 0
 
   // Lote dinâmico por evento — aplica desconto progressivo (regra "maior dos dois" vs cupom no servidor).
-  const eventState: PricingEventStatePayload | null = item.pricingEventState || null
+  const eventState: PricingEventStatePayload | null = timedVersion ? null : (item.pricingEventState || null)
   const tierPct = eventState?.activeTier?.discountPercent || 0
   const hasTier =
     !!eventState?.activeTier && eventState.isActive !== false && tierPct > 0 && priceBeforeTier > 0
@@ -1245,7 +1277,7 @@ export default function MateriaisCheckoutPage() {
       const res = await fetch('/api/materiais/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ itemType, itemId, paymentMethodId: 'free', couponCode: appliedCoupon?.code }),
+        body: JSON.stringify({ itemType, itemId, paymentMethodId: 'free', couponCode: appliedCoupon?.code, ...(accessVersionId ? { accessVersionId } : {}) }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Erro ao liberar item')
@@ -1307,6 +1339,11 @@ export default function MateriaisCheckoutPage() {
                 <h2 style={{ fontSize: '20px', fontWeight: 800, color: 'white', letterSpacing: '-0.01em', lineHeight: '1.3' }}>
                   {item.title}
                 </h2>
+                {timedVersion && (
+                  <p style={{ marginTop: '6px', fontSize: '13px', fontWeight: 700, color: '#7dd3fc' }}>
+                    {timedVersion.label} · {timedVersion.durationLabel}
+                  </p>
+                )}
               </div>
 
               {hasTier && eventState && (
@@ -1366,8 +1403,22 @@ export default function MateriaisCheckoutPage() {
                     Cupom {appliedCoupon.code}: − {formatBRL(appliedCoupon.discountAmount)}
                   </p>
                 )}
-                <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.35)', marginTop: '6px' }}>Pagamento único · Acesso permanente</p>
+                <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.35)', marginTop: '6px' }}>
+                  {timedVersion
+                    ? `Pagamento único · Acesso por ${timedVersion.durationLabel}, sem download`
+                    : 'Pagamento único · Acesso permanente'}
+                </p>
               </div>
+
+              {timedVersion && (
+                <TimedAccessNotice
+                  durationLabel={timedVersion.durationLabel}
+                  versionLabel={timedVersion.label}
+                  viaSerialKey={isGuest === true}
+                  variant="dark"
+                  className="mb-4"
+                />
+              )}
 
               <CouponBox
                 amount={price}
@@ -1408,7 +1459,7 @@ export default function MateriaisCheckoutPage() {
             <UnifiedCheckoutPayment
               publicKey={publicKey}
               digitalPayable={Math.max(0, payablePrice)}
-              digitalBody={{ itemType, itemId, couponCode: appliedCoupon?.code }}
+              digitalBody={{ itemType, itemId, couponCode: appliedCoupon?.code, ...(accessVersionId ? { accessVersionId } : {}) }}
               purchaseMaterialIds={itemType === 'material' ? [itemId] : ((item.materialIds || []) as any[]).map(String)}
               purchasePackageIds={itemType === 'package' ? [itemId] : []}
               includeStandalone={false}
@@ -1457,12 +1508,12 @@ export default function MateriaisCheckoutPage() {
               </div>
             ) : (
               <MercadoPagoCheckout
-                key={`single-${payablePrice}-${appliedCoupon?.code || 'sem-cupom'}`}
+                key={`single-${payablePrice}-${accessVersionId || 'vitalicio'}-${appliedCoupon?.code || 'sem-cupom'}`}
                 publicKey={publicKey}
                 amount={payablePrice}
-                description={item.title}
+                description={timedVersion ? `${item.title} — ${timedVersion.label}` : item.title}
                 endpoint="/api/materiais/checkout"
-                extraBody={{ itemType, itemId, couponCode: appliedCoupon?.code }}
+                extraBody={{ itemType, itemId, couponCode: appliedCoupon?.code, ...(accessVersionId ? { accessVersionId } : {}) }}
                 analytics={{
                   productId: itemId,
                   productTitle: item.title,

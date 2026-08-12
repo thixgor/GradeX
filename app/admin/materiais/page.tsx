@@ -75,6 +75,10 @@ import { Textarea } from '@/components/ui/textarea'
 import { AppShell } from '@/components/app-shell'
 import { PricingEventSelector } from '@/components/pricing-events/PricingEventSelector'
 import {
+  TimedAccessVersionsEditor,
+  type TimedAccessVersionForm,
+} from '@/components/materiais/timed-access-versions-editor'
+import {
   DEFAULT_PUBLIC_METRIC_SETTINGS,
   type PublicMetricSettings,
 } from '@/lib/display-settings'
@@ -737,6 +741,7 @@ function AdminMateriaisContent() {
     pdfViewerConfig: EMPTY_PDF_VIEWER_CONFIG as PdfViewerConfig,
     htmlViewerEnabled: false,
     complementaryItems: [] as ComplementaryItemForm[],
+    timedAccessVersions: [] as TimedAccessVersionForm[],
     order: 0,
   })
 
@@ -768,6 +773,7 @@ function AdminMateriaisContent() {
     pricingEventId: null as string | null,
     stripePriceId: '',
     excludeFromCommission: false,
+    timedAccessVersions: [] as TimedAccessVersionForm[],
     isHidden: false,
     isFeatured: false,
     order: 0,
@@ -993,6 +999,7 @@ function AdminMateriaisContent() {
         complementaryItems: (material.complementaryItems && material.complementaryItems.length > 0)
           ? material.complementaryItems.map((it) => ({ ...it, id: it.id || newComplementaryId() }))
           : (material.complementaryMaterialIds || []).map((mid) => ({ id: newComplementaryId(), kind: 'material' as const, materialId: mid })),
+        timedAccessVersions: normalizeVersionsForForm((material as any).timedAccessVersions),
         order: material.order || 0,
       })
       setPdfInfo(material._pdfFile || null)
@@ -1006,7 +1013,7 @@ function AdminMateriaisContent() {
         pricing: 'free', price: 0, pricingEventId: null, stripePriceId: '', excludeFromCommission: false, isHidden: false, isFeatured: false,
         pdfViewerEnabled: false, pdfDownloadEnabled: true, autoEmailPdfOnPurchase: false,
         pdfViewerConfig: { coverPage: undefined, summary: [], navigation: [], preview: { enabled: false, ranges: [] } },
-        htmlViewerEnabled: false, complementaryItems: [],
+        htmlViewerEnabled: false, complementaryItems: [], timedAccessVersions: [],
         order: 0,
       })
       setPdfInfo(null)
@@ -1427,6 +1434,7 @@ function AdminMateriaisContent() {
         pricingEventId: (pkg as any).pricingEventId || null,
         stripePriceId: pkg.stripePriceId || '',
         excludeFromCommission: (pkg as any).excludeFromCommission === true,
+        timedAccessVersions: normalizeVersionsForForm((pkg as any).timedAccessVersions),
         isHidden: pkg.isHidden,
         isFeatured: pkg.isFeatured, order: pkg.order || 0,
       })
@@ -1435,7 +1443,8 @@ function AdminMateriaisContent() {
         _id: '', title: '', description: '', coverImage: '', materialIds: [],
         tags: '', autoEmailPdfOnPurchase: false, allowedGroups: [], pricing: 'free', price: 0, originalPrice: 0,
         pricingEventId: null,
-        stripePriceId: '', excludeFromCommission: false, isHidden: false, isFeatured: false, order: 0,
+        stripePriceId: '', excludeFromCommission: false, timedAccessVersions: [],
+        isHidden: false, isFeatured: false, order: 0,
       })
     }
     setShowPackageModal(true)
@@ -2851,6 +2860,16 @@ function AdminMateriaisContent() {
                 )}
 
                 {materialForm.pricing === 'paid' && (
+                  <TimedAccessVersionsEditor
+                    versions={materialForm.timedAccessVersions}
+                    onChange={(timedAccessVersions) => setMaterialForm(p => ({ ...p, timedAccessVersions }))}
+                    fullPrice={materialForm.price}
+                    itemLabel="material"
+                    hasPdf={materialForm.type === 'pdf'}
+                  />
+                )}
+
+                {materialForm.pricing === 'paid' && (
                   <label className="flex items-start gap-2 rounded-lg border p-2 text-sm cursor-pointer hover:bg-muted/40">
                     <input
                       type="checkbox"
@@ -3027,6 +3046,15 @@ function AdminMateriaisContent() {
                   <PricingEventSelector
                     value={packageForm.pricingEventId}
                     onChange={(id) => setPackageForm(p => ({ ...p, pricingEventId: id }))}
+                  />
+                )}
+
+                {packageForm.pricing === 'paid' && (
+                  <TimedAccessVersionsEditor
+                    versions={packageForm.timedAccessVersions}
+                    onChange={(timedAccessVersions) => setPackageForm(p => ({ ...p, timedAccessVersions }))}
+                    fullPrice={packageForm.price}
+                    itemLabel="pacote"
                   />
                 )}
 
@@ -4122,6 +4150,26 @@ function ModalActions({ onCancel, onSave, saving, mode }: { onCancel: () => void
 }
 
 // ─── Page Export ─────────────────────────────────────────────
+/**
+ * Traz as versões salvas para o formato do formulário, preenchendo defaults —
+ * documentos antigos não têm o campo, e versões gravadas antes de um ajuste
+ * podem não ter todos os campos.
+ */
+function normalizeVersionsForForm(raw: any): TimedAccessVersionForm[] {
+  if (!Array.isArray(raw)) return []
+  return raw.map((version: any, index: number) => ({
+    id: String(version?.id || `tav-${index}-${Math.random().toString(36).slice(2, 8)}`),
+    label: String(version?.label || ''),
+    description: version?.description ? String(version.description) : '',
+    price: Number(version?.price || 0),
+    durationDays: Math.max(0, Math.floor(Number(version?.durationDays) || 0)),
+    durationHours: Math.max(0, Math.floor(Number(version?.durationHours) || 0)),
+    isActive: version?.isActive !== false,
+    highlight: version?.highlight === true,
+    order: Math.max(0, Math.floor(Number(version?.order) || index)),
+  }))
+}
+
 export default function AdminMateriaisPage() {
   return (
     <AppShell headerTitle="Gerenciar Materiais" headerSubtitle="Marketplace de materiais de estudo">

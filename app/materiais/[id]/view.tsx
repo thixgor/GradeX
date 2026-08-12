@@ -70,6 +70,12 @@ import { PricingEventBadge } from '@/components/pricing-events/PricingEventBadge
 import { usePricingEventState } from '@/components/pricing-events/usePricingEventState'
 import { PrintedAddon } from '@/components/shop/printed-addon'
 import { PLUS_LABEL } from '@/lib/account-tier'
+import {
+  TimedAccessBanner,
+  TimedAccessOptions,
+  type TimedAccessVersionView,
+  type TimedAccessView,
+} from '@/components/materiais/timed-access'
 
 // ─── Types ───────────────────────────────────────────────────
 interface Material {
@@ -102,6 +108,8 @@ interface Material {
       ranges?: Array<{ start: number; end: number }>
     }
   }
+  /** Versões de acesso por tempo publicadas pelo admin (opcional). */
+  _timedAccessVersions?: TimedAccessVersionView[]
 }
 
 interface ComplementaryItem {
@@ -132,6 +140,8 @@ interface PageData {
   isAuthenticated: boolean
   watermark: { name: string; cpf: string }
   complementaryItems?: ComplementaryItem[]
+  /** Prazo restante quando o acesso atual veio de uma versão por tempo. */
+  timedAccess?: TimedAccessView | null
 }
 
 // ─── Constants ───────────────────────────────────────────────
@@ -259,6 +269,8 @@ export default function MaterialViewPage() {
   const [copied, setCopied] = useState(false)
   const [reviewSummary, setReviewSummary] = useState<ReviewSummary | null>(null)
   const [metricSettings, setMetricSettings] = useState<PublicMetricSettings>(DEFAULT_PUBLIC_METRIC_SETTINGS)
+  // null = acesso vitalício (padrão). Um id = versão por tempo escolhida.
+  const [accessVersionId, setAccessVersionId] = useState<string | null>(null)
   const stepTimersRef = useRef<ReturnType<typeof setTimeout>[]>([])
   const { addItem } = useMaterialCart()
 
@@ -406,20 +418,29 @@ export default function MaterialViewPage() {
   }, [])
 
   const addMaterialToCart = useCallback((mat: Material) => {
+    const version = (mat._timedAccessVersions || []).find(v => v.id === accessVersionId) || null
+    const price = version ? Number(version.price || 0) : Number(mat.price || 0)
     const result = addItem({
       itemType: 'material',
       itemId: mat._id,
-      title: mat.title,
+      title: version ? `${mat.title} — ${version.label}` : mat.title,
       pricing: mat.pricing,
-      price: Number(mat.price || 0),
+      price,
       coverImage: mat.coverImage,
       materialType: mat.type,
-      effectivePrice: Number(mat.price || 0),
-      originalPrice: Number(mat.price || 0),
+      effectivePrice: price,
+      originalPrice: version ? Number(mat.price || 0) : price,
       discountApplied: 0,
+      ...(version
+        ? {
+            accessVersionId: version.id,
+            accessVersionLabel: version.label,
+            accessDurationLabel: version.durationLabel,
+          }
+        : {}),
     })
     showCartMessage(result === 'added' ? 'Material adicionado ao carrinho.' : 'Este material já está no carrinho.')
-  }, [addItem, showCartMessage])
+  }, [addItem, showCartMessage, accessVersionId])
 
   // ─── Acquire ──────────────────────────────────────────────
   // Add-to-cart é fluxo leve: sem upsell (sugestões aparecem como banner no checkout).
@@ -503,12 +524,15 @@ export default function MaterialViewPage() {
   // Buy-now é alta intenção: aqui sim vale interromper com upsell se houver pacote.
   const handleBuyNow = async (skipUpsell = false) => {
     if (!data) return
-    const checkoutPath = `/materiais/checkout?type=material&id=${id}`
+    // A versão escolhida viaja na URL: o checkout (logado ou por Serial Key)
+    // revalida o id na fonte e cobra o preço da versão.
+    const versionQuery = accessVersionId ? `&accessVersionId=${encodeURIComponent(accessVersionId)}` : ''
+    const checkoutPath = `/materiais/checkout?type=material&id=${id}${versionQuery}`
     const goCheckout = () => {
       if (!data.isAuthenticated) {
         // Compra sem login via Serial Key (nome/e-mail/telefone no checkout).
         const pt = data.material.type === 'flashcard_deck' ? 'flashcard' : 'material'
-        router.push(`/comprar?productType=${pt}&productId=${id}&itemType=material`)
+        router.push(`/comprar?productType=${pt}&productId=${id}&itemType=material${versionQuery}`)
         return
       }
       router.push(checkoutPath)
@@ -562,9 +586,18 @@ export default function MaterialViewPage() {
     : originalPrice
   const tierSavings = hasActiveTier ? Math.max(0, originalPrice - tierFinalPrice) : 0
   const descLong = material.description && material.description.length > 200
+  // Acesso por tempo limitado: prazo em andamento (ou já vencido) desta conta.
+  const timedAccess = data.timedAccess || null
+  const timedVersions = material._timedAccessVersions || []
+  const selectedTimedVersion = timedVersions.find((version) => version.id === accessVersionId) || null
+  const purchasePrice = selectedTimedVersion ? Number(selectedTimedVersion.price || 0) : tierFinalPrice
+
   const isPdf = material._hasPdf || material.type === 'pdf'
   const canViewPdf = hasAccess && !!material._hasPdf && material.pdfViewerEnabled === true
-  const canDownload = hasAccess && (!material._hasPdf || material.pdfDownloadEnabled !== false)
+  // A versão por tempo é vendida como leitura na plataforma: nunca oferece
+  // download (o servidor recusa de qualquer forma).
+  const canDownload =
+    hasAccess && !timedAccess?.isTimed && (!material._hasPdf || material.pdfDownloadEnabled !== false)
   const isHtml = material._hasHtml || material.type === 'html'
   const canViewHtml = hasAccess && !!material._hasHtml && material.htmlViewerEnabled === true
   const complementaryItems = data.complementaryItems || []
@@ -779,6 +812,17 @@ export default function MaterialViewPage() {
                 </div>
               </div>
 
+              {/* Acesso por tempo limitado — quanto ainda resta */}
+              {hasAccess && timedAccess?.isTimed && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-4"
+                >
+                  <TimedAccessBanner access={timedAccess} itemLabel="material" />
+                </motion.div>
+              )}
+
               {/* Lote dinâmico por evento — banner full */}
               {hasActiveTier && pricingEventState && !hasAccess && (
                 <motion.div
@@ -963,7 +1007,17 @@ export default function MaterialViewPage() {
                           Ver prévia grátis (págs. {previewLabel})
                         </Button>
                       )}
-                      {hasActiveTier && pricingEventState && (
+                      {timedVersions.length > 0 && !isFree && (
+                        <TimedAccessOptions
+                          versions={timedVersions}
+                          value={accessVersionId}
+                          onChange={setAccessVersionId}
+                          fullPrice={hasActiveTier ? tierFinalPrice : originalPrice}
+                          disabled={checkoutLoading}
+                          className="mb-3"
+                        />
+                      )}
+                      {hasActiveTier && pricingEventState && !selectedTimedVersion && (
                         <div className="mb-3 rounded-lg border border-border/40 bg-muted/20 px-3 py-2.5">
                           <div className="mb-1 flex items-center justify-between gap-3 text-xs">
                             <span className="text-muted-foreground">Valor sem lote</span>
@@ -1217,8 +1271,20 @@ export default function MaterialViewPage() {
                     </div>
                   )}
 
+                  {/* Formas de acesso — vitalício ou versão por tempo */}
+                  {!hasAccess && !isFree && timedVersions.length > 0 && (
+                    <TimedAccessOptions
+                      versions={timedVersions}
+                      value={accessVersionId}
+                      onChange={setAccessVersionId}
+                      fullPrice={hasActiveTier ? tierFinalPrice : originalPrice}
+                      disabled={checkoutLoading}
+                      className="mb-3"
+                    />
+                  )}
+
                   {/* Lote dinâmico por evento — desktop sidebar breakdown */}
-                  {hasActiveTier && !hasAccess && pricingEventState && (
+                  {hasActiveTier && !hasAccess && !selectedTimedVersion && pricingEventState && (
                     <div className="mb-3 rounded-lg border border-border/40 overflow-hidden">
                       <div className="px-3 py-2 border-b border-border/30 bg-muted/20">
                         <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
@@ -1478,7 +1544,14 @@ export default function MaterialViewPage() {
             <div className="min-w-0 flex-1">
               <p className="truncate text-xs font-semibold text-foreground">{material.title}</p>
               <p className="text-sm font-black text-emerald-700 dark:text-emerald-300">
-                {isFree ? 'Gratuito' : hasActiveTier ? (
+                {isFree ? 'Gratuito' : selectedTimedVersion ? (
+                  <>
+                    R$ {purchasePrice.toFixed(2)}
+                    <span className="ml-1.5 text-[10px] font-bold text-sky-500">
+                      {selectedTimedVersion.durationLabel}
+                    </span>
+                  </>
+                ) : hasActiveTier ? (
                   <>
                     <span className="mr-1.5 text-[10px] font-medium text-muted-foreground line-through">
                       R$ {originalPrice.toFixed(2)}

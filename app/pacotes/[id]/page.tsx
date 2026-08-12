@@ -36,6 +36,12 @@ import {
   Download,
 } from 'lucide-react'
 import { PLUS_LABEL } from '@/lib/account-tier'
+import {
+  TimedAccessBanner,
+  TimedAccessOptions,
+  type TimedAccessVersionView,
+  type TimedAccessView,
+} from '@/components/materiais/timed-access'
 import { Button } from '@/components/ui/button'
 import { AppShell } from '@/components/app-shell'
 import { useMaterialCart } from '@/context/MaterialCartContext'
@@ -87,6 +93,8 @@ interface PackageDoc {
   isFeatured: boolean
   createdAt: string
   pricingEventId?: string | null
+  /** Versões de acesso por tempo publicadas pelo admin (opcional). */
+  _timedAccessVersions?: TimedAccessVersionView[]
 }
 
 interface AccessInfo {
@@ -115,6 +123,8 @@ interface PageData {
   access: AccessInfo
   pricing: PricingInfo
   pricingEventState?: PricingEventStatePayload | null
+  /** Prazo restante quando o acesso atual veio de uma versão por tempo. */
+  timedAccess?: TimedAccessView | null
 }
 
 const GROUP_META: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
@@ -161,6 +171,8 @@ export default function PackageDetailPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [checkoutLoading, setCheckoutLoading] = useState(false)
+  // null = acesso vitalício (padrão). Um id = versão por tempo escolhida.
+  const [accessVersionId, setAccessVersionId] = useState<string | null>(null)
   const [cartMessage, setCartMessage] = useState('')
   const [descExpanded, setDescExpanded] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -250,19 +262,28 @@ export default function PackageDetailPage() {
       keepalive: true,
     }).catch(() => {})
 
-    const isFreePath = pkg.pricing === 'free' || price <= 0
+    const chosenVersion = (pkg._timedAccessVersions || []).find(v => v.id === accessVersionId) || null
+    const cartPrice = chosenVersion ? Number(chosenVersion.price || 0) : price
+    const isFreePath = !chosenVersion && (pkg.pricing === 'free' || price <= 0)
     if (!isFreePath) {
       const result = addItem({
         itemType: 'package',
         itemId: id,
-        title: pkg.title,
+        title: chosenVersion ? `${pkg.title} — ${chosenVersion.label}` : pkg.title,
         pricing: pkg.pricing,
-        price,
+        price: cartPrice,
         coverImage: pkg.coverImage,
         materialCount: data.materials.length,
-        effectivePrice: price,
-        originalPrice: Number(pkg.price || price),
-        discountApplied: Number(pricing.discountApplied || 0),
+        effectivePrice: cartPrice,
+        originalPrice: Number(pkg.price || cartPrice),
+        discountApplied: chosenVersion ? 0 : Number(pricing.discountApplied || 0),
+        ...(chosenVersion
+          ? {
+              accessVersionId: chosenVersion.id,
+              accessVersionLabel: chosenVersion.label,
+              accessDurationLabel: chosenVersion.durationLabel,
+            }
+          : {}),
       })
       setCartMessage(result === 'added' ? 'Pacote adicionado ao carrinho.' : 'Este pacote já está no carrinho.')
       setTimeout(() => setCartMessage(''), 3500)
@@ -297,10 +318,12 @@ export default function PackageDetailPage() {
 
   const handleBuyNow = () => {
     if (!data) return
-    const checkoutPath = `/materiais/checkout?type=package&id=${id}`
+    // A versão escolhida viaja na URL e é revalidada no servidor.
+    const versionQuery = accessVersionId ? `&accessVersionId=${encodeURIComponent(accessVersionId)}` : ''
+    const checkoutPath = `/materiais/checkout?type=package&id=${id}${versionQuery}`
     if (!data.access.isAuthenticated) {
       // Compra sem login via Serial Key (nome/e-mail/telefone no checkout).
-      router.push(`/comprar?productType=package&productId=${id}&itemType=package`)
+      router.push(`/comprar?productType=package&productId=${id}&itemType=package${versionQuery}`)
       return
     }
     router.push(checkoutPath)
@@ -328,6 +351,9 @@ export default function PackageDetailPage() {
   const showMaterialDownloads = metricSettings.materials.showDownloads
   const hasInfoMetrics = showMaterialViews || showMaterialDownloads
   const showMobilePurchaseBar = !access.hasAccess && access.isAuthenticated
+  const timedAccess = data.timedAccess || null
+  const timedVersions = pkg._timedAccessVersions || []
+  const selectedTimedVersion = timedVersions.find((version) => version.id === accessVersionId) || null
 
   // Lote dinâmico por evento
   const eventState = data.pricingEventState || null
@@ -465,6 +491,11 @@ export default function PackageDetailPage() {
                 </div>
               </div>
 
+              {/* Acesso por tempo limitado — quanto ainda resta */}
+              {access.hasAccess && timedAccess?.isTimed && (
+                <TimedAccessBanner access={timedAccess} itemLabel="pacote" className="mb-4" />
+              )}
+
               {/* Lote dinâmico por evento */}
               {hasTier && eventState && !access.hasAccess && (
                 <motion.div
@@ -585,6 +616,17 @@ export default function PackageDetailPage() {
                 )}
 
                 <div className="mt-4 space-y-2">
+                  {!access.hasAccess && !isFree && timedVersions.length > 0 && (
+                    <TimedAccessOptions
+                      versions={timedVersions}
+                      value={accessVersionId}
+                      onChange={setAccessVersionId}
+                      fullPrice={hasTier ? tierFinalPrice : pricing.effectivePrice}
+                      fullPriceLabel="Pacote completo, para sempre"
+                      disabled={checkoutLoading}
+                      className="mb-3"
+                    />
+                  )}
                   {access.hasAccess ? (
                     <>
                       <Button
@@ -648,7 +690,9 @@ export default function PackageDetailPage() {
                       )}
                       {!isFree && (
                         <p className="text-center text-[10px] text-muted-foreground/60">
-                          Pagamento único · acesso permanente
+                          {selectedTimedVersion
+                            ? `Pagamento único · acesso por ${selectedTimedVersion.durationLabel}, sem download`
+                            : 'Pagamento único · acesso permanente'}
                         </p>
                       )}
                       {cartMessage && (
@@ -919,6 +963,19 @@ export default function PackageDetailPage() {
                     </div>
                   )}
 
+                  {/* Formas de acesso — pacote completo ou versão por tempo */}
+                  {!access.hasAccess && !isFree && timedVersions.length > 0 && (
+                    <TimedAccessOptions
+                      versions={timedVersions}
+                      value={accessVersionId}
+                      onChange={setAccessVersionId}
+                      fullPrice={hasTier ? tierFinalPrice : pricing.effectivePrice}
+                      fullPriceLabel="Pacote completo, para sempre"
+                      disabled={checkoutLoading}
+                      className="mb-3"
+                    />
+                  )}
+
                   {/* CTA */}
                   <div className="mt-1 space-y-2">
                     {access.hasAccess ? (
@@ -968,7 +1025,9 @@ export default function PackageDetailPage() {
                         )}
                         {!isFree && (
                           <p className="text-center text-[10px] text-muted-foreground/60">
-                            Pagamento único · acesso permanente
+                            {selectedTimedVersion
+                              ? `Pagamento único · acesso por ${selectedTimedVersion.durationLabel}, sem download`
+                              : 'Pagamento único · acesso permanente'}
                           </p>
                         )}
                         {cartMessage && (

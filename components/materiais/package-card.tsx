@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import {
   Check,
+  Clock,
   Crown,
   File,
   Gift,
@@ -18,9 +19,11 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { PricingEventBadge } from '@/components/pricing-events/PricingEventBadge'
 import { PLUS_LABEL } from '@/lib/account-tier'
+import { TimedAccessPill } from './timed-access'
 import {
   CardPrice,
   CopyLinkBtn,
+  formatBRL,
   GROUP_META,
   LockedGroupOverlay,
   typeIcons,
@@ -71,6 +74,10 @@ export const PackageCard = memo(function PackageCard({
     : staticOriginalPrice > packagePrice
       ? staticOriginalPrice
       : null
+  // Versão por tempo mais barata do pacote, para o "ou R$X por 30 dias".
+  const cheapestTimedVersion = (pkg._timedAccessVersions || [])
+    .slice()
+    .sort((a, b) => a.price - b.price)[0] || null
   const canAccess = typeof pkg._hasAccess === 'boolean'
     ? pkg._hasAccess
     : isPurchased || (groupAccess && isFree)
@@ -224,9 +231,13 @@ export const PackageCard = memo(function PackageCard({
                 <Info className="h-3.5 w-3.5" /> Ver detalhes e fazer upgrade
               </button>
             ) : canAccess ? (
-              <span className="inline-flex items-center gap-1.5 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-sm font-semibold text-emerald-700 dark:text-emerald-300">
-                <Check className="h-4 w-4" /> Adquirido
-              </span>
+              pkg._timedAccess?.isTimed ? (
+                <TimedAccessPill access={pkg._timedAccess} className="px-3 py-2 text-sm" />
+              ) : (
+                <span className="inline-flex items-center gap-1.5 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-sm font-semibold text-emerald-700 dark:text-emerald-300">
+                  <Check className="h-4 w-4" /> Adquirido
+                </span>
+              )
             ) : includedInPlus ? (
               <>
                 <span className="inline-flex items-center gap-1.5 rounded-md border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm font-semibold text-amber-700 dark:text-amber-300">
@@ -257,6 +268,12 @@ export const PackageCard = memo(function PackageCard({
                   state={pkg._pricingEventState}
                   crossedPrice={crossedPrice}
                 />
+                {cheapestTimedVersion && (
+                  <p className="flex items-center gap-1 text-[11px] font-medium text-sky-600 dark:text-sky-400">
+                    <Clock className="h-3 w-3" />
+                    ou {formatBRL(cheapestTimedVersion.price)} por {cheapestTimedVersion.durationLabel}
+                  </p>
+                )}
                 <div className="flex gap-2">
                   <Button onClick={onBuyNow} disabled={loading} size="sm" className="cta-raised h-11 flex-1 font-semibold">
                     {loading

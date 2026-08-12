@@ -21,6 +21,7 @@ import {
 import { cn } from '@/lib/utils'
 import type { PricingEventStatePayload } from '@/components/pricing-events/PricingEventCountdown'
 import type { PublicMetricSettings } from '@/lib/display-settings'
+import type { TimedAccessVersionView, TimedAccessView } from './timed-access'
 
 /**
  * Tipos, formatadores e peças visuais compartilhadas entre os cartões de
@@ -62,6 +63,10 @@ export interface Material {
   pdfDownloadEnabled?: boolean
   pricingEventId?: string | null
   _pricingEventState?: PricingEventStatePayload | null
+  /** Versões de acesso por tempo publicadas (opcionais). */
+  _timedAccessVersions?: TimedAccessVersionView[]
+  /** Prazo restante quando a posse atual veio de uma versão por tempo. */
+  _timedAccess?: TimedAccessView | null
 }
 
 export interface Folder {
@@ -106,6 +111,10 @@ export interface MaterialPackage {
   }
   pricingEventId?: string | null
   _pricingEventState?: PricingEventStatePayload | null
+  /** Versões de acesso por tempo publicadas (opcionais). */
+  _timedAccessVersions?: TimedAccessVersionView[]
+  /** Prazo restante quando a posse atual veio de uma versão por tempo. */
+  _timedAccess?: TimedAccessView | null
 }
 
 export type MaterialMetricSettings = PublicMetricSettings['materials']

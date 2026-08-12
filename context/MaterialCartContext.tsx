@@ -24,6 +24,14 @@ export interface MaterialCartItem {
   effectivePrice?: number
   originalPrice?: number
   discountApplied?: number
+  /**
+   * Versão de acesso por tempo escolhida. Ausente = acesso vitalício. O id é
+   * revalidado no servidor a cada preview/checkout — aqui ele só preserva a
+   * escolha do usuário entre a página do produto e o checkout.
+   */
+  accessVersionId?: string
+  accessVersionLabel?: string
+  accessDurationLabel?: string
   addedAt: string
 }
 
@@ -57,6 +65,9 @@ function normalizeCartItem(item: any): MaterialCartItem | null {
     effectivePrice: Number.isFinite(Number(item.effectivePrice)) ? Math.max(0, Number(item.effectivePrice)) : undefined,
     originalPrice: Number.isFinite(Number(item.originalPrice)) ? Math.max(0, Number(item.originalPrice)) : undefined,
     discountApplied: Number.isFinite(Number(item.discountApplied)) ? Math.max(0, Number(item.discountApplied)) : undefined,
+    accessVersionId: item.accessVersionId ? String(item.accessVersionId).slice(0, 40) : undefined,
+    accessVersionLabel: item.accessVersionLabel ? String(item.accessVersionLabel).slice(0, 60) : undefined,
+    accessDurationLabel: item.accessDurationLabel ? String(item.accessDurationLabel).slice(0, 40) : undefined,
     addedAt: item.addedAt ? String(item.addedAt) : new Date().toISOString(),
   }
 }
