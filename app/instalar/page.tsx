@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { BackButton } from '@/components/back-button'
 import { InstalarApp } from '@/components/pwa/instalar-app'
-import { absoluteUrl } from '@/lib/seo'
 
 export const metadata: Metadata = {
   title: 'Instalar o app',
@@ -17,21 +16,20 @@ export const metadata: Metadata = {
 }
 
 /**
- * Endereço fixo para mandar a quem pergunta "tem app?".
+ * Endereço fixo para mandar a quem pergunta "tem app?" — e o destino do atalho
+ * curto `/app`, divulgado por fora (ver o redirect no `next.config.js`).
  *
- * A resposta agora é sim para os dois lados: no Android (Samsung Internet,
- * Chrome) a instalação é um toque no diálogo nativo do sistema; no iPhone é o
- * Compartilhar → Adicionar à Tela de Início. A página detecta o aparelho e já
- * abre no caminho certo, mas deixa todos visíveis — muita gente instala pelo
- * computador e precisa da instrução do celular do filho, do plantão, etc.
+ * A tela em si é a mesma que a landing mostra na seção `#app`: um componente
+ * só, `InstalarApp`. Antes eram duas implementações, e a da landing só sabia
+ * falar de iPhone — quem chegava de um Galaxy pela home lia a instrução errada.
  */
 export default function InstalarPage() {
   return (
     <div className="flex flex-1 flex-col bg-gradient-to-br from-background to-muted">
       <div className="container mx-auto px-4 py-8">
         <BackButton />
-        <div className="mt-4">
-          <InstalarApp urlDaPagina={absoluteUrl('/instalar')} />
+        <div className="mt-6 pb-12">
+          <InstalarApp aparencia="app" />
         </div>
       </div>
     </div>

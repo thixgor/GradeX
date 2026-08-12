@@ -8,10 +8,14 @@ import { useInstalarApp, type ResultadoInstalacao } from '@/hooks/use-instalar-a
 import {
   CHAVE_DISPENSA,
   ehAndroid,
-  ehAparelhoSamsung,
   foiDispensadoRecentemente,
   type PlataformaInstalacao,
 } from '@/lib/pwa/instalacao'
+import {
+  CAMINHO_INSTALACAO,
+  ENDERECO_CURTO,
+  nomeDoAparelho,
+} from '@/lib/pwa/conteudo'
 
 // Chave usada pela versão anterior (só iPhone). Continua sendo respeitada para
 // não ressuscitar o convite para quem já tinha fechado.
@@ -229,8 +233,11 @@ function ConviteComBotao({
     return (
       <p className="text-sm text-muted-foreground">
         Tudo bem — quando quiser, é só abrir{' '}
-        <Link href="/instalar" className="font-medium text-primary underline">
-          domineaqui.com.br/instalar
+        <Link
+          href={CAMINHO_INSTALACAO}
+          className="font-medium text-primary underline"
+        >
+          {ENDERECO_CURTO}
         </Link>
         .
       </p>
@@ -273,12 +280,12 @@ function ConviteComPassos({
   plataforma: PlataformaInstalacao
   passos: string[]
 }) {
-  const [aparelho, setAparelho] = useState('seu celular')
+  // Mesma frase da página de instalação — vem de `lib/pwa/conteudo.ts`, para o
+  // convite e a página nunca chamarem o aparelho por nomes diferentes.
+  const [aparelho, setAparelho] = useState('no seu celular')
 
   useEffect(() => {
-    if (ehAparelhoSamsung(navigator.userAgent || '')) setAparelho('seu Samsung')
-    else if (ehAndroid(plataforma)) setAparelho('seu Android')
-    else setAparelho('seu iPhone')
+    setAparelho(nomeDoAparelho(plataforma, navigator.userAgent || ''))
   }, [plataforma])
 
   // O iPhone tem um caminho curto o bastante para caber numa frase — e a frase
@@ -287,7 +294,7 @@ function ConviteComPassos({
     return (
       <>
         <p className="text-sm font-semibold text-foreground">
-          Instale o DomineAqui no {aparelho}
+          Instale o DomineAqui {aparelho}
         </p>
         <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
           Toque em{' '}
@@ -308,7 +315,7 @@ function ConviteComPassos({
   return (
     <>
       <p className="text-sm font-semibold text-foreground">
-        Instale o DomineAqui no {aparelho}
+        Instale o DomineAqui {aparelho}
       </p>
       <ol className="mt-1.5 space-y-1">
         {passos.map((passo, i) => (

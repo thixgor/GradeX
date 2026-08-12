@@ -18,6 +18,12 @@ export interface EstadoInstalacao {
   /** `false` até o primeiro efeito rodar — não dá para detectar no servidor. */
   pronto: boolean
   plataforma: PlataformaInstalacao
+  /**
+   * `navigator.userAgent` (vazio no servidor). Exposto porque a plataforma
+   * sozinha não diz se o aparelho é um Galaxy — só o código do modelo (`SM-…`)
+   * diz, e é ele que decide se o texto fala "no seu Samsung".
+   */
+  userAgent: string
   instrucoes: Instrucoes
   /** O diálogo nativo está disponível AGORA (evento em mãos). */
   podeInstalarAgora: boolean
@@ -117,6 +123,7 @@ export function useInstalarApp(): EstadoInstalacao {
   return {
     pronto,
     plataforma,
+    userAgent,
     instrucoes: instrucoesDe(plataforma),
     podeInstalarAgora: temEvento && !jaInstalado,
     aguardandoPromptNativo:

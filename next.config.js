@@ -116,6 +116,15 @@ const nextConfig = {
         destination: '/manual-clinico/radiologia/tomografia/:slug',
         permanent: true,
       },
+      // Atalho curto do app. "domineaqui.com.br/app" cabe num story, num áudio
+      // de WhatsApp e no fim de uma aula — "barra instalar" não. O canônico
+      // continua sendo /instalar (um endereço só para o buscador indexar), e é
+      // este atalho que o QR code da própria página carrega.
+      {
+        source: '/app',
+        destination: '/instalar',
+        permanent: true,
+      },
     ]
   },
 

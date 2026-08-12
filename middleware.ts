@@ -27,8 +27,12 @@ const publicRoutes = [
   '/politica-de-privacidade',
   '/termos-de-servico',
   // Instalação do app (PWA): a página é o endereço que mandamos para quem
-  // pergunta "tem app pra Samsung?" — precisa abrir sem login.
+  // pergunta "tem app pra Samsung?" — precisa abrir sem login. `/app` é o
+  // atalho curto divulgado por fora; o redirect do next.config já o resolve
+  // antes daqui, mas listá-lo evita que uma mudança de ordem mande um visitante
+  // deslogado para a tela de entrar.
   '/instalar',
+  '/app',
   // Tela servida pelo service worker quando não há rede. Redirecionar para o
   // login aqui seria absurdo: quem chega nela está justamente sem conexão, e o
   // service worker precisa conseguir baixá-la para guardar no cache.
