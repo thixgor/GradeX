@@ -227,6 +227,69 @@ describe('o prazo começa quando o acesso é liberado', () => {
   })
 })
 
+describe('renovar soma ao tempo que ainda resta', () => {
+  const now = new Date('2026-05-10T12:00:00.000Z')
+
+  it('o novo prazo começa no fim do atual, não em zero', () => {
+    const currentEnd = new Date('2026-05-25T12:00:00.000Z')
+    const fields = buildTimedPurchaseFieldsFor(
+      { id: 'v30', label: 'Acesso 30 dias', duration: duration({ days: 30 }) },
+      now,
+      { extendFrom: currentEnd }
+    )
+    // 15 dias que sobravam + 30 comprados: nada é perdido.
+    expect(fields.accessStartsAt).toBe(currentEnd)
+    expect(fields.accessExtendedFrom).toBe(currentEnd)
+    expect(fields.accessExpiresAt?.toISOString()).toBe('2026-06-24T12:00:00.000Z')
+    // Continua registrando quando a compra foi liberada de fato.
+    expect(fields.accessGrantedAt).toBe(now)
+  })
+
+  it('soma respeitando o calendário quando o prazo é em meses', () => {
+    // Acesso atual termina em 31/01; +1 mês vai para 28/02, não para 02/03.
+    const fields = buildTimedPurchaseFieldsFor(
+      { id: 'v1m', label: '1 mês', duration: duration({ months: 1 }) },
+      now,
+      { extendFrom: new Date('2027-01-31T09:00:00.000Z') }
+    )
+    expect(fields.accessExpiresAt?.toISOString()).toBe('2027-02-28T09:00:00.000Z')
+  })
+
+  it('acesso já vencido não estende — recomeça do zero', () => {
+    const fields = buildTimedPurchaseFieldsFor(
+      { id: 'v7', label: '7 dias', duration: duration({ days: 7 }) },
+      now,
+      { extendFrom: new Date('2026-05-01T12:00:00.000Z') }
+    )
+    expect(fields.accessExtendedFrom).toBeUndefined()
+    expect(fields.accessStartsAt).toBe(now)
+    expect(fields.accessExpiresAt?.toISOString()).toBe('2026-05-17T12:00:00.000Z')
+  })
+
+  it('sem acesso anterior, o prazo conta a partir da liberação', () => {
+    const fields = buildTimedPurchaseFieldsFor(
+      { id: 'v7', label: '7 dias', duration: duration({ days: 7 }) },
+      now,
+      { extendFrom: null }
+    )
+    expect(fields.accessExtendedFrom).toBeUndefined()
+    expect(fields.accessExpiresAt?.toISOString()).toBe('2026-05-17T12:00:00.000Z')
+  })
+
+  it('a interface sabe que foi renovação', () => {
+    const status = summarizeTimedAccess(
+      {
+        accessMode: 'timed',
+        accessExtendedFrom: new Date('2026-05-25T12:00:00.000Z'),
+        accessExpiresAt: new Date('2026-06-24T12:00:00.000Z'),
+      },
+      now
+    )
+    expect(status?.extended).toBe(true)
+    expect(status?.extendedFromLabel).toBeTruthy()
+  })
+})
+
 describe('compra vencida deixa de dar acesso', () => {
   const now = new Date('2026-05-10T12:00:00.000Z')
 

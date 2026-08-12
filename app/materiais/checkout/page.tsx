@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { AlertCircle, Check, ChevronLeft, Clock, FileText, Flame, Loader2, Package, Percent, ShoppingCart, Sparkles, Trash2, X } from 'lucide-react'
 import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
 import { TimedAccessNotice, type TimedAccessVersionView } from '@/components/materiais/timed-access'
+import { computeAccessExpiry, formatAccessDate } from '@/lib/material-timed-access'
 import { CheckoutAddonOffers } from '@/components/shop/checkout-addon-offers'
 import { UnifiedCheckoutPayment } from '@/components/shop/unified-checkout-payment'
 import { CheckoutAccountNotice } from '@/components/checkout/checkout-account-notice'
@@ -436,6 +437,7 @@ export default function MateriaisCheckoutPage() {
         if (itemType === 'package' && itemResp?.package) {
           found = {
             ...itemResp.package,
+            _timedAccess: itemResp.timedAccess ?? null,
             effectivePrice: itemResp.pricing?.effectivePrice ?? itemResp.package.price,
             originalPackagePrice: itemResp.pricing?.originalPackagePrice ?? itemResp.package.price,
             discountApplied: itemResp.pricing?.discountApplied ?? 0,
@@ -445,6 +447,7 @@ export default function MateriaisCheckoutPage() {
         } else if (itemType === 'material' && itemResp?.material) {
           found = {
             ...itemResp.material,
+            _timedAccess: itemResp.timedAccess ?? null,
             pricingEventState: itemResp.pricingEventState ?? null,
           }
         } else if (Array.isArray(itemResp)) {
@@ -458,9 +461,12 @@ export default function MateriaisCheckoutPage() {
           setError('Item não encontrado')
           return
         }
-        const alreadyOwned = itemType === 'package'
+        // Acesso por tempo ainda correndo não é "já possui": o comprador está
+        // aqui para somar mais tempo. Só a posse definitiva bloqueia.
+        const hasTimedAccess = !!found?._timedAccess?.isTimed
+        const alreadyOwned = !hasTimedAccess && (itemType === 'package'
           ? !!(itemResp?.access?.hasAccess || itemResp?.access?.isPurchased)
-          : !!(itemResp?.hasAccess || itemResp?.isPurchased || found?._hasAccess || found?._isPurchased)
+          : !!(itemResp?.hasAccess || itemResp?.isPurchased || found?._hasAccess || found?._isPurchased))
         if (alreadyOwned) {
           setAlreadyOwnedInfo({
             redirect: getOwnedRedirect(found),
@@ -1240,6 +1246,14 @@ export default function MateriaisCheckoutPage() {
   const timedVersion: TimedAccessVersionView | null =
     (item._timedAccessVersions || []).find((v: TimedAccessVersionView) => v.id === accessVersionId) || null
 
+  // Renovação: o prazo escolhido é somado ao acesso que ainda corre, com a
+  // mesma conta do servidor (meses e anos de calendário).
+  const currentTimedAccess = item._timedAccess || null
+  const projectedEndLabel =
+    timedVersion?.duration && currentTimedAccess?.expiresAt && !currentTimedAccess.expired
+      ? formatAccessDate(computeAccessExpiry(new Date(currentTimedAccess.expiresAt), timedVersion.duration))
+      : ''
+
   const originalPrice = timedVersion
     ? Number(item.price ?? 0)
     : Number(item.originalPackagePrice ?? item.price ?? 0)
@@ -1409,6 +1423,26 @@ export default function MateriaisCheckoutPage() {
                     : 'Pagamento único · Acesso permanente'}
                 </p>
               </div>
+
+              {timedVersion && currentTimedAccess?.isTimed && !currentTimedAccess.expired && (
+                <div style={{
+                  background: 'rgba(56,189,248,0.08)',
+                  border: '1px solid rgba(56,189,248,0.28)',
+                  borderRadius: '12px',
+                  padding: '12px 14px',
+                  marginBottom: '12px',
+                }}>
+                  <p style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 800, color: '#7dd3fc', marginBottom: '6px' }}>
+                    <Clock size={13} /> Você já tem {currentTimedAccess.remainingLabel} de acesso
+                  </p>
+                  <p style={{ fontSize: '12px', lineHeight: 1.6, color: 'rgba(255,255,255,0.75)', margin: 0 }}>
+                    Este prazo <strong style={{ color: 'white' }}>soma</strong> ao tempo que ainda resta — nada é
+                    perdido. {projectedEndLabel
+                      ? <>Seu acesso passa a valer até <strong style={{ color: 'white' }}>{projectedEndLabel}</strong>.</>
+                      : null}
+                  </p>
+                </div>
+              )}
 
               {timedVersion && (
                 <TimedAccessNotice

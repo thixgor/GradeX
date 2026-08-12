@@ -11,7 +11,8 @@
  */
 
 import { useEffect, useMemo, useState } from 'react'
-import { Clock, Download, Hourglass, Info, ShieldCheck, Sparkles } from 'lucide-react'
+import { Clock, Download, Hourglass, Info, Plus, ShieldCheck, Sparkles } from 'lucide-react'
+import { computeAccessExpiry, formatAccessDate } from '@/lib/material-timed-access'
 
 export interface TimedAccessVersionView {
   id: string
@@ -38,6 +39,9 @@ export interface TimedAccessView {
   durationLabel?: string
   expiresAt?: string | null
   expiresAtLabel?: string
+  /** Compra feita por cima de um acesso que ainda corria (prazo somado). */
+  extended?: boolean
+  extendedFromLabel?: string
   remainingMs: number
   remainingLabel: string
   expired: boolean
@@ -104,12 +108,29 @@ export function TimedAccessBanner({
   access,
   itemLabel = 'material',
   className = '',
+  versions,
+  selectedVersionId,
+  onSelectVersion,
+  onRenew,
+  renewLoading,
+  fullPrice,
+  fullPriceLabel,
 }: {
   access: TimedAccessView | null | undefined
   itemLabel?: string
   className?: string
+  /** Versões à venda — habilitam o bloco "adicionar mais tempo". */
+  versions?: TimedAccessVersionView[]
+  selectedVersionId?: string | null
+  onSelectVersion?: (versionId: string | null) => void
+  onRenew?: () => void
+  renewLoading?: boolean
+  /** Preço do acesso vitalício, oferecido junto como saída definitiva. */
+  fullPrice?: number
+  fullPriceLabel?: string
 }) {
   const live = useRemainingTime(access?.expiresAt)
+  const [renewOpen, setRenewOpen] = useState(false)
   if (!access?.isTimed) return null
 
   const remainingMs = access.expiresAt ? live.remainingMs : access.remainingMs
@@ -122,6 +143,14 @@ export function TimedAccessBanner({
     : endingSoon
       ? 'border-amber-500/30 bg-amber-500/5 text-amber-700 dark:text-amber-300'
       : 'border-sky-500/30 bg-sky-500/5 text-sky-700 dark:text-sky-300'
+
+  const canRenew = !!versions?.length && !!onRenew && !!onSelectVersion
+  const selectedVersion = versions?.find((v) => v.id === (selectedVersionId ?? versions?.[0]?.id)) || null
+  // Projeção do novo término: o prazo escolhido é somado ao que ainda resta,
+  // com a mesma conta do servidor (meses e anos de calendário).
+  const projectedEndLabel = selectedVersion?.duration && access.expiresAt && !expired
+    ? formatAccessDate(computeAccessExpiry(new Date(access.expiresAt), selectedVersion.duration))
+    : ''
 
   return (
     <div className={`rounded-xl border p-3.5 ${tone} ${className}`}>
@@ -151,8 +180,66 @@ export function TimedAccessBanner({
               </>
             )}
           </p>
+          {access.extended && access.extendedFromLabel && !expired && (
+            <p className="mt-1 text-[11px] font-semibold opacity-80">
+              Renovação somada ao seu acesso anterior, que ia até {access.extendedFromLabel}.
+            </p>
+          )}
         </div>
       </div>
+
+      {/* Renovar: o prazo novo entra por cima do que ainda resta. */}
+      {canRenew && (
+        <div className="mt-3 border-t border-current/15 pt-3">
+          {!renewOpen ? (
+            <button
+              type="button"
+              onClick={() => setRenewOpen(true)}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-current/30 bg-black/5 px-3 py-2 text-xs font-bold transition-colors hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/15"
+            >
+              <Plus className="h-3.5 w-3.5" />
+              {expired ? 'Comprar acesso novamente' : 'Comprar — adicione mais tempo de uso'}
+            </button>
+          ) : (
+            <div className="space-y-2">
+              <TimedAccessOptions
+                versions={versions!}
+                value={selectedVersionId ?? versions![0]?.id ?? null}
+                onChange={onSelectVersion!}
+                fullPrice={fullPrice ?? 0}
+                fullPriceLabel={fullPriceLabel}
+                allowLifetime={(fullPrice ?? 0) > 0}
+                disabled={renewLoading}
+              />
+              {!expired && selectedVersion && (
+                <p className="rounded-lg bg-black/5 px-2.5 py-2 text-[11px] font-medium dark:bg-white/10">
+                  Somamos ao tempo que ainda resta: comprando {selectedVersion.label}, seu acesso passa a
+                  valer até <strong>{projectedEndLabel}</strong>.
+                </p>
+              )}
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={onRenew}
+                  disabled={renewLoading}
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-current px-3 py-2 text-xs font-bold disabled:opacity-60"
+                >
+                  <span className="text-white dark:text-black">
+                    {renewLoading ? 'Processando…' : expired ? 'Comprar acesso' : 'Adicionar tempo'}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setRenewOpen(false)}
+                  className="rounded-lg border border-current/30 px-3 py-2 text-xs font-semibold"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }
@@ -202,6 +289,7 @@ export function TimedAccessOptions({
   onChange,
   fullPrice,
   fullPriceLabel = 'Acesso vitalício',
+  allowLifetime = true,
   disabled,
   className = '',
 }: {
@@ -210,18 +298,22 @@ export function TimedAccessOptions({
   onChange: (versionId: string | null) => void
   fullPrice: number
   fullPriceLabel?: string
+  /** Na renovação de quem já tem prazo correndo, some se não fizer sentido. */
+  allowLifetime?: boolean
   disabled?: boolean
   className?: string
 }) {
   if (!versions || versions.length === 0) return null
 
   const options: Array<{ id: string | null; title: string; sub: string; price: number; highlight?: boolean }> = [
-    {
-      id: null,
-      title: fullPriceLabel,
-      sub: 'Para sempre, com download quando disponível',
-      price: fullPrice,
-    },
+    ...(allowLifetime
+      ? [{
+          id: null,
+          title: fullPriceLabel,
+          sub: 'Para sempre, com download quando disponível',
+          price: fullPrice,
+        }]
+      : []),
     ...versions.map((version) => ({
       id: version.id,
       title: version.label,
@@ -332,6 +424,10 @@ export function TimedAccessNotice({
             : viaSerialKey
               ? <span>A contagem <strong>só começa quando você ativa a Serial Key</strong> — comprar hoje e ativar depois não consome o seu prazo.</span>
               : <span>A contagem começa assim que o acesso é liberado na sua conta.</span>}
+        </li>
+        <li className="flex items-start gap-1.5">
+          <Plus className="mt-0.5 h-3 w-3 shrink-0 opacity-70" />
+          <span>Já tem acesso a este item? O novo prazo <strong>soma</strong> ao tempo que ainda resta.</span>
         </li>
         <li className="flex items-start gap-1.5">
           <Download className="mt-0.5 h-3 w-3 shrink-0 opacity-70" />

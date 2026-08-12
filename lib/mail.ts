@@ -1230,7 +1230,8 @@ export async function sendSerialKeyPurchaseEmail(input: {
       </p>
       <p style="margin: 0; color: #0c4a6e; font-size: 13px; line-height: 1.6;">
         A contagem <strong>só começa quando você ativar esta Serial Key</strong> — comprar hoje e ativar depois
-        não consome o seu prazo. Esta modalidade é de leitura no visualizador protegido da plataforma,
+        não consome o seu prazo, e se você já tem acesso a este item o novo prazo é <strong>somado</strong> ao tempo
+        que ainda resta. Esta modalidade é de leitura no visualizador protegido da plataforma,
         <strong>sem download</strong>. O tempo restante fica visível na página do produto e dentro do leitor.
       </p>
     </div>` : ''}

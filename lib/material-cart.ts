@@ -3,6 +3,7 @@ import { computeEffectivePackagePrice, type EffectivePackagePrice } from './mate
 import { audit } from './payments/audit'
 import type { MaterialPurchase } from './types'
 import { isPlusAccount } from './account-tier'
+import type { TimedAccessDuration, TimedAccessPurchaseFields } from './material-timed-access'
 import {
   buildTimedPurchaseFieldsFor,
   findTimedAccessVersion,
@@ -10,7 +11,6 @@ import {
   lifetimeOwnershipFilter,
   versionDuration,
   versionDurationMinutes,
-  type TimedAccessDuration,
   type TimedAccessVersion,
 } from './material-timed-access'
 
@@ -476,6 +476,79 @@ export function serializeMaterialCartItem(item: MaterialCartResolvedItem) {
   }
 }
 
+/**
+ * Resolve os campos de acesso por tempo de uma concessão, já com as duas
+ * regras que ela precisa respeitar:
+ *
+ *  - **Renovação soma.** Se o comprador ainda tem prazo correndo neste item, o
+ *    novo período começa no fim do atual — ninguém perde os dias que sobraram
+ *    por renovar antes da hora.
+ *  - **Idempotência.** Webhook do provedor repete; se esta linha de compra já
+ *    recebeu a janela, ela não é recalculada (sem isso, cada reentrega
+ *    empilharia mais prazo em cima do mesmo pagamento).
+ *
+ * Retorna `{}` quando não há nada a gravar.
+ */
+export async function resolveTimedGrantFields(
+  db: Db,
+  params: {
+    userId: string
+    itemType: MaterialCartItemType
+    itemId: string
+    /** Filtro exato da linha que será criada/atualizada. */
+    purchaseFilter: Record<string, any>
+    versionId?: string
+    versionLabel?: string
+    duration?: TimedAccessDuration
+    durationMinutes?: number
+  },
+  grantedAt: Date
+): Promise<Partial<TimedAccessPurchaseFields>> {
+  if (!params.duration && !params.durationMinutes) return {}
+
+  const purchases = db.collection<MaterialPurchase>('material_purchases')
+
+  const existing = await purchases.findOne(params.purchaseFilter as any)
+  if (existing?.accessExpiresAt) return {} // já concedida — reentrega não estende
+
+  // Maior prazo ainda de pé que já cobre este item, para somar em cima dele.
+  // Para um material, um pacote por tempo que o contém também conta — senão
+  // quem renova o material solto perderia os dias que o pacote ainda dava.
+  const coveringIds: string[] = []
+  if (params.itemType === 'material') {
+    const packages = await db.collection('material_packages')
+      .find({ materialIds: params.itemId })
+      .project({ _id: 1 })
+      .toArray()
+    for (const pkg of packages as any[]) coveringIds.push(String(pkg._id))
+  }
+
+  const active = await purchases
+    .find({
+      userId: params.userId,
+      status: 'completed',
+      accessExpiresAt: { $gt: grantedAt },
+      $or: [
+        { itemType: params.itemType, itemId: params.itemId },
+        ...(coveringIds.length > 0 ? [{ itemType: 'package', itemId: { $in: coveringIds } }] : []),
+      ],
+    } as any)
+    .sort({ accessExpiresAt: -1 })
+    .limit(1)
+    .toArray()
+
+  return buildTimedPurchaseFieldsFor(
+    {
+      id: params.versionId,
+      label: params.versionLabel,
+      duration: params.duration,
+      durationMinutes: params.durationMinutes,
+    },
+    grantedAt,
+    { extendFrom: (active[0]?.accessExpiresAt as Date | undefined) || null }
+  )
+}
+
 export async function grantMaterialCartItems(
   db: Db,
   session: MaterialCartSession,
@@ -504,6 +577,31 @@ export async function grantMaterialCartItems(
     const versionFilter = item.accessMode === 'timed'
       ? { accessVersionId: item.accessVersionId }
       : { accessVersionId: { $exists: false } }
+    const purchaseFilter = {
+      userId: session.userId,
+      itemType: item.itemType,
+      itemId: item.itemId,
+      ...versionFilter,
+      ...providerFilter,
+    }
+
+    const timedFields = item.accessMode === 'timed'
+      ? await resolveTimedGrantFields(
+          db,
+          {
+            userId: session.userId,
+            itemType: item.itemType,
+            itemId: item.itemId,
+            purchaseFilter,
+            versionId: item.accessVersionId,
+            versionLabel: item.accessVersionLabel,
+            duration: item.accessDuration,
+            durationMinutes: item.accessDurationMinutes,
+          },
+          grantedAt
+        )
+      : {}
+
     const purchaseSet: Partial<MaterialPurchase> = {
       userId: session.userId,
       userName: session.name || '',
@@ -515,30 +613,14 @@ export async function grantMaterialCartItems(
       provider: 'mercado_pago',
       status: 'completed',
       purchasedAt: new Date(),
-      ...(item.accessMode === 'timed' && (item.accessDuration || item.accessDurationMinutes)
-        ? buildTimedPurchaseFieldsFor(
-            {
-              id: item.accessVersionId,
-              label: item.accessVersionLabel,
-              duration: item.accessDuration,
-              durationMinutes: item.accessDurationMinutes,
-            },
-            grantedAt
-          )
-        : {}),
+      ...timedFields,
     }
 
     if (options.providerOrderId) purchaseSet.providerOrderId = options.providerOrderId
     if (options.providerPaymentId) purchaseSet.providerPaymentId = options.providerPaymentId
 
     await db.collection<MaterialPurchase>('material_purchases').updateOne(
-      {
-        userId: session.userId,
-        itemType: item.itemType,
-        itemId: item.itemId,
-        ...versionFilter,
-        ...providerFilter,
-      } as any,
+      purchaseFilter as any,
       {
         $set: purchaseSet,
       },
@@ -568,7 +650,9 @@ export async function grantMaterialCartItems(
               accessVersionLabel: item.accessVersionLabel,
               accessDuration: item.accessDuration,
               accessDurationMinutes: item.accessDurationMinutes,
-              accessStartsAt: grantedAt,
+              accessStartsAt: timedFields.accessStartsAt || grantedAt,
+              accessExpiresAt: timedFields.accessExpiresAt,
+              accessExtendedFrom: timedFields.accessExtendedFrom,
             }
           : {}),
         ...(options.auditMetadata || {}),

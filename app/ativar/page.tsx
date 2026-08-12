@@ -141,10 +141,10 @@ function ActivarContent() {
               marginBottom: '22px',
               textAlign: 'left',
             }}>
-              <strong style={{ color: '#7dd3fc' }}>Seu prazo começou agora:</strong> você tem{' '}
-              <strong style={{ color: 'white' }}>{info.accessDurationLabel}</strong> de acesso, para leitura no
-              visualizador protegido da plataforma (sem download). O tempo restante aparece na página do produto
-              e dentro do leitor.
+              <strong style={{ color: '#7dd3fc' }}>Seu prazo começou agora:</strong> somamos{' '}
+              <strong style={{ color: 'white' }}>{info.accessDurationLabel}</strong> ao seu acesso (se já havia
+              tempo correndo neste item, ele foi preservado). A leitura é no visualizador protegido da plataforma,
+              sem download. O tempo restante aparece na página do produto e dentro do leitor.
             </p>
           )}
           <a href={done.redirectTo} style={primaryBtn}>Acessar agora <ArrowRight size={16} /></a>
@@ -202,7 +202,8 @@ function ActivarContent() {
             ) : (
               <>
                 Esta key libera <strong style={{ color: 'white' }}>{info.accessVersionLabel || 'acesso temporário'}</strong>: a contagem de{' '}
-                <strong style={{ color: 'white' }}>{info.accessDurationLabel}</strong> começa <strong style={{ color: 'white' }}>agora</strong>, ao ativar.
+                <strong style={{ color: 'white' }}>{info.accessDurationLabel}</strong> começa <strong style={{ color: 'white' }}>agora</strong>, ao ativar —
+                e se você já tinha acesso a este item, ela é somada ao tempo que ainda restava.
                 Leitura no visualizador protegido, sem download.
               </>
             )}

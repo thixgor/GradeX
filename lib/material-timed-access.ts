@@ -63,7 +63,12 @@ export interface TimedAccessPurchaseFields {
   accessDuration?: TimedAccessDuration
   /** Aproximação em minutos — ordenação, compatibilidade e fallback de rótulo. */
   accessDurationMinutes?: number
+  /** Início da janela DESTA compra (numa renovação, o fim da janela anterior). */
   accessStartsAt?: Date
+  /** Quando a compra foi liberada de fato (ativação da key). */
+  accessGrantedAt?: Date
+  /** Renovação: fim do acesso anterior, sobre o qual este prazo foi somado. */
+  accessExtendedFrom?: Date
   accessExpiresAt?: Date
   /** Compra por tempo nunca libera download do PDF. */
   downloadDisabled?: boolean
@@ -79,6 +84,9 @@ export interface TimedAccessStatus {
   startsAt?: string
   expiresAt?: string
   expiresAtLabel?: string
+  /** Compra feita por cima de um acesso que ainda corria (prazo somado). */
+  extended?: boolean
+  extendedFromLabel?: string
   /** Milissegundos restantes (0 quando expirou). */
   remainingMs: number
   remainingLabel: string
@@ -333,11 +341,24 @@ export function buildTimedPurchaseFields(
  */
 export function buildTimedPurchaseFieldsFor(
   version: { id?: string; label?: string; duration?: TimedAccessDuration | null; durationMinutes?: number },
-  startsAt: Date = new Date()
+  grantedAt: Date = new Date(),
+  options: {
+    /**
+     * Fim do acesso que o comprador ainda tinha neste item. Presente ⇒ é uma
+     * renovação: o novo prazo é SOMADO ao que faltava, em vez de zerar o
+     * relógio. Quem renova no meio do caminho não perde os dias que sobraram.
+     */
+    extendFrom?: Date | null
+  } = {}
 ): TimedAccessPurchaseFields {
   const duration = version.duration && hasDuration(version.duration)
     ? version.duration
     : { ...EMPTY_DURATION, minutes: Math.max(1, Math.floor(Number(version.durationMinutes) || 0)) }
+
+  const extendFrom = options.extendFrom && options.extendFrom.getTime() > grantedAt.getTime()
+    ? options.extendFrom
+    : null
+  const startsAt = extendFrom || grantedAt
 
   return {
     accessMode: 'timed',
@@ -346,6 +367,8 @@ export function buildTimedPurchaseFieldsFor(
     accessDuration: duration,
     accessDurationMinutes: durationToApproxMinutes(duration),
     accessStartsAt: startsAt,
+    accessGrantedAt: grantedAt,
+    ...(extendFrom ? { accessExtendedFrom: extendFrom } : {}),
     accessExpiresAt: computeAccessExpiry(startsAt, duration),
     downloadDisabled: true,
   }
@@ -406,6 +429,7 @@ export function summarizeTimedAccess(purchase: any, now: Date = new Date()): Tim
   if (!purchase || !isTimedPurchase(purchase)) return null
   const expiresAt = toDate(purchase.accessExpiresAt)
   const startsAt = toDate(purchase.accessStartsAt)
+  const extendedFrom = toDate(purchase.accessExtendedFrom)
   const remainingMs = expiresAt ? Math.max(0, expiresAt.getTime() - now.getTime()) : 0
   const expired = !!expiresAt && remainingMs <= 0
 
@@ -429,6 +453,8 @@ export function summarizeTimedAccess(purchase: any, now: Date = new Date()): Tim
     startsAt: startsAt ? startsAt.toISOString() : undefined,
     expiresAt: expiresAt ? expiresAt.toISOString() : undefined,
     expiresAtLabel: expiresAt ? formatAccessDate(expiresAt) : undefined,
+    extended: !!extendedFrom,
+    extendedFromLabel: extendedFrom ? formatAccessDate(extendedFrom) : undefined,
     remainingMs,
     remainingLabel: formatRemaining(remainingMs),
     expired,
@@ -506,7 +532,8 @@ export function formatAccessDate(date: Date): string {
  */
 export function timedAccessDisclaimer(durationLabel: string, options: { viaSerialKey?: boolean } = {}): string {
   const base = `Acesso por ${durationLabel}, sem download — o conteúdo fica disponível no leitor protegido dentro da plataforma.`
-  return options.viaSerialKey
-    ? `${base} A contagem começa quando você ativa a sua Serial Key.`
-    : `${base} A contagem começa assim que o acesso é liberado.`
+  const start = options.viaSerialKey
+    ? 'A contagem começa quando você ativa a sua Serial Key.'
+    : 'A contagem começa assim que o acesso é liberado.'
+  return `${base} ${start} Se você já tem acesso a este item, o novo prazo é somado ao tempo que ainda resta.`
 }

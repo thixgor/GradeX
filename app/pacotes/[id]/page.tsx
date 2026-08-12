@@ -318,8 +318,13 @@ export default function PackageDetailPage() {
 
   const handleBuyNow = () => {
     if (!data) return
-    // A versão escolhida viaja na URL e é revalidada no servidor.
-    const versionQuery = accessVersionId ? `&accessVersionId=${encodeURIComponent(accessVersionId)}` : ''
+    // A versão escolhida viaja na URL e é revalidada no servidor. Numa
+    // renovação, o padrão é a primeira versão publicada.
+    const renewalDefault = data.timedAccess?.isTimed
+      ? (data.package._timedAccessVersions?.[0]?.id || null)
+      : null
+    const chosenVersionId = accessVersionId || renewalDefault
+    const versionQuery = chosenVersionId ? `&accessVersionId=${encodeURIComponent(chosenVersionId)}` : ''
     const checkoutPath = `/materiais/checkout?type=package&id=${id}${versionQuery}`
     if (!data.access.isAuthenticated) {
       // Compra sem login via Serial Key (nome/e-mail/telefone no checkout).
@@ -491,9 +496,20 @@ export default function PackageDetailPage() {
                 </div>
               </div>
 
-              {/* Acesso por tempo limitado — quanto ainda resta */}
+              {/* Acesso por tempo limitado — quanto resta e como somar mais */}
               {access.hasAccess && timedAccess?.isTimed && (
-                <TimedAccessBanner access={timedAccess} itemLabel="pacote" className="mb-4" />
+                <TimedAccessBanner
+                  access={timedAccess}
+                  itemLabel="pacote"
+                  className="mb-4"
+                  versions={timedVersions}
+                  selectedVersionId={accessVersionId}
+                  onSelectVersion={setAccessVersionId}
+                  onRenew={handleBuyNow}
+                  renewLoading={checkoutLoading}
+                  fullPrice={pricing.effectivePrice}
+                  fullPriceLabel="Pacote completo, para sempre"
+                />
               )}
 
               {/* Lote dinâmico por evento */}

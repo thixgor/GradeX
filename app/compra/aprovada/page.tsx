@@ -110,7 +110,7 @@ function TimedAccessReceiptNote({
       <p style={{ fontSize: '12px', lineHeight: 1.6, color: 'rgba(255,255,255,0.7)', margin: 0 }}>
         {expiresLabel
           ? <>Seu acesso já está ativo e vai até <strong style={{ color: 'white' }}>{expiresLabel}</strong>.</>
-          : <>A contagem de <strong style={{ color: 'white' }}>{durationLabel}</strong> começa quando você <strong style={{ color: 'white' }}>ativar esta Serial Key</strong> — comprar hoje e ativar depois não consome o seu prazo.</>}
+          : <>A contagem de <strong style={{ color: 'white' }}>{durationLabel}</strong> começa quando você <strong style={{ color: 'white' }}>ativar esta Serial Key</strong> — comprar hoje e ativar depois não consome o seu prazo, e se você já tem acesso a este item o prazo é somado ao que ainda resta.</>}
         {' '}Esta modalidade é de leitura no visualizador protegido da plataforma, <strong style={{ color: 'white' }}>sem download</strong>.
       </p>
     </div>

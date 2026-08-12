@@ -89,7 +89,7 @@ export function buildReceiptText(data: SerialKeyReceiptData): string {
     data.transactionId ? `ID da transação: ${data.transactionId}` : '',
     `Data/hora: ${formatDateTimeBR(data.purchasedAt)}`,
     data.timedAccess
-      ? `Modalidade: ${data.timedAccess.versionLabel || 'Acesso temporário'} — ${data.timedAccess.durationLabel} a partir da ATIVAÇÃO da key, sem download (leitura no visualizador protegido).`
+      ? `Modalidade: ${data.timedAccess.versionLabel || 'Acesso temporário'} — ${data.timedAccess.durationLabel} a partir da ATIVAÇÃO da key (somados ao tempo que já restar neste item), sem download (leitura no visualizador protegido).`
       : 'Modalidade: Acesso vitalício.',
     '-----------------------------------',
     `Serial Key: ${data.serialKey}`,
@@ -162,7 +162,7 @@ export async function generateReceiptPdf(data: SerialKeyReceiptData): Promise<Bu
   row(
     'Modalidade de acesso',
     data.timedAccess
-      ? `${data.timedAccess.versionLabel || 'Acesso temporário'} — ${data.timedAccess.durationLabel}, contados a partir da ativação da Serial Key. Leitura no visualizador protegido, sem download.`
+      ? `${data.timedAccess.versionLabel || 'Acesso temporário'} — ${data.timedAccess.durationLabel}, contados a partir da ativação da Serial Key e somados ao tempo que já restar neste item. Leitura no visualizador protegido, sem download.`
       : 'Acesso vitalício'
   )
 

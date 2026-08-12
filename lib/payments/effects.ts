@@ -30,9 +30,12 @@ import { audit } from './audit'
 import { recordOrderCheckoutEvent } from '../analytics'
 import { sendMetaCapiEvent } from '../meta-capi'
 import { approveCouponRedemption, releaseCouponRedemption } from '../coupons'
-import { grantMaterialCartItems, type MaterialCartResolvedItem } from '../material-cart'
 import {
-  buildTimedPurchaseFieldsFor,
+  grantMaterialCartItems,
+  resolveTimedGrantFields,
+  type MaterialCartResolvedItem,
+} from '../material-cart'
+import {
   formatDuration,
   formatDurationMinutes,
   normalizeDuration,
@@ -578,12 +581,25 @@ async function applyMaterialPurchase(order: PaymentOrder, result?: ProviderOrder
   // Compra de uma versão por tempo: o acesso vence em `accessExpiresAt` e nunca
   // libera download (ver `lib/material-timed-access`).
   const timedDurationMinutes = Number(order.metadata?.accessDurationMinutes) || 0
+  const purchaseFilter = {
+    userId: order.userId,
+    itemType,
+    itemId: order.refId,
+    providerOrderId: String(order._id),
+  }
+  // Renovação soma ao prazo que ainda corre; reentrega do webhook não estende
+  // de novo (ver `resolveTimedGrantFields`).
   const timedFields: Partial<TimedAccessPurchaseFields> =
     order.metadata?.accessMode === 'timed' && (order.metadata?.accessDuration || timedDurationMinutes > 0)
-      ? buildTimedPurchaseFieldsFor(
+      ? await resolveTimedGrantFields(
+          db,
           {
-            id: order.metadata?.accessVersionId ? String(order.metadata.accessVersionId) : undefined,
-            label: order.metadata?.accessVersionLabel ? String(order.metadata.accessVersionLabel) : undefined,
+            userId: order.userId,
+            itemType,
+            itemId: order.refId,
+            purchaseFilter,
+            versionId: order.metadata?.accessVersionId ? String(order.metadata.accessVersionId) : undefined,
+            versionLabel: order.metadata?.accessVersionLabel ? String(order.metadata.accessVersionLabel) : undefined,
             duration: order.metadata?.accessDuration ? normalizeDuration(order.metadata.accessDuration) : undefined,
             durationMinutes: timedDurationMinutes,
           },
@@ -592,12 +608,7 @@ async function applyMaterialPurchase(order: PaymentOrder, result?: ProviderOrder
       : {}
 
   await db.collection<MaterialPurchase>('material_purchases').updateOne(
-    {
-      userId: order.userId,
-      itemType,
-      itemId: order.refId,
-      providerOrderId: String(order._id),
-    },
+    purchaseFilter,
     {
       $set: {
         userId: order.userId,
@@ -636,6 +647,7 @@ async function applyMaterialPurchase(order: PaymentOrder, result?: ProviderOrder
             accessMode: 'timed',
             accessVersionLabel: timedFields.accessVersionLabel,
             accessExpiresAt: timedFields.accessExpiresAt,
+            accessExtendedFrom: timedFields.accessExtendedFrom,
           }
         : {}),
     },

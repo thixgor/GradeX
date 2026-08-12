@@ -23,6 +23,7 @@ import {
   MAX_MATERIAL_CART_ITEMS,
   grantMaterialCartItems,
   resolveMaterialCart,
+  resolveTimedGrantFields,
   serializeMaterialCartItem,
 } from '@/lib/material-cart'
 import {
@@ -430,6 +431,34 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Versão por tempo com preço zero é um "experimente por N dias": entra
+    // aqui, mas continua sendo acesso com prazo — nunca vira vitalício.
+    const freePurchaseFilter = {
+      userId: session.userId,
+      itemType: data.itemType,
+      itemId: data.itemId,
+      ...(timedVersion
+        ? { accessVersionId: timedVersion.id }
+        : { accessVersionId: { $exists: false } }),
+      status: 'completed',
+    }
+    const freeTimedFields = timedVersion
+      ? await resolveTimedGrantFields(
+          db,
+          {
+            userId: session.userId,
+            itemType: data.itemType,
+            itemId: data.itemId,
+            purchaseFilter: freePurchaseFilter,
+            versionId: timedVersion.id,
+            versionLabel: timedVersion.label,
+            duration: versionDuration(timedVersion),
+            durationMinutes: timedDurationMinutes,
+          },
+          new Date()
+        )
+      : {}
+
     await db.collection<MaterialPurchase>('material_purchases').insertOne({
       userId: session.userId,
       userName: session.name,
@@ -441,6 +470,7 @@ export async function POST(request: NextRequest) {
       provider: 'mercado_pago',
       status: 'completed',
       purchasedAt: new Date(),
+      ...freeTimedFields,
     } as any)
     await db.collection(collection).updateOne(
       { _id: new ObjectId(data.itemId) },

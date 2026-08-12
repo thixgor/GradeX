@@ -525,8 +525,11 @@ export default function MaterialViewPage() {
   const handleBuyNow = async (skipUpsell = false) => {
     if (!data) return
     // A versão escolhida viaja na URL: o checkout (logado ou por Serial Key)
-    // revalida o id na fonte e cobra o preço da versão.
-    const versionQuery = accessVersionId ? `&accessVersionId=${encodeURIComponent(accessVersionId)}` : ''
+    // revalida o id na fonte e cobra o preço da versão. Renovando (já tem
+    // prazo correndo), o padrão é a primeira versão da lista.
+    const renewalDefault = timedAccess?.isTimed ? (timedVersions[0]?.id || null) : null
+    const chosenVersionId = accessVersionId || renewalDefault
+    const versionQuery = chosenVersionId ? `&accessVersionId=${encodeURIComponent(chosenVersionId)}` : ''
     const checkoutPath = `/materiais/checkout?type=material&id=${id}${versionQuery}`
     const goCheckout = () => {
       if (!data.isAuthenticated) {
@@ -812,14 +815,23 @@ export default function MaterialViewPage() {
                 </div>
               </div>
 
-              {/* Acesso por tempo limitado — quanto ainda resta */}
+              {/* Acesso por tempo limitado — quanto resta e como somar mais */}
               {hasAccess && timedAccess?.isTimed && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="mt-4"
                 >
-                  <TimedAccessBanner access={timedAccess} itemLabel="material" />
+                  <TimedAccessBanner
+                    access={timedAccess}
+                    itemLabel="material"
+                    versions={timedVersions}
+                    selectedVersionId={accessVersionId}
+                    onSelectVersion={setAccessVersionId}
+                    onRenew={() => handleBuyNow(true)}
+                    renewLoading={checkoutLoading}
+                    fullPrice={originalPrice}
+                  />
                 </motion.div>
               )}
 

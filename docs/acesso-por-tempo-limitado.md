@@ -56,13 +56,27 @@ cupom de lote nem o abatimento proporcional de pacote — esse abatimento existe
 para não cobrar duas vezes pelo acesso definitivo, e um passe temporário não é
 uma fração do acervo.
 
-## Recompra
+## Recompra e renovação
 
 Só a posse **vitalícia** bloqueia uma nova compra (`lifetimeOwnershipFilter()`).
 Quem está na versão por tempo pode comprar de novo para renovar o prazo ou para
 migrar para o acesso definitivo — inclusive depois de o prazo vencer. Quando há
 mais de uma posse do mesmo item, vale a melhor: qualquer posse vitalícia encerra
 a contagem, e entre prazos vence o maior.
+
+**Renovar soma, não zera.** Se ainda há prazo correndo, a nova janela começa no
+fim da atual (`accessExtendedFrom` guarda de onde ela partiu) — quem renova
+antes de acabar não perde os dias que sobravam. A base é o maior prazo ativo que
+já cobre o item, inclusive um pacote por tempo que o contenha. Tudo isso vive em
+`resolveTimedGrantFields` (`lib/material-cart.ts`), que também garante a
+**idempotência**: se a linha de compra já recebeu a janela, uma reentrega do
+webhook não estende de novo.
+
+Para o comprador, a soma aparece: o botão vira "Comprar — adicione mais tempo de
+uso" na página do material/pacote, e o checkout mostra "você já tem X restante …
+seu acesso passa a valer até <data>". Versão por tempo com preço zero é
+suportada de propósito — é o "experimente por N dias", e continua sendo acesso
+com prazo, nunca vitalício.
 
 ## Onde o prazo aparece para o usuário
 
