@@ -92,7 +92,7 @@ export async function GET(
               ? { $or: [{ userId: session.userId }, emailFilter] }
               : { userId: session.userId }),
           },
-          { projection: { _id: 1, accessMode: 1, accessVersionId: 1, accessVersionLabel: 1, accessDurationMinutes: 1, accessStartsAt: 1, accessExpiresAt: 1 } }
+          { projection: { _id: 1, accessMode: 1, accessVersionId: 1, accessVersionLabel: 1, accessDuration: 1, accessDurationMinutes: 1, accessStartsAt: 1, accessExpiresAt: 1 } }
         ),
         db.collection('material_packages')
           .find({ materialIds: id, isHidden: { $ne: true } }, { projection: { _id: 1 } })
@@ -115,7 +115,7 @@ export async function GET(
                 ? { $or: [{ userId: session.userId }, emailFilter] }
                 : { userId: session.userId }),
             },
-            { projection: { _id: 1, accessMode: 1, accessVersionId: 1, accessVersionLabel: 1, accessDurationMinutes: 1, accessStartsAt: 1, accessExpiresAt: 1 } }
+            { projection: { _id: 1, accessMode: 1, accessVersionId: 1, accessVersionLabel: 1, accessDuration: 1, accessDurationMinutes: 1, accessStartsAt: 1, accessExpiresAt: 1 } }
           ).toArray()
           isPurchased = pkgPurchases.length > 0
           if (isPurchased) {

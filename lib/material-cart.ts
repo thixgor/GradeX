@@ -4,11 +4,13 @@ import { audit } from './payments/audit'
 import type { MaterialPurchase } from './types'
 import { isPlusAccount } from './account-tier'
 import {
-  buildTimedPurchaseFieldsFromMinutes,
+  buildTimedPurchaseFieldsFor,
   findTimedAccessVersion,
-  formatDurationMinutes,
+  formatDuration,
   lifetimeOwnershipFilter,
+  versionDuration,
   versionDurationMinutes,
+  type TimedAccessDuration,
   type TimedAccessVersion,
 } from './material-timed-access'
 
@@ -50,6 +52,8 @@ export interface MaterialCartResolvedItem {
   accessMode?: 'lifetime' | 'timed'
   accessVersionId?: string
   accessVersionLabel?: string
+  /** Prazo comprado — meses e anos de calendário viajam inteiros até a ativação. */
+  accessDuration?: TimedAccessDuration
   accessDurationMinutes?: number
   accessDurationLabel?: string
 }
@@ -186,13 +190,14 @@ async function getCompletedPurchases(
  * temporário é um valor fechado, não uma fração do acervo.
  */
 function timedFieldsFor(version: TimedAccessVersion) {
-  const minutes = versionDurationMinutes(version)
+  const duration = versionDuration(version)
   return {
     accessMode: 'timed' as const,
     accessVersionId: version.id,
     accessVersionLabel: version.label,
-    accessDurationMinutes: minutes,
-    accessDurationLabel: formatDurationMinutes(minutes),
+    accessDuration: duration,
+    accessDurationMinutes: versionDurationMinutes(version),
+    accessDurationLabel: formatDuration(duration),
   }
 }
 
@@ -463,6 +468,7 @@ export function serializeMaterialCartItem(item: MaterialCartResolvedItem) {
           accessMode: 'timed' as const,
           accessVersionId: item.accessVersionId,
           accessVersionLabel: item.accessVersionLabel,
+          accessDuration: item.accessDuration,
           accessDurationMinutes: item.accessDurationMinutes,
           accessDurationLabel: item.accessDurationLabel,
         }
@@ -509,11 +515,12 @@ export async function grantMaterialCartItems(
       provider: 'mercado_pago',
       status: 'completed',
       purchasedAt: new Date(),
-      ...(item.accessMode === 'timed' && item.accessDurationMinutes
-        ? buildTimedPurchaseFieldsFromMinutes(
+      ...(item.accessMode === 'timed' && (item.accessDuration || item.accessDurationMinutes)
+        ? buildTimedPurchaseFieldsFor(
             {
               id: item.accessVersionId,
               label: item.accessVersionLabel,
+              duration: item.accessDuration,
               durationMinutes: item.accessDurationMinutes,
             },
             grantedAt
@@ -559,6 +566,7 @@ export async function grantMaterialCartItems(
               accessMode: 'timed',
               accessVersionId: item.accessVersionId,
               accessVersionLabel: item.accessVersionLabel,
+              accessDuration: item.accessDuration,
               accessDurationMinutes: item.accessDurationMinutes,
               accessStartsAt: grantedAt,
             }

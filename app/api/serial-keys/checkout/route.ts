@@ -154,6 +154,7 @@ export async function GET(request: NextRequest) {
       accessMode: resolved.accessMode || 'lifetime',
       accessVersionId: resolved.accessVersionId || null,
       accessVersionLabel: resolved.accessVersionLabel || null,
+      accessDuration: resolved.accessDuration || null,
       accessDurationMinutes: resolved.accessDurationMinutes || null,
       accessDurationLabel: resolved.accessDurationLabel || null,
       accessNotice: resolved.accessNotice || null,
@@ -339,6 +340,7 @@ export async function POST(request: NextRequest) {
             accessMode: 'timed',
             accessVersionId: resolved.accessVersionId,
             accessVersionLabel: resolved.accessVersionLabel,
+            accessDuration: resolved.accessDuration,
             accessDurationMinutes: resolved.accessDurationMinutes,
           }
         : {}),
@@ -578,11 +580,12 @@ async function handleCartCheckout(
       itemTitle: item.itemTitle,
       linkedDeckSlug: item.linkedDeckSlug,
       // Duração viaja na grant; a data de fim nasce na ativação da key.
-      ...(item.accessMode === 'timed' && item.accessDurationMinutes
+      ...(item.accessMode === 'timed' && (item.accessDuration || item.accessDurationMinutes)
         ? {
             accessMode: 'timed' as const,
             accessVersionId: item.accessVersionId,
             accessVersionLabel: item.accessVersionLabel,
+            accessDuration: item.accessDuration,
             accessDurationMinutes: item.accessDurationMinutes,
           }
         : {}),

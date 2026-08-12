@@ -18,6 +18,15 @@ export interface TimedAccessVersionView {
   label: string
   description?: string
   price: number
+  /** Prazo em unidades de calendário (anos/meses/dias/horas/minutos). */
+  duration?: {
+    years: number
+    months: number
+    days: number
+    hours: number
+    minutes: number
+  }
+  /** Estimativa em minutos — usada só para comparar/ordenar. */
   durationMinutes: number
   durationLabel: string
   highlight?: boolean

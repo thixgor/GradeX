@@ -81,6 +81,7 @@ export async function GET(request: NextRequest) {
         accessMode: 1,
         accessVersionId: 1,
         accessVersionLabel: 1,
+        accessDuration: 1,
         accessDurationMinutes: 1,
         accessStartsAt: 1,
         accessExpiresAt: 1,

@@ -37,6 +37,7 @@ import { isPlusAccount } from '@/lib/account-tier'
 import {
   findTimedAccessVersion,
   lifetimeOwnershipFilter,
+  versionDuration,
   versionDurationMinutes,
 } from '@/lib/material-timed-access'
 
@@ -539,6 +540,7 @@ export async function POST(request: NextRequest) {
             accessMode: 'timed',
             accessVersionId: timedVersion.id,
             accessVersionLabel: timedVersion.label,
+            accessDuration: versionDuration(timedVersion),
             accessDurationMinutes: timedDurationMinutes,
           }
         : {}),

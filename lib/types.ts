@@ -622,6 +622,8 @@ export interface SerialKeyGrant {
   accessMode?: import('./material-timed-access').MaterialAccessMode
   accessVersionId?: string
   accessVersionLabel?: string
+  /** Prazo comprado — vira data de fim só na ativação. */
+  accessDuration?: import('./material-timed-access').TimedAccessDuration
   accessDurationMinutes?: number
 }
 
@@ -1722,6 +1724,9 @@ export interface MaterialPurchase {
   /** Versão de acesso comprada (`Material.timedAccessVersions[].id`). */
   accessVersionId?: string
   accessVersionLabel?: string
+  /** Prazo comprado (anos/meses/dias/horas/minutos). Meses e anos são de calendário. */
+  accessDuration?: import('./material-timed-access').TimedAccessDuration
+  /** Estimativa em minutos — ordenação e compras anteriores às cinco unidades. */
   accessDurationMinutes?: number
   /** Início da contagem — a ativação da serial key, não o pagamento. */
   accessStartsAt?: Date

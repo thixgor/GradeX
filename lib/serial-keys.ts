@@ -23,10 +23,15 @@ import { getPersonalExamsQuota } from './tier-limits'
 import { grantMaterialCartItems, type MaterialCartResolvedItem } from './material-cart'
 import { restorePlusClaims } from './plus-claims'
 import {
+  computeAccessExpiry,
   findTimedAccessVersion,
+  formatDuration,
   formatDurationMinutes,
+  normalizeDuration,
   timedAccessDisclaimer,
+  versionDuration,
   versionDurationMinutes,
+  type TimedAccessDuration,
 } from './material-timed-access'
 import {
   getManualClinicoConfig,
@@ -198,6 +203,8 @@ export interface ResolvedSerialKeyProduct {
   accessMode?: 'lifetime' | 'timed'
   accessVersionId?: string
   accessVersionLabel?: string
+  /** Prazo comprado — vira data de fim só na ativação da key. */
+  accessDuration?: TimedAccessDuration
   accessDurationMinutes?: number
   accessDurationLabel?: string
   /** Aviso pronto para o checkout ("acesso por X, sem download…"). */
@@ -324,8 +331,9 @@ export async function resolveSerialKeyProduct(
   // Versão por tempo limitada: preço próprio, e a duração viaja na grant para
   // ser convertida em data de fim só na ATIVAÇÃO da key.
   const timedVersion = findTimedAccessVersion(item, input.accessVersionId)
+  const duration = timedVersion ? versionDuration(timedVersion) : null
   const durationMinutes = timedVersion ? versionDurationMinutes(timedVersion) : 0
-  const durationLabel = durationMinutes ? formatDurationMinutes(durationMinutes) : ''
+  const durationLabel = duration ? formatDuration(duration) : ''
   const amount = timedVersion ? Number(timedVersion.price) : Number(item.price)
   if (timedVersion && (!Number.isFinite(amount) || amount <= 0)) {
     throw new Error('Esta versão de acesso não está disponível.')
@@ -367,6 +375,7 @@ export async function resolveSerialKeyProduct(
             accessMode: 'timed' as const,
             accessVersionId: timedVersion.id,
             accessVersionLabel: timedVersion.label,
+            accessDuration: duration!,
             accessDurationMinutes: durationMinutes,
           }
         : {}),
@@ -757,13 +766,16 @@ export async function grantSerialKeyProduct(
         ownedMaterialIds: [],
         // A contagem do acesso por tempo nasce aqui: `grantMaterialCartItems`
         // usa `accessStartsAt` (agora = ativação) para calcular o fim.
-        ...(grant.accessMode === 'timed' && grant.accessDurationMinutes
+        ...(grant.accessMode === 'timed' && (grant.accessDuration || grant.accessDurationMinutes)
           ? {
               accessMode: 'timed' as const,
               accessVersionId: grant.accessVersionId,
               accessVersionLabel: grant.accessVersionLabel,
+              accessDuration: grant.accessDuration,
               accessDurationMinutes: grant.accessDurationMinutes,
-              accessDurationLabel: formatDurationMinutes(grant.accessDurationMinutes),
+              accessDurationLabel: grant.accessDuration
+                ? formatDuration(normalizeDuration(grant.accessDuration))
+                : formatDurationMinutes(grant.accessDurationMinutes || 0),
             }
           : {}),
       }
@@ -900,21 +912,25 @@ export function serializeSerialKeyForActivation(serial: SerialKey) {
  */
 export function serializeGrantAccess(serial: SerialKey) {
   const grant = serial.grant
-  if (grant?.accessMode !== 'timed' || !grant.accessDurationMinutes) {
+  if (grant?.accessMode !== 'timed' || !(grant.accessDuration || grant.accessDurationMinutes)) {
     return { accessMode: 'lifetime' as const }
   }
-  const durationLabel = formatDurationMinutes(grant.accessDurationMinutes)
+  const duration = grant.accessDuration
+    ? normalizeDuration(grant.accessDuration)
+    : normalizeDuration({ minutes: grant.accessDurationMinutes })
+  const durationLabel = formatDuration(duration)
   const activatedAt = serial.activatedAt ? new Date(serial.activatedAt) : null
   return {
     accessMode: 'timed' as const,
     accessVersionId: grant.accessVersionId,
     accessVersionLabel: grant.accessVersionLabel,
+    accessDuration: duration,
     accessDurationMinutes: grant.accessDurationMinutes,
     accessDurationLabel: durationLabel,
     accessNotice: timedAccessDisclaimer(durationLabel, { viaSerialKey: true }),
     /** Só existe depois da ativação — antes dela, o prazo não corre. */
     accessExpiresAt: activatedAt
-      ? new Date(activatedAt.getTime() + grant.accessDurationMinutes * 60_000).toISOString()
+      ? computeAccessExpiry(activatedAt, duration).toISOString()
       : null,
   }
 }

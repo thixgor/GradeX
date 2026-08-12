@@ -32,8 +32,10 @@ import { sendMetaCapiEvent } from '../meta-capi'
 import { approveCouponRedemption, releaseCouponRedemption } from '../coupons'
 import { grantMaterialCartItems, type MaterialCartResolvedItem } from '../material-cart'
 import {
-  buildTimedPurchaseFieldsFromMinutes,
+  buildTimedPurchaseFieldsFor,
+  formatDuration,
   formatDurationMinutes,
+  normalizeDuration,
   type TimedAccessPurchaseFields,
 } from '../material-timed-access'
 import { restorePlusClaims } from '../plus-claims'
@@ -491,13 +493,16 @@ async function applyMaterialPurchase(order: PaymentOrder, result?: ProviderOrder
           // Versão por tempo escolhida no checkout: o prazo passa a correr
           // agora, que é quando o acesso é de fato liberado nesta compra
           // logada (na compra com serial key, quem libera é a ativação).
-          ...(item.accessMode === 'timed' && Number(item.accessDurationMinutes) > 0
+          ...(item.accessMode === 'timed' && (item.accessDuration || Number(item.accessDurationMinutes) > 0)
             ? {
                 accessMode: 'timed' as const,
                 accessVersionId: item.accessVersionId ? String(item.accessVersionId) : undefined,
                 accessVersionLabel: item.accessVersionLabel ? String(item.accessVersionLabel) : undefined,
-                accessDurationMinutes: Number(item.accessDurationMinutes),
-                accessDurationLabel: formatDurationMinutes(Number(item.accessDurationMinutes)),
+                accessDuration: item.accessDuration ? normalizeDuration(item.accessDuration) : undefined,
+                accessDurationMinutes: Number(item.accessDurationMinutes) || undefined,
+                accessDurationLabel: item.accessDuration
+                  ? formatDuration(normalizeDuration(item.accessDuration))
+                  : formatDurationMinutes(Number(item.accessDurationMinutes)),
               }
             : {}),
         }
@@ -573,16 +578,18 @@ async function applyMaterialPurchase(order: PaymentOrder, result?: ProviderOrder
   // Compra de uma versão por tempo: o acesso vence em `accessExpiresAt` e nunca
   // libera download (ver `lib/material-timed-access`).
   const timedDurationMinutes = Number(order.metadata?.accessDurationMinutes) || 0
-  const timedFields: Partial<TimedAccessPurchaseFields> = order.metadata?.accessMode === 'timed' && timedDurationMinutes > 0
-    ? buildTimedPurchaseFieldsFromMinutes(
-        {
-          id: order.metadata?.accessVersionId ? String(order.metadata.accessVersionId) : undefined,
-          label: order.metadata?.accessVersionLabel ? String(order.metadata.accessVersionLabel) : undefined,
-          durationMinutes: timedDurationMinutes,
-        },
-        new Date()
-      )
-    : {}
+  const timedFields: Partial<TimedAccessPurchaseFields> =
+    order.metadata?.accessMode === 'timed' && (order.metadata?.accessDuration || timedDurationMinutes > 0)
+      ? buildTimedPurchaseFieldsFor(
+          {
+            id: order.metadata?.accessVersionId ? String(order.metadata.accessVersionId) : undefined,
+            label: order.metadata?.accessVersionLabel ? String(order.metadata.accessVersionLabel) : undefined,
+            duration: order.metadata?.accessDuration ? normalizeDuration(order.metadata.accessDuration) : undefined,
+            durationMinutes: timedDurationMinutes,
+          },
+          new Date()
+        )
+      : {}
 
   await db.collection<MaterialPurchase>('material_purchases').updateOne(
     {

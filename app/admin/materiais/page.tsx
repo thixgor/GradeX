@@ -78,6 +78,7 @@ import {
   TimedAccessVersionsEditor,
   type TimedAccessVersionForm,
 } from '@/components/materiais/timed-access-versions-editor'
+import { normalizeDuration } from '@/lib/material-timed-access'
 import {
   DEFAULT_PUBLIC_METRIC_SETTINGS,
   type PublicMetricSettings,
@@ -4157,17 +4158,25 @@ function ModalActions({ onCancel, onSave, saving, mode }: { onCancel: () => void
  */
 function normalizeVersionsForForm(raw: any): TimedAccessVersionForm[] {
   if (!Array.isArray(raw)) return []
-  return raw.map((version: any, index: number) => ({
-    id: String(version?.id || `tav-${index}-${Math.random().toString(36).slice(2, 8)}`),
-    label: String(version?.label || ''),
-    description: version?.description ? String(version.description) : '',
-    price: Number(version?.price || 0),
-    durationDays: Math.max(0, Math.floor(Number(version?.durationDays) || 0)),
-    durationHours: Math.max(0, Math.floor(Number(version?.durationHours) || 0)),
-    isActive: version?.isActive !== false,
-    highlight: version?.highlight === true,
-    order: Math.max(0, Math.floor(Number(version?.order) || index)),
-  }))
+  return raw.map((version: any, index: number) => {
+    // Versões salvas antes das cinco unidades só têm dias/horas — as demais
+    // entram zeradas, sem mudar o prazo já publicado.
+    const duration = normalizeDuration(version)
+    return {
+      id: String(version?.id || `tav-${index}-${Math.random().toString(36).slice(2, 8)}`),
+      label: String(version?.label || ''),
+      description: version?.description ? String(version.description) : '',
+      price: Number(version?.price || 0),
+      durationYears: duration.years,
+      durationMonths: duration.months,
+      durationDays: duration.days,
+      durationHours: duration.hours,
+      durationMinutes: duration.minutes,
+      isActive: version?.isActive !== false,
+      highlight: version?.highlight === true,
+      order: Math.max(0, Math.floor(Number(version?.order) || index)),
+    }
+  })
 }
 
 export default function AdminMateriaisPage() {

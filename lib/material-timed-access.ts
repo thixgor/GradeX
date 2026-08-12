@@ -3,7 +3,8 @@
  *
  * Um material (ou pacote) tem sempre a sua versão vitalícia — o preço normal,
  * que dá acesso para sempre. Além dela, o admin pode publicar *versões de
- * acesso*: o mesmo conteúdo por um preço menor, válido por X dias/horas.
+ * acesso*: o mesmo conteúdo por um preço menor, válido por um prazo que ele
+ * monta em minutos, horas, dias, meses e anos (somados).
  *
  * Regras (aplicadas no servidor, nunca só na interface):
  *  - O relógio começa a correr na ATIVAÇÃO da serial key (ou, na compra
@@ -13,9 +14,22 @@
  *  - Versão por tempo NÃO permite download: o conteúdo é consumido no PDF
  *    Viewer / leitor protegido. Flashcards e vídeo-aulas não têm PDF, então
  *    para eles a versão apenas limita o período de uso.
+ *
+ * Meses e anos são de CALENDÁRIO, não blocos de 30/365 dias: "1 mês" comprado
+ * em 31/01 vence em 28/02, e não em 02/03. Por isso a duração viaja inteira
+ * (as cinco unidades) até a ativação, onde vira data — ver `computeAccessExpiry`.
  */
 
 export type MaterialAccessMode = 'lifetime' | 'timed'
+
+/** As cinco unidades que o admin pode somar para montar um prazo. */
+export interface TimedAccessDuration {
+  years: number
+  months: number
+  days: number
+  hours: number
+  minutes: number
+}
 
 /** Uma versão de acesso por tempo publicada pelo admin. */
 export interface TimedAccessVersion {
@@ -27,9 +41,12 @@ export interface TimedAccessVersion {
   description?: string
   /** Preço desta versão em R$. */
   price: number
-  /** Duração — dias e horas somam o período total de acesso. */
+  /** Duração — as cinco unidades somam o período total de acesso. */
+  durationYears: number
+  durationMonths: number
   durationDays: number
   durationHours: number
+  durationMinutes: number
   /** Versão desligada não aparece no catálogo nem pode ser comprada. */
   isActive: boolean
   /** Marca a versão como recomendada (destaque visual). */
@@ -42,6 +59,9 @@ export interface TimedAccessPurchaseFields {
   accessMode: MaterialAccessMode
   accessVersionId?: string
   accessVersionLabel?: string
+  /** Duração de calendário comprada (fonte da verdade para recalcular datas). */
+  accessDuration?: TimedAccessDuration
+  /** Aproximação em minutos — ordenação, compatibilidade e fallback de rótulo. */
   accessDurationMinutes?: number
   accessStartsAt?: Date
   accessExpiresAt?: Date
@@ -69,11 +89,35 @@ export interface TimedAccessStatus {
 }
 
 export const MAX_TIMED_ACCESS_VERSIONS = 6
+const MINUTES_PER_HOUR = 60
 const MINUTES_PER_DAY = 24 * 60
+/**
+ * Equivalências usadas SÓ para estimar minutos (ordenação, rótulo de legado).
+ * A data real de término nunca sai daqui — sai de `computeAccessExpiry`.
+ */
+const MINUTES_PER_MONTH = 30 * MINUTES_PER_DAY
+const MINUTES_PER_YEAR = 365 * MINUTES_PER_DAY
 /** Teto de segurança: 10 anos. Acima disso, use a versão vitalícia. */
-const MAX_DURATION_MINUTES = 10 * 365 * MINUTES_PER_DAY
+const MAX_DURATION_MINUTES = 10 * MINUTES_PER_YEAR
 /** Falta menos que isso → a interface trata como "acabando". */
 export const ENDING_SOON_MS = 24 * 60 * 60 * 1000
+
+/** Limites por unidade no formulário do admin. */
+export const DURATION_LIMITS = {
+  years: 10,
+  months: 120,
+  days: 3650,
+  hours: 8760,
+  minutes: 525_600,
+} as const
+
+export const EMPTY_DURATION: TimedAccessDuration = {
+  years: 0,
+  months: 0,
+  days: 0,
+  hours: 0,
+  minutes: 0,
+}
 
 function toInt(value: unknown, min: number, max: number): number {
   const n = Math.floor(Number(value))
@@ -95,11 +139,56 @@ function makeVersionId(): string {
   return `tav-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`
 }
 
-/** Duração total da versão em minutos. */
-export function versionDurationMinutes(version: Pick<TimedAccessVersion, 'durationDays' | 'durationHours'>): number {
-  const days = Math.max(0, Math.floor(Number(version.durationDays) || 0))
-  const hours = Math.max(0, Math.floor(Number(version.durationHours) || 0))
-  return Math.min(MAX_DURATION_MINUTES, days * MINUTES_PER_DAY + hours * 60)
+/** Lê as cinco unidades de um objeto solto (versão, compra ou grant). */
+export function normalizeDuration(raw: any): TimedAccessDuration {
+  if (!raw || typeof raw !== 'object') return { ...EMPTY_DURATION }
+  // Objeto que carrega a duração aninhada (versão serializada, compra): a
+  // duração de dentro é a boa — o `durationMinutes` ao lado dela é só a
+  // estimativa total e leria "minutos" errado.
+  if (raw.duration && typeof raw.duration === 'object') return normalizeDuration(raw.duration)
+  if (raw.accessDuration && typeof raw.accessDuration === 'object') return normalizeDuration(raw.accessDuration)
+  // Aceita tanto o formato aninhado (`accessDuration`) quanto o achatado da
+  // versão (`durationYears`, …) — é o mesmo prazo escrito de dois jeitos.
+  const pick = (nested: string, flat: string, max: number) =>
+    toInt(raw[nested] ?? raw[flat], 0, max)
+  return {
+    years: pick('years', 'durationYears', DURATION_LIMITS.years),
+    months: pick('months', 'durationMonths', DURATION_LIMITS.months),
+    days: pick('days', 'durationDays', DURATION_LIMITS.days),
+    hours: pick('hours', 'durationHours', DURATION_LIMITS.hours),
+    minutes: pick('minutes', 'durationMinutes', DURATION_LIMITS.minutes),
+  }
+}
+
+/** A duração de uma versão, no formato canônico. */
+export function versionDuration(version: any): TimedAccessDuration {
+  return normalizeDuration(version)
+}
+
+/** A duração tem alguma unidade preenchida? */
+export function hasDuration(duration: TimedAccessDuration): boolean {
+  return duration.years > 0 || duration.months > 0 || duration.days > 0 ||
+    duration.hours > 0 || duration.minutes > 0
+}
+
+/**
+ * Estimativa da duração em minutos (mês = 30 dias, ano = 365). Serve para
+ * ordenar versões, comparar prazos e como rótulo de compras antigas. A data de
+ * término real nunca vem daqui.
+ */
+export function durationToApproxMinutes(duration: TimedAccessDuration): number {
+  const total =
+    duration.years * MINUTES_PER_YEAR +
+    duration.months * MINUTES_PER_MONTH +
+    duration.days * MINUTES_PER_DAY +
+    duration.hours * MINUTES_PER_HOUR +
+    duration.minutes
+  return Math.min(MAX_DURATION_MINUTES, Math.max(0, Math.floor(total)))
+}
+
+/** Atalho: duração aproximada de uma versão, em minutos. */
+export function versionDurationMinutes(version: any): number {
+  return durationToApproxMinutes(versionDuration(version))
 }
 
 /**
@@ -117,9 +206,8 @@ export function sanitizeTimedAccessVersions(raw: unknown): TimedAccessVersion[] 
     const label = cleanText(item.label, 60)
     if (!label) continue
 
-    const durationDays = toInt(item.durationDays, 0, 3650)
-    const durationHours = toInt(item.durationHours, 0, 23)
-    if (versionDurationMinutes({ durationDays, durationHours }) <= 0) continue
+    const duration = normalizeDuration(item)
+    if (!hasDuration(duration)) continue
 
     let id = cleanText(item.id, 40)
     if (!id || seen.has(id)) id = makeVersionId()
@@ -130,8 +218,11 @@ export function sanitizeTimedAccessVersions(raw: unknown): TimedAccessVersion[] 
       label,
       description: cleanText(item.description, 180) || undefined,
       price: toMoney(item.price),
-      durationDays,
-      durationHours,
+      durationYears: duration.years,
+      durationMonths: duration.months,
+      durationDays: duration.days,
+      durationHours: duration.hours,
+      durationMinutes: duration.minutes,
       isActive: item.isActive !== false,
       highlight: item.highlight === true,
       order: toInt(item.order ?? out.length, 0, 999),
@@ -147,18 +238,24 @@ export function getActiveTimedAccessVersions(item: any): TimedAccessVersion[] {
   const raw = item?.timedAccessVersions
   if (!Array.isArray(raw)) return []
   return raw
-    .filter((v: any) => v && v.isActive !== false && versionDurationMinutes(v) > 0)
-    .map((v: any) => ({
-      id: String(v.id || ''),
-      label: String(v.label || 'Acesso temporário'),
-      description: v.description ? String(v.description) : undefined,
-      price: toMoney(v.price),
-      durationDays: Math.max(0, Math.floor(Number(v.durationDays) || 0)),
-      durationHours: Math.max(0, Math.floor(Number(v.durationHours) || 0)),
-      isActive: true,
-      highlight: v.highlight === true,
-      order: Math.max(0, Math.floor(Number(v.order) || 0)),
-    }))
+    .filter((v: any) => v && v.isActive !== false && hasDuration(normalizeDuration(v)))
+    .map((v: any) => {
+      const duration = normalizeDuration(v)
+      return {
+        id: String(v.id || ''),
+        label: String(v.label || 'Acesso temporário'),
+        description: v.description ? String(v.description) : undefined,
+        price: toMoney(v.price),
+        durationYears: duration.years,
+        durationMonths: duration.months,
+        durationDays: duration.days,
+        durationHours: duration.hours,
+        durationMinutes: duration.minutes,
+        isActive: true,
+        highlight: v.highlight === true,
+        order: Math.max(0, Math.floor(Number(v.order) || 0)),
+      }
+    })
     .filter((v) => !!v.id)
     .sort((a, b) => a.order - b.order || a.price - b.price)
 }
@@ -172,22 +269,46 @@ export function findTimedAccessVersion(item: any, versionId?: string | null): Ti
 
 /** Serializa as versões para o cliente, já com rótulos prontos. */
 export function serializeTimedAccessVersions(item: any) {
-  return getActiveTimedAccessVersions(item).map((version) => ({
-    id: version.id,
-    label: version.label,
-    description: version.description || '',
-    price: version.price,
-    durationDays: version.durationDays,
-    durationHours: version.durationHours,
-    durationMinutes: versionDurationMinutes(version),
-    durationLabel: formatDurationMinutes(versionDurationMinutes(version)),
-    highlight: version.highlight === true,
-  }))
+  return getActiveTimedAccessVersions(item).map((version) => {
+    const duration = versionDuration(version)
+    return {
+      id: version.id,
+      label: version.label,
+      description: version.description || '',
+      price: version.price,
+      duration,
+      durationMinutes: durationToApproxMinutes(duration),
+      durationLabel: formatDuration(duration),
+      highlight: version.highlight === true,
+    }
+  })
 }
 
-/** Data em que o acesso termina, contando a partir de `startsAt`. */
-export function computeAccessExpiry(startsAt: Date, durationMinutes: number): Date {
-  return new Date(startsAt.getTime() + Math.max(1, Math.floor(durationMinutes)) * 60_000)
+/**
+ * Data em que o acesso termina, contando a partir de `startsAt`.
+ *
+ * Anos e meses andam no calendário (em UTC, para não depender do fuso do
+ * servidor); dias, horas e minutos são somados como tempo absoluto. Quando o
+ * dia do mês não existe no mês de destino, a data cai no último dia dele —
+ * "1 mês" a partir de 31/01 termina em 28/02, e não escorrega para março.
+ */
+export function computeAccessExpiry(startsAt: Date, duration: TimedAccessDuration): Date {
+  const result = new Date(startsAt.getTime())
+
+  if (duration.years > 0 || duration.months > 0) {
+    const day = result.getUTCDate()
+    const targetMonth = result.getUTCMonth() + duration.months + duration.years * 12
+    // Dia 1 antes de mexer no mês: evita o rollover automático do JS
+    // (31/01 + 1 mês viraria 03/03) antes de podermos limitar ao fim do mês.
+    result.setUTCDate(1)
+    result.setUTCMonth(targetMonth)
+    const lastDayOfMonth = new Date(Date.UTC(result.getUTCFullYear(), result.getUTCMonth() + 1, 0)).getUTCDate()
+    result.setUTCDate(Math.min(day, lastDayOfMonth))
+  }
+
+  const absoluteMinutes =
+    duration.days * MINUTES_PER_DAY + duration.hours * MINUTES_PER_HOUR + duration.minutes
+  return new Date(result.getTime() + absoluteMinutes * 60_000)
 }
 
 /**
@@ -199,30 +320,43 @@ export function buildTimedPurchaseFields(
   version: TimedAccessVersion,
   startsAt: Date = new Date()
 ): TimedAccessPurchaseFields {
-  return buildTimedPurchaseFieldsFromMinutes(
-    { id: version.id, label: version.label, durationMinutes: versionDurationMinutes(version) },
+  return buildTimedPurchaseFieldsFor(
+    { id: version.id, label: version.label, duration: versionDuration(version) },
     startsAt
   )
 }
 
 /**
- * Mesma coisa a partir dos dados já achatados que viajam no pedido/serial key
- * (id + rótulo + minutos) — é o formato que sobrevive ao checkout.
+ * Mesma coisa a partir dos dados achatados que viajam no pedido/serial key.
+ * Aceita a duração completa (`duration`) ou, para keys geradas antes das cinco
+ * unidades existirem, apenas os minutos.
  */
-export function buildTimedPurchaseFieldsFromMinutes(
-  version: { id?: string; label?: string; durationMinutes: number },
+export function buildTimedPurchaseFieldsFor(
+  version: { id?: string; label?: string; duration?: TimedAccessDuration | null; durationMinutes?: number },
   startsAt: Date = new Date()
 ): TimedAccessPurchaseFields {
-  const durationMinutes = Math.max(1, Math.floor(Number(version.durationMinutes) || 0))
+  const duration = version.duration && hasDuration(version.duration)
+    ? version.duration
+    : { ...EMPTY_DURATION, minutes: Math.max(1, Math.floor(Number(version.durationMinutes) || 0)) }
+
   return {
     accessMode: 'timed',
     accessVersionId: version.id || undefined,
     accessVersionLabel: version.label || undefined,
-    accessDurationMinutes: durationMinutes,
+    accessDuration: duration,
+    accessDurationMinutes: durationToApproxMinutes(duration),
     accessStartsAt: startsAt,
-    accessExpiresAt: computeAccessExpiry(startsAt, durationMinutes),
+    accessExpiresAt: computeAccessExpiry(startsAt, duration),
     downloadDisabled: true,
   }
+}
+
+/** @deprecated use `buildTimedPurchaseFieldsFor`. Mantido para keys antigas. */
+export function buildTimedPurchaseFieldsFromMinutes(
+  version: { id?: string; label?: string; durationMinutes: number },
+  startsAt: Date = new Date()
+): TimedAccessPurchaseFields {
+  return buildTimedPurchaseFieldsFor(version, startsAt)
 }
 
 /**
@@ -272,16 +406,26 @@ export function summarizeTimedAccess(purchase: any, now: Date = new Date()): Tim
   if (!purchase || !isTimedPurchase(purchase)) return null
   const expiresAt = toDate(purchase.accessExpiresAt)
   const startsAt = toDate(purchase.accessStartsAt)
-  const durationMinutes = Number(purchase.accessDurationMinutes) || undefined
   const remainingMs = expiresAt ? Math.max(0, expiresAt.getTime() - now.getTime()) : 0
   const expired = !!expiresAt && remainingMs <= 0
+
+  // Compras novas guardam a duração completa; as antigas, só os minutos.
+  const duration = purchase.accessDuration ? normalizeDuration(purchase.accessDuration) : null
+  const durationMinutes = duration
+    ? durationToApproxMinutes(duration)
+    : Number(purchase.accessDurationMinutes) || undefined
+  const durationLabel = duration && hasDuration(duration)
+    ? formatDuration(duration)
+    : durationMinutes
+      ? formatDurationMinutes(durationMinutes)
+      : undefined
 
   return {
     isTimed: true,
     versionId: purchase.accessVersionId ? String(purchase.accessVersionId) : undefined,
     label: purchase.accessVersionLabel ? String(purchase.accessVersionLabel) : undefined,
     durationMinutes,
-    durationLabel: durationMinutes ? formatDurationMinutes(durationMinutes) : undefined,
+    durationLabel,
     startsAt: startsAt ? startsAt.toISOString() : undefined,
     expiresAt: expiresAt ? expiresAt.toISOString() : undefined,
     expiresAtLabel: expiresAt ? formatAccessDate(expiresAt) : undefined,
@@ -293,18 +437,47 @@ export function summarizeTimedAccess(purchase: any, now: Date = new Date()): Tim
   }
 }
 
-/** "30 dias", "12 horas", "1 dia e 6 h". */
+const UNIT_LABELS: Array<{ key: keyof TimedAccessDuration; one: string; many: string }> = [
+  { key: 'years', one: 'ano', many: 'anos' },
+  { key: 'months', one: 'mês', many: 'meses' },
+  { key: 'days', one: 'dia', many: 'dias' },
+  { key: 'hours', one: 'hora', many: 'horas' },
+  { key: 'minutes', one: 'minuto', many: 'minutos' },
+]
+
+/**
+ * "30 dias", "1 ano e 6 meses", "2 h e 30 min". Mostra no máximo as duas
+ * maiores unidades preenchidas — "1 ano, 2 meses, 3 dias e 15 minutos" não
+ * ajuda ninguém a decidir uma compra.
+ */
+export function formatDuration(duration: TimedAccessDuration): string {
+  const filled = UNIT_LABELS
+    .map(({ key, one, many }) => ({ key, one, many, value: Math.max(0, Math.floor(duration[key] || 0)) }))
+    .filter((entry) => entry.value > 0)
+
+  if (filled.length === 0) return '0 minutos'
+
+  // Sozinha, a unidade vai por extenso ("2 horas"); acompanhada, abrevia as
+  // menores para a frase não ficar comprida ("1 dia e 6 h").
+  const render = (entry: (typeof filled)[number], abbreviate: boolean) => {
+    if (abbreviate && entry.key === 'hours') return `${entry.value} h`
+    if (abbreviate && entry.key === 'minutes') return `${entry.value} min`
+    return `${entry.value} ${entry.value === 1 ? entry.one : entry.many}`
+  }
+
+  if (filled.length === 1) return render(filled[0], false)
+  return `${render(filled[0], true)} e ${render(filled[1], true)}`
+}
+
+/** Mesma leitura, a partir de uma quantidade de minutos (compras antigas). */
 export function formatDurationMinutes(minutes: number): string {
   const total = Math.max(0, Math.floor(minutes))
-  const days = Math.floor(total / MINUTES_PER_DAY)
-  const hours = Math.floor((total % MINUTES_PER_DAY) / 60)
-  const mins = total % 60
-
-  if (days > 0 && hours > 0) return `${days} ${days === 1 ? 'dia' : 'dias'} e ${hours} h`
-  if (days > 0) return `${days} ${days === 1 ? 'dia' : 'dias'}`
-  if (hours > 0 && mins > 0) return `${hours} h e ${mins} min`
-  if (hours > 0) return `${hours} ${hours === 1 ? 'hora' : 'horas'}`
-  return `${mins} ${mins === 1 ? 'minuto' : 'minutos'}`
+  return formatDuration({
+    ...EMPTY_DURATION,
+    days: Math.floor(total / MINUTES_PER_DAY),
+    hours: Math.floor((total % MINUTES_PER_DAY) / MINUTES_PER_HOUR),
+    minutes: total % MINUTES_PER_HOUR,
+  })
 }
 
 /** "12 dias e 4 h restantes" vira "12 dias e 4 h" — a frase fica com a UI. */

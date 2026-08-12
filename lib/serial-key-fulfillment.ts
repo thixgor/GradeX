@@ -21,7 +21,7 @@ import {
 } from './serial-key-receipt'
 import { sendSerialKeyPurchaseEmail, sendSerialKeyCartPurchaseEmail, type MaterialEmailAttachment } from './mail'
 import { buildAutoEmailPdfAttachments } from './material-pdf-email'
-import { formatDurationMinutes } from './material-timed-access'
+import { formatDuration, formatDurationMinutes, normalizeDuration } from './material-timed-access'
 import type { PaymentOrder, SerialKey, SerialKeyEmailLog } from './types'
 import type { ProviderOrder } from './payments/types'
 
@@ -138,10 +138,12 @@ export function getFulfillmentEmailState(keys: SerialKey[]): {
 /** Modalidade de acesso da key, quando a compra foi por tempo limitado. */
 function timedAccessOf(serial: SerialKey): SerialKeyReceiptData['timedAccess'] {
   const grant = serial.grant
-  if (grant?.accessMode !== 'timed' || !grant.accessDurationMinutes) return undefined
+  if (grant?.accessMode !== 'timed' || !(grant.accessDuration || grant.accessDurationMinutes)) return undefined
   return {
     versionLabel: grant.accessVersionLabel,
-    durationLabel: formatDurationMinutes(grant.accessDurationMinutes),
+    durationLabel: grant.accessDuration
+      ? formatDuration(normalizeDuration(grant.accessDuration))
+      : formatDurationMinutes(grant.accessDurationMinutes || 0),
   }
 }
 
