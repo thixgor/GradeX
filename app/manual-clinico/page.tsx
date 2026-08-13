@@ -27,7 +27,7 @@ import {
   Bug,
   Target,
   BookOpen,
-  Box,
+  PersonStanding,
   Calculator,
   ChevronLeft,
   ChevronRight,
@@ -360,8 +360,8 @@ const TOUR_STEPS: TourStep[] = [
   },
   {
     target: '[data-tour="anatomia"]',
-    title: 'Anatomia 3D',
-    body: 'Atlas 3D interativo: modelos rotacionáveis em 360° com explicação anatômica aprofundada.',
+    title: 'Domine Anatomia',
+    body: 'Escolha entre o Atlas de Anatomia com marcadores aprofundados e modelos 3D rotacionáveis em 360°.',
   },
   {
     target: '[data-tour="histologia"]',
@@ -1063,7 +1063,7 @@ function ManualClinicoContent() {
           </button>
         )}
 
-        {/* ══════════ ANATOMIA 3D ENTRY ══════════ */}
+        {/* ══════════ DOMINE ANATOMIA ENTRY ══════════ */}
         {!busca && (
           <button
             onClick={() => router.push('/manual-clinico/anatomia-3d')}
@@ -1073,12 +1073,12 @@ function ManualClinicoContent() {
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-3">
                 <div className="rounded-xl bg-primary/10 p-2.5">
-                  <Box className="h-5 w-5 text-primary" />
+                  <PersonStanding className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm font-bold leading-snug">Anatomia 3D</p>
+                  <p className="text-sm font-bold leading-snug">Domine Anatomia</p>
                   <p className="mt-0.5 text-xs text-muted-foreground">
-                    Atlas 3D interativo com dezenas de modelos rotacionáveis em 360° — coração, cardiopatias congênitas, pulmões, coluna torácica, ossos e mais — cada um com explicação anatômica aprofundada. Fonte: Universidade de Dundee.
+                    Escolha entre o Atlas de Anatomia com 418 pranchas da UFJF e marcadores aprofundados ou modelos 3D rotacionáveis em 360°.
                   </p>
                 </div>
               </div>

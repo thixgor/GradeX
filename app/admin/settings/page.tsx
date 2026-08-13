@@ -642,7 +642,7 @@ export default function SettingsPage() {
               <div className="p-4 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg">
                 <p className="text-sm text-amber-900 dark:text-amber-100">
                   Ao desabilitar uma seção, usuários comuns deixam de vê-la no menu lateral e são redirecionados caso tentem abrir a rota diretamente.
-                  As áreas do Manual Clínico (Ferramentas, Farmacologia, Anatomia 3D, Histologia,
+                  As áreas do Manual Clínico (Ferramentas, Farmacologia, Domine Anatomia, Histologia,
                   Radiologia e Eletrocardiograma) vêm desligadas: ligue apenas as que quiser
                   promover a atalho de primeiro nível no menu.
                 </p>

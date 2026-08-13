@@ -118,7 +118,7 @@ function ModeloDetalheContent() {
           <h1 className="text-xl font-bold mb-1">Modelo não encontrado</h1>
           <p className="text-muted-foreground text-sm mb-6">Este modelo 3D não existe ou foi movido.</p>
           <button
-            onClick={() => router.push('/manual-clinico/anatomia-3d')}
+            onClick={() => router.push('/manual-clinico/anatomia-3d/modelos')}
             className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground hover:bg-primary/90"
           >
             <ArrowLeft className="h-4 w-4" /> Voltar à Anatomia 3D
@@ -144,13 +144,13 @@ function ModeloDetalheContent() {
           <div className="mb-5 flex flex-wrap items-center gap-1.5 text-sm text-muted-foreground">
             <Link href="/manual-clinico" className="hover:text-foreground transition-colors">Manual Clínico</Link>
             <ChevronRight className="h-3.5 w-3.5 opacity-50" />
-            <Link href="/manual-clinico/anatomia-3d" className="hover:text-foreground transition-colors">Anatomia 3D</Link>
+            <Link href="/manual-clinico/anatomia-3d/modelos" className="hover:text-foreground transition-colors">Anatomia 3D</Link>
             <ChevronRight className="h-3.5 w-3.5 opacity-50" />
             <span className="text-foreground font-medium">{modelo.titulo}</span>
           </div>
 
           <button
-            onClick={() => router.push('/manual-clinico/anatomia-3d')}
+            onClick={() => router.push('/manual-clinico/anatomia-3d/modelos')}
             className={`mb-4 inline-flex items-center gap-1.5 rounded-full border ${tema.border} ${tema.bg} px-3 py-1 text-xs font-semibold ${tema.text}`}
           >
             <Icon className="h-3.5 w-3.5" /> {categoria.titulo}

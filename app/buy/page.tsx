@@ -54,7 +54,7 @@ const defaultPlans: Plan[] = [
       'Manual Clínico',
       'Manual Interativo do Eletrocardiograma',
       'Manual Interativo de Farmacologia',
-      'Anatomia 3D Interativa',
+      'Domine Anatomia (Atlas + modelos 3D)',
       'Todos os Materiais da plataforma (Resumos, etc)',
       'Todos os Flashcards da plataforma',
       'Todas as Provas da Faculdade + Download em PDF',

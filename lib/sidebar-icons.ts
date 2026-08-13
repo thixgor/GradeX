@@ -243,7 +243,7 @@ export const DEFAULT_SECTION_ICONS: Record<SidebarSectionKey, string> = {
   manualClinico: 'heart-pulse',
   ferramentasClinicas: 'calculator',
   farmacologia: 'pill',
-  anatomia3d: 'box',
+  anatomia3d: 'person-standing',
   manualHistologia: 'microscope',
   manualRadiologia: 'scan-line',
   manualEletro: 'activity',
@@ -262,7 +262,12 @@ export function normalizeSidebarIcons(input?: unknown): SidebarSectionIcons {
   const stored = (input && typeof input === 'object' ? input : {}) as Record<string, unknown>
 
   return SIDEBAR_SECTION_DEFINITIONS.reduce((acc, section) => {
-    const chosen = stored[section.key]
+    // `box` era o padrão de Anatomia 3D e acabou persistido para muita gente.
+    // Agora que a área reúne atlas e 3D, tratamos esse legado como ausência de
+    // escolha; um ícone diferente escolhido pelo admin continua respeitado.
+    const chosen = section.key === 'anatomia3d' && stored[section.key] === 'box'
+      ? undefined
+      : stored[section.key]
     acc[section.key] = isValidSidebarIcon(chosen) ? chosen : DEFAULT_SECTION_ICONS[section.key]
     return acc
   }, {} as SidebarSectionIcons)

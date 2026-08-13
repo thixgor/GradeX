@@ -82,6 +82,12 @@ describe('normalizeSidebarIcons', () => {
     expect(icons.manualRadiologia).toBe('radiation')
   })
 
+  it('migra o antigo cubo padrão da Anatomia 3D para corpo humano', () => {
+    const icons = normalizeSidebarIcons({ anatomia3d: 'box' })
+
+    expect(icons.anatomia3d).toBe('person-standing')
+  })
+
   it('ícone que saiu do catálogo volta para o padrão da seção', () => {
     // Cenário real: o lucide remove um ícone numa atualização e o nome salvo
     // no banco deixa de existir. Melhor o padrão do que um buraco no menu.
