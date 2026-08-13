@@ -4,6 +4,15 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { Maximize2, Minus, Move, Plus, RotateCcw, Shrink } from 'lucide-react'
 import type { AtlasMarker } from '@/lib/atlas-anatomia/catalogo'
+import {
+  criarControladorDeGestos,
+  limitarTransformacao,
+  TRANSFORMACAO_INICIAL,
+  ZOOM_MAX,
+  ZOOM_MIN,
+  ZOOM_PASSO,
+  type Transformacao,
+} from '@/lib/anatomia/gestos-prancha'
 
 /**
  * Visualizador da prancha anatômica.
@@ -17,18 +26,6 @@ import type { AtlasMarker } from '@/lib/atlas-anatomia/catalogo'
  * modo que os pinos acompanhem a peça; a escala inversa aplicada a cada pino
  * mantém o círculo do mesmo tamanho na tela em qualquer nível de aproximação.
  */
-
-const ZOOM_MIN = 1
-const ZOOM_MAX = 6
-const ZOOM_PASSO = 0.4
-
-interface Transformacao {
-  escala: number
-  x: number
-  y: number
-}
-
-const INICIAL: Transformacao = { escala: 1, x: 0, y: 0 }
 
 export interface PranchaInterativaProps {
   imagem: string
@@ -57,19 +54,22 @@ export function PranchaInterativa({
   prioridade,
 }: PranchaInterativaProps) {
   const palcoRef = useRef<HTMLDivElement>(null)
-  const [transformacao, setTransformacao] = useState<Transformacao>(INICIAL)
+  const [transformacao, setTransformacao] = useState<Transformacao>(TRANSFORMACAO_INICIAL)
   const [arrastando, setArrastando] = useState(false)
   const [telaCheia, setTelaCheia] = useState(false)
   const [revelados, setRevelados] = useState<Set<number>>(new Set())
 
-  const ponteiros = useRef(new Map<number, { x: number; y: number }>())
-  const gesto = useRef<{ distancia: number; escala: number } | null>(null)
-  const arrasteInicial = useRef<{ x: number; y: number; origemX: number; origemY: number } | null>(null)
+  const gestos = useRef(criarControladorDeGestos())
+  // Espelho da transformação para os manipuladores de ponteiro, que precisam do
+  // valor corrente sem depender do fechamento da renderização.
+  const transformacaoRef = useRef(TRANSFORMACAO_INICIAL)
+  transformacaoRef.current = transformacao
 
   // Cada prancha começa do zero: manter o zoom da anterior desorienta.
   useEffect(() => {
-    setTransformacao(INICIAL)
+    setTransformacao(TRANSFORMACAO_INICIAL)
     setRevelados(new Set())
+    gestos.current.cancelarTudo()
   }, [chaveDaPeca])
 
   useEffect(() => {
@@ -78,24 +78,12 @@ export function PranchaInterativa({
     return () => document.removeEventListener('fullscreenchange', aoMudar)
   }, [])
 
-  const limitar = useCallback((valor: Transformacao): Transformacao => {
-    const escala = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, valor.escala))
-    // Em escala 1 não há para onde arrastar; acima disso, o deslocamento é
-    // limitado à metade do excedente para a peça nunca sumir da moldura.
-    const limite = ((escala - 1) / 2) * 100
-    return {
-      escala,
-      x: Math.min(limite, Math.max(-limite, escala === 1 ? 0 : valor.x)),
-      y: Math.min(limite, Math.max(-limite, escala === 1 ? 0 : valor.y)),
-    }
-  }, [])
-
   const aplicarZoom = useCallback(
-    (delta: number) => setTransformacao(atual => limitar({ ...atual, escala: atual.escala + delta })),
-    [limitar],
+    (delta: number) => setTransformacao(atual => limitarTransformacao({ ...atual, escala: atual.escala + delta })),
+    [],
   )
 
-  const reiniciar = useCallback(() => setTransformacao(INICIAL), [])
+  const reiniciar = useCallback(() => setTransformacao(TRANSFORMACAO_INICIAL), [])
 
   // Zoom pela roda só com Ctrl/⌘ (que é também o que a pinça do trackpad envia).
   // Sem isso, passar o mouse sobre uma prancha de tela cheia sequestraria a
@@ -107,62 +95,41 @@ export function PranchaInterativa({
     const aoRolar = (evento: WheelEvent) => {
       if (!evento.ctrlKey && !evento.metaKey) return
       evento.preventDefault()
-      setTransformacao(atual => limitar({ ...atual, escala: atual.escala - Math.sign(evento.deltaY) * ZOOM_PASSO }))
+      setTransformacao(atual =>
+        limitarTransformacao({ ...atual, escala: atual.escala - Math.sign(evento.deltaY) * ZOOM_PASSO }),
+      )
     }
     palco.addEventListener('wheel', aoRolar, { passive: false })
     return () => palco.removeEventListener('wheel', aoRolar)
-  }, [limitar])
+  }, [])
 
   function aoPressionar(evento: React.PointerEvent) {
-    ponteiros.current.set(evento.pointerId, { x: evento.clientX, y: evento.clientY })
-    if (ponteiros.current.size === 2) {
-      const [a, b] = [...ponteiros.current.values()]
-      gesto.current = { distancia: Math.hypot(a.x - b.x, a.y - b.y), escala: transformacao.escala }
-      return
-    }
-    if (transformacao.escala === 1) return
-    ;(evento.target as Element).setPointerCapture?.(evento.pointerId)
-    arrasteInicial.current = {
-      x: evento.clientX,
-      y: evento.clientY,
-      origemX: transformacao.x,
-      origemY: transformacao.y,
-    }
+    const reacao = gestos.current.pressionar(
+      { id: evento.pointerId, x: evento.clientX, y: evento.clientY },
+      transformacaoRef.current,
+    )
+    if (reacao !== 'arraste') return
+
+    // A captura garante que o arraste continue recebendo eventos mesmo quando o
+    // dedo escorrega para fora do palco.
+    ;(evento.currentTarget as Element).setPointerCapture?.(evento.pointerId)
     setArrastando(true)
   }
 
   function aoMover(evento: React.PointerEvent) {
-    if (!ponteiros.current.has(evento.pointerId)) return
-    ponteiros.current.set(evento.pointerId, { x: evento.clientX, y: evento.clientY })
-
-    if (ponteiros.current.size === 2 && gesto.current) {
-      const [a, b] = [...ponteiros.current.values()]
-      const distancia = Math.hypot(a.x - b.x, a.y - b.y)
-      const fator = distancia / (gesto.current.distancia || 1)
-      setTransformacao(atual => limitar({ ...atual, escala: gesto.current!.escala * fator }))
-      return
-    }
-
-    const inicio = arrasteInicial.current
-    if (!inicio) return
-    const largura = palcoRef.current?.clientWidth || 1
-    const altura = palcoRef.current?.clientHeight || 1
-    setTransformacao(atual =>
-      limitar({
-        ...atual,
-        x: inicio.origemX + ((evento.clientX - inicio.x) / largura) * 100,
-        y: inicio.origemY + ((evento.clientY - inicio.y) / altura) * 100,
-      }),
+    const ajuste = gestos.current.mover(
+      { id: evento.pointerId, x: evento.clientX, y: evento.clientY },
+      { largura: palcoRef.current?.clientWidth || 1, altura: palcoRef.current?.clientHeight || 1 },
     )
+    // `ajuste` já carrega os números do gesto: pode ser executado pelo React
+    // quando ele quiser, sem depender de nada que ainda esteja vivo aqui.
+    if (ajuste) setTransformacao(ajuste)
   }
 
   function aoSoltar(evento: React.PointerEvent) {
-    ponteiros.current.delete(evento.pointerId)
-    if (ponteiros.current.size < 2) gesto.current = null
-    if (ponteiros.current.size === 0) {
-      arrasteInicial.current = null
-      setArrastando(false)
-    }
+    const reacao = gestos.current.soltar({ id: evento.pointerId }, transformacaoRef.current)
+    if (reacao === 'fim') setArrastando(false)
+    else if (reacao === 'arraste') setArrastando(true)
   }
 
   async function alternarTelaCheia() {
