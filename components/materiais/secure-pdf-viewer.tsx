@@ -679,34 +679,50 @@ function releasePageProxy(materialId: string, pageNumber: number) {
 }
 
 // ─── Orçamento de pixels do canvas ──────────────────────────────────────────
-// A versão anterior forçava um PISO de DPR (2 no celular, 2,5 no desktop) e
-// multiplicava por `zoom` sem teto nenhum. Em zoom 2,6 com DPR 3,5 a escala
-// chegava a 9,1 — uma A4 virava ~5400x7660px, ~41 Mpx, ~165 MB de canvas.
-// Vezes as páginas vivas, passava de 1 GB e a aba morria no celular.
-// Agora: DPR real limitado a 2 e um TETO de megapixels por canvas. A escala
-// continua crescendo com o zoom (a página fica mesmo mais nítida ao ampliar),
-// só que dentro de um orçamento fixo de memória.
-// Teto de megapixels por canvas.
+// Duas travas independentes definem quantos pixels a página ganha: o DPR
+// máximo (quantos pixels de canvas por pixel de CSS) e um TETO de megapixels
+// por canvas. A primeira decide a nitidez no uso normal; a segunda só entra
+// quando a página está muito ampliada, e existe para a memória ter um pior
+// caso conhecido.
 //
-// A conta que define o valor do celular (A4 de 595x842pt, tela de ~390pt com
-// DPR 3 = 1170px reais de largura):
+// Por que o DPR sobe até 3 (e não 2, como antes).
 //
-//   2,2 Mpx -> 1247px de canvas -> 1,07x a tela na largura ajustada
-//   3,5 Mpx -> 1573px de canvas -> 1,34x a tela na largura ajustada
+// A conta do caso mais comum — A4 de 595x842pt aberta na largura ajustada,
+// num celular de 390pt de viewport com DPR 3, ou seja 1170 pixels FÍSICOS de
+// largura de tela:
 //
-// Ou seja: na largura ajustada já 2,2 entrega mais pixels do que a tela mostra,
-// e subir não muda nada de visível. A diferença aparece AMPLIADO, onde a mesma
-// imagem é esticada: em 2,5x o zoom, 2,2 Mpx cai para 0,43x a densidade da tela
-// (visivelmente borrado) e 3,5 Mpx vai a 0,54x. Daí a escolha de 3,5.
+//   renderScale (zoom para caber) = 366/595 = 0,615
+//   DPR 2 -> canvas de  732px -> 0,67x os pixels da tela  (BORRADO)
+//   DPR 3 -> canvas de 1098px -> 1,00x os pixels da tela  (nítido)
 //
-// O pico com 7 páginas vivas fica em ~112 MB, com folga larga para o limite de
-// memória de canvas do Safari do iOS. O que tinha derrubado a aba não era este
-// número: era `window.innerWidth` (viewport VISUAL no iOS) fazendo o leitor se
-// achar desktop no meio da pinça e trocar 2,2 por 9 Mpx de uma vez. Ver
-// isMobileViewport().
-const MAX_CANVAS_MPX_MOBILE = 3.0
-const MAX_CANVAS_MPX_LOW_MEMORY = 2.0
-const MAX_CANVAS_MPX_DESKTOP = 9
+// Era esse 0,67x o motivo de figuras, gráficos e tabelas escaneadas saírem
+// ilegíveis: um terço da resolução da tela era jogado fora ANTES de o teto de
+// megapixels sequer ser consultado (0,76 Mpx contra um teto de 3,0 — ou seja,
+// o teto nunca era o limitante no modo de leitura, o clamp de DPR era).
+//
+// O custo de subir para DPR 3 nesse caso é 1,7 Mpx por página (~6,8 MB), e com
+// 5 páginas vivas no celular o pico fica em ~34 MB — abaixo do que a versão
+// anterior já gastava com o teto de 3,0 Mpx.
+//
+// Os tetos de megapixels sobem junto porque agora eles VOLTAM a ser o limite
+// que importa (é o que segura a memória quando o leitor amplia ou pinça). No
+// celular, 4,5 Mpx com 5 páginas vivas dá pico de ~90 MB, com folga para o
+// limite de canvas do Safari do iOS. Aparelho de pouca memória fica com DPR 2
+// e teto menor — lá a prioridade é não morrer, não ficar bonito.
+//
+// Cuidado histórico que continua valendo: o que derrubou a aba no iOS não foi
+// nenhum destes números, e sim `window.innerWidth` (viewport VISUAL) fazendo o
+// leitor se achar desktop no meio da pinça e trocar o teto de celular pelo de
+// desktop de uma vez só. Ver isMobileViewport().
+const MAX_CANVAS_MPX_MOBILE = 4.5
+const MAX_CANVAS_MPX_LOW_MEMORY = 2.75
+const MAX_CANVAS_MPX_DESKTOP = 12
+
+// Quantos pixels de canvas por pixel de CSS. 3 cobre a tela de qualquer
+// celular atual (DPR 3) sem passar disso — acima de 3 o ganho é invisível e o
+// custo é quadrático.
+const MAX_RASTER_DPR = 3
+const MAX_RASTER_DPR_LOW_MEMORY = 2
 
 // ATENÇÃO: não usar `window.innerWidth` aqui.
 //
@@ -737,17 +753,87 @@ function isMobileViewport() {
   return mobileQuery.matches
 }
 
-function rasterScaleFor(baseWidth: number, baseHeight: number, scale: number) {
+// `density` é um multiplicador extra de RASTERIZAÇÃO (não de layout): hoje é a
+// pinça do navegador (ver o rastreador abaixo). Sai por baixo do mesmo teto de
+// megapixels, então nenhum multiplicador consegue estourar o orçamento.
+function rasterScaleFor(baseWidth: number, baseHeight: number, scale: number, density = 1) {
   const deviceDpr = (typeof window !== 'undefined' && window.devicePixelRatio) || 1
-  const dpr = Math.min(Math.max(deviceDpr, 1), 2)
-  let effective = scale * dpr
-  const budgetMpx = isLowMemoryDevice()
+  const lowMemory = isLowMemoryDevice()
+  const dpr = Math.min(
+    Math.max(deviceDpr, 1),
+    lowMemory ? MAX_RASTER_DPR_LOW_MEMORY : MAX_RASTER_DPR
+  )
+  let effective = scale * dpr * Math.max(1, density)
+  const budgetMpx = lowMemory
     ? MAX_CANVAS_MPX_LOW_MEMORY
     : isMobileViewport() ? MAX_CANVAS_MPX_MOBILE : MAX_CANVAS_MPX_DESKTOP
   const budget = budgetMpx * 1_000_000
   const wanted = baseWidth * baseHeight * effective * effective
   if (wanted > budget) effective *= Math.sqrt(budget / wanted)
   return effective
+}
+
+// ─── Nitidez sob a pinça do navegador ───────────────────────────────────────
+// A pinça aqui é a do NAVEGADOR, por decisão documentada no bloco de gestos:
+// ela ESTICA o bitmap já desenhado, sem redesenhar nada. Só que é justamente
+// pinçando que o leitor vai olhar de perto uma figura, um gráfico ou uma
+// tabela escaneada — e por mais que ele amplie, a imagem continuava do mesmo
+// tamanho de pixel, apenas maior e mais borrada.
+//
+// Agora `visualViewport.scale` entra como multiplicador da rasterização: a
+// página é redesenhada na densidade em que está sendo OLHADA. O layout não é
+// tocado — quem pinça continua vendo exatamente o mesmo enquadramento, só que
+// nítido.
+//
+// Três travas, porque redesenhar no meio do gesto já derrubou a aba antes:
+//  1. só depois de a pinça PARAR (PINCH_SETTLE_MS sem novo evento);
+//  2. só quando a mudança passa de PINCH_STEP — pinçada pequena não vale
+//     redesenhar todas as páginas vivas;
+//  3. o teto de megapixels continua valendo por cima, então o pior caso de
+//     memória é o mesmo de antes de este multiplicador existir.
+const PINCH_SETTLE_MS = 320
+const PINCH_STEP = 0.12
+const MAX_PINCH_DENSITY = 3
+
+let pinchDensity = 1
+let pinchSettleTimer: number | null = null
+let pinchTrackingBound = false
+const pinchListeners = new Set<() => void>()
+
+function readVisualScale() {
+  if (typeof window === 'undefined') return 1
+  const scale = window.visualViewport?.scale
+  return typeof scale === 'number' && Number.isFinite(scale) && scale > 0 ? scale : 1
+}
+
+function publishPinchDensity() {
+  const next = Math.min(MAX_PINCH_DENSITY, Math.max(1, readVisualScale()))
+  const ratio = next / pinchDensity
+  if (ratio > 1 - PINCH_STEP && ratio < 1 + PINCH_STEP) return
+  pinchDensity = next
+  for (const listener of pinchListeners) listener()
+}
+
+function ensurePinchTracking() {
+  if (pinchTrackingBound || typeof window === 'undefined' || !window.visualViewport) return
+  pinchTrackingBound = true
+  // `resize` do visualViewport também dispara com teclado/barra de endereço,
+  // mas ali `scale` não muda e publishPinchDensity sai sem fazer nada.
+  window.visualViewport.addEventListener('resize', () => {
+    if (pinchSettleTimer) window.clearTimeout(pinchSettleTimer)
+    pinchSettleTimer = window.setTimeout(() => {
+      pinchSettleTimer = null
+      publishPinchDensity()
+    }, PINCH_SETTLE_MS)
+  })
+}
+
+function subscribePinchDensity(listener: () => void) {
+  ensurePinchTracking()
+  pinchListeners.add(listener)
+  return () => {
+    pinchListeners.delete(listener)
+  }
 }
 
 // Rasterização em fila de UM. O render vai para um canvas fora da tela antes de
@@ -4091,6 +4177,14 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   // e o bitmap é reescalado pela GPU); a rasterização nítida vem depois, com
   // debounce, e só quando a diferença for grande o bastante para ser visível.
   const [renderScale, setRenderScale] = useState(zoom)
+  // Densidade extra vinda da pinça do navegador. Só entra na rasterização —
+  // ver subscribePinchDensity. O estado nasce do valor de módulo (e não de 1)
+  // porque uma página montada DEPOIS da pinça — virar a página, ou a janela de
+  // virtualização avançar — precisa já desenhar na densidade em curso, em vez
+  // de esperar a próxima pinçada para ficar nítida.
+  const [density, setDensity] = useState(() => pinchDensity)
+
+  useEffect(() => subscribePinchDensity(() => setDensity(pinchDensity)), [])
 
   useEffect(() => {
     requestedRef.current = false
@@ -4194,12 +4288,17 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   }, [materialId, pageNumber, pageProxy])
 
   // Debounce do zoom: o frame já reescala o bitmap na hora, então a
-  // rasterização nítida pode esperar o usuário parar de mexer. E só vale a
-  // pena refazer quando a diferença é perceptível — reescalar um bitmap entre
-  // 0,8x e 1,25x é indistinguível de re-rasterizar, e custa zero.
+  // rasterização nítida pode esperar o usuário parar de mexer.
+  //
+  // A faixa morta era de 0,8x a 1,25x, e era larga demais: dois cliques no
+  // botão de zoom (+12% cada) ficavam dentro dela, então a página passava a
+  // ser exibida 25% maior que o bitmap desenhado — um upscale permanente, que
+  // é exatamente o tipo de perda que aparece primeiro nas imagens. Com 0,9 a
+  // 1,1 o primeiro passo de zoom já redesenha; o debounce de 180ms continua
+  // impedindo que arrastar o zoom dispare um render por passo.
   useEffect(() => {
     const ratio = zoom / renderScale
-    if (ratio > 0.8 && ratio < 1.25) return
+    if (ratio > 0.9 && ratio < 1.1) return
     const timer = window.setTimeout(() => setRenderScale(zoom), 180)
     return () => window.clearTimeout(timer)
   }, [zoom, renderScale])
@@ -4229,7 +4328,7 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
         // Escala de rasterização com teto de megapixels (ver rasterScaleFor).
         // Independe de `active`: manter a qualidade estável evita re-render de
         // todas as páginas vivas toda vez que o foco muda durante o scroll.
-        const scale = rasterScaleFor(baseViewport.width, baseViewport.height, renderScale)
+        const scale = rasterScaleFor(baseViewport.width, baseViewport.height, renderScale, density)
         const viewport = page.getViewport({ scale })
         const displayViewport = page.getViewport({ scale: renderScale })
         if (cancelled) return
@@ -4309,7 +4408,7 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
       if (idleHandle != null) cancelIdle(idleHandle)
       renderTask?.cancel?.()
     }
-  }, [onPageSize, pageProxy, renderScale])
+  }, [density, onPageSize, pageProxy, renderScale])
 
   // Libera a memória do canvas ao desmontar. O Safari do iOS segura o backing
   // store mesmo depois de o nó sair do DOM; zerar as dimensões devolve na hora.
