@@ -71,9 +71,8 @@ export function BuscaGlobal({ className, onAbrirTour }: BuscaGlobalProps) {
         aria-haspopup="dialog"
         aria-expanded={aberto}
         className={cn(
-          'group flex w-full items-center gap-3 rounded-2xl border border-border/70 bg-card/70 px-4 py-3 text-left',
-          'shadow-sm backdrop-blur-sm transition-all duration-200',
-          'hover:border-primary/40 hover:bg-card hover:shadow-md active:scale-[0.995]',
+          'busca-vidro-barra group flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left',
+          'transition-all duration-200 active:scale-[0.995]',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40',
           className,
         )}
@@ -82,7 +81,7 @@ export function BuscaGlobal({ className, onAbrirTour }: BuscaGlobalProps) {
         <span className="flex-1 truncate text-sm text-muted-foreground">
           Buscar em toda a plataforma
         </span>
-        <kbd className="hidden items-center gap-0.5 rounded-md border border-border/70 bg-muted/60 px-1.5 py-0.5 font-clinical text-[10px] font-medium text-muted-foreground sm:inline-flex">
+        <kbd className="busca-vidro-linha hidden items-center gap-0.5 rounded-md border px-1.5 py-0.5 font-clinical text-[10px] font-medium text-muted-foreground sm:inline-flex">
           <AtalhoDoSistema />
         </kbd>
       </button>

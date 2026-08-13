@@ -315,18 +315,17 @@ export function PainelDeBusca({
 
   return (
     <motion.div
-      className="fixed inset-0 z-[120] flex items-start justify-center p-0 sm:p-6"
+      className="fixed inset-0 z-[120] flex items-start justify-center px-4 pt-[9vh] sm:px-6 sm:pt-[8vh]"
       initial={liteMode ? false : { opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.16 }}
     >
-      <div
-        className="absolute inset-0 bg-background/70 backdrop-blur-md"
-        onClick={onFechar}
-        aria-hidden
-      />
+      <div className="busca-vidro-fundo absolute inset-0" onClick={onFechar} aria-hidden />
 
+      {/* Retângulo flutuante em qualquer tela — no celular também. Encostado um
+          pouco acima do meio de propósito: centralizado de verdade, o teclado
+          virtual cobriria justamente o campo onde se digita. */}
       <motion.div
         role="dialog"
         aria-modal="true"
@@ -334,14 +333,14 @@ export function PainelDeBusca({
         {...animacao}
         transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
         className={cn(
-          'relative z-10 flex w-full flex-col overflow-hidden border border-border/70 bg-card shadow-2xl',
-          'h-[100dvh] rounded-none pwa-safe-top',
-          'sm:mt-[8vh] sm:h-auto sm:max-h-[72vh] sm:w-[min(680px,94vw)] sm:rounded-2xl',
+          'busca-vidro relative z-10 flex w-full flex-col overflow-hidden',
+          'max-h-[74dvh] rounded-3xl',
+          'sm:max-h-[72vh] sm:w-[min(680px,94vw)] sm:rounded-[26px]',
         )}
         onKeyDown={aoTeclar}
       >
         {/* Campo */}
-        <div className="flex items-center gap-3 border-b border-border/70 px-4 py-3.5 sm:px-5">
+        <div className="busca-vidro-linha relative z-[1] flex items-center gap-3 border-b px-4 py-3.5 sm:px-5">
           <Search className="h-[18px] w-[18px] shrink-0 text-muted-foreground" />
           <input
             ref={campoRef}
@@ -363,14 +362,14 @@ export function PainelDeBusca({
                 campoRef.current?.focus()
               }}
               aria-label="Limpar busca"
-              className="rounded-md p-1 text-muted-foreground transition hover:bg-muted hover:text-foreground"
+              className="rounded-md p-1 text-muted-foreground transition hover:bg-foreground/10 hover:text-foreground"
             >
               <X className="h-4 w-4" />
             </button>
           )}
-          {/* No celular o painel ocupa a tela inteira: não existe "fora" para
-              tocar, então o botão de fechar precisa estar à vista. No desktop a
-              mesma área vira a dica da tecla Esc. */}
+          {/* No celular, com o teclado aberto, sobra pouca área do painel para
+              tocar "fora" — então o fechar fica à vista. No desktop a mesma
+              área vira a dica da tecla Esc. */}
           <button
             type="button"
             onClick={onFechar}
@@ -382,7 +381,7 @@ export function PainelDeBusca({
             type="button"
             onClick={onFechar}
             aria-label="Fechar busca"
-            className="hidden rounded-md border border-border/70 bg-muted/50 px-1.5 py-0.5 font-clinical text-[10px] font-medium text-muted-foreground transition hover:text-foreground sm:block"
+            className="busca-vidro-linha hidden rounded-md border px-1.5 py-0.5 font-clinical text-[10px] font-medium text-muted-foreground transition hover:text-foreground sm:block"
           >
             esc
           </button>
@@ -397,7 +396,7 @@ export function PainelDeBusca({
         </p>
 
         {/* Lista */}
-        <div ref={listaRef} className="min-h-0 flex-1 overflow-y-auto overscroll-contain py-2">
+        <div ref={listaRef} className="relative z-[1] min-h-0 flex-1 overflow-y-auto overscroll-contain py-2">
           {consultaAdiada.trim().length === 0 && recentes.length > 0 && (
             <section className="px-2 pb-1">
               <div className="flex items-center justify-between px-3 py-1.5">
@@ -421,7 +420,7 @@ export function PainelDeBusca({
                       setConsulta(recente)
                       campoRef.current?.focus()
                     }}
-                    className="rounded-full border border-border/70 bg-muted/40 px-2.5 py-1 text-xs text-muted-foreground transition hover:border-primary/40 hover:text-foreground"
+                    className="busca-vidro-linha rounded-full border px-2.5 py-1 text-xs text-muted-foreground transition hover:border-primary/40 hover:text-foreground"
                   >
                     {recente}
                   </button>
@@ -471,7 +470,7 @@ export function PainelDeBusca({
         </div>
 
         {/* Rodapé */}
-        <div className="flex items-center justify-between gap-3 border-t border-border/70 bg-muted/25 px-4 py-2.5 sm:px-5">
+        <div className="busca-vidro-linha relative z-[1] flex items-center justify-between gap-3 border-t px-4 py-2.5 sm:px-5">
           <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
             <span className="hidden items-center gap-1 sm:flex">
               <Tecla>↑</Tecla>
@@ -504,7 +503,7 @@ export function PainelDeBusca({
 
 function Tecla({ children }: { children: React.ReactNode }) {
   return (
-    <kbd className="inline-flex h-[18px] min-w-[18px] items-center justify-center rounded border border-border/70 bg-card px-1 font-clinical text-[10px] font-medium text-muted-foreground">
+    <kbd className="busca-vidro-linha inline-flex h-[18px] min-w-[18px] items-center justify-center rounded border px-1 font-clinical text-[10px] font-medium text-muted-foreground">
       {children}
     </kbd>
   )
@@ -538,13 +537,15 @@ function LinhaDeResultado({
         aria-current={ativo || undefined}
         className={cn(
           'flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors',
-          ativo ? 'bg-primary/10' : 'hover:bg-muted/60',
+          ativo ? 'bg-primary/15 ring-1 ring-inset ring-primary/20' : 'hover:bg-foreground/[0.06]',
         )}
       >
         <span
           className={cn(
             'inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border transition-colors',
-            ativo ? 'border-primary/30 bg-primary/15 text-primary' : 'border-border/70 bg-muted/40 text-muted-foreground',
+            ativo
+              ? 'border-primary/30 bg-primary/20 text-primary'
+              : 'border-white/40 bg-white/40 text-muted-foreground dark:border-white/10 dark:bg-white/[0.06]',
           )}
         >
           <Icone className="h-[18px] w-[18px]" />
@@ -556,7 +557,7 @@ function LinhaDeResultado({
               <Realce texto={item.titulo} termos={termos} />
             </span>
             {item.etiqueta && (
-              <span className="shrink-0 rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
+              <span className="shrink-0 rounded-full bg-foreground/[0.07] px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
                 {item.etiqueta}
               </span>
             )}

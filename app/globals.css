@@ -1246,6 +1246,214 @@
 }
 
 /* ============================================
+   Busca global — vidro líquido (iOS 26)
+   Duas superfícies: a barra na dashboard e o painel
+   que ela abre. Ambas são translúcidas de verdade —
+   desfocam e saturam o que está atrás, com bisel claro
+   na borda de cima e sombra funda embaixo, que é o que
+   dá a sensação de uma placa de vidro flutuando sobre
+   a página em vez de um cartão colado nela.
+   ============================================ */
+
+/* Piso sólido: sem suporte a backdrop-filter, vidro vira cartão opaco. Uma
+   superfície semitransparente SEM desfoque deixa o texto da página aparecendo
+   por trás da lista de resultados — ilegível. */
+.busca-vidro,
+.busca-vidro-barra {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .busca-vidro {
+    position: relative;
+    isolation: isolate;
+    background: linear-gradient(
+      150deg,
+      hsl(var(--card) / 0.82) 0%,
+      hsl(var(--card) / 0.66) 48%,
+      hsl(var(--card) / 0.76) 100%
+    );
+    -webkit-backdrop-filter: blur(34px) saturate(185%) brightness(1.04);
+    backdrop-filter: blur(34px) saturate(185%) brightness(1.04);
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.75),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.12),
+      0 24px 60px -12px rgba(21, 61, 31, 0.28),
+      0 8px 24px -8px rgba(21, 61, 31, 0.16);
+  }
+
+  /* Faísca especular no topo: a linha fina de luz que o vidro da Apple tem na
+     quina superior. Fica ACIMA do conteúdo — é o brilho da própria quina, e o
+     cabeçalho translúcido a abafaria se ela ficasse por baixo. Não recebe
+     evento nenhum, então não atrapalha o clique. */
+  .busca-vidro::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 12%;
+    right: 12%;
+    height: 1px;
+    z-index: 2;
+    pointer-events: none;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.5) 25%,
+      rgba(255, 255, 255, 0.95) 50%,
+      rgba(255, 255, 255, 0.5) 75%,
+      transparent 100%
+    );
+  }
+
+  /* No escuro o vidro precisa de um véu branco por cima do tom do cartão. Sem
+     ele a placa fica quase tão escura quanto o fundo já escurecido atrás e
+     deixa de ler como vidro — vira um buraco preto com uma borda. É a mesma
+     receita do material do iOS: desfoque + tinta + véu. */
+  .dark .busca-vidro {
+    background:
+      linear-gradient(
+        150deg,
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(255, 255, 255, 0.045) 50%,
+        rgba(255, 255, 255, 0.075) 100%
+      ),
+      linear-gradient(
+        150deg,
+        hsl(var(--card) / 0.76) 0%,
+        hsl(var(--card) / 0.6) 48%,
+        hsl(var(--card) / 0.7) 100%
+      );
+    -webkit-backdrop-filter: blur(36px) saturate(165%) brightness(1.08);
+    backdrop-filter: blur(36px) saturate(165%) brightness(1.08);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.14),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.25),
+      0 28px 70px -12px rgba(0, 0, 0, 0.6),
+      0 8px 24px -8px rgba(0, 0, 0, 0.45);
+  }
+
+  .dark .busca-vidro::before {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.12) 25%,
+      rgba(255, 255, 255, 0.35) 50%,
+      rgba(255, 255, 255, 0.12) 75%,
+      transparent 100%
+    );
+  }
+
+  /* A barra é a mesma placa, mais fina: menos desfoque e sombra rasa, porque
+     ela vive dentro do fluxo da página e não flutua sobre nada. */
+  .busca-vidro-barra {
+    background: linear-gradient(
+      150deg,
+      hsl(var(--card) / 0.7) 0%,
+      hsl(var(--card) / 0.52) 100%
+    );
+    -webkit-backdrop-filter: blur(20px) saturate(175%) brightness(1.03);
+    backdrop-filter: blur(20px) saturate(175%) brightness(1.03);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.6),
+      0 2px 10px -4px rgba(21, 61, 31, 0.12);
+  }
+
+  .busca-vidro-barra:hover {
+    background: linear-gradient(
+      150deg,
+      hsl(var(--card) / 0.82) 0%,
+      hsl(var(--card) / 0.64) 100%
+    );
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.75),
+      0 6px 20px -6px rgba(21, 61, 31, 0.18);
+  }
+
+  .dark .busca-vidro-barra {
+    background:
+      linear-gradient(150deg, rgba(255, 255, 255, 0.085) 0%, rgba(255, 255, 255, 0.04) 100%),
+      linear-gradient(150deg, hsl(var(--card) / 0.62) 0%, hsl(var(--card) / 0.44) 100%);
+    -webkit-backdrop-filter: blur(22px) saturate(160%) brightness(1.07);
+    backdrop-filter: blur(22px) saturate(160%) brightness(1.07);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.16),
+      0 2px 12px -6px rgba(0, 0, 0, 0.5);
+  }
+
+  .dark .busca-vidro-barra:hover {
+    background:
+      linear-gradient(150deg, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.06) 100%),
+      linear-gradient(150deg, hsl(var(--card) / 0.72) 0%, hsl(var(--card) / 0.54) 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.22),
+      0 6px 22px -8px rgba(0, 0, 0, 0.6);
+  }
+}
+
+/* Divisórias e realces internos: sobre vidro, uma linha opaca de `border`
+   parece riscada por cima da placa. Estas acompanham a translucidez. */
+.busca-vidro-linha {
+  border-color: rgba(255, 255, 255, 0.4);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.06));
+}
+
+.dark .busca-vidro-linha {
+  border-color: rgba(255, 255, 255, 0.09);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01));
+}
+
+/* Véu atrás do painel: escurece e desfoca a página para o vidro ter o que
+   refratar. Sem o desfoque aqui, a placa fica apenas translúcida sobre texto
+   nítido — e texto nítido atravessando texto nítido é ilegível. */
+.busca-vidro-fundo {
+  background: hsl(var(--background) / 0.6);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+/* No Modo Lite o vidro sai inteiro. Desfoque de fundo é o efeito mais caro que
+   existe em GPU fraca, e aqui são DUAS camadas (véu + placa) com uma lista
+   rolando por cima — exatamente o caso que o Lite existe para evitar. */
+.lite-mode .busca-vidro,
+.lite-mode .busca-vidro-barra,
+.lite-mode .busca-vidro-fundo {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+.lite-mode .busca-vidro,
+.lite-mode .busca-vidro-barra {
+  background: hsl(var(--card)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+}
+
+.lite-mode .busca-vidro-fundo {
+  background: hsl(var(--background) / 0.86) !important;
+}
+
+/* Desfoque grande é o efeito mais caro que existe em GPU de celular, e aqui ele
+   cobre a tela inteira enquanto uma lista rola por cima. Cai pela metade no
+   telefone — a leitura de vidro continua, o custo não. */
+@media (max-width: 640px) {
+  @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .busca-vidro {
+      -webkit-backdrop-filter: blur(18px) saturate(170%) brightness(1.03);
+      backdrop-filter: blur(18px) saturate(170%) brightness(1.03);
+    }
+
+    .busca-vidro-barra {
+      -webkit-backdrop-filter: blur(14px) saturate(165%);
+      backdrop-filter: blur(14px) saturate(165%);
+    }
+  }
+}
+
+/* ============================================
    Sidebar Fluid Glass Bubble - Apple iOS 26 / visionOS
    Interactive cursor-tracking glassmorphism indicator
    ============================================ */
