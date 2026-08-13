@@ -1066,7 +1066,7 @@ function ManualClinicoContent() {
         {/* ══════════ DOMINE ANATOMIA ENTRY ══════════ */}
         {!busca && (
           <button
-            onClick={() => router.push('/manual-clinico/anatomia-3d')}
+            onClick={() => router.push('/anatomia')}
             data-tour="anatomia"
             className="group mb-3 w-full overflow-hidden rounded-lg border border-border bg-card p-4 text-left transition-colors hover:border-primary/35"
           >

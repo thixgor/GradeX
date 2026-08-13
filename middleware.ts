@@ -93,6 +93,10 @@ const publicRoutes = [
   // deck e pacote — visitantes precisam ver as notas e comentários. A rota
   // GET não exige login; POST/PATCH/DELETE continuam validando a sessão
   // internamente no handler (retornam 401 para quem não está logado).
+  // Miniaturas oficiais dos modelos 3D (Sketchfab). A rota só repassa imagens
+  // públicas de terceiro, sem dado de sessão, e é consumida pela vitrine de
+  // Anatomia 3D — inclusive antes de o visitante entrar.
+  '/api/anatomia/previas',
   '/api/reviews',
   // Vitrine agregada de avaliações (todos os materiais/decks visíveis) que
   // alimenta a esteira de prova social da landing. Só GET, sem dado de sessão.

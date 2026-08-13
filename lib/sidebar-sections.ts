@@ -115,7 +115,7 @@ export const SIDEBAR_SECTION_DEFINITIONS: SidebarSectionDefinition[] = [
   {
     key: 'anatomia3d',
     label: 'Domine Anatomia',
-    href: '/manual-clinico/anatomia-3d',
+    href: '/anatomia',
     description: 'Atlas anatômico com marcadores e modelos 3D rotacionáveis em 360°.',
     defaultEnabled: false,
   },

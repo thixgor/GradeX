@@ -116,6 +116,33 @@ const nextConfig = {
         destination: '/manual-clinico/radiologia/tomografia/:slug',
         permanent: true,
       },
+      // Domine Anatomia saiu de dentro do Manual Clínico e virou seção própria
+      // em `/anatomia`, com as duas experiências como irmãs: `/anatomia/atlas-
+      // anatomia` (pranchas da UFJF) e `/anatomia/anatomia-3d` (modelos em 360°).
+      // O endereço antigo era `/manual-clinico/anatomia-3d`, com `/atlas` e
+      // `/modelos` embaixo — e cada modelo pendurado direto na raiz da seção.
+      // As regras específicas vêm antes da genérica de `:slug`, porque o Next
+      // aplica a primeira que casar.
+      {
+        source: '/manual-clinico/anatomia-3d/atlas',
+        destination: '/anatomia/atlas-anatomia',
+        permanent: true,
+      },
+      {
+        source: '/manual-clinico/anatomia-3d/modelos',
+        destination: '/anatomia/anatomia-3d',
+        permanent: true,
+      },
+      {
+        source: '/manual-clinico/anatomia-3d',
+        destination: '/anatomia',
+        permanent: true,
+      },
+      {
+        source: '/manual-clinico/anatomia-3d/:slug',
+        destination: '/anatomia/anatomia-3d/:slug',
+        permanent: true,
+      },
       // Atalho curto do app. "domineaqui.com.br/app" cabe num story, num áudio
       // de WhatsApp e no fim de uma aula — "barra instalar" não. O canônico
       // continua sendo /instalar (um endereço só para o buscador indexar), e é
