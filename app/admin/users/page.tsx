@@ -8,7 +8,7 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { User, BanReason, BanReasonLabels, AccountType, TrialPlanType, PremiumPlanType } from '@/lib/types'
-import { ArrowLeft, Trash2, Ban, CheckCircle, AlertTriangle, Shield, Crown, Timer, Settings, Info, Zap, Activity, Users, UserCheck, Clock, Search, RefreshCw, Mail, CalendarDays, ShoppingBag, FileDown, Package as PackageIcon, FileText as FileTextIcon, Receipt, GraduationCap, MonitorSmartphone, Wifi, LogOut, Phone, MapPin, Stethoscope } from 'lucide-react'
+import { ArrowLeft, Trash2, Ban, CheckCircle, AlertTriangle, Shield, Crown, Timer, Settings, Info, Zap, Activity, Users, UserCheck, Clock, Search, RefreshCw, Mail, CalendarDays, ShoppingBag, FileDown, Package as PackageIcon, FileText as FileTextIcon, Receipt, GraduationCap, MonitorSmartphone, Wifi, LogOut, Phone, MapPin, Stethoscope, BookOpen, TrendingUp, Wallet, CalendarClock, AlertCircle, Repeat, Sparkles, Infinity as InfinityIcon, Target } from 'lucide-react'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
@@ -17,6 +17,25 @@ import { PERIODO_OPTIONS, computeCurrentPeriodo, formatPeriodoLabel } from '@/li
 import { formatStateLabel } from '@/lib/brazil-states'
 import { isPlusAccount, normalizeAccountType, PLUS_LABEL } from '@/lib/account-tier'
 import { AdminSecurityPanel } from '@/components/admin/admin-security-panel'
+import {
+  buildAdminUserInsights,
+  describeAccountRole,
+  formatMoney,
+  formatSubscriptionEndDate,
+  formatSubscriptionRemaining,
+  matchesCycleFilter,
+  matchesExpiryFilter,
+  matchesSubscriptionFilter,
+  nextExpiryValue,
+  CYCLE_FILTER_OPTIONS,
+  EXPIRING_SOON_DAYS,
+  resolvePlanLabel,
+  type AdminSubscriptionInfo,
+  type AdminUserRow,
+  type ExpiryFilter,
+  type ProductInsights,
+  type SubscriptionFilter,
+} from '@/lib/admin-user-insights'
 
 const PROFESSION_LABELS: Record<string, string> = {
   medico: 'Médico',
@@ -31,9 +50,9 @@ type OnlineUser = {
   lastLoginAt?: string
 }
 
-type UserSortMode = 'lastLogin' | 'createdAt' | 'name'
+type UserSortMode = 'lastLogin' | 'createdAt' | 'name' | 'expiresAt' | 'spend'
 type UserActivityFilter = 'all' | 'online' | 'active7d' | 'never'
-type UserPlanFilter = 'all' | AccountType | 'admin' | 'banned'
+type UserPlanFilter = 'all' | AccountType | 'admin' | 'banned' | 'monitor'
 
 const ONLINE_THRESHOLD_MS = 10 * 60 * 1000
 const ACTIVE_7D_THRESHOLD_MS = 7 * 24 * 60 * 60 * 1000
@@ -82,9 +101,173 @@ function isRecentlyOnline(user: User) {
   return !!time && Date.now() - time <= ONLINE_THRESHOLD_MS && !user.banned
 }
 
+function formatPercent(value: number) {
+  return `${value.toLocaleString('pt-BR', { maximumFractionDigits: 1 })}%`
+}
+
+/** Card compacto de número + contexto usado na faixa de indicadores. */
+function StatCard({
+  icon,
+  label,
+  value,
+  hint,
+  onClick,
+  tone,
+}: {
+  icon: React.ReactNode
+  label: string
+  value: React.ReactNode
+  hint?: React.ReactNode
+  onClick?: () => void
+  tone?: 'default' | 'warning' | 'danger' | 'success'
+}) {
+  const toneClass =
+    tone === 'warning' ? 'border-amber-300/70 dark:border-amber-800'
+      : tone === 'danger' ? 'border-red-300/70 dark:border-red-900'
+      : tone === 'success' ? 'border-emerald-300/70 dark:border-emerald-900'
+      : ''
+
+  return (
+    <Card
+      className={`${toneClass} ${onClick ? 'cursor-pointer transition-colors hover:bg-muted/40' : ''}`}
+      onClick={onClick}
+    >
+      <CardHeader className="pb-2">
+        <CardDescription className="flex items-center gap-2">{icon}{label}</CardDescription>
+        <CardTitle className="text-2xl">{value}</CardTitle>
+      </CardHeader>
+      {hint ? <CardContent className="text-xs text-muted-foreground">{hint}</CardContent> : null}
+    </Card>
+  )
+}
+
+/**
+ * Distribuição dos assinantes ativos por ciclo contratado. Responde de bate
+ * pronto "quantos são mensais, semestrais, anuais" — a pergunta que motivou
+ * boa parte desta tela.
+ */
+function CycleBreakdown({
+  insights,
+  accent,
+  onSelectCycle,
+}: {
+  insights: ProductInsights
+  accent: string
+  onSelectCycle?: (cycle: string) => void
+}) {
+  if (insights.cycles.length === 0) {
+    return <p className="text-xs text-muted-foreground">Nenhum assinante ativo no momento.</p>
+  }
+  const max = Math.max(...insights.cycles.map(c => c.count), 1)
+
+  return (
+    <div className="space-y-2">
+      {insights.cycles.map(cycle => (
+        <button
+          key={cycle.key}
+          type="button"
+          onClick={onSelectCycle ? () => onSelectCycle(cycle.key) : undefined}
+          className={`w-full text-left ${onSelectCycle ? 'cursor-pointer' : 'cursor-default'}`}
+        >
+          <div className="flex items-center justify-between text-xs">
+            <span className="font-medium">{cycle.label}</span>
+            <span className="text-muted-foreground">
+              {cycle.count} ({formatPercent((cycle.count / insights.active) * 100)})
+            </span>
+          </div>
+          <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-muted">
+            <div
+              className={`h-full rounded-full ${accent}`}
+              style={{ width: `${Math.max(4, (cycle.count / max) * 100)}%` }}
+            />
+          </div>
+        </button>
+      ))}
+    </div>
+  )
+}
+
+/**
+ * Bloco de uma assinatura no card do usuário: o que comprou, até quando vale e
+ * quanto falta. Também aparece para assinatura vencida — é a fila do
+ * rebaixamento, e escondê-la esconderia o problema.
+ */
+function SubscriptionTile({ info }: { info: AdminSubscriptionInfo }) {
+  const isPlus = info.product === 'plus'
+  const state = info.lifetime
+    ? { label: 'Vitalício', className: 'bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-300' }
+    : info.expired
+      ? { label: 'Expirado', className: 'bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300' }
+      : info.expiringSoon
+        ? { label: `Vence em ${info.daysRemaining}d`, className: 'bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300' }
+        : { label: 'Ativo', className: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300' }
+
+  const barClass = info.expired
+    ? 'bg-red-500'
+    : info.expiringSoon
+      ? 'bg-amber-500'
+      : isPlus ? 'bg-gradient-to-r from-yellow-500 to-orange-500' : 'bg-sky-500'
+
+  return (
+    <div className="rounded-lg border bg-muted/20 p-3">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+          {isPlus ? <Crown className="h-3.5 w-3.5 text-amber-500" /> : <BookOpen className="h-3.5 w-3.5 text-sky-500" />}
+          {info.productLabel}
+        </div>
+        <span className={`rounded px-2 py-0.5 text-[11px] font-medium ${state.className}`}>
+          {state.label}
+        </span>
+      </div>
+
+      <div className="mt-2 flex flex-wrap items-center gap-2">
+        <span className="text-sm font-semibold text-foreground">{info.planLabel}</span>
+        {info.autoRenew && (
+          <span className="flex items-center gap-1 rounded bg-blue-100 px-1.5 py-0.5 text-[11px] text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+            <Repeat className="h-3 w-3" />
+            Recorrente
+          </span>
+        )}
+        {info.price ? (
+          <span className="text-[11px] text-muted-foreground">{formatMoney(info.price)}</span>
+        ) : null}
+      </div>
+
+      <div className="mt-2 space-y-1 text-xs">
+        <div className="flex items-center gap-1.5 text-muted-foreground">
+          <CalendarClock className="h-3.5 w-3.5 shrink-0" />
+          {info.lifetime ? 'Sem data de término' : `Termina em ${formatSubscriptionEndDate(info)}`}
+        </div>
+        <div
+          className={`font-medium ${
+            info.expired
+              ? 'text-red-600 dark:text-red-400'
+              : info.expiringSoon
+                ? 'text-amber-600 dark:text-amber-400'
+                : 'text-foreground'
+          }`}
+        >
+          {formatSubscriptionRemaining(info)}
+        </div>
+        {info.startedAt && (
+          <div className="text-muted-foreground">
+            Comprado em {new Date(info.startedAt).toLocaleDateString('pt-BR')}
+          </div>
+        )}
+      </div>
+
+      {info.elapsedRatio !== null && !info.lifetime && (
+        <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-muted">
+          <div className={`h-full rounded-full ${barClass}`} style={{ width: `${info.elapsedRatio * 100}%` }} />
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function AdminUsersPage() {
   const router = useRouter()
-  const [users, setUsers] = useState<User[]>([])
+  const [users, setUsers] = useState<AdminUserRow[]>([])
   const [loading, setLoading] = useState(true)
   const [onlineCount, setOnlineCount] = useState<number | null>(null)
   const [onlineUsers, setOnlineUsers] = useState<OnlineUser[]>([])
@@ -132,7 +315,7 @@ export default function AdminUsersPage() {
     }>
   } | null>(null)
   const [revokingSessionId, setRevokingSessionId] = useState<string | null>(null)
-  const [selectedUser, setSelectedUser] = useState<User | null>(null)
+  const [selectedUser, setSelectedUser] = useState<AdminUserRow | null>(null)
   const [banReason, setBanReason] = useState<BanReason>('other')
   const [banDetails, setBanDetails] = useState('')
   const [selectedAccountType, setSelectedAccountType] = useState<AccountType>('gratuito')
@@ -146,6 +329,14 @@ export default function AdminUsersPage() {
   const [sortMode, setSortMode] = useState<UserSortMode>('lastLogin')
   const [activityFilter, setActivityFilter] = useState<UserActivityFilter>('all')
   const [planFilter, setPlanFilter] = useState<UserPlanFilter>('all')
+  const [subscriptionFilter, setSubscriptionFilter] = useState<SubscriptionFilter>('all')
+  const [cycleFilter, setCycleFilter] = useState<string>('all')
+  const [expiryFilter, setExpiryFilter] = useState<ExpiryFilter>('all')
+  const [visibleCount, setVisibleCount] = useState(30)
+  const [loadError, setLoadError] = useState<string | null>(null)
+  const [showManualDialog, setShowManualDialog] = useState(false)
+  const [manualPlanKey, setManualPlanKey] = useState<'semestral' | 'anual' | 'vitalicio'>('anual')
+  const [manualSaving, setManualSaving] = useState(false)
 
   useEffect(() => {
     loadUsers()
@@ -164,26 +355,9 @@ export default function AdminUsersPage() {
     setToastOpen(true)
   }
 
-  const dashboardStats = useMemo(() => {
-    const now = Date.now()
-    const onlineUsersCount = users.filter(isRecentlyOnline).length
-    const activeLast7Days = users.filter((user) => {
-      const lastLogin = getUserDateValue(user.lastLoginAt)
-      return lastLogin && now - lastLogin <= ACTIVE_7D_THRESHOLD_MS && !user.banned
-    }).length
-    const neverLoggedIn = users.filter((user) => !getUserDateValue(user.lastLoginAt)).length
-    const admins = users.filter((user) => user.role === 'admin').length
-    const banned = users.filter((user) => user.banned).length
-
-    return {
-      total: users.length,
-      onlineUsersCount,
-      activeLast7Days,
-      neverLoggedIn,
-      admins,
-      banned,
-    }
-  }, [users])
+  // Todos os indicadores saem do mesmo módulo que a rota usa para montar as
+  // assinaturas, então o que o card diz e o que a lista mostra nunca divergem.
+  const insights = useMemo(() => buildAdminUserInsights(users), [users])
 
   const recentUsers = useMemo(() => {
     return [...users]
@@ -199,16 +373,24 @@ export default function AdminUsersPage() {
     return users
       .filter((user) => {
         if (!normalizedSearch) return true
-        return `${user.name} ${user.email}`.toLowerCase().includes(normalizedSearch)
+        // Busca também por telefone e CPF: o suporte costuma chegar com o dado
+        // que o usuário informou no atendimento, não com o e-mail.
+        return `${user.name} ${user.email} ${user.phone || ''} ${user.cpf || ''}`
+          .toLowerCase()
+          .includes(normalizedSearch)
       })
       .filter((user) => {
         if (planFilter === 'all') return true
         if (planFilter === 'admin') return user.role === 'admin'
         if (planFilter === 'banned') return !!user.banned
+        if (planFilter === 'monitor') return user.secondaryRole === 'monitor'
         // Normaliza para que o filtro "Plus+" também pegue as contas legadas
         // ainda gravadas como premium/essential.
         return normalizeAccountType(user.accountType) === planFilter && user.role !== 'admin'
       })
+      .filter((user) => matchesSubscriptionFilter(user, subscriptionFilter))
+      .filter((user) => matchesCycleFilter(user, cycleFilter))
+      .filter((user) => matchesExpiryFilter(user, expiryFilter))
       .filter((user) => {
         const lastLogin = getUserDateValue(user.lastLoginAt)
         if (activityFilter === 'all') return true
@@ -220,17 +402,136 @@ export default function AdminUsersPage() {
       .sort((a, b) => {
         if (sortMode === 'name') return a.name.localeCompare(b.name, 'pt-BR')
         if (sortMode === 'createdAt') return getUserDateValue(b.createdAt) - getUserDateValue(a.createdAt)
+        if (sortMode === 'spend') return (b.spend?.total || 0) - (a.spend?.total || 0)
+        if (sortMode === 'expiresAt') return nextExpiryValue(a) - nextExpiryValue(b)
         return getUserDateValue(b.lastLoginAt) - getUserDateValue(a.lastLoginAt)
       })
-  }, [activityFilter, planFilter, searchTerm, sortMode, users])
+  }, [activityFilter, cycleFilter, expiryFilter, planFilter, searchTerm, sortMode, subscriptionFilter, users])
+
+  const visibleUsers = useMemo(
+    () => filteredUsers.slice(0, visibleCount),
+    [filteredUsers, visibleCount],
+  )
+
+  // Qualquer mudança de filtro recomeça a paginação — senão o admin filtra e
+  // continua vendo a página 4 de um resultado que agora tem 3 itens.
+  useEffect(() => {
+    setVisibleCount(30)
+  }, [activityFilter, cycleFilter, expiryFilter, planFilter, searchTerm, sortMode, subscriptionFilter])
+
+  /** Atalho dos cards de indicador: aplica um recorte e limpa os concorrentes. */
+  function applyQuickFilter(next: {
+    subscription?: SubscriptionFilter
+    expiry?: ExpiryFilter
+    cycle?: string
+    plan?: UserPlanFilter
+    activity?: UserActivityFilter
+    sort?: UserSortMode
+  }) {
+    setSearchTerm('')
+    setPlanFilter(next.plan ?? 'all')
+    setActivityFilter(next.activity ?? 'all')
+    setSubscriptionFilter(next.subscription ?? 'all')
+    setCycleFilter(next.cycle ?? 'all')
+    setExpiryFilter(next.expiry ?? 'all')
+    if (next.sort) setSortMode(next.sort)
+    if (typeof window !== 'undefined') {
+      document.getElementById('lista-usuarios')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }
+
+  function resetFilters() {
+    setSearchTerm('')
+    setPlanFilter('all')
+    setActivityFilter('all')
+    setSubscriptionFilter('all')
+    setCycleFilter('all')
+    setExpiryFilter('all')
+    setSortMode('lastLogin')
+  }
+
+  const hasActiveFilters =
+    !!searchTerm ||
+    planFilter !== 'all' ||
+    activityFilter !== 'all' ||
+    subscriptionFilter !== 'all' ||
+    cycleFilter !== 'all' ||
+    expiryFilter !== 'all'
+
+  /**
+   * Exporta exatamente o recorte que está na tela. O admin filtra "anuais que
+   * vencem em 30 dias" e leva a lista pronta para a campanha de renovação.
+   */
+  function handleExportCsv() {
+    if (filteredUsers.length === 0) {
+      showToastMessage('Nenhum usuário no filtro atual para exportar.', 'info')
+      return
+    }
+
+    const header = [
+      'Nome', 'Email', 'Telefone', 'Cargo', 'Periodo', 'Profissao', 'Estado',
+      'Plus - plano', 'Plus - situacao', 'Plus - termina em', 'Plus - dias restantes',
+      'Manual Clinico - plano', 'Manual Clinico - situacao', 'Manual Clinico - termina em', 'Manual Clinico - dias restantes',
+      'Total gasto (R$)', 'Compras', 'Cadastro', 'Ultimo acesso',
+    ]
+
+    const situation = (info: AdminSubscriptionInfo | null) =>
+      !info ? '' : info.lifetime ? 'Vitalicio' : info.expired ? 'Expirado' : 'Ativo'
+    const endDate = (info: AdminSubscriptionInfo | null) =>
+      !info || info.lifetime ? '' : formatSubscriptionEndDate(info)
+    const daysLeft = (info: AdminSubscriptionInfo | null) =>
+      !info || info.daysRemaining === null ? '' : String(info.daysRemaining)
+
+    const rows = filteredUsers.map((user) => [
+      user.name || '',
+      user.email || '',
+      user.phone || '',
+      describeAccountRole(user),
+      formatPeriodoLabel(computeCurrentPeriodo(user.periodoBase, user.periodoBaseRef)),
+      user.profession ? PROFESSION_LABELS[user.profession] || user.profession : '',
+      user.state || '',
+      user.plusSubscription?.planLabel || '',
+      situation(user.plusSubscription),
+      endDate(user.plusSubscription),
+      daysLeft(user.plusSubscription),
+      user.manualSubscription?.planLabel || '',
+      situation(user.manualSubscription),
+      endDate(user.manualSubscription),
+      daysLeft(user.manualSubscription),
+      (user.spend?.total || 0).toFixed(2).replace('.', ','),
+      String(user.spend?.count || 0),
+      user.createdAt ? new Date(user.createdAt).toLocaleDateString('pt-BR') : '',
+      user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleDateString('pt-BR') : '',
+    ])
+
+    const escape = (value: string) => `"${String(value).replace(/"/g, '""')}"`
+    const csv = [header, ...rows].map(row => row.map(escape).join(';')).join('\r\n')
+    // BOM: sem ele o Excel em pt-BR abre os acentos quebrados.
+    const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `usuarios-gradex-${new Date().toISOString().slice(0, 10)}.csv`
+    link.click()
+    URL.revokeObjectURL(url)
+    showToastMessage(`${filteredUsers.length} usuário(s) exportado(s).`, 'success')
+  }
 
   async function loadUsers() {
     try {
-      const res = await fetch('/api/users')
+      // `/api/admin/users/overview` devolve o mesmo documento do usuário que
+      // `/api/users`, já com as assinaturas (Plus+ e Manual Clínico) e o gasto
+      // acumulado resolvidos no servidor.
+      const res = await fetch('/api/admin/users/overview', { cache: 'no-store' })
+      if (!res.ok) throw new Error('Falha ao carregar usuários')
       const data = await res.json()
-      setUsers(data.users || [])
+      setUsers(Array.isArray(data.users) ? data.users : [])
+      setLoadError(null)
     } catch (error) {
       console.error('Erro ao carregar usuários:', error)
+      // Erro de carga fica fixo na tela, e não num toast: a lista continua
+      // vazia (ou velha) até alguém tentar de novo, e isso precisa ser visível.
+      setLoadError('Não foi possível carregar a lista de usuários.')
     } finally {
       setLoading(false)
     }
@@ -456,7 +757,56 @@ export default function AdminUsersPage() {
     }
   }
 
-  async function openPurchasesDialog(user: User) {
+  /**
+   * Concede o Manual Clínico pela mesma rota que o painel do produto usa —
+   * ela grava a compra, calcula o vencimento do plano e dispara o e-mail de
+   * confirmação para o usuário.
+   */
+  async function handleGrantManual() {
+    if (!selectedUser) return
+    setManualSaving(true)
+    try {
+      const res = await fetch('/api/admin/manual-clinico/access', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: selectedUser._id?.toString(), planKey: manualPlanKey }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(data?.error || 'Erro ao conceder acesso ao Manual Clínico')
+
+      showToastMessage('Acesso ao Manual Clínico concedido.', 'success')
+      setShowManualDialog(false)
+      loadUsers()
+    } catch (error: any) {
+      showToastMessage(error?.message || 'Erro ao conceder acesso ao Manual Clínico')
+    } finally {
+      setManualSaving(false)
+    }
+  }
+
+  async function handleRevokeManual() {
+    if (!selectedUser) return
+    setManualSaving(true)
+    try {
+      const res = await fetch('/api/admin/manual-clinico/access', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: selectedUser._id?.toString() }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(data?.error || 'Erro ao revogar acesso ao Manual Clínico')
+
+      showToastMessage(`${data.revokedCount || 0} acesso(s) revogado(s).`, 'success')
+      setShowManualDialog(false)
+      loadUsers()
+    } catch (error: any) {
+      showToastMessage(error?.message || 'Erro ao revogar acesso ao Manual Clínico')
+    } finally {
+      setManualSaving(false)
+    }
+  }
+
+  async function openPurchasesDialog(user: AdminUserRow) {
     setSelectedUser(user)
     setShowPurchasesDialog(true)
     setPurchasesData(null)
@@ -513,7 +863,7 @@ export default function AdminUsersPage() {
     }
   }
 
-  async function openSessionsDialog(user: User) {
+  async function openSessionsDialog(user: AdminUserRow) {
     setSelectedUser(user)
     setShowSessionsDialog(true)
     setSessionsData(null)
@@ -632,6 +982,21 @@ export default function AdminUsersPage() {
       </header>
 
       <main className="container mx-auto px-4 py-8">
+        {loadError && (
+          <Card className="mb-6 border-red-300 dark:border-red-900">
+            <CardContent className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
+              <p className="flex items-center gap-2 text-sm text-red-700 dark:text-red-300">
+                <AlertTriangle className="h-4 w-4 shrink-0" />
+                {loadError}
+              </p>
+              <Button variant="outline" size="sm" onClick={loadUsers}>
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Tentar novamente
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
         {loading ? (
           <div className="text-center py-12">Carregando...</div>
         ) : users.length === 0 ? (
@@ -643,70 +1008,270 @@ export default function AdminUsersPage() {
         ) : (
           <div className="space-y-6">
             <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardDescription className="flex items-center gap-2">
-                    <Users className="h-4 w-4" />
-                    Total
-                  </CardDescription>
-                  <CardTitle className="text-2xl">{dashboardStats.total}</CardTitle>
-                </CardHeader>
-                <CardContent className="text-xs text-muted-foreground">
-                  {dashboardStats.admins} admin(s)
-                </CardContent>
-              </Card>
+              <StatCard
+                icon={<Users className="h-4 w-4" />}
+                label="Total"
+                value={insights.total}
+                hint={`${insights.admins} admin(s) · ${insights.monitors} monitor(es)`}
+                onClick={() => applyQuickFilter({})}
+              />
+              <StatCard
+                icon={<Activity className="h-4 w-4 text-emerald-500" />}
+                label="Online agora"
+                value={onlineCount === null ? insights.onlineNow : onlineCount}
+                hint="Ativos nos últimos 10 min"
+                onClick={openOnlineUsersDialog}
+              />
+              <StatCard
+                icon={<UserCheck className="h-4 w-4 text-blue-500" />}
+                label="Ativos 7 dias"
+                value={insights.activeLast7Days}
+                hint={`${insights.newLast7Days} novo(s) na semana`}
+                onClick={() => applyQuickFilter({ activity: 'active7d' })}
+              />
+              <StatCard
+                icon={<Clock className="h-4 w-4 text-amber-500" />}
+                label="Nunca acessaram"
+                value={insights.neverLoggedIn}
+                hint="Sem atividade registrada"
+                onClick={() => applyQuickFilter({ activity: 'never' })}
+              />
+              <StatCard
+                icon={<Ban className="h-4 w-4 text-red-500" />}
+                label="Banidos"
+                value={insights.banned}
+                hint="Acesso bloqueado"
+                onClick={() => applyQuickFilter({ plan: 'banned' })}
+              />
+            </section>
 
-              <Card className="cursor-pointer transition-colors hover:bg-muted/40" onClick={openOnlineUsersDialog}>
-                <CardHeader className="pb-2">
-                  <CardDescription className="flex items-center gap-2">
-                    <Activity className="h-4 w-4 text-emerald-500" />
-                    Online agora
-                  </CardDescription>
-                  <CardTitle className="text-2xl">
-                    {onlineCount === null ? dashboardStats.onlineUsersCount : onlineCount}
+            {/* ── Assinaturas ─────────────────────────────────────────────── */}
+            <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-6">
+              <StatCard
+                icon={<Crown className="h-4 w-4 text-amber-500" />}
+                label={`${PLUS_LABEL} ativos`}
+                value={insights.plus.active}
+                hint={`${insights.plus.lifetime} vitalício(s) · ${insights.plus.expiringSoon} vencem em ${EXPIRING_SOON_DAYS}d`}
+                onClick={() => applyQuickFilter({ subscription: 'plus_active', sort: 'expiresAt' })}
+                tone="success"
+              />
+              <StatCard
+                icon={<BookOpen className="h-4 w-4 text-sky-500" />}
+                label="Manual Clínico"
+                value={insights.manual.active}
+                hint={`${insights.manual.lifetime} vitalício(s) · ${insights.manual.expiringSoon} vencem em ${EXPIRING_SOON_DAYS}d`}
+                onClick={() => applyQuickFilter({ subscription: 'manual_active', sort: 'expiresAt' })}
+                tone="success"
+              />
+              <StatCard
+                icon={<Sparkles className="h-4 w-4 text-violet-500" />}
+                label="Assinantes únicos"
+                value={insights.payingUsers}
+                hint={`${insights.bothProducts} com os dois produtos`}
+                onClick={() => applyQuickFilter({ subscription: 'any', sort: 'expiresAt' })}
+              />
+              <StatCard
+                icon={<CalendarClock className="h-4 w-4 text-amber-500" />}
+                label="Vencem em 30 dias"
+                value={insights.plus.expiringMonth + insights.manual.expiringMonth}
+                hint="Janela de renovação"
+                onClick={() => applyQuickFilter({ expiry: 'expiring30', sort: 'expiresAt' })}
+                tone="warning"
+              />
+              <StatCard
+                icon={<AlertCircle className="h-4 w-4 text-red-500" />}
+                label="Expirados"
+                value={insights.plus.expired + insights.manual.expired}
+                hint="Ainda com o acesso — fila do rebaixamento"
+                onClick={() => applyQuickFilter({ expiry: 'expired', sort: 'expiresAt' })}
+                tone="danger"
+              />
+              <StatCard
+                icon={<Target className="h-4 w-4 text-emerald-500" />}
+                label="Conversão"
+                value={formatPercent(insights.conversionRate)}
+                hint="Assinantes ativos ÷ contas de usuário"
+              />
+            </section>
+
+            <section className="grid gap-4 lg:grid-cols-3">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <Crown className="h-5 w-5 text-amber-500" />
+                    Planos {PLUS_LABEL}
                   </CardTitle>
+                  <CardDescription>
+                    {insights.plus.active} assinante(s) ativo(s) por ciclo contratado.
+                  </CardDescription>
                 </CardHeader>
-                <CardContent className="text-xs text-muted-foreground">
-                  Ativos nos últimos 10 min
+                <CardContent>
+                  <CycleBreakdown
+                    insights={insights.plus}
+                    accent="bg-gradient-to-r from-yellow-500 to-orange-500"
+                    onSelectCycle={(cycle) =>
+                      applyQuickFilter({ subscription: 'plus_active', cycle, sort: 'expiresAt' })
+                    }
+                  />
                 </CardContent>
               </Card>
 
               <Card>
-                <CardHeader className="pb-2">
-                  <CardDescription className="flex items-center gap-2">
-                    <UserCheck className="h-4 w-4 text-blue-500" />
-                    Ativos 7 dias
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <BookOpen className="h-5 w-5 text-sky-500" />
+                    Planos Manual Clínico
+                  </CardTitle>
+                  <CardDescription>
+                    {insights.manual.active} assinante(s) ativo(s) por ciclo contratado.
                   </CardDescription>
-                  <CardTitle className="text-2xl">{dashboardStats.activeLast7Days}</CardTitle>
                 </CardHeader>
-                <CardContent className="text-xs text-muted-foreground">
-                  Com atividade recente
+                <CardContent>
+                  <CycleBreakdown
+                    insights={insights.manual}
+                    accent="bg-sky-500"
+                    onSelectCycle={(cycle) =>
+                      applyQuickFilter({ subscription: 'manual_active', cycle, sort: 'expiresAt' })
+                    }
+                  />
                 </CardContent>
               </Card>
 
               <Card>
-                <CardHeader className="pb-2">
-                  <CardDescription className="flex items-center gap-2">
-                    <Clock className="h-4 w-4 text-amber-500" />
-                    Nunca acessaram
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <Wallet className="h-5 w-5 text-emerald-500" />
+                    Receita
+                  </CardTitle>
+                  <CardDescription>
+                    Compras concluídas somadas por conta.
                   </CardDescription>
-                  <CardTitle className="text-2xl">{dashboardStats.neverLoggedIn}</CardTitle>
                 </CardHeader>
-                <CardContent className="text-xs text-muted-foreground">
-                  Sem atividade registrada
+                <CardContent className="space-y-3 text-sm">
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground">Total arrecadado</span>
+                    <span className="font-semibold">{formatMoney(insights.revenueTotal)}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground">Compradores</span>
+                    <span className="font-semibold">{insights.buyers}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground">Ticket médio</span>
+                    <span className="font-semibold">{formatMoney(insights.averageTicket)}</span>
+                  </div>
+                  <div className="flex items-center justify-between border-t pt-3">
+                    <span className="flex items-center gap-1.5 text-muted-foreground">
+                      <TrendingUp className="h-4 w-4" />
+                      MRR estimado
+                    </span>
+                    <span className="font-semibold">{formatMoney(insights.estimatedMrr)}</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    O MRR divide o valor de cada assinatura ativa pela duração do ciclo.
+                    Vitalícios e planos sem preço registrado ficam de fora.
+                  </p>
+                </CardContent>
+              </Card>
+            </section>
+
+            <section className="grid gap-4 lg:grid-cols-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <Receipt className="h-5 w-5" />
+                    Maiores clientes
+                  </CardTitle>
+                  <CardDescription>Contas que mais gastaram na plataforma.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {insights.topSpenders.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">Nenhuma compra registrada ainda.</p>
+                  ) : (
+                    <div className="space-y-2">
+                      {insights.topSpenders.map((spender, index) => (
+                        <button
+                          key={spender.id}
+                          type="button"
+                          onClick={() => {
+                            resetFilters()
+                            setSearchTerm(spender.email)
+                          }}
+                          className="flex w-full items-center justify-between gap-3 rounded-lg border bg-muted/20 p-2.5 text-left transition-colors hover:bg-muted/50"
+                        >
+                          <div className="flex min-w-0 items-center gap-2">
+                            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold">
+                              {index + 1}
+                            </span>
+                            <div className="min-w-0">
+                              <p className="truncate text-sm font-medium">{spender.name}</p>
+                              <p className="truncate text-xs text-muted-foreground">{spender.email}</p>
+                            </div>
+                          </div>
+                          <div className="shrink-0 text-right">
+                            <p className="text-sm font-semibold">{formatMoney(spender.total)}</p>
+                            <p className="text-xs text-muted-foreground">{spender.count} compra(s)</p>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
 
               <Card>
-                <CardHeader className="pb-2">
-                  <CardDescription className="flex items-center gap-2">
-                    <Ban className="h-4 w-4 text-red-500" />
-                    Banidos
-                  </CardDescription>
-                  <CardTitle className="text-2xl">{dashboardStats.banned}</CardTitle>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <Zap className="h-5 w-5" />
+                    Atalhos de gestão
+                  </CardTitle>
+                  <CardDescription>Recortes que costumam virar ação.</CardDescription>
                 </CardHeader>
-                <CardContent className="text-xs text-muted-foreground">
-                  Acesso bloqueado
+                <CardContent className="grid gap-2 sm:grid-cols-2">
+                  <Button
+                    variant="outline"
+                    className="justify-start"
+                    onClick={() => applyQuickFilter({ expiry: 'expiring7', sort: 'expiresAt' })}
+                  >
+                    <CalendarClock className="mr-2 h-4 w-4 text-amber-500" />
+                    Vencem em 7 dias ({insights.plus.expiringSoon + insights.manual.expiringSoon})
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="justify-start"
+                    onClick={() => applyQuickFilter({ expiry: 'expired', sort: 'expiresAt' })}
+                  >
+                    <AlertCircle className="mr-2 h-4 w-4 text-red-500" />
+                    Expirados ({insights.plus.expired + insights.manual.expired})
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="justify-start"
+                    onClick={() => applyQuickFilter({ subscription: 'both', sort: 'spend' })}
+                  >
+                    <Sparkles className="mr-2 h-4 w-4 text-violet-500" />
+                    {PLUS_LABEL} + Manual ({insights.bothProducts})
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="justify-start"
+                    onClick={() => applyQuickFilter({ subscription: 'plus_recurring', sort: 'expiresAt' })}
+                  >
+                    <Repeat className="mr-2 h-4 w-4 text-blue-500" />
+                    Assinaturas recorrentes
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="justify-start"
+                    onClick={() => applyQuickFilter({ subscription: 'plus_lifetime' })}
+                  >
+                    <InfinityIcon className="mr-2 h-4 w-4 text-violet-500" />
+                    Vitalícios {PLUS_LABEL} ({insights.plus.lifetime})
+                  </Button>
+                  <Button variant="outline" className="justify-start" onClick={handleExportCsv}>
+                    <FileDown className="mr-2 h-4 w-4" />
+                    Exportar filtro (CSV)
+                  </Button>
                 </CardContent>
               </Card>
             </section>
@@ -797,60 +1362,128 @@ export default function AdminUsersPage() {
 
             <AdminSecurityPanel onNotify={showToastMessage} />
 
-            <Card>
-              <CardHeader>
-                <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <Card id="lista-usuarios">
+              <CardHeader className="space-y-4">
+                <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                   <div>
                     <CardTitle>Todos os usuários</CardTitle>
                     <CardDescription>
                       {filteredUsers.length} de {users.length} usuário(s) exibidos
+                      {filteredUsers.length > 0 && (
+                        <> · {formatMoney(filteredUsers.reduce((sum, u) => sum + (u.spend?.total || 0), 0))} no recorte</>
+                      )}
                     </CardDescription>
                   </div>
-                  <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-[240px_180px_180px_180px]">
-                    <div className="relative">
-                      <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                      <Input
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        placeholder="Buscar nome ou email"
-                        className="pl-9"
-                      />
-                    </div>
-                    <Select value={sortMode} onValueChange={(value) => setSortMode(value as UserSortMode)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Ordenar" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="lastLogin">Mais recentes</SelectItem>
-                        <SelectItem value="createdAt">Cadastro recente</SelectItem>
-                        <SelectItem value="name">Nome</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Select value={activityFilter} onValueChange={(value) => setActivityFilter(value as UserActivityFilter)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Atividade" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">Toda atividade</SelectItem>
-                        <SelectItem value="online">Online agora</SelectItem>
-                        <SelectItem value="active7d">Ativos 7 dias</SelectItem>
-                        <SelectItem value="never">Nunca acessaram</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Select value={planFilter} onValueChange={(value) => setPlanFilter(value as UserPlanFilter)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Plano" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">Todos os planos</SelectItem>
-                        <SelectItem value="admin">Admins</SelectItem>
-                        <SelectItem value="gratuito">Gratuito</SelectItem>
-                        <SelectItem value="trial">Trial</SelectItem>
-                        <SelectItem value="plus">{PLUS_LABEL}</SelectItem>
-                        <SelectItem value="banned">Banidos</SelectItem>
-                      </SelectContent>
-                    </Select>
+                  <div className="flex flex-wrap gap-2">
+                    <Button variant="outline" size="sm" onClick={handleExportCsv}>
+                      <FileDown className="mr-2 h-4 w-4" />
+                      Exportar CSV
+                    </Button>
+                    {hasActiveFilters && (
+                      <Button variant="ghost" size="sm" onClick={resetFilters}>
+                        Limpar filtros
+                      </Button>
+                    )}
                   </div>
+                </div>
+
+                <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
+                  <div className="relative sm:col-span-2 xl:col-span-1">
+                    <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <Input
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      placeholder="Nome, email, telefone ou CPF"
+                      className="pl-9"
+                    />
+                  </div>
+
+                  <Select value={subscriptionFilter} onValueChange={(value) => setSubscriptionFilter(value as SubscriptionFilter)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Assinatura" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todas as assinaturas</SelectItem>
+                      <SelectItem value="any">Qualquer assinatura ativa</SelectItem>
+                      <SelectItem value="none">Sem assinatura ativa</SelectItem>
+                      <SelectItem value="plus_active">{PLUS_LABEL} — ativos</SelectItem>
+                      <SelectItem value="plus_lifetime">{PLUS_LABEL} — vitalícios</SelectItem>
+                      <SelectItem value="plus_recurring">{PLUS_LABEL} — recorrentes</SelectItem>
+                      <SelectItem value="plus_expired">{PLUS_LABEL} — expirados</SelectItem>
+                      <SelectItem value="plus">{PLUS_LABEL} — histórico completo</SelectItem>
+                      <SelectItem value="manual_active">Manual Clínico — ativos</SelectItem>
+                      <SelectItem value="manual_lifetime">Manual Clínico — vitalícios</SelectItem>
+                      <SelectItem value="manual_expired">Manual Clínico — expirados</SelectItem>
+                      <SelectItem value="manual">Manual Clínico — histórico completo</SelectItem>
+                      <SelectItem value="both">{PLUS_LABEL} + Manual Clínico</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  <Select value={cycleFilter} onValueChange={setCycleFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Ciclo" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todos os ciclos</SelectItem>
+                      {CYCLE_FILTER_OPTIONS.map((cycle) => (
+                        <SelectItem key={cycle} value={cycle}>{resolvePlanLabel(cycle)}</SelectItem>
+                      ))}
+                      <SelectItem value="outro">Outros/personalizados</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  <Select value={expiryFilter} onValueChange={(value) => setExpiryFilter(value as ExpiryFilter)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Vencimento" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Qualquer vencimento</SelectItem>
+                      <SelectItem value="expiring7">Vencem em 7 dias</SelectItem>
+                      <SelectItem value="expiring15">Vencem em 15 dias</SelectItem>
+                      <SelectItem value="expiring30">Vencem em 30 dias</SelectItem>
+                      <SelectItem value="expired">Já expirados</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  <Select value={planFilter} onValueChange={(value) => setPlanFilter(value as UserPlanFilter)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Cargo" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todos os cargos</SelectItem>
+                      <SelectItem value="admin">Admins</SelectItem>
+                      <SelectItem value="monitor">Monitores</SelectItem>
+                      <SelectItem value="gratuito">Gratuito</SelectItem>
+                      <SelectItem value="trial">Trial</SelectItem>
+                      <SelectItem value="plus">{PLUS_LABEL}</SelectItem>
+                      <SelectItem value="banned">Banidos</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  <Select value={activityFilter} onValueChange={(value) => setActivityFilter(value as UserActivityFilter)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Atividade" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Toda atividade</SelectItem>
+                      <SelectItem value="online">Online agora</SelectItem>
+                      <SelectItem value="active7d">Ativos 7 dias</SelectItem>
+                      <SelectItem value="never">Nunca acessaram</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  <Select value={sortMode} onValueChange={(value) => setSortMode(value as UserSortMode)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Ordenar" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="lastLogin">Atividade recente</SelectItem>
+                      <SelectItem value="createdAt">Cadastro recente</SelectItem>
+                      <SelectItem value="expiresAt">Vence primeiro</SelectItem>
+                      <SelectItem value="spend">Maior gasto</SelectItem>
+                      <SelectItem value="name">Nome</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </CardHeader>
             </Card>
@@ -861,7 +1494,7 @@ export default function AdminUsersPage() {
                   <p className="text-muted-foreground">Nenhum usuário encontrado com os filtros atuais.</p>
                 </CardContent>
               </Card>
-            ) : filteredUsers.map((user) => (
+            ) : visibleUsers.map((user) => (
               <Card key={user._id?.toString()}>
                 <CardHeader>
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -881,6 +1514,25 @@ export default function AdminUsersPage() {
                           </span>
                         )}
                         {user.role !== 'admin' && getAccountTypeBadge(user)}
+                        {/* Ciclo contratado direto no título: é a primeira coisa
+                            que o suporte precisa saber ao abrir a conta. */}
+                        {user.plusSubscription?.active && (
+                          <span className="rounded bg-amber-100 px-2 py-1 text-xs font-medium text-amber-800 dark:bg-amber-950 dark:text-amber-300">
+                            {PLUS_LABEL} {user.plusSubscription.planLabel}
+                          </span>
+                        )}
+                        {user.manualSubscription?.active && (
+                          <span className="flex items-center gap-1 rounded bg-sky-100 px-2 py-1 text-xs font-medium text-sky-800 dark:bg-sky-950 dark:text-sky-300">
+                            <BookOpen className="h-3 w-3" />
+                            Manual {user.manualSubscription.planLabel}
+                          </span>
+                        )}
+                        {user.secondaryRole === 'monitor' && (
+                          <span className="rounded bg-yellow-100 px-2 py-1 text-xs text-yellow-800 dark:bg-yellow-950 dark:text-yellow-300">
+                            <Zap className="h-3 w-3 inline mr-1" />
+                            Monitor
+                          </span>
+                        )}
                         {user.banned && (
                           <span className="text-xs bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 px-2 py-1 rounded">
                             <Ban className="h-3 w-3 inline mr-1" />
@@ -896,6 +1548,11 @@ export default function AdminUsersPage() {
                     <div className="text-left text-xs text-muted-foreground sm:text-right">
                       <div className="font-medium text-foreground">{formatRelativeActivity(user.lastLoginAt)}</div>
                       <div>Última atividade</div>
+                      {(user.spend?.total || 0) > 0 && (
+                        <div className="mt-1 font-medium text-emerald-600 dark:text-emerald-400">
+                          {formatMoney(user.spend.total)} em {user.spend.count} compra(s)
+                        </div>
+                      )}
                     </div>
                   </div>
                 </CardHeader>
@@ -911,6 +1568,13 @@ export default function AdminUsersPage() {
                       <p className="text-xs text-red-600 dark:text-red-400 mt-1">
                         Banido em: {new Date(user.bannedAt!).toLocaleDateString('pt-BR')}
                       </p>
+                    </div>
+                  )}
+
+                  {(user.plusSubscription || user.manualSubscription) && (
+                    <div className="mb-4 grid gap-3 sm:grid-cols-2">
+                      {user.plusSubscription && <SubscriptionTile info={user.plusSubscription} />}
+                      {user.manualSubscription && <SubscriptionTile info={user.manualSubscription} />}
                     </div>
                   )}
 
@@ -932,11 +1596,9 @@ export default function AdminUsersPage() {
                     <div className="rounded-lg border bg-muted/20 p-3">
                       <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
                         <Settings className="h-3.5 w-3.5" />
-                        Plano atual
+                        Cargo
                       </div>
-                      <div className="mt-1 capitalize text-foreground">
-                        {user.role === 'admin' ? 'Admin' : user.accountType || 'gratuito'}
-                      </div>
+                      <div className="mt-1 text-foreground">{describeAccountRole(user)}</div>
                     </div>
                     <div className="rounded-lg border bg-muted/20 p-3">
                       <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
@@ -1047,6 +1709,21 @@ export default function AdminUsersPage() {
                           size="sm"
                           onClick={() => {
                             setSelectedUser(user)
+                            setManualPlanKey(
+                              (user.manualSubscription?.planKey as 'semestral' | 'anual' | 'vitalicio') || 'anual',
+                            )
+                            setShowManualDialog(true)
+                          }}
+                          className={user.manualSubscription?.active ? 'border-sky-500 text-sky-600 dark:text-sky-400' : ''}
+                        >
+                          <BookOpen className="h-4 w-4 mr-2" />
+                          Manual Clínico
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedUser(user)
                             setSelectedPeriodo(user.periodoBase ? String(user.periodoBase) : '')
                             setShowPeriodoDialog(true)
                           }}
@@ -1124,6 +1801,26 @@ export default function AdminUsersPage() {
                 </CardContent>
               </Card>
             ))}
+
+            {/* A base inteira vem de uma vez, mas renderizar milhares de cards
+                de uma vez trava a tela — o resto entra sob demanda. */}
+            {filteredUsers.length > visibleUsers.length && (
+              <Card>
+                <CardContent className="flex flex-col items-center gap-3 py-6">
+                  <p className="text-sm text-muted-foreground">
+                    Mostrando {visibleUsers.length} de {filteredUsers.length} usuário(s) do filtro.
+                  </p>
+                  <div className="flex gap-2">
+                    <Button variant="outline" onClick={() => setVisibleCount((count) => count + 30)}>
+                      Carregar mais 30
+                    </Button>
+                    <Button variant="ghost" onClick={() => setVisibleCount(filteredUsers.length)}>
+                      Mostrar todos
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
         )}
       </main>
@@ -1313,6 +2010,15 @@ export default function AdminUsersPage() {
                     <div className="text-xs opacity-80">6 meses</div>
                   </Button>
                   <Button
+                    variant={selectedPremiumSubtype === 'anual' ? 'default' : 'outline'}
+                    onClick={() => setSelectedPremiumSubtype('anual')}
+                    className="h-auto py-3 flex-col gap-1"
+                    size="sm"
+                  >
+                    <div className="font-semibold text-sm">Anual</div>
+                    <div className="text-xs opacity-80">12 meses</div>
+                  </Button>
+                  <Button
                     variant={selectedPremiumSubtype === 'vitalicio' ? 'default' : 'outline'}
                     onClick={() => setSelectedPremiumSubtype('vitalicio')}
                     className="h-auto py-3 flex-col gap-1"
@@ -1332,6 +2038,84 @@ export default function AdminUsersPage() {
             <Button onClick={handleUpdateTier}>
               <Settings className="h-4 w-4 mr-2" />
               Atualizar Plano
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog do Manual Clínico */}
+      <Dialog open={showManualDialog} onOpenChange={setShowManualDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Manual Clínico</DialogTitle>
+            <DialogDescription>
+              Acesso ao Manual Clínico de <strong>{selectedUser?.name}</strong>.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            <div className="rounded-lg border bg-muted/30 p-3 text-sm">
+              <p className="text-xs font-semibold text-muted-foreground">Situação atual</p>
+              {selectedUser?.manualSubscription ? (
+                <div className="mt-2 space-y-1">
+                  <p className="font-medium">
+                    {selectedUser.manualSubscription.planLabel}
+                    {selectedUser.manualSubscription.expired ? ' — expirado' : ''}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {selectedUser.manualSubscription.lifetime
+                      ? 'Sem data de término'
+                      : `Termina em ${formatSubscriptionEndDate(selectedUser.manualSubscription)}`}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {formatSubscriptionRemaining(selectedUser.manualSubscription)}
+                  </p>
+                </div>
+              ) : (
+                <p className="mt-2 text-muted-foreground">Nunca contratou o Manual Clínico.</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label>Conceder plano</Label>
+              <div className="grid grid-cols-3 gap-2">
+                {([
+                  { key: 'semestral', label: 'Semestral', hint: '6 meses' },
+                  { key: 'anual', label: 'Anual', hint: '12 meses' },
+                  { key: 'vitalicio', label: 'Vitalício', hint: 'Para sempre' },
+                ] as const).map((plan) => (
+                  <Button
+                    key={plan.key}
+                    variant={manualPlanKey === plan.key ? 'default' : 'outline'}
+                    onClick={() => setManualPlanKey(plan.key)}
+                    className="h-auto py-3 flex-col gap-1"
+                    size="sm"
+                  >
+                    <div className="font-semibold text-sm">{plan.label}</div>
+                    <div className="text-xs opacity-80">{plan.hint}</div>
+                  </Button>
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                A concessão registra a compra com preço zero e envia ao usuário o e-mail de
+                confirmação do Manual Clínico. O prazo passa a contar a partir de agora.
+              </p>
+            </div>
+          </div>
+
+          <DialogFooter className="flex-col gap-2 sm:flex-row">
+            <Button variant="outline" onClick={() => setShowManualDialog(false)} disabled={manualSaving}>
+              Cancelar
+            </Button>
+            {selectedUser?.manualSubscription?.active && (
+              <Button variant="destructive" onClick={handleRevokeManual} disabled={manualSaving}>
+                <Ban className="h-4 w-4 mr-2" />
+                Revogar acesso
+              </Button>
+            )}
+            <Button onClick={handleGrantManual} disabled={manualSaving}>
+              <BookOpen className="h-4 w-4 mr-2" />
+              {manualSaving ? 'Salvando...' : 'Conceder acesso'}
             </Button>
           </DialogFooter>
         </DialogContent>

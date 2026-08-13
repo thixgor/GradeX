@@ -224,7 +224,22 @@ export type AccountType = 'gratuito' | 'trial' | 'plus' | LegacyPaidAccountType
 /** @deprecated Consolidados em `'plus'`. Somente leitura de registros antigos. */
 export type LegacyPaidAccountType = 'premium' | 'essential'
 
-export type PremiumPlanType = 'teste' | 'mensal' | 'trimestral' | 'semestral' | 'vitalicio'
+/**
+ * Ciclo de cobrança do cargo pago. Os valores abaixo são os que a plataforma
+ * conhece de fábrica, mas o campo aceita qualquer chave: um plano criado em
+ * `/admin/settings` grava o próprio `PlanConfig.tipo` aqui (ver
+ * `applyPlanPurchase` em `lib/payments/effects.ts`). O `(string & {})` mantém o
+ * autocomplete dos ciclos padrão sem transformar um plano personalizado em
+ * erro de tipo.
+ */
+export type PremiumPlanType =
+  | 'teste'
+  | 'mensal'
+  | 'trimestral'
+  | 'semestral'
+  | 'anual'
+  | 'vitalicio'
+  | (string & {})
 export type TrialPlanType = 'teste' | '7dias'
 
 export interface User {
