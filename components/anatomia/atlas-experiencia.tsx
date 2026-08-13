@@ -37,6 +37,7 @@ import {
   LayoutGrid,
   Search,
   Sparkles,
+  Target,
   X,
 } from 'lucide-react'
 
@@ -259,6 +260,24 @@ function EscolhaDeRegiao({
       </header>
 
       <section className="mx-auto max-w-6xl px-4 py-7 sm:py-10">
+        <Link
+          href={`/anatomia/atlas-anatomia/quiz?sistema=${sistema.slug}`}
+          className="group mb-5 flex items-center gap-3 rounded-2xl border border-primary/25 bg-primary/[0.07] p-4 transition hover:border-primary/50 hover:bg-primary/10"
+        >
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
+            <Target className="h-5 w-5" />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block font-heading text-lg font-semibold leading-tight tracking-tight">
+              Já estudou? Teste-se
+            </span>
+            <span className="mt-0.5 block text-xs text-muted-foreground">
+              O marcador aparece sem rótulo e você identifica a estrutura — com resposta comentada em cada questão.
+            </span>
+          </span>
+          <ArrowRight className="h-4 w-4 shrink-0 text-primary transition-transform group-hover:translate-x-0.5" />
+        </Link>
+
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {listaRegioes.map(regiao => {
             // Região sem subdivisão abre a prancha direto: um clique, não dois.
@@ -485,6 +504,7 @@ function AreaDeEstudo({
           </div>
 
           <div className="hidden shrink-0 items-center gap-2 md:flex">
+            <BotaoQuiz sistemaSlug={sistema.slug} />
             <BotaoModoEstudo ativo={modoEstudo} onClick={() => setModoEstudo(atual => !atual)} />
             <BotaoIndice ativo={indiceVisivel} onClick={() => setIndiceVisivel(atual => !atual)} />
           </div>
@@ -497,6 +517,7 @@ function AreaDeEstudo({
             <BuscaDeEstrutura valor={busca} onMudar={setBusca} resultados={resultados} onAbrir={abrirResultado} />
           </div>
           <div className="flex shrink-0 items-center gap-2 md:hidden">
+            <BotaoQuiz sistemaSlug={sistema.slug} />
             <BotaoModoEstudo ativo={modoEstudo} onClick={() => setModoEstudo(atual => !atual)} />
             <BotaoIndice ativo={indiceVisivel} onClick={() => setIndiceVisivel(atual => !atual)} />
           </div>
@@ -744,6 +765,20 @@ function AreaDeEstudo({
         </div>
       )}
     </main>
+  )
+}
+
+/** Atalho para treinar exatamente o sistema que está aberto. */
+function BotaoQuiz({ sistemaSlug }: { sistemaSlug: string }) {
+  return (
+    <Link
+      href={`/anatomia/atlas-anatomia/quiz?sistema=${sistemaSlug}`}
+      title="Treinar identificação das estruturas deste sistema"
+      className="flex h-9 shrink-0 items-center gap-1.5 rounded-xl border border-primary/30 bg-primary/10 px-2.5 text-xs font-bold text-primary transition hover:bg-primary/15"
+    >
+      <Target className="h-4 w-4" />
+      <span className="hidden xl:inline">Treinar</span>
+    </Link>
   )
 }
 

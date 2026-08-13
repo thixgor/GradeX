@@ -211,6 +211,30 @@ export function HubAnatomia({ catalogo }: { catalogo: ResumoAnatomia }) {
         </div>
       </section>
 
+      {/* ══════════ Treino ══════════ */}
+      <section className="mx-auto max-w-6xl px-4 pb-2">
+        <Link
+          href="/anatomia/atlas-anatomia/quiz"
+          className="group flex flex-col gap-3 rounded-3xl border border-primary/25 bg-primary/[0.07] p-5 transition hover:border-primary/50 hover:bg-primary/10 sm:flex-row sm:items-center sm:p-6"
+        >
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-primary">
+            <Target className="h-6 w-6" />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block font-heading text-xl font-semibold leading-tight tracking-tight sm:text-2xl">
+              Quiz de identificação
+            </span>
+            <span className="mt-1 block text-sm leading-relaxed text-muted-foreground">
+              A prancha aparece com um marcador só, sem rótulo, e você diz que estrutura é. Cada resposta vem comentada:
+              o raciocínio de identificação, o aprofundamento e o porquê de cada alternativa errada.
+            </span>
+          </span>
+          <span className="inline-flex shrink-0 items-center gap-1.5 text-sm font-bold text-primary">
+            Treinar agora <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+          </span>
+        </Link>
+      </section>
+
       {/* ══════════ O que cada estrutura entrega ══════════ */}
       <section className="border-y border-border bg-muted/30">
         <div className="mx-auto max-w-6xl px-4 py-10 sm:py-14">

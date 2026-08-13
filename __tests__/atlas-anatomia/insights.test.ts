@@ -72,7 +72,9 @@ describe('motor de conteúdo do Atlas de Anatomia', () => {
       ).map(item => item.marcador.title),
     )
 
-    expect(semClasse.size).toBeLessThanOrEqual(15)
+    // Só devem sobrar aqui as legendas que não nomeiam estrutura nenhuma
+    // ("Afastamento do Músculo…") e recortes topográficos como o trígono femoral.
+    expect(semClasse.size).toBeLessThanOrEqual(6)
   })
 
   it('resolve a região pelo caminho da coleção, sem confundir palavras contidas', () => {

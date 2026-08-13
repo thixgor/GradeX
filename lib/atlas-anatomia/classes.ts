@@ -708,8 +708,11 @@ const REGRAS: RegraClasse[] = [
     classe: 'ponto-craniometrico',
     padrao: /^(nasio|nasion|inio|inion|basio|basion|pterio|pterion|asterio|asterion|gonio|gonion|bregma|vertex|lambda|glabela|opistocranio|euri[oa]n|zigio)/,
   },
-  { classe: 'tendao', padrao: /^tendao|^tendoes/ },
-  { classe: 'musculo', padrao: /^musculo|^musculos|^ventre |^porcao (longa|curta|clavicular|esternocostal|abdominal)/ },
+  { classe: 'tendao', padrao: /^tendao|^tendoes|^conexoes intertendineas|^expansao extensora/ },
+  {
+    classe: 'musculo',
+    padrao: /^musculo|^musculos|^ventre |^porcao (longa|curta|clavicular|esternocostal|abdominal)|^cabeca (longa|curta|lateral|medial|obliqua|transversa|superficial|profunda|reta|angular)|^manguito rotador|^musculatura/,
+  },
   { classe: 'ligamento', padrao: /^ligamento|^ligamentos|^ligamentum/ },
   { classe: 'fascia', padrao: /^fascia|^aponeurose|^retinaculo|^bainha|^septo intermuscular|^galea|^trato iliotibial|^membrana interossea/ },
   { classe: 'sutura', padrao: /^sutura|^suturas/ },
@@ -722,14 +725,14 @@ const REGRAS: RegraClasse[] = [
   { classe: 'seio-venoso', padrao: /^seio (sagital|transverso|reto|sigmoide|cavernoso|occipital|petroso)|^confluencia dos seios|^seio venoso|^seios da dura/ },
   {
     classe: 'arteria',
-    padrao: /^arteria|^arterias|^aorta|^arco (aortico|da aorta)|^tronco (pulmonar|braquiocefalico|celiaco|tireocervical|costocervical)|^circulo arterial|^poligono de willis/,
+    padrao: /^arteria|^arterias|^aorta|^arco (aortico|da aorta|palmar|plantar)|^tronco (pulmonar|braquiocefalico|celiaco|tireocervical|costocervical)|^circulo arterial|^poligono de willis|^vasos |^ramo .*(arteria|arterial)/,
   },
   { classe: 'veia', padrao: /^veia|^veias|^plexo (pampiniforme|venoso|venosos)|^cava|^sistema (azigo|porta)/ },
   { classe: 'plexo-nervoso', padrao: /^plexo (braquial|lombar|sacral|cervical|lombossacral|celiaco|cardiaco|pulmonar|mienterico|submucoso|hipogastrico|faringeo)|^plexos nervosos/ },
   { classe: 'ganglio', padrao: /^ganglio|^ganglios/ },
   {
     classe: 'nervo',
-    padrao: /^nervo|^nervos|^tronco (superior|medio|inferior) do plexo|^fasciculo (lateral|medial|posterior)|^raiz (ventral|dorsal|anterior|posterior)|^ramo (ventral|dorsal|anterior|posterior|comunicante)|^cauda equina|^filamento terminal/,
+    padrao: /^nervo|^nervos|^tronco (superior|medio|inferior) do plexo|^fasciculo (lateral|medial|posterior)|^raiz (ventral|dorsal|anterior|posterior)|^ramo (ventral|dorsal|anterior|posterior|comunicante)|^ramo .*nervo|^cauda equina|^filamento terminal/,
   },
   { classe: 'meninge', padrao: /^dura-?mater|^aracnoide|^pia-?mater|^meninge|^leptomeninge|^tenda do cerebelo|^foice (do cerebro|do cerebelo)|^espaco (subaracnoideo|subdural|epidural|extradural)/ },
   { classe: 'ventriculo', padrao: /^ventriculo (lateral|terceiro|quarto|iii|iv)|^iii ventriculo|^iv ventriculo|^aqueduto|^plexo corioideo|^liquido cerebrospinal|^cisterna|^forame interventricular|^granulacoes/ },
@@ -759,6 +762,18 @@ const REGRAS: RegraClasse[] = [
     classe: 'osso',
     padrao: /^osso|^ossos|^mandibula|^maxila|^cranio|^umero|^radio$|^radio |^ulna|^femur|^tibia|^fibula|^patela|^escapula|^clavicula|^esterno|^costela|^costelas|^vertebra|^vertebras|^sacro|^coccix|^ilio|^isquio|^pubis|^metacarpo|^metacarpos|^metatarso|^metatarsos|^falange|^falanges|^atlas$|^axis$|^manubrio|^processo xifoide|^coluna (cervical|toracica|lombar|vertebral)|^calvaria|^diploe/,
   },
+]
+
+/**
+ * Regras que só valem no esqueleto.
+ *
+ * "Face", "ápice", "margem", "corpo", "colo", "sulco", "fissura" e "incisura"
+ * são descritores morfológicos, não termos ósseos: existem na face do coração,
+ * no ápice do pulmão, no corpo da língua e no sulco bulbopontino. Aplicá-las em
+ * todo lugar transformava meia víscera em acidente ósseo — e o comentário do
+ * quiz saía afirmando barbaridade com toda a confiança.
+ */
+const REGRAS_OSSEAS: RegraClasse[] = [
   {
     classe: 'passagem-ossea',
     padrao: /^forame|^forames|^canal|^canais|^fissura|^meato|^hiato|^abertura|^orificio|^incisura|^aqueduto do vestibulo|^sulco do nervo|^sulco da arteria|^sulco do seio|^tunel do carpo|^cavidade (nasal|orbital)|^orbita|^coanas/,
@@ -769,6 +784,16 @@ const REGRAS: RegraClasse[] = [
   },
 ]
 
+/** Sistemas em que os descritores morfológicos são, de fato, ósseos. */
+const SISTEMAS_OSSEOS = new Set(['esqueletico', 'articular'])
+
+/**
+ * Acidentes que não são ambíguos em nenhum sistema: não existe "epicôndilo" de
+ * víscera nem "trocanter" de nervo. Estes continuam valendo em toda prancha.
+ */
+const ACIDENTES_INEQUIVOCOS =
+  /^epicondilo|^trocanter|^maleolo|^olecrano|^acromio|^condilo|^tuberosidade|^tuber isquiatico|^processo (espinhoso|transverso|articular|coracoide|estiloide|mastoide|xifoide|coronoide|odontoide|alveolar)|^espinha (iliaca|da escapula|isquiatica|nasal)|^crista iliaca|^sinfise|^diafise|^epifise|^metafise/
+
 const normalizar = (valor: string) =>
   valor
     .normalize('NFD')
@@ -778,8 +803,17 @@ const normalizar = (valor: string) =>
 
 export function classificar(titulo: string, sistemaSlug?: string): ClasseEstrutural {
   const nome = normalizar(titulo)
+
   const regra = REGRAS.find(candidata => candidata.padrao.test(nome))
   if (regra) return CLASSES[regra.classe]
+
+  // Sem sistema informado, o léxico ósseo continua valendo: é o comportamento
+  // que faz sentido para quem classifica um termo solto.
+  if (!sistemaSlug || SISTEMAS_OSSEOS.has(sistemaSlug) || ACIDENTES_INEQUIVOCOS.test(nome)) {
+    const ossea = REGRAS_OSSEAS.find(candidata => candidata.padrao.test(nome))
+    if (ossea) return CLASSES[ossea.classe]
+  }
+
   const porSistema = sistemaSlug ? FALLBACK_POR_SISTEMA[sistemaSlug] : undefined
   return CLASSES[porSistema || 'estrutura']
 }

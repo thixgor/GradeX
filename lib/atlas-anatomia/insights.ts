@@ -140,7 +140,9 @@ export function getMarkerInsight(marker: AtlasMarker, contexto: ContextoMarcador
     vasosRegionais: !entrada?.vascularizacao && !entrada?.inervacao,
     linfaticos: entrada?.linfaticos || (classe.mostraVasos ? regiao.linfaticos : undefined),
     relacoes: entrada?.relacoes,
-    clinica: entrada?.clinica ? entrada.clinica : `${classe.clinica} ${regiao.clinica || ''}`.trim(),
+    // Sem entrada curada, a correlação da região é mais específica que a da
+    // classe — e o que vem primeiro é o que o aluno de fato lê.
+    clinica: entrada?.clinica ? entrada.clinica : `${regiao.clinica || ''} ${classe.clinica}`.trim(),
     reparos: regiao.reparos,
     pontos: entrada?.pontos?.length ? entrada.pontos : classe.pontos,
     notaAcervo,

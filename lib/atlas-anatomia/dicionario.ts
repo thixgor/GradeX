@@ -2654,5 +2654,413 @@ export const DICIONARIO: EntradaDicionario[] = [
       'Omento maior como "polícia do abdome"',
     ],
   },
-]
 
+  /* ═══════════ Lacunas frequentes: SNC, tórax, vísceras e cíngulos ═══════════ */
+  {
+    termos: ['cerebelo'],
+    exato: true,
+    classe: 'snc',
+    resumo: 'Órgão da fossa craniana posterior que calibra o movimento — não o inicia, mas decide como ele sai.',
+    localizacao:
+      'Atrás da ponte e do bulbo, sob a tenda do cerebelo, separado dos lobos occipitais. Tem dois hemisférios, o vérmis na linha média e três pares de pedúnculos que o ligam ao tronco encefálico; à frente dele fica o IV ventrículo.',
+    funcao:
+      'Compara a ordem motora enviada pelo córtex com o que de fato aconteceu, informado pela propriocepção, e corrige a diferença em tempo real. É isso que dá suavidade, precisão e sincronia ao movimento, além de sustentar equilíbrio, tônus e aprendizado motor.',
+    vascularizacao:
+      'Três artérias, todas do sistema vertebrobasilar: cerebelar superior e ântero-inferior (AICA), da basilar, e póstero-inferior (PICA), da vertebral.',
+    inervacao: 'Não emite nervos periféricos; comunica-se pelos pedúnculos cerebelares e envia sua saída pelos núcleos profundos, sobretudo o núcleo denteado.',
+    relacoes: 'Ocupa um compartimento apertado: o IV ventrículo à frente, o tronco encefálico adiante e o forame magno logo abaixo.',
+    clinica:
+      'A regra de ouro é a lateralidade: o cerebelo age no mesmo lado, então a lesão de um hemisfério dá ataxia, dismetria e disdiadococinesia ipsilaterais — o oposto do que se espera de uma lesão cortical. Lesão do vérmis dá ataxia de tronco e marcha ebriosa. E como o espaço é estreito, o edema cerebelar comprime o IV ventrículo e produz hidrocefalia aguda, com risco de herniação tonsilar.',
+    pontos: [
+      'Sinais cerebelares são ipsilaterais à lesão',
+      'Hemisférios = membros; vérmis = tronco e marcha',
+      'PICA, AICA e cerebelar superior — e a síndrome de Wallenberg',
+    ],
+  },
+  {
+    termos: ['medula espinal'],
+    classe: 'snc',
+    resumo: 'Continuação do tronco encefálico dentro do canal vertebral, do forame magno até o cone medular em L1–L2.',
+    localizacao:
+      'Ocupa o canal vertebral envolvida pelas meninges, com substância cinzenta central em forma de H e substância branca periférica organizada em funículos. Apresenta duas intumescências: cervical (C4–T1, membro superior) e lombossacral (L2–S3, membro inferior).',
+    funcao:
+      'Conduz as vias descendentes motoras e ascendentes sensitivas entre encéfalo e corpo, e fecha por conta própria os arcos reflexos — é por isso que o reflexo patelar acontece antes de você perceber a martelada.',
+    vascularizacao:
+      'Artéria espinal anterior (dois terços anteriores) e duas espinais posteriores, reforçadas pelas radiculares; a maior delas, a artéria de Adamkiewicz, entra geralmente à esquerda entre T9 e L2.',
+    inervacao: '31 pares de nervos espinais, cada um com raiz dorsal sensitiva (com gânglio) e raiz ventral motora.',
+    relacoes: 'Termina bem acima do fim do canal: abaixo de L2 há apenas cauda equina e líquido cerebrospinal — o espaço que torna a punção lombar segura.',
+    clinica:
+      'A dissociação entre nível vertebral e nível medular é o que explica tanto a punção lombar quanto o fato de uma fratura de T12 poder lesar segmentos lombares. A síndrome da artéria espinal anterior poupa os cordões posteriores: perde-se motricidade, dor e temperatura, e preserva-se propriocepção e vibração.',
+    pontos: [
+      'Cone medular em L1–L2 no adulto',
+      'Punção lombar abaixo de L3, na cauda equina',
+      'Espinal anterior: 2/3 anteriores; cordões posteriores poupados',
+    ],
+  },
+  {
+    termos: ['lobo occipital', 'lobo frontal', 'lobo parietal', 'lobo temporal'],
+    classe: 'snc',
+    resumo: 'Lobo do hemisfério cerebral, delimitado por sulcos constantes e definido pela função que concentra.',
+    localizacao:
+      'O sulco central separa frontal de parietal; o sulco lateral delimita o temporal; o occipital ocupa o polo posterior, atrás do sulco parieto-occipital. A ínsula fica escondida no fundo do sulco lateral.',
+    funcao:
+      'Frontal: motricidade, funções executivas e a área de Broca. Parietal: sensibilidade somática e integração espacial. Temporal: audição, memória e a área de Wernicke. Occipital: visão, com a área calcarina.',
+    vascularizacao:
+      'Cerebral anterior para a face medial (território do membro inferior), cerebral média para a face lateral (face e membro superior) e cerebral posterior para o occipital e a face inferior do temporal.',
+    clinica:
+      'Cada lobo tem sua síndrome: hemiparesia braquiofacial e afasia na cerebral média, incontinência e abulia na cerebral anterior, hemianopsia homônima com preservação macular na cerebral posterior. É esse mapa que transforma o exame neurológico em localização topográfica antes da tomografia.',
+    pontos: [
+      'Sulco central separa motor de sensitivo',
+      'Broca no frontal inferior; Wernicke no temporal superior',
+      'Território arterial de cada lobo',
+    ],
+  },
+  {
+    termos: ['coracao'],
+    exato: true,
+    classe: 'camara-cardiaca',
+    resumo: 'Órgão muscular oco do mediastino médio: duas bombas em série dentro do mesmo saco pericárdico.',
+    localizacao:
+      'Entre os pulmões, sobre o diafragma e atrás do esterno, com dois terços à esquerda da linha mediana. Tem base voltada para cima e para trás (átrios e grandes vasos) e ápice para baixo, à frente e à esquerda, no 5º espaço intercostal.',
+    funcao:
+      'O lado direito recebe o retorno venoso e o manda aos pulmões; o esquerdo recebe o sangue arterializado e o ejeta na aorta. As duas bombas trabalham em série, com o mesmo débito, e é por isso que a falência de uma repercute na outra.',
+    vascularizacao:
+      'Coronárias direita e esquerda, os primeiros ramos da aorta, saindo dos seios aórticos; drenagem pelas veias cardíacas para o seio coronário e daí para o átrio direito.',
+    inervacao:
+      'Plexo cardíaco: simpático acelera e aumenta a força, vago desacelera. A dor cardíaca sobe por fibras simpáticas até T1–T4, o que explica a irradiação para o membro superior esquerdo e para a mandíbula.',
+    relacoes: 'À frente, o esterno; atrás, o esôfago (janela do ecocardiograma transesofágico); abaixo, o diafragma; dos lados, os pulmões e os nervos frênicos.',
+    clinica:
+      'O ictus cordis no 5º espaço intercostal esquerdo, na linha hemiclavicular, é a projeção do ápice — seu desvio lateral indica dilatação. Como a bomba direita é anterior, ela é a mais lesada no trauma torácico penetrante.',
+    pontos: [
+      'Mediastino médio, dentro do pericárdio',
+      'Ápice no 5º EIC esquerdo, linha hemiclavicular',
+      'Duas bombas em série, mesmo débito',
+    ],
+  },
+  {
+    termos: ['tronco pulmonar'],
+    classe: 'arteria',
+    resumo: 'Grande vaso que sai do ventrículo direito levando sangue venoso aos pulmões — a artéria que carrega sangue pobre em oxigênio.',
+    localizacao:
+      'Emerge do cone arterial do ventrículo direito, à frente e à esquerda da aorta ascendente, e após cerca de 5 cm se bifurca, sob o arco aórtico, nas artérias pulmonares direita e esquerda.',
+    funcao: 'Conduz todo o débito do ventrículo direito à circulação pulmonar, num regime de baixa pressão e baixa resistência.',
+    relacoes:
+      'O ligamento arterial — resquício do ducto arterial fetal — liga sua bifurcação ao arco aórtico, e é justamente por baixo dele que o nervo laríngeo recorrente esquerdo faz a curva.',
+    clinica:
+      'A bifurcação é onde impacta o êmbolo em sela do tromboembolismo pulmonar maciço. A persistência do ducto arterial mantém o desvio esquerda-direita do período fetal e produz sopro contínuo, em maquinaria.',
+    pontos: [
+      'Artéria com sangue venoso, do VD aos pulmões',
+      'Ligamento arterial e o laríngeo recorrente esquerdo',
+      'Êmbolo em sela na bifurcação',
+    ],
+  },
+  {
+    termos: ['auricula direita', 'auricula esquerda', 'auricula'],
+    classe: 'camara-cardiaca',
+    resumo: 'Apêndice em forma de orelha que prolonga cada átrio para a frente, com parede trabeculada por músculos pectíneos.',
+    localizacao: 'A direita cobre a raiz da aorta; a esquerda contorna o tronco pulmonar, na face anterior do coração.',
+    funcao: 'Aumenta a complacência do átrio e acrescenta um pequeno volume ao enchimento ventricular na sístole atrial.',
+    clinica:
+      'A aurícula esquerda é o principal sítio de formação de trombo na fibrilação atrial — o fluxo lento numa cavidade trabeculada é o cenário perfeito. É de lá que sai a maior parte dos AVC cardioembólicos, e é por isso que existem a anticoagulação e o oclusor de aurícula.',
+    pontos: [
+      'Músculos pectíneos revestem sua parede',
+      'Aurícula esquerda: trombo na fibrilação atrial',
+      'Origem do AVC cardioembólico',
+    ],
+  },
+  {
+    termos: ['pulmao direito', 'pulmao esquerdo'],
+    classe: 'viscera',
+    resumo: 'Órgão da respiração, alojado na cavidade pleural e moldado pelas estruturas que encosta.',
+    localizacao:
+      'O direito tem três lobos e é mais largo e curto, empurrado para cima pelo fígado. O esquerdo tem dois lobos, a incisura cardíaca e a língula, porque cede espaço ao coração. Cada um tem ápice acima da clavícula e base sobre o diafragma.',
+    funcao: 'Conduz o ar até os alvéolos e realiza a hematose, oferecendo à circulação uma superfície de troca de dezenas de metros quadrados.',
+    vascularizacao:
+      'Artérias pulmonares para as trocas e artérias brônquicas, da aorta torácica, para nutrir o próprio tecido; veias pulmonares devolvem o sangue arterializado ao átrio esquerdo.',
+    inervacao: 'Plexo pulmonar — vago (broncoconstrição e secreção) e simpático (broncodilatação).',
+    relacoes: 'No hilo, a disposição muda de lado: à direita o brônquio é a estrutura mais posterior; à esquerda, a artéria pulmonar é a mais alta.',
+    clinica:
+      'A assimetria explica a clínica: o brônquio principal direito, mais vertical e largo, recebe corpos estranhos e a intubação seletiva. O ápice ultrapassa a clavícula, e por isso um tumor de Pancoast comprime o plexo braquial e a cadeia simpática.',
+    pontos: [
+      'Direito: 3 lobos; esquerdo: 2 + língula e incisura cardíaca',
+      'Dupla irrigação: pulmonares e brônquicas',
+      'Ápice acima da clavícula — tumor de Pancoast',
+    ],
+  },
+  {
+    termos: ['osso hioide', 'hioide'],
+    classe: 'osso',
+    resumo: 'Único osso do corpo que não se articula com nenhum outro — fica suspenso por músculos e ligamentos.',
+    localizacao: 'No pescoço, ao nível de C3, entre a mandíbula e a cartilagem tireóidea, com corpo, cornos maiores e cornos menores.',
+    funcao: 'Ancora a musculatura supra e infra-hióidea, sustentando o assoalho da boca e a laringe; é a peça de apoio da deglutição e da fala.',
+    vascularizacao: 'Ramos das artérias lingual e tireóidea superior.',
+    inervacao: 'Musculatura supra-hióidea por V3, VII e C1; infra-hióidea pela alça cervical (C1–C3).',
+    clinica:
+      'Sua elevação é o que fecha a laringe durante a deglutição — perdida, instala-se broncoaspiração. A fratura do hioide é rara e, na necropsia, é achado clássico de estrangulamento.',
+    pontos: [
+      'Não se articula com nenhum osso',
+      'Nível de C3; ancora supra e infra-hióideos',
+      'Fratura sugere estrangulamento na medicina legal',
+    ],
+  },
+  {
+    termos: ['glandula tireoide', 'tireoide'],
+    classe: 'glandula',
+    resumo: 'Maior glândula endócrina pura do corpo, em forma de borboleta sobre a traqueia.',
+    localizacao:
+      'Dois lobos unidos pelo istmo, que cruza a traqueia na altura do 2º ao 4º anel, entre C5 e T1. Envolvida pela bainha visceral, sobe junto da laringe na deglutição — sinal que a distingue de qualquer outra massa cervical.',
+    funcao: 'Produz T3 e T4, que fixam a taxa metabólica basal, e calcitonina pelas células parafoliculares.',
+    vascularizacao:
+      'Artéria tireóidea superior (carótida externa) e inferior (tronco tireocervical); drenagem pelas veias tireóideas superior, média e inferior.',
+    inervacao: 'Fibras simpáticas dos gânglios cervicais; o controle real é hormonal, pelo TSH da hipófise.',
+    relacoes:
+      'Dois nervos correm coladinhos: o laríngeo recorrente sobe no sulco traqueoesofágico, junto da tireóidea inferior, e o ramo externo do laríngeo superior acompanha a tireóidea superior. As paratireoides ficam na face posterior.',
+    clinica:
+      'A anatomia dita as complicações da tireoidectomia: rouquidão por lesão do recorrente, voz sem agudos por lesão do laríngeo superior externo, e hipocalcemia por remoção inadvertida das paratireoides. Bócio mergulhante pode comprimir traqueia e causar estridor.',
+    pontos: [
+      'Sobe à deglutição — diferencial de massa cervical',
+      'Recorrente com a tireóidea inferior; laríngeo superior com a superior',
+      'Paratireoides na face posterior',
+    ],
+  },
+  {
+    termos: ['baco'],
+    exato: true,
+    classe: 'linfatico',
+    resumo: 'Maior órgão linfoide do corpo — filtro do sangue, e não da linfa.',
+    localizacao:
+      'Intraperitoneal, no hipocôndrio esquerdo, entre a 9ª e a 11ª costela, com o eixo longo acompanhando a 10ª. Encosta no diafragma, no estômago, no rim esquerdo, na cauda do pâncreas e na flexura cólica esquerda.',
+    funcao:
+      'Remove hemácias velhas e partículas opsonizadas, monta resposta imune contra antígenos circulantes e é reservatório de plaquetas. Na vida fetal, é hematopoético.',
+    vascularizacao: 'Artéria esplênica, ramo tortuoso do tronco celíaco; a veia esplênica se une à mesentérica superior para formar a veia porta.',
+    inervacao: 'Plexo celíaco. A irritação diafragmática refere dor ao ombro esquerdo — o sinal de Kehr.',
+    clinica:
+      'É o órgão mais lesado no trauma abdominal fechado, sobretudo com fratura de costelas baixas à esquerda. Quando cresce, avança em direção à fossa ilíaca direita e ganha a incisura palpável. A esplenectomia exige vacinar contra germes encapsulados: sem baço, pneumococo, meningococo e Haemophilus podem virar sepse fulminante.',
+    pontos: [
+      'Costelas 9 a 11 à esquerda — trauma fechado',
+      'Cresce em direção à fossa ilíaca direita',
+      'Sepse por encapsulados após esplenectomia',
+    ],
+  },
+  {
+    termos: ['reto'],
+    exato: true,
+    classe: 'viscera',
+    resumo: 'Segmento final do intestino grosso, entre o sigmoide e o canal anal — reservatório antes da evacuação.',
+    localizacao:
+      'Começa em S3, acompanha a concavidade do sacro e termina no canal anal. Perde as tênias, as saculações e os apêndices omentais que caracterizam o cólon, e tem apenas o terço superior revestido por peritônio à frente.',
+    funcao: 'Armazena as fezes e, ao distender, dispara o reflexo de defecação — que a continência voluntária, pelo esfíncter externo, é capaz de adiar.',
+    vascularizacao:
+      'Retal superior (mesentérica inferior), retais médias (ilíaca interna) e retais inferiores (pudenda interna). Essa tripla origem cria uma anastomose portossistêmica na submucosa.',
+    inervacao: 'Plexo hipogástrico inferior; o esfíncter externo é do nervo pudendo (S2–S4), voluntário.',
+    relacoes: 'À frente, a próstata e as vesículas seminais no homem, e a vagina na mulher — a razão de o toque retal alcançar a próstata.',
+    clinica:
+      'A anastomose portossistêmica retal participa das varizes na hipertensão portal. A drenagem linfática dupla — para os mesentéricos inferiores acima da linha pectínea e para os inguinais abaixo — decide o estadiamento e a via cirúrgica do câncer retal.',
+    pontos: [
+      'Sem tênias, saculações ou apêndices omentais',
+      'Três artérias retais e a anastomose portossistêmica',
+      'Linha pectínea divide a drenagem linfática',
+    ],
+  },
+  {
+    termos: ['palato duro'],
+    classe: 'viscera',
+    resumo: 'Teto ósseo da boca e assoalho da cavidade nasal, revestido por mucosa firmemente aderida.',
+    localizacao: 'Formado pelos processos palatinos das maxilas à frente e pelas lâminas horizontais dos ossos palatinos atrás, com o forame incisivo na frente e os palatinos maior e menor atrás.',
+    funcao: 'Separa definitivamente as vias respiratória e digestória, e serve de anteparo para a língua comprimir o alimento e articular a fala.',
+    vascularizacao: 'Artéria palatina maior, que emerge pelo forame palatino maior, e a esfenopalatina pelo forame incisivo.',
+    inervacao: 'Nervos palatino maior e nasopalatino, ramos de V2 vindos do gânglio pterigopalatino.',
+    clinica:
+      'A falha de fusão nesse plano produz a fenda palatina, com dificuldade de sucção e voz hipernasal. O bloqueio do palatino maior é rotina em odontologia, e o torus palatino é uma exostose benigna comum na linha média.',
+    pontos: [
+      'Maxilas à frente, palatinos atrás',
+      'Palatino maior (V2) e nasopalatino',
+      'Fenda palatina e voz hipernasal',
+    ],
+  },
+  {
+    termos: ['septo nasal'],
+    classe: 'via-aerea',
+    resumo: 'Parede mediana que divide a cavidade nasal em duas metades, com parte óssea e parte cartilaginosa.',
+    localizacao: 'Formado pela lâmina perpendicular do etmoide em cima, pelo vômer atrás e embaixo, e pela cartilagem septal à frente.',
+    funcao: 'Sustenta o dorso nasal e reparte o fluxo aéreo entre as duas fossas, permitindo o ciclo nasal fisiológico.',
+    vascularizacao:
+      'Área de Kiesselbach, no septo anteroinferior, onde se anastomosam esfenopalatina, etmoidal anterior, palatina maior e o ramo septal da labial superior — carótida interna e externa se encontrando num só ponto.',
+    inervacao: 'Nervos nasopalatino e etmoidal anterior; o epitélio olfatório ocupa a parte mais alta.',
+    clinica:
+      'Mais de 90% das epistaxes vêm de Kiesselbach, e é por isso que comprimir a asa do nariz resolve a maioria. O desvio de septo obstrui e favorece sinusite; o hematoma septal precisa ser drenado, sob pena de necrose da cartilagem e nariz em sela.',
+    pontos: [
+      'Etmoide + vômer + cartilagem septal',
+      'Área de Kiesselbach: 90% das epistaxes',
+      'Hematoma septal → nariz em sela',
+    ],
+  },
+  {
+    termos: ['adito da laringe', 'vestibulo da laringe'],
+    classe: 'via-aerea',
+    resumo: 'Entrada da laringe, delimitada pela epiglote, pelas pregas ariepiglóticas e pelas aritenoides.',
+    localizacao: 'Voltado para trás e para cima, abrindo-se na laringofaringe; de cada lado ficam os recessos piriformes.',
+    funcao: 'Porta de passagem do ar e ponto onde o reflexo de fechamento protege a via aérea inferior durante a deglutição.',
+    inervacao: 'Ramo interno do nervo laríngeo superior — a aferência do reflexo de tosse.',
+    clinica:
+      'É a estrutura que se procura na laringoscopia, e o recesso piriforme ao lado é onde corpos estranhos pontiagudos, como espinha de peixe, costumam encravar. A remoção às cegas ali arrisca o laríngeo superior interno.',
+    pontos: [
+      'Epiglote, pregas ariepiglóticas e aritenoides',
+      'Recesso piriforme: corpo estranho encravado',
+      'Laríngeo superior interno e o reflexo de tosse',
+    ],
+  },
+  {
+    termos: ['lamina do arco vertebral', 'pediculo do arco vertebral', 'arco vertebral'],
+    resumo: 'Componentes do arco vertebral: os pedículos ligam o corpo ao arco e as lâminas se fundem atrás, fechando o canal.',
+    localizacao: 'Os pedículos saem da face posterolateral do corpo e suas incisuras formam o forame intervertebral; as lâminas seguem deles até o processo espinhoso.',
+    funcao: 'Fecham o forame vertebral, protegendo a medula, e transmitem carga do arco posterior para o corpo.',
+    clinica:
+      'A lâmina é o osso removido na laminectomia, a descompressão clássica da estenose de canal. O pedículo é a via de entrada do parafuso pedicular na artrodese e, na radiografia, o "pedículo ausente" é sinal clássico de metástase vertebral. A falha de fusão das lâminas produz a espinha bífida.',
+    pontos: [
+      'Pedículos delimitam o forame intervertebral',
+      'Laminectomia e parafuso pedicular',
+      'Pedículo ausente na radiografia = metástase',
+    ],
+  },
+  {
+    termos: ['processo coronoide'],
+    resumo: 'Projeção anterior da ulna proximal, na mandíbula também o nome da lâmina que recebe o músculo temporal.',
+    localizacao: 'Na ulna, forma a parede anterior da incisura troclear e se encaixa na fossa coronóidea do úmero na flexão máxima do cotovelo.',
+    funcao: 'É o principal bloqueio ósseo contra o deslocamento posterior da ulna — o estabilizador que impede o cotovelo de escapar para trás.',
+    clinica:
+      'Sua fratura integra a "tríade terrível" do cotovelo, com luxação e fratura da cabeça do rádio, e a instabilidade resultante costuma exigir fixação. Perder mais de metade da altura do processo praticamente garante recidiva da luxação.',
+    pontos: [
+      'Trava o deslocamento posterior da ulna',
+      'Tríade terrível: coronoide + cabeça do rádio + luxação',
+      'Na mandíbula, recebe o tendão do temporal',
+    ],
+  },
+  {
+    termos: ['espinha iliaca anterossuperior', 'espinha iliaca antero-inferior', 'espinha iliaca anteroinferior', 'espinha iliaca posterossuperior'],
+    resumo: 'Saliências da margem do ílio — os reparos palpáveis que orientam quase todo exame da pelve e do quadril.',
+    localizacao:
+      'A anterossuperior termina a crista ilíaca à frente e recebe o sartório e o ligamento inguinal; a anteroinferior, logo abaixo, recebe o reto femoral; a posterossuperior marca a fosseta de Vênus e o nível de S2.',
+    funcao: 'Áreas de inserção muscular e ligamentar, e pontos de referência constantes para medida e palpação.',
+    inervacao: 'O nervo cutâneo femoral lateral cruza logo medialmente à espinha ilíaca anterossuperior.',
+    clinica:
+      'A avulsão da anterossuperior (sartório) e da anteroinferior (reto femoral) é lesão típica do atleta adolescente em arrancada. A compressão do cutâneo femoral lateral ali produz meralgia parestésica — queimação na face lateral da coxa, sem déficit motor. A posterossuperior projeta S2, referência da punção sacroilíaca.',
+    pontos: [
+      'EIAS: sartório e ligamento inguinal',
+      'EIAI: reto femoral — avulsão no adolescente',
+      'Meralgia parestésica pelo cutâneo femoral lateral',
+    ],
+  },
+  {
+    termos: ['condilo medial', 'condilo lateral'],
+    resumo: 'Massas articulares arredondadas das extremidades do fêmur e da tíbia, que formam a articulação do joelho.',
+    localizacao:
+      'No fêmur, projetam-se posteriormente e são separados pela fossa intercondilar, com os epicôndilos por fora recebendo os colaterais. Na tíbia, formam o platô que recebe os côndilos femorais, com os meniscos entre eles.',
+    funcao: 'Transmitem carga e, pelo raio de curvatura diferente entre medial e lateral, produzem a rotação automática que "trava" o joelho na extensão completa.',
+    clinica:
+      'A fratura do platô tibial lateral é a mais comum, por trauma em valgo, e é sítio clássico de afundamento articular. A necrose avascular espontânea do côndilo femoral medial acomete mulheres acima dos 60 anos com dor súbita no joelho.',
+    pontos: [
+      'Fossa intercondilar aloja os cruzados',
+      'Rotação de travamento na extensão completa',
+      'Fratura de platô lateral por trauma em valgo',
+    ],
+  },
+  {
+    termos: ['falanges proximais', 'falanges medias', 'falanges distais', 'falange proximal', 'falange media', 'falange distal', 'falanges'],
+    classe: 'osso',
+    resumo: 'Ossos dos dedos: três por dedo, exceto o polegar e o hálux, que têm duas.',
+    localizacao: 'Distalmente aos metacarpos e metatarsos, articuladas em metacarpofalângicas/metatarsofalângicas e interfalângicas proximais e distais.',
+    funcao: 'Formam as alavancas finais da preensão e da propulsão; a falange distal sustenta a polpa digital e a unha.',
+    vascularizacao: 'Artérias digitais palmares e dorsais, que correm nas faces laterais do dedo.',
+    inervacao: 'Nervos digitais próprios, também laterais — a razão de o bloqueio digital ser feito na base do dedo, dos dois lados.',
+    clinica:
+      'O dedo em martelo é a avulsão do extensor na base da falange distal; a lesão em botoeira acomete a bandeleta central na interfalângica proximal. O bloqueio digital nunca usa vasoconstritor, pelo risco de isquemia — as digitais são artérias terminais.',
+    pontos: [
+      '3 falanges por dedo; 2 no polegar e no hálux',
+      'Bloqueio digital nas laterais da base',
+      'Dedo em martelo x deformidade em botoeira',
+    ],
+  },
+  {
+    termos: ['sutura sagital', 'sutura coronal', 'sutura lambdoidea', 'sutura escamosa'],
+    classe: 'sutura',
+    resumo: 'Articulações fibrosas da calvária, cada uma unindo um par definido de ossos.',
+    localizacao:
+      'A sagital corre na linha média entre os parietais; a coronal separa o frontal dos parietais; a lambdóidea separa os parietais do occipital; a escamosa contorna a escama do temporal.',
+    funcao: 'Permitem o crescimento do crânio perpendicular à sua linha durante a infância e travam no adulto.',
+    clinica:
+      'O fechamento precoce deforma o crânio de modo previsível: sinostose sagital dá escafocefalia (crânio longo e estreito), coronal bilateral dá braquicefalia, e a lambdóidea, plagiocefalia posterior. Nas radiografias, a sutura é o principal diagnóstico diferencial de traço de fratura — a sutura é serrilhada e bilateral; a fratura, retilínea e mais radiotransparente.',
+    pontos: [
+      'Sagital = escafocefalia quando fecha cedo',
+      'Sutura serrilhada x fratura retilínea',
+      'Crescimento perpendicular à linha da sutura',
+    ],
+  },
+  {
+    termos: ['corpo do penis', 'glande do penis', 'glande'],
+    classe: 'viscera',
+    resumo: 'Porção livre e extremidade do pênis, formadas pelos corpos eréteis revestidos por pele móvel.',
+    localizacao:
+      'O corpo contém os dois corpos cavernosos dorsais e o corpo esponjoso ventral; a glande é a expansão distal do esponjoso, com a coroa e o colo marcando sua base e o óstio externo da uretra na ponta.',
+    funcao: 'Os cavernosos garantem a rigidez da ereção; o esponjoso mantém a uretra pérvia durante a ereção, e a glande concentra a inervação sensitiva.',
+    vascularizacao: 'Artérias profundas do pênis (cavernosos) e do bulbo (esponjoso), ramos da pudenda interna; drenagem pela veia dorsal profunda para o plexo prostático.',
+    inervacao: 'Nervo dorsal do pênis, ramo do pudendo (S2–S4); ereção parassimpática pelos nervos cavernosos e ejaculação simpática.',
+    clinica:
+      'A fimose e a parafimose se explicam pelo anel prepucial no colo da glande — na parafimose, o prepúcio retraído estrangula e exige redução imediata. O priapismo isquêmico acomete os cavernosos e poupa a glande, e é emergência de horas pelo risco de fibrose e disfunção erétil definitiva.',
+    pontos: [
+      'Cavernosos = rigidez; esponjoso = uretra pérvia',
+      'Parafimose estrangula no colo da glande',
+      'Priapismo isquêmico poupa a glande',
+    ],
+  },
+  {
+    termos: ['escroto'],
+    exato: true,
+    classe: 'viscera',
+    resumo: 'Bolsa cutânea que aloja os testículos fora da cavidade abdominal, mantendo-os alguns graus mais frios.',
+    localizacao: 'Suspensa abaixo da sínfise púbica, dividida por um septo interno e marcada externamente pela rafe escrotal; suas camadas repetem, uma a uma, as da parede abdominal.',
+    funcao: 'Regula a temperatura testicular pelo músculo dartos, que enruga a pele, e pelo cremaster, que aproxima ou afasta o testículo do corpo.',
+    vascularizacao: 'Artérias pudendas externas (femoral) na frente e pudenda interna atrás.',
+    inervacao: 'Ramo genital do genitofemoral (L1–L2) para o cremaster, ílio-inguinal na frente e ramos do pudendo atrás.',
+    linfaticos: 'Linfonodos inguinais superficiais — diferente do testículo, que drena para os lombares.',
+    clinica:
+      'Essa diferença de drenagem é decisiva: tumor de testículo estadia-se no retroperitônio, mas câncer de pele do escroto vai para a virilha. O reflexo cremastérico (L1–L2) desaparece na torção testicular, e a transiluminação separa hidrocele de massa sólida.',
+    pontos: [
+      'Camadas espelham a parede abdominal',
+      'Escroto drena para inguinais; testículo para lombares',
+      'Reflexo cremastérico abolido na torção',
+    ],
+  },
+  {
+    termos: ['tuba uterina', 'tuba uterina direita', 'tuba uterina esquerda'],
+    classe: 'viscera',
+    resumo: 'Conduto par que capta o ovócito e o leva ao útero — e onde a fecundação de fato acontece.',
+    localizacao:
+      'Na margem livre do ligamento largo, com quatro partes: intramural, istmo, ampola e infundíbulo com as fímbrias, que abraçam o ovário e abrem na cavidade peritoneal.',
+    funcao: 'As fímbrias capturam o ovócito na ovulação, e o batimento ciliar somado à peristalse o conduz até o útero, geralmente em três a quatro dias.',
+    vascularizacao: 'Ramos tubários das artérias uterina e ovárica.',
+    inervacao: 'Plexos ovárico e uterovaginal.',
+    relacoes: 'É o único ponto do corpo em que a cavidade peritoneal se comunica com o meio externo — pela vagina, útero e tuba.',
+    clinica:
+      'A fecundação ocorre na ampola, o sítio mais comum de gravidez ectópica: quando rompe, dá abdome agudo hemorrágico. Essa comunicação com o peritônio é também a via da doença inflamatória pélvica ascendente e da peri-hepatite de Fitz-Hugh-Curtis.',
+    pontos: [
+      'Fecundação na ampola; ectópica no mesmo lugar',
+      'Única comunicação do peritônio com o exterior',
+      'Via ascendente da doença inflamatória pélvica',
+    ],
+  },
+  {
+    termos: ['fornice da vagina', 'fornice vaginal'],
+    classe: 'viscera',
+    resumo: 'Recesso circular entre o colo do útero e a parede vaginal, dividido em fórnices anterior, posterior e laterais.',
+    localizacao: 'Em torno da porção vaginal do colo; o fórnice posterior é o mais profundo, e logo atrás dele está a escavação retouterina.',
+    funcao: 'Acomoda a projeção do colo dentro da vagina e é onde se depositam as secreções cervicais.',
+    clinica:
+      'A profundidade do fórnice posterior é o que permite a culdocentese — puncionar o fundo de saco de Douglas pela vagina para confirmar hemoperitônio, como na ruptura de gravidez ectópica. É também por ali que se palpa a espinha isquiática para o bloqueio do pudendo.',
+    pontos: [
+      'Fórnice posterior é o mais profundo',
+      'Acesso ao fundo de saco de Douglas',
+      'Referência do bloqueio do nervo pudendo',
+    ],
+  },
+]

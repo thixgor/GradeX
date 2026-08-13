@@ -272,7 +272,7 @@ export function VitrineAnatomia({ dados, secao = 'hub' }: VitrineAnatomiaProps) 
             recursos={[
               { icone: Maximize2, texto: 'Zoom, arraste e tela cheia em cada prancha' },
               { icone: Search, texto: 'Busca de estrutura em todo o sistema' },
-              { icone: Target, texto: 'Modo estudo: esconde os rótulos e testa você' },
+              { icone: Target, texto: 'Quiz de identificação com resposta comentada' },
               { icone: Stethoscope, texto: 'Ficha completa em cada estrutura marcada' },
             ]}
             tom="primary"

@@ -40,6 +40,8 @@ export interface PranchaInterativaProps {
   modoEstudo: boolean
   /** Chave que reinicia o zoom quando a prancha muda. */
   chaveDaPeca: string
+  /** Rótulo com o nome ao lado do pino ativo. O quiz o desliga até responder. */
+  mostrarRotulos?: boolean
   prioridade?: boolean
 }
 
@@ -51,6 +53,7 @@ export function PranchaInterativa({
   onSelecionar,
   modoEstudo,
   chaveDaPeca,
+  mostrarRotulos = true,
   prioridade,
 }: PranchaInterativaProps) {
   const palcoRef = useRef<HTMLDivElement>(null)
@@ -245,7 +248,7 @@ export function PranchaInterativa({
                 {/* O nome sai junto do pino: na maior parte das vezes a pergunta
                     é só "que estrutura é essa?", e a resposta não deveria exigir
                     procurar o painel do lado. */}
-                {ativo && !oculto && (
+                {ativo && !oculto && mostrarRotulos && (
                   <span className="pointer-events-none absolute left-1/2 top-[calc(100%+6px)] max-w-[42vw] -translate-x-1/2 whitespace-nowrap rounded-lg border border-amber-300/40 bg-amber-400 px-2 py-1 text-[11px] font-bold text-amber-950 shadow-lg sm:max-w-[260px]">
                     <span className="block overflow-hidden text-ellipsis">{marcador.title}</span>
                   </span>
