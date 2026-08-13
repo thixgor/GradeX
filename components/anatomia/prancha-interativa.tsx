@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { Maximize2, Minus, Move, Plus, RotateCcw, Shrink } from 'lucide-react'
-import type { AtlasMarker } from '@/lib/atlas-anatomia/catalogo'
+import type { AtlasMarker } from '@/lib/atlas-anatomia/estrutura'
 import {
   criarControladorDeGestos,
   limitarTransformacao,

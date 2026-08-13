@@ -88,7 +88,11 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: 'any' },
-      { url: '/favicon.png', type: 'image/png' },
+      // 96 px cobre a aba em telas 1×, 2× e 3×. Sem o `sizes` declarado, o
+      // navegador tratava este arquivo como o candidato de maior qualidade e
+      // baixava a arte de 512 px — 71 KB, em toda página, para desenhar um
+      // ícone de 16 px. A mesma arte em 96 px pesa 5,5 KB.
+      { url: '/favicon.png', sizes: '96x96', type: 'image/png' },
     ],
     shortcut: '/favicon.ico',
     apple: [{ url: '/apple-icon.png', sizes: '180x180', type: 'image/png' }],

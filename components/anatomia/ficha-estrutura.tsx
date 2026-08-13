@@ -161,6 +161,39 @@ export function FichaVazia({ compacta }: { compacta?: boolean }) {
   )
 }
 
+/**
+ * Ficha no instante entre o toque e a chegada do conteúdo.
+ *
+ * O texto das estruturas é carregado sob demanda, e o nome do marcador já está
+ * na prancha — então a resposta mais comum ("que estrutura é essa?") aparece
+ * imediatamente, e só o aprofundamento espera. Na prática esta tela quase não é
+ * vista: o conteúdo começa a ser buscado assim que a prancha abre.
+ */
+export function FichaCarregando({ titulo, numero }: { titulo: string; numero: number }) {
+  return (
+    <article className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+      <div className="relative px-4 pb-4 pt-4 sm:px-5 sm:pt-5">
+        <div className="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-primary/50 to-primary/0" aria-hidden />
+        <div className="flex items-start gap-3">
+          <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border bg-muted/60 text-sm font-black tabular-nums text-muted-foreground">
+            {numero}
+          </span>
+          <div className="min-w-0 flex-1">
+            <h2 className="font-heading text-[22px] font-semibold leading-tight tracking-tight sm:text-2xl">
+              {titulo}
+            </h2>
+            <div className="mt-2.5 flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+              <span className="h-2 w-24 animate-pulse rounded-full bg-muted" aria-hidden />
+              <span className="h-2 w-16 animate-pulse rounded-full bg-muted" aria-hidden />
+            </div>
+          </div>
+        </div>
+        <p className="mt-4 text-[13px] text-muted-foreground">Carregando a ficha desta estrutura…</p>
+      </div>
+    </article>
+  )
+}
+
 export interface FichaEstruturaProps {
   titulo: string
   numero: number

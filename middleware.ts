@@ -99,6 +99,12 @@ const publicRoutes = [
   '/anatomia',
   '/api/anatomia',
   '/api/anatomia/previas',
+  // O acervo por sistema passa pelo middleware sem exigir sessão de propósito:
+  // quem decide é o mesmo `getManualClinicoAccess` que liberou a tela, dentro
+  // do próprio handler, que responde 403 a quem não assina. Exigir login aqui
+  // criaria uma segunda autoridade — e o Atlas quebraria justamente na
+  // configuração em que o módulo está aberto e o veredito libera visitante.
+  '/api/anatomia/acervo',
   // Avaliações (prova social) são leitura pública nas páginas de material,
   // deck e pacote — visitantes precisam ver as notas e comentários. A rota
   // GET não exige login; POST/PATCH/DELETE continuam validando a sessão
@@ -261,9 +267,19 @@ export async function middleware(request: NextRequest) {
     // visitante sem cookie para /auth/login, quebrando o registro do worker.
     pathname === '/sw.js' ||
     pathname.startsWith('/favicon') ||
+    // Analytics e Speed Insights da Vercel são servidos como script estático a
+    // partir daqui. Sem esta linha o visitante sem cookie recebia o HTML de
+    // /auth/login no lugar do JS — o navegador recusava por MIME type, depois
+    // de gastar um redirecionamento e 7 KB de HTML por script, em toda página.
+    pathname.startsWith('/_vercel/') ||
     pathname.endsWith('.ico') ||
     pathname.endsWith('.png') ||
     pathname.endsWith('.jpg') ||
+    // A logo do cabeçalho é `.webp`: faltando aqui, ela também caía no desvio
+    // para /auth/login e simplesmente não aparecia para quem não tem login.
+    pathname.endsWith('.webp') ||
+    pathname.endsWith('.avif') ||
+    pathname.endsWith('.gif') ||
     pathname.endsWith('.svg') ||
     pathname.endsWith('.xml') ||
     pathname.endsWith('.txt') ||

@@ -1,46 +1,24 @@
 import rawCatalog from '@/data/atlas-anatomia/catalogo.json'
+import { flattenCollections, type AtlasCatalog } from './estrutura'
 
-export interface AtlasMarker {
-  title: string
-  description: string
-  x: number
-  y: number
-  placement: string
-  color: string
-}
+/**
+ * O acervo inteiro, em memória.
+ *
+ * Este é o único módulo do projeto que importa o JSON das 418 pranchas — e por
+ * isso é de uso do servidor: as rotas de API, que servem o acervo por sistema,
+ * e os metadados das páginas. No navegador, importar daqui traz 66 KB
+ * comprimidos de dado junto; use `estrutura.ts` para os tipos e a travessia, e
+ * `acervo-cliente.ts` para buscar um sistema.
+ */
 
-export interface AtlasPiece {
-  id: string
-  title: string
-  image: string
-  sourceImage: string
-  markers: AtlasMarker[]
-}
-
-export interface AtlasCollection {
-  slug: string
-  title: string
-  sourceUrl?: string
-  pieces?: AtlasPiece[]
-  children?: AtlasCollection[]
-}
-
-export interface AtlasSystem {
-  slug: string
-  title: string
-  cover: string
-  sourceUrl: string
-  collections: AtlasCollection[]
-}
-
-interface AtlasCatalog {
-  source: {
-    name: string
-    url: string
-    authorization: string
-  }
-  systems: AtlasSystem[]
-}
+export type {
+  AtlasCatalog,
+  AtlasCollection,
+  AtlasMarker,
+  AtlasPiece,
+  AtlasSystem,
+} from './estrutura'
+export { flattenCollections, getAtlasCollection } from './estrutura'
 
 export const ATLAS_CATALOG = rawCatalog as AtlasCatalog
 
@@ -63,23 +41,6 @@ export const ATLAS_SYSTEMS = [...ATLAS_CATALOG.systems].sort(
 
 export function getAtlasSystem(slug: string | null | undefined) {
   return ATLAS_SYSTEMS.find(system => system.slug === slug)
-}
-
-export function flattenCollections(
-  collections: AtlasCollection[],
-  parents: string[] = [],
-): Array<AtlasCollection & { breadcrumb: string[] }> {
-  return collections.flatMap(collection => {
-    const breadcrumb = [...parents, collection.title]
-    return [
-      { ...collection, breadcrumb },
-      ...flattenCollections(collection.children || [], breadcrumb),
-    ]
-  })
-}
-
-export function getAtlasCollection(system: AtlasSystem, slug: string | null | undefined) {
-  return flattenCollections(system.collections).find(collection => collection.slug === slug)
 }
 
 export const ATLAS_TOTALS = ATLAS_SYSTEMS.reduce(
