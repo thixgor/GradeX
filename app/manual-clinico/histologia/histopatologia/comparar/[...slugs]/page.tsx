@@ -5,6 +5,7 @@ import { ArrowLeft } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
 import { Comparador } from '@/components/histopatologia/comparador'
+import { exigirAcessoAHistologia } from '@/lib/histologia/acesso'
 import type { MidiaExibivel } from '@/lib/histopatologia/esquemas'
 import { paraExibicao } from '@/lib/histopatologia/midia'
 import { obterDoenca } from '@/lib/histopatologia/repositorio'
@@ -22,7 +23,7 @@ import { metadadosDoModulo } from '@/lib/histopatologia/seo'
  * editorial. O par precisa ter sido afirmado por alguém.
  */
 
-export const revalidate = 86400
+export const dynamic = 'force-dynamic'
 
 interface Props {
   params: { slugs: string[] }
@@ -49,6 +50,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function PaginaDeComparacao({ params }: Props) {
+  await exigirAcessoAHistologia()
+
   const { slugDaDoenca, caminhoNormal } = separar(params.slugs)
   if (!slugDaDoenca || caminhoNormal.length === 0) notFound()
 

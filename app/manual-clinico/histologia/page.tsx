@@ -21,6 +21,8 @@ import { ContinuarEstudando } from '@/components/histologia/continuar'
 import { LogoDaHistologia } from '@/components/histologia/marca'
 import { MapaCurricular } from '@/components/histologia/mapa-curricular'
 import { setorDe, tema } from '@/components/histologia/tema'
+import { VitrineDaHistologia } from '@/components/histologia/vitrine'
+import { verificarAcessoAHistologia } from '@/lib/histologia/acesso'
 import type { NoCurriculo } from '@/lib/histologia/esquemas'
 import { MODULOS_DE_LABORATORIO } from '@/lib/histologia/laboratorio'
 import { AVISO_EDUCACIONAL, CREDITO_BASE } from '@/lib/histologia/licenca'
@@ -34,6 +36,7 @@ import {
   obterPagina,
 } from '@/lib/histologia/repositorio'
 import { BASE, rotaDaPagina } from '@/lib/histologia/seo'
+import { montarVitrine } from '@/lib/histologia/vitrine'
 
 /**
  * Home do Manual da Histologia.
@@ -59,12 +62,63 @@ import { BASE, rotaDaPagina } from '@/lib/histologia/seo'
  * serem falsos.
  */
 
-export const revalidate = 86400
+/**
+ * A home lê a sessão — é ela que decide entre o módulo e a vitrine — então não
+ * há o que pré-renderizar. As demais páginas da árvore mantêm seu ISR: elas
+ * redirecionam para cá quando o acesso falta, sem depender de cache.
+ */
+export const dynamic = 'force-dynamic'
 
 /** Lâmina de abertura: a primeira do currículo que tem imagem e crédito. */
 const ROTA_HERO = ['histologia-basica', 'preparacao-do-tecido', 'tissue-preparation-1']
 
 export default async function HomeDaHistologia() {
+  // Primeira linha, antes de tocar no repositório: sem acesso, o que esta rota
+  // serve é a landing de vendas — na mesma URL, para o link continuar valendo e
+  // o buscador ter o que indexar.
+  const acesso = await verificarAcessoAHistologia()
+  if (!acesso.liberado) {
+    const dados = await montarVitrine()
+    return (
+      // `guestNotice` desligado: o aviso flutuante do shell fala de catálogo e
+      // download, fora de contexto aqui, e cobre a barra de compra no celular.
+      // A landing já explica, no lugar certo, o que está trancado e como abrir.
+      <AppShell allowGuest showHeader={false} guestNotice={false}>
+        <VitrineDaHistologia
+          acesso={{
+            autenticado: acesso.autenticado,
+            motivo:
+              acesso.motivo === 'indisponivel'
+                ? 'indisponivel'
+                : acesso.autenticado
+                  ? 'locked'
+                  : 'guest',
+            produto: acesso.produto
+              ? {
+                  label: acesso.produto.label,
+                  ctaText: acesso.produto.ctaText,
+                  isActive: acesso.produto.isActive,
+                  currentPrice: acesso.produto.currentPrice,
+                  price: acesso.produto.price,
+                  hasActivePromotion: acesso.produto.hasActivePromotion,
+                  pricingEventId: acesso.produto.pricingEventId ?? null,
+                  plans: acesso.produto.plans.map((plano) => ({
+                    key: plano.key,
+                    label: plano.label,
+                    durationMonths: plano.durationMonths,
+                    price: plano.price,
+                    enabled: plano.enabled,
+                    pricingEventId: plano.pricingEventId,
+                  })),
+                }
+              : null,
+          }}
+          dados={dados}
+        />
+      </AppShell>
+    )
+  }
+
   const hero = await obterPagina(ROTA_HERO)
   // O hero é a primeira imagem que o aluno vê no módulo; é ela que define a
   // impressão de velocidade da home inteira.
@@ -173,8 +227,10 @@ export default async function HomeDaHistologia() {
               <Indicador icone={<FlaskConical className="h-3.5 w-3.5" aria-hidden />}>
                 {MODULOS_DE_LABORATORIO.length} laboratórios
               </Indicador>
-              <li className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/35 bg-emerald-500/10 px-3 py-1.5 font-bold text-emerald-800 dark:text-emerald-300">
-                Gratuito, sem login
+              {/* Quem chega aqui já passou pelo portão do layout — este selo
+                  confirma o acesso em vez de anunciar um preço. */}
+              <li className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/35 bg-amber-500/10 px-3 py-1.5 font-bold text-amber-800 dark:text-amber-300">
+                Seu acesso está liberado
               </li>
             </ul>
           </div>

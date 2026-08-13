@@ -8,10 +8,11 @@ import {
   CREDITO_BASE,
   LISTA_DE_FONTES,
 } from '@/lib/histopatologia/direitos'
+import { exigirAcessoAHistologia } from '@/lib/histologia/acesso'
 import { BASE, rotaDosCreditos } from '@/lib/histopatologia/rotas'
 import { metadadosDoModulo } from '@/lib/histopatologia/seo'
 
-export const revalidate = 86400
+export const dynamic = 'force-dynamic'
 
 export const metadata = metadadosDoModulo({
   titulo: 'Créditos, proveniência e direitos',
@@ -21,7 +22,9 @@ export const metadata = metadadosDoModulo({
 })
 
 /** Créditos e atribuições das fontes usadas no módulo. */
-export default function PaginaDeCreditos() {
+export default async function PaginaDeCreditos() {
+  await exigirAcessoAHistologia()
+
   return (
     <AppShell allowGuest showHeader={false} guestNotice={false}>
       <div className="surface-page min-h-screen">

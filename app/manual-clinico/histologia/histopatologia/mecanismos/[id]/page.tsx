@@ -6,6 +6,7 @@ import { ArrowLeft } from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
 import { CartaoDeDoenca } from '@/components/histopatologia/cartao-doenca'
 import { CLASSE_DE_FAMILIA } from '@/components/histopatologia/tema'
+import { exigirAcessoAHistologia } from '@/lib/histologia/acesso'
 import { FAMILIAS_DE_MECANISMO } from '@/lib/histopatologia/editorial/mecanismos'
 import {
   MECANISMOS_PUBLICADOS,
@@ -15,7 +16,7 @@ import {
 import { rotaDoMecanismo, rotaDosMecanismos } from '@/lib/histopatologia/rotas'
 import { metadadosDoModulo } from '@/lib/histopatologia/seo'
 
-export const revalidate = 86400
+export const dynamic = 'force-dynamic'
 
 interface Props {
   params: { id: string }
@@ -37,7 +38,9 @@ export function generateStaticParams() {
   return MECANISMOS_PUBLICADOS.map((m) => ({ id: m.id }))
 }
 
-export default function PaginaDoMecanismo({ params }: Props) {
+export default async function PaginaDoMecanismo({ params }: Props) {
+  await exigirAcessoAHistologia()
+
   const mecanismo = obterMecanismoPublicado(params.id)
   if (!mecanismo) notFound()
 

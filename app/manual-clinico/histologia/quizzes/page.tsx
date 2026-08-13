@@ -8,9 +8,10 @@ import {
   TOTAIS,
   type ResumoDeQuiz,
 } from '@/lib/histologia/repositorio'
+import { exigirAcessoAHistologia } from '@/lib/histologia/acesso'
 import { BASE, metadadosDoModulo } from '@/lib/histologia/seo'
 
-export const revalidate = 86400
+export const dynamic = 'force-dynamic'
 
 export const metadata = metadadosDoModulo({
   titulo: 'Quizzes de identificação',
@@ -67,7 +68,9 @@ function CartaoDeQuiz({ quiz, contexto }: { quiz: ResumoDeQuiz; contexto?: strin
   )
 }
 
-export default function PaginaDeQuizzes() {
+export default async function PaginaDeQuizzes() {
+  await exigirAcessoAHistologia()
+
   return (
     <AppShell allowGuest showHeader={false} guestNotice={false}>
       <div className="surface-page min-h-screen">

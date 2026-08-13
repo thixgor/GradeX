@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowRight, BookOpen, ChevronLeft, ChevronRight, Layers } fr
 
 import { AppShell } from '@/components/app-shell'
 import { CartaoDeDoenca } from '@/components/histopatologia/cartao-doenca'
+import { exigirAcessoAHistologia } from '@/lib/histologia/acesso'
 import { CAPITULOS_DO_ATLAS, obterCapituloDoAtlas } from '@/lib/histopatologia/catalogacao'
 import {
   SISTEMAS_COM_CONTAGEM,
@@ -34,7 +35,7 @@ import { metadadosDoModulo } from '@/lib/histopatologia/seo'
  * consulta o índice de servidor sem baixá-lo.
  */
 
-export const revalidate = 86400
+export const dynamic = 'force-dynamic'
 
 const ENTRADAS_POR_PAGINA = 48
 
@@ -64,6 +65,8 @@ export function generateStaticParams() {
 }
 
 export default async function PaginaDoSistema({ params, searchParams }: Props) {
+  await exigirAcessoAHistologia()
+
   const sistema = obterSistemaComContagem(params.sistema)
   if (!sistema) notFound()
 

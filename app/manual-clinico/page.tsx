@@ -366,7 +366,7 @@ const TOUR_STEPS: TourStep[] = [
   {
     target: '[data-tour="histologia"]',
     title: 'Manual da Histologia',
-    body: 'Atlas de histologia com microscópio virtual: percorra a lâmina com zoom e objetivos de 4× a 100×, acenda as estruturas sobre a imagem e teste-se nos quizzes. Gratuito e sem login.',
+    body: 'Atlas de histologia com microscópio virtual: percorra a lâmina com zoom e objetivos de 4× a 100×, acenda as estruturas sobre a imagem e teste-se nos quizzes. Privativo para assinantes e Plus+.',
   },
   {
     target: '[data-tour="tomografia"]',
@@ -1088,9 +1088,9 @@ function ManualClinicoContent() {
         )}
 
         {/* ══════════ HISTOLOGIA ENTRY ══════════ */}
-        {/* Módulo gratuito, sem paywall: o acervo é CC BY-NC-SA e a cláusula
-            NãoComercial impede colocá-lo atrás de assinatura. Por isso não há
-            selo de plano aqui — ver docs/adr/0001-licenca-manual-histologia.md. */}
+        {/* Seção privativa desde 2026-08-13: assinantes do Manual Clínico e
+            contas Plus+. Quem não assina cai na landing de vendas, na própria
+            rota — ver docs/adr/0003-histologia-privativa-assinantes.md. */}
         {!busca && (
           <button
             onClick={() => router.push('/manual-clinico/histologia')}
@@ -1107,15 +1107,15 @@ function ManualClinicoContent() {
                     height={566}
                     className="block h-auto w-full max-w-[110px]"
                   />
-                  <span className="inline-flex items-center gap-1 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-emerald-700 dark:text-emerald-300">
-                    Gratuito
+                  <span className="inline-flex items-center gap-1 rounded-md border border-amber-300/25 bg-amber-400/10 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-amber-700 dark:text-amber-200">
+                    <Crown className="h-2.5 w-2.5" /> {PLUS_LABEL}
                   </span>
                 </div>
                 <p className="mt-1.5 text-xs text-muted-foreground">
                   Atlas de histologia com microscópio virtual: 1.320 lâminas reais, zoom e
                   objetivos de 4× a 100×, e 7.775 estruturas que você acende sobre a imagem até
                   aprender a achá-las sozinho. Laboratório de preparação e artefatos, atlas
-                  pesquisável e 388 questões de identificação. Sem login.
+                  pesquisável e 388 questões de identificação.
                 </p>
               </div>
               <ArrowRight className="h-5 w-5 shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5 group-hover:text-teal-600" />

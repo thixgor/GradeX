@@ -4,11 +4,12 @@ import { ArrowLeft } from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
 import { BuscaDaHistologia } from '@/components/histologia/busca'
 import { MapaCurricular } from '@/components/histologia/mapa-curricular'
+import { exigirAcessoAHistologia } from '@/lib/histologia/acesso'
 import { COLORACOES } from '@/lib/histologia/glossario'
 import { CURRICULO, TOTAIS } from '@/lib/histologia/repositorio'
 import { BASE, metadadosDoModulo, rotaDaPagina } from '@/lib/histologia/seo'
 
-export const revalidate = 86400
+export const dynamic = 'force-dynamic'
 
 export const metadata = metadadosDoModulo({
   titulo: 'Atlas pesquisável',
@@ -18,7 +19,9 @@ export const metadata = metadadosDoModulo({
   caminho: `${BASE}/atlas`,
 })
 
-export default function PaginaDoAtlas() {
+export default async function PaginaDoAtlas() {
+  await exigirAcessoAHistologia()
+
   return (
     <AppShell allowGuest showHeader={false} guestNotice={false}>
       <div className="surface-page min-h-screen">

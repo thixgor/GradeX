@@ -8,10 +8,11 @@ import {
   MECANISMOS_PUBLICADOS,
   TOTAIS,
 } from '@/lib/histopatologia/repositorio'
+import { exigirAcessoAHistologia } from '@/lib/histologia/acesso'
 import { BASE, rotaDosMecanismos } from '@/lib/histopatologia/rotas'
 import { metadadosDoModulo } from '@/lib/histopatologia/seo'
 
-export const revalidate = 86400
+export const dynamic = 'force-dynamic'
 
 export const metadata = metadadosDoModulo({
   titulo: 'Mecanismos patológicos gerais',
@@ -30,7 +31,9 @@ export const metadata = metadadosDoModulo({
  * mesma coisa no fígado, no linfonodo e na pele. O eixo por sistema ensina um
  * órgão; este ensina um processo.
  */
-export default function PaginaDeMecanismos() {
+export default async function PaginaDeMecanismos() {
+  await exigirAcessoAHistologia()
+
   const contagem: Record<string, number> = {}
   for (const doenca of DOENCAS_RESUMIDAS) {
     for (const id of doenca.mecanismoIds) contagem[id] = (contagem[id] ?? 0) + 1

@@ -9,7 +9,13 @@ Escolha e registre uma destas rotas antes de publicar:
 1. manter o Manual da Histologia integralmente gratuito, sem paywall, sem CTA comercial contextual e tecnicamente separado de benefícios pagos; ou
 2. obter autorização escrita dos titulares para o uso comercial pretendido e arquivá-la no projeto.
 
-Enquanto isso não estiver resolvido, é permitido desenvolver e revisar em ambiente privado, mas não lançar em produção comercial. Não aplique o hook de acesso pago do módulo de Tomografia à Histologia.
+Enquanto isso não estiver resolvido, é permitido desenvolver e revisar em ambiente privado, mas não lançar em produção comercial.
+
+## Estado atual (2026-08-13): rota 2 escolhida, autorização ainda pendente
+
+Por decisão do responsável pelo produto, o módulo passou a ser **privativo de assinantes do Manual Clínico e de contas Plus+**. A autorização escrita da rota 2 **ainda não foi obtida nem arquivada** — o risco da cláusula NãoComercial está assumido e declarado em código (`PENDENCIA_NAO_COMERCIAL`, em `lib/histologia/licenca.ts`) e em `docs/adr/0003-histologia-privativa-assinantes.md`.
+
+Enquanto a autorização não chegar, mantenha o portão onde ele está: **um único arquivo**, `lib/histologia/acesso.ts`, aplicado pelo layout do módulo. Não espalhe checagem de acesso pelas páginas — reverter a decisão precisa continuar sendo uma mudança de um arquivo só. As obrigações de atribuição abaixo continuam valendo integralmente, inclusive na landing de vendas exibida a quem ainda não assina.
 
 ## Obrigações mínimas
 

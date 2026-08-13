@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 
+import { histologiaLiberadaNaRequisicao } from '@/lib/histologia/acesso'
 import { histologiaHabilitada } from '@/lib/histologia/licenca'
 import { obterQuiz } from '@/lib/histologia/repositorio'
 
@@ -17,18 +18,22 @@ import { obterQuiz } from '@/lib/histologia/repositorio'
  * ## O que isso protege, e o que não protege
  *
  * Protege contra o caminho fácil: abrir o inspetor e ler as respostas antes de
- * responder. **Não** protege contra quem chama esta rota direto — e não tem
- * como proteger, num módulo gratuito e sem login, sem sessão para amarrar a
- * tentativa. Não fingimos o contrário: estes quizzes são de autoavaliação, não
- * de avaliação com nota, e blindá-los custaria a gratuidade que a licença
- * NãoComercial nos obriga a manter.
+ * responder. **Não** protege contra o assinante que chama esta rota direto —
+ * não há sessão de prova para amarrar a tentativa. Não fingimos o contrário:
+ * estes quizzes são de autoavaliação, não de avaliação com nota.
+ *
+ * O que a rota protege desde que o módulo virou privativo é quem pode pedir:
+ * sem assinatura, 404 — o mesmo que a licença desligada devolve.
  */
 
 export const runtime = 'nodejs'
-export const revalidate = 86400
+export const dynamic = 'force-dynamic'
 
 export async function GET(_requisicao: Request, { params }: { params: { slug: string } }) {
   if (!histologiaHabilitada()) {
+    return new NextResponse(null, { status: 404 })
+  }
+  if (!(await histologiaLiberadaNaRequisicao())) {
     return new NextResponse(null, { status: 404 })
   }
 
@@ -57,6 +62,6 @@ export async function GET(_requisicao: Request, { params }: { params: { slug: st
         })),
       })),
     },
-    { headers: { 'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=604800' } },
+    { headers: { 'Cache-Control': 'private, max-age=300, must-revalidate' } },
   )
 }

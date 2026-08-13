@@ -5,26 +5,38 @@
  * CC BY-NC-SA 4.0. A cláusula NãoComercial é, por padrão, incompatível com
  * paywall, assinatura, promoção de produto e CTA comercial contextual. O Domine Aqui
  * tem fluxo Plus+/assinatura. Logo, este módulo **não pode ir ao ar** enquanto
- * uma destas duas rotas não estiver registrada em `AUTORIZACAO`:
+ * uma destas três rotas não estiver registrada em `AUTORIZACAO`:
  *
  *   1. o Manual da Histologia permanece integralmente gratuito, sem paywall,
  *      sem CTA comercial contextual e tecnicamente separado de benefícios
- *      pagos; ou
- *   2. existe autorização escrita dos titulares, arquivada no projeto.
+ *      pagos;
+ *   2. existe autorização escrita dos titulares, arquivada no projeto; ou
+ *   3. o responsável pelo produto assume, por decisão registrada aqui, o risco
+ *      de restringir o módulo a assinantes enquanto a autorização escrita não
+ *      chega (`'privativo-assinantes'`).
  *
  * Enquanto `AUTORIZACAO.decisao === 'pendente'`, a flag fica desligada em
  * produção e as rotas devolvem 404. Desenvolvimento e revisão continuam
  * liberados — é exatamente o que `LICENCA_E_PUBLICACAO.md` autoriza.
  *
- * NÃO aplique aqui `useAcessoTomografia`, `PLUS_LABEL`, checkout ou qualquer
- * hook de acesso pago. A gratuidade deste módulo é estrutural: não existe
- * código de cobrança para configurar errado.
+ * ## Estado atual: privativo, com pendência jurídica declarada
+ *
+ * O módulo passou a ser privativo de assinantes do Manual Clínico e de contas
+ * Plus+ em 2026-08-13, por decisão do responsável pelo produto. Isso **não**
+ * resolve a cláusula NãoComercial: a pendência continua aberta e está declarada
+ * em `PENDENCIA_NAO_COMERCIAL`, para que ninguém a descubra por acidente.
+ *
+ * O portão vive num só lugar — `lib/histologia/acesso.ts`, aplicado pelo layout
+ * do módulo. Não espalhe checagem de acesso por página: quando a autorização
+ * escrita chegar (ou a decisão voltar atrás), quem reverte precisa ter um único
+ * arquivo para mexer.
  */
 
 export type DecisaoDeLicenca =
   | 'pendente'
   | 'gratuito-sem-exploracao-comercial'
   | 'autorizacao-escrita-arquivada'
+  | 'privativo-assinantes'
 
 export interface RegistroDeAutorizacao {
   decisao: DecisaoDeLicenca
@@ -38,33 +50,65 @@ export interface RegistroDeAutorizacao {
 }
 
 /**
- * ESTADO ATUAL: gratuito, sem exploração comercial.
+ * ESTADO ATUAL: privativo de assinantes.
  *
- * Decisão registrada por throdrigf@gmail.com em 2026-08-07: o Manual da
- * Histologia permanece integralmente gratuito, sem paywall, sem CTA comercial
- * contextual e tecnicamente separado do Plus+/assinatura — não há hook de
- * acesso pago em nenhum arquivo do módulo (ver o teste que varre por
- * `useAcessoTomografia`, `PLUS_LABEL` e afins).
+ * Decisão registrada por throdrigf@gmail.com em 2026-08-13, substituindo a Rota
+ * A de 2026-08-07: o Manual da Histologia passa a ser **privativo de assinantes
+ * do Manual Clínico e de contas Plus+**. Quem não assina — inclusive visitante
+ * sem login — recebe a landing de vendas na mesma URL, em vez do acervo.
+ *
+ * A decisão é do responsável pelo produto e está registrada como tal. O que ela
+ * **não** faz é resolver a cláusula NãoComercial: ver `PENDENCIA_NAO_COMERCIAL`
+ * e `docs/adr/0003-histologia-privativa-assinantes.md`.
  *
  * Isso libera a *publicação*, mas não a *disponibilidade*: em produção o
- * módulo ainda exige `HISTOLOGIA_HABILITADO=1` no ambiente. Ver
- * `docs/adr/0001-licenca-manual-histologia.md`.
+ * módulo ainda exige `HISTOLOGIA_HABILITADO=1` no ambiente.
  */
 export const AUTORIZACAO: RegistroDeAutorizacao = {
-  decisao: 'gratuito-sem-exploracao-comercial',
-  registradoEm: '2026-08-07',
+  decisao: 'privativo-assinantes',
+  registradoEm: '2026-08-13',
   responsavel: 'throdrigf@gmail.com',
   documento: null,
   observacao:
-    'O módulo é gratuito por construção: nenhum código de cobrança existe em lib/histologia, ' +
-    'components/histologia ou app/manual-clinico/histologia. Falta ainda: envio do acervo ao ' +
-    'Vercel Blob (ver public/Manual-Histologia/IMPLEMENTACAO.md) e revisão biomédica do ' +
-    'conteúdo, que continua marcado como pendente-de-revisao em toda página e quiz.',
+    'Módulo restrito a assinantes do Manual Clínico e contas Plus+ por decisão do responsável ' +
+    'pelo produto, que assume o risco enquanto a autorização escrita dos titulares do acervo não ' +
+    'é obtida e arquivada. O portão fica num único ponto (lib/histologia/acesso.ts, aplicado pelo ' +
+    'layout do módulo) justamente para poder ser revertido num arquivo só. Seguem pendentes: ' +
+    'autorização escrita da VCU, envio do acervo ao Vercel Blob (ver ' +
+    'public/Manual-Histologia/IMPLEMENTACAO.md) e revisão biomédica do conteúdo, que continua ' +
+    'marcado como pendente-de-revisao em toda página e quiz.',
 }
+
+/**
+ * Pendência jurídica que a decisão de restringir **não** resolve.
+ *
+ * Fica exportada, e não escondida num comentário, porque o teste do módulo a
+ * exige enquanto o acesso for pago e sem documento arquivado: é a diferença
+ * entre um risco assumido com registro e um risco descoberto depois.
+ */
+export const PENDENCIA_NAO_COMERCIAL: string | null =
+  AUTORIZACAO.decisao === 'privativo-assinantes' && !AUTORIZACAO.documento
+    ? 'O acervo é CC BY-NC-SA 4.0 e o módulo está atrás de assinatura sem autorização escrita ' +
+      'dos titulares arquivada. Risco assumido pelo responsável pelo produto em ' +
+      `${AUTORIZACAO.registradoEm}. Para encerrar a pendência: obtenha a autorização, arquive-a ` +
+      'no projeto e mude a decisão para "autorizacao-escrita-arquivada". Para reverter: volte a ' +
+      'decisão para "gratuito-sem-exploracao-comercial" e libere o portão em lib/histologia/acesso.ts.'
+    : null
 
 /** A decisão registrada libera publicação em produção? */
 export function licencaPermitePublicar(): boolean {
   return AUTORIZACAO.decisao !== 'pendente'
+}
+
+/**
+ * O módulo é privativo neste estado de licença?
+ *
+ * É a única fonte da verdade sobre isso. `lib/histologia/acesso.ts` pergunta
+ * aqui antes de consultar sessão e banco — assim, voltar o módulo a gratuito é
+ * trocar a decisão registrada, e não caçar checagens espalhadas.
+ */
+export function histologiaEhPrivativa(): boolean {
+  return AUTORIZACAO.decisao === 'privativo-assinantes'
 }
 
 /**

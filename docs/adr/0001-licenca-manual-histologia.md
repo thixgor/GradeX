@@ -1,6 +1,10 @@
 # ADR 0001 — Portão de licença do Manual da Histologia
 
-- **Estado:** aceito — Rota A (gratuito, sem exploração comercial) registrada
+- **Estado:** parcialmente substituído por
+  [ADR 0003](./0003-histologia-privativa-assinantes.md) em 2026-08-13 — a Rota A
+  (gratuito) foi revertida e o módulo passou a ser privativo de assinantes. O
+  portão de licença descrito aqui (flag de ambiente, 404 seco, atribuição
+  estrutural) **continua valendo**; o que caiu foi a gratuidade.
 - **Data da decisão:** 2026-08-07
 - **Decisores:** throdrigf@gmail.com (responsável pelo produto)
 

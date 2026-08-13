@@ -5,6 +5,7 @@ import { ArrowLeft, ExternalLink } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
 import { GaleriaRemota } from '@/components/histopatologia/galeria-remota'
+import { exigirAcessoAHistologia } from '@/lib/histologia/acesso'
 import { AVISO_ACERVO_INDISPONIVEL, inventarioDaEntrada } from '@/lib/histopatologia/acervo'
 import { FONTES } from '@/lib/histopatologia/direitos'
 import {
@@ -40,7 +41,7 @@ import { metadadosDoModulo } from '@/lib/histopatologia/seo'
  * são navegáveis por `?pagina=`.
  */
 
-export const revalidate = 86400
+export const dynamic = 'force-dynamic'
 
 interface Props {
   params: { id: string }
@@ -65,6 +66,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function PaginaDaEntradaCatalogada({ params, searchParams }: Props) {
+  await exigirAcessoAHistologia()
+
   const entrada = await obterEntradaCatalogada(decodeURIComponent(params.id))
   if (!entrada) notFound()
 

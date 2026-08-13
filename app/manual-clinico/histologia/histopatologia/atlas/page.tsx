@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight, Microscope } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
 import { BuscaDaHistopatologia } from '@/components/histopatologia/busca'
+import { exigirAcessoAHistologia } from '@/lib/histologia/acesso'
 import { LISTA_DE_FONTES } from '@/lib/histopatologia/direitos'
 import { SISTEMAS_COM_CONTAGEM, TOTAIS } from '@/lib/histopatologia/repositorio'
 import { BASE, rotaDoCapituloWebPathUtah, rotaDoSistema } from '@/lib/histopatologia/rotas'
@@ -27,7 +28,7 @@ import {
  * todas como diagnósticos seria inventar 2.917 entidades nosológicas.
  */
 
-export const revalidate = 86400
+export const dynamic = 'force-dynamic'
 
 const TOTAL_DE_ITENS_DO_ATLAS = TOTAIS.capitulosVisuais + TOTAL_ENTRADAS_WEBPATH_UTAH
 
@@ -39,7 +40,9 @@ export const metadata = metadadosDoModulo({
   caminho: `${BASE}/atlas`,
 })
 
-export default function PaginaDoAtlas() {
+export default async function PaginaDoAtlas() {
+  await exigirAcessoAHistologia()
+
   return (
     <AppShell allowGuest showHeader={false} guestNotice={false}>
       <div className="surface-page min-h-screen">

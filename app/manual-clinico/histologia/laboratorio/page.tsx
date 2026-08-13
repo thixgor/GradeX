@@ -2,10 +2,11 @@ import Link from 'next/link'
 import { ArrowLeft, ArrowRight, Clock, FlaskConical } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
+import { exigirAcessoAHistologia } from '@/lib/histologia/acesso'
 import { MODULOS_DE_LABORATORIO } from '@/lib/histologia/laboratorio'
 import { BASE, metadadosDoModulo } from '@/lib/histologia/seo'
 
-export const revalidate = 86400
+export const dynamic = 'force-dynamic'
 
 export const metadata = metadadosDoModulo({
   titulo: 'Laboratório virtual',
@@ -15,7 +16,9 @@ export const metadata = metadadosDoModulo({
   caminho: `${BASE}/laboratorio`,
 })
 
-export default function PaginaDoLaboratorio() {
+export default async function PaginaDoLaboratorio() {
+  await exigirAcessoAHistologia()
+
   return (
     <AppShell allowGuest showHeader={false} guestNotice={false}>
       <div className="surface-page min-h-screen">

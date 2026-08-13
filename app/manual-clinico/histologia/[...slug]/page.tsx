@@ -5,6 +5,7 @@ import { AppShell } from '@/components/app-shell'
 import { Lamina } from '@/components/histologia/lamina'
 import { SecaoDoCurriculo } from '@/components/histologia/secao'
 import { DoencasRelacionadas } from '@/components/histopatologia/doencas-relacionadas'
+import { exigirAcessoAHistologia } from '@/lib/histologia/acesso'
 import { doencasRelacionadasA } from '@/lib/histopatologia/repositorio'
 import { buildJsonLd } from '@/lib/seo'
 import {
@@ -39,7 +40,7 @@ import { jsonLdDeLamina, jsonLdDeTrilha, metadadosDoModulo, rotaDaPagina } from 
  * resultado ainda é cacheado por variante de URL.
  */
 
-export const revalidate = 86400
+export const dynamic = 'force-dynamic'
 
 interface Props {
   params: { slug: string[] }
@@ -71,6 +72,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function PaginaDoCurriculo({ params, searchParams }: Props) {
+  await exigirAcessoAHistologia()
+
   const pagina = await obterPagina(params.slug)
   if (!pagina) notFound()
 

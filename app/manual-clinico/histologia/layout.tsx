@@ -5,7 +5,7 @@ import { histologiaHabilitada, motivoDoBloqueio } from '@/lib/histologia/licenca
 import { metadadosDoModulo } from '@/lib/histologia/seo'
 
 /**
- * Portão de entrada do Manual da Histologia.
+ * Portão de licença do Manual da Histologia.
  *
  * Todo o módulo passa por aqui, e é aqui que o bloqueio de licença é aplicado —
  * um único ponto, em vez de uma checagem por rota que alguém esqueceria de
@@ -15,14 +15,28 @@ import { metadadosDoModulo } from '@/lib/histologia/seo'
  * anunciar que existe conteúdo escondido convida ao contorno e não beneficia
  * ninguém. O motivo real vai para o log do servidor, onde quem opera vê.
  *
- * Ver `docs/adr/0001-licenca-manual-histologia.md`.
+ * ## O portão de assinatura NÃO fica aqui
+ *
+ * O módulo é privativo de assinantes (ADR 0003), mas essa checagem vive nas
+ * páginas, via `lib/histologia/acesso.ts`. A razão é técnica e foi medida: um
+ * layout que escolhe entre `children` e a vitrine não impede a página de
+ * renderizar — no App Router a árvore da página é prop de um componente de
+ * cliente e vai serializada no payload RSC de qualquer jeito. O HTML mostrava a
+ * landing e o `<script>` seguinte entregava a lâmina.
+ *
+ * Licença é diferente: `notFound()` lança aqui e derruba a resposta inteira,
+ * então o 404 continua valendo para a árvore toda.
+ *
+ * Ver `docs/adr/0001-licenca-manual-histologia.md` e
+ * `docs/adr/0003-histologia-privativa-assinantes.md`.
  */
 
 export const metadata: Metadata = metadadosDoModulo({
   titulo: 'Manual da Histologia',
   descricao:
-    'Atlas de histologia interativo e gratuito: microscópio virtual com camadas de marcação, ' +
-    'laboratório de preparação e coloração, atlas pesquisável por estrutura e quizzes nativos.',
+    'Atlas de histologia interativo: microscópio virtual com camadas de marcação, laboratório de ' +
+    'preparação e coloração, atlas pesquisável por estrutura e quizzes nativos. Privativo para ' +
+    'assinantes do Manual Clínico e contas DomineAqui Plus+.',
   caminho: '/manual-clinico/histologia',
 })
 

@@ -20,6 +20,7 @@ import {
 } from '@/components/histopatologia/tabela-normal-patologico'
 import { MARCA_DE_NATUREZA, MARCA_DE_REVISAO } from '@/components/histopatologia/tema'
 import type { AplicacaoDeMecanismoResolvida } from '@/components/histopatologia/tipos'
+import { exigirAcessoAHistologia } from '@/lib/histologia/acesso'
 import { LISTA_DE_FONTES } from '@/lib/histopatologia/direitos'
 import { referenciasVisuaisDaDoenca } from '@/lib/histopatologia/editorial/referencias-visuais'
 import { MIDIAS_PRINCIPAIS_MAXIMO, paraExibicao } from '@/lib/histopatologia/midia'
@@ -68,7 +69,7 @@ import type { MidiaExibivel } from '@/lib/histopatologia/esquemas'
  * precede olhar.
  */
 
-export const revalidate = 86400
+export const dynamic = 'force-dynamic'
 
 interface Props {
   params: { slug: string }
@@ -88,6 +89,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function PaginaDaDoenca({ params }: Props) {
+  await exigirAcessoAHistologia()
+
   const fragmento = await obterDoenca(params.slug)
   if (!fragmento) notFound()
 

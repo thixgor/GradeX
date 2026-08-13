@@ -10,6 +10,7 @@ import {
   OrdemImpossivel,
 } from '@/components/histologia/laboratorio'
 import { EstadoEditorial } from '@/components/histologia/marca'
+import { exigirAcessoAHistologia } from '@/lib/histologia/acesso'
 import { COLORACOES } from '@/lib/histologia/glossario'
 import { MODULOS_DE_LABORATORIO, obterModulo } from '@/lib/histologia/laboratorio'
 import { BASE, metadadosDoModulo } from '@/lib/histologia/seo'
@@ -18,7 +19,7 @@ export function generateStaticParams() {
   return MODULOS_DE_LABORATORIO.map((m) => ({ modulo: m.id }))
 }
 
-export const revalidate = 86400
+export const dynamic = 'force-dynamic'
 
 interface Props {
   params: { modulo: string }
@@ -34,7 +35,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   })
 }
 
-export default function PaginaDoModulo({ params }: Props) {
+export default async function PaginaDoModulo({ params }: Props) {
+  await exigirAcessoAHistologia()
+
   const modulo = obterModulo(params.modulo)
   if (!modulo) notFound()
 

@@ -5,6 +5,7 @@ import { ArrowLeft, ChevronLeft, ChevronRight, Search } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
 import { GaleriaWebPathUtah } from '@/components/histopatologia/galeria-webpath-utah'
+import { exigirAcessoAHistologia } from '@/lib/histologia/acesso'
 import { FONTES, resolverDireitos } from '@/lib/histopatologia/direitos'
 import type { MidiaExibivel } from '@/lib/histopatologia/esquemas'
 import {
@@ -24,7 +25,7 @@ import {
   traduzirTituloWebPathUtah,
 } from '@/lib/histopatologia/webpath-utah/traducao'
 
-export const revalidate = 86400
+export const dynamic = 'force-dynamic'
 
 const POR_PAGINA = 24
 
@@ -44,6 +45,8 @@ export function generateMetadata({ params }: Props): Metadata {
 }
 
 export default async function PaginaDoCapituloWebPathUtah({ params, searchParams = {} }: Props) {
+  await exigirAcessoAHistologia()
+
   const resumo = resumoDoCapituloWebPathUtah(params.capitulo)
   const capitulo = await obterCapituloWebPathUtah(params.capitulo)
   if (!resumo || !capitulo) notFound()

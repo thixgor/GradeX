@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 
+import { histologiaLiberadaNaRequisicao } from '@/lib/histologia/acesso'
 import { buscar, type FiltrosDeBusca, type TipoDeResultado } from '@/lib/histologia/busca'
 import type { EntradaBusca } from '@/lib/histologia/esquemas'
 import { histologiaHabilitada } from '@/lib/histologia/licenca'
@@ -17,8 +18,12 @@ import indiceCompleto from '@/data/histologia/busca-servidor.json'
  * comprimidos, resposta instantânea enquanto se digita) e chama esta rota em
  * paralelo para trazer as estruturas.
  *
- * O módulo é gratuito e sem login, então não há sessão a validar aqui — só o
- * portão de licença, que fecha a rota junto com o resto do módulo.
+ * ## Por que há sessão a validar aqui
+ *
+ * O módulo é privativo de assinantes do Manual Clínico e de contas Plus+. Este
+ * índice é o acervo em forma de texto — os 7.453 rótulos de estrutura, todos
+ * eles — e seria a maneira mais fácil de contornar o portão da página. Fecha
+ * junto, com o mesmo 404 seco da licença desligada.
  */
 
 const INDICE = indiceCompleto as unknown as EntradaBusca[]
@@ -26,12 +31,15 @@ const INDICE = indiceCompleto as unknown as EntradaBusca[]
 const TIPOS_VALIDOS: TipoDeResultado[] = ['lamina', 'secao', 'estrutura', 'quiz']
 
 export const runtime = 'nodejs'
-// O índice é estático entre deploys: a resposta pode ficar na borda por um dia
-// e o `stale-while-revalidate` cobre a virada sem nenhuma requisição lenta.
-export const revalidate = 86400
+// A resposta depende de quem pergunta, então não pode mais ficar na borda: o
+// cache compartilhado serviria a busca de um assinante a um visitante.
+export const dynamic = 'force-dynamic'
 
 export async function GET(requisicao: Request) {
   if (!histologiaHabilitada()) {
+    return new NextResponse(null, { status: 404 })
+  }
+  if (!(await histologiaLiberadaNaRequisicao())) {
     return new NextResponse(null, { status: 404 })
   }
 
@@ -55,10 +63,6 @@ export async function GET(requisicao: Request) {
 
   return NextResponse.json(
     { resultados, total: resultados.length },
-    {
-      headers: {
-        'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=604800',
-      },
-    },
+    { headers: { 'Cache-Control': 'private, max-age=300, must-revalidate' } },
   )
 }

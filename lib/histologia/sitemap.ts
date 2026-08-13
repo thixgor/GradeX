@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next'
 
 import { CANONICAL_ORIGIN } from '@/lib/seo'
-import { podeIndexar } from './licenca'
+import { histologiaEhPrivativa, podeIndexar } from './licenca'
 import { MODULOS_DE_LABORATORIO } from './laboratorio'
 import { CURRICULO, TODOS_OS_QUIZZES, achatarCurriculo } from './repositorio'
 import { BASE } from './seo'
@@ -22,6 +22,13 @@ import { BASE } from './seo'
  *    o que efetivamente tem conteúdo indexável hoje. Quando o aprofundamento em
  *    português estiver escrito e revisado, as lâminas entram por um sitemap
  *    próprio, paginado.
+ *
+ * 3. **Com o módulo privativo, só a home entra.** O buscador chega sem sessão,
+ *    então toda rota interna o manda para a landing. Convidar o rastreador a
+ *    duzentas URLs que redirecionam para a mesma página gasta orçamento de
+ *    rastreamento para produzir duzentos redirecionamentos — o convite honesto é
+ *    a única URL que realmente responde com conteúdo próprio a quem não assina.
+ *    Se a decisão voltar atrás (ADR 0003), o sitemap completo volta sozinho.
  */
 
 function canonico(caminho: string): string {
@@ -31,8 +38,13 @@ function canonico(caminho: string): string {
 export function entradasDaHistologia(agora = new Date()): MetadataRoute.Sitemap {
   if (!podeIndexar()) return []
 
-  const fixas: MetadataRoute.Sitemap = [
+  const home: MetadataRoute.Sitemap = [
     { url: canonico(BASE), lastModified: agora, changeFrequency: 'weekly', priority: 0.8 },
+  ]
+  if (histologiaEhPrivativa()) return home
+
+  const fixas: MetadataRoute.Sitemap = [
+    ...home,
     { url: canonico(`${BASE}/atlas`), lastModified: agora, changeFrequency: 'weekly', priority: 0.7 },
     {
       url: canonico(`${BASE}/laboratorio`),

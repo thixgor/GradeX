@@ -25,6 +25,7 @@ import {
   SISTEMAS_COM_CONTAGEM,
   TOTAIS,
 } from '@/lib/histopatologia/repositorio'
+import { exigirAcessoAHistologia } from '@/lib/histologia/acesso'
 import { TOTAL_ENTRADAS_WEBPATH_UTAH } from '@/lib/histopatologia/webpath-utah/catalogo'
 
 /**
@@ -40,9 +41,11 @@ import { TOTAL_ENTRADAS_WEBPATH_UTAH } from '@/lib/histopatologia/webpath-utah/c
  * só são lidos quando alguém abre aquele sistema.
  */
 
-export const revalidate = 86400
+export const dynamic = 'force-dynamic'
 
-export default function HomeDaHistopatologia() {
+export default async function HomeDaHistopatologia() {
+  await exigirAcessoAHistologia()
+
   const comDoencas = SISTEMAS_COM_CONTAGEM.filter((s) => s.doencas > 0)
   const semDoencas = SISTEMAS_COM_CONTAGEM.filter((s) => s.doencas === 0)
 

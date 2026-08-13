@@ -75,10 +75,11 @@ const publicRoutes = [
   // privativas e quem decide é o handler /api/manual-clinico/ferramentas. As
   // áreas (/ferramentas/<slug>) entram pela regex em isPublicRoute.
   '/manual-clinico/ferramentas',
-  // Manual da Histologia: público *por obrigação de licença*. O acervo é
-  // CC BY-NC-SA e a cláusula NãoComercial impede colocá-lo atrás de login ou
-  // assinatura. As subrotas entram pela regex em isPublicRoute; quem decide se
-  // o módulo existe é o portão em lib/histologia/licenca.ts, não o middleware.
+  // Manual da Histologia: seção privativa (assinantes do Manual Clínico e
+  // Plus+), mas a rota segue pública para que o visitante deslogado veja a
+  // landing de vendas em vez de cair no login. Quem decide o que aparece é o
+  // layout do módulo, via lib/histologia/acesso.ts; quem decide se o módulo
+  // existe é lib/histologia/licenca.ts. Nenhum dos dois é o middleware.
   '/manual-clinico/histologia',
   // Landing page lê settings publicamente (videoEmbedUrl, landingPageEnabled,
   // etc). A própria rota faz checagem de admin internamente para PUT.
@@ -192,7 +193,10 @@ function isPublicRoute(pathname: string): boolean {
   if (/^\/anatomia(\/[a-z0-9-]+){0,2}$/.test(pathname)) return true
 
   // Todo o Manual da Histologia — inclusive o currículo, que tem até seis
-  // segmentos de profundidade — e as rotas de dados que ele consome.
+  // segmentos de profundidade — e as rotas de dados que ele consome. Público
+  // aqui significa "não redireciona para o login": o portão de assinatura é
+  // aplicado dentro do módulo (layout) e dentro de cada handler de dados, que
+  // devolvem a landing e 404 respectivamente a quem não assina.
   if (/^\/manual-clinico\/histologia(\/[a-z0-9-]+)*$/.test(pathname)) return true
   if (/^\/api\/manual-clinico\/histologia\//.test(pathname)) return true
   // As rotas de dados da Histopatologia (índice de busca, busca e inventário do

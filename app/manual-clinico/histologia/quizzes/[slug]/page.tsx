@@ -5,6 +5,7 @@ import { ArrowLeft } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
 import { QuizRunner } from '@/components/histologia/quiz'
+import { exigirAcessoAHistologia } from '@/lib/histologia/acesso'
 import { buildJsonLd } from '@/lib/seo'
 import type { Modo } from '@/lib/histologia/quiz-engine'
 import { quizParaCliente } from '@/lib/histologia/quiz-engine'
@@ -21,7 +22,7 @@ export function generateStaticParams() {
   return listarSlugsDeQuiz().map((slug) => ({ slug }))
 }
 
-export const revalidate = 86400
+export const dynamic = 'force-dynamic'
 
 interface Props {
   params: { slug: string }
@@ -42,6 +43,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function PaginaDoQuiz({ params, searchParams }: Props) {
+  await exigirAcessoAHistologia()
+
   const quiz = await obterQuiz(params.slug)
   if (!quiz) notFound()
 

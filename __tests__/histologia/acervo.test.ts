@@ -7,6 +7,8 @@ import {
   AUTORIZACAO,
   CREDITO_BASE,
   LICENCA,
+  PENDENCIA_NAO_COMERCIAL,
+  histologiaEhPrivativa,
   licencaPermitePublicar,
   pendenciaDeLicenca,
   podeIndexar,
@@ -54,20 +56,61 @@ describe('portão de licença', () => {
       expect(alteracao.length).toBeGreaterThan(40)
     }
   })
+
+  /**
+   * O módulo passou a ser privativo em 2026-08-13 (ADR 0003). A cláusula
+   * NãoComercial **não** foi resolvida por isso — foi assumida como risco pelo
+   * responsável pelo produto.
+   *
+   * Este teste substitui o antigo "nenhum acoplamento a fluxo pago". O que ele
+   * defende agora não é a gratuidade, e sim que o risco continue *declarado*:
+   * enquanto houver paywall sem autorização escrita arquivada, a pendência tem
+   * de existir por escrito no código, com data e responsável. Quando a
+   * autorização chegar, a decisão vira 'autorizacao-escrita-arquivada', o
+   * documento passa a ser obrigatório e a pendência some sozinha.
+   */
+  it('paywall sem autorização escrita mantém a pendência NãoComercial declarada', () => {
+    if (!histologiaEhPrivativa()) {
+      expect(PENDENCIA_NAO_COMERCIAL).toBeNull()
+      return
+    }
+    expect(AUTORIZACAO.documento).toBeNull()
+    expect(PENDENCIA_NAO_COMERCIAL).toBeTruthy()
+    expect(PENDENCIA_NAO_COMERCIAL).toContain('CC BY-NC-SA')
+    expect(PENDENCIA_NAO_COMERCIAL).toContain(AUTORIZACAO.registradoEm)
+    // Quem herdar isto precisa achar o caminho de volta sem arqueologia.
+    expect(AUTORIZACAO.observacao).toContain('lib/histologia/acesso.ts')
+  })
 })
 
-describe('nenhum acoplamento a fluxo pago', () => {
+describe('portão de assinatura num único ponto', () => {
   /**
-   * A gratuidade do módulo é estrutural: não existe código de cobrança para
-   * configurar errado. Este teste varre a superfície inteira do módulo atrás
-   * dos símbolos que trariam o paywall de volta.
+   * Antes, este bloco varria o módulo proibindo qualquer símbolo de cobrança —
+   * a gratuidade era estrutural. Com o módulo privativo, a invariante muda de
+   * natureza mas não de espírito: o acesso pago pode existir, **num lugar só**.
+   *
+   * O que isso compra: reverter a decisão (ou trocar a regra de quem entra) é
+   * mexer em `lib/histologia/acesso.ts` e mais nada. Uma checagem copiada para
+   * dentro de uma página é exatamente o que faz um paywall sobreviver à decisão
+   * de removê-lo.
    */
-  const PROIBIDOS = [
+  const SIMBOLOS_DE_ACESSO = [
     'useAcessoTomografia',
     'PLUS_LABEL',
     'manual-clinico/checkout',
     'hasFullAccess',
     'account-tier',
+    'getManualClinicoAccess',
+  ]
+
+  /** Os únicos arquivos autorizados a falar de acesso pago. */
+  const AUTORIZADOS = [
+    'lib/histologia/licenca.ts',
+    'lib/histologia/acesso.ts',
+    'components/histologia/vitrine.tsx',
+    // A home é a única página que precisa do veredito: é ela que troca o
+    // conteúdo pela vitrine. As demais só chamam `exigirAcessoAHistologia()`.
+    'app/manual-clinico/histologia/page.tsx',
   ]
 
   const alvos = [
@@ -77,7 +120,7 @@ describe('nenhum acoplamento a fluxo pago', () => {
     'app/api/manual-clinico/histologia',
   ]
 
-  it('nenhum arquivo do módulo referencia acesso pago', async () => {
+  it('só o portão e a vitrine tocam em acesso pago', async () => {
     const { readdirSync, statSync, existsSync } = await import('node:fs')
     const arquivos: string[] = []
     const varrer = (dir: string) => {
@@ -92,15 +135,70 @@ describe('nenhum acoplamento a fluxo pago', () => {
     expect(arquivos.length).toBeGreaterThan(0)
 
     for (const arquivo of arquivos) {
+      const relativo = path.relative(RAIZ, arquivo).split(path.sep).join('/')
+      if (AUTORIZADOS.includes(relativo)) continue
       const conteudo = readFileSync(arquivo, 'utf8')
-      for (const proibido of PROIBIDOS) {
-        // `licenca.ts` e este teste citam os nomes em comentário, de propósito.
-        if (/licenca\.ts$/.test(arquivo)) continue
+      for (const simbolo of SIMBOLOS_DE_ACESSO) {
         expect(
-          conteudo.includes(proibido),
-          `${path.relative(RAIZ, arquivo)} referencia "${proibido}"`,
+          conteudo.includes(simbolo),
+          `${relativo} referencia "${simbolo}" — o portão deve viver só em lib/histologia/acesso.ts`,
         ).toBe(false)
       }
+    }
+  })
+
+  /**
+   * O erro que esta forma de portão permite cometer.
+   *
+   * O portão precisa estar **na página**, e não no layout: no App Router a
+   * árvore da página é prop de um componente de cliente, então ela renderiza e
+   * vai serializada no payload RSC mesmo quando o layout devolve outra coisa —
+   * o HTML mostra a vitrine e o `<script>` seguinte entrega a lâmina. Foi
+   * medido. O preço de barrar na página é uma linha por página, e a linha que
+   * alguém esquece na próxima página nova é exatamente o vazamento.
+   *
+   * Este teste é essa linha.
+   */
+  it('toda página da árvore chama o portão', async () => {
+    const { readdirSync, statSync } = await import('node:fs')
+    const paginas: string[] = []
+    const varrer = (dir: string) => {
+      for (const nome of readdirSync(dir)) {
+        const completo = path.join(dir, nome)
+        if (statSync(completo).isDirectory()) varrer(completo)
+        else if (nome === 'page.tsx') paginas.push(completo)
+      }
+    }
+    varrer(path.join(RAIZ, 'app/manual-clinico/histologia'))
+    expect(paginas.length).toBeGreaterThan(15)
+
+    const home = path.join(RAIZ, 'app/manual-clinico/histologia/page.tsx')
+    for (const pagina of paginas) {
+      const relativo = path.relative(RAIZ, pagina).split(path.sep).join('/')
+      const conteudo = readFileSync(pagina, 'utf8')
+      // A home decide entre conteúdo e vitrine; as outras só exigem acesso.
+      const chamada = pagina === home ? 'verificarAcessoAHistologia(' : 'exigirAcessoAHistologia('
+      expect(
+        conteudo.includes(chamada),
+        `${relativo} serve conteúdo do módulo sem chamar ${chamada})`,
+      ).toBe(histologiaEhPrivativa())
+    }
+  })
+
+  it('as rotas de dados do módulo fecham junto com as páginas', async () => {
+    const rotas = [
+      'app/api/manual-clinico/histologia/indice/route.ts',
+      'app/api/manual-clinico/histologia/busca/route.ts',
+      'app/api/manual-clinico/histologia/quiz/[slug]/gabarito/route.ts',
+    ]
+    for (const rota of rotas) {
+      const conteudo = readFileSync(path.join(RAIZ, rota), 'utf8')
+      expect(
+        conteudo.includes('histologiaLiberadaNaRequisicao'),
+        `${rota} serve o acervo sem consultar o portão`,
+      ).toBe(histologiaEhPrivativa())
+      // Resposta que depende de sessão nunca pode ficar num cache compartilhado.
+      expect(conteudo.includes('public, s-maxage')).toBe(false)
     }
   })
 })

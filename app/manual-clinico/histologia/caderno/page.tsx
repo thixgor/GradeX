@@ -3,6 +3,7 @@ import { ArrowLeft } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
 import { Caderno } from '@/components/histologia/caderno'
+import { exigirAcessoAHistologia } from '@/lib/histologia/acesso'
 import { BASE, metadadosDoModulo } from '@/lib/histologia/seo'
 
 export const metadata = metadadosDoModulo({
@@ -13,7 +14,11 @@ export const metadata = metadadosDoModulo({
   caminho: `${BASE}/caderno`,
 })
 
-export default function PaginaDoCaderno() {
+export const dynamic = 'force-dynamic'
+
+export default async function PaginaDoCaderno() {
+  await exigirAcessoAHistologia()
+
   return (
     <AppShell allowGuest showHeader={false} guestNotice={false}>
       <div className="surface-page min-h-screen">
@@ -31,9 +36,9 @@ export default function PaginaDoCaderno() {
               Caderno e meus dados
             </h1>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-              Este módulo é gratuito e não pede login, então nada disso vive num servidor: fica no
-              armazenamento local deste navegador. Você pode levar tudo embora num arquivo ou apagar
-              de vez, aqui mesmo.
+              O progresso deste módulo não vive num servidor: fica no armazenamento local deste
+              navegador, mesmo estando sua conta conectada. Você pode levar tudo embora num arquivo
+              ou apagar de vez, aqui mesmo.
             </p>
           </header>
 
