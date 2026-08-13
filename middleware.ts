@@ -89,14 +89,19 @@ const publicRoutes = [
   // /api/loja/produtos e /api/loja/settings validam admin internamente.
   '/api/loja/produtos',
   '/api/loja/settings/public',
+  // Domine Anatomia é seção privativa (assinantes do Manual Clínico e Plus+),
+  // mas as páginas são públicas para mostrar a landing de vendas a quem ainda
+  // não assina — inclusive sem login. Quem decide o que aparece é esta rota,
+  // que devolve o veredito de acesso e apenas o resumo do catálogo; o acervo
+  // fica do outro lado. As miniaturas dos modelos vêm do Sketchfab e também
+  // são vitrine.
+  '/anatomia',
+  '/api/anatomia',
+  '/api/anatomia/previas',
   // Avaliações (prova social) são leitura pública nas páginas de material,
   // deck e pacote — visitantes precisam ver as notas e comentários. A rota
   // GET não exige login; POST/PATCH/DELETE continuam validando a sessão
   // internamente no handler (retornam 401 para quem não está logado).
-  // Miniaturas oficiais dos modelos 3D (Sketchfab). A rota só repassa imagens
-  // públicas de terceiro, sem dado de sessão, e é consumida pela vitrine de
-  // Anatomia 3D — inclusive antes de o visitante entrar.
-  '/api/anatomia/previas',
   '/api/reviews',
   // Vitrine agregada de avaliações (todos os materiais/decks visíveis) que
   // alimenta a esteira de prova social da landing. Só GET, sem dado de sessão.
@@ -179,6 +184,12 @@ function isPublicRoute(pathname: string): boolean {
   if (/^\/manual-clinico\/radiologia(\/[\w-]+){0,2}$/.test(pathname)) return true
   // Áreas das Ferramentas Clínicas (/manual-clinico/ferramentas/<slug>).
   if (/^\/manual-clinico\/ferramentas\/[a-z0-9-]+$/.test(pathname)) return true
+
+  // Toda a árvore de Domine Anatomia: /anatomia/atlas-anatomia,
+  // /anatomia/anatomia-3d e a página de cada modelo. O paywall é decidido no
+  // cliente a partir do veredito de /api/anatomia, então a rota precisa abrir
+  // para o visitante ver a landing em vez de cair no login.
+  if (/^\/anatomia(\/[a-z0-9-]+){0,2}$/.test(pathname)) return true
 
   // Todo o Manual da Histologia — inclusive o currículo, que tem até seis
   // segmentos de profundidade — e as rotas de dados que ele consome.
