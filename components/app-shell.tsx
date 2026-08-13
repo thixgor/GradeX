@@ -57,6 +57,8 @@ interface AppShellContextType {
   sidebarOpen: boolean
   setSidebarOpen: (open: boolean) => void
   handleCreateExam: () => void
+  /** Encerra a sessão. Exposto para superfícies que oferecem "Sair" fora do menu (busca global). */
+  handleLogout: () => void
   tierLimitExceeded: boolean
   examsRemaining: number | null
   examsLimit: number | null
@@ -293,6 +295,7 @@ export function AppShell({
     sidebarOpen,
     setSidebarOpen,
     handleCreateExam,
+    handleLogout,
     tierLimitExceeded,
     examsRemaining,
     examsLimit,

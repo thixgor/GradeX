@@ -28,6 +28,7 @@ import {
   Package,
   Quote,
 } from 'lucide-react'
+import { BuscaGlobal } from '@/components/busca/busca-global'
 import { PendingReviewReminder } from '@/components/reviews/pending-review-reminder'
 import { QuestaoDoDiaCard } from '@/components/retencao/questao-do-dia-card'
 import { ContinueReading } from '@/components/materiais/continue-reading'
@@ -374,6 +375,13 @@ function DashboardContent() {
       )}
 
       <div className="mx-auto max-w-7xl space-y-5 p-4 pb-24 sm:space-y-6 sm:p-6 sm:pb-8 lg:p-8 lg:pb-10">
+
+        {/* ═══════════════════════════════════════════════════════
+            0. BUSCA GLOBAL
+            Primeira coisa da página: quem chega sabendo o que quer
+            não deveria precisar caçar a área no menu.
+           ═══════════════════════════════════════════════════════ */}
+        <BuscaGlobal className="dash-rise" onAbrirTour={() => tour.start(tour.initialStep)} />
 
         {/* ═══════════════════════════════════════════════════════
             1. HERO FOCUS SECTION
