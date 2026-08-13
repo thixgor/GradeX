@@ -14,7 +14,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { PranchaInterativa } from '@/components/anatomia/prancha-interativa'
-import { FichaEstrutura, FichaVazia } from '@/components/anatomia/ficha-estrutura'
+import { FichaMarcador, FichaVazia } from '@/components/anatomia/ficha-estrutura'
 import {
   ATLAS_CATALOG,
   ATLAS_SYSTEMS,
@@ -51,6 +51,51 @@ const normalizar = (valor: string) =>
 
 function folhas(sistema: AtlasSystem): Colecao[] {
   return flattenCollections(sistema.collections).filter(colecao => colecao.pieces?.length)
+}
+
+interface Regiao {
+  /** `null` quando a própria coleção é a região (sistemas sem subdivisão). */
+  titulo: string | null
+  colecoes: Colecao[]
+  pranchas: number
+  marcadores: number
+}
+
+/**
+ * Agrupa as coleções do sistema pela primeira parte do caminho.
+ *
+ * O acervo é irregular de propósito: o esquelético se divide em Crânio, Tronco
+ * e membros, enquanto o respiratório vai direto em Nariz, Faringe, Laringe.
+ * Aqui os dois casos viram a mesma coisa — uma lista de regiões —, e é isso que
+ * permite oferecer o mesmo passo de escolha para os dez sistemas.
+ */
+function regioes(colecoes: Colecao[]): Regiao[] {
+  const ordem: string[] = []
+  const mapa = new Map<string, Colecao[]>()
+
+  for (const colecao of colecoes) {
+    // Sem subdivisão, a coleção é a própria região — a chave usa o slug para
+    // duas coleções de mesmo nome não se fundirem.
+    const chave = colecao.breadcrumb.length > 1 ? colecao.breadcrumb[0] : `\u0000${colecao.slug}`
+    if (!mapa.has(chave)) {
+      mapa.set(chave, [])
+      ordem.push(chave)
+    }
+    mapa.get(chave)!.push(colecao)
+  }
+
+  return ordem.map(chave => {
+    const itens = mapa.get(chave)!
+    return {
+      titulo: chave.startsWith('\u0000') ? null : chave,
+      colecoes: itens,
+      pranchas: itens.reduce((total, item) => total + (item.pieces?.length || 0), 0),
+      marcadores: itens.reduce(
+        (total, item) => total + (item.pieces || []).reduce((soma, peca) => soma + peca.markers.length, 0),
+        0,
+      ),
+    }
+  })
 }
 
 function contarPranchas(sistema: AtlasSystem) {
@@ -155,6 +200,139 @@ function EscolhaDeSistema({ onEscolher }: { onEscolher: (sistema: AtlasSystem) =
   )
 }
 
+/* ══════════════════════════ Escolha da região ══════════════════════════ */
+
+/**
+ * Passo entre o sistema e a prancha.
+ *
+ * Antes, escolher "Esquelético" jogava o aluno direto na primeira coleção do
+ * crânio, e a existência de Tronco, Membro Superior e Membro Inferior só ficava
+ * visível para quem abrisse o índice lateral. Agora o sistema mostra do que ele
+ * é feito, e o aluno escolhe por onde entrar.
+ */
+function EscolhaDeRegiao({
+  sistema,
+  onAbrirColecao,
+  onTrocarSistema,
+}: {
+  sistema: AtlasSystem
+  onAbrirColecao: (slug: string) => void
+  onTrocarSistema: () => void
+}) {
+  const listaRegioes = useMemo(() => regioes(folhas(sistema)), [sistema])
+  const totalPranchas = listaRegioes.reduce((total, regiao) => total + regiao.pranchas, 0)
+  const totalMarcadores = listaRegioes.reduce((total, regiao) => total + regiao.marcadores, 0)
+
+  return (
+    <main className="surface-page min-h-screen">
+      <header className="relative isolate overflow-hidden border-b border-border bg-slate-950">
+        <Image
+          src={sistema.cover}
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center opacity-35"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/85 to-slate-950/55" aria-hidden />
+
+        <div className="relative mx-auto max-w-6xl px-4 pb-9 pt-7 sm:pb-12 sm:pt-9">
+          <button
+            type="button"
+            onClick={onTrocarSistema}
+            className="mb-6 inline-flex items-center gap-1.5 text-sm text-white/55 transition-colors hover:text-white"
+          >
+            <ArrowLeft className="h-4 w-4" /> Todos os sistemas
+          </button>
+
+          <div className="mb-3">
+            <p className="editorial-mark !text-amber-300">Sistema {sistema.title}</p>
+          </div>
+          <h1 className="font-heading text-4xl font-semibold leading-[1.05] tracking-tight text-white sm:text-5xl">
+            Por onde você quer começar?
+          </h1>
+          <p className="mt-3.5 max-w-2xl text-base leading-relaxed text-white/65">
+            {listaRegioes.length} {listaRegioes.length === 1 ? 'região' : 'regiões'} · {totalPranchas} pranchas ·{' '}
+            {totalMarcadores.toLocaleString('pt-BR')} estruturas marcadas.
+          </p>
+        </div>
+      </header>
+
+      <section className="mx-auto max-w-6xl px-4 py-7 sm:py-10">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {listaRegioes.map(regiao => {
+            // Região sem subdivisão abre a prancha direto: um clique, não dois.
+            if (!regiao.titulo) {
+              const unica = regiao.colecoes[0]
+              return (
+                <button
+                  key={unica.slug}
+                  type="button"
+                  onClick={() => onAbrirColecao(unica.slug)}
+                  className="group flex items-center gap-3 rounded-2xl border border-border bg-card p-4 text-left transition hover:-translate-y-0.5 hover:border-primary/45 hover:shadow-lg"
+                >
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                    <Layers className="h-5 w-5" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block font-heading text-lg font-semibold leading-tight tracking-tight">
+                      {unica.title}
+                    </span>
+                    <span className="mt-0.5 block text-xs text-muted-foreground">
+                      {regiao.pranchas} prancha{regiao.pranchas !== 1 ? 's' : ''} ·{' '}
+                      {regiao.marcadores.toLocaleString('pt-BR')} estruturas
+                    </span>
+                  </span>
+                  <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
+                </button>
+              )
+            }
+
+            return (
+              <div
+                key={regiao.titulo}
+                className="flex flex-col rounded-2xl border border-border bg-card p-4 transition hover:border-primary/35"
+              >
+                <div className="mb-3 flex items-center gap-3">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                    <Layers className="h-5 w-5" />
+                  </span>
+                  <div className="min-w-0">
+                    <h2 className="font-heading text-lg font-semibold leading-tight tracking-tight">{regiao.titulo}</h2>
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                      {regiao.colecoes.length} coleç{regiao.colecoes.length !== 1 ? 'ões' : 'ão'} ·{' '}
+                      {regiao.pranchas} pranchas
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  {regiao.colecoes.map(colecao => (
+                    <button
+                      key={colecao.slug}
+                      type="button"
+                      onClick={() => onAbrirColecao(colecao.slug)}
+                      className="group flex w-full items-center justify-between gap-2 rounded-xl border border-transparent bg-muted/40 px-3 py-2 text-left transition hover:border-primary/30 hover:bg-primary/10"
+                    >
+                      <span className="min-w-0 truncate text-[13px] font-semibold">{colecao.title}</span>
+                      <span className="flex shrink-0 items-center gap-1.5">
+                        <span className="rounded-md bg-background px-1.5 py-0.5 text-[10px] font-bold tabular-nums text-muted-foreground">
+                          {colecao.pieces?.length || 0}
+                        </span>
+                        <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/40 transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </section>
+    </main>
+  )
+}
+
 /* ══════════════════════════ Área de estudo ══════════════════════════ */
 
 interface Resultado {
@@ -165,9 +343,20 @@ interface Resultado {
   titulo: string
 }
 
-function AreaDeEstudo({ sistema, onTrocarSistema }: { sistema: AtlasSystem; onTrocarSistema: () => void }) {
+function AreaDeEstudo({
+  sistema,
+  slugColecao,
+  onAbrirColecao,
+  onVoltarParaRegioes,
+  onTrocarSistema,
+}: {
+  sistema: AtlasSystem
+  slugColecao: string
+  onAbrirColecao: (slug: string) => void
+  onVoltarParaRegioes: () => void
+  onTrocarSistema: () => void
+}) {
   const colecoes = useMemo(() => folhas(sistema), [sistema])
-  const [slugColecao, setSlugColecao] = useState(() => colecoes[0]?.slug || '')
   const [indicePeca, setIndicePeca] = useState(0)
   const [indiceMarcador, setIndiceMarcador] = useState<number | null>(null)
   const [busca, setBusca] = useState('')
@@ -180,13 +369,6 @@ function AreaDeEstudo({ sistema, onTrocarSistema }: { sistema: AtlasSystem; onTr
   const pecas = colecao?.pieces || []
   const peca: AtlasPiece | null = pecas[indicePeca] || pecas[0] || null
   const marcador = indiceMarcador === null ? null : peca?.markers[indiceMarcador] || null
-
-  useEffect(() => {
-    setSlugColecao(colecoes[0]?.slug || '')
-    setIndicePeca(0)
-    setIndiceMarcador(null)
-    setBusca('')
-  }, [colecoes])
 
   const insight = useMemo(() => {
     if (!marcador || !colecao) return null
@@ -236,7 +418,7 @@ function AreaDeEstudo({ sistema, onTrocarSistema }: { sistema: AtlasSystem; onTr
   )
 
   function abrirResultado(resultado: Resultado) {
-    setSlugColecao(resultado.colecao.slug)
+    if (resultado.colecao.slug !== slugColecao) onAbrirColecao(resultado.colecao.slug)
     setIndicePeca(resultado.indicePeca)
     setIndiceMarcador(resultado.indiceMarcador)
     setGavetaAberta(true)
@@ -284,8 +466,18 @@ function AreaDeEstudo({ sistema, onTrocarSistema }: { sistema: AtlasSystem; onTr
           </button>
 
           <div className="min-w-0 flex-1">
-            <p className="text-[10px] font-black uppercase tracking-[0.16em] text-primary">Atlas de Anatomia</p>
-            <h1 className="truncate font-heading text-base font-semibold leading-tight sm:text-lg">{sistema.title}</h1>
+            <button
+              type="button"
+              onClick={onVoltarParaRegioes}
+              className="flex max-w-full items-center gap-1 text-[10px] font-black uppercase tracking-[0.16em] text-primary transition hover:text-primary/75"
+            >
+              <span className="truncate">{sistema.title}</span>
+              <ChevronRight className="h-3 w-3 shrink-0 opacity-60" />
+              <span className="hidden shrink-0 sm:inline">regiões</span>
+            </button>
+            <h1 className="truncate font-heading text-base font-semibold leading-tight sm:text-lg">
+              {colecao?.title || sistema.title}
+            </h1>
           </div>
 
           <div className="relative hidden min-w-0 max-w-sm flex-1 lg:block">
@@ -331,7 +523,7 @@ function AreaDeEstudo({ sistema, onTrocarSistema }: { sistema: AtlasSystem; onTr
                         key={item.slug}
                         type="button"
                         onClick={() => {
-                          setSlugColecao(item.slug)
+                          onAbrirColecao(item.slug)
                           setIndicePeca(0)
                           setIndiceMarcador(null)
                           setIndiceVisivel(false)
@@ -474,7 +666,12 @@ function AreaDeEstudo({ sistema, onTrocarSistema }: { sistema: AtlasSystem; onTr
               {/* Ficha embutida em telas médias (a lateral só existe no xl) */}
               <div className="mt-4 xl:hidden">
                 {insight && marcador ? (
-                  <FichaEstrutura titulo={marcador.title} numero={(indiceMarcador || 0) + 1} insight={insight} />
+                  <FichaMarcador
+                    titulo={marcador.title}
+                    numero={(indiceMarcador || 0) + 1}
+                    insight={insight}
+                    chave={`${peca?.id}:${indiceMarcador}`}
+                  />
                 ) : (
                   <FichaVazia compacta />
                 )}
@@ -491,7 +688,12 @@ function AreaDeEstudo({ sistema, onTrocarSistema }: { sistema: AtlasSystem; onTr
         <aside className="hidden xl:block">
           <div className="sticky top-[76px] max-h-[calc(100vh-92px)] overflow-y-auto pb-4">
             {insight && marcador ? (
-              <FichaEstrutura titulo={marcador.title} numero={(indiceMarcador || 0) + 1} insight={insight} />
+              <FichaMarcador
+                titulo={marcador.title}
+                numero={(indiceMarcador || 0) + 1}
+                insight={insight}
+                chave={`${peca?.id}:${indiceMarcador}`}
+              />
             ) : (
               <FichaVazia />
             )}
@@ -529,7 +731,13 @@ function AreaDeEstudo({ sistema, onTrocarSistema }: { sistema: AtlasSystem; onTr
                 </button>
               </div>
               <div className="p-3">
-                <FichaEstrutura titulo={marcador.title} numero={(indiceMarcador || 0) + 1} insight={insight} compacta />
+                <FichaMarcador
+                  titulo={marcador.title}
+                  numero={(indiceMarcador || 0) + 1}
+                  insight={insight}
+                  chave={`${peca?.id}:${indiceMarcador}`}
+                  compacta
+                />
               </div>
             </div>
           </div>
@@ -646,18 +854,46 @@ function BuscaDeEstrutura({
 export default function AtlasExperiencia() {
   const router = useRouter()
   const parametros = useSearchParams()
-  const slug = parametros.get('sistema')
-  const sistema = ATLAS_SYSTEMS.find(item => item.slug === slug) || null
+  const sistema = ATLAS_SYSTEMS.find(item => item.slug === parametros.get('sistema')) || null
+  const slugColecao = parametros.get('colecao') || ''
 
-  // O sistema vive na URL: assim o aluno consegue voltar, compartilhar o link e
-  // chegar direto de um atalho da página inicial da seção.
-  function abrir(proximo: AtlasSystem | null) {
-    router.replace(proximo ? `/anatomia/atlas-anatomia?sistema=${proximo.slug}` : '/anatomia/atlas-anatomia', {
-      scroll: true,
-    })
+  // Sistema e coleção vivem na URL. Além de tornar o link compartilhável, é o
+  // que faz o botão voltar do navegador desfazer um passo por vez —
+  // prancha → regiões → sistemas — em vez de sair da seção de uma vez.
+  function navegar(sistemaSlug: string | null, colecaoSlug?: string | null) {
+    if (!sistemaSlug) {
+      router.push('/anatomia/atlas-anatomia')
+      return
+    }
+    const destino = colecaoSlug
+      ? `/anatomia/atlas-anatomia?sistema=${sistemaSlug}&colecao=${colecaoSlug}`
+      : `/anatomia/atlas-anatomia?sistema=${sistemaSlug}`
+    router.push(destino)
   }
 
-  if (!sistema) return <EscolhaDeSistema onEscolher={abrir} />
-  return <AreaDeEstudo key={sistema.slug} sistema={sistema} onTrocarSistema={() => abrir(null)} />
+  if (!sistema) return <EscolhaDeSistema onEscolher={proximo => navegar(proximo.slug)} />
+
+  const colecaoValida = folhas(sistema).some(item => item.slug === slugColecao)
+  if (!colecaoValida) {
+    return (
+      <EscolhaDeRegiao
+        key={sistema.slug}
+        sistema={sistema}
+        onAbrirColecao={slug => navegar(sistema.slug, slug)}
+        onTrocarSistema={() => navegar(null)}
+      />
+    )
+  }
+
+  return (
+    <AreaDeEstudo
+      key={`${sistema.slug}:${slugColecao}`}
+      sistema={sistema}
+      slugColecao={slugColecao}
+      onAbrirColecao={slug => navegar(sistema.slug, slug)}
+      onVoltarParaRegioes={() => navegar(sistema.slug)}
+      onTrocarSistema={() => navegar(null)}
+    />
+  )
 }
 

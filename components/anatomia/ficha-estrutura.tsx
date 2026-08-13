@@ -1,7 +1,10 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import {
   Activity,
+  ChevronDown,
+  ChevronUp,
   BookMarked,
   Bone,
   Brain,
@@ -164,41 +167,102 @@ export interface FichaEstruturaProps {
   insight: MarkerInsight
   /** Densidade reduzida para a gaveta do celular. */
   compacta?: boolean
+  /** Quando presente, oferece o caminho de volta ao resumo. */
+  onRecolher?: () => void
 }
 
-export function FichaEstrutura({ titulo, numero, insight, compacta }: FichaEstruturaProps) {
+function Identidade({
+  titulo,
+  numero,
+  insight,
+}: {
+  titulo: string
+  numero: number
+  insight: MarkerInsight
+}) {
   const cores = familia(insight.classeId)
   const Icone = ICONES_POR_CLASSE[insight.classeId] || CircleDot
 
   return (
-    <article className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
-      <header className="relative px-4 pb-4 pt-4 sm:px-5 sm:pt-5">
-        <div className={`absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r ${cores.barra}`} aria-hidden />
-        <div className="flex items-start gap-3">
-          <span
-            className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border text-sm font-black tabular-nums ${cores.selo}`}
-          >
-            {numero}
-          </span>
-          <div className="min-w-0 flex-1">
-            <h2 className="font-heading text-[22px] font-semibold leading-tight tracking-tight sm:text-2xl">{titulo}</h2>
-            <div className="mt-2 flex flex-wrap items-center gap-1.5">
-              <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-wider ${cores.selo}`}>
-                <Icone className="h-3 w-3" />
-                {insight.classe}
+    <>
+      <div className={`absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r ${cores.barra}`} aria-hidden />
+      <div className="flex items-start gap-3">
+        <span
+          className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border text-sm font-black tabular-nums ${cores.selo}`}
+        >
+          {numero}
+        </span>
+        <div className="min-w-0 flex-1">
+          <h2 className="font-heading text-[22px] font-semibold leading-tight tracking-tight sm:text-2xl">{titulo}</h2>
+          <div className="mt-2 flex flex-wrap items-center gap-1.5">
+            <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-wider ${cores.selo}`}>
+              <Icone className="h-3 w-3" />
+              {insight.classe}
+            </span>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/60 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              <MapPin className="h-3 w-3" />
+              {insight.regiao}
+            </span>
+            {insight.aprofundado && (
+              <span className="inline-flex items-center gap-1 rounded-full border border-primary/25 bg-primary/10 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-primary">
+                <Sparkles className="h-3 w-3" /> aprofundado
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/60 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                <MapPin className="h-3 w-3" />
-                {insight.regiao}
-              </span>
-              {insight.aprofundado && (
-                <span className="inline-flex items-center gap-1 rounded-full border border-primary/25 bg-primary/10 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-primary">
-                  <Sparkles className="h-3 w-3" /> aprofundado
-                </span>
-              )}
-            </div>
+            )}
           </div>
         </div>
+      </div>
+    </>
+  )
+}
+
+/**
+ * Primeiro nível da ficha: nome, classe, região e a frase de identidade.
+ *
+ * Boa parte das consultas termina aqui — o aluno olhou a prancha, quer saber
+ * que estrutura é aquela e volta a estudar. Despejar sete blocos de texto nesse
+ * momento é ruído; quem quiser o resto pede.
+ */
+function FichaResumo({
+  titulo,
+  numero,
+  insight,
+  onAprofundar,
+}: {
+  titulo: string
+  numero: number
+  insight: MarkerInsight
+  onAprofundar: () => void
+}) {
+  return (
+    <article className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+      <div className="relative px-4 pb-4 pt-4 sm:px-5 sm:pt-5">
+        <Identidade titulo={titulo} numero={numero} insight={insight} />
+        <p className="mt-3.5 text-[13.5px] font-medium leading-relaxed text-foreground/90 sm:text-sm">
+          {insight.resumo}
+        </p>
+        <button
+          type="button"
+          onClick={onAprofundar}
+          className="mt-4 inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-primary/30 bg-primary/10 px-4 text-sm font-bold text-primary transition hover:bg-primary/15"
+        >
+          Ver detalhes completos
+          <ChevronDown className="h-4 w-4" />
+        </button>
+        <p className="mt-2 text-center text-[11px] text-muted-foreground">
+          Localização, função, vascularização, inervação e clínica
+        </p>
+      </div>
+    </article>
+  )
+}
+
+export function FichaEstrutura({ titulo, numero, insight, compacta, onRecolher }: FichaEstruturaProps) {
+  const cores = familia(insight.classeId)
+
+  return (
+    <article className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+      <header className="relative px-4 pb-4 pt-4 sm:px-5 sm:pt-5">
+        <Identidade titulo={titulo} numero={numero} insight={insight} />
         <p className="mt-3.5 text-[13.5px] font-medium leading-relaxed text-foreground/90 sm:text-sm">{insight.resumo}</p>
       </header>
 
@@ -254,6 +318,62 @@ export function FichaEstrutura({ titulo, numero, insight, compacta }: FichaEstru
           </div>
         </section>
       )}
+
+      {onRecolher && (
+        <div className="border-t border-border/60 px-4 py-3 sm:px-5">
+          <button
+            type="button"
+            onClick={onRecolher}
+            className="inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-xl border border-border bg-muted/40 text-xs font-bold text-muted-foreground transition hover:text-foreground"
+          >
+            <ChevronUp className="h-3.5 w-3.5" /> Mostrar só o nome
+          </button>
+        </div>
+      )}
     </article>
+  )
+}
+
+/**
+ * Ficha em dois níveis.
+ *
+ * Selecionar um marcador quase sempre é uma pergunta curta — "que estrutura é
+ * essa?". A ficha abre no resumo e só se aprofunda a pedido, e volta ao resumo
+ * sozinha a cada nova estrutura, para o comportamento ser sempre o mesmo.
+ */
+export function FichaMarcador({
+  titulo,
+  numero,
+  insight,
+  compacta,
+  chave,
+}: {
+  titulo: string
+  numero: number
+  insight: MarkerInsight
+  compacta?: boolean
+  /** Muda a cada estrutura selecionada e recolhe a ficha de volta ao resumo. */
+  chave: string
+}) {
+  const [expandida, setExpandida] = useState(false)
+
+  useEffect(() => {
+    setExpandida(false)
+  }, [chave])
+
+  if (!expandida) {
+    return (
+      <FichaResumo titulo={titulo} numero={numero} insight={insight} onAprofundar={() => setExpandida(true)} />
+    )
+  }
+
+  return (
+    <FichaEstrutura
+      titulo={titulo}
+      numero={numero}
+      insight={insight}
+      compacta={compacta}
+      onRecolher={() => setExpandida(false)}
+    />
   )
 }

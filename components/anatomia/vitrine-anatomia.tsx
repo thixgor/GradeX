@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { usePricingEventState } from '@/components/pricing-events/usePricingEventState'
 import { PranchaInterativa } from '@/components/anatomia/prancha-interativa'
-import { FichaEstrutura } from '@/components/anatomia/ficha-estrutura'
+import { FichaMarcador } from '@/components/anatomia/ficha-estrutura'
 import type { ResumoAnatomia, RespostaAcessoAnatomia } from '@/lib/anatomia/tipos'
 import {
   ArrowLeft,
@@ -554,7 +554,12 @@ function AmostraInterativa({
 
         <div className="lg:sticky lg:top-6">
           {marcador && insight ? (
-            <FichaEstrutura titulo={marcador.title} numero={(indice || 0) + 1} insight={insight} />
+            <FichaMarcador
+              titulo={marcador.title}
+              numero={(indice || 0) + 1}
+              insight={insight}
+              chave={`${amostra.prancha.id}:${indice}`}
+            />
           ) : (
             <div className="flex min-h-[280px] flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-muted/25 p-6 text-center">
               <span className="rounded-2xl bg-sky-500/10 p-3 text-sky-600 dark:text-sky-400">

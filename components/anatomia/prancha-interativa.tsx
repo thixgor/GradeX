@@ -241,6 +241,15 @@ export function PranchaInterativa({
                     <span className="absolute inset-0 animate-ping rounded-full bg-amber-400/40" aria-hidden />
                   )}
                 </span>
+
+                {/* O nome sai junto do pino: na maior parte das vezes a pergunta
+                    é só "que estrutura é essa?", e a resposta não deveria exigir
+                    procurar o painel do lado. */}
+                {ativo && !oculto && (
+                  <span className="pointer-events-none absolute left-1/2 top-[calc(100%+6px)] max-w-[42vw] -translate-x-1/2 whitespace-nowrap rounded-lg border border-amber-300/40 bg-amber-400 px-2 py-1 text-[11px] font-bold text-amber-950 shadow-lg sm:max-w-[260px]">
+                    <span className="block overflow-hidden text-ellipsis">{marcador.title}</span>
+                  </span>
+                )}
               </button>
             )
           })}
