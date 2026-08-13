@@ -21,6 +21,7 @@ import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { carregarAcervo, prepararAcervo } from '@/lib/atlas-anatomia/acervo-cliente'
 import {
+  chaveDeRegiao,
   contarEstruturas,
   ocorrenciasDoAcervo,
   regioesDoSistema,
@@ -48,7 +49,20 @@ const TAMANHOS = [10, 20, 30]
  * `carregarAcervo` guarda o que já buscou, voltar a uma configuração anterior
  * não gera pedido nenhum.
  */
-function useOcorrencias(sistemaSlug: string | null, ativo = true) {
+/**
+ * Universo de perguntas dos sistemas escolhidos.
+ *
+ * O acervo chega por sistema. "Acervo inteiro" pede os dez de uma vez; um
+ * recorte pede só o que foi marcado — que é o caso comum e custa poucos KB.
+ * Como `carregarAcervo` guarda o que já buscou por chave, a lista é ordenada
+ * para "esquelético + muscular" e "muscular + esquelético" serem o mesmo pedido.
+ */
+function chaveDoPedido(sistemas: string[]) {
+  return sistemas.length === 0 ? 'todos' : [...sistemas].sort().join(',')
+}
+
+function useOcorrencias(sistemas: string[], ativo = true) {
+  const chave = chaveDoPedido(sistemas)
   const [ocorrencias, setOcorrencias] = useState<Ocorrencia[] | null>(null)
   const [erro, setErro] = useState(false)
 
@@ -57,9 +71,9 @@ function useOcorrencias(sistemaSlug: string | null, ativo = true) {
     let vivo = true
     setOcorrencias(null)
     setErro(false)
-    carregarAcervo(sistemaSlug || 'todos')
-      .then(sistemas => {
-        if (vivo) setOcorrencias(ocorrenciasDoAcervo(sistemas))
+    carregarAcervo(chave)
+      .then(carregados => {
+        if (vivo) setOcorrencias(ocorrenciasDoAcervo(carregados))
       })
       .catch(() => {
         if (vivo) setErro(true)
@@ -67,22 +81,40 @@ function useOcorrencias(sistemaSlug: string | null, ativo = true) {
     return () => {
       vivo = false
     }
-  }, [sistemaSlug, ativo])
+  }, [chave, ativo])
 
   return { ocorrencias, erro }
+}
+
+/** Monta a busca da URL repetindo a chave, em vez de separar por vírgula: os
+ *  nomes das regiões vêm do acervo e não precisam de um separador reservado. */
+function buscaDaRodada(
+  sistemas: string[],
+  regioes: string[],
+  quantidade: number,
+  semente: number,
+): string {
+  const busca = new URLSearchParams()
+  for (const sistema of sistemas) busca.append('sistema', sistema)
+  for (const regiao of regioes) busca.append('regiao', regiao)
+  busca.set('n', String(quantidade))
+  busca.set('s', String(semente))
+  return busca.toString()
 }
 
 export default function QuizAtlas({ catalogo }: { catalogo: ResumoAnatomia }) {
   const router = useRouter()
   const parametros = useSearchParams()
 
-  const sistemaSlug = parametros.get('sistema')
-  const regiao = parametros.get('regiao')
+  // `getAll` porque o recorte é plural — e um link antigo com um `sistema` só
+  // continua sendo lido, agora como lista de um item.
+  const sistemas = parametros.getAll('sistema').filter(Boolean)
+  const regioes = parametros.getAll('regiao').filter(Boolean)
   const quantidade = Number(parametros.get('n')) || 0
   const semente = Number(parametros.get('s')) || 0
 
   const emAndamento = quantidade > 0 && semente > 0
-  const { ocorrencias, erro } = useOcorrencias(sistemaSlug, emAndamento)
+  const { ocorrencias, erro } = useOcorrencias(sistemas, emAndamento)
 
   if (!emAndamento) {
     return (
@@ -122,21 +154,16 @@ export default function QuizAtlas({ catalogo }: { catalogo: ResumoAnatomia }) {
 
   return (
     <Rodada
-      key={`${sistemaSlug}:${regiao}:${quantidade}:${semente}`}
+      key={`${sistemas.join(',')}:${regioes.join(',')}:${quantidade}:${semente}`}
       ocorrencias={ocorrencias}
-      sistemaSlug={sistemaSlug}
-      regiao={regiao}
+      sistemas={sistemas}
+      regioes={regioes}
       quantidade={quantidade}
       semente={semente}
       onReconfigurar={() => router.push('/anatomia/atlas-anatomia/quiz')}
       onRefazer={() =>
         router.push(
-          `/anatomia/atlas-anatomia/quiz?${new URLSearchParams({
-            ...(sistemaSlug ? { sistema: sistemaSlug } : {}),
-            ...(regiao ? { regiao } : {}),
-            n: String(quantidade),
-            s: String(Date.now() % 100000),
-          }).toString()}`,
+          `/anatomia/atlas-anatomia/quiz?${buscaDaRodada(sistemas, regioes, quantidade, Date.now() % 100000)}`,
         )
       }
     />
@@ -152,24 +179,62 @@ function Configuracao({
   catalogo: ResumoAnatomia
   onComecar: (busca: string) => void
 }) {
-  const [sistemaSlug, setSistemaSlug] = useState<string | null>(null)
-  const [regiao, setRegiao] = useState<string | null>(null)
+  const [sistemas, setSistemas] = useState<string[]>([])
+  const [regioes, setRegioes] = useState<string[]>([])
   const [quantidade, setQuantidade] = useState(10)
 
-  // Regiões e contagem por região dependem do acervo — buscado só depois que o
-  // aluno aponta um sistema, e só o sistema apontado. Enquanto ele está em
-  // "acervo inteiro", o total já veio no resumo e não custa pedido nenhum.
-  const { ocorrencias } = useOcorrencias(sistemaSlug, !!sistemaSlug)
+  // Regiões e contagens dependem do acervo — buscado só depois que o aluno
+  // aponta um sistema, e só os sistemas apontados. Enquanto ele está em "acervo
+  // inteiro", os números já vieram no resumo e não custam pedido nenhum.
+  const { ocorrencias } = useOcorrencias(sistemas, sistemas.length > 0)
 
-  const listaRegioes = useMemo(
-    () => (sistemaSlug && ocorrencias ? regioesDoSistema(ocorrencias, sistemaSlug) : []),
-    [ocorrencias, sistemaSlug],
-  )
+  function alternarSistema(slug: string) {
+    setSistemas(atuais => {
+      const marcado = atuais.includes(slug)
+      // Desmarcar o sistema leva junto as regiões dele: deixar chave órfã no
+      // recorte faria o quiz filtrar por algo que não está mais em jogo.
+      if (marcado) setRegioes(anteriores => anteriores.filter(chave => !chave.startsWith(`${slug}:`)))
+      return marcado ? atuais.filter(item => item !== slug) : [...atuais, slug]
+    })
+  }
+
+  function alternarRegiao(chave: string) {
+    setRegioes(atuais => (atuais.includes(chave) ? atuais.filter(item => item !== chave) : [...atuais, chave]))
+  }
+
+  /** Regiões oferecidas, agrupadas por sistema, na ordem em que foram marcados. */
+  const gruposDeRegiao = useMemo(() => {
+    if (!ocorrencias) return []
+    return sistemas
+      .map(slug => ({
+        slug,
+        titulo: catalogo.sistemas.find(item => item.slug === slug)?.titulo || slug,
+        regioes: regioesDoSistema(ocorrencias, slug),
+      }))
+      // Sistema com uma região só não tem o que recortar — mostrar o botão
+      // sozinho seria oferecer uma escolha que não muda nada.
+      .filter(grupo => grupo.regioes.length > 1)
+  }, [catalogo.sistemas, ocorrencias, sistemas])
+
   const disponiveis = useMemo(() => {
-    if (!sistemaSlug) return catalogo.totalMarcadores
-    if (!ocorrencias) return catalogo.sistemas.find(item => item.slug === sistemaSlug)?.marcadores ?? 0
-    return contarEstruturas(ocorrencias, { sistemaSlug, regiao })
-  }, [catalogo, ocorrencias, sistemaSlug, regiao])
+    if (sistemas.length === 0) return catalogo.totalMarcadores
+    // Antes de o acervo chegar, o resumo já sabe quantos marcadores cada sistema
+    // tem: o número aparece na hora e só se refina quando as regiões entram.
+    if (!ocorrencias) {
+      return sistemas.reduce(
+        (total, slug) => total + (catalogo.sistemas.find(item => item.slug === slug)?.marcadores ?? 0),
+        0,
+      )
+    }
+    return contarEstruturas(ocorrencias, { sistemas, regioes })
+  }, [catalogo, ocorrencias, sistemas, regioes])
+
+  const resumoDoRecorte = useMemo(() => {
+    if (sistemas.length === 0) return 'Acervo inteiro'
+    const nomes = sistemas.map(slug => catalogo.sistemas.find(item => item.slug === slug)?.titulo || slug)
+    const comRegiao = regioes.length > 0 ? ` · ${regioes.length} ${regioes.length === 1 ? 'região' : 'regiões'}` : ''
+    return nomes.join(' + ') + comRegiao
+  }, [catalogo.sistemas, sistemas, regioes])
 
   // A rodada é o passo seguinte garantido: o pacote dela vem no tempo ocioso,
   // enquanto o aluno ainda decide o recorte.
@@ -184,13 +249,7 @@ function Configuracao({
   }, [])
 
   function comecar() {
-    const busca = new URLSearchParams({
-      ...(sistemaSlug ? { sistema: sistemaSlug } : {}),
-      ...(regiao ? { regiao } : {}),
-      n: String(quantidade),
-      s: String(Date.now() % 100000),
-    })
-    onComecar(busca.toString())
+    onComecar(buscaDaRodada(sistemas, regioes, quantidade, Date.now() % 100000))
   }
 
   return (
@@ -224,13 +283,17 @@ function Configuracao({
       </header>
 
       <section className="mx-auto max-w-4xl px-4 py-8 sm:py-10">
-        <Campo titulo="De onde vêm as questões" numero={1}>
+        <Campo
+          titulo="De onde vêm as questões"
+          numero={1}
+          nota="Pode marcar mais de um — as questões vêm de tudo o que estiver aceso."
+        >
           <div className="flex flex-wrap gap-2">
             <Chip
-              ativo={sistemaSlug === null}
+              ativo={sistemas.length === 0}
               onClick={() => {
-                setSistemaSlug(null)
-                setRegiao(null)
+                setSistemas([])
+                setRegioes([])
               }}
             >
               Acervo inteiro
@@ -238,14 +301,11 @@ function Configuracao({
             {catalogo.sistemas.map(sistema => (
               <Chip
                 key={sistema.slug}
-                ativo={sistemaSlug === sistema.slug}
+                ativo={sistemas.includes(sistema.slug)}
                 // Passar o dedo/mouse já adianta o acervo daquele sistema: as
                 // regiões aparecem no clique, sem espera visível.
                 onPointerEnter={() => prepararAcervo(sistema.slug)}
-                onClick={() => {
-                  setSistemaSlug(sistema.slug)
-                  setRegiao(null)
-                }}
+                onClick={() => alternarSistema(sistema.slug)}
               >
                 {sistema.titulo}
               </Chip>
@@ -253,23 +313,39 @@ function Configuracao({
           </div>
         </Campo>
 
-        {listaRegioes.length > 1 && (
-          <Campo titulo="Quer estreitar mais?" numero={2}>
-            <div className="flex flex-wrap gap-2">
-              <Chip ativo={regiao === null} onClick={() => setRegiao(null)}>
-                Sistema todo
-              </Chip>
-              {listaRegioes.map(item => (
-                <Chip key={item.nome} ativo={regiao === item.nome} onClick={() => setRegiao(item.nome)}>
-                  {item.nome}
-                  <span className="ml-1.5 text-[10px] opacity-60">{item.estruturas}</span>
-                </Chip>
+        {gruposDeRegiao.length > 0 && (
+          <Campo
+            titulo="Quer estreitar mais?"
+            numero={2}
+            nota="Sem nada marcado, o sistema entra inteiro. Marque as regiões que quiser treinar."
+          >
+            <div className="space-y-3.5">
+              {gruposDeRegiao.map(grupo => (
+                <div key={grupo.slug}>
+                  {/* O nome do sistema fica visível mesmo com um só marcado: é
+                      ele que diz a qual sistema cada região pertence quando há
+                      "Tronco" em mais de um. */}
+                  <p className="mb-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-muted-foreground">
+                    {grupo.titulo}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {grupo.regioes.map(item => {
+                      const chave = chaveDeRegiao(grupo.slug, item.nome)
+                      return (
+                        <Chip key={chave} ativo={regioes.includes(chave)} onClick={() => alternarRegiao(chave)}>
+                          {item.nome}
+                          <span className="ml-1.5 text-[10px] opacity-60">{item.estruturas}</span>
+                        </Chip>
+                      )
+                    })}
+                  </div>
+                </div>
               ))}
             </div>
           </Campo>
         )}
 
-        <Campo titulo="Quantas questões" numero={listaRegioes.length > 1 ? 3 : 2}>
+        <Campo titulo="Quantas questões" numero={gruposDeRegiao.length > 0 ? 3 : 2}>
           <div className="flex flex-wrap gap-2">
             {TAMANHOS.map(tamanho => (
               <Chip key={tamanho} ativo={quantidade === tamanho} onClick={() => setQuantidade(tamanho)}>
@@ -277,9 +353,10 @@ function Configuracao({
               </Chip>
             ))}
           </div>
-          <p className="mt-3 text-xs text-muted-foreground">
-            {disponiveis.toLocaleString('pt-BR')} estruturas marcadas disponíveis neste recorte. Cada rodada sorteia
-            estruturas diferentes, sem repetir a mesma duas vezes.
+          <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+            <span className="font-bold text-foreground">{resumoDoRecorte}</span> ·{' '}
+            {disponiveis.toLocaleString('pt-BR')} estruturas marcadas disponíveis. Cada rodada sorteia estruturas
+            diferentes, sem repetir a mesma duas vezes.
           </p>
         </Campo>
 
@@ -301,15 +378,28 @@ function Configuracao({
   )
 }
 
-function Campo({ titulo, numero, children }: { titulo: string; numero: number; children: React.ReactNode }) {
+function Campo({
+  titulo,
+  numero,
+  nota,
+  children,
+}: {
+  titulo: string
+  numero: number
+  /** Uma linha explicando a regra do campo — o que "nada marcado" significa. */
+  nota?: string
+  children: React.ReactNode
+}) {
   return (
     <div className="mb-6">
-      <h2 className="mb-3 flex items-center gap-2 text-sm font-bold">
+      <h2 className="flex items-center gap-2 text-sm font-bold">
         <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-primary/12 text-[11px] font-black text-primary">
           {numero}
         </span>
         {titulo}
       </h2>
+      {nota && <p className="mb-3 ml-8 mt-1 text-xs leading-relaxed text-muted-foreground">{nota}</p>}
+      {!nota && <div className="mb-3" />}
       {children}
     </div>
   )

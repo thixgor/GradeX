@@ -9,9 +9,10 @@
  * onde vêm as perguntas não precisa disso; responder, sim.
  */
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import { PranchaInterativa } from '@/components/anatomia/prancha-interativa'
+import { holdScrollAtTop } from '@/components/scroll-to-top'
 import { comentar, montarQuiz, type Comentario, type QuestaoQuiz } from '@/lib/atlas-anatomia/quiz'
 import type { Ocorrencia } from '@/lib/atlas-anatomia/recorte-quiz'
 import {
@@ -55,8 +56,8 @@ interface Resposta {
 
 export default function Rodada({
   ocorrencias,
-  sistemaSlug,
-  regiao,
+  sistemas,
+  regioes,
   quantidade,
   semente,
   onReconfigurar,
@@ -64,16 +65,19 @@ export default function Rodada({
 }: {
   /** Universo já carregado pela tela de configuração. */
   ocorrencias: Ocorrencia[]
-  sistemaSlug: string | null
-  regiao: string | null
+  sistemas: string[]
+  regioes: string[]
   quantidade: number
   semente: number
   onReconfigurar: () => void
   onRefazer: () => void
 }) {
   const questoes = useMemo(
-    () => montarQuiz(ocorrencias, { sistemaSlug, regiao }, quantidade, semente),
-    [ocorrencias, sistemaSlug, regiao, quantidade, semente],
+    () => montarQuiz(ocorrencias, { sistemas, regioes }, quantidade, semente),
+    // As listas vêm da URL e são recriadas a cada render; a chave estável é o
+    // conteúdo delas, não a identidade do array.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [ocorrencias, sistemas.join(','), regioes.join(','), quantidade, semente],
   )
 
   const [atual, setAtual] = useState(0)
@@ -107,9 +111,33 @@ export default function Rodada({
     else setAtual(atual + 1)
   }
 
+  /**
+   * Volta ao topo a cada questão.
+   *
+   * `window.scrollTo({ behavior: 'smooth' })` não dava conta: quem responde
+   * termina lá embaixo, no fim do comentário, e a questão seguinte nasce curta
+   * — sem comentário e com a prancha ainda carregando. O navegador prende o
+   * scroll no fim desse documento curto e cancela a rolagem suave quando a
+   * imagem entra e muda o layout. Resultado: a tela ficava exatamente onde
+   * estava, no rodapé. `holdScrollAtTop` sobe na hora e segura por alguns
+   * quadros, até a página crescer — e solta ao primeiro gesto de rolagem.
+   */
+  useEffect(() => holdScrollAtTop(), [atual, encerrado])
+
+  /**
+   * Assim que a resposta é marcada, o veredito entra em cena.
+   *
+   * No celular as alternativas ocupam a tela inteira: sem isto, o comentário
+   * nasce abaixo da dobra e a pessoa não vê nem se acertou.
+   */
+  const comentarioRef = useRef<HTMLDivElement | null>(null)
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }, [atual, encerrado])
+    if (!respondida) return
+    const id = window.requestAnimationFrame(() =>
+      comentarioRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
+    )
+    return () => window.cancelAnimationFrame(id)
+  }, [respondida, atual])
 
   if (questoes.length === 0) {
     return (
@@ -276,15 +304,25 @@ export default function Rodada({
 
           {comentario && (
             <>
-              <RespostaComentada comentario={comentario} acertou={resposta.acertou} />
-              <button
-                type="button"
-                onClick={avancar}
-                className="mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-bold text-primary-foreground shadow-sm transition hover:bg-primary/90 active:scale-[0.99]"
-              >
-                {atual + 1 >= questoes.length ? 'Ver o resultado' : 'Próxima questão'}
-                <ChevronRight className="h-4 w-4" />
-              </button>
+              <div ref={comentarioRef} className="scroll-mt-[68px] sm:scroll-mt-[76px]">
+                <RespostaComentada comentario={comentario} acertou={resposta.acertou} />
+              </div>
+              {/* Grudado no rodapé enquanto o comentário rola.
+                  A resposta comentada é longa de propósito — é ela que ensina —,
+                  mas com o botão só no fim era preciso percorrer tudo para poder
+                  seguir. Agora ele acompanha a leitura: quem quiser ler até a
+                  última linha lê, quem já entendeu avança de onde estiver. */}
+              <div className="sticky bottom-0 z-30 -mx-3 mt-3 px-3 pb-3 pt-2 sm:-mx-4 sm:px-4 lg:mx-0 lg:px-0">
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background via-background/95 to-transparent" />
+                <button
+                  type="button"
+                  onClick={avancar}
+                  className="relative inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/20 transition hover:bg-primary/90 active:scale-[0.99]"
+                >
+                  {atual + 1 >= questoes.length ? 'Ver o resultado' : 'Próxima questão'}
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+              </div>
             </>
           )}
         </section>

@@ -86,19 +86,59 @@ export function ocorrenciasDoAcervo(sistemas: AtlasSystem[]): Ocorrencia[] {
   return encontradas
 }
 
+/**
+ * De onde as questões podem sair.
+ *
+ * Os dois campos são listas porque um recorte útil raramente é um só: quem vai
+ * revisar membro superior quer o esquelético e o muscular juntos, e quem estuda
+ * cabeça e pescoço quer crânio, face e coluna cervical na mesma rodada.
+ *
+ * Cada região vem prefixada pelo sistema (`esqueletico:Membro Superior`) porque
+ * o nome sozinho é ambíguo — "Tronco" existe em mais de um sistema, e sem o
+ * prefixo marcar o tronco do esquelético traria o do muscular junto.
+ */
 export interface RecorteQuiz {
-  /** `null` = acervo inteiro. */
-  sistemaSlug?: string | null
-  /** `null` = todas as regiões do sistema. */
-  regiao?: string | null
+  /** Vazio = acervo inteiro. */
+  sistemas?: string[] | null
+  /** Vazio = os sistemas inteiros. Chaves no formato `sistema:regiao`. */
+  regioes?: string[] | null
+}
+
+export const chaveDeRegiao = (sistemaSlug: string, regiao: string) => `${sistemaSlug}:${regiao}`
+
+/** Marca usada por chaves antigas, sem sistema na frente: valem para todos. */
+const QUALQUER_SISTEMA = '*'
+
+function regioesPorSistema(chaves: string[]): Map<string, Set<string>> {
+  const mapa = new Map<string, Set<string>>()
+  for (const chave of chaves) {
+    const corte = chave.indexOf(':')
+    // Links antigos traziam `?regiao=Membro Superior`, sem o sistema. Continuam
+    // valendo — só que aplicados a qualquer sistema do recorte.
+    const sistema = corte < 0 ? QUALQUER_SISTEMA : chave.slice(0, corte)
+    const regiao = corte < 0 ? chave : chave.slice(corte + 1)
+    if (!mapa.has(sistema)) mapa.set(sistema, new Set())
+    mapa.get(sistema)!.add(regiao)
+  }
+  return mapa
 }
 
 export function aplicarRecorte(ocorrencias: Ocorrencia[], recorte: RecorteQuiz): Ocorrencia[] {
-  return ocorrencias.filter(
-    ocorrencia =>
-      (!recorte.sistemaSlug || ocorrencia.sistemaSlug === recorte.sistemaSlug) &&
-      (!recorte.regiao || ocorrencia.regiao === recorte.regiao),
-  )
+  const sistemas = new Set(recorte.sistemas || [])
+  const porSistema = regioesPorSistema(recorte.regioes || [])
+  const soltas = porSistema.get(QUALQUER_SISTEMA)
+
+  return ocorrencias.filter(ocorrencia => {
+    if (sistemas.size > 0 && !sistemas.has(ocorrencia.sistemaSlug)) return false
+
+    // Recortar por região em um sistema não pode encolher os outros: quem
+    // marcou "Membro Superior" no esquelético e o muscular inteiro espera as
+    // duas coisas. Por isso o filtro de região vale por sistema.
+    const doSistema = porSistema.get(ocorrencia.sistemaSlug)
+    if (doSistema) return doSistema.has(ocorrencia.regiao)
+    if (soltas && porSistema.size === 1) return soltas.has(ocorrencia.regiao)
+    return true
+  })
 }
 
 /** Regiões disponíveis para recortar o quiz dentro de um sistema. */

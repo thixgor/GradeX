@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { comentar, montarQuiz } from '@/lib/atlas-anatomia/quiz'
 import {
+  aplicarRecorte,
+  chaveDeRegiao,
   contarEstruturas,
   ocorrenciasDoAcervo,
   regioesDoSistema,
@@ -73,18 +75,59 @@ describe('quiz de identificação do Atlas', () => {
   })
 
   it('respeita o recorte por sistema e por região', () => {
-    const doCoracao = sortear({ sistemaSlug: 'circulatorio' }, 10, 5)
+    const doCoracao = sortear({ sistemas: ['circulatorio'] }, 10, 5)
     expect(doCoracao.every(questao => questao.ocorrencia.sistemaSlug === 'circulatorio')).toBe(true)
 
     const regioes = regioesDoSistema(ACERVO, 'esqueletico')
     expect(regioes.map(regiao => regiao.nome)).toContain('Membro Superior')
 
-    const membroSuperior = sortear({ sistemaSlug: 'esqueletico', regiao: 'Membro Superior' }, 8, 5)
+    const membroSuperior = sortear({ sistemas: ['esqueletico'], regioes: [chaveDeRegiao('esqueletico', 'Membro Superior')] }, 8, 5)
     expect(membroSuperior.length).toBeGreaterThan(0)
     expect(membroSuperior.every(questao => questao.ocorrencia.regiao === 'Membro Superior')).toBe(true)
 
-    expect(contarEstruturas(ACERVO, { sistemaSlug: 'circulatorio' })).toBeGreaterThan(0)
+    expect(contarEstruturas(ACERVO, { sistemas: ['circulatorio'] })).toBeGreaterThan(0)
     expect(contarEstruturas(ACERVO, {})).toBe(2382)
+  })
+
+  it('combina sistemas, e o recorte de região de um não encolhe os outros', () => {
+    const doisSistemas = aplicarRecorte(ACERVO, { sistemas: ['circulatorio', 'urinario'] })
+    const slugs = new Set(doisSistemas.map(item => item.sistemaSlug))
+    expect(slugs).toEqual(new Set(['circulatorio', 'urinario']))
+    expect(doisSistemas.length).toBe(
+      contarEstruturas(ACERVO, { sistemas: ['circulatorio'] }) +
+        contarEstruturas(ACERVO, { sistemas: ['urinario'] }),
+    )
+
+    // Duas regiões do mesmo sistema entram somadas, não intersectadas.
+    const duasRegioes = aplicarRecorte(ACERVO, {
+      sistemas: ['esqueletico'],
+      regioes: [chaveDeRegiao('esqueletico', 'Membro Superior'), chaveDeRegiao('esqueletico', 'Membro Inferior')],
+    })
+    expect(new Set(duasRegioes.map(item => item.regiao))).toEqual(new Set(['Membro Superior', 'Membro Inferior']))
+
+    // O caso que motivou a chave prefixada: recortar região no esquelético não
+    // pode apagar o muscular, que entrou inteiro.
+    const misturado = aplicarRecorte(ACERVO, {
+      sistemas: ['esqueletico', 'muscular'],
+      regioes: [chaveDeRegiao('esqueletico', 'Membro Superior')],
+    })
+    const doEsqueletico = misturado.filter(item => item.sistemaSlug === 'esqueletico')
+    const doMuscular = misturado.filter(item => item.sistemaSlug === 'muscular')
+    expect(doEsqueletico.every(item => item.regiao === 'Membro Superior')).toBe(true)
+    expect(doMuscular.length).toBe(contarEstruturas(ACERVO, { sistemas: ['muscular'] }))
+    expect(new Set(doMuscular.map(item => item.regiao)).size).toBeGreaterThan(1)
+  })
+
+  it('ainda entende o link antigo, com a região sem o sistema na frente', () => {
+    const legado = aplicarRecorte(ACERVO, { sistemas: ['esqueletico'], regioes: ['Membro Superior'] })
+    expect(legado.length).toBeGreaterThan(0)
+    expect(legado.every(item => item.regiao === 'Membro Superior')).toBe(true)
+    expect(legado.length).toBe(
+      contarEstruturas(ACERVO, {
+        sistemas: ['esqueletico'],
+        regioes: [chaveDeRegiao('esqueletico', 'Membro Superior')],
+      }),
+    )
   })
 
   it('comenta a questão inteira, alternativa por alternativa', () => {

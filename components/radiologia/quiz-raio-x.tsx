@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { holdScrollAtTop } from '@/components/scroll-to-top'
 import Link from 'next/link'
 import {
   Activity,
@@ -84,8 +85,6 @@ export function QuizRaioXView({ quiz, irmaos }: QuizRaioXViewProps) {
   const [tamanho, setTamanho] = useState<number>(() => Math.min(20, quiz.questoes.length))
   const [recorde, setRecorde] = useState<Recorde | null>(null)
 
-  const topo = useRef<HTMLDivElement | null>(null)
-
   useEffect(() => {
     try {
       const bruto = window.localStorage.getItem(CHAVE_RECORDE(quiz.slug))
@@ -102,7 +101,7 @@ export function QuizRaioXView({ quiz, irmaos }: QuizRaioXViewProps) {
       setIndice(0)
       setMarcando(true)
       setFase('rodada')
-      topo.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      holdScrollAtTop()
     },
     [],
   )
@@ -132,15 +131,26 @@ export function QuizRaioXView({ quiz, irmaos }: QuizRaioXViewProps) {
     [indice],
   )
 
+  /**
+   * Passa de questão e devolve a tela ao topo.
+   *
+   * `scrollIntoView({ behavior: 'smooth' })` falhava justamente aqui: quem
+   * responde termina no fim de um comentário longo, e a questão seguinte nasce
+   * curta — sem comentário e com o filme ainda carregando. O navegador prende o
+   * scroll no fim desse documento curto e cancela a rolagem suave assim que a
+   * radiografia entra e muda o layout, deixando a tela parada no rodapé.
+   * `holdScrollAtTop` sobe na hora e segura até a página crescer, soltando ao
+   * primeiro gesto de rolagem.
+   */
   const avancar = useCallback(() => {
     if (indice + 1 >= rodada.length) {
       setFase('resultado')
-      topo.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      holdScrollAtTop()
       return
     }
     setIndice((atual) => atual + 1)
     setMarcando(true)
-    topo.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    holdScrollAtTop()
   }, [indice, rodada.length])
 
   // Guardar o recorde na saída da rodada, e não a cada resposta: o que interessa
@@ -210,7 +220,6 @@ export function QuizRaioXView({ quiz, irmaos }: QuizRaioXViewProps) {
 
   return (
     <div className="rx surface-page min-h-screen">
-      <div ref={topo} className="scroll-mt-2" />
       <CabecalhoQuiz quiz={quiz} />
 
       <main className="container mx-auto max-w-6xl px-4 pb-16 pt-6">
@@ -480,6 +489,21 @@ function Rodada({
   const respondeu = escolhida !== null
   const acertou = escolhida === questao.correta
 
+  /**
+   * Assim que a alternativa é marcada, o comentário entra em cena.
+   *
+   * No celular o negatoscópio ocupa meia tela e as alternativas o resto: sem
+   * isto, o veredito nasce abaixo da dobra e a pessoa não vê nem se acertou.
+   */
+  const comentarioRef = useRef<HTMLDivElement | null>(null)
+  useEffect(() => {
+    if (!respondeu) return
+    const id = window.requestAnimationFrame(() =>
+      comentarioRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
+    )
+    return () => window.cancelAnimationFrame(id)
+  }, [respondeu, indice])
+
   return (
     <div className="grid gap-5 lg:grid-cols-[minmax(0,1.35fr)_minmax(320px,1fr)] lg:items-start">
       {/* ── Negatoscópio ── */}
@@ -673,13 +697,37 @@ function Rodada({
         </section>
 
         {respondeu && (
-          <Comentario
-            questao={questao}
-            acertou={acertou}
-            escolhida={escolhida}
-            ultima={indice + 1 >= total}
-            onAvancar={onAvancar}
-          />
+          <>
+            <div ref={comentarioRef} className="scroll-mt-3">
+              <Comentario questao={questao} acertou={acertou} escolhida={escolhida} />
+            </div>
+
+            {/* Grudada no rodapé enquanto o comentário rola.
+                O comentário é longo de propósito — é ele que ensina a
+                reconhecer a estrutura sem a marcação —, mas com o botão só no
+                fim era preciso percorrer tudo para poder seguir. Agora ele
+                acompanha a leitura. */}
+            <div className="sticky bottom-0 z-30 -mx-4 px-4 pb-3 pt-2 lg:mx-0 lg:px-0">
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background via-background/95 to-transparent" />
+              <div className="relative flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={onAvancar}
+                  className="inline-flex h-11 flex-1 items-center justify-center gap-1.5 rounded-lg bg-sky-500 px-4 text-sm font-bold text-white shadow-lg shadow-sky-500/20 transition hover:bg-sky-600 active:scale-[0.98]"
+                >
+                  {indice + 1 >= total ? 'Ver resultado' : 'Próxima questão'}
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+                <Link
+                  href={questao.atalho}
+                  prefetch={false}
+                  className="inline-flex h-11 shrink-0 items-center gap-1.5 rounded-lg border border-border bg-card px-3.5 text-xs font-bold transition hover:border-sky-500/50 hover:bg-muted"
+                >
+                  Abrir no atlas <ArrowUpRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+            </div>
+          </>
         )}
       </div>
     </div>
@@ -715,18 +763,15 @@ function BotaoFilme({
 
 /* ───────────────────────────── Resposta comentada ───────────────────────────── */
 
+/** Só o conteúdo: as ações moram na barra grudada, fora daqui. */
 function Comentario({
   questao,
   acertou,
   escolhida,
-  ultima,
-  onAvancar,
 }: {
   questao: QuestaoRaioX
   acertou: boolean
   escolhida: number
-  ultima: boolean
-  onAvancar: () => void
 }) {
   const { comentario } = questao
   const marcada = questao.alternativas[escolhida]
@@ -824,23 +869,6 @@ function Comentario({
         </Secao>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 border-t border-border bg-muted/20 p-4">
-        <button
-          type="button"
-          onClick={onAvancar}
-          className="inline-flex h-10 items-center gap-1.5 rounded-lg bg-sky-500 px-4 text-sm font-bold text-white transition hover:bg-sky-600 active:scale-[0.98]"
-        >
-          {ultima ? 'Ver resultado' : 'Próxima questão'}
-          <ChevronRight className="h-4 w-4" />
-        </button>
-        <Link
-          href={questao.atalho}
-          prefetch={false}
-          className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-border px-3.5 text-xs font-bold transition hover:border-sky-500/50 hover:bg-muted"
-        >
-          Abrir no atlas <ArrowUpRight className="h-3.5 w-3.5" />
-        </Link>
-      </div>
     </section>
   )
 }
