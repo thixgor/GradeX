@@ -5,7 +5,9 @@ import { Loader2 } from 'lucide-react'
 import { PortaoAnatomia } from '@/components/anatomia/portao-anatomia'
 
 /** A explicação aprofundada de cada peça é conteúdo pago: entra sob demanda. */
-const ModeloDetalhe = dynamic(() => import('@/components/anatomia/modelo-detalhe'), {
+const carregarDetalhe = () => import('@/components/anatomia/modelo-detalhe')
+
+const ModeloDetalhe = dynamic(carregarDetalhe, {
   ssr: false,
   loading: () => (
     <div className="surface-page flex min-h-screen items-center justify-center">
@@ -15,5 +17,9 @@ const ModeloDetalhe = dynamic(() => import('@/components/anatomia/modelo-detalhe
 })
 
 export default function ModeloDetalhePage() {
-  return <PortaoAnatomia secao="modelos">{() => <ModeloDetalhe />}</PortaoAnatomia>
+  return (
+    <PortaoAnatomia secao="modelos" precarregar={carregarDetalhe}>
+      {() => <ModeloDetalhe />}
+    </PortaoAnatomia>
+  )
 }

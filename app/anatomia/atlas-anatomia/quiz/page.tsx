@@ -6,7 +6,9 @@ import { Loader2 } from 'lucide-react'
 import { PortaoAnatomia } from '@/components/anatomia/portao-anatomia'
 
 /** O quiz sorteia questões do acervo — carrega só depois do veredito de acesso. */
-const QuizAtlas = dynamic(() => import('@/components/anatomia/quiz-atlas'), {
+const carregarQuiz = () => import('@/components/anatomia/quiz-atlas')
+
+const QuizAtlas = dynamic(carregarQuiz, {
   ssr: false,
   loading: () => (
     <div className="surface-page flex min-h-screen items-center justify-center">
@@ -17,10 +19,10 @@ const QuizAtlas = dynamic(() => import('@/components/anatomia/quiz-atlas'), {
 
 export default function QuizAtlasPage() {
   return (
-    <PortaoAnatomia secao="atlas">
-      {() => (
+    <PortaoAnatomia secao="atlas" precarregar={carregarQuiz}>
+      {dados => (
         <Suspense fallback={<div className="surface-page min-h-screen" />}>
-          <QuizAtlas />
+          <QuizAtlas catalogo={dados.catalogo} />
         </Suspense>
       )}
     </PortaoAnatomia>

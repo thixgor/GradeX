@@ -1,4 +1,4 @@
-import type { AtlasMarker } from '@/lib/atlas-anatomia/catalogo'
+import type { AtlasMarker } from '@/lib/atlas-anatomia/estrutura'
 import type { MarkerInsight } from '@/lib/atlas-anatomia/insights'
 
 /**

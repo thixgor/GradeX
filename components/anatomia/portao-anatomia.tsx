@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Loader2 } from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
 import { VitrineAnatomia } from '@/components/anatomia/vitrine-anatomia'
@@ -20,13 +20,29 @@ import type { RespostaAcessoAnatomia } from '@/lib/anatomia/tipos'
  */
 export function PortaoAnatomia({
   secao,
+  precarregar,
   children,
 }: {
   secao: 'hub' | 'atlas' | 'modelos'
+  /**
+   * Import do conteúdo pago. Sem isto as duas esperas ficam em fila — a página
+   * sobe, consulta o acesso e só então começa a baixar o pacote da seção. Com
+   * ele, o download começa junto com a consulta, e o veredito chega enquanto o
+   * pacote já está vindo. Quem não assina não perde nada: a resposta é a mesma
+   * landing, e o pacote baixado em paralelo simplesmente não é montado.
+   */
+  precarregar?: () => Promise<unknown>
   children: (dados: RespostaAcessoAnatomia) => React.ReactNode
 }) {
   const [dados, setDados] = useState<RespostaAcessoAnatomia | null>(null)
   const [carregado, setCarregado] = useState(false)
+
+  // Numa ref para o disparo não depender da identidade da função: quem chama
+  // pode passar uma lambda sem que isso refaça a consulta de acesso a cada render.
+  const adiantar = useRef(precarregar)
+  useEffect(() => {
+    adiantar.current?.().catch(() => {})
+  }, [])
 
   useEffect(() => {
     let ativo = true

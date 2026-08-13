@@ -6,11 +6,15 @@ import { Loader2 } from 'lucide-react'
 import { PortaoAnatomia } from '@/components/anatomia/portao-anatomia'
 
 /**
- * O Atlas em si carrega o catálogo do acervo — quase 900 KB de JSON. Ele só é
- * baixado depois que `/api/anatomia` confirma a assinatura; para quem cai na
- * landing de vendas, este import nunca acontece.
+ * A experiência do Atlas só entra depois que `/api/anatomia` confirma a
+ * assinatura; para quem cai na landing de vendas, este import nunca acontece.
+ *
+ * `precarregar` faz o pacote começar a vir junto com a consulta de acesso, e
+ * não depois dela: as duas esperas passam a acontecer ao mesmo tempo.
  */
-const AtlasExperiencia = dynamic(() => import('@/components/anatomia/atlas-experiencia'), {
+const carregarExperiencia = () => import('@/components/anatomia/atlas-experiencia')
+
+const AtlasExperiencia = dynamic(carregarExperiencia, {
   ssr: false,
   loading: () => (
     <div className="surface-page flex min-h-screen items-center justify-center">
@@ -21,10 +25,10 @@ const AtlasExperiencia = dynamic(() => import('@/components/anatomia/atlas-exper
 
 export default function AtlasAnatomiaPage() {
   return (
-    <PortaoAnatomia secao="atlas">
-      {() => (
+    <PortaoAnatomia secao="atlas" precarregar={carregarExperiencia}>
+      {dados => (
         <Suspense fallback={<div className="surface-page min-h-screen" />}>
-          <AtlasExperiencia />
+          <AtlasExperiencia catalogo={dados.catalogo} />
         </Suspense>
       )}
     </PortaoAnatomia>

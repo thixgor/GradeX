@@ -1,9 +1,23 @@
 import { describe, expect, it } from 'vitest'
-import { comentar, contarEstruturas, montarQuiz, regioesDoSistema } from '@/lib/atlas-anatomia/quiz'
+import { comentar, montarQuiz } from '@/lib/atlas-anatomia/quiz'
+import {
+  contarEstruturas,
+  ocorrenciasDoAcervo,
+  regioesDoSistema,
+  type RecorteQuiz,
+} from '@/lib/atlas-anatomia/recorte-quiz'
+import { ATLAS_SYSTEMS } from '@/lib/atlas-anatomia/catalogo'
+
+// No navegador o universo chega por sistema, sob demanda. Aqui, no Node, o
+// acervo inteiro está à mão: monta-se uma vez e as questões saem dele.
+const ACERVO = ocorrenciasDoAcervo(ATLAS_SYSTEMS)
+
+const sortear = (recorte: RecorteQuiz, quantidade: number, semente: number) =>
+  montarQuiz(ACERVO, recorte, quantidade, semente)
 
 describe('quiz de identificação do Atlas', () => {
   it('monta a quantidade pedida sem repetir estrutura na mesma rodada', () => {
-    const questoes = montarQuiz({}, 20, 4242)
+    const questoes = sortear({}, 20, 4242)
     expect(questoes).toHaveLength(20)
 
     const nomes = questoes.map(questao => questao.ocorrencia.marcador.title)
@@ -11,16 +25,16 @@ describe('quiz de identificação do Atlas', () => {
   })
 
   it('é reprodutível pela semente e muda quando a semente muda', () => {
-    const primeira = montarQuiz({}, 10, 99).map(questao => questao.id)
-    const repetida = montarQuiz({}, 10, 99).map(questao => questao.id)
-    const outra = montarQuiz({}, 10, 100).map(questao => questao.id)
+    const primeira = sortear({}, 10, 99).map(questao => questao.id)
+    const repetida = sortear({}, 10, 99).map(questao => questao.id)
+    const outra = sortear({}, 10, 100).map(questao => questao.id)
 
     expect(repetida).toEqual(primeira)
     expect(outra).not.toEqual(primeira)
   })
 
   it('dá quatro alternativas distintas, com exatamente uma correta', () => {
-    for (const questao of montarQuiz({}, 30, 7)) {
+    for (const questao of sortear({}, 30, 7)) {
       expect(questao.alternativas).toHaveLength(4)
       expect(new Set(questao.alternativas.map(alternativa => alternativa.texto)).size).toBe(4)
 
@@ -31,7 +45,7 @@ describe('quiz de identificação do Atlas', () => {
   })
 
   it('prefere distratores da própria prancha, que é onde eles ensinam', () => {
-    const questoes = montarQuiz({}, 30, 31)
+    const questoes = sortear({}, 30, 31)
 
     // O distrator ideal é uma estrutura que está à vista na mesma peça: obriga a
     // olhar a prancha em vez de eliminar pelo absurdo. Nem toda peça tem quatro
@@ -59,22 +73,22 @@ describe('quiz de identificação do Atlas', () => {
   })
 
   it('respeita o recorte por sistema e por região', () => {
-    const doCoracao = montarQuiz({ sistemaSlug: 'circulatorio' }, 10, 5)
+    const doCoracao = sortear({ sistemaSlug: 'circulatorio' }, 10, 5)
     expect(doCoracao.every(questao => questao.ocorrencia.sistemaSlug === 'circulatorio')).toBe(true)
 
-    const regioes = regioesDoSistema('esqueletico')
+    const regioes = regioesDoSistema(ACERVO, 'esqueletico')
     expect(regioes.map(regiao => regiao.nome)).toContain('Membro Superior')
 
-    const membroSuperior = montarQuiz({ sistemaSlug: 'esqueletico', regiao: 'Membro Superior' }, 8, 5)
+    const membroSuperior = sortear({ sistemaSlug: 'esqueletico', regiao: 'Membro Superior' }, 8, 5)
     expect(membroSuperior.length).toBeGreaterThan(0)
     expect(membroSuperior.every(questao => questao.ocorrencia.regiao === 'Membro Superior')).toBe(true)
 
-    expect(contarEstruturas({ sistemaSlug: 'circulatorio' })).toBeGreaterThan(0)
-    expect(contarEstruturas({})).toBe(2382)
+    expect(contarEstruturas(ACERVO, { sistemaSlug: 'circulatorio' })).toBeGreaterThan(0)
+    expect(contarEstruturas(ACERVO, {})).toBe(2382)
   })
 
   it('comenta a questão inteira, alternativa por alternativa', () => {
-    for (const questao of montarQuiz({}, 15, 88)) {
+    for (const questao of sortear({}, 15, 88)) {
       const errada = (questao.correta + 1) % questao.alternativas.length
       const comentario = comentar(questao, errada)
 
@@ -93,7 +107,7 @@ describe('quiz de identificação do Atlas', () => {
   })
 
   it('muda a abertura conforme o aluno acertou ou errou', () => {
-    const questao = montarQuiz({}, 1, 1234)[0]
+    const questao = sortear({}, 1, 1234)[0]
     const acerto = comentar(questao, questao.correta)
     const erro = comentar(questao, (questao.correta + 1) % 4)
 

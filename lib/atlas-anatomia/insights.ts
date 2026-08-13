@@ -1,4 +1,4 @@
-import type { AtlasMarker } from './catalogo'
+import type { AtlasMarker } from './estrutura'
 import { classificar, classePorId, type ClasseEstrutural } from './classes'
 import { resolverRegiao, type RegiaoAnatomica } from './regioes'
 import { DICIONARIO, type EntradaDicionario } from './dicionario'
