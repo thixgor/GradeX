@@ -351,7 +351,12 @@ export function PainelDeBusca({
             autoComplete="off"
             autoCorrect="off"
             spellCheck={false}
-            className="min-w-0 flex-1 bg-transparent text-[15px] text-foreground outline-none placeholder:text-muted-foreground/70"
+            // 16px no celular NÃO é escolha estética: abaixo disso o Safari do
+            // iOS dá aquele zoom automático ao focar o campo, e o pior é a
+            // saída — ele não desfaz sozinho, a página fica ampliada depois de
+            // fechar a busca. A partir do `sm:` o campo volta aos 15px do
+            // resto da interface, porque no desktop esse zoom não existe.
+            className="min-w-0 flex-1 bg-transparent text-base text-foreground outline-none placeholder:text-muted-foreground/70 sm:text-[15px]"
           />
           {carregando && <Loader2 className="h-4 w-4 shrink-0 animate-spin text-muted-foreground" />}
           {consulta.length > 0 && !carregando && (
