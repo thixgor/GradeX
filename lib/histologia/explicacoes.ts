@@ -28,8 +28,20 @@
  * determina. Tradução automática silenciosa seria pior que a lacuna: o aluno
  * perderia a única pista de que aquele texto não foi conferido por ninguém.
  *
+ * Hoje os 3.110 textos estão cobertos, e portanto os 7.355 marcadores. Isso
+ * torna o caminho do `null` invisível na interface, mas não morto: o acervo
+ * é reprocessável, e um fragmento que traga texto novo volta a percorrê-lo. É
+ * por isso que a tarja de pendência continua no componente em vez de sair
+ * junto com a última lacuna.
+ *
+ * Também não traduz as camadas de `credito` e `navegacao`. A primeira é
+ * atribuição de imagem, que a interface remete aos créditos da página sem
+ * exibir — traduzir uma atribuição seria adulterá-la. A segunda descreve o
+ * percurso do atlas de origem e não é renderizada em lugar nenhum.
+ *
  * A cobertura está declarada em `__tests__/histologia/explicacoes.test.ts`, que
- * a mede a cada rodada e falha se ela regredir.
+ * a mede a cada rodada e falha se ela regredir — nos dois sentidos: texto novo
+ * sem tradução e chave que deixou de casar com o acervo.
  */
 
 /** Colapsa espaços e normaliza aspas — ver a nota sobre `Meissner’s` acima. */
