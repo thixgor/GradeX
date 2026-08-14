@@ -11,6 +11,8 @@ import { TimedAccessNotice } from '@/components/materiais/timed-access'
 import { CheckoutAccountNotice } from '@/components/checkout/checkout-account-notice'
 import { CouponPromo } from '@/components/checkout/coupon-promo'
 import { PackageContents } from '@/components/shop/package-contents'
+import { ListaDoPacote } from '@/components/manual-clinico/pacote'
+import { TOTAL_DE_MODULOS, precoPorDia, precoPorModulo } from '@/lib/manual-clinico/pacote'
 import { isPlusAccount } from '@/lib/account-tier'
 import Link from 'next/link'
 
@@ -382,6 +384,8 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
     ? Math.max(2, Math.ceil(lifetimePlan.price / longestTemporary.price))
     : null
   const selectedIsLifetime = selectedPlan?.key === 'vitalicio'
+  const precoDoManual = precoPorModulo(payableAmount)
+  const precoDiario = precoPorDia(payableAmount, selectedPlan?.durationMonths ?? null)
 
   const extraBody = {
     productType: 'manual_clinico',
@@ -403,9 +407,11 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
               <div className="h-48 bg-primary/10" />
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
-            <div className="absolute bottom-4 left-4 flex items-center gap-2 rounded-full border border-border bg-card/95 px-3 py-1.5 text-xs font-black uppercase tracking-wide shadow-sm">
+            {/* Era "Produto avulso" — o rótulo dizia à pessoa, no momento de
+                decidir, o contrário do que a compra faz: libera sete manuais. */}
+            <div className="absolute bottom-4 left-4 flex items-center gap-2 rounded-full border border-amber-500/30 bg-card/95 px-3 py-1.5 text-xs font-black uppercase tracking-wide shadow-sm">
               <Sparkles className="h-3.5 w-3.5 text-amber-600 dark:text-amber-300" />
-              Produto avulso
+              {TOTAL_DE_MODULOS} manuais · 1 pagamento
             </div>
           </div>
 
@@ -417,6 +423,18 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
               <h1 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">{product.label}</h1>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{product.shortDescription}</p>
             </div>
+          </div>
+
+          {/* O valor antes do número: quem chega aqui acha que compra um manual.
+              A lista mostra os sete que leva, com o tamanho de cada um, antes de
+              qualquer preço aparecer na tela. */}
+          <div className="mb-5">
+            <p className="text-base font-bold text-foreground">Esta compra abre os {TOTAL_DE_MODULOS} manuais</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              Nenhum deles é vendido separado, e nenhum é versão reduzida. Todos abrem completos assim que o
+              pagamento é aprovado.
+            </p>
+            <ListaDoPacote className="mt-3" />
           </div>
 
           {enabledPlans.length > 1 && (
@@ -434,7 +452,7 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
               <div className="mb-3">
                 <p className="text-base font-bold text-foreground">Escolha como quer seu acesso</p>
                 <p className="mt-0.5 text-xs text-muted-foreground">
-                  Todos liberam o Manual completo — a diferença é só por quanto tempo.
+                  Os três liberam os {TOTAL_DE_MODULOS} manuais completos — a diferença é só por quanto tempo.
                 </p>
               </div>
               <div className="grid gap-2.5">
@@ -510,11 +528,12 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
 
           <div className="grid gap-2 text-sm text-muted-foreground">
             {[
-              product.benefitText,
-              'Diagnostico, tratamento, diferenciais, farmacologia e fluxogramas',
+              `Os ${TOTAL_DE_MODULOS} manuais liberados juntos — nenhum é vendido à parte`,
+              'Diagnóstico, tratamento, diferenciais, farmacologia e fluxogramas',
+              'Conteúdo novo entra no mesmo acesso, sem cobrança extra',
               selectedPlan?.durationMonths
-                ? `Acesso por ${selectedPlan.durationMonths} ${selectedPlan.durationMonths === 1 ? 'mês' : 'meses'} apos pagamento aprovado`
-                : 'Acesso vitalicio liberado apos pagamento aprovado',
+                ? `Acesso por ${selectedPlan.durationMonths} ${selectedPlan.durationMonths === 1 ? 'mês' : 'meses'} após pagamento aprovado`
+                : 'Acesso vitalício liberado após pagamento aprovado',
               'Serial Key enviada por e-mail — não precisa criar conta agora',
             ].map((item) => (
               <div key={item} className="flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2.5">
@@ -542,6 +561,14 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
                   ? `${selectedPlan.label} · ${selectedPlan.durationMonths} ${selectedPlan.durationMonths === 1 ? 'mês' : 'meses'} de acesso`
                   : 'Acesso completo liberado na hora'}
             </p>
+            {/* O total sobre sete: o número que se compara com o preço de um
+                manual avulso, e o que desarma a objeção sem precisar de desconto. */}
+            {precoDoManual != null && (
+              <p className="mt-1.5 text-xs font-black text-amber-700 dark:text-amber-300">
+                {formatBRL(precoDoManual)} por manual
+                {precoDiario != null ? ` · cerca de ${formatBRL(precoDiario)} por dia` : ''}
+              </p>
+            )}
             {hasActiveTier && (tierBeatsCoupon || stackCoupon) && tierDiscountAmount > 0 ? (
               <p className="mt-1 inline-flex items-center gap-1 text-xs font-bold text-primary">
                 <Flame className="h-3 w-3" />

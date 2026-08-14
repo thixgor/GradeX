@@ -29,6 +29,8 @@ import {
 } from 'lucide-react'
 
 import { usePricingEventState } from '@/components/pricing-events/usePricingEventState'
+import { FaixaDoPacote, GradeDoPacote, ListaDoPacote } from '@/components/manual-clinico/pacote'
+import { TOTAL_DE_MODULOS, precoPorModulo } from '@/lib/manual-clinico/pacote'
 import { LogoDaHistologia } from '@/components/histologia/marca'
 import { setorDe, tema } from '@/components/histologia/tema'
 import { AVISO_EDUCACIONAL, CREDITO_BASE } from '@/lib/histologia/licenca'
@@ -104,7 +106,7 @@ export function VitrineDaHistologia({
     : precoBase
   const mostrarPreco = acesso.produto?.isActive !== false && precoBase > 0
 
-  const rotuloCta = acesso.autenticado ? 'Desbloquear agora' : 'Comprar e desbloquear'
+  const rotuloCta = `Quero os ${TOTAL_DE_MODULOS} manuais`
 
   function irParaCheckout() {
     router.push(DESTINO_CHECKOUT)
@@ -136,6 +138,10 @@ export function VitrineDaHistologia({
         </div>
       )}
 
+      <div className="mx-auto max-w-6xl px-4 pt-8">
+        <FaixaDoPacote atual="histologia" />
+      </div>
+
       {dados.amostra && <Amostra amostra={dados.amostra} totalDeLaminas={totais.laminas} />}
 
       <PorQueTrava />
@@ -145,6 +151,12 @@ export function VitrineDaHistologia({
       <Setores setores={dados.setores} totais={totais} />
 
       <SemComparacao />
+
+      {/* O valor inteiro antes do número: a grade dos sete manuais é a última
+          coisa que a pessoa lê antes de ver quanto custa. */}
+      <section className="mx-auto max-w-6xl px-4 pt-14">
+        <GradeDoPacote atual="histologia" />
+      </section>
 
       <Preco
         acesso={acesso}
@@ -269,7 +281,7 @@ function Hero({
 
         <div className="mt-5">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-300/25 bg-amber-400/10 px-3 py-1.5 text-[11px] font-black uppercase tracking-wider text-amber-300 backdrop-blur">
-            <Crown className="h-3.5 w-3.5" aria-hidden /> Seção privativa · Manual Clínico
+            <Crown className="h-3.5 w-3.5" aria-hidden /> {TOTAL_DE_MODULOS} manuais · 1 pagamento único
           </span>
         </div>
 
@@ -326,12 +338,14 @@ function Hero({
             <ArrowRight className="h-4 w-4" aria-hidden />
           </button>
 
-          {mostrarPreco && (
-            <p className="text-sm text-white/60">
-              a partir de <span className="font-black text-white">{reais(precoFinal)}</span>
-              {temLote && <span className="ml-1.5 text-white/40 line-through">{reais(precoBase)}</span>}
-            </p>
-          )}
+          {/* Sem preço na primeira dobra de propósito: aqui a pessoa ainda não
+              sabe que a mesma compra abre outros seis manuais, e um número lido
+              antes disso vira comparação com o preço de um atlas avulso. O valor
+              aparece inteiro na seção da oferta, depois do acervo. */}
+          <p className="text-sm text-white/60">
+            A Histologia é <span className="font-black text-white">1 dos {TOTAL_DE_MODULOS} manuais</span> que
+            este acesso abre
+          </p>
 
           {!autenticado && (
             <Link
@@ -345,7 +359,8 @@ function Hero({
 
         <ul className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-white/45">
           {[
-            'Incluso no Manual Clínico',
+            `${TOTAL_DE_MODULOS} manuais na mesma compra`,
+            'Nenhum é vendido separado',
             'Incluso no DomineAqui Plus+',
             'Acesso imediato',
           ].map((item) => (
@@ -807,7 +822,7 @@ function SemComparacao() {
 const PERGUNTAS = [
   {
     q: 'O Manual da Histologia é vendido separado?',
-    a: 'Não. Ele vem incluído, sem custo extra, para quem assina o Manual Clínico — e para as contas DomineAqui Plus+. A mesma assinatura abre também as patologias do Manual, o simulador de ECG, o Manual de Radiologia, Domine Anatomia e as Ferramentas Clínicas.',
+    a: 'Não — e nenhuma outra seção é. São sete manuais numa compra só: além da Histologia, o mesmo pagamento abre as patologias do Manual Clínico, a Farmacologia, o Manual do Eletrocardiograma, o Manual de Radiologia, o Domine Anatomia e as Ferramentas Clínicas. Tudo isso também já vem incluído nas contas DomineAqui Plus+.',
   },
   {
     q: 'Preciso ter conta para comprar?',
@@ -852,6 +867,10 @@ function Preco({
   planoMaisBarato: string | null
   aoComprar: () => void
 }) {
+  // O total sobre sete: é o número que se compara com o preço de um manual
+  // avulso, e o que desarma a objeção sem precisar de mais desconto.
+  const porManual = precoPorModulo(precoFinal)
+
   return (
     <section className="border-t border-border bg-muted/25" aria-labelledby="preco">
       <div className="mx-auto max-w-6xl px-4 py-12 sm:py-16">
@@ -867,22 +886,25 @@ function Preco({
                   <Lock className="h-5 w-5" aria-hidden />
                 </span>
                 <div className="min-w-0">
-                  <p className="editorial-mark">Conteúdo exclusivo de assinantes</p>
+                  <p className="editorial-mark">A oferta inteira</p>
                   <h2
                     id="preco"
                     className="mt-2 font-heading text-xl font-semibold tracking-tight sm:text-2xl"
                   >
-                    O Manual da Histologia faz parte do Manual Clínico
+                    Você não escolhe um manual. Você leva os {TOTAL_DE_MODULOS}.
                   </h2>
                   <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                    A seção não é vendida à parte: vem incluída, sem custo extra, para quem assina o{' '}
-                    <strong className="text-foreground">Manual Clínico</strong> — e para as contas{' '}
-                    <strong className="text-foreground">DomineAqui Plus+</strong>. Uma assinatura só
-                    abre as {totais.laminas.toLocaleString('pt-BR')} lâminas daqui e todo o resto do
-                    Manual.
+                    Nenhuma seção é vendida à parte. O mesmo pagamento que abre as{' '}
+                    {totais.laminas.toLocaleString('pt-BR')} lâminas daqui abre também as patologias do{' '}
+                    <strong className="text-foreground">Manual Clínico</strong>, a Farmacologia, o
+                    Eletrocardiograma, a Radiologia, o Domine Anatomia e as Ferramentas Clínicas — e tudo isso
+                    já vem incluso nas contas{' '}
+                    <strong className="text-foreground">DomineAqui Plus+</strong>.
                   </p>
                 </div>
               </div>
+
+              <ListaDoPacote atual="histologia" className="mt-5" />
             </div>
 
             <div className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
@@ -901,7 +923,7 @@ function Preco({
             {mostrarPreco ? (
               <>
                 <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Incluso no Manual Clínico
+                  Os {TOTAL_DE_MODULOS} manuais por
                   {planoMaisBarato ? ` · plano ${planoMaisBarato}` : ''}
                 </p>
                 <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
@@ -919,6 +941,11 @@ function Preco({
                     </span>
                   )}
                 </div>
+                {porManual != null && (
+                  <p className="mt-2 text-[13px] font-bold leading-snug text-teal-700 dark:text-teal-300">
+                    Dá {reais(porManual)} por manual.
+                  </p>
+                )}
                 {temLote && rotuloDoLote && (
                   <p className="mt-1.5 text-xs text-emerald-700 dark:text-emerald-400">
                     Lote {rotuloDoLote} — você economiza {reais(precoBase - precoFinal)}.
@@ -945,7 +972,8 @@ function Preco({
               {[
                 'Acesso imediato após o pagamento',
                 `As ${totais.laminas.toLocaleString('pt-BR')} lâminas e os ${totais.quizzes} quizzes inclusos`,
-                'Leva junto as patologias, o ECG, a Radiologia e a Anatomia',
+                `Os ${TOTAL_DE_MODULOS} manuais juntos — não há venda avulsa de nenhum`,
+                'Conteúdo novo entra no mesmo acesso, sem cobrança extra',
                 ...(acesso.autenticado ? [] : ['Sem conta? A Serial Key vai por e-mail']),
               ].map((item) => (
                 <li key={item} className="flex items-start gap-2 text-xs text-muted-foreground">
@@ -1045,8 +1073,10 @@ function BarraDoCelular({
       <div className="flex items-center gap-3">
         {mostrarPreco && (
           <div className="min-w-0">
-            <p className="truncate text-[11px] text-muted-foreground">
-              {temLote ? `−${Math.round(desconto)}% no lote atual` : 'Manual Clínico completo'}
+            <p className="truncate text-[11px] font-bold text-teal-700 dark:text-teal-300">
+              {temLote
+                ? `−${Math.round(desconto)}% · ${TOTAL_DE_MODULOS} manuais`
+                : `${TOTAL_DE_MODULOS} manuais inclusos`}
             </p>
             <p className="flex items-baseline gap-1.5">
               {temLote && (

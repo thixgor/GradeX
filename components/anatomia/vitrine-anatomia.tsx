@@ -4,6 +4,8 @@ import { useState } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { usePricingEventState } from '@/components/pricing-events/usePricingEventState'
+import { FaixaDoPacote, GradeDoPacote, ListaDoPacote } from '@/components/manual-clinico/pacote'
+import { TOTAL_DE_MODULOS, precoPorModulo } from '@/lib/manual-clinico/pacote'
 import { PranchaInterativa } from '@/components/anatomia/prancha-interativa'
 import { FichaMarcador } from '@/components/anatomia/ficha-estrutura'
 import type { ResumoAnatomia, RespostaAcessoAnatomia } from '@/lib/anatomia/tipos'
@@ -60,7 +62,7 @@ const CAMADAS = [
 const PERGUNTAS = [
   {
     q: 'Domine Anatomia é vendido separado?',
-    a: 'Não. Ele vem incluído, sem custo extra, para quem assina o Manual Clínico — e para as contas DomineAqui Plus+. Uma assinatura só abre esta seção e todo o resto do Manual.',
+    a: 'Não — e nenhuma outra seção é. São sete manuais numa compra só: além do Domine Anatomia, o mesmo pagamento abre as 300+ patologias do Manual Clínico, a Farmacologia, o Manual do Eletrocardiograma, o Manual de Radiologia, o Manual de Histologia e as 201 Ferramentas Clínicas. Tudo isso também já vem incluído nas contas DomineAqui Plus+.',
   },
   {
     q: 'Preciso ter conta para comprar?',
@@ -104,7 +106,9 @@ export function VitrineAnatomia({ dados, secao = 'hub' }: VitrineAnatomiaProps) 
     router.push('/manual-clinico/checkout')
   }
 
-  const rotuloCta = autenticado ? 'Desbloquear o Manual Clínico' : 'Comprar e desbloquear'
+  const rotuloCta = `Quero os ${TOTAL_DE_MODULOS} manuais`
+  // O total sobre sete — o número que se compara com o preço de um atlas avulso.
+  const porManual = precoPorModulo(precoFinal)
 
   const chamadas = {
     hub: {
@@ -161,10 +165,11 @@ export function VitrineAnatomia({ dados, secao = 'hub' }: VitrineAnatomiaProps) 
             <ArrowLeft className="h-4 w-4" /> Voltar ao Manual Clínico
           </button>
 
-          <div>
+          <div className="flex flex-wrap items-center gap-2">
             <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-300/25 bg-amber-400/12 px-3 py-1.5 text-[11px] font-black uppercase tracking-wider text-amber-300">
-              <Crown className="h-3.5 w-3.5" /> {chamadas.olho}
+              <Crown className="h-3.5 w-3.5" /> {TOTAL_DE_MODULOS} manuais · 1 pagamento único
             </span>
+            <span className="text-[11px] font-bold uppercase tracking-wider text-white/40">{chamadas.olho}</span>
           </div>
 
           <h1 className="mt-4 max-w-4xl font-heading text-[2.6rem] font-semibold leading-[0.98] tracking-tight text-white sm:text-6xl lg:text-7xl">
@@ -196,18 +201,18 @@ export function VitrineAnatomia({ dados, secao = 'hub' }: VitrineAnatomiaProps) 
               {rotuloCta}
               <ArrowRight className="h-4 w-4" />
             </button>
-            {mostrarPreco && (
-              <p className="text-sm text-white/60">
-                a partir de{' '}
-                <span className="font-black text-white">{reais(precoFinal)}</span>
-                {temLote && <span className="ml-1.5 text-white/40 line-through">{reais(precoBase)}</span>}
-              </p>
-            )}
+            {/* Sem preço na primeira dobra: aqui a pessoa ainda não sabe que a
+                mesma compra abre outros seis manuais, e o número lido antes
+                disso vira comparação com o preço de um atlas avulso. */}
+            <p className="text-sm text-white/60">
+              Domine Anatomia é <span className="font-black text-white">1 dos {TOTAL_DE_MODULOS} manuais</span>{' '}
+              que este acesso abre
+            </p>
           </div>
 
           <p className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-white/45">
             <span className="inline-flex items-center gap-1.5">
-              <Check className="h-3.5 w-3.5 text-emerald-400" /> Incluso no Manual Clínico
+              <Check className="h-3.5 w-3.5 text-emerald-400" /> {TOTAL_DE_MODULOS} manuais na mesma compra
             </span>
             <span className="inline-flex items-center gap-1.5">
               <Check className="h-3.5 w-3.5 text-emerald-400" /> Incluso no DomineAqui Plus+
@@ -218,6 +223,10 @@ export function VitrineAnatomia({ dados, secao = 'hub' }: VitrineAnatomiaProps) 
           </p>
         </div>
       </header>
+
+      <div className="mx-auto max-w-6xl px-4 pt-8">
+        <FaixaDoPacote atual="anatomia" />
+      </div>
 
       {/* ══════════════ Amostra grátis: uma prancha de verdade ══════════════ */}
       {catalogo.amostra && (
@@ -346,6 +355,11 @@ export function VitrineAnatomia({ dados, secao = 'hub' }: VitrineAnatomiaProps) 
         </div>
       </section>
 
+      {/* ══════════════ O pacote: o valor inteiro, antes do preço ══════════════ */}
+      <section className="mx-auto max-w-6xl px-4 pt-12 sm:pt-16">
+        <GradeDoPacote atual="anatomia" />
+      </section>
+
       {/* ══════════════ Preço ══════════════ */}
       <section className="mx-auto max-w-6xl px-4 py-12 sm:py-16">
         <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
@@ -357,18 +371,21 @@ export function VitrineAnatomia({ dados, secao = 'hub' }: VitrineAnatomiaProps) 
                   <Lock className="h-5 w-5" />
                 </span>
                 <div className="min-w-0">
-                  <p className="editorial-mark">Conteúdo exclusivo de assinantes</p>
+                  <p className="editorial-mark">A oferta inteira</p>
                   <h2 className="mt-2 font-heading text-xl font-semibold tracking-tight sm:text-2xl">
-                    Domine Anatomia faz parte do Manual Clínico
+                    Você não escolhe um manual. Você leva os {TOTAL_DE_MODULOS}.
                   </h2>
                   <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                    A seção não é vendida à parte: vem incluída, sem custo extra, para quem assina o{' '}
-                    <strong className="text-foreground">Manual Clínico</strong> — e para as contas{' '}
-                    <strong className="text-foreground">DomineAqui Plus+</strong>. A mesma assinatura abre as 300+
-                    patologias do Manual, o simulador de ECG, o Manual de Radiologia e as Ferramentas Clínicas.
+                    Nenhuma seção é vendida à parte. O mesmo pagamento que abre as {catalogo.totalPranchas}{' '}
+                    pranchas e os {catalogo.totalModelos} modelos daqui abre também as 300+ patologias do{' '}
+                    <strong className="text-foreground">Manual Clínico</strong>, a Farmacologia, o simulador de
+                    ECG, o Manual de Radiologia, o Manual de Histologia e as Ferramentas Clínicas — e tudo isso
+                    já vem incluso nas contas <strong className="text-foreground">DomineAqui Plus+</strong>.
                   </p>
                 </div>
               </div>
+
+              <ListaDoPacote atual="anatomia" className="mt-5" />
             </div>
 
             <div className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
@@ -385,7 +402,8 @@ export function VitrineAnatomia({ dados, secao = 'hub' }: VitrineAnatomiaProps) 
             {mostrarPreco ? (
               <>
                 <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Incluso no Manual Clínico{planoMaisBarato?.label ? ` · plano ${planoMaisBarato.label}` : ''}
+                  Os {TOTAL_DE_MODULOS} manuais por
+                  {planoMaisBarato?.label ? ` · plano ${planoMaisBarato.label}` : ''}
                 </p>
                 <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
                   {temLote && <span className="text-base text-muted-foreground line-through">{reais(precoBase)}</span>}
@@ -396,6 +414,11 @@ export function VitrineAnatomia({ dados, secao = 'hub' }: VitrineAnatomiaProps) 
                     </span>
                   )}
                 </div>
+                {porManual != null && (
+                  <p className="mt-2 text-[13px] font-bold leading-snug text-emerald-700 dark:text-emerald-300">
+                    Dá {reais(porManual)} por manual.
+                  </p>
+                )}
                 {temLote && evento?.activeTier?.label && (
                   <p className="mt-1.5 text-xs text-emerald-700 dark:text-emerald-400">
                     Lote {evento.activeTier.label} — você economiza {reais(precoBase - precoFinal)}.
@@ -422,7 +445,8 @@ export function VitrineAnatomia({ dados, secao = 'hub' }: VitrineAnatomiaProps) 
               {[
                 'Acesso imediato após o pagamento',
                 `As ${catalogo.totalPranchas} pranchas e os ${catalogo.totalModelos} modelos inclusos`,
-                'Leva junto as 300+ patologias do Manual Clínico',
+                `Os ${TOTAL_DE_MODULOS} manuais juntos — não há venda avulsa de nenhum`,
+                'Conteúdo novo entra no mesmo acesso, sem cobrança extra',
                 ...(autenticado ? [] : ['Sem conta? A Serial Key vai por e-mail']),
               ].map(item => (
                 <li key={item} className="flex items-start gap-2 text-xs text-muted-foreground">
@@ -451,8 +475,10 @@ export function VitrineAnatomia({ dados, secao = 'hub' }: VitrineAnatomiaProps) 
         <div className="flex items-center gap-3">
           {mostrarPreco && (
             <div className="min-w-0">
-              <p className="truncate text-[11px] text-muted-foreground">
-                {temLote ? `−${Math.round(descontoPct)}% no lote atual` : 'Manual Clínico completo'}
+              <p className="truncate text-[11px] font-bold text-emerald-700 dark:text-emerald-300">
+                {temLote
+                  ? `−${Math.round(descontoPct)}% · ${TOTAL_DE_MODULOS} manuais`
+                  : `${TOTAL_DE_MODULOS} manuais inclusos`}
               </p>
               <p className="flex items-baseline gap-1.5">
                 {temLote && <span className="text-[11px] text-muted-foreground line-through">{reais(precoBase)}</span>}
@@ -466,7 +492,7 @@ export function VitrineAnatomia({ dados, secao = 'hub' }: VitrineAnatomiaProps) 
             className="ml-auto inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-md bg-primary px-4 text-sm font-bold text-primary-foreground shadow-sm transition active:scale-[0.98]"
           >
             <Crown className="h-4 w-4" />
-            {autenticado ? 'Desbloquear' : 'Comprar agora'}
+            Quero os {TOTAL_DE_MODULOS}
           </button>
         </div>
       </div>

@@ -3,26 +3,29 @@
 import { useMemo, useState } from 'react'
 import {
   AlertTriangle,
-  ArrowRight,
   BookOpen,
-  Check,
   ChevronDown,
-  Crown,
-  Flame,
   Gauge,
   Lock,
   Search,
-  ShieldCheck,
   Sigma,
   Smartphone,
-  Sparkles,
   Star,
   X,
   Zap,
 } from 'lucide-react'
 import { usePricingEventState } from '@/components/pricing-events/usePricingEventState'
 import { PricingEventCountdown } from '@/components/pricing-events/PricingEventCountdown'
-import { PLUS_LABEL } from '@/lib/account-tier'
+import {
+  AvisoJaTenho,
+  BarraDoPacote,
+  FaixaDoPacote,
+  FechamentoDoPacote,
+  GradeDoPacote,
+  OfertaDoPacote,
+  SeloDoPacote,
+} from '@/components/manual-clinico/pacote'
+import { TOTAL_DE_MODULOS } from '@/lib/manual-clinico/pacote'
 import { normalizar } from '@/lib/ferramentas-clinicas'
 import type { ItemCatalogo, ResumoFerramentas } from '@/app/api/manual-clinico/ferramentas/route'
 import type { PlanoResumo } from './use-acesso'
@@ -37,10 +40,6 @@ interface VitrineProps {
   resumo?: ResumoFerramentas
   /** Área que o visitante tentou abrir, quando chegou por link direto. */
   areaAlvo?: string | null
-}
-
-function formatBRL(v: number) {
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(v || 0))
 }
 
 /** Quantas ferramentas cada área mostra antes de precisar expandir. */
@@ -99,11 +98,11 @@ const FAQ = [
   },
   {
     q: 'Já assino o Manual Clínico. Preciso pagar de novo?',
-    a: 'Não. As Ferramentas Clínicas já estão inclusas na sua assinatura, como o Manual do Eletrocardiograma e o Manual de Tomografia. Basta entrar na conta que a seção abre inteira.',
+    a: 'Não. As Ferramentas Clínicas já estão inclusas na sua assinatura, como os outros seis manuais — Farmacologia, Eletrocardiograma, Radiologia, Histologia e Domine Anatomia. Basta entrar na conta que a seção abre inteira.',
   },
   {
     q: 'Dá para comprar só as ferramentas?',
-    a: 'Não há venda avulsa desta seção. Ela vem junto com o Manual Clínico, que inclui também as 300+ patologias, o Manual do Eletrocardiograma e o Manual de Tomografia.',
+    a: 'Não há venda avulsa desta seção — nem de nenhuma outra. Ela vem junto com o Manual Clínico, e o mesmo pagamento abre as 300+ patologias, a Farmacologia, o Manual do Eletrocardiograma, o Manual de Radiologia, o Manual de Histologia e o Domine Anatomia. São sete manuais numa compra só.',
   },
   {
     q: 'Preciso criar conta para comprar?',
@@ -155,23 +154,13 @@ export function VitrineFerramentas({
     { v: '100%', r: 'com armadilhas escritas' },
   ]
 
-  const beneficios = [
-    'Acesso imediato após o pagamento',
-    'Leva junto as 300+ patologias do Manual Clínico',
-    'O Manual do Eletrocardiograma e o de Tomografia vêm no mesmo pacote',
-    'Ferramentas novas entram sem custo extra',
-    ...(isAuthenticated ? [] : ['Sem conta? A Serial Key vai por e-mail']),
-  ]
-
   return (
     <>
       {/* pb reserva o espaço da barra fixa do celular */}
       <div className="pb-28 lg:pb-0">
         {/* ══════════════════════════ ABERTURA ══════════════════════════ */}
         <section>
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-300/30 bg-amber-400/10 px-3 py-1.5 text-[11px] font-black uppercase tracking-wider text-amber-700 dark:text-amber-300">
-            <Crown className="h-3.5 w-3.5" /> {PLUS_LABEL} · incluso no Manual Clínico
-          </span>
+          <SeloDoPacote />
 
           <h1 className="mt-4 font-heading text-3xl font-bold leading-[1.05] tracking-tight sm:text-4xl md:text-5xl">
             {nFerramentas} calculadoras clínicas
@@ -201,15 +190,9 @@ export function VitrineFerramentas({
             ))}
           </div>
 
-          <div className="mt-6 rounded-2xl border border-emerald-500/25 bg-emerald-500/[0.06] p-4 sm:p-5">
-            <p className="flex items-center gap-2 text-sm font-bold text-emerald-800 dark:text-emerald-300">
-              <Check className="h-4 w-4" /> Já assina o Manual Clínico ou tem {PLUS_LABEL}?
-            </p>
-            <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
-              Então as Ferramentas Clínicas já são suas — sem custo extra, sem comprar de novo. Basta entrar na
-              sua conta que a seção abre inteira.
-            </p>
-          </div>
+          <FaixaDoPacote atual="ferramentas" className="mt-6" />
+
+          <AvisoJaTenho className="mt-3" />
         </section>
 
         {/* ══════════════════════════ O QUE CADA UMA ENTREGA ══════════════════════════ */}
@@ -267,86 +250,29 @@ export function VitrineFerramentas({
           </div>
         </section>
 
+        {/* ══════════════ O PACOTE — o valor inteiro, antes do preço ══════════════ */}
+        <GradeDoPacote atual="ferramentas" className="mt-14" />
+
         {/* ══════════════════════════ PREÇO ══════════════════════════ */}
-        <section className="mt-14">
-          <div className="glass-panel overflow-hidden rounded-2xl p-5 sm:p-7">
-            <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
-              <div>
-                <p className="flex items-center gap-2 text-[11px] font-black uppercase tracking-wider text-amber-700 dark:text-amber-300">
-                  <Sparkles className="h-3.5 w-3.5" /> Um pagamento, vários manuais
-                </p>
-                <h2 className="mt-2 font-heading text-xl font-semibold tracking-tight sm:text-2xl">
-                  As Ferramentas Clínicas vêm junto com o Manual Clínico
-                </h2>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  O mesmo acesso libera as 300+ patologias do Manual Clínico, o Manual do Eletrocardiograma com
-                  simulador de 12 derivações, o Manual de Tomografia e estas {nFerramentas} calculadoras. Não há
-                  venda avulsa desta seção.
-                </p>
-                <ul className="mt-4 space-y-1.5">
-                  {beneficios.map((b) => (
-                    <li key={b} className="flex items-start gap-2 text-[12.5px] text-muted-foreground">
-                      <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-600 dark:text-emerald-400" />
-                      {b}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="rounded-2xl border border-border bg-card p-5">
-                {mostrarPreco ? (
-                  <>
-                    <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      Incluso no Manual Clínico
-                      {maisBarato?.label ? ` · plano ${maisBarato.label}` : ''}
-                    </p>
-                    <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                      {temLote && (
-                        <span className="text-base text-muted-foreground line-through">{formatBRL(precoBase)}</span>
-                      )}
-                      <span className="font-heading text-3xl font-black tracking-tight text-primary sm:text-4xl">
-                        {formatBRL(precoFinal)}
-                      </span>
-                      {temLote && (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 text-xs font-bold text-emerald-700 dark:text-emerald-300">
-                          <Flame className="h-3 w-3" /> −{Math.round(pctLote)}%
-                        </span>
-                      )}
-                    </div>
-                    {temLote && evento?.activeTier?.label && (
-                      <p className="mt-1.5 text-xs text-emerald-700 dark:text-emerald-400">
-                        Lote {evento.activeTier.label} — você economiza {formatBRL(precoBase - precoFinal)}.
-                      </p>
-                    )}
-                    {temLote && evento && (
-                      <div className="mt-3">
-                        <PricingEventCountdown state={evento} compact />
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <p className="text-sm text-muted-foreground">
-                    Acesso liberado para assinantes do Manual Clínico e contas {PLUS_LABEL}.
-                  </p>
-                )}
-
-                <button
-                  onClick={onCheckout}
-                  className="mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-md bg-primary px-6 text-sm font-bold text-primary-foreground shadow-sm transition hover:bg-primary/90 active:scale-[0.98]"
-                >
-                  <Crown className="h-4 w-4" />
-                  {isAuthenticated ? 'Desbloquear o Manual Clínico' : 'Comprar e desbloquear'}
-                  <ArrowRight className="h-4 w-4" />
-                </button>
-
-                <p className="mt-3 flex items-center gap-1.5 border-t border-border pt-3 text-[11px] text-muted-foreground">
-                  <ShieldCheck className="h-3.5 w-3.5 shrink-0" /> Pix, cartão ou boleto · pagamento processado
-                  com segurança.
-                </p>
-              </div>
+        <OfertaDoPacote
+          className="mt-10"
+          onCheckout={onCheckout}
+          isAuthenticated={isAuthenticated}
+          precoBase={precoBase}
+          precoFinal={precoFinal}
+          temLote={temLote}
+          pctLote={pctLote}
+          rotuloLote={evento?.activeTier?.label ?? null}
+          rotuloPlano={maisBarato?.label ?? null}
+          mesesDoPlano={maisBarato?.durationMonths ?? null}
+          mostrarPreco={mostrarPreco}
+        >
+          {temLote && evento && (
+            <div className="mt-3">
+              <PricingEventCountdown state={evento} compact />
             </div>
-          </div>
-        </section>
+          )}
+        </OfertaDoPacote>
 
         {/* ══════════════════════════ FAQ ══════════════════════════ */}
         <section className="mt-14">
@@ -378,30 +304,26 @@ export function VitrineFerramentas({
         </section>
 
         {/* ══════════════════════════ FECHAMENTO ══════════════════════════ */}
-        <section className="mt-14 overflow-hidden rounded-2xl border border-amber-500/25 bg-amber-500/[0.06] p-5 sm:p-7">
-          <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-            <div className="max-w-2xl">
-              <p className="flex items-center gap-2 text-[11px] font-black uppercase tracking-wider text-amber-700 dark:text-amber-300">
-                <Gauge className="h-3.5 w-3.5" /> A conta que você faz todo plantão
-              </p>
-              <h2 className="mt-2 font-heading text-xl font-semibold tracking-tight sm:text-2xl">
-                {nFerramentas} ferramentas, {nReferencias} referências, nenhuma caixa-preta
-              </h2>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                Você acabou de ler a lista inteira do que há lá dentro — nome por nome, com o que cada uma faz.
-                Não há surpresa do outro lado do pagamento.
-              </p>
-            </div>
-            <button
-              onClick={onCheckout}
-              className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-md bg-primary px-6 text-sm font-bold text-primary-foreground shadow-sm transition hover:bg-primary/90 active:scale-[0.98]"
-            >
-              <Crown className="h-4 w-4" />
-              {mostrarPreco ? `Desbloquear por ${formatBRL(precoFinal)}` : 'Desbloquear agora'}
-              <ArrowRight className="h-4 w-4" />
-            </button>
-          </div>
+        <section className="mt-14 overflow-hidden rounded-2xl border border-border bg-muted/30 p-5 sm:p-7">
+          <p className="flex items-center gap-2 text-[11px] font-black uppercase tracking-wider text-amber-700 dark:text-amber-300">
+            <Gauge className="h-3.5 w-3.5" /> A conta que você faz todo plantão
+          </p>
+          <h2 className="mt-2 font-heading text-xl font-semibold tracking-tight sm:text-2xl">
+            {nFerramentas} ferramentas, {nReferencias} referências, nenhuma caixa-preta
+          </h2>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+            Você acabou de ler a lista inteira do que há lá dentro — nome por nome, com o que cada uma faz. Não há
+            surpresa do outro lado do pagamento. E as calculadoras são só um dos {TOTAL_DE_MODULOS} manuais que a
+            mesma compra abre.
+          </p>
         </section>
+
+        <FechamentoDoPacote
+          className="mt-4"
+          onCheckout={onCheckout}
+          precoFinal={precoFinal}
+          mostrarPreco={mostrarPreco}
+        />
 
         <p className="mt-8 text-center text-xs leading-relaxed text-muted-foreground">
           Material educacional. Escores descrevem probabilidades em populações e não substituem julgamento
@@ -410,30 +332,14 @@ export function VitrineFerramentas({
       </div>
 
       {/* ══════════════════════════ BARRA FIXA DO CELULAR ══════════════════════════ */}
-      <div className="glass-panel fixed inset-x-0 bottom-0 z-40 rounded-none border-x-0 border-b-0 px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 lg:hidden">
-        <div className="flex items-center gap-3">
-          {mostrarPreco && (
-            <div className="min-w-0">
-              <p className="truncate text-[11px] text-muted-foreground">
-                {temLote ? `−${Math.round(pctLote)}% no lote atual` : `${PLUS_LABEL} · tudo incluso`}
-              </p>
-              <p className="flex items-baseline gap-1.5">
-                {temLote && (
-                  <span className="text-[11px] text-muted-foreground line-through">{formatBRL(precoBase)}</span>
-                )}
-                <span className="text-lg font-black leading-tight text-primary">{formatBRL(precoFinal)}</span>
-              </p>
-            </div>
-          )}
-          <button
-            onClick={onCheckout}
-            className="ml-auto inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-md bg-primary px-4 text-sm font-bold text-primary-foreground shadow-sm transition active:scale-[0.98]"
-          >
-            <Crown className="h-4 w-4" />
-            {isAuthenticated ? 'Desbloquear' : 'Comprar agora'}
-          </button>
-        </div>
-      </div>
+      <BarraDoPacote
+        onCheckout={onCheckout}
+        precoBase={precoBase}
+        precoFinal={precoFinal}
+        temLote={temLote}
+        pctLote={pctLote}
+        mostrarPreco={mostrarPreco}
+      />
     </>
   )
 }

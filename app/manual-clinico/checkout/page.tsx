@@ -8,6 +8,8 @@ import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout
 import { CheckoutAccountNotice } from '@/components/checkout/checkout-account-notice'
 import { CouponPromo } from '@/components/checkout/coupon-promo'
 import { usePricingEventState, usePricingEventStates } from '@/components/pricing-events/usePricingEventState'
+import { ListaDoPacote } from '@/components/manual-clinico/pacote'
+import { TOTAL_DE_MODULOS, precoPorDia, precoPorModulo } from '@/lib/manual-clinico/pacote'
 
 const MANUAL_CLINICO_PRODUCT_ID = 'manual-clinico-premium'
 
@@ -344,6 +346,8 @@ export default function ManualClinicoCheckoutPage() {
     ? Math.max(2, Math.ceil(lifetimePlan.price / longestTemporary.price))
     : null
   const selectedIsLifetime = selectedPlan?.key === 'vitalicio'
+  const precoDoManual = precoPorModulo(payableAmount)
+  const precoDiario = precoPorDia(payableAmount, selectedPlan?.durationMonths ?? null)
 
   return (
     <div className="min-h-screen overflow-hidden bg-[#031109] px-4 py-6 text-white">
@@ -366,9 +370,12 @@ export default function ManualClinicoCheckoutPage() {
                 <div className="h-48 bg-emerald-400/10" />
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-[#031109] via-[#031109]/15 to-transparent" />
-              <div className="absolute bottom-4 left-4 flex items-center gap-2 rounded-full border border-white/10 bg-black/35 px-3 py-1.5 text-xs font-black uppercase tracking-wide backdrop-blur-xl">
+              {/* Era "Produto avulso" — o rótulo mais caro da página. Ele dizia à
+                  pessoa, no momento de decidir, exatamente o contrário do que a
+                  compra faz: libera sete manuais de uma vez. */}
+              <div className="absolute bottom-4 left-4 flex items-center gap-2 rounded-full border border-amber-300/25 bg-black/45 px-3 py-1.5 text-xs font-black uppercase tracking-wide backdrop-blur-xl">
                 <Sparkles className="h-3.5 w-3.5 text-amber-200" />
-                Produto avulso
+                {TOTAL_DE_MODULOS} manuais · 1 pagamento
               </div>
             </div>
 
@@ -380,6 +387,18 @@ export default function ManualClinicoCheckoutPage() {
                 <h1 className="text-2xl font-black tracking-tight sm:text-3xl">{product.label}</h1>
                 <p className="mt-2 text-sm leading-relaxed text-white/58">{product.shortDescription}</p>
               </div>
+            </div>
+
+            {/* O valor antes do número: a pessoa chega aqui achando que compra um
+                manual. A lista mostra os sete que ela leva, com o tamanho de cada
+                um, antes de qualquer preço aparecer na tela. */}
+            <div className="mb-5">
+              <p className="text-base font-black text-white">Esta compra abre os {TOTAL_DE_MODULOS} manuais</p>
+              <p className="mt-0.5 text-xs text-white/55">
+                Nenhum deles é vendido separado, e nenhum é versão reduzida. Todos abrem completos assim que o
+                pagamento é aprovado.
+              </p>
+              <ListaDoPacote tom="escuro" className="mt-3" />
             </div>
 
             {enabledPlans.length > 1 && (
@@ -397,7 +416,7 @@ export default function ManualClinicoCheckoutPage() {
                 <div className="mb-3">
                   <p className="text-base font-black text-white">Escolha como quer seu acesso</p>
                   <p className="mt-0.5 text-xs text-white/55">
-                    Todos liberam o Manual completo — a diferença é só por quanto tempo.
+                    Os três liberam os {TOTAL_DE_MODULOS} manuais completos — a diferença é só por quanto tempo.
                   </p>
                 </div>
                 <div className="grid gap-2.5">
@@ -473,11 +492,12 @@ export default function ManualClinicoCheckoutPage() {
 
             <div className="grid gap-2 text-sm text-white/70">
               {[
-                product.benefitText,
-                'Diagnostico, tratamento, diferenciais, farmacologia e fluxogramas',
+                `Os ${TOTAL_DE_MODULOS} manuais liberados juntos — nenhum é vendido à parte`,
+                'Diagnóstico, tratamento, diferenciais, farmacologia e fluxogramas',
+                'Conteúdo novo entra no mesmo acesso, sem cobrança extra',
                 selectedPlan?.durationMonths
-                  ? `Acesso por ${selectedPlan.durationMonths} ${selectedPlan.durationMonths === 1 ? 'mês' : 'meses'} apos pagamento aprovado`
-                  : 'Acesso vitalicio liberado apos pagamento aprovado',
+                  ? `Acesso por ${selectedPlan.durationMonths} ${selectedPlan.durationMonths === 1 ? 'mês' : 'meses'} após pagamento aprovado`
+                  : 'Acesso vitalício liberado após pagamento aprovado',
               ].map((item) => (
                 <div key={item} className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2.5">
                   <Check className="h-4 w-4 text-emerald-300" />
@@ -504,6 +524,14 @@ export default function ManualClinicoCheckoutPage() {
                     ? `${selectedPlan.label} · ${selectedPlan.durationMonths} ${selectedPlan.durationMonths === 1 ? 'mês' : 'meses'} de acesso`
                     : 'Acesso completo liberado na hora'}
               </p>
+              {/* O total sobre sete. É o número que a pessoa compara com o preço
+                  de um manual avulso — e o que desarma a objeção sem desconto. */}
+              {precoDoManual != null && (
+                <p className="mt-1.5 text-xs font-black text-amber-200">
+                  {formatBRL(precoDoManual)} por manual
+                  {precoDiario != null ? ` · cerca de ${formatBRL(precoDiario)} por dia` : ''}
+                </p>
+              )}
               {hasActiveTier && (tierBeatsCoupon || stackCoupon) && tierDiscountAmount > 0 ? (
                 <p className="mt-1 inline-flex items-center gap-1 text-xs font-bold text-emerald-200">
                   <Flame className="h-3 w-3" />

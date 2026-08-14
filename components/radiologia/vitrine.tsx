@@ -23,6 +23,17 @@ import {
   Stethoscope,
   Target,
 } from 'lucide-react'
+import {
+  AvisoJaTenho,
+  BarraDoPacote,
+  FaixaDoPacote,
+  FechamentoDoPacote,
+  GradeDoPacote,
+  ListaDoPacote,
+  OfertaDoPacote,
+  SeloDoPacote,
+} from '@/components/manual-clinico/pacote'
+import { TOTAL_DE_MODULOS } from '@/lib/manual-clinico/pacote'
 import { usePricingEventState } from '@/components/pricing-events/usePricingEventState'
 import { PricingEventCountdown } from '@/components/pricing-events/PricingEventCountdown'
 import { PLUS_LABEL } from '@/lib/account-tier'
@@ -232,15 +243,6 @@ export function VitrineRadiologia({
     { v: resumo?.questoes ?? 107, r: 'questões' },
   ]
 
-  const beneficios = [
-    'Acesso imediato após o pagamento',
-    'Tomografia e Raio-X no mesmo acesso',
-    'Leva junto as 300+ patologias do Manual Clínico',
-    'O Manual do Eletrocardiograma vem no mesmo pacote',
-    'Atualizações do atlas inclusas',
-    ...(isAuthenticated ? [] : ['Sem conta? A Serial Key vai por e-mail']),
-  ]
-
   return (
     <>
       {/* pb reserva o espaço da barra fixa do celular */}
@@ -248,9 +250,7 @@ export function VitrineRadiologia({
         {/* ══════════ ABERTURA ══════════ */}
         <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-start lg:gap-10">
           <div>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-300/30 bg-amber-400/10 px-3 py-1.5 text-[11px] font-black uppercase tracking-wider text-amber-700 dark:text-amber-300">
-              <Crown className="h-3.5 w-3.5" /> {PLUS_LABEL} · incluso no Manual Clínico
-            </span>
+            <SeloDoPacote />
 
             <h1 className="sr-only">Manual de Radiologia</h1>
             <LogoRadiologia className="mt-4" />
@@ -278,15 +278,9 @@ export function VitrineRadiologia({
               ))}
             </div>
 
-            <div className="mt-6 rounded-2xl border border-emerald-500/25 bg-emerald-500/[0.06] p-4 sm:p-5">
-              <p className="flex items-center gap-2 text-sm font-bold text-emerald-800 dark:text-emerald-300">
-                <Check className="h-4 w-4" /> Já assina o Manual Clínico ou tem {PLUS_LABEL}?
-              </p>
-              <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
-                Então o Manual de Radiologia já é seu — sem custo extra, sem comprar de novo. Basta entrar na
-                sua conta que o atlas abre inteiro, tomografia e Raio-X.
-              </p>
-            </div>
+            <FaixaDoPacote atual="radiologia" className="mt-6" />
+
+            <AvisoJaTenho className="mt-3" />
 
             {/* ── As duas modalidades ── */}
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
@@ -343,61 +337,26 @@ export function VitrineRadiologia({
               )}
             </div>
 
+            {/* O cartão lateral mostra o tamanho do pacote, não o preço: quem chega
+                aqui ainda não sabe que a compra abre outros seis manuais, e um
+                número antes disso vira comparação com o preço de um atlas avulso.
+                O preço vem inteiro mais abaixo, depois do acervo. */}
             <div className="glass-panel overflow-hidden rounded-2xl p-5 sm:p-6">
-              {mostrarPreco ? (
-                <>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Incluso no Manual Clínico
-                    {maisBarato?.label ? ` · plano ${maisBarato.label}` : ''}
-                  </p>
-                  <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                    {temLote && (
-                      <span className="text-base text-muted-foreground line-through">{formatBRL(precoBase)}</span>
-                    )}
-                    <span className="font-heading text-3xl font-black tracking-tight text-primary sm:text-4xl">
-                      {formatBRL(precoFinal)}
-                    </span>
-                    {temLote && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 text-xs font-bold text-emerald-700 dark:text-emerald-300">
-                        <Flame className="h-3 w-3" /> −{Math.round(pctLote)}%
-                      </span>
-                    )}
-                  </div>
-                  {temLote && evento?.activeTier?.label && (
-                    <p className="mt-1.5 text-xs text-emerald-700 dark:text-emerald-400">
-                      Lote {evento.activeTier.label} — você economiza {formatBRL(precoBase - precoFinal)}.
-                    </p>
-                  )}
-                </>
-              ) : (
-                <p className="text-sm text-muted-foreground">
-                  Acesso liberado para assinantes do Manual Clínico e contas {PLUS_LABEL}.
-                </p>
-              )}
-
-              {temLote && evento && (
-                <div className="mt-3">
-                  <PricingEventCountdown state={evento} compact />
-                </div>
-              )}
-
+              <p className="flex items-center gap-2 text-[11px] font-black uppercase tracking-wider text-amber-700 dark:text-amber-300">
+                <Sparkles className="h-3.5 w-3.5" /> O que a compra abre
+              </p>
+              <h2 className="mt-2 font-heading text-lg font-semibold leading-snug tracking-tight">
+                A Radiologia é um dos {TOTAL_DE_MODULOS} manuais — e todos vêm juntos
+              </h2>
+              <ListaDoPacote atual="radiologia" className="mt-3.5" />
               <button
                 onClick={onCheckout}
                 className="mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-md bg-primary px-6 text-sm font-bold text-primary-foreground shadow-sm transition hover:bg-primary/90 active:scale-[0.98]"
               >
                 <Crown className="h-4 w-4" />
-                {isAuthenticated ? 'Desbloquear o Manual Clínico' : 'Comprar e desbloquear'}
+                Quero os {TOTAL_DE_MODULOS} manuais
                 <ArrowRight className="h-4 w-4" />
               </button>
-
-              <ul className="mt-4 space-y-1.5">
-                {beneficios.map((b) => (
-                  <li key={b} className="flex items-start gap-2 text-xs text-muted-foreground">
-                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-600 dark:text-emerald-400" />
-                    {b}
-                  </li>
-                ))}
-              </ul>
               <p className="mt-3 flex items-center gap-1.5 border-t border-border pt-3 text-[11px] text-muted-foreground">
                 <ShieldCheck className="h-3.5 w-3.5 shrink-0" /> Pix, cartão ou boleto · pagamento processado com
                 segurança.
@@ -562,32 +521,37 @@ export function VitrineRadiologia({
           </div>
         </section>
 
-        {/* ══════════ FECHAMENTO ══════════ */}
-        <section className="mt-14 overflow-hidden rounded-2xl border border-amber-500/25 bg-amber-500/[0.06] p-5 sm:p-7">
-          <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-            <div className="max-w-2xl">
-              <p className="flex items-center gap-2 text-[11px] font-black uppercase tracking-wider text-amber-700 dark:text-amber-300">
-                <Sparkles className="h-3.5 w-3.5" /> Um pagamento, três manuais
-              </p>
-              <h2 className="mt-2 font-heading text-xl font-semibold tracking-tight sm:text-2xl">
-                O Manual de Radiologia vem junto com o Manual Clínico
-              </h2>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                O mesmo acesso libera as 300+ patologias do Manual Clínico, o Manual do Eletrocardiograma com
-                simulador de 12 derivações e este atlas de TC e Raio-X. Não há venda avulsa nem teste gratuito
-                do atlas — ele é indivisível.
-              </p>
+        {/* ══════════ O PACOTE — o valor inteiro, antes do preço ══════════ */}
+        <GradeDoPacote atual="radiologia" className="mt-14" />
+
+        {/* ══════════ A OFERTA ══════════ */}
+        <OfertaDoPacote
+          className="mt-10"
+          onCheckout={onCheckout}
+          isAuthenticated={isAuthenticated}
+          precoBase={precoBase}
+          precoFinal={precoFinal}
+          temLote={temLote}
+          pctLote={pctLote}
+          rotuloLote={evento?.activeTier?.label ?? null}
+          rotuloPlano={maisBarato?.label ?? null}
+          mesesDoPlano={maisBarato?.durationMonths ?? null}
+          mostrarPreco={mostrarPreco}
+        >
+          {temLote && evento && (
+            <div className="mt-3">
+              <PricingEventCountdown state={evento} compact />
             </div>
-            <button
-              onClick={onCheckout}
-              className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-md bg-primary px-6 text-sm font-bold text-primary-foreground shadow-sm transition hover:bg-primary/90 active:scale-[0.98]"
-            >
-              <Crown className="h-4 w-4" />
-              {mostrarPreco ? `Desbloquear por ${formatBRL(precoFinal)}` : 'Desbloquear agora'}
-              <ArrowRight className="h-4 w-4" />
-            </button>
-          </div>
-        </section>
+          )}
+        </OfertaDoPacote>
+
+        {/* ══════════ FECHAMENTO ══════════ */}
+        <FechamentoDoPacote
+          className="mt-4"
+          onCheckout={onCheckout}
+          precoFinal={precoFinal}
+          mostrarPreco={mostrarPreco}
+        />
 
         <p className="mt-8 text-center text-xs leading-relaxed text-muted-foreground">
           Material educacional. As imagens são usadas para ensino de anatomia radiológica e não substituem
@@ -596,30 +560,15 @@ export function VitrineRadiologia({
       </div>
 
       {/* ══════════ BARRA FIXA DO CELULAR ══════════ */}
-      <div className="glass-panel fixed inset-x-0 bottom-0 z-40 rounded-none border-x-0 border-b-0 px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 lg:hidden">
-        <div className="flex items-center gap-3">
-          {mostrarPreco && (
-            <div className="min-w-0">
-              <p className="truncate text-[11px] text-muted-foreground">
-                {temLote ? `−${Math.round(pctLote)}% no lote atual` : `${PLUS_LABEL} · tudo incluso`}
-              </p>
-              <p className="flex items-baseline gap-1.5">
-                {temLote && (
-                  <span className="text-[11px] text-muted-foreground line-through">{formatBRL(precoBase)}</span>
-                )}
-                <span className="text-lg font-black leading-tight text-primary">{formatBRL(precoFinal)}</span>
-              </p>
-            </div>
-          )}
-          <button
-            onClick={onCheckout}
-            className="ml-auto inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-md bg-primary px-4 text-sm font-bold text-primary-foreground shadow-sm transition active:scale-[0.98]"
-          >
-            <Crown className="h-4 w-4" />
-            {isAuthenticated ? 'Desbloquear' : 'Comprar agora'}
-          </button>
-        </div>
-      </div>
+      <BarraDoPacote
+        onCheckout={onCheckout}
+        precoBase={precoBase}
+        precoFinal={precoFinal}
+        temLote={temLote}
+        pctLote={pctLote}
+        mostrarPreco={mostrarPreco}
+      />
+
     </>
   )
 }

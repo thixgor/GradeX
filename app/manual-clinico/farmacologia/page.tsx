@@ -12,12 +12,21 @@ import {
   X,
   Filter,
   Lock,
-  Crown,
   ChevronDown,
   ChevronUp,
   Loader2,
 } from 'lucide-react'
 import { CLASSES_MEDICAMENTOS, CLASSES_MEDICAMENTOS_NAMES } from '@/lib/types/farmacologia'
+import { usePricingEventState } from '@/components/pricing-events/usePricingEventState'
+import {
+  AvisoJaTenho,
+  BarraDoPacote,
+  FaixaDoPacote,
+  FechamentoDoPacote,
+  GradeDoPacote,
+  OfertaDoPacote,
+  PerguntasDoPacote,
+} from '@/components/manual-clinico/pacote'
 
 interface MedicamentoResumo {
   _id: string
@@ -31,6 +40,15 @@ interface MedicamentoResumo {
   accessStatus?: string
 }
 
+interface ProductPlan {
+  key: string
+  label?: string
+  price: number
+  enabled: boolean
+  durationMonths?: number | null
+  pricingEventId?: string | null
+}
+
 interface ManualProduct {
   label: string
   benefitText: string
@@ -40,10 +58,8 @@ interface ManualProduct {
   currentPrice: number
   price: number
   hasActivePromotion: boolean
-}
-
-function formatBRL(value: number) {
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(value || 0))
+  plans?: ProductPlan[]
+  pricingEventId?: string | null
 }
 
 export default function FarmacologiaPage() {
@@ -130,6 +146,24 @@ function FarmacologiaContent() {
   })
 
   const hasFilters = busca || classeAtiva
+
+  // Mesma regra das outras vitrines: o "a partir de" é o plano habilitado mais
+  // barato, e o lote que desconta está amarrado ao plano — não ao produto.
+  const planosAtivos = (product?.plans || []).filter((p) => p.enabled && p.price > 0)
+  const planoMaisBarato = planosAtivos.reduce<ProductPlan | null>(
+    (menor, p) => (menor == null || p.price < menor.price ? p : menor),
+    null,
+  )
+  const precoBase = planoMaisBarato?.price ?? product?.currentPrice ?? 0
+  const { state: evento } = usePricingEventState(
+    planoMaisBarato?.pricingEventId || product?.pricingEventId || null,
+  )
+  const pctLote = evento?.activeTier?.discountPercent || 0
+  const temLote = Boolean(evento?.activeTier) && evento?.isActive !== false && pctLote > 0 && precoBase > 0
+  const precoFinal = temLote
+    ? Math.max(0, Math.round(precoBase * (1 - pctLote / 100) * 100) / 100)
+    : precoBase
+  const mostrarPreco = product?.isActive !== false && precoBase > 0
 
   return (
     <div className="surface-page min-h-screen">
@@ -218,29 +252,13 @@ function FarmacologiaContent() {
 
       {/* ══════════ MAIN ══════════ */}
       <div className="container mx-auto px-4 py-8 max-w-6xl">
-        {/* Plus+ banner */}
+        {/* A faixa do pacote no lugar do banner de preço: o que faltava aqui não
+            era um número, era a informação de que a mesma compra abre outros
+            seis manuais. O preço vem inteiro no fim da página, depois da grade. */}
         {!hasFullAccess && product?.isActive && (
-          <div className="mb-7 overflow-hidden rounded-lg border border-amber-500/25 bg-amber-500/10 p-4">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-start gap-3">
-                <div className="rounded-xl bg-amber-400/15 p-2 text-amber-600 dark:text-amber-300">
-                  <Crown className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="text-sm font-bold leading-snug">Farmacologia faz parte do Manual Clínico Completo.</p>
-                  <p className="mt-0.5 text-xs text-muted-foreground">
-                    Desbloqueie todas as fichas de fármacos — mecanismo, posologia, calculadora de dose e mais — por {formatBRL(product.currentPrice)}.
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={goToCheckout}
-                className="group inline-flex h-11 items-center justify-center gap-2 rounded-md bg-primary px-5 text-sm font-bold text-primary-foreground shadow-sm transition hover:bg-primary/90 active:scale-[0.98]"
-              >
-                Desbloquear agora
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-              </button>
-            </div>
+          <div className="mb-7 space-y-3">
+            <FaixaDoPacote atual="farmacologia" />
+            <AvisoJaTenho />
           </div>
         )}
 
@@ -335,7 +353,48 @@ function FarmacologiaContent() {
             })}
           </div>
         )}
+
+        {/* ── A oferta: o valor inteiro primeiro, o preço depois ── */}
+        {!hasFullAccess && product?.isActive && (
+          <div className="pb-28 lg:pb-0">
+            <GradeDoPacote atual="farmacologia" className="mt-14" />
+
+            <OfertaDoPacote
+              className="mt-10"
+              onCheckout={goToCheckout}
+              isAuthenticated={isAuthenticated}
+              precoBase={precoBase}
+              precoFinal={precoFinal}
+              temLote={temLote}
+              pctLote={pctLote}
+              rotuloLote={evento?.activeTier?.label ?? null}
+              rotuloPlano={planoMaisBarato?.label ?? null}
+              mesesDoPlano={planoMaisBarato?.durationMonths ?? null}
+              mostrarPreco={mostrarPreco}
+            />
+
+            <PerguntasDoPacote className="mt-14" />
+
+            <FechamentoDoPacote
+              className="mt-10"
+              onCheckout={goToCheckout}
+              precoFinal={precoFinal}
+              mostrarPreco={mostrarPreco}
+            />
+          </div>
+        )}
       </div>
+
+      {!hasFullAccess && product?.isActive && (
+        <BarraDoPacote
+          onCheckout={goToCheckout}
+          precoBase={precoBase}
+          precoFinal={precoFinal}
+          temLote={temLote}
+          pctLote={pctLote}
+          mostrarPreco={mostrarPreco}
+        />
+      )}
     </div>
   )
 }

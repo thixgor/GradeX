@@ -6,8 +6,19 @@ import { useRouter } from 'next/navigation'
 import { AppShell, useAppShell } from '@/components/app-shell'
 import { usePricingEventState } from '@/components/pricing-events/usePricingEventState'
 import {
-  Activity, ArrowLeft, Crown, Lock, ArrowRight, Loader2, Gauge, Ruler,
-  GraduationCap, Check, Flame, ShieldCheck, Zap,
+  AvisoJaTenho,
+  BarraDoPacote,
+  FaixaDoPacote,
+  FechamentoDoPacote,
+  GradeDoPacote,
+  OfertaDoPacote,
+  PerguntasDoPacote,
+  SeloDoPacote,
+} from '@/components/manual-clinico/pacote'
+import { TOTAL_DE_MODULOS } from '@/lib/manual-clinico/pacote'
+import {
+  Activity, ArrowLeft, Crown, ArrowRight, Loader2, Gauge, Ruler,
+  GraduationCap, Check, ShieldCheck, Zap,
 } from 'lucide-react'
 
 // Carregado sob demanda apenas quando o acesso é confirmado — o simulador
@@ -50,10 +61,6 @@ interface AccessResp {
     plans?: ProductPlan[]
   }
   catalog?: CatalogSummary
-}
-
-function formatBRL(v: number) {
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(v || 0))
 }
 
 const PREVIEW_IMAGE = '/img/eletro/simulador-ecg-preview.webp'
@@ -118,7 +125,7 @@ function EcgManualContent() {
           </button>
           <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="editorial-mark">Seção premium · Manual Clínico</p>
+              <SeloDoPacote />
               <h1 className="sr-only">Manual do Eletrocardiograma</h1>
               <>
                 <img
@@ -163,6 +170,7 @@ function EcgManualContent() {
             basePrice={basePrice}
             eventId={eventId}
             planLabel={cheapestPlan?.label || null}
+            planMonths={cheapestPlan?.durationMonths ?? null}
             isActive={data?.product?.isActive !== false}
             catalog={data?.catalog}
           />
@@ -187,13 +195,14 @@ const FEATURES = [
  * scroll e a pessoa fica sem saber quanto custa.
  */
 function Paywall({
-  onCheckout, isAuthenticated, basePrice, eventId, planLabel, isActive, catalog,
+  onCheckout, isAuthenticated, basePrice, eventId, planLabel, planMonths, isActive, catalog,
 }: {
   onCheckout: () => void
   isAuthenticated: boolean
   basePrice: number
   eventId: string | null
   planLabel: string | null
+  planMonths: number | null
   isActive: boolean
   catalog?: CatalogSummary
 }) {
@@ -216,35 +225,20 @@ function Paywall({
   const perks = [
     'Acesso imediato após o pagamento',
     `Os ${totalTracings} traçados e as atualizações inclusos`,
-    'Leva junto as 300+ patologias do Manual',
+    `Os outros ${TOTAL_DE_MODULOS - 1} manuais vêm juntos, sem custo extra`,
+    'Nenhuma seção é vendida à parte',
     ...(isAuthenticated ? [] : ['Sem conta? A Serial Key vai por e-mail']),
   ]
 
   return (
     <>
       {/* pb no celular reserva o espaço da barra fixa, senão ela cobre o rodapé do card */}
-      <div className="grid gap-6 pb-28 lg:grid-cols-[1.05fr_0.95fr] lg:items-start lg:gap-8 lg:pb-0">
+      <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-start lg:gap-8">
         {/* ── Coluna do argumento ── */}
         <div className="space-y-6">
-          <div className="relative overflow-hidden rounded-2xl border border-amber-500/25 bg-card p-5 shadow-sm sm:p-7">
-            <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-amber-500/40 to-transparent" aria-hidden />
-            <div className="flex items-start gap-3">
-              <div className="shrink-0 rounded-xl bg-amber-400/15 p-2.5 text-amber-600 dark:text-amber-400">
-                <Lock className="h-5 w-5" />
-              </div>
-              <div className="min-w-0">
-                <p className="editorial-mark">Conteúdo exclusivo de assinantes</p>
-                <h2 className="mt-2 font-heading text-xl font-semibold tracking-tight sm:text-2xl">
-                  O simulador de ECG faz parte do Manual Clínico
-                </h2>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  Ele não é vendido à parte nem entra no teste grátis: vem incluído, sem custo extra,
-                  para quem assina o <strong className="text-foreground">Manual Clínico</strong> — e para
-                  as contas <strong className="text-foreground">Plus+</strong>.
-                </p>
-              </div>
-            </div>
-          </div>
+          <FaixaDoPacote atual="eletrocardiograma" />
+
+          <AvisoJaTenho />
 
           {/* Prova visual — no celular vem cedo, antes da lista de recursos */}
           <SimulatorPreview className="lg:hidden" />
@@ -293,46 +287,17 @@ function Paywall({
         <div className="space-y-5 lg:sticky lg:top-6">
           <SimulatorPreview className="hidden lg:block" />
 
+          {/* Aqui o cartão mostra o que se leva, não quanto custa: quem chegou
+              pelo simulador ainda não sabe que a mesma compra abre outros seis
+              manuais, e o preço lido antes disso vira comparação com o preço de
+              um curso de ECG avulso. O número vem inteiro logo abaixo. */}
           <div className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
-            {showPrice ? (
-              <>
-                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Incluso no Manual Clínico{planLabel ? ` · plano ${planLabel}` : ''}
-                </p>
-                <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                  {hasTier && (
-                    <span className="text-base text-muted-foreground line-through">{formatBRL(basePrice)}</span>
-                  )}
-                  <span className="text-3xl font-black tracking-tight text-primary sm:text-4xl">
-                    {formatBRL(finalPrice)}
-                  </span>
-                  {hasTier && (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 text-xs font-bold text-emerald-700 dark:text-emerald-300">
-                      <Flame className="h-3 w-3" /> −{Math.round(tierPct)}%
-                    </span>
-                  )}
-                </div>
-                {hasTier && pricingEvent?.activeTier?.label && (
-                  <p className="mt-1.5 text-xs text-emerald-700 dark:text-emerald-400">
-                    Lote {pricingEvent.activeTier.label} — você economiza {formatBRL(basePrice - finalPrice)}.
-                  </p>
-                )}
-              </>
-            ) : (
-              <p className="text-sm text-muted-foreground">
-                Acesso liberado para assinantes do Manual Clínico e contas Plus+.
-              </p>
-            )}
-
-            <button
-              onClick={onCheckout}
-              className="mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-md bg-primary px-6 text-sm font-bold text-primary-foreground shadow-sm transition hover:bg-primary/90 active:scale-[0.98]"
-            >
-              <Crown className="h-4 w-4" />
-              {ctaLabel}
-              <ArrowRight className="h-4 w-4" />
-            </button>
-
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              O que a compra abre
+            </p>
+            <h3 className="mt-1.5 font-heading text-lg font-semibold leading-snug tracking-tight">
+              O Eletrocardiograma é 1 dos {TOTAL_DE_MODULOS} manuais
+            </h3>
             <ul className="mt-4 space-y-1.5">
               {perks.map((t) => (
                 <li key={t} className="flex items-start gap-2 text-xs text-muted-foreground">
@@ -341,6 +306,14 @@ function Paywall({
                 </li>
               ))}
             </ul>
+            <button
+              onClick={onCheckout}
+              className="mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-md bg-primary px-6 text-sm font-bold text-primary-foreground shadow-sm transition hover:bg-primary/90 active:scale-[0.98]"
+            >
+              <Crown className="h-4 w-4" />
+              {ctaLabel}
+              <ArrowRight className="h-4 w-4" />
+            </button>
             <p className="mt-3 flex items-center gap-1.5 border-t border-border pt-3 text-[11px] text-muted-foreground">
               <ShieldCheck className="h-3.5 w-3.5 shrink-0" /> Pix, cartão ou boleto · pagamento processado com segurança.
             </p>
@@ -348,34 +321,41 @@ function Paywall({
         </div>
       </div>
 
-      {/* Barra fixa do celular: mantém preço e CTA sempre à mão. O recuo de baixo
-          soma o safe-area do iPhone ao respiro normal — a classe .pwa-safe-bottom
-          não serve aqui porque o !important dela zeraria o padding no aparelho
-          que não tem inset, colando o botão na borda. */}
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur-md lg:hidden">
-        <div className="flex items-center gap-3">
-          {showPrice && (
-            <div className="min-w-0">
-              <p className="truncate text-[11px] text-muted-foreground">
-                {hasTier ? `−${Math.round(tierPct)}% no lote atual` : 'Manual Clínico completo'}
-              </p>
-              <p className="flex items-baseline gap-1.5">
-                {hasTier && (
-                  <span className="text-[11px] text-muted-foreground line-through">{formatBRL(basePrice)}</span>
-                )}
-                <span className="text-lg font-black leading-tight text-primary">{formatBRL(finalPrice)}</span>
-              </p>
-            </div>
-          )}
-          <button
-            onClick={onCheckout}
-            className="ml-auto inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-md bg-primary px-4 text-sm font-bold text-primary-foreground shadow-sm transition active:scale-[0.98]"
-          >
-            <Crown className="h-4 w-4" />
-            {isAuthenticated ? 'Desbloquear' : 'Comprar agora'}
-          </button>
-        </div>
-      </div>
+      {/* ── O valor inteiro, e só então o preço ── */}
+      <GradeDoPacote atual="eletrocardiograma" className="mt-14" />
+
+      <OfertaDoPacote
+        className="mt-10"
+        onCheckout={onCheckout}
+        isAuthenticated={isAuthenticated}
+        precoBase={basePrice}
+        precoFinal={finalPrice}
+        temLote={hasTier}
+        pctLote={tierPct}
+        rotuloLote={pricingEvent?.activeTier?.label ?? null}
+        rotuloPlano={planLabel}
+        mesesDoPlano={planMonths}
+        mostrarPreco={showPrice}
+      />
+
+      <PerguntasDoPacote className="mt-14" />
+
+      <FechamentoDoPacote
+        className="mt-10 mb-28 lg:mb-0"
+        onCheckout={onCheckout}
+        precoFinal={finalPrice}
+        mostrarPreco={showPrice}
+      />
+
+      {/* Barra fixa do celular: mantém preço e CTA sempre à mão. */}
+      <BarraDoPacote
+        onCheckout={onCheckout}
+        precoBase={basePrice}
+        precoFinal={finalPrice}
+        temLote={hasTier}
+        pctLote={tierPct}
+        mostrarPreco={showPrice}
+      />
     </>
   )
 }

@@ -54,6 +54,14 @@ import { trackMeta } from '@/lib/meta-pixel'
 import { GuidedTour, type TourStep } from '@/components/manual-clinico/guided-tour'
 import { LogoRadiologia } from '@/components/radiologia/logo'
 import { PricingEventCountdown } from '@/components/pricing-events/PricingEventCountdown'
+import {
+  FaixaDoPacote,
+  FechamentoDoPacote,
+  GradeDoPacote,
+  OfertaDoPacote,
+  PerguntasDoPacote,
+} from '@/components/manual-clinico/pacote'
+import { TOTAL_DE_MODULOS } from '@/lib/manual-clinico/pacote'
 import { usePricingEventState } from '@/components/pricing-events/usePricingEventState'
 import { PLUS_LABEL } from '@/lib/account-tier'
 
@@ -453,8 +461,14 @@ function ManualClinicoContent() {
   const tierPct = pricingEventState?.activeTier?.discountPercent || 0
   const hasActiveTier = !!pricingEventState?.activeTier && pricingEventState?.isActive !== false && tierPct > 0
   // Preço exibido publicamente: apenas o menor plano (demais só aparecem no checkout), aplicando lote quando vale
-  const cheapestPlanPrice = enabledPlans.length > 0
-    ? Math.min(...enabledPlans.map(p => p.price))
+  // O plano inteiro, não só o valor: a oferta precisa do rótulo e da duração
+  // para escrever "plano Semestral" e calcular o custo por dia.
+  const cheapestPlan = enabledPlans.reduce<(typeof enabledPlans)[number] | null>(
+    (menor, p) => (menor == null || p.price < menor.price ? p : menor),
+    null,
+  )
+  const cheapestPlanPrice = cheapestPlan
+    ? cheapestPlan.price
     : Number(product?.currentPrice || 0)
   const cheapestAfterTier = hasActiveTier
     ? Math.max(0, Math.round(cheapestPlanPrice * (1 - tierPct / 100) * 100) / 100)
@@ -701,6 +715,9 @@ function ManualClinicoContent() {
           <div className="text-center mb-7">
             <div className="inline-flex flex-col items-center">
               <p className="editorial-mark mb-3 justify-center">Produto carro-chefe</p>
+              <span className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1.5 text-[11px] font-black uppercase tracking-wider text-amber-700 dark:text-amber-300">
+                <Crown className="h-3.5 w-3.5" /> {TOTAL_DE_MODULOS} manuais · 1 pagamento único
+              </span>
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold font-heading tracking-tight text-foreground">
                 Manual Clínico
               </h1>
@@ -803,7 +820,7 @@ function ManualClinicoContent() {
                             className="group inline-flex h-12 sm:h-14 items-center justify-center gap-2.5 rounded-md bg-secondary px-6 sm:px-7 text-sm sm:text-base font-bold text-secondary-foreground shadow-md transition hover:bg-secondary/90 active:scale-[0.98]"
                           >
                             <Crown className="h-5 w-5" />
-                            Desbloquear o Manual Clínico
+                            Quero os {TOTAL_DE_MODULOS} manuais
                             <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-0.5" />
                           </button>
                           <p className="text-xs font-bold text-emerald-700 dark:text-emerald-300">
@@ -875,6 +892,10 @@ function ManualClinicoContent() {
                       <span className="inline-flex items-center gap-1">
                         <span className="h-1 w-1 rounded-full bg-emerald-400" />
                         Acesso imediato
+                      </span>
+                      <span className="inline-flex items-center gap-1">
+                        <span className="h-1 w-1 rounded-full bg-emerald-400" />
+                        {TOTAL_DE_MODULOS} manuais no mesmo acesso
                       </span>
                       <span className="inline-flex items-center gap-1">
                         <span className="h-1 w-1 rounded-full bg-emerald-400" />
@@ -969,6 +990,12 @@ function ManualClinicoContent() {
 
         {/* ══════════ MAIN CONTENT ══════════ */}
       <div className="container mx-auto px-4 py-8 max-w-6xl">
+        {/* A informação que faltava antes de qualquer preço: a compra não é de um
+            manual, é dos sete. Vem antes do banner de conversão de propósito. */}
+        {ctasReady && !manualAccess.hasFullAccess && product?.isActive && (
+          <FaixaDoPacote atual="manual" className="mb-4" />
+        )}
+
         {ctasReady && !manualAccess.hasFullAccess && product?.isActive && (
           <div className="mb-7 overflow-hidden rounded-lg border border-amber-500/25 bg-amber-500/10 p-4">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -1186,6 +1213,36 @@ function ManualClinicoContent() {
               <ArrowRight className="h-5 w-5 shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5 group-hover:text-red-500" />
             </div>
           </button>
+        )}
+
+        {/* ══════════ A OFERTA — valor inteiro primeiro, preço depois ══════════ */}
+        {ctasReady && !manualAccess.hasFullAccess && product?.isActive && !busca && (
+          <div className="mb-10">
+            <GradeDoPacote atual="manual" />
+
+            <OfertaDoPacote
+              className="mt-10"
+              onCheckout={() => goToCheckout()}
+              isAuthenticated={isAuthenticated}
+              precoBase={cheapestPlanPrice}
+              precoFinal={hasActiveTier ? cheapestAfterTier : cheapestPlanPrice}
+              temLote={hasActiveTier}
+              pctLote={tierPct}
+              rotuloLote={pricingEventState?.activeTier?.label ?? null}
+              rotuloPlano={cheapestPlan?.label ?? null}
+              mesesDoPlano={cheapestPlan?.durationMonths ?? null}
+              mostrarPreco={cheapestPlanPrice > 0}
+            />
+
+            <PerguntasDoPacote className="mt-12" />
+
+            <FechamentoDoPacote
+              className="mt-8"
+              onCheckout={() => goToCheckout()}
+              precoFinal={hasActiveTier ? cheapestAfterTier : cheapestPlanPrice}
+              mostrarPreco={cheapestPlanPrice > 0}
+            />
+          </div>
         )}
 
         {/* ══════════ SISTEMAS GRID ══════════ */}
