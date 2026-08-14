@@ -23,6 +23,7 @@
     "radiologia:assets:sync": "node scripts/radiologia/sync-raio-x.mjs --download",
     "radiologia:casos:verify": "node scripts/radiologia/sync-casos-raio-x.mjs --verify",
     "radiologia:casos:sync": "node scripts/radiologia/sync-casos-raio-x.mjs --download",
+    "pwa:splash": "python3 scripts/pwa/gerar-telas-de-partida.py",
     "create-admin": "node scripts/create-admin.js",
     "make-admin": "node scripts/make-admin.js",
     "backfill-lead-uuid": "node scripts/backfill-lead-uuid.js",

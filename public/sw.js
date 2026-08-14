@@ -24,7 +24,7 @@
  * "não atrapalhar o caminho normal" continua valendo na prática.
  */
 
-const CACHE_VERSION = 'da-static-v2'
+const CACHE_VERSION = 'da-static-v3'
 
 // Página mostrada quando a navegação falha por falta de rede. Ela existe por
 // causa do app instalado: no navegador, cair na tela de erro é normal; dentro
@@ -46,6 +46,42 @@ function isImmutableAsset(url) {
   )
 }
 
+/**
+ * Descobre as folhas de estilo que a página offline usa e guarda cada uma.
+ *
+ * Sem isto, guardávamos o HTML da página offline e mais nada: os arquivos de
+ * CSS do Next têm hash no nome, então só estavam em cache se o usuário já
+ * tivesse navegado depois de o service worker ativar. Quando não estavam, a
+ * tela sem internet abria como HTML cru — texto preto em fundo branco,
+ * empilhado. Dentro de um app em tela cheia, isso não parece "sem internet":
+ * parece o app ter quebrado, que é exatamente o que a página existe para
+ * evitar.
+ */
+async function guardarEstilosDaPaginaOffline(cache, htmlOffline) {
+  if (!htmlOffline) return
+  let html
+  try {
+    html = await htmlOffline.clone().text()
+  } catch {
+    return
+  }
+
+  const encontrados = new Set()
+  // A query opcional cobre o `?v=` que o servidor de desenvolvimento anexa; em
+  // produção o nome já traz o hash e vem sem query.
+  const padrao = /href="(\/_next\/static\/[^"]+\.css(?:\?[^"]*)?)"/g
+  let achado
+  while ((achado = padrao.exec(html)) !== null) {
+    encontrados.add(achado[1])
+  }
+
+  await Promise.all(
+    Array.from(encontrados).map((caminho) =>
+      cache.add(new Request(caminho, { cache: 'reload' })).catch(() => {})
+    )
+  )
+}
+
 self.addEventListener('install', (event) => {
   event.waitUntil(
     (async () => {
@@ -57,6 +93,7 @@ self.addEventListener('install', (event) => {
           cache.add(new Request(caminho, { cache: 'reload' })).catch(() => {})
         )
       )
+      await guardarEstilosDaPaginaOffline(cache, await cache.match(PAGINA_OFFLINE))
     })()
   )
   // Ativa a nova versão imediatamente, sem esperar abas antigas fecharem.

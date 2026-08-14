@@ -21,6 +21,11 @@ import { LiteModeProvider } from '@/context/LiteModeContext'
 import { LiteModePrompt } from '@/components/lite-mode-prompt'
 import { LITE_BOOTSTRAP_SCRIPT } from '@/lib/lite-mode'
 import { SCRIPT_CAPTURA_INSTALACAO } from '@/lib/pwa/instalacao'
+import {
+  TELAS_DE_PARTIDA,
+  arquivoDaTelaDePartida,
+  mediaDaTelaDePartida,
+} from '@/lib/pwa/splash'
 import { UIPreferencesProvider } from '@/context/UIPreferencesContext'
 import { MaterialCartProvider } from '@/context/MaterialCartContext'
 import { ShopCartProvider } from '@/context/ShopCartContext'
@@ -210,6 +215,35 @@ export default function RootLayout({
       className={`${newsreader.variable} ${sourceSans.variable} ${plexMono.variable}`}
     >
       <head>
+        {/* Cor de fundo na PRIMEIRA pintura.
+            O `globals.css` é uma folha externa: até ela chegar, o navegador
+            pinta o fundo padrão dele — branco no navegador comum, preto no app
+            instalado em tema escuro. Dentro de um app em tela cheia esse
+            piscar de tela vazia é o que assusta ("abriu preto"). Estas quatro
+            linhas viajam no HTML, então valem antes de qualquer download.
+            Os valores são os mesmos de `--background` (globals.css) em cada
+            tema, então quando a folha chega não há troca de cor. */}
+        <style
+          dangerouslySetInnerHTML={{
+            __html:
+              'html{background-color:#F5F1EB}' +
+              '@media (prefers-color-scheme:dark){html{background-color:#0B130F}}' +
+              'html.dark{background-color:#0B130F}' +
+              'html.light{background-color:#F5F1EB}',
+          }}
+        />
+        {/* Telas de partida do iPhone/iPad. Sem elas, o intervalo entre tocar
+            no ícone e a primeira pintura é um retângulo preto — ver
+            lib/pwa/splash.ts. O iOS casa a imagem por media query exata, então
+            é uma tag por classe de aparelho. */}
+        {TELAS_DE_PARTIDA.map((tela) => (
+          <link
+            key={arquivoDaTelaDePartida(tela)}
+            rel="apple-touch-startup-image"
+            media={mediaDaTelaDePartida(tela)}
+            href={arquivoDaTelaDePartida(tela)}
+          />
+        ))}
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){if(typeof Node!=='function'||!Node.prototype)return;var r=Node.prototype.removeChild;Node.prototype.removeChild=function(c){if(c&&c.parentNode!==this){return c}return r.apply(this,arguments)};var i=Node.prototype.insertBefore;Node.prototype.insertBefore=function(n,ref){if(ref&&ref.parentNode!==this){return n}return i.apply(this,arguments)}})();`,

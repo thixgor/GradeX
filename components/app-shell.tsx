@@ -9,6 +9,7 @@ import { ProfileCompletionGate, resetProfilePromptDismissal } from '@/components
 import { SupportChat } from '@/components/support-chat'
 import { PageLoading } from '@/components/page-loading'
 import { SectionSkeleton } from '@/components/section-skeleton'
+import { AvisoDePartidaLenta } from '@/components/pwa/aviso-de-partida-lenta'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { LiteModeToggle } from '@/components/lite-mode-toggle'
@@ -271,7 +272,16 @@ export function AppShell({
   // espera não parece "o app recarregando do zero" — que é exatamente a
   // sensação logo depois do login, quando o cache foi limpo de propósito.
   if (loading && !isGuest) {
-    return <SectionSkeleton variant={skeletonVariantForPath(pathname)} />
+    return (
+      <>
+        <SectionSkeleton variant={skeletonVariantForPath(pathname)} />
+        {/* O esqueleto sozinho é mudo. Se a espera passar de alguns segundos —
+            o caso do app instalado abrindo em rede ruim —, ele passa a
+            explicar o que está acontecendo e a oferecer "tentar de novo", em
+            vez de deixar a pessoa achando que travou. */}
+        <AvisoDePartidaLenta onRetry={handleRetryBootstrap} retrying={retryingBootstrap} />
+      </>
+    )
   }
 
   // Handle error or unauthenticated state
