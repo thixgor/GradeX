@@ -46,6 +46,7 @@ import { normalizeSidebarIcons, type SidebarSectionIcons } from '@/lib/sidebar-i
 import { getSidebarIconComponent } from '@/components/sidebar-icon-map'
 import { isPlusAccount } from '@/lib/account-tier'
 import { useLiteMode } from '@/hooks/use-lite-mode'
+import { ScrollRoller } from '@/components/ui/scroll-roller'
 
 interface SidebarProps {
   user: {
@@ -727,63 +728,41 @@ export function Sidebar({
           </div>
         </div>
 
-        {/* ─── Navigation ─── */}
-        <nav
-          ref={navRef}
-          data-tour="sidebar-nav"
-          className="flex-1 min-h-0 px-3 py-2 overflow-y-auto overscroll-contain relative select-none [-webkit-overflow-scrolling:touch]"
-          style={{ touchAction: 'pan-y' }}
+        {/* ─── Navigation ───
+            O <nav> rola, mas a barra é a nossa (ScrollRoller): a nativa é
+            grossa e cinza no Windows, invisível no macOS e inexistente no
+            celular — três aparências diferentes no meio de um menu com
+            identidade própria. O wrapper existe só para ancorar o roller,
+            que fica por cima do conteúdo sem rolar junto. */}
+        <div
+          className="relative flex-1 min-h-0"
           onMouseEnter={handleNavMouseEnter}
           onMouseLeave={handleNavMouseLeave}
         >
-          {/* A bolha de vidro é três camadas com blur seguindo o cursor por
-              spring — bonita no desktop, cara demais em GPU fraca. */}
-          {!liteMode && (
-            <FluidGlassBubble
-              navRef={navRef}
-              hoveredIndex={hoveredIndex}
-              isVisible={bubbleVisible}
-              collapsed={isCollapsed}
-            />
-          )}
-
-          <div className="space-y-0.5">
-            {mainNavItems.map((item, index) => (
-              <NavItemButton
-                key={item.label}
-                item={item}
-                index={index}
+          <nav
+            ref={navRef}
+            id="sidebar-nav-scroll"
+            data-tour="sidebar-nav"
+            className="h-full px-3 py-2 overflow-y-auto overscroll-contain relative select-none scrollbar-hide [-webkit-overflow-scrolling:touch]"
+            style={{ touchAction: 'pan-y' }}
+          >
+            {/* A bolha de vidro é três camadas com blur seguindo o cursor por
+                spring — bonita no desktop, cara demais em GPU fraca. */}
+            {!liteMode && (
+              <FluidGlassBubble
+                navRef={navRef}
                 hoveredIndex={hoveredIndex}
-                pressedIndex={pressedIndex}
+                isVisible={bubbleVisible}
                 collapsed={isCollapsed}
-                isItemActive={isActive(item.href)}
-                onHover={(i) => {
-                  setHoveredIndex(i)
-                  handleNavPrefetch(item)
-                }}
-                onPress={(i) => {
-                  handleNavPress(i)
-                  handleNavPrefetch(item)
-                }}
-                onRelease={handleNavRelease}
-                onClick={() => handleNavClick(item, index)}
-                staggerDelay={index * 0.03}
-                skipEntrance={skipEntranceRef.current}
-                lite={liteMode}
               />
-            ))}
-          </div>
+            )}
 
-          <div className="my-3 border-t mx-1" />
-
-          <div className="space-y-0.5">
-            {secondaryNavItems.map((item, index) => {
-              const globalIndex = mainNavItems.length + index
-              return (
+            <div className="space-y-0.5">
+              {mainNavItems.map((item, index) => (
                 <NavItemButton
                   key={item.label}
                   item={item}
-                  index={globalIndex}
+                  index={index}
                   hoveredIndex={hoveredIndex}
                   pressedIndex={pressedIndex}
                   collapsed={isCollapsed}
@@ -797,54 +776,93 @@ export function Sidebar({
                     handleNavPrefetch(item)
                   }}
                   onRelease={handleNavRelease}
-                  onClick={() => handleNavClick(item, globalIndex)}
-                  staggerDelay={(mainNavItems.length + index) * 0.03}
+                  onClick={() => handleNavClick(item, index)}
+                  staggerDelay={index * 0.03}
                   skipEntrance={skipEntranceRef.current}
                   lite={liteMode}
                 />
-              )
-            })}
-          </div>
+              ))}
+            </div>
 
-          <div className="mt-3 pt-3 border-t mx-1">
-            <NavItemButton
-              item={liteNavItem}
-              index={liteIndex}
-              hoveredIndex={hoveredIndex}
-              pressedIndex={pressedIndex}
-              collapsed={isCollapsed}
-              isItemActive={liteMode}
-              onHover={setHoveredIndex}
-              onPress={handleNavPress}
-              onRelease={handleNavRelease}
-              onClick={() => {
-                handleNavRelease()
-                toggleLiteMode()
-              }}
-              staggerDelay={liteIndex * 0.03}
-              skipEntrance={skipEntranceRef.current}
-              lite={liteMode}
-            />
-            <NavItemButton
-              item={{ icon: <LogOut className="h-5 w-5" />, label: 'Sair' }}
-              index={logoutIndex}
-              hoveredIndex={hoveredIndex}
-              pressedIndex={pressedIndex}
-              collapsed={isCollapsed}
-              isItemActive={false}
-              onHover={setHoveredIndex}
-              onPress={handleNavPress}
-              onRelease={handleNavRelease}
-              onClick={() => {
-                handleNavRelease()
-                onLogout()
-              }}
-              staggerDelay={(logoutIndex) * 0.03}
-              skipEntrance={skipEntranceRef.current}
-              lite={liteMode}
-            />
-          </div>
-        </nav>
+            <div className="my-3 border-t mx-1" />
+
+            <div className="space-y-0.5">
+              {secondaryNavItems.map((item, index) => {
+                const globalIndex = mainNavItems.length + index
+                return (
+                  <NavItemButton
+                    key={item.label}
+                    item={item}
+                    index={globalIndex}
+                    hoveredIndex={hoveredIndex}
+                    pressedIndex={pressedIndex}
+                    collapsed={isCollapsed}
+                    isItemActive={isActive(item.href)}
+                    onHover={(i) => {
+                      setHoveredIndex(i)
+                      handleNavPrefetch(item)
+                    }}
+                    onPress={(i) => {
+                      handleNavPress(i)
+                      handleNavPrefetch(item)
+                    }}
+                    onRelease={handleNavRelease}
+                    onClick={() => handleNavClick(item, globalIndex)}
+                    staggerDelay={(mainNavItems.length + index) * 0.03}
+                    skipEntrance={skipEntranceRef.current}
+                    lite={liteMode}
+                  />
+                )
+              })}
+            </div>
+
+            <div className="mt-3 pt-3 border-t mx-1">
+              <NavItemButton
+                item={liteNavItem}
+                index={liteIndex}
+                hoveredIndex={hoveredIndex}
+                pressedIndex={pressedIndex}
+                collapsed={isCollapsed}
+                isItemActive={liteMode}
+                onHover={setHoveredIndex}
+                onPress={handleNavPress}
+                onRelease={handleNavRelease}
+                onClick={() => {
+                  handleNavRelease()
+                  toggleLiteMode()
+                }}
+                staggerDelay={liteIndex * 0.03}
+                skipEntrance={skipEntranceRef.current}
+                lite={liteMode}
+              />
+              <NavItemButton
+                item={{ icon: <LogOut className="h-5 w-5" />, label: 'Sair' }}
+                index={logoutIndex}
+                hoveredIndex={hoveredIndex}
+                pressedIndex={pressedIndex}
+                collapsed={isCollapsed}
+                isItemActive={false}
+                onHover={setHoveredIndex}
+                onPress={handleNavPress}
+                onRelease={handleNavRelease}
+                onClick={() => {
+                  handleNavRelease()
+                  onLogout()
+                }}
+                staggerDelay={(logoutIndex) * 0.03}
+                skipEntrance={skipEntranceRef.current}
+                lite={liteMode}
+              />
+            </div>
+          </nav>
+
+          <ScrollRoller
+            targetRef={navRef}
+            controlsId="sidebar-nav-scroll"
+            lite={liteMode}
+            label="Rolar menu lateral"
+          />
+        </div>
       </aside>
     </>
   )

@@ -1674,6 +1674,231 @@
   letter-spacing: 0.02em;
 }
 
+/* ============================================
+   Roller — barra de rolagem própria (components/ui/scroll-roller.tsx)
+
+   A barra nativa é o único pedaço da interface que o navegador desenha
+   sozinho: cinza grossa no Windows, some no macOS, não existe no celular.
+   Aqui ela vira um traço na cor da marca, que some quando ninguém usa,
+   engorda no hover e responde ao arrasto.
+
+   Só `opacity`, `transform` e `width` (num elemento de 6px) mudam — nada
+   que force layout na árvore do menu enquanto a lista rola.
+   ============================================ */
+.roller {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* ---- Esmaecido nas bordas ----
+   Diz "tem mais coisa aí" sem ocupar espaço. A cor é exatamente a da
+   superfície da sidebar, então o conteúdo parece dissolver na borda. */
+.roller-fade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 28px;
+  pointer-events: none;
+  will-change: opacity;
+}
+
+.roller-fade-top {
+  top: 0;
+  opacity: var(--roller-fade-top, 0);
+  background: linear-gradient(
+    to bottom,
+    hsl(var(--card)) 0%,
+    hsl(var(--card) / 0.82) 42%,
+    hsl(var(--card) / 0) 100%
+  );
+}
+
+.roller-fade-bottom {
+  bottom: 0;
+  opacity: var(--roller-fade-bottom, 0);
+  background: linear-gradient(
+    to top,
+    hsl(var(--card)) 0%,
+    hsl(var(--card) / 0.82) 42%,
+    hsl(var(--card) / 0) 100%
+  );
+}
+
+/* ---- Pista ----
+   14px de área clicável (o dedo precisa disso) com um traço de 5px dentro.
+   A pista só ganha cor quando o ponteiro está no menu. */
+.roller-track {
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  right: 2px;
+  width: 14px;
+  border-radius: 9999px;
+  background: transparent;
+  pointer-events: auto;
+  transition: background-color 200ms ease;
+}
+
+.roller[data-hover='true'] .roller-track,
+.roller[data-dragging='true'] .roller-track {
+  background: hsl(var(--foreground) / 0.045);
+}
+
+.roller[data-scrollable='false'] .roller-track {
+  pointer-events: none;
+}
+
+/* ---- Traço ----
+   O container leva o translate (compositor puro, atualizado a cada frame);
+   a barrinha de dentro leva a aparência. Separados de propósito: assim o
+   hover pode engordar a barra sem brigar com o transform da rolagem. */
+.roller-thumb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 32px;
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-end;
+  cursor: grab;
+  outline: none;
+  /* O dedo arrasta o traço em vez de rolar a página por trás. */
+  touch-action: none;
+  will-change: transform;
+}
+
+.roller[data-dragging='true'] .roller-thumb {
+  cursor: grabbing;
+}
+
+.roller-thumb-bar {
+  position: relative;
+  align-self: stretch;
+  width: 5px;
+  margin-right: 4px;
+  border-radius: 9999px;
+  opacity: 0;
+  overflow: hidden;
+  /* O degradê tem a altura da PISTA (`--roller-track-h`) e é deslocado para
+     cima conforme o traço desce (`--roller-shift`): o traço vira uma janela
+     que revela o pedaço de cor daquela altura do menu. Sem as variáveis
+     (Lite, primeiro frame) ele degrada para o degradê comum. */
+  background-image: linear-gradient(
+    180deg,
+    #468152 0%,
+    #5aa06a 42%,
+    #e2a43e 100%
+  );
+  background-size: 100% var(--roller-track-h, 100%);
+  background-position: 0 var(--roller-shift, 0px);
+  background-repeat: no-repeat;
+  box-shadow:
+    0 0 0 1px hsl(var(--card) / 0.9),
+    0 2px 8px -3px rgba(70, 129, 82, 0.55);
+  transition:
+    opacity 220ms cubic-bezier(0.16, 1, 0.3, 1),
+    width 160ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 200ms ease;
+}
+
+/* Brilho interno correndo no topo do traço — o detalhe que separa "barra
+   customizada" de "barra bonita". Estático, sem animação em loop. */
+.roller-thumb-shine {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.55) 0%,
+    rgba(255, 255, 255, 0.12) 34%,
+    rgba(255, 255, 255, 0) 62%
+  );
+  pointer-events: none;
+}
+
+.roller[data-scrollable='true'][data-awake='true'] .roller-thumb-bar {
+  opacity: 1;
+}
+
+.roller[data-scrollable='true'][data-hover='true'] .roller-thumb-bar {
+  width: 7px;
+}
+
+.roller[data-scrollable='true'][data-dragging='true'] .roller-thumb-bar {
+  width: 8px;
+  box-shadow:
+    0 0 0 1px hsl(var(--card) / 0.9),
+    0 0 14px -1px rgba(70, 129, 82, 0.7),
+    0 4px 12px -4px rgba(226, 164, 62, 0.6);
+}
+
+.roller-thumb:focus-visible .roller-thumb-bar {
+  opacity: 1;
+  width: 8px;
+  box-shadow:
+    0 0 0 2px hsl(var(--card)),
+    0 0 0 4px hsl(var(--primary) / 0.55);
+}
+
+.dark .roller-thumb-bar {
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.35),
+    0 2px 10px -3px rgba(0, 0, 0, 0.7);
+}
+
+.dark .roller[data-hover='true'] .roller-track,
+.dark .roller[data-dragging='true'] .roller-track {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* Enquanto arrasta, o cursor é de arrasto na tela inteira e nada é
+   selecionado sem querer. */
+body.roller-dragging {
+  cursor: grabbing;
+  user-select: none;
+}
+
+/* Modo Lite / menos movimento: mesmo traço, sem gradiente, sombra ou
+   transição. Continua sendo um alvo de arrasto de 14px. */
+.roller[data-lite='true'] .roller-thumb-bar {
+  background-image: none;
+  background-color: hsl(var(--foreground) / 0.28);
+  box-shadow: none;
+  transition: none;
+}
+
+.roller[data-lite='true'] .roller-thumb-shine {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .roller-thumb-bar,
+  .roller-track {
+    transition: none;
+  }
+}
+
+/* Ponteiro grosso (celular/tablet sem mouse): aqui o roller é só indicador.
+   Arrastar um traço de 5px com o dedo não é gesto de celular — quem rola,
+   rola o conteúdo. E uma pista clicável na borda viraria uma faixa morta
+   onde o swipe não pega e o toque no item não passa. Sem eventos, então:
+   a faixa inteira continua rolando normalmente. Tablet com mouse relata
+   `hover: hover` e cai no comportamento completo do desktop. */
+@media (hover: none) and (pointer: coarse) {
+  .roller-track,
+  .roller-thumb {
+    pointer-events: none;
+  }
+
+  .roller-thumb-bar {
+    width: 4px;
+    margin-right: 5px;
+  }
+}
+
 /* ---- Fluid Glass Bubble (Framer Motion driven) ---- */
 /* Iridescent Glassmorphism — chromatic reflections on contour only */
 
