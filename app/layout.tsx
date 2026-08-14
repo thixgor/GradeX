@@ -23,8 +23,11 @@ import { LITE_BOOTSTRAP_SCRIPT } from '@/lib/lite-mode'
 import { SCRIPT_CAPTURA_INSTALACAO } from '@/lib/pwa/instalacao'
 import {
   TELAS_DE_PARTIDA,
+  TELAS_DE_RESERVA,
   arquivoDaTelaDePartida,
+  arquivoDaTelaDeReserva,
   mediaDaTelaDePartida,
+  mediaDaTelaDeReserva,
 } from '@/lib/pwa/splash'
 import { UIPreferencesProvider } from '@/context/UIPreferencesContext'
 import { MaterialCartProvider } from '@/context/MaterialCartContext'
@@ -235,7 +238,21 @@ export default function RootLayout({
         {/* Telas de partida do iPhone/iPad. Sem elas, o intervalo entre tocar
             no ícone e a primeira pintura é um retângulo preto — ver
             lib/pwa/splash.ts. O iOS casa a imagem por media query exata, então
-            é uma tag por classe de aparelho. */}
+            é uma tag por classe de aparelho.
+
+            As duas de RESERVA vêm primeiro de propósito: elas casam com
+            qualquer aparelho (filtram só a orientação), e vindo antes deixam as
+            específicas prevalecerem onde existem. Aparelho fora da tabela — o
+            iPhone que ainda não saiu — cai na reserva e abre com a marca em vez
+            de abrir preto. */}
+        {TELAS_DE_RESERVA.map((tela) => (
+          <link
+            key={arquivoDaTelaDeReserva(tela)}
+            rel="apple-touch-startup-image"
+            media={mediaDaTelaDeReserva(tela)}
+            href={arquivoDaTelaDeReserva(tela)}
+          />
+        ))}
         {TELAS_DE_PARTIDA.map((tela) => (
           <link
             key={arquivoDaTelaDePartida(tela)}

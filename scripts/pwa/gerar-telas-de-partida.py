@@ -55,7 +55,12 @@ ICONE_MAXIMO = 360
 DESLOCAMENTO_VERTICAL = -0.04
 
 
-def ler_tabela_de_aparelhos() -> list[tuple[int, int, int]]:
+def ler_tabela() -> str:
+    with open(TABELA, "r", encoding="utf-8") as arquivo:
+        return arquivo.read()
+
+
+def ler_aparelhos(conteudo: str) -> list[tuple[int, int, int]]:
     """Extrai (larguraCss, alturaCss, densidade) de lib/pwa/splash.ts.
 
     Ler o TypeScript em vez de repetir a tabela aqui é de propósito: com duas
@@ -63,19 +68,30 @@ def ler_tabela_de_aparelhos() -> list[tuple[int, int, int]]:
     sintoma seria exatamente o que este script veio consertar — retângulo vazio
     na abertura, só que num aparelho só.
     """
-    with open(TABELA, "r", encoding="utf-8") as arquivo:
-        conteudo = arquivo.read()
-
     padrao = re.compile(
         r"larguraCss:\s*(\d+),\s*alturaCss:\s*(\d+),\s*densidade:\s*(\d+)"
     )
-    telas = [
+    aparelhos = [
         (int(largura), int(altura), int(densidade))
         for largura, altura, densidade in padrao.findall(conteudo)
     ]
-    if not telas:
+    if not aparelhos:
         raise SystemExit(f"Nenhum aparelho encontrado em {TABELA}")
-    return telas
+    return aparelhos
+
+
+def ler_reservas(conteudo: str) -> list[tuple[str, int, int]]:
+    """Extrai as telas de reserva (as que casam com qualquer aparelho)."""
+    padrao = re.compile(
+        r"orientacao:\s*'(portrait|landscape)',\s*larguraPx:\s*(\d+),\s*alturaPx:\s*(\d+)"
+    )
+    reservas = [
+        (orientacao, int(largura), int(altura))
+        for orientacao, largura, altura in padrao.findall(conteudo)
+    ]
+    if not reservas:
+        raise SystemExit(f"Nenhuma tela de reserva encontrada em {TABELA}")
+    return reservas
 
 
 def cantos_arredondados(icone: Image.Image) -> Image.Image:
@@ -91,15 +107,34 @@ def cantos_arredondados(icone: Image.Image) -> Image.Image:
     return recortado
 
 
+def desenhar(arte: Image.Image, largura: int, altura: int) -> Image.Image:
+    tela = Image.new("RGB", (largura, altura), COR_DE_FUNDO)
+
+    lado_do_icone = min(int(min(largura, altura) * PROPORCAO_DO_ICONE), ICONE_MAXIMO)
+    icone = cantos_arredondados(arte.resize((lado_do_icone, lado_do_icone), Image.LANCZOS))
+
+    x = (largura - lado_do_icone) // 2
+    y = int((altura - lado_do_icone) / 2 + altura * DESLOCAMENTO_VERTICAL)
+    tela.paste(icone, (x, y), icone)
+
+    # Paleta de 256 cores: a imagem é fundo chapado + um ícone pequeno com
+    # brilho suave, então 256 cores cobrem tudo sem banda visível e o arquivo
+    # cai a um terço (de ~107 KB para ~36 KB por tela). Cada aparelho baixa
+    # exatamente uma — na abertura do app, que é justamente o momento em que
+    # ninguém quer gastar rede.
+    return tela.quantize(colors=256, method=Image.MEDIANCUT, dither=Image.FLOYDSTEINBERG)
+
+
 def gerar() -> None:
     if not os.path.exists(FONTE):
         raise SystemExit(f"Arte-mãe não encontrada: {FONTE}")
 
     os.makedirs(DESTINO, exist_ok=True)
     arte = Image.open(FONTE).convert("RGBA")
+    conteudo = ler_tabela()
 
     total = 0
-    for largura_css, altura_css, densidade in ler_tabela_de_aparelhos():
+    for largura_css, altura_css, densidade in ler_aparelhos(conteudo):
         # Retrato e paisagem: a orientação em que o aparelho estava no instante
         # do toque decide qual das duas o iOS procura, e o que não casa abre
         # preto.
@@ -107,32 +142,24 @@ def gerar() -> None:
             ("", (largura_css * densidade, altura_css * densidade)),
             ("-paisagem", (altura_css * densidade, largura_css * densidade)),
         ):
-            tela = Image.new("RGB", (largura, altura), COR_DE_FUNDO)
-
-            lado_do_icone = min(
-                int(min(largura, altura) * PROPORCAO_DO_ICONE), ICONE_MAXIMO
-            )
-            icone = cantos_arredondados(
-                arte.resize((lado_do_icone, lado_do_icone), Image.LANCZOS)
-            )
-
-            x = (largura - lado_do_icone) // 2
-            y = int((altura - lado_do_icone) / 2 + altura * DESLOCAMENTO_VERTICAL)
-            tela.paste(icone, (x, y), icone)
-
-            # Paleta de 256 cores: a imagem é fundo chapado + um ícone pequeno
-            # com brilho suave, então 256 cores cobrem tudo sem banda visível e
-            # o arquivo cai a um terço (de ~107 KB para ~36 KB por tela). Cada
-            # aparelho baixa exatamente uma — na abertura do app, que é
-            # justamente o momento em que ninguém quer gastar rede.
-            tela = tela.quantize(
-                colors=256, method=Image.MEDIANCUT, dither=Image.FLOYDSTEINBERG
-            )
-
             nome = f"partida-{largura_css}x{altura_css}@{densidade}x{sufixo}.png"
-            tela.save(os.path.join(DESTINO, nome), "PNG", optimize=True)
+            desenhar(arte, largura, altura).save(
+                os.path.join(DESTINO, nome), "PNG", optimize=True
+            )
             print(f"  {nome}  {largura}x{altura}")
             total += 1
+
+    # Reserva: usada por qualquer aparelho que não esteja na tabela — o iPhone
+    # que ainda não existe. É o que impede a volta do retângulo preto quando a
+    # tabela envelhecer.
+    for orientacao, largura, altura in ler_reservas(conteudo):
+        sufixo = "-paisagem" if orientacao == "landscape" else ""
+        nome = f"partida-reserva{sufixo}.png"
+        desenhar(arte, largura, altura).save(
+            os.path.join(DESTINO, nome), "PNG", optimize=True
+        )
+        print(f"  {nome}  {largura}x{altura}  (reserva)")
+        total += 1
 
     print(f"\n{total} telas de partida geradas em {DESTINO}")
 
