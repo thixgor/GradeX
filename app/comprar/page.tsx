@@ -560,6 +560,20 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
             ) : null}
           </div>
 
+          {/* Cupom logo abaixo do Total: antes só aparecia depois de preencher
+              nome/e-mail/telefone e clicar em "Ir para pagamento" — quem só
+              queria testar um código nem chegava lá. */}
+          <div className="mt-4">
+            <ManualClinicoCouponBox
+              product={product}
+              email={email}
+              planKey={selectedPlanKey}
+              appliedCoupon={appliedCoupon}
+              onApplied={setAppliedCoupon}
+              onRemoved={() => setAppliedCoupon(null)}
+            />
+          </div>
+
           <div className="mt-4 flex flex-col gap-2 text-xs text-muted-foreground">
             <div className="flex items-center gap-2">
               <ShieldCheck className="h-4 w-4 text-primary" /> Pagamento 100% seguro · Mercado Pago
@@ -618,15 +632,6 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
               <div className="rounded-lg border border-border bg-muted/40 px-3.5 py-3 text-xs text-muted-foreground">
                 Comprando como <strong className="text-foreground">{name}</strong> · {email} · {phone}
               </div>
-
-              <ManualClinicoCouponBox
-                product={product}
-                email={email}
-                planKey={selectedPlanKey}
-                appliedCoupon={appliedCoupon}
-                onApplied={setAppliedCoupon}
-                onRemoved={() => setAppliedCoupon(null)}
-              />
 
               <MercadoPagoCheckout
                 key={`comprar-manual-${selectedPlanKey}-${payableAmount}-${appliedCoupon?.code || 'sem-cupom'}`}
