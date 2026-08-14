@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, useRef, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import { Bell, X, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -10,6 +11,7 @@ import { notificationSound } from '@/lib/notification-sound'
 import { useBootstrap } from '@/hooks/use-bootstrap'
 import { useApi, useMutation } from '@/hooks/use-api'
 import { invalidateCache, CACHE_DURATIONS } from '@/lib/api-client'
+import { useAnchoredPanel } from '@/hooks/use-anchored-panel'
 
 /**
  * NotificationsBell Component - Optimized Version
@@ -29,8 +31,14 @@ export function NotificationsBell() {
   const [open, setOpen] = useState(false)
   const [previousUnreadCount, setPreviousUnreadCount] = useState(0)
   const router = useRouter()
-  const dropdownRef = useRef<HTMLDivElement>(null)
   const initializedRef = useRef(false)
+
+  const closePanel = useCallback(() => setOpen(false), [])
+  const { triggerRef, panelRef, style, mounted } = useAnchoredPanel<HTMLButtonElement>(
+    open,
+    closePanel,
+    { width: 360 },
+  )
 
   // Use bootstrap to check authentication (shared across all components)
   const { isAuthenticated, loading: authLoading } = useBootstrap()
@@ -84,20 +92,6 @@ export function NotificationsBell() {
 
     setPreviousUnreadCount(unreadCount)
   }, [unreadCount, notificationsLoading])
-
-  // Handle click outside to close dropdown
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setOpen(false)
-      }
-    }
-
-    if (open) {
-      document.addEventListener('mousedown', handleClickOutside)
-      return () => document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [open])
 
   async function markAsRead(notificationId: string) {
     try {
@@ -160,13 +154,110 @@ export function NotificationsBell() {
     return null
   }
 
+  const panel = (
+    <Card
+      ref={panelRef}
+      style={style ?? undefined}
+      className="app-anchored-panel flex flex-col overflow-hidden p-0 border shadow-2xl"
+      role="dialog"
+      aria-label="Notificações"
+    >
+      <div className="border-b p-4 flex items-center justify-between bg-card shrink-0">
+        <h3 className="font-semibold">Notificacoes</h3>
+        <div className="flex items-center gap-1">
+          {notifications.length > 0 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearAllNotifications}
+              className="text-xs h-auto py-1 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
+            >
+              <Trash2 className="h-3 w-3 mr-1" />
+              Limpar todas
+            </Button>
+          )}
+          {/* Fechar explícito: no celular não existe "clicar fora" óbvio. */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={closePanel}
+            className="h-8 w-8 sm:hidden"
+            aria-label="Fechar notificações"
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+      <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain bg-card">
+        {notifications.length === 0 ? (
+          <div className="p-8 text-center text-sm text-muted-foreground">
+            Nenhuma notificacao
+          </div>
+        ) : (
+          notifications.map((notification) => (
+            <div
+              key={String(notification._id)}
+              className={`relative group border-b hover:bg-muted transition-colors ${
+                !notification.read ? 'bg-blue-50 dark:bg-blue-950' : ''
+              }`}
+            >
+              <button
+                onClick={() => handleNotificationClick(notification)}
+                className="w-full text-left p-4 pr-12"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">
+                      {(notification.type === 'ticket_created' || notification.type === 'ticket_reopened')
+                        ? notification.ticketTitle
+                        : notification.examTitle}
+                    </p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {notification.message}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {new Date(notification.createdAt).toLocaleDateString('pt-BR', {
+                        day: '2-digit',
+                        month: 'short',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
+                    </p>
+                  </div>
+                  {!notification.read && (
+                    <div className="h-2 w-2 bg-blue-500 rounded-full mt-1 flex-shrink-0" />
+                  )}
+                </div>
+              </button>
+              {/* No toque não existe hover: o botão de apagar ficava
+                  invisível para sempre no celular. */}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={(e) => deleteNotification(e, String(notification._id!))}
+                aria-label="Apagar notificação"
+                className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 opacity-70 transition-opacity hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-950 lg:opacity-0 lg:group-hover:opacity-100"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          ))
+        )}
+      </div>
+    </Card>
+  )
+
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="relative">
       <Button
+        ref={triggerRef}
         variant="ghost"
         size="icon"
         className="relative"
-        onClick={() => setOpen(!open)}
+        onClick={() => setOpen((v) => !v)}
+        aria-haspopup="dialog"
+        aria-expanded={open}
+        aria-label="Notificações"
       >
         <Bell className="h-5 w-5" />
         {unreadCount > 0 && (
@@ -176,77 +267,7 @@ export function NotificationsBell() {
         )}
       </Button>
 
-      {open && (
-        <Card className="absolute right-0 top-12 w-80 max-w-[90vw] shadow-lg z-50 p-0 border">
-          <div className="border-b p-4 flex items-center justify-between bg-card">
-            <h3 className="font-semibold">Notificacoes</h3>
-            {notifications.length > 0 && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={clearAllNotifications}
-                className="text-xs h-auto py-1 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
-              >
-                <Trash2 className="h-3 w-3 mr-1" />
-                Limpar todas
-              </Button>
-            )}
-          </div>
-          <div className="max-h-[400px] overflow-y-auto bg-card">
-            {notifications.length === 0 ? (
-              <div className="p-8 text-center text-sm text-muted-foreground">
-                Nenhuma notificacao
-              </div>
-            ) : (
-              notifications.map((notification) => (
-                <div
-                  key={String(notification._id)}
-                  className={`relative group border-b hover:bg-muted transition-colors ${
-                    !notification.read ? 'bg-blue-50 dark:bg-blue-950' : ''
-                  }`}
-                >
-                  <button
-                    onClick={() => handleNotificationClick(notification)}
-                    className="w-full text-left p-4 pr-12"
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex-1">
-                        <p className="text-sm font-medium">
-                          {(notification.type === 'ticket_created' || notification.type === 'ticket_reopened')
-                            ? notification.ticketTitle
-                            : notification.examTitle}
-                        </p>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {notification.message}
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {new Date(notification.createdAt).toLocaleDateString('pt-BR', {
-                            day: '2-digit',
-                            month: 'short',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })}
-                        </p>
-                      </div>
-                      {!notification.read && (
-                        <div className="h-2 w-2 bg-blue-500 rounded-full mt-1 flex-shrink-0" />
-                      )}
-                    </div>
-                  </button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={(e) => deleteNotification(e, String(notification._id!))}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-950"
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              ))
-            )}
-          </div>
-        </Card>
-      )}
+      {mounted && open && style && createPortal(panel, document.body)}
     </div>
   )
 }

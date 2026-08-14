@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { Logo } from '@/components/logo'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { LiteModeToggle } from '@/components/lite-mode-toggle'
+import { useLiteMode } from '@/hooks/use-lite-mode'
 import { InstalarApp } from '@/components/pwa/instalar-app'
 
 // Import estático: o Next lê as dimensões no build (zero layout shift) e gera o
@@ -83,13 +84,23 @@ function SmartLink({
  * (o protótipo fazia setState por frame e redesenhava a página inteira).
  * O loop só roda enquanto a seção está visível.
  */
-function useParallaxVars<T extends HTMLElement>() {
+function useParallaxVars<T extends HTMLElement>(enabled = true) {
   const ref = useRef<T>(null)
 
   useEffect(() => {
     const el = ref.current
-    if (!el) return
+    if (!el || !enabled) return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    // Nada de parallax em aparelho de toque.
+    //
+    // Sem ponteiro não existe o efeito que ele foi feito para dar — mas o
+    // custo continuava inteiro: cada evento de rolagem acordava o rAF, que
+    // escrevia três custom properties no elemento raiz da landing. Custom
+    // property herdada invalida o estilo de TODA a subárvore, então a página
+    // inteira era recalculada quadro a quadro enquanto o dedo arrastava. Era
+    // a maior fonte de travamento da home no celular.
+    if (window.matchMedia('(pointer: coarse)').matches) return
+    if (window.matchMedia('(max-width: 1024px)').matches) return
 
     let raf = 0
     let listening = false
@@ -169,6 +180,40 @@ function useParallaxVars<T extends HTMLElement>() {
       io.disconnect()
       stop()
     }
+  }, [enabled])
+
+  return ref
+}
+
+/* =================== ANIMAÇÕES INFINITAS =================== */
+
+/**
+ * Pausa uma esteira (marquee / trilho de avaliações) enquanto ela está fora
+ * da tela.
+ *
+ * Elas são `animation: ... infinite`: o navegador continua compondo os quadros
+ * mesmo quando a faixa está a três telas de distância. São três esteiras na
+ * landing, cada uma com dezenas de cartões — no celular isso é trabalho de GPU
+ * queimado do começo ao fim da visita. Com o observer, só anima a que está à
+ * vista.
+ */
+function useOffscreenPause<T extends HTMLElement>() {
+  const ref = useRef<T>(null)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    el.classList.add('da-anim-paused')
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          el.classList.toggle('da-anim-paused', !entry.isIntersecting)
+        }
+      },
+      { rootMargin: '200px 0px' }
+    )
+    io.observe(el)
+    return () => io.disconnect()
   }, [])
 
   return ref
@@ -219,10 +264,13 @@ function Reveal({
       ref={ref}
       className={className}
       style={{
+        // Sem `filter: blur()` na transição: desfocar uma seção inteira é um
+        // repaint caríssimo em GPU de celular, e ele acontecia em cada bloco
+        // da página conforme a pessoa rolava. Deslocamento + opacidade rodam
+        // no compositor e dão praticamente a mesma leitura.
         transform: shown ? 'translateY(0)' : 'translateY(20px)',
         opacity: shown ? 1 : 0.001,
-        filter: shown ? 'blur(0)' : 'blur(5px)',
-        transition: `transform .7s cubic-bezier(.2,.7,.2,1) ${delay}ms, opacity .7s ease ${delay}ms, filter .7s ease ${delay}ms`,
+        transition: `transform .7s cubic-bezier(.2,.7,.2,1) ${delay}ms, opacity .7s ease ${delay}ms`,
       }}
     >
       {children}
@@ -246,6 +294,10 @@ function TiltCard({
     (e: React.PointerEvent) => {
       const el = ref.current
       if (!el) return
+      // Só mouse: no toque, `pointermove` dispara durante a ROLAGEM e cada
+      // disparo escrevia um transform 3D no cartão — a página inteira
+      // engasgava quando o dedo passava por cima de um deles.
+      if (e.pointerType !== 'mouse') return
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
       const r = el.getBoundingClientRect()
       const px = (e.clientX - r.left) / r.width - 0.5
@@ -603,7 +655,10 @@ export interface LandingPageProps {
 
 export default function LandingPage({ initialIsLoggedIn }: LandingPageProps) {
   const router = useRouter()
-  const rootRef = useParallaxVars<HTMLDivElement>()
+  const { liteMode } = useLiteMode()
+  // No Modo Lite (ligado à mão ou detectado num aparelho fraco) o parallax nem
+  // é montado — o CSS do Lite mata o efeito visual, mas não o loop de rAF.
+  const rootRef = useParallaxVars<HTMLDivElement>(!liteMode)
   const [isLoggedIn, setIsLoggedIn] = useState(initialIsLoggedIn ?? false)
   const showcase = usePlatformReviews()
 
@@ -687,8 +742,17 @@ function Nav({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn: boole
   const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
-    const onScroll = () => setSolid(window.scrollY > 40)
-    onScroll()
+    // Guarda em ref: sem ela, cada evento de rolagem (dezenas por segundo no
+    // celular) entrava no agendador do React só para descobrir que o valor não
+    // mudou. Agora o setState só acontece nas duas transições reais.
+    let current = window.scrollY > 40
+    setSolid(current)
+    const onScroll = () => {
+      const next = window.scrollY > 40
+      if (next === current) return
+      current = next
+      setSolid(next)
+    }
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
@@ -964,14 +1028,23 @@ function Hero({
             />
             {/* Duas artes (clara/escura) trocadas por CSS: sem flash na primeira
                 pintura e sem depender do mount do JS pra saber o tema. */}
+            {/* As duas artes (clara e escura) somam ~510KB e antes as DUAS
+                eram `priority`: o `<link rel=preload>` baixa a imagem mesmo
+                quando o CSS a esconde, então todo visitante pagava a arte do
+                tema que nem ia ver. Sem `priority`, a que está com
+                `display:none` não chega a ser baixada, e a visível — que está
+                no topo da tela — é buscada logo após o primeiro layout.
+
+                A sombra projetada só entra do `md` para cima: `drop-shadow`
+                num PNG desse tamanho é das operações de pintura mais caras que
+                existem em GPU de celular. */}
             <div className="absolute inset-0 z-10 dark:hidden" style={heroMidStyle}>
               <Image
                 src={heroMidLight}
                 alt="Ecossistema do Domine Aqui: Manual Clínico, flashcards, provas, banco de questões, cronograma e ECG conectados"
                 fill
-                priority
                 sizes="(max-width: 1024px) 100vw, 45vw"
-                className="object-contain drop-shadow-[0_40px_80px_rgba(0,0,0,.5)]"
+                className="object-contain md:drop-shadow-[0_40px_80px_rgba(0,0,0,.5)]"
               />
             </div>
             <div className="absolute inset-0 z-10 hidden dark:block" style={heroMidStyle}>
@@ -979,9 +1052,8 @@ function Hero({
                 src={heroMid}
                 alt="Ecossistema do Domine Aqui: Manual Clínico, flashcards, provas, banco de questões, cronograma e ECG conectados"
                 fill
-                priority
                 sizes="(max-width: 1024px) 100vw, 45vw"
-                className="object-contain drop-shadow-[0_40px_80px_rgba(0,0,0,.5)]"
+                className="object-contain md:drop-shadow-[0_40px_80px_rgba(0,0,0,.5)]"
               />
             </div>
             <div className="pointer-events-none absolute inset-0 z-20" style={heroFrontStyle}>
@@ -1087,8 +1159,12 @@ function Marquee() {
     'Repetição espaçada',
   ]
   const row = [...items, ...items]
+  const wrapRef = useOffscreenPause<HTMLDivElement>()
   return (
-    <div className="relative overflow-hidden border-y border-[color:var(--da-neutral-line)] bg-da-panel/40 py-4">
+    <div
+      ref={wrapRef}
+      className="relative overflow-hidden border-y border-[color:var(--da-neutral-line)] bg-da-panel/40 py-4"
+    >
       <div className="da-marquee-track flex w-max gap-8 whitespace-nowrap">
         {row.map((t, i) => (
           <span
@@ -1135,7 +1211,7 @@ function ProductImage({ src, alt }: { src: typeof provas3d; alt: string }) {
         src={src}
         alt={alt}
         sizes="(max-width: 1024px) 60vw, 300px"
-        className="relative z-10 max-h-[280px] w-auto object-contain drop-shadow-[0_24px_50px_rgba(0,0,0,.5)]"
+        className="relative z-10 max-h-[280px] w-auto object-contain md:drop-shadow-[0_24px_50px_rgba(0,0,0,.5)]"
       />
     </div>
   )
@@ -1863,14 +1939,23 @@ function ReviewChip({ r }: { r: ShowcaseReview }) {
  * O conteúdo é duplicado no JSX porque o keyframe anda -50% do track.
  */
 function PlatformReviews({ data }: { data: ShowcaseData | null }) {
+  const railsRef = useOffscreenPause<HTMLDivElement>()
   if (!data || data.reviews.length === 0) return null
 
   const { reviews, summary } = data
   // Com poucas avaliações a esteira dá volta rápido demais e fica óbvio que é
   // a mesma coisa repetindo — nesse caso vira uma faixa estática.
   const animate = reviews.length >= 6
+  // Teto de cartões por fileira. Com muitas avaliações a esteira chegava a
+  // ~40 cartões por fileira (× 2 cópias × 2 fileiras): DOM enorme dentro de
+  // uma camada animada sem parar, que é justamente o que faz a home arrastar
+  // no celular. Ninguém lê a 30ª avaliação de uma faixa que passa sozinha.
+  const MAX_POR_FILEIRA = 10
   const half = Math.ceil(reviews.length / 2)
-  const rows = [reviews.slice(0, half), reviews.slice(half)]
+  const rows = [
+    reviews.slice(0, half).slice(0, MAX_POR_FILEIRA),
+    reviews.slice(half).slice(0, MAX_POR_FILEIRA),
+  ]
   // O keyframe anda -50% do track, então o conteúdo precisa estar duplicado um
   // número PAR de vezes para o loop fechar sem salto. Em fileira curta, duas
   // cópias podem não cobrir a largura de um monitor grande e apareceria um
@@ -1910,17 +1995,11 @@ function PlatformReviews({ data }: { data: ShowcaseData | null }) {
         </Reveal>
       </div>
 
-      <div
-        className="relative pb-20 md:pb-24"
-        style={{
-          // Apaga as pontas para os cards entrarem e saírem de cena sem corte
-          // seco na borda da tela.
-          maskImage:
-            'linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent)',
-          WebkitMaskImage:
-            'linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent)',
-        }}
-      >
+      {/* As pontas são apagadas por dois véus de gradiente sobre a faixa (ver
+          `.da-rail-fade`). Antes era `mask-image` no contêiner: máscara em cima
+          de conteúdo que anima obriga o navegador a recompor a camada inteira a
+          cada quadro — caro no celular, e o resultado visual é o mesmo. */}
+      <div ref={railsRef} className="relative pb-20 md:pb-24">
         {animate ? (
           rows.map((row, rowIndex) => {
             const copies = repeat(row)
@@ -1946,6 +2025,12 @@ function PlatformReviews({ data }: { data: ShowcaseData | null }) {
               <ReviewChip key={r._id} r={r} />
             ))}
           </div>
+        )}
+        {animate && (
+          <>
+            <span aria-hidden className="da-rail-fade da-rail-fade-left" />
+            <span aria-hidden className="da-rail-fade da-rail-fade-right" />
+          </>
         )}
       </div>
     </section>

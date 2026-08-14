@@ -227,13 +227,17 @@ function NavItemButton({
       onPointerCancel={onRelease}
       onPointerLeave={onRelease}
       className={cn(
-        'sidebar-fluid-item w-full flex items-center h-11 rounded-[14px] cursor-pointer relative z-[1]',
+        // h-12 no celular: alvo de toque de verdade (44px+). No desktop segue
+        // compacto, onde o ponteiro é preciso.
+        'sidebar-fluid-item w-full flex items-center h-12 lg:h-11 rounded-[14px] cursor-pointer relative z-[1]',
         'select-none overflow-hidden transition-[background-color,box-shadow] duration-150',
         isLogout
-          ? cn('text-muted-foreground', (isHovered || isPressed) && 'text-red-500 dark:text-red-400', isPressed && 'bg-red-500/10 shadow-inner')
+          ? cn('text-foreground/70', (isHovered || isPressed) && 'text-red-500 dark:text-red-400', isPressed && 'bg-red-500/10 shadow-inner')
           : isGradient
-            ? cn('text-amber-600 dark:text-amber-400', (isHovered || isPressed) && 'text-amber-500 dark:text-amber-300', isPressed && 'bg-amber-500/[0.12] shadow-inner')
-            : cn('text-muted-foreground', (isHovered || isPressed) && 'text-foreground', isPressed && 'bg-primary/10 shadow-inner ring-1 ring-primary/15'),
+            ? cn('text-amber-700 dark:text-amber-400 font-semibold', (isHovered || isPressed) && 'text-amber-600 dark:text-amber-300', isPressed && 'bg-amber-500/[0.12] shadow-inner')
+            // Rótulo em `foreground/80` no lugar de `muted-foreground`: o menu
+            // inteiro em cinza claro era o que fazia os itens sumirem.
+            : cn('text-foreground/80', (isHovered || isPressed) && 'text-foreground', isPressed && 'bg-primary/10 shadow-inner ring-1 ring-primary/15'),
         isItemActive && !isGradient && !isLogout && 'sidebar-fluid-item-active text-primary font-semibold'
       )}
       style={{
@@ -263,7 +267,11 @@ function NavItemButton({
                 rotate: { type: 'spring', stiffness: 300, damping: 12 },
               }
         }
-        className="flex-shrink-0"
+        className={cn(
+          'flex-shrink-0 sidebar-nav-chip',
+          isGradient && 'sidebar-nav-chip-gradient',
+          isLogout && 'sidebar-nav-chip-danger',
+        )}
       >
         {item.icon}
       </motion.span>
@@ -286,7 +294,7 @@ function NavItemButton({
       {/* Badge */}
       {item.badge && (
         <span
-          className="text-[10px] bg-primary/10 text-primary rounded-full whitespace-nowrap"
+          className="sidebar-nav-badge ml-auto text-[10px] rounded-full whitespace-nowrap"
           style={{
             maxWidth: collapsed ? 0 : 100,
             opacity: collapsed ? 0 : 1,
@@ -669,7 +677,9 @@ export function Sidebar({
             <Button
               onClick={onCreateExam}
               disabled={tierLimitExceeded}
-              className="w-full rounded-md bg-secondary text-secondary-foreground hover:bg-secondary/90 font-semibold overflow-hidden shadow-sm"
+              // Mesmo gradiente do "Nova Prova" do cabeçalho: é a ação
+              // principal do menu e estava com a cor mais apagada da tela.
+              className="w-full h-11 rounded-md bg-gradient-to-r from-[#468152] to-[#E2A43E] text-white hover:from-[#468152]/90 hover:to-[#E2A43E]/90 font-semibold overflow-hidden shadow-md shadow-[#468152]/20"
               style={{
                 justifyContent: isCollapsed ? 'center' : 'flex-start',
                 gap: isCollapsed ? 0 : 12,

@@ -1,7 +1,9 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import { useFocusSession } from '@/hooks/use-focus-session'
+import { useAnchoredPanel } from '@/hooks/use-anchored-panel'
 import { cn } from '@/lib/utils'
 import { Focus, Play, Pause, StopCircle, Target, Clock, Trash2, Edit3, Check, ChevronDown, ChevronUp } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -80,23 +82,17 @@ export function FocusSessionButton() {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editValue, setEditValue] = useState('')
   const [confirmFinish, setConfirmFinish] = useState(false)
-  const containerRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  useEffect(() => { setMounted(true) }, [])
+  // O painel vive num portal ancorado ao botão: dentro do cabeçalho ele nascia
+  // com a borda esquerda fora da tela no celular — dava a impressão de que o
+  // botão simplesmente não funcionava.
+  const closePanel = useCallback(() => setOpen(false), [])
+  const { triggerRef, panelRef, style } = useAnchoredPanel<HTMLButtonElement>(open, closePanel, {
+    width: 340,
+  })
 
-  // Click outside to close
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        setOpen(false)
-      }
-    }
-    if (open) {
-      document.addEventListener('mousedown', handleClickOutside)
-      return () => document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [open])
+  useEffect(() => { setMounted(true) }, [])
 
   // Reset confirm state when popover closes
   useEffect(() => {
@@ -106,11 +102,14 @@ export function FocusSessionButton() {
     }
   }, [open])
 
-  // Auto-focus objective input when popover opens without session
+  // Auto-focus objective input when popover opens without session.
+  // No celular, não: focar sozinho abre o teclado por cima do painel que a
+  // pessoa acabou de abrir para ver o cronômetro.
   useEffect(() => {
-    if (open && !currentSession && inputRef.current) {
-      setTimeout(() => inputRef.current?.focus(), 100)
-    }
+    if (!open || currentSession || !inputRef.current) return
+    if (window.matchMedia('(pointer: coarse)').matches) return
+    const timer = setTimeout(() => inputRef.current?.focus(), 100)
+    return () => clearTimeout(timer)
   }, [open, currentSession])
 
   if (!mounted) return null
@@ -141,19 +140,25 @@ export function FocusSessionButton() {
   }
 
   return (
-    <div className="relative" ref={containerRef}>
+    <div className="relative">
       {/* Trigger Button */}
       <button
-        onClick={() => setOpen(!open)}
+        ref={triggerRef}
+        type="button"
+        onClick={() => setOpen((v) => !v)}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
+        aria-haspopup="dialog"
+        aria-expanded={open}
+        aria-label={hasSession ? 'Sessão de foco em andamento' : 'Abrir sessão de foco'}
         className={cn(
-          'relative flex items-center gap-2 rounded-full transition-all duration-500 ease-out',
+          // `h-10` e `touch-manipulation`: alvo de toque de verdade e sem o
+          // atraso de 300ms do duplo-toque no celular.
+          'relative flex items-center gap-2 rounded-full transition-all duration-500 ease-out touch-manipulation',
           'focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-          'backdrop-blur-xl border h-9 px-2.5',
-          hasSession
-            ? 'bg-gradient-to-r from-[#468152]/20 to-[#E2A43E]/20 border-[#468152]/40 dark:from-[#468152]/30 dark:to-[#E2A43E]/30 dark:border-[#468152]/50 focus-session-active'
-            : 'bg-white/20 dark:bg-white/10 border-white/30 dark:border-white/20 hover:bg-white/30 dark:hover:bg-white/15',
+          'focus-session-trigger h-10 px-2.5',
+          hasSession && 'focus-session-trigger-active focus-session-active',
+          open && 'focus-session-trigger-open',
           (isHovered && !hasSession) ? 'pr-4' : '',
           hasSession ? 'pr-3' : '',
         )}
@@ -190,15 +195,20 @@ export function FocusSessionButton() {
         </div>
       </button>
 
-      {/* Dropdown Popover */}
-      {open && (
-        <Card className="absolute right-0 top-12 w-80 max-w-[90vw] shadow-2xl z-50 p-0 border overflow-visible slide-in-from-bottom-4 liquid-glass-bubble backdrop-blur-2xl">
+      {/* Painel — portal no <body>, ancorado ao botão (ver useAnchoredPanel) */}
+      {open && style && createPortal(
+        <Card
+          ref={panelRef}
+          style={style}
+          role="dialog"
+          aria-label="Sessão de foco"
+          className="app-anchored-panel focus-session-panel overflow-y-auto overscroll-contain p-0"
+        >
           {/* Timer area */}
           <div className={cn(
             'px-5 pt-5 pb-4',
-            hasSession
-              ? 'bg-gradient-to-br from-[#468152]/5 to-[#E2A43E]/5 dark:from-[#468152]/10 dark:to-[#E2A43E]/10'
-              : 'bg-card',
+            hasSession &&
+              'bg-gradient-to-br from-[#468152]/10 to-[#E2A43E]/10 dark:from-[#468152]/15 dark:to-[#E2A43E]/15',
           )}>
             {/* Stopwatch display */}
             <div className="flex items-center justify-center gap-1">
@@ -271,7 +281,7 @@ export function FocusSessionButton() {
           </div>
 
           {/* Controls */}
-          <div className="px-4 py-3 border-t border-border/50 bg-card">
+          <div className="px-4 py-3 border-t border-border/50">
             {/* No session — objective input + start */}
             {!hasSession && (
               <div className="space-y-2">
@@ -285,13 +295,15 @@ export function FocusSessionButton() {
                     onChange={e => setObjective(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && handleStart()}
                     maxLength={100}
-                    className="w-full h-9 pl-8 pr-3 rounded-lg bg-muted/50 border border-border/50 text-sm focus:outline-none focus:ring-1 focus:ring-[#468152]/40 placeholder:text-muted-foreground/60"
+                    // `text-base` no celular: abaixo de 16px o Safari do iPhone
+                    // dá zoom na página ao focar o campo.
+                    className="w-full h-10 pl-8 pr-3 rounded-lg bg-muted/50 border border-border/50 text-base sm:text-sm focus:outline-none focus:ring-1 focus:ring-[#468152]/40 placeholder:text-muted-foreground/60"
                   />
                 </div>
                 <Button
                   onClick={handleStart}
                   size="sm"
-                  className="w-full h-9 rounded-lg bg-gradient-to-r from-[#468152] to-[#E2A43E] hover:from-[#468152]/90 hover:to-[#E2A43E]/90 text-white text-sm gap-1.5"
+                  className="w-full h-10 rounded-lg bg-gradient-to-r from-[#468152] to-[#E2A43E] hover:from-[#468152]/90 hover:to-[#E2A43E]/90 text-white text-sm gap-1.5"
                 >
                   <Play className="w-3.5 h-3.5" />
                   Iniciar Sessao
@@ -306,7 +318,7 @@ export function FocusSessionButton() {
                   onClick={pauseSession}
                   variant="outline"
                   size="sm"
-                  className="flex-1 h-9 rounded-lg text-sm gap-1.5"
+                  className="flex-1 h-10 rounded-lg text-sm gap-1.5"
                 >
                   <Pause className="w-3.5 h-3.5" />
                   Pausar
@@ -315,7 +327,7 @@ export function FocusSessionButton() {
                   onClick={handleFinish}
                   variant={confirmFinish ? 'destructive' : 'outline'}
                   size="sm"
-                  className="flex-1 h-9 rounded-lg text-sm gap-1.5"
+                  className="flex-1 h-10 rounded-lg text-sm gap-1.5"
                 >
                   <StopCircle className="w-3.5 h-3.5" />
                   {confirmFinish ? 'Confirmar?' : 'Finalizar'}
@@ -329,7 +341,7 @@ export function FocusSessionButton() {
                 <Button
                   onClick={resumeSession}
                   size="sm"
-                  className="flex-1 h-9 rounded-lg bg-gradient-to-r from-[#468152] to-[#E2A43E] hover:from-[#468152]/90 hover:to-[#E2A43E]/90 text-white text-sm gap-1.5"
+                  className="flex-1 h-10 rounded-lg bg-gradient-to-r from-[#468152] to-[#E2A43E] hover:from-[#468152]/90 hover:to-[#E2A43E]/90 text-white text-sm gap-1.5"
                 >
                   <Play className="w-3.5 h-3.5" />
                   Retomar
@@ -338,7 +350,7 @@ export function FocusSessionButton() {
                   onClick={handleFinish}
                   variant={confirmFinish ? 'destructive' : 'outline'}
                   size="sm"
-                  className="flex-1 h-9 rounded-lg text-sm gap-1.5"
+                  className="flex-1 h-10 rounded-lg text-sm gap-1.5"
                 >
                   <StopCircle className="w-3.5 h-3.5" />
                   {confirmFinish ? 'Confirmar?' : 'Finalizar'}
@@ -352,7 +364,7 @@ export function FocusSessionButton() {
             <div className="border-t border-border/50">
               <button
                 onClick={() => setShowHistory(!showHistory)}
-                className="w-full flex items-center justify-between px-4 py-2.5 text-xs text-muted-foreground hover:text-foreground transition-colors bg-card"
+                className="w-full flex items-center justify-between px-4 py-3 text-xs text-muted-foreground hover:text-foreground transition-colors"
               >
                 <span className="flex items-center gap-1.5">
                   <Clock className="w-3.5 h-3.5" />
@@ -362,7 +374,7 @@ export function FocusSessionButton() {
               </button>
 
               {showHistory && (
-                <div className="px-3 pb-3 space-y-1 max-h-[180px] overflow-y-auto scrollbar-hide bg-card">
+                <div className="px-3 pb-3 space-y-1 max-h-[180px] overflow-y-auto overscroll-contain scrollbar-hide">
                   {history.slice(0, 5).map(session => (
                     <div
                       key={session.id}
@@ -394,7 +406,9 @@ export function FocusSessionButton() {
                         )}
                       </div>
                       {editingId !== session.id && (
-                        <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                        // Sem hover no celular: renomear e apagar ficavam
+                        // invisíveis lá. Só o desktop esconde até o hover.
+                        <div className="flex items-center gap-0.5 opacity-70 transition-opacity shrink-0 lg:opacity-0 lg:group-hover:opacity-100">
                           <button
                             onClick={() => { setEditingId(session.id); setEditValue(session.objective) }}
                             className="p-1 hover:bg-muted rounded"
@@ -415,7 +429,8 @@ export function FocusSessionButton() {
               )}
             </div>
           )}
-        </Card>
+        </Card>,
+        document.body,
       )}
     </div>
   )

@@ -841,6 +841,116 @@
 }
 
 /* ============================================
+   Painéis ancorados do cabeçalho (sino, sessão de foco)
+   --------------------------------------------
+   Posição e tamanho vêm do JS (hooks/use-anchored-panel): aqui fica só o
+   material. Piso sólido para quem não tem backdrop-filter — texto legível
+   acima de qualquer efeito.
+   ============================================ */
+.app-anchored-panel {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: 16px;
+  box-shadow:
+    0 18px 50px -20px hsl(var(--foreground) / 0.35),
+    0 2px 8px hsl(var(--foreground) / 0.06);
+  animation: slide-in-from-bottom-4 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dark .app-anchored-panel {
+  box-shadow:
+    0 24px 60px -20px rgba(0, 0, 0, 0.7),
+    0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  /* Vidro de verdade só no painel da sessão de foco: é o painel curto, sem
+     lista rolando por trás, onde o efeito lê bem sem custar legibilidade. */
+  .focus-session-panel {
+    background: hsl(var(--card) / 0.72);
+    -webkit-backdrop-filter: blur(26px) saturate(180%);
+    backdrop-filter: blur(26px) saturate(180%);
+    border-color: hsl(var(--border) / 0.7);
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.5),
+      0 18px 50px -20px hsl(var(--foreground) / 0.35);
+  }
+
+  .dark .focus-session-panel {
+    background: hsl(var(--card) / 0.62);
+    border-color: hsl(0 0% 100% / 0.1);
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.08),
+      0 24px 60px -20px rgba(0, 0, 0, 0.7);
+  }
+}
+
+/* Modo Lite / sem suporte: cartão sólido, sem desfoque. O `!important` do
+   bloco do Modo Lite já zera o backdrop-filter; aqui garantimos o fundo
+   opaco para o texto não ficar por cima do conteúdo da página. */
+.lite-mode .focus-session-panel {
+  background: hsl(var(--card)) !important;
+}
+
+/* ---- Botão da sessão de foco (gatilho no cabeçalho) ---- */
+.focus-session-trigger {
+  background: hsl(var(--card) / 0.7);
+  border: 1px solid hsl(var(--border));
+  color: hsl(var(--foreground));
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .focus-session-trigger {
+    background: hsl(var(--card) / 0.55);
+    -webkit-backdrop-filter: blur(14px) saturate(170%);
+    backdrop-filter: blur(14px) saturate(170%);
+    border-color: hsl(var(--border) / 0.8);
+    box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.35);
+  }
+
+  .dark .focus-session-trigger {
+    background: hsl(var(--card) / 0.45);
+    border-color: hsl(0 0% 100% / 0.12);
+    box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.07);
+  }
+}
+
+.focus-session-trigger:hover {
+  border-color: hsl(var(--primary) / 0.45);
+}
+
+.focus-session-trigger-open {
+  border-color: hsl(var(--primary) / 0.55);
+  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.12);
+}
+
+/* Sessão rolando: o botão vira o gradiente da marca, para a pessoa enxergar
+   de relance que o cronômetro está correndo. */
+.focus-session-trigger-active {
+  background: linear-gradient(
+    100deg,
+    rgba(70, 129, 82, 0.28),
+    rgba(226, 164, 62, 0.28),
+    rgba(70, 129, 82, 0.28)
+  );
+  border-color: rgba(70, 129, 82, 0.5);
+}
+
+.dark .focus-session-trigger-active {
+  background: linear-gradient(
+    100deg,
+    rgba(70, 129, 82, 0.42),
+    rgba(226, 164, 62, 0.38),
+    rgba(70, 129, 82, 0.42)
+  );
+  border-color: rgba(226, 164, 62, 0.5);
+}
+
+.lite-mode .focus-session-trigger {
+  background: hsl(var(--card)) !important;
+}
+
+/* ============================================
    Dashboard Premium Utilities
    ============================================ */
 
@@ -1214,35 +1324,27 @@
    solid card surface where backdrop-filter is unsupported.
    ============================================ */
 
+/* Menu lateral: superfície SÓLIDA.
+   Era vidro translúcido com blur de tela inteira. No celular a sidebar é uma
+   gaveta por cima do conteúdo, então o texto da página atravessava o menu e
+   atrapalhava a leitura — e um backdrop-filter da altura da tela é o efeito
+   mais caro que existe em GPU de celular, pago justamente enquanto a gaveta
+   desliza. Agora é cartão opaco, com bisel e sombra projetada para continuar
+   parecendo uma camada acima da página. */
 .sidebar-glass {
-  /* Fallback: fully opaque card so text stays legible without blur support */
   background: hsl(var(--card));
   border-right: 1px solid hsl(var(--border));
+  box-shadow:
+    inset -1px 0 0 hsl(var(--foreground) / 0.04),
+    2px 0 24px -12px hsl(var(--foreground) / 0.25);
 }
 
-@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .sidebar-glass {
-    background: hsl(var(--card) / 0.72);
-    -webkit-backdrop-filter: blur(28px) saturate(180%);
-    backdrop-filter: blur(28px) saturate(180%);
-    border-right: 1px solid hsl(var(--border) / 0.6);
-    /* Bevel: bright inner-left highlight + faint inner-right shade + soft cast */
-    box-shadow:
-      inset 1px 0 0 rgba(255, 255, 255, 0.45),
-      inset -1px 0 0 rgba(255, 255, 255, 0.06),
-      1px 0 30px rgba(21, 61, 31, 0.05);
-  }
-
-  .dark .sidebar-glass {
-    background: hsl(var(--card) / 0.62);
-    -webkit-backdrop-filter: blur(30px) saturate(160%);
-    backdrop-filter: blur(30px) saturate(160%);
-    border-right: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow:
-      inset 1px 0 0 rgba(255, 255, 255, 0.08),
-      inset -1px 0 0 rgba(0, 0, 0, 0.2),
-      1px 0 40px rgba(0, 0, 0, 0.3);
-  }
+.dark .sidebar-glass {
+  background: hsl(var(--card));
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.05),
+    2px 0 30px -10px rgba(0, 0, 0, 0.6);
 }
 
 /* ============================================
@@ -1466,8 +1568,13 @@
   outline: none;
 }
 
+/* Rota atual: fundo tingido + contorno. Antes o único sinal era a barrinha da
+   esquerda, que passava despercebida — principalmente no celular, onde a
+   bolha de vidro que segue o cursor nem existe. */
 .sidebar-fluid-item-active {
   position: relative;
+  background: hsl(var(--primary) / 0.1);
+  box-shadow: inset 0 0 0 1px hsl(var(--primary) / 0.2);
 }
 
 /* Persistent active route indicator - subtle left accent bar */
@@ -1475,10 +1582,10 @@
   content: '';
   position: absolute;
   left: -6px;
-  top: 20%;
-  bottom: 20%;
-  width: 3px;
-  border-radius: 3px;
+  top: 16%;
+  bottom: 16%;
+  width: 4px;
+  border-radius: 4px;
   background: linear-gradient(180deg, #468152, #3a9d5e);
   box-shadow: 0 0 8px rgba(70, 129, 82, 0.4);
   z-index: 2;
@@ -1487,6 +1594,77 @@
 .dark .sidebar-fluid-item-active::before {
   background: linear-gradient(180deg, #5ba36a, #468152);
   box-shadow: 0 0 12px rgba(70, 129, 82, 0.5);
+}
+
+/* ---- Chip do ícone ----
+   Cada item do menu ganha um quadradinho colorido atrás do ícone. É o que
+   faz o olho encontrar a lista: antes eram doze traços cinza iguais, sem
+   nenhum ponto de fixação, e o usuário relatou que os botões "não chamavam
+   atenção". O item ativo inverte o chip (preenchido na cor da marca). */
+.sidebar-nav-chip {
+  display: grid;
+  place-items: center;
+  height: 2rem;
+  width: 2rem;
+  border-radius: 10px;
+  background: hsl(var(--primary) / 0.1);
+  color: hsl(var(--primary));
+  box-shadow: inset 0 0 0 1px hsl(var(--primary) / 0.14);
+  transition:
+    background-color 160ms ease,
+    color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.sidebar-fluid-item:hover .sidebar-nav-chip,
+.sidebar-fluid-item:focus-visible .sidebar-nav-chip {
+  background: hsl(var(--primary) / 0.2);
+  box-shadow: inset 0 0 0 1px hsl(var(--primary) / 0.28);
+}
+
+.sidebar-fluid-item-active .sidebar-nav-chip {
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  box-shadow: 0 6px 14px -6px hsl(var(--primary) / 0.8);
+}
+
+.sidebar-nav-chip-gradient {
+  background: linear-gradient(135deg, rgba(226, 164, 62, 0.28), rgba(245, 158, 11, 0.22));
+  color: #b45309;
+  box-shadow: inset 0 0 0 1px rgba(226, 164, 62, 0.4);
+}
+
+.dark .sidebar-nav-chip-gradient {
+  color: #fbbf24;
+  box-shadow: inset 0 0 0 1px rgba(226, 164, 62, 0.35);
+}
+
+.sidebar-fluid-item:hover .sidebar-nav-chip-gradient {
+  background: linear-gradient(135deg, rgba(226, 164, 62, 0.42), rgba(245, 158, 11, 0.34));
+  box-shadow: inset 0 0 0 1px rgba(226, 164, 62, 0.55);
+}
+
+.sidebar-nav-chip-danger {
+  background: hsl(0 84% 60% / 0.12);
+  color: hsl(0 72% 51%);
+  box-shadow: inset 0 0 0 1px hsl(0 84% 60% / 0.2);
+}
+
+.dark .sidebar-nav-chip-danger {
+  color: hsl(0 91% 71%);
+}
+
+.sidebar-fluid-item:hover .sidebar-nav-chip-danger {
+  background: hsl(0 84% 60% / 0.2);
+  box-shadow: inset 0 0 0 1px hsl(0 84% 60% / 0.35);
+}
+
+/* Selo "Novo"/"Auto": pequeno demais e apagado demais para ser notado. */
+.sidebar-nav-badge {
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 
 /* ---- Fluid Glass Bubble (Framer Motion driven) ---- */
@@ -2541,7 +2719,16 @@
 }
 .da-marquee-track {
   animation: da-marquee 38s linear infinite;
-  will-change: transform;
+}
+
+/* Esteira fora da tela não anima (useOffscreenPause aplica a classe). Pausar
+   é o único jeito de o navegador parar de compor quadros de uma animação
+   `infinite` que ninguém está vendo. */
+.da-anim-paused .da-marquee-track,
+.da-anim-paused .da-rail,
+.da-marquee-track.da-anim-paused,
+.da-rail.da-anim-paused {
+  animation-play-state: paused;
 }
 
 /* Troca de canal no console de ferramentas */
@@ -2563,10 +2750,36 @@
   display: flex;
   width: max-content;
   animation: da-marquee var(--da-rail-duration, 60s) linear infinite;
-  will-change: transform;
 }
 .da-rail-reverse {
   animation-direction: reverse;
+}
+
+/* Véus das pontas (substituem o mask-image do contêiner).
+   A seção da esteira é `bg-da-panel/40` por cima do fundo da página, então a
+   cor sólida do véu é essa mistura. `color-mix` tem piso: onde não houver
+   suporte fica o fundo da página, que já é bem próximo. */
+.da-rail-fade {
+  --da-rail-fade-color: rgb(var(--da-ground));
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 8%;
+  pointer-events: none;
+  z-index: 2;
+}
+@supports (background: color-mix(in srgb, red 40%, blue)) {
+  .da-rail-fade {
+    --da-rail-fade-color: color-mix(in srgb, rgb(var(--da-panel)) 40%, rgb(var(--da-ground)));
+  }
+}
+.da-rail-fade-left {
+  left: 0;
+  background: linear-gradient(90deg, var(--da-rail-fade-color), transparent);
+}
+.da-rail-fade-right {
+  right: 0;
+  background: linear-gradient(270deg, var(--da-rail-fade-color), transparent);
 }
 .da-rail-wrap:hover .da-rail,
 .da-rail-wrap:focus-within .da-rail {
