@@ -7,6 +7,7 @@ import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout
 import type { PlanConfig } from '@/lib/types'
 import { AppShell } from '@/components/app-shell'
 import { CheckoutAccountNotice } from '@/components/checkout/checkout-account-notice'
+import { CouponPromo } from '@/components/checkout/coupon-promo'
 import { cn } from '@/lib/utils'
 
 type PayMode = 'subscription' | 'one_time'
@@ -137,9 +138,12 @@ function BuyCheckoutContent() {
   const couponDiscountAmount = couponSupported && appliedCoupon ? appliedCoupon.discountAmount : 0
   const payableAmount = Math.max(0, Math.round((baseAmount - couponDiscountAmount) * 100) / 100)
 
-  const applyCoupon = async () => {
-    const normalized = couponCode.trim()
+  // `override` é o caminho do chamativo: a faixa manda o código direto, sem
+  // depender do que está digitado no campo.
+  const applyCoupon = async (override?: string) => {
+    const normalized = (override ?? couponCode).trim()
     if (!normalized) return
+    if (override) setCouponCode(override.toUpperCase())
     setCouponLoading(true)
     setCouponError('')
     try {
@@ -223,6 +227,15 @@ function BuyCheckoutContent() {
                 )}
               </div>
 
+              {couponSupported ? (
+                <CouponPromo
+                  itens={[{ itemType: 'plus', itemId: plan.tipo }]}
+                  onAplicar={(code) => applyCoupon(code)}
+                  codigoAplicado={appliedCoupon?.code || null}
+                  className="mb-3.5"
+                />
+              ) : null}
+
               <div className="mb-5 rounded-lg border border-border bg-background p-3.5">
                 <div className="mb-2.5 flex items-center gap-2 text-sm font-bold text-foreground">
                   <Percent className="h-4 w-4 text-primary" /> Cupom de desconto
@@ -262,7 +275,7 @@ function BuyCheckoutContent() {
                       />
                       <button
                         type="button"
-                        onClick={applyCoupon}
+                        onClick={() => applyCoupon()}
                         disabled={couponLoading || !couponCode.trim()}
                         className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-secondary px-3.5 text-xs font-black text-secondary-foreground disabled:cursor-not-allowed disabled:opacity-55"
                       >

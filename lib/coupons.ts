@@ -40,6 +40,11 @@ export interface Coupon {
    * "maior dos dois" (lote OU cupom, o que for maior).
    */
   stackWithTier?: boolean
+  /**
+   * Chamativo persuasivo exibido no checkout dos itens que este cupom alcança.
+   * `null`/ausente = o cupom existe, mas ninguém é avisado dele na tela.
+   */
+  promo?: CouponPromo | null
   usageCount: number
   expiresAt?: Date | null
   durationValue?: number | null
@@ -555,5 +560,143 @@ export function couponAnalyticsMetadata(validation?: CouponValidationResult | nu
     couponDiscountAmount: validation.discountAmount,
     couponAmountBefore: validation.amountBeforeCoupon,
     couponEligibleAmount: validation.eligibleAmount,
+  }
+}
+
+/* =================== CHAMATIVO NO CHECKOUT =================== */
+
+/**
+ * O chamativo é a resposta para um problema concreto: um cupom só desconta se
+ * a pessoa souber que ele existe. Antes disso, o campo "Digite seu cupom" era
+ * uma caixa vazia — quem não tinha recebido o código por fora nunca digitava
+ * nada, e a campanha só alcançava quem já estava no grupo do WhatsApp.
+ *
+ * Aqui o admin escreve a chamada uma vez, no próprio cupom, e ela aparece
+ * sozinha no checkout de todos os itens que aquele cupom alcança — sem lista
+ * paralela para manter sincronizada.
+ *
+ * Regra de ouro deste módulo: o chamativo NUNCA promete o que o cupom não
+ * cumpre. O texto livre é do admin, mas as letras miúdas (`conditions`) e o
+ * rótulo do desconto saem das regras reais do documento, e a visibilidade
+ * morre junto com o cupom (inativo, expirado ou esgotado).
+ */
+
+/** Tom visual. Muda como o chamativo grita, nunca o que o cupom faz. */
+export type CouponPromoTone = 'destaque' | 'urgencia' | 'economia'
+
+export const COUPON_PROMO_TONES: CouponPromoTone[] = ['destaque', 'urgencia', 'economia']
+export const COUPON_PROMO_HEADLINE_MAX = 70
+export const COUPON_PROMO_SUBTEXT_MAX = 160
+
+export interface CouponPromo {
+  enabled: boolean
+  headline: string
+  subtext: string
+  /** Revela o código na tela. Desligado, o chamativo só anuncia o desconto. */
+  showCode: boolean
+  tone: CouponPromoTone
+}
+
+/** O que o checkout público pode ver de um chamativo. */
+export interface CouponPromoPayload {
+  couponId: string
+  headline: string
+  subtext: string
+  tone: CouponPromoTone
+  /** `null` quando o admin optou por não revelar o código. */
+  code: string | null
+  discountLabel: string
+  /** Letras miúdas derivadas das regras reais — não são texto livre. */
+  conditions: string[]
+  expiresAt: string | null
+}
+
+/**
+ * Normaliza o que veio do formulário do admin.
+ *
+ * Devolve `null` quando não há chamativo de verdade — incluindo o caso
+ * "ativado, mas sem título", que renderizaria uma faixa vazia no checkout.
+ */
+export function normalizeCouponPromo(input?: Partial<CouponPromo> | null): CouponPromo | null {
+  if (!input || input.enabled !== true) return null
+  const headline = String(input.headline || '').trim().slice(0, COUPON_PROMO_HEADLINE_MAX)
+  if (!headline) return null
+  const tone = COUPON_PROMO_TONES.includes(input.tone as CouponPromoTone)
+    ? (input.tone as CouponPromoTone)
+    : 'destaque'
+  return {
+    enabled: true,
+    headline,
+    subtext: String(input.subtext || '').trim().slice(0, COUPON_PROMO_SUBTEXT_MAX),
+    showCode: input.showCode !== false,
+    tone,
+  }
+}
+
+/**
+ * O chamativo pode aparecer agora?
+ *
+ * Deliberadamente amarrado às mesmas condições que fazem o resgate passar: um
+ * cupom inativo, vencido ou esgotado não pode continuar anunciando desconto —
+ * seria empurrar a pessoa para um código que o servidor vai recusar.
+ */
+export function isCouponPromoVisible(coupon: Coupon, now = new Date()): boolean {
+  if (!coupon.promo?.enabled) return false
+  if (!coupon.promo.headline) return false
+  if (coupon.isActive === false) return false
+  if (isCouponExpired(coupon, now)) return false
+  if (isCouponUsageExhausted(coupon)) return false
+  return true
+}
+
+/**
+ * Letras miúdas a partir das regras do cupom.
+ *
+ * Existe para o chamativo não virar promessa falsa: se o cupom exige compra
+ * mínima ou só vale na primeira compra, isso aparece na faixa — o admin não
+ * precisa lembrar de escrever, e não consegue omitir.
+ */
+export function couponPromoConditions(coupon: Coupon): string[] {
+  const conditions: string[] = []
+
+  if (typeof coupon.minimumCartAmount === 'number' && coupon.minimumCartAmount > 0) {
+    conditions.push(`Compra mínima de ${formatMoney(coupon.minimumCartAmount)}`)
+  }
+  if (coupon.firstPurchaseOnly) {
+    conditions.push('Válido só na primeira compra')
+  }
+  if (isCouponPerUserLimitEnabled(coupon)) {
+    const limit = Number(coupon.perUserLimit)
+    conditions.push(limit === 1 ? 'Um uso por pessoa' : `Até ${limit} usos por pessoa`)
+  }
+  if (coupon.allowedManualPlans?.length) {
+    const labels = coupon.allowedManualPlans.map((plan) => MANUAL_PLAN_LABELS[plan] || plan)
+    conditions.push(`Só nos planos: ${labels.join(', ')}`)
+  }
+  // Escassez verdadeira: o número sai do mesmo contador que barra o resgate,
+  // então "restam 3" quer dizer que a quarta pessoa leva erro — nunca o
+  // contrário.
+  if (typeof coupon.usageLimit === 'number' && coupon.usageLimit > 0) {
+    const remaining = Math.max(0, coupon.usageLimit - Number(coupon.usageCount || 0))
+    conditions.push(remaining === 1 ? 'Resta 1 uso' : `Restam ${remaining} usos`)
+  }
+
+  return conditions
+}
+
+export function buildCouponPromoPayload(coupon: Coupon): CouponPromoPayload {
+  const promo = coupon.promo as CouponPromo
+  const expiresAt = coupon.expiresAt
+    ? (coupon.expiresAt instanceof Date ? coupon.expiresAt : new Date(coupon.expiresAt))
+    : null
+  return {
+    couponId: String(coupon._id),
+    headline: promo.headline,
+    subtext: promo.subtext || '',
+    tone: promo.tone || 'destaque',
+    code: promo.showCode === false ? null : coupon.codeNormalized,
+    discountLabel: getCouponLabel(coupon),
+    conditions: couponPromoConditions(coupon),
+    expiresAt: expiresAt && !Number.isNaN(expiresAt.getTime()) ? expiresAt.toISOString() : null,
   }
 }

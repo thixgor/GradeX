@@ -9,6 +9,7 @@ import { computeAccessExpiry, formatAccessDate } from '@/lib/material-timed-acce
 import { CheckoutAddonOffers } from '@/components/shop/checkout-addon-offers'
 import { UnifiedCheckoutPayment } from '@/components/shop/unified-checkout-payment'
 import { CheckoutAccountNotice } from '@/components/checkout/checkout-account-notice'
+import { CouponPromo } from '@/components/checkout/coupon-promo'
 import { PackageContents } from '@/components/shop/package-contents'
 import { useMaterialCart } from '@/context/MaterialCartContext'
 import { PricingEventCountdown, type PricingEventStatePayload } from '@/components/pricing-events/PricingEventCountdown'
@@ -1075,6 +1076,15 @@ export default function MateriaisCheckoutPage() {
                   </p>
                 </div>
                 <div style={{ marginTop: '14px' }}>
+                  <CouponPromo
+                    itens={cartPayload.map((linha) => ({
+                      itemType: linha.itemType as 'material' | 'package',
+                      itemId: linha.itemId,
+                    }))}
+                    aparencia="dark"
+                    codigoAplicado={appliedCoupon?.code || null}
+                    className="mb-3"
+                  />
                   <CouponBox
                     amount={amount}
                     payload={{ items: cartPayload, ...(isGuest && buyer.email ? { buyerEmail: buyer.email } : {}) }}
@@ -1453,6 +1463,16 @@ export default function MateriaisCheckoutPage() {
                   className="mb-4"
                 />
               )}
+
+              <CouponPromo
+                itens={[{
+                  itemType,
+                  itemId,
+                  materialType: item.type === 'flashcard_deck' ? 'flashcard_deck' : undefined,
+                }]}
+                aparencia="dark"
+                codigoAplicado={appliedCoupon?.code || null}
+              />
 
               <CouponBox
                 amount={price}

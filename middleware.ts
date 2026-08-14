@@ -46,6 +46,10 @@ const publicRoutes = [
   // Validação de cupom no checkout de visitante (Serial Key). A rota trata
   // convidado internamente e revalida no checkout autoritativo.
   '/api/coupons/validate',
+  // Chamativos de cupom exibidos no checkout. Só leitura de campanha, e as
+  // telas de compra sem login precisam dela para anunciar a promoção a quem
+  // ainda não tem conta.
+  '/api/coupons/promo',
   '/flashcards',
   '/ldpg-mnclinico',
   '/prescricao-real-no-sus',

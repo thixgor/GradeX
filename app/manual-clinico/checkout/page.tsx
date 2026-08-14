@@ -6,6 +6,7 @@ import { trackMeta } from '@/lib/meta-pixel'
 import { ArrowLeft, BookOpen, Check, Flame, Lock, Loader2, Percent, Sparkles, TrendingDown, X, Clock, Crown } from 'lucide-react'
 import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
 import { CheckoutAccountNotice } from '@/components/checkout/checkout-account-notice'
+import { CouponPromo } from '@/components/checkout/coupon-promo'
 import { usePricingEventState, usePricingEventStates } from '@/components/pricing-events/usePricingEventState'
 
 const MANUAL_CLINICO_PRODUCT_ID = 'manual-clinico-premium'
@@ -521,6 +522,14 @@ export default function ManualClinicoCheckoutPage() {
                 </p>
               ) : null}
             </div>
+
+            <CouponPromo
+              itens={[{ itemType: 'manual_clinico', itemId: MANUAL_CLINICO_PRODUCT_ID }]}
+              planKey={selectedPlanKey}
+              aparencia="dark"
+              codigoAplicado={appliedCoupon?.code || null}
+              className="mt-3.5"
+            />
 
             {/* Cupom logo abaixo do Total: no celular as duas colunas empilham, e
                 deixar o cupom só na coluna de pagamento (mais abaixo) fazia quem

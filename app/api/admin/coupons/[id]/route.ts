@@ -6,6 +6,9 @@ import { getDb } from '@/lib/mongodb'
 import {
   addCouponDuration,
   normalizeCouponCode,
+  normalizeCouponPromo,
+  COUPON_PROMO_HEADLINE_MAX,
+  COUPON_PROMO_SUBTEXT_MAX,
   type Coupon,
   type CouponDurationUnit,
   type CouponProductRef,
@@ -27,6 +30,14 @@ const AllowedAfyaUnitsSchema = z.array(z.string())
   .default([])
   .transform((units) => Array.from(new Set(units.filter((unit) => INSTITUTION_UNITS.includes(unit)))))
 
+const PromoSchema = z.object({
+  enabled: z.boolean().default(false),
+  headline: z.string().max(COUPON_PROMO_HEADLINE_MAX).optional(),
+  subtext: z.string().max(COUPON_PROMO_SUBTEXT_MAX).optional(),
+  showCode: z.boolean().default(true),
+  tone: z.enum(['destaque', 'urgencia', 'economia']).default('destaque'),
+}).optional().nullable()
+
 const CouponUpdateSchema = z.object({
   code: z.string().min(2).max(40),
   description: z.string().max(140).optional(),
@@ -41,6 +52,7 @@ const CouponUpdateSchema = z.object({
   allowedAfyaUnits: AllowedAfyaUnitsSchema,
   allowedManualPlans: z.array(z.enum(['semestral', 'anual', 'vitalicio'])).max(3).optional(),
   stackWithTier: z.boolean().default(false),
+  promo: PromoSchema,
   expirationMode: z.enum(['none', 'date', 'duration']).default('none'),
   expiresAt: z.string().optional(),
   durationValue: z.number().int().positive().optional(),
@@ -122,6 +134,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
         ? Array.from(new Set(data.allowedManualPlans))
         : null,
       stackWithTier: data.stackWithTier === true,
+      promo: normalizeCouponPromo(data.promo),
       expiresAt: buildExpiresAt(data, Number.isNaN(createdAt.getTime()) ? now : createdAt),
       durationValue: data.expirationMode === 'duration' ? data.durationValue || null : null,
       durationUnit: data.expirationMode === 'duration' ? data.durationUnit || null : null,

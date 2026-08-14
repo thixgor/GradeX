@@ -10,13 +10,17 @@ import {
   CalendarClock,
   Check,
   Copy,
+  Flame,
   Loader2,
+  Megaphone,
   Package,
   Percent,
+  PiggyBank,
   Plus,
   Search,
   SlidersHorizontal,
   ShoppingCart,
+  Sparkles,
   Tag,
   Trash2,
   UserCheck,
@@ -36,6 +40,15 @@ type ManualPlanKey = 'semestral' | 'anual' | 'vitalicio'
 type ExpirationMode = 'none' | 'date' | 'duration'
 type DurationUnit = 'hours' | 'days' | 'weeks' | 'months'
 type ProductKind = 'material' | 'flashcard' | 'package' | 'product'
+type PromoTone = 'destaque' | 'urgencia' | 'economia'
+
+type CouponPromo = {
+  enabled: boolean
+  headline: string
+  subtext: string
+  showCode: boolean
+  tone: PromoTone
+}
 
 type ProductRef = {
   itemType: 'material' | 'package' | 'manual_clinico'
@@ -59,6 +72,7 @@ type Coupon = {
   allowedAfyaUnits: string[]
   allowedManualPlans: ManualPlanKey[]
   stackWithTier: boolean
+  promo: CouponPromo | null
   usageCount: number
   expiresAt: string | null
   durationValue: number | null
@@ -105,6 +119,41 @@ const MANUAL_PLAN_OPTIONS: { key: ManualPlanKey; label: string }[] = [
   { key: 'vitalicio', label: 'Vitalício' },
 ]
 
+// Espelham COUPON_PROMO_HEADLINE_MAX / _SUBTEXT_MAX de lib/coupons.ts. Aqui só
+// para o contador de caracteres — quem corta de verdade é o servidor.
+const PROMO_HEADLINE_MAX = 70
+const PROMO_SUBTEXT_MAX = 160
+
+const PROMO_TONES: { key: PromoTone; label: string; icon: typeof Sparkles }[] = [
+  { key: 'destaque', label: 'Destaque', icon: Sparkles },
+  { key: 'urgencia', label: 'Urgência', icon: Flame },
+  { key: 'economia', label: 'Economia', icon: PiggyBank },
+]
+
+const PROMO_TONE_CLASSES: Record<PromoTone, { card: string; title: string; text: string; code: string; fine: string }> = {
+  destaque: {
+    card: 'border-primary/30 bg-primary/10',
+    title: 'text-foreground',
+    text: 'text-muted-foreground',
+    code: 'border-primary/35 bg-background/70 text-primary',
+    fine: 'text-muted-foreground',
+  },
+  urgencia: {
+    card: 'border-orange-500/35 bg-orange-500/10',
+    title: 'text-orange-900 dark:text-orange-100',
+    text: 'text-orange-800/80 dark:text-orange-200/75',
+    code: 'border-orange-500/40 bg-background/70 text-orange-700 dark:text-orange-200',
+    fine: 'text-orange-800/70 dark:text-orange-200/65',
+  },
+  economia: {
+    card: 'border-emerald-500/30 bg-emerald-500/10',
+    title: 'text-emerald-900 dark:text-emerald-100',
+    text: 'text-emerald-800/80 dark:text-emerald-200/75',
+    code: 'border-emerald-500/40 bg-background/70 text-emerald-700 dark:text-emerald-200',
+    fine: 'text-emerald-800/70 dark:text-emerald-200/65',
+  },
+}
+
 function emptyForm() {
   return {
     code: '',
@@ -120,6 +169,11 @@ function emptyForm() {
     allowedAfyaUnits: [] as string[],
     allowedManualPlans: [] as ManualPlanKey[],
     stackWithTier: false,
+    promoEnabled: false,
+    promoHeadline: '',
+    promoSubtext: '',
+    promoShowCode: true,
+    promoTone: 'destaque' as PromoTone,
     expirationMode: 'none' as ExpirationMode,
     expiresAt: '',
     durationValue: 7,
@@ -235,6 +289,11 @@ export default function AdminCouponsPage() {
       allowedAfyaUnits: coupon.allowedAfyaUnits || [],
       allowedManualPlans: coupon.allowedManualPlans || [],
       stackWithTier: coupon.stackWithTier === true,
+      promoEnabled: coupon.promo?.enabled === true,
+      promoHeadline: coupon.promo?.headline || '',
+      promoSubtext: coupon.promo?.subtext || '',
+      promoShowCode: coupon.promo?.showCode !== false,
+      promoTone: coupon.promo?.tone || 'destaque',
       expirationMode: coupon.durationValue && coupon.durationUnit ? 'duration' : coupon.expiresAt ? 'date' : 'none',
       expiresAt: coupon.expiresAt ? coupon.expiresAt.slice(0, 16) : '',
       durationValue: coupon.durationValue || 7,
@@ -286,6 +345,13 @@ export default function AdminCouponsPage() {
         allowedAfyaUnits: form.allowedAfyaUnits,
         allowedManualPlans: form.allowedManualPlans,
         stackWithTier: form.stackWithTier,
+        promo: {
+          enabled: form.promoEnabled,
+          headline: form.promoHeadline,
+          subtext: form.promoSubtext,
+          showCode: form.promoShowCode,
+          tone: form.promoTone,
+        },
         expirationMode: form.expirationMode,
         expiresAt: form.expirationMode === 'date' ? form.expiresAt : undefined,
         durationValue: form.expirationMode === 'duration' ? Number(form.durationValue || 0) : undefined,
@@ -368,6 +434,31 @@ export default function AdminCouponsPage() {
       return matchesQuery && matchesStatus && matchesScope
     })
   }, [couponQuery, coupons, scopeFilter, statusFilter])
+
+  // Espelha couponPromoConditions() do servidor: as letras miúdas da faixa saem
+  // das regras do cupom, não de texto livre. Aqui é só para o admin ver o que a
+  // pessoa vai ler antes de salvar.
+  const previewConditions = useMemo(() => {
+    const conditions: string[] = []
+    const minimum = Number(form.minimumCartAmount || 0)
+    if (minimum > 0) conditions.push(`Compra mínima de ${currency.format(minimum)}`)
+    if (form.firstPurchaseOnly) conditions.push('Válido só na primeira compra')
+    const perUser = Number(form.perUserLimit || 0)
+    if (perUser > 0) conditions.push(perUser === 1 ? 'Um uso por pessoa' : `Até ${perUser} usos por pessoa`)
+    if (form.allowedManualPlans.length > 0) {
+      const labels = form.allowedManualPlans.map((p) => MANUAL_PLAN_OPTIONS.find((o) => o.key === p)?.label || p)
+      conditions.push(`Só nos planos: ${labels.join(', ')}`)
+    }
+    const total = Number(form.usageLimit || 0)
+    if (total > 0) conditions.push(total === 1 ? 'Resta 1 uso' : `Restam ${total} usos`)
+    return conditions
+  }, [
+    form.allowedManualPlans,
+    form.firstPurchaseOnly,
+    form.minimumCartAmount,
+    form.perUserLimit,
+    form.usageLimit,
+  ])
 
   const visibleInstitutionUnits = useMemo(() => {
     const query = unitQuery.trim().toLowerCase()
@@ -639,6 +730,104 @@ export default function AdminCouponsPage() {
                 </div>
               ) : null}
 
+              <SectionTitle title="Chamativo no checkout" />
+              <div className="space-y-3 rounded-lg border bg-muted/30 p-3">
+                <label className="flex items-start gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    className="mt-0.5"
+                    checked={form.promoEnabled}
+                    onChange={(e) => setForm((f) => ({ ...f, promoEnabled: e.target.checked }))}
+                  />
+                  <span>
+                    <span className="font-semibold">Anunciar este cupom no checkout</span>
+                    <span className="mt-0.5 block text-xs text-muted-foreground">
+                      Uma faixa aparece em <strong>/comprar</strong> e nos checkouts dos itens que este cupom
+                      alcança (o mesmo alcance definido em &quot;Onde o cupom vale&quot;). Some sozinha quando o
+                      cupom fica inativo, vence ou esgota.
+                    </span>
+                  </span>
+                </label>
+
+                {form.promoEnabled ? (
+                  <>
+                    <Field label={`Chamada (${form.promoHeadline.length}/${PROMO_HEADLINE_MAX})`}>
+                      <Input
+                        value={form.promoHeadline}
+                        maxLength={PROMO_HEADLINE_MAX}
+                        onChange={(e) => setForm((f) => ({ ...f, promoHeadline: e.target.value }))}
+                        placeholder="Ex: Leve este material com 20% OFF hoje"
+                      />
+                    </Field>
+
+                    <Field label={`Apoio (${form.promoSubtext.length}/${PROMO_SUBTEXT_MAX})`}>
+                      <Textarea
+                        value={form.promoSubtext}
+                        maxLength={PROMO_SUBTEXT_MAX}
+                        onChange={(e) => setForm((f) => ({ ...f, promoSubtext: e.target.value }))}
+                        placeholder="Ex: Promoção da semana de provas. Aplique no campo de cupom abaixo."
+                      />
+                    </Field>
+
+                    <div>
+                      <Label className="mb-1 block">Tom</Label>
+                      <div className="flex flex-wrap gap-2">
+                        {PROMO_TONES.map((option) => {
+                          const active = form.promoTone === option.key
+                          const Icon = option.icon
+                          return (
+                            <button
+                              key={option.key}
+                              type="button"
+                              onClick={() => setForm((f) => ({ ...f, promoTone: option.key }))}
+                              className={`inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-semibold transition ${active ? 'border-primary/40 bg-primary/10 text-primary' : 'border-border bg-background text-muted-foreground hover:bg-muted'}`}
+                            >
+                              <Icon className="h-3.5 w-3.5" />
+                              {option.label}
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </div>
+
+                    <label className="flex items-start gap-2 rounded-md border bg-background px-3 py-2.5 text-sm">
+                      <input
+                        type="checkbox"
+                        className="mt-0.5"
+                        checked={form.promoShowCode}
+                        onChange={(e) => setForm((f) => ({ ...f, promoShowCode: e.target.checked }))}
+                      />
+                      <span>
+                        <span className="font-semibold">Mostrar o código na faixa</span>
+                        <span className="mt-0.5 block text-xs text-muted-foreground">
+                          Com o código à vista, a pessoa copia e aplica em um toque. Desligue para anunciar a
+                          promoção sem revelar o código (campanha em que o código vem por fora).
+                        </span>
+                      </span>
+                    </label>
+
+                    <div className="rounded-lg border border-dashed bg-background p-3">
+                      <p className="mb-2 text-[11px] font-black uppercase text-muted-foreground">Prévia</p>
+                      <PromoPreview
+                        headline={form.promoHeadline}
+                        subtext={form.promoSubtext}
+                        tone={form.promoTone}
+                        code={form.promoShowCode ? (form.code || 'SEUCUPOM') : null}
+                        discountLabel={form.discountType === 'percentage' ? `${form.discountValue || 0}% OFF` : `${currency.format(Number(form.discountValue || 0))} OFF`}
+                        conditions={previewConditions}
+                      />
+                    </div>
+
+                    {form.allowedAfyaUnits.length > 0 ? (
+                      <p className="rounded-md border border-amber-300/30 bg-amber-400/10 p-2.5 text-xs text-amber-800 dark:text-amber-200">
+                        Campanha restrita a unidades: a faixa só aparece para quem está logado e pertence a uma
+                        das unidades selecionadas. Visitante deslogado não vê o código.
+                      </p>
+                    ) : null}
+                  </>
+                ) : null}
+              </div>
+
               <div className="flex gap-2 pt-2">
                 <Button className="flex-1 gap-2" onClick={saveCoupon} disabled={saving}>
                   {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
@@ -705,6 +894,11 @@ export default function AdminCouponsPage() {
                         {coupon.stackWithTier ? (
                           <span className="rounded-md border border-amber-300/30 bg-amber-400/10 px-2 py-1 text-xs font-semibold text-amber-700 dark:text-amber-200">Empilha com lote</span>
                         ) : null}
+                        {coupon.promo?.enabled ? (
+                          <span className="inline-flex items-center gap-1 rounded-md border border-primary/30 bg-primary/10 px-2 py-1 text-xs font-semibold text-primary" title={coupon.promo.headline}>
+                            <Megaphone className="h-3 w-3" /> Anunciado no checkout
+                          </span>
+                        ) : null}
                         {coupon.allowedManualPlans?.length ? (
                           <span className="rounded-md border border-emerald-300/25 bg-emerald-400/10 px-2 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-200">
                             Planos: {coupon.allowedManualPlans.map((p) => MANUAL_PLAN_OPTIONS.find((o) => o.key === p)?.label || p).join(', ')}
@@ -754,6 +948,65 @@ export default function AdminCouponsPage() {
         </div>
       </div>
     </AppShell>
+  )
+}
+
+/**
+ * Prévia da faixa como ela aparece no checkout.
+ *
+ * Vale o esforço de duplicar o visual aqui: sem ver o resultado, escrever
+ * "chamada" e "apoio" às cegas é chute — e a faixa vai para uma tela de
+ * pagamento, onde texto ruim custa venda.
+ */
+function PromoPreview({
+  headline,
+  subtext,
+  tone,
+  code,
+  discountLabel,
+  conditions,
+}: {
+  headline: string
+  subtext: string
+  tone: PromoTone
+  code: string | null
+  discountLabel: string
+  conditions: string[]
+}) {
+  const skin = PROMO_TONE_CLASSES[tone]
+  const Icon = PROMO_TONES.find((t) => t.key === tone)?.icon || Sparkles
+
+  return (
+    <div className={`rounded-lg border p-3.5 ${skin.card}`}>
+      <div className="flex items-start gap-2.5">
+        <Icon className={`mt-0.5 h-4 w-4 flex-none ${skin.title}`} strokeWidth={2.4} />
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+            <p className={`text-sm font-bold leading-snug ${skin.title}`}>
+              {headline || <span className="italic opacity-60">Escreva a chamada acima…</span>}
+            </p>
+            <span className={`inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[11px] font-black ${skin.code}`}>
+              <BadgePercent className="h-3 w-3" />
+              {discountLabel}
+            </span>
+          </div>
+          {subtext ? <p className={`mt-1 text-xs leading-relaxed ${skin.text}`}>{subtext}</p> : null}
+          {code ? (
+            <div className="mt-2.5 flex flex-wrap items-center gap-2">
+              <span className={`inline-flex h-8 items-center rounded-md border px-2.5 font-mono text-sm font-black tracking-wider ${skin.code}`}>
+                {code}
+              </span>
+              <span className="inline-flex h-8 items-center rounded-md bg-primary px-3 text-xs font-black text-primary-foreground">
+                Aplicar cupom
+              </span>
+            </div>
+          ) : null}
+          {conditions.length > 0 ? (
+            <p className={`mt-2 text-[11px] leading-relaxed ${skin.fine}`}>{conditions.join(' · ')}</p>
+          ) : null}
+        </div>
+      </div>
+    </div>
   )
 }
 

@@ -9,6 +9,7 @@ import { PricingEventCountdown } from '@/components/pricing-events/PricingEventC
 import { PublicPageShell } from '@/components/public-page-shell'
 import { TimedAccessNotice } from '@/components/materiais/timed-access'
 import { CheckoutAccountNotice } from '@/components/checkout/checkout-account-notice'
+import { CouponPromo } from '@/components/checkout/coupon-promo'
 import { PackageContents } from '@/components/shop/package-contents'
 import { isPlusAccount } from '@/lib/account-tier'
 import Link from 'next/link'
@@ -560,6 +561,13 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
             ) : null}
           </div>
 
+          <CouponPromo
+            itens={[{ itemType: 'manual_clinico', itemId: MANUAL_CLINICO_PRODUCT_ID }]}
+            planKey={selectedPlanKey}
+            codigoAplicado={appliedCoupon?.code || null}
+            className="mt-4"
+          />
+
           {/* Cupom logo abaixo do Total: antes só aparecia depois de preencher
               nome/e-mail/telefone e clicar em "Ir para pagamento" — quem só
               queria testar um código nem chegava lá. */}
@@ -739,9 +747,12 @@ function GenericComprarContent({ productType }: { productType: string }) {
     couponCode: appliedCoupon?.code,
   }), [productType, productId, planKey, itemType, accessVersionId, name, email, phone, appliedCoupon])
 
-  const applyCoupon = async () => {
-    const normalized = couponCode.trim()
+  // `override` é o caminho do chamativo: a faixa manda o código direto, sem
+  // depender do que está digitado no campo.
+  const applyCoupon = async (override?: string) => {
+    const normalized = (override ?? couponCode).trim()
     if (!normalized || !product) return
+    if (override) setCouponCode(override.toUpperCase())
     setCouponLoading(true)
     setCouponError('')
     try {
@@ -891,6 +902,19 @@ function GenericComprarContent({ productType }: { productType: string }) {
               </div>
             ) : null}
 
+            {couponEligible && product.productId ? (
+              <CouponPromo
+                itens={[{
+                  itemType: couponItemType,
+                  itemId: product.productId,
+                  materialType: productType === 'flashcard' ? 'flashcard_deck' : undefined,
+                }]}
+                onAplicar={(code) => applyCoupon(code)}
+                codigoAplicado={appliedCoupon?.code || null}
+                className="mt-3.5"
+              />
+            ) : null}
+
             {couponEligible && (
               <div className="mt-3.5 rounded-lg border border-border bg-background p-3.5">
                 <div className="mb-2.5 flex items-center gap-2 text-sm font-bold text-foreground">
@@ -925,7 +949,7 @@ function GenericComprarContent({ productType }: { productType: string }) {
                       />
                       <button
                         type="button"
-                        onClick={applyCoupon}
+                        onClick={() => applyCoupon()}
                         disabled={couponLoading || !couponCode.trim()}
                         className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-secondary px-3.5 text-xs font-black text-secondary-foreground disabled:cursor-not-allowed disabled:opacity-55"
                       >
