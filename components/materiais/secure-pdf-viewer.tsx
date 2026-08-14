@@ -467,6 +467,39 @@ async function getPdfJs() {
   return pdfjsLib
 }
 
+// ─── UM worker para todos os documentos ─────────────────────────────────────
+//
+// Esta é a maior fonte de memória do leitor, e ela não aparece em lugar nenhum
+// que se possa medir pelo canvas.
+//
+// Cada página do material é um PDF de uma página só, aberto com `getDocument`.
+// Sem passar um worker, o pdf.js sobe um worker DEDICADO por documento — e o
+// leitor mantém vários documentos vivos (as páginas da janela, mais as
+// miniaturas do painel, que abriam e fechavam um worker cada). Cada worker
+// carrega uma cópia inteira do pdf.js e guarda, do lado dele, as imagens já
+// decodificadas da página. Num material escaneado, UMA página decodificada são
+// dezenas de megabytes; multiplicado por meia dúzia de workers, é o estouro que
+// derrubava a aba no iOS.
+//
+// Era por isso que nenhum ajuste de canvas resolvia: o canvas nunca foi o maior
+// consumidor. Com um worker só, o custo fixo é pago uma vez e a memória de
+// decodificação passa a ter um dono único — que ainda é limpo a cada página
+// desenhada (ver `page.cleanup()` na rasterização).
+type SharedPdfWorker = InstanceType<Awaited<ReturnType<typeof getPdfJs>>['PDFWorker']>
+let sharedPdfWorker: SharedPdfWorker | null = null
+
+function getSharedPdfWorker(pdfjs: Awaited<ReturnType<typeof getPdfJs>>) {
+  // `destroyed` cobre o caso de o worker ter morrido (o navegador derruba
+  // workers sob pressão de memória): o próximo documento sobe um novo em vez
+  // de falhar para sempre.
+  if (sharedPdfWorker && !sharedPdfWorker.destroyed) return sharedPdfWorker
+  // Sem parâmetros de propósito: a tipagem gerada do pdf.js declara `name`
+  // como `null | undefined` (artefato do JSDoc), e um nome de depuração não
+  // vale um cast por cima da checagem de tipos.
+  sharedPdfWorker = new pdfjs.PDFWorker()
+  return sharedPdfWorker
+}
+
 // Cada página é um PDF marcado individualmente no servidor (operação pesada
 // de CPU/memória). Ao abrir o documento, uma requisição por página visível era
 // disparada ao mesmo tempo, sem limite de concorrência, sem timeout e sem
@@ -659,14 +692,19 @@ async function fetchPdfPageBytes(
 // de página igual ao cache de bytes. Precisa caber a janela de páginas vivas
 // com folga — abaixo disso, virar uma página evicta um documento que será
 // pedido logo em seguida e o parse se repete à toa.
+// Quantos DOCUMENTOS ficam abertos ao mesmo tempo. As páginas em uso estão
+// protegidas por contagem de referência — este número controla só a cauda de
+// documentos ociosos, e cada um deles ainda custa memória no worker. Era 9 no
+// celular; com material escaneado isso é caro demais para algo que ninguém
+// está olhando.
 function pageProxyCacheMax() {
-  return isLowMemoryDevice() ? 7 : isMobileViewport() ? 9 : 14
+  return isLowMemoryDevice() ? 3 : isMobileViewport() ? 6 : 14
 }
 
 // Teto por bytes, além do de quantidade: numa página com imagens a cópia é de
 // megabytes, e só contar entradas não diz nada sobre a memória usada.
 function pageProxyBudget() {
-  return isLowMemoryDevice() ? 12 * 1024 * 1024 : isMobileViewport() ? 24 * 1024 * 1024 : 96 * 1024 * 1024
+  return isLowMemoryDevice() ? 8 * 1024 * 1024 : isMobileViewport() ? 14 * 1024 * 1024 : 96 * 1024 * 1024
 }
 
 interface PageProxyEntry {
@@ -686,6 +724,20 @@ function destroyProxyEntry(entry: PageProxyEntry) {
   try {
     entry.doc?.destroy?.()
   } catch {}
+}
+
+/**
+ * O worker morreu (o navegador derruba workers sob pressão de memória) e levou
+ * junto TODOS os documentos abertos nele — é o preço de compartilhar um só.
+ * Sem isto, cada página em cache continuaria apontando para um worker morto e
+ * o leitor ficaria quebrado até um F5. Jogando o cache fora, a próxima
+ * tentativa sobe um worker novo e reabre o que precisar.
+ */
+function dropAllPageProxies() {
+  for (const [key, entry] of pageProxyCache) {
+    destroyProxyEntry(entry)
+    pageProxyCache.delete(key)
+  }
 }
 
 function evictPageProxies() {
@@ -740,7 +792,10 @@ async function acquirePageProxy(
     const pdfjs = await getPdfJs()
     // `slice()` porque o pdf.js assume a posse do buffer que recebe e os
     // mesmos bytes ficam no `pageBytesCache` para reuso.
-    const doc = await pdfjs.getDocument({ data: bytes.slice() }).promise
+    const doc = await pdfjs.getDocument({
+      data: bytes.slice(),
+      worker: getSharedPdfWorker(pdfjs) as never,
+    }).promise
     const page = await doc.getPage(1)
     const entry: PageProxyEntry = {
       doc,
@@ -4967,7 +5022,10 @@ const PdfThumbnail = memo(function PdfThumbnail({
         const { bytes } = await fetchPdfPageBytes(materialId, pageNumber, 'thumb')
         if (cancelled) return
         const pdfjs = await getPdfJs()
-        doc = await pdfjs.getDocument({ data: bytes.slice() }).promise
+        doc = await pdfjs.getDocument({
+          data: bytes.slice(),
+          worker: getSharedPdfWorker(pdfjs) as never,
+        }).promise
         const page = await doc.getPage(1)
         const base = page.getViewport({ scale: 1 })
         const targetWidth = 150
@@ -5571,8 +5629,21 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
         }
         hasBitmapRef.current = true
         setPainted(true)
+        // Solta o que o pdf.js guardou desta página: lista de operadores e,
+        // sobretudo, as IMAGENS JÁ DECODIFICADAS. Numa página escaneada isso
+        // são dezenas de megabytes que ficavam presos no worker enquanto o
+        // documento existisse — invisíveis para qualquer orçamento de canvas,
+        // e a razão de a aba morrer mesmo com os canvas sob controle. Se a
+        // página precisar ser redesenhada (um passo de zoom), o pdf.js
+        // reconstrói o que jogou fora; é trabalho de CPU no lugar de memória
+        // que não volta.
+        try { entry!.page.cleanup() } catch {}
       } catch (err: any) {
         if (!cancelled && err?.name !== 'RenderingCancelledException') {
+          // Worker derrubado leva todos os documentos junto: limpa o cache
+          // para a auto-recuperação reabrir num worker novo, em vez de tentar
+          // para sempre contra um documento morto.
+          if (sharedPdfWorker?.destroyed) dropAllPageProxies()
           setError(err?.message || 'Pagina indisponivel')
         }
       } finally {
@@ -5624,6 +5695,14 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
     return () => {
       if (rafRef.current) window.cancelAnimationFrame(rafRef.current)
       if (laserRafRef.current) window.cancelAnimationFrame(laserRafRef.current)
+      // O Safari do iOS segura o buffer do canvas mesmo depois de o nó sair do
+      // DOM; zerar as dimensões devolve na hora. Vale para os dois auxiliares,
+      // como já valia para o canvas da página.
+      for (const auxiliar of [draftCanvasRef.current, laserCanvasRef.current]) {
+        if (!auxiliar) continue
+        auxiliar.width = 0
+        auxiliar.height = 0
+      }
       // A página pode sair do DOM no meio de um traço (a janela de
       // virtualização andou). Sem isto, o sinal de "escrevendo" ficaria preso
       // em ligado e a barra flutuante não voltaria mais.
@@ -5861,16 +5940,20 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   }, [getDraftContext, readOverlayRect])
 
   const clearDraftCanvas = useCallback(() => {
-    const context = draftCtxRef.current
-    const surface = draftSurfaceRef.current
-    if (!context || !surface) return
-    context.clearRect(0, 0, surface.width, surface.height)
-    draftPaintedRef.current = 0
     const canvas = draftCanvasRef.current
-    if (canvas) {
-      canvas.style.opacity = '1'
-      canvas.style.mixBlendMode = 'normal'
-    }
+    draftPaintedRef.current = 0
+    draftSurfaceRef.current = null
+    if (!canvas) return
+    canvas.style.opacity = '1'
+    canvas.style.mixBlendMode = 'normal'
+    // Zerar as dimensões DEVOLVE a memória do canvas, em vez de só apagar o
+    // desenho. Não é detalhe: a superfície do rascunho tem o tamanho da página
+    // vezes a densidade da tela — numa página ampliada são dezenas de
+    // megabytes, que ficavam retidos em cada página viva depois do primeiro
+    // traço, para nunca mais serem usados. O próximo traço recria a superfície
+    // (ver setupDraftSurface), que é barato perto de segurar isso à toa.
+    canvas.width = 0
+    canvas.height = 0
   }, [])
 
   // Espessura em pixels de tela — ver inkPixelWidth: a mesma conta que o traço
@@ -6127,7 +6210,11 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
     if (alive || laserDrawingRef.current) {
       laserRafRef.current = window.requestAnimationFrame(renderLaser)
     } else {
-      context.clearRect(0, 0, rect.width, rect.height)
+      // Rastro acabou: devolve a memória em vez de só apagar o desenho. Mesmo
+      // motivo do canvas de rascunho — esta superfície tem o tamanho da página
+      // vezes a densidade da tela, e ficaria retida em cada página viva.
+      canvas.width = 0
+      canvas.height = 0
       laserRafRef.current = null
     }
   }, [laserColor, readOverlayRect])
