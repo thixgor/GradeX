@@ -3,6 +3,7 @@ import { CANONICAL_ORIGIN } from '@/lib/seo'
 import { TODAS_SUBSECOES } from '@/lib/tomografia'
 import { ESTUDOS_RAIO_X } from '@/lib/radiologia/raio-x'
 import { QUIZZES_RAIO_X } from '@/lib/radiologia/quiz-raio-x'
+import { QUIZZES_CLINICOS } from '@/lib/radiologia/quiz-casos-raio-x'
 import { entradasDaHistologia } from '@/lib/histologia/sitemap'
 import { entradasDaHistopatologia } from '@/lib/histopatologia/sitemap'
 
@@ -108,6 +109,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     ...QUIZZES_RAIO_X.map((quiz) => ({
       url: canonical(`/manual-clinico/radiologia/raio-x/quiz/${quiz.slug}`),
+      lastModified: now,
+      changeFrequency: 'monthly' as const,
+      priority: 0.5,
+    })),
+    {
+      url: canonical('/manual-clinico/radiologia/raio-x/casos'),
+      lastModified: now,
+      changeFrequency: 'monthly',
+      priority: 0.6,
+    },
+    {
+      url: canonical('/manual-clinico/radiologia/raio-x/casos/quiz'),
+      lastModified: now,
+      changeFrequency: 'monthly',
+      priority: 0.6,
+    },
+    ...QUIZZES_CLINICOS.map((quiz) => ({
+      url: canonical(`/manual-clinico/radiologia/raio-x/casos/quiz/${quiz.slug}`),
       lastModified: now,
       changeFrequency: 'monthly' as const,
       priority: 0.5,

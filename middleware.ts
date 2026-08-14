@@ -182,13 +182,17 @@ function isPublicRoute(pathname: string): boolean {
   if (/^\/api\/mindmaps\/[^/]+$/.test(pathname)) return true
   if (/^\/api\/mindmaps\/[^/]+\/unlock$/.test(pathname)) return true
   // Toda a árvore do Manual de Radiologia: séries de tomografia
-  // (/radiologia/tomografia/<slug>) e incidências do atlas de Raio-X
-  // (/radiologia/raio-x/<slug>). O paywall é decidido no cliente a partir do
-  // veredito do servidor, então a rota precisa abrir para visitante.
+  // (/radiologia/tomografia/<slug>), incidências do atlas de Raio-X
+  // (/radiologia/raio-x/<slug>), casos de tórax (/raio-x/casos/<slug>) e o quiz
+  // clínico (/raio-x/casos/quiz/<slug>). O paywall é decidido no cliente a
+  // partir do veredito do servidor, então a rota precisa abrir para visitante.
   // `\w` e não `[a-z0-9-]`: os ids das incidências vêm do atlas original em
   // camelCase (`thoraxBones`, `skullLat`), e uma regex só-minúsculas mandava o
   // visitante para o login em vez de mostrar a landing de vendas.
-  if (/^\/manual-clinico\/radiologia(\/[\w-]+){0,2}$/.test(pathname)) return true
+  // Quatro segmentos, e não dois: com o teto antigo, `/raio-x/casos/<slug>` e
+  // `/raio-x/casos/quiz/<slug>` caíam fora e o visitante era mandado para o
+  // login — perdendo justamente a landing de vendas que o link prometia.
+  if (/^\/manual-clinico\/radiologia(\/[\w-]+){0,4}$/.test(pathname)) return true
   // Áreas das Ferramentas Clínicas (/manual-clinico/ferramentas/<slug>).
   if (/^\/manual-clinico\/ferramentas\/[a-z0-9-]+$/.test(pathname)) return true
 
