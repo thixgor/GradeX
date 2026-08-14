@@ -103,6 +103,15 @@ export const metadata: Metadata = {
       { url: '/favicon.png', sizes: '96x96', type: 'image/png' },
     ],
     shortcut: '/favicon.ico',
+    // Este `<link rel="apple-touch-icon">` é o caminho principal. Mas quando o
+    // iOS não consegue resolver o ícone por ele — a página que estava aberta na
+    // hora do "Adicionar à Tela de Início" era um erro, uma versão em cache ou
+    // a busca do arquivo falhou —, ele NÃO desiste com elegância: procura, por
+    // convenção, `/apple-touch-icon-precomposed.png` e `/apple-touch-icon.png`
+    // na raiz do site e, não achando, cria o ícone a partir de uma captura de
+    // tela da página. É assim que o app aparece na tela de início sem a marca.
+    // Os dois arquivos existem em `public/` justamente para essa rede de
+    // segurança: são cópias de 180×180 do mesmo desenho.
     apple: [{ url: '/apple-icon.png', sizes: '180x180', type: 'image/png' }],
   },
   openGraph: {
