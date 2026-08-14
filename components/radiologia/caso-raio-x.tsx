@@ -419,6 +419,31 @@ export function CasoRaioXPagina({
           {proximo && <Vizinho caso={proximo} direcao="proximo" />}
         </nav>
 
+        {/* Estudar o caso com as marcações à mão é o passo um; medir se ele foi
+            reconhecido a partir de uma história clínica é o passo dois, e é aqui
+            que o aluno está mais disposto a dá-lo. */}
+        <Link
+          href={`/manual-clinico/radiologia/raio-x/casos/quiz/${caso.categoria}`}
+          className="group mt-4 flex items-center gap-3 rounded-2xl border border-sky-500/30 bg-sky-500/[0.06] p-4 transition hover:-translate-y-0.5 hover:border-sky-500/60 hover:shadow-md hover:shadow-sky-500/10"
+        >
+          <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sky-500 text-white shadow-lg shadow-sky-500/20">
+            <Stethoscope className="h-5 w-5" />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[10px] font-black uppercase tracking-widest text-sky-600 dark:text-sky-400">
+              Agora sem a legenda
+            </span>
+            <strong className="mt-0.5 block font-heading text-sm font-semibold sm:text-base">
+              Treinar {guia.titulo.toLowerCase()} em casos clínicos
+            </strong>
+            <span className="mt-0.5 block text-xs leading-relaxed text-muted-foreground">
+              O paciente é apresentado como numa consulta, o filme sobe limpo e as marcações só
+              acendem depois que você identifica o achado.
+            </span>
+          </span>
+          <ArrowRight className="h-4 w-4 shrink-0 text-sky-500 transition group-hover:translate-x-0.5" />
+        </Link>
+
         <div className="mt-4 flex justify-center">
           <Link
             href="/manual-clinico/radiologia/raio-x/casos"
