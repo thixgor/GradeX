@@ -44,12 +44,93 @@ describe('vinhetas clínicas dos casos de Raio-X', () => {
       expect(vinheta.exame.length, slug).toBeGreaterThanOrEqual(3)
       expect(vinheta.pedido.length, slug).toBeGreaterThan(40)
       expect(vinheta.pergunta.length, slug).toBeGreaterThan(20)
-      expect(vinheta.achado.length, slug).toBeGreaterThan(15)
+      // Piso baixo de propósito: o rótulo é curto por exigência do formato
+      // ("Cardiomegalia", "Hérnia hiatal"). Quem cobra o comprimento dele é o
+      // bloco "a forma não entrega o gabarito", que o compara aos distratores.
+      expect(vinheta.achado.length, slug).toBeGreaterThan(8)
       expect(vinheta.correlacao.length, slug).toBeGreaterThan(150)
 
       for (const campo of ['pa', 'fc', 'fr', 'satO2'] as const) {
         expect(vinheta.vitais[campo], `${slug}: sinal vital ${campo}`).toBeTruthy()
       }
+    }
+  })
+
+  /**
+   * A forma da alternativa não pode entregar o gabarito.
+   *
+   * A primeira versão deste banco falhava nisto de forma catastrófica, e o
+   * número é o argumento: a alternativa certa era a mais longa nas 72 questões
+   * (94 caracteres contra 36 dos distratores) e a única com travessão
+   * explicativo em 64 delas. Dava para gabaritar o acervo inteiro sem abrir uma
+   * radiografia — o quiz media leitura de português, não de imagem.
+   *
+   * Estes testes existem para que a regressão seja barulhenta. Se um caso novo
+   * chegar com o achado explicado no rótulo, eles quebram.
+   */
+  describe('a forma não entrega o gabarito', () => {
+    const questoes = Object.entries(VINHETAS_CASOS_RAIO_X).map(([slug, vinheta]) => ({
+      slug,
+      vinheta,
+      alternativas: [vinheta.achado, ...vinheta.distratores.map((item) => item.nome)],
+    }))
+
+    it('não usa travessão, parênteses nem aspas em nenhuma alternativa', () => {
+      for (const { slug, alternativas } of questoes) {
+        for (const alternativa of alternativas) {
+          expect(alternativa, `${slug}: "${alternativa}" tem pontuação explicativa`).not.toMatch(
+            /[—("'"]/,
+          )
+        }
+      }
+    })
+
+    it('não deixa a alternativa certa ser sistematicamente a mais longa nem a mais curta', () => {
+      let maisLonga = 0
+      let maisCurta = 0
+      for (const { vinheta, alternativas } of questoes) {
+        const tamanhos = alternativas.map((item) => item.length)
+        if (vinheta.achado.length === Math.max(...tamanhos)) maisLonga += 1
+        if (vinheta.achado.length === Math.min(...tamanhos)) maisCurta += 1
+      }
+      // Com quatro alternativas, o acaso põe a certa em cada extremo em ~25%
+      // das questões. O teto dá folga para variação sem admitir um padrão que
+      // um aluno consiga apostar.
+      const teto = Math.round(questoes.length * 0.38)
+      expect(maisLonga, `certa é a mais longa em ${maisLonga}/${questoes.length}`).toBeLessThanOrEqual(teto)
+      expect(maisCurta, `certa é a mais curta em ${maisCurta}/${questoes.length}`).toBeLessThanOrEqual(teto)
+    })
+
+    it('mantém a alternativa certa do mesmo tamanho dos distratores, questão a questão', () => {
+      for (const { slug, vinheta, alternativas } of questoes) {
+        const outras = alternativas.slice(1)
+        const media = outras.reduce((total, item) => total + item.length, 0) / outras.length
+        const razao = vinheta.achado.length / media
+        expect(
+          razao,
+          `${slug}: "${vinheta.achado}" (${vinheta.achado.length}) contra média ${Math.round(media)} dos distratores`,
+        ).toBeGreaterThan(0.6)
+        expect(razao, `${slug}: "${vinheta.achado}" destoa em comprimento`).toBeLessThan(1.5)
+      }
+    })
+
+    it('escreve toda alternativa como rótulo de diferencial, não como explicação', () => {
+      for (const { slug, alternativas } of questoes) {
+        for (const alternativa of alternativas) {
+          const palavras = alternativa.trim().split(/\s+/).length
+          expect(palavras, `${slug}: "${alternativa}" tem ${palavras} palavras`).toBeLessThanOrEqual(7)
+          expect(alternativa, `${slug}: "${alternativa}" tem vírgula explicativa`).not.toMatch(/,/)
+        }
+      }
+    })
+  })
+
+  it('guarda o achado por extenso para a resposta comentada', () => {
+    for (const [slug, vinheta] of Object.entries(VINHETAS_CASOS_RAIO_X)) {
+      // O veredito é o que o rótulo curto deixou de dizer: ele só aparece
+      // depois da resposta, então pode — e deve — ser específico.
+      expect(vinheta.veredito, `${slug}: sem veredito`).toBeDefined()
+      expect(vinheta.veredito!.length, slug).toBeGreaterThan(vinheta.achado.length)
     }
   })
 

@@ -83,7 +83,12 @@ describe('quiz de casos clínicos do Raio-X', () => {
     for (const questao of getQuizCasoClinico('plantao')!.questoes) {
       const { comentario } = questao
 
-      expect(comentario.veredito, questao.id).toBe(questao.vinheta.achado)
+      // O veredito é o achado por extenso, e não o rótulo curto que disputou
+      // com os distratores: ele só aparece depois da resposta.
+      expect(comentario.veredito, questao.id).toBe(
+        questao.vinheta.veredito ?? questao.vinheta.achado,
+      )
+      expect(comentario.veredito.length, questao.id).toBeGreaterThan(questao.vinheta.achado.length)
       expect(comentario.correlacao.length, questao.id).toBeGreaterThan(150)
       expect(comentario.leitura.length, questao.id).toBeGreaterThan(100)
       expect(comentario.descartes, questao.id).toHaveLength(3)

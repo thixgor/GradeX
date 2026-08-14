@@ -223,7 +223,9 @@ export function montarQuestaoClinica(caso: CasoRaioX): QuestaoCasoClinico | null
     alternativas,
     correta: alternativas.findIndex((item) => item.nome === vinheta.achado),
     comentario: {
-      veredito: vinheta.achado,
+      // `achado` é o rótulo curto que disputa com os distratores; `veredito` é
+      // o mesmo achado por extenso, e só aparece depois da resposta.
+      veredito: vinheta.veredito ?? vinheta.achado,
       correlacao: vinheta.correlacao,
       mecanismo: detalhe?.mecanismo,
       leitura: caso.explicacao,

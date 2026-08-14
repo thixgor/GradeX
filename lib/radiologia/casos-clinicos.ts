@@ -65,8 +65,27 @@ export interface VinhetaClinica {
   pedido: string
   /** O que se pergunta ao aluno depois que o filme sobe no negatoscópio. */
   pergunta: string
-  /** A resposta certa, escrita como achado radiográfico. */
+  /**
+   * A resposta certa, escrita como item de diagnóstico diferencial.
+   *
+   * Curta e paralela aos distratores de propósito. A primeira versão deste
+   * banco trazia aqui o achado *explicado* — "Cardiomegalia — índice
+   * cardiotorácico acima de 50%" — enquanto os distratores eram rótulos secos
+   * de três palavras. O resultado, medido: a alternativa certa era a mais longa
+   * nas 72 questões e a única com travessão em 64 delas. Dava para gabaritar o
+   * banco inteiro sem olhar uma única radiografia.
+   *
+   * A explicação não sumiu: ela mora em `veredito`, que só aparece **depois**
+   * da resposta, e em `correlacao`. O que o aluno lê antes de decidir são
+   * quatro rótulos indistinguíveis pela forma.
+   */
   achado: string
+  /**
+   * O achado por extenso, para o cabeçalho da resposta comentada.
+   *
+   * É o que `achado` era antes de encurtar. Ausente, vale o próprio `achado`.
+   */
+  veredito?: string
   /** Como a história e o filme se encaixam — abre a resposta comentada. */
   correlacao: string
   distratores: DistratorClinico[]
@@ -107,7 +126,8 @@ const CARDIOVASCULAR: Record<string, VinhetaClinica> = {
     pedido:
       'Dispneia progressiva com ortopneia e dispneia paroxística noturna: a pergunta é se há aumento da silhueta cardíaca e sinais de congestão que sustentem insuficiência cardíaca.',
     pergunta: 'Radiografia de tórax em PA, ortostática e com boa inspiração. Qual é o achado que responde à pergunta clínica?',
-    achado: 'Cardiomegalia — índice cardiotorácico acima de 50%',
+    achado: 'Cardiomegalia',
+    veredito: 'Cardiomegalia — índice cardiotorácico acima de 50%',
     correlacao:
       'A história é de insuficiência cardíaca esquerda: ortopneia, dispneia paroxística noturna e terceira bulha. O ictus deslocado para fora da linha hemiclavicular já anuncia, ao dedo, o que o filme confirma ao olho — a silhueta cardíaca ocupa mais da metade da largura interna do tórax.',
     distratores: [
@@ -116,11 +136,11 @@ const CARDIOVASCULAR: Record<string, VinhetaClinica> = {
         'Também alarga a silhueta, mas o contorno fica globoso e uniforme, sem que se distingam os segmentos — botão aórtico, tronco da pulmonar e ventrículo esquerdo deixam de ser individualizáveis. Aqui os segmentos continuam reconhecíveis, e a radiografia não distingue os dois com segurança: quem decide é o ecocardiograma.',
       ),
       d(
-        'Radiografia AP com ampliação da silhueta',
+        'Efeito da projeção AP',
         'É a armadilha técnica desta medida: em AP o coração fica mais longe do filme e a silhueta cresce por geometria, sem doença. Esta radiografia é PA, ortostática e com inspiração adequada — condições em que o índice cardiotorácico pode ser calculado.',
       ),
       d(
-        'Silhueta normal com má inspiração',
+        'Inspiração incompleta',
         'Inspiração incompleta horizontaliza o diafragma, comprime o coração contra ele e alarga a base — mas então se contam menos de seis arcos costais anteriores acima da cúpula. A contagem aqui é adequada, e o alargamento não se explica pela técnica.',
       ),
     ],
@@ -148,7 +168,8 @@ const CARDIOVASCULAR: Record<string, VinhetaClinica> = {
     pedido:
       'Descompensação de insuficiência cardíaca após suspensão do diurético: a pergunta é qual o grau de congestão pulmonar no momento.',
     pergunta: 'A radiografia mostra o grau de congestão. Qual é o achado vascular que abre essa sequência?',
-    achado: 'Redistribuição do fluxo para os ápices — vasos dos campos superiores tão ou mais calibrosos que os basais',
+    achado: 'Redistribuição vascular para os ápices',
+    veredito: 'Redistribuição do fluxo para os ápices — vasos dos campos superiores tão ou mais calibrosos que os basais',
     correlacao:
       'A suspensão do diurético elevou a pressão de enchimento do ventrículo esquerdo, e a pressão venosa pulmonar subiu atrás dela. Antes de encharcar alvéolo, esse aumento inverte a distribuição do fluxo: as bases, onde o edema perivascular e a vasoconstrição hipóxica aumentam a resistência, cedem fluxo para os ápices. É o primeiro degrau radiográfico da congestão — e o que a turgência jugular já sugeria.',
     distratores: [
@@ -157,11 +178,11 @@ const CARDIOVASCULAR: Record<string, VinhetaClinica> = {
         'Também torna os ápices diferentes das bases, mas no sentido oposto: no enfisema os vasos apicais ficam rarefeitos e atenuados, com hipertransparência. Aqui os vasos superiores estão mais grossos, não mais finos.',
       ),
       d(
-        'Nódulos pulmonares múltiplos nos ápices',
+        'Nódulos pulmonares nos ápices',
         'Vasos vistos de topo podem simular nódulos, mas se resolvem quando seguidos em continuidade até o hilo — o que é possível fazer neste filme. Nódulo verdadeiro tem contorno próprio e não se prolonga em ramo vascular.',
       ),
       d(
-        'Radiografia em decúbito, sem valor para avaliar distribuição vascular',
+        'Distribuição normal alterada pelo decúbito',
         'Correta como princípio: deitado, a gravidade deixa de separar ápices de bases e a redistribuição não pode ser afirmada. Mas este exame foi feito em ortostatismo, condição em que a comparação é válida — e o achado, portanto, é real.',
       ),
     ],
@@ -189,16 +210,17 @@ const CARDIOVASCULAR: Record<string, VinhetaClinica> = {
     pedido:
       'Dispneia subaguda com anti-inflamatório recente em portadora de cardiopatia e doença renal: a pergunta é se há congestão pulmonar antes de encharcamento alveolar.',
     pergunta: 'Sem consolidação e sem broncograma aéreo, que achado periférico responde à suspeita de congestão?',
-    achado: 'Linhas B de Kerley — septos interlobulares espessados por edema intersticial',
+    achado: 'Linhas B de Kerley',
+    veredito: 'Linhas B de Kerley — septos interlobulares espessados por edema intersticial',
     correlacao:
       'O anti-inflamatório reteve sódio e água em quem já tinha cardiopatia e rim limitado. A pressão venosa pulmonar subiu o suficiente para extravasar líquido para o interstício, mas ainda não para o alvéolo — por isso o exame físico tem estertores finos sem broncofonia e a radiografia tem linha, não mancha. O septo interlobular espessado é exatamente essa linha.',
     distratores: [
       d(
-        'Atelectasias laminares nas bases',
+        'Atelectasias laminares',
         'Também produzem linhas basais, mas costumam ser mais longas, mais grosseiras e acompanham perda de volume, com elevação diafragmática ou aproximação de costelas. As linhas septais são curtas, finas e tocam a pleura perpendicularmente.',
       ),
       d(
-        'Fibrose pulmonar de padrão reticular',
+        'Fibrose de padrão reticular',
         'O retículo fibrótico é periférico e basal como aqui, mas persistente e associado a faveolamento e perda de volume ao longo do tempo. Linha septal de origem congestiva é reversível: some quando o paciente é depletado, o que a fibrose não faz.',
       ),
       d(
@@ -230,7 +252,8 @@ const CARDIOVASCULAR: Record<string, VinhetaClinica> = {
     pedido:
       'Edema agudo de pulmão clínico com dor torácica prévia: a radiografia é feita à beira do leito para confirmar a extensão do encharcamento e afastar outra causa de insuficiência respiratória.',
     pergunta: 'Radiografia portátil, em AP. Qual padrão o filme mostra?',
-    achado: 'Edema pulmonar alveolar — opacidades perihilares bilaterais em "asa de borboleta"',
+    achado: 'Edema pulmonar alveolar',
+    veredito: 'Edema pulmonar alveolar — opacidades perihilares bilaterais em "asa de borboleta"',
     correlacao:
       'A pressão hidrostática ultrapassou o que o interstício e os linfáticos conseguiam drenar, e o líquido passou a preencher alvéolos. Preenchimento alveolar dá consolidação, não linha: por isso o exame físico saiu de estertores finos para crepitação difusa até os ápices, e a expectoração ficou rósea e espumosa. A distribuição central, poupando a periferia, desenha a asa de borboleta.',
     distratores: [
@@ -272,7 +295,8 @@ const CARDIOVASCULAR: Record<string, VinhetaClinica> = {
     pedido:
       'Melhora do edema periférico sem melhora respiratória proporcional: a pergunta é se há coleção pleural residual sustentando a dispneia.',
     pergunta: 'Que achado explica o murmúrio abolido e a macicez nas bases?',
-    achado: 'Derrames pleurais bilaterais — velamento dos seios costofrênicos com sinal do menisco',
+    achado: 'Derrames pleurais bilaterais',
+    veredito: 'Derrames pleurais bilaterais — velamento dos seios costofrênicos com sinal do menisco',
     correlacao:
       'O mesmo aumento de pressão que congestionou o pulmão empurra líquido para o espaço pleural, e ele se acumula onde a gravidade manda: nos recessos costofrênicos. A tríade do exame — murmúrio abolido, percussão maciça e frêmito reduzido — é a assinatura de líquido entre o pulmão e a parede, e o menisco no filme é a mesma coisa vista de outro ângulo.',
     distratores: [
@@ -285,7 +309,7 @@ const CARDIOVASCULAR: Record<string, VinhetaClinica> = {
         'Diafragma elevado também reduz o volume aerado das bases, mas mantém o seio costofrênico agudo e nítido, e a linha superior da opacidade é a própria cúpula, convexa para cima. O menisco tem concavidade superior — curvatura oposta.',
       ),
       d(
-        'Atelectasia por compressão, sem líquido pleural',
+        'Atelectasia de compressão sem líquido',
         'Existe atelectasia associada, e ela é consequência: o líquido comprime o parênquima vizinho. Mas atelectasia isolada puxa estruturas para o lado doente, e aqui não há desvio mediastinal ipsilateral — o que domina o quadro é a coleção, não a perda de volume.',
       ),
     ],
@@ -313,7 +337,8 @@ const CARDIOVASCULAR: Record<string, VinhetaClinica> = {
     pedido:
       'Bulhas abafadas, turgência jugular e pulmão limpo: a pergunta é se a silhueta cardíaca está alargada de forma compatível com coleção pericárdica.',
     pergunta: 'A dissociação entre coração grande e pulmão limpo aponta para qual achado?',
-    achado: 'Derrame pericárdico — silhueta cardíaca globosa, aumentada de forma uniforme',
+    achado: 'Derrame pericárdico',
+    veredito: 'Derrame pericárdico — silhueta cardíaca globosa, aumentada de forma uniforme',
     correlacao:
       'Congestão sistêmica com pulmão limpo é a pista central: na falência ventricular esquerda o pulmão encharca antes das jugulares estufarem, e aqui a sequência está invertida. Líquido no saco pericárdico comprime as câmaras de fora para dentro, aumenta a pressão de enchimento sem encharcar o pulmão e desenha uma silhueta que cresce para todos os lados de uma vez — globosa, com perda dos ângulos entre os segmentos.',
     distratores: [
@@ -322,11 +347,11 @@ const CARDIOVASCULAR: Record<string, VinhetaClinica> = {
         'Produz silhueta grande e pode ficar globosa, e a radiografia não separa as duas com segurança — por isso o ecocardiograma é obrigatório. O que inclina para coleção aqui é a clínica: bulhas hipofonéticas, pulso paradoxal e pulmão limpo apesar da congestão sistêmica.',
       ),
       d(
-        'Massa mediastinal anterior volumosa',
+        'Massa mediastinal anterior',
         'Também alarga o mediastino inferior, mas costuma ser assimétrica e apagar seletivamente contornos vizinhos, preservando outras linhas mediastinais. O aumento aqui é concêntrico e mantém a simetria em torno da linha média.',
       ),
       d(
-        'Cardiomegalia com congestão pulmonar',
+        'Cardiomegalia com congestão',
         'Congestão é justamente o que falta: não há redistribuição vascular, linhas septais nem derrame pleural. Coração grande com pulmão limpo é a combinação que separa a coleção pericárdica da falência ventricular esquerda descompensada.',
       ),
     ],
@@ -354,7 +379,8 @@ const CARDIOVASCULAR: Record<string, VinhetaClinica> = {
     pedido:
       'Sequela de infarto anterior extenso com ictus difuso: a pergunta é se há alteração estrutural do contorno cardíaco visível na radiografia.',
     pergunta: 'Que achado do contorno cardíaco esquerdo o filme demonstra?',
-    achado: 'Calcificação curvilínea em "casca de ovo" na borda esquerda — aneurisma ventricular pós-infarto',
+    achado: 'Aneurisma ventricular calcificado',
+    veredito: 'Calcificação curvilínea em "casca de ovo" na borda esquerda — aneurisma ventricular pós-infarto',
     correlacao:
       'Infarto anterior extenso destrói miocárdio e deixa uma parede fina que se abaúla a cada sístole; com anos, esse tecido cicatricial calcifica. O ictus difuso e amplo que se palpa é a mesma parede discinética que o filme mostra como linha calcificada acompanhando a borda ventricular esquerda.',
     distratores: [
@@ -395,12 +421,13 @@ const CARDIOVASCULAR: Record<string, VinhetaClinica> = {
     pedido:
       'Desdobramento fixo da segunda bulha em adulta jovem com cansaço progressivo: a pergunta é se há sinais de hiperfluxo pulmonar.',
     pergunta: 'Comparando artéria pulmonar e botão aórtico, que achado o filme mostra?',
-    achado: 'Aumento do fluxo pulmonar por shunt esquerda-direita — artéria pulmonar desproporcionalmente grande em relação ao botão aórtico',
+    achado: 'Hiperfluxo por shunt esquerda-direita',
+    veredito: 'Aumento do fluxo pulmonar por shunt esquerda-direita — artéria pulmonar desproporcionalmente grande em relação ao botão aórtico',
     correlacao:
       'O desdobramento fixo da segunda bulha é o sinal semiológico de uma comunicação interatrial: o volume que passa do átrio esquerdo para o direito atravessa a valva pulmonar em excesso, atrasando seu fechamento de forma constante. Esse volume extra dilata o tronco da pulmonar e enche demais a vasculatura pulmonar — e no filme a pulmonar fica grande enquanto o botão aórtico, que recebe menos volume, fica pequeno.',
     distratores: [
       d(
-        'Hipertensão arterial pulmonar sem shunt',
+        'Hipertensão pulmonar sem shunt',
         'Também dilata o tronco da pulmonar, mas o padrão distal é oposto: os vasos periféricos afilam abruptamente e a periferia fica pobre. Aqui a vascularização periférica acompanha o aumento central, o que caracteriza hiperfluxo, não obstrução.',
       ),
       d(
@@ -408,7 +435,7 @@ const CARDIOVASCULAR: Record<string, VinhetaClinica> = {
         'Uma massa junto ao hilo esquerdo pode simular tronco da pulmonar aumentado, mas não se prolonga em ramos vasculares que possam ser seguidos até a periferia. O contorno aqui continua em vasos, e não termina numa borda própria.',
       ),
       d(
-        'Dilatação pós-estenótica da aorta ascendente',
+        'Dilatação pós-estenótica da aorta',
         'É o achado da valva aórtica bicúspide, e aumenta justamente o contorno oposto: a aorta ascendente à direita. Aqui a desproporção é a favor da pulmonar, com botão aórtico pequeno.',
       ),
     ],
@@ -436,12 +463,13 @@ const CARDIOVASCULAR: Record<string, VinhetaClinica> = {
     pedido:
       'Radiografia de controle pós-implante: confirmar posição dos eletrodos e — diante da dor e da dessaturação — procurar complicação da punção.',
     pergunta: 'Além de conferir os eletrodos, qual complicação o filme demonstra?',
-    achado: 'Pneumotórax após inserção do marcapasso — complicação da punção subclávia',
+    achado: 'Pneumotórax após o implante',
+    veredito: 'Pneumotórax após inserção do marcapasso — complicação da punção subclávia',
     correlacao:
       'A punção subclávia passa rente à cúpula pleural, e mais de uma tentativa multiplica o risco de atravessá-la. O murmúrio reduzido com hipertimpanismo no ápice esquerdo é ar no espaço pleural, e a radiografia de controle — feita justamente para isso — mostra a linha pleural que confirma. Sem desvio mediastinal nem instabilidade, não há tensão: é pneumotórax simples, e o controle radiográfico existe para achá-lo antes que cresça.',
     distratores: [
       d(
-        'Eletrodo fraturado',
+        'Fratura do eletrodo de marcapasso',
         'A fratura explica falha de comando ou de sensibilidade do dispositivo, não dor pleurítica com hipertimpanismo. Além disso, o marcapasso está capturando — o ritmo é de marcapasso a 72 bpm —, o que torna descontinuidade elétrica improvável duas horas após o implante.',
       ),
       d(
@@ -478,12 +506,13 @@ const CARDIOVASCULAR: Record<string, VinhetaClinica> = {
     pedido:
       'Paciente operado do coração sem documentação, com sinais de congestão: a radiografia serve para reconhecer o material implantado e, principalmente, para não parar nele.',
     pergunta: 'Que material a radiografia identifica — e o que a leitura não pode deixar de procurar depois dele?',
-    achado: 'Artefatos de cirurgia cardíaca — fios de esternotomia e clipes de enxerto, com congestão pulmonar associada',
+    achado: 'Material de revascularização com congestão',
+    veredito: 'Artefatos de cirurgia cardíaca — fios de esternotomia e clipes de enxerto, com congestão pulmonar associada',
     correlacao:
       'Os fios medianos e os clipes ao longo do trajeto das artérias mamárias internas contam a história cirúrgica que o paciente não sabe relatar: houve esternotomia e houve revascularização. Mas reconhecer o material é o começo da leitura, não o fim — a terceira bulha e os estertores pedem que se continue olhando, e é aí que aparecem a cardiomegalia, a redistribuição vascular e as linhas septais que explicam a piora.',
     distratores: [
       d(
-        'Apenas fios de esternotomia, sem outros materiais',
+        'Apenas fios de esternotomia',
         'Fio de esternotomia diz que o esterno foi aberto, e nada além disso: vale para troca valvar, revascularização ou correção congênita. Os clipes metálicos alinhados fora da linha média acrescentam a informação que faltava — houve dissecção de mamária interna para enxerto.',
       ),
       d(
@@ -491,7 +520,7 @@ const CARDIOVASCULAR: Record<string, VinhetaClinica> = {
         'Prótese valvar tem anel denso e compacto, com forma reconhecível, projetado na topografia da valva. Clipes de enxerto são pequenos, múltiplos e distribuídos ao longo de um trajeto vascular — não formam anel.',
       ),
       d(
-        'Radiografia sem alterações além do material cirúrgico',
+        'Material cirúrgico sem outras alterações',
         'É a armadilha central deste caso, e tem nome: satisfação de busca. Encontrar o material esperado encerra a leitura antes da hora, e o que muda a conduta hoje não é o clipe de quatro anos atrás, mas a congestão nova.',
       ),
     ],
@@ -520,12 +549,13 @@ const CARDIOVASCULAR: Record<string, VinhetaClinica> = {
     pedido:
       'Controle diário de dispositivos em paciente crítica: identificar cada objeto projetado sobre o tórax e distinguir o que está dentro do que está fora do paciente.',
     pergunta: 'Diante de tantos objetos sobrepostos, qual é a leitura correta do filme?',
-    achado: 'Múltiplos artefatos médicos, incluindo objetos externos e fio de estimulação temporária — nenhum simulando doença pulmonar',
+    achado: 'Artefatos externos sobre o tórax',
+    veredito: 'Múltiplos artefatos médicos, incluindo objetos externos e fio de estimulação temporária — nenhum simulando doença pulmonar',
     correlacao:
       'Na terapia intensiva, o tórax é atravessado por camadas: o que está dentro do paciente, o que está sobre a pele e o que está apenas sobre o colchão. Botões de eletrodo de monitorização são redondos, muito densos, de contorno perfeitamente nítido e se repetem em posições simétricas — características que nenhum nódulo pulmonar tem. Reconhecê-los como externos evita a investigação de uma lesão que não existe; e seguir cada fio de ponta a ponta é o que garante que o de estimulação temporária está onde deveria.',
     distratores: [
       d(
-        'Nódulos pulmonares múltiplos, a investigar',
+        'Nódulos pulmonares múltiplos',
         'É exatamente o erro que o caso previne. Nódulo verdadeiro tem densidade de partes moles, bordas que se fundem ao parênquima e não respeita a geometria de um monitor. Estes objetos têm densidade metálica, contorno perfeitamente circular e distribuição regular sobre a parede.',
       ),
       d(
@@ -566,20 +596,21 @@ const VARIANTES: Record<string, VinhetaClinica> = {
     pedido:
       'Trauma torácico fechado: procurar fratura de arcos costais, pneumotórax e hemotórax. O marcador de lateralidade foi conferido na sala.',
     pergunta: 'O coração aparece à direita. Com marcador de lateralidade conferido e ictus palpável à direita, qual é a leitura?',
-    achado: 'Dextrocardia com situs inversus — coração e bolha gástrica à direita, confirmados pelo exame físico',
+    achado: 'Dextrocardia com situs inversus',
+    veredito: 'Dextrocardia com situs inversus — coração e bolha gástrica à direita, confirmados pelo exame físico',
     correlacao:
       'Aqui a radiografia não é o único dado: o ictus foi palpado à direita antes do filme subir. Essa convergência entre exame físico e imagem é o que transforma uma imagem estranha em diagnóstico. A bolha gástrica acompanhando o coração para a direita confirma inversão visceral completa, e a história de infecções respiratórias de repetição levanta a possibilidade de síndrome de Kartagener.',
     distratores: [
       d(
-        'Imagem digital invertida por erro de rotulagem',
+        'Imagem invertida por erro de rotulagem',
         'É o diferencial mais importante e, na prática, mais frequente que a própria dextrocardia — uma radiografia espelhada produz imagem idêntica. O que resolve é o que foi feito aqui: conferir o marcador de lateralidade e palpar o ictus. Nenhum erro de arquivo desloca um ictus.',
       ),
       d(
-        'Desvio mediastinal para a direita por colapso pulmonar',
+        'Desvio mediastinal por colapso pulmonar',
         'Deslocamento adquirido puxa o coração, mas não leva a bolha gástrica junto, e vem acompanhado de perda de volume: hemitórax menor, costelas aproximadas e hemidiafragma elevado. Nada disso existe neste filme.',
       ),
       d(
-        'Pneumotórax hipertensivo à esquerda empurrando o mediastino',
+        'Pneumotórax hipertensivo à esquerda',
         'Empurraria o coração para a direita, sim — mas com hipertransparência à esquerda, ausência de trama vascular além da linha pleural e um paciente em franca instabilidade. O exame está estável e o murmúrio é simétrico.',
       ),
     ],
@@ -607,12 +638,13 @@ const VARIANTES: Record<string, VinhetaClinica> = {
     pedido:
       'Tosse seca crônica com disfagia para sólidos em adulta jovem: a pergunta é se há alteração mediastinal comprimindo traqueia ou esôfago.',
     pergunta: 'Onde está o botão aórtico neste filme, e o que ele explica?',
-    achado: 'Arco aórtico à direita, com desvio traqueal — variante com efeito compressivo',
+    achado: 'Arco aórtico à direita',
+    veredito: 'Arco aórtico à direita, com desvio traqueal — variante com efeito compressivo',
     correlacao:
       'A combinação de tosse seca crônica e disfagia para sólidos, sem infecção e sem refluxo respondendo a tratamento, sugere compressão extrínseca das duas estruturas que passam pelo mediastino superior. O botão aórtico à direita, com a traqueia empurrada e estreitada, explica os dois sintomas de uma vez: o mesmo vaso que comprime a via aérea comprime o esôfago atrás dela.',
     distratores: [
       d(
-        'Massa mediastinal superior comprimindo a traqueia',
+        'Massa mediastinal superior',
         'Uma massa teria borda própria e densidade de partes moles, e apagaria contornos vizinhos de forma localizada. O que se vê aqui tem a densidade, a curvatura e a continuidade de um vaso, prolongando-se na aorta descendente — e continua sendo aorta, apenas do lado errado.',
       ),
       d(
@@ -620,7 +652,7 @@ const VARIANTES: Record<string, VinhetaClinica> = {
         'É a causa clássica de desvio traqueal alto e também produz disfagia. Mas o bócio desloca a traqueia a partir da região cervical, alarga a coluna aérea acima da fúrcula e costuma ser palpável no pescoço — o exame cervical aqui é normal.',
       ),
       d(
-        'Rotação do paciente simulando desvio traqueal',
+        'Desvio traqueal por rotação do paciente',
         'É a checagem obrigatória antes de valorizar qualquer desvio traqueal, e por isso merece ser considerada. Mas rotação não muda o lado do botão aórtico: ela desloca clavículas em relação aos processos espinhosos, e a aorta continua onde estava.',
       ),
     ],
@@ -649,20 +681,21 @@ const VARIANTES: Record<string, VinhetaClinica> = {
     pedido:
       'Radiografia admissional de rotina em jovem assintomático. Achado incidental de linha curva no ápice direito.',
     pergunta: 'Uma linha fina e curva atravessa o ápice direito, terminando numa pequena densidade. O que é?',
-    achado: 'Fissura ázigos — fissura acessória com a veia ázigos formando a "cabeça de girino"',
+    achado: 'Fissura ázigos',
+    veredito: 'Fissura ázigos — fissura acessória com a veia ázigos formando a "cabeça de girino"',
     correlacao:
       'Um paciente assintomático, com ausculta limpa e sem história respiratória, muda o peso da imagem: uma linha apical nesse contexto é muito mais provavelmente variante que doença. E a variante aqui tem assinatura própria — a veia ázigos, envolta por quatro folhetos pleurais, migrou através do ápice arrastando a pleura, e desenha a cabeça do girino na base da linha. Ocorre em 1 a 2% das radiografias e apenas à direita.',
     distratores: [
       d(
-        'Pneumotórax apical de pequeno volume',
+        'Pneumotórax apical',
         'A linha pleural do pneumotórax separa pulmão com trama vascular de um espaço sem trama alguma — e além dela não há vasos. Aqui há vasculatura normal dos dois lados da linha, e a linha termina numa densidade venosa, o que o pneumotórax não faz.',
       ),
       d(
-        'Cicatriz apical de tuberculose prévia',
+        'Cicatriz de tuberculose',
         'Sequela apical é irregular, associa-se a retração, espessamento pleural e perda de volume do ápice, com desvio traqueal para o lado afetado. Esta linha é lisa, fina, de curvatura suave e sem qualquer retração ao redor.',
       ),
       d(
-        'Fio de cateter venoso central',
+        'Cateter venoso central',
         'Um cateter tem densidade metálica ou plástica, calibre uniforme e trajeto que pode ser seguido até fora do tórax. Esta linha tem densidade de tecido, afila progressivamente e não sai do gradil — e o paciente não tem acesso venoso algum.',
       ),
     ],
@@ -690,7 +723,8 @@ const VARIANTES: Record<string, VinhetaClinica> = {
     pedido:
       'Tosse pós-viral em resolução: radiografia solicitada para afastar pneumonia antes de liberar o atestado.',
     pergunta: 'Há uma linha fina e reta no parênquima. Ela representa doença?',
-    achado: 'Fissura pulmonar acessória — linha fissural congênita, sem perda de volume associada',
+    achado: 'Fissura pulmonar acessória',
+    veredito: 'Fissura pulmonar acessória — linha fissural congênita, sem perda de volume associada',
     correlacao:
       'A pergunta a fazer diante de qualquer linha pulmonar é se ela vem acompanhada de alteração de volume. Fissura acessória é uma separação incompleta ou adicional entre segmentos, presente desde sempre: contorno fino, liso, em posição anatômica previsível e — o que decide — sem elevação diafragmática, sem aproximação de costelas e sem qualquer retração. Numa paciente em melhora clínica, é achado incidental.',
     distratores: [
@@ -699,7 +733,7 @@ const VARIANTES: Record<string, VinhetaClinica> = {
         'É o principal imitador e a distinção é justamente o volume: atelectasia linear costuma vir com perda de volume regional ou num contexto agudo — pós-operatório, dor que impede inspirar, imobilidade. Aqui não há nem contexto nem sinal indireto de perda de volume.',
       ),
       d(
-        'Espessamento pleural residual de pneumonia',
+        'Espessamento pleural residual',
         'Sequela pleural é irregular, mais espessa, frequentemente com obliteração do seio costofrênico correspondente, e acompanha uma pneumonia que de fato existiu. A história aqui é de quadro viral alto, sem consolidação.',
       ),
       d(
@@ -731,20 +765,21 @@ const VARIANTES: Record<string, VinhetaClinica> = {
     pedido:
       'Suspeita de síndrome do desfiladeiro torácico: a radiografia procura anomalia óssea da transição cervicotorácica.',
     pergunta: 'Que achado ósseo o filme demonstra na transição cervicotorácica?',
-    achado: 'Costela cervical — arco supranumerário originado de C7',
+    achado: 'Costela cervical',
+    veredito: 'Costela cervical — arco supranumerário originado de C7',
     correlacao:
       'A distribuição dos sintomas em C8-T1 e a redução do pulso à manobra de abdução apontam para compressão do tronco inferior do plexo braquial e da artéria subclávia na passagem entre a primeira costela e a clavícula. A costela cervical estreita esse desfiladeiro por cima. O achado é a explicação anatômica da queixa — mas a costela em si é comum e quase sempre assintomática, e só ganha significado porque a clínica bate.',
     distratores: [
       d(
-        'Fratura consolidada do primeiro arco costal',
+        'Fratura consolidada',
         'Fratura antiga deixa calo ósseo irregular, com espessamento local e contorno grosseiro, e interrompe a continuidade cortical antes de consolidar. Este arco tem cortical lisa e contínua e nasce de uma vértebra acima da primeira costela — é estrutura formada, não reparada.',
       ),
       d(
-        'Apófise transversa alongada de C7',
+        'Apófise transversa de C7',
         'É o diferencial anatômico mais próximo e a distinção é o ponto de saída e a direção: o processo transverso aponta para baixo e para fora e não articula; a costela cervical se dirige para baixo e para a frente, com articulação própria, e pode ser completa ou rudimentar.',
       ),
       d(
-        'Tumor de Pancoast no ápice direito',
+        'Tumor de Pancoast',
         'Também comprime o tronco inferior do plexo e produz sintomas em C8-T1 — é o diferencial que não se pode perder. Mas cursa com massa apical de partes moles, frequentemente com destruição costal, e num contexto de tabagismo, dor intensa e perda de peso. Aqui há apenas osso a mais, sem massa.',
       ),
     ],
@@ -772,20 +807,21 @@ const VARIANTES: Record<string, VinhetaClinica> = {
     pedido:
       'Trauma torácico leve: afastar fratura de arco costal, pneumotórax e contusão pulmonar.',
     pergunta: 'O gradil tem uma alteração de forma. Ela é traumática?',
-    achado: 'Variante congênita do gradil costal — costela bífida, com cortical lisa e contínua',
+    achado: 'Costela bífida',
+    veredito: 'Variante congênita do gradil costal — costela bífida, com cortical lisa e contínua',
     correlacao:
       'A pergunta do trauma é se o osso foi quebrado, e a resposta está na cortical: fratura interrompe a linha cortical e produz degrau, com partes moles adjacentes edemaciadas. Aqui a cortical percorre toda a extensão do arco sem descontinuidade, e a bifurcação tem margens lisas e arredondadas — forma construída, não rompida. Costela bífida é variante de desenvolvimento sem significado clínico, e o achado é incidental em relação ao trauma.',
     distratores: [
       d(
-        'Fratura de arco costal com desvio',
+        'Fratura de arco costal',
         'É o que se veio procurar, e por isso merece ser afastado explicitamente: fratura produz interrupção nítida da cortical, linha radiotransparente atravessando o osso e, quando há desvio, degrau entre os fragmentos. Nada disso está presente.',
       ),
       d(
-        'Lesão lítica expansiva de arco costal',
+        'Lesão lítica expansiva',
         'Lesão agressiva destrói cortical, produz falha óssea de margens mal definidas e frequentemente massa de partes moles associada. A cortical aqui está íntegra em toda a volta, o que praticamente exclui processo destrutivo.',
       ),
       d(
-        'Calo ósseo de fratura antiga',
+        'Calo ósseo antigo',
         'Calo é espessamento fusiforme irregular sobre um traço prévio, com aumento de densidade local. A alteração aqui é uma bifurcação simétrica com contorno regular, e o paciente nunca teve fratura costal.',
       ),
     ],
@@ -813,20 +849,21 @@ const VARIANTES: Record<string, VinhetaClinica> = {
     pedido:
       'Tosse crônica em tabagista de longa data: rastrear alteração parenquimatosa. Há opacidades arredondadas junto às extremidades anteriores das costelas.',
     pergunta: 'As opacidades junto às junções costocondrais representam nódulos pulmonares?',
-    achado: 'Calcificação das cartilagens costais — mineralização relacionada à idade, bilateral e simétrica',
+    achado: 'Calcificação das cartilagens costais',
+    veredito: 'Calcificação das cartilagens costais — mineralização relacionada à idade, bilateral e simétrica',
     correlacao:
       'Em tabagista de longa data, todo pseudonódulo merece um segundo olhar — e é justamente por isso que reconhecer este padrão importa. As cartilagens costais não são visíveis no jovem, mas calcificam progressivamente com a idade: a distribuição bilateral, simétrica, restrita às extremidades anteriores mediais das costelas e em continuidade com o osso é o que identifica a origem. Nódulo pulmonar não respeita a simetria do gradil.',
     distratores: [
       d(
-        'Nódulos pulmonares múltiplos, a investigar com tomografia',
+        'Nódulos pulmonares múltiplos',
         'É a leitura que a densidade sugere e que o contexto de tabagismo torna assustadora — mas nódulo parenquimatoso se distribui ao acaso, não em pares espelhados sobre as junções costocondrais, e não se prolonga em continuidade com a cortical costal.',
       ),
       d(
-        'Metástases pulmonares em "bala de canhão"',
+        'Metástases em bala de canhão',
         'Metástases hematogênicas são arredondadas, de tamanhos variados e espalhadas por ambos os pulmões, inclusive nas bases e na periferia posterior. Estas opacidades ocupam uma faixa anatômica estreita e previsível.',
       ),
       d(
-        'Granulomas calcificados de doença granulomatosa prévia',
+        'Granulomas calcificados residuais',
         'Granulomas calcificados são realmente densos, mas pequenos, irregulares e dispersos no parênquima, com frequência acompanhados de linfonodos hilares calcificados. Não seguem o desenho das cartilagens costais.',
       ),
     ],
@@ -854,12 +891,13 @@ const VARIANTES: Record<string, VinhetaClinica> = {
     pedido:
       'Esclarecer a "mancha" descrita em radiografia anterior num paciente com deformidade evidente da parede torácica.',
     pergunta: 'A borda cardíaca direita está apagada. Isso é doença do lobo médio?',
-    achado: 'Pectus excavatum — esterno posteriorizado, com apagamento da borda cardíaca direita e costelas em "7"',
+    achado: 'Pectus excavatum',
+    veredito: 'Pectus excavatum — esterno posteriorizado, com apagamento da borda cardíaca direita e costelas em "7"',
     correlacao:
       'O exame físico já entrega a resposta: há uma escavação esternal palpável e o ictus está desviado para a esquerda porque o esterno empurra o coração. Na incidência frontal, o tecido mole da parede deprimida encosta na borda cardíaca direita e a apaga pelo sinal da silhueta, imitando consolidação do lobo médio — mas a ausculta é limpa e não há febre. As costelas anteriores, que descem oblíquas, completam o padrão em "7", e o perfil mostra o esterno posteriorizado de forma direta.',
     distratores: [
       d(
-        'Pneumonia do lobo médio direito',
+        'Pneumonia do lobo médio',
         'É exatamente a leitura errada que este caso previne, e o sinal da silhueta é o mesmo nos dois. O que separa é o resto: consolidação teria broncograma aéreo, opacidade com densidade própria e um paciente com febre e ausculta alterada. Aqui não há nada além do apagamento da borda.',
       ),
       d(
@@ -867,7 +905,7 @@ const VARIANTES: Record<string, VinhetaClinica> = {
         'Também apaga a borda cardíaca direita, mas com perda de volume: fissura horizontal deslocada para baixo e opacidade triangular no perfil. O perfil aqui mostra esterno deprimido, não colapso lobar.',
       ),
       d(
-        'Massa mediastinal anterior direita',
+        'Massa mediastinal anterior',
         'Uma massa teria borda convexa própria e deslocaria estruturas, e seria vista como densidade adicional no perfil. O perfil demonstra a deformidade óssea diretamente — a causa é a parede, não um conteúdo novo no mediastino.',
       ),
     ],
@@ -895,12 +933,13 @@ const VARIANTES: Record<string, VinhetaClinica> = {
     pedido:
       'Dispneia de esforço com relato prévio de "coração grande": a pergunta é se a silhueta é realmente anormal ou se a técnica não permite medi-la.',
     pergunta: 'A silhueta cardíaca parece alargada. É possível afirmar cardiomegalia neste filme?',
-    achado: 'Escoliose torácica — curvatura e rotação que distorcem a projeção e invalidam a medida do índice cardiotorácico',
+    achado: 'Rotação da escoliose torácica',
+    veredito: 'Escoliose torácica — curvatura e rotação que distorcem a projeção e invalidam a medida do índice cardiotorácico',
     correlacao:
       'A rotação imposta pela curva vertebral muda a geometria de tudo o que se projeta sobre o filme: hilos, mediastino e coração aparecem em plano oblíquo, e a maior largura cardíaca medida deixa de corresponder à real. Some-se a isso a assimetria do gradil, que distorce o denominador da medida. Antes de rotular cardiomegalia, é preciso reconhecer que este filme não permite o cálculo — e a ausculta sem terceira bulha, sem sopros e sem congestão apoia essa cautela.',
     distratores: [
       d(
-        'Cardiomegalia com índice cardiotorácico aumentado',
+        'Cardiomegalia ao índice cardiotorácico',
         'É a conclusão apressada que a imagem convida a tirar. O índice cardiotorácico exige PA sem rotação, e a rotação aqui é estrutural e não corrigível pelo posicionamento — medir produziria um número que não representa o coração.',
       ),
       d(
@@ -940,7 +979,8 @@ const VIAS_AEREAS: Record<string, VinhetaClinica> = {
     pedido:
       'Revisão oncológica anual com dispneia estável: a pergunta é se há progressão de doença ou sequela do tratamento.',
     pergunta: 'A traqueia está desviada. Para que lado, e o que isso significa?',
-    achado: 'Fibrose pós-radioterapia do lobo superior esquerdo — perda de volume que puxa a traqueia para o mesmo lado',
+    achado: 'Fibrose actínica do lobo superior',
+    veredito: 'Fibrose pós-radioterapia do lobo superior esquerdo — perda de volume que puxa a traqueia para o mesmo lado',
     correlacao:
       'Excluída a rotação, o desvio traqueal é verdadeiro e a pergunta passa a ser direcional: traqueia puxada indica perda de volume do lado para onde ela vai; traqueia empurrada indica ganho. Aqui ela vai para a esquerda, onde a expansibilidade está reduzida e onde a radioterapia atuou. A opacidade retrátil, geométrica e restrita ao território irradiado, num quadro estável há um ano, é sequela — e o diagnóstico depende dessa correspondência com o campo de tratamento.',
     distratores: [
@@ -981,7 +1021,8 @@ const VIAS_AEREAS: Record<string, VinhetaClinica> = {
     pedido:
       'Febre e hipoxemia em paciente com cirurgia torácica prévia não documentada: reconhecer a anatomia pós-operatória antes de procurar a pneumonia.',
     pergunta: 'O hemitórax esquerdo está opaco e o mediastino, deslocado. Qual é a leitura?',
-    achado: 'Pneumonectomia esquerda — hemitórax opacificado com perda de volume e desvio ipsilateral do mediastino',
+    achado: 'Pneumonectomia esquerda',
+    veredito: 'Pneumonectomia esquerda — hemitórax opacificado com perda de volume e desvio ipsilateral do mediastino',
     correlacao:
       'Quando um pulmão inteiro é retirado, o espaço vazio é preenchido por líquido e depois se retrai: traqueia, coração e grandes vasos migram para o lado operado, o brônquio principal termina abruptamente e o pulmão remanescente hiperexpande, podendo cruzar a linha média. Reconhecer esse estado esperado é o que evita tratar a anatomia como doença — e libera a atenção para a base direita, onde os estertores e a febre apontam a pneumonia que de fato motivou a vinda.',
     distratores: [
@@ -990,11 +1031,11 @@ const VIAS_AEREAS: Record<string, VinhetaClinica> = {
         'Também opacifica o hemitórax, mas empurra o mediastino para o lado oposto porque adiciona volume. O desvio aqui é para o mesmo lado da opacidade — sinal de perda de volume, não de ganho.',
       ),
       d(
-        'Colapso total do pulmão esquerdo por obstrução brônquica',
+        'Colapso total do pulmão esquerdo',
         'Produz desvio ipsilateral idêntico e é o diferencial radiográfico legítimo. O que decide é a cicatriz de toracotomia e o coto brônquico terminando de forma abrupta, sem árvore brônquica distal — no colapso o pulmão continua lá, apenas sem ar.',
       ),
       d(
-        'Pneumonia extensa de todo o pulmão esquerdo',
+        'Pneumonia de todo o pulmão esquerdo',
         'Consolidação mantém o volume do hemitórax e preserva broncogramas aéreos; não retrai o gradil nem puxa o mediastino. E não explicaria a ausência completa de murmúrio associada à redução do volume do hemitórax.',
       ),
     ],
@@ -1022,7 +1063,8 @@ const VIAS_AEREAS: Record<string, VinhetaClinica> = {
     pedido:
       'Dispneia progressiva com perda de peso e exposição ao asbesto: caracterizar a opacificação do hemitórax e definir o sentido do desvio mediastinal.',
     pergunta: 'O hemitórax esquerdo está opaco. O mediastino foi empurrado ou puxado?',
-    achado: 'Grande derrame pleural à esquerda — ganho de volume que empurra o mediastino para o lado oposto',
+    achado: 'Grande derrame pleural à esquerda',
+    veredito: 'Grande derrame pleural à esquerda — ganho de volume que empurra o mediastino para o lado oposto',
     correlacao:
       'A tríade semiológica de murmúrio abolido, macicez e frêmito abolido já diz que há líquido entre o pulmão e a parede. O filme acrescenta o que o exame não mede: o volume é grande o bastante para deslocar o mediastino para a direita, e o menisco confirma a natureza líquida da opacificação. Numa história de exposição ao asbesto com perda ponderal, o derrame não é o diagnóstico final — é a porta de entrada para investigar mesotelioma.',
     distratores: [
@@ -1063,7 +1105,8 @@ const VIAS_AEREAS: Record<string, VinhetaClinica> = {
     pedido:
       'Hemitórax branco em tabagista com perda de peso: decidir se há ganho, perda ou equilíbrio de volume — e por quê.',
     pergunta: 'Há menisco pleural, mas a traqueia está desviada para o lado opaco. Como explicar?',
-    achado: 'Derrame pleural associado a colapso pulmonar por obstrução brônquica tumoral — a perda de volume supera o líquido',
+    achado: 'Derrame pleural com colapso pulmonar',
+    veredito: 'Derrame pleural associado a colapso pulmonar por obstrução brônquica tumoral — a perda de volume supera o líquido',
     correlacao:
       'O menisco confirma que existe líquido, e líquido empurra. A traqueia, porém, foi para o lado opaco: alguma coisa está puxando com mais força do que o derrame empurra. Essa força é o colapso do pulmão inteiro, e o brônquio principal esquerdo interrompido de forma abrupta mostra a causa. Em tabagista com perda de peso e linfonodo supraclavicular endurecido, a obstrução é tumoral até prova em contrário — o hemitórax branco aqui é a soma de duas coisas, não uma só.',
     distratores: [
@@ -1104,12 +1147,13 @@ const VIAS_AEREAS: Record<string, VinhetaClinica> = {
     pedido:
       'Pneumonia de repetição no mesmo lobo, sem resolução radiográfica: a pergunta é se há obstrução brônquica subjacente.',
     pergunta: 'Que achado explica a alteração persistente na base direita?',
-    achado: 'Colapso do lobo inferior direito — opacidade com perda de volume e mediastino puxado para a direita',
+    achado: 'Colapso do lobo inferior direito',
+    veredito: 'Colapso do lobo inferior direito — opacidade com perda de volume e mediastino puxado para a direita',
     correlacao:
       'Pneumonia que se repete no mesmo lobo e não resolve depois do antibiótico é obstrução até prova em contrário: o brônquio bloqueado retém secreção, infecta e não drena. O filme mostra a consequência mecânica — o lobo perdeu ar, o hemitórax direito perdeu volume e o mediastino foi puxado para esse lado. A massa obstrutiva pode não ser visível, e essa ausência não tranquiliza: em adulto, colapso lobar sem causa evidente exige broncoscopia e tomografia.',
     distratores: [
       d(
-        'Pneumonia da base direita ainda em resolução',
+        'Pneumonia da base ainda em resolução',
         'Consolidação em resolução mantém ou aumenta o volume do lobo e não puxa o mediastino. A perda de volume é o que transforma "pneumonia arrastada" em "obstrução a investigar", e é o achado que muda a conduta.',
       ),
       d(
@@ -1145,12 +1189,13 @@ const VIAS_AEREAS: Record<string, VinhetaClinica> = {
     pedido:
       'Hipoxemia e febre no pós-operatório: diferenciar atelectasia, pneumonia e complicação tromboembólica.',
     pergunta: 'A borda cardíaca esquerda tem um segundo contorno. O que ele representa?',
-    achado: 'Colapso do lobo inferior esquerdo — sinal da vela retrocardíaco, com duplo contorno da borda cardíaca',
+    achado: 'Colapso do lobo inferior esquerdo',
+    veredito: 'Colapso do lobo inferior esquerdo — sinal da vela retrocardíaco, com duplo contorno da borda cardíaca',
     correlacao:
       'A dor da laparotomia impede inspirar fundo e tossir; sem isso, a secreção se acumula, o brônquio se obstrui e o lobo inferior esquerdo colapsa — o quadro clássico do quarto dia de pós-operatório. O lobo colapsado se retrai contra a coluna, atrás do coração, e forma uma opacidade triangular que cria uma segunda borda dentro da silhueta cardíaca: o sinal da vela. O hemidiafragma esquerdo deixa de ser seguido até a coluna porque dois tecidos de mesma densidade passam a se tocar.',
     distratores: [
       d(
-        'Aumento do átrio esquerdo produzindo duplo contorno',
+        'Duplo contorno por átrio esquerdo aumentado',
         'O duplo contorno do átrio esquerdo aparece na borda direita da silhueta, não na esquerda, e vem acompanhado de carina alargada e apêndice atrial convexo. Aqui a segunda borda está à esquerda e vem com perda da linha diafragmática posterior.',
       ),
       d(
@@ -1186,12 +1231,13 @@ const VIAS_AEREAS: Record<string, VinhetaClinica> = {
     pedido:
       'Hemoptise em tabagista com perda de peso: procurar massa, colapso e sinais indiretos de obstrução brônquica.',
     pergunta: 'O campo superior direito está denso e a fissura horizontal subiu. Qual é o achado?',
-    achado: 'Colapso do lobo superior direito — fissura horizontal elevada com tração traqueal ipsilateral',
+    achado: 'Colapso do lobo superior direito',
+    veredito: 'Colapso do lobo superior direito — fissura horizontal elevada com tração traqueal ipsilateral',
     correlacao:
       'Hemoptise em tabagista de 45 anos-maço com perda ponderal é câncer de pulmão até prova em contrário, e o filme mostra o sinal indireto que frequentemente aparece antes da massa: o lobo superior direito perdeu ar, ficou denso e se retraiu para cima, levando a fissura horizontal e puxando a traqueia para o mesmo lado. Em adulto, esse colapso raramente se explica por muco ou corpo estranho — a obstrução neoplásica precisa ser excluída com broncoscopia.',
     distratores: [
       d(
-        'Consolidação pneumônica do lobo superior direito',
+        'Consolidação do lobo superior direito',
         'Pneumonia preenche o lobo sem encolhê-lo: a fissura fica no lugar ou é empurrada para baixo, e a traqueia não se desloca. A elevação da fissura é o que caracteriza perda de volume e reorienta toda a investigação.',
       ),
       d(
@@ -1227,7 +1273,8 @@ const VIAS_AEREAS: Record<string, VinhetaClinica> = {
     pedido:
       'Dispneia posicional com rouquidão e perda de peso: procurar massa mediastinal ou hilar e avaliar a posição dos hemidiafragmas.',
     pergunta: 'O hemidiafragma esquerdo está elevado e há uma massa hilar. Como os dois se conectam?',
-    achado: 'Paralisia do nervo frênico por massa hilar — hemidiafragma elevado com perda de volume do lado da lesão',
+    achado: 'Paralisia frênica por massa hilar',
+    veredito: 'Paralisia do nervo frênico por massa hilar — hemidiafragma elevado com perda de volume do lado da lesão',
     correlacao:
       'A dispneia que piora ao deitar e ao se abaixar é a assinatura clínica de um hemidiafragma que não trabalha: sem a contração, o conteúdo abdominal empurra a cúpula para cima toda vez que a gravidade favorece. O nervo frênico corre junto ao mediastino e ao hilo, e uma massa naquele território pode invadi-lo — a mesma massa que, ao envolver o nervo laríngeo recorrente, explica a rouquidão. Note que a massa impede que a traqueia se desloque livremente em direção à perda de volume.',
     distratores: [
@@ -1268,7 +1315,8 @@ const VIAS_AEREAS: Record<string, VinhetaClinica> = {
     pedido:
       'Tosse refratária a antibiótico com perda de peso e adenopatia supraclavicular: procurar massa e sinais de colapso lobar.',
     pergunta: 'Há opacidade "em véu" à esquerda com um crescente aéreo junto ao arco aórtico. Qual é o achado?',
-    achado: 'Colapso do lobo superior esquerdo — opacidade em véu com sinal da Luftsichel',
+    achado: 'Colapso do lobo superior esquerdo',
+    veredito: 'Colapso do lobo superior esquerdo — opacidade em véu com sinal da Luftsichel',
     correlacao:
       'O lobo superior esquerdo, quando colapsa, não se retrai para cima como o direito: ele se achata contra a parede anterior, e na incidência frontal isso produz um véu difuso que apaga a borda cardíaca esquerda sem apagar o hemidiafragma. O lobo inferior, hiperinsuflado, sobe medialmente para ocupar o espaço vazio e se interpõe entre o arco aórtico e o lobo colapsado — esse crescente de ar é a Luftsichel. Tosse que não responde a antibiótico, perda de peso e linfonodo supraclavicular apontam a causa obstrutiva.',
     distratores: [
@@ -1313,7 +1361,8 @@ const DISPOSITIVOS: Record<string, VinhetaClinica> = {
     pedido:
       'Hipoxemia grave com ausculta pobre e candidíase oral: caracterizar o padrão pulmonar e identificar objetos externos projetados sobre o tórax.',
     pergunta: 'Que padrão pulmonar o filme mostra — e o que é o objeto metálico sobre a parede torácica?',
-    achado: 'Opacidades intersticiais peri-hilares bilaterais compatíveis com pneumocistose, com artefato de piercing mamilar',
+    achado: 'Pneumocistose com artefato de piercing',
+    veredito: 'Opacidades intersticiais peri-hilares bilaterais compatíveis com pneumocistose, com artefato de piercing mamilar',
     correlacao:
       'A dissociação clássica entre ausculta pobre e hipoxemia grave, num paciente com candidíase oral e perda ponderal, aponta para pneumonia por Pneumocystis em imunossupressão avançada. O padrão radiográfico típico é intersticial, peri-hilar, bilateral e simétrico — mas a pneumocistose pode assumir qualquer padrão, inclusive radiografia normal, e um filme limpo jamais a exclui. O anel metálico com fecho menos denso é externo: reconhecê-lo evita investigar um nódulo que não existe.',
     distratores: [
@@ -1322,11 +1371,11 @@ const DISPOSITIVOS: Record<string, VinhetaClinica> = {
         'Também produz opacidades peri-hilares bilaterais, mas viria com cardiomegalia, redistribuição vascular, linhas septais e derrames — e num paciente de 34 anos sem cardiopatia, com febre e perda de peso, o contexto não sustenta.',
       ),
       d(
-        'Nódulo pulmonar a esclarecer, projetado no campo inferior',
+        'Nódulo pulmonar a esclarecer',
         'É o erro que o caso previne: densidade metálica, contorno perfeitamente circular e um fecho de densidade diferente denunciam objeto externo. Nódulo parenquimatoso não tem componentes de densidades distintas com geometria de joia.',
       ),
       d(
-        'Tuberculose pulmonar com padrão miliar',
+        'Tuberculose de padrão miliar',
         'É diferencial obrigatório neste contexto de imunossupressão, mas o padrão miliar é de micronódulos uniformes distribuídos por todos os campos, e não de opacidade intersticial peri-hilar confluente.',
       ),
     ],
@@ -1354,16 +1403,17 @@ const DISPOSITIVOS: Record<string, VinhetaClinica> = {
     pedido:
       'Radiografia de controle pós-implante: confirmar trajeto e posição da ponta e afastar pneumotórax antes de liberar o uso.',
     pergunta: 'Siga o cateter de uma extremidade à outra. Qual é a leitura correta do trajeto?',
-    achado: 'Cateter jugular interno tunelizado com ponta na junção cavoatrial — trajeto e posicionamento adequados',
+    achado: 'Cateter tunelizado bem posicionado',
+    veredito: 'Cateter jugular interno tunelizado com ponta na junção cavoatrial — trajeto e posicionamento adequados',
     correlacao:
       'A leitura de um cateter é sempre a mesma sequência: onde entra, por onde passa, onde termina e o que complicou. Aqui o cateter entra pela jugular interna, desce pela veia braquiocefálica e cava superior e termina na junção cavoatrial — a posição que garante fluxo alto e reduz risco de trombose e de erosão. Entre a saída na pele e a entrada venosa há um segmento que percorre um túnel subcutâneo anterior, característica dos cateteres de longa permanência, feita para reduzir infecção. Sem pneumotórax, o acesso pode ser liberado.',
     distratores: [
       d(
-        'Ponta do cateter no átrio direito, exigindo tração',
+        'Ponta intra-atrial exigindo tração',
         'Posição intra-atrial profunda deve ser corrigida por risco de arritmia e perfuração, e por isso a checagem importa. A referência é a junção cavoatrial, aproximadamente na altura do brônquio-fonte direito ou dois corpos vertebrais abaixo da carina — e a ponta aqui não a ultrapassa.',
       ),
       d(
-        'Cateter mal posicionado em veia jugular contralateral',
+        'Cateter refluído para jugular contralateral',
         'Mau posicionamento por refluxo faz o cateter subir de volta pelo pescoço, formando uma curva ascendente reconhecível acima da clavícula. O trajeto aqui é descendente e contínuo até o mediastino.',
       ),
       d(
@@ -1395,7 +1445,8 @@ const DISPOSITIVOS: Record<string, VinhetaClinica> = {
     pedido:
       'Exacerbação infecciosa em fibrose cística: avaliar o parênquima e conferir a integridade do dispositivo antes de iniciar antibiótico endovenoso.',
     pergunta: 'Que dispositivo está implantado — e o que o pulmão sob ele mostra?',
-    achado: 'Port-a-cath com ponta em posição venosa central, sobre pulmão com bronquiectasias difusas',
+    achado: 'Port-a-cath sobre bronquiectasias',
+    veredito: 'Port-a-cath com ponta em posição venosa central, sobre pulmão com bronquiectasias difusas',
     correlacao:
       'O reservatório subcutâneo puncionável ligado a um cateter que entra na subclávia é um port totalmente implantado, escolhido justamente para terapias repetidas de longa duração como as desta paciente. Reconhecê-lo é rápido — e a leitura não pode parar aí: sob o dispositivo, o pulmão mostra retículo grosseiro e linhas paralelas em "trilho de trem", que são paredes brônquicas espessadas e dilatadas. Essa é a alteração que explica a exacerbação e o baqueteamento digital.',
     distratores: [
@@ -1436,16 +1487,17 @@ const DISPOSITIVOS: Record<string, VinhetaClinica> = {
     pedido:
       'Disfunção de cateter de longa permanência: documentar ponto de entrada, trajeto, continuidade e posição da ponta.',
     pergunta: 'O que a radiografia documenta sobre este acesso?',
-    achado: 'Cateter tunelizado por subclávia esquerda, com trajeto contínuo e ponta em posição venosa central',
+    achado: 'Cateter com trajeto e ponta adequados',
+    veredito: 'Cateter tunelizado por subclávia esquerda, com trajeto contínuo e ponta em posição venosa central',
     correlacao:
       'Diante de disfunção, a radiografia responde ao que é mecânico e visível: se o cateter migrou, se dobrou, se fraturou ou se a ponta saiu da posição. Aqui o trajeto entra pela subclávia esquerda, cruza para a cava superior sem angulação abrupta e a ponta permanece central — o material está onde deveria. Isso não encerra a investigação da disfunção, que passa a ter causas que a radiografia não mostra, como trombo na ponta ou bainha de fibrina.',
     distratores: [
       d(
-        'Fratura do cateter com embolização do fragmento',
+        'Fratura do cateter com embolização',
         'É a complicação grave a excluir, e se manifesta como interrupção da linha radiopaca com fragmento em posição vascular distante. A linha aqui é contínua de ponta a ponta.',
       ),
       d(
-        'Ponta do cateter em veia jugular, por refluxo',
+        'Ponta refluída para a veia jugular',
         'Mau posicionamento por refluxo é causa mecânica frequente de disfunção e explicaria a queixa — mas exige ver o cateter curvar-se para cima em direção ao pescoço, o que não ocorre neste trajeto.',
       ),
       d(
@@ -1477,12 +1529,13 @@ const DISPOSITIVOS: Record<string, VinhetaClinica> = {
     pedido:
       'Dor óssea localizada e dispneia em paciente oncológico: identificar o material implantado e procurar doença metastática.',
     pergunta: 'Além do stent, o que a leitura sistemática encontra?',
-    achado: 'Stent esofágico com doença metastática associada — destruição costal, massa de partes moles e derrames pleurais',
+    achado: 'Stent esofágico com metástase costal',
+    veredito: 'Stent esofágico com doença metastática associada — destruição costal, massa de partes moles e derrames pleurais',
     correlacao:
       'O stent é o achado mais chamativo e o menos importante hoje: ele explica a deglutição, não a dor. Ao seguir a leitura, a quinta costela direita mostra falha cortical com massa de partes moles adjacente — exatamente onde o dedo encontra dor exquisita e abaulamento —, e os seios costofrênicos estão velados. É o caso que demonstra por que identificar o dispositivo não substitui a varredura sistemática de ossos, pleura e parênquima.',
     distratores: [
       d(
-        'Apenas o stent esofágico, sem outras alterações',
+        'Apenas o stent esofágico',
         'É a armadilha do caso: o dispositivo chama a atenção e a leitura para nele. A dor localizada à palpação com abaulamento é justamente a pista de que existe algo na parede — e existe.',
       ),
       d(
@@ -1490,7 +1543,7 @@ const DISPOSITIVOS: Record<string, VinhetaClinica> = {
         'Também interrompe a cortical e dói à palpação, mas ocorre num contexto de trauma e não vem acompanhada de massa de partes moles expansiva. Destruição óssea com massa é lesão lítica, não fratura.',
       ),
       d(
-        'Derrames pleurais de origem cardíaca',
+        'Derrames de origem cardíaca',
         'Os derrames existem, mas atribuí-los à insuficiência cardíaca ignora o resto: não há cardiomegalia, redistribuição vascular nem linhas septais, e há destruição óssea concomitante num paciente com neoplasia avançada.',
       ),
     ],
@@ -1518,7 +1571,8 @@ const DISPOSITIVOS: Record<string, VinhetaClinica> = {
     pedido:
       'Assimetria de ausculta imediatamente após intubação difícil: conferir a posição da ponta do tubo em relação à carina.',
     pergunta: 'Onde termina o tubo, e o que isso causou no pulmão contralateral?',
-    achado: 'Tubo endotraqueal no brônquio principal direito — intubação seletiva com colapso do pulmão esquerdo',
+    achado: 'Intubação seletiva do brônquio direito',
+    veredito: 'Tubo endotraqueal no brônquio principal direito — intubação seletiva com colapso do pulmão esquerdo',
     correlacao:
       'O brônquio principal direito é mais vertical e mais calibroso que o esquerdo: um tubo que avança além da carina entra nele por gravidade anatômica. A partir daí só o pulmão direito é ventilado, e o esquerdo, sem receber ar, colapsa — daí o murmúrio ausente à esquerda, a expansibilidade assimétrica, a queda da saturação e o aumento das pressões, já que todo o volume corrente passa a caber em um pulmão só. A correção é imediata e mecânica: tracionar o tubo até posição supracarinal.',
     distratores: [
@@ -1559,12 +1613,13 @@ const DISPOSITIVOS: Record<string, VinhetaClinica> = {
     pedido:
       'Reconstituir a história cirúrgica de paciente sem documentação: a radiografia é usada como registro do material implantado.',
     pergunta: 'Que procedimentos os materiais visíveis permitem reconstituir?',
-    achado: 'Fios de esternotomia com prótese valvar aórtica e clipes axilares de cirurgia mamária prévia',
+    achado: 'Prótese aórtica com clipes de mastectomia',
+    veredito: 'Fios de esternotomia com prótese valvar aórtica e clipes axilares de cirurgia mamária prévia',
     correlacao:
       'Cada material tem topografia própria e conta uma parte da história. Os fios medianos dizem que o esterno foi aberto; o anel denso na topografia valvar aórtica explica o clique metálico da ausculta e identifica troca valvar; os clipes na região axilar ficam fora do mediastino e pertencem a esvaziamento axilar da cirurgia mamária, não à cirurgia cardíaca. Ler a posição de cada um evita atribuir tudo ao mesmo procedimento.',
     distratores: [
       d(
-        'Revascularização miocárdica com enxertos de mamária',
+        'Revascularização com enxertos de mamária',
         'Clipes de revascularização acompanham o trajeto das mamárias internas, ou seja, paramedianos e junto ao esterno. Estes estão na axila, território de drenagem linfática da mama — mesma aparência, endereço diferente.',
       ),
       d(
@@ -1600,7 +1655,8 @@ const DISPOSITIVOS: Record<string, VinhetaClinica> = {
     pedido:
       'Imagem de planejamento (scout) da tomografia: reconhecer o material implantado antes da aquisição dos cortes.',
     pergunta: 'Nesta projeção de planejamento, que material está identificado e onde?',
-    achado: 'Prótese valvar mitral com fios de esternotomia, reconhecidos no scout da tomografia',
+    achado: 'Prótese valvar mitral',
+    veredito: 'Prótese valvar mitral com fios de esternotomia, reconhecidos no scout da tomografia',
     correlacao:
       'A projeção de planejamento da tomografia não é uma radiografia diagnóstica — tem resolução menor e técnica diferente — mas serve perfeitamente para reconhecer material metálico. Os fios medianos indicam a via de acesso, e o anel denso, projetado mais inferior e posterior em relação ao plano aórtico, identifica a posição mitral. Saber disso antes dos cortes importa também na prática: próteses metálicas geram artefato de endurecimento do feixe que degrada a imagem ao redor.',
     distratores: [
@@ -1613,7 +1669,7 @@ const DISPOSITIVOS: Record<string, VinhetaClinica> = {
         'Anéis de anuloplastia são menos densos, incompletos e ficam mais à direita, na topografia da valva tricúspide. A estrutura aqui é fechada, densa e projetada à esquerda da linha média.',
       ),
       d(
-        'Corpo estranho metálico na parede torácica',
+        'Corpo estranho na parede torácica',
         'Objeto de parede não respeita topografia valvar nem acompanha o movimento cardíaco, e costuma ser irregular. Este material tem forma anelar regular, característica de prótese.',
       ),
     ],
@@ -1641,16 +1697,17 @@ const DISPOSITIVOS: Record<string, VinhetaClinica> = {
     pedido:
       'Radiografia de rotina para conferir eletrodos e integridade do sistema em paciente com marcapasso.',
     pergunta: 'Os eletrodos estão íntegros. Há algo mais no filme?',
-    achado: 'Pequena opacidade pulmonar junto à margem do gerador — lesão parcialmente encoberta pelo dispositivo',
+    achado: 'Opacidade pulmonar na borda do gerador',
+    veredito: 'Pequena opacidade pulmonar junto à margem do gerador — lesão parcialmente encoberta pelo dispositivo',
     correlacao:
       'O gerador é o objeto mais denso e mais chamativo do filme, e é exatamente por isso que ele é perigoso: a atenção converge para ele, confirma que os três eletrodos estão íntegros e a leitura se encerra satisfeita. Na borda do gerador, porém, há uma opacidade pulmonar de contorno próprio, que não pertence ao dispositivo. Em ex-tabagista de 72 anos, essa opacidade precisa de tomografia — e o seguimento deste mesmo paciente mostra o que acontece quando ela é ignorada.',
     distratores: [
       d(
-        'Radiografia normal, apenas com o marcapasso',
+        'Radiografia normal apenas com o marcapasso',
         'É a leitura que a satisfação de busca produz e o motivo de este caso existir. A regra prática é obrigatória: depois de identificar qualquer dispositivo, revise deliberadamente o parênquima e os ossos que ele encobre.',
       ),
       d(
-        'Sombra do próprio gerador projetada no pulmão',
+        'Sombra do próprio gerador no pulmão',
         'O gerador tem densidade metálica homogênea e bordas retas, e não produz opacidade de densidade intermediária adjacente. Esta opacidade tem contorno independente e continua visível fora do contorno do dispositivo.',
       ),
       d(
@@ -1682,12 +1739,13 @@ const DISPOSITIVOS: Record<string, VinhetaClinica> = {
     pedido:
       'Comparação com a radiografia do ano anterior em paciente com perda ponderal e tosse persistente.',
     pergunta: 'Comparando com o exame anterior, qual é o achado?',
-    achado: 'Massa pulmonar adjacente ao gerador, com crescimento em relação ao exame anterior',
+    achado: 'Massa pulmonar em crescimento',
+    veredito: 'Massa pulmonar adjacente ao gerador, com crescimento em relação ao exame anterior',
     correlacao:
       'O que era uma opacidade discreta na borda do gerador tornou-se massa evidente, com contorno próprio independente do dispositivo. A comparação com o exame anterior é o que transforma uma imagem em informação: crescimento documentado num intervalo de doze meses, em ex-tabagista com perda ponderal, define a urgência da investigação. A tomografia realizada em seguida demonstrou doença já inoperável à época da primeira radiografia — o custo de a leitura ter parado no marcapasso.',
     distratores: [
       d(
-        'Consolidação pneumônica de instalação recente',
+        'Consolidação pneumônica recente',
         'Pneumonia se instala em dias e responde a antibiótico, com contexto febril. Esta lesão tem um ano de história documentada, cresceu progressivamente e vem com perda ponderal — evolução incompatível com processo infeccioso agudo.',
       ),
       d(
@@ -1695,7 +1753,7 @@ const DISPOSITIVOS: Record<string, VinhetaClinica> = {
         'Artefatos não crescem entre exames e não mudam de forma. O contorno da lesão avança sobre o parênquima, independentemente da posição do dispositivo, que permanece o mesmo.',
       ),
       d(
-        'Massa nova, sem correspondente no exame anterior',
+        'Massa nova sem correspondente anterior',
         'A comparação mostra o contrário, e essa distinção importa: reconhecer que a lesão já estava presente muda o estadiamento presumido, a expectativa de ressecabilidade e a lição sobre leitura sistemática.',
       ),
     ],
@@ -1723,7 +1781,8 @@ const DISPOSITIVOS: Record<string, VinhetaClinica> = {
     pedido:
       'Falha de captura do marcapasso com quase-síncope: examinar a integridade do sistema de estimulação.',
     pergunta: 'Que alteração do sistema de estimulação a radiografia mostra?',
-    achado: 'Fratura do eletrodo de marcapasso — descontinuidade do fio, com cardiomegalia e congestão associadas',
+    achado: 'Fratura do eletrodo de marcapasso',
+    veredito: 'Fratura do eletrodo de marcapasso — descontinuidade do fio, com cardiomegalia e congestão associadas',
     correlacao:
       'Falha de captura tem causas elétricas que a imagem não vê e causas mecânicas que ela vê muito bem — e a fratura do condutor é a principal delas, favorecida por nove anos de flexões repetidas na transição entre clavícula e primeira costela. A interrupção da linha radiopaca explica a bradicardia intermitente e a quase-síncope. E, como sempre, a leitura continua: a silhueta muito aumentada e os vasos superiores ingurgitados correspondem à congestão que o exame físico já mostrava.',
     distratores: [
@@ -1732,7 +1791,7 @@ const DISPOSITIVOS: Record<string, VinhetaClinica> = {
         'Também causa falha de captura e é diferencial legítimo, mas se manifesta como ponta fora da posição habitual na câmara, com trajeto íntegro. O trajeto aqui é que está rompido.',
       ),
       d(
-        'Sobreposição de estruturas simulando descontinuidade',
+        'Sobreposição simulando descontinuidade',
         'Cautela justa: costela, clavícula e o próprio gerador podem cruzar o fio e simular interrupção. A confirmação exige outra projeção ou ampliação — e é por isso que a suspeita radiográfica deve ser correlacionada com a telemetria, que aqui já mostra falha de captura.',
       ),
       d(
@@ -1768,7 +1827,8 @@ const PNEUMOTORAX: Record<string, VinhetaClinica> = {
     pedido:
       'Instabilidade hemodinâmica com murmúrio abolido e hipertimpanismo unilateral. A radiografia é registrada, mas a decisão terapêutica não a aguarda.',
     pergunta: 'Que achado o filme confirma — e qual é o erro de conduta que ele não pode induzir?',
-    achado: 'Pneumotórax hipertensivo à esquerda — colapso pulmonar total com desvio mediastinal contralateral',
+    achado: 'Pneumotórax hipertensivo',
+    veredito: 'Pneumotórax hipertensivo à esquerda — colapso pulmonar total com desvio mediastinal contralateral',
     correlacao:
       'O hemitórax esquerdo está hipertransparente e sem trama vascular, o pulmão comprimido junto ao hilo, a traqueia e o coração deslocados para a direita e o hemidiafragma esquerdo deprimido. O ar entra no espaço pleural e não sai; a pressão positiva colapsa o pulmão, torce as veias cavas e reduz o retorno venoso — daí a hipotensão com turgência jugular, que é choque obstrutivo. O erro que este filme não pode induzir é o de existir: pneumotórax hipertensivo é diagnóstico clínico, e a descompressão não deve esperar imagem.',
     distratores: [
@@ -1777,7 +1837,7 @@ const PNEUMOTORAX: Record<string, VinhetaClinica> = {
         'A diferença não é o tamanho, é a repercussão: aqui há desvio mediastinal contralateral, depressão diafragmática, hipotensão e turgência jugular. Sem esses sinais, seria simples — com eles, é uma emergência que exige agulha ou dedo antes do dreno.',
       ),
       d(
-        'Ruptura diafragmática com herniação de vísceras',
+        'Ruptura diafragmática com herniação',
         'Também causa hipertransparência e desvio mediastinal no trauma, e é diferencial importante. Mas o conteúdo herniado tem paredes, haustrações ou nível hidroaéreo, e frequentemente a sonda nasogástrica aparece dentro do tórax. Aqui o espaço é uniformemente aéreo.',
       ),
       d(
@@ -1809,12 +1869,13 @@ const PNEUMOTORAX: Record<string, VinhetaClinica> = {
     pedido:
       'Pneumotórax espontâneo primário: além de confirmar, é preciso dimensionar a coleção para decidir entre observação, aspiração e drenagem.',
     pergunta: 'Como se mede este pneumotórax, e o que a medida significa?',
-    achado: 'Pneumotórax grande — separação superior a 2 cm entre pulmão e parede no nível do hilo',
+    achado: 'Pneumotórax grande ao nível do hilo',
+    veredito: 'Pneumotórax grande — separação superior a 2 cm entre pulmão e parede no nível do hilo',
     correlacao:
       'A regra britânica clássica considera grande a separação maior que 2 cm medida no nível do hilo, e essa medida orienta a conduta. Mas ela tem uma condição de validade que costuma ser esquecida: só se aplica quando a borda pulmonar é aproximadamente paralela à parede torácica. Se a compressão for irregular, com coleções localizadas, a medida hilar subestima o volume. E o número nunca decide sozinho: sintomas, reserva pulmonar e recorrência pesam tanto quanto os centímetros.',
     distratores: [
       d(
-        'Pneumotórax pequeno, apenas apical',
+        'Pneumotórax pequeno e apical',
         'Coleção apical isolada tem menos de 2 cm no nível do hilo e frequentemente permite conduta expectante com oxigênio. A medida aqui, feita no plano correto, ultrapassa esse limite — e a diferença muda a decisão terapêutica.',
       ),
       d(
@@ -1850,7 +1911,8 @@ const PNEUMOTORAX: Record<string, VinhetaClinica> = {
     pedido:
       'Dor pleurítica sem alterações significativas ao exame: procurar ativamente linha pleural em todos os campos, especialmente nos ápices.',
     pergunta: 'O exame parece normal à primeira vista. Que achado a busca dirigida encontra?',
-    achado: 'Pneumotórax pequeno e sutil — linha pleural visceral fina, sem trama vascular além dela',
+    achado: 'Pneumotórax pequeno e sutil',
+    veredito: 'Pneumotórax pequeno e sutil — linha pleural visceral fina, sem trama vascular além dela',
     correlacao:
       'Quando o exame físico é quase normal e a queixa é pleurítica, a radiografia precisa ser interrogada e não apenas olhada: percorre-se deliberadamente o ápice e as margens laterais procurando uma linha fina como traço de lápis. Encontrada a linha, o critério que confirma é a ausência de trama vascular além dela — o espaço entre a linha e a parede está vazio. A radiografia expiratória não acrescenta benefício rotineiro; em dúvida persistente, a tomografia resolve.',
     distratores: [
@@ -1859,7 +1921,7 @@ const PNEUMOTORAX: Record<string, VinhetaClinica> = {
         'É o imitador mais comum e o que mais gera dreno desnecessário. A prega é uma borda de densidade que se prolonga para fora do gradil costal e, decisivamente, tem trama vascular dos dois lados. A linha pleural termina no gradil e tem vazio de um lado.',
       ),
       d(
-        'Borda medial da escápula sobreposta ao ápice',
+        'Borda medial da escápula sobreposta',
         'Também produz linha vertical no campo superior, mas pode ser seguida para fora do tórax até o contorno escapular, e não acompanha a curvatura do ápice pulmonar.',
       ),
       d(
@@ -1891,12 +1953,13 @@ const PNEUMOTORAX: Record<string, VinhetaClinica> = {
     pedido:
       'Pneumotórax extenso com sinais incipientes de repercussão: definir se há tensão em instalação.',
     pergunta: 'Os desvios são discretos. Isso permite adiar a conduta?',
-    achado: 'Grande pneumotórax direito com sinais iniciais de tensão — desvio cardíaco, hemidiafragma deprimido e traqueia discretamente desviada',
+    achado: 'Grande pneumotórax com tensão inicial',
+    veredito: 'Grande pneumotórax direito com sinais iniciais de tensão — desvio cardíaco, hemidiafragma deprimido e traqueia discretamente desviada',
     correlacao:
       'O filme mostra deslocamentos modestos: coração empurrado para a esquerda, hemidiafragma direito discretamente rebaixado e traqueia levemente desviada. A tentação é considerar que "ainda não está hipertensivo" e ganhar tempo. Mas a pressão intrapleural sobe de forma não linear e a deterioração pode ser rápida — o paciente já piorou em vinte minutos, com taquicardia e queda de saturação. A prioridade é via aérea, ventilação, circulação e ajuda imediata, não a discussão terminológica sobre o rótulo.',
     distratores: [
       d(
-        'Pneumotórax simples sem repercussão, apto a observação',
+        'Pneumotórax simples apto a observação',
         'Observação isolada só cabe em coleções pequenas e pacientes estáveis. Aqui há colapso extenso, hipoxemia, taquicardia e desvios já presentes — a trajetória é de piora, e ela já se manifestou durante o atendimento.',
       ),
       d(
@@ -1932,12 +1995,13 @@ const PNEUMOTORAX: Record<string, VinhetaClinica> = {
     pedido:
       'Radiografia de controle pós-drenagem: confirmar reexpansão pulmonar e a posição do dreno, incluindo seus orifícios laterais.',
     pergunta: 'O que a radiografia de controle demonstra após a drenagem?',
-    achado: 'Reexpansão pulmonar com dreno torácico posicionado e pneumotórax residual mínimo no ápice',
+    achado: 'Reexpansão com pneumotórax residual',
+    veredito: 'Reexpansão pulmonar com dreno torácico posicionado e pneumotórax residual mínimo no ápice',
     correlacao:
       'O pulmão voltou a preencher o hemitórax e resta apenas uma pequena coleção apical — desfecho esperado e que não exige, por si só, nova intervenção. A leitura do dreno tem quatro perguntas: onde está a ponta, onde estão os orifícios laterais, o trajeto é contínuo e sem dobras, e há material fora do espaço pleural. O último orifício lateral precisa estar dentro da cavidade; se ficar entre os planos da parede, o sistema aspira ar do subcutâneo e produz enfisema subcutâneo em vez de drenar.',
     distratores: [
       d(
-        'Dreno mal posicionado, com orifício fora da cavidade pleural',
+        'Orifício do dreno fora da cavidade',
         'É a complicação a procurar, e se manifesta com enfisema subcutâneo progressivo e drenagem ineficaz. Aqui o pulmão reexpandiu, o borbulhamento cessou e não há ar nos tecidos moles — o funcionamento está adequado.',
       ),
       d(
@@ -1973,7 +2037,8 @@ const PNEUMOTORAX: Record<string, VinhetaClinica> = {
     pedido:
       'Enfisema subcutâneo progressivo em paciente drenada: avaliar posição do dreno e a possibilidade de coleção pleural subjacente.',
     pergunta: 'Que achado a radiografia mostra nos tecidos moles — e o que ele pode estar escondendo?',
-    achado: 'Enfisema subcutâneo extenso após drenagem — ar dissecando planos da parede torácica e do pescoço',
+    achado: 'Enfisema subcutâneo extenso',
+    veredito: 'Enfisema subcutâneo extenso após drenagem — ar dissecando planos da parede torácica e do pescoço',
     correlacao:
       'O ar disseca os planos fasciais e desenha lucências lineares que contornam feixes musculares, produzindo o padrão em "penas" sobre a parede e o pescoço. A causa aqui é mecânica: o dreno se exteriorizou parcialmente e um orifício lateral passou a ficar fora da cavidade pleural, aspirando ar para o subcutâneo em vez de retirá-lo do tórax. E há um risco de leitura: enfisema extenso aumenta a transparência da parede e pode mascarar um pneumotórax subjacente que continua crescendo.',
     distratores: [
@@ -2014,7 +2079,8 @@ const PNEUMOTORAX: Record<string, VinhetaClinica> = {
     pedido:
       'Piora respiratória imediatamente após punção pleural: procurar pneumotórax iatrogênico e caracterizar o líquido residual.',
     pergunta: 'Há interface horizontal na base direita. O que isso indica?',
-    achado: 'Hidropneumotórax após toracocentese — ar e líquido coexistindo, com nível hidroaéreo horizontal',
+    achado: 'Hidropneumotórax pós-toracocentese',
+    veredito: 'Hidropneumotórax após toracocentese — ar e líquido coexistindo, com nível hidroaéreo horizontal',
     correlacao:
       'Depois de qualquer instrumentação pleural, procurar pneumotórax é obrigatório — e a piora paradoxal do paciente já anuncia. O detalhe que fecha o raciocínio é a forma da interface: derrame isolado forma menisco, com concavidade superior, porque o líquido sobe pela parede por capilaridade contra o pulmão expandido. Quando existe ar acima, essa força desaparece e a interface fica reta e horizontal. Nível horizontal no espaço pleural significa duas fases — ar e líquido.',
     distratores: [
@@ -2055,20 +2121,21 @@ const PNEUMOTORAX: Record<string, VinhetaClinica> = {
     pedido:
       'Piora abrupta em doença pulmonar avançada: procurar pneumotórax em ambos os lados, não apenas onde a ausculta parece pior.',
     pergunta: 'Encontrado ar pleural de um lado, a busca deve parar?',
-    achado: 'Pneumotórax bilateral em enfisema grave — bordas pulmonares visíveis nos dois hemitórax',
+    achado: 'Pneumotórax bilateral',
+    veredito: 'Pneumotórax bilateral em enfisema grave — bordas pulmonares visíveis nos dois hemitórax',
     correlacao:
       'Em pulmão enfisematoso a ausculta já é reduzida de base e a percussão já é hipertimpânica, o que torna o exame físico pouco discriminativo — a comparação entre os lados perde valor justamente quando mais se precisa dela. Por isso a regra: encontrar pneumotórax de um lado não encerra a busca. Aqui há borda pulmonar visível nos dois hemitórax, entre bolhas de paredes curvas. E o contexto importa: com reserva pulmonar mínima, mesmo coleções pequenas têm grande repercussão clínica.',
     distratores: [
       d(
-        'Pneumotórax unilateral com hiperinsuflação contralateral',
+        'Pneumotórax unilateral',
         'É a leitura incompleta que o caso previne. Hiperinsuflação por enfisema não produz borda pulmonar definida com ausência de trama além dela — e essa borda está presente dos dois lados.',
       ),
       d(
-        'Múltiplas bolhas enfisematosas, sem pneumotórax',
+        'Bolhas sem pneumotórax',
         'As bolhas existem e tornam a leitura difícil, mas a parede de bolha é curva com concavidade voltada para a parede torácica, enquanto a pleura visceral acompanha o contorno do pulmão. Quando a distinção não é possível, a tomografia é o caminho — drenar uma bolha causa dano grave.',
       ),
       d(
-        'Exacerbação infecciosa da doença de base',
+        'Exacerbação infecciosa',
         'Explicaria piora da dispneia, mas viria com aumento e mudança de aspecto da secreção, frequentemente febre, e instalação em dias. Esta piora foi abrupta, em horas, sem secreção nova.',
       ),
     ],
@@ -2096,12 +2163,13 @@ const PNEUMOTORAX: Record<string, VinhetaClinica> = {
     pedido:
       'Suspeita de pneumotórax encaminhada para drenagem: confirmar ou afastar antes de qualquer procedimento invasivo.',
     pergunta: 'A hipertransparência à esquerda justifica a drenagem imediata?',
-    achado: 'Bolha enfisematosa gigante simulando pneumotórax — pseudopneumotórax, sem indicação de dreno',
+    achado: 'Bolha gigante simulando pneumotórax',
+    veredito: 'Bolha enfisematosa gigante simulando pneumotórax — pseudopneumotórax, sem indicação de dreno',
     correlacao:
       'Três elementos separam a bolha do ar pleural. A curvatura: a parede da bolha é convexa em relação ao hilo e côncava em relação à parede torácica, enquanto a linha pleural acompanha o contorno do pulmão. A trama: dentro de bolha podem persistir septos e vasos finos atravessando, o que não existe no espaço pleural. E o tempo: comparação com exames anteriores mostrando estabilidade praticamente resolve a questão. Somando isso a um paciente sem piora aguda, drenar seria criar uma fístula broncopleural em quem não tinha problema nenhum.',
     distratores: [
       d(
-        'Pneumotórax de grande volume, com indicação de drenagem',
+        'Pneumotórax com indicação de drenagem',
         'É a conclusão do serviço que encaminhou, e o erro que o caso existe para prevenir. Faltam os elementos que sustentariam o diagnóstico: linha pleural acompanhando o contorno pulmonar, ausência absoluta de trama além dela e — sobretudo — mudança clínica aguda.',
       ),
       d(
@@ -2141,16 +2209,17 @@ const CANCER: Record<string, VinhetaClinica> = {
     pedido:
       'Alteração radiográfica persistente após antibiótico em tabagista: descrever o padrão sem presumir a causa.',
     pergunta: 'A opacidade é arredondada e bem delimitada. O que a radiografia permite afirmar sobre a etiologia?',
-    achado: 'Massa pulmonar — o padrão descreve a lesão, mas a radiografia não distingue neoplasia de infecção',
+    achado: 'Massa pulmonar de etiologia indefinida',
+    veredito: 'Massa pulmonar — o padrão descreve a lesão, mas a radiografia não distingue neoplasia de infecção',
     correlacao:
       'A resposta honesta desta questão é sobre os limites do método. Massa arredondada e consolidação podem, ambas, representar câncer; e ambas podem representar infecção. O que a radiografia entrega é a descrição — localização, tamanho, contorno, densidade, presença de cavitação, efeito sobre estruturas vizinhas — e é isso que deve constar do laudo. Etiologia se define por evolução, tomografia, broncoscopia e histologia. Em tabagista de 40 anos-maço com perda ponderal e resposta parcial ao antibiótico, a probabilidade pré-teste de neoplasia é alta, mas probabilidade não é diagnóstico.',
     distratores: [
       d(
-        'Pneumonia arredondada, a tratar com novo curso de antibiótico',
+        'Pneumonia arredondada a retratar',
         'Repetir antibiótico diante de lesão persistente é o erro que mais atrasa diagnóstico de câncer. A pneumonia arredondada existe, sobretudo em crianças, mas não se assume em adulto tabagista com perda de peso e resposta incompleta ao primeiro tratamento.',
       ),
       d(
-        'Nódulo pulmonar solitário benigno, para seguimento anual',
+        'Nódulo benigno para seguimento anual',
         'A distinção de tamanho é operacional e importa: nódulo tem até 3 cm, massa é maior — e o limiar existe justamente porque a probabilidade de malignidade sobe com o diâmetro. Uma massa não entra em seguimento anual, entra em investigação.',
       ),
       d(
@@ -2182,20 +2251,21 @@ const CANCER: Record<string, VinhetaClinica> = {
     pedido:
       'Hemoptise com perda ponderal e adenopatia supraclavicular: avaliar hilos, mediastino e espaço pleural.',
     pergunta: 'Comparando os dois hilos, qual é o achado — e o que o acompanha?',
-    achado: 'Massa hilar direita com adenopatia paratraqueal e derrame pleural — apagamento da faixa paratraqueal e menisco',
+    achado: 'Massa hilar direita com derrame',
+    veredito: 'Massa hilar direita com adenopatia paratraqueal e derrame pleural — apagamento da faixa paratraqueal e menisco',
     correlacao:
       'Hilos normais são assimétricos em formato, mas semelhantes em densidade e volume, e a comparação deve ser feita nesses termos. Aqui o hilo direito está maior e mais denso, e as estruturas vasculares que normalmente o compõem deixaram de ser individualizáveis — sinal de que algo sólido ocupou o espaço. Acima, os linfonodos alargam o mediastino e apagam a faixa paratraqueal direita; abaixo, o seio costofrênico forma menisco. É a tríade de doença hilar avançada, e o linfonodo supraclavicular palpável oferece o alvo de biópsia mais acessível.',
     distratores: [
       d(
-        'Artéria pulmonar direita proeminente por hipertensão pulmonar',
+        'Artéria pulmonar direita proeminente',
         'Vaso aumentado se prolonga em ramos que podem ser seguidos até a periferia e mantém contorno vascular. A opacidade aqui apaga a arquitetura vascular do hilo em vez de continuá-la — e não explica a faixa paratraqueal apagada.',
       ),
       d(
-        'Pneumonia da base direita com derrame parapneumônico',
+        'Pneumonia com derrame parapneumônico',
         'Explicaria opacidade basal e líquido, mas não o hilo denso com perda de arquitetura nem a adenopatia paratraqueal — e o quadro é subagudo, com perda ponderal e hemoptise, não febril agudo.',
       ),
       d(
-        'Tuberculose ganglionar com derrame pleural',
+        'Tuberculose ganglionar com derrame',
         'Diferencial legítimo, capaz de produzir adenopatia hilar e derrame. O que inclina a balança é o conjunto: 50 anos-maço, hemoptise, idade e linfonodo supraclavicular endurecido e aderido. A definição, em ambos os casos, é histológica.',
       ),
     ],
@@ -2223,7 +2293,8 @@ const CANCER: Record<string, VinhetaClinica> = {
     pedido:
       'Lesão pulmonar persistente com febre baixa e perda de peso: caracterizar contorno, parede e conteúdo.',
     pergunta: 'A lesão tem centro escavado. O que a espessura e o contorno da parede sugerem?',
-    achado: 'Massa pulmonar cavitada — necrose central com parede espessa e irregular',
+    achado: 'Massa pulmonar cavitada',
+    veredito: 'Massa pulmonar cavitada — necrose central com parede espessa e irregular',
     correlacao:
       'Tumores sólidos crescem além da própria vascularização, necrosam no centro e drenam o material necrótico pelo brônquio, deixando uma cavidade. A parede é o dado que orienta: espessa e irregular, com nódulo mural, favorece neoplasia — o carcinoma escamoso é o que mais cavita; fina e regular favorece processo infeccioso ou bolha infectada. Mas favorecer não é definir: abscesso e vasculite também cavitam, e só clínica, tomografia e histologia fecham. Os fios e clipes são de revascularização prévia e não têm relação com a lesão.',
     distratores: [
@@ -2264,7 +2335,8 @@ const CANCER: Record<string, VinhetaClinica> = {
     pedido:
       'Sibilância fixa e unilateral sem resposta a broncodilatador: procurar obstrução brônquica central.',
     pergunta: 'A fissura horizontal está elevada e tem uma convexidade focal. Que sinal é esse?',
-    achado: 'Colapso do lobo superior direito com sinal do S dourado — massa central deformando a fissura elevada',
+    achado: 'Colapso lobar com S de Golden',
+    veredito: 'Colapso do lobo superior direito com sinal do S dourado — massa central deformando a fissura elevada',
     correlacao:
       'Sibilo fixo, unilateral e que não muda com a tosse é obstrução de via aérea central, não broncoespasmo difuso — por isso o tratamento para asma falhou. No filme, a perda de volume eleva a fissura horizontal, e a massa que obstrui o brônquio do lobo superior direito empurra a porção medial dessa fissura para baixo, criando uma convexidade. A soma das duas curvaturas desenha um S invertido, e esse sinal é altamente sugestivo de neoplasia central. Note que o sinal indireto costuma ser mais evidente que a própria massa.',
     distratores: [
@@ -2305,12 +2377,13 @@ const CANCER: Record<string, VinhetaClinica> = {
     pedido:
       'Comparação com o exame de dezoito meses atrás em paciente com nódulo previamente documentado.',
     pergunta: 'Comparando os dois exames, que mudança indica progressão?',
-    achado: 'Progressão tumoral com paralisia frênica — massa que cresceu até o hilo, com nova elevação do hemidiafragma',
+    achado: 'Progressão tumoral com paralisia frênica',
+    veredito: 'Progressão tumoral com paralisia frênica — massa que cresceu até o hilo, com nova elevação do hemidiafragma',
     correlacao:
       'A comparação seriada é o instrumento mais potente da radiografia de tórax, e aqui ela mostra duas coisas: o nódulo cresceu até se tornar massa em contato com o hilo e a borda cardíaca, e o hemidiafragma direito, antes normal, subiu. Essa elevação nova é o sinal de que o nervo frênico foi invadido ou comprimido — e explica a dispneia que piora ao deitar, quando o conteúdo abdominal empurra a cúpula paralisada. Uma alteração do hemidiafragma pode ser a primeira pista de progressão, antes mesmo de sintomas respiratórios francos.',
     distratores: [
       d(
-        'Elevação diafragmática por técnica ou má inspiração',
+        'Elevação diafragmática por má inspiração',
         'É a checagem correta, porque inspiração incompleta eleva ambas as cúpulas. Mas aqui a elevação é unilateral, é nova em relação a um exame anterior adequado e acompanha crescimento tumoral documentado.',
       ),
       d(
@@ -2318,7 +2391,7 @@ const CANCER: Record<string, VinhetaClinica> = {
         'Simula elevação diafragmática e muda com o decúbito, o que permite distingui-lo. Também não explicaria o crescimento da massa hilar nem a evolução em dezoito meses.',
       ),
       d(
-        'Hepatomegalia empurrando a cúpula direita',
+        'Hepatomegalia elevando a cúpula',
         'Produz elevação da cúpula, mas seria acompanhada de fígado palpável e de alterações hepáticas ao exame. Não há hepatomegalia, e a massa hilar contígua ao nervo frênico oferece explicação direta.',
       ),
     ],
@@ -2347,7 +2420,8 @@ const CANCER: Record<string, VinhetaClinica> = {
     pedido:
       'Dor de ritmo inflamatório sem resposta a tratamento conservador, com perda de peso: investigar parede torácica e ápice pulmonar.',
     pergunta: 'A dor não é do ombro. Que achado o filme mostra?',
-    achado: 'Massa pulmonar com destruição da terceira e quarta costelas — invasão direta da parede torácica',
+    achado: 'Massa pulmonar com destruição costal',
+    veredito: 'Massa pulmonar com destruição da terceira e quarta costelas — invasão direta da parede torácica',
     correlacao:
       'Dor que não respeita o movimento, acorda à noite e não responde a fisioterapia não é dor mecânica de ombro. No filme, a massa do campo superior direito atravessa a pleura e destrói segmentos costais, e é essa invasão que explica a dor — o osso é ricamente inervado no periósteo. A lição de leitura é revisar deliberadamente as costelas atrás de qualquer massa e nos ápices: a destruição óssea muda o estadiamento e frequentemente é a manifestação dominante do tumor de sulco superior.',
     distratores: [
@@ -2356,7 +2430,7 @@ const CANCER: Record<string, VinhetaClinica> = {
         'É o diagnóstico presumido que levou à fisioterapia e o motivo do atraso. Dor do manguito é mecânica, piora em arcos específicos de movimento e melhora em repouso — não acorda o paciente todas as noites nem vem com perda ponderal.',
       ),
       d(
-        'Fratura patológica sem lesão primária identificável',
+        'Fratura patológica sem lesão primária',
         'A falha cortical existe, mas há massa de partes moles contígua ao osso, o que identifica a origem: a lesão pulmonar invadiu a parede. Descrever apenas a fratura perderia o essencial.',
       ),
       d(
@@ -2388,12 +2462,13 @@ const CANCER: Record<string, VinhetaClinica> = {
     pedido:
       'Controle pós-radioterapia estereotáxica: comparar dimensões da lesão com o exame pré-tratamento.',
     pergunta: 'Comparando com o exame anterior, o que aconteceu com a lesão?',
-    achado: 'Redução significativa do nódulo espiculado após radioterapia — resposta ao tratamento',
+    achado: 'Redução da lesão após radioterapia',
+    veredito: 'Redução significativa do nódulo espiculado após radioterapia — resposta ao tratamento',
     correlacao:
       'As margens espiculadas eram o achado que motivou a biópsia: espículas representam extensão do tumor ao longo de septos e linfáticos e têm alto valor preditivo de malignidade. No controle, a lesão diminuiu de forma expressiva. A comparação precisa seguir regras para valer: mesma incidência, mesma técnica quando possível, e medida do mesmo eixo. E há um cuidado permanente no seguimento — a fibrose actínica que se desenvolve no território irradiado pode mascarar ou simular recidiva nos exames seguintes.',
     distratores: [
       d(
-        'Progressão da lesão, com aumento de dimensões',
+        'Progressão com aumento de dimensões',
         'A comparação mostra o oposto, e é justamente a comparação — e não a impressão sobre um único filme — que estabelece a direção da mudança. Ler o exame atual isoladamente não permitiria essa conclusão.',
       ),
       d(
@@ -2430,7 +2505,8 @@ const CANCER: Record<string, VinhetaClinica> = {
     pedido:
       'Piora clínica após resposta inicial: comparar a série de exames para documentar recidiva e definir extensão.',
     pergunta: 'Na série temporal, que achados caracterizam a progressão?',
-    achado: 'Recidiva com consolidação distal, perda de volume, derrame pleural e extensão mediastinal',
+    achado: 'Recidiva com extensão pleuromediastinal',
+    veredito: 'Recidiva com consolidação distal, perda de volume, derrame pleural e extensão mediastinal',
     correlacao:
       'A série conta uma história em capítulos: a massa hilar respondeu à quimioterapia, mas a paralisia frênica persistiu — sinal indireto que não regride porque o nervo já estava lesado. Depois vem a recidiva, com consolidação distal à obstrução, fissura que sobe acompanhando a perda de volume, derrame pleural e extensão para o mediastino contralateral. A regra prática que o caso ensina: compare sempre na mesma ordem, use fissuras e hemidiafragma para julgar volume, e pleura e mediastino para julgar extensão. Resposta parcial não encerra vigilância.',
     distratores: [
@@ -2472,16 +2548,17 @@ const CANCER: Record<string, VinhetaClinica> = {
     pedido:
       'Dor óssea localizada em paciente oncológica: avaliar disseminação pulmonar e óssea.',
     pergunta: 'Que padrão de disseminação a radiografia documenta?',
-    achado: 'Metástases do câncer pulmonar — nódulos no pulmão contralateral e lesão expansiva de costela',
+    achado: 'Metástases pulmonares e costal',
+    veredito: 'Metástases do câncer pulmonar — nódulos no pulmão contralateral e lesão expansiva de costela',
     correlacao:
       'Um tumor pulmonar dissemina por duas vias que a radiografia consegue mostrar: pelo próprio pulmão, gerando nódulos múltiplos inclusive no lado oposto, e pelo osso, invadindo ou metastatizando para o gradil. A expansão focal do sexto arco costal direito corresponde exatamente ao ponto de dor exquisita à palpação — a correlação entre o dedo e a imagem é o que dá segurança ao achado. Ainda assim, nem todo nódulo adicional é metástase, e a tomografia é necessária para caracterizar número, tamanho e localização.',
     distratores: [
       d(
-        'Fratura costal patológica sem lesão expansiva',
+        'Fratura costal patológica sem lesão',
         'A alteração aqui é expansiva, com remodelamento do arco costal — o osso está sendo substituído, não apenas rompido. Descrever só a fratura perderia a natureza da lesão.',
       ),
       d(
-        'Nódulos pulmonares infecciosos por êmbolos sépticos',
+        'Nódulos por êmbolos sépticos',
         'Êmbolos sépticos produzem nódulos periféricos, frequentemente cavitados, num contexto de febre alta, endocardite ou foco infeccioso a distância. A paciente é afebril e tem neoplasia conhecida.',
       ),
       d(
@@ -2514,7 +2591,8 @@ const CANCER: Record<string, VinhetaClinica> = {
     pedido:
       'Sintomas respiratórios em paciente com neoplasia renal prévia: procurar disseminação hematogênica pulmonar.',
     pergunta: 'Os nódulos são múltiplos, bilaterais e de tamanhos variados. O padrão identifica o tumor primário?',
-    achado: 'Metástases pulmonares hematogênicas — nódulos múltiplos e bilaterais, em "bala de canhão"',
+    achado: 'Metástases hematogênicas pulmonares',
+    veredito: 'Metástases pulmonares hematogênicas — nódulos múltiplos e bilaterais, em "bala de canhão"',
     correlacao:
       'A distribuição bilateral, aleatória, com predomínio periférico e basal e nódulos de tamanhos diferentes é a assinatura da via hematogênica: cada nódulo nasceu de um êmbolo tumoral em momento distinto, e por isso os diâmetros não coincidem. O carcinoma de células renais é classicamente associado a metástases grandes e arredondadas, chamadas de "bala de canhão" — mas a aparência sugere a via de disseminação, não identifica o primário. Um paciente com nefrectomia há três anos e este padrão precisa de tomografia e reestadiamento.',
     distratores: [
@@ -2556,16 +2634,17 @@ const CANCER: Record<string, VinhetaClinica> = {
     pedido:
       'Tosse persistente em tabagista com radiografia prévia considerada normal: revisar deliberadamente as zonas cegas do filme.',
     pergunta: 'À primeira vista o filme parece normal. Onde está o achado?',
-    achado: 'Massa pulmonar retrocardíaca — lesão do lobo inferior esquerdo oculta pela silhueta cardíaca',
+    achado: 'Massa pulmonar retrocardíaca',
+    veredito: 'Massa pulmonar retrocardíaca — lesão do lobo inferior esquerdo oculta pela silhueta cardíaca',
     correlacao:
       'Existem regiões do filme onde a densidade de fundo é alta e a percepção falha: atrás do coração, atrás dos hemidiafragmas, nos ápices sobrepostos às clavículas e nos hilos. Este caso mora na primeira delas. A massa arredondada do lobo inferior esquerdo se projeta sobre o coração e só aparece a quem procura por aumento focal de densidade através da silhueta cardíaca e por assimetria retrocardíaca. Não é a imagem que muda entre um exame e outro — é o olhar.',
     distratores: [
       d(
-        'Radiografia sem alterações, com tosse a investigar por outras causas',
+        'Radiografia sem alterações',
         'Foi a conclusão do exame anterior, e é o erro perceptivo que o caso demonstra. Aumentar brilho e contraste apenas no centro dos campos pulmonares reforça a falha: a revisão precisa incluir explicitamente as zonas de sobreposição.',
       ),
       d(
-        'Aumento do átrio esquerdo produzindo densidade retrocardíaca',
+        'Duplo contorno por átrio esquerdo',
         'O átrio aumentado produz duplo contorno que acompanha a curva atrial e vem acompanhado de carina alargada e apêndice atrial convexo. Esta densidade é arredondada, de contorno próprio, e não segue a anatomia de nenhuma câmara.',
       ),
       d(
@@ -2597,12 +2676,13 @@ const CANCER: Record<string, VinhetaClinica> = {
     pedido:
       'Hemoptise em ex-tabagista com radiografia prévia normal: revisar recessos costofrênicos e o pulmão projetado abaixo da cúpula diafragmática.',
     pergunta: 'A lesão está fora dos campos pulmonares habituais. Onde ela se esconde?',
-    achado: 'Massa pulmonar projetada abaixo da cúpula diafragmática — lesão espiculada e cavitada no recesso posterior',
+    achado: 'Massa pulmonar abaixo da cúpula',
+    veredito: 'Massa pulmonar projetada abaixo da cúpula diafragmática — lesão espiculada e cavitada no recesso posterior',
     correlacao:
       'A cúpula diafragmática não marca o limite inferior do pulmão: na periferia, sobretudo posteriormente, o parênquima desce bem abaixo dela, nos recessos costofrênicos. Uma lesão nessa região se projeta sobre os tecidos moles do abdome superior e desaparece para quem só varre a área entre as clavículas e as cúpulas. Vista com atenção, a massa tem margens espiculadas e cavitação — características de alta suspeição. A regra prática: em toda radiografia, percorrer também o que está abaixo do diafragma no filme.',
     distratores: [
       d(
-        'Densidade de origem abdominal, sem relação com o tórax',
+        'Densidade de origem abdominal',
         'É a leitura que perde o diagnóstico. Uma densidade abaixo da cúpula pode ser pulmonar, e o que a identifica é o contorno próprio, independente das vísceras abdominais, e a presença de espículas e cavitação — características parenquimatosas.',
       ),
       d(
@@ -2610,7 +2690,7 @@ const CANCER: Record<string, VinhetaClinica> = {
         'Alteraria a posição da cúpula, mantendo seu contorno convexo e liso. Aqui a cúpula está em posição habitual e existe uma opacidade adicional com borda própria projetada sob ela.',
       ),
       d(
-        'Hérnia diafragmática com conteúdo intestinal',
+        'Hérnia diafragmática com alça intestinal',
         'Conteúdo herniado teria gás, haustrações ou pregas identificáveis e paredes próprias. A lesão é sólida, com centro escavado — cavitação de massa, não alça intestinal.',
       ),
     ],
@@ -2643,7 +2723,8 @@ const MEDIASTINO: Record<string, VinhetaClinica> = {
     pedido:
       'Suspeita de miastenia gravis: rastrear massa em mediastino anterior, dada a associação com timoma.',
     pergunta: 'Que linhas mediastinais permanecem visíveis — e o que isso diz sobre a localização da massa?',
-    achado: 'Massa mediastinal anterior — timoma, com preservação das linhas dos compartimentos médio e posterior',
+    achado: 'Massa mediastinal anterior',
+    veredito: 'Massa mediastinal anterior — timoma, com preservação das linhas dos compartimentos médio e posterior',
     correlacao:
       'A radiografia frontal não tem profundidade, mas tem uma ferramenta que a substitui: o sinal da silhueta. Uma massa só apaga o contorno de estruturas que estão no mesmo plano que ela. Aqui os contornos mediastinais abaúlam, mas o botão aórtico, a linha ázigo-esofágica e a aorta descendente continuam visíveis — nenhuma delas está encostada na massa, o que a coloca à frente de todas. Em paciente com quadro de fatigabilidade sugestivo de miastenia, massa anterior é timoma até que a tomografia diga o contrário.',
     distratores: [
@@ -2684,12 +2765,13 @@ const MEDIASTINO: Record<string, VinhetaClinica> = {
     pedido:
       'Sintomas B com adenopatia periférica: avaliar mediastino e espaço pleural para estadiamento inicial.',
     pergunta: 'O mediastino superior está alargado. Que estrutura desapareceu e o que isso significa?',
-    achado: 'Massa mediastinal superior por linfoma — alargamento com apagamento da faixa paratraqueal direita',
+    achado: 'Massa mediastinal superior',
+    veredito: 'Massa mediastinal superior por linfoma — alargamento com apagamento da faixa paratraqueal direita',
     correlacao:
       'A faixa paratraqueal direita é uma linha fina de tecido mole entre o ar da traqueia e o ar do pulmão; qualquer coisa que se interponha ali a espessa ou a apaga. Aqui ela desapareceu e o mediastino superior está alargado, misturando-se ao topo do botão aórtico — massa de partes moles ocupando o compartimento. Somado a sintomas B, adenopatia periférica coalescente e derrames bilaterais, o quadro aponta para linfoma; a biópsia de linfonodo, e não a imagem, dá o diagnóstico e o subtipo.',
     distratores: [
       d(
-        'Alargamento mediastinal apenas por técnica AP',
+        'Alargamento apenas por técnica AP',
         'A projeção AP realmente amplia o mediastino e essa checagem é obrigatória. Mas ampliação técnica não apaga a faixa paratraqueal nem produz contorno com borda própria — ela aumenta proporcionalmente o que já existe.',
       ),
       d(
@@ -2725,7 +2807,8 @@ const MEDIASTINO: Record<string, VinhetaClinica> = {
     pedido:
       'Dor dorsal de padrão inflamatório com sintoma radicular: procurar lesão no mediastino posterior e no sulco paravertebral.',
     pergunta: 'A borda cardíaca e o hilo estão preservados, mas uma linha sumiu. Qual, e o que ela localiza?',
-    achado: 'Massa mediastinal posterior — apagamento da linha da aorta descendente com borda cardíaca e hilo preservados',
+    achado: 'Massa mediastinal posterior',
+    veredito: 'Massa mediastinal posterior — apagamento da linha da aorta descendente com borda cardíaca e hilo preservados',
     correlacao:
       'O sinal da silhueta funciona por eliminação: a massa arredondada à esquerda não apaga a borda cardíaca nem os vasos hilares, o que a afasta dos compartimentos anterior e médio; mas apaga a linha da aorta descendente, com a qual precisa estar em contato. Isso a localiza no compartimento posterior, o sulco paravertebral — território dos tumores de origem neurogênica, o que combina com a dor de padrão inflamatório e a parestesia em faixa deste paciente. Uma massa "hilar" na frontal pode, portanto, ser posterior.',
     distratores: [
@@ -2766,7 +2849,8 @@ const MEDIASTINO: Record<string, VinhetaClinica> = {
     pedido:
       'Rouquidão persistente em tabagista: procurar lesão no trajeto do nervo laríngeo recorrente, que contorna o arco aórtico à esquerda.',
     pergunta: 'Comparando densidade e tamanho dos hilos, qual é o achado?',
-    achado: 'Aumento hilar unilateral à esquerda — hilo denso, aumentado e com perda da arquitetura vascular',
+    achado: 'Aumento hilar unilateral',
+    veredito: 'Aumento hilar unilateral à esquerda — hilo denso, aumentado e com perda da arquitetura vascular',
     correlacao:
       'A rouquidão aponta o caminho: o nervo laríngeo recorrente esquerdo desce até o tórax e contorna o arco aórtico antes de voltar à laringe, e uma lesão na janela aortopulmonar ou no hilo esquerdo pode comprometê-lo. No filme, os hilos são comparados por densidade e volume — formato normalmente difere, densidade não. O hilo esquerdo está maior, mais denso e perdeu a arquitetura vascular normal, o que significa que algo sólido substituiu ou envolveu os vasos.',
     distratores: [
@@ -2807,16 +2891,17 @@ const MEDIASTINO: Record<string, VinhetaClinica> = {
     pedido:
       'Tosse seca com eritema nodoso e artralgia: avaliar hilos e mediastino.',
     pergunta: 'Ambos os hilos estão aumentados e simétricos. Isso fecha o diagnóstico?',
-    achado: 'Aumento hilar bilateral e simétrico — padrão clássico de sarcoidose, mas não específico',
+    achado: 'Adenopatia hilar bilateral',
+    veredito: 'Aumento hilar bilateral e simétrico — padrão clássico de sarcoidose, mas não específico',
     correlacao:
       'A tríade de eritema nodoso, artralgia e adenopatia hilar bilateral tem nome — síndrome de Löfgren — e é uma apresentação aguda da sarcoidose com bom prognóstico. A radiografia mostra o achado clássico: hilos aumentados de forma bilateral e simétrica, frequentemente com adenopatia paratraqueal direita associada. Mas "bilateral" não significa automaticamente sarcoidose: o linfoma pode produzir padrão quase idêntico, e a distinção depende de distribuição, clínica e, quando necessário, biópsia. A ausculta limpa apesar da extensão radiográfica é característica.',
     distratores: [
       d(
-        'Linfoma com acometimento hilar bilateral',
+        'Linfoma com acometimento hilar',
         'É o diferencial que a imagem não resolve — o padrão pode ser praticamente idêntico. O que inclina para sarcoidose aqui é o conjunto clínico: eritema nodoso, artralgia, simetria e ausência de sintomas B francos.',
       ),
       d(
-        'Hipertensão pulmonar com aumento das artérias centrais',
+        'Hipertensão arterial pulmonar',
         'Aumenta os hilos de forma bilateral, mas as estruturas aumentadas são vasculares e se prolongam em ramos, com afilamento periférico abrupto. Não produz contornos nodulares nem adenopatia paratraqueal.',
       ),
       d(
@@ -2848,12 +2933,13 @@ const MEDIASTINO: Record<string, VinhetaClinica> = {
     pedido:
       'Consulta de rotina em sobrevivente de linfoma: distinguir sequela de tratamento de recidiva.',
     pergunta: 'Há opacidade e retração peri-hilares. Isso indica recidiva?',
-    achado: 'Fibrose pós-radioterapia peri-hilar — cicatrização retrátil na distribuição do campo irradiado',
+    achado: 'Fibrose actínica peri-hilar',
+    veredito: 'Fibrose pós-radioterapia peri-hilar — cicatrização retrátil na distribuição do campo irradiado',
     correlacao:
       'Dois elementos sustentam o diagnóstico de sequela e nenhum deles é a aparência isolada da opacidade. O primeiro é a geometria: a alteração respeita o território irradiado, com bordas que não seguem limites anatômicos de lobos ou segmentos, mas o desenho do campo de tratamento. O segundo é o comportamento no tempo: fibrose actínica estabiliza e permanece igual por anos, enquanto recidiva cresce. Sem história de radioterapia, esse diagnóstico não pode ser feito por aparência.',
     distratores: [
       d(
-        'Recidiva de linfoma com massa mediastinal',
+        'Recidiva de linfoma com massa',
         'É o que não se pode perder, e por isso a comparação com exames prévios é essencial. Recidiva produz massa com contorno convexo próprio, adenopatia e progressão documentável — não retração. E o paciente está assintomático e com peso estável há anos.',
       ),
       d(
@@ -2889,7 +2975,8 @@ const MEDIASTINO: Record<string, VinhetaClinica> = {
     pedido:
       'Sopro aórtico com pulso de ascensão lenta e tontura de esforço: avaliar o contorno da aorta.',
     pergunta: 'Que segmento da aorta está alargado, e por qual mecanismo?',
-    achado: 'Dilatação pós-estenótica da aorta ascendente — alargamento do contorno superior direito',
+    achado: 'Dilatação pós-estenótica da aorta ascendente',
+    veredito: 'Dilatação pós-estenótica da aorta ascendente — alargamento do contorno superior direito',
     correlacao:
       'A semiologia já indica estenose aórtica: sopro rude com irradiação carotídea, pulso de ascensão lenta e segunda bulha hipofonética, num paciente com sopro desde sempre — quadro típico de valva aórtica bicúspide. O jato de alta velocidade que atravessa a valva estreitada bate na parede da aorta logo adiante e a dilata: é a dilatação pós-estenótica, que pode aparecer antes de qualquer cardiomegalia ou falência ventricular. Identificar o segmento acometido é o que separa este achado do aneurisma de aorta descendente.',
     distratores: [
@@ -2931,7 +3018,8 @@ const MEDIASTINO: Record<string, VinhetaClinica> = {
     pedido:
       'Avaliação pré-operatória de rotina em idosa assintomática, com contorno aórtico proeminente.',
     pergunta: 'O botão aórtico está proeminente. Isso configura aneurisma?',
-    achado: 'Desenrolamento da aorta — alongamento senil com calcificação parietal, sem dilatação focal',
+    achado: 'Desenrolamento senil da aorta',
+    veredito: 'Desenrolamento da aorta — alongamento senil com calcificação parietal, sem dilatação focal',
     correlacao:
       'Com a idade, a aorta perde elastina, alonga-se e, presa em suas extremidades, acomoda o comprimento extra tornando-se mais tortuosa: o botão fica mais proeminente e a aorta descendente mais visível junto à coluna. É achado comum em idosos e não constitui aneurisma por si só, que exige dilatação focal do calibre. A calcificação da parede indica aterosclerose e permite, de quebra, ver onde a parede está — útil para julgar o calibre real. Numa paciente assintomática, com pulsos simétricos e sem diferença pressórica entre os braços, não há nada a investigar com urgência.',
     distratores: [
@@ -2972,12 +3060,13 @@ const MEDIASTINO: Record<string, VinhetaClinica> = {
     pedido:
       'Hipertensão de início precoce com pulsos femorais reduzidos e diferença pressórica entre membros: procurar sinais radiográficos de coarctação.',
     pergunta: 'Que dois sinais radiográficos confirmam a suspeita clínica?',
-    achado: 'Coarctação da aorta — entalhes na borda inferior das costelas e sinal do número 3',
+    achado: 'Coarctação da aorta',
+    veredito: 'Coarctação da aorta — entalhes na borda inferior das costelas e sinal do número 3',
     correlacao:
       'O gradiente pressórico entre braços e pernas com pulso femoral atrasado praticamente fecha o diagnóstico à beira do leito, e a radiografia mostra as duas consequências crônicas. A primeira é a circulação colateral: para contornar o estreitamento, as artérias intercostais dilatam e erodem a borda inferior das costelas, da quarta à oitava, bilateralmente — os entalhes. A segunda é o contorno do próprio vaso: dilatação pré-estenótica, ponto de coarctação e dilatação pós-estenótica desenham um 3. Os sinais podem ser discretos; a suspeita clínica é que orienta a angiotomografia ou a ressonância.',
     distratores: [
       d(
-        'Hipertensão essencial com aorta proeminente',
+        'Hipertensão essencial',
         'É o rótulo que a maioria dos hipertensos recebe, e o que não cabe aqui: hipertensão essencial não produz gradiente entre membros superiores e inferiores, não atrasa o pulso femoral e não gera entalhes costais. Hipertensão antes dos 30 anos exige causa secundária.',
       ),
       d(
@@ -2985,7 +3074,7 @@ const MEDIASTINO: Record<string, VinhetaClinica> = {
         'Variantes do gradil têm cortical lisa e contínua e não se limitam à borda inferior de uma sequência específica de arcos. Os entalhes da coarctação são erosões da margem inferior por vasos dilatados, com distribuição característica da quarta à oitava costela.',
       ),
       d(
-        'Neurofibromatose com erosões costais',
+        'Neurofibromatose',
         'É a outra causa clássica de entalhe costal e merece ser lembrada, mas costuma vir com lesões cutâneas, manchas café com leite e alterações vertebrais — ausentes aqui —, e não produz o contorno aórtico em 3 nem gradiente pressórico.',
       ),
     ],
@@ -3014,12 +3103,13 @@ const MEDIASTINO: Record<string, VinhetaClinica> = {
     pedido:
       'Refluxo de longa data com disfagia e tosse noturna: procurar herniação gástrica acima do diafragma.',
     pergunta: 'Há um nível hidroaéreo atrás do coração. O que ele representa?',
-    achado: 'Hérnia hiatal — estômago intratorácico com nível hidroaéreo retrocardíaco',
+    achado: 'Hérnia hiatal',
+    veredito: 'Hérnia hiatal — estômago intratorácico com nível hidroaéreo retrocardíaco',
     correlacao:
       'A herniação de parte do estômago através do hiato esofágico coloca uma víscera oca no tórax, e víscera oca com conteúdo líquido e gasoso produz nível hidroaéreo. Encontrá-lo atrás do coração, acima do diafragma, é a pista central — e explica os sintomas: o mecanismo antirrefluxo do hiato se perde, o refluxo piora e o conteúdo aspirado causa tosse noturna. A ressalva importante é a sensibilidade: hérnias pequenas frequentemente não aparecem na radiografia, e um filme normal não exclui o diagnóstico.',
     distratores: [
       d(
-        'Abscesso pulmonar do lobo inferior esquerdo',
+        'Abscesso pulmonar',
         'Também produz nível hidroaéreo, mas dentro de cavidade de paredes espessas e irregulares no parênquima, com febre, toxemia e expectoração purulenta. A paciente está afebril e o nível está em topografia mediastinal posterior, não intraparenquimatosa.',
       ),
       d(
@@ -3027,7 +3117,7 @@ const MEDIASTINO: Record<string, VinhetaClinica> = {
         'Produz nível horizontal que se estende por toda a largura do hemitórax, no espaço pleural, com linha pleural visível acima. Este nível está contido por paredes próprias, em posição retrocardíaca central.',
       ),
       d(
-        'Massa mediastinal posterior',
+        'Massa paravertebral',
         'Massa é sólida e homogênea, sem gás em seu interior. A presença de conteúdo aéreo com nível líquido identifica uma víscera oca, não uma lesão sólida.',
       ),
     ],
@@ -3055,16 +3145,17 @@ const MEDIASTINO: Record<string, VinhetaClinica> = {
     pedido:
       'Dor torácica e enfisema cervical após vômitos forçados: procurar gás no mediastino e sinais de perfuração esofágica.',
     pergunta: 'Que achado o filme mostra — e por que ele é urgente nesta história?',
-    achado: 'Pneumomediastino — gás delineando estruturas mediastinais e deslocando a pleura mediastinal',
+    achado: 'Pneumomediastino',
+    veredito: 'Pneumomediastino — gás delineando estruturas mediastinais e deslocando a pleura mediastinal',
     correlacao:
       'O ar disseca os tecidos do mediastino e produz dois achados: linhas de gás contornando estruturas que normalmente não têm borda própria — aorta, timo, traqueia — e a pleura mediastinal deslocada lateralmente, aparecendo como uma linha branca fina paralela ao mediastino. O achado pode ser muito sutil, e a crepitação cervical à palpação é frequentemente o que obriga a procurá-lo. O contexto é o que define a urgência: pneumomediastino espontâneo em jovem costuma ser benigno e autolimitado, mas depois de vômitos forçados é preciso excluir perfuração esofágica — a síndrome de Boerhaave — com tomografia e esofagograma com contraste hidrossolúvel.',
     distratores: [
       d(
-        'Pneumotórax bilateral de pequeno volume',
+        'Pneumotórax bilateral',
         'A linha pleural do pneumotórax fica na periferia, entre pulmão e parede torácica, com ausência de trama além dela. Estas linhas são centrais, acompanhando o contorno mediastinal — embora pneumotórax possa coexistir e deva ser procurado ativamente.',
       ),
       d(
-        'Enfisema subcutâneo isolado da parede torácica',
+        'Enfisema subcutâneo',
         'O ar realmente disseca para o subcutâneo cervical e é o que se palpa, mas as lucências que contornam aorta e traqueia estão dentro do mediastino. Chamar o quadro de enfisema subcutâneo isolado perderia a origem do ar e a urgência esofágica.',
       ),
       d(
