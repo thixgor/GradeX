@@ -152,6 +152,39 @@ describe('acessibilidade — verificações estáticas', () => {
     // Ctrl+roda é o zoom do navegador e precisa continuar sendo.
     expect(microscopio).toContain('if (evento.ctrlKey) return')
   })
+
+  /**
+   * O celular e o tablet, onde o palco ocupa quase a tela inteira.
+   *
+   * O palco declarava `touch-action: none` fixo. Enquanto a lâmina está
+   * enquadrada — o estado inicial de toda página — arrastar não a move, e a
+   * declaração fixa apenas impedia a página de rolar: passar o dedo sobre a
+   * lâmina não fazia nada, nem descer a tela nem mexer na imagem.
+   */
+  it('o palco não declara touch-action fixo', () => {
+    const microscopio = FONTES.get('components/histologia/microscopio.tsx')!
+    expect(microscopio).not.toContain("touchAction: 'none'")
+    // A declaração é derivada da folga de arrasto, que é testada em viewport.
+    expect(microscopio).toContain('touchAction: acaoDeToque')
+    expect(microscopio).toContain('acaoDeToqueDoPalco(folga)')
+  })
+
+  it('a pinça é tirada do navegador no início do gesto, não pelo touch-action', () => {
+    const microscopio = FONTES.get('components/histologia/microscopio.tsx')!
+    // `preventDefault` num `touchstart` de dois dedos vale mesmo quando o
+    // `touch-action` da vez permitiria rolar — é o que deixa a pinça funcionar
+    // sem ter de trancar o dedo único junto.
+    expect(microscopio).toContain("addEventListener('touchstart'")
+    expect(microscopio).toContain("addEventListener('touchmove'")
+    // Sem `passive: false`, o navegador ignora o `preventDefault`.
+    expect(microscopio).toContain('{ passive: false }')
+    expect(microscopio).toContain('evento.touches.length >= 2')
+  })
+
+  it('o toque tem um caminho próprio, separado do ponteiro do mouse', () => {
+    const microscopio = FONTES.get('components/histologia/microscopio.tsx')!
+    expect(microscopio).toContain("evento.pointerType === 'touch'")
+  })
 })
 
 describe('nenhuma promessa que os dados não sustentam', () => {

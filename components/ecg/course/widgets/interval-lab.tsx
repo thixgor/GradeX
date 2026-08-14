@@ -149,10 +149,17 @@ export function IntervalLab() {
         </LabButton>
       </div>
 
+      {/*
+        `pan-y`, e não `none`, com o paquímetro ligado: os dois cursores só
+        andam na horizontal, então é só a horizontal que precisa ser tirada do
+        navegador. Com `touch-none`, ligar o paquímetro congelava a rolagem da
+        página sobre um bloco de trezentos pixels de altura — e quem lê no
+        celular precisa passar por ele para continuar a aula.
+      */}
       <PaperFrame
         ref={svgRef}
         viewBox={`0 0 ${W} ${H}`}
-        className={caliper ? 'touch-none' : ''}
+        className={caliper ? 'touch-pan-y' : ''}
         role="img"
         aria-label={`Traçado com ${spec.label} destacado`}
         onPointerMove={(e) => {

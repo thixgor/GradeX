@@ -204,8 +204,16 @@ export function EcgLeadCanvas({
     render(0)
   }, [animate, render])
 
-  // interação da régua — com "grude" (snap) aos pontos fiduciais em modo estático
-  const handlePointer = useCallback((e: React.PointerEvent) => {
+  /**
+   * Interação da régua — com "grude" (snap) aos pontos fiduciais em modo estático.
+   *
+   * É `click`, e não `pointerdown`, de propósito. No celular o `pointerdown`
+   * dispara no instante em que o dedo encosta, antes de o navegador saber se
+   * aquilo é um toque ou o começo de uma rolagem: passar o dedo pelo traçado
+   * para descer a página largava um cursor de régua no caminho. O `click` só
+   * acontece quando o gesto termina como toque de verdade.
+   */
+  const handlePointer = useCallback((e: React.MouseEvent) => {
     if (!calipers) return
     const rect = canvasRef.current!.getBoundingClientRect()
     const rawX = e.clientX - rect.left
@@ -225,12 +233,19 @@ export function EcgLeadCanvas({
     })
   }, [calipers, snapOn, fiducials, x0, pxPerMs])
 
+  /*
+   * Sem `touch-action` declarado no invólucro: o traçado é uma imagem parada,
+   * não um mapa arrastável, e o dedo que passa por ele é de quem está lendo a
+   * página. Com `touch-action: none` aqui, o ECG virava um bloco morto no meio
+   * do manual — rolar era impossível e a pinça do navegador não ampliava o papel
+   * milimetrado, que é justamente onde a ampliação faz falta.
+   */
   return (
-    <div ref={wrapRef} className="relative w-full overflow-hidden rounded-lg" style={{ touchAction: 'none' }}>
+    <div ref={wrapRef} className="relative w-full overflow-hidden rounded-lg">
       <canvas
         ref={canvasRef}
         style={{ width: '100%', height, display: 'block', cursor: calipers ? 'crosshair' : 'default' }}
-        onPointerDown={handlePointer}
+        onClick={handlePointer}
       />
       {calipers && caliper.x1 != null && (
         <button

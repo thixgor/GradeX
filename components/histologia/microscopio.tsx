@@ -34,11 +34,13 @@ import {
   type Campo,
   type Dimensoes,
   type Objetivo,
+  acaoDeToqueDoPalco,
   aplicarObjetivo,
   aplicarZoom,
   campoDeAjuste,
   deslocar,
   enquadrar,
+  folgaDeArrasto,
   janelaVisivel,
   limitesDeEscala,
   objetivoAtual,
@@ -316,52 +318,233 @@ export function Microscopio({
     return () => palco.removeEventListener('wheel', aoRolar)
   }, [imagem, container])
 
-  /* ────────────────── arrasto e pinça ────────────────── */
+  /* ────────────────── arrasto do mouse e da caneta ────────────────── */
 
-  const ponteiros = useRef(new Map<number, { x: number; y: number }>())
-  const distanciaInicial = useRef<number | null>(null)
-  const escalaInicial = useRef(1)
+  /**
+   * Mouse e caneta ficam no modelo de ponteiro; o toque tem manipulador próprio,
+   * logo abaixo. Não é duplicação: no celular a pergunta não é "arrastar ou
+   * não", é **de quem é o gesto** — do microscópio ou da página. Um único
+   * caminho para os dois obrigava a responder essa pergunta com `touch-action:
+   * none` fixo, que é justamente o que prendia o dedo na lâmina.
+   */
+  const arrasto = useRef<{ x: number; y: number } | null>(null)
 
   const aoPressionar = (evento: React.PointerEvent<HTMLDivElement>) => {
-    if (!imagem) return
-    ;(evento.target as Element).setPointerCapture?.(evento.pointerId)
-    ponteiros.current.set(evento.pointerId, { x: evento.clientX, y: evento.clientY })
-    if (ponteiros.current.size === 2) {
-      const [a, b] = [...ponteiros.current.values()]
-      distanciaInicial.current = Math.hypot(a.x - b.x, a.y - b.y)
-      escalaInicial.current = campo.escala
-    }
+    if (!imagem || evento.pointerType === 'touch' || evento.button !== 0) return
+    evento.currentTarget.setPointerCapture?.(evento.pointerId)
+    arrasto.current = { x: evento.clientX, y: evento.clientY }
   }
 
   const aoMover = (evento: React.PointerEvent<HTMLDivElement>) => {
-    if (!imagem) return
-    const anterior = ponteiros.current.get(evento.pointerId)
-    if (!anterior) return
-    const atual = { x: evento.clientX, y: evento.clientY }
-    ponteiros.current.set(evento.pointerId, atual)
-
-    if (ponteiros.current.size >= 2 && distanciaInicial.current) {
-      const [a, b] = [...ponteiros.current.values()]
-      const distancia = Math.hypot(a.x - b.x, a.y - b.y)
-      const caixa = palcoRef.current!.getBoundingClientRect()
-      const centro = {
-        x: (a.x + b.x) / 2 - caixa.left,
-        y: (a.y + b.y) / 2 - caixa.top,
-      }
-      const razao = distancia / distanciaInicial.current
-      setCampo((c) => aplicarZoom(c, centro, escalaInicial.current * razao, imagem, container))
-      return
-    }
-
+    const anterior = arrasto.current
+    if (!imagem || !anterior || evento.pointerType === 'touch') return
+    arrasto.current = { x: evento.clientX, y: evento.clientY }
     setCampo((c) =>
-      deslocar(c, { x: atual.x - anterior.x, y: atual.y - anterior.y }, imagem, container),
+      deslocar(
+        c,
+        { x: evento.clientX - anterior.x, y: evento.clientY - anterior.y },
+        imagem,
+        container,
+      ),
     )
   }
 
   const aoSoltar = (evento: React.PointerEvent<HTMLDivElement>) => {
-    ponteiros.current.delete(evento.pointerId)
-    if (ponteiros.current.size < 2) distanciaInicial.current = null
+    arrasto.current = null
+    if (evento.currentTarget.hasPointerCapture?.(evento.pointerId)) {
+      evento.currentTarget.releasePointerCapture(evento.pointerId)
+    }
   }
+
+  /* ────────────────── gestos de toque ────────────────── */
+
+  /**
+   * De quem é o gesto: do microscópio ou da página.
+   *
+   * A regra inteira mora em `lib/histologia/viewport.ts`, junto com o resto da
+   * matemática do campo e coberta por teste — é uma decisão de comportamento
+   * fina demais para ser reencontrada por tentativa dentro de um componente de
+   * 1.500 linhas. Aqui só se calcula a folga a cada quadro e se pergunta.
+   */
+  const folga = useMemo(
+    () => (imagem ? folgaDeArrasto(campo, imagem, container) : { x: false, y: false }),
+    [campo, imagem, container],
+  )
+  const acaoDeToque = acaoDeToqueDoPalco(folga)
+
+  // Espelhos para os ouvintes nativos, que são registrados uma vez e não podem
+  // fechar sobre o estado de um render antigo.
+  const campoRef = useRef(campo)
+  campoRef.current = campo
+  const folgaRef = useRef(folga)
+  folgaRef.current = folga
+
+  /** Publica o campo no estado e no espelho, na mesma linha. */
+  const aplicarCampo = useCallback((proximo: Campo) => {
+    campoRef.current = proximo
+    setCampo(proximo)
+  }, [])
+
+  useEffect(() => {
+    const palco = palcoRef.current
+    if (!palco || !imagem) return
+
+    let modo: 'nenhum' | 'arrasto' | 'pinca' = 'nenhum'
+    let ultimo = { x: 0, y: 0 }
+    let distanciaInicial = 1
+    let escalaInicial = 1
+    let inicioDoToque = 0
+    let percorrido = 0
+    let toqueAnteriorEm = 0
+    let pontoDoToqueAnterior = { x: 0, y: 0 }
+
+    const distancia = (a: Touch, b: Touch) =>
+      Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY)
+
+    const centroNoPalco = (a: Touch, b: Touch) => {
+      const caixa = palco.getBoundingClientRect()
+      return {
+        x: (a.clientX + b.clientX) / 2 - caixa.left,
+        y: (a.clientY + b.clientY) / 2 - caixa.top,
+      }
+    }
+
+    const aoTocar = (evento: TouchEvent) => {
+      if (evento.touches.length >= 2) {
+        /*
+         * Dois dedos são sempre do microscópio. `preventDefault` logo no início
+         * do gesto tira dele a rolagem e o zoom do navegador mesmo quando o
+         * `touch-action` da vez os permitiria — é o que deixa a pinça funcionar
+         * sem ter de trancar o dedo único junto.
+         */
+        if (evento.cancelable) evento.preventDefault()
+        distanciaInicial = Math.max(1, distancia(evento.touches[0], evento.touches[1]))
+        escalaInicial = campoRef.current.escala
+        modo = 'pinca'
+        return
+      }
+
+      // Toque que começa num controle sobreposto ao palco (o "apagar destaque")
+      // é do controle, não da lâmina.
+      if ((evento.target as Element | null)?.closest?.('button')) {
+        modo = 'nenhum'
+        return
+      }
+
+      modo = 'arrasto'
+      ultimo = { x: evento.touches[0].clientX, y: evento.touches[0].clientY }
+      inicioDoToque = evento.timeStamp
+      percorrido = 0
+    }
+
+    const aoArrastarComToque = (evento: TouchEvent) => {
+      if (modo === 'pinca') {
+        if (evento.touches.length < 2) return
+        if (evento.cancelable) evento.preventDefault()
+        const [a, b] = [evento.touches[0], evento.touches[1]]
+        const razao = distancia(a, b) / distanciaInicial
+        const centro = centroNoPalco(a, b)
+        // Escrever o espelho **antes** do `setCampo` não é zelo: `touchmove`
+        // chega mais rápido do que o React re-renderiza, e dois eventos no mesmo
+        // quadro leriam o mesmo campo velho — a lâmina tremeria e o ponto sob os
+        // dedos escaparia.
+        aplicarCampo(aplicarZoom(campoRef.current, centro, escalaInicial * razao, imagem, container))
+        return
+      }
+
+      if (modo !== 'arrasto' || evento.touches.length !== 1) return
+
+      const toque = evento.touches[0]
+      const delta = { x: toque.clientX - ultimo.x, y: toque.clientY - ultimo.y }
+      percorrido += Math.abs(delta.x) + Math.abs(delta.y)
+      ultimo = { x: toque.clientX, y: toque.clientY }
+
+      const { x: folgaX, y: folgaY } = folgaRef.current
+      // Lâmina inteira à vista: não há o que arrastar e o dedo é da página.
+      if (!folgaX && !folgaY) return
+
+      const antes = campoRef.current
+      const depois = deslocar(antes, delta, imagem, container)
+      aplicarCampo(depois)
+
+      // Com folga em um eixo só, o `touch-action` já entregou o outro ao
+      // navegador: cancelar o gesto aqui tiraria dele a rolagem que ele está
+      // fazendo certo.
+      if (!(folgaX && folgaY)) return
+      if (evento.cancelable) evento.preventDefault()
+
+      /*
+       * A lâmina encostou na borda e o dedo continuou: o que sobrou do gesto
+       * volta a ser da página. Sem isto, uma lâmina ampliada vira uma armadilha
+       * de rolagem no meio do artigo — o aluno chega ao fim da imagem e a tela
+       * simplesmente para de responder.
+       */
+      const sobra = delta.y - (depois.y - antes.y)
+      if (!telaCheia && Math.abs(sobra) > 0.5 && Math.abs(delta.y) > Math.abs(delta.x)) {
+        window.scrollBy(0, -sobra)
+      }
+    }
+
+    const aoLevantar = (evento: TouchEvent) => {
+      // Sobrou um dedo depois da pinça: vira arrasto a partir de onde ele está,
+      // senão a lâmina salta no primeiro milímetro.
+      if (modo === 'pinca' && evento.touches.length === 1) {
+        modo = 'arrasto'
+        ultimo = { x: evento.touches[0].clientX, y: evento.touches[0].clientY }
+        percorrido = Infinity
+        return
+      }
+      if (evento.touches.length > 0) return
+
+      const foiToqueSeco =
+        modo === 'arrasto' && percorrido < 12 && evento.timeStamp - inicioDoToque < 320
+      modo = 'nenhum'
+      if (!foiToqueSeco) return
+
+      const perto =
+        evento.timeStamp - toqueAnteriorEm < 320 &&
+        Math.hypot(ultimo.x - pontoDoToqueAnterior.x, ultimo.y - pontoDoToqueAnterior.y) < 40
+
+      if (!perto) {
+        toqueAnteriorEm = evento.timeStamp
+        pontoDoToqueAnterior = ultimo
+        return
+      }
+
+      // Duplo toque: alterna entre a lâmina inteira e o aumento de trabalho,
+      // ancorado onde o dedo tocou. É o gesto que substitui a roda do mouse em
+      // quem estuda no celular.
+      toqueAnteriorEm = 0
+      const caixa = palco.getBoundingClientRect()
+      const foco = { x: ultimo.x - caixa.left, y: ultimo.y - caixa.top }
+      const { ajuste } = limitesDeEscala(imagem, container)
+      const ampliada = campoRef.current.escala > ajuste * 1.05
+      aplicarCampo(
+        aplicarZoom(
+          campoRef.current,
+          foco,
+          ampliada ? ajuste : ajuste * OBJETIVOS[1].fator,
+          imagem,
+          container,
+        ),
+      )
+    }
+
+    const aoCancelar = () => {
+      modo = 'nenhum'
+    }
+
+    palco.addEventListener('touchstart', aoTocar, { passive: false })
+    palco.addEventListener('touchmove', aoArrastarComToque, { passive: false })
+    palco.addEventListener('touchend', aoLevantar)
+    palco.addEventListener('touchcancel', aoCancelar)
+    return () => {
+      palco.removeEventListener('touchstart', aoTocar)
+      palco.removeEventListener('touchmove', aoArrastarComToque)
+      palco.removeEventListener('touchend', aoLevantar)
+      palco.removeEventListener('touchcancel', aoCancelar)
+    }
+  }, [imagem, container, telaCheia, aplicarCampo])
 
   /* ────────────────── teclado ────────────────── */
 
@@ -744,9 +927,10 @@ export function Microscopio({
           className={`relative overflow-hidden bg-[#0d1210] outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-teal-400 ${
             telaCheia ? 'h-full' : altura === 'tela' ? 'h-[70vh]' : 'aspect-[4/3]'
           }`}
-          // `touch-action: none` entrega os gestos ao visualizador. Sem isso, o
-          // arrasto rolaria a página no celular e a lâmina ficaria intocável.
-          style={{ touchAction: 'none', cursor: 'grab' }}
+          // Calculado a cada quadro a partir da folga da lâmina — ver
+          // `acaoDeToque`. Fixá-lo em `none` é o que trancava a rolagem da
+          // página no celular sobre uma lâmina que nem tinha para onde ir.
+          style={{ touchAction: acaoDeToque, cursor: 'grab' }}
         >
           {/* Retícula do micrômetro, sob a lâmina */}
           <div
@@ -968,8 +1152,11 @@ export function Microscopio({
       </div>
 
       <p id={`${idBase}-instrucoes`} className="sr-only">
-        Arraste para deslocar a lâmina, use a roda do mouse ou o gesto de pinça para o zoom. Pelo
-        teclado: setas deslocam, mais e menos aproximam e afastam, zero enquadra a lâmina inteira,
+        Arraste para deslocar a lâmina, use a roda do mouse ou o gesto de pinça para o zoom. No
+        celular e no tablet, um dedo rola a página enquanto a lâmina inteira está enquadrada e
+        passa a deslocá-la depois que ela é ampliada; dois dedos aproximam e afastam; dois toques
+        seguidos alternam entre a lâmina inteira e o aumento de trabalho. Pelo teclado: setas
+        deslocam, mais e menos aproximam e afastam, zero enquadra a lâmina inteira,
         teclas 1 a 4 trocam de objetivo, L alterna todas as camadas, N e P passam de uma estrutura
         marcada para a seguinte ou a anterior, Esc apaga o destaque, F alterna a tela cheia e ponto
         de interrogação abre a lista de atalhos.

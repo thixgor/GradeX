@@ -289,8 +289,44 @@ export function Heart3D(props: Props) {
     const onUp = () => { dragging = false }
     const onMove = (e: PointerEvent) => { if (!dragging) return; targetRY += (e.clientX - lx) * 0.01; targetRX = Math.max(-1.0, Math.min(1.2, targetRX + (e.clientY - ly) * 0.01)); lx = e.clientX; ly = e.clientY }
     const onWheel = (e: WheelEvent) => { e.preventDefault(); camera.position.z = Math.max(6, Math.min(15, camera.position.z + e.deltaY * 0.01)) }
-    const el = renderer.domElement; el.style.touchAction = 'none'
-    el.addEventListener('pointerdown', onDown); window.addEventListener('pointerup', onUp); window.addEventListener('pointermove', onMove); el.addEventListener('wheel', onWheel, { passive: false })
+
+    const el = renderer.domElement
+    /*
+     * `pan-y`, e não `none`: girar o coração é gesto horizontal — é o eixo em
+     * que ele tem faces diferentes para mostrar — e o gesto vertical continua
+     * sendo o da página. Com `none`, arrastar o dedo sobre o coração no meio da
+     * simulação simplesmente travava a rolagem do manual.
+     *
+     * Quando o navegador decide que a vertical virou rolagem, ele emite
+     * `pointercancel`; sem tratá-lo, o modelo continuava "sendo arrastado" com
+     * o dedo já longe dali.
+     */
+    el.style.touchAction = 'pan-y'
+    el.addEventListener('pointerdown', onDown); window.addEventListener('pointerup', onUp); window.addEventListener('pointercancel', onUp); window.addEventListener('pointermove', onMove); el.addEventListener('wheel', onWheel, { passive: false })
+
+    // Pinça: aproxima e afasta a câmera. `preventDefault` no início do gesto de
+    // dois dedos tira dele o zoom do navegador, que sobre uma tela WebGL só
+    // ampliaria pixels borrados em vez de reenquadrar a cena.
+    let pincaInicial: { distancia: number; z: number } | null = null
+    const distanciaEntre = (t: TouchList) =>
+      Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY)
+    const onTouchStart = (e: TouchEvent) => {
+      if (e.touches.length < 2) return
+      if (e.cancelable) e.preventDefault()
+      dragging = false
+      pincaInicial = { distancia: Math.max(1, distanciaEntre(e.touches)), z: camera.position.z }
+    }
+    const onTouchMove = (e: TouchEvent) => {
+      if (!pincaInicial || e.touches.length < 2) return
+      if (e.cancelable) e.preventDefault()
+      const fator = pincaInicial.distancia / Math.max(1, distanciaEntre(e.touches))
+      camera.position.z = Math.max(6, Math.min(15, pincaInicial.z * fator))
+    }
+    const onTouchEnd = (e: TouchEvent) => { if (e.touches.length < 2) pincaInicial = null }
+    el.addEventListener('touchstart', onTouchStart, { passive: false })
+    el.addEventListener('touchmove', onTouchMove, { passive: false })
+    el.addEventListener('touchend', onTouchEnd)
+    el.addEventListener('touchcancel', onTouchEnd)
 
     const ro = new ResizeObserver(() => { curW = mount.clientWidth || curW; renderer.setSize(curW, curH); composer?.setSize(curW, curH); camera.aspect = curW / curH; camera.updateProjectionMatrix() })
     ro.observe(mount)
@@ -409,7 +445,8 @@ export function Heart3D(props: Props) {
     return () => {
       disposed = true
       cancelAnimationFrame(raf); ro.disconnect()
-      el.removeEventListener('pointerdown', onDown); window.removeEventListener('pointerup', onUp); window.removeEventListener('pointermove', onMove); el.removeEventListener('wheel', onWheel)
+      el.removeEventListener('pointerdown', onDown); window.removeEventListener('pointerup', onUp); window.removeEventListener('pointercancel', onUp); window.removeEventListener('pointermove', onMove); el.removeEventListener('wheel', onWheel)
+      el.removeEventListener('touchstart', onTouchStart); el.removeEventListener('touchmove', onTouchMove); el.removeEventListener('touchend', onTouchEnd); el.removeEventListener('touchcancel', onTouchEnd)
       composer?.dispose(); bgTex.dispose(); bumpTex.dispose()
       scene.traverse((o) => { const a = o as any; a.geometry?.dispose?.(); if (a.material) (Array.isArray(a.material) ? a.material : [a.material]).forEach((m: any) => m.dispose?.()) })
       renderer.dispose()

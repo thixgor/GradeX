@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import {
   OBJETIVOS,
+  acaoDeToqueDoPalco,
   aplicarObjetivo,
   aplicarZoom,
   campoDeAjuste,
@@ -9,6 +10,7 @@ import {
   deslocar,
   enquadrar,
   escalaDeAjuste,
+  folgaDeArrasto,
   janelaVisivel,
   larguraDaBarraEmMicrometros,
   limitesDeEscala,
@@ -240,5 +242,76 @@ describe('escala em micrômetros', () => {
     expect(barra).not.toBeNull()
     const mantissa = barra!.micrometros / Math.pow(10, Math.floor(Math.log10(barra!.micrometros)))
     expect([1, 2, 5, 10]).toContain(Math.round(mantissa * 1000) / 1000)
+  })
+})
+
+describe('de quem é o gesto no celular', () => {
+  /**
+   * A regressão que motivou estas duas funções.
+   *
+   * O palco declarava `touch-action: none` fixo. Com a lâmina inteira
+   * enquadrada — o estado em que toda página do módulo abre — arrastar não
+   * movia a imagem um pixel, porque não há excedente para deslocar; e como o
+   * navegador tinha sido proibido de rolar, o dedo sobre a lâmina simplesmente
+   * não descia a página. Quem estudava no celular ficava preso na imagem.
+   */
+  it('lâmina enquadrada não tem folga, e o dedo é da página', () => {
+    const campo = campoDeAjuste(IMAGEM, CONTAINER)
+    const folga = folgaDeArrasto(campo, IMAGEM, CONTAINER)
+    expect(folga).toEqual({ x: false, y: false })
+    expect(acaoDeToqueDoPalco(folga)).toBe('pan-y')
+  })
+
+  it('lâmina ampliada nos dois eixos entrega o palco ao microscópio', () => {
+    const campo = aplicarZoom(
+      campoDeAjuste(IMAGEM, CONTAINER),
+      { x: 400, y: 450 },
+      escalaDeAjuste(IMAGEM, CONTAINER) * 4,
+      IMAGEM,
+      CONTAINER,
+    )
+    const folga = folgaDeArrasto(campo, IMAGEM, CONTAINER)
+    expect(folga).toEqual({ x: true, y: true })
+    expect(acaoDeToqueDoPalco(folga)).toBe('none')
+  })
+
+  /**
+   * O caso do meio, que é o mais comum: lâmina em paisagem num contêiner mais
+   * alto. Sobra imagem para os lados e não sobra para cima e para baixo — então
+   * o lado é do microscópio e a vertical continua rolando a página.
+   */
+  it('com folga só na horizontal, a rolagem vertical continua da página', () => {
+    // 1920 × 1280 numa moldura 800 × 900: em escala 0,5 sobram 160 px de
+    // largura (960 > 800) e faltam 260 de altura (640 < 900).
+    const folga = folgaDeArrasto({ escala: 0.5, x: 0, y: 0 }, IMAGEM, CONTAINER)
+    expect(folga).toEqual({ x: true, y: false })
+    expect(acaoDeToqueDoPalco(folga)).toBe('pan-y')
+  })
+
+  it('com folga só na vertical, o arrasto vertical percorre a lâmina', () => {
+    // Contêiner largo e baixo: a altura estoura antes da largura.
+    const container = { largura: 2000, altura: 300 }
+    const folga = folgaDeArrasto({ escala: 0.5, x: 0, y: 0 }, IMAGEM, container)
+    expect(folga).toEqual({ x: false, y: true })
+    expect(acaoDeToqueDoPalco(folga)).toBe('pan-x')
+  })
+
+  it('não declara folga antes de o contêiner ter sido medido', () => {
+    const folga = folgaDeArrasto({ escala: 1, x: 0, y: 0 }, IMAGEM, { largura: 0, altura: 0 })
+    expect(folga).toEqual({ x: false, y: false })
+    expect(acaoDeToqueDoPalco(folga)).toBe('pan-y')
+  })
+
+  /**
+   * Nenhum valor devolvido pode ser `auto` nem `manipulation`: os dois deixam o
+   * duplo toque do navegador ampliar a página por cima do duplo toque do
+   * microscópio, e o aluno recebe dois zooms sobrepostos no mesmo gesto.
+   */
+  it('nunca devolve um valor que devolva o duplo toque ao navegador', () => {
+    for (const x of [true, false]) {
+      for (const y of [true, false]) {
+        expect(['none', 'pan-x', 'pan-y']).toContain(acaoDeToqueDoPalco({ x, y }))
+      }
+    }
   })
 })

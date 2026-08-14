@@ -170,8 +170,14 @@ export function Ecg12Lead({ signals, fs, speedMmS, gainMmMv, zoom, dark, live, r
     render(0)
   }, [live, render])
 
-  // régua: só ativa na tira de ritmo (traçado contínuo de DII), em modo estático
-  const handlePointer = useCallback((e: React.PointerEvent) => {
+  /**
+   * Régua: só ativa na tira de ritmo (traçado contínuo de DII), em modo estático.
+   *
+   * `click`, e não `pointerdown`: no celular o `pointerdown` chega antes de o
+   * navegador decidir se o dedo veio tocar ou rolar, e rolar a página pelo ECG
+   * largava um cursor de régua no traçado.
+   */
+  const handlePointer = useCallback((e: React.MouseEvent) => {
     if (!calipers || live) return
     const rect = canvasRef.current!.getBoundingClientRect()
     const scale = rect.width / width
@@ -194,11 +200,13 @@ export function Ecg12Lead({ signals, fs, speedMmS, gainMmMv, zoom, dark, live, r
   }, [calipers, live, snapOn, fiducials, width, stripY, rhythmH, stripX0, pxPerMs])
 
   return (
-    <div ref={wrapRef} className="relative w-full overflow-hidden rounded-lg" style={{ touchAction: 'none' }}>
+    // Sem `touch-action` fixo: as doze derivações são leitura, e o dedo que
+    // passa por elas é da página. Ver a nota em `ecg-lead-canvas.tsx`.
+    <div ref={wrapRef} className="relative w-full overflow-hidden rounded-lg">
       <canvas
         ref={canvasRef}
         style={{ width: '100%', height: totalH, display: 'block', cursor: calipers && !live ? 'crosshair' : 'default' }}
-        onPointerDown={handlePointer}
+        onClick={handlePointer}
       />
       {calipers && !live && (
         <div className="pointer-events-none absolute left-2 top-2 rounded-md bg-black/55 px-2 py-1 text-[10px] font-bold text-cyan-200">

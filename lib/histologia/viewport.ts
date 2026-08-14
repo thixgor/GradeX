@@ -230,6 +230,62 @@ export function enquadrar(
   )
 }
 
+/* ═══════════════════════ De quem é o gesto ═══════════════════════ */
+
+/** Em quais eixos ainda sobra lâmina para arrastar, na escala atual. */
+export interface Folga {
+  x: boolean
+  y: boolean
+}
+
+/**
+ * Sobra lâmina fora do contêiner em cada eixo?
+ *
+ * Com a lâmina inteira enquadrada — o estado em que toda página do módulo abre
+ * — a resposta é "não" nos dois: arrastar ali não move a imagem um pixel,
+ * porque `centralizar` recentraliza tudo o que não excede o contêiner. A folga
+ * de 1 px absorve o arredondamento de layouts fracionários, que de outra forma
+ * declararia folga inexistente em telas com fator de escala não inteiro.
+ */
+export function folgaDeArrasto(campo: Campo, imagem: Dimensoes, container: Dimensoes): Folga {
+  if (imagem.largura <= 0 || imagem.altura <= 0) return { x: false, y: false }
+  if (container.largura <= 0 || container.altura <= 0) return { x: false, y: false }
+  return {
+    x: imagem.largura * campo.escala > container.largura + 1,
+    y: imagem.altura * campo.escala > container.altura + 1,
+  }
+}
+
+/**
+ * Qual `touch-action` o palco deve declarar — a decisão que faltava no celular.
+ *
+ * O navegador precisa saber **antes** de o dedo se mover quem fica com o gesto;
+ * depois que ele começa a rolar, já é tarde. A regra é a mais simples que
+ * atende os dois lados: *o microscópio só toma o eixo que ele realmente usa*.
+ *
+ * - sem folga em eixo nenhum (lâmina enquadrada) → `pan-y`: o dedo rola a
+ *   página, que é o que qualquer pessoa espera ao passar o dedo por uma imagem
+ *   parada. Um `touch-action: none` fixo aqui — o que havia antes — transformava
+ *   um arrasto que não movia nada em rolagem sequestrada: a página simplesmente
+ *   não descia enquanto o dedo estivesse sobre a lâmina;
+ * - folga só na vertical → `pan-x`: o arrasto vertical percorre a lâmina;
+ * - folga só na horizontal → `pan-y`: a página continua rolando na vertical e o
+ *   arrasto lateral percorre a lâmina;
+ * - folga nos dois eixos (lâmina ampliada) → `none`: aí o palco é mesmo do
+ *   microscópio. A rolagem volta à página quando a lâmina encosta na borda, o
+ *   que o componente resolve repassando o resto do gesto.
+ *
+ * Nenhum dos valores é `auto` nem `manipulation`, então o duplo toque do
+ * navegador nunca dispara sobre o palco — o duplo toque ali é do microscópio.
+ * A pinça também não depende desta declaração: dois dedos são cancelados no
+ * `touchstart`, que vale mais do que qualquer `touch-action`.
+ */
+export function acaoDeToqueDoPalco(folga: Folga): 'none' | 'pan-x' | 'pan-y' {
+  if (folga.x && folga.y) return 'none'
+  if (folga.y) return 'pan-x'
+  return 'pan-y'
+}
+
 /** Objetivo cujo fator mais se aproxima da escala atual. */
 export function objetivoAtual(campo: Campo, imagem: Dimensoes, container: Dimensoes): Objetivo {
   const { ajuste } = limitesDeEscala(imagem, container)

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   AlertTriangle,
   ChevronLeft,
@@ -243,10 +243,82 @@ export function VisualizadorDeLamina({
   const [zoom, setZoom] = useState(1)
   const url = midia.urlImagem
 
+  const areaRef = useRef<HTMLDivElement | null>(null)
+  const zoomRef = useRef(zoom)
+  zoomRef.current = zoom
+  const zoomAnterior = useRef(zoom)
+
   useEffect(() => {
     setFalhou(false)
     setZoom(1)
   }, [midia.id])
+
+  /**
+   * Pinça para ampliar.
+   *
+   * Sem ela, o único caminho para ampliar eram os botões de 50 em 50%, e a
+   * pinça do navegador não servia de substituto: o visualizador é uma camada
+   * fixa, então ampliar a *página* aumenta a moldura junto com a lâmina e não
+   * revela detalhe nenhum. Quem estuda no celular ficava sem o gesto que
+   * qualquer visualizador de imagem tem.
+   *
+   * Ouvinte nativo com `passive: false` porque `preventDefault` é o que tira o
+   * gesto do navegador — o React registra ouvintes passivos e o pedido seria
+   * ignorado.
+   */
+  useEffect(() => {
+    const area = areaRef.current
+    if (!area) return
+
+    let inicial: { distancia: number; zoom: number } | null = null
+    const distancia = (toques: TouchList) =>
+      Math.hypot(
+        toques[0].clientX - toques[1].clientX,
+        toques[0].clientY - toques[1].clientY,
+      )
+
+    const aoTocar = (evento: TouchEvent) => {
+      if (evento.touches.length < 2) return
+      if (evento.cancelable) evento.preventDefault()
+      inicial = { distancia: Math.max(1, distancia(evento.touches)), zoom: zoomRef.current }
+    }
+    const aoMover = (evento: TouchEvent) => {
+      if (!inicial || evento.touches.length < 2) return
+      if (evento.cancelable) evento.preventDefault()
+      const razao = distancia(evento.touches) / inicial.distancia
+      setZoom(Math.min(4, Math.max(1, Math.round(inicial.zoom * razao * 20) / 20)))
+    }
+    const aoSoltar = (evento: TouchEvent) => {
+      if (evento.touches.length < 2) inicial = null
+    }
+
+    area.addEventListener('touchstart', aoTocar, { passive: false })
+    area.addEventListener('touchmove', aoMover, { passive: false })
+    area.addEventListener('touchend', aoSoltar)
+    area.addEventListener('touchcancel', aoSoltar)
+    return () => {
+      area.removeEventListener('touchstart', aoTocar)
+      area.removeEventListener('touchmove', aoMover)
+      area.removeEventListener('touchend', aoSoltar)
+      area.removeEventListener('touchcancel', aoSoltar)
+    }
+  }, [])
+
+  /**
+   * Ampliar mantendo o centro no lugar.
+   *
+   * A lâmina cresce dentro de um contêiner rolável; sem reposicionar a rolagem,
+   * cada passo de zoom jogava a vista para o canto superior esquerdo e o achado
+   * que estava no meio da tela sumia. Vale para a pinça e para os botões.
+   */
+  useEffect(() => {
+    const area = areaRef.current
+    const razao = zoom / zoomAnterior.current
+    zoomAnterior.current = zoom
+    if (!area || razao === 1) return
+    area.scrollLeft = (area.scrollLeft + area.clientWidth / 2) * razao - area.clientWidth / 2
+    area.scrollTop = (area.scrollTop + area.clientHeight / 2) * razao - area.clientHeight / 2
+  }, [zoom])
 
   useEffect(() => {
     const aoPressionar = (evento: KeyboardEvent) => {
@@ -333,7 +405,7 @@ export function VisualizadorDeLamina({
           </div>
         </header>
 
-        <div className="relative min-h-0 flex-1 overflow-auto bg-black">
+        <div ref={areaRef} className="relative min-h-0 flex-1 touch-manipulation overflow-auto bg-black">
           {falhou ? (
             <div className="p-10 text-center text-sm text-zinc-300">
               Não foi possível carregar esta lâmina agora.
