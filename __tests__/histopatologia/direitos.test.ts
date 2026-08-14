@@ -1,11 +1,12 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs'
 import path from 'node:path'
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import {
   ESCOPOS_DE_DIREITOS,
   FONTES,
   LISTA_DE_FONTES,
+  histopatologiaHabilitada,
   hostPermitido,
   permiteIncorporacao,
   permiteLinkDireto,
@@ -219,6 +220,58 @@ describe('texto alternativo não afirma diagnóstico', () => {
   it('legenda editorial revisada pode descrever o achado', () => {
     const alt = altDaMidia(midiaBase, 'granuloma com necrose caseosa central')
     expect(alt).toContain('granuloma com necrose caseosa central')
+  })
+})
+
+/**
+ * O 404 que este bloco existe para não deixar voltar.
+ *
+ * A Histopatologia exigia `HISTOPATOLOGIA_HABILITADO=1` e mais nada. Nenhum
+ * documento de publicação mandava definir essa variável — `docs/adr/0001` e
+ * `public/Manual-Histologia/IMPLEMENTACAO.md` falam só de
+ * `HISTOLOGIA_HABILITADO=1` —, então em produção ela ficou vazia. Resultado: a
+ * Histologia no ar, com link para a Histopatologia na própria home do módulo, e
+ * **assinante clicando nesse link recebia 404**. O portão não protegia nada;
+ * derrubava conteúdo pago por uma variável que ninguém sabia que existia.
+ *
+ * A regra passa a ser a que não surpreende: a subárea acompanha o módulo que a
+ * contém, e só se separa dele quando alguém declara isso de propósito.
+ */
+describe('disponibilidade da rota', () => {
+  afterEach(() => {
+    vi.unstubAllEnvs()
+  })
+
+  it('fora de produção abre sempre — é preciso poder revisar', () => {
+    vi.stubEnv('NODE_ENV', 'development')
+    vi.stubEnv('HISTOLOGIA_HABILITADO', '')
+    vi.stubEnv('HISTOPATOLOGIA_HABILITADO', '')
+    expect(histopatologiaHabilitada()).toBe(true)
+  })
+
+  it('em produção herda a Histologia quando nada é declarado', () => {
+    vi.stubEnv('NODE_ENV', 'production')
+    vi.stubEnv('HISTOPATOLOGIA_HABILITADO', '')
+
+    vi.stubEnv('HISTOLOGIA_HABILITADO', '1')
+    expect(histopatologiaHabilitada()).toBe(true)
+
+    vi.stubEnv('HISTOLOGIA_HABILITADO', '')
+    expect(histopatologiaHabilitada()).toBe(false)
+  })
+
+  it('"0" fecha só a Histopatologia, com a Histologia no ar', () => {
+    vi.stubEnv('NODE_ENV', 'production')
+    vi.stubEnv('HISTOLOGIA_HABILITADO', '1')
+    vi.stubEnv('HISTOPATOLOGIA_HABILITADO', '0')
+    expect(histopatologiaHabilitada()).toBe(false)
+  })
+
+  it('"1" abre a Histopatologia mesmo com a Histologia fechada', () => {
+    vi.stubEnv('NODE_ENV', 'production')
+    vi.stubEnv('HISTOLOGIA_HABILITADO', '')
+    vi.stubEnv('HISTOPATOLOGIA_HABILITADO', '1')
+    expect(histopatologiaHabilitada()).toBe(true)
   })
 })
 

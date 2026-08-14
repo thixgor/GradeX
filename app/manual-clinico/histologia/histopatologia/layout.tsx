@@ -11,8 +11,10 @@ import { BASE, metadadosDoModulo } from '@/lib/histopatologia/seo'
  * confundi-los:
  *
  * 1. **este layout** decide se a *rota* existe. Fora de produção ela sempre
- *    existe (é preciso poder revisar); em produção exige
- *    `HISTOPATOLOGIA_HABILITADO=1`;
+ *    existe (é preciso poder revisar); em produção ela acompanha o Manual da
+ *    Histologia, que é o módulo que a contém, e só se separa dele quando
+ *    `HISTOPATOLOGIA_HABILITADO` é declarado explicitamente (`0` fecha, `1`
+ *    abre) — ver `histopatologiaHabilitada`;
  * 2. **`resolverDireitos`** decide, mídia a mídia, se a imagem pode ser exibida.
  *    As fontes incorporadas estão autorizadas, mas a validação continua
  *    independente da disponibilidade da rota.
@@ -37,7 +39,10 @@ export const metadata: Metadata = metadadosDoModulo({
 export default function LayoutDaHistopatologia({ children }: { children: React.ReactNode }) {
   if (!histopatologiaHabilitada()) {
     // eslint-disable-next-line no-console
-    console.warn('[histopatologia] rota bloqueada — HISTOPATOLOGIA_HABILITADO não está em "1".')
+    console.warn(
+      '[histopatologia] rota bloqueada — HISTOPATOLOGIA_HABILITADO="0" ou o Manual da ' +
+        'Histologia está fechado neste ambiente.',
+    )
     notFound()
   }
 

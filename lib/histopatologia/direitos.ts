@@ -1,3 +1,5 @@
+import { histologiaHabilitada } from '../histologia/licenca'
+
 import type { EscopoDeDireitos, EstadoDeDireitos, Fonte, FonteId } from './esquemas'
 
 /** Registro de fontes e permissões de exibição remota da Histopatologia. */
@@ -334,13 +336,45 @@ export const EXPLICACAO_DE_DIREITOS: Record<EstadoDeDireitos, string> = {
  * Flag de disponibilidade.
  *
  * Fora de produção o módulo abre sempre — é preciso poder revisar para sair do
- * estado pendente. Em produção exige `HISTOPATOLOGIA_HABILITADO=1`, opt-in
- * explícito de quem opera. Note que a flag governa a *rota*, não os direitos de
- * mídia: mesmo habilitado, o portão de `resolverDireitos` continua fechado.
+ * estado pendente. Note que a flag governa a *rota*, não os direitos de mídia:
+ * mesmo habilitado, o portão de `resolverDireitos` continua fechado.
+ *
+ * ## Por que a flag herda a da Histologia
+ *
+ * A primeira versão exigia `HISTOPATOLOGIA_HABILITADO=1` e mais nada. O efeito
+ * em produção foi o pior possível e demorou a aparecer: a Histologia estava no
+ * ar com `HISTOLOGIA_HABILITADO=1`, todo link para a Histopatologia continuava
+ * visível na home do módulo — e **assinante que clicava levava 404**, porque
+ * ninguém sabia que existia uma segunda variável para ligar uma subárea da
+ * mesma seção. Não era o portão protegendo nada; era uma variável esquecida
+ * derrubando conteúdo pago.
+ *
+ * A Histopatologia é uma *subárea* do Manual da Histologia: mora dentro da rota
+ * dele, passa pelo layout dele e usa o mesmo portão de assinatura
+ * (`exigirAcessoAHistologia`). Então o padrão passa a ser o único que não
+ * surpreende: **a subárea acompanha o módulo que a contém**. Publicar a
+ * Histologia publica a Histopatologia junto.
+ *
+ * O controle separado continua existindo, agora nos dois sentidos e sempre
+ * explícito:
+ *
+ * - `HISTOPATOLOGIA_HABILITADO=0` fecha só a Histopatologia, com a Histologia
+ *   no ar — é o botão de emergência se um problema de direitos aparecer só
+ *   aqui;
+ * - `HISTOPATOLOGIA_HABILITADO=1` abre a Histopatologia mesmo com a Histologia
+ *   fechada, para revisão isolada.
+ *
+ * Sem valor declarado, herda. Um ambiente que não diz nada não deveria produzir
+ * um 404 silencioso em conteúdo de assinante.
  */
 export function histopatologiaHabilitada(): boolean {
   if (process.env.NODE_ENV !== 'production') return true
-  return process.env.HISTOPATOLOGIA_HABILITADO === '1'
+
+  const declarado = process.env.HISTOPATOLOGIA_HABILITADO
+  if (declarado === '0') return false
+  if (declarado === '1') return true
+
+  return histologiaHabilitada()
 }
 
 /**

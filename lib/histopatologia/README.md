@@ -134,5 +134,14 @@ Quando a edição de referência for substituída, marque a doença como
 
 ## Disponibilidade em produção
 
-Além do portão da Histologia normal (`HISTOLOGIA_HABILITADO=1`), este módulo
-exige `HISTOPATOLOGIA_HABILITADO=1`. A flag governa somente a disponibilidade da rota.
+Este módulo é uma subárea do Manual da Histologia: mora dentro da rota dele, passa pelo layout dele
+e usa o mesmo portão de assinatura. Por isso a disponibilidade **acompanha** a do módulo que o
+contém — com `HISTOLOGIA_HABILITADO=1`, a Histopatologia também está no ar.
+
+`HISTOPATOLOGIA_HABILITADO` continua existindo para separar os dois, e só age quando é declarado:
+`0` fecha apenas a Histopatologia (botão de emergência para um problema de direitos restrito a
+ela), `1` abre apenas a Histopatologia (revisão isolada, com a Histologia fechada). Sem valor
+declarado, herda.
+
+A flag governa somente a disponibilidade da rota — nunca os direitos de mídia, que continuam
+decididos item a item por `resolverDireitos`.
