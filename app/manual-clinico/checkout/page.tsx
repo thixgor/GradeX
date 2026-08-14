@@ -521,6 +521,20 @@ export default function ManualClinicoCheckoutPage() {
                 </p>
               ) : null}
             </div>
+
+            {/* Cupom logo abaixo do Total: no celular as duas colunas empilham, e
+                deixar o cupom só na coluna de pagamento (mais abaixo) fazia quem
+                está decidindo o plano nunca rolar até ele. Aqui ele aparece no
+                mesmo cartão do preço, sem precisar de mais um scroll. */}
+            <div className="mt-3.5">
+              <CouponBox
+                product={product}
+                planKey={selectedPlanKey}
+                appliedCoupon={appliedCoupon}
+                onApplied={setAppliedCoupon}
+                onRemoved={() => setAppliedCoupon(null)}
+              />
+            </div>
           </div>
 
           <div className="rounded-3xl border border-white/10 bg-white/[0.07] p-5 shadow-2xl shadow-black/20 backdrop-blur-2xl sm:p-7">
@@ -533,14 +547,6 @@ export default function ManualClinicoCheckoutPage() {
             ) : (
               <div className="space-y-4">
                 <CheckoutAccountNotice tone="dark" />
-
-                <CouponBox
-                  product={product}
-                  planKey={selectedPlanKey}
-                  appliedCoupon={appliedCoupon}
-                  onApplied={setAppliedCoupon}
-                  onRemoved={() => setAppliedCoupon(null)}
-                />
 
                 {payableAmount <= 0 ? (
                   <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-6 text-center">
