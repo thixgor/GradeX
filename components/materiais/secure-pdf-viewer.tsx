@@ -100,6 +100,7 @@ import {
   pushEntry,
 } from '@/lib/pdf-viewer-history'
 import { inkPixelWidth, traceStroke } from '@/lib/pdf-viewer-ink'
+import { fitToCanvasBudget } from '@/lib/pdf-viewer-canvas-budget'
 
 type ViewerMode = 'single' | 'width' | 'continuous'
 // Folhas do celular. O cabeçalho antigo empilhava até cinco linhas de rolagem
@@ -274,23 +275,25 @@ function prefetchAhead() {
   return isLowMemoryDevice() ? 1 : isMobileViewport() ? 2 : 3
 }
 
+// Quantas páginas ficam montadas de cada lado da atual.
+//
+// Este número anda de mãos dadas com o orçamento de canvas (ver
+// CANVAS_BUDGET_MPX_*): o orçamento é do TOTAL, então o raio decide o tamanho
+// da fatia de cada página. Ampliado, poucas páginas grandes; sem ampliação,
+// mais páginas — e nenhuma delas encosta no teto, porque o tamanho natural
+// já cabe.
+//
+// Depende do zoom ASSENTADO, nunca do zoom cru: quando dependia do cru, uma
+// mudança de escala montava e desmontava páginas no meio do gesto e todas
+// re-rasterizavam de uma vez. E a pinça do navegador não mexe neste número.
 function liveRadiusForZoom(zoom: number) {
-  // No celular o raio é FIXO em 3 (7 páginas vivas, ~112 MB de canvas com o
-  // teto de 3,5 Mpx). Fixo é o ponto: quando ele variava, uma mudança de zoom
-  // montava/desmontava páginas no meio do gesto e todas re-rasterizavam de uma
-  // vez. O teto de megapixels já é quem limita a memória — o raio não precisa
-  // fazer esse trabalho também.
   if (isLowMemoryDevice()) return 1
   if (isMobileViewport()) {
-    // Ampliado, cada canvas encosta no teto de megapixels (~18 MB) — cinco
-    // deles são 90 MB, perto demais do limite do Safari do iOS. Aqui o raio
-    // encolhe: numa página muito ampliada as vizinhas nem aparecem na tela, e
-    // ninguém sente falta delas. Usa o zoom ASSENTADO, então isto não muda no
-    // meio de um gesto (a pinça do navegador nem mexe neste número).
-    return zoom > 1.1 ? 1 : 2
+    // Ampliado, as vizinhas nem aparecem na tela — e cada uma delas custa um
+    // canvas do tamanho da fatia. Duas ao redor bastam para a rolagem não
+    // mostrar buraco; ampliado, uma.
+    return zoom > 1.05 ? 1 : 2
   }
-  // No desktop o zoom é absoluto e pode ir bem alto, com canvas de 9 Mpx. Aí
-  // vale encolher: numa página muito ampliada as vizinhas nem aparecem na tela.
   if (zoom > 1.8) return 1
   if (zoom > 1.2) return 2
   return LIVE_PAGE_RADIUS
@@ -820,9 +823,23 @@ function releasePageProxy(materialId: string, pageNumber: number) {
 // nenhum destes números, e sim `window.innerWidth` (viewport VISUAL) fazendo o
 // leitor se achar desktop no meio da pinça e trocar o teto de celular pelo de
 // desktop de uma vez só. Ver isMobileViewport().
-const MAX_CANVAS_MPX_MOBILE = 4.5
-const MAX_CANVAS_MPX_LOW_MEMORY = 2.75
-const MAX_CANVAS_MPX_DESKTOP = 12
+// ATENÇÃO: este orçamento é do TOTAL das páginas vivas, não de cada uma.
+//
+// Era por página, e essa era a conta errada: o leitor mantém várias páginas
+// montadas ao mesmo tempo, então um teto "seguro" de 4,5 Mpx virava 22,5 Mpx
+// (~90 MB de canvas) assim que a leitura era ampliada — porque, ampliado, TODA
+// página encosta no teto, não só a que está sendo lida. Rolar nesse estado
+// aloca mais um canvas cheio a cada página que entra na janela, e era aí que o
+// Safari do iOS descartava tudo e recarregava a aba.
+//
+// Dividindo o total pelo número de páginas vivas, o pico deixa de depender do
+// zoom: mais páginas vivas, cada uma um pouco menor; menos páginas vivas (que é
+// o que acontece justamente quando se amplia), cada uma maior. Na leitura sem
+// ampliação nada muda — ali o tamanho natural está abaixo da parte de cada uma,
+// e o teto nem chega a ser consultado.
+const CANVAS_BUDGET_MPX_MOBILE = 11
+const CANVAS_BUDGET_MPX_LOW_MEMORY = 6
+const CANVAS_BUDGET_MPX_DESKTOP = 40
 
 // Quantos pixels de canvas por pixel de CSS. 3 cobre a tela de qualquer
 // celular atual (DPR 3) sem passar disso — acima de 3 o ganho é invisível e o
@@ -862,21 +879,32 @@ function isMobileViewport() {
 // `density` é um multiplicador extra de RASTERIZAÇÃO (não de layout): hoje é a
 // pinça do navegador (ver o rastreador abaixo). Sai por baixo do mesmo teto de
 // megapixels, então nenhum multiplicador consegue estourar o orçamento.
-function rasterScaleFor(baseWidth: number, baseHeight: number, scale: number, density = 1) {
+function rasterScaleFor(
+  baseWidth: number,
+  baseHeight: number,
+  scale: number,
+  density = 1,
+  layoutScale = scale
+) {
   const deviceDpr = (typeof window !== 'undefined' && window.devicePixelRatio) || 1
   const lowMemory = isLowMemoryDevice()
   const dpr = Math.min(
     Math.max(deviceDpr, 1),
     lowMemory ? MAX_RASTER_DPR_LOW_MEMORY : MAX_RASTER_DPR
   )
-  let effective = scale * dpr * Math.max(1, density)
-  const budgetMpx = lowMemory
-    ? MAX_CANVAS_MPX_LOW_MEMORY
-    : isMobileViewport() ? MAX_CANVAS_MPX_MOBILE : MAX_CANVAS_MPX_DESKTOP
-  const budget = budgetMpx * 1_000_000
-  const wanted = baseWidth * baseHeight * effective * effective
-  if (wanted > budget) effective *= Math.sqrt(budget / wanted)
-  return effective
+  // O MAIOR dos dois raios: a escala já rasterizada e a que o layout está
+  // pedindo. Entre um clique de zoom e o redesenho existe um intervalo em que
+  // as duas discordam — e nesse intervalo a tela tem as páginas do raio antigo
+  // com o orçamento do raio novo, que é justamente um pico de memória a mais.
+  // Ficar com o raio maior nunca estoura; ficar com o menor, sim.
+  const livePages = Math.max(liveRadiusForZoom(scale), liveRadiusForZoom(layoutScale)) * 2 + 1
+  const totalMpx = lowMemory
+    ? CANVAS_BUDGET_MPX_LOW_MEMORY
+    : isMobileViewport() ? CANVAS_BUDGET_MPX_MOBILE : CANVAS_BUDGET_MPX_DESKTOP
+  // A conta em si mora em lib/pdf-viewer-canvas-budget, com testes que varrem
+  // o intervalo inteiro de zoom e de pinça: é a invariante que fecha a porta
+  // para a aba ser descartada por memória.
+  return fitToCanvasBudget({ baseWidth, baseHeight, scale, dpr, density, livePages, totalMpx })
 }
 
 // ─── Nitidez sob a pinça do navegador ───────────────────────────────────────
@@ -5297,6 +5325,11 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   // troca de foco durante a rolagem redesenharia tudo.
   const activeRef = useRef(active)
   activeRef.current = active
+  // Zoom pedido pelo layout, num ref: a rasterização precisa dele para escolher
+  // o orçamento certo (ver rasterScaleFor), mas não pode redesenhar a cada
+  // passo de zoom — para isso existe o `renderScale`, que vem com atraso.
+  const zoomPropRef = useRef(zoom)
+  zoomPropRef.current = zoom
   // Escala já rasterizada no canvas. O zoom muda na hora (o frame redimensiona
   // e o bitmap é reescalado pela GPU); a rasterização nítida vem depois, com
   // debounce, e só quando a diferença for grande o bastante para ser visível.
@@ -5493,7 +5526,7 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
         // Escala de rasterização com teto de megapixels (ver rasterScaleFor).
         // Independe de `active`: manter a qualidade estável evita re-render de
         // todas as páginas vivas toda vez que o foco muda durante o scroll.
-        const scale = rasterScaleFor(baseViewport.width, baseViewport.height, renderScale, density)
+        const scale = rasterScaleFor(baseViewport.width, baseViewport.height, renderScale, density, zoomPropRef.current)
         const viewport = page.getViewport({ scale })
         const displayViewport = page.getViewport({ scale: renderScale })
         if (cancelled) return
