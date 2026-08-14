@@ -22,6 +22,15 @@ export default defineConfig({
     },
   },
   resolve: {
-    alias: { '@': path.resolve(__dirname, '.') },
+    alias: {
+      '@': path.resolve(__dirname, '.'),
+      // `server-only` só é inofensivo quando resolvido pela condição
+      // `react-server`, que o Next aplica e o vitest não: pelo caminho padrão o
+      // pacote lança no import ("cannot be imported from a Client Component").
+      // Apontar para o `empty.js` dele é exatamente o que o Next faz num
+      // Server Component, e é o que permite testar módulos de servidor —
+      // `lib/histologia/acesso.ts`, por exemplo — sem afrouxar a marcação.
+      'server-only': path.resolve(__dirname, 'node_modules/server-only/empty.js'),
+    },
   },
 })
