@@ -45,6 +45,14 @@ export const SCROLL_EDGE_TOLERANCE = 2
 // conta como conteúdo inteiro na tela: exigir que o leitor "role" esses poucos
 // pixels antes de poder virar faria o gesto parecer quebrado.
 export const SCROLL_IGNORE_RANGE = 48
+// No eixo vertical a sobra costuma ser bem maior que uma margem: o cabeçalho, a
+// barra de baixo e o respiro em volta da página somam uma faixa que a página
+// inteira na tela ainda deixa rolando. Medida em pixels fixos, essa sobra fazia
+// o gesto de virar para cima "não funcionar" — o dedo rolava aqueles poucos
+// pixels e o gesto era descartado, e só o SEGUNDO gesto virava a página. Uma
+// fração da tela resolve em qualquer aparelho: um terço da altura visível ainda
+// é pouco para ser leitura, e muito para ser sobra de moldura.
+export const SCROLL_IGNORE_VIEWPORT_RATIO = 0.34
 
 export type SwipeAxis = 'x' | 'y'
 
@@ -65,6 +73,12 @@ export interface ScrollMetrics {
   scrollStart: number
   viewport: number
   content: number
+  /**
+   * Quanta rolagem ainda conta como "não há o que rolar". Sem valor, vale o
+   * mínimo fixo; no eixo vertical o leitor passa uma fração da tela (ver
+   * SCROLL_IGNORE_VIEWPORT_RATIO).
+   */
+  ignoreRange?: number
 }
 
 /**
@@ -84,9 +98,9 @@ export function rubberBand(delta: number) {
  * eixos: na vertical decide se o dedo vira página ou rola a leitura; na
  * horizontal, se arrasta a página ampliada ou vira.
  */
-export function readScrollEdges({ scrollStart, viewport, content }: ScrollMetrics) {
+export function readScrollEdges({ scrollStart, viewport, content, ignoreRange }: ScrollMetrics) {
   const range = content - viewport
-  if (range <= SCROLL_IGNORE_RANGE) return { atStart: true, atEnd: true }
+  if (range <= Math.max(SCROLL_IGNORE_RANGE, ignoreRange ?? 0)) return { atStart: true, atEnd: true }
   return {
     atStart: scrollStart <= SCROLL_EDGE_TOLERANCE,
     atEnd: scrollStart >= range - SCROLL_EDGE_TOLERANCE,

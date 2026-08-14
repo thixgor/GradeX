@@ -75,6 +75,7 @@ import {
 } from '@/lib/pdf-summary-outline'
 import {
   SCROLL_EDGE_TOLERANCE,
+  SCROLL_IGNORE_VIEWPORT_RATIO,
   type SwipeStart,
   isSwipeAllowed,
   lockSwipeAxis,
@@ -1095,6 +1096,35 @@ const TOUR_STEPS: ViewerTourStep[] = [
   },
 ]
 
+/**
+ * Rola um item para dentro do PAINEL dele — e só dele.
+ *
+ * `scrollIntoView` não serve aqui: ele rola TODOS os contêineres roláveis até o
+ * documento. A miniatura da página atual chamava esse método a cada troca de
+ * página; como a leitura muda de página o tempo todo, o painel puxava o
+ * documento junto, o documento mudava a página atual, e isso puxava o painel de
+ * novo. Era essa realimentação que fazia a leitura "sair rolando sozinha"
+ * depois de um salto pelo sumário.
+ */
+function scrollIntoPanel(element: HTMLElement | null, align: 'center' | 'nearest') {
+  if (!element) return
+  let container: HTMLElement | null = element.parentElement
+  while (container) {
+    const overflowY = window.getComputedStyle(container).overflowY
+    if ((overflowY === 'auto' || overflowY === 'scroll') && container.scrollHeight > container.clientHeight + 2) break
+    container = container.parentElement
+  }
+  if (!container) return
+  const item = element.getBoundingClientRect()
+  const view = container.getBoundingClientRect()
+  if (align === 'center') {
+    container.scrollTop += (item.top + item.height / 2) - (view.top + view.height / 2)
+    return
+  }
+  if (item.top < view.top) container.scrollTop += item.top - view.top
+  else if (item.bottom > view.bottom) container.scrollTop += item.bottom - view.bottom
+}
+
 // Um alvo só conta se estiver de fato ocupando espaço na tela.
 function findVisibleTourTarget(candidates: string[]): string | null {
   for (const selector of candidates) {
@@ -1185,6 +1215,40 @@ function writeViewerPrefs(patch: ViewerPrefs) {
       window.localStorage.setItem(PREFS_STORAGE_KEY, JSON.stringify(merged))
     } catch {}
   }, 300)
+}
+
+// Abertura do leitor: quanto tempo esperar por tentativa e quantas tentar. Doze
+// segundos é generoso para uma rede ruim e curto para quem está olhando a tela.
+const ACCESS_FETCH_TIMEOUT_MS = 12000
+const ACCESS_FETCH_ATTEMPTS = 3
+// Prazo até considerar que uma página travou (ver o vigia em PdfCanvasPage).
+// Folgado de propósito: a rasterização é enfileirada, então uma página pode
+// esperar a vez legitimamente por alguns segundos.
+const PAGE_STALL_TIMEOUT_MS = 30000
+
+/**
+ * `fetch` que DESISTE. O padrão da plataforma não tem prazo: uma requisição
+ * pendurada fica pendurada, e quem espera por ela espera para sempre. Aqui cada
+ * tentativa tem prazo próprio e, entre elas, uma pausa que cresce — que é o que
+ * resolve a maioria das falhas de rede de celular sem incomodar ninguém.
+ */
+async function fetchWithDeadline(url: string, timeoutMs: number, attempts = 1): Promise<Response> {
+  let lastError: unknown
+  for (let attempt = 0; attempt < attempts; attempt++) {
+    const controller = new AbortController()
+    const timer = setTimeout(() => controller.abort(), timeoutMs)
+    try {
+      return await fetch(url, { cache: 'no-store', signal: controller.signal })
+    } catch (error) {
+      lastError = error
+    } finally {
+      clearTimeout(timer)
+    }
+    if (attempt < attempts - 1) {
+      await new Promise((resolve) => setTimeout(resolve, 600 * (attempt + 1)))
+    }
+  }
+  throw lastError instanceof Error ? lastError : new Error('fetch failed')
 }
 
 function clampZoom(value: number, min = 0.55, max = 2.6) {
@@ -1592,10 +1656,14 @@ function useViewerGestures(
         content: row?.scrollWidth ?? 0,
       })
       const scroller = findVerticalScroller(event.target)
+      const viewport = scroller?.clientHeight ?? 0
       const pageEdges = readScrollEdges({
         scrollStart: scroller?.scrollTop ?? 0,
-        viewport: scroller?.clientHeight ?? 0,
+        viewport,
         content: scroller?.scrollHeight ?? 0,
+        // Ver SCROLL_IGNORE_VIEWPORT_RATIO: a sobra vertical costuma ser o
+        // cabeçalho e a barra de baixo, não conteúdo para ler.
+        ignoreRange: viewport * SCROLL_IGNORE_VIEWPORT_RATIO,
       })
 
       pointerIdRef.current = event.pointerId
@@ -1733,6 +1801,9 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const pendingResumeRef = useRef<number | null>(null)
   const suppressFocusUntilRef = useRef(0)
   const [access, setAccess] = useState<ViewerAccess | null>(null)
+  // Contador de tentativas de abrir o material. Existe para dar ao leitor um
+  // caminho de volta que não seja fechar o aplicativo.
+  const [loadAttempt, setLoadAttempt] = useState(0)
   const [annotations, setAnnotations] = useState<PdfAnnotation[]>([])
   // Espelho para leitura SÍNCRONA dentro do desfazer: entre uma operação e a
   // seguinte do mesmo lote, o estado do React ainda não voltou.
@@ -2010,7 +2081,16 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
       setLoading(true)
       setError('')
       try {
-        const res = await fetch(`/api/materiais/${materialId}/pdf-viewer/access`, { cache: 'no-store' })
+        // COM PRAZO, e com tentativas. Sem isto, uma requisição que ficava
+        // pendurada — rede de celular oscilando, app voltando do segundo plano
+        // com a conexão morta — deixava o leitor na tela de "preparando seu
+        // material" para sempre, sem erro, sem botão, sem saída a não ser
+        // fechar o app. Um `fetch` sem prazo simplesmente nunca desiste.
+        const res = await fetchWithDeadline(
+          `/api/materiais/${materialId}/pdf-viewer/access`,
+          ACCESS_FETCH_TIMEOUT_MS,
+          ACCESS_FETCH_ATTEMPTS
+        )
         if (res.status === 401) {
           router.push('/auth/login')
           return
@@ -2064,14 +2144,14 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
           loadAnnotations().catch(() => {})
         }
       } catch {
-        if (mounted) setError('PDF nao pode ser carregado agora. Tente novamente.')
+        if (mounted) setError('Nao conseguimos falar com o servidor. Verifique sua conexao e tente de novo.')
       } finally {
         if (mounted) setLoading(false)
       }
     }
     loadAccess()
     return () => { mounted = false }
-  }, [loadAnnotations, materialId, router])
+  }, [loadAnnotations, materialId, router, loadAttempt])
 
   useEffect(() => {
     currentPageRef.current = currentPage
@@ -2519,22 +2599,57 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
       // puxam `currentPage` de volta — cada um desses puxões re-renderiza o
       // leitor inteiro e remexe a âncora no meio do salto. Era o que fazia um
       // toque no sumário parecer engasgado antes de assentar no destino.
-      let frame = 0
-      const holdFocus = () => {
-        if (!isJump) return
-        suppressFocusUntilRef.current = Math.max(suppressFocusUntilRef.current, Date.now() + 260)
+      if (!isJump) {
+        // Passo curto: a página vizinha já está montada e o scroll suave dá
+        // conta sozinho.
+        requestAnimationFrame(() => {
+          document.getElementById(`pdf-page-${next}`)?.scrollIntoView({ behavior, block: 'start' })
+        })
+        return
       }
-      const scrollToTarget = () => {
-        holdFocus()
+
+      // Salto longo. Rolar UMA vez não basta e desistir depois de alguns
+      // quadros era o que deixava o leitor "quase lá": a altura das páginas
+      // acima do destino é uma ESTIMATIVA enquanto elas são espaçadores, e ela
+      // muda embaixo do pé conforme as páginas de verdade entram e se medem.
+      // O destino escorregava, o observer de foco reportava outra página, a
+      // janela de páginas se mexia atrás dela — e o resultado era a rolagem
+      // maluca que terminava num espaçador ("Pag. X" e mais nada).
+      //
+      // Agora o salto INSISTE: reposiciona a cada quadro e só larga quando o
+      // destino parar de se mexer (ou quando o tempo acaba). O foco por rolagem
+      // fica suspenso o caminho inteiro, senão ele desfaz o salto no meio.
+      const deadline = Date.now() + 1200
+      let stable = 0
+      // Se o leitor encostar na tela no meio do caminho, o salto sai de cena na
+      // hora: insistir contra o dedo é pior do que parar no lugar errado.
+      let abandoned = false
+      const abandon = () => { abandoned = true }
+      window.addEventListener('pointerdown', abandon, { capture: true, once: true, passive: true })
+      const finish = () => {
+        window.removeEventListener('pointerdown', abandon, true)
+      }
+
+      const settle = () => {
+        if (abandoned) { finish(); return }
+        const now = Date.now()
+        suppressFocusUntilRef.current = Math.max(suppressFocusUntilRef.current, now + 300)
         const element = document.getElementById(`pdf-page-${next}`)
         if (element) {
-          element.scrollIntoView({ behavior, block: 'start' })
+          const before = element.getBoundingClientRect().top
+          element.scrollIntoView({ behavior: 'auto', block: 'start' })
+          const after = element.getBoundingClientRect().top
+          stable = Math.abs(after - before) < 1 ? stable + 1 : 0
+        }
+        // Três quadros parado é o bastante para dizer que o layout assentou.
+        if (stable >= 3 || now > deadline) {
+          suppressFocusUntilRef.current = Math.max(suppressFocusUntilRef.current, Date.now() + 150)
+          finish()
           return
         }
-        if (frame++ < 10) requestAnimationFrame(scrollToTarget)
+        requestAnimationFrame(settle)
       }
-      holdFocus()
-      requestAnimationFrame(scrollToTarget)
+      requestAnimationFrame(settle)
     } else {
       // Em modo página única, sobe suavemente para o topo da nova página.
       requestAnimationFrame(() => {
@@ -2675,29 +2790,28 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   // (com o container ainda nulo), não reagia à montagem das páginas e o swipe
   // simplesmente nunca era ligado — sobrava virar página só nas setinhas.
   //
-  // Na rolagem horizontal o gesto sintético SAI DE CENA: ali quem vira a página
-  // é o scroll-snap do navegador, com a inércia e o encaixe nativos. Manter os
-  // dois ligados seria o pior dos mundos — o dedo rolaria a fileira e, ao
-  // soltar, o gesto viraria mais uma página por cima.
-  //
-  // E com a ferramenta de escrita ativa em modo "só caneta", o dedo volta a
-  // valer para virar página: ele não desenha mais, então não há disputa. É o
-  // que faz o tablet com caneta parecer um caderno de verdade — a mão navega,
-  // a caneta escreve.
+  // Com a ferramenta de escrita ativa em modo "só caneta", o dedo volta a valer
+  // para virar página: ele não desenha mais, então não há disputa. É o que faz
+  // o tablet com caneta parecer um caderno de verdade — a mão navega, a caneta
+  // escreve.
   const fingerCanNavigate = tool === 'cursor' || !touchDrawingEnabled
-  const gesturesEnabled = fingerCanNavigate && !horizontal && !loading && !error && !!access
+  const gesturesEnabled = fingerCanNavigate && !loading && !error && !!access
   useViewerGestures(contentRef, {
     enabled: gesturesEnabled,
-    // Para o lado vale em qualquer modo: nada no leitor usa arrasto horizontal
-    // além da panorâmica da página ampliada, e essa o próprio gesto respeita
-    // (só vira quando a página já está encostada na borda).
-    horizontal: true,
-    // Para cima/baixo só em "uma página por vez". Nos modos de rolagem o
-    // vertical É a leitura — virar página ali brigaria com o scroll o tempo
-    // todo. Dentro do modo página única o gesto ainda espera a página chegar
-    // ao fim (ou ao começo) antes de virar, então página ampliada continua
-    // rolando normalmente.
-    vertical: singlePage,
+    // Para o lado, em qualquer modo de leitura — MENOS na rolagem horizontal,
+    // onde quem vira a página é o encaixe nativo do navegador. Ali os dois
+    // ligados seriam o pior dos mundos: o dedo rolaria a fileira e, ao soltar,
+    // o gesto viraria mais uma página por cima.
+    horizontal: !horizontal,
+    // Para cima e para baixo:
+    // - em "uma página por vez", sempre (é o irmão do gesto para o lado);
+    // - na rolagem horizontal, também — quem escolheu passar as páginas de lado
+    //   continua podendo virar com um gesto para cima, que é o que a mão faz
+    //   sozinha; e ali o vertical não é a leitura, então não há conflito;
+    // - nos modos de rolagem vertical, não: ali o vertical É a leitura.
+    // Em todos eles o gesto ainda espera a página chegar ao fim (ou ao começo)
+    // antes de virar, então página ampliada continua rolando normalmente.
+    vertical: singlePage || horizontal,
     // A caneta só vira página quando não é ela quem escreve.
     allowPen: tool === 'cursor',
     onSwipe: handleSwipe,
@@ -3081,7 +3195,11 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   ])
 
   if (loading) {
-    return <ViewerShell><ViewerLoading /></ViewerShell>
+    return (
+      <ViewerShell>
+        <ViewerLoading onRetry={() => setLoadAttempt((attempt) => attempt + 1)} />
+      </ViewerShell>
+    )
   }
 
   if (error || !access) {
@@ -3092,9 +3210,23 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
             <SearchX className="h-10 w-10 mx-auto mb-3 text-amber-200" />
             <h1 className="font-heading text-xl font-bold mb-2">PDF indisponivel</h1>
             <p className="text-sm text-white/70 mb-5">{error || 'Nao foi possivel carregar este material.'}</p>
-            <Button onClick={() => router.push(`/materiais/${materialId}`)} className="rounded-xl bg-emerald-500 hover:bg-emerald-600">
-              <ArrowLeft className="h-4 w-4 mr-2" /> Voltar ao material
-            </Button>
+            <div className="flex flex-col items-center gap-2 sm:flex-row sm:justify-center">
+              {/* Tentar de novo SEM sair da tela: quase sempre é rede, e sair
+                  daqui custa ao leitor achar o material outra vez. */}
+              <Button
+                onClick={() => setLoadAttempt((attempt) => attempt + 1)}
+                className="w-full rounded-xl bg-emerald-500 hover:bg-emerald-600 sm:w-auto"
+              >
+                Tentar novamente
+              </Button>
+              <Button
+                onClick={() => router.push(`/materiais/${materialId}`)}
+                variant="ghost"
+                className="w-full rounded-xl text-white hover:bg-white/10 hover:text-white sm:w-auto"
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" /> Voltar ao material
+              </Button>
+            </div>
           </div>
         </div>
       </ViewerShell>
@@ -4511,7 +4643,7 @@ const SummaryList = memo(function SummaryList({
   useEffect(() => {
     if (didAutoScroll.current) return
     didAutoScroll.current = true
-    activeItemRef.current?.scrollIntoView({ block: 'center' })
+    scrollIntoPanel(activeItemRef.current, 'center')
   }, [])
 
   return (
@@ -4683,7 +4815,8 @@ const PdfThumbnail = memo(function PdfThumbnail({
   const [status, setStatus] = useState<'idle' | 'loading' | 'ready' | 'error'>('idle')
 
   useEffect(() => {
-    if (active) buttonRef.current?.scrollIntoView({ block: 'nearest' })
+    // Só o painel de miniaturas se mexe — nunca o documento. Ver scrollIntoPanel.
+    if (active) scrollIntoPanel(buttonRef.current, 'nearest')
   }, [active])
 
   useEffect(() => {
@@ -4788,7 +4921,17 @@ function ViewerShell({ children }: { children: React.ReactNode }) {
 // Esqueleto no FORMATO do leitor (barra + moldura de página), não um cartão
 // centralizado. Um esqueleto que já tem a silhueta da tela final faz a espera
 // parecer mais curta e evita o salto de layout quando o conteúdo entra.
-function ViewerLoading() {
+function ViewerLoading({ onRetry }: { onRetry: () => void }) {
+  // Depois de alguns segundos a espera silenciosa vira suspeita de travamento —
+  // e era exatamente esse o caso em que o leitor não tinha o que fazer além de
+  // fechar o app. Dizer que ainda estamos tentando, e oferecer o botão, é o
+  // mínimo devido a quem está olhando para uma tela parada.
+  const [slow, setSlow] = useState(false)
+  useEffect(() => {
+    const timer = window.setTimeout(() => setSlow(true), 7000)
+    return () => window.clearTimeout(timer)
+  }, [])
+
   return (
     <div className="min-h-screen text-white">
       <div className="sticky top-0 z-40 border-b border-white/10 bg-zinc-950/80 backdrop-blur-2xl">
@@ -4808,6 +4951,20 @@ function ViewerLoading() {
             style={{ aspectRatio: '595 / 842' }}
           />
           <p className="mt-4 text-center text-xs text-white/45">Preparando seu material…</p>
+          {slow && (
+            <div className="mt-3 flex flex-col items-center gap-2">
+              <p className="text-center text-xs text-amber-200/80">
+                Está demorando mais que o normal. Continuamos tentando.
+              </p>
+              <Button
+                onClick={onRetry}
+                variant="ghost"
+                className="h-9 rounded-xl border border-white/15 bg-white/10 px-4 text-xs font-semibold text-white hover:bg-white/15 hover:text-white"
+              >
+                Tentar de novo
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -4983,6 +5140,13 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
     blend: 'normal' | 'multiply'
   } | null>(null)
   const draftPaintedRef = useRef(0)
+  // Ferramenta de tinta ativa, para o ouvinte nativo de toque decidir sem ser
+  // reanexado a cada troca de ferramenta.
+  const inkToolRef = useRef(false)
+  // Quando a caneta encostou por último. O `pointerdown` chega antes do
+  // `touchstart`, então isto identifica a caneta mesmo onde o navegador não
+  // marca o toque como 'stylus' (o caso das canetas de Android/Windows).
+  const penDownAtRef = useRef(0)
   const laserCanvasRef = useRef<HTMLCanvasElement>(null)
   const laserCtxRef = useRef<CanvasRenderingContext2D | null>(null)
   const laserCtxOwnerRef = useRef<HTMLCanvasElement | null>(null)
@@ -5343,6 +5507,22 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
     return () => window.clearTimeout(timer)
   }, [error, waitSeconds])
 
+  // Vigia da página: nada pode ficar girando para sempre.
+  //
+  // A busca dos bytes já tem prazo, mas o caminho depois dela não tinha — se o
+  // worker do PDF não subir (rede caiu no meio, cache do app corrompido), a
+  // promessa de abrir o documento simplesmente nunca responde e a página fica
+  // com o rodinha girando até o leitor fechar o aplicativo. Passado o prazo,
+  // isto vira um erro comum: a auto-recuperação tenta de novo sozinha e, se
+  // insistir em falhar, aparece o botão de tentar novamente.
+  useEffect(() => {
+    if (renderSize || error || (!visible && !active)) return
+    const timer = window.setTimeout(() => {
+      setError('Esta pagina demorou demais para abrir.')
+    }, PAGE_STALL_TIMEOUT_MS)
+    return () => window.clearTimeout(timer)
+  }, [renderSize, error, visible, active, loadAttempt])
+
   // Contagem regressiva visível durante a espera de um 429.
   useEffect(() => {
     if (waitSeconds <= 0) return
@@ -5384,6 +5564,34 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
     overlayRectRef.current = { left: rect.left, top: rect.top, width: rect.width, height: rect.height }
     return overlayRectRef.current
   }, [])
+
+  // ── A caneta não rola a página ──────────────────────────────────────────
+  // No iPad, a Pencil entra como TOQUE: ela obedece ao `touch-action` igual a
+  // um dedo. Com o dedo liberado para rolar (que é o ponto do modo "só
+  // caneta"), a caneta rolava a leitura junto enquanto escrevia — o traço saía,
+  // mas a página andava embaixo dele.
+  //
+  // O CSS não distingue caneta de dedo, mas o Safari distingue no evento de
+  // toque: `Touch.touchType` diz 'stylus'. Barrando a rolagem só nesse caso
+  // (e enquanto um traço estiver em curso), a caneta escreve firme e o dedo
+  // continua rolando e virando página como antes.
+  useEffect(() => {
+    const element = overlayRef.current
+    if (!element) return
+    const onTouchStart = (event: TouchEvent) => {
+      if (!inkToolRef.current) return
+      const started = Array.from(event.changedTouches)
+      const stylus = started.some((touch) => (touch as Touch & { touchType?: string }).touchType === 'stylus')
+      // Três formas de reconhecer a caneta, por ordem de confiança: o próprio
+      // toque diz que é caneta (Safari), a caneta acabou de encostar, ou já há
+      // um traço em curso — e nesse último caso nem o dedo pode rolar, senão a
+      // página andaria por baixo da caneta e o traço sairia torto.
+      const penJustLanded = Date.now() - penDownAtRef.current < 400
+      if (stylus || penJustLanded || interactionRef.current) event.preventDefault()
+    }
+    element.addEventListener('touchstart', onTouchStart, { passive: false })
+    return () => element.removeEventListener('touchstart', onTouchStart)
+  }, [renderSize])
 
   useEffect(() => {
     // Invalidar é escrever `null`: a medida nova só é tirada quando alguém
@@ -5947,8 +6155,10 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   // muda alguma coisa. Nota, texto e marcador nascem de um TOQUE, não de um
   // traço: recusar o dedo neles só tiraria uma forma de usar o leitor.
   const inkTool = tool === 'drawing' || tool === 'highlight' || tool === 'laser' || tool === 'eraser'
+  inkToolRef.current = inkTool
 
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === 'pen') penDownAtRef.current = Date.now()
     if (!renderSize || editor) return
     if (event.button !== 0 && event.pointerType !== 'touch' && event.pointerType !== 'pen') return
     // UM gesto de cada vez. Sem isto, a mão que encosta na tela no meio de um
