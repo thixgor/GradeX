@@ -1812,6 +1812,9 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
    *   no lugar errado. O defeito se perpetuava sozinho.
    */
   const pendingTargetRef = useRef<number | null>(null)
+  // Direção da rolagem num ref: o laço de assentamento roda quadro a quadro,
+  // fora do ciclo do React, e precisa saber para que lado alinhar.
+  const horizontalRef = useRef(false)
   const [access, setAccess] = useState<ViewerAccess | null>(null)
   // Contador de tentativas de abrir o material. Existe para dar ao leitor um
   // caminho de volta que não seja fechar o aplicativo.
@@ -1934,6 +1937,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   // página atual) não se aplica ali — na horizontal todas as páginas existem na
   // fileira, virtualizadas como no modo contínuo.
   const horizontal = scrollAxis === 'horizontal'
+  horizontalRef.current = horizontal
   const singlePage = mode === 'single' && !horizontal
   // O dedo desenha neste aparelho? Ver PenMode: no automático, para de
   // desenhar assim que uma caneta aparece — é a rejeição de palma.
@@ -2143,11 +2147,19 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
           ? 'single'
           : saved?.mode || json.viewer?.defaultMode || 'single'
         setMode(resolvedMode)
-        // Em contínuo/largura a lista começa na primeira página, então apenas
-        // restaurar `currentPage` não basta: é preciso rolar até a página salva
-        // quando ela existir no DOM — e suprimir o foco por scroll por um
-        // instante para o observer não reverter para a pág. 1 no topo.
-        if (resolvedMode !== 'single' && startPage > 1) {
+        // Qualquer layout que seja uma LISTA precisa rolar até a página salva:
+        // restaurar o número da página não move a leitura, e a lista começa na
+        // primeira. O foco por rolagem fica suspenso por um instante para o
+        // observer não reverter para a página 1 no caminho.
+        //
+        // O destino é marcado SEMPRE que houver página salva, sem olhar o modo.
+        // Antes a condição era `resolvedMode !== 'single'` e isso ignorava a
+        // direção da rolagem: na horizontal, "uma página por vez" também é uma
+        // fileira virtualizada, e um material grande — que sempre abre em "uma
+        // página por vez" — simplesmente não retomava. Quem decide se há o que
+        // rolar é o efeito de retomada, que conhece os dois eixos e descarta o
+        // destino quando a página é montada sozinha.
+        if (startPage > 1) {
           pendingResumeRef.current = startPage
           suppressFocusUntilRef.current = Date.now() + 1500
         }
@@ -2280,6 +2292,11 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
 
     const measure = () => {
       frame = 0
+      // Viagem em curso: a janela de páginas pertence ao destino. Ler a posição
+      // no meio do caminho — que pode estar em cima de um bloco de
+      // preenchimento — mandaria a janela para o lugar errado e desmontaria o
+      // destino embaixo da viagem.
+      if (pendingTargetRef.current != null) return
       const slot = pageSlotWidthRef.current
       if (!(slot > 0)) return
       const index = Math.min(pages.length - 1, Math.max(0, Math.round(element.scrollLeft / slot)))
@@ -2472,15 +2489,33 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
       suppressFocusUntilRef.current = Math.max(suppressFocusUntilRef.current, now + 300)
       if (now > deadline) { finish(); return }
 
+      // Mira o ELEMENTO da página, nos dois eixos.
+      //
+      // Na horizontal isso não é preciosismo: a fileira tem encaixe
+      // obrigatório (scroll-snap), e mandar a rolagem para uma COORDENADA que
+      // cai dentro de um bloco de preenchimento — onde não existe casa de
+      // página montada — faz o navegador puxar de volta para a casa montada
+      // mais próxima. Era essa briga entre o cálculo e o encaixe que produzia a
+      // corrida "de uma página lá na frente até a página X". Mirando um
+      // elemento que EXISTE, o encaixe joga a favor: ele assenta exatamente
+      // nele. Enquanto a casa não estiver montada, o laço espera.
       const element = document.getElementById(`pdf-page-${page}`)
       if (element) {
-        const before = element.getBoundingClientRect().top
+        const sideways = horizontalRef.current
+        const measure = () => {
+          const rect = element.getBoundingClientRect()
+          return sideways ? rect.left : rect.top
+        }
+        const before = measure()
         // `instant` e não `auto`: `auto` obedece ao `scroll-behavior` do CSS, e
         // uma rolagem ANIMADA de centenas de milhares de pixels é exatamente a
         // "passagem por todas as páginas" que não pode acontecer.
-        element.scrollIntoView({ behavior: 'instant', block: 'start' })
-        const after = element.getBoundingClientRect().top
-        stable = Math.abs(after - before) < 1 ? stable + 1 : 0
+        element.scrollIntoView({
+          behavior: 'instant',
+          block: sideways ? 'nearest' : 'start',
+          inline: sideways ? 'center' : 'nearest',
+        })
+        stable = Math.abs(measure() - before) < 1 ? stable + 1 : 0
         if (stable >= 3 && now >= minUntil) { finish(); return }
       }
       requestAnimationFrame(step)
@@ -2515,24 +2550,6 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     }
     const target = pendingResumeRef.current
     if (target == null) return
-
-    // Na horizontal a posição é uma conta (índice × largura da casa) e vale
-    // mesmo antes de a página existir no DOM — mas ainda depende da largura já
-    // ter sido medida, então a tentativa se repete até isso valer.
-    if (horizontal) {
-      const element = contentRef.current
-      const index = pagesRef.current.indexOf(target)
-      const slot = pageSlotWidthRef.current
-      if (!element || index < 0 || !(slot > 1)) return
-      pendingResumeRef.current = null
-      pendingTargetRef.current = target
-      suppressFocusUntilRef.current = Date.now() + 600
-      element.scrollTo({ left: index * slot, behavior: 'instant' })
-      window.setTimeout(() => {
-        if (pendingTargetRef.current === target) pendingTargetRef.current = null
-      }, 400)
-      return
-    }
 
     pendingResumeRef.current = null
     // Mais tempo segurando que num salto comum: na abertura ainda faltam
@@ -2656,20 +2673,29 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     }
     setCurrentPage((current) => (current === next ? current : next))
 
-    // Fileira horizontal: a posição é uma conta, não uma busca no DOM. Um salto
-    // do sumário para a página 900 não precisa que ela já esteja montada — a
-    // rolagem vai para o lugar certo e a virtualização acompanha.
+    // Fileira horizontal.
+    //
+    // Passo curto (a casa vizinha já está montada): a conta é direta e o
+    // encaixe do navegador cuida do resto, com a rolagem suave de sempre.
+    //
+    // Salto longo: NÃO pode ser conta. A fileira tem encaixe obrigatório, e
+    // mandar a rolagem para uma coordenada que cai dentro de um bloco de
+    // preenchimento — onde não há casa de página montada — faz o navegador
+    // puxar de volta para a casa montada mais próxima. O resultado era a
+    // corrida "de uma página lá na frente até a página X". Quem cuida do salto
+    // é o motor de assentamento, que espera a casa existir e mira o elemento.
     if (horizontal) {
       const index = pagesRef.current.indexOf(next)
       if (index < 0) return
       const isJump = Math.abs(next - currentPageRef.current) > 2
       if (isJump) {
-        suppressFocusUntilRef.current = Math.max(suppressFocusUntilRef.current, Date.now() + 260)
+        settleToPage(next, { deadlineMs: 2500 })
+        return
       }
       const element = contentRef.current
       const slot = pageSlotWidthRef.current
       if (!element || !(slot > 1)) return
-      element.scrollTo({ left: index * slot, behavior: isJump ? 'auto' : 'smooth' })
+      element.scrollTo({ left: index * slot, behavior: 'smooth' })
       return
     }
 
@@ -5250,6 +5276,15 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   const [pageProxy, setPageProxy] = useState<PageProxyEntry | null>(null)
   const [loadAttempt, setLoadAttempt] = useState(0)
   const [renderSize, setRenderSize] = useState<PageSize | null>(null)
+  // A página já tem TINTA na tela? Não é a mesma pergunta que `renderSize`: o
+  // tamanho é definido antes do desenho (para a moldura reservar o espaço e a
+  // página não pular), e a espera saía da tela naquele instante. O leitor ficava
+  // olhando um retângulo cinza sem nenhum sinal de que algo estava acontecendo —
+  // exatamente o que a captura de tela mostrava.
+  const [painted, setPainted] = useState(false)
+  // Pedido de repintura: muda para forçar uma rasterização nova sem mexer em
+  // mais nada (ver a recuperação ao voltar do segundo plano).
+  const [repaintNonce, setRepaintNonce] = useState(0)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [editor, setEditor] = useState<EditorState | null>(null)
   const requestedRef = useRef(false)
@@ -5307,6 +5342,7 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
     setError('')
     setWaitSeconds(0)
     setRenderSize(null)
+    setPainted(false)
     setSelectedId(null)
     setEditor(null)
     laserStrokesRef.current = []
@@ -5501,6 +5537,7 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
           setRenderSize({ width: displayViewport.width, height: displayViewport.height })
         }
         hasBitmapRef.current = true
+        setPainted(true)
       } catch (err: any) {
         if (!cancelled && err?.name !== 'RenderingCancelledException') {
           setError(err?.message || 'Pagina indisponivel')
@@ -5537,7 +5574,7 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
       if (idleHandle != null) cancelIdle(idleHandle)
       renderTask?.cancel?.()
     }
-  }, [density, onPageSize, pageProxy, renderScale])
+  }, [density, onPageSize, pageProxy, renderScale, repaintNonce])
 
   // Libera a memória do canvas ao desmontar. O Safari do iOS segura o backing
   // store mesmo depois de o nó sair do DOM; zerar as dimensões devolve na hora.
@@ -5605,6 +5642,25 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
     return () => window.clearTimeout(timer)
   }, [error, waitSeconds])
 
+  // O Safari do iOS descarta o conteúdo dos canvas quando o app fica em segundo
+  // plano. A página volta EM BRANCO e nada a repinta, porque para o leitor ela
+  // "já foi desenhada" — é o retângulo cinza que aparece depois de sair e
+  // voltar do aplicativo. Ao voltar para a frente, a página que está sendo lida
+  // se redesenha. Só ela: repintar todas as vivas de uma vez é justamente o
+  // pico de memória que derruba a aba.
+  useEffect(() => {
+    const onVisibility = () => {
+      if (document.visibilityState !== 'visible') return
+      if (!activeRef.current || !hasBitmapRef.current) return
+      // Sem bitmap a proteger, o redesenho dispensa o canvas gêmeo.
+      hasBitmapRef.current = false
+      setPainted(false)
+      setRepaintNonce((nonce) => nonce + 1)
+    }
+    document.addEventListener('visibilitychange', onVisibility)
+    return () => document.removeEventListener('visibilitychange', onVisibility)
+  }, [])
+
   // Vigia da página: nada pode ficar girando para sempre.
   //
   // A busca dos bytes já tem prazo, mas o caminho depois dela não tinha — se o
@@ -5614,12 +5670,12 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   // isto vira um erro comum: a auto-recuperação tenta de novo sozinha e, se
   // insistir em falhar, aparece o botão de tentar novamente.
   useEffect(() => {
-    if (renderSize || error || (!visible && !active)) return
+    if (painted || error || (!visible && !active)) return
     const timer = window.setTimeout(() => {
       setError('Esta pagina demorou demais para abrir.')
     }, PAGE_STALL_TIMEOUT_MS)
     return () => window.clearTimeout(timer)
-  }, [renderSize, error, visible, active, loadAttempt])
+  }, [painted, error, visible, active, loadAttempt])
 
   // Contagem regressiva visível durante a espera de um 429.
   useEffect(() => {
@@ -6659,7 +6715,7 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
             um flash branco com spinner por cima da página já desenhada a cada
             passo de zoom. Com o render em offscreen, re-rasterizar não precisa
             mais esconder nada. */}
-        {!renderSize && (visible || active) && (
+        {!painted && (visible || active) && (
           <div className="absolute inset-2 rounded-lg bg-white/90 flex items-center justify-center">
             <div className="h-7 w-7 rounded-full border-2 border-emerald-700/20 border-t-emerald-700 animate-spin" />
           </div>
