@@ -11,6 +11,7 @@ import {
   readScrollEdges,
   resolveSwipe,
   rubberBand,
+  swipeAxesForMode,
 } from '@/lib/pdf-viewer-swipe'
 
 /**
@@ -79,6 +80,24 @@ describe('readPageEdges', () => {
     expect(readPageEdges({ top: -1200, bottom: 790, viewport })).toEqual({ atStart: false, atEnd: true })
     // E no começo dela, o contrário.
     expect(readPageEdges({ top: 0, bottom: 2000, viewport })).toEqual({ atStart: true, atEnd: false })
+  })
+})
+
+describe('swipeAxesForMode', () => {
+  it('na leitura horizontal o gesto sintético não vira página em eixo nenhum', () => {
+    // O lado é do encaixe nativo. A vertical estava liberada "de brinde" e era
+    // isso que fazia passar o dedo para cima VOLTAR uma página: o arco do
+    // polegar leva um empurrão lateral junto, e meia casa de empurrão já cai na
+    // página anterior (medido: 200 px numa casa de 390 px).
+    expect(swipeAxesForMode({ singlePage: false, horizontal: true })).toEqual({ x: false, y: false })
+  })
+
+  it('em "uma página por vez" o dedo vira nos dois eixos', () => {
+    expect(swipeAxesForMode({ singlePage: true, horizontal: false })).toEqual({ x: true, y: true })
+  })
+
+  it('nos modos de rolagem contínua só para o lado — a vertical é a leitura', () => {
+    expect(swipeAxesForMode({ singlePage: false, horizontal: false })).toEqual({ x: true, y: false })
   })
 })
 

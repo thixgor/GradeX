@@ -81,6 +81,7 @@ import {
   readScrollEdges,
   resolveSwipe,
   rubberBand,
+  swipeAxesForMode,
 } from '@/lib/pdf-viewer-swipe'
 import {
   ERASER_RADIUS,
@@ -1619,12 +1620,19 @@ function useResizeWidth(ref: React.RefObject<HTMLElement>, deps: React.Dependenc
 // As medidas e a decisão do gesto moram em `lib/pdf-viewer-swipe.ts` (sem DOM,
 // testável sozinho). Aqui fica só a ponte com os eventos de ponteiro.
 
+// Quanto tempo a fileira horizontal fica presa depois de o dedo sair. Cobre a
+// inércia do toque, que é onde o encaixe mudava de página sozinho; curto o
+// bastante para não atrapalhar o gesto seguinte (e qualquer dedo novo na tela
+// solta a guarda na hora).
+const ROW_ANCHOR_TAIL_MS = 700
+
 function useViewerGestures(
   ref: React.RefObject<HTMLElement>,
   {
     enabled,
     horizontal,
     vertical,
+    snapRow,
     allowPen,
     onSwipe,
     trackRef,
@@ -1632,6 +1640,12 @@ function useViewerGestures(
     enabled: boolean
     horizontal: boolean
     vertical: boolean
+    /**
+     * O elemento observado é a fileira com encaixe obrigatório (leitura
+     * horizontal)? Se for, um gesto que o dedo fez na VERTICAL não pode
+     * terminar noutra página — ver `holdRowAnchor`.
+     */
+    snapRow?: boolean
     /** A caneta também vira página? Só quando ela não estiver escrevendo. */
     allowPen: boolean
     onSwipe: (direction: 1 | -1) => void
@@ -1654,6 +1668,8 @@ function useViewerGestures(
   onSwipeRef.current = onSwipe
   const axesRef = useRef({ horizontal, vertical })
   axesRef.current = { horizontal, vertical }
+  const snapRowRef = useRef(snapRow)
+  snapRowRef.current = snapRow
   const allowPenRef = useRef(allowPen)
   allowPenRef.current = allowPen
 
@@ -1688,6 +1704,51 @@ function useViewerGestures(
       track.style.transform = dx === 0 && dy === 0 ? '' : `translate3d(${dx}px, ${dy}px, 0)`
     }
 
+    // ── Guarda de eixo da fileira horizontal ───────────────────────────────
+    //
+    // Na leitura horizontal o eixo do LADO é do navegador: a fileira tem
+    // encaixe obrigatório e é ele quem vira a página. Só que nenhum movimento
+    // de dedo é puramente vertical — o arco natural do polegar leva um empurrão
+    // lateral junto, o navegador projeta esse empurrão com a inércia e o encaixe
+    // resolve para a casa mais próxima. Medido num contêiner com casa de 390 px:
+    // 200 px de empurrão lateral já caem na página ANTERIOR. Era exatamente o
+    // "passo o dedo para cima e volta uma página".
+    //
+    // A guarda é literal: no instante em que o gesto trava no eixo vertical,
+    // anotamos onde a fileira estava e a devolvemos para lá enquanto ela durar.
+    // Assinar `scrollLeft` cancela a inércia, então o desvio morre no primeiro
+    // quadro — em vez de virar a página e a correção vir depois, à vista.
+    let rowAnchor: number | null = null
+    let rowGuardTimer: number | null = null
+
+    const onRowScroll = () => {
+      if (rowAnchor == null) return
+      if (Math.abs(element.scrollLeft - rowAnchor) > 1) element.scrollLeft = rowAnchor
+    }
+
+    const holdRowAnchor = () => {
+      if (rowAnchor != null || !snapRowRef.current) return
+      rowAnchor = element.scrollLeft
+      element.addEventListener('scroll', onRowScroll, { passive: true })
+    }
+
+    const releaseRowAnchor = (delayMs: number) => {
+      if (rowGuardTimer != null) {
+        window.clearTimeout(rowGuardTimer)
+        rowGuardTimer = null
+      }
+      if (rowAnchor == null) return
+      const drop = () => {
+        rowGuardTimer = null
+        element.removeEventListener('scroll', onRowScroll)
+        rowAnchor = null
+      }
+      // A inércia do toque continua DEPOIS de o dedo sair. Soltar a guarda no
+      // `pointerup` deixaria passar justamente o pedaço que vira a página.
+      if (delayMs <= 0) drop()
+      else rowGuardTimer = window.setTimeout(drop, delayMs)
+    }
+
     const resetTrack = (animated: boolean) => {
       const track = trackRef?.current
       if (!track) return
@@ -1701,6 +1762,9 @@ function useViewerGestures(
 
     const onPointerDown = (event: PointerEvent) => {
       if (!isGesturePointer(event)) return
+      // Dedo novo na tela: o gesto anterior acabou de verdade, e prender a
+      // fileira agora atrapalharia justamente quem quer passar de página.
+      releaseRowAnchor(0)
       const now = Date.now()
       dropStalePointers(now)
       activePointers.set(event.pointerId, now)
@@ -1781,6 +1845,8 @@ function useViewerGestures(
       if (!start.axis) {
         start.axis = lockSwipeAxis(dx, dy)
         if (!start.axis) return
+        // Gesto vertical: a fileira horizontal fica onde está.
+        if (start.axis === 'y') holdRowAnchor()
       }
 
       const delta = start.axis === 'x' ? dx : dy
@@ -1814,6 +1880,9 @@ function useViewerGestures(
 
       swipeStartRef.current = null
       pointerIdRef.current = null
+      // A inércia do toque só morre alguns décimos depois do dedo sair — é
+      // nesse rastro que o encaixe da fileira decidia mudar de página.
+      releaseRowAnchor(ROW_ANCHOR_TAIL_MS)
 
       // Velocidade do fim do gesto, no eixo que ele assumiu.
       const samples = samplesRef.current
@@ -1854,6 +1923,7 @@ function useViewerGestures(
       window.removeEventListener('pointerup', finishPointer)
       window.removeEventListener('pointercancel', finishPointer)
       resetTrack(false)
+      releaseRowAnchor(0)
       swipeStartRef.current = null
       pointerIdRef.current = null
       samplesRef.current = []
@@ -2967,22 +3037,19 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   // escreve.
   const fingerCanNavigate = tool === 'cursor' || !touchDrawingEnabled
   const gesturesEnabled = fingerCanNavigate && !loading && !error && !!access
+  // Em quais eixos o dedo vira página. A regra mora em `swipeAxesForMode` (com
+  // o porquê inteiro escrito lá): na horizontal os DOIS eixos pertencem ao
+  // navegador — o lado, pelo encaixe; a vertical, pela leitura da página
+  // ampliada. Liberar o vertical ali para virar página foi exatamente o que
+  // fazia "passar o dedo para cima" VOLTAR uma página.
+  const swipeAxes = swipeAxesForMode({ singlePage, horizontal })
   useViewerGestures(contentRef, {
     enabled: gesturesEnabled,
-    // Para o lado, em qualquer modo de leitura — MENOS na rolagem horizontal,
-    // onde quem vira a página é o encaixe nativo do navegador. Ali os dois
-    // ligados seriam o pior dos mundos: o dedo rolaria a fileira e, ao soltar,
-    // o gesto viraria mais uma página por cima.
-    horizontal: !horizontal,
-    // Para cima e para baixo:
-    // - em "uma página por vez", sempre (é o irmão do gesto para o lado);
-    // - na rolagem horizontal, também — quem escolheu passar as páginas de lado
-    //   continua podendo virar com um gesto para cima, que é o que a mão faz
-    //   sozinha; e ali o vertical não é a leitura, então não há conflito;
-    // - nos modos de rolagem vertical, não: ali o vertical É a leitura.
-    // Em todos eles o gesto ainda espera a página chegar ao fim (ou ao começo)
-    // antes de virar, então página ampliada continua rolando normalmente.
-    vertical: singlePage || horizontal,
+    horizontal: swipeAxes.x,
+    vertical: swipeAxes.y,
+    // A fileira horizontal é um contêiner de encaixe obrigatório do navegador:
+    // enquanto o dedo estiver num gesto vertical, ela não pode andar de casa.
+    snapRow: horizontal,
     // A caneta só vira página quando não é ela quem escreve.
     allowPen: tool === 'cursor',
     onSwipe: handleSwipe,

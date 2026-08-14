@@ -60,6 +60,39 @@ export const PAGE_EDGE_SLACK_RATIO = 0.22
 
 export type SwipeAxis = 'x' | 'y'
 
+/**
+ * Em quais eixos o gesto sintético pode virar página, dado o modo de leitura.
+ *
+ * A regra é curta e vale a pena estar escrita num lugar só, porque a versão
+ * anterior errava nela: na leitura HORIZONTAL o eixo vertical foi liberado para
+ * virar página "de brinde", e o resultado foi o defeito oposto — passar o dedo
+ * para cima VOLTAVA uma página.
+ *
+ * O motivo é que, na horizontal, a fileira é um contêiner de encaixe
+ * obrigatório do próprio navegador, e o eixo horizontal é dele. Um movimento
+ * vertical de dedo nunca é só vertical: o arco natural do polegar leva um
+ * empurrão lateral junto. O navegador projeta esse empurrão com a inércia, o
+ * encaixe resolve para a casa mais próxima — e meia casa de empurrão já cai na
+ * página ANTERIOR. Medido: 200 px de deslocamento lateral numa casa de 390 px
+ * bastam para o encaixe voltar uma página.
+ *
+ * Então: quem escolheu ler na horizontal vira a página para o lado, e o eixo
+ * vertical volta a ser só leitura (arrastar a página ampliada). Nos modos
+ * verticais nada muda — lá o gesto para cima/baixo é o irmão do gesto para o
+ * lado, e não disputa com encaixe nenhum.
+ */
+export function swipeAxesForMode({
+  singlePage,
+  horizontal,
+}: {
+  /** Modo "uma página por vez" com rolagem vertical. */
+  singlePage: boolean
+  /** Leitura na horizontal (fileira com encaixe nativo). */
+  horizontal: boolean
+}): Record<SwipeAxis, boolean> {
+  return { x: !horizontal, y: singlePage && !horizontal }
+}
+
 export interface SwipeStart {
   x: number
   y: number
