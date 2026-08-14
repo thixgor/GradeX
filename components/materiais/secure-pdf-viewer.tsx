@@ -11,6 +11,7 @@ import {
   Bookmark,
   Brush,
   Check,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Circle,
@@ -98,6 +99,7 @@ import {
   invertEntry,
   pushEntry,
 } from '@/lib/pdf-viewer-history'
+import { inkPixelWidth, traceStroke } from '@/lib/pdf-viewer-ink'
 
 type ViewerMode = 'single' | 'width' | 'continuous'
 // Folhas do celular. O cabeçalho antigo empilhava até cinco linhas de rolagem
@@ -154,6 +156,9 @@ interface EraserStyle {
   mode: EraserMode
   size: EraserSize
 }
+
+// Estado da barra flutuante de desenho (ver InkDock).
+type InkDockState = 'off' | 'mini' | 'open'
 
 const ERASER_MODE_OPTIONS: Array<{ value: EraserMode; label: string; hint: string }> = [
   { value: 'object', label: 'Traço inteiro', hint: 'Encostou em qualquer parte, o traço todo sai' },
@@ -421,6 +426,10 @@ const LASER_SWATCHES = ['#ef4444', '#ec4899', '#f97316', '#22c55e', '#3b82f6']
 // Tempo (ms) que cada traço da caneta laser leva para desaparecer sozinho,
 // no estilo GoodNotes: escreve/aponta e a tinta some pouco depois.
 const LASER_FADE_MS = 900
+// Em quantas faixas de opacidade o rastro do laser é desenhado. Ver renderLaser:
+// 10 faixas dão um degradê indistinguível do ponto a ponto, com um punhado de
+// traçados por quadro em vez de um por ponto.
+const LASER_FADE_BANDS = 10
 const FONT_OPTIONS = ['Inter', 'Arial', 'Georgia', 'Times New Roman', 'Courier New']
 /**
  * Cursor da borracha: um círculo do TAMANHO REAL do apagador. Com um ícone
@@ -989,6 +998,26 @@ function createSharedObserver(rootMargin: string) {
   }
 }
 
+// ─── Sinal de "está escrevendo agora" ───────────────────────────────────────
+// A barra de ferramentas flutuante precisa sumir de vista enquanto a caneta
+// trabalha, e voltar quando ela levanta. Um estado no leitor faria o componente
+// inteiro re-renderizar no PIOR momento possível — o começo do traço. Este
+// canal avisa só quem se inscreveu (a barra), e o resto do leitor nem fica
+// sabendo. Mesmo padrão dos ouvintes de pinça mais acima.
+const inkListeners = new Set<(active: boolean) => void>()
+let inkActive = false
+
+function setInkActive(active: boolean) {
+  if (inkActive === active) return
+  inkActive = active
+  for (const listener of inkListeners) listener(active)
+}
+
+function subscribeInkActivity(listener: (active: boolean) => void) {
+  inkListeners.add(listener)
+  return () => { inkListeners.delete(listener) }
+}
+
 // Foco de leitura: a página passa a ser "a atual" quando cruza a faixa central.
 const observePageFocus = createSharedObserver('-18% 0px -68% 0px')
 // Visibilidade: dispara o carregamento um pouco antes de a página entrar.
@@ -1119,6 +1148,7 @@ interface ViewerPrefs {
   textStyle?: TextStyle
   eraserStyle?: EraserStyle
   penMode?: PenMode
+  inkDock?: InkDockState
   /**
    * Já vimos uma caneta neste aparelho? Guardado (e não só detectado em
    * memória) porque a rejeição da palma precisa valer desde o PRIMEIRO toque da
@@ -1344,27 +1374,18 @@ function pointsToSvgPath(points: PdfPoint[]) {
   return segments.join(' ')
 }
 
+// O caminho inteiro de uma vez. A curva mora em lib/pdf-viewer-ink (testada à
+// parte), que é a mesma usada pelo rascunho que cresce pela ponta — é daí que
+// vem a garantia de que os dois desenham igual.
 function pointsToCanvasPath(context: CanvasRenderingContext2D, points: PdfPoint[], width: number, height: number) {
   if (!points.length) return
   context.beginPath()
-  context.moveTo(points[0].x * width, points[0].y * height)
   if (points.length === 1) {
+    context.moveTo(points[0].x * width, points[0].y * height)
     context.lineTo(points[0].x * width + 0.1, points[0].y * height + 0.1)
     return
   }
-
-  for (let index = 1; index < points.length - 1; index++) {
-    const current = points[index]
-    const next = points[index + 1]
-    context.quadraticCurveTo(
-      current.x * width,
-      current.y * height,
-      ((current.x + next.x) / 2) * width,
-      ((current.y + next.y) / 2) * height
-    )
-  }
-  const last = points[points.length - 1]
-  context.lineTo(last.x * width, last.y * height)
+  traceStroke(context, points, width, height)
 }
 
 function shouldConvertToCircle(points: PdfPoint[]) {
@@ -1778,6 +1799,9 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const [eraserStyle, setEraserStyle] = useState<EraserStyle>({ mode: 'object', size: 'medium' })
   const [penMode, setPenMode] = useState<PenMode>('auto')
   const [penSeen, setPenSeen] = useState(false)
+  // Barra flutuante das ferramentas. 'off' = fora da tela (quem só lê nem vê),
+  // 'mini' = a pastilha com a ferramenta atual, 'open' = a barra inteira.
+  const [inkDock, setInkDock] = useState<InkDockState>('off')
   const [textStyle, setTextStyle] = useState<TextStyle>({
     fontFamily: 'Inter',
     fontSize: 16,
@@ -1876,13 +1900,29 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   // Ver LARGE_DOCUMENT_PAGES.
   const isLargeDocument = pageCount >= LARGE_DOCUMENT_PAGES
 
+  // Anotações agrupadas por página — e, o que importa tanto quanto: com a MESMA
+  // referência de array para as páginas que não mudaram.
+  //
+  // Sem esse cuidado, terminar um traço reconstruía o mapa inteiro e entregava
+  // um array novo para TODAS as páginas vivas; como o `memo` de PdfCanvasPage
+  // compara por identidade, as sete páginas da janela re-renderizavam ao levantar
+  // a caneta. Era o engasgo no fim do traço.
+  const annotationsByPageRef = useRef<Map<number, PdfAnnotation[]>>(new Map())
   const annotationsByPage = useMemo(() => {
+    const previous = annotationsByPageRef.current
     const grouped = new Map<number, PdfAnnotation[]>()
     for (const annotation of annotations) {
-      const pageAnnotations = grouped.get(annotation.pageNumber) || []
-      pageAnnotations.push(annotation)
-      grouped.set(annotation.pageNumber, pageAnnotations)
+      const pageAnnotations = grouped.get(annotation.pageNumber)
+      if (pageAnnotations) pageAnnotations.push(annotation)
+      else grouped.set(annotation.pageNumber, [annotation])
     }
+    for (const [page, list] of grouped) {
+      const before = previous.get(page)
+      if (before && before.length === list.length && before.every((item, index) => item === list[index])) {
+        grouped.set(page, before)
+      }
+    }
+    annotationsByPageRef.current = grouped
     return grouped
   }, [annotations])
 
@@ -2199,6 +2239,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     if (prefs.textStyle) setTextStyle((current) => ({ ...current, ...prefs.textStyle }))
     if (prefs.eraserStyle) setEraserStyle((current) => ({ ...current, ...prefs.eraserStyle }))
     if (prefs.penMode) setPenMode(prefs.penMode)
+    if (prefs.inkDock) setInkDock(prefs.inkDock)
     if (prefs.penSeen) setPenSeen(true)
     if (prefs.scrollAxis) setScrollAxis(prefs.scrollAxis)
     prefsHydratedRef.current = true
@@ -2238,11 +2279,12 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
       eraserStyle,
       penMode,
       penSeen,
+      inkDock,
     })
   }, [
     zoom, mode, scrollAxis, tool, showThumbs, sidePanelTab, showAnnotations, showGuide,
     highlightColor, highlightWidth, noteColor, laserColor, drawingStyle, textStyle,
-    eraserStyle, penMode, penSeen,
+    eraserStyle, penMode, penSeen, inkDock,
   ])
 
   // Salva a posição de leitura para retomar na próxima abertura. Com atraso:
@@ -3003,6 +3045,41 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     applyScrollAxis, scrollAxis, undoAnnotation, redoAnnotation,
   ])
 
+  // Escolher uma ferramenta é dizer "vou marcar": a barra flutuante aparece
+  // sozinha nesse momento, inclusive quando o leitor volta e a ferramenta
+  // salva não é a de navegar. Quem só lê nunca a vê.
+  useEffect(() => {
+    if (previewActive || tool === 'cursor') return
+    setInkDock((current) => (current === 'off' ? 'open' : current))
+  }, [tool, previewActive])
+
+  // Um objeto só com tudo o que as opções de ferramenta precisam. Memoizado
+  // para não desfazer o `memo` da barra flutuante a cada render do leitor
+  // (que acontece a cada troca de página, ou seja, o tempo todo).
+  const inkOptions = useMemo(() => ({
+    tool,
+    drawingStyle,
+    onDrawingStyleChange: setDrawingStyle,
+    highlightColor,
+    onHighlightColorChange: setHighlightColor,
+    highlightWidth,
+    onHighlightWidthChange: setHighlightWidth,
+    noteColor,
+    onNoteColorChange: setNoteColor,
+    laserColor,
+    onLaserColorChange: setLaserColor,
+    textStyle,
+    onTextStyleChange: setTextStyle,
+    eraserStyle,
+    onEraserStyleChange: setEraserStyle,
+    penMode,
+    onPenModeChange: setPenMode,
+    penSeen,
+  }), [
+    tool, drawingStyle, highlightColor, highlightWidth, noteColor, laserColor,
+    textStyle, eraserStyle, penMode, penSeen,
+  ])
+
   if (loading) {
     return <ViewerShell><ViewerLoading /></ViewerShell>
   }
@@ -3315,6 +3392,16 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                       title="Refazer (Ctrl+Shift+Z)"
                     >
                       <Redo2 className="h-4 w-4" />
+                    </ToolbarButton>
+                    {/* A mesma barra flutuante do celular, para quem escreve de
+                        caneta num 2-em-1: a mão fica embaixo, não no topo. */}
+                    <ToolbarButton
+                      compact
+                      active={inkDock !== 'off'}
+                      onClick={() => setInkDock((current) => (current === 'off' ? 'open' : 'off'))}
+                      title="Barra flutuante de ferramentas"
+                    >
+                      <PenTool className="h-4 w-4" />
                     </ToolbarButton>
                   </div>
 
@@ -3679,7 +3766,13 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
           <button
             type="button"
             onClick={() => { zoomTouchedRef.current = true; if (fitWidthZoom) setZoom(clampZoom(fitWidthZoom, minZoom, maxZoom)) }}
-            className="pointer-events-auto fixed bottom-20 left-1/2 z-40 -translate-x-1/2 rounded-full border border-white/20 bg-zinc-950/90 px-3 py-1.5 text-[11px] font-semibold text-white shadow-lg backdrop-blur-sm lg:bottom-6"
+            // Sobe quando a barra de ferramentas está na tela: os dois moram no
+            // mesmo canto, e sobrepostos nenhum dos dois serve para nada.
+            className={`pointer-events-auto fixed left-1/2 z-40 -translate-x-1/2 rounded-full border border-white/20 bg-zinc-950/90 px-3 py-1.5 text-[11px] font-semibold text-white shadow-lg backdrop-blur-sm ${
+              !previewActive && inkDock !== 'off'
+                ? 'bottom-[calc(env(safe-area-inset-bottom)+9.5rem)] lg:bottom-24'
+                : 'bottom-20 lg:bottom-6'
+            }`}
           >
             {Math.round((fitWidthZoom ? zoom / fitWidthZoom : zoom) * 100)}% · toque para ajustar
           </button>
@@ -3755,11 +3848,14 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
               <button
                 type="button"
                 data-tour="viewer-tools-mobile"
-                onClick={() => setMobileSheet('tools')}
+                // Um toque só, e a barra de ferramentas aparece flutuando sobre
+                // a página. Antes este botão abria uma folha que cobria metade
+                // do material e exigia mais dois toques para começar a escrever.
+                onClick={() => setInkDock((current) => (current === 'off' ? 'open' : 'off'))}
                 className={`flex h-11 shrink-0 flex-col items-center justify-center rounded-xl border px-2.5 text-[10px] font-semibold ${
-                  tool === 'cursor'
-                    ? 'border-white/20 bg-white/15 text-white'
-                    : 'border-emerald-300/50 bg-emerald-400/25 text-white'
+                  inkDock !== 'off'
+                    ? 'border-emerald-300/50 bg-emerald-400/25 text-white'
+                    : 'border-white/20 bg-white/15 text-white'
                 }`}
               >
                 <PenLine className="h-4 w-4" />
@@ -4041,6 +4137,8 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
             </div>
             <p className="mt-3 text-xs text-white/50">
               Tudo o que você marcar fica salvo na sua conta e reaparece quando voltar, em qualquer aparelho.
+              Para trocar de ferramenta sem abrir esta folha, use a barra flutuante — o botão
+              &quot;Marcar&quot; a liga e desliga.
             </p>
           </ViewerSheet>
         )}
@@ -4066,6 +4164,24 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
             )}
           </div>
         </ViewerSheet>
+
+        {/* Barra flutuante das ferramentas. Fica fora da folha e fora do
+            cabeçalho de propósito: é o caminho de UM toque para trocar de
+            ferramenta com o material inteiro à vista. */}
+        {!previewActive && inkDock !== 'off' && (
+          <InkDock
+            state={inkDock}
+            onStateChange={setInkDock}
+            tool={tool}
+            onToolChange={setTool}
+            onOpenAllTools={() => setMobileSheet('tools')}
+            canUndo={historyDepth.undo > 0}
+            canRedo={historyDepth.redo > 0}
+            onUndo={undoAnnotation}
+            onRedo={redoAnnotation}
+            options={inkOptions}
+          />
+        )}
 
         {showDeleteAllConfirm && (
           <ConfirmDialog
@@ -4854,7 +4970,22 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
     partial: Map<string, { annotation: PdfAnnotation; segments: PdfPoint[][] }>
   } | null>(null)
   const rafRef = useRef<number | null>(null)
+  // Medida da página guardada entre eventos do ponteiro — ver readOverlayRect.
+  const overlayRectRef = useRef<{ left: number; top: number; width: number; height: number } | null>(null)
+  // Contexto do rascunho pedido uma vez só (com `desynchronized`), a superfície
+  // preparada para o traço em curso e até onde ele já foi pintado.
+  const draftCtxRef = useRef<CanvasRenderingContext2D | null>(null)
+  const draftCtxOwnerRef = useRef<HTMLCanvasElement | null>(null)
+  const draftSurfaceRef = useRef<{
+    width: number
+    height: number
+    opacity: number
+    blend: 'normal' | 'multiply'
+  } | null>(null)
+  const draftPaintedRef = useRef(0)
   const laserCanvasRef = useRef<HTMLCanvasElement>(null)
+  const laserCtxRef = useRef<CanvasRenderingContext2D | null>(null)
+  const laserCtxOwnerRef = useRef<HTMLCanvasElement | null>(null)
   const laserStrokesRef = useRef<Array<{ points: Array<{ x: number; y: number; t: number }> }>>([])
   const laserDrawingRef = useRef(false)
   const laserPointerIdRef = useRef<number | null>(null)
@@ -5161,6 +5292,10 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
     return () => {
       if (rafRef.current) window.cancelAnimationFrame(rafRef.current)
       if (laserRafRef.current) window.cancelAnimationFrame(laserRafRef.current)
+      // A página pode sair do DOM no meio de um traço (a janela de
+      // virtualização andou). Sem isto, o sinal de "escrevendo" ficaria preso
+      // em ligado e a barra flutuante não voltaria mais.
+      if (interactionRef.current || laserDrawingRef.current) setInkActive(false)
     }
   }, [])
 
@@ -5233,19 +5368,77 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   const frameOuterWidth = Math.ceil(pageFrameSize.width + 16)
   const overflowing = containerWidth > 0 && frameOuterWidth > containerWidth
 
+  // ── Medida da página ────────────────────────────────────────────────────
+  // `getBoundingClientRect` é uma leitura de LAYOUT: o navegador precisa ter
+  // certeza de que tudo está posicionado antes de responder. Isso custava caro
+  // no lugar mais sensível do leitor — o traço da caneta chega com eventos
+  // aglutinados (uma Apple Pencil entrega ~240 por segundo), e cada ponto fazia
+  // a sua própria medição. Agora a página é medida uma vez por gesto e a medida
+  // fica guardada; só rolagem, zoom e mudança de tamanho a invalidam, que são
+  // exatamente as coisas que a movem.
+  const readOverlayRect = useCallback((force = false) => {
+    if (!force && overlayRectRef.current) return overlayRectRef.current
+    const element = overlayRef.current
+    if (!element) return null
+    const rect = element.getBoundingClientRect()
+    overlayRectRef.current = { left: rect.left, top: rect.top, width: rect.width, height: rect.height }
+    return overlayRectRef.current
+  }, [])
+
+  useEffect(() => {
+    // Invalidar é escrever `null`: a medida nova só é tirada quando alguém
+    // realmente precisar dela (o próximo ponto do traço). Assim rolar a página
+    // não custa medição nenhuma.
+    const invalidate = () => { overlayRectRef.current = null }
+    window.addEventListener('scroll', invalidate, { passive: true, capture: true })
+    window.addEventListener('resize', invalidate, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', invalidate, true)
+      window.removeEventListener('resize', invalidate)
+    }
+  }, [])
+
   const getPosition = useCallback((clientX: number, clientY: number) => {
-    const rect = overlayRef.current?.getBoundingClientRect()
-    if (!rect) return { x: 0, y: 0 }
+    const rect = readOverlayRect()
+    if (!rect || !(rect.width > 0) || !(rect.height > 0)) return { x: 0, y: 0 }
     return {
       x: clamp01((clientX - rect.left) / rect.width),
       y: clamp01((clientY - rect.top) / rect.height),
     }
+  }, [readOverlayRect])
+
+  // ── Tela do rascunho ────────────────────────────────────────────────────
+  // O contexto é pedido UMA vez, com `desynchronized`. É a bandeira de baixa
+  // latência do canvas: o navegador pode entregar o traço à tela sem esperar a
+  // composição do resto da página. É o que tira aquele meio quadro de atraso
+  // entre a ponta da caneta e a tinta.
+  const getDraftContext = useCallback(() => {
+    const canvas = draftCanvasRef.current
+    if (!canvas) return null
+    if (draftCtxOwnerRef.current !== canvas) {
+      draftCtxOwnerRef.current = canvas
+      draftCtxRef.current = canvas.getContext('2d', { desynchronized: true, alpha: true })
+      draftSurfaceRef.current = null
+    }
+    return draftCtxRef.current
   }, [])
 
-  const prepareDraftCanvas = useCallback(() => {
+  /**
+   * Prepara a superfície para UM traço.
+   *
+   * A opacidade e a mistura (multiply do marca-texto) vão no ELEMENTO, não em
+   * cada traçado. Essa é a peça que destrava tudo: com a tinta desenhada
+   * opaca, repintar por cima é invisível, e aí o traço pode crescer só na
+   * ponta em vez de ser redesenhado inteiro a cada quadro. Com `globalAlpha`
+   * no contexto, cada emenda de segmento escureceria — foi por isso que a
+   * versão anterior tinha de limpar e refazer o traço inteiro, um custo que
+   * crescia com o tamanho do traço até engasgar em traços longos.
+   */
+  const setupDraftSurface = useCallback((opacity: number, blend: 'normal' | 'multiply') => {
     const canvas = draftCanvasRef.current
-    const rect = overlayRef.current?.getBoundingClientRect()
-    if (!canvas || !rect) return null
+    const context = getDraftContext()
+    const rect = readOverlayRect(true)
+    if (!canvas || !context || !rect || !(rect.width > 0) || !(rect.height > 0)) return null
     const dpr = Math.min(window.devicePixelRatio || 1, 2)
     const width = Math.max(1, Math.floor(rect.width * dpr))
     const height = Math.max(1, Math.floor(rect.height * dpr))
@@ -5255,28 +5448,76 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
     }
     canvas.style.width = `${rect.width}px`
     canvas.style.height = `${rect.height}px`
-    const context = canvas.getContext('2d')
-    if (!context) return null
+    canvas.style.opacity = String(opacity)
+    canvas.style.mixBlendMode = blend
     context.setTransform(dpr, 0, 0, dpr, 0, 0)
+    context.lineCap = 'round'
+    context.lineJoin = 'round'
+    // O contexto é reaproveitado entre gestos: sem zerar o tracejado aqui, um
+    // traço livre desenhado logo depois de uma linha tracejada sairia picotado.
+    context.setLineDash([])
     context.clearRect(0, 0, rect.width, rect.height)
+    // Opacidade e mistura ficam guardadas junto: se a página mudar de tamanho
+    // no meio do traço (uma pinça, uma rotação de tela), dá para refazer a
+    // superfície exatamente igual sem perguntar nada ao gesto.
+    draftSurfaceRef.current = { width: rect.width, height: rect.height, opacity, blend }
+    draftPaintedRef.current = 0
     return { context, width: rect.width, height: rect.height }
-  }, [])
+  }, [getDraftContext, readOverlayRect])
 
   const clearDraftCanvas = useCallback(() => {
+    const context = draftCtxRef.current
+    const surface = draftSurfaceRef.current
+    if (!context || !surface) return
+    context.clearRect(0, 0, surface.width, surface.height)
+    draftPaintedRef.current = 0
     const canvas = draftCanvasRef.current
-    const rect = overlayRef.current?.getBoundingClientRect()
-    const context = canvas?.getContext('2d')
-    if (!canvas || !rect || !context) return
-    context.clearRect(0, 0, rect.width, rect.height)
+    if (canvas) {
+      canvas.style.opacity = '1'
+      canvas.style.mixBlendMode = 'normal'
+    }
   }, [])
 
-  const renderDraftOnCanvas = useCallback((interaction = interactionRef.current) => {
-    if (!interaction) return
-    const prepared = prepareDraftCanvas()
-    if (!prepared) return
-    const { context, width, height } = prepared
+  // Espessura em pixels de tela — ver inkPixelWidth: a mesma conta que o traço
+  // já salvo usa, para levantar a caneta não mudar nada na tela.
+  const strokePixelWidth = inkPixelWidth
+
+  /**
+   * Pinta o rascunho do gesto em curso.
+   *
+   * Três caminhos, por ordem de quanto custam:
+   *
+   * - **Traço livre / pincel / marca-texto**: cresce só na PONTA. Cada quadro
+   *   pinta apenas os segmentos que nasceram desde o último, então o custo é o
+   *   do movimento do dedo, não o do traço inteiro. É a diferença entre um
+   *   traço longo continuar leve e ele ir engasgando conforme cresce.
+   * - **Formas** (reta, tracejado, círculo): a prévia inteira muda a cada
+   *   quadro, então limpa e redesenha — mas são dois pontos, custo fixo.
+   * - **Borracha**: limpa e redesenha os pedaços que sobraram mais o círculo
+   *   sob o dedo, que também mudam de lugar a cada quadro.
+   */
+  const paintDraft = useCallback((options: { restart?: boolean } = {}) => {
+    const interaction = interactionRef.current
+    const context = draftCtxRef.current
+    let surface = draftSurfaceRef.current
+    if (!interaction || !context || !surface) return
+
+    // A página mudou de tamanho no meio do gesto (pinça, rotação, painel que
+    // abriu)? A medida já foi refeita pelo ponto mais recente, então aqui é só
+    // comparar — sem tocar no layout — e, se for o caso, refazer a superfície e
+    // repintar o traço inteiro uma vez.
+    const rect = overlayRectRef.current
+    let restart = options.restart === true
+    if (rect && (Math.abs(rect.width - surface.width) > 0.5 || Math.abs(rect.height - surface.height) > 0.5)) {
+      if (!setupDraftSurface(surface.opacity, surface.blend)) return
+      surface = draftSurfaceRef.current
+      if (!surface) return
+      restart = true
+    }
+    const { width, height } = surface
 
     if (interaction.kind === 'eraser') {
+      context.clearRect(0, 0, width, height)
       // Os pedaços que SOBRARAM dos traços partidos, desenhados por cima do
       // original (que já está escondido). É o que faz a borracha precisa
       // responder na hora, sem esperar ida e volta ao servidor.
@@ -5286,7 +5527,7 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
         context.globalAlpha = annotation.data?.opacity ?? (isHighlight ? 0.34 : 0.9)
         if (isHighlight) context.globalCompositeOperation = 'multiply'
         context.strokeStyle = annotation.color || '#22c55e'
-        context.lineWidth = Math.max(1, width * (annotation.data?.strokeWidthRatio || 0.004))
+        context.lineWidth = strokePixelWidth(annotation.data?.strokeWidthRatio || 0.004, width, height)
         context.lineCap = 'round'
         context.lineJoin = 'round'
         for (const segment of segments) {
@@ -5312,71 +5553,87 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
       return
     }
 
-    if (interaction.kind === 'highlight') {
-      const points = interaction.draft.points
-      context.save()
-      context.globalAlpha = 0.34
-      context.globalCompositeOperation = 'multiply'
-      context.strokeStyle = interaction.draft.color
-      context.lineWidth = Math.max(4, width * interaction.draft.strokeWidthRatio)
-      context.lineCap = 'round'
-      context.lineJoin = 'round'
-      pointsToCanvasPath(context, points, width, height)
+    // A partir daqui é tinta. A opacidade e a mistura já estão no elemento
+    // (ver setupDraftSurface), então aqui tudo é desenhado OPACO — é isso que
+    // torna a repintura por cima invisível e o crescimento pela ponta possível.
+    // O marca-texto é sempre traço livre; só a caneta tem formas.
+    const mode: DrawingMode = interaction.kind === 'drawing' ? interaction.draft.mode : 'free'
+    const draft = interaction.draft
+    const inkWidth = strokePixelWidth(draft.strokeWidthRatio, width, height)
+    context.strokeStyle = draft.color
+    context.lineWidth = interaction.kind === 'highlight' ? Math.max(4, inkWidth) : inkWidth
+
+    if (mode === 'circle' || mode === 'line' || mode === 'dash') {
+      context.clearRect(0, 0, width, height)
+      context.setLineDash(mode === 'dash' ? [8, 8] : [])
+      context.beginPath()
+      if (mode === 'circle') {
+        const rect = normalizeRect(draft.start, draft.current, 0.025, 0.025)
+        context.ellipse(
+          (rect.x + rect.width / 2) * width,
+          (rect.y + rect.height / 2) * height,
+          (rect.width / 2) * width,
+          (rect.height / 2) * height,
+          0,
+          0,
+          Math.PI * 2
+        )
+      } else {
+        context.moveTo(draft.start.x * width, draft.start.y * height)
+        context.lineTo(draft.current.x * width, draft.current.y * height)
+      }
       context.stroke()
-      context.restore()
       return
     }
 
-    const draft = interaction.draft
-    const mode = draft.mode
-    context.save()
-    context.globalAlpha = mode === 'marker' ? Math.min(draft.opacity, 0.52) : draft.opacity
-    context.strokeStyle = draft.color
-    context.lineWidth = Math.max(1, width * draft.strokeWidthRatio)
-    context.lineCap = 'round'
-    context.lineJoin = 'round'
-    if (mode === 'dash') context.setLineDash([8, 8])
+    const points = draft.points
+    if (points.length === 0) return
 
-    if (mode === 'circle') {
-      const rect = normalizeRect(draft.start, draft.current, 0.025, 0.025)
-      context.beginPath()
-      context.ellipse(
-        (rect.x + rect.width / 2) * width,
-        (rect.y + rect.height / 2) * height,
-        (rect.width / 2) * width,
-        (rect.height / 2) * height,
-        0,
-        0,
-        Math.PI * 2
-      )
-      context.stroke()
-    } else if (mode === 'line' || mode === 'dash') {
-      context.beginPath()
-      context.moveTo(draft.start.x * width, draft.start.y * height)
-      context.lineTo(draft.current.x * width, draft.current.y * height)
-      context.stroke()
-    } else {
-      pointsToCanvasPath(context, draft.points, width, height)
-      context.stroke()
+    if (restart) {
+      context.clearRect(0, 0, width, height)
+      draftPaintedRef.current = 0
     }
-    context.restore()
-  }, [prepareDraftCanvas])
 
+    if (points.length === 1) {
+      const only = points[0]
+      context.beginPath()
+      context.arc(only.x * width, only.y * height, context.lineWidth / 2, 0, Math.PI * 2)
+      context.fillStyle = draft.color
+      context.fill()
+      return
+    }
+
+    // A mesma curva de sempre, emendada a partir de onde parou. `traceStroke`
+    // (lib/pdf-viewer-ink) devolve por onde continuar e garante — em teste —
+    // que o traço em pedaços sai idêntico ao traço de uma vez.
+    //
+    // `tail: false` deixa de fora o pedacinho que ainda não virou curva: a
+    // tinta fica um ponto atrás da ponta (menos de um pixel, embaixo da própria
+    // ponta) e, em compensação, cada trecho é pintado UMA vez, no lugar
+    // definitivo. É o que garante que levantar a caneta não mude nada.
+    context.beginPath()
+    draftPaintedRef.current = traceStroke(context, points, width, height, draftPaintedRef.current, { tail: false })
+    context.stroke()
+  }, [setupDraftSurface, strokePixelWidth])
+
+  // Formas e borracha continuam por quadro (a prévia inteira muda a cada
+  // movimento). O traço livre NÃO passa por aqui: ele pinta direto no evento
+  // do ponteiro, que é onde mora a diferença de latência.
   const scheduleDraftUpdate = useCallback(() => {
     if (rafRef.current) return
     rafRef.current = window.requestAnimationFrame(() => {
-      renderDraftOnCanvas()
       rafRef.current = null
+      paintDraft()
     })
-  }, [renderDraftOnCanvas])
+  }, [paintDraft])
 
   // Caneta laser (estilo GoodNotes): desenha um traço luminoso que some sozinho
   // pouco depois. Nada é salvo — é só para apontar durante a leitura. Um loop de
   // animação próprio mantém o efeito de rastro/desvanecimento após soltar.
   const renderLaser = useCallback(() => {
     const canvas = laserCanvasRef.current
-    const rect = overlayRef.current?.getBoundingClientRect()
-    if (!canvas || !rect) {
+    const rect = readOverlayRect()
+    if (!canvas || !rect || !(rect.width > 0)) {
       laserRafRef.current = null
       return
     }
@@ -5389,7 +5646,11 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
     }
     canvas.style.width = `${rect.width}px`
     canvas.style.height = `${rect.height}px`
-    const context = canvas.getContext('2d')
+    if (laserCtxOwnerRef.current !== canvas) {
+      laserCtxOwnerRef.current = canvas
+      laserCtxRef.current = canvas.getContext('2d', { desynchronized: true })
+    }
+    const context = laserCtxRef.current
     if (!context) {
       laserRafRef.current = null
       return
@@ -5410,38 +5671,56 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
       const points = stroke.points
       // Descarta a "cauda" já expirada, criando o rastro que segue o cursor.
       while (points.length && now - points[0].t > LASER_FADE_MS) points.shift()
-      if (points.length) alive = true
+      if (points.length < 2) {
+        if (points.length) alive = true
+        continue
+      }
+      alive = true
 
-      // Brilho externo.
-      context.shadowColor = laserColor
-      context.shadowBlur = 16
+      // O rastro desvanece do fim para a ponta. Antes, isso custava DUAS
+      // chamadas de traçado por ponto — e a do brilho ainda carregava um
+      // `shadowBlur`, que é dos efeitos mais caros do canvas. Num movimento
+      // rápido são ~100 pontos, ou seja, 200 traçados borrados por quadro.
+      // Agora os pontos entram em faixas de opacidade: o degradê continua
+      // suave a olho nu e o custo por quadro vira constante.
+      const bands = LASER_FADE_BANDS
+      const buckets: Array<Array<{ x: number; y: number }>> = Array.from({ length: bands }, () => [])
       for (let index = 1; index < points.length; index++) {
-        const previous = points[index - 1]
         const current = points[index]
         const alpha = Math.max(0, 1 - (now - current.t) / LASER_FADE_MS)
         if (alpha <= 0) continue
+        const band = Math.min(bands - 1, Math.floor(alpha * bands))
+        const bucket = buckets[band]
+        const previous = points[index - 1]
+        // Cada faixa guarda os seus trechos como pares soltos: o rastro pode
+        // ter buracos (pontos que já expiraram no meio), e emendar tudo numa
+        // linha só criaria um atalho reto por cima da página.
+        bucket.push(previous, current)
+      }
+
+      for (let band = 0; band < bands; band++) {
+        const bucket = buckets[band]
+        if (bucket.length === 0) continue
+        const alpha = (band + 0.5) / bands
+
+        context.beginPath()
+        for (let index = 0; index < bucket.length; index += 2) {
+          context.moveTo(bucket[index].x * width, bucket[index].y * height)
+          context.lineTo(bucket[index + 1].x * width, bucket[index + 1].y * height)
+        }
+
+        // Brilho externo e núcleo branco compartilham o mesmo caminho.
+        context.shadowColor = laserColor
+        context.shadowBlur = 16
         context.globalAlpha = alpha * 0.55
         context.strokeStyle = laserColor
         context.lineWidth = 9
-        context.beginPath()
-        context.moveTo(previous.x * width, previous.y * height)
-        context.lineTo(current.x * width, current.y * height)
         context.stroke()
-      }
 
-      // Núcleo branco brilhante.
-      context.shadowBlur = 0
-      for (let index = 1; index < points.length; index++) {
-        const previous = points[index - 1]
-        const current = points[index]
-        const alpha = Math.max(0, 1 - (now - current.t) / LASER_FADE_MS)
-        if (alpha <= 0) continue
+        context.shadowBlur = 0
         context.globalAlpha = alpha
         context.strokeStyle = '#ffffff'
         context.lineWidth = 2.5
-        context.beginPath()
-        context.moveTo(previous.x * width, previous.y * height)
-        context.lineTo(current.x * width, current.y * height)
         context.stroke()
       }
     }
@@ -5456,7 +5735,7 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
       context.clearRect(0, 0, rect.width, rect.height)
       laserRafRef.current = null
     }
-  }, [laserColor])
+  }, [laserColor, readOverlayRect])
 
   const ensureLaserLoop = useCallback(() => {
     if (laserRafRef.current == null) {
@@ -5467,12 +5746,15 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   const addDrawingPoint = useCallback((point: PdfPoint) => {
     const interaction = interactionRef.current
     if (!interaction || interaction.kind !== 'drawing') return
+    // A ponta do gesto é sempre a posição real do ponteiro, mesmo quando o
+    // ponto não entra no traço: é dela que a reta e o círculo tiram a prévia,
+    // e prendê-la ao último ponto ACEITO fazia a forma andar aos saltinhos.
+    interaction.draft.current = point
     const points = interaction.draft.points
     const last = points[points.length - 1]
     const minStep = interaction.draft.mode === 'marker' ? 0.0024 : 0.0014
     if (last && distance(last, point) < minStep) return
     points.push(point)
-    interaction.draft.current = point
   }, [])
 
   const finishDrawing = useCallback(() => {
@@ -5669,10 +5951,21 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     if (!renderSize || editor) return
     if (event.button !== 0 && event.pointerType !== 'touch' && event.pointerType !== 'pen') return
+    // UM gesto de cada vez. Sem isto, a mão que encosta na tela no meio de um
+    // traço (ou o segundo dedo de uma pinça) começava um gesto novo por cima do
+    // que estava em curso: a caneta largava o traço no meio e a tinta pulava
+    // para o outro ponteiro. É o defeito clássico de canvas em tablet.
+    if (interactionRef.current || laserDrawingRef.current) return
     if (inkTool && !canDrawWith(event)) {
       onTouchRejected()
       return
     }
+    // Uma medição fresca por gesto, aqui e só aqui. A página pode ter mudado de
+    // lugar desde o último traço sem que ninguém tenha rolado nada — um painel
+    // que abriu, o zoom que mudou, a barra que apareceu. Com a medida velha, o
+    // primeiro ponto do traço cairia deslocado; com esta linha, todos os pontos
+    // seguintes reaproveitam a medida sem tocar no layout de novo.
+    readOverlayRect(true)
 
     // A ponta-borracha da caneta (Surface, Wacom e afins) apaga, esteja qual
     // ferramenta estiver ativa — é o gesto que a pessoa já faz sem pensar.
@@ -5694,9 +5987,11 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
         removed: new Map(),
         partial: new Map(),
       }
+      setupDraftSurface(1, 'normal')
       applyEraserAt(point)
-      renderDraftOnCanvas(interactionRef.current)
-      setSelectedId(null)
+      paintDraft()
+      if (selectedId) setSelectedId(null)
+      setInkActive(true)
       return
     }
 
@@ -5708,7 +6003,8 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
       laserPointerIdRef.current = event.pointerId
       laserStrokesRef.current.push({ points: [{ x: point.x, y: point.y, t: performance.now() }] })
       ensureLaserLoop()
-      setSelectedId(null)
+      if (selectedId) setSelectedId(null)
+      setInkActive(true)
       return
     }
 
@@ -5716,9 +6012,8 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
       event.preventDefault()
       event.currentTarget.setPointerCapture(event.pointerId)
       const point = getPosition(event.clientX, event.clientY)
-      const rect = overlayRef.current?.getBoundingClientRect()
+      const rect = readOverlayRect()
       const widthRatio = drawingStyle.width / Math.max(rect?.width || 1, 1)
-      clearDraftCanvas()
       interactionRef.current = {
         kind: 'drawing',
         startedAt: performance.now(),
@@ -5734,8 +6029,14 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
           autoShape: drawingStyle.holdToShape,
         },
       }
-      renderDraftOnCanvas(interactionRef.current)
-      setSelectedId(null)
+      // A opacidade do rascunho é EXATAMENTE a que vai ser salva, e a mistura é
+      // a mesma do traço salvo (a caneta e o pincel pintam por cima; só o
+      // marca-texto multiplica). Antes o rascunho clareava o pincel por conta
+      // própria e o traço mudava de tom ao ser salvo.
+      setupDraftSurface(drawingStyle.opacity, 'normal')
+      paintDraft()
+      if (selectedId) setSelectedId(null)
+      setInkActive(true)
       return
     }
 
@@ -5743,8 +6044,7 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
       event.preventDefault()
       event.currentTarget.setPointerCapture(event.pointerId)
       const point = getPosition(event.clientX, event.clientY)
-      const rect = overlayRef.current?.getBoundingClientRect()
-      clearDraftCanvas()
+      const rect = readOverlayRect()
       interactionRef.current = {
         kind: 'highlight',
         pointerId: event.pointerId,
@@ -5756,8 +6056,10 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
           color: highlightColor,
         },
       }
-      renderDraftOnCanvas(interactionRef.current)
-      setSelectedId(null)
+      setupDraftSurface(0.34, 'multiply')
+      paintDraft()
+      if (selectedId) setSelectedId(null)
+      setInkActive(true)
     }
   }
 
@@ -5782,15 +6084,20 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
 
     const interaction = interactionRef.current
     if (!interaction) return
+    // Só o ponteiro DONO do gesto move o traço. Antes, um segundo dedo na tela
+    // durante um traço de caneta empurrava os pontos dele para dentro do mesmo
+    // traço — a tinta saltava para a mão apoiada e voltava.
+    if (interaction.pointerId !== event.pointerId) return
     event.preventDefault()
 
+    // Eventos aglutinados: num movimento rápido o navegador guarda os pontos
+    // intermediários e entrega todos de uma vez. Percorrer todos é o que
+    // preserva a curva de um traço veloz em vez de virar uma reta entre dois
+    // quadros — e é de graça, porque eles já estão no evento.
+    const native = event.nativeEvent as PointerEvent & { getCoalescedEvents?: () => PointerEvent[] }
+    const events = native.getCoalescedEvents?.() || [native]
+
     if (interaction.kind === 'eraser') {
-      if (interaction.pointerId !== event.pointerId) return
-      // Eventos aglutinados: num movimento rápido o navegador entrega vários
-      // pontos de uma vez. Passar por todos é o que impede a borracha de
-      // "pular" um traço no meio do gesto.
-      const native = event.nativeEvent as PointerEvent & { getCoalescedEvents?: () => PointerEvent[] }
-      const events = native.getCoalescedEvents?.() || [native]
       for (const pointerEvent of events) {
         applyEraserAt(getPosition(pointerEvent.clientX, pointerEvent.clientY))
       }
@@ -5799,21 +6106,28 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
     }
 
     if (interaction.kind === 'drawing') {
-      const native = event.nativeEvent as PointerEvent & { getCoalescedEvents?: () => PointerEvent[] }
-      const events = native.getCoalescedEvents?.() || [native]
       for (const pointerEvent of events) {
         addDrawingPoint(getPosition(pointerEvent.clientX, pointerEvent.clientY))
       }
-      scheduleDraftUpdate()
+      const mode = interaction.draft.mode
+      // Traço livre e pincel pintam AQUI, no evento, sem esperar o próximo
+      // quadro de animação: é o último meio quadro de atraso que ainda separava
+      // a ponta da caneta da tinta. Só cresce a ponta, então o custo é o mesmo
+      // no primeiro e no milésimo ponto. As formas seguem por quadro, porque a
+      // prévia delas muda inteira a cada movimento.
+      if (mode === 'free' || mode === 'marker') paintDraft()
+      else scheduleDraftUpdate()
       return
     }
 
-    const point = getPosition(event.clientX, event.clientY)
-    interaction.draft.current = point
-    const points = interaction.draft.points
-    const last = points[points.length - 1]
-    if (!last || distance(last, point) >= 0.0015) points.push(point)
-    scheduleDraftUpdate()
+    for (const pointerEvent of events) {
+      const point = getPosition(pointerEvent.clientX, pointerEvent.clientY)
+      interaction.draft.current = point
+      const points = interaction.draft.points
+      const last = points[points.length - 1]
+      if (!last || distance(last, point) >= 0.0015) points.push(point)
+    }
+    paintDraft()
   }
 
   const handlePointerEnd = (event: React.PointerEvent<HTMLDivElement>) => {
@@ -5825,11 +6139,13 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
       ignoreNextClickRef.current = true
       window.setTimeout(() => { ignoreNextClickRef.current = false }, 0)
       ensureLaserLoop()
+      setInkActive(false)
       return
     }
 
     const interaction = interactionRef.current
     if (!interaction) return
+    if (interaction.pointerId !== event.pointerId) return
     event.preventDefault()
     ignoreNextClickRef.current = true
     window.setTimeout(() => { ignoreNextClickRef.current = false }, 0)
@@ -5839,9 +6155,14 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
     if (interaction.kind === 'drawing') finishDrawing()
     if (interaction.kind === 'highlight') finishHighlight()
     if (interaction.kind === 'eraser') finishErasing()
+    setInkActive(false)
   }
 
-  const openTextEditor = (point: PdfPoint, annotation?: PdfAnnotation) => {
+  // Memoizados junto com os manipuladores do overlay: são eles que fecham a
+  // corrente de `memo` das anotações. Sem isso, cada render da página entregava
+  // funções novas e TODOS os traços da página eram reconstruídos — justamente
+  // ao terminar um traço, que é quando a página re-renderiza.
+  const openTextEditor = useCallback((point: PdfPoint, annotation?: PdfAnnotation) => {
     setSelectedId(annotation?.id || null)
     setEditor({
       kind: 'text',
@@ -5859,9 +6180,9 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
       },
       noteColor,
     })
-  }
+  }, [noteColor, textStyle])
 
-  const openNoteEditor = (point: PdfPoint, annotation?: PdfAnnotation) => {
+  const openNoteEditor = useCallback((point: PdfPoint, annotation?: PdfAnnotation) => {
     setSelectedId(annotation?.id || null)
     setEditor({
       kind: 'note',
@@ -5871,7 +6192,17 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
       textStyle,
       noteColor: annotation?.color || annotation?.data?.noteColor || noteColor,
     })
-  }
+  }, [noteColor, textStyle])
+
+  const handleAnnotationSelect = useCallback((annotation: PdfAnnotation) => {
+    setSelectedId(annotation.id)
+  }, [])
+
+  const handleAnnotationEdit = useCallback((annotation: PdfAnnotation) => {
+    const bounds = getAnnotationBounds(annotation)
+    if (annotation.type === 'text') openTextEditor({ x: bounds.x, y: bounds.y }, annotation)
+    if (annotation.type === 'note') openNoteEditor({ x: bounds.x, y: bounds.y }, annotation)
+  }, [openNoteEditor, openTextEditor])
 
   const handleOverlayClick = (event: React.MouseEvent<HTMLDivElement>) => {
     if (ignoreNextClickRef.current || editor) {
@@ -6067,12 +6398,8 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
               annotations={visibleAnnotations}
               selectedAnnotation={selectedAnnotation}
               pointerEvents={annotationPointerEvents}
-              onSelect={(annotation) => setSelectedId(annotation.id)}
-              onEdit={(annotation) => {
-                const bounds = getAnnotationBounds(annotation)
-                if (annotation.type === 'text') openTextEditor({ x: bounds.x, y: bounds.y }, annotation)
-                if (annotation.type === 'note') openNoteEditor({ x: bounds.x, y: bounds.y }, annotation)
-              }}
+              onSelect={handleAnnotationSelect}
+              onEdit={handleAnnotationEdit}
               onDelete={onDeleteAnnotation}
             />
             {editor && (
@@ -6130,7 +6457,7 @@ function AnnotationOverlay({
   )
 }
 
-function AnnotationItem({
+const AnnotationItem = memo(function AnnotationItem({
   annotation,
   selected,
   pointerEvents,
@@ -6298,9 +6625,9 @@ function AnnotationItem({
       {annotation.content}
     </button>
   )
-}
+})
 
-function HighlightLayer({ annotation }: { annotation: PdfAnnotation }) {
+const HighlightLayer = memo(function HighlightLayer({ annotation }: { annotation: PdfAnnotation }) {
   const points = annotation.position.points || []
   if (points.length < 2) return null
   const strokeWidth = `${((annotation.data?.strokeWidthRatio || 0.018) * 100).toFixed(3)}`
@@ -6318,9 +6645,9 @@ function HighlightLayer({ annotation }: { annotation: PdfAnnotation }) {
       />
     </svg>
   )
-}
+})
 
-function DrawingLayer({ annotation, isDraft }: { annotation: PdfAnnotation; isDraft?: boolean }) {
+const DrawingLayer = memo(function DrawingLayer({ annotation, isDraft }: { annotation: PdfAnnotation; isDraft?: boolean }) {
   const points = annotation.position.points || []
   const mode = annotation.data?.drawingMode || 'free'
   const strokeWidth = `${((annotation.data?.strokeWidthRatio || 0.0048) * 100).toFixed(3)}`
@@ -6356,7 +6683,7 @@ function DrawingLayer({ annotation, isDraft }: { annotation: PdfAnnotation; isDr
       <path d={pointsToSvgPath(points)} strokeDasharray={dashArray} {...common} />
     </svg>
   )
-}
+})
 
 function AnnotationActionBar({
   annotation,
@@ -6485,6 +6812,263 @@ function InlineAnnotationEditor({
     </div>
   )
 }
+
+// ─── Barra flutuante das ferramentas (estilo GoodNotes) ─────────────────────
+//
+// O caminho antigo para grifar no celular tinha três passos: abrir "Marcar",
+// achar a ferramenta na grade, fechar a folha. Escrever assim é escrever com o
+// material escondido metade do tempo. Esta barra fica por cima da página, ao
+// alcance do polegar (ou da mão que segura a caneta), e troca de ferramenta em
+// UM toque. Tocar de novo na ferramenta que já está ativa abre as opções dela
+// — cor, grossura, tipo de borracha —, que é o gesto que o GoodNotes ensinou a
+// esperar.
+//
+// Ela some de vista sozinha enquanto a caneta trabalha (ver subscribeInkActivity)
+// e encolhe numa pastilha quando atrapalha. Quem só lê nunca a vê: ela nasce
+// desligada e só aparece quando alguma ferramenta é escolhida.
+//
+// Sobre o vidro: `backdrop-filter` é caro quando o que está atrás dele rola —
+// foi por isso que ele saiu do cabeçalho e da barra inferior (ver os
+// comentários lá). Aqui ele fica, por dois motivos: a área é pequena (uma
+// pastilha, não uma faixa de tela inteira) e o elemento tem camada própria de
+// composição, então o borrão é recalculado só onde ele existe. É o mesmo
+// desenho de vidro do iOS: fundo translúcido, brilho interno na borda de cima
+// e sombra longa embaixo para a barra "flutuar" sobre a página.
+const INK_DOCK_GLASS: React.CSSProperties = {
+  // A página é branca na maior parte do tempo, e vidro claro sobre branco come
+  // o contraste dos rótulos. Este degradê é escuro o bastante para o texto
+  // continuar legível sobre a folha e claro o bastante para o borrão aparecer.
+  background: 'linear-gradient(180deg, rgba(39,39,42,0.74) 0%, rgba(12,12,14,0.82) 100%)',
+  backdropFilter: 'blur(28px) saturate(180%)',
+  WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+  border: '1px solid rgba(255,255,255,0.16)',
+  boxShadow: '0 20px 50px -14px rgba(0,0,0,0.75), inset 0 1px 0 rgba(255,255,255,0.26), inset 0 -1px 0 rgba(255,255,255,0.05)',
+  transform: 'translateZ(0)',
+}
+
+const INK_DOCK_PRIMARY: Array<{ value: AnnotationTool; label: string; icon: React.ReactNode }> = [
+  { value: 'cursor', label: 'Navegar', icon: <MousePointer2 className="h-[18px] w-[18px]" /> },
+  { value: 'drawing', label: 'Caneta', icon: <PenLine className="h-[18px] w-[18px]" /> },
+  { value: 'highlight', label: 'Marca-texto', icon: <Highlighter className="h-[18px] w-[18px]" /> },
+  { value: 'eraser', label: 'Borracha', icon: <Eraser className="h-[18px] w-[18px]" /> },
+]
+
+const INK_DOCK_SECONDARY: Array<{ value: AnnotationTool; label: string; icon: React.ReactNode }> = [
+  { value: 'laser', label: 'Laser', icon: <Zap className="h-[18px] w-[18px]" /> },
+  { value: 'text', label: 'Texto', icon: <Type className="h-[18px] w-[18px]" /> },
+  { value: 'note', label: 'Nota', icon: <MessageSquare className="h-[18px] w-[18px]" /> },
+  { value: 'bookmark', label: 'Marcador', icon: <Bookmark className="h-[18px] w-[18px]" /> },
+]
+
+const INK_DOCK_TOOLS = [...INK_DOCK_PRIMARY, ...INK_DOCK_SECONDARY]
+
+/** A cor que a ferramenta está usando — vira o pontinho embaixo do ícone. */
+function inkToolColor(
+  tool: AnnotationTool,
+  styles: { drawing: string; highlight: string; note: string; laser: string; text: string }
+) {
+  if (tool === 'drawing') return styles.drawing
+  if (tool === 'highlight') return styles.highlight
+  if (tool === 'note') return styles.note
+  if (tool === 'laser') return styles.laser
+  if (tool === 'text') return styles.text
+  return null
+}
+
+const InkDock = memo(function InkDock({
+  state,
+  onStateChange,
+  tool,
+  onToolChange,
+  onOpenAllTools,
+  canUndo,
+  canRedo,
+  onUndo,
+  onRedo,
+  options,
+}: {
+  state: Exclude<InkDockState, 'off'>
+  onStateChange: (next: InkDockState) => void
+  tool: AnnotationTool
+  onToolChange: (tool: AnnotationTool) => void
+  onOpenAllTools: () => void
+  canUndo: boolean
+  canRedo: boolean
+  onUndo: () => void
+  onRedo: () => void
+  options: React.ComponentProps<typeof ToolOptionsBar>
+}) {
+  const [showOptions, setShowOptions] = useState(false)
+  const [showExtra, setShowExtra] = useState(false)
+  // Enquanto a caneta escreve, a barra sai da frente. Sem estado no leitor:
+  // só este componente re-renderiza (ver subscribeInkActivity).
+  const [inking, setInking] = useState(false)
+  useEffect(() => subscribeInkActivity(setInking), [])
+
+  const active = INK_DOCK_TOOLS.find((item) => item.value === tool) || INK_DOCK_PRIMARY[0]
+  const colors = {
+    drawing: options.drawingStyle.color,
+    highlight: options.highlightColor,
+    note: options.noteColor,
+    laser: options.laserColor,
+    text: options.textStyle.color,
+  }
+  const hasOptions = ['drawing', 'highlight', 'note', 'laser', 'text', 'eraser'].includes(tool)
+
+  const pick = (next: AnnotationTool) => {
+    if (next === tool) {
+      // Segundo toque na ferramenta ativa: abre (ou fecha) as opções dela.
+      if (hasOptions) setShowOptions((value) => !value)
+      return
+    }
+    onToolChange(next)
+    setShowOptions(false)
+  }
+
+  const toolButton = (item: { value: AnnotationTool; label: string; icon: React.ReactNode }) => {
+    const selected = tool === item.value
+    const color = inkToolColor(item.value, colors)
+    return (
+      <button
+        key={item.value}
+        type="button"
+        onClick={() => pick(item.value)}
+        title={item.label}
+        aria-label={item.label}
+        aria-pressed={selected}
+        className={`relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-white transition-all duration-200 active:scale-95 ${
+          selected ? 'text-white' : 'text-white/65 hover:text-white'
+        }`}
+        style={selected ? {
+          background: 'rgba(255,255,255,0.22)',
+          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.45), 0 6px 16px -8px rgba(0,0,0,0.8)',
+        } : undefined}
+      >
+        {item.icon}
+        {/* O pontinho de cor responde "com qual cor?" sem abrir nada. */}
+        {color && (
+          <span
+            aria-hidden
+            className="absolute bottom-1 h-1.5 w-4 rounded-full"
+            style={{ backgroundColor: color, opacity: selected ? 1 : 0.7 }}
+          />
+        )}
+      </button>
+    )
+  }
+
+  if (state === 'mini') {
+    return (
+      <div className="pointer-events-none fixed left-1/2 z-40 -translate-x-1/2 bottom-[calc(env(safe-area-inset-bottom)+5.25rem)] lg:bottom-6">
+        <button
+          type="button"
+          onClick={() => onStateChange('open')}
+          title="Mostrar ferramentas"
+          aria-label="Mostrar ferramentas"
+          className={`pointer-events-auto flex h-12 w-12 items-center justify-center rounded-full text-white transition-opacity duration-200 lg:h-11 lg:w-11 ${
+            inking ? 'opacity-20' : 'opacity-100'
+          }`}
+          style={INK_DOCK_GLASS}
+        >
+          {active.icon}
+        </button>
+      </div>
+    )
+  }
+
+  return (
+    <div className="pointer-events-none fixed inset-x-0 z-40 flex justify-center px-3 bottom-[calc(env(safe-area-inset-bottom)+5.25rem)] lg:bottom-6">
+      <div
+        // Enquanto a caneta trabalha a barra sai de vista E sai do caminho: sem
+        // `pointer-events-none` a mão apoiada perto dela apertaria um botão
+        // invisível no meio da escrita.
+        className={`flex w-full max-w-[26rem] flex-col items-center gap-2 transition-all duration-200 ${
+          inking ? 'pointer-events-none translate-y-2 opacity-15' : 'translate-y-0 opacity-100'
+        }`}
+      >
+        {showOptions && hasOptions && (
+          <div
+            className="pointer-events-auto w-full overflow-hidden rounded-3xl px-2 pb-2 pt-1"
+            style={INK_DOCK_GLASS}
+          >
+            {/* A mesma barra de opções do computador, dentro do vidro: uma só
+                fonte de verdade para cor, grossura, tipo de borracha e quem
+                pode escrever. */}
+            <ToolOptionsBar {...options} />
+            <button
+              type="button"
+              onClick={onOpenAllTools}
+              className="mt-1 w-full rounded-xl py-1.5 text-[11px] font-semibold text-white/60 transition-colors hover:bg-white/10 hover:text-white lg:hidden"
+            >
+              Todas as ferramentas e ajuda
+            </button>
+          </div>
+        )}
+
+        <div className="pointer-events-auto flex flex-col items-center gap-1 rounded-[26px] p-1.5" style={INK_DOCK_GLASS}>
+          {showExtra && (
+            <div className="flex items-center gap-1 border-b border-white/10 pb-1">
+              {INK_DOCK_SECONDARY.map(toolButton)}
+            </div>
+          )}
+          <div className="flex items-center gap-1">
+            {INK_DOCK_PRIMARY.map(toolButton)}
+
+            <button
+              type="button"
+              onClick={() => setShowExtra((value) => !value)}
+              title={showExtra ? 'Menos ferramentas' : 'Mais ferramentas'}
+              aria-label={showExtra ? 'Menos ferramentas' : 'Mais ferramentas'}
+              aria-pressed={showExtra}
+              className={`flex h-11 w-9 shrink-0 items-center justify-center rounded-2xl transition-colors active:scale-95 ${
+                showExtra ? 'bg-white/15 text-white' : 'text-white/55 hover:text-white'
+              }`}
+            >
+              <MoreHorizontal className="h-[18px] w-[18px]" />
+            </button>
+
+            <span aria-hidden className="mx-0.5 h-6 w-px shrink-0 bg-white/15" />
+
+            <button
+              type="button"
+              onClick={onUndo}
+              disabled={!canUndo}
+              title="Desfazer"
+              aria-label="Desfazer"
+              className="flex h-11 w-9 shrink-0 items-center justify-center rounded-2xl text-white/75 transition-colors hover:text-white active:scale-95 disabled:opacity-25"
+            >
+              <Undo2 className="h-[18px] w-[18px]" />
+            </button>
+            <button
+              type="button"
+              onClick={onRedo}
+              disabled={!canRedo}
+              title="Refazer"
+              aria-label="Refazer"
+              className="flex h-11 w-9 shrink-0 items-center justify-center rounded-2xl text-white/75 transition-colors hover:text-white active:scale-95 disabled:opacity-25"
+            >
+              <Redo2 className="h-[18px] w-[18px]" />
+            </button>
+
+            <span aria-hidden className="mx-0.5 h-6 w-px shrink-0 bg-white/15" />
+
+            {/* Encolher, não fechar: a pastilha continua ali para trazer tudo
+                de volta com um toque. Fechar de vez é pelo botão "Marcar". */}
+            <button
+              type="button"
+              onClick={() => onStateChange('mini')}
+              title="Encolher a barra"
+              aria-label="Encolher a barra"
+              className="flex h-11 w-9 shrink-0 items-center justify-center rounded-2xl text-white/55 transition-colors hover:text-white active:scale-95"
+            >
+              <ChevronDown className="h-[18px] w-[18px]" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+})
 
 function ToolOptionsBar({
   tool,
@@ -6813,6 +7397,7 @@ const AnnotationsPanel = memo(function AnnotationsPanel({
 function ToolGuide() {
   const guideItems = [
     { icon: <MousePointer2 className="h-4 w-4" />, title: 'Navegar', text: 'Move pelo PDF, seleciona anotacoes e abre editar com duplo toque em textos e notas. No celular e no tablet, deslize o dedo para o lado (ou para cima e para baixo, no modo uma pagina por vez) para virar a pagina.' },
+    { icon: <PenTool className="h-4 w-4" />, title: 'Barra flutuante', text: 'O botao "Marcar" (celular) ou o icone de caneta na barra de cima (computador) abre uma barra de vidro que fica sobre a pagina: troca de ferramenta em um toque, e um segundo toque na ferramenta ativa abre as cores e a grossura dela. Ela some sozinha enquanto voce escreve e encolhe numa pastilha pela setinha.' },
     { icon: <ArrowLeftRight className="h-4 w-4" />, title: 'Direcao das paginas', text: 'Em "Modo" voce escolhe entre rolagem vertical (as paginas descem) e horizontal (as paginas passam para o lado, com encaixe pagina a pagina — e ai quem vira a pagina e o proprio deslize do aparelho).' },
     { icon: <Highlighter className="h-4 w-4" />, title: 'Marca texto', text: 'Arraste para grifar uma area. Um toque cria um grifo rapido na linha.' },
     { icon: <PenLine className="h-4 w-4" />, title: 'Caneta', text: 'Desenhe com mouse, dedo ou Apple Pencil. Escolha cor, grossura, pincel, linha, tracejado ou circulo.' },
