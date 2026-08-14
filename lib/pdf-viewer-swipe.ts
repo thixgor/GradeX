@@ -11,20 +11,31 @@
  * nada para rolar naquela direção. É isso que impede os dois defeitos opostos —
  * virar a página no meio de uma rolagem, ou perder a rolagem por causa do gesto
  * de virar.
+ *
+ * Vale para a rolagem VERTICAL do leitor. Na rolagem horizontal quem vira a
+ * página é o próprio navegador (scroll-snap nativo, ver `ScrollAxis` no leitor):
+ * ali não há gesto sintético nenhum a decidir.
  */
 
 // Curso mínimo de um arrasto deliberado.
-export const SWIPE_MIN_DISTANCE = 60
+export const SWIPE_MIN_DISTANCE = 52
 // Gesto rápido ("flick") não precisa de curso longo: quem joga o dedo de leve
 // espera virar. Sem isso o leitor tem que arrastar deliberadamente toda vez.
-export const SWIPE_FLICK_DISTANCE = 26
-export const SWIPE_FLICK_DURATION = 320
+export const SWIPE_FLICK_DISTANCE = 22
+export const SWIPE_FLICK_DURATION = 340
+// Velocidade (px/ms) no fim do gesto que já conta como virada, mesmo sem curso
+// longo e mesmo num gesto que começou devagar. É o caso do dedo que ajeita a
+// posição e só então joga a página para o lado: medir a MÉDIA do gesto inteiro
+// dizia "lento" e engolia a virada — foi a queixa mais comum em tablet.
+export const SWIPE_FLICK_VELOCITY = 0.5
 // Acima disto o dedo estava passeando, não virando página.
 export const SWIPE_MAX_DURATION = 900
-// O eixo precisa ser dominante — senão qualquer diagonal vira página.
-export const SWIPE_AXIS_RATIO = 1.5
+// O eixo precisa ser dominante — senão qualquer diagonal vira página. 1,25 e
+// não 1,5: numa tela grande o arco natural do polegar é bem mais diagonal do
+// que num celular, e o gesto certo estava sendo recusado por causa disso.
+export const SWIPE_AXIS_RATIO = 1.25
 // A partir daqui o gesto tem eixo definido e o acompanhamento visual começa.
-export const SWIPE_AXIS_LOCK = 12
+export const SWIPE_AXIS_LOCK = 10
 // Deslocamento máximo do arrasto que acompanha o dedo. É só feedback: a página
 // anda um pouco, com resistência crescente, e volta ao lugar.
 export const SWIPE_FOLLOW_MAX = 64
@@ -103,10 +114,13 @@ export function isSwipeAllowed(start: SwipeStart, axis: SwipeAxis, delta: number
  * O gesto virou página? Decidido só na soltura: distância, tempo, dominância do
  * eixo e — de novo — a permissão daquela direção, registrada no início.
  * Devolve 1 (próxima), -1 (anterior) ou null (não foi virada).
+ *
+ * `velocity` (px/ms, com sinal, medida nos últimos milissegundos do gesto) é
+ * opcional: quando vem, um lance rápido vira página mesmo com curso curto.
  */
 export function resolveSwipe(
   start: SwipeStart | null,
-  end: { x: number; y: number; t: number; cancelled?: boolean }
+  end: { x: number; y: number; t: number; cancelled?: boolean; velocity?: number }
 ): 1 | -1 | null {
   if (!start || start.dropped || !start.axis || end.cancelled) return null
 
@@ -118,9 +132,17 @@ export function resolveSwipe(
   const delta = start.axis === 'x' ? dx : dy
   const other = start.axis === 'x' ? dy : dx
   const travelled = Math.abs(delta)
-  // Curso longo OU gesto rápido — os dois jeitos de "passar a página".
+  // Curso longo, gesto curto e rápido, ou lance final veloz — os três jeitos de
+  // "passar a página". O lance final só conta se estiver indo para o MESMO lado
+  // do gesto: senão o dedo que volta atrás no fim viraria a página do lado
+  // errado.
+  const flicked = end.velocity != null
+    && Math.abs(end.velocity) >= SWIPE_FLICK_VELOCITY
+    && Math.sign(end.velocity) === Math.sign(delta)
+    && travelled > SWIPE_FLICK_DISTANCE
   const longEnough = travelled > SWIPE_MIN_DISTANCE
     || (travelled > SWIPE_FLICK_DISTANCE && elapsed < SWIPE_FLICK_DURATION)
+    || flicked
   if (!longEnough || travelled < Math.abs(other) * SWIPE_AXIS_RATIO) return null
 
   const direction: 1 | -1 = delta < 0 ? 1 : -1

@@ -95,6 +95,23 @@ describe('resolveSwipe', () => {
     expect(resolveSwipe(start, { x: start.x - SWIPE_FLICK_DISTANCE - 4, y: start.y, t: 700 })).toBeNull()
   })
 
+  it('aceita o lance final rápido mesmo num gesto que começou devagar', () => {
+    // O dedo ajeita a posição e só então joga a página para o lado: o gesto
+    // inteiro é lento (600 ms), mas o fim é veloz. Medindo só a média, isto
+    // era recusado — foi a queixa mais comum em tablet.
+    const start = startAt()
+    const end = { x: start.x - 40, y: start.y, t: 600, velocity: -0.9 }
+    expect(resolveSwipe(start, end)).toBe(1)
+    // Sem a medida de velocidade, o mesmo gesto continua sendo recusado.
+    expect(resolveSwipe(startAt(), { ...end, velocity: undefined })).toBeNull()
+  })
+
+  it('ignora o lance final que vai para o lado contrário ao gesto', () => {
+    // Dedo que volta atrás no fim não pode virar a página do lado errado.
+    const start = startAt()
+    expect(resolveSwipe(start, { x: start.x - 40, y: start.y, t: 600, velocity: 0.9 })).toBeNull()
+  })
+
   it('recusa arrasto diagonal, que quase sempre é rolagem', () => {
     const start = startAt()
     const end = { x: start.x - 80, y: start.y - 70, t: 300 }

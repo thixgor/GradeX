@@ -4,7 +4,9 @@ import type * as React from 'react'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
+  ArrowDownUp,
   ArrowLeft,
+  ArrowLeftRight,
   Bold,
   Bookmark,
   Brush,
@@ -15,6 +17,7 @@ import {
   Clock,
   Eraser,
   Eye,
+  Hand,
   HelpCircle,
   Highlighter,
   Image as ImageIcon,
@@ -32,8 +35,11 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   PenLine,
+  PenTool,
   Plus,
+  Redo2,
   Rows3,
+  Scissors,
   SearchX,
   ShieldCheck,
   Sparkles,
@@ -41,6 +47,7 @@ import {
   Trash2,
   Type,
   Underline,
+  Undo2,
   X,
   Zap,
 } from 'lucide-react'
@@ -74,6 +81,23 @@ import {
   resolveSwipe,
   rubberBand,
 } from '@/lib/pdf-viewer-swipe'
+import {
+  ERASER_RADIUS,
+  type EraserMode,
+  type EraserSize,
+  annotationHit,
+  compactStroke,
+  isSplittable,
+  rectHit,
+  splitStroke,
+  strokeTolerance,
+} from '@/lib/pdf-viewer-eraser'
+import {
+  type HistoryEntry,
+  type HistoryOp,
+  invertEntry,
+  pushEntry,
+} from '@/lib/pdf-viewer-history'
 
 type ViewerMode = 'single' | 'width' | 'continuous'
 // Folhas do celular. O cabeçalho antigo empilhava até cinco linhas de rolagem
@@ -89,10 +113,59 @@ const MODE_OPTIONS: Array<{ value: ViewerMode; label: string; hint: string }> = 
   { value: 'width', label: 'Largura da tela', hint: 'Ajusta a página à largura do aparelho' },
 ]
 
+// Direção da rolagem. Não é o mesmo eixo de decisão do "modo de leitura": ali
+// se escolhe QUANTA página aparece; aqui, para que lado o material anda.
+//
+// Vertical é o leitor de sempre (as páginas empilhadas, rolagem para baixo).
+// Horizontal transforma a leitura numa fileira de páginas com encaixe
+// (scroll-snap) — quem vira a página passa a ser o NAVEGADOR, com a inércia e
+// o encaixe nativos do aparelho. É o que resolve de vez a virada com o dedo em
+// tablet: não existe gesto sintético para acertar, é a mesma rolagem que o
+// sistema já faz em qualquer galeria de fotos.
+type ScrollAxis = 'vertical' | 'horizontal'
+
+const SCROLL_AXIS_OPTIONS: Array<{ value: ScrollAxis; label: string; hint: string }> = [
+  { value: 'vertical', label: 'Vertical', hint: 'As páginas descem, como num site' },
+  { value: 'horizontal', label: 'Horizontal', hint: 'As páginas passam para o lado, como um livro' },
+]
+
 type AnnotationType = 'highlight' | 'note' | 'bookmark' | 'text' | 'drawing'
 type AnnotationTool = 'cursor' | AnnotationType | 'eraser' | 'laser'
 type DrawingMode = 'free' | 'marker' | 'line' | 'dash' | 'circle'
 type TextAlign = 'left' | 'center' | 'right'
+
+// Quem pode escrever na página. Em tablet a mão apoiada dispara toques que o
+// navegador não distingue de um dedo desenhando de propósito — é a "palma".
+//
+// 'auto' é o padrão e resolve sozinho o caso do usuário comum: enquanto
+// nenhuma caneta tiver sido usada neste aparelho, o dedo escreve (celular sem
+// caneta continua igual); assim que uma caneta encosta na tela uma vez, o dedo
+// passa a só rolar e virar página, e só a caneta escreve. Quem quiser fixa a
+// escolha nas duas pontas.
+type PenMode = 'auto' | 'pen' | 'any'
+
+const PEN_MODE_OPTIONS: Array<{ value: PenMode; label: string; hint: string }> = [
+  { value: 'auto', label: 'Automático', hint: 'Se você usa caneta neste aparelho, o dedo para de desenhar' },
+  { value: 'pen', label: 'Só caneta', hint: 'A mão apoiada nunca desenha; o dedo rola e vira página' },
+  { value: 'any', label: 'Dedo e caneta', hint: 'Os dois desenham' },
+]
+
+interface EraserStyle {
+  mode: EraserMode
+  size: EraserSize
+}
+
+const ERASER_MODE_OPTIONS: Array<{ value: EraserMode; label: string; hint: string }> = [
+  { value: 'object', label: 'Traço inteiro', hint: 'Encostou em qualquer parte, o traço todo sai' },
+  { value: 'partial', label: 'Precisa', hint: 'Apaga só o pedaço por onde você passar' },
+  { value: 'highlight', label: 'Só grifos', hint: 'Limpa o marca-texto e não encosta na sua escrita' },
+]
+
+const ERASER_SIZE_OPTIONS: Array<{ value: EraserSize; label: string }> = [
+  { value: 'fine', label: 'Fina' },
+  { value: 'medium', label: 'Média' },
+  { value: 'wide', label: 'Grossa' },
+]
 
 interface SummaryEntry {
   id: string
@@ -151,6 +224,12 @@ interface ViewerAccess {
 interface PdfAnnotation {
   _id: string
   id: string
+  /**
+   * Identidade do CLIENTE, que sobrevive à troca do id temporário pelo id do
+   * banco. É por ela que o desfazer/refazer encontra a anotação em qualquer
+   * momento — inclusive depois de apagada e recriada. Ver lib/pdf-viewer-history.
+   */
+  clientId: string
   userId: string
   materialId: string
   pageNumber: number
@@ -343,7 +422,18 @@ const LASER_SWATCHES = ['#ef4444', '#ec4899', '#f97316', '#22c55e', '#3b82f6']
 // no estilo GoodNotes: escreve/aponta e a tinta some pouco depois.
 const LASER_FADE_MS = 900
 const FONT_OPTIONS = ['Inter', 'Arial', 'Georgia', 'Times New Roman', 'Courier New']
-const ERASER_CURSOR = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Cpath d='M9 18 17.5 9.5a3 3 0 0 1 4.24 4.24L14.5 21H8l-3-3 4-4Z' fill='%23fff' stroke='%23111827' stroke-width='2' stroke-linejoin='round'/%3E%3Cpath d='M13 14 17 18' stroke='%23111827' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") 7 21, cell`
+/**
+ * Cursor da borracha: um círculo do TAMANHO REAL do apagador. Com um ícone
+ * fixo (era o desenho de uma borracha de escola) não dava para saber o que ia
+ * sair na passada seguinte — que é justamente o que muda entre a borracha fina
+ * e a grossa. O círculo é o mesmo do dedo: o que ele cobre, some.
+ */
+function eraserCursor(radius: number) {
+  const size = Math.ceil(radius * 2 + 4)
+  const center = size / 2
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}"><circle cx="${center}" cy="${center}" r="${radius}" fill="rgba(255,255,255,0.4)" stroke="#111827" stroke-width="1.5"/></svg>`
+  return `url("data:image/svg+xml,${encodeURIComponent(svg)}") ${center} ${center}, cell`
+}
 const pageBytesCache = new Map<string, { bytes: Uint8Array; pageCount?: number; expiresAt: number }>()
 const pageBytesInflight = new Map<string, Promise<{ bytes: Uint8Array; pageCount?: number }>>()
 
@@ -943,7 +1033,7 @@ const TOUR_STEPS: ViewerTourStep[] = [
     // sozinho (ver findVisibleTourTarget) — o gesto também não faz sentido lá.
     targets: ['[data-tour="viewer-pagenav-mobile"]'],
     title: 'Vire a página com o dedo',
-    body: 'Não precisa mirar nas setinhas: deslize o dedo para o lado — ou para cima e para baixo, no modo "uma página por vez" — e a página vira. Se a página estiver ampliada, o dedo primeiro arrasta o que falta ver; ao chegar na borda, o próximo gesto vira.',
+    body: 'Não precisa mirar nas setinhas: deslize o dedo para o lado — ou para cima e para baixo, no modo "uma página por vez" — e a página vira. Se a página estiver ampliada, o dedo primeiro arrasta o que falta ver; ao chegar na borda, o próximo gesto vira. Em "Modo" você ainda pode deixar as páginas passando para o lado, com encaixe, como num livro.',
   },
   {
     targets: ['[data-tour="viewer-zoom"]'],
@@ -963,7 +1053,7 @@ const TOUR_STEPS: ViewerTourStep[] = [
   {
     targets: ['[data-tour="viewer-tools"]', '[data-tour="viewer-tools-mobile"]'],
     title: 'Grife e escreva, como num caderno',
-    body: 'Marca-texto, notas, caneta, texto e marcadores. Tudo fica salvo na sua conta e reaparece quando você voltar, em qualquer aparelho.',
+    body: 'Marca-texto, notas, caneta, texto e marcadores. A borracha apaga passando por cima, e o botão de desfazer volta atrás quando sair torto. Tudo fica salvo na sua conta e reaparece quando você voltar, em qualquer aparelho.',
   },
   {
     targets: ['[data-tour="viewer-fit"]'],
@@ -1015,6 +1105,7 @@ const PREFS_STORAGE_KEY = 'domineaqui:pdf-viewer:prefs:v1'
 interface ViewerPrefs {
   zoom?: number
   mode?: ViewerMode
+  scrollAxis?: ScrollAxis
   tool?: AnnotationTool
   showThumbs?: boolean
   sidePanelTab?: 'pages' | 'summary'
@@ -1026,6 +1117,15 @@ interface ViewerPrefs {
   laserColor?: string
   drawingStyle?: DrawingStyle
   textStyle?: TextStyle
+  eraserStyle?: EraserStyle
+  penMode?: PenMode
+  /**
+   * Já vimos uma caneta neste aparelho? Guardado (e não só detectado em
+   * memória) porque a rejeição da palma precisa valer desde o PRIMEIRO toque da
+   * próxima sessão: quem lê de Apple Pencil não deve ter que encostar a caneta
+   * uma vez para o leitor "lembrar" de ignorar a mão.
+   */
+  penSeen?: boolean
 }
 
 function readViewerPrefs(): ViewerPrefs {
@@ -1065,12 +1165,21 @@ function clamp01(value: number) {
   return Math.min(1, Math.max(0, value))
 }
 
-function createEmptyAnnotation(input: Partial<PdfAnnotation>, materialId: string): PdfAnnotation {
+function newClientId() {
+  return `c-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 9)}`
+}
+
+function createEmptyAnnotation(
+  input: Partial<PdfAnnotation>,
+  materialId: string,
+  clientId = newClientId()
+): PdfAnnotation {
   const now = new Date().toISOString()
   const id = `temp-${Date.now()}-${Math.random().toString(36).slice(2)}`
   return {
     _id: id,
     id,
+    clientId,
     userId: 'local',
     materialId,
     pageNumber: input.pageNumber || 1,
@@ -1082,6 +1191,27 @@ function createEmptyAnnotation(input: Partial<PdfAnnotation>, materialId: string
     createdAt: now,
     updatedAt: now,
   }
+}
+
+/**
+ * O "molde" de uma anotação: o que basta para recriá-la igual. É o que o
+ * histórico guarda — nunca o objeto vivo, que ainda vai trocar de id quando a
+ * resposta do servidor chegar.
+ */
+function annotationPayload(annotation: PdfAnnotation): Partial<PdfAnnotation> {
+  return {
+    pageNumber: annotation.pageNumber,
+    type: annotation.type,
+    content: annotation.content,
+    color: annotation.color,
+    position: annotation.position,
+    data: annotation.data,
+  }
+}
+
+/** Anotação vinda do servidor: ganha a identidade de cliente que faltava. */
+function adoptAnnotation(annotation: PdfAnnotation, clientId?: string): PdfAnnotation {
+  return { ...annotation, clientId: clientId || annotation.clientId || annotation.id || newClientId() }
 }
 
 function extractObjectId(value: unknown): string {
@@ -1337,30 +1467,59 @@ function useViewerGestures(
     enabled,
     horizontal,
     vertical,
+    allowPen,
     onSwipe,
     trackRef,
   }: {
     enabled: boolean
     horizontal: boolean
     vertical: boolean
+    /** A caneta também vira página? Só quando ela não estiver escrevendo. */
+    allowPen: boolean
     onSwipe: (direction: 1 | -1) => void
     trackRef?: React.RefObject<HTMLElement>
   }
 ) {
   const swipeStartRef = useRef<SwipeStart | null>(null)
-  const activePointersRef = useRef(0)
+  // Ponteiros vivos com o instante em que chegaram. Era um CONTADOR, e contador
+  // não se recupera de evento perdido: um `pointerup` engolido (o dedo saiu por
+  // cima de um elemento que capturou o ponteiro, o sistema abriu a central de
+  // controle no meio do gesto) deixava a conta em 1 para sempre e o leitor
+  // ficava sem virar página até recarregar. Com o registro de cada ponteiro dá
+  // para varrer os que ficaram para trás — ver `dropStalePointers`.
+  const activePointersRef = useRef(new Map<number, number>())
   const pointerIdRef = useRef<number | null>(null)
+  // Últimas amostras do ponteiro do gesto, para medir a velocidade do FIM do
+  // movimento (e não a média do gesto inteiro).
+  const samplesRef = useRef<Array<{ x: number; y: number; t: number }>>([])
   const onSwipeRef = useRef(onSwipe)
   onSwipeRef.current = onSwipe
   const axesRef = useRef({ horizontal, vertical })
   axesRef.current = { horizontal, vertical }
+  const allowPenRef = useRef(allowPen)
+  allowPenRef.current = allowPen
 
   useEffect(() => {
     const element = ref.current
     if (!element || !enabled) return
 
-    activePointersRef.current = 0
+    // A referência do Map nunca muda; guardá-lo numa const deixa claro que
+    // a limpeza no fim mexe no MESMO mapa que os handlers usaram.
+    const activePointers = activePointersRef.current
+    activePointers.clear()
     pointerIdRef.current = null
+    samplesRef.current = []
+
+    // Um ponteiro que "nasceu" há mais de 4 segundos e nunca levantou não
+    // existe mais: nenhum gesto de virar página dura isso.
+    const dropStalePointers = (now: number) => {
+      for (const [id, startedAt] of activePointers) {
+        if (now - startedAt > 4000) activePointers.delete(id)
+      }
+    }
+
+    const isGesturePointer = (event: PointerEvent) =>
+      event.pointerType === 'touch' || (event.pointerType === 'pen' && allowPenRef.current)
 
     // Feedback visual direto no DOM: a cada quadro do dedo um setState
     // re-renderizaria a página inteira (canvas incluso) — caro e trêmulo.
@@ -1383,12 +1542,15 @@ function useViewerGestures(
     }
 
     const onPointerDown = (event: PointerEvent) => {
-      if (event.pointerType !== 'touch') return
-      activePointersRef.current += 1
-      if (activePointersRef.current > 1) {
+      if (!isGesturePointer(event)) return
+      const now = Date.now()
+      dropStalePointers(now)
+      activePointers.set(event.pointerId, now)
+      if (activePointers.size > 1) {
         // Dois dedos = pinça do navegador. Nada de swipe.
         swipeStartRef.current = null
         pointerIdRef.current = null
+        samplesRef.current = []
         resetTrack(false)
         return
       }
@@ -1416,10 +1578,11 @@ function useViewerGestures(
       })
 
       pointerIdRef.current = event.pointerId
+      samplesRef.current = [{ x: event.clientX, y: event.clientY, t: now }]
       swipeStartRef.current = {
         x: event.clientX,
         y: event.clientY,
-        t: Date.now(),
+        t: now,
         // "next" = dedo para a esquerda / para cima.
         allowNext: { x: allowX && rowEdges.atEnd, y: allowY && pageEdges.atEnd },
         allowPrev: { x: allowX && rowEdges.atStart, y: allowY && pageEdges.atStart },
@@ -1430,12 +1593,18 @@ function useViewerGestures(
     }
 
     const onPointerMove = (event: PointerEvent) => {
-      if (event.pointerType !== 'touch') return
+      if (!isGesturePointer(event)) return
       const start = swipeStartRef.current
       if (!start || start.dropped || pointerIdRef.current !== event.pointerId) return
 
       const dx = event.clientX - start.x
       const dy = event.clientY - start.y
+
+      // Só as amostras dos últimos 120 ms interessam: é o "lance" final do
+      // gesto, não a média de um movimento que pode ter começado devagar.
+      const samples = samplesRef.current
+      samples.push({ x: event.clientX, y: event.clientY, t: Date.now() })
+      while (samples.length > 2 && samples[samples.length - 1].t - samples[0].t > 120) samples.shift()
 
       if (!start.axis) {
         start.axis = lockSwipeAxis(dx, dy)
@@ -1458,10 +1627,10 @@ function useViewerGestures(
     }
 
     const finishPointer = (event: PointerEvent) => {
-      if (event.pointerType !== 'touch') return
-      activePointersRef.current = Math.max(0, activePointersRef.current - 1)
+      if (!isGesturePointer(event)) return
+      activePointers.delete(event.pointerId)
       const start = swipeStartRef.current
-      if (activePointersRef.current > 0 || pointerIdRef.current !== event.pointerId) {
+      if (activePointers.size > 0 || pointerIdRef.current !== event.pointerId) {
         // Dedo que não era o do gesto (ou que sobrou de uma pinça): só desfaz o
         // que houver. Sem o `start` nada foi deslocado, e mexer no estilo do
         // track em todo toque da tela seria trabalho à toa.
@@ -1474,11 +1643,22 @@ function useViewerGestures(
       swipeStartRef.current = null
       pointerIdRef.current = null
 
+      // Velocidade do fim do gesto, no eixo que ele assumiu.
+      const samples = samplesRef.current
+      samplesRef.current = []
+      const first = samples[0]
+      const last = samples[samples.length - 1]
+      const span = first && last ? last.t - first.t : 0
+      const velocity = span > 0 && start?.axis
+        ? (start.axis === 'x' ? last.x - first.x : last.y - first.y) / span
+        : undefined
+
       const direction = resolveSwipe(start, {
         x: event.clientX,
         y: event.clientY,
         t: Date.now(),
         cancelled: event.type === 'pointercancel',
+        velocity,
       })
       // Virou página: o deslocamento sai NA HORA, sem transição. Quem vai
       // posicionar a nova página (scrollIntoView / scrollTo) mede o elemento no
@@ -1504,7 +1684,8 @@ function useViewerGestures(
       resetTrack(false)
       swipeStartRef.current = null
       pointerIdRef.current = null
-      activePointersRef.current = 0
+      samplesRef.current = []
+      activePointers.clear()
     }
   }, [enabled, ref, trackRef])
 }
@@ -1532,6 +1713,24 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const suppressFocusUntilRef = useRef(0)
   const [access, setAccess] = useState<ViewerAccess | null>(null)
   const [annotations, setAnnotations] = useState<PdfAnnotation[]>([])
+  // Espelho para leitura SÍNCRONA dentro do desfazer: entre uma operação e a
+  // seguinte do mesmo lote, o estado do React ainda não voltou.
+  const annotationsRef = useRef<PdfAnnotation[]>(annotations)
+  annotationsRef.current = annotations
+  // Pilhas do desfazer/refazer em refs (elas mudam dentro de callbacks
+  // assíncronos e não devem, por si só, provocar render). O que a interface
+  // precisa saber é só quantos passos existem de cada lado — daí o estadinho
+  // separado, que muda no máximo uma vez por ação.
+  const undoStackRef = useRef<Array<HistoryEntry<Partial<PdfAnnotation>>>>([])
+  const redoStackRef = useRef<Array<HistoryEntry<Partial<PdfAnnotation>>>>([])
+  const [historyDepth, setHistoryDepth] = useState({ undo: 0, redo: 0 })
+  const syncHistoryState = useCallback(() => {
+    setHistoryDepth((current) => {
+      const undo = undoStackRef.current.length
+      const redo = redoStackRef.current.length
+      return current.undo === undo && current.redo === redo ? current : { undo, redo }
+    })
+  }, [])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
@@ -1541,6 +1740,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   // Índice em torno do qual a janela de páginas materializadas fica centrada.
   const [windowAnchor, setWindowAnchor] = useState(0)
   const [mode, setMode] = useState<ViewerMode>('single')
+  const [scrollAxis, setScrollAxis] = useState<ScrollAxis>('vertical')
   const [tool, setTool] = useState<AnnotationTool>('cursor')
   const [pageSize, setPageSize] = useState<PageSize | null>(null)
   const [showThumbs, setShowThumbs] = useState(true)
@@ -1575,6 +1775,9 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     opacity: 0.9,
     holdToShape: true,
   })
+  const [eraserStyle, setEraserStyle] = useState<EraserStyle>({ mode: 'object', size: 'medium' })
+  const [penMode, setPenMode] = useState<PenMode>('auto')
+  const [penSeen, setPenSeen] = useState(false)
   const [textStyle, setTextStyle] = useState<TextStyle>({
     fontFamily: 'Inter',
     fontSize: 16,
@@ -1619,6 +1822,16 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   // Painel de anotações nunca aparece na prévia (leitura apenas / não salva).
   const annotationsVisible = showAnnotations && !previewActive
 
+  // Rolagem horizontal: a fileira de páginas com encaixe nativo. Ela substitui
+  // a pilha vertical INTEIRA, então o modo "uma página por vez" (que monta só a
+  // página atual) não se aplica ali — na horizontal todas as páginas existem na
+  // fileira, virtualizadas como no modo contínuo.
+  const horizontal = scrollAxis === 'horizontal'
+  const singlePage = mode === 'single' && !horizontal
+  // O dedo desenha neste aparelho? Ver PenMode: no automático, para de
+  // desenhar assim que uma caneta aparece — é a rejeição de palma.
+  const touchDrawingEnabled = penMode === 'any' || (penMode === 'auto' && !penSeen)
+
   // Lista de páginas para os modos contínuos: só muda quando a contagem de
   // páginas ou a liberação de prévia mudam — mantém a MESMA referência de
   // array durante o scroll (currentPage não entra aqui), evitando trabalho
@@ -1628,10 +1841,15 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     return Array.from({ length: pageCount }, (_, index) => index + 1)
   }, [previewActive, allowedPages, pageCount])
   const pages = useMemo(() => {
-    if (mode === 'single') return [currentPage]
-    if (previewActive && continuousPages.length === 0) return [currentPage]
+    if (singlePage) return [currentPage]
+    if (continuousPages.length === 0) return [currentPage]
     return continuousPages
-  }, [mode, currentPage, previewActive, continuousPages])
+  }, [singlePage, currentPage, continuousPages])
+  // Leitura síncrona da lista dentro de callbacks estáveis (goToPage na
+  // horizontal precisa do índice da página, e depender de `pages` recriaria o
+  // callback a cada troca de página no modo página única).
+  const pagesRef = useRef<number[]>(pages)
+  pagesRef.current = pages
   const contentWidth = useResizeWidth(contentRef, [loading, showAnnotations, showThumbs])
 
   // Zoom em que a página cabe exatamente na largura disponível. É a referência
@@ -1669,13 +1887,13 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   }, [annotations])
 
   const handlePageFocused = useCallback((page: number) => {
-    if (mode === 'single') return
+    if (singlePage) return
     // Durante a retomada (rolagem programática até a última página salva),
     // ignora o foco por scroll para as callbacks pendentes do observer no topo
     // não reverterem `currentPage` para a pág. 1.
     if (Date.now() < suppressFocusUntilRef.current) return
     setCurrentPage((current) => current === page ? current : page)
-  }, [mode])
+  }, [singlePage])
 
   // Só atualiza o tamanho compartilhado quando ele realmente muda. Antes, cada
   // página renderizada chamava setPageSize com um objeto NOVO (mesmo valor),
@@ -1710,6 +1928,19 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const pageSlotHeightRef = useRef(pageSlotHeight)
   pageSlotHeightRef.current = pageSlotHeight
 
+  // Na horizontal cada página ocupa uma "casa" de largura FIXA: exatamente a
+  // largura visível da área de leitura. Fixa é o ponto — com todas as casas do
+  // mesmo tamanho, a posição de encaixe da página N é N × casa, e daí saem de
+  // graça três coisas que na vertical custam medição de elemento: qual página
+  // está na tela, para onde rolar num salto e a largura dos blocos de
+  // preenchimento da virtualização.
+  // O espaço entre as páginas vem do padding DENTRO da casa (ver PdfCanvasPage),
+  // e não de `gap`: um gap entre os itens entraria na conta de todas as
+  // posições e desalinharia o encaixe.
+  const pageSlotWidth = Math.max(1, contentWidth)
+  const pageSlotWidthRef = useRef(pageSlotWidth)
+  pageSlotWidthRef.current = pageSlotWidth
+
   const updateKnownPageCount = useCallback((totalPages?: number) => {
     if (!totalPages || totalPages < 1) return
     setAccess((current) => {
@@ -1728,7 +1959,8 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     const res = await fetch(`/api/materiais/${materialId}/pdf-viewer/annotations`, { cache: 'no-store' })
     if (res.ok) {
       const json = await res.json()
-      setAnnotations(json.annotations || [])
+      const list: PdfAnnotation[] = json.annotations || []
+      setAnnotations(list.map((annotation) => adoptAnnotation(annotation)))
     }
   }, [materialId])
 
@@ -1823,10 +2055,10 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   // Fonte 1: a página atual. Cobre saltos (sumário, "ir para página"), que
   // precisam materializar o destino antes de rolar até ele.
   useEffect(() => {
-    if (mode === 'single') return
+    if (singlePage) return
     const index = Math.max(0, pages.indexOf(currentPage))
     setWindowAnchor((current) => (Math.abs(index - current) > WINDOW_RECENTER_BAND ? index : current))
-  }, [currentPage, mode, pages])
+  }, [currentPage, singlePage, pages])
 
   // Fonte 2: a posição de rolagem. Esta é a que impede a ZONA MORTA.
   //
@@ -1837,7 +2069,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   // vazia e não havia saída. Calcular o índice a partir do deslocamento resolve
   // porque não depende de elemento nenhum existir naquela posição.
   useEffect(() => {
-    if (mode === 'single' || pages.length === 0) return
+    if (singlePage || horizontal || pages.length === 0) return
     let frame = 0
     let trailing: number | null = null
     let lastMeasuredAt = 0
@@ -1893,7 +2125,44 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
       if (frame) window.cancelAnimationFrame(frame)
       if (trailing != null) window.clearTimeout(trailing)
     }
-  }, [mode, pages.length])
+  }, [singlePage, horizontal, pages.length])
+
+  // Fonte 3: a rolagem HORIZONTAL. Na fileira de páginas a conta é direta —
+  // todas as casas têm a mesma largura, então `scrollLeft / casa` é o índice da
+  // página, sem medir elemento nenhum. Isso resolve de uma vez a âncora da
+  // virtualização E a página atual: não há IntersectionObserver na horizontal
+  // (com as páginas lado a lado, todas cruzam a mesma faixa vertical da tela e
+  // o observer de foco reportaria todas ao mesmo tempo).
+  useEffect(() => {
+    if (!horizontal || pages.length === 0) return
+    const element = contentRef.current
+    if (!element) return
+    let frame = 0
+
+    const measure = () => {
+      frame = 0
+      const slot = pageSlotWidthRef.current
+      if (!(slot > 0)) return
+      const index = Math.min(pages.length - 1, Math.max(0, Math.round(element.scrollLeft / slot)))
+      setWindowAnchor((current) => (Math.abs(index - current) > WINDOW_RECENTER_BAND ? index : current))
+      if (Date.now() < suppressFocusUntilRef.current) return
+      const page = pages[index]
+      if (page) setCurrentPage((current) => (current === page ? current : page))
+    }
+
+    const onScroll = () => {
+      if (frame) return
+      frame = window.requestAnimationFrame(measure)
+    }
+
+    element.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll, { passive: true })
+    return () => {
+      element.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+      if (frame) window.cancelAnimationFrame(frame)
+    }
+  }, [horizontal, pages])
 
   // Zoom "assentado": acompanha o zoom com atraso, para que decisões de LAYOUT
   // (altura dos espaçadores, quantas páginas ficam vivas) não sejam refeitas a
@@ -1928,8 +2197,24 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     if (prefs.laserColor) setLaserColor(prefs.laserColor)
     if (prefs.drawingStyle) setDrawingStyle((current) => ({ ...current, ...prefs.drawingStyle }))
     if (prefs.textStyle) setTextStyle((current) => ({ ...current, ...prefs.textStyle }))
+    if (prefs.eraserStyle) setEraserStyle((current) => ({ ...current, ...prefs.eraserStyle }))
+    if (prefs.penMode) setPenMode(prefs.penMode)
+    if (prefs.penSeen) setPenSeen(true)
+    if (prefs.scrollAxis) setScrollAxis(prefs.scrollAxis)
     prefsHydratedRef.current = true
   }, [])
+
+  // Rejeição de palma: o aparelho tem caneta? Basta ela encostar uma vez, em
+  // qualquer lugar do leitor — a partir daí (e nas próximas sessões, porque
+  // fica salvo) o modo automático deixa de aceitar o dedo para desenhar.
+  useEffect(() => {
+    if (penSeen) return
+    const onPointerDown = (event: PointerEvent) => {
+      if (event.pointerType === 'pen') setPenSeen(true)
+    }
+    window.addEventListener('pointerdown', onPointerDown, { passive: true })
+    return () => window.removeEventListener('pointerdown', onPointerDown)
+  }, [penSeen])
 
   // Salva as preferências conforme mudam. O guard evita gravar os valores
   // padrão por cima dos salvos no primeiro render, antes da hidratação.
@@ -1938,6 +2223,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     writeViewerPrefs({
       zoom,
       mode,
+      scrollAxis,
       tool,
       showThumbs,
       sidePanelTab,
@@ -1949,10 +2235,14 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
       laserColor,
       drawingStyle,
       textStyle,
+      eraserStyle,
+      penMode,
+      penSeen,
     })
   }, [
-    zoom, mode, tool, showThumbs, sidePanelTab, showAnnotations, showGuide,
+    zoom, mode, scrollAxis, tool, showThumbs, sidePanelTab, showAnnotations, showGuide,
     highlightColor, highlightWidth, noteColor, laserColor, drawingStyle, textStyle,
+    eraserStyle, penMode, penSeen,
   ])
 
   // Salva a posição de leitura para retomar na próxima abertura. Com atraso:
@@ -1984,11 +2274,33 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   // um tick depois. Corrige o bug de abrir sempre no início mesmo tendo salvo a
   // última página vista.
   useEffect(() => {
-    if (!access || mode === 'single') return
+    if (!access) return
+    if (singlePage) {
+      // Aqui a página é montada sozinha: não há para onde rolar, e um destino
+      // pendente esquecido daria um salto fora de hora numa troca de modo.
+      pendingResumeRef.current = null
+      return
+    }
     const target = pendingResumeRef.current
     if (target == null) return
     let cancelled = false
     let frame = 0
+
+    // Na horizontal a retomada não espera elemento nenhum: a posição da página
+    // é uma conta (índice × largura da casa), e ela vale mesmo antes de a
+    // página existir no DOM.
+    if (horizontal) {
+      const element = contentRef.current
+      const index = pagesRef.current.indexOf(target)
+      const slot = pageSlotWidthRef.current
+      if (element && index >= 0 && slot > 1) {
+        suppressFocusUntilRef.current = Math.max(suppressFocusUntilRef.current, Date.now() + 500)
+        element.scrollTo({ left: index * slot, behavior: 'auto' })
+        if (pageSize && settledZoom === zoom) pendingResumeRef.current = null
+      }
+      return
+    }
+
     const attempt = () => {
       if (cancelled) return
       const element = document.getElementById(`pdf-page-${target}`)
@@ -2013,7 +2325,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     // `zoom`/`settledZoom` nas dependências: cada mudança de escala remexe a
     // altura de todos os espaçadores acima, então a retomada precisa reajustar
     // o destino até o layout parar de se mexer.
-  }, [access, mode, pageSize, settledZoom, zoom])
+  }, [access, singlePage, horizontal, pageSize, settledZoom, zoom, contentWidth])
 
   useEffect(() => {
     if (!pageSize || !contentWidth || zoomTouchedRef.current) return
@@ -2129,6 +2441,24 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
       )
     }
     setCurrentPage((current) => (current === next ? current : next))
+
+    // Fileira horizontal: a posição é uma conta, não uma busca no DOM. Um salto
+    // do sumário para a página 900 não precisa que ela já esteja montada — a
+    // rolagem vai para o lugar certo e a virtualização acompanha.
+    if (horizontal) {
+      const index = pagesRef.current.indexOf(next)
+      if (index < 0) return
+      const isJump = Math.abs(next - currentPageRef.current) > 2
+      if (isJump) {
+        suppressFocusUntilRef.current = Math.max(suppressFocusUntilRef.current, Date.now() + 260)
+      }
+      const element = contentRef.current
+      const slot = pageSlotWidthRef.current
+      if (!element || !(slot > 1)) return
+      element.scrollTo({ left: index * slot, behavior: isJump ? 'auto' : 'smooth' })
+      return
+    }
+
     if (mode !== 'single') {
       // Saltos longos (ex.: clicar numa seção distante do sumário) rolam de
       // forma INSTANTÂNEA — o scroll suave atravessaria todas as páginas do
@@ -2170,7 +2500,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
         if (top < 0) window.scrollTo({ top: window.scrollY + top - 12, behavior: 'smooth' })
       })
     }
-  }, [mode, pageCount, previewActive, allowedPages])
+  }, [mode, horizontal, pageCount, previewActive, allowedPages])
 
   // Passo de página que respeita o conjunto de páginas da prévia: avança/volta
   // pela lista liberada em vez de +1/-1 (que travaria num "buraco" de páginas).
@@ -2255,6 +2585,17 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     else setMode(next)
   }, [fitToWidth])
 
+  // Trocar a direção da rolagem troca o contêiner que rola: o que estava
+  // posicionado na pilha vertical não diz nada sobre a fileira horizontal. Em
+  // vez de tentar converter posições, a troca reabre na MESMA página — que é o
+  // que o leitor espera ver — usando o mesmo caminho da retomada de leitura.
+  const applyScrollAxis = useCallback((next: ScrollAxis) => {
+    if (scrollAxis === next) return
+    pendingResumeRef.current = currentPageRef.current
+    suppressFocusUntilRef.current = Date.now() + 900
+    setScrollAxis(next)
+  }, [scrollAxis])
+
   // A contagem de páginas nem sempre está em cache no banco quando o viewer
   // abre — nesse caso ela só aparece depois que a primeira página é
   // renderizada. Se o material se revelar grande, cai para "uma página por
@@ -2263,6 +2604,18 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     if (!access || modeTouchedRef.current) return
     if (pageCount >= LARGE_DOCUMENT_PAGES && mode !== 'single') setMode('single')
   }, [access, pageCount, mode])
+
+  // O dedo encostou para escrever num aparelho em modo caneta. Sem dizer nada,
+  // a impressão é de leitor quebrado ("a caneta funciona, o dedo não faz
+  // nada") — e a explicação é justamente o que a pessoa pediu. Uma vez a cada
+  // 12 segundos, para não virar aviso piscando durante a escrita.
+  const penWarnedAtRef = useRef(0)
+  const warnPenOnly = useCallback(() => {
+    const now = Date.now()
+    if (now - penWarnedAtRef.current < 12000) return
+    penWarnedAtRef.current = now
+    setNotice('Escrevendo só com a caneta. O dedo rola e vira a página.')
+  }, [])
 
   // ── Gestos ──────────────────────────────────────────────────────────────
   const handleSwipe = useCallback((direction: 1 | -1) => {
@@ -2279,7 +2632,18 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   // DOM. Sem esta condição nas dependências do efeito, ele rodava uma única vez
   // (com o container ainda nulo), não reagia à montagem das páginas e o swipe
   // simplesmente nunca era ligado — sobrava virar página só nas setinhas.
-  const gesturesEnabled = tool === 'cursor' && !loading && !error && !!access
+  //
+  // Na rolagem horizontal o gesto sintético SAI DE CENA: ali quem vira a página
+  // é o scroll-snap do navegador, com a inércia e o encaixe nativos. Manter os
+  // dois ligados seria o pior dos mundos — o dedo rolaria a fileira e, ao
+  // soltar, o gesto viraria mais uma página por cima.
+  //
+  // E com a ferramenta de escrita ativa em modo "só caneta", o dedo volta a
+  // valer para virar página: ele não desenha mais, então não há disputa. É o
+  // que faz o tablet com caneta parecer um caderno de verdade — a mão navega,
+  // a caneta escreve.
+  const fingerCanNavigate = tool === 'cursor' || !touchDrawingEnabled
+  const gesturesEnabled = fingerCanNavigate && !horizontal && !loading && !error && !!access
   useViewerGestures(contentRef, {
     enabled: gesturesEnabled,
     // Para o lado vale em qualquer modo: nada no leitor usa arrasto horizontal
@@ -2291,7 +2655,9 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     // todo. Dentro do modo página única o gesto ainda espera a página chegar
     // ao fim (ou ao começo) antes de virar, então página ampliada continua
     // rolando normalmente.
-    vertical: mode === 'single',
+    vertical: singlePage,
+    // A caneta só vira página quando não é ela quem escreve.
+    allowPen: tool === 'cursor',
     onSwipe: handleSwipe,
     trackRef: pagesTrackRef,
   })
@@ -2363,11 +2729,199 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     await requestAppFullscreen(element)
   }, [])
 
+  // ── Anotações: criar, editar, apagar — e desfazer ───────────────────────
+  //
+  // Toda operação aceita `record: false`. É assim que o desfazer reusa os mesmos
+  // caminhos (com a mesma tolerância a falha de rede) sem que o próprio desfazer
+  // vire um novo passo do histórico e o botão fique preso num vaivém.
+  const recordHistory = useCallback((entry: HistoryEntry<Partial<PdfAnnotation>>) => {
+    if (entry.length === 0) return
+    undoStackRef.current = pushEntry(undoStackRef.current, entry)
+    // Ramo novo: o que estava para refazer não pertence mais a esta linha do
+    // tempo (é o mesmo comportamento de qualquer editor).
+    redoStackRef.current = []
+    syncHistoryState()
+  }, [syncHistoryState])
+
+  const createAnnotation = useCallback(async (
+    annotation: Partial<PdfAnnotation>,
+    options: { clientId?: string; record?: boolean } = {}
+  ) => {
+    const clientId = options.clientId || newClientId()
+    const local = createEmptyAnnotation(annotation, materialId, clientId)
+    setAnnotations((prev) => [...prev, local])
+    if (options.record !== false) {
+      recordHistory([{ kind: 'add', clientId, payload: annotationPayload(local) }])
+    }
+
+    try {
+      const res = await fetch(`/api/materiais/${materialId}/pdf-viewer/annotations`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(annotation),
+      })
+      if (!res.ok) throw new Error('create failed')
+      const json = await res.json()
+      // O id vem do banco, o `clientId` continua sendo o daqui — é ele que o
+      // histórico guarda.
+      setAnnotations((prev) => prev.map((item) => item.id === local.id ? adoptAnnotation(json.annotation, clientId) : item))
+    } catch {
+      setAnnotations((prev) => prev.filter((item) => item.id !== local.id))
+      setNotice('Nao foi possivel salvar esta anotacao.')
+    }
+  }, [materialId, recordHistory])
+
+  const updateAnnotation = useCallback(async (
+    annotation: PdfAnnotation,
+    patch: Partial<PdfAnnotation>,
+    options: { record?: boolean } = {}
+  ) => {
+    const previous = annotation
+    const optimistic = { ...annotation, ...patch, data: { ...(annotation.data || {}), ...(patch.data || {}) } }
+    setAnnotations((prev) => prev.map((item) => item.id === annotation.id ? optimistic : item))
+    if (options.record !== false) {
+      recordHistory([{
+        kind: 'update',
+        clientId: annotation.clientId,
+        before: annotationPayload(previous),
+        after: annotationPayload(optimistic),
+      }])
+    }
+    const annotationId = getPersistedAnnotationId(annotation)
+    if (!annotationId) return
+
+    try {
+      const res = await fetch(`/api/materiais/${materialId}/pdf-viewer/annotations`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...optimistic, id: annotationId }),
+      })
+      if (!res.ok) throw new Error('update failed')
+      const json = await res.json()
+      setAnnotations((prev) => prev.map((item) => item.id === annotation.id ? adoptAnnotation(json.annotation, annotation.clientId) : item))
+    } catch {
+      setAnnotations((prev) => prev.map((item) => item.id === annotation.id ? previous : item))
+      setNotice('Nao foi possivel atualizar a anotacao.')
+    }
+  }, [materialId, recordHistory])
+
+  const deleteAnnotation = useCallback(async (
+    annotation: PdfAnnotation,
+    options: { record?: boolean } = {}
+  ) => {
+    setAnnotations((prev) => prev.filter((item) => item.id !== annotation.id))
+    if (options.record !== false) {
+      recordHistory([{ kind: 'remove', clientId: annotation.clientId, payload: annotationPayload(annotation) }])
+    }
+    const annotationId = getPersistedAnnotationId(annotation)
+    if (!annotationId) return
+
+    try {
+      const res = await fetch(`/api/materiais/${materialId}/pdf-viewer/annotations?id=${encodeURIComponent(annotationId)}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: annotationId, _id: annotationId }),
+      })
+      if (!res.ok) throw new Error('delete failed')
+    } catch {
+      setAnnotations((prev) => [...prev, annotation].sort((a, b) => a.pageNumber - b.pageNumber))
+      setNotice('Nao foi possivel apagar a anotacao.')
+    }
+  }, [materialId, recordHistory])
+
+  /**
+   * Resultado de UMA passada da borracha: o que sumiu inteiro e o que foi
+   * partido em pedaços. Tudo vira um único passo do histórico — quem passou a
+   * borracha uma vez desfaz uma vez, mesmo que ela tenha cruzado seis traços.
+   */
+  const applyEraserResult = useCallback(async (result: {
+    removed: PdfAnnotation[]
+    replaced: Array<{ annotation: PdfAnnotation; segments: Array<Partial<PdfAnnotation>> }>
+  }) => {
+    const entry: HistoryEntry<Partial<PdfAnnotation>> = []
+    const jobs: Array<Promise<unknown>> = []
+
+    for (const annotation of result.removed) {
+      entry.push({ kind: 'remove', clientId: annotation.clientId, payload: annotationPayload(annotation) })
+      jobs.push(deleteAnnotation(annotation, { record: false }))
+    }
+
+    for (const { annotation, segments } of result.replaced) {
+      entry.push({ kind: 'remove', clientId: annotation.clientId, payload: annotationPayload(annotation) })
+      jobs.push(deleteAnnotation(annotation, { record: false }))
+      for (const segment of segments) {
+        const clientId = newClientId()
+        entry.push({ kind: 'add', clientId, payload: segment })
+        jobs.push(createAnnotation(segment, { clientId, record: false }))
+      }
+    }
+
+    if (entry.length === 0) return
+    recordHistory(entry)
+    await Promise.allSettled(jobs)
+  }, [createAnnotation, deleteAnnotation, recordHistory])
+
+  // Executa um lote de operações. É o motor do desfazer/refazer: nada aqui sabe
+  // se está indo para a frente ou para trás — quem inverte é `invertEntry`.
+  const applyHistoryOps = useCallback(async (ops: Array<HistoryOp<Partial<PdfAnnotation>>>) => {
+    for (const op of ops) {
+      if (op.kind === 'add') {
+        await createAnnotation(op.payload, { clientId: op.clientId, record: false })
+        continue
+      }
+      const target = annotationsRef.current.find((item) => item.clientId === op.clientId)
+      if (!target) continue
+      if (op.kind === 'remove') await deleteAnnotation(target, { record: false })
+      else await updateAnnotation(target, op.after, { record: false })
+    }
+  }, [createAnnotation, deleteAnnotation, updateAnnotation])
+
+  const undoAnnotation = useCallback(async () => {
+    const entry = undoStackRef.current[undoStackRef.current.length - 1]
+    if (!entry) return
+    undoStackRef.current = undoStackRef.current.slice(0, -1)
+    redoStackRef.current = pushEntry(redoStackRef.current, entry)
+    syncHistoryState()
+    await applyHistoryOps(invertEntry(entry))
+  }, [applyHistoryOps, syncHistoryState])
+
+  const redoAnnotation = useCallback(async () => {
+    const entry = redoStackRef.current[redoStackRef.current.length - 1]
+    if (!entry) return
+    redoStackRef.current = redoStackRef.current.slice(0, -1)
+    undoStackRef.current = pushEntry(undoStackRef.current, entry)
+    syncHistoryState()
+    await applyHistoryOps(entry)
+  }, [applyHistoryOps, syncHistoryState])
+
+  const deleteAllAnnotations = useCallback(async () => {
+    if (!annotations.length) return
+    const previous = annotations
+    setAnnotations([])
+    setShowDeleteAllConfirm(false)
+    // "Apagar tudo" também é desfazível: é a ação mais fácil de tocar sem
+    // querer e a mais cara de perder.
+    recordHistory(previous.map((annotation) => ({
+      kind: 'remove' as const,
+      clientId: annotation.clientId,
+      payload: annotationPayload(annotation),
+    })))
+    try {
+      const res = await fetch(`/api/materiais/${materialId}/pdf-viewer/annotations?all=true`, {
+        method: 'DELETE',
+      })
+      if (!res.ok) throw new Error('delete all failed')
+    } catch {
+      setAnnotations(previous)
+      setNotice('Nao foi possivel apagar as anotacoes.')
+    }
+  }, [annotations, materialId, recordHistory])
+
   // Navegação por teclado: setas, PageUp/Down, Home/End, mais os atalhos de
-  // zoom/modo/painéis. Ignora quando o foco está em um campo de edição
-  // (anotações, input de página, etc). Fica DEPOIS dos callbacks que usa —
-  // o array de dependências é avaliado durante o render, então referenciar um
-  // `const` declarado abaixo estouraria em TDZ.
+  // zoom/modo/painéis e o desfazer/refazer. Ignora quando o foco está em um
+  // campo de edição (anotações, input de página, etc). Fica DEPOIS dos
+  // callbacks que usa — o array de dependências é avaliado durante o render,
+  // então referenciar um `const` declarado abaixo estouraria em TDZ.
   useEffect(() => {
     if (!access) return
     const onKey = (event: KeyboardEvent) => {
@@ -2376,6 +2930,23 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
         target.closest('[data-pdf-editor="true"]') ||
         ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)
       )) return
+      // Desfazer/refazer são os únicos atalhos com Ctrl/Cmd do leitor — os
+      // outros dessa família são bloqueados pelo anti-pirataria. Ficam ANTES do
+      // guard de Ctrl abaixo, e valem só onde há anotação (na prévia não há).
+      if ((event.ctrlKey || event.metaKey) && !previewActive) {
+        const combo = event.key.toLowerCase()
+        if (combo === 'z') {
+          event.preventDefault()
+          if (event.shiftKey) redoAnnotation()
+          else undoAnnotation()
+          return
+        }
+        if (combo === 'y') {
+          event.preventDefault()
+          redoAnnotation()
+          return
+        }
+      }
       if (event.ctrlKey || event.metaKey || event.altKey) return
       // Com o tutorial aberto as setas são dele (avançar/voltar passo). Sem
       // este guard, uma seta avançaria o passo E viraria a página junto.
@@ -2417,88 +2988,20 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
           event.preventDefault(); applyMode('single'); break
         case '3':
           event.preventDefault(); applyMode('width'); break
+        case 'v':
+        case 'V':
+          event.preventDefault(); applyScrollAxis(scrollAxis === 'vertical' ? 'horizontal' : 'vertical'); break
         case '?':
           event.preventDefault(); setShowShortcuts(true); break
       }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [access, pageCount, goToPage, stepPage, previewActive, allowedPages, minZoom, maxZoom, fitToPage, toggleFullScreen, openSidePanel, applyMode, hasSummary])
-
-  const createAnnotation = useCallback(async (annotation: Partial<PdfAnnotation>) => {
-    const local = createEmptyAnnotation(annotation, materialId)
-    setAnnotations((prev) => [...prev, local])
-
-    try {
-      const res = await fetch(`/api/materiais/${materialId}/pdf-viewer/annotations`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(annotation),
-      })
-      if (!res.ok) throw new Error('create failed')
-      const json = await res.json()
-      setAnnotations((prev) => prev.map((item) => item.id === local.id ? json.annotation : item))
-    } catch {
-      setAnnotations((prev) => prev.filter((item) => item.id !== local.id))
-      setNotice('Nao foi possivel salvar esta anotacao.')
-    }
-  }, [materialId])
-
-  const updateAnnotation = useCallback(async (annotation: PdfAnnotation, patch: Partial<PdfAnnotation>) => {
-    const previous = annotation
-    const optimistic = { ...annotation, ...patch, data: { ...(annotation.data || {}), ...(patch.data || {}) } }
-    setAnnotations((prev) => prev.map((item) => item.id === annotation.id ? optimistic : item))
-    const annotationId = getPersistedAnnotationId(annotation)
-    if (!annotationId) return
-
-    try {
-      const res = await fetch(`/api/materiais/${materialId}/pdf-viewer/annotations`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...optimistic, id: annotationId }),
-      })
-      if (!res.ok) throw new Error('update failed')
-      const json = await res.json()
-      setAnnotations((prev) => prev.map((item) => item.id === annotation.id ? json.annotation : item))
-    } catch {
-      setAnnotations((prev) => prev.map((item) => item.id === annotation.id ? previous : item))
-      setNotice('Nao foi possivel atualizar a anotacao.')
-    }
-  }, [materialId])
-
-  const deleteAnnotation = useCallback(async (annotation: PdfAnnotation) => {
-    setAnnotations((prev) => prev.filter((item) => item.id !== annotation.id))
-    const annotationId = getPersistedAnnotationId(annotation)
-    if (!annotationId) return
-
-    try {
-      const res = await fetch(`/api/materiais/${materialId}/pdf-viewer/annotations?id=${encodeURIComponent(annotationId)}`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: annotationId, _id: annotationId }),
-      })
-      if (!res.ok) throw new Error('delete failed')
-    } catch {
-      setAnnotations((prev) => [...prev, annotation].sort((a, b) => a.pageNumber - b.pageNumber))
-      setNotice('Nao foi possivel apagar a anotacao.')
-    }
-  }, [materialId])
-
-  const deleteAllAnnotations = useCallback(async () => {
-    if (!annotations.length) return
-    const previous = annotations
-    setAnnotations([])
-    setShowDeleteAllConfirm(false)
-    try {
-      const res = await fetch(`/api/materiais/${materialId}/pdf-viewer/annotations?all=true`, {
-        method: 'DELETE',
-      })
-      if (!res.ok) throw new Error('delete all failed')
-    } catch {
-      setAnnotations(previous)
-      setNotice('Nao foi possivel apagar as anotacoes.')
-    }
-  }, [annotations, materialId])
+  }, [
+    access, pageCount, goToPage, stepPage, previewActive, allowedPages, minZoom, maxZoom,
+    fitToPage, toggleFullScreen, openSidePanel, applyMode, hasSummary,
+    applyScrollAxis, scrollAxis, undoAnnotation, redoAnnotation,
+  ])
 
   if (loading) {
     return <ViewerShell><ViewerLoading /></ViewerShell>
@@ -2524,7 +3027,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   // Janela de páginas "vivas" (virtualização). Em página única tudo é a página
   // atual. Nos modos contínuo/largura, só o raio ao redor da página atual é
   // montado como componente pesado; as demais ficam como espaçadores leves.
-  const centerIndex = mode === 'single' ? 0 : Math.max(0, pages.indexOf(currentPage))
+  const centerIndex = singlePage ? 0 : Math.max(0, pages.indexOf(currentPage))
   const liveRadius = liveRadiusForZoom(settledZoom)
   const liveStart = centerIndex - liveRadius
   const liveEnd = centerIndex + liveRadius
@@ -2541,13 +3044,17 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   // é calculada a partir do DESLOCAMENTO da rolagem, que não depende de
   // elemento nenhum existir naquela posição. Ver o efeito "Fonte 2" acima.
   const anchorIndex = Math.min(Math.max(0, windowAnchor), Math.max(0, pages.length - 1))
-  const windowStart = mode === 'single' ? 0 : Math.max(0, anchorIndex - WINDOW_RADIUS)
-  const windowEnd = mode === 'single'
+  const windowStart = singlePage ? 0 : Math.max(0, anchorIndex - WINDOW_RADIUS)
+  const windowEnd = singlePage
     ? pages.length - 1
     : Math.min(pages.length - 1, anchorIndex + WINDOW_RADIUS)
-  const renderedPages = mode === 'single' ? pages : pages.slice(windowStart, windowEnd + 1)
-  const fillerTopHeight = Math.max(0, windowStart * pageSlotHeight)
-  const fillerBottomHeight = Math.max(0, (pages.length - 1 - windowEnd) * pageSlotHeight)
+  const renderedPages = singlePage ? pages : pages.slice(windowStart, windowEnd + 1)
+  // O preenchimento reserva o espaço das páginas que não estão materializadas.
+  // Na vertical isso é altura; na horizontal, largura de casa — e é o que
+  // mantém a barra de rolagem proporcional e o encaixe caindo no lugar certo.
+  const fillerSlot = horizontal ? pageSlotWidth : pageSlotHeight
+  const fillerStartSize = Math.max(0, windowStart * fillerSlot)
+  const fillerEndSize = Math.max(0, (pages.length - 1 - windowEnd) * fillerSlot)
 
   return (
     <ViewerShell>
@@ -2713,6 +3220,28 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                 ))}
               </div>
 
+              {/* Direção da rolagem. Duas teclas só, ao lado do modo de leitura:
+                  é a mesma pergunta ("como o material anda?") vista de outro
+                  ângulo, e separar em outro menu esconderia a opção. */}
+              <div className="hidden items-center gap-1 rounded-xl border border-white/10 bg-white/10 p-1 lg:flex" data-tour="viewer-axis">
+                <ToolbarButton
+                  compact
+                  active={scrollAxis === 'vertical'}
+                  onClick={() => applyScrollAxis('vertical')}
+                  title="Rolagem vertical — as páginas descem"
+                >
+                  <ArrowDownUp className="h-4 w-4" />
+                </ToolbarButton>
+                <ToolbarButton
+                  compact
+                  active={scrollAxis === 'horizontal'}
+                  onClick={() => applyScrollAxis('horizontal')}
+                  title="Rolagem horizontal — as páginas passam para o lado"
+                >
+                  <ArrowLeftRight className="h-4 w-4" />
+                </ToolbarButton>
+              </div>
+
               <ToolbarButton
                 className="hidden lg:inline-flex"
                 onClick={toggleFullScreen}
@@ -2759,9 +3288,35 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                   <ToolButton active={tool === 'bookmark'} onClick={() => setTool('bookmark')} title="Marcador">
                     <Bookmark className="h-4 w-4" />
                   </ToolButton>
-                  <ToolButton active={tool === 'eraser'} onClick={() => setTool('eraser')} title="Apagar item">
+                  <ToolButton active={tool === 'eraser'} onClick={() => setTool('eraser')} title="Borracha">
                     <Eraser className="h-4 w-4" />
                   </ToolButton>
+
+                  <div className="mx-1 h-6 w-px shrink-0 bg-white/10" />
+
+                  {/* Voltar e avançar o que você marcou. Ao lado das
+                      ferramentas, não junto da navegação de página: o que estes
+                      dois desfazem são traços e grifos, e a confusão entre
+                      "voltar uma página" e "voltar uma ação" é justamente o que
+                      um par de setas isolado causaria. */}
+                  <div className="flex items-center gap-1" data-tour="viewer-history">
+                    <ToolbarButton
+                      compact
+                      onClick={undoAnnotation}
+                      disabled={historyDepth.undo === 0}
+                      title="Desfazer (Ctrl+Z)"
+                    >
+                      <Undo2 className="h-4 w-4" />
+                    </ToolbarButton>
+                    <ToolbarButton
+                      compact
+                      onClick={redoAnnotation}
+                      disabled={historyDepth.redo === 0}
+                      title="Refazer (Ctrl+Shift+Z)"
+                    >
+                      <Redo2 className="h-4 w-4" />
+                    </ToolbarButton>
+                  </div>
 
                   <div className="mx-1 h-6 w-px shrink-0 bg-white/10" />
                 </div>
@@ -2841,6 +3396,11 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                   onLaserColorChange={setLaserColor}
                   textStyle={textStyle}
                   onTextStyleChange={setTextStyle}
+                  eraserStyle={eraserStyle}
+                  onEraserStyleChange={setEraserStyle}
+                  penMode={penMode}
+                  onPenModeChange={setPenMode}
+                  penSeen={penSeen}
                 />
               </div>
             )}
@@ -2995,12 +3555,29 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
             // revertida (ver o comentário em useViewerGestures): alternar o
             // `touchAction` no meio do gesto cancelava os ponteiros e produzia
             // saltos absurdos de zoom.
-            style={{ touchAction: 'pan-x pan-y pinch-zoom' }}
+            //
+            // Na horizontal esta seção vira o contêiner de rolagem da fileira,
+            // com encaixe obrigatório. `scrollSnapStop: always` mora em cada
+            // página (ver PdfCanvasPage): sem ele um lance forte atravessaria
+            // cinco páginas de uma vez, que é exatamente o que ninguém quer ao
+            // "passar a página".
+            // `overscrollBehaviorX: contain` segura o gesto dentro do leitor —
+            // no iOS um arrasto da borda para a direita é o "voltar" do Safari,
+            // e voltar de página não pode significar sair do material.
+            style={horizontal
+              ? {
+                  touchAction: 'pan-x pan-y pinch-zoom',
+                  overflowX: 'auto',
+                  scrollSnapType: 'x mandatory',
+                  overscrollBehaviorX: 'contain',
+                  scrollbarWidth: 'none',
+                }
+              : { touchAction: 'pan-x pan-y pinch-zoom' }}
             // Sem `overflow-hidden`: junto com o `max-w-full` da moldura ele
             // impedia a página de passar da largura do container, então
             // aumentar o zoom não mudava nada na tela. Cada página agora rola
             // na horizontal por conta própria (ver PdfCanvasPage).
-            className={`min-w-0 px-2 py-4 sm:px-4 sm:py-7 ${
+            className={`min-w-0 py-4 sm:py-7 ${horizontal ? 'px-0' : 'px-2 sm:px-4'} ${
               showThumbs ? 'lg:col-start-2' : 'lg:col-start-1'
             } ${
               annotationsVisible
@@ -3008,13 +3585,27 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                 : showThumbs ? 'lg:col-span-2' : 'lg:col-span-3'
             }`}
           >
-            <div ref={pagesTrackRef} className="mx-auto flex w-full max-w-6xl flex-col items-center gap-5">
-              {fillerTopHeight > 0 && (
-                <div aria-hidden style={{ height: fillerTopHeight }} className="w-full shrink-0" />
+            {/* Na horizontal a coluna vira fileira e o `max-w-6xl` sai de cena:
+                a largura da casa é a largura visível da área, e um limite no
+                meio do caminho quebraria a conta do encaixe. O respiro entre as
+                páginas vem do padding de cada casa, não de `gap` (ver
+                pageSlotWidth). */}
+            <div
+              ref={pagesTrackRef}
+              className={horizontal
+                ? 'flex w-max flex-row items-start'
+                : 'mx-auto flex w-full max-w-6xl flex-col items-center gap-5'}
+            >
+              {fillerStartSize > 0 && (
+                <div
+                  aria-hidden
+                  style={horizontal ? { width: fillerStartSize } : { height: fillerStartSize }}
+                  className={horizontal ? 'h-px shrink-0' : 'w-full shrink-0'}
+                />
               )}
               {renderedPages.map((page, offset) => {
-                const index = mode === 'single' ? offset : windowStart + offset
-                const isLive = mode === 'single' || (index >= liveStart && index <= liveEnd)
+                const index = singlePage ? offset : windowStart + offset
+                const isLive = singlePage || (index >= liveStart && index <= liveEnd)
                 if (!isLive) {
                   return (
                     <PdfPageSpacer
@@ -3022,13 +3613,14 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                       pageNumber={page}
                       size={spacerSize}
                       containerWidth={contentWidth}
+                      axis={scrollAxis}
                       onPageFocus={handlePageFocused}
                     />
                   )
                 }
                 return (
                   <PdfCanvasPage
-                    key={`${page}-${mode}`}
+                    key={`${page}-${mode}-${scrollAxis}`}
                     materialId={materialId}
                     pageNumber={page}
                     active={page === currentPage}
@@ -3041,6 +3633,9 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                     noteColor={noteColor}
                     laserColor={laserColor}
                     textStyle={textStyle}
+                    eraserStyle={eraserStyle}
+                    allowTouchDrawing={touchDrawingEnabled}
+                    axis={scrollAxis}
                     onPageFocus={handlePageFocused}
                     onPageSize={handlePageSize}
                     fallbackSize={pageSize}
@@ -3049,11 +3644,17 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                     onCreateAnnotation={createAnnotation}
                     onUpdateAnnotation={updateAnnotation}
                     onDeleteAnnotation={deleteAnnotation}
+                    onErase={applyEraserResult}
+                    onTouchRejected={warnPenOnly}
                   />
                 )
               })}
-              {fillerBottomHeight > 0 && (
-                <div aria-hidden style={{ height: fillerBottomHeight }} className="w-full shrink-0" />
+              {fillerEndSize > 0 && (
+                <div
+                  aria-hidden
+                  style={horizontal ? { width: fillerEndSize } : { height: fillerEndSize }}
+                  className={horizontal ? 'h-px shrink-0' : 'w-full shrink-0'}
+                />
               )}
             </div>
           </section>
@@ -3167,6 +3768,30 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
             )}
           </div>
 
+          {/* Desfazer/refazer no celular só aparecem quando há o que desfazer.
+              A barra de baixo já está cheia; dois botões permanentemente
+              apagados roubariam o espaço do polegar sem servir para nada. */}
+          {!previewActive && (historyDepth.undo > 0 || historyDepth.redo > 0) && (
+            <div className="flex items-center justify-center gap-2 px-2 pt-2">
+              <button
+                type="button"
+                onClick={undoAnnotation}
+                disabled={historyDepth.undo === 0}
+                className="flex h-9 flex-1 items-center justify-center gap-1.5 rounded-xl border border-white/20 bg-white/10 text-xs font-semibold text-white disabled:opacity-35"
+              >
+                <Undo2 className="h-4 w-4" /> Desfazer
+              </button>
+              <button
+                type="button"
+                onClick={redoAnnotation}
+                disabled={historyDepth.redo === 0}
+                className="flex h-9 flex-1 items-center justify-center gap-1.5 rounded-xl border border-white/20 bg-white/10 text-xs font-semibold text-white disabled:opacity-35"
+              >
+                <Redo2 className="h-4 w-4" /> Refazer
+              </button>
+            </div>
+          )}
+
           {/* Assinatura da casa, na área segura do aparelho.
               Aquela faixa preta embaixo dos botões não era decisão de desenho:
               é o `env(safe-area-inset-bottom)` do iPhone (~34pt reservados para
@@ -3240,6 +3865,13 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
 
         {/* Folha: modo de leitura */}
         <ViewerSheet open={mobileSheet === 'mode'} title="Como você quer ler?" onClose={() => setMobileSheet(null)}>
+          {horizontal && (
+            <p className="mb-3 rounded-xl border border-emerald-300/25 bg-emerald-400/10 p-3 text-[11px] leading-relaxed text-emerald-50/80">
+              Você está lendo com as páginas passando para o lado. As opções abaixo continuam
+              valendo para o <strong>tamanho</strong> da página na tela; para voltar a rolar para
+              baixo, mude a direção logo adiante.
+            </p>
+          )}
           <div className="space-y-2">
             {MODE_OPTIONS.map((option) => (
               <button
@@ -3276,6 +3908,36 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
               página para pular direto para onde você quer.
             </p>
           )}
+
+          {/* Direção da rolagem. Mora aqui, e não numa folha própria, porque é
+              a mesma decisão de leitura — e no celular é onde ela mais importa:
+              na horizontal, virar a página com o dedo passa a ser a rolagem
+              nativa do aparelho, com encaixe página a página. */}
+          <div className="mt-4 border-t border-white/10 pt-3">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-white/40">Direção das páginas</p>
+            <div className="grid grid-cols-2 gap-2">
+              {SCROLL_AXIS_OPTIONS.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => applyScrollAxis(option.value)}
+                  className={`flex flex-col items-start gap-1 rounded-xl border p-3 text-left transition-colors ${
+                    scrollAxis === option.value
+                      ? 'border-emerald-300/60 bg-emerald-400/20'
+                      : 'border-white/10 bg-white/5'
+                  }`}
+                >
+                  <span className="flex items-center gap-1.5 text-sm font-semibold text-white">
+                    {option.value === 'vertical'
+                      ? <ArrowDownUp className="h-4 w-4" />
+                      : <ArrowLeftRight className="h-4 w-4" />}
+                    {option.label}
+                  </span>
+                  <span className="text-[11px] leading-snug text-white/55">{option.hint}</span>
+                </button>
+              ))}
+            </div>
+          </div>
           <div className="mt-4 border-t border-white/10 pt-3">
             <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-white/40">Tamanho da letra</p>
             <div className="flex items-center gap-2">
@@ -3338,7 +4000,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                 { value: 'laser' as AnnotationTool, label: 'Laser', icon: <Zap className="h-5 w-5" /> },
                 { value: 'text' as AnnotationTool, label: 'Texto', icon: <Type className="h-5 w-5" /> },
                 { value: 'bookmark' as AnnotationTool, label: 'Marcador', icon: <Bookmark className="h-5 w-5" /> },
-                { value: 'eraser' as AnnotationTool, label: 'Apagar', icon: <Eraser className="h-5 w-5" /> },
+                { value: 'eraser' as AnnotationTool, label: 'Borracha', icon: <Eraser className="h-5 w-5" /> },
               ].map((item) => (
                 <button
                   key={item.value}
@@ -3370,6 +4032,11 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                 onLaserColorChange={setLaserColor}
                 textStyle={textStyle}
                 onTextStyleChange={setTextStyle}
+                eraserStyle={eraserStyle}
+                onEraserStyleChange={setEraserStyle}
+                penMode={penMode}
+                onPenModeChange={setPenMode}
+                penSeen={penSeen}
               />
             </div>
             <p className="mt-3 text-xs text-white/50">
@@ -4040,20 +4707,27 @@ const PdfPageSpacer = memo(function PdfPageSpacer({
   pageNumber,
   size,
   containerWidth,
+  axis,
   onPageFocus,
 }: {
   pageNumber: number
   size: PageSize
   containerWidth: number
+  axis: ScrollAxis
   onPageFocus: (page: number) => void
 }) {
   const ref = useRef<HTMLDivElement>(null)
+  const horizontal = axis === 'horizontal'
 
   useEffect(() => {
+    // Na fileira horizontal o foco vem da posição de rolagem, não de observer:
+    // todas as páginas ocupam a mesma faixa vertical da tela e o observer
+    // reportaria todas de uma vez. Ver a "Fonte 3" no leitor.
+    if (horizontal) return
     const element = ref.current
     if (!element) return
     return observePageFocus(element, () => onPageFocus(pageNumber))
-  }, [onPageFocus, pageNumber])
+  }, [horizontal, onPageFocus, pageNumber])
 
   const frameWidth = Math.ceil(size.width + 16)
   const frameHeight = Math.ceil(size.height + 16)
@@ -4066,12 +4740,19 @@ const PdfPageSpacer = memo(function PdfPageSpacer({
     <div
       id={`pdf-page-${pageNumber}`}
       ref={ref}
-      className="flex w-full scroll-mt-36 px-0 sm:px-2"
+      className={horizontal ? 'flex shrink-0 scroll-mt-36 px-2.5' : 'flex w-full scroll-mt-36 px-0 sm:px-2'}
       // `clip` e não `auto`: um espaçador é só um lugar reservado, ninguém
       // arrasta ele. `auto` criaria um contêiner de rolagem por página — num
       // material de milhares de páginas, milhares deles. `clip` recorta sem
       // criar contêiner nenhum.
-      style={{ justifyContent: overflowing ? 'flex-start' : 'center', overflowX: 'clip' }}
+      style={{
+        justifyContent: overflowing && !horizontal ? 'flex-start' : 'center',
+        overflowX: 'clip',
+        // A casa da fileira tem a largura da área visível — a mesma conta da
+        // página real, senão a rolagem horizontal desalinharia ao trocar um
+        // espaçador por uma página.
+        ...(horizontal && containerWidth > 0 ? { width: containerWidth } : null),
+      }}
     >
       <div
         className="relative flex shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04]"
@@ -4101,6 +4782,9 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   noteColor,
   laserColor,
   textStyle,
+  eraserStyle,
+  allowTouchDrawing,
+  axis,
   onPageFocus,
   onPageSize,
   fallbackSize,
@@ -4109,6 +4793,8 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   onCreateAnnotation,
   onUpdateAnnotation,
   onDeleteAnnotation,
+  onErase,
+  onTouchRejected,
 }: {
   materialId: string
   pageNumber: number
@@ -4123,6 +4809,10 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   noteColor: string
   laserColor: string
   textStyle: TextStyle
+  eraserStyle: EraserStyle
+  /** O dedo escreve? Quando não, ele fica livre para rolar e virar página. */
+  allowTouchDrawing: boolean
+  axis: ScrollAxis
   onPageFocus: (page: number) => void
   onPageSize: (size: PageSize) => void
   fallbackSize: PageSize | null
@@ -4130,6 +4820,11 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   onCreateAnnotation: (annotation: Partial<PdfAnnotation>) => void
   onUpdateAnnotation: (annotation: PdfAnnotation, patch: Partial<PdfAnnotation>) => void
   onDeleteAnnotation: (annotation: PdfAnnotation) => void
+  onErase: (result: {
+    removed: PdfAnnotation[]
+    replaced: Array<{ annotation: PdfAnnotation; segments: Array<Partial<PdfAnnotation>> }>
+  }) => void
+  onTouchRejected: () => void
 }) {
   const wrapperRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -4144,6 +4839,19 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
     kind: 'highlight'
     draft: HighlightDraft
     pointerId: number
+  } | {
+    kind: 'eraser'
+    pointerId: number
+    /** Rastro da borracha neste gesto, em coordenadas da página. */
+    centers: PdfPoint[]
+    /** Onde o ponteiro está agora — só para desenhar o círculo da borracha. */
+    cursor: PdfPoint
+    radius: number
+    mode: EraserMode
+    /** Anotações que sumiram inteiras nesta passada. */
+    removed: Map<string, PdfAnnotation>
+    /** Traços partidos: o que sobrou de cada um, atualizado a cada movimento. */
+    partial: Map<string, { annotation: PdfAnnotation; segments: PdfPoint[][] }>
   } | null>(null)
   const rafRef = useRef<number | null>(null)
   const laserCanvasRef = useRef<HTMLCanvasElement>(null)
@@ -4152,6 +4860,18 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   const laserPointerIdRef = useRef<number | null>(null)
   const laserRafRef = useRef<number | null>(null)
   const ignoreNextClickRef = useRef(false)
+  const horizontal = axis === 'horizontal'
+  // A borracha varre esta lista a cada movimento, de dentro de um callback
+  // estável — daí o espelho.
+  const annotationsPropRef = useRef(annotations)
+  annotationsPropRef.current = annotations
+  // Anotações que a borracha já pegou nesta passada. Elas somem da tela na
+  // hora — a borracha tem que parecer instantânea — enquanto o servidor é
+  // avisado uma vez só, ao levantar o dedo. A lista continua valendo depois do
+  // fim do gesto e só é limpa quando a anotação some da lista de verdade;
+  // sem isso o traço apagado reapareceria por um quadro entre a soltura e a
+  // resposta do estado do leitor.
+  const [erasedIds, setErasedIds] = useState<string[]>([])
   const [visible, setVisible] = useState(active)
   const [error, setError] = useState('')
   // Espera pedida pelo servidor num 429. Quando presente, a UI mostra uma
@@ -4198,11 +4918,24 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
     setEditor(null)
     laserStrokesRef.current = []
     laserDrawingRef.current = false
+    setErasedIds([])
     if (laserRafRef.current) {
       window.cancelAnimationFrame(laserRafRef.current)
       laserRafRef.current = null
     }
   }, [materialId, pageNumber])
+
+  // Limpeza da lista de apagados: o que já não existe na lista de anotações
+  // não precisa mais ser escondido. Mantém a lista curta e devolve o item à
+  // tela caso o servidor tenha recusado a exclusão (e o leitor o tenha
+  // devolvido ao estado).
+  useEffect(() => {
+    setErasedIds((current) => {
+      if (current.length === 0) return current
+      const alive = current.filter((id) => annotations.some((annotation) => annotation.id === id))
+      return alive.length === current.length ? current : alive
+    })
+  }, [annotations])
 
   useEffect(() => {
     const element = wrapperRef.current
@@ -4211,10 +4944,13 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   }, [pageNumber])
 
   useEffect(() => {
+    // Ver PdfPageSpacer: na fileira horizontal quem diz a página atual é a
+    // posição de rolagem, não o observer de foco.
+    if (horizontal) return
     const element = wrapperRef.current
     if (!element) return
     return observePageFocus(element, () => onPageFocus(pageNumber))
-  }, [onPageFocus, pageNumber])
+  }, [horizontal, onPageFocus, pageNumber])
 
   // Efeito de CARGA: busca os bytes e parseia o documento uma única vez por
   // página. O zoom não entra aqui — antes entrava, e era por isso que cada
@@ -4540,6 +5276,42 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
     if (!prepared) return
     const { context, width, height } = prepared
 
+    if (interaction.kind === 'eraser') {
+      // Os pedaços que SOBRARAM dos traços partidos, desenhados por cima do
+      // original (que já está escondido). É o que faz a borracha precisa
+      // responder na hora, sem esperar ida e volta ao servidor.
+      for (const { annotation, segments } of interaction.partial.values()) {
+        const isHighlight = annotation.type === 'highlight'
+        context.save()
+        context.globalAlpha = annotation.data?.opacity ?? (isHighlight ? 0.34 : 0.9)
+        if (isHighlight) context.globalCompositeOperation = 'multiply'
+        context.strokeStyle = annotation.color || '#22c55e'
+        context.lineWidth = Math.max(1, width * (annotation.data?.strokeWidthRatio || 0.004))
+        context.lineCap = 'round'
+        context.lineJoin = 'round'
+        for (const segment of segments) {
+          pointsToCanvasPath(context, segment, width, height)
+          context.stroke()
+        }
+        context.restore()
+      }
+
+      // O círculo da borracha embaixo do dedo. No toque não existe cursor do
+      // sistema: sem este desenho, não dá para saber o que a próxima passada
+      // vai levar — e é justamente o tamanho que muda entre as borrachas.
+      const cursor = interaction.cursor
+      context.save()
+      context.beginPath()
+      context.arc(cursor.x * width, cursor.y * height, interaction.radius, 0, Math.PI * 2)
+      context.fillStyle = 'rgba(255, 255, 255, 0.38)'
+      context.fill()
+      context.lineWidth = 1.5
+      context.strokeStyle = 'rgba(17, 24, 39, 0.7)'
+      context.stroke()
+      context.restore()
+      return
+    }
+
     if (interaction.kind === 'highlight') {
       const points = interaction.draft.points
       context.save()
@@ -4777,9 +5549,156 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
     })
   }, [clearDraftCanvas, onCreateAnnotation, pageNumber])
 
+  // ── Borracha ────────────────────────────────────────────────────────────
+  // A borracha antiga era um CLIQUE: ela só apagava a anotação em que o dedo
+  // encostasse, uma por toque, e não fazia nada ao arrastar. Agora ela é o que
+  // todo mundo espera de uma borracha — passa por cima e vai limpando —, em
+  // três feitios: traço inteiro, precisa (corta só o pedaço tocado) e só grifos.
+  //
+  // A geometria mora em lib/pdf-viewer-eraser (testada à parte). Aqui fica a
+  // ponte: rastro do ponteiro, o que já sumiu da tela e o desenho da prévia.
+  const eraserRadius = ERASER_RADIUS[eraserStyle.size]
+
+  const applyEraserAt = useCallback((point: PdfPoint) => {
+    const interaction = interactionRef.current
+    if (!interaction || interaction.kind !== 'eraser') return
+    const rect = overlayRef.current?.getBoundingClientRect()
+    if (!rect) return
+    const geometry = { width: rect.width, height: rect.height }
+    const radius = interaction.radius
+    interaction.cursor = point
+    interaction.centers.push(point)
+
+    let changed = false
+    for (const annotation of annotationsPropRef.current) {
+      if (interaction.removed.has(annotation.id)) continue
+      // "Só grifos" existe para quem grifa por cima da própria escrita: passar
+      // a borracha ali não pode levar a anotação junto.
+      if (interaction.mode === 'highlight' && annotation.type !== 'highlight') continue
+
+      const tolerance = strokeTolerance(annotation, geometry)
+      // Peneira barata antes da conta cara: a caixa que envolve a anotação.
+      // Nota e marcador ficam de fora dela — são um ícone ancorado num ponto,
+      // desenhado CENTRADO nele, então a caixa guardada não corresponde ao que
+      // aparece na tela e descartaria metade dos acertos legítimos. O teste
+      // deles já é uma conta só.
+      const anchored = annotation.type === 'note' || annotation.type === 'bookmark'
+      if (!anchored && !rectHit(getAnnotationBounds(annotation), point, radius + tolerance, geometry)) continue
+
+      const entry = interaction.partial.get(annotation.id)
+      const splitting = interaction.mode === 'partial' && (entry != null || isSplittable(annotation))
+
+      if (!splitting) {
+        if (!annotationHit(annotation, point, radius, geometry)) continue
+        interaction.removed.set(annotation.id, annotation)
+        changed = true
+        continue
+      }
+
+      const segments = entry ? entry.segments : [annotation.position.points || []]
+      const touched = segments.some((segment) =>
+        annotationHit({ ...annotation, position: { points: segment } }, point, radius, geometry))
+      if (!touched) continue
+
+      const next: PdfPoint[][] = []
+      for (const segment of segments) {
+        next.push(...splitStroke(segment, [point], radius, geometry, tolerance))
+      }
+      changed = true
+      if (next.length === 0) {
+        interaction.partial.delete(annotation.id)
+        interaction.removed.set(annotation.id, annotation)
+      } else {
+        interaction.partial.set(annotation.id, { annotation, segments: next })
+      }
+    }
+
+    if (!changed) return
+    // O que a borracha pegou some da tela AGORA; o servidor só é avisado ao
+    // levantar o dedo, numa tacada só (e num único passo de desfazer).
+    const hidden = [...interaction.removed.keys(), ...interaction.partial.keys()]
+    setErasedIds(hidden)
+  }, [])
+
+  const finishErasing = useCallback(() => {
+    const interaction = interactionRef.current
+    if (!interaction || interaction.kind !== 'eraser') return
+    interactionRef.current = null
+    clearDraftCanvas()
+    const rect = overlayRef.current?.getBoundingClientRect()
+    // Sem medida da página não há como enxugar o traço em pixels — e enxugar
+    // com uma medida inventada apagaria as curvas, deixando retas no lugar dos
+    // traços. Nesse caso o pedaço vai como está: pesa um pouco mais e é fiel.
+    const geometry = rect && rect.width > 0 && rect.height > 0
+      ? { width: rect.width, height: rect.height }
+      : null
+
+    const removed = [...interaction.removed.values()]
+    const replaced = [...interaction.partial.values()].map(({ annotation, segments }) => ({
+      annotation,
+      segments: segments.map((points) => ({
+        pageNumber,
+        type: annotation.type,
+        content: annotation.content,
+        color: annotation.color,
+        // `compactStroke` desfaz o adensamento que a borracha precisou fazer
+        // para acertar o traço: o que vai para o banco é o traço, não a régua.
+        position: { points: geometry ? compactStroke(points, 1.2, geometry) : points },
+        data: annotation.data,
+      })),
+    }))
+
+    if (removed.length === 0 && replaced.length === 0) return
+    onErase({ removed, replaced })
+  }, [clearDraftCanvas, onErase, pageNumber])
+
+  /**
+   * Quem pode escrever com este ponteiro. É aqui que a mão apoiada no tablet
+   * deixa de virar traço: em modo caneta o toque de dedo não escreve — e, o
+   * que é igualmente importante, também NÃO chama preventDefault, então ele
+   * segue rolando e virando página como se a ferramenta nem estivesse ativa.
+   */
+  const canDrawWith = (event: React.PointerEvent) =>
+    event.pointerType !== 'touch' || allowTouchDrawing
+
+  // Ferramentas que deixam tinta na página — as únicas em que o modo caneta
+  // muda alguma coisa. Nota, texto e marcador nascem de um TOQUE, não de um
+  // traço: recusar o dedo neles só tiraria uma forma de usar o leitor.
+  const inkTool = tool === 'drawing' || tool === 'highlight' || tool === 'laser' || tool === 'eraser'
+
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     if (!renderSize || editor) return
     if (event.button !== 0 && event.pointerType !== 'touch' && event.pointerType !== 'pen') return
+    if (inkTool && !canDrawWith(event)) {
+      onTouchRejected()
+      return
+    }
+
+    // A ponta-borracha da caneta (Surface, Wacom e afins) apaga, esteja qual
+    // ferramenta estiver ativa — é o gesto que a pessoa já faz sem pensar.
+    // `buttons & 32` é o bit dessa ponta no padrão de eventos de ponteiro.
+    const penErasing = event.pointerType === 'pen' && (event.buttons & 32) === 32
+
+    if (tool === 'eraser' || penErasing) {
+      event.preventDefault()
+      event.currentTarget.setPointerCapture(event.pointerId)
+      const point = getPosition(event.clientX, event.clientY)
+      clearDraftCanvas()
+      interactionRef.current = {
+        kind: 'eraser',
+        pointerId: event.pointerId,
+        centers: [],
+        cursor: point,
+        radius: eraserRadius,
+        mode: penErasing && tool !== 'eraser' ? 'object' : eraserStyle.mode,
+        removed: new Map(),
+        partial: new Map(),
+      }
+      applyEraserAt(point)
+      renderDraftOnCanvas(interactionRef.current)
+      setSelectedId(null)
+      return
+    }
 
     if (tool === 'laser') {
       event.preventDefault()
@@ -4865,6 +5784,20 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
     if (!interaction) return
     event.preventDefault()
 
+    if (interaction.kind === 'eraser') {
+      if (interaction.pointerId !== event.pointerId) return
+      // Eventos aglutinados: num movimento rápido o navegador entrega vários
+      // pontos de uma vez. Passar por todos é o que impede a borracha de
+      // "pular" um traço no meio do gesto.
+      const native = event.nativeEvent as PointerEvent & { getCoalescedEvents?: () => PointerEvent[] }
+      const events = native.getCoalescedEvents?.() || [native]
+      for (const pointerEvent of events) {
+        applyEraserAt(getPosition(pointerEvent.clientX, pointerEvent.clientY))
+      }
+      scheduleDraftUpdate()
+      return
+    }
+
     if (interaction.kind === 'drawing') {
       const native = event.nativeEvent as PointerEvent & { getCoalescedEvents?: () => PointerEvent[] }
       const events = native.getCoalescedEvents?.() || [native]
@@ -4905,6 +5838,7 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
     } catch {}
     if (interaction.kind === 'drawing') finishDrawing()
     if (interaction.kind === 'highlight') finishHighlight()
+    if (interaction.kind === 'eraser') finishErasing()
   }
 
   const openTextEditor = (point: PdfPoint, annotation?: PdfAnnotation) => {
@@ -5015,7 +5949,25 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   }
 
   const selectedAnnotation = selectedId ? annotations.find((annotation) => annotation.id === selectedId) || null : null
-  const annotationPointerEvents = tool === 'drawing' || tool === 'highlight' || tool === 'laser' ? 'none' : 'auto'
+  // Com a borracha ativa as anotações não recebem mais ponteiro. Antes elas
+  // recebiam, e o resultado era uma borracha de dois comportamentos: começar a
+  // passada em cima de um traço apagava SÓ ele (era um clique), enquanto
+  // começar no espaço vazio apagava tudo por onde o dedo fosse. Agora o gesto é
+  // um só, decidido pela geometria — encostar sem arrastar continua apagando o
+  // que está embaixo, porque um toque é um rastro de um ponto.
+  const annotationPointerEvents = tool === 'drawing' || tool === 'highlight' || tool === 'laser' || tool === 'eraser'
+    ? 'none'
+    : 'auto'
+  // O que a borracha já pegou sai da tela na hora (ver `erasedIds`).
+  const visibleAnnotations = erasedIds.length === 0
+    ? annotations
+    : annotations.filter((annotation) => !erasedIds.includes(annotation.id))
+  // Com uma ferramenta de tinta ativa e o toque LIBERADO para desenhar, o dedo
+  // pertence ao traço (`touchAction: none`, senão o navegador rola no meio do
+  // desenho). Em modo caneta é o contrário: o dedo continua sendo do leitor —
+  // rola, dá pinça e vira página — e só a caneta escreve. É esta linha que faz
+  // a rejeição de palma valer a pena de verdade.
+  const inkTouchAction = inkTool && allowTouchDrawing ? 'none' : 'manipulation'
 
   return (
     <div
@@ -5027,8 +5979,26 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
       // `justify-center` num container com overflow deixa a borda esquerda
       // inalcançável (armadilha clássica do flexbox), por isso alternamos para
       // `flex-start` quando a página passa da largura disponível.
-      className="pdf-page-fade flex w-full scroll-mt-36 overflow-x-auto px-0 sm:px-2"
-      style={{ justifyContent: overflowing ? 'flex-start' : 'center' }}
+      //
+      // Na fileira horizontal esta mesma linha vira a CASA da página: largura
+      // fixa (a da área visível), encaixe no centro e `scrollSnapStop: always`,
+      // que é o que faz o dedo passar UMA página por gesto em vez de atravessar
+      // meia dúzia num lance mais forte. A rolagem interna continua existindo
+      // para a página ampliada — quem estiver com zoom arrasta dentro da casa e,
+      // ao chegar na borda, o gesto seguinte troca de página.
+      className={horizontal
+        ? 'pdf-page-fade flex shrink-0 scroll-mt-36 overflow-x-auto px-2.5'
+        : 'pdf-page-fade flex w-full scroll-mt-36 overflow-x-auto px-0 sm:px-2'}
+      style={{
+        justifyContent: overflowing ? 'flex-start' : 'center',
+        ...(horizontal
+          ? {
+              width: containerWidth > 0 ? containerWidth : undefined,
+              scrollSnapAlign: 'center',
+              scrollSnapStop: 'always',
+            }
+          : null),
+      }}
     >
       <div
         // Sem `backdrop-blur`: o blur fica atrás de um canvas opaco, ou seja,
@@ -5084,15 +6054,18 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
             onPointerUp={handlePointerEnd}
             onPointerCancel={handlePointerEnd}
             style={{
-              cursor: tool === 'cursor' ? 'default' : tool === 'eraser' ? ERASER_CURSOR : (tool === 'drawing' || tool === 'laser') ? 'crosshair' : 'copy',
-              touchAction: tool === 'drawing' || tool === 'highlight' || tool === 'laser' ? 'none' : 'manipulation',
+              cursor: tool === 'cursor'
+                ? 'default'
+                : tool === 'eraser'
+                  ? eraserCursor(eraserRadius)
+                  : (tool === 'drawing' || tool === 'laser') ? 'crosshair' : 'copy',
+              touchAction: inkTouchAction,
             }}
           >
             <canvas ref={draftCanvasRef} className="absolute inset-0 h-full w-full pointer-events-none" />
             <AnnotationOverlay
-              annotations={annotations}
+              annotations={visibleAnnotations}
               selectedAnnotation={selectedAnnotation}
-              tool={tool}
               pointerEvents={annotationPointerEvents}
               onSelect={(annotation) => setSelectedId(annotation.id)}
               onEdit={(annotation) => {
@@ -5121,7 +6094,6 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
 function AnnotationOverlay({
   annotations,
   selectedAnnotation,
-  tool,
   pointerEvents,
   onSelect,
   onEdit,
@@ -5129,7 +6101,6 @@ function AnnotationOverlay({
 }: {
   annotations: PdfAnnotation[]
   selectedAnnotation: PdfAnnotation | null
-  tool: AnnotationTool
   pointerEvents: 'none' | 'auto'
   onSelect: (annotation: PdfAnnotation) => void
   onEdit: (annotation: PdfAnnotation) => void
@@ -5142,7 +6113,6 @@ function AnnotationOverlay({
           key={annotation.id}
           annotation={annotation}
           selected={selectedAnnotation?.id === annotation.id}
-          tool={tool}
           pointerEvents={pointerEvents}
           onSelect={onSelect}
           onEdit={onEdit}
@@ -5163,7 +6133,6 @@ function AnnotationOverlay({
 function AnnotationItem({
   annotation,
   selected,
-  tool,
   pointerEvents,
   onSelect,
   onEdit,
@@ -5171,7 +6140,6 @@ function AnnotationItem({
 }: {
   annotation: PdfAnnotation
   selected: boolean
-  tool: AnnotationTool
   pointerEvents: 'none' | 'auto'
   onSelect: (annotation: PdfAnnotation) => void
   onEdit: (annotation: PdfAnnotation) => void
@@ -5183,10 +6151,6 @@ function AnnotationItem({
     onPointerDown: (event: React.PointerEvent) => event.stopPropagation(),
     onClick: (event: React.MouseEvent) => {
       event.stopPropagation()
-      if (tool === 'eraser') {
-        onDelete(annotation)
-        return
-      }
       if ((annotation.type === 'text' || annotation.type === 'note') && event.detail >= 2) {
         onEdit(annotation)
         return
@@ -5536,6 +6500,11 @@ function ToolOptionsBar({
   onLaserColorChange,
   textStyle,
   onTextStyleChange,
+  eraserStyle,
+  onEraserStyleChange,
+  penMode,
+  onPenModeChange,
+  penSeen,
 }: {
   tool: AnnotationTool
   drawingStyle: DrawingStyle
@@ -5550,8 +6519,17 @@ function ToolOptionsBar({
   onLaserColorChange: (color: string) => void
   textStyle: TextStyle
   onTextStyleChange: (style: TextStyle) => void
+  eraserStyle: EraserStyle
+  onEraserStyleChange: (style: EraserStyle) => void
+  penMode: PenMode
+  onPenModeChange: (mode: PenMode) => void
+  penSeen: boolean
 }) {
-  if (!['drawing', 'highlight', 'text', 'note', 'laser'].includes(tool)) return null
+  if (!['drawing', 'highlight', 'text', 'note', 'laser', 'eraser'].includes(tool)) return null
+  // A escolha de quem escreve (dedo × caneta) acompanha as ferramentas que
+  // encostam na página. Em "texto" e "nota" ela não faria diferença: ali o
+  // toque abre um editor, não deixa tinta.
+  const showPenMode = tool === 'drawing' || tool === 'highlight' || tool === 'eraser'
 
   return (
     <div className="mt-1 flex items-center gap-2 overflow-x-auto rounded-xl border border-white/10 bg-white/10 px-2 py-2">
@@ -5610,6 +6588,73 @@ function ToolOptionsBar({
           <ColorSwatches colors={LASER_SWATCHES} value={laserColor} onChange={onLaserColorChange} />
           <span className="shrink-0 text-[11px] text-white/55">O traco brilha e some sozinho apos desenhar</span>
         </>
+      )}
+
+      {tool === 'eraser' && (
+        <>
+          <span className="flex shrink-0 items-center gap-1 text-xs font-semibold text-white/75"><Eraser className="h-4 w-4" /> Borracha</span>
+          <div className="flex shrink-0 items-center gap-1">
+            {ERASER_MODE_OPTIONS.map((option) => (
+              <MiniModeButton
+                key={option.value}
+                active={eraserStyle.mode === option.value}
+                onClick={() => onEraserStyleChange({ ...eraserStyle, mode: option.value })}
+                title={`${option.label} — ${option.hint}`}
+              >
+                {option.value === 'object' && <Eraser className="h-4 w-4" />}
+                {option.value === 'partial' && <Scissors className="h-4 w-4" />}
+                {option.value === 'highlight' && <Highlighter className="h-4 w-4" />}
+              </MiniModeButton>
+            ))}
+          </div>
+          <div className="flex shrink-0 items-center gap-1 rounded-lg border border-white/10 bg-white/10 px-2 py-1">
+            {ERASER_SIZE_OPTIONS.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => onEraserStyleChange({ ...eraserStyle, size: option.value })}
+                title={`Borracha ${option.label.toLowerCase()}`}
+                className={`flex h-6 items-center gap-1.5 rounded-md px-2 text-[11px] font-semibold transition-colors ${
+                  eraserStyle.size === option.value ? 'bg-emerald-400/25 text-white' : 'text-white/60 hover:text-white'
+                }`}
+              >
+                <span
+                  aria-hidden
+                  className="rounded-full border border-current"
+                  style={{ width: option.value === 'fine' ? 6 : option.value === 'medium' ? 10 : 14, height: option.value === 'fine' ? 6 : option.value === 'medium' ? 10 : 14 }}
+                />
+                {option.label}
+              </button>
+            ))}
+          </div>
+          <span className="shrink-0 text-[11px] text-white/55">
+            {ERASER_MODE_OPTIONS.find((option) => option.value === eraserStyle.mode)?.hint}
+          </span>
+        </>
+      )}
+
+      {showPenMode && (
+        <div className="flex shrink-0 items-center gap-1 rounded-lg border border-white/10 bg-white/10 px-2 py-1">
+          <Hand className="h-4 w-4 shrink-0 text-white/55" />
+          {PEN_MODE_OPTIONS.map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              onClick={() => onPenModeChange(option.value)}
+              title={option.hint}
+              className={`h-6 rounded-md px-2 text-[11px] font-semibold transition-colors ${
+                penMode === option.value ? 'bg-emerald-400/25 text-white' : 'text-white/60 hover:text-white'
+              }`}
+            >
+              {option.label}
+            </button>
+          ))}
+          {penSeen && penMode === 'auto' && (
+            <span className="flex shrink-0 items-center gap-1 text-[11px] text-emerald-200/80">
+              <PenTool className="h-3.5 w-3.5" /> caneta detectada
+            </span>
+          )}
+        </div>
       )}
 
       {tool === 'text' && (
@@ -5768,12 +6813,15 @@ const AnnotationsPanel = memo(function AnnotationsPanel({
 function ToolGuide() {
   const guideItems = [
     { icon: <MousePointer2 className="h-4 w-4" />, title: 'Navegar', text: 'Move pelo PDF, seleciona anotacoes e abre editar com duplo toque em textos e notas. No celular e no tablet, deslize o dedo para o lado (ou para cima e para baixo, no modo uma pagina por vez) para virar a pagina.' },
+    { icon: <ArrowLeftRight className="h-4 w-4" />, title: 'Direcao das paginas', text: 'Em "Modo" voce escolhe entre rolagem vertical (as paginas descem) e horizontal (as paginas passam para o lado, com encaixe pagina a pagina — e ai quem vira a pagina e o proprio deslize do aparelho).' },
     { icon: <Highlighter className="h-4 w-4" />, title: 'Marca texto', text: 'Arraste para grifar uma area. Um toque cria um grifo rapido na linha.' },
     { icon: <PenLine className="h-4 w-4" />, title: 'Caneta', text: 'Desenhe com mouse, dedo ou Apple Pencil. Escolha cor, grossura, pincel, linha, tracejado ou circulo.' },
+    { icon: <Hand className="h-4 w-4" />, title: 'Mao apoiada nao desenha', text: 'Nas opcoes da caneta, escolha quem escreve. No automatico, assim que voce usa uma caneta no aparelho o dedo para de desenhar: a mao pode apoiar na tela, e o dedo passa a rolar e virar pagina enquanto a caneta escreve.' },
     { icon: <Zap className="h-4 w-4" />, title: 'Caneta laser', text: 'Aponte durante a leitura: o traco brilha e some sozinho, como um laser. Nao fica salvo.' },
     { icon: <Type className="h-4 w-4" />, title: 'Texto', text: 'Toque no PDF e escreva direto na pagina com fonte, tamanho, cor, negrito, italico e sublinhado.' },
     { icon: <MessageSquare className="h-4 w-4" />, title: 'Nota', text: 'Cria um post-it visual com cores. Toque duas vezes na nota para editar.' },
-    { icon: <Eraser className="h-4 w-4" />, title: 'Apagar', text: 'Ative e toque em qualquer anotacao para remover individualmente, ou use o botao do painel.' },
+    { icon: <Eraser className="h-4 w-4" />, title: 'Borracha', text: 'Passe por cima para ir apagando, como uma borracha de verdade. Em tres feitios: traco inteiro, precisa (apaga so o pedaco por onde voce passar) e so grifos — e em tres tamanhos.' },
+    { icon: <Undo2 className="h-4 w-4" />, title: 'Desfazer e refazer', text: 'Voltou atras numa marcacao? Desfazer devolve o que voce acabou de fazer, e refazer traz de volta. Vale ate para o "apagar tudo". No computador: Ctrl+Z e Ctrl+Shift+Z.' },
   ]
 
   return (
@@ -5965,7 +7013,15 @@ function ShortcutsDialog({ onClose }: { onClose: () => void }) {
         ['0', 'Ajustar a página à tela'],
         ['F', 'Tela cheia'],
         ['1  /  2  /  3', 'Rolagem contínua / uma página / largura'],
+        ['V', 'Alternar rolagem vertical / horizontal'],
         ['?', 'Abrir esta lista'],
+      ],
+    },
+    {
+      title: 'Marcar',
+      items: [
+        ['Ctrl+Z', 'Desfazer a última marcação'],
+        ['Ctrl+Shift+Z  ou  Ctrl+Y', 'Refazer'],
       ],
     },
   ]
@@ -5989,7 +7045,8 @@ function ShortcutsDialog({ onClose }: { onClose: () => void }) {
         <p className="text-[11px] text-white/40">
           No celular e no tablet: deslize o dedo para os lados para virar de página — e também para
           cima ou para baixo no modo &quot;uma página por vez&quot;, quando a página já chegou ao fim
-          ou ao começo. Para aumentar a letra, use os botões de tamanho em &quot;Modo&quot;.
+          ou ao começo. Na rolagem horizontal, o próprio deslize já passa de página, com encaixe.
+          Para aumentar a letra, use os botões de tamanho em &quot;Modo&quot;.
         </p>
       </div>
     </ViewerDialog>
@@ -6103,6 +7160,7 @@ function ToolbarButton({
   disabled,
   title,
   compact,
+  active,
   className,
 }: {
   children: React.ReactNode
@@ -6110,6 +7168,7 @@ function ToolbarButton({
   disabled?: boolean
   title: string
   compact?: boolean
+  active?: boolean
   className?: string
 }) {
   return (
@@ -6120,7 +7179,12 @@ function ToolbarButton({
       disabled={disabled}
       title={title}
       aria-label={title}
-      className={`${compact ? 'h-8 w-8 rounded-lg' : 'h-10 w-10 rounded-xl'} shrink-0 border border-white/10 bg-white/10 text-white hover:bg-white/15 hover:text-white disabled:opacity-40 ${className || ''}`}
+      aria-pressed={active}
+      className={`${compact ? 'h-8 w-8 rounded-lg' : 'h-10 w-10 rounded-xl'} shrink-0 border text-white hover:text-white disabled:opacity-40 ${
+        active
+          ? 'border-emerald-300/60 bg-emerald-400/25 hover:bg-emerald-400/30'
+          : 'border-white/10 bg-white/10 hover:bg-white/15'
+      } ${className || ''}`}
     >
       {children}
     </Button>
