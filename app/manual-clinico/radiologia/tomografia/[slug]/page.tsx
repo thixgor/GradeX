@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
-import { notFound, useParams, useRouter, useSearchParams } from 'next/navigation'
+import { notFound, useParams, useRouter } from 'next/navigation'
 import { AppShell, useAppShell } from '@/components/app-shell'
 import {
   ArrowLeft,
@@ -60,7 +60,6 @@ export default function SerieTomografiaPage() {
 
 function SerieConteudo() {
   const params = useParams<{ slug: string }>()
-  const searchParams = useSearchParams()
   const router = useRouter()
   const slug = params?.slug
 
@@ -125,17 +124,24 @@ function SerieConteudo() {
   }
 
   // Abertura direta em uma estrutura vinda da busca da página anterior.
+  //
+  // O `?estrutura=` sai de `window.location.search`, e não de
+  // `useSearchParams()`: o hook obriga a rota a desistir da renderização no
+  // servidor, e as séries de tomografia — pré-renderizadas no build — chegavam
+  // ao navegador como HTML vazio, com um carregando no lugar de um conteúdo
+  // que já estava pronto. Aqui a leitura acontece dentro de um efeito, ou seja,
+  // só no cliente: nada do que é renderizado no servidor depende dela.
   const jaAplicouQuery = useRef(false)
   useEffect(() => {
     if (jaAplicouQuery.current) return
-    const alvo = searchParams?.get('estrutura')
+    const alvo = new URLSearchParams(window.location.search).get('estrutura')
     if (!alvo) return
     const e = sub.estruturas.find((x) => x.id === alvo)
     if (!e) return
     jaAplicouQuery.current = true
     setSelecionada(e)
     if (e.cortes?.length) setCorte(e.cortes[Math.floor(e.cortes.length / 2)])
-  }, [searchParams, sub])
+  }, [sub])
 
   // Trocar de série sem remontar o componente precisa zerar o estado local.
   useEffect(() => {

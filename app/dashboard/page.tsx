@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { AppShell, useAppShell } from '@/components/app-shell'
+import { readPageCache, writePageCache } from '@/lib/page-cache'
 import { Button } from '@/components/ui/button'
 import { PlanLimitsCard } from '@/components/plan-limits-card'
 import { AccountType } from '@/lib/types'
@@ -124,22 +125,51 @@ const PHRASE_SEED = [
   "O foco não vem antes da ação. Vem durante. Você não espera ter vontade de estudar para começar a estudar — você começa, e depois de alguns minutos o foco aparece. Quem espera o estado ideal para começar nunca começa de verdade.",
 ]
 
+// Chaves do cache de página (lib/page-cache.ts). Nada aqui é sensível: são
+// contadores de estudo e os títulos das últimas provas — dado que a própria
+// pessoa acabou de ver. Limite de plano, crédito e assinatura continuam
+// vindo frescos do /api/bootstrap, como manda o comentário daquele módulo.
+const DASHBOARD_STATS_CACHE_KEY = 'dashboard:stats'
+const DASHBOARD_EXAMS_CACHE_KEY = 'dashboard:recent-exams'
+const DASHBOARD_MATERIALS_CACHE_KEY = 'dashboard:materials'
+
+interface DashboardStats {
+  questionsAnswered: number
+  examsCompleted: number
+  accuracyRate: number
+  streakDays: number
+}
+
 // ─── Dashboard Content ──────────────────────────────────────────
 function DashboardContent() {
   const router = useRouter()
   const { user, isAdmin, accountType, setSidebarOpen } = useAppShell()
 
-  const [stats, setStats] = useState({
-    questionsAnswered: 0,
-    examsCompleted: 0,
-    // Aproveitamento no banco de questões. Antes esse cartão mostrava
-    // "Flashcards Estudados", um campo que /api/user/statistics nunca devolveu
-    // — ou seja, um zero permanente na cara de todo mundo.
-    accuracyRate: 0,
-    streakDays: 0,
-  })
-  const [recentExams, setRecentExams] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
+  // Hidrata da última visita, de forma síncrona, no primeiro frame (ver
+  // lib/page-cache.ts). A dashboard é a primeira tela depois do login e a mais
+  // revisitada do app: sem isso, toda entrada mostrava 0 questões respondidas,
+  // 0 provas, 0 dias de sequência e a lista de provas recentes vazia até as
+  // três chamadas voltarem — um "carregando" disfarçado de dado zerado, que
+  // depois pulava para o valor real. Agora os números da última visita
+  // aparecem na hora e são corrigidos por baixo quando a resposta chega.
+  const [stats, setStats] = useState(
+    () =>
+      readPageCache<DashboardStats>(DASHBOARD_STATS_CACHE_KEY) ?? {
+        questionsAnswered: 0,
+        examsCompleted: 0,
+        // Aproveitamento no banco de questões. Antes esse cartão mostrava
+        // "Flashcards Estudados", um campo que /api/user/statistics nunca
+        // devolveu — ou seja, um zero permanente na cara de todo mundo.
+        accuracyRate: 0,
+        streakDays: 0,
+      },
+  )
+  const [recentExams, setRecentExams] = useState<any[]>(
+    () => readPageCache<any[]>(DASHBOARD_EXAMS_CACHE_KEY) ?? [],
+  )
+  const [loading, setLoading] = useState(
+    () => readPageCache<DashboardStats>(DASHBOARD_STATS_CACHE_KEY) === null,
+  )
 
   // Acervo de frases: começa com a semente e é trocado pelo conjunto completo
   // assim que o aparelho fica ocioso.
@@ -200,17 +230,21 @@ function DashboardContent() {
 
       if (statsRes.ok) {
         const data = await statsRes.json()
-        setStats({
+        const proximo: DashboardStats = {
           questionsAnswered: data.questionsAnswered || 0,
           examsCompleted: data.examsCompleted || 0,
           accuracyRate: Math.round(data.bankAccuracyRate || 0),
           streakDays: data.streakDays || 0,
-        })
+        }
+        setStats(proximo)
+        writePageCache(DASHBOARD_STATS_CACHE_KEY, proximo)
       }
 
       if (examsRes.ok) {
         const data = await examsRes.json()
-        setRecentExams((data.exams || []).slice(0, 3))
+        const recentes = (data.exams || []).slice(0, 3)
+        setRecentExams(recentes)
+        writePageCache(DASHBOARD_EXAMS_CACHE_KEY, recentes)
       }
 
       if (cronogramasRes.ok) {
@@ -711,8 +745,16 @@ const TYPE_ICON_MAP: Record<string, React.ReactNode> = {
 }
 
 function MeusMaterialsWidget({ onCount }: { onCount?: (count: number) => void }) {
-  const [materials, setMaterials] = useState<DashMaterial[]>([])
-  const [loading, setLoading] = useState(true)
+  // Mesma hidratação síncrona dos contadores acima: a prateleira "Meus
+  // materiais" abria em esqueleto a cada visita à dashboard, para redesenhar
+  // exatamente os mesmos itens da visita anterior. O veredito de acesso
+  // continua sendo o do servidor — o cache só adianta o desenho.
+  const [materials, setMaterials] = useState<DashMaterial[]>(
+    () => readPageCache<DashMaterial[]>(DASHBOARD_MATERIALS_CACHE_KEY) ?? [],
+  )
+  const [loading, setLoading] = useState(
+    () => readPageCache<DashMaterial[]>(DASHBOARD_MATERIALS_CACHE_KEY) === null,
+  )
   const [expanded, setExpanded] = useState(false)
 
   useEffect(() => {
@@ -721,6 +763,7 @@ function MeusMaterialsWidget({ onCount }: { onCount?: (count: number) => void })
       .then(d => {
         const mine = (d.materials || []).filter((m: DashMaterial) => m._hasAccess)
         setMaterials(mine)
+        writePageCache(DASHBOARD_MATERIALS_CACHE_KEY, mine)
         onCount?.(mine.length)
       })
       .catch(() => {})

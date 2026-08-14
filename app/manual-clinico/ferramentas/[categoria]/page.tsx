@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useParams, useRouter, useSearchParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { AppShell, useAppShell } from '@/components/app-shell'
 import { Input } from '@/components/ui/input'
@@ -31,9 +31,24 @@ export default function CategoriaFerramentasPage() {
   )
 }
 
+/**
+ * O `?f=` que a busca da página anterior usa para abrir direto numa ferramenta.
+ *
+ * Lido de `window.location.search` em vez de `useSearchParams()` de propósito:
+ * o hook obriga a página a "desistir" da renderização no servidor (bailout para
+ * CSR), e as 16 categorias, que são pré-renderizadas no build, passavam a
+ * chegar ao navegador como HTML vazio — a pessoa via um carregando enquanto o
+ * JS montava uma página cujo conteúdo já existia pronto. Este parâmetro só
+ * decide para onde rolar depois que a lista já está na tela; nada do que é
+ * renderizado depende dele.
+ */
+function ancoraDaUrl(): string | null {
+  if (typeof window === 'undefined') return null
+  return new URLSearchParams(window.location.search).get('f')
+}
+
 function Conteudo() {
   const params = useParams<{ categoria: string }>()
-  const searchParams = useSearchParams()
   const router = useRouter()
   const id = (params?.categoria ?? '') as CategoriaId
   const valida = ehCategoria(id)
@@ -44,7 +59,7 @@ function Conteudo() {
   const [busca, setBusca] = useState('')
   const [abertos, setAbertos] = useState<Set<string>>(new Set())
   const [ancorado, setAncorado] = useState<string | null>(null)
-  const ancoraRef = useRef<string | null>(searchParams?.get('f') ?? null)
+  const ancoraRef = useRef<string | null>(ancoraDaUrl())
   const { alternar: alternarFavorito, ehFavorito, sincronizar } = useFavoritos()
   const { loading: carregandoShell } = useAppShell()
   const { dados, carregado } = useAcessoFerramentas()

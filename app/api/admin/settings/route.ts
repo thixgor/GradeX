@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
 import { PlanConfig, AdminSettings } from '@/lib/types'
@@ -112,6 +113,13 @@ export async function PUT(req: NextRequest) {
     } else {
       await collection.updateOne({}, { $set: sanitizedBody }, { upsert: true })
     }
+
+    // A landing (`/`) é HTML estático em cache de borda. Sem este purge, virar
+    // o `landingPageEnabled` (ou qualquer outro campo que a landing exibe) só
+    // apareceria no próximo `revalidate` — até 5 minutos depois. Com ele, o
+    // toggle do painel continua valendo na hora, sem devolver a página ao
+    // regime de renderizar a cada visita.
+    revalidatePath('/')
 
     // Buscar as configurações atualizadas para retornar
     const updatedSettings = await collection.findOne({})

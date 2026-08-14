@@ -1,31 +1,24 @@
 import { redirect } from 'next/navigation'
-import { Space_Grotesk, Inter, JetBrains_Mono } from 'next/font/google'
-import LandingPage from '@/components/landing-page'
+import { LandingShell } from '@/components/landing-shell'
 
-export const dynamic = 'force-dynamic'
-
-// Fontes da landing. Declaradas aqui (e não no layout raiz) para que só a rota
-// '/' baixe e faça preload desses arquivos — o resto do app segue com
-// Newsreader / Source Sans / IBM Plex Mono. next/font auto-hospeda, então não
-// há request pro Google nem CSS externo bloqueando a renderização.
-const daDisplay = Space_Grotesk({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-da-display',
-  display: 'swap',
-})
-const daBody = Inter({
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
-  variable: '--font-da-body',
-  display: 'swap',
-})
-const daMono = JetBrains_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500'],
-  variable: '--font-da-mono',
-  display: 'swap',
-})
+// A landing é HTML ESTÁTICO, regenerado no máximo a cada 5 minutos — e na
+// hora, via `revalidatePath('/')`, quando o admin mexe em `landing_settings`.
+//
+// Antes era `force-dynamic`: toda visita — inclusive a de quem chegou de um
+// anúncio e nunca fez login — acordava uma função serverless, esperava
+// `getSession()` (cookies + possível ida ao Atlas, com timeout de 2,5 s) e só
+// então começava a montar as 2.400 linhas de JSX. Nada disso dependia do
+// visitante: o HTML é idêntico para todo mundo deslogado. Agora ele sai do
+// cache de borda, com TTFB de CDN e sem cold start — que é justamente o
+// "carregando" que aparecia ANTES da landing aparecer.
+//
+// As duas decisões que dependiam do request saíram daqui:
+//   • sessão válida → /dashboard: virou desvio no middleware (Edge, só JWT,
+//     sem banco), antes de qualquer byte de HTML;
+//   • ?landing=true (ver a landing mesmo logado, ou com ela desligada): o
+//     middleware reescreve para /previa-landing, que é dinâmica. Ler
+//     `searchParams` aqui tornaria esta rota dinâmica de novo.
+export const revalidate = 300
 
 interface LandingSettings {
   landingPageEnabled?: boolean
@@ -51,19 +44,7 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   })
 }
 
-// Cache de módulo para o flag da landing. `landing_settings` muda raríssimas
-// vezes (é um toggle do admin), mas antes toda visita à landing pagava um
-// findOne no Atlas — com timeout de 2,5s — antes do primeiro byte. Com 60s de
-// TTL, o flag continua respeitado quase em tempo real e o TTFB deixa de
-// depender do banco. O cache vive por instância de lambda.
-let cachedLanding: { value: Required<LandingSettings>; at: number } | null = null
-const LANDING_TTL_MS = 60_000
-
 async function loadLandingSettings(): Promise<Required<LandingSettings>> {
-  if (cachedLanding && Date.now() - cachedLanding.at < LANDING_TTL_MS) {
-    return cachedLanding.value
-  }
-
   try {
     const { getDb } = await import('@/lib/mongodb')
     const db = await withTimeout(getDb(), 2500)
@@ -74,49 +55,23 @@ async function loadLandingSettings(): Promise<Required<LandingSettings>> {
       2500
     )
 
-    const value: Required<LandingSettings> = settings
+    return settings
       ? { landingPageEnabled: settings.landingPageEnabled !== false }
       : DEFAULTS
-
-    cachedLanding = { value, at: Date.now() }
-    return value
   } catch {
-    // Falha de rede/timeout: não cacheia, para tentar de novo na próxima visita.
+    // Falha de rede/timeout (inclusive durante o build, sem acesso ao Atlas):
+    // a landing continua no ar. Desligá-la por causa de uma intermitência do
+    // banco seria o pior resultado possível para uma página de vendas.
     return DEFAULTS
   }
 }
 
-async function loadSession() {
-  try {
-    const { getSession } = await import('@/lib/auth')
-    return await withTimeout(getSession(), 2500)
-  } catch {
-    return null
-  }
-}
+export default async function HomePage() {
+  const settings = await loadLandingSettings()
 
-export default async function HomePage({
-  searchParams,
-}: {
-  searchParams?: { landing?: string }
-}) {
-  const forceLanding = searchParams?.landing === 'true'
-
-  const [session, settings] = await Promise.all([loadSession(), loadLandingSettings()])
-
-  const isLoggedIn = !!session
-
-  if (isLoggedIn && !forceLanding) {
-    redirect('/dashboard')
-  }
-
-  if (!settings.landingPageEnabled && !forceLanding) {
+  if (!settings.landingPageEnabled) {
     redirect('/auth/login')
   }
 
-  return (
-    <div className={`${daDisplay.variable} ${daBody.variable} ${daMono.variable}`}>
-      <LandingPage initialIsLoggedIn={isLoggedIn} />
-    </div>
-  )
+  return <LandingShell />
 }

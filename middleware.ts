@@ -355,6 +355,37 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // ══════════ Landing: desvio e prévia, antes do primeiro byte ══════════
+  //
+  // `/` virou HTML estático servido do CDN (ver app/page.tsx). As duas
+  // decisões que dependiam do request moram aqui, no Edge:
+  //
+  //  • `?landing=true` → reescreve para /previa-landing (dinâmica). É o item
+  //    "ver a landing" da sidebar e a conferência do admin com a landing
+  //    desligada. O endereço na barra continua `/?landing=true`.
+  //  • sessão válida → /dashboard. Antes isso era feito dentro da página com
+  //    `force-dynamic`, o que obrigava uma invocação de função (e o cold start
+  //    dela) em TODA visita à landing — inclusive a de quem nunca fez login.
+  //    Aqui é só `jwtVerify`, sem banco.
+  //
+  // Cookie ausente numa navegação vinda de fora (é SameSite=strict) não é
+  // problema: a landing consulta /api/auth/me no cliente e desvia por lá.
+  if (pathname === '/') {
+    if (request.nextUrl.searchParams.get('landing') === 'true') {
+      return NextResponse.rewrite(new URL('/previa-landing', request.url))
+    }
+
+    const sessionToken = request.cookies.get('auth-token')?.value
+    if (sessionToken && !isDevAuthBypass()) {
+      try {
+        await jwtVerify(sessionToken, secret)
+        return NextResponse.redirect(new URL('/dashboard', request.url))
+      } catch {
+        // Token expirado ou inválido: segue para a landing normalmente.
+      }
+    }
+  }
+
   // Rotas públicas: permitir acesso sem autenticação.
   // Exceção: algumas entradas da lista pública são públicas só na leitura
   // (ex.: GET /api/admin/settings alimenta a landing, GET /api/display-settings,

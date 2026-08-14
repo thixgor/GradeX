@@ -649,62 +649,63 @@ function RailControls({
 
 /* =================== PÁGINA =================== */
 
-export interface LandingPageProps {
-  initialIsLoggedIn?: boolean
-}
-
-export default function LandingPage({ initialIsLoggedIn }: LandingPageProps) {
+export default function LandingPage() {
   const router = useRouter()
   const { liteMode } = useLiteMode()
   // No Modo Lite (ligado à mão ou detectado num aparelho fraco) o parallax nem
   // é montado — o CSS do Lite mata o efeito visual, mas não o loop de rAF.
   const rootRef = useParallaxVars<HTMLDivElement>(!liteMode)
-  const [isLoggedIn, setIsLoggedIn] = useState(initialIsLoggedIn ?? false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
   const showcase = usePlatformReviews()
 
-  // Ao voltar pelo botão do navegador, a landing pode ser restaurada do
-  // back-forward cache (bfcache) com o estado congelado em "deslogado"
-  // (isLoggedIn capturado no SSR), mesmo com a sessão ainda válida. Um reload
-  // força app/page.tsx (force-dynamic) a reavaliar getSession() e redirecionar
-  // quem está logado. Não há loop: um load fresco tem persisted=false.
   useEffect(() => {
+    // Verificação de auth no cliente — SEMPRE. Por dois motivos que se somam:
+    // o HTML de `/` é estático (igual para todo mundo, servido do CDN), e o
+    // cookie de sessão é SameSite=strict (lib/auth.ts) — numa navegação de
+    // nível superior vinda de outro site (e-mail, WhatsApp, Instagram, Google,
+    // bookmark...) ele nem acompanha o request. Um fetch same-site para
+    // /api/auth/me manda o cookie e revela o estado real.
+    let cancelled = false
+
+    const revelarSessao = () => {
+      fetch('/api/auth/me', { cache: 'no-store' })
+        .then((r) => {
+          if (cancelled) return
+          if (r.ok) {
+            // Sessão válida. Espelha o middleware: logado sem ?landing=true vai
+            // direto pro dashboard.
+            const forceLanding =
+              new URLSearchParams(window.location.search).get('landing') === 'true'
+            if (!forceLanding) {
+              router.replace('/dashboard')
+              return
+            }
+            setIsLoggedIn(true)
+          } else {
+            // 401 = realmente deslogado. (Erro de rede cai no .catch e mantém o
+            // estado atual, para não deslogar por intermitência.)
+            setIsLoggedIn(false)
+          }
+        })
+        .catch(() => {})
+    }
+
+    revelarSessao()
+
+    // Voltar pelo botão do navegador restaura a página do back-forward cache
+    // com o estado congelado: nenhum efeito de mount roda de novo, então quem
+    // entrou na conta nesse meio-tempo veria a landing dizendo "Entrar". Antes
+    // isso era resolvido com `window.location.reload()` — um recarregamento
+    // inteiro, com tela em branco, só para reavaliar um booleano. Refazer a
+    // mesma consulta leve dá o mesmo resultado sem descartar a página.
     const handlePageShow = (event: PageTransitionEvent) => {
-      if (event.persisted) window.location.reload()
+      if (event.persisted) revelarSessao()
     }
     window.addEventListener('pageshow', handlePageShow)
-    return () => window.removeEventListener('pageshow', handlePageShow)
-  }, [])
 
-  useEffect(() => {
-    // Verificação de auth no cliente — SEMPRE. O cookie de sessão usa
-    // SameSite=strict (lib/auth.ts), então numa navegação de nível superior
-    // vinda de outro site (e-mail, WhatsApp, Instagram, Google, bookmark...) o
-    // cookie NÃO acompanha o request do SSR: getSession() vê null e a landing
-    // renderiza como "deslogado" mesmo com sessão válida. Um fetch same-site
-    // para /api/auth/me envia o cookie e revela o estado real.
-    let cancelled = false
-    fetch('/api/auth/me', { cache: 'no-store' })
-      .then((r) => {
-        if (cancelled) return
-        if (r.ok) {
-          // Sessão válida que o SSR não enxergou. Espelha app/page.tsx: logado
-          // sem ?landing=true vai direto pro dashboard.
-          const forceLanding =
-            new URLSearchParams(window.location.search).get('landing') === 'true'
-          if (!initialIsLoggedIn && !forceLanding) {
-            router.replace('/dashboard')
-            return
-          }
-          setIsLoggedIn(true)
-        } else {
-          // 401 = realmente deslogado. (Erro de rede cai no .catch e mantém o
-          // estado atual, para não deslogar por intermitência.)
-          setIsLoggedIn(false)
-        }
-      })
-      .catch(() => {})
     return () => {
       cancelled = true
+      window.removeEventListener('pageshow', handlePageShow)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
