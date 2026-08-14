@@ -98,35 +98,43 @@ def gerar() -> None:
     os.makedirs(DESTINO, exist_ok=True)
     arte = Image.open(FONTE).convert("RGBA")
 
+    total = 0
     for largura_css, altura_css, densidade in ler_tabela_de_aparelhos():
-        largura = largura_css * densidade
-        altura = altura_css * densidade
+        # Retrato e paisagem: a orientação em que o aparelho estava no instante
+        # do toque decide qual das duas o iOS procura, e o que não casa abre
+        # preto.
+        for sufixo, (largura, altura) in (
+            ("", (largura_css * densidade, altura_css * densidade)),
+            ("-paisagem", (altura_css * densidade, largura_css * densidade)),
+        ):
+            tela = Image.new("RGB", (largura, altura), COR_DE_FUNDO)
 
-        tela = Image.new("RGB", (largura, altura), COR_DE_FUNDO)
+            lado_do_icone = min(
+                int(min(largura, altura) * PROPORCAO_DO_ICONE), ICONE_MAXIMO
+            )
+            icone = cantos_arredondados(
+                arte.resize((lado_do_icone, lado_do_icone), Image.LANCZOS)
+            )
 
-        lado_do_icone = min(int(min(largura, altura) * PROPORCAO_DO_ICONE), ICONE_MAXIMO)
-        icone = cantos_arredondados(
-            arte.resize((lado_do_icone, lado_do_icone), Image.LANCZOS)
-        )
+            x = (largura - lado_do_icone) // 2
+            y = int((altura - lado_do_icone) / 2 + altura * DESLOCAMENTO_VERTICAL)
+            tela.paste(icone, (x, y), icone)
 
-        x = (largura - lado_do_icone) // 2
-        y = int((altura - lado_do_icone) / 2 + altura * DESLOCAMENTO_VERTICAL)
-        tela.paste(icone, (x, y), icone)
+            # Paleta de 256 cores: a imagem é fundo chapado + um ícone pequeno
+            # com brilho suave, então 256 cores cobrem tudo sem banda visível e
+            # o arquivo cai a um terço (de ~107 KB para ~36 KB por tela). Cada
+            # aparelho baixa exatamente uma — na abertura do app, que é
+            # justamente o momento em que ninguém quer gastar rede.
+            tela = tela.quantize(
+                colors=256, method=Image.MEDIANCUT, dither=Image.FLOYDSTEINBERG
+            )
 
-        # Paleta de 256 cores: a imagem é fundo chapado + um ícone pequeno com
-        # brilho suave, então 256 cores cobrem tudo sem banda visível e o
-        # arquivo cai a um terço (de ~107 KB para ~36 KB por tela). São 18
-        # telas versionadas no repositório, e cada aparelho baixa exatamente
-        # uma — na abertura do app, que é justamente o momento em que ninguém
-        # quer gastar rede.
-        tela = tela.quantize(colors=256, method=Image.MEDIANCUT, dither=Image.FLOYDSTEINBERG)
+            nome = f"partida-{largura_css}x{altura_css}@{densidade}x{sufixo}.png"
+            tela.save(os.path.join(DESTINO, nome), "PNG", optimize=True)
+            print(f"  {nome}  {largura}x{altura}")
+            total += 1
 
-        nome = f"partida-{largura_css}x{altura_css}@{densidade}x.png"
-        caminho = os.path.join(DESTINO, nome)
-        tela.save(caminho, "PNG", optimize=True)
-        print(f"  {nome}  {largura}x{altura}")
-
-    print(f"\nTelas de partida geradas em {DESTINO}")
+    print(f"\n{total} telas de partida geradas em {DESTINO}")
 
 
 if __name__ == "__main__":

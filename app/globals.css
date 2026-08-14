@@ -5,6 +5,12 @@
 @layer base {
   /* Editorial DomineAqui — cream / forest (matches landing, light + dark) */
   :root {
+    /* Sem `color-scheme` declarado, o navegador assume tema claro para tudo
+       que ele desenha sozinho: a cor de base da tela antes da primeira
+       pintura, as barras de rolagem e os controles nativos (seletor de data,
+       lista de <select>). No tema escuro isso aparecia como um lampejo branco
+       na abertura e como campos nativos claros no meio de telas escuras. */
+    color-scheme: light;
     --background: 36 33% 94%; /* #F6F1E8 */
     --foreground: 140 15% 12%; /* #1A2419 */
     --card: 40 60% 99%; /* #FFFCF7 */
@@ -34,6 +40,7 @@
   }
 
   .dark {
+    color-scheme: dark;
     --background: 150 25% 6%; /* #0C1410 */
     --foreground: 40 25% 92%; /* #F0EBE0 */
     --card: 150 18% 9%; /* #131C16 */

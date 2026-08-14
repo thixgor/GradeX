@@ -14,18 +14,25 @@
  * o retângulo vazio de sempre. Por isso a lista abaixo é uma tabela de
  * aparelhos, e por isso ela precisa crescer quando a Apple lança tela nova.
  *
- * As imagens são geradas por `npm run pwa:splash` (scripts/pwa/gerar-splash.mjs)
- * e versionadas em `public/pwa/splash/`.
+ * As imagens são geradas por `npm run pwa:splash`
+ * (scripts/pwa/gerar-telas-de-partida.py) e versionadas em
+ * `public/pwa/splash/`.
  *
- * Só retrato: o manifest declara `orientation: 'portrait'`. Um aparelho que
- * abra em paisagem simplesmente não casa com nenhuma entrada e cai no
- * comportamento atual — nada piora.
+ * Retrato E paisagem. O manifest pede `orientation: 'portrait'`, mas isso
+ * governa como o app se comporta DEPOIS de aberto — não a orientação em que o
+ * aparelho estava no instante do toque no ícone. Quem abre o app deitado na
+ * cama, com a trava de rotação desligada, não casava com nenhuma entrada e via
+ * exatamente o retângulo preto que este arquivo veio eliminar.
+ *
+ * IMPORTANTE ao aparecer um iPhone novo: se o aparelho não estiver na tabela,
+ * nenhuma imagem casa e ele volta a abrir preto. Acrescente a linha com as
+ * medidas em pixels CSS e rode `npm run pwa:splash` de novo.
  */
 
-export interface TelaDePartida {
-  /** Largura da tela em pixels CSS. */
+export interface AparelhoDePartida {
+  /** Largura da tela em pixels CSS, em retrato. */
   larguraCss: number
-  /** Altura da tela em pixels CSS. */
+  /** Altura da tela em pixels CSS, em retrato. */
   alturaCss: number
   /** Densidade da tela (device pixel ratio). */
   densidade: number
@@ -33,7 +40,13 @@ export interface TelaDePartida {
   aparelhos: string
 }
 
-export const TELAS_DE_PARTIDA: TelaDePartida[] = [
+export type Orientacao = 'portrait' | 'landscape'
+
+export interface TelaDePartida extends AparelhoDePartida {
+  orientacao: Orientacao
+}
+
+const APARELHOS: AparelhoDePartida[] = [
   // ── iPhone ────────────────────────────────────────────────
   { larguraCss: 320, alturaCss: 568, densidade: 2, aparelhos: 'iPhone SE (1ª), 5s' },
   { larguraCss: 375, alturaCss: 667, densidade: 2, aparelhos: 'iPhone SE (2ª/3ª), 6, 7, 8' },
@@ -59,15 +72,27 @@ export const TELAS_DE_PARTIDA: TelaDePartida[] = [
 /** Cor de fundo da tela de partida — a mesma do `background_color` do manifest. */
 export const COR_DE_FUNDO_DA_PARTIDA = '#0B1F1A'
 
+/** Cada aparelho vira duas telas: uma em retrato e uma em paisagem. */
+export const TELAS_DE_PARTIDA: TelaDePartida[] = APARELHOS.flatMap((aparelho) => [
+  { ...aparelho, orientacao: 'portrait' as const },
+  { ...aparelho, orientacao: 'landscape' as const },
+])
+
 export function arquivoDaTelaDePartida(tela: TelaDePartida): string {
-  return `/pwa/splash/partida-${tela.larguraCss}x${tela.alturaCss}@${tela.densidade}x.png`
+  const sufixo = tela.orientacao === 'landscape' ? '-paisagem' : ''
+  return `/pwa/splash/partida-${tela.larguraCss}x${tela.alturaCss}@${tela.densidade}x${sufixo}.png`
 }
 
+/**
+ * `device-width`/`device-height` descrevem a tela FÍSICA e não giram com o
+ * aparelho, então as duas orientações usam os mesmos números — o que muda é a
+ * cláusula `orientation` e, no arquivo, a proporção da imagem.
+ */
 export function mediaDaTelaDePartida(tela: TelaDePartida): string {
   return [
     `(device-width: ${tela.larguraCss}px)`,
     `(device-height: ${tela.alturaCss}px)`,
     `(-webkit-device-pixel-ratio: ${tela.densidade})`,
-    '(orientation: portrait)',
+    `(orientation: ${tela.orientacao})`,
   ].join(' and ')
 }
