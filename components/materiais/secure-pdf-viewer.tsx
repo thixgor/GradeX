@@ -1800,6 +1800,18 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   // ignorado — senão o IntersectionObserver do topo reverteria para a pág. 1.
   const pendingResumeRef = useRef<number | null>(null)
   const suppressFocusUntilRef = useRef(0)
+  /**
+   * Página que o leitor está tentando ALCANÇAR agora (retomada de leitura ou
+   * salto pelo sumário). Enquanto ela existe, três coisas ficam paradas:
+   *
+   * - o foco por rolagem, que reportaria cada página cruzada no caminho;
+   * - a âncora da virtualização por deslocamento, que arrastaria a janela de
+   *   páginas para longe do destino no meio da viagem;
+   * - a gravação da posição de leitura — e esta é a mais importante, porque uma
+   *   viagem malfeita GRAVAVA a página errada e a abertura seguinte já nascia
+   *   no lugar errado. O defeito se perpetuava sozinho.
+   */
+  const pendingTargetRef = useRef<number | null>(null)
   const [access, setAccess] = useState<ViewerAccess | null>(null)
   // Contador de tentativas de abrir o material. Existe para dar ao leitor um
   // caminho de volta que não seja fechar o aplicativo.
@@ -1999,6 +2011,9 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
 
   const handlePageFocused = useCallback((page: number) => {
     if (singlePage) return
+    // Viagem em curso: quem manda na página atual é o destino, não o que passa
+    // pela janela no caminho até ele.
+    if (pendingTargetRef.current != null) return
     // Durante a retomada (rolagem programática até a última página salva),
     // ignora o foco por scroll para as callbacks pendentes do observer no topo
     // não reverterem `currentPage` para a pág. 1.
@@ -2197,6 +2212,10 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     const applyAnchor = () => {
       const element = contentRef.current
       if (!element) return
+      // Durante uma viagem, a janela de páginas pertence ao destino. Sem isto,
+      // um único evento de rolagem no meio do caminho puxava a janela de volta
+      // para o começo do material e o destino desmontava embaixo da viagem.
+      if (pendingTargetRef.current != null) return
       const slot = pageSlotHeightRef.current
       if (!(slot > 0)) return
       // Relativo à viewport: funciona tanto quando quem rola é o documento
@@ -2373,6 +2392,9 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   useEffect(() => {
     if (!access) return
     const timer = window.setTimeout(() => {
+      // Nada de gravar no meio de uma viagem: era assim que uma retomada
+      // malfeita salvava a página errada e estragava a abertura seguinte.
+      if (pendingTargetRef.current != null) return
       writeSavedPosition(materialId, { page: currentPage, mode })
       // Índice de "Continuar lendo". Leitura em prévia (quem ainda não tem o
       // material) fica de fora de propósito: a área é um atalho para o que a
@@ -2391,10 +2413,98 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     return () => window.clearTimeout(timer)
   }, [access, currentPage, mode, materialId])
 
-  // Retomada em modo contínuo/largura: rola até a última página salva assim que
-  // o layout existe. Tenta por alguns frames porque o elemento-alvo pode montar
-  // um tick depois. Corrige o bug de abrir sempre no início mesmo tendo salvo a
-  // última página vista.
+  /**
+   * Leva a leitura até uma página e SEGURA ela lá até o layout parar de se
+   * mexer. É o motor da retomada de leitura e do salto pelo sumário.
+   *
+   * Por que não basta rolar uma vez: acima do destino, as páginas que ainda não
+   * foram montadas são espaçadores com altura ESTIMADA. Assim que as páginas de
+   * verdade chegam e se medem — e assim que o ajuste automático mexe no zoom —
+   * todas essas alturas mudam, e o destino escorrega depois que a rolagem já
+   * aconteceu. Numa retomada da página 1000 isso era uma viagem visível pelo
+   * material inteiro, com as seções trocando de nome no caminho, terminando
+   * longe do destino.
+   *
+   * A saída não é adiar o primeiro salto (isso deixaria a tela em branco
+   * enquanto a página baixa): `scrollIntoView` mira o ELEMENTO, então o primeiro
+   * salto já cai no lugar certo, por pior que seja a estimativa do que está
+   * acima. O que faltava era SEGURAR o destino depois — reposicionar a cada
+   * quadro enquanto o layout se ajeita e só largar quando ele ficar parado por
+   * alguns quadros seguidos. Sai de cena na hora se o leitor encostar na tela.
+   */
+  const settleToPage = useCallback((page: number, options: {
+    minMs?: number
+    deadlineMs?: number
+  } = {}) => {
+    const startedAt = Date.now()
+    const deadline = startedAt + (options.deadlineMs ?? 1200)
+    const minUntil = startedAt + (options.minMs ?? 0)
+    pendingTargetRef.current = page
+
+    let stable = 0
+    let abandoned = false
+    const abandon = () => { abandoned = true }
+    window.addEventListener('pointerdown', abandon, { capture: true, once: true, passive: true })
+
+    const finish = () => {
+      window.removeEventListener('pointerdown', abandon, true)
+      if (pendingTargetRef.current === page) pendingTargetRef.current = null
+      // Uma folga curta depois de soltar: o último reposicionamento ainda gera
+      // um evento de rolagem, e ele não pode ser lido como "o leitor mudou de
+      // página".
+      suppressFocusUntilRef.current = Math.max(suppressFocusUntilRef.current, Date.now() + 200)
+    }
+
+    const step = () => {
+      // Outro destino assumiu no meio do caminho (o leitor tocou no sumário de
+      // novo): este laço sai sem mexer em nada, porque quem manda agora é o
+      // outro. Note que `finish` NÃO é chamado aqui — ele limparia o destino
+      // alheio e destravaria o foco no meio da viagem do outro.
+      if (pendingTargetRef.current !== page) {
+        window.removeEventListener('pointerdown', abandon, true)
+        return
+      }
+      // O leitor encostou na tela: insistir contra o dedo é pior do que parar
+      // onde está. Aqui sim solta tudo — senão o foco, a âncora e a gravação da
+      // posição ficariam congelados para sempre.
+      if (abandoned) { finish(); return }
+      const now = Date.now()
+      suppressFocusUntilRef.current = Math.max(suppressFocusUntilRef.current, now + 300)
+      if (now > deadline) { finish(); return }
+
+      const element = document.getElementById(`pdf-page-${page}`)
+      if (element) {
+        const before = element.getBoundingClientRect().top
+        // `instant` e não `auto`: `auto` obedece ao `scroll-behavior` do CSS, e
+        // uma rolagem ANIMADA de centenas de milhares de pixels é exatamente a
+        // "passagem por todas as páginas" que não pode acontecer.
+        element.scrollIntoView({ behavior: 'instant', block: 'start' })
+        const after = element.getBoundingClientRect().top
+        stable = Math.abs(after - before) < 1 ? stable + 1 : 0
+        if (stable >= 3 && now >= minUntil) { finish(); return }
+      }
+      requestAnimationFrame(step)
+    }
+
+    requestAnimationFrame(step)
+  }, [])
+
+  // Retomada de leitura: volta para a última página vista.
+  //
+  // Este era o pior caminho do leitor. Ele rolava para uma posição CALCULADA
+  // SOBRE ESTIMATIVAS (enquanto as páginas acima são espaçadores, a altura de
+  // cada uma é um chute de A4 com zoom 1) e largava o controle assim que a
+  // primeira medida real aparecia. Só que é logo depois disso que tudo se mexe:
+  // a página real informa o tamanho, o ajuste automático muda o zoom, e as mil
+  // alturas acima do destino mudam junto. O resultado era a "viagem" pelo
+  // material inteiro — e, pior, o foco por rolagem ia gravando as páginas
+  // cruzadas no caminho, de forma que a abertura seguinte já retomava no lugar
+  // errado. O defeito se alimentava sozinho.
+  //
+  // Agora quem faz o trabalho é `settleToPage`: ele leva ao destino e SEGURA a
+  // leitura lá enquanto o layout se ajeita. Enquanto isso, foco, âncora da
+  // virtualização e gravação da posição ficam parados (ver pendingTargetRef) —
+  // é o que impede a viagem de reescrever a posição salva.
   useEffect(() => {
     if (!access) return
     if (singlePage) {
@@ -2405,49 +2515,31 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     }
     const target = pendingResumeRef.current
     if (target == null) return
-    let cancelled = false
-    let frame = 0
 
-    // Na horizontal a retomada não espera elemento nenhum: a posição da página
-    // é uma conta (índice × largura da casa), e ela vale mesmo antes de a
-    // página existir no DOM.
+    // Na horizontal a posição é uma conta (índice × largura da casa) e vale
+    // mesmo antes de a página existir no DOM — mas ainda depende da largura já
+    // ter sido medida, então a tentativa se repete até isso valer.
     if (horizontal) {
       const element = contentRef.current
       const index = pagesRef.current.indexOf(target)
       const slot = pageSlotWidthRef.current
-      if (element && index >= 0 && slot > 1) {
-        suppressFocusUntilRef.current = Math.max(suppressFocusUntilRef.current, Date.now() + 500)
-        element.scrollTo({ left: index * slot, behavior: 'auto' })
-        if (pageSize && settledZoom === zoom) pendingResumeRef.current = null
-      }
+      if (!element || index < 0 || !(slot > 1)) return
+      pendingResumeRef.current = null
+      pendingTargetRef.current = target
+      suppressFocusUntilRef.current = Date.now() + 600
+      element.scrollTo({ left: index * slot, behavior: 'instant' })
+      window.setTimeout(() => {
+        if (pendingTargetRef.current === target) pendingTargetRef.current = null
+      }, 400)
       return
     }
 
-    const attempt = () => {
-      if (cancelled) return
-      const element = document.getElementById(`pdf-page-${target}`)
-      if (element) {
-        // Cada passada da retomada renova a janela em que o foco por scroll é
-        // ignorado, senão o observer do topo reverte para a página 1.
-        suppressFocusUntilRef.current = Math.max(suppressFocusUntilRef.current, Date.now() + 500)
-        element.scrollIntoView({ behavior: 'auto', block: 'start' })
-        // A retomada só termina quando o layout PAROU de mudar: é preciso já
-        // conhecer a altura real da página E o zoom já ter assentado. Antes os
-        // espaçadores usam a estimativa A4 com zoom 1; quando a medida real
-        // chega e o auto-ajuste encolhe o zoom, todas as alturas acima mudam e
-        // a posição desliza. Largar o controle cedo demais era o que deixava o
-        // leitor parado longe da página que ele pediu no sumário.
-        if (pageSize && settledZoom === zoom) pendingResumeRef.current = null
-        return
-      }
-      if (frame++ < 30) window.requestAnimationFrame(attempt)
-    }
-    window.requestAnimationFrame(attempt)
-    return () => { cancelled = true }
-    // `zoom`/`settledZoom` nas dependências: cada mudança de escala remexe a
-    // altura de todos os espaçadores acima, então a retomada precisa reajustar
-    // o destino até o layout parar de se mexer.
-  }, [access, singlePage, horizontal, pageSize, settledZoom, zoom, contentWidth])
+    pendingResumeRef.current = null
+    // Mais tempo segurando que num salto comum: na abertura ainda faltam
+    // chegar a medida real da página e o ajuste automático de zoom, e é
+    // exatamente isso que remexe todas as alturas acima do destino.
+    settleToPage(target, { minMs: 1200, deadlineMs: 6000 })
+  }, [access, singlePage, horizontal, contentWidth, settleToPage])
 
   useEffect(() => {
     if (!pageSize || !contentWidth || zoomTouchedRef.current) return
@@ -2619,37 +2711,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
       // Agora o salto INSISTE: reposiciona a cada quadro e só larga quando o
       // destino parar de se mexer (ou quando o tempo acaba). O foco por rolagem
       // fica suspenso o caminho inteiro, senão ele desfaz o salto no meio.
-      const deadline = Date.now() + 1200
-      let stable = 0
-      // Se o leitor encostar na tela no meio do caminho, o salto sai de cena na
-      // hora: insistir contra o dedo é pior do que parar no lugar errado.
-      let abandoned = false
-      const abandon = () => { abandoned = true }
-      window.addEventListener('pointerdown', abandon, { capture: true, once: true, passive: true })
-      const finish = () => {
-        window.removeEventListener('pointerdown', abandon, true)
-      }
-
-      const settle = () => {
-        if (abandoned) { finish(); return }
-        const now = Date.now()
-        suppressFocusUntilRef.current = Math.max(suppressFocusUntilRef.current, now + 300)
-        const element = document.getElementById(`pdf-page-${next}`)
-        if (element) {
-          const before = element.getBoundingClientRect().top
-          element.scrollIntoView({ behavior: 'auto', block: 'start' })
-          const after = element.getBoundingClientRect().top
-          stable = Math.abs(after - before) < 1 ? stable + 1 : 0
-        }
-        // Três quadros parado é o bastante para dizer que o layout assentou.
-        if (stable >= 3 || now > deadline) {
-          suppressFocusUntilRef.current = Math.max(suppressFocusUntilRef.current, Date.now() + 150)
-          finish()
-          return
-        }
-        requestAnimationFrame(settle)
-      }
-      requestAnimationFrame(settle)
+      settleToPage(next, { deadlineMs: 1500 })
     } else {
       // Em modo página única, sobe suavemente para o topo da nova página.
       requestAnimationFrame(() => {
@@ -2657,7 +2719,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
         if (top < 0) window.scrollTo({ top: window.scrollY + top - 12, behavior: 'smooth' })
       })
     }
-  }, [mode, horizontal, pageCount, previewActive, allowedPages])
+  }, [mode, horizontal, pageCount, previewActive, allowedPages, settleToPage])
 
   // Passo de página que respeita o conjunto de páginas da prévia: avança/volta
   // pela lista liberada em vez de +1/-1 (que travaria num "buraco" de páginas).
