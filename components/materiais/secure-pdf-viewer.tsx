@@ -74,8 +74,7 @@ import {
   type SummaryOutlineNode,
 } from '@/lib/pdf-summary-outline'
 import {
-  SCROLL_EDGE_TOLERANCE,
-  SCROLL_IGNORE_VIEWPORT_RATIO,
+  readPageEdges,
   type SwipeStart,
   isSwipeAllowed,
   lockSwipeAxis,
@@ -111,9 +110,9 @@ type MobileSheet = null | 'nav' | 'tools' | 'mode' | 'goto' | 'more'
 // Rótulos em linguagem de gente. "Pagina/Largura/Continuo" só faz sentido para
 // quem já conhece leitores de PDF; o público aqui não conhece.
 const MODE_OPTIONS: Array<{ value: ViewerMode; label: string; hint: string }> = [
-  { value: 'continuous', label: 'Rolagem contínua', hint: 'Deslize para baixo, como numa página comum' },
-  { value: 'single', label: 'Uma página por vez', hint: 'Deslize o dedo para o lado ou para cima' },
-  { value: 'width', label: 'Largura da tela', hint: 'Ajusta a página à largura do aparelho' },
+  { value: 'continuous', label: 'Rolagem contínua', hint: 'Deslize para baixo, como numa página comum — aqui o dedo rola, não vira' },
+  { value: 'single', label: 'Uma página por vez', hint: 'Deslize o dedo para o lado OU para cima e para baixo para virar' },
+  { value: 'width', label: 'Largura da tela', hint: 'Ajusta a página à largura do aparelho; o dedo rola, como na contínua' },
 ]
 
 // Direção da rolagem. Não é o mesmo eixo de decisão do "modo de leitura": ali
@@ -129,7 +128,7 @@ type ScrollAxis = 'vertical' | 'horizontal'
 
 const SCROLL_AXIS_OPTIONS: Array<{ value: ScrollAxis; label: string; hint: string }> = [
   { value: 'vertical', label: 'Vertical', hint: 'As páginas descem, como num site' },
-  { value: 'horizontal', label: 'Horizontal', hint: 'As páginas passam para o lado, como um livro' },
+  { value: 'horizontal', label: 'Horizontal', hint: 'As páginas passam para o lado — e o dedo vira nos dois sentidos' },
 ]
 
 type AnnotationType = 'highlight' | 'note' | 'bookmark' | 'text' | 'drawing'
@@ -282,7 +281,14 @@ function liveRadiusForZoom(zoom: number) {
   // vez. O teto de megapixels já é quem limita a memória — o raio não precisa
   // fazer esse trabalho também.
   if (isLowMemoryDevice()) return 1
-  if (isMobileViewport()) return 2
+  if (isMobileViewport()) {
+    // Ampliado, cada canvas encosta no teto de megapixels (~18 MB) — cinco
+    // deles são 90 MB, perto demais do limite do Safari do iOS. Aqui o raio
+    // encolhe: numa página muito ampliada as vizinhas nem aparecem na tela, e
+    // ninguém sente falta delas. Usa o zoom ASSENTADO, então isto não muda no
+    // meio de um gesto (a pinça do navegador nem mexe neste número).
+    return zoom > 1.1 ? 1 : 2
+  }
   // No desktop o zoom é absoluto e pode ir bem alto, com canvas de 9 Mpx. Aí
   // vale encolher: numa página muito ampliada as vizinhas nem aparecem na tela.
   if (zoom > 1.8) return 1
@@ -1530,22 +1536,6 @@ function useResizeWidth(ref: React.RefObject<HTMLElement>, deps: React.Dependenc
 // As medidas e a decisão do gesto moram em `lib/pdf-viewer-swipe.ts` (sem DOM,
 // testável sozinho). Aqui fica só a ponte com os eventos de ponteiro.
 
-// Quem realmente rola na vertical sob o dedo: o ancestral com overflow próprio
-// (é o caso da tela cheia, onde o shell vira o contêiner de rolagem) ou, na
-// falta dele, o documento. Sem isso o gesto vertical se comportaria diferente
-// dentro e fora da tela cheia.
-function findVerticalScroller(target: EventTarget | null): Element | null {
-  let node = target instanceof HTMLElement ? target : null
-  while (node) {
-    const overflowY = window.getComputedStyle(node).overflowY
-    if ((overflowY === 'auto' || overflowY === 'scroll') && node.scrollHeight > node.clientHeight + SCROLL_EDGE_TOLERANCE) {
-      return node
-    }
-    node = node.parentElement
-  }
-  return document.scrollingElement || document.documentElement
-}
-
 function useViewerGestures(
   ref: React.RefObject<HTMLElement>,
   {
@@ -1655,16 +1645,26 @@ function useViewerGestures(
         viewport: row?.clientWidth ?? 0,
         content: row?.scrollWidth ?? 0,
       })
-      const scroller = findVerticalScroller(event.target)
-      const viewport = scroller?.clientHeight ?? 0
-      const pageEdges = readScrollEdges({
-        scrollStart: scroller?.scrollTop ?? 0,
-        viewport,
-        content: scroller?.scrollHeight ?? 0,
-        // Ver SCROLL_IGNORE_VIEWPORT_RATIO: a sobra vertical costuma ser o
-        // cabeçalho e a barra de baixo, não conteúdo para ler.
-        ignoreRange: viewport * SCROLL_IGNORE_VIEWPORT_RATIO,
-      })
+      // Para cima/baixo, quem decide é a PÁGINA na tela — não a rolagem do
+      // documento.
+      //
+      // Medir o documento parecia natural e era a razão de o gesto vertical
+      // "não funcionar": o cabeçalho, a barra de baixo e as margens somam uma
+      // sobra de rolagem mesmo com a página inteira à vista, e essa sobra fazia
+      // o gesto ser descartado como se ainda houvesse leitura pela frente. O
+      // primeiro gesto era engolido e só o segundo virava a página.
+      //
+      // A regra agora é a que o leitor enxerga: "estou vendo o fim da página,
+      // então para cima é a próxima". Se a página está ampliada e sobra parte
+      // dela fora da tela, o dedo primeiro arrasta o que falta ver — como
+      // sempre foi para o lado.
+      const pageRect = row?.getBoundingClientRect()
+      const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0
+      // Folga: o que está debaixo do cabeçalho ou da barra inferior não conta
+      // como página por ver.
+      const pageEdges = pageRect
+        ? readPageEdges({ top: pageRect.top, bottom: pageRect.bottom, viewport: viewportHeight })
+        : { atStart: true, atEnd: true }
 
       pointerIdRef.current = event.pointerId
       samplesRef.current = [{ x: event.clientX, y: event.clientY, t: now }]
@@ -4203,6 +4203,18 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
               a mesma decisão de leitura — e no celular é onde ela mais importa:
               na horizontal, virar a página com o dedo passa a ser a rolagem
               nativa do aparelho, com encaixe página a página. */}
+          {/* Onde o gesto para cima/baixo vale, dito na cara. Sem isto o leitor
+              procura em "rolagem contínua" um gesto que ali não pode existir:
+              naquele modo o dedo para cima É a leitura, e virar página junto
+              faria a leitura andar duas vezes a cada deslize. */}
+          {!horizontal && mode !== 'single' && (
+            <p className="mt-3 rounded-xl border border-white/10 bg-white/5 p-3 text-[11px] leading-relaxed text-white/55">
+              Neste modo o dedo para cima e para baixo <strong>rola a leitura</strong>. Para virar a
+              página com um deslize vertical, escolha &quot;uma página por vez&quot; ou passe a
+              direção para horizontal — para o lado, o dedo vira a página em qualquer modo.
+            </p>
+          )}
+
           <div className="mt-4 border-t border-white/10 pt-3">
             <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-white/40">Direção das páginas</p>
             <div className="grid grid-cols-2 gap-2">
@@ -5259,9 +5271,33 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   // porque uma página montada DEPOIS da pinça — virar a página, ou a janela de
   // virtualização avançar — precisa já desenhar na densidade em curso, em vez
   // de esperar a próxima pinçada para ficar nítida.
-  const [density, setDensity] = useState(() => pinchDensity)
+  const [density, setDensity] = useState(() => (active ? pinchDensity : 1))
 
-  useEffect(() => subscribePinchDensity(() => setDensity(pinchDensity)), [])
+  // Densidade extra da pinça — a peça que derrubava a aba ao DESPINÇAR.
+  //
+  // Duas regras, e as duas existem por causa de memória:
+  //
+  // 1. Só a página que o leitor está OLHANDO ganha densidade. Antes, uma
+  //    pinçada mandava todas as páginas vivas redesenharem no teto de
+  //    megapixels: cinco canvas de 4,5 Mpx (~18 MB cada) ao mesmo tempo. Quem
+  //    pinça está olhando UMA página; as vizinhas pagavam a conta sem ninguém
+  //    ver a diferença.
+  //
+  // 2. Densidade só SOBE. Descer não muda nada do que se vê — o bitmap já é
+  //    maior que o necessário — e custa uma rasterização inteira mais um canvas
+  //    gêmeo temporário por página. Era exatamente isso que acontecia no
+  //    instante da despinçada: cinco rasterizações completas de uma vez, o pico
+  //    de memória estourava, o Safari descartava os canvas (a tela branca com a
+  //    barra preta) e recarregava a aba. A volta ao tamanho normal acontece
+  //    sozinha na próxima rasterização natural — mudar o zoom, virar a página,
+  //    ou a página sair da janela e voltar.
+  useEffect(() => subscribePinchDensity(() => {
+    if (!activeRef.current) {
+      setDensity((current) => (current === 1 ? current : 1))
+      return
+    }
+    setDensity((current) => (pinchDensity > current ? pinchDensity : current))
+  }), [])
 
   useEffect(() => {
     requestedRef.current = false

@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest'
 
 import {
-  SCROLL_IGNORE_VIEWPORT_RATIO,
   SWIPE_FLICK_DISTANCE,
   SWIPE_MAX_DURATION,
   SWIPE_MIN_DISTANCE,
   SCROLL_IGNORE_RANGE,
   type SwipeStart,
   lockSwipeAxis,
+  readPageEdges,
   readScrollEdges,
   resolveSwipe,
   rubberBand,
@@ -49,32 +49,36 @@ describe('readScrollEdges', () => {
     expect(edges).toEqual({ atStart: true, atEnd: true })
   })
 
-  it('trata a sobra de moldura como "nada para rolar" no eixo vertical', () => {
-    // Página inteira na tela, mas o cabeçalho e a barra de baixo deixam 180 px
-    // de rolagem numa tela de 800. Isso não é leitura, é moldura — e exigir que
-    // o dedo "role" essa sobra antes de virar a página era o que fazia o gesto
-    // para cima parecer quebrado: o primeiro gesto era engolido, e só o segundo
-    // virava. Com o mínimo fixo de 48 px, a mesma medida seria rejeitada.
-    const metrics = { scrollStart: 90, viewport: 800, content: 980 }
-    expect(readScrollEdges(metrics)).toEqual({ atStart: false, atEnd: false })
-    expect(readScrollEdges({ ...metrics, ignoreRange: 800 * SCROLL_IGNORE_VIEWPORT_RATIO }))
-      .toEqual({ atStart: true, atEnd: true })
-  })
-
-  it('mas uma página ampliada de verdade continua rolando antes de virar', () => {
-    // Três telas de conteúdo: aqui há o que ler, e o gesto tem que ceder a vez
-    // para a rolagem até chegar na borda.
-    const metrics = { viewport: 800, content: 2400, ignoreRange: 800 * SCROLL_IGNORE_VIEWPORT_RATIO }
-    expect(readScrollEdges({ ...metrics, scrollStart: 700 })).toEqual({ atStart: false, atEnd: false })
-    expect(readScrollEdges({ ...metrics, scrollStart: 0 })).toEqual({ atStart: true, atEnd: false })
-    expect(readScrollEdges({ ...metrics, scrollStart: 1600 })).toEqual({ atStart: false, atEnd: true })
-  })
-
   it('reconhece topo, meio e fim de uma rolagem de verdade', () => {
     const metrics = { viewport: 800, content: 2400 }
     expect(readScrollEdges({ ...metrics, scrollStart: 0 })).toEqual({ atStart: true, atEnd: false })
     expect(readScrollEdges({ ...metrics, scrollStart: 700 })).toEqual({ atStart: false, atEnd: false })
     expect(readScrollEdges({ ...metrics, scrollStart: 1600 })).toEqual({ atStart: false, atEnd: true })
+  })
+})
+
+describe('readPageEdges', () => {
+  const viewport = 800
+
+  it('página inteira na tela libera os dois sentidos', () => {
+    // O cabeçalho cobre o topo e a barra de baixo cobre o pé, então a página
+    // "cabendo" ainda passa um pouco por trás dos dois. Medindo a ROLAGEM DO
+    // DOCUMENTO, essa sobra fazia o gesto ser descartado como se houvesse
+    // leitura pela frente — era o gesto vertical "não funcionando".
+    expect(readPageEdges({ top: 110, bottom: 700, viewport })).toEqual({ atStart: true, atEnd: true })
+    expect(readPageEdges({ top: -80, bottom: 860, viewport })).toEqual({ atStart: true, atEnd: true })
+  })
+
+  it('página ampliada arrasta antes de virar', () => {
+    // Duas telas e meia de página: no meio dela não se vira para lado nenhum.
+    expect(readPageEdges({ top: -900, bottom: 1100, viewport })).toEqual({ atStart: false, atEnd: false })
+  })
+
+  it('libera só o sentido cujo fim da página está à vista', () => {
+    // Encostado no fim da página: para cima vira, para baixo ainda é leitura.
+    expect(readPageEdges({ top: -1200, bottom: 790, viewport })).toEqual({ atStart: false, atEnd: true })
+    // E no começo dela, o contrário.
+    expect(readPageEdges({ top: 0, bottom: 2000, viewport })).toEqual({ atStart: true, atEnd: false })
   })
 })
 

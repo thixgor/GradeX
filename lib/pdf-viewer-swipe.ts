@@ -45,14 +45,18 @@ export const SCROLL_EDGE_TOLERANCE = 2
 // conta como conteúdo inteiro na tela: exigir que o leitor "role" esses poucos
 // pixels antes de poder virar faria o gesto parecer quebrado.
 export const SCROLL_IGNORE_RANGE = 48
-// No eixo vertical a sobra costuma ser bem maior que uma margem: o cabeçalho, a
-// barra de baixo e o respiro em volta da página somam uma faixa que a página
-// inteira na tela ainda deixa rolando. Medida em pixels fixos, essa sobra fazia
-// o gesto de virar para cima "não funcionar" — o dedo rolava aqueles poucos
-// pixels e o gesto era descartado, e só o SEGUNDO gesto virava a página. Uma
-// fração da tela resolve em qualquer aparelho: um terço da altura visível ainda
-// é pouco para ser leitura, e muito para ser sobra de moldura.
-export const SCROLL_IGNORE_VIEWPORT_RATIO = 0.34
+// Folga das bordas da PÁGINA no eixo vertical.
+//
+// Para cima e para baixo, quem decide se o gesto vira a página é a página na
+// tela, não a rolagem do documento: o cabeçalho, a barra de baixo e as margens
+// deixam o documento com sobra de rolagem mesmo com a página inteira à vista, e
+// medir por ali fazia o gesto ser descartado como se ainda houvesse leitura
+// pela frente — o primeiro gesto era engolido e só o segundo virava a página.
+//
+// Esta folga é o quanto da página pode estar fora da tela e ainda contar como
+// "já vi tudo": é o pedaço que fica escondido atrás do cabeçalho e da barra
+// inferior. Uma fração da tela cobre qualquer aparelho.
+export const PAGE_EDGE_SLACK_RATIO = 0.22
 
 export type SwipeAxis = 'x' | 'y'
 
@@ -73,12 +77,15 @@ export interface ScrollMetrics {
   scrollStart: number
   viewport: number
   content: number
-  /**
-   * Quanta rolagem ainda conta como "não há o que rolar". Sem valor, vale o
-   * mínimo fixo; no eixo vertical o leitor passa uma fração da tela (ver
-   * SCROLL_IGNORE_VIEWPORT_RATIO).
-   */
-  ignoreRange?: number
+}
+
+export interface PageEdgeMetrics {
+  /** Borda de cima da página, em relação ao topo da tela. */
+  top: number
+  /** Borda de baixo da página, em relação ao topo da tela. */
+  bottom: number
+  /** Altura visível da tela. */
+  viewport: number
 }
 
 /**
@@ -98,12 +105,26 @@ export function rubberBand(delta: number) {
  * eixos: na vertical decide se o dedo vira página ou rola a leitura; na
  * horizontal, se arrasta a página ampliada ou vira.
  */
-export function readScrollEdges({ scrollStart, viewport, content, ignoreRange }: ScrollMetrics) {
+export function readScrollEdges({ scrollStart, viewport, content }: ScrollMetrics) {
   const range = content - viewport
-  if (range <= Math.max(SCROLL_IGNORE_RANGE, ignoreRange ?? 0)) return { atStart: true, atEnd: true }
+  if (range <= SCROLL_IGNORE_RANGE) return { atStart: true, atEnd: true }
   return {
     atStart: scrollStart <= SCROLL_EDGE_TOLERANCE,
     atEnd: scrollStart >= range - SCROLL_EDGE_TOLERANCE,
+  }
+}
+
+/**
+ * A mesma pergunta ("já vi tudo deste lado?"), mas para o eixo VERTICAL — e
+ * medindo a PÁGINA, não a rolagem do documento. Ver PAGE_EDGE_SLACK_RATIO: é a
+ * regra que o leitor enxerga, "estou vendo o fim da página, então para cima é a
+ * próxima", e é ela que faz o gesto vertical valer já no primeiro movimento.
+ */
+export function readPageEdges({ top, bottom, viewport }: PageEdgeMetrics) {
+  const slack = viewport * PAGE_EDGE_SLACK_RATIO
+  return {
+    atStart: top >= -slack,
+    atEnd: bottom <= viewport + slack,
   }
 }
 
