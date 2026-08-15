@@ -70,7 +70,7 @@ const PERGUNTAS = [
   },
   {
     q: 'De onde vêm as pranchas?',
-    a: 'Do acervo integral do Atlas Interativo de Anatomia Humana da UFJF, usado mediante autorização escrita. Os aprofundamentos de cada estrutura — localização, função, vascularização, inervação e clínica — são conteúdo editorial do GradeX.',
+    a: 'Do acervo integral do Atlas Interativo de Anatomia Humana, usado mediante autorização escrita. Os aprofundamentos de cada estrutura — localização, função, vascularização, inervação e clínica — são conteúdo editorial do GradeX.',
   },
   {
     q: 'Funciona no celular?',
@@ -118,7 +118,7 @@ export function VitrineAnatomia({ dados, secao = 'hub' }: VitrineAnatomiaProps) 
         'O corpo humano em duas linguagens que se completam: pranchas reais com cada estrutura marcada e explicada, e modelos tridimensionais que você gira na mão.',
     },
     atlas: {
-      olho: 'Atlas de Anatomia · acervo UFJF',
+      olho: 'Atlas de Anatomia · acervo completo',
       titulo: 'O atlas que responde',
       linha:
         'Pranchas anatômicas reais com as estruturas marcadas. Toque em qualquer marcador e receba a ficha inteira — não só o nome.',
@@ -277,7 +277,7 @@ export function VitrineAnatomia({ dados, secao = 'hub' }: VitrineAnatomiaProps) 
             icone={BookOpen}
             selo="Atlas de Anatomia"
             titulo="Explore peça por peça"
-            descricao={`${catalogo.totalPranchas} pranchas do acervo da UFJF com ${catalogo.totalMarcadores.toLocaleString('pt-BR')} marcadores clicáveis, distribuídas em ${catalogo.totalSistemas} sistemas.`}
+            descricao={`${catalogo.totalPranchas} pranchas do acervo com ${catalogo.totalMarcadores.toLocaleString('pt-BR')} marcadores clicáveis, distribuídas em ${catalogo.totalSistemas} sistemas.`}
             recursos={[
               { icone: Maximize2, texto: 'Zoom, arraste e tela cheia em cada prancha' },
               { icone: Search, texto: 'Busca de estrutura em todo o sistema' },
@@ -465,7 +465,7 @@ export function VitrineAnatomia({ dados, secao = 'hub' }: VitrineAnatomiaProps) 
 
         <p className="mt-10 flex flex-wrap items-center justify-center gap-2 text-center text-xs leading-relaxed text-muted-foreground">
           <GraduationCap className="h-4 w-4 shrink-0 text-primary" />
-          Conteúdo educacional. As pranchas vêm do acervo integral do Atlas de Anatomia da UFJF, usado mediante
+          Conteúdo educacional. As pranchas vêm do acervo integral do Atlas de Anatomia, usado mediante
           autorização escrita.
         </p>
       </section>

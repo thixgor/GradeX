@@ -345,7 +345,7 @@ export function FichaEstrutura({ titulo, numero, insight, compacta, onRecolher }
         <section className="border-t border-border/60 px-4 py-3.5 sm:px-5">
           <div className="rounded-xl border border-amber-500/20 bg-amber-500/[0.07] p-3">
             <h3 className="mb-1 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-amber-700 dark:text-amber-300">
-              <Info className="h-3 w-3" /> Nota do acervo UFJF
+              <Info className="h-3 w-3" /> Nota do acervo
             </h3>
             <p className="text-xs leading-relaxed text-muted-foreground">{insight.notaAcervo}</p>
           </div>

@@ -147,12 +147,12 @@ export function HubAnatomia({ catalogo }: { catalogo: ResumoAnatomia }) {
               </span>
               <h3 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">Explore peça por peça</h3>
               <p className="mt-2.5 flex-1 text-sm leading-relaxed text-muted-foreground">
-                {catalogo.totalPranchas} pranchas do acervo da UFJF com{' '}
+                {catalogo.totalPranchas} pranchas do acervo com{' '}
                 {catalogo.totalMarcadores.toLocaleString('pt-BR')} marcadores clicáveis. Zoom, tela cheia e um modo de
                 estudo que esconde os rótulos para você tentar nomear antes de conferir.
               </p>
               <div className="mt-4 flex flex-wrap gap-1.5 text-[11px] text-muted-foreground">
-                {['zoom e tela cheia', 'modo estudo', 'busca por estrutura', 'acervo UFJF autorizado'].map(item => (
+                {['zoom e tela cheia', 'modo estudo', 'busca por estrutura', 'acervo autorizado'].map(item => (
                   <span key={item} className="rounded-full bg-muted px-2.5 py-1 font-medium">
                     {item}
                   </span>
@@ -356,7 +356,7 @@ export function HubAnatomia({ catalogo }: { catalogo: ResumoAnatomia }) {
       <footer className="mx-auto max-w-3xl px-4 py-10 text-center">
         <p className="inline-flex flex-wrap items-center justify-center gap-2 text-xs leading-relaxed text-muted-foreground">
           <Compass className="h-4 w-4 shrink-0 text-primary" />
-          Conteúdo educacional. As pranchas vêm do acervo integral do Atlas de Anatomia da UFJF, usado mediante
+          Conteúdo educacional. As pranchas vêm do acervo integral do Atlas de Anatomia, usado mediante
           autorização escrita.
           <GraduationCap className="h-4 w-4 shrink-0 text-primary" />
         </p>

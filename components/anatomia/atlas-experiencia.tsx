@@ -114,7 +114,7 @@ function EscolhaDeSistema({
             <ArrowLeft className="h-4 w-4" /> Domine Anatomia
           </Link>
           <div className="mb-3">
-            <p className="editorial-mark !text-amber-300">Atlas de Anatomia · acervo UFJF</p>
+            <p className="editorial-mark !text-amber-300">Atlas de Anatomia · acervo completo</p>
           </div>
           <h1 className="font-heading text-4xl font-semibold leading-[1.05] tracking-tight text-white sm:text-6xl">
             Escolha o sistema
@@ -145,7 +145,7 @@ function EscolhaDeSistema({
           ))}
         </div>
         <p className="mt-8 text-center text-xs leading-relaxed text-muted-foreground">
-          Acervo: Atlas Interativo de Anatomia Humana — UFJF. Uso integral autorizado ao Domine Aqui em 12/08/2026. Os
+          Acervo: Atlas Interativo de Anatomia Humana. Uso integral autorizado ao Domine Aqui em 12/08/2026. Os
           aprofundamentos de cada estrutura são conteúdo editorial do GradeX.
         </p>
       </section>

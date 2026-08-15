@@ -652,7 +652,7 @@ function AreaDeEstudo({
                 <GraduationCap className="h-3.5 w-3.5 text-primary" /> Uso educacional
               </p>
               <p className="text-[10px] leading-relaxed text-muted-foreground">
-                Pranchas do acervo da UFJF, com autorização de uso integral. Os aprofundamentos de cada estrutura são
+                Pranchas do acervo, com autorização de uso integral. Os aprofundamentos de cada estrutura são
                 conteúdo editorial do GradeX e não substituem avaliação clínica.
               </p>
             </div>

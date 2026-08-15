@@ -285,7 +285,7 @@ export function comentar(questao: QuestaoQuiz, indiceEscolhido: number | null): 
   })
 
   if (insight.notaAcervo && insight.aprofundado) {
-    blocos.push({ titulo: 'Nota do acervo UFJF', texto: insight.notaAcervo })
+    blocos.push({ titulo: 'Nota do acervo', texto: insight.notaAcervo })
   }
 
   const alternativas: ComentarioAlternativa[] = questao.alternativas.map((alternativa, indice) => ({
