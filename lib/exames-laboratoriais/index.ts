@@ -13,20 +13,40 @@
  * por construção.
  */
 
+import { marcadores as adrenal } from './marcadores/adrenal'
+import { marcadores as alergologia } from './marcadores/alergologia'
+import { marcadores as autoimunidade } from './marcadores/autoimunidade'
 import { marcadores as cardiaco } from './marcadores/cardiaco'
 import { marcadores as coagulacao } from './marcadores/coagulacao'
 import { marcadores as complementares } from './marcadores/complementares'
+import { marcadores as diabetesAvancado } from './marcadores/diabetes-avancado'
+import { marcadores as digestivo } from './marcadores/digestivo'
 import { marcadores as eletrolitos } from './marcadores/eletrolitos'
 import { marcadores as endocrino } from './marcadores/endocrino'
 import { marcadores as ferro } from './marcadores/ferro'
+import { marcadores as ferroAvancado } from './marcadores/ferro-avancado'
 import { marcadores as gasometria } from './marcadores/gasometria'
 import { marcadores as glicemia } from './marcadores/glicemia'
 import { marcadores as hematologia } from './marcadores/hematologia'
+import { marcadores as hematologiaAvancada } from './marcadores/hematologia-avancada'
+import { marcadores as hemostasiaAvancada } from './marcadores/hemostasia-avancada'
 import { marcadores as hepatico } from './marcadores/hepatico'
+import { marcadores as hepatologiaAvancada } from './marcadores/hepatologia-avancada'
+import { marcadores as hidroeletrolitico } from './marcadores/hidroeletrolitico'
+import { marcadores as infectologiaAvancada } from './marcadores/infectologia-avancada'
 import { marcadores as inflamatorio } from './marcadores/inflamatorio'
 import { marcadores as lipidico } from './marcadores/lipidico'
+import { marcadores as liquidosCorporais } from './marcadores/liquidos-corporais'
+import { marcadores as muscularOsseo } from './marcadores/muscular-osseo'
+import { marcadores as neurologia } from './marcadores/neurologia'
+import { marcadores as oncoHematologia } from './marcadores/onco-hematologia'
 import { marcadores as renal } from './marcadores/renal'
+import { marcadores as renalAvancada } from './marcadores/renal-avancada'
+import { marcadores as tireoideAvancada } from './marcadores/tireoide-avancada'
+import { marcadores as toxicologiaFarmacos } from './marcadores/toxicologia-farmacos'
+import { marcadores as tumorais } from './marcadores/tumorais'
 import { marcadores as urinalise } from './marcadores/urinalise'
+import { marcadores as vitaminas } from './marcadores/vitaminas'
 
 import { COMPARACOES, COMPARACAO_POR_ID, DOENCAS, DOENCA_POR_ID } from './doencas'
 import { EXAMES, EXAME_POR_ID } from './paineis'
@@ -56,19 +76,39 @@ export type { ItemDoIndice, ResultadoBusca, TipoDeResultado } from './busca'
 
 export const MARCADORES: Marcador[] = [
   ...hematologia,
+  ...hematologiaAvancada,
   ...ferro,
+  ...ferroAvancado,
   ...renal,
+  ...renalAvancada,
   ...hepatico,
+  ...hepatologiaAvancada,
   ...eletrolitos,
+  ...hidroeletrolitico,
   ...cardiaco,
   ...inflamatorio,
   ...lipidico,
   ...endocrino,
+  ...tireoideAvancada,
+  ...adrenal,
+  ...muscularOsseo,
   ...glicemia,
+  ...diabetesAvancado,
   ...coagulacao,
+  ...hemostasiaAvancada,
   ...gasometria,
   ...urinalise,
+  ...digestivo,
+  ...liquidosCorporais,
   ...complementares,
+  ...tumorais,
+  ...alergologia,
+  ...autoimunidade,
+  ...oncoHematologia,
+  ...infectologiaAvancada,
+  ...neurologia,
+  ...vitaminas,
+  ...toxicologiaFarmacos,
 ]
 
 export const MARCADOR_POR_ID = new Map(MARCADORES.map((m) => [m.id, m]))
@@ -95,6 +135,17 @@ export const ROTULO_DO_GRUPO: Record<GrupoId, string> = {
   imunologia: 'Imunologia',
   infectologia: 'Infectologia',
   digestivo: 'Digestivo e pancreático',
+  autoimunidade: 'Autoimunidade',
+  alergologia: 'Alergologia e imunidade inata',
+  neurologia: 'Neurologia e líquor',
+  muscular: 'Músculo esquelético',
+  osseo: 'Metabolismo ósseo',
+  'onco-hematologia': 'Onco-hematologia e gamopatias',
+  liquidos: 'Líquidos corporais',
+  fecal: 'Exames de fezes',
+  toxicologia: 'Toxicologia e metais',
+  farmacos: 'Monitorização de fármacos',
+  hemostasia: 'Hemostasia avançada',
 }
 
 export function marcadorPorId(id: string): Marcador | undefined {
@@ -117,10 +168,12 @@ export function marcadoresDoSistema(sistema: SistemaId): Marcador[] {
 /** Grupos com pelo menos um marcador, na ordem em que a página os exibe. */
 export function gruposComConteudo(): { id: GrupoId; nome: string; total: number }[] {
   const ordem: GrupoId[] = [
-    'hematologia', 'ferro', 'renal', 'hepatico', 'eletrolitos', 'cardiaco',
-    'inflamatorio', 'lipidico', 'endocrino', 'glicemia', 'coagulacao',
-    'gasometria', 'urinalise', 'digestivo', 'tumorais', 'vitaminas',
-    'imunologia', 'infectologia',
+    'hematologia', 'hemostasia', 'coagulacao', 'ferro', 'onco-hematologia',
+    'renal', 'hepatico', 'eletrolitos', 'gasometria', 'cardiaco',
+    'inflamatorio', 'lipidico', 'endocrino', 'osseo', 'glicemia',
+    'urinalise', 'fecal', 'digestivo', 'liquidos', 'muscular', 'neurologia',
+    'imunologia', 'autoimunidade', 'alergologia', 'infectologia',
+    'tumorais', 'vitaminas', 'toxicologia', 'farmacos',
   ]
   return ordem
     .map((id) => ({ id, nome: ROTULO_DO_GRUPO[id], total: marcadoresDoGrupo(id).length }))

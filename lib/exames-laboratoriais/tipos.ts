@@ -61,6 +61,21 @@ export type GrupoId =
   | 'imunologia'
   | 'infectologia'
   | 'digestivo'
+  // Domínios acrescentados na expansão para medicina laboratorial completa.
+  // Cada um existe porque a pergunta clínica que ele responde não cabia em
+  // nenhum dos grupos anteriores: monitorização de fármaco não é toxicologia,
+  // líquido pleural não é urinálise, autoanticorpo específico não é o FAN.
+  | 'autoimunidade'
+  | 'alergologia'
+  | 'neurologia'
+  | 'muscular'
+  | 'osseo'
+  | 'onco-hematologia'
+  | 'liquidos'
+  | 'fecal'
+  | 'toxicologia'
+  | 'farmacos'
+  | 'hemostasia'
 
 /** Sistema do organismo — eixo de navegação da tela "Exames por Sistemas". */
 export type SistemaId =
@@ -75,6 +90,9 @@ export type SistemaId =
   | 'infeccioso'
   | 'metabolico'
   | 'oncologico'
+  | 'neurologico'
+  | 'musculoesqueletico'
+  | 'toxicologico'
 
 /** Para que serve clinicamente aquele marcador. Não são exclusivos entre si. */
 export type UtilidadeClinica =

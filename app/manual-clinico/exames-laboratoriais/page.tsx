@@ -2,6 +2,8 @@ import Link from 'next/link'
 import {
   Activity,
   ArrowRight,
+  Bone,
+  Brain,
   Bug,
   Droplets,
   Filter,
@@ -251,6 +253,9 @@ const ICONE_DO_SISTEMA: Record<string, React.ReactNode> = {
   Bug: <Bug className="h-4 w-4" />,
   Flame: <Flame className="h-4 w-4" />,
   Microscope: <Microscope className="h-4 w-4" />,
+  Brain: <Brain className="h-4 w-4" />,
+  Bone: <Bone className="h-4 w-4" />,
+  FlaskConical: <FlaskConical className="h-4 w-4" />,
 }
 
 function Porta({

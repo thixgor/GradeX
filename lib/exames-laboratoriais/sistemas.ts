@@ -390,6 +390,132 @@ export const SISTEMAS: Sistema[] = [
       },
     ],
   },
+
+  {
+    id: 'neurologico',
+    nome: 'Sistema nervoso',
+    chamada: 'O tecido mais protegido do organismo — e por isso o que menos se revela no sangue. Quase tudo aqui exige o compartimento certo.',
+    cor: 'purple',
+    icone: 'Brain',
+    eixos: [
+      {
+        titulo: 'Líquor',
+        descricao: 'Celularidade, proteína, glicose e lactato — sempre lidos em relação ao sangue colhido no mesmo momento.',
+        marcadores: ['liquor'],
+      },
+      {
+        titulo: 'Neurodegeneração',
+        descricao: 'Proteínas do neurônio que provam dano axonal e patologia específica.',
+        marcadores: ['neurofilamento-leve', 'biomarcadores-alzheimer'],
+      },
+      {
+        titulo: 'Autoimunidade neurológica',
+        descricao: 'Anticorpos que causam a doença diretamente — e que definem quadros tratáveis.',
+        marcadores: ['anticorpos-neurologicos'],
+      },
+      {
+        titulo: 'Causas reversíveis de disfunção cognitiva',
+        descricao: 'O que sempre se exclui antes de concluir por doença degenerativa.',
+        marcadores: ['tsh', 'vitamina-b12', 'homocisteina', 'sodio', 'calcio', 'vdrl'],
+      },
+    ],
+    mapas: [
+      {
+        titulo: 'Por que a glicose do líquor só faz sentido como razão',
+        etapas: [
+          { titulo: 'A glicose entra no líquor por transporte facilitado', detalhe: 'A concentração liquórica acompanha a glicemia com atraso de cerca de duas horas.' },
+          { titulo: 'Glicose liquórica de 60 mg/dL', detalhe: 'Parece normal — até se saber a glicemia.' },
+          { titulo: 'Se a glicemia é 100, a razão é 0,6', detalhe: 'Normal.' },
+          { titulo: 'Se a glicemia é 300, a razão é 0,2', detalhe: 'Francamente baixa: consumo bacteriano.' },
+        ],
+        leitura: 'O mesmo número liquórico significa coisas opostas conforme a glicemia. Colher a glicemia junto não é detalhe — é parte do exame.',
+      },
+    ],
+  },
+
+  {
+    id: 'musculoesqueletico',
+    nome: 'Sistema musculoesquelético',
+    chamada: 'Músculo e osso só aparecem no laboratório indiretamente: pelo que vaza da célula lesada e pelos fragmentos da remodelação.',
+    cor: 'stone',
+    icone: 'Bone',
+    eixos: [
+      {
+        titulo: 'Lesão muscular',
+        descricao: 'Enzimas que vazam do miócito — e que frequentemente são confundidas com hepatopatia.',
+        marcadores: ['ck', 'aldolase', 'mioglobina', 'ldh', 'ast'],
+      },
+      {
+        titulo: 'Miopatias inflamatórias',
+        descricao: 'Os anticorpos que definem o subtipo e predizem acometimento pulmonar.',
+        marcadores: ['anticorpos-miosite', 'fan'],
+      },
+      {
+        titulo: 'Metabolismo ósseo',
+        descricao: 'Cálcio, fósforo, PTH e vitamina D definem a causa; os marcadores de remodelação definem a velocidade.',
+        marcadores: ['calcio', 'fosforo', 'pth', 'vitamina-d', 'vitamina-d-1-25', 'marcadores-remodelacao-ossea', 'fosfatase-alcalina'],
+      },
+      {
+        titulo: 'Articulação',
+        descricao: 'A artrocentese responde o que nenhum exame de sangue responde numa monoartrite aguda.',
+        marcadores: ['liquido-sinovial', 'acido-urico', 'pcr', 'fator-reumatoide', 'anti-ccp'],
+      },
+    ],
+    mapas: [
+      {
+        titulo: 'Por que uma miopatia chega rotulada como hepatopatia',
+        etapas: [
+          { titulo: 'AST, ALT e LDH existem no músculo', detalhe: 'Não são exclusivas do fígado — a ALT em menor quantidade, mas existe.' },
+          { titulo: 'A lesão muscular libera as três', detalhe: 'O paciente chega com "transaminases elevadas".' },
+          { titulo: 'A GGT vem normal', detalhe: 'Ela é hepatobiliar e praticamente ausente no músculo.' },
+          { titulo: 'A CK está alta', detalhe: 'E fecha a origem.' },
+        ],
+        leitura: 'Transaminases altas com GGT normal e CK alta são músculo, não fígado. Pedir CK antes de investigar o fígado economiza meses.',
+      },
+    ],
+  },
+
+  {
+    id: 'toxicologico',
+    nome: 'Toxicologia e monitorização de fármacos',
+    chamada: 'Concentração isolada quase nunca decide: o que decide é a concentração em relação ao tempo desde a exposição.',
+    cor: 'zinc',
+    icone: 'FlaskConical',
+    eixos: [
+      {
+        titulo: 'Metais e exposição ambiental',
+        descricao: 'Cada metal tem um alvo preferencial e um par bioquímico característico.',
+        marcadores: ['chumbo', 'protoporfirina-zinco', 'oligoelementos'],
+      },
+      {
+        titulo: 'Hemoglobinas disfuncionais',
+        descricao: 'Hipóxia tecidual com oximetria de pulso e pO₂ normais — só a co-oximetria revela.',
+        marcadores: ['carboxihemoglobina', 'pao2', 'lactato'],
+      },
+      {
+        titulo: 'Monitorização terapêutica',
+        descricao: 'Por que alguns fármacos exigem dosagem sérica e a maioria não.',
+        marcadores: ['monitorizacao-terapeutica', 'creatinina', 'albumina', 'potassio'],
+      },
+      {
+        titulo: 'Intoxicação por álcoois e o hiato osmolar',
+        descricao: 'O soluto que a fórmula não contabiliza.',
+        marcadores: ['osmolalidade-serica', 'anion-gap-corrigido', 'bicarbonato'],
+      },
+    ],
+    mapas: [
+      {
+        titulo: 'A dança do gap osmolar e do ânion gap na intoxicação por álcool tóxico',
+        etapas: [
+          { titulo: 'Ingestão', detalhe: 'O álcool íntegro é osmoticamente ativo: gap osmolar ↑, ânion gap normal.' },
+          { titulo: 'A álcool-desidrogenase começa a metabolizar', detalhe: 'Formam-se ácidos orgânicos.' },
+          { titulo: 'Fase intermediária', detalhe: 'Gap osmolar caindo, ânion gap subindo.' },
+          { titulo: 'Apresentação tardia', detalhe: 'Gap osmolar normal com acidose grave de ânion gap alto.' },
+        ],
+        leitura: 'Gap osmolar normal não exclui intoxicação: pode significar apenas que o paciente chegou tarde — e é exatamente quando o dano de órgão-alvo já começou.',
+      },
+    ],
+  },
 ]
 
 export const SISTEMA_POR_ID = new Map(SISTEMAS.map((s) => [s.id, s]))
