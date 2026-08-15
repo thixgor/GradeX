@@ -14,6 +14,7 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  ChevronUp,
   Circle,
   Clock,
   Eraser,
@@ -40,6 +41,7 @@ import {
   Plus,
   Redo2,
   Rows3,
+  Scan,
   Scissors,
   SearchX,
   ShieldCheck,
@@ -111,10 +113,10 @@ type MobileSheet = null | 'nav' | 'tools' | 'mode' | 'goto' | 'more'
 
 // Rótulos em linguagem de gente. "Pagina/Largura/Continuo" só faz sentido para
 // quem já conhece leitores de PDF; o público aqui não conhece.
-const MODE_OPTIONS: Array<{ value: ViewerMode; label: string; hint: string }> = [
-  { value: 'continuous', label: 'Rolagem contínua', hint: 'Deslize para baixo, como numa página comum — aqui o dedo rola, não vira' },
-  { value: 'single', label: 'Uma página por vez', hint: 'Deslize o dedo para o lado OU para cima e para baixo para virar' },
-  { value: 'width', label: 'Largura da tela', hint: 'Ajusta a página à largura do aparelho; o dedo rola, como na contínua' },
+const MODE_OPTIONS: Array<{ value: ViewerMode; label: string; short: string; hint: string }> = [
+  { value: 'continuous', label: 'Rolagem contínua', short: 'Contínua', hint: 'Deslize para baixo, como numa página comum — aqui o dedo rola, não vira' },
+  { value: 'single', label: 'Uma página por vez', short: 'Uma página', hint: 'Deslize o dedo para o lado OU para cima e para baixo para virar' },
+  { value: 'width', label: 'Largura da tela', short: 'Largura', hint: 'Ajusta a página à largura do aparelho; o dedo rola, como na contínua' },
 ]
 
 // Direção da rolagem. Não é o mesmo eixo de decisão do "modo de leitura": ali
@@ -148,10 +150,10 @@ type TextAlign = 'left' | 'center' | 'right'
 // escolha nas duas pontas.
 type PenMode = 'auto' | 'pen' | 'any'
 
-const PEN_MODE_OPTIONS: Array<{ value: PenMode; label: string; hint: string }> = [
-  { value: 'auto', label: 'Automático', hint: 'Se você usa caneta neste aparelho, o dedo para de desenhar' },
-  { value: 'pen', label: 'Só caneta', hint: 'A mão apoiada nunca desenha; o dedo rola e vira página' },
-  { value: 'any', label: 'Dedo e caneta', hint: 'Os dois desenham' },
+const PEN_MODE_OPTIONS: Array<{ value: PenMode; label: string; shortLabel: string; hint: string }> = [
+  { value: 'auto', label: 'Automático', shortLabel: 'Auto', hint: 'Se você usa caneta neste aparelho, o dedo para de desenhar' },
+  { value: 'pen', label: 'Só caneta', shortLabel: 'Caneta', hint: 'A mão apoiada nunca desenha; o dedo rola e vira página' },
+  { value: 'any', label: 'Dedo e caneta', shortLabel: 'Ambos', hint: 'Os dois desenham' },
 ]
 
 interface EraserStyle {
@@ -1270,6 +1272,13 @@ interface ViewerPrefs {
   penMode?: PenMode
   inkDock?: InkDockState
   /**
+   * Cabeçalho enxuto: some com a faixa de ferramentas e com a faixa de
+   * contexto, deixando só a linha de cima. Em tablet essas faixas somavam
+   * quase metade da tela — quem só está lendo escolhe aqui recuperá-la, e a
+   * escolha vale para as próximas aberturas.
+   */
+  compactChrome?: boolean
+  /**
    * Já vimos uma caneta neste aparelho? Guardado (e não só detectado em
    * memória) porque a rejeição da palma precisa valer desde o PRIMEIRO toque da
    * próxima sessão: quem lê de Apple Pencil não deve ter que encostar a caneta
@@ -2016,7 +2025,22 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const [isFullscreen, setIsFullscreen] = useState(false)
   // Folha (bottom sheet) aberta no celular. Uma de cada vez.
   const [mobileSheet, setMobileSheet] = useState<MobileSheet>(null)
-  const [helpMenuOpen, setHelpMenuOpen] = useState(false)
+  // ── Cabeçalho de tablet/desktop ──────────────────────────────────────────
+  // O cabeçalho antigo empilhava CINCO faixas fixas (título+modo, ferramentas,
+  // opções da ferramenta, atalhos do material, sumário). Num iPad deitado isso
+  // comia ~40% da altura da tela antes de a primeira linha do PDF aparecer, e
+  // a densidade — mais de trinta controles à mostra ao mesmo tempo — era o que
+  // o usuário descreveu como "enlouquecedor".
+  //
+  // A reorganização segue três regras:
+  //  1. o que é ESCOLHA DE LEITURA (modo, direção, zoom, ajustar, tela cheia)
+  //     sai da barra e vira um menu só, cujo botão já mostra o valor atual;
+  //  2. o que é AÇÃO RARA (anotações, guia, atalhos, tutorial) vai para o "⋯";
+  //  3. o que sobra fica em, no máximo, três faixas — e as duas de baixo somem
+  //     num toque, para quem só quer ler.
+  const [viewMenuOpen, setViewMenuOpen] = useState(false)
+  const [moreMenuOpen, setMoreMenuOpen] = useState(false)
+  const [compactChrome, setCompactChrome] = useState(false)
   const [showShortcuts, setShowShortcuts] = useState(false)
   const [showDownloadInfo, setShowDownloadInfo] = useState(false)
   const [tourSteps, setTourSteps] = useState<TourStep[]>([])
@@ -2139,6 +2163,11 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
 
   // Ver LARGE_DOCUMENT_PAGES.
   const isLargeDocument = pageCount >= LARGE_DOCUMENT_PAGES
+
+  // O modo de leitura em vigor. O botão do menu de exibição mostra este rótulo
+  // curto: um menu fechado que já responde "estou em uma página por vez" vale
+  // pelas três opções escritas por extenso que ele substituiu.
+  const activeModeOption = useMemo(() => MODE_OPTIONS.find((option) => option.value === mode), [mode])
 
   // Anotações agrupadas por página — e, o que importa tanto quanto: com a MESMA
   // referência de array para as páginas que não mudaram.
@@ -2509,6 +2538,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     if (prefs.eraserStyle) setEraserStyle((current) => ({ ...current, ...prefs.eraserStyle }))
     if (prefs.penMode) setPenMode(prefs.penMode)
     if (prefs.inkDock) setInkDock(prefs.inkDock)
+    if (typeof prefs.compactChrome === 'boolean') setCompactChrome(prefs.compactChrome)
     if (prefs.penSeen) setPenSeen(true)
     if (prefs.scrollAxis) setScrollAxis(prefs.scrollAxis)
     prefsHydratedRef.current = true
@@ -2549,11 +2579,12 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
       penMode,
       penSeen,
       inkDock,
+      compactChrome,
     })
   }, [
     zoom, mode, scrollAxis, tool, showThumbs, sidePanelTab, showAnnotations, showGuide,
     highlightColor, highlightWidth, noteColor, laserColor, drawingStyle, textStyle,
-    eraserStyle, penMode, penSeen, inkDock,
+    eraserStyle, penMode, penSeen, inkDock, compactChrome,
   ])
 
   // Salva a posição de leitura para retomar na próxima abertura. Com atraso:
@@ -3082,6 +3113,16 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     tourOpenRef.current = true
   }, [])
 
+  // Recolher/abrir as faixas de baixo do cabeçalho. Recolher não pode custar
+  // as ferramentas: quem já estava marcando a página leva a barra flutuante
+  // junto, que faz o mesmo trabalho POR CIMA do material em vez de acima dele.
+  const toggleCompactChrome = useCallback(() => {
+    setCompactChrome((value) => !value)
+    if (!compactChrome && !previewActive && tool !== 'cursor') {
+      setInkDock((dock) => (dock === 'off' ? 'open' : dock))
+    }
+  }, [compactChrome, previewActive, tool])
+
   const closeTour = useCallback(() => {
     setTourOpen(false)
     tourOpenRef.current = false
@@ -3385,6 +3426,11 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
         case 'v':
         case 'V':
           event.preventDefault(); applyScrollAxis(scrollAxis === 'vertical' ? 'horizontal' : 'vertical'); break
+        // Recolher/mostrar as faixas de baixo do cabeçalho. Mesma ação do
+        // botão de seta no fim da barra.
+        case 'b':
+        case 'B':
+          event.preventDefault(); toggleCompactChrome(); break
         case '?':
           event.preventDefault(); setShowShortcuts(true); break
       }
@@ -3394,7 +3440,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   }, [
     access, pageCount, goToPage, stepPage, previewActive, allowedPages, minZoom, maxZoom,
     fitToPage, toggleFullScreen, openSidePanel, applyMode, hasSummary,
-    applyScrollAxis, scrollAxis, undoAnnotation, redoAnnotation,
+    applyScrollAxis, scrollAxis, undoAnnotation, redoAnnotation, toggleCompactChrome,
   ])
 
   // Escolher uma ferramenta é dizer "vou marcar": a barra flutuante aparece
@@ -3601,12 +3647,16 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
             />
           </div>
           <div className="px-2 py-2 sm:px-4">
-            <div className="flex items-center gap-1.5 pb-1.5 sm:gap-2 lg:overflow-x-auto">
+            {/* ── Faixa 1 — sempre visível ───────────────────────────────────
+                Só o que se usa a cada minuto de leitura: onde estou (título e
+                página), como ando (virar, zoom) e para onde pulo (sumário,
+                páginas). Todo o resto foi para os dois menus do fim da linha. */}
+            <div className="flex items-center gap-1.5 sm:gap-2">
               <Button
                 size="icon"
                 variant="ghost"
                 onClick={() => router.push(`/materiais/${materialId}`)}
-                className="h-10 w-10 shrink-0 rounded-xl text-white hover:bg-white/10 hover:text-white"
+                className="h-10 w-10 shrink-0 rounded-xl text-white hover:bg-white/10 hover:text-white lg:h-9 lg:w-9"
                 title="Voltar"
               >
                 <ArrowLeft className="h-5 w-5" />
@@ -3617,84 +3667,244 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                   <ShieldCheck className="h-4 w-4 text-emerald-300 shrink-0" />
                   <h1 className="truncate text-sm font-semibold sm:text-base">{access.material.title}</h1>
                 </div>
-                <p className="hidden text-[11px] text-emerald-100/60 sm:block">DomineAqui PDF Viewer protegido</p>
+                {/* A segunda linha do título trabalha: com o cabeçalho enxuto
+                    ela assume a função da faixa de contexto (que some) e passa
+                    a dizer em que seção a leitura está. */}
+                {compactChrome && activeSummaryEntry ? (
+                  <p className="hidden truncate text-[11px] text-emerald-100/70 sm:block">
+                    {activeSummaryEntry.title}
+                  </p>
+                ) : (
+                  <p className="hidden text-[11px] text-emerald-100/60 sm:block">DomineAqui PDF Viewer protegido</p>
+                )}
               </div>
 
-              {/* ── Controles de desktop ─────────────────────────────────── */}
-              <div className="hidden items-center gap-1.5 lg:flex" data-tour="viewer-pagenav">
-                <ToolbarButton onClick={() => stepPage(-1)} disabled={!canStepPrev} title="Pagina anterior">
+              {/* ── Controles de tablet e desktop ────────────────────────── */}
+              <div className="hidden items-center gap-1 lg:flex" data-tour="viewer-pagenav">
+                <ToolbarButton compact onClick={() => stepPage(-1)} disabled={!canStepPrev} title="Página anterior">
                   <ChevronLeft className="h-4 w-4" />
                 </ToolbarButton>
-                <div className="flex h-10 shrink-0 items-center gap-1 rounded-xl border border-white/10 bg-white/10 px-2">
+                <div className="flex h-9 shrink-0 items-center gap-1 rounded-lg border border-white/10 bg-white/10 px-2">
                   <input
                     value={pageInput}
                     onChange={(event) => setPageInput(event.target.value.replace(/\D/g, ''))}
                     onKeyDown={(event) => event.key === 'Enter' && submitPageInput()}
                     onBlur={submitPageInput}
-                    className="w-10 bg-transparent text-center text-sm text-white outline-none"
+                    className="w-9 bg-transparent text-center text-sm font-semibold text-white outline-none"
                     inputMode="numeric"
                     aria-label="Ir para a página"
                   />
-                  <span className="text-xs text-white/55">/ {pageCount}</span>
+                  <span className="text-[11px] text-white/50">/ {pageCount}</span>
                 </div>
-                <ToolbarButton onClick={() => stepPage(1)} disabled={!canStepNext} title="Proxima pagina">
+                <ToolbarButton compact onClick={() => stepPage(1)} disabled={!canStepNext} title="Próxima página">
                   <ChevronRight className="h-4 w-4" />
                 </ToolbarButton>
               </div>
 
-              <div className="hidden items-center gap-1 rounded-xl border border-white/10 bg-white/10 p-1 lg:flex" data-tour="viewer-zoom">
-                <ToolbarButton compact onClick={() => { zoomTouchedRef.current = true; setZoom((z) => clampZoom(z - 0.12, minZoom, maxZoom)) }} title="Diminuir zoom">
+              {/* Zoom com o número clicável: ele é o "ajustar à tela", que
+                  antes gastava um botão escrito inteiro na faixa de baixo.
+                  Ler o tamanho atual e desfazê-lo viraram o mesmo gesto. */}
+              <div className="hidden items-center gap-0.5 rounded-lg border border-white/10 bg-white/10 p-0.5 lg:flex" data-tour="viewer-zoom">
+                <ToolbarButton compact subtle onClick={() => { zoomTouchedRef.current = true; setZoom((z) => clampZoom(z - 0.12, minZoom, maxZoom)) }} title="Diminuir zoom">
                   <Minus className="h-4 w-4" />
                 </ToolbarButton>
-                <span className="min-w-12 text-center text-xs text-white/75">{Math.round(zoom * 100)}%</span>
-                <ToolbarButton compact onClick={() => { zoomTouchedRef.current = true; setZoom((z) => clampZoom(z + 0.12, minZoom, maxZoom)) }} title="Aumentar zoom">
+                <button
+                  type="button"
+                  data-tour="viewer-fit"
+                  onClick={fitToPage}
+                  title="Ajustar a página à tela (tecla 0)"
+                  className="flex h-8 min-w-[3.25rem] items-center justify-center gap-1 rounded-md px-1 text-xs font-semibold text-white/80 transition-colors hover:bg-white/10 hover:text-white"
+                >
+                  <Scan className="h-3.5 w-3.5 shrink-0 text-white/45" />
+                  {Math.round(zoom * 100)}%
+                </button>
+                <ToolbarButton compact subtle onClick={() => { zoomTouchedRef.current = true; setZoom((z) => clampZoom(z + 0.12, minZoom, maxZoom)) }} title="Aumentar zoom">
                   <Plus className="h-4 w-4" />
                 </ToolbarButton>
               </div>
 
-              {/* Seletor de modo: antes era `hidden lg:flex`, ou seja, no
-                  celular não havia como sair do "uma página por vez". Agora
-                  existe nos dois lugares — aqui e na barra inferior. */}
-              <div className="hidden items-center gap-1 lg:flex" data-tour="viewer-mode">
-                {MODE_OPTIONS.map((option) => (
+              {/* Menu de exibição. Substitui SEIS controles soltos do cabeçalho
+                  antigo (três modos escritos por extenso, duas direções e a
+                  tela cheia) por um botão que já mostra a resposta atual. */}
+              <ToolbarPopover
+                className="hidden lg:block"
+                open={viewMenuOpen}
+                onOpenChange={setViewMenuOpen}
+                label="Exibição"
+                trigger={
                   <ToolbarTextButton
-                    key={option.value}
-                    active={mode === option.value}
-                    onClick={() => applyMode(option.value)}
+                    compact
+                    data-tour="viewer-mode"
+                    active={viewMenuOpen}
+                    icon={<Rows3 className="h-4 w-4" />}
+                    title="Como a página aparece — modo, direção e tela cheia"
+                    aria-haspopup="dialog"
+                    aria-expanded={viewMenuOpen}
+                    onClick={() => { setMoreMenuOpen(false); setViewMenuOpen((value) => !value) }}
                   >
-                    {option.label}
+                    {activeModeOption?.short ?? 'Exibição'}
+                    <ChevronDown className={`h-3.5 w-3.5 text-white/45 transition-transform ${viewMenuOpen ? 'rotate-180' : ''}`} />
                   </ToolbarTextButton>
-                ))}
-              </div>
-
-              {/* Direção da rolagem. Duas teclas só, ao lado do modo de leitura:
-                  é a mesma pergunta ("como o material anda?") vista de outro
-                  ângulo, e separar em outro menu esconderia a opção. */}
-              <div className="hidden items-center gap-1 rounded-xl border border-white/10 bg-white/10 p-1 lg:flex" data-tour="viewer-axis">
-                <ToolbarButton
-                  compact
-                  active={scrollAxis === 'vertical'}
-                  onClick={() => applyScrollAxis('vertical')}
-                  title="Rolagem vertical — as páginas descem"
-                >
-                  <ArrowDownUp className="h-4 w-4" />
-                </ToolbarButton>
-                <ToolbarButton
-                  compact
-                  active={scrollAxis === 'horizontal'}
-                  onClick={() => applyScrollAxis('horizontal')}
-                  title="Rolagem horizontal — as páginas passam para o lado"
-                >
-                  <ArrowLeftRight className="h-4 w-4" />
-                </ToolbarButton>
-              </div>
-
-              <ToolbarButton
-                className="hidden lg:inline-flex"
-                onClick={toggleFullScreen}
-                title={isFullscreen ? 'Sair da tela cheia' : 'Tela cheia'}
+                }
               >
-                {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+                <MenuSection title="Como ler">
+                  {MODE_OPTIONS.map((option, index) => (
+                    <MenuOptionRow
+                      key={option.value}
+                      active={mode === option.value}
+                      label={option.label}
+                      hint={option.hint}
+                      shortcut={String(index + 1)}
+                      warning={isLargeDocument && option.value !== 'single'
+                        ? `Pode ficar lento aqui: são ${pageCount} páginas.`
+                        : undefined}
+                      onClick={() => { applyMode(option.value); setViewMenuOpen(false) }}
+                    />
+                  ))}
+                </MenuSection>
+
+                <MenuSection title="Direção das páginas">
+                  {SCROLL_AXIS_OPTIONS.map((option) => (
+                    <MenuOptionRow
+                      key={option.value}
+                      active={scrollAxis === option.value}
+                      label={option.label}
+                      hint={option.hint}
+                      shortcut={option.value === 'vertical' ? undefined : 'V'}
+                      icon={option.value === 'vertical'
+                        ? <ArrowDownUp className="h-4 w-4" />
+                        : <ArrowLeftRight className="h-4 w-4" />}
+                      onClick={() => { applyScrollAxis(option.value); setViewMenuOpen(false) }}
+                    />
+                  ))}
+                </MenuSection>
+
+                <MenuSection title="Tamanho">
+                  <SheetAction
+                    icon={<Scan className="h-4 w-4" />}
+                    label="Ajustar a página à tela"
+                    onClick={() => { fitToPage(); setViewMenuOpen(false) }}
+                  />
+                  <SheetAction
+                    icon={isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+                    label={isFullscreen ? 'Sair da tela cheia' : 'Tela cheia'}
+                    onClick={() => { toggleFullScreen(); setViewMenuOpen(false) }}
+                  />
+                </MenuSection>
+              </ToolbarPopover>
+
+              {/* Painéis laterais: os dois atalhos que o leitor usa para se
+                  localizar num material de milhares de páginas. Ficam escritos
+                  — ícone sozinho aqui não ensina ninguém. */}
+              <div className="hidden items-center gap-1 lg:flex">
+                {hasSummary && (
+                  <ToolbarTextButton
+                    compact
+                    tone="emerald"
+                    data-tour="viewer-summary"
+                    active={showThumbs && sidePanelTab === 'summary'}
+                    icon={<List className="h-4 w-4" />}
+                    title="Sumário — pular para seções (tecla S)"
+                    onClick={() => openSidePanel('summary')}
+                  >
+                    Sumário
+                  </ToolbarTextButton>
+                )}
+                <ToolbarTextButton
+                  compact
+                  data-tour="viewer-thumbs"
+                  active={showThumbs && sidePanelTab === 'pages'}
+                  icon={showThumbs && sidePanelTab === 'pages'
+                    ? <PanelLeftClose className="h-4 w-4" />
+                    : <PanelLeftOpen className="h-4 w-4" />}
+                  title="Miniaturas das páginas (tecla T)"
+                  onClick={() => {
+                    if (showThumbs && sidePanelTab === 'summary') {
+                      // Painel já aberto noutra aba: troca para miniaturas em vez de fechar.
+                      setSidePanelTab('pages')
+                    } else {
+                      setSidePanelTab('pages')
+                      setShowThumbs((value) => !value)
+                    }
+                  }}
+                >
+                  Páginas
+                </ToolbarTextButton>
+              </div>
+
+              {/* "⋯" do desktop: o que se usa uma vez por sessão (anotações,
+                  guia, tutorial, atalhos) some daqui de dentro em vez de
+                  ocupar uma faixa inteira do cabeçalho. */}
+              <ToolbarPopover
+                className="hidden lg:block"
+                open={moreMenuOpen}
+                onOpenChange={setMoreMenuOpen}
+                label="Mais opções"
+                trigger={
+                  <ToolbarButton
+                    compact
+                    active={moreMenuOpen}
+                    title="Mais opções"
+                    onClick={() => { setViewMenuOpen(false); setMoreMenuOpen((value) => !value) }}
+                  >
+                    <MoreHorizontal className="h-4 w-4" />
+                  </ToolbarButton>
+                }
+              >
+                <div className="space-y-1">
+                  {!previewActive && (
+                    <>
+                      <SheetAction
+                        icon={<StickyNote className="h-4 w-4" />}
+                        label={showAnnotations ? 'Ocultar minhas anotações' : 'Ver minhas anotações'}
+                        onClick={() => { setShowAnnotations((value) => !value); setMoreMenuOpen(false) }}
+                      />
+                      <SheetAction
+                        icon={<PenTool className="h-4 w-4" />}
+                        label={inkDock !== 'off' ? 'Fechar a barra flutuante' : 'Barra flutuante de ferramentas'}
+                        onClick={() => { setInkDock((current) => (current === 'off' ? 'open' : 'off')); setMoreMenuOpen(false) }}
+                      />
+                      <SheetAction
+                        icon={<HelpCircle className="h-4 w-4" />}
+                        label={showGuide ? 'Ocultar guia das ferramentas' : 'Mostrar guia das ferramentas'}
+                        onClick={() => { setShowGuide((value) => !value); setShowAnnotations(true); setMoreMenuOpen(false) }}
+                      />
+                    </>
+                  )}
+                  <SheetAction
+                    icon={<Sparkles className="h-4 w-4" />}
+                    label="Ver o tutorial de novo"
+                    onClick={() => { setMoreMenuOpen(false); startTour() }}
+                  />
+                  <SheetAction
+                    icon={<Keyboard className="h-4 w-4" />}
+                    label="Atalhos do teclado"
+                    onClick={() => { setMoreMenuOpen(false); setShowShortcuts(true) }}
+                  />
+                  {!previewActive && (!access.material.downloadEnabled || timedAccess?.isTimed) && (
+                    <SheetAction
+                      icon={<Lock className="h-4 w-4" />}
+                      label="Por que não posso baixar?"
+                      onClick={() => { setMoreMenuOpen(false); setShowDownloadInfo(true) }}
+                    />
+                  )}
+                </div>
+              </ToolbarPopover>
+
+              {/* Recolher o cabeçalho. É a válvula de escape do tablet: num
+                  toque as duas faixas de baixo somem e a leitura ganha de volta
+                  a altura que elas ocupavam. As ferramentas continuam a um
+                  toque na barra flutuante, que fica sobre a página. */}
+              <ToolbarButton
+                compact
+                className="hidden lg:inline-flex"
+                active={compactChrome}
+                onClick={toggleCompactChrome}
+                title={compactChrome
+                  ? 'Mostrar ferramentas e atalhos do material (tecla B)'
+                  : 'Recolher a barra e ler com mais espaço (tecla B)'}
+              >
+                {compactChrome ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
               </ToolbarButton>
 
               {/* ── Único controle extra do celular: tudo o mais mora nas
@@ -3710,218 +3920,163 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
               </button>
             </div>
 
-            <div className="hidden items-center gap-1 overflow-x-auto pb-1 lg:flex">
-              {/* Ferramentas de anotação ficam ocultas na prévia (leitura apenas). */}
-              {!previewActive && (
-                <div className="flex items-center gap-1" data-tour="viewer-tools">
-                  <ToolButton active={tool === 'cursor'} onClick={() => setTool('cursor')} title="Navegar">
+            {/* ── Faixa 2 — grifar e escrever ────────────────────────────────
+                As ferramentas e as opções DA ferramenta escolhida agora dividem
+                uma única linha. Antes eram duas faixas empilhadas, e a de baixo
+                repetia por escrito o nome da ferramenta que já estava acesa na
+                de cima. */}
+            {!previewActive && !compactChrome && (
+              <div className="mt-1.5 hidden items-center gap-1.5 lg:flex">
+                <div className="flex shrink-0 items-center gap-0.5 rounded-xl border border-white/10 bg-white/[0.06] p-0.5" data-tour="viewer-tools">
+                  <ToolButton compact active={tool === 'cursor'} onClick={() => setTool('cursor')} title="Navegar">
                     <MousePointer2 className="h-4 w-4" />
                   </ToolButton>
-                  <ToolButton active={tool === 'highlight'} onClick={() => setTool('highlight')} title="Marca texto">
+                  <ToolButton compact active={tool === 'highlight'} onClick={() => setTool('highlight')} title="Marca texto">
                     <Highlighter className="h-4 w-4" />
                   </ToolButton>
-                  <ToolButton active={tool === 'note'} onClick={() => setTool('note')} title="Nota">
+                  <ToolButton compact active={tool === 'note'} onClick={() => setTool('note')} title="Nota">
                     <MessageSquare className="h-4 w-4" />
                   </ToolButton>
-                  <ToolButton active={tool === 'drawing'} onClick={() => setTool('drawing')} title="Caneta">
+                  <ToolButton compact active={tool === 'drawing'} onClick={() => setTool('drawing')} title="Caneta">
                     <PenLine className="h-4 w-4" />
                   </ToolButton>
-                  <ToolButton active={tool === 'laser'} onClick={() => setTool('laser')} title="Caneta laser">
+                  <ToolButton compact active={tool === 'laser'} onClick={() => setTool('laser')} title="Caneta laser">
                     <Zap className="h-4 w-4" />
                   </ToolButton>
-                  <ToolButton active={tool === 'text'} onClick={() => setTool('text')} title="Texto">
+                  <ToolButton compact active={tool === 'text'} onClick={() => setTool('text')} title="Texto">
                     <Type className="h-4 w-4" />
                   </ToolButton>
-                  <ToolButton active={tool === 'bookmark'} onClick={() => setTool('bookmark')} title="Marcador">
+                  <ToolButton compact active={tool === 'bookmark'} onClick={() => setTool('bookmark')} title="Marcador">
                     <Bookmark className="h-4 w-4" />
                   </ToolButton>
-                  <ToolButton active={tool === 'eraser'} onClick={() => setTool('eraser')} title="Borracha">
+                  <ToolButton compact active={tool === 'eraser'} onClick={() => setTool('eraser')} title="Borracha">
                     <Eraser className="h-4 w-4" />
                   </ToolButton>
-
-                  <div className="mx-1 h-6 w-px shrink-0 bg-white/10" />
-
-                  {/* Voltar e avançar o que você marcou. Ao lado das
-                      ferramentas, não junto da navegação de página: o que estes
-                      dois desfazem são traços e grifos, e a confusão entre
-                      "voltar uma página" e "voltar uma ação" é justamente o que
-                      um par de setas isolado causaria. */}
-                  <div className="flex items-center gap-1" data-tour="viewer-history">
-                    <ToolbarButton
-                      compact
-                      onClick={undoAnnotation}
-                      disabled={historyDepth.undo === 0}
-                      title="Desfazer (Ctrl+Z)"
-                    >
-                      <Undo2 className="h-4 w-4" />
-                    </ToolbarButton>
-                    <ToolbarButton
-                      compact
-                      onClick={redoAnnotation}
-                      disabled={historyDepth.redo === 0}
-                      title="Refazer (Ctrl+Shift+Z)"
-                    >
-                      <Redo2 className="h-4 w-4" />
-                    </ToolbarButton>
-                    {/* A mesma barra flutuante do celular, para quem escreve de
-                        caneta num 2-em-1: a mão fica embaixo, não no topo. */}
-                    <ToolbarButton
-                      compact
-                      active={inkDock !== 'off'}
-                      onClick={() => setInkDock((current) => (current === 'off' ? 'open' : 'off'))}
-                      title="Barra flutuante de ferramentas"
-                    >
-                      <PenTool className="h-4 w-4" />
-                    </ToolbarButton>
-                  </div>
-
-                  <div className="mx-1 h-6 w-px shrink-0 bg-white/10" />
                 </div>
-              )}
-              <div className="mx-1 h-6 w-px shrink-0 bg-white/10" />
-              {hasSummary && (
-                <button
-                  type="button"
-                  data-tour="viewer-summary"
-                  onClick={() => openSidePanel('summary')}
-                  title="Abrir sumário"
-                  className={`flex h-10 shrink-0 items-center gap-1.5 rounded-xl border px-3 text-xs font-bold transition-colors ${
-                    showThumbs && sidePanelTab === 'summary'
-                      ? 'border-emerald-300/60 bg-emerald-400/25 text-white'
-                      : 'border-emerald-300/30 bg-emerald-400/10 text-emerald-200 hover:border-emerald-300/50 hover:bg-emerald-400/20 hover:text-white'
-                  }`}
-                >
-                  <List className="h-4 w-4 shrink-0" />
-                  Sumário
-                </button>
-              )}
-              {/* Rótulo visível ao lado do ícone: para quem não é familiarizado
-                  com leitores de PDF, um tooltip que só aparece no hover não
-                  ensina nada. */}
-              <ToolbarTextButton
-                data-tour="viewer-thumbs"
-                active={showThumbs}
-                icon={showThumbs ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeftOpen className="h-4 w-4" />}
-                onClick={() => {
-                  if (showThumbs && sidePanelTab === 'summary') {
-                    // Painel já aberto noutra aba: troca para miniaturas em vez de fechar.
-                    setSidePanelTab('pages')
-                  } else {
-                    setSidePanelTab('pages')
-                    setShowThumbs((value) => !value)
-                  }
-                }}
-              >
-                Páginas
-              </ToolbarTextButton>
-              {!previewActive && (
-                <>
-                  <ToolbarTextButton
-                    active={showAnnotations}
-                    icon={<StickyNote className="h-4 w-4" />}
-                    onClick={() => setShowAnnotations((value) => !value)}
-                  >
-                    Anotações
-                  </ToolbarTextButton>
-                  <ToolbarTextButton
-                    active={helpMenuOpen}
-                    icon={<HelpCircle className="h-4 w-4" />}
-                    onClick={() => setHelpMenuOpen((value) => !value)}
-                  >
-                    Ajuda
-                  </ToolbarTextButton>
-                </>
-              )}
-              <ToolbarTextButton data-tour="viewer-fit" onClick={fitToPage}>
-                Ajustar à tela
-              </ToolbarTextButton>
-            </div>
 
-            {!previewActive && (
-              <div className="hidden lg:block">
-                <ToolOptionsBar
-                  tool={tool}
-                  drawingStyle={drawingStyle}
-                  onDrawingStyleChange={setDrawingStyle}
-                  highlightColor={highlightColor}
-                  onHighlightColorChange={setHighlightColor}
-                  highlightWidth={highlightWidth}
-                  onHighlightWidthChange={setHighlightWidth}
-                  noteColor={noteColor}
-                  onNoteColorChange={setNoteColor}
-                  laserColor={laserColor}
-                  onLaserColorChange={setLaserColor}
-                  textStyle={textStyle}
-                  onTextStyleChange={setTextStyle}
-                  eraserStyle={eraserStyle}
-                  onEraserStyleChange={setEraserStyle}
-                  penMode={penMode}
-                  onPenModeChange={setPenMode}
-                  penSeen={penSeen}
-                />
+                {/* Voltar e avançar o que você marcou. Ao lado das ferramentas,
+                    não junto da navegação de página: o que estes dois desfazem
+                    são traços e grifos, e a confusão entre "voltar uma página" e
+                    "voltar uma ação" é justamente o que um par de setas isolado
+                    causaria. */}
+                <div className="flex shrink-0 items-center gap-0.5 rounded-xl border border-white/10 bg-white/[0.06] p-1" data-tour="viewer-history">
+                  <ToolbarButton
+                    compact
+                    subtle
+                    onClick={undoAnnotation}
+                    disabled={historyDepth.undo === 0}
+                    title="Desfazer (Ctrl+Z)"
+                  >
+                    <Undo2 className="h-4 w-4" />
+                  </ToolbarButton>
+                  <ToolbarButton
+                    compact
+                    subtle
+                    onClick={redoAnnotation}
+                    disabled={historyDepth.redo === 0}
+                    title="Refazer (Ctrl+Shift+Z)"
+                  >
+                    <Redo2 className="h-4 w-4" />
+                  </ToolbarButton>
+                </div>
+
+                {/* Opções da ferramenta acesa. Vazio quando não há o que
+                    ajustar (navegar, marcador) — e aí a linha simplesmente
+                    encolhe em vez de mostrar uma caixa vazia. */}
+                <div className="min-w-0 flex-1">
+                  <ToolOptionsBar
+                    dense
+                    tool={tool}
+                    drawingStyle={drawingStyle}
+                    onDrawingStyleChange={setDrawingStyle}
+                    highlightColor={highlightColor}
+                    onHighlightColorChange={setHighlightColor}
+                    highlightWidth={highlightWidth}
+                    onHighlightWidthChange={setHighlightWidth}
+                    noteColor={noteColor}
+                    onNoteColorChange={setNoteColor}
+                    laserColor={laserColor}
+                    onLaserColorChange={setLaserColor}
+                    textStyle={textStyle}
+                    onTextStyleChange={setTextStyle}
+                    eraserStyle={eraserStyle}
+                    onEraserStyleChange={setEraserStyle}
+                    penMode={penMode}
+                    onPenModeChange={setPenMode}
+                    penSeen={penSeen}
+                  />
+                </div>
               </div>
             )}
 
-            {(navigation.length > 0 || coverPage) && (
-              <div className="mt-1 hidden items-center gap-1.5 overflow-x-auto pb-0.5 lg:flex">
-                {coverPage ? (
+            {/* ── Faixa 3 — onde estou e para onde pulo ──────────────────────
+                O "você está em" e os atalhos do material (capa, listas,
+                gabaritos) eram duas faixas separadas fazendo a mesma pergunta.
+                Agora dividem uma linha: contexto à esquerda, saltos à direita. */}
+            {!compactChrome && (hasSummary || navigation.length > 0 || coverPage) && (
+              <div className="mt-1.5 hidden items-center gap-2 lg:flex">
+                {hasSummary && (
                   <button
                     type="button"
-                    onClick={() => navigateTo(coverPage)}
-                    className={`flex h-8 shrink-0 items-center gap-1 rounded-full border px-3 text-xs font-semibold transition-colors ${
-                      currentPage === coverPage
-                        ? 'border-emerald-300/60 bg-emerald-400/25 text-white'
-                        : 'border-white/10 bg-white/10 text-white/75 hover:bg-white/15'
-                    }`}
-                    title={`Capa (pag. ${coverPage})`}
+                    data-tour="viewer-summary-strip"
+                    onClick={() => openSidePanel('summary')}
+                    title="Abrir sumário — pular para seções"
+                    className="flex h-8 min-w-0 flex-1 items-center gap-2 rounded-lg border border-emerald-300/25 bg-emerald-400/[0.07] px-2.5 text-left text-white/75 transition-colors hover:border-emerald-300/40 hover:bg-emerald-400/15 hover:text-white"
                   >
-                    <Bookmark className="h-3.5 w-3.5" /> Capa
+                    <List className="h-4 w-4 shrink-0 text-emerald-300" />
+                    {activeSummaryEntry ? (
+                      <>
+                        <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wide text-white/40">
+                          Você está em
+                        </span>
+                        <span className="min-w-0 flex-1 truncate text-xs font-semibold">
+                          {activeSummaryEntry.title}
+                        </span>
+                      </>
+                    ) : (
+                      <span className="min-w-0 flex-1 truncate text-xs font-semibold text-emerald-100">
+                        Sumário — pular para seções
+                      </span>
+                    )}
+                    <span className="shrink-0 text-[10px] font-semibold text-emerald-300/90">Abrir →</span>
                   </button>
-                ) : null}
-                {navigation.map((entry) => (
-                  <button
-                    key={entry.id}
-                    type="button"
-                    onClick={() => navigateTo(entry.page)}
-                    className={`flex h-8 shrink-0 items-center gap-1 rounded-full border px-3 text-xs font-medium transition-colors ${
-                      currentPage === entry.page
-                        ? 'border-emerald-300/60 bg-emerald-400/25 text-white'
-                        : 'border-white/10 bg-white/10 text-white/75 hover:bg-white/15'
-                    }`}
-                    title={`${entry.label} — pag. ${entry.page}`}
-                  >
-                    {entry.label}
-                    <span className="text-white/45">{entry.page}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-
-            {hasSummary && (
-              <button
-                type="button"
-                data-tour="viewer-summary-strip"
-                onClick={() => openSidePanel('summary')}
-                title="Abrir sumário — pular para seções"
-                className="mt-1 flex w-full items-center gap-2 rounded-lg border border-emerald-300/25 bg-emerald-400/[0.07] px-2.5 py-1.5 text-left text-white/75 transition-colors hover:border-emerald-300/40 hover:bg-emerald-400/15 hover:text-white"
-              >
-                <List className="h-4 w-4 shrink-0 text-emerald-300" />
-                {activeSummaryEntry ? (
-                  <>
-                    <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wide text-white/40">
-                      Você está em
-                    </span>
-                    <span className="min-w-0 flex-1 truncate text-xs font-semibold">
-                      {activeSummaryEntry.title}
-                    </span>
-                  </>
-                ) : (
-                  <span className="min-w-0 flex-1 truncate text-xs font-semibold text-emerald-100">
-                    Sumário — pular para seções
-                  </span>
                 )}
-                <span className="shrink-0 text-[10px] font-semibold text-emerald-300/90">Abrir →</span>
-              </button>
+
+                {(navigation.length > 0 || coverPage) && (
+                  <div className={`flex items-center gap-1.5 overflow-x-auto ${hasSummary ? 'max-w-[46%] shrink-0' : 'min-w-0 flex-1'}`}>
+                    {coverPage ? (
+                      <button
+                        type="button"
+                        onClick={() => navigateTo(coverPage)}
+                        className={`flex h-8 shrink-0 items-center gap-1 rounded-full border px-3 text-xs font-semibold transition-colors ${
+                          currentPage === coverPage
+                            ? 'border-emerald-300/60 bg-emerald-400/25 text-white'
+                            : 'border-white/10 bg-white/10 text-white/75 hover:bg-white/15'
+                        }`}
+                        title={`Capa (pág. ${coverPage})`}
+                      >
+                        <Bookmark className="h-3.5 w-3.5" /> Capa
+                      </button>
+                    ) : null}
+                    {navigation.map((entry) => (
+                      <button
+                        key={entry.id}
+                        type="button"
+                        onClick={() => navigateTo(entry.page)}
+                        className={`flex h-8 shrink-0 items-center gap-1 rounded-full border px-3 text-xs font-medium transition-colors ${
+                          currentPage === entry.page
+                            ? 'border-emerald-300/60 bg-emerald-400/25 text-white'
+                            : 'border-white/10 bg-white/10 text-white/75 hover:bg-white/15'
+                        }`}
+                        title={`${entry.label} — pág. ${entry.page}`}
+                      >
+                        {entry.label}
+                        <span className="text-white/45">{entry.page}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </header>
@@ -4575,37 +4730,9 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
           />
         )}
 
-        {/* Menu de ajuda do desktop. Reúne o tutorial, o guia das ferramentas
-            (que antes ocupava o painel de anotações desde a abertura), os
-            atalhos e a explicação sobre download. */}
-        {helpMenuOpen && (
-          <ViewerDialog title="Ajuda" onClose={() => setHelpMenuOpen(false)}>
-            <div className="space-y-2">
-              <SheetAction
-                icon={<Sparkles className="h-4 w-4" />}
-                label="Ver o tutorial de novo"
-                onClick={() => { setHelpMenuOpen(false); startTour() }}
-              />
-              <SheetAction
-                icon={<HelpCircle className="h-4 w-4" />}
-                label={showGuide ? 'Ocultar guia das ferramentas' : 'Mostrar guia das ferramentas'}
-                onClick={() => { setShowGuide((value) => !value); setShowAnnotations(true); setHelpMenuOpen(false) }}
-              />
-              <SheetAction
-                icon={<Keyboard className="h-4 w-4" />}
-                label="Atalhos do teclado"
-                onClick={() => { setHelpMenuOpen(false); setShowShortcuts(true) }}
-              />
-              {!previewActive && (!access.material.downloadEnabled || timedAccess?.isTimed) && (
-                <SheetAction
-                  icon={<Lock className="h-4 w-4" />}
-                  label="Por que não posso baixar?"
-                  onClick={() => { setHelpMenuOpen(false); setShowDownloadInfo(true) }}
-                />
-              )}
-            </div>
-          </ViewerDialog>
-        )}
+        {/* O antigo diálogo "Ajuda" saiu daqui: era um menu que só levava a
+            outro menu. Os mesmos quatro itens agora estão diretamente no "⋯"
+            do cabeçalho, a um clique em vez de dois. */}
 
         {showShortcuts && <ShortcutsDialog onClose={() => setShowShortcuts(false)} />}
         {showDownloadInfo && <DownloadInfoDialog onClose={() => setShowDownloadInfo(false)} timedAccess={timedAccess} />}
@@ -7640,6 +7767,7 @@ function ToolOptionsBar({
   penMode,
   onPenModeChange,
   penSeen,
+  dense,
 }: {
   tool: AnnotationTool
   drawingStyle: DrawingStyle
@@ -7659,6 +7787,15 @@ function ToolOptionsBar({
   penMode: PenMode
   onPenModeChange: (mode: PenMode) => void
   penSeen: boolean
+  /**
+   * Modo enxuto do cabeçalho de tablet/desktop: a barra de opções divide a
+   * linha com as ferramentas em vez de ocupar uma faixa própria. Some com o
+   * que era redundante ali — o nome da ferramenta (o botão dela já está aceso
+   * a dois centímetros de distância) e as frases de ajuda que se repetiam a
+   * cada abertura. Nada de controle é removido: só o texto que a proximidade
+   * já dizia.
+   */
+  dense?: boolean
 }) {
   if (!['drawing', 'highlight', 'text', 'note', 'laser', 'eraser'].includes(tool)) return null
   // A escolha de quem escreve (dedo × caneta) acompanha as ferramentas que
@@ -7667,7 +7804,9 @@ function ToolOptionsBar({
   const showPenMode = tool === 'drawing' || tool === 'highlight' || tool === 'eraser'
 
   return (
-    <div className="mt-1 flex items-center gap-2 overflow-x-auto rounded-xl border border-white/10 bg-white/10 px-2 py-2">
+    <div className={`flex items-center overflow-x-auto rounded-xl border border-white/10 ${
+      dense ? 'gap-1.5 bg-white/[0.06] px-2 py-1' : 'mt-1 gap-2 bg-white/10 px-2 py-2'
+    }`}>
       {tool === 'drawing' && (
         <>
           <div className="flex shrink-0 items-center gap-1">
@@ -7704,7 +7843,7 @@ function ToolOptionsBar({
 
       {tool === 'highlight' && (
         <>
-          <span className="flex shrink-0 items-center gap-1 text-xs font-semibold text-white/75"><Highlighter className="h-4 w-4" /> Marca texto</span>
+          {!dense && <span className="flex shrink-0 items-center gap-1 text-xs font-semibold text-white/75"><Highlighter className="h-4 w-4" /> Marca texto</span>}
           <ColorSwatches colors={HIGHLIGHT_SWATCHES} value={highlightColor} onChange={onHighlightColorChange} />
           <LabeledRange label="Espessura" min={8} max={48} value={highlightWidth} onChange={onHighlightWidthChange} />
         </>
@@ -7712,22 +7851,22 @@ function ToolOptionsBar({
 
       {tool === 'note' && (
         <>
-          <span className="flex shrink-0 items-center gap-1 text-xs font-semibold text-white/75"><MessageSquare className="h-4 w-4" /> Nota</span>
+          {!dense && <span className="flex shrink-0 items-center gap-1 text-xs font-semibold text-white/75"><MessageSquare className="h-4 w-4" /> Nota</span>}
           <ColorSwatches colors={NOTE_SWATCHES} value={noteColor} onChange={onNoteColorChange} />
         </>
       )}
 
       {tool === 'laser' && (
         <>
-          <span className="flex shrink-0 items-center gap-1 text-xs font-semibold text-white/75"><Zap className="h-4 w-4" /> Laser</span>
+          {!dense && <span className="flex shrink-0 items-center gap-1 text-xs font-semibold text-white/75"><Zap className="h-4 w-4" /> Laser</span>}
           <ColorSwatches colors={LASER_SWATCHES} value={laserColor} onChange={onLaserColorChange} />
-          <span className="shrink-0 text-[11px] text-white/55">O traco brilha e some sozinho apos desenhar</span>
+          {!dense && <span className="shrink-0 text-[11px] text-white/55">O traço brilha e some sozinho depois de desenhar</span>}
         </>
       )}
 
       {tool === 'eraser' && (
         <>
-          <span className="flex shrink-0 items-center gap-1 text-xs font-semibold text-white/75"><Eraser className="h-4 w-4" /> Borracha</span>
+          {!dense && <span className="flex shrink-0 items-center gap-1 text-xs font-semibold text-white/75"><Eraser className="h-4 w-4" /> Borracha</span>}
           <div className="flex shrink-0 items-center gap-1">
             {ERASER_MODE_OPTIONS.map((option) => (
               <MiniModeButton
@@ -7762,29 +7901,36 @@ function ToolOptionsBar({
               </button>
             ))}
           </div>
-          <span className="shrink-0 text-[11px] text-white/55">
-            {ERASER_MODE_OPTIONS.find((option) => option.value === eraserStyle.mode)?.hint}
-          </span>
+          {!dense && (
+            <span className="shrink-0 text-[11px] text-white/55">
+              {ERASER_MODE_OPTIONS.find((option) => option.value === eraserStyle.mode)?.hint}
+            </span>
+          )}
         </>
       )}
 
       {showPenMode && (
         <div className="flex shrink-0 items-center gap-1 rounded-lg border border-white/10 bg-white/10 px-2 py-1">
-          <Hand className="h-4 w-4 shrink-0 text-white/55" />
+          {/* Com a caneta já reconhecida, o ícone deixa de ser um desenho de
+              mão e vira o aviso: é a resposta curta para "por que meu dedo
+              parou de desenhar?", no lugar onde a escolha se muda. */}
+          {penSeen && penMode === 'auto'
+            ? <PenTool className="h-4 w-4 shrink-0 text-emerald-300" aria-label="Caneta detectada neste aparelho" />
+            : <Hand className="h-4 w-4 shrink-0 text-white/55" />}
           {PEN_MODE_OPTIONS.map((option) => (
             <button
               key={option.value}
               type="button"
               onClick={() => onPenModeChange(option.value)}
-              title={option.hint}
+              title={`${option.label} — ${option.hint}`}
               className={`h-6 rounded-md px-2 text-[11px] font-semibold transition-colors ${
                 penMode === option.value ? 'bg-emerald-400/25 text-white' : 'text-white/60 hover:text-white'
               }`}
             >
-              {option.label}
+              {dense ? option.shortLabel : option.label}
             </button>
           ))}
-          {penSeen && penMode === 'auto' && (
+          {penSeen && penMode === 'auto' && !dense && (
             <span className="flex shrink-0 items-center gap-1 text-[11px] text-emerald-200/80">
               <PenTool className="h-3.5 w-3.5" /> caneta detectada
             </span>
@@ -8150,6 +8296,7 @@ function ShortcutsDialog({ onClose }: { onClose: () => void }) {
         ['F', 'Tela cheia'],
         ['1  /  2  /  3', 'Rolagem contínua / uma página / largura'],
         ['V', 'Alternar rolagem vertical / horizontal'],
+        ['B', 'Recolher / mostrar as barras de ferramentas'],
         ['?', 'Abrir esta lista'],
       ],
     },
@@ -8252,6 +8399,119 @@ function SheetAction({ icon, label, onClick }: { icon: React.ReactNode; label: s
   )
 }
 
+// ─── Menu ancorado do cabeçalho (tablet e desktop) ──────────────────────────
+// Um controle que só existe para tirar coisa da barra. O cabeçalho antigo
+// resolvia "dar acesso a tudo" mostrando tudo ao mesmo tempo; aqui cada grupo
+// de decisão vira um menu que se abre ao lado do botão que o descreve.
+//
+// Nada de modal centralizado (ViewerDialog) para isto: escurecer a tela toda
+// para trocar o modo de leitura tira o material de vista justamente quando a
+// pessoa quer ver o efeito da escolha. O menu ancorado deixa a página à mostra.
+function ToolbarPopover({
+  open,
+  onOpenChange,
+  trigger,
+  children,
+  label,
+  className,
+}: {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  trigger: React.ReactNode
+  children: React.ReactNode
+  label: string
+  className?: string
+}) {
+  useEffect(() => {
+    if (!open) return
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onOpenChange(false)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [open, onOpenChange])
+
+  return (
+    <div className={`relative shrink-0 ${className || ''}`}>
+      {trigger}
+      {open && (
+        <>
+          {/* Captura o clique fora. `fixed` e não `absolute`: o cabeçalho é
+              sticky, e uma camada absoluta cobriria só a largura dele. */}
+          <div className="fixed inset-0 z-40" aria-hidden onClick={() => onOpenChange(false)} />
+          <div
+            role="dialog"
+            aria-label={label}
+            className="absolute right-0 top-full z-50 mt-2 flex max-h-[min(70vh,32rem)] w-80 flex-col overflow-y-auto overscroll-contain rounded-2xl border border-white/15 bg-zinc-950 p-3 text-white shadow-2xl shadow-black/60"
+          >
+            {children}
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+
+function MenuSection({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="mt-3 space-y-1 border-t border-white/10 pt-3 first:mt-0 first:border-0 first:pt-0">
+      <p className="px-1 pb-0.5 text-[10px] font-bold uppercase tracking-wider text-white/40">{title}</p>
+      {children}
+    </div>
+  )
+}
+
+// Linha de escolha do menu: rótulo, explicação em linguagem de gente e o
+// atalho de teclado equivalente. A explicação vem junto de propósito — é a
+// mesma que o celular já mostrava na folha, e era o que faltava no desktop,
+// onde as opções eram três botões escritos sem nenhuma pista do que faziam.
+function MenuOptionRow({
+  active,
+  label,
+  hint,
+  shortcut,
+  warning,
+  icon,
+  onClick,
+}: {
+  active: boolean
+  label: string
+  hint: string
+  shortcut?: string
+  warning?: string
+  icon?: React.ReactNode
+  onClick: () => void
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      className={`flex w-full items-start gap-2.5 rounded-xl border p-2.5 text-left transition-colors ${
+        active ? 'border-emerald-300/50 bg-emerald-400/15' : 'border-transparent hover:bg-white/5'
+      }`}
+    >
+      <span className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${
+        active ? 'border-emerald-300 bg-emerald-400 text-emerald-950' : 'border-white/25 text-white/50'
+      }`}>
+        {active ? <Check className="h-3 w-3" /> : icon}
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="flex items-center gap-2">
+          <span className="text-[13px] font-semibold text-white">{label}</span>
+          {shortcut && (
+            <span className="ml-auto shrink-0 rounded border border-white/15 px-1.5 text-[10px] font-bold text-white/45">
+              {shortcut}
+            </span>
+          )}
+        </span>
+        <span className="mt-0.5 block text-[11px] leading-snug text-white/50">{hint}</span>
+        {warning && <span className="mt-1 block text-[11px] text-amber-300/80">{warning}</span>}
+      </span>
+    </button>
+  )
+}
+
 function ConfirmDialog({
   title,
   body,
@@ -8297,6 +8557,7 @@ function ToolbarButton({
   title,
   compact,
   active,
+  subtle,
   className,
 }: {
   children: React.ReactNode
@@ -8305,6 +8566,13 @@ function ToolbarButton({
   title: string
   compact?: boolean
   active?: boolean
+  /**
+   * Sem borda nem fundo próprios, para uso DENTRO de um grupo que já tem
+   * moldura (o par de zoom, o par desfazer/refazer). Molduras aninhadas eram
+   * metade do ruído visual da barra antiga: cada botão desenhava a sua caixa,
+   * e o grupo desenhava outra por cima.
+   */
+  subtle?: boolean
   className?: string
 }) {
   return (
@@ -8316,10 +8584,12 @@ function ToolbarButton({
       title={title}
       aria-label={title}
       aria-pressed={active}
-      className={`${compact ? 'h-8 w-8 rounded-lg' : 'h-10 w-10 rounded-xl'} shrink-0 border text-white hover:text-white disabled:opacity-40 ${
-        active
-          ? 'border-emerald-300/60 bg-emerald-400/25 hover:bg-emerald-400/30'
-          : 'border-white/10 bg-white/10 hover:bg-white/15'
+      className={`${compact ? 'h-8 w-8 rounded-lg' : 'h-10 w-10 rounded-xl'} shrink-0 text-white hover:text-white disabled:opacity-40 ${
+        subtle
+          ? `border-0 bg-transparent ${active ? 'bg-emerald-400/25' : 'text-white/75 hover:bg-white/10'}`
+          : `border ${active
+              ? 'border-emerald-300/60 bg-emerald-400/25 hover:bg-emerald-400/30'
+              : 'border-white/10 bg-white/10 hover:bg-white/15'}`
       } ${className || ''}`}
     >
       {children}
@@ -8327,16 +8597,41 @@ function ToolbarButton({
   )
 }
 
-function ToolButton({ children, active, onClick, title }: { children: React.ReactNode; active: boolean; onClick: () => void; title: string }) {
+function ToolButton({
+  children,
+  active,
+  onClick,
+  title,
+  compact,
+}: {
+  children: React.ReactNode
+  active: boolean
+  onClick: () => void
+  title: string
+  /**
+   * Dentro de um grupo com moldura própria (a faixa de ferramentas do
+   * cabeçalho), cada botão perde a borda e encolhe: a moldura já separa o
+   * grupo do resto, e oito caixas com borda lado a lado eram oito molduras
+   * disputando atenção. O alvo continua com 36px — acima do mínimo de toque
+   * confortável de tablet quando o grupo inteiro tem folga em volta.
+   */
+  compact?: boolean
+}) {
   return (
     <Button
       size="icon"
       variant="ghost"
       onClick={onClick}
       title={title}
-      className={`h-10 w-10 shrink-0 rounded-xl border text-white hover:text-white ${
-        active ? 'border-emerald-300/50 bg-emerald-400/25' : 'border-white/10 bg-white/10 hover:bg-white/15'
-      }`}
+      aria-label={title}
+      aria-pressed={active}
+      className={compact
+        ? `h-9 w-9 shrink-0 rounded-lg text-white hover:text-white ${
+            active ? 'bg-emerald-400/25 text-white' : 'text-white/70 hover:bg-white/10'
+          }`
+        : `h-10 w-10 shrink-0 rounded-xl border text-white hover:text-white ${
+            active ? 'border-emerald-300/50 bg-emerald-400/25' : 'border-white/10 bg-white/10 hover:bg-white/15'
+          }`}
     >
       {children}
     </Button>
@@ -8351,22 +8646,41 @@ function ToolbarTextButton({
   active,
   onClick,
   icon,
+  title,
+  compact,
+  tone = 'default',
   'data-tour': dataTour,
+  'aria-haspopup': ariaHasPopup,
+  'aria-expanded': ariaExpanded,
 }: {
   children: React.ReactNode
   active?: boolean
   onClick: () => void
   icon?: React.ReactNode
+  title?: string
+  compact?: boolean
+  /** 'emerald' marca o que leva a OUTRO lugar do material (o sumário). */
+  tone?: 'default' | 'emerald'
   'data-tour'?: string
+  'aria-haspopup'?: 'dialog' | 'menu'
+  'aria-expanded'?: boolean
 }) {
+  const restingTone = tone === 'emerald'
+    ? 'border-emerald-300/25 bg-emerald-400/10 text-emerald-100/90 hover:border-emerald-300/45 hover:bg-emerald-400/20 hover:text-white'
+    : 'border-white/10 bg-white/10 text-white/70 hover:bg-white/15 hover:text-white'
+
   return (
     <button
       type="button"
       onClick={onClick}
+      title={title}
       data-tour={dataTour}
-      className={`flex h-10 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-xl border px-3 text-xs font-semibold transition-colors ${
-        active ? 'border-emerald-300/50 bg-emerald-400/25 text-white' : 'border-white/10 bg-white/10 text-white/70 hover:bg-white/15 hover:text-white'
-      }`}
+      aria-haspopup={ariaHasPopup}
+      aria-expanded={ariaExpanded}
+      aria-pressed={ariaHasPopup ? undefined : active}
+      className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap border font-semibold transition-colors ${
+        compact ? 'h-9 rounded-lg px-2.5 text-xs' : 'h-10 rounded-xl px-3 text-xs'
+      } ${active ? 'border-emerald-300/50 bg-emerald-400/25 text-white' : restingTone}`}
     >
       {icon}
       {children}
