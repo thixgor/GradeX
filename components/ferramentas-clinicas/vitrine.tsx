@@ -102,7 +102,7 @@ const FAQ = [
   },
   {
     q: 'Dá para comprar só as ferramentas?',
-    a: 'Não há venda avulsa desta seção — nem de nenhuma outra. Ela vem junto com o Manual Clínico, e o mesmo pagamento abre as 300+ patologias, a Farmacologia, o Manual do Eletrocardiograma, o Manual de Radiologia, o Manual de Histologia e o Domine Anatomia. São sete manuais numa compra só.',
+    a: 'Não há venda avulsa desta seção — nem de nenhuma outra. Ela vem junto com o Manual Clínico, e o mesmo pagamento abre as 300+ patologias, a Farmacologia, o Manual do Eletrocardiograma, o Manual de Radiologia, o Manual de Histologia, os Exames Laboratoriais e o Domine Anatomia. É tudo numa compra só.',
   },
   {
     q: 'Preciso criar conta para comprar?',

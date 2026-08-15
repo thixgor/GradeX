@@ -39,6 +39,7 @@ const CHAVES_DA_AREA: Record<SidebarSectionKey, string[]> = {
   ferramentasClinicas: ['calculadora', 'calculadoras', 'escore', 'escores', 'score', 'ferramenta', 'gasometria', 'sepse'],
   farmacologia: ['farmaco', 'farmacos', 'remedio', 'medicamento', 'medicamentos', 'dose', 'posologia', 'bula'],
   anatomia3d: ['anatomia', 'anatomico', '3d', 'atlas', 'corpo humano', 'osso', 'musculo'],
+  manualExames: ['exame', 'exames', 'laboratorio', 'laboratorial', 'hemograma', 'creatinina', 'tgo', 'tgp', 'referencia'],
   manualHistologia: ['histologia', 'lamina', 'laminas', 'microscopio', 'tecido', 'tecidos', 'he'],
   manualRadiologia: ['radiologia', 'raio x', 'raiox', 'rx', 'tomografia', 'tc', 'imagem', 'laudo'],
   manualEletro: ['ecg', 'eletrocardiograma', 'eletro', 'ekg', 'ritmo', 'derivacoes', 'arritmia'],
@@ -60,6 +61,7 @@ const ICONE_DA_AREA: Record<SidebarSectionKey, string> = {
   ferramentasClinicas: 'calculator',
   farmacologia: 'pill',
   anatomia3d: 'person-standing',
+  manualExames: 'flask-conical',
   manualHistologia: 'microscope',
   manualRadiologia: 'scan-line',
   manualEletro: 'activity',
@@ -76,6 +78,7 @@ const ICONE_DA_AREA: Record<SidebarSectionKey, string> = {
 const AREA_MAE: Partial<Record<SidebarSectionKey, SidebarSectionKey>> = {
   ferramentasClinicas: 'manualClinico',
   farmacologia: 'manualClinico',
+  manualExames: 'manualClinico',
   manualHistologia: 'manualClinico',
   manualRadiologia: 'manualClinico',
   manualEletro: 'manualClinico',
@@ -194,6 +197,20 @@ const PAGINAS: ItemBusca[] = [
     ['mecanismos', 'lesao celular', 'necrose', 'apoptose', 'inflamacao'], { secao: 'manualClinico' }),
   pagina('histopatologia-webpath', 'Acervo WebPath (Utah)', '/manual-clinico/histologia/histopatologia/webpath-utah', 'Histopatologia', 'library',
     ['webpath', 'utah', 'acervo externo', 'capitulos'], { secao: 'manualClinico' }),
+
+  // ── Exames Laboratoriais ──────────────────────────────────────────────
+  pagina('exames-marcadores', 'Marcadores laboratoriais', '/manual-clinico/exames-laboratoriais/marcadores', 'Exames Laboratoriais', 'flask-conical',
+    ['marcador', 'marcadores', 'valor de referencia', 'referencia', 'hemoglobina', 'creatinina', 'tgo', 'tgp'], { secao: 'manualClinico' }),
+  pagina('exames-padroes', 'Padrões laboratoriais', '/manual-clinico/exames-laboratoriais/padroes', 'Exames Laboratoriais', 'activity',
+    ['padrao', 'padroes', 'hepatocelular', 'colestatico', 'hemolise', 'cetoacidose'], { secao: 'manualClinico' }),
+  pagina('exames-sistemas', 'Exames por sistema', '/manual-clinico/exames-laboratoriais/sistemas', 'Exames Laboratoriais', 'stethoscope',
+    ['sistema', 'sistemas', 'hepatobiliar', 'renal', 'endocrino', 'gasometria'], { secao: 'manualClinico' }),
+  pagina('exames-comparar', 'Comparar diagnósticos', '/manual-clinico/exames-laboratoriais/comparar', 'Exames Laboratoriais', 'scale',
+    ['comparar', 'diferenciar', 'diagnostico diferencial', 'ferropriva', 'talassemia'], { secao: 'manualClinico' }),
+  pagina('exames-doencas', 'Doenças e padrão esperado', '/manual-clinico/exames-laboratoriais/doencas', 'Exames Laboratoriais', 'microscope',
+    ['doenca', 'doencas', 'padrao esperado', 'anemia ferropriva', 'cirrose'], { secao: 'manualClinico' }),
+  pagina('exames-laboratorio-virtual', 'Laboratório Virtual', '/manual-clinico/exames-laboratoriais/laboratorio', 'Exames Laboratoriais', 'dices',
+    ['laboratorio virtual', 'gerar exame', 'praticar', 'caso', 'desafio'], { secao: 'manualClinico' }),
 
   // ── Radiologia ────────────────────────────────────────────────────────
   pagina('raio-x', 'Raio-X', '/manual-clinico/radiologia/raio-x', 'Radiologia', 'scan',

@@ -9,6 +9,7 @@ import {
   ChevronDown,
   Crown,
   Flame,
+  FlaskConical,
   Layers,
   Microscope,
   PersonStanding,
@@ -38,10 +39,10 @@ import {
  * Cada seção tinha a própria página, e cada página vendia a si mesma. Quem caía
  * na Histologia lia sobre 1.318 lâminas, via um preço e ia embora achando que
  * aquilo era um produto avulso — sem descobrir que o mesmo pagamento abre
- * outros seis manuais. O que faltava não era desconto: era a informação de que
+ * os outros manuais. O que faltava não era desconto: era a informação de que
  * a compra é uma só.
  *
- * A ordem aqui é deliberada e vale para as sete páginas: primeiro a faixa que
+ * A ordem aqui é deliberada e vale para todas as vitrines: primeiro a faixa que
  * diz que a compra é conjunta, depois a grade com o que cada manual tem dentro,
  * e **só então** o preço. Preço mostrado antes do valor vira comparação com
  * outro preço; mostrado depois, vira comparação com o que se recebe.
@@ -50,8 +51,7 @@ import {
  *
  * As vitrines não compartilham paleta: Ferramentas e Radiologia usam os tokens
  * de tema (viram claro e escuro com o resto do site), Anatomia e Histologia
- * abrem sobre herói escuro fixo, e o checkout é verde-escuro. Em vez de sete
- * variantes, cada componente aceita `tom`: `'tema'` segue os tokens, `'escuro'`
+ * abrem sobre herói escuro fixo, e o checkout é verde-escuro. Em vez de uma variante por vitrine, cada componente aceita `tom`: `'tema'` segue os tokens, `'escuro'`
  * usa superfícies claras sobre fundo escuro fixo.
  */
 
@@ -59,6 +59,7 @@ type Tom = 'tema' | 'escuro'
 
 const ICONES: Record<ModuloDoPacote['icone'], LucideIcon> = {
   BookOpen,
+  FlaskConical,
   Pill,
   Activity,
   ScanLine,
@@ -118,7 +119,7 @@ function reais(v: number) {
  *
  * Substitui o "incluso no Manual Clínico" que as vitrines usavam. A diferença
  * é a direção da frase: "incluso" pede que a pessoa já saiba o que é o Manual
- * Clínico; "7 manuais, 1 pagamento" funciona para quem nunca ouviu falar dele.
+ * Clínico; "N manuais, 1 pagamento" funciona para quem nunca ouviu falar dele.
  */
 export function SeloDoPacote({ tom = 'tema', className = '' }: { tom?: Tom; className?: string }) {
   const t = T[tom]
@@ -171,7 +172,7 @@ export function FaixaDoPacote({
             {i < outros.length - 2 ? ', ' : i === outros.length - 2 ? ' e ' : ''}
           </span>
         ))}
-        . Sete manuais, uma conta só — e quem já assina o Manual Clínico ou tem {PLUS_LABEL} já tem tudo isto sem
+        . Todos os manuais numa conta só — e quem já assina o Manual Clínico ou tem {PLUS_LABEL} já tem tudo isto sem
         pagar de novo.
       </p>
       <ul className="mt-3.5 flex flex-wrap gap-1.5">
@@ -195,7 +196,7 @@ export function FaixaDoPacote({
 /* ══════════════════════════════ GRADE ══════════════════════════════ */
 
 /**
- * O que existe dentro de cada um dos sete.
+ * O que existe dentro de cada um deles.
  *
  * É a peça que constrói valor, e por isso vem inteira antes do preço. Cada
  * cartão traz números reais do acervo — não adjetivos — porque a pessoa que
@@ -208,7 +209,7 @@ export function FaixaDoPacote({
 export function GradeDoPacote({
   atual,
   tom = 'tema',
-  titulo = 'Um pagamento abre os sete',
+  titulo = 'Um pagamento abre todos',
   className = '',
 }: {
   atual?: IdDoModulo | null
@@ -224,7 +225,7 @@ export function GradeDoPacote({
       <p className={`editorial-mark mb-2 ${tom === 'escuro' ? 'text-white/50' : ''}`}>O que entra na compra</p>
       <h2 className={`font-heading text-xl font-semibold tracking-tight sm:text-2xl ${t.texto}`}>{titulo}</h2>
       <p className={`mt-1.5 max-w-2xl text-sm leading-relaxed ${t.fraco}`}>
-        Nenhum deles é vendido à parte, e nenhum é uma versão reduzida do outro. São sete manuais completos,
+        Nenhum deles é vendido à parte, e nenhum é uma versão reduzida do outro. São manuais completos,
         liberados juntos no mesmo instante em que o pagamento é aprovado.
       </p>
 
@@ -350,7 +351,7 @@ export interface OfertaProps {
  * O bloco de preço — e ele só aparece depois do valor.
  *
  * A sequência interna repete, em miniatura, a sequência da página: primeiro o
- * que se recebe (os sete manuais, somados), depois quanto custa, e por último a
+ * que se recebe (todos os manuais, somados), depois quanto custa, e por último a
  * conta que encolhe o número — o total dividido por sete, e o custo por dia
  * quando o plano tem prazo. Dividir é honesto e desarma a objeção sem precisar
  * de mais desconto: o que se compara com o preço de um manual avulso não é o
@@ -483,7 +484,7 @@ export function OfertaDoPacote({
 /**
  * A barra do celular. Sem ela o preço e o botão somem no primeiro scroll.
  *
- * O rótulo diz "7 manuais" em vez do nome da seção porque é aqui que a pessoa
+ * O rótulo diz "N manuais" em vez do nome da seção porque é aqui que a pessoa
  * decide, e o que a faz decidir é o tamanho do que leva — não o nome da página
  * em que está.
  */
@@ -550,7 +551,7 @@ const PERGUNTAS_DO_PACOTE = [
   },
   {
     q: 'Dá para comprar só um deles, mais barato?',
-    a: 'Não existe venda avulsa de nenhuma seção — e é por isso que o preço é o que é. Cobrar sete vezes por sete manuais tornaria cada um mais caro do que o pacote inteiro custa hoje.',
+    a: 'Não existe venda avulsa de nenhuma seção — e é por isso que o preço é o que é. Cobrar por cada manual separadamente tornaria cada um mais caro do que o pacote inteiro custa hoje.',
   },
   {
     q: 'Já assino o Manual Clínico. Preciso pagar de novo por algum?',

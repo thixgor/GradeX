@@ -1,17 +1,17 @@
 /**
  * O que existe dentro do Manual Clínico.
  *
- * Sete manuais são liberados pela **mesma** compra — o servidor decide isso num
+ * Todos os manuais são liberados pela **mesma** compra — o servidor decide isso num
  * lugar só (`getManualClinicoAccess`), e todas as seções privativas consultam
  * essa mesma resposta. O problema nunca foi técnico: era de leitura. Cada seção
  * tinha a própria página de vendas, cada uma anunciava o próprio conteúdo, e
  * quem caía na Histologia por um link não tinha como saber que o mesmo
  * pagamento abre a Radiologia, o Eletrocardiograma e as 201 calculadoras.
- * Parecia sete produtos avulsos concorrendo entre si.
+ * Pareciam produtos avulsos concorrendo entre si.
  *
  * Este arquivo é a lista única do que entra no pacote. Todas as vitrines
- * importam daqui, então acrescentar um manual é editar um array — e não sete
- * páginas que já discordavam entre si sobre o que estava incluso.
+ * importam daqui, então acrescentar um manual é editar um array — e não uma
+ * página por seção, que já discordavam entre si sobre o que estava incluso.
  *
  * ## Sobre os números
  *
@@ -30,6 +30,7 @@
 
 export type IdDoModulo =
   | 'manual'
+  | 'exames'
   | 'farmacologia'
   | 'eletrocardiograma'
   | 'radiologia'
@@ -40,6 +41,7 @@ export type IdDoModulo =
 /** Nome do ícone em `lucide-react`, resolvido no componente que desenha. */
 export type IconeDoModulo =
   | 'BookOpen'
+  | 'FlaskConical'
   | 'Pill'
   | 'Activity'
   | 'ScanLine'
@@ -84,6 +86,22 @@ export const MODULOS_DO_PACOTE: ModuloDoPacote[] = [
     ],
     href: '/manual-clinico',
     icone: 'BookOpen',
+  },
+  {
+    id: 'exames',
+    nome: 'Exames Laboratoriais',
+    nomeCurto: 'Exames Laboratoriais',
+    chamada:
+      'A central de interpretação laboratorial: cada marcador com fisiologia, mecanismo de alteração, diagnósticos diferenciais e padrões — mais o Laboratório Virtual para praticar.',
+    destaque:
+      'Você não decora que a ferritina sobe na inflamação: você vê a cadeia inteira, da citocina ao número do laudo.',
+    numeros: [
+      { v: '100+', r: 'marcadores com ficha completa' },
+      { v: '25', r: 'padrões laboratoriais' },
+      { v: 'Lab', r: 'exames gerados para praticar' },
+    ],
+    href: '/manual-clinico/exames-laboratoriais',
+    icone: 'FlaskConical',
   },
   {
     id: 'farmacologia',
@@ -204,10 +222,10 @@ export function moduloPorId(id: IdDoModulo): ModuloDoPacote | undefined {
 }
 
 /**
- * Preço dividido pelos sete manuais.
+ * Preço dividido pelo número de manuais.
  *
  * É a conta que desarma a objeção de preço sem precisar de desconto: o número
- * que a pessoa compara com o cafezinho não é o total, é o total sobre sete.
+ * que a pessoa compara com o cafezinho não é o total, é o total dividido pelo número de manuais.
  * Devolve `null` quando não há preço para dividir, para a interface simplesmente
  * não mostrar a linha em vez de anunciar "R$ 0,00 por manual".
  */

@@ -62,7 +62,7 @@ const CAMADAS = [
 const PERGUNTAS = [
   {
     q: 'Domine Anatomia é vendido separado?',
-    a: 'Não — e nenhuma outra seção é. São sete manuais numa compra só: além do Domine Anatomia, o mesmo pagamento abre as 300+ patologias do Manual Clínico, a Farmacologia, o Manual do Eletrocardiograma, o Manual de Radiologia, o Manual de Histologia e as 201 Ferramentas Clínicas. Tudo isso também já vem incluído nas contas DomineAqui Plus+.',
+    a: 'Não — e nenhuma outra seção é. É tudo numa compra só: além do Domine Anatomia, o mesmo pagamento abre as 300+ patologias do Manual Clínico, a Farmacologia, o Manual do Eletrocardiograma, o Manual de Radiologia, o Manual de Histologia, os Exames Laboratoriais e as 201 Ferramentas Clínicas. Tudo isso também já vem incluído nas contas DomineAqui Plus+.',
   },
   {
     q: 'Preciso ter conta para comprar?',

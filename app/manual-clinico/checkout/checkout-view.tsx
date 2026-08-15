@@ -382,7 +382,7 @@ export default function ManualClinicoCheckoutView({
               <div className="absolute inset-0 bg-gradient-to-t from-[#031109] via-[#031109]/15 to-transparent" />
               {/* Era "Produto avulso" — o rótulo mais caro da página. Ele dizia à
                   pessoa, no momento de decidir, exatamente o contrário do que a
-                  compra faz: libera sete manuais de uma vez. */}
+                  compra faz: libera todos os manuais de uma vez. */}
               <div className="absolute bottom-4 left-4 flex items-center gap-2 rounded-full border border-amber-300/25 bg-black/45 px-3 py-1.5 text-xs font-black uppercase tracking-wide backdrop-blur-xl">
                 <Sparkles className="h-3.5 w-3.5 text-amber-200" />
                 {TOTAL_DE_MODULOS} manuais · 1 pagamento
@@ -400,7 +400,7 @@ export default function ManualClinicoCheckoutView({
             </div>
 
             {/* O valor antes do número: a pessoa chega aqui achando que compra um
-                manual. A lista mostra os sete que ela leva, com o tamanho de cada
+                manual. A lista mostra todos os que ela leva, com o tamanho de cada
                 um, antes de qualquer preço aparecer na tela. */}
             <div className="mb-5">
               <p className="text-base font-black text-white">Esta compra abre os {TOTAL_DE_MODULOS} manuais</p>

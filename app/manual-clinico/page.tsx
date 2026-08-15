@@ -46,7 +46,8 @@ import {
   CalendarClock,
   XCircle,
   CreditCard,
-  GraduationCap
+  GraduationCap,
+  FlaskConical
 } from 'lucide-react'
 import { AREAS_SAUDE, SISTEMAS_FISIOLOGICOS, type AreaSaude, type SistemaFisiologico } from '@/lib/types/manual-clinico'
 import { clearAllManualHighlights, hasAnyManualHighlights } from '@/lib/manual-clinico-highlights'
@@ -360,6 +361,11 @@ const TOUR_STEPS: TourStep[] = [
     target: '[data-tour="access"]',
     title: 'Seu acesso',
     body: 'Aqui você acompanha suas aberturas gratuitas ou desbloqueia o Manual inteiro — pagamento único, acesso imediato.',
+  },
+  {
+    target: '[data-tour="exames-laboratoriais"]',
+    title: 'Exames Laboratoriais',
+    body: 'A central de interpretação laboratorial: cada marcador com fisiologia, por que sobe, por que cai e como diferenciar — mais o Laboratório Virtual, que gera exames para você interpretar antes de ver a resposta. Privativo para assinantes e Plus+.',
   },
   {
     target: '[data-tour="farmacologia"]',
@@ -991,7 +997,7 @@ function ManualClinicoContent() {
         {/* ══════════ MAIN CONTENT ══════════ */}
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         {/* A informação que faltava antes de qualquer preço: a compra não é de um
-            manual, é dos sete. Vem antes do banner de conversão de propósito. */}
+            manual, é do pacote inteiro. Vem antes do banner de conversão de propósito. */}
         {ctasReady && !manualAccess.hasFullAccess && product?.isActive && (
           <FaixaDoPacote atual="manual" className="mb-4" />
         )}
@@ -1062,6 +1068,40 @@ function ManualClinicoContent() {
                 </div>
               </div>
               <ArrowRight className="h-5 w-5 shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
+            </div>
+          </button>
+        )}
+
+        {/* ══════════ EXAMES LABORATORIAIS ENTRY ══════════ */}
+        {/* Vem logo depois das Ferramentas porque é a mesma pergunta vista de
+            outro lado: lá a pessoa calcula um índice, aqui ela entende o valor
+            que alimentou a conta. */}
+        {!busca && (
+          <button
+            onClick={() => router.push('/manual-clinico/exames-laboratoriais')}
+            data-tour="exames-laboratoriais"
+            className="group mb-3 w-full overflow-hidden rounded-lg border border-emerald-700/20 bg-gradient-to-r from-emerald-700/[0.06] to-card p-4 text-left transition-colors hover:border-emerald-700/40"
+          >
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="rounded-xl bg-emerald-700/10 p-2.5">
+                  <FlaskConical className="h-5 w-5 text-emerald-700 dark:text-emerald-400" />
+                </div>
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="text-sm font-bold leading-snug">Exames Laboratoriais — DomineAqui Lab</p>
+                    <span className="inline-flex items-center gap-1 rounded-md border border-amber-300/25 bg-amber-400/10 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-amber-700 dark:text-amber-200">
+                      <Crown className="h-2.5 w-2.5" /> {PLUS_LABEL}
+                    </span>
+                  </div>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    Central de interpretação laboratorial: cada marcador com fisiologia, por que sobe, por que cai, a
+                    cadeia causal de cada doença, diagnósticos diferenciais lado a lado e padrões clássicos. Mais o
+                    Laboratório Virtual, que gera exames fictícios para você interpretar antes de ver a resposta.
+                  </p>
+                </div>
+              </div>
+              <ArrowRight className="h-5 w-5 shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5 group-hover:text-emerald-700" />
             </div>
           </button>
         )}

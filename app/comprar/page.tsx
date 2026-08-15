@@ -408,7 +408,7 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
             {/* Era "Produto avulso" — o rótulo dizia à pessoa, no momento de
-                decidir, o contrário do que a compra faz: libera sete manuais. */}
+                decidir, o contrário do que a compra faz: libera todos os manuais. */}
             <div className="absolute bottom-4 left-4 flex items-center gap-2 rounded-full border border-amber-500/30 bg-card/95 px-3 py-1.5 text-xs font-black uppercase tracking-wide shadow-sm">
               <Sparkles className="h-3.5 w-3.5 text-amber-600 dark:text-amber-300" />
               {TOTAL_DE_MODULOS} manuais · 1 pagamento

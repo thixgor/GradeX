@@ -4221,3 +4221,524 @@ body.roller-dragging {
     animation: none;
   }
 }
+
+/* ==========================================================================
+   DOMINEAQUI LAB — Exames Laboratoriais
+   --------------------------------------------------------------------------
+   A direção de arte nasce do objeto real: uma folha de laudo laboratorial.
+   Papel claro com uma leve textura de fibra, cabeçalho com fio duplo, números
+   em tipografia monoespaçada alinhados à direita, coluna de referência
+   discreta e a seta na margem.
+
+   Duas decisões governam o resto:
+
+   1. **Resultado normal é neutro.** Só o que está fora da faixa recebe cor. Se
+      tudo brilhasse, o olho perderia justamente o que a folha existe para
+      mostrar. Vermelho fica reservado ao que está muito alterado.
+
+   2. **Cada linha é clicável.** É o gesto central da seção — tocar o número
+      para descobrir por que ele está assim. Por isso a linha inteira tem área
+      de toque generosa e um estado de foco visível, e não apenas o nome.
+
+   A paleta segue a identidade do DomineAqui (verde profundo, creme, laranja
+   como acento) com um verde-petróleo próprio que separa a seção das demais
+   sem sair da família.
+   ========================================================================== */
+
+.lab {
+  --lab-tinta: 158 40% 22%;
+  --lab-papel: 40 45% 98%;
+  --lab-fio: 158 18% 78%;
+  --lab-realce: 18 65% 48%;
+}
+
+.dark .lab {
+  --lab-tinta: 158 32% 62%;
+  --lab-papel: 158 16% 10%;
+  --lab-fio: 158 14% 24%;
+  --lab-realce: 24 78% 58%;
+}
+
+/* Superfície da seção: papel com fibra e um halo frio de bancada. */
+.lab-superficie {
+  position: relative;
+  background-color: hsl(var(--background));
+}
+
+.lab-superficie::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 65% 45% at 50% -5%, hsl(var(--lab-tinta) / 0.09), transparent 62%),
+    radial-gradient(ellipse 40% 30% at 92% 4%, hsl(var(--lab-realce) / 0.05), transparent 60%);
+}
+
+.lab-superficie > * {
+  position: relative;
+  z-index: 1;
+}
+
+@media (forced-colors: active) {
+  .lab-superficie::before {
+    display: none;
+  }
+}
+
+/* ───────────────────────────── A folha ───────────────────────────── */
+
+.lab-folha {
+  position: relative;
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.75rem;
+  background: hsl(var(--card));
+  overflow: hidden;
+}
+
+/* Faixa de identidade no topo do papel. */
+.lab-folha::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: linear-gradient(90deg, hsl(var(--lab-tinta)), hsl(var(--lab-realce)) 70%, transparent);
+}
+
+.lab-cabecalho {
+  padding: 1.25rem 1.25rem 0.875rem;
+  border-bottom: 1px solid hsl(var(--border));
+  /* Fio duplo do laudo impresso: a borda acima e esta linha fina abaixo. */
+  box-shadow: inset 0 -3px 0 -2px hsl(var(--lab-fio));
+}
+
+.lab-marca {
+  font-family: var(--font-clinical), ui-monospace, monospace;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: hsl(var(--lab-tinta));
+}
+
+.lab-titulo-folha {
+  margin-top: 0.35rem;
+  font-family: var(--font-heading), Georgia, serif;
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.lab-meta {
+  font-family: var(--font-clinical), ui-monospace, monospace;
+  font-size: 0.6875rem;
+  color: hsl(var(--muted-foreground));
+}
+
+.lab-bloco + .lab-bloco {
+  border-top: 1px solid hsl(var(--border));
+}
+
+.lab-bloco-cabecalho {
+  padding: 0.75rem 1.25rem 0.35rem;
+}
+
+.lab-bloco-titulo {
+  font-family: var(--font-clinical), ui-monospace, monospace;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: hsl(var(--lab-tinta));
+}
+
+.lab-bloco-descricao {
+  margin-top: 0.15rem;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: hsl(var(--muted-foreground));
+}
+
+.lab-bloco-linhas {
+  padding-bottom: 0.5rem;
+}
+
+/* ───────────────────────── Linha de resultado ───────────────────────── */
+
+.lab-linha {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: 'nome valor' 'ref ref';
+  align-items: baseline;
+  gap: 0.15rem 0.75rem;
+  padding: 0.5rem 1.25rem;
+  border-top: 1px dotted hsl(var(--border));
+}
+
+@media (min-width: 640px) {
+  .lab-linha {
+    grid-template-columns: minmax(0, 1fr) 10.5rem 9rem;
+    grid-template-areas: 'nome valor ref';
+  }
+}
+
+.lab-bloco-linhas > .lab-linha:first-child {
+  border-top: 0;
+}
+
+.lab-linha-link {
+  text-decoration: none;
+  color: inherit;
+  transition: background-color 140ms ease;
+}
+
+@media (hover: hover) {
+  .lab-linha-link:hover {
+    background: hsl(var(--lab-tinta) / 0.06);
+  }
+}
+
+.lab-linha-link:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: -2px;
+  border-radius: 0.25rem;
+}
+
+.lab-linha-nome {
+  grid-area: nome;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.lab-linha-nota {
+  display: block;
+  margin-top: 0.1rem;
+  font-size: 0.6875rem;
+  font-weight: 400;
+  line-height: 1.4;
+  color: hsl(var(--muted-foreground));
+}
+
+.lab-linha-valor {
+  grid-area: valor;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  justify-self: end;
+  font-family: var(--font-clinical), ui-monospace, monospace;
+  white-space: nowrap;
+}
+
+@media (min-width: 640px) {
+  .lab-linha-valor {
+    justify-self: start;
+  }
+}
+
+.lab-numero {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.lab-unidade {
+  font-size: 0.6875rem;
+  opacity: 0.75;
+}
+
+.lab-seta {
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.lab-linha-ref {
+  grid-area: ref;
+  font-family: var(--font-clinical), ui-monospace, monospace;
+  font-size: 0.6875rem;
+  color: hsl(var(--muted-foreground));
+  font-variant-numeric: tabular-nums;
+}
+
+/* ───────────────────────────── Avisos ───────────────────────────── */
+
+.lab-aviso {
+  font-size: 0.6875rem;
+  line-height: 1.6;
+  color: hsl(var(--muted-foreground));
+  border-top: 1px dashed hsl(var(--border));
+  padding-top: 0.625rem;
+}
+
+.lab-aviso-contexto {
+  border: 1px solid hsl(var(--lab-tinta) / 0.25);
+  background: hsl(var(--lab-tinta) / 0.05);
+  border-radius: 0.625rem;
+  padding: 0.875rem 1rem;
+}
+
+.lab-aviso-contexto-titulo {
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.lab-aviso-contexto-conta {
+  margin-top: 0.4rem;
+  font-size: 0.75rem;
+  line-height: 1.7;
+  color: hsl(var(--muted-foreground));
+}
+
+.lab-aviso-contexto-conta span {
+  color: hsl(var(--lab-tinta));
+  font-weight: 700;
+  padding: 0 0.1rem;
+}
+
+.lab-aviso-contexto-conta .lab-igual {
+  color: hsl(var(--lab-realce));
+}
+
+.lab-advertencia {
+  border-left: 3px solid hsl(var(--lab-realce));
+  background: hsl(var(--lab-realce) / 0.07);
+  border-radius: 0 0.5rem 0.5rem 0;
+  padding: 0.75rem 0.9rem;
+  font-size: 0.8125rem;
+  line-height: 1.65;
+}
+
+/* ───────────────────────────── Fluxo causal ───────────────────────────── */
+
+.lab-fluxo {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.lab-fluxo-etapa {
+  position: relative;
+  display: flex;
+  gap: 0.7rem;
+  padding: 0 0 0.85rem 0;
+}
+
+.lab-fluxo-etapa:last-child {
+  padding-bottom: 0;
+}
+
+/* O fio que liga uma etapa à seguinte. */
+.lab-fluxo-etapa:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: 0.3125rem;
+  top: 0.9rem;
+  bottom: 0.1rem;
+  width: 1px;
+  background: linear-gradient(hsl(var(--lab-tinta) / 0.45), hsl(var(--lab-tinta) / 0.12));
+}
+
+.lab-fluxo-marca {
+  flex: none;
+  margin-top: 0.35rem;
+  width: 0.6875rem;
+  height: 0.6875rem;
+  border-radius: 9999px;
+  border: 2px solid hsl(var(--lab-tinta) / 0.55);
+  background: hsl(var(--card));
+}
+
+.lab-fluxo-etapa:last-child .lab-fluxo-marca {
+  background: hsl(var(--lab-realce));
+  border-color: hsl(var(--lab-realce));
+}
+
+.lab-fluxo-titulo {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.lab-fluxo-detalhe {
+  margin-top: 0.15rem;
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: hsl(var(--muted-foreground));
+}
+
+.lab-fluxo-compacto .lab-fluxo-etapa {
+  padding-bottom: 0.5rem;
+}
+
+.lab-fluxo-compacto .lab-fluxo-titulo {
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* ───────────────────────── Tabela comparativa ───────────────────────── */
+
+.lab-tabela-scroll {
+  overflow-x: auto;
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.625rem;
+  -webkit-overflow-scrolling: touch;
+}
+
+.lab-tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+  min-width: 34rem;
+}
+
+.lab-tabela thead th {
+  position: sticky;
+  top: 0;
+  background: hsl(var(--muted) / 0.7);
+  backdrop-filter: blur(4px);
+  font-family: var(--font-clinical), ui-monospace, monospace;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-align: left;
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.lab-tabela tbody th {
+  text-align: left;
+  font-weight: 600;
+  padding: 0.55rem 0.75rem;
+  white-space: nowrap;
+}
+
+.lab-tabela td {
+  padding: 0.55rem 0.75rem;
+  font-family: var(--font-clinical), ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.lab-tabela tbody tr + tr th,
+.lab-tabela tbody tr + tr td {
+  border-top: 1px dotted hsl(var(--border));
+}
+
+.lab-cel-alta {
+  color: hsl(38 74% 34%);
+  font-weight: 600;
+}
+
+.lab-cel-baixa {
+  color: hsl(205 70% 34%);
+  font-weight: 600;
+}
+
+.dark .lab-cel-alta {
+  color: hsl(38 82% 66%);
+}
+
+.dark .lab-cel-baixa {
+  color: hsl(205 80% 68%);
+}
+
+/* ───────────────────────────── Etiquetas ───────────────────────────── */
+
+.lab-etiqueta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  padding: 0.15rem 0.5rem;
+  font-family: var(--font-clinical), ui-monospace, monospace;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.lab-etiqueta-neutro {
+  border-color: hsl(var(--border));
+  background: hsl(var(--muted) / 0.6);
+  color: hsl(var(--muted-foreground));
+}
+
+.lab-etiqueta-destaque {
+  border-color: hsl(var(--lab-tinta) / 0.3);
+  background: hsl(var(--lab-tinta) / 0.1);
+  color: hsl(var(--lab-tinta));
+}
+
+.lab-etiqueta-alta {
+  border-color: hsl(38 74% 45% / 0.35);
+  background: hsl(38 74% 50% / 0.12);
+  color: hsl(38 74% 32%);
+}
+
+.lab-etiqueta-baixa {
+  border-color: hsl(205 70% 45% / 0.35);
+  background: hsl(205 70% 50% / 0.12);
+  color: hsl(205 70% 32%);
+}
+
+.lab-etiqueta-alerta {
+  border-color: hsl(0 65% 50% / 0.35);
+  background: hsl(0 65% 50% / 0.1);
+  color: hsl(0 65% 40%);
+}
+
+.dark .lab-etiqueta-alta {
+  color: hsl(38 82% 66%);
+}
+
+.dark .lab-etiqueta-baixa {
+  color: hsl(205 80% 68%);
+}
+
+.dark .lab-etiqueta-alerta {
+  color: hsl(0 75% 70%);
+}
+
+/* ───────────────────────── Cartão de seção ───────────────────────── */
+
+.lab-cartao {
+  position: relative;
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.75rem;
+  background: hsl(var(--card));
+  transition: border-color 160ms ease, transform 160ms ease;
+}
+
+@media (hover: hover) {
+  .lab-cartao-link:hover {
+    border-color: hsl(var(--lab-tinta) / 0.45);
+    transform: translateY(-1px);
+  }
+}
+
+.lab-rubrica {
+  font-family: var(--font-clinical), ui-monospace, monospace;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: hsl(var(--lab-tinta));
+}
+
+/* Régua fina que separa seções longas sem pesar como uma borda. */
+.lab-regua {
+  height: 1px;
+  background: repeating-linear-gradient(
+    90deg,
+    hsl(var(--border)) 0 6px,
+    transparent 6px 12px
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lab-cartao,
+  .lab-linha-link {
+    transition: none;
+  }
+}

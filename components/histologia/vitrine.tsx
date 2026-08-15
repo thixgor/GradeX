@@ -152,7 +152,7 @@ export function VitrineDaHistologia({
 
       <SemComparacao />
 
-      {/* O valor inteiro antes do número: a grade dos sete manuais é a última
+      {/* O valor inteiro antes do número: a grade de todos os manuais é a última
           coisa que a pessoa lê antes de ver quanto custa. */}
       <section className="mx-auto max-w-6xl px-4 pt-14">
         <GradeDoPacote atual="histologia" />
@@ -822,7 +822,7 @@ function SemComparacao() {
 const PERGUNTAS = [
   {
     q: 'O Manual da Histologia é vendido separado?',
-    a: 'Não — e nenhuma outra seção é. São sete manuais numa compra só: além da Histologia, o mesmo pagamento abre as patologias do Manual Clínico, a Farmacologia, o Manual do Eletrocardiograma, o Manual de Radiologia, o Domine Anatomia e as Ferramentas Clínicas. Tudo isso também já vem incluído nas contas DomineAqui Plus+.',
+    a: 'Não — e nenhuma outra seção é. É tudo numa compra só: além da Histologia, o mesmo pagamento abre as patologias do Manual Clínico, a Farmacologia, o Manual do Eletrocardiograma, o Manual de Radiologia, os Exames Laboratoriais, o Domine Anatomia e as Ferramentas Clínicas. Tudo isso também já vem incluído nas contas DomineAqui Plus+.',
   },
   {
     q: 'Preciso ter conta para comprar?',

@@ -12,6 +12,7 @@ export type SidebarSectionKey =
   | 'farmacologia'
   | 'anatomia3d'
   | 'manualHistologia'
+  | 'manualExames'
   | 'manualRadiologia'
   | 'manualEletro'
   | 'materiais'
@@ -124,6 +125,13 @@ export const SIDEBAR_SECTION_DEFINITIONS: SidebarSectionDefinition[] = [
     label: 'Manual da Histologia',
     href: '/manual-clinico/histologia',
     description: 'Atlas de histologia com microscópio virtual e lâminas reais.',
+    defaultEnabled: false,
+  },
+  {
+    key: 'manualExames',
+    label: 'Exames Laboratoriais',
+    href: '/manual-clinico/exames-laboratoriais',
+    description: 'Central de interpretação laboratorial e Laboratório Virtual.',
     defaultEnabled: false,
   },
   {
