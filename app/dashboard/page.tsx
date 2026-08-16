@@ -415,7 +415,14 @@ function DashboardContent() {
             Primeira coisa da página: quem chega sabendo o que quer
             não deveria precisar caçar a área no menu.
            ═══════════════════════════════════════════════════════ */}
-        <BuscaGlobal className="dash-rise" onAbrirTour={() => tour.start(tour.initialStep)} />
+        {/* O atalho ⌘K vive na instância do menu lateral, que existe em todas
+            as telas. Aqui ele fica desligado para o mesmo toque não abrir dois
+            painéis sobrepostos. */}
+        <BuscaGlobal
+          className="dash-rise"
+          atalhoGlobal={false}
+          onAbrirTour={() => tour.start(tour.initialStep)}
+        />
 
         {/* ═══════════════════════════════════════════════════════
             1. HERO FOCUS SECTION

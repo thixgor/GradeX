@@ -148,8 +148,8 @@ function buildScript(firstName: string): TourStep[] {
       eyebrow: 'O mapa',
       title: 'O menu é o seu mapa — ele nunca sai daqui',
       body:
-        'Tudo que existe na plataforma está nessa lista, sempre no mesmo lugar e na mesma ordem. No computador ela fica fixa à esquerda; no celular, aparece pelo botão de menu no topo. Se você se perder em qualquer tela, é para cá que se volta.',
-      hint: 'Início leva de volta a esta dashboard, de qualquer página.',
+        'Tudo que existe na plataforma está nessa lista, sempre no mesmo lugar e na mesma ordem. As áreas do dia a dia ficam soltas; conjuntos grandes, como o Manual Clínico, vivem dentro de um item que abre e fecha. No computador o menu fica fixo à esquerda; no celular, aparece pelo botão no topo.',
+      hint: 'Perdido? O campo de busca no topo do menu acha qualquer coisa — atalho ⌘K.',
       needsSidebar: true,
     },
     {

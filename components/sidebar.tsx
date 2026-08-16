@@ -1,40 +1,24 @@
 'use client'
 
 import { useRouter, usePathname } from 'next/navigation'
-import { useRef, useState, useCallback, useEffect } from 'react'
+import { useRef, useState, useCallback, useEffect, useMemo } from 'react'
+import { createPortal } from 'react-dom'
 import { motion, useMotionValue, useSpring, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Logo } from '@/components/logo'
 import { cn } from '@/lib/utils'
 import {
-  FileText,
-  Brain,
-  BookMarked,
-  MessageCircle,
-  Video,
   User as UserIcon,
   Settings,
   Plus,
   ChevronLeft,
+  ChevronDown,
   ChevronRight,
   ShoppingCart,
   LogOut,
   Home,
   X,
-  Database,
-  Lock,
-  Gamepad2,
-  HeartPulse,
-  BookOpen,
-  Network,
-  Ticket,
   Zap,
-  Calculator,
-  Pill,
-  Box,
-  Microscope,
-  ScanLine,
-  Activity,
 } from 'lucide-react'
 import {
   getVisibleSidebarSections,
@@ -42,11 +26,20 @@ import {
   type SidebarSectionOrder,
   type SidebarSectionSettings,
 } from '@/lib/sidebar-sections'
+import {
+  buildSidebarTree,
+  normalizeSidebarGroups,
+  normalizeSidebarSectionGroups,
+  type SidebarGroupDefinition,
+  type SidebarSectionGroups,
+  type SidebarTreeNode,
+} from '@/lib/sidebar-groups'
 import { normalizeSidebarIcons, type SidebarSectionIcons } from '@/lib/sidebar-icons'
 import { getSidebarIconComponent } from '@/components/sidebar-icon-map'
 import { isPlusAccount } from '@/lib/account-tier'
 import { useLiteMode } from '@/hooks/use-lite-mode'
 import { ScrollRoller } from '@/components/ui/scroll-roller'
+import { BuscaGlobal } from '@/components/busca/busca-global'
 
 interface SidebarProps {
   user: {
@@ -68,9 +61,15 @@ interface SidebarProps {
   sidebarSections?: SidebarSectionSettings | null
   sidebarSectionOrder?: SidebarSectionOrder | null
   sidebarSectionIcons?: SidebarSectionIcons | null
+  sidebarGroups?: SidebarGroupDefinition[] | null
+  sidebarSectionGroups?: SidebarSectionGroups | null
 }
 
 interface NavItem {
+  /** Identidade estável do item. Substitui o índice numérico de antes: com os
+   *  grupos abrindo e fechando, a posição na lista deixou de ser um endereço
+   *  confiável (era o que fazia a bolha de vidro pousar no item errado). */
+  id: string
   icon: React.ReactNode
   label: string
   href?: string
@@ -92,17 +91,23 @@ const SECTION_BADGES: Partial<Record<SidebarSectionKey, string>> = {
 const SB_DUR = '400ms'
 const SB_EASE = 'cubic-bezier(0.4, 0, 0.2, 1)'
 
+const OPEN_GROUPS_STORAGE_KEY = 'gradex:sidebar-grupos-abertos'
+
 // ─── Fluid Glass Bubble ─────────────────────────────────────
 function FluidGlassBubble({
   navRef,
-  hoveredIndex,
+  hoveredId,
   isVisible,
   collapsed,
+  /** Muda sempre que a lista muda de altura (grupo abriu/fechou), para a bolha
+   *  remedir a posição do item em vez de ficar pousada onde ele estava. */
+  layoutVersion,
 }: {
   navRef: React.RefObject<HTMLElement | null>
-  hoveredIndex: number | null
+  hoveredId: string | null
   isVisible: boolean
   collapsed: boolean
+  layoutVersion: number
 }) {
   const springY = { stiffness: 500, damping: 38, mass: 0.6 }
   const springSize = { stiffness: 400, damping: 32, mass: 0.4 }
@@ -112,10 +117,9 @@ function FluidGlassBubble({
   const squeeze = useSpring(useMotionValue(1), { stiffness: 600, damping: 28 })
 
   useEffect(() => {
-    if (hoveredIndex === null || !navRef.current) return
+    if (!hoveredId || !navRef.current) return
 
-    const items = navRef.current.querySelectorAll<HTMLElement>('[data-nav-item]')
-    const item = items[hoveredIndex]
+    const item = navRef.current.querySelector<HTMLElement>(`[data-nav-item="${hoveredId}"]`)
     if (!item) return
 
     const navRect = navRef.current.getBoundingClientRect()
@@ -128,11 +132,11 @@ function FluidGlassBubble({
     squeeze.set(0.97)
     const t = setTimeout(() => squeeze.set(1), 60)
     return () => clearTimeout(t)
-  }, [hoveredIndex, navRef, bubbleY, bubbleH, squeeze, collapsed])
+  }, [hoveredId, navRef, bubbleY, bubbleH, squeeze, collapsed, layoutVersion])
 
   return (
     <AnimatePresence>
-      {isVisible && hoveredIndex !== null && (
+      {isVisible && hoveredId && (
         <motion.div
           className="liquid-glass-bubble"
           initial={{ opacity: 0, scale: 0.9 }}
@@ -167,30 +171,33 @@ function FluidGlassBubble({
 // No AnimatePresence on text — avoids layout-shift bugs (e.g. Games icon jump).
 function NavItemButton({
   item,
-  index,
-  hoveredIndex,
-  pressedIndex,
+  hoveredId,
+  pressedId,
   collapsed,
   isItemActive,
   onHover,
   onPress,
   onRelease,
   onClick,
-  staggerDelay,
+  staggerIndex,
   skipEntrance,
   lite,
+  /** Item dentro de um grupo: recua e ganha o fio-guia à esquerda. */
+  nested,
+  /** Seta do acordeão, quando o item é o cabeçalho de um grupo. */
+  trailing,
+  ariaExpanded,
 }: {
   item: NavItem
-  index: number
-  hoveredIndex: number | null
-  pressedIndex: number | null
+  hoveredId: string | null
+  pressedId: string | null
   collapsed: boolean
   isItemActive: boolean
-  onHover: (index: number) => void
-  onPress: (index: number) => void
+  onHover: (item: NavItem, event: React.MouseEvent<HTMLButtonElement>) => void
+  onPress: (item: NavItem) => void
   onRelease: () => void
   onClick: () => void
-  staggerDelay: number
+  staggerIndex: number
   // On remount after a route change the whole sidebar re-renders; replaying the
   // staggered slide-in every navigation is what reads as "flickering". After the
   // first mount of the session we skip the entrance and the item is simply there.
@@ -199,18 +206,22 @@ function NavItemButton({
   // ~20 animações simultâneas na abertura do menu — em aparelho fraco é o
   // momento em que a sidebar mais engasga. Aqui elas simplesmente não rodam.
   lite: boolean
+  nested?: boolean
+  trailing?: React.ReactNode
+  ariaExpanded?: boolean
 }) {
-  const isHovered = hoveredIndex === index
-  const isPressed = pressedIndex === index
+  const isHovered = hoveredId === item.id
+  const isPressed = pressedId === item.id
   const isGradient = item.variant === 'gradient'
-  const isLogout = item.label === 'Sair'
+  const isLogout = item.id === 'action:logout'
 
   // Stagger: each item's label fades slightly after the previous
-  const staggerMs = index * 25
+  const staggerMs = staggerIndex * 25
 
   return (
     <motion.button
-      data-nav-item
+      data-nav-item={item.id}
+      aria-expanded={ariaExpanded}
       initial={skipEntrance || lite ? false : { opacity: 0, x: -12 }}
       animate={{ opacity: 1, x: 0, scale: !lite && isPressed ? 0.97 : 1 }}
       transition={
@@ -218,11 +229,11 @@ function NavItemButton({
           ? { duration: 0 }
           : skipEntrance
             ? { duration: 0.15, ease: [0.16, 1, 0.3, 1] }
-            : { duration: 0.35, delay: staggerDelay, ease: [0.16, 1, 0.3, 1] }
+            : { duration: 0.35, delay: staggerIndex * 0.03, ease: [0.16, 1, 0.3, 1] }
       }
-      onMouseEnter={() => onHover(index)}
+      onMouseEnter={(event) => onHover(item, event)}
       onPointerDown={(event) => {
-        if (event.pointerType === 'touch' || event.pointerType === 'pen') onPress(index)
+        if (event.pointerType === 'touch' || event.pointerType === 'pen') onPress(item)
       }}
       onPointerUp={onRelease}
       onPointerCancel={onRelease}
@@ -242,7 +253,7 @@ function NavItemButton({
         isItemActive && !isGradient && !isLogout && 'sidebar-fluid-item-active text-primary font-semibold'
       )}
       style={{
-        paddingLeft: collapsed ? 0 : 12,
+        paddingLeft: collapsed ? 0 : nested ? 26 : 12,
         paddingRight: collapsed ? 0 : 12,
         gap: collapsed ? 0 : 12,
         justifyContent: collapsed ? 'center' : 'flex-start',
@@ -272,6 +283,7 @@ function NavItemButton({
           'flex-shrink-0 sidebar-nav-chip',
           isGradient && 'sidebar-nav-chip-gradient',
           isLogout && 'sidebar-nav-chip-danger',
+          nested && 'sidebar-nav-chip-nested',
         )}
       >
         {item.icon}
@@ -325,13 +337,27 @@ function NavItemButton({
           PRO
         </span>
       )}
+
+      {trailing && (
+        <span
+          className={cn('ml-auto flex items-center', !item.badge && 'ml-auto')}
+          style={{
+            maxWidth: collapsed ? 0 : 24,
+            opacity: collapsed ? 0 : 1,
+            overflow: 'hidden',
+            transition: `opacity 150ms ${SB_EASE}, max-width ${SB_DUR} ${SB_EASE}`,
+          }}
+        >
+          {trailing}
+        </span>
+      )}
     </motion.button>
   )
 }
 
 // ─── Module-level state (survives component remount across navigations) ───
 let _mouseInsideSidebar = false
-let _lastClickedIndex: number | null = null
+let _lastClickedId: string | null = null
 // True once the sidebar has mounted at least once this session. Because AppShell
 // (and the sidebar with it) is mounted per-page, every navigation remounts this
 // component; without this flag the entrance stagger replays on each route change
@@ -341,6 +367,10 @@ let _hasMountedOnce = false
 // remonta a cada navegação — num ref o conjunto seria perdido e o prefetch
 // rodaria de novo toda vez.
 const _prefetchedRoutes = new Set<string>()
+// Grupos abertos/fechados. Mesmo motivo: sem este cache de módulo, cada
+// navegação remontaria a sidebar com tudo fechado e só depois o efeito leria o
+// localStorage — o grupo aberto piscaria fechado a cada clique.
+let _openGroups: Record<string, boolean> | null = null
 
 // ─── Sidebar ─────────────────────────────────────────────────
 export function Sidebar({
@@ -357,16 +387,20 @@ export function Sidebar({
   sidebarSections,
   sidebarSectionOrder,
   sidebarSectionIcons,
+  sidebarGroups,
+  sidebarSectionGroups,
 }: SidebarProps) {
   const router = useRouter()
   const pathname = usePathname()
   const navRef = useRef<HTMLElement>(null)
   const { liteMode, preference: litePreference, toggleLiteMode } = useLiteMode()
 
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(_lastClickedIndex)
+  const [hoveredId, setHoveredId] = useState<string | null>(_lastClickedId)
   const [isInNav, setIsInNav] = useState(_mouseInsideSidebar)
-  const [pressedIndex, setPressedIndex] = useState<number | null>(null)
+  const [pressedId, setPressedId] = useState<string | null>(null)
   const [canCollapse, setCanCollapse] = useState(false)
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() => _openGroups ?? {})
+  const [layoutVersion, setLayoutVersion] = useState(0)
 
   // Snapshot the "already mounted" flag before flipping it, so the first mount
   // still animates in while every subsequent navigation renders the nav instantly.
@@ -385,12 +419,27 @@ export function Sidebar({
   // acrescentar uma área.
   const resolvedIcons = normalizeSidebarIcons(sidebarSectionIcons)
 
-  const mainNavItems: NavItem[] = [
-    { icon: <Home className="h-5 w-5" />, label: 'Início', href: '/dashboard' },
-    ...getVisibleSidebarSections(sidebarSections, sidebarSectionOrder, isAdmin).map(
-      (section): NavItem => {
-        const Icon = getSidebarIconComponent(resolvedIcons[section.key])
-        return {
+  const groups = useMemo(() => normalizeSidebarGroups(sidebarGroups), [sidebarGroups])
+  const assignments = useMemo(
+    () => normalizeSidebarSectionGroups(sidebarSectionGroups, groups),
+    [sidebarSectionGroups, groups]
+  )
+
+  const isActive = useCallback(
+    (href?: string) => {
+      if (!href) return false
+      if (href === '/dashboard') return pathname === '/dashboard' || pathname === '/'
+      return pathname.startsWith(href)
+    },
+    [pathname]
+  )
+
+  /** Item de menu a partir de uma seção configurada pelo admin. */
+  const sectionToNavItem = useCallback(
+    (section: { key: SidebarSectionKey; label: string; href: string }): NavItem => {
+      const Icon = getSidebarIconComponent(resolvedIcons[section.key])
+      return {
+        id: `section:${section.key}`,
         icon: <Icon className="h-5 w-5" />,
         label: section.label,
         href: section.href,
@@ -401,31 +450,107 @@ export function Sidebar({
               : undefined
             : SECTION_BADGES[section.key],
         sectionKey: section.key,
-        }
       }
-    ),
-  ]
+    },
+    [resolvedIcons, isAdmin, user?.accountType]
+  )
+
+  const homeItem: NavItem = {
+    id: 'section:inicio',
+    icon: <Home className="h-5 w-5" />,
+    label: 'Início',
+    href: '/dashboard',
+  }
+
+  const tree: SidebarTreeNode[] = useMemo(
+    () =>
+      buildSidebarTree(
+        getVisibleSidebarSections(sidebarSections, sidebarSectionOrder, isAdmin),
+        groups,
+        assignments
+      ),
+    [sidebarSections, sidebarSectionOrder, isAdmin, groups, assignments]
+  )
+
+  /** Um grupo com a rota atual dentro fica aberto à força: esconder a página em
+   *  que o usuário está seria o pior efeito colateral possível do acordeão. */
+  const groupHasActiveSection = useCallback(
+    (node: Extract<SidebarTreeNode, { type: 'group' }>) =>
+      node.sections.some((section) => isActive(section.href)),
+    [isActive]
+  )
+
+  const isGroupOpen = useCallback(
+    (node: Extract<SidebarTreeNode, { type: 'group' }>) => {
+      if (groupHasActiveSection(node)) return true
+      const stored = openGroups[node.group.key]
+      return stored === undefined ? node.group.defaultOpen : stored
+    },
+    [openGroups, groupHasActiveSection]
+  )
+
+  const toggleGroup = useCallback((groupKey: string, open: boolean) => {
+    setOpenGroups((current) => {
+      const next = { ...current, [groupKey]: open }
+      _openGroups = next
+      try {
+        window.localStorage.setItem(OPEN_GROUPS_STORAGE_KEY, JSON.stringify(next))
+      } catch {
+        // modo privado / storage cheio — o menu segue funcionando na sessão
+      }
+      return next
+    })
+    setLayoutVersion((v) => v + 1)
+  }, [])
+
+  // Lê a preferência salva uma única vez por sessão. Em `useState` direto isso
+  // divergiria da renderização do servidor (o HTML sai sem localStorage).
+  useEffect(() => {
+    if (_openGroups) return
+    try {
+      const raw = window.localStorage.getItem(OPEN_GROUPS_STORAGE_KEY)
+      const parsed = raw ? JSON.parse(raw) : {}
+      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+        _openGroups = parsed as Record<string, boolean>
+        setOpenGroups(parsed as Record<string, boolean>)
+      } else {
+        _openGroups = {}
+      }
+    } catch {
+      _openGroups = {}
+    }
+  }, [])
 
   const secondaryNavItems: NavItem[] = [
-    { icon: <UserIcon className="h-5 w-5" />, label: 'Meu Perfil', href: '/profile' },
-    { icon: <ShoppingCart className="h-5 w-5" />, label: 'Upgrade', href: '/buy', variant: 'gradient' },
+    { id: 'nav:profile', icon: <UserIcon className="h-5 w-5" />, label: 'Meu Perfil', href: '/profile' },
   ]
 
   if (isAdmin) {
-    secondaryNavItems.push({ icon: <Settings className="h-5 w-5" />, label: 'Painel Admin', href: '/admin' })
+    secondaryNavItems.push({
+      id: 'nav:admin',
+      icon: <Settings className="h-5 w-5" />,
+      label: 'Painel Admin',
+      href: '/admin',
+    })
   }
 
-  // Modo Lite no menu principal, com o estado à vista (ON/OFF/AUTO). Ficava só
+  // Modo Lite junto do perfil, com o estado à vista (ON/OFF/AUTO). Ficava só
   // no fim do /profile — quem tem aparelho fraco nunca chegava lá.
   const liteNavItem: NavItem = {
+    id: 'action:lite',
     icon: <Zap className={cn('h-5 w-5', liteMode && 'fill-current')} />,
     label: 'Modo Lite',
     badge: liteMode ? (litePreference === 'auto' ? 'Auto' : 'Ativo') : 'Off',
     onClick: toggleLiteMode,
   }
 
-  const liteIndex = mainNavItems.length + secondaryNavItems.length
-  const logoutIndex = liteIndex + 1
+  const upgradeItem: NavItem = {
+    id: 'nav:upgrade',
+    icon: <ShoppingCart className="h-5 w-5" />,
+    label: 'Upgrade',
+    href: '/buy',
+    variant: 'gradient',
+  }
 
   // ── Aquecimento das rotas do menu ────────────────────────────────────
   // Os itens são <button> com router.push, não <Link>, então o Next nunca
@@ -433,10 +558,15 @@ export function Sidebar({
   // DEPOIS do clique. Aqui pedimos o prefetch de todas as rotas visíveis do
   // menu assim que o browser fica ocioso — uma única vez por sessão. Depois
   // disso, cada navegação da sidebar já encontra o destino em cache.
-  const navHrefsKey = [...mainNavItems, ...secondaryNavItems]
-    .map((item) => item.href ?? '')
-    .filter(Boolean)
-    .join(',')
+  const navHrefsKey = useMemo(() => {
+    const hrefs = [homeItem.href, ...secondaryNavItems.map((item) => item.href), upgradeItem.href]
+    for (const node of tree) {
+      if (node.type === 'section') hrefs.push(node.section.href)
+      else hrefs.push(...node.sections.map((section) => section.href))
+    }
+    return hrefs.filter(Boolean).join(',')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tree, isAdmin])
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -483,21 +613,18 @@ export function Sidebar({
     [router],
   )
 
-  const handleNavClick = (item: NavItem, index: number) => {
-    _lastClickedIndex = index
-    setPressedIndex(null)
-    setHoveredIndex(index)
+  const handleNavClick = useCallback(
+    (item: NavItem) => {
+      _lastClickedId = item.id
+      setPressedId(null)
+      setHoveredId(item.id)
 
-    if (item.onClick) item.onClick()
-    else if (item.href) router.push(item.href)
-    if (typeof window !== 'undefined' && window.innerWidth < 1024) onClose()
-  }
-
-  const isActive = (href?: string) => {
-    if (!href) return false
-    if (href === '/dashboard') return pathname === '/dashboard' || pathname === '/'
-    return pathname.startsWith(href)
-  }
+      if (item.onClick) item.onClick()
+      else if (item.href) router.push(item.href)
+      if (typeof window !== 'undefined' && window.innerWidth < 1024) onClose()
+    },
+    [router, onClose]
+  )
 
   const handleNavMouseEnter = useCallback(() => {
     _mouseInsideSidebar = true
@@ -505,34 +632,44 @@ export function Sidebar({
   }, [])
   const handleNavMouseLeave = useCallback(() => {
     _mouseInsideSidebar = false
-    _lastClickedIndex = null
+    _lastClickedId = null
     setIsInNav(false)
-    setHoveredIndex(null)
+    setHoveredId(null)
   }, [])
 
-  const handleNavPress = useCallback((index: number) => {
-    setPressedIndex(index)
-    setHoveredIndex(index)
+  const handleNavPress = useCallback((item: NavItem) => {
+    setPressedId(item.id)
+    setHoveredId(item.id)
   }, [])
 
   const handleNavRelease = useCallback(() => {
-    setPressedIndex(null)
+    setPressedId(null)
   }, [])
 
   useEffect(() => {
-    if (_lastClickedIndex !== null) {
+    if (_lastClickedId !== null) {
       setIsInNav(true)
-      setHoveredIndex(_lastClickedIndex)
+      setHoveredId(_lastClickedId)
       return
     }
     if (!_mouseInsideSidebar) return
     setIsInNav(true)
 
-    const allItems = [...mainNavItems, ...secondaryNavItems]
-    const activeIdx = allItems.findIndex(item => isActive(item.href))
-    if (activeIdx !== -1) {
-      setHoveredIndex(activeIdx)
+    for (const node of tree) {
+      if (node.type === 'section') {
+        if (isActive(node.section.href)) {
+          setHoveredId(`section:${node.section.key}`)
+          return
+        }
+        continue
+      }
+      const activeChild = node.sections.find((section) => isActive(section.href))
+      if (activeChild) {
+        setHoveredId(`section:${activeChild.key}`)
+        return
+      }
     }
+    if (isActive(homeItem.href)) setHoveredId(homeItem.id)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname])
 
@@ -545,7 +682,182 @@ export function Sidebar({
     return () => media.removeEventListener('change', update)
   }, [])
 
-  const bubbleVisible = isInNav || pressedIndex !== null
+  const bubbleVisible = isInNav || pressedId !== null
+
+  // ── Menu flutuante do grupo (só no modo recolhido) ────────────────────
+  // A 72px não cabe acordeão: o grupo vira ícone e as seções aparecem num
+  // painel ao lado. Posição `fixed` porque o <aside> é `overflow-hidden` —
+  // dentro dele o painel seria cortado.
+  const [flyout, setFlyout] = useState<{ groupKey: string; top: number } | null>(null)
+  const flyoutTimer = useRef<number | null>(null)
+
+  const cancelFlyoutClose = useCallback(() => {
+    if (flyoutTimer.current !== null) {
+      window.clearTimeout(flyoutTimer.current)
+      flyoutTimer.current = null
+    }
+  }, [])
+
+  const scheduleFlyoutClose = useCallback(() => {
+    cancelFlyoutClose()
+    // Folga generosa de propósito: entre a borda do menu recolhido e o painel
+    // existem alguns pixels de vão, e fechar durante essa travessia faria o
+    // painel piscar fora justamente quando o usuário vai clicar nele.
+    flyoutTimer.current = window.setTimeout(() => setFlyout(null), 220)
+  }, [cancelFlyoutClose])
+
+  useEffect(() => {
+    if (!isCollapsed) setFlyout(null)
+  }, [isCollapsed])
+
+  useEffect(() => () => cancelFlyoutClose(), [cancelFlyoutClose])
+
+  const handleItemHover = useCallback(
+    (item: NavItem, event: React.MouseEvent<HTMLButtonElement>) => {
+      setHoveredId(item.id)
+      handleNavPrefetch(item)
+
+      if (!isCollapsed) return
+      // No modo recolhido, passar por qualquer item fecha o painel do grupo
+      // anterior; sobre o cabeçalho de um grupo, abre o dele.
+      const groupKey = item.id.startsWith('group:') ? item.id.slice('group:'.length) : null
+      if (!groupKey) {
+        scheduleFlyoutClose()
+        return
+      }
+      cancelFlyoutClose()
+      setFlyout({ groupKey, top: event.currentTarget.getBoundingClientRect().top })
+    },
+    [handleNavPrefetch, isCollapsed, scheduleFlyoutClose, cancelFlyoutClose]
+  )
+
+  const flyoutNode = flyout
+    ? tree.find(
+        (node): node is Extract<SidebarTreeNode, { type: 'group' }> =>
+          node.type === 'group' && node.group.key === flyout.groupKey
+      )
+    : undefined
+
+  /** Renderiza um nó da árvore: seção solta ou grupo colapsável. */
+  const renderNode = (node: SidebarTreeNode, staggerIndex: number) => {
+    if (node.type === 'section') {
+      const item = sectionToNavItem(node.section)
+      return (
+        <NavItemButton
+          key={item.id}
+          item={item}
+          hoveredId={hoveredId}
+          pressedId={pressedId}
+          collapsed={isCollapsed}
+          isItemActive={isActive(item.href)}
+          onHover={handleItemHover}
+          onPress={(navItem) => {
+            handleNavPress(navItem)
+            handleNavPrefetch(navItem)
+          }}
+          onRelease={handleNavRelease}
+          onClick={() => handleNavClick(item)}
+          staggerIndex={staggerIndex}
+          skipEntrance={skipEntranceRef.current}
+          lite={liteMode}
+        />
+      )
+    }
+
+    const GroupIcon = getSidebarIconComponent(node.group.icon)
+    const open = isGroupOpen(node)
+    const hasActive = groupHasActiveSection(node)
+    const groupItem: NavItem = {
+      id: node.id,
+      icon: <GroupIcon className="h-5 w-5" />,
+      label: node.group.label,
+    }
+
+    return (
+      <div key={node.id} className="sidebar-group">
+        <NavItemButton
+          item={groupItem}
+          hoveredId={hoveredId}
+          pressedId={pressedId}
+          collapsed={isCollapsed}
+          // O grupo fechado herda o destaque do filho ativo: sem isso, entrar
+          // numa subárea apagaria qualquer sinal de onde você está.
+          isItemActive={hasActive && !open}
+          onHover={handleItemHover}
+          onPress={handleNavPress}
+          onRelease={handleNavRelease}
+          onClick={() => {
+            handleNavRelease()
+            _lastClickedId = node.id
+            setHoveredId(node.id)
+            if (isCollapsed) {
+              // Recolhido, o clique no ícone expande a sidebar e abre o grupo:
+              // é o caminho de teclado/toque para o que o hover faz no ponteiro.
+              onCollapse?.(false)
+              toggleGroup(node.group.key, true)
+              return
+            }
+            toggleGroup(node.group.key, !open)
+          }}
+          staggerIndex={staggerIndex}
+          skipEntrance={skipEntranceRef.current}
+          lite={liteMode}
+          ariaExpanded={isCollapsed ? undefined : open}
+          trailing={
+            isCollapsed ? null : (
+              <motion.span
+                animate={{ rotate: open ? 0 : -90 }}
+                transition={liteMode ? { duration: 0 } : { type: 'spring', stiffness: 300, damping: 25 }}
+                className="flex text-foreground/40"
+              >
+                <ChevronDown className="h-4 w-4" />
+              </motion.span>
+            )
+          }
+        />
+
+        <AnimatePresence initial={false}>
+          {open && !isCollapsed && (
+            <motion.div
+              className="overflow-hidden"
+              initial={liteMode ? false : { height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={liteMode ? { height: 0, opacity: 0 } : { height: 0, opacity: 0 }}
+              transition={liteMode ? { duration: 0 } : { duration: 0.28, ease: [0.4, 0, 0.2, 1] }}
+              onAnimationComplete={() => setLayoutVersion((v) => v + 1)}
+            >
+              <div className="sidebar-group-children space-y-0.5 pt-0.5">
+                {node.sections.map((section) => {
+                  const item = sectionToNavItem(section)
+                  return (
+                    <NavItemButton
+                      key={item.id}
+                      item={item}
+                      hoveredId={hoveredId}
+                      pressedId={pressedId}
+                      collapsed={isCollapsed}
+                      isItemActive={isActive(item.href)}
+                      onHover={handleItemHover}
+                      onPress={(navItem) => {
+                        handleNavPress(navItem)
+                        handleNavPrefetch(navItem)
+                      }}
+                      onRelease={handleNavRelease}
+                      onClick={() => handleNavClick(item)}
+                      staggerIndex={staggerIndex}
+                      skipEntrance
+                      lite={liteMode}
+                      nested
+                    />
+                  )
+                })}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    )
+  }
 
   return (
     <>
@@ -641,35 +953,8 @@ export function Sidebar({
           </div>
         </div>
 
-        {/* User Info */}
-        <AnimatePresence initial={false}>
-          {user && !isCollapsed && (
-            <motion.div
-              className="p-4 border-b overflow-hidden shrink-0"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
-            >
-              <div className="flex items-center gap-3">
-                <motion.div
-                  className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold flex-shrink-0"
-                  whileHover={{ scale: 1.08, rotate: [0, -5, 5, 0] }}
-                  transition={{ type: 'spring', stiffness: 300, damping: 15 }}
-                >
-                  {user.name.charAt(0).toUpperCase()}
-                </motion.div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium truncate">{user.name}</p>
-                  <p className="text-xs text-muted-foreground truncate">{user.email}</p>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
         {/* Create Exam Button */}
-        <div data-tour="sidebar-new-exam" className="p-3 border-b shrink-0 overflow-hidden">
+        <div data-tour="sidebar-new-exam" className="p-3 border-b shrink-0 overflow-hidden space-y-2">
           <motion.div
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.97 }}
@@ -710,14 +995,18 @@ export function Sidebar({
             </Button>
           </motion.div>
 
+          {/* Busca global — a saída de emergência do menu agrupado. Quem não
+              sabe em que grupo mora "gasometria" digita e chega. O painel em si
+              é carregado sob demanda; aqui só vive o botão. */}
+          <BuscaGlobal variante="sidebar" colapsado={isCollapsed} />
+
           {/* Exams remaining counter */}
           <div
             className="overflow-hidden"
             style={{
               maxHeight: isCollapsed ? 0 : 30,
               opacity: isCollapsed ? 0 : 1,
-              marginTop: isCollapsed ? 0 : 8,
-              transition: `max-height ${SB_DUR} ${SB_EASE}, opacity 200ms ${SB_EASE}, margin ${SB_DUR} ${SB_EASE}`,
+              transition: `max-height ${SB_DUR} ${SB_EASE}, opacity 200ms ${SB_EASE}`,
             }}
           >
             {examsRemaining !== null && examsLimit !== null && (
@@ -737,7 +1026,10 @@ export function Sidebar({
         <div
           className="relative flex-1 min-h-0"
           onMouseEnter={handleNavMouseEnter}
-          onMouseLeave={handleNavMouseLeave}
+          onMouseLeave={() => {
+            handleNavMouseLeave()
+            scheduleFlyoutClose()
+          }}
         >
           <nav
             ref={navRef}
@@ -751,108 +1043,32 @@ export function Sidebar({
             {!liteMode && (
               <FluidGlassBubble
                 navRef={navRef}
-                hoveredIndex={hoveredIndex}
+                hoveredId={hoveredId}
                 isVisible={bubbleVisible}
                 collapsed={isCollapsed}
+                layoutVersion={layoutVersion}
               />
             )}
 
             <div className="space-y-0.5">
-              {mainNavItems.map((item, index) => (
-                <NavItemButton
-                  key={item.label}
-                  item={item}
-                  index={index}
-                  hoveredIndex={hoveredIndex}
-                  pressedIndex={pressedIndex}
-                  collapsed={isCollapsed}
-                  isItemActive={isActive(item.href)}
-                  onHover={(i) => {
-                    setHoveredIndex(i)
-                    handleNavPrefetch(item)
-                  }}
-                  onPress={(i) => {
-                    handleNavPress(i)
-                    handleNavPrefetch(item)
-                  }}
-                  onRelease={handleNavRelease}
-                  onClick={() => handleNavClick(item, index)}
-                  staggerDelay={index * 0.03}
-                  skipEntrance={skipEntranceRef.current}
-                  lite={liteMode}
-                />
-              ))}
-            </div>
-
-            <div className="my-3 border-t mx-1" />
-
-            <div className="space-y-0.5">
-              {secondaryNavItems.map((item, index) => {
-                const globalIndex = mainNavItems.length + index
-                return (
-                  <NavItemButton
-                    key={item.label}
-                    item={item}
-                    index={globalIndex}
-                    hoveredIndex={hoveredIndex}
-                    pressedIndex={pressedIndex}
-                    collapsed={isCollapsed}
-                    isItemActive={isActive(item.href)}
-                    onHover={(i) => {
-                      setHoveredIndex(i)
-                      handleNavPrefetch(item)
-                    }}
-                    onPress={(i) => {
-                      handleNavPress(i)
-                      handleNavPrefetch(item)
-                    }}
-                    onRelease={handleNavRelease}
-                    onClick={() => handleNavClick(item, globalIndex)}
-                    staggerDelay={(mainNavItems.length + index) * 0.03}
-                    skipEntrance={skipEntranceRef.current}
-                    lite={liteMode}
-                  />
-                )
-              })}
-            </div>
-
-            <div className="mt-3 pt-3 border-t mx-1">
               <NavItemButton
-                item={liteNavItem}
-                index={liteIndex}
-                hoveredIndex={hoveredIndex}
-                pressedIndex={pressedIndex}
+                item={homeItem}
+                hoveredId={hoveredId}
+                pressedId={pressedId}
                 collapsed={isCollapsed}
-                isItemActive={liteMode}
-                onHover={setHoveredIndex}
-                onPress={handleNavPress}
-                onRelease={handleNavRelease}
-                onClick={() => {
-                  handleNavRelease()
-                  toggleLiteMode()
+                isItemActive={isActive(homeItem.href)}
+                onHover={handleItemHover}
+                onPress={(navItem) => {
+                  handleNavPress(navItem)
+                  handleNavPrefetch(navItem)
                 }}
-                staggerDelay={liteIndex * 0.03}
+                onRelease={handleNavRelease}
+                onClick={() => handleNavClick(homeItem)}
+                staggerIndex={0}
                 skipEntrance={skipEntranceRef.current}
                 lite={liteMode}
               />
-              <NavItemButton
-                item={{ icon: <LogOut className="h-5 w-5" />, label: 'Sair' }}
-                index={logoutIndex}
-                hoveredIndex={hoveredIndex}
-                pressedIndex={pressedIndex}
-                collapsed={isCollapsed}
-                isItemActive={false}
-                onHover={setHoveredIndex}
-                onPress={handleNavPress}
-                onRelease={handleNavRelease}
-                onClick={() => {
-                  handleNavRelease()
-                  onLogout()
-                }}
-                staggerDelay={(logoutIndex) * 0.03}
-                skipEntrance={skipEntranceRef.current}
-                lite={liteMode}
-              />
+              {tree.map((node, index) => renderNode(node, index + 1))}
             </div>
           </nav>
 
@@ -863,7 +1079,325 @@ export function Sidebar({
             label="Rolar menu lateral"
           />
         </div>
+
+        {/* ─── Rodapé: conta ───
+            Perfil, Upgrade, Painel Admin, Modo Lite e Sair viviam no fim da
+            mesma lista rolável das áreas de estudo. Eram cinco linhas
+            competindo com o conteúdo — e "Sair" ficava colado no "Modo Lite",
+            a um deslize de encerrar a sessão sem querer. Agora são âncoras
+            fixas no rodapé, fora do scroll. */}
+        <SidebarAccountFooter
+          user={user}
+          collapsed={isCollapsed}
+          items={[...secondaryNavItems, liteNavItem]}
+          upgradeItem={upgradeItem}
+          onNavigate={(item) => {
+            // Só navegação fecha o menu no celular. O Modo Lite é uma chave que
+            // se liga e desliga ali mesmo — fechar a sidebar a cada toque
+            // obrigaria a reabrir tudo para conferir o resultado.
+            if (item.href) handleNavClick(item)
+            else item.onClick?.()
+          }}
+          onLogout={onLogout}
+          lite={liteMode}
+        />
       </aside>
+
+      {/* Painel do grupo no modo recolhido */}
+      {flyoutNode && flyout && (
+        <GroupFlyout
+          node={flyoutNode}
+          top={flyout.top}
+          isActive={isActive}
+          iconFor={(key) => resolvedIcons[key]}
+          onEnter={cancelFlyoutClose}
+          onLeave={scheduleFlyoutClose}
+          onSelect={(href) => {
+            setFlyout(null)
+            router.push(href)
+          }}
+        />
+      )}
     </>
+  )
+}
+
+// ─── Painel flutuante de um grupo (modo recolhido) ───────────────────────────
+function GroupFlyout({
+  node,
+  top,
+  isActive,
+  iconFor,
+  onEnter,
+  onLeave,
+  onSelect,
+}: {
+  node: Extract<SidebarTreeNode, { type: 'group' }>
+  top: number
+  isActive: (href?: string) => boolean
+  iconFor: (key: SidebarSectionKey) => string
+  onEnter: () => void
+  onLeave: () => void
+  onSelect: (href: string) => void
+}) {
+  const [montado, setMontado] = useState(false)
+  useEffect(() => setMontado(true), [])
+  if (!montado) return null
+
+  // Não deixa o painel vazar pela borda de baixo em telas curtas.
+  const altura = 44 + node.sections.length * 40
+  const topoAjustado = Math.max(8, Math.min(top, window.innerHeight - altura - 8))
+
+  return createPortal(
+    <motion.div
+      initial={{ opacity: 0, x: -8 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
+      className="sidebar-flyout fixed z-[60] min-w-[220px] rounded-xl border bg-popover p-1.5 shadow-xl"
+      style={{ left: 74, top: topoAjustado }}
+      onMouseEnter={onEnter}
+      onMouseLeave={onLeave}
+      role="menu"
+      aria-label={node.group.label}
+    >
+      <p className="px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+        {node.group.label}
+      </p>
+      {node.sections.map((section) => {
+        const Icon = getSidebarIconComponent(iconFor(section.key))
+        const ativo = isActive(section.href)
+        return (
+          <button
+            key={section.key}
+            type="button"
+            role="menuitem"
+            onClick={() => onSelect(section.href)}
+            className={cn(
+              'flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm transition-colors',
+              ativo ? 'bg-primary/10 text-primary font-semibold' : 'text-foreground/80 hover:bg-muted'
+            )}
+          >
+            <Icon className="h-4 w-4 shrink-0" />
+            <span className="truncate">{section.label}</span>
+          </button>
+        )
+      })}
+    </motion.div>,
+    document.body
+  )
+}
+
+// ─── Rodapé da conta ─────────────────────────────────────────────────────────
+function SidebarAccountFooter({
+  user,
+  collapsed,
+  items,
+  upgradeItem,
+  onNavigate,
+  onLogout,
+  lite,
+}: {
+  user: SidebarProps['user']
+  collapsed: boolean
+  items: NavItem[]
+  upgradeItem: NavItem
+  onNavigate: (item: NavItem) => void
+  onLogout: () => void
+  lite: boolean
+}) {
+  const [aberto, setAberto] = useState(false)
+  const [ancora, setAncora] = useState<{ left: number; bottom: number } | null>(null)
+  const gatilhoRef = useRef<HTMLButtonElement>(null)
+  const painelRef = useRef<HTMLDivElement>(null)
+  const [montado, setMontado] = useState(false)
+
+  useEffect(() => setMontado(true), [])
+
+  const abrir = useCallback(() => {
+    const rect = gatilhoRef.current?.getBoundingClientRect()
+    if (rect) {
+      setAncora({ left: rect.left, bottom: window.innerHeight - rect.top + 8 })
+    }
+    setAberto(true)
+  }, [])
+
+  useEffect(() => {
+    if (!aberto) return
+
+    function aoClicarFora(evento: MouseEvent) {
+      const alvo = evento.target as Node
+      if (painelRef.current?.contains(alvo) || gatilhoRef.current?.contains(alvo)) return
+      setAberto(false)
+    }
+    function aoTeclar(evento: KeyboardEvent) {
+      if (evento.key === 'Escape') setAberto(false)
+    }
+
+    document.addEventListener('mousedown', aoClicarFora)
+    document.addEventListener('keydown', aoTeclar)
+    return () => {
+      document.removeEventListener('mousedown', aoClicarFora)
+      document.removeEventListener('keydown', aoTeclar)
+    }
+  }, [aberto])
+
+  if (!user) return null
+
+  const larguraPainel = 232
+
+  return (
+    <div className="shrink-0 border-t p-2 space-y-1.5">
+      {/* Upgrade fica à vista: é a única ação do rodapé que o usuário não sabe
+          que procura. Escondê-la num popover seria economizar espaço no lugar
+          errado. */}
+      <button
+        type="button"
+        onClick={() => onNavigate(upgradeItem)}
+        className={cn(
+          'flex h-10 w-full items-center rounded-[12px] font-semibold text-amber-700 dark:text-amber-400',
+          'bg-gradient-to-r from-amber-500/10 to-orange-500/10 hover:from-amber-500/[0.18] hover:to-orange-500/[0.18]',
+          'transition-colors overflow-hidden'
+        )}
+        style={{
+          justifyContent: collapsed ? 'center' : 'flex-start',
+          gap: collapsed ? 0 : 10,
+          paddingLeft: collapsed ? 0 : 11,
+          paddingRight: collapsed ? 0 : 11,
+          transition: `gap ${SB_DUR} ${SB_EASE}, padding ${SB_DUR} ${SB_EASE}`,
+        }}
+        aria-label="Upgrade"
+      >
+        <ShoppingCart className="h-[18px] w-[18px] shrink-0" />
+        <span
+          className="truncate whitespace-nowrap text-sm"
+          style={{
+            maxWidth: collapsed ? 0 : 160,
+            opacity: collapsed ? 0 : 1,
+            overflow: 'hidden',
+            transition: `opacity 200ms ${SB_EASE}, max-width ${SB_DUR} ${SB_EASE}`,
+          }}
+        >
+          Upgrade
+        </span>
+        <span
+          className="ml-auto text-[10px] font-bold bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent whitespace-nowrap"
+          style={{
+            maxWidth: collapsed ? 0 : 40,
+            opacity: collapsed ? 0 : 0.9,
+            overflow: 'hidden',
+            transition: `opacity 200ms ${SB_EASE}, max-width ${SB_DUR} ${SB_EASE}`,
+          }}
+        >
+          PRO
+        </span>
+      </button>
+
+      <button
+        ref={gatilhoRef}
+        type="button"
+        onClick={() => (aberto ? setAberto(false) : abrir())}
+        aria-haspopup="menu"
+        aria-expanded={aberto}
+        className={cn(
+          'flex h-12 w-full items-center rounded-[12px] transition-colors hover:bg-muted overflow-hidden',
+          aberto && 'bg-muted'
+        )}
+        style={{
+          justifyContent: collapsed ? 'center' : 'flex-start',
+          gap: collapsed ? 0 : 10,
+          paddingLeft: collapsed ? 0 : 8,
+          paddingRight: collapsed ? 0 : 8,
+          transition: `gap ${SB_DUR} ${SB_EASE}, padding ${SB_DUR} ${SB_EASE}`,
+        }}
+      >
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 font-semibold text-primary">
+          {user.name.charAt(0).toUpperCase()}
+        </span>
+        <span
+          className="min-w-0 flex-1 text-left"
+          style={{
+            maxWidth: collapsed ? 0 : 170,
+            opacity: collapsed ? 0 : 1,
+            overflow: 'hidden',
+            transition: `opacity 200ms ${SB_EASE}, max-width ${SB_DUR} ${SB_EASE}`,
+          }}
+        >
+          <span className="block truncate text-sm font-medium">{user.name}</span>
+          <span className="block truncate text-xs text-muted-foreground">{user.email}</span>
+        </span>
+        <ChevronRight
+          className="h-4 w-4 shrink-0 text-muted-foreground"
+          style={{
+            maxWidth: collapsed ? 0 : 16,
+            opacity: collapsed ? 0 : 1,
+            overflow: 'hidden',
+            transition: `opacity 150ms ${SB_EASE}, max-width ${SB_DUR} ${SB_EASE}`,
+          }}
+        />
+      </button>
+
+      {montado &&
+        ancora &&
+        createPortal(
+          <AnimatePresence>
+            {aberto && (
+              <motion.div
+                ref={painelRef}
+                initial={lite ? false : { opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 6 }}
+                transition={lite ? { duration: 0 } : { duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
+                className="fixed z-[60] rounded-xl border bg-popover p-1.5 shadow-xl"
+                style={{
+                  left: Math.max(8, ancora.left),
+                  bottom: ancora.bottom,
+                  width: larguraPainel,
+                }}
+                role="menu"
+                aria-label="Conta"
+              >
+                {items.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    role="menuitem"
+                    onClick={() => {
+                      setAberto(false)
+                      onNavigate(item)
+                    }}
+                    className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm text-foreground/85 transition-colors hover:bg-muted"
+                  >
+                    <span className="flex h-[18px] w-[18px] shrink-0 items-center justify-center [&>svg]:h-[18px] [&>svg]:w-[18px]">
+                      {item.icon}
+                    </span>
+                    <span className="truncate">{item.label}</span>
+                    {item.badge && (
+                      <span className="sidebar-nav-badge ml-auto rounded-full px-2 py-0.5 text-[10px]">
+                        {item.badge}
+                      </span>
+                    )}
+                  </button>
+                ))}
+
+                <div className="my-1 border-t" />
+
+                <button
+                  type="button"
+                  role="menuitem"
+                  onClick={() => {
+                    setAberto(false)
+                    onLogout()
+                  }}
+                  className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm text-foreground/85 transition-colors hover:bg-red-500/10 hover:text-red-500 dark:hover:text-red-400"
+                >
+                  <LogOut className="h-[18px] w-[18px] shrink-0" />
+                  <span>Sair</span>
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>,
+          document.body
+        )}
+    </div>
   )
 }
