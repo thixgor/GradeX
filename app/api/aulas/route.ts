@@ -6,6 +6,7 @@ import { AulaPostagem, AulaSetor, AulaTopic, AulaSubtopic, AulaModulo, AulaSubmo
 import { avaliarAcessoAula, ocultarConteudoRestrito } from '@/lib/aulas/acesso'
 import { montarContextoDoUsuario } from '@/lib/aulas/contexto'
 import { aplicarVinculo, resolverVinculosEmLote } from '@/lib/aulas/resolver-vinculo'
+import { lerProgressoEmLote } from '@/lib/aulas/repositorio-progresso'
 
 export const dynamic = 'force-dynamic'
 
@@ -66,6 +67,23 @@ export async function GET() {
           requisito: veredito.requisito,
         },
       })
+    }
+
+    // Progresso vem junto, em lote. Sem isso a biblioteca precisaria de uma
+    // requisição por aula só para desenhar as barrinhas — dezenas de idas ao
+    // servidor para montar uma tela.
+    if (session?.userId && aulasVisiveis.length > 0) {
+      const progresso = await lerProgressoEmLote(
+        db,
+        session.userId,
+        aulasVisiveis.map((a) => String(a._id)),
+      )
+      for (const aula of aulasVisiveis) {
+        const p = progresso.get(String(aula._id))
+        aula.progresso = p
+          ? { percentual: p.percentual, concluida: p.concluida, posicaoSegundos: p.posicaoSegundos }
+          : null
+      }
     }
 
     const headers = new Headers({
