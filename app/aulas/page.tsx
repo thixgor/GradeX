@@ -6,6 +6,7 @@ import Link from 'next/link'
 import {
   ArrowLeft,
   BookOpen,
+  ChevronRight,
   GraduationCap,
   Layers,
   Search,
@@ -455,13 +456,40 @@ function AulasPageContent() {
   )
 }
 
+/** Um ramo só vale desenhar se ele (ou algum filho) tem aula. */
+function temConteudo(ramo: Ramo): boolean {
+  return ramo.aulas.length > 0 || ramo.filhos.some(temConteudo)
+}
+
+function contarAulas(ramo: Ramo): { total: number; concluidas: number } {
+  const soma = {
+    total: ramo.aulas.length,
+    concluidas: ramo.aulas.filter((a) => a.progresso?.concluida).length,
+  }
+  for (const filho of ramo.filhos) {
+    const f = contarAulas(filho)
+    soma.total += f.total
+    soma.concluidas += f.concluidas
+  }
+  return soma
+}
+
 /**
- * Um curso aberto: a árvore inteira, cada grupo num trilho.
+ * Um curso aberto.
  *
- * Os níveis viram hierarquia visual (tópico manda mais que módulo, que manda
- * mais que submódulo) em vez de virarem cliques. O aluno rola a página pelos
- * assuntos e desliza as aulas dentro de cada um — nunca precisa "entrar" num
- * nível para descobrir o que tem lá dentro.
+ * A primeira versão empilhava TODOS os níveis verticalmente: tópico, subtópico,
+ * módulo e submódulo viravam uma sequência de títulos e trilhos que descia sem
+ * fim. A hierarquia existia no código e no tamanho da fonte, mas na tela era
+ * uma coluna só — impossível saber onde um assunto acaba e o outro começa, e
+ * pior no celular, onde cada nível empurra o resto para fora da tela.
+ *
+ * Duas mudanças resolvem isso:
+ *
+ *  1. **Tópicos viram abas.** Só um assunto por vez, então a página tem fim.
+ *     As abas deslizam, e o aluno troca de assunto sem rolar.
+ *  2. **Os níveis abaixo ganham contenção visual.** Subtópico vira um bloco
+ *     com borda e fundo próprios; os módulos moram dentro dele. Dá para VER o
+ *     agrupamento, em vez de deduzi-lo pelo tamanho do título.
  */
 function CursoAberto({
   ramos,
@@ -470,9 +498,14 @@ function CursoAberto({
   ramos: Ramo[]
   progresso?: { total: number; concluidas: number }
 }) {
-  const temAlgo = ramos.some(temConteudo)
+  const comConteudo = useMemo(() => ramos.filter(temConteudo), [ramos])
+  const [abaAtiva, setAbaAtiva] = useState<string | null>(null)
 
-  if (!temAlgo) {
+  // A aba escolhida some quando a busca muda os ramos; voltar para a primeira
+  // é melhor do que mostrar uma tela vazia sem explicação.
+  const aba = comConteudo.find((r) => r.id === abaAtiva) || comConteudo[0]
+
+  if (comConteudo.length === 0) {
     return (
       <EstadoVazio
         icone={Layers}
@@ -485,67 +518,64 @@ function CursoAberto({
   }
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-5">
       {progresso && progresso.total > 0 ? (
         <div className="rounded-xl border border-border bg-card p-4">
           <ResumoDoCurso concluidas={progresso.concluidas} total={progresso.total} />
         </div>
       ) : null}
 
-      {ramos.filter(temConteudo).map((ramo) => (
-        <RamoDaArvore key={ramo.id} ramo={ramo} />
-      ))}
+      {/* Abas dos tópicos — só aparecem quando há mais de um assunto. */}
+      {comConteudo.length > 1 ? (
+        <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:px-0">
+          {comConteudo.map((r) => {
+            const { total, concluidas } = contarAulas(r)
+            const ativa = r.id === aba?.id
+            return (
+              <button
+                key={r.id}
+                type="button"
+                onClick={() => setAbaAtiva(r.id)}
+                aria-pressed={ativa}
+                className={cn(
+                  'inline-flex flex-none items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition',
+                  ativa
+                    ? 'border-primary bg-primary text-primary-foreground'
+                    : 'border-border bg-card text-muted-foreground hover:text-foreground',
+                )}
+              >
+                {r.nome}
+                <span
+                  className={cn(
+                    'rounded-full px-1.5 py-0.5 text-[10px] font-bold tabular-nums',
+                    ativa ? 'bg-primary-foreground/20' : 'bg-muted',
+                  )}
+                >
+                  {concluidas}/{total}
+                </span>
+              </button>
+            )
+          })}
+        </div>
+      ) : null}
+
+      {aba ? <ConteudoDoRamo ramo={aba} /> : null}
     </div>
   )
 }
 
-/** Um ramo só vale a pena desenhar se ele (ou algum filho) tem aula. */
-function temConteudo(ramo: Ramo): boolean {
-  return ramo.aulas.length > 0 || ramo.filhos.some(temConteudo)
-}
-
-function contarAulas(ramo: Ramo): { total: number; concluidas: number } {
-  const proprio = {
-    total: ramo.aulas.length,
-    concluidas: ramo.aulas.filter((a) => a.progresso?.concluida).length,
-  }
-  for (const filho of ramo.filhos) {
-    const f = contarAulas(filho)
-    proprio.total += f.total
-    proprio.concluidas += f.concluidas
-  }
-  return proprio
-}
-
-function RamoDaArvore({ ramo }: { ramo: Ramo }) {
-  if (!temConteudo(ramo)) return null
-  const { total, concluidas } = contarAulas(ramo)
-
-  // A hierarquia aparece no peso do título, não em profundidade de indentação:
-  // recuar quatro níveis no celular comeria metade da largura útil.
-  const titulo =
-    ramo.nivel === 1 ? (
-      <h2 className="text-lg font-bold tracking-tight sm:text-xl">{ramo.nome}</h2>
-    ) : ramo.nivel === 2 ? (
-      <h3 className="text-base font-bold tracking-tight">{ramo.nome}</h3>
-    ) : (
-      <h4 className="flex items-center gap-1.5 text-sm font-semibold text-foreground/90">
-        <Layers className="h-3.5 w-3.5 text-primary" />
-        {ramo.nome}
-      </h4>
-    )
+/**
+ * O conteúdo de um tópico: aulas soltas primeiro, depois os blocos filhos.
+ *
+ * Cada filho com netos (subtópico contendo módulos) vira um bloco cercado; um
+ * filho folha (módulo com aulas) vira só um trilho rotulado. Assim a moldura
+ * aparece onde ela informa algo — agrupar — e não em volta de cada linha.
+ */
+function ConteudoDoRamo({ ramo }: { ramo: Ramo }) {
+  const filhos = ramo.filhos.filter(temConteudo)
 
   return (
-    <section className={cn(ramo.nivel === 1 && 'border-t border-border pt-6 first:border-t-0 first:pt-0')}>
-      <div className="mb-3 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-        {titulo}
-        {total > 0 ? (
-          <span className="text-xs text-muted-foreground">
-            {concluidas}/{total} concluídas
-          </span>
-        ) : null}
-      </div>
-
+    <div className="space-y-5">
       {ramo.aulas.length > 0 ? (
         <Trilho>
           {ramo.aulas.map((aula) => (
@@ -554,13 +584,85 @@ function RamoDaArvore({ ramo }: { ramo: Ramo }) {
         </Trilho>
       ) : null}
 
-      {ramo.filhos.length > 0 ? (
-        <div className={cn('space-y-6', ramo.aulas.length > 0 && 'mt-6')}>
-          {ramo.filhos.filter(temConteudo).map((filho) => (
-            <RamoDaArvore key={filho.id} ramo={filho} />
-          ))}
+      {filhos.map((filho) =>
+        filho.filhos.some(temConteudo) ? (
+          <BlocoAgrupador key={filho.id} ramo={filho} />
+        ) : (
+          <TrilhoRotulado key={filho.id} ramo={filho} />
+        ),
+      )}
+    </div>
+  )
+}
+
+/** Subtópico (ou módulo com submódulos): bloco cercado que agrupa os filhos. */
+function BlocoAgrupador({ ramo }: { ramo: Ramo }) {
+  const [aberto, setAberto] = useState(true)
+  const { total, concluidas } = contarAulas(ramo)
+  const filhos = ramo.filhos.filter(temConteudo)
+
+  return (
+    <section className="overflow-hidden rounded-xl border border-border bg-muted/20">
+      <button
+        type="button"
+        onClick={() => setAberto((v) => !v)}
+        aria-expanded={aberto}
+        className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition hover:bg-muted/40"
+      >
+        <span className="flex min-w-0 items-center gap-2">
+          <ChevronRight
+            className={cn('h-4 w-4 flex-none text-muted-foreground transition-transform', aberto && 'rotate-90')}
+          />
+          <span className="truncate font-bold">{ramo.nome}</span>
+        </span>
+        <span className="flex-none text-xs text-muted-foreground">
+          {concluidas}/{total}
+        </span>
+      </button>
+
+      {aberto ? (
+        <div className="space-y-4 border-t border-border px-4 py-4">
+          {ramo.aulas.length > 0 ? (
+            <Trilho>
+              {ramo.aulas.map((aula) => (
+                <CardDeAula key={aula._id} aula={aula} noTrilho />
+              ))}
+            </Trilho>
+          ) : null}
+
+          {filhos.map((filho) =>
+            filho.filhos.some(temConteudo) ? (
+              <BlocoAgrupador key={filho.id} ramo={filho} />
+            ) : (
+              <TrilhoRotulado key={filho.id} ramo={filho} />
+            ),
+          )}
         </div>
       ) : null}
+    </section>
+  )
+}
+
+/** Módulo folha: rótulo, progresso e o trilho de aulas. */
+function TrilhoRotulado({ ramo }: { ramo: Ramo }) {
+  const { total, concluidas } = contarAulas(ramo)
+
+  return (
+    <section>
+      <div className="mb-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+        <h3 className="flex items-center gap-1.5 text-sm font-bold">
+          <Layers className="h-3.5 w-3.5 text-primary" />
+          {ramo.nome}
+        </h3>
+        <span className="text-xs text-muted-foreground">
+          {concluidas}/{total}
+        </span>
+      </div>
+      <Trilho>
+        {ramo.aulas.map((aula) => (
+          <CardDeAula key={aula._id} aula={aula} noTrilho />
+        ))}
+      </Trilho>
     </section>
   )
 }
