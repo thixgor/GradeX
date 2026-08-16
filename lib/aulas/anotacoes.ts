@@ -66,9 +66,11 @@ export function normalizarAnotacao(entrada: EntradaDeAnotacao): {
  * sumário da aula escrito pelo próprio aluno. As livres vêm depois, da mais
  * recente para a mais antiga, como um caderno.
  */
-export function ordenarAnotacoes<T extends Pick<AnotacaoDaAula, 'segundo' | 'criadoEm'>>(
-  anotacoes: T[],
-): T[] {
+export function ordenarAnotacoes<
+  // `criadoEm` aceita Date ou string: no servidor é Date, e do fetch chega como
+  // ISO. Exigir Date aqui obrigaria cada tela a converter só para ordenar.
+  T extends { segundo: number | null; criadoEm: Date | string },
+>(anotacoes: T[]): T[] {
   const comTempo = anotacoes.filter((a) => a.segundo !== null && a.segundo !== undefined)
   const livres = anotacoes.filter((a) => a.segundo === null || a.segundo === undefined)
 
@@ -94,7 +96,7 @@ function paraBusca(texto: string): string {
 }
 
 /** Busca dentro das anotações (§9) — o caderno só serve se der para achar nele. */
-export function filtrarAnotacoes<T extends Pick<AnotacaoDaAula, 'conteudo'>>(
+export function filtrarAnotacoes<T extends { conteudo: string }>(
   anotacoes: T[],
   termo: string,
 ): T[] {

@@ -1,604 +1,528 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useRouter, useParams } from 'next/navigation'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useParams, useRouter } from 'next/navigation'
+import Link from 'next/link'
+import {
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  CheckCircle2,
+  ChevronRight,
+  Clock,
+  Focus,
+  ListVideo,
+  Loader2,
+  Lock,
+  PlayCircle,
+  Sparkles,
+  X,
+} from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { ArrowLeft, Send, Trash2, Lock, Globe, Video, Zap, Download, CheckCircle2 } from 'lucide-react'
-import { AulaPostagem, AulaComentario } from '@/lib/types'
-import { VideoWatermark } from '@/components/video-watermark'
-import { isPlusAccount, isPlusOnlyAula } from '@/lib/account-tier'
+import { PlayerDaAula, type ControleDoPlayer } from '@/components/aulas/player'
+import { PainelDeAnotacoes } from '@/components/aulas/anotacoes-painel'
+import { BarraDeProgresso } from '@/components/aulas/biblioteca'
+import { cn } from '@/lib/utils'
 
-interface User {
-  id: string
-  email: string
-  name: string
-  cpf?: string
-  role: string
-  accountType?: string
-  secondaryRole?: string
+/**
+ * Assistir a uma aula (§6, §9, §17, §19, §20, §33).
+ *
+ * A tela é organizada em torno de uma pergunta: o que a pessoa faz enquanto o
+ * vídeo roda? Ela assiste, anota e — quando termina — precisa saber qual é o
+ * próximo passo sem voltar para a listagem.
+ *
+ * Por isso o vídeo domina a coluna principal, as anotações ficam ao lado (não
+ * escondidas numa aba que ninguém abre), a navegação do curso é recolhível, e a
+ * próxima aula aparece sozinha ao concluir. O Modo Foco tira tudo que não é
+ * vídeo e anotação, para quem estuda horas seguidas.
+ *
+ * Aula bloqueada não vira erro: o servidor manda o motivo e o botão, e é isso
+ * que a tela desenha (§17).
+ */
+
+interface Aula {
+  _id: string
+  titulo: string
+  descricao?: string
+  tipo?: string
+  videoEmbed?: string
+  linkOuEmbed?: string
+  setorId?: string
+  moduloId?: string
+  pdfs?: Array<{ nome: string; url: string; tamanho: number }>
+  botoesAcesso?: Array<{ nome: string; url: string }>
+  progresso?: { percentual: number; concluida: boolean; posicaoSegundos?: number } | null
+  acesso?: {
+    liberado: boolean
+    porAmostra?: boolean
+    requisito?: {
+      motivo: string
+      titulo: string
+      acaoLabel?: string
+      acaoHref?: string
+      liberaEm?: string
+    } | null
+  }
 }
 
-export default function AulaDetalhePage() {
-  const router = useRouter()
-  const params = useParams()
-  const aulaId = params.id as string
+interface AulaVizinha {
+  _id: string
+  titulo: string
+  moduloId?: string
+  ordem?: number
+  progresso?: { concluida: boolean } | null
+  acesso?: { liberado: boolean }
+}
 
-  const [user, setUser] = useState<User | null>(null)
-  const [aula, setAula] = useState<AulaPostagem | null>(null)
-  const [authLoading, setAuthLoading] = useState(true)
-  const [aulaLoading, setAulaLoading] = useState(false)
-  const [aulaLoaded, setAulaLoaded] = useState(false)
-  const [redirecting, setRedirecting] = useState(false)
-  const [isAdmin, setIsAdmin] = useState(false)
-  const [temAcesso, setTemAcesso] = useState(true)
-  const [bloqueadaPorData, setBloqueadaPorData] = useState(false)
-  const [comentarios, setComentarios] = useState<AulaComentario[]>([])
-  const [novoComentario, setNovoComentario] = useState('')
-  const [enviandoComentario, setEnviandoComentario] = useState(false)
-  const [aulaConcluida, setAulaConcluida] = useState(false)
-  const [marcandoConclusao, setMarcandoConclusao] = useState(false)
+export default function AssistirAulaPage() {
+  const params = useParams()
+  const router = useRouter()
+  const aulaId = String(params?.id || '')
+
+  const [aula, setAula] = useState<Aula | null>(null)
+  const [carregando, setCarregando] = useState(true)
+  const [erro, setErro] = useState('')
+  const [controle, setControle] = useState<ControleDoPlayer | null>(null)
+  const [modoFoco, setModoFoco] = useState(false)
+  const [lateralAberta, setLateralAberta] = useState(false)
+  const [concluida, setConcluida] = useState(false)
+  const [percentual, setPercentual] = useState(0)
+  const [marcando, setMarcando] = useState(false)
+
+  const [vizinhas, setVizinhas] = useState<AulaVizinha[]>([])
+  const [nomeDoCurso, setNomeDoCurso] = useState<string | null>(null)
 
   useEffect(() => {
-    checkAuth()
+    if (!aulaId) return
+    let cancelado = false
+    setCarregando(true)
+
+    fetch(`/api/aulas/${aulaId}`, { cache: 'no-store' })
+      .then(async (r) => {
+        const d = await r.json().catch(() => ({}))
+        if (!r.ok) throw new Error(d.error || 'Aula não encontrada')
+        return d
+      })
+      .then((d) => {
+        if (cancelado) return
+        const carregada: Aula = { ...d.aula, _id: String(d.aula._id), acesso: d.acesso }
+        setAula(carregada)
+        setConcluida(carregada.progresso?.concluida === true)
+        setPercentual(carregada.progresso?.percentual || 0)
+      })
+      .catch((e) => {
+        if (!cancelado) setErro(e?.message || 'Aula não encontrada')
+      })
+      .finally(() => {
+        if (!cancelado) setCarregando(false)
+      })
+
+    return () => {
+      cancelado = true
+    }
+  }, [aulaId])
+
+  // A navegação do curso vem da árvore já filtrada por acesso — a mesma que a
+  // biblioteca usa, então a lateral nunca mostra aula que a pessoa não veria lá.
+  useEffect(() => {
+    if (!aula?.setorId) return
+    let cancelado = false
+    fetch('/api/aulas', { cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (cancelado || !d) return
+        const doCurso = (d.aulas || [])
+          .filter((a: any) => a.setorId === aula.setorId)
+          .map((a: any) => ({ ...a, _id: String(a._id) }))
+          .sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0))
+        setVizinhas(doCurso)
+        const setor = (d.setores || []).find((s: any) => String(s._id) === aula.setorId)
+        setNomeDoCurso(setor?.nome || null)
+      })
+      .catch(() => {})
+    return () => {
+      cancelado = true
+    }
+  }, [aula?.setorId])
+
+  const indiceAtual = vizinhas.findIndex((a) => a._id === aulaId)
+  const proxima = indiceAtual >= 0 ? vizinhas.slice(indiceAtual + 1).find((a) => a.acesso?.liberado !== false) : undefined
+  const anterior = indiceAtual > 0 ? vizinhas[indiceAtual - 1] : undefined
+
+  const totalCurso = vizinhas.length
+  const concluidasCurso = vizinhas.filter((a) => a.progresso?.concluida).length
+
+  const aoRegistrarControle = useCallback((c: ControleDoPlayer) => setControle(c), [])
+  const aoAtualizarProgresso = useCallback((p: { percentual: number; concluida: boolean }) => {
+    setPercentual(p.percentual)
+    setConcluida(p.concluida)
   }, [])
 
-  useEffect(() => {
-    if (user) {
-      loadAula()
-    }
-  }, [user?.id, aulaId])
-
-  async function checkAuth() {
-    try {
-      const res = await fetch('/api/auth/me')
-      if (!res.ok) {
-        setRedirecting(true)
-        router.push('/auth/login')
-        return
-      }
-      const data = await res.json()
-      setUser(data.user)
-      setIsAdmin(data.user.role === 'admin')
-    } catch (error) {
-      setRedirecting(true)
-      router.push('/auth/login')
-    } finally {
-      setAuthLoading(false)
-    }
-  }
-
-  async function registrarVisita(aulaId: string) {
-    try {
-      await fetch('/api/user/ultima-aula', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ aulaId })
-      })
-    } catch (error) {
-      console.error('Erro ao registrar visita:', error)
-    }
-  }
-
-  async function loadAula() {
-    setAulaLoaded(false)
-    setAulaLoading(true)
-    try {
-      const res = await fetch(`/api/aulas/${aulaId}`)
-      if (res.ok) {
-        const data = await res.json()
-        setAula(data.aula)
-        setComentarios(data.aula.comentarios || [])
-        setAulaConcluida(data.aula.usuariosConcluidos?.includes(user?.id) || false)
-
-        // Registrar visita à aula
-        registrarVisita(aulaId)
-
-        // Verificar acesso
-        const isPremium = isPlusOnlyAula(data.aula.visibilidade)
-        const userIsPremium = isPlusAccount(user?.accountType)
-        const userIsAdmin = user?.role === 'admin'
-        const userIsMonitor = user?.secondaryRole === 'monitor'
-
-        const liberadaPorData = new Date(data.aula.dataLiberacao) <= new Date()
-        const shouldHideUntilRelease = !!data.aula.ocultarAteLiberacao
-        const isBlockedByDate = !liberadaPorData && !shouldHideUntilRelease
-        setBloqueadaPorData(isBlockedByDate)
-
-        if (isPremium && !userIsPremium && !userIsAdmin && !userIsMonitor) {
-          setTemAcesso(false)
-        } else {
-          setTemAcesso(true)
-        }
-      } else {
-        setRedirecting(true)
-        router.push('/aulas')
-      }
-    } catch (error) {
-      console.error('Erro ao carregar aula:', error)
-      setRedirecting(true)
-      router.push('/aulas')
-    } finally {
-      setAulaLoading(false)
-      setAulaLoaded(true)
-    }
-  }
-
-  async function enviarComentario() {
-    if (!novoComentario.trim() || !user) return
-
-    setEnviandoComentario(true)
-    try {
-      const res = await fetch(`/api/aulas/${aulaId}/comentarios`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          conteudo: novoComentario
-        })
-      })
-
-      if (res.ok) {
-        const data = await res.json()
-        setComentarios([...comentarios, data.comentario])
-        setNovoComentario('')
-      }
-    } catch (error) {
-      console.error('Erro ao enviar comentário:', error)
-    } finally {
-      setEnviandoComentario(false)
-    }
-  }
-
-  async function deletarComentario(comentarioId: string) {
-    if (!confirm('Tem certeza que deseja deletar este comentário?')) return
-
-    try {
-      const res = await fetch(`/api/aulas/${aulaId}/comentarios/${comentarioId}`, {
-        method: 'DELETE'
-      })
-
-      if (res.ok) {
-        setComentarios(comentarios.filter(c => String(c._id) !== comentarioId))
-      }
-    } catch (error) {
-      console.error('Erro ao deletar comentário:', error)
-    }
-  }
-
-  async function marcarComoConcluida() {
-    if (!user) return
-
-    setMarcandoConclusao(true)
+  async function alternarConclusao() {
+    setMarcando(true)
     try {
       const res = await fetch(`/api/aulas/${aulaId}/conclusao`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ concluida: !aulaConcluida })
+        body: JSON.stringify({ concluida: !concluida }),
       })
-
       if (res.ok) {
-        setAulaConcluida(!aulaConcluida)
+        const d = await res.json()
+        setConcluida(d.progresso?.concluida ?? !concluida)
+        if (d.progresso) setPercentual(d.progresso.percentual)
       }
-    } catch (error) {
-      console.error('Erro ao marcar conclusão:', error)
     } finally {
-      setMarcandoConclusao(false)
+      setMarcando(false)
     }
   }
 
-  if (redirecting || authLoading || !user || aulaLoading || !aulaLoaded) {
-    return (
-      <AppShell headerTitle="Carregando...">
-        <div className="min-h-[60vh] flex items-center justify-center">
-          <div className="text-lg">Carregando...</div>
-        </div>
-      </AppShell>
-    )
-  }
+  const conteudo = aula?.videoEmbed || aula?.linkOuEmbed || ''
 
-  if (!aula) {
+  if (carregando) {
     return (
       <AppShell headerTitle="Aula">
-        <div className="min-h-[60vh] flex items-center justify-center">
-          <Card>
-            <CardContent className="pt-6">
-              <p className="text-lg mb-4">Aula não encontrada</p>
-              <Button onClick={() => router.push('/aulas')}>
-                Voltar para Aulas
-              </Button>
-            </CardContent>
-          </Card>
+        <div className="container mx-auto max-w-7xl px-4 py-8">
+          <div className="aspect-video w-full animate-pulse rounded-xl bg-muted" />
+          <div className="mt-4 h-6 w-2/3 animate-pulse rounded bg-muted" />
         </div>
       </AppShell>
     )
   }
 
-  return (
-    <AppShell headerTitle={aula.titulo} headerSubtitle={aula.tipo === 'ao-vivo' ? 'Ao Vivo' : 'Gravada'}>
-      <div className="surface-page min-h-full">
-      <style>{`
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        
-        . {
-          animation: fadeInUp 0.6s ease-out;
-        }
-        
-        . {
-          transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        
-        .:hover {
-          transform: translateY(-4px);
-        }
-      `}</style>
-      {/* Back button */}
-      <div className="container mx-auto px-4 pt-4">
-        <Button
-          variant="ghost"
-          onClick={() => {
-            // Tentar voltar pela history para manter a cascata aberta
-            if (window.history.length > 1) {
-              router.back()
-            } else {
-              router.push('/aulas')
-            }
-          }}
-          className="text-foreground hover:bg-muted transition-colors"
+  if (erro || !aula) {
+    return (
+      <AppShell headerTitle="Aula">
+        <div className="container mx-auto max-w-2xl px-4 py-16 text-center">
+          <p className="text-lg font-bold">Aula não encontrada</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Ela pode ter sido removida ou o endereço está errado.
+          </p>
+          <Link
+            href="/aulas"
+            className="mt-6 inline-flex h-10 items-center rounded-lg bg-primary px-5 text-sm font-bold text-primary-foreground"
+          >
+            Voltar para as aulas
+          </Link>
+        </div>
+      </AppShell>
+    )
+  }
+
+  const bloqueada = aula.acesso ? !aula.acesso.liberado : false
+
+  const corpo = (
+    <div
+      className={cn(
+        'container mx-auto px-4 py-5',
+        modoFoco ? 'max-w-5xl' : 'max-w-7xl',
+      )}
+    >
+      {/* ── Barra superior ────────────────────────────────────────────── */}
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+        <Link
+          href={aula.setorId ? `/aulas?curso=${aula.setorId}` : '/aulas'}
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-muted-foreground transition hover:text-foreground"
         >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Voltar para Aulas
-        </Button>
+          <ArrowLeft className="h-4 w-4" />
+          {nomeDoCurso || 'Aulas'}
+        </Link>
+
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setModoFoco((v) => !v)}
+            aria-pressed={modoFoco}
+            className={cn(
+              'inline-flex h-9 items-center gap-1.5 rounded-lg border px-3 text-xs font-semibold transition',
+              modoFoco
+                ? 'border-primary bg-primary text-primary-foreground'
+                : 'border-border bg-card text-muted-foreground hover:text-foreground',
+            )}
+          >
+            <Focus className="h-3.5 w-3.5" /> Modo foco
+          </button>
+
+          {totalCurso > 0 && !modoFoco ? (
+            <button
+              type="button"
+              onClick={() => setLateralAberta((v) => !v)}
+              className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-border bg-card px-3 text-xs font-semibold text-muted-foreground transition hover:text-foreground xl:hidden"
+            >
+              <ListVideo className="h-3.5 w-3.5" /> Conteúdo
+            </button>
+          ) : null}
+        </div>
       </div>
 
-      {/* Main Content */}
-      <main className="relative z-30 container mx-auto px-4 py-8 max-w-5xl">
-        {/* Bloqueio de Acesso Plus+ */}
-        {!temAcesso && (
-          <div className="mb-8 bg-red-500/10 border border-red-500/30 rounded-lg p-8 shadow-xl shadow-red-500/10 ">
-            <div className="flex items-start gap-4">
-              <Lock className="h-8 w-8 text-red-400 flex-shrink-0 mt-1" />
-              <div className="flex-1">
-                <h2 className="text-2xl font-bold text-red-600 dark:text-red-300 mb-2">Aula Plus+</h2>
-                <p className="text-muted-foreground mb-4">
-                  Esta aula é exclusiva para assinantes Plus+. Faça upgrade da sua conta para acessar este conteúdo.
-                </p>
-                <Button
-                  onClick={() => router.push('/buy')}
-                  className="bg-secondary hover:bg-secondary/90 text-secondary-foreground transition-all duration-300"
-                >
-                  Fazer Assinar Plus+
-                </Button>
-              </div>
-            </div>
-          </div>
+      <div
+        className={cn(
+          'grid gap-6',
+          !modoFoco && totalCurso > 0 && 'xl:grid-cols-[minmax(0,1fr)_320px]',
         )}
-
-        {/* Bloqueio por Data de Liberação */}
-        {bloqueadaPorData && (
-          <div className="mb-8 bg-cyan-500/10 border border-cyan-500/30 rounded-lg p-8 shadow-xl shadow-cyan-500/10 ">
-            <div className="flex items-start gap-4">
-              <Lock className="h-8 w-8 text-cyan-600 dark:text-cyan-300 flex-shrink-0 mt-1" />
-              <div className="flex-1">
-                <h2 className="text-2xl font-bold text-cyan-700 dark:text-cyan-200 mb-2">Aula ainda não liberada</h2>
-                <p className="text-muted-foreground mb-4">
-                  Esta aula está agendada para liberação em{' '}
-                  {new Date(aula.dataLiberacao).toLocaleDateString('pt-BR', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                  })}.
-                </p>
-                <Button
-                  onClick={() => router.push('/aulas')}
-                  className="bg-muted hover:bg-muted/80 text-foreground border border-border transition-all duration-300"
-                >
-                  Voltar para Aulas
-                </Button>
-              </div>
+      >
+        {/* ── Coluna principal ────────────────────────────────────────── */}
+        <div className="min-w-0">
+          {bloqueada ? (
+            <CadeadoDaAula acesso={aula.acesso} />
+          ) : conteudo ? (
+            <PlayerDaAula
+              aulaId={aulaId}
+              videoEmbed={conteudo}
+              posicaoInicial={aula.progresso?.posicaoSegundos || 0}
+              aoRegistrarControle={aoRegistrarControle}
+              aoAtualizarProgresso={aoAtualizarProgresso}
+            />
+          ) : (
+            <div className="flex aspect-video items-center justify-center rounded-xl border border-dashed border-border bg-muted/20 text-sm text-muted-foreground">
+              Esta aula ainda não tem vídeo publicado.
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Capa da Aula */}
-        {aula.capa && (
-          <div className="mb-8 rounded-2xl overflow-hidden border border-emerald-500/20 shadow-xl shadow-emerald-500/10 ">
-            {aula.capa.tipo === 'imagem' && aula.capa.imagem ? (
-              <img 
-                src={aula.capa.imagem} 
-                alt={aula.titulo}
-                className="w-full h-64 object-cover"
-              />
-            ) : aula.capa.tipo === 'cor' ? (
-              <div 
-                className="w-full h-64 flex items-center justify-center"
-                style={{ backgroundColor: aula.capa.cor || '#3b82f6' }}
-              >
-                <p className="text-4xl font-bold text-foreground text-center px-4">{aula.capa.titulo}</p>
+          {/* Título e ações */}
+          <div className="mt-4">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div className="min-w-0">
+                <h1 className="font-heading text-xl font-semibold leading-tight tracking-tight sm:text-2xl">
+                  {aula.titulo}
+                </h1>
+                {aula.acesso?.porAmostra ? (
+                  <p className="mt-1.5 inline-flex items-center gap-1.5 rounded-md border border-amber-500/30 bg-amber-500/10 px-2 py-1 text-xs font-semibold text-amber-700 dark:text-amber-200">
+                    <Sparkles className="h-3.5 w-3.5" />
+                    Esta é uma amostra das vídeo-aulas do Domine Aqui
+                  </p>
+                ) : null}
               </div>
+
+              {!bloqueada ? (
+                <button
+                  type="button"
+                  onClick={alternarConclusao}
+                  disabled={marcando}
+                  className={cn(
+                    'inline-flex h-10 flex-none items-center gap-2 rounded-lg px-4 text-sm font-bold transition disabled:opacity-60',
+                    concluida
+                      ? 'border border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300'
+                      : 'bg-primary text-primary-foreground hover:brightness-110',
+                  )}
+                >
+                  {marcando ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : concluida ? (
+                    <CheckCircle2 className="h-4 w-4" />
+                  ) : (
+                    <Check className="h-4 w-4" />
+                  )}
+                  {concluida ? 'Aula concluída' : 'Marcar como concluída'}
+                </button>
+              ) : null}
+            </div>
+
+            {percentual > 0 && !bloqueada ? (
+              <BarraDeProgresso percentual={percentual} concluida={concluida} className="mt-3" />
+            ) : null}
+
+            {aula.descricao ? (
+              <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground">
+                {aula.descricao}
+              </p>
             ) : null}
           </div>
-        )}
 
-        {/* Informações da Aula */}
-        <div className="mb-8 bg-white/5 border border-emerald-500/20 rounded-2xl p-6 shadow-xl shadow-emerald-500/10 " style={{animationDelay: '0.1s'}}>
-          <div className="flex items-start justify-between gap-4 flex-wrap">
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-4 flex-wrap">
-                {aula.tipo === 'ao-vivo' ? (
-                  <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-red-500/20 text-red-600 dark:text-red-300 text-xs font-semibold border border-red-500/30 animate-pulse">
-                    <Zap className="h-3 w-3" />
-                    Ao Vivo
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-blue-500/20 text-blue-300 text-xs font-semibold border border-blue-500/30">
-                    <Video className="h-3 w-3" />
-                    Gravada
-                  </span>
-                )}
-                {isPlusOnlyAula(aula.visibilidade) ? (
-                  <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-yellow-500/20 text-yellow-300 text-xs font-semibold border border-yellow-500/30">
-                    <Lock className="h-3 w-3" />
-                    Plus+
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-semibold border border-emerald-500/30">
-                    <Globe className="h-3 w-3" />
-                    Gratuita
-                  </span>
-                )}
-                {aulaConcluida && (
-                  <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-semibold border border-emerald-500/30">
-                    <CheckCircle2 className="h-3 w-3" />
-                    Concluída
-                  </span>
-                )}
+          {/* Próxima aula (§20) — o próximo passo sem voltar para a lista. */}
+          {concluida && proxima ? (
+            <Link
+              href={`/aulas/${proxima._id}`}
+              className="mt-5 flex items-center justify-between gap-3 rounded-xl border border-primary/30 bg-primary/5 p-4 transition hover:border-primary/60"
+            >
+              <div className="min-w-0">
+                <p className="text-xs font-bold uppercase tracking-wide text-primary">Próxima aula</p>
+                <p className="mt-0.5 line-clamp-1 font-semibold">{proxima.titulo}</p>
               </div>
-              {aula.descricao && (
-                <p className="text-foreground/80 mb-4 text-base leading-relaxed">{aula.descricao}</p>
-              )}
-              <p className="text-xs text-foreground/50">
-                Postada em {new Date(aula.criadoEm).toLocaleDateString('pt-BR', {
-                  day: '2-digit',
-                  month: '2-digit',
-                  year: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit'
-                })}
-                {aula.criadoEm !== aula.atualizadoEm && (
-                  <> • Atualizada em {new Date(aula.atualizadoEm).toLocaleDateString('pt-BR', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                  })}</>
-                )}
-              </p>
+              <span className="inline-flex h-10 flex-none items-center gap-1.5 rounded-lg bg-primary px-4 text-sm font-bold text-primary-foreground">
+                Continuar <ArrowRight className="h-4 w-4" />
+              </span>
+            </Link>
+          ) : null}
+
+          {/* Anexos */}
+          {!bloqueada && aula.pdfs && aula.pdfs.length > 0 ? (
+            <section className="mt-5">
+              <h2 className="mb-2 text-sm font-bold">Materiais da aula</h2>
+              <ul className="space-y-2">
+                {aula.pdfs.map((pdf) => (
+                  <li key={pdf.url}>
+                    <a
+                      href={pdf.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-between gap-3 rounded-lg border border-border bg-card px-3 py-2.5 text-sm transition hover:bg-muted"
+                    >
+                      <span className="truncate">{pdf.nome}</span>
+                      <ChevronRight className="h-4 w-4 flex-none text-muted-foreground" />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+
+          {/* Anotações: no celular vêm aqui embaixo; no desktop, na lateral. */}
+          {!bloqueada ? (
+            <div className={cn('mt-6', !modoFoco && totalCurso > 0 && 'xl:hidden')}>
+              <PainelDeAnotacoes aulaId={aulaId} controle={controle} />
             </div>
-            <div className="flex gap-2 flex-wrap justify-end">
-              <Button
-                onClick={marcarComoConcluida}
-                disabled={marcandoConclusao}
-                className={`${
-                  aulaConcluida
-                    ? 'bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30'
-                    : 'bg-muted hover:bg-muted/80 text-foreground border border-border'
-                } transition-all duration-300 `}
-              >
-                <CheckCircle2 className="h-4 w-4 mr-2" />
-                {aulaConcluida ? 'Concluída' : 'Marcar como Concluída'}
-              </Button>
-              {(isAdmin || user?.secondaryRole === 'monitor') && (
-                <Button
-                  onClick={() => router.push(`/aulas/gerenciar/aulas/${aula._id}/editar`)}
-                  className="bg-muted hover:bg-muted/80 text-foreground border border-border transition-all duration-300 "
-                  size="sm"
-                >
-                  Editar
-                </Button>
-              )}
-            </div>
-          </div>
+          ) : null}
         </div>
 
-        {/* Conteúdo da Aula */}
-        {temAcesso && !bloqueadaPorData ? (
-        <div className="space-y-6 mb-8">
-          {/* Botões de Acesso */}
-          {aula.botoesAcesso && aula.botoesAcesso.length > 0 && (
-            <div className="bg-white/5 border border-emerald-500/20 rounded-2xl p-6 shadow-xl shadow-emerald-500/10 " style={{animationDelay: '0.15s'}}>
-              <h3 className="text-lg font-semibold text-foreground mb-4">Acessos Rápidos</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {aula.botoesAcesso.map((botao, idx) => (
-                  <a
-                    key={idx}
-                    href={botao.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 px-4 py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg transition-all duration-300  font-medium"
-                  >
-                    {botao.nome}
-                  </a>
-                ))}
+        {/* ── Lateral ─────────────────────────────────────────────────── */}
+        {!modoFoco && totalCurso > 0 ? (
+          <aside
+            className={cn(
+              'min-w-0 space-y-6',
+              lateralAberta ? 'block' : 'hidden xl:block',
+            )}
+          >
+            <div className="rounded-xl border border-border bg-card p-3">
+              <div className="mb-2 flex items-center justify-between gap-2">
+                <p className="text-sm font-bold">Conteúdo do curso</p>
+                <span className="text-xs text-muted-foreground">
+                  {concluidasCurso}/{totalCurso}
+                </span>
               </div>
-            </div>
-          )}
-
-          {/* Vídeo/Link */}
-          {aula.tipo === 'ao-vivo' && aula.linkOuEmbed && (
-            <div className="bg-white/5 border border-emerald-500/20 rounded-2xl p-6 shadow-xl shadow-emerald-500/10 " style={{animationDelay: '0.2s'}}>
-              <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-                <Zap className="h-5 w-5 text-red-400" />
-                Acesso à Aula Ao Vivo
-              </h3>
-              {aula.linkOuEmbed.startsWith('<') ? (
-                <div
-                  dangerouslySetInnerHTML={{ __html: aula.linkOuEmbed }}
-                  className="w-full aspect-video rounded-lg overflow-hidden"
-                />
-              ) : (
-                <a
-                  href={aula.linkOuEmbed}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-secondary hover:bg-secondary/90 text-secondary-foreground rounded-lg transition-all duration-300 "
-                >
-                  <Zap className="h-4 w-4" />
-                  Entrar na Aula Ao Vivo
-                </a>
-              )}
-            </div>
-          )}
-
-          {aula.tipo === 'gravada' && aula.videoEmbed && (
-            <div className="bg-white/5 border border-emerald-500/20 rounded-2xl p-6 shadow-xl shadow-emerald-500/10 " style={{animationDelay: '0.2s'}}>
-              <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-                <Video className="h-5 w-5 text-blue-400" />
-                Vídeo da Aula
-              </h3>
-              <VideoWatermark 
-                userName={user?.name || 'Usuário'} 
-                userCpf={user?.cpf || 'CPF'}
-              >
-                {aula.videoEmbed.startsWith('<') ? (
-                  <div
-                    dangerouslySetInnerHTML={{ __html: aula.videoEmbed }}
-                    className="w-full h-full"
-                  />
-                ) : (
-                  <video
-                    src={aula.videoEmbed}
-                    controls
-                    className="w-full h-full"
-                  />
-                )}
-              </VideoWatermark>
-            </div>
-          )}
-
-          {/* PDFs */}
-          {aula.pdfs && aula.pdfs.length > 0 && (
-            <div className="bg-white/5 border border-emerald-500/20 rounded-2xl p-6 shadow-xl shadow-emerald-500/10 " style={{animationDelay: '0.3s'}}>
-              <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-                <Download className="h-5 w-5 text-emerald-400" />
-                Materiais de Apoio
-              </h3>
-              <div className="space-y-2">
-                {aula.pdfs.map((pdf, index) => (
-                  <a
-                    key={index}
-                    href={pdf.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-3 p-3 border border-white/10 rounded-lg hover:bg-white/10 hover:border-emerald-500/30 transition-all duration-300 "
-                  >
-                    <Download className="h-4 w-4 text-emerald-400 flex-shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-foreground truncate">{pdf.nome}</p>
-                      <p className="text-xs text-foreground/50">
-                        {(pdf.tamanho / 1024 / 1024).toFixed(2)} MB
-                      </p>
-                    </div>
-                  </a>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-        ) : null}
-
-        {/* Comentários */}
-        {temAcesso && !bloqueadaPorData && (
-        <div className="bg-white/5 border border-emerald-500/20 rounded-2xl p-6 shadow-xl shadow-emerald-500/10 " style={{animationDelay: '0.4s'}}>
-          <h3 className="text-lg font-semibold text-foreground mb-6">Comentários ({comentarios.length})</h3>
-          <div className="space-y-6">
-            {/* Novo Comentário */}
-            <div className="space-y-3 pb-6 border-b border-white/10">
-              <label className="text-sm font-medium text-foreground">Seu Comentário</label>
-              <Textarea
-                placeholder="Compartilhe suas dúvidas ou observações..."
-                value={novoComentario}
-                onChange={(e) => setNovoComentario(e.target.value)}
-                className="resize-none bg-white/5 border-white/10 text-foreground placeholder:text-foreground/40 rounded-lg"
-                rows={3}
+              <BarraDeProgresso
+                percentual={totalCurso ? (concluidasCurso / totalCurso) * 100 : 0}
+                concluida={concluidasCurso === totalCurso}
+                className="mb-3"
               />
-              <Button
-                onClick={enviarComentario}
-                disabled={!novoComentario.trim() || enviandoComentario}
-                className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300 "
-              >
-                <Send className="h-4 w-4 mr-2" />
-                {enviandoComentario ? 'Enviando...' : 'Enviar Comentário'}
-              </Button>
+
+              <ol className="max-h-[60vh] space-y-0.5 overflow-y-auto">
+                {vizinhas.map((v) => {
+                  const atual = v._id === aulaId
+                  const travada = v.acesso?.liberado === false
+                  return (
+                    <li key={v._id}>
+                      <Link
+                        href={`/aulas/${v._id}`}
+                        aria-current={atual ? 'page' : undefined}
+                        className={cn(
+                          'flex items-start gap-2 rounded-lg px-2 py-2 text-xs transition',
+                          atual ? 'bg-primary/10 font-bold text-primary' : 'hover:bg-muted',
+                          travada && 'opacity-60',
+                        )}
+                      >
+                        <span className="mt-0.5 flex-none">
+                          {v.progresso?.concluida ? (
+                            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                          ) : travada ? (
+                            <Lock className="h-3.5 w-3.5" />
+                          ) : atual ? (
+                            <PlayCircle className="h-3.5 w-3.5" />
+                          ) : (
+                            <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+                          )}
+                        </span>
+                        <span className="line-clamp-2 leading-snug">{v.titulo}</span>
+                      </Link>
+                    </li>
+                  )
+                })}
+              </ol>
             </div>
 
-            {/* Lista de Comentários */}
-            <div className="space-y-4">
-              {comentarios.length === 0 ? (
-                <p className="text-center text-foreground/50 py-4">
-                  Nenhum comentário ainda. Seja o primeiro a comentar!
-                </p>
-              ) : (
-                comentarios.map(comentario => (
-                  <div key={String(comentario._id)} className="flex gap-4 p-4 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-all duration-300">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1 flex-wrap">
-                        <span className="font-medium text-sm text-foreground">{comentario.nomeUsuario}</span>
-                        {comentario.isAdmin && (
-                          <span className="px-2 py-0.5 rounded-full bg-red-500/20 text-red-600 dark:text-red-300 border border-red-500/30 text-xs font-semibold">
-                            Administrador
-                          </span>
-                        )}
-                        {!comentario.isAdmin && (
-                          <span className="px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30 text-xs font-semibold">
-                            Aluno
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-xs text-foreground/50 mb-2">
-                        {new Date(comentario.criadoEm).toLocaleDateString('pt-BR', {
-                          day: '2-digit',
-                          month: '2-digit',
-                          year: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })}
-                      </p>
-                      <p className="text-sm text-foreground/80 break-words">{comentario.conteudo}</p>
-                    </div>
-                    {isAdmin && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => deletarComentario(String(comentario._id))}
-                        className="text-red-400 hover:text-red-600 dark:text-red-300 hover:bg-red-500/10"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    )}
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
+            {!bloqueada ? <PainelDeAnotacoes aulaId={aulaId} controle={controle} /> : null}
+          </aside>
+        ) : null}
+      </div>
+
+      {/* Navegação entre aulas, sempre disponível */}
+      {(anterior || proxima) && !modoFoco ? (
+        <div className="mt-8 flex items-center justify-between gap-3 border-t border-border pt-4">
+          {anterior ? (
+            <button
+              type="button"
+              onClick={() => router.push(`/aulas/${anterior._id}`)}
+              className="inline-flex min-w-0 items-center gap-2 text-sm text-muted-foreground transition hover:text-foreground"
+            >
+              <ArrowLeft className="h-4 w-4 flex-none" />
+              <span className="truncate">{anterior.titulo}</span>
+            </button>
+          ) : (
+            <span />
+          )}
+          {proxima ? (
+            <button
+              type="button"
+              onClick={() => router.push(`/aulas/${proxima._id}`)}
+              className="inline-flex min-w-0 items-center gap-2 text-sm font-semibold text-primary transition hover:brightness-110"
+            >
+              <span className="truncate">{proxima.titulo}</span>
+              <ArrowRight className="h-4 w-4 flex-none" />
+            </button>
+          ) : null}
         </div>
-        )}
-      </main>
+      ) : null}
     </div>
-    </AppShell>
+  )
+
+  // O Modo Foco tira o shell inteiro: menu lateral, cabeçalho e o resto da
+  // navegação da plataforma. Quem ativou quer o vídeo e nada mais.
+  if (modoFoco) {
+    return (
+      <div className="min-h-screen bg-background">
+        <button
+          type="button"
+          onClick={() => setModoFoco(false)}
+          className="fixed right-4 top-4 z-50 inline-flex h-10 items-center gap-1.5 rounded-lg border border-border bg-card/95 px-3 text-xs font-bold shadow-lg backdrop-blur"
+        >
+          <X className="h-4 w-4" /> Sair do foco
+        </button>
+        {corpo}
+      </div>
+    )
+  }
+
+  return <AppShell headerTitle="Aula">{corpo}</AppShell>
+}
+
+/**
+ * Cadeado com motivo e saída (§17).
+ *
+ * Nunca uma página quebrada: o servidor já disse por que travou e para onde
+ * mandar, e é exatamente isso que aparece.
+ */
+function CadeadoDaAula({ acesso }: { acesso?: Aula['acesso'] }) {
+  const requisito = acesso?.requisito
+  const agendada = requisito?.motivo === 'agendada'
+  const liberaEm = requisito?.liberaEm ? new Date(requisito.liberaEm) : null
+
+  return (
+    <div className="flex aspect-video flex-col items-center justify-center gap-3 rounded-xl border border-border bg-muted/20 px-6 text-center">
+      <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+        {agendada ? <Clock className="h-6 w-6" /> : <Lock className="h-6 w-6" />}
+      </span>
+      <p className="text-base font-bold">{requisito?.titulo || 'Conteúdo restrito'}</p>
+
+      {agendada && liberaEm ? (
+        <p className="text-sm text-muted-foreground">
+          Disponível em{' '}
+          {liberaEm.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' })} às{' '}
+          {liberaEm.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+        </p>
+      ) : (
+        <p className="max-w-md text-sm text-muted-foreground">
+          Assim que você tiver acesso, esta aula abre aqui mesmo — seu progresso e suas anotações
+          continuam guardados.
+        </p>
+      )}
+
+      {requisito?.acaoLabel && requisito.acaoHref ? (
+        <Link
+          href={requisito.acaoHref}
+          className="mt-2 inline-flex h-10 items-center rounded-lg bg-primary px-5 text-sm font-bold text-primary-foreground transition hover:brightness-110"
+        >
+          {requisito.acaoLabel}
+        </Link>
+      ) : null}
+    </div>
   )
 }
