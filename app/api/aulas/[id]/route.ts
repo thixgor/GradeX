@@ -12,6 +12,7 @@ import { getSession } from '@/lib/auth'
 import { avaliarAcessoAula, ocultarConteudoRestrito } from '@/lib/aulas/acesso'
 import { montarContextoDoUsuario } from '@/lib/aulas/contexto'
 import { normalizarRegras, visibilidadeEquivalente } from '@/lib/aulas/regras-edicao'
+import { normalizarCapitulos, normalizarTranscricao } from '@/lib/aulas/marcadores'
 import { aplicarVinculo, resolverVinculosEmLote } from '@/lib/aulas/resolver-vinculo'
 
 export const dynamic = 'force-dynamic'
@@ -203,6 +204,16 @@ export async function PATCH(
       }
     }
 
+    // Capítulos (§11) e transcrição (§10). Aceitam texto colado — VTT, SRT ou
+    // "00:00 Título" — e são convertidos aqui, para o documento nunca guardar o
+    // formato bruto de origem. `null` limpa o campo.
+    if ('capitulos' in updateData) {
+      updateData.capitulos = normalizarCapitulos(updateData.capitulos)
+    }
+    if ('transcricao' in updateData) {
+      updateData.transcricao = normalizarTranscricao(updateData.transcricao)
+    }
+
     /*
      * Campos que podem ser LIMPOS.
      *
@@ -212,7 +223,13 @@ export async function PATCH(
      * data de encerramento, e nunca mais desligar: a tela mandava `null`, o
      * laço engolia, e o valor antigo continuava valendo em silêncio.
      */
-    const LIMPAVEIS = new Set(['vinculoMaterial', 'ocultarEm', 'regrasAcesso'])
+    const LIMPAVEIS = new Set([
+      'vinculoMaterial',
+      'ocultarEm',
+      'regrasAcesso',
+      'capitulos',
+      'transcricao',
+    ])
 
     // Remover campos undefined e null
     Object.keys(updateData).forEach(key => {

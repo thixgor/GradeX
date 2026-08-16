@@ -13,6 +13,8 @@ import { LogoLoading } from '@/components/logo-loading'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { VinculoMaterialField, type VinculoMaterial } from '@/components/aulas/vinculo-material-field'
 import { EditorDeRegras } from '@/components/aulas/editor-regras'
+import { EditorDeMarcadores } from '@/components/aulas/editor-marcadores'
+import type { Capitulo, TrechoDaTranscricao } from '@/lib/aulas/marcadores'
 import { regrasIniciais } from '@/lib/aulas/regras-edicao'
 import type { RegrasDeAcessoAula } from '@/lib/aulas/acesso'
 
@@ -45,6 +47,8 @@ export default function EditarAulaPage() {
   const [tipo, setTipo] = useState<AulaType>('gravada')
   const [vinculoMaterial, setVinculoMaterial] = useState<VinculoMaterial | null>(null)
   const [regras, setRegras] = useState<RegrasDeAcessoAula | null>(null)
+  const [capitulos, setCapitulos] = useState<Capitulo[] | null>(null)
+  const [transcricao, setTranscricao] = useState<TrechoDaTranscricao[] | null>(null)
   const [setorId, setSetorId] = useState('')
   const [topicoId, setTopicoId] = useState('')
   const [subtopicoId, setSubtopicoId] = useState('')
@@ -134,6 +138,8 @@ export default function EditarAulaPage() {
       // Aula legada abre mostrando o que ela já fazia, traduzido de
       // `visibilidade` — nunca uma tela em branco (§45).
       setRegras(regrasIniciais(a))
+      setCapitulos(a.capitulos || null)
+      setTranscricao(a.transcricao || null)
       setSetorId(a.setorId || '')
       setTopicoId(a.topicoId || '')
       setSubtopicoId(a.subtopicoId || '')
@@ -241,6 +247,8 @@ export default function EditarAulaPage() {
         tipo,
         // `regrasAcesso` manda; o servidor deriva `visibilidade` delas.
         regrasAcesso: regras,
+        capitulos,
+        transcricao,
         setorId: setorId || null,
         topicoId: topicoId || null,
         subtopicoId: subtopicoId || null,
@@ -373,6 +381,23 @@ export default function EditarAulaPage() {
                   <EditorDeRegras valor={regras} onChange={setRegras} escuro />
                 </div>
               )}
+
+              {/* Capítulos e transcrição (§10, §11) ficam perto do vídeo, que é
+                  a que eles se referem. */}
+              <div>
+                <Label className="text-white/80">Capítulos e transcrição</Label>
+                <div className="mt-1">
+                  <EditorDeMarcadores
+                    capitulos={capitulos}
+                    transcricao={transcricao}
+                    onChange={(v) => {
+                      setCapitulos(v.capitulos)
+                      setTranscricao(v.transcricao)
+                    }}
+                    escuro
+                  />
+                </div>
+              </div>
 
               <div>
                 <Label className="text-white/80">Venda e conteúdo em /materiais</Label>

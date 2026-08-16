@@ -21,6 +21,7 @@ import {
 import { AppShell } from '@/components/app-shell'
 import { PlayerDaAula, type ControleDoPlayer } from '@/components/aulas/player'
 import { PainelDeAnotacoes } from '@/components/aulas/anotacoes-painel'
+import { PainelDeMarcadores } from '@/components/aulas/marcadores-painel'
 import { BarraDeProgresso } from '@/components/aulas/biblioteca'
 import { FaixaModoAluno } from '@/components/aulas/faixa-modo-aluno'
 import { comModo, lerModo, PARAMETRO_MODO } from '@/lib/aulas/modo-visualizacao'
@@ -51,6 +52,8 @@ interface Aula {
   linkOuEmbed?: string
   setorId?: string
   moduloId?: string
+  capitulos?: Array<{ segundo: number; titulo: string }> | null
+  transcricao?: Array<{ segundo: number; fim?: number; texto: string }> | null
   pdfs?: Array<{ nome: string; url: string; tamanho: number }>
   botoesAcesso?: Array<{ nome: string; url: string }>
   progresso?: { percentual: number; concluida: boolean; posicaoSegundos?: number } | null
@@ -370,6 +373,19 @@ function AssistirAulaConteudo() {
             </section>
           ) : null}
 
+          {/* Capítulos e transcrição (§10, §11): no celular vêm logo abaixo do
+              vídeo — é onde a pergunta "onde está a parte que eu preciso?"
+              aparece — e no desktop sobem para a lateral, junto do índice. */}
+          {!bloqueada ? (
+            <div className={cn('mt-6', !modoFoco && totalCurso > 0 && 'xl:hidden')}>
+              <PainelDeMarcadores
+                capitulos={aula.capitulos}
+                transcricao={aula.transcricao}
+                controle={controle}
+              />
+            </div>
+          ) : null}
+
           {/* Anotações: no celular vêm aqui embaixo; no desktop, na lateral. */}
           {!bloqueada ? (
             <div className={cn('mt-6', !modoFoco && totalCurso > 0 && 'xl:hidden')}>
@@ -432,6 +448,14 @@ function AssistirAulaConteudo() {
                 })}
               </ol>
             </div>
+
+            {!bloqueada ? (
+              <PainelDeMarcadores
+                capitulos={aula.capitulos}
+                transcricao={aula.transcricao}
+                controle={controle}
+              />
+            ) : null}
 
             {!bloqueada ? <PainelDeAnotacoes aulaId={aulaId} controle={controle} /> : null}
           </aside>
