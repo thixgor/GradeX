@@ -27,6 +27,7 @@ import { useLiteMode } from '@/hooks/use-lite-mode'
 import { MotionConfig } from 'framer-motion'
 import type { SidebarSectionOrder, SidebarSectionSettings } from '@/lib/sidebar-sections'
 import type { SidebarSectionIcons } from '@/lib/sidebar-icons'
+import type { SidebarGroupDefinition, SidebarSectionGroups } from '@/lib/sidebar-groups'
 
 /**
  * AppShell Component - Optimized Version
@@ -73,6 +74,8 @@ interface AppShellContextType {
   sidebarSections: SidebarSectionSettings | null
   sidebarSectionOrder: SidebarSectionOrder | null
   sidebarSectionIcons: SidebarSectionIcons | null
+  sidebarGroups: SidebarGroupDefinition[] | null
+  sidebarSectionGroups: SidebarSectionGroups | null
 }
 
 const AppShellContext = createContext<AppShellContextType | null>(null)
@@ -155,6 +158,8 @@ export function AppShell({
     sidebarSections,
     sidebarSectionOrder,
     sidebarSectionIcons,
+    sidebarGroups,
+    sidebarSectionGroups,
     refetch: refetchBootstrap,
   } = useBootstrap({
     redirectOnUnauth: !allowGuest, // Auto-redirect to login if not authenticated
@@ -319,6 +324,8 @@ export function AppShell({
     sidebarSections,
     sidebarSectionOrder,
     sidebarSectionIcons,
+    sidebarGroups,
+    sidebarSectionGroups,
   }
 
   if (isGuest) {
@@ -404,6 +411,8 @@ export function AppShell({
           sidebarSections={sidebarSections}
           sidebarSectionOrder={sidebarSectionOrder}
           sidebarSectionIcons={sidebarSectionIcons}
+          sidebarGroups={sidebarGroups}
+          sidebarSectionGroups={sidebarSectionGroups}
         />
 
         {/* Floating controls when shell header is hidden */}

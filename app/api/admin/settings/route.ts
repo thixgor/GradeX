@@ -10,6 +10,12 @@ import {
   type SidebarSectionSettings,
 } from '@/lib/sidebar-sections'
 import { normalizeSidebarIcons, type SidebarSectionIcons } from '@/lib/sidebar-icons'
+import {
+  normalizeSidebarGroups,
+  normalizeSidebarSectionGroups,
+  type SidebarGroupDefinition,
+  type SidebarSectionGroups,
+} from '@/lib/sidebar-groups'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -36,6 +42,8 @@ interface LandingSettings {
   sidebarSections?: SidebarSectionSettings
   sidebarSectionOrder?: SidebarSectionOrder
   sidebarSectionIcons?: SidebarSectionIcons
+  sidebarGroups?: SidebarGroupDefinition[]
+  sidebarSectionGroups?: SidebarSectionGroups
 }
 
 const DEFAULT_LANDING_SETTINGS: LandingSettings = {
@@ -51,6 +59,21 @@ const DEFAULT_LANDING_SETTINGS: LandingSettings = {
   sidebarSections: normalizeSidebarSections(),
   sidebarSectionOrder: normalizeSidebarOrder(),
   sidebarSectionIcons: normalizeSidebarIcons(),
+  sidebarGroups: normalizeSidebarGroups(),
+  sidebarSectionGroups: normalizeSidebarSectionGroups(undefined),
+}
+
+/**
+ * Grupos e vínculos saem sempre juntos: o mapa seção → grupo é validado contra
+ * a lista de grupos que sobreviveu à normalização. Separá-los deixaria passar
+ * uma seção apontando para um grupo que o admin acabou de apagar.
+ */
+function sidebarGroupPayload(rawGroups: unknown, rawAssignments: unknown) {
+  const sidebarGroups = normalizeSidebarGroups(rawGroups)
+  return {
+    sidebarGroups,
+    sidebarSectionGroups: normalizeSidebarSectionGroups(rawAssignments, sidebarGroups),
+  }
 }
 
 // GET - Obter configurações (público)
@@ -71,6 +94,7 @@ export async function GET(req: NextRequest) {
         sidebarSections: normalizeSidebarSections(settings.sidebarSections),
         sidebarSectionOrder: normalizeSidebarOrder(settings.sidebarSectionOrder),
         sidebarSectionIcons: normalizeSidebarIcons(settings.sidebarSectionIcons),
+        ...sidebarGroupPayload(settings.sidebarGroups, settings.sidebarSectionGroups),
       },
       { headers: NO_STORE_HEADERS }
     )
@@ -98,6 +122,7 @@ export async function PUT(req: NextRequest) {
       sidebarSections: normalizeSidebarSections(body.sidebarSections),
       sidebarSectionOrder: normalizeSidebarOrder(body.sidebarSectionOrder),
       sidebarSectionIcons: normalizeSidebarIcons(body.sidebarSectionIcons),
+      ...sidebarGroupPayload(body.sidebarGroups, body.sidebarSectionGroups),
     }
 
     const db = await getDb()
@@ -132,6 +157,7 @@ export async function PUT(req: NextRequest) {
         sidebarSections: normalizeSidebarSections(updatedSettings?.sidebarSections),
         sidebarSectionOrder: normalizeSidebarOrder(updatedSettings?.sidebarSectionOrder),
         sidebarSectionIcons: normalizeSidebarIcons(updatedSettings?.sidebarSectionIcons),
+        ...sidebarGroupPayload(updatedSettings?.sidebarGroups, updatedSettings?.sidebarSectionGroups),
       },
       { headers: NO_STORE_HEADERS }
     )

@@ -1666,6 +1666,53 @@
   box-shadow: inset 0 0 0 1px hsl(0 84% 60% / 0.35);
 }
 
+/* ---- Grupos colapsáveis ----
+   O menu tinha até 18 itens de mesmo peso, sete deles subáreas do Manual
+   Clínico disputando atenção com "Provas". Agrupar só resolve se o olho
+   enxergar de imediato o que é filho de quem: daí o fio-guia vertical descendo
+   do cabeçalho do grupo e o chip menor e mais discreto nos filhos. Sem essas
+   duas pistas, o acordeão aberto vira a mesma lista plana de antes, só que
+   mais longa. */
+.sidebar-group-children {
+  position: relative;
+  padding-left: 0;
+}
+
+.sidebar-group-children::before {
+  content: '';
+  position: absolute;
+  left: 27px;
+  top: 2px;
+  bottom: 2px;
+  width: 1.5px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to bottom,
+    hsl(var(--primary) / 0.28),
+    hsl(var(--primary) / 0.06)
+  );
+}
+
+.sidebar-nav-chip-nested {
+  height: 1.65rem;
+  width: 1.65rem;
+  border-radius: 8px;
+  background: hsl(var(--primary) / 0.07);
+  box-shadow: inset 0 0 0 1px hsl(var(--primary) / 0.1);
+}
+
+.sidebar-nav-chip-nested > svg {
+  height: 1rem;
+  width: 1rem;
+}
+
+/* Painel que substitui o acordeão quando o menu está recolhido a 72px. */
+.sidebar-flyout {
+  background: hsl(var(--popover) / 0.98);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
 /* Selo "Novo"/"Auto": pequeno demais e apagado demais para ser notado. */
 .sidebar-nav-badge {
   background: hsl(var(--primary));

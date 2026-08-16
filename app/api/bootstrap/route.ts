@@ -23,6 +23,12 @@ import {
   type SidebarSectionSettings,
 } from '@/lib/sidebar-sections'
 import { normalizeSidebarIcons, type SidebarSectionIcons } from '@/lib/sidebar-icons'
+import {
+  normalizeSidebarGroups,
+  normalizeSidebarSectionGroups,
+  type SidebarGroupDefinition,
+  type SidebarSectionGroups,
+} from '@/lib/sidebar-groups'
 import { normalizeAccountType } from '@/lib/account-tier'
 import { getMissingProfileFields } from '@/lib/profile-completeness'
 
@@ -107,6 +113,8 @@ interface BootstrapResponse {
   sidebarSections: SidebarSectionSettings
   sidebarSectionOrder: SidebarSectionOrder
   sidebarSectionIcons: SidebarSectionIcons
+  sidebarGroups: SidebarGroupDefinition[]
+  sidebarSectionGroups: SidebarSectionGroups
 }
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
@@ -192,7 +200,15 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       ),
       db.collection('landing_settings').findOne(
         {},
-        { projection: { sidebarSections: 1, sidebarSectionOrder: 1, sidebarSectionIcons: 1 } }
+        {
+          projection: {
+            sidebarSections: 1,
+            sidebarSectionOrder: 1,
+            sidebarSectionIcons: 1,
+            sidebarGroups: 1,
+            sidebarSectionGroups: 1,
+          },
+        }
       ),
       db.collection('exam_submissions').aggregate([
         { $match: { userId, createdAt: { $gte: startOfMonth } } },
@@ -232,6 +248,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       aiGenerations: tierLimits.aiGenerationLimit > 0 ? 0 : 0,
       storage: tierLimits.storageGB > 0 ? 0 : 0,
     }
+
+    // Os vínculos seção → grupo são validados contra a lista de grupos que
+    // realmente sobreviveu à normalização, e não contra o que está cru no
+    // banco: assim uma seção nunca aponta para um grupo já apagado.
+    const sidebarGroups = normalizeSidebarGroups(landingSettings?.sidebarGroups)
 
     const response: BootstrapResponse = {
       user: {
@@ -287,6 +308,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       sidebarSections: normalizeSidebarSections(landingSettings?.sidebarSections),
       sidebarSectionOrder: normalizeSidebarOrder(landingSettings?.sidebarSectionOrder),
       sidebarSectionIcons: normalizeSidebarIcons(landingSettings?.sidebarSectionIcons),
+      sidebarGroups: sidebarGroups,
+      sidebarSectionGroups: normalizeSidebarSectionGroups(
+        landingSettings?.sidebarSectionGroups,
+        sidebarGroups
+      ),
     }
 
     // User/session-specific data must never survive logout/account switches.

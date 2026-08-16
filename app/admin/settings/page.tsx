@@ -14,15 +14,22 @@ import { PlanConfig } from '@/lib/types'
 import { PLUS_LABEL, normalizeAccountType } from '@/lib/account-tier'
 import { PlusGuardPanel } from '@/components/admin/plus-guard-panel'
 import {
-  getOrderedSidebarSections,
   normalizeSidebarOrder,
   normalizeSidebarSections,
-  type SidebarSectionKey,
   type SidebarSectionOrder,
   type SidebarSectionSettings,
 } from '@/lib/sidebar-sections'
 import { normalizeSidebarIcons, type SidebarSectionIcons } from '@/lib/sidebar-icons'
-import { SidebarIconPicker } from '@/components/admin/sidebar-icon-picker'
+import {
+  normalizeSidebarGroups,
+  normalizeSidebarSectionGroups,
+  type SidebarGroupDefinition,
+  type SidebarSectionGroups,
+} from '@/lib/sidebar-groups'
+import {
+  SidebarMenuConfig,
+  type SidebarMenuConfigValue,
+} from '@/components/admin/sidebar-menu-config'
 
 interface User {
   id: string
@@ -46,6 +53,8 @@ interface LandingSettings {
   sidebarSections?: SidebarSectionSettings
   sidebarSectionOrder?: SidebarSectionOrder
   sidebarSectionIcons?: SidebarSectionIcons
+  sidebarGroups?: SidebarGroupDefinition[]
+  sidebarSectionGroups?: SidebarSectionGroups
 }
 
 interface MercadoPagoStatus {
@@ -107,6 +116,8 @@ export default function SettingsPage() {
     sidebarSections: normalizeSidebarSections(),
     sidebarSectionOrder: normalizeSidebarOrder(),
     sidebarSectionIcons: normalizeSidebarIcons(),
+    sidebarGroups: normalizeSidebarGroups(),
+    sidebarSectionGroups: normalizeSidebarSectionGroups(undefined),
   })
   const [mpStatus, setMpStatus] = useState<MercadoPagoStatus | null>(null)
   const [mpEvents, setMpEvents] = useState<MercadoPagoEvent[]>([])
@@ -219,6 +230,9 @@ export default function SettingsPage() {
       const res = await fetch('/api/admin/settings', { cache: 'no-store' })
       if (res.ok) {
         const data = await res.json()
+        // Os vínculos seção → grupo só fazem sentido contra a lista de grupos
+        // que sobreviveu à normalização.
+        const grupos = normalizeSidebarGroups(data.sidebarGroups)
         // Garantir que personalExamsEnabled é um booleano
         const settings: LandingSettings = {
           landingPageEnabled: data.landingPageEnabled !== false,
@@ -233,6 +247,8 @@ export default function SettingsPage() {
           sidebarSections: normalizeSidebarSections(data.sidebarSections),
           sidebarSectionOrder: normalizeSidebarOrder(data.sidebarSectionOrder),
           sidebarSectionIcons: normalizeSidebarIcons(data.sidebarSectionIcons),
+          sidebarGroups: grupos,
+          sidebarSectionGroups: normalizeSidebarSectionGroups(data.sidebarSectionGroups, grupos),
         }
         setSettings(settings)
       }
@@ -361,37 +377,20 @@ export default function SettingsPage() {
     }
   }
 
-  function toggleSidebarSection(sectionKey: SidebarSectionKey) {
-    const currentSections = normalizeSidebarSections(settings.sidebarSections)
-    setSettings({
-      ...settings,
-      sidebarSections: {
-        ...currentSections,
-        [sectionKey]: !currentSections[sectionKey],
-      },
-    })
-  }
-
-  function setSidebarSectionIcon(sectionKey: SidebarSectionKey, iconName: string) {
-    setSettings({
-      ...settings,
-      sidebarSectionIcons: {
-        ...normalizeSidebarIcons(settings.sidebarSectionIcons),
-        [sectionKey]: iconName,
-      },
-    })
-  }
-
-  /** Sobe (-1) ou desce (+1) uma seção na ordem do menu. */
-  function moveSidebarSection(sectionKey: SidebarSectionKey, direction: -1 | 1) {
-    const order = normalizeSidebarOrder(settings.sidebarSectionOrder)
-    const from = order.indexOf(sectionKey)
-    const to = from + direction
-    if (from === -1 || to < 0 || to >= order.length) return
-
-    const next = [...order]
-    ;[next[from], next[to]] = [next[to], next[from]]
-    setSettings({ ...settings, sidebarSectionOrder: next })
+  /**
+   * Ponte entre o estado desta tela e o componente do menu. O componente
+   * trabalha com nomes curtos (sections/order/icons/groups/sectionGroups);
+   * aqui eles voltam a ser os campos do documento de configuração.
+   */
+  function aplicarMenu(patch: Partial<SidebarMenuConfigValue>) {
+    setSettings((atual) => ({
+      ...atual,
+      ...(patch.sections ? { sidebarSections: patch.sections } : {}),
+      ...(patch.order ? { sidebarSectionOrder: patch.order } : {}),
+      ...(patch.icons ? { sidebarSectionIcons: patch.icons } : {}),
+      ...(patch.groups ? { sidebarGroups: patch.groups } : {}),
+      ...(patch.sectionGroups ? { sidebarSectionGroups: patch.sectionGroups } : {}),
+    }))
   }
 
   async function handleSave() {
@@ -567,105 +566,24 @@ export default function SettingsPage() {
             </CardContent>
           </Card>
 
-          {/* Sidebar Sections */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Seções do Sidebar Geral</CardTitle>
-              <CardDescription>
-                Controle quais áreas aparecem para usuários comuns, em que ordem e com
-                qual ícone. Ordem e ícone valem para o menu lateral e para o carrossel do
-                início. Administradores continuam com acesso completo.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid gap-3">
-                {getOrderedSidebarSections(settings.sidebarSectionOrder).map((section, index, list) => {
-                  const sidebarSections = normalizeSidebarSections(settings.sidebarSections)
-                  const enabled = sidebarSections[section.key]
-
-                  return (
-                    <div key={section.key} className="flex items-center justify-between gap-4 p-4 border rounded-lg hover:bg-muted/50 transition-colors">
-                      <div className="flex flex-col gap-1 shrink-0">
-                        <button
-                          type="button"
-                          onClick={() => moveSidebarSection(section.key, -1)}
-                          disabled={index === 0}
-                          aria-label={`Mover ${section.label} para cima`}
-                          className="rounded-md border p-1.5 transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-30"
-                        >
-                          <ArrowUp className="h-3.5 w-3.5" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => moveSidebarSection(section.key, 1)}
-                          disabled={index === list.length - 1}
-                          aria-label={`Mover ${section.label} para baixo`}
-                          className="rounded-md border p-1.5 transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-30"
-                        >
-                          <ArrowDown className="h-3.5 w-3.5" />
-                        </button>
-                      </div>
-                      <SidebarIconPicker
-                        value={normalizeSidebarIcons(settings.sidebarSectionIcons)[section.key]}
-                        sectionLabel={section.label}
-                        onChange={(iconName) => setSidebarSectionIcon(section.key, iconName)}
-                      />
-                      <div className="space-y-1 flex-1 min-w-0">
-                        <Label className="text-base font-semibold">
-                          <span className="mr-2 text-xs font-mono text-muted-foreground">{index + 1}.</span>
-                          {section.label}
-                        </Label>
-                        <p className="text-sm text-muted-foreground">{section.description}</p>
-                        <p className="text-xs text-muted-foreground font-mono">{section.href}</p>
-                      </div>
-                      <div className="flex items-center gap-3 shrink-0">
-                        <span className={`hidden sm:inline text-xs font-medium ${enabled ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                          {enabled ? 'Habilitada' : 'Desabilitada'}
-                        </span>
-                        <button
-                          type="button"
-                          role="switch"
-                          aria-checked={enabled}
-                          onClick={() => toggleSidebarSection(section.key)}
-                          className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors ${enabled ? 'bg-primary' : 'bg-muted'}`}
-                        >
-                          <span
-                            className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${enabled ? 'translate-x-7' : 'translate-x-1'}`}
-                          />
-                        </button>
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-
-              <div className="p-4 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg">
-                <p className="text-sm text-amber-900 dark:text-amber-100">
-                  Ao desabilitar uma seção, usuários comuns deixam de vê-la no menu lateral e são redirecionados caso tentem abrir a rota diretamente.
-                  As áreas do Manual Clínico (Ferramentas, Farmacologia, Domine Anatomia, Histologia,
-                  Radiologia e Eletrocardiograma) vêm desligadas: ligue apenas as que quiser
-                  promover a atalho de primeiro nível no menu.
-                </p>
-              </div>
-
-              <div className="flex gap-3 pt-4 border-t">
-                <Button
-                  onClick={handleSave}
-                  disabled={saving}
-                  className="bg-primary hover:bg-primary/90"
-                >
-                  {saving ? 'Salvando...' : 'Salvar Seções'}
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => loadSettings()}
-                  disabled={saving}
-                >
-                  Cancelar
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          {/* Menu lateral: seções, ordem, ícones e grupos.
+              A tela inteira vive em components/admin/sidebar-menu-config. */}
+          <SidebarMenuConfig
+            value={{
+              sections: normalizeSidebarSections(settings.sidebarSections),
+              order: normalizeSidebarOrder(settings.sidebarSectionOrder),
+              icons: normalizeSidebarIcons(settings.sidebarSectionIcons),
+              groups: normalizeSidebarGroups(settings.sidebarGroups),
+              sectionGroups: normalizeSidebarSectionGroups(
+                settings.sidebarSectionGroups,
+                normalizeSidebarGroups(settings.sidebarGroups)
+              ),
+            }}
+            onChange={aplicarMenu}
+            saving={saving}
+            onSave={handleSave}
+            onCancel={() => loadSettings()}
+          />
 
           {/* Registration Blocked Message */}
           {settings.registrationBlocked && (
