@@ -2441,8 +2441,15 @@ body.roller-dragging {
   -webkit-backdrop-filter: none !important;
   box-shadow: none !important;
   text-shadow: none !important;
-  filter: none !important;
   will-change: auto !important;
+}
+
+/* `filter` sai junto — menos onde ele é a ferramenta, e não o efeito. No
+   negatoscópio, inverter densidades e realçar contraste é o que se faz com
+   uma radiografia; zerar o filtro ali deixaria dois botões que não fazem
+   nada. Ver `[data-imagem-clinica]` no bloco 3. */
+.lite-mode *:not([data-imagem-clinica]) {
+  filter: none !important;
 }
 
 .lite-mode :focus-visible {
@@ -2481,8 +2488,16 @@ body.roller-dragging {
    todos, e o efeito colateral era grave: ícones brancos sobre tile de
    gradiente viravam ícone branco sobre nada (invisível), e textos com
    `bg-clip-text` ficavam transparentes. O ganho de performance de um gradiente
-   linear é próximo de zero perto de um blur — não vale o conteúdo sumir. */
-.lite-mode [style*='background-image']:not([style*='gradient']) {
+   linear é próximo de zero perto de um blur — não vale o conteúdo sumir.
+
+   Pela mesma razão, `data-imagem-clinica` FICA. Nem todo `background-image`
+   inline é decoração: as radiografias de "Casos e alterações" e dos casos
+   clínicos são sprites de duas metades (filme limpo | filme marcado), e trocar
+   de metade é `background-position` — por isso elas chegam como fundo, e não
+   como `<img>`. Sem esta exceção o Modo Lite apagava exatamente a imagem que
+   a página existe para mostrar, deixando um retângulo preto no negatoscópio.
+   O atributo marca só esses casos: quem não o declara continua saindo. */
+.lite-mode [style*='background-image']:not([style*='gradient']):not([data-imagem-clinica]) {
   background-image: none !important;
 }
 

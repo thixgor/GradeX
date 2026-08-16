@@ -265,6 +265,7 @@ export function CasoRaioXImagem({
         <div
           ref={filme}
           onPointerDown={aoArrastar}
+          data-imagem-clinica
           className={`relative mx-auto select-none overflow-hidden ${
             modo === 'comparar' ? 'cursor-ew-resize' : zoom > 1 ? 'cursor-grab active:cursor-grabbing' : ''
           }`}
@@ -405,6 +406,7 @@ function Camada({
   return (
     <div
       aria-hidden
+      data-imagem-clinica
       className={`absolute inset-0 bg-black bg-no-repeat ${classe}`}
       style={{
         width: largura,
@@ -495,6 +497,7 @@ export function MiniaturaCasoRaioX({
       role={marcada ? 'presentation' : 'img'}
       aria-label={marcada ? undefined : imagem.titulo}
       aria-hidden={marcada || undefined}
+      data-imagem-clinica
       className={`block bg-black bg-no-repeat ${className}`}
       style={{
         backgroundImage: `url("${imagem.sprite}")`,

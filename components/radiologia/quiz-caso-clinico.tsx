@@ -852,6 +852,7 @@ function Negatoscopio({
 
       <div className="relative bg-black">
         <div
+          data-imagem-clinica
           className="relative mx-auto w-full select-none overflow-hidden"
           style={{ aspectRatio: `${imagem.largura} / ${imagem.altura}`, filter: filtro }}
           role="img"
@@ -910,6 +911,7 @@ function Camada({
   return (
     <div
       aria-hidden
+      data-imagem-clinica
       className={`absolute inset-0 bg-black bg-no-repeat ${classe}`}
       style={{
         backgroundImage: `url("${imagem.sprite}")`,
@@ -939,6 +941,7 @@ export function FilmeSprite({
     <span
       role="presentation"
       aria-hidden
+      data-imagem-clinica
       className={`block bg-black bg-no-repeat ${className}`}
       style={{
         aspectRatio: `${imagem.largura} / ${imagem.altura}`,
