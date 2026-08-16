@@ -11,6 +11,7 @@ import { ArrowLeft, Upload, X } from 'lucide-react'
 import { AulaTopic, AulaSubtopic, AulaModulo, AulaType, AulaVisibility, AulaPostagem } from '@/lib/types'
 import { LogoLoading } from '@/components/logo-loading'
 import { ToastAlert } from '@/components/ui/toast-alert'
+import { VinculoMaterialField, type VinculoMaterial } from '@/components/aulas/vinculo-material-field'
 
 interface User {
   id: string
@@ -40,6 +41,7 @@ export default function EditarAulaPage() {
   const [descricao, setDescricao] = useState('')
   const [tipo, setTipo] = useState<AulaType>('gravada')
   const [visibilidade, setVisibilidade] = useState<AulaVisibility>('premium')
+  const [vinculoMaterial, setVinculoMaterial] = useState<VinculoMaterial | null>(null)
   const [setorId, setSetorId] = useState('')
   const [topicoId, setTopicoId] = useState('')
   const [subtopicoId, setSubtopicoId] = useState('')
@@ -126,6 +128,7 @@ export default function EditarAulaPage() {
       setDescricao(a.descricao || '')
       setTipo(a.tipo)
       setVisibilidade(a.visibilidade)
+      setVinculoMaterial(a.vinculoMaterial || null)
       setSetorId(a.setorId || '')
       setTopicoId(a.topicoId || '')
       setSubtopicoId(a.subtopicoId || '')
@@ -242,7 +245,8 @@ export default function EditarAulaPage() {
         dataLiberacao: dataLiberacao || null,
         ocultarAteLiberacao: dataLiberacaoHabilitada ? ocultarAteLiberacao : false,
         capa,
-        botoesAcesso: botoesAcesso.length > 0 ? botoesAcesso : null
+        botoesAcesso: botoesAcesso.length > 0 ? botoesAcesso : null,
+        vinculoMaterial
       }
 
       console.log('Atualizando aula:', { aulaId, payload })
@@ -364,6 +368,13 @@ export default function EditarAulaPage() {
                     <option value="premium" className="bg-slate-900">Plus+</option>
                     <option value="gratuita" className="bg-slate-900">Gratuita</option>
                   </select>
+                </div>
+              </div>
+
+              <div>
+                <Label className="text-white/80">Venda e conteúdo em /materiais</Label>
+                <div className="mt-1">
+                  <VinculoMaterialField valor={vinculoMaterial} onChange={setVinculoMaterial} />
                 </div>
               </div>
 

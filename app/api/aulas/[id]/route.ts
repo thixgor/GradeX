@@ -11,6 +11,7 @@ import {
 import { getSession } from '@/lib/auth'
 import { avaliarAcessoAula, ocultarConteudoRestrito } from '@/lib/aulas/acesso'
 import { montarContextoDoUsuario } from '@/lib/aulas/contexto'
+import { aplicarVinculo, resolverVinculosEmLote } from '@/lib/aulas/resolver-vinculo'
 
 export const dynamic = 'force-dynamic'
 
@@ -56,8 +57,15 @@ export async function GET(
     }
 
     const session = await getSession()
-    const usuario = await montarContextoDoUsuario(db, session)
-    const veredito = avaliarAcessoAula(aula as any, usuario)
+    const [usuario, vinculos] = await Promise.all([
+      montarContextoDoUsuario(db, session),
+      resolverVinculosEmLote(db, [aula as any]),
+    ])
+
+    // O vínculo com /materiais é aplicado ANTES do veredito: é ele que soma
+    // "comprou o material" às condições e diz de onde o vídeo vem.
+    const resolvida = aplicarVinculo(aula as any, vinculos)
+    const veredito = avaliarAcessoAula(resolvida, usuario)
 
     // Rascunho e aula encerrada não existem para o aluno: responder 404 evita
     // confirmar que aquele endereço guarda alguma coisa.
@@ -66,7 +74,7 @@ export async function GET(
     }
 
     return NextResponse.json({
-      aula: ocultarConteudoRestrito(aula, veredito),
+      aula: ocultarConteudoRestrito(resolvida, veredito),
       acesso: {
         liberado: veredito.liberado,
         porAmostra: veredito.porAmostra,
@@ -147,6 +155,29 @@ export async function PATCH(
     // Converter dataLiberacao para Date se for string
     if (updateData.dataLiberacao && typeof updateData.dataLiberacao === 'string') {
       updateData.dataLiberacao = new Date(updateData.dataLiberacao)
+    }
+
+    // Vínculo com /materiais: normalizado aqui para o documento nunca guardar
+    // uma forma pela metade. `null` (ou id inválido) desfaz o vínculo — é como
+    // o admin desliga a venda sem apagar a aula.
+    if ('vinculoMaterial' in updateData) {
+      const bruto = updateData.vinculoMaterial
+      const materialId = String(bruto?.materialId || '')
+      updateData.vinculoMaterial = materialId && isValidObjectId(materialId)
+        ? {
+            materialId,
+            materialTitulo: String(bruto?.materialTitulo || '').slice(0, 160),
+            liberaPorCompra: bruto?.liberaPorCompra !== false,
+            conteudoDoMaterial: bruto?.conteudoDoMaterial === true,
+          }
+        : null
+    }
+
+    // Janela de encerramento (§12) — aula temporária. String vazia limpa.
+    if ('ocultarEm' in updateData) {
+      const valor = updateData.ocultarEm
+      const data = valor ? new Date(valor) : null
+      updateData.ocultarEm = data && !Number.isNaN(data.getTime()) ? data : null
     }
 
     // Remover campos undefined e null

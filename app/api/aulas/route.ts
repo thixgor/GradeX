@@ -5,6 +5,7 @@ import { ObjectId } from 'mongodb'
 import { AulaPostagem, AulaSetor, AulaTopic, AulaSubtopic, AulaModulo, AulaSubmodulo } from '@/lib/types'
 import { avaliarAcessoAula, ocultarConteudoRestrito } from '@/lib/aulas/acesso'
 import { montarContextoDoUsuario } from '@/lib/aulas/contexto'
+import { aplicarVinculo, resolverVinculosEmLote } from '@/lib/aulas/resolver-vinculo'
 
 export const dynamic = 'force-dynamic'
 
@@ -47,13 +48,18 @@ export async function GET() {
       montarContextoDoUsuario(db, session),
     ])
 
+    // Vínculos com /materiais resolvidos em lote — uma consulta para a
+    // listagem inteira, não uma por aula.
+    const vinculos = await resolverVinculosEmLote(db, aulas as any)
+
     const agora = new Date()
     const aulasVisiveis: any[] = []
     for (const aula of aulas) {
-      const veredito = avaliarAcessoAula(aula as any, usuario, agora)
+      const resolvida = aplicarVinculo(aula as any, vinculos)
+      const veredito = avaliarAcessoAula(resolvida, usuario, agora)
       if (veredito.invisivel) continue
       aulasVisiveis.push({
-        ...ocultarConteudoRestrito(aula, veredito),
+        ...ocultarConteudoRestrito(resolvida, veredito),
         acesso: {
           liberado: veredito.liberado,
           porAmostra: veredito.porAmostra,
