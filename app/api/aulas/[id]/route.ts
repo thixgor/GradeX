@@ -11,6 +11,7 @@ import {
 import { getSession } from '@/lib/auth'
 import { avaliarAcessoAula, ocultarConteudoRestrito } from '@/lib/aulas/acesso'
 import { montarContextoDoUsuario } from '@/lib/aulas/contexto'
+import { normalizarRegras, visibilidadeEquivalente } from '@/lib/aulas/regras-edicao'
 import { aplicarVinculo, resolverVinculosEmLote } from '@/lib/aulas/resolver-vinculo'
 
 export const dynamic = 'force-dynamic'
@@ -186,9 +187,36 @@ export async function PATCH(
       updateData.ocultarEm = data && !Number.isNaN(data.getTime()) ? data : null
     }
 
+    // Regras de acesso (§15). O motor sempre soube avaliá-las, mas o editor só
+    // oferecia `visibilidade`: eram regras que ninguém conseguia escrever.
+    // `null` volta a aula para o comportamento legado, decidido por
+    // `visibilidade` — é a saída de emergência de quem se enrolou no editor.
+    if ('regrasAcesso' in updateData) {
+      updateData.regrasAcesso = normalizarRegras(updateData.regrasAcesso)
+
+      // `visibilidade` continua sendo escrito em sincronia. Outras partes ainda
+      // leem esse campo — os metadados de /aulas/[id] decidem por ele se a
+      // página é indexável — e pará-lo faria uma aula recém-trancada seguir se
+      // anunciando como gratuita para fora (§45).
+      if (updateData.regrasAcesso) {
+        updateData.visibilidade = visibilidadeEquivalente(updateData.regrasAcesso)
+      }
+    }
+
+    /*
+     * Campos que podem ser LIMPOS.
+     *
+     * O laço abaixo apaga tudo que for `null`, o que é certo para campo não
+     * enviado — mas errado para estes três, em que `null` é a instrução
+     * "desfaz". Sem essa lista, dava para ligar o vínculo com um material e a
+     * data de encerramento, e nunca mais desligar: a tela mandava `null`, o
+     * laço engolia, e o valor antigo continuava valendo em silêncio.
+     */
+    const LIMPAVEIS = new Set(['vinculoMaterial', 'ocultarEm', 'regrasAcesso'])
+
     // Remover campos undefined e null
     Object.keys(updateData).forEach(key => {
-      if (updateData[key] === undefined || updateData[key] === null) {
+      if (updateData[key] === undefined || (updateData[key] === null && !LIMPAVEIS.has(key))) {
         delete updateData[key]
       }
     })

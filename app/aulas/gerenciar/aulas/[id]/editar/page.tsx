@@ -8,10 +8,13 @@ import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { ArrowLeft, Upload, X } from 'lucide-react'
-import { AulaTopic, AulaSubtopic, AulaModulo, AulaType, AulaVisibility, AulaPostagem } from '@/lib/types'
+import { AulaTopic, AulaSubtopic, AulaModulo, AulaType, AulaPostagem } from '@/lib/types'
 import { LogoLoading } from '@/components/logo-loading'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { VinculoMaterialField, type VinculoMaterial } from '@/components/aulas/vinculo-material-field'
+import { EditorDeRegras } from '@/components/aulas/editor-regras'
+import { regrasIniciais } from '@/lib/aulas/regras-edicao'
+import type { RegrasDeAcessoAula } from '@/lib/aulas/acesso'
 
 interface User {
   id: string
@@ -40,8 +43,8 @@ export default function EditarAulaPage() {
   const [titulo, setTitulo] = useState('')
   const [descricao, setDescricao] = useState('')
   const [tipo, setTipo] = useState<AulaType>('gravada')
-  const [visibilidade, setVisibilidade] = useState<AulaVisibility>('premium')
   const [vinculoMaterial, setVinculoMaterial] = useState<VinculoMaterial | null>(null)
+  const [regras, setRegras] = useState<RegrasDeAcessoAula | null>(null)
   const [setorId, setSetorId] = useState('')
   const [topicoId, setTopicoId] = useState('')
   const [subtopicoId, setSubtopicoId] = useState('')
@@ -127,8 +130,10 @@ export default function EditarAulaPage() {
       setTitulo(a.titulo)
       setDescricao(a.descricao || '')
       setTipo(a.tipo)
-      setVisibilidade(a.visibilidade)
       setVinculoMaterial(a.vinculoMaterial || null)
+      // Aula legada abre mostrando o que ela já fazia, traduzido de
+      // `visibilidade` — nunca uma tela em branco (§45).
+      setRegras(regrasIniciais(a))
       setSetorId(a.setorId || '')
       setTopicoId(a.topicoId || '')
       setSubtopicoId(a.subtopicoId || '')
@@ -234,7 +239,8 @@ export default function EditarAulaPage() {
         titulo,
         descricao,
         tipo,
-        visibilidade,
+        // `regrasAcesso` manda; o servidor deriva `visibilidade` delas.
+        regrasAcesso: regras,
         setorId: setorId || null,
         topicoId: topicoId || null,
         subtopicoId: subtopicoId || null,
@@ -357,24 +363,21 @@ export default function EditarAulaPage() {
                   </select>
                 </div>
 
-                <div>
-                  <Label htmlFor="visibilidade" className="text-white/80">Visibilidade *</Label>
-                  <select
-                    id="visibilidade"
-                    value={visibilidade}
-                    onChange={(e) => setVisibilidade(e.target.value as AulaVisibility)}
-                    className="w-full mt-1 px-3 py-2 border border-white/10 rounded-md bg-white/5 text-white text-sm"
-                  >
-                    <option value="premium" className="bg-slate-900">Plus+</option>
-                    <option value="gratuita" className="bg-slate-900">Gratuita</option>
-                  </select>
-                </div>
               </div>
+
+              {/* O seletor de dois valores virou o editor completo: ele escreve
+                  `regrasAcesso`, e o servidor mantém `visibilidade` em sincronia
+                  a partir delas (§15, §45). */}
+              {regras && (
+                <div>
+                  <EditorDeRegras valor={regras} onChange={setRegras} escuro />
+                </div>
+              )}
 
               <div>
                 <Label className="text-white/80">Venda e conteúdo em /materiais</Label>
                 <div className="mt-1">
-                  <VinculoMaterialField valor={vinculoMaterial} onChange={setVinculoMaterial} />
+                  <VinculoMaterialField valor={vinculoMaterial} onChange={setVinculoMaterial} escuro />
                 </div>
               </div>
 

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { LogoLoading } from '@/components/logo-loading'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/theme-toggle'
-import { ArrowLeft, Network, Plus } from 'lucide-react'
+import { ArrowLeft, Network, Plus, Users } from 'lucide-react'
 
 interface User {
   id: string
@@ -124,6 +124,26 @@ export default function GerenciarAulasPage() {
               <p className="text-sm text-white/50">
                 Arraste para reorganizar, publique em massa, duplique módulos e veja
                 cada aula pelos olhos do aluno
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Turmas */}
+          <Card className="backdrop-blur-md bg-white/5 border-white/10 hover:bg-white/10 transition-all cursor-pointer"
+            onClick={() => router.push('/aulas/gerenciar/turmas')}>
+            <CardHeader>
+              <CardTitle className="text-white flex items-center gap-2">
+                <Users className="h-5 w-5" />
+                Turmas
+              </CardTitle>
+              <CardDescription className="text-white/60">
+                Grupos de alunos que destravam aulas
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-white/50">
+                Cole uma lista de e-mails e use a turma para liberar — ou restringir — aulas
+                específicas
               </p>
             </CardContent>
           </Card>
