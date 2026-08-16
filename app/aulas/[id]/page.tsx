@@ -1,7 +1,7 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import {
   ArrowLeft,
@@ -22,6 +22,8 @@ import { AppShell } from '@/components/app-shell'
 import { PlayerDaAula, type ControleDoPlayer } from '@/components/aulas/player'
 import { PainelDeAnotacoes } from '@/components/aulas/anotacoes-painel'
 import { BarraDeProgresso } from '@/components/aulas/biblioteca'
+import { FaixaModoAluno } from '@/components/aulas/faixa-modo-aluno'
+import { comModo, lerModo, PARAMETRO_MODO } from '@/lib/aulas/modo-visualizacao'
 import { cn } from '@/lib/utils'
 
 /**
@@ -74,10 +76,12 @@ interface AulaVizinha {
   acesso?: { liberado: boolean }
 }
 
-export default function AssistirAulaPage() {
+function AssistirAulaConteudo() {
   const params = useParams()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const aulaId = String(params?.id || '')
+  const modo = lerModo(searchParams.get(PARAMETRO_MODO))
 
   const [aula, setAula] = useState<Aula | null>(null)
   const [carregando, setCarregando] = useState(true)
@@ -97,7 +101,7 @@ export default function AssistirAulaPage() {
     let cancelado = false
     setCarregando(true)
 
-    fetch(`/api/aulas/${aulaId}`, { cache: 'no-store' })
+    fetch(comModo(`/api/aulas/${aulaId}`, modo), { cache: 'no-store' })
       .then(async (r) => {
         const d = await r.json().catch(() => ({}))
         if (!r.ok) throw new Error(d.error || 'Aula não encontrada')
@@ -120,14 +124,14 @@ export default function AssistirAulaPage() {
     return () => {
       cancelado = true
     }
-  }, [aulaId])
+  }, [aulaId, modo])
 
   // A navegação do curso vem da árvore já filtrada por acesso — a mesma que a
   // biblioteca usa, então a lateral nunca mostra aula que a pessoa não veria lá.
   useEffect(() => {
     if (!aula?.setorId) return
     let cancelado = false
-    fetch('/api/aulas', { cache: 'no-store' })
+    fetch(comModo('/api/aulas', modo), { cache: 'no-store' })
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => {
         if (cancelado || !d) return
@@ -143,7 +147,7 @@ export default function AssistirAulaPage() {
     return () => {
       cancelado = true
     }
-  }, [aula?.setorId])
+  }, [aula?.setorId, modo])
 
   const indiceAtual = vizinhas.findIndex((a) => a._id === aulaId)
   const proxima = indiceAtual >= 0 ? vizinhas.slice(indiceAtual + 1).find((a) => a.acesso?.liberado !== false) : undefined
@@ -220,7 +224,7 @@ export default function AssistirAulaPage() {
       {/* ── Barra superior ────────────────────────────────────────────── */}
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <Link
-          href={aula.setorId ? `/aulas?curso=${aula.setorId}` : '/aulas'}
+          href={comModo(aula.setorId ? `/aulas?curso=${aula.setorId}` : '/aulas', modo)}
           className="inline-flex items-center gap-1.5 text-sm font-semibold text-muted-foreground transition hover:text-foreground"
         >
           <ArrowLeft className="h-4 w-4" />
@@ -331,7 +335,7 @@ export default function AssistirAulaPage() {
           {/* Próxima aula (§20) — o próximo passo sem voltar para a lista. */}
           {concluida && proxima ? (
             <Link
-              href={`/aulas/${proxima._id}`}
+              href={comModo(`/aulas/${proxima._id}`, modo)}
               className="mt-5 flex items-center justify-between gap-3 rounded-xl border border-primary/30 bg-primary/5 p-4 transition hover:border-primary/60"
             >
               <div className="min-w-0">
@@ -402,7 +406,7 @@ export default function AssistirAulaPage() {
                   return (
                     <li key={v._id}>
                       <Link
-                        href={`/aulas/${v._id}`}
+                        href={comModo(`/aulas/${v._id}`, modo)}
                         aria-current={atual ? 'page' : undefined}
                         className={cn(
                           'flex items-start gap-2 rounded-lg px-2 py-2 text-xs transition',
@@ -440,7 +444,7 @@ export default function AssistirAulaPage() {
           {anterior ? (
             <button
               type="button"
-              onClick={() => router.push(`/aulas/${anterior._id}`)}
+              onClick={() => router.push(comModo(`/aulas/${anterior._id}`, modo))}
               className="inline-flex min-w-0 items-center gap-2 text-sm text-muted-foreground transition hover:text-foreground"
             >
               <ArrowLeft className="h-4 w-4 flex-none" />
@@ -452,7 +456,7 @@ export default function AssistirAulaPage() {
           {proxima ? (
             <button
               type="button"
-              onClick={() => router.push(`/aulas/${proxima._id}`)}
+              onClick={() => router.push(comModo(`/aulas/${proxima._id}`, modo))}
               className="inline-flex min-w-0 items-center gap-2 text-sm font-semibold text-primary transition hover:brightness-110"
             >
               <span className="truncate">{proxima.titulo}</span>
@@ -481,7 +485,31 @@ export default function AssistirAulaPage() {
     )
   }
 
-  return <AppShell headerTitle="Aula">{corpo}</AppShell>
+  return (
+    <AppShell headerTitle="Aula">
+      <FaixaModoAluno modo={modo} caminho={`/aulas/${aulaId}`} />
+      {corpo}
+    </AppShell>
+  )
+}
+
+export default function AssistirAulaPage() {
+  // `useSearchParams` obriga a fronteira de Suspense no App Router — sem ela o
+  // build reclama e a rota inteira deixa de ser pré-renderizada.
+  return (
+    <Suspense
+      fallback={
+        <AppShell headerTitle="Aula">
+          <div className="container mx-auto max-w-7xl px-4 py-8">
+            <div className="aspect-video w-full animate-pulse rounded-xl bg-muted" />
+            <div className="mt-4 h-6 w-2/3 animate-pulse rounded bg-muted" />
+          </div>
+        </AppShell>
+      }
+    >
+      <AssistirAulaConteudo />
+    </Suspense>
+  )
 }
 
 /**

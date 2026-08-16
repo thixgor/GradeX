@@ -1,1264 +1,1056 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
+import Link from 'next/link'
+import {
+  AlertTriangle,
+  ArrowLeft,
+  CalendarClock,
+  ChevronsDownUp,
+  ChevronsUpDown,
+  Eye,
+  EyeOff,
+  Image as ImageIcon,
+  Loader2,
+  Plus,
+  Search,
+  Trash2,
+  X,
+} from 'lucide-react'
 import { LogoLoading } from '@/components/logo-loading'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { ThemeToggle } from '@/components/theme-toggle'
-import { ArrowLeft, Plus, Trash2, ChevronRight, Edit2, Copy, Eye, EyeOff, ChevronUp, ChevronDown, X, Info } from 'lucide-react'
-import { AulaSetor, AulaTopic, AulaSubtopic, AulaModulo, AulaSubmodulo } from '@/lib/types'
 import { ToastAlert } from '@/components/ui/toast-alert'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import {
+  LinhaDaArvore,
+  type AcoesDaLinha,
+  type ZonaDeSolta,
+} from '@/components/admin/aulas/linha-da-arvore'
+import {
+  aulasAbaixo,
+  ehDescendente,
+  filtrarArvore,
+  FILHOS_PERMITIDOS,
+  montarArvore,
+  moverPara,
+  reordenar,
+  ROTULO_DO_TIPO,
+  type DocumentoDeNo,
+  type NoDaArvore,
+  type TipoDeNo,
+} from '@/lib/aulas/arvore-admin'
+import { comModo } from '@/lib/aulas/modo-visualizacao'
+import { cn } from '@/lib/utils'
 
-interface User {
-  id: string
-  email: string
-  name: string
-  role: string
-  secondaryRole?: string
+/**
+ * Painel de estrutura das aulas (§3, §4, §5, §28, §29, §30).
+ *
+ * A tela anterior eram quatro listas planas — aulas, tópicos, subtópicos e
+ * módulos — cada uma sem saber da outra. Setores e submódulos nem apareciam.
+ * Para descobrir o que havia dentro de um curso, o admin tinha que abrir item
+ * por item e reconstruir a hierarquia de cabeça; e reordenar era impossível,
+ * porque `ordem` não tinha nenhum controle na interface.
+ *
+ * Aqui a estrutura inteira é uma árvore só: dá para ver, arrastar, publicar em
+ * massa, duplicar um módulo com as aulas dentro e conferir a trava pelos olhos
+ * do aluno. As telas antigas de criação continuam funcionando e são para onde
+ * os botões apontam — a reformulação troca a navegação, não invalida o que já
+ * existe (§45).
+ *
+ * Mora em `/aulas/gerenciar` e não em `/admin` de propósito: o middleware tranca
+ * `/admin/*` em `role === 'admin'`, e monitores — que são quem publica aula no
+ * dia a dia — ficariam de fora do painel que existe para eles.
+ */
+
+const COLECAO_POR_TIPO: Record<Exclude<TipoDeNo, 'aula'>, string> = {
+  setor: 'setores',
+  topico: 'topicos',
+  subtopico: 'subtopicos',
+  modulo: 'modulos',
+  submodulo: 'submodulos',
 }
 
-export default function EstruturasPage() {
+/** Chaves do estado bruto, na mesma ordem em que a árvore as consome. */
+type ListasBrutas = {
+  setores: DocumentoDeNo[]
+  topicos: DocumentoDeNo[]
+  subtopicos: DocumentoDeNo[]
+  modulos: DocumentoDeNo[]
+  submodulos: DocumentoDeNo[]
+  aulas: DocumentoDeNo[]
+}
+
+const CHAVE_POR_TIPO: Record<TipoDeNo, keyof ListasBrutas> = {
+  setor: 'setores',
+  topico: 'topicos',
+  subtopico: 'subtopicos',
+  modulo: 'modulos',
+  submodulo: 'submodulos',
+  aula: 'aulas',
+}
+
+const VAZIO: ListasBrutas = {
+  setores: [],
+  topicos: [],
+  subtopicos: [],
+  modulos: [],
+  submodulos: [],
+  aulas: [],
+}
+
+interface Movimento {
+  tipo: TipoDeNo
+  id: string
+  ordem: number
+  pai?: Record<string, string | null>
+}
+
+export default function PainelDeAulasPage() {
   const router = useRouter()
-  const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
 
-  // Estados para dados
-  const [setores, setSetores] = useState<AulaSetor[]>([])
-  const [topicos, setTopicos] = useState<AulaTopic[]>([])
-  const [subtopicos, setSubtopicos] = useState<AulaSubtopic[]>([])
-  const [modulos, setModulos] = useState<AulaModulo[]>([])
-  const [submodulos, setSubmodulos] = useState<AulaSubmodulo[]>([])
+  const [autorizado, setAutorizado] = useState(false)
+  const [carregando, setCarregando] = useState(true)
+  const [salvando, setSalvando] = useState(false)
+  const [listas, setListas] = useState<ListasBrutas>(VAZIO)
 
-  // Estados de navegação
-  const [selectedSetor, setSelectedSetor] = useState<AulaSetor | null>(null)
-  const [selectedTopico, setSelectedTopico] = useState<AulaTopic | null>(null)
-  const [selectedSubtopico, setSelectedSubtopico] = useState<AulaSubtopic | null>(null)
-  const [selectedModulo, setSelectedModulo] = useState<AulaModulo | null>(null)
+  const [busca, setBusca] = useState('')
+  const [abertos, setAbertos] = useState<Set<string>>(new Set())
+  const [selecionados, setSelecionados] = useState<Set<string>>(new Set())
 
-  // Estados de dialog
-  const [showDialog, setShowDialog] = useState(false)
-  const [dialogType, setDialogType] = useState<'setor' | 'topico' | 'subtopico' | 'modulo' | 'submodulo'>('setor')
-  const [formData, setFormData] = useState({ nome: '', descricao: '', imagem: '' })
-  const [editingId, setEditingId] = useState<string | null>(null)
+  const [arrastando, setArrastando] = useState<NoDaArvore | null>(null)
+  const [alvo, setAlvo] = useState<{ id: string; zona: ZonaDeSolta } | null>(null)
 
-  // Toast
-  const [toastOpen, setToastOpen] = useState(false)
-  const [toastMessage, setToastMessage] = useState('')
-  const [toastType, setToastType] = useState<'error' | 'success' | 'info'>('success')
+  const [dialogo, setDialogo] = useState<
+    | { modo: 'criar'; pai: NoDaArvore | null; tipo: TipoDeNo }
+    | { modo: 'renomear'; no: NoDaArvore }
+    | { modo: 'excluir'; no: NoDaArvore }
+    | { modo: 'excluir-lote' }
+    | { modo: 'agendar' }
+    | null
+  >(null)
+  const [nomeNoDialogo, setNomeNoDialogo] = useState('')
+  const [dataNoDialogo, setDataNoDialogo] = useState('')
 
-  useEffect(() => {
-    checkAuth()
+  const [toast, setToast] = useState<{ aberto: boolean; texto: string; tipo: 'success' | 'error' | 'info' }>({
+    aberto: false,
+    texto: '',
+    tipo: 'success',
+  })
+
+  const avisar = useCallback((texto: string, tipo: 'success' | 'error' | 'info' = 'success') => {
+    setToast({ aberto: true, texto, tipo })
   }, [])
 
-  async function checkAuth() {
-    try {
-      const res = await fetch('/api/auth/me')
-      if (!res.ok) {
-        router.push('/auth/login')
-        return
-      }
-      const data = await res.json()
-      const isAdmin = data.user.role === 'admin'
-      const isMonitor = data.user.secondaryRole === 'monitor'
+  /* ── Carregamento ───────────────────────────────────────────────────── */
 
-      if (!isAdmin && !isMonitor) {
-        router.push('/aulas')
-        return
-      }
+  const carregar = useCallback(async () => {
+    const res = await fetch('/api/aulas', { cache: 'no-store' })
+    if (!res.ok) return
+    const d = await res.json()
+    const normalizar = (lista: any[]) => (lista || []).map((x) => ({ ...x, _id: String(x._id) }))
+    setListas({
+      setores: normalizar(d.setores),
+      topicos: normalizar(d.topicos),
+      subtopicos: normalizar(d.subtopicos),
+      modulos: normalizar(d.modulos),
+      submodulos: normalizar(d.submodulos),
+      aulas: normalizar(d.aulas),
+    })
+  }, [])
 
-      setUser(data.user)
-      loadDados()
-    } catch (error) {
-      router.push('/auth/login')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  async function loadDados() {
-    try {
-      const res = await fetch('/api/aulas?t=' + Date.now())
-      if (res.ok) {
-        const data = await res.json()
-        setSetores(data.setores || [])
-        setTopicos(data.topicos || [])
-        setSubtopicos(data.subtopicos || [])
-        setModulos(data.modulos || [])
-        setSubmodulos(data.submodulos || [])
-      }
-    } catch (error) {
-      console.error('Erro ao carregar dados:', error)
-    }
-  }
-
-  async function limparAulasOrfas() {
-    if (!confirm('Isso vai remover aulas órfãs (aulas que referenciam setores/tópicos/subtópicos/módulos/submódulos que não existem mais). Deseja continuar?')) {
-      return
-    }
-
-    try {
-      const res = await fetch('/api/aulas/cleanup', {
-        method: 'POST'
-      })
-
-      if (res.ok) {
-        const data = await res.json()
-        showToast(data.message)
-        // Recarregar dados
-        loadDados()
-      } else {
-        const errorData = await res.json().catch(() => ({}))
-        showToast(errorData.error || 'Erro ao limpar aulas órfãs', 'error')
-      }
-    } catch (error) {
-      console.error('Erro:', error)
-      showToast('Erro ao limpar aulas órfãs', 'error')
-    }
-  }
-
-  function showToast(message: string, type: 'error' | 'success' | 'info' = 'success') {
-    setToastMessage(message)
-    setToastType(type)
-    setToastOpen(true)
-  }
-
-  function openCreateDialog(type: 'setor' | 'topico' | 'subtopico' | 'modulo' | 'submodulo', item?: any) {
-    setDialogType(type)
-    if (item) {
-      setFormData({ nome: item.nome, descricao: item.descricao || '', imagem: item.imagem || '' })
-      setEditingId(String(item._id))
-    } else {
-      setFormData({ nome: '', descricao: '', imagem: '' })
-      setEditingId(null)
-    }
-    setShowDialog(true)
-  }
-
-  async function salvarItem() {
-    if (!formData.nome.trim()) {
-      showToast('Nome é obrigatório', 'error')
-      return
-    }
-
-    try {
-      let endpoint = ''
-      let method = editingId ? 'PATCH' : 'POST'
-      let body: any = {
-        nome: formData.nome,
-        descricao: formData.descricao,
-        ordem: 0
-      }
-
-      if (dialogType === 'setor') {
-        endpoint = editingId ? `/api/aulas/setores/${editingId}` : '/api/aulas/setores'
-        body.imagem = formData.imagem || undefined
-      } else if (dialogType === 'topico') {
-        endpoint = editingId ? `/api/aulas/topicos/${editingId}` : '/api/aulas/topicos'
-        body.setorId = selectedSetor?._id
-      } else if (dialogType === 'subtopico') {
-        endpoint = editingId ? `/api/aulas/subtopicos/${editingId}` : '/api/aulas/subtopicos'
-        body.setorId = selectedSetor?._id
-        body.topicoId = selectedTopico?._id
-      } else if (dialogType === 'modulo') {
-        endpoint = editingId ? `/api/aulas/modulos/${editingId}` : '/api/aulas/modulos'
-        body.setorId = selectedSetor?._id
-        body.topicoId = selectedTopico?._id
-        body.subtopicoId = selectedSubtopico?._id
-      } else if (dialogType === 'submodulo') {
-        endpoint = editingId ? `/api/aulas/submodulos/${editingId}` : '/api/aulas/submodulos'
-        body.setorId = selectedSetor?._id
-        body.topicoId = selectedTopico?._id
-        body.subtopicoId = selectedSubtopico?._id
-        body.moduloId = selectedModulo?._id
-      }
-
-      const res = await fetch(endpoint, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      })
-
-      if (res.ok) {
-        const data = await res.json()
-        console.log('Salvar resposta:', { status: res.status, data })
-
-        if (!data.item) {
-          console.error('Resposta sem item:', data)
-          showToast('Erro ao salvar - resposta inválida', 'error')
+  useEffect(() => {
+    let cancelado = false
+    ;(async () => {
+      try {
+        const res = await fetch('/api/auth/me')
+        if (!res.ok) {
+          router.push('/auth/login')
           return
         }
-
-        if (editingId) {
-          // Atualizar item existente
-          if (dialogType === 'setor') {
-            setSetores(setores.map(s => String(s._id) === editingId ? data.item : s))
-          } else if (dialogType === 'topico') {
-            setTopicos(topicos.map(t => String(t._id) === editingId ? data.item : t))
-          } else if (dialogType === 'subtopico') {
-            setSubtopicos(subtopicos.map(s => String(s._id) === editingId ? data.item : s))
-          } else if (dialogType === 'modulo') {
-            setModulos(modulos.map(m => String(m._id) === editingId ? data.item : m))
-          } else if (dialogType === 'submodulo') {
-            setSubmodulos(submodulos.map(sm => String(sm._id) === editingId ? data.item : sm))
-          }
-          showToast(`${dialogType.charAt(0).toUpperCase() + dialogType.slice(1)} atualizado com sucesso!`)
-        } else {
-          // Criar novo item
-          if (dialogType === 'setor') {
-            setSetores([...setores, data.item])
-          } else if (dialogType === 'topico') {
-            setTopicos([...topicos, data.item])
-          } else if (dialogType === 'subtopico') {
-            setSubtopicos([...subtopicos, data.item])
-          } else if (dialogType === 'modulo') {
-            setModulos([...modulos, data.item])
-          } else if (dialogType === 'submodulo') {
-            setSubmodulos([...submodulos, data.item])
-          }
-          showToast(`${dialogType.charAt(0).toUpperCase() + dialogType.slice(1)} criado com sucesso!`)
+        const { user } = await res.json()
+        if (user?.role !== 'admin' && user?.secondaryRole !== 'monitor') {
+          router.push('/')
+          return
         }
-        setShowDialog(false)
-      } else {
-        const errorData = await res.json().catch(() => ({}))
-        console.error('Erro ao salvar:', { status: res.status, error: errorData })
-        showToast(errorData.error || 'Erro ao salvar', 'error')
+        if (cancelado) return
+        setAutorizado(true)
+        await carregar()
+      } catch {
+        router.push('/auth/login')
+      } finally {
+        if (!cancelado) setCarregando(false)
       }
-    } catch (error) {
-      console.error('Erro:', error)
-      showToast('Erro ao salvar', 'error')
+    })()
+    return () => {
+      cancelado = true
     }
+  }, [router, carregar])
+
+  /* ── Árvore ─────────────────────────────────────────────────────────── */
+
+  const { raizes, orfaos, porId } = useMemo(() => montarArvore(listas), [listas])
+  const visiveis = useMemo(() => filtrarArvore(raizes, busca), [raizes, busca])
+  const orfaosVisiveis = useMemo(() => filtrarArvore(orfaos, busca), [orfaos, busca])
+  const buscando = busca.trim().length >= 2
+
+  /** Irmãos de um nó, na ordem em que estão desenhados. */
+  const irmaosDe = useCallback(
+    (no: NoDaArvore): NoDaArvore[] => {
+      if (no.tipo === 'setor') return raizes
+      for (const candidato of porId.values()) {
+        if (candidato.filhos.some((f) => f.id === no.id)) return candidato.filhos
+      }
+      return orfaos.some((o) => o.id === no.id) ? orfaos : [no]
+    },
+    [raizes, orfaos, porId],
+  )
+
+  /* ── Escrita ────────────────────────────────────────────────────────── */
+
+  /**
+   * Aplica os movimentos na tela ANTES do servidor responder.
+   *
+   * Arrastar precisa parecer instantâneo. Esperar a ida ao servidor faria o
+   * item voltar para o lugar antigo por uma fração de segundo a cada gesto —
+   * e é essa piscada que faz a pessoa arrastar duas vezes.
+   */
+  function aplicarLocalmente(movimentos: Movimento[]) {
+    setListas((atual) => {
+      const novo: ListasBrutas = { ...atual }
+      for (const chave of Object.keys(novo) as Array<keyof ListasBrutas>) {
+        novo[chave] = [...novo[chave]]
+      }
+
+      for (const movimento of movimentos) {
+        const chave = CHAVE_POR_TIPO[movimento.tipo]
+        const indice = novo[chave].findIndex((d) => String(d._id) === movimento.id)
+        if (indice < 0) continue
+
+        const doc = { ...novo[chave][indice], ordem: movimento.ordem }
+        for (const [campo, valor] of Object.entries(movimento.pai || {})) {
+          if (valor === null) delete (doc as any)[campo]
+          else (doc as any)[campo] = valor
+        }
+        novo[chave][indice] = doc
+      }
+      return novo
+    })
   }
 
-  async function deletarItem(id: string, type: 'setor' | 'topico' | 'subtopico' | 'modulo' | 'submodulo') {
-    const typeLabel = {
-      'setor': 'Setor',
-      'topico': 'Tópico',
-      'subtopico': 'Subtópico',
-      'modulo': 'Módulo',
-      'submodulo': 'Submódulo'
-    }[type]
-
-    if (!confirm(`Tem certeza que deseja deletar este ${typeLabel}? As aulas associadas também serão deletadas.`)) return
-
+  async function gravarMovimentos(movimentos: Movimento[]) {
+    if (movimentos.length === 0) return
+    aplicarLocalmente(movimentos)
+    setSalvando(true)
     try {
-      let endpoint = ''
-      if (type === 'setor') {
-        endpoint = `/api/aulas/setores/${id}`
-      } else if (type === 'topico') {
-        endpoint = `/api/aulas/topicos/${id}`
-      } else if (type === 'subtopico') {
-        endpoint = `/api/aulas/subtopicos/${id}`
-      } else if (type === 'modulo') {
-        endpoint = `/api/aulas/modulos/${id}`
-      } else if (type === 'submodulo') {
-        endpoint = `/api/aulas/submodulos/${id}`
-      }
-
-      const res = await fetch(endpoint, { method: 'DELETE' })
-
-      if (res.ok) {
-        const data = await res.json()
-        if (type === 'setor') {
-          setSetores(setores.filter(s => String(s._id) !== id))
-          setSelectedSetor(null)
-          setSelectedTopico(null)
-          setSelectedSubtopico(null)
-          setSelectedModulo(null)
-        } else if (type === 'topico') {
-          setTopicos(topicos.filter(t => String(t._id) !== id))
-          setSelectedTopico(null)
-          setSelectedSubtopico(null)
-          setSelectedModulo(null)
-        } else if (type === 'subtopico') {
-          setSubtopicos(subtopicos.filter(s => String(s._id) !== id))
-          setSelectedSubtopico(null)
-          setSelectedModulo(null)
-        } else if (type === 'modulo') {
-          setModulos(modulos.filter(m => String(m._id) !== id))
-          setSelectedModulo(null)
-        } else if (type === 'submodulo') {
-          setSubmodulos(submodulos.filter(sm => String(sm._id) !== id))
-        }
-        
-        const message = data.deletedAulas > 0 
-          ? `${typeLabel} deletado com sucesso! (${data.deletedAulas} aula(s) removida(s))`
-          : `${typeLabel} deletado com sucesso!`
-        showToast(message)
-      } else {
-        const errorData = await res.json().catch(() => ({}))
-        showToast(errorData.error || `Erro ao deletar ${typeLabel}`, 'error')
-      }
-    } catch (error) {
-      console.error('Erro:', error)
-      showToast('Erro ao deletar', 'error')
-    }
-  }
-
-  async function duplicarItem(id: string, type: 'setor' | 'topico' | 'subtopico' | 'modulo' | 'submodulo', item: any) {
-    try {
-      let endpoint = ''
-      let body: any = {
-        nome: `${item.nome} (Cópia)`,
-        descricao: item.descricao,
-        ordem: 0
-      }
-
-      if (type === 'setor') {
-        endpoint = '/api/aulas/setores'
-      } else if (type === 'topico') {
-        endpoint = '/api/aulas/topicos'
-        body.setorId = item.setorId
-      } else if (type === 'subtopico') {
-        endpoint = '/api/aulas/subtopicos'
-        body.setorId = item.setorId
-        body.topicoId = item.topicoId
-      } else if (type === 'modulo') {
-        endpoint = '/api/aulas/modulos'
-        body.setorId = item.setorId
-        body.topicoId = item.topicoId
-        body.subtopicoId = item.subtopicoId
-      } else if (type === 'submodulo') {
-        endpoint = '/api/aulas/submodulos'
-        body.setorId = item.setorId
-        body.topicoId = item.topicoId
-        body.subtopicoId = item.subtopicoId
-        body.moduloId = item.moduloId
-      }
-
-      const res = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      })
-
-      if (res.ok) {
-        const data = await res.json()
-        if (type === 'setor') {
-          setSetores([...setores, data.item])
-        } else if (type === 'topico') {
-          setTopicos([...topicos, data.item])
-        } else if (type === 'subtopico') {
-          setSubtopicos([...subtopicos, data.item])
-        } else if (type === 'modulo') {
-          setModulos([...modulos, data.item])
-        } else if (type === 'submodulo') {
-          setSubmodulos([...submodulos, data.item])
-        }
-        showToast('Duplicado com sucesso!')
-      }
-    } catch (error) {
-      console.error('Erro:', error)
-      showToast('Erro ao duplicar', 'error')
-    }
-  }
-
-  async function toggleOcultar(id: string, type: 'setor' | 'topico' | 'subtopico' | 'modulo' | 'submodulo', oculta: boolean) {
-    try {
-      let endpoint = ''
-      if (type === 'setor') {
-        endpoint = `/api/aulas/setores/${id}`
-      } else if (type === 'topico') {
-        endpoint = `/api/aulas/topicos/${id}`
-      } else if (type === 'subtopico') {
-        endpoint = `/api/aulas/subtopicos/${id}`
-      } else if (type === 'modulo') {
-        endpoint = `/api/aulas/modulos/${id}`
-      } else if (type === 'submodulo') {
-        endpoint = `/api/aulas/submodulos/${id}`
-      }
-
-      console.log('Toggling ocultar:', { endpoint, type, id, oculta })
-
-      const res = await fetch(endpoint, {
+      const res = await fetch('/api/aulas/estrutura', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ oculta: !oculta })
+        body: JSON.stringify({ movimentos }),
       })
-
-      console.log('Response status:', res.status)
-
-      if (res.ok) {
-        const data = await res.json()
-        if (type === 'setor') {
-          setSetores(setores.map(s => String(s._id) === id ? data.item : s))
-        } else if (type === 'topico') {
-          setTopicos(topicos.map(t => String(t._id) === id ? data.item : t))
-        } else if (type === 'subtopico') {
-          setSubtopicos(subtopicos.map(s => String(s._id) === id ? data.item : s))
-        } else if (type === 'modulo') {
-          setModulos(modulos.map(m => String(m._id) === id ? data.item : m))
-        } else if (type === 'submodulo') {
-          setSubmodulos(submodulos.map(sm => String(sm._id) === id ? data.item : sm))
-        }
-        showToast(oculta ? 'Visível!' : 'Oculto!')
-      } else {
-        const errorData = await res.json()
-        showToast(errorData.error || 'Erro ao atualizar', 'error')
-      }
-    } catch (error) {
-      console.error('Erro:', error)
-      showToast('Erro ao atualizar', 'error')
+      if (!res.ok) throw new Error()
+    } catch {
+      avisar('Não foi possível salvar a nova ordem. Recarregando.', 'error')
+      // A tela mostrou o resultado antes de ter certeza; se o servidor recusou,
+      // ela precisa voltar a ser verdade — e a verdade vem do banco.
+      await carregar()
+    } finally {
+      setSalvando(false)
     }
   }
 
-  async function reordenarItem(id: string, type: 'setor' | 'topico' | 'subtopico' | 'modulo' | 'submodulo', direcao: 'up' | 'down') {
+  function moverNaOrdem(no: NoDaArvore, direcao: -1 | 1) {
+    const irmaos = irmaosDe(no)
+    const indice = irmaos.findIndex((i) => i.id === no.id)
+    if (indice < 0) return
+    void gravarMovimentos(reordenar(irmaos, indice, indice + direcao))
+  }
+
+  function soltarEm(destino: NoDaArvore, zona: ZonaDeSolta) {
+    const movido = arrastando
+    setArrastando(null)
+    setAlvo(null)
+    if (!movido || movido.id === destino.id) return
+
+    if (zona === 'dentro') {
+      if (ehDescendente(movido, destino.id)) {
+        avisar('Não dá para mover um item para dentro dele mesmo.', 'error')
+        return
+      }
+      if (!FILHOS_PERMITIDOS[destino.tipo].includes(movido.tipo)) {
+        avisar(
+          `${ROTULO_DO_TIPO[movido.tipo]} não pode ficar dentro de ${ROTULO_DO_TIPO[destino.tipo].toLowerCase()}.`,
+          'error',
+        )
+        return
+      }
+      const movimento = moverPara(movido, destino, destino.filhos.length)
+      if (!movimento) return
+      setAbertos((atual) => new Set(atual).add(destino.id))
+      void gravarMovimentos([movimento])
+      return
+    }
+
+    // Antes/depois: entra na lista de irmãos do destino, na posição indicada.
+    const irmaos = irmaosDe(destino)
+    const posicao = irmaos.findIndex((i) => i.id === destino.id) + (zona === 'depois' ? 1 : 0)
+    const jaEIrmao = irmaos.some((i) => i.id === movido.id)
+
+    if (jaEIrmao) {
+      const de = irmaos.findIndex((i) => i.id === movido.id)
+      void gravarMovimentos(reordenar(irmaos, de, de < posicao ? posicao - 1 : posicao))
+      return
+    }
+
+    // Vem de outro pai: primeiro a transferência, depois a renumeração dos
+    // novos irmãos — senão o item chega ao destino sem posição definida.
+    const paiDoDestino = destino.tipo === 'setor' ? null : encontrarPai(destino)
+    if (destino.tipo !== 'setor' && !paiDoDestino) return
+    if (ehDescendente(movido, destino.id)) {
+      avisar('Não dá para mover um item para dentro dele mesmo.', 'error')
+      return
+    }
+
+    const transferencia = moverPara(movido, paiDoDestino, posicao)
+    if (!transferencia) {
+      avisar(
+        paiDoDestino
+          ? `${ROTULO_DO_TIPO[movido.tipo]} não pode ficar dentro de ${ROTULO_DO_TIPO[paiDoDestino.tipo].toLowerCase()}.`
+          : 'Só um curso pode ficar solto no primeiro nível.',
+        'error',
+      )
+      return
+    }
+
+    const nova = [...irmaos]
+    nova.splice(posicao, 0, movido)
+    const renumeracao = nova.map((n, i) => ({ tipo: n.tipo, id: n.id, ordem: i }))
+    void gravarMovimentos([transferencia, ...renumeracao.filter((m) => m.id !== movido.id)])
+  }
+
+  function encontrarPai(no: NoDaArvore): NoDaArvore | null {
+    for (const candidato of porId.values()) {
+      if (candidato.filhos.some((f) => f.id === no.id)) return candidato
+    }
+    return null
+  }
+
+  /* ── Criar, renomear, duplicar, excluir ─────────────────────────────── */
+
+  async function confirmarCriacao() {
+    if (!dialogo || dialogo.modo !== 'criar') return
+    const nome = nomeNoDialogo.trim()
+    if (!nome) return
+
+    if (dialogo.tipo === 'aula') {
+      // Aula tem tela própria, com vídeo, PDFs, capa e regras de acesso.
+      // Reproduzir isso num diálogo seria manter dois formulários divergentes.
+      const params = new URLSearchParams({ titulo: nome })
+      for (const [campo, valor] of Object.entries(vinculosDe(dialogo.pai))) {
+        if (valor) params.set(campo, valor)
+      }
+      router.push(`/aulas/gerenciar/aulas/criar?${params}`)
+      return
+    }
+
+    setSalvando(true)
     try {
-      let items: any[] = []
-
-      if (type === 'setor') {
-        items = [...setores].sort((a, b) => (a.ordem || 0) - (b.ordem || 0))
-      } else if (type === 'topico') {
-        items = [...topicosFiltrados].sort((a, b) => (a.ordem || 0) - (b.ordem || 0))
-      } else if (type === 'subtopico') {
-        items = [...subtopicosFiltrados].sort((a, b) => (a.ordem || 0) - (b.ordem || 0))
-      } else if (type === 'modulo') {
-        items = [...modulosFiltrados].sort((a, b) => (a.ordem || 0) - (b.ordem || 0))
-      } else if (type === 'submodulo') {
-        items = [...submodulosFiltrados].sort((a, b) => (a.ordem || 0) - (b.ordem || 0))
+      const corpo: Record<string, any> = { nome, ordem: dialogo.pai?.filhos.length || 0 }
+      Object.assign(corpo, vinculosDe(dialogo.pai))
+      // O tipo do pai também é vínculo — um tópico dentro do curso X precisa
+      // do `setorId` de X, que não está nos vínculos herdados dele.
+      if (dialogo.pai && dialogo.pai.tipo !== 'aula') {
+        corpo[`${dialogo.pai.tipo}Id`] = dialogo.pai.id
       }
 
-      const itemIndex = items.findIndex(i => String(i._id) === id)
-      if (itemIndex === -1) return
+      const res = await fetch(`/api/aulas/${COLECAO_POR_TIPO[dialogo.tipo as Exclude<TipoDeNo, 'aula'>]}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(corpo),
+      })
+      const d = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(d.error || 'Não foi possível criar')
 
-      const swapIndex = direcao === 'up' ? itemIndex - 1 : itemIndex + 1
-      if (swapIndex < 0 || swapIndex >= items.length) return
-
-      const currentItem = items[itemIndex]
-      const swapItem = items[swapIndex]
-      const currentOrdem = currentItem.ordem ?? 0
-      const swapOrdem = swapItem.ordem ?? 0
-
-      // Optimistically swap in UI
-      const updateItem = (list: any[], idA: string, ordemA: number, idB: string, ordemB: number) =>
-        list.map(i => {
-          if (String(i._id) === idA) return { ...i, ordem: ordemB }
-          if (String(i._id) === idB) return { ...i, ordem: ordemA }
-          return i
-        }).sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0))
-
-      const idA = String(currentItem._id)
-      const idB = String(swapItem._id)
-
-      if (type === 'setor') {
-        setSetores(updateItem(setores, idA, currentOrdem, idB, swapOrdem))
-      } else if (type === 'topico') {
-        setTopicos(updateItem(topicos, idA, currentOrdem, idB, swapOrdem))
-      } else if (type === 'subtopico') {
-        setSubtopicos(updateItem(subtopicos, idA, currentOrdem, idB, swapOrdem))
-      } else if (type === 'modulo') {
-        setModulos(updateItem(modulos, idA, currentOrdem, idB, swapOrdem))
-      } else if (type === 'submodulo') {
-        setSubmodulos(updateItem(submodulos, idA, currentOrdem, idB, swapOrdem))
-      }
-
-      // Send both PATCH requests in parallel
-      const endpointMap: Record<string, string> = {
-        setor: 'setores', topico: 'topicos', subtopico: 'subtopicos',
-        modulo: 'modulos', submodulo: 'submodulos'
-      }
-      const base = `/api/aulas/${endpointMap[type]}`
-
-      const [res1, res2] = await Promise.all([
-        fetch(`${base}/${idA}`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ordem: swapOrdem })
-        }),
-        fetch(`${base}/${idB}`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ordem: currentOrdem })
-        })
-      ])
-
-      if (!res1.ok || !res2.ok) {
-        showToast('Erro ao reordenar', 'error')
-        loadDados()
-      }
-    } catch (error) {
-      console.error('Erro:', error)
-      showToast('Erro ao reordenar', 'error')
-      loadDados()
+      avisar(`${ROTULO_DO_TIPO[dialogo.tipo]} criado.`)
+      if (dialogo.pai) setAbertos((atual) => new Set(atual).add(dialogo.pai!.id))
+      setDialogo(null)
+      await carregar()
+    } catch (e: any) {
+      avisar(e?.message || 'Não foi possível criar', 'error')
+    } finally {
+      setSalvando(false)
     }
   }
 
-  if (loading) {
-    return <LogoLoading message="Carregando..." size="lg" fullscreen />
+  /** Vínculos que um filho herda do pai (sem o vínculo com o próprio pai). */
+  function vinculosDe(pai: NoDaArvore | null): Record<string, string> {
+    if (!pai) return {}
+    const herdados: Record<string, string> = {}
+    for (const [campo, valor] of Object.entries(pai.pai)) {
+      if (valor) herdados[campo] = valor
+    }
+    return herdados
   }
 
-  const topicosFiltrados = topicos.filter(t => t.setorId === String(selectedSetor?._id))
-  const subtopicosFiltrados = subtopicos.filter(s => s.topicoId === String(selectedTopico?._id))
-  const modulosFiltrados = modulos.filter(m =>
-    selectedSubtopico
-      ? m.subtopicoId === String(selectedSubtopico._id)
-      : m.topicoId === String(selectedTopico?._id)
-  )
-  const submodulosFiltrados = submodulos.filter(sm => sm.moduloId === String(selectedModulo?._id))
+  async function confirmarRenomeacao() {
+    if (!dialogo || dialogo.modo !== 'renomear') return
+    const nome = nomeNoDialogo.trim()
+    if (!nome) return
+
+    setSalvando(true)
+    try {
+      const { no } = dialogo
+      const rota =
+        no.tipo === 'aula'
+          ? `/api/aulas/${no.id}`
+          : `/api/aulas/${COLECAO_POR_TIPO[no.tipo as Exclude<TipoDeNo, 'aula'>]}/${no.id}`
+      const res = await fetch(rota, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(no.tipo === 'aula' ? { titulo: nome } : { nome }),
+      })
+      if (!res.ok) throw new Error()
+      setDialogo(null)
+      await carregar()
+      avisar('Nome atualizado.')
+    } catch {
+      avisar('Não foi possível renomear', 'error')
+    } finally {
+      setSalvando(false)
+    }
+  }
+
+  async function duplicar(no: NoDaArvore) {
+    setSalvando(true)
+    try {
+      const res =
+        no.tipo === 'aula'
+          ? await fetch(`/api/aulas/${no.id}/duplicar`, { method: 'POST' })
+          : await fetch('/api/aulas/estrutura/duplicar', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ tipo: no.tipo, id: no.id }),
+            })
+      const d = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(d.error || 'Não foi possível duplicar')
+
+      await carregar()
+      avisar(
+        d.aulasCopiadas
+          ? `Cópia criada com ${d.aulasCopiadas} aula(s). Ela nasce oculta — publique quando estiver pronta.`
+          : 'Cópia criada, oculta.',
+      )
+    } catch (e: any) {
+      avisar(e?.message || 'Não foi possível duplicar', 'error')
+    } finally {
+      setSalvando(false)
+    }
+  }
+
+  async function alternarVisibilidade(no: NoDaArvore) {
+    const rota =
+      no.tipo === 'aula'
+        ? `/api/aulas/${no.id}`
+        : `/api/aulas/${COLECAO_POR_TIPO[no.tipo as Exclude<TipoDeNo, 'aula'>]}/${no.id}`
+    setSalvando(true)
+    try {
+      const res = await fetch(rota, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ oculta: !no.oculta }),
+      })
+      if (!res.ok) throw new Error()
+      await carregar()
+      avisar(no.oculta ? 'Publicado.' : 'Ocultado.')
+    } catch {
+      avisar('Não foi possível atualizar', 'error')
+    } finally {
+      setSalvando(false)
+    }
+  }
+
+  async function confirmarExclusao() {
+    if (!dialogo) return
+    setSalvando(true)
+    try {
+      if (dialogo.modo === 'excluir-lote') {
+        const ids = idsDeAulasSelecionadas()
+        const res = await fetch('/api/aulas/lote', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ acao: 'excluir', ids, confirmar: true }),
+        })
+        if (!res.ok) throw new Error()
+        setSelecionados(new Set())
+        avisar(`${ids.length} aula(s) excluída(s).`)
+      } else if (dialogo.modo === 'excluir') {
+        const { no } = dialogo
+        const rota =
+          no.tipo === 'aula'
+            ? `/api/aulas/${no.id}`
+            : `/api/aulas/${COLECAO_POR_TIPO[no.tipo as Exclude<TipoDeNo, 'aula'>]}/${no.id}`
+        const res = await fetch(rota, { method: 'DELETE' })
+        const d = await res.json().catch(() => ({}))
+        // 409 é o servidor recusando apagar um nó que ainda tem conteúdo. A
+        // mensagem dele já explica o que precisa sair antes — repeti-la é mais
+        // útil do que um "erro ao excluir" genérico.
+        if (!res.ok) throw new Error(d.error || 'Não foi possível excluir')
+        avisar('Excluído.')
+      }
+      setDialogo(null)
+      await carregar()
+    } catch (e: any) {
+      avisar(e?.message || 'Não foi possível excluir', 'error')
+    } finally {
+      setSalvando(false)
+    }
+  }
+
+  /* ── Seleção e ações em massa (§30) ─────────────────────────────────── */
+
+  /**
+   * Marcar um curso marca as aulas dele.
+   *
+   * As ações em massa só sabem operar aulas. Deixar o admin marcar um módulo e
+   * depois avisar "isto não vale para módulos" seria pior do que não deixar
+   * marcar — então marcar um ramo significa marcar as aulas dentro dele.
+   */
+  function selecionar(no: NoDaArvore, marcado: boolean) {
+    const alvos = no.tipo === 'aula' ? [no] : aulasAbaixo(no)
+    setSelecionados((atual) => {
+      const novo = new Set(atual)
+      for (const aula of alvos) {
+        if (marcado) novo.add(aula.id)
+        else novo.delete(aula.id)
+      }
+      return novo
+    })
+  }
+
+  function idsDeAulasSelecionadas(): string[] {
+    return Array.from(selecionados)
+  }
+
+  async function acaoEmLote(acao: 'publicar' | 'ocultar' | 'agendar', extra: Record<string, any> = {}) {
+    const ids = idsDeAulasSelecionadas()
+    if (ids.length === 0) return
+    setSalvando(true)
+    try {
+      const res = await fetch('/api/aulas/lote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ acao, ids, ...extra }),
+      })
+      const d = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(d.error || 'Não foi possível aplicar')
+      await carregar()
+      avisar(`${d.afetadas ?? ids.length} aula(s) atualizada(s).`)
+      setDialogo(null)
+    } catch (e: any) {
+      avisar(e?.message || 'Não foi possível aplicar', 'error')
+    } finally {
+      setSalvando(false)
+    }
+  }
+
+  /* ── Expandir / recolher ────────────────────────────────────────────── */
+
+  function alternarAberto(id: string) {
+    setAbertos((atual) => {
+      const novo = new Set(atual)
+      if (novo.has(id)) novo.delete(id)
+      else novo.add(id)
+      return novo
+    })
+  }
+
+  function expandirTudo() {
+    const todos = new Set<string>()
+    const descer = (nos: NoDaArvore[]) => {
+      for (const no of nos) {
+        if (no.filhos.length > 0) todos.add(no.id)
+        descer(no.filhos)
+      }
+    }
+    descer(raizes)
+    descer(orfaos)
+    setAbertos(todos)
+  }
+
+  /* ── Ações passadas para cada linha ─────────────────────────────────── */
+
+  const acoes: AcoesDaLinha = {
+    aoAlternarAberto: alternarAberto,
+    aoSelecionar: selecionar,
+    aoAdicionar: (pai, tipo) => {
+      setNomeNoDialogo('')
+      setDialogo({ modo: 'criar', pai, tipo })
+    },
+    aoRenomear: (no) => {
+      setNomeNoDialogo(no.nome)
+      setDialogo({ modo: 'renomear', no })
+    },
+    aoDuplicar: duplicar,
+    aoAlternarVisibilidade: alternarVisibilidade,
+    aoExcluir: (no) => setDialogo({ modo: 'excluir', no }),
+    aoEditarAula: (no) => router.push(`/aulas/gerenciar/aulas/${no.id}/editar`),
+    aoVerComoAluno: (no) => window.open(comModo(`/aulas/${no.id}`, 'aluno'), '_blank'),
+    aoCopiarLink: async (no) => {
+      try {
+        await navigator.clipboard.writeText(`${window.location.origin}/aulas/${no.id}`)
+        avisar('Link copiado.')
+      } catch {
+        avisar('Não foi possível copiar o link', 'error')
+      }
+    },
+    aoMoverNaOrdem: moverNaOrdem,
+    aoIniciarArraste: setArrastando,
+    aoPassarPorCima: (destino, zona) => {
+      // Só reescreve o estado quando a zona realmente muda: `dragover` dispara
+      // dezenas de vezes por segundo, e um setState por evento repinta a árvore
+      // inteira durante o gesto.
+      setAlvo((atual) =>
+        atual?.id === destino.id && atual.zona === zona ? atual : { id: destino.id, zona },
+      )
+    },
+    aoSoltarEm: soltarEm,
+    aoTerminarArraste: () => {
+      setArrastando(null)
+      setAlvo(null)
+    },
+  }
+
+  /* ── Desenho da árvore ──────────────────────────────────────────────── */
+
+  function desenhar(nos: NoDaArvore[]): React.ReactNode {
+    return nos.map((no, indice) => {
+      // Durante a busca tudo fica aberto: esconder o resultado atrás de um
+      // chevron obrigaria a expandir o caminho inteiro na mão.
+      const aberto = buscando || abertos.has(no.id)
+      const aulas = no.tipo === 'aula' ? [no] : aulasAbaixo(no)
+      const selecionado = aulas.length > 0 && aulas.every((a) => selecionados.has(a.id))
+
+      return (
+        <div key={no.id}>
+          <LinhaDaArvore
+            no={no}
+            estado={{
+              aberto,
+              selecionado,
+              arrastando: arrastando?.id === no.id,
+              zonaAtiva: alvo?.id === no.id ? alvo.zona : null,
+              podeSubir: indice > 0,
+              podeDescer: indice < nos.length - 1,
+              aceitaSolta: arrastando
+                ? FILHOS_PERMITIDOS[no.tipo].includes(arrastando.tipo) &&
+                  !ehDescendente(arrastando, no.id)
+                : FILHOS_PERMITIDOS[no.tipo].length > 0,
+            }}
+            acoes={acoes}
+          />
+          {/*
+            O aninhamento é desenhado por uma linha-guia, não por recuo grande.
+            Cinco níveis a 16px cada consumiam 80px de uma tela de 390px — o
+            título da aula ficava com menos espaço que os selos. A guia mostra a
+            hierarquia com 12px e ainda deixa claro onde um ramo termina.
+          */}
+          {aberto && no.filhos.length > 0 ? (
+            <div className="ml-3 border-l border-border pl-1">{desenhar(no.filhos)}</div>
+          ) : null}
+        </div>
+      )
+    })
+  }
+
+  if (carregando) return <LogoLoading message="Carregando estrutura..." size="lg" fullscreen />
+  if (!autorizado) return null
+
+  const totalAulas = listas.aulas.length
+  const marcadas = selecionados.size
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      {/* Background effects */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
-      </div>
-
-      {/* Header */}
-      <header className="relative z-40 backdrop-blur-md bg-white/5 border-b border-white/10 sticky top-0">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between gap-4 flex-wrap">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => router.push('/aulas/gerenciar')}
-                className="shrink-0 text-white hover:bg-white/10"
+    <div className="min-h-screen bg-background">
+      <header className="glass sticky top-0 z-40 border-b">
+        <div className="container mx-auto max-w-6xl px-4 py-3">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex min-w-0 items-center gap-3">
+              <Link
+                href="/aulas/gerenciar"
+                aria-label="Voltar"
+                className="flex h-9 w-9 flex-none items-center justify-center rounded-lg text-muted-foreground transition hover:bg-muted"
               >
                 <ArrowLeft className="h-5 w-5" />
-              </Button>
-              <div>
-                <h1 className="text-xl sm:text-2xl font-bold text-white">Estrutura de Aulas</h1>
-                <p className="text-sm text-white/60">
-                  Setor → Tópico → Subtópico → Módulo → Submódulo
+              </Link>
+              <div className="min-w-0">
+                <h1 className="truncate text-lg font-bold tracking-tight sm:text-xl">
+                  Estrutura das aulas
+                </h1>
+                <p className="truncate text-xs text-muted-foreground">
+                  {listas.setores.length} curso(s) · {totalAulas} aula(s)
+                  {salvando ? ' · salvando…' : ''}
                 </p>
               </div>
             </div>
-            <div className="flex gap-2">
-              <Button
-                onClick={limparAulasOrfas}
-                variant="outline"
-                className="border-orange-500/30 text-orange-400 hover:bg-orange-500/10"
-                title="Remove aulas órfãs que referenciam itens deletados"
+
+            <div className="flex flex-none items-center gap-2">
+              <Link
+                href="/aulas/gerenciar/detalhes"
+                className="hidden h-9 items-center gap-1.5 rounded-lg border border-border px-3 text-xs font-semibold transition hover:bg-muted lg:inline-flex"
+                title="Editar descrições, capas e imagens dos cursos"
               >
-                🧹 Limpar Órfãs
-              </Button>
+                <ImageIcon className="h-3.5 w-3.5" />
+                Capas e descrições
+              </Link>
+              <Link
+                href={comModo('/aulas', 'aluno')}
+                target="_blank"
+                className="hidden h-9 items-center gap-1.5 rounded-lg border border-border px-3 text-xs font-semibold transition hover:bg-muted sm:inline-flex"
+              >
+                <Eye className="h-3.5 w-3.5" />
+                Ver como aluno
+              </Link>
+              <button
+                type="button"
+                onClick={() => {
+                  setNomeNoDialogo('')
+                  setDialogo({ modo: 'criar', pai: null, tipo: 'setor' })
+                }}
+                className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-primary px-3 text-xs font-bold text-primary-foreground transition hover:brightness-110"
+              >
+                <Plus className="h-3.5 w-3.5" />
+                Novo curso
+              </button>
               <ThemeToggle />
             </div>
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="relative z-30 container mx-auto px-4 py-8 max-w-full overflow-x-hidden">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-2 lg:gap-4">
-          {/* Setores */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-white">Setores</h2>
-              <Button
-                size="sm"
-                onClick={() => openCreateDialog('setor')}
-                className="bg-white/10 hover:bg-white/20 text-white border border-white/20 backdrop-blur-md"
+      <main className="container mx-auto max-w-6xl px-4 py-5">
+        {/* ── Busca e controles ───────────────────────────────────────── */}
+        <div className="mb-4 flex flex-wrap items-center gap-2">
+          <div className="relative min-w-0 flex-1">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <input
+              value={busca}
+              onChange={(e) => setBusca(e.target.value)}
+              placeholder="Buscar curso, módulo ou aula..."
+              className="h-9 w-full rounded-lg border border-border bg-card pl-9 pr-8 text-sm outline-none transition focus:border-primary/50"
+            />
+            {busca ? (
+              <button
+                type="button"
+                onClick={() => setBusca('')}
+                aria-label="Limpar busca"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
               >
-                <Plus className="h-4 w-4" />
-              </Button>
-            </div>
-
-            <div className="space-y-2 max-h-96 overflow-y-auto">
-              {setores.length === 0 ? (
-                <div className="text-center py-8 text-white/40">
-                  <p className="text-sm">Nenhum setor criado</p>
-                </div>
-              ) : (
-                setores.map(setor => (
-                  <div
-                    key={String(setor._id)}
-                    onClick={() => {
-                      setSelectedSetor(setor)
-                      setSelectedTopico(null)
-                      setSelectedSubtopico(null)
-                      setSelectedModulo(null)
-                    }}
-                    className={`group p-4 rounded-xl backdrop-blur-md border transition-all cursor-pointer ${
-                      selectedSetor?._id === setor._id
-                        ? 'bg-white/20 border-white/40 shadow-lg shadow-purple-500/20'
-                        : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
-                    }`}
-                  >
-                    <div className="flex flex-col gap-2 w-full">
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium text-white break-words">{setor.nome}</p>
-                          {setor.descricao && (
-                            <p className="text-xs text-white/50 line-clamp-1">{setor.descricao}</p>
-                          )}
-                          {setor.oculta && (
-                            <p className="text-xs text-gray-400 mt-1">Oculto</p>
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex flex-wrap gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                        {setor.descricao && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              showToast(setor.descricao || '', 'info')
-                            }}
-                            title="Ver descrição"
-                            className="text-blue-400 hover:text-blue-300 hover:bg-blue-500/10 h-5 w-5"
-                          >
-                            <Info className="h-3 w-3" />
-                          </Button>
-                        )}
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            reordenarItem(String(setor._id), 'setor', 'up')
-                          }}
-                          title="Mover para cima"
-                          className="text-white/60 hover:text-white hover:bg-white/10 h-5 w-5"
-                        >
-                          <ChevronUp className="h-3 w-3" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            reordenarItem(String(setor._id), 'setor', 'down')
-                          }}
-                          title="Mover para baixo"
-                          className="text-white/60 hover:text-white hover:bg-white/10 h-5 w-5"
-                        >
-                          <ChevronDown className="h-3 w-3" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            toggleOcultar(String(setor._id), 'setor', setor.oculta || false)
-                          }}
-                          title={setor.oculta ? 'Mostrar' : 'Ocultar'}
-                          className="text-white/60 hover:text-white hover:bg-white/10 h-5 w-5"
-                        >
-                          {setor.oculta ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            openCreateDialog('setor', setor)
-                          }}
-                          className="text-white/60 hover:text-white hover:bg-white/10 h-5 w-5"
-                        >
-                          <Edit2 className="h-3 w-3" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            duplicarItem(String(setor._id), 'setor', setor)
-                          }}
-                          className="text-white/60 hover:text-white hover:bg-white/10 h-5 w-5"
-                        >
-                          <Copy className="h-3 w-3" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            deletarItem(String(setor._id), 'setor')
-                          }}
-                          className="text-red-400 hover:text-red-300 hover:bg-red-500/10 h-5 w-5"
-                        >
-                          <Trash2 className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
+                <X className="h-4 w-4" />
+              </button>
+            ) : null}
           </div>
 
-          {/* Tópicos */}
-          {selectedSetor && (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <ChevronRight className="h-4 w-4 text-white/40" />
-                  <h2 className="text-lg font-semibold text-white">Tópicos</h2>
-                </div>
-                <Button
-                  size="sm"
-                  onClick={() => openCreateDialog('topico')}
-                  className="bg-white/10 hover:bg-white/20 text-white border border-white/20 backdrop-blur-md"
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-
-              <div className="space-y-2 max-h-96 overflow-y-auto">
-                {topicosFiltrados.length === 0 ? (
-                  <div className="text-center py-8 text-white/40">
-                    <p className="text-sm">Nenhum tópico criado</p>
-                  </div>
-                ) : (
-                  topicosFiltrados.map(topico => (
-                    <div
-                      key={String(topico._id)}
-                      onClick={() => {
-                        setSelectedTopico(topico)
-                        setSelectedSubtopico(null)
-                        setSelectedModulo(null)
-                      }}
-                      className={`group p-4 rounded-xl backdrop-blur-md border transition-all cursor-pointer ${
-                        selectedTopico?._id === topico._id
-                          ? 'bg-white/20 border-white/40 shadow-lg shadow-blue-500/20'
-                          : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
-                      }`}
-                    >
-                      <div className="flex flex-col gap-2 w-full">
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="flex-1 min-w-0">
-                            <p className="font-medium text-white break-words">{topico.nome}</p>
-                            {topico.descricao && (
-                              <p className="text-xs text-white/50 line-clamp-1">{topico.descricao}</p>
-                            )}
-                            {topico.oculta && (
-                              <p className="text-xs text-gray-400 mt-1">Oculto</p>
-                            )}
-                          </div>
-                        </div>
-                        <div className="flex flex-wrap gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              reordenarItem(String(topico._id), 'topico', 'up')
-                            }}
-                            title="Mover para cima"
-                            className="text-white/60 hover:text-white hover:bg-white/10 h-5 w-5"
-                          >
-                            <ChevronUp className="h-3 w-3" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              reordenarItem(String(topico._id), 'topico', 'down')
-                            }}
-                            title="Mover para baixo"
-                            className="text-white/60 hover:text-white hover:bg-white/10 h-5 w-5"
-                          >
-                            <ChevronDown className="h-3 w-3" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              toggleOcultar(String(topico._id), 'topico', topico.oculta || false)
-                            }}
-                            title={topico.oculta ? 'Mostrar' : 'Ocultar'}
-                            className="text-white/60 hover:text-white hover:bg-white/10 h-5 w-5"
-                          >
-                            {topico.oculta ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              openCreateDialog('topico', topico)
-                            }}
-                            className="text-white/60 hover:text-white hover:bg-white/10"
-                          >
-                            <Edit2 className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              duplicarItem(String(topico._id), 'topico', topico)
-                            }}
-                            className="text-white/60 hover:text-white hover:bg-white/10"
-                          >
-                            <Copy className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              deletarItem(String(topico._id), 'topico')
-                            }}
-                            className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Subtópicos */}
-          {selectedTopico && (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <ChevronRight className="h-4 w-4 text-white/40" />
-                  <h2 className="text-lg font-semibold text-white">Subtópicos</h2>
-                </div>
-                <Button
-                  size="sm"
-                  onClick={() => openCreateDialog('subtopico')}
-                  className="bg-white/10 hover:bg-white/20 text-white border border-white/20 backdrop-blur-md"
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-
-              <div className="space-y-2 max-h-96 overflow-y-auto">
-                {subtopicosFiltrados.length === 0 ? (
-                  <div className="text-center py-8 text-white/40">
-                    <p className="text-sm">Nenhum subtópico criado</p>
-                  </div>
-                ) : (
-                  subtopicosFiltrados.map(subtopico => (
-                    <div
-                      key={String(subtopico._id)}
-                      onClick={() => {
-                        setSelectedSubtopico(subtopico)
-                        setSelectedModulo(null)
-                      }}
-                      className={`group p-4 rounded-xl backdrop-blur-md border transition-all cursor-pointer ${
-                        selectedSubtopico?._id === subtopico._id
-                          ? 'bg-white/20 border-white/40 shadow-lg shadow-cyan-500/20'
-                          : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
-                      }`}
-                    >
-                      <div className="flex flex-col gap-2 w-full">
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="flex-1 min-w-0">
-                            <p className="font-medium text-white break-words">{subtopico.nome}</p>
-                            {subtopico.descricao && (
-                              <p className="text-xs text-white/50 line-clamp-1">{subtopico.descricao}</p>
-                            )}
-                            {subtopico.oculta && (
-                              <p className="text-xs text-gray-400 mt-1">Oculto</p>
-                            )}
-                          </div>
-                        </div>
-                        <div className="flex flex-wrap gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              reordenarItem(String(subtopico._id), 'subtopico', 'up')
-                            }}
-                            title="Mover para cima"
-                            className="text-white/60 hover:text-white hover:bg-white/10 h-5 w-5"
-                          >
-                            <ChevronUp className="h-3 w-3" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              reordenarItem(String(subtopico._id), 'subtopico', 'down')
-                            }}
-                            title="Mover para baixo"
-                            className="text-white/60 hover:text-white hover:bg-white/10 h-5 w-5"
-                          >
-                            <ChevronDown className="h-3 w-3" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              toggleOcultar(String(subtopico._id), 'subtopico', subtopico.oculta || false)
-                            }}
-                            title={subtopico.oculta ? 'Mostrar' : 'Ocultar'}
-                            className="text-white/60 hover:text-white hover:bg-white/10 h-5 w-5"
-                          >
-                            {subtopico.oculta ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              openCreateDialog('subtopico', subtopico)
-                            }}
-                            className="text-white/60 hover:text-white hover:bg-white/10"
-                          >
-                            <Edit2 className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              duplicarItem(String(subtopico._id), 'subtopico', subtopico)
-                            }}
-                            className="text-white/60 hover:text-white hover:bg-white/10"
-                          >
-                            <Copy className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              deletarItem(String(subtopico._id), 'subtopico')
-                            }}
-                            className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Módulos */}
-          {selectedSubtopico && (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <ChevronRight className="h-4 w-4 text-white/40" />
-                  <h2 className="text-lg font-semibold text-white">Módulos</h2>
-                </div>
-                <Button
-                  size="sm"
-                  onClick={() => openCreateDialog('modulo')}
-                  className="bg-white/10 hover:bg-white/20 text-white border border-white/20 backdrop-blur-md"
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-
-              <div className="space-y-2 max-h-96 overflow-y-auto">
-                {modulosFiltrados.length === 0 ? (
-                  <div className="text-center py-8 text-white/40">
-                    <p className="text-sm">Nenhum módulo criado</p>
-                  </div>
-                ) : (
-                  modulosFiltrados.map(modulo => (
-                    <div
-                      key={String(modulo._id)}
-                      onClick={() => setSelectedModulo(modulo)}
-                      className={`group p-4 rounded-xl backdrop-blur-md border transition-all cursor-pointer ${
-                        selectedModulo?._id === modulo._id
-                          ? 'bg-white/20 border-white/40 shadow-lg shadow-green-500/20'
-                          : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
-                      }`}
-                    >
-                      <div className="flex flex-col gap-2 w-full">
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="flex-1 min-w-0">
-                            <p className="font-medium text-white break-words">{modulo.nome}</p>
-                            {modulo.descricao && (
-                              <p className="text-xs text-white/50 line-clamp-1">{modulo.descricao}</p>
-                            )}
-                            {modulo.oculta && (
-                              <p className="text-xs text-gray-400 mt-1">Oculto</p>
-                            )}
-                          </div>
-                        </div>
-                        <div className="flex flex-wrap gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              reordenarItem(String(modulo._id), 'modulo', 'up')
-                            }}
-                            title="Mover para cima"
-                            className="text-white/60 hover:text-white hover:bg-white/10 h-5 w-5"
-                          >
-                            <ChevronUp className="h-3 w-3" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              reordenarItem(String(modulo._id), 'modulo', 'down')
-                            }}
-                            title="Mover para baixo"
-                            className="text-white/60 hover:text-white hover:bg-white/10 h-5 w-5"
-                          >
-                            <ChevronDown className="h-3 w-3" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              toggleOcultar(String(modulo._id), 'modulo', modulo.oculta || false)
-                            }}
-                            title={modulo.oculta ? 'Mostrar' : 'Ocultar'}
-                            className="text-white/60 hover:text-white hover:bg-white/10 h-5 w-5"
-                          >
-                            {modulo.oculta ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              openCreateDialog('modulo', modulo)
-                            }}
-                            className="text-white/60 hover:text-white hover:bg-white/10"
-                          >
-                            <Edit2 className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              duplicarItem(String(modulo._id), 'modulo', modulo)
-                            }}
-                            className="text-white/60 hover:text-white hover:bg-white/10"
-                          >
-                            <Copy className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => deletarItem(String(modulo._id), 'modulo')}
-                            className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Submódulos */}
-          {selectedModulo && (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <ChevronRight className="h-4 w-4 text-white/40" />
-                  <h2 className="text-lg font-semibold text-white">Submódulos</h2>
-                </div>
-                <Button
-                  size="sm"
-                  onClick={() => openCreateDialog('submodulo')}
-                  className="bg-white/10 hover:bg-white/20 text-white border border-white/20 backdrop-blur-md"
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-
-              <div className="space-y-2 max-h-96 overflow-y-auto">
-                {submodulosFiltrados.length === 0 ? (
-                  <div className="text-center py-8 text-white/40">
-                    <p className="text-sm">Nenhum submódulo criado</p>
-                  </div>
-                ) : (
-                  submodulosFiltrados.map(submodulo => (
-                    <div
-                      key={String(submodulo._id)}
-                      className="group p-4 rounded-xl backdrop-blur-md border bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 transition-all"
-                    >
-                      <div className="flex flex-col gap-2 w-full">
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="flex-1 min-w-0">
-                            <p className="font-medium text-white break-words">{submodulo.nome}</p>
-                            {submodulo.descricao && (
-                              <p className="text-xs text-white/50 line-clamp-1">{submodulo.descricao}</p>
-                            )}
-                            {submodulo.oculta && (
-                              <p className="text-xs text-gray-400 mt-1">Oculto</p>
-                            )}
-                          </div>
-                        </div>
-                        <div className="flex flex-wrap gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              reordenarItem(String(submodulo._id), 'submodulo', 'up')
-                            }}
-                            title="Mover para cima"
-                            className="text-white/60 hover:text-white hover:bg-white/10 h-5 w-5"
-                          >
-                            <ChevronUp className="h-3 w-3" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              reordenarItem(String(submodulo._id), 'submodulo', 'down')
-                            }}
-                            title="Mover para baixo"
-                            className="text-white/60 hover:text-white hover:bg-white/10 h-5 w-5"
-                          >
-                            <ChevronDown className="h-3 w-3" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              toggleOcultar(String(submodulo._id), 'submodulo', submodulo.oculta || false)
-                            }}
-                            title={submodulo.oculta ? 'Mostrar' : 'Ocultar'}
-                            className="text-white/60 hover:text-white hover:bg-white/10 h-5 w-5"
-                          >
-                            {submodulo.oculta ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              openCreateDialog('submodulo', submodulo)
-                            }}
-                            className="text-white/60 hover:text-white hover:bg-white/10"
-                          >
-                            <Edit2 className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              duplicarItem(String(submodulo._id), 'submodulo', submodulo)
-                            }}
-                            className="text-white/60 hover:text-white hover:bg-white/10"
-                          >
-                            <Copy className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => deletarItem(String(submodulo._id), 'submodulo')}
-                            className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-          )}
+          <button
+            type="button"
+            onClick={expandirTudo}
+            className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-border px-3 text-xs font-semibold transition hover:bg-muted"
+          >
+            <ChevronsUpDown className="h-3.5 w-3.5" />
+            Expandir tudo
+          </button>
+          <button
+            type="button"
+            onClick={() => setAbertos(new Set())}
+            className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-border px-3 text-xs font-semibold transition hover:bg-muted"
+          >
+            <ChevronsDownUp className="h-3.5 w-3.5" />
+            Recolher tudo
+          </button>
         </div>
+
+        {/* ── Barra de ações em massa (§30) ───────────────────────────── */}
+        {marcadas > 0 ? (
+          <div className="sticky top-16 z-30 mb-3 flex flex-wrap items-center gap-2 rounded-xl border border-primary/30 bg-primary/10 px-3 py-2 backdrop-blur">
+            <span className="text-xs font-bold">
+              {marcadas} aula(s) selecionada(s)
+            </span>
+            <div className="ml-auto flex flex-wrap items-center gap-1.5">
+              <BotaoDeLote onClick={() => acaoEmLote('publicar')} icone={Eye}>
+                Publicar
+              </BotaoDeLote>
+              <BotaoDeLote onClick={() => acaoEmLote('ocultar')} icone={EyeOff}>
+                Ocultar
+              </BotaoDeLote>
+              <BotaoDeLote
+                onClick={() => {
+                  setDataNoDialogo('')
+                  setDialogo({ modo: 'agendar' })
+                }}
+                icone={CalendarClock}
+              >
+                Agendar
+              </BotaoDeLote>
+              <BotaoDeLote
+                onClick={() => setDialogo({ modo: 'excluir-lote' })}
+                icone={Trash2}
+                perigo
+              >
+                Excluir
+              </BotaoDeLote>
+              <button
+                type="button"
+                onClick={() => setSelecionados(new Set())}
+                className="inline-flex h-8 items-center rounded-lg px-2 text-xs font-semibold text-muted-foreground transition hover:bg-muted"
+              >
+                Limpar
+              </button>
+            </div>
+          </div>
+        ) : null}
+
+        {/* ── Árvore ──────────────────────────────────────────────────── */}
+        {visiveis.length === 0 && orfaosVisiveis.length === 0 ? (
+          <div className="rounded-xl border border-dashed border-border px-6 py-16 text-center">
+            <p className="text-sm font-semibold">
+              {buscando ? 'Nada encontrado' : 'Nenhum curso ainda'}
+            </p>
+            <p className="mx-auto mt-1 max-w-sm text-xs text-muted-foreground">
+              {buscando
+                ? 'Tente outro termo — a busca olha o nome de cursos, módulos e aulas.'
+                : 'Comece criando um curso. Tópicos, módulos e aulas entram dentro dele, e nenhum nível é obrigatório.'}
+            </p>
+            {!buscando ? (
+              <button
+                type="button"
+                onClick={() => {
+                  setNomeNoDialogo('')
+                  setDialogo({ modo: 'criar', pai: null, tipo: 'setor' })
+                }}
+                className="mt-5 inline-flex h-9 items-center gap-1.5 rounded-lg bg-primary px-4 text-xs font-bold text-primary-foreground"
+              >
+                <Plus className="h-3.5 w-3.5" />
+                Criar primeiro curso
+              </button>
+            ) : null}
+          </div>
+        ) : (
+          <div className="rounded-xl border border-border bg-card p-1.5">{desenhar(visiveis)}</div>
+        )}
+
+        {/* ── Órfãos ──────────────────────────────────────────────────── */}
+        {orfaosVisiveis.length > 0 ? (
+          <section className="mt-6">
+            <div className="mb-2 flex items-center gap-2 text-sm font-bold text-amber-600 dark:text-amber-400">
+              <AlertTriangle className="h-4 w-4" />
+              Fora de qualquer curso ({orfaosVisiveis.length})
+            </div>
+            <p className="mb-2 text-xs text-muted-foreground">
+              O vínculo destes itens aponta para algo que não existe mais. Eles não aparecem para o
+              aluno. Arraste-os para dentro de um curso ou exclua.
+            </p>
+            <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-1.5">
+              {desenhar(orfaosVisiveis)}
+            </div>
+          </section>
+        ) : null}
       </main>
 
-      {/* Dialog */}
-      <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent className="backdrop-blur-md bg-slate-900/80 border border-white/10">
+      {/* ── Diálogos ──────────────────────────────────────────────────── */}
+      <Dialog open={dialogo?.modo === 'criar'} onOpenChange={(a) => !a && setDialogo(null)}>
+        <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-white">
-              {editingId ? 'Editar' : 'Criar'} {dialogType.charAt(0).toUpperCase() + dialogType.slice(1)}
+            <DialogTitle>
+              {dialogo?.modo === 'criar' ? `Novo ${ROTULO_DO_TIPO[dialogo.tipo].toLowerCase()}` : ''}
             </DialogTitle>
+            <DialogDescription>
+              {dialogo?.modo === 'criar' && dialogo.pai
+                ? `Dentro de “${dialogo.pai.nome}”.`
+                : 'No primeiro nível da biblioteca.'}
+            </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <label className="text-sm font-medium text-white/80">Nome *</label>
-              <Input
-                value={formData.nome}
-                onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-                placeholder={`Nome do ${dialogType}`}
-                className="mt-1 bg-white/5 border-white/10 text-white placeholder:text-white/40"
-              />
-            </div>
-            <div>
-              <label className="text-sm font-medium text-white/80">Descrição (Opcional)</label>
-              <Textarea
-                value={formData.descricao}
-                onChange={(e) => setFormData({ ...formData, descricao: e.target.value })}
-                placeholder={`Descrição do ${dialogType}`}
-                className="mt-1 bg-white/5 border-white/10 text-white placeholder:text-white/40"
-                rows={3}
-              />
-            </div>
-            {dialogType === 'setor' && (
-              <div>
-                <label className="text-sm font-medium text-white/80">URL da Imagem do Card (Opcional)</label>
-                <div className="flex gap-2 mt-1">
-                  <Input
-                    value={formData.imagem}
-                    onChange={(e) => setFormData({ ...formData, imagem: e.target.value })}
-                    placeholder="https://exemplo.com/imagem.png"
-                    className="bg-white/5 border-white/10 text-white placeholder:text-white/40"
-                  />
-                  {formData.imagem && (
-                    <button
-                      type="button"
-                      onClick={() => setFormData(prev => ({ ...prev, imagem: '' }))}
-                      className="p-2 rounded-md bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors shrink-0"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  )}
-                </div>
-                {formData.imagem && (
-                  <img
-                    src={formData.imagem}
-                    alt="Preview"
-                    className="mt-2 w-full h-36 object-cover rounded-lg border border-white/10"
-                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
-                  />
-                )}
-              </div>
-            )}
-          </div>
+          <input
+            autoFocus
+            value={nomeNoDialogo}
+            onChange={(e) => setNomeNoDialogo(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && confirmarCriacao()}
+            placeholder="Nome"
+            className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm outline-none focus:border-primary/50"
+          />
+          {dialogo?.modo === 'criar' && dialogo.tipo === 'aula' ? (
+            <p className="text-xs text-muted-foreground">
+              A aula abre na tela completa, com vídeo, materiais e regras de acesso.
+            </p>
+          ) : null}
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setShowDialog(false)}
-              className="border-white/10 text-white hover:bg-white/10"
+            <button
+              type="button"
+              onClick={() => setDialogo(null)}
+              className="h-9 rounded-lg border border-border px-4 text-sm font-semibold"
             >
               Cancelar
-            </Button>
-            <Button
-              onClick={salvarItem}
-              className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white"
+            </button>
+            <button
+              type="button"
+              onClick={confirmarCriacao}
+              disabled={salvando || !nomeNoDialogo.trim()}
+              className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-primary px-4 text-sm font-bold text-primary-foreground disabled:opacity-50"
             >
-              {editingId ? 'Atualizar' : 'Criar'}
-            </Button>
+              {salvando ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
+              Criar
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={dialogo?.modo === 'renomear'} onOpenChange={(a) => !a && setDialogo(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Renomear</DialogTitle>
+          </DialogHeader>
+          <input
+            autoFocus
+            value={nomeNoDialogo}
+            onChange={(e) => setNomeNoDialogo(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && confirmarRenomeacao()}
+            className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm outline-none focus:border-primary/50"
+          />
+          <DialogFooter>
+            <button
+              type="button"
+              onClick={() => setDialogo(null)}
+              className="h-9 rounded-lg border border-border px-4 text-sm font-semibold"
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              onClick={confirmarRenomeacao}
+              disabled={salvando || !nomeNoDialogo.trim()}
+              className="h-9 rounded-lg bg-primary px-4 text-sm font-bold text-primary-foreground disabled:opacity-50"
+            >
+              Salvar
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={dialogo?.modo === 'agendar'} onOpenChange={(a) => !a && setDialogo(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Agendar liberação</DialogTitle>
+            <DialogDescription>
+              {marcadas} aula(s) ficam disponíveis a partir da data escolhida (§13).
+            </DialogDescription>
+          </DialogHeader>
+          <input
+            type="datetime-local"
+            value={dataNoDialogo}
+            onChange={(e) => setDataNoDialogo(e.target.value)}
+            className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm outline-none focus:border-primary/50"
+          />
+          <DialogFooter>
+            <button
+              type="button"
+              onClick={() => setDialogo(null)}
+              className="h-9 rounded-lg border border-border px-4 text-sm font-semibold"
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              disabled={salvando || !dataNoDialogo}
+              onClick={() =>
+                acaoEmLote('agendar', {
+                  dataLiberacao: new Date(dataNoDialogo).toISOString(),
+                  ocultarAteLiberacao: true,
+                })
+              }
+              className="h-9 rounded-lg bg-primary px-4 text-sm font-bold text-primary-foreground disabled:opacity-50"
+            >
+              Agendar
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={dialogo?.modo === 'excluir' || dialogo?.modo === 'excluir-lote'}
+        onOpenChange={(a) => !a && setDialogo(null)}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Excluir sem volta</DialogTitle>
+            <DialogDescription>
+              {dialogo?.modo === 'excluir-lote'
+                ? `${marcadas} aula(s) serão apagadas, junto com o progresso e as anotações dos alunos nelas.`
+                : dialogo?.modo === 'excluir' && dialogo.no.tipo !== 'aula'
+                  ? dialogo.no.filhos.length > 0
+                    ? `“${dialogo.no.nome}” ainda tem conteúdo dentro (${dialogo.no.totalAulas} aula(s)). O servidor vai recusar a exclusão até isso sair — mova ou exclua o conteúdo primeiro, ou apenas oculte o item.`
+                    : `“${dialogo.no.nome}” será apagado. Ele está vazio, então nenhuma aula é afetada.`
+                  : 'Esta aula será apagada, junto com o progresso e as anotações dos alunos nela.'}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <button
+              type="button"
+              onClick={() => setDialogo(null)}
+              className="h-9 rounded-lg border border-border px-4 text-sm font-semibold"
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              onClick={confirmarExclusao}
+              disabled={salvando}
+              className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-destructive px-4 text-sm font-bold text-destructive-foreground disabled:opacity-50"
+            >
+              {salvando ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
+              Excluir mesmo assim
+            </button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       <ToastAlert
-        open={toastOpen}
-        onOpenChange={setToastOpen}
-        message={toastMessage}
-        type={toastType}
+        open={toast.aberto}
+        onOpenChange={(a) => setToast((t) => ({ ...t, aberto: a }))}
+        message={toast.texto}
+        type={toast.tipo}
       />
     </div>
+  )
+}
+
+function BotaoDeLote({
+  onClick,
+  icone: Icone,
+  perigo,
+  children,
+}: {
+  onClick: () => void
+  icone: typeof Eye
+  perigo?: boolean
+  children: React.ReactNode
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        'inline-flex h-8 items-center gap-1.5 rounded-lg border px-2.5 text-xs font-semibold transition',
+        perigo
+          ? 'border-destructive/40 text-destructive hover:bg-destructive/10'
+          : 'border-border bg-card hover:bg-muted',
+      )}
+    >
+      <Icone className="h-3.5 w-3.5" />
+      {children}
+    </button>
   )
 }

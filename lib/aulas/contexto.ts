@@ -27,14 +27,33 @@ export interface SessaoMinima {
 /** Visitante sem conta — o piso de permissão. */
 export const CONTEXTO_VISITANTE: ContextoDoUsuario = { logado: false }
 
+export interface OpcoesDeContexto {
+  /**
+   * "Visualizar como aluno" (§28).
+   *
+   * Admin e monitor atravessam todo cadeado, o que torna impossível conferir se
+   * a trava está no lugar certo — a tela do admin sempre mostra tudo liberado.
+   * Com este sinal, o privilégio é abandonado e o motor de acesso avalia a
+   * conta pelas compras e assinatura que ela realmente tem.
+   *
+   * É só de leitura e só afeta a resposta desta requisição: nada é gravado, e
+   * as rotas de escrita continuam checando o papel real da sessão.
+   */
+  comoAluno?: boolean
+  /** Nível a simular quando `comoAluno`: visitante deslogado. */
+  comoVisitante?: boolean
+}
+
 export async function montarContextoDoUsuario(
   db: Db,
   sessao: SessaoMinima | null,
+  opcoes: OpcoesDeContexto = {},
 ): Promise<ContextoDoUsuario> {
   if (!sessao?.userId || !ObjectId.isValid(sessao.userId)) return CONTEXTO_VISITANTE
+  if (opcoes.comoVisitante) return CONTEXTO_VISITANTE
 
-  const isAdmin = sessao.role === 'admin'
-  const isMonitor = sessao.secondaryRole === 'monitor'
+  const isAdmin = sessao.role === 'admin' && !opcoes.comoAluno
+  const isMonitor = sessao.secondaryRole === 'monitor' && !opcoes.comoAluno
 
   // Admin e monitor passam por tudo no motor de acesso; gastar consultas de
   // compras e turmas para eles seria trabalho jogado fora.

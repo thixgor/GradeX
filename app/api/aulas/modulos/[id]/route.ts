@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
+import { contarDependentes, mensagemDeBloqueio } from '@/lib/aulas/exclusao'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -117,14 +118,21 @@ export async function DELETE(
       )
     }
     const modulosCollection = db.collection('aulas_modulos')
-    const postagensCollection = db.collection('aulas_postagens')
 
     const filter: any = ObjectId.isValid(id) ? { _id: new ObjectId(id) } : { _id: id }
 
-    // Deletar todas as aulas associadas ao módulo
-    const deleteAulasResult = await postagensCollection.deleteMany({
-      moduloId: new ObjectId(id)
-    })
+    // A exclusão em cascata daqui comparava um campo de TEXTO com um
+    // ObjectId, então nunca apagava nada e apenas deixava as aulas órfãs,
+    // fora da biblioteca do aluno. Consertar o filtro passaria a destruir
+    // conteúdo e progresso de verdade; em vez disso, a exclusão agora é
+    // recusada enquanto houver algo dentro (§45).
+    const dependentes = await contarDependentes(db, 'modulo', id)
+    if (dependentes.total > 0) {
+      return NextResponse.json(
+        { error: mensagemDeBloqueio(dependentes), dependentes: dependentes.total },
+        { status: 409 }
+      )
+    }
 
     let result = await modulosCollection.deleteOne(filter)
 
@@ -141,8 +149,7 @@ export async function DELETE(
 
     return NextResponse.json({
       success: true,
-      message: `Módulo deletado com sucesso (${deleteAulasResult.deletedCount} aula(s) removida(s))`,
-      deletedAulas: deleteAulasResult.deletedCount
+      message: 'Módulo excluído com sucesso'
     })
   } catch (error) {
     console.error('Erro ao deletar módulo:', error)

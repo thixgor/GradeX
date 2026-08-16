@@ -26,9 +26,15 @@ export const dynamic = 'force-dynamic'
  * cadeado com o motivo e o botão certo (§17). Rascunho, aula encerrada e
  * agendada-com-ocultar somem de vez.
  */
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const db = await getDb()
+
+    // "Visualizar como aluno" (§28): o admin abre mão do próprio privilégio
+    // para conferir a trava do jeito que ela chega em quem paga.
+    const parametros = new URL(request.url).searchParams
+    const comoAluno = parametros.get('comoAluno') === '1'
+    const comoVisitante = parametros.get('comoAluno') === 'visitante'
 
     const setoresCollection = db.collection<AulaSetor>('aulas_setores')
     const topicosCollection = db.collection<AulaTopic>('aulas_topicos')
@@ -46,7 +52,7 @@ export async function GET() {
       modulosCollection.find({}).sort({ ordem: 1 }).toArray(),
       submodulosCollection.find({}).sort({ ordem: 1 }).toArray(),
       aulasCollection.find({}).sort({ criadoEm: -1 }).toArray(),
-      montarContextoDoUsuario(db, session),
+      montarContextoDoUsuario(db, session, { comoAluno, comoVisitante }),
     ])
 
     // Vínculos com /materiais resolvidos em lote — uma consulta para a

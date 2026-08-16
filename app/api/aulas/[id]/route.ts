@@ -56,9 +56,15 @@ export async function GET(
       )
     }
 
+    // "Visualizar como aluno" (§28): o admin abre mão do próprio privilégio
+    // para conferir a trava do jeito que ela chega em quem paga.
+    const parametros = new URL(request.url).searchParams
+    const comoAluno = parametros.get('comoAluno') === '1'
+    const comoVisitante = parametros.get('comoAluno') === 'visitante'
+
     const session = await getSession()
     const [usuario, vinculos] = await Promise.all([
-      montarContextoDoUsuario(db, session),
+      montarContextoDoUsuario(db, session, { comoAluno, comoVisitante }),
       resolverVinculosEmLote(db, [aula as any]),
     ])
 

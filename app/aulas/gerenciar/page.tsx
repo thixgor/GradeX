@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { LogoLoading } from '@/components/logo-loading'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/theme-toggle'
-import { ArrowLeft, Plus } from 'lucide-react'
+import { ArrowLeft, Network, Plus } from 'lucide-react'
 
 interface User {
   id: string
@@ -113,16 +113,17 @@ export default function GerenciarAulasPage() {
             onClick={() => router.push('/aulas/gerenciar/estrutura')}>
             <CardHeader>
               <CardTitle className="text-white flex items-center gap-2">
-                <Plus className="h-5 w-5" />
+                <Network className="h-5 w-5" />
                 Estrutura
               </CardTitle>
               <CardDescription className="text-white/60">
-                Gerenciar tópicos, subtópicos e módulos
+                O curso inteiro numa árvore só
               </CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-white/50">
-                Crie e organize a hierarquia de conteúdo
+                Arraste para reorganizar, publique em massa, duplique módulos e veja
+                cada aula pelos olhos do aluno
               </p>
             </CardContent>
           </Card>

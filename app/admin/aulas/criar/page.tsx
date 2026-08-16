@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { Suspense, useEffect, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { LogoLoading } from '@/components/logo-loading'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -20,8 +20,12 @@ interface User {
   role: string
 }
 
-export default function CriarAulaPage() {
+function CriarAulaConteudo() {
   const router = useRouter()
+  // O painel de estrutura abre esta tela já sabendo onde a aula vai morar
+  // (§4). Sem isso o admin escolheria o curso de novo, à mão, logo depois de
+  // ter clicado exatamente no lugar em que a queria.
+  const searchParams = useSearchParams()
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -31,13 +35,17 @@ export default function CriarAulaPage() {
   const [modulos, setModulos] = useState<AulaModulo[]>([])
 
   // Form
-  const [titulo, setTitulo] = useState('')
+  const [titulo, setTitulo] = useState(() => searchParams.get('titulo') || '')
   const [descricao, setDescricao] = useState('')
   const [tipo, setTipo] = useState<AulaType>('gravada')
   const [visibilidade, setVisibilidade] = useState<AulaVisibility>('plus')
-  const [topicoId, setTopicoId] = useState('')
-  const [subtopicoId, setSubtopicoId] = useState('')
-  const [moduloId, setModuloId] = useState('')
+  const [topicoId, setTopicoId] = useState(() => searchParams.get('topicoId') || '')
+  const [subtopicoId, setSubtopicoId] = useState(() => searchParams.get('subtopicoId') || '')
+  const [moduloId, setModuloId] = useState(() => searchParams.get('moduloId') || '')
+  // Curso e submódulo não têm campo nesta tela; vêm do painel e seguem junto no
+  // envio para a aula não nascer solta.
+  const [setorId] = useState(() => searchParams.get('setorId') || '')
+  const [submoduloId] = useState(() => searchParams.get('submoduloId') || '')
   const [linkOuEmbed, setLinkOuEmbed] = useState('')
   const [videoEmbed, setVideoEmbed] = useState('')
   const [dataLiberacao, setDataLiberacao] = useState('')
@@ -86,6 +94,13 @@ export default function CriarAulaPage() {
     } catch (error) {
       console.error('Erro ao carregar dados:', error)
     }
+  }
+
+  /** De que curso é este tópico? */
+  function setorDoTopico(id: string): string {
+    if (!id) return ''
+    const topico = topicos.find((t) => String(t._id) === id)
+    return topico?.setorId ? String(topico.setorId) : ''
   }
 
   function showToast(message: string, type: 'error' | 'success' | 'info' = 'success') {
@@ -164,9 +179,14 @@ export default function CriarAulaPage() {
           descricao,
           tipo,
           visibilidade,
+          // O `setorId` é o que a biblioteca do aluno usa para agrupar por
+          // curso: sem ele a aula é criada, fica no banco e nunca aparece lá.
+          // Quando o painel não informa, ele é deduzido do tópico escolhido.
+          setorId: setorId || setorDoTopico(topicoId) || undefined,
           topicoId: topicoId || undefined,
           subtopicoId: subtopicoId || undefined,
           moduloId: moduloId || undefined,
+          submoduloId: submoduloId || undefined,
           linkOuEmbed: tipo === 'ao-vivo' ? linkOuEmbed : undefined,
           videoEmbed: tipo === 'gravada' ? videoEmbed : undefined,
           pdfs,
@@ -467,5 +487,14 @@ export default function CriarAulaPage() {
         type={toastType}
       />
     </div>
+  )
+}
+
+export default function CriarAulaPage() {
+  // `useSearchParams` exige a fronteira de Suspense no App Router.
+  return (
+    <Suspense fallback={<LogoLoading message="Carregando..." size="lg" fullscreen />}>
+      <CriarAulaConteudo />
+    </Suspense>
   )
 }

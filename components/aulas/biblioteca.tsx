@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import {
   BookOpen,
@@ -12,6 +12,7 @@ import {
   PlayCircle,
   Sparkles,
 } from 'lucide-react'
+import { comModo, type ModoDeVisualizacao } from '@/lib/aulas/modo-visualizacao'
 import { cn } from '@/lib/utils'
 
 /**
@@ -278,13 +279,35 @@ export function SeloDaAula({ acesso, progresso }: { acesso?: AcessoDaAula; progr
 
 /* =================== CARD DE AULA =================== */
 
+/**
+ * Modo de visualização vigente na tela (§28).
+ *
+ * Vem por contexto, e não por prop, porque os cards ficam quatro níveis abaixo
+ * da página — dentro de ramo, bloco agrupador e trilho. Empurrar a prop por
+ * essa corrente inteira significaria alterar cinco componentes que não têm nada
+ * a ver com permissão, e bastaria esquecer um para o admin cair fora do modo no
+ * meio da conferência, sem perceber.
+ */
+const ContextoDoModo = createContext<ModoDeVisualizacao>('admin')
+
+export function ProvedorDeModo({
+  modo,
+  children,
+}: {
+  modo: ModoDeVisualizacao
+  children: React.ReactNode
+}) {
+  return <ContextoDoModo.Provider value={modo}>{children}</ContextoDoModo.Provider>
+}
+
 export function CardDeAula({ aula, noTrilho = false }: { aula: AulaNaBiblioteca; noTrilho?: boolean }) {
   const bloqueada = aula.acesso ? !aula.acesso.liberado : false
   const progresso = aula.progresso
+  const modo = useContext(ContextoDoModo)
 
   return (
     <Link
-      href={`/aulas/${aula._id}`}
+      href={comModo(`/aulas/${aula._id}`, modo)}
       className={cn(
         'group flex flex-col overflow-hidden rounded-xl border border-border bg-card transition',
         'hover:border-primary/40 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary',
@@ -422,6 +445,7 @@ export interface ItemDeRetomada {
  * o módulo e caçar a aula — três decisões antes de estudar um minuto.
  */
 export function ContinueEstudando({ itens }: { itens: ItemDeRetomada[] }) {
+  const modo = useContext(ContextoDoModo)
   if (itens.length === 0) return null
 
   return (
@@ -435,7 +459,7 @@ export function ContinueEstudando({ itens }: { itens: ItemDeRetomada[] }) {
         {itens.map((item) => (
           <Link
             key={item.aulaId}
-            href={item.href}
+            href={comModo(item.href, modo)}
             className="group flex w-[80vw] flex-none snap-start gap-3 overflow-hidden rounded-xl border border-primary/25 bg-primary/5 p-3 transition hover:border-primary/50 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary sm:w-80"
           >
             <CapaDaAula

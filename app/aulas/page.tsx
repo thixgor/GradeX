@@ -17,6 +17,7 @@ import { AppShell, useAppShell } from '@/components/app-shell'
 import {
   CardDeAula,
   ContinueEstudando,
+  ProvedorDeModo,
   EsqueletoDeCards,
   CardDeCurso,
   EstadoVazio,
@@ -25,6 +26,8 @@ import {
   type AulaNaBiblioteca,
   type ItemDeRetomada,
 } from '@/components/aulas/biblioteca'
+import { FaixaModoAluno } from '@/components/aulas/faixa-modo-aluno'
+import { comModo, lerModo, PARAMETRO_MODO } from '@/lib/aulas/modo-visualizacao'
 import { cn } from '@/lib/utils'
 
 /**
@@ -148,6 +151,7 @@ function AulasPageContent() {
   const [busca, setBusca] = useState('')
   const [filtro, setFiltro] = useState<Filtro>('todas')
   const cursoAberto = searchParams.get('curso')
+  const modo = lerModo(searchParams.get(PARAMETRO_MODO))
 
   useEffect(() => {
     let cancelado = false
@@ -155,7 +159,7 @@ function AulasPageContent() {
     // As duas chamadas partem juntas: a retomada é o topo da tela e não pode
     // esperar a árvore inteira chegar para aparecer.
     Promise.all([
-      fetch('/api/aulas', { cache: 'no-store' }).then((r) => (r.ok ? r.json() : null)),
+      fetch(comModo('/api/aulas', modo), { cache: 'no-store' }).then((r) => (r.ok ? r.json() : null)),
       fetch('/api/aulas/continuar', { cache: 'no-store' }).then((r) => (r.ok ? r.json() : { itens: [] })),
     ])
       .then(([arvore, continuar]) => {
@@ -179,7 +183,9 @@ function AulasPageContent() {
     return () => {
       cancelado = true
     }
-  }, [])
+    // Trocar de modo recarrega a árvore: é a resposta do servidor que muda, não
+    // a filtragem na tela — o cadeado do aluno é decidido lá.
+  }, [modo])
 
   /** Progresso agregado por curso — alimenta o card e a barra do cabeçalho. */
   const progressoPorCurso = useMemo(() => {
@@ -320,7 +326,9 @@ function AulasPageContent() {
   }
 
   return (
-    <div className="container mx-auto max-w-7xl px-4 py-6 sm:py-8">
+    <ProvedorDeModo modo={modo}>
+      <FaixaModoAluno modo={modo} caminho={`/aulas${cursoAberto ? `?curso=${cursoAberto}` : ''}`} />
+      <div className="container mx-auto max-w-7xl px-4 py-6 sm:py-8">
       {/* ── Cabeçalho ─────────────────────────────────────────────────── */}
       <header className="mb-6 flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
@@ -452,7 +460,8 @@ function AulasPageContent() {
           acaoHref="/buy"
         />
       )}
-    </div>
+      </div>
+    </ProvedorDeModo>
   )
 }
 

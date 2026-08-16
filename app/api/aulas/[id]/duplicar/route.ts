@@ -39,7 +39,13 @@ export async function POST(
       titulo: `${aulaOriginal.titulo} (Cópia)`,
       criadoEm: new Date(),
       atualizadoEm: new Date(),
-      comentarios: []
+      comentarios: [],
+      // A cópia nasce fora do ar (§29). Duplicar é o começo de uma edição, não
+      // uma publicação: uma duplicata visível apareceria na biblioteca do aluno
+      // com o título "(Cópia)" no instante do clique.
+      oculta: true,
+      // Conclusões pertencem à aula original — quem assistiu, assistiu aquela.
+      usuariosConcluidos: []
     }
 
     const result = await aulasCollection.insertOne(aulaDuplicada)
