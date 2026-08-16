@@ -11,6 +11,7 @@ import {
   Lock,
   PlayCircle,
   Sparkles,
+  Star,
 } from 'lucide-react'
 import { comModo, type ModoDeVisualizacao } from '@/lib/aulas/modo-visualizacao'
 import { cn } from '@/lib/utils'
@@ -290,6 +291,28 @@ export function SeloDaAula({ acesso, progresso }: { acesso?: AcessoDaAula; progr
  */
 const ContextoDoModo = createContext<ModoDeVisualizacao>('admin')
 
+/**
+ * Favoritos (§21), pelo mesmo motivo do modo: os cards ficam quatro níveis
+ * abaixo da página. `null` quando a tela não oferece favoritar — e aí a estrela
+ * simplesmente não é desenhada, em vez de aparecer inerte.
+ */
+interface ControleDeFavoritos {
+  ehFavorito: (aulaId: string) => boolean
+  alternar: (aulaId: string) => void
+}
+
+const ContextoDeFavoritos = createContext<ControleDeFavoritos | null>(null)
+
+export function ProvedorDeFavoritos({
+  controle,
+  children,
+}: {
+  controle: ControleDeFavoritos
+  children: React.ReactNode
+}) {
+  return <ContextoDeFavoritos.Provider value={controle}>{children}</ContextoDeFavoritos.Provider>
+}
+
 export function ProvedorDeModo({
   modo,
   children,
@@ -304,13 +327,19 @@ export function CardDeAula({ aula, noTrilho = false }: { aula: AulaNaBiblioteca;
   const bloqueada = aula.acesso ? !aula.acesso.liberado : false
   const progresso = aula.progresso
   const modo = useContext(ContextoDoModo)
+  const favoritos = useContext(ContextoDeFavoritos)
+  const favorito = favoritos?.ehFavorito(aula._id) === true
 
   return (
-    <Link
-      href={comModo(`/aulas/${aula._id}`, modo)}
+    /*
+     * O cartão é uma `div` com o link cobrindo tudo, e não um `<a>` em volta de
+     * tudo: a estrela é um `<button>`, e botão dentro de âncora é HTML inválido
+     * — quebra o teclado e o leitor de tela.
+     */
+    <div
       className={cn(
-        'group flex flex-col overflow-hidden rounded-xl border border-border bg-card transition',
-        'hover:border-primary/40 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary',
+        'group relative flex flex-col overflow-hidden rounded-xl border border-border bg-card transition',
+        'hover:border-primary/40 hover:shadow-md focus-within:outline focus-within:outline-2 focus-within:outline-primary',
         // No trilho o card tem largura fixa e trava no snap. A largura cresce
         // com a tela para nunca virar um card minúsculo no desktop nem um card
         // largo demais no celular.
@@ -318,6 +347,32 @@ export function CardDeAula({ aula, noTrilho = false }: { aula: AulaNaBiblioteca;
         bloqueada && 'opacity-80',
       )}
     >
+      <Link
+        href={comModo(`/aulas/${aula._id}`, modo)}
+        className="absolute inset-0 z-10 rounded-xl"
+        aria-label={`Abrir ${aula.titulo}`}
+      />
+
+      {favoritos ? (
+        <button
+          type="button"
+          onClick={() => favoritos.alternar(aula._id)}
+          aria-pressed={favorito}
+          aria-label={favorito ? `Tirar ${aula.titulo} dos salvos` : `Salvar ${aula.titulo}`}
+          className={cn(
+            'absolute right-2 top-2 z-20 flex h-8 w-8 items-center justify-center rounded-lg backdrop-blur transition',
+            favorito
+              ? 'bg-black/45 text-amber-400'
+              : 'bg-black/35 text-white/70 opacity-0 hover:text-amber-400 focus-visible:opacity-100 group-hover:opacity-100',
+            // Sem hover no toque: no celular a estrela é sempre visível, senão
+            // não haveria como favoritar.
+            'max-sm:opacity-100',
+          )}
+        >
+          <Star className={cn('h-4 w-4', favorito && 'fill-current')} />
+        </button>
+      ) : null}
+
       <div className="relative aspect-video">
         <CapaDaAula aula={aula} className="h-full w-full" />
 
@@ -354,7 +409,7 @@ export function CardDeAula({ aula, noTrilho = false }: { aula: AulaNaBiblioteca;
           <p className="line-clamp-2 text-xs text-muted-foreground">{aula.descricao}</p>
         ) : null}
       </div>
-    </Link>
+    </div>
   )
 }
 

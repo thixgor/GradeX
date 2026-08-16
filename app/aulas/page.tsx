@@ -8,7 +8,9 @@ import {
   BookOpen,
   ChevronRight,
   GraduationCap,
+  History,
   Layers,
+  Star,
   Search,
   Settings2,
   X,
@@ -18,6 +20,7 @@ import {
   CardDeAula,
   ContinueEstudando,
   ProvedorDeModo,
+  ProvedorDeFavoritos,
   EsqueletoDeCards,
   CardDeCurso,
   EstadoVazio,
@@ -26,6 +29,8 @@ import {
   type AulaNaBiblioteca,
   type ItemDeRetomada,
 } from '@/components/aulas/biblioteca'
+import { EstanteDeAulas } from '@/components/aulas/estante'
+import { useFavoritosDeAula } from '@/components/aulas/use-favoritos-aula'
 import { FaixaModoAluno } from '@/components/aulas/faixa-modo-aluno'
 import { comModo, lerModo, PARAMETRO_MODO } from '@/lib/aulas/modo-visualizacao'
 import { cn } from '@/lib/utils'
@@ -108,14 +113,6 @@ interface Submodulo {
  * o admin tinha montado. Aqui a árvore é preservada inteira, e os níveis vazios
  * simplesmente não são desenhados.
  */
-interface Ramo {
-  id: string
-  nome: string
-  nivel: number
-  aulas: Aula[]
-  filhos: Ramo[]
-}
-
 interface Aula extends AulaNaBiblioteca {
   setorId?: string
   topicoId?: string
@@ -150,6 +147,7 @@ function AulasPageContent() {
 
   const [busca, setBusca] = useState('')
   const [filtro, setFiltro] = useState<Filtro>('todas')
+  const favoritos = useFavoritosDeAula()
   const cursoAberto = searchParams.get('curso')
   const modo = lerModo(searchParams.get(PARAMETRO_MODO))
 
@@ -250,75 +248,34 @@ function AulasPageContent() {
    * é o que permite um curso simples (só módulos) e um complexo (com seções e
    * subtópicos) usarem a mesma tela sem parecer a mesma bagunça.
    */
-  const ramosDoCurso = useMemo<Ramo[]>(() => {
-    if (!cursoAberto) return []
 
-    const porOrdem = <T extends { ordem: number }>(a: T, b: T) => (a.ordem || 0) - (b.ordem || 0)
-    const aulasDe = (chave: keyof Aula, valor: string, exigirVazios: Array<keyof Aula> = []) =>
-      aulasFiltradas
-        .filter((a) => String(a[chave] || '') === valor && exigirVazios.every((c) => !a[c]))
-        .sort((a, b) => (a.ordem || 0) - (b.ordem || 0))
 
-    const ramoDoSubmodulo = (sm: Submodulo): Ramo => ({
-      id: sm._id, nome: sm.nome, nivel: 4,
-      aulas: aulasDe('submoduloId', sm._id),
-      filhos: [],
-    })
-
-    const ramoDoModulo = (m: Modulo): Ramo => ({
-      id: m._id, nome: m.nome, nivel: 3,
-      aulas: aulasDe('moduloId', m._id, ['submoduloId']),
-      filhos: submodulos.filter((sm) => sm.moduloId === m._id).sort(porOrdem).map(ramoDoSubmodulo),
-    })
-
-    const ramoDoSubtopico = (st: Subtopico): Ramo => ({
-      id: st._id, nome: st.nome, nivel: 2,
-      aulas: aulasDe('subtopicoId', st._id, ['moduloId']),
-      filhos: modulos.filter((m) => m.subtopicoId === st._id).sort(porOrdem).map(ramoDoModulo),
-    })
-
-    const ramoDoTopico = (t: Topico): Ramo => ({
-      id: t._id, nome: t.nome, nivel: 1,
-      aulas: aulasDe('topicoId', t._id, ['subtopicoId', 'moduloId']),
-      filhos: [
-        ...subtopicos.filter((st) => st.topicoId === t._id).sort(porOrdem).map(ramoDoSubtopico),
-        ...modulos
-          .filter((m) => m.topicoId === t._id && !m.subtopicoId)
-          .sort(porOrdem)
-          .map(ramoDoModulo),
-      ],
-    })
-
-    return [
-      ...topicos.filter((t) => t.setorId === cursoAberto).sort(porOrdem).map(ramoDoTopico),
-      // Módulos pendurados direto no curso, sem tópico — o caso simples.
-      ...modulos
-        .filter((m) => m.setorId === cursoAberto && !m.topicoId && !m.subtopicoId)
-        .sort(porOrdem)
-        .map(ramoDoModulo),
-      // Aulas soltas no curso, sem nível nenhum.
-      ...(() => {
-        const soltas = aulasFiltradas.filter(
-          (a) => !a.topicoId && !a.subtopicoId && !a.moduloId && !a.submoduloId,
-        )
-        return soltas.length > 0
-          ? [{ id: '__soltas__', nome: 'Aulas do curso', nivel: 1, aulas: soltas, filhos: [] }]
-          : []
-      })(),
-    ]
-  }, [aulasFiltradas, cursoAberto, modulos, submodulos, subtopicos, topicos])
-
-  const curso = cursoAberto ? setores.find((s) => s._id === cursoAberto) : null
-  const modulosDoCurso = cursoAberto
-    ? modulos.filter((m) => m.setorId === cursoAberto).sort((a, b) => a.ordem - b.ordem)
-    : []
-
+  /**
+   * Abrir um curso passou a ser navegar até a página dele (§18).
+   *
+   * Antes o curso abria embutido aqui, atrás de `?curso=`. Não dava para
+   * mandar o link para alguém, e o botão voltar do navegador saía da biblioteca
+   * inteira em vez de subir um nível.
+   */
   function abrirCurso(id: string | null) {
-    const params = new URLSearchParams(searchParams.toString())
-    if (id) params.set('curso', id)
-    else params.delete('curso')
-    router.push(`/aulas${params.toString() ? `?${params}` : ''}`, { scroll: true })
+    if (!id) {
+      const params = new URLSearchParams(searchParams.toString())
+      params.delete('curso')
+      router.push(`/aulas${params.toString() ? `?${params}` : ''}`, { scroll: true })
+      return
+    }
+    router.push(comModo(`/aulas/curso/${id}`, modo))
   }
+
+  /*
+   * Endereço antigo com `?curso=` continua funcionando.
+   *
+   * Ele está em favorito de navegador e em link colado em conversa; quebrá-lo
+   * transformaria a melhoria numa perda para quem mais usava a biblioteca (§45).
+   */
+  useEffect(() => {
+    if (cursoAberto) router.replace(comModo(`/aulas/curso/${cursoAberto}`, modo))
+  }, [cursoAberto, modo, router])
 
   function limparFiltros() {
     setBusca('')
@@ -327,27 +284,17 @@ function AulasPageContent() {
 
   return (
     <ProvedorDeModo modo={modo}>
-      <FaixaModoAluno modo={modo} caminho={`/aulas${cursoAberto ? `?curso=${cursoAberto}` : ''}`} />
+      <ProvedorDeFavoritos controle={favoritos}>
+      <FaixaModoAluno modo={modo} caminho="/aulas" />
       <div className="container mx-auto max-w-7xl px-4 py-6 sm:py-8">
       {/* ── Cabeçalho ─────────────────────────────────────────────────── */}
       <header className="mb-6 flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          {curso ? (
-            <button
-              type="button"
-              onClick={() => abrirCurso(null)}
-              className="mb-2 inline-flex items-center gap-1.5 text-sm font-semibold text-muted-foreground transition hover:text-foreground"
-            >
-              <ArrowLeft className="h-4 w-4" /> Todos os cursos
-            </button>
-          ) : null}
           <h1 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
-            {curso ? curso.nome : 'Aulas'}
+            Aulas
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            {curso
-              ? curso.descricao || 'Continue de onde parou ou escolha um módulo abaixo.'
-              : 'Sua central de aprendizado — cursos, progresso e onde você parou.'}
+            Sua central de aprendizado — cursos, progresso e onde você parou.
           </p>
         </div>
 
@@ -362,7 +309,7 @@ function AulasPageContent() {
       </header>
 
       {/* ── Continue estudando ────────────────────────────────────────── */}
-      {!carregando && !buscando && !filtrando && !curso ? (
+      {!carregando && !buscando && !filtrando ? (
         <ContinueEstudando itens={retomada} />
       ) : null}
 
@@ -373,7 +320,7 @@ function AulasPageContent() {
           <input
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
-            placeholder={curso ? 'Pesquisar neste curso...' : 'Pesquisar aula, curso ou assunto...'}
+            placeholder="Pesquisar aula, curso ou assunto..." 
             className="h-11 w-full rounded-xl border border-border bg-card pl-10 pr-10 text-sm outline-none transition focus:border-primary/50 focus:ring-2 focus:ring-primary/15"
           />
           {busca ? (
@@ -432,8 +379,6 @@ function AulasPageContent() {
             onAcao={limparFiltros}
           />
         )
-      ) : curso ? (
-        <CursoAberto ramos={ramosDoCurso} progresso={progressoPorCurso.get(curso._id)} />
       ) : setores.length > 0 ? (
         <section>
           <h2 className="mb-3 flex items-center gap-2 text-lg font-bold tracking-tight">
@@ -460,219 +405,31 @@ function AulasPageContent() {
           acaoHref="/buy"
         />
       )}
-      </div>
-    </ProvedorDeModo>
-  )
-}
 
-/** Um ramo só vale desenhar se ele (ou algum filho) tem aula. */
-function temConteudo(ramo: Ramo): boolean {
-  return ramo.aulas.length > 0 || ramo.filhos.some(temConteudo)
-}
-
-function contarAulas(ramo: Ramo): { total: number; concluidas: number } {
-  const soma = {
-    total: ramo.aulas.length,
-    concluidas: ramo.aulas.filter((a) => a.progresso?.concluida).length,
-  }
-  for (const filho of ramo.filhos) {
-    const f = contarAulas(filho)
-    soma.total += f.total
-    soma.concluidas += f.concluidas
-  }
-  return soma
-}
-
-/**
- * Um curso aberto.
- *
- * A primeira versão empilhava TODOS os níveis verticalmente: tópico, subtópico,
- * módulo e submódulo viravam uma sequência de títulos e trilhos que descia sem
- * fim. A hierarquia existia no código e no tamanho da fonte, mas na tela era
- * uma coluna só — impossível saber onde um assunto acaba e o outro começa, e
- * pior no celular, onde cada nível empurra o resto para fora da tela.
- *
- * Duas mudanças resolvem isso:
- *
- *  1. **Tópicos viram abas.** Só um assunto por vez, então a página tem fim.
- *     As abas deslizam, e o aluno troca de assunto sem rolar.
- *  2. **Os níveis abaixo ganham contenção visual.** Subtópico vira um bloco
- *     com borda e fundo próprios; os módulos moram dentro dele. Dá para VER o
- *     agrupamento, em vez de deduzi-lo pelo tamanho do título.
- */
-function CursoAberto({
-  ramos,
-  progresso,
-}: {
-  ramos: Ramo[]
-  progresso?: { total: number; concluidas: number }
-}) {
-  const comConteudo = useMemo(() => ramos.filter(temConteudo), [ramos])
-  const [abaAtiva, setAbaAtiva] = useState<string | null>(null)
-
-  // A aba escolhida some quando a busca muda os ramos; voltar para a primeira
-  // é melhor do que mostrar uma tela vazia sem explicação.
-  const aba = comConteudo.find((r) => r.id === abaAtiva) || comConteudo[0]
-
-  if (comConteudo.length === 0) {
-    return (
-      <EstadoVazio
-        icone={Layers}
-        titulo="Nenhuma aula por aqui ainda"
-        descricao="Assim que as aulas deste curso forem liberadas, elas aparecem organizadas por módulo."
-        acaoLabel="Ver outros cursos"
-        acaoHref="/aulas"
-      />
-    )
-  }
-
-  return (
-    <div className="space-y-5">
-      {progresso && progresso.total > 0 ? (
-        <div className="rounded-xl border border-border bg-card p-4">
-          <ResumoDoCurso concluidas={progresso.concluidas} total={progresso.total} />
-        </div>
-      ) : null}
-
-      {/* Abas dos tópicos — só aparecem quando há mais de um assunto. */}
-      {comConteudo.length > 1 ? (
-        <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:px-0">
-          {comConteudo.map((r) => {
-            const { total, concluidas } = contarAulas(r)
-            const ativa = r.id === aba?.id
-            return (
-              <button
-                key={r.id}
-                type="button"
-                onClick={() => setAbaAtiva(r.id)}
-                aria-pressed={ativa}
-                className={cn(
-                  'inline-flex flex-none items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition',
-                  ativa
-                    ? 'border-primary bg-primary text-primary-foreground'
-                    : 'border-border bg-card text-muted-foreground hover:text-foreground',
-                )}
-              >
-                {r.nome}
-                <span
-                  className={cn(
-                    'rounded-full px-1.5 py-0.5 text-[10px] font-bold tabular-nums',
-                    ativa ? 'bg-primary-foreground/20' : 'bg-muted',
-                  )}
-                >
-                  {concluidas}/{total}
-                </span>
-              </button>
-            )
-          })}
-        </div>
-      ) : null}
-
-      {aba ? <ConteudoDoRamo ramo={aba} /> : null}
-    </div>
-  )
-}
-
-/**
- * O conteúdo de um tópico: aulas soltas primeiro, depois os blocos filhos.
- *
- * Cada filho com netos (subtópico contendo módulos) vira um bloco cercado; um
- * filho folha (módulo com aulas) vira só um trilho rotulado. Assim a moldura
- * aparece onde ela informa algo — agrupar — e não em volta de cada linha.
- */
-function ConteudoDoRamo({ ramo }: { ramo: Ramo }) {
-  const filhos = ramo.filhos.filter(temConteudo)
-
-  return (
-    <div className="space-y-5">
-      {ramo.aulas.length > 0 ? (
-        <Trilho>
-          {ramo.aulas.map((aula) => (
-            <CardDeAula key={aula._id} aula={aula} noTrilho />
-          ))}
-        </Trilho>
-      ) : null}
-
-      {filhos.map((filho) =>
-        filho.filhos.some(temConteudo) ? (
-          <BlocoAgrupador key={filho.id} ramo={filho} />
-        ) : (
-          <TrilhoRotulado key={filho.id} ramo={filho} />
-        ),
-      )}
-    </div>
-  )
-}
-
-/** Subtópico (ou módulo com submódulos): bloco cercado que agrupa os filhos. */
-function BlocoAgrupador({ ramo }: { ramo: Ramo }) {
-  const [aberto, setAberto] = useState(true)
-  const { total, concluidas } = contarAulas(ramo)
-  const filhos = ramo.filhos.filter(temConteudo)
-
-  return (
-    <section className="overflow-hidden rounded-xl border border-border bg-muted/20">
-      <button
-        type="button"
-        onClick={() => setAberto((v) => !v)}
-        aria-expanded={aberto}
-        className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition hover:bg-muted/40"
-      >
-        <span className="flex min-w-0 items-center gap-2">
-          <ChevronRight
-            className={cn('h-4 w-4 flex-none text-muted-foreground transition-transform', aberto && 'rotate-90')}
+      {/* As duas estantes ficam DEPOIS dos cursos de propósito: quem abre a
+          biblioteca quer estudar, não revisar o que já viu. Elas respondem
+          "onde estava aquela aula?", que é a terceira pergunta, não a
+          primeira (§21, §22). */}
+      {!carregando && !buscando && !filtrando ? (
+        <>
+          <EstanteDeAulas
+            titulo="Salvas para depois"
+            vazio="Toque na estrela de qualquer aula para guardá-la aqui."
+            rota="/api/aulas/historico?favoritos=1"
+            icone={Star}
+            recarregar={favoritos.ids.size}
           />
-          <span className="truncate font-bold">{ramo.nome}</span>
-        </span>
-        <span className="flex-none text-xs text-muted-foreground">
-          {concluidas}/{total}
-        </span>
-      </button>
-
-      {aberto ? (
-        <div className="space-y-4 border-t border-border px-4 py-4">
-          {ramo.aulas.length > 0 ? (
-            <Trilho>
-              {ramo.aulas.map((aula) => (
-                <CardDeAula key={aula._id} aula={aula} noTrilho />
-              ))}
-            </Trilho>
-          ) : null}
-
-          {filhos.map((filho) =>
-            filho.filhos.some(temConteudo) ? (
-              <BlocoAgrupador key={filho.id} ramo={filho} />
-            ) : (
-              <TrilhoRotulado key={filho.id} ramo={filho} />
-            ),
-          )}
-        </div>
+          <EstanteDeAulas
+            titulo="Vistas recentemente"
+            vazio="As aulas que você abrir aparecem aqui, na ordem em que foram vistas."
+            rota="/api/aulas/historico"
+            icone={History}
+          />
+        </>
       ) : null}
-    </section>
-  )
-}
-
-/** Módulo folha: rótulo, progresso e o trilho de aulas. */
-function TrilhoRotulado({ ramo }: { ramo: Ramo }) {
-  const { total, concluidas } = contarAulas(ramo)
-
-  return (
-    <section>
-      <div className="mb-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
-        <h3 className="flex items-center gap-1.5 text-sm font-bold">
-          <Layers className="h-3.5 w-3.5 text-primary" />
-          {ramo.nome}
-        </h3>
-        <span className="text-xs text-muted-foreground">
-          {concluidas}/{total}
-        </span>
       </div>
-      <Trilho>
-        {ramo.aulas.map((aula) => (
-          <CardDeAula key={aula._id} aula={aula} noTrilho />
-        ))}
-      </Trilho>
-    </section>
+      </ProvedorDeFavoritos>
+    </ProvedorDeModo>
   )
 }
 
