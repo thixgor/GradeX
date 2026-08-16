@@ -40,6 +40,7 @@ export function PainelFerramenta({
   ancora,
   favorito,
   onFavoritar,
+  fixo = false,
 }: {
   ferramenta: Ferramenta
   cor: string
@@ -48,6 +49,15 @@ export function PainelFerramenta({
   ancora?: boolean
   favorito?: boolean
   onFavoritar?: () => void
+  /**
+   * Página dedicada a esta ferramenta: o painel nasce aberto e o cabeçalho
+   * deixa de ser botão.
+   *
+   * Numa tela em que a ferramenta é o único assunto, um cabeçalho que recolhe
+   * o conteúdo só oferece a possibilidade de esvaziar a página — e um toque
+   * errado no título apagaria justamente aquilo que a pessoa veio ver.
+   */
+  fixo?: boolean
 }) {
   const t = tema(cor)
   const [valores, setValores] = useState<Valores>(() => valoresIniciais(ferramenta.campos))
@@ -76,9 +86,12 @@ export function PainelFerramenta({
 
   const copiar = useCallback(
     async (tipo: 'link' | 'resultado') => {
+      // O link copiado é o endereço próprio da ferramenta. Antes ele apontava
+      // para a lista da área com `?f=`, e quem recebia caía numa página com
+      // dezenas de calculadoras para achar aquela de que se falava.
       const texto =
         tipo === 'link'
-          ? `${window.location.origin}${window.location.pathname}?f=${ferramenta.id}`
+          ? `${window.location.origin}/manual-clinico/ferramentas/${ferramenta.categorias[0]}/${ferramenta.id}`
           : montarResumo(ferramenta, resultado)
       try {
         await navigator.clipboard.writeText(texto)
@@ -104,27 +117,39 @@ export function PainelFerramenta({
       } ${ancora ? 'ring-2 ring-primary/30' : ''}`}
     >
       <div className="flex items-stretch">
-        <button
-          type="button"
-          onClick={onToggle}
-          aria-expanded={aberto}
-          className={`flex min-w-0 flex-1 items-start gap-3 py-4 pl-4 pr-2 text-left transition-colors hover:bg-muted/40 sm:py-5 sm:pl-5 ${
-            aberto ? 'rounded-tl-xl' : 'rounded-l-xl'
-          }`}
-        >
-          <div className="min-w-0 flex-1">
-            <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-              <h3 className="font-heading text-[15px] font-semibold leading-snug tracking-tight sm:text-base">{ferramenta.nome}</h3>
-              {ferramenta.sigla && (
-                <span className={`rounded px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wide ${t.bg} ${t.text}`}>
-                  {ferramenta.sigla}
-                </span>
-              )}
+        {(() => {
+          const miolo = (
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                <h3 className={`font-heading font-semibold leading-snug tracking-tight ${fixo ? 'text-lg sm:text-xl' : 'text-[15px] sm:text-base'}`}>
+                  {ferramenta.nome}
+                </h3>
+                {ferramenta.sigla && (
+                  <span className={`rounded px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wide ${t.bg} ${t.text}`}>
+                    {ferramenta.sigla}
+                  </span>
+                )}
+              </div>
+              <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">{ferramenta.resumo}</p>
             </div>
-            <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">{ferramenta.resumo}</p>
-          </div>
-          <ChevronDown className={`mt-1 h-5 w-5 shrink-0 text-muted-foreground/50 transition-transform duration-200 ${aberto ? 'rotate-180' : ''}`} />
-        </button>
+          )
+
+          return fixo ? (
+            <div className="flex min-w-0 flex-1 items-start gap-3 py-4 pl-4 pr-2 sm:py-5 sm:pl-5">{miolo}</div>
+          ) : (
+            <button
+              type="button"
+              onClick={onToggle}
+              aria-expanded={aberto}
+              className={`flex min-w-0 flex-1 items-start gap-3 py-4 pl-4 pr-2 text-left transition-colors hover:bg-muted/40 sm:py-5 sm:pl-5 ${
+                aberto ? 'rounded-tl-xl' : 'rounded-l-xl'
+              }`}
+            >
+              {miolo}
+              <ChevronDown className={`mt-1 h-5 w-5 shrink-0 text-muted-foreground/50 transition-transform duration-200 ${aberto ? 'rotate-180' : ''}`} />
+            </button>
+          )
+        })()}
 
         {/* Botão irmão, não aninhado: um <button> dentro de outro é HTML
             inválido e quebra o teclado e o leitor de tela. */}
@@ -165,7 +190,7 @@ export function PainelFerramenta({
 
           <div className="grid gap-0 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
             {/* ─────────── Entrada ─────────── */}
-            <div className="border-b border-border p-4 sm:p-5 lg:border-b-0 lg:border-r">
+            <div className="min-w-0 border-b border-border p-4 sm:p-5 lg:border-b-0 lg:border-r">
               <div className="mb-4 flex items-center justify-between gap-2">
                 <p className="editorial-mark">Dados</p>
                 <button
@@ -184,7 +209,7 @@ export function PainelFerramenta({
             </div>
 
             {/* ─────────── Resultado ─────────── */}
-            <div className="bg-muted/20 p-4 sm:p-5">
+            <div className="min-w-0 bg-muted/20 p-4 sm:p-5">
               <div className="mb-4 flex items-center justify-between gap-2">
                 <p className="editorial-mark">Resultado</p>
                 <div className="-mr-1.5 flex items-center gap-0.5 sm:-mr-1">
@@ -336,15 +361,25 @@ export function PainelFerramenta({
 
           {/* ─────────── Fundamento, fórmula, armadilhas e referências ─────────── */}
           <div className="rounded-b-xl border-t border-border bg-background p-4 sm:p-5">
+            {/* `min-w-0` nos filhos: item de grid tem largura mínima
+                automática igual ao conteúdo, então a fórmula em fonte mono
+                esticava a coluna, a coluna esticava a grade e a PÁGINA INTEIRA
+                passava a rolar de lado no celular — o `overflow-x-auto` da
+                caixa da fórmula nunca chegava a agir. */}
             <div className="grid gap-5 lg:grid-cols-2">
-              <div className="space-y-4">
+              <div className="min-w-0 space-y-4">
                 {ferramenta.formula && ferramenta.formula.length > 0 && (
                   <div>
                     <p className="editorial-mark mb-2 flex items-center gap-1.5">
                       <Sigma className="h-3 w-3" /> Fórmula
                     </p>
+                    {/* `pre-wrap` em vez de `pre`: muitas fórmulas são frases
+                        ("1 ponto para cada: exsudato | adenopatia | febre…") e
+                        rolagem lateral para ler uma frase é péssimo no celular.
+                        O `pre-wrap` preserva o alinhamento das que dependem
+                        dele e quebra as que não cabem. */}
                     <div className="overflow-x-auto rounded-lg border border-border bg-muted/40 p-3">
-                      <pre className="whitespace-pre font-mono text-[11.5px] leading-relaxed text-foreground sm:text-[12px]">{ferramenta.formula.join('\n')}</pre>
+                      <pre className="whitespace-pre-wrap break-words font-mono text-[11.5px] leading-relaxed text-foreground sm:text-[12px]">{ferramenta.formula.join('\n')}</pre>
                     </div>
                   </div>
                 )}
@@ -356,7 +391,7 @@ export function PainelFerramenta({
                 </div>
               </div>
 
-              <div className="space-y-4">
+              <div className="min-w-0 space-y-4">
                 {ferramenta.armadilhas && ferramenta.armadilhas.length > 0 && (
                   <div>
                     <p className="editorial-mark mb-2 flex items-center gap-1.5">

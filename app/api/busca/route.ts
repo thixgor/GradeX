@@ -439,7 +439,9 @@ function carregarFerramentas(): Promise<ItemBusca[]> {
           ),
           prioridade: 6,
           grupo: 'ferramenta' as const,
-          href: `/manual-clinico/ferramentas/${f.categorias[0]}?f=${f.id}`,
+          // Vai direto na ferramenta: cair na lista da área obrigaria a
+          // procurar de novo o que a pessoa acabou de buscar.
+          href: `/manual-clinico/ferramentas/${f.categorias[0]}/${f.id}`,
           icone: 'calculator',
           etiqueta: 'Calculadora',
           secao: 'manualClinico' as const,

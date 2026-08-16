@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation'
 import { AppShell, useAppShell } from '@/components/app-shell'
 import { Input } from '@/components/ui/input'
 import {
-  ArrowLeft,
   ArrowRight,
   BookOpen,
   Calculator,
@@ -27,6 +26,7 @@ import {
   type Ferramenta,
 } from '@/lib/ferramentas-clinicas'
 import { ICONES, ICONE_PADRAO, tema } from '@/components/ferramentas-clinicas/tema'
+import { BarraFerramentas } from '@/components/ferramentas-clinicas/barra-superior'
 import { useFavoritos } from '@/components/ferramentas-clinicas/use-favoritos'
 import { useAcessoFerramentas } from '@/components/ferramentas-clinicas/use-acesso'
 import { VitrineFerramentas } from '@/components/ferramentas-clinicas/vitrine'
@@ -75,16 +75,7 @@ function Conteudo() {
   if (!temAcesso) {
     return (
       <div className="surface-page min-h-screen">
-        <div className="border-b border-border bg-muted/30">
-          <div className="container mx-auto max-w-6xl px-4 pb-4 pt-16 sm:pt-6">
-            <button
-              onClick={() => router.push('/manual-clinico')}
-              className="-m-2 inline-flex items-center gap-1.5 rounded-lg p-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
-            >
-              <ArrowLeft className="h-4 w-4" /> Voltar ao Manual Clínico
-            </button>
-          </div>
-        </div>
+        <BarraFerramentas voltarHref="/manual-clinico" voltarLabel="Voltar ao Manual Clínico" />
         <div className="container mx-auto max-w-6xl px-4 py-8">
           <VitrineFerramentas
             onCheckout={() => router.push('/manual-clinico/checkout')}
@@ -101,6 +92,11 @@ function Conteudo() {
 
   return (
     <div className="surface-page min-h-screen">
+      {/* A barra fica ANTES do herói e é `sticky`: ela dá superfície opaca aos
+          botões flutuantes da casca, que antes tinham o título da página
+          passando por baixo deles ao rolar. */}
+      <BarraFerramentas voltarHref="/manual-clinico" voltarLabel="Voltar ao Manual Clínico" />
+
       {/* ══════════════════════════ HERO ══════════════════════════ */}
       <div className="relative overflow-hidden border-b border-border">
         <div className="absolute inset-0 bg-muted/30" aria-hidden />
@@ -117,17 +113,7 @@ function Conteudo() {
           }}
         />
 
-        {/* `pt-16` no celular: os botões flutuantes do AppShell ocupam os 52px
-            do topo quando o cabeçalho da casca está oculto, e sem essa folga o
-            botão de voltar fica embaixo do botão de menu. */}
-        <div className="container relative z-10 mx-auto max-w-6xl px-4 pb-10 pt-16 sm:pt-8">
-          <button
-            onClick={() => router.push('/manual-clinico')}
-            className="-m-2 mb-4 inline-flex items-center gap-1.5 rounded-lg p-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <ArrowLeft className="h-4 w-4" /> Voltar ao Manual Clínico
-          </button>
-
+        <div className="container relative z-10 mx-auto max-w-6xl px-4 pb-10 pt-6">
           <div className="max-w-3xl">
             <p className="editorial-mark mb-3">Manual Clínico · Calculadoras e escores</p>
             <h1 className="font-heading text-3xl font-bold leading-tight tracking-tight sm:text-4xl md:text-5xl">
@@ -270,7 +256,7 @@ function Favoritos() {
               {/* O link cobre o cartão inteiro e o botão de remover fica acima
                   dele. Um <button> dentro de um <a> seria HTML inválido. */}
               <Link
-                href={`/manual-clinico/ferramentas/${fav.categoria}?f=${fav.id}`}
+                href={`/manual-clinico/ferramentas/${fav.categoria}/${fav.id}`}
                 prefetch={false}
                 className="absolute inset-0 z-10 rounded-xl"
                 aria-label={`Abrir ${fav.nome}`}
@@ -407,7 +393,7 @@ function ResultadosBusca({
           return (
             <Link
               key={ferramenta.id}
-              href={`/manual-clinico/ferramentas/${ferramenta.categorias[0]}?f=${ferramenta.id}`}
+              href={`/manual-clinico/ferramentas/${ferramenta.categorias[0]}/${ferramenta.id}`}
               prefetch={false}
               className="group flex items-start gap-3 rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/40"
             >
