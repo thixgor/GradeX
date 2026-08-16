@@ -8,9 +8,26 @@ import {
   isValidObjectId,
   sanitizeObject
 } from '@/lib/api-security'
+import { getSession } from '@/lib/auth'
+import { avaliarAcessoAula, ocultarConteudoRestrito } from '@/lib/aulas/acesso'
+import { montarContextoDoUsuario } from '@/lib/aulas/contexto'
 
 export const dynamic = 'force-dynamic'
 
+/**
+ * Detalhe da aula, já filtrado pelo que esta pessoa pode ver.
+ *
+ * Esta rota devolvia o documento INTEIRO — `videoEmbed`, links de aula ao vivo
+ * e PDFs — sem sessão e sem checagem nenhuma. O cadeado das aulas pagas existia
+ * só em `app/aulas/[id]/page.tsx`, ou seja, no navegador: bastava abrir
+ * /api/aulas/<id> para ler o embed de qualquer aula do Plus+.
+ *
+ * Agora quem decide é `avaliarAcessoAula`, no servidor, e o conteúdo restrito
+ * nunca entra na resposta. Continua respondendo 200 com os metadados (título,
+ * capa, motivo do bloqueio) de propósito: a tela precisa desenhar o cadeado
+ * explicando o que falta (§17), e um 403 seco viraria a "página quebrada" que
+ * não queremos.
+ */
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -38,7 +55,24 @@ export async function GET(
       )
     }
 
-    return NextResponse.json({ aula })
+    const session = await getSession()
+    const usuario = await montarContextoDoUsuario(db, session)
+    const veredito = avaliarAcessoAula(aula as any, usuario)
+
+    // Rascunho e aula encerrada não existem para o aluno: responder 404 evita
+    // confirmar que aquele endereço guarda alguma coisa.
+    if (veredito.invisivel && veredito.requisito?.motivo !== 'agendada') {
+      return NextResponse.json({ error: 'Aula não encontrada' }, { status: 404 })
+    }
+
+    return NextResponse.json({
+      aula: ocultarConteudoRestrito(aula, veredito),
+      acesso: {
+        liberado: veredito.liberado,
+        porAmostra: veredito.porAmostra,
+        requisito: veredito.requisito,
+      },
+    })
   } catch (error) {
     console.error('Erro ao buscar aula:', error)
     return NextResponse.json(

@@ -3,13 +3,31 @@ import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { AulaPostagem, AulaSetor, AulaTopic, AulaSubtopic, AulaModulo, AulaSubmodulo } from '@/lib/types'
+import { avaliarAcessoAula, ocultarConteudoRestrito } from '@/lib/aulas/acesso'
+import { montarContextoDoUsuario } from '@/lib/aulas/contexto'
 
 export const dynamic = 'force-dynamic'
 
+/**
+ * Árvore de aulas already filtrada pelo que esta pessoa pode ver.
+ *
+ * Duas correções de segurança moram aqui:
+ *
+ *  1. A rota devolvia todos os documentos completos — `videoEmbed` incluído —
+ *     sem sessão. O cadeado ficava no navegador (`app/aulas/page.tsx`), então
+ *     o embed de qualquer aula paga saía por esta rota.
+ *  2. A resposta era `Cache-Control: public, s-maxage=300`. Agora que ela varia
+ *     por usuário, um cache compartilhado entregaria a árvore de um assinante
+ *     para um visitante. Passa a ser privada e sem armazenamento.
+ *
+ * Aula bloqueada continua na lista, mas sem conteúdo: é ela que desenha o
+ * cadeado com o motivo e o botão certo (§17). Rascunho, aula encerrada e
+ * agendada-com-ocultar somem de vez.
+ */
 export async function GET() {
   try {
     const db = await getDb()
-    
+
     const setoresCollection = db.collection<AulaSetor>('aulas_setores')
     const topicosCollection = db.collection<AulaTopic>('aulas_topicos')
     const subtopicosCollection = db.collection<AulaSubtopic>('aulas_subtopicos')
@@ -17,18 +35,37 @@ export async function GET() {
     const submodulosCollection = db.collection<AulaSubmodulo>('aulas_submodulos')
     const aulasCollection = db.collection<AulaPostagem>('aulas_postagens')
 
-    const [setores, topicos, subtopicos, modulos, submodulos, aulas] = await Promise.all([
+    const session = await getSession()
+
+    const [setores, topicos, subtopicos, modulos, submodulos, aulas, usuario] = await Promise.all([
       setoresCollection.find({}).sort({ ordem: 1 }).toArray(),
       topicosCollection.find({}).sort({ ordem: 1 }).toArray(),
       subtopicosCollection.find({}).sort({ ordem: 1 }).toArray(),
       modulosCollection.find({}).sort({ ordem: 1 }).toArray(),
       submodulosCollection.find({}).sort({ ordem: 1 }).toArray(),
-      aulasCollection.find({}).sort({ criadoEm: -1 }).toArray()
+      aulasCollection.find({}).sort({ criadoEm: -1 }).toArray(),
+      montarContextoDoUsuario(db, session),
     ])
 
-    // Cache aulas data for 5 minutes (content changes infrequently)
+    const agora = new Date()
+    const aulasVisiveis: any[] = []
+    for (const aula of aulas) {
+      const veredito = avaliarAcessoAula(aula as any, usuario, agora)
+      if (veredito.invisivel) continue
+      aulasVisiveis.push({
+        ...ocultarConteudoRestrito(aula, veredito),
+        acesso: {
+          liberado: veredito.liberado,
+          porAmostra: veredito.porAmostra,
+          requisito: veredito.requisito,
+        },
+      })
+    }
+
     const headers = new Headers({
-      'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+      // A resposta agora depende de quem pergunta — cache compartilhado aqui
+      // seria vazamento entre contas.
+      'Cache-Control': 'private, no-store',
       'Content-Type': 'application/json',
     })
 
@@ -38,7 +75,7 @@ export async function GET() {
       subtopicos,
       modulos,
       submodulos,
-      aulas
+      aulas: aulasVisiveis
     }, { headers })
   } catch (error) {
     console.error('Erro ao buscar aulas:', error)
