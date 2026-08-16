@@ -1,8 +1,12 @@
 'use client'
 
+import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import {
+  BookOpen,
   CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
   Clock,
   Lock,
   PlayCircle,
@@ -142,6 +146,95 @@ export function CapaDaAula({
   )
 }
 
+/* =================== TRILHO DESLIZANTE =================== */
+
+/**
+ * Faixa horizontal de cards — o "deslizante" da biblioteca.
+ *
+ * Substitui a grade porque a grade resolvia mal os dois extremos: no celular
+ * ela vira uma coluna e um módulo de 12 aulas obriga a rolar meia tela para
+ * chegar no módulo seguinte; no desktop ela quebra em várias fileiras e o
+ * agrupamento por módulo se perde no meio.
+ *
+ * Num trilho, cada módulo ocupa UMA faixa. O olho corre a página na vertical
+ * pelos módulos, e o dedo (ou a seta) corre as aulas na horizontal. É como o
+ * conteúdo já é organizado na cabeça de quem estuda: "esse módulo tem essas
+ * aulas".
+ *
+ * O snap alinha o card na borda ao soltar, para nunca sobrar meio card cortado
+ * — que é o detalhe que separa "desliza bem" de "desliza".
+ */
+export function Trilho({ children }: { children: React.ReactNode }) {
+  const refTrilho = useRef<HTMLDivElement>(null)
+  const [temAntes, setTemAntes] = useState(false)
+  const [temDepois, setTemDepois] = useState(false)
+
+  const medir = useCallback(() => {
+    const el = refTrilho.current
+    if (!el) return
+    // 4px de tolerância: arredondamento de subpixel deixaria a seta acesa no
+    // fim do trilho, prometendo conteúdo que não existe.
+    setTemAntes(el.scrollLeft > 4)
+    setTemDepois(el.scrollLeft + el.clientWidth < el.scrollWidth - 4)
+  }, [])
+
+  useEffect(() => {
+    medir()
+    const el = refTrilho.current
+    if (!el) return
+    const observador = new ResizeObserver(medir)
+    observador.observe(el)
+    return () => observador.disconnect()
+  }, [medir, children])
+
+  const deslizar = (direcao: 1 | -1) => {
+    const el = refTrilho.current
+    if (!el) return
+    // Rola quase uma tela cheia, deixando um card visível como âncora — pular
+    // a tela inteira faz a pessoa perder a referência de onde estava.
+    el.scrollBy({ left: direcao * (el.clientWidth * 0.85), behavior: 'smooth' })
+  }
+
+  return (
+    <div className="group/trilho relative">
+      <div
+        ref={refTrilho}
+        onScroll={medir}
+        // `scroll-px-4` casa com o `px-4`: sem isso o snap alinha o card na
+        // borda do container e engole o padding, deixando um trilho começando
+        // em 0 e o de baixo em 16px — o desalinhamento entre faixas que faz a
+        // tela parecer desmontada.
+        className="-mx-4 flex snap-x snap-mandatory scroll-px-4 gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:scroll-px-0 sm:px-0"
+      >
+        {children}
+      </div>
+
+      {/* Setas só onde há mouse: no celular o gesto é o dedo, e botão
+          sobreposto ali só rouba área de toque do card. */}
+      {temAntes ? (
+        <button
+          type="button"
+          onClick={() => deslizar(-1)}
+          aria-label="Voltar"
+          className="absolute -left-3 top-1/2 hidden h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-card/95 shadow-lg backdrop-blur transition hover:bg-muted md:flex"
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </button>
+      ) : null}
+      {temDepois ? (
+        <button
+          type="button"
+          onClick={() => deslizar(1)}
+          aria-label="Avançar"
+          className="absolute -right-3 top-1/2 hidden h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-card/95 shadow-lg backdrop-blur transition hover:bg-muted md:flex"
+        >
+          <ChevronRight className="h-4 w-4" />
+        </button>
+      ) : null}
+    </div>
+  )
+}
+
 /* =================== ESTADO DE ACESSO =================== */
 
 /**
@@ -185,7 +278,7 @@ export function SeloDaAula({ acesso, progresso }: { acesso?: AcessoDaAula; progr
 
 /* =================== CARD DE AULA =================== */
 
-export function CardDeAula({ aula }: { aula: AulaNaBiblioteca }) {
+export function CardDeAula({ aula, noTrilho = false }: { aula: AulaNaBiblioteca; noTrilho?: boolean }) {
   const bloqueada = aula.acesso ? !aula.acesso.liberado : false
   const progresso = aula.progresso
 
@@ -195,6 +288,10 @@ export function CardDeAula({ aula }: { aula: AulaNaBiblioteca }) {
       className={cn(
         'group flex flex-col overflow-hidden rounded-xl border border-border bg-card transition',
         'hover:border-primary/40 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary',
+        // No trilho o card tem largura fixa e trava no snap. A largura cresce
+        // com a tela para nunca virar um card minúsculo no desktop nem um card
+        // largo demais no celular.
+        noTrilho && 'w-[70vw] flex-none snap-start sm:w-64 lg:w-72',
         bloqueada && 'opacity-80',
       )}
     >
@@ -238,6 +335,72 @@ export function CardDeAula({ aula }: { aula: AulaNaBiblioteca }) {
   )
 }
 
+
+/* =================== CARD DE CURSO =================== */
+
+export interface CursoNaBiblioteca {
+  _id: string
+  nome: string
+  descricao?: string
+  /** Capa cadastrada no setor. Era ignorada na primeira versão desta tela. */
+  imagem?: string
+}
+
+/**
+ * Card do curso, com a capa que o admin cadastrou.
+ *
+ * A primeira versão trocou a capa por um ícone genérico — e capa não é enfeite
+ * numa biblioteca: é como o aluno reconhece o curso de relance, antes de ler o
+ * nome. Sem ela, uma lista de cursos vira uma lista de textos iguais.
+ */
+export function CardDeCurso({
+  curso,
+  progresso,
+  onAbrir,
+}: {
+  curso: CursoNaBiblioteca
+  progresso?: { total: number; concluidas: number }
+  onAbrir: () => void
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onAbrir}
+      className="group flex w-[78vw] flex-none snap-start flex-col overflow-hidden rounded-xl border border-border bg-card text-left transition hover:border-primary/40 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary sm:w-72 lg:w-80"
+    >
+      <div className="relative aspect-[16/9] overflow-hidden bg-primary/10">
+        {curso.imagem ? (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img
+            src={curso.imagem}
+            alt=""
+            className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+            loading="lazy"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center">
+            <BookOpen className="h-8 w-8 text-primary/60" />
+          </div>
+        )}
+        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 to-transparent p-3">
+          <p className="line-clamp-2 text-sm font-bold leading-snug text-white">{curso.nome}</p>
+        </div>
+      </div>
+
+      <div className="flex flex-1 flex-col gap-2 p-3">
+        {curso.descricao ? (
+          <p className="line-clamp-2 text-xs text-muted-foreground">{curso.descricao}</p>
+        ) : null}
+        {progresso && progresso.total > 0 ? (
+          <ResumoDoCurso concluidas={progresso.concluidas} total={progresso.total} className="mt-auto" />
+        ) : (
+          <p className="mt-auto text-xs text-muted-foreground">Nenhuma aula publicada ainda.</p>
+        )}
+      </div>
+    </button>
+  )
+}
+
 /* =================== CONTINUE ESTUDANDO =================== */
 
 export interface ItemDeRetomada {
@@ -268,12 +431,12 @@ export function ContinueEstudando({ itens }: { itens: ItemDeRetomada[] }) {
         Continue estudando
       </h2>
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <Trilho>
         {itens.map((item) => (
           <Link
             key={item.aulaId}
             href={item.href}
-            className="group flex gap-3 overflow-hidden rounded-xl border border-primary/25 bg-primary/5 p-3 transition hover:border-primary/50 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+            className="group flex w-[80vw] flex-none snap-start gap-3 overflow-hidden rounded-xl border border-primary/25 bg-primary/5 p-3 transition hover:border-primary/50 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary sm:w-80"
           >
             <CapaDaAula
               aula={{ capa: item.capa, titulo: item.titulo }}
@@ -295,7 +458,7 @@ export function ContinueEstudando({ itens }: { itens: ItemDeRetomada[] }) {
             </div>
           </Link>
         ))}
-      </div>
+      </Trilho>
     </section>
   )
 }

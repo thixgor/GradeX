@@ -14,12 +14,13 @@ import {
 } from 'lucide-react'
 import { AppShell, useAppShell } from '@/components/app-shell'
 import {
-  BarraDeProgresso,
   CardDeAula,
   ContinueEstudando,
   EsqueletoDeCards,
+  CardDeCurso,
   EstadoVazio,
   ResumoDoCurso,
+  Trilho,
   type AulaNaBiblioteca,
   type ItemDeRetomada,
 } from '@/components/aulas/biblioteca'
@@ -64,16 +65,59 @@ interface Setor {
   ordem: number
 }
 
-interface Modulo {
+interface Topico {
   _id: string
   setorId: string
   nome: string
   ordem: number
 }
 
+interface Subtopico {
+  _id: string
+  setorId: string
+  topicoId: string
+  nome: string
+  ordem: number
+}
+
+interface Modulo {
+  _id: string
+  setorId: string
+  topicoId?: string
+  subtopicoId?: string
+  nome: string
+  ordem: number
+}
+
+interface Submodulo {
+  _id: string
+  moduloId: string
+  nome: string
+  ordem: number
+}
+
+/**
+ * Um nível da árvore do curso, com as aulas que penduram nele.
+ *
+ * A primeira versão desta tela agrupava só por módulo e jogava tópico,
+ * subtópico e submódulo no mesmo balaio — ou seja, descartava a organização que
+ * o admin tinha montado. Aqui a árvore é preservada inteira, e os níveis vazios
+ * simplesmente não são desenhados.
+ */
+interface Ramo {
+  id: string
+  nome: string
+  nivel: number
+  aulas: Aula[]
+  filhos: Ramo[]
+}
+
 interface Aula extends AulaNaBiblioteca {
   setorId?: string
+  topicoId?: string
+  subtopicoId?: string
   moduloId?: string
+  submoduloId?: string
   ordem?: number
 }
 
@@ -93,7 +137,10 @@ function AulasPageContent() {
 
   const [carregando, setCarregando] = useState(true)
   const [setores, setSetores] = useState<Setor[]>([])
+  const [topicos, setTopicos] = useState<Topico[]>([])
+  const [subtopicos, setSubtopicos] = useState<Subtopico[]>([])
   const [modulos, setModulos] = useState<Modulo[]>([])
+  const [submodulos, setSubmodulos] = useState<Submodulo[]>([])
   const [aulas, setAulas] = useState<Aula[]>([])
   const [retomada, setRetomada] = useState<ItemDeRetomada[]>([])
 
@@ -113,8 +160,12 @@ function AulasPageContent() {
       .then(([arvore, continuar]) => {
         if (cancelado) return
         if (arvore) {
-          setSetores((arvore.setores || []).map((s: any) => ({ ...s, _id: String(s._id) })))
-          setModulos((arvore.modulos || []).map((m: any) => ({ ...m, _id: String(m._id) })))
+          const id = (x: any) => ({ ...x, _id: String(x._id) })
+          setSetores((arvore.setores || []).map(id))
+          setTopicos((arvore.topicos || []).map(id))
+          setSubtopicos((arvore.subtopicos || []).map(id))
+          setModulos((arvore.modulos || []).map(id))
+          setSubmodulos((arvore.submodulos || []).map(id))
           setAulas((arvore.aulas || []).map((a: any) => ({ ...a, _id: String(a._id) })))
         }
         setRetomada(continuar?.itens || [])
@@ -184,20 +235,71 @@ function AulasPageContent() {
     })
   }, [aulas, busca, cursoAberto, filtro, modulos, setores])
 
-  /** Dentro de um curso, as aulas continuam agrupadas por módulo. */
-  const aulasPorModulo = useMemo(() => {
-    const grupos = new Map<string, Aula[]>()
-    for (const aula of aulasFiltradas) {
-      const chave = aula.moduloId || '__sem_modulo__'
-      const atual = grupos.get(chave) || []
-      atual.push(aula)
-      grupos.set(chave, atual)
-    }
-    for (const lista of grupos.values()) {
-      lista.sort((a, b) => (a.ordem || 0) - (b.ordem || 0))
-    }
-    return grupos
-  }, [aulasFiltradas])
+  /**
+   * Monta a árvore do curso preservando os níveis que existem.
+   *
+   * Tópico → Subtópico → Módulo → Submódulo. Cada aula pendura no nível mais
+   * fundo que ela declara, e níveis sem conteúdo são podados na renderização —
+   * é o que permite um curso simples (só módulos) e um complexo (com seções e
+   * subtópicos) usarem a mesma tela sem parecer a mesma bagunça.
+   */
+  const ramosDoCurso = useMemo<Ramo[]>(() => {
+    if (!cursoAberto) return []
+
+    const porOrdem = <T extends { ordem: number }>(a: T, b: T) => (a.ordem || 0) - (b.ordem || 0)
+    const aulasDe = (chave: keyof Aula, valor: string, exigirVazios: Array<keyof Aula> = []) =>
+      aulasFiltradas
+        .filter((a) => String(a[chave] || '') === valor && exigirVazios.every((c) => !a[c]))
+        .sort((a, b) => (a.ordem || 0) - (b.ordem || 0))
+
+    const ramoDoSubmodulo = (sm: Submodulo): Ramo => ({
+      id: sm._id, nome: sm.nome, nivel: 4,
+      aulas: aulasDe('submoduloId', sm._id),
+      filhos: [],
+    })
+
+    const ramoDoModulo = (m: Modulo): Ramo => ({
+      id: m._id, nome: m.nome, nivel: 3,
+      aulas: aulasDe('moduloId', m._id, ['submoduloId']),
+      filhos: submodulos.filter((sm) => sm.moduloId === m._id).sort(porOrdem).map(ramoDoSubmodulo),
+    })
+
+    const ramoDoSubtopico = (st: Subtopico): Ramo => ({
+      id: st._id, nome: st.nome, nivel: 2,
+      aulas: aulasDe('subtopicoId', st._id, ['moduloId']),
+      filhos: modulos.filter((m) => m.subtopicoId === st._id).sort(porOrdem).map(ramoDoModulo),
+    })
+
+    const ramoDoTopico = (t: Topico): Ramo => ({
+      id: t._id, nome: t.nome, nivel: 1,
+      aulas: aulasDe('topicoId', t._id, ['subtopicoId', 'moduloId']),
+      filhos: [
+        ...subtopicos.filter((st) => st.topicoId === t._id).sort(porOrdem).map(ramoDoSubtopico),
+        ...modulos
+          .filter((m) => m.topicoId === t._id && !m.subtopicoId)
+          .sort(porOrdem)
+          .map(ramoDoModulo),
+      ],
+    })
+
+    return [
+      ...topicos.filter((t) => t.setorId === cursoAberto).sort(porOrdem).map(ramoDoTopico),
+      // Módulos pendurados direto no curso, sem tópico — o caso simples.
+      ...modulos
+        .filter((m) => m.setorId === cursoAberto && !m.topicoId && !m.subtopicoId)
+        .sort(porOrdem)
+        .map(ramoDoModulo),
+      // Aulas soltas no curso, sem nível nenhum.
+      ...(() => {
+        const soltas = aulasFiltradas.filter(
+          (a) => !a.topicoId && !a.subtopicoId && !a.moduloId && !a.submoduloId,
+        )
+        return soltas.length > 0
+          ? [{ id: '__soltas__', nome: 'Aulas do curso', nivel: 1, aulas: soltas, filhos: [] }]
+          : []
+      })(),
+    ]
+  }, [aulasFiltradas, cursoAberto, modulos, submodulos, subtopicos, topicos])
 
   const curso = cursoAberto ? setores.find((s) => s._id === cursoAberto) : null
   const modulosDoCurso = cursoAberto
@@ -322,49 +424,23 @@ function AulasPageContent() {
           />
         )
       ) : curso ? (
-        <CursoAberto
-          modulos={modulosDoCurso}
-          aulasPorModulo={aulasPorModulo}
-          progresso={progressoPorCurso.get(curso._id)}
-        />
+        <CursoAberto ramos={ramosDoCurso} progresso={progressoPorCurso.get(curso._id)} />
       ) : setores.length > 0 ? (
         <section>
           <h2 className="mb-3 flex items-center gap-2 text-lg font-bold tracking-tight">
             <GraduationCap className="h-5 w-5 text-primary" />
             Seus cursos
           </h2>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {setores.map((setor) => {
-              const p = progressoPorCurso.get(setor._id)
-              return (
-                <button
-                  key={setor._id}
-                  type="button"
-                  onClick={() => abrirCurso(setor._id)}
-                  className="group flex flex-col gap-3 rounded-xl border border-border bg-card p-4 text-left transition hover:border-primary/40 hover:shadow-md"
-                >
-                  <div className="flex items-start gap-3">
-                    <span className="flex h-10 w-10 flex-none items-center justify-center rounded-xl bg-primary/10 text-primary">
-                      <BookOpen className="h-5 w-5" />
-                    </span>
-                    <div className="min-w-0">
-                      <p className="line-clamp-2 font-semibold leading-snug">{setor.nome}</p>
-                      {setor.descricao ? (
-                        <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">
-                          {setor.descricao}
-                        </p>
-                      ) : null}
-                    </div>
-                  </div>
-                  {p && p.total > 0 ? (
-                    <ResumoDoCurso concluidas={p.concluidas} total={p.total} />
-                  ) : (
-                    <p className="text-xs text-muted-foreground">Nenhuma aula publicada ainda.</p>
-                  )}
-                </button>
-              )
-            })}
-          </div>
+          <Trilho>
+            {setores.map((setor) => (
+              <CardDeCurso
+                key={setor._id}
+                curso={setor}
+                progresso={progressoPorCurso.get(setor._id)}
+                onAbrir={() => abrirCurso(setor._id)}
+              />
+            ))}
+          </Trilho>
         </section>
       ) : (
         <EstadoVazio
@@ -379,25 +455,29 @@ function AulasPageContent() {
   )
 }
 
-/** Um curso aberto: módulos na ordem, com o progresso de cada um. */
+/**
+ * Um curso aberto: a árvore inteira, cada grupo num trilho.
+ *
+ * Os níveis viram hierarquia visual (tópico manda mais que módulo, que manda
+ * mais que submódulo) em vez de virarem cliques. O aluno rola a página pelos
+ * assuntos e desliza as aulas dentro de cada um — nunca precisa "entrar" num
+ * nível para descobrir o que tem lá dentro.
+ */
 function CursoAberto({
-  modulos,
-  aulasPorModulo,
+  ramos,
   progresso,
 }: {
-  modulos: Modulo[]
-  aulasPorModulo: Map<string, Aula[]>
+  ramos: Ramo[]
   progresso?: { total: number; concluidas: number }
 }) {
-  const semModulo = aulasPorModulo.get('__sem_modulo__') || []
-  const temAlgo = modulos.some((m) => (aulasPorModulo.get(m._id) || []).length > 0) || semModulo.length > 0
+  const temAlgo = ramos.some(temConteudo)
 
   if (!temAlgo) {
     return (
       <EstadoVazio
         icone={Layers}
-        titulo="Este curso ainda não tem aulas publicadas"
-        descricao="Assim que as primeiras aulas forem liberadas, elas aparecem aqui na ordem do curso."
+        titulo="Nenhuma aula por aqui ainda"
+        descricao="Assim que as aulas deste curso forem liberadas, elas aparecem organizadas por módulo."
         acaoLabel="Ver outros cursos"
         acaoHref="/aulas"
       />
@@ -405,53 +485,83 @@ function CursoAberto({
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       {progresso && progresso.total > 0 ? (
         <div className="rounded-xl border border-border bg-card p-4">
           <ResumoDoCurso concluidas={progresso.concluidas} total={progresso.total} />
         </div>
       ) : null}
 
-      {modulos.map((modulo) => {
-        const lista = aulasPorModulo.get(modulo._id) || []
-        if (lista.length === 0) return null
-        const concluidas = lista.filter((a) => a.progresso?.concluida).length
-        return (
-          <section key={modulo._id}>
-            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-              <h2 className="flex items-center gap-2 text-base font-bold tracking-tight">
-                <Layers className="h-4 w-4 text-primary" />
-                {modulo.nome}
-              </h2>
-              <span className="text-xs text-muted-foreground">
-                {concluidas}/{lista.length} concluídas
-              </span>
-            </div>
-            <BarraDeProgresso
-              percentual={lista.length ? (concluidas / lista.length) * 100 : 0}
-              concluida={concluidas === lista.length}
-              className="mb-3"
-            />
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {lista.map((aula) => (
-                <CardDeAula key={aula._id} aula={aula} />
-              ))}
-            </div>
-          </section>
-        )
-      })}
-
-      {semModulo.length > 0 ? (
-        <section>
-          <h2 className="mb-3 text-base font-bold tracking-tight">Outras aulas</h2>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {semModulo.map((aula) => (
-              <CardDeAula key={aula._id} aula={aula} />
-            ))}
-          </div>
-        </section>
-      ) : null}
+      {ramos.filter(temConteudo).map((ramo) => (
+        <RamoDaArvore key={ramo.id} ramo={ramo} />
+      ))}
     </div>
+  )
+}
+
+/** Um ramo só vale a pena desenhar se ele (ou algum filho) tem aula. */
+function temConteudo(ramo: Ramo): boolean {
+  return ramo.aulas.length > 0 || ramo.filhos.some(temConteudo)
+}
+
+function contarAulas(ramo: Ramo): { total: number; concluidas: number } {
+  const proprio = {
+    total: ramo.aulas.length,
+    concluidas: ramo.aulas.filter((a) => a.progresso?.concluida).length,
+  }
+  for (const filho of ramo.filhos) {
+    const f = contarAulas(filho)
+    proprio.total += f.total
+    proprio.concluidas += f.concluidas
+  }
+  return proprio
+}
+
+function RamoDaArvore({ ramo }: { ramo: Ramo }) {
+  if (!temConteudo(ramo)) return null
+  const { total, concluidas } = contarAulas(ramo)
+
+  // A hierarquia aparece no peso do título, não em profundidade de indentação:
+  // recuar quatro níveis no celular comeria metade da largura útil.
+  const titulo =
+    ramo.nivel === 1 ? (
+      <h2 className="text-lg font-bold tracking-tight sm:text-xl">{ramo.nome}</h2>
+    ) : ramo.nivel === 2 ? (
+      <h3 className="text-base font-bold tracking-tight">{ramo.nome}</h3>
+    ) : (
+      <h4 className="flex items-center gap-1.5 text-sm font-semibold text-foreground/90">
+        <Layers className="h-3.5 w-3.5 text-primary" />
+        {ramo.nome}
+      </h4>
+    )
+
+  return (
+    <section className={cn(ramo.nivel === 1 && 'border-t border-border pt-6 first:border-t-0 first:pt-0')}>
+      <div className="mb-3 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+        {titulo}
+        {total > 0 ? (
+          <span className="text-xs text-muted-foreground">
+            {concluidas}/{total} concluídas
+          </span>
+        ) : null}
+      </div>
+
+      {ramo.aulas.length > 0 ? (
+        <Trilho>
+          {ramo.aulas.map((aula) => (
+            <CardDeAula key={aula._id} aula={aula} noTrilho />
+          ))}
+        </Trilho>
+      ) : null}
+
+      {ramo.filhos.length > 0 ? (
+        <div className={cn('space-y-6', ramo.aulas.length > 0 && 'mt-6')}>
+          {ramo.filhos.filter(temConteudo).map((filho) => (
+            <RamoDaArvore key={filho.id} ramo={filho} />
+          ))}
+        </div>
+      ) : null}
+    </section>
   )
 }
 
