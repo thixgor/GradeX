@@ -24,6 +24,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
+import { CriadorDeLista } from '@/components/banco/criador-de-lista'
 import type { BancoListaUsuario, BancoModoResposta } from '@/lib/types/banco-questoes'
 
 /**
@@ -58,6 +59,10 @@ export default function MinhasListasPage() {
   const [paraApagar, setParaApagar] = useState<Lista | null>(null)
   const [apagando, setApagando] = useState(false)
 
+  const [criadorAberto, setCriadorAberto] = useState(false)
+  const [hierarquia, setHierarquia] = useState({ modulos: [], topicos: [], subtopicos: [] } as any)
+  const [anosDisponiveis, setAnosDisponiveis] = useState<number[]>([])
+
   const carregar = useCallback(async () => {
     try {
       const res = await fetch('/api/banco/listas', { cache: 'no-store' })
@@ -77,6 +82,23 @@ export default function MinhasListasPage() {
   useEffect(() => {
     void carregar()
   }, [carregar])
+
+  // A hierarquia é carregada junto porque o criador precisa dela no primeiro
+  // clique — pedir só ao abrir deixaria a árvore vazia por meio segundo.
+  useEffect(() => {
+    let vivo = true
+    Promise.all([
+      fetch('/api/banco/hierarquia', { cache: 'no-store' }).then((r) => (r.ok ? r.json() : null)),
+      fetch('/api/banco/anos').then((r) => (r.ok ? r.json() : null)),
+    ]).then(([h, a]) => {
+      if (!vivo) return
+      if (h) setHierarquia(h)
+      if (a) setAnosDisponiveis(a.anos || [])
+    })
+    return () => {
+      vivo = false
+    }
+  }, [])
 
   async function salvar() {
     if (!edicao?.nome.trim()) return
@@ -165,7 +187,7 @@ export default function MinhasListasPage() {
   // ── Tela ──────────────────────────────────────────────────────────────
   return (
     <AppShell headerTitle="Minhas listas">
-      <div className="mx-auto max-w-5xl space-y-5 p-4 sm:p-6">
+      <div className="vidro-ambiente mx-auto max-w-5xl space-y-5 p-4 sm:p-6">
         <motion.header
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -195,9 +217,9 @@ export default function MinhasListasPage() {
             </Link>
             <Button
               className="btn-brand-glow h-9 flex-none gap-1.5 rounded-xl text-xs font-bold text-white active:scale-[0.97]"
-              onClick={() => setEdicao({ nome: '', modo: 'imediato' })}
+              onClick={() => setCriadorAberto(true)}
             >
-              <Plus className="h-3.5 w-3.5" /> Nova lista
+              <Plus className="h-3.5 w-3.5" /> Montar lista
             </Button>
           </div>
         </motion.header>
@@ -206,7 +228,7 @@ export default function MinhasListasPage() {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="glass-page-card rounded-2xl px-6 py-14 text-center"
+            className="vidro vidro-brilho rounded-[22px] px-6 py-14 text-center"
           >
             <BookOpen className="mx-auto mb-3 h-8 w-8 text-muted-foreground/40" />
             <h2 className="text-base font-bold">Nenhuma lista ainda</h2>
@@ -217,9 +239,16 @@ export default function MinhasListasPage() {
             <div className="mt-5 flex flex-wrap justify-center gap-2">
               <Button
                 className="btn-brand-glow h-10 gap-1.5 rounded-xl text-sm font-bold text-white"
+                onClick={() => setCriadorAberto(true)}
+              >
+                <Plus className="h-4 w-4" /> Montar a primeira
+              </Button>
+              <Button
+                variant="outline"
+                className="h-10 gap-1.5 rounded-xl text-sm font-semibold"
                 onClick={() => setEdicao({ nome: '', modo: 'imediato' })}
               >
-                <Plus className="h-4 w-4" /> Criar a primeira
+                Criar lista vazia
               </Button>
               {/* O caminho mais provável não é criar uma lista vazia e voltar
                   para enchê-la: é escolher as questões primeiro. */}
@@ -254,6 +283,17 @@ export default function MinhasListasPage() {
           </div>
         )}
       </div>
+
+      <CriadorDeLista
+        aberto={criadorAberto}
+        hierarquia={hierarquia}
+        anosDisponiveis={anosDisponiveis}
+        onFechar={() => setCriadorAberto(false)}
+        onCriada={(id) => {
+          setCriadorAberto(false)
+          if (id) router.push(`/banco-questoes/listas/${id}`)
+        }}
+      />
 
       {/* ── Criar / renomear ─────────────────────────────────────────────── */}
       <AnimatePresence>
@@ -365,7 +405,7 @@ function CartaoDeLista({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.96 }}
       transition={{ duration: 0.3, delay: Math.min(indice, 6) * 0.04 }}
-      className="glass-page-card hover-glow-green hover-lift group relative flex flex-col rounded-2xl p-4 transition-all duration-300"
+      className="vidro vidro-brilho hover-lift group relative flex flex-col rounded-[22px] p-4 transition-all duration-300"
     >
       <div className="flex items-start justify-between gap-2">
         <button
@@ -480,7 +520,7 @@ function Modal({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[120] flex items-end justify-center bg-black/50 p-0 backdrop-blur-sm sm:items-center sm:p-4"
+      className="fixed inset-0 z-[195] flex items-end justify-center bg-black/50 p-0 backdrop-blur-sm sm:items-center sm:p-4"
       onClick={(e) => {
         if (e.target === e.currentTarget) aoFechar()
       }}
@@ -493,7 +533,7 @@ function Modal({
         role="dialog"
         aria-modal="true"
         aria-label={titulo}
-        className="w-full max-w-sm rounded-t-2xl border border-border bg-card p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] shadow-2xl sm:rounded-2xl sm:pb-5"
+        className="vidro-denso vidro-brilho w-full max-w-sm rounded-t-[28px] p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:rounded-[28px] sm:pb-5"
       >
         <div className="mb-3 flex items-center justify-between gap-2">
           <h2 className="text-sm font-bold">{titulo}</h2>

@@ -37,6 +37,7 @@ import {
   type SelecaoDaArvore,
 } from '@/components/banco/arvore-banco'
 import { CartaoDeQuestao, ListaVazia, type QuestaoDoCartao } from '@/components/banco/cartao-questao'
+import { CriadorDeLista } from '@/components/banco/criador-de-lista'
 import type {
   BancoDificuldade,
   BancoListaUsuario,
@@ -119,13 +120,6 @@ function Conteudo() {
   const [salvandoLista, setSalvandoLista] = useState(false)
 
   const [sorteioAberto, setSorteioAberto] = useState(false)
-  const [sorteio, setSorteio] = useState({
-    nome: '',
-    quantidade: 10,
-    modoResposta: 'imediato' as BancoModoResposta,
-    excluirJaResolvidas: false,
-  })
-  const [sorteando, setSorteando] = useState(false)
 
   const primeiraCarga = useRef(true)
 
@@ -275,39 +269,6 @@ function Conteudo() {
     if (res.ok) setListas((await res.json()).listas || [])
   }
 
-  async function sortearLista() {
-    if (!sorteio.nome.trim()) return
-    setSorteando(true)
-    try {
-      const res = await fetch('/api/banco/listas/aleatorias', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          nome: sorteio.nome.trim(),
-          quantidade: sorteio.quantidade,
-          // O sorteio herda os assuntos e filtros da tela: montar uma lista
-          // "de arritmias" já filtrou por arritmias na lista — repetir a
-          // escolha dentro do diálogo era o passo que ninguém entendia.
-          moduloId: selecao.moduloIds.join(',') || undefined,
-          topicoId: selecao.topicoIds.join(',') || undefined,
-          subtopicoId: selecao.subtopicoIds.join(',') || undefined,
-          tipo: tipo || undefined,
-          dificuldade: dificuldade || undefined,
-          ano: anos.length === 1 ? anos[0] : undefined,
-          modoResposta: sorteio.modoResposta,
-          excluirJaResolvidas: sorteio.excluirJaResolvidas || undefined,
-        }),
-      })
-      const dados = await res.json().catch(() => ({}))
-      if (res.ok && dados.lista?._id) {
-        setSorteioAberto(false)
-        router.push(`/banco-questoes/listas/${dados.lista._id}`)
-      }
-    } finally {
-      setSorteando(false)
-    }
-  }
-
   function limparTudo() {
     setSelecao(SELECAO_VAZIA)
     setBusca('')
@@ -320,7 +281,7 @@ function Conteudo() {
 
   if (carregando) {
     return (
-      <div className="surface-page">
+      <div className="surface-page vidro-ambiente">
         <div className="mx-auto max-w-7xl space-y-6 p-4 sm:p-6 lg:p-8">
           <div className="h-24 rounded-2xl skeleton-pulse" />
           <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
@@ -339,7 +300,7 @@ function Conteudo() {
   const semSaldo = !!gratuito && gratuito.restantes <= 0
 
   return (
-    <div className="surface-page">
+    <div className="surface-page vidro-ambiente">
       <div className="mx-auto max-w-7xl space-y-5 p-4 sm:p-6 lg:p-8">
         {/* ── Cabeçalho ────────────────────────────────────────────────── */}
         <motion.header
@@ -383,10 +344,7 @@ function Conteudo() {
               <Button
                 size="sm"
                 className="btn-brand-glow h-9 flex-none gap-1.5 rounded-xl text-xs font-bold text-white active:scale-[0.97]"
-                onClick={() => {
-                  setSorteio((s) => ({ ...s, nome: '' }))
-                  setSorteioAberto(true)
-                }}
+                onClick={() => setSorteioAberto(true)}
               >
                 <Shuffle className="h-3.5 w-3.5" /> Montar lista
               </Button>
@@ -409,7 +367,7 @@ function Conteudo() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.05 }}
             className={cn(
-              'glass-page-card rounded-2xl p-4 sm:p-5',
+              'vidro vidro-brilho rounded-[22px] p-4 sm:p-5',
               semSaldo && 'border-primary/40 bg-primary/5',
             )}
           >
@@ -474,7 +432,7 @@ function Conteudo() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.1 }}
-          className="glass-page-card rounded-2xl p-3"
+          className="vidro vidro-brilho rounded-[22px] p-3"
         >
           {/* No celular o campo tem a linha inteira: dividindo com dois botões
               ele encolhia até caber só "Buscar nc". */}
@@ -599,7 +557,7 @@ function Conteudo() {
           {/* Do tablet para cima a árvore é uma COLUNA: com 800px de largura
               sobra espaço de sobra, e escondê-la atrás de um botão fazia a
               página desperdiçar metade da tela e o catálogo desaparecer. */}
-          <aside className="glass-page-card sticky top-4 hidden rounded-2xl p-3 md:block">
+          <aside className="vidro vidro-brilho sticky top-4 hidden rounded-[22px] p-3 md:block">
             <div className="flex h-[26rem] flex-col lg:h-[32rem]">
               <ArvoreDoBanco
                 modulos={hierarquia.modulos}
@@ -690,7 +648,7 @@ function Conteudo() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[110] bg-black/50 backdrop-blur-sm md:hidden"
+            className="fixed inset-0 z-[190] bg-black/50 backdrop-blur-sm md:hidden"
             onClick={(e) => {
               if (e.target === e.currentTarget) setArvoreAberta(false)
             }}
@@ -700,7 +658,7 @@ function Conteudo() {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-              className="absolute inset-x-0 bottom-0 flex max-h-[82vh] flex-col rounded-t-2xl border-t border-border bg-card p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
+              className="vidro-denso vidro-brilho absolute inset-x-0 bottom-0 flex max-h-[82vh] flex-col rounded-t-[28px] p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
             >
               <div className="mx-auto mb-2 h-1 w-10 flex-none rounded-full bg-border" aria-hidden />
               <div className="flex items-center justify-between gap-2 px-1 pb-2">
@@ -789,80 +747,20 @@ function Conteudo() {
         </DialogContent>
       </Dialog>
 
-      {/* ── Montar lista por sorteio ───────────────────────────────────── */}
-      <Dialog open={sorteioAberto} onOpenChange={setSorteioAberto}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Montar lista</DialogTitle>
-          </DialogHeader>
-
-          <div className="space-y-3">
-            <p className="rounded-lg bg-muted/60 px-3 py-2 text-xs leading-relaxed text-muted-foreground">
-              {contarSelecionados(selecao) > 0 || tipo || dificuldade || anos.length > 0
-                ? 'A lista usa os assuntos e filtros que você já escolheu na tela.'
-                : 'Sem filtros escolhidos, a lista sorteia de todo o banco.'}
-            </p>
-
-            <div>
-              <Label className="text-xs">Nome</Label>
-              <Input
-                value={sorteio.nome}
-                onChange={(e) => setSorteio((s) => ({ ...s, nome: e.target.value }))}
-                placeholder="Ex: Simulado de arritmias"
-                className="mt-1 h-9 text-sm"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <Label className="text-xs">Quantidade</Label>
-                <Input
-                  type="number"
-                  min={1}
-                  max={100}
-                  value={sorteio.quantidade}
-                  onChange={(e) =>
-                    setSorteio((s) => ({ ...s, quantidade: Number(e.target.value) || 10 }))
-                  }
-                  className="mt-1 h-9 text-sm"
-                />
-              </div>
-              <div>
-                <Label className="text-xs">Resposta</Label>
-                <select
-                  value={sorteio.modoResposta}
-                  onChange={(e) =>
-                    setSorteio((s) => ({ ...s, modoResposta: e.target.value as BancoModoResposta }))
-                  }
-                  className="mt-1 h-9 w-full rounded-lg border border-border bg-background px-2 text-[13px] outline-none focus:border-primary/50"
-                >
-                  <option value="imediato">Mostrar a cada questão</option>
-                  <option value="final">Mostrar só no final</option>
-                </select>
-              </div>
-            </div>
-
-            <label className="flex cursor-pointer items-center gap-2 text-xs">
-              <input
-                type="checkbox"
-                checked={sorteio.excluirJaResolvidas}
-                onChange={(e) => setSorteio((s) => ({ ...s, excluirJaResolvidas: e.target.checked }))}
-              />
-              Não repetir questões que eu já resolvi
-            </label>
-          </div>
-
-          <DialogFooter>
-            <Button variant="outline" size="sm" onClick={() => setSorteioAberto(false)}>
-              Cancelar
-            </Button>
-            <Button size="sm" disabled={!sorteio.nome.trim() || sorteando} onClick={sortearLista}>
-              {sorteando ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : null}
-              Criar lista
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* ── Montar lista (multifatorial) ───────────────────────────────── */}
+      <CriadorDeLista
+        aberto={sorteioAberto}
+        hierarquia={hierarquia}
+        anosDisponiveis={anosDisponiveis}
+        // Começa de onde a pessoa estava: se ela filtrou arritmias na página,
+        // pedir os assuntos de novo no criador seria refazer trabalho.
+        selecaoInicial={selecao}
+        onFechar={() => setSorteioAberto(false)}
+        onCriada={(id) => {
+          setSorteioAberto(false)
+          if (id) router.push(`/banco-questoes/listas/${id}`)
+        }}
+      />
     </div>
   )
 }

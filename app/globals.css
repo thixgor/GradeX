@@ -4804,3 +4804,176 @@ body.roller-dragging {
     transition: none;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════════════
+   VIDRO — material translúcido do Banco de Questões
+   ══════════════════════════════════════════════════════════════════════
+
+   Um material, não um enfeite. As três regras que fazem vidro parecer
+   vidro e não "um retângulo branco com opacidade":
+
+   1. Precisa haver ALGO ATRÁS para desfocar. Vidro sobre fundo chapado é
+      indistinguível de uma cor sólida — por isso `.vidro-ambiente` pinta
+      manchas de cor por baixo da página.
+   2. O desfoque vem com SATURAÇÃO. Só `blur()` deixa o que está atrás
+      cinzento e sujo; `saturate()` devolve a cor que a luz atravessou.
+   3. A borda superior é mais clara que a inferior. É o brilho especular
+      da quina do vidro, e é ele que dá a espessura — sem isso o painel
+      parece um adesivo.
+
+   Tudo tem um caminho de fallback: navegador sem `backdrop-filter` recebe
+   um fundo opaco legível em vez de um painel ilegível.
+   ────────────────────────────────────────────────────────────────────── */
+
+.vidro {
+  position: relative;
+  background: rgba(255, 255, 255, 0.62);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow:
+    0 1px 1px rgba(21, 61, 31, 0.04),
+    0 8px 24px -12px rgba(21, 61, 31, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .vidro {
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+  }
+}
+
+/* Camada mais densa: diálogos e gavetas, que precisam segurar leitura
+   longa por cima de qualquer conteúdo. */
+.vidro-denso {
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow:
+    0 24px 60px -20px rgba(21, 61, 31, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .vidro-denso {
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(40px) saturate(200%);
+    -webkit-backdrop-filter: blur(40px) saturate(200%);
+  }
+}
+
+.dark .vidro {
+  background: rgba(24, 32, 27, 0.6);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 1px 1px rgba(0, 0, 0, 0.2),
+    0 8px 28px -14px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.09);
+}
+
+.dark .vidro-denso {
+  background: rgba(24, 32, 27, 0.86);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 28px 70px -24px rgba(0, 0, 0, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .dark .vidro {
+    background: rgba(24, 32, 27, 0.45);
+  }
+  .dark .vidro-denso {
+    background: rgba(24, 32, 27, 0.72);
+  }
+}
+
+/* Reflexo que corre a quina de cima. Fica em `::before` para não brigar
+   com o conteúdo nem exigir um elemento a mais no HTML. */
+.vidro-brilho::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    160deg,
+    rgba(255, 255, 255, 0.55) 0%,
+    rgba(255, 255, 255, 0.08) 26%,
+    transparent 55%
+  );
+}
+
+.dark .vidro-brilho::before {
+  background: linear-gradient(
+    160deg,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0.03) 26%,
+    transparent 55%
+  );
+}
+
+/* Manchas de cor que dão ao vidro o que desfocar. Ficam presas atrás de
+   tudo e não capturam clique. */
+.vidro-ambiente {
+  position: relative;
+  isolation: isolate;
+}
+
+.vidro-ambiente::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(42rem 32rem at 12% -8%, rgba(70, 129, 82, 0.16), transparent 60%),
+    radial-gradient(34rem 30rem at 92% 6%, rgba(226, 164, 62, 0.14), transparent 62%),
+    radial-gradient(38rem 34rem at 68% 88%, rgba(70, 129, 82, 0.1), transparent 64%);
+}
+
+.dark .vidro-ambiente::before {
+  background:
+    radial-gradient(42rem 32rem at 12% -8%, rgba(70, 129, 82, 0.22), transparent 60%),
+    radial-gradient(34rem 30rem at 92% 6%, rgba(226, 164, 62, 0.12), transparent 62%),
+    radial-gradient(38rem 34rem at 68% 88%, rgba(70, 129, 82, 0.14), transparent 64%);
+}
+
+/* Pastilha de escolha — o controle que aparece dezenas de vezes no
+   criador de listas. O estado marcado é cor + peso, nunca só cor: quem
+   não distingue verde de cinza precisa ver a diferença mesmo assim. */
+.vidro-pastilha {
+  border: 1px solid hsl(var(--border));
+  background: rgba(255, 255, 255, 0.45);
+  transition: transform 0.16s ease, background-color 0.16s ease, border-color 0.16s ease;
+}
+
+.dark .vidro-pastilha {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.vidro-pastilha:hover {
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.dark .vidro-pastilha:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.vidro-pastilha[data-marcado='true'] {
+  border-color: hsl(var(--primary) / 0.55);
+  background: hsl(var(--primary) / 0.12);
+  box-shadow: 0 0 0 1px hsl(var(--primary) / 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.vidro-pastilha:active {
+  transform: scale(0.985);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vidro-pastilha {
+    transition: none;
+  }
+  .vidro-pastilha:active {
+    transform: none;
+  }
+}

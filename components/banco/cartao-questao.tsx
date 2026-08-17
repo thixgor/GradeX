@@ -103,7 +103,7 @@ export function CartaoDeQuestao({
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: Math.min(indice, 8) * 0.03 }}
-        className="glass-page-card rounded-2xl !border-l-[3px] !border-l-border p-4"
+        className="vidro vidro-brilho rounded-[22px] !border-l-[3px] !border-l-foreground/10 p-4"
       >
         <div className="flex items-start gap-3">
           <span className="flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-muted text-muted-foreground">
@@ -155,7 +155,7 @@ export function CartaoDeQuestao({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: Math.min(indice, 8) * 0.03 }}
       className={cn(
-        'group relative glass-page-card rounded-2xl p-4 !border-l-[3px] transition-all duration-300',
+        'group relative vidro vidro-brilho rounded-[22px] p-4 !border-l-[3px] transition-all duration-300',
         'hover-glow-green hover-lift',
         questao.tipo === 'discursiva' ? '!border-l-violet-500' : '!border-l-[#468152]',
       )}
@@ -195,7 +195,7 @@ export function CartaoDeQuestao({
 /** O que aparece quando o filtro não devolve nada. */
 export function ListaVazia({ temFiltro, onLimpar }: { temFiltro: boolean; onLimpar: () => void }) {
   return (
-    <div className="glass-page-card rounded-2xl border-dashed py-14 text-center">
+    <div className="vidro rounded-[22px] border-dashed py-14 text-center">
       <CircleSlash className="mx-auto mb-2 h-7 w-7 text-muted-foreground/40" />
       <p className="text-sm text-muted-foreground">
         {temFiltro ? 'Nenhuma questão com esses filtros.' : 'O banco ainda não tem questões.'}

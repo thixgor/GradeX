@@ -64,8 +64,9 @@ export async function POST(request: NextRequest) {
     // Construir query para buscar questões
     const matchStage: any = {}
 
-    const periodoFilter = buildIdFilter(body.periodoId)
-    if (periodoFilter) matchStage.periodoId = periodoFilter
+    // `periodoId` saiu do produto (ver lib/banco/hierarquia.ts) e não é mais
+    // aceito: um filtro por um nível que a tela não mostra só produziria
+    // listas vazias sem explicação.
     const moduloFilter = buildIdFilter(body.moduloId)
     if (moduloFilter) matchStage.moduloId = moduloFilter
     const topicoFilter = buildIdFilter(body.topicoId)
@@ -78,9 +79,14 @@ export async function POST(request: NextRequest) {
     if (body.dificuldade) {
       matchStage.dificuldade = body.dificuldade
     }
-    if (body.ano) {
-      matchStage.ano = body.ano
-    }
+    // Um ano (compatibilidade) ou vários — a tela manda `anos`.
+    const anos = Array.isArray((body as any).anos)
+      ? (body as any).anos.map((a: any) => Number(a)).filter((a: number) => Number.isFinite(a))
+      : body.ano
+        ? [Number(body.ano)]
+        : []
+    if (anos.length === 1) matchStage.ano = anos[0]
+    else if (anos.length > 1) matchStage.ano = { $in: anos }
 
     // Se o usuário quer excluir questões já resolvidas, buscar IDs resolvidos
     if (body.excluirJaResolvidas) {
@@ -114,7 +120,7 @@ export async function POST(request: NextRequest) {
 
     if (questoesAleatorias.length === 0) {
       return NextResponse.json({
-        error: 'Nenhuma questão encontrada com os filtros selecionados'
+        error: 'Nenhuma questão combina com esses filtros'
       }, { status: 400 })
     }
 
@@ -140,10 +146,20 @@ export async function POST(request: NextRequest) {
 
     const result = await db.collection('banco_listas_usuario').insertOne(novaLista)
 
+    /*
+     * A lista sai com o que EXISTE, não com o que foi pedido.
+     *
+     * Pedir 50 quando há 12 não é erro do usuário: é o banco que ainda não tem
+     * 50 daquele recorte. Recusar mandaria a pessoa adivinhar qual número
+     * cabe, tentando 40, 30, 20 até acertar. A lista é criada com as 12 e a
+     * resposta diz que foram 12 — a tela avisa antes, com a mesma conta.
+     */
     return NextResponse.json({
       sucesso: true,
       lista: { ...novaLista, _id: result.insertedId },
-      totalQuestoes: questaoIds.length
+      totalQuestoes: questaoIds.length,
+      pedidas: body.quantidade,
+      incompleta: questaoIds.length < body.quantidade
     })
   } catch (error) {
     console.error('Erro ao criar lista aleatória:', error)
