@@ -22,7 +22,7 @@ import { AppShell } from '@/components/app-shell'
 import { PlayerDaAula, type ControleDoPlayer } from '@/components/aulas/player'
 import { PainelDeAnotacoes } from '@/components/aulas/anotacoes-painel'
 import { PainelDeMarcadores } from '@/components/aulas/marcadores-painel'
-import { BarraDeProgresso } from '@/components/aulas/biblioteca'
+import { BarraDeProgresso, CardDeAula, Trilho, type AulaNaBiblioteca } from '@/components/aulas/biblioteca'
 import { FaixaModoAluno } from '@/components/aulas/faixa-modo-aluno'
 import { comModo, lerModo, PARAMETRO_MODO } from '@/lib/aulas/modo-visualizacao'
 import { cn } from '@/lib/utils'
@@ -96,6 +96,7 @@ function AssistirAulaConteudo() {
   const [percentual, setPercentual] = useState(0)
   const [marcando, setMarcando] = useState(false)
 
+  const [relacionadas, setRelacionadas] = useState<AulaNaBiblioteca[]>([])
   const [vizinhas, setVizinhas] = useState<AulaVizinha[]>([])
   const [nomeDoCurso, setNomeDoCurso] = useState<string | null>(null)
 
@@ -114,6 +115,7 @@ function AssistirAulaConteudo() {
         if (cancelado) return
         const carregada: Aula = { ...d.aula, _id: String(d.aula._id), acesso: d.acesso }
         setAula(carregada)
+        setRelacionadas((d.relacionadas || []).map((r: any) => ({ ...r, _id: String(r._id) })))
         setConcluida(carregada.progresso?.concluida === true)
         setPercentual(carregada.progresso?.percentual || 0)
       })
@@ -461,6 +463,19 @@ function AssistirAulaConteudo() {
           </aside>
         ) : null}
       </div>
+
+      {/* Conteúdo relacionado (§31): a curadoria que o índice do curso não faz,
+          porque atravessa módulo e curso — "antes desta, veja gasometria". */}
+      {relacionadas.length > 0 && !modoFoco ? (
+        <section className="mt-8">
+          <h2 className="mb-3 text-sm font-bold">Veja também</h2>
+          <Trilho>
+            {relacionadas.map((r) => (
+              <CardDeAula key={r._id} aula={r} noTrilho />
+            ))}
+          </Trilho>
+        </section>
+      ) : null}
 
       {/* Navegação entre aulas, sempre disponível */}
       {(anterior || proxima) && !modoFoco ? (

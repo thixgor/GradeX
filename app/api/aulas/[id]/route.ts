@@ -81,8 +81,52 @@ export async function GET(
       return NextResponse.json({ error: 'Aula não encontrada' }, { status: 404 })
     }
 
+    /*
+     * Conteúdo relacionado (§31), resolvido aqui e não na tela.
+     *
+     * A lista guardada é só de ids. Resolvê-los no navegador exigiria baixar a
+     * árvore inteira só para descobrir três títulos — e, pior, a tela não teria
+     * como saber se aquela aula ainda existe ou se a pessoa pode vê-la.
+     *
+     * Cada relacionada passa pelo MESMO motor de acesso. Uma aula bloqueada
+     * continua aparecendo, com o cadeado e o motivo: é assim que ela vira convite
+     * em vez de erro (§17). O que não sai daqui é o conteúdo dela.
+     */
+    let relacionadas: any[] = []
+    const idsRelacionados = Array.isArray((aula as any).relacionadas)
+      ? (aula as any).relacionadas.filter(isValidObjectId).slice(0, 24)
+      : []
+
+    if (idsRelacionados.length > 0) {
+      const docs = await aulasCollection
+        .find({ _id: { $in: idsRelacionados.map((i: string) => new ObjectId(i)) } as any })
+        .toArray()
+
+      const vinculosRel = await resolverVinculosEmLote(db, docs as any)
+      const porId = new Map(docs.map((d) => [String(d._id), d]))
+
+      // A ordem é a que o admin escolheu — o `$in` do Mongo não preserva nenhuma.
+      for (const id of idsRelacionados) {
+        const doc = porId.get(id)
+        if (!doc) continue
+        const rel = aplicarVinculo(doc as any, vinculosRel)
+        const v = avaliarAcessoAula(rel, usuario)
+        if (v.invisivel) continue
+        const limpa = ocultarConteudoRestrito(rel, v) as any
+        relacionadas.push({
+          _id: id,
+          titulo: limpa.titulo,
+          descricao: limpa.descricao,
+          capa: limpa.capa,
+          setorId: limpa.setorId,
+          acesso: { liberado: v.liberado, porAmostra: v.porAmostra, requisito: v.requisito },
+        })
+      }
+    }
+
     return NextResponse.json({
       aula: ocultarConteudoRestrito(resolvida, veredito),
+      relacionadas,
       acesso: {
         liberado: veredito.liberado,
         porAmostra: veredito.porAmostra,
@@ -204,6 +248,29 @@ export async function PATCH(
       }
     }
 
+    /*
+     * Conteúdo relacionado (§31).
+     *
+     * Uma lista de ids escolhida à mão. Automático por "mesmo módulo" seria
+     * redundante — o índice do curso e a próxima aula já cobrem a vizinhança.
+     * O que só a curadoria resolve é o salto: "antes desta, veja gasometria
+     * básica", que atravessa curso e módulo.
+     */
+    if ('relacionadas' in updateData) {
+      const lista = Array.isArray(updateData.relacionadas) ? updateData.relacionadas : []
+      const vistos = new Set<string>()
+      const limpa: string[] = []
+      for (const bruto of lista.slice(0, 24)) {
+        const id = String(bruto || '')
+        // A própria aula fora da lista: um cartão que leva para onde já se está
+        // é ruído, e é o erro mais fácil de cometer num seletor de busca.
+        if (!isValidObjectId(id) || id === params.id || vistos.has(id)) continue
+        vistos.add(id)
+        limpa.push(id)
+      }
+      updateData.relacionadas = limpa.length > 0 ? limpa : null
+    }
+
     // Capítulos (§11) e transcrição (§10). Aceitam texto colado — VTT, SRT ou
     // "00:00 Título" — e são convertidos aqui, para o documento nunca guardar o
     // formato bruto de origem. `null` limpa o campo.
@@ -229,6 +296,7 @@ export async function PATCH(
       'regrasAcesso',
       'capitulos',
       'transcricao',
+      'relacionadas',
     ])
 
     // Remover campos undefined e null

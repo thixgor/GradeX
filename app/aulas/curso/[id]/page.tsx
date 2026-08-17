@@ -4,7 +4,7 @@ import { Suspense, useEffect, useMemo, useState } from 'react'
 import { useParams, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, BookOpen, PlayCircle, RotateCcw } from 'lucide-react'
-import { AppShell } from '@/components/app-shell'
+import { AppShell, useAppShell } from '@/components/app-shell'
 import {
   EsqueletoDeCards,
   ProvedorDeFavoritos,
@@ -15,6 +15,7 @@ import {
 import { useFavoritosDeAula } from '@/components/aulas/use-favoritos-aula'
 import { CursoAberto, type Ramo } from '@/components/aulas/curso-conteudo'
 import { FaixaModoAluno } from '@/components/aulas/faixa-modo-aluno'
+import { MuralDeAvisos } from '@/components/aulas/mural-de-avisos'
 import { achatarAulas, montarRamos } from '@/lib/aulas/ramos'
 import { comModo, lerModo, PARAMETRO_MODO } from '@/lib/aulas/modo-visualizacao'
 
@@ -75,6 +76,10 @@ function Conteudo() {
   const [aulas, setAulas] = useState<Aula[]>([])
   const [nos, setNos] = useState({ topicos: [], subtopicos: [], modulos: [], submodulos: [] } as any)
   const favoritos = useFavoritosDeAula()
+  const { user, isAdmin } = useAppShell()
+  // Em "ver como aluno" o admin também abre mão de administrar o mural: senão
+  // a conferência mostraria botões que o aluno não tem (§28).
+  const podeGerenciar = modo === 'admin' && (isAdmin || user?.secondaryRole === 'monitor')
 
   useEffect(() => {
     let cancelado = false
@@ -222,6 +227,10 @@ function Conteudo() {
 
       {/* ── Conteúdo ──────────────────────────────────────────────────── */}
       <div className="container mx-auto max-w-7xl px-4 py-6">
+        {/* Os avisos vêm antes da lista: um recado que aparece depois das aulas
+            chega tarde — a pessoa já clicou (§36). */}
+        <MuralDeAvisos cursoId={cursoId} podeGerenciar={podeGerenciar} />
+
         <CursoAberto ramos={ramos} />
       </div>
       </ProvedorDeFavoritos>

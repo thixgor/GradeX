@@ -14,6 +14,7 @@ import { ToastAlert } from '@/components/ui/toast-alert'
 import { VinculoMaterialField, type VinculoMaterial } from '@/components/aulas/vinculo-material-field'
 import { EditorDeRegras } from '@/components/aulas/editor-regras'
 import { EditorDeMarcadores } from '@/components/aulas/editor-marcadores'
+import { EditorDeRelacionadas } from '@/components/aulas/editor-relacionadas'
 import type { Capitulo, TrechoDaTranscricao } from '@/lib/aulas/marcadores'
 import { regrasIniciais } from '@/lib/aulas/regras-edicao'
 import type { RegrasDeAcessoAula } from '@/lib/aulas/acesso'
@@ -49,6 +50,7 @@ export default function EditarAulaPage() {
   const [regras, setRegras] = useState<RegrasDeAcessoAula | null>(null)
   const [capitulos, setCapitulos] = useState<Capitulo[] | null>(null)
   const [transcricao, setTranscricao] = useState<TrechoDaTranscricao[] | null>(null)
+  const [relacionadas, setRelacionadas] = useState<string[]>([])
   const [setorId, setSetorId] = useState('')
   const [topicoId, setTopicoId] = useState('')
   const [subtopicoId, setSubtopicoId] = useState('')
@@ -140,6 +142,7 @@ export default function EditarAulaPage() {
       setRegras(regrasIniciais(a))
       setCapitulos(a.capitulos || null)
       setTranscricao(a.transcricao || null)
+      setRelacionadas(Array.isArray(a.relacionadas) ? a.relacionadas.map(String) : [])
       setSetorId(a.setorId || '')
       setTopicoId(a.topicoId || '')
       setSubtopicoId(a.subtopicoId || '')
@@ -249,6 +252,7 @@ export default function EditarAulaPage() {
         regrasAcesso: regras,
         capitulos,
         transcricao,
+        relacionadas: relacionadas.length > 0 ? relacionadas : null,
         setorId: setorId || null,
         topicoId: topicoId || null,
         subtopicoId: subtopicoId || null,
@@ -394,6 +398,18 @@ export default function EditarAulaPage() {
                       setCapitulos(v.capitulos)
                       setTranscricao(v.transcricao)
                     }}
+                    escuro
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label className="text-white/80">Conteúdo relacionado</Label>
+                <div className="mt-1">
+                  <EditorDeRelacionadas
+                    aulaAtualId={aulaId}
+                    valor={relacionadas}
+                    onChange={setRelacionadas}
                     escuro
                   />
                 </div>
