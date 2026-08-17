@@ -54,8 +54,14 @@ import {
   Trash2,
   Share2,
   ArrowDownAZ,
+  CheckSquare,
+  Square,
+  FolderInput,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { BarraDeSelecao, MoverParaDialog, type AlvoDaMovimentacao } from '@/components/provas/mover-para'
+import { contarProvas, contarQuestoes } from '@/lib/provas/arvore-grupos'
+import { resumirMovimentacao } from '@/lib/provas/mover-provas'
 
 interface Group {
   _id: string
@@ -154,6 +160,19 @@ function ProvasContent() {
   const [drillDownloadOpen, setDrillDownloadOpen] = useState(false)
   const [drillCopiedLink, setDrillCopiedLink] = useState(false)
   const [isSortingDrillGroup, setIsSortingDrillGroup] = useState(false)
+  // Seleção múltipla e movimentação (provas ou grupo inteiro).
+  const [selecionadas, setSelecionadas] = useState<string[]>([])
+  const [modoSelecao, setModoSelecao] = useState(false)
+  const [alvoParaMover, setAlvoParaMover] = useState<AlvoDaMovimentacao | null>(null)
+  const [avisoDeMovimentacao, setAvisoDeMovimentacao] = useState('')
+
+  // O aviso da movimentação some sozinho: ele confirma o que acabou de
+  // acontecer e não é algo que precise ser descartado à mão.
+  useEffect(() => {
+    if (!avisoDeMovimentacao) return
+    const t = setTimeout(() => setAvisoDeMovimentacao(''), 5000)
+    return () => clearTimeout(t)
+  }, [avisoDeMovimentacao])
 
   // Handle ?view=faculdade|plataforma direct entry
   useEffect(() => {
@@ -226,28 +245,67 @@ function ProvasContent() {
     }
   }
 
-  async function handleMoveExamToGroup(examId: string, groupId: string | null) {
-    try {
-      const res = await fetch(`/api/exams/${examId}/move-group`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ groupId }),
-      })
+  /**
+   * Mover uma leva de provas.
+   *
+   * Serve tanto para uma prova (menu de contexto) quanto para a seleção
+   * múltipla: são a mesma operação, e ter dois caminhos faria as duas divergirem
+   * na primeira regra nova de permissão.
+   */
+  async function handleMoverProvas(examIds: string[], groupId: string | null) {
+    const res = await fetch('/api/exams/move-group', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ examIds, groupId }),
+    })
+    const dados = await res.json().catch(() => ({}))
+    if (!res.ok) throw new Error(dados.error || 'Erro ao mover provas')
 
-      if (res.ok) {
-        setExams(exams.map(e =>
-          e._id?.toString() === examId
-            ? { ...e, groupId: groupId || undefined }
-            : e
-        ))
-      } else {
-        const error = await res.json()
-        alert(`Erro: ${error.error}`)
-      }
-    } catch (error) {
-      console.error('Erro ao mover prova:', error)
-      alert('Erro ao mover prova')
-    }
+    const movidas = new Set<string>(dados.movidas || [])
+    setExams(prev => prev.map(e =>
+      movidas.has(e._id?.toString() || '') ? { ...e, groupId: groupId || undefined } : e
+    ))
+    setSelecionadas(prev => prev.filter(id => !movidas.has(id)))
+
+    const recusadas = (dados.recusadas || []).length
+    // Quando tudo deu certo e era uma prova só, o resultado está na tela — a
+    // prova mudou de lugar. O aviso existe para o que a tela NÃO mostra.
+    setAvisoDeMovimentacao(
+      recusadas > 0 || movidas.size > 1 ? resumirMovimentacao(movidas.size, recusadas) : ''
+    )
+  }
+
+  /**
+   * Mover um grupo inteiro para dentro de outro.
+   *
+   * As provas vão junto sem serem tocadas: elas apontam para o grupo, e o grupo
+   * é que mudou de lugar. Por isso aqui só o `parentGroupId` é reescrito.
+   */
+  async function handleMoverGrupo(grupoId: string, destinoId: string | null) {
+    const res = await fetch(`/api/groups/${grupoId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ parentGroupId: destinoId }),
+    })
+    const dados = await res.json().catch(() => ({}))
+    if (!res.ok) throw new Error(dados.error || 'Erro ao mover grupo')
+
+    setGroups(prev => prev.map(g => (g._id === grupoId ? { ...g, parentGroupId: destinoId } : g)))
+
+    // A trilha aberta pode ter deixado de existir (o grupo saiu de onde
+    // estávamos). Recortar até o ponto ainda válido evita uma tela que mostra
+    // um caminho que não leva mais a lugar nenhum.
+    setFacDrillPath(caminho => {
+      const corte = caminho.findIndex(g => g._id === grupoId)
+      return corte === -1 ? caminho : caminho.slice(0, corte)
+    })
+    setAvisoDeMovimentacao('Grupo movido — as provas foram junto.')
+  }
+
+  function alternarSelecao(examId: string) {
+    setSelecionadas(prev =>
+      prev.includes(examId) ? prev.filter(i => i !== examId) : [...prev, examId]
+    )
   }
 
   function handleExamContextMenu(exam: Exam, e: React.MouseEvent) {
@@ -567,12 +625,28 @@ function ProvasContent() {
   const filteredUngrouped = ungroupedExams.filter(e => matchesSearch(e) && matchesStatus(e))
 
   function countGroupExams(groupId: string): number {
-    function countRec(gid: string): number {
-      const direct = exams.filter(e => e.groupId === gid).length
-      const children = groups.filter(c => c.parentGroupId === gid)
-      return direct + children.reduce((s, c) => s + countRec(c._id), 0)
-    }
-    return countRec(groupId)
+    return contarProvas(groups, exams as any, groupId)
+  }
+
+  /**
+   * Questões do ramo inteiro.
+   *
+   * "12 provas" não diz quanto há para treinar: doze provas de 5 questões e
+   * doze de 90 são coisas muito diferentes, e é a segunda que faz alguém abrir
+   * o grupo. A soma desce pelos subgrupos, então o número do curso é a soma
+   * real de tudo que está pendurado nele.
+   */
+  function countGroupQuestions(groupId: string): number {
+    return contarQuestoes(groups, exams as any, groupId)
+  }
+
+  /** "12 provas · 430 questões" — o par que sempre aparece junto. */
+  function resumoDoGrupo(groupId: string): string {
+    const provas = countGroupExams(groupId)
+    const questoes = countGroupQuestions(groupId)
+    const parteProvas = `${provas} ${provas === 1 ? 'prova' : 'provas'}`
+    if (questoes === 0) return parteProvas
+    return `${parteProvas} · ${questoes} ${questoes === 1 ? 'questão' : 'questões'}`
   }
 
   function countGroupExamsForSearch(groupId: string, query = normalizedQuery, ancestorMatched = false): number {
@@ -593,8 +667,11 @@ function ProvasContent() {
 
   // Contadores
   const faculdadeExamCount = faculdadeGroups.reduce((sum, g) => sum + countGroupExams(g._id), 0)
+  const faculdadeQuestionCount = faculdadeGroups.reduce((sum, g) => sum + countGroupQuestions(g._id), 0)
 
   const plataformaExamCount = exams.length - faculdadeExamCount
+  const totalQuestionCount = exams.reduce((sum, e) => sum + (Number(e.numberOfQuestions) || 0), 0)
+  const plataformaQuestionCount = totalQuestionCount - faculdadeQuestionCount
 
   // Loading state
   if (loading) {
@@ -613,21 +690,75 @@ function ProvasContent() {
   }
 
   // ─── EXAM CARD (reusable) ──────────────────────────────────
+  /**
+   * Liga/desliga o modo de seleção de uma lista de provas.
+   *
+   * Fica ao lado do título da lista porque é ali que a pessoa está olhando
+   * quando decide organizar, e traz "selecionar todas" junto: mover uma pasta
+   * inteira para outro lugar é o caso mais comum de arrumação, e clicar em
+   * quarenta cartões para isso é o que fazia ninguém usar.
+   */
+  function BotaoDeSelecao({ visiveis, rotuloTudo }: { visiveis: string[]; rotuloTudo: string }) {
+    const todasMarcadas = visiveis.length > 0 && visiveis.every(id => selecionadas.includes(id))
+    return (
+      <div className="flex items-center gap-1.5">
+        {modoSelecao && visiveis.length > 0 && (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 rounded-xl text-xs"
+            onClick={() =>
+              setSelecionadas(prev =>
+                todasMarcadas
+                  ? prev.filter(id => !visiveis.includes(id))
+                  : Array.from(new Set([...prev, ...visiveis]))
+              )
+            }
+          >
+            {todasMarcadas ? 'Desmarcar todas' : rotuloTudo}
+          </Button>
+        )}
+        <Button
+          variant={modoSelecao ? 'secondary' : 'ghost'}
+          size="sm"
+          className="h-8 rounded-xl text-xs gap-1.5"
+          onClick={() => {
+            setModoSelecao(v => !v)
+            if (modoSelecao) setSelecionadas([])
+          }}
+        >
+          <ListChecks className="h-3.5 w-3.5" />
+          {modoSelecao ? 'Sair da seleção' : 'Selecionar'}
+        </Button>
+      </div>
+    )
+  }
+
   function ExamCard({ exam, index = 0 }: { exam: Exam; index?: number }) {
     const status = getExamStatus(exam)
+    const examId = exam._id?.toString() || ''
+    const marcada = selecionadas.includes(examId)
     return (
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, delay: 0.1 + index * 0.04 }}
         className={cn(
-          "glass-page-card rounded-lg overflow-hidden group cursor-pointer",
+          "glass-page-card rounded-lg overflow-hidden group cursor-pointer relative",
           "hover-glow-green hover-lift transition-all duration-300",
           "border-l-[3px]",
-          exam.isPersonalExam ? 'border-l-violet-500' : 'border-l-[#468152]'
+          exam.isPersonalExam ? 'border-l-violet-500' : 'border-l-[#468152]',
+          marcada && 'ring-2 ring-primary'
         )}
         onContextMenu={(e) => handleExamContextMenu(exam, e)}
         onClick={() => {
+          // Em modo de seleção o cartão inteiro vira alvo de marcar: mirar numa
+          // caixinha de 16px enquanto se organiza dezenas de provas é o que faz
+          // a seleção múltipla cansar mais do que mover uma a uma.
+          if (modoSelecao) {
+            alternarSelecao(examId)
+            return
+          }
           if (status.canTake) {
             router.push(`/exam/${exam._id}`)
           } else if (new Date() > new Date(exam.endTime)) {
@@ -635,6 +766,20 @@ function ProvasContent() {
           }
         }}
       >
+        {modoSelecao && (
+          <span
+            aria-hidden
+            className={cn(
+              'absolute right-2 top-2 z-10 flex h-7 w-7 items-center justify-center rounded-lg border shadow-sm transition-colors',
+              marcada
+                ? 'border-primary bg-primary text-primary-foreground'
+                : 'border-border bg-background/90 text-muted-foreground'
+            )}
+          >
+            {marcada ? <CheckSquare className="h-4 w-4" /> : <Square className="h-4 w-4" />}
+          </span>
+        )}
+
         {exam.coverImage && (
           <div className="relative h-32 overflow-hidden">
             <CoverImage
@@ -802,8 +947,10 @@ function ProvasContent() {
                       ))}
                     </div>
 
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      <span className="font-semibold text-foreground">{faculdadeExamCount} provas</span>
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
+                      <span className="font-semibold text-foreground tabular-nums">{faculdadeExamCount} provas</span>
+                      {/* O número que responde "quanto tenho para treinar aqui". */}
+                      <span className="tabular-nums">{faculdadeQuestionCount} questões</span>
                       <span>{faculdadeGroups.length} grupos</span>
                     </div>
                   </div>
@@ -846,8 +993,9 @@ function ProvasContent() {
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      <span className="font-semibold text-foreground">{plataformaExamCount} provas</span>
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
+                      <span className="font-semibold text-foreground tabular-nums">{plataformaExamCount} provas</span>
+                      <span className="tabular-nums">{plataformaQuestionCount} questões</span>
                       <span>{personalExams.length} pessoais</span>
                     </div>
                   </div>
@@ -953,7 +1101,9 @@ function ProvasContent() {
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold">Provas da Faculdade</h1>
-                  <p className="text-xs text-muted-foreground">{faculdadeExamCount} provas disponiveis para treino</p>
+                  <p className="text-xs text-muted-foreground tabular-nums">
+                    {faculdadeExamCount} provas · {faculdadeQuestionCount} questões para treinar
+                  </p>
                 </div>
               </div>
             </div>
@@ -1001,6 +1151,7 @@ function ProvasContent() {
               {orderedCourseEntries.map(([courseKey, courseGroups], idx) => {
                 const courseInfo = COURSE_LABELS[courseKey]
                 const courseExamCount = courseGroups.reduce((sum, group) => sum + countGroupExamsForSearch(group._id), 0)
+                const courseQuestionCount = courseGroups.reduce((sum, group) => sum + countGroupQuestions(group._id), 0)
                 return (
                   <motion.section
                     key={courseKey}
@@ -1016,8 +1167,11 @@ function ProvasContent() {
                           {courseInfo.label}
                         </h2>
                       </div>
-                      <span className="text-[11px] rounded-full bg-muted px-2 py-0.5 text-muted-foreground">
+                      <span className="text-[11px] rounded-full bg-muted px-2 py-0.5 text-muted-foreground tabular-nums">
                         {courseExamCount} provas
+                      </span>
+                      <span className="text-[11px] rounded-full bg-muted px-2 py-0.5 text-muted-foreground tabular-nums">
+                        {courseQuestionCount} questões
                       </span>
                       <span className="text-[11px] rounded-full bg-muted px-2 py-0.5 text-muted-foreground">
                         {courseGroups.length} grupos
@@ -1049,6 +1203,7 @@ function ProvasContent() {
                               onEditGroup={handleEditGroup}
                               onReorderExam={handleReorderExam}
                               onSortGroup={handleSortGroup}
+                              onMoveGroup={(g) => setAlvoParaMover({ tipo: 'grupo', grupo: g as any })}
                               onDownloadPDF={setPdfModalExam}
                               onGroupDownloadPDF={handleGroupDownloadPDF}
                               filterQuery={groupSelfMatchesSearch(group) ? '' : searchQuery}
@@ -1067,6 +1222,7 @@ function ProvasContent() {
                             key={group._id}
                             group={group}
                             examCount={countGroupExams(group._id)}
+                            questionCount={countGroupQuestions(group._id)}
                             subgroupCount={groups.filter(g => g.parentGroupId === group._id).length}
                             directPracticeExams={exams.filter(e => e.groupId === group._id && e.isPracticeExam)}
                             canManage={user?.role === 'admin' || (group.createdBy === user?.id && group.type === 'personal')}
@@ -1081,6 +1237,7 @@ function ProvasContent() {
                               if (name) handleCreateGroup(name, 'general', parentGroupId)
                             }}
                             onSortGroup={handleSortGroup}
+                            onMoveGroup={(g) => setAlvoParaMover({ tipo: 'grupo', grupo: g as any })}
                             onGroupDownloadPDF={handleGroupDownloadPDF}
                           />
                         ))}
@@ -1145,6 +1302,7 @@ function ProvasContent() {
                           key={group._id}
                           group={group}
                           examCount={countGroupExams(group._id)}
+                          questionCount={countGroupQuestions(group._id)}
                           subgroupCount={groups.filter(g => g.parentGroupId === group._id).length}
                           directPracticeExams={exams.filter(e => e.groupId === group._id && e.isPracticeExam)}
                           canManage={user?.role === 'admin' || (group.createdBy === user?.id && group.type === 'personal')}
@@ -1159,6 +1317,7 @@ function ProvasContent() {
                             if (name) handleCreateGroup(name, 'general', parentGroupId)
                           }}
                           onSortGroup={handleSortGroup}
+                          onMoveGroup={(g) => setAlvoParaMover({ tipo: 'grupo', grupo: g as any })}
                           onGroupDownloadPDF={handleGroupDownloadPDF}
                         />
                       ))}
@@ -1190,6 +1349,7 @@ function ProvasContent() {
         </div>
 
         {/* Context Menu & Modals */}
+        {renderMovimentacao()}
         {renderContextMenu()}
         {renderDeleteModal()}
         {renderEditGroupModal()}
@@ -1344,11 +1504,17 @@ function ProvasContent() {
                 <FileText className="h-4 w-4 text-muted-foreground" />
                 <h2 className="text-lg font-semibold tracking-tight">Suas Provas</h2>
               </div>
-              {(searchQuery || statusFilter !== 'all') && (
-                <span className="text-xs text-muted-foreground tabular-nums">
-                  {filteredUngrouped.length} de {ungroupedExams.length}
-                </span>
-              )}
+              <div className="flex items-center gap-2">
+                {(searchQuery || statusFilter !== 'all') && (
+                  <span className="text-xs text-muted-foreground tabular-nums">
+                    {filteredUngrouped.length} de {ungroupedExams.length}
+                  </span>
+                )}
+                <BotaoDeSelecao
+                  visiveis={filteredUngrouped.map(e => e._id?.toString() || '')}
+                  rotuloTudo="Selecionar todas"
+                />
+              </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
               {filteredUngrouped.map((exam, index) => (
@@ -1463,6 +1629,7 @@ function ProvasContent() {
       </div>
 
       {/* Context Menu & Modals */}
+      {renderMovimentacao()}
       {renderContextMenu()}
       {renderDeleteModal()}
       {renderInfoDialog()}
@@ -1579,8 +1746,8 @@ function ProvasContent() {
               {currentGroup.description && (
                 <p className="text-sm text-muted-foreground mt-0.5">{currentGroup.description}</p>
               )}
-              <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
-                <span className="tabular-nums">{countGroupExams(currentGroup._id)} {countGroupExams(currentGroup._id) === 1 ? 'prova' : 'provas'}</span>
+              <div className="flex flex-wrap items-center gap-2 mt-2 text-xs text-muted-foreground">
+                <span className="tabular-nums">{resumoDoGrupo(currentGroup._id)}</span>
                 {childGroups.length > 0 && (
                   <span>· {childGroups.length} {childGroups.length === 1 ? 'subgrupo' : 'subgrupos'}</span>
                 )}
@@ -1670,6 +1837,15 @@ function ProvasContent() {
                           </button>
                         )}
                         <button
+                          onClick={() => {
+                            setDrillActionsOpen(false)
+                            setAlvoParaMover({ tipo: 'grupo', grupo: currentGroup as any })
+                          }}
+                          className="w-full flex items-center gap-2 px-3.5 py-2.5 text-xs hover:bg-muted/60 text-left"
+                        >
+                          <FolderInput className="h-3.5 w-3.5" /> Mover para…
+                        </button>
+                        <button
                           onClick={() => { handleEditGroup(currentGroup); setDrillActionsOpen(false) }}
                           className="w-full flex items-center gap-2 px-3.5 py-2.5 text-xs hover:bg-muted/60 text-left"
                         >
@@ -1721,6 +1897,7 @@ function ProvasContent() {
                   key={cg._id}
                   group={cg}
                   examCount={countGroupExams(cg._id)}
+                  questionCount={countGroupQuestions(cg._id)}
                   subgroupCount={groups.filter(g => g.parentGroupId === cg._id).length}
                   directPracticeExams={exams.filter(e => e.groupId === cg._id && e.isPracticeExam)}
                   canManage={isAdmin || (cg.createdBy === user?.id && cg.type === 'personal')}
@@ -1735,6 +1912,7 @@ function ProvasContent() {
                     if (name) handleCreateGroup(name, 'general', parentGroupId)
                   }}
                   onSortGroup={handleSortGroup}
+                  onMoveGroup={(g) => setAlvoParaMover({ tipo: 'grupo', grupo: g as any })}
                   onGroupDownloadPDF={handleGroupDownloadPDF}
                 />
               ))}
@@ -1745,9 +1923,16 @@ function ProvasContent() {
         {/* Direct exams */}
         {directExams.length > 0 ? (
           <div className="space-y-3">
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <FileText className="h-4 w-4 text-muted-foreground" />
               <h3 className="text-sm font-semibold text-muted-foreground">Provas</h3>
+              <div className="flex-1" />
+              {canManageGroup && (
+                <BotaoDeSelecao
+                  visiveis={directExams.map(e => e._id?.toString() || '')}
+                  rotuloTudo="Selecionar todas desta pasta"
+                />
+              )}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
               {directExams.map((exam, index) => (
@@ -1860,6 +2045,55 @@ function ProvasContent() {
     )
   }
 
+  /**
+   * Seletor de destino + barra de seleção.
+   *
+   * Os dois vivem juntos porque são a mesma tarefa em dois momentos: escolher o
+   * que move e escolher para onde. Ficam fora das três telas (início, faculdade,
+   * plataforma) para que a seleção sobreviva a trocar de pasta — perder a
+   * seleção ao navegar é o que faria a seleção múltipla não servir para nada.
+   */
+  function renderMovimentacao() {
+    return (
+      <>
+        <BarraDeSelecao
+          quantidade={selecionadas.length}
+          onMover={() =>
+            setAlvoParaMover({
+              tipo: 'provas',
+              ids: selecionadas,
+              rotulo: selecionadas.length === 1 ? '1 prova' : `${selecionadas.length} provas`,
+            })
+          }
+          onLimpar={() => { setSelecionadas([]); setModoSelecao(false) }}
+        />
+
+        <MoverParaDialog
+          aberto={!!alvoParaMover}
+          alvo={alvoParaMover}
+          grupos={groups as any}
+          provas={exams as any}
+          usuario={{ id: user?.id || '', ehAdmin: user?.role === 'admin' }}
+          onFechar={() => setAlvoParaMover(null)}
+          onConfirmar={async (destinoId) => {
+            if (!alvoParaMover) return
+            if (alvoParaMover.tipo === 'grupo') {
+              await handleMoverGrupo(alvoParaMover.grupo._id, destinoId)
+            } else {
+              await handleMoverProvas(alvoParaMover.ids, destinoId)
+            }
+          }}
+        />
+
+        {avisoDeMovimentacao ? (
+          <div className="fixed bottom-24 left-1/2 z-[95] -translate-x-1/2 rounded-xl border border-border bg-card px-4 py-2.5 text-xs font-medium shadow-2xl">
+            {avisoDeMovimentacao}
+          </div>
+        ) : null}
+      </>
+    )
+  }
+
   function renderContextMenu() {
     if (!selectedExam) return null
     return (
@@ -1871,8 +2105,15 @@ function ProvasContent() {
         currentUserId={user?.id || ''}
         userRole={user?.role || 'user'}
         groups={groups}
-        onMoveToGroup={(groupId) => handleMoveExamToGroup(selectedExam._id?.toString() || '', groupId)}
+        onMoveToGroup={(groupId) => handleMoverProvas([selectedExam._id?.toString() || ''], groupId)}
         onCreateGroup={handleCreateGroup}
+        onAbrirSeletor={() =>
+          setAlvoParaMover({
+            tipo: 'provas',
+            ids: [selectedExam._id?.toString() || ''],
+            rotulo: `“${selectedExam.title}”`,
+          })
+        }
         position={contextMenu}
         onClose={() => {
           setContextMenu(null)

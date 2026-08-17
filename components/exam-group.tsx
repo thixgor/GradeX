@@ -5,9 +5,10 @@ import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { TiltCard } from '@/components/tilt-card'
 import { CoverImage } from '@/components/cover-image'
-import { ChevronDown, Trash2, Edit2, FolderPlus, MoreHorizontal, ArrowUp, ArrowDown, Share2, Download, FileDown, ArrowDownAZ, BookOpen, ChevronRight } from 'lucide-react'
+import { ChevronDown, Trash2, Edit2, FolderPlus, FolderInput, MoreHorizontal, ArrowUp, ArrowDown, Share2, Download, FileDown, ArrowDownAZ, BookOpen, ChevronRight } from 'lucide-react'
 import { Exam } from '@/lib/types'
 import { cn } from '@/lib/utils'
+import { contarQuestoes } from '@/lib/provas/arvore-grupos'
 
 interface GroupData {
   _id: string
@@ -35,6 +36,8 @@ interface ExamGroupProps {
   onDeleteGroup?: (groupId: string) => Promise<void>
   onEditGroup?: (group: any) => void
   onCreateSubgroup?: (parentGroupId: string) => void
+  /** Abre o seletor de destino para o grupo inteiro (as provas vão junto). */
+  onMoveGroup?: (group: GroupData) => void
   onReorderExam?: (examId: string, direction: 'up' | 'down') => Promise<void>
   onSortGroup?: (groupId: string) => void
   onDownloadPDF?: (exam: Exam) => void
@@ -87,6 +90,7 @@ export function ExamGroup({
   onDeleteGroup,
   onEditGroup,
   onCreateSubgroup,
+  onMoveGroup,
   onReorderExam,
   onSortGroup,
   onDownloadPDF,
@@ -164,6 +168,10 @@ export function ExamGroup({
   }
 
   const totalExamCount = countExamsRecursive(group._id)
+  // Questões do ramo inteiro — o número que diz o tamanho do treino. Aqui não
+  // passa pelo filtro de busca: a lista já está recortada, e uma contagem que
+  // muda conforme o termo digitado não serve para comparar grupos.
+  const totalQuestionCount = contarQuestoes(allGroups, allExams as any, group._id)
 
   const handleDelete = async () => {
     if (!onDeleteGroup) return
@@ -292,6 +300,11 @@ export function ExamGroup({
           <span className="text-[10px] text-muted-foreground/50 tabular-nums">
             {totalExamCount} {totalExamCount === 1 ? 'prova' : 'provas'}
           </span>
+          {totalQuestionCount > 0 && (
+            <span className="text-[10px] text-muted-foreground/40 tabular-nums">
+              · {totalQuestionCount} {totalQuestionCount === 1 ? 'questão' : 'questões'}
+            </span>
+          )}
           {childGroups.length > 0 && (
             <span className="text-[10px] text-muted-foreground/40">· {childGroups.length} {childGroups.length === 1 ? 'subgrupo' : 'subgrupos'}</span>
           )}
@@ -377,6 +390,12 @@ export function ExamGroup({
             <Button variant="ghost" size="sm" onClick={() => { onCreateSubgroup(group._id); setShowActions(false) }}
               disabled={isDeleting} className="h-8 text-xs gap-1.5 text-muted-foreground hover:text-foreground rounded-xl">
               <FolderPlus className="h-3.5 w-3.5" /> Subgrupo
+            </Button>
+          )}
+          {onMoveGroup && (
+            <Button variant="ghost" size="sm" onClick={() => { onMoveGroup(group); setShowActions(false) }}
+              disabled={isDeleting} className="h-8 text-xs gap-1.5 text-muted-foreground hover:text-foreground rounded-xl">
+              <FolderInput className="h-3.5 w-3.5" /> Mover para…
             </Button>
           )}
           {isAdmin && exams.length > 0 && (
@@ -502,6 +521,7 @@ export function ExamGroup({
                     onDeleteGroup={onDeleteGroup}
                     onEditGroup={onEditGroup}
                     onCreateSubgroup={onCreateSubgroup}
+                    onMoveGroup={onMoveGroup}
                     onReorderExam={onReorderExam}
                     onSortGroup={onSortGroup}
                     onDownloadPDF={onDownloadPDF}

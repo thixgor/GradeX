@@ -8,6 +8,7 @@ import { CoverImage } from '@/components/cover-image'
 import {
   MoreHorizontal,
   FolderPlus,
+  FolderInput,
   Edit2,
   Trash2,
   Share2,
@@ -35,6 +36,8 @@ interface GroupCardData {
 interface GroupCardProps {
   group: GroupCardData
   examCount: number
+  /** Questões somadas do ramo inteiro. Omitir esconde a metade da frase, não zera a contagem. */
+  questionCount?: number
   subgroupCount: number
   directPracticeExams: Exam[]
   canManage: boolean
@@ -45,6 +48,8 @@ interface GroupCardProps {
   onEditGroup?: (group: any) => void
   onDeleteGroup?: (groupId: string) => Promise<void>
   onCreateSubgroup?: (parentGroupId: string) => void
+  /** Abre o seletor de destino. Ausente = quem vê este cartão não move grupos. */
+  onMoveGroup?: (group: GroupCardData) => void
   onSortGroup?: (groupId: string) => void
   onGroupDownloadPDF?: (exams: Exam[], type: 'exam' | 'with-answers' | 'gabarito', groupName: string) => void
 }
@@ -53,6 +58,7 @@ interface GroupCardProps {
 export function GroupCard({
   group,
   examCount,
+  questionCount,
   subgroupCount,
   directPracticeExams,
   canManage,
@@ -63,6 +69,7 @@ export function GroupCard({
   onEditGroup,
   onDeleteGroup,
   onCreateSubgroup,
+  onMoveGroup,
   onSortGroup,
   onGroupDownloadPDF,
 }: GroupCardProps) {
@@ -178,6 +185,14 @@ export function GroupCard({
                       <FolderPlus className="h-3.5 w-3.5" /> Subgrupo
                     </button>
                   )}
+                  {onMoveGroup && (
+                    <button
+                      onClick={() => { onMoveGroup(group); setShowActions(false) }}
+                      className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs hover:bg-muted/60"
+                    >
+                      <FolderInput className="h-3.5 w-3.5" /> Mover para…
+                    </button>
+                  )}
                   {isAdmin && (
                     <button
                       onClick={handleSortAlpha}
@@ -226,8 +241,16 @@ export function GroupCard({
             )}
             <div className="flex-1" />
             <div className="flex items-center justify-between gap-2 pt-1">
-              <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground/60">
+              <div className="flex flex-wrap items-center gap-1.5 text-[10px] text-muted-foreground/60">
                 <span className="tabular-nums">{examCount} {examCount === 1 ? 'prova' : 'provas'}</span>
+                {/* Questões antes de subgrupos: é o número que diz o tamanho do
+                    treino, e o que a pessoa compara entre uma pasta e outra. */}
+                {questionCount !== undefined && questionCount > 0 && (
+                  <>
+                    <span className="opacity-40">·</span>
+                    <span className="tabular-nums">{questionCount} {questionCount === 1 ? 'questão' : 'questões'}</span>
+                  </>
+                )}
                 {subgroupCount > 0 && (
                   <>
                     <span className="opacity-40">·</span>

@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { FolderOpen, FolderPlus, Home, X, ChevronRight } from 'lucide-react'
+import { FolderOpen, FolderPlus, Home, X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
@@ -24,84 +24,30 @@ interface ExamContextMenuProps {
   groups: any[]
   onMoveToGroup: (groupId: string | null) => Promise<void>
   onCreateGroup?: (name: string, type: 'personal' | 'general', parentGroupId?: string | null, category?: string, course?: string) => Promise<void>
+  /**
+   * Abre o seletor de destino (`MoverParaDialog`).
+   *
+   * Antes daqui saía um submenu com a árvore INTEIRA aberta, um item por grupo.
+   * Com dezenas de subgrupos, escolher o destino virava rolar centenas de
+   * linhas dentro de uma caixinha — e "P1" aparecia igual em quatro cursos.
+   */
+  onAbrirSeletor?: () => void
   position: { x: number; y: number } | null
   onClose: () => void
 }
 
-function GroupTree({
-  groups,
-  parentId,
-  depth,
-  isLoading,
-  onSelect,
-}: {
-  groups: any[]
-  parentId: string | null
-  depth: number
-  isLoading: boolean
-  onSelect: (groupId: string) => void
-}) {
-  const rootGroups = groups.filter(g => (g.parentGroupId || null) === parentId)
-
-  return (
-    <>
-      {rootGroups.map((group) => {
-        const children = groups.filter(g => g.parentGroupId === group._id)
-        const hasChildren = children.length > 0
-
-        return (
-          <div key={group._id}>
-            <button
-              onClick={() => onSelect(group._id)}
-              disabled={isLoading}
-              className="w-full px-4 py-2 text-left text-sm hover:bg-muted disabled:opacity-50 flex items-center gap-2 transition-colors"
-              style={{ paddingLeft: `${16 + depth * 16}px` }}
-            >
-              <span
-                className="w-3 h-3 rounded-full flex-shrink-0"
-                style={{ backgroundColor: group.color || '#3B82F6' }}
-              />
-              <span className="flex-1 truncate">
-                {group.icon && group.icon !== '📁' ? `${group.icon} ` : ''}{group.name}
-              </span>
-              {group.type === 'general' && (
-                <span className="text-[10px] text-muted-foreground flex-shrink-0">Geral</span>
-              )}
-              {hasChildren && (
-                <ChevronRight className="h-3 w-3 text-muted-foreground/50 flex-shrink-0" />
-              )}
-            </button>
-            {hasChildren && (
-              <GroupTree
-                groups={groups}
-                parentId={group._id}
-                depth={depth + 1}
-                isLoading={isLoading}
-                onSelect={onSelect}
-              />
-            )}
-          </div>
-        )
-      })}
-    </>
-  )
-}
-
 export function ExamContextMenu({
-  examId,
   examGroupId,
-  isPersonalExam,
-  createdBy,
   currentUserId,
   userRole,
   groups,
   onMoveToGroup,
   onCreateGroup,
+  onAbrirSeletor,
   position,
   onClose,
 }: ExamContextMenuProps) {
   const [isLoading, setIsLoading] = useState(false)
-  const [showGroupSubmenu, setShowGroupSubmenu] = useState(false)
   const [showCreateGroupModal, setShowCreateGroupModal] = useState(false)
   const [newGroupName, setNewGroupName] = useState('')
   const [newGroupType, setNewGroupType] = useState<'personal' | 'general'>('personal')
@@ -130,7 +76,6 @@ export function ExamContextMenu({
   if (!position) return null
 
   // Determinar permissões
-  const isCreator = createdBy === currentUserId
   const isAdmin = userRole === 'admin'
   const isInGeneralGroup = examGroupId ? groups.find(g => g._id === examGroupId)?.type === 'general' : false
 
@@ -150,16 +95,6 @@ export function ExamContextMenu({
     }
     return false
   })
-
-  const handleMoveToGroup = async (groupId: string) => {
-    setIsLoading(true)
-    try {
-      await onMoveToGroup(groupId)
-      onClose()
-    } finally {
-      setIsLoading(false)
-    }
-  }
 
   const handleMoveToMainPage = async () => {
     setIsLoading(true)
@@ -221,43 +156,14 @@ export function ExamContextMenu({
         <div className="py-1">
           {/* Mover para Grupo */}
           {canMoveFromGroup && (
-            <div 
-              className="relative"
-              onMouseEnter={() => setShowGroupSubmenu(true)}
-              onMouseLeave={() => setShowGroupSubmenu(false)}
+            <button
+              onClick={() => { onAbrirSeletor?.(); onClose() }}
+              disabled={isLoading}
+              className="w-full px-4 py-2 text-left text-sm hover:bg-muted disabled:opacity-50 flex items-center gap-2 transition-colors"
             >
-              <button
-                disabled={isLoading}
-                className="w-full px-4 py-2 text-left text-sm hover:bg-muted disabled:opacity-50 flex items-center gap-2 transition-colors"
-              >
-                <FolderOpen className="h-4 w-4" />
-                Mover para Grupo
-              </button>
-
-              {/* Submenu de Grupos */}
-              {showGroupSubmenu && (
-                <div
-                  className="absolute left-full top-0 ml-0 bg-background border border-muted rounded-lg shadow-lg min-w-56 z-50"
-                  style={{ marginLeft: '-4px' }}
-                >
-                  <div className="py-1 max-h-80 overflow-y-auto">
-                    {availableGroups.length === 0 ? (
-                      <div className="px-4 py-2 text-xs text-muted-foreground">
-                        Nenhum grupo disponível
-                      </div>
-                    ) : (
-                      <GroupTree
-                        groups={availableGroups}
-                        parentId={null}
-                        depth={0}
-                        isLoading={isLoading}
-                        onSelect={handleMoveToGroup}
-                      />
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
+              <FolderOpen className="h-4 w-4" />
+              Mover para…
+            </button>
           )}
 
           {/* Mover para Página Principal */}

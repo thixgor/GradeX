@@ -8,6 +8,7 @@ import {
   normalizeImageUrl,
   validateStringInput
 } from '@/lib/api-security'
+import { podeMoverGrupo, type GrupoNaArvore } from '@/lib/provas/arvore-grupos'
 
 export const dynamic = 'force-dynamic'
 
@@ -78,6 +79,45 @@ export async function PUT(
     // Campos de categoria/curso (apenas admin)
     if (body.category !== undefined && session.role === 'admin') updateData.category = body.category
     if (body.course !== undefined && session.role === 'admin') updateData.course = body.course
+
+    /*
+     * Mover o grupo para dentro de outro (ou para a raiz).
+     *
+     * Trocar `parentGroupId` move o ramo inteiro de uma vez: as provas apontam
+     * para os grupos, não para o caminho, então elas vão junto sem que nada
+     * seja copiado nem reescrito.
+     *
+     * A validação carrega a árvore toda porque a recusa que importa — pôr um
+     * grupo dentro do próprio descendente — não é decidível olhando só os dois
+     * documentos. Um ciclo aqui não dá erro em lugar nenhum: o grupo e tudo
+     * abaixo dele simplesmente somem da tela, já que deixam de ser alcançáveis
+     * a partir da raiz.
+     */
+    if (body.parentGroupId !== undefined) {
+      const destinoId = body.parentGroupId ? String(body.parentGroupId) : null
+      if (destinoId && !isValidObjectId(destinoId)) {
+        return NextResponse.json({ error: 'Grupo de destino inválido' }, { status: 400 })
+      }
+
+      const todos = await groupsCollection.find({}).toArray()
+      const arvore: GrupoNaArvore[] = todos.map((g: any) => ({
+        _id: String(g._id),
+        name: g.name,
+        parentGroupId: g.parentGroupId ? String(g.parentGroupId) : null,
+        type: g.type,
+        createdBy: g.createdBy,
+      }))
+
+      const veredito = podeMoverGrupo(arvore, id, destinoId, {
+        id: session.userId,
+        ehAdmin: session.role === 'admin',
+      })
+      if (!veredito.ok) {
+        return NextResponse.json({ error: veredito.motivo }, { status: 409 })
+      }
+
+      updateData.parentGroupId = destinoId
+    }
 
     await groupsCollection.updateOne(
       { _id: new ObjectId(id) },
