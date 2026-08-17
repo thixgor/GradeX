@@ -125,6 +125,14 @@ const publicRoutes = [
 
 // Prefixos públicos
 const publicPrefixes = [
+  // Verificação de certificado (§38). Precisa abrir sem conta: o valor do
+  // documento está em um TERCEIRO — instituição, empregador — conseguir
+  // conferi-lo. Exigir login transformaria o certificado num enfeite interno.
+  // A rota devolve só nome, curso, data e percentual; nada de e-mail ou id.
+  // A EMISSÃO (POST) na mesma rota continua exigindo sessão — ela valida
+  // internamente com `secureApiEndpoint`, como as rotas de serial key.
+  '/aulas/certificado/',
+  '/api/aulas/certificado',
   '/lead/',
   '/api/auth/',
   '/api/webhooks/mercadopago',

@@ -38,7 +38,7 @@ export async function PATCH(
     }
 
     const body = await request.json()
-    const { nome, descricao, imagem, oculta, ordem } = body
+    const { nome, descricao, imagem, oculta, ordem, certificado } = body
 
     const setoresCollection = db.collection('aulas_setores')
 
@@ -51,6 +51,24 @@ export async function PATCH(
     if (imagem !== undefined) updateData.imagem = imagem
     if (oculta !== undefined) updateData.oculta = oculta
     if (ordem !== undefined) updateData.ordem = ordem
+
+    // Certificado do curso (§38). `null` desliga. A régua é validada aqui para
+    // o documento nunca guardar um percentual fora da faixa — o que faria
+    // `regrasDoCertificado` cair no padrão e o curso passar a exigir 100% sem
+    // ninguém ter pedido.
+    if (certificado !== undefined) {
+      if (!certificado || certificado.habilitado !== true) {
+        updateData.certificado = null
+      } else {
+        const bruto = Number(certificado.percentualMinimo)
+        updateData.certificado = {
+          habilitado: true,
+          percentualMinimo:
+            Number.isFinite(bruto) && bruto >= 1 && bruto <= 100 ? Math.round(bruto) : 100,
+          textoAssinatura: String(certificado.textoAssinatura || '').slice(0, 160) || undefined,
+        }
+      }
+    }
 
     const result = await setoresCollection.findOneAndUpdate(
       { _id: new ObjectId(id) },

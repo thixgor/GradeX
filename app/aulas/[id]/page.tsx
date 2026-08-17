@@ -9,6 +9,7 @@ import {
   Check,
   CheckCircle2,
   ChevronRight,
+  ClipboardCheck,
   Clock,
   Focus,
   ListVideo,
@@ -52,6 +53,7 @@ interface Aula {
   linkOuEmbed?: string
   setorId?: string
   moduloId?: string
+  avaliacao?: { examId: string; titulo?: string; obrigatoria?: boolean } | null
   capitulos?: Array<{ segundo: number; titulo: string }> | null
   transcricao?: Array<{ segundo: number; fim?: number; texto: string }> | null
   pdfs?: Array<{ nome: string; url: string; tamanho: number }>
@@ -463,6 +465,32 @@ function AssistirAulaConteudo() {
           </aside>
         ) : null}
       </div>
+
+      {/* Avaliação (§39): a aula aponta para uma prova que já existe no sistema
+          de provas, em vez de a plataforma ganhar um segundo motor de quiz. */}
+      {aula.avaliacao?.examId && !bloqueada && !modoFoco ? (
+        <section className="mt-8 rounded-xl border border-primary/25 bg-primary/5 p-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="min-w-0">
+              <h2 className="flex items-center gap-2 text-sm font-bold">
+                <ClipboardCheck className="h-4 w-4 text-primary" />
+                {aula.avaliacao.titulo || 'Avaliação desta aula'}
+              </h2>
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                {aula.avaliacao.obrigatoria
+                  ? 'Necessária para concluir a aula.'
+                  : 'Teste o que você acabou de ver.'}
+              </p>
+            </div>
+            <Link
+              href={`/exam/${aula.avaliacao.examId}`}
+              className="inline-flex h-9 flex-none items-center rounded-lg bg-primary px-4 text-xs font-bold text-primary-foreground transition hover:brightness-110"
+            >
+              Fazer avaliação
+            </Link>
+          </div>
+        </section>
+      ) : null}
 
       {/* Conteúdo relacionado (§31): a curadoria que o índice do curso não faz,
           porque atravessa módulo e curso — "antes desta, veja gasometria". */}

@@ -249,6 +249,30 @@ export async function PATCH(
     }
 
     /*
+     * Avaliação da aula (§39) — por REFERÊNCIA a uma prova existente.
+     *
+     * A plataforma já tem um sistema de provas completo (banco de questões,
+     * correção, tempo, proctoring). Construir um motor de quiz dentro de Aulas
+     * criaria um segundo sistema para o mesmo problema, com metade dos recursos
+     * e o dobro da manutenção — e as questões teriam de ser cadastradas duas
+     * vezes. Aqui a aula só aponta para a prova, como já faz com /materiais (§6).
+     */
+    if ('avaliacao' in updateData) {
+      const bruto = updateData.avaliacao
+      const examId = String(bruto?.examId || '')
+      updateData.avaliacao = examId && isValidObjectId(examId)
+        ? {
+            examId,
+            titulo: String(bruto?.titulo || '').slice(0, 160),
+            // Obrigatória bloqueia a conclusão da aula até a prova ser feita.
+            // Fica em falso por padrão: uma trava ligada sem querer prenderia
+            // o aluno no meio do curso.
+            obrigatoria: bruto?.obrigatoria === true,
+          }
+        : null
+    }
+
+    /*
      * Conteúdo relacionado (§31).
      *
      * Uma lista de ids escolhida à mão. Automático por "mesmo módulo" seria
@@ -297,6 +321,7 @@ export async function PATCH(
       'capitulos',
       'transcricao',
       'relacionadas',
+      'avaliacao',
     ])
 
     // Remover campos undefined e null

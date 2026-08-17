@@ -16,6 +16,7 @@ import { useFavoritosDeAula } from '@/components/aulas/use-favoritos-aula'
 import { CursoAberto, type Ramo } from '@/components/aulas/curso-conteudo'
 import { FaixaModoAluno } from '@/components/aulas/faixa-modo-aluno'
 import { MuralDeAvisos } from '@/components/aulas/mural-de-avisos'
+import { CartaoDeCertificado } from '@/components/aulas/cartao-certificado'
 import { achatarAulas, montarRamos } from '@/lib/aulas/ramos'
 import { comModo, lerModo, PARAMETRO_MODO } from '@/lib/aulas/modo-visualizacao'
 
@@ -63,6 +64,7 @@ interface Curso {
   nome: string
   descricao?: string
   imagem?: string
+  certificado?: { habilitado?: boolean; percentualMinimo?: number } | null
 }
 
 function Conteudo() {
@@ -230,6 +232,15 @@ function Conteudo() {
         {/* Os avisos vêm antes da lista: um recado que aparece depois das aulas
             chega tarde — a pessoa já clicou (§36). */}
         <MuralDeAvisos cursoId={cursoId} podeGerenciar={podeGerenciar} />
+
+        {/* O certificado aparece antes de ser emitível, mostrando o que falta:
+            é aí que ele vira motivo para terminar, e não troféu (§38). */}
+        <CartaoDeCertificado
+          cursoId={cursoId}
+          curso={curso}
+          progresso={progresso}
+          podeGerenciar={podeGerenciar}
+        />
 
         <CursoAberto ramos={ramos} />
       </div>
