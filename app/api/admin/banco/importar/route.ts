@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
+import { paraCodigo } from '@/lib/banco/hierarquia'
 import {
   BancoQuestao,
   BancoQuestaoImportacao,
@@ -278,70 +279,34 @@ export async function POST(request: NextRequest) {
       const q = questoesParsed[i]
 
       try {
-        let periodo: any = null
-        let modulo: any = null
-
-        // Primeiro, tentar encontrar o módulo pelo nome (sem filtrar por período)
-        // Se o módulo já existe, usamos o período dele
-        const moduloExistente = await db.collection('banco_modulos').findOne({
+        /*
+         * Hierarquia sem período (ver lib/banco/hierarquia.ts).
+         *
+         * Antes, um módulo novo só podia ser criado se a questão trouxesse
+         * `PERÍODO:` — importar um arquivo sem essa linha falhava com "Módulo X
+         * não existe e nenhum período foi especificado", que é um erro sobre um
+         * nível que o produto nem mostra mais. Agora o módulo é criado direto.
+         *
+         * A linha `PERÍODO:` continua sendo aceita no arquivo e é ignorada, para
+         * que material antigo não precise ser reescrito.
+         */
+        let modulo: any = await db.collection('banco_modulos').findOne({
           nome: { $regex: `^${q.modulo}$`, $options: 'i' }
         })
 
-        if (moduloExistente) {
-          // Módulo já existe, usar o período dele
-          modulo = moduloExistente
-          periodo = await db.collection('banco_periodos').findOne({ _id: moduloExistente.periodoId })
-        } else if (q.periodo) {
-          // Módulo não existe e período foi fornecido, buscar ou criar período
-          periodo = await db.collection('banco_periodos').findOne({
-            nome: { $regex: `^${q.periodo}$`, $options: 'i' }
-          })
-
-          if (!periodo) {
-            const codigo = q.periodo.toLowerCase()
-              .normalize('NFD')
-              .replace(/[\u0300-\u036f]/g, '')
-              .replace(/[^a-z0-9]+/g, '-')
-              .replace(/^-|-$/g, '')
-
-            const ultimoPeriodo = await db.collection('banco_periodos')
-              .findOne({}, { sort: { ordem: -1 } })
-
-            const result = await db.collection('banco_periodos').insertOne({
-              nome: q.periodo,
-              codigo,
-              ordem: (ultimoPeriodo?.ordem ?? 0) + 1,
-              createdAt: new Date(),
-              updatedAt: new Date()
-            })
-            periodo = { _id: result.insertedId, nome: q.periodo }
-          }
-        } else {
-          // Módulo não existe e período não foi fornecido - erro
-          errosImportacao.push({ linha: i + 1, mensagem: `Módulo "${q.modulo}" não existe e nenhum período foi especificado` })
-          continue
-        }
-
-        // Criar módulo se não existe
         if (!modulo) {
-          const codigo = q.modulo.toLowerCase()
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '')
-            .replace(/[^a-z0-9]+/g, '-')
-            .replace(/^-|-$/g, '')
-
+          const codigo = paraCodigo(q.modulo)
           const ultimoModulo = await db.collection('banco_modulos')
-            .findOne({ periodoId: periodo._id }, { sort: { ordem: -1 } })
+            .findOne({}, { sort: { ordem: -1 } })
 
           const result = await db.collection('banco_modulos').insertOne({
-            periodoId: periodo._id,
             nome: q.modulo,
             codigo,
             ordem: (ultimoModulo?.ordem ?? 0) + 1,
             createdAt: new Date(),
             updatedAt: new Date()
           })
-          modulo = { _id: result.insertedId, nome: q.modulo, periodoId: periodo._id }
+          modulo = { _id: result.insertedId, nome: q.modulo }
         }
 
         // Buscar ou criar tópico
@@ -351,11 +316,7 @@ export async function POST(request: NextRequest) {
         })
 
         if (!topico) {
-          const codigo = q.topico.toLowerCase()
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '')
-            .replace(/[^a-z0-9]+/g, '-')
-            .replace(/^-|-$/g, '')
+          const codigo = paraCodigo(q.topico)
 
           const ultimoTopico = await db.collection('banco_topicos')
             .findOne({ moduloId: modulo._id }, { sort: { ordem: -1 } })
@@ -380,11 +341,7 @@ export async function POST(request: NextRequest) {
           })
 
           if (!subtopico) {
-            const codigo = q.subtopico.toLowerCase()
-              .normalize('NFD')
-              .replace(/[\u0300-\u036f]/g, '')
-              .replace(/[^a-z0-9]+/g, '-')
-              .replace(/^-|-$/g, '')
+            const codigo = paraCodigo(q.subtopico!)
 
             const ultimoSubtopico = await db.collection('banco_subtopicos')
               .findOne({ topicoId: topico._id }, { sort: { ordem: -1 } })
@@ -404,7 +361,6 @@ export async function POST(request: NextRequest) {
         // Criar questão
         const novaQuestao: Omit<BancoQuestao, '_id'> = {
           tipo: q.tipo,
-          periodoId: periodo._id,
           moduloId: modulo._id,
           topicoId: topico._id,
           subtopicoid: subtopico?._id,

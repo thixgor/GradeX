@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
-import { User } from '@/lib/types'
 import { BancoQuestao, BancoQuestaoComHierarquia } from '@/lib/types/banco-questoes'
-import { isPlusAccount } from '@/lib/account-tier'
+import { lerAcessoAoBanco } from '@/lib/banco/acesso-servidor'
+import { jaDesbloqueada, restantes } from '@/lib/banco/gratuito'
 
 export const dynamic = 'force-dynamic'
 
@@ -26,29 +26,34 @@ export async function GET(
 
     const db = await getDb()
 
-    // Verificar se usuário é premium ou admin
-    const user = await db.collection<User>('users').findOne({ _id: new ObjectId(session.userId) })
-
-    if (!user) {
+    const acesso = await lerAcessoAoBanco(db, session.userId)
+    if (!acesso) {
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
     }
 
-    const isAdmin = user.role === 'admin'
-    const isPremiumOrTrial = isPlusAccount(user.accountType) || user.accountType === 'trial'
-    const isFreeUser = !isAdmin && !isPremiumOrTrial
-
-    // Verificar acesso para usuários gratuitos
-    if (isFreeUser) {
-      // Verificar se a questão está na lista de questões permitidas para o usuário
-      const freeQuestions = user.freeQuestionsByPeriod || {}
-      const allAllowedQuestionIds = Object.values(freeQuestions).flat()
-
-      if (!allAllowedQuestionIds.includes(id)) {
-        return NextResponse.json({
-          error: 'Acesso restrito a assinantes Plus+',
-          requiresPlus: true
-        }, { status: 403 })
-      }
+    /*
+     * Questão fechada não devolve conteúdo — devolve o CONVITE para abrir.
+     *
+     * O 403 aqui não é um beco: ele diz quantas questões gratuitas ainda
+     * existem, e a tela oferece o botão que gasta uma delas (POST em
+     * `/abrir`). Antes, uma questão fora do sorteio do período respondia
+     * apenas "Acesso restrito a assinantes Plus+", que é uma porta sem
+     * maçaneta para quem estava justamente avaliando se vale assinar.
+     */
+    if (acesso.ehGratuito && !jaDesbloqueada(acesso.gratuito, id)) {
+      const sobrando = restantes(acesso.gratuito)
+      return NextResponse.json(
+        {
+          error: sobrando > 0
+            ? 'Esta questão ainda não foi aberta'
+            : 'Você já usou suas questões gratuitas',
+          bloqueada: true,
+          podeAbrir: sobrando > 0,
+          requiresPlus: sobrando === 0,
+          gratuito: { restantes: sobrando, limite: acesso.gratuito.limite },
+        },
+        { status: 403 },
+      )
     }
 
     // Buscar questão com hierarquia
@@ -136,7 +141,15 @@ export async function GET(
       return NextResponse.json({ error: 'Questão não encontrada' }, { status: 404 })
     }
 
-    return NextResponse.json({ questao: questoes[0] })
+    return NextResponse.json(
+      {
+        questao: questoes[0],
+        gratuito: acesso.ehGratuito
+          ? { restantes: restantes(acesso.gratuito), limite: acesso.gratuito.limite }
+          : undefined,
+      },
+      { headers: { 'Cache-Control': 'private, no-store' } },
+    )
   } catch (error) {
     console.error('Erro ao buscar questão:', error)
     return NextResponse.json({ error: 'Erro ao buscar questão' }, { status: 500 })

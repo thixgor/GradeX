@@ -119,8 +119,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Tipo inválido' }, { status: 400 })
     }
 
-    if (!body.periodoId || !body.moduloId || !body.topicoId) {
-      return NextResponse.json({ error: 'Período, módulo e tópico são obrigatórios' }, { status: 400 })
+    // Período saiu da hierarquia (ver lib/banco/hierarquia.ts): módulo é o topo.
+    if (!body.moduloId || !body.topicoId) {
+      return NextResponse.json({ error: 'Módulo e tópico são obrigatórios' }, { status: 400 })
     }
 
     if (!body.enunciado || body.enunciado.trim() === '') {
@@ -145,11 +146,6 @@ export async function POST(request: NextRequest) {
     const db = await getDb()
 
     // Verificar se hierarquia existe
-    const periodo = await db.collection('banco_periodos').findOne({ _id: new ObjectId(body.periodoId) })
-    if (!periodo) {
-      return NextResponse.json({ error: 'Período não encontrado' }, { status: 404 })
-    }
-
     const modulo = await db.collection('banco_modulos').findOne({ _id: new ObjectId(body.moduloId) })
     if (!modulo) {
       return NextResponse.json({ error: 'Módulo não encontrado' }, { status: 404 })
@@ -162,7 +158,8 @@ export async function POST(request: NextRequest) {
 
     const novaQuestao: Omit<BancoQuestao, '_id'> = {
       tipo: body.tipo,
-      periodoId: new ObjectId(body.periodoId),
+      // Só é gravado quando vier: questão nova não tem período nenhum.
+      ...(body.periodoId ? { periodoId: new ObjectId(body.periodoId) } : {}),
       moduloId: new ObjectId(body.moduloId),
       topicoId: new ObjectId(body.topicoId),
       subtopicoid: body.subtopicoId ? new ObjectId(body.subtopicoId) : undefined,

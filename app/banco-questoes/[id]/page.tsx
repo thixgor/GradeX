@@ -38,6 +38,7 @@ import {
   Flag,
   Copy,
   ClipboardCheck,
+  Lock,
   Star
 } from 'lucide-react'
 import { BancoQuestaoComHierarquia, BancoListaUsuario } from '@/lib/types/banco-questoes'
@@ -57,6 +58,8 @@ export default function QuestaoPage() {
   const [loading, setLoading] = useState(true)
   const [questao, setQuestao] = useState<BancoQuestaoComHierarquia | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [bloqueio, setBloqueio] = useState<{ podeAbrir: boolean; restantes: number; limite: number } | null>(null)
+  const [abrindo, setAbrindo] = useState(false)
 
   // Estado da resolução
   const [alternativaSelecionada, setAlternativaSelecionada] = useState<string | null>(null)
@@ -187,9 +190,21 @@ export default function QuestaoPage() {
 
   async function loadQuestao() {
     try {
-      const res = await fetch(`/api/banco/questoes/${id}`)
+      const res = await fetch(`/api/banco/questoes/${id}`, { cache: 'no-store' })
       if (!res.ok) {
-        const data = await res.json()
+        const data = await res.json().catch(() => ({}))
+        // Questão fechada para quem está no plano gratuito não é erro: é um
+        // convite. O servidor diz quantas questões grátis sobraram, e a tela
+        // oferece gastar uma — em vez do beco "Acesso restrito a assinantes",
+        // que era a resposta para quem estava justamente avaliando se assina.
+        if (data.bloqueada) {
+          setBloqueio({
+            podeAbrir: data.podeAbrir === true,
+            restantes: data.gratuito?.restantes ?? 0,
+            limite: data.gratuito?.limite ?? 0,
+          })
+          return
+        }
         setError(data.error || 'Erro ao carregar questão')
         return
       }
@@ -366,6 +381,57 @@ ${respostaAluno}`
       <AppShell headerTitle="Questão">
         <div className="flex items-center justify-center h-[60vh]">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </AppShell>
+    )
+  }
+
+  if (bloqueio) {
+    return (
+      <AppShell headerTitle="Questão">
+        <div className="container mx-auto max-w-lg px-4 py-12">
+          <div className="rounded-2xl border border-border bg-card p-6 text-center">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10">
+              <Lock className="h-6 w-6 text-primary" />
+            </div>
+            <h1 className="text-lg font-bold">
+              {bloqueio.podeAbrir ? 'Abrir esta questão?' : 'Suas questões gratuitas acabaram'}
+            </h1>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+              {bloqueio.podeAbrir
+                ? `Você tem ${bloqueio.restantes} de ${bloqueio.limite} questões gratuitas. Abrir esta usa uma delas — e ela fica sua para sempre, com a resposta comentada.`
+                : 'As questões que você já abriu continuam disponíveis, com a resposta comentada. Para ver o banco inteiro, assine o Plus+.'}
+            </p>
+
+            <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
+              {bloqueio.podeAbrir ? (
+                <Button
+                  disabled={abrindo}
+                  onClick={async () => {
+                    setAbrindo(true)
+                    try {
+                      const res = await fetch(`/api/banco/questoes/${id}/abrir`, { method: 'POST' })
+                      if (res.ok) {
+                        setBloqueio(null)
+                        setLoading(true)
+                        await loadQuestao()
+                      }
+                    } finally {
+                      setAbrindo(false)
+                    }
+                  }}
+                >
+                  {abrindo ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                  Abrir questão
+                </Button>
+              ) : (
+                <Button onClick={() => router.push('/loja')}>Assinar o Plus+</Button>
+              )}
+              <Button variant="outline" onClick={() => router.push('/banco-questoes')}>
+                Voltar ao banco
+              </Button>
+            </div>
+          </div>
         </div>
       </AppShell>
     )

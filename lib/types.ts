@@ -334,8 +334,13 @@ export interface User {
   // Campos de autenticação social
   googleId?: string // ID do Google (sub)
   profilePicture?: string // URL da foto de perfil
-  // Banco de questões gratuito - questões fixas por período
-  freeQuestionsByPeriod?: { [periodoId: string]: string[] } // Mapa: periodoId -> array de IDs de questões (5 questões por período)
+  // Banco de questões gratuito — modelo ANTIGO: 5 questões sorteadas por período.
+  // Continua sendo lido (as questões dele entram como já desbloqueadas) e nunca
+  // mais é escrito. Ver lib/banco/gratuito.ts.
+  freeQuestionsByPeriod?: { [periodoId: string]: string[] }
+  // Banco de questões gratuito — modelo atual: a pessoa ESCOLHE quais abrir,
+  // até o limite, e o que abriu fica aberto para sempre.
+  bancoQuestoesLiberadas?: string[]
   // Retenção: último envio do e-mail de revisão espaçada (evita reenvio na janela mínima)
   lastSpacedReviewEmailAt?: Date
   // Recuperação de senha

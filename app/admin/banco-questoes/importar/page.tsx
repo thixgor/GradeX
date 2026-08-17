@@ -24,7 +24,6 @@ import {
 import { BancoImportacaoResult } from '@/lib/types/banco-questoes'
 
 const EXEMPLO_TXT = `[OBJETIVA]
-PERÍODO: SOI I
 MÓDULO: Introdução à Medicina
 TÓPICO: Anatomia Básica
 ENUNCIADO: Qual estrutura anatômica é responsável pela condução do impulso nervoso do coração?\\nEsta é uma pergunta importante sobre fisiologia cardíaca.\\nPense bem antes de responder!
@@ -193,7 +192,7 @@ export default function AdminImportarPage() {
                 <div>
                   <h4 className="font-medium mb-2">Campos opcionais:</h4>
                   <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
-                    <li><code>PERÍODO:</code> - Nome do período (opcional se o módulo já existir)</li>
+                    <li><code>PERÍODO:</code> - ignorado. O nível saiu da organização; a linha continua sendo aceita para não quebrar arquivo antigo</li>
                     <li><code>SUBTÓPICO:</code> - Nome do subtópico</li>
                     <li><code>IMAGEM:</code> ou <code>IMG:</code> - URL da imagem (Imgur ou qualquer URL de imagem)</li>
                     <li><code>EXPLICAÇÃO:</code> - Explicação da resposta</li>

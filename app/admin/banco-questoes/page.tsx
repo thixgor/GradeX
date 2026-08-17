@@ -19,6 +19,7 @@ import {
   CheckCircle2,
   Loader2,
   ArrowRightLeft,
+  GraduationCap,
   AlertCircle
 } from 'lucide-react'
 import { BancoEstatisticasAdmin } from '@/lib/types/banco-questoes'
@@ -91,7 +92,7 @@ export default function AdminBancoQuestoes() {
   const adminSections = [
     {
       title: 'Gerenciar Hierarquia',
-      description: 'Criar e editar períodos, módulos, tópicos e subtópicos.',
+      description: 'Criar e editar módulos, tópicos e subtópicos.',
       icon: FolderTree,
       href: '/admin/banco-questoes/hierarquia',
       color: 'from-blue-500 to-cyan-500'
@@ -109,6 +110,13 @@ export default function AdminBancoQuestoes() {
       icon: Upload,
       href: '/admin/banco-questoes/importar',
       color: 'from-purple-500 to-pink-500'
+    },
+    {
+      title: 'Importar das Provas',
+      description: 'Trazer as questões das Provas da Faculdade, com gabarito e comentário.',
+      icon: GraduationCap,
+      href: '/admin/banco-questoes/importar-provas',
+      color: 'from-indigo-500 to-violet-500'
     },
     {
       title: 'Extrair Questões',
@@ -205,13 +213,16 @@ export default function AdminBancoQuestoes() {
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">Períodos</CardTitle>
+                <CardTitle className="text-sm font-medium">Objetivas</CardTitle>
                 <FolderTree className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{estatisticas.questoesPorPeriodo.length}</div>
+                {/* Era "Períodos". O nível saiu do produto (ver
+                    lib/banco/hierarquia.ts) e o cartão passou a mostrar o que
+                    de fato se acompanha: a divisão entre objetiva e discursiva. */}
+                <div className="text-2xl font-bold">{estatisticas.questoesPorTipo.objetiva}</div>
                 <p className="text-xs text-muted-foreground">
-                  com questões cadastradas
+                  e {estatisticas.questoesPorTipo.discursiva} discursivas
                 </p>
               </CardContent>
             </Card>

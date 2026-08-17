@@ -1,875 +1,398 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import Link from 'next/link'
+import {
+  ArrowLeft,
+  ChevronRight,
+  FolderTree,
+  Loader2,
+  Pencil,
+  Plus,
+  Search,
+  Trash2,
+  X,
+} from 'lucide-react'
+import { AppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { ThemeToggle } from '@/components/theme-toggle'
-import { LogoLoading } from '@/components/logo-loading'
-import { BanChecker } from '@/components/ban-checker'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
-import {
-  FolderTree,
-  ArrowLeft,
-  Plus,
-  Pencil,
-  Trash2,
-  Loader2,
-  ArrowRight
-} from 'lucide-react'
-import {
-  BancoPeriodoComContagem,
-  BancoModuloComContagem,
-  BancoTopicoComContagem,
-  BancoSubtopicoComContagem
-} from '@/lib/types/banco-questoes'
+import { cn } from '@/lib/utils'
+import { filtrarArvore, montarArvore, type ModuloDaArvore } from '@/lib/banco/hierarquia'
 
-export default function AdminHierarquiaPage() {
-  const router = useRouter()
-  const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState('periodos')
+/**
+ * Gerenciar a hierarquia do Banco de Questões.
+ *
+ * A tela anterior tinha quatro abas — Períodos, Módulos, Tópicos, Subtópicos —
+ * e cada aba só funcionava depois de escolher o item da aba anterior num
+ * `<select>`. Para renomear um subtópico era preciso lembrar em que período
+ * ficava o módulo que continha o tópico que continha o subtópico. A estrutura
+ * do banco existia, mas nunca aparecia inteira em lugar nenhum.
+ *
+ * Agora é uma árvore só, com a contagem em cada nível e criar/renomear/excluir
+ * no lugar onde a coisa está. E o nível "Período" saiu: módulo é o topo
+ * (ver lib/banco/hierarquia.ts).
+ */
 
-  // Dados
-  const [periodos, setPeriodos] = useState<BancoPeriodoComContagem[]>([])
-  const [modulos, setModulos] = useState<BancoModuloComContagem[]>([])
-  const [topicos, setTopicos] = useState<BancoTopicoComContagem[]>([])
-  const [subtopicos, setSubtopicos] = useState<BancoSubtopicoComContagem[]>([])
+type Nivel = 'modulo' | 'topico' | 'subtopico'
 
-  // Filtros
-  const [periodoSelecionado, setPeriodoSelecionado] = useState<string>('')
-  const [moduloSelecionado, setModuloSelecionado] = useState<string>('')
-  const [topicoSelecionado, setTopicoSelecionado] = useState<string>('')
+const ROTULO: Record<Nivel, string> = {
+  modulo: 'Módulo',
+  topico: 'Tópico',
+  subtopico: 'Subtópico',
+}
 
-  // Modais
-  const [showModal, setShowModal] = useState(false)
-  const [modalMode, setModalMode] = useState<'create' | 'edit'>('create')
-  const [modalType, setModalType] = useState<'periodo' | 'modulo' | 'topico' | 'subtopico'>('periodo')
-  const [editingItem, setEditingItem] = useState<any>(null)
-  const [formData, setFormData] = useState({ nome: '', codigo: '', ordem: 0 })
-  const [saving, setSaving] = useState(false)
-  const [deleting, setDeleting] = useState<string | null>(null)
+const ROTA: Record<Nivel, string> = {
+  modulo: '/api/admin/banco/modulos',
+  topico: '/api/admin/banco/topicos',
+  subtopico: '/api/admin/banco/subtopicos',
+}
 
-  // Modal para mover questões
-  const [showMoverModal, setShowMoverModal] = useState(false)
-  const [topicoParaMover, setTopicoParaMover] = useState<any>(null)
-  const [topicoDestino, setTopicoDestino] = useState('')
-  const [movendo, setMovendo] = useState(false)
+interface Edicao {
+  nivel: Nivel
+  /** Preenchido ao renomear; vazio ao criar. */
+  id?: string
+  nome: string
+  /** Pai ao criar: moduloId para tópico, topicoId para subtópico. */
+  paiId?: string
+}
 
-  useEffect(() => {
-    checkAuth()
+export default function HierarquiaPage() {
+  const [modulos, setModulos] = useState<any[]>([])
+  const [topicos, setTopicos] = useState<any[]>([])
+  const [subtopicos, setSubtopicos] = useState<any[]>([])
+  const [carregando, setCarregando] = useState(true)
+  const [busca, setBusca] = useState('')
+  const [abertos, setAbertos] = useState<string[]>([])
+
+  const [edicao, setEdicao] = useState<Edicao | null>(null)
+  const [salvando, setSalvando] = useState(false)
+  const [erro, setErro] = useState('')
+
+  const carregar = useCallback(async () => {
+    const res = await fetch('/api/banco/hierarquia', { cache: 'no-store' })
+    if (res.ok) {
+      const d = await res.json()
+      setModulos(d.modulos || [])
+      setTopicos(d.topicos || [])
+      setSubtopicos(d.subtopicos || [])
+    }
+    setCarregando(false)
   }, [])
 
   useEffect(() => {
-    if (activeTab === 'periodos') {
-      loadPeriodos()
-    } else if (activeTab === 'modulos') {
-      loadPeriodos()
-      if (periodoSelecionado) {
-        loadModulos(periodoSelecionado)
-      }
-    } else if (activeTab === 'topicos') {
-      loadPeriodos()
-      if (periodoSelecionado) {
-        loadModulos(periodoSelecionado)
-        if (moduloSelecionado) {
-          loadTopicos(moduloSelecionado)
-        }
-      }
-    } else if (activeTab === 'subtopicos') {
-      loadPeriodos()
-      if (periodoSelecionado) {
-        loadModulos(periodoSelecionado)
-        if (moduloSelecionado) {
-          loadTopicos(moduloSelecionado)
-          if (topicoSelecionado) {
-            loadSubtopicos(topicoSelecionado)
-          }
-        }
-      }
-    }
-  }, [activeTab, periodoSelecionado, moduloSelecionado, topicoSelecionado])
+    void carregar()
+  }, [carregar])
 
-  async function checkAuth() {
+  const arvore = useMemo(
+    () => montarArvore(modulos, topicos, subtopicos),
+    [modulos, topicos, subtopicos],
+  )
+  const visivel = useMemo(() => filtrarArvore(arvore, busca), [arvore, busca])
+  const buscando = busca.trim().length >= 2
+
+  async function salvar() {
+    if (!edicao || !edicao.nome.trim()) return
+    setSalvando(true)
+    setErro('')
     try {
-      const res = await fetch('/api/auth/me')
+      const criando = !edicao.id
+      const corpo: Record<string, unknown> = { nome: edicao.nome.trim() }
+      if (criando) {
+        if (edicao.nivel === 'topico') corpo.moduloId = edicao.paiId
+        if (edicao.nivel === 'subtopico') corpo.topicoId = edicao.paiId
+      }
+
+      const res = await fetch(criando ? ROTA[edicao.nivel] : `${ROTA[edicao.nivel]}/${edicao.id}`, {
+        method: criando ? 'POST' : 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(corpo),
+      })
+      const dados = await res.json().catch(() => ({}))
       if (!res.ok) {
-        router.push('/auth/login')
+        setErro(dados.error || 'Não foi possível salvar')
         return
       }
-      const data = await res.json()
-      if (data.user.role !== 'admin') {
-        router.push('/')
-        return
-      }
-    } catch (error) {
-      router.push('/auth/login')
+      setEdicao(null)
+      await carregar()
     } finally {
-      setLoading(false)
+      setSalvando(false)
     }
   }
 
-  async function loadPeriodos() {
-    try {
-      const res = await fetch('/api/admin/banco/periodos')
-      if (res.ok) {
-        const data = await res.json()
-        setPeriodos(data.periodos)
-      }
-    } catch (error) {
-      console.error('Erro ao carregar períodos:', error)
-    }
-  }
+  async function excluir(nivel: Nivel, id: string, nome: string, questoes: number) {
+    // O aviso diz o NÚMERO: "tem certeza?" não ajuda ninguém a decidir, e a
+    // diferença entre apagar um tópico vazio e um com 300 questões é toda.
+    const aviso =
+      questoes > 0
+        ? `Excluir "${nome}"? Ele tem ${questoes} questões — elas ficam sem este nível na organização.`
+        : `Excluir "${nome}"?`
+    if (!confirm(aviso)) return
 
-  async function loadModulos(periodoId: string) {
-    try {
-      const res = await fetch(`/api/admin/banco/modulos?periodoId=${periodoId}`)
-      if (res.ok) {
-        const data = await res.json()
-        setModulos(data.modulos)
-      }
-    } catch (error) {
-      console.error('Erro ao carregar módulos:', error)
-    }
-  }
-
-  async function loadTopicos(moduloId: string) {
-    try {
-      const res = await fetch(`/api/admin/banco/topicos?moduloId=${moduloId}`)
-      if (res.ok) {
-        const data = await res.json()
-        setTopicos(data.topicos)
-      }
-    } catch (error) {
-      console.error('Erro ao carregar tópicos:', error)
-    }
-  }
-
-  async function loadSubtopicos(topicoId: string) {
-    try {
-      const res = await fetch(`/api/admin/banco/subtopicos?topicoId=${topicoId}`)
-      if (res.ok) {
-        const data = await res.json()
-        setSubtopicos(data.subtopicos)
-      }
-    } catch (error) {
-      console.error('Erro ao carregar subtópicos:', error)
-    }
-  }
-
-  function openCreateModal(type: typeof modalType) {
-    setModalType(type)
-    setModalMode('create')
-    setEditingItem(null)
-    setFormData({ nome: '', codigo: '', ordem: 0 })
-    setShowModal(true)
-  }
-
-  function openEditModal(type: typeof modalType, item: any) {
-    setModalType(type)
-    setModalMode('edit')
-    setEditingItem(item)
-    setFormData({
-      nome: item.nome,
-      codigo: item.codigo || '',
-      ordem: item.ordem || 0
-    })
-    setShowModal(true)
-  }
-
-  function openMoverModal(topico: any) {
-    setTopicoParaMover(topico)
-    setTopicoDestino('')
-    setShowMoverModal(true)
-  }
-
-  async function handleMoverQuestoes() {
-    if (!topicoParaMover || !topicoDestino || topicoDestino === String(topicoParaMover._id)) {
+    const res = await fetch(`${ROTA[nivel]}/${id}`, { method: 'DELETE' })
+    if (!res.ok) {
+      const d = await res.json().catch(() => ({}))
+      setErro(d.error || 'Não foi possível excluir')
       return
     }
-
-    setMovendo(true)
-    try {
-      const res = await fetch('/api/admin/banco/questoes/mover', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          topicoOrigem: String(topicoParaMover._id),
-          topicoDestino
-        })
-      })
-
-      if (res.ok) {
-        const data = await res.json()
-        alert(`Sucesso! ${data.totalMovidas} questão(ões) movida(s).`)
-        setShowMoverModal(false)
-        loadTopicos(moduloSelecionado)
-      } else {
-        const data = await res.json()
-        alert(data.error || 'Erro ao mover questões')
-      }
-    } catch (error) {
-      console.error('Erro ao mover questões:', error)
-      alert('Erro ao mover questões')
-    } finally {
-      setMovendo(false)
-    }
-  }
-
-  async function handleSave() {
-    setSaving(true)
-    try {
-      const endpoints: Record<typeof modalType, string> = {
-        periodo: '/api/admin/banco/periodos',
-        modulo: '/api/admin/banco/modulos',
-        topico: '/api/admin/banco/topicos',
-        subtopico: '/api/admin/banco/subtopicos'
-      }
-
-      const body: any = {
-        nome: formData.nome,
-        codigo: formData.codigo || undefined,
-        ordem: formData.ordem
-      }
-
-      if (modalType === 'modulo') body.periodoId = periodoSelecionado
-      if (modalType === 'topico') body.moduloId = moduloSelecionado
-      if (modalType === 'subtopico') body.topicoId = topicoSelecionado
-
-      const url = modalMode === 'edit'
-        ? `${endpoints[modalType]}/${editingItem._id}`
-        : endpoints[modalType]
-
-      const res = await fetch(url, {
-        method: modalMode === 'edit' ? 'PUT' : 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      })
-
-      if (res.ok) {
-        setShowModal(false)
-        // Recarregar dados
-        if (modalType === 'periodo') loadPeriodos()
-        else if (modalType === 'modulo' && periodoSelecionado) loadModulos(periodoSelecionado)
-        else if (modalType === 'topico' && moduloSelecionado) loadTopicos(moduloSelecionado)
-        else if (modalType === 'subtopico' && topicoSelecionado) loadSubtopicos(topicoSelecionado)
-      } else {
-        const data = await res.json()
-        alert(data.error || 'Erro ao salvar')
-      }
-    } catch (error) {
-      console.error('Erro ao salvar:', error)
-    } finally {
-      setSaving(false)
-    }
-  }
-
-  async function handleDelete(type: typeof modalType, id: string, cascata = false) {
-    if (!cascata && !confirm('Tem certeza que deseja excluir? Esta ação não pode ser desfeita.')) {
-      return
-    }
-
-    setDeleting(id)
-    try {
-      const endpoints: Record<typeof modalType, string> = {
-        periodo: '/api/admin/banco/periodos',
-        modulo: '/api/admin/banco/modulos',
-        topico: '/api/admin/banco/topicos',
-        subtopico: '/api/admin/banco/subtopicos'
-      }
-
-      const url = cascata ? `${endpoints[type]}/${id}?cascata=true` : `${endpoints[type]}/${id}`
-      const res = await fetch(url, {
-        method: 'DELETE'
-      })
-
-      if (res.ok) {
-        if (type === 'periodo') loadPeriodos()
-        else if (type === 'modulo' && periodoSelecionado) loadModulos(periodoSelecionado)
-        else if (type === 'topico' && moduloSelecionado) loadTopicos(moduloSelecionado)
-        else if (type === 'subtopico' && topicoSelecionado) loadSubtopicos(topicoSelecionado)
-      } else {
-        const data = await res.json()
-
-        // Se há itens vinculados, perguntar se quer deletar em cascata
-        if (data.detalhes) {
-          const totalVinculados = (data.detalhes.questoes || 0) +
-            (data.detalhes.modulos || 0) +
-            (data.detalhes.topicos || 0) +
-            (data.detalhes.subtopicos || 0)
-
-          if (totalVinculados > 0) {
-            const confirmarCascata = confirm(
-              `${data.mensagem}\n\nDeseja excluir e TODOS os itens vinculados?`
-            )
-            if (confirmarCascata) {
-              // Tentar novamente com cascata
-              await handleDelete(type, id, true)
-            }
-            return
-          }
-        }
-
-        alert(data.error || 'Erro ao excluir')
-      }
-    } catch (error) {
-      console.error('Erro ao excluir:', error)
-    } finally {
-      setDeleting(null)
-    }
-  }
-
-  if (loading) {
-    return <LogoLoading message="Carregando..." size="lg" fullscreen />
-  }
-
-  const modalTitles = {
-    periodo: 'Período',
-    modulo: 'Módulo',
-    topico: 'Tópico',
-    subtopico: 'Subtópico'
+    await carregar()
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted">
-      <BanChecker />
+    <AppShell headerTitle="Hierarquia do banco">
+      <div className="mx-auto max-w-3xl space-y-4 p-4 sm:p-6">
+        <div>
+          <Link
+            href="/admin/banco-questoes"
+            className="-m-2 mb-2 inline-flex items-center gap-1.5 rounded-lg p-2 text-sm text-muted-foreground transition hover:text-foreground"
+          >
+            <ArrowLeft className="h-4 w-4" /> Banco de Questões
+          </Link>
+          <h1 className="flex items-center gap-2 font-heading text-2xl font-semibold tracking-tight">
+            <FolderTree className="h-6 w-6 text-primary" />
+            Hierarquia
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Módulo › Tópico › Subtópico. O número ao lado é quantas questões estão em cada nível.
+          </p>
+        </div>
 
-      {/* Header */}
-      <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between gap-4 flex-wrap">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => router.push('/admin/banco-questoes')}
+        <div className="flex flex-wrap gap-2">
+          <div className="relative min-w-0 flex-1">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <input
+              value={busca}
+              onChange={(e) => setBusca(e.target.value)}
+              placeholder="Buscar módulo, tópico ou subtópico…"
+              className="h-10 w-full rounded-lg border border-border bg-background pl-9 pr-9 text-sm outline-none focus:border-primary/50"
+            />
+            {busca ? (
+              <button
+                type="button"
+                onClick={() => setBusca('')}
+                aria-label="Limpar busca"
+                className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-muted-foreground hover:bg-muted"
               >
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-              <div>
-                <h1 className="text-xl font-bold flex items-center gap-2">
-                  <FolderTree className="h-5 w-5 text-primary" />
-                  Gerenciar Hierarquia
-                </h1>
-                <p className="text-sm text-muted-foreground">
-                  Períodos, módulos, tópicos e subtópicos
-                </p>
-              </div>
+                <X className="h-3.5 w-3.5" />
+              </button>
+            ) : null}
+          </div>
+          <Button
+            className="h-10 gap-1.5 rounded-lg text-xs"
+            onClick={() => setEdicao({ nivel: 'modulo', nome: '' })}
+          >
+            <Plus className="h-3.5 w-3.5" /> Novo módulo
+          </Button>
+        </div>
+
+        {erro ? (
+          <p className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive">
+            {erro}
+          </p>
+        ) : null}
+
+        <section className="rounded-xl border border-border bg-card p-2">
+          {carregando ? (
+            <div className="space-y-2 p-2">
+              {[0, 1, 2, 3].map((i) => (
+                <div key={i} className="h-9 rounded-lg skeleton-pulse" />
+              ))}
             </div>
-            <ThemeToggle />
+          ) : visivel.length === 0 ? (
+            <p className="py-10 text-center text-sm text-muted-foreground">
+              {buscando ? 'Nada com esse nome.' : 'Nenhum módulo cadastrado ainda.'}
+            </p>
+          ) : (
+            visivel.map((modulo) => (
+              <LinhaModulo
+                key={modulo._id}
+                modulo={modulo}
+                aberto={buscando || abertos.includes(modulo._id)}
+                onAlternar={() =>
+                  setAbertos((a) =>
+                    a.includes(modulo._id) ? a.filter((i) => i !== modulo._id) : [...a, modulo._id],
+                  )
+                }
+                onEditar={setEdicao}
+                onExcluir={excluir}
+              />
+            ))
+          )}
+        </section>
+      </div>
+
+      {/* ── Criar / renomear ───────────────────────────────────────────── */}
+      {edicao ? (
+        <div
+          className="fixed inset-0 z-[120] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
+          onClick={(e) => {
+            if (e.target === e.currentTarget && !salvando) setEdicao(null)
+          }}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label={edicao.id ? `Renomear ${ROTULO[edicao.nivel]}` : `Novo ${ROTULO[edicao.nivel]}`}
+            className="w-full max-w-sm rounded-2xl border border-border bg-card p-5 shadow-2xl"
+          >
+            <h2 className="text-sm font-bold">
+              {edicao.id ? `Renomear ${ROTULO[edicao.nivel].toLowerCase()}` : `Novo ${ROTULO[edicao.nivel].toLowerCase()}`}
+            </h2>
+            <Label className="mt-3 block text-xs text-muted-foreground">Nome</Label>
+            <Input
+              autoFocus
+              value={edicao.nome}
+              onChange={(e) => setEdicao({ ...edicao, nome: e.target.value })}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') void salvar()
+              }}
+              placeholder={edicao.nivel === 'modulo' ? 'Ex: Cardiologia' : 'Ex: Arritmias'}
+              className="mt-1 h-9 text-sm"
+            />
+
+            <div className="mt-4 flex justify-end gap-2">
+              <Button variant="outline" size="sm" disabled={salvando} onClick={() => setEdicao(null)}>
+                Cancelar
+              </Button>
+              <Button size="sm" disabled={!edicao.nome.trim() || salvando} onClick={salvar}>
+                {salvando ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : null}
+                Salvar
+              </Button>
+            </div>
           </div>
         </div>
-      </header>
+      ) : null}
+    </AppShell>
+  )
+}
 
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-8 max-w-6xl">
-        <Tabs value={activeTab} onValueChange={setActiveTab} defaultValue="periodos">
-          <TabsList className="grid w-full grid-cols-4 mb-6">
-            <TabsTrigger value="periodos">Períodos</TabsTrigger>
-            <TabsTrigger value="modulos">Módulos</TabsTrigger>
-            <TabsTrigger value="topicos">Tópicos</TabsTrigger>
-            <TabsTrigger value="subtopicos">Subtópicos</TabsTrigger>
-          </TabsList>
+function LinhaModulo({
+  modulo,
+  aberto,
+  onAlternar,
+  onEditar,
+  onExcluir,
+}: {
+  modulo: ModuloDaArvore
+  aberto: boolean
+  onAlternar: () => void
+  onEditar: (e: Edicao) => void
+  onExcluir: (nivel: Nivel, id: string, nome: string, questoes: number) => void
+}) {
+  return (
+    <div className="mb-0.5">
+      <div className="flex items-center gap-0.5 rounded-lg px-1 hover:bg-muted/60">
+        <button
+          type="button"
+          onClick={onAlternar}
+          disabled={modulo.topicos.length === 0}
+          aria-label={aberto ? `Recolher ${modulo.nome}` : `Expandir ${modulo.nome}`}
+          aria-expanded={aberto}
+          className="flex h-8 w-6 flex-none items-center justify-center rounded text-muted-foreground transition hover:bg-muted disabled:opacity-25"
+        >
+          <ChevronRight className={cn('h-3.5 w-3.5 transition-transform', aberto && 'rotate-90')} />
+        </button>
+        <span className="min-w-0 flex-1 truncate py-1.5 text-[13px] font-semibold">{modulo.nome}</span>
+        <span className="flex-none text-[11px] tabular-nums text-muted-foreground">
+          {modulo.totalQuestoes}
+        </span>
+        <Acoes
+          onNovo={() => onEditar({ nivel: 'topico', nome: '', paiId: modulo._id })}
+          rotuloNovo="Novo tópico"
+          onRenomear={() => onEditar({ nivel: 'modulo', id: modulo._id, nome: modulo.nome })}
+          onExcluir={() => onExcluir('modulo', modulo._id, modulo.nome, modulo.totalQuestoes)}
+        />
+      </div>
 
-          {/* Períodos */}
-          <TabsContent value="periodos">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
-                <div>
-                  <CardTitle>Períodos</CardTitle>
-                  <CardDescription>Gerencie os períodos do curso</CardDescription>
+      {aberto ? (
+        <div className="ml-3 border-l border-border pl-1">
+          {modulo.topicos.length === 0 ? (
+            <p className="px-3 py-1.5 text-[11px] text-muted-foreground">Sem tópicos.</p>
+          ) : (
+            modulo.topicos.map((topico) => (
+              <div key={topico._id}>
+                <div className="flex items-center gap-0.5 rounded-lg px-1 hover:bg-muted/60">
+                  <span className="min-w-0 flex-1 truncate py-1.5 pl-2 text-[12.5px]">{topico.nome}</span>
+                  <span className="flex-none text-[11px] tabular-nums text-muted-foreground">
+                    {topico.totalQuestoes}
+                  </span>
+                  <Acoes
+                    onNovo={() => onEditar({ nivel: 'subtopico', nome: '', paiId: topico._id })}
+                    rotuloNovo="Novo subtópico"
+                    onRenomear={() => onEditar({ nivel: 'topico', id: topico._id, nome: topico.nome })}
+                    onExcluir={() => onExcluir('topico', topico._id, topico.nome, topico.totalQuestoes)}
+                  />
                 </div>
-                <Button onClick={() => openCreateModal('periodo')}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Novo Período
-                </Button>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Nome</TableHead>
-                      <TableHead>Código</TableHead>
-                      <TableHead>Módulos</TableHead>
-                      <TableHead>Questões</TableHead>
-                      <TableHead className="text-right">Ações</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {periodos.map((periodo) => (
-                      <TableRow key={String(periodo._id)}>
-                        <TableCell className="font-medium">{periodo.nome}</TableCell>
-                        <TableCell>{periodo.codigo}</TableCell>
-                        <TableCell>{periodo.totalModulos}</TableCell>
-                        <TableCell>{periodo.totalQuestoes}</TableCell>
-                        <TableCell className="text-right space-x-2">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => openEditModal('periodo', periodo)}
-                          >
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleDelete('periodo', String(periodo._id))}
-                            disabled={deleting === String(periodo._id)}
-                          >
-                            {deleting === String(periodo._id) ? (
-                              <Loader2 className="h-4 w-4 animate-spin" />
-                            ) : (
-                              <Trash2 className="h-4 w-4 text-red-500" />
-                            )}
-                          </Button>
-                        </TableCell>
-                      </TableRow>
+
+                {topico.subtopicos.length > 0 ? (
+                  <div className="ml-3 border-l border-border pl-1">
+                    {topico.subtopicos.map((sub) => (
+                      <div key={sub._id} className="flex items-center gap-0.5 rounded-lg px-1 hover:bg-muted/60">
+                        <span className="min-w-0 flex-1 truncate py-1.5 pl-2 text-[12px] text-muted-foreground">
+                          {sub.nome}
+                        </span>
+                        <span className="flex-none text-[10.5px] tabular-nums text-muted-foreground">
+                          {sub.totalQuestoes}
+                        </span>
+                        <Acoes
+                          onRenomear={() => onEditar({ nivel: 'subtopico', id: sub._id, nome: sub.nome })}
+                          onExcluir={() => onExcluir('subtopico', sub._id, sub.nome, sub.totalQuestoes)}
+                        />
+                      </div>
                     ))}
-                    {periodos.length === 0 && (
-                      <TableRow>
-                        <TableCell colSpan={5} className="text-center text-muted-foreground">
-                          Nenhum período cadastrado
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Módulos */}
-          <TabsContent value="modulos">
-            <Card>
-              <CardHeader>
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                  <div>
-                    <CardTitle>Módulos</CardTitle>
-                    <CardDescription>Gerencie os módulos de cada período</CardDescription>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Select value={periodoSelecionado} onValueChange={setPeriodoSelecionado}>
-                      <SelectTrigger className="w-[200px]">
-                        <SelectValue placeholder="Selecione um período" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {periodos.map((p) => (
-                          <SelectItem key={String(p._id)} value={String(p._id)}>
-                            {p.nome}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <Button onClick={() => openCreateModal('modulo')} disabled={!periodoSelecionado}>
-                      <Plus className="h-4 w-4 mr-2" />
-                      Novo Módulo
-                    </Button>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                {!periodoSelecionado ? (
-                  <p className="text-center text-muted-foreground py-8">
-                    Selecione um período para ver os módulos
-                  </p>
-                ) : (
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Nome</TableHead>
-                        <TableHead>Código</TableHead>
-                        <TableHead>Tópicos</TableHead>
-                        <TableHead>Questões</TableHead>
-                        <TableHead className="text-right">Ações</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {modulos.map((modulo) => (
-                        <TableRow key={String(modulo._id)}>
-                          <TableCell className="font-medium">{modulo.nome}</TableCell>
-                          <TableCell>{modulo.codigo}</TableCell>
-                          <TableCell>{modulo.totalTopicos}</TableCell>
-                          <TableCell>{modulo.totalQuestoes}</TableCell>
-                          <TableCell className="text-right space-x-2">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => openEditModal('modulo', modulo)}
-                            >
-                              <Pencil className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => handleDelete('modulo', String(modulo._id))}
-                              disabled={deleting === String(modulo._id)}
-                            >
-                              {deleting === String(modulo._id) ? (
-                                <Loader2 className="h-4 w-4 animate-spin" />
-                              ) : (
-                                <Trash2 className="h-4 w-4 text-red-500" />
-                              )}
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                      {modulos.length === 0 && (
-                        <TableRow>
-                          <TableCell colSpan={5} className="text-center text-muted-foreground">
-                            Nenhum módulo cadastrado neste período
-                          </TableCell>
-                        </TableRow>
-                      )}
-                    </TableBody>
-                  </Table>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Tópicos */}
-          <TabsContent value="topicos">
-            <Card>
-              <CardHeader>
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                  <div>
-                    <CardTitle>Tópicos</CardTitle>
-                    <CardDescription>Gerencie os tópicos de cada módulo</CardDescription>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Select value={periodoSelecionado} onValueChange={(v) => { setPeriodoSelecionado(v); setModuloSelecionado('') }}>
-                      <SelectTrigger className="w-[150px]">
-                        <SelectValue placeholder="Período" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {periodos.map((p) => (
-                          <SelectItem key={String(p._id)} value={String(p._id)}>
-                            {p.nome}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <Select value={moduloSelecionado} onValueChange={setModuloSelecionado} disabled={!periodoSelecionado}>
-                      <SelectTrigger className="w-[150px]">
-                        <SelectValue placeholder="Módulo" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {modulos.map((m) => (
-                          <SelectItem key={String(m._id)} value={String(m._id)}>
-                            {m.nome}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <Button onClick={() => openCreateModal('topico')} disabled={!moduloSelecionado}>
-                      <Plus className="h-4 w-4 mr-2" />
-                      Novo Tópico
-                    </Button>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                {!moduloSelecionado ? (
-                  <p className="text-center text-muted-foreground py-8">
-                    Selecione um período e módulo para ver os tópicos
-                  </p>
-                ) : (
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Nome</TableHead>
-                        <TableHead>Código</TableHead>
-                        <TableHead>Subtópicos</TableHead>
-                        <TableHead>Questões</TableHead>
-                        <TableHead className="text-right">Ações</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {topicos.map((topico) => (
-                        <TableRow key={String(topico._id)}>
-                          <TableCell className="font-medium">{topico.nome}</TableCell>
-                          <TableCell>{topico.codigo}</TableCell>
-                          <TableCell>{topico.totalSubtopicos}</TableCell>
-                          <TableCell>{topico.totalQuestoes}</TableCell>
-                           <TableCell className="text-right space-x-2">
-                             {topico.totalQuestoes > 0 && (
-                               <Button
-                                 variant="ghost"
-                                 size="icon"
-                                 onClick={() => openMoverModal(topico)}
-                                 title="Mover todas as questões para outro tópico"
-                               >
-                                 <ArrowRight className="h-4 w-4" />
-                               </Button>
-                             )}
-                             <Button
-                               variant="ghost"
-                               size="icon"
-                               onClick={() => openEditModal('topico', topico)}
-                             >
-                               <Pencil className="h-4 w-4" />
-                             </Button>
-                             <Button
-                               variant="ghost"
-                               size="icon"
-                               onClick={() => handleDelete('topico', String(topico._id))}
-                               disabled={deleting === String(topico._id)}
-                             >
-                               {deleting === String(topico._id) ? (
-                                 <Loader2 className="h-4 w-4 animate-spin" />
-                               ) : (
-                                 <Trash2 className="h-4 w-4 text-red-500" />
-                               )}
-                             </Button>
-                           </TableCell>
-                        </TableRow>
-                      ))}
-                      {topicos.length === 0 && (
-                        <TableRow>
-                          <TableCell colSpan={5} className="text-center text-muted-foreground">
-                            Nenhum tópico cadastrado neste módulo
-                          </TableCell>
-                        </TableRow>
-                      )}
-                    </TableBody>
-                  </Table>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Subtópicos */}
-          <TabsContent value="subtopicos">
-            <Card>
-              <CardHeader>
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                  <div>
-                    <CardTitle>Subtópicos</CardTitle>
-                    <CardDescription>Gerencie os subtópicos de cada tópico</CardDescription>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Select value={periodoSelecionado} onValueChange={(v) => { setPeriodoSelecionado(v); setModuloSelecionado(''); setTopicoSelecionado('') }}>
-                      <SelectTrigger className="w-[130px]">
-                        <SelectValue placeholder="Período" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {periodos.map((p) => (
-                          <SelectItem key={String(p._id)} value={String(p._id)}>
-                            {p.nome}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <Select value={moduloSelecionado} onValueChange={(v) => { setModuloSelecionado(v); setTopicoSelecionado('') }} disabled={!periodoSelecionado}>
-                      <SelectTrigger className="w-[130px]">
-                        <SelectValue placeholder="Módulo" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {modulos.map((m) => (
-                          <SelectItem key={String(m._id)} value={String(m._id)}>
-                            {m.nome}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <Select value={topicoSelecionado} onValueChange={setTopicoSelecionado} disabled={!moduloSelecionado}>
-                      <SelectTrigger className="w-[130px]">
-                        <SelectValue placeholder="Tópico" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {topicos.map((t) => (
-                          <SelectItem key={String(t._id)} value={String(t._id)}>
-                            {t.nome}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <Button onClick={() => openCreateModal('subtopico')} disabled={!topicoSelecionado}>
-                      <Plus className="h-4 w-4 mr-2" />
-                      Novo Subtópico
-                    </Button>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                {!topicoSelecionado ? (
-                  <p className="text-center text-muted-foreground py-8">
-                    Selecione um período, módulo e tópico para ver os subtópicos
-                  </p>
-                ) : (
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Nome</TableHead>
-                        <TableHead>Código</TableHead>
-                        <TableHead>Questões</TableHead>
-                        <TableHead className="text-right">Ações</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {subtopicos.map((subtopico) => (
-                        <TableRow key={String(subtopico._id)}>
-                          <TableCell className="font-medium">{subtopico.nome}</TableCell>
-                          <TableCell>{subtopico.codigo}</TableCell>
-                          <TableCell>{subtopico.totalQuestoes}</TableCell>
-                          <TableCell className="text-right space-x-2">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => openEditModal('subtopico', subtopico)}
-                            >
-                              <Pencil className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => handleDelete('subtopico', String(subtopico._id))}
-                              disabled={deleting === String(subtopico._id)}
-                            >
-                              {deleting === String(subtopico._id) ? (
-                                <Loader2 className="h-4 w-4 animate-spin" />
-                              ) : (
-                                <Trash2 className="h-4 w-4 text-red-500" />
-                              )}
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                      {subtopicos.length === 0 && (
-                        <TableRow>
-                          <TableCell colSpan={4} className="text-center text-muted-foreground">
-                            Nenhum subtópico cadastrado neste tópico
-                          </TableCell>
-                        </TableRow>
-                      )}
-                    </TableBody>
-                  </Table>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-
-        {/* Modal de criar/editar */}
-        <Dialog open={showModal} onOpenChange={setShowModal}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>
-                {modalMode === 'create' ? 'Novo' : 'Editar'} {modalTitles[modalType]}
-              </DialogTitle>
-              <DialogDescription>
-                {modalMode === 'create' ? 'Preencha os dados para criar' : 'Atualize os dados'}
-              </DialogDescription>
-            </DialogHeader>
-
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label>Nome *</Label>
-                <Input
-                  value={formData.nome}
-                  onChange={(e) => setFormData(prev => ({ ...prev, nome: e.target.value }))}
-                  placeholder={`Nome do ${modalTitles[modalType].toLowerCase()}`}
-                />
+                ) : null}
               </div>
+            ))
+          )}
+        </div>
+      ) : null}
+    </div>
+  )
+}
 
-              <div className="space-y-2">
-                <Label>Código (opcional)</Label>
-                <Input
-                  value={formData.codigo}
-                  onChange={(e) => setFormData(prev => ({ ...prev, codigo: e.target.value }))}
-                  placeholder="Código único (gerado automaticamente se vazio)"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label>Ordem</Label>
-                <Input
-                  type="number"
-                  value={formData.ordem}
-                  onChange={(e) => setFormData(prev => ({ ...prev, ordem: parseInt(e.target.value) || 0 }))}
-                  placeholder="Ordem de exibição"
-                />
-              </div>
-            </div>
-
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setShowModal(false)}>
-                Cancelar
-              </Button>
-              <Button onClick={handleSave} disabled={saving || !formData.nome.trim()}>
-                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Salvar'}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        {/* Modal de mover questões */}
-        <Dialog open={showMoverModal} onOpenChange={setShowMoverModal}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Mover Questões</DialogTitle>
-              <DialogDescription>
-                Mover {topicoParaMover?.totalQuestoes || 0} questão(ões) do tópico <strong>{topicoParaMover?.nome}</strong> para outro tópico
-              </DialogDescription>
-            </DialogHeader>
-
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label>Tópico de destino *</Label>
-                <Select
-                  value={topicoDestino}
-                  onValueChange={setTopicoDestino}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione o tópico de destino" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {topicos.filter(t => String(t._id) !== String(topicoParaMover?._id)).map((t) => (
-                      <SelectItem key={String(t._id)} value={String(t._id)}>
-                        {t.nome} ({t.totalQuestoes} questões)
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setShowMoverModal(false)}>
-                Cancelar
-              </Button>
-              <Button onClick={handleMoverQuestoes} disabled={movendo || !topicoDestino}>
-                {movendo ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <ArrowRight className="h-4 w-4 mr-2" />}
-                Mover
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </main>
+function Acoes({
+  onNovo,
+  rotuloNovo,
+  onRenomear,
+  onExcluir,
+}: {
+  onNovo?: () => void
+  rotuloNovo?: string
+  onRenomear: () => void
+  onExcluir: () => void
+}) {
+  return (
+    <div className="flex flex-none items-center">
+      {onNovo ? (
+        <button
+          type="button"
+          onClick={onNovo}
+          aria-label={rotuloNovo}
+          title={rotuloNovo}
+          className="flex h-7 w-7 items-center justify-center rounded text-muted-foreground transition hover:bg-primary/10 hover:text-primary"
+        >
+          <Plus className="h-3.5 w-3.5" />
+        </button>
+      ) : null}
+      <button
+        type="button"
+        onClick={onRenomear}
+        aria-label="Renomear"
+        title="Renomear"
+        className="flex h-7 w-7 items-center justify-center rounded text-muted-foreground transition hover:bg-muted hover:text-foreground"
+      >
+        <Pencil className="h-3.5 w-3.5" />
+      </button>
+      <button
+        type="button"
+        onClick={onExcluir}
+        aria-label="Excluir"
+        title="Excluir"
+        className="flex h-7 w-7 items-center justify-center rounded text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive"
+      >
+        <Trash2 className="h-3.5 w-3.5" />
+      </button>
     </div>
   )
 }

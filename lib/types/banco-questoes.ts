@@ -8,8 +8,17 @@ export type BancoQuestaoTipo = 'objetiva' | 'discursiva'
 export type BancoDificuldade = 'facil' | 'medio' | 'dificil'
 export type BancoAlternativaLetra = 'A' | 'B' | 'C' | 'D' | 'E'
 
-// Hierarquia: Período → Módulo → Tópico → Subtópico
+/*
+ * Hierarquia: Módulo → Tópico → Subtópico.
+ *
+ * "Período" foi removido do produto — pedia o nome interno da grade da
+ * faculdade antes de a pessoa ver qualquer questão, e fazia o mesmo módulo
+ * existir duas vezes sem ninguém notar. Os tipos abaixo permanecem porque os
+ * documentos antigos continuam no banco (nada foi apagado), mas `periodoId`
+ * é opcional em tudo que se escreve hoje. Ver lib/banco/hierarquia.ts.
+ */
 
+/** @deprecated Nível removido do produto; mantido para ler dado antigo. */
 export interface BancoPeriodo {
   _id?: string | ObjectId
   nome: string           // "SOI I", "HAM II", etc.
@@ -21,7 +30,8 @@ export interface BancoPeriodo {
 
 export interface BancoModulo {
   _id?: string | ObjectId
-  periodoId: string | ObjectId
+  /** @deprecated Só existe em módulos criados antes da remoção do período. */
+  periodoId?: string | ObjectId
   nome: string
   codigo: string
   ordem: number
@@ -58,7 +68,8 @@ export interface BancoAlternativa {
 export interface BancoQuestao {
   _id?: string | ObjectId
   tipo: BancoQuestaoTipo
-  periodoId: string | ObjectId
+  /** @deprecated Só existe em questões criadas antes da remoção do período. */
+  periodoId?: string | ObjectId
   moduloId: string | ObjectId
   topicoId: string | ObjectId
   subtopicoid?: string | ObjectId
@@ -270,7 +281,8 @@ export interface BancoImportacaoResult {
 
 export interface BancoQuestaoFormData {
   tipo: BancoQuestaoTipo
-  periodoId: string
+  /** @deprecated */
+  periodoId?: string
   moduloId: string
   topicoId: string
   subtopicoId?: string
