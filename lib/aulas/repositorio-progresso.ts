@@ -103,12 +103,32 @@ export async function salvarBatida(
   usuarioId: string,
   aulaId: string,
   batida: { posicaoSegundos: number; duracaoSegundos?: number; limiteConclusao?: number },
+  opcoes: {
+    /**
+     * Consultado só no instante em que a batida CONCLUIRIA a aula.
+     *
+     * Existe por causa da avaliação obrigatória (§39): sem isso, a trava valeria
+     * apenas no botão "marcar como concluída" e o player concluiria a aula
+     * sozinho aos 90%, que é o caminho que quase todo aluno percorre. A
+     * pergunta é feita na transição, e não a cada batida, porque o PUT de
+     * progresso roda de poucos em poucos segundos e precisa continuar barato.
+     */
+    podeConcluir?: () => Promise<boolean>
+  } = {},
 ): Promise<ProgressoDaAula> {
   const anterior = await lerProgresso(db, usuarioId, aulaId)
-  const calculado = aplicarBatida(anterior, {
+  let calculado = aplicarBatida(anterior, {
     ...batida,
     limiteConclusao: batida.limiteConclusao ?? PERCENTUAL_CONCLUSAO_PADRAO,
   })
+
+  if (calculado.concluida && !anterior?.concluida && opcoes.podeConcluir) {
+    if (!(await opcoes.podeConcluir())) {
+      // O percentual assistido continua valendo — o que fica pendente é só o
+      // carimbo de concluída. Zerar o progresso puniria quem assistiu tudo.
+      calculado = { ...calculado, concluida: false, concluidaEm: null }
+    }
+  }
 
   const documento: ProgressoDaAula = {
     aulaId,

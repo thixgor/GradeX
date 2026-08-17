@@ -26,6 +26,7 @@ import { PainelDeMarcadores } from '@/components/aulas/marcadores-painel'
 import { BarraDeProgresso, CardDeAula, Trilho, type AulaNaBiblioteca } from '@/components/aulas/biblioteca'
 import { FaixaModoAluno } from '@/components/aulas/faixa-modo-aluno'
 import { comModo, lerModo, PARAMETRO_MODO } from '@/lib/aulas/modo-visualizacao'
+import { descreverAvaliacao } from '@/lib/aulas/avaliacao'
 import { cn } from '@/lib/utils'
 
 /**
@@ -95,6 +96,9 @@ function AssistirAulaConteudo() {
   const [modoFoco, setModoFoco] = useState(false)
   const [lateralAberta, setLateralAberta] = useState(false)
   const [concluida, setConcluida] = useState(false)
+  const [impedimento, setImpedimento] = useState('')
+  const [avaliacaoFeita, setAvaliacaoFeita] = useState(false)
+  const [avaliacaoDisponivel, setAvaliacaoDisponivel] = useState(false)
   const [percentual, setPercentual] = useState(0)
   const [marcando, setMarcando] = useState(false)
 
@@ -120,6 +124,8 @@ function AssistirAulaConteudo() {
         setRelacionadas((d.relacionadas || []).map((r: any) => ({ ...r, _id: String(r._id) })))
         setConcluida(carregada.progresso?.concluida === true)
         setPercentual(carregada.progresso?.percentual || 0)
+        setAvaliacaoFeita(d.avaliacaoFeita === true)
+        setAvaliacaoDisponivel(d.avaliacaoDisponivel === true)
       })
       .catch((e) => {
         if (!cancelado) setErro(e?.message || 'Aula não encontrada')
@@ -171,16 +177,22 @@ function AssistirAulaConteudo() {
 
   async function alternarConclusao() {
     setMarcando(true)
+    setImpedimento('')
     try {
       const res = await fetch(`/api/aulas/${aulaId}/conclusao`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ concluida: !concluida }),
       })
+      const d = await res.json().catch(() => ({}))
       if (res.ok) {
-        const d = await res.json()
         setConcluida(d.progresso?.concluida ?? !concluida)
         if (d.progresso) setPercentual(d.progresso.percentual)
+      } else {
+        // Um botão que não faz nada é pior do que um botão bloqueado: quem
+        // clicou tem de saber por quê. A razão vem do servidor — é ele que
+        // decide, e a avaliação obrigatória (§39) é a razão mais provável.
+        setImpedimento(d.error || 'Não foi possível marcar a aula como concluída.')
       }
     } finally {
       setMarcando(false)
@@ -328,6 +340,21 @@ function AssistirAulaConteudo() {
               ) : null}
             </div>
 
+            {impedimento ? (
+              <p className="mt-3 flex flex-wrap items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs font-medium text-amber-700 dark:text-amber-200">
+                <ClipboardCheck className="h-3.5 w-3.5 flex-none" />
+                <span className="min-w-0">{impedimento}</span>
+                {aula.avaliacao?.examId && avaliacaoDisponivel ? (
+                  <Link
+                    href={`/exam/${aula.avaliacao.examId}`}
+                    className="font-bold underline underline-offset-2"
+                  >
+                    Fazer agora
+                  </Link>
+                ) : null}
+              </p>
+            ) : null}
+
             {percentual > 0 && !bloqueada ? (
               <BarraDeProgresso percentual={percentual} concluida={concluida} className="mt-3" />
             ) : null}
@@ -468,7 +495,7 @@ function AssistirAulaConteudo() {
 
       {/* Avaliação (§39): a aula aponta para uma prova que já existe no sistema
           de provas, em vez de a plataforma ganhar um segundo motor de quiz. */}
-      {aula.avaliacao?.examId && !bloqueada && !modoFoco ? (
+      {aula.avaliacao?.examId && avaliacaoDisponivel && !bloqueada && !modoFoco ? (
         <section className="mt-8 rounded-xl border border-primary/25 bg-primary/5 p-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="min-w-0">
@@ -477,16 +504,19 @@ function AssistirAulaConteudo() {
                 {aula.avaliacao.titulo || 'Avaliação desta aula'}
               </h2>
               <p className="mt-0.5 text-xs text-muted-foreground">
-                {aula.avaliacao.obrigatoria
-                  ? 'Necessária para concluir a aula.'
-                  : 'Teste o que você acabou de ver.'}
+                {descreverAvaliacao(aula.avaliacao, avaliacaoFeita)}
               </p>
             </div>
             <Link
               href={`/exam/${aula.avaliacao.examId}`}
-              className="inline-flex h-9 flex-none items-center rounded-lg bg-primary px-4 text-xs font-bold text-primary-foreground transition hover:brightness-110"
+              className={cn(
+                'inline-flex h-9 flex-none items-center rounded-lg px-4 text-xs font-bold transition',
+                avaliacaoFeita
+                  ? 'border border-border text-foreground hover:bg-muted'
+                  : 'bg-primary text-primary-foreground hover:brightness-110',
+              )}
             >
-              Fazer avaliação
+              {avaliacaoFeita ? 'Rever avaliação' : 'Fazer avaliação'}
             </Link>
           </div>
         </section>

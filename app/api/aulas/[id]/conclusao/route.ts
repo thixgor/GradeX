@@ -5,6 +5,8 @@ import { ObjectId } from 'mongodb'
 import { AulaPostagem } from '@/lib/types'
 import { isValidObjectId } from '@/lib/api-security'
 import { definirConclusaoManual } from '@/lib/aulas/repositorio-progresso'
+import { motivoDoBloqueio, normalizarAvaliacao } from '@/lib/aulas/avaliacao'
+import { liberadoParaConcluir } from '@/lib/aulas/avaliacao-servidor'
 
 export const dynamic = 'force-dynamic'
 
@@ -41,14 +43,34 @@ export async function POST(
     const concluida = (body as any)?.concluida === true
 
     const db = await getDb()
-    const existe = await db.collection<AulaPostagem>('aulas_postagens').countDocuments(
+    const aula = await db.collection<AulaPostagem>('aulas_postagens').findOne(
       { _id: new ObjectId(params.id) },
-      { limit: 1 }
+      { projection: { avaliacao: 1 } }
     )
-    if (existe === 0) {
+    if (!aula) {
       return NextResponse.json(
         { error: 'Aula não encontrada' },
         { status: 404 }
+      )
+    }
+
+    /*
+     * Avaliação obrigatória (§39).
+     *
+     * A checagem é aqui, e não na tela, porque a tela é só um botão: quem
+     * chamasse a rota direto marcaria a aula como concluída sem fazer a prova,
+     * e o certificado (§38) — que conta aulas concluídas — sairia por cima
+     * disso. Um documento que a pessoa mostra a terceiros não pode ter a régua
+     * no navegador.
+     *
+     * Só trava a marcação; DESMARCAR continua livre. Quem se enganou tem de
+     * poder voltar atrás sem depender de suporte.
+     */
+    const avaliacao = normalizarAvaliacao((aula as any).avaliacao)
+    if (concluida && !(await liberadoParaConcluir(db, session.userId, avaliacao))) {
+      return NextResponse.json(
+        { error: motivoDoBloqueio(avaliacao), avaliacao: { examId: avaliacao!.examId } },
+        { status: 409 }
       )
     }
 

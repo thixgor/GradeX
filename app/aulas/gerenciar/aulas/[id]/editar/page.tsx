@@ -15,6 +15,8 @@ import { VinculoMaterialField, type VinculoMaterial } from '@/components/aulas/v
 import { EditorDeRegras } from '@/components/aulas/editor-regras'
 import { EditorDeMarcadores } from '@/components/aulas/editor-marcadores'
 import { EditorDeRelacionadas } from '@/components/aulas/editor-relacionadas'
+import { EditorDeAvaliacao } from '@/components/aulas/editor-avaliacao'
+import { normalizarAvaliacao, type AvaliacaoDaAula } from '@/lib/aulas/avaliacao'
 import type { Capitulo, TrechoDaTranscricao } from '@/lib/aulas/marcadores'
 import { regrasIniciais } from '@/lib/aulas/regras-edicao'
 import type { RegrasDeAcessoAula } from '@/lib/aulas/acesso'
@@ -51,6 +53,7 @@ export default function EditarAulaPage() {
   const [capitulos, setCapitulos] = useState<Capitulo[] | null>(null)
   const [transcricao, setTranscricao] = useState<TrechoDaTranscricao[] | null>(null)
   const [relacionadas, setRelacionadas] = useState<string[]>([])
+  const [avaliacao, setAvaliacao] = useState<AvaliacaoDaAula | null>(null)
   const [setorId, setSetorId] = useState('')
   const [topicoId, setTopicoId] = useState('')
   const [subtopicoId, setSubtopicoId] = useState('')
@@ -143,6 +146,7 @@ export default function EditarAulaPage() {
       setCapitulos(a.capitulos || null)
       setTranscricao(a.transcricao || null)
       setRelacionadas(Array.isArray(a.relacionadas) ? a.relacionadas.map(String) : [])
+      setAvaliacao(normalizarAvaliacao((a as any).avaliacao))
       setSetorId(a.setorId || '')
       setTopicoId(a.topicoId || '')
       setSubtopicoId(a.subtopicoId || '')
@@ -253,6 +257,7 @@ export default function EditarAulaPage() {
         capitulos,
         transcricao,
         relacionadas: relacionadas.length > 0 ? relacionadas : null,
+        avaliacao,
         setorId: setorId || null,
         topicoId: topicoId || null,
         subtopicoId: subtopicoId || null,
@@ -400,6 +405,16 @@ export default function EditarAulaPage() {
                     }}
                     escuro
                   />
+                </div>
+              </div>
+
+              {/* A avaliação fica ao lado dos capítulos: as duas dizem o que
+                  acontece DEPOIS de assistir, e ler as duas juntas é o que
+                  evita marcar como obrigatória uma prova de outro assunto. */}
+              <div>
+                <Label className="text-white/80">Avaliação</Label>
+                <div className="mt-1">
+                  <EditorDeAvaliacao valor={avaliacao} onChange={setAvaliacao} escuro />
                 </div>
               </div>
 

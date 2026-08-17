@@ -13,6 +13,8 @@ import { avaliarAcessoAula, ocultarConteudoRestrito } from '@/lib/aulas/acesso'
 import { montarContextoDoUsuario } from '@/lib/aulas/contexto'
 import { normalizarRegras, visibilidadeEquivalente } from '@/lib/aulas/regras-edicao'
 import { normalizarCapitulos, normalizarTranscricao } from '@/lib/aulas/marcadores'
+import { normalizarAvaliacao } from '@/lib/aulas/avaliacao'
+import { fezAvaliacao, provaExiste } from '@/lib/aulas/avaliacao-servidor'
 import { aplicarVinculo, resolverVinculosEmLote } from '@/lib/aulas/resolver-vinculo'
 
 export const dynamic = 'force-dynamic'
@@ -124,9 +126,33 @@ export async function GET(
       }
     }
 
+    /*
+     * A avaliação (§39) já foi entregue?
+     *
+     * Só é perguntado quando a aula tem prova vinculada — o que é a minoria —
+     * e serve para a tela não prometer uma coisa e o servidor fazer outra: sem
+     * isto, o aluno que já fez a prova continuaria lendo "necessária para
+     * concluir" e não entenderia por que o botão agora funciona.
+     */
+    const avaliacaoDaAula = normalizarAvaliacao((resolvida as any).avaliacao)
+    const [avaliacaoFeita, avaliacaoDisponivel] = avaliacaoDaAula
+      ? await Promise.all([
+          session?.userId && veredito.liberado
+            ? fezAvaliacao(db, session.userId, avaliacaoDaAula.examId)
+            : Promise.resolve(false),
+          // A prova pode ter sido apagada por /provas, que não sabe quem aponta
+          // para ela. O campo continua saindo na resposta — é assim que o editor
+          // mostra o vínculo quebrado para o admin consertar —, mas a aula não
+          // oferece ao aluno um botão que leva a lugar nenhum.
+          provaExiste(db, avaliacaoDaAula.examId),
+        ])
+      : [false, false]
+
     return NextResponse.json({
       aula: ocultarConteudoRestrito(resolvida, veredito),
       relacionadas,
+      avaliacaoFeita,
+      avaliacaoDisponivel,
       acesso: {
         liberado: veredito.liberado,
         porAmostra: veredito.porAmostra,
@@ -258,18 +284,10 @@ export async function PATCH(
      * vezes. Aqui a aula só aponta para a prova, como já faz com /materiais (§6).
      */
     if ('avaliacao' in updateData) {
-      const bruto = updateData.avaliacao
-      const examId = String(bruto?.examId || '')
-      updateData.avaliacao = examId && isValidObjectId(examId)
-        ? {
-            examId,
-            titulo: String(bruto?.titulo || '').slice(0, 160),
-            // Obrigatória bloqueia a conclusão da aula até a prova ser feita.
-            // Fica em falso por padrão: uma trava ligada sem querer prenderia
-            // o aluno no meio do curso.
-            obrigatoria: bruto?.obrigatoria === true,
-          }
-        : null
+      // A mesma função que o editor e a rota de conclusão usam: quando
+      // `obrigatoria` trava a conclusão de verdade, as três precisam concordar
+      // sobre o que é uma avaliação válida.
+      updateData.avaliacao = normalizarAvaliacao(updateData.avaliacao)
     }
 
     /*

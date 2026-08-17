@@ -58,7 +58,27 @@ export async function GET(request: NextRequest) {
     const limitParam = Number(request.nextUrl.searchParams.get('limit'))
     const limit = Number.isFinite(limitParam) && limitParam > 0 ? Math.min(limitParam, 200) : 0
 
-    const cursor = examsCollection.find(query).sort({ createdAt: -1 })
+    // `?resumo=1` devolve só o suficiente para listar e escolher uma prova.
+    // É opt-in justamente porque a projeção completa é necessária às telas
+    // existentes (ver comentário acima): quem não pede continua recebendo o
+    // documento inteiro. Quem só monta um seletor — como o editor de aulas ao
+    // vincular a avaliação (§39) — não precisa baixar o banco de questões de
+    // cada prova para mostrar uma lista de títulos.
+    const resumo = request.nextUrl.searchParams.get('resumo') === '1'
+    const projecao = {
+      title: 1,
+      isHidden: 1,
+      isPersonalExam: 1,
+      isPracticeExam: 1,
+      numberOfQuestions: 1,
+      startTime: 1,
+      endTime: 1,
+      createdAt: 1,
+    }
+
+    const cursor = examsCollection
+      .find(query, resumo ? { projection: projecao } : {})
+      .sort({ createdAt: -1 })
     const exams = await (limit ? cursor.limit(limit) : cursor).toArray()
 
     // Cache privado curto: lista pessoal de provas raramente muda em

@@ -7,6 +7,8 @@ import { avaliarAcessoAula } from '@/lib/aulas/acesso'
 import { montarContextoDoUsuario } from '@/lib/aulas/contexto'
 import { lerProgresso, salvarBatida } from '@/lib/aulas/repositorio-progresso'
 import { podeRetomar } from '@/lib/aulas/progresso'
+import { exigeAvaliacao, normalizarAvaliacao } from '@/lib/aulas/avaliacao'
+import { liberadoParaConcluir } from '@/lib/aulas/avaliacao-servidor'
 import type { AulaPostagem } from '@/lib/types'
 import { ObjectId, type Db } from 'mongodb'
 
@@ -85,7 +87,16 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     const guarda = await garantirAcesso(db, params.id, session)
     if (guarda.erro) return guarda.erro
 
-    const progresso = await salvarBatida(db, session.userId, params.id, parsed.data)
+    // A avaliação obrigatória (§39) também vale aqui, e não só no botão de
+    // marcar como concluída: sem isso o player concluiria a aula sozinho aos
+    // 90% e a trava não existiria na prática, porque assistir até o fim é o
+    // caminho normal. A consulta só acontece na batida que concluiria a aula.
+    const avaliacao = normalizarAvaliacao((guarda.aula as any)?.avaliacao)
+    const progresso = await salvarBatida(db, session.userId, params.id, parsed.data, {
+      podeConcluir: exigeAvaliacao(avaliacao)
+        ? () => liberadoParaConcluir(db, session.userId, avaliacao)
+        : undefined,
+    })
     return NextResponse.json({ progresso })
   } catch (error) {
     console.error('[aulas/progresso] erro ao salvar:', error)
