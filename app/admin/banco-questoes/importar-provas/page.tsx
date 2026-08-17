@@ -330,7 +330,7 @@ export default function ImportarProvasPage() {
             {importando ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
             {importando
               ? `Importando… ${progresso ? `${progresso.feitas}/${progresso.total} provas` : ''}`
-              : `Importar${previa ? ` até ${previa.questoes} questões` : ''}`}
+              : `Importar${previa ? ` ${previa.questoes} questões` : ''}`}
           </Button>
         </div>
 
@@ -357,12 +357,12 @@ export default function ImportarProvasPage() {
             <h2 className="text-sm font-bold">Prévia</h2>
             <div className="mt-3 grid grid-cols-2 gap-3">
               <Numero rotulo="Provas" valor={previa.provas} />
-              <Numero rotulo="Questões (teto)" valor={previa.questoes} destaque />
+              <Numero rotulo="Questões" valor={previa.questoes} destaque />
             </div>
             <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
-              É um teto, não uma promessa: redação, questão sem enunciado e objetiva sem gabarito
-              ficam de fora, e isso só se sabe olhando questão a questão. O número exato aparece no
-              fim da importação.
+              Não há limite de quantidade: a importação anda em ondas até terminar, seja qual for o
+              tamanho. Algumas questões podem não entrar — redação, questão sem enunciado e objetiva
+              sem gabarito —, e isso só se sabe olhando uma a uma. O número exato aparece no fim.
             </p>
 
             {previa.porGrupo?.length > 0 ? (

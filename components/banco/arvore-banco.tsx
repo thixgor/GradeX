@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronRight, Layers, Search, X } from 'lucide-react'
 import {
   filtrarArvore,
@@ -90,7 +91,7 @@ export function ArvoreDoBanco({
           value={busca}
           onChange={(e) => setBusca(e.target.value)}
           placeholder="Buscar módulo ou tópico…"
-          className="h-9 w-full rounded-lg border border-border bg-background pl-9 pr-8 text-[13px] outline-none focus:border-primary/50"
+          className="h-10 w-full rounded-xl border border-border bg-background pl-9 pr-8 text-[13px] outline-none transition focus:border-primary/50 focus:ring-2 focus:ring-primary/10"
         />
         {busca ? (
           <button
@@ -181,7 +182,7 @@ function Modulo({
           type="button"
           onClick={() => onEscolher('moduloIds', modulo._id)}
           className={cn(
-            'flex min-w-0 flex-1 items-center gap-2 rounded-lg px-2 py-1.5 text-left transition',
+            'flex min-w-0 flex-1 items-center gap-2 rounded-lg px-2 py-2 text-left transition active:scale-[0.99]',
             escolhido ? 'bg-primary/10 text-primary' : 'hover:bg-muted',
           )}
         >
@@ -191,8 +192,15 @@ function Modulo({
         </button>
       </div>
 
+      <AnimatePresence initial={false}>
       {aberto ? (
-        <div className="ml-3 border-l border-border pl-1">
+        <motion.div
+          initial={{ height: 0, opacity: 0 }}
+          animate={{ height: 'auto', opacity: 1 }}
+          exit={{ height: 0, opacity: 0 }}
+          transition={{ duration: 0.18, ease: 'easeOut' }}
+          className="ml-3 overflow-hidden border-l border-border pl-1"
+        >
           {modulo.topicos.map((topico) => {
             const topicoEscolhido = selecao.topicoIds.includes(topico._id)
             return (
@@ -201,7 +209,7 @@ function Modulo({
                   type="button"
                   onClick={() => onEscolher('topicoIds', topico._id)}
                   className={cn(
-                    'flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left transition',
+                    'flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left transition active:scale-[0.99]',
                     topicoEscolhido ? 'bg-primary/10 text-primary' : 'hover:bg-muted',
                   )}
                 >
@@ -221,7 +229,7 @@ function Modulo({
                           type="button"
                           onClick={() => onEscolher('subtopicoIds', sub._id)}
                           className={cn(
-                            'flex w-full items-center gap-2 rounded-lg px-2 py-1 text-left transition',
+                            'flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left transition active:scale-[0.99]',
                             subEscolhido ? 'bg-primary/10 text-primary' : 'hover:bg-muted',
                           )}
                         >
@@ -239,8 +247,9 @@ function Modulo({
               </div>
             )
           })}
-        </div>
+        </motion.div>
       ) : null}
+      </AnimatePresence>
     </div>
   )
 }

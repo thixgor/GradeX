@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { TiltCard } from '@/components/tilt-card'
 import {
   BarChart3,
@@ -361,16 +361,18 @@ function Conteudo() {
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
+          {/* Rolagem horizontal no celular: empilhar quatro botões empurraria
+              a primeira questão para fora da tela. */}
+          <div className="-mx-4 flex w-[calc(100%+2rem)] items-center gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:w-auto sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0">
             <Link
               href="/banco-questoes/historico"
-              className="inline-flex h-9 items-center gap-1.5 rounded-xl border border-border px-3 text-xs font-semibold transition hover:bg-muted"
+              className="inline-flex h-9 flex-none items-center gap-1.5 rounded-xl border border-border px-3 text-xs font-semibold transition hover:bg-muted active:scale-[0.97]"
             >
               <History className="h-3.5 w-3.5" /> Histórico
             </Link>
             <Link
               href="/banco-questoes/listas"
-              className="inline-flex h-9 items-center gap-1.5 rounded-xl border border-border px-3 text-xs font-semibold transition hover:bg-muted"
+              className="inline-flex h-9 flex-none items-center gap-1.5 rounded-xl border border-border px-3 text-xs font-semibold transition hover:bg-muted active:scale-[0.97]"
             >
               <ListPlus className="h-3.5 w-3.5" /> Minhas listas
               {listas.length > 0 ? (
@@ -380,7 +382,7 @@ function Conteudo() {
             {!gratuito ? (
               <Button
                 size="sm"
-                className="btn-brand-glow h-9 gap-1.5 rounded-xl text-xs font-bold text-white"
+                className="btn-brand-glow h-9 flex-none gap-1.5 rounded-xl text-xs font-bold text-white active:scale-[0.97]"
                 onClick={() => {
                   setSorteio((s) => ({ ...s, nome: '' }))
                   setSorteioAberto(true)
@@ -392,7 +394,7 @@ function Conteudo() {
             {isAdmin ? (
               <Link
                 href="/admin/banco-questoes"
-                className="inline-flex h-9 items-center rounded-xl border border-border px-3 text-xs font-semibold transition hover:bg-muted"
+                className="inline-flex h-9 flex-none items-center rounded-xl border border-border px-3 text-xs font-semibold transition hover:bg-muted"
               >
                 Administrar
               </Link>
@@ -411,10 +413,10 @@ function Conteudo() {
               semSaldo && 'border-primary/40 bg-primary/5',
             )}
           >
-            <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0">
                 <p className="flex items-center gap-2 text-sm font-bold">
-                  <Sparkles className="h-4 w-4 text-primary" />
+                  <Sparkles className="h-4 w-4 flex-none text-primary" />
                   {semSaldo
                     ? 'Você abriu suas questões gratuitas'
                     : `${gratuito.restantes} de ${gratuito.limite} questões gratuitas`}
@@ -427,7 +429,7 @@ function Conteudo() {
               </div>
               <Link
                 href="/loja"
-                className="btn-brand-glow inline-flex h-10 flex-none items-center rounded-xl px-4 text-xs font-bold text-white"
+                className="btn-brand-glow inline-flex h-10 flex-none items-center justify-center rounded-xl px-4 text-xs font-bold text-white active:scale-[0.98]"
               >
                 Assinar o Plus+
               </Link>
@@ -474,7 +476,9 @@ function Conteudo() {
           transition={{ duration: 0.4, delay: 0.1 }}
           className="glass-page-card rounded-2xl p-3"
         >
-          <div className="flex flex-wrap gap-2">
+          {/* No celular o campo tem a linha inteira: dividindo com dois botões
+              ele encolhia até caber só "Buscar nc". */}
+          <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
             <div className="relative min-w-0 flex-1">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <input
@@ -501,9 +505,10 @@ function Conteudo() {
               ) : null}
             </div>
 
+            <div className="flex gap-2">
             <Button
               variant="outline"
-              className="h-10 gap-1.5 rounded-xl text-xs"
+              className="h-10 flex-1 gap-1.5 rounded-xl text-xs sm:flex-none md:hidden"
               onClick={() => setArvoreAberta((v) => !v)}
             >
               <Database className="h-3.5 w-3.5" />
@@ -517,17 +522,18 @@ function Conteudo() {
 
             <Button
               variant={filtrosAbertos ? 'secondary' : 'outline'}
-              className="h-10 gap-1.5 rounded-xl text-xs"
+              className="h-10 flex-1 gap-1.5 rounded-xl text-xs sm:flex-none"
               onClick={() => setFiltrosAbertos((v) => !v)}
             >
               <SlidersHorizontal className="h-3.5 w-3.5" /> Filtros
             </Button>
 
             {temFiltro ? (
-              <Button variant="ghost" className="h-10 rounded-xl text-xs" onClick={limparTudo}>
+              <Button variant="ghost" className="h-10 flex-none rounded-xl text-xs" onClick={limparTudo}>
                 Limpar
               </Button>
             ) : null}
+            </div>
           </div>
 
           {filtrosAbertos ? (
@@ -589,15 +595,11 @@ function Conteudo() {
         </motion.section>
 
         {/* ── Assuntos + questões ──────────────────────────────────────── */}
-        <div className="grid gap-5 lg:grid-cols-[280px_1fr]">
-          <aside
-            className={cn(
-              'glass-page-card rounded-2xl p-3 lg:block',
-              // No celular a árvore ocupa a tela toda e some por padrão: ela é
-              // uma ferramenta de escolha, não o conteúdo principal.
-              arvoreAberta ? 'block' : 'hidden',
-            )}
-          >
+        <div className="grid gap-5 md:grid-cols-[240px_1fr] lg:grid-cols-[280px_1fr]">
+          {/* Do tablet para cima a árvore é uma COLUNA: com 800px de largura
+              sobra espaço de sobra, e escondê-la atrás de um botão fazia a
+              página desperdiçar metade da tela e o catálogo desaparecer. */}
+          <aside className="glass-page-card sticky top-4 hidden rounded-2xl p-3 md:block">
             <div className="flex h-[26rem] flex-col lg:h-[32rem]">
               <ArvoreDoBanco
                 modulos={hierarquia.modulos}
@@ -610,23 +612,47 @@ function Conteudo() {
           </aside>
 
           <main className="min-w-0 space-y-3">
-            {carregandoQuestoes ? (
-              [0, 1, 2, 3].map((i) => <div key={i} className="h-28 rounded-xl skeleton-pulse" />)
-            ) : questoes.length === 0 ? (
-              <ListaVazia temFiltro={temFiltro} onLimpar={limparTudo} />
-            ) : (
-              questoes.map((q, i) => (
-                <CartaoDeQuestao
-                  key={q._id}
-                  questao={q}
-                  indice={((paginacao?.page || 1) - 1) * POR_PAGINA + i + 1}
-                  podeAbrir={!!gratuito && gratuito.restantes > 0}
-                  abrindo={abrindo === q._id}
-                  onAbrir={abrirQuestao}
-                  onAdicionarALista={gratuito ? undefined : setQuestaoParaLista}
-                />
-              ))
-            )}
+            <AnimatePresence mode="wait" initial={false}>
+              {carregandoQuestoes ? (
+                <motion.div
+                  key="carregando"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="space-y-3"
+                >
+                  {[0, 1, 2, 3].map((i) => (
+                    <div key={i} className="h-28 rounded-2xl skeleton-pulse" />
+                  ))}
+                </motion.div>
+              ) : questoes.length === 0 ? (
+                <motion.div key="vazio" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                  <ListaVazia temFiltro={temFiltro} onLimpar={limparTudo} />
+                </motion.div>
+              ) : (
+                <motion.div
+                  // A chave muda com o filtro e com a página: é o que faz a
+                  // lista TROCAR com uma transição em vez de piscar no lugar.
+                  key={`${parametros.toString()}-${paginacao?.page || 1}`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="space-y-3"
+                >
+                  {questoes.map((q, i) => (
+                    <CartaoDeQuestao
+                      key={q._id}
+                      questao={q}
+                      indice={((paginacao?.page || 1) - 1) * POR_PAGINA + i + 1}
+                      podeAbrir={!!gratuito && gratuito.restantes > 0}
+                      abrindo={abrindo === q._id}
+                      onAbrir={abrirQuestao}
+                      onAdicionarALista={gratuito ? undefined : setQuestaoParaLista}
+                    />
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {paginacao && paginacao.totalPages > 1 ? (
               <div className="flex items-center justify-between gap-3 pt-2">
@@ -656,6 +682,58 @@ function Conteudo() {
           </main>
         </div>
       </div>
+
+      {/* ── Assuntos no celular: gaveta, não empurrão ──────────────────── */}
+      <AnimatePresence>
+        {arvoreAberta ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[110] bg-black/50 backdrop-blur-sm md:hidden"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setArvoreAberta(false)
+            }}
+          >
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+              className="absolute inset-x-0 bottom-0 flex max-h-[82vh] flex-col rounded-t-2xl border-t border-border bg-card p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
+            >
+              <div className="mx-auto mb-2 h-1 w-10 flex-none rounded-full bg-border" aria-hidden />
+              <div className="flex items-center justify-between gap-2 px-1 pb-2">
+                <h2 className="text-sm font-bold">Assuntos</h2>
+                <button
+                  type="button"
+                  onClick={() => setArvoreAberta(false)}
+                  aria-label="Fechar"
+                  className="-m-1 rounded-lg p-1 text-muted-foreground hover:bg-muted"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+              <div className="flex min-h-0 flex-1 flex-col">
+                <ArvoreDoBanco
+                  modulos={hierarquia.modulos}
+                  topicos={hierarquia.topicos}
+                  subtopicos={hierarquia.subtopicos}
+                  selecao={selecao}
+                  onChange={setSelecao}
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => setArvoreAberta(false)}
+                className="btn-brand-glow mt-2 h-11 flex-none rounded-xl text-sm font-bold text-white active:scale-[0.98]"
+              >
+                Ver {paginacao ? `${paginacao.total} ` : ''}questões
+              </button>
+            </motion.div>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
 
       {/* ── Adicionar a uma lista ──────────────────────────────────────── */}
       <Dialog open={!!questaoParaLista} onOpenChange={(a) => !a && setQuestaoParaLista(null)}>
