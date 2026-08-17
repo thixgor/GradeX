@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
+import { colecaoDeGrupos, colecaoDeProvas } from '@/lib/provas/colecoes'
 import { ObjectId } from 'mongodb'
 
 export const dynamic = 'force-dynamic'
@@ -19,9 +19,18 @@ export async function PATCH(
     const { groupId } = await request.json()
     const examId = params.id
 
-    const db = await getDb()
-    const examsCollection = db.collection('exams')
-    const groupsCollection = db.collection('groups')
+    /*
+     * Provas e grupos vivem em bancos diferentes (ver lib/provas/colecoes.ts).
+     * Enquanto os grupos eram lidos do lado das provas, TODA consulta a grupo
+     * daqui voltava vazia — e as guardas abaixo, escritas com `?.`, deixavam
+     * passar em silêncio: qualquer pessoa podia tirar uma prova de um grupo
+     * geral, porque o grupo geral nunca era encontrado para ser reconhecido
+     * como tal.
+     */
+    const [examsCollection, groupsCollection] = await Promise.all([
+      colecaoDeProvas(),
+      colecaoDeGrupos(),
+    ])
 
     // Buscar a prova
     const exam = await examsCollection.findOne({

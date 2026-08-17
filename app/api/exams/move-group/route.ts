@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
+import { colecaoDeGrupos, colecaoDeProvas } from '@/lib/provas/colecoes'
 import { ObjectId } from 'mongodb'
 import { isValidObjectId } from '@/lib/api-security'
 import { podeMoverProva } from '@/lib/provas/mover-provas'
@@ -46,9 +46,13 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: 'Grupo inválido' }, { status: 400 })
     }
 
-    const db = await getDb()
-    const examsCollection = db.collection('exams')
-    const groupsCollection = db.collection('groups')
+    // Provas e grupos vivem em bancos diferentes (ver lib/provas/colecoes.ts).
+    // Pegar os grupos do banco errado não dá erro: a busca volta vazia e a rota
+    // responde "Grupo não encontrado" para um grupo que está na tela.
+    const [examsCollection, groupsCollection] = await Promise.all([
+      colecaoDeProvas(),
+      colecaoDeGrupos(),
+    ])
 
     const [provas, todosGrupos] = await Promise.all([
       examsCollection

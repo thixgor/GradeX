@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import clientPromise from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import {
   secureApiEndpoint,
@@ -9,6 +8,7 @@ import {
   validateStringInput
 } from '@/lib/api-security'
 import { podeMoverGrupo, type GrupoNaArvore } from '@/lib/provas/arvore-grupos'
+import { colecaoDeGrupos, colecaoDeProvas } from '@/lib/provas/colecoes'
 
 export const dynamic = 'force-dynamic'
 
@@ -47,9 +47,7 @@ export async function PUT(
     const color = body.color
     const icon = body.icon ? sanitizeHtml(body.icon) : undefined
 
-    const client = await clientPromise
-    const db = client.db('DomineAqui')
-    const groupsCollection = db.collection('groups')
+    const groupsCollection = await colecaoDeGrupos()
 
     // Buscar grupo
     const group = await groupsCollection.findOne({ _id: new ObjectId(id) })
@@ -155,10 +153,12 @@ export async function DELETE(
     const session = security.session!
     const { id } = params
 
-    const client = await clientPromise
-    const db = client.db('DomineAqui')
-    const groupsCollection = db.collection('groups')
-    const examsCollection = db.collection('exams')
+    const groupsCollection = await colecaoDeGrupos()
+    // As provas NÃO estão neste banco (ver lib/provas/colecoes.ts). Enquanto
+    // esta linha pegava `exams` do lado dos grupos, o `updateMany` abaixo não
+    // casava com nada: apagar um grupo deixava as provas dele apontando para um
+    // grupo morto, e elas sumiam da tela sem terem sido apagadas.
+    const examsCollection = await colecaoDeProvas()
 
     // Buscar grupo
     const group = await groupsCollection.findOne({ _id: new ObjectId(id) })
