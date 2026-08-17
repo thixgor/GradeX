@@ -170,20 +170,38 @@ export async function PUT(
       updateData.questaoIds = body.questaoIds.map((qid: string) => new ObjectId(qid))
     }
 
-    // Se está adicionando uma questão específica
-    if (body.adicionarQuestao) {
+    if (body.modoResposta === 'imediato' || body.modoResposta === 'final') {
+      updateData.modoResposta = body.modoResposta
+    }
+
+    /*
+     * Adicionar uma questão à lista.
+     *
+     * A tela sempre mandou `addQuestaoId`; esta rota só olhava
+     * `adicionarQuestao`. O corpo caía no `else` lá embaixo, que grava apenas
+     * `updatedAt` — a resposta era 200, a tela fechava o diálogo dizendo que
+     * deu certo, e a questão nunca entrava na lista. Um erro que não parece
+     * erro em lugar nenhum.
+     *
+     * Os dois nomes passam a valer: consertar só um lado deixaria a outra
+     * ponta quebrada dependendo de quem chama.
+     */
+    const adicionar = body.addQuestaoId || body.adicionarQuestao
+    const remover = body.removeQuestaoId || body.removerQuestao
+
+    if (adicionar && ObjectId.isValid(String(adicionar))) {
       await db.collection('banco_listas_usuario').updateOne(
         { _id: new ObjectId(id) },
         {
-          $addToSet: { questaoIds: new ObjectId(body.adicionarQuestao) },
+          $addToSet: { questaoIds: new ObjectId(String(adicionar)) },
           $set: { updatedAt: new Date() }
         }
       )
-    } else if (body.removerQuestao) {
+    } else if (remover && ObjectId.isValid(String(remover))) {
       await db.collection('banco_listas_usuario').updateOne(
         { _id: new ObjectId(id) },
         {
-          $pull: { questaoIds: new ObjectId(body.removerQuestao) } as any,
+          $pull: { questaoIds: new ObjectId(String(remover)) } as any,
           $set: { updatedAt: new Date() }
         }
       )

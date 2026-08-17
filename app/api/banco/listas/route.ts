@@ -31,15 +31,42 @@ export async function GET(request: NextRequest) {
       }, { status: 403 })
     }
 
-    // Buscar listas do usuário
+    /*
+     * As listas com o PROGRESSO de cada uma.
+     *
+     * "12 questões" não diz o que a pessoa precisa saber ao voltar: se aquela
+     * lista está pela metade ou intocada. Sem isso, todas as listas parecem
+     * iguais na tela e a escolha de qual retomar vira adivinhação.
+     *
+     * O cruzamento é feito no banco, numa consulta só — contar resolvidas no
+     * Node exigiria uma ida por lista.
+     */
     const listas = await db.collection<BancoListaUsuario>('banco_listas_usuario')
       .aggregate([
         { $match: { userId: new ObjectId(session.userId) } },
+        { $addFields: { totalQuestoes: { $size: '$questaoIds' } } },
         {
-          $addFields: {
-            totalQuestoes: { $size: '$questaoIds' }
-          }
+          $lookup: {
+            from: 'banco_resolucoes',
+            let: { ids: '$questaoIds' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [
+                      { $eq: ['$userId', new ObjectId(session.userId)] },
+                      { $in: ['$questaoId', '$$ids'] },
+                    ],
+                  },
+                },
+              },
+              { $group: { _id: '$questaoId' } },
+            ],
+            as: 'resolvidas',
+          },
         },
+        { $addFields: { totalResolvidas: { $size: '$resolvidas' } } },
+        { $project: { resolvidas: 0 } },
         { $sort: { updatedAt: -1 } }
       ])
       .toArray()

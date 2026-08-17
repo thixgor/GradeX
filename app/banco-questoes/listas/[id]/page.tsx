@@ -12,6 +12,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Progress } from '@/components/ui/progress'
 import {
   ArrowLeft,
+  BookOpen,
   Loader2,
   ChevronRight,
   ChevronLeft,
@@ -406,13 +407,13 @@ ${respostaAluno}`
       <AppShell headerTitle={lista.nome} headerSubtitle={`Questão ${questaoAtual + 1} de ${questoes.length}`}>
         <div className="container max-w-4xl mx-auto py-6 px-4 space-y-6">
           {/* Header do simulado */}
-          <div className="flex items-center justify-between flex-wrap gap-2">
-            <Button variant="ghost" onClick={voltarParaLista}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Sair do Simulado
+          <div className="flex items-center justify-between gap-2">
+            <Button variant="ghost" className="h-9 flex-none rounded-xl text-xs" onClick={voltarParaLista}>
+              <ArrowLeft className="mr-1.5 h-4 w-4" />
+              Sair
             </Button>
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-sm text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <span className="hidden text-xs text-muted-foreground sm:inline">
                 {modoCorrecao === 'imediato' ? 'Correção Imediata' : 'Correção no Final'}
               </span>
               <div className="flex gap-1">
@@ -904,41 +905,44 @@ ${respostaAluno}`
   return (
     <AppShell headerTitle={lista.nome} headerSubtitle={`${questoes.length} questões`}>
       <div className="container max-w-5xl mx-auto py-6 px-4 space-y-6">
-        {/* Navegação */}
-        <div className="flex items-center justify-between flex-wrap gap-4">
+        {/* Navegação — rola no celular em vez de empilhar três botões. */}
+        <div className="-mx-4 flex items-center gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:justify-between sm:overflow-visible sm:px-0 sm:pb-0">
           <Button
             variant="ghost"
+            className="h-9 flex-none rounded-xl text-xs"
             onClick={() => router.push('/banco-questoes/listas')}
           >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Voltar às Listas
+            <ArrowLeft className="mr-1.5 h-4 w-4" />
+            Minhas listas
           </Button>
 
           {questoes.length > 0 && (
-            <div className="flex gap-2 flex-wrap">
+            <div className="flex flex-none gap-2">
               <Button
                 variant="outline"
+                className="h-9 flex-none rounded-xl text-xs"
                 onClick={() => handleDownloadPdf(false)}
                 disabled={downloadingPdf}
               >
                 {downloadingPdf ? (
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
                 ) : (
-                  <Download className="h-4 w-4 mr-2" />
+                  <Download className="mr-1.5 h-3.5 w-3.5" />
                 )}
-                Baixar PDF
+                PDF
               </Button>
               <Button
                 variant="outline"
+                className="h-9 flex-none rounded-xl text-xs"
                 onClick={() => handleDownloadPdf(true)}
                 disabled={downloadingPdf}
               >
                 {downloadingPdf ? (
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
                 ) : (
-                  <FileText className="h-4 w-4 mr-2" />
+                  <FileText className="mr-1.5 h-3.5 w-3.5" />
                 )}
-                PDF com Gabarito
+                PDF com gabarito
               </Button>
             </div>
           )}
@@ -946,46 +950,63 @@ ${respostaAluno}`
 
         {/* Questões da lista */}
         {questoes.length === 0 ? (
-          <Card>
-            <CardContent className="py-12 text-center">
-              <h3 className="text-lg font-medium">Lista vazia</h3>
-              <p className="text-muted-foreground mb-4">
-                Adicione questões a esta lista pelo banco de questões
-              </p>
-              <Button onClick={() => router.push('/banco-questoes')}>
-                Ir para o Banco de Questões
-              </Button>
-            </CardContent>
-          </Card>
+          <div className="glass-page-card rounded-2xl px-6 py-14 text-center">
+            <BookOpen className="mx-auto mb-3 h-8 w-8 text-muted-foreground/40" />
+            <h3 className="text-base font-bold">Lista vazia</h3>
+            <p className="mx-auto mt-1.5 max-w-sm text-sm leading-relaxed text-muted-foreground">
+              Abra o banco, use o botão de adicionar no cartão da questão e ela cai aqui.
+            </p>
+            <Button
+              className="btn-brand-glow mt-5 h-10 rounded-xl text-sm font-bold text-white"
+              onClick={() => router.push('/banco-questoes')}
+            >
+              Escolher questões
+            </Button>
+          </div>
         ) : (
           <>
             {/* Botões de iniciar simulado */}
-            <Card className="bg-gradient-to-r from-[#468152]/10 to-[#E2A43E]/10 border-[#468152]/30">
-              <CardContent className="py-6">
-                <div className="text-center space-y-4">
-                  <h3 className="text-xl font-bold">Pronto para praticar?</h3>
-                  <p className="text-muted-foreground">
-                    Inicie o simulado e responda as {questoes.length} questões desta lista
-                  </p>
-                  <div className="flex gap-4 justify-center flex-wrap">
-                    <Button
-                      onClick={() => iniciarSimulado('imediato')}
-                      className="bg-gradient-to-r from-[#468152] to-[#E2A43E] hover:from-[#468152]/90 hover:to-[#E2A43E]/90"
-                    >
-                      <Play className="h-4 w-4 mr-2" />
-                      Iniciar com Correção Imediata
-                    </Button>
-                    <Button
-                      variant="outline"
-                      onClick={() => iniciarSimulado('final')}
-                    >
-                      <Eye className="h-4 w-4 mr-2" />
-                      Iniciar com Correção no Final
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            {/* Os dois modos lado a lado, cada um dizendo o que faz. Antes eram
+                dois botões cujos nomes ("Correção Imediata", "Correção no
+                Final") só fazem sentido para quem já usou uma vez. */}
+            <div className="glass-page-card rounded-2xl p-4 sm:p-5">
+              <h3 className="text-sm font-bold">Praticar as {questoes.length} questões</h3>
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                Escolha quando quer ver a resposta.
+              </p>
+              <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                <button
+                  type="button"
+                  onClick={() => iniciarSimulado('imediato')}
+                  className="group flex items-start gap-3 rounded-xl border border-border p-3 text-left transition hover:border-primary/50 hover:bg-primary/5 active:scale-[0.99]"
+                >
+                  <span className="flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-primary/10 text-primary">
+                    <Play className="h-4 w-4" />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block text-[13px] font-bold">Corrigir na hora</span>
+                    <span className="block text-[11px] leading-relaxed text-muted-foreground">
+                      Vê o gabarito e a explicação a cada questão
+                    </span>
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => iniciarSimulado('final')}
+                  className="group flex items-start gap-3 rounded-xl border border-border p-3 text-left transition hover:border-primary/50 hover:bg-primary/5 active:scale-[0.99]"
+                >
+                  <span className="flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-muted text-muted-foreground">
+                    <Eye className="h-4 w-4" />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block text-[13px] font-bold">Só no final</span>
+                    <span className="block text-[11px] leading-relaxed text-muted-foreground">
+                      Como um simulado: responde tudo e confere depois
+                    </span>
+                  </span>
+                </button>
+              </div>
+            </div>
 
             {/* Lista de questões */}
             <div className="space-y-4">
