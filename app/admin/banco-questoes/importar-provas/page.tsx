@@ -36,7 +36,11 @@ import {
  */
 export default function ImportarProvasPage() {
   const [grupos, setGrupos] = useState<GrupoNaArvore[]>([])
+  // Contagem vinda da mesma fonte da importação (ver GET da rota): usar
+  // /api/exams aqui mostrava zero em todo grupo, porque aquela rota esconde as
+  // provas ocultas — que são boa parte das provas antigas da faculdade.
   const [provas, setProvas] = useState<{ _id: string; groupId?: string | null }[]>([])
+  const [contagem, setContagem] = useState<Record<string, { provas: number; questoes: number }>>({})
   const [carregando, setCarregando] = useState(true)
   const [escolhidos, setEscolhidos] = useState<string[]>([])
   const [busca, setBusca] = useState('')
@@ -52,7 +56,7 @@ export default function ImportarProvasPage() {
     let vivo = true
     Promise.all([
       fetch('/api/groups').then((r) => (r.ok ? r.json() : { groups: [] })),
-      fetch('/api/exams?resumo=1').then((r) => (r.ok ? r.json() : { exams: [] })),
+      fetch('/api/admin/banco/importar-provas').then((r) => (r.ok ? r.json() : { porGrupo: [] })),
     ])
       .then(([g, e]) => {
         if (!vivo) return
@@ -65,13 +69,35 @@ export default function ImportarProvasPage() {
             category: x.category,
           })),
         )
-        setProvas((e.exams || []).map((x: any) => ({ _id: String(x._id), groupId: x.groupId || null })))
+        const mapa: Record<string, { provas: number; questoes: number }> = {}
+        // A árvore soma o ramo inteiro com `contarProvas`, que espera uma lista
+        // de provas; a contagem agregada é expandida para isso.
+        const expandidas: { _id: string; groupId: string | null }[] = []
+        for (const linha of e.porGrupo || []) {
+          mapa[linha.grupoId] = { provas: linha.provas, questoes: linha.questoes }
+          for (let i = 0; i < linha.provas; i++) {
+            expandidas.push({ _id: `${linha.grupoId}-${i}`, groupId: linha.grupoId })
+          }
+        }
+        setContagem(mapa)
+        setProvas(expandidas)
       })
       .finally(() => vivo && setCarregando(false))
     return () => {
       vivo = false
     }
   }, [])
+
+  /** Questões do ramo inteiro — mesma soma que `contarProvas` faz para provas. */
+  const questoesDoRamo = useMemo(() => {
+    const somar = (id: string, vistos = new Set<string>()): number => {
+      if (vistos.has(id)) return 0
+      vistos.add(id)
+      const direto = contagem[id]?.questoes || 0
+      return filhosDe(grupos, id).reduce((s, f) => s + somar(f._id, vistos), direto)
+    }
+    return somar
+  }, [grupos, contagem])
 
   // Só grupos gerais entram: grupo pessoal é material de uma pessoa só e não
   // pode virar conteúdo do banco, que é de todo mundo.
@@ -203,6 +229,7 @@ export default function ImportarProvasPage() {
                     grupo={g}
                     caminho={caminhoAte(gerais, g._id).slice(0, -1).map((x) => x.name).join(' › ')}
                     provas={contarProvas(gerais, provas as any, g._id)}
+                    questoes={questoesDoRamo(g._id)}
                     escolhido={escolhidos.includes(g._id)}
                     onEscolher={() => alternar(g._id)}
                   />
@@ -215,6 +242,7 @@ export default function ImportarProvasPage() {
               provas={provas}
               paiId={null}
               nivel={0}
+              questoesDoRamo={questoesDoRamo}
               abertos={abertos}
               onAlternarAberto={(id) =>
                 setAbertos((a) => (a.includes(id) ? a.filter((i) => i !== id) : [...a, id]))
@@ -328,6 +356,7 @@ function Nivel({
   provas,
   paiId,
   nivel,
+  questoesDoRamo,
   abertos,
   onAlternarAberto,
   escolhidos,
@@ -337,6 +366,7 @@ function Nivel({
   provas: { _id: string; groupId?: string | null }[]
   paiId: string | null
   nivel: number
+  questoesDoRamo: (id: string) => number
   abertos: string[]
   onAlternarAberto: (id: string) => void
   escolhidos: string[]
@@ -366,6 +396,7 @@ function Nivel({
               <Linha
                 grupo={g}
                 provas={contarProvas(grupos, provas as any, g._id)}
+                questoes={questoesDoRamo(g._id)}
                 escolhido={escolhidos.includes(g._id)}
                 onEscolher={() => onEscolher(g._id)}
               />
@@ -376,6 +407,7 @@ function Nivel({
                 provas={provas}
                 paiId={g._id}
                 nivel={nivel + 1}
+                questoesDoRamo={questoesDoRamo}
                 abertos={abertos}
                 onAlternarAberto={onAlternarAberto}
                 escolhidos={escolhidos}
@@ -393,12 +425,14 @@ function Linha({
   grupo,
   caminho,
   provas,
+  questoes,
   escolhido,
   onEscolher,
 }: {
   grupo: GrupoNaArvore
   caminho?: string
   provas: number
+  questoes?: number
   escolhido: boolean
   onEscolher: () => void
 }) {
@@ -426,6 +460,7 @@ function Linha({
       </span>
       <span className="flex-none text-[11px] tabular-nums text-muted-foreground">
         {provas} {provas === 1 ? 'prova' : 'provas'}
+        {questoes ? ` · ${questoes} questões` : ''}
       </span>
     </button>
   )

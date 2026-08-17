@@ -67,6 +67,10 @@ export async function GET(request: NextRequest) {
     const resumo = request.nextUrl.searchParams.get('resumo') === '1'
     const projecao = {
       title: 1,
+      // `groupId` faz parte da identidade da prova, não do conteúdo dela: sem
+      // ele, quem lista provas por grupo conta zero em todos os grupos — e o
+      // zero não parece um erro de projeção, parece um banco vazio.
+      groupId: 1,
       isHidden: 1,
       isPersonalExam: 1,
       isPracticeExam: 1,

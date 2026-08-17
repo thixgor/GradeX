@@ -16,6 +16,50 @@ import {
 export const dynamic = 'force-dynamic'
 
 /**
+ * Quantas provas existem em cada grupo — contadas na MESMA fonte da importação.
+ *
+ * A tela chegou a usar `/api/exams` para isso e mostrava zero em todos os
+ * grupos por dois motivos independentes: a projeção resumida não trazia
+ * `groupId`, e aquela rota esconde as provas marcadas como ocultas — que são
+ * justamente muitas das provas antigas da faculdade. O número na tela precisa
+ * ser o número que vai ser importado; qualquer diferença entre os dois é uma
+ * mentira que só aparece depois de apertar o botão.
+ */
+export async function GET() {
+  try {
+    const session = await getSession()
+    if (!session || session.role !== 'admin') {
+      return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
+    }
+
+    const provasCol = await colecaoDeProvas()
+    const linhas = await provasCol
+      .aggregate([
+        { $match: { isDeleted: { $ne: true }, groupId: { $ne: null } } },
+        {
+          $group: {
+            _id: '$groupId',
+            provas: { $sum: 1 },
+            questoes: { $sum: { $size: { $ifNull: ['$questions', []] } } },
+          },
+        },
+      ])
+      .toArray()
+
+    return NextResponse.json({
+      porGrupo: linhas.map((l: any) => ({
+        grupoId: String(l._id),
+        provas: l.provas,
+        questoes: l.questoes,
+      })),
+    })
+  } catch (error) {
+    console.error('Erro ao contar provas por grupo:', error)
+    return NextResponse.json({ error: 'Erro ao contar provas' }, { status: 500 })
+  }
+}
+
+/**
  * Trazer as questões das Provas da Faculdade para o Banco de Questões.
  *
  * O admin escolhe grupos em /provas e as questões entram com gabarito e
