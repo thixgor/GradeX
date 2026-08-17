@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { motion } from 'framer-motion'
 import { CheckCircle2, CircleSlash, ListPlus, Lock, Sparkles, XCircle } from 'lucide-react'
 import { descreverCaminho } from '@/lib/banco/hierarquia'
 import { cn } from '@/lib/utils'
@@ -98,47 +99,67 @@ export function CartaoDeQuestao({
   // ── Bloqueada ────────────────────────────────────────────────────────
   if (questao.bloqueada) {
     return (
-      <div className="rounded-xl border border-dashed border-border bg-card/60 p-4">
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: Math.min(indice, 8) * 0.03 }}
+        className="glass-page-card rounded-2xl !border-l-[3px] !border-l-border p-4"
+      >
         <div className="flex items-start gap-3">
-          <span className="flex h-8 w-8 flex-none items-center justify-center rounded-lg bg-muted text-muted-foreground">
+          <span className="flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-muted text-muted-foreground">
             <Lock className="h-4 w-4" />
           </span>
           <div className="min-w-0 flex-1">
             <p className="truncate text-[11px] font-medium text-muted-foreground">
               {caminho || 'Sem assunto'}
             </p>
-            <p className="mt-1 text-sm font-semibold">Questão {indice}</p>
-            <div className="mt-2">{etiquetas}</div>
-
-            <div className="mt-3 flex flex-wrap items-center gap-2">
+            {/* O assunto é o título, não "Questão 7": é por ele que a pessoa
+                decide se vale gastar uma das gratuitas. */}
+            <p className="mt-0.5 truncate text-sm font-semibold">
+              {questao.subtopicoNome || questao.topicoNome || 'Questão do banco'}
+              <span className="ml-1.5 text-[11px] font-normal text-muted-foreground tabular-nums">
+                #{indice}
+              </span>
+            </p>
+            <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
+              {etiquetas}
               {podeAbrir ? (
                 <button
                   type="button"
                   onClick={() => onAbrir?.(questao._id)}
                   disabled={abrindo}
-                  className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-primary px-3.5 text-xs font-bold text-primary-foreground transition hover:brightness-110 disabled:opacity-50"
+                  className="inline-flex h-9 items-center gap-1.5 rounded-xl border border-primary/30 bg-primary/5 px-3.5 text-xs font-bold text-primary transition hover:bg-primary/10 disabled:opacity-50"
                 >
                   <Sparkles className="h-3.5 w-3.5" />
-                  {abrindo ? 'Abrindo…' : 'Abrir com 1 questão grátis'}
+                  {abrindo ? 'Abrindo…' : 'Abrir com 1 grátis'}
                 </button>
               ) : (
                 <Link
                   href="/loja"
-                  className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-primary px-3.5 text-xs font-bold text-primary-foreground transition hover:brightness-110"
+                  className="inline-flex h-9 items-center gap-1.5 rounded-xl border border-border px-3.5 text-xs font-bold text-muted-foreground transition hover:bg-muted"
                 >
-                  Assinar para ver todas
+                  Assinar para ver
                 </Link>
               )}
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
     )
   }
 
   // ── Aberta ───────────────────────────────────────────────────────────
   return (
-    <div className="group relative rounded-xl border border-border bg-card p-4 transition hover:border-primary/40">
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, delay: Math.min(indice, 8) * 0.03 }}
+      className={cn(
+        'group relative glass-page-card rounded-2xl p-4 !border-l-[3px] transition-all duration-300',
+        'hover-glow-green hover-lift',
+        questao.tipo === 'discursiva' ? '!border-l-violet-500' : '!border-l-[#468152]',
+      )}
+    >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <p className="truncate text-[11px] font-medium text-muted-foreground">
@@ -167,14 +188,14 @@ export function CartaoDeQuestao({
           </button>
         ) : null}
       </div>
-    </div>
+    </motion.div>
   )
 }
 
 /** O que aparece quando o filtro não devolve nada. */
 export function ListaVazia({ temFiltro, onLimpar }: { temFiltro: boolean; onLimpar: () => void }) {
   return (
-    <div className="rounded-xl border border-dashed border-border py-14 text-center">
+    <div className="glass-page-card rounded-2xl border-dashed py-14 text-center">
       <CircleSlash className="mx-auto mb-2 h-7 w-7 text-muted-foreground/40" />
       <p className="text-sm text-muted-foreground">
         {temFiltro ? 'Nenhuma questão com esses filtros.' : 'O banco ainda não tem questões.'}
@@ -183,7 +204,7 @@ export function ListaVazia({ temFiltro, onLimpar }: { temFiltro: boolean; onLimp
         <button
           type="button"
           onClick={onLimpar}
-          className="mt-3 rounded-lg border border-border px-3 py-1.5 text-xs font-semibold transition hover:bg-muted"
+          className="mt-3 rounded-xl border border-border px-3.5 py-2 text-xs font-semibold transition hover:bg-muted"
         >
           Limpar filtros
         </button>

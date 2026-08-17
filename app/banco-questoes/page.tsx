@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { motion } from 'framer-motion'
+import { TiltCard } from '@/components/tilt-card'
 import {
   BarChart3,
   Database,
@@ -340,28 +342,35 @@ function Conteudo() {
     <div className="surface-page">
       <div className="mx-auto max-w-7xl space-y-5 p-4 sm:p-6 lg:p-8">
         {/* ── Cabeçalho ────────────────────────────────────────────────── */}
-        <header className="flex flex-wrap items-start justify-between gap-3">
-          <div className="min-w-0">
-            <h1 className="flex items-center gap-2 font-heading text-2xl font-semibold tracking-tight">
+        <motion.header
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="flex flex-wrap items-start justify-between gap-3"
+        >
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="flex h-11 w-11 flex-none items-center justify-center rounded-2xl bg-primary/10">
               <Database className="h-6 w-6 text-primary" />
-              Banco de Questões
-            </h1>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {paginacao ? `${paginacao.total} questões` : 'Carregando…'}
-              {temFiltro ? ' com os filtros atuais' : ' no banco'}
-            </p>
+            </div>
+            <div className="min-w-0">
+              <h1 className="font-heading text-2xl font-semibold tracking-tight">Banco de Questões</h1>
+              <p className="mt-0.5 text-sm text-muted-foreground tabular-nums">
+                {paginacao ? `${paginacao.total} questões` : 'Carregando…'}
+                {temFiltro ? ' com os filtros atuais' : ' no banco'}
+              </p>
+            </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
             <Link
               href="/banco-questoes/historico"
-              className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-border px-3 text-xs font-semibold transition hover:bg-muted"
+              className="inline-flex h-9 items-center gap-1.5 rounded-xl border border-border px-3 text-xs font-semibold transition hover:bg-muted"
             >
               <History className="h-3.5 w-3.5" /> Histórico
             </Link>
             <Link
               href="/banco-questoes/listas"
-              className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-border px-3 text-xs font-semibold transition hover:bg-muted"
+              className="inline-flex h-9 items-center gap-1.5 rounded-xl border border-border px-3 text-xs font-semibold transition hover:bg-muted"
             >
               <ListPlus className="h-3.5 w-3.5" /> Minhas listas
               {listas.length > 0 ? (
@@ -371,7 +380,7 @@ function Conteudo() {
             {!gratuito ? (
               <Button
                 size="sm"
-                className="h-9 gap-1.5 rounded-lg text-xs font-bold"
+                className="btn-brand-glow h-9 gap-1.5 rounded-xl text-xs font-bold text-white"
                 onClick={() => {
                   setSorteio((s) => ({ ...s, nome: '' }))
                   setSorteioAberto(true)
@@ -383,20 +392,23 @@ function Conteudo() {
             {isAdmin ? (
               <Link
                 href="/admin/banco-questoes"
-                className="inline-flex h-9 items-center rounded-lg border border-border px-3 text-xs font-semibold transition hover:bg-muted"
+                className="inline-flex h-9 items-center rounded-xl border border-border px-3 text-xs font-semibold transition hover:bg-muted"
               >
                 Administrar
               </Link>
             ) : null}
           </div>
-        </header>
+        </motion.header>
 
         {/* ── Faixa do plano gratuito ───────────────────────────────────── */}
         {gratuito ? (
-          <section
+          <motion.section
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.05 }}
             className={cn(
-              'rounded-xl border p-4',
-              semSaldo ? 'border-primary/30 bg-primary/5' : 'border-border bg-card',
+              'glass-page-card rounded-2xl p-4 sm:p-5',
+              semSaldo && 'border-primary/40 bg-primary/5',
             )}
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
@@ -415,7 +427,7 @@ function Conteudo() {
               </div>
               <Link
                 href="/loja"
-                className="inline-flex h-9 flex-none items-center rounded-lg bg-primary px-4 text-xs font-bold text-primary-foreground transition hover:brightness-110"
+                className="btn-brand-glow inline-flex h-10 flex-none items-center rounded-xl px-4 text-xs font-bold text-white"
               >
                 Assinar o Plus+
               </Link>
@@ -429,9 +441,14 @@ function Conteudo() {
                 />
               </div>
             ) : null}
-          </section>
+          </motion.section>
         ) : estatisticas ? (
-          <section className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <motion.section
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.05 }}
+            className="grid grid-cols-2 gap-3 sm:grid-cols-3"
+          >
             <Indicador
               icone={<Target className="h-4 w-4" />}
               rotulo="Resolvidas"
@@ -447,11 +464,16 @@ function Conteudo() {
               rotulo="Listas"
               valor={String(listas.length)}
             />
-          </section>
+          </motion.section>
         ) : null}
 
         {/* ── Busca + filtros ──────────────────────────────────────────── */}
-        <section className="rounded-xl border border-border bg-card p-3">
+        <motion.section
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+          className="glass-page-card rounded-2xl p-3"
+        >
           <div className="flex flex-wrap gap-2">
             <div className="relative min-w-0 flex-1">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -462,7 +484,7 @@ function Conteudo() {
                   if (e.key === 'Enter') setBuscaAplicada(busca.trim())
                 }}
                 placeholder="Buscar no enunciado…"
-                className="h-10 w-full rounded-lg border border-border bg-background pl-9 pr-9 text-sm outline-none focus:border-primary/50"
+                className="h-10 w-full rounded-xl border border-border bg-background pl-9 pr-9 text-sm outline-none transition focus:border-primary/50 focus:ring-2 focus:ring-primary/10"
               />
               {busca ? (
                 <button
@@ -481,7 +503,7 @@ function Conteudo() {
 
             <Button
               variant="outline"
-              className="h-10 gap-1.5 rounded-lg text-xs"
+              className="h-10 gap-1.5 rounded-xl text-xs"
               onClick={() => setArvoreAberta((v) => !v)}
             >
               <Database className="h-3.5 w-3.5" />
@@ -495,14 +517,14 @@ function Conteudo() {
 
             <Button
               variant={filtrosAbertos ? 'secondary' : 'outline'}
-              className="h-10 gap-1.5 rounded-lg text-xs"
+              className="h-10 gap-1.5 rounded-xl text-xs"
               onClick={() => setFiltrosAbertos((v) => !v)}
             >
               <SlidersHorizontal className="h-3.5 w-3.5" /> Filtros
             </Button>
 
             {temFiltro ? (
-              <Button variant="ghost" className="h-10 rounded-lg text-xs" onClick={limparTudo}>
+              <Button variant="ghost" className="h-10 rounded-xl text-xs" onClick={limparTudo}>
                 Limpar
               </Button>
             ) : null}
@@ -514,7 +536,7 @@ function Conteudo() {
                 <select
                   value={tipo}
                   onChange={(e) => setTipo(e.target.value as BancoQuestaoTipo | '')}
-                  className="h-9 w-full rounded-lg border border-border bg-background px-2 text-[13px] outline-none focus:border-primary/50"
+                  className="h-9 w-full rounded-xl border border-border bg-background px-2 text-[13px] outline-none focus:border-primary/50"
                 >
                   <option value="">Todos</option>
                   <option value="objetiva">Objetiva</option>
@@ -526,7 +548,7 @@ function Conteudo() {
                 <select
                   value={dificuldade}
                   onChange={(e) => setDificuldade(e.target.value as BancoDificuldade | '')}
-                  className="h-9 w-full rounded-lg border border-border bg-background px-2 text-[13px] outline-none focus:border-primary/50"
+                  className="h-9 w-full rounded-xl border border-border bg-background px-2 text-[13px] outline-none focus:border-primary/50"
                 >
                   <option value="">Todas</option>
                   <option value="facil">Fácil</option>
@@ -539,7 +561,7 @@ function Conteudo() {
                 <select
                   value={anos.length === 1 ? String(anos[0]) : ''}
                   onChange={(e) => setAnos(e.target.value ? [Number(e.target.value)] : [])}
-                  className="h-9 w-full rounded-lg border border-border bg-background px-2 text-[13px] outline-none focus:border-primary/50"
+                  className="h-9 w-full rounded-xl border border-border bg-background px-2 text-[13px] outline-none focus:border-primary/50"
                 >
                   <option value="">Todos</option>
                   {anosDisponiveis.map((a) => (
@@ -564,13 +586,13 @@ function Conteudo() {
               ) : null}
             </div>
           ) : null}
-        </section>
+        </motion.section>
 
         {/* ── Assuntos + questões ──────────────────────────────────────── */}
         <div className="grid gap-5 lg:grid-cols-[280px_1fr]">
           <aside
             className={cn(
-              'rounded-xl border border-border bg-card p-3 lg:block',
+              'glass-page-card rounded-2xl p-3 lg:block',
               // No celular a árvore ocupa a tela toda e some por padrão: ela é
               // uma ferramenta de escolha, não o conteúdo principal.
               arvoreAberta ? 'block' : 'hidden',
@@ -611,7 +633,7 @@ function Conteudo() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="rounded-lg text-xs"
+                  className="rounded-xl text-xs"
                   disabled={paginacao.page <= 1 || carregandoQuestoes}
                   onClick={() => carregarQuestoes(paginacao.page - 1)}
                 >
@@ -623,7 +645,7 @@ function Conteudo() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="rounded-lg text-xs"
+                  className="rounded-xl text-xs"
                   disabled={paginacao.page >= paginacao.totalPages || carregandoQuestoes}
                   onClick={() => carregarQuestoes(paginacao.page + 1)}
                 >
@@ -769,12 +791,14 @@ function Conteudo() {
 
 function Indicador({ icone, rotulo, valor }: { icone: React.ReactNode; rotulo: string; valor: string }) {
   return (
-    <div className="rounded-xl border border-border bg-card p-3">
-      <p className="flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
-        {icone} {rotulo}
-      </p>
-      <p className="mt-1 text-xl font-bold tabular-nums">{valor}</p>
-    </div>
+    <TiltCard maxTilt={4} scale={1.02} className="rounded-2xl">
+      <div className="glass-page-card h-full rounded-2xl p-3.5">
+        <p className="flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
+          {icone} {rotulo}
+        </p>
+        <p className="mt-1 text-2xl font-bold tabular-nums">{valor}</p>
+      </div>
+    </TiltCard>
   )
 }
 

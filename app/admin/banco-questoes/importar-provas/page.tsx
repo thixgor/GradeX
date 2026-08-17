@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import {
-  AlertTriangle,
   ArrowLeft,
   CheckCircle2,
   ChevronRight,
@@ -49,6 +48,7 @@ export default function ImportarProvasPage() {
   const [previa, setPrevia] = useState<any>(null)
   const [calculando, setCalculando] = useState(false)
   const [importando, setImportando] = useState(false)
+  const [progresso, setProgresso] = useState<{ feitas: number; total: number } | null>(null)
   const [resultado, setResultado] = useState<any>(null)
   const [erro, setErro] = useState('')
 
@@ -115,26 +115,78 @@ export default function ImportarProvasPage() {
     setEscolhidos((atual) => (atual.includes(id) ? atual.filter((i) => i !== id) : [...atual, id]))
   }
 
-  async function pedir(previaApenas: boolean) {
+  async function calcularPrevia() {
     setErro('')
-    if (previaApenas) setCalculando(true)
-    else setImportando(true)
+    setCalculando(true)
     try {
       const res = await fetch('/api/admin/banco/importar-provas', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ grupoIds: escolhidos, previa: previaApenas }),
+        body: JSON.stringify({ grupoIds: escolhidos, previa: true }),
       })
       const dados = await res.json().catch(() => ({}))
       if (!res.ok) {
-        setErro(dados.error || 'Não foi possível processar')
+        setErro(dados.error || 'Não foi possível calcular')
         return
       }
-      if (previaApenas) setPrevia(dados)
-      else setResultado(dados)
+      setPrevia(dados)
     } finally {
       setCalculando(false)
+    }
+  }
+
+  /**
+   * Importa em ondas, de algumas provas por vez.
+   *
+   * Um curso inteiro são centenas de provas com dezenas de questões cada. Numa
+   * requisição só, isso estoura o tempo limite da função e falha DEPOIS de ter
+   * trabalhado, sem dizer o que entrou. Aqui cada volta grava um pedaço e a
+   * barra anda; se uma volta falhar, o que já entrou continua no banco e
+   * recomeçar apenas atualiza o que foi gravado duas vezes.
+   */
+  async function importar() {
+    setErro('')
+    setImportando(true)
+    setResultado(null)
+
+    const acumulado = { criadas: 0, atualizadas: 0, ignoradas: 0, exemplosIgnorados: [] as any[] }
+    let offset = 0
+
+    try {
+      for (let volta = 0; volta < 2000; volta++) {
+        const res = await fetch('/api/admin/banco/importar-provas', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ grupoIds: escolhidos, offset }),
+        })
+        const dados = await res.json().catch(() => ({}))
+
+        if (!res.ok) {
+          // O parcial é reportado junto do erro: dizer só "falhou" depois de
+          // 600 questões terem entrado faria o admin reimportar às cegas.
+          setErro(
+            `${dados.error || 'A importação parou'} — ${acumulado.criadas} questões já entraram. Pode rodar de novo: o que entrou será atualizado, não duplicado.`,
+          )
+          setResultado({ ...acumulado, parcial: true })
+          return
+        }
+
+        acumulado.criadas += dados.criadas || 0
+        acumulado.atualizadas += dados.atualizadas || 0
+        acumulado.ignoradas += dados.ignoradas || 0
+        if (acumulado.exemplosIgnorados.length < 10 && dados.exemplosIgnorados?.length) {
+          acumulado.exemplosIgnorados.push(...dados.exemplosIgnorados)
+        }
+
+        offset = dados.proximoOffset ?? offset + (dados.processadas || 0)
+        setProgresso({ feitas: Math.min(offset, dados.totalProvas || offset), total: dados.totalProvas || offset })
+
+        if (dados.fim) break
+      }
+      setResultado({ ...acumulado, parcial: false })
+    } finally {
       setImportando(false)
+      setProgresso(null)
     }
   }
 
@@ -159,7 +211,7 @@ export default function ImportarProvasPage() {
         </div>
 
         {/* ── Mapeamento ────────────────────────────────────────────────── */}
-        <section className="rounded-xl border border-border bg-muted/30 p-4">
+        <section className="surface-inset rounded-2xl p-4">
           <h2 className="text-sm font-bold">Para onde cada coisa vai</h2>
           <dl className="mt-2 space-y-1 text-xs text-muted-foreground">
             <div className="flex gap-2">
@@ -182,7 +234,7 @@ export default function ImportarProvasPage() {
         </section>
 
         {/* ── Escolha dos grupos ───────────────────────────────────────── */}
-        <section className="rounded-xl border border-border bg-card p-4">
+        <section className="glass-page-card rounded-2xl p-4">
           <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
             <h2 className="text-sm font-bold">Grupos</h2>
             {escolhidos.length > 0 ? (
@@ -206,7 +258,7 @@ export default function ImportarProvasPage() {
               value={busca}
               onChange={(e) => setBusca(e.target.value)}
               placeholder="Buscar grupo…"
-              className="h-9 w-full rounded-lg border border-border bg-background pl-9 pr-3 text-[13px] outline-none focus:border-primary/50"
+              className="h-9 w-full rounded-xl border border-border bg-background pl-9 pr-3 text-[13px] outline-none focus:border-primary/50"
             />
           </div>
 
@@ -264,32 +316,54 @@ export default function ImportarProvasPage() {
           <Button
             variant="outline"
             disabled={escolhidos.length === 0 || calculando}
-            onClick={() => pedir(true)}
-            className="gap-1.5"
+            onClick={calcularPrevia}
+            className="gap-1.5 rounded-xl"
           >
             {calculando ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
             Ver o que será importado
           </Button>
           <Button
-            disabled={!previa || previa.total === 0 || importando}
-            onClick={() => pedir(false)}
-            className="gap-1.5"
+            disabled={!previa || previa.questoes === 0 || importando}
+            onClick={importar}
+            className="btn-brand-glow gap-1.5 rounded-xl text-white"
           >
             {importando ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
-            Importar {previa ? `${previa.total} questões` : ''}
+            {importando
+              ? `Importando… ${progresso ? `${progresso.feitas}/${progresso.total} provas` : ''}`
+              : `Importar${previa ? ` até ${previa.questoes} questões` : ''}`}
           </Button>
         </div>
 
+        {progresso && progresso.total > 0 ? (
+          <div className="glass-page-card rounded-2xl p-4">
+            <p className="text-xs font-semibold tabular-nums">
+              {progresso.feitas} de {progresso.total} provas processadas
+            </p>
+            <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-muted">
+              <div
+                className="h-full rounded-full bg-primary transition-[width] duration-300"
+                style={{ width: `${(progresso.feitas / progresso.total) * 100}%` }}
+              />
+            </div>
+            <p className="mt-2 text-[11px] text-muted-foreground">
+              Não feche a página. A importação vai em ondas para não estourar o tempo do servidor.
+            </p>
+          </div>
+        ) : null}
+
         {/* ── Prévia ────────────────────────────────────────────────────── */}
         {previa ? (
-          <section className="rounded-xl border border-border bg-card p-4">
+          <section className="glass-page-card rounded-2xl p-4">
             <h2 className="text-sm font-bold">Prévia</h2>
-            <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
-              <Numero rotulo="Questões" valor={previa.total} destaque />
-              <Numero rotulo="Novas" valor={previa.novas} />
-              <Numero rotulo="Atualizadas" valor={previa.atualizadas} />
-              <Numero rotulo="Fora" valor={previa.ignoradas} />
+            <div className="mt-3 grid grid-cols-2 gap-3">
+              <Numero rotulo="Provas" valor={previa.provas} />
+              <Numero rotulo="Questões (teto)" valor={previa.questoes} destaque />
             </div>
+            <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
+              É um teto, não uma promessa: redação, questão sem enunciado e objetiva sem gabarito
+              ficam de fora, e isso só se sabe olhando questão a questão. O número exato aparece no
+              fim da importação.
+            </p>
 
             {previa.porGrupo?.length > 0 ? (
               <ul className="mt-3 space-y-1 border-t border-border pt-3">
@@ -297,50 +371,42 @@ export default function ImportarProvasPage() {
                   <li key={g.grupoId} className="flex items-center justify-between gap-2 text-xs">
                     <span className="min-w-0 flex-1 truncate">{g.grupoNome}</span>
                     <span className="flex-none tabular-nums text-muted-foreground">
-                      {g.questoes} questões
+                      {g.provas} provas · {g.questoes} questões
                     </span>
                   </li>
                 ))}
               </ul>
             ) : null}
 
-            {previa.exemplosIgnorados?.length > 0 ? (
-              <div className="mt-3 border-t border-border pt-3">
-                <p className="flex items-center gap-1.5 text-xs font-semibold text-amber-600 dark:text-amber-400">
-                  <AlertTriangle className="h-3.5 w-3.5" />
-                  O que fica de fora
-                </p>
-                <ul className="mt-1.5 space-y-0.5">
-                  {previa.exemplosIgnorados.map((i: any, idx: number) => (
-                    <li key={idx} className="text-[11px] text-muted-foreground">
-                      {i.provaTitulo}
-                      {i.questaoNumero ? ` · questão ${i.questaoNumero}` : ''} — {i.motivo}
-                    </li>
-                  ))}
-                </ul>
-                {previa.ignoradas > previa.exemplosIgnorados.length ? (
-                  <p className="mt-1 text-[11px] text-muted-foreground">
-                    …e mais {previa.ignoradas - previa.exemplosIgnorados.length}.
-                  </p>
-                ) : null}
-              </div>
-            ) : null}
           </section>
         ) : null}
 
         {/* ── Resultado ─────────────────────────────────────────────────── */}
         {resultado ? (
-          <section className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-4">
+          <section className="rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-4">
             <p className="flex items-center gap-2 text-sm font-bold text-emerald-700 dark:text-emerald-300">
               <CheckCircle2 className="h-4 w-4" />
               {resultado.criadas} questões criadas, {resultado.atualizadas} atualizadas
             </p>
             <p className="mt-1 text-xs text-muted-foreground">
+              {resultado.ignoradas > 0
+                ? `${resultado.ignoradas} ficaram de fora (redação, sem enunciado ou sem gabarito). `
+                : ''}
               Elas já aparecem no banco, filtráveis pelo caminho dos grupos.
             </p>
+            {resultado.exemplosIgnorados?.length > 0 ? (
+              <ul className="mt-2 space-y-0.5">
+                {resultado.exemplosIgnorados.slice(0, 6).map((i: any, idx: number) => (
+                  <li key={idx} className="text-[11px] text-muted-foreground">
+                    {i.provaTitulo}
+                    {i.questaoNumero ? ` · questão ${i.questaoNumero}` : ''} — {i.motivo}
+                  </li>
+                ))}
+              </ul>
+            ) : null}
             <Link
               href="/banco-questoes"
-              className="mt-3 inline-flex h-9 items-center rounded-lg bg-primary px-4 text-xs font-bold text-primary-foreground"
+              className="btn-brand-glow mt-3 inline-flex h-10 items-center rounded-xl px-4 text-xs font-bold text-white"
             >
               Ver no banco
             </Link>

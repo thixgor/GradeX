@@ -207,7 +207,7 @@ export default function AdminImportarPage() {
                   <h4 className="font-medium mb-2">Dicas importantes:</h4>
                   <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
                     <li>Separe cada questão com <strong>uma linha em branco</strong></li>
-                    <li>Para quebrar linhas no texto, use <code>\n</code> (ex: "Linha 1\nLinha 2")</li>
+                    <li>Para quebrar linhas no texto, use <code>\n</code> (ex.: &ldquo;Linha 1\nLinha 2&rdquo;)</li>
                     <li>Não use <code>---</code> como separador, apenas linha em branco</li>
                   </ul>
                 </div>
