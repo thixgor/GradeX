@@ -401,7 +401,14 @@ function lerBloco(bloco: Bloco): BlocoLido {
     const alternativa = lerAlternativa(texto)
     // Só conta como alternativa depois que o enunciado começou: uma questão
     // que abre com "A) ..." não existe, mas texto começando com "E - " existe.
-    if (alternativa && (enunciado.length > 0 || alternativas.length > 0)) {
+    // E nunca dentro de EXPLICAÇÃO ou RESPOSTA: citar "A) ..." ao comentar as
+    // alternativas não pode reabrir a lista e virar uma alternativa nova.
+    if (
+      alternativa &&
+      (enunciado.length > 0 || alternativas.length > 0) &&
+      destino !== 'resposta' &&
+      destino !== 'explicacao'
+    ) {
       reconheceuAlgo = true
       alternativas.push({ letra: alternativa.letra, texto: alternativa.texto })
       destino = 'alternativa'
