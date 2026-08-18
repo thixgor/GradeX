@@ -75,6 +75,32 @@ const nextConfig = {
         './public/patologia/catalogo/**/*.json.gz',
       ],
     },
+    /**
+     * Peso morto que o rastreador copia para dentro de cada função.
+     *
+     * O `mongodb` declara `gcp-metadata` como peer dependency OPCIONAL — ele
+     * serve só para pegar credenciais do Google Cloud, e o `require` mora
+     * dentro de um try/catch em `mongodb/lib/deps.js`. O npm instala peers
+     * opcionais assim mesmo, o rastreador enxerga o caminho e arrasta a árvore
+     * inteira (`gaxios` → `json-bigint` → `bignumber.js`) para as 573 funções
+     * do deploy — inclusive as que só leem uma coleção.
+     *
+     * Nada no projeto importa esses pacotes (verificado por busca), e a
+     * conexão é por connection string do Atlas, nunca por credencial do GCP.
+     *
+     * `node-fetch` fica de fora desta lista de propósito: ele também chega até
+     * aqui pelo `gaxios`, mas o `mercadopago` o exige de verdade em tempo de
+     * execução (`dist/utils/restClient/index.js`), e excluí-lo derrubaria o
+     * checkout.
+     */
+    outputFileTracingExcludes: {
+      '**/*': [
+        'node_modules/gcp-metadata/**',
+        'node_modules/gaxios/**',
+        'node_modules/json-bigint/**',
+        'node_modules/bignumber.js/**',
+      ],
+    },
     optimizePackageImports: [
       'lucide-react',
       'date-fns',

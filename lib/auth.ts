@@ -25,8 +25,21 @@ const JWT_CONFIG = {
 const DEFAULT_SECRET = 'your-secret-key-change-this'
 const jwtSecretValue = process.env.JWT_SECRET || DEFAULT_SECRET
 
+// `next build` avalia TODO módulo de rota com NODE_ENV=production só para
+// descobrir quais rotas são dinâmicas — e as 356 rotas que dependem deste
+// arquivo faziam a checagem abaixo rodar 356 vezes durante o build. O efeito
+// prático era um build que morria na primeira rota importada em qualquer
+// ambiente sem JWT_SECRET no shell (CI, clone novo, container de preview),
+// ainda que o segredo estivesse configurado no runtime.
+//
+// `NEXT_PHASE` é definido pelo próprio Next enquanto o build roda e não existe
+// em nenhum processo que atenda requisição, então a guarda continua valendo
+// integralmente onde ela protege alguém: o servidor de produção segue se
+// recusando a subir com segredo ausente ou padrão.
+const durandoOBuild = process.env.NEXT_PHASE === 'phase-production-build'
+
 // Em produção, FALHA se JWT_SECRET não estiver configurado corretamente
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === 'production' && !durandoOBuild) {
   if (!process.env.JWT_SECRET || process.env.JWT_SECRET === DEFAULT_SECRET) {
     console.error('='.repeat(60))
     console.error('ERRO CRÍTICO DE SEGURANÇA!')

@@ -27,8 +27,21 @@ __tests__/
 # Manual da Histologia — nada do pacote de origem vai para o deploy.
 # O acervo (2,56 GiB) vive no Vercel Blob; os derivados enxutos que a aplicacao
 # consome estao em data/histologia/, fora de public/.
-public/Manual-Histologia/acervo-fonte/**
-public/Manual-Histologia/dados/**
-public/Manual-Histologia/documentacao/**
-public/Manual-Histologia/scripts/**
-public/Manual-Histologia/*.json
+#
+# A pasta inteira, e nao mais subpasta por subpasta: sobravam o brand/ e os
+# .md do pacote, e nenhum arquivo servido pela aplicacao sai daqui — o unico
+# resquicio no codigo sao duas citacoes em comentario (lib/histologia/
+# licenca.ts e midia.ts). Sao 12.620 arquivos e 195 MB a menos para clonar,
+# enviar e indexar a cada deploy.
+public/Manual-Histologia/**
+
+# Documentacao e rascunhos da raiz do repositorio. Nenhum e lido em runtime
+# nem em tempo de build; so engordam o pacote enviado para a Vercel.
+/*.md
+/*.txt
+/last_commit.diff
+docs/
+.windsurf/
+
+# Configuracao de teste (o runner nao roda no deploy)
+vitest.config.ts

@@ -46,11 +46,22 @@ import {
 } from '@/lib/seo'
 
 // Editorial / textbook serif — medical journal feel (not Space Grotesk / Rowdies AI stack)
+//
+// `adjustFontFallback: false` + `fallback` explícito: a tabela de métricas que
+// o next/font usa para calcular a fonte-fantasma (`capsize-font-metrics.json`)
+// não tem entrada para Newsreader, e a ausência fazia o build imprimir
+// "⨯ Failed to find font override values for font `Newsreader`" duas vezes e
+// abortar o cálculo. Como o ajuste automático já não acontecia, declarar o
+// fallback à mão não muda um pixel do que é renderizado — apenas alinha o
+// arquivo com Georgia/serif, que é o que `tailwind.config.ts` (font-heading) e
+// `app/global-error.tsx` já usam como reserva.
 const newsreader = Newsreader({
   subsets: ['latin'],
   variable: '--font-heading',
   display: 'swap',
   style: ['normal', 'italic'],
+  fallback: ['Georgia', 'Times New Roman', 'serif'],
+  adjustFontFallback: false,
 })
 // Clinical readable sans — used in health products, highly legible
 const sourceSans = Source_Sans_3({
