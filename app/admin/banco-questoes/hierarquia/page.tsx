@@ -57,6 +57,27 @@ interface Edicao {
   paiId?: string
 }
 
+/**
+ * O que o admin pediu para excluir, com o tamanho do estrago já medido.
+ *
+ * A tela usava `confirm()` do navegador, que só cabe uma frase e só tem "ok" e
+ * "cancelar" — e do outro lado a rota recusava qualquer nível que tivesse
+ * conteúdo. Ou seja: o aviso dizia "ele tem 300 questões", a pessoa clicava em
+ * OK e nada acontecia, porque o `?cascata=true` que a rota exigia não era
+ * mandado por ninguém. Agora a confirmação lista o que vai junto e a chamada
+ * leva a autorização correspondente.
+ */
+interface Exclusao {
+  nivel: Nivel
+  id: string
+  nome: string
+  questoes: number
+  topicos: number
+  subtopicos: number
+  /** Só para subtópico: apagar as questões em vez de apenas desvinculá-las. */
+  apagarQuestoes: boolean
+}
+
 export default function HierarquiaPage() {
   const [modulos, setModulos] = useState<any[]>([])
   const [topicos, setTopicos] = useState<any[]>([])
@@ -66,8 +87,11 @@ export default function HierarquiaPage() {
   const [abertos, setAbertos] = useState<string[]>([])
 
   const [edicao, setEdicao] = useState<Edicao | null>(null)
+  const [exclusao, setExclusao] = useState<Exclusao | null>(null)
+  const [excluindo, setExcluindo] = useState(false)
   const [salvando, setSalvando] = useState(false)
   const [erro, setErro] = useState('')
+  const [recado, setRecado] = useState('')
 
   const carregar = useCallback(async () => {
     const res = await fetch('/api/banco/hierarquia', { cache: 'no-store' })
@@ -120,22 +144,34 @@ export default function HierarquiaPage() {
     }
   }
 
-  async function excluir(nivel: Nivel, id: string, nome: string, questoes: number) {
-    // O aviso diz o NÚMERO: "tem certeza?" não ajuda ninguém a decidir, e a
-    // diferença entre apagar um tópico vazio e um com 300 questões é toda.
-    const aviso =
-      questoes > 0
-        ? `Excluir "${nome}"? Ele tem ${questoes} questões — elas ficam sem este nível na organização.`
-        : `Excluir "${nome}"?`
-    if (!confirm(aviso)) return
+  async function confirmarExclusao() {
+    if (!exclusao) return
+    setExcluindo(true)
+    setErro('')
+    setRecado('')
 
-    const res = await fetch(`${ROTA[nivel]}/${id}`, { method: 'DELETE' })
-    if (!res.ok) {
-      const d = await res.json().catch(() => ({}))
-      setErro(d.error || 'Não foi possível excluir')
-      return
+    // Módulo e tópico levam tudo embaixo deles — a questão não sobrevive à
+    // perda do tópico. O subtópico é opcional na questão, então o padrão é
+    // soltá-la; apagar só se o admin marcar.
+    const cascata = exclusao.nivel === 'subtopico' ? exclusao.apagarQuestoes : true
+
+    try {
+      const res = await fetch(`${ROTA[exclusao.nivel]}/${exclusao.id}${cascata ? '?cascata=true' : ''}`, {
+        method: 'DELETE',
+      })
+      const dados = await res.json().catch(() => ({}))
+
+      if (!res.ok) {
+        setErro(dados.mensagem || dados.error || 'Não foi possível excluir')
+        return
+      }
+
+      setRecado(descreverExclusao(exclusao, dados))
+      setExclusao(null)
+      await carregar()
+    } finally {
+      setExcluindo(false)
     }
-    await carregar()
   }
 
   return (
@@ -191,6 +227,12 @@ export default function HierarquiaPage() {
           </p>
         ) : null}
 
+        {recado ? (
+          <p className="rounded-lg border border-primary/30 bg-primary/10 px-3 py-2 text-xs text-primary">
+            {recado}
+          </p>
+        ) : null}
+
         <section className="rounded-xl border border-border bg-card p-2">
           {carregando ? (
             <div className="space-y-2 p-2">
@@ -214,7 +256,11 @@ export default function HierarquiaPage() {
                   )
                 }
                 onEditar={setEdicao}
-                onExcluir={excluir}
+                onExcluir={(alvo) => {
+                  setErro('')
+                  setRecado('')
+                  setExclusao(alvo)
+                }}
               />
             ))
           )}
@@ -262,8 +308,92 @@ export default function HierarquiaPage() {
           </div>
         </div>
       ) : null}
+      {/* ── Excluir ────────────────────────────────────────────────────── */}
+      {exclusao ? (
+        <div
+          className="fixed inset-0 z-[120] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
+          onClick={(e) => {
+            if (e.target === e.currentTarget && !excluindo) setExclusao(null)
+          }}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Excluir ${ROTULO[exclusao.nivel]}`}
+            className="w-full max-w-sm rounded-2xl border border-border bg-card p-5 shadow-2xl"
+          >
+            <h2 className="flex items-center gap-2 text-sm font-bold">
+              <Trash2 className="h-4 w-4 text-destructive" />
+              Excluir {ROTULO[exclusao.nivel].toLowerCase()} &ldquo;{exclusao.nome}&rdquo;
+            </h2>
+
+            <div className="mt-3 space-y-2 text-xs text-muted-foreground">
+              {exclusao.nivel === 'subtopico' ? (
+                <p>
+                  {exclusao.questoes > 0
+                    ? `As ${exclusao.questoes} questões continuam no banco, no mesmo módulo e tópico — elas só deixam de ter subtópico.`
+                    : 'Este subtópico está vazio.'}
+                </p>
+              ) : (
+                <>
+                  <p>Isto exclui, de uma vez:</p>
+                  <ul className="list-disc space-y-0.5 pl-4">
+                    {exclusao.topicos > 0 ? <li>{exclusao.topicos} tópico(s)</li> : null}
+                    {exclusao.subtopicos > 0 ? <li>{exclusao.subtopicos} subtópico(s)</li> : null}
+                    <li className={exclusao.questoes > 0 ? 'font-semibold text-destructive' : undefined}>
+                      {exclusao.questoes} questão(ões)
+                    </li>
+                  </ul>
+                  {exclusao.questoes > 0 ? (
+                    <p>
+                      As respostas já dadas por alunos e as listas que usam essas questões também
+                      caem. Não dá para desfazer.
+                    </p>
+                  ) : null}
+                </>
+              )}
+            </div>
+
+            {exclusao.nivel === 'subtopico' && exclusao.questoes > 0 ? (
+              <label className="mt-3 flex cursor-pointer items-start gap-2 rounded-lg border border-border p-2.5 text-xs">
+                <input
+                  type="checkbox"
+                  checked={exclusao.apagarQuestoes}
+                  onChange={(e) => setExclusao({ ...exclusao, apagarQuestoes: e.target.checked })}
+                  className="mt-0.5 h-3.5 w-3.5 flex-none accent-[hsl(var(--destructive))]"
+                />
+                <span>
+                  Excluir também as {exclusao.questoes} questões, com as respostas e listas delas.
+                  <span className="block text-muted-foreground">Não dá para desfazer.</span>
+                </span>
+              </label>
+            ) : null}
+
+            <div className="mt-4 flex justify-end gap-2">
+              <Button variant="outline" size="sm" disabled={excluindo} onClick={() => setExclusao(null)}>
+                Cancelar
+              </Button>
+              <Button variant="destructive" size="sm" disabled={excluindo} onClick={confirmarExclusao}>
+                {excluindo ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : null}
+                Excluir
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </AppShell>
   )
+}
+
+/** O que aconteceu de fato, com os números que a rota devolveu. */
+function descreverExclusao(exclusao: Exclusao, dados: any): string {
+  const nome = `${ROTULO[exclusao.nivel]} "${exclusao.nome}"`
+  const questoes = dados?.excluidos?.questoes || 0
+  const desvinculadas = dados?.questoesDesvinculadas || 0
+
+  if (desvinculadas > 0) return `${nome} excluído. ${desvinculadas} questão(ões) continuam no banco, sem subtópico.`
+  if (questoes > 0) return `${nome} excluído, com ${questoes} questão(ões).`
+  return `${nome} excluído.`
 }
 
 function LinhaModulo({
@@ -277,7 +407,7 @@ function LinhaModulo({
   aberto: boolean
   onAlternar: () => void
   onEditar: (e: Edicao) => void
-  onExcluir: (nivel: Nivel, id: string, nome: string, questoes: number) => void
+  onExcluir: (alvo: Exclusao) => void
 }) {
   return (
     <div className="mb-0.5">
@@ -300,7 +430,17 @@ function LinhaModulo({
           onNovo={() => onEditar({ nivel: 'topico', nome: '', paiId: modulo._id })}
           rotuloNovo="Novo tópico"
           onRenomear={() => onEditar({ nivel: 'modulo', id: modulo._id, nome: modulo.nome })}
-          onExcluir={() => onExcluir('modulo', modulo._id, modulo.nome, modulo.totalQuestoes)}
+          onExcluir={() =>
+            onExcluir({
+              nivel: 'modulo',
+              id: modulo._id,
+              nome: modulo.nome,
+              questoes: modulo.totalQuestoes,
+              topicos: modulo.topicos.length,
+              subtopicos: modulo.topicos.reduce((s, t) => s + t.subtopicos.length, 0),
+              apagarQuestoes: true,
+            })
+          }
         />
       </div>
 
@@ -320,7 +460,17 @@ function LinhaModulo({
                     onNovo={() => onEditar({ nivel: 'subtopico', nome: '', paiId: topico._id })}
                     rotuloNovo="Novo subtópico"
                     onRenomear={() => onEditar({ nivel: 'topico', id: topico._id, nome: topico.nome })}
-                    onExcluir={() => onExcluir('topico', topico._id, topico.nome, topico.totalQuestoes)}
+                    onExcluir={() =>
+                      onExcluir({
+                        nivel: 'topico',
+                        id: topico._id,
+                        nome: topico.nome,
+                        questoes: topico.totalQuestoes,
+                        topicos: 0,
+                        subtopicos: topico.subtopicos.length,
+                        apagarQuestoes: true,
+                      })
+                    }
                   />
                 </div>
 
@@ -336,7 +486,17 @@ function LinhaModulo({
                         </span>
                         <Acoes
                           onRenomear={() => onEditar({ nivel: 'subtopico', id: sub._id, nome: sub.nome })}
-                          onExcluir={() => onExcluir('subtopico', sub._id, sub.nome, sub.totalQuestoes)}
+                          onExcluir={() =>
+                            onExcluir({
+                              nivel: 'subtopico',
+                              id: sub._id,
+                              nome: sub.nome,
+                              questoes: sub.totalQuestoes,
+                              topicos: 0,
+                              subtopicos: 0,
+                              apagarQuestoes: false,
+                            })
+                          }
                         />
                       </div>
                     ))}

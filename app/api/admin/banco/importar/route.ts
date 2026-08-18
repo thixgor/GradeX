@@ -1,248 +1,176 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { Db, ObjectId } from 'mongodb'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
-import { ObjectId } from 'mongodb'
 import { paraCodigo } from '@/lib/banco/hierarquia'
+import { formatarPeriodoLetivo } from '@/lib/banco/periodo-letivo'
 import {
-  BancoQuestao,
-  BancoQuestaoImportacao,
-  BancoImportacaoResult,
-  BancoAlternativaLetra
-} from '@/lib/types/banco-questoes'
+  chaveDaQuestao,
+  lerArquivoDeImportacao,
+  resumir,
+  type OcorrenciaDeImportacao,
+  type QuestaoLida,
+} from '@/lib/banco/importar-questoes'
+import { BancoAlternativaLetra, BancoQuestao } from '@/lib/types/banco-questoes'
 
 export const dynamic = 'force-dynamic'
 
-// Função para processar \n literal como quebra de linha real
-function processLineBreaks(text: string): string {
-  return text.replace(/\\n/g, '\n')
+/**
+ * Importação em massa de questões pelo arquivo de texto.
+ *
+ * A leitura do arquivo mora em lib/banco/importar-questoes.ts, que é puro e
+ * testado — aqui só sobra o que precisa de banco. Esta rota faz três coisas
+ * que a versão anterior não fazia:
+ *
+ * 1. **Conferir sem gravar** (`validar: true`). Antes, a única forma de saber
+ *    se o arquivo estava certo era importar: quando a questão 300 falhava, as
+ *    299 primeiras já estavam no banco e o conserto era caçá-las na tabela.
+ * 2. **Não duplicar.** Reimportar o mesmo arquivo — porque a primeira metade
+ *    falhou, porque o admin não lembrava se tinha enviado — criava uma segunda
+ *    cópia de cada questão. Agora o que já existe no mesmo módulo é contado
+ *    como ignorado, e a resposta diz quantos foram.
+ * 3. **Achar a hierarquia pelo código.** A busca era por `$regex` com o nome
+ *    cru: um módulo chamado "Saúde (SOI I)" virava expressão regular inválida
+ *    e derrubava a questão inteira com um erro de MongoDB. Agora o nome é
+ *    escapado e a comparação primária é pelo `codigo` — o mesmo que a tela de
+ *    hierarquia usa —, então "Cardiologia" e "cardiologia " param no mesmo
+ *    módulo em vez de criarem dois.
+ */
+
+interface HierarquiaCriada {
+  modulos: string[]
+  topicos: string[]
+  subtopicos: string[]
 }
 
-function parseImportTxt(content: string): { questoes: BancoQuestaoImportacao[], erros: { linha: number, mensagem: string }[] } {
-  const questoes: BancoQuestaoImportacao[] = []
-  const erros: { linha: number, mensagem: string }[] = []
+function escaparRegex(valor: string): string {
+  return valor.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
 
-  // Dividir por blocos de questão:
-  // 1. Primeiro tenta separador --- (compatibilidade)
-  // 2. Se não encontrar, divide por linha em branco seguida de [OBJETIVA] ou [DISCURSIVA]
-  let blocos: string[]
+/** Casa pelo código (sem acento nem caixa) e, para dado antigo, pelo nome. */
+function filtroDeNome(nome: string) {
+  return {
+    $or: [
+      { codigo: paraCodigo(nome) },
+      { nome: { $regex: `^${escaparRegex(nome)}$`, $options: 'i' } },
+    ],
+  }
+}
 
-  if (content.includes('---')) {
-    // Modo legado com ---
-    blocos = content.split(/---+/).map(b => b.trim()).filter(b => b.length > 0)
-  } else {
-    // Novo modo: divide quando encontra linha em branco seguida de [OBJETIVA] ou [DISCURSIVA]
-    // Primeiro, normaliza as quebras de linha
-    const normalizado = content.replace(/\r\n/g, '\n')
+/**
+ * Resolve (achando ou criando) um nível da hierarquia, com cache por execução.
+ *
+ * Sem o cache, um arquivo com 300 questões do mesmo módulo faz 300 idas ao
+ * banco para descobrir 300 vezes a mesma resposta — e, nas primeiras, corre o
+ * risco de criar o módulo duas vezes.
+ */
+async function resolverNivel(
+  db: Db,
+  colecao: string,
+  nome: string,
+  pai: Record<string, unknown>,
+  cache: Map<string, ObjectId>,
+  criados: string[],
+  criar: boolean,
+): Promise<ObjectId | null> {
+  const chaveDoPai = Object.values(pai).map(String).join('/')
+  const chave = `${colecao}:${chaveDoPai}:${paraCodigo(nome)}`
+  const emCache = cache.get(chave)
+  if (emCache) return emCache
 
-    // Divide por padrão de nova questão (linha em branco + marcador de tipo)
-    blocos = normalizado
-      .split(/\n\s*\n(?=\s*\[(OBJETIVA|DISCURSIVA)\])/i)
-      .map(b => b.trim())
-      .filter(b => b.length > 0)
+  const existente = await db.collection(colecao).findOne({ ...pai, ...filtroDeNome(nome) })
+  if (existente) {
+    cache.set(chave, existente._id)
+    return existente._id
   }
 
-  blocos.forEach((bloco, index) => {
-    const linhas = bloco.split('\n').map(l => l.trim())
-    const linhaBase = content.substring(0, content.indexOf(bloco)).split('\n').length
+  if (!criar) return null
 
-    try {
-      let tipo: 'objetiva' | 'discursiva' | null = null
-      let periodo = ''
-      let modulo = ''
-      let topico = ''
-      let subtopico = ''
-      let enunciado = ''
-      let imagemUrl = ''
-      const alternativas: { letra: string, texto: string }[] = []
-      let correta = ''
-      let respostaModelo = ''
-      let explicacao = ''
-      let dificuldade: 'facil' | 'medio' | 'dificil' | undefined
-      const tags: string[] = []
-      let fonte = ''
-      let ano: number | undefined
-
-      let enunciadoAtivo = false
-      let respostaAtiva = false
-      let explicacaoAtiva = false
-
-      for (const linha of linhas) {
-        if (linha.startsWith('[OBJETIVA]')) {
-          tipo = 'objetiva'
-          continue
-        }
-        if (linha.startsWith('[DISCURSIVA]')) {
-          tipo = 'discursiva'
-          continue
-        }
-
-        if (linha.startsWith('PERÍODO:') || linha.startsWith('PERIODO:')) {
-          periodo = linha.replace(/PERÍODO:|PERIODO:/, '').trim()
-          enunciadoAtivo = false
-          respostaAtiva = false
-          explicacaoAtiva = false
-          continue
-        }
-        if (linha.startsWith('MÓDULO:') || linha.startsWith('MODULO:')) {
-          modulo = linha.replace(/MÓDULO:|MODULO:/, '').trim()
-          continue
-        }
-        if (linha.startsWith('TÓPICO:') || linha.startsWith('TOPICO:')) {
-          topico = linha.replace(/TÓPICO:|TOPICO:/, '').trim()
-          continue
-        }
-        if (linha.startsWith('SUBTÓPICO:') || linha.startsWith('SUBTOPICO:')) {
-          subtopico = linha.replace(/SUBTÓPICO:|SUBTOPICO:/, '').trim()
-          continue
-        }
-        if (linha.startsWith('DIFICULDADE:')) {
-          const dif = linha.replace('DIFICULDADE:', '').trim().toLowerCase()
-          if (['facil', 'medio', 'dificil'].includes(dif)) {
-            dificuldade = dif as 'facil' | 'medio' | 'dificil'
-          }
-          continue
-        }
-        if (linha.startsWith('TAGS:')) {
-          const tagStr = linha.replace('TAGS:', '').trim()
-          tags.push(...tagStr.split(',').map(t => t.trim()).filter(t => t))
-          continue
-        }
-        if (linha.startsWith('FONTE:')) {
-          fonte = linha.replace('FONTE:', '').trim()
-          continue
-        }
-        if (linha.startsWith('ANO:')) {
-          const anoStr = linha.replace('ANO:', '').trim()
-          const anoNum = parseInt(anoStr)
-          if (!isNaN(anoNum)) {
-            ano = anoNum
-          }
-          continue
-        }
-
-        if (linha.startsWith('IMAGEM:') || linha.startsWith('IMG:')) {
-          imagemUrl = linha.replace(/IMAGEM:|IMG:/, '').trim()
-          continue
-        }
-
-        if (linha.startsWith('ENUNCIADO:')) {
-          enunciado = processLineBreaks(linha.replace('ENUNCIADO:', '').trim())
-          enunciadoAtivo = true
-          respostaAtiva = false
-          explicacaoAtiva = false
-          continue
-        }
-
-        if (linha.startsWith('CORRETA:')) {
-          correta = linha.replace('CORRETA:', '').trim().toUpperCase()
-          enunciadoAtivo = false
-          continue
-        }
-
-        if (linha.startsWith('RESPOSTA:')) {
-          respostaModelo = processLineBreaks(linha.replace('RESPOSTA:', '').trim())
-          respostaAtiva = true
-          enunciadoAtivo = false
-          explicacaoAtiva = false
-          continue
-        }
-
-        if (linha.startsWith('EXPLICAÇÃO:') || linha.startsWith('EXPLICACAO:')) {
-          explicacao = processLineBreaks(linha.replace(/EXPLICAÇÃO:|EXPLICACAO:/, '').trim())
-          explicacaoAtiva = true
-          enunciadoAtivo = false
-          respostaAtiva = false
-          continue
-        }
-
-        // Alternativas (A), B), C), D), E))
-        const altMatch = linha.match(/^([A-E])\)\s*(.+)$/)
-        if (altMatch) {
-          alternativas.push({
-            letra: altMatch[1],
-            texto: processLineBreaks(altMatch[2].trim())
-          })
-          enunciadoAtivo = false
-          continue
-        }
-
-        // Continuação de campos multilinhas
-        if (enunciadoAtivo && linha) {
-          enunciado += '\n' + processLineBreaks(linha)
-        } else if (respostaAtiva && linha) {
-          respostaModelo += '\n' + processLineBreaks(linha)
-        } else if (explicacaoAtiva && linha) {
-          explicacao += '\n' + processLineBreaks(linha)
-        }
-      }
-
-      // Validações
-      if (!tipo) {
-        erros.push({ linha: linhaBase, mensagem: 'Tipo não especificado ([OBJETIVA] ou [DISCURSIVA])' })
-        return
-      }
-
-      // PERÍODO É OPCIONAL - será inferido do módulo se não fornecido
-      // if (!periodo) {
-      //   erros.push({ linha: linhaBase, mensagem: 'Período não especificado' })
-      //   return
-      // }
-
-      if (!modulo) {
-        erros.push({ linha: linhaBase, mensagem: 'Módulo não especificado' })
-        return
-      }
-
-      if (!topico) {
-        erros.push({ linha: linhaBase, mensagem: 'Tópico não especificado' })
-        return
-      }
-
-      if (!enunciado) {
-        erros.push({ linha: linhaBase, mensagem: 'Enunciado não especificado' })
-        return
-      }
-
-      if (tipo === 'objetiva') {
-        if (alternativas.length < 2) {
-          erros.push({ linha: linhaBase, mensagem: 'Questão objetiva precisa de pelo menos 2 alternativas' })
-          return
-        }
-        if (!correta || !['A', 'B', 'C', 'D', 'E'].includes(correta)) {
-          erros.push({ linha: linhaBase, mensagem: 'Alternativa correta não especificada ou inválida' })
-          return
-        }
-      }
-
-      if (tipo === 'discursiva' && !respostaModelo) {
-        erros.push({ linha: linhaBase, mensagem: 'Resposta modelo não especificada para questão discursiva' })
-        return
-      }
-
-      questoes.push({
-        tipo,
-        periodo: periodo || undefined,
-        modulo,
-        topico,
-        subtopico: subtopico || undefined,
-        enunciado,
-        imagemUrl: imagemUrl || undefined,
-        alternativas: tipo === 'objetiva' ? alternativas : undefined,
-        correta: tipo === 'objetiva' ? correta : undefined,
-        respostaModelo: tipo === 'discursiva' ? respostaModelo : undefined,
-        explicacao: explicacao || undefined,
-        dificuldade,
-        tags: tags.length > 0 ? tags : undefined,
-        fonte: fonte || undefined,
-        ano
-      })
-
-    } catch (e) {
-      erros.push({ linha: linhaBase, mensagem: `Erro ao processar bloco: ${e}` })
-    }
+  const ultimo = await db.collection(colecao).findOne(pai, { sort: { ordem: -1 } })
+  const { insertedId } = await db.collection(colecao).insertOne({
+    ...pai,
+    nome,
+    codigo: paraCodigo(nome),
+    ordem: (ultimo?.ordem ?? 0) + 1,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   })
 
-  return { questoes, erros }
+  cache.set(chave, insertedId)
+  criados.push(nome)
+  return insertedId
+}
+
+/**
+ * Enunciados que já existem nos módulos envolvidos.
+ *
+ * Uma consulta só, projetando o enunciado, em vez de uma por questão: com o
+ * banco cheio, 300 consultas sem índice são 300 varreduras da coleção. O teto
+ * evita que um módulo gigante traga tudo para a memória — passando dele, a
+ * importação segue sem a checagem, e a resposta avisa.
+ */
+const TETO_DE_COMPARACAO = 20000
+
+async function carregarExistentes(
+  db: Db,
+  moduloIds: ObjectId[],
+): Promise<{ chaves: Set<string>; completo: boolean }> {
+  const chaves = new Set<string>()
+  if (moduloIds.length === 0) return { chaves, completo: true }
+
+  const docs = await db
+    .collection('banco_questoes')
+    .find({ moduloId: { $in: moduloIds } }, { projection: { enunciado: 1, moduloId: 1 } })
+    .limit(TETO_DE_COMPARACAO + 1)
+    .toArray()
+
+  if (docs.length > TETO_DE_COMPARACAO) return { chaves, completo: false }
+
+  for (const doc of docs) {
+    chaves.add(chaveDaQuestao(String(doc.moduloId), String(doc.enunciado || '')))
+  }
+  return { chaves, completo: true }
+}
+
+function montarQuestao(
+  q: QuestaoLida,
+  moduloId: ObjectId,
+  topicoId: ObjectId,
+  subtopicoId: ObjectId | null,
+  autor: ObjectId | undefined,
+): Omit<BancoQuestao, '_id'> {
+  const periodoLetivo =
+    q.ano && q.semestre ? formatarPeriodoLetivo({ ano: q.ano, semestre: q.semestre }) : null
+
+  return {
+    tipo: q.tipo,
+    moduloId,
+    topicoId,
+    subtopicoid: subtopicoId || undefined,
+    enunciado: q.enunciado,
+    explicacao: q.explicacao,
+    imagemUrl: q.imagemUrl,
+    imagensAlternativas: q.alternativas
+      ?.filter((a) => a.imagemUrl)
+      .map((a) => ({ letra: a.letra as BancoAlternativaLetra, url: a.imagemUrl! })),
+    alternativas: q.alternativas?.map((alt) => ({
+      letra: alt.letra as BancoAlternativaLetra,
+      texto: alt.texto,
+      correta: alt.letra === q.correta,
+    })),
+    respostaModelo: q.respostaModelo,
+    dificuldade: q.dificuldade,
+    tags: q.tags,
+    fonte: q.fonte,
+    ano: q.ano,
+    semestre: q.semestre,
+    periodoLetivo: periodoLetivo || undefined,
+    totalRespostas: 0,
+    totalAcertos: 0,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    createdBy: autor as unknown as ObjectId,
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -252,155 +180,160 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
     }
 
-    const body = await request.json()
+    const body = await request.json().catch(() => ({}))
 
-    if (!body.conteudo || typeof body.conteudo !== 'string') {
+    if (!body?.conteudo || typeof body.conteudo !== 'string') {
       return NextResponse.json({ error: 'Conteúdo do arquivo é obrigatório' }, { status: 400 })
     }
 
-    const { questoes: questoesParsed, erros } = parseImportTxt(body.conteudo)
+    // Conferência: lê, resolve a hierarquia que JÁ existe e conta duplicadas,
+    // sem escrever nada. É o que a tela chama antes de deixar importar.
+    const validar = body.validar === true
 
-    if (questoesParsed.length === 0) {
+    const { questoes, erros, avisos } = lerArquivoDeImportacao(body.conteudo)
+
+    if (questoes.length === 0) {
       return NextResponse.json({
         sucesso: false,
+        validacao: validar,
         totalImportadas: 0,
+        totalIgnoradas: 0,
         erros: erros.length > 0 ? erros : [{ linha: 1, mensagem: 'Nenhuma questão encontrada no arquivo' }],
-        questoesImportadas: []
-      } as BancoImportacaoResult)
+        avisos,
+        questoesImportadas: [],
+        hierarquiaCriada: { modulos: [], topicos: [], subtopicos: [] },
+      })
     }
 
     const db = await getDb()
 
-    // Buscar/criar hierarquia e inserir questões
-    const questoesImportadas: BancoQuestao[] = []
-    const errosImportacao: { linha: number, mensagem: string }[] = [...erros]
+    const cache = new Map<string, ObjectId>()
+    const criados: HierarquiaCriada = { modulos: [], topicos: [], subtopicos: [] }
+    const errosDeGravacao: OcorrenciaDeImportacao[] = []
+    const autor = ObjectId.isValid(String(session.userId))
+      ? new ObjectId(String(session.userId))
+      : undefined
 
-    for (let i = 0; i < questoesParsed.length; i++) {
-      const q = questoesParsed[i]
+    // 1ª passada: hierarquia. Em conferência, nada é criado — o que ainda não
+    // existe é listado como "vai ser criado".
+    const resolvidas: { q: QuestaoLida; moduloId: ObjectId; topicoId: ObjectId; subtopicoId: ObjectId | null }[] = []
+    const criariaModulos = new Set<string>()
+    const criariaTopicos = new Set<string>()
+    const criariaSubtopicos = new Set<string>()
 
+    for (const q of questoes) {
       try {
-        /*
-         * Hierarquia sem período (ver lib/banco/hierarquia.ts).
-         *
-         * Antes, um módulo novo só podia ser criado se a questão trouxesse
-         * `PERÍODO:` — importar um arquivo sem essa linha falhava com "Módulo X
-         * não existe e nenhum período foi especificado", que é um erro sobre um
-         * nível que o produto nem mostra mais. Agora o módulo é criado direto.
-         *
-         * A linha `PERÍODO:` continua sendo aceita no arquivo e é ignorada, para
-         * que material antigo não precise ser reescrito.
-         */
-        let modulo: any = await db.collection('banco_modulos').findOne({
-          nome: { $regex: `^${q.modulo}$`, $options: 'i' }
-        })
-
-        if (!modulo) {
-          const codigo = paraCodigo(q.modulo)
-          const ultimoModulo = await db.collection('banco_modulos')
-            .findOne({}, { sort: { ordem: -1 } })
-
-          const result = await db.collection('banco_modulos').insertOne({
-            nome: q.modulo,
-            codigo,
-            ordem: (ultimoModulo?.ordem ?? 0) + 1,
-            createdAt: new Date(),
-            updatedAt: new Date()
-          })
-          modulo = { _id: result.insertedId, nome: q.modulo }
+        const moduloId = await resolverNivel(db, 'banco_modulos', q.modulo, {}, cache, criados.modulos, !validar)
+        if (!moduloId) {
+          criariaModulos.add(q.modulo)
+          criariaTopicos.add(`${q.modulo} › ${q.topico}`)
+          if (q.subtopico) criariaSubtopicos.add(`${q.modulo} › ${q.topico} › ${q.subtopico}`)
+          continue
         }
 
-        // Buscar ou criar tópico
-        let topico = await db.collection('banco_topicos').findOne({
-          moduloId: modulo._id,
-          nome: { $regex: `^${q.topico}$`, $options: 'i' }
-        })
-
-        if (!topico) {
-          const codigo = paraCodigo(q.topico)
-
-          const ultimoTopico = await db.collection('banco_topicos')
-            .findOne({ moduloId: modulo._id }, { sort: { ordem: -1 } })
-
-          const result = await db.collection('banco_topicos').insertOne({
-            moduloId: modulo._id,
-            nome: q.topico,
-            codigo,
-            ordem: (ultimoTopico?.ordem ?? 0) + 1,
-            createdAt: new Date(),
-            updatedAt: new Date()
-          })
-          topico = { _id: result.insertedId, nome: q.topico }
+        const topicoId = await resolverNivel(
+          db, 'banco_topicos', q.topico, { moduloId }, cache, criados.topicos, !validar,
+        )
+        if (!topicoId) {
+          criariaTopicos.add(`${q.modulo} › ${q.topico}`)
+          if (q.subtopico) criariaSubtopicos.add(`${q.modulo} › ${q.topico} › ${q.subtopico}`)
+          continue
         }
 
-        // Buscar ou criar subtópico (se fornecido)
-        let subtopico = null
+        let subtopicoId: ObjectId | null = null
         if (q.subtopico) {
-          subtopico = await db.collection('banco_subtopicos').findOne({
-            topicoId: topico._id,
-            nome: { $regex: `^${q.subtopico}$`, $options: 'i' }
-          })
-
-          if (!subtopico) {
-            const codigo = paraCodigo(q.subtopico!)
-
-            const ultimoSubtopico = await db.collection('banco_subtopicos')
-              .findOne({ topicoId: topico._id }, { sort: { ordem: -1 } })
-
-            const result = await db.collection('banco_subtopicos').insertOne({
-              topicoId: topico._id,
-              nome: q.subtopico,
-              codigo,
-              ordem: (ultimoSubtopico?.ordem ?? 0) + 1,
-              createdAt: new Date(),
-              updatedAt: new Date()
-            })
-            subtopico = { _id: result.insertedId, nome: q.subtopico }
-          }
+          subtopicoId = await resolverNivel(
+            db, 'banco_subtopicos', q.subtopico, { topicoId }, cache, criados.subtopicos, !validar,
+          )
+          if (!subtopicoId) criariaSubtopicos.add(`${q.modulo} › ${q.topico} › ${q.subtopico}`)
         }
 
-        // Criar questão
-        const novaQuestao: Omit<BancoQuestao, '_id'> = {
-          tipo: q.tipo,
-          moduloId: modulo._id,
-          topicoId: topico._id,
-          subtopicoid: subtopico?._id,
-          enunciado: q.enunciado,
-          explicacao: q.explicacao,
-          imagemUrl: q.imagemUrl,
-          alternativas: q.tipo === 'objetiva' && q.alternativas
-            ? q.alternativas.map(alt => ({
-                letra: alt.letra as BancoAlternativaLetra,
-                texto: alt.texto,
-                correta: alt.letra === q.correta
-              }))
-            : undefined,
-          respostaModelo: q.tipo === 'discursiva' ? q.respostaModelo : undefined,
-          dificuldade: q.dificuldade,
-          tags: q.tags,
-          fonte: q.fonte,
-          ano: q.ano,
-          totalRespostas: 0,
-          totalAcertos: 0,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          createdBy: new ObjectId(session.userId)
-        }
-
-        const result = await db.collection('banco_questoes').insertOne(novaQuestao)
-        questoesImportadas.push({ ...novaQuestao, _id: result.insertedId } as BancoQuestao)
-
+        resolvidas.push({ q, moduloId, topicoId, subtopicoId })
       } catch (e) {
-        errosImportacao.push({ linha: i + 1, mensagem: `Erro ao importar questão: ${e}` })
+        errosDeGravacao.push({
+          linha: q.linha,
+          mensagem: `Não consegui montar a hierarquia de "${resumir(q.enunciado)}": ${e instanceof Error ? e.message : e}`,
+        })
+      }
+    }
+
+    // 2ª passada: o que já está no banco não entra de novo.
+    const moduloIds = [...new Set(resolvidas.map((r) => String(r.moduloId)))].map((id) => new ObjectId(id))
+    const { chaves, completo } = await carregarExistentes(db, moduloIds)
+
+    if (!completo) {
+      avisos.push({
+        linha: 0,
+        mensagem: 'Este módulo tem questões demais para comparar uma a uma — a checagem de repetidas foi pulada nesta importação.',
+      })
+    }
+
+    const novas: { q: QuestaoLida; documento: Omit<BancoQuestao, '_id'> }[] = []
+    let ignoradas = 0
+
+    for (const { q, moduloId, topicoId, subtopicoId } of resolvidas) {
+      const chave = chaveDaQuestao(String(moduloId), q.enunciado)
+      if (chaves.has(chave)) {
+        ignoradas++
+        continue
+      }
+      chaves.add(chave)
+      novas.push({ q, documento: montarQuestao(q, moduloId, topicoId, subtopicoId, autor) })
+    }
+
+    if (validar) {
+      return NextResponse.json({
+        sucesso: erros.length === 0 && novas.length > 0,
+        validacao: true,
+        totalImportadas: 0,
+        totalAImportar: novas.length,
+        totalIgnoradas: ignoradas,
+        erros: [...erros, ...errosDeGravacao],
+        avisos,
+        questoesImportadas: [],
+        hierarquiaCriada: {
+          modulos: [...criariaModulos],
+          topicos: [...criariaTopicos],
+          subtopicos: [...criariaSubtopicos],
+        },
+      })
+    }
+
+    // Gravação em lotes: `insertMany` por questão faria uma ida ao banco por
+    // linha do arquivo, e um arquivo de prova inteira tem centenas.
+    const TAMANHO_DO_LOTE = 200
+    const importadas: BancoQuestao[] = []
+
+    for (let i = 0; i < novas.length; i += TAMANHO_DO_LOTE) {
+      const lote = novas.slice(i, i + TAMANHO_DO_LOTE)
+      try {
+        const { insertedIds } = await db
+          .collection('banco_questoes')
+          .insertMany(lote.map((n) => n.documento) as any[], { ordered: false })
+
+        lote.forEach((n, indice) => {
+          importadas.push({ ...n.documento, _id: insertedIds[indice] } as BancoQuestao)
+        })
+      } catch (e) {
+        errosDeGravacao.push({
+          linha: lote[0].q.linha,
+          mensagem: `Falha ao gravar um lote de ${lote.length} questões: ${e instanceof Error ? e.message : e}`,
+        })
       }
     }
 
     return NextResponse.json({
-      sucesso: questoesImportadas.length > 0,
-      totalImportadas: questoesImportadas.length,
-      erros: errosImportacao,
-      questoesImportadas
-    } as BancoImportacaoResult)
-
+      sucesso: importadas.length > 0,
+      validacao: false,
+      totalImportadas: importadas.length,
+      totalIgnoradas: ignoradas,
+      erros: [...erros, ...errosDeGravacao],
+      avisos,
+      // A tela só mostra uma amostra; devolver 3 mil questões inteiras faria a
+      // resposta pesar mais do que o arquivo enviado.
+      questoesImportadas: importadas.slice(0, 50),
+      hierarquiaCriada: criados,
+    })
   } catch (error) {
     console.error('Erro ao importar questões:', error)
     return NextResponse.json({ error: 'Erro ao importar questões' }, { status: 500 })

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
+import { removerQuestoes } from '@/lib/banco/exclusao'
 
 export const dynamic = 'force-dynamic'
 
@@ -63,6 +64,20 @@ export async function PUT(
   }
 }
 
+/**
+ * Excluir um tópico.
+ *
+ * Mesma história do módulo (ver ../../modulos/[id]/route.ts): a rota só aceitava
+ * apagar tópico vazio, e o `?cascata=true` que destravava o resto não era
+ * mandado por tela nenhuma. Com a confirmação da tela de hierarquia, o tópico
+ * cai com os subtópicos e as questões dele.
+ *
+ * A questão não sobrevive à perda do tópico: `topicoId` é obrigatório e todo
+ * filtro do banco passa por ele. Uma questão sem tópico continuaria ocupando
+ * espaço sem aparecer em lugar nenhum — nem na lista do admin, nem na busca do
+ * aluno. Por isso aqui é exclusão, e não desvínculo (o subtópico, que é
+ * opcional, se comporta ao contrário).
+ */
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -84,49 +99,52 @@ export async function DELETE(
     const db = await getDb()
     const topicoId = new ObjectId(id)
 
-    // Contar itens vinculados
-    const questoesVinculadas = await db.collection('banco_questoes')
-      .countDocuments({ topicoId })
-    const subtopicosVinculados = await db.collection('banco_subtopicos')
-      .countDocuments({ topicoId })
-
-    // Se não for cascata e houver vínculos, retornar erro
-    if (!cascata && (questoesVinculadas > 0 || subtopicosVinculados > 0)) {
-      return NextResponse.json({
-        error: 'Existem itens vinculados a este tópico',
-        detalhes: {
-          questoes: questoesVinculadas,
-          subtopicos: subtopicosVinculados
-        },
-        mensagem: `Este tópico possui ${subtopicosVinculados} subtópico(s) e ${questoesVinculadas} questão(ões). Deseja excluir tudo?`
-      }, { status: 400 })
-    }
-
-    // Se cascata, deletar tudo
-    if (cascata) {
-      // Deletar subtópicos
-      await db.collection('banco_subtopicos')
-        .deleteMany({ topicoId })
-
-      // Deletar questões
-      await db.collection('banco_questoes')
-        .deleteMany({ topicoId })
-    }
-
-    const result = await db.collection('banco_topicos').deleteOne({
-      _id: topicoId
-    })
-
-    if (result.deletedCount === 0) {
+    const topico = await db.collection('banco_topicos').findOne({ _id: topicoId })
+    if (!topico) {
       return NextResponse.json({ error: 'Tópico não encontrado' }, { status: 404 })
     }
 
+    const questoesVinculadas = await db.collection('banco_questoes').countDocuments({ topicoId })
+    const subtopicosVinculados = await db.collection('banco_subtopicos').countDocuments({ topicoId })
+
+    if (!cascata && (questoesVinculadas > 0 || subtopicosVinculados > 0)) {
+      return NextResponse.json(
+        {
+          error: 'Existem itens vinculados a este tópico',
+          precisaCascata: true,
+          detalhes: {
+            questoes: questoesVinculadas,
+            subtopicos: subtopicosVinculados,
+          },
+          mensagem: `Este tópico tem ${subtopicosVinculados} subtópico(s) e ${questoesVinculadas} questão(ões). Confirme para excluir tudo.`,
+        },
+        { status: 409 },
+      )
+    }
+
+    const removidas = cascata
+      ? await removerQuestoes(db, { topicoId })
+      : { questoes: 0, resolucoes: 0, listas: 0, relatos: 0, saldos: 0 }
+
+    if (cascata) {
+      await db.collection('banco_subtopicos').deleteMany({ topicoId })
+    }
+
+    await db.collection('banco_topicos').deleteOne({ _id: topicoId })
+
+    console.warn(
+      `[banco] Admin ${session.userId} excluiu o tópico "${topico.nome}" ` +
+        `(${removidas.questoes} questões, ${subtopicosVinculados} subtópicos)`,
+    )
+
     return NextResponse.json({
       sucesso: true,
-      excluidos: cascata ? {
-        questoes: questoesVinculadas,
-        subtopicos: subtopicosVinculados
-      } : undefined
+      excluidos: {
+        questoes: removidas.questoes,
+        subtopicos: cascata ? subtopicosVinculados : 0,
+        resolucoes: removidas.resolucoes,
+        listas: removidas.listas,
+      },
     })
   } catch (error) {
     console.error('Erro ao excluir tópico:', error)

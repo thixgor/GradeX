@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
+import { removerQuestoes } from '@/lib/banco/exclusao'
 
 export const dynamic = 'force-dynamic'
 
@@ -63,6 +64,29 @@ export async function PUT(
   }
 }
 
+/**
+ * Excluir um módulo.
+ *
+ * ## O que estava quebrado
+ *
+ * Um módulo com qualquer coisa dentro era impossível de apagar. A rota recusava
+ * com "Existem itens vinculados a este módulo" e só aceitava seguir com
+ * `?cascata=true` — parâmetro que nenhuma tela mandava. Na prática, o botão de
+ * excluir da tela de hierarquia funcionava apenas em módulo vazio, e o admin
+ * ficava com módulos criados por engano (uma importação com o nome errado, por
+ * exemplo) presos para sempre.
+ *
+ * Agora a tela mostra o que vai junto e manda `cascata=true` quando o admin
+ * confirma. A recusa sem o parâmetro continua existindo, mas com 409 e a
+ * contagem no corpo: é o que a tela usa para montar o aviso, não uma parede.
+ *
+ * ## O que "cascata" leva junto
+ *
+ * Tópicos, subtópicos e as questões do módulo — e, com elas, as resoluções, as
+ * listas e o saldo gratuito que apontavam para essas questões
+ * (ver lib/banco/exclusao.ts). Apagar a questão sem apagar essas referências
+ * deixa histórico órfão e queima crédito de aluno.
+ */
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -84,59 +108,72 @@ export async function DELETE(
     const db = await getDb()
     const moduloId = new ObjectId(id)
 
-    // Contar itens vinculados
-    const questoesVinculadas = await db.collection('banco_questoes')
-      .countDocuments({ moduloId })
-    const topicosVinculados = await db.collection('banco_topicos')
-      .countDocuments({ moduloId })
-
-    // Se não for cascata e houver vínculos, retornar erro
-    if (!cascata && (questoesVinculadas > 0 || topicosVinculados > 0)) {
-      return NextResponse.json({
-        error: 'Existem itens vinculados a este módulo',
-        detalhes: {
-          questoes: questoesVinculadas,
-          topicos: topicosVinculados
-        },
-        mensagem: `Este módulo possui ${topicosVinculados} tópico(s) e ${questoesVinculadas} questão(ões). Deseja excluir tudo?`
-      }, { status: 400 })
-    }
-
-    // Se cascata, deletar tudo
-    if (cascata) {
-      // Buscar tópicos do módulo
-      const topicos = await db.collection('banco_topicos')
-        .find({ moduloId })
-        .toArray()
-      const topicoIds = topicos.map(t => t._id)
-
-      // Deletar subtópicos
-      await db.collection('banco_subtopicos')
-        .deleteMany({ topicoId: { $in: topicoIds } })
-
-      // Deletar tópicos
-      await db.collection('banco_topicos')
-        .deleteMany({ moduloId })
-
-      // Deletar questões
-      await db.collection('banco_questoes')
-        .deleteMany({ moduloId })
-    }
-
-    const result = await db.collection('banco_modulos').deleteOne({
-      _id: moduloId
-    })
-
-    if (result.deletedCount === 0) {
+    const modulo = await db.collection('banco_modulos').findOne({ _id: moduloId })
+    if (!modulo) {
       return NextResponse.json({ error: 'Módulo não encontrado' }, { status: 404 })
     }
 
+    const topicos = await db
+      .collection('banco_topicos')
+      .find({ moduloId }, { projection: { _id: 1 } })
+      .toArray()
+    const topicoIds = topicos.map((t) => t._id)
+
+    // A questão é do módulo por `moduloId`, mas dado antigo pode ter só o
+    // tópico certo. Os dois caminhos entram no filtro para não sobrar questão
+    // apontando para um tópico que acabou de deixar de existir.
+    const filtroDasQuestoes =
+      topicoIds.length > 0
+        ? { $or: [{ moduloId }, { topicoId: { $in: topicoIds } }] }
+        : { moduloId }
+
+    const questoesVinculadas = await db.collection('banco_questoes').countDocuments(filtroDasQuestoes)
+    const subtopicosVinculados =
+      topicoIds.length > 0
+        ? await db.collection('banco_subtopicos').countDocuments({ topicoId: { $in: topicoIds } })
+        : 0
+
+    if (!cascata && (questoesVinculadas > 0 || topicoIds.length > 0)) {
+      return NextResponse.json(
+        {
+          error: 'Existem itens vinculados a este módulo',
+          precisaCascata: true,
+          detalhes: {
+            questoes: questoesVinculadas,
+            topicos: topicoIds.length,
+            subtopicos: subtopicosVinculados,
+          },
+          mensagem: `Este módulo tem ${topicoIds.length} tópico(s) e ${questoesVinculadas} questão(ões). Confirme para excluir tudo.`,
+        },
+        { status: 409 },
+      )
+    }
+
+    const removidas = cascata
+      ? await removerQuestoes(db, filtroDasQuestoes)
+      : { questoes: 0, resolucoes: 0, listas: 0, relatos: 0, saldos: 0 }
+
+    if (cascata && topicoIds.length > 0) {
+      await db.collection('banco_subtopicos').deleteMany({ topicoId: { $in: topicoIds } })
+      await db.collection('banco_topicos').deleteMany({ moduloId })
+    }
+
+    await db.collection('banco_modulos').deleteOne({ _id: moduloId })
+
+    console.warn(
+      `[banco] Admin ${session.userId} excluiu o módulo "${modulo.nome}" ` +
+        `(${removidas.questoes} questões, ${topicoIds.length} tópicos, ${subtopicosVinculados} subtópicos)`,
+    )
+
     return NextResponse.json({
       sucesso: true,
-      excluidos: cascata ? {
-        questoes: questoesVinculadas,
-        topicos: topicosVinculados
-      } : undefined
+      excluidos: {
+        questoes: removidas.questoes,
+        topicos: cascata ? topicoIds.length : 0,
+        subtopicos: cascata ? subtopicosVinculados : 0,
+        resolucoes: removidas.resolucoes,
+        listas: removidas.listas,
+      },
     })
   } catch (error) {
     console.error('Erro ao excluir módulo:', error)

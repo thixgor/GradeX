@@ -292,14 +292,31 @@ export interface BancoQuestaoImportacao {
   ano?: number
 }
 
+export interface BancoImportacaoOcorrencia {
+  linha: number
+  mensagem: string
+}
+
 export interface BancoImportacaoResult {
   sucesso: boolean
+  /** `true` quando foi só conferência: nada foi gravado. */
+  validacao?: boolean
   totalImportadas: number
-  erros: {
-    linha: number
-    mensagem: string
-  }[]
+  /** Quantas entrariam, na conferência. */
+  totalAImportar?: number
+  /** Já existiam no mesmo módulo e por isso não entraram de novo. */
+  totalIgnoradas?: number
+  erros: BancoImportacaoOcorrencia[]
+  /** Não impedem a questão de entrar; dizem o que foi assumido ou ignorado. */
+  avisos?: BancoImportacaoOcorrencia[]
+  /** Amostra: a resposta não devolve milhares de questões inteiras. */
   questoesImportadas: BancoQuestao[]
+  /** Níveis criados (ou, na conferência, que seriam criados). */
+  hierarquiaCriada?: {
+    modulos: string[]
+    topicos: string[]
+    subtopicos: string[]
+  }
 }
 
 // ============================================
