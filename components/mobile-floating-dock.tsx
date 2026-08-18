@@ -79,8 +79,16 @@ export function MobileFloatingDock() {
           // A prova (modo paginado) tem uma barra fixa de navegação no rodapé;
           // sem esta folga o "+" nascia embaixo dela, ilegível e sem toque.
           ? 'left-4 items-start bottom-[calc(5.75rem+env(safe-area-inset-bottom))]'
-          : 'pwa-safe-bottom right-4 items-end bottom-5',
+          : 'pwa-safe-bottom right-4 items-end',
       )}
+      // Fora da prova, o "+" sobe quando a tela publica uma barra de ações no
+      // rodapé (ver components/ui/barra-inferior.tsx). Sem isso ele cobre o
+      // canto direito da barra — que é onde mora o "Próxima".
+      style={
+        isExamResolver
+          ? undefined
+          : { bottom: 'calc(1.25rem + var(--gx-barra-inferior-h, 0px))' }
+      }
     >
       {/* Ações reveladas */}
       <div

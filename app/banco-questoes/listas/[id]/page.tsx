@@ -31,7 +31,8 @@ import {
   Flag,
   Copy,
   ClipboardCheck,
-  Star
+  Star,
+  LayoutGrid,
 } from 'lucide-react'
 import {
   Dialog,
@@ -42,6 +43,8 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
+import { BarraInferior } from '@/components/ui/barra-inferior'
+import { Portal } from '@/components/ui/portal'
 import { BancoListaUsuario, BancoQuestaoComHierarquia } from '@/lib/types/banco-questoes'
 import { QuestionAnnotation, TextHighlight } from '@/lib/types'
 import { InlineAnnotationCanvas } from '@/components/inline-annotation-canvas'
@@ -104,6 +107,11 @@ export default function ListaDetalhePage() {
   const [selfScoreQuestionId, setSelfScoreQuestionId] = useState<string | null>(null)
   const [pendingSelfScore, setPendingSelfScore] = useState<number | null>(null)
   const [showSelfScoreModal, setShowSelfScoreModal] = useState(false)
+
+  // Mapa de questões no celular. No desktop ele é um cartão fixo no fim da
+  // página; no celular, chegar até lá custava rolar a questão inteira, então
+  // ele virou um painel que abre a partir da barra de ações.
+  const [mapaAberto, setMapaAberto] = useState(false)
 
   // Funções de anotações
   function handleSaveAnnotation(annotation: QuestionAnnotation) {
@@ -326,21 +334,36 @@ ${respostaAluno}`
     setPendingSelfScore(null)
   }
 
+  /**
+   * Troca de questão e volta ao topo.
+   *
+   * Sem isso, quem avança do fim de uma questão longa cai no MEIO da próxima —
+   * com o enunciado já rolado para fora da tela — e precisa subir para
+   * começar a ler. O salto é instantâneo de propósito: rolagem suave por três
+   * telas de altura é uma espera, não um afago.
+   */
+  function irParaQuestao(indice: number) {
+    if (indice < 0 || indice >= questoes.length) return
+    setQuestaoAtual(indice)
+    setMapaAberto(false)
+    if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'auto' })
+  }
+
   function proximaQuestao() {
-    if (questaoAtual < questoes.length - 1) {
-      setQuestaoAtual(questaoAtual + 1)
-    }
+    irParaQuestao(questaoAtual + 1)
   }
 
   function questaoAnterior() {
-    if (questaoAtual > 0) {
-      setQuestaoAtual(questaoAtual - 1)
-    }
+    irParaQuestao(questaoAtual - 1)
   }
 
   function finalizarSimulado() {
     setMostrarResultado(new Array(questoes.length).fill(true))
     setSimuladoFinalizado(true)
+    setMapaAberto(false)
+    // O resultado é desenhado no TOPO da página; terminar a última questão e
+    // continuar olhando para o rodapé faria parecer que nada aconteceu.
+    if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   function calcularResultado() {
@@ -403,9 +426,18 @@ ${respostaAluno}`
     const acertou = questao.tipo === 'objetiva' && respostaAtual?.alternativaSelecionada === correta
     const resultado = calcularResultado()
 
+    const ehUltima = questaoAtual === questoes.length - 1
+    const podeVerResposta = modoCorrecao === 'imediato' && !mostrarResultadoAtual && !!respostaAtual
+    // Na correção imediata, terminar sem conferir a última resposta perderia o
+    // gabarito dela — o botão só libera depois do "Ver resposta".
+    const finalizarBloqueado = podeVerResposta
+    const naoRespondidas = questoes.filter((q) => !getRespostaAtual(String(q._id))).length
+
     return (
       <AppShell headerTitle={lista.nome} headerSubtitle={`Questão ${questaoAtual + 1} de ${questoes.length}`}>
-        <div className="container max-w-4xl mx-auto py-6 px-4 space-y-6">
+        {/* A folga no rodapé é a altura da barra fixa do celular: sem ela, o
+            último cartão fica escondido atrás dos botões. */}
+        <div className="container max-w-4xl mx-auto space-y-6 px-4 py-6 pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:pb-6">
           {/* Header do simulado */}
           <div className="flex items-center justify-between gap-2">
             <Button variant="ghost" className="h-9 flex-none rounded-xl text-xs" onClick={voltarParaLista}>
@@ -746,8 +778,10 @@ ${respostaAluno}`
               )}
             </InlineAnnotationCanvas>
 
-              {/* Botões de ação */}
-              <div className="flex items-center justify-between pt-4">
+              {/* Botões de ação — no celular eles moram na barra do rodapé
+                  (ver o fim deste bloco), porque descer três telas de rolagem
+                  só para avançar era o gesto mais caro do fluxo. */}
+              <div className="hidden items-center justify-between pt-4 md:flex">
                 <Button
                   variant="outline"
                   onClick={questaoAnterior}
@@ -758,18 +792,18 @@ ${respostaAluno}`
                 </Button>
 
                 <div className="flex gap-2">
-                  {modoCorrecao === 'imediato' && !mostrarResultadoAtual && respostaAtual && (
+                  {podeVerResposta && (
                     <Button onClick={() => verificarResposta(questaoAtual)}>
                       <Eye className="h-4 w-4 mr-2" />
                       Ver Resposta
                     </Button>
                   )}
 
-                  {questaoAtual === questoes.length - 1 ? (
+                  {ehUltima ? (
                     <Button
                       onClick={finalizarSimulado}
                       className="bg-gradient-to-r from-[#468152] to-[#E2A43E]"
-                      disabled={modoCorrecao === 'imediato' && !mostrarResultadoAtual && !!respostaAtual}
+                      disabled={finalizarBloqueado}
                     >
                       <CheckCircle2 className="h-4 w-4 mr-2" />
                       Finalizar
@@ -785,55 +819,142 @@ ${respostaAluno}`
             </CardContent>
           </Card>
 
-          {/* Navegação rápida */}
-          <Card>
+          {/* Navegação rápida — no desktop ela cabe na página; no celular vira
+              painel, aberto pelo botão "Mapa" da barra do rodapé. */}
+          <Card className="hidden md:block">
             <CardContent className="py-4">
-              {/* Contador de questões não respondidas */}
-              {(() => {
-                const naoRespondidas = questoes.filter((q) => !getRespostaAtual(String(q._id))).length
-                if (naoRespondidas > 0 && !simuladoFinalizado) {
-                  return (
-                    <div className="text-center mb-3 text-sm text-muted-foreground">
-                      <span className="font-medium text-orange-500">{naoRespondidas}</span>
-                      {naoRespondidas === 1 ? ' questão não respondida' : ' questões não respondidas'}
-                    </div>
-                  )
-                }
-                return null
-              })()}
-              <div className="flex flex-wrap gap-2 justify-center">
-                {questoes.map((q, i) => {
-                  const respondida = !!getRespostaAtual(String(q._id))
-                  const mostrou = mostrarResultado[i]
-                  const correcta = q.tipo === 'objetiva'
-                    ? q.alternativas?.find(a => a.correta)?.letra
-                    : null
-                  const acertouEsta = q.tipo === 'objetiva' && getRespostaAtual(String(q._id))?.alternativaSelecionada === correcta
-
-                  return (
-                    <Button
-                      key={i}
-                      variant={i === questaoAtual ? 'default' : 'outline'}
-                      size="sm"
-                      className={cn(
-                        "w-10 h-10",
-                        mostrou && q.tipo === 'objetiva'
-                          ? acertouEsta
-                            ? 'bg-green-500 hover:bg-green-600 text-white border-green-500'
-                            : 'bg-red-500 hover:bg-red-600 text-white border-red-500'
-                          : respondida
-                            ? 'border-primary bg-primary/10'
-                            : 'border-orange-400/50 bg-orange-50 dark:bg-orange-900/10'
-                      )}
-                      onClick={() => setQuestaoAtual(i)}
-                    >
-                      {i + 1}
-                    </Button>
-                  )
-                })}
-              </div>
+              {naoRespondidas > 0 && !simuladoFinalizado ? (
+                <div className="text-center mb-3 text-sm text-muted-foreground">
+                  <span className="font-medium text-orange-500">{naoRespondidas}</span>
+                  {naoRespondidas === 1 ? ' questão não respondida' : ' questões não respondidas'}
+                </div>
+              ) : null}
+              <MapaDeQuestoes
+                questoes={questoes}
+                questaoAtual={questaoAtual}
+                mostrarResultado={mostrarResultado}
+                getResposta={(id) => getRespostaAtual(id)}
+                onIr={irParaQuestao}
+              />
             </CardContent>
           </Card>
+
+          {/* ── Barra de ações do celular ─────────────────────────────────
+              O "Próxima" ficava no fim do cartão da questão: enunciado longo,
+              cinco alternativas, gabarito e explicação depois de responder —
+              várias telas de rolagem para dar UM passo. Agora ele acompanha a
+              leitura. Os botões flutuantes sobem sozinhos: a barra publica a
+              própria altura (ver components/ui/barra-inferior.tsx). */}
+          <BarraInferior apenasMobile>
+            <button
+              type="button"
+              onClick={questaoAnterior}
+              disabled={questaoAtual === 0}
+              aria-label="Questão anterior"
+              className="tecla flex h-12 w-12 flex-none items-center justify-center disabled:opacity-35"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setMapaAberto(true)}
+              aria-label="Abrir o mapa de questões"
+              className="tecla flex h-12 flex-none items-center gap-1.5 px-3 text-xs font-bold"
+            >
+              <LayoutGrid className="h-4 w-4" />
+              <span className="tabular-nums">
+                {questaoAtual + 1}/{questoes.length}
+              </span>
+            </button>
+
+            {simuladoFinalizado ? (
+              // Terminado, "Finalizar" de novo não faria nada. O que resta a
+              // fazer é ler o resultado, que está no topo da página.
+              <Button
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                className="btn-brand-glow h-12 min-w-0 flex-1 gap-1.5 rounded-xl text-sm font-bold text-white"
+              >
+                <CheckCircle2 className="h-4 w-4" />
+                Ver resultado
+              </Button>
+            ) : podeVerResposta ? (
+              <Button
+                onClick={() => verificarResposta(questaoAtual)}
+                className="h-12 min-w-0 flex-1 gap-1.5 rounded-xl text-sm font-bold"
+              >
+                <Eye className="h-4 w-4" />
+                Ver resposta
+              </Button>
+            ) : ehUltima ? (
+              <Button
+                onClick={finalizarSimulado}
+                disabled={finalizarBloqueado}
+                className="btn-brand-glow h-12 min-w-0 flex-1 gap-1.5 rounded-xl text-sm font-bold text-white"
+              >
+                <CheckCircle2 className="h-4 w-4" />
+                Finalizar
+              </Button>
+            ) : (
+              <Button
+                onClick={proximaQuestao}
+                className="btn-brand-glow h-12 min-w-0 flex-1 gap-1.5 rounded-xl text-sm font-bold text-white"
+              >
+                Próxima
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            )}
+          </BarraInferior>
+
+          {/* ── Mapa de questões no celular ──────────────────────────────── */}
+          {mapaAberto ? (
+            <Portal>
+              <div
+                className="fixed inset-0 z-[210] flex items-center justify-center bg-black/55 p-4 backdrop-blur-sm md:hidden"
+                style={{
+                  paddingTop: 'max(1rem, env(safe-area-inset-top))',
+                  paddingBottom: 'max(1rem, env(safe-area-inset-bottom))',
+                }}
+                onClick={(e) => {
+                  if (e.target === e.currentTarget) setMapaAberto(false)
+                }}
+              >
+                <div
+                  role="dialog"
+                  aria-modal="true"
+                  aria-label="Mapa de questões"
+                  className="vidro-denso vidro-brilho relevo flex max-h-full w-full max-w-sm flex-col rounded-[28px] p-4"
+                >
+                  <div className="flex items-center justify-between gap-2 pb-3">
+                    <h2 className="text-sm font-bold">Ir para a questão</h2>
+                    <button
+                      type="button"
+                      onClick={() => setMapaAberto(false)}
+                      aria-label="Fechar"
+                      className="-m-1 rounded-lg p-1 text-muted-foreground hover:bg-muted"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                  {naoRespondidas > 0 && !simuladoFinalizado ? (
+                    <p className="pb-3 text-center text-xs text-muted-foreground">
+                      <span className="font-semibold text-orange-500">{naoRespondidas}</span>
+                      {naoRespondidas === 1 ? ' questão não respondida' : ' questões não respondidas'}
+                    </p>
+                  ) : null}
+                  <div className="min-h-0 flex-1 overflow-y-auto">
+                    <MapaDeQuestoes
+                      questoes={questoes}
+                      questaoAtual={questaoAtual}
+                      mostrarResultado={mostrarResultado}
+                      getResposta={(id) => getRespostaAtual(id)}
+                      onIr={irParaQuestao}
+                    />
+                  </div>
+                </div>
+              </div>
+            </Portal>
+          ) : null}
 
           {/* Modal de Imagem Expandida */}
           <ImageModal
@@ -965,47 +1086,43 @@ ${respostaAluno}`
           </div>
         ) : (
           <>
-            {/* Botões de iniciar simulado */}
-            {/* Os dois modos lado a lado, cada um dizendo o que faz. Antes eram
-                dois botões cujos nomes ("Correção Imediata", "Correção no
-                Final") só fazem sentido para quem já usou uma vez. */}
-            <div className="glass-page-card rounded-2xl p-4 sm:p-5">
-              <h3 className="text-sm font-bold">Praticar as {questoes.length} questões</h3>
-              <p className="mt-0.5 text-xs text-muted-foreground">
-                Escolha quando quer ver a resposta.
-              </p>
-              <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                <button
-                  type="button"
-                  onClick={() => iniciarSimulado('imediato')}
-                  className="group flex items-start gap-3 rounded-xl border border-border p-3 text-left transition hover:border-primary/50 hover:bg-primary/5 active:scale-[0.99]"
-                >
-                  <span className="flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-primary/10 text-primary">
-                    <Play className="h-4 w-4" />
-                  </span>
-                  <span className="min-w-0">
-                    <span className="block text-[13px] font-bold">Corrigir na hora</span>
-                    <span className="block text-[11px] leading-relaxed text-muted-foreground">
-                      Vê o gabarito e a explicação a cada questão
-                    </span>
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => iniciarSimulado('final')}
-                  className="group flex items-start gap-3 rounded-xl border border-border p-3 text-left transition hover:border-primary/50 hover:bg-primary/5 active:scale-[0.99]"
-                >
-                  <span className="flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-muted text-muted-foreground">
-                    <Eye className="h-4 w-4" />
-                  </span>
-                  <span className="min-w-0">
-                    <span className="block text-[13px] font-bold">Só no final</span>
-                    <span className="block text-[11px] leading-relaxed text-muted-foreground">
-                      Como um simulado: responde tudo e confere depois
-                    </span>
-                  </span>
-                </button>
+            {/* ── Começar ────────────────────────────────────────────────
+                Havia dois cartões de contorno lado a lado, do mesmo peso
+                visual, e nenhum deles parecia o botão de começar: a tela abria
+                com duas escolhas de igual importância antes que ficasse claro
+                que ali era o INÍCIO. Agora há UM botão primário — grande,
+                preenchido, dizendo o verbo — e a segunda opção é um link
+                secundário embaixo, para quem quer o formato de simulado. */}
+            <div className="glass-page-card relevo rounded-2xl p-4 sm:p-5">
+              <div className="flex flex-wrap items-end justify-between gap-2">
+                <div className="min-w-0">
+                  <h3 className="font-heading text-base font-bold">
+                    Responder em sequência
+                  </h3>
+                  <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
+                    As {questoes.length} questões, uma de cada vez, com o gabarito e a explicação a
+                    cada resposta.
+                  </p>
+                </div>
               </div>
+
+              <button
+                type="button"
+                onClick={() => iniciarSimulado('imediato')}
+                className="btn-brand-glow mt-3 flex h-14 w-full items-center justify-center gap-2 rounded-2xl text-base font-bold text-white active:scale-[0.99]"
+              >
+                <Play className="h-5 w-5 fill-current" />
+                Começar as {questoes.length} questões
+              </button>
+
+              <button
+                type="button"
+                onClick={() => iniciarSimulado('final')}
+                className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl border border-border px-3 py-2.5 text-xs font-semibold text-muted-foreground transition hover:bg-muted hover:text-foreground active:scale-[0.99]"
+              >
+                <Eye className="h-3.5 w-3.5" />
+                Ou fazer como simulado — respostas só no final
+              </button>
             </div>
 
             {/* Lista de questões */}
@@ -1117,5 +1234,68 @@ ${respostaAluno}`
         />
       )}
     </AppShell>
+  )
+}
+
+/**
+ * A grade de números que leva a qualquer questão.
+ *
+ * Uma implementação só, usada no cartão do desktop e no painel do celular. Ter
+ * duas cópias faria as cores de "acertou"/"errou"/"não respondida" divergirem
+ * na primeira alteração — e é justamente a cor que a pessoa usa para achar o
+ * que falta.
+ *
+ * O estado nunca é só a cor: a questão atual leva anel, a respondida leva
+ * preenchimento, a não respondida fica com a borda tracejada.
+ */
+function MapaDeQuestoes({
+  questoes,
+  questaoAtual,
+  mostrarResultado,
+  getResposta,
+  onIr,
+}: {
+  questoes: BancoQuestaoComHierarquia[]
+  questaoAtual: number
+  mostrarResultado: boolean[]
+  getResposta: (questaoId: string) => RespostaUsuario | undefined
+  onIr: (indice: number) => void
+}) {
+  return (
+    <div className="grid grid-cols-[repeat(auto-fill,minmax(2.5rem,1fr))] gap-2">
+      {questoes.map((q, i) => {
+        const resposta = getResposta(String(q._id))
+        const respondida = !!resposta
+        const mostrou = mostrarResultado[i]
+        const correta = q.tipo === 'objetiva' ? q.alternativas?.find((a) => a.correta)?.letra : null
+        const acertouEsta = q.tipo === 'objetiva' && resposta?.alternativaSelecionada === correta
+        const corrigida = mostrou && q.tipo === 'objetiva'
+
+        return (
+          <button
+            key={q._id ? String(q._id) : `q-${i}`}
+            type="button"
+            onClick={() => onIr(i)}
+            aria-label={`Questão ${i + 1}${
+              corrigida ? (acertouEsta ? ', acertou' : ', errou') : respondida ? ', respondida' : ', não respondida'
+            }`}
+            aria-current={i === questaoAtual ? 'true' : undefined}
+            className={cn(
+              'flex h-10 items-center justify-center rounded-xl border text-[13px] font-bold tabular-nums transition active:scale-95',
+              corrigida
+                ? acertouEsta
+                  ? 'border-emerald-500 bg-emerald-500 text-white'
+                  : 'border-red-500 bg-red-500 text-white'
+                : respondida
+                  ? 'border-primary/40 bg-primary/10 text-primary'
+                  : 'border-dashed border-border text-muted-foreground hover:bg-muted',
+              i === questaoAtual && 'ring-2 ring-primary ring-offset-2 ring-offset-background',
+            )}
+          >
+            {i + 1}
+          </button>
+        )
+      })}
+    </div>
   )
 }

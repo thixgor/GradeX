@@ -24,6 +24,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
+import { Portal } from '@/components/ui/portal'
 import { CriadorDeLista } from '@/components/banco/criador-de-lista'
 import type { BancoListaUsuario, BancoModoResposta } from '@/lib/types/banco-questoes'
 
@@ -62,6 +63,7 @@ export default function MinhasListasPage() {
   const [criadorAberto, setCriadorAberto] = useState(false)
   const [hierarquia, setHierarquia] = useState({ modulos: [], topicos: [], subtopicos: [] } as any)
   const [anosDisponiveis, setAnosDisponiveis] = useState<number[]>([])
+  const [periodosDisponiveis, setPeriodosDisponiveis] = useState<{ periodo: string; total: number }[]>([])
 
   const carregar = useCallback(async () => {
     try {
@@ -93,7 +95,10 @@ export default function MinhasListasPage() {
     ]).then(([h, a]) => {
       if (!vivo) return
       if (h) setHierarquia(h)
-      if (a) setAnosDisponiveis(a.anos || [])
+      if (a) {
+        setAnosDisponiveis(a.anos || [])
+        setPeriodosDisponiveis(a.periodos || [])
+      }
     })
     return () => {
       vivo = false
@@ -288,6 +293,7 @@ export default function MinhasListasPage() {
         aberto={criadorAberto}
         hierarquia={hierarquia}
         anosDisponiveis={anosDisponiveis}
+        periodosDisponiveis={periodosDisponiveis}
         onFechar={() => setCriadorAberto(false)}
         onCriada={(id) => {
           setCriadorAberto(false)
@@ -298,7 +304,15 @@ export default function MinhasListasPage() {
       {/* ── Criar / renomear ─────────────────────────────────────────────── */}
       <AnimatePresence>
         {edicao ? (
-          <Modal aoFechar={() => !salvando && setEdicao(null)} titulo={edicao.id ? 'Editar lista' : 'Nova lista'}>
+          <Modal
+            aoFechar={() => !salvando && setEdicao(null)}
+            titulo={edicao.id ? 'Renomear lista' : 'Nova lista'}
+            descricao={
+              edicao.id
+                ? 'Muda o nome e quando a resposta aparece. As questões continuam as mesmas — para mexer nelas, abra a lista.'
+                : 'Uma lista vazia, para encher com questões do banco depois.'
+            }
+          >
             <Label className="text-xs text-muted-foreground">Nome</Label>
             <Input
               autoFocus
@@ -419,10 +433,15 @@ function CartaoDeLista({
         {/* Acima da camada do cartão: botão dentro de área clicável não é
             alcançável por teclado se ficar embaixo. */}
         <div className="relative z-10 flex flex-none items-center opacity-70 transition group-hover:opacity-100">
+          {/* "Editar" prometia mexer nas questões e abria um campo de nome.
+              O que este botão faz é renomear e trocar quando a resposta
+              aparece — e agora é isso que ele diz. Para mexer nas questões,
+              abre-se a lista. */}
           <button
             type="button"
             onClick={onEditar}
-            aria-label={`Editar ${lista.nome}`}
+            aria-label={`Renomear ${lista.nome}`}
+            title="Renomear e ajustar a correção"
             className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition hover:bg-muted hover:text-foreground"
           >
             <Pencil className="h-3.5 w-3.5" />
@@ -478,12 +497,19 @@ function CartaoDeLista({
         </p>
       )}
 
-      <span
+      {/* Era um `<span>`: não tinha handler nenhum, e ainda por cima cobria a
+          camada de clique do cartão (`z-0` + ordem no DOM ganham do `::after`
+          do título). Ou seja, o único ponto da tela que dizia "Começar" era
+          exatamente o ponto que não fazia nada. Agora é um botão de verdade,
+          acima da camada, com a mesma ação de abrir a lista. */}
+      <button
+        type="button"
+        onClick={onAbrir}
         className={cn(
-          'relative z-0 mt-3 inline-flex h-9 items-center justify-center gap-1.5 rounded-xl text-xs font-bold transition',
+          'relative z-10 mt-3 inline-flex h-10 items-center justify-center gap-1.5 rounded-xl text-xs font-bold transition active:scale-[0.98]',
           total === 0
-            ? 'border border-border text-muted-foreground'
-            : 'bg-primary/10 text-primary group-hover:bg-primary/15',
+            ? 'border border-border text-muted-foreground hover:bg-muted'
+            : 'bg-primary text-primary-foreground shadow-sm hover:bg-primary/90',
         )}
       >
         {total === 0 ? (
@@ -494,60 +520,88 @@ function CartaoDeLista({
           </>
         ) : comecada ? (
           <>
-            <Play className="h-3.5 w-3.5" /> Continuar
+            <Play className="h-3.5 w-3.5 fill-current" /> Continuar
           </>
         ) : (
           <>
-            <Play className="h-3.5 w-3.5" /> Começar
+            <Play className="h-3.5 w-3.5 fill-current" /> Começar
           </>
         )}
-      </span>
+      </button>
     </motion.div>
   )
 }
 
+/**
+ * Diálogo centralizado.
+ *
+ * Era uma gaveta colada na base do celular (`items-end`), e uma gaveta com
+ * campo de texto dentro é o pior dos dois mundos: o teclado virtual sobe
+ * exatamente de onde ela nasce e empurra o campo para fora da tela. No centro,
+ * o campo continua visível com o teclado aberto.
+ *
+ * Vai para o fim do `<body>` porque `z-index` só compara irmãos dentro do
+ * mesmo contexto de empilhamento, e os botões flutuantes do rodapé são filhos
+ * diretos do `<body>`. Ver components/ui/portal.tsx.
+ */
 function Modal({
   titulo,
+  descricao,
   aoFechar,
   children,
 }: {
   titulo: string
+  descricao?: string
   aoFechar: () => void
   children: React.ReactNode
 }) {
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[195] flex items-end justify-center bg-black/50 p-0 backdrop-blur-sm sm:items-center sm:p-4"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) aoFechar()
-      }}
-    >
+    <Portal>
       <motion.div
-        initial={{ y: 40, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        exit={{ y: 20, opacity: 0 }}
-        transition={{ type: 'spring', damping: 28, stiffness: 320 }}
-        role="dialog"
-        aria-modal="true"
-        aria-label={titulo}
-        className="vidro-denso vidro-brilho w-full max-w-sm rounded-t-[28px] p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:rounded-[28px] sm:pb-5"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.18 }}
+        className="fixed inset-0 z-[210] flex items-center justify-center bg-black/55 p-4 backdrop-blur-sm"
+        style={{
+          paddingTop: 'max(1rem, env(safe-area-inset-top))',
+          paddingBottom: 'max(1rem, env(safe-area-inset-bottom))',
+        }}
+        onClick={(e) => {
+          if (e.target === e.currentTarget) aoFechar()
+        }}
       >
-        <div className="mb-3 flex items-center justify-between gap-2">
-          <h2 className="text-sm font-bold">{titulo}</h2>
-          <button
-            type="button"
-            onClick={aoFechar}
-            aria-label="Fechar"
-            className="-m-1 rounded-lg p-1 text-muted-foreground transition hover:bg-muted"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-        {children}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.94, y: 12 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.96, y: 8 }}
+          transition={{ type: 'spring', damping: 28, stiffness: 340 }}
+          role="dialog"
+          aria-modal="true"
+          aria-label={titulo}
+          className="vidro-denso vidro-brilho relevo max-h-full w-full max-w-sm overflow-y-auto rounded-[28px] p-5"
+        >
+          <div className="mb-3 flex items-start justify-between gap-2">
+            <div className="min-w-0">
+              <h2 className="text-sm font-bold">{titulo}</h2>
+              {descricao ? (
+                <p className="mt-0.5 text-[11px] leading-relaxed text-muted-foreground">
+                  {descricao}
+                </p>
+              ) : null}
+            </div>
+            <button
+              type="button"
+              onClick={aoFechar}
+              aria-label="Fechar"
+              className="-m-1 flex-none rounded-lg p-1 text-muted-foreground transition hover:bg-muted"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+          {children}
+        </motion.div>
       </motion.div>
-    </motion.div>
+    </Portal>
   )
 }

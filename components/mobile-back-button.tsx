@@ -252,12 +252,13 @@ export function MobileBackButton() {
       // se atropelar. Nunca fica "pendurado" no meio do conteúdo: um ícone
       // pequeno inteiramente dentro da tela, sem texto, sem cortar borda.
       // O deslocamento soma a safe-area (indicador de home) e, quando
-      // presente, a altura do banner de instalação do PWA — para nunca ficar
-      // tampado por ele. `bottom` (não padding) para não espremer o ícone
-      // dentro da altura fixa do círculo.
+      // presentes, a altura do banner de instalação do PWA e a de uma barra de
+      // ações no rodapé (ver components/ui/barra-inferior.tsx) — para nunca
+      // ficar tampado por eles nem tampá-los. `bottom` (não padding) para não
+      // espremer o ícone dentro da altura fixa do círculo.
       style={{
         bottom:
-          'calc(1.25rem + env(safe-area-inset-bottom) + var(--gx-install-prompt-h, 0px))',
+          'calc(1.25rem + env(safe-area-inset-bottom) + var(--gx-install-prompt-h, 0px) + var(--gx-barra-inferior-h, 0px))',
       }}
       className={cn(
         'fixed left-4 z-30 lg:hidden',
