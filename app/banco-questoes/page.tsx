@@ -21,6 +21,7 @@ import { AppShell, useAppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Portal } from '@/components/ui/portal'
 import {
   Dialog,
   DialogContent,
@@ -781,55 +782,80 @@ function Conteudo() {
         </div>
       </div>
 
-      {/* ── Assuntos no celular: gaveta, não empurrão ──────────────────── */}
+      {/* ── Assuntos no celular ────────────────────────────────────────
+          Centralizado, e fora da árvore da página.
+
+          Era uma gaveta colada embaixo (`inset-x-0 bottom-0`) e dava dois
+          problemas ao mesmo tempo. O primeiro é que a gaveta se ajusta ao
+          conteúdo: com poucos módulos no catálogo, ela virava uma tira de dois
+          dedos grudada na base da tela, com o título quase encostando no
+          rodapé. O segundo é que o botão de voltar e a doca flutuante passavam
+          POR CIMA dela — não por z-index baixo, mas porque a página inteira
+          vive dentro de `.vidro-ambiente`, que isola o contexto de
+          empilhamento; nenhum número de `z-index` atravessa isso. Daí o
+          `Portal`. Ver components/ui/portal.tsx. */}
       <AnimatePresence>
         {arvoreAberta ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[190] bg-black/50 backdrop-blur-sm md:hidden"
-            onClick={(e) => {
-              if (e.target === e.currentTarget) setArvoreAberta(false)
-            }}
-          >
+          <Portal key="assuntos">
             <motion.div
-              initial={{ y: '100%' }}
-              animate={{ y: 0 }}
-              exit={{ y: '100%' }}
-              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-              className="vidro-denso vidro-brilho absolute inset-x-0 bottom-0 flex max-h-[82vh] flex-col rounded-t-[28px] p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.18 }}
+              className="fixed inset-0 z-[210] flex items-center justify-center bg-black/55 p-4 backdrop-blur-sm md:hidden"
+              style={{
+                paddingTop: 'max(1rem, env(safe-area-inset-top))',
+                paddingBottom: 'max(1rem, env(safe-area-inset-bottom))',
+              }}
+              onClick={(e) => {
+                if (e.target === e.currentTarget) setArvoreAberta(false)
+              }}
             >
-              <div className="mx-auto mb-2 h-1 w-10 flex-none rounded-full bg-border" aria-hidden />
-              <div className="flex items-center justify-between gap-2 px-1 pb-2">
-                <h2 className="text-sm font-bold">Assuntos</h2>
+              <motion.div
+                // Cresce a partir do centro, em vez de subir da base: a gaveta
+                // que desliza de baixo promete que ela mora ali embaixo.
+                initial={{ opacity: 0, scale: 0.94, y: 12 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.96, y: 8 }}
+                transition={{ type: 'spring', damping: 28, stiffness: 340 }}
+                role="dialog"
+                aria-modal="true"
+                aria-label="Assuntos do banco"
+                className="vidro-denso vidro-brilho relevo flex max-h-full w-full max-w-md flex-col rounded-[28px] p-3"
+              >
+                <div className="flex items-center justify-between gap-2 px-1 pb-2">
+                  <h2 className="text-sm font-bold">Assuntos</h2>
+                  <button
+                    type="button"
+                    onClick={() => setArvoreAberta(false)}
+                    aria-label="Fechar"
+                    className="-m-1 rounded-lg p-1 text-muted-foreground hover:bg-muted"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+                {/* Altura mínima para o painel não encolher até virar tira
+                    quando o catálogo tem poucos módulos, e máxima para a
+                    rolagem ficar DENTRO da árvore, nunca no modal inteiro. */}
+                <div className="flex min-h-[18rem] flex-1 flex-col overflow-hidden">
+                  <ArvoreDoBanco
+                    modulos={hierarquia.modulos}
+                    topicos={hierarquia.topicos}
+                    subtopicos={hierarquia.subtopicos}
+                    selecao={selecao}
+                    onChange={setSelecao}
+                  />
+                </div>
                 <button
                   type="button"
                   onClick={() => setArvoreAberta(false)}
-                  aria-label="Fechar"
-                  className="-m-1 rounded-lg p-1 text-muted-foreground hover:bg-muted"
+                  className="btn-brand-glow mt-2 h-11 flex-none rounded-xl text-sm font-bold text-white active:scale-[0.98]"
                 >
-                  <X className="h-4 w-4" />
+                  Ver {paginacao ? `${paginacao.total.toLocaleString('pt-BR')} ` : ''}questões
                 </button>
-              </div>
-              <div className="flex min-h-0 flex-1 flex-col">
-                <ArvoreDoBanco
-                  modulos={hierarquia.modulos}
-                  topicos={hierarquia.topicos}
-                  subtopicos={hierarquia.subtopicos}
-                  selecao={selecao}
-                  onChange={setSelecao}
-                />
-              </div>
-              <button
-                type="button"
-                onClick={() => setArvoreAberta(false)}
-                className="btn-brand-glow mt-2 h-11 flex-none rounded-xl text-sm font-bold text-white active:scale-[0.98]"
-              >
-                Ver {paginacao ? `${paginacao.total} ` : ''}questões
-              </button>
+              </motion.div>
             </motion.div>
-          </motion.div>
+          </Portal>
         ) : null}
       </AnimatePresence>
 

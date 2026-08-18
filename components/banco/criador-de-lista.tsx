@@ -16,6 +16,7 @@ import {
   X,
   Zap,
 } from 'lucide-react'
+import { Portal } from '@/components/ui/portal'
 import { cn } from '@/lib/utils'
 import { ArvoreDoBanco, SELECAO_VAZIA, type SelecaoDaArvore } from '@/components/banco/arvore-banco'
 import {
@@ -186,6 +187,12 @@ export function CriadorDeLista({
 
   return (
     <AnimatePresence>
+      {/* Fora da árvore da página: ela vive dentro de `.vidro-ambiente`, que
+          isola o contexto de empilhamento, e por isso os botões flutuantes do
+          rodapé passavam por cima do modal — cobrindo o botão de criar a lista.
+          Nenhum `z-index` atravessa um contexto isolado. Ver
+          components/ui/portal.tsx. */}
+      <Portal>
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -370,6 +377,7 @@ export function CriadorDeLista({
           </div>
         </motion.div>
       </motion.div>
+      </Portal>
     </AnimatePresence>
   )
 }
