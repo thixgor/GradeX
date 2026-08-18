@@ -23,7 +23,7 @@ import { formatDate } from '@/lib/utils'
 import { downloadUserReportPDF } from '@/lib/user-report-generator'
 import { ProctoringConsent } from '@/components/proctoring-consent'
 import { ProctoringMonitor } from '@/components/proctoring-monitor'
-import { InlineAnnotationCanvas } from '@/components/inline-annotation-canvas'
+import { InlineAnnotationCanvas, useAnnotationModeActive } from '@/components/inline-annotation-canvas'
 import { ReportQuestionModal } from '@/components/report-question-modal'
 import { PracticeExamConfig, PracticeExamSettings } from '@/components/practice-exam-config'
 import { ExamQuestionPalette, PaletteQuestion } from '@/components/exam-question-palette'
@@ -31,7 +31,7 @@ import { useProctoring } from '@/hooks/use-proctoring'
 import { useWebSocket } from '@/hooks/use-websocket'
 import { useVisibilityDetection } from '@/hooks/use-visibility-detection'
 import { useWebRTC } from '@/hooks/use-webrtc'
-import { ArrowLeft, Check, X, Send, FileDown, Clock, User, CheckCircle2, AlertCircle, List, StickyNote, Copy, ClipboardCheck, Flag, ChevronRight, Bot, Maximize2, BookOpen } from 'lucide-react'
+import { ArrowLeft, Check, X, Send, FileDown, Clock, User, CheckCircle2, AlertCircle, List, StickyNote, Copy, ClipboardCheck, Flag, ChevronRight, ChevronLeft, Bot, Maximize2, BookOpen, LogOut } from 'lucide-react'
 import { ImageModal } from '@/components/image-modal'
 import { PremiumPdfCtaModal } from '@/components/premium-pdf-cta-modal'
 import { canDownloadExamPdf } from '@/lib/tier-limits'
@@ -68,6 +68,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   const [toastMessage, setToastMessage] = useState('')
   const [toastType, setToastType] = useState<'error' | 'success' | 'info'>('error')
   const [showUnansweredModal, setShowUnansweredModal] = useState(false)
+  const [showExitConfirm, setShowExitConfirm] = useState(false) // Confirmação antes de abandonar a prova
   const [examStartTime, setExamStartTime] = useState<Date | null>(null)
   const [examDuration, setExamDuration] = useState<string>('')
 
@@ -584,7 +585,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
       if (!target) return
       // Ignorar quando usuário digita em inputs/textareas/contenteditable
       if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) return
-      if (showFeedbackModal || showUnansweredModal || reportQuestionId) return
+      if (showFeedbackModal || showUnansweredModal || showExitConfirm || reportQuestionId) return
 
       // Modo paginado apenas (em scroll mode, atalhos atrapalhariam)
       if (exam.navigationMode === 'scroll') return
@@ -619,7 +620,17 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [started, submitted, alreadySubmitted, exam, currentQuestionIndex, showFeedbackModal, showUnansweredModal, reportQuestionId, lockedQuestions])
+  }, [started, submitted, alreadySubmitted, exam, currentQuestionIndex, showFeedbackModal, showUnansweredModal, showExitConfirm, reportQuestionId, lockedQuestions])
+
+  // Esc fecha a confirmação de saída — o mesmo gesto que fecha os outros modais.
+  useEffect(() => {
+    if (!showExitConfirm) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setShowExitConfirm(false)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [showExitConfirm])
 
   // Mostrar tela de configuração para provas práticas ao invés de auto-iniciar
   useEffect(() => {
@@ -803,6 +814,9 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   // subir na mão toda vez para ler o enunciado.
   const questionCardRef = useRef<HTMLDivElement>(null)
   const isPaginatedMode = !!exam && exam.navigationMode !== 'scroll'
+  // Enquanto a pessoa desenha, a barra de anotação ocupa o rodapé — a barra de
+  // navegação sai de cena para as duas não disputarem o mesmo espaço.
+  const annotationModeActive = useAnnotationModeActive()
   useEffect(() => {
     if (!started || submitted || !isPaginatedMode) return
     if (typeof window === 'undefined') return
@@ -2205,6 +2219,15 @@ ${respostaAluno}`
         {proctoringModal}
         <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/40 flex items-center justify-center p-4 sm:p-6">
           <div className="max-w-3xl w-full">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="mb-3 rounded-xl text-muted-foreground hover:text-foreground -ml-2"
+              onClick={() => router.push('/')}
+            >
+              <ArrowLeft className="h-4 w-4 mr-1.5" /> Voltar para a tela inicial
+            </Button>
+
             <div className="relative overflow-hidden rounded-3xl border border-border/50 bg-background/60 backdrop-blur-xl shadow-2xl">
               <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-500 via-violet-400 to-fuchsia-500" />
 
@@ -2332,6 +2355,26 @@ ${respostaAluno}`
     }
   })
 
+  // A contagem de respondidas já sai pronta da paleta — reaproveitar aqui evita
+  // recalcular a mesma varredura em cada barra de progresso da tela.
+  const answeredCount = paletteQuestions.filter(q => q.answered).length
+  const progressPercent = exam.questions.length
+    ? (answeredCount / exam.questions.length) * 100
+    : 0
+
+  // ─── Estado da navegação paginada ───
+  const isLastQuestion = currentQuestionIndex === exam.questions.length - 1
+  const showCheckAnswerButton =
+    exam?.feedbackMode === 'immediate' &&
+    ((exam as any).isPersonalExam || exam.isPracticeExam) &&
+    showCheckButton
+  const previousDisabled =
+    !canGoBack || (exam?.feedbackMode === 'immediate' && lockedQuestions.has(currentQuestion.id))
+  const nextDisabled =
+    exam?.feedbackMode === 'immediate' &&
+    currentQuestion.type === 'multiple-choice' &&
+    !lockedQuestions.has(currentQuestion.id)
+
   function handlePaletteJump(idx: number) {
     if (isScrollMode) {
       const q = exam!.questions[idx]
@@ -2347,7 +2390,14 @@ ${respostaAluno}`
   return (
     <>
       {proctoringModal}
-      <div className="min-h-screen bg-gradient-to-br from-background to-muted">
+      <div
+        className="min-h-screen bg-gradient-to-br from-background to-muted"
+        style={
+          isScrollMode
+            ? undefined
+            : ({ '--anotacao-espaco-inferior': 'calc(4.75rem + env(safe-area-inset-bottom))' } as React.CSSProperties)
+        }
+      >
         {/* Verificador de Banimento */}
         <BanChecker />
 
@@ -2487,8 +2537,20 @@ ${respostaAluno}`
       <header className="sticky top-0 z-50 border-b border-border/60 bg-background/85 shadow-sm backdrop-blur-md">
         <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-3 md:py-4">
           <div className="flex items-center justify-between gap-2 sm:gap-4 flex-wrap">
-            <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-shrink">
-              <Logo variant="icon" size="sm" />
+            <div className="flex items-center gap-1.5 sm:gap-3 min-w-0 flex-shrink">
+              {/* Saída para a tela inicial — durante a prova ela passa pela
+                  confirmação, porque sair aqui descarta o que ainda não foi enviado. */}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowExitConfirm(true)}
+                title="Voltar para a tela inicial"
+                aria-label="Voltar para a tela inicial"
+                className="h-9 w-9 shrink-0 -ml-1 rounded-xl text-muted-foreground hover:text-foreground"
+              >
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+              <Logo variant="icon" size="sm" className="hidden sm:block" />
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
                   <h1 className="text-sm sm:text-base md:text-lg lg:text-xl font-bold truncate">{exam.title}</h1>
@@ -2553,14 +2615,22 @@ ${respostaAluno}`
                 <AlertCircle className="h-4 w-4 mr-2" />
                 Não respondidas ({getUnansweredQuestions().length})
               </Button>
+              {/* No mobile o botão vira ícone: sem o número ao lado, ele não
+                  contava mais quantas questões ainda faltam. */}
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => setShowUnansweredModal(true)}
-                title="Não respondidas"
-                className="md:hidden h-8 w-8"
+                title={`Não respondidas (${getUnansweredQuestions().length})`}
+                aria-label={`Não respondidas (${getUnansweredQuestions().length})`}
+                className="md:hidden relative h-8 w-8"
               >
                 <AlertCircle className="h-4 w-4" />
+                {getUnansweredQuestions().length > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-amber-500 text-[10px] font-bold leading-4 text-white tabular-nums">
+                    {getUnansweredQuestions().length}
+                  </span>
+                )}
               </Button>
               <Button
                 variant="outline"
@@ -2619,7 +2689,12 @@ ${respostaAluno}`
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-6 sm:py-8 max-w-4xl">
+      <main
+        className={`container mx-auto px-4 py-6 sm:py-8 max-w-4xl ${
+          // Espaço para o conteúdo não terminar debaixo da barra fixa.
+          isScrollMode ? '' : 'pb-[calc(7rem+env(safe-area-inset-bottom))]'
+        }`}
+      >
         {/* Modo Scroll - Todas as questões visíveis */}
         {isScrollMode ? (
           <div className="space-y-6">
@@ -2989,36 +3064,14 @@ ${respostaAluno}`
                   <div>
                     <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
                       <span>Progresso</span>
-                      <span>
-                        {answers.filter((a, index) => {
-                          const question = exam.questions[index]
-                          if (question.type === 'multiple-choice') {
-                            return !!a.selectedAlternative
-                          } else if (question.type === 'discursive') {
-                            return !!a.discursiveText && a.discursiveText.trim().length > 0
-                          } else if (question.type === 'essay') {
-                            return !!a.essayText && a.essayText.trim().length > 0
-                          }
-                          return false
-                        }).length}/{exam.questions.length} respondidas
+                      <span className="tabular-nums">
+                        {answeredCount}/{exam.questions.length} respondidas
                       </span>
                     </div>
                     <div className="w-full bg-muted rounded-full h-2">
                       <div
                         className="bg-primary h-2 rounded-full transition-all"
-                        style={{
-                          width: `${(answers.filter((a, index) => {
-                            const question = exam.questions[index]
-                            if (question.type === 'multiple-choice') {
-                              return !!a.selectedAlternative
-                            } else if (question.type === 'discursive') {
-                              return !!a.discursiveText && a.discursiveText.trim().length > 0
-                            } else if (question.type === 'essay') {
-                              return !!a.essayText && a.essayText.trim().length > 0
-                            }
-                            return false
-                          }).length / exam.questions.length) * 100}%`
-                        }}
+                        style={{ width: `${progressPercent}%` }}
                       />
                     </div>
                   </div>
@@ -3417,88 +3470,86 @@ ${respostaAluno}`
             )}
           </InlineAnnotationCanvas>
 
-            {/* Navegação */}
-            <div className="flex justify-between pt-6 border-t gap-2">
-              <Button
-                variant="outline"
-                onClick={() => setCurrentQuestionIndex(Math.max(0, currentQuestionIndex - 1))}
-                disabled={!canGoBack || (exam?.feedbackMode === 'immediate' && lockedQuestions.has(currentQuestion.id))}
-                title={hasTimedQuestions && currentQuestionIndex > 0 ? "Não é possível voltar em provas com tempo por questão" : ""}
-              >
-                Anterior
-              </Button>
-
-              {/* Botão "Check & Continue" para feedback imediato */}
-              {exam?.feedbackMode === 'immediate' && ((exam as any).isPersonalExam || exam.isPracticeExam) && showCheckButton && (
-                <Button
-                  onClick={handleCheckAnswer}
-                  className="bg-green-600 hover:bg-green-700"
-                >
-                  Verificar e Continuar
-                </Button>
-              )}
-
-              {currentQuestionIndex === exam.questions.length - 1 ? (
-                <Button onClick={handleSubmit} disabled={submitting}>
-                  <Send className="h-4 w-4 mr-2" />
-                  {submitting ? 'Enviando...' : 'Finalizar Prova'}
-                </Button>
-              ) : (
-                <Button
-                  onClick={() => setCurrentQuestionIndex(currentQuestionIndex + 1)}
-                  disabled={
-                    exam?.feedbackMode === 'immediate' &&
-                    currentQuestion.type === 'multiple-choice' &&
-                    !lockedQuestions.has(currentQuestion.id)
-                  }
-                >
-                  Próxima
-                </Button>
-              )}
-            </div>
-
-            {/* Indicador de progresso */}
-            <div className="pt-4 border-t">
-              <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
-                <span>Progresso</span>
-                <span>
-                  {answers.filter((a, index) => {
-                    const question = exam.questions[index]
-                    if (question.type === 'multiple-choice') {
-                      return !!a.selectedAlternative
-                    } else if (question.type === 'discursive') {
-                      return !!a.discursiveText && a.discursiveText.trim().length > 0
-                    } else if (question.type === 'essay') {
-                      return !!a.essayText && a.essayText.trim().length > 0
-                    }
-                    return false
-                  }).length}/{exam.questions.length}{' '}
-                  respondidas
-                </span>
-              </div>
-              <div className="w-full bg-muted rounded-full h-2">
-                <div
-                  className="bg-primary h-2 rounded-full transition-all"
-                  style={{
-                    width: `${(answers.filter((a, index) => {
-                      const question = exam.questions[index]
-                      if (question.type === 'multiple-choice') {
-                        return !!a.selectedAlternative
-                      } else if (question.type === 'discursive') {
-                        return !!a.discursiveText && a.discursiveText.trim().length > 0
-                      } else if (question.type === 'essay') {
-                        return !!a.essayText && a.essayText.trim().length > 0
-                      }
-                      return false
-                    }).length / exam.questions.length) * 100}%`
-                  }}
-                />
-              </div>
-            </div>
+            {/* A navegação e o progresso vivem na barra fixa do rodapé
+                (logo abaixo de </main>): no card eles ficavam no fim de um
+                enunciado longo, e no celular só apareciam depois de rolar a
+                questão inteira. */}
           </CardContent>
         </Card>
         )}
       </main>
+
+      {/* ─── Barra fixa de navegação (modo paginado) ───
+          Fica sempre ao alcance do polegar: o "Próxima" não depende mais de
+          rolar até o fim do enunciado, das alternativas e do gabarito. */}
+      {!isScrollMode && (
+        <nav
+          className={`fixed inset-x-0 bottom-0 z-40 border-t border-border/60 bg-background/95 backdrop-blur-md transition-all duration-200 ${
+            annotationModeActive ? 'pointer-events-none translate-y-full opacity-0' : ''
+          }`}
+        >
+          {/* Progresso como filete no topo da barra: informa sem roubar altura */}
+          <div className="h-1 w-full bg-muted">
+            <div
+              className="h-full bg-primary transition-all duration-300"
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
+
+          <div className="container mx-auto flex max-w-4xl items-center gap-2 px-3 pt-2.5 pb-[calc(0.7rem+env(safe-area-inset-bottom))] sm:px-4">
+            <Button
+              variant="outline"
+              onClick={() => setCurrentQuestionIndex(Math.max(0, currentQuestionIndex - 1))}
+              disabled={previousDisabled}
+              title={hasTimedQuestions && currentQuestionIndex > 0 ? 'Não é possível voltar em provas com tempo por questão' : 'Questão anterior'}
+              aria-label="Questão anterior"
+              className="h-12 shrink-0 rounded-xl px-3 sm:px-4"
+            >
+              <ChevronLeft className="h-4 w-4 sm:mr-1.5" />
+              <span className="hidden sm:inline">Anterior</span>
+            </Button>
+
+            {/* Posição e respondidas — só onde sobra largura para elas */}
+            <div className="hidden min-w-0 flex-1 flex-col items-center justify-center leading-tight sm:flex">
+              <span className="text-xs font-semibold tabular-nums">
+                Questão {currentQuestionIndex + 1} de {exam.questions.length}
+              </span>
+              <span className="text-[11px] text-muted-foreground tabular-nums">
+                {answeredCount}/{exam.questions.length} respondidas
+              </span>
+            </div>
+
+            {showCheckAnswerButton ? (
+              <Button
+                onClick={handleCheckAnswer}
+                className="h-12 flex-1 rounded-xl bg-green-600 font-semibold hover:bg-green-700 sm:flex-none sm:px-6"
+              >
+                <Check className="h-4 w-4 mr-2" />
+                Verificar e Continuar
+              </Button>
+            ) : isLastQuestion ? (
+              <Button
+                onClick={handleSubmit}
+                disabled={submitting}
+                className="h-12 flex-1 rounded-xl font-semibold sm:flex-none sm:px-6"
+              >
+                <Send className="h-4 w-4 mr-2" />
+                {submitting ? 'Enviando...' : 'Finalizar Prova'}
+              </Button>
+            ) : (
+              <Button
+                onClick={() => setCurrentQuestionIndex(currentQuestionIndex + 1)}
+                disabled={nextDisabled}
+                title={nextDisabled ? 'Responda a questão para continuar' : 'Próxima questão'}
+                className="h-12 flex-1 rounded-xl font-semibold sm:flex-none sm:px-6"
+              >
+                {nextDisabled ? 'Responda para continuar' : 'Próxima'}
+                <ChevronRight className="h-4 w-4 ml-2" />
+              </Button>
+            )}
+          </div>
+        </nav>
+      )}
 
       {/* Mapa de Questões — paleta flutuante */}
       {started && !alreadySubmitted && (
@@ -3506,6 +3557,7 @@ ${respostaAluno}`
           questions={paletteQuestions}
           currentIndex={currentQuestionIndex}
           onJump={handlePaletteJump}
+          raised={!isScrollMode}
         />
       )}
 
@@ -3515,6 +3567,53 @@ ${respostaAluno}`
         message={toastMessage}
         type={toastType}
       />
+
+      {/* Modal de Saída — sair leva para a tela inicial e descarta o que não foi enviado */}
+      {showExitConfirm && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <Card className="max-w-md w-full shadow-2xl">
+            <CardHeader className="space-y-3">
+              <div className="mx-auto w-14 h-14 rounded-full bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center">
+                <AlertCircle className="h-7 w-7 text-amber-600 dark:text-amber-300" />
+              </div>
+              <div className="text-center">
+                <CardTitle className="text-xl">Sair da prova?</CardTitle>
+                <CardDescription className="mt-2">
+                  Você respondeu {answeredCount} de {exam.questions.length} questões. Saindo agora
+                  nada é enviado — as respostas desta sessão são perdidas.
+                </CardDescription>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {!exam.isPracticeExam && !(exam as any).isPersonalExam && (
+                <p className="text-xs text-center text-muted-foreground bg-muted rounded-lg p-3">
+                  O cronômetro da prova continua correndo enquanto você estiver fora.
+                </p>
+              )}
+              <div className="flex flex-col-reverse sm:flex-row gap-2">
+                <Button
+                  variant="outline"
+                  className="flex-1 h-11"
+                  onClick={() => setShowExitConfirm(false)}
+                >
+                  Continuar prova
+                </Button>
+                <Button
+                  variant="destructive"
+                  className="flex-1 h-11"
+                  onClick={() => {
+                    setShowExitConfirm(false)
+                    router.push('/')
+                  }}
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sair mesmo assim
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       {/* Modal de Questões Não Respondidas */}
       {showUnansweredModal && (
