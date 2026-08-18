@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { AnimatePresence, motion } from 'framer-motion'
 import { TiltCard } from '@/components/tilt-card'
 import {
-  BarChart3,
+  CalendarRange,
   Database,
   History,
   ListPlus,
@@ -15,7 +15,6 @@ import {
   Shuffle,
   SlidersHorizontal,
   Sparkles,
-  Target,
   X,
 } from 'lucide-react'
 import { AppShell, useAppShell } from '@/components/app-shell'
@@ -25,7 +24,6 @@ import { Label } from '@/components/ui/label'
 import {
   Dialog,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
@@ -38,10 +36,10 @@ import {
 } from '@/components/banco/arvore-banco'
 import { CartaoDeQuestao, ListaVazia, type QuestaoDoCartao } from '@/components/banco/cartao-questao'
 import { CriadorDeLista } from '@/components/banco/criador-de-lista'
+import { PainelDeDesempenho } from '@/components/banco/painel-desempenho'
 import type {
   BancoDificuldade,
   BancoListaUsuario,
-  BancoModoResposta,
   BancoPaginacao,
   BancoQuestaoTipo,
 } from '@/lib/types/banco-questoes'
@@ -63,6 +61,22 @@ import type {
  *    abrir é uma escolha da pessoa.
  *
  * O nível "Período" saiu do produto inteiro. Ver lib/banco/hierarquia.ts.
+ *
+ * ## A segunda passada: catalogar e ver o próprio desempenho
+ *
+ * - **O recorte temporal virou PERÍODO LETIVO.** A prova se chama "N1 SOI I -
+ *   2026.2"; filtrar por "2026" juntava dois semestres diferentes num balaio
+ *   só. As pastilhas de período mostram quantas questões cada semestre tem
+ *   antes do clique — um `<select>` mudo não mostrava nem isso.
+ *
+ * - **O filtro aplicado ficou visível.** Antes, quem escolhia três tópicos e
+ *   rolava a página perdia de vista o que tinha escolhido: a lista encurtava e
+ *   o motivo estava fora da tela. Agora cada recorte ativo é uma pastilha com
+ *   um X próprio, logo acima das questões.
+ *
+ * - **O desempenho mora aqui, colapsado.** A pergunta "onde eu erro" se faz
+ *   olhando a lista de questões, não numa aba de perfil do outro lado do app.
+ *   Fechado, o painel custa uma faixa; aberto, responde em cinco recortes.
  */
 export default function BancoQuestoesPage() {
   return (
@@ -80,6 +94,11 @@ interface SaldoGratuito {
   restantes: number
   limite: number
   desbloqueadas?: string[]
+}
+
+interface PeriodoDisponivel {
+  periodo: string
+  total: number
 }
 
 const POR_PAGINA = 20
@@ -106,13 +125,14 @@ function Conteudo() {
   const [buscaAplicada, setBuscaAplicada] = useState('')
   const [tipo, setTipo] = useState<BancoQuestaoTipo | ''>('')
   const [dificuldade, setDificuldade] = useState<BancoDificuldade | ''>('')
+  const [periodos, setPeriodos] = useState<string[]>([])
+  const [periodosDisponiveis, setPeriodosDisponiveis] = useState<PeriodoDisponivel[]>([])
   const [anos, setAnos] = useState<number[]>([])
   const [anosDisponiveis, setAnosDisponiveis] = useState<number[]>([])
   const [apenasNaoResolvidas, setApenasNaoResolvidas] = useState(false)
   const [filtrosAbertos, setFiltrosAbertos] = useState(false)
   const [arvoreAberta, setArvoreAberta] = useState(false)
 
-  const [estatisticas, setEstatisticas] = useState<{ totalResolvidas: number; percentualAcerto: number } | null>(null)
   const [listas, setListas] = useState<ListaComContagem[]>([])
 
   const [questaoParaLista, setQuestaoParaLista] = useState<string | null>(null)
@@ -128,6 +148,7 @@ function Conteudo() {
     !!buscaAplicada ||
     !!tipo ||
     !!dificuldade ||
+    periodos.length > 0 ||
     anos.length > 0 ||
     apenasNaoResolvidas
 
@@ -139,11 +160,12 @@ function Conteudo() {
     if (selecao.subtopicoIds.length) p.set('subtopicoId', selecao.subtopicoIds.join(','))
     if (tipo) p.set('tipo', tipo)
     if (dificuldade) p.set('dificuldade', dificuldade)
+    if (periodos.length) p.set('periodos', periodos.join(','))
     if (anos.length) p.set('anos', anos.join(','))
     if (apenasNaoResolvidas) p.set('apenasNaoResolvidas', 'true')
     if (buscaAplicada) p.set('busca', buscaAplicada)
     return p
-  }, [selecao, tipo, dificuldade, anos, apenasNaoResolvidas, buscaAplicada])
+  }, [selecao, tipo, dificuldade, periodos, anos, apenasNaoResolvidas, buscaAplicada])
 
   const carregarQuestoes = useCallback(
     async (pagina = 1) => {
@@ -167,27 +189,21 @@ function Conteudo() {
   useEffect(() => {
     let vivo = true
     ;(async () => {
-      const [hierRes, anosRes, statsRes, listasRes] = await Promise.all([
+      const [hierRes, anosRes, listasRes] = await Promise.all([
         fetch('/api/banco/hierarquia', { cache: 'no-store' }),
         fetch('/api/banco/anos'),
-        fetch('/api/banco/estatisticas'),
         fetch('/api/banco/listas'),
       ])
       if (!vivo) return
 
       if (hierRes.ok) setHierarquia(await hierRes.json())
-      if (anosRes.ok) setAnosDisponiveis((await anosRes.json()).anos || [])
-      // Estatística e listas são de assinante; para quem é gratuito a resposta
-      // vem vazia ou negada, e a tela simplesmente não mostra a seção.
-      if (statsRes.ok) {
-        const d = await statsRes.json()
-        if (d?.estatisticas) {
-          setEstatisticas({
-            totalResolvidas: d.estatisticas.totalResolvidas,
-            percentualAcerto: d.estatisticas.percentualAcerto,
-          })
-        }
+      if (anosRes.ok) {
+        const d = await anosRes.json()
+        setAnosDisponiveis(d.anos || [])
+        setPeriodosDisponiveis(d.periodos || [])
       }
+      // As listas são de assinante; para quem é gratuito a resposta vem vazia
+      // ou negada, e a tela simplesmente não mostra a seção.
       if (listasRes.ok) setListas((await listasRes.json()).listas || [])
 
       await carregarQuestoes(1)
@@ -204,6 +220,15 @@ function Conteudo() {
     if (primeiraCarga.current) return
     carregarQuestoes(1)
   }, [carregarQuestoes])
+
+  /** Nome legível de cada nó escolhido — as pastilhas mostram o assunto, não o id. */
+  const nomePorId = useMemo(() => {
+    const mapa = new Map<string, string>()
+    for (const m of hierarquia.modulos || []) mapa.set(String(m._id), m.nome)
+    for (const t of hierarquia.topicos || []) mapa.set(String(t._id), t.nome)
+    for (const s of hierarquia.subtopicos || []) mapa.set(String(s._id), s.nome)
+    return mapa
+  }, [hierarquia])
 
   async function abrirQuestao(id: string) {
     setAbrindo(id)
@@ -269,12 +294,23 @@ function Conteudo() {
     if (res.ok) setListas((await res.json()).listas || [])
   }
 
+  function alternarPeriodo(rotulo: string) {
+    setPeriodos((atual) =>
+      atual.includes(rotulo) ? atual.filter((p) => p !== rotulo) : [...atual, rotulo],
+    )
+  }
+
+  function tirarDaSelecao(campo: keyof SelecaoDaArvore, id: string) {
+    setSelecao((atual) => ({ ...atual, [campo]: atual[campo].filter((i) => i !== id) }))
+  }
+
   function limparTudo() {
     setSelecao(SELECAO_VAZIA)
     setBusca('')
     setBuscaAplicada('')
     setTipo('')
     setDificuldade('')
+    setPeriodos([])
     setAnos([])
     setApenasNaoResolvidas(false)
   }
@@ -284,6 +320,7 @@ function Conteudo() {
       <div className="surface-page vidro-ambiente">
         <div className="mx-auto max-w-7xl space-y-6 p-4 sm:p-6 lg:p-8">
           <div className="h-24 rounded-2xl skeleton-pulse" />
+          <div className="h-16 rounded-2xl skeleton-pulse" />
           <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
             <div className="h-96 rounded-2xl skeleton-pulse" />
             <div className="space-y-3">
@@ -301,7 +338,7 @@ function Conteudo() {
 
   return (
     <div className="surface-page vidro-ambiente">
-      <div className="mx-auto max-w-7xl space-y-5 p-4 sm:p-6 lg:p-8">
+      <div className="mx-auto max-w-7xl space-y-4 p-4 sm:space-y-5 sm:p-6 lg:p-8">
         {/* ── Cabeçalho ────────────────────────────────────────────────── */}
         <motion.header
           initial={{ opacity: 0, y: 12 }}
@@ -310,13 +347,17 @@ function Conteudo() {
           className="flex flex-wrap items-start justify-between gap-3"
         >
           <div className="flex min-w-0 items-center gap-3">
-            <div className="flex h-11 w-11 flex-none items-center justify-center rounded-2xl bg-primary/10">
-              <Database className="h-6 w-6 text-primary" />
-            </div>
+            {/* O ícone é uma peça com espessura, não um quadrado chapado: é a
+                primeira coisa da tela e dá o tom do resto. */}
+            <TiltCard maxTilt={12} scale={1.06} className="flex-none rounded-2xl">
+              <div className="relevo relevo-varre flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 text-primary">
+                <Database className="h-6 w-6" />
+              </div>
+            </TiltCard>
             <div className="min-w-0">
               <h1 className="font-heading text-2xl font-semibold tracking-tight">Banco de Questões</h1>
               <p className="mt-0.5 text-sm text-muted-foreground tabular-nums">
-                {paginacao ? `${paginacao.total} questões` : 'Carregando…'}
+                {paginacao ? `${paginacao.total.toLocaleString('pt-BR')} questões` : 'Carregando…'}
                 {temFiltro ? ' com os filtros atuais' : ' no banco'}
               </p>
             </div>
@@ -327,13 +368,13 @@ function Conteudo() {
           <div className="-mx-4 flex w-[calc(100%+2rem)] items-center gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:w-auto sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0">
             <Link
               href="/banco-questoes/historico"
-              className="inline-flex h-9 flex-none items-center gap-1.5 rounded-xl border border-border px-3 text-xs font-semibold transition hover:bg-muted active:scale-[0.97]"
+              className="tecla inline-flex h-9 flex-none items-center gap-1.5 px-3 text-xs font-semibold"
             >
               <History className="h-3.5 w-3.5" /> Histórico
             </Link>
             <Link
               href="/banco-questoes/listas"
-              className="inline-flex h-9 flex-none items-center gap-1.5 rounded-xl border border-border px-3 text-xs font-semibold transition hover:bg-muted active:scale-[0.97]"
+              className="tecla inline-flex h-9 flex-none items-center gap-1.5 px-3 text-xs font-semibold"
             >
               <ListPlus className="h-3.5 w-3.5" /> Minhas listas
               {listas.length > 0 ? (
@@ -352,7 +393,7 @@ function Conteudo() {
             {isAdmin ? (
               <Link
                 href="/admin/banco-questoes"
-                className="inline-flex h-9 flex-none items-center rounded-xl border border-border px-3 text-xs font-semibold transition hover:bg-muted"
+                className="tecla inline-flex h-9 flex-none items-center px-3 text-xs font-semibold"
               >
                 Administrar
               </Link>
@@ -367,7 +408,7 @@ function Conteudo() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.05 }}
             className={cn(
-              'vidro vidro-brilho rounded-[22px] p-4 sm:p-5',
+              'vidro vidro-brilho relevo rounded-[22px] p-4 sm:p-5',
               semSaldo && 'border-primary/40 bg-primary/5',
             )}
           >
@@ -402,37 +443,23 @@ function Conteudo() {
               </div>
             ) : null}
           </motion.section>
-        ) : estatisticas ? (
-          <motion.section
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.05 }}
-            className="grid grid-cols-2 gap-3 sm:grid-cols-3"
-          >
-            <Indicador
-              icone={<Target className="h-4 w-4" />}
-              rotulo="Resolvidas"
-              valor={String(estatisticas.totalResolvidas)}
-            />
-            <Indicador
-              icone={<BarChart3 className="h-4 w-4" />}
-              rotulo="Acerto"
-              valor={`${Math.round(estatisticas.percentualAcerto)}%`}
-            />
-            <Indicador
-              icone={<ListPlus className="h-4 w-4" />}
-              rotulo="Listas"
-              valor={String(listas.length)}
-            />
-          </motion.section>
         ) : null}
+
+        {/* ── Desempenho ───────────────────────────────────────────────── */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.08 }}
+        >
+          <PainelDeDesempenho />
+        </motion.div>
 
         {/* ── Busca + filtros ──────────────────────────────────────────── */}
         <motion.section
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.1 }}
-          className="vidro vidro-brilho rounded-[22px] p-3"
+          className="vidro vidro-brilho relevo rounded-[22px] p-3"
         >
           {/* No celular o campo tem a linha inteira: dividindo com dois botões
               ele encolhia até caber só "Buscar nc". */}
@@ -446,7 +473,7 @@ function Conteudo() {
                   if (e.key === 'Enter') setBuscaAplicada(busca.trim())
                 }}
                 placeholder="Buscar no enunciado…"
-                className="h-10 w-full rounded-xl border border-border bg-background pl-9 pr-9 text-sm outline-none transition focus:border-primary/50 focus:ring-2 focus:ring-primary/10"
+                className="h-10 w-full rounded-xl border border-border bg-background/70 pl-9 pr-9 text-sm outline-none transition focus:border-primary/50 focus:ring-2 focus:ring-primary/10"
               />
               {busca ? (
                 <button
@@ -464,100 +491,213 @@ function Conteudo() {
             </div>
 
             <div className="flex gap-2">
-            <Button
-              variant="outline"
-              className="h-10 flex-1 gap-1.5 rounded-xl text-xs sm:flex-none md:hidden"
-              onClick={() => setArvoreAberta((v) => !v)}
-            >
-              <Database className="h-3.5 w-3.5" />
-              Assuntos
-              {contarSelecionados(selecao) > 0 ? (
-                <span className="rounded bg-primary/15 px-1.5 text-[10px] font-bold text-primary tabular-nums">
-                  {contarSelecionados(selecao)}
-                </span>
+              <button
+                type="button"
+                data-marcado={contarSelecionados(selecao) > 0}
+                className="tecla inline-flex h-10 flex-1 items-center justify-center gap-1.5 px-3 text-xs font-semibold sm:flex-none md:hidden"
+                onClick={() => setArvoreAberta((v) => !v)}
+              >
+                <Database className="h-3.5 w-3.5" />
+                Assuntos
+                {contarSelecionados(selecao) > 0 ? (
+                  <span className="rounded bg-primary/15 px-1.5 text-[10px] font-bold tabular-nums">
+                    {contarSelecionados(selecao)}
+                  </span>
+                ) : null}
+              </button>
+
+              <button
+                type="button"
+                data-marcado={filtrosAbertos}
+                aria-expanded={filtrosAbertos}
+                className="tecla inline-flex h-10 flex-1 items-center justify-center gap-1.5 px-3 text-xs font-semibold sm:flex-none"
+                onClick={() => setFiltrosAbertos((v) => !v)}
+              >
+                <SlidersHorizontal className="h-3.5 w-3.5" /> Filtros
+              </button>
+
+              {temFiltro ? (
+                <Button variant="ghost" className="h-10 flex-none rounded-xl text-xs" onClick={limparTudo}>
+                  Limpar
+                </Button>
               ) : null}
-            </Button>
-
-            <Button
-              variant={filtrosAbertos ? 'secondary' : 'outline'}
-              className="h-10 flex-1 gap-1.5 rounded-xl text-xs sm:flex-none"
-              onClick={() => setFiltrosAbertos((v) => !v)}
-            >
-              <SlidersHorizontal className="h-3.5 w-3.5" /> Filtros
-            </Button>
-
-            {temFiltro ? (
-              <Button variant="ghost" className="h-10 flex-none rounded-xl text-xs" onClick={limparTudo}>
-                Limpar
-              </Button>
-            ) : null}
             </div>
           </div>
 
-          {filtrosAbertos ? (
-            <div className="mt-3 grid gap-3 border-t border-border pt-3 sm:grid-cols-2 lg:grid-cols-4">
-              <Campo rotulo="Tipo">
-                <select
-                  value={tipo}
-                  onChange={(e) => setTipo(e.target.value as BancoQuestaoTipo | '')}
-                  className="h-9 w-full rounded-xl border border-border bg-background px-2 text-[13px] outline-none focus:border-primary/50"
-                >
-                  <option value="">Todos</option>
-                  <option value="objetiva">Objetiva</option>
-                  <option value="discursiva">Discursiva</option>
-                </select>
-              </Campo>
+          <AnimatePresence initial={false}>
+            {filtrosAbertos ? (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                className="overflow-hidden"
+              >
+                <div className="mt-3 space-y-3 border-t border-border pt-3">
+                  {/* ── Período letivo ───────────────────────────────── */}
+                  {periodosDisponiveis.length > 0 ? (
+                    <div>
+                      <Label className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                        <CalendarRange className="h-3 w-3" /> Período letivo
+                      </Label>
+                      {/* Pastilhas e não um `<select>`: aqui a contagem aparece
+                          ANTES do clique, e escolher dois semestres é natural.
+                          Um `<select>` esconde o catálogo e só aceita um. */}
+                      <div className="-mx-1 mt-1.5 flex gap-1.5 overflow-x-auto px-1 pb-1">
+                        {periodosDisponiveis.map((p) => {
+                          const marcado = periodos.includes(p.periodo)
+                          return (
+                            <button
+                              key={p.periodo}
+                              type="button"
+                              data-marcado={marcado}
+                              aria-pressed={marcado}
+                              onClick={() => alternarPeriodo(p.periodo)}
+                              className="tecla inline-flex h-9 flex-none items-center gap-1.5 px-2.5 text-xs font-semibold"
+                            >
+                              <span className="tabular-nums">{p.periodo}</span>
+                              <span
+                                className={cn(
+                                  'rounded px-1 text-[10px] tabular-nums',
+                                  marcado ? 'bg-primary/20' : 'bg-muted text-muted-foreground',
+                                )}
+                              >
+                                {p.total}
+                              </span>
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  ) : null}
 
-              <Campo rotulo="Dificuldade">
-                <select
-                  value={dificuldade}
-                  onChange={(e) => setDificuldade(e.target.value as BancoDificuldade | '')}
-                  className="h-9 w-full rounded-xl border border-border bg-background px-2 text-[13px] outline-none focus:border-primary/50"
-                >
-                  <option value="">Todas</option>
-                  <option value="facil">Fácil</option>
-                  <option value="medio">Média</option>
-                  <option value="dificil">Difícil</option>
-                </select>
-              </Campo>
+                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                    <Campo rotulo="Tipo">
+                      <select
+                        value={tipo}
+                        onChange={(e) => setTipo(e.target.value as BancoQuestaoTipo | '')}
+                        className="h-9 w-full rounded-xl border border-border bg-background px-2 text-[13px] outline-none focus:border-primary/50"
+                      >
+                        <option value="">Todos</option>
+                        <option value="objetiva">Objetiva</option>
+                        <option value="discursiva">Discursiva</option>
+                      </select>
+                    </Campo>
 
-              <Campo rotulo="Ano">
-                <select
-                  value={anos.length === 1 ? String(anos[0]) : ''}
-                  onChange={(e) => setAnos(e.target.value ? [Number(e.target.value)] : [])}
-                  className="h-9 w-full rounded-xl border border-border bg-background px-2 text-[13px] outline-none focus:border-primary/50"
-                >
-                  <option value="">Todos</option>
-                  {anosDisponiveis.map((a) => (
-                    <option key={a} value={a}>
-                      {a}
-                    </option>
-                  ))}
-                </select>
-              </Campo>
+                    <Campo rotulo="Dificuldade">
+                      <select
+                        value={dificuldade}
+                        onChange={(e) => setDificuldade(e.target.value as BancoDificuldade | '')}
+                        className="h-9 w-full rounded-xl border border-border bg-background px-2 text-[13px] outline-none focus:border-primary/50"
+                      >
+                        <option value="">Todas</option>
+                        <option value="facil">Fácil</option>
+                        <option value="medio">Média</option>
+                        <option value="dificil">Difícil</option>
+                      </select>
+                    </Campo>
 
-              {!gratuito ? (
-                <Campo rotulo="Já resolvidas">
-                  <label className="flex h-9 cursor-pointer items-center gap-2 text-[13px]">
-                    <input
-                      type="checkbox"
-                      checked={apenasNaoResolvidas}
-                      onChange={(e) => setApenasNaoResolvidas(e.target.checked)}
-                    />
-                    Esconder as que já resolvi
-                  </label>
-                </Campo>
-              ) : null}
-            </div>
-          ) : null}
+                    <Campo rotulo="Ano">
+                      <select
+                        value={anos.length === 1 ? String(anos[0]) : ''}
+                        onChange={(e) => setAnos(e.target.value ? [Number(e.target.value)] : [])}
+                        className="h-9 w-full rounded-xl border border-border bg-background px-2 text-[13px] outline-none focus:border-primary/50"
+                      >
+                        <option value="">Todos</option>
+                        {anosDisponiveis.map((a) => (
+                          <option key={a} value={a}>
+                            {a}
+                          </option>
+                        ))}
+                      </select>
+                    </Campo>
+
+                    {!gratuito ? (
+                      <Campo rotulo="Já resolvidas">
+                        <label className="flex h-9 cursor-pointer items-center gap-2 text-[13px]">
+                          <input
+                            type="checkbox"
+                            checked={apenasNaoResolvidas}
+                            onChange={(e) => setApenasNaoResolvidas(e.target.checked)}
+                          />
+                          Esconder as que já resolvi
+                        </label>
+                      </Campo>
+                    ) : null}
+                  </div>
+                </div>
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
         </motion.section>
+
+        {/* ── O que está filtrado agora ─────────────────────────────────── */}
+        {temFiltro ? (
+          <div className="flex flex-wrap items-center gap-1.5">
+            {selecao.moduloIds.map((id) => (
+              <Pastilha
+                key={`m-${id}`}
+                rotulo={nomePorId.get(id) || 'Módulo'}
+                onRemover={() => tirarDaSelecao('moduloIds', id)}
+              />
+            ))}
+            {selecao.topicoIds.map((id) => (
+              <Pastilha
+                key={`t-${id}`}
+                rotulo={nomePorId.get(id) || 'Tópico'}
+                onRemover={() => tirarDaSelecao('topicoIds', id)}
+              />
+            ))}
+            {selecao.subtopicoIds.map((id) => (
+              <Pastilha
+                key={`s-${id}`}
+                rotulo={nomePorId.get(id) || 'Subtópico'}
+                onRemover={() => tirarDaSelecao('subtopicoIds', id)}
+              />
+            ))}
+            {periodos.map((p) => (
+              <Pastilha key={`p-${p}`} rotulo={p} onRemover={() => alternarPeriodo(p)} />
+            ))}
+            {anos.map((a) => (
+              <Pastilha
+                key={`a-${a}`}
+                rotulo={`Ano ${a}`}
+                onRemover={() => setAnos((atual) => atual.filter((x) => x !== a))}
+              />
+            ))}
+            {tipo ? (
+              <Pastilha
+                rotulo={tipo === 'discursiva' ? 'Discursiva' : 'Objetiva'}
+                onRemover={() => setTipo('')}
+              />
+            ) : null}
+            {dificuldade ? (
+              <Pastilha
+                rotulo={{ facil: 'Fácil', medio: 'Média', dificil: 'Difícil' }[dificuldade] || dificuldade}
+                onRemover={() => setDificuldade('')}
+              />
+            ) : null}
+            {apenasNaoResolvidas ? (
+              <Pastilha rotulo="Não resolvidas" onRemover={() => setApenasNaoResolvidas(false)} />
+            ) : null}
+            {buscaAplicada ? (
+              <Pastilha
+                rotulo={`“${buscaAplicada}”`}
+                onRemover={() => {
+                  setBusca('')
+                  setBuscaAplicada('')
+                }}
+              />
+            ) : null}
+          </div>
+        ) : null}
 
         {/* ── Assuntos + questões ──────────────────────────────────────── */}
         <div className="grid gap-5 md:grid-cols-[240px_1fr] lg:grid-cols-[280px_1fr]">
           {/* Do tablet para cima a árvore é uma COLUNA: com 800px de largura
               sobra espaço de sobra, e escondê-la atrás de um botão fazia a
               página desperdiçar metade da tela e o catálogo desaparecer. */}
-          <aside className="vidro vidro-brilho sticky top-4 hidden rounded-[22px] p-3 md:block">
+          <aside className="vidro vidro-brilho relevo sticky top-4 hidden rounded-[22px] p-3 md:block">
             <div className="flex h-[26rem] flex-col lg:h-[32rem]">
               <ArvoreDoBanco
                 modulos={hierarquia.modulos}
@@ -752,6 +892,7 @@ function Conteudo() {
         aberto={sorteioAberto}
         hierarquia={hierarquia}
         anosDisponiveis={anosDisponiveis}
+        periodosDisponiveis={periodosDisponiveis}
         // Começa de onde a pessoa estava: se ela filtrou arritmias na página,
         // pedir os assuntos de novo no criador seria refazer trabalho.
         selecaoInicial={selecao}
@@ -765,16 +906,26 @@ function Conteudo() {
   )
 }
 
-function Indicador({ icone, rotulo, valor }: { icone: React.ReactNode; rotulo: string; valor: string }) {
+/**
+ * Um recorte ativo, com o X que o desfaz.
+ *
+ * Existe porque o filtro aplicado some da vista assim que a pessoa rola a
+ * página: a lista encurta e o motivo fica lá em cima. Aqui o motivo anda junto
+ * das questões, e desfazer um recorte não obriga a reabrir o painel de filtros.
+ */
+function Pastilha({ rotulo, onRemover }: { rotulo: string; onRemover: () => void }) {
   return (
-    <TiltCard maxTilt={4} scale={1.02} className="rounded-2xl">
-      <div className="glass-page-card h-full rounded-2xl p-3.5">
-        <p className="flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
-          {icone} {rotulo}
-        </p>
-        <p className="mt-1 text-2xl font-bold tabular-nums">{valor}</p>
-      </div>
-    </TiltCard>
+    <span className="inline-flex max-w-full items-center gap-1 rounded-full border border-primary/25 bg-primary/10 py-1 pl-2.5 pr-1 text-[11px] font-semibold text-primary">
+      <span className="min-w-0 max-w-[14rem] truncate">{rotulo}</span>
+      <button
+        type="button"
+        onClick={onRemover}
+        aria-label={`Remover filtro ${rotulo}`}
+        className="flex h-4 w-4 flex-none items-center justify-center rounded-full transition hover:bg-primary/20"
+      >
+        <X className="h-3 w-3" />
+      </button>
+    </span>
   )
 }
 

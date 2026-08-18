@@ -27,6 +27,8 @@ export interface QuestaoDoCartao {
   enunciado?: string
   dificuldade?: string
   ano?: number
+  /** "2026.2" quando a prova de origem diz o semestre no título. */
+  periodoLetivo?: string
   fonte?: string
   moduloNome?: string
   topicoNome?: string
@@ -71,7 +73,14 @@ export function CartaoDeQuestao({
           {dificuldade.texto}
         </span>
       ) : null}
-      {questao.ano ? (
+      {/* Período letivo na frente do ano: "2026.2" é como a prova se chama na
+          faculdade, e "2026" sozinho junta dois semestres diferentes. O ano
+          continua aparecendo para a questão cuja prova não diz o semestre. */}
+      {questao.periodoLetivo ? (
+        <span className="rounded-md border border-primary/25 bg-primary/10 px-1.5 py-0.5 text-[10px] font-bold text-primary tabular-nums">
+          {questao.periodoLetivo}
+        </span>
+      ) : questao.ano ? (
         <span className="rounded-md bg-muted px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground tabular-nums">
           {questao.ano}
         </span>
@@ -103,7 +112,7 @@ export function CartaoDeQuestao({
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: Math.min(indice, 8) * 0.03 }}
-        className="vidro vidro-brilho rounded-[22px] !border-l-[3px] !border-l-foreground/10 p-4"
+        className="vidro vidro-brilho relevo rounded-[22px] !border-l-[3px] !border-l-foreground/10 p-4"
       >
         <div className="flex items-start gap-3">
           <span className="flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-muted text-muted-foreground">
@@ -155,8 +164,7 @@ export function CartaoDeQuestao({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: Math.min(indice, 8) * 0.03 }}
       className={cn(
-        'group relative vidro vidro-brilho rounded-[22px] p-4 !border-l-[3px] transition-all duration-300',
-        'hover-glow-green hover-lift',
+        'group relative vidro vidro-brilho relevo relevo-toca rounded-[22px] p-4 !border-l-[3px]',
         questao.tipo === 'discursiva' ? '!border-l-violet-500' : '!border-l-[#468152]',
       )}
     >

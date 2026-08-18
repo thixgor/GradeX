@@ -95,6 +95,13 @@ export interface BancoQuestao {
   tags?: string[]
   fonte?: string
   ano?: number
+  /**
+   * Semestre letivo (1 ou 2) lido do título da prova de origem.
+   * Ver lib/banco/periodo-letivo.ts.
+   */
+  semestre?: 1 | 2
+  /** "2026.2" — ano e semestre juntos, prontos para filtrar e exibir. */
+  periodoLetivo?: string
 
   // Estatísticas
   totalRespostas: number
@@ -226,6 +233,8 @@ export interface BancoQuestoesFiltros {
   tags?: string[]
   busca?: string
   anos?: number[]
+  /** Rótulos de período letivo, ex.: ["2026.2", "2026.1"]. */
+  periodos?: string[]
 }
 
 export interface BancoPaginacao {

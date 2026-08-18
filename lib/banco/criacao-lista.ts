@@ -22,6 +22,8 @@ export interface FiltrosDaLista {
   tipo?: BancoQuestaoTipo | ''
   dificuldade?: BancoDificuldade | ''
   anos: number[]
+  /** Períodos letivos escolhidos, ex.: ["2026.2"]. Ver lib/banco/periodo-letivo.ts. */
+  periodos: string[]
   excluirJaResolvidas: boolean
 }
 
@@ -38,6 +40,7 @@ export const FILTROS_VAZIOS: FiltrosDaLista = {
   tipo: '',
   dificuldade: '',
   anos: [],
+  periodos: [],
   excluirJaResolvidas: false,
 }
 
@@ -59,6 +62,7 @@ export function contarFiltros(filtros: FiltrosDaLista): number {
     (filtros.tipo ? 1 : 0) +
     (filtros.dificuldade ? 1 : 0) +
     (filtros.anos.length > 0 ? 1 : 0) +
+    (filtros.periodos.length > 0 ? 1 : 0) +
     (filtros.excluirJaResolvidas ? 1 : 0)
   )
 }
@@ -100,7 +104,11 @@ export function descreverLista(
     partes.push('de todo o banco')
   }
 
-  if (config.anos.length === 1) partes.push(`de ${config.anos[0]}`)
+  // O período letivo é mais específico que o ano e vem antes por isso: quem
+  // marcou "2026.2" quer ouvir "de 2026.2", não "de 2026".
+  if (config.periodos.length === 1) partes.push(`de ${config.periodos[0]}`)
+  else if (config.periodos.length > 1) partes.push(`de ${config.periodos.length} períodos`)
+  else if (config.anos.length === 1) partes.push(`de ${config.anos[0]}`)
   else if (config.anos.length > 1) partes.push(`de ${config.anos.length} anos`)
 
   if (config.excluirJaResolvidas) partes.push('que você ainda não resolveu')
@@ -185,6 +193,7 @@ export function corpoDaRequisicao(config: ConfiguracaoDaLista) {
     tipo: config.tipo || undefined,
     dificuldade: config.dificuldade || undefined,
     anos: config.anos.length > 0 ? config.anos : undefined,
+    periodos: config.periodos.length > 0 ? config.periodos : undefined,
     modoResposta: config.modoResposta,
     excluirJaResolvidas: config.excluirJaResolvidas || undefined,
   }
@@ -201,6 +210,7 @@ export function parametrosDeContagem(filtros: FiltrosDaLista): URLSearchParams {
   if (filtros.tipo) p.set('tipo', filtros.tipo)
   if (filtros.dificuldade) p.set('dificuldade', filtros.dificuldade)
   if (filtros.anos.length) p.set('anos', filtros.anos.join(','))
+  if (filtros.periodos.length) p.set('periodos', filtros.periodos.join(','))
   if (filtros.excluirJaResolvidas) p.set('apenasNaoResolvidas', 'true')
   return p
 }

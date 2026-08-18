@@ -68,6 +68,7 @@ export function CriadorDeLista({
   aberto,
   hierarquia,
   anosDisponiveis,
+  periodosDisponiveis = [],
   selecaoInicial,
   onFechar,
   onCriada,
@@ -75,6 +76,8 @@ export function CriadorDeLista({
   aberto: boolean
   hierarquia: Hierarquia
   anosDisponiveis: number[]
+  /** Períodos letivos com contagem, ex.: [{ periodo: '2026.2', total: 148 }]. */
+  periodosDisponiveis?: { periodo: string; total: number }[]
   /** Assuntos já escolhidos na página — o criador começa de onde a pessoa estava. */
   selecaoInicial?: SelecaoDaArvore
   onFechar: () => void
@@ -269,6 +272,7 @@ export function CriadorDeLista({
                   <PassoRecorte
                     filtros={filtros}
                     anosDisponiveis={anosDisponiveis}
+                    periodosDisponiveis={periodosDisponiveis}
                     onChange={setFiltros}
                   />
                 ) : (
@@ -431,10 +435,12 @@ function PassoOrigem({
 function PassoRecorte({
   filtros,
   anosDisponiveis,
+  periodosDisponiveis,
   onChange,
 }: {
   filtros: FiltrosDaLista
   anosDisponiveis: number[]
+  periodosDisponiveis: { periodo: string; total: number }[]
   onChange: (f: FiltrosDaLista) => void
 }) {
   return (
@@ -481,6 +487,37 @@ function PassoRecorte({
           ))}
         </div>
       </Campo>
+
+      {/* Período letivo antes do ano: é o recorte que a prova usa de fato
+          ("N1 SOI I - 2026.2"), e a contagem aparece na própria pastilha. O ano
+          continua logo abaixo, para as questões cuja prova não diz o semestre. */}
+      {periodosDisponiveis.length > 0 ? (
+        <Campo titulo="Período letivo" opcional>
+          <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
+            {periodosDisponiveis.slice(0, 16).map((p) => {
+              const marcado = filtros.periodos.includes(p.periodo)
+              return (
+                <PastilhaCurta
+                  key={p.periodo}
+                  marcado={marcado}
+                  className="inline-flex flex-none items-center justify-center gap-1.5 px-3"
+                  onClick={() =>
+                    onChange({
+                      ...filtros,
+                      periodos: marcado
+                        ? filtros.periodos.filter((x) => x !== p.periodo)
+                        : [...filtros.periodos, p.periodo],
+                    })
+                  }
+                >
+                  <span className="tabular-nums">{p.periodo}</span>
+                  <span className="text-[10px] opacity-60 tabular-nums">{p.total}</span>
+                </PastilhaCurta>
+              )
+            })}
+          </div>
+        </Campo>
+      ) : null}
 
       {anosDisponiveis.length > 0 ? (
         <Campo titulo="Ano" opcional>

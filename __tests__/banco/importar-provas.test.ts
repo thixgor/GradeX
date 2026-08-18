@@ -143,11 +143,41 @@ describe('mapearProvas', () => {
     expect(ignoradas[0].motivo).toContain('Redação')
   })
 
-  it('deduz o ano da data da prova', () => {
+  it('usa a data da prova só quando o título não diz o período', () => {
     const provas: ProvaParaImportar[] = [
       { _id: 'e1', title: 'P', groupId: 'p1', startTime: '2023-04-10T12:00:00Z', questions: [objetiva()] },
     ]
-    expect(mapearProvas(raiz, provas, grupos).questoes[0].ano).toBe(2023)
+    const questao = mapearProvas(raiz, provas, grupos).questoes[0]
+    expect(questao.ano).toBe(2023)
+    expect(questao.periodoLetivo).toBeUndefined()
+  })
+
+  it('lê o período letivo do título, e não da data em que a prova foi cadastrada', () => {
+    // O caso que motivou a mudança: prova de 2023.2 digitada na plataforma em
+    // 2026. A data diria 2026; o título diz a verdade.
+    const provas: ProvaParaImportar[] = [
+      {
+        _id: 'e1',
+        title: 'N1 SOI I - 2023.2',
+        groupId: 'p1',
+        createdAt: '2026-03-01T12:00:00Z',
+        questions: [objetiva()],
+      },
+    ]
+    const questao = mapearProvas(raiz, provas, grupos).questoes[0]
+    expect(questao.ano).toBe(2023)
+    expect(questao.semestre).toBe(2)
+    expect(questao.periodoLetivo).toBe('2023.2')
+  })
+
+  it('aceita o título sem semestre sem inventar um', () => {
+    const provas: ProvaParaImportar[] = [
+      { _id: 'e1', title: 'Simulado 2024', groupId: 'p1', questions: [objetiva()] },
+    ]
+    const questao = mapearProvas(raiz, provas, grupos).questoes[0]
+    expect(questao.ano).toBe(2024)
+    expect(questao.semestre).toBeUndefined()
+    expect(questao.periodoLetivo).toBeUndefined()
   })
 })
 

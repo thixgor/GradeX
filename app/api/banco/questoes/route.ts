@@ -10,6 +10,7 @@ import {
 } from '@/lib/types/banco-questoes'
 import { lerAcessoAoBanco, ocultarConteudo } from '@/lib/banco/acesso-servidor'
 import { jaDesbloqueada, restantes } from '@/lib/banco/gratuito'
+import { interpretarPeriodoLetivo } from '@/lib/banco/periodo-letivo'
 
 export const dynamic = 'force-dynamic'
 
@@ -65,6 +66,18 @@ export async function GET(request: NextRequest) {
     const anosParam = searchParams.get('anos')
     const anos = anosParam ? anosParam.split(',').map(Number).filter(n => !isNaN(n)) : undefined
 
+    // Período letivo ("2026.2"): é assim que a prova se chama na faculdade, e
+    // por isso é o recorte temporal que a tela oferece. Só entram rótulos com
+    // formato válido — um valor solto viraria um filtro que nunca casa e a
+    // pessoa veria "nenhuma questão" sem entender por quê.
+    const periodosParam = searchParams.get('periodos')
+    const periodos = periodosParam
+      ? periodosParam
+          .split(',')
+          .map((p) => p.trim())
+          .filter((p) => interpretarPeriodoLetivo(p) !== null)
+      : undefined
+
     // Paginação
     const page = parseInt(searchParams.get('page') || '1')
     const limit = Math.min(parseInt(searchParams.get('limit') || '20'), 50)
@@ -103,6 +116,9 @@ export async function GET(request: NextRequest) {
     }
     if (anos && anos.length > 0) {
       matchStage.ano = { $in: anos }
+    }
+    if (periodos && periodos.length > 0) {
+      matchStage.periodoLetivo = { $in: periodos }
     }
 
     const pipeline: any[] = [

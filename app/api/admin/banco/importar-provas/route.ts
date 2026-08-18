@@ -379,7 +379,13 @@ async function gravar(db: any, questoes: QuestaoImportada[], userId: string) {
             explicacao: q.explicacao,
             imagemUrl: q.imagemUrl,
             fonte: q.fonte,
-            ano: q.ano,
+            ano: q.ano ?? null,
+            // `null` explícito e não `undefined`: reimportar uma prova que foi
+            // renomeada de "N1 SOI I" para "N1 SOI I - 2023.2" precisa APAGAR o
+            // período antigo quando ele deixa de existir, e `$set: undefined`
+            // simplesmente não escreve o campo.
+            semestre: q.semestre ?? null,
+            periodoLetivo: q.periodoLetivo ?? null,
             origem: q.origem,
             updatedAt: new Date(),
           },

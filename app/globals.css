@@ -4977,3 +4977,222 @@ body.roller-dragging {
     transform: none;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════════════
+   RELEVO — a camada de profundidade do Banco de Questões
+   ──────────────────────────────────────────────────────────────────────
+   O vidro (`.vidro`) resolve transparência; ele não resolve ESPESSURA.
+   Um painel de vidro sem relevo lê como um retângulo desenhado, e uma
+   tela inteira feita deles fica seca: tudo no mesmo plano, nada
+   convidando a ser tocado.
+
+   O relevo é construído em três camadas, e nenhuma delas é decoração
+   solta:
+
+   1. **A quina de cima é clara e a de baixo é escura.** É a única pista
+      de que a peça tem altura. Sem ela, sombra é só borrão.
+   2. **A sombra tem dois passos** — uma curta e fechada (o contato com
+      a superfície) e uma longa e aberta (a luz do ambiente). Uma sombra
+      só, do tamanho médio das duas, parece adesivo flutuando.
+   3. **O movimento é de LEVANTAR, não de crescer.** No hover a peça
+      sobe 2px e a sombra abre; escala mudaria o tamanho do texto e
+      seria percebida como zoom, não como profundidade.
+
+   Tudo respeita `prefers-reduced-motion` e some no toque (`hover: none`),
+   onde o efeito nunca dispara e só atrapalharia o scroll.
+   ══════════════════════════════════════════════════════════════════════ */
+
+.relevo {
+  position: relative;
+  border-radius: inherit;
+  box-shadow:
+    0 1px 2px rgba(21, 61, 31, 0.06),
+    0 10px 24px -14px rgba(21, 61, 31, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.75),
+    inset 0 -1px 0 rgba(21, 61, 31, 0.06);
+  transition:
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.dark .relevo {
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.35),
+    0 12px 28px -16px rgba(0, 0, 0, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .relevo-toca:hover {
+    transform: translateY(-3px);
+    box-shadow:
+      0 2px 4px rgba(21, 61, 31, 0.07),
+      0 22px 44px -20px rgba(21, 61, 31, 0.34),
+      inset 0 1px 0 rgba(255, 255, 255, 0.85),
+      inset 0 -1px 0 rgba(21, 61, 31, 0.06);
+  }
+
+  .dark .relevo-toca:hover {
+    box-shadow:
+      0 2px 4px rgba(0, 0, 0, 0.4),
+      0 26px 52px -22px rgba(0, 0, 0, 0.78),
+      inset 0 1px 0 rgba(255, 255, 255, 0.14),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.32);
+  }
+}
+
+.relevo-toca:active {
+  transform: translateY(0);
+  box-shadow:
+    0 1px 1px rgba(21, 61, 31, 0.08),
+    0 4px 10px -8px rgba(21, 61, 31, 0.3),
+    inset 0 1px 2px rgba(21, 61, 31, 0.08);
+}
+
+/* Pilha: a peça de baixo aparece pela beirada, como uma folha embaixo da
+   outra. É o que dá ao cabeçalho a leitura de "monte de questões" sem
+   custar nenhum elemento a mais no HTML. */
+.relevo-pilha::after {
+  content: '';
+  position: absolute;
+  inset: auto 1rem -0.45rem 1rem;
+  height: 0.9rem;
+  z-index: -1;
+  border-radius: inherit;
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+/* Botão/pastilha com corpo: a borda de baixo é a "parede" da peça, e ela
+   encolhe no clique — o mesmo vocabulário de uma tecla física. */
+.tecla {
+  position: relative;
+  border-radius: 0.85rem;
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--card));
+  box-shadow:
+    0 2px 0 hsl(var(--border)),
+    0 4px 10px -6px rgba(21, 61, 31, 0.3);
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease,
+    background-color 0.16s ease,
+    border-color 0.16s ease;
+}
+
+.dark .tecla {
+  box-shadow:
+    0 2px 0 rgba(0, 0, 0, 0.45),
+    0 4px 12px -6px rgba(0, 0, 0, 0.6);
+}
+
+.tecla:active {
+  transform: translateY(2px);
+  box-shadow: 0 0 0 hsl(var(--border)), 0 1px 3px -2px rgba(21, 61, 31, 0.4);
+}
+
+.tecla[data-marcado='true'] {
+  border-color: hsl(var(--primary) / 0.55);
+  background: hsl(var(--primary) / 0.12);
+  color: hsl(var(--primary));
+  box-shadow:
+    0 2px 0 hsl(var(--primary) / 0.35),
+    0 6px 16px -8px hsl(var(--primary) / 0.5);
+}
+
+/* Números que precisam ser lidos de longe (os indicadores do topo).
+   O gradiente sutil no texto dá volume sem virar neon. */
+.numero-relevo {
+  background-image: linear-gradient(180deg, hsl(var(--foreground)) 0%, hsl(var(--foreground) / 0.72) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Brilho que corre a peça quando ela entra na tela. Uma vez só — repetir
+   viraria um letreiro. */
+@keyframes relevo-varredura {
+  from {
+    transform: translateX(-120%);
+  }
+  to {
+    transform: translateX(220%);
+  }
+}
+
+.relevo-varre {
+  position: relative;
+  overflow: hidden;
+}
+
+.relevo-varre::after {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 45%;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.28) 50%,
+    transparent 100%
+  );
+  animation: relevo-varredura 1.5s cubic-bezier(0.3, 0, 0.2, 1) 0.25s 1 both;
+}
+
+.dark .relevo-varre::after {
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.09) 50%,
+    transparent 100%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .relevo,
+  .tecla {
+    transition: none;
+  }
+  .relevo-toca:hover,
+  .relevo-toca:active,
+  .tecla:active {
+    transform: none;
+  }
+  .relevo-varre::after {
+    animation: none;
+    display: none;
+  }
+}
+
+/* Figuras do painel de desempenho do banco.
+   O `ChartCard` nasce com `bg-card` opaco, feito para o fundo liso do perfil.
+   Dentro do painel de vidro ele apareceria como um retângulo sólido colado
+   sobre o vidro — a mesma sensação de adesivo que o relevo existe para evitar.
+   Aqui ele ganha translucidez e a mesma espessura das outras peças. */
+.grafico-do-banco {
+  background: hsl(var(--card) / 0.66);
+  border-color: hsl(var(--border) / 0.7);
+  box-shadow:
+    0 1px 2px rgba(21, 61, 31, 0.05),
+    0 10px 24px -16px rgba(21, 61, 31, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.dark .grafico-do-banco {
+  background: hsl(var(--card) / 0.55);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.3),
+    0 12px 28px -18px rgba(0, 0, 0, 0.65),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .grafico-do-banco {
+    backdrop-filter: blur(10px) saturate(150%);
+    -webkit-backdrop-filter: blur(10px) saturate(150%);
+  }
+}

@@ -5,6 +5,7 @@ import { ObjectId } from 'mongodb'
 import { User } from '@/lib/types'
 import { BancoListaUsuario, BancoListaAleatoriaFiltros } from '@/lib/types/banco-questoes'
 import { isPlusAccount } from '@/lib/account-tier'
+import { interpretarPeriodoLetivo } from '@/lib/banco/periodo-letivo'
 
 export const dynamic = 'force-dynamic'
 
@@ -87,6 +88,17 @@ export async function POST(request: NextRequest) {
         : []
     if (anos.length === 1) matchStage.ano = anos[0]
     else if (anos.length > 1) matchStage.ano = { $in: anos }
+
+    // Período letivo ("2026.2"): o recorte que a tela oferece desde que o ano
+    // da questão passou a vir do nome da prova. Rótulo mal formado é
+    // descartado — um filtro que nunca casa devolveria "nenhuma questão" sem
+    // dizer por quê.
+    const periodos: string[] = Array.isArray((body as any).periodos)
+      ? (body as any).periodos
+          .map((p: any) => String(p).trim())
+          .filter((p: string) => interpretarPeriodoLetivo(p) !== null)
+      : []
+    if (periodos.length > 0) matchStage.periodoLetivo = { $in: periodos }
 
     // Se o usuário quer excluir questões já resolvidas, buscar IDs resolvidos
     if (body.excluirJaResolvidas) {

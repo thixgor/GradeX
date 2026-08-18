@@ -226,6 +226,13 @@ export default function ImportarProvasPage() {
               <dt className="w-20 flex-none font-semibold text-foreground">Subtópico</dt>
               <dd>o título da prova</dd>
             </div>
+            <div className="flex gap-2">
+              <dt className="w-20 flex-none font-semibold text-foreground">Período</dt>
+              <dd>
+                o “2026.2” do nome da prova — “N1 SOI I - 2026.2” entra como 2026, semestre 2. Sem
+                isso no nome, vale o ano da data da prova.
+              </dd>
+            </div>
           </dl>
           <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
             Reimportar o mesmo grupo <strong>atualiza</strong> as questões já trazidas em vez de

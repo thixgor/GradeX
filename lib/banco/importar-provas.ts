@@ -1,4 +1,9 @@
 import { paraCodigo } from '@/lib/banco/hierarquia'
+import {
+  formatarPeriodoLetivo,
+  lerAnoDoTitulo,
+  lerPeriodoLetivo,
+} from '@/lib/banco/periodo-letivo'
 
 /**
  * Trazer as questões das Provas da Faculdade para o Banco de Questões.
@@ -81,6 +86,10 @@ export interface QuestaoImportada {
   imagemUrl?: string
   fonte: string
   ano?: number
+  /** 1 ou 2, quando o título da prova diz o semestre. */
+  semestre?: 1 | 2
+  /** "2026.2" — o rótulo pronto, para não remontá-lo em toda tela. */
+  periodoLetivo?: string
   /** Carimbo de origem — é o que torna a reimportação uma atualização. */
   origem: {
     tipo: 'prova'
@@ -160,12 +169,42 @@ export function montarEnunciado(questao: QuestaoDaProva): string {
   return enunciado.includes(comando) ? enunciado : `${enunciado}\n\n${comando}`
 }
 
-function anoDaProva(prova: ProvaParaImportar): number | undefined {
+/**
+ * De quando é a prova.
+ *
+ * O TÍTULO manda. Na plataforma a prova se chama "N1 SOI I - 2026.2", e é esse
+ * "2026.2" que diz o período letivo em que ela foi aplicada. A data do
+ * documento diz outra coisa: quando a prova foi CADASTRADA aqui — e boa parte
+ * do acervo antigo foi digitada anos depois, o que fazia uma N1 de 2023.2
+ * entrar no banco como questão de 2026.
+ *
+ * A data continua como último recurso, para a prova cujo título não traz nada.
+ * Melhor um ano aproximado do que nenhum: é ele que alimenta o filtro por ano.
+ */
+function periodoDaProva(prova: ProvaParaImportar): {
+  ano?: number
+  semestre?: 1 | 2
+  periodoLetivo?: string
+} {
+  const doTitulo = lerPeriodoLetivo(prova.title)
+  if (doTitulo) {
+    return {
+      ano: doTitulo.ano,
+      semestre: doTitulo.semestre,
+      periodoLetivo: formatarPeriodoLetivo(doTitulo) || undefined,
+    }
+  }
+
+  // Título com o ano mas sem o semestre ("Prova de 2024"): o ano vale, o
+  // rótulo de período não — inventar ".1" seria fabricar um dado.
+  const anoSolto = lerAnoDoTitulo(prova.title)
+  if (anoSolto) return { ano: anoSolto }
+
   const bruto = prova.startTime || prova.createdAt
-  if (!bruto) return undefined
+  if (!bruto) return {}
   const data = new Date(bruto as any)
   const ano = data.getFullYear()
-  return Number.isFinite(ano) && ano > 1990 && ano < 2200 ? ano : undefined
+  return Number.isFinite(ano) && ano > 1990 && ano < 2200 ? { ano } : {}
 }
 
 /**
@@ -189,7 +228,7 @@ export function mapearProvas(
     if (relativo === null) continue
 
     const topicoNome = relativo.length > 0 ? relativo.join(' › ') : 'Geral'
-    const ano = anoDaProva(prova)
+    const quando = periodoDaProva(prova)
 
     for (const questao of prova.questions || []) {
       const numero = questao.number
@@ -213,7 +252,9 @@ export function mapearProvas(
         explicacao: montarExplicacao(questao),
         imagemUrl: questao.imageUrl || undefined,
         fonte: prova.title,
-        ano,
+        ano: quando.ano,
+        semestre: quando.semestre,
+        periodoLetivo: quando.periodoLetivo,
         origem: {
           tipo: 'prova' as const,
           examId: prova._id,

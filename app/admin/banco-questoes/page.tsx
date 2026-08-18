@@ -22,6 +22,7 @@ import {
   GraduationCap,
   AlertCircle
 } from 'lucide-react'
+import { ZonaDeRisco } from '@/components/admin/banco/zona-de-risco'
 import { BancoEstatisticasAdmin } from '@/lib/types/banco-questoes'
 
 interface User {
@@ -327,6 +328,7 @@ export default function AdminBancoQuestoes() {
             </div>
           </div>
         )}
+        <ZonaDeRisco onMudou={loadEstatisticas} />
       </main>
     </div>
   )

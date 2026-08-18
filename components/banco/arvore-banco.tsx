@@ -2,12 +2,13 @@
 
 import { useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ChevronRight, Layers, Search, X } from 'lucide-react'
+import { Check, ChevronRight, FolderTree, Layers, Search, X } from 'lucide-react'
 import {
   filtrarArvore,
   montarArvore,
   totalDaArvore,
   type ModuloDaArvore,
+  type TopicoDaArvore,
 } from '@/lib/banco/hierarquia'
 import { cn } from '@/lib/utils'
 
@@ -23,6 +24,23 @@ import { cn } from '@/lib/utils'
  * Aqui a árvore inteira está na tela, com a contagem em cada nível, e a busca
  * filtra sem ir ao servidor. Escolher um tópico é um clique, e o que está
  * escolhido fica marcado — inclusive quando a busca esconde a linha.
+ *
+ * ## O que mudou na segunda passada
+ *
+ * 1. **O tópico agora recolhe.** Depois da importação das provas, o subtópico
+ *    passou a ser o TÍTULO DE CADA PROVA — um módulo com 40 provas despejava 40
+ *    linhas de uma vez ao ser aberto, e o catálogo virava uma lista de rolagem
+ *    infinita em que nada se achava. Agora cada nível abre sob demanda e a
+ *    linha do tópico diz quantas provas existem lá dentro.
+ *
+ * 2. **A contagem virou peso visível.** Além do número, cada módulo mostra uma
+ *    barra proporcional à fatia dele no banco. É o que responde de relance
+ *    "onde está o volume de questões" — coisa que uma coluna de números
+ *    alinhados não responde sem que a pessoa some tudo de cabeça.
+ *
+ * 3. **A escolha ficou explícita.** O item marcado leva uma caixa com o traço
+ *    da confirmação e uma barra de cor na lateral, não só um fundo esverdeado:
+ *    cor sozinha não é estado para quem não distingue verde de cinza.
  */
 
 export interface SelecaoDaArvore {
@@ -62,6 +80,15 @@ export function ArvoreDoBanco({
   const visivel = useMemo(() => filtrarArvore(arvore, busca), [arvore, busca])
   const buscando = busca.trim().length >= 2
 
+  // A barra de peso é relativa ao MAIOR módulo, não ao total. Contra o total,
+  // um banco com trinta módulos daria barras de 3% em todos e nenhuma
+  // comparação seria possível.
+  const maiorModulo = useMemo(
+    () => Math.max(1, ...arvore.map((m) => m.totalQuestoes)),
+    [arvore],
+  )
+  const totalGeral = useMemo(() => totalDaArvore(arvore), [arvore])
+
   function alternar(campo: keyof SelecaoDaArvore, id: string) {
     const atual = selecao[campo]
     onChange({
@@ -70,13 +97,17 @@ export function ArvoreDoBanco({
     })
   }
 
+  function alternarAberto(id: string) {
+    setAbertos((a) => (a.includes(id) ? a.filter((i) => i !== id) : [...a, id]))
+  }
+
   const totalEscolhido = contarSelecionados(selecao)
 
   if (carregando) {
     return (
       <div className="space-y-2">
         {[0, 1, 2, 3].map((i) => (
-          <div key={i} className="h-10 rounded-lg skeleton-pulse" />
+          <div key={i} className="h-10 rounded-xl skeleton-pulse" />
         ))}
       </div>
     )
@@ -84,6 +115,17 @@ export function ArvoreDoBanco({
 
   return (
     <div className="flex h-full min-h-0 flex-col">
+      {/* ── Cabeçalho ──────────────────────────────────────────────────── */}
+      <div className="mb-2 flex items-center justify-between gap-2 px-0.5">
+        <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+          <FolderTree className="h-3.5 w-3.5" />
+          Catálogo
+        </p>
+        <span className="rounded-full bg-muted px-2 py-0.5 text-[10.5px] font-semibold tabular-nums text-muted-foreground">
+          {totalGeral.toLocaleString('pt-BR')}
+        </span>
+      </div>
+
       {/* ── Busca ──────────────────────────────────────────────────────── */}
       <div className="relative mb-2">
         <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
@@ -91,7 +133,7 @@ export function ArvoreDoBanco({
           value={busca}
           onChange={(e) => setBusca(e.target.value)}
           placeholder="Buscar módulo ou tópico…"
-          className="h-10 w-full rounded-xl border border-border bg-background pl-9 pr-8 text-[13px] outline-none transition focus:border-primary/50 focus:ring-2 focus:ring-primary/10"
+          className="h-10 w-full rounded-xl border border-border bg-background/70 pl-9 pr-8 text-[13px] outline-none transition focus:border-primary/50 focus:ring-2 focus:ring-primary/10"
         />
         {busca ? (
           <button
@@ -109,14 +151,15 @@ export function ArvoreDoBanco({
         <button
           type="button"
           onClick={() => onChange(SELECAO_VAZIA)}
-          className="mb-2 self-start rounded-lg bg-primary/10 px-2.5 py-1 text-[11px] font-semibold text-primary transition hover:bg-primary/15"
+          className="mb-2 flex items-center gap-1.5 self-start rounded-lg bg-primary/10 px-2.5 py-1 text-[11px] font-semibold text-primary transition hover:bg-primary/15"
         >
-          {totalEscolhido} {totalEscolhido === 1 ? 'assunto escolhido' : 'assuntos escolhidos'} · limpar
+          {totalEscolhido} {totalEscolhido === 1 ? 'assunto escolhido' : 'assuntos escolhidos'}
+          <X className="h-3 w-3" />
         </button>
       ) : null}
 
       {/* ── Árvore ─────────────────────────────────────────────────────── */}
-      <div className="min-h-0 flex-1 overflow-y-auto pr-1">
+      <div className="min-h-0 flex-1 space-y-0.5 overflow-y-auto pr-1">
         {visivel.length === 0 ? (
           <p className="px-2 py-8 text-center text-xs text-muted-foreground">
             {buscando ? 'Nenhum assunto com esse nome.' : 'O banco ainda não tem assuntos cadastrados.'}
@@ -126,14 +169,12 @@ export function ArvoreDoBanco({
             <Modulo
               key={modulo._id}
               modulo={modulo}
+              peso={modulo.totalQuestoes / maiorModulo}
               // Durante a busca tudo nasce aberto: esconder o resultado atrás de
               // mais um clique desfaz o motivo de ter buscado.
-              aberto={buscando || abertos.includes(modulo._id)}
-              onAlternarAberto={() =>
-                setAbertos((a) =>
-                  a.includes(modulo._id) ? a.filter((i) => i !== modulo._id) : [...a, modulo._id],
-                )
-              }
+              buscando={buscando}
+              abertos={abertos}
+              onAlternarAberto={alternarAberto}
               selecao={selecao}
               onEscolher={alternar}
             />
@@ -143,7 +184,7 @@ export function ArvoreDoBanco({
 
       {buscando ? (
         <p className="mt-2 text-[11px] text-muted-foreground">
-          {totalDaArvore(visivel)} questões nos assuntos encontrados
+          {totalDaArvore(visivel).toLocaleString('pt-BR')} questões nos assuntos encontrados
         </p>
       ) : null}
     </div>
@@ -152,104 +193,218 @@ export function ArvoreDoBanco({
 
 function Modulo({
   modulo,
-  aberto,
+  peso,
+  buscando,
+  abertos,
   onAlternarAberto,
   selecao,
   onEscolher,
 }: {
   modulo: ModuloDaArvore
+  /** Fatia do módulo em relação ao maior módulo, de 0 a 1. */
+  peso: number
+  buscando: boolean
+  abertos: string[]
+  onAlternarAberto: (id: string) => void
+  selecao: SelecaoDaArvore
+  onEscolher: (campo: keyof SelecaoDaArvore, id: string) => void
+}) {
+  const escolhido = selecao.moduloIds.includes(modulo._id)
+  const aberto = buscando || abertos.includes(modulo._id)
+
+  return (
+    <div>
+      <div className="flex items-stretch gap-0.5">
+        <button
+          type="button"
+          onClick={() => onAlternarAberto(modulo._id)}
+          aria-label={aberto ? `Recolher ${modulo.nome}` : `Expandir ${modulo.nome}`}
+          aria-expanded={aberto}
+          disabled={modulo.topicos.length === 0}
+          className="flex w-6 flex-none items-center justify-center rounded-lg text-muted-foreground transition hover:bg-muted disabled:opacity-25"
+        >
+          <ChevronRight className={cn('h-3.5 w-3.5 transition-transform', aberto && 'rotate-90')} />
+        </button>
+
+        <button
+          type="button"
+          onClick={() => onEscolher('moduloIds', modulo._id)}
+          aria-pressed={escolhido}
+          className={cn(
+            'group relative flex min-w-0 flex-1 items-center gap-2 overflow-hidden rounded-xl px-2 py-2 text-left transition active:scale-[0.99]',
+            escolhido
+              ? 'bg-primary/12 text-primary shadow-[inset_2px_0_0_hsl(var(--primary))]'
+              : 'hover:bg-muted',
+          )}
+        >
+          <Marca escolhido={escolhido} icone={<Layers className="h-3 w-3" />} />
+          <span className="min-w-0 flex-1">
+            <span className="block truncate text-[13px] font-semibold">{modulo.nome}</span>
+            {/* A barra é o peso do módulo no banco. Fica sob o nome, fina, para
+                ser lida de relance sem competir com o texto. */}
+            <span className="mt-1 block h-[3px] w-full overflow-hidden rounded-full bg-muted">
+              <span
+                className={cn(
+                  'block h-full rounded-full transition-[width] duration-500',
+                  escolhido ? 'bg-primary' : 'bg-primary/35',
+                )}
+                style={{ width: `${Math.max(4, Math.round(peso * 100))}%` }}
+              />
+            </span>
+          </span>
+          <span className="flex-none self-start text-[11px] font-semibold tabular-nums opacity-70">
+            {modulo.totalQuestoes.toLocaleString('pt-BR')}
+          </span>
+        </button>
+      </div>
+
+      <AnimatePresence initial={false}>
+        {aberto ? (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.18, ease: 'easeOut' }}
+            className="ml-3 overflow-hidden border-l border-border pl-1"
+          >
+            {modulo.topicos.map((topico) => (
+              <Topico
+                key={topico._id}
+                topico={topico}
+                buscando={buscando}
+                aberto={buscando || abertos.includes(topico._id)}
+                onAlternarAberto={() => onAlternarAberto(topico._id)}
+                selecao={selecao}
+                onEscolher={onEscolher}
+              />
+            ))}
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
+    </div>
+  )
+}
+
+function Topico({
+  topico,
+  buscando,
+  aberto,
+  onAlternarAberto,
+  selecao,
+  onEscolher,
+}: {
+  topico: TopicoDaArvore
+  buscando: boolean
   aberto: boolean
   onAlternarAberto: () => void
   selecao: SelecaoDaArvore
   onEscolher: (campo: keyof SelecaoDaArvore, id: string) => void
 }) {
-  const escolhido = selecao.moduloIds.includes(modulo._id)
+  const escolhido = selecao.topicoIds.includes(topico._id)
+  const temFilhos = topico.subtopicos.length > 0
 
   return (
-    <div className="mb-0.5">
+    <div>
       <div className="flex items-center gap-0.5">
         <button
           type="button"
           onClick={onAlternarAberto}
-          aria-label={aberto ? `Recolher ${modulo.nome}` : `Expandir ${modulo.nome}`}
+          aria-label={aberto ? `Recolher ${topico.nome}` : `Expandir ${topico.nome}`}
           aria-expanded={aberto}
-          disabled={modulo.topicos.length === 0}
-          className="flex h-7 w-6 flex-none items-center justify-center rounded text-muted-foreground transition hover:bg-muted disabled:opacity-25"
+          disabled={!temFilhos}
+          className="flex h-8 w-5 flex-none items-center justify-center rounded text-muted-foreground transition hover:bg-muted disabled:opacity-0"
         >
-          <ChevronRight className={cn('h-3.5 w-3.5 transition-transform', aberto && 'rotate-90')} />
+          <ChevronRight className={cn('h-3 w-3 transition-transform', aberto && 'rotate-90')} />
         </button>
+
         <button
           type="button"
-          onClick={() => onEscolher('moduloIds', modulo._id)}
+          onClick={() => onEscolher('topicoIds', topico._id)}
+          aria-pressed={escolhido}
           className={cn(
-            'flex min-w-0 flex-1 items-center gap-2 rounded-lg px-2 py-2 text-left transition active:scale-[0.99]',
-            escolhido ? 'bg-primary/10 text-primary' : 'hover:bg-muted',
+            'flex min-w-0 flex-1 items-center gap-2 rounded-lg px-2 py-1.5 text-left transition active:scale-[0.99]',
+            escolhido
+              ? 'bg-primary/12 text-primary shadow-[inset_2px_0_0_hsl(var(--primary))]'
+              : 'hover:bg-muted',
           )}
         >
-          <Layers className="h-3.5 w-3.5 flex-none opacity-60" />
-          <span className="min-w-0 flex-1 truncate text-[13px] font-semibold">{modulo.nome}</span>
-          <span className="flex-none text-[11px] tabular-nums opacity-60">{modulo.totalQuestoes}</span>
+          <Marca escolhido={escolhido} />
+          <span className="min-w-0 flex-1 truncate text-[12.5px]">{topico.nome}</span>
+          {temFilhos && !aberto ? (
+            <span className="flex-none rounded bg-muted px-1 text-[10px] tabular-nums text-muted-foreground">
+              {topico.subtopicos.length}
+            </span>
+          ) : null}
+          <span className="flex-none text-[11px] tabular-nums opacity-60">
+            {topico.totalQuestoes.toLocaleString('pt-BR')}
+          </span>
         </button>
       </div>
 
       <AnimatePresence initial={false}>
-      {aberto ? (
-        <motion.div
-          initial={{ height: 0, opacity: 0 }}
-          animate={{ height: 'auto', opacity: 1 }}
-          exit={{ height: 0, opacity: 0 }}
-          transition={{ duration: 0.18, ease: 'easeOut' }}
-          className="ml-3 overflow-hidden border-l border-border pl-1"
-        >
-          {modulo.topicos.map((topico) => {
-            const topicoEscolhido = selecao.topicoIds.includes(topico._id)
-            return (
-              <div key={topico._id}>
+        {aberto && temFilhos ? (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.16, ease: 'easeOut' }}
+            className="ml-3 overflow-hidden border-l border-border pl-1"
+          >
+            {topico.subtopicos.map((sub) => {
+              const subEscolhido = selecao.subtopicoIds.includes(sub._id)
+              return (
                 <button
+                  key={sub._id}
                   type="button"
-                  onClick={() => onEscolher('topicoIds', topico._id)}
+                  onClick={() => onEscolher('subtopicoIds', sub._id)}
+                  aria-pressed={subEscolhido}
                   className={cn(
-                    'flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left transition active:scale-[0.99]',
-                    topicoEscolhido ? 'bg-primary/10 text-primary' : 'hover:bg-muted',
+                    'flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left transition active:scale-[0.99]',
+                    subEscolhido
+                      ? 'bg-primary/12 text-primary shadow-[inset_2px_0_0_hsl(var(--primary))]'
+                      : 'hover:bg-muted',
                   )}
                 >
-                  <span className="min-w-0 flex-1 truncate text-[12.5px]">{topico.nome}</span>
-                  <span className="flex-none text-[11px] tabular-nums opacity-60">
-                    {topico.totalQuestoes}
+                  <Marca escolhido={subEscolhido} />
+                  <span
+                    className={cn(
+                      'min-w-0 flex-1 truncate text-[12px]',
+                      subEscolhido ? '' : 'text-muted-foreground',
+                    )}
+                  >
+                    {sub.nome}
+                  </span>
+                  <span className="flex-none text-[10.5px] tabular-nums opacity-60">
+                    {sub.totalQuestoes.toLocaleString('pt-BR')}
                   </span>
                 </button>
-
-                {topico.subtopicos.length > 0 ? (
-                  <div className="ml-3 border-l border-border pl-1">
-                    {topico.subtopicos.map((sub) => {
-                      const subEscolhido = selecao.subtopicoIds.includes(sub._id)
-                      return (
-                        <button
-                          key={sub._id}
-                          type="button"
-                          onClick={() => onEscolher('subtopicoIds', sub._id)}
-                          className={cn(
-                            'flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left transition active:scale-[0.99]',
-                            subEscolhido ? 'bg-primary/10 text-primary' : 'hover:bg-muted',
-                          )}
-                        >
-                          <span className="min-w-0 flex-1 truncate text-[12px] text-muted-foreground">
-                            {sub.nome}
-                          </span>
-                          <span className="flex-none text-[10.5px] tabular-nums opacity-60">
-                            {sub.totalQuestoes}
-                          </span>
-                        </button>
-                      )
-                    })}
-                  </div>
-                ) : null}
-              </div>
-            )
-          })}
-        </motion.div>
-      ) : null}
+              )
+            })}
+          </motion.div>
+        ) : null}
       </AnimatePresence>
     </div>
+  )
+}
+
+/**
+ * A caixinha de escolha.
+ *
+ * Marcada, ela mostra o traço da confirmação — o estado não é só a cor de
+ * fundo. Quem não distingue verde de cinza precisa ver a diferença mesmo assim.
+ */
+function Marca({ escolhido, icone }: { escolhido: boolean; icone?: React.ReactNode }) {
+  return (
+    <span
+      aria-hidden
+      className={cn(
+        'flex h-4 w-4 flex-none items-center justify-center rounded-[5px] border transition',
+        escolhido
+          ? 'border-primary bg-primary text-primary-foreground'
+          : 'border-border text-muted-foreground/60',
+      )}
+    >
+      {escolhido ? <Check className="h-2.5 w-2.5" strokeWidth={3.5} /> : icone}
+    </span>
   )
 }

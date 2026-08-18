@@ -428,7 +428,51 @@ export interface DailyPoint {
   provas: number
 }
 
+/**
+ * Atividade diária do perfil: banco embaixo, provas em cima.
+ *
+ * É um caso particular de `StackedDayColumns` — as duas séries e os rótulos já
+ * escolhidos. Manter a assinatura antiga evita mexer na aba de desempenho, e
+ * manter UMA implementação evita que os dois gráficos empilhados da plataforma
+ * divirjam no vão entre segmentos ou na regra dos rótulos do eixo.
+ */
 export function ActivityColumns({ data }: { data: DailyPoint[] }) {
+  return (
+    <StackedDayColumns
+      data={data.map((d) => ({ date: d.date, base: d.banco, topo: d.provas }))}
+      base={{ label: 'no banco', color: 'var(--viz-series-1)' }}
+      topo={{ label: 'em provas', color: 'var(--viz-series-2)' }}
+      ariaLabel="Questões respondidas por dia nos últimos 30 dias"
+    />
+  )
+}
+
+export interface StackedDayPoint {
+  date: string
+  /** Segmento de baixo — encosta na linha de base. */
+  base: number
+  /** Segmento de cima — leva a ponta arredondada. */
+  topo: number
+}
+
+/**
+ * Colunas empilhadas por dia, com duas séries nomeadas por quem chama.
+ *
+ * O eixo do tempo é sempre o mesmo (30 dias, um rótulo a cada 7); o que muda é
+ * o que está empilhado — questões por origem no perfil, acertos e erros no
+ * banco.
+ */
+export function StackedDayColumns({
+  data,
+  base,
+  topo,
+  ariaLabel,
+}: {
+  data: StackedDayPoint[]
+  base: { label: string; color: string }
+  topo: { label: string; color: string }
+  ariaLabel: string
+}) {
   const { ref, width } = useChartWidth<HTMLDivElement>()
   const [hover, setHover] = useState<number | null>(null)
 
@@ -437,7 +481,7 @@ export function ActivityColumns({ data }: { data: DailyPoint[] }) {
   const plotW = Math.max(1, width - padding.left - padding.right)
   const plotH = height - padding.top - padding.bottom
 
-  const max = niceMax(Math.max(...data.map((d) => d.banco + d.provas), 1))
+  const max = niceMax(Math.max(...data.map((d) => d.base + d.topo), 1))
   const band = plotW / Math.max(1, data.length)
   const barW = Math.min(24, Math.max(3, band * 0.62))
   const GAP = 2 // vão na cor da superfície entre os segmentos empilhados
@@ -449,7 +493,7 @@ export function ActivityColumns({ data }: { data: DailyPoint[] }) {
 
   return (
     <div ref={ref} className={PLOT_BOX} style={{ minHeight: height }}>
-      <svg width={width} height={height} role="img" aria-label="Questões respondidas por dia nos últimos 30 dias">
+      <svg width={width} height={height} role="img" aria-label={ariaLabel}>
         {ticks.map((t) => (
           <g key={t}>
             <line
@@ -473,21 +517,25 @@ export function ActivityColumns({ data }: { data: DailyPoint[] }) {
 
         {data.map((d, i) => {
           const x = padding.left + i * band + (band - barW) / 2
-          const total = d.banco + d.provas
+          const total = d.base + d.topo
           const isHover = hover === i
-          const bancoH = (d.banco / max) * plotH
-          const provasH = (d.provas / max) * plotH
+          const baseH = (d.base / max) * plotH
+          const topoH = (d.topo / max) * plotH
           // O segmento de cima leva a ponta arredondada; o de baixo encosta na base.
-          const topIsProvas = d.provas > 0
-          const provasY = y(total)
-          const bancoY = y(d.banco)
+          const temTopo = d.topo > 0
+          const topoY = y(total)
+          const baseY = y(d.base)
 
           return (
             <g
               key={d.date}
               tabIndex={total > 0 ? 0 : -1}
               role={total > 0 ? 'button' : undefined}
-              aria-label={total > 0 ? `${fullDate(d.date)}: ${d.banco} no banco, ${d.provas} provas` : undefined}
+              aria-label={
+                total > 0
+                  ? `${fullDate(d.date)}: ${d.base} ${base.label}, ${d.topo} ${topo.label}`
+                  : undefined
+              }
               onFocus={() => setHover(i)}
               onBlur={() => setHover(null)}
               className="outline-none"
@@ -513,21 +561,21 @@ export function ActivityColumns({ data }: { data: DailyPoint[] }) {
                   pointerEvents="none"
                 />
               )}
-              {d.provas > 0 && (
+              {d.topo > 0 && (
                 <path
-                  d={roundedTop(x, provasY, barW, Math.max(2, provasH - (d.banco > 0 ? GAP : 0)), 4)}
-                  fill="var(--viz-series-2)"
+                  d={roundedTop(x, topoY, barW, Math.max(2, topoH - (d.base > 0 ? GAP : 0)), 4)}
+                  fill={topo.color}
                   pointerEvents="none"
                 />
               )}
-              {d.banco > 0 && (
+              {d.base > 0 && (
                 <path
                   d={
-                    topIsProvas
-                      ? `M${x},${bancoY} h${barW} v${bancoH} h${-barW} Z`
-                      : roundedTop(x, bancoY, barW, bancoH, 4)
+                    temTopo
+                      ? `M${x},${baseY} h${barW} v${baseH} h${-barW} Z`
+                      : roundedTop(x, baseY, barW, baseH, 4)
                   }
-                  fill="var(--viz-series-1)"
+                  fill={base.color}
                   pointerEvents="none"
                 />
               )}
@@ -566,16 +614,16 @@ export function ActivityColumns({ data }: { data: DailyPoint[] }) {
         })}
       </svg>
 
-      {point && point.banco + point.provas > 0 && (
+      {point && point.base + point.topo > 0 && (
         <Tooltip
           x={padding.left + (hover as number) * band + band / 2}
-          y={y(point.banco + point.provas)}
+          y={y(point.base + point.topo)}
           width={width}
           height={height}
           title={fullDate(point.date)}
           rows={[
-            { label: 'no banco', value: String(point.banco), color: 'var(--viz-series-1)' },
-            { label: 'em provas', value: String(point.provas), color: 'var(--viz-series-2)' },
+            { label: topo.label, value: String(point.topo), color: topo.color },
+            { label: base.label, value: String(point.base), color: base.color },
           ]}
         />
       )}
