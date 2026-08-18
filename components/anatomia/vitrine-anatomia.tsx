@@ -132,7 +132,7 @@ export function VitrineAnatomia({ dados, secao = 'hub' }: VitrineAnatomiaProps) 
   }[secao]
 
   return (
-    <div className="surface-page min-h-screen pb-28 lg:pb-0">
+    <div className="surface-page anatomia-ambiente min-h-screen pb-28 lg:pb-0">
       {/* ══════════════ Hero ══════════════ */}
       <header className="relative isolate overflow-hidden bg-slate-950">
         <div className="absolute inset-0 grid grid-cols-3 opacity-40 sm:grid-cols-6" aria-hidden>
@@ -184,7 +184,7 @@ export function VitrineAnatomia({ dados, secao = 'hub' }: VitrineAnatomiaProps) 
               { valor: catalogo.totalModelos.toLocaleString('pt-BR'), rotulo: 'modelos 3D' },
               { valor: catalogo.totalSistemas.toLocaleString('pt-BR'), rotulo: 'sistemas' },
             ].map(item => (
-              <div key={item.rotulo} className="rounded-2xl border border-white/10 bg-white/[0.06] p-3.5 backdrop-blur">
+              <div key={item.rotulo} className="anatomia-vidro-escuro rounded-2xl p-3.5">
                 <dt className="font-heading text-2xl font-semibold tabular-nums text-white sm:text-3xl">{item.valor}</dt>
                 <dd className="mt-0.5 text-[11px] font-bold uppercase tracking-wider text-white/50">{item.rotulo}</dd>
               </div>
@@ -249,7 +249,7 @@ export function VitrineAnatomia({ dados, secao = 'hub' }: VitrineAnatomiaProps) 
 
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {CAMADAS.map(camada => (
-              <div key={camada.titulo} className="flex gap-3 rounded-2xl border border-border bg-card p-4 transition hover:border-primary/35">
+              <div key={camada.titulo} className="vidro-leve vidro-brilho relevo flex gap-3 rounded-[22px] p-4">
                 <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
                   <camada.icone className="h-4 w-4" />
                 </span>
@@ -345,7 +345,7 @@ export function VitrineAnatomia({ dados, secao = 'hub' }: VitrineAnatomiaProps) 
             {catalogo.categorias.map(categoria => (
               <span
                 key={categoria.id}
-                className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs text-muted-foreground"
+                className="vidro inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs text-muted-foreground"
               >
                 {categoria.titulo}
                 <span className="font-bold tabular-nums text-primary">{categoria.quantidade}</span>
@@ -364,7 +364,7 @@ export function VitrineAnatomia({ dados, secao = 'hub' }: VitrineAnatomiaProps) 
       <section className="mx-auto max-w-6xl px-4 py-12 sm:py-16">
         <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
           <div className="space-y-5">
-            <div className="relative overflow-hidden rounded-2xl border border-amber-500/25 bg-card p-5 shadow-sm sm:p-7">
+            <div className="vidro vidro-brilho relevo relative overflow-hidden rounded-[22px] !border-amber-500/25 p-5 sm:p-7">
               <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-amber-500/40 to-transparent" aria-hidden />
               <div className="flex items-start gap-3">
                 <span className="shrink-0 rounded-xl bg-amber-400/15 p-2.5 text-amber-600 dark:text-amber-400">
@@ -388,7 +388,7 @@ export function VitrineAnatomia({ dados, secao = 'hub' }: VitrineAnatomiaProps) 
               <ListaDoPacote atual="anatomia" className="mt-5" />
             </div>
 
-            <div className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
+            <div className="vidro vidro-brilho relevo rounded-[22px] p-5 sm:p-6">
               <h3 className="font-heading text-base font-semibold tracking-tight">Perguntas frequentes</h3>
               <div className="mt-3 divide-y divide-border">
                 {PERGUNTAS.map(item => (
@@ -398,7 +398,7 @@ export function VitrineAnatomia({ dados, secao = 'hub' }: VitrineAnatomiaProps) 
             </div>
           </div>
 
-          <div className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6 lg:sticky lg:top-6">
+          <div className="vidro vidro-brilho relevo rounded-[22px] p-5 sm:p-6 lg:sticky lg:top-6">
             {mostrarPreco ? (
               <>
                 <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -558,15 +558,14 @@ function AmostraInterativa({
                   key={`${item.title}-${posicao}`}
                   type="button"
                   onClick={() => setIndice(ativo ? null : posicao)}
-                  className={`inline-flex items-center gap-1.5 rounded-lg border px-2 py-1.5 text-left text-xs font-medium transition ${
-                    ativo
-                      ? 'border-amber-500/50 bg-amber-500/15 text-amber-800 dark:text-amber-200'
-                      : 'border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground'
+                  data-marcado={ativo ? 'true' : 'false'}
+                  className={`vidro-pastilha inline-flex items-center gap-1.5 rounded-xl px-2 py-1.5 text-left text-xs font-medium ${
+                    ativo ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
                   <span
                     className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-[10px] font-black tabular-nums ${
-                      ativo ? 'bg-amber-500 text-amber-950' : 'bg-muted text-muted-foreground'
+                      ativo ? 'bg-primary text-primary-foreground' : 'bg-foreground/[0.07] text-muted-foreground'
                     }`}
                   >
                     {posicao + 1}
@@ -587,7 +586,7 @@ function AmostraInterativa({
               chave={`${amostra.prancha.id}:${indice}`}
             />
           ) : (
-            <div className="flex min-h-[280px] flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-muted/25 p-6 text-center">
+            <div className="vidro flex min-h-[280px] flex-col items-center justify-center rounded-[22px] !border-dashed p-6 text-center">
               <span className="rounded-2xl bg-sky-500/10 p-3 text-sky-600 dark:text-sky-400">
                 <MousePointerClick className="h-6 w-6" />
               </span>
@@ -634,7 +633,7 @@ function BlocoExperiencia({
         }
 
   return (
-    <div className={`flex flex-col rounded-3xl border border-border bg-card p-6 shadow-sm transition sm:p-7 ${cores.borda}`}>
+    <div className={`vidro vidro-brilho relevo flex flex-col rounded-[26px] p-6 sm:p-7 ${cores.borda}`}>
       <span className={`inline-flex w-fit items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-black uppercase tracking-wider ${cores.selo}`}>
         <Icone className="h-3.5 w-3.5" /> {selo}
       </span>

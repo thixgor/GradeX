@@ -5196,3 +5196,322 @@ body.roller-dragging {
     -webkit-backdrop-filter: blur(10px) saturate(150%);
   }
 }
+
+/* ══════════════════════════════════════════════════════════════════════
+   DOMINE ANATOMIA — o vidro da seção
+   ══════════════════════════════════════════════════════════════════════
+
+   A seção herda o material do Banco de Questões (`.vidro`, `.relevo`,
+   `.tecla`) e acrescenta as peças que só existem aqui: uma barra de
+   ferramentas que fica colada no topo enquanto a prancha rola por baixo,
+   uma gaveta que sobe do rodapé no celular, o palco escuro da prancha e o
+   segmentado de dois estados.
+
+   Três regras se repetem em todas elas, e são o que separa vidro de
+   "retângulo com opacidade":
+
+   1. Tem que haver algo atrás para desfocar — `.anatomia-ambiente` pinta
+      as manchas de cor que a página inteira usa como fundo.
+   2. O desfoque vem com saturação; só `blur()` deixa o que passa por
+      baixo cinzento.
+   3. A quina de cima é mais clara que a de baixo. É o brilho especular
+      que dá espessura à lâmina.
+
+   Toda peça tem caminho de fallback: sem `backdrop-filter`, o fundo vira
+   opaco e legível em vez de um painel translúcido ilegível.
+   ────────────────────────────────────────────────────────────────────── */
+
+/* Manchas de cor presas ao fundo da janela. Ficam em `position: fixed`
+   para que rolar a página faça o vidro revelar cores diferentes — é esse
+   deslizamento que faz a lâmina parecer material, e não textura. */
+.anatomia-ambiente {
+  position: relative;
+  isolation: isolate;
+}
+
+.anatomia-ambiente::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(46rem 34rem at 8% -10%, rgba(56, 189, 248, 0.14), transparent 62%),
+    radial-gradient(38rem 32rem at 94% 4%, rgba(226, 164, 62, 0.13), transparent 64%),
+    radial-gradient(42rem 36rem at 62% 92%, rgba(70, 129, 82, 0.13), transparent 66%);
+}
+
+.dark .anatomia-ambiente::before {
+  background:
+    radial-gradient(46rem 34rem at 8% -10%, rgba(56, 189, 248, 0.16), transparent 62%),
+    radial-gradient(38rem 32rem at 94% 4%, rgba(226, 164, 62, 0.11), transparent 64%),
+    radial-gradient(42rem 36rem at 62% 92%, rgba(70, 129, 82, 0.16), transparent 66%);
+}
+
+/* Barra de ferramentas fixa. Mais densa que um cartão porque texto
+   pequeno passa por cima dela o tempo todo enquanto a página rola. */
+.anatomia-barra {
+  background: rgba(255, 255, 255, 0.8);
+  border-bottom: 1px solid rgba(21, 61, 31, 0.1);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 8px 24px -20px rgba(21, 61, 31, 0.4);
+}
+
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .anatomia-barra {
+    background: rgba(255, 255, 255, 0.62);
+    backdrop-filter: blur(28px) saturate(185%);
+    -webkit-backdrop-filter: blur(28px) saturate(185%);
+  }
+}
+
+.dark .anatomia-barra {
+  background: rgba(20, 27, 23, 0.86);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 10px 28px -22px rgba(0, 0, 0, 0.9);
+}
+
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .dark .anatomia-barra {
+    background: rgba(20, 27, 23, 0.6);
+  }
+}
+
+/* Gaveta do celular e painéis flutuantes: leitura longa por cima de
+   qualquer conteúdo, então o vidro é o mais denso da seção. */
+.anatomia-gaveta {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow:
+    0 -18px 60px -20px rgba(21, 61, 31, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .anatomia-gaveta {
+    background: rgba(255, 255, 255, 0.76);
+    backdrop-filter: blur(40px) saturate(200%);
+    -webkit-backdrop-filter: blur(40px) saturate(200%);
+  }
+}
+
+.dark .anatomia-gaveta {
+  background: rgba(20, 27, 23, 0.93);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 -20px 70px -24px rgba(0, 0, 0, 0.8),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .dark .anatomia-gaveta {
+    background: rgba(20, 27, 23, 0.78);
+  }
+}
+
+/* Puxador da gaveta — a barrinha que diz "isto arrasta/fecha". */
+.anatomia-puxador {
+  width: 2.5rem;
+  height: 0.3rem;
+  border-radius: 9999px;
+  background: hsl(var(--foreground) / 0.18);
+}
+
+/* Segmentado de dois ou três estados, no formato do iOS: a pastilha
+   branca desliza por baixo do rótulo escolhido. */
+.anatomia-segmento {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 9999px;
+  border: 1px solid rgba(21, 61, 31, 0.1);
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: inset 0 1px 2px rgba(21, 61, 31, 0.08);
+}
+
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .anatomia-segmento {
+    backdrop-filter: blur(16px) saturate(170%);
+    -webkit-backdrop-filter: blur(16px) saturate(170%);
+  }
+}
+
+.dark .anatomia-segmento {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+.anatomia-segmento-item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  border-radius: 9999px;
+  color: hsl(var(--muted-foreground));
+  transition: color 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.anatomia-segmento-item[data-ativo='true'] {
+  color: hsl(var(--foreground));
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow:
+    0 1px 2px rgba(21, 61, 31, 0.16),
+    0 2px 8px -4px rgba(21, 61, 31, 0.3);
+}
+
+.dark .anatomia-segmento-item[data-ativo='true'] {
+  background: rgba(255, 255, 255, 0.16);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+/* Palco da prancha. Fundo escuro fixo nos dois temas — prancha anatômica
+   é impressa em papel claro e precisa de um contorno escuro para o
+   recorte não se dissolver no fundo da página. */
+.anatomia-palco {
+  background: radial-gradient(ellipse at center, #18202a 0%, #070a0f 78%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 20px 50px -30px rgba(0, 0, 0, 0.8);
+}
+
+/* Cluster de controles sobre o palco: vidro escuro, para os botões
+   flutuarem sobre a peça sem escondê-la. */
+.anatomia-controles {
+  background: rgba(10, 14, 20, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 10px 28px -14px rgba(0, 0, 0, 0.85);
+}
+
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .anatomia-controles {
+    background: rgba(10, 14, 20, 0.34);
+    backdrop-filter: blur(22px) saturate(180%);
+    -webkit-backdrop-filter: blur(22px) saturate(180%);
+  }
+}
+
+/* Campo de busca em vidro — o mesmo material da barra, um pouco mais
+   fundo, para o input parecer escavado na lâmina em vez de colado nela. */
+.anatomia-campo {
+  border: 1px solid rgba(21, 61, 31, 0.12);
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: inset 0 1px 2px rgba(21, 61, 31, 0.07);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+}
+
+.dark .anatomia-campo {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+.anatomia-campo:focus-within {
+  border-color: hsl(var(--primary) / 0.5);
+  box-shadow:
+    inset 0 1px 2px rgba(21, 61, 31, 0.05),
+    0 0 0 3px hsl(var(--primary) / 0.14);
+}
+
+/* Vidro sobre fotografia (heróis com capa do acervo por baixo). O tom é
+   escuro nos dois temas porque a foto é que manda ali. */
+.anatomia-vidro-escuro {
+  background: rgba(8, 12, 18, 0.42);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 12px 32px -20px rgba(0, 0, 0, 0.9);
+}
+
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .anatomia-vidro-escuro {
+    background: rgba(8, 12, 18, 0.28);
+    backdrop-filter: blur(20px) saturate(170%);
+    -webkit-backdrop-filter: blur(20px) saturate(170%);
+  }
+}
+
+/* No Modo Lite todo o desfoque some (regra global). Sem um fundo opaco de
+   volta, estas peças ficariam quase transparentes por cima do conteúdo
+   que deveriam cobrir. */
+.lite-mode .vidro,
+.lite-mode .vidro-denso,
+.lite-mode .anatomia-barra,
+.lite-mode .anatomia-gaveta,
+.lite-mode .anatomia-segmento,
+.lite-mode .anatomia-campo,
+.lite-mode .anatomia-vidro-escuro {
+  background: hsl(var(--card)) !important;
+  border-color: hsl(var(--border)) !important;
+}
+
+.lite-mode .anatomia-controles {
+  background: rgba(10, 14, 20, 0.92) !important;
+}
+
+.lite-mode .anatomia-ambiente::before {
+  display: none;
+}
+
+/* Vidro empilhado é o item mais caro em GPU de celular, e a seção empilha
+   barra + palco + gaveta na mesma tela. Abaixo de 768 px o desfoque cai
+   pela metade: a leitura de material continua, o custo não. */
+@media (max-width: 768px) {
+  @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+    .anatomia-barra {
+      backdrop-filter: blur(16px) saturate(170%);
+      -webkit-backdrop-filter: blur(16px) saturate(170%);
+    }
+    .anatomia-gaveta {
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+    }
+  }
+}
+
+/* Vidro de lista — a mesma leitura, sem `backdrop-filter`.
+   ──────────────────────────────────────────────────────────────────────
+   O desfoque de fundo é o efeito mais caro da interface, e o custo é POR
+   ELEMENTO: uma lâmina translúcida no topo da tela é barata, cem cartões
+   dela numa vitrine derrubam o scroll de qualquer celular.
+
+   Aqui a translucidez é pintada, não filtrada: o fundo semitransparente
+   deixa as manchas de `.anatomia-ambiente` atravessarem por composição
+   normal, e a GPU não precisa recompor nada a cada quadro. De perto, a
+   diferença é o fundo não sair borrado; de longe, é a mesma peça.
+
+   Regra prática da seção: `.vidro` no que aparece uma ou duas vezes por
+   tela (barra, gaveta, ficha, índice); `.vidro-leve` no que se repete. */
+.vidro-leve {
+  position: relative;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow:
+    0 1px 1px rgba(21, 61, 31, 0.04),
+    0 8px 24px -12px rgba(21, 61, 31, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+.dark .vidro-leve {
+  background: rgba(24, 32, 27, 0.72);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 1px 1px rgba(0, 0, 0, 0.2),
+    0 8px 28px -14px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.09);
+}
+
+.lite-mode .vidro-leve {
+  background: hsl(var(--card)) !important;
+  border-color: hsl(var(--border)) !important;
+}

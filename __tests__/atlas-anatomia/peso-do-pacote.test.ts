@@ -1,4 +1,4 @@
-import { readFileSync, existsSync } from 'node:fs'
+import { readFileSync, statSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 
@@ -41,9 +41,16 @@ function resolverImport(especificador: string, deQualArquivo: string): string | 
       : null
   if (!base) return null
 
+  // `existsSync` sozinho não serve: `@/lib/utils` casa tanto com o arquivo
+  // `lib/utils.ts` quanto com o diretório `lib/utils/`, e o diretório vem
+  // primeiro na lista de sufixos. Aceitar só arquivo evita ler uma pasta.
   for (const sufixo of ['', '.ts', '.tsx', '.json', '/index.ts', '/index.tsx']) {
     const candidato = base + sufixo
-    if (existsSync(candidato) && !candidato.endsWith('/')) return candidato
+    try {
+      if (statSync(candidato).isFile()) return candidato
+    } catch {
+      /* não existe: tenta o próximo sufixo */
+    }
   }
   return null
 }

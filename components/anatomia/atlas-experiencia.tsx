@@ -16,14 +16,15 @@
  * buscado por baixo, enquanto o aluno decide por onde entrar.
  */
 
-import { useEffect } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { ArrowLeft, ArrowRight, Loader2 } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Loader2, Search, Target, X } from 'lucide-react'
 import { prepararAcervo } from '@/lib/atlas-anatomia/acervo-cliente'
 import { prepararMotorDeFichas } from '@/lib/atlas-anatomia/motor-fichas'
+import type { AlvoDeAbertura } from '@/components/anatomia/atlas-estudo'
 import type { ResumoAnatomia, SistemaResumo } from '@/lib/anatomia/tipos'
 
 const AtlasEstudo = dynamic(() => import('@/components/anatomia/atlas-estudo'), {
@@ -34,6 +35,13 @@ const AtlasEstudo = dynamic(() => import('@/components/anatomia/atlas-estudo'), 
     </div>
   ),
 })
+
+const normalizar = (valor: string) =>
+  valor
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim()
 
 /* ══════════════════════════ Escolha do sistema ══════════════════════════ */
 
@@ -46,7 +54,7 @@ function CartaoSistema({ sistema, onAbrir }: { sistema: SistemaResumo; onAbrir: 
       // sistema começa a vir antes do clique, e a área de estudo abre sem espera.
       onPointerEnter={() => prepararAcervo(sistema.slug)}
       onFocus={() => prepararAcervo(sistema.slug)}
-      className="group relative isolate flex aspect-[4/5] flex-col justify-end overflow-hidden rounded-2xl border border-white/10 bg-slate-950 text-left shadow-lg transition duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+      className="relevo relevo-toca group relative isolate flex aspect-[4/5] flex-col justify-end overflow-hidden rounded-[22px] border border-white/10 bg-slate-950 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
     >
       <Image
         src={sistema.capa}
@@ -57,19 +65,17 @@ function CartaoSistema({ sistema, onAbrir }: { sistema: SistemaResumo; onAbrir: 
       />
       {/* A capa do acervo traz o nome do sistema impresso em corpo grande; o
           escurecimento deixa a imagem falar e o rótulo do card ser lido. */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-black/30" aria-hidden />
-      <div className="relative p-3.5 sm:p-4">
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-black/25" aria-hidden />
+      <div className="relative p-3.5">
         <h3 className="font-heading text-lg font-semibold leading-tight tracking-tight text-white sm:text-xl">
           {sistema.titulo}
         </h3>
         <p className="mt-1 text-[11px] font-medium text-white/60">
-          {sistema.pranchas} prancha{sistema.pranchas !== 1 ? 's' : ''} · {sistema.colecoes} coleç
-          {sistema.colecoes !== 1 ? 'ões' : 'ão'}
+          {sistema.pranchas} prancha{sistema.pranchas !== 1 ? 's' : ''} ·{' '}
+          {sistema.marcadores.toLocaleString('pt-BR')} estruturas
         </p>
-        <span className="mt-2.5 inline-flex items-center gap-1.5 text-xs font-bold text-primary-foreground/90">
-          <span className="rounded-full bg-white/15 px-2.5 py-1 backdrop-blur transition group-hover:bg-white/25">
-            Explorar <ArrowRight className="ml-0.5 inline h-3 w-3" />
-          </span>
+        <span className="anatomia-vidro-escuro mt-2.5 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-bold text-white">
+          Explorar <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
         </span>
       </div>
     </button>
@@ -83,13 +89,21 @@ function EscolhaDeSistema({
   catalogo: ResumoAnatomia
   onEscolher: (sistema: SistemaResumo) => void
 }) {
-  const sistemas = catalogo.sistemas
+  const [filtro, setFiltro] = useState('')
+
+  // O filtro é sobre dez nomes, não sobre o acervo — é instantâneo e serve para
+  // quem já sabe o que quer chegar sem varrer a grade com os olhos.
+  const sistemas = useMemo(() => {
+    const termo = normalizar(filtro)
+    if (!termo) return catalogo.sistemas
+    return catalogo.sistemas.filter(sistema => normalizar(sistema.titulo).includes(termo))
+  }, [catalogo.sistemas, filtro])
 
   return (
-    <main className="surface-page min-h-screen">
-      <header className="relative overflow-hidden border-b border-border bg-slate-950">
+    <main className="surface-page anatomia-ambiente min-h-screen">
+      <header className="relative isolate overflow-hidden border-b border-border bg-slate-950">
         <div className="absolute inset-0 grid grid-cols-5 opacity-25" aria-hidden>
-          {sistemas.slice(0, 5).map(sistema => (
+          {catalogo.sistemas.slice(0, 5).map(sistema => (
             <div key={sistema.slug} className="relative">
               {/* Mesmo `sizes` dos cards abaixo de propósito: a faixa decorativa
                   passa a reaproveitar exatamente o arquivo que os cards já
@@ -106,44 +120,69 @@ function EscolhaDeSistema({
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/85 to-slate-950/60" aria-hidden />
 
-        <div className="relative mx-auto max-w-6xl px-4 pb-10 pt-7 sm:pb-14 sm:pt-9">
+        <div className="relative mx-auto max-w-6xl px-4 pb-8 pt-6 sm:pb-10 sm:pt-8">
           <Link
             href="/anatomia"
-            className="mb-7 inline-flex items-center gap-1.5 text-sm text-white/60 transition-colors hover:text-white"
+            className="mb-6 inline-flex items-center gap-1.5 text-sm text-white/55 transition-colors hover:text-white"
           >
             <ArrowLeft className="h-4 w-4" /> Domine Anatomia
           </Link>
-          <div className="mb-3">
-            <p className="editorial-mark !text-amber-300">Atlas de Anatomia · acervo completo</p>
-          </div>
-          <h1 className="font-heading text-4xl font-semibold leading-[1.05] tracking-tight text-white sm:text-6xl">
+
+          <p className="editorial-mark !text-amber-300">Atlas de Anatomia · acervo completo</p>
+          <h1 className="mt-2.5 font-heading text-[2.25rem] font-semibold leading-[1.05] tracking-tight text-white sm:text-5xl">
             Escolha o sistema
           </h1>
-          <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/65 sm:text-lg">
+          <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-white/65">
             {catalogo.totalPranchas} pranchas reais com {catalogo.totalMarcadores.toLocaleString('pt-BR')} estruturas
-            marcadas. Toque em qualquer marcador e receba localização, função, vascularização, inervação e correlação
-            clínica.
+            marcadas. Toque num marcador e receba localização, função, vascularização, inervação e clínica.
           </p>
-          <div className="mt-6 flex flex-wrap gap-2 text-xs font-bold text-white/70">
-            {[
-              `${catalogo.totalSistemas} sistemas`,
-              `${catalogo.totalPranchas} pranchas`,
-              `${catalogo.totalMarcadores.toLocaleString('pt-BR')} marcadores`,
-            ].map(rotulo => (
-              <span key={rotulo} className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 backdrop-blur">
-                {rotulo}
-              </span>
-            ))}
+
+          {/* Busca e treino na mesma linha: os dois caminhos que não passam por
+              percorrer a grade inteira. */}
+          <div className="mt-5 flex flex-col gap-2.5 sm:flex-row sm:items-center">
+            <div className="anatomia-vidro-escuro relative flex h-11 min-w-0 flex-1 items-center rounded-2xl sm:max-w-sm">
+              <Search className="pointer-events-none ml-3.5 h-4 w-4 shrink-0 text-white/40" />
+              <input
+                value={filtro}
+                onChange={evento => setFiltro(evento.target.value)}
+                placeholder="Filtrar sistema…"
+                aria-label="Filtrar sistema"
+                className="h-full min-w-0 flex-1 bg-transparent px-2.5 text-sm text-white outline-none placeholder:text-white/40"
+              />
+              {filtro && (
+                <button
+                  type="button"
+                  onClick={() => setFiltro('')}
+                  aria-label="Limpar filtro"
+                  className="mr-2 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-white/60 transition hover:bg-white/10 hover:text-white"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
+
+            <Link
+              href="/anatomia/atlas-anatomia/quiz"
+              className="anatomia-vidro-escuro inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-2xl px-4 text-sm font-bold text-white transition hover:bg-white/15"
+            >
+              <Target className="h-4 w-4 text-amber-300" /> Treinar identificação
+            </Link>
           </div>
         </div>
       </header>
 
-      <section className="mx-auto max-w-6xl px-4 py-8 sm:py-12">
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-5">
-          {sistemas.map(sistema => (
-            <CartaoSistema key={sistema.slug} sistema={sistema} onAbrir={() => onEscolher(sistema)} />
-          ))}
-        </div>
+      <section className="mx-auto max-w-6xl px-4 py-7 sm:py-10">
+        {sistemas.length === 0 ? (
+          <p className="vidro relevo rounded-[22px] px-6 py-12 text-center text-sm text-muted-foreground">
+            Nenhum sistema com esse nome. Limpe o filtro para ver os {catalogo.totalSistemas}.
+          </p>
+        ) : (
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-5">
+            {sistemas.map(sistema => (
+              <CartaoSistema key={sistema.slug} sistema={sistema} onAbrir={() => onEscolher(sistema)} />
+            ))}
+          </div>
+        )}
         <p className="mt-8 text-center text-xs leading-relaxed text-muted-foreground">
           Acervo: Atlas Interativo de Anatomia Humana. Uso integral autorizado ao Domine Aqui em 12/08/2026. Os
           aprofundamentos de cada estrutura são conteúdo editorial do GradeX.
@@ -162,18 +201,43 @@ export default function AtlasExperiencia({ catalogo }: { catalogo: ResumoAnatomi
   const slugColecao = parametros.get('colecao') || ''
   const sistemaValido = catalogo.sistemas.some(item => item.slug === sistemaSlug)
 
-  // Sistema e coleção vivem na URL. Além de tornar o link compartilhável, é o
-  // que faz o botão voltar do navegador desfazer um passo por vez —
-  // prancha → regiões → sistemas — em vez de sair da seção de uma vez.
-  function navegar(proximoSistema: string | null, colecaoSlug?: string | null) {
+  /**
+   * Onde a área de estudo deve abrir, quando a URL pede um lugar exato.
+   *
+   * É o que faz a busca por estrutura funcionar de uma coleção para outra: o
+   * resultado escolhido vira `peca`/`estrutura` na barra de endereços, a tela
+   * remonta na coleção certa e já abre com a ficha daquela estrutura. De
+   * quebra, o endereço vira um link direto para a estrutura — que é o que
+   * alguém copia quando quer mandar "olha essa aqui" para um colega.
+   */
+  const alvo = useMemo<AlvoDeAbertura | undefined>(() => {
+    const bruto = parametros.get('peca')
+    if (bruto === null) return undefined
+    const peca = Number(bruto)
+    if (!Number.isInteger(peca) || peca < 0) return undefined
+    const brutoMarcador = parametros.get('estrutura')
+    const marcador = Number(brutoMarcador)
+    return {
+      peca,
+      marcador: brutoMarcador !== null && Number.isInteger(marcador) && marcador >= 0 ? marcador : null,
+    }
+  }, [parametros])
+
+  // Sistema, coleção e posição vivem na URL. Além de tornar o link
+  // compartilhável, é o que faz o botão voltar do navegador desfazer um passo
+  // por vez — prancha → regiões → sistemas — em vez de sair da seção de uma vez.
+  function navegar(proximoSistema: string | null, colecaoSlug?: string | null, destinoAlvo?: AlvoDeAbertura) {
     if (!proximoSistema) {
       router.push('/anatomia/atlas-anatomia')
       return
     }
-    const destino = colecaoSlug
-      ? `/anatomia/atlas-anatomia?sistema=${proximoSistema}&colecao=${colecaoSlug}`
-      : `/anatomia/atlas-anatomia?sistema=${proximoSistema}`
-    router.push(destino)
+    const busca = new URLSearchParams({ sistema: proximoSistema })
+    if (colecaoSlug) busca.set('colecao', colecaoSlug)
+    if (destinoAlvo) {
+      busca.set('peca', String(destinoAlvo.peca))
+      if (destinoAlvo.marcador != null) busca.set('estrutura', String(destinoAlvo.marcador))
+    }
+    router.push(`/anatomia/atlas-anatomia?${busca.toString()}`)
   }
 
   // Na tela de sistemas, a área de estudo e o texto das fichas são buscados no
@@ -204,7 +268,8 @@ export default function AtlasExperiencia({ catalogo }: { catalogo: ResumoAnatomi
     <AtlasEstudo
       sistemaSlug={sistemaSlug}
       slugColecao={slugColecao}
-      onAbrirColecao={slug => navegar(sistemaSlug, slug)}
+      alvo={alvo}
+      onAbrirColecao={(slug, destino) => navegar(sistemaSlug, slug, destino)}
       onVoltarParaRegioes={() => navegar(sistemaSlug)}
       onTrocarSistema={() => navegar(null)}
     />

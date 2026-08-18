@@ -5,9 +5,22 @@
  *
  * Fica fora da página porque carrega o catálogo inteiro dos modelos e as
  * prévias; só é montado depois que o servidor confirma a assinatura.
+ *
+ * ## O que mudou no caminho até a peça
+ *
+ * A busca morava dentro do herói. Bastava rolar meia tela para ela sumir, e
+ * quem já sabia o nome do modelo tinha que voltar ao topo para digitá-lo —
+ * exatamente a pessoa com mais pressa. Agora ela vive na barra fixa, junto dos
+ * filtros, e continua ao alcance em qualquer ponto da lista.
+ *
+ * As pastilhas de categoria também mudaram de função. Antes elas rolavam a
+ * página até a seção correspondente, o que só encurtava o gesto de rolar; agora
+ * elas **filtram**: escolher "Crânio" deixa na tela os modelos de crânio e nada
+ * mais. "Todos" devolve a vitrine inteira, com destaques e seções — que é o
+ * modo de quem está passeando, não procurando.
  */
 
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import { PreviaModelo, useMiniaturas } from '@/components/anatomia/previa-modelo'
 import {
@@ -59,7 +72,7 @@ function CardModelo({
       href={`/anatomia/anatomia-3d/${modelo.slug}`}
       prefetch={false}
       style={{ animationDelay: `${Math.min(indice, 12) * 40}ms` }}
-      className={`group relative flex animate-fade-in-up flex-col overflow-hidden rounded-2xl border border-border bg-card opacity-0 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl ${tema.hoverBorder}`}
+      className={`vidro-leve vidro-brilho relevo relevo-toca group relative flex animate-fade-in-up flex-col overflow-hidden rounded-[22px] opacity-0 ${tema.hoverBorder}`}
     >
       <PreviaModelo
         titulo={modelo.titulo}
@@ -73,7 +86,7 @@ function CardModelo({
       />
 
       {modelo.destaque && (
-        <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full border border-amber-300/30 bg-amber-400/25 px-2 py-1 text-[10px] font-black uppercase tracking-wider text-amber-100 backdrop-blur">
+        <span className="anatomia-vidro-escuro absolute right-3 top-3 inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-black uppercase tracking-wider text-amber-100">
           <Sparkles className="h-3 w-3" /> Destaque
         </span>
       )}
@@ -103,7 +116,7 @@ function LinhaModelo({ modelo, miniatura }: { modelo: Modelo3D; miniatura?: stri
     <Link
       href={`/anatomia/anatomia-3d/${modelo.slug}`}
       prefetch={false}
-      className={`group flex items-stretch gap-3 overflow-hidden rounded-xl border border-border bg-card transition hover:shadow-md ${tema.hoverBorder}`}
+      className={`vidro-leve relevo relevo-toca group flex items-stretch gap-3 overflow-hidden rounded-[20px] ${tema.hoverBorder}`}
     >
       <div className="w-28 shrink-0 sm:w-36">
         <PreviaModelo
@@ -135,7 +148,6 @@ export default function VitrineModelos() {
   const [busca, setBusca] = useState('')
   const [categoriaAtiva, setCategoriaAtiva] = useState<CategoriaId | null>(null)
   const [visao, setVisao] = useState<'grade' | 'lista'>('grade')
-  const observando = useRef(false)
 
   const destaques = useMemo(() => getDestaques(), [])
   const miniaturas = useMiniaturas(useMemo(() => MODELOS.map(modelo => modelo.sketchfabId), []))
@@ -148,32 +160,10 @@ export default function VitrineModelos() {
     )
   }, [termo])
 
-  // Destaca na barra fixa a categoria que está na tela.
-  useEffect(() => {
-    if (termo || observando.current) return
-    observando.current = true
-    const secoes = CATEGORIAS.map(categoria => document.getElementById(`cat-${categoria.id}`)).filter(
-      Boolean,
-    ) as HTMLElement[]
-    const observador = new IntersectionObserver(
-      entradas => {
-        const visivel = entradas
-          .filter(entrada => entrada.isIntersecting)
-          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0]
-        if (visivel) setCategoriaAtiva(visivel.target.id.replace('cat-', '') as CategoriaId)
-      },
-      { rootMargin: '-40% 0px -55% 0px' },
-    )
-    secoes.forEach(secao => observador.observe(secao))
-    return () => {
-      observador.disconnect()
-      observando.current = false
-    }
-  }, [termo])
-
-  function irPara(id: CategoriaId) {
-    document.getElementById(`cat-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }
+  const daCategoria = useMemo(
+    () => (categoriaAtiva ? getModelosPorCategoria(categoriaAtiva) : []),
+    [categoriaAtiva],
+  )
 
   function renderizar(modelos: Modelo3D[]) {
     if (visao === 'lista') {
@@ -203,8 +193,17 @@ export default function VitrineModelos() {
     )
   }
 
+  const vazio = (
+    <div className="py-16 text-center">
+      <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-foreground/[0.05]">
+        <Box className="h-8 w-8 text-muted-foreground/30" />
+      </div>
+      <p className="text-sm text-muted-foreground">Tente outro termo, como um sistema ou o nome de um osso.</p>
+    </div>
+  )
+
   return (
-    <div className="surface-page min-h-screen">
+    <div className="surface-page anatomia-ambiente min-h-screen">
       {/* ── Hero ── */}
       <header className="relative overflow-hidden border-b border-border bg-slate-950">
         <div
@@ -216,93 +215,64 @@ export default function VitrineModelos() {
           aria-hidden
         />
 
-        <div className="relative mx-auto max-w-6xl px-4 pb-9 pt-7 sm:pb-12 sm:pt-9">
+        <div className="relative mx-auto max-w-6xl px-4 pb-8 pt-6 sm:pb-10 sm:pt-8">
           <Link
             href="/anatomia"
-            className="mb-6 inline-flex items-center gap-1.5 text-sm text-white/55 transition-colors hover:text-white"
+            className="mb-5 inline-flex items-center gap-1.5 text-sm text-white/55 transition-colors hover:text-white"
           >
             <ArrowLeft className="h-4 w-4" /> Domine Anatomia
           </Link>
 
-          <div className="mb-3">
-            <p className="editorial-mark !text-cyan-300">Domine Anatomia · modelos interativos</p>
-          </div>
-          <h1 className="font-heading text-4xl font-semibold leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl">
+          <p className="editorial-mark !text-cyan-300">Domine Anatomia · modelos interativos</p>
+          <h1 className="mt-2.5 font-heading text-[2.25rem] font-semibold leading-[1.05] tracking-tight text-white sm:text-5xl">
             Anatomia 3D
           </h1>
-          <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/65 sm:text-lg">
-            {TOTAL_MODELOS} peças anatômicas rotacionáveis em 360°, organizadas por sistema e acompanhadas de uma
-            explicação aprofundada. Passe o cursor sobre um card para ver o modelo girar antes mesmo de abri-lo.
+          <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-white/65">
+            {TOTAL_MODELOS} peças rotacionáveis em 360°, organizadas por sistema e acompanhadas de uma explicação
+            aprofundada. Passe o cursor sobre um card para ver o modelo girar antes mesmo de abri-lo.
           </p>
 
-          <div className="mt-6 flex flex-wrap items-center gap-2 text-xs font-bold">
-            <span className="inline-flex items-center gap-2 rounded-full border border-cyan-400/25 bg-cyan-400/12 px-3 py-1.5 text-cyan-200">
+          <div className="mt-5 flex flex-wrap items-center gap-2 text-xs font-bold">
+            <span className="anatomia-vidro-escuro inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-cyan-200">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-cyan-300" />
               {TOTAL_MODELOS} modelos
             </span>
-            <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-white/70">
+            <span className="anatomia-vidro-escuro rounded-full px-3 py-1.5 text-white/70">
               {CATEGORIAS.length} categorias
             </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-white/70">
+            <span className="anatomia-vidro-escuro inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-white/70">
               <GraduationCap className="h-3.5 w-3.5" /> {FONTE}
             </span>
-          </div>
-
-          <div className="relative mt-6 max-w-xl">
-            <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-white/35" />
-            <input
-              value={busca}
-              onChange={evento => setBusca(evento.target.value)}
-              placeholder="Buscar modelo (coração, vértebra T5, laringe...)"
-              aria-label="Buscar modelo 3D"
-              className="w-full rounded-2xl border border-white/15 bg-white/10 py-3.5 pl-12 pr-11 text-base text-white outline-none backdrop-blur transition placeholder:text-white/35 focus:border-cyan-400/50 focus:bg-white/15"
-            />
-            {busca && (
-              <button
-                type="button"
-                onClick={() => setBusca('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-white/15 p-1.5 text-white/70 transition hover:bg-white/25 hover:text-white"
-                aria-label="Limpar busca"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            )}
           </div>
         </div>
       </header>
 
-      {/* ── Barra de categorias ── */}
-      {!termo && (
-        <div className="sticky top-0 z-30 border-b border-border bg-background/95 supports-[backdrop-filter]:bg-background/80 supports-[backdrop-filter]:backdrop-blur-md">
-          <div className="mx-auto flex max-w-6xl items-center gap-2 px-4">
-            <div className="flex flex-1 gap-2 overflow-x-auto py-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-              {CATEGORIAS.map(categoria => {
-                const tema = TEMA[categoria.cor]
-                const ativa = categoriaAtiva === categoria.id
-                const quantidade = getModelosPorCategoria(categoria.id).length
-                if (quantidade === 0) return null
-                return (
-                  <button
-                    key={categoria.id}
-                    type="button"
-                    onClick={() => irPara(categoria.id)}
-                    className={`inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
-                      ativa ? tema.chipActive : `border-border bg-card ${tema.text} hover:bg-muted`
-                    }`}
-                  >
-                    {categoria.titulo}
-                    <span
-                      className={`rounded-full px-1.5 text-[10px] tabular-nums ${
-                        ativa ? 'bg-white/25' : 'bg-muted-foreground/15'
-                      }`}
-                    >
-                      {quantidade}
-                    </span>
-                  </button>
-                )
-              })}
+      {/* ── Barra de comando: busca, filtro e forma de ver ── */}
+      <div className="anatomia-barra sticky top-0 z-30">
+        <div className="mx-auto max-w-6xl px-4 py-2.5">
+          <div className="flex items-center gap-2">
+            <div className="anatomia-campo flex h-10 min-w-0 flex-1 items-center rounded-2xl">
+              <Search className="pointer-events-none ml-3 h-4 w-4 shrink-0 text-muted-foreground" />
+              <input
+                value={busca}
+                onChange={evento => setBusca(evento.target.value)}
+                placeholder="Buscar modelo (coração, vértebra T5, laringe…)"
+                aria-label="Buscar modelo 3D"
+                className="h-full min-w-0 flex-1 bg-transparent px-2.5 text-sm outline-none placeholder:text-muted-foreground/70"
+              />
+              {busca && (
+                <button
+                  type="button"
+                  onClick={() => setBusca('')}
+                  className="mr-1.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-muted-foreground transition hover:bg-foreground/5 hover:text-foreground"
+                  aria-label="Limpar busca"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
             </div>
-            <div className="hidden shrink-0 items-center gap-0.5 rounded-lg border border-border bg-card p-0.5 sm:flex">
+
+            <div className="anatomia-segmento hidden h-10 shrink-0 sm:flex">
               <BotaoVisao ativo={visao === 'grade'} onClick={() => setVisao('grade')} rotulo="Ver em grade">
                 <LayoutGrid className="h-4 w-4" />
               </BotaoVisao>
@@ -311,11 +281,48 @@ export default function VitrineModelos() {
               </BotaoVisao>
             </div>
           </div>
+
+          {/* As pastilhas somem durante a busca: o resultado já é um recorte, e
+              dois filtros disputando o mesmo conjunto confundem mais que ajudam. */}
+          {!termo && (
+            <div className="mt-2 flex gap-2 overflow-x-auto pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              <button
+                type="button"
+                onClick={() => setCategoriaAtiva(null)}
+                data-marcado={categoriaAtiva === null ? 'true' : 'false'}
+                className="tecla inline-flex h-8 shrink-0 items-center gap-1.5 px-3 text-xs font-semibold"
+              >
+                Todos
+                <span className="rounded-full bg-foreground/[0.08] px-1.5 text-[10px] tabular-nums">
+                  {TOTAL_MODELOS}
+                </span>
+              </button>
+              {CATEGORIAS.map(categoria => {
+                const quantidade = getModelosPorCategoria(categoria.id).length
+                if (quantidade === 0) return null
+                const ativa = categoriaAtiva === categoria.id
+                return (
+                  <button
+                    key={categoria.id}
+                    type="button"
+                    onClick={() => setCategoriaAtiva(ativa ? null : categoria.id)}
+                    data-marcado={ativa ? 'true' : 'false'}
+                    className="tecla inline-flex h-8 shrink-0 items-center gap-1.5 px-3 text-xs font-semibold"
+                  >
+                    {categoria.titulo}
+                    <span className="rounded-full bg-foreground/[0.08] px-1.5 text-[10px] tabular-nums">
+                      {quantidade}
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
+          )}
         </div>
-      )}
+      </div>
 
       {/* ── Conteúdo ── */}
-      <div className="mx-auto max-w-6xl px-4 py-8">
+      <div className="mx-auto max-w-6xl px-4 py-7">
         {termo ? (
           <div>
             <p className="mb-5 text-sm text-muted-foreground">
@@ -323,19 +330,10 @@ export default function VitrineModelos() {
                 ? `${resultados.length} modelo${resultados.length !== 1 ? 's' : ''} para “${busca}”`
                 : `Nenhum modelo encontrado para “${busca}”`}
             </p>
-            {resultados.length > 0 ? (
-              renderizar(resultados)
-            ) : (
-              <div className="py-16 text-center">
-                <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-muted/50">
-                  <Box className="h-8 w-8 text-muted-foreground/30" />
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  Tente outro termo, como um sistema ou o nome de um osso.
-                </p>
-              </div>
-            )}
+            {resultados.length > 0 ? renderizar(resultados) : vazio}
           </div>
+        ) : categoriaAtiva ? (
+          <CategoriaEmFoco categoriaAtiva={categoriaAtiva} modelos={daCategoria} renderizar={renderizar} />
         ) : (
           <>
             {destaques.length > 0 && (
@@ -355,12 +353,12 @@ export default function VitrineModelos() {
                 const tema = TEMA[categoria.cor]
                 const Icone = ICONS[categoria.icon]
                 return (
-                  <section key={categoria.id} id={`cat-${categoria.id}`} className="scroll-mt-20">
+                  <section key={categoria.id} id={`cat-${categoria.id}`} className="scroll-mt-32">
                     <div className="mb-5 flex items-center gap-4">
-                      <div className={`rounded-xl border ${tema.border} ${tema.bg} p-3`}>
+                      <div className={`rounded-2xl border ${tema.border} ${tema.bg} p-3`}>
                         <Icone className={`h-6 w-6 ${tema.text}`} />
                       </div>
-                      <div className="min-w-0">
+                      <div className="min-w-0 flex-1">
                         <h2 className="font-heading text-xl font-semibold leading-tight tracking-tight">
                           {categoria.titulo}
                         </h2>
@@ -368,6 +366,13 @@ export default function VitrineModelos() {
                           {categoria.subtitulo} · {modelos.length} modelo{modelos.length !== 1 ? 's' : ''}
                         </p>
                       </div>
+                      <button
+                        type="button"
+                        onClick={() => setCategoriaAtiva(categoria.id)}
+                        className="tecla hidden h-9 shrink-0 items-center gap-1.5 px-3 text-xs font-semibold text-muted-foreground sm:inline-flex"
+                      >
+                        Só esta <ArrowRight className="h-3.5 w-3.5" />
+                      </button>
                     </div>
                     {renderizar(modelos)}
                   </section>
@@ -388,6 +393,39 @@ export default function VitrineModelos() {
   )
 }
 
+/** A vitrine reduzida a uma categoria, com o caminho de volta sempre visível. */
+function CategoriaEmFoco({
+  categoriaAtiva,
+  modelos,
+  renderizar,
+}: {
+  categoriaAtiva: CategoriaId
+  modelos: Modelo3D[]
+  renderizar: (modelos: Modelo3D[]) => React.ReactNode
+}) {
+  const categoria = CATEGORIAS.find(item => item.id === categoriaAtiva)
+  if (!categoria) return null
+  const tema = TEMA[categoria.cor]
+  const Icone = ICONS[categoria.icon]
+
+  return (
+    <section>
+      <div className="mb-5 flex items-center gap-4">
+        <div className={`rounded-2xl border ${tema.border} ${tema.bg} p-3`}>
+          <Icone className={`h-6 w-6 ${tema.text}`} />
+        </div>
+        <div className="min-w-0 flex-1">
+          <h2 className="font-heading text-xl font-semibold leading-tight tracking-tight">{categoria.titulo}</h2>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            {categoria.subtitulo} · {modelos.length} modelo{modelos.length !== 1 ? 's' : ''}
+          </p>
+        </div>
+      </div>
+      {renderizar(modelos)}
+    </section>
+  )
+}
+
 function BotaoVisao({
   ativo,
   onClick,
@@ -404,11 +442,10 @@ function BotaoVisao({
       type="button"
       onClick={onClick}
       aria-pressed={ativo}
+      data-ativo={ativo}
       title={rotulo}
       aria-label={rotulo}
-      className={`flex h-8 w-8 items-center justify-center rounded-md transition ${
-        ativo ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-muted'
-      }`}
+      className="anatomia-segmento-item h-full w-9"
     >
       {children}
     </button>

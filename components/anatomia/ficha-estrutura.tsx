@@ -146,7 +146,7 @@ function Bloco({
 export function FichaVazia({ compacta }: { compacta?: boolean }) {
   return (
     <div
-      className={`flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-muted/25 p-6 text-center ${
+      className={`vidro flex flex-col items-center justify-center rounded-[22px] !border-dashed p-6 text-center ${
         compacta ? 'min-h-[140px]' : 'min-h-[280px]'
       }`}
     >
@@ -171,7 +171,7 @@ export function FichaVazia({ compacta }: { compacta?: boolean }) {
  */
 export function FichaCarregando({ titulo, numero }: { titulo: string; numero: number }) {
   return (
-    <article className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+    <article className="vidro relevo overflow-hidden rounded-[22px]">
       <div className="relative px-4 pb-4 pt-4 sm:px-5 sm:pt-5">
         <div className="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-primary/50 to-primary/0" aria-hidden />
         <div className="flex items-start gap-3">
@@ -267,7 +267,7 @@ function FichaResumo({
   onAprofundar: () => void
 }) {
   return (
-    <article className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+    <article className="vidro relevo overflow-hidden rounded-[22px]">
       <div className="relative px-4 pb-4 pt-4 sm:px-5 sm:pt-5">
         <Identidade titulo={titulo} numero={numero} insight={insight} />
         <p className="mt-3.5 text-[13.5px] font-medium leading-relaxed text-foreground/90 sm:text-sm">
@@ -276,7 +276,8 @@ function FichaResumo({
         <button
           type="button"
           onClick={onAprofundar}
-          className="mt-4 inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-primary/30 bg-primary/10 px-4 text-sm font-bold text-primary transition hover:bg-primary/15"
+          className="tecla mt-4 inline-flex h-11 w-full items-center justify-center gap-2 px-4 text-sm font-bold text-primary"
+          data-marcado="true"
         >
           Ver detalhes completos
           <ChevronDown className="h-4 w-4" />
@@ -293,7 +294,7 @@ export function FichaEstrutura({ titulo, numero, insight, compacta, onRecolher }
   const cores = familia(insight.classeId)
 
   return (
-    <article className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+    <article className="vidro relevo overflow-hidden rounded-[22px]">
       <header className="relative px-4 pb-4 pt-4 sm:px-5 sm:pt-5">
         <Identidade titulo={titulo} numero={numero} insight={insight} />
         <p className="mt-3.5 text-[13.5px] font-medium leading-relaxed text-foreground/90 sm:text-sm">{insight.resumo}</p>
@@ -325,7 +326,7 @@ export function FichaEstrutura({ titulo, numero, insight, compacta, onRecolher }
       <Bloco icone={Stethoscope} titulo="Correlação clínica" texto={insight.clinica} cor="text-sky-500" />
 
       {insight.pontos.length > 0 && (
-        <section className="border-t border-border/60 bg-muted/30 px-4 py-3.5 sm:px-5">
+        <section className="border-t border-border/60 bg-foreground/[0.035] px-4 py-3.5 sm:px-5">
           <h3 className="mb-2 flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.12em] text-muted-foreground">
             <BookMarked className={`h-3.5 w-3.5 ${cores.realce}`} />
             Você precisa saber responder
@@ -357,7 +358,7 @@ export function FichaEstrutura({ titulo, numero, insight, compacta, onRecolher }
           <button
             type="button"
             onClick={onRecolher}
-            className="inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-xl border border-border bg-muted/40 text-xs font-bold text-muted-foreground transition hover:text-foreground"
+            className="tecla inline-flex h-9 w-full items-center justify-center gap-1.5 text-xs font-bold text-muted-foreground"
           >
             <ChevronUp className="h-3.5 w-3.5" /> Mostrar só o nome
           </button>
