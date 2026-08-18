@@ -1,461 +1,277 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { Badge } from '@/components/ui/badge'
-import { ThemeToggle } from '@/components/theme-toggle'
-import { LogoLoading } from '@/components/logo-loading'
-import { BanChecker } from '@/components/ban-checker'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import Link from 'next/link'
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
-import {
-  FileText,
-  ArrowLeft,
-  Plus,
-  Pencil,
-  Trash2,
-  Loader2,
-  Search,
-  Eye,
-  Image as ImageIcon,
-  X,
-  Download,
   AlertTriangle,
+  ArrowLeft,
+  CheckCircle2,
   Copy,
-  CheckCircle2
+  Download,
+  FileText,
+  FolderTree,
+  Image as ImageIcon,
+  Loader2,
+  MessageSquareText,
+  Pencil,
+  Plus,
+  Search,
+  SlidersHorizontal,
+  Trash2,
+  X,
 } from 'lucide-react'
+import { AppShell } from '@/components/app-shell'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { ToastAlert } from '@/components/ui/toast-alert'
+import { EditorDeQuestao } from '@/components/admin/banco/editor-de-questao'
 import {
-  BancoPeriodoComContagem,
-  BancoModuloComContagem,
-  BancoTopicoComContagem,
-  BancoSubtopicoComContagem,
-  BancoQuestaoComHierarquia,
-  BancoQuestaoFormData,
-  BancoAlternativaLetra,
-  BancoPaginacao
-} from '@/lib/types/banco-questoes'
+  CATALOGO_VAZIO,
+  caminhoDaQuestao,
+  modulosOrdenados,
+  type Catalogo,
+} from '@/lib/banco/catalogo'
+import type { BancoPaginacao, BancoQuestaoComHierarquia } from '@/lib/types/banco-questoes'
+import { cn } from '@/lib/utils'
+
+/**
+ * Gerenciar as questões do banco.
+ *
+ * A tela anterior tinha um bug que impedia salvar QUALQUER questão criada
+ * depois de o nível "Período" sair do produto (ver lib/banco/hierarquia.ts):
+ * ela abria o formulário com `String(questao.periodoId)`, que numa questão sem
+ * período é a string "undefined", pedia os módulos daquele "período"
+ * inexistente — e mandava esse texto para a rota, que tentava construir um
+ * ObjectId com ele e devolvia 500 "Erro ao atualizar questão".
+ *
+ * O conserto não foi só remover o campo: o problema era a forma. Quatro
+ * `<select>` encadeados, cada um esperando o anterior e cada um com uma
+ * requisição própria; `alert()` do navegador para erro; `confirm()` para
+ * excluir; a busca só disparando no Enter; e a lista trazendo Período numa
+ * coluna que já não existia. Agora o catálogo inteiro vem numa chamada só, o
+ * assunto é um campo com busca, e cada resposta do servidor aparece na tela em
+ * que foi pedida.
+ */
+
+const POR_PAGINA = 20
+
+interface Filtros {
+  busca: string
+  moduloId: string
+  topicoId: string
+  tipo: string
+  dificuldade: string
+  ordenar: string
+  revisar: boolean
+}
+
+const FILTROS_VAZIOS: Filtros = {
+  busca: '',
+  moduloId: '',
+  topicoId: '',
+  tipo: '',
+  dificuldade: '',
+  ordenar: 'recentes',
+  revisar: false,
+}
+
+const ROTULO_DIFICULDADE: Record<string, string> = {
+  facil: 'Fácil',
+  medio: 'Média',
+  dificil: 'Difícil',
+}
 
 export default function AdminQuestoesPage() {
-  const router = useRouter()
-  const [loading, setLoading] = useState(true)
+  return (
+    <AppShell headerTitle="Questões do banco">
+      <Conteudo />
+    </AppShell>
+  )
+}
 
-  // Dados de hierarquia para filtros e formulário
-  const [periodos, setPeriodos] = useState<BancoPeriodoComContagem[]>([])
-  const [modulos, setModulos] = useState<BancoModuloComContagem[]>([])
-  const [topicos, setTopicos] = useState<BancoTopicoComContagem[]>([])
-  const [subtopicos, setSubtopicos] = useState<BancoSubtopicoComContagem[]>([])
-
-  // Filtros
-  const [filtros, setFiltros] = useState({
-    periodoId: '',
-    moduloId: '',
-    tipo: '',
-    busca: ''
-  })
-
-  // Questões
+function Conteudo() {
+  const [catalogo, setCatalogo] = useState<Catalogo>(CATALOGO_VAZIO)
   const [questoes, setQuestoes] = useState<BancoQuestaoComHierarquia[]>([])
   const [paginacao, setPaginacao] = useState<BancoPaginacao | null>(null)
-  const [loadingQuestoes, setLoadingQuestoes] = useState(false)
+  const [carregando, setCarregando] = useState(true)
+  const [erro, setErro] = useState('')
 
-  // Modal
-  const [showModal, setShowModal] = useState(false)
-  const [modalMode, setModalMode] = useState<'create' | 'edit' | 'view'>('create')
-  const [editingQuestao, setEditingQuestao] = useState<BancoQuestaoComHierarquia | null>(null)
-  const [saving, setSaving] = useState(false)
-  const [deleting, setDeleting] = useState<string | null>(null)
+  const [buscaDigitada, setBuscaDigitada] = useState('')
+  const [filtros, setFiltros] = useState<Filtros>(FILTROS_VAZIOS)
+  const [filtrosAbertos, setFiltrosAbertos] = useState(false)
+  const [pagina, setPagina] = useState(1)
 
-  // Exportação
-  const [exporting, setExporting] = useState(false)
+  const [editando, setEditando] = useState<{ questao: BancoQuestaoComHierarquia | null } | null>(null)
+  const [excluindo, setExcluindo] = useState<string | null>(null)
+  const [confirmandoExclusao, setConfirmandoExclusao] = useState<string | null>(null)
+  const [exportando, setExportando] = useState(false)
+  const [recado, setRecado] = useState('')
 
-  // Modal de questões duplicadas
-  const [showDuplicatasModal, setShowDuplicatasModal] = useState(false)
-  const [loadingDuplicatas, setLoadingDuplicatas] = useState(false)
+  const [duplicatasAbertas, setDuplicatasAbertas] = useState(false)
   const [duplicatas, setDuplicatas] = useState<any[]>([])
-  const [deletingDuplicata, setDeletingDuplicata] = useState<string | null>(null)
+  const [carregandoDuplicatas, setCarregandoDuplicatas] = useState(false)
 
-  // Form data
-  const [formData, setFormData] = useState<BancoQuestaoFormData>({
-    tipo: 'objetiva',
-    periodoId: '',
-    moduloId: '',
-    topicoId: '',
-    subtopicoId: '',
-    enunciado: '',
-    explicacao: '',
-    imagemUrl: '',
-    alternativas: [
-      { letra: 'A', texto: '', correta: false },
-      { letra: 'B', texto: '', correta: false },
-      { letra: 'C', texto: '', correta: false },
-      { letra: 'D', texto: '', correta: false },
-    ],
-    respostaModelo: '',
-    dificuldade: undefined,
-    tags: [],
-    fonte: '',
-    ano: undefined
-  })
+  // Cada busca leva um número. Só a resposta do pedido mais recente entra na
+  // tela: digitando rápido, a resposta de "car" chegava depois da de "cardio" e
+  // a lista terminava mostrando o resultado do que a pessoa já tinha apagado.
+  const pedido = useRef(0)
 
-  // Form hierarchy
-  const [formModulos, setFormModulos] = useState<BancoModuloComContagem[]>([])
-  const [formTopicos, setFormTopicos] = useState<BancoTopicoComContagem[]>([])
-  const [formSubtopicos, setFormSubtopicos] = useState<BancoSubtopicoComContagem[]>([])
-
-  // Criar novo tópico/subtópico inline
-  const [showNewTopico, setShowNewTopico] = useState(false)
-  const [showNewSubtopico, setShowNewSubtopico] = useState(false)
-  const [newTopicoNome, setNewTopicoNome] = useState('')
-  const [newSubtopicoNome, setNewSubtopicoNome] = useState('')
-  const [creatingTopico, setCreatingTopico] = useState(false)
-  const [creatingSubtopico, setCreatingSubtopico] = useState(false)
-
-  useEffect(() => {
-    checkAuth()
-    loadPeriodos()
+  const carregarCatalogo = useCallback(async () => {
+    try {
+      const res = await fetch('/api/banco/hierarquia', { cache: 'no-store' })
+      if (!res.ok) return
+      const dados = await res.json()
+      setCatalogo({
+        modulos: dados.modulos || [],
+        topicos: dados.topicos || [],
+        subtopicos: dados.subtopicos || [],
+      })
+    } catch {
+      // A lista de questões ainda funciona sem o catálogo; os filtros de
+      // assunto é que ficam vazios. Falhar a tela inteira aqui seria pior.
+    }
   }, [])
 
-  useEffect(() => {
-    loadQuestoes()
-  }, [filtros.periodoId, filtros.moduloId, filtros.tipo])
-
-  useEffect(() => {
-    if (filtros.periodoId) {
-      loadModulos(filtros.periodoId)
-    } else {
-      setModulos([])
-    }
-  }, [filtros.periodoId])
-
-  // Form hierarchy loading
-  useEffect(() => {
-    if (formData.periodoId) {
-      loadFormModulos(formData.periodoId)
-    } else {
-      setFormModulos([])
-      setFormTopicos([])
-      setFormSubtopicos([])
-    }
-  }, [formData.periodoId])
-
-  useEffect(() => {
-    if (formData.moduloId) {
-      loadFormTopicos(formData.moduloId)
-    } else {
-      setFormTopicos([])
-      setFormSubtopicos([])
-    }
-  }, [formData.moduloId])
-
-  useEffect(() => {
-    if (formData.topicoId) {
-      loadFormSubtopicos(formData.topicoId)
-    } else {
-      setFormSubtopicos([])
-    }
-  }, [formData.topicoId])
-
-  async function checkAuth() {
+  const carregarQuestoes = useCallback(async () => {
+    const meu = ++pedido.current
+    setCarregando(true)
+    setErro('')
     try {
-      const res = await fetch('/api/auth/me')
-      if (!res.ok) {
-        router.push('/auth/login')
-        return
-      }
-      const data = await res.json()
-      if (data.user.role !== 'admin') {
-        router.push('/')
-        return
-      }
-    } catch (error) {
-      router.push('/auth/login')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  async function loadPeriodos() {
-    try {
-      const res = await fetch('/api/admin/banco/periodos')
-      if (res.ok) {
-        const data = await res.json()
-        setPeriodos(data.periodos)
-      }
-    } catch (error) {
-      console.error('Erro ao carregar períodos:', error)
-    }
-  }
-
-  async function loadModulos(periodoId: string) {
-    try {
-      const res = await fetch(`/api/admin/banco/modulos?periodoId=${periodoId}`)
-      if (res.ok) {
-        const data = await res.json()
-        setModulos(data.modulos)
-      }
-    } catch (error) {
-      console.error('Erro ao carregar módulos:', error)
-    }
-  }
-
-  async function loadFormModulos(periodoId: string) {
-    try {
-      const res = await fetch(`/api/admin/banco/modulos?periodoId=${periodoId}`)
-      if (res.ok) {
-        const data = await res.json()
-        setFormModulos(data.modulos)
-      }
-    } catch (error) {
-      console.error('Erro ao carregar módulos:', error)
-    }
-  }
-
-  async function loadFormTopicos(moduloId: string) {
-    try {
-      const res = await fetch(`/api/admin/banco/topicos?moduloId=${moduloId}`)
-      if (res.ok) {
-        const data = await res.json()
-        setFormTopicos(data.topicos)
-      }
-    } catch (error) {
-      console.error('Erro ao carregar tópicos:', error)
-    }
-  }
-
-  async function loadFormSubtopicos(topicoId: string) {
-    try {
-      const res = await fetch(`/api/admin/banco/subtopicos?topicoId=${topicoId}`)
-      if (res.ok) {
-        const data = await res.json()
-        setFormSubtopicos(data.subtopicos)
-      }
-    } catch (error) {
-      console.error('Erro ao carregar subtópicos:', error)
-    }
-  }
-
-  async function loadQuestoes(page = 1) {
-    setLoadingQuestoes(true)
-    try {
-      const params = new URLSearchParams()
-      params.set('page', page.toString())
-      params.set('limit', '20')
-      if (filtros.periodoId) params.set('periodoId', filtros.periodoId)
-      if (filtros.moduloId) params.set('moduloId', filtros.moduloId)
-      if (filtros.tipo) params.set('tipo', filtros.tipo)
+      const params = new URLSearchParams({ page: String(pagina), limit: String(POR_PAGINA) })
       if (filtros.busca) params.set('busca', filtros.busca)
+      if (filtros.moduloId) params.set('moduloId', filtros.moduloId)
+      if (filtros.topicoId) params.set('topicoId', filtros.topicoId)
+      if (filtros.tipo) params.set('tipo', filtros.tipo)
+      if (filtros.dificuldade) params.set('dificuldade', filtros.dificuldade)
+      if (filtros.ordenar !== 'recentes') params.set('ordenar', filtros.ordenar)
+      if (filtros.revisar) params.set('revisar', '1')
 
-      const res = await fetch(`/api/admin/banco/questoes?${params.toString()}`)
-      if (res.ok) {
-        const data = await res.json()
-        setQuestoes(data.questoes)
-        setPaginacao(data.paginacao)
+      const res = await fetch(`/api/admin/banco/questoes?${params.toString()}`, { cache: 'no-store' })
+      const dados = await res.json().catch(() => ({}))
+      if (meu !== pedido.current) return
+
+      if (!res.ok) {
+        setErro(dados.error || 'Não foi possível carregar as questões')
+        setQuestoes([])
+        setPaginacao(null)
+        return
       }
-    } catch (error) {
-      console.error('Erro ao carregar questões:', error)
+
+      setQuestoes(dados.questoes || [])
+      setPaginacao(dados.paginacao || null)
+    } catch {
+      if (meu === pedido.current) setErro('Não foi possível falar com o servidor')
     } finally {
-      setLoadingQuestoes(false)
+      if (meu === pedido.current) setCarregando(false)
     }
-  }
+  }, [filtros, pagina])
 
-  function openCreateModal() {
-    setModalMode('create')
-    setEditingQuestao(null)
-    setFormData({
-      tipo: 'objetiva',
-      periodoId: '',
-      moduloId: '',
-      topicoId: '',
-      subtopicoId: '',
-      enunciado: '',
-      explicacao: '',
-      imagemUrl: '',
-      alternativas: [
-        { letra: 'A', texto: '', correta: false },
-        { letra: 'B', texto: '', correta: false },
-        { letra: 'C', texto: '', correta: false },
-        { letra: 'D', texto: '', correta: false },
-      ],
-      respostaModelo: '',
-      dificuldade: undefined,
-      tags: [],
-      fonte: '',
-      ano: undefined
-    })
-    setShowModal(true)
-  }
+  useEffect(() => {
+    void carregarCatalogo()
+  }, [carregarCatalogo])
 
-  async function openEditModal(questao: BancoQuestaoComHierarquia) {
-    setModalMode('edit')
-    setEditingQuestao(questao)
+  /**
+   * Entrar direto numa questão pelo endereço.
+   *
+   * A tela de relatos abre `?busca=<id da questão>` quando o admin clica em
+   * "ver questão" — e caía numa busca por enunciado, que nunca casa com um id:
+   * a lista abria vazia e o relato ficava sem resposta. Um id abre a questão;
+   * qualquer outro texto vira busca mesmo. Lido de `window.location` de
+   * propósito: `useSearchParams` obrigaria a envolver a página inteira num
+   * Suspense só por causa disto.
+   */
+  useEffect(() => {
+    const parametros = new URLSearchParams(window.location.search)
+    const inicial = (parametros.get('id') || parametros.get('busca') || '').trim()
+    if (!inicial) return
 
-    // Carregar hierarquia necessária
-    if (questao.periodoId) {
-      await loadFormModulos(String(questao.periodoId))
-    }
-    if (questao.moduloId) {
-      await loadFormTopicos(String(questao.moduloId))
-    }
-    if (questao.topicoId) {
-      await loadFormSubtopicos(String(questao.topicoId))
-    }
-
-    setFormData({
-      tipo: questao.tipo,
-      periodoId: String(questao.periodoId),
-      moduloId: String(questao.moduloId),
-      topicoId: String(questao.topicoId),
-      subtopicoId: questao.subtopicoid ? String(questao.subtopicoid) : '',
-      enunciado: questao.enunciado,
-      explicacao: questao.explicacao || '',
-      imagemUrl: questao.imagemUrl || '',
-      alternativas: questao.alternativas || [
-        { letra: 'A', texto: '', correta: false },
-        { letra: 'B', texto: '', correta: false },
-        { letra: 'C', texto: '', correta: false },
-        { letra: 'D', texto: '', correta: false },
-      ],
-      respostaModelo: questao.respostaModelo || '',
-      dificuldade: questao.dificuldade,
-      tags: questao.tags || [],
-      fonte: questao.fonte || '',
-      ano: questao.ano
-    })
-    setShowModal(true)
-  }
-
-  function openViewModal(questao: BancoQuestaoComHierarquia) {
-    setModalMode('view')
-    setEditingQuestao(questao)
-    setShowModal(true)
-  }
-
-  async function handleSave() {
-    setSaving(true)
-    try {
-      const url = modalMode === 'edit'
-        ? `/api/admin/banco/questoes/${editingQuestao?._id}`
-        : '/api/admin/banco/questoes'
-
-      const res = await fetch(url, {
-        method: modalMode === 'edit' ? 'PUT' : 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      })
-
-      if (res.ok) {
-        setShowModal(false)
-        loadQuestoes()
-      } else {
-        const data = await res.json()
-        alert(data.error || 'Erro ao salvar')
-      }
-    } catch (error) {
-      console.error('Erro ao salvar:', error)
-    } finally {
-      setSaving(false)
-    }
-  }
-
-  async function handleDelete(id: string) {
-    if (!confirm('Tem certeza que deseja excluir esta questão? Esta ação não pode ser desfeita.')) {
+    if (!/^[0-9a-fA-F]{24}$/.test(inicial)) {
+      setBuscaDigitada(inicial)
       return
     }
 
-    setDeleting(id)
-    try {
-      const res = await fetch(`/api/admin/banco/questoes/${id}`, {
-        method: 'DELETE'
-      })
-
-      if (res.ok) {
-        loadQuestoes()
-      } else {
-        const data = await res.json()
-        alert(data.error || 'Erro ao excluir')
+    let cancelado = false
+    ;(async () => {
+      try {
+        const res = await fetch(`/api/admin/banco/questoes/${inicial}`, { cache: 'no-store' })
+        const dados = await res.json().catch(() => ({}))
+        if (cancelado) return
+        if (!res.ok) {
+          setErro(dados.error || 'Questão não encontrada')
+          return
+        }
+        setEditando({ questao: dados.questao })
+      } catch {
+        if (!cancelado) setErro('Não foi possível abrir a questão')
       }
-    } catch (error) {
-      console.error('Erro ao excluir:', error)
+    })()
+    return () => {
+      cancelado = true
+    }
+  }, [])
+
+  useEffect(() => {
+    void carregarQuestoes()
+  }, [carregarQuestoes])
+
+  // A busca acompanha a digitação, com uma pausa. Antes era preciso apertar
+  // Enter ou clicar na lupa — e nada na tela dizia isso.
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setFiltros((f) => (f.busca === buscaDigitada.trim() ? f : { ...f, busca: buscaDigitada.trim() }))
+    }, 350)
+    return () => clearTimeout(t)
+  }, [buscaDigitada])
+
+  useEffect(() => {
+    setPagina(1)
+  }, [filtros])
+
+  const modulos = useMemo(() => modulosOrdenados(catalogo), [catalogo])
+  const topicosDoFiltro = useMemo(() => {
+    const lista = filtros.moduloId
+      ? catalogo.topicos.filter((t) => t.moduloId === filtros.moduloId)
+      : catalogo.topicos
+    return [...lista].sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR', { numeric: true }))
+  }, [catalogo, filtros.moduloId])
+
+  const temFiltro =
+    Boolean(filtros.busca || filtros.moduloId || filtros.topicoId || filtros.tipo || filtros.dificuldade || filtros.revisar) ||
+    filtros.ordenar !== 'recentes'
+
+  async function excluir(id: string) {
+    setExcluindo(id)
+    try {
+      const res = await fetch(`/api/admin/banco/questoes/${id}`, { method: 'DELETE' })
+      const dados = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        setErro(dados.error || 'Não foi possível excluir a questão')
+        return
+      }
+      setConfirmandoExclusao(null)
+      setRecado('Questão excluída.')
+      await carregarQuestoes()
+    } catch {
+      setErro('Não foi possível excluir a questão')
     } finally {
-      setDeleting(null)
+      setExcluindo(null)
     }
   }
 
-  function updateAlternativa(index: number, field: 'texto' | 'correta', value: any) {
-    setFormData(prev => {
-      const newAlts = [...(prev.alternativas || [])]
-      if (field === 'correta') {
-        // Desmarcar todas e marcar apenas a selecionada
-        newAlts.forEach((alt, i) => {
-          alt.correta = i === index
-        })
-      } else {
-        newAlts[index] = { ...newAlts[index], [field]: value }
-      }
-      return { ...prev, alternativas: newAlts }
-    })
-  }
-
-  function addAlternativa() {
-    if ((formData.alternativas?.length || 0) >= 5) return
-    const letras: BancoAlternativaLetra[] = ['A', 'B', 'C', 'D', 'E']
-    const nextLetra = letras[formData.alternativas?.length || 0]
-    setFormData(prev => ({
-      ...prev,
-      alternativas: [...(prev.alternativas || []), { letra: nextLetra, texto: '', correta: false }]
-    }))
-  }
-
-  function removeAlternativa(index: number) {
-    if ((formData.alternativas?.length || 0) <= 2) return
-    setFormData(prev => ({
-      ...prev,
-      alternativas: prev.alternativas?.filter((_, i) => i !== index)
-    }))
-  }
-
-  async function handleExportar() {
-    setExporting(true)
+  async function exportar() {
+    setExportando(true)
     try {
       const params = new URLSearchParams()
-      if (filtros.periodoId) params.set('periodoId', filtros.periodoId)
       if (filtros.moduloId) params.set('moduloId', filtros.moduloId)
+      if (filtros.topicoId) params.set('topicoId', filtros.topicoId)
       if (filtros.tipo) params.set('tipo', filtros.tipo)
 
       const res = await fetch(`/api/admin/banco/exportar?${params.toString()}`)
       if (!res.ok) {
-        const data = await res.json()
-        alert(data.error || 'Erro ao exportar')
+        const dados = await res.json().catch(() => ({}))
+        setErro(dados.error || 'Não foi possível exportar')
         return
       }
 
-      // Download do arquivo
       const blob = await res.blob()
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
@@ -465,896 +281,535 @@ export default function AdminQuestoesPage() {
       a.click()
       document.body.removeChild(a)
       window.URL.revokeObjectURL(url)
-    } catch (error) {
-      console.error('Erro ao exportar:', error)
-      alert('Erro ao exportar questões')
+    } catch {
+      setErro('Não foi possível exportar')
     } finally {
-      setExporting(false)
+      setExportando(false)
     }
   }
 
-  async function handleCarregarDuplicatas() {
-    setLoadingDuplicatas(true)
+  async function carregarDuplicatas() {
+    setCarregandoDuplicatas(true)
+    setDuplicatasAbertas(true)
     try {
       const res = await fetch('/api/admin/banco/questoes/duplicatas')
-      if (res.ok) {
-        const data = await res.json()
-        setDuplicatas(data.duplicatas)
-        setShowDuplicatasModal(true)
-      } else {
-        const data = await res.json()
-        alert(data.error || 'Erro ao buscar duplicatas')
+      const dados = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        setErro(dados.error || 'Não foi possível buscar duplicatas')
+        setDuplicatasAbertas(false)
+        return
       }
-    } catch (error) {
-      console.error('Erro ao buscar duplicatas:', error)
-      alert('Erro ao buscar duplicatas')
+      setDuplicatas(dados.duplicatas || [])
+    } catch {
+      setErro('Não foi possível buscar duplicatas')
+      setDuplicatasAbertas(false)
     } finally {
-      setLoadingDuplicatas(false)
+      setCarregandoDuplicatas(false)
     }
   }
 
-  async function handleDeleteDuplicata(id: string) {
-    if (!confirm('Tem certeza que deseja excluir esta questão duplicada?')) {
-      return
-    }
-
-    setDeletingDuplicata(id)
+  async function excluirDuplicata(id: string) {
+    setExcluindo(id)
     try {
-      const res = await fetch(`/api/admin/banco/questoes/${id}`, {
-        method: 'DELETE'
-      })
-
-      if (res.ok) {
-        setDuplicatas(prev => prev.map(grupo => ({
-          ...grupo,
-          questoes: grupo.questoes.filter((q: any) => String(q._id) !== id),
-          count: grupo.questoes.filter((q: any) => String(q._id) !== id).length
-        })).filter(g => g.count > 1))
-      } else {
-        const data = await res.json()
-        alert(data.error || 'Erro ao excluir')
+      const res = await fetch(`/api/admin/banco/questoes/${id}`, { method: 'DELETE' })
+      if (!res.ok) {
+        const dados = await res.json().catch(() => ({}))
+        setErro(dados.error || 'Não foi possível excluir')
+        return
       }
-    } catch (error) {
-      console.error('Erro ao excluir:', error)
-      alert('Erro ao excluir')
+      setDuplicatas((grupos) =>
+        grupos
+          .map((grupo) => {
+            const restantes = grupo.questoes.filter((q: any) => String(q._id) !== id)
+            return { ...grupo, questoes: restantes, count: restantes.length }
+          })
+          .filter((grupo) => grupo.count > 1),
+      )
+      await carregarQuestoes()
     } finally {
-      setDeletingDuplicata(null)
+      setExcluindo(null)
     }
-  }
-
-  async function handleCreateTopico() {
-    if (!newTopicoNome.trim() || !formData.moduloId) return
-
-    setCreatingTopico(true)
-    try {
-      const res = await fetch('/api/admin/banco/topicos', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          moduloId: formData.moduloId,
-          nome: newTopicoNome.trim()
-        })
-      })
-
-      if (res.ok) {
-        const data = await res.json()
-        // Recarregar tópicos e selecionar o novo
-        await loadFormTopicos(formData.moduloId)
-        setFormData(prev => ({ ...prev, topicoId: String(data.topico._id), subtopicoId: '' }))
-        setNewTopicoNome('')
-        setShowNewTopico(false)
-      } else {
-        const data = await res.json()
-        alert(data.error || 'Erro ao criar tópico')
-      }
-    } catch (error) {
-      console.error('Erro ao criar tópico:', error)
-    } finally {
-      setCreatingTopico(false)
-    }
-  }
-
-  async function handleCreateSubtopico() {
-    if (!newSubtopicoNome.trim() || !formData.topicoId) return
-
-    setCreatingSubtopico(true)
-    try {
-      const res = await fetch('/api/admin/banco/subtopicos', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          topicoId: formData.topicoId,
-          nome: newSubtopicoNome.trim()
-        })
-      })
-
-      if (res.ok) {
-        const data = await res.json()
-        // Recarregar subtópicos e selecionar o novo
-        await loadFormSubtopicos(formData.topicoId)
-        setFormData(prev => ({ ...prev, subtopicoId: String(data.subtopico._id) }))
-        setNewSubtopicoNome('')
-        setShowNewSubtopico(false)
-      } else {
-        const data = await res.json()
-        alert(data.error || 'Erro ao criar subtópico')
-      }
-    } catch (error) {
-      console.error('Erro ao criar subtópico:', error)
-    } finally {
-      setCreatingSubtopico(false)
-    }
-  }
-
-  if (loading) {
-    return <LogoLoading message="Carregando..." size="lg" fullscreen />
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted">
-      <BanChecker />
+    <div className="mx-auto max-w-5xl space-y-4 p-4 sm:p-6">
+      {/* ── Cabeçalho ──────────────────────────────────────────────────── */}
+      <div className="flex flex-wrap items-center gap-3">
+        <Link
+          href="/admin/banco-questoes"
+          className="inline-flex h-9 w-9 flex-none items-center justify-center rounded-xl border border-border text-muted-foreground transition hover:text-foreground"
+          aria-label="Voltar"
+        >
+          <ArrowLeft className="h-4 w-4" />
+        </Link>
+        <div className="min-w-0 flex-1">
+          <h1 className="flex items-center gap-2 text-lg font-bold">
+            <FileText className="h-5 w-5 text-primary" />
+            Questões
+          </h1>
+          <p className="text-xs text-muted-foreground">
+            {paginacao
+              ? `${paginacao.total.toLocaleString('pt-BR')} ${paginacao.total === 1 ? 'questão' : 'questões'}${temFiltro ? ' no filtro atual' : ' no banco'}`
+              : 'Criar, editar e excluir questões'}
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => setEditando({ questao: null })}
+          className="inline-flex h-10 items-center gap-1.5 rounded-xl bg-primary px-3 text-sm font-semibold text-primary-foreground"
+        >
+          <Plus className="h-4 w-4" /> Nova questão
+        </button>
+      </div>
 
-      {/* Header */}
-      <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between gap-4 flex-wrap">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => router.push('/admin/banco-questoes')}
+      {/* ── Busca e filtros ────────────────────────────────────────────── */}
+      <section className="vidro vidro-brilho relevo rounded-[22px] p-3">
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <div className="relative min-w-0 flex-1">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <input
+              value={buscaDigitada}
+              onChange={(e) => setBuscaDigitada(e.target.value)}
+              placeholder="Buscar no enunciado, na fonte ou nas tags…"
+              className="h-10 w-full rounded-xl border border-border bg-background/70 pl-9 pr-9 text-sm outline-none transition focus:border-primary/50 focus:ring-2 focus:ring-primary/10"
+            />
+            {buscaDigitada ? (
+              <button
+                type="button"
+                onClick={() => setBuscaDigitada('')}
+                aria-label="Limpar busca"
+                className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-muted-foreground hover:bg-muted"
               >
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-              <div>
-                <h1 className="text-xl font-bold flex items-center gap-2">
-                  <FileText className="h-5 w-5 text-primary" />
-                  Gerenciar Questões
-                </h1>
-                <p className="text-sm text-muted-foreground">
-                  Criar, editar e excluir questões
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                onClick={handleCarregarDuplicatas}
-                disabled={loadingDuplicatas}
+                <X className="h-3.5 w-3.5" />
+              </button>
+            ) : null}
+          </div>
+
+          <div className="flex gap-2">
+            <button
+              type="button"
+              data-marcado={filtrosAbertos || temFiltro}
+              aria-expanded={filtrosAbertos}
+              onClick={() => setFiltrosAbertos((v) => !v)}
+              className="tecla inline-flex h-10 flex-1 items-center justify-center gap-1.5 px-3 text-xs font-semibold sm:flex-none"
+            >
+              <SlidersHorizontal className="h-3.5 w-3.5" /> Filtros
+            </button>
+            {temFiltro ? (
+              <button
+                type="button"
+                onClick={() => {
+                  setFiltros(FILTROS_VAZIOS)
+                  setBuscaDigitada('')
+                }}
+                className="inline-flex h-10 items-center rounded-xl px-3 text-xs font-semibold text-muted-foreground hover:text-foreground"
               >
-                {loadingDuplicatas ? (
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                ) : (
-                  <AlertTriangle className="h-4 w-4 mr-2" />
-                )}
-                Scanear Duplicatas
-              </Button>
-              <Button
-                variant="outline"
-                onClick={handleExportar}
-                disabled={exporting}
-              >
-                {exporting ? (
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                ) : (
-                  <Download className="h-4 w-4 mr-2" />
-                )}
-                Exportar TXT
-              </Button>
-              <Button onClick={openCreateModal}>
-                <Plus className="h-4 w-4 mr-2" />
-                Nova Questão
-              </Button>
-              <ThemeToggle />
-            </div>
+                Limpar
+              </button>
+            ) : null}
           </div>
         </div>
-      </header>
 
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-8 max-w-7xl">
-        {/* Filtros */}
-        <Card className="mb-6">
-          <CardContent className="pt-6">
-            <div className="grid gap-4 md:grid-cols-5">
-              <div>
-                <Label>Período</Label>
-                <Select
-                  value={filtros.periodoId}
-                  onValueChange={(v) => setFiltros(prev => ({ ...prev, periodoId: v, moduloId: '' }))}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Todos" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="">Todos</SelectItem>
-                    {periodos.map((p) => (
-                      <SelectItem key={String(p._id)} value={String(p._id)}>
-                        {p.nome}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Label>Módulo</Label>
-                <Select
+        {filtrosAbertos ? (
+          <div className="mt-3 space-y-3 border-t border-border pt-3">
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              <Campo rotulo="Módulo">
+                <select
                   value={filtros.moduloId}
-                  onValueChange={(v) => setFiltros(prev => ({ ...prev, moduloId: v }))}
-                  disabled={!filtros.periodoId}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Todos" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="">Todos</SelectItem>
-                    {modulos.map((m) => (
-                      <SelectItem key={String(m._id)} value={String(m._id)}>
-                        {m.nome}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Label>Tipo</Label>
-                <Select
-                  value={filtros.tipo}
-                  onValueChange={(v) => setFiltros(prev => ({ ...prev, tipo: v }))}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Todos" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="">Todos</SelectItem>
-                    <SelectItem value="objetiva">Objetiva</SelectItem>
-                    <SelectItem value="discursiva">Discursiva</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="md:col-span-2">
-                <Label>Buscar</Label>
-                <div className="flex gap-2">
-                  <Input
-                    placeholder="Buscar no enunciado..."
-                    value={filtros.busca}
-                    onChange={(e) => setFiltros(prev => ({ ...prev, busca: e.target.value }))}
-                    onKeyDown={(e) => e.key === 'Enter' && loadQuestoes()}
-                  />
-                  <Button variant="outline" onClick={() => loadQuestoes()}>
-                    <Search className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Lista de Questões */}
-        <Card>
-          <CardHeader>
-            <CardTitle>
-              Questões
-              {paginacao && (
-                <span className="text-sm font-normal text-muted-foreground ml-2">
-                  ({paginacao.total} total)
-                </span>
-              )}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {loadingQuestoes ? (
-              <div className="flex items-center justify-center py-12">
-                <Loader2 className="h-8 w-8 animate-spin" />
-              </div>
-            ) : questoes.length === 0 ? (
-              <p className="text-center text-muted-foreground py-12">
-                Nenhuma questão encontrada
-              </p>
-            ) : (
-              <>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-[60px]">Tipo</TableHead>
-                      <TableHead>Enunciado</TableHead>
-                      <TableHead>Período</TableHead>
-                      <TableHead>Módulo</TableHead>
-                      <TableHead className="text-right">Ações</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {questoes.map((questao) => (
-                      <TableRow key={String(questao._id)}>
-                        <TableCell>
-                          <Badge variant={questao.tipo === 'objetiva' ? 'default' : 'secondary'}>
-                            {questao.tipo === 'objetiva' ? 'OBJ' : 'DIS'}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="max-w-[300px]">
-                          <p className="truncate">{questao.enunciado}</p>
-                        </TableCell>
-                        <TableCell>{questao.periodoNome}</TableCell>
-                        <TableCell>{questao.moduloNome}</TableCell>
-                        <TableCell className="text-right space-x-1">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => openViewModal(questao)}
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => openEditModal(questao)}
-                          >
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleDelete(String(questao._id))}
-                            disabled={deleting === String(questao._id)}
-                          >
-                            {deleting === String(questao._id) ? (
-                              <Loader2 className="h-4 w-4 animate-spin" />
-                            ) : (
-                              <Trash2 className="h-4 w-4 text-red-500" />
-                            )}
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-
-                {/* Paginação */}
-                {paginacao && paginacao.totalPages > 1 && (
-                  <div className="flex items-center justify-center gap-2 mt-4">
-                    <Button
-                      variant="outline"
-                      disabled={paginacao.page <= 1}
-                      onClick={() => loadQuestoes(paginacao.page - 1)}
-                    >
-                      Anterior
-                    </Button>
-                    <span className="text-sm text-muted-foreground">
-                      Página {paginacao.page} de {paginacao.totalPages}
-                    </span>
-                    <Button
-                      variant="outline"
-                      disabled={paginacao.page >= paginacao.totalPages}
-                      onClick={() => loadQuestoes(paginacao.page + 1)}
-                    >
-                      Próxima
-                    </Button>
-                  </div>
-                )}
-              </>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Modal de criar/editar/visualizar */}
-        <Dialog open={showModal} onOpenChange={setShowModal}>
-          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>
-                {modalMode === 'create' ? 'Nova Questão' :
-                 modalMode === 'edit' ? 'Editar Questão' : 'Visualizar Questão'}
-              </DialogTitle>
-            </DialogHeader>
-
-            {modalMode === 'view' && editingQuestao ? (
-              <div className="space-y-4">
-                <div className="flex gap-2">
-                  <Badge>{editingQuestao.tipo}</Badge>
-                  <Badge variant="outline">{editingQuestao.periodoNome}</Badge>
-                  <Badge variant="outline">{editingQuestao.moduloNome}</Badge>
-                </div>
-
-                <div>
-                  <Label className="font-medium">Enunciado</Label>
-                  <p className="mt-1 whitespace-pre-wrap">{editingQuestao.enunciado}</p>
-                </div>
-
-                {editingQuestao.imagemUrl && (
-                  <div>
-                    <Label className="font-medium">Imagem</Label>
-                    <div className="mt-2">
-                      <img
-                        src={editingQuestao.imagemUrl}
-                        alt="Imagem da questão"
-                        className="max-w-full max-h-64 rounded border"
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {editingQuestao.tipo === 'objetiva' && editingQuestao.alternativas && (
-                  <div>
-                    <Label className="font-medium">Alternativas</Label>
-                    <div className="mt-2 space-y-2">
-                      {editingQuestao.alternativas.map((alt) => (
-                        <div
-                          key={alt.letra}
-                          className={`p-3 rounded border ${alt.correta ? 'bg-green-50 border-green-500 dark:bg-green-900/20' : ''}`}
-                        >
-                          <strong>{alt.letra})</strong> {alt.texto}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {editingQuestao.tipo === 'discursiva' && editingQuestao.respostaModelo && (
-                  <div>
-                    <Label className="font-medium">Resposta Modelo</Label>
-                    <p className="mt-1 whitespace-pre-wrap p-3 bg-muted rounded">
-                      {editingQuestao.respostaModelo}
-                    </p>
-                  </div>
-                )}
-
-                {editingQuestao.explicacao && (
-                  <div>
-                    <Label className="font-medium">Explicação</Label>
-                    <p className="mt-1 whitespace-pre-wrap p-3 bg-muted rounded">
-                      {editingQuestao.explicacao}
-                    </p>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="space-y-4 py-4">
-                {/* Tipo */}
-                <div>
-                  <Label>Tipo *</Label>
-                  <Select
-                    value={formData.tipo}
-                    onValueChange={(v: 'objetiva' | 'discursiva') => setFormData(prev => ({ ...prev, tipo: v }))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="objetiva">Objetiva</SelectItem>
-                      <SelectItem value="discursiva">Discursiva</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Hierarquia */}
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div>
-                    <Label>Período *</Label>
-                    <Select
-                      value={formData.periodoId}
-                      onValueChange={(v) => setFormData(prev => ({ ...prev, periodoId: v, moduloId: '', topicoId: '', subtopicoId: '' }))}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {periodos.map((p) => (
-                          <SelectItem key={String(p._id)} value={String(p._id)}>
-                            {p.nome}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <Label>Módulo *</Label>
-                    <Select
-                      value={formData.moduloId}
-                      onValueChange={(v) => setFormData(prev => ({ ...prev, moduloId: v, topicoId: '', subtopicoId: '' }))}
-                      disabled={!formData.periodoId}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {formModulos.map((m) => (
-                          <SelectItem key={String(m._id)} value={String(m._id)}>
-                            {m.nome}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <Label>Tópico *</Label>
-                    {showNewTopico ? (
-                      <div className="flex gap-2">
-                        <Input
-                          value={newTopicoNome}
-                          onChange={(e) => setNewTopicoNome(e.target.value)}
-                          placeholder="Nome do novo tópico"
-                          disabled={creatingTopico}
-                        />
-                        <Button
-                          type="button"
-                          size="icon"
-                          onClick={handleCreateTopico}
-                          disabled={creatingTopico || !newTopicoNome.trim()}
-                        >
-                          {creatingTopico ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
-                        </Button>
-                        <Button
-                          type="button"
-                          size="icon"
-                          variant="ghost"
-                          onClick={() => { setShowNewTopico(false); setNewTopicoNome('') }}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ) : (
-                      <div className="flex gap-2">
-                        <Select
-                          value={formData.topicoId}
-                          onValueChange={(v) => setFormData(prev => ({ ...prev, topicoId: v, subtopicoId: '' }))}
-                          disabled={!formData.moduloId}
-                        >
-                          <SelectTrigger className="flex-1">
-                            <SelectValue placeholder="Selecione" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {formTopicos.map((t) => (
-                              <SelectItem key={String(t._id)} value={String(t._id)}>
-                                {t.nome}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <Button
-                          type="button"
-                          size="icon"
-                          variant="outline"
-                          onClick={() => setShowNewTopico(true)}
-                          disabled={!formData.moduloId}
-                          title="Criar novo tópico"
-                        >
-                          <Plus className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-
-                  <div>
-                    <Label>Subtópico (opcional)</Label>
-                    {showNewSubtopico ? (
-                      <div className="flex gap-2">
-                        <Input
-                          value={newSubtopicoNome}
-                          onChange={(e) => setNewSubtopicoNome(e.target.value)}
-                          placeholder="Nome do novo subtópico"
-                          disabled={creatingSubtopico}
-                        />
-                        <Button
-                          type="button"
-                          size="icon"
-                          onClick={handleCreateSubtopico}
-                          disabled={creatingSubtopico || !newSubtopicoNome.trim()}
-                        >
-                          {creatingSubtopico ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
-                        </Button>
-                        <Button
-                          type="button"
-                          size="icon"
-                          variant="ghost"
-                          onClick={() => { setShowNewSubtopico(false); setNewSubtopicoNome('') }}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ) : (
-                      <div className="flex gap-2">
-                        <Select
-                          value={formData.subtopicoId || ''}
-                          onValueChange={(v) => setFormData(prev => ({ ...prev, subtopicoId: v }))}
-                          disabled={!formData.topicoId}
-                        >
-                          <SelectTrigger className="flex-1">
-                            <SelectValue placeholder="Selecione" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="">Nenhum</SelectItem>
-                            {formSubtopicos.map((s) => (
-                              <SelectItem key={String(s._id)} value={String(s._id)}>
-                                {s.nome}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <Button
-                          type="button"
-                          size="icon"
-                          variant="outline"
-                          onClick={() => setShowNewSubtopico(true)}
-                          disabled={!formData.topicoId}
-                          title="Criar novo subtópico"
-                        >
-                          <Plus className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Enunciado */}
-                <div>
-                  <Label>Enunciado *</Label>
-                  <Textarea
-                    value={formData.enunciado}
-                    onChange={(e) => setFormData(prev => ({ ...prev, enunciado: e.target.value }))}
-                    rows={5}
-                    placeholder="Digite o enunciado da questão..."
-                  />
-                </div>
-
-                {/* Imagem */}
-                <div>
-                  <Label className="flex items-center gap-2">
-                    <ImageIcon className="h-4 w-4" />
-                    Imagem (opcional)
-                  </Label>
-                  <div className="mt-1 space-y-2">
-                    <Input
-                      value={formData.imagemUrl || ''}
-                      onChange={(e) => setFormData(prev => ({ ...prev, imagemUrl: e.target.value }))}
-                      placeholder="Cole a URL da imagem (Imgur, etc.) ou faça upload"
-                    />
-                    {formData.imagemUrl && (
-                      <div className="relative inline-block">
-                        <img
-                          src={formData.imagemUrl}
-                          alt="Preview"
-                          className="max-w-full max-h-48 rounded border"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).style.display = 'none'
-                          }}
-                        />
-                        <Button
-                          type="button"
-                          variant="destructive"
-                          size="icon"
-                          className="absolute top-1 right-1 h-6 w-6"
-                          onClick={() => setFormData(prev => ({ ...prev, imagemUrl: '' }))}
-                        >
-                          <X className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    )}
-                    <p className="text-xs text-muted-foreground">
-                      Dica: Faça upload no <a href="https://imgur.com/upload" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Imgur</a> e cole o link aqui
-                    </p>
-                  </div>
-                </div>
-
-                {/* Alternativas (para objetiva) */}
-                {formData.tipo === 'objetiva' && (
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <Label>Alternativas *</Label>
-                      {(formData.alternativas?.length || 0) < 5 && (
-                        <Button variant="outline" size="sm" onClick={addAlternativa}>
-                          <Plus className="h-3 w-3 mr-1" />
-                          Adicionar
-                        </Button>
-                      )}
-                    </div>
-                    <div className="space-y-2">
-                      {formData.alternativas?.map((alt, index) => (
-                        <div key={alt.letra} className="flex items-start gap-2">
-                          <div className="flex items-center gap-2 pt-2">
-                            <input
-                              type="radio"
-                              name="alternativaCorreta"
-                              checked={alt.correta}
-                              onChange={() => updateAlternativa(index, 'correta', true)}
-                              className="h-4 w-4"
-                            />
-                            <span className="font-medium w-6">{alt.letra})</span>
-                          </div>
-                          <Textarea
-                            value={alt.texto}
-                            onChange={(e) => updateAlternativa(index, 'texto', e.target.value)}
-                            rows={2}
-                            className="flex-1"
-                            placeholder={`Texto da alternativa ${alt.letra}`}
-                          />
-                          {(formData.alternativas?.length || 0) > 2 && (
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => removeAlternativa(index)}
-                            >
-                              <Trash2 className="h-4 w-4 text-red-500" />
-                            </Button>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Resposta Modelo (para discursiva) */}
-                {formData.tipo === 'discursiva' && (
-                  <div>
-                    <Label>Resposta Modelo *</Label>
-                    <Textarea
-                      value={formData.respostaModelo || ''}
-                      onChange={(e) => setFormData(prev => ({ ...prev, respostaModelo: e.target.value }))}
-                      rows={5}
-                      placeholder="Digite a resposta modelo esperada..."
-                    />
-                  </div>
-                )}
-
-                {/* Explicação */}
-                <div>
-                  <Label>Explicação (opcional)</Label>
-                  <Textarea
-                    value={formData.explicacao || ''}
-                    onChange={(e) => setFormData(prev => ({ ...prev, explicacao: e.target.value }))}
-                    rows={3}
-                    placeholder="Explicação que será mostrada após a resposta..."
-                  />
-                </div>
-
-                {/* Metadados */}
-                <div className="grid gap-4 md:grid-cols-3">
-                  <div>
-                    <Label>Dificuldade</Label>
-                    <Select
-                      value={formData.dificuldade || ''}
-                      onValueChange={(v: any) => setFormData(prev => ({ ...prev, dificuldade: v || undefined }))}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="">Não definida</SelectItem>
-                        <SelectItem value="facil">Fácil</SelectItem>
-                        <SelectItem value="medio">Médio</SelectItem>
-                        <SelectItem value="dificil">Difícil</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <Label>Fonte</Label>
-                    <Input
-                      value={formData.fonte || ''}
-                      onChange={(e) => setFormData(prev => ({ ...prev, fonte: e.target.value }))}
-                      placeholder="Ex: ENADE 2023"
-                    />
-                  </div>
-
-                  <div>
-                    <Label>Ano</Label>
-                    <Input
-                      type="number"
-                      value={formData.ano || ''}
-                      onChange={(e) => setFormData(prev => ({ ...prev, ano: e.target.value ? parseInt(e.target.value) : undefined }))}
-                      placeholder="Ex: 2023"
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setShowModal(false)}>
-                {modalMode === 'view' ? 'Fechar' : 'Cancelar'}
-              </Button>
-              {modalMode !== 'view' && (
-                <Button
-                  onClick={handleSave}
-                  disabled={
-                    saving ||
-                    !formData.periodoId ||
-                    !formData.moduloId ||
-                    !formData.topicoId ||
-                    !formData.enunciado.trim() ||
-                    (formData.tipo === 'objetiva' && !formData.alternativas?.some(a => a.correta)) ||
-                    (formData.tipo === 'discursiva' && !formData.respostaModelo?.trim())
+                  onChange={(e) =>
+                    // Trocar de módulo zera o tópico: o tópico escolhido é de
+                    // outro módulo e a lista voltaria vazia sem explicar por quê.
+                    setFiltros((f) => ({ ...f, moduloId: e.target.value, topicoId: '' }))
                   }
+                  className="h-9 w-full rounded-xl border border-border bg-background px-2 text-[13px] outline-none focus:border-primary/50"
                 >
-                  {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Salvar'}
-                </Button>
-              )}
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+                  <option value="">Todos</option>
+                  {modulos.map((m) => (
+                    <option key={m._id} value={m._id}>
+                      {m.nome}
+                    </option>
+                  ))}
+                </select>
+              </Campo>
 
-        {/* Modal de questões duplicadas */}
-        <Dialog open={showDuplicatasModal} onOpenChange={setShowDuplicatasModal}>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <AlertTriangle className="h-5 w-5 text-yellow-500" />
-                Questões Duplicadas
-              </DialogTitle>
-              <DialogDescription>
-                Questões com enunciados idênticos encontradas no banco de questões
-              </DialogDescription>
-            </DialogHeader>
+              <Campo rotulo="Tópico">
+                <select
+                  value={filtros.topicoId}
+                  onChange={(e) => setFiltros((f) => ({ ...f, topicoId: e.target.value }))}
+                  className="h-9 w-full rounded-xl border border-border bg-background px-2 text-[13px] outline-none focus:border-primary/50"
+                >
+                  <option value="">Todos</option>
+                  {topicosDoFiltro.map((t) => (
+                    <option key={t._id} value={t._id}>
+                      {t.nome}
+                    </option>
+                  ))}
+                </select>
+              </Campo>
 
-            {loadingDuplicatas ? (
-              <div className="flex items-center justify-center py-12">
-                <Loader2 className="h-8 w-8 animate-spin" />
+              <Campo rotulo="Tipo">
+                <select
+                  value={filtros.tipo}
+                  onChange={(e) => setFiltros((f) => ({ ...f, tipo: e.target.value }))}
+                  className="h-9 w-full rounded-xl border border-border bg-background px-2 text-[13px] outline-none focus:border-primary/50"
+                >
+                  <option value="">Todos</option>
+                  <option value="objetiva">Objetiva</option>
+                  <option value="discursiva">Discursiva</option>
+                </select>
+              </Campo>
+
+              <Campo rotulo="Dificuldade">
+                <select
+                  value={filtros.dificuldade}
+                  onChange={(e) => setFiltros((f) => ({ ...f, dificuldade: e.target.value }))}
+                  className="h-9 w-full rounded-xl border border-border bg-background px-2 text-[13px] outline-none focus:border-primary/50"
+                >
+                  <option value="">Todas</option>
+                  <option value="facil">Fácil</option>
+                  <option value="medio">Média</option>
+                  <option value="dificil">Difícil</option>
+                </select>
+              </Campo>
+
+              <Campo rotulo="Ordenar por">
+                <select
+                  value={filtros.ordenar}
+                  onChange={(e) => setFiltros((f) => ({ ...f, ordenar: e.target.value }))}
+                  className="h-9 w-full rounded-xl border border-border bg-background px-2 text-[13px] outline-none focus:border-primary/50"
+                >
+                  <option value="recentes">Mais recentes</option>
+                  <option value="antigas">Mais antigas</option>
+                  <option value="atualizadas">Editadas por último</option>
+                </select>
+              </Campo>
+            </div>
+
+            {/* O filtro que existe por causa do bug antigo: enquanto o PUT
+                gravava o que viesse, dava para salvar objetiva sem gabarito e
+                discursiva sem resposta. Isto é como se acha o estrago. */}
+            <button
+              type="button"
+              data-marcado={filtros.revisar}
+              onClick={() => setFiltros((f) => ({ ...f, revisar: !f.revisar }))}
+              className="tecla inline-flex h-9 items-center gap-1.5 px-3 text-xs font-semibold"
+            >
+              <AlertTriangle className="h-3.5 w-3.5" />
+              Só as que precisam de revisão
+            </button>
+          </div>
+        ) : null}
+
+        <div className="mt-3 flex flex-wrap gap-2 border-t border-border pt-3">
+          <button
+            type="button"
+            onClick={() => void carregarDuplicatas()}
+            disabled={carregandoDuplicatas}
+            className="inline-flex h-9 items-center gap-1.5 rounded-xl border border-border px-3 text-xs font-semibold text-muted-foreground transition hover:text-foreground"
+          >
+            {carregandoDuplicatas ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <Copy className="h-3.5 w-3.5" />
+            )}
+            Procurar duplicatas
+          </button>
+          <button
+            type="button"
+            onClick={() => void exportar()}
+            disabled={exportando}
+            className="inline-flex h-9 items-center gap-1.5 rounded-xl border border-border px-3 text-xs font-semibold text-muted-foreground transition hover:text-foreground"
+          >
+            {exportando ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <Download className="h-3.5 w-3.5" />
+            )}
+            Exportar TXT
+          </button>
+          <Link
+            href="/admin/banco-questoes/hierarquia"
+            className="inline-flex h-9 items-center gap-1.5 rounded-xl border border-border px-3 text-xs font-semibold text-muted-foreground transition hover:text-foreground"
+          >
+            <FolderTree className="h-3.5 w-3.5" />
+            Hierarquia
+          </Link>
+        </div>
+      </section>
+
+      {erro ? (
+        <p className="flex items-start gap-2 rounded-xl border border-red-500/40 bg-red-500/5 px-3 py-2 text-[13px] text-red-600 dark:text-red-400">
+          <AlertTriangle className="mt-0.5 h-4 w-4 flex-none" />
+          <span>{erro}</span>
+        </p>
+      ) : null}
+
+      {/* ── Lista ──────────────────────────────────────────────────────── */}
+      {carregando ? (
+        <div className="space-y-2">
+          {[0, 1, 2, 3, 4].map((i) => (
+            <div key={i} className="h-24 rounded-2xl skeleton-pulse" />
+          ))}
+        </div>
+      ) : questoes.length === 0 ? (
+        <div className="rounded-[22px] border border-dashed border-border p-10 text-center">
+          <p className="text-sm font-medium">Nenhuma questão encontrada</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            {temFiltro ? 'Tente afrouxar os filtros.' : 'Crie a primeira ou importe uma prova.'}
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {questoes.map((questao) => {
+            const id = String(questao._id)
+            const semGabarito =
+              questao.tipo === 'objetiva' && !(questao.alternativas || []).some((a) => a.correta)
+            const caminho = caminhoDaQuestao(questao)
+
+            return (
+              <article
+                key={id}
+                className="vidro relevo group rounded-2xl border border-border/60 p-3 transition hover:border-primary/30"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="min-w-0 flex-1">
+                    <div className="mb-1 flex flex-wrap items-center gap-1.5">
+                      <span
+                        className={cn(
+                          'rounded px-1.5 py-0.5 text-[10px] font-bold uppercase',
+                          questao.tipo === 'objetiva'
+                            ? 'bg-primary/15 text-primary'
+                            : 'bg-muted text-muted-foreground',
+                        )}
+                      >
+                        {questao.tipo === 'objetiva' ? 'Objetiva' : 'Discursiva'}
+                      </span>
+                      {questao.dificuldade ? (
+                        <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground">
+                          {ROTULO_DIFICULDADE[questao.dificuldade] || questao.dificuldade}
+                        </span>
+                      ) : null}
+                      {questao.imagemUrl ? (
+                        <span title="Tem imagem" className="text-muted-foreground">
+                          <ImageIcon className="h-3.5 w-3.5" />
+                        </span>
+                      ) : null}
+                      {questao.explicacao ? (
+                        <span title="Tem comentário" className="text-muted-foreground">
+                          <MessageSquareText className="h-3.5 w-3.5" />
+                        </span>
+                      ) : null}
+                      {semGabarito ? (
+                        <span className="inline-flex items-center gap-1 rounded bg-red-500/10 px-1.5 py-0.5 text-[10px] font-bold text-red-500">
+                          <AlertTriangle className="h-3 w-3" /> sem gabarito
+                        </span>
+                      ) : null}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setEditando({ questao })}
+                      className="block w-full text-left"
+                    >
+                      <p className="line-clamp-2 text-sm">{questao.enunciado}</p>
+                    </button>
+
+                    <p className="mt-1 truncate text-[11px] text-muted-foreground">
+                      {caminho || 'Sem assunto'}
+                      {questao.fonte ? ` · ${questao.fonte}` : ''}
+                      {questao.ano ? ` · ${questao.ano}` : ''}
+                      {questao.totalRespostas
+                        ? ` · ${questao.totalRespostas} ${questao.totalRespostas === 1 ? 'resposta' : 'respostas'}`
+                        : ''}
+                    </p>
+                  </div>
+
+                  <div className="flex flex-none gap-1">
+                    <button
+                      type="button"
+                      onClick={() => setEditando({ questao })}
+                      aria-label="Editar questão"
+                      className="rounded-lg p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground"
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setConfirmandoExclusao(id)}
+                      aria-label="Excluir questão"
+                      className="rounded-lg p-2 text-muted-foreground transition hover:bg-red-500/10 hover:text-red-500"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* A confirmação de exclusão fica na própria linha, dizendo o
+                    que some junto. Era um `confirm()` do navegador, que não
+                    mostra de qual questão está falando. */}
+                {confirmandoExclusao === id ? (
+                  <div className="mt-2 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-red-500/40 bg-red-500/5 px-3 py-2">
+                    <p className="text-[12px] text-red-600 dark:text-red-400">
+                      Excluir esta questão? As respostas dos alunos e o lugar dela nas listas somem
+                      junto.
+                    </p>
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setConfirmandoExclusao(null)}
+                        className="inline-flex h-8 items-center rounded-lg border border-border bg-background px-3 text-xs font-semibold"
+                      >
+                        Cancelar
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => void excluir(id)}
+                        disabled={excluindo === id}
+                        className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-red-500 px-3 text-xs font-semibold text-white disabled:opacity-60"
+                      >
+                        {excluindo === id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
+                        Excluir
+                      </button>
+                    </div>
+                  </div>
+                ) : null}
+              </article>
+            )
+          })}
+        </div>
+      )}
+
+      {/* ── Paginação ──────────────────────────────────────────────────── */}
+      {paginacao && paginacao.totalPages > 1 ? (
+        <div className="flex items-center justify-center gap-3 pt-2">
+          <button
+            type="button"
+            disabled={pagina <= 1 || carregando}
+            onClick={() => setPagina((p) => Math.max(1, p - 1))}
+            className="inline-flex h-9 items-center rounded-xl border border-border px-3 text-xs font-semibold disabled:opacity-40"
+          >
+            Anterior
+          </button>
+          <span className="text-xs tabular-nums text-muted-foreground">
+            Página {paginacao.page} de {paginacao.totalPages}
+          </span>
+          <button
+            type="button"
+            disabled={pagina >= paginacao.totalPages || carregando}
+            onClick={() => setPagina((p) => p + 1)}
+            className="inline-flex h-9 items-center rounded-xl border border-border px-3 text-xs font-semibold disabled:opacity-40"
+          >
+            Próxima
+          </button>
+        </div>
+      ) : null}
+
+      <EditorDeQuestao
+        aberto={editando !== null}
+        questao={editando?.questao || null}
+        catalogo={catalogo}
+        onFechar={() => setEditando(null)}
+        onCatalogoMudou={carregarCatalogo}
+        onSalvo={(salva, criada) => {
+          setEditando(null)
+          setRecado(criada ? 'Questão criada.' : 'Questão salva.')
+          if (criada) {
+            void carregarQuestoes()
+          } else {
+            // A linha editada é trocada no lugar: recarregar a página inteira
+            // faria a lista pular para o topo e perder onde a pessoa estava.
+            setQuestoes((atuais) =>
+              atuais.map((q) => (String(q._id) === String(salva._id) ? salva : q)),
+            )
+          }
+          void carregarCatalogo()
+        }}
+      />
+
+      {/* ── Duplicatas ─────────────────────────────────────────────────── */}
+      <Dialog open={duplicatasAbertas} onOpenChange={(v) => setDuplicatasAbertas(v)}>
+        <DialogContent className="w-full max-w-3xl p-0">
+          <DialogHeader className="sticky top-0 z-10 flex items-center justify-between gap-2 border-b border-border bg-background px-5 py-4">
+            <DialogTitle className="flex items-center gap-2 text-base">
+              <Copy className="h-4 w-4 text-yellow-500" />
+              Questões duplicadas
+            </DialogTitle>
+            <button
+              type="button"
+              onClick={() => setDuplicatasAbertas(false)}
+              aria-label="Fechar"
+              className="rounded-lg p-1 text-muted-foreground transition hover:bg-muted"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </DialogHeader>
+
+          <div className="space-y-4 px-5 py-4">
+            {carregandoDuplicatas ? (
+              <div className="flex justify-center py-10">
+                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
               </div>
             ) : duplicatas.length === 0 ? (
-              <div className="text-center py-12">
-                <CheckCircle2 className="h-12 w-12 mx-auto text-green-500 mb-4" />
-                <h3 className="text-lg font-medium">Nenhuma duplicata encontrada!</h3>
-                <p className="text-muted-foreground">
-                  Todas as questões têm enunciados únicos
+              <div className="py-10 text-center">
+                <CheckCircle2 className="mx-auto mb-3 h-10 w-10 text-green-500" />
+                <p className="text-sm font-medium">Nenhuma duplicata</p>
+                <p className="text-xs text-muted-foreground">
+                  Todos os enunciados do banco são diferentes entre si.
                 </p>
               </div>
             ) : (
-              <div className="space-y-6 py-4">
-                {duplicatas.map((grupo, idx) => (
-                  <div key={idx} className="border rounded-lg p-4 space-y-3">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Badge variant="destructive" className="flex items-center gap-1">
-                            <Copy className="h-3 w-3" />
-                            {grupo.count} duplicatas
-                          </Badge>
-                        </div>
-                        <p className="text-sm font-medium line-clamp-2">
-                          {grupo.enunciado}
-                        </p>
+              duplicatas.map((grupo, i) => (
+                <div key={i} className="rounded-xl border border-border p-3">
+                  <p className="mb-2 line-clamp-2 text-[13px] font-medium">{grupo.enunciado}</p>
+                  <div className="space-y-1.5">
+                    {grupo.questoes.map((q: any) => (
+                      <div
+                        key={String(q._id)}
+                        className="flex items-center justify-between gap-2 rounded-lg bg-muted px-3 py-2 text-xs"
+                      >
+                        <span className="text-muted-foreground">
+                          {String(q._id).slice(-6)} · criada em{' '}
+                          {new Date(q.createdAt).toLocaleDateString('pt-BR')}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => void excluirDuplicata(String(q._id))}
+                          disabled={excluindo === String(q._id)}
+                          className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-red-500 px-2.5 text-[11px] font-semibold text-white disabled:opacity-60"
+                        >
+                          {excluindo === String(q._id) ? (
+                            <Loader2 className="h-3 w-3 animate-spin" />
+                          ) : (
+                            <Trash2 className="h-3 w-3" />
+                          )}
+                          Excluir
+                        </button>
                       </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      {grupo.questoes.map((questao: any) => (
-                        <div key={String(questao._id)} className="flex items-center justify-between p-3 bg-muted rounded-lg">
-                          <div className="flex-1 text-sm">
-                            <span className="font-medium">ID:</span> {String(questao._id).slice(-6)}
-                            <span className="mx-2">•</span>
-                            <span className="font-medium">Criada em:</span> {new Date(questao.createdAt).toLocaleDateString('pt-BR')}
-                          </div>
-                          <Button
-                            variant="destructive"
-                            size="sm"
-                            onClick={() => handleDeleteDuplicata(String(questao._id))}
-                            disabled={deletingDuplicata === String(questao._id)}
-                          >
-                            {deletingDuplicata === String(questao._id) ? (
-                              <Loader2 className="h-4 w-4 animate-spin" />
-                            ) : (
-                              <Trash2 className="h-4 w-4" />
-                            )}
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                </div>
+              ))
             )}
+          </div>
+        </DialogContent>
+      </Dialog>
 
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setShowDuplicatasModal(false)}>
-                Fechar
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </main>
+      <ToastAlert
+        open={Boolean(recado)}
+        onOpenChange={(v) => (v ? null : setRecado(''))}
+        message={recado}
+        type="success"
+        duration={2500}
+      />
     </div>
+  )
+}
+
+function Campo({ rotulo, children }: { rotulo: string; children: React.ReactNode }) {
+  return (
+    <label className="block">
+      <span className="mb-1 block text-[11px] text-muted-foreground">{rotulo}</span>
+      {children}
+    </label>
   )
 }
