@@ -3,6 +3,7 @@ import { getDb } from '@/lib/mongodb'
 import { createToken, setAuthCookie, generateSessionId } from '@/lib/auth'
 import { recordLoginSession } from '@/lib/sessions'
 import { User } from '@/lib/types'
+import { verifyGoogleIdToken, GoogleAuthError } from '@/lib/google-auth'
 
 export const dynamic = 'force-dynamic'
 
@@ -11,35 +12,19 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { idToken } = body
 
-    if (!idToken) {
-      return NextResponse.json(
-        { error: 'ID token é obrigatório' },
-        { status: 400 }
-      )
+    // Assinatura conferida contra as chaves do Google e `aud` contra o client id
+    // deste site — sem isso, um JWT montado à mão logaria como qualquer usuário.
+    let identity
+    try {
+      identity = await verifyGoogleIdToken(idToken)
+    } catch (err) {
+      if (err instanceof GoogleAuthError) {
+        return NextResponse.json({ error: err.message }, { status: err.status })
+      }
+      throw err
     }
 
-    // Decodifica o token JWT do Google (sem verificar assinatura por enquanto)
-    // Em produção, você deve verificar a assinatura do token
-    const parts = idToken.split('.')
-    if (parts.length !== 3) {
-      return NextResponse.json(
-        { error: 'Token inválido' },
-        { status: 400 }
-      )
-    }
-
-    const payload = JSON.parse(
-      Buffer.from(parts[1], 'base64').toString('utf-8')
-    )
-
-    const { email, name, picture, sub } = payload
-
-    if (!email) {
-      return NextResponse.json(
-        { error: 'Email não encontrado no token' },
-        { status: 400 }
-      )
-    }
+    const { email, name, picture, googleId: sub } = identity
 
     const db = await getDb()
     const usersCollection = db.collection<User>('users')
