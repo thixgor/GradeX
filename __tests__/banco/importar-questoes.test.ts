@@ -203,6 +203,24 @@ CORRETA: A`,
     expect(erros[0].mensagem).toContain('duas vezes')
   })
 
+  it('não reabre a lista de alternativas dentro de EXPLICAÇÃO ou RESPOSTA', () => {
+    const { questoes, erros } = lerArquivoDeImportacao(
+      `[OBJETIVA]
+MÓDULO: Cardiologia
+TÓPICO: Arritmias
+ENUNCIADO: Pergunta.
+A) Primeira
+B) Segunda
+CORRETA: A
+EXPLICAÇÃO: A) , B) e as demais foram descartadas porque
+A) é a única correta.`,
+    )
+
+    expect(erros).toEqual([])
+    expect(questoes[0].alternativas?.map((a) => a.letra)).toEqual(['A', 'B'])
+    expect(questoes[0].explicacao).toBe('A) , B) e as demais foram descartadas porque\nA) é a única correta.')
+  })
+
   it('liga IMAGEM A à alternativa A', () => {
     const { questoes } = lerArquivoDeImportacao(
       `[OBJETIVA]
