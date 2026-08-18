@@ -17,10 +17,11 @@ function hashString(value: string): number {
 }
 
 // Alguns registros do banco trazem quebras de linha escapadas como texto
-// literal ("\n", "\r\n") em vez de caracteres de quebra de linha reais —
-// normaliza para que `whitespace-pre-line` no front exiba corretamente.
+// literal ("\n", "\r\n", "\nl") em vez de caracteres de quebra de linha
+// reais — normaliza para que `whitespace-pre-line` no front exiba
+// corretamente.
 function normalizarQuebrasDeLinha(texto: string): string {
-  return texto.replace(/\\r\\n|\\n|\\r/g, '\n')
+  return texto.replace(/\\r\\n|\\nl|\\n|\\r/g, '\n')
 }
 
 // Questão do dia: mecânica de retorno (gatilho para o usuário voltar todo dia).
