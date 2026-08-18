@@ -21,9 +21,12 @@ interface ExamQuestionPaletteProps {
   /** When true, renders inline (used in scroll mode to jump via scrollIntoView).
    *  Caller still receives the index in onJump. */
   inline?: boolean
+  /** Sobe o botão flutuante quando existe uma barra de navegação fixa no rodapé
+   *  (modo paginado), para os dois não ocuparem o mesmo canto da tela. */
+  raised?: boolean
 }
 
-export function ExamQuestionPalette({ questions, currentIndex, onJump }: ExamQuestionPaletteProps) {
+export function ExamQuestionPalette({ questions, currentIndex, onJump, raised = false }: ExamQuestionPaletteProps) {
   const [open, setOpen] = useState(false)
   // Enquanto a pessoa está desenhando, o botão flutuante sai da frente — a
   // barra de anotação já ocupa esse canto da tela.
@@ -53,7 +56,10 @@ export function ExamQuestionPalette({ questions, currentIndex, onJump }: ExamQue
         onClick={() => setOpen(true)}
         aria-label="Mapa de questões"
         className={cn(
-          'fixed right-3 sm:right-5 bottom-20 sm:bottom-24 z-50 group flex items-center gap-2 pl-3 pr-3.5 py-2.5 rounded-2xl bg-background/95 backdrop-blur-md border border-border/60 shadow-lg shadow-black/5 hover:shadow-xl hover:scale-[1.03] transition-all',
+          'fixed right-3 sm:right-5 z-50 group flex items-center gap-2 pl-3 pr-3.5 py-2.5 rounded-2xl bg-background/95 backdrop-blur-md border border-border/60 shadow-lg shadow-black/5 hover:shadow-xl hover:scale-[1.03] transition-all',
+          raised
+            ? 'bottom-[calc(6rem+env(safe-area-inset-bottom))] sm:bottom-[calc(6.5rem+env(safe-area-inset-bottom))]'
+            : 'bottom-20 sm:bottom-24',
           annotating && 'pointer-events-none opacity-0 translate-y-2'
         )}
       >
