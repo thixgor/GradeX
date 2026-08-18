@@ -2,13 +2,14 @@
 
 import { useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Check, ChevronRight, FolderTree, Layers, Search, X } from 'lucide-react'
+import { Check, ChevronRight, FolderTree, Layers, Minus, Search, X } from 'lucide-react'
 import {
   filtrarArvore,
   montarArvore,
+  topicosDoRamo,
   totalDaArvore,
   type ModuloDaArvore,
-  type TopicoDaArvore,
+  type RamoDaArvore,
 } from '@/lib/banco/hierarquia'
 import { cn } from '@/lib/utils'
 
@@ -27,11 +28,14 @@ import { cn } from '@/lib/utils'
  *
  * ## O que mudou na segunda passada
  *
- * 1. **O tópico agora recolhe.** Depois da importação das provas, o subtópico
- *    passou a ser o TÍTULO DE CADA PROVA — um módulo com 40 provas despejava 40
- *    linhas de uma vez ao ser aberto, e o catálogo virava uma lista de rolagem
- *    infinita em que nada se achava. Agora cada nível abre sob demanda e a
- *    linha do tópico diz quantas provas existem lá dentro.
+ * 1. **Cada segmento do caminho é um nível que recolhe.** A importação grava o
+ *    caminho inteiro no nome do tópico ("1º PERÍODO › HAM I"), e a árvore
+ *    mostrava isso como está: uma linha por caminho completo, doze seguidas
+ *    começando por "1º PERÍODO ›", todas cortadas na largura da coluna
+ *    justamente na parte que as diferencia. Agora "1º PERÍODO" é uma pasta e
+ *    "HAM I" está dentro dela. Idem para os subtópicos, que depois da
+ *    importação são o TÍTULO DE CADA PROVA — um módulo com 40 provas despejava
+ *    40 linhas de uma vez ao ser aberto.
  *
  * 2. **A contagem virou peso visível.** Além do número, cada módulo mostra uma
  *    barra proporcional à fatia dele no banco. É o que responde de relance
@@ -89,12 +93,28 @@ export function ArvoreDoBanco({
   )
   const totalGeral = useMemo(() => totalDaArvore(arvore), [arvore])
 
-  function alternar(campo: keyof SelecaoDaArvore, id: string) {
+  /**
+   * Liga ou desliga um conjunto de ids de uma vez.
+   *
+   * Um ramo intermediário ("1º PERÍODO") não tem id próprio — ele é os tópicos
+   * que estão embaixo dele. Marcar o ramo tem que marcar todos, e desmarcar só
+   * quando todos já estão marcados; senão clicar num período parcialmente
+   * escolhido apagaria a escolha em vez de completá-la.
+   */
+  function alternarVarios(campo: keyof SelecaoDaArvore, ids: string[]) {
+    if (ids.length === 0) return
     const atual = selecao[campo]
+    const todosMarcados = ids.every((id) => atual.includes(id))
     onChange({
       ...selecao,
-      [campo]: atual.includes(id) ? atual.filter((i) => i !== id) : [...atual, id],
+      [campo]: todosMarcados
+        ? atual.filter((id) => !ids.includes(id))
+        : Array.from(new Set([...atual, ...ids])),
     })
+  }
+
+  function alternar(campo: keyof SelecaoDaArvore, id: string) {
+    alternarVarios(campo, [id])
   }
 
   function alternarAberto(id: string) {
@@ -177,6 +197,7 @@ export function ArvoreDoBanco({
               onAlternarAberto={alternarAberto}
               selecao={selecao}
               onEscolher={alternar}
+              onEscolherVarios={alternarVarios}
             />
           ))
         )}
@@ -199,6 +220,7 @@ function Modulo({
   onAlternarAberto,
   selecao,
   onEscolher,
+  onEscolherVarios,
 }: {
   modulo: ModuloDaArvore
   /** Fatia do módulo em relação ao maior módulo, de 0 a 1. */
@@ -208,6 +230,7 @@ function Modulo({
   onAlternarAberto: (id: string) => void
   selecao: SelecaoDaArvore
   onEscolher: (campo: keyof SelecaoDaArvore, id: string) => void
+  onEscolherVarios: (campo: keyof SelecaoDaArvore, ids: string[]) => void
 }) {
   const escolhido = selecao.moduloIds.includes(modulo._id)
   const aberto = buscando || abertos.includes(modulo._id)
@@ -220,7 +243,7 @@ function Modulo({
           onClick={() => onAlternarAberto(modulo._id)}
           aria-label={aberto ? `Recolher ${modulo.nome}` : `Expandir ${modulo.nome}`}
           aria-expanded={aberto}
-          disabled={modulo.topicos.length === 0}
+          disabled={modulo.ramos.length === 0}
           className="flex w-6 flex-none items-center justify-center rounded-lg text-muted-foreground transition hover:bg-muted disabled:opacity-25"
         >
           <ChevronRight className={cn('h-3.5 w-3.5 transition-transform', aberto && 'rotate-90')} />
@@ -237,7 +260,7 @@ function Modulo({
               : 'hover:bg-muted',
           )}
         >
-          <Marca escolhido={escolhido} icone={<Layers className="h-3 w-3" />} />
+          <Marca estado={escolhido ? 'marcado' : 'vazio'} icone={<Layers className="h-3 w-3" />} />
           <span className="min-w-0 flex-1">
             <span className="block truncate text-[13px] font-semibold">{modulo.nome}</span>
             {/* A barra é o peso do módulo no banco. Fica sob o nome, fina, para
@@ -267,15 +290,19 @@ function Modulo({
             transition={{ duration: 0.18, ease: 'easeOut' }}
             className="ml-3 overflow-hidden border-l border-border pl-1"
           >
-            {modulo.topicos.map((topico) => (
-              <Topico
-                key={topico._id}
-                topico={topico}
+            {modulo.ramos.map((ramo) => (
+              <Ramo
+                key={ramo.chave}
+                ramo={ramo}
+                // A chave do ramo já carrega o caminho; prefixar com o módulo
+                // impede que "1º PERÍODO" de dois módulos abra junto.
+                prefixo={modulo._id}
                 buscando={buscando}
-                aberto={buscando || abertos.includes(topico._id)}
-                onAlternarAberto={() => onAlternarAberto(topico._id)}
+                abertos={abertos}
+                onAlternarAberto={onAlternarAberto}
                 selecao={selecao}
                 onEscolher={onEscolher}
+                onEscolherVarios={onEscolherVarios}
               />
             ))}
           </motion.div>
@@ -285,31 +312,50 @@ function Modulo({
   )
 }
 
-function Topico({
-  topico,
+/**
+ * Um segmento do caminho — recursivo, porque o caminho pode ter a profundidade
+ * que a organização das provas tiver.
+ *
+ * O ramo é sempre selecionável, tenha ele um tópico próprio ou não: marcar
+ * "1º PERÍODO" marca os tópicos todos que estão embaixo. Quando parte deles já
+ * está marcada, a caixa mostra o traço parcial — dizer "marcado" ali seria
+ * mentir sobre o que o filtro está fazendo.
+ */
+function Ramo({
+  ramo,
+  prefixo,
   buscando,
-  aberto,
+  abertos,
   onAlternarAberto,
   selecao,
   onEscolher,
+  onEscolherVarios,
 }: {
-  topico: TopicoDaArvore
+  ramo: RamoDaArvore
+  prefixo: string
   buscando: boolean
-  aberto: boolean
-  onAlternarAberto: () => void
+  abertos: string[]
+  onAlternarAberto: (id: string) => void
   selecao: SelecaoDaArvore
   onEscolher: (campo: keyof SelecaoDaArvore, id: string) => void
+  onEscolherVarios: (campo: keyof SelecaoDaArvore, ids: string[]) => void
 }) {
-  const escolhido = selecao.topicoIds.includes(topico._id)
-  const temFilhos = topico.subtopicos.length > 0
+  const chave = `${prefixo}/${ramo.chave}`
+  const subtopicos = ramo.topico?.subtopicos || []
+  const temFilhos = ramo.ramos.length > 0 || subtopicos.length > 0
+  const aberto = buscando || abertos.includes(chave)
+
+  const ids = useMemo(() => topicosDoRamo(ramo), [ramo])
+  const marcados = ids.filter((id) => selecao.topicoIds.includes(id)).length
+  const estado = marcados === 0 ? 'vazio' : marcados === ids.length ? 'marcado' : 'parcial'
 
   return (
     <div>
       <div className="flex items-center gap-0.5">
         <button
           type="button"
-          onClick={onAlternarAberto}
-          aria-label={aberto ? `Recolher ${topico.nome}` : `Expandir ${topico.nome}`}
+          onClick={() => onAlternarAberto(chave)}
+          aria-label={aberto ? `Recolher ${ramo.nome}` : `Expandir ${ramo.nome}`}
           aria-expanded={aberto}
           disabled={!temFilhos}
           className="flex h-8 w-5 flex-none items-center justify-center rounded text-muted-foreground transition hover:bg-muted disabled:opacity-0"
@@ -319,24 +365,26 @@ function Topico({
 
         <button
           type="button"
-          onClick={() => onEscolher('topicoIds', topico._id)}
-          aria-pressed={escolhido}
+          onClick={() => onEscolherVarios('topicoIds', ids)}
+          aria-pressed={estado === 'marcado'}
           className={cn(
             'flex min-w-0 flex-1 items-center gap-2 rounded-lg px-2 py-1.5 text-left transition active:scale-[0.99]',
-            escolhido
+            estado !== 'vazio'
               ? 'bg-primary/12 text-primary shadow-[inset_2px_0_0_hsl(var(--primary))]'
               : 'hover:bg-muted',
           )}
         >
-          <Marca escolhido={escolhido} />
-          <span className="min-w-0 flex-1 truncate text-[12.5px]">{topico.nome}</span>
+          <Marca estado={estado} />
+          <span className="min-w-0 flex-1 truncate text-[12.5px]">{ramo.nome}</span>
+          {/* Quantos itens estão escondidos aí dentro. Some ao abrir: com o
+              conteúdo à vista, o número vira ruído ao lado da contagem real. */}
           {temFilhos && !aberto ? (
             <span className="flex-none rounded bg-muted px-1 text-[10px] tabular-nums text-muted-foreground">
-              {topico.subtopicos.length}
+              {ramo.ramos.length || subtopicos.length}
             </span>
           ) : null}
           <span className="flex-none text-[11px] tabular-nums opacity-60">
-            {topico.totalQuestoes.toLocaleString('pt-BR')}
+            {ramo.totalQuestoes.toLocaleString('pt-BR')}
           </span>
         </button>
       </div>
@@ -350,7 +398,21 @@ function Topico({
             transition={{ duration: 0.16, ease: 'easeOut' }}
             className="ml-3 overflow-hidden border-l border-border pl-1"
           >
-            {topico.subtopicos.map((sub) => {
+            {ramo.ramos.map((filho) => (
+              <Ramo
+                key={filho.chave}
+                ramo={filho}
+                prefixo={prefixo}
+                buscando={buscando}
+                abertos={abertos}
+                onAlternarAberto={onAlternarAberto}
+                selecao={selecao}
+                onEscolher={onEscolher}
+                onEscolherVarios={onEscolherVarios}
+              />
+            ))}
+
+            {subtopicos.map((sub) => {
               const subEscolhido = selecao.subtopicoIds.includes(sub._id)
               return (
                 <button
@@ -365,7 +427,7 @@ function Topico({
                       : 'hover:bg-muted',
                   )}
                 >
-                  <Marca escolhido={subEscolhido} />
+                  <Marca estado={subEscolhido ? 'marcado' : 'vazio'} />
                   <span
                     className={cn(
                       'min-w-0 flex-1 truncate text-[12px]',
@@ -388,23 +450,39 @@ function Topico({
 }
 
 /**
- * A caixinha de escolha.
+ * A caixinha de escolha, em três estados.
  *
- * Marcada, ela mostra o traço da confirmação — o estado não é só a cor de
- * fundo. Quem não distingue verde de cinza precisa ver a diferença mesmo assim.
+ * Marcada, ela mostra o traço da confirmação; parcialmente marcada, um traço
+ * horizontal. O estado não é só a cor de fundo — quem não distingue verde de
+ * cinza precisa ver a diferença mesmo assim, e "alguns filhos escolhidos"
+ * precisa se distinguir de "todos".
  */
-function Marca({ escolhido, icone }: { escolhido: boolean; icone?: React.ReactNode }) {
+function Marca({
+  estado,
+  icone,
+}: {
+  estado: 'vazio' | 'parcial' | 'marcado'
+  icone?: React.ReactNode
+}) {
   return (
     <span
       aria-hidden
       className={cn(
         'flex h-4 w-4 flex-none items-center justify-center rounded-[5px] border transition',
-        escolhido
+        estado === 'marcado'
           ? 'border-primary bg-primary text-primary-foreground'
-          : 'border-border text-muted-foreground/60',
+          : estado === 'parcial'
+            ? 'border-primary bg-primary/20 text-primary'
+            : 'border-border text-muted-foreground/60',
       )}
     >
-      {escolhido ? <Check className="h-2.5 w-2.5" strokeWidth={3.5} /> : icone}
+      {estado === 'marcado' ? (
+        <Check className="h-2.5 w-2.5" strokeWidth={3.5} />
+      ) : estado === 'parcial' ? (
+        <Minus className="h-2.5 w-2.5" strokeWidth={3.5} />
+      ) : (
+        icone
+      )}
     </span>
   )
 }

@@ -23,13 +23,49 @@ export interface NoDeHierarquia {
 }
 
 export interface ModuloDaArvore extends NoDeHierarquia {
+  /** Todos os tópicos do módulo, em lista plana. */
   topicos: TopicoDaArvore[]
+  /** Os mesmos tópicos, quebrados nos segmentos do nome. Ver `montarRamos`. */
+  ramos: RamoDaArvore[]
 }
 
 export interface TopicoDaArvore extends NoDeHierarquia {
   moduloId: string
   subtopicos: NoDeHierarquia[]
 }
+
+/**
+ * Um segmento do caminho de um tópico.
+ *
+ * A importação das provas grava o caminho inteiro no NOME do tópico, unido por
+ * " › " — "1º PERÍODO › HAM I". Isso é proposital: usar só o último segmento
+ * faria "HAM I" do 1º período e "HAM I" do 2º se fundirem num tópico só (ver
+ * lib/banco/importar-provas.ts).
+ *
+ * O preço é que a árvore mostrava uma linha por caminho completo, achatada:
+ * doze linhas "1º PERÍODO › ..." seguidas de doze "2º PERÍODO › ...", todas
+ * cortadas no meio pela largura da coluna, sem nada em comum visível entre as
+ * do mesmo período. O nome mais longo — justamente o que diferencia uma linha
+ * da outra — era o primeiro a ser cortado.
+ *
+ * `montarRamos` desfaz o achatamento na LEITURA: cada segmento vira um nível
+ * que abre e fecha. O dado no banco não muda; o que muda é que "1º PERÍODO"
+ * passa a ser uma pasta com os módulos dele dentro.
+ */
+export interface RamoDaArvore {
+  /** O caminho até aqui, dentro do módulo — identidade estável para abrir/fechar. */
+  chave: string
+  /** Só o segmento, sem o caminho. */
+  nome: string
+  /** Soma do ramo inteiro: o tópico daqui (se houver) mais os sub-ramos. */
+  totalQuestoes: number
+  /** O tópico que termina exatamente neste segmento, quando existe. */
+  topico?: TopicoDaArvore
+  ramos: RamoDaArvore[]
+}
+
+/** O que a importação usa para unir os segmentos do caminho. */
+export const SEPARADOR_DE_CAMINHO = ' › '
 
 interface ModuloBruto {
   _id: string
@@ -117,13 +153,97 @@ export function montarArvore(
         nome: m.nome,
         totalQuestoes: m.totalQuestoes ?? filhos.reduce((s, t) => s + t.totalQuestoes, 0),
         topicos: filhos,
+        ramos: montarRamos(filhos),
       }
     })
-    .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'))
+    .sort(compararNomes)
+}
+
+/**
+ * Quebra os tópicos nos segmentos do nome e devolve os níveis aninhados.
+ *
+ * "1º PERÍODO › HAM I" e "1º PERÍODO › SOI I" viram um ramo "1º PERÍODO" com
+ * dois filhos. Um tópico sem separador no nome (o caso de quem cadastrou a
+ * hierarquia à mão) vira um ramo de um nível só, com o tópico nele — ou seja,
+ * a árvore antiga continua saindo igual, sem nenhum caso especial.
+ *
+ * A contagem de um ramo intermediário é a soma do que está abaixo dele; a de um
+ * ramo que também É um tópico soma o próprio total, porque as questões daquele
+ * tópico não estão em nenhum dos filhos.
+ */
+export function montarRamos(topicos: TopicoDaArvore[]): RamoDaArvore[] {
+  const raizes: RamoDaArvore[] = []
+  const porChave = new Map<string, RamoDaArvore>()
+
+  for (const topico of topicos) {
+    const segmentos = separarCaminho(topico.nome)
+    let nivel = raizes
+    let chave = ''
+
+    segmentos.forEach((nome, i) => {
+      chave = chave ? `${chave}${SEPARADOR_DE_CAMINHO}${nome}` : nome
+      let ramo = porChave.get(chave)
+      if (!ramo) {
+        ramo = { chave, nome, totalQuestoes: 0, ramos: [] }
+        porChave.set(chave, ramo)
+        nivel.push(ramo)
+      }
+      // Dois tópicos com o mesmo caminho não existem — o código do tópico é
+      // único por módulo e sai do nome. Se acontecer, o primeiro fica: perder
+      // um é melhor do que trocar de lugar a cada renderização.
+      if (i === segmentos.length - 1 && !ramo.topico) ramo.topico = topico
+      nivel = ramo.ramos
+    })
+  }
+
+  somarRamos(raizes)
+  return ordenarRamos(raizes)
+}
+
+/** "1º PERÍODO › HAM I" → ["1º PERÍODO", "HAM I"]. */
+export function separarCaminho(nome: string): string[] {
+  const partes = String(nome || '')
+    .split('›')
+    .map((p) => p.trim())
+    .filter(Boolean)
+  // Nome vazio ainda precisa render alguma coisa; some-lo faria o tópico
+  // desaparecer da árvore sem que a contagem do módulo mudasse.
+  return partes.length > 0 ? partes : [String(nome || '').trim() || 'Sem nome']
+}
+
+function somarRamos(ramos: RamoDaArvore[]): number {
+  let soma = 0
+  for (const ramo of ramos) {
+    ramo.totalQuestoes = (ramo.topico?.totalQuestoes || 0) + somarRamos(ramo.ramos)
+    soma += ramo.totalQuestoes
+  }
+  return soma
+}
+
+function ordenarRamos(ramos: RamoDaArvore[]): RamoDaArvore[] {
+  for (const ramo of ramos) ramo.ramos = ordenarRamos(ramo.ramos)
+  return ramos.sort(compararNomes)
+}
+
+/** Todos os ids de tópico dentro de um ramo — o ramo inteiro é selecionável. */
+export function topicosDoRamo(ramo: RamoDaArvore): string[] {
+  const ids = ramo.topico ? [ramo.topico._id] : []
+  for (const filho of ramo.ramos) ids.push(...topicosDoRamo(filho))
+  return ids
+}
+
+/**
+ * Ordem alfabética com números lidos como números.
+ *
+ * Sem `numeric`, "10º PERÍODO" vem antes de "2º PERÍODO" — a grade da faculdade
+ * apareceria fora de ordem justamente no nível que existe para dar ordem.
+ */
+function compararNomes(a: { nome: string }, b: { nome: string }): number {
+  return a.nome.localeCompare(b.nome, 'pt-BR', { numeric: true })
 }
 
 function ordenarPorNome<T extends { nome: string }>(lista: T[]): T[] {
-  return [...lista].sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'))
+  return [...lista].sort(compararNomes)
 }
 
 /**
@@ -149,7 +269,10 @@ export function filtrarArvore(arvore: ModuloDaArvore[], termo: string): ModuloDa
           return subtopicos.length > 0 ? { ...topico, subtopicos } : null
         })
         .filter(Boolean) as TopicoDaArvore[]
-      return topicos.length > 0 ? { ...modulo, topicos } : null
+      // Os ramos são remontados a partir dos tópicos que sobraram: manter os
+      // ramos originais mostraria níveis vazios, com a contagem do que a busca
+      // acabou de esconder.
+      return topicos.length > 0 ? { ...modulo, topicos, ramos: montarRamos(topicos) } : null
     })
     .filter(Boolean) as ModuloDaArvore[]
 }

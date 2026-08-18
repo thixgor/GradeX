@@ -3,6 +3,7 @@ import {
   descreverCaminho,
   filtrarArvore,
   montarArvore,
+  topicosDoRamo,
   paraBusca,
   paraCodigo,
   totalDaArvore,
@@ -151,5 +152,55 @@ describe('experiência gratuita', () => {
     })
     expect(caminho).toBe('Medicina › Período 1')
     expect(etiquetas).toEqual(['Objetiva', 'Difícil', '2023'])
+  })
+})
+
+describe('montarRamos', () => {
+  // O caminho que a importação das provas grava no nome do tópico.
+  const topicosDeProva = [
+    { _id: 't1', moduloId: 'm1', nome: '1º PERÍODO › HAM I', totalQuestoes: 95 },
+    { _id: 't2', moduloId: 'm1', nome: '1º PERÍODO › SOI I', totalQuestoes: 131 },
+    { _id: 't3', moduloId: 'm1', nome: '2º PERÍODO › HAM II', totalQuestoes: 80 },
+    { _id: 't4', moduloId: 'm1', nome: '10º PERÍODO › INT', totalQuestoes: 10 },
+  ]
+
+  const arvore = montarArvore([{ _id: 'm1', nome: 'Medicina' }], topicosDeProva, [])
+
+  it('quebra o caminho em níveis em vez de uma linha achatada', () => {
+    const ramos = arvore[0].ramos
+    expect(ramos.map((r) => r.nome)).toEqual(['1º PERÍODO', '2º PERÍODO', '10º PERÍODO'])
+    expect(ramos[0].ramos.map((r) => r.nome)).toEqual(['HAM I', 'SOI I'])
+  })
+
+  it('soma o ramo inteiro no nível de cima', () => {
+    expect(arvore[0].ramos[0].totalQuestoes).toBe(226)
+    expect(arvore[0].ramos[1].totalQuestoes).toBe(80)
+  })
+
+  it('só o segmento final carrega o tópico selecionável', () => {
+    const periodo = arvore[0].ramos[0]
+    expect(periodo.topico).toBeUndefined()
+    expect(periodo.ramos[0].topico?._id).toBe('t1')
+  })
+
+  it('devolve todos os tópicos de um ramo, para o clique no nível de cima', () => {
+    expect(topicosDoRamo(arvore[0].ramos[0]).sort()).toEqual(['t1', 't2'])
+  })
+
+  it('tópico sem separador continua sendo um nível só', () => {
+    const simples = montarArvore(
+      [{ _id: 'm1', nome: 'Cardiologia' }],
+      [{ _id: 't1', moduloId: 'm1', nome: 'Arritmias', totalQuestoes: 12 }],
+      [],
+    )
+    expect(simples[0].ramos).toHaveLength(1)
+    expect(simples[0].ramos[0].nome).toBe('Arritmias')
+    expect(simples[0].ramos[0].topico?._id).toBe('t1')
+  })
+
+  it('a busca remonta os ramos com o que sobrou', () => {
+    const achado = filtrarArvore(arvore, 'soi')
+    expect(achado[0].ramos.map((r) => r.nome)).toEqual(['1º PERÍODO'])
+    expect(achado[0].ramos[0].ramos.map((r) => r.nome)).toEqual(['SOI I'])
   })
 })
