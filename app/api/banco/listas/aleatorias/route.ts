@@ -81,8 +81,8 @@ export async function POST(request: NextRequest) {
       matchStage.dificuldade = body.dificuldade
     }
     // Um ano (compatibilidade) ou vários — a tela manda `anos`.
-    const anos = Array.isArray((body as any).anos)
-      ? (body as any).anos.map((a: any) => Number(a)).filter((a: number) => Number.isFinite(a))
+    const anos = Array.isArray(body.anos)
+      ? body.anos.map((a) => Number(a)).filter((a) => Number.isFinite(a))
       : body.ano
         ? [Number(body.ano)]
         : []
@@ -93,15 +93,46 @@ export async function POST(request: NextRequest) {
     // da questão passou a vir do nome da prova. Rótulo mal formado é
     // descartado — um filtro que nunca casa devolveria "nenhuma questão" sem
     // dizer por quê.
-    const periodos: string[] = Array.isArray((body as any).periodos)
-      ? (body as any).periodos
-          .map((p: any) => String(p).trim())
-          .filter((p: string) => interpretarPeriodoLetivo(p) !== null)
+    const periodos: string[] = Array.isArray(body.periodos)
+      ? body.periodos.map((p) => String(p).trim()).filter((p) => interpretarPeriodoLetivo(p) !== null)
       : []
     if (periodos.length > 0) matchStage.periodoLetivo = { $in: periodos }
 
-    // Se o usuário quer excluir questões já resolvidas, buscar IDs resolvidos
-    if (body.excluirJaResolvidas) {
+    if (body.comImagem) {
+      matchStage.imagemUrl = { $exists: true, $ne: '' }
+    }
+    if (body.comExplicacao) {
+      matchStage.explicacao = { $exists: true, $ne: '' }
+    }
+
+    /*
+     * Já resolvidas versus só as erradas são mutuamente exclusivos — a
+     * segunda EXIGE ter resolvido, a primeira exclui quem resolveu. A tela
+     * nunca manda os dois juntos, e aqui `apenasErradas` decide sozinho
+     * quando isso acontecer: uma lista de revisão de erros é o pedido mais
+     * específico dos dois.
+     */
+    if (body.apenasErradas) {
+      const erradas = await db
+        .collection('banco_resolucoes')
+        .aggregate([
+          { $match: { userId: new ObjectId(session.userId) } },
+          { $sort: { createdAt: -1 } },
+          // A última tentativa de cada questão é o que decide "ainda está
+          // errada" — quem errou e depois acertou não pertence mais aqui.
+          { $group: { _id: '$questaoId', ultimaCorreta: { $first: '$correta' } } },
+          { $match: { ultimaCorreta: false } },
+        ])
+        .toArray()
+
+      if (erradas.length === 0) {
+        return NextResponse.json(
+          { error: 'Você ainda não errou nenhuma questão para revisar' },
+          { status: 400 },
+        )
+      }
+      matchStage._id = { $in: erradas.map((r) => new ObjectId(String(r._id))) }
+    } else if (body.excluirJaResolvidas) {
       const resolucoes = await db.collection('banco_resolucoes')
         .distinct('questaoId', { userId: new ObjectId(session.userId) })
       if (resolucoes.length > 0) {

@@ -7,13 +7,16 @@ import {
   Check,
   ChevronRight,
   Clock,
+  ImageIcon,
   Layers,
   Loader2,
+  MessageSquareText,
   PenLine,
   Shuffle,
   Sparkles,
   Target,
   X,
+  XCircle,
   Zap,
 } from 'lucide-react'
 import { Portal } from '@/components/ui/portal'
@@ -552,29 +555,64 @@ function PassoRecorte({
         </Campo>
       ) : null}
 
-      <button
-        type="button"
-        data-marcado={filtros.excluirJaResolvidas}
-        onClick={() => onChange({ ...filtros, excluirJaResolvidas: !filtros.excluirJaResolvidas })}
-        className="vidro-pastilha flex w-full items-center gap-3 rounded-2xl p-3 text-left"
-      >
-        <span
-          className={cn(
-            'flex h-5 w-5 flex-none items-center justify-center rounded-md border transition',
-            filtros.excluirJaResolvidas
-              ? 'border-primary bg-primary text-primary-foreground'
-              : 'border-foreground/25',
-          )}
-        >
-          {filtros.excluirJaResolvidas ? <Check className="h-3 w-3" /> : null}
-        </span>
-        <span className="min-w-0">
-          <span className="block text-[13px] font-semibold">Só o que eu ainda não resolvi</span>
-          <span className="block text-[11px] text-muted-foreground">
-            Evita repetir questão que você já viu
-          </span>
-        </span>
-      </button>
+      {/* ── O que já foi resolvido ────────────────────────────────────
+          As duas opções são mutuamente exclusivas: "ainda não resolvi" exclui
+          quem já respondeu, "só as que errei" exige ter respondido errado.
+          Marcar uma desmarca a outra — nunca fazem sentido juntas. */}
+      <Campo titulo="Sobre o que você já resolveu" opcional>
+        <div className="grid grid-cols-2 gap-2">
+          <ToggleCurto
+            marcado={filtros.excluirJaResolvidas}
+            onClick={() =>
+              onChange({
+                ...filtros,
+                excluirJaResolvidas: !filtros.excluirJaResolvidas,
+                apenasErradas: false,
+              })
+            }
+            icone={<Check className="h-3.5 w-3.5" />}
+            titulo="Ainda não resolvi"
+            descricao="Evita repetir questão"
+          />
+          <ToggleCurto
+            marcado={filtros.apenasErradas}
+            onClick={() =>
+              onChange({
+                ...filtros,
+                apenasErradas: !filtros.apenasErradas,
+                excluirJaResolvidas: false,
+              })
+            }
+            icone={<XCircle className="h-3.5 w-3.5" />}
+            titulo="Só as que errei"
+            descricao="Lista de revisão"
+          />
+        </div>
+      </Campo>
+
+      {/* ── Conteúdo da questão ───────────────────────────────────────
+          "Com imagem" é o pedido mais direto: ECG, radiografia, lâmina — quem
+          quer treinar leitura de imagem não pode sortear questão de texto
+          puro. "Com resposta comentada" é para quem estuda pela explicação,
+          não só treina. */}
+      <Campo titulo="Conteúdo da questão" opcional>
+        <div className="grid grid-cols-2 gap-2">
+          <ToggleCurto
+            marcado={filtros.comImagem}
+            onClick={() => onChange({ ...filtros, comImagem: !filtros.comImagem })}
+            icone={<ImageIcon className="h-3.5 w-3.5" />}
+            titulo="Só com imagem"
+            descricao="ECG, raio-X, lâmina…"
+          />
+          <ToggleCurto
+            marcado={filtros.comExplicacao}
+            onClick={() => onChange({ ...filtros, comExplicacao: !filtros.comExplicacao })}
+            icone={<MessageSquareText className="h-3.5 w-3.5" />}
+            titulo="Com comentário"
+            descricao="Resposta explicada"
+          />
+        </div>
+      </Campo>
     </div>
   )
 }
@@ -746,6 +784,49 @@ function PastilhaCurta({
       )}
     >
       {children}
+    </button>
+  )
+}
+
+/**
+ * Um interruptor com ícone, título e descrição — a versão curta da `Pastilha`
+ * grande, para caber duas por linha nos filtros opcionais deste passo.
+ */
+function ToggleCurto({
+  marcado,
+  onClick,
+  icone,
+  titulo,
+  descricao,
+}: {
+  marcado: boolean
+  onClick: () => void
+  icone: React.ReactNode
+  titulo: string
+  descricao: string
+}) {
+  return (
+    <button
+      type="button"
+      data-marcado={marcado}
+      onClick={onClick}
+      aria-pressed={marcado}
+      className="vidro-pastilha flex items-center gap-2.5 rounded-2xl p-2.5 text-left"
+    >
+      <span
+        className={cn(
+          'flex h-8 w-8 flex-none items-center justify-center rounded-xl transition',
+          marcado ? 'bg-primary text-primary-foreground' : 'bg-foreground/5 text-muted-foreground',
+        )}
+      >
+        {icone}
+      </span>
+      <span className="min-w-0">
+        <span className="block truncate text-[12.5px] font-bold leading-tight">{titulo}</span>
+        <span className="block truncate text-[10.5px] leading-snug text-muted-foreground">
+          {descricao}
+        </span>
+      </span>
     </button>
   )
 }

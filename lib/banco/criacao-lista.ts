@@ -25,6 +25,17 @@ export interface FiltrosDaLista {
   /** Períodos letivos escolhidos, ex.: ["2026.2"]. Ver lib/banco/periodo-letivo.ts. */
   periodos: string[]
   excluirJaResolvidas: boolean
+  /**
+   * Sorteia só entre as que a pessoa já respondeu errado — a lista de
+   * revisão de erros. Mutuamente exclusivo com `excluirJaResolvidas`: uma
+   * exige ter resolvido, a outra exclui quem resolveu. A tela cuida disso
+   * ligando uma e desligando a outra; aqui é só o dado.
+   */
+  apenasErradas: boolean
+  /** Só questão com imagem — ECG, radiografia, lâmina de histologia. */
+  comImagem: boolean
+  /** Só questão com a resposta comentada preenchida. */
+  comExplicacao: boolean
 }
 
 export interface ConfiguracaoDaLista extends FiltrosDaLista {
@@ -42,6 +53,9 @@ export const FILTROS_VAZIOS: FiltrosDaLista = {
   anos: [],
   periodos: [],
   excluirJaResolvidas: false,
+  apenasErradas: false,
+  comImagem: false,
+  comExplicacao: false,
 }
 
 /** Atalhos de quantidade. Números redondos que cobrem do treino curto ao simulado. */
@@ -63,7 +77,10 @@ export function contarFiltros(filtros: FiltrosDaLista): number {
     (filtros.dificuldade ? 1 : 0) +
     (filtros.anos.length > 0 ? 1 : 0) +
     (filtros.periodos.length > 0 ? 1 : 0) +
-    (filtros.excluirJaResolvidas ? 1 : 0)
+    (filtros.excluirJaResolvidas ? 1 : 0) +
+    (filtros.apenasErradas ? 1 : 0) +
+    (filtros.comImagem ? 1 : 0) +
+    (filtros.comExplicacao ? 1 : 0)
   )
 }
 
@@ -111,7 +128,13 @@ export function descreverLista(
   else if (config.anos.length === 1) partes.push(`de ${config.anos[0]}`)
   else if (config.anos.length > 1) partes.push(`de ${config.anos.length} anos`)
 
-  if (config.excluirJaResolvidas) partes.push('que você ainda não resolveu')
+  if (config.comImagem) partes.push('com imagem')
+  if (config.comExplicacao) partes.push('com resposta comentada')
+
+  // `apenasErradas` e `excluirJaResolvidas` nunca vêm juntos (a tela impede),
+  // mas a frase é escrita para não mentir se algum dia vierem.
+  if (config.apenasErradas) partes.push('que você errou')
+  else if (config.excluirJaResolvidas) partes.push('que você ainda não resolveu')
 
   const modo =
     config.modoResposta === 'final' ? 'com a resposta só no final' : 'corrigidas na hora'
@@ -127,11 +150,21 @@ export function descreverLista(
  * conteúdo resolve os dois problemas — e continua editável.
  */
 export function nomeSugerido(
-  config: Pick<ConfiguracaoDaLista, 'quantidade' | 'tipo' | 'dificuldade'>,
+  config: Pick<ConfiguracaoDaLista, 'quantidade' | 'tipo' | 'dificuldade'> &
+    Partial<Pick<ConfiguracaoDaLista, 'apenasErradas'>>,
   nomesDosAssuntos: string[] = [],
 ): string {
-  if (nomesDosAssuntos.length === 1) return `${nomesDosAssuntos[0]} — ${config.quantidade} questões`
-  if (nomesDosAssuntos.length > 1) return `${nomesDosAssuntos[0]} +${nomesDosAssuntos.length - 1} — ${config.quantidade} questões`
+  // "Erradas" é o recorte mais específico dos três: quem ligou isso quer o
+  // nome dizendo "revisão", não repetindo o assunto que ele já escolheu antes.
+  const prefixo = config.apenasErradas ? 'Revisão' : ''
+
+  if (nomesDosAssuntos.length === 1) {
+    return `${prefixo ? `${prefixo}: ` : ''}${nomesDosAssuntos[0]} — ${config.quantidade} questões`
+  }
+  if (nomesDosAssuntos.length > 1) {
+    return `${prefixo ? `${prefixo}: ` : ''}${nomesDosAssuntos[0]} +${nomesDosAssuntos.length - 1} — ${config.quantidade} questões`
+  }
+  if (config.apenasErradas) return `Revisão de erros — ${config.quantidade} questões`
   if (config.dificuldade) {
     return `${config.quantidade} questões ${ROTULO_DIFICULDADE[config.dificuldade]}`
   }
@@ -196,6 +229,9 @@ export function corpoDaRequisicao(config: ConfiguracaoDaLista) {
     periodos: config.periodos.length > 0 ? config.periodos : undefined,
     modoResposta: config.modoResposta,
     excluirJaResolvidas: config.excluirJaResolvidas || undefined,
+    apenasErradas: config.apenasErradas || undefined,
+    comImagem: config.comImagem || undefined,
+    comExplicacao: config.comExplicacao || undefined,
   }
 }
 
@@ -211,6 +247,9 @@ export function parametrosDeContagem(filtros: FiltrosDaLista): URLSearchParams {
   if (filtros.dificuldade) p.set('dificuldade', filtros.dificuldade)
   if (filtros.anos.length) p.set('anos', filtros.anos.join(','))
   if (filtros.periodos.length) p.set('periodos', filtros.periodos.join(','))
-  if (filtros.excluirJaResolvidas) p.set('apenasNaoResolvidas', 'true')
+  if (filtros.apenasErradas) p.set('apenasErradas', 'true')
+  else if (filtros.excluirJaResolvidas) p.set('apenasNaoResolvidas', 'true')
+  if (filtros.comImagem) p.set('comImagem', 'true')
+  if (filtros.comExplicacao) p.set('comExplicacao', 'true')
   return p
 }

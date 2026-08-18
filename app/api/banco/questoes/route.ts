@@ -59,7 +59,15 @@ export async function GET(request: NextRequest) {
       tipo: searchParams.get('tipo') as BancoQuestoesFiltros['tipo'] || undefined,
       dificuldade: searchParams.get('dificuldade') as BancoQuestoesFiltros['dificuldade'] || undefined,
       apenasNaoResolvidas: searchParams.get('apenasNaoResolvidas') === 'true',
-      busca: searchParams.get('busca') || undefined
+      apenasErradas: searchParams.get('apenasErradas') === 'true',
+      comImagem: searchParams.get('comImagem') === 'true',
+      comExplicacao: searchParams.get('comExplicacao') === 'true',
+      busca: searchParams.get('busca') || undefined,
+      ordenar: (['recentes', 'menosPraticadas', 'maisDificeis'] as const).includes(
+        searchParams.get('ordenar') as any,
+      )
+        ? (searchParams.get('ordenar') as BancoQuestoesFiltros['ordenar'])
+        : 'recentes',
     }
 
     // Parse anos param
@@ -119,6 +127,14 @@ export async function GET(request: NextRequest) {
     }
     if (periodos && periodos.length > 0) {
       matchStage.periodoLetivo = { $in: periodos }
+    }
+    if (filtros.comImagem) {
+      // `$ne: ''` além de `$exists`: bastante questão do acervo importado tem
+      // o campo criado e vazio, e isso não é "tem imagem".
+      matchStage.imagemUrl = { $exists: true, $ne: '' }
+    }
+    if (filtros.comExplicacao) {
+      matchStage.explicacao = { $exists: true, $ne: '' }
     }
 
     const pipeline: any[] = [
@@ -199,11 +215,15 @@ export async function GET(request: NextRequest) {
       }
     ]
 
-    // Filtrar apenas não resolvidas se solicitado
+    // Filtrar apenas não resolvidas se solicitado. `apenasErradas` é o
+    // oposto complementar de "esconder as que já resolvi": ele exige que
+    // TENHA resolvido, e que a última resposta tenha sido errada — os dois
+    // juntos nunca fazem sentido ao mesmo tempo, e a tela os trata como
+    // mutuamente exclusivos.
     if (filtros.apenasNaoResolvidas) {
-      pipeline.push({
-        $match: { jaResolvida: false }
-      })
+      pipeline.push({ $match: { jaResolvida: false } })
+    } else if (filtros.apenasErradas) {
+      pipeline.push({ $match: { jaResolvida: true, 'ultimaResolucao.correta': false } })
     }
 
     // Contar total
@@ -213,12 +233,38 @@ export async function GET(request: NextRequest) {
       .toArray()
     const total = countResult[0]?.total || 0
 
+    /*
+     * A ordenação por dificuldade real não é um campo do documento — é a
+     * razão entre acertos e respostas, calculada aqui. Questão sem nenhuma
+     * resposta ainda não tem taxa, e SOME para o fim: colocá-la entre as
+     * "mais difíceis" confundiria "ninguém tentou" com "quase ninguém acerta",
+     * que são coisas opostas para quem está escolhendo o que estudar.
+     */
+    if (filtros.ordenar === 'maisDificeis') {
+      pipeline.push(
+        {
+          $addFields: {
+            _temResposta: { $gt: ['$totalRespostas', 0] },
+            _taxaAcerto: {
+              $cond: [
+                { $gt: ['$totalRespostas', 0] },
+                { $divide: ['$totalAcertos', '$totalRespostas'] },
+                1,
+              ],
+            },
+          },
+        },
+        { $sort: { _temResposta: -1, _taxaAcerto: 1, createdAt: -1 } },
+        { $project: { _temResposta: 0, _taxaAcerto: 0 } },
+      )
+    } else if (filtros.ordenar === 'menosPraticadas') {
+      pipeline.push({ $sort: { totalRespostas: 1, createdAt: -1 } })
+    } else {
+      pipeline.push({ $sort: { createdAt: -1 } })
+    }
+
     // Paginação
-    pipeline.push(
-      { $sort: { createdAt: -1 } },
-      { $skip: skip },
-      { $limit: limit }
-    )
+    pipeline.push({ $skip: skip }, { $limit: limit })
 
     const questoes = await db.collection<BancoQuestao>('banco_questoes')
       .aggregate<BancoQuestaoComHierarquia>(pipeline)

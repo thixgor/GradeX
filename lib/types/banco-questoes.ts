@@ -230,12 +230,30 @@ export interface BancoQuestoesFiltros {
   tipo?: BancoQuestaoTipo
   dificuldade?: BancoDificuldade
   apenasNaoResolvidas?: boolean
+  /** Só as que a pessoa já resolveu E errou — o material de revisão mais direto que existe. */
+  apenasErradas?: boolean
+  /** Só questão com `imagemUrl` preenchido — ECG, radiografia, lâmina de histologia. */
+  comImagem?: boolean
+  /** Só questão com `explicacao` preenchida — quem quer estudar pela resposta comentada, não só treinar. */
+  comExplicacao?: boolean
   tags?: string[]
   busca?: string
   anos?: number[]
   /** Rótulos de período letivo, ex.: ["2026.2", "2026.1"]. */
   periodos?: string[]
+  ordenar?: BancoOrdenacao
 }
+
+/**
+ * Como listar as questões que casam com o filtro.
+ *
+ * - `recentes`     — as que entraram por último no banco primeiro (padrão).
+ * - `menosPraticadas` — quem tem menos respostas registradas primeiro; é o
+ *   filtro de quem quer treinar o que a turma ainda não gastou.
+ * - `maisDificeis` — menor taxa de acerto primeiro, entre as que já têm
+ *   alguma resposta; questão nunca respondida não tem taxa e fica depois.
+ */
+export type BancoOrdenacao = 'recentes' | 'menosPraticadas' | 'maisDificeis'
 
 export interface BancoPaginacao {
   page: number
@@ -327,9 +345,17 @@ export interface BancoListaAleatoriaFiltros {
   subtopicoId?: string
   tipo?: BancoQuestaoTipo
   dificuldade?: BancoDificuldade
+  /** Um ano, por compatibilidade — a tela manda `anos`. */
   ano?: number
+  anos?: number[]
+  /** Rótulos de período letivo, ex.: ["2026.2"]. */
+  periodos?: string[]
   quantidade: number
   modoResposta: BancoModoResposta
   nome: string
   excluirJaResolvidas?: boolean
+  /** Sorteia só entre as que a pessoa já errou — lista de revisão. */
+  apenasErradas?: boolean
+  comImagem?: boolean
+  comExplicacao?: boolean
 }

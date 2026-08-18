@@ -60,6 +60,19 @@ describe('descreverLista', () => {
   it('concorda no singular', () => {
     expect(descreverLista(config({ quantidade: 1 }))).toContain('1 questão ')
   })
+
+  it('descreve o conteúdo da questão', () => {
+    expect(descreverLista(config({ comImagem: true }))).toContain('com imagem')
+    expect(descreverLista(config({ comExplicacao: true }))).toContain('com resposta comentada')
+  })
+
+  it('"só as que errei" fala por si, mesmo se excluirJaResolvidas vier junto', () => {
+    // A tela nunca manda os dois juntos, mas a frase não pode dizer as duas
+    // coisas contraditórias se algum dia vierem.
+    const texto = descreverLista(config({ apenasErradas: true, excluirJaResolvidas: true }))
+    expect(texto).toContain('que você errou')
+    expect(texto).not.toContain('ainda não resolveu')
+  })
 })
 
 describe('nomeSugerido', () => {
@@ -77,6 +90,13 @@ describe('nomeSugerido', () => {
     expect(nomeSugerido({ quantidade: 30, dificuldade: 'dificil' })).toBe('30 questões difíceis')
     expect(nomeSugerido({ quantidade: 15, tipo: 'discursiva' })).toBe('15 questões discursivas')
     expect(nomeSugerido({ quantidade: 5 })).toBe('Aleatórias — 5 questões')
+  })
+
+  it('"só as que errei" vira "Revisão", mesmo com assunto escolhido', () => {
+    expect(nomeSugerido({ quantidade: 20, apenasErradas: true })).toBe('Revisão de erros — 20 questões')
+    expect(nomeSugerido({ quantidade: 20, apenasErradas: true }, ['Arritmias'])).toBe(
+      'Revisão: Arritmias — 20 questões',
+    )
   })
 })
 
@@ -120,6 +140,14 @@ describe('filtros', () => {
     expect(
       contarFiltros({ ...FILTROS_VAZIOS, tipo: 'objetiva', anos: [2023], excluirJaResolvidas: true }),
     ).toBe(3)
+    expect(
+      contarFiltros({
+        ...FILTROS_VAZIOS,
+        apenasErradas: true,
+        comImagem: true,
+        comExplicacao: true,
+      }),
+    ).toBe(3)
   })
 
   it('monta o corpo da requisição sem campos vazios', () => {
@@ -128,6 +156,13 @@ describe('filtros', () => {
     expect(corpo.tipo).toBe('objetiva')
     expect(corpo.moduloId).toBeUndefined()
     expect(corpo.dificuldade).toBeUndefined()
+  })
+
+  it('leva o conteúdo da questão e "só as que errei" para a rota de sorteio', () => {
+    const corpo = corpoDaRequisicao(config({ apenasErradas: true, comImagem: true, comExplicacao: true }))
+    expect(corpo.apenasErradas).toBe(true)
+    expect(corpo.comImagem).toBe(true)
+    expect(corpo.comExplicacao).toBe(true)
   })
 
   it('monta os parâmetros de contagem iguais aos do filtro da lista', () => {
@@ -143,5 +178,21 @@ describe('filtros', () => {
     expect(p.get('anos')).toBe('2023,2022')
     expect(p.get('apenasNaoResolvidas')).toBe('true')
     expect(p.get('limit')).toBe('1')
+  })
+
+  it('"só as que errei" manda apenasErradas, não apenasNaoResolvidas — mesmo se os dois vierem marcados', () => {
+    const p = parametrosDeContagem({
+      ...FILTROS_VAZIOS,
+      apenasErradas: true,
+      excluirJaResolvidas: true,
+    })
+    expect(p.get('apenasErradas')).toBe('true')
+    expect(p.get('apenasNaoResolvidas')).toBeNull()
+  })
+
+  it('conteúdo da questão vira parâmetro próprio', () => {
+    const p = parametrosDeContagem({ ...FILTROS_VAZIOS, comImagem: true, comExplicacao: true })
+    expect(p.get('comImagem')).toBe('true')
+    expect(p.get('comExplicacao')).toBe('true')
   })
 })

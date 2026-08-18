@@ -6,16 +6,21 @@ import Link from 'next/link'
 import { AnimatePresence, motion } from 'framer-motion'
 import { TiltCard } from '@/components/tilt-card'
 import {
+  ArrowDownWideNarrow,
   CalendarRange,
+  Check,
   Database,
   History,
+  ImageIcon,
   ListPlus,
   Loader2,
+  MessageSquareText,
   Search,
   Shuffle,
   SlidersHorizontal,
   Sparkles,
   X,
+  XCircle,
 } from 'lucide-react'
 import { AppShell, useAppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
@@ -41,6 +46,7 @@ import { PainelDeDesempenho } from '@/components/banco/painel-desempenho'
 import type {
   BancoDificuldade,
   BancoListaUsuario,
+  BancoOrdenacao,
   BancoPaginacao,
   BancoQuestaoTipo,
 } from '@/lib/types/banco-questoes'
@@ -130,7 +136,14 @@ function Conteudo() {
   const [periodosDisponiveis, setPeriodosDisponiveis] = useState<PeriodoDisponivel[]>([])
   const [anos, setAnos] = useState<number[]>([])
   const [anosDisponiveis, setAnosDisponiveis] = useState<number[]>([])
+  // "Não resolvidas" e "erradas" são mutuamente exclusivas: a primeira exclui
+  // quem já respondeu, a segunda exige ter respondido errado — nunca fazem
+  // sentido juntas. Ver o mesmo par no criador de listas.
   const [apenasNaoResolvidas, setApenasNaoResolvidas] = useState(false)
+  const [apenasErradas, setApenasErradas] = useState(false)
+  const [comImagem, setComImagem] = useState(false)
+  const [comExplicacao, setComExplicacao] = useState(false)
+  const [ordenar, setOrdenar] = useState<BancoOrdenacao>('recentes')
   const [filtrosAbertos, setFiltrosAbertos] = useState(false)
   const [arvoreAberta, setArvoreAberta] = useState(false)
 
@@ -151,7 +164,11 @@ function Conteudo() {
     !!dificuldade ||
     periodos.length > 0 ||
     anos.length > 0 ||
-    apenasNaoResolvidas
+    apenasNaoResolvidas ||
+    apenasErradas ||
+    comImagem ||
+    comExplicacao ||
+    ordenar !== 'recentes'
 
   const parametros = useMemo(() => {
     const p = new URLSearchParams()
@@ -163,10 +180,26 @@ function Conteudo() {
     if (dificuldade) p.set('dificuldade', dificuldade)
     if (periodos.length) p.set('periodos', periodos.join(','))
     if (anos.length) p.set('anos', anos.join(','))
-    if (apenasNaoResolvidas) p.set('apenasNaoResolvidas', 'true')
+    if (apenasErradas) p.set('apenasErradas', 'true')
+    else if (apenasNaoResolvidas) p.set('apenasNaoResolvidas', 'true')
+    if (comImagem) p.set('comImagem', 'true')
+    if (comExplicacao) p.set('comExplicacao', 'true')
+    if (ordenar !== 'recentes') p.set('ordenar', ordenar)
     if (buscaAplicada) p.set('busca', buscaAplicada)
     return p
-  }, [selecao, tipo, dificuldade, periodos, anos, apenasNaoResolvidas, buscaAplicada])
+  }, [
+    selecao,
+    tipo,
+    dificuldade,
+    periodos,
+    anos,
+    apenasNaoResolvidas,
+    apenasErradas,
+    comImagem,
+    comExplicacao,
+    ordenar,
+    buscaAplicada,
+  ])
 
   const carregarQuestoes = useCallback(
     async (pagina = 1) => {
@@ -314,6 +347,10 @@ function Conteudo() {
     setPeriodos([])
     setAnos([])
     setApenasNaoResolvidas(false)
+    setApenasErradas(false)
+    setComImagem(false)
+    setComExplicacao(false)
+    setOrdenar('recentes')
   }
 
   if (carregando) {
@@ -613,19 +650,82 @@ function Conteudo() {
                       </select>
                     </Campo>
 
-                    {!gratuito ? (
-                      <Campo rotulo="Já resolvidas">
-                        <label className="flex h-9 cursor-pointer items-center gap-2 text-[13px]">
-                          <input
-                            type="checkbox"
-                            checked={apenasNaoResolvidas}
-                            onChange={(e) => setApenasNaoResolvidas(e.target.checked)}
-                          />
-                          Esconder as que já resolvi
-                        </label>
-                      </Campo>
-                    ) : null}
+                    {/* Ordenar por: "recentes" continua sendo o padrão — só
+                        entra no filtro ativo (e no parâmetro da URL) quando a
+                        pessoa escolhe outra coisa. */}
+                    <Campo rotulo="Ordenar por">
+                      <div className="relative">
+                        <ArrowDownWideNarrow className="pointer-events-none absolute left-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+                        <select
+                          value={ordenar}
+                          onChange={(e) => setOrdenar(e.target.value as BancoOrdenacao)}
+                          className="h-9 w-full rounded-xl border border-border bg-background py-0 pl-7 pr-2 text-[13px] outline-none focus:border-primary/50"
+                        >
+                          <option value="recentes">Mais recentes</option>
+                          <option value="menosPraticadas">Menos praticadas</option>
+                          <option value="maisDificeis">Mais difíceis</option>
+                        </select>
+                      </div>
+                    </Campo>
                   </div>
+
+                  {/* ── Conteúdo da questão ─────────────────────────────
+                      Toggles, não checkboxes de formulário: são o mesmo
+                      vocabulário das pastilhas de período, e cabem lado a lado
+                      sem crescer a grade acima. */}
+                  <div>
+                    <Label className="text-[11px] text-muted-foreground">Conteúdo da questão</Label>
+                    <div className="mt-1.5 flex flex-wrap gap-1.5">
+                      <ToggleDeFiltro
+                        marcado={comImagem}
+                        onClick={() => setComImagem((v) => !v)}
+                        icone={<ImageIcon className="h-3.5 w-3.5" />}
+                      >
+                        Só com imagem
+                      </ToggleDeFiltro>
+                      <ToggleDeFiltro
+                        marcado={comExplicacao}
+                        onClick={() => setComExplicacao((v) => !v)}
+                        icone={<MessageSquareText className="h-3.5 w-3.5" />}
+                      >
+                        Com comentário
+                      </ToggleDeFiltro>
+                    </div>
+                  </div>
+
+                  {/* O que já foi resolvido não existe para quem é gratuito:
+                      quase todo o catálogo ainda está bloqueado para essa
+                      pessoa, e "esconder as que já resolvi" filtraria sobre um
+                      recorte que ela mal viu. */}
+                  {!gratuito ? (
+                    <div>
+                      <Label className="text-[11px] text-muted-foreground">
+                        Sobre o que você já resolveu
+                      </Label>
+                      <div className="mt-1.5 flex flex-wrap gap-1.5">
+                        <ToggleDeFiltro
+                          marcado={apenasNaoResolvidas}
+                          onClick={() => {
+                            setApenasNaoResolvidas((v) => !v)
+                            setApenasErradas(false)
+                          }}
+                          icone={<Check className="h-3.5 w-3.5" />}
+                        >
+                          Ainda não resolvi
+                        </ToggleDeFiltro>
+                        <ToggleDeFiltro
+                          marcado={apenasErradas}
+                          onClick={() => {
+                            setApenasErradas((v) => !v)
+                            setApenasNaoResolvidas(false)
+                          }}
+                          icone={<XCircle className="h-3.5 w-3.5" />}
+                        >
+                          Só as que errei
+                        </ToggleDeFiltro>
+                      </div>
+                    </div>
+                  ) : null}
                 </div>
               </motion.div>
             ) : null}
@@ -680,6 +780,21 @@ function Conteudo() {
             ) : null}
             {apenasNaoResolvidas ? (
               <Pastilha rotulo="Não resolvidas" onRemover={() => setApenasNaoResolvidas(false)} />
+            ) : null}
+            {apenasErradas ? (
+              <Pastilha rotulo="Só as que errei" onRemover={() => setApenasErradas(false)} />
+            ) : null}
+            {comImagem ? (
+              <Pastilha rotulo="Com imagem" onRemover={() => setComImagem(false)} />
+            ) : null}
+            {comExplicacao ? (
+              <Pastilha rotulo="Com comentário" onRemover={() => setComExplicacao(false)} />
+            ) : null}
+            {ordenar !== 'recentes' ? (
+              <Pastilha
+                rotulo={ordenar === 'maisDificeis' ? 'Mais difíceis' : 'Menos praticadas'}
+                onRemover={() => setOrdenar('recentes')}
+              />
             ) : null}
             {buscaAplicada ? (
               <Pastilha
@@ -961,5 +1076,37 @@ function Campo({ rotulo, children }: { rotulo: string; children: React.ReactNode
       <Label className="text-[11px] text-muted-foreground">{rotulo}</Label>
       <div className="mt-1">{children}</div>
     </div>
+  )
+}
+
+/**
+ * Um filtro de liga/desliga, para o que não é uma escolha entre opções (tipo,
+ * dificuldade) mas sim "com isso" ou "sem isso" — imagem, comentário,
+ * resolução. Mesmo vocabulário visual das pastilhas de período, só que sem a
+ * contagem: contar "quantas têm imagem" custaria uma consulta a mais só para
+ * um número que ninguém pediu.
+ */
+function ToggleDeFiltro({
+  marcado,
+  onClick,
+  icone,
+  children,
+}: {
+  marcado: boolean
+  onClick: () => void
+  icone: React.ReactNode
+  children: React.ReactNode
+}) {
+  return (
+    <button
+      type="button"
+      data-marcado={marcado}
+      aria-pressed={marcado}
+      onClick={onClick}
+      className="tecla inline-flex h-9 flex-none items-center gap-1.5 px-3 text-xs font-semibold"
+    >
+      {icone}
+      {children}
+    </button>
   )
 }
