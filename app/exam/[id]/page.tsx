@@ -2395,7 +2395,10 @@ ${respostaAluno}`
         style={
           isScrollMode
             ? undefined
-            : ({ '--anotacao-espaco-inferior': 'calc(4.75rem + env(safe-area-inset-bottom))' } as React.CSSProperties)
+            // 4.75rem cobre a barra de navegação; os +5.25rem por cima são o
+            // botão "Questões" (bottom-24 + sua própria altura) — sem eles o
+            // FAB de anotação nascia embaixo do mapa de questões, quase colado.
+            : ({ '--anotacao-espaco-inferior': 'calc(10rem + env(safe-area-inset-bottom))' } as React.CSSProperties)
         }
       >
         {/* Verificador de Banimento */}
