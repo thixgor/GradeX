@@ -4,8 +4,10 @@ import { notFound } from 'next/navigation'
 import { ArrowLeft, ExternalLink } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
+import { NavegacaoDoModulo } from '@/components/histologia/navegacao'
 import { GaleriaRemota } from '@/components/histopatologia/galeria-remota'
 import { exigirAcessoAHistologia } from '@/lib/histologia/acesso'
+import { histopatologiaHabilitada } from '@/lib/histopatologia/direitos'
 import { AVISO_ACERVO_INDISPONIVEL, inventarioDaEntrada } from '@/lib/histopatologia/acervo'
 import { FONTES } from '@/lib/histopatologia/direitos'
 import {
@@ -87,6 +89,7 @@ export default async function PaginaDaEntradaCatalogada({ params, searchParams }
   return (
     <AppShell allowGuest showHeader={false} guestNotice={false}>
       <div className="surface-page min-h-screen">
+        <NavegacaoDoModulo histopatologiaHabilitada={histopatologiaHabilitada()} />
         <div className="container mx-auto max-w-4xl px-4 py-6">
           <nav aria-label="Trilha de navegação" className="mb-4">
             <ol className="flex flex-wrap items-center gap-1 text-xs text-muted-foreground">

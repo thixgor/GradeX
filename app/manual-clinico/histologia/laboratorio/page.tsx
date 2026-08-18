@@ -2,7 +2,9 @@ import Link from 'next/link'
 import { ArrowLeft, ArrowRight, Clock, FlaskConical } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
+import { NavegacaoDoModulo } from '@/components/histologia/navegacao'
 import { exigirAcessoAHistologia } from '@/lib/histologia/acesso'
+import { histopatologiaHabilitada } from '@/lib/histopatologia/direitos'
 import { MODULOS_DE_LABORATORIO } from '@/lib/histologia/laboratorio'
 import { BASE, metadadosDoModulo } from '@/lib/histologia/seo'
 
@@ -22,6 +24,7 @@ export default async function PaginaDoLaboratorio() {
   return (
     <AppShell allowGuest showHeader={false} guestNotice={false}>
       <div className="surface-page min-h-screen">
+        <NavegacaoDoModulo histopatologiaHabilitada={histopatologiaHabilitada()} />
         <div className="container mx-auto max-w-4xl px-4 py-6">
           <Link
             href={BASE}

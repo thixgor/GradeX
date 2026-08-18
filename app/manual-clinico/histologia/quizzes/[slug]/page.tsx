@@ -4,8 +4,10 @@ import { notFound } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
+import { NavegacaoDoModulo } from '@/components/histologia/navegacao'
 import { QuizRunner } from '@/components/histologia/quiz'
 import { exigirAcessoAHistologia } from '@/lib/histologia/acesso'
+import { histopatologiaHabilitada } from '@/lib/histopatologia/direitos'
 import { buildJsonLd } from '@/lib/seo'
 import type { Modo } from '@/lib/histologia/quiz-engine'
 import { quizParaCliente } from '@/lib/histologia/quiz-engine'
@@ -60,6 +62,7 @@ export default async function PaginaDoQuiz({ params, searchParams }: Props) {
   return (
     <AppShell allowGuest showHeader={false} guestNotice={false}>
       <div className="surface-page min-h-screen">
+        <NavegacaoDoModulo histopatologiaHabilitada={histopatologiaHabilitada()} />
         <div className="container mx-auto max-w-3xl px-4 py-6">
           <Link
             href={`${BASE}/quizzes`}

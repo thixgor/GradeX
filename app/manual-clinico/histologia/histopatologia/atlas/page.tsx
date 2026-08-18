@@ -2,8 +2,10 @@ import Link from 'next/link'
 import { ArrowLeft, ArrowRight, Microscope } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
+import { NavegacaoDoModulo } from '@/components/histologia/navegacao'
 import { BuscaDaHistopatologia } from '@/components/histopatologia/busca'
 import { exigirAcessoAHistologia } from '@/lib/histologia/acesso'
+import { histopatologiaHabilitada } from '@/lib/histopatologia/direitos'
 import { LISTA_DE_FONTES } from '@/lib/histopatologia/direitos'
 import { SISTEMAS_COM_CONTAGEM, TOTAIS } from '@/lib/histopatologia/repositorio'
 import { BASE, rotaDoCapituloWebPathUtah, rotaDoSistema } from '@/lib/histopatologia/rotas'
@@ -46,6 +48,7 @@ export default async function PaginaDoAtlas() {
   return (
     <AppShell allowGuest showHeader={false} guestNotice={false}>
       <div className="surface-page min-h-screen">
+        <NavegacaoDoModulo histopatologiaHabilitada={histopatologiaHabilitada()} />
         <div className="container mx-auto max-w-4xl px-4 py-6">
           <Link
             href={BASE}

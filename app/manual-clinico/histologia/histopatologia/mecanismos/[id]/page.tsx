@@ -4,9 +4,11 @@ import { notFound } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
+import { NavegacaoDoModulo } from '@/components/histologia/navegacao'
 import { CartaoDeDoenca } from '@/components/histopatologia/cartao-doenca'
 import { CLASSE_DE_FAMILIA } from '@/components/histopatologia/tema'
 import { exigirAcessoAHistologia } from '@/lib/histologia/acesso'
+import { histopatologiaHabilitada } from '@/lib/histopatologia/direitos'
 import { FAMILIAS_DE_MECANISMO } from '@/lib/histopatologia/editorial/mecanismos'
 import {
   MECANISMOS_PUBLICADOS,
@@ -53,6 +55,7 @@ export default async function PaginaDoMecanismo({ params }: Props) {
   return (
     <AppShell allowGuest showHeader={false} guestNotice={false}>
       <div className="surface-page min-h-screen">
+        <NavegacaoDoModulo histopatologiaHabilitada={histopatologiaHabilitada()} />
         <div className="container mx-auto max-w-3xl px-4 py-6">
           <Link
             href={rotaDosMecanismos()}

@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
+import { NavegacaoDoModulo } from '@/components/histologia/navegacao'
 import {
   ALTERACOES_EDITORIAIS,
   AVISO_EDUCACIONAL,
@@ -9,6 +10,7 @@ import {
   LISTA_DE_FONTES,
 } from '@/lib/histopatologia/direitos'
 import { exigirAcessoAHistologia } from '@/lib/histologia/acesso'
+import { histopatologiaHabilitada } from '@/lib/histopatologia/direitos'
 import { BASE, rotaDosCreditos } from '@/lib/histopatologia/rotas'
 import { metadadosDoModulo } from '@/lib/histopatologia/seo'
 
@@ -28,6 +30,7 @@ export default async function PaginaDeCreditos() {
   return (
     <AppShell allowGuest showHeader={false} guestNotice={false}>
       <div className="surface-page min-h-screen">
+        <NavegacaoDoModulo histopatologiaHabilitada={histopatologiaHabilitada()} />
         <div className="container mx-auto max-w-3xl px-4 py-6">
           <Link
             href={BASE}

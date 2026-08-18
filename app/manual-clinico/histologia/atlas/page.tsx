@@ -2,9 +2,11 @@ import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
+import { NavegacaoDoModulo } from '@/components/histologia/navegacao'
 import { BuscaDaHistologia } from '@/components/histologia/busca'
 import { MapaCurricular } from '@/components/histologia/mapa-curricular'
 import { exigirAcessoAHistologia } from '@/lib/histologia/acesso'
+import { histopatologiaHabilitada } from '@/lib/histopatologia/direitos'
 import { COLORACOES } from '@/lib/histologia/glossario'
 import { CURRICULO, TOTAIS } from '@/lib/histologia/repositorio'
 import { BASE, metadadosDoModulo, rotaDaPagina } from '@/lib/histologia/seo'
@@ -25,6 +27,7 @@ export default async function PaginaDoAtlas() {
   return (
     <AppShell allowGuest showHeader={false} guestNotice={false}>
       <div className="surface-page min-h-screen">
+        <NavegacaoDoModulo histopatologiaHabilitada={histopatologiaHabilitada()} />
         <div className="container mx-auto max-w-4xl px-4 py-6">
           <Link
             href={BASE}
@@ -51,6 +54,9 @@ export default async function PaginaDoAtlas() {
             filtrosVisiveis
             autoFoco
             placeholder="lâmina própria, osteon, cólon, H&E…"
+            /* O acervo de patologia tem índice próprio: sem a ponte, buscar
+               "apendicite" aqui devolve nada e o aluno conclui que não existe. */
+            pontePatologica={histopatologiaHabilitada()}
           />
 
           <section aria-labelledby="por-coloracao" className="mt-10">

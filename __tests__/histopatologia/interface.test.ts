@@ -395,14 +395,111 @@ describe('rotas', () => {
 })
 
 describe('integração com a Histologia normal', () => {
+  const HOME_DA_HISTOLOGIA = () =>
+    readFileSync(path.join(RAIZ, 'app/manual-clinico/histologia/page.tsx'), 'utf8')
+
   it('a home da Histologia oferece a escolha entre normal e patológico', () => {
-    const home = readFileSync(
-      path.join(RAIZ, 'app/manual-clinico/histologia/page.tsx'),
-      'utf8',
-    )
+    const home = HOME_DA_HISTOLOGIA()
     expect(home).toContain('Histopatologia')
     expect(home).toContain(`${'${BASE}'}/histopatologia`)
     expect(home).toContain('Comparar normal × patológico')
+  })
+
+  /**
+   * O relato que originou estas três verificações foi "está muito escondido": a
+   * área existia como duas fichas no rodapé da seção de assuntos, **abaixo** da
+   * gaveta fechada do currículo. Uma home que só cite a Histopatologia satisfaz
+   * o teste acima e ainda assim a esconde — daí estes, que cobram os pontos de
+   * entrada altos, e não a mera presença da palavra.
+   */
+  it('a Histopatologia tem entrada no alto da home, e não só no rodapé de outra seção', () => {
+    const home = HOME_DA_HISTOLOGIA()
+
+    // 1. um dos botões do hero, ao lado de "ver uma lâmina" e "buscar estrutura"
+    expect(home).toContain('Ir para Histopatologia')
+
+    // 2. um passo numerado do fluxo, e não um apêndice sem lugar na sequência
+    expect(home).toContain('Abrir a Histopatologia')
+
+    // 3. seção de primeiro nível, irmã de "Escolher o assunto"
+    expect(home).toContain('id="titulo-patologia"')
+    expect(home).toContain('<Histopatologia />')
+  })
+
+  it('a home não anuncia a área quando o ambiente a mantém fechada', () => {
+    const home = HOME_DA_HISTOLOGIA()
+    // Sem isto, o hero e a seção levariam ao 404 seco do portão do módulo — que
+    // o aluno leria como defeito do produto, não como área indisponível.
+    expect(home).toContain('const comPatologia = histopatologiaHabilitada()')
+    expect(home).toContain('{comPatologia && <Histopatologia />}')
+  })
+
+  it('a barra de seções do módulo leva à Histopatologia de qualquer página', () => {
+    const nav = readFileSync(path.join(RAIZ, 'components/histologia/navegacao.tsx'), 'utf8')
+    expect(nav).toContain(`${'${BASE}'}/histopatologia`)
+    // Some na raiz: lá a mesma URL pode estar servindo a vitrine de vendas.
+    expect(nav).toContain('caminho === BASE')
+    // Aba escondida quando a área está fechada no ambiente.
+    expect(nav).toContain('histopatologiaHabilitada ? [...DESTINOS, HISTOPATOLOGIA] : DESTINOS')
+  })
+
+  /**
+   * A barra não pode viver no layout do módulo: ele envolve o `AppShell`, cuja
+   * lateral `fixed` e cujos controles flutuantes passariam por cima dela. Ela é
+   * montada por cada página, dentro da área de conteúdo — o que significa que
+   * uma página nova pode esquecê-la. Este teste é o que impede isso de virar
+   * "a Histopatologia some quando estou nesta tela aqui".
+   */
+  it('toda página interna do módulo monta a barra de seções', () => {
+    const raiz = path.join(RAIZ, 'app/manual-clinico/histologia')
+    const paginas: string[] = []
+    const varrer = (dir: string) => {
+      for (const nome of readdirSync(dir)) {
+        const completo = path.join(dir, nome)
+        if (statSync(completo).isDirectory()) varrer(completo)
+        else if (nome === 'page.tsx') paginas.push(completo)
+      }
+    }
+    varrer(raiz)
+
+    for (const arquivo of paginas) {
+      const fonte = readFileSync(arquivo, 'utf8')
+      const relativo = path.relative(RAIZ, arquivo)
+
+      // A home é a exceção declarada: a mesma URL serve a vitrine de vendas, e
+      // ela já oferece destinos maiores e ilustrados.
+      if (relativo === 'app/manual-clinico/histologia/page.tsx') {
+        expect(fonte).not.toContain('<NavegacaoDoModulo')
+        continue
+      }
+      // Rotas que só redirecionam não renderizam nada.
+      if (!fonte.includes('<AppShell')) continue
+
+      expect(fonte, `${relativo} não monta <NavegacaoDoModulo>`).toContain('<NavegacaoDoModulo')
+    }
+
+    // Guarda contra o teste passar por vacuidade se a árvore mudar de forma.
+    expect(paginas.length).toBeGreaterThan(15)
+  })
+
+  /**
+   * Os dois módulos têm índices de busca separados — o da patologia tem 915 KB e
+   * não desce para o navegador. Sem a ponte, buscar "apendicite" na Histologia
+   * devolve "nada encontrado", e o aluno conclui que o assunto não existe no
+   * produto.
+   */
+  it('a busca da Histologia leva o termo digitado para a busca da Histopatologia', () => {
+    const busca = readFileSync(path.join(RAIZ, 'components/histologia/busca.tsx'), 'utf8')
+    expect(busca).toContain('pontePatologica')
+    expect(busca).toContain(`${'${BASE_DA_PATOLOGIA}'}?q=${'${encodeURIComponent(termo)}'}`)
+
+    // E o outro lado da ponte recebe o termo já buscado, em vez de campo vazio.
+    const home = readFileSync(
+      path.join(RAIZ, 'app/manual-clinico/histologia/histopatologia/page.tsx'),
+      'utf8',
+    )
+    expect(home).toContain('searchParams.q')
+    expect(home).toContain('termoInicial=')
   })
 
   it('as páginas do currículo normal listam as doenças relacionadas', () => {

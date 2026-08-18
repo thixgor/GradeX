@@ -55,6 +55,15 @@ export interface BuscaProps {
   placeholder?: string
   filtrosVisiveis?: boolean
   autoFoco?: boolean
+  /**
+   * Termo que já vem preenchido. É o outro lado da ponte da busca da Histologia
+   * normal (`?q=`): quem digitou "apendicite" lá e não achou nada chega aqui com
+   * a busca **já feita**, e não com um campo vazio para redigitar.
+   *
+   * Só o valor inicial — depois disso quem manda é o campo. Sincronizar os dois
+   * faria a URL brigar com o que o aluno está digitando.
+   */
+  termoInicial?: string
 }
 
 export function BuscaDaHistopatologia({
@@ -62,11 +71,12 @@ export function BuscaDaHistopatologia({
   placeholder = 'Buscar doença, mecanismo, órgão ou lâmina catalogada…',
   filtrosVisiveis = false,
   autoFoco = false,
+  termoInicial = '',
 }: BuscaProps) {
   const idCampo = useId()
   const campoRef = useRef<HTMLInputElement | null>(null)
 
-  const [termo, setTermo] = useState('')
+  const [termo, setTermo] = useState(termoInicial)
   const [indiceLocal, setIndiceLocal] = useState<EntradaBusca[] | null>(null)
   const [carregandoIndice, setCarregandoIndice] = useState(false)
   const [doServidor, setDoServidor] = useState<Resultado[]>([])
@@ -87,6 +97,15 @@ export function BuscaDaHistopatologia({
   useEffect(() => {
     if (autoFoco) campoRef.current?.focus()
   }, [autoFoco])
+
+  /*
+   * O índice local é carregado na primeira interação — e com um termo vindo da
+   * URL não há primeira interação. Sem esta linha, quem chega pela ponte veria
+   * só os resultados do servidor, sem doenças, sistemas nem mecanismos.
+   */
+  useEffect(() => {
+    if (termoInicial.trim().length >= 2) carregarIndice()
+  }, [termoInicial, carregarIndice])
 
   useEffect(() => {
     if (termo.trim().length < 2) {

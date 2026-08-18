@@ -4,8 +4,10 @@ import { notFound } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
+import { NavegacaoDoModulo } from '@/components/histologia/navegacao'
 import { Comparador } from '@/components/histopatologia/comparador'
 import { exigirAcessoAHistologia } from '@/lib/histologia/acesso'
+import { histopatologiaHabilitada } from '@/lib/histopatologia/direitos'
 import type { MidiaExibivel } from '@/lib/histopatologia/esquemas'
 import { paraExibicao } from '@/lib/histopatologia/midia'
 import { obterDoenca } from '@/lib/histopatologia/repositorio'
@@ -72,6 +74,7 @@ export default async function PaginaDeComparacao({ params }: Props) {
   return (
     <AppShell allowGuest showHeader={false} guestNotice={false}>
       <div className="surface-page min-h-screen">
+        <NavegacaoDoModulo histopatologiaHabilitada={histopatologiaHabilitada()} />
         <div className="container mx-auto max-w-6xl px-4 py-6">
           <Link
             href={rotaDaDoenca(fragmento.doenca.slug)}

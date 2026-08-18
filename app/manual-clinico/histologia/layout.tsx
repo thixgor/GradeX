@@ -29,6 +29,14 @@ import { metadadosDoModulo } from '@/lib/histologia/seo'
  *
  * Ver `docs/adr/0001-licenca-manual-histologia.md` e
  * `docs/adr/0003-histologia-privativa-assinantes.md`.
+ *
+ * ## Onde a barra de seções **não** fica
+ *
+ * `NavegacaoDoModulo` seria natural aqui — um só lugar para toda a árvore. Não
+ * funciona: este layout envolve o `AppShell` de cada página, e o `AppShell` tem
+ * barra lateral `fixed` de 280 px e controles flutuantes nos cantos superiores.
+ * Uma barra montada aqui nasceria por baixo dos dois. Ela é montada por cada
+ * página, dentro da área de conteúdo — ver `components/histologia/navegacao.tsx`.
  */
 
 export const metadata: Metadata = metadadosDoModulo({

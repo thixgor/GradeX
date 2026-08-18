@@ -7,6 +7,7 @@ import {
   Columns2,
   FlaskConical,
   Layers,
+  Library,
   ListChecks,
   Microscope,
   Search,
@@ -37,6 +38,9 @@ import {
 } from '@/lib/histologia/repositorio'
 import { BASE, rotaDaPagina } from '@/lib/histologia/seo'
 import { montarVitrine } from '@/lib/histologia/vitrine'
+import { histopatologiaHabilitada } from '@/lib/histopatologia/direitos'
+import { rotaDoAtlas, rotaDosMecanismos } from '@/lib/histopatologia/rotas'
+import { TOTAIS as TOTAIS_DA_PATOLOGIA } from '@/lib/histopatologia/repositorio'
 
 /**
  * Home do Manual da Histologia.
@@ -44,11 +48,29 @@ import { montarVitrine } from '@/lib/histologia/vitrine'
  * ## A regra que orienta o desenho desta página
  *
  * A home não é o lugar de explicar o módulo — é o lugar de **entrar nele**.
- * Quem chega aqui quer uma de cinco coisas: continuar de onde parou, achar uma
- * estrutura específica, escolher um assunto, treinar, ou entender por que a
- * lâmina tem aquela cara. A página é literalmente essa lista, nessa ordem, e
- * cada item é uma superfície visual — capa de lâmina, número, ícone — em vez de
- * um parágrafo que precisa ser lido para revelar para onde leva.
+ * Quem chega aqui quer uma de seis coisas: continuar de onde parou, achar uma
+ * estrutura específica, escolher um assunto, treinar, entender por que a lâmina
+ * tem aquela cara, ou ver o que dá errado naquele tecido. A página é
+ * literalmente essa lista, nessa ordem, e cada item é uma superfície visual —
+ * capa de lâmina, número, ícone — em vez de um parágrafo que precisa ser lido
+ * para revelar para onde leva.
+ *
+ * ## As duas metades do Manual
+ *
+ * A Histopatologia é a sexta, e por muito tempo foi a única sem lugar próprio:
+ * vivia como duas fichas no rodapé de "Escolher o assunto", abaixo da gaveta
+ * fechada do currículo — três telas de rolagem depois do topo. O relato foi
+ * direto: "está muito escondido".
+ *
+ * Ela agora aparece em quatro alturas desta página, cada uma para um momento
+ * distinto de decisão: um botão no hero (quem já sabe o que quer), o
+ * passo 4 do fluxo (quem está entendendo o percurso), a seção própria logo
+ * depois dos assuntos (quem está escolhendo o que estudar) e a ponte na busca
+ * (quem procurou uma doença num índice que só tem tecido normal). Fora daqui, a
+ * barra de seções do módulo a mantém a um clique de qualquer lâmina.
+ *
+ * Todas as quatro somem juntas quando `histopatologiaHabilitada()` é falso:
+ * anunciar uma área que responde 404 é pior do que não anunciá-la.
  *
  * O texto longo não sumiu: desceu para onde ele é útil. O panorama de cada
  * setor vive na landing do setor, o resumo de cada quiz na página do quiz, o
@@ -124,6 +146,13 @@ export default async function HomeDaHistologia() {
   // impressão de velocidade da home inteira.
   const urlHero = urlOtimizada(hero?.base ? urlDaMidia(hero.base) : null, LARGURA_LAMINA)
   const capas = await capasDosSetores(CURRICULO, hero?.base?.sha256)
+  /*
+   * A área de patologia pode estar fechada no ambiente (ver
+   * `lib/histopatologia/direitos.ts`). Quando está, a home não anuncia nada dela
+   * — botão do hero, quarto passo e seção somem juntos, em vez de levarem a um
+   * 404 que o aluno interpretaria como defeito.
+   */
+  const comPatologia = histopatologiaHabilitada()
 
   return (
     <AppShell allowGuest showHeader={false} guestNotice={false}>
@@ -163,9 +192,13 @@ export default async function HomeDaHistologia() {
                     ficam nas fichas abaixo, onde são varridos em vez de lidos. */}
                 <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
                   Lâminas reais num microscópio virtual. Você acende as estruturas sobre a imagem,
-                  uma a uma, até saber achá-las sozinho.
+                  uma a uma, até saber achá-las sozinho — e, quando o normal estiver firme, vê o
+                  mesmo tecido doente na Histopatologia.
                 </p>
 
+                {/* As portas de entrada do módulo, lado a lado. A
+                    Histopatologia é uma delas de propósito: ela é metade do
+                    Manual, e ficava a três telas de rolagem de distância. */}
                 <div className="mt-6 flex flex-wrap gap-2.5">
                   <Link
                     href={rotaDaPagina(ROTA_HERO)}
@@ -181,12 +214,21 @@ export default async function HomeDaHistologia() {
                     <Search className="h-4 w-4" aria-hidden />
                     Buscar estrutura
                   </Link>
+                  {comPatologia && (
+                    <Link
+                      href={`${BASE}/histopatologia`}
+                      className="inline-flex min-h-[44px] items-center gap-2 rounded-md border border-rose-500/45 bg-card px-5 text-sm font-bold text-rose-700 transition-colors hover:border-rose-500 hover:bg-rose-500/10 dark:text-rose-300"
+                    >
+                      <Stethoscope className="h-4 w-4" aria-hidden />
+                      Ir para Histopatologia
+                    </Link>
+                  )}
                 </div>
 
                 {/* Busca instantânea: o atalho de quem já sabe o nome do que
                     procura, no alcance do polegar e não no fim da rolagem. */}
                 <div className="mt-5 max-w-xl">
-                  <BuscaDaHistologia />
+                  <BuscaDaHistologia pontePatologica={comPatologia} />
                 </div>
               </div>
 
@@ -242,11 +284,16 @@ export default async function HomeDaHistologia() {
               volta não deveria ter que reencontrar a página onde parou. */}
           <ContinuarEstudando />
 
-          {/* ══════════ O fluxo, em três passos ══════════ */}
-          <ComoEstudar />
+          {/* ══════════ O fluxo, do normal à doença ══════════ */}
+          <ComoEstudar comPatologia={comPatologia} />
 
           {/* ══════════ Escolher o assunto ══════════ */}
           <EscolherAssunto capas={capas} />
+
+          {/* ══════════ A outra metade: Histopatologia ══════════
+              Seção própria, logo depois dos assuntos — e não duas fichas no
+              rodapé da seção anterior, onde ninguém achava. */}
+          {comPatologia && <Histopatologia />}
 
           {/* ══════════ Treinar e entender a lâmina ══════════ */}
           <div className="mt-12 grid gap-8 lg:grid-cols-2">
@@ -351,27 +398,46 @@ export default async function HomeDaHistologia() {
 }
 
 /**
- * O fluxo do módulo, em três passos.
+ * O fluxo do módulo, em quatro passos.
  *
  * O aluno que abre o Manual pela primeira vez não sabe o que é "atlas",
  * "laboratório" e "quiz" *neste* contexto, e a home antiga o obrigava a inferir
- * isso de seis blocos de prosa. Esta faixa diz a sequência inteira em três
+ * isso de seis blocos de prosa. Esta faixa diz a sequência inteira em quatro
  * frases curtas, com o passo numerado e a seta explícita — e cada passo é um
  * link, para quem já sabe entrar direto no que quer.
  *
+ * O quarto passo é a Histopatologia, e ele está aqui por um motivo específico:
+ * enquanto ela era um par de cartões no rodapé da seção de assuntos, o aluno
+ * não tinha como saber que a doença fazia parte do percurso deste módulo. Um
+ * passo numerado diz o que dois cartões escondidos não diziam — que estudar o
+ * normal é meio caminho, e o outro meio tem endereço.
+ *
  * As cores não são decoração: repetem a convenção do módulo (petróleo para o
- * instrumento, hematoxilina para estrutura, eosina para avaliação), então o
- * passo 3 é rosa na home e o quiz continua rosa em toda parte.
+ * instrumento, hematoxilina para estrutura, eosina para avaliação e para a
+ * patologia), então os passos 3 e 4 são rosa aqui — e o quiz e a Histopatologia
+ * continuam rosa em toda parte.
  */
-function ComoEstudar() {
+function ComoEstudar({ comPatologia }: { comPatologia: boolean }) {
   return (
     <section aria-labelledby="como-estudar" className="mt-8">
       <p className="editorial-mark mb-2">Como funciona</p>
       <h2 id="como-estudar" className="mb-4 font-heading text-xl font-semibold tracking-tight">
-        Três passos, do assunto ao acerto
+        {comPatologia ? 'Do tecido normal à doença, em quatro passos' : 'Três passos, do assunto ao acerto'}
       </h2>
 
-      <ol className="grid items-stretch gap-2.5 sm:grid-cols-[1fr_auto_1fr_auto_1fr]">
+      {/*
+        Quatro passos não cabem numa fileira única em tablet sem espremer o
+        texto de cada um a duas palavras. Abaixo de `lg` a faixa vira grade de
+        dois, e as setas — que só fazem sentido numa sequência horizontal —
+        somem junto.
+      */}
+      <ol
+        className={`grid items-stretch gap-2.5 sm:grid-cols-2 ${
+          comPatologia
+            ? 'lg:grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr]'
+            : 'lg:grid-cols-[1fr_auto_1fr_auto_1fr]'
+        }`}
+      >
         <Passo
           n={1}
           cor="petroleo"
@@ -401,6 +467,20 @@ function ComoEstudar() {
           destino={`${BASE}/quizzes`}
           acao="Fazer um quiz"
         />
+        {comPatologia && (
+          <>
+            <Seta />
+            <Passo
+              n={4}
+              cor="eosina"
+              icone={<Stethoscope className="h-5 w-5" aria-hidden />}
+              titulo="Veja o que dá errado"
+              texto="O mesmo tecido depois da agressão: mecanismo, achado na lâmina e sintoma."
+              destino={`${BASE}/histopatologia`}
+              acao="Abrir a Histopatologia"
+            />
+          </>
+        )}
       </ol>
     </section>
   )
@@ -454,10 +534,10 @@ function Passo({
   )
 }
 
-/** Conector entre os passos. Some no celular, onde a pilha já é a sequência. */
+/** Conector entre os passos. Some fora da fileira única, onde a grade já é a sequência. */
 function Seta() {
   return (
-    <li aria-hidden className="hidden items-center justify-center sm:flex">
+    <li aria-hidden className="hidden items-center justify-center lg:flex">
       <ArrowRight className="h-4 w-4 text-muted-foreground/40" aria-hidden />
     </li>
   )
@@ -568,52 +648,129 @@ function EscolherAssunto({ capas }: { capas: Record<string, string> }) {
           <MapaCurricular setores={CURRICULO} />
         </div>
       </details>
+    </section>
+  )
+}
 
-      {/* Além do normal: patologia e comparação lado a lado */}
-      <p className="mb-3 mt-8 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-        Quando o normal já estiver firme
-      </p>
-      <ul className="grid gap-3 sm:grid-cols-2">
-        <li>
-          <Link
-            href={`${BASE}/histopatologia`}
-            className="group flex h-full min-h-[44px] flex-col histologia-cartao p-4 transition-colors hover:border-rose-500/50"
+/**
+ * A outra metade do Manual: a Histopatologia.
+ *
+ * ## Por que ela virou seção própria
+ *
+ * Ela existia — como duas fichas pequenas no rodapé de "Escolher o assunto",
+ * **abaixo** da gaveta fechada do currículo. Quem não abrisse a gaveta nem
+ * rolasse até o fim da seção mais longa da home simplesmente não descobria que
+ * o módulo tem uma área de anatomia patológica. O sintoma relatado foi
+ * literalmente esse: "está muito escondido".
+ *
+ * A correção não é um cartão maior no mesmo lugar; é tirar a área do rodapé de
+ * outra seção e dar a ela o mesmo tratamento que a Histologia normal recebe —
+ * marca editorial, título, números reais e as quatro portas de entrada que a
+ * home da própria Histopatologia oferece. Somada ao botão do hero, ao passo 4
+ * do fluxo, à ponte da busca e à barra de seções, a área deixa de depender de
+ * um único acesso — e ele escondido.
+ *
+ * Os números vêm de `TOTAIS` da Histopatologia, o mesmo relatório do pipeline
+ * que a home dela usa — e não de constantes escritas aqui, que envelheceriam na
+ * primeira reingestão e contradiriam a página de destino.
+ */
+function Histopatologia() {
+  return (
+    <section aria-labelledby="titulo-patologia" id="patologia" className="mt-12 scroll-mt-4">
+      <p className="editorial-mark mb-2">A outra metade do Manual</p>
+      <div className="flex flex-wrap items-end justify-between gap-2">
+        <div>
+          <h2
+            id="titulo-patologia"
+            className="inline-flex items-center gap-2 font-heading text-xl font-semibold tracking-tight"
           >
-            <Stethoscope className="mb-2 h-5 w-5 text-rose-600 dark:text-rose-400" aria-hidden />
-            <p className="text-sm font-bold leading-snug">Histopatologia</p>
-            <p className="mt-1 flex-1 text-xs leading-relaxed text-muted-foreground">
-              Da agressão ao achado na lâmina, e do achado ao sintoma.
-            </p>
-            <span className="mt-2.5 inline-flex items-center gap-1 text-[11px] font-bold text-rose-700 dark:text-rose-400">
-              Abrir a área
-              <ArrowRight
-                className="h-3 w-3 transition-transform group-hover:translate-x-0.5"
-                aria-hidden
-              />
-            </span>
-          </Link>
-        </li>
-        <li>
-          <Link
-            href={`${BASE}/histopatologia#capitulos`}
-            className="group flex h-full min-h-[44px] flex-col histologia-cartao p-4 transition-colors hover:border-violet-600/50"
-          >
-            <Columns2 className="mb-2 h-5 w-5 text-violet-700 dark:text-violet-400" aria-hidden />
-            <p className="text-sm font-bold leading-snug">Comparar normal × patológico</p>
-            <p className="mt-1 flex-1 text-xs leading-relaxed text-muted-foreground">
-              Cada capítulo abre lado a lado com a lâmina normal e diz o que mudou.
-            </p>
-            <span className="mt-2.5 inline-flex items-center gap-1 text-[11px] font-bold text-violet-700 dark:text-violet-400">
-              Ver os capítulos
-              <ArrowRight
-                className="h-3 w-3 transition-transform group-hover:translate-x-0.5"
-                aria-hidden
-              />
-            </span>
-          </Link>
-        </li>
+            <Stethoscope className="h-5 w-5 text-rose-600 dark:text-rose-400" aria-hidden />
+            Histopatologia
+          </h2>
+          <p className="mt-1.5 max-w-3xl text-sm leading-relaxed text-muted-foreground">
+            Reconhecer doença na lâmina não é decorar adjetivos: é saber qual agressão produziu
+            aquela forma. {TOTAIS_DA_PATOLOGIA.doencas} capítulos aprofundados,{' '}
+            {TOTAIS_DA_PATOLOGIA.mecanismos} mecanismos gerais e{' '}
+            {TOTAIS_DA_PATOLOGIA.sistemas} sistemas — cada um ancorado na lâmina normal
+            correspondente.
+          </p>
+        </div>
+        <Link
+          href={`${BASE}/histopatologia`}
+          className="inline-flex min-h-[40px] items-center gap-1.5 rounded-md border border-rose-500/45 bg-card px-3.5 text-xs font-bold text-rose-700 transition-colors hover:border-rose-500 hover:bg-rose-500/10 dark:text-rose-300"
+        >
+          Abrir a área <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+        </Link>
+      </div>
+
+      <ul className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <PortaDaPatologia
+          href={`${BASE}/histopatologia`}
+          icone={<Stethoscope className="h-5 w-5" aria-hidden />}
+          titulo="Começar pela doença"
+          texto="Da agressão ao achado na lâmina, e do achado ao sintoma."
+          acao="Ver as doenças"
+        />
+        <PortaDaPatologia
+          href={rotaDosMecanismos()}
+          icone={<Microscope className="h-5 w-5" aria-hidden />}
+          titulo="Por mecanismo"
+          texto="Granuloma, trombose, displasia: o mesmo processo em órgãos diferentes."
+          acao="Ver os mecanismos"
+        />
+        <PortaDaPatologia
+          href={rotaDoAtlas()}
+          icone={<Library className="h-5 w-5" aria-hidden />}
+          titulo="Atlas de lâminas"
+          texto="Capítulos visuais por sistema, com crédito e proveniência por item."
+          acao="Abrir o atlas"
+        />
+        <PortaDaPatologia
+          href={`${BASE}/histopatologia#capitulos`}
+          icone={<Columns2 className="h-5 w-5" aria-hidden />}
+          titulo="Comparar normal × patológico"
+          texto="Cada capítulo abre lado a lado com a lâmina normal e diz o que mudou."
+          acao="Ver os capítulos"
+        />
       </ul>
     </section>
+  )
+}
+
+/** Ficha de entrada da Histopatologia. Rosa em toda parte, como o resto da área. */
+function PortaDaPatologia({
+  href,
+  icone,
+  titulo,
+  texto,
+  acao,
+}: {
+  href: string
+  icone: React.ReactNode
+  titulo: string
+  texto: string
+  acao: string
+}) {
+  return (
+    <li>
+      <Link
+        href={href}
+        className="group flex h-full min-h-[44px] flex-col histologia-cartao p-4 transition-colors hover:border-rose-500/50"
+      >
+        <span className="mb-2 block text-rose-600 dark:text-rose-400">{icone}</span>
+        <span className="block text-sm font-bold leading-snug">{titulo}</span>
+        <span className="mt-1 block flex-1 text-xs leading-relaxed text-muted-foreground">
+          {texto}
+        </span>
+        <span className="mt-2.5 inline-flex items-center gap-1 text-[11px] font-bold text-rose-700 dark:text-rose-400">
+          {acao}
+          <ArrowRight
+            className="h-3 w-3 transition-transform group-hover:translate-x-0.5"
+            aria-hidden
+          />
+        </span>
+      </Link>
+    </li>
   )
 }
 

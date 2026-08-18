@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { ArrowLeft, ExternalLink } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
+import { NavegacaoDoModulo } from '@/components/histologia/navegacao'
 import { Autoavaliacao } from '@/components/histopatologia/autoavaliacao'
 import { CadeiaFisiopatologica, EmPreparacao } from '@/components/histopatologia/cadeia-fisiopatologica'
 import { GaleriaRemota } from '@/components/histopatologia/galeria-remota'
@@ -21,6 +22,7 @@ import {
 import { MARCA_DE_NATUREZA, MARCA_DE_REVISAO } from '@/components/histopatologia/tema'
 import type { AplicacaoDeMecanismoResolvida } from '@/components/histopatologia/tipos'
 import { exigirAcessoAHistologia } from '@/lib/histologia/acesso'
+import { histopatologiaHabilitada } from '@/lib/histopatologia/direitos'
 import { LISTA_DE_FONTES } from '@/lib/histopatologia/direitos'
 import { referenciasVisuaisDaDoenca } from '@/lib/histopatologia/editorial/referencias-visuais'
 import { MIDIAS_PRINCIPAIS_MAXIMO, paraExibicao } from '@/lib/histopatologia/midia'
@@ -138,6 +140,7 @@ export default async function PaginaDaDoenca({ params }: Props) {
   return (
     <AppShell allowGuest showHeader={false} guestNotice={false}>
       <div className="surface-page min-h-screen">
+        <NavegacaoDoModulo histopatologiaHabilitada={histopatologiaHabilitada()} />
         <div className="container mx-auto max-w-4xl px-4 py-6">
           {/* ── Breadcrumb ── */}
           <nav aria-label="Trilha de navegação" className="mb-4">

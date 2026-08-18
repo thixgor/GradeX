@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
+import { NavegacaoDoModulo } from '@/components/histologia/navegacao'
 import { MapaDeMecanismos } from '@/components/histopatologia/mapa-mecanismos'
 import {
   DOENCAS_RESUMIDAS,
@@ -9,6 +10,7 @@ import {
   TOTAIS,
 } from '@/lib/histopatologia/repositorio'
 import { exigirAcessoAHistologia } from '@/lib/histologia/acesso'
+import { histopatologiaHabilitada } from '@/lib/histopatologia/direitos'
 import { BASE, rotaDosMecanismos } from '@/lib/histopatologia/rotas'
 import { metadadosDoModulo } from '@/lib/histopatologia/seo'
 
@@ -42,6 +44,7 @@ export default async function PaginaDeMecanismos() {
   return (
     <AppShell allowGuest showHeader={false} guestNotice={false}>
       <div className="surface-page min-h-screen">
+        <NavegacaoDoModulo histopatologiaHabilitada={histopatologiaHabilitada()} />
         <div className="container mx-auto max-w-4xl px-4 py-6">
           <Link
             href={BASE}

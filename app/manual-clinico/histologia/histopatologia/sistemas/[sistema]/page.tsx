@@ -4,8 +4,10 @@ import { notFound } from 'next/navigation'
 import { ArrowLeft, ArrowRight, BookOpen, ChevronLeft, ChevronRight, Layers } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
+import { NavegacaoDoModulo } from '@/components/histologia/navegacao'
 import { CartaoDeDoenca } from '@/components/histopatologia/cartao-doenca'
 import { exigirAcessoAHistologia } from '@/lib/histologia/acesso'
+import { histopatologiaHabilitada } from '@/lib/histopatologia/direitos'
 import { CAPITULOS_DO_ATLAS, obterCapituloDoAtlas } from '@/lib/histopatologia/catalogacao'
 import {
   SISTEMAS_COM_CONTAGEM,
@@ -101,6 +103,7 @@ export default async function PaginaDoSistema({ params, searchParams }: Props) {
   return (
     <AppShell allowGuest showHeader={false} guestNotice={false}>
       <div className="surface-page min-h-screen">
+        <NavegacaoDoModulo histopatologiaHabilitada={histopatologiaHabilitada()} />
         <div className="container mx-auto max-w-4xl px-4 py-6">
           <Link
             href={BASE}

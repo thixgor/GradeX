@@ -2,7 +2,18 @@
 
 import Link from 'next/link'
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
-import { Columns2, History, Loader2, Microscope, Search, Sparkles, Trash2, X } from 'lucide-react'
+import {
+  ArrowRight,
+  Columns2,
+  History,
+  Loader2,
+  Microscope,
+  Search,
+  Sparkles,
+  Stethoscope,
+  Trash2,
+  X,
+} from 'lucide-react'
 
 import {
   buscar,
@@ -13,6 +24,7 @@ import {
 import type { EntradaBusca } from '@/lib/histologia/esquemas'
 import { faixaDeResultados, registrarEvento } from '@/lib/histologia/analitica'
 import { BASE } from '@/lib/histologia/rotas'
+import { BASE as BASE_DA_PATOLOGIA } from '@/lib/histopatologia/rotas'
 
 /**
  * Busca instantânea do Manual da Histologia.
@@ -34,6 +46,19 @@ import { BASE } from '@/lib/histologia/rotas'
  * Fica no dispositivo, é removível item a item e some por inteiro num clique.
  * O termo digitado **nunca** vai para telemetria — só a categoria da busca e a
  * faixa de quantos resultados apareceram.
+ *
+ * ## A ponte para a Histopatologia
+ *
+ * Os dois módulos têm índices separados, e é assim de propósito: o da patologia
+ * tem 915 KB e não desce para o navegador. A consequência é que quem digita
+ * "apendicite" aqui recebe "nada encontrado" — sem nenhuma pista de que existe
+ * um capítulo inteiro sobre isso a um clique de distância.
+ *
+ * A ponte resolve isso sem fundir os dois índices: uma linha no fim da lista
+ * leva o **mesmo termo já digitado** para a busca da Histopatologia, via `?q=`.
+ * Ela aparece sempre que há termo — não só no vazio — porque uma busca por
+ * "fígado" acha lâminas normais *e* tem capítulos de doença hepática, e o aluno
+ * é quem decide qual metade quer.
  */
 
 const CHAVE_HISTORICO = 'histologia-busca-historico'
@@ -60,6 +85,11 @@ export interface BuscaProps {
   placeholder?: string
   filtrosVisiveis?: boolean
   autoFoco?: boolean
+  /**
+   * Oferecer a ponte para a busca da Histopatologia. Desligado onde a área está
+   * fechada no ambiente — uma ponte para 404 é pior do que ponte nenhuma.
+   */
+  pontePatologica?: boolean
 }
 
 export function BuscaDaHistologia({
@@ -67,6 +97,7 @@ export function BuscaDaHistologia({
   placeholder = 'Buscar estrutura, tecido, órgão ou coloração…',
   filtrosVisiveis = false,
   autoFoco = false,
+  pontePatologica = false,
 }: BuscaProps) {
   const idCampo = useId()
   const campoRef = useRef<HTMLInputElement | null>(null)
@@ -347,6 +378,30 @@ export function BuscaDaHistologia({
               </li>
             ))}
           </ul>
+
+          {/*
+            Fora do `role="listbox"`: é travessia entre módulos, não mais uma
+            opção da lista — entrar na navegação por setas confundiria quem usa
+            teclado. Ver "A ponte para a Histopatologia", no topo do arquivo.
+          */}
+          {pontePatologica && (
+            <Link
+              href={`${BASE_DA_PATOLOGIA}?q=${encodeURIComponent(termo)}`}
+              className="mt-2 flex min-h-[44px] items-center gap-2.5 rounded-lg border border-dashed border-rose-500/45 bg-card p-3 text-sm transition-colors hover:border-rose-500 hover:bg-rose-500/5"
+            >
+              <Stethoscope
+                className="h-4 w-4 shrink-0 text-rose-600 dark:text-rose-400"
+                aria-hidden
+              />
+              <span className="min-w-0 flex-1">
+                Buscar <span className="font-semibold">“{termo}”</span> na Histopatologia
+                <span className="block text-xs text-muted-foreground">
+                  Doenças, mecanismos e lâminas catalogadas ficam num acervo separado.
+                </span>
+              </span>
+              <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
+            </Link>
+          )}
         </div>
       )}
     </div>

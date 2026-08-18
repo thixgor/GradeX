@@ -2,8 +2,10 @@ import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
+import { NavegacaoDoModulo } from '@/components/histologia/navegacao'
 import { Caderno } from '@/components/histologia/caderno'
 import { exigirAcessoAHistologia } from '@/lib/histologia/acesso'
+import { histopatologiaHabilitada } from '@/lib/histopatologia/direitos'
 import { BASE, metadadosDoModulo } from '@/lib/histologia/seo'
 
 export const metadata = metadadosDoModulo({
@@ -22,6 +24,7 @@ export default async function PaginaDoCaderno() {
   return (
     <AppShell allowGuest showHeader={false} guestNotice={false}>
       <div className="surface-page min-h-screen">
+        <NavegacaoDoModulo histopatologiaHabilitada={histopatologiaHabilitada()} />
         <div className="container mx-auto max-w-3xl px-4 py-6">
           <Link
             href={BASE}

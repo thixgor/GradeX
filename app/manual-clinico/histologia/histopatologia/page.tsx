@@ -10,6 +10,7 @@ import {
 } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
+import { NavegacaoDoModulo } from '@/components/histologia/navegacao'
 import { BuscaDaHistopatologia } from '@/components/histopatologia/busca'
 import { CartaoDeDoenca } from '@/components/histopatologia/cartao-doenca'
 import {
@@ -26,6 +27,7 @@ import {
   TOTAIS,
 } from '@/lib/histopatologia/repositorio'
 import { exigirAcessoAHistologia } from '@/lib/histologia/acesso'
+import { histopatologiaHabilitada } from '@/lib/histopatologia/direitos'
 import { TOTAL_ENTRADAS_WEBPATH_UTAH } from '@/lib/histopatologia/webpath-utah/catalogo'
 
 /**
@@ -43,7 +45,16 @@ import { TOTAL_ENTRADAS_WEBPATH_UTAH } from '@/lib/histopatologia/webpath-utah/c
 
 export const dynamic = 'force-dynamic'
 
-export default async function HomeDaHistopatologia() {
+interface Props {
+  /**
+   * `?q=` é a ponte vinda da busca do Manual da Histologia normal: o aluno
+   * digitou um nome de doença num índice que só tem tecido normal, não achou, e
+   * chega aqui com o termo já buscado em vez de um campo vazio.
+   */
+  searchParams: { q?: string }
+}
+
+export default async function HomeDaHistopatologia({ searchParams }: Props) {
   await exigirAcessoAHistologia()
 
   const comDoencas = SISTEMAS_COM_CONTAGEM.filter((s) => s.doencas > 0)
@@ -52,6 +63,7 @@ export default async function HomeDaHistopatologia() {
   return (
     <AppShell allowGuest showHeader={false} guestNotice={false}>
       <div className="surface-page min-h-screen">
+        <NavegacaoDoModulo histopatologiaHabilitada={histopatologiaHabilitada()} />
         <header className="border-b border-border">
           <div className="container mx-auto max-w-6xl px-4 pb-8 pt-6">
             <Link
@@ -73,7 +85,9 @@ export default async function HomeDaHistopatologia() {
             </p>
 
             <div className="mt-6 max-w-2xl">
-              <BuscaDaHistopatologia />
+              {/* Recorte defensivo: o termo vem da URL, é entrada não confiável
+                  e só alimenta o campo de busca — nunca uma rota. */}
+              <BuscaDaHistopatologia termoInicial={(searchParams.q ?? '').slice(0, 80)} />
             </div>
 
             <ul className="mt-6 flex flex-wrap items-center gap-2.5 text-xs">
