@@ -3,68 +3,45 @@ import { getDb } from '@/lib/mongodb'
 import { createToken, setAuthCookie, generateSessionId } from '@/lib/auth'
 import { recordLoginSession } from '@/lib/sessions'
 import { User } from '@/lib/types'
-import { normalizePeriodo, getCurrentSemesterRef } from '@/lib/user-periodo'
-import { isValidStateUf } from '@/lib/brazil-states'
-import { isValidBrazilPhone } from '@/lib/phone'
+import { verifyGoogleIdToken, GoogleAuthError } from '@/lib/google-auth'
+import { sendWelcomeEmail } from '@/lib/mail'
+import { recordCheckoutEvent, getRequestAnalyticsMeta } from '@/lib/analytics'
 
 export const dynamic = 'force-dynamic'
 
+/**
+ * Cria a conta de quem entrou com o Google.
+ *
+ * Pede só o nome de exibição, igual ao cadastro por e-mail — os dados de perfil
+ * (telefone, estado, profissão, faculdade/CRM, CPF) são coletados depois, dentro
+ * do app, pelo `ProfileCompletionGate`, que é a fonte única desses campos. Antes
+ * esta rota exigia data de nascimento, profissão, estado, telefone e mais — uma
+ * lista que já não corresponde ao que a plataforma pede hoje.
+ *
+ * A identidade vem do ID token verificado, nunca do corpo do request: o e-mail
+ * enviado pelo cliente não prova nada.
+ */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const {
-      email, profileName, dateOfBirth,
-      profession, state, phone,
-      specialty, residencySpecialty, residencyHospital, residencyYear,
-      isAfyaMedicineStudent, afyaUnit, periodo,
-      picture, googleId,
-    } = body
+    const { idToken, profileName } = body
 
-    if (!email || !profileName || !dateOfBirth) {
-      return NextResponse.json(
-        { error: 'Email, nome do perfil e data de nascimento são obrigatórios' },
-        { status: 400 }
-      )
+    let identity
+    try {
+      identity = await verifyGoogleIdToken(idToken)
+    } catch (err) {
+      if (err instanceof GoogleAuthError) {
+        return NextResponse.json({ error: err.message }, { status: err.status })
+      }
+      throw err
     }
 
-    if (!['medico', 'academico', 'residente'].includes(profession)) {
-      return NextResponse.json(
-        { error: 'Selecione se você é médico, acadêmico ou residente' },
-        { status: 400 }
-      )
-    }
+    const { email, googleId, picture } = identity
+    const name = String(profileName ?? identity.name ?? '').trim().slice(0, 60)
 
-    if (!isValidStateUf(state)) {
+    if (name.length < 2) {
       return NextResponse.json(
-        { error: 'Selecione um estado válido' },
-        { status: 400 }
-      )
-    }
-
-    if (!isValidBrazilPhone(phone)) {
-      return NextResponse.json(
-        { error: 'Informe um telefone válido com DDD' },
-        { status: 400 }
-      )
-    }
-
-    if (profession === 'medico' && !specialty) {
-      return NextResponse.json(
-        { error: 'Especialidade é obrigatória para médicos' },
-        { status: 400 }
-      )
-    }
-
-    if (profession === 'residente' && (!residencySpecialty || !residencyHospital || !residencyYear)) {
-      return NextResponse.json(
-        { error: 'Dados da residência são obrigatórios para residentes' },
-        { status: 400 }
-      )
-    }
-
-    if (profession === 'academico' && !afyaUnit) {
-      return NextResponse.json(
-        { error: 'Unidade é obrigatória para acadêmicos' },
+        { error: 'Digite como você quer ser chamado (mínimo 2 letras).' },
         { status: 400 }
       )
     }
@@ -72,75 +49,124 @@ export async function POST(request: NextRequest) {
     const db = await getDb()
     const usersCollection = db.collection<User>('users')
 
-    // Verifica se o email já existe
-    const existingUserByEmail = await usersCollection.findOne({ email })
-    if (existingUserByEmail) {
+    // Duplo envio (clique duplo, retry de rede) ou conta que já existia: o token
+    // prova que o e-mail é dele, então entramos em vez de devolver erro.
+    const existingUser = await usersCollection.findOne({ email })
+    if (existingUser) {
+      if (existingUser.banned) {
+        return NextResponse.json(
+          {
+            error: 'banned',
+            banReason: existingUser.banReason,
+            banDetails: existingUser.banDetails,
+            bannedAt: existingUser.bannedAt,
+          },
+          { status: 403 }
+        )
+      }
+
+      const patch: Record<string, unknown> = { lastLoginAt: new Date() }
+      if (!existingUser.googleId) patch.googleId = googleId
+      if (picture && !existingUser.profilePicture) patch.profilePicture = picture
+      await usersCollection.updateOne({ _id: existingUser._id }, { $set: patch })
+
+      const jti = generateSessionId()
+      const token = await createToken({
+        userId: existingUser._id!.toString(),
+        email: existingUser.email,
+        name: existingUser.name,
+        role: existingUser.role,
+        emailVerified: !!existingUser.emailVerified,
+        jti,
+      })
+      await setAuthCookie(token)
+
+      try {
+        await recordLoginSession({ request, userId: existingUser._id!.toString(), jti })
+      } catch (sessErr) {
+        console.error('Falha ao registrar sessão (Google setup, conta existente):', sessErr)
+      }
+
+      return NextResponse.json({
+        success: true,
+        user: {
+          id: existingUser._id!.toString(),
+          email: existingUser.email,
+          name: existingUser.name,
+          role: existingUser.role,
+        },
+      })
+    }
+
+    // O cadastro pode estar desativado — a rota /api/auth/google já checa, mas
+    // esta é chamável direto e não pode ser o caminho aberto.
+    const settings = await db.collection('landing_settings').findOne({})
+    if (settings?.registrationBlocked) {
       return NextResponse.json(
-        { error: 'Email já cadastrado' },
-        { status: 400 }
+        {
+          error: 'blocked',
+          message: settings.registrationBlockedMessage || 'Cadastro temporariamente desativado',
+        },
+        { status: 403 }
       )
     }
 
-
-
-    // Período é opcional. Quando informado, guardamos a âncora do semestre atual.
-    const periodoBase = normalizePeriodo(periodo)
-
-    // Cria o novo usuário
     const newUser: User = {
       email,
-      name: profileName,
-      password: '', // Usuário do Google não tem senha
+      name,
+      password: '', // Conta do Google não tem senha
       role: 'user',
       createdAt: new Date(),
       lastLoginAt: new Date(),
-      dateOfBirth: new Date(dateOfBirth),
-      profession,
-      state,
-      phone,
-      specialty: profession === 'medico' ? specialty : undefined,
-      residencySpecialty: profession === 'residente' ? residencySpecialty : undefined,
-      residencyHospital: profession === 'residente' ? residencyHospital : undefined,
-      residencyYear: profession === 'residente' ? residencyYear : undefined,
-      isAfyaMedicineStudent: profession === 'academico',
-      afyaUnit: profession === 'academico' ? afyaUnit : undefined,
+      // O Google já confirmou o e-mail: nada de pedir confirmação de novo.
+      emailVerified: true,
       googleId,
-      profilePicture: picture,
-      ...(periodoBase !== null
-        ? { periodoBase, periodoBaseRef: getCurrentSemesterRef() }
-        : {}),
+      ...(picture ? { profilePicture: picture } : {}),
     }
 
     const result = await usersCollection.insertOne(newUser)
+    const userId = result.insertedId.toString()
 
-    // Cria o token vinculado a uma sessão de dispositivo (jti)
     const jti = generateSessionId()
     const token = await createToken({
-      userId: result.insertedId.toString(),
+      userId,
       email,
-      name: profileName,
+      name,
       role: 'user',
-      emailVerified: true, // Google accounts are auto-verified
+      emailVerified: true,
       jti,
     })
-
-    // Define o cookie
     await setAuthCookie(token)
 
     try {
-      await recordLoginSession({ request, userId: result.insertedId.toString(), jti })
+      await recordLoginSession({ request, userId, jti })
     } catch (sessErr) {
       console.error('Falha ao registrar sessão (Google setup):', sessErr)
     }
 
+    // Mesmo evento de topo de funil do cadastro por e-mail: sem isso, as contas
+    // criadas pelo Google sumiam do funil de conversão em /admin/analytics.
+    await recordCheckoutEvent({
+      event: 'lead_signup',
+      userId,
+      userName: name,
+      userEmail: email,
+      productType: 'unknown',
+      source: 'Cadastro com Google',
+      metadata: { provider: 'google' },
+      ...getRequestAnalyticsMeta(request),
+    })
+
+    // Best-effort: e-mail de boas-vindas não trava a criação da conta. (Não há
+    // e-mail de verificação — a conta do Google já vem verificada.)
+    sendWelcomeEmail(email, name).catch((mailErr) => {
+      console.error('Erro ao enviar email de boas-vindas (Google):', mailErr)
+    })
+
     return NextResponse.json({
       success: true,
-      user: {
-        id: result.insertedId.toString(),
-        email,
-        name: profileName,
-        role: 'user',
-      },
+      created: true,
+      user: { id: userId, email, name, role: 'user' },
     })
   } catch (error) {
     console.error('Setup profile error:', error)

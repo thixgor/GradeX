@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
+import { useTheme } from 'next-themes'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -77,6 +78,9 @@ export default function LoginView({
   const [showBlockedModal, setShowBlockedModal] = useState(false)
   const [blockedMessage, setBlockedMessage] = useState('')
   const [googleLoading, setGoogleLoading] = useState(false)
+  // Erro do passo de criar a conta pelo Google: mostrado dentro do modal, não
+  // atrás dele (antes a mensagem caía no formulário, escondida pelo overlay).
+  const [setupError, setSetupError] = useState('')
   const [googleStatus, setGoogleStatus] = useState<'loading' | 'ready' | 'error'>('loading')
   const [googleData, setGoogleData] = useState<{
     email: string
@@ -84,6 +88,10 @@ export default function LoginView({
     picture?: string
     googleId: string
   } | null>(null)
+  // O ID token é reenviado no passo de criar a conta: é ele que prova, no
+  // servidor, de quem é o e-mail. Sem isso o cadastro aceitaria qualquer e-mail
+  // digitado no corpo do request.
+  const [googleCredential, setGoogleCredential] = useState<string | null>(null)
   const [banInfo, setBanInfo] = useState<{
     reason?: BanReason
     details?: string
@@ -156,74 +164,143 @@ export default function LoginView({
   }, [redirectTo])
 
   useEffect(() => {
-    const loadRecaptchaScript = () => {
-      const script = document.createElement('script')
-      script.src = `https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`
-      script.async = true
-      script.defer = true
-      script.onload = () => {
-        if (window.grecaptcha) {
-          window.grecaptcha.ready(() => {})
-        }
-      }
-      document.head.appendChild(script)
-      return () => {
-        try { document.head.removeChild(script) } catch {}
+    const script = document.createElement('script')
+    script.src = `https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`
+    script.async = true
+    script.defer = true
+    script.onload = () => {
+      if (window.grecaptcha) {
+        window.grecaptcha.ready(() => {})
       }
     }
-
-    const loadGoogleScript = () => {
-      const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID
-      // Sem client id configurado, o GIS não renderiza nada (área branca).
-      // Sinaliza erro para exibir fallback em vez de espaço vazio.
-      if (!clientId) {
-        setGoogleStatus('error')
-        return () => {}
-      }
-
-      setGoogleStatus('loading')
-      const script = document.createElement('script')
-      script.src = 'https://accounts.google.com/gsi/client'
-      script.async = true
-      script.defer = true
-      script.onload = () => {
-        try {
-          if (window.google) {
-            window.google.accounts.id.initialize({
-              client_id: clientId,
-              callback: handleGoogleLogin,
-            })
-            const buttonElement = document.getElementById('google-signin-button')
-            if (buttonElement && isLogin) {
-              window.google.accounts.id.renderButton(buttonElement, {
-                type: 'standard',
-                size: 'large',
-                text: 'signin_with',
-                locale: 'pt-BR',
-              })
-            }
-            setGoogleStatus('ready')
-          } else {
-            setGoogleStatus('error')
-          }
-        } catch {
-          setGoogleStatus('error')
-        }
-      }
-      script.onerror = () => setGoogleStatus('error')
-      document.head.appendChild(script)
-      return () => {
-        try { document.head.removeChild(script) } catch {}
-      }
-    }
-
-    const cleanupRecaptcha = loadRecaptchaScript()
-    const cleanupGoogle = loadGoogleScript()
+    document.head.appendChild(script)
     return () => {
-      cleanupRecaptcha?.()
-      cleanupGoogle?.()
+      try { document.head.removeChild(script) } catch {}
     }
-  }, [isLogin])
+  }, [])
+
+  // ── Google Identity Services ──────────────────────────────────────────
+  // O script carrega uma vez só; o botão é redesenhado quando o modo (entrar /
+  // criar conta) ou o tema mudam. Antes o `renderButton` era condicionado a
+  // `isLogin`, e por isso quem chegava em /auth/login?mode=register não via
+  // nenhuma menção ao Google — a opção existia, mas ficava escondida atrás do
+  // link "Já tem uma conta?".
+  const googleButtonRef = useRef<HTMLDivElement>(null)
+  const googleCallbackRef = useRef<(response: any) => void>(() => {})
+  const { resolvedTheme } = useTheme()
+
+  useEffect(() => {
+    const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID
+    // Sem client id o GIS não renderiza nada (área branca). Sinaliza erro para
+    // exibir o fallback em vez de um espaço vazio.
+    if (!clientId) {
+      setGoogleStatus('error')
+      return
+    }
+
+    let cancelled = false
+    setGoogleStatus('loading')
+
+    const script = document.createElement('script')
+    script.src = 'https://accounts.google.com/gsi/client'
+    script.async = true
+    script.defer = true
+    script.onload = () => {
+      if (cancelled) return
+      try {
+        if (!window.google) {
+          setGoogleStatus('error')
+          return
+        }
+        window.google.accounts.id.initialize({
+          client_id: clientId,
+          // Via ref: o callback registrado no GIS é fixo, mas precisa enxergar
+          // o estado atual do componente.
+          callback: (response: any) => googleCallbackRef.current(response),
+        })
+        setGoogleStatus('ready')
+      } catch {
+        setGoogleStatus('error')
+      }
+    }
+    script.onerror = () => {
+      if (!cancelled) setGoogleStatus('error')
+    }
+    document.head.appendChild(script)
+
+    // Bloqueador de anúncios, rede corporativa, DNS capenga: o `onerror` nem
+    // sempre dispara e o spinner ficaria girando para sempre. Passados 8s sem
+    // resposta, mostramos o caminho do e-mail.
+    const timeout = setTimeout(() => {
+      if (!cancelled) setGoogleStatus((status) => (status === 'ready' ? status : 'error'))
+    }, 8000)
+
+    return () => {
+      cancelled = true
+      clearTimeout(timeout)
+      try { document.head.removeChild(script) } catch {}
+    }
+  }, [])
+
+  const renderGoogleButton = useCallback(() => {
+    if (googleStatus !== 'ready' || typeof window === 'undefined' || !window.google) return
+    const target = googleButtonRef.current
+    if (!target) return
+
+    // O GIS desenha com largura fixa em px (máximo 400), então medimos o
+    // espaço real do cartão para o botão não ficar mais estreito que o resto
+    // do formulário.
+    const width = Math.round(Math.min(400, Math.max(240, target.clientWidth || 320)))
+    target.innerHTML = ''
+    try {
+      window.google.accounts.id.renderButton(target, {
+        type: 'standard',
+        theme: resolvedTheme === 'dark' ? 'filled_black' : 'outline',
+        size: 'large',
+        shape: 'pill',
+        // "Cadastrar com o Google" no modo de criar conta, "Entrar com o
+        // Google" no de entrar: o rótulo é o que deixa claro que dá para se
+        // cadastrar por aqui.
+        text: isLogin ? 'signin_with' : 'signup_with',
+        logo_alignment: 'left',
+        locale: 'pt-BR',
+        width,
+      })
+    } catch {
+      setGoogleStatus('error')
+    }
+    // `emailCodeRequired`/`isRegistered` trocam o conteúdo do cartão e
+    // desmontam o alvo: ao voltar para o formulário o botão precisa ser
+    // desenhado de novo, senão fica um buraco no lugar dele.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [googleStatus, isLogin, resolvedTheme, emailCodeRequired, isRegistered])
+
+  useEffect(() => {
+    renderGoogleButton()
+  }, [renderGoogleButton])
+
+  // O botão nasce com largura fixa: sem redesenhar, girar o celular deixa ele
+  // desalinhado com os campos.
+  useEffect(() => {
+    if (googleStatus !== 'ready') return
+    let timer: ReturnType<typeof setTimeout>
+    const onResize = () => {
+      clearTimeout(timer)
+      timer = setTimeout(renderGoogleButton, 200)
+    }
+    window.addEventListener('resize', onResize)
+    return () => {
+      window.removeEventListener('resize', onResize)
+      clearTimeout(timer)
+    }
+  }, [googleStatus, renderGoogleButton])
+
+  // `handleGoogleLogin` é recriado a cada render; o GIS guarda só a primeira
+  // referência, então o ref é atualizado a cada render para o clique no botão
+  // sempre cair na versão atual.
+  useEffect(() => {
+    googleCallbackRef.current = handleGoogleLogin
+  })
 
   // ── reCAPTCHA pré-aquecido ────────────────────────────────────────────
   // O token v3 leva 150-600ms para ser emitido e antes isso acontecia DEPOIS
@@ -469,6 +546,7 @@ export default function LoginView({
 
       if (data.requiresProfileSetup) {
         setGoogleData(data.googleData)
+        setGoogleCredential(response.credential)
         setShowProfileSetup(true)
         return
       }
@@ -482,51 +560,45 @@ export default function LoginView({
     }
   }
 
-  async function handleProfileSetupComplete(setupData: {
-    profileName: string
-    dateOfBirth: string
-    profession: 'medico' | 'academico' | 'residente'
-    state: string
-    phone: string
-    specialty?: string
-    residencySpecialty?: string
-    residencyHospital?: string
-    residencyYear?: string
-    isAfyaMedicineStudent: boolean
-    afyaUnit?: string
-    periodo?: string
-  }) {
-    if (!googleData) return
+  async function handleProfileSetupComplete(setupData: { profileName: string }) {
+    if (!googleData || !googleCredential) return
     setGoogleLoading(true)
+    setError('')
     try {
       const res = await fetch('/api/auth/google/setup-profile', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: googleData.email,
+          idToken: googleCredential,
           profileName: setupData.profileName,
-          dateOfBirth: setupData.dateOfBirth,
-          profession: setupData.profession,
-          state: setupData.state,
-          phone: setupData.phone,
-          specialty: setupData.specialty,
-          residencySpecialty: setupData.residencySpecialty,
-          residencyHospital: setupData.residencyHospital,
-          residencyYear: setupData.residencyYear,
-          isAfyaMedicineStudent: setupData.isAfyaMedicineStudent,
-          afyaUnit: setupData.afyaUnit,
-          periodo: setupData.periodo,
-          picture: googleData.picture,
-          googleId: googleData.googleId,
         }),
       })
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Erro ao criar perfil')
+
+      if (!res.ok) {
+        if (data.error === 'blocked') {
+          setShowProfileSetup(false)
+          setBlockedMessage(data.message)
+          setShowBlockedModal(true)
+          return
+        }
+        if (data.error === 'banned') {
+          setShowProfileSetup(false)
+          setBanInfo({ reason: data.banReason, details: data.banDetails, bannedAt: data.bannedAt })
+          setShowBannedDialog(true)
+          return
+        }
+        throw new Error(data.error || 'Erro ao criar sua conta')
+      }
+
+      // Mesma conversão de topo de funil do cadastro por e-mail — o Meta
+      // aprende com os dois caminhos.
+      trackMeta('CompleteRegistration', { content_name: 'Cadastro com Google' })
       setShowProfileSetup(false)
       clearBootstrapCache()
       window.location.assign(redirectTo)
     } catch (err: any) {
-      setError(err.message)
+      setSetupError(err.message)
     } finally {
       setGoogleLoading(false)
     }
@@ -535,7 +607,12 @@ export default function LoginView({
   function handleProfileSetupCancel() {
     setShowProfileSetup(false)
     setGoogleData(null)
+    setGoogleCredential(null)
+    setSetupError('')
     setError('')
+    // Sem isto o GIS lembra da conta escolhida e reabre no mesmo e-mail que a
+    // pessoa acabou de recusar.
+    try { window.google?.accounts?.id?.disableAutoSelect?.() } catch {}
   }
 
   // Editorial inputs — light/dark via tokens
@@ -676,7 +753,7 @@ export default function LoginView({
           >
 
             {/* ── Mobile: logo block ── */}
-            <div className="lg:hidden pt-8 pb-2 flex flex-col items-center gap-5">
+            <div className="lg:hidden pt-6 pb-1 flex flex-col items-center gap-3">
               <Logo variant="full" size="md" />
               <motion.div
                 animate={shouldReduceMotion ? {} : {
@@ -693,7 +770,7 @@ export default function LoginView({
                     transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
                     className="absolute rounded-full blur-2xl"
                     style={{
-                      width: 120, height: 120,
+                      width: 92, height: 92,
                       background: 'radial-gradient(ellipse, rgba(74,222,128,0.55) 0%, rgba(45,212,191,0.28) 55%, transparent 75%)',
                     }}
                   />
@@ -703,10 +780,10 @@ export default function LoginView({
                     width={160}
                     height={160}
                     priority
-                    sizes="120px"
+                    sizes="92px"
                     className="relative object-contain"
                     style={{
-                      width: 120, height: 120,
+                      width: 92, height: 92,
                       filter: 'drop-shadow(0 0 18px rgba(74,222,128,0.80)) drop-shadow(0 0 40px rgba(45,212,191,0.40))',
                     }}
                   />
@@ -715,7 +792,7 @@ export default function LoginView({
             </div>
 
             {/* ── Header ── */}
-            <div className="px-7 pt-6 pb-2 flex-shrink-0 text-center">
+            <div className="px-7 pt-5 pb-1 flex-shrink-0 text-center lg:pt-6 lg:pb-2">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={isLogin ? 'login' : 'register'}
@@ -730,7 +807,7 @@ export default function LoginView({
                   <p className="text-sm text-muted-foreground mt-1">
                     {isLogin
                       ? 'Bem-vindo de volta, continue de onde parou'
-                      : 'Só nome, email e senha. Sem cartão. Comece agora mesmo.'}
+                      : 'Com o Google em um toque, ou com e-mail e senha. Sem cartão.'}
                   </p>
                 </motion.div>
               </AnimatePresence>
@@ -777,8 +854,7 @@ export default function LoginView({
                   <motion.div
                     initial={{ opacity: 0, y: -4 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="text-sm text-red-400 text-center p-3 rounded-xl"
-                    style={{ background: 'rgba(239,68,68,0.10)', border: '1px solid rgba(239,68,68,0.20)' }}
+                    className="rounded-xl border border-destructive/25 bg-destructive/10 p-3 text-center text-sm text-destructive"
                   >
                     {error}
                   </motion.div>
@@ -859,6 +935,55 @@ export default function LoginView({
               <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
                 <div className="space-y-4 overflow-y-auto flex-1 px-7 py-5">
 
+                  {/* ── Google: primeiro, porque é o caminho mais curto ──
+                      Vale nos dois modos. No cadastro é o que responde à
+                      pergunta "dá para criar conta com o Google?" sem a pessoa
+                      precisar procurar. */}
+                  <div className="space-y-2">
+                    <div
+                      ref={googleButtonRef}
+                      className={googleStatus === 'ready' ? 'flex min-h-[44px] justify-center' : 'hidden'}
+                    />
+
+                    {googleStatus === 'loading' && (
+                      <div className="flex h-11 items-center justify-center gap-2 rounded-full border border-border bg-muted/40 text-sm text-muted-foreground">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Carregando o Google...
+                      </div>
+                    )}
+
+                    {googleStatus === 'error' && (
+                      <p className="rounded-lg border border-border bg-muted/40 p-3 text-center text-xs text-muted-foreground">
+                        {isLogin ? 'Entrar' : 'Cadastro'} com Google indisponível no
+                        momento. Use seu e-mail e senha {isLogin ? 'acima' : 'abaixo'}.
+                      </p>
+                    )}
+
+                    {googleLoading && !showProfileSetup && (
+                      <p className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        Conectando com o Google...
+                      </p>
+                    )}
+
+                    {!isLogin && googleStatus !== 'error' && (
+                      <p className="text-center text-xs text-muted-foreground">
+                        Cadastro em um toque: sem criar senha e sem confirmar e-mail.
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="relative py-1">
+                    <div className="absolute inset-0 flex items-center">
+                      <span className="w-full border-t border-border" />
+                    </div>
+                    <div className="relative flex justify-center">
+                      <span className="bg-card px-3 text-[11px] uppercase tracking-wide text-muted-foreground">
+                        ou {isLogin ? 'entre' : 'cadastre-se'} com e-mail
+                      </span>
+                    </div>
+                  </div>
+
                   {/* Name — register only */}
                   <AnimatePresence mode="wait">
                     {!isLogin && (
@@ -938,8 +1063,8 @@ export default function LoginView({
                       telefone, etc.) é completado depois, dentro do app. */}
                   {!isLogin && (
                     <p className="text-xs text-center text-muted-foreground">
-                      Sem cartão. Sem formulário longo. Você entra agora e
-                      personaliza o resto depois.
+                      Você entra agora e personaliza o resto depois, já dentro
+                      da plataforma.
                     </p>
                   )}
 
@@ -965,8 +1090,7 @@ export default function LoginView({
                     <motion.div
                       initial={{ opacity: 0, y: -4 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="text-sm text-red-400 text-center p-3 rounded-xl"
-                      style={{ background: 'rgba(239,68,68,0.10)', border: '1px solid rgba(239,68,68,0.20)' }}
+                      className="rounded-xl border border-destructive/25 bg-destructive/10 p-3 text-center text-sm text-destructive"
                     >
                       {error}
                     </motion.div>
@@ -989,34 +1113,6 @@ export default function LoginView({
                     {loading ? 'Carregando...' : isLogin ? 'Entrar' : 'Começar agora — é grátis'}
                   </button>
 
-                  {isLogin && (
-                    <>
-                      <div className="relative">
-                        <div className="absolute inset-0 flex items-center">
-                          <span className="w-full border-t border-border" />
-                        </div>
-                        <div className="relative flex justify-center text-xs uppercase">
-                          <span className="px-3 text-muted-foreground" style={{ backgroundColor: 'transparent' }}>
-                            ou continue com
-                          </span>
-                        </div>
-                      </div>
-                      <div className="min-h-[44px] flex flex-col justify-center items-center gap-2">
-                        {/* GIS injeta o botão aqui — div sem filhos do React
-                            para o Google ter controle total do DOM. */}
-                        <div id="google-signin-button" className="flex justify-center" />
-                        {googleStatus === 'loading' && (
-                          <Loader2 className="h-4 w-4 animate-spin text-foreground0" />
-                        )}
-                        {googleStatus === 'error' && (
-                          <p className="text-xs text-center text-foreground0">
-                            Login com Google indisponível no momento. Use seu e-mail e senha acima.
-                          </p>
-                        )}
-                      </div>
-                    </>
-                  )}
-
                   <button
                     type="button"
                     className="w-full text-sm text-foreground0 hover:text-primary transition-colors py-1"
@@ -1035,29 +1131,18 @@ export default function LoginView({
 
       {/* ── Modal: Cadastro Bloqueado ── */}
       <Dialog open={showBlockedModal} onOpenChange={setShowBlockedModal}>
-        <DialogContent
-          className="max-w-md border-none"
-          style={{
-            background: 'rgba(4,8,22,0.95)',
-            backdropFilter: 'blur(40px)',
-            border: '1px solid rgba(255,255,255,0.09)',
-            borderRadius: 24,
-            color: '#f1f5f9',
-          }}
-        >
+        <DialogContent className="max-w-md rounded-2xl border border-border bg-card text-foreground">
           <DialogHeader>
             <div
-              className="mx-auto w-16 h-16 rounded-full flex items-center justify-center mb-4"
-              style={{ background: 'rgba(239,68,68,0.10)', border: '1px solid rgba(239,68,68,0.20)' }}
+              className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-destructive/20 bg-destructive/10"
             >
-              <AlertCircle className="h-8 w-8 text-red-400" />
+              <AlertCircle className="h-8 w-8 text-destructive" />
             </div>
-            <DialogTitle className="text-center text-xl text-red-400">Cadastro Bloqueado</DialogTitle>
+            <DialogTitle className="text-center text-xl text-destructive">Cadastro Bloqueado</DialogTitle>
             <DialogDescription asChild>
               <div className="space-y-4 mt-4">
                 <div
-                  className="p-4 rounded-xl"
-                  style={{ background: 'rgba(239,68,68,0.05)', border: '1px solid rgba(239,68,68,0.10)' }}
+                  className="rounded-xl border border-destructive/15 bg-destructive/5 p-4"
                 >
                   <p className="text-sm text-muted-foreground">{blockedMessage}</p>
                 </div>
@@ -1077,29 +1162,18 @@ export default function LoginView({
 
       {/* ── Modal: Usuário Banido ── */}
       <Dialog open={showBannedDialog} onOpenChange={setShowBannedDialog}>
-        <DialogContent
-          className="max-w-md border-none"
-          style={{
-            background: 'rgba(4,8,22,0.95)',
-            backdropFilter: 'blur(40px)',
-            border: '1px solid rgba(255,255,255,0.09)',
-            borderRadius: 24,
-            color: '#f1f5f9',
-          }}
-        >
+        <DialogContent className="max-w-md rounded-2xl border border-border bg-card text-foreground">
           <DialogHeader>
             <div
-              className="mx-auto w-16 h-16 rounded-full flex items-center justify-center mb-4"
-              style={{ background: 'rgba(239,68,68,0.10)', border: '1px solid rgba(239,68,68,0.20)' }}
+              className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-destructive/20 bg-destructive/10"
             >
-              <Ban className="h-8 w-8 text-red-400" />
+              <Ban className="h-8 w-8 text-destructive" />
             </div>
-            <DialogTitle className="text-center text-xl text-red-400">Acesso Negado</DialogTitle>
+            <DialogTitle className="text-center text-xl text-destructive">Acesso Negado</DialogTitle>
             <DialogDescription asChild>
               <div className="space-y-4 mt-4">
                 <div
-                  className="p-4 rounded-xl"
-                  style={{ background: 'rgba(239,68,68,0.05)', border: '1px solid rgba(239,68,68,0.10)' }}
+                  className="rounded-xl border border-destructive/15 bg-destructive/5 p-4"
                 >
                   <p className="text-sm font-medium mb-2 text-foreground/90">Sua conta foi banida da plataforma.</p>
                   {banInfo.reason && (
@@ -1145,6 +1219,7 @@ export default function LoginView({
           onComplete={handleProfileSetupComplete}
           onCancel={handleProfileSetupCancel}
           isLoading={googleLoading}
+          serverError={setupError}
         />
       )}
     </div>
