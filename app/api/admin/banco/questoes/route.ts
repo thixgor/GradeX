@@ -2,9 +2,39 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
-import { BancoQuestao, BancoQuestaoComHierarquia, BancoQuestaoFormData } from '@/lib/types/banco-questoes'
+import { BancoQuestao, BancoQuestaoComHierarquia } from '@/lib/types/banco-questoes'
+import { ehObjectId, escaparRegex, lerQuestao } from '@/lib/banco/questao-admin'
+import { conferirHierarquia } from '@/lib/banco/questao-hierarquia'
 
 export const dynamic = 'force-dynamic'
+
+const LIMITE_PADRAO = 20
+const LIMITE_MAXIMO = 100
+
+/** As ordens que a tela oferece. Qualquer outra coisa cai em "recentes". */
+const ORDENS: Record<string, Record<string, 1 | -1>> = {
+  recentes: { createdAt: -1 },
+  antigas: { createdAt: 1 },
+  atualizadas: { updatedAt: -1 },
+}
+
+/**
+ * Questões que precisam de uma segunda olhada.
+ *
+ * Objetiva sem gabarito, objetiva sem alternativa nenhuma, discursiva sem
+ * resposta modelo: todas passavam pelo PUT antigo, que gravava o que viesse
+ * (ver lib/banco/questao-admin.ts). A validação nova impede que apareçam
+ * novas; este filtro é como se acha as que já estão lá.
+ */
+const PRECISA_DE_REVISAO = {
+  $or: [
+    { tipo: 'objetiva', alternativas: { $not: { $elemMatch: { correta: true } } } },
+    { tipo: 'objetiva', alternativas: { $elemMatch: { texto: '' } } },
+    { tipo: 'discursiva', respostaModelo: { $in: [null, ''] } },
+    { enunciado: { $in: [null, ''] } },
+    { topicoId: null },
+  ],
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -15,80 +45,88 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url)
 
-    // Filtros
-    const periodoId = searchParams.get('periodoId')
     const moduloId = searchParams.get('moduloId')
     const topicoId = searchParams.get('topicoId')
+    const subtopicoId = searchParams.get('subtopicoId')
     const tipo = searchParams.get('tipo')
     const dificuldade = searchParams.get('dificuldade')
-    const busca = searchParams.get('busca')
+    const busca = (searchParams.get('busca') || '').trim()
+    const ordenar = searchParams.get('ordenar') || 'recentes'
+    const revisar = searchParams.get('revisar') === '1'
 
-    // Paginação
-    const page = parseInt(searchParams.get('page') || '1')
-    const limit = Math.min(parseInt(searchParams.get('limit') || '20'), 100)
+    // Id malformado é pergunta sem resposta, não erro do servidor: antes ele ia
+    // direto para `new ObjectId()`, que lança, e a lista inteira respondia 500.
+    for (const [nome, valor] of [
+      ['moduloId', moduloId],
+      ['topicoId', topicoId],
+      ['subtopicoId', subtopicoId],
+    ] as const) {
+      if (valor && !ehObjectId(valor)) {
+        return NextResponse.json({ error: `Filtro ${nome} inválido` }, { status: 400 })
+      }
+    }
+
+    const page = Math.max(1, parseInt(searchParams.get('page') || '1') || 1)
+    const limit = Math.min(Math.max(1, parseInt(searchParams.get('limit') || '') || LIMITE_PADRAO), LIMITE_MAXIMO)
     const skip = (page - 1) * limit
 
     const db = await getDb()
 
-    const matchStage: any = {}
+    const filtro: any = {}
 
-    if (periodoId) matchStage.periodoId = new ObjectId(periodoId)
-    if (moduloId) matchStage.moduloId = new ObjectId(moduloId)
-    if (topicoId) matchStage.topicoId = new ObjectId(topicoId)
-    if (tipo) matchStage.tipo = tipo
-    if (dificuldade) matchStage.dificuldade = dificuldade
-    if (busca) matchStage.enunciado = { $regex: busca, $options: 'i' }
+    if (moduloId) filtro.moduloId = new ObjectId(moduloId)
+    if (topicoId) filtro.topicoId = new ObjectId(topicoId)
+    if (subtopicoId) filtro.subtopicoid = new ObjectId(subtopicoId)
+    if (tipo === 'objetiva' || tipo === 'discursiva') filtro.tipo = tipo
+    if (dificuldade) filtro.dificuldade = dificuldade
 
+    if (busca) {
+      // O termo é escapado: enunciado de prova tem parêntese, e "(A)" cru vira
+      // um grupo de captura — quando não derruba a consulta com erro de sintaxe.
+      const termo = { $regex: escaparRegex(busca), $options: 'i' }
+      filtro.$and = [{ $or: [{ enunciado: termo }, { fonte: termo }, { tags: termo }] }]
+    }
+
+    if (revisar) {
+      filtro.$and = [...(filtro.$and || []), PRECISA_DE_REVISAO]
+    }
+
+    // Ordenar, cortar a página e SÓ ENTÃO buscar os nomes da hierarquia. Os
+    // `$lookup` vinham antes do `$skip`: com dez mil questões no banco, cada
+    // abertura da lista juntava as três coleções dez mil vezes para mostrar
+    // vinte linhas.
     const pipeline = [
-      { $match: matchStage },
+      { $match: filtro },
+      { $sort: ORDENS[ordenar] || ORDENS.recentes },
+      { $skip: skip },
+      { $limit: limit },
+      { $lookup: { from: 'banco_modulos', localField: 'moduloId', foreignField: '_id', as: 'modulo' } },
+      { $lookup: { from: 'banco_topicos', localField: 'topicoId', foreignField: '_id', as: 'topico' } },
       {
         $lookup: {
-          from: 'banco_periodos',
-          localField: 'periodoId',
+          from: 'banco_subtopicos',
+          localField: 'subtopicoid',
           foreignField: '_id',
-          as: 'periodo'
-        }
-      },
-      {
-        $lookup: {
-          from: 'banco_modulos',
-          localField: 'moduloId',
-          foreignField: '_id',
-          as: 'modulo'
-        }
-      },
-      {
-        $lookup: {
-          from: 'banco_topicos',
-          localField: 'topicoId',
-          foreignField: '_id',
-          as: 'topico'
-        }
+          as: 'subtopico',
+        },
       },
       {
         $addFields: {
-          periodoNome: { $arrayElemAt: ['$periodo.nome', 0] },
           moduloNome: { $arrayElemAt: ['$modulo.nome', 0] },
-          topicoNome: { $arrayElemAt: ['$topico.nome', 0] }
-        }
+          topicoNome: { $arrayElemAt: ['$topico.nome', 0] },
+          subtopicoNome: { $arrayElemAt: ['$subtopico.nome', 0] },
+        },
       },
-      {
-        $project: {
-          periodo: 0,
-          modulo: 0,
-          topico: 0
-        }
-      },
-      { $sort: { createdAt: -1 } },
-      { $skip: skip },
-      { $limit: limit }
+      { $project: { modulo: 0, topico: 0, subtopico: 0 } },
     ]
 
-    const questoes = await db.collection<BancoQuestao>('banco_questoes')
-      .aggregate<BancoQuestaoComHierarquia>(pipeline)
-      .toArray()
-
-    const total = await db.collection('banco_questoes').countDocuments(matchStage)
+    const [questoes, total] = await Promise.all([
+      db
+        .collection<BancoQuestao>('banco_questoes')
+        .aggregate<BancoQuestaoComHierarquia>(pipeline)
+        .toArray(),
+      db.collection('banco_questoes').countDocuments(filtro),
+    ])
 
     return NextResponse.json({
       questoes,
@@ -96,8 +134,8 @@ export async function GET(request: NextRequest) {
         page,
         limit,
         total,
-        totalPages: Math.ceil(total / limit)
-      }
+        totalPages: Math.max(1, Math.ceil(total / limit)),
+      },
     })
   } catch (error) {
     console.error('Erro ao buscar questões:', error)
@@ -112,78 +150,59 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
     }
 
-    const body: BancoQuestaoFormData = await request.json()
+    const corpo = await request.json().catch(() => null)
 
-    // Validações
-    if (!body.tipo || !['objetiva', 'discursiva'].includes(body.tipo)) {
-      return NextResponse.json({ error: 'Tipo inválido' }, { status: 400 })
+    // A mesma leitura da edição, para as duas telas cobrarem as mesmas coisas.
+    const leitura = lerQuestao(corpo)
+    if (!leitura.ok) {
+      return NextResponse.json({ error: leitura.erro, campo: leitura.campo }, { status: 400 })
     }
-
-    // Período saiu da hierarquia (ver lib/banco/hierarquia.ts): módulo é o topo.
-    if (!body.moduloId || !body.topicoId) {
-      return NextResponse.json({ error: 'Módulo e tópico são obrigatórios' }, { status: 400 })
-    }
-
-    if (!body.enunciado || body.enunciado.trim() === '') {
-      return NextResponse.json({ error: 'Enunciado é obrigatório' }, { status: 400 })
-    }
-
-    if (body.tipo === 'objetiva') {
-      if (!body.alternativas || body.alternativas.length < 2) {
-        return NextResponse.json({ error: 'Questões objetivas precisam de pelo menos 2 alternativas' }, { status: 400 })
-      }
-
-      const temCorreta = body.alternativas.some(alt => alt.correta)
-      if (!temCorreta) {
-        return NextResponse.json({ error: 'É necessário marcar uma alternativa como correta' }, { status: 400 })
-      }
-    }
-
-    if (body.tipo === 'discursiva' && !body.respostaModelo) {
-      return NextResponse.json({ error: 'Resposta modelo é obrigatória para questões discursivas' }, { status: 400 })
-    }
+    const questao = leitura.questao
 
     const db = await getDb()
 
-    // Verificar se hierarquia existe
-    const modulo = await db.collection('banco_modulos').findOne({ _id: new ObjectId(body.moduloId) })
-    if (!modulo) {
-      return NextResponse.json({ error: 'Módulo não encontrado' }, { status: 404 })
+    const hierarquia = await conferirHierarquia(db, questao)
+    if (!hierarquia.ok) {
+      return NextResponse.json(
+        { error: hierarquia.erro, campo: hierarquia.campo },
+        { status: hierarquia.status },
+      )
     }
 
-    const topico = await db.collection('banco_topicos').findOne({ _id: new ObjectId(body.topicoId) })
-    if (!topico) {
-      return NextResponse.json({ error: 'Tópico não encontrado' }, { status: 404 })
-    }
-
-    const novaQuestao: Omit<BancoQuestao, '_id'> = {
-      tipo: body.tipo,
-      // Só é gravado quando vier: questão nova não tem período nenhum.
-      ...(body.periodoId ? { periodoId: new ObjectId(body.periodoId) } : {}),
-      moduloId: new ObjectId(body.moduloId),
-      topicoId: new ObjectId(body.topicoId),
-      subtopicoid: body.subtopicoId ? new ObjectId(body.subtopicoId) : undefined,
-      enunciado: body.enunciado.trim(),
-      explicacao: body.explicacao?.trim() || undefined,
-      imagemUrl: body.imagemUrl?.trim() || undefined,
-      alternativas: body.tipo === 'objetiva' ? body.alternativas : undefined,
-      respostaModelo: body.tipo === 'discursiva' ? body.respostaModelo?.trim() : undefined,
-      dificuldade: body.dificuldade || undefined,
-      tags: body.tags || undefined,
-      fonte: body.fonte?.trim() || undefined,
-      ano: body.ano || undefined,
+    // Período saiu da hierarquia (ver lib/banco/hierarquia.ts): módulo é o topo
+    // e questão nova não nasce com período nenhum.
+    const nova = {
+      tipo: questao.tipo,
+      moduloId: new ObjectId(questao.moduloId),
+      topicoId: new ObjectId(questao.topicoId),
+      subtopicoid: questao.subtopicoId ? new ObjectId(questao.subtopicoId) : null,
+      enunciado: questao.enunciado,
+      explicacao: questao.explicacao,
+      imagemUrl: questao.imagemUrl,
+      alternativas: questao.alternativas,
+      respostaModelo: questao.respostaModelo,
+      dificuldade: questao.dificuldade,
+      tags: questao.tags,
+      fonte: questao.fonte,
+      ano: questao.ano,
       totalRespostas: 0,
       totalAcertos: 0,
       createdAt: new Date(),
       updatedAt: new Date(),
-      createdBy: new ObjectId(session.userId)
+      createdBy: new ObjectId(session.userId),
     }
 
-    const result = await db.collection('banco_questoes').insertOne(novaQuestao)
+    const resultado = await db.collection('banco_questoes').insertOne(nova as any)
 
     return NextResponse.json({
       sucesso: true,
-      questao: { ...novaQuestao, _id: result.insertedId }
+      questao: {
+        ...nova,
+        _id: resultado.insertedId,
+        moduloNome: hierarquia.moduloNome,
+        topicoNome: hierarquia.topicoNome,
+        subtopicoNome: hierarquia.subtopicoNome,
+      },
     })
   } catch (error) {
     console.error('Erro ao criar questão:', error)
