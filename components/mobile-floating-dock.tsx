@@ -74,8 +74,12 @@ export function MobileFloatingDock() {
     <div
       ref={rootRef}
       className={cn(
-        'pwa-safe-bottom fixed bottom-5 z-40 flex flex-col items-end gap-2.5 lg:hidden',
-        isExamResolver ? 'left-4 items-start' : 'right-4 items-end',
+        'fixed z-40 flex flex-col items-end gap-2.5 lg:hidden',
+        isExamResolver
+          // A prova (modo paginado) tem uma barra fixa de navegação no rodapé;
+          // sem esta folga o "+" nascia embaixo dela, ilegível e sem toque.
+          ? 'left-4 items-start bottom-[calc(5.75rem+env(safe-area-inset-bottom))]'
+          : 'pwa-safe-bottom right-4 items-end bottom-5',
       )}
     >
       {/* Ações reveladas */}

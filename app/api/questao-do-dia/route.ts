@@ -16,6 +16,14 @@ function hashString(value: string): number {
   return h >>> 0
 }
 
+// Alguns registros do banco trazem quebras de linha escapadas como texto
+// literal ("\n", "\r\n", "\nl") em vez de caracteres de quebra de linha
+// reais — normaliza para que `whitespace-pre-line` no front exiba
+// corretamente.
+function normalizarQuebrasDeLinha(texto: string): string {
+  return texto.replace(/\\r\\n|\\nl|\\n|\\r/g, '\n')
+}
+
 // Questão do dia: mecânica de retorno (gatilho para o usuário voltar todo dia).
 // Determinística por data, autenticada.
 export async function GET(_request: NextRequest) {
@@ -69,8 +77,8 @@ export async function GET(_request: NextRequest) {
         data: hoje,
         questao: {
           id: String(q._id),
-          enunciado: q.enunciado || '',
-          explicacao: q.explicacao || '',
+          enunciado: normalizarQuebrasDeLinha(q.enunciado || ''),
+          explicacao: normalizarQuebrasDeLinha(q.explicacao || ''),
           imagemUrl: q.imagemUrl || null,
           alternativas: (q.alternativas || []).map((a: any) => ({
             letra: a.letra,

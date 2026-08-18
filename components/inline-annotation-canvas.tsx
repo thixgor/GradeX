@@ -879,7 +879,9 @@ export function InlineAnnotationCanvas({
           stays reachable while scrolling through a long question and scrolls
           away naturally once you move past it. No portal: each question owns one. */}
       {!isActive && (
-        <div className="sticky bottom-3 z-30 flex justify-end pr-0.5 pointer-events-none">
+        // `--anotacao-espaco-inferior` deixa a página empurrar o FAB para cima
+        // quando existe uma barra fixa no rodapé (ex.: navegação da prova).
+        <div className="sticky bottom-[calc(0.75rem+var(--anotacao-espaco-inferior,0px))] z-30 flex justify-end pr-0.5 pointer-events-none">
           <AnnotateFab hasInk={hasInk} onClick={activate} />
         </div>
       )}
