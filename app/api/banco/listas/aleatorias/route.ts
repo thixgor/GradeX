@@ -6,6 +6,7 @@ import { User } from '@/lib/types'
 import { BancoListaUsuario, BancoListaAleatoriaFiltros } from '@/lib/types/banco-questoes'
 import { isPlusAccount } from '@/lib/account-tier'
 import { interpretarPeriodoLetivo } from '@/lib/banco/periodo-letivo'
+import { campoTextoPreenchido } from '@/lib/banco/filtros-conteudo'
 
 export const dynamic = 'force-dynamic'
 
@@ -99,10 +100,10 @@ export async function POST(request: NextRequest) {
     if (periodos.length > 0) matchStage.periodoLetivo = { $in: periodos }
 
     if (body.comImagem) {
-      matchStage.imagemUrl = { $exists: true, $ne: '' }
+      matchStage.imagemUrl = campoTextoPreenchido()
     }
     if (body.comExplicacao) {
-      matchStage.explicacao = { $exists: true, $ne: '' }
+      matchStage.explicacao = campoTextoPreenchido()
     }
 
     /*

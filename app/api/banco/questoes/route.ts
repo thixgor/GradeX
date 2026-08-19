@@ -11,6 +11,7 @@ import {
 import { lerAcessoAoBanco, ocultarConteudo } from '@/lib/banco/acesso-servidor'
 import { jaDesbloqueada, restantes } from '@/lib/banco/gratuito'
 import { interpretarPeriodoLetivo } from '@/lib/banco/periodo-letivo'
+import { campoTextoPreenchido } from '@/lib/banco/filtros-conteudo'
 
 export const dynamic = 'force-dynamic'
 
@@ -129,12 +130,10 @@ export async function GET(request: NextRequest) {
       matchStage.periodoLetivo = { $in: periodos }
     }
     if (filtros.comImagem) {
-      // `$ne: ''` além de `$exists`: bastante questão do acervo importado tem
-      // o campo criado e vazio, e isso não é "tem imagem".
-      matchStage.imagemUrl = { $exists: true, $ne: '' }
+      matchStage.imagemUrl = campoTextoPreenchido()
     }
     if (filtros.comExplicacao) {
-      matchStage.explicacao = { $exists: true, $ne: '' }
+      matchStage.explicacao = campoTextoPreenchido()
     }
 
     const pipeline: any[] = [
