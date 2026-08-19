@@ -841,6 +841,22 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     return () => cancelAnimationFrame(frame)
   }, [currentQuestionIndex, started, submitted, isPaginatedMode])
 
+  // ─── Modo paginado: pré-carregar a imagem da próxima questão ───
+  // No modo paginado só a questão atual está no DOM, então o <img> da próxima
+  // só começa a baixar depois do clique em "Próxima" — a pessoa via a tela
+  // travada até a imagem chegar. Buscando o arquivo em segundo plano assim que
+  // a questão atual abre, ele já está no cache do navegador quando o <img>
+  // trocar de src.
+  useEffect(() => {
+    if (!started || submitted || !isPaginatedMode) return
+    if (typeof window === 'undefined') return
+    const proxima = exam?.questions[currentQuestionIndex + 1]
+    if (proxima?.imageUrl) {
+      const preload = new window.Image()
+      preload.src = proxima.imageUrl
+    }
+  }, [currentQuestionIndex, started, submitted, isPaginatedMode, exam])
+
   function handleSelectAlternative(questionId: string, alternativeId: string) {
     // Não permitir mudança se questão está bloqueada
     if (lockedQuestions.has(questionId)) {

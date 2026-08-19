@@ -135,6 +135,20 @@ export default function ListaDetalhePage() {
     prewarmPDFAssets()
   }, [id])
 
+  // No simulado só a questão atual está no DOM, então o <img> da próxima só
+  // começa a baixar depois do clique em "Próxima" — daí a demora visível para
+  // a imagem trocar. Buscando o arquivo em segundo plano assim que a questão
+  // atual abre, ele já está no cache do navegador quando o <img> trocar de src.
+  useEffect(() => {
+    if (modo !== 'simulado') return
+    if (typeof window === 'undefined') return
+    const proxima = questoes[questaoAtual + 1]
+    if (proxima?.imagemUrl) {
+      const preload = new window.Image()
+      preload.src = proxima.imagemUrl
+    }
+  }, [modo, questaoAtual, questoes])
+
   async function loadLista() {
     try {
       const res = await fetch(`/api/banco/listas/${id}`)
