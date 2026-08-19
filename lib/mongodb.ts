@@ -117,6 +117,26 @@ if (process.env.NODE_ENV === 'development') {
         db.collection('shop_orders').createIndex({ providerOrderId: 1 }, { sparse: true }),
         db.collection('shop_orders').createIndex({ orderNumber: 1 }, { unique: true }),
         db.collection('shop_settings').createIndex({ settingsId: 1 }, { unique: true }),
+        // ── Banco de Questões ──
+        // Sem nenhum destes, toda listagem em /banco-questoes varria a
+        // coleção inteira: o filtro por assunto/tipo/dificuldade/ano/período,
+        // o $lookup de resolução por questão (1 busca por documento) e a
+        // ordenação por "menos praticadas" rodavam sem índice nenhum.
+        db.collection('banco_questoes').createIndex({ moduloId: 1, createdAt: -1 }),
+        db.collection('banco_questoes').createIndex({ topicoId: 1, createdAt: -1 }),
+        db.collection('banco_questoes').createIndex({ subtopicoid: 1, createdAt: -1 }),
+        db.collection('banco_questoes').createIndex({ periodoId: 1 }),
+        db.collection('banco_questoes').createIndex({ tipo: 1, createdAt: -1 }),
+        db.collection('banco_questoes').createIndex({ dificuldade: 1, createdAt: -1 }),
+        db.collection('banco_questoes').createIndex({ ano: 1, createdAt: -1 }),
+        db.collection('banco_questoes').createIndex({ periodoLetivo: 1, createdAt: -1 }),
+        db.collection('banco_questoes').createIndex({ createdAt: -1 }),
+        db.collection('banco_questoes').createIndex({ totalRespostas: 1, createdAt: -1 }),
+        // Cobre o lookup por questão+usuário (listagem/resolução) e o lookup
+        // por usuário+questões (contagem de progresso de uma lista).
+        db.collection('banco_resolucoes').createIndex({ questaoId: 1, userId: 1, createdAt: -1 }),
+        db.collection('banco_resolucoes').createIndex({ userId: 1, questaoId: 1 }),
+        db.collection('banco_listas_usuario').createIndex({ userId: 1 }),
       ]).catch(err => console.error('Erro ao criar índices iniciais:', err))
       return client
     })
@@ -223,6 +243,26 @@ if (process.env.NODE_ENV === 'development') {
       db.collection('shop_orders').createIndex({ providerOrderId: 1 }, { sparse: true }),
       db.collection('shop_orders').createIndex({ orderNumber: 1 }, { unique: true }),
       db.collection('shop_settings').createIndex({ settingsId: 1 }, { unique: true }),
+      // ── Banco de Questões ──
+      // Sem nenhum destes, toda listagem em /banco-questoes varria a
+      // coleção inteira: o filtro por assunto/tipo/dificuldade/ano/período,
+      // o $lookup de resolução por questão (1 busca por documento) e a
+      // ordenação por "menos praticadas" rodavam sem índice nenhum.
+      db.collection('banco_questoes').createIndex({ moduloId: 1, createdAt: -1 }),
+      db.collection('banco_questoes').createIndex({ topicoId: 1, createdAt: -1 }),
+      db.collection('banco_questoes').createIndex({ subtopicoid: 1, createdAt: -1 }),
+      db.collection('banco_questoes').createIndex({ periodoId: 1 }),
+      db.collection('banco_questoes').createIndex({ tipo: 1, createdAt: -1 }),
+      db.collection('banco_questoes').createIndex({ dificuldade: 1, createdAt: -1 }),
+      db.collection('banco_questoes').createIndex({ ano: 1, createdAt: -1 }),
+      db.collection('banco_questoes').createIndex({ periodoLetivo: 1, createdAt: -1 }),
+      db.collection('banco_questoes').createIndex({ createdAt: -1 }),
+      db.collection('banco_questoes').createIndex({ totalRespostas: 1, createdAt: -1 }),
+      // Cobre o lookup por questão+usuário (listagem/resolução) e o lookup
+      // por usuário+questões (contagem de progresso de uma lista).
+      db.collection('banco_resolucoes').createIndex({ questaoId: 1, userId: 1, createdAt: -1 }),
+      db.collection('banco_resolucoes').createIndex({ userId: 1, questaoId: 1 }),
+      db.collection('banco_listas_usuario').createIndex({ userId: 1 }),
     ]).catch(err => console.error('Erro ao criar índices iniciais:', err))
     return client
   })

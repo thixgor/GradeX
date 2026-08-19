@@ -136,6 +136,56 @@ export async function GET(request: NextRequest) {
       matchStage.explicacao = campoTextoPreenchido()
     }
 
+    // Lookup de resoluções do usuário — só entra quando "não resolvidas" ou
+    // "só as que errei" está ativo. Ele roda um sub-pipeline POR QUESTÃO, então
+    // carregá-lo sem necessidade (inclusive na contagem, que nem devolve
+    // esse campo) custava caro para nada.
+    const precisaResolucoes = filtros.apenasNaoResolvidas || filtros.apenasErradas
+    const resolucoesLookup = {
+      $lookup: {
+        from: 'banco_resolucoes',
+        let: { questaoId: '$_id' },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ['$questaoId', '$$questaoId'] },
+                  { $eq: ['$userId', new ObjectId(session.userId)] }
+                ]
+              }
+            }
+          },
+          { $sort: { createdAt: -1 } },
+          { $limit: 1 }
+        ],
+        as: 'resolucoes'
+      }
+    }
+    const resolucoesAddFields = {
+      $addFields: {
+        jaResolvida: { $gt: [{ $size: '$resolucoes' }, 0] },
+        ultimaResolucao: { $arrayElemAt: ['$resolucoes', 0] }
+      }
+    }
+    // `apenasErradas` é o oposto complementar de "esconder as que já
+    // resolvi": ele exige que TENHA resolvido, e que a última resposta tenha
+    // sido errada — os dois juntos nunca fazem sentido ao mesmo tempo, e a
+    // tela os trata como mutuamente exclusivos.
+    const resolucoesMatch = {
+      $match: filtros.apenasNaoResolvidas
+        ? { jaResolvida: false }
+        : { jaResolvida: true, 'ultimaResolucao.correta': false }
+    }
+
+    // Pipeline de CONTAGEM: só o que decide se a questão entra no total. Os
+    // nomes de período/módulo/tópico/subtópico não importam para contar — o
+    // pipeline completo, com os 5 lookups, rodava DE NOVO só para chegar num
+    // número, dobrando o trabalho de toda listagem.
+    const countPipeline: any[] = [{ $match: matchStage }]
+    if (precisaResolucoes) countPipeline.push(resolucoesLookup, resolucoesAddFields, resolucoesMatch)
+    countPipeline.push({ $count: 'total' })
+
     const pipeline: any[] = [
       { $match: matchStage },
       // Lookup para hierarquia
@@ -171,28 +221,7 @@ export async function GET(request: NextRequest) {
           as: 'subtopico'
         }
       },
-      // Lookup para resoluções do usuário
-      {
-        $lookup: {
-          from: 'banco_resolucoes',
-          let: { questaoId: '$_id' },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $and: [
-                    { $eq: ['$questaoId', '$$questaoId'] },
-                    { $eq: ['$userId', new ObjectId(session.userId)] }
-                  ]
-                }
-              }
-            },
-            { $sort: { createdAt: -1 } },
-            { $limit: 1 }
-          ],
-          as: 'resolucoes'
-        }
-      },
+      resolucoesLookup,
       {
         $addFields: {
           periodoNome: { $arrayElemAt: ['$periodo.nome', 0] },
@@ -214,23 +243,7 @@ export async function GET(request: NextRequest) {
       }
     ]
 
-    // Filtrar apenas não resolvidas se solicitado. `apenasErradas` é o
-    // oposto complementar de "esconder as que já resolvi": ele exige que
-    // TENHA resolvido, e que a última resposta tenha sido errada — os dois
-    // juntos nunca fazem sentido ao mesmo tempo, e a tela os trata como
-    // mutuamente exclusivos.
-    if (filtros.apenasNaoResolvidas) {
-      pipeline.push({ $match: { jaResolvida: false } })
-    } else if (filtros.apenasErradas) {
-      pipeline.push({ $match: { jaResolvida: true, 'ultimaResolucao.correta': false } })
-    }
-
-    // Contar total
-    const countPipeline = [...pipeline, { $count: 'total' }]
-    const countResult = await db.collection<BancoQuestao>('banco_questoes')
-      .aggregate(countPipeline)
-      .toArray()
-    const total = countResult[0]?.total || 0
+    if (precisaResolucoes) pipeline.push(resolucoesMatch)
 
     /*
      * A ordenação por dificuldade real não é um campo do documento — é a
@@ -265,9 +278,13 @@ export async function GET(request: NextRequest) {
     // Paginação
     pipeline.push({ $skip: skip }, { $limit: limit })
 
-    const questoes = await db.collection<BancoQuestao>('banco_questoes')
-      .aggregate<BancoQuestaoComHierarquia>(pipeline)
-      .toArray()
+    // Contagem e página de dados não dependem uma da outra — rodar em
+    // paralelo custa o tempo da mais lenta das duas, não a soma das duas.
+    const [countResult, questoes] = await Promise.all([
+      db.collection<BancoQuestao>('banco_questoes').aggregate(countPipeline).toArray(),
+      db.collection<BancoQuestao>('banco_questoes').aggregate<BancoQuestaoComHierarquia>(pipeline).toArray(),
+    ])
+    const total = countResult[0]?.total || 0
 
     // O corte do conteúdo é a ÚLTIMA coisa: filtro, contagem e paginação são
     // iguais para todo mundo, então o número de resultados que o gratuito vê é

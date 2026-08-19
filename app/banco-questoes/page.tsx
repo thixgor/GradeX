@@ -223,10 +223,15 @@ function Conteudo() {
   useEffect(() => {
     let vivo = true
     ;(async () => {
+      // As quatro chamadas partem juntas: a lista de questões (a mais lenta,
+      // por ter os lookups de hierarquia e resolução) não depende de nenhuma
+      // das outras três, então esperar hierarquia+anos+listas terminarem
+      // antes de pedi-la só somava o tempo das quatro em vez de sobrepô-las.
       const [hierRes, anosRes, listasRes] = await Promise.all([
         fetch('/api/banco/hierarquia', { cache: 'no-store' }),
         fetch('/api/banco/anos'),
         fetch('/api/banco/listas'),
+        carregarQuestoes(1),
       ])
       if (!vivo) return
 
@@ -240,7 +245,6 @@ function Conteudo() {
       // ou negada, e a tela simplesmente não mostra a seção.
       if (listasRes.ok) setListas((await listasRes.json()).listas || [])
 
-      await carregarQuestoes(1)
       if (vivo) setCarregando(false)
       primeiraCarga.current = false
     })()
