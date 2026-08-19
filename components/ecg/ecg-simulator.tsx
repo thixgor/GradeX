@@ -6,11 +6,12 @@ import {
   Search, Activity, Ruler, GraduationCap, ZoomIn, ZoomOut, Play, Pause,
   GitCompare, Grid3x3, Monitor, Rows3, LineChart, Heart, Box, Loader2,
   X, ListFilter, Gauge, Star, StickyNote, ChevronRight, HelpCircle, FlaskConical,
-  BookOpen,
+  BookOpen, ArrowUp, ArrowDown,
 } from 'lucide-react'
 import { ECG_CATALOG, CATEGORIES, searchCatalog, type EcgEntry, type EcgCategory, type Urgency } from '@/lib/ecg/catalog'
 import { computeMeasurements, LEADS, type LeadName } from '@/lib/ecg/engine'
 import { measureEcg } from '@/lib/ecg/measure'
+import { referenciaDe, type RefKey, type RefStatus } from '@/lib/ecg/reference'
 import { conductionFor } from '@/lib/ecg/conduction'
 import { useEcg12 } from './use-ecg-signal'
 import { useEcgFavorites } from './use-ecg-favorites'
@@ -397,15 +398,31 @@ export function EcgSimulator() {
               </span>
             </div>
             <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-8">
-              <Measure label="FC" value={`${measures.hr}`} unit="bpm" />
-              <Measure label="PR" value={measures.pr != null ? `${measures.pr}` : '—'} unit="ms" />
-              <Measure label="QRS" value={`${measures.qrs}`} unit="ms" />
-              <Measure label="QT" value={`${measures.qt}`} unit="ms" />
-              <Measure label="QTc" value={`${measures.qtc}`} unit="ms" warn={measures.qtc > 460 || measures.qtc < 350} />
-              <Measure label="Eixo" value={`${measures.axis}°`} />
-              <Measure label="RR" value={`${measures.rr}`} unit="ms" />
-              <Measure label="R" value={`${measures.rAmp}`} unit="mV" />
+              <Measure label="FC" value={`${measures.hr}`} unit="bpm" refKey="hr" num={measures.hr} />
+              <Measure label="PR" value={measures.pr != null ? `${measures.pr}` : '—'} unit="ms" refKey="pr" num={measures.pr} />
+              <Measure label="QRS" value={`${measures.qrs}`} unit="ms" refKey="qrs" num={measures.qrs} />
+              <Measure label="QT" value={`${measures.qt}`} unit="ms" refKey="qt" num={measures.qt} />
+              <Measure label="QTc" value={`${measures.qtc}`} unit="ms" refKey="qtc" num={measures.qtc} />
+              <Measure label="Eixo" value={`${measures.axis}°`} refKey="axis" num={measures.axis} />
+              <Measure label="RR" value={`${measures.rr}`} unit="ms" refKey="rr" num={measures.rr} />
+              <Measure label="R" value={`${measures.rAmp}`} unit="mV" refKey="rAmp" num={measures.rAmp} />
             </div>
+            {/* Legenda da faixa de normalidade — o "VR" impresso em cada card. */}
+            <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] leading-tight text-muted-foreground">
+              <span className="inline-flex items-center gap-1">
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400" /> dentro da referência
+              </span>
+              <span className="inline-flex items-center gap-1">
+                <ArrowUp className="h-3 w-3 text-amber-500" /> acima
+              </span>
+              <span className="inline-flex items-center gap-1">
+                <ArrowDown className="h-3 w-3 text-amber-500" /> abaixo
+              </span>
+              <span className="opacity-80">
+                <b className="font-bold">VR</b> = valor normal de referência do adulto. O QT absoluto varia com a
+                frequência cardíaca — a leitura válida é a do QTc.
+              </span>
+            </p>
             {calipers && (
               <div className="rounded-lg border border-cyan-400/30 bg-cyan-500/[0.06] px-3 py-2 text-[11px] text-cyan-700 dark:text-cyan-300">
                 <Ruler className="mr-1 inline h-3.5 w-3.5" />
@@ -495,11 +512,84 @@ function Segmented({ label, value, options, onChange, icon: Icon }: { label: str
   )
 }
 
-function Measure({ label, value, unit, warn }: { label: string; value: string; unit?: string; warn?: boolean }) {
+/* ── cores do card de medida conforme o valor cai (ou não) na faixa normal ── */
+const MEASURE_TONE: Record<RefStatus, { card: string; value: string; mark: string; ref: string; sep: string }> = {
+  normal: {
+    card: 'border-emerald-400/25 bg-emerald-500/[0.05]',
+    value: 'text-foreground',
+    mark: 'bg-emerald-400',
+    ref: 'text-emerald-700/90 dark:text-emerald-300/90',
+    sep: 'border-emerald-400/20',
+  },
+  alto: {
+    card: 'border-amber-400/45 bg-amber-500/[0.09]',
+    value: 'text-amber-600 dark:text-amber-300',
+    mark: 'text-amber-500 dark:text-amber-300',
+    ref: 'text-amber-700/90 dark:text-amber-300/90',
+    sep: 'border-amber-400/25',
+  },
+  baixo: {
+    card: 'border-amber-400/45 bg-amber-500/[0.09]',
+    value: 'text-amber-600 dark:text-amber-300',
+    mark: 'text-amber-500 dark:text-amber-300',
+    ref: 'text-amber-700/90 dark:text-amber-300/90',
+    sep: 'border-amber-400/25',
+  },
+  // Sem julgamento possível (QT absoluto, PR não mensurável): tokens do tema,
+  // para o card não sumir no papel claro ao lado dos coloridos.
+  neutro: {
+    card: 'border-border bg-foreground/[0.03]',
+    value: 'text-foreground',
+    mark: 'bg-muted-foreground/50',
+    ref: 'text-muted-foreground',
+    sep: 'border-border',
+  },
+}
+
+const STATUS_WORD: Record<RefStatus, string> = {
+  normal: 'dentro da referência',
+  alto: 'ACIMA da referência',
+  baixo: 'ABAIXO da referência',
+  neutro: 'sem julgamento automático',
+}
+
+/**
+ * Card de uma medida do traçado com o valor normal de referência logo abaixo.
+ *
+ * O número sozinho não ensina nada a quem está aprendendo: "PR 260 ms" só vira
+ * BAV de 1º grau quando se sabe que o normal vai até 200 ms. Por isso o card
+ * carrega sempre a faixa (VR) e sinaliza, pela cor e pela seta, de que lado da
+ * faixa o valor caiu.
+ */
+function Measure({ label, value, unit, refKey, num }: {
+  label: string
+  value: string
+  unit?: string
+  refKey: RefKey
+  /** valor numérico da medida (null quando não mensurável) — o que é comparado à faixa */
+  num: number | null
+}) {
+  const { faixa, detalhe, status } = referenciaDe(refKey, num)
+  const tone = MEASURE_TONE[status]
+  const Seta = status === 'alto' ? ArrowUp : status === 'baixo' ? ArrowDown : null
   return (
-    <div className={`rounded-lg border p-2 text-center ${warn ? 'border-red-500/40 bg-red-500/10' : 'border-white/[0.08] bg-white/[0.02]'}`}>
-      <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">{label}</p>
-      <p className={`text-base font-black tabular-nums ${warn ? 'text-red-500' : ''}`}>{value}<span className="ml-0.5 text-[9px] font-medium text-muted-foreground">{unit}</span></p>
+    <div
+      className={`rounded-lg border p-2 text-center transition-colors ${tone.card}`}
+      title={`${label}: ${value}${unit ? ' ' + unit : ''} — ${STATUS_WORD[status]}. Valor normal de referência: ${faixa}${unit ? ' ' + unit : ''}. ${detalhe}`}
+    >
+      <p className="flex items-center justify-center gap-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+        {Seta
+          ? <Seta className={`h-3 w-3 shrink-0 ${tone.mark}`} aria-hidden />
+          : <span className={`inline-block h-1.5 w-1.5 shrink-0 rounded-full ${tone.mark}`} aria-hidden />}
+        {label}
+      </p>
+      <p className={`text-base font-black leading-tight tabular-nums ${tone.value}`}>
+        {value}<span className="ml-0.5 text-[9px] font-medium text-muted-foreground">{unit}</span>
+      </p>
+      <p className={`mt-1 border-t pt-1 text-[9px] font-semibold leading-tight tabular-nums ${tone.sep} ${tone.ref}`}>
+        <span className="opacity-60">VR</span> {faixa}
+      </p>
+      <span className="sr-only">{STATUS_WORD[status]}</span>
     </div>
   )
 }

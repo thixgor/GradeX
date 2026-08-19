@@ -6,6 +6,7 @@ import { synthesizeLead, computeMeasurements, type LeadName } from '@/lib/ecg/en
 import {
   PLAYGROUND_SCENARIOS, defaultValues, type PlaygroundScenario, type Tone,
 } from '@/lib/ecg/playground'
+import { referenciaDe, type RefKey } from '@/lib/ecg/reference'
 import { EcgLeadCanvas } from './ecg-lead-canvas'
 
 const TONE_TEXT: Record<Tone, string> = {
@@ -177,12 +178,16 @@ export function EcgPlayground({ dark, onClose, initialScenario, onOpenPattern }:
               ))}
             </div>
             <div className="mt-2 grid grid-cols-5 gap-1.5">
-              <LiveTile label="FC" value={`${measures.hr}`} unit="bpm" />
-              <LiveTile label="PR" value={measures.pr != null ? `${measures.pr}` : '—'} unit="ms" />
-              <LiveTile label="QRS" value={`${measures.qrs}`} unit="ms" warn={measures.qrs >= 120} />
-              <LiveTile label="QT" value={`${measures.qt}`} unit="ms" />
-              <LiveTile label="QTc" value={`${measures.qtc}`} unit="ms" warn={measures.qtc > 460 || measures.qtc < 350} />
+              <LiveTile label="FC" value={`${measures.hr}`} unit="bpm" refKey="hr" num={measures.hr} />
+              <LiveTile label="PR" value={measures.pr != null ? `${measures.pr}` : '—'} unit="ms" refKey="pr" num={measures.pr} />
+              <LiveTile label="QRS" value={`${measures.qrs}`} unit="ms" refKey="qrs" num={measures.qrs} />
+              <LiveTile label="QT" value={`${measures.qt}`} unit="ms" refKey="qt" num={measures.qt} />
+              <LiveTile label="QTc" value={`${measures.qtc}`} unit="ms" refKey="qtc" num={measures.qtc} />
             </div>
+            <p className="mt-1 text-[9px] leading-tight text-muted-foreground">
+              <b className="font-bold">VR</b> = valor normal de referência do adulto. Mexa nos controles e veja a
+              medida sair (ou voltar) da faixa.
+            </p>
           </div>
 
           {/* Controles + achados */}
@@ -276,12 +281,34 @@ export function EcgPlayground({ dark, onClose, initialScenario, onOpenPattern }:
   )
 }
 
-function LiveTile({ label, value, unit, warn }: { label: string; value: string; unit: string; warn?: boolean }) {
+/**
+ * Mostrador de uma medida do laboratório vivo, com o valor normal de
+ * referência abaixo — é ele que dá sentido ao número enquanto a pessoa
+ * arrasta os controles e vê a medida sair da faixa.
+ */
+function LiveTile({ label, value, unit, refKey, num }: {
+  label: string
+  value: string
+  unit: string
+  refKey: RefKey
+  num: number | null
+}) {
+  const { faixa, detalhe, status } = referenciaDe(refKey, num)
+  const fora = status === 'alto' || status === 'baixo'
   return (
-    <div className={`rounded-lg border px-1.5 py-1 text-center ${warn ? 'border-amber-500/40 bg-amber-500/10' : 'border-border bg-foreground/[0.03]'}`}>
+    <div
+      className={`rounded-lg border px-1.5 py-1 text-center ${fora ? 'border-amber-500/40 bg-amber-500/10' : status === 'normal' ? 'border-emerald-500/30 bg-emerald-500/[0.06]' : 'border-border bg-foreground/[0.03]'}`}
+      title={`${label}: ${value} ${unit} — valor normal de referência: ${faixa} ${unit}. ${detalhe}`}
+    >
       <div className="text-[9px] font-bold uppercase tracking-wide text-muted-foreground">{label}</div>
-      <div className={`font-mono text-sm font-bold tabular-nums ${warn ? 'text-amber-500' : ''}`}>{value}</div>
+      <div className={`font-mono text-sm font-bold tabular-nums ${fora ? 'text-amber-500' : ''}`}>
+        {value}
+        {fora && <span className="ml-0.5 align-top text-[8px]">{status === 'alto' ? '↑' : '↓'}</span>}
+      </div>
       <div className="text-[8px] text-muted-foreground">{unit}</div>
+      <div className={`mt-0.5 border-t pt-0.5 text-[8px] font-semibold tabular-nums ${fora ? 'border-amber-500/25 text-amber-600 dark:text-amber-400' : 'border-border text-muted-foreground'}`}>
+        <span className="opacity-60">VR</span> {faixa}
+      </div>
     </div>
   )
 }
