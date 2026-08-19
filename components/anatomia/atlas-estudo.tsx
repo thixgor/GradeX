@@ -14,6 +14,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { Portal } from '@/components/ui/portal'
 import { PranchaInterativa } from '@/components/anatomia/prancha-interativa'
 import { FichaCarregando, FichaMarcador, FichaVazia } from '@/components/anatomia/ficha-estrutura'
 import {
@@ -26,6 +27,7 @@ import {
 import type { MarkerInsight } from '@/lib/atlas-anatomia/insights'
 import { AcervoIndisponivel, carregarAcervo } from '@/lib/atlas-anatomia/acervo-cliente'
 import { prepararMotorDeFichas, useMotorDeFichas } from '@/lib/atlas-anatomia/motor-fichas'
+import { registrarVisita } from '@/lib/anatomia/ultima-visita'
 import {
   ArrowLeft,
   ArrowRight,
@@ -38,12 +40,17 @@ import {
   LayoutGrid,
   Loader2,
   Search,
-  Sparkles,
   Target,
   X,
 } from 'lucide-react'
 
 type Colecao = AtlasCollection & { breadcrumb: string[] }
+
+/** Onde a área de estudo deve abrir: prancha e, se houver, estrutura. */
+export interface AlvoDeAbertura {
+  peca: number
+  marcador?: number | null
+}
 
 const normalizar = (valor: string) =>
   valor
@@ -101,8 +108,115 @@ function regioes(colecoes: Colecao[]): Regiao[] {
   })
 }
 
-function contarPranchas(sistema: AtlasSystem) {
-  return folhas(sistema).reduce((total, colecao) => total + (colecao.pieces?.length || 0), 0)
+/* ══════════════════════════ Busca de estrutura ══════════════════════════ */
+
+interface Resultado {
+  colecao: Colecao
+  peca: AtlasPiece
+  indicePeca: number
+  indiceMarcador: number
+  titulo: string
+}
+
+/**
+ * Procura a estrutura em todo o sistema aberto, e não só na coleção da vez.
+ *
+ * O acervo já está na memória quando esta tela existe, então a busca é uma
+ * varredura local — sem rede, sem espera. O teto de 40 resultados existe porque
+ * "artéria" casa com centenas de marcadores, e ninguém rola uma lista dessas.
+ */
+function useResultados(colecoes: Colecao[], busca: string): Resultado[] {
+  return useMemo(() => {
+    const termo = normalizar(busca)
+    if (termo.length < 2) return []
+    const encontrados: Resultado[] = []
+    for (const item of colecoes) {
+      ;(item.pieces || []).forEach((umaPeca, posicaoPeca) => {
+        umaPeca.markers.forEach((umMarcador, posicaoMarcador) => {
+          if (encontrados.length >= 40) return
+          if (normalizar(umMarcador.title).includes(termo)) {
+            encontrados.push({
+              colecao: item,
+              peca: umaPeca,
+              indicePeca: posicaoPeca,
+              indiceMarcador: posicaoMarcador,
+              titulo: umMarcador.title,
+            })
+          }
+        })
+      })
+    }
+    return encontrados
+  }, [busca, colecoes])
+}
+
+function BuscaDeEstrutura({
+  valor,
+  onMudar,
+  resultados,
+  onAbrir,
+  placeholder = 'Buscar estrutura neste sistema…',
+}: {
+  valor: string
+  onMudar: (valor: string) => void
+  resultados: Resultado[]
+  onAbrir: (resultado: Resultado) => void
+  placeholder?: string
+}) {
+  const [focada, setFocada] = useState(false)
+  const aberta = focada && valor.trim().length >= 2
+
+  return (
+    <div className="relative">
+      <div className="anatomia-campo flex h-10 items-center rounded-2xl">
+        <Search className="pointer-events-none ml-3 h-4 w-4 shrink-0 text-muted-foreground" />
+        <input
+          value={valor}
+          onChange={evento => onMudar(evento.target.value)}
+          onFocus={() => setFocada(true)}
+          onBlur={() => window.setTimeout(() => setFocada(false), 150)}
+          placeholder={placeholder}
+          aria-label="Buscar estrutura"
+          className="h-full min-w-0 flex-1 bg-transparent px-2.5 text-sm outline-none placeholder:text-muted-foreground/70"
+        />
+        {valor && (
+          <button
+            type="button"
+            onClick={() => onMudar('')}
+            className="mr-1.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-muted-foreground transition hover:bg-foreground/5 hover:text-foreground"
+            aria-label="Limpar busca"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        )}
+      </div>
+
+      {aberta && (
+        <div className="vidro-denso vidro-brilho absolute inset-x-0 top-[calc(100%+8px)] z-50 max-h-80 overflow-y-auto rounded-[22px] p-1.5">
+          {resultados.length === 0 ? (
+            <p className="px-3 py-6 text-center text-xs text-muted-foreground">
+              Nenhuma estrutura encontrada para “{valor}”.
+            </p>
+          ) : (
+            resultados.map(resultado => (
+              <button
+                key={`${resultado.peca.id}-${resultado.indiceMarcador}`}
+                type="button"
+                onMouseDown={evento => evento.preventDefault()}
+                onClick={() => onAbrir(resultado)}
+                className="flex w-full flex-col gap-0.5 rounded-2xl px-3 py-2 text-left transition hover:bg-foreground/[0.06]"
+              >
+                <span className="text-sm font-semibold leading-tight">{resultado.titulo}</span>
+                <span className="truncate text-[11px] text-muted-foreground">
+                  {resultado.colecao.title} · {resultado.peca.title}
+                </span>
+              </button>
+            ))
+          )}
+        </div>
+      )}
+    </div>
+  )
 }
 
 /* ══════════════════════════ Escolha da região ══════════════════════════ */
@@ -114,6 +228,10 @@ function contarPranchas(sistema: AtlasSystem) {
  * crânio, e a existência de Tronco, Membro Superior e Membro Inferior só ficava
  * visível para quem abrisse o índice lateral. Agora o sistema mostra do que ele
  * é feito, e o aluno escolhe por onde entrar.
+ *
+ * A busca por estrutura vive aqui também, e não só dentro da área de estudo:
+ * quem já sabe o nome do que procura não deveria ter que adivinhar em que
+ * coleção ele mora para poder digitá-lo.
  */
 function EscolhaDeRegiao({
   sistema,
@@ -121,16 +239,24 @@ function EscolhaDeRegiao({
   onTrocarSistema,
 }: {
   sistema: AtlasSystem
-  onAbrirColecao: (slug: string) => void
+  onAbrirColecao: (slug: string, alvo?: AlvoDeAbertura) => void
   onTrocarSistema: () => void
 }) {
-  const listaRegioes = useMemo(() => regioes(folhas(sistema)), [sistema])
+  const colecoes = useMemo(() => folhas(sistema), [sistema])
+  const listaRegioes = useMemo(() => regioes(colecoes), [colecoes])
   const totalPranchas = listaRegioes.reduce((total, regiao) => total + regiao.pranchas, 0)
   const totalMarcadores = listaRegioes.reduce((total, regiao) => total + regiao.marcadores, 0)
 
+  const [busca, setBusca] = useState('')
+  const resultados = useResultados(colecoes, busca)
+
   return (
-    <main className="surface-page min-h-screen">
-      <header className="relative isolate overflow-hidden border-b border-border bg-slate-950">
+    <main className="surface-page anatomia-ambiente min-h-screen">
+      {/* Sem `overflow-hidden`: a lista de resultados da busca nasce dentro
+          deste cabeçalho e desce por baixo dele — recortar aqui deixaria a
+          busca com metade dos resultados invisíveis. A capa não transborda
+          (é `fill`, presa ao próprio quadro), então não há o que recortar. */}
+      <header className="relative isolate border-b border-border bg-slate-950">
         <Image
           src={sistema.cover}
           alt=""
@@ -143,47 +269,52 @@ function EscolhaDeRegiao({
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/85 to-slate-950/55" aria-hidden />
 
-        <div className="relative mx-auto max-w-6xl px-4 pb-9 pt-7 sm:pb-12 sm:pt-9">
+        <div className="relative mx-auto max-w-6xl px-4 pb-8 pt-6 sm:pb-10 sm:pt-8">
           <button
             type="button"
             onClick={onTrocarSistema}
-            className="mb-6 inline-flex items-center gap-1.5 text-sm text-white/55 transition-colors hover:text-white"
+            className="mb-5 inline-flex items-center gap-1.5 text-sm text-white/55 transition-colors hover:text-white"
           >
             <ArrowLeft className="h-4 w-4" /> Todos os sistemas
           </button>
 
-          <div className="mb-3">
-            <p className="editorial-mark !text-amber-300">Sistema {sistema.title}</p>
-          </div>
-          <h1 className="font-heading text-4xl font-semibold leading-[1.05] tracking-tight text-white sm:text-5xl">
+          <p className="editorial-mark !text-amber-300">Sistema {sistema.title}</p>
+          <h1 className="mt-2.5 font-heading text-[2.25rem] font-semibold leading-[1.05] tracking-tight text-white sm:text-5xl">
             Por onde você quer começar?
           </h1>
-          <p className="mt-3.5 max-w-2xl text-base leading-relaxed text-white/65">
+          <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-white/65">
             {listaRegioes.length} {listaRegioes.length === 1 ? 'região' : 'regiões'} · {totalPranchas} pranchas ·{' '}
             {totalMarcadores.toLocaleString('pt-BR')} estruturas marcadas.
           </p>
+
+          <div className="mt-5 flex flex-col gap-2.5 sm:flex-row sm:items-center">
+            {/* O campo herda o vidro escuro do herói: um retângulo branco colado
+                sobre a fotografia da capa seria um adesivo, não uma lâmina. */}
+            <div className="min-w-0 flex-1 sm:max-w-md [&_.anatomia-campo]:border-white/20 [&_.anatomia-campo]:bg-white/10 [&_input]:text-white [&_input]:placeholder:text-white/45 [&_svg]:text-white/50">
+              <BuscaDeEstrutura
+                valor={busca}
+                onMudar={setBusca}
+                resultados={resultados}
+                onAbrir={resultado =>
+                  onAbrirColecao(resultado.colecao.slug, {
+                    peca: resultado.indicePeca,
+                    marcador: resultado.indiceMarcador,
+                  })
+                }
+                placeholder="Ir direto a uma estrutura…"
+              />
+            </div>
+            <Link
+              href={`/anatomia/atlas-anatomia/quiz?sistema=${sistema.slug}`}
+              className="anatomia-vidro-escuro inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-2xl px-4 text-sm font-bold text-white transition hover:bg-white/15"
+            >
+              <Target className="h-4 w-4 text-amber-300" /> Testar este sistema
+            </Link>
+          </div>
         </div>
       </header>
 
-      <section className="mx-auto max-w-6xl px-4 py-7 sm:py-10">
-        <Link
-          href={`/anatomia/atlas-anatomia/quiz?sistema=${sistema.slug}`}
-          className="group mb-5 flex items-center gap-3 rounded-2xl border border-primary/25 bg-primary/[0.07] p-4 transition hover:border-primary/50 hover:bg-primary/10"
-        >
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
-            <Target className="h-5 w-5" />
-          </span>
-          <span className="min-w-0 flex-1">
-            <span className="block font-heading text-lg font-semibold leading-tight tracking-tight">
-              Já estudou? Teste-se
-            </span>
-            <span className="mt-0.5 block text-xs text-muted-foreground">
-              O marcador aparece sem rótulo e você identifica a estrutura — com resposta comentada em cada questão.
-            </span>
-          </span>
-          <ArrowRight className="h-4 w-4 shrink-0 text-primary transition-transform group-hover:translate-x-0.5" />
-        </Link>
-
+      <section className="mx-auto max-w-6xl px-4 py-7 sm:py-9">
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {listaRegioes.map(regiao => {
             // Região sem subdivisão abre a prancha direto: um clique, não dois.
@@ -194,9 +325,9 @@ function EscolhaDeRegiao({
                   key={unica.slug}
                   type="button"
                   onClick={() => onAbrirColecao(unica.slug)}
-                  className="group flex items-center gap-3 rounded-2xl border border-border bg-card p-4 text-left transition hover:-translate-y-0.5 hover:border-primary/45 hover:shadow-lg"
+                  className="vidro-leve vidro-brilho relevo relevo-toca group flex items-center gap-3 rounded-[22px] p-4 text-left"
                 >
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                     <Layers className="h-5 w-5" />
                   </span>
                   <span className="min-w-0 flex-1">
@@ -214,21 +345,27 @@ function EscolhaDeRegiao({
             }
 
             return (
-              <div
-                key={regiao.titulo}
-                className="flex flex-col rounded-2xl border border-border bg-card p-4 transition hover:border-primary/35"
-              >
+              <div key={regiao.titulo} className="vidro-leve vidro-brilho relevo flex flex-col rounded-[22px] p-4">
                 <div className="mb-3 flex items-center gap-3">
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                     <Layers className="h-5 w-5" />
                   </span>
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1">
                     <h2 className="font-heading text-lg font-semibold leading-tight tracking-tight">{regiao.titulo}</h2>
                     <p className="mt-0.5 text-xs text-muted-foreground">
-                      {regiao.colecoes.length} coleç{regiao.colecoes.length !== 1 ? 'ões' : 'ão'} ·{' '}
-                      {regiao.pranchas} pranchas
+                      {regiao.colecoes.length} coleç{regiao.colecoes.length !== 1 ? 'ões' : 'ão'} · {regiao.pranchas}{' '}
+                      pranchas
                     </p>
                   </div>
+                  {/* Uma região é um lugar, não uma pasta: dá para entrar nela
+                      sem antes decidir por qual das coleções. */}
+                  <button
+                    type="button"
+                    onClick={() => onAbrirColecao(regiao.colecoes[0].slug)}
+                    className="tecla inline-flex h-8 shrink-0 items-center gap-1 px-2.5 text-[11px] font-bold text-primary"
+                  >
+                    Abrir <ArrowRight className="h-3 w-3" />
+                  </button>
                 </div>
 
                 <div className="space-y-1">
@@ -237,11 +374,11 @@ function EscolhaDeRegiao({
                       key={colecao.slug}
                       type="button"
                       onClick={() => onAbrirColecao(colecao.slug)}
-                      className="group flex w-full items-center justify-between gap-2 rounded-xl border border-transparent bg-muted/40 px-3 py-2 text-left transition hover:border-primary/30 hover:bg-primary/10"
+                      className="vidro-pastilha group flex w-full items-center justify-between gap-2 rounded-2xl px-3 py-2 text-left"
                     >
                       <span className="min-w-0 truncate text-[13px] font-semibold">{colecao.title}</span>
                       <span className="flex shrink-0 items-center gap-1.5">
-                        <span className="rounded-md bg-background px-1.5 py-0.5 text-[10px] font-bold tabular-nums text-muted-foreground">
+                        <span className="rounded-md bg-foreground/[0.06] px-1.5 py-0.5 text-[10px] font-bold tabular-nums text-muted-foreground">
                           {colecao.pieces?.length || 0}
                         </span>
                         <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/40 transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
@@ -259,14 +396,6 @@ function EscolhaDeRegiao({
 }
 
 /* ══════════════════════════ Área de estudo ══════════════════════════ */
-
-interface Resultado {
-  colecao: Colecao
-  peca: AtlasPiece
-  indicePeca: number
-  indiceMarcador: number
-  titulo: string
-}
 
 /**
  * Os três estados da ficha, num lugar só: nenhum marcador escolhido, marcador
@@ -289,30 +418,30 @@ function PainelDaFicha({
 }) {
   if (!marcador) return <FichaVazia compacta={compacta} />
   if (!insight) return <FichaCarregando titulo={marcador.title} numero={numero} />
-  return (
-    <FichaMarcador titulo={marcador.title} numero={numero} insight={insight} chave={chave} compacta={compacta} />
-  )
+  return <FichaMarcador titulo={marcador.title} numero={numero} insight={insight} chave={chave} compacta={compacta} />
 }
 
 function AreaDeEstudo({
   sistema,
   slugColecao,
+  alvo,
   onAbrirColecao,
   onVoltarParaRegioes,
   onTrocarSistema,
 }: {
   sistema: AtlasSystem
   slugColecao: string
-  onAbrirColecao: (slug: string) => void
+  alvo?: AlvoDeAbertura
+  onAbrirColecao: (slug: string, alvo?: AlvoDeAbertura) => void
   onVoltarParaRegioes: () => void
   onTrocarSistema: () => void
 }) {
   const colecoes = useMemo(() => folhas(sistema), [sistema])
-  const [indicePeca, setIndicePeca] = useState(0)
-  const [indiceMarcador, setIndiceMarcador] = useState<number | null>(null)
+  const [indicePeca, setIndicePeca] = useState(alvo?.peca ?? 0)
+  const [indiceMarcador, setIndiceMarcador] = useState<number | null>(alvo?.marcador ?? null)
   const [busca, setBusca] = useState('')
   const [modoEstudo, setModoEstudo] = useState(false)
-  const [gavetaAberta, setGavetaAberta] = useState(false)
+  const [gavetaAberta, setGavetaAberta] = useState(alvo?.marcador != null)
   const [indiceVisivel, setIndiceVisivel] = useState(false)
   const palcoRef = useRef<HTMLDivElement>(null)
 
@@ -334,34 +463,36 @@ function AreaDeEstudo({
     })
   }, [calcularFicha, marcador, colecao, sistema.slug, peca?.title])
 
-  /** Busca por estrutura em todo o sistema, e não só na coleção aberta. */
-  const resultados = useMemo<Resultado[]>(() => {
-    const termo = normalizar(busca)
-    if (termo.length < 2) return []
-    const encontrados: Resultado[] = []
-    for (const item of colecoes) {
-      ;(item.pieces || []).forEach((umaPeca, posicaoPeca) => {
-        umaPeca.markers.forEach((umMarcador, posicaoMarcador) => {
-          if (encontrados.length >= 40) return
-          if (normalizar(umMarcador.title).includes(termo)) {
-            encontrados.push({
-              colecao: item,
-              peca: umaPeca,
-              indicePeca: posicaoPeca,
-              indiceMarcador: posicaoMarcador,
-              titulo: umMarcador.title,
-            })
-          }
-        })
-      })
-    }
-    return encontrados
-  }, [busca, colecoes])
+  const resultados = useResultados(colecoes, busca)
+
+  // O hub oferece "continuar de onde parou"; quem alimenta esse atalho é esta
+  // tela, que é onde de fato se estuda.
+  useEffect(() => {
+    if (!colecao) return
+    registrarVisita({
+      tipo: 'atlas',
+      titulo: `${sistema.title} · ${colecao.title}`,
+      detalhe: `${pecas.length} prancha${pecas.length !== 1 ? 's' : ''} no Atlas`,
+      href: `/anatomia/atlas-anatomia?sistema=${sistema.slug}&colecao=${colecao.slug}`,
+    })
+  }, [sistema.slug, sistema.title, colecao, pecas.length])
 
   const selecionarMarcador = useCallback((indice: number | null) => {
     setIndiceMarcador(indice)
     setGavetaAberta(indice !== null)
   }, [])
+
+  /** Anda de estrutura em estrutura sem fechar a ficha — o gesto de folhear. */
+  const passarMarcador = useCallback(
+    (passo: number) => {
+      const total = peca?.markers.length || 0
+      if (total === 0) return
+      const atual = indiceMarcador ?? -1
+      setIndiceMarcador((atual + passo + total) % total)
+      setGavetaAberta(true)
+    },
+    [indiceMarcador, peca?.markers.length],
+  )
 
   const trocarPeca = useCallback(
     (indice: number) => {
@@ -373,26 +504,41 @@ function AreaDeEstudo({
   )
 
   function abrirResultado(resultado: Resultado) {
-    if (resultado.colecao.slug !== slugColecao) onAbrirColecao(resultado.colecao.slug)
+    setBusca('')
+    // Trocar de coleção remonta esta tela (a chave inclui o slug), então a
+    // posição precisa viajar pela URL — senão o alvo se perderia no caminho.
+    if (resultado.colecao.slug !== slugColecao) {
+      onAbrirColecao(resultado.colecao.slug, {
+        peca: resultado.indicePeca,
+        marcador: resultado.indiceMarcador,
+      })
+      return
+    }
     setIndicePeca(resultado.indicePeca)
     setIndiceMarcador(resultado.indiceMarcador)
     setGavetaAberta(true)
-    setBusca('')
     palcoRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
-  // Setas trocam de prancha e Esc fecha a ficha — atalhos esperados num visualizador.
+  // Setas trocam de prancha, ↑/↓ folheiam as estruturas e Esc fecha a ficha —
+  // os atalhos que se espera de um visualizador.
   useEffect(() => {
     function aoTeclar(evento: KeyboardEvent) {
-      const alvo = evento.target as HTMLElement | null
-      if (alvo && ['INPUT', 'TEXTAREA', 'SELECT'].includes(alvo.tagName)) return
+      const alvoDoEvento = evento.target as HTMLElement | null
+      if (alvoDoEvento && ['INPUT', 'TEXTAREA', 'SELECT'].includes(alvoDoEvento.tagName)) return
       if (evento.key === 'ArrowRight') trocarPeca(indicePeca + 1)
       else if (evento.key === 'ArrowLeft') trocarPeca(indicePeca - 1)
-      else if (evento.key === 'Escape') selecionarMarcador(null)
+      else if (evento.key === 'ArrowDown') {
+        evento.preventDefault()
+        passarMarcador(1)
+      } else if (evento.key === 'ArrowUp') {
+        evento.preventDefault()
+        passarMarcador(-1)
+      } else if (evento.key === 'Escape') selecionarMarcador(null)
     }
     window.addEventListener('keydown', aoTeclar)
     return () => window.removeEventListener('keydown', aoTeclar)
-  }, [indicePeca, trocarPeca, selecionarMarcador])
+  }, [indicePeca, trocarPeca, selecionarMarcador, passarMarcador])
 
   const agrupadas = useMemo(() => {
     const grupos = new Map<string, Colecao[]>()
@@ -403,18 +549,63 @@ function AreaDeEstudo({
     return [...grupos.entries()]
   }, [colecoes])
 
+  // O mesmo índice serve a coluna fixa do desktop e a gaveta do celular. Manter
+  // duas cópias garantiria que uma delas envelhecesse sem ninguém notar.
+  const indice = (
+    <nav className="space-y-2">
+      {agrupadas.map(([grupo, itens]) => (
+        <div key={grupo}>
+          <p className="px-2.5 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-muted-foreground/70">
+            {grupo}
+          </p>
+          <div className="space-y-0.5">
+            {itens.map(item => {
+              const ativa = item.slug === colecao?.slug
+              const total = item.pieces?.length || 0
+              return (
+                <button
+                  key={item.slug}
+                  type="button"
+                  onClick={() => {
+                    setIndiceVisivel(false)
+                    if (ativa) return
+                    onAbrirColecao(item.slug)
+                  }}
+                  className={`flex w-full items-center justify-between gap-2 rounded-2xl px-2.5 py-2 text-left transition ${
+                    ativa
+                      ? 'bg-primary/12 text-foreground ring-1 ring-inset ring-primary/25'
+                      : 'text-muted-foreground hover:bg-foreground/[0.06] hover:text-foreground'
+                  }`}
+                >
+                  <span className="min-w-0 truncate text-[13px] font-semibold leading-tight">{item.title}</span>
+                  <span
+                    className={`shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-bold tabular-nums ${
+                      ativa ? 'bg-primary/20 text-primary' : 'bg-foreground/[0.06] text-muted-foreground/70'
+                    }`}
+                  >
+                    {total}
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      ))}
+    </nav>
+  )
+
   return (
-    <main className="surface-page min-h-screen pb-24 xl:pb-0">
+    <main className="surface-page anatomia-ambiente min-h-screen pb-24 xl:pb-0">
       {/* ── Barra superior ── */}
       {/* O AppShell mantém controles flutuantes fixos nos cantos superiores
           (menu à esquerda abaixo de `lg`, tema e modo leve à direita). A barra
           reserva esse espaço para não ter botão coberto em nenhuma largura. */}
-      <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+      <header className="anatomia-barra sticky top-0 z-40">
         <div className="mx-auto flex max-w-[1600px] items-center gap-2 py-2.5 pl-[3.75rem] pr-[9.75rem] sm:gap-3 sm:py-3 lg:pl-4">
           <button
             type="button"
             onClick={onTrocarSistema}
-            className="flex h-9 shrink-0 items-center gap-1.5 rounded-xl border border-border bg-card px-2.5 text-xs font-semibold text-muted-foreground transition hover:border-primary/40 hover:text-foreground"
+            className="tecla flex h-9 shrink-0 items-center gap-1.5 px-2.5 text-xs font-semibold text-muted-foreground"
           >
             <ArrowLeft className="h-4 w-4" />
             <span className="hidden sm:inline">Sistemas</span>
@@ -441,71 +632,29 @@ function AreaDeEstudo({
 
           <div className="hidden shrink-0 items-center gap-2 md:flex">
             <BotaoQuiz sistemaSlug={sistema.slug} />
-            <BotaoModoEstudo ativo={modoEstudo} onClick={() => setModoEstudo(atual => !atual)} />
+            <SegmentoModoEstudo ativo={modoEstudo} onMudar={setModoEstudo} />
             <BotaoIndice ativo={indiceVisivel} onClick={() => setIndiceVisivel(atual => !atual)} />
           </div>
         </div>
 
         {/* Em telas estreitas, busca e ações descem para uma segunda linha, que
             usa a largura inteira sem disputar espaço com os flutuantes. */}
-        <div className="flex items-center gap-2 border-t border-border px-3 py-2 lg:hidden">
+        <div className="flex items-center gap-2 border-t border-border/50 px-3 py-2 lg:hidden">
           <div className="min-w-0 flex-1">
             <BuscaDeEstrutura valor={busca} onMudar={setBusca} resultados={resultados} onAbrir={abrirResultado} />
           </div>
           <div className="flex shrink-0 items-center gap-2 md:hidden">
             <BotaoQuiz sistemaSlug={sistema.slug} />
-            <BotaoModoEstudo ativo={modoEstudo} onClick={() => setModoEstudo(atual => !atual)} />
+            <SegmentoModoEstudo ativo={modoEstudo} onMudar={setModoEstudo} compacto />
             <BotaoIndice ativo={indiceVisivel} onClick={() => setIndiceVisivel(atual => !atual)} />
           </div>
         </div>
       </header>
 
       <div className="mx-auto grid max-w-[1600px] gap-4 px-3 py-4 sm:px-4 sm:py-5 xl:grid-cols-[264px_minmax(0,1fr)_390px]">
-        {/* ── Índice de coleções ── */}
-        <aside
-          className={`${indiceVisivel ? 'block' : 'hidden'} xl:block xl:sticky xl:top-[76px] xl:max-h-[calc(100vh-92px)] xl:overflow-y-auto`}
-        >
-          <nav className="rounded-2xl border border-border bg-card p-2">
-            {agrupadas.map(([grupo, itens]) => (
-              <div key={grupo} className="mb-2 last:mb-0">
-                <p className="px-2.5 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-muted-foreground/70">
-                  {grupo}
-                </p>
-                <div className="space-y-0.5">
-                  {itens.map(item => {
-                    const ativa = item.slug === colecao?.slug
-                    const total = item.pieces?.length || 0
-                    return (
-                      <button
-                        key={item.slug}
-                        type="button"
-                        onClick={() => {
-                          onAbrirColecao(item.slug)
-                          setIndicePeca(0)
-                          setIndiceMarcador(null)
-                          setIndiceVisivel(false)
-                        }}
-                        className={`flex w-full items-center justify-between gap-2 rounded-xl px-2.5 py-2 text-left transition ${
-                          ativa
-                            ? 'bg-primary/12 text-foreground ring-1 ring-inset ring-primary/25'
-                            : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground'
-                        }`}
-                      >
-                        <span className="min-w-0 truncate text-[13px] font-semibold leading-tight">{item.title}</span>
-                        <span
-                          className={`shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-bold tabular-nums ${
-                            ativa ? 'bg-primary/20 text-primary' : 'bg-muted text-muted-foreground/70'
-                          }`}
-                        >
-                          {total}
-                        </span>
-                      </button>
-                    )
-                  })}
-                </div>
-              </div>
-            ))}
-          </nav>
+        {/* ── Índice de coleções (coluna fixa no desktop largo) ── */}
+        <aside className="hidden xl:sticky xl:top-[84px] xl:block xl:max-h-[calc(100vh-100px)] xl:overflow-y-auto">
+          <div className="vidro vidro-brilho relevo rounded-[22px] p-2">{indice}</div>
         </aside>
 
         {/* ── Palco ── */}
@@ -522,7 +671,7 @@ function AreaDeEstudo({
                   </h2>
                   <p className="mt-0.5 text-sm text-muted-foreground">{peca.title}</p>
                 </div>
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-semibold text-muted-foreground">
+                <span className="vidro inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold text-muted-foreground">
                   <Layers className="h-3.5 w-3.5" />
                   {indicePeca + 1} / {pecas.length}
                 </span>
@@ -539,49 +688,51 @@ function AreaDeEstudo({
                 prioridade
               />
 
-              {/* Navegação entre pranchas */}
-              <div className="mt-3 flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => trocarPeca(indicePeca - 1)}
-                  disabled={indicePeca === 0}
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-border bg-card transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-35"
-                  aria-label="Prancha anterior"
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </button>
+              {/* Navegação entre pranchas — só existe quando há mais de uma. */}
+              {pecas.length > 1 && (
+                <div className="vidro vidro-brilho relevo mt-3 flex items-center gap-2 rounded-[22px] p-2">
+                  <button
+                    type="button"
+                    onClick={() => trocarPeca(indicePeca - 1)}
+                    disabled={indicePeca === 0}
+                    className="tecla flex h-10 w-10 shrink-0 items-center justify-center disabled:cursor-not-allowed disabled:opacity-35"
+                    aria-label="Prancha anterior"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </button>
 
-                <div className="flex min-w-0 flex-1 gap-1.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                  {pecas.map((item, indice) => (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => trocarPeca(indice)}
-                      title={item.title}
-                      className={`relative h-14 w-14 shrink-0 overflow-hidden rounded-lg border bg-slate-950 transition ${
-                        indice === indicePeca
-                          ? 'border-primary ring-2 ring-primary/30'
-                          : 'border-border opacity-60 hover:opacity-100'
-                      }`}
-                    >
-                      <Image src={item.image} alt="" fill sizes="56px" className="object-contain" />
-                    </button>
-                  ))}
+                  <div className="flex min-w-0 flex-1 gap-1.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                    {pecas.map((item, posicao) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => trocarPeca(posicao)}
+                        title={item.title}
+                        className={`relative h-14 w-14 shrink-0 overflow-hidden rounded-xl border bg-slate-950 transition ${
+                          posicao === indicePeca
+                            ? 'border-primary ring-2 ring-primary/30'
+                            : 'border-white/10 opacity-60 hover:opacity-100'
+                        }`}
+                      >
+                        <Image src={item.image} alt="" fill sizes="56px" className="object-contain" />
+                      </button>
+                    ))}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => trocarPeca(indicePeca + 1)}
+                    disabled={indicePeca >= pecas.length - 1}
+                    className="tecla flex h-10 w-10 shrink-0 items-center justify-center disabled:cursor-not-allowed disabled:opacity-35"
+                    aria-label="Próxima prancha"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
                 </div>
-
-                <button
-                  type="button"
-                  onClick={() => trocarPeca(indicePeca + 1)}
-                  disabled={indicePeca >= pecas.length - 1}
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-border bg-card transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-35"
-                  aria-label="Próxima prancha"
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </button>
-              </div>
+              )}
 
               {/* Lista de estruturas da prancha */}
-              <div className="mt-4 rounded-2xl border border-border bg-card p-3 sm:p-4">
+              <div className="vidro vidro-brilho relevo mt-3 rounded-[22px] p-3 sm:p-4">
                 <div className="mb-2.5 flex items-center justify-between gap-3">
                   <h3 className="text-[11px] font-black uppercase tracking-[0.14em] text-muted-foreground">
                     Estruturas desta prancha
@@ -592,25 +743,24 @@ function AreaDeEstudo({
                   <p className="py-2 text-sm text-muted-foreground">Esta prancha não tem marcadores no acervo.</p>
                 ) : (
                   <div className="flex flex-wrap gap-1.5">
-                    {peca.markers.map((item, indice) => {
-                      const ativo = indice === indiceMarcador
+                    {peca.markers.map((item, posicao) => {
+                      const ativo = posicao === indiceMarcador
                       return (
                         <button
-                          key={`${item.title}-${indice}`}
+                          key={`${item.title}-${posicao}`}
                           type="button"
-                          onClick={() => selecionarMarcador(ativo ? null : indice)}
-                          className={`inline-flex items-center gap-1.5 rounded-lg border px-2 py-1.5 text-left text-xs font-medium transition ${
-                            ativo
-                              ? 'border-amber-500/50 bg-amber-500/15 text-amber-800 dark:text-amber-200'
-                              : 'border-border bg-background text-muted-foreground hover:border-primary/40 hover:text-foreground'
+                          onClick={() => selecionarMarcador(ativo ? null : posicao)}
+                          data-marcado={ativo ? 'true' : 'false'}
+                          className={`vidro-pastilha inline-flex items-center gap-1.5 rounded-xl px-2 py-1.5 text-left text-xs font-medium ${
+                            ativo ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
                           }`}
                         >
                           <span
                             className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-[10px] font-black tabular-nums ${
-                              ativo ? 'bg-amber-500 text-amber-950' : 'bg-muted text-muted-foreground'
+                              ativo ? 'bg-primary text-primary-foreground' : 'bg-foreground/[0.07] text-muted-foreground'
                             }`}
                           >
-                            {indice + 1}
+                            {posicao + 1}
                           </span>
                           {modoEstudo && !ativo ? '• • •' : item.title}
                         </button>
@@ -621,7 +771,7 @@ function AreaDeEstudo({
               </div>
 
               {/* Ficha embutida em telas médias (a lateral só existe no xl) */}
-              <div className="mt-4 xl:hidden">
+              <div className="mt-3 xl:hidden">
                 <PainelDaFicha
                   marcador={marcador}
                   insight={insight}
@@ -632,7 +782,7 @@ function AreaDeEstudo({
               </div>
             </>
           ) : (
-            <div className="flex min-h-[400px] items-center justify-center rounded-2xl border border-dashed border-border bg-muted/20 p-8 text-center text-sm text-muted-foreground">
+            <div className="vidro flex min-h-[400px] items-center justify-center rounded-[22px] !border-dashed p-8 text-center text-sm text-muted-foreground">
               Escolha uma coleção no índice para abrir as pranchas.
             </div>
           )}
@@ -640,58 +790,125 @@ function AreaDeEstudo({
 
         {/* ── Ficha (desktop largo) ── */}
         <aside className="hidden xl:block">
-          <div className="sticky top-[76px] max-h-[calc(100vh-92px)] overflow-y-auto pb-4">
+          <div className="sticky top-[84px] max-h-[calc(100vh-100px)] overflow-y-auto pb-4">
             <PainelDaFicha
               marcador={marcador}
               insight={insight}
               numero={(indiceMarcador || 0) + 1}
               chave={`${peca?.id}:${indiceMarcador}`}
             />
-            <div className="mt-3 rounded-xl border border-border bg-card p-3">
+            <div className="vidro mt-3 rounded-2xl p-3">
               <p className="mb-1 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-foreground">
                 <GraduationCap className="h-3.5 w-3.5 text-primary" /> Uso educacional
               </p>
               <p className="text-[10px] leading-relaxed text-muted-foreground">
-                Pranchas do acervo, com autorização de uso integral. Os aprofundamentos de cada estrutura são
-                conteúdo editorial do GradeX e não substituem avaliação clínica.
+                Pranchas do acervo, com autorização de uso integral. Os aprofundamentos de cada estrutura são conteúdo
+                editorial do GradeX e não substituem avaliação clínica.
               </p>
             </div>
           </div>
         </aside>
       </div>
 
-      {/* ── Gaveta do celular ── */}
-      {marcador && (
-        <div className={`fixed inset-x-0 bottom-0 z-50 xl:hidden ${gavetaAberta ? '' : 'pointer-events-none'}`}>
-          <div
-            className={`transition-transform duration-300 ease-out ${gavetaAberta ? 'translate-y-0' : 'translate-y-full'}`}
-          >
-            <div className="mx-auto max-h-[72vh] max-w-3xl overflow-y-auto rounded-t-3xl border-x border-t border-border bg-card shadow-[0_-8px_40px_rgba(0,0,0,0.28)]">
-              <div className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-border bg-card/95 px-4 py-2.5 backdrop-blur">
-                <span className="inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-primary">
-                  <Sparkles className="h-3.5 w-3.5" /> Estrutura selecionada
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setGavetaAberta(false)}
-                  className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-muted-foreground transition hover:text-foreground"
-                  aria-label="Fechar ficha"
-                >
-                  <X className="h-4 w-4" />
-                </button>
+      {/* ── Índice como gaveta (abaixo do xl) ──
+          Antes ele empurrava a prancha para fora da tela ao abrir; agora sobe
+          por cima, some ao escolher e devolve a peça no mesmo lugar.
+
+          Vai pelo `Portal` porque a página inteira vive dentro de
+          `.anatomia-ambiente`, que isola o contexto de empilhamento para prender
+          as manchas de cor do fundo. Lá dentro, nenhum `z-index` alcança os
+          botões flutuantes do shell. Ver components/ui/portal.tsx. */}
+      {indiceVisivel && (
+        <Portal>
+          <div className="fixed inset-0 z-50 xl:hidden">
+            <button
+              type="button"
+              aria-label="Fechar índice"
+              onClick={() => setIndiceVisivel(false)}
+              className="absolute inset-0 bg-slate-950/45"
+            />
+            <div className="anatomia-gaveta absolute inset-x-0 bottom-0 max-h-[76vh] overflow-y-auto rounded-t-[28px] p-3 pb-6">
+              <div className="mb-2 flex flex-col items-center gap-2">
+                <span className="anatomia-puxador" aria-hidden />
+                <div className="flex w-full items-center justify-between gap-3 px-1">
+                  <p className="text-[11px] font-black uppercase tracking-wider text-muted-foreground">
+                    Coleções de {sistema.title}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setIndiceVisivel(false)}
+                    className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground/[0.07] text-muted-foreground transition hover:text-foreground"
+                    aria-label="Fechar índice"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
               </div>
-              <div className="p-3">
-                <PainelDaFicha
-                  marcador={marcador}
-                  insight={insight}
-                  numero={(indiceMarcador || 0) + 1}
-                  chave={`${peca?.id}:${indiceMarcador}`}
-                  compacta
-                />
+              {indice}
+            </div>
+          </div>
+        </Portal>
+      )}
+
+      {/* ── Gaveta da ficha (celular e tablet) ── */}
+      {marcador && (
+        <Portal>
+          <div className={`fixed inset-x-0 bottom-0 z-50 xl:hidden ${gavetaAberta ? '' : 'pointer-events-none'}`}>
+            <div
+              className={`transition-transform duration-300 ease-out ${
+                gavetaAberta ? 'translate-y-0' : 'translate-y-full'
+              }`}
+            >
+              <div className="anatomia-gaveta mx-auto max-h-[74vh] max-w-3xl overflow-y-auto rounded-t-[28px]">
+                <div className="sticky top-0 z-10 flex flex-col items-center gap-2 border-b border-border/50 px-3 pb-2 pt-2.5">
+                  <span className="anatomia-puxador" aria-hidden />
+                  <div className="flex w-full items-center justify-between gap-2">
+                    {/* Folhear as estruturas da prancha sem fechar a ficha: é o
+                        gesto de quem estuda a peça inteira, e não uma só. */}
+                    <div className="anatomia-segmento h-9">
+                      <button
+                        type="button"
+                        onClick={() => passarMarcador(-1)}
+                        className="anatomia-segmento-item h-full w-9"
+                        aria-label="Estrutura anterior"
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                      </button>
+                      <span className="px-2 text-[11px] font-bold tabular-nums text-muted-foreground">
+                        {(indiceMarcador ?? 0) + 1}/{peca?.markers.length ?? 0}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => passarMarcador(1)}
+                        className="anatomia-segmento-item h-full w-9"
+                        aria-label="Próxima estrutura"
+                      >
+                        <ChevronRight className="h-4 w-4" />
+                      </button>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setGavetaAberta(false)}
+                      className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground/[0.07] text-muted-foreground transition hover:text-foreground"
+                      aria-label="Fechar ficha"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+                <div className="p-3">
+                  <PainelDaFicha
+                    marcador={marcador}
+                    insight={insight}
+                    numero={(indiceMarcador || 0) + 1}
+                    chave={`${peca?.id}:${indiceMarcador}`}
+                    compacta
+                  />
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </Portal>
       )}
     </main>
   )
@@ -703,7 +920,8 @@ function BotaoQuiz({ sistemaSlug }: { sistemaSlug: string }) {
     <Link
       href={`/anatomia/atlas-anatomia/quiz?sistema=${sistemaSlug}`}
       title="Treinar identificação das estruturas deste sistema"
-      className="flex h-9 shrink-0 items-center gap-1.5 rounded-xl border border-primary/30 bg-primary/10 px-2.5 text-xs font-bold text-primary transition hover:bg-primary/15"
+      className="tecla flex h-9 shrink-0 items-center gap-1.5 px-2.5 text-xs font-bold text-primary"
+      data-marcado="true"
     >
       <Target className="h-4 w-4" />
       <span className="hidden xl:inline">Treinar</span>
@@ -711,22 +929,51 @@ function BotaoQuiz({ sistemaSlug }: { sistemaSlug: string }) {
   )
 }
 
-function BotaoModoEstudo({ ativo, onClick }: { ativo: boolean; onClick: () => void }) {
+/**
+ * Modo estudo como segmentado, e não como interruptor.
+ *
+ * O botão de olho anterior dizia o estado com um ícone que troca — e ícone que
+ * troca é ambíguo: o olho fechado significa "está escondido" ou "toque para
+ * esconder"? Os dois rótulos lado a lado mostram as duas opções e qual delas
+ * está valendo, sem depender de memória.
+ */
+function SegmentoModoEstudo({
+  ativo,
+  onMudar,
+  compacto,
+}: {
+  ativo: boolean
+  onMudar: (valor: boolean) => void
+  compacto?: boolean
+}) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-pressed={ativo}
-      title="Esconde os números da prancha para você tentar nomear cada estrutura"
-      className={`flex h-9 shrink-0 items-center gap-1.5 rounded-xl border px-2.5 text-xs font-bold transition ${
-        ativo
-          ? 'border-amber-500/40 bg-amber-500/15 text-amber-700 dark:text-amber-300'
-          : 'border-border bg-card text-muted-foreground hover:text-foreground'
-      }`}
+    <div
+      className="anatomia-segmento h-9 shrink-0"
+      role="group"
+      aria-label="Rótulos das estruturas na prancha"
+      title="Esconde os nomes para você tentar nomear cada estrutura antes de conferir"
     >
-      {ativo ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-      <span className="hidden xl:inline">Modo estudo</span>
-    </button>
+      <button
+        type="button"
+        onClick={() => onMudar(false)}
+        data-ativo={!ativo}
+        aria-pressed={!ativo}
+        className="anatomia-segmento-item h-full px-2.5 text-[11px] font-bold"
+      >
+        <Eye className="h-3.5 w-3.5" />
+        {!compacto && <span className="hidden xl:inline">Ver nomes</span>}
+      </button>
+      <button
+        type="button"
+        onClick={() => onMudar(true)}
+        data-ativo={ativo}
+        aria-pressed={ativo}
+        className="anatomia-segmento-item h-full px-2.5 text-[11px] font-bold"
+      >
+        <EyeOff className="h-3.5 w-3.5" />
+        {!compacto && <span className="hidden xl:inline">Modo estudo</span>}
+      </button>
+    </div>
   )
 }
 
@@ -737,79 +984,11 @@ function BotaoIndice({ ativo, onClick }: { ativo: boolean; onClick: () => void }
       onClick={onClick}
       aria-pressed={ativo}
       aria-label="Abrir índice de coleções"
-      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border transition xl:hidden ${
-        ativo ? 'border-primary/40 bg-primary/12 text-primary' : 'border-border bg-card text-muted-foreground hover:text-foreground'
-      }`}
+      data-marcado={ativo ? 'true' : 'false'}
+      className="tecla flex h-9 w-9 shrink-0 items-center justify-center text-muted-foreground xl:hidden"
     >
       <LayoutGrid className="h-4 w-4" />
     </button>
-  )
-}
-
-/* ══════════════════════════ Busca ══════════════════════════ */
-
-function BuscaDeEstrutura({
-  valor,
-  onMudar,
-  resultados,
-  onAbrir,
-}: {
-  valor: string
-  onMudar: (valor: string) => void
-  resultados: Resultado[]
-  onAbrir: (resultado: Resultado) => void
-}) {
-  const [focada, setFocada] = useState(false)
-  const aberta = focada && valor.trim().length >= 2
-
-  return (
-    <div className="relative">
-      <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-      <input
-        value={valor}
-        onChange={evento => onMudar(evento.target.value)}
-        onFocus={() => setFocada(true)}
-        onBlur={() => window.setTimeout(() => setFocada(false), 150)}
-        placeholder="Buscar estrutura neste sistema..."
-        aria-label="Buscar estrutura"
-        className="h-9 w-full rounded-xl border border-border bg-card pl-9 pr-8 text-sm outline-none transition focus:border-primary/50 focus:ring-2 focus:ring-primary/10"
-      />
-      {valor && (
-        <button
-          type="button"
-          onClick={() => onMudar('')}
-          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-1 text-muted-foreground hover:bg-muted"
-          aria-label="Limpar busca"
-        >
-          <X className="h-3.5 w-3.5" />
-        </button>
-      )}
-
-      {aberta && (
-        <div className="absolute inset-x-0 top-[calc(100%+6px)] z-50 max-h-80 overflow-y-auto rounded-2xl border border-border bg-popover p-1.5 shadow-xl">
-          {resultados.length === 0 ? (
-            <p className="px-3 py-6 text-center text-xs text-muted-foreground">
-              Nenhuma estrutura encontrada para “{valor}”.
-            </p>
-          ) : (
-            resultados.map(resultado => (
-              <button
-                key={`${resultado.peca.id}-${resultado.indiceMarcador}`}
-                type="button"
-                onMouseDown={evento => evento.preventDefault()}
-                onClick={() => onAbrir(resultado)}
-                className="flex w-full flex-col gap-0.5 rounded-xl px-3 py-2 text-left transition hover:bg-muted"
-              >
-                <span className="text-sm font-semibold leading-tight">{resultado.titulo}</span>
-                <span className="truncate text-[11px] text-muted-foreground">
-                  {resultado.colecao.title} · {resultado.peca.title}
-                </span>
-              </button>
-            ))
-          )}
-        </div>
-      )}
-    </div>
   )
 }
 
@@ -849,13 +1028,16 @@ function Falhou({ mensagem, onTentarDeNovo }: { mensagem: string; onTentarDeNovo
 export default function AtlasEstudo({
   sistemaSlug,
   slugColecao,
+  alvo,
   onAbrirColecao,
   onVoltarParaRegioes,
   onTrocarSistema,
 }: {
   sistemaSlug: string
   slugColecao: string
-  onAbrirColecao: (slug: string) => void
+  /** Prancha (e estrutura) em que abrir — vem da URL, para o link ser direto. */
+  alvo?: AlvoDeAbertura
+  onAbrirColecao: (slug: string, alvo?: AlvoDeAbertura) => void
   onVoltarParaRegioes: () => void
   onTrocarSistema: () => void
 }) {
@@ -873,9 +1055,7 @@ export default function AtlasEstudo({
       })
       .catch((falha: unknown) => {
         if (!ativo) return
-        setErro(
-          falha instanceof AcervoIndisponivel ? falha.message : 'Não foi possível carregar o acervo do Atlas.',
-        )
+        setErro(falha instanceof AcervoIndisponivel ? falha.message : 'Não foi possível carregar o acervo do Atlas.')
       })
     return () => {
       ativo = false
@@ -908,6 +1088,7 @@ export default function AtlasEstudo({
       key={`${sistema.slug}:${slugColecao}`}
       sistema={sistema}
       slugColecao={slugColecao}
+      alvo={alvo}
       onAbrirColecao={onAbrirColecao}
       onVoltarParaRegioes={onVoltarParaRegioes}
       onTrocarSistema={onTrocarSistema}

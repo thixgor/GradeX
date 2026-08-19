@@ -27,6 +27,7 @@ import {
   regioesDoSistema,
   type Ocorrencia,
 } from '@/lib/atlas-anatomia/recorte-quiz'
+import { BarraInferior } from '@/components/ui/barra-inferior'
 import type { ResumoAnatomia } from '@/lib/anatomia/tipos'
 import { ArrowLeft, Loader2, Play, Target } from 'lucide-react'
 
@@ -253,7 +254,7 @@ function Configuracao({
   }
 
   return (
-    <main className="surface-page min-h-screen">
+    <main className="surface-page anatomia-ambiente min-h-screen pb-28 md:pb-0">
       <header className="relative isolate overflow-hidden border-b border-border bg-slate-950">
         <div
           className="absolute inset-0 bg-[radial-gradient(ellipse_60%_60%_at_20%_0%,rgba(245,158,11,0.22),transparent_60%),radial-gradient(ellipse_50%_50%_at_85%_20%,rgba(16,185,129,0.18),transparent_60%)]"
@@ -268,7 +269,7 @@ function Configuracao({
           </Link>
 
           <div className="mb-3">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-300/25 bg-amber-400/12 px-3 py-1.5 text-[11px] font-black uppercase tracking-wider text-amber-300">
+            <span className="anatomia-vidro-escuro inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-black uppercase tracking-wider text-amber-300">
               <Target className="h-3.5 w-3.5" /> Quiz de identificação
             </span>
           </div>
@@ -360,20 +361,41 @@ function Configuracao({
           </p>
         </Campo>
 
+        {disponiveis < 4 && (
+          <p className="mb-2 text-xs text-muted-foreground">
+            Este recorte tem estruturas de menos para montar alternativas. Escolha um conjunto maior.
+          </p>
+        )}
+
+        {/* No desktop o botão fica onde a leitura termina. No celular ele passa
+            a morar numa barra fixa: os três campos ocupam mais de uma tela, e um
+            botão no fim da página some justamente enquanto se decide. */}
         <button
           type="button"
           onClick={comecar}
           disabled={disponiveis < 4}
-          className="mt-2 inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-bold text-primary-foreground shadow-sm transition hover:bg-primary/90 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto sm:px-8"
+          className="hidden h-12 w-full items-center justify-center gap-2 rounded-2xl bg-primary px-6 text-sm font-bold text-primary-foreground shadow-sm transition hover:bg-primary/90 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-40 md:inline-flex md:w-auto md:px-8"
         >
           <Play className="h-4 w-4" /> Começar o quiz
         </button>
-        {disponiveis < 4 && (
-          <p className="mt-2 text-xs text-muted-foreground">
-            Este recorte tem estruturas de menos para montar alternativas. Escolha um conjunto maior.
-          </p>
-        )}
       </section>
+
+      {/* `BarraInferior` publica a própria altura, e é isso que faz o botão
+          flutuante da plataforma subir em vez de cobrir o "Começar". */}
+      <BarraInferior apenasMobile>
+        <span className="min-w-0 flex-1">
+          <span className="block truncate text-[11px] font-bold">{resumoDoRecorte}</span>
+          <span className="block text-[11px] tabular-nums text-muted-foreground">{quantidade} questões</span>
+        </span>
+        <button
+          type="button"
+          onClick={comecar}
+          disabled={disponiveis < 4}
+          className="inline-flex h-12 flex-none items-center justify-center gap-2 rounded-2xl bg-primary px-5 text-sm font-bold text-primary-foreground transition active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          <Play className="h-4 w-4" /> Começar
+        </button>
+      </BarraInferior>
     </main>
   )
 }
@@ -391,7 +413,7 @@ function Campo({
   children: React.ReactNode
 }) {
   return (
-    <div className="mb-6">
+    <div className="vidro vidro-brilho relevo mb-3 rounded-[22px] p-4 sm:p-5">
       <h2 className="flex items-center gap-2 text-sm font-bold">
         <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-primary/12 text-[11px] font-black text-primary">
           {numero}
@@ -422,10 +444,9 @@ function Chip({
       onClick={onClick}
       onPointerEnter={onPointerEnter}
       aria-pressed={ativo}
-      className={`inline-flex items-center rounded-xl border px-3 py-2 text-[13px] font-semibold transition ${
-        ativo
-          ? 'border-primary bg-primary/12 text-primary'
-          : 'border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground'
+      data-marcado={ativo ? 'true' : 'false'}
+      className={`tecla inline-flex items-center px-3 py-2 text-[13px] font-semibold ${
+        ativo ? '' : 'text-muted-foreground hover:text-foreground'
       }`}
     >
       {children}

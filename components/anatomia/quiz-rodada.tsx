@@ -172,14 +172,14 @@ export default function Rodada({
   }
 
   return (
-    <main className="surface-page min-h-screen pb-8">
+    <main className="surface-page anatomia-ambiente min-h-screen pb-8">
       {/* ── Progresso ── */}
-      <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+      <header className="anatomia-barra sticky top-0 z-40">
         <div className="mx-auto flex max-w-[1400px] items-center gap-3 py-2.5 pl-[3.75rem] pr-[9.75rem] sm:py-3 lg:pl-4">
           <button
             type="button"
             onClick={onReconfigurar}
-            className="flex h-9 shrink-0 items-center gap-1.5 rounded-xl border border-border bg-card px-2.5 text-xs font-semibold text-muted-foreground transition hover:text-foreground"
+            className="tecla flex h-9 shrink-0 items-center gap-1.5 px-2.5 text-xs font-semibold text-muted-foreground"
           >
             <ArrowLeft className="h-4 w-4" />
             <span className="hidden sm:inline">Sair</span>
@@ -191,7 +191,7 @@ export default function Rodada({
                 {atual + 1}/{questoes.length} · {acertos} {acertos === 1 ? 'acerto' : 'acertos'}
               </p>
             </div>
-            <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-muted">
+            <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-foreground/[0.08]">
               <div
                 className="h-full rounded-full bg-primary transition-[width] duration-300"
                 style={{ width: `${((atual + (respondida ? 1 : 0)) / questoes.length) * 100}%` }}
@@ -247,14 +247,14 @@ export default function Rodada({
                   type="button"
                   onClick={() => responder(indice)}
                   disabled={respondida}
-                  className={`flex w-full items-start gap-3 rounded-2xl border p-3.5 text-left transition ${
+                  className={`vidro relevo flex w-full items-start gap-3 rounded-[22px] p-3.5 text-left transition ${
                     revelar && correta
-                      ? 'border-emerald-500/50 bg-emerald-500/10'
+                      ? '!border-emerald-500/50 !bg-emerald-500/15'
                       : revelar
-                        ? 'border-rose-500/50 bg-rose-500/10'
+                        ? '!border-rose-500/50 !bg-rose-500/15'
                         : respondida
-                          ? 'border-border bg-card opacity-55'
-                          : 'border-border bg-card hover:border-primary/45 hover:bg-primary/[0.06]'
+                          ? 'opacity-55'
+                          : 'relevo-toca hover:!border-primary/45'
                   }`}
                 >
                   <span
@@ -263,7 +263,7 @@ export default function Rodada({
                         ? 'bg-emerald-500 text-white'
                         : revelar
                           ? 'bg-rose-500 text-white'
-                          : 'bg-muted text-muted-foreground'
+                          : 'bg-foreground/[0.07] text-muted-foreground'
                     }`}
                   >
                     {revelar ? (
@@ -288,12 +288,12 @@ export default function Rodada({
                 type="button"
                 onClick={() => setDicaAberta(true)}
                 disabled={dicaAberta}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs font-bold text-amber-700 transition hover:bg-amber-500/15 disabled:opacity-60 dark:text-amber-300"
+                className="tecla inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-amber-700 disabled:opacity-60 dark:text-amber-300"
               >
                 <Lightbulb className="h-3.5 w-3.5" /> {dicaAberta ? 'Dica revelada' : 'Preciso de uma dica'}
               </button>
               {dicaAberta && (
-                <p className="mt-2 rounded-xl border border-amber-500/20 bg-amber-500/[0.07] p-3 text-[13px] leading-relaxed text-muted-foreground">
+                <p className="vidro mt-2 rounded-2xl !border-amber-500/25 !bg-amber-500/[0.09] p-3 text-[13px] leading-relaxed text-muted-foreground">
                   A estrutura marcada é <strong className="text-foreground">{questao.insight.classe.toLowerCase()}</strong>{' '}
                   na região de <strong className="text-foreground">{questao.insight.regiao.toLowerCase()}</strong>. Isso
                   já elimina o que não pertence a essa família.
@@ -335,10 +335,10 @@ export default function Rodada({
 
 function RespostaComentada({ comentario, acertou }: { comentario: Comentario; acertou: boolean }) {
   return (
-    <article className="mt-4 overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+    <article className="vidro relevo mt-4 overflow-hidden rounded-[22px]">
       <header
-        className={`flex items-start gap-3 border-b border-border p-4 ${
-          acertou ? 'bg-emerald-500/[0.08]' : 'bg-rose-500/[0.07]'
+        className={`flex items-start gap-3 border-b border-border/60 p-4 ${
+          acertou ? 'bg-emerald-500/[0.12]' : 'bg-rose-500/[0.1]'
         }`}
       >
         <span
@@ -395,7 +395,7 @@ function RespostaComentada({ comentario, acertou }: { comentario: Comentario; ac
         </ul>
       </section>
 
-      <section className="bg-muted/30 px-4 py-3.5">
+      <section className="bg-foreground/[0.035] px-4 py-3.5">
         <p className="text-[13px] leading-relaxed text-foreground/85">
           <Award className="mr-1.5 inline h-4 w-4 text-primary" />
           {comentario.fechamento}
@@ -434,9 +434,9 @@ function Resultado({
           : 'Sem drama — identificar estrutura é treino. Abra as pranchas dessa região no Atlas e refaça o quiz depois.'
 
   return (
-    <main className="surface-page min-h-screen">
+    <main className="surface-page anatomia-ambiente min-h-screen">
       <div className="mx-auto max-w-3xl px-4 py-10 sm:py-14">
-        <div className="rounded-3xl border border-border bg-card p-6 text-center shadow-sm sm:p-9">
+        <div className="vidro vidro-brilho relevo rounded-[28px] p-6 text-center sm:p-9">
           <span className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
             <Trophy className="h-7 w-7" />
           </span>
@@ -458,7 +458,7 @@ function Resultado({
             <button
               type="button"
               onClick={onReconfigurar}
-              className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-border bg-card px-5 text-sm font-bold transition hover:bg-muted"
+              className="tecla inline-flex h-11 items-center justify-center gap-2 px-5 text-sm font-bold"
             >
               Trocar o recorte
             </button>
@@ -466,14 +466,14 @@ function Resultado({
         </div>
 
         {erradas.length > 0 && (
-          <section className="mt-6 rounded-2xl border border-border bg-card p-5">
+          <section className="vidro relevo mt-6 rounded-[22px] p-5">
             <h2 className="mb-3 text-sm font-bold">Estruturas para revisar</h2>
             <ul className="space-y-1.5">
               {erradas.map(questao => (
                 <li key={questao.id}>
                   <Link
                     href={`/anatomia/atlas-anatomia?sistema=${questao.ocorrencia.sistemaSlug}&colecao=${questao.ocorrencia.colecaoSlug}`}
-                    className="group flex items-center justify-between gap-3 rounded-xl border border-border bg-background px-3 py-2.5 transition hover:border-primary/40"
+                    className="vidro-pastilha group flex items-center justify-between gap-3 rounded-2xl px-3 py-2.5"
                   >
                     <span className="min-w-0">
                       <span className="block truncate text-[13px] font-semibold">

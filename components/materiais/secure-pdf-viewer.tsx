@@ -104,6 +104,11 @@ import {
 } from '@/lib/pdf-viewer-history'
 import { inkPixelWidth, traceStroke } from '@/lib/pdf-viewer-ink'
 import { fitToCanvasBudget } from '@/lib/pdf-viewer-canvas-budget'
+import {
+  isViewportRelayout,
+  measurePageIndex,
+  RELAYOUT_SETTLE_MS,
+} from '@/lib/pdf-viewer-relayout'
 
 type ViewerMode = 'single' | 'width' | 'continuous'
 // Folhas do celular. O cabeçalho antigo empilhava até cinco linhas de rolagem
@@ -1591,11 +1596,28 @@ function useResizeWidth(ref: React.RefObject<HTMLElement>, deps: React.Dependenc
   useEffect(() => {
     const element = ref.current
     if (!element) return
-    const updateWidth = () => setWidth(element.clientWidth)
+    let frame = 0
+    // Girar o tablet não produz UMA largura nova: a animação de rotação passa
+    // por dezenas de larguras intermediárias, e o ResizeObserver reporta todas.
+    // Cada uma virava um `setState` e um re-render do leitor INTEIRO, com as
+    // páginas montadas junto — metade do piscar da rotação nascia aqui. Uma
+    // medida por quadro, e só quando o número realmente muda.
+    const updateWidth = () => {
+      frame = 0
+      const next = element.clientWidth
+      setWidth((current) => (Math.abs(current - next) < 1 ? current : next))
+    }
     updateWidth()
-    const observer = new ResizeObserver(updateWidth)
+    const schedule = () => {
+      if (frame) return
+      frame = window.requestAnimationFrame(updateWidth)
+    }
+    const observer = new ResizeObserver(schedule)
     observer.observe(element)
-    return () => observer.disconnect()
+    return () => {
+      observer.disconnect()
+      if (frame) window.cancelAnimationFrame(frame)
+    }
   }, deps)
   return width
 }
@@ -2402,6 +2424,10 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     let frame = 0
     let trailing: number | null = null
     let lastMeasuredAt = 0
+    // Tamanho da casa quando o deslocamento atual foi produzido. Ver
+    // `measurePageIndex`: girar a tela muda a casa embaixo de um deslocamento
+    // que o navegador preserva, e a divisão devolve uma página qualquer.
+    let slotWhenScrolled = pageSlotHeightRef.current
 
     const applyAnchor = () => {
       const element = contentRef.current
@@ -2411,12 +2437,19 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
       // para o começo do material e o destino desmontava embaixo da viagem.
       if (pendingTargetRef.current != null) return
       const slot = pageSlotHeightRef.current
-      if (!(slot > 0)) return
       // Relativo à viewport: funciona tanto quando quem rola é o documento
       // quanto quando é o shell (tela cheia), sem saber qual dos dois é.
       const viewportHeight = document.documentElement.clientHeight || window.innerHeight
-      const offset = -element.getBoundingClientRect().top + viewportHeight / 2
-      const index = Math.min(pages.length - 1, Math.max(0, Math.round(offset / slot)))
+      const index = measurePageIndex({
+        offset: -element.getBoundingClientRect().top + viewportHeight / 2,
+        slot,
+        slotWhenScrolled,
+        count: pages.length,
+      })
+      // A casa mudou de tamanho: esta medida vira a base da PRÓXIMA, não uma
+      // resposta agora.
+      slotWhenScrolled = slot
+      if (index == null) return
       setWindowAnchor((current) => (Math.abs(index - current) > WINDOW_RECENTER_BAND ? index : current))
     }
 
@@ -2471,6 +2504,11 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     const element = contentRef.current
     if (!element) return
     let frame = 0
+    // A casa da fileira é EXATAMENTE a largura visível, então girar o tablet a
+    // muda por definição — e o `scrollLeft` que o navegador preserva ainda é o
+    // da largura antiga. `scrollLeft` velho ÷ casa nova era a origem direta das
+    // trocas de página em rajada ao girar a tela. Ver `measurePageIndex`.
+    let slotWhenScrolled = pageSlotWidthRef.current
 
     const measure = () => {
       frame = 0
@@ -2480,8 +2518,16 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
       // destino embaixo da viagem.
       if (pendingTargetRef.current != null) return
       const slot = pageSlotWidthRef.current
-      if (!(slot > 0)) return
-      const index = Math.min(pages.length - 1, Math.max(0, Math.round(element.scrollLeft / slot)))
+      const index = measurePageIndex({
+        offset: element.scrollLeft,
+        slot,
+        slotWhenScrolled,
+        count: pages.length,
+      })
+      // A casa mudou de tamanho: esta medida vira a base da PRÓXIMA, não uma
+      // resposta agora.
+      slotWhenScrolled = slot
+      if (index == null) return
       setWindowAnchor((current) => (Math.abs(index - current) > WINDOW_RECENTER_BAND ? index : current))
       if (Date.now() < suppressFocusUntilRef.current) return
       const page = pages[index]
@@ -2707,6 +2753,75 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
 
     requestAnimationFrame(step)
   }, [])
+
+  // ── Rotação de tela ─────────────────────────────────────────────────────
+  // Girar o iPad piscava e trocava de página em rajada — "um trilhão de trocas
+  // de página", nas palavras de quem reportou.
+  //
+  // O mecanismo está descrito por inteiro em `lib/pdf-viewer-relayout.ts`. Em
+  // uma frase: as duas fontes que descobrem "que página é esta" dividem o
+  // deslocamento da rolagem pela casa que cada página ocupa, e girar muda a
+  // casa sem mudar o deslocamento — conta errada, página errada, e a janela de
+  // virtualização correndo atrás da página errada a cada quadro da animação de
+  // rotação, montando e desmontando páginas (o piscar).
+  //
+  // As medidas agora se recusam a responder enquanto a casa está mudando. Falta
+  // a outra metade: alguém precisa dizer onde a leitura está. Esse alguém é a
+  // página que o leitor JÁ estava lendo — a rotação não muda o que ele quer
+  // ver. Depois que a tela para de mudar de tamanho, a leitura volta para ela
+  // pelo mesmo motor dos saltos do sumário.
+  //
+  // `pendingTargetRef` entra na hora do primeiro evento, e não só no fim: é ele
+  // que segura o foco por rolagem, a âncora da virtualização e a gravação da
+  // posição de leitura. Sem congelar já no primeiro evento, a rotação chegava a
+  // GRAVAR a página errada e a abertura seguinte nascia no lugar errado.
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    let lastWidth = document.documentElement.clientWidth
+    let settleTimer = 0
+
+    const onRelayout = (force: boolean) => {
+      const width = document.documentElement.clientWidth
+      // `orientationchange` chega ANTES de o layout responder em alguns
+      // navegadores: ali a largura ainda é a antiga, e por isso ele não passa
+      // pelo teste de largura.
+      if (!force && !isViewportRelayout(lastWidth, width)) return
+      lastWidth = width
+      // Já havia uma viagem em curso (retomada de leitura, salto pelo sumário)?
+      // O destino dela continua valendo — girar a tela não desfaz o que o
+      // leitor pediu. Roubar o destino aqui mandaria a leitura para a página
+      // onde a viagem estava passando, que é justamente o que ela evita.
+      const page = pendingTargetRef.current ?? currentPageRef.current
+      pendingTargetRef.current = page
+      suppressFocusUntilRef.current = Math.max(
+        suppressFocusUntilRef.current,
+        Date.now() + RELAYOUT_SETTLE_MS + 600
+      )
+      window.clearTimeout(settleTimer)
+      // Uma rotação dispara vários eventos seguidos. Reposicionar no meio da
+      // animação seria reposicionar contra um layout que ainda vai mudar —
+      // vale a pena esperar o último.
+      settleTimer = window.setTimeout(() => {
+        settleTimer = 0
+        settleToPage(page, { minMs: 200, deadlineMs: 2000 })
+      }, RELAYOUT_SETTLE_MS)
+    }
+
+    const onResize = () => onRelayout(false)
+    const onOrientation = () => onRelayout(true)
+    window.addEventListener('resize', onResize, { passive: true })
+    window.addEventListener('orientationchange', onOrientation, { passive: true })
+    return () => {
+      window.removeEventListener('resize', onResize)
+      window.removeEventListener('orientationchange', onOrientation)
+      // Sair com um destino pendente deixaria foco, âncora e gravação da
+      // posição congelados para sempre.
+      if (settleTimer) {
+        window.clearTimeout(settleTimer)
+        pendingTargetRef.current = null
+      }
+    }
+  }, [settleToPage])
 
   // Retomada de leitura: volta para a última página vista.
   //

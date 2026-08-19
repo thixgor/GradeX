@@ -146,8 +146,8 @@ export function PranchaInterativa({
   return (
     <div
       ref={palcoRef}
-      className={`group/palco relative isolate overflow-hidden bg-[radial-gradient(ellipse_at_center,#161d26_0%,#080b10_75%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] ${
-        telaCheia ? 'flex h-full w-full items-center justify-center' : 'rounded-2xl border border-white/10'
+      className={`group/palco anatomia-palco relative isolate overflow-hidden ${
+        telaCheia ? 'flex h-full w-full items-center justify-center !rounded-none !border-0' : 'rounded-[22px]'
       }`}
     >
       {/* `pb-14` reserva a faixa dos controles: sem ela, um marcador no rodapé
@@ -228,11 +228,11 @@ export function PranchaInterativa({
 
       {/* Controles: discretos no desktop, sempre visíveis no toque. */}
       <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-2.5 sm:p-3">
-        <span className="pointer-events-none hidden items-center gap-1.5 rounded-lg bg-black/45 px-2.5 py-1.5 text-[11px] font-medium text-white/70 backdrop-blur sm:inline-flex">
+        <span className="anatomia-controles pointer-events-none hidden items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-[11px] font-medium text-white/75 sm:inline-flex">
           <Move className="h-3.5 w-3.5" />
           {transformacao.escala > 1 ? 'Arraste para navegar' : 'Duplo clique, pinça ou Ctrl + roda para aproximar'}
         </span>
-        <div className="pointer-events-auto ml-auto flex items-center gap-1 rounded-xl border border-white/10 bg-black/55 p-1 backdrop-blur">
+        <div className="anatomia-controles pointer-events-auto ml-auto flex items-center gap-1 rounded-2xl p-1">
           <BotaoPalco titulo="Afastar" onClick={() => aplicarZoom(-ZOOM_PASSO)} desabilitado={transformacao.escala <= ZOOM_MIN}>
             <Minus className="h-4 w-4" />
           </BotaoPalco>
