@@ -763,6 +763,12 @@ export const marcadores: Marcador[] = [
       { rotulo: 'Adultos', minimo: 4000, maximo: 11000, unidade: '/mm³' },
       { rotulo: 'Recém-nascido', minimo: 9000, maximo: 30000, unidade: '/mm³' },
       { rotulo: 'Criança (1 a 6 anos)', minimo: 5000, maximo: 15000, unidade: '/mm³', observacao: 'Predomínio linfocitário é normal até cerca de 4 a 5 anos — o contrário do adulto.' },
+      { rotulo: 'Fórmula — neutrófilos segmentados', minimo: 40, maximo: 70, unidade: '%' },
+      { rotulo: 'Fórmula — bastonetes', minimo: 0, maximo: 5, unidade: '%' },
+      { rotulo: 'Fórmula — linfócitos', minimo: 20, maximo: 45, unidade: '%' },
+      { rotulo: 'Fórmula — monócitos', minimo: 2, maximo: 10, unidade: '%' },
+      { rotulo: 'Fórmula — eosinófilos', minimo: 1, maximo: 5, unidade: '%' },
+      { rotulo: 'Fórmula — basófilos', minimo: 0, maximo: 2, unidade: '%', observacao: 'A fórmula percentual soma 100% por definição: qualquer linhagem que caia faz as outras subirem em percentual sem ter mudado em número. Converta sempre em absoluto — percentual × leucócitos totais ÷ 100 — antes de chamar de neutropenia, linfocitose ou eosinofilia.' },
     ],
     resumo:
       'A soma de todas as células de defesa circulantes. O número total quase nunca é a informação — quem informa é o diferencial.',
@@ -881,7 +887,8 @@ export const marcadores: Marcador[] = [
     unidade: '/mm³',
     referencias: [
       { rotulo: 'Adultos (absoluto)', minimo: 1500, maximo: 7500, unidade: '/mm³' },
-      { rotulo: 'Adultos (percentual)', minimo: 40, maximo: 70, unidade: '%', observacao: 'O percentual só interpreta corretamente quando convertido em absoluto.' },
+      { rotulo: 'Adultos (percentual)', minimo: 40, maximo: 70, unidade: '%', observacao: 'O percentual só interpreta corretamente quando convertido em absoluto: multiplique pelos leucócitos totais e divida por 100.' },
+      { rotulo: 'Bastonetes (percentual)', minimo: 0, maximo: 5, unidade: '%', observacao: 'Acima de 10% caracteriza desvio à esquerda relevante.' },
     ],
     resumo:
       'A primeira linha contra bactérias e fungos. O valor absoluto — não o percentual — é o que define risco infeccioso.',
@@ -972,7 +979,9 @@ export const marcadores: Marcador[] = [
     unidade: '/mm³',
     referencias: [
       { rotulo: 'Adultos (absoluto)', minimo: 1000, maximo: 4000, unidade: '/mm³' },
-      { rotulo: 'Crianças até 4 anos', minimo: 3000, maximo: 9500, unidade: '/mm³', observacao: 'Predomínio linfocitário é fisiológico na primeira infância.' },
+      { rotulo: 'Adultos (percentual)', minimo: 20, maximo: 45, unidade: '%', observacao: 'Linfocitose relativa com absoluto normal é frequente quando os neutrófilos caem — o percentual sobe sem que nenhum linfócito tenha sido produzido a mais.' },
+      { rotulo: 'Crianças até 4 anos (absoluto)', minimo: 3000, maximo: 9500, unidade: '/mm³', observacao: 'Predomínio linfocitário é fisiológico na primeira infância.' },
+      { rotulo: 'Crianças até 4 anos (percentual)', minimo: 40, maximo: 70, unidade: '%', observacao: 'A inversão da fórmula em relação ao adulto é esperada e não indica infecção viral por si só.' },
     ],
     resumo: 'A imunidade adaptativa circulante: linfócitos T, B e NK. Sobem em viroses, caem em corticoide, HIV e estresse agudo.',
     entenda:
@@ -1048,7 +1057,10 @@ export const marcadores: Marcador[] = [
     sistemas: ['hematologico', 'infeccioso', 'imunologico'],
     material: 'Sangue total com EDTA',
     unidade: '/mm³',
-    referencias: [{ rotulo: 'Adultos (absoluto)', minimo: 200, maximo: 1000, unidade: '/mm³' }],
+    referencias: [
+      { rotulo: 'Adultos (absoluto)', minimo: 200, maximo: 1000, unidade: '/mm³' },
+      { rotulo: 'Adultos (percentual)', minimo: 2, maximo: 10, unidade: '%', observacao: 'Monocitose relativa acompanha qualquer neutropenia; confirme sempre no valor absoluto.' },
+    ],
     resumo: 'O precursor circulante do macrófago tecidual. Sobe em inflamação crônica, infecções granulomatosas e recuperação medular.',
     entenda:
       'O monócito passa poucos dias no sangue e se transforma em macrófago ou célula dendrítica ao entrar no tecido. Monocitose sugere processo crônico: tuberculose, endocardite, doenças inflamatórias intestinais, colagenoses. Também aparece como sinal precoce de recuperação medular após quimioterapia — a monocitose antecede em dias a subida dos neutrófilos, e nesse contexto é boa notícia. Monocitose persistente acima de 1.000/mm³ em idoso levanta leucemia mielomonocítica crônica.',
@@ -1103,7 +1115,10 @@ export const marcadores: Marcador[] = [
     sistemas: ['hematologico', 'imunologico', 'infeccioso'],
     material: 'Sangue total com EDTA',
     unidade: '/mm³',
-    referencias: [{ rotulo: 'Adultos (absoluto)', minimo: 0, maximo: 500, unidade: '/mm³' }],
+    referencias: [
+      { rotulo: 'Adultos (absoluto)', minimo: 0, maximo: 500, unidade: '/mm³' },
+      { rotulo: 'Adultos (percentual)', minimo: 1, maximo: 5, unidade: '%', observacao: 'O percentual isolado engana nas leucopenias: 8% de 3.000 leucócitos ainda é contagem absoluta normal.' },
+    ],
     resumo:
       'A célula da alergia e das parasitoses teciduais. No Brasil, eosinofilia sem atopia evidente é helmintíase até prova em contrário.',
     entenda:
@@ -1163,7 +1178,10 @@ export const marcadores: Marcador[] = [
     sistemas: ['hematologico', 'imunologico'],
     material: 'Sangue total com EDTA',
     unidade: '/mm³',
-    referencias: [{ rotulo: 'Adultos (absoluto)', minimo: 0, maximo: 200, unidade: '/mm³' }],
+    referencias: [
+      { rotulo: 'Adultos (absoluto)', minimo: 0, maximo: 200, unidade: '/mm³' },
+      { rotulo: 'Adultos (percentual)', minimo: 0, maximo: 2, unidade: '%', observacao: 'Basofilia acima de 2% de forma persistente favorece doença mieloproliferativa.' },
+    ],
     resumo: 'A linhagem menos numerosa do leucograma. Sua elevação é rara e, quando persistente, aponta para doença mieloproliferativa.',
     entenda:
       'Basófilos contêm histamina e heparina e participam de reações de hipersensibilidade imediata. Basofilia é achado incomum e tem um valor específico: em leucocitose com granulócitos imaturos, a presença de basofilia favorece leucemia mieloide crônica em vez de reação leucemoide infecciosa. Basofilia transitória também aparece em hipotireoidismo e em reações alérgicas.',

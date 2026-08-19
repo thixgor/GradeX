@@ -31,6 +31,7 @@ export const marcadores: Marcador[] = [
     unidade: '/mm³',
     referencias: [
       { rotulo: 'Adultos', minimo: 1500, maximo: 7500, unidade: '/mm³' },
+      { rotulo: 'Adultos (percentual)', minimo: 40, maximo: 70, unidade: '%', observacao: 'A conta que transforma o percentual em absoluto: (segmentados % + bastonetes %) × leucócitos totais ÷ 100.' },
       { rotulo: 'Neutropenia leve', texto: '1.000 a 1.500', unidade: '/mm³' },
       { rotulo: 'Neutropenia moderada', texto: '500 a 1.000', unidade: '/mm³' },
       { rotulo: 'Neutropenia grave', texto: '< 500', unidade: '/mm³', observacao: 'Faixa em que o risco de infecção grave sobe acentuadamente; febre nesse contexto é urgência.' },
@@ -132,6 +133,7 @@ export const marcadores: Marcador[] = [
     unidade: '/mm³',
     referencias: [
       { rotulo: 'Adultos', minimo: 1000, maximo: 4000, unidade: '/mm³' },
+      { rotulo: 'Adultos (percentual)', minimo: 20, maximo: 45, unidade: '%', observacao: 'Absoluto = percentual × leucócitos totais ÷ 100. Linfócitos em 55% com 3.000 leucócitos são 1.650/mm³ — normais, apesar do percentual alto.' },
       { rotulo: 'Linfopenia', texto: '< 1.000', unidade: '/mm³' },
       { rotulo: 'Linfopenia grave', texto: '< 500', unidade: '/mm³', observacao: 'Associa-se a risco de infecção oportunista, sobretudo se sustentada.' },
     ],
@@ -221,6 +223,7 @@ export const marcadores: Marcador[] = [
     unidade: '/mm³',
     referencias: [
       { rotulo: 'Normal', texto: '< 500', unidade: '/mm³' },
+      { rotulo: 'Normal (percentual)', minimo: 1, maximo: 5, unidade: '%', observacao: 'É a faixa percentual que o laudo imprime ao lado; o corte clínico, porém, é o absoluto de 500/mm³.' },
       { rotulo: 'Eosinofilia leve', texto: '500 a 1.500', unidade: '/mm³' },
       { rotulo: 'Eosinofilia moderada a grave', texto: '> 1.500', unidade: '/mm³', observacao: 'Persistente nessa faixa, exige investigação de lesão de órgão-alvo — coração, pulmão, sistema nervoso.' },
     ],
@@ -308,8 +311,10 @@ export const marcadores: Marcador[] = [
     unidade: '/mm³',
     referencias: [
       { rotulo: 'Monócitos — adultos', minimo: 200, maximo: 1000, unidade: '/mm³' },
-      { rotulo: 'Monocitose relevante', texto: '> 1.000 sustentada por mais de 3 meses', unidade: '/mm³', observacao: 'Critério da leucemia mielomonocítica crônica quando associada a displasia.' },
+      { rotulo: 'Monócitos — adultos (percentual)', minimo: 2, maximo: 10, unidade: '%' },
+      { rotulo: 'Monocitose relevante', texto: '> 1.000 sustentada por mais de 3 meses', unidade: '/mm³', observacao: 'Critério da leucemia mielomonocítica crônica quando associada a displasia. O critério é absoluto: monócitos em 12% de um leucograma de 5.000 são 600/mm³, e não preenchem o critério.' },
       { rotulo: 'Basófilos — adultos', minimo: 0, maximo: 200, unidade: '/mm³' },
+      { rotulo: 'Basófilos — adultos (percentual)', minimo: 0, maximo: 2, unidade: '%' },
     ],
     resumo:
       'Duas linhagens minoritárias com valor diagnóstico desproporcional ao seu número: a monocitose anuncia recuperação medular e inflamação crônica; a basofilia aponta doença mieloproliferativa.',

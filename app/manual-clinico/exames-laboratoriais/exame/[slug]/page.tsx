@@ -189,11 +189,28 @@ export default function PaginaDoExame({ params }: { params: { slug: string } }) 
   )
 }
 
-/** A referência do adulto, encurtada para caber na coluna da folha. */
-function referenciaCurta(referencias: { rotulo: string; minimo?: number; maximo?: number; texto?: string; unidade: string }[]): string {
+type ReferenciaCurta = { rotulo: string; minimo?: number; maximo?: number; texto?: string; unidade: string }
+
+const fmtNumero = (n?: number) => (n == null ? '—' : n.toLocaleString('pt-BR', { maximumFractionDigits: 3 }))
+
+function faixaEscrita(r: ReferenciaCurta): string {
+  return r.texto ?? `${fmtNumero(r.minimo)} – ${fmtNumero(r.maximo)}`
+}
+
+/**
+ * A referência do adulto, encurtada para caber na coluna da folha.
+ *
+ * Nas linhagens do leucograma o laudo real imprime duas colunas — a relativa e
+ * a absoluta — e a folha faz o mesmo: quando o marcador declara uma faixa
+ * percentual para o adulto, ela vem logo depois do intervalo absoluto. O
+ * absoluto continua vindo primeiro porque é ele que interpreta; o percentual
+ * está ali porque é o número que aparece impresso no hemograma.
+ */
+function referenciaCurta(referencias: ReferenciaCurta[]): string {
   const principal = referencias[0]
   if (!principal) return '—'
-  if (principal.texto) return principal.texto
-  const fmt = (n?: number) => (n == null ? '—' : n.toLocaleString('pt-BR', { maximumFractionDigits: 3 }))
-  return `${fmt(principal.minimo)} – ${fmt(principal.maximo)}`
+
+  const percentual = referencias.find((r) => r !== principal && r.unidade === '%' && /percentual/i.test(r.rotulo))
+  const base = faixaEscrita(principal)
+  return percentual ? `${base} · ${faixaEscrita(percentual)}%` : base
 }

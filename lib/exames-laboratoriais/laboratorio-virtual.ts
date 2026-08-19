@@ -38,6 +38,16 @@ interface BaseDoMarcador {
   /** Texto da referência quando ela não é um simples intervalo numérico. */
   refTexto?: string
   /**
+   * Faixa percentual, para as linhagens do diferencial.
+   *
+   * O laudo de laboratório imprime as duas colunas — relativa e absoluta — e a
+   * folha faz o mesmo: o valor sorteado continua sendo o absoluto (que é o que
+   * interpreta), mas a régua de referência mostra também a fatia esperada da
+   * fórmula leucocitária, que é o número que o estudante encontra impresso na
+   * maioria dos hemogramas brasileiros.
+   */
+  refPercentual?: string
+  /**
    * Ficha que a linha abre, quando ela não tem página própria.
    *
    * A amilase é o caso: ela aparece no laudo da pancreatite porque é o que o
@@ -61,11 +71,11 @@ export const BASE: Record<string, BaseDoMarcador> = {
   reticulocitos: { nome: 'Reticulócitos', unidade: '%', min: 0.5, max: 2.5, casas: 1 },
   // Série branca
   leucocitos: { nome: 'Leucócitos', unidade: '/mm³', min: 4000, max: 11000, casas: 0 },
-  neutrofilos: { nome: 'Neutrófilos', unidade: '/mm³', min: 1500, max: 7500, casas: 0 },
-  linfocitos: { nome: 'Linfócitos', unidade: '/mm³', min: 1000, max: 4000, casas: 0 },
-  monocitos: { nome: 'Monócitos', unidade: '/mm³', min: 200, max: 1000, casas: 0 },
-  eosinofilos: { nome: 'Eosinófilos', unidade: '/mm³', min: 0, max: 500, casas: 0 },
-  basofilos: { nome: 'Basófilos', unidade: '/mm³', min: 0, max: 200, casas: 0 },
+  neutrofilos: { nome: 'Neutrófilos', unidade: '/mm³', min: 1500, max: 7500, casas: 0, refPercentual: '40 a 70%' },
+  linfocitos: { nome: 'Linfócitos', unidade: '/mm³', min: 1000, max: 4000, casas: 0, refPercentual: '20 a 45%' },
+  monocitos: { nome: 'Monócitos', unidade: '/mm³', min: 200, max: 1000, casas: 0, refPercentual: '2 a 10%' },
+  eosinofilos: { nome: 'Eosinófilos', unidade: '/mm³', min: 0, max: 500, casas: 0, refPercentual: '1 a 5%' },
+  basofilos: { nome: 'Basófilos', unidade: '/mm³', min: 0, max: 200, casas: 0, refPercentual: '0 a 2%' },
   plaquetas: { nome: 'Plaquetas', unidade: '/mm³', min: 150000, max: 450000, casas: 0 },
   vpm: { nome: 'VPM', unidade: 'fL', min: 7.5, max: 11.5, casas: 1 },
   // Ferro
@@ -1660,7 +1670,8 @@ function formatar(valor: number, casas: number): string {
 function textoDaReferencia(base: BaseDoMarcador): string {
   if (base.refTexto) return base.refTexto
   const casas = base.casas
-  return `${formatar(base.min, casas)} a ${formatar(base.max, casas)}`
+  const absoluto = `${formatar(base.min, casas)} a ${formatar(base.max, casas)}`
+  return base.refPercentual ? `${absoluto} · ${base.refPercentual}` : absoluto
 }
 
 /**
