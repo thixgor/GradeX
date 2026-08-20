@@ -32,6 +32,7 @@ import {
 } from '@/components/ensino/painel'
 import { BotaoDuo } from '@/components/ensino/duo'
 import { EstadoVazio, Esqueleto, Selo } from '@/components/ensino/primitivos'
+import { usePublicaAltura } from '@/hooks/use-publica-altura'
 import { cn } from '@/lib/utils'
 
 /**
@@ -119,6 +120,15 @@ function Conteudo() {
   const [confirmandoExclusao, setConfirmandoExclusao] = useState(false)
   const [aplicando, setAplicando] = useState('')
   const [aviso, setAviso] = useState('')
+
+  /**
+   * A barra de ações publica a própria altura enquanto está na tela — é o que
+   * faz o botão flutuante de Suporte (canto inferior direito, telas grandes)
+   * subir para não cobrir o "Excluir". Sem isso o círculo do Suporte ficava
+   * bem em cima do botão mais destrutivo do painel, interceptando o clique
+   * como se o botão nunca tivesse sido pressionado.
+   */
+  const refDaBarraDeAcoes = usePublicaAltura<HTMLDivElement>('--gx-barra-inferior-h', marcadas.size > 0)
 
   const carregar = useCallback(() => {
     setCarregando(true)
@@ -536,6 +546,7 @@ function Conteudo() {
       <AnimatePresence>
         {marcadas.size > 0 ? (
           <motion.div
+            ref={refDaBarraDeAcoes}
             initial={{ y: 90, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 90, opacity: 0 }}

@@ -212,18 +212,31 @@ export function SupportChat() {
 
   return (
     <>
-      {/* Botão Flutuante — desktop apenas (no mobile o dock consolidado assume) */}
+      {/* Botão Flutuante — desktop apenas (no mobile o dock consolidado assume).
+          O `bottom` soma `--gx-barra-inferior-h`: quando alguma tela publica
+          uma barra de ações fixa no rodapé (ex.: a seleção em massa do
+          Catálogo), este círculo sobe para não ficar em cima do botão mais à
+          direita dela, interceptando o clique. Sem barra nenhuma publicando,
+          a variável vale 0px e o botão fica exatamente onde sempre esteve. */}
       <button
         onClick={() => setOpen(!isOpen)}
         aria-label={isOpen ? 'Fechar suporte' : 'Abrir suporte'}
-        className="fixed bottom-6 right-6 z-50 hidden lg:flex w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-lg hover:scale-110 transition-transform items-center justify-center"
+        style={{ bottom: 'calc(1.5rem + var(--gx-barra-inferior-h, 0px))' }}
+        className="fixed right-6 z-50 hidden lg:flex w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-lg hover:scale-110 transition-[transform,bottom] items-center justify-center"
       >
         {isOpen ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}
       </button>
 
-      {/* Chat Window */}
+      {/* Chat Window — mesma lógica: abre acima da barra, não em cima dela.
+          `--base` guarda o afastamento de sempre (5rem no mobile, 6rem do
+          `lg` em diante, exatamente como antes); só a soma com a variável da
+          barra é novidade. */}
       {isOpen && (
-        <div className="fixed bottom-20 right-4 left-4 sm:left-auto z-50 sm:w-96 w-auto h-[70vh] max-h-[600px] lg:bottom-24 lg:right-6 bg-background border border-border rounded-lg shadow-2xl flex flex-col">
+        <div
+          style={{
+            bottom: 'calc(var(--base, 5rem) + var(--gx-barra-inferior-h, 0px))',
+          }}
+          className="fixed right-4 left-4 sm:left-auto z-50 sm:w-96 w-auto h-[70vh] max-h-[600px] lg:right-6 lg:[--base:6rem] bg-background border border-border rounded-lg shadow-2xl flex flex-col">
           {/* Header */}
           <div className="p-4 border-b border-border bg-primary text-primary-foreground rounded-t-lg flex items-start justify-between gap-2">
             <div>
