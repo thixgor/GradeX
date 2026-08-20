@@ -101,6 +101,19 @@ const DESTINOS: Destino[] = [
  */
 export const RESPIRO_DA_DOCA = 'pb-32 sm:pb-36'
 
+/**
+ * O respiro simétrico, no alto.
+ *
+ * Nenhuma das telas de `/aulas` passava um `pt-*` para o próprio conteúdo —
+ * só a de assistir tinha um `pt-4` escrito à mão. O resultado era o título de
+ * cada página colado direto na régua de baixo do cabeçalho fixo, sem nenhum
+ * ar entre os dois: mais visível ainda agora que o cabeçalho virou vidro
+ * (`vidro` do AppShell) e o texto por trás dele passou a se misturar com o
+ * título da própria página. A mesma lógica do respiro de baixo — uma
+ * constante, não um número copiado em oito arquivos.
+ */
+export const RESPIRO_DO_TOPO = 'pt-6 sm:pt-8'
+
 /** A variável que o "voltar" e o "+" já leem para subir. */
 const VARIAVEL_DE_ALTURA = '--gx-barra-inferior-h'
 

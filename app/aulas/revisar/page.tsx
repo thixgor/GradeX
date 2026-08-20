@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { FileText, Layers, Play, RotateCcw, Sparkles } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
-import { RESPIRO_DA_DOCA } from '@/components/ensino/doca'
+import { RESPIRO_DA_DOCA, RESPIRO_DO_TOPO } from '@/components/ensino/doca'
 import { EstadoVazio, Esqueleto } from '@/components/ensino/primitivos'
 import { cn } from '@/lib/utils'
 
@@ -49,7 +49,7 @@ const FERRAMENTAS = {
 
 export default function RevisarPage() {
   return (
-    <AppShell headerTitle="Revisar" headerSubtitle="O que você já estudou" comercio={false}>
+    <AppShell headerTitle="Revisar" headerSubtitle="O que você já estudou" comercio={false} vidro>
       <Conteudo />
     </AppShell>
   )
@@ -90,7 +90,7 @@ function Conteudo() {
   )
 
   return (
-    <div className={`container mx-auto max-w-4xl px-4 ${RESPIRO_DA_DOCA}`}>
+    <div className={`container mx-auto max-w-4xl px-4 ${RESPIRO_DO_TOPO} ${RESPIRO_DA_DOCA}`}>
 
       <header className="mb-5">
         <h1 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">Revisar</h1>

@@ -361,7 +361,7 @@ function Conteudo() {
             </ul>
             <p className="mt-3">
               O formato completo, com todos os campos, está em{' '}
-              <Link href="/aulas/gerenciar/importar" className="font-semibold underline">
+              <Link href="/docs/formato-importacao-aulas.md" className="font-semibold underline">
                 docs/formato-importacao-aulas.md
               </Link>
               .

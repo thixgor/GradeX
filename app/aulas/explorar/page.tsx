@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { ChevronRight, Compass, Layers } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
-import { RESPIRO_DA_DOCA } from '@/components/ensino/doca'
+import { RESPIRO_DA_DOCA, RESPIRO_DO_TOPO } from '@/components/ensino/doca'
 import {
   CartaoDeAula,
   EstadoVazio,
@@ -51,7 +51,7 @@ const ROTULO_DO_NIVEL: Record<string, string> = {
 
 export default function ExplorarPage() {
   return (
-    <AppShell headerTitle="Explorar" headerSubtitle="Todo o conteúdo por assunto" comercio={false}>
+    <AppShell headerTitle="Explorar" headerSubtitle="Todo o conteúdo por assunto" comercio={false} vidro>
       <Suspense
         fallback={
           <div className="container mx-auto max-w-6xl px-4 py-8">
@@ -135,7 +135,7 @@ function Conteudo() {
   const ramosVisiveis = atual ? atual.filhos || [] : arvore
 
   return (
-    <div className={`container mx-auto max-w-6xl px-4 ${RESPIRO_DA_DOCA}`}>
+    <div className={`container mx-auto max-w-6xl px-4 ${RESPIRO_DO_TOPO} ${RESPIRO_DA_DOCA}`}>
 
       <header className="mb-6">
         <Migalha

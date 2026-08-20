@@ -25,7 +25,7 @@ import {
 import { motion, useReducedMotion } from 'framer-motion'
 
 import { AppShell } from '@/components/app-shell'
-import { RESPIRO_DA_DOCA } from '@/components/ensino/doca'
+import { RESPIRO_DA_DOCA, RESPIRO_DO_TOPO } from '@/components/ensino/doca'
 import { BotaoDuo, Confete } from '@/components/ensino/duo'
 import { PlayerDaAula, type ControleDoPlayer } from '@/components/aulas/player'
 import { PainelDeAnotacoes } from '@/components/aulas/anotacoes-painel'
@@ -120,7 +120,7 @@ interface RespostaDaAula {
 
 export default function AssistirAulaPage() {
   return (
-    <AppShell headerTitle="Aula" headerSubtitle="Área de Ensino" comercio={false}>
+    <AppShell headerTitle="Aula" headerSubtitle="Área de Ensino" comercio={false} vidro>
       <Suspense
         fallback={
           <div className="container mx-auto max-w-6xl px-4 py-6">
@@ -290,7 +290,7 @@ function Conteudo() {
 
   return (
     <ProvedorDeEnsino trilha={trilha?.slug}>
-      <div className={`container mx-auto max-w-6xl px-4 pt-4 ${RESPIRO_DA_DOCA}`}>
+      <div className={`container mx-auto max-w-6xl px-4 ${RESPIRO_DO_TOPO} ${RESPIRO_DA_DOCA}`}>
         {/* ── Onde estou ─────────────────────────────────────────────── */}
         <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
           {trilha ? (

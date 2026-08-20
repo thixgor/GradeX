@@ -17,7 +17,7 @@ import {
 } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
-import { RESPIRO_DA_DOCA } from '@/components/ensino/doca'
+import { RESPIRO_DA_DOCA, RESPIRO_DO_TOPO } from '@/components/ensino/doca'
 import {
   BotaoDuo,
   CaminhoDeNos,
@@ -129,7 +129,7 @@ const ROTULO_DO_NIVEL: Record<string, string> = {
 
 export default function TrilhaPage() {
   return (
-    <AppShell headerTitle="Trilha" headerSubtitle="Caminho de estudo" comercio={false}>
+    <AppShell headerTitle="Trilha" headerSubtitle="Caminho de estudo" comercio={false} vidro>
       <Conteudo />
     </AppShell>
   )
@@ -260,7 +260,7 @@ function Conteudo() {
 
   if (carregando) {
     return (
-      <div className={`container mx-auto max-w-3xl px-4 ${RESPIRO_DA_DOCA}`}>
+      <div className={`container mx-auto max-w-3xl px-4 ${RESPIRO_DO_TOPO} ${RESPIRO_DA_DOCA}`}>
         <Esqueleto className="aspect-[21/9] w-full rounded-3xl" />
         <Esqueleto className="mx-auto mt-6 h-9 w-2/3" />
         <div className="mt-10 flex flex-col items-center gap-7">
@@ -274,7 +274,7 @@ function Conteudo() {
 
   if (erro || !dados) {
     return (
-      <div className={`container mx-auto max-w-3xl px-4 ${RESPIRO_DA_DOCA}`}>
+      <div className={`container mx-auto max-w-3xl px-4 ${RESPIRO_DO_TOPO} ${RESPIRO_DA_DOCA}`}>
         <EstadoVazio
           icone={Layers}
           titulo="Trilha não encontrada"
@@ -290,7 +290,7 @@ function Conteudo() {
 
   return (
     <ProvedorDeEnsino trilha={trilha.slug}>
-      <div className={`container mx-auto max-w-3xl px-4 ${RESPIRO_DA_DOCA}`}>
+      <div className={`container mx-auto max-w-3xl px-4 ${RESPIRO_DO_TOPO} ${RESPIRO_DA_DOCA}`}>
 
         {/* ══ Capa ═══════════════════════════════════════════════════ */}
         <header className="relative">

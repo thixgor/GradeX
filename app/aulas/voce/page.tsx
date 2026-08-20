@@ -15,7 +15,7 @@ import {
 } from 'lucide-react'
 
 import { AppShell, useAppShell } from '@/components/app-shell'
-import { RESPIRO_DA_DOCA } from '@/components/ensino/doca'
+import { RESPIRO_DA_DOCA, RESPIRO_DO_TOPO } from '@/components/ensino/doca'
 import { FichaDeEstatistica } from '@/components/ensino/duo'
 import { Esqueleto, formatarMinutos } from '@/components/ensino/primitivos'
 import { cn } from '@/lib/utils'
@@ -59,7 +59,7 @@ interface Estatisticas {
 
 export default function VocePage() {
   return (
-    <AppShell headerTitle="Você" headerSubtitle="Progresso, caderno e conta" comercio={false}>
+    <AppShell headerTitle="Você" headerSubtitle="Progresso, caderno e conta" comercio={false} vidro>
       <Conteudo />
     </AppShell>
   )
@@ -99,7 +99,7 @@ function Conteudo() {
   }, [])
 
   return (
-    <div className={`container mx-auto max-w-3xl px-4 ${RESPIRO_DA_DOCA}`}>
+    <div className={`container mx-auto max-w-3xl px-4 ${RESPIRO_DO_TOPO} ${RESPIRO_DA_DOCA}`}>
       <header className="mb-5">
         <h1 className="font-heading text-2xl font-extrabold tracking-tight sm:text-3xl">
           {user?.name ? `Olá, ${user.name.split(' ')[0]}` : 'Você'}

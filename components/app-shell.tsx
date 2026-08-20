@@ -129,6 +129,18 @@ interface AppShellProps {
    * deixa de mostrá-lo por causa desta mudança.
    */
   comercio?: boolean
+  /**
+   * Cabeçalho em vidro, em vez do opaco padrão do resto do app.
+   *
+   * A Área de Ensino tem uma doca flutuante em vidro no rodapé (ver
+   * `doca.tsx`); com o cabeçalho opaco por cima, a tela falava duas
+   * linguagens de material ao mesmo tempo. `vidro` troca só a superfície
+   * (`.cabecalho-vidro` em `globals.css`, mesma receita de três camadas da
+   * doca) — todo o resto do cabeçalho continua igual. Passe `true` apenas em
+   * telas que já têm outro elemento de vidro na composição; num cabeçalho
+   * sozinho, opaco continua sendo a leitura mais legível.
+   */
+  vidro?: boolean
 }
 
 export function AppShell({
@@ -139,6 +151,7 @@ export function AppShell({
   allowGuest = false,
   guestNotice = true,
   comercio = true,
+  vidro = false,
 }: AppShellProps) {
   const router = useRouter()
   const pathname = usePathname()
@@ -455,7 +468,14 @@ export function AppShell({
         >
           {/* Header */}
           {showHeader && (
-            <header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/90">
+            <header
+              className={cn(
+                'sticky top-0 z-30',
+                vidro
+                  ? 'cabecalho-vidro'
+                  : 'border-b border-border bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/90',
+              )}
+            >
               <div className="flex h-14 sm:h-16 items-center justify-between gap-3 px-3 sm:px-4 lg:px-6">
                 <div className="flex min-w-0 items-center gap-2 sm:gap-3">
                   <Button

@@ -18,7 +18,7 @@ import {
 } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
-import { RESPIRO_DA_DOCA } from '@/components/ensino/doca'
+import { RESPIRO_DA_DOCA, RESPIRO_DO_TOPO } from '@/components/ensino/doca'
 import { EstadoVazio, Esqueleto } from '@/components/ensino/primitivos'
 import { cn } from '@/lib/utils'
 
@@ -64,7 +64,7 @@ const ICONE_DO_TIPO: Record<string, LucideIcon> = {
 
 export default function BuscarPage() {
   return (
-    <AppShell headerTitle="Buscar" headerSubtitle="Aulas, Trilhas e materiais" comercio={false}>
+    <AppShell headerTitle="Buscar" headerSubtitle="Aulas, Trilhas e materiais" comercio={false} vidro>
       <Suspense
         fallback={
           <div className="container mx-auto max-w-4xl px-4 py-8">
@@ -123,7 +123,7 @@ function Conteudo() {
   }
 
   return (
-    <div className={`container mx-auto max-w-4xl px-4 ${RESPIRO_DA_DOCA}`}>
+    <div className={`container mx-auto max-w-4xl px-4 ${RESPIRO_DO_TOPO} ${RESPIRO_DA_DOCA}`}>
 
       {/* O campo gruda no topo (§8).
           Refinar a busca é o gesto mais comum desta tela — a primeira lista
@@ -132,7 +132,7 @@ function Conteudo() {
           um toque de onde a pessoa estiver. */}
       <form
         onSubmit={enviar}
-        className="sticky top-14 z-20 -mx-4 mb-5 bg-background/90 px-4 py-3 backdrop-blur-md sm:top-16"
+        className="cabecalho-vidro sticky top-14 z-20 -mx-4 mb-5 px-4 py-3 sm:top-16"
       >
         <div className="relative">
           <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
@@ -143,7 +143,7 @@ function Conteudo() {
             enterKeyHint="search"
             placeholder="hipercalemia, insuficiência cardíaca, ECG…"
             aria-label="Buscar"
-            className="h-14 w-full rounded-2xl border border-border bg-card pl-12 pr-12 text-base outline-none transition focus:border-primary/50 focus:ring-2 focus:ring-primary/15"
+            className="campo-vidro h-14 w-full rounded-2xl pl-12 pr-12 text-base outline-none transition focus:border-primary/50 focus:ring-2 focus:ring-primary/15"
           />
           {termo ? (
             <button

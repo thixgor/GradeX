@@ -5603,3 +5603,78 @@ body.roller-dragging {
   -webkit-backdrop-filter: none !important;
   backdrop-filter: none !important;
 }
+
+/* ══════════════════════════════════════════════════════════════════════
+   O CABEÇALHO DA ÁREA DE ENSINO — a mesma família de vidro, na borda de cima
+
+   A doca resolveu o rodapé; o topo continuava com o cabeçalho opaco padrão
+   do app inteiro (`.border-b bg-background/95`), que ao lado da doca lia
+   como duas linguagens diferentes na mesma tela — uma flutuando sobre o
+   conteúdo, a outra pintada por cima dele.
+
+   `.cabecalho-vidro` é opt-in (prop `vidro` do AppShell): o cabeçalho global
+   continua opaco em todo o resto do produto, e só a Área de Ensino — onde a
+   doca já estabeleceu esse material — pede a variante. Mesma receita de três
+   camadas da doca, com a borda só embaixo (é uma faixa presa no topo, não
+   uma peça flutuante com quatro lados) e um pouco menos de desfoque: o
+   cabeçalho fica parado, e textos de menu direto sob um blur muito forte
+   perdem nitidez com mais facilidade que um ícone. */
+
+.cabecalho-vidro {
+  background: hsl(var(--card) / 0.95);
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.campo-vidro {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .cabecalho-vidro {
+    background: hsl(var(--card) / 0.58);
+    -webkit-backdrop-filter: blur(22px) saturate(180%);
+    backdrop-filter: blur(22px) saturate(180%);
+    border-bottom-color: hsl(0 0% 100% / 0.4);
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.5),
+      0 8px 24px -16px hsl(var(--foreground) / 0.25);
+  }
+
+  .dark .cabecalho-vidro {
+    background: hsl(var(--card) / 0.5);
+    border-bottom-color: hsl(0 0% 100% / 0.1);
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.08),
+      0 10px 28px -16px rgb(0 0 0 / 0.6);
+  }
+
+  /* O campo de busca ganha o mesmo vidro, um degrau mais claro — é a
+     superfície que convida o toque, então precisa se destacar do
+     cabeçalho por trás dela, não só do conteúdo por trás de ambos. */
+  .campo-vidro {
+    background: hsl(var(--card) / 0.7);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    backdrop-filter: blur(16px) saturate(160%);
+    border-color: hsl(0 0% 100% / 0.4);
+    box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.4);
+  }
+
+  .dark .campo-vidro {
+    background: hsl(var(--card) / 0.6);
+    border-color: hsl(0 0% 100% / 0.1);
+    box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.08);
+  }
+}
+
+.lite-mode .cabecalho-vidro {
+  background: hsl(var(--card)) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+.lite-mode .campo-vidro {
+  background: hsl(var(--card)) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}

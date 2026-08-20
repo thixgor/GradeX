@@ -16,7 +16,7 @@ import {
 } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
-import { RESPIRO_DA_DOCA } from '@/components/ensino/doca'
+import { RESPIRO_DA_DOCA, RESPIRO_DO_TOPO } from '@/components/ensino/doca'
 import { Cascata, ItemDaCascata } from '@/components/ensino/duo'
 import {
   AnelDeProgresso,
@@ -139,7 +139,7 @@ interface ProximaAcao {
 
 export default function AulasPage() {
   return (
-    <AppShell headerTitle="Ensino" headerSubtitle="Aprender, buscar e revisar" comercio={false}>
+    <AppShell headerTitle="Ensino" headerSubtitle="Aprender, buscar e revisar" comercio={false} vidro>
       <ConteudoDaHome />
     </AppShell>
   )
@@ -258,7 +258,7 @@ function ConteudoDaHome() {
   const vazio = !carregando && dados && !proxima
 
   return (
-    <div className={`container mx-auto max-w-6xl px-4 ${RESPIRO_DA_DOCA}`}>
+    <div className={`container mx-auto max-w-6xl px-4 ${RESPIRO_DO_TOPO} ${RESPIRO_DA_DOCA}`}>
       {/* ══ Título e busca ═══════════════════════════════════════════
           Duas linhas, e a segunda é a busca — que a tela anterior não
           tinha em lugar nenhum, obrigando quem chegava atrás de um
@@ -277,8 +277,8 @@ function ConteudoDaHome() {
           href="/aulas/buscar"
           prefetch
           className={cn(
-            'mt-3 flex h-12 items-center gap-3 rounded-2xl bg-card px-4 ring-1 ring-border/70',
-            'text-sm text-muted-foreground transition hover:ring-primary/40',
+            'campo-vidro mt-3 flex h-12 items-center gap-3 rounded-2xl px-4',
+            'text-sm text-muted-foreground transition hover:ring-2 hover:ring-primary/40',
           )}
         >
           <Search className="h-[1.15rem] w-[1.15rem] flex-none" />
