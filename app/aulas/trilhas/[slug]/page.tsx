@@ -515,7 +515,7 @@ function Conteudo() {
           initial={semMovimento ? false : { y: 80 }}
           animate={{ y: 0 }}
           transition={{ type: 'spring', stiffness: 300, damping: 30, delay: 0.4 }}
-          className="fixed inset-x-0 bottom-[calc(4.75rem+env(safe-area-inset-bottom))] z-30 px-3"
+          className="fixed inset-x-0 bottom-[calc(5.75rem+env(safe-area-inset-bottom))] z-30 px-3"
         >
           <div className="doca-vidro container mx-auto flex max-w-3xl items-center gap-3 rounded-[1.75rem] p-2 pl-4">
             <div className="min-w-0 flex-1">

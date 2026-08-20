@@ -181,9 +181,24 @@ export function Trilho({ children, className }: { children: React.ReactNode; cla
   )
 }
 
+/**
+ * A grade de descoberta.
+ *
+ * O `[&>*]:w-full` não é preguiça: o cartão nasce com largura FIXA porque o
+ * uso mais comum dele é o trilho horizontal, onde esticar não faz sentido. Era
+ * o cartão que carregava um `sm:w-full` — e como o trilho é um container flex,
+ * bastava a faixa ter um item só para ele ocupar a tela inteira. A largura de
+ * um filho é decisão de quem o dispõe, e é aqui que ela vive.
+ */
 export function Grade({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={cn('grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4', className)}>
+    <div
+      className={cn(
+        'grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4',
+        '[&>*]:w-full',
+        className,
+      )}
+    >
       {children}
     </div>
   )
@@ -324,7 +339,7 @@ export function Capa({
             cor ? 'text-white' : 'bg-gradient-to-br from-primary/15 via-primary/5 to-transparent',
           )}
         >
-          <span className="line-clamp-3 font-heading text-sm font-semibold leading-snug opacity-90">
+          <span className="line-clamp-3 font-heading text-[13px] font-bold leading-snug opacity-90">
             {capa?.titulo || titulo}
           </span>
         </div>
@@ -442,7 +457,7 @@ export function CartaoDeAula({
     <Link
       href={href}
       className={cn(
-        'group flex w-[260px] flex-none snap-start flex-col gap-2 transition-transform duration-150 hover:-translate-y-0.5 active:translate-y-[2px] sm:w-full',
+        'group flex w-[15.5rem] flex-none snap-start flex-col gap-2 transition-transform duration-150 hover:-translate-y-0.5 active:translate-y-[2px]',
         className,
       )}
     >
@@ -614,7 +629,7 @@ export function CartaoDeTrilha({
         'shadow-[0_4px_0_rgb(0_0_0/0.13)] transition-[transform,box-shadow] duration-150',
         'hover:-translate-y-0.5 hover:shadow-[0_6px_0_rgb(0_0_0/0.15)] hover:ring-primary/40',
         'active:translate-y-[3px] active:shadow-none',
-        formato === 'cartao' ? 'w-[280px] sm:w-full' : 'w-full',
+        formato === 'cartao' ? 'w-[17rem]' : 'w-full',
         className,
       )}
     >
@@ -739,7 +754,7 @@ export function EsqueletoDeFaixa({ quantidade = 4 }: { quantidade?: number }) {
       <Esqueleto className="h-6 w-48" />
       <Trilho>
         {Array.from({ length: quantidade }).map((_, i) => (
-          <div key={i} className="w-[260px] flex-none space-y-2 sm:w-full">
+          <div key={i} className="w-[15.5rem] flex-none space-y-2">
             <Esqueleto className="aspect-video w-full" />
             <Esqueleto className="h-4 w-3/4" />
             <Esqueleto className="h-3 w-1/2" />
