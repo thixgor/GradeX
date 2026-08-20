@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { ObjectId } from 'mongodb'
 import { z } from 'zod'
 import { secureApiEndpoint, isValidObjectId } from '@/lib/api-security'
+import { excluirAulasComReferencias } from '@/lib/aulas/exclusao'
 import { getDb } from '@/lib/mongodb'
 import type { AulaPostagem } from '@/lib/types'
 
@@ -79,60 +80,17 @@ export async function POST(request: NextRequest) {
         )
       }
 
-      const r = await colecao.deleteMany(filtro)
-      const textos = objectIds.map((id) => String(id))
+      // `excluirAulasComReferencias` apaga os documentos E limpa toda
+      // referência a eles (Trilhas, relacionadas, pré-requisitos, o vínculo
+      // de Aula Resumo, progresso, anotações, favoritos) — a mesma função que
+      // a exclusão em cascata da taxonomia usa, para as duas nunca divergirem
+      // (ver o comentário em lib/aulas/exclusao.ts).
+      const afetadas = await excluirAulasComReferencias(
+        db,
+        objectIds.map((id) => String(id)),
+      )
 
-      /*
-       * A limpeza das referências.
-       *
-       * Apagar só o documento da aula deixaria buracos silenciosos por toda a
-       * plataforma: Trilhas apontando para o vazio, "conteúdo relacionado" que
-       * some da tela sem explicação, pré-requisitos fantasmas e progresso de
-       * gente que assistiu a algo que não existe mais.
-       *
-       * As telas toleram a ausência — a Trilha simplesmente não desenha o item
-       * —, mas tolerar não é o mesmo que estar limpo: o admin que abrisse a
-       * Trilha veria a contagem de aulas mudar sozinha e não saberia por quê.
-       *
-       * Nenhuma destas limpezas pode derrubar a exclusão que já aconteceu, por
-       * isso elas rodam depois e com o erro registrado, não propagado.
-       */
-      try {
-        await Promise.all([
-          // Itens dentro das etapas de qualquer Trilha.
-          db.collection('ensino_trilhas').updateMany(
-            { 'etapas.itens.refId': { $in: textos } },
-            { $pull: { 'etapas.$[].itens': { refId: { $in: textos } } } } as any,
-          ),
-          // Relações que apontavam para as aulas apagadas.
-          db.collection('aulas_postagens').updateMany(
-            { relacionadas: { $in: textos } },
-            { $pull: { relacionadas: { $in: textos } } } as any,
-          ),
-          db.collection('aulas_postagens').updateMany(
-            { 'ensino.prerequisitos': { $in: textos } },
-            { $pull: { 'ensino.prerequisitos': { $in: textos } } } as any,
-          ),
-          // O vínculo com a Aula Resumo, dos dois lados.
-          db.collection('aulas_postagens').updateMany(
-            { 'ensino.resumoId': { $in: textos } },
-            { $set: { 'ensino.resumoId': null } },
-          ),
-          db.collection('aulas_postagens').updateMany(
-            { 'ensino.aulaPrincipalId': { $in: textos } },
-            { $set: { 'ensino.aulaPrincipalId': null, 'ensino.tipo': 'aula' } },
-          ),
-          // Progresso e anotações órfãos: dado de aluno sobre conteúdo que não
-          // existe mais só ocupa espaço e distorce as estatísticas.
-          db.collection('aulas_progresso').deleteMany({ aulaId: { $in: textos } }),
-          db.collection('aulas_anotacoes').deleteMany({ aulaId: { $in: textos } }),
-          db.collection('aulas_favoritos').deleteMany({ aulaId: { $in: textos } }),
-        ])
-      } catch (erroDeLimpeza) {
-        console.error('[aulas/lote] limpeza pós-exclusão:', erroDeLimpeza)
-      }
-
-      return NextResponse.json({ success: true, afetadas: r.deletedCount })
+      return NextResponse.json({ success: true, afetadas })
     }
 
     let update: Record<string, any>

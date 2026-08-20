@@ -1,11 +1,14 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { motion } from 'framer-motion'
 import {
+  AlertTriangle,
   ChevronDown,
   ChevronRight,
   Compass,
   EyeOff,
+  Loader2,
   Pencil,
   Plus,
   Trash2,
@@ -91,6 +94,14 @@ function Conteudo() {
   const [abertos, setAbertos] = useState<Set<string>>(new Set())
   const [editando, setEditando] = useState<Partial<No> | null>(null)
   const [erro, setErro] = useState('')
+  // O nó recusado por ter conteúdo dentro, à espera de uma decisão: mover
+  // (fechar o aviso) ou apagar tudo junto (a cascata, ver `excluirEmCascata`).
+  const [pendenteCascata, setPendenteCascata] = useState<{
+    no: Ramo
+    totalNiveis: number
+    totalAulas: number
+  } | null>(null)
+  const [excluindoCascata, setExcluindoCascata] = useState(false)
 
   const carregar = useCallback(() => {
     fetch('/api/ensino/taxonomia', { cache: 'no-store' })
@@ -134,15 +145,50 @@ function Conteudo() {
 
   async function excluir(no: Ramo) {
     if (!window.confirm(`Excluir "${no.nome}"?`)) return
+    setErro('')
     const resposta = await fetch(`/api/ensino/taxonomia/${no._id}`, { method: 'DELETE' })
     const d = await resposta.json().catch(() => ({}))
+
+    if (resposta.status === 409) {
+      // Recusado por ter conteúdo dentro. A rota já manda os números da
+      // árvore inteira (totalNiveis/totalAulas) — é o que o diálogo de
+      // cascata abaixo precisa para mostrar o tamanho real do estrago antes
+      // de oferecer "excluir mesmo assim".
+      setPendenteCascata({
+        no,
+        totalNiveis: d.totalNiveis ?? d.filhos ?? 0,
+        totalAulas: d.totalAulas ?? d.aulas ?? 0,
+      })
+      return
+    }
+
     if (!resposta.ok) {
-      // A recusa vem com o motivo e os números: "ainda há 12 aulas aqui". Um
-      // "não foi possível" seco obrigaria o admin a caçar o que está preso.
       setErro(d.error || 'Não foi possível excluir.')
       return
     }
     carregar()
+  }
+
+  async function excluirEmCascata() {
+    if (!pendenteCascata) return
+    setExcluindoCascata(true)
+    setErro('')
+    try {
+      const resposta = await fetch(`/api/ensino/taxonomia/${pendenteCascata.no._id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cascata: true }),
+      })
+      const d = await resposta.json().catch(() => ({}))
+      if (!resposta.ok) {
+        setErro(d.error || 'Não foi possível excluir.')
+        return
+      }
+      setPendenteCascata(null)
+      carregar()
+    } finally {
+      setExcluindoCascata(false)
+    }
   }
 
   const total = useMemo(() => {
@@ -218,6 +264,17 @@ function Conteudo() {
           aoFechar={() => setEditando(null)}
           aoSalvar={salvar}
           erro={erro}
+        />
+      ) : null}
+
+      {pendenteCascata ? (
+        <ConfirmacaoDeCascata
+          nome={pendenteCascata.no.nome}
+          totalNiveis={pendenteCascata.totalNiveis}
+          totalAulas={pendenteCascata.totalAulas}
+          ocupado={excluindoCascata}
+          aoCancelar={() => setPendenteCascata(null)}
+          aoConfirmar={excluirEmCascata}
         />
       ) : null}
     </PainelDeEnsino>
@@ -411,6 +468,103 @@ function FormularioDeNo({
           <BotaoSecundario onClick={aoFechar}>Cancelar</BotaoSecundario>
         </div>
       </div>
+    </div>
+  )
+}
+
+/**
+ * A confirmação da exclusão em cascata.
+ *
+ * O NÓ VAZIO CONTINUA SENDO UM CLIQUE
+ *
+ * Este diálogo só aparece quando a exclusão simples já foi recusada — ou
+ * seja, quando há mesmo algo dentro. Ele nunca substitui o fluxo normal; é o
+ * degrau que existe porque às vezes "mover o conteúdo antes" é trabalho
+ * inteiro, e o admin realmente quer dizer "não, apaga tudo junto".
+ *
+ * A ESCALADA É PELO NÚMERO DE AULAS, NÃO DE NÍVEIS
+ *
+ * Um Módulo vazio com três Tópicos igualmente vazios é uma limpeza de
+ * estrutura — irrelevante o quanto se repita. É a AULA que carrega progresso e
+ * anotação de gente de verdade, e é o total de aulas que decide se um clique
+ * basta ou se é preciso digitar a palavra (mesmo limiar da exclusão em massa
+ * do catálogo, para o admin não aprender dois comportamentos diferentes para
+ * o mesmo risco).
+ */
+function ConfirmacaoDeCascata({
+  nome,
+  totalNiveis,
+  totalAulas,
+  ocupado,
+  aoCancelar,
+  aoConfirmar,
+}: {
+  nome: string
+  totalNiveis: number
+  totalAulas: number
+  ocupado: boolean
+  aoCancelar: () => void
+  aoConfirmar: () => void
+}) {
+  const exigeDigitar = totalAulas > 10
+  const [texto, setTexto] = useState('')
+  const liberado = !exigeDigitar || texto.trim().toUpperCase() === 'EXCLUIR'
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+      onClick={aoCancelar}
+    >
+      <motion.div
+        initial={{ scale: 0.94, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ type: 'spring', stiffness: 420, damping: 30 }}
+        className="w-full max-w-md rounded-3xl bg-background p-6 shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-destructive/12 text-destructive">
+          <AlertTriangle className="h-7 w-7" strokeWidth={2.5} />
+        </span>
+
+        <h2 className="mt-4 font-heading text-xl font-extrabold tracking-tight">
+          Excluir &ldquo;{nome}&rdquo; com tudo dentro?
+        </h2>
+
+        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+          Isso apaga{' '}
+          {totalNiveis > 0
+            ? `${totalNiveis} ${totalNiveis === 1 ? 'nível' : 'níveis'} de organização`
+            : ''}
+          {totalNiveis > 0 && totalAulas > 0 ? ' e ' : ''}
+          {totalAulas > 0 ? `${totalAulas} ${totalAulas === 1 ? 'aula' : 'aulas'}` : ''} de vez,
+          junto com o progresso e as anotações de quem já assistiu. As Trilhas que usavam essas
+          aulas continuam existindo — só ficam sem elas.
+        </p>
+
+        <p className="mt-2 text-sm font-semibold">Não dá para desfazer.</p>
+
+        {exigeDigitar ? (
+          <label className="mt-4 block">
+            <span className="mb-1 block text-xs font-bold uppercase tracking-wide text-muted-foreground">
+              Digite EXCLUIR para confirmar
+            </span>
+            <input
+              value={texto}
+              autoFocus
+              onChange={(e) => setTexto(e.target.value)}
+              className={cn(classeDeEntrada, 'uppercase tracking-widest')}
+            />
+          </label>
+        ) : null}
+
+        <div className="mt-5 flex flex-wrap gap-2">
+          <BotaoSecundario tom="perigo" onClick={aoConfirmar} disabled={!liberado || ocupado}>
+            {ocupado ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+            {ocupado ? 'Excluindo…' : 'Excluir tudo'}
+          </BotaoSecundario>
+          <BotaoSecundario onClick={aoCancelar}>Cancelar</BotaoSecundario>
+        </div>
+      </motion.div>
     </div>
   )
 }

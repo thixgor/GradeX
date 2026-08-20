@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { ObjectId } from 'mongodb'
 
 import { getSession } from '@/lib/auth'
+import { excluirAulasComReferencias } from '@/lib/aulas/exclusao'
 import { getDb } from '@/lib/mongodb'
 import { COLECOES } from '@/lib/ensino/compatibilidade'
 import { lerNos, podeEditarEnsino } from '@/lib/ensino/repositorio'
@@ -92,13 +93,27 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 }
 
 /**
- * Apaga um nó — e só quando ele está realmente vazio.
+ * Apaga um nó — vazio por padrão, em cascata quando pedido explicitamente.
  *
- * A alternativa (apagar em cascata) destruiria conteúdo com um clique, e este
- * subsistema não apaga aula nenhuma por decisão de arquitetura (§36). Quando o
- * nó tem filhos ou aulas, a resposta explica o que está preso ali, com os
- * números — um "não foi possível excluir" seco obrigaria o admin a caçar o
- * motivo à mão.
+ * O PADRÃO CONTINUA SENDO RECUSAR
+ *
+ * Sem `cascata: true` no corpo, esta rota nunca apaga aula nenhuma: se o nó
+ * tem filhos ou aulas (em qualquer profundidade abaixo dele), a resposta
+ * explica o que está preso ali, com os números — um "não foi possível
+ * excluir" seco obrigaria o admin a caçar o motivo à mão. É a mesma resposta
+ * de sempre; ela agora também traz `totalNiveis` e `totalAulas` (a árvore
+ * inteira, não só o nível de baixo), para a tela oferecer a cascata com o
+ * tamanho real do estrago, não uma estimativa por baixo.
+ *
+ * A CASCATA É UM PEDIDO EXPLÍCITO, NÃO UM SEGUNDO CAMINHO SILENCIOSO
+ *
+ * Com `cascata: true`, a rota apaga o nó, TODOS os descendentes (em qualquer
+ * profundidade) e TODAS as aulas que moram em qualquer um desses níveis —
+ * usando `excluirAulasComReferencias` (lib/aulas/exclusao.ts), a mesma função
+ * da exclusão em massa do catálogo, para a limpeza de Trilhas, relacionadas,
+ * pré-requisitos, progresso e anotações ser idêntica nos dois caminhos. A
+ * tela só manda essa flag depois de uma confirmação que mostra os números
+ * reais — ver `app/aulas/gerenciar/taxonomia/page.tsx`.
  */
 export async function DELETE(request: Request, { params }: { params: { id: string } }) {
   try {
@@ -112,7 +127,16 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
       return NextResponse.json({ error: 'Não autorizado' }, { status: 403 })
     }
 
-    const [filhos, aulas] = await Promise.all([
+    const corpo = await request.json().catch(() => ({}))
+    const cascata = corpo?.cascata === true
+
+    // O ramo inteiro — o nó pedido e todo descendente, em qualquer
+    // profundidade. `idsDoRamo` é a mesma função que a navegação usa para
+    // filtrar por assunto; aqui ela decide o que uma cascata alcança.
+    const nos = await lerNos(db)
+    const idsDoNo = idsDoRamo(nos, params.id)
+
+    const [filhos, aulasDoNivel, totalAulas] = await Promise.all([
       db.collection(COLECOES.nos).countDocuments({ paiId: params.id }),
       db.collection(COLECOES.aulas).countDocuments({
         $or: [
@@ -122,21 +146,59 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
           { 'ensino.subtopicoId': params.id },
         ],
       }),
+      db.collection(COLECOES.aulas).countDocuments({
+        $or: [
+          { 'ensino.areaId': { $in: idsDoNo } },
+          { 'ensino.moduloId': { $in: idsDoNo } },
+          { 'ensino.topicoId': { $in: idsDoNo } },
+          { 'ensino.subtopicoId': { $in: idsDoNo } },
+        ],
+      }),
     ])
+    const totalNiveis = idsDoNo.length - 1 // sem contar o próprio nó pedido
 
-    if (filhos > 0 || aulas > 0) {
+    if (!cascata && (filhos > 0 || aulasDoNivel > 0)) {
       const partes = [
         filhos > 0 ? `${filhos} ${filhos === 1 ? 'nível' : 'níveis'} dentro` : '',
-        aulas > 0 ? `${aulas} ${aulas === 1 ? 'aula' : 'aulas'}` : '',
+        aulasDoNivel > 0 ? `${aulasDoNivel} ${aulasDoNivel === 1 ? 'aula' : 'aulas'}` : '',
       ].filter(Boolean)
       return NextResponse.json(
         {
           error: `Ainda há ${partes.join(' e ')} aqui. Mova esse conteúdo antes de excluir.`,
           filhos,
-          aulas,
+          aulas: aulasDoNivel,
+          totalNiveis,
+          totalAulas,
         },
         { status: 409 },
       )
+    }
+
+    if (cascata) {
+      const aulasDoRamo = await db
+        .collection(COLECOES.aulas)
+        .find(
+          {
+            $or: [
+              { 'ensino.areaId': { $in: idsDoNo } },
+              { 'ensino.moduloId': { $in: idsDoNo } },
+              { 'ensino.topicoId': { $in: idsDoNo } },
+              { 'ensino.subtopicoId': { $in: idsDoNo } },
+            ],
+          },
+          { projection: { _id: 1 } },
+        )
+        .toArray()
+
+      await excluirAulasComReferencias(
+        db,
+        aulasDoRamo.map((a: any) => String(a._id)),
+      )
+      await db
+        .collection(COLECOES.nos)
+        .deleteMany({ _id: { $in: idsDoNo.filter(ObjectId.isValid).map((id) => new ObjectId(id)) } as any })
+
+      return NextResponse.json({ ok: true, niveisExcluidos: idsDoNo.length, aulasExcluidas: aulasDoRamo.length })
     }
 
     await db.collection(COLECOES.nos).deleteOne({ _id: new ObjectId(params.id) })

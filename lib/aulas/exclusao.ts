@@ -1,4 +1,4 @@
-import { type Db } from 'mongodb'
+import { ObjectId, type Db } from 'mongodb'
 
 /**
  * Guarda de exclusão da estrutura de aulas (§45).
@@ -95,4 +95,66 @@ export async function contarDependentes(
 /** Mensagem única para as cinco rotas — o admin merece a mesma explicação. */
 export function mensagemDeBloqueio(dependentes: Dependentes): string {
   return `Ainda há ${dependentes.descricao} aqui dentro. Mova ou exclua esse conteúdo antes — assim nada some sem você ver.`
+}
+
+/**
+ * Apaga um lote de aulas e limpa toda referência a elas — a mesma operação,
+ * chamada dos dois lugares que apagam aula de verdade: a exclusão em massa do
+ * catálogo (`/api/aulas/lote`) e a exclusão em cascata de um nível da
+ * taxonomia nova (`/api/ensino/taxonomia/[id]`, quando pedida com
+ * `cascata: true` — ver o comentário da rota).
+ *
+ * Existir num lugar só é o que importa aqui: as duas rotas destroem conteúdo
+ * de verdade, e a limpeza — Trilhas, relacionadas, pré-requisitos, o vínculo
+ * de Aula Resumo, progresso, anotações, favoritos — precisa ser IDÊNTICA nas
+ * duas, ou uma delas vai deixar buraco silencioso (Trilha apontando para uma
+ * aula que já não existe, "conteúdo relacionado" fantasma) que a outra não
+ * deixa. Uma cópia da lógica em cada rota divergiria no primeiro ajuste.
+ *
+ * Nenhuma falha na limpeza derruba a exclusão que já aconteceu — as aulas já
+ * foram apagadas quando a limpeza roda, e não há como desfazer isso. O erro só
+ * é registrado.
+ */
+export async function excluirAulasComReferencias(db: Db, aulaIds: string[]): Promise<number> {
+  const objectIds = aulaIds.filter((id) => ObjectId.isValid(id)).map((id) => new ObjectId(id))
+  if (objectIds.length === 0) return 0
+
+  const r = await db.collection('aulas_postagens').deleteMany({ _id: { $in: objectIds } as any })
+
+  try {
+    await Promise.all([
+      // Itens dentro das etapas de qualquer Trilha.
+      db.collection('ensino_trilhas').updateMany(
+        { 'etapas.itens.refId': { $in: aulaIds } },
+        { $pull: { 'etapas.$[].itens': { refId: { $in: aulaIds } } } } as any,
+      ),
+      // Relações que apontavam para as aulas apagadas.
+      db.collection('aulas_postagens').updateMany(
+        { relacionadas: { $in: aulaIds } },
+        { $pull: { relacionadas: { $in: aulaIds } } } as any,
+      ),
+      db.collection('aulas_postagens').updateMany(
+        { 'ensino.prerequisitos': { $in: aulaIds } },
+        { $pull: { 'ensino.prerequisitos': { $in: aulaIds } } } as any,
+      ),
+      // O vínculo com a Aula Resumo, dos dois lados.
+      db.collection('aulas_postagens').updateMany(
+        { 'ensino.resumoId': { $in: aulaIds } },
+        { $set: { 'ensino.resumoId': null } },
+      ),
+      db.collection('aulas_postagens').updateMany(
+        { 'ensino.aulaPrincipalId': { $in: aulaIds } },
+        { $set: { 'ensino.aulaPrincipalId': null, 'ensino.tipo': 'aula' } },
+      ),
+      // Progresso e anotações órfãos: dado de aluno sobre conteúdo que não
+      // existe mais só ocupa espaço e distorce as estatísticas.
+      db.collection('aulas_progresso').deleteMany({ aulaId: { $in: aulaIds } }),
+      db.collection('aulas_anotacoes').deleteMany({ aulaId: { $in: aulaIds } }),
+      db.collection('aulas_favoritos').deleteMany({ aulaId: { $in: aulaIds } }),
+    ])
+  } catch (erroDeLimpeza) {
+    console.error('[exclusao] limpeza pós-exclusão:', erroDeLimpeza)
+  }
+
+  return r.deletedCount
 }

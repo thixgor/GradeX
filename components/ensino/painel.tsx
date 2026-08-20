@@ -221,27 +221,33 @@ export function BotaoSecundario({
   href,
   className,
   tom = 'neutro',
+  disabled,
 }: {
   children: React.ReactNode
   onClick?: () => void
   href?: string
   className?: string
   tom?: 'neutro' | 'perigo'
+  disabled?: boolean
 }) {
   const classe = cn(
     'inline-flex h-10 items-center gap-2 rounded-lg border px-3.5 text-sm font-semibold transition',
     tom === 'perigo'
       ? 'border-destructive/40 text-destructive hover:bg-destructive/10'
       : 'border-border hover:bg-muted',
+    disabled && 'pointer-events-none opacity-50',
     className,
   )
 
+  // `disabled` só se aplica ao link em espírito — um <a> não tem esse
+  // atributo — então ali a barreira é `pointer-events-none` no próprio
+  // estilo acima.
   return href ? (
     <Link href={href} className={classe}>
       {children}
     </Link>
   ) : (
-    <button type="button" onClick={onClick} className={classe}>
+    <button type="button" onClick={onClick} disabled={disabled} className={classe}>
       {children}
     </button>
   )
