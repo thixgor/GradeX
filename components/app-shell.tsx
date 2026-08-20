@@ -116,6 +116,19 @@ interface AppShellProps {
   headerSubtitle?: string
   allowGuest?: boolean
   guestNotice?: boolean
+  /**
+   * Mostra o carrinho de materiais no cabeçalho.
+   *
+   * Existe para as áreas de ESTUDO poderem desligá-lo. O cabeçalho é
+   * compartilhado por todo o app e acumulou sete controles — menu, marca,
+   * carrinho, sessão de foco, sino, modo lite e tema —, todos disputando a
+   * mesma faixa de 56px. Num catálogo o carrinho é a ação principal; no meio
+   * de uma aula ele é uma oferta de compra competindo com o conteúdo (§20).
+   *
+   * O padrão continua sendo `true`: nenhuma tela que já mostrava o carrinho
+   * deixa de mostrá-lo por causa desta mudança.
+   */
+  comercio?: boolean
 }
 
 export function AppShell({
@@ -125,6 +138,7 @@ export function AppShell({
   headerSubtitle,
   allowGuest = false,
   guestNotice = true,
+  comercio = true,
 }: AppShellProps) {
   const router = useRouter()
   const pathname = usePathname()
@@ -478,7 +492,7 @@ export function AppShell({
                 </div>
 
                 <div data-tour="header-tools" className="flex shrink-0 items-center gap-1.5 sm:gap-2">
-                  <MaterialCartButton isAuthenticated={!!user} />
+                  {comercio ? <MaterialCartButton isAuthenticated={!!user} /> : null}
                   <FocusSessionButton />
                   <NotificationsBell />
                   {/* Ao lado do tema: é onde a pessoa procura por "mudar o visual". */}

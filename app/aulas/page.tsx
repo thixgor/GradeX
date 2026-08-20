@@ -5,59 +5,71 @@ import Link from 'next/link'
 import { motion, useReducedMotion } from 'framer-motion'
 import {
   ArrowRight,
-  Clock,
+  ChevronRight,
   Compass,
-  Flame,
   GraduationCap,
   Play,
   Route,
   RotateCcw,
-  Settings2,
+  Search,
   Sparkles,
-  Trophy,
 } from 'lucide-react'
 
-import { AppShell, useAppShell } from '@/components/app-shell'
-import { DocaDeEnsino, RESPIRO_DA_DOCA } from '@/components/ensino/doca'
-import {
-  BotaoDuo,
-  Cascata,
-  FichaDeEstatistica,
-  ItemDaCascata,
-} from '@/components/ensino/duo'
+import { AppShell } from '@/components/app-shell'
+import { RESPIRO_DA_DOCA } from '@/components/ensino/doca'
+import { Cascata, ItemDaCascata } from '@/components/ensino/duo'
 import {
   AnelDeProgresso,
   BarraDeProgresso,
+  Capa,
   CartaoDeAula,
   CartaoDeTrilha,
   EstadoVazio,
+  Esqueleto,
   EsqueletoDeFaixa,
   Trilho,
   TituloDaFaixa,
+  formatarMinutos,
   type AulaNaTela,
   type TrilhaNaTela,
 } from '@/components/ensino/primitivos'
 import { cn } from '@/lib/utils'
 
 /**
- * A home da Área de Ensino (§13).
+ * APRENDER — a única casa da Área de Ensino (§3, §4, §5, §11, §29, §30).
  *
- * O QUE MUDOU EM RELAÇÃO À TELA ANTERIOR
+ * ══ O QUE ESTA TELA DEIXOU DE SER ════════════════════════════════════
  *
- * A anterior abria com "seus cursos" e uma busca. Era um índice: a pessoa
- * chegava e precisava decidir sozinha o que fazer. Esta abre com a única coisa
- * que ela quase sempre quer — voltar para onde parou — e só depois oferece
- * escolhas, na ordem em que uma decisão de estudo acontece:
+ * A versão anterior abria com quatro fichas de estatística e seis faixas de
+ * mesmo peso. Era um painel: bonito, informativo e mudo sobre a única pergunta
+ * que o aluno tem ao abrir o app — "o que eu faço agora?". Para uma conta nova
+ * a primeira dobra inteira eram quatro zeros.
  *
- *   1. continuar o que já comecei;
- *   2. as Trilhas que estou percorrendo;
- *   3. o que vale começar agora;
- *   4. onde fica cada assunto;
- *   5. o que já vi e preciso revisar.
+ * ══ A REGRA DOS DOIS SEGUNDOS ════════════════════════════════════════
  *
- * Nenhuma dessas faixas é "todas as aulas". Aula avulsa continua existindo e
- * continua encontrável (§4) — pela busca, pela navegação e pela faixa de
- * novidades —, ela só deixou de ser a primeira coisa que a área mostra.
+ * Agora a tela abre com UMA decisão, grande, no topo: a próxima coisa que faz
+ * sentido estudar. Ela é calculada, não perguntada (§11): retomar a aula
+ * interrompida, se houver; senão a Trilha em andamento; senão a Trilha que a
+ * equipe marcou como ponto de partida; senão a aula mais recente do acervo.
+ * O botão é um só, e ele é a resposta.
+ *
+ * Tudo o mais desce um degrau de hierarquia e vira material de descoberta —
+ * Trilhas, acervo, novidades e revisão continuam ali, em faixas, para quem
+ * quiser escolher em vez de seguir.
+ *
+ * ══ TRILHAS E EXPLORAR NÃO SÃO LUGARES (§3, §7) ══════════════════════
+ *
+ * Eles eram abas na barra de baixo, competindo com Aprender enquanto mostravam
+ * a mesma coisa. Aqui voltam ao que sempre foram: uma faixa de conteúdo e uma
+ * fileira de atalhos por assunto, com "ver tudo" levando às páginas completas,
+ * que continuam existindo e recebendo link direto.
+ *
+ * ══ AS ESTATÍSTICAS VIRARAM UMA LINHA (§6) ═══════════════════════════
+ *
+ * "Esta semana: 4 aulas · 1h32" diz mais sobre o momento do que quatro
+ * totalizadores históricos, e cabe numa linha. O painel completo mora em
+ * "Você", que é onde alguém vai quando quer olhar para o próprio progresso —
+ * e não quando quer estudar.
  */
 
 interface ItemDeContinuidade {
@@ -103,22 +115,37 @@ interface RespostaDaHome {
     minutosEstudados: number
     trilhasConcluidas: number
     trilhasEmCurso: number
+    semana: { aulas: number; minutos: number }
   }
+}
+
+/**
+ * A próxima ação — o produto desta tela.
+ *
+ * Um único formato para quatro origens diferentes, porque para quem olha não
+ * importa se o destino é uma aula solta ou a terceira etapa de uma Trilha:
+ * importa que existe uma coisa certa a fazer e um botão para fazê-la.
+ */
+interface ProximaAcao {
+  contexto: string
+  titulo: string
+  detalhe?: string
+  href: string
+  rotulo: string
+  capa?: any
+  percentual?: number
+  anel?: number
 }
 
 export default function AulasPage() {
   return (
-    <AppShell headerTitle="Ensino" headerSubtitle="Trilhas, aulas e revisão">
+    <AppShell headerTitle="Ensino" headerSubtitle="Aprender, buscar e revisar" comercio={false}>
       <ConteudoDaHome />
-      <DocaDeEnsino />
     </AppShell>
   )
 }
 
 function ConteudoDaHome() {
-  const { user, isAdmin } = useAppShell()
-  const podeGerenciar = isAdmin || user?.secondaryRole === 'monitor'
-
   const [dados, setDados] = useState<RespostaDaHome | null>(null)
   const [carregando, setCarregando] = useState(true)
   const semMovimento = useReducedMotion()
@@ -139,100 +166,129 @@ function ConteudoDaHome() {
     }
   }, [])
 
-  /** Os Módulos (Ciclo Básico, Ciclo Clínico…) com seus tópicos por baixo. */
+  /** Os Módulos (Ciclo Básico, Ciclo Clínico…) achatados para a fileira de atalhos. */
   const modulos = useMemo(() => {
-    const saida: Array<{ _id: string; nome: string; aulas: number; topicos: RamoNaTela[] }> = []
+    const saida: Array<{ _id: string; nome: string; aulas: number }> = []
     for (const area of dados?.arvore || []) {
       for (const modulo of area.filhos || []) {
-        saida.push({
-          _id: modulo._id,
-          nome: modulo.nome,
-          aulas: modulo.aulasNaArvore,
-          topicos: modulo.filhos || [],
-        })
+        saida.push({ _id: modulo._id, nome: modulo.nome, aulas: modulo.aulasNaArvore })
       }
     }
     return saida
   }, [dados])
 
-  const vazio =
-    !carregando &&
-    dados &&
-    dados.trilhas.total === 0 &&
-    dados.aulasRecentes.length === 0 &&
-    modulos.length === 0
+  /** A decisão, na ordem em que ela vale a pena ser tomada (§11, §28). */
+  const proxima = useMemo<ProximaAcao | null>(() => {
+    if (!dados) return null
+
+    const retomada = dados.continuar[0]
+    if (retomada) {
+      return {
+        contexto: retomada.trilha ? retomada.trilha.titulo : retomada.localizacao || 'Continue',
+        titulo: retomada.titulo,
+        detalhe: retomada.trilha
+          ? `${retomada.trilha.etapa} · ${retomada.trilha.concluidos} de ${retomada.trilha.total} aulas`
+          : retomada.retomarLabel,
+        href: retomada.href,
+        rotulo: 'Continuar',
+        capa: retomada.capa,
+        percentual: retomada.percentual,
+        anel: retomada.trilha?.percentual,
+      }
+    }
+
+    const emCurso = dados.trilhas.emCurso[0]
+    if (emCurso) {
+      return {
+        contexto: 'Sua Trilha',
+        titulo: emCurso.titulo,
+        detalhe: emCurso.progresso
+          ? `${emCurso.progresso.concluidos} de ${emCurso.progresso.total} aulas`
+          : emCurso.subtitulo,
+        href: `/aulas/trilhas/${emCurso.slug}`,
+        rotulo: 'Continuar',
+        capa: emCurso.capa,
+        anel: emCurso.progresso?.percentual,
+      }
+    }
+
+    const sugerida = dados.trilhas.recomendadas[0]
+    if (sugerida) {
+      return {
+        contexto: 'Comece por aqui',
+        titulo: sugerida.titulo,
+        detalhe:
+          sugerida.subtitulo ||
+          [
+            `${sugerida.aulas} ${sugerida.aulas === 1 ? 'aula' : 'aulas'}`,
+            sugerida.minutos > 0 ? formatarMinutos(sugerida.minutos) : '',
+          ]
+            .filter(Boolean)
+            .join(' · '),
+        href: `/aulas/trilhas/${sugerida.slug}`,
+        rotulo: 'Começar',
+        capa: sugerida.capa,
+      }
+    }
+
+    const aula = dados.aulasRecentes[0]
+    if (aula) {
+      return {
+        contexto: aula.localizacao || 'Novo no acervo',
+        titulo: aula.titulo,
+        detalhe: aula.duracaoLabel,
+        href: aula.href,
+        rotulo: 'Assistir',
+        capa: aula.capa,
+      }
+    }
+
+    return null
+  }, [dados])
+
+  /** As Trilhas sugeridas menos a que já virou o cartão do topo. */
+  const recomendadas = useMemo(() => {
+    if (!dados) return [] as TrilhaNaTela[]
+    const jaNoTopo = proxima?.href.startsWith('/aulas/trilhas/') ? proxima.href : null
+    return dados.trilhas.recomendadas.filter((t) => `/aulas/trilhas/${t.slug}` !== jaNoTopo)
+  }, [dados, proxima])
+
+  const outrasRetomadas = dados?.continuar.slice(1, 4) || []
+  const semana = dados?.estatisticas?.semana
+  const vazio = !carregando && dados && !proxima
 
   return (
-    <div className={`container mx-auto max-w-7xl px-4 ${RESPIRO_DA_DOCA}`}>
-
+    <div className={`container mx-auto max-w-6xl px-4 ${RESPIRO_DA_DOCA}`}>
+      {/* ══ Título e busca ═══════════════════════════════════════════
+          Duas linhas, e a segunda é a busca — que a tela anterior não
+          tinha em lugar nenhum, obrigando quem chegava atrás de um
+          assunto específico a passar pela barra de baixo (§8). */}
       <motion.header
         initial={semMovimento ? false : { opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ type: 'spring', stiffness: 320, damping: 30 }}
-        className="mb-5 flex flex-wrap items-start justify-between gap-3"
+        className="mb-4"
       >
-        <div className="min-w-0">
-          <h1 className="font-heading text-2xl font-extrabold tracking-tight sm:text-4xl">
-            {dados?.continuar?.length ? 'Bom te ver de volta 👋' : 'O que você quer aprender?'}
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Escolha uma Trilha e siga um caminho — ou vá direto à aula que você precisa.
-          </p>
-        </div>
+        <h1 className="font-heading text-2xl font-extrabold tracking-tight sm:text-3xl">
+          {dados?.continuar?.length ? 'Bom te ver de volta' : 'O que você quer aprender?'}
+        </h1>
 
-        {podeGerenciar ? (
-          <BotaoDuo href="/aulas/gerenciar" tom="claro" tamanho="pequeno" className="flex-none">
-            <Settings2 className="h-4 w-4" /> Gerenciar
-          </BotaoDuo>
-        ) : null}
+        <Link
+          href="/aulas/buscar"
+          prefetch
+          className={cn(
+            'mt-3 flex h-12 items-center gap-3 rounded-2xl bg-card px-4 ring-1 ring-border/70',
+            'text-sm text-muted-foreground transition hover:ring-primary/40',
+          )}
+        >
+          <Search className="h-[1.15rem] w-[1.15rem] flex-none" />
+          <span className="truncate">Buscar aula, Trilha ou assunto</span>
+        </Link>
       </motion.header>
 
-      {/* ── As fichas do topo (§27) ─────────────────────────────────
-          Números reais do progresso da pessoa. Nada de moeda inventada:
-          o que aparece aqui é aula concluída, tempo estudado e Trilha
-          fechada — as três coisas que o sistema sabe de verdade. */}
-      {dados?.estatisticas && dados.logado ? (
-        <motion.div
-          initial={semMovimento ? false : { opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.08, type: 'spring', stiffness: 320, damping: 30 }}
-          className="mb-7 grid grid-cols-2 gap-2 sm:grid-cols-4"
-        >
-          <FichaDeEstatistica
-            valor={dados.estatisticas.aulasConcluidas}
-            rotulo="aulas concluídas"
-            icone={Flame}
-            tom="fogo"
-          />
-          <FichaDeEstatistica
-            valor={
-              dados.estatisticas.minutosEstudados >= 60
-                ? Math.round(dados.estatisticas.minutosEstudados / 60)
-                : dados.estatisticas.minutosEstudados
-            }
-            sufixo={dados.estatisticas.minutosEstudados >= 60 ? 'h' : 'min'}
-            rotulo="estudadas"
-            icone={Clock}
-            tom="primario"
-          />
-          <FichaDeEstatistica
-            valor={dados.estatisticas.trilhasEmCurso}
-            rotulo="trilhas em curso"
-            icone={Route}
-            tom="primario"
-          />
-          <FichaDeEstatistica
-            valor={dados.estatisticas.trilhasConcluidas}
-            rotulo="trilhas dominadas"
-            icone={Trophy}
-            tom="ouro"
-          />
-        </motion.div>
-      ) : null}
-
       {carregando ? (
-        <div className="space-y-10">
-          <EsqueletoDeFaixa />
+        <div className="space-y-8">
+          <Esqueleto className="h-40 w-full rounded-3xl" />
           <EsqueletoDeFaixa quantidade={3} />
         </div>
       ) : vazio ? (
@@ -244,148 +300,162 @@ function ConteudoDaHome() {
           acaoHref="/buy"
         />
       ) : (
-        <Cascata className="space-y-10">
-          {/* ── Continue estudando (§12) ────────────────────────────── */}
-          {dados?.continuar?.length ? (
+        <Cascata className="space-y-8">
+          {/* ══ A próxima ação ═══════════════════════════════════════ */}
+          {proxima ? (
             <ItemDaCascata>
-              <TituloDaFaixa titulo="Continue estudando" icone={Play} />
-              <div className="grid gap-3 lg:grid-cols-2">
-                {dados.continuar.slice(0, 4).map((item) => (
-                  <CartaoDeRetomada key={item.aulaId} item={item} />
+              <CartaoDaProximaAcao acao={proxima} />
+            </ItemDaCascata>
+          ) : null}
+
+          {/* ══ A semana, numa linha (§6) ════════════════════════════ */}
+          {dados?.logado && semana && (semana.aulas > 0 || dados.estatisticas.aulasConcluidas > 0) ? (
+            <ItemDaCascata>
+              <Link
+                href="/aulas/voce"
+                className="flex items-center gap-2 text-sm text-muted-foreground transition hover:text-foreground"
+              >
+                <span className="font-semibold text-foreground">Esta semana</span>
+                <span aria-hidden>·</span>
+                <span className="tabular-nums">
+                  {semana.aulas} {semana.aulas === 1 ? 'aula' : 'aulas'}
+                </span>
+                {semana.minutos > 0 ? (
+                  <>
+                    <span aria-hidden>·</span>
+                    <span className="tabular-nums">{formatarMinutos(semana.minutos)}</span>
+                  </>
+                ) : null}
+                <ChevronRight className="h-4 w-4" />
+              </Link>
+            </ItemDaCascata>
+          ) : null}
+
+          {/* ══ As outras retomadas, em lista compacta ═══════════════
+              Elas são a segunda, a terceira e a quarta escolhas — e uma
+              lista fina é exatamente o peso que isso merece ao lado do
+              cartão do topo (§26). */}
+          {outrasRetomadas.length > 0 ? (
+            <ItemDaCascata>
+              <TituloDaFaixa titulo="Também em andamento" icone={Play} />
+              <div className="divide-y divide-border/60 overflow-hidden rounded-2xl bg-card ring-1 ring-border/70">
+                {outrasRetomadas.map((item) => (
+                  <Link
+                    key={item.aulaId}
+                    href={item.href}
+                    className="group flex items-center gap-3 px-4 py-3 transition hover:bg-muted/50"
+                  >
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-sm font-semibold transition group-hover:text-primary">
+                        {item.titulo}
+                      </span>
+                      <span className="mt-1 flex items-center gap-2">
+                        <BarraDeProgresso percentual={item.percentual} className="w-16" />
+                        <span className="truncate text-xs text-muted-foreground">
+                          {item.trilha ? item.trilha.titulo : item.retomarLabel}
+                        </span>
+                      </span>
+                    </span>
+                    <ChevronRight className="h-4 w-4 flex-none text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-primary" />
+                  </Link>
                 ))}
               </div>
             </ItemDaCascata>
           ) : null}
 
-          {/* ── Trilhas em curso ────────────────────────────────────── */}
-          {dados?.trilhas.emCurso.length ? (
-            <section>
-              <TituloDaFaixa
-                titulo="Suas Trilhas"
-                descricao="Caminhos que você já começou"
-                icone={Route}
-                href="/aulas/trilhas"
-              />
+          {/* ══ Trilhas em andamento ═════════════════════════════════ */}
+          {dados && dados.trilhas.emCurso.length > 0 ? (
+            <ItemDaCascata>
+              <TituloDaFaixa titulo="Suas Trilhas" icone={Route} href="/aulas/trilhas" />
               <Trilho>
                 {dados.trilhas.emCurso.map((trilha) => (
                   <CartaoDeTrilha key={trilha._id} trilha={trilha} />
                 ))}
               </Trilho>
-            </section>
+            </ItemDaCascata>
           ) : null}
 
-          {/* ── Recomendadas ────────────────────────────────────────── */}
-          {dados?.trilhas.recomendadas.length ? (
-            <section>
+          {/* ══ Trilhas para começar ═════════════════════════════════ */}
+          {recomendadas.length > 0 ? (
+            <ItemDaCascata>
               <TituloDaFaixa
-                titulo={dados.trilhas.emCurso.length ? 'Para começar agora' : 'Trilhas de Ensino'}
-                descricao="Do que você precisa saber primeiro até dominar o assunto"
+                titulo={dados?.trilhas.emCurso.length ? 'Para começar agora' : 'Trilhas de Ensino'}
                 icone={Sparkles}
                 href="/aulas/trilhas"
               />
               <Trilho>
-                {dados.trilhas.recomendadas.map((trilha) => (
+                {recomendadas.map((trilha) => (
                   <CartaoDeTrilha key={trilha._id} trilha={trilha} />
                 ))}
               </Trilho>
-            </section>
+            </ItemDaCascata>
           ) : null}
 
-          {/* ── Explorar por etapa da Medicina (§13, §14) ───────────── */}
+          {/* ══ O acervo, como fileira de atalhos (§7, §26) ══════════
+              "Explorar" era uma aba; virou o que sempre foi — um jeito
+              de chegar num assunto. Chips ocupam uma linha, e não a
+              tela inteira, porque navegar por pasta é a exceção: a
+              regra é continuar ou buscar. */}
           {modulos.length > 0 ? (
-            <section>
+            <ItemDaCascata>
               <TituloDaFaixa
-                titulo="Explore por etapa"
-                descricao="Ciclo Básico, Ciclo Clínico e o que vier depois"
+                titulo="Por etapa da Medicina"
                 icone={Compass}
                 href="/aulas/explorar"
+                hrefLabel="Ver o acervo"
               />
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                 {modulos.map((modulo) => (
                   <Link
                     key={modulo._id}
                     href={`/aulas/explorar?no=${modulo._id}`}
                     className={cn(
-                      'group rounded-3xl bg-card p-4 ring-1 ring-border/70',
-                      'shadow-[0_4px_0_rgb(0_0_0/0.12)] transition-[transform,box-shadow] duration-150',
-                      'hover:-translate-y-0.5 hover:ring-primary/40 active:translate-y-[3px] active:shadow-none',
+                      'group inline-flex h-11 flex-none items-center gap-2 rounded-full bg-card px-4',
+                      'text-sm font-semibold ring-1 ring-border/70 transition hover:ring-primary/40',
                     )}
                   >
-                    <div className="flex items-baseline justify-between gap-3">
-                      <h3 className="font-heading text-base font-extrabold tracking-tight transition group-hover:text-primary">
-                        {modulo.nome}
-                      </h3>
-                      <span className="flex-none text-xs font-medium tabular-nums text-muted-foreground">
-                        {modulo.aulas} {modulo.aulas === 1 ? 'aula' : 'aulas'}
-                      </span>
-                    </div>
-                    {modulo.topicos.length > 0 ? (
-                      <p className="mt-1.5 line-clamp-2 text-sm text-muted-foreground">
-                        {modulo.topicos.map((t) => t.nome).join(' · ')}
-                      </p>
-                    ) : null}
+                    <span className="transition group-hover:text-primary">{modulo.nome}</span>
+                    <span className="text-xs font-medium tabular-nums text-muted-foreground">
+                      {modulo.aulas}
+                    </span>
                   </Link>
                 ))}
               </div>
-            </section>
+            </ItemDaCascata>
           ) : null}
 
-          {/* ── Novas Trilhas ───────────────────────────────────────── */}
-          {dados && dados.trilhas.novas.length > 0 && dados.trilhas.total > 3 ? (
-            <section>
-              <TituloDaFaixa titulo="Novas Trilhas" href="/aulas/trilhas" />
-              <Trilho>
-                {dados.trilhas.novas.map((trilha) => (
-                  <CartaoDeTrilha key={`nova-${trilha._id}`} trilha={trilha} />
-                ))}
-              </Trilho>
-            </section>
-          ) : null}
-
-          {/* ── Aulas recentes (avulsas continuam existindo — §4) ───── */}
-          {dados?.aulasRecentes.length ? (
-            <section>
-              <TituloDaFaixa
-                titulo="Aulas recentes"
-                descricao="O que entrou no acervo por último"
-                href="/aulas/explorar"
-                hrefLabel="Ver o acervo"
-              />
+          {/* ══ Novidades ════════════════════════════════════════════ */}
+          {dados && dados.aulasRecentes.length > 0 ? (
+            <ItemDaCascata>
+              <TituloDaFaixa titulo="Novas aulas" href="/aulas/explorar" hrefLabel="Ver o acervo" />
               <Trilho>
                 {dados.aulasRecentes.map((aula) => (
                   <CartaoDeAula key={aula._id} aula={aula} />
                 ))}
               </Trilho>
-            </section>
+            </ItemDaCascata>
           ) : null}
 
-          {/* ── Revisão (§16) ───────────────────────────────────────── */}
-          {dados?.revisar.concluidas ? (
-            <section>
+          {/* ══ Revisão — uma linha, não um cartão gigante (§26) ═════ */}
+          {dados && dados.revisar.concluidas > 0 ? (
+            <ItemDaCascata>
               <Link
                 href="/aulas/revisar"
-                className={cn(
-                  'group flex items-center gap-4 rounded-3xl bg-card p-5 ring-1 ring-border/70',
-                  'shadow-[0_4px_0_rgb(0_0_0/0.12)] transition-[transform,box-shadow] duration-150',
-                  'hover:-translate-y-0.5 hover:ring-primary/40 active:translate-y-[3px] active:shadow-none',
-                )}
+                className="group flex items-center gap-3 rounded-2xl bg-card px-4 py-3.5 ring-1 ring-border/70 transition hover:ring-primary/40"
               >
-                <span className="inline-flex h-12 w-12 flex-none items-center justify-center rounded-2xl bg-primary/12 text-primary">
-                  <RotateCcw className="h-6 w-6" strokeWidth={2.5} />
+                <span className="inline-flex h-10 w-10 flex-none items-center justify-center rounded-xl bg-primary/12 text-primary">
+                  <RotateCcw className="h-5 w-5" strokeWidth={2.5} />
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="block font-heading text-lg font-extrabold tracking-tight">
-                    Revisar o que você estudou
-                  </span>
-                  <span className="mt-0.5 block text-sm text-muted-foreground">
+                  <span className="block text-sm font-bold">Revisar o que você já estudou</span>
+                  <span className="block truncate text-xs text-muted-foreground">
                     {dados.revisar.concluidas}{' '}
-                    {dados.revisar.concluidas === 1 ? 'aula concluída' : 'aulas concluídas'} — com
-                    resumo, PDF e flashcards
+                    {dados.revisar.concluidas === 1 ? 'aula concluída' : 'aulas concluídas'}
                   </span>
                 </span>
-                <ArrowRight className="h-5 w-5 flex-none text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-primary" />
+                <ArrowRight className="h-4 w-4 flex-none text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-primary" />
               </Link>
-            </section>
+            </ItemDaCascata>
           ) : null}
         </Cascata>
       )}
@@ -394,77 +464,78 @@ function ConteudoDaHome() {
 }
 
 /**
- * A retomada, com o contexto da Trilha (§12).
+ * O cartão do topo.
  *
- * O cartão antigo dizia só o nome da aula. Este diz a Trilha, a etapa e o
- * quanto falta — que é o que faz alguém voltar. "Continuar de 08:24" sozinho
- * não lembra a pessoa do que ela estava construindo.
+ * É o único elemento da página com capa grande, botão sólido e sombra de
+ * espessura. Essa desproporção é intencional: se tudo tivesse o mesmo peso, a
+ * tela voltaria a ser um menu — e a decisão, de novo, seria do aluno.
  */
-function CartaoDeRetomada({ item }: { item: ItemDeContinuidade }) {
+function CartaoDaProximaAcao({ acao }: { acao: ProximaAcao }) {
   return (
     <Link
-      href={item.href}
+      href={acao.href}
+      prefetch
       className={cn(
-        'group relative flex gap-3 overflow-hidden rounded-3xl bg-card p-3 ring-1 ring-border/70',
-        'shadow-[0_4px_0_rgb(0_0_0/0.12)] transition-[transform,box-shadow] duration-150',
-        'hover:-translate-y-0.5 hover:shadow-[0_6px_0_rgb(0_0_0/0.14)] hover:ring-primary/40',
-        'active:translate-y-[3px] active:shadow-none',
+        'group relative flex overflow-hidden rounded-3xl bg-card ring-1 ring-border/70',
+        'shadow-[0_5px_0_rgb(0_0_0/0.14)] transition-[transform,box-shadow] duration-150',
+        'hover:-translate-y-0.5 hover:shadow-[0_7px_0_rgb(0_0_0/0.16)] hover:ring-primary/40',
+        'active:translate-y-[4px] active:shadow-none',
       )}
     >
-      <div className="relative aspect-video w-32 flex-none overflow-hidden rounded-2xl bg-muted sm:w-40">
-        {item.capa?.imagem ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={item.capa.imagem} alt="" loading="lazy" className="h-full w-full object-cover" />
-        ) : (
-          <div
-            className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/20 to-transparent"
-            style={item.capa?.cor ? { backgroundColor: item.capa.cor } : undefined}
-          >
-            <Play className="h-5 w-5 text-primary" />
-          </div>
-        )}
-        {/* O play sobre a capa: o gesto de "voltar ao vídeo" precisa de um
-            alvo óbvio, não de um cartão inteiro que talvez seja clicável. */}
+      {/* `absolute inset-0` na capa: a altura do cartão é ditada pelo texto,
+          e a imagem preenche a coluna inteira em vez de deixar uma faixa
+          cinza embaixo quando o título ocupa duas linhas. */}
+      <div className="relative w-32 flex-none self-stretch sm:w-52">
+        <Capa
+          capa={acao.capa}
+          titulo={acao.titulo}
+          className="absolute inset-0 h-full w-full rounded-none"
+        />
         <span className="absolute inset-0 flex items-center justify-center">
-          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/95 text-primary-foreground shadow-[0_3px_0_rgb(0_0_0/0.3)] transition group-hover:scale-110">
-            <Play className="ml-0.5 h-4 w-4" fill="currentColor" />
+          <span className="flex h-11 w-11 items-center justify-center rounded-full bg-primary/95 text-primary-foreground shadow-[0_3px_0_rgb(0_0_0/0.3)] transition group-hover:scale-110">
+            <Play className="ml-0.5 h-5 w-5" fill="currentColor" />
           </span>
         </span>
-        <BarraDeProgresso
-          percentual={item.percentual}
-          className="absolute inset-x-0 bottom-0 rounded-none bg-black/40"
-        />
+        {acao.percentual ? (
+          <BarraDeProgresso
+            percentual={acao.percentual}
+            className="absolute inset-x-0 bottom-0 rounded-none bg-black/40"
+          />
+        ) : null}
       </div>
 
-      <div className="flex min-w-0 flex-1 flex-col justify-center">
-        {item.trilha ? (
-          <p className="truncate text-[11px] font-extrabold uppercase tracking-wide text-primary">
-            {item.trilha.titulo}
-          </p>
-        ) : item.localizacao ? (
-          <p className="truncate text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-            {item.localizacao}
-          </p>
+      <div className="flex min-w-0 flex-1 flex-col justify-center gap-1 p-4 sm:p-5">
+        <p className="truncate text-[11px] font-extrabold uppercase tracking-wide text-primary">
+          {acao.contexto}
+        </p>
+        <h2 className="line-clamp-2 font-heading text-lg font-extrabold leading-tight tracking-tight sm:text-2xl">
+          {acao.titulo}
+        </h2>
+        {acao.detalhe ? (
+          <p className="truncate text-xs text-muted-foreground sm:text-sm">{acao.detalhe}</p>
         ) : null}
 
-        <h3 className="mt-0.5 line-clamp-2 text-sm font-bold leading-snug transition group-hover:text-primary">
-          {item.titulo}
-        </h3>
-
-        <p className="mt-1 truncate text-xs text-muted-foreground">
-          {item.trilha
-            ? `${item.trilha.etapa} · ${item.trilha.concluidos} de ${item.trilha.total} aulas`
-            : item.retomarLabel}
-        </p>
+        <div className="mt-2 flex items-center gap-3">
+          {/* Um `<span>` com a cara do botão, e não um `BotaoDuo`: o cartão
+              inteiro já é o link, e um botão de verdade aqui dentro seria um
+              alvo clicável dentro de outro — HTML inválido e um segundo
+              destino de foco para o teclado, sem nenhum ganho. */}
+          <span
+            className={cn(
+              'inline-flex h-9 select-none items-center gap-2 rounded-2xl bg-primary px-3.5',
+              'text-[11px] font-extrabold uppercase tracking-wide text-primary-foreground',
+              'shadow-[0_3px_0_rgb(0_0_0/0.28)] transition-[transform,box-shadow] duration-100',
+              'group-active:translate-y-[3px] group-active:shadow-none',
+            )}
+          >
+            {acao.rotulo}
+            <ArrowRight className="h-4 w-4" />
+          </span>
+          {typeof acao.anel === 'number' ? (
+            <AnelDeProgresso percentual={acao.anel} tamanho={38} />
+          ) : null}
+        </div>
       </div>
-
-      {item.trilha ? (
-        <AnelDeProgresso
-          percentual={item.trilha.percentual}
-          tamanho={40}
-          className={cn('self-center', 'hidden sm:block')}
-        />
-      ) : null}
     </Link>
   )
 }

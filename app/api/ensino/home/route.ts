@@ -221,21 +221,44 @@ export async function GET() {
     const concluidas = usuarioId
       ? await db
           .collection(COLECOES.progresso)
-          .find({ usuarioId, concluida: true }, { projection: { aulaId: 1 } })
+          .find(
+            { usuarioId, concluida: true },
+            { projection: { aulaId: 1, concluidaEm: 1 } },
+          )
           .limit(5000)
           .toArray()
       : []
 
-    const estatisticas = {
-      aulasConcluidas: concluidas.length,
-      minutosEstudados: Math.round(
-        concluidas.reduce(
+    const minutosDe = (registros: any[]) =>
+      Math.round(
+        registros.reduce(
           (soma: number, p: any) => soma + (duracaoPorAulaId.get(String(p.aulaId)) || 0),
           0,
         ) / 60,
-      ),
+      )
+
+    /*
+     * A semana, e não só o total (§6).
+     *
+     * "127 aulas concluídas" é um troféu: diz o que a pessoa já foi, não o que
+     * ela está sendo. Quem abre a área hoje quer saber se hoje conta — e é a
+     * janela curta que responde isso. O total continua na resposta porque a
+     * página de progresso o usa; ele só deixou de ser a manchete.
+     */
+    const seteDiasAtras = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+    const daSemana = concluidas.filter(
+      (p: any) => p.concluidaEm && new Date(p.concluidaEm) >= seteDiasAtras,
+    )
+
+    const estatisticas = {
+      aulasConcluidas: concluidas.length,
+      minutosEstudados: minutosDe(concluidas),
       trilhasConcluidas: Array.from(progressoDasTrilhas.values()).filter((p) => p.concluida).length,
       trilhasEmCurso: emCurso.length,
+      semana: {
+        aulas: daSemana.length,
+        minutos: minutosDe(daSemana),
+      },
     }
 
     return NextResponse.json(

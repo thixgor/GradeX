@@ -352,7 +352,12 @@ export function NoDoCaminhoBotao({
       className="relative flex flex-col items-center"
       style={{ transform: `translateX(${deslocamento}px)` }}
     >
-      {/* O balão "COMEÇAR" sobre o nó atual — o único ponto da tela que grita. */}
+      {/* O balão sobre o nó atual.
+          Ele dizia "COMEÇAR"/"CONTINUAR" — a mesma ação do botão fixo no
+          rodapé da Trilha, escrita duas vezes na mesma tela. Agora ele faz o
+          que só ele pode fazer: dizer ONDE a pessoa está no caminho (§10). A
+          ação continua sendo uma só, embaixo, e o toque no nó continua
+          funcionando. */}
       {no.estado === 'atual' ? (
         <motion.div
           initial={semMovimento ? false : { opacity: 0, y: 6 }}
@@ -364,7 +369,7 @@ export function NoDoCaminhoBotao({
           className="absolute -top-11 z-10 whitespace-nowrap"
         >
           <span className="relative block rounded-xl bg-card px-3 py-1.5 text-[11px] font-extrabold uppercase tracking-wider text-primary shadow-[0_3px_0_rgb(0_0_0/0.14)] ring-2 ring-primary/30">
-            {(no.percentual || 0) > 0 ? 'Continuar' : 'Começar'}
+            Você está aqui
             <span className="absolute -bottom-[7px] left-1/2 h-3 w-3 -translate-x-1/2 rotate-45 rounded-[2px] bg-card ring-2 ring-primary/30 [clip-path:polygon(100%_0,100%_100%,0_100%)]" />
           </span>
         </motion.div>

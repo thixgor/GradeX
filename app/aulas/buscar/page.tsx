@@ -13,11 +13,12 @@ import {
   Route,
   Search,
   Sparkles,
+  X,
   type LucideIcon,
 } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
-import { DocaDeEnsino, RESPIRO_DA_DOCA } from '@/components/ensino/doca'
+import { RESPIRO_DA_DOCA } from '@/components/ensino/doca'
 import { EstadoVazio, Esqueleto } from '@/components/ensino/primitivos'
 import { cn } from '@/lib/utils'
 
@@ -63,7 +64,7 @@ const ICONE_DO_TIPO: Record<string, LucideIcon> = {
 
 export default function BuscarPage() {
   return (
-    <AppShell headerTitle="Buscar" headerSubtitle="Aulas, Trilhas e materiais">
+    <AppShell headerTitle="Buscar" headerSubtitle="Aulas, Trilhas e materiais" comercio={false}>
       <Suspense
         fallback={
           <div className="container mx-auto max-w-4xl px-4 py-8">
@@ -73,7 +74,6 @@ export default function BuscarPage() {
       >
         <Conteudo />
       </Suspense>
-      <DocaDeEnsino />
     </AppShell>
   )
 }
@@ -125,17 +125,39 @@ function Conteudo() {
   return (
     <div className={`container mx-auto max-w-4xl px-4 ${RESPIRO_DA_DOCA}`}>
 
-      <form onSubmit={enviar} className="mb-6">
+      {/* O campo gruda no topo (§8).
+          Refinar a busca é o gesto mais comum desta tela — a primeira lista
+          quase nunca é a última. Com o campo rolando junto com os resultados,
+          cada tentativa exigia voltar ao topo; grudado, digitar de novo custa
+          um toque de onde a pessoa estiver. */}
+      <form
+        onSubmit={enviar}
+        className="sticky top-14 z-20 -mx-4 mb-5 bg-background/90 px-4 py-3 backdrop-blur-md sm:top-16"
+      >
         <div className="relative">
           <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
           <input
             value={termo}
             onChange={(e) => setTermo(e.target.value)}
             autoFocus
+            enterKeyHint="search"
             placeholder="hipercalemia, insuficiência cardíaca, ECG…"
             aria-label="Buscar"
-            className="h-14 w-full rounded-2xl border border-border bg-card pl-12 pr-4 text-base outline-none transition focus:border-primary/50 focus:ring-2 focus:ring-primary/15"
+            className="h-14 w-full rounded-2xl border border-border bg-card pl-12 pr-12 text-base outline-none transition focus:border-primary/50 focus:ring-2 focus:ring-primary/15"
           />
+          {termo ? (
+            <button
+              type="button"
+              onClick={() => {
+                setTermo('')
+                router.push('/aulas/buscar')
+              }}
+              aria-label="Limpar busca"
+              className="absolute right-2 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-xl text-muted-foreground transition hover:bg-muted"
+            >
+              <X className="h-[1.15rem] w-[1.15rem]" />
+            </button>
+          ) : null}
         </div>
       </form>
 
@@ -143,7 +165,9 @@ function Conteudo() {
         <EstadoVazio
           icone={Search}
           titulo="O que você quer estudar?"
-          descricao="Busque por um assunto, o nome de uma aula ou de uma Trilha. Os resultados vêm separados entre Trilhas, aulas, resumos, PDFs e flashcards."
+          descricao="Um assunto, o nome de uma aula ou de uma Trilha."
+          acaoLabel="Navegar pelo acervo"
+          acaoHref="/aulas/explorar"
         />
       ) : carregando ? (
         <div className="space-y-5">

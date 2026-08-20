@@ -25,6 +25,7 @@ import {
 import { motion, useReducedMotion } from 'framer-motion'
 
 import { AppShell } from '@/components/app-shell'
+import { RESPIRO_DA_DOCA } from '@/components/ensino/doca'
 import { BotaoDuo, Confete } from '@/components/ensino/duo'
 import { PlayerDaAula, type ControleDoPlayer } from '@/components/aulas/player'
 import { PainelDeAnotacoes } from '@/components/aulas/anotacoes-painel'
@@ -119,7 +120,7 @@ interface RespostaDaAula {
 
 export default function AssistirAulaPage() {
   return (
-    <AppShell headerTitle="Aula" headerSubtitle="Área de Ensino">
+    <AppShell headerTitle="Aula" headerSubtitle="Área de Ensino" comercio={false}>
       <Suspense
         fallback={
           <div className="container mx-auto max-w-6xl px-4 py-6">
@@ -289,7 +290,7 @@ function Conteudo() {
 
   return (
     <ProvedorDeEnsino trilha={trilha?.slug}>
-      <div className="container mx-auto max-w-6xl px-4 pb-24 pt-4">
+      <div className={`container mx-auto max-w-6xl px-4 pt-4 ${RESPIRO_DA_DOCA}`}>
         {/* ── Onde estou ─────────────────────────────────────────────── */}
         <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
           {trilha ? (
@@ -435,24 +436,14 @@ function Conteudo() {
               ) : null}
             </div>
 
-            {/* ── Convite à revisão (§17) ──────────────────────────── */}
-            {mostrarReforco && dados.reforco.length > 0 ? (
-              <div className="mt-4 flex flex-wrap items-center gap-2 rounded-xl border border-primary/25 bg-primary/5 px-4 py-3">
-                <span className="text-sm font-semibold">Quer reforçar esse conteúdo?</span>
-                {dados.reforco.map((atalho) => (
-                  <BotaoDuo key={atalho.href} href={atalho.href} tom="claro" tamanho="pequeno">
-                    {atalho.rotulo}
-                  </BotaoDuo>
-                ))}
-                <button
-                  type="button"
-                  onClick={() => setMostrarReforco(false)}
-                  aria-label="Dispensar"
-                  className="ml-auto inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition hover:bg-muted"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
+            {/* ── O que vem depois (§9, §17) ───────────────────────── */}
+            {mostrarReforco ? (
+              <PainelDeConclusao
+                trilha={trilha}
+                reforco={dados.reforco}
+                relacionada={dados.relacionadas[0] || null}
+                aoDispensar={() => setMostrarReforco(false)}
+              />
             ) : null}
 
             {/* ── Navegação sequencial (§9) ────────────────────────── */}
@@ -609,6 +600,112 @@ function Conteudo() {
         </div>
       </div>
     </ProvedorDeEnsino>
+  )
+}
+
+/**
+ * O que acontece quando a aula termina (§9).
+ *
+ * ══ O FIM DE UMA AULA É O COMEÇO DA PRÓXIMA ══════════════════════════
+ *
+ * Antes, concluir uma aula produzia uma faixa fina perguntando "quer reforçar
+ * esse conteúdo?" com três atalhos do mesmo tamanho — e a próxima aula ficava
+ * mais abaixo, num par de cartões cinza empatados com o "aula anterior". O
+ * momento de maior embalo do estudo terminava numa escolha entre iguais, e a
+ * saída mais fácil da tela era o "voltar".
+ *
+ * Aqui a conclusão é anunciada, a próxima aula é NOMEADA e o botão dela é o
+ * único elemento sólido do bloco. Reforçar continua possível, um degrau abaixo,
+ * porque é o que uma minoria quer fazer naquele instante — e não o padrão.
+ *
+ * Sem Trilha o painel não inventa uma sequência: oferece o reforço e, se
+ * houver, um conteúdo relacionado. Uma "próxima aula" fabricada a partir da
+ * ordem do acervo seria pior do que nenhuma.
+ */
+function PainelDeConclusao({
+  trilha,
+  reforco,
+  relacionada,
+  aoDispensar,
+}: {
+  trilha: ContextoDaTrilha | null
+  reforco: Array<{ rotulo: string; href: string }>
+  relacionada: AulaNaTela | null
+  aoDispensar: () => void
+}) {
+  const proxima = trilha?.proxima || null
+  const terminouATrilha = Boolean(trilha && !proxima)
+  const seguinte = proxima || (!trilha ? relacionada : null)
+
+  return (
+    <div className="mt-4 overflow-hidden rounded-3xl bg-primary/[0.07] ring-1 ring-primary/25">
+      <div className="flex items-start gap-3 px-4 pt-4">
+        <span className="inline-flex h-9 w-9 flex-none items-center justify-center rounded-full bg-primary text-primary-foreground">
+          <Check className="h-5 w-5" strokeWidth={3.5} />
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="font-heading text-base font-extrabold tracking-tight">
+            {terminouATrilha ? 'Trilha concluída!' : 'Aula concluída'}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            {terminouATrilha
+              ? `Você fechou ${trilha!.titulo}.`
+              : proxima
+                ? `Faltam ${Math.max(0, trilha!.progresso.total - trilha!.progresso.concluidos)} de ${trilha!.progresso.total} aulas nesta Trilha.`
+                : 'Registrado no seu progresso.'}
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={aoDispensar}
+          aria-label="Dispensar"
+          className="-mr-1 -mt-1 inline-flex h-8 w-8 flex-none items-center justify-center rounded-lg text-muted-foreground transition hover:bg-foreground/5"
+        >
+          <X className="h-4 w-4" />
+        </button>
+      </div>
+
+      {/* A próxima aula, nomeada e com o único botão sólido do bloco. */}
+      {seguinte ? (
+        <div className="mt-3 flex flex-wrap items-center gap-3 border-t border-primary/15 px-4 py-3">
+          <div className="min-w-0 flex-1">
+            <p className="text-[11px] font-extrabold uppercase tracking-wide text-primary">
+              {proxima ? 'Próxima aula' : 'Continue por aqui'}
+            </p>
+            <p className="truncate text-sm font-bold">{seguinte.titulo}</p>
+          </div>
+          <BotaoDuo href={seguinte.href} className="flex-none">
+            <Play className="h-4 w-4" fill="currentColor" />
+            Continuar
+          </BotaoDuo>
+        </div>
+      ) : terminouATrilha ? (
+        <div className="mt-3 flex flex-wrap items-center gap-3 border-t border-primary/15 px-4 py-3">
+          <div className="min-w-0 flex-1">
+            <p className="text-[11px] font-extrabold uppercase tracking-wide text-primary">
+              Feche o ciclo
+            </p>
+            <p className="truncate text-sm font-bold">Veja o caminho inteiro que você percorreu</p>
+          </div>
+          <BotaoDuo href={`/aulas/trilhas/${trilha!.slug}`} className="flex-none">
+            <Route className="h-4 w-4" />
+            Ver a Trilha
+          </BotaoDuo>
+        </div>
+      ) : null}
+
+      {/* O reforço, um degrau abaixo — botões claros, nunca sólidos. */}
+      {reforco.length > 0 ? (
+        <div className="flex flex-wrap items-center gap-2 border-t border-primary/15 px-4 py-3">
+          <span className="text-xs font-semibold text-muted-foreground">Antes de seguir:</span>
+          {reforco.map((atalho) => (
+            <BotaoDuo key={atalho.href} href={atalho.href} tom="claro" tamanho="pequeno">
+              {atalho.rotulo}
+            </BotaoDuo>
+          ))}
+        </div>
+      ) : null}
+    </div>
   )
 }
 

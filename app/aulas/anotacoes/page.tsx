@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { StickyNote, Search, Star } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
-import { DocaDeEnsino, RESPIRO_DA_DOCA } from '@/components/ensino/doca'
+import { RESPIRO_DA_DOCA } from '@/components/ensino/doca'
 import { EstadoVazio, Esqueleto } from '@/components/ensino/primitivos'
 import { cn } from '@/lib/utils'
 
@@ -49,9 +49,8 @@ function paraBusca(texto: string) {
 
 export default function MinhasAnotacoesPage() {
   return (
-    <AppShell headerTitle="Minhas Anotações" headerSubtitle="Seu caderno de estudo">
+    <AppShell headerTitle="Minhas Anotações" headerSubtitle="Seu caderno de estudo" comercio={false}>
       <Conteudo />
-      <DocaDeEnsino />
     </AppShell>
   )
 }

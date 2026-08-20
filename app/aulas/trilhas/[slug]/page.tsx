@@ -17,7 +17,7 @@ import {
 } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
-import { DocaDeEnsino, RESPIRO_DA_DOCA } from '@/components/ensino/doca'
+import { RESPIRO_DA_DOCA } from '@/components/ensino/doca'
 import {
   BotaoDuo,
   CaminhoDeNos,
@@ -129,9 +129,8 @@ const ROTULO_DO_NIVEL: Record<string, string> = {
 
 export default function TrilhaPage() {
   return (
-    <AppShell headerTitle="Trilha" headerSubtitle="Caminho de estudo">
+    <AppShell headerTitle="Trilha" headerSubtitle="Caminho de estudo" comercio={false}>
       <Conteudo />
-      <DocaDeEnsino />
     </AppShell>
   )
 }
@@ -509,13 +508,16 @@ function Conteudo() {
 
           Fica ACIMA da doca, e não sob ela: são os dois únicos elementos
           fixos da tela, e sobrepô-los esconderia justamente o botão que a
-          página inteira existe para oferecer. */}
+          página inteira existe para oferecer. A altura vem da variável que a
+          doca publica (`--gx-barra-inferior-h`), e não de um número copiado:
+          quando a barra mudar de tamanho, este botão sobe junto sem ninguém
+          precisar lembrar de vir aqui. */}
       {acesso.liberado && !progresso.concluida ? (
         <motion.div
           initial={semMovimento ? false : { y: 80 }}
           animate={{ y: 0 }}
           transition={{ type: 'spring', stiffness: 300, damping: 30, delay: 0.4 }}
-          className="fixed inset-x-0 bottom-[calc(5.75rem+env(safe-area-inset-bottom))] z-30 px-3"
+          className="fixed inset-x-0 bottom-[calc(var(--gx-barra-inferior-h,4.5rem)+0.6rem)] z-30 px-3"
         >
           <div className="doca-vidro container mx-auto flex max-w-3xl items-center gap-3 rounded-[1.75rem] p-2 pl-4">
             <div className="min-w-0 flex-1">
@@ -528,7 +530,7 @@ function Conteudo() {
             </div>
             <BotaoDuo onClick={comecar} className="flex-none">
               <Play className="h-4 w-4" fill="currentColor" />
-              {progresso.iniciada ? 'Continuar' : 'Começar'}
+              {progresso.iniciada ? 'Continuar Trilha' : 'Começar Trilha'}
             </BotaoDuo>
           </div>
         </motion.div>

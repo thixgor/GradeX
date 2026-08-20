@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { FileText, Layers, Play, RotateCcw, Sparkles } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
-import { DocaDeEnsino, RESPIRO_DA_DOCA } from '@/components/ensino/doca'
+import { RESPIRO_DA_DOCA } from '@/components/ensino/doca'
 import { EstadoVazio, Esqueleto } from '@/components/ensino/primitivos'
 import { cn } from '@/lib/utils'
 
@@ -49,9 +49,8 @@ const FERRAMENTAS = {
 
 export default function RevisarPage() {
   return (
-    <AppShell headerTitle="Revisar" headerSubtitle="O que você já estudou">
+    <AppShell headerTitle="Revisar" headerSubtitle="O que você já estudou" comercio={false}>
       <Conteudo />
-      <DocaDeEnsino />
     </AppShell>
   )
 }
@@ -143,16 +142,26 @@ function Conteudo() {
           acaoHref="/auth/login"
         />
       ) : visiveis.length === 0 ? (
+        /*
+         * O vazio que ensina (§13).
+         *
+         * "Você ainda não tem o que revisar" descreve a tela e abandona a
+         * pessoa nela. Aqui o texto explica o que esta área VAI fazer por ela
+         * — a fila se monta sozinha, ordenada pelo que está esfriando — e o
+         * botão devolve ao único lugar de onde se sai estudando. Mandar para
+         * a lista de Trilhas seria empurrar mais uma escolha para quem ainda
+         * não fez a primeira.
+         */
         <EstadoVazio
           icone={RotateCcw}
-          titulo={itens.length === 0 ? 'Você ainda não tem o que revisar' : 'Nada com esse filtro'}
+          titulo={itens.length === 0 ? 'Sua revisão começa na primeira aula' : 'Nada com esse filtro'}
           descricao={
             itens.length === 0
-              ? 'Assim que você assistir a uma aula, ela aparece aqui com resumo, PDF e flashcards para revisar.'
+              ? 'Cada aula que você assiste entra nesta fila, ordenada por quanto tempo faz que você a viu — com resumo, PDF e flashcards à mão.'
               : 'Tente outro filtro para ver o restante.'
           }
-          acaoLabel={itens.length === 0 ? 'Escolher uma Trilha' : undefined}
-          acaoHref={itens.length === 0 ? '/aulas/trilhas' : undefined}
+          acaoLabel={itens.length === 0 ? 'Ver o que estudar agora' : undefined}
+          acaoHref={itens.length === 0 ? '/aulas' : undefined}
         />
       ) : (
         <div className="space-y-2">

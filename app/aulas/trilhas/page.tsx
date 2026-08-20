@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Route } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
-import { DocaDeEnsino, RESPIRO_DA_DOCA } from '@/components/ensino/doca'
+import { RESPIRO_DA_DOCA } from '@/components/ensino/doca'
 import {
   CartaoDeTrilha,
   EstadoVazio,
@@ -35,9 +35,8 @@ const FILTROS: Array<{ id: Filtro; rotulo: string }> = [
 
 export default function TrilhasPage() {
   return (
-    <AppShell headerTitle="Trilhas de Ensino" headerSubtitle="Caminhos organizados de estudo">
+    <AppShell headerTitle="Trilhas de Ensino" headerSubtitle="Caminhos organizados de estudo" comercio={false}>
       <Conteudo />
-      <DocaDeEnsino />
     </AppShell>
   )
 }

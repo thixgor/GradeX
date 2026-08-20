@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { ChevronRight, Compass, Layers } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
-import { DocaDeEnsino, RESPIRO_DA_DOCA } from '@/components/ensino/doca'
+import { RESPIRO_DA_DOCA } from '@/components/ensino/doca'
 import {
   CartaoDeAula,
   EstadoVazio,
@@ -51,7 +51,7 @@ const ROTULO_DO_NIVEL: Record<string, string> = {
 
 export default function ExplorarPage() {
   return (
-    <AppShell headerTitle="Explorar" headerSubtitle="Todo o acervo por assunto">
+    <AppShell headerTitle="Explorar" headerSubtitle="Todo o acervo por assunto" comercio={false}>
       <Suspense
         fallback={
           <div className="container mx-auto max-w-6xl px-4 py-8">
@@ -61,7 +61,6 @@ export default function ExplorarPage() {
       >
         <Conteudo />
       </Suspense>
-      <DocaDeEnsino />
     </AppShell>
   )
 }
