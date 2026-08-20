@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
+import { memoizarPorTempo } from '@/lib/cache-de-servidor'
 import {
   normalizeSidebarSections,
   isSidebarSectionEnabled,
@@ -9,14 +10,28 @@ import {
   type SidebarSectionSettings,
 } from '@/lib/sidebar-sections'
 
-export async function getSidebarSectionSettings(): Promise<SidebarSectionSettings> {
-  const db = await getDb()
-  const settings = await db.collection('landing_settings').findOne(
-    {},
-    { projection: { sidebarSections: 1 } }
-  )
+/**
+ * 15 segundos. Este `findOne` roda no LAYOUT de cada seção (/aulas,
+ * /banco-questoes, /provas, …), ou seja, uma vez por navegação e ANTES de
+ * qualquer HTML sair — é tempo que o aluno passa olhando a tela anterior.
+ *
+ * O documento é o mesmo para todo mundo e muda quando um admin liga ou desliga
+ * uma seção, o que acontece raramente. A janela é curta o bastante para a
+ * mudança aparecer quase imediata, e larga o bastante para que a rajada de
+ * requisições de uma única abertura de tela custe uma consulta só.
+ */
+const TTL_DAS_SECOES_MS = 15_000
 
-  return normalizeSidebarSections(settings?.sidebarSections)
+export async function getSidebarSectionSettings(): Promise<SidebarSectionSettings> {
+  return memoizarPorTempo('sidebar-sections', TTL_DAS_SECOES_MS, async () => {
+    const db = await getDb()
+    const settings = await db.collection('landing_settings').findOne(
+      {},
+      { projection: { sidebarSections: 1 } }
+    )
+
+    return normalizeSidebarSections(settings?.sidebarSections)
+  })
 }
 
 export async function canAccessSidebarSection(sectionKey: SidebarSectionKey): Promise<boolean> {

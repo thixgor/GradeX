@@ -15,6 +15,7 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 
+import { CoverImage } from '@/components/cover-image'
 import { cn } from '@/lib/utils'
 
 /**
@@ -295,25 +296,66 @@ export function AnelDeProgresso({
 /* =================== CAPAS =================== */
 
 /**
+ * O cartão de aula tem 15,5rem (248 px) no trilho e no máximo ~1/4 da largura
+ * útil na Grade; no celular ele ocupa quase a tela toda. Esta é a resposta que
+ * o otimizador precisa para escolher a variante — sem ela ele assume 100vw e
+ * gera a maior imagem possível para um cartão que cabe na palma da mão.
+ */
+const LARGURA_DA_CAPA = '(max-width: 640px) 92vw, 320px'
+
+/**
  * A capa de uma aula ou Trilha.
  *
  * Sem imagem, NÃO desenha um ícone genérico no meio de um retângulo cinza: usa
  * o próprio título em tipografia sobre um fundo da paleta. Cinquenta cartões
  * com o mesmo ícone de "play" no centro é ruído com aparência de conteúdo.
+ *
+ * ## Por que ela não é mais um `<img>` cru
+ *
+ * Era. E o navegador baixava o arquivo ORIGINAL — a capa que o admin subiu do
+ * computador dele, tipicamente 1 a 3 MB — para desenhá-la num retângulo de
+ * 248 px. A home do Ensino mostra continuar, Trilhas em curso, recomendadas,
+ * novas e aulas recentes: passa fácil de trinta cartões numa tela só, ou seja
+ * dezenas de megabytes disputando as mesmas conexões, com o conteúdo já
+ * escrito e a página parecendo travada.
+ *
+ * `CoverImage` manda a mesma URL para o otimizador do Next quando o host está
+ * liberado (`next.config.js`), que reamostra para a largura real do cartão,
+ * converte para WebP e guarda no edge por 30 dias. Host fora da lista cai num
+ * `<img>` lazy — nunca em página em branco, que é o que `next/image` faria.
  */
 export function Capa({
   capa,
   titulo,
   className,
   aspecto = 'video',
+  sizes = LARGURA_DA_CAPA,
+  prioridade = false,
 }: {
   capa?: { tipo?: string; imagem?: string; cor?: string; titulo?: string } | null
   titulo: string
   className?: string
   aspecto?: 'video' | 'alto'
+  /** Sobrescreve a largura estimada quando o cartão não tem o tamanho padrão. */
+  sizes?: string
+  /** Acima da dobra (a capa da próxima ação, por exemplo): entra sem lazy. */
+  prioridade?: boolean
 }) {
   const cor = capa?.cor
   const imagem = capa?.tipo === 'imagem' ? capa.imagem : capa?.imagem
+
+  const tipografica = (
+    <div
+      className={cn(
+        'flex h-full w-full items-center p-4',
+        cor ? 'text-white' : 'bg-gradient-to-br from-primary/15 via-primary/5 to-transparent',
+      )}
+    >
+      <span className="line-clamp-3 font-heading text-[13px] font-bold leading-snug opacity-90">
+        {capa?.titulo || titulo}
+      </span>
+    </div>
+  )
 
   return (
     <div
@@ -324,26 +366,13 @@ export function Capa({
       )}
       style={cor && !imagem ? { backgroundColor: cor } : undefined}
     >
-      {imagem ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={imagem}
-          alt=""
-          loading="lazy"
-          className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
-        />
-      ) : (
-        <div
-          className={cn(
-            'flex h-full w-full items-center p-4',
-            cor ? 'text-white' : 'bg-gradient-to-br from-primary/15 via-primary/5 to-transparent',
-          )}
-        >
-          <span className="line-clamp-3 font-heading text-[13px] font-bold leading-snug opacity-90">
-            {capa?.titulo || titulo}
-          </span>
-        </div>
-      )}
+      <CoverImage
+        src={imagem}
+        sizes={sizes}
+        priority={prioridade}
+        className="transition duration-500 group-hover:scale-[1.03]"
+        fallback={tipografica}
+      />
     </div>
   )
 }

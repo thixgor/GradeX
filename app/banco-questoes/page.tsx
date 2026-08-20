@@ -34,6 +34,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
+import { readPageCache, writePageCache } from '@/lib/page-cache'
 import {
   ArvoreDoBanco,
   SELECAO_VAZIA,
@@ -110,21 +111,50 @@ interface PeriodoDisponivel {
 
 const POR_PAGINA = 20
 
+/*
+ * O que sobrevive à navegação.
+ *
+ * A árvore do catálogo e o eixo de períodos são os mesmos em toda visita e
+ * demoram para chegar; sem guardá-los, sair para uma questão e voltar
+ * remontava a tela do zero, com esqueleto, por dados que não mudaram. Ficam de
+ * fora o saldo do plano gratuito e as listas do usuário: são dados de conta, e
+ * mostrar um saldo velho diria à pessoa que ela pode abrir uma questão que na
+ * verdade já gastou (ver o aviso em lib/page-cache.ts).
+ */
+const CACHE_HIERARQUIA = 'banco:hierarquia'
+const CACHE_EIXO = 'banco:eixo'
+
+interface EixoTemporalEmCache {
+  anos: number[]
+  periodos: PeriodoDisponivel[]
+}
+
 function Conteudo() {
   const router = useRouter()
   const { isAdmin } = useAppShell()
 
-  const [carregando, setCarregando] = useState(true)
-  const [hierarquia, setHierarquia] = useState<{ modulos: any[]; topicos: any[]; subtopicos: any[] }>({
-    modulos: [],
-    topicos: [],
-    subtopicos: [],
-  })
+  const [hierarquia, setHierarquia] = useState<{ modulos: any[]; topicos: any[]; subtopicos: any[] }>(
+    () =>
+      readPageCache<{ modulos: any[]; topicos: any[]; subtopicos: any[] }>(CACHE_HIERARQUIA) ?? {
+        modulos: [],
+        topicos: [],
+        subtopicos: [],
+      },
+  )
+  // O esqueleto de tela cheia só aparece para quem chega sem nada em mãos. Com
+  // a árvore em cache, a tela já pinta e as questões entram por baixo.
+  const [carregando, setCarregando] = useState(
+    () => readPageCache<unknown>(CACHE_HIERARQUIA) === null,
+  )
   const [selecao, setSelecao] = useState<SelecaoDaArvore>(SELECAO_VAZIA)
 
   const [questoes, setQuestoes] = useState<QuestaoDoCartao[]>([])
   const [paginacao, setPaginacao] = useState<BancoPaginacao | null>(null)
-  const [carregandoQuestoes, setCarregandoQuestoes] = useState(false)
+  // Começa em `true`: a primeira busca só dispara no efeito, que roda DEPOIS da
+  // primeira pintura. Começando em `false`, quem chega com a árvore em cache —
+  // e portanto sem o esqueleto de tela cheia — via por um quadro a mensagem "o
+  // banco ainda não tem questões" antes de a lista chegar.
+  const [carregandoQuestoes, setCarregandoQuestoes] = useState(true)
   const [gratuito, setGratuito] = useState<SaldoGratuito | null>(null)
   const [abrindo, setAbrindo] = useState<string | null>(null)
 
@@ -133,9 +163,13 @@ function Conteudo() {
   const [tipo, setTipo] = useState<BancoQuestaoTipo | ''>('')
   const [dificuldade, setDificuldade] = useState<BancoDificuldade | ''>('')
   const [periodos, setPeriodos] = useState<string[]>([])
-  const [periodosDisponiveis, setPeriodosDisponiveis] = useState<PeriodoDisponivel[]>([])
+  const [periodosDisponiveis, setPeriodosDisponiveis] = useState<PeriodoDisponivel[]>(
+    () => readPageCache<EixoTemporalEmCache>(CACHE_EIXO)?.periodos ?? [],
+  )
   const [anos, setAnos] = useState<number[]>([])
-  const [anosDisponiveis, setAnosDisponiveis] = useState<number[]>([])
+  const [anosDisponiveis, setAnosDisponiveis] = useState<number[]>(
+    () => readPageCache<EixoTemporalEmCache>(CACHE_EIXO)?.anos ?? [],
+  )
   // "Não resolvidas" e "erradas" são mutuamente exclusivas: a primeira exclui
   // quem já respondeu, a segunda exige ter respondido errado — nunca fazem
   // sentido juntas. Ver o mesmo par no criador de listas.
@@ -207,6 +241,11 @@ function Conteudo() {
       try {
         const p = new URLSearchParams(parametros)
         p.set('page', String(pagina))
+        // `campos=lista`: o cartão desenha assunto, etiquetas e as três
+        // primeiras linhas do enunciado. Sem isso o servidor manda o documento
+        // inteiro de vinte questões — alternativas, gabarito e explicação
+        // comentada — e a tela espera por texto que ela não vai mostrar.
+        p.set('campos', 'lista')
         const res = await fetch(`/api/banco/questoes?${p.toString()}`, { cache: 'no-store' })
         if (!res.ok) return
         const dados = await res.json()
@@ -222,32 +261,54 @@ function Conteudo() {
 
   useEffect(() => {
     let vivo = true
-    ;(async () => {
-      // As quatro chamadas partem juntas: a lista de questões (a mais lenta,
-      // por ter os lookups de hierarquia e resolução) não depende de nenhuma
-      // das outras três, então esperar hierarquia+anos+listas terminarem
-      // antes de pedi-la só somava o tempo das quatro em vez de sobrepô-las.
-      const [hierRes, anosRes, listasRes] = await Promise.all([
-        fetch('/api/banco/hierarquia', { cache: 'no-store' }),
-        fetch('/api/banco/anos'),
-        fetch('/api/banco/listas'),
-        carregarQuestoes(1),
-      ])
-      if (!vivo) return
 
-      if (hierRes.ok) setHierarquia(await hierRes.json())
-      if (anosRes.ok) {
-        const d = await anosRes.json()
-        setAnosDisponiveis(d.anos || [])
-        setPeriodosDisponiveis(d.periodos || [])
-      }
-      // As listas são de assinante; para quem é gratuito a resposta vem vazia
-      // ou negada, e a tela simplesmente não mostra a seção.
-      if (listasRes.ok) setListas((await listasRes.json()).listas || [])
-
+    // As quatro chamadas partem juntas: a lista de questões (a mais lenta,
+    // por ter os lookups de hierarquia e resolução) não depende de nenhuma
+    // das outras três, então esperar hierarquia+anos+listas terminarem
+    // antes de pedi-la só somava o tempo das quatro em vez de sobrepô-las.
+    //
+    // E cada uma se aplica À TELA ASSIM QUE CHEGA. Antes elas eram esperadas
+    // num `Promise.all` e a página inteira só saía do esqueleto quando a mais
+    // lenta das quatro voltasse — a lista de questões ficava pronta e escondida
+    // esperando as listas do usuário, que a maior parte das contas nem tem.
+    const questoesProntas = carregarQuestoes(1).finally(() => {
       if (vivo) setCarregando(false)
+    })
+
+    fetch('/api/banco/hierarquia')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (!vivo || !d) return
+        setHierarquia(d)
+        writePageCache(CACHE_HIERARQUIA, d)
+        setCarregando(false)
+      })
+      .catch(() => {})
+
+    fetch('/api/banco/anos')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (!vivo || !d) return
+        const eixo: EixoTemporalEmCache = { anos: d.anos || [], periodos: d.periodos || [] }
+        setAnosDisponiveis(eixo.anos)
+        setPeriodosDisponiveis(eixo.periodos)
+        writePageCache(CACHE_EIXO, eixo)
+      })
+      .catch(() => {})
+
+    // As listas são de assinante; para quem é gratuito a resposta vem vazia
+    // ou negada, e a tela simplesmente não mostra a seção.
+    fetch('/api/banco/listas')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (vivo && d) setListas(d.listas || [])
+      })
+      .catch(() => {})
+
+    questoesProntas.finally(() => {
       primeiraCarga.current = false
-    })()
+    })
+
     return () => {
       vivo = false
     }

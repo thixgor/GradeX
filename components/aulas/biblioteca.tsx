@@ -13,6 +13,7 @@ import {
   Sparkles,
   Star,
 } from 'lucide-react'
+import { CoverImage } from '@/components/cover-image'
 import { comModo, type ModoDeVisualizacao } from '@/lib/aulas/modo-visualizacao'
 import { cn } from '@/lib/utils'
 
@@ -128,8 +129,10 @@ export function CapaDaAula({
   if (capa?.tipo === 'imagem' && capa.imagem) {
     return (
       <div className={cn('relative overflow-hidden bg-muted', className)}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={capa.imagem} alt="" className="h-full w-full object-cover" loading="lazy" />
+        {/* Pelo otimizador: o cartão da biblioteca tem no máximo ~20rem, e o
+            `<img>` cru que estava aqui baixava o arquivo original que o admin
+            subiu — tipicamente megabytes — uma vez por cartão na tela. */}
+        <CoverImage src={capa.imagem} sizes="(max-width: 640px) 50vw, 320px" />
       </div>
     )
   }
@@ -447,19 +450,17 @@ export function CardDeCurso({
       className="group flex w-[78vw] flex-none snap-start flex-col overflow-hidden rounded-xl border border-border bg-card text-left transition hover:border-primary/40 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary sm:w-72 lg:w-80"
     >
       <div className="relative aspect-[16/9] overflow-hidden bg-primary/10">
-        {curso.imagem ? (
-          /* eslint-disable-next-line @next/next/no-img-element */
-          <img
-            src={curso.imagem}
-            alt=""
-            className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
-            loading="lazy"
-          />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center">
-            <BookOpen className="h-8 w-8 text-primary/60" />
-          </div>
-        )}
+        <CoverImage
+          src={curso.imagem}
+          // 78vw no celular, 18rem a partir de `sm` e 20rem em `lg`.
+          sizes="(max-width: 640px) 78vw, (max-width: 1024px) 288px, 320px"
+          className="transition duration-500 group-hover:scale-[1.03]"
+          fallback={
+            <div className="flex h-full w-full items-center justify-center">
+              <BookOpen className="h-8 w-8 text-primary/60" />
+            </div>
+          }
+        />
         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 to-transparent p-3">
           <p className="line-clamp-2 text-sm font-bold leading-snug text-white">{curso.nome}</p>
         </div>

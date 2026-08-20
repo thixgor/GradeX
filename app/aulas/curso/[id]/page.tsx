@@ -5,6 +5,7 @@ import { useParams, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, BookOpen, PlayCircle, RotateCcw } from 'lucide-react'
 import { AppShell, useAppShell } from '@/components/app-shell'
+import { CoverImage } from '@/components/cover-image'
 import {
   EsqueletoDeCards,
   ProvedorDeFavoritos,
@@ -184,9 +185,12 @@ function Conteudo() {
             {curso.imagem ? (
               // A capa é do curso e foi escolhida pelo admin; sumir com ela na
               // página dele seria descartar a identidade que ele montou.
-              <div className="aspect-video w-full flex-none overflow-hidden rounded-xl border border-border sm:w-56">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={curso.imagem} alt="" className="h-full w-full object-cover" />
+              <div className="relative aspect-video w-full flex-none overflow-hidden rounded-xl border border-border sm:w-56">
+                {/* Pelo otimizador: a capa que o admin subiu costuma ser o
+                    arquivo original, de vários megabytes, para um retângulo de
+                    224 px no topo da página. `priority` porque ela é a primeira
+                    dobra e mede o LCP desta tela. */}
+                <CoverImage src={curso.imagem} sizes="(max-width: 640px) 100vw, 224px" priority />
               </div>
             ) : null}
 

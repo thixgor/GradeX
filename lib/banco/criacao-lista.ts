@@ -240,6 +240,10 @@ export function parametrosDeContagem(filtros: FiltrosDaLista): URLSearchParams {
   const p = new URLSearchParams()
   p.set('limit', '1')
   p.set('page', '1')
+  // Só o `paginacao.total` desta resposta é lido. `campos=lista` não muda o
+  // número — muda o tamanho da questão que vem junto com ele, e esta chamada
+  // dispara a cada mexida nos filtros enquanto a pessoa monta a lista.
+  p.set('campos', 'lista')
   if (filtros.moduloIds.length) p.set('moduloId', filtros.moduloIds.join(','))
   if (filtros.topicoIds.length) p.set('topicoId', filtros.topicoIds.join(','))
   if (filtros.subtopicoIds.length) p.set('subtopicoId', filtros.subtopicoIds.join(','))

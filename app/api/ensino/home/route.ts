@@ -3,6 +3,7 @@ import { ObjectId } from 'mongodb'
 
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
+import { memoizarPorTempo } from '@/lib/cache-de-servidor'
 import { montarContextoDoUsuario } from '@/lib/aulas/contexto'
 import { lerEmAndamento } from '@/lib/aulas/repositorio-progresso'
 import { formatarTempo, podeRetomar } from '@/lib/aulas/progresso'
@@ -22,6 +23,24 @@ export const runtime = 'nodejs'
 
 /** Quantos itens cada faixa da home leva. Poucos e bons — a home não é acervo. */
 const POR_FAIXA = 8
+
+/**
+ * O catálogo (só o bloco `ensino` de cada aula visível) é a única consulta desta
+ * rota que percorre a coleção INTEIRA, e ele não depende de quem está pedindo:
+ * serve para contar aulas por nó da navegação e para somar a duração das aulas
+ * concluídas. Enquanto todas as outras consultas crescem com o usuário, esta
+ * cresce com o acervo — e ela roda a cada abertura de /aulas, de todo mundo.
+ *
+ * Um minuto. A aula publicada agora aparece na faixa de recentes (que NÃO passa
+ * por aqui) na hora; o que atrasa até um minuto é o contador ao lado do nome do
+ * tópico na navegação.
+ */
+const TTL_DO_CATALOGO_MS = 60_000
+
+interface AulaDoCatalogo {
+  _id: any
+  ensino?: { duracaoSegundos?: number; [chave: string]: any }
+}
 
 /**
  * A home da Área de Ensino (§12, §13).
@@ -86,14 +105,19 @@ export async function GET() {
         .limit(POR_FAIXA * 2)
         .toArray(),
       // Só o bloco `ensino` — é tudo que a contagem da navegação precisa, e
-      // baixar o acervo inteiro para contar tópicos custaria caro à toa.
-      db
-        .collection(COLECOES.aulas)
-        .find(
-          { oculta: { $ne: true }, 'ensino.tipo': { $ne: 'resumo' } },
-          { projection: { ensino: 1 } },
-        )
-        .toArray(),
+      // baixar o acervo inteiro para contar tópicos custaria caro à toa. E só
+      // uma vez por minuto por instância: o resultado é o mesmo para todos os
+      // alunos, então repeti-lo a cada abertura de tela era pagar a varredura
+      // do acervo inteiro por visita.
+      memoizarPorTempo<AulaDoCatalogo[]>('ensino:catalogo', TTL_DO_CATALOGO_MS, () =>
+        db
+          .collection(COLECOES.aulas)
+          .find(
+            { oculta: { $ne: true }, 'ensino.tipo': { $ne: 'resumo' } },
+            { projection: { ensino: 1 } },
+          )
+          .toArray() as Promise<AulaDoCatalogo[]>,
+      ),
     ])
 
     const [cartoesEmAndamento, cartoesRecentes] = await Promise.all([
