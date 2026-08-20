@@ -156,12 +156,22 @@ export async function GET(request: Request) {
     const limite = Math.min(LIMITE_MAXIMO, Math.max(1, Number(p.get('limite')) || LIMITE_PADRAO))
     const total = cartoes.length
 
+    const rascunhos = new Set(
+      documentos.filter((d: any) => d.oculta).map((d: any) => String(d._id)),
+    )
+
     const itens = cartoes.slice(0, limite).map((cartao) => ({
       ...cartao,
       trilhas: trilhasPorAula.get(cartao._id) || [],
       // O painel precisa saber o que está em rascunho; o aluno nunca vê essa
       // aula, então o campo é inofensivo na resposta pública.
-      publicada: !documentos.find((d: any) => String(d._id) === cartao._id)?.oculta,
+      publicada: !rascunhos.has(cartao._id),
+      // O bloco cru alimenta o painel de classificação rápida, que edita
+      // exatamente estes campos. Sem ele o painel abriria vazio e sobrescreveria
+      // a organização já cadastrada com nada.
+      ensino: modoAdmin
+        ? documentos.find((d: any) => String(d._id) === cartao._id)?.ensino || null
+        : undefined,
     }))
 
     return NextResponse.json(

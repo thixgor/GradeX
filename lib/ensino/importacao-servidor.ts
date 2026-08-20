@@ -112,6 +112,12 @@ export async function aplicarPacote(
    * aula declara `Medicina > Ciclo Clínico > Cardiologia` e não precisa saber
    * se esses três níveis já existem. Sem ela, todo arquivo teria de repetir a
    * taxonomia inteira ou falhar quando um degrau faltasse.
+   *
+   * O nível de cada nó vem da POSIÇÃO no caminho, e não de um rótulo declarado
+   * à parte. É a única leitura que não pode se contradizer: `Medicina > Ciclo
+   * Clínico > Cardiologia` só tem uma interpretação possível, enquanto um campo
+   * `nivel` separado poderia dizer "subtópico" para o segundo nome do caminho e
+   * deixar a árvore impossível de desenhar.
    */
   const garantirCaminho = async (nomes: string[]): Promise<Record<string, string | null>> => {
     const saida: Record<string, string | null> = {
