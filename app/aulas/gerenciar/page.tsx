@@ -1,192 +1,255 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { LogoLoading } from '@/components/logo-loading'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ThemeToggle } from '@/components/theme-toggle'
-import { ArrowLeft, Network, Plus, Users } from 'lucide-react'
+import Link from 'next/link'
+import {
+  AlertTriangle,
+  ArrowRight,
+  Compass,
+  Download,
+  FileUp,
+  Play,
+  Plus,
+  Route,
+  Settings2,
+  Users,
+} from 'lucide-react'
 
-interface User {
-  id: string
-  email: string
-  name: string
-  role: string
-  secondaryRole?: string
+import { AppShell } from '@/components/app-shell'
+import { BotaoPrincipal, Numero, PainelDeEnsino } from '@/components/ensino/painel'
+
+/**
+ * A visão geral da administração de Ensino (§22).
+ *
+ * O QUE ELA RESPONDE
+ *
+ * Não é um menu de módulos: é um estado do acervo. As três perguntas que a
+ * equipe faz ao abrir esta tela são "quanto conteúdo temos?", "o que está pela
+ * metade?" e "o que eu faço agora?". Um hub de botões responderia só a terceira,
+ * e mal.
+ *
+ * Por isso o destaque é a fila de pendências — Trilhas em rascunho e aulas sem
+ * classificação. É onde o trabalho realmente está, e é o que uma tabela de
+ * "todas as aulas" esconde.
+ */
+
+interface Resumo {
+  trilhas: number
+  rascunhos: number
+  aulas: number
+  semClassificacao: number
+  nos: number
 }
 
-export default function GerenciarAulasPage() {
-  const router = useRouter()
-  const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [isAuthorized, setIsAuthorized] = useState(false)
+export default function GerenciarEnsinoPage() {
+  return (
+    <AppShell headerTitle="Gerenciar Ensino" headerSubtitle="Trilhas, aulas e organização">
+      <Conteudo />
+    </AppShell>
+  )
+}
+
+function Conteudo() {
+  const [resumo, setResumo] = useState<Resumo | null>(null)
 
   useEffect(() => {
-    checkAuth()
+    let cancelado = false
+
+    Promise.all([
+      fetch('/api/ensino/trilhas?rascunhos=1', { cache: 'no-store' }).then((r) =>
+        r.ok ? r.json() : { trilhas: [] },
+      ),
+      fetch('/api/ensino/catalogo?admin=1&limite=1&tipo=todos', { cache: 'no-store' }).then((r) =>
+        r.ok ? r.json() : { total: 0 },
+      ),
+      fetch('/api/ensino/catalogo?admin=1&semClassificacao=1&limite=1&tipo=todos', {
+        cache: 'no-store',
+      }).then((r) => (r.ok ? r.json() : { total: 0 })),
+      fetch('/api/ensino/taxonomia?contagem=0', { cache: 'no-store' }).then((r) =>
+        r.ok ? r.json() : { nos: [] },
+      ),
+    ])
+      .then(([trilhas, catalogo, pendentes, taxonomia]) => {
+        if (cancelado) return
+        const lista = trilhas.trilhas || []
+        setResumo({
+          trilhas: lista.filter((t: any) => t.situacao === 'publicada').length,
+          rascunhos: lista.filter((t: any) => t.situacao !== 'publicada').length,
+          aulas: catalogo.total || 0,
+          semClassificacao: pendentes.total || 0,
+          nos: (taxonomia.nos || []).length,
+        })
+      })
+      .catch(() => {})
+
+    return () => {
+      cancelado = true
+    }
   }, [])
 
-  async function checkAuth() {
-    try {
-      const res = await fetch('/api/auth/me')
-      if (!res.ok) {
-        router.push('/auth/login')
-        return
-      }
-      const data = await res.json()
-      setUser(data.user)
-
-      // Verificar se é admin ou monitor
-      const isAdmin = data.user.role === 'admin'
-      const isMonitor = data.user.secondaryRole === 'monitor'
-
-      if (!isAdmin && !isMonitor) {
-        router.push('/aulas')
-        return
-      }
-
-      setIsAuthorized(true)
-    } catch (error) {
-      router.push('/auth/login')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  if (loading) {
-    return <LogoLoading message="Carregando..." size="lg" fullscreen />
-  }
-
-  if (!isAuthorized) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Card>
-          <CardContent className="pt-6">
-            <p className="text-lg mb-4">Acesso negado</p>
-            <Button onClick={() => router.push('/aulas')}>
-              Voltar para Aulas
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    )
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      {/* Background effects */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
+    <PainelDeEnsino
+      titulo="Ensino"
+      descricao="O acervo é uma rede: aulas pequenas, reutilizadas em vários caminhos. Comece pelas Trilhas."
+      acoes={
+        <BotaoPrincipal href="/aulas/gerenciar/trilhas">
+          <Plus className="h-4 w-4" /> Nova Trilha
+        </BotaoPrincipal>
+      }
+    >
+      <div className="mb-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <Numero
+          valor={resumo?.trilhas ?? '—'}
+          rotulo="Trilhas publicadas"
+          icone={Route}
+          href="/aulas/gerenciar/trilhas"
+        />
+        <Numero
+          valor={resumo?.aulas ?? '—'}
+          rotulo="Aulas no acervo"
+          icone={Play}
+          href="/aulas/gerenciar/catalogo"
+        />
+        <Numero
+          valor={resumo?.nos ?? '—'}
+          rotulo="Níveis de organização"
+          icone={Compass}
+          href="/aulas/gerenciar/taxonomia"
+        />
+        <Numero valor={resumo?.rascunhos ?? '—'} rotulo="Trilhas em rascunho" icone={FileUp} />
       </div>
 
-      {/* Header */}
-      <header className="relative z-40 backdrop-blur-md bg-white/5 border-b border-white/10 sticky top-0">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between gap-4 flex-wrap">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => router.push('/aulas')}
-                className="shrink-0 text-white hover:bg-white/10"
+      {/* ── A fila de trabalho ────────────────────────────────────────── */}
+      {resumo && (resumo.semClassificacao > 0 || resumo.rascunhos > 0) ? (
+        <section className="mb-8">
+          <h2 className="mb-3 font-heading text-lg font-semibold tracking-tight">
+            O que está pendente
+          </h2>
+          <div className="space-y-2">
+            {resumo.semClassificacao > 0 ? (
+              <Link
+                href="/aulas/gerenciar/catalogo?semClassificacao=1"
+                className="group flex items-center gap-3 rounded-xl border border-accent/40 bg-accent/5 px-4 py-3.5 transition hover:border-accent"
               >
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-              <div>
-                <h1 className="text-xl sm:text-2xl font-bold text-white">Gerenciar Aulas</h1>
-                <p className="text-sm text-white/60">
-                  {user?.role === 'admin' ? 'Administrador' : 'Monitor'}
-                </p>
-              </div>
-            </div>
-            <ThemeToggle />
+                <AlertTriangle className="h-5 w-5 flex-none text-accent-foreground" />
+                <span className="min-w-0 flex-1">
+                  <span className="block text-sm font-semibold">
+                    {resumo.semClassificacao}{' '}
+                    {resumo.semClassificacao === 1 ? 'aula sem' : 'aulas sem'} organização
+                  </span>
+                  <span className="block text-xs text-muted-foreground">
+                    Elas existem e são assistíveis, mas não aparecem na navegação por assunto.
+                  </span>
+                </span>
+                <ArrowRight className="h-4 w-4 flex-none text-muted-foreground transition group-hover:translate-x-0.5" />
+              </Link>
+            ) : null}
+
+            {resumo.rascunhos > 0 ? (
+              <Link
+                href="/aulas/gerenciar/trilhas"
+                className="group flex items-center gap-3 rounded-xl border border-border/70 bg-card px-4 py-3.5 transition hover:border-primary/40"
+              >
+                <Route className="h-5 w-5 flex-none text-primary" />
+                <span className="min-w-0 flex-1">
+                  <span className="block text-sm font-semibold">
+                    {resumo.rascunhos} {resumo.rascunhos === 1 ? 'Trilha' : 'Trilhas'} em rascunho
+                  </span>
+                  <span className="block text-xs text-muted-foreground">
+                    Só você as enxerga. Publique quando o caminho estiver montado.
+                  </span>
+                </span>
+                <ArrowRight className="h-4 w-4 flex-none text-muted-foreground transition group-hover:translate-x-0.5" />
+              </Link>
+            ) : null}
           </div>
+        </section>
+      ) : null}
+
+      {/* ── Atalhos ───────────────────────────────────────────────────── */}
+      <section>
+        <h2 className="mb-3 font-heading text-lg font-semibold tracking-tight">Ferramentas</h2>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <Atalho
+            href="/aulas/gerenciar/trilhas"
+            icone={Route}
+            titulo="Construtor de Trilhas"
+            descricao="Monte caminhos com etapas, arrastando aulas que já existem. Nada é duplicado."
+          />
+          <Atalho
+            href="/aulas/gerenciar/catalogo"
+            icone={Play}
+            titulo="Catálogo de aulas"
+            descricao="Filtre por módulo, tópico, Trilha, nível e recursos. Veja o reuso de cada aula."
+          />
+          <Atalho
+            href="/aulas/gerenciar/taxonomia"
+            icone={Compass}
+            titulo="Organização do conteúdo"
+            descricao="Área → Módulo → Tópico → Subtópico. O subtópico é opcional."
+          />
+          <Atalho
+            href="/aulas/gerenciar/importar"
+            icone={Download}
+            titulo="Importar e migrar"
+            descricao="Traga aulas e Trilhas por arquivo Markdown ou JSON, e migre o acervo antigo."
+          />
+          <Atalho
+            href="/aulas/gerenciar/aulas/criar"
+            icone={Plus}
+            titulo="Nova aula"
+            descricao="Cadastre uma unidade específica de conhecimento — pequena e reutilizável."
+          />
+          <Atalho
+            href="/aulas/gerenciar/turmas"
+            icone={Users}
+            titulo="Turmas e acesso"
+            descricao="Grupos com acesso exclusivo a aulas e Trilhas."
+          />
         </div>
-      </header>
+      </section>
 
-      {/* Main Content */}
-      <main className="relative z-30 container mx-auto px-4 py-8 max-w-6xl">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Estrutura */}
-          <Card className="backdrop-blur-md bg-white/5 border-white/10 hover:bg-white/10 transition-all cursor-pointer"
-            onClick={() => router.push('/aulas/gerenciar/estrutura')}>
-            <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
-                <Network className="h-5 w-5" />
-                Estrutura
-              </CardTitle>
-              <CardDescription className="text-white/60">
-                O curso inteiro numa árvore só
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-white/50">
-                Arraste para reorganizar, publique em massa, duplique módulos e veja
-                cada aula pelos olhos do aluno
-              </p>
-            </CardContent>
-          </Card>
+      <p className="mt-8 flex items-start gap-2 rounded-xl bg-muted/60 px-4 py-3 text-xs leading-relaxed text-muted-foreground">
+        <Settings2 className="mt-0.5 h-4 w-4 flex-none" />
+        As telas antigas de estrutura, estatísticas e detalhes continuam disponíveis em{' '}
+        <Link href="/aulas/gerenciar/estrutura" className="font-semibold underline">
+          estrutura
+        </Link>
+        ,{' '}
+        <Link href="/aulas/gerenciar/estatisticas" className="font-semibold underline">
+          estatísticas
+        </Link>{' '}
+        e{' '}
+        <Link href="/aulas/gerenciar/detalhes" className="font-semibold underline">
+          detalhes
+        </Link>
+        . Nada foi removido — o acervo antigo continua funcionando enquanto a migração acontece.
+      </p>
+    </PainelDeEnsino>
+  )
+}
 
-          {/* Turmas */}
-          <Card className="backdrop-blur-md bg-white/5 border-white/10 hover:bg-white/10 transition-all cursor-pointer"
-            onClick={() => router.push('/aulas/gerenciar/turmas')}>
-            <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
-                <Users className="h-5 w-5" />
-                Turmas
-              </CardTitle>
-              <CardDescription className="text-white/60">
-                Grupos de alunos que destravam aulas
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-white/50">
-                Cole uma lista de e-mails e use a turma para liberar — ou restringir — aulas
-                específicas
-              </p>
-            </CardContent>
-          </Card>
-
-          {/* Aulas */}
-          <Card className="backdrop-blur-md bg-white/5 border-white/10 hover:bg-white/10 transition-all cursor-pointer"
-            onClick={() => router.push('/aulas/gerenciar/aulas')}>
-            <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
-                <Plus className="h-5 w-5" />
-                Aulas
-              </CardTitle>
-              <CardDescription className="text-white/60">
-                Criar e gerenciar aulas
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-white/50">
-                Aulas ao-vivo, gravadas e materiais
-              </p>
-            </CardContent>
-          </Card>
-
-          {/* Estatísticas */}
-          <Card className="backdrop-blur-md bg-white/5 border-white/10 hover:bg-white/10 transition-all cursor-pointer"
-            onClick={() => router.push('/aulas/gerenciar/estatisticas')}>
-            <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
-                📊
-                Estatísticas
-              </CardTitle>
-              <CardDescription className="text-white/60">
-                Ver dados das aulas
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-white/50">
-                Visualizações, conclusões e comentários
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-      </main>
-    </div>
+function Atalho({
+  href,
+  icone: Icone,
+  titulo,
+  descricao,
+}: {
+  href: string
+  icone: typeof Route
+  titulo: string
+  descricao: string
+}) {
+  return (
+    <Link
+      href={href}
+      className="group rounded-2xl border border-border/70 bg-card p-4 transition hover:border-primary/40"
+    >
+      <Icone className="h-5 w-5 text-primary" />
+      <h3 className="mt-2 font-heading text-base font-semibold tracking-tight transition group-hover:text-primary">
+        {titulo}
+      </h3>
+      <p className="mt-1 text-sm leading-snug text-muted-foreground">{descricao}</p>
+    </Link>
   )
 }

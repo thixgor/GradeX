@@ -1,131 +1,177 @@
 'use client'
 
-import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
-import { useParams, useRouter, useSearchParams } from 'next/navigation'
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import {
   ArrowLeft,
   ArrowRight,
+  BookOpen,
   Check,
-  CheckCircle2,
-  ChevronRight,
-  ClipboardCheck,
-  Clock,
-  Focus,
+  ChevronDown,
+  Download,
+  FileText,
+  Layers,
   ListVideo,
   Loader2,
-  Lock,
-  PlayCircle,
+  MessageCircle,
+  StickyNote,
+  Play,
+  Route,
   Sparkles,
   X,
 } from 'lucide-react'
+
 import { AppShell } from '@/components/app-shell'
 import { PlayerDaAula, type ControleDoPlayer } from '@/components/aulas/player'
 import { PainelDeAnotacoes } from '@/components/aulas/anotacoes-painel'
-import { PainelDeMarcadores } from '@/components/aulas/marcadores-painel'
-import { BarraDeProgresso, CardDeAula, Trilho, type AulaNaBiblioteca } from '@/components/aulas/biblioteca'
-import { FaixaModoAluno } from '@/components/aulas/faixa-modo-aluno'
-import { comModo, lerModo, PARAMETRO_MODO } from '@/lib/aulas/modo-visualizacao'
-import { descreverAvaliacao } from '@/lib/aulas/avaliacao'
+import {
+  BarraDeProgresso,
+  Cadeado,
+  CartaoDeAula,
+  EstadoVazio,
+  Esqueleto,
+  LinhaDeAula,
+  Migalha,
+  ProvedorDeEnsino,
+  Selo,
+  SeloDeProfundidade,
+  Trilho,
+  type AcessoNaTela,
+  type AulaNaTela,
+} from '@/components/ensino/primitivos'
 import { cn } from '@/lib/utils'
 
 /**
- * Assistir a uma aula (§6, §9, §17, §19, §20, §33).
+ * Assistir a uma aula (§9, §10, §11, §17, §19, §20, §35).
  *
- * A tela é organizada em torno de uma pergunta: o que a pessoa faz enquanto o
- * vídeo roda? Ela assiste, anota e — quando termina — precisa saber qual é o
- * próximo passo sem voltar para a listagem.
+ * A PRIORIDADE ABSOLUTA É O CONTEÚDO
  *
- * Por isso o vídeo domina a coluna principal, as anotações ficam ao lado (não
- * escondidas numa aba que ninguém abre), a navegação do curso é recolhível, e a
- * próxima aula aparece sozinha ao concluir. O Modo Foco tira tudo que não é
- * vídeo e anotação, para quem estuda horas seguidas.
+ * A tela anterior tinha, ao redor do player: navegação do curso, anotações,
+ * marcadores, avaliação, relacionadas, modo foco e uma faixa de progresso —
+ * tudo aberto ao mesmo tempo, competindo com o vídeo. Aqui a regra é outra: o
+ * player e o que está IMEDIATAMENTE ao redor dele (título, onde estou, próxima
+ * aula, concluir) ficam visíveis; todo o resto entra em ABAS, que existem
+ * apenas quando têm conteúdo (§10).
  *
- * Aula bloqueada não vira erro: o servidor manda o motivo e o botão, e é isso
- * que a tela desenha (§17).
+ * A ABA É A RESPOSTA CERTA PARA "MUITOS RECURSOS"
+ *
+ * Uma aula pode ter resumo, PDF, flashcards, anotações e dúvidas. Cinco botões
+ * lado a lado viram cinco decisões a cada abertura; cinco abas viram uma. E aba
+ * de recurso inexistente simplesmente não é desenhada — a interface encolhe com
+ * a aula, em vez de mostrar cinco portas com quatro trancadas.
+ *
+ * O CONTEXTO DA TRILHA É OPCIONAL (§4)
+ *
+ * Com `?trilha=slug`, a tela ganha etapa, progresso, anterior e próxima. Sem
+ * ele, a mesma aula abre sozinha e continua completa — é a mesma aula, não uma
+ * versão reduzida. Essa é a expressão na interface do princípio central: o
+ * conteúdo existe uma vez e serve a vários caminhos.
  */
 
-interface Aula {
-  _id: string
+type Aba = 'aula' | 'resumo' | 'pdf' | 'flashcards' | 'anotacoes' | 'discussao'
+
+interface Recursos {
+  aula: boolean
+  resumo: AulaNaTela | null
+  aulaPrincipal: AulaNaTela | null
+  pdf: boolean
+  flashcards: Array<{ _id: string; titulo: string; cards: number; href: string }>
+  pdfs: Array<{ nome: string; url: string }>
+  anotacoes: boolean
+  discussao: boolean
+}
+
+interface ContextoDaTrilha {
+  slug: string
   titulo: string
-  descricao?: string
-  tipo?: string
-  videoEmbed?: string
-  linkOuEmbed?: string
-  setorId?: string
-  moduloId?: string
-  avaliacao?: { examId: string; titulo?: string; obrigatoria?: boolean } | null
-  capitulos?: Array<{ segundo: number; titulo: string }> | null
-  transcricao?: Array<{ segundo: number; fim?: number; texto: string }> | null
-  pdfs?: Array<{ nome: string; url: string; tamanho: number }>
-  botoesAcesso?: Array<{ nome: string; url: string }>
-  progresso?: { percentual: number; concluida: boolean; posicaoSegundos?: number } | null
-  acesso?: {
-    liberado: boolean
-    porAmostra?: boolean
-    requisito?: {
-      motivo: string
-      titulo: string
-      acaoLabel?: string
-      acaoHref?: string
-      liberaEm?: string
-    } | null
+  etapa: { titulo: string; indice: number; total: number; itens: AulaNaTela[] }
+  anterior: AulaNaTela | null
+  proxima: AulaNaTela | null
+  progresso: { percentual: number; concluidos: number; total: number }
+}
+
+interface RespostaDaAula {
+  aula: {
+    _id: string
+    titulo: string
+    descricao?: string
+    videoEmbed?: string
+    linkOuEmbed?: string
+    botoesAcesso?: Array<{ nome: string; url: string }>
+    duracaoLabel?: string
+    ensino?: { profundidade?: string; tags?: string[]; tipo?: string }
   }
+  acesso: AcessoNaTela
+  progresso: { percentual: number; concluida: boolean; posicaoSegundos?: number } | null
+  caminho: Array<{ _id: string; nome: string; nivel: string }>
+  recursos: Recursos
+  prerequisitos: AulaNaTela[]
+  relacionadas: AulaNaTela[]
+  professores: Array<{ _id: string; nome: string; foto?: string | null; titulacao?: string | null }>
+  trilha: ContextoDaTrilha | null
+  trilhasQueContem: Array<{ slug: string; titulo: string; subtitulo?: string }>
+  reforco: Array<{ rotulo: string; href: string }>
 }
 
-interface AulaVizinha {
-  _id: string
-  titulo: string
-  moduloId?: string
-  ordem?: number
-  progresso?: { concluida: boolean } | null
-  acesso?: { liberado: boolean }
+export default function AssistirAulaPage() {
+  return (
+    <AppShell headerTitle="Aula" headerSubtitle="Área de Ensino">
+      <Suspense
+        fallback={
+          <div className="container mx-auto max-w-6xl px-4 py-6">
+            <Esqueleto className="aspect-video w-full rounded-2xl" />
+          </div>
+        }
+      >
+        <Conteudo />
+      </Suspense>
+    </AppShell>
+  )
 }
 
-function AssistirAulaConteudo() {
+function Conteudo() {
   const params = useParams()
   const router = useRouter()
-  const searchParams = useSearchParams()
+  const busca = useSearchParams()
   const aulaId = String(params?.id || '')
-  const modo = lerModo(searchParams.get(PARAMETRO_MODO))
+  const slugDaTrilha = busca.get('trilha') || ''
+  const abaInicial = (busca.get('aba') || 'aula') as Aba
+  const segundoInicial = Number(busca.get('t')) || 0
 
-  const [aula, setAula] = useState<Aula | null>(null)
+  const [dados, setDados] = useState<RespostaDaAula | null>(null)
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState('')
+  const [aba, setAba] = useState<Aba>(abaInicial)
   const [controle, setControle] = useState<ControleDoPlayer | null>(null)
-  const [modoFoco, setModoFoco] = useState(false)
-  const [lateralAberta, setLateralAberta] = useState(false)
   const [concluida, setConcluida] = useState(false)
-  const [impedimento, setImpedimento] = useState('')
-  const [avaliacaoFeita, setAvaliacaoFeita] = useState(false)
-  const [avaliacaoDisponivel, setAvaliacaoDisponivel] = useState(false)
   const [percentual, setPercentual] = useState(0)
   const [marcando, setMarcando] = useState(false)
-
-  const [relacionadas, setRelacionadas] = useState<AulaNaBiblioteca[]>([])
-  const [vizinhas, setVizinhas] = useState<AulaVizinha[]>([])
-  const [nomeDoCurso, setNomeDoCurso] = useState<string | null>(null)
+  const [impedimento, setImpedimento] = useState('')
+  const [mostrarReforco, setMostrarReforco] = useState(false)
+  const [indiceAberto, setIndiceAberto] = useState(false)
+  const jaConcluidaAoAbrir = useRef(false)
 
   useEffect(() => {
     if (!aulaId) return
     let cancelado = false
     setCarregando(true)
+    setErro('')
 
-    fetch(comModo(`/api/aulas/${aulaId}`, modo), { cache: 'no-store' })
+    const endereco = `/api/ensino/aulas/${aulaId}${slugDaTrilha ? `?trilha=${encodeURIComponent(slugDaTrilha)}` : ''}`
+
+    fetch(endereco, { cache: 'no-store' })
       .then(async (r) => {
         const d = await r.json().catch(() => ({}))
         if (!r.ok) throw new Error(d.error || 'Aula não encontrada')
-        return d
+        return d as RespostaDaAula
       })
       .then((d) => {
         if (cancelado) return
-        const carregada: Aula = { ...d.aula, _id: String(d.aula._id), acesso: d.acesso }
-        setAula(carregada)
-        setRelacionadas((d.relacionadas || []).map((r: any) => ({ ...r, _id: String(r._id) })))
-        setConcluida(carregada.progresso?.concluida === true)
-        setPercentual(carregada.progresso?.percentual || 0)
-        setAvaliacaoFeita(d.avaliacaoFeita === true)
-        setAvaliacaoDisponivel(d.avaliacaoDisponivel === true)
+        setDados(d)
+        setConcluida(d.progresso?.concluida === true)
+        setPercentual(d.progresso?.percentual || 0)
+        jaConcluidaAoAbrir.current = d.progresso?.concluida === true
       })
       .catch((e) => {
         if (!cancelado) setErro(e?.message || 'Aula não encontrada')
@@ -137,61 +183,42 @@ function AssistirAulaConteudo() {
     return () => {
       cancelado = true
     }
-  }, [aulaId, modo])
+  }, [aulaId, slugDaTrilha])
 
-  // A navegação do curso vem da árvore já filtrada por acesso — a mesma que a
-  // biblioteca usa, então a lateral nunca mostra aula que a pessoa não veria lá.
+  /** Abre o vídeo no segundo pedido pela anotação (`?t=`). */
   useEffect(() => {
-    if (!aula?.setorId) return
-    let cancelado = false
-    fetch(comModo('/api/aulas', modo), { cache: 'no-store' })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((d) => {
-        if (cancelado || !d) return
-        const doCurso = (d.aulas || [])
-          .filter((a: any) => a.setorId === aula.setorId)
-          .map((a: any) => ({ ...a, _id: String(a._id) }))
-          .sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0))
-        setVizinhas(doCurso)
-        const setor = (d.setores || []).find((s: any) => String(s._id) === aula.setorId)
-        setNomeDoCurso(setor?.nome || null)
-      })
-      .catch(() => {})
-    return () => {
-      cancelado = true
-    }
-  }, [aula?.setorId, modo])
-
-  const indiceAtual = vizinhas.findIndex((a) => a._id === aulaId)
-  const proxima = indiceAtual >= 0 ? vizinhas.slice(indiceAtual + 1).find((a) => a.acesso?.liberado !== false) : undefined
-  const anterior = indiceAtual > 0 ? vizinhas[indiceAtual - 1] : undefined
-
-  const totalCurso = vizinhas.length
-  const concluidasCurso = vizinhas.filter((a) => a.progresso?.concluida).length
+    if (segundoInicial > 0 && controle?.navegavel) controle.irPara(segundoInicial)
+  }, [controle, segundoInicial])
 
   const aoRegistrarControle = useCallback((c: ControleDoPlayer) => setControle(c), [])
+
   const aoAtualizarProgresso = useCallback((p: { percentual: number; concluida: boolean }) => {
     setPercentual(p.percentual)
-    setConcluida(p.concluida)
+    setConcluida((antes) => {
+      // O convite à revisão só aparece na TRANSIÇÃO para concluída, e nunca
+      // para quem abriu uma aula que já tinha terminado: seria uma sugestão
+      // repetida a cada visita (§17).
+      if (p.concluida && !antes && !jaConcluidaAoAbrir.current) setMostrarReforco(true)
+      return p.concluida
+    })
   }, [])
 
   async function alternarConclusao() {
     setMarcando(true)
     setImpedimento('')
     try {
-      const res = await fetch(`/api/aulas/${aulaId}/conclusao`, {
+      const resposta = await fetch(`/api/aulas/${aulaId}/conclusao`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ concluida: !concluida }),
       })
-      const d = await res.json().catch(() => ({}))
-      if (res.ok) {
-        setConcluida(d.progresso?.concluida ?? !concluida)
+      const d = await resposta.json().catch(() => ({}))
+      if (resposta.ok) {
+        const virou = d.progresso?.concluida ?? !concluida
+        setConcluida(virou)
         if (d.progresso) setPercentual(d.progresso.percentual)
+        if (virou && !jaConcluidaAoAbrir.current) setMostrarReforco(true)
       } else {
-        // Um botão que não faz nada é pior do que um botão bloqueado: quem
-        // clicou tem de saber por quê. A razão vem do servidor — é ele que
-        // decide, e a avaliação obrigatória (§39) é a razão mais provável.
         setImpedimento(d.error || 'Não foi possível marcar a aula como concluída.')
       }
     } finally {
@@ -199,455 +226,533 @@ function AssistirAulaConteudo() {
     }
   }
 
-  const conteudo = aula?.videoEmbed || aula?.linkOuEmbed || ''
+  const abas = useMemo(() => {
+    if (!dados) return [] as Array<{ id: Aba; rotulo: string; icone: typeof Play }>
+    const lista: Array<{ id: Aba; rotulo: string; icone: typeof Play }> = [
+      { id: 'aula', rotulo: 'Aula', icone: Play },
+    ]
+    if (dados.recursos.resumo) lista.push({ id: 'resumo', rotulo: 'Resumo', icone: Sparkles })
+    if (dados.recursos.pdfs?.length) lista.push({ id: 'pdf', rotulo: 'PDF', icone: FileText })
+    if (dados.recursos.flashcards?.length) {
+      lista.push({ id: 'flashcards', rotulo: 'Flashcards', icone: Layers })
+    }
+    lista.push({ id: 'anotacoes', rotulo: 'Anotações', icone: StickyNote })
+    if (dados.recursos.discussao) {
+      lista.push({ id: 'discussao', rotulo: 'Dúvidas', icone: MessageCircle })
+    }
+    return lista
+  }, [dados])
 
   if (carregando) {
     return (
-      <AppShell headerTitle="Aula">
-        <div className="container mx-auto max-w-7xl px-4 py-8">
-          <div className="aspect-video w-full animate-pulse rounded-xl bg-muted" />
-          <div className="mt-4 h-6 w-2/3 animate-pulse rounded bg-muted" />
-        </div>
-      </AppShell>
-    )
-  }
-
-  if (erro || !aula) {
-    return (
-      <AppShell headerTitle="Aula">
-        <div className="container mx-auto max-w-2xl px-4 py-16 text-center">
-          <p className="text-lg font-bold">Aula não encontrada</p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Ela pode ter sido removida ou o endereço está errado.
-          </p>
-          <Link
-            href="/aulas"
-            className="mt-6 inline-flex h-10 items-center rounded-lg bg-primary px-5 text-sm font-bold text-primary-foreground"
-          >
-            Voltar para as aulas
-          </Link>
-        </div>
-      </AppShell>
-    )
-  }
-
-  const bloqueada = aula.acesso ? !aula.acesso.liberado : false
-
-  const corpo = (
-    <div
-      className={cn(
-        'container mx-auto px-4 py-5',
-        modoFoco ? 'max-w-5xl' : 'max-w-7xl',
-      )}
-    >
-      {/* ── Barra superior ────────────────────────────────────────────── */}
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-        <Link
-          href={comModo(aula.setorId ? `/aulas?curso=${aula.setorId}` : '/aulas', modo)}
-          className="inline-flex items-center gap-1.5 text-sm font-semibold text-muted-foreground transition hover:text-foreground"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          {nomeDoCurso || 'Aulas'}
-        </Link>
-
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setModoFoco((v) => !v)}
-            aria-pressed={modoFoco}
-            className={cn(
-              'inline-flex h-9 items-center gap-1.5 rounded-lg border px-3 text-xs font-semibold transition',
-              modoFoco
-                ? 'border-primary bg-primary text-primary-foreground'
-                : 'border-border bg-card text-muted-foreground hover:text-foreground',
-            )}
-          >
-            <Focus className="h-3.5 w-3.5" /> Modo foco
-          </button>
-
-          {totalCurso > 0 && !modoFoco ? (
-            <button
-              type="button"
-              onClick={() => setLateralAberta((v) => !v)}
-              className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-border bg-card px-3 text-xs font-semibold text-muted-foreground transition hover:text-foreground xl:hidden"
-            >
-              <ListVideo className="h-3.5 w-3.5" /> Conteúdo
-            </button>
-          ) : null}
-        </div>
+      <div className="container mx-auto max-w-6xl px-4 py-6">
+        <Esqueleto className="mb-4 h-4 w-64" />
+        <Esqueleto className="aspect-video w-full rounded-2xl" />
+        <Esqueleto className="mt-4 h-7 w-2/3" />
       </div>
+    )
+  }
 
-      <div
-        className={cn(
-          'grid gap-6',
-          !modoFoco && totalCurso > 0 && 'xl:grid-cols-[minmax(0,1fr)_320px]',
-        )}
-      >
-        {/* ── Coluna principal ────────────────────────────────────────── */}
-        <div className="min-w-0">
-          {bloqueada ? (
-            <CadeadoDaAula acesso={aula.acesso} />
-          ) : conteudo ? (
-            <PlayerDaAula
-              aulaId={aulaId}
-              videoEmbed={conteudo}
-              posicaoInicial={aula.progresso?.posicaoSegundos || 0}
-              aoRegistrarControle={aoRegistrarControle}
-              aoAtualizarProgresso={aoAtualizarProgresso}
-            />
+  if (erro || !dados) {
+    return (
+      <div className="container mx-auto max-w-3xl px-4 py-10">
+        <EstadoVazio
+          icone={BookOpen}
+          titulo="Aula não encontrada"
+          descricao="Ela pode ter saído do ar ou o endereço está errado."
+          acaoLabel="Voltar para o Ensino"
+          acaoHref="/aulas"
+        />
+      </div>
+    )
+  }
+
+  const { aula, acesso, recursos, trilha } = dados
+  const video = aula.videoEmbed || aula.linkOuEmbed || ''
+
+  return (
+    <ProvedorDeEnsino trilha={trilha?.slug}>
+      <div className="container mx-auto max-w-6xl px-4 pb-24 pt-4">
+        {/* ── Onde estou ─────────────────────────────────────────────── */}
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+          {trilha ? (
+            <Link
+              href={`/aulas/trilhas/${trilha.slug}`}
+              className="group inline-flex min-w-0 items-center gap-2 text-sm font-semibold text-primary"
+            >
+              <Route className="h-4 w-4 flex-none" />
+              <span className="truncate">{trilha.titulo}</span>
+              <span className="flex-none text-xs font-medium text-muted-foreground">
+                · Etapa {trilha.etapa.indice} de {trilha.etapa.total}
+              </span>
+            </Link>
           ) : (
-            <div className="flex aspect-video items-center justify-center rounded-xl border border-dashed border-border bg-muted/20 text-sm text-muted-foreground">
-              Esta aula ainda não tem vídeo publicado.
-            </div>
+            <Migalha
+              itens={dados.caminho.map((n) => ({
+                _id: n._id,
+                nome: n.nome,
+                href: `/aulas/explorar?no=${n._id}`,
+              }))}
+            />
           )}
 
-          {/* Título e ações */}
-          <div className="mt-4">
-            <div className="flex flex-wrap items-start justify-between gap-3">
-              <div className="min-w-0">
-                <h1 className="font-heading text-xl font-semibold leading-tight tracking-tight sm:text-2xl">
-                  {aula.titulo}
-                </h1>
-                {aula.acesso?.porAmostra ? (
-                  <p className="mt-1.5 inline-flex items-center gap-1.5 rounded-md border border-amber-500/30 bg-amber-500/10 px-2 py-1 text-xs font-semibold text-amber-700 dark:text-amber-200">
-                    <Sparkles className="h-3.5 w-3.5" />
-                    Esta é uma amostra das vídeo-aulas do Domine Aqui
-                  </p>
+          {trilha ? (
+            <div className="flex flex-none items-center gap-2 text-xs text-muted-foreground">
+              <BarraDeProgresso percentual={trilha.progresso.percentual} className="w-24" />
+              <span className="tabular-nums">
+                {trilha.progresso.concluidos}/{trilha.progresso.total}
+              </span>
+            </div>
+          ) : null}
+        </div>
+
+        <div className="lg:flex lg:gap-6">
+          {/* ── Coluna principal ─────────────────────────────────────── */}
+          <div className="min-w-0 flex-1">
+            {acesso.liberado && video ? (
+              <PlayerDaAula
+                aulaId={aulaId}
+                videoEmbed={video}
+                posicaoInicial={dados.progresso?.posicaoSegundos || 0}
+                aoRegistrarControle={aoRegistrarControle}
+                aoAtualizarProgresso={aoAtualizarProgresso}
+              />
+            ) : acesso.liberado ? (
+              <EstadoVazio
+                icone={Play}
+                titulo="Esta aula ainda não tem vídeo"
+                descricao="Assim que o conteúdo for publicado, ele aparece aqui."
+              />
+            ) : (
+              <Cadeado requisito={acesso.requisito} />
+            )}
+
+            {/* ── Título e ações ───────────────────────────────────── */}
+            <div className="mt-4">
+              <div className="flex flex-wrap items-center gap-2">
+                {aula.ensino?.tipo === 'resumo' ? <Selo tom="primario">Aula Resumo</Selo> : null}
+                <SeloDeProfundidade profundidade={aula.ensino?.profundidade} />
+                {acesso.porAmostra ? (
+                  <Selo tom="aviso">Esta é uma aula demonstrativa do Domine Aqui</Selo>
                 ) : null}
+                {aula.duracaoLabel ? <Selo>{aula.duracaoLabel}</Selo> : null}
               </div>
 
-              {!bloqueada ? (
-                <button
-                  type="button"
-                  onClick={alternarConclusao}
-                  disabled={marcando}
-                  className={cn(
-                    'inline-flex h-10 flex-none items-center gap-2 rounded-lg px-4 text-sm font-bold transition disabled:opacity-60',
-                    concluida
-                      ? 'border border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300'
-                      : 'bg-primary text-primary-foreground hover:brightness-110',
-                  )}
-                >
-                  {marcando ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : concluida ? (
-                    <CheckCircle2 className="h-4 w-4" />
-                  ) : (
-                    <Check className="h-4 w-4" />
-                  )}
-                  {concluida ? 'Aula concluída' : 'Marcar como concluída'}
-                </button>
+              <h1 className="mt-2 font-heading text-xl font-semibold leading-tight tracking-tight sm:text-2xl">
+                {aula.titulo}
+              </h1>
+
+              {dados.professores.length > 0 ? (
+                <div className="mt-2 flex flex-wrap items-center gap-3">
+                  {dados.professores.map((professor) => (
+                    <span key={professor._id} className="flex items-center gap-2">
+                      {professor.foto ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={professor.foto}
+                          alt=""
+                          className="h-7 w-7 rounded-full object-cover"
+                        />
+                      ) : null}
+                      <span className="text-sm">
+                        <span className="font-semibold">{professor.nome}</span>
+                        {professor.titulacao ? (
+                          <span className="text-muted-foreground"> · {professor.titulacao}</span>
+                        ) : null}
+                      </span>
+                    </span>
+                  ))}
+                </div>
+              ) : null}
+
+              {acesso.liberado ? (
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={alternarConclusao}
+                    disabled={marcando}
+                    className={cn(
+                      'inline-flex h-10 items-center gap-2 rounded-lg px-4 text-sm font-semibold transition disabled:opacity-60',
+                      concluida
+                        ? 'bg-primary text-primary-foreground'
+                        : 'border border-border bg-card hover:bg-muted',
+                    )}
+                  >
+                    {marcando ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Check className="h-4 w-4" strokeWidth={concluida ? 3 : 2} />
+                    )}
+                    {concluida ? 'Concluída' : 'Marcar como concluída'}
+                  </button>
+
+                  {(aula.botoesAcesso || []).map((botao) => (
+                    <a
+                      key={botao.url}
+                      href={botao.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex h-10 items-center rounded-lg border border-border px-4 text-sm font-semibold transition hover:bg-muted"
+                    >
+                      {botao.nome}
+                    </a>
+                  ))}
+
+                  {percentual > 0 && !concluida ? (
+                    <span className="ml-auto text-xs tabular-nums text-muted-foreground">
+                      {percentual}% assistido
+                    </span>
+                  ) : null}
+                </div>
+              ) : null}
+
+              {impedimento ? (
+                <p className="mt-2 rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
+                  {impedimento}
+                </p>
               ) : null}
             </div>
 
-            {impedimento ? (
-              <p className="mt-3 flex flex-wrap items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs font-medium text-amber-700 dark:text-amber-200">
-                <ClipboardCheck className="h-3.5 w-3.5 flex-none" />
-                <span className="min-w-0">{impedimento}</span>
-                {aula.avaliacao?.examId && avaliacaoDisponivel ? (
+            {/* ── Convite à revisão (§17) ──────────────────────────── */}
+            {mostrarReforco && dados.reforco.length > 0 ? (
+              <div className="mt-4 flex flex-wrap items-center gap-2 rounded-xl border border-primary/25 bg-primary/5 px-4 py-3">
+                <span className="text-sm font-semibold">Quer reforçar esse conteúdo?</span>
+                {dados.reforco.map((atalho) => (
                   <Link
-                    href={`/exam/${aula.avaliacao.examId}`}
-                    className="font-bold underline underline-offset-2"
+                    key={atalho.href}
+                    href={atalho.href}
+                    className="inline-flex h-8 items-center rounded-lg bg-card px-3 text-xs font-semibold transition hover:bg-muted"
                   >
-                    Fazer agora
+                    {atalho.rotulo}
                   </Link>
-                ) : null}
-              </p>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => setMostrarReforco(false)}
+                  aria-label="Dispensar"
+                  className="ml-auto inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition hover:bg-muted"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
             ) : null}
 
-            {percentual > 0 && !bloqueada ? (
-              <BarraDeProgresso percentual={percentual} concluida={concluida} className="mt-3" />
+            {/* ── Navegação sequencial (§9) ────────────────────────── */}
+            {trilha ? (
+              <nav className="mt-4 grid gap-2 sm:grid-cols-2">
+                {trilha.anterior ? (
+                  <Link
+                    href={`${trilha.anterior.href}`}
+                    className="group flex items-center gap-3 rounded-xl border border-border/70 bg-card px-4 py-3 transition hover:border-primary/40"
+                  >
+                    <ArrowLeft className="h-4 w-4 flex-none text-muted-foreground transition group-hover:-translate-x-0.5" />
+                    <span className="min-w-0">
+                      <span className="block text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                        Aula anterior
+                      </span>
+                      <span className="block truncate text-sm font-medium">
+                        {trilha.anterior.titulo}
+                      </span>
+                    </span>
+                  </Link>
+                ) : (
+                  <span className="hidden sm:block" />
+                )}
+
+                {trilha.proxima ? (
+                  <Link
+                    href={`${trilha.proxima.href}`}
+                    className="group flex items-center gap-3 rounded-xl border border-primary/30 bg-primary/5 px-4 py-3 text-right transition hover:border-primary/60"
+                  >
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-[11px] font-semibold uppercase tracking-wide text-primary">
+                        Próxima aula
+                      </span>
+                      <span className="block truncate text-sm font-medium">
+                        {trilha.proxima.titulo}
+                      </span>
+                    </span>
+                    <ArrowRight className="h-4 w-4 flex-none text-primary transition group-hover:translate-x-0.5" />
+                  </Link>
+                ) : (
+                  <Link
+                    href={`/aulas/trilhas/${trilha.slug}`}
+                    className="group flex items-center justify-end gap-3 rounded-xl border border-border/70 bg-card px-4 py-3 transition hover:border-primary/40"
+                  >
+                    <span className="text-sm font-medium">Última aula da Trilha — ver índice</span>
+                    <ArrowRight className="h-4 w-4 flex-none text-muted-foreground" />
+                  </Link>
+                )}
+              </nav>
             ) : null}
 
-            {aula.descricao ? (
-              <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground">
-                {aula.descricao}
-              </p>
-            ) : null}
+            {/* ── Abas (§10) ───────────────────────────────────────── */}
+            <div className="mt-6">
+              <div
+                role="tablist"
+                className="-mx-1 flex gap-1 overflow-x-auto border-b border-border px-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              >
+                {abas.map(({ id, rotulo, icone: Icone }) => (
+                  <button
+                    key={id}
+                    role="tab"
+                    type="button"
+                    aria-selected={aba === id}
+                    onClick={() => setAba(id)}
+                    className={cn(
+                      'inline-flex h-11 flex-none items-center gap-1.5 border-b-2 px-3 text-sm font-semibold transition',
+                      aba === id
+                        ? 'border-primary text-primary'
+                        : 'border-transparent text-muted-foreground hover:text-foreground',
+                    )}
+                  >
+                    <Icone className="h-4 w-4" />
+                    {rotulo}
+                  </button>
+                ))}
+              </div>
+
+              <div className="pt-4">
+                {aba === 'aula' ? (
+                  <SobreAula dados={dados} />
+                ) : aba === 'resumo' && recursos.resumo ? (
+                  <PainelDoResumo resumo={recursos.resumo} trilhaSlug={trilha?.slug} />
+                ) : aba === 'pdf' ? (
+                  <PainelDePdf pdfs={recursos.pdfs || []} />
+                ) : aba === 'flashcards' ? (
+                  <PainelDeFlashcards decks={recursos.flashcards || []} />
+                ) : aba === 'anotacoes' ? (
+                  <PainelDeAnotacoes aulaId={aulaId} controle={controle} />
+                ) : (
+                  <EstadoVazio
+                    icone={MessageCircle}
+                    titulo="Dúvidas em breve"
+                    descricao="O espaço de discussão desta aula está sendo preparado."
+                  />
+                )}
+              </div>
+            </div>
           </div>
 
-          {/* Próxima aula (§20) — o próximo passo sem voltar para a lista. */}
-          {concluida && proxima ? (
-            <Link
-              href={comModo(`/aulas/${proxima._id}`, modo)}
-              className="mt-5 flex items-center justify-between gap-3 rounded-xl border border-primary/30 bg-primary/5 p-4 transition hover:border-primary/60"
-            >
-              <div className="min-w-0">
-                <p className="text-xs font-bold uppercase tracking-wide text-primary">Próxima aula</p>
-                <p className="mt-0.5 line-clamp-1 font-semibold">{proxima.titulo}</p>
+          {/* ── Lateral: o conteúdo da etapa atual ───────────────────── */}
+          {trilha ? (
+            <aside className="mt-6 w-full flex-none lg:mt-0 lg:w-80">
+              <div className="overflow-hidden rounded-2xl border border-border/70 bg-card lg:sticky lg:top-20">
+                <button
+                  type="button"
+                  onClick={() => setIndiceAberto((v) => !v)}
+                  aria-expanded={indiceAberto}
+                  className="flex w-full items-center gap-2 px-4 py-3 text-left lg:cursor-default"
+                >
+                  <ListVideo className="h-4 w-4 flex-none text-primary" />
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-sm font-semibold">
+                      {trilha.etapa.titulo}
+                    </span>
+                    <span className="block text-xs text-muted-foreground">
+                      Etapa {trilha.etapa.indice} de {trilha.etapa.total}
+                    </span>
+                  </span>
+                  <ChevronDown
+                    className={cn(
+                      'h-4 w-4 flex-none text-muted-foreground transition lg:hidden',
+                      indiceAberto && 'rotate-180',
+                    )}
+                  />
+                </button>
+
+                {/* No celular a lista é recolhível — ela não pode empurrar o
+                    player para fora da tela. No desktop fica sempre aberta. */}
+                <div
+                  className={cn(
+                    'max-h-[60vh] overflow-y-auto border-t border-border/60 p-1.5',
+                    indiceAberto ? 'block' : 'hidden lg:block',
+                  )}
+                >
+                  {trilha.etapa.itens.map((item, i) => (
+                    <LinhaDeAula
+                      key={item._id}
+                      aula={item}
+                      numero={i + 1}
+                      atual={item._id === aulaId}
+                    />
+                  ))}
+                </div>
+
+                <Link
+                  href={`/aulas/trilhas/${trilha.slug}`}
+                  className="flex items-center justify-center gap-1.5 border-t border-border/60 px-4 py-2.5 text-xs font-semibold text-muted-foreground transition hover:text-primary"
+                >
+                  Ver a Trilha completa <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
               </div>
-              <span className="inline-flex h-10 flex-none items-center gap-1.5 rounded-lg bg-primary px-4 text-sm font-bold text-primary-foreground">
-                Continuar <ArrowRight className="h-4 w-4" />
-              </span>
-            </Link>
-          ) : null}
-
-          {/* Anexos */}
-          {!bloqueada && aula.pdfs && aula.pdfs.length > 0 ? (
-            <section className="mt-5">
-              <h2 className="mb-2 text-sm font-bold">Materiais da aula</h2>
-              <ul className="space-y-2">
-                {aula.pdfs.map((pdf) => (
-                  <li key={pdf.url}>
-                    <a
-                      href={pdf.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-between gap-3 rounded-lg border border-border bg-card px-3 py-2.5 text-sm transition hover:bg-muted"
-                    >
-                      <span className="truncate">{pdf.nome}</span>
-                      <ChevronRight className="h-4 w-4 flex-none text-muted-foreground" />
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ) : null}
-
-          {/* Capítulos e transcrição (§10, §11): no celular vêm logo abaixo do
-              vídeo — é onde a pergunta "onde está a parte que eu preciso?"
-              aparece — e no desktop sobem para a lateral, junto do índice. */}
-          {!bloqueada ? (
-            <div className={cn('mt-6', !modoFoco && totalCurso > 0 && 'xl:hidden')}>
-              <PainelDeMarcadores
-                capitulos={aula.capitulos}
-                transcricao={aula.transcricao}
-                controle={controle}
-              />
-            </div>
-          ) : null}
-
-          {/* Anotações: no celular vêm aqui embaixo; no desktop, na lateral. */}
-          {!bloqueada ? (
-            <div className={cn('mt-6', !modoFoco && totalCurso > 0 && 'xl:hidden')}>
-              <PainelDeAnotacoes aulaId={aulaId} controle={controle} />
-            </div>
+            </aside>
           ) : null}
         </div>
-
-        {/* ── Lateral ─────────────────────────────────────────────────── */}
-        {!modoFoco && totalCurso > 0 ? (
-          <aside
-            className={cn(
-              'min-w-0 space-y-6',
-              lateralAberta ? 'block' : 'hidden xl:block',
-            )}
-          >
-            <div className="rounded-xl border border-border bg-card p-3">
-              <div className="mb-2 flex items-center justify-between gap-2">
-                <p className="text-sm font-bold">Conteúdo do curso</p>
-                <span className="text-xs text-muted-foreground">
-                  {concluidasCurso}/{totalCurso}
-                </span>
-              </div>
-              <BarraDeProgresso
-                percentual={totalCurso ? (concluidasCurso / totalCurso) * 100 : 0}
-                concluida={concluidasCurso === totalCurso}
-                className="mb-3"
-              />
-
-              <ol className="max-h-[60vh] space-y-0.5 overflow-y-auto">
-                {vizinhas.map((v) => {
-                  const atual = v._id === aulaId
-                  const travada = v.acesso?.liberado === false
-                  return (
-                    <li key={v._id}>
-                      <Link
-                        href={comModo(`/aulas/${v._id}`, modo)}
-                        aria-current={atual ? 'page' : undefined}
-                        className={cn(
-                          'flex items-start gap-2 rounded-lg px-2 py-2 text-xs transition',
-                          atual ? 'bg-primary/10 font-bold text-primary' : 'hover:bg-muted',
-                          travada && 'opacity-60',
-                        )}
-                      >
-                        <span className="mt-0.5 flex-none">
-                          {v.progresso?.concluida ? (
-                            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
-                          ) : travada ? (
-                            <Lock className="h-3.5 w-3.5" />
-                          ) : atual ? (
-                            <PlayCircle className="h-3.5 w-3.5" />
-                          ) : (
-                            <Clock className="h-3.5 w-3.5 text-muted-foreground" />
-                          )}
-                        </span>
-                        <span className="line-clamp-2 leading-snug">{v.titulo}</span>
-                      </Link>
-                    </li>
-                  )
-                })}
-              </ol>
-            </div>
-
-            {!bloqueada ? (
-              <PainelDeMarcadores
-                capitulos={aula.capitulos}
-                transcricao={aula.transcricao}
-                controle={controle}
-              />
-            ) : null}
-
-            {!bloqueada ? <PainelDeAnotacoes aulaId={aulaId} controle={controle} /> : null}
-          </aside>
-        ) : null}
       </div>
+    </ProvedorDeEnsino>
+  )
+}
 
-      {/* Avaliação (§39): a aula aponta para uma prova que já existe no sistema
-          de provas, em vez de a plataforma ganhar um segundo motor de quiz. */}
-      {aula.avaliacao?.examId && avaliacaoDisponivel && !bloqueada && !modoFoco ? (
-        <section className="mt-8 rounded-xl border border-primary/25 bg-primary/5 p-4">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="min-w-0">
-              <h2 className="flex items-center gap-2 text-sm font-bold">
-                <ClipboardCheck className="h-4 w-4 text-primary" />
-                {aula.avaliacao.titulo || 'Avaliação desta aula'}
-              </h2>
-              <p className="mt-0.5 text-xs text-muted-foreground">
-                {descreverAvaliacao(aula.avaliacao, avaliacaoFeita)}
-              </p>
-            </div>
-            <Link
-              href={`/exam/${aula.avaliacao.examId}`}
-              className={cn(
-                'inline-flex h-9 flex-none items-center rounded-lg px-4 text-xs font-bold transition',
-                avaliacaoFeita
-                  ? 'border border-border text-foreground hover:bg-muted'
-                  : 'bg-primary text-primary-foreground hover:brightness-110',
-              )}
-            >
-              {avaliacaoFeita ? 'Rever avaliação' : 'Fazer avaliação'}
-            </Link>
-          </div>
-        </section>
+/* =================== ABAS =================== */
+
+/**
+ * A aba "Aula": descrição, pré-requisitos, relacionadas e as Trilhas que contêm
+ * esta aula.
+ *
+ * As Trilhas ficam aqui, e não no topo, de propósito: quem chegou pela busca
+ * veio atrás DESTA aula (§4). Descobrir que existe um caminho inteiro sobre o
+ * assunto é um bônus valioso, mas não pode competir com o vídeo que a pessoa
+ * abriu para assistir.
+ */
+function SobreAula({ dados }: { dados: RespostaDaAula }) {
+  return (
+    <div className="space-y-6">
+      {dados.aula.descricao ? (
+        <p className="max-w-3xl whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
+          {dados.aula.descricao}
+        </p>
       ) : null}
 
-      {/* Conteúdo relacionado (§31): a curadoria que o índice do curso não faz,
-          porque atravessa módulo e curso — "antes desta, veja gasometria". */}
-      {relacionadas.length > 0 && !modoFoco ? (
-        <section className="mt-8">
-          <h2 className="mb-3 text-sm font-bold">Veja também</h2>
+      {dados.prerequisitos.length > 0 ? (
+        <section>
+          <h2 className="mb-2 text-sm font-bold">Recomendamos conhecer antes</h2>
+          <p className="mb-3 text-xs text-muted-foreground">
+            Não é obrigatório — se você já domina, siga em frente.
+          </p>
           <Trilho>
-            {relacionadas.map((r) => (
-              <CardDeAula key={r._id} aula={r} noTrilho />
+            {dados.prerequisitos.map((aula) => (
+              <CartaoDeAula key={aula._id} aula={aula} />
             ))}
           </Trilho>
         </section>
       ) : null}
 
-      {/* Navegação entre aulas, sempre disponível */}
-      {(anterior || proxima) && !modoFoco ? (
-        <div className="mt-8 flex items-center justify-between gap-3 border-t border-border pt-4">
-          {anterior ? (
-            <button
-              type="button"
-              onClick={() => router.push(comModo(`/aulas/${anterior._id}`, modo))}
-              className="inline-flex min-w-0 items-center gap-2 text-sm text-muted-foreground transition hover:text-foreground"
-            >
-              <ArrowLeft className="h-4 w-4 flex-none" />
-              <span className="truncate">{anterior.titulo}</span>
-            </button>
-          ) : (
-            <span />
-          )}
-          {proxima ? (
-            <button
-              type="button"
-              onClick={() => router.push(comModo(`/aulas/${proxima._id}`, modo))}
-              className="inline-flex min-w-0 items-center gap-2 text-sm font-semibold text-primary transition hover:brightness-110"
-            >
-              <span className="truncate">{proxima.titulo}</span>
-              <ArrowRight className="h-4 w-4 flex-none" />
-            </button>
-          ) : null}
-        </div>
+      {dados.trilhasQueContem.length > 0 ? (
+        <section>
+          <h2 className="mb-2 text-sm font-bold">Esta aula faz parte de</h2>
+          <div className="flex flex-wrap gap-2">
+            {dados.trilhasQueContem.map((trilha) => (
+              <Link
+                key={trilha.slug}
+                href={`/aulas/trilhas/${trilha.slug}`}
+                className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-sm font-medium transition hover:border-primary/40 hover:text-primary"
+              >
+                <Route className="h-3.5 w-3.5 text-primary" />
+                {trilha.titulo}
+              </Link>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {dados.relacionadas.length > 0 ? (
+        <section>
+          <h2 className="mb-3 text-sm font-bold">Conteúdo relacionado</h2>
+          <Trilho>
+            {dados.relacionadas.map((aula) => (
+              <CartaoDeAula key={aula._id} aula={aula} />
+            ))}
+          </Trilho>
+        </section>
       ) : null}
     </div>
-  )
-
-  // O Modo Foco tira o shell inteiro: menu lateral, cabeçalho e o resto da
-  // navegação da plataforma. Quem ativou quer o vídeo e nada mais.
-  if (modoFoco) {
-    return (
-      <div className="min-h-screen bg-background">
-        <button
-          type="button"
-          onClick={() => setModoFoco(false)}
-          className="fixed right-4 top-4 z-50 inline-flex h-10 items-center gap-1.5 rounded-lg border border-border bg-card/95 px-3 text-xs font-bold shadow-lg backdrop-blur"
-        >
-          <X className="h-4 w-4" /> Sair do foco
-        </button>
-        {corpo}
-      </div>
-    )
-  }
-
-  return (
-    <AppShell headerTitle="Aula">
-      <FaixaModoAluno modo={modo} caminho={`/aulas/${aulaId}`} />
-      {corpo}
-    </AppShell>
-  )
-}
-
-export default function AssistirAulaPage() {
-  // `useSearchParams` obriga a fronteira de Suspense no App Router — sem ela o
-  // build reclama e a rota inteira deixa de ser pré-renderizada.
-  return (
-    <Suspense
-      fallback={
-        <AppShell headerTitle="Aula">
-          <div className="container mx-auto max-w-7xl px-4 py-8">
-            <div className="aspect-video w-full animate-pulse rounded-xl bg-muted" />
-            <div className="mt-4 h-6 w-2/3 animate-pulse rounded bg-muted" />
-          </div>
-        </AppShell>
-      }
-    >
-      <AssistirAulaConteudo />
-    </Suspense>
   )
 }
 
 /**
- * Cadeado com motivo e saída (§17).
+ * A aba "Resumo".
  *
- * Nunca uma página quebrada: o servidor já disse por que travou e para onde
- * mandar, e é exatamente isso que aparece.
+ * Não embute um segundo player: leva à Aula Resumo, que é uma aula de verdade
+ * com progresso e anotações próprios (§3). Duplicar o player aqui criaria uma
+ * segunda sessão de vídeo cujo progresso ninguém saberia onde foi parar.
  */
-function CadeadoDaAula({ acesso }: { acesso?: Aula['acesso'] }) {
-  const requisito = acesso?.requisito
-  const agendada = requisito?.motivo === 'agendada'
-  const liberaEm = requisito?.liberaEm ? new Date(requisito.liberaEm) : null
+function PainelDoResumo({ resumo, trilhaSlug }: { resumo: AulaNaTela; trilhaSlug?: string }) {
+  const href = trilhaSlug ? `${resumo.href}?trilha=${encodeURIComponent(trilhaSlug)}` : resumo.href
 
   return (
-    <div className="flex aspect-video flex-col items-center justify-center gap-3 rounded-xl border border-border bg-muted/20 px-6 text-center">
-      <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
-        {agendada ? <Clock className="h-6 w-6" /> : <Lock className="h-6 w-6" />}
-      </span>
-      <p className="text-base font-bold">{requisito?.titulo || 'Conteúdo restrito'}</p>
-
-      {agendada && liberaEm ? (
-        <p className="text-sm text-muted-foreground">
-          Disponível em{' '}
-          {liberaEm.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' })} às{' '}
-          {liberaEm.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+    <div className="flex flex-wrap items-center gap-4 rounded-2xl border border-border/70 bg-card p-4">
+      <div className="min-w-0 flex-1">
+        <p className="text-[11px] font-bold uppercase tracking-wide text-primary">Aula Resumo</p>
+        <h3 className="mt-0.5 font-heading text-base font-semibold tracking-tight">
+          {resumo.titulo}
+        </h3>
+        <p className="mt-1 text-sm text-muted-foreground">
+          A versão condensada desta aula
+          {resumo.duracaoLabel ? ` — ${resumo.duracaoLabel}` : ''}. Ideal para revisar depois.
         </p>
-      ) : (
-        <p className="max-w-md text-sm text-muted-foreground">
-          Assim que você tiver acesso, esta aula abre aqui mesmo — seu progresso e suas anotações
-          continuam guardados.
-        </p>
-      )}
+      </div>
+      <Link
+        href={href}
+        className="inline-flex h-10 flex-none items-center gap-2 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:opacity-90"
+      >
+        <Play className="h-4 w-4" fill="currentColor" /> Assistir resumo
+      </Link>
+    </div>
+  )
+}
 
-      {requisito?.acaoLabel && requisito.acaoHref ? (
-        <Link
-          href={requisito.acaoHref}
-          className="mt-2 inline-flex h-10 items-center rounded-lg bg-primary px-5 text-sm font-bold text-primary-foreground transition hover:brightness-110"
+function PainelDePdf({ pdfs }: { pdfs: Array<{ nome: string; url: string }> }) {
+  if (pdfs.length === 0) {
+    return (
+      <EstadoVazio
+        icone={FileText}
+        titulo="Sem PDF nesta aula"
+        descricao="Quando houver material escrito, ele aparece aqui."
+      />
+    )
+  }
+
+  return (
+    <div className="space-y-2">
+      {pdfs.map((pdf) => (
+        <a
+          key={pdf.url}
+          href={pdf.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group flex min-h-[3.25rem] items-center gap-3 rounded-xl border border-border/70 bg-card px-4 py-3 transition hover:border-primary/40"
         >
-          {requisito.acaoLabel}
+          <FileText className="h-5 w-5 flex-none text-primary" />
+          <span className="min-w-0 flex-1 truncate text-sm font-medium">{pdf.nome}</span>
+          <Download className="h-4 w-4 flex-none text-muted-foreground transition group-hover:text-primary" />
+        </a>
+      ))}
+    </div>
+  )
+}
+
+function PainelDeFlashcards({
+  decks,
+}: {
+  decks: Array<{ _id: string; titulo: string; cards: number; href: string }>
+}) {
+  if (decks.length === 0) {
+    return (
+      <EstadoVazio
+        icone={Layers}
+        titulo="Sem flashcards nesta aula"
+        descricao="Quando houver um deck vinculado, ele aparece aqui."
+      />
+    )
+  }
+
+  return (
+    <div className="space-y-2">
+      {decks.map((deck) => (
+        <Link
+          key={deck._id}
+          href={deck.href}
+          className="group flex min-h-[3.25rem] items-center gap-3 rounded-xl border border-border/70 bg-card px-4 py-3 transition hover:border-primary/40"
+        >
+          <Layers className="h-5 w-5 flex-none text-primary" />
+          <span className="min-w-0 flex-1">
+            <span className="block truncate text-sm font-medium">{deck.titulo}</span>
+            <span className="block text-xs text-muted-foreground">{deck.cards} cards</span>
+          </span>
+          <ArrowRight className="h-4 w-4 flex-none text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-primary" />
         </Link>
-      ) : null}
+      ))}
     </div>
   )
 }
