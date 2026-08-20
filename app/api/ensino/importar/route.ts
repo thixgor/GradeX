@@ -10,6 +10,21 @@ import { garantirIndicesDeEnsino, podeEditarEnsino } from '@/lib/ensino/reposito
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
+/**
+ * `aplicarPacote` (a aplicação real, com `ensaio: false`) escreve uma aula de
+ * cada vez — a taxonomia de um caminho pode nascer no meio da importação, e a
+ * segunda aula do arquivo pode depender do nó que a primeira acabou de criar,
+ * então as gravações não podem virar um `bulkWrite` cego. Isso é rápido para o
+ * arquivo de exemplo (uma dúzia de aulas), mas um plano de ensino de verdade
+ * — centenas de aulas — soma centenas de idas ao banco, uma atrás da outra.
+ *
+ * Sem este limite explícito, a rota herdava o padrão da plataforma (10–15s):
+ * o ENSAIO sempre terminava a tempo (ele não escreve nada), então o relatório
+ * de prévia aparecia normal — e só a aplicação de verdade, no arquivo grande,
+ * estourava. O servidor devolvia uma página de timeout em vez de JSON, e a
+ * tela mostrava só "Não foi possível processar." sem dizer por quê.
+ */
+export const maxDuration = 300
 
 /** Um arquivo de importação plausível tem KBs, não MBs. */
 const TAMANHO_MAXIMO = 2 * 1024 * 1024

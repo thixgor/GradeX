@@ -112,7 +112,19 @@ function Conteudo() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ acao, ensaio, conteudo }),
       })
-      const d = await resposta.json().catch(() => ({}))
+      // Um arquivo grande demora, e a aplicação de verdade (não o ensaio)
+      // pode estourar o tempo do servidor antes de terminar de escrever. Nesse
+      // caso a resposta não é o JSON de sempre — é uma página de erro do
+      // próprio servidor —, e sem este aviso específico a pessoa só via "Não
+      // foi possível processar." sem saber que o motivo era o tamanho.
+      const d = await resposta.json().catch(() => {
+        if (!ensaio && (resposta.status === 502 || resposta.status === 504)) {
+          throw new Error(
+            'A importação demorou demais para o servidor responder. Divida o arquivo em partes menores e importe cada uma separadamente.',
+          )
+        }
+        return {}
+      })
       if (!resposta.ok) throw new Error(d.error || 'Não foi possível processar.')
       if (acao === 'migrar') setMigracao(d)
       else setRelatorio(d.relatorio)
