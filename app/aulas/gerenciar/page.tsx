@@ -195,7 +195,7 @@ function Conteudo() {
             descricao="Traga aulas e Trilhas por arquivo Markdown ou JSON, e migre o acervo antigo."
           />
           <Atalho
-            href="/aulas/gerenciar/aulas/criar"
+            href="/aulas/gerenciar/catalogo/nova"
             icone={Plus}
             titulo="Nova aula"
             descricao="Cadastre uma unidade específica de conhecimento — pequena e reutilizável."

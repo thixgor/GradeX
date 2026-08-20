@@ -177,7 +177,7 @@ function Conteudo() {
       titulo="Aulas"
       descricao="Unidades específicas de conhecimento. A mesma aula pode servir a várias Trilhas — o número ao lado mostra em quantas."
       acoes={
-        <BotaoPrincipal href="/aulas/gerenciar/aulas/criar">
+        <BotaoPrincipal href="/aulas/gerenciar/catalogo/nova">
           <Plus className="h-4 w-4" /> Nova aula
         </BotaoPrincipal>
       }
@@ -342,7 +342,7 @@ function Conteudo() {
                   <Layers className="h-4 w-4" />
                 </button>
                 <Link
-                  href={`/aulas/gerenciar/aulas/${aula._id}/editar`}
+                  href={`/aulas/gerenciar/catalogo/${aula._id}`}
                   title="Editar aula"
                   className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition hover:bg-muted hover:text-foreground"
                 >
@@ -358,7 +358,6 @@ function Conteudo() {
         <PainelDeOrganizacao
           aula={organizando}
           nos={nos}
-          acervo={aulas}
           aoFechar={() => setOrganizando(null)}
           aoSalvar={() => {
             setOrganizando(null)
@@ -390,24 +389,21 @@ function Recurso({
 }
 
 /**
- * O painel lateral de organização (§23).
+ * O painel lateral de classificação rápida.
  *
- * Só o que é específico do novo modelo: onde a aula mora na taxonomia, seu grau
- * de profundidade, tags, duração, a Aula Resumo vinculada e os pré-requisitos.
- * Vídeo, capa, acesso e agendamento continuam no editor completo — duplicar
- * aqueles campos aqui criaria dois lugares para editar a mesma coisa, e a
- * pergunta "qual dos dois vale?" não teria resposta.
+ * Existe para uma tarefa só: esvaziar a fila de "aulas sem organização" sem
+ * sair da lista. São quatro campos — onde a aula mora, profundidade, duração e
+ * tags — e nada além. Todo o resto (vídeo, resumo, relações, permissões) mora
+ * no editor completo, porque campo repetido em dois lugares vira duas verdades.
  */
 function PainelDeOrganizacao({
   aula,
   nos,
-  acervo,
   aoFechar,
   aoSalvar,
 }: {
   aula: AulaNoCatalogo
   nos: NoNaTela[]
-  acervo: AulaNoCatalogo[]
   aoFechar: () => void
   aoSalvar: () => void
 }) {
@@ -548,51 +544,21 @@ function PainelDeOrganizacao({
             />
           </Campo>
 
-          <Campo
-            rotulo="Aula Resumo vinculada"
-            dica="A versão condensada desta aula. Ela some da navegação normal e aparece na aba Resumo."
+          {/*
+           * O painel para aqui de propósito.
+           *
+           * Aula Resumo, pré-requisitos, vídeo, PDFs e permissões moram no
+           * editor completo. Repeti-los aqui criaria dois lugares para editar a
+           * mesma coisa, e a pergunta "qual dos dois vale?" não teria resposta.
+           * Este painel resolve UMA coisa: tirar a aula da fila de "sem
+           * organização" sem sair da lista.
+           */}
+          <Link
+            href={`/aulas/gerenciar/catalogo/${aula._id}`}
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground transition hover:text-primary"
           >
-            <select
-              value={ensino.resumoId || ''}
-              onChange={(e) => setEnsino({ ...ensino, resumoId: e.target.value || null })}
-              className={classeDeEntrada}
-            >
-              <option value="">— nenhuma —</option>
-              {acervo
-                .filter((outra) => outra._id !== aula._id)
-                .map((outra) => (
-                  <option key={outra._id} value={outra._id}>
-                    {outra.titulo}
-                  </option>
-                ))}
-            </select>
-          </Campo>
-
-          <Campo
-            rotulo="Recomendamos conhecer antes"
-            dica="Pré-requisitos são recomendação, nunca bloqueio."
-          >
-            <select
-              multiple
-              size={6}
-              value={ensino.prerequisitos || []}
-              onChange={(e) =>
-                setEnsino({
-                  ...ensino,
-                  prerequisitos: Array.from(e.target.selectedOptions).map((o) => o.value),
-                })
-              }
-              className="w-full rounded-lg border border-border bg-card p-2 text-sm outline-none transition focus:border-primary/50"
-            >
-              {acervo
-                .filter((outra) => outra._id !== aula._id)
-                .map((outra) => (
-                  <option key={outra._id} value={outra._id}>
-                    {outra.titulo}
-                  </option>
-                ))}
-            </select>
-          </Campo>
+            <Pencil className="h-3.5 w-3.5" /> Abrir o editor completo desta aula
+          </Link>
         </div>
 
         <div className="flex items-center gap-2 border-t border-border px-4 py-3">

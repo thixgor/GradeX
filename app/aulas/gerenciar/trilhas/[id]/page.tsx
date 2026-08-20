@@ -8,8 +8,12 @@ import {
   Check,
   ChevronDown,
   ChevronUp,
+  ExternalLink,
   Eye,
+  FileText,
   GripVertical,
+  Layers,
+  Link2,
   Plus,
   Search,
   Trash2,
@@ -70,6 +74,8 @@ interface ItemNaEtapa {
   id: string
   tipo: string
   refId: string
+  /** Só para `link` — os demais tipos referenciam por `refId`. */
+  url?: string
   rotulo?: string
   nota?: string
   obrigatorio?: boolean
@@ -96,6 +102,7 @@ interface TrilhaEmEdicao {
   capa?: { tipo: 'imagem' | 'cor'; imagem?: string; cor?: string } | null
   certificado?: { ativo: boolean } | null
   regrasAcesso?: any
+  prerequisitos?: string[]
   destaque?: boolean
   situacao: string
   etapas: EtapaEmEdicao[]
@@ -129,6 +136,9 @@ function Conteudo() {
 
   /** Etapa que recebe a aula clicada no acervo. */
   const [etapaAlvo, setEtapaAlvo] = useState<string>('')
+  /** Etapa com o formulário de conteúdo complementar aberto. */
+  const [complementarEm, setComplementarEm] = useState('')
+  const [trilhasIrmas, setTrilhasIrmas] = useState<Array<{ _id: string; titulo: string }>>([])
   const arrastando = useRef<{ etapaId: string; itemId: string } | null>(null)
 
   useEffect(() => {
@@ -142,8 +152,11 @@ function Conteudo() {
       fetch('/api/ensino/catalogo?admin=1&limite=300&comTrilhas=1', { cache: 'no-store' }).then(
         (r) => (r.ok ? r.json() : null),
       ),
+      fetch('/api/ensino/trilhas?rascunhos=1', { cache: 'no-store' }).then((r) =>
+        r.ok ? r.json() : null,
+      ),
     ])
-      .then(([detalhe, catalogo]) => {
+      .then(([detalhe, catalogo, todas]) => {
         if (cancelado) return
         if (detalhe?.trilha) {
           // O GET devolve os itens já resolvidos com a aula embutida; o editor
@@ -165,6 +178,13 @@ function Conteudo() {
           setEtapaAlvo(etapas[0]?.id || '')
         }
         if (catalogo?.aulas) setAcervo(catalogo.aulas)
+        if (todas?.trilhas) {
+          setTrilhasIrmas(
+            todas.trilhas
+              .filter((t: any) => t._id !== trilhaId)
+              .map((t: any) => ({ _id: t._id, titulo: t.titulo })),
+          )
+        }
       })
       .catch(() => {})
       .finally(() => {
@@ -266,6 +286,40 @@ function Conteudo() {
           : etapa,
       ),
     )
+  }
+
+  /**
+   * Conteúdo complementar (§6).
+   *
+   * Um material, um deck, uma prova ou um link externo dentro da etapa. Entra
+   * como NÃO obrigatório por padrão: complementar que conta no progresso é uma
+   * contradição, e faria a barra do aluno parar em 94% para sempre.
+   */
+  function adicionarComplementar(etapaId: string, tipo: string, valor: string, rotulo: string) {
+    if (!trilha) return
+    const limpo = valor.trim()
+    if (!limpo) return
+    alterarEtapas(
+      trilha.etapas.map((etapa) =>
+        etapa.id === etapaId
+          ? {
+              ...etapa,
+              itens: [
+                ...etapa.itens,
+                {
+                  id: idLocal('i'),
+                  tipo,
+                  refId: tipo === 'link' ? '' : limpo,
+                  ...(tipo === 'link' ? { url: limpo } : {}),
+                  rotulo: rotulo.trim() || undefined,
+                  obrigatorio: false,
+                },
+              ],
+            }
+          : etapa,
+      ),
+    )
+    setComplementarEm('')
   }
 
   function removerItem(etapaId: string, itemId: string) {
@@ -579,6 +633,30 @@ function Conteudo() {
                  * X". O aluno não precisa entender nada disso — para ele a
                  * Trilha simplesmente aparece liberada.
                  */}
+                <Campo
+                  rotulo="Trilhas recomendadas antes desta"
+                  dica="Recomendação, nunca bloqueio — o aluno decide se pula."
+                  className="sm:col-span-2"
+                >
+                  <select
+                    multiple
+                    size={Math.min(5, Math.max(2, trilhasIrmas.length))}
+                    value={trilha.prerequisitos || []}
+                    onChange={(e) =>
+                      alterar({
+                        prerequisitos: Array.from(e.target.selectedOptions).map((o) => o.value),
+                      })
+                    }
+                    className="w-full rounded-lg border border-border bg-card p-2 text-sm outline-none transition focus:border-primary/50"
+                  >
+                    {trilhasIrmas.map((irma) => (
+                      <option key={irma._id} value={irma._id}>
+                        {irma.titulo}
+                      </option>
+                    ))}
+                  </select>
+                </Campo>
+
                 <div className="sm:col-span-2">
                   <p className="mb-1 text-xs font-bold uppercase tracking-wide text-muted-foreground">
                     Quem pode fazer esta Trilha
@@ -680,12 +758,19 @@ function Conteudo() {
                         </span>
 
                         <span className="min-w-0 flex-1">
-                          <span className="block truncate text-sm font-medium">
-                            {aula?.titulo || item.rotulo || 'Aula removida do acervo'}
+                          <span className="flex items-center gap-1.5 truncate text-sm font-medium">
+                            {item.tipo !== 'aula' ? <IconeDoTipo tipo={item.tipo} /> : null}
+                            {item.tipo === 'aula'
+                              ? aula?.titulo || item.rotulo || 'Aula removida do acervo'
+                              : item.rotulo || ROTULO_DO_TIPO[item.tipo] || 'Conteúdo complementar'}
                           </span>
-                          {aula?.localizacao ? (
+                          {item.tipo === 'aula' && aula?.localizacao ? (
                             <span className="block truncate text-xs text-muted-foreground">
                               {aula.localizacao}
+                            </span>
+                          ) : item.tipo !== 'aula' ? (
+                            <span className="block truncate text-xs text-muted-foreground">
+                              {item.url || item.refId}
                             </span>
                           ) : null}
                         </span>
@@ -756,20 +841,40 @@ function Conteudo() {
                 )}
               </div>
 
-              <button
-                type="button"
-                onClick={() => setEtapaAlvo(etapa.id)}
-                className={cn(
-                  'w-full border-t border-border/60 px-4 py-2 text-xs font-semibold transition',
-                  etapaAlvo === etapa.id
-                    ? 'bg-primary/10 text-primary'
-                    : 'text-muted-foreground hover:bg-muted',
-                )}
-              >
-                {etapaAlvo === etapa.id
-                  ? 'Recebendo as aulas que você clicar no acervo →'
-                  : 'Adicionar aulas nesta etapa'}
-              </button>
+              <div className="flex border-t border-border/60">
+                <button
+                  type="button"
+                  onClick={() => setEtapaAlvo(etapa.id)}
+                  className={cn(
+                    'flex-1 px-4 py-2 text-xs font-semibold transition',
+                    etapaAlvo === etapa.id
+                      ? 'bg-primary/10 text-primary'
+                      : 'text-muted-foreground hover:bg-muted',
+                  )}
+                >
+                  {etapaAlvo === etapa.id
+                    ? 'Recebendo as aulas que você clicar no acervo →'
+                    : 'Adicionar aulas nesta etapa'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setComplementarEm((atual) => (atual === etapa.id ? '' : etapa.id))
+                  }
+                  className="flex-none border-l border-border/60 px-4 py-2 text-xs font-semibold text-muted-foreground transition hover:bg-muted"
+                >
+                  + Complementar
+                </button>
+              </div>
+
+              {complementarEm === etapa.id ? (
+                <FormularioComplementar
+                  aoAdicionar={(tipo, valor, rotulo) =>
+                    adicionarComplementar(etapa.id, tipo, valor, rotulo)
+                  }
+                  aoCancelar={() => setComplementarEm('')}
+                />
+              ) : null}
             </section>
           ))}
 
@@ -850,7 +955,7 @@ function Conteudo() {
 
             <div className="border-t border-border/60 px-3 py-2">
               <Link
-                href="/aulas/gerenciar/aulas/criar"
+                href="/aulas/gerenciar/catalogo/nova"
                 className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground transition hover:text-primary"
               >
                 <Plus className="h-3.5 w-3.5" /> Criar uma aula nova
@@ -881,5 +986,83 @@ function Conteudo() {
         </div>
       </div>
     </PainelDeEnsino>
+  )
+}
+
+/* =================== CONTEÚDO COMPLEMENTAR =================== */
+
+const ROTULO_DO_TIPO: Record<string, string> = {
+  material: 'Material de /materiais',
+  flashcards: 'Deck de flashcards',
+  prova: 'Prova do banco',
+  link: 'Link externo',
+}
+
+function IconeDoTipo({ tipo }: { tipo: string }) {
+  const Icone =
+    tipo === 'link' ? ExternalLink : tipo === 'flashcards' ? Layers : tipo === 'prova' ? Check : FileText
+  return <Icone className="h-3.5 w-3.5 flex-none text-muted-foreground" />
+}
+
+/**
+ * O formulário de conteúdo complementar.
+ *
+ * Aparece só quando pedido, e some ao adicionar: ele é a exceção dentro da
+ * etapa, não o caminho principal. Se ficasse sempre aberto, cada etapa
+ * carregaria quatro campos vazios que na maioria das Trilhas nunca serão
+ * preenchidos.
+ */
+function FormularioComplementar({
+  aoAdicionar,
+  aoCancelar,
+}: {
+  aoAdicionar: (tipo: string, valor: string, rotulo: string) => void
+  aoCancelar: () => void
+}) {
+  const [tipo, setTipo] = useState('link')
+  const [valor, setValor] = useState('')
+  const [rotulo, setRotulo] = useState('')
+
+  return (
+    <div className="space-y-2 border-t border-border/60 bg-muted/40 p-3">
+      <div className="flex flex-wrap gap-2">
+        <select
+          value={tipo}
+          onChange={(e) => setTipo(e.target.value)}
+          className={cn(classeDeEntrada, 'max-w-[13rem] flex-none')}
+        >
+          <option value="link">Link externo</option>
+          <option value="material">Material de /materiais</option>
+          <option value="flashcards">Deck de flashcards</option>
+          <option value="prova">Prova do banco</option>
+        </select>
+
+        <input
+          value={valor}
+          onChange={(e) => setValor(e.target.value)}
+          placeholder={tipo === 'link' ? 'https://…' : 'id do item'}
+          className={cn(classeDeEntrada, 'min-w-[12rem] flex-1')}
+        />
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        <input
+          value={rotulo}
+          onChange={(e) => setRotulo(e.target.value)}
+          placeholder="Como aparece na etapa (opcional)"
+          className={cn(classeDeEntrada, 'min-w-[12rem] flex-1')}
+        />
+        <BotaoPrincipal onClick={() => aoAdicionar(tipo, valor, rotulo)} className="flex-none">
+          <Link2 className="h-4 w-4" /> Adicionar
+        </BotaoPrincipal>
+        <BotaoSecundario onClick={aoCancelar} className="flex-none">
+          Cancelar
+        </BotaoSecundario>
+      </div>
+
+      <p className="text-xs text-muted-foreground">
+        Complementar não conta no progresso da Trilha — ele acompanha o caminho sem virar dívida.
+      </p>
+    </div>
   )
 }
