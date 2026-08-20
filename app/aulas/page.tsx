@@ -18,7 +18,7 @@ import {
 } from 'lucide-react'
 
 import { AppShell, useAppShell } from '@/components/app-shell'
-import { CabecalhoDeEnsino } from '@/components/ensino/cabecalho'
+import { DocaDeEnsino, RESPIRO_DA_DOCA } from '@/components/ensino/doca'
 import {
   BotaoDuo,
   Cascata,
@@ -110,6 +110,7 @@ export default function AulasPage() {
   return (
     <AppShell headerTitle="Ensino" headerSubtitle="Trilhas, aulas e revisão">
       <ConteudoDaHome />
+      <DocaDeEnsino />
     </AppShell>
   )
 }
@@ -162,8 +163,7 @@ function ConteudoDaHome() {
     modulos.length === 0
 
   return (
-    <div className="container mx-auto max-w-7xl px-4 pb-16">
-      <CabecalhoDeEnsino />
+    <div className={`container mx-auto max-w-7xl px-4 ${RESPIRO_DA_DOCA}`}>
 
       <motion.header
         initial={semMovimento ? false : { opacity: 0, y: 10 }}

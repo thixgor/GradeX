@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { StickyNote, Search, Star } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
-import { CabecalhoDeEnsino } from '@/components/ensino/cabecalho'
+import { DocaDeEnsino, RESPIRO_DA_DOCA } from '@/components/ensino/doca'
 import { EstadoVazio, Esqueleto } from '@/components/ensino/primitivos'
 import { cn } from '@/lib/utils'
 
@@ -51,6 +51,7 @@ export default function MinhasAnotacoesPage() {
   return (
     <AppShell headerTitle="Minhas Anotações" headerSubtitle="Seu caderno de estudo">
       <Conteudo />
+      <DocaDeEnsino />
     </AppShell>
   )
 }
@@ -97,8 +98,7 @@ function Conteudo() {
   }, [grupos, busca])
 
   return (
-    <div className="container mx-auto max-w-4xl px-4 pb-16">
-      <CabecalhoDeEnsino />
+    <div className={`container mx-auto max-w-4xl px-4 ${RESPIRO_DA_DOCA}`}>
 
       <header className="mb-5">
         <h1 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">

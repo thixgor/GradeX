@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { ChevronRight, Compass, Layers } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
-import { CabecalhoDeEnsino } from '@/components/ensino/cabecalho'
+import { DocaDeEnsino, RESPIRO_DA_DOCA } from '@/components/ensino/doca'
 import {
   CartaoDeAula,
   EstadoVazio,
@@ -15,7 +15,6 @@ import {
   Migalha,
   type AulaNaTela,
 } from '@/components/ensino/primitivos'
-import { cn } from '@/lib/utils'
 
 /**
  * Navegação por conteúdo (§14).
@@ -62,6 +61,7 @@ export default function ExplorarPage() {
       >
         <Conteudo />
       </Suspense>
+      <DocaDeEnsino />
     </AppShell>
   )
 }
@@ -136,8 +136,7 @@ function Conteudo() {
   const ramosVisiveis = atual ? atual.filhos || [] : arvore
 
   return (
-    <div className="container mx-auto max-w-6xl px-4 pb-16">
-      <CabecalhoDeEnsino />
+    <div className={`container mx-auto max-w-6xl px-4 ${RESPIRO_DA_DOCA}`}>
 
       <header className="mb-6">
         <Migalha

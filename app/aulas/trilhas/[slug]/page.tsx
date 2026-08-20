@@ -17,7 +17,7 @@ import {
 } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
-import { CabecalhoDeEnsino } from '@/components/ensino/cabecalho'
+import { DocaDeEnsino, RESPIRO_DA_DOCA } from '@/components/ensino/doca'
 import {
   BotaoDuo,
   CaminhoDeNos,
@@ -131,6 +131,7 @@ export default function TrilhaPage() {
   return (
     <AppShell headerTitle="Trilha" headerSubtitle="Caminho de estudo">
       <Conteudo />
+      <DocaDeEnsino />
     </AppShell>
   )
 }
@@ -260,8 +261,7 @@ function Conteudo() {
 
   if (carregando) {
     return (
-      <div className="container mx-auto max-w-3xl px-4 pb-16">
-        <CabecalhoDeEnsino />
+      <div className={`container mx-auto max-w-3xl px-4 ${RESPIRO_DA_DOCA}`}>
         <Esqueleto className="aspect-[21/9] w-full rounded-3xl" />
         <Esqueleto className="mx-auto mt-6 h-9 w-2/3" />
         <div className="mt-10 flex flex-col items-center gap-7">
@@ -275,8 +275,7 @@ function Conteudo() {
 
   if (erro || !dados) {
     return (
-      <div className="container mx-auto max-w-3xl px-4 pb-16">
-        <CabecalhoDeEnsino />
+      <div className={`container mx-auto max-w-3xl px-4 ${RESPIRO_DA_DOCA}`}>
         <EstadoVazio
           icone={Layers}
           titulo="Trilha não encontrada"
@@ -292,8 +291,7 @@ function Conteudo() {
 
   return (
     <ProvedorDeEnsino trilha={trilha.slug}>
-      <div className="container mx-auto max-w-3xl px-4 pb-32">
-        <CabecalhoDeEnsino />
+      <div className={`container mx-auto max-w-3xl px-4 ${RESPIRO_DA_DOCA}`}>
 
         {/* ══ Capa ═══════════════════════════════════════════════════ */}
         <header className="relative">
@@ -507,15 +505,19 @@ function Conteudo() {
       {/* ══ CTA fixo ═════════════════════════════════════════════════
           Ele acompanha a rolagem porque o caminho é longo: a decisão
           "continuar" precisa estar ao alcance do polegar em qualquer ponto da
-          página, e não só lá no topo. */}
+          página, e não só lá no topo.
+
+          Fica ACIMA da doca, e não sob ela: são os dois únicos elementos
+          fixos da tela, e sobrepô-los esconderia justamente o botão que a
+          página inteira existe para oferecer. */}
       {acesso.liberado && !progresso.concluida ? (
         <motion.div
           initial={semMovimento ? false : { y: 80 }}
           animate={{ y: 0 }}
           transition={{ type: 'spring', stiffness: 300, damping: 30, delay: 0.4 }}
-          className="fixed inset-x-0 bottom-0 z-30 border-t border-border/60 bg-background/90 px-4 py-3 backdrop-blur-md"
+          className="fixed inset-x-0 bottom-[calc(4.75rem+env(safe-area-inset-bottom))] z-30 px-3"
         >
-          <div className="container mx-auto flex max-w-3xl items-center gap-3">
+          <div className="doca-vidro container mx-auto flex max-w-3xl items-center gap-3 rounded-[1.75rem] p-2 pl-4">
             <div className="min-w-0 flex-1">
               <p className="truncate text-xs font-bold uppercase tracking-wide text-muted-foreground">
                 {progresso.iniciada ? 'Continue de onde parou' : 'Sua próxima aula'}
@@ -524,7 +526,7 @@ function Conteudo() {
                 {proximaAula?.titulo || 'Comece agora'}
               </p>
             </div>
-            <BotaoDuo onClick={comecar} tamanho="grande" className="flex-none">
+            <BotaoDuo onClick={comecar} className="flex-none">
               <Play className="h-4 w-4" fill="currentColor" />
               {progresso.iniciada ? 'Continuar' : 'Começar'}
             </BotaoDuo>

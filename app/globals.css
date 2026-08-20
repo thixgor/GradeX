@@ -5515,3 +5515,91 @@ body.roller-dragging {
   background: hsl(var(--card)) !important;
   border-color: hsl(var(--border)) !important;
 }
+
+/* ══════════════════════════════════════════════════════════════════════
+   A DOCA DA ÁREA DE ENSINO — vidro líquido
+
+   A navegação de /aulas é uma barra flutuante que acompanha a rolagem, e
+   por isso ela fica SOBRE o conteúdo o tempo todo. Isso muda o que o vidro
+   precisa fazer: não é enfeite, é a única forma de o aluno continuar vendo
+   o que está por baixo enquanto o controle permanece legível.
+
+   Três camadas fazem o material:
+
+     1. o fundo translúcido com desfoque e saturação — o desfoque sozinho
+        dá cinza leitoso; é a saturação que devolve a cor do que está atrás
+        e faz o vidro parecer vidro;
+     2. o brilho especular na aresta de cima (`inset 0 1px 0`), que é o que
+        o olho lê como "superfície curva pegando luz";
+     3. a sombra difusa embaixo, que descola a barra da página.
+
+   Tudo dentro de `@supports`: sem backdrop-filter (Firefox antigo, modo de
+   economia), o fundo vira sólido e o controle continua utilizável — vidro
+   que falha para "texto sobre texto" é pior que barra opaca.
+   ────────────────────────────────────────────────────────────────────── */
+
+.doca-vidro {
+  background: hsl(var(--card) / 0.92);
+  border: 1px solid hsl(var(--border));
+  box-shadow: 0 12px 34px -12px hsl(var(--foreground) / 0.3);
+}
+
+.doca-pilula {
+  background: hsl(var(--primary) / 0.14);
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .doca-vidro {
+    background: hsl(var(--card) / 0.62);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    backdrop-filter: blur(28px) saturate(180%);
+    border-color: hsl(0 0% 100% / 0.5);
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.65),
+      inset 0 -1px 0 hsl(var(--foreground) / 0.04),
+      0 10px 30px -10px hsl(var(--foreground) / 0.28);
+  }
+
+  .dark .doca-vidro {
+    background: hsl(var(--card) / 0.55);
+    border-color: hsl(0 0% 100% / 0.12);
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.1),
+      inset 0 -1px 0 hsl(0 0% 0% / 0.2),
+      0 14px 40px -12px rgb(0 0 0 / 0.7);
+  }
+
+  /* A pílula que desliza sob o item ativo.
+     Ela é um segundo vidro POR CIMA do primeiro: mais clara, com brilho
+     próprio. É essa diferença de material — e não uma cor de fundo — que
+     faz o indicador parecer flutuar dentro da barra. */
+  .doca-pilula {
+    background: hsl(var(--primary) / 0.16);
+    -webkit-backdrop-filter: blur(8px) saturate(150%);
+    backdrop-filter: blur(8px) saturate(150%);
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.55),
+      0 2px 8px -2px hsl(var(--primary) / 0.45);
+  }
+
+  .dark .doca-pilula {
+    background: hsl(var(--primary) / 0.26);
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.16),
+      0 2px 10px -2px hsl(var(--primary) / 0.5);
+  }
+}
+
+/* Modo Lite e navegadores sem desfoque: superfície sólida. O `!important`
+   acompanha o que o bloco do Modo Lite já faz com os outros vidros. */
+.lite-mode .doca-vidro {
+  background: hsl(var(--card)) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+.lite-mode .doca-pilula {
+  background: hsl(var(--primary) / 0.16) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}

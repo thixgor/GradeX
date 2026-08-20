@@ -17,7 +17,7 @@ import {
 } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
-import { CabecalhoDeEnsino } from '@/components/ensino/cabecalho'
+import { DocaDeEnsino, RESPIRO_DA_DOCA } from '@/components/ensino/doca'
 import { EstadoVazio, Esqueleto } from '@/components/ensino/primitivos'
 import { cn } from '@/lib/utils'
 
@@ -73,6 +73,7 @@ export default function BuscarPage() {
       >
         <Conteudo />
       </Suspense>
+      <DocaDeEnsino />
     </AppShell>
   )
 }
@@ -122,8 +123,7 @@ function Conteudo() {
   }
 
   return (
-    <div className="container mx-auto max-w-4xl px-4 pb-16">
-      <CabecalhoDeEnsino />
+    <div className={`container mx-auto max-w-4xl px-4 ${RESPIRO_DA_DOCA}`}>
 
       <form onSubmit={enviar} className="mb-6">
         <div className="relative">

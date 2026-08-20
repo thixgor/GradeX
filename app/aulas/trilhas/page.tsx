@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Route } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
-import { CabecalhoDeEnsino } from '@/components/ensino/cabecalho'
+import { DocaDeEnsino, RESPIRO_DA_DOCA } from '@/components/ensino/doca'
 import {
   CartaoDeTrilha,
   EstadoVazio,
@@ -37,6 +37,7 @@ export default function TrilhasPage() {
   return (
     <AppShell headerTitle="Trilhas de Ensino" headerSubtitle="Caminhos organizados de estudo">
       <Conteudo />
+      <DocaDeEnsino />
     </AppShell>
   )
 }
@@ -81,8 +82,7 @@ function Conteudo() {
   }, [trilhas, filtro])
 
   return (
-    <div className="container mx-auto max-w-7xl px-4 pb-16">
-      <CabecalhoDeEnsino />
+    <div className={`container mx-auto max-w-7xl px-4 ${RESPIRO_DA_DOCA}`}>
 
       <header className="mb-5">
         <h1 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
