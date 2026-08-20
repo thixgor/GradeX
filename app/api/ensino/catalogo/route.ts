@@ -156,6 +156,22 @@ export async function GET(request: Request) {
     const limite = Math.min(LIMITE_MAXIMO, Math.max(1, Number(p.get('limite')) || LIMITE_PADRAO))
     const total = cartoes.length
 
+    /*
+     * "Selecionar todas" precisa de todas — inclusive as que a página não
+     * mostrou.
+     *
+     * Devolver os cartões completos só para o admin marcar caixas seria pagar
+     * o preço de montar centenas deles à toa. Este modo devolve a lista crua de
+     * ids que passaram pelos MESMOS filtros e pelo MESMO motor de acesso, e
+     * nada além disso.
+     */
+    if (p.get('soIds') === '1') {
+      return NextResponse.json(
+        { ids: cartoes.map((c) => c._id), total },
+        { headers: { 'Cache-Control': 'private, no-store' } },
+      )
+    }
+
     const rascunhos = new Set(
       documentos.filter((d: any) => d.oculta).map((d: any) => String(d._id)),
     )

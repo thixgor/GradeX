@@ -3,16 +3,15 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
+import { motion, useReducedMotion } from 'framer-motion'
 import {
   Award,
   Check,
-  ChevronDown,
   Clock,
-  ExternalLink,
-  FileText,
   Layers,
   Pencil,
   Play,
+  Sparkles,
   Target,
   Trophy,
 } from 'lucide-react'
@@ -20,15 +19,22 @@ import {
 import { AppShell } from '@/components/app-shell'
 import { CabecalhoDeEnsino } from '@/components/ensino/cabecalho'
 import {
-  AnelDeProgresso,
-  BarraDeProgresso,
+  BotaoDuo,
+  CaminhoDeNos,
+  Cascata,
+  Confete,
+  FichaDeEstatistica,
+  ItemDaCascata,
+  NumeroAnimado,
+  type EstadoDoNo,
+  type NoDoCaminho,
+} from '@/components/ensino/duo'
+import {
   Cadeado,
   Capa,
   EstadoVazio,
   Esqueleto,
-  LinhaDeAula,
   ProvedorDeEnsino,
-  Selo,
   formatarMinutos,
   type AcessoNaTela,
   type AulaNaTela,
@@ -38,22 +44,24 @@ import { cn } from '@/lib/utils'
 /**
  * A página de uma Trilha (§7, §8, §28).
  *
- * A TELA TEM DE TRANSMITIR PERCURSO, NÃO CATÁLOGO
+ * A ETAPA VIROU UM TRECHO DE CAMINHO
  *
- * Três decisões sustentam isso:
+ * A versão anterior desta tela listava as etapas em acordeões. Funcionava, e
+ * ainda assim era uma lista: o aluno lia trinta linhas para descobrir onde
+ * estava. Aqui as aulas são NÓS num caminho que desce serpenteando, e a
+ * pergunta "onde eu paro hoje?" se responde em meio segundo — é o único nó com
+ * anel pulsando e o balão "COMEÇAR".
  *
- *  • **O CTA é único e sabe onde a pessoa está.** "Começar Trilha" para quem
- *    nunca abriu, "Continuar de onde parei" para quem já anda nela. Dois botões
- *    concorrendo obrigariam o aluno a decidir algo que o sistema já sabe.
- *  • **As etapas são a estrutura, não decoração.** Cada uma abre e fecha, com o
- *    próprio contador. É o que impede a tela de virar uma lista de trinta
- *    vídeos consecutivos (§7).
- *  • **A etapa em que a pessoa está vem aberta; as concluídas vêm fechadas.**
- *    A tela mostra o percurso inteiro, mas destaca o presente.
+ * As etapas continuam existindo e continuam sendo a estrutura (§7): cada uma
+ * abre com uma faixa própria, com o seu contador. O que mudou é que elas
+ * separam trechos de percurso em vez de esconder listas.
  *
- * A Trilha não contém as aulas — ela as referencia. Todo cartão daqui aponta
- * para a MESMA aula que aparece na busca e em outras Trilhas, com o mesmo
- * progresso.
+ * O QUE O CAMINHO NÃO FAZ
+ *
+ * Ele não tranca aula por sequência. Pré-requisito é recomendação (§19), e um
+ * cadeado por "você ainda não viu a anterior" transformaria a Trilha numa
+ * prisão para quem já domina metade do assunto. O único cadeado que existe é o
+ * comercial, decidido pelo mesmo motor de acesso de sempre.
  */
 
 interface ItemResolvido {
@@ -131,11 +139,12 @@ function Conteudo() {
   const params = useParams()
   const router = useRouter()
   const slug = String(params?.slug || '')
+  const semMovimento = useReducedMotion()
 
   const [dados, setDados] = useState<RespostaDaTrilha | null>(null)
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState('')
-  const [abertas, setAbertas] = useState<Set<string>>(new Set())
+  const [celebrar, setCelebrar] = useState(false)
 
   useEffect(() => {
     if (!slug) return
@@ -151,11 +160,12 @@ function Conteudo() {
       .then((d) => {
         if (cancelado) return
         setDados(d)
-        // A etapa em que a pessoa está começa aberta. As já concluídas ficam
-        // fechadas: o percurso inteiro continua visível, sem trinta linhas de
-        // conteúdo que ela já venceu ocupando a tela.
-        const emCurso = d.progresso.etapas.find((e) => !e.completa)
-        setAbertas(new Set(emCurso ? [emCurso.etapaId] : d.trilha.etapas.map((e) => e.id)))
+        if (d.progresso.concluida) {
+          // O confete cai uma vez, ao abrir. Repetir a cada rolagem
+          // transformaria a comemoração em incômodo.
+          setCelebrar(true)
+          setTimeout(() => setCelebrar(false), 2600)
+        }
       })
       .catch((e) => {
         if (!cancelado) setErro(e?.message || 'Trilha não encontrada')
@@ -173,16 +183,15 @@ function Conteudo() {
     const alvo = dados?.progresso.proximo?.item.refId
     if (!alvo) return null
     for (const etapa of dados?.trilha.etapas || []) {
-      for (const item of etapa.itens) {
-        if (item.aula?._id === alvo) return item.aula
-      }
+      for (const item of etapa.itens) if (item.aula?._id === alvo) return item.aula
     }
     return null
   }, [dados])
 
   const comecar = useCallback(() => {
     if (!dados) return
-    const destino = proximaAula || dados.trilha.etapas.flatMap((e) => e.itens).find((i) => i.aula)?.aula
+    const destino =
+      proximaAula || dados.trilha.etapas.flatMap((e) => e.itens).find((i) => i.aula)?.aula
     if (!destino) return
     // Registra a entrada na Trilha antes de navegar: é isso que faz a home
     // dizer "você está na Trilha X" em vez de só "você viu um vídeo".
@@ -194,20 +203,79 @@ function Conteudo() {
     router.push(`/aulas/${destino._id}?trilha=${encodeURIComponent(dados.trilha.slug)}`)
   }, [dados, proximaAula, router])
 
+  /** Traduz cada etapa nos nós que o caminho desenha. */
+  const caminhoPorEtapa = useMemo(() => {
+    if (!dados) return []
+    const alvo = dados.progresso.proximo?.item.refId
+
+    return dados.trilha.etapas.map((etapa) => {
+      const nos: NoDoCaminho[] = []
+
+      etapa.itens.forEach((item, indice) => {
+        if (item.tipo !== 'aula' || !item.aula) {
+          nos.push({
+            id: item.id,
+            titulo: item.rotulo || 'Conteúdo complementar',
+            href:
+              item.tipo === 'link'
+                ? item.url || '#'
+                : item.tipo === 'material'
+                  ? `/materiais/${item.refId}`
+                  : item.tipo === 'prova'
+                    ? `/exam/${item.refId}`
+                    : `/flashcards/d/${item.refId}`,
+            estado: 'disponivel',
+            etiqueta: 'Extra',
+          })
+          return
+        }
+
+        const aula = item.aula
+        const concluida = aula.progresso?.concluida === true
+        const bloqueada = aula.acesso ? !aula.acesso.liberado : false
+
+        const estado: EstadoDoNo = bloqueada
+          ? 'bloqueado'
+          : concluida
+            ? 'concluido'
+            : aula._id === alvo
+              ? 'atual'
+              : 'disponivel'
+
+        nos.push({
+          id: item.id,
+          titulo: aula.titulo,
+          href: `/aulas/${aula._id}?trilha=${encodeURIComponent(dados.trilha.slug)}`,
+          estado,
+          percentual: aula.progresso?.percentual || 0,
+          fimDeEtapa: indice === etapa.itens.length - 1,
+          duracaoLabel: aula.duracaoLabel,
+          etiqueta: item.obrigatorio === false ? 'Extra' : undefined,
+        })
+      })
+
+      return { etapa, nos }
+    })
+  }, [dados])
+
   if (carregando) {
     return (
-      <div className="container mx-auto max-w-5xl px-4 pb-16">
+      <div className="container mx-auto max-w-3xl px-4 pb-16">
         <CabecalhoDeEnsino />
-        <Esqueleto className="aspect-[21/9] w-full rounded-2xl" />
-        <Esqueleto className="mt-4 h-8 w-2/3" />
-        <Esqueleto className="mt-2 h-4 w-1/2" />
+        <Esqueleto className="aspect-[21/9] w-full rounded-3xl" />
+        <Esqueleto className="mx-auto mt-6 h-9 w-2/3" />
+        <div className="mt-10 flex flex-col items-center gap-7">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Esqueleto key={i} className="h-[4.5rem] w-[4.5rem] rounded-full" />
+          ))}
+        </div>
       </div>
     )
   }
 
   if (erro || !dados) {
     return (
-      <div className="container mx-auto max-w-5xl px-4 pb-16">
+      <div className="container mx-auto max-w-3xl px-4 pb-16">
         <CabecalhoDeEnsino />
         <EstadoVazio
           icone={Layers}
@@ -224,190 +292,191 @@ function Conteudo() {
 
   return (
     <ProvedorDeEnsino trilha={trilha.slug}>
-      <div className="container mx-auto max-w-5xl px-4 pb-20">
+      <div className="container mx-auto max-w-3xl px-4 pb-32">
         <CabecalhoDeEnsino />
 
-        {/* ── Capa e identidade ──────────────────────────────────────── */}
-        <header className="mb-8">
-          <div className="relative overflow-hidden rounded-2xl">
-            <Capa capa={trilha.capa} titulo={trilha.titulo} className="aspect-[21/9] rounded-2xl" />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent" />
+        {/* ══ Capa ═══════════════════════════════════════════════════ */}
+        <header className="relative">
+          <motion.div
+            initial={semMovimento ? false : { opacity: 0, scale: 0.97 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ type: 'spring', stiffness: 260, damping: 28 }}
+            className="relative overflow-hidden rounded-3xl shadow-[0_6px_0_rgb(0_0_0/0.12)]"
+          >
+            <Capa capa={trilha.capa} titulo={trilha.titulo} className="aspect-[21/9] rounded-3xl" />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
 
             <div className="absolute inset-x-0 bottom-0 p-4 sm:p-6">
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="mb-2 flex flex-wrap items-center gap-1.5">
                 {trilha.nivel && ROTULO_DO_NIVEL[trilha.nivel] ? (
-                  <span className="rounded-full bg-white/15 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur-sm">
-                    {ROTULO_DO_NIVEL[trilha.nivel]}
-                  </span>
+                  <Pilula>{ROTULO_DO_NIVEL[trilha.nivel]}</Pilula>
                 ) : null}
-                {trilha.publico ? (
-                  <span className="rounded-full bg-white/15 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur-sm">
-                    {trilha.publico}
-                  </span>
+                {trilha.publico ? <Pilula>{trilha.publico}</Pilula> : null}
+                {trilha.certificado?.ativo ? (
+                  <Pilula>
+                    <Award className="h-3 w-3" /> Certificado
+                  </Pilula>
                 ) : null}
                 {trilha.situacao !== 'publicada' ? (
-                  <span className="rounded-full bg-accent px-2.5 py-1 text-xs font-bold text-accent-foreground">
+                  <span className="rounded-full bg-accent px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wide text-accent-foreground">
                     Rascunho
                   </span>
                 ) : null}
               </div>
 
-              <h1 className="mt-2 font-heading text-2xl font-semibold leading-tight tracking-tight text-white drop-shadow-sm sm:text-4xl">
+              <h1 className="font-heading text-2xl font-extrabold leading-[1.1] tracking-tight text-white drop-shadow-md sm:text-4xl">
                 {trilha.titulo}
               </h1>
               {trilha.subtitulo ? (
-                <p className="mt-1 max-w-2xl text-sm text-white/85 sm:text-base">
+                <p className="mt-1.5 max-w-xl text-sm font-medium text-white/85 sm:text-base">
                   {trilha.subtitulo}
                 </p>
               ) : null}
             </div>
-          </div>
+          </motion.div>
 
-          {/* ── Barra de ação ────────────────────────────────────────── */}
-          <div className="mt-4 flex flex-wrap items-center gap-4">
-            {acesso.liberado ? (
-              <button
-                type="button"
-                onClick={comecar}
-                className="inline-flex h-12 flex-none items-center gap-2 rounded-xl bg-primary px-5 text-sm font-bold text-primary-foreground transition hover:opacity-90"
-              >
-                <Play className="h-4 w-4" fill="currentColor" />
-                {progresso.concluida
-                  ? 'Revisar a Trilha'
-                  : progresso.iniciada
-                    ? 'Continuar de onde parei'
-                    : 'Começar Trilha'}
-              </button>
-            ) : null}
+          {dados.podeEditar ? (
+            <Link
+              href={`/aulas/gerenciar/trilhas/${trilha._id}`}
+              className="absolute right-3 top-3 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-black/50 text-white backdrop-blur-sm transition hover:bg-black/70"
+              title="Editar Trilha"
+            >
+              <Pencil className="h-4 w-4" />
+            </Link>
+          ) : null}
+        </header>
 
-            {progresso.total > 0 ? (
-              <div className="flex min-w-[10rem] flex-1 items-center gap-3">
-                <AnelDeProgresso percentual={progresso.percentual} tamanho={44} />
-                <div className="min-w-0">
-                  <p className="text-sm font-semibold">{progresso.percentual}% concluído</p>
-                  <p className="text-xs text-muted-foreground">
-                    {progresso.concluidos} de {progresso.total} aulas
-                  </p>
-                </div>
+        {/* ══ Barra de progresso ═════════════════════════════════════ */}
+        <section className="relative mt-5">
+          <Confete ativo={celebrar} />
+
+          <div className="rounded-3xl bg-card p-4 ring-1 ring-border/70 sm:p-5">
+            <div className="flex items-end justify-between gap-3">
+              <div>
+                <p className="font-heading text-3xl font-extrabold leading-none">
+                  <NumeroAnimado valor={progresso.percentual} sufixo="%" />
+                </p>
+                <p className="mt-1 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                  {progresso.concluidos} de {progresso.total} aulas
+                </p>
               </div>
-            ) : null}
 
-            <div className="flex flex-none flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
-              <span className="inline-flex items-center gap-1">
-                <Layers className="h-3.5 w-3.5" /> {trilha.resumo.etapas}{' '}
-                {trilha.resumo.etapas === 1 ? 'etapa' : 'etapas'}
-              </span>
-              <span className="inline-flex items-center gap-1">
-                <Play className="h-3.5 w-3.5" /> {trilha.resumo.aulas} aulas
-              </span>
-              {trilha.resumo.minutos > 0 ? (
-                <span className="inline-flex items-center gap-1">
-                  <Clock className="h-3.5 w-3.5" /> {formatarMinutos(trilha.resumo.minutos)}
-                </span>
-              ) : null}
-              {trilha.certificado?.ativo ? (
-                <span className="inline-flex items-center gap-1">
-                  <Award className="h-3.5 w-3.5" /> Com certificado
+              {progresso.concluida ? (
+                <span className="flex items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-xs font-extrabold uppercase tracking-wide text-primary-foreground">
+                  <Trophy className="h-4 w-4" /> Concluída
                 </span>
               ) : null}
             </div>
 
-            {dados.podeEditar ? (
-              <Link
-                href={`/aulas/gerenciar/trilhas/${trilha._id}`}
-                className="ml-auto inline-flex h-10 flex-none items-center gap-2 rounded-lg border border-border px-3 text-sm font-semibold transition hover:bg-muted"
+            {/* A barra grossa e arredondada, com o brilho interno que a faz
+                parecer preenchida em vez de pintada. */}
+            <div className="mt-3 h-4 w-full overflow-hidden rounded-full bg-muted ring-1 ring-inset ring-black/5">
+              <motion.div
+                initial={semMovimento ? false : { width: 0 }}
+                animate={{ width: `${progresso.percentual}%` }}
+                transition={{ duration: 1, ease: [0.2, 0.7, 0.3, 1], delay: 0.15 }}
+                className="relative h-full rounded-full bg-primary"
               >
-                <Pencil className="h-4 w-4" /> Editar
-              </Link>
-            ) : null}
+                <span className="absolute inset-x-1 top-0.5 h-1 rounded-full bg-white/30" />
+              </motion.div>
+            </div>
+
+            <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
+              <FichaDeEstatistica
+                valor={trilha.resumo.aulas}
+                rotulo="aulas"
+                icone={Play}
+                tom="primario"
+              />
+              <FichaDeEstatistica
+                valor={trilha.resumo.etapas}
+                rotulo="etapas"
+                icone={Layers}
+                tom="ouro"
+              />
+              <FichaDeEstatistica
+                valor={Math.round(trilha.resumo.minutos / 60) || trilha.resumo.minutos}
+                sufixo={trilha.resumo.minutos >= 60 ? 'h' : ' min'}
+                rotulo="de conteúdo"
+                icone={Clock}
+                tom="fogo"
+              />
+            </div>
           </div>
-        </header>
+        </section>
 
-        {!acesso.liberado ? <Cadeado requisito={acesso.requisito} className="mb-8" /> : null}
+        {!acesso.liberado ? <Cadeado requisito={acesso.requisito} className="mt-5" /> : null}
 
-        {/* ── Conclusão (§28) ────────────────────────────────────────── */}
+        {/* ══ Conclusão (§28) ════════════════════════════════════════ */}
         {progresso.concluida ? (
-          <section className="mb-8 rounded-2xl border border-primary/30 bg-primary/5 p-5">
+          <motion.section
+            initial={semMovimento ? false : { opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, type: 'spring', stiffness: 300, damping: 26 }}
+            className="mt-5 overflow-hidden rounded-3xl bg-primary p-5 text-primary-foreground shadow-[0_5px_0_rgb(0_0_0/0.2)]"
+          >
             <div className="flex items-start gap-3">
-              <Trophy className="h-6 w-6 flex-none text-primary" />
+              <Trophy className="h-8 w-8 flex-none" strokeWidth={2.5} />
               <div className="min-w-0">
-                <h2 className="font-heading text-lg font-semibold tracking-tight">
-                  Trilha concluída 🎉
+                <h2 className="font-heading text-xl font-extrabold tracking-tight">
+                  Trilha concluída! 🎉
                 </h2>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {progresso.total} aulas
+                <p className="mt-1 text-sm opacity-90">
+                  {progresso.total} aulas dominadas
                   {trilha.resumo.minutos > 0
                     ? ` · ${formatarMinutos(trilha.resumo.minutos)} de conteúdo`
                     : ''}
-                  . O conteúdo continua disponível para revisão sempre que você precisar.
+                  . Agora é manter na memória.
                 </p>
                 <div className="mt-3 flex flex-wrap gap-2">
-                  <Link
-                    href="/aulas/revisar"
-                    className="inline-flex h-9 items-center rounded-lg bg-primary px-3.5 text-sm font-semibold text-primary-foreground transition hover:opacity-90"
-                  >
-                    Revisar esta matéria
-                  </Link>
+                  <BotaoDuo href="/aulas/revisar" tom="claro" tamanho="pequeno">
+                    <Sparkles className="h-4 w-4" /> Revisar
+                  </BotaoDuo>
                   {trilha.certificado?.ativo ? (
-                    <Link
-                      href="/aulas/certificado"
-                      className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-border px-3.5 text-sm font-semibold transition hover:bg-muted"
-                    >
-                      <Award className="h-4 w-4" /> Emitir certificado
-                    </Link>
+                    <BotaoDuo href="/aulas/certificado" tom="ouro" tamanho="pequeno">
+                      <Award className="h-4 w-4" /> Certificado
+                    </BotaoDuo>
                   ) : null}
                 </div>
               </div>
             </div>
-          </section>
+          </motion.section>
         ) : null}
 
-        {/* ── Objetivo e aprendizados ────────────────────────────────── */}
-        {trilha.descricao || trilha.objetivo || trilha.aprendizados?.length ? (
-          <section className="mb-8 grid gap-5 sm:grid-cols-2">
-            {trilha.descricao || trilha.objetivo ? (
-              <div>
-                {trilha.objetivo ? (
-                  <>
-                    <h2 className="mb-1.5 flex items-center gap-1.5 text-sm font-bold uppercase tracking-wide text-muted-foreground">
-                      <Target className="h-4 w-4" /> Objetivo
-                    </h2>
-                    <p className="text-sm leading-relaxed">{trilha.objetivo}</p>
-                  </>
-                ) : null}
-                {trilha.descricao ? (
-                  <p
-                    className={cn(
-                      'text-sm leading-relaxed text-muted-foreground',
-                      trilha.objetivo && 'mt-3',
-                    )}
-                  >
-                    {trilha.descricao}
-                  </p>
-                ) : null}
-              </div>
+        {/* ══ Objetivo ═══════════════════════════════════════════════ */}
+        {trilha.objetivo || trilha.descricao || trilha.aprendizados?.length ? (
+          <Cascata className="mt-6 grid gap-3 sm:grid-cols-2">
+            {trilha.objetivo || trilha.descricao ? (
+              <ItemDaCascata className="rounded-2xl bg-card p-4 ring-1 ring-border/70">
+                <h2 className="mb-1.5 flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wide text-muted-foreground">
+                  <Target className="h-4 w-4" /> Objetivo
+                </h2>
+                <p className="text-sm leading-relaxed">{trilha.objetivo || trilha.descricao}</p>
+              </ItemDaCascata>
             ) : null}
 
             {trilha.aprendizados?.length ? (
-              <div>
-                <h2 className="mb-1.5 text-sm font-bold uppercase tracking-wide text-muted-foreground">
+              <ItemDaCascata className="rounded-2xl bg-card p-4 ring-1 ring-border/70">
+                <h2 className="mb-2 text-xs font-extrabold uppercase tracking-wide text-muted-foreground">
                   Ao concluir, você saberá
                 </h2>
                 <ul className="space-y-1.5">
-                  {trilha.aprendizados.map((item) => (
-                    <li key={item} className="flex gap-2 text-sm leading-snug">
-                      <Check className="mt-0.5 h-4 w-4 flex-none text-primary" strokeWidth={2.5} />
-                      {item}
+                  {trilha.aprendizados.map((texto) => (
+                    <li key={texto} className="flex gap-2 text-sm leading-snug">
+                      <span className="mt-0.5 flex h-4 w-4 flex-none items-center justify-center rounded-full bg-primary text-primary-foreground">
+                        <Check className="h-2.5 w-2.5" strokeWidth={4} />
+                      </span>
+                      {texto}
                     </li>
                   ))}
                 </ul>
-              </div>
+              </ItemDaCascata>
             ) : null}
-          </section>
+          </Cascata>
         ) : null}
 
-        {/* ── As etapas (§7) ─────────────────────────────────────────── */}
-        <section className="space-y-3">
+        {/* ══ O CAMINHO (§7) ═════════════════════════════════════════ */}
+        <section className="mt-8">
           {trilha.etapas.length === 0 ? (
             <EstadoVazio
               icone={Layers}
@@ -415,132 +484,129 @@ function Conteudo() {
               descricao="As etapas aparecem aqui assim que forem publicadas."
             />
           ) : (
-            trilha.etapas.map((etapa, indice) => {
+            caminhoPorEtapa.map(({ etapa, nos }, indice) => {
               const p = progresso.etapas.find((e) => e.etapaId === etapa.id)
-              const aberta = abertas.has(etapa.id)
-
               return (
-                <div
-                  key={etapa.id}
-                  className={cn(
-                    'overflow-hidden rounded-2xl border transition',
-                    p?.completa ? 'border-border/60 bg-card/50' : 'border-border/70 bg-card',
-                  )}
-                >
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setAbertas((atual) => {
-                        const proximo = new Set(atual)
-                        if (proximo.has(etapa.id)) proximo.delete(etapa.id)
-                        else proximo.add(etapa.id)
-                        return proximo
-                      })
-                    }
-                    aria-expanded={aberta}
-                    className="flex w-full items-center gap-3 px-4 py-3.5 text-left transition hover:bg-muted/50"
-                  >
-                    <span
-                      className={cn(
-                        'flex h-8 w-8 flex-none items-center justify-center rounded-full text-sm font-bold tabular-nums',
-                        p?.completa
-                          ? 'bg-primary text-primary-foreground'
-                          : 'bg-muted text-muted-foreground',
-                      )}
-                    >
-                      {p?.completa ? <Check className="h-4 w-4" strokeWidth={3} /> : indice + 1}
-                    </span>
-
-                    <span className="min-w-0 flex-1">
-                      <span className="block font-heading text-base font-semibold leading-snug tracking-tight">
-                        {etapa.titulo}
-                      </span>
-                      <span className="mt-0.5 block text-xs text-muted-foreground">
-                        {etapa.itens.length} {etapa.itens.length === 1 ? 'aula' : 'aulas'}
-                        {p && p.total > 0 ? ` · ${p.concluidos}/${p.total} concluídas` : ''}
-                      </span>
-                      {p && p.total > 0 && !p.completa ? (
-                        <BarraDeProgresso percentual={p.percentual} className="mt-2 max-w-xs" />
-                      ) : null}
-                    </span>
-
-                    <ChevronDown
-                      className={cn(
-                        'h-5 w-5 flex-none text-muted-foreground transition',
-                        aberta && 'rotate-180',
-                      )}
-                    />
-                  </button>
-
-                  {aberta ? (
-                    <div className="border-t border-border/60 px-1.5 py-1.5">
-                      {etapa.descricao ? (
-                        <p className="px-3 py-2 text-sm text-muted-foreground">{etapa.descricao}</p>
-                      ) : null}
-
-                      {etapa.itens.map((item, i) =>
-                        item.aula ? (
-                          <div key={item.id}>
-                            <LinhaDeAula
-                              aula={item.aula}
-                              numero={i + 1}
-                              atual={progresso.proximo?.item.refId === item.aula._id}
-                            />
-                            {item.nota ? (
-                              <p className="px-3 pb-2 pl-[3.25rem] text-xs italic text-muted-foreground">
-                                {item.nota}
-                              </p>
-                            ) : null}
-                          </div>
-                        ) : (
-                          <ItemComplementar key={item.id} item={item} />
-                        ),
-                      )}
-                    </div>
-                  ) : null}
+                <div key={etapa.id}>
+                  <FaixaDaEtapa
+                    numero={indice + 1}
+                    titulo={etapa.titulo}
+                    descricao={etapa.descricao}
+                    concluidos={p?.concluidos ?? 0}
+                    total={p?.total ?? nos.length}
+                    completa={p?.completa === true}
+                  />
+                  <CaminhoDeNos nos={nos} />
                 </div>
               )
             })
           )}
         </section>
       </div>
+
+      {/* ══ CTA fixo ═════════════════════════════════════════════════
+          Ele acompanha a rolagem porque o caminho é longo: a decisão
+          "continuar" precisa estar ao alcance do polegar em qualquer ponto da
+          página, e não só lá no topo. */}
+      {acesso.liberado && !progresso.concluida ? (
+        <motion.div
+          initial={semMovimento ? false : { y: 80 }}
+          animate={{ y: 0 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 30, delay: 0.4 }}
+          className="fixed inset-x-0 bottom-0 z-30 border-t border-border/60 bg-background/90 px-4 py-3 backdrop-blur-md"
+        >
+          <div className="container mx-auto flex max-w-3xl items-center gap-3">
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                {progresso.iniciada ? 'Continue de onde parou' : 'Sua próxima aula'}
+              </p>
+              <p className="truncate text-sm font-bold">
+                {proximaAula?.titulo || 'Comece agora'}
+              </p>
+            </div>
+            <BotaoDuo onClick={comecar} tamanho="grande" className="flex-none">
+              <Play className="h-4 w-4" fill="currentColor" />
+              {progresso.iniciada ? 'Continuar' : 'Começar'}
+            </BotaoDuo>
+          </div>
+        </motion.div>
+      ) : null}
     </ProvedorDeEnsino>
   )
 }
 
-/**
- * Conteúdo complementar dentro da etapa (§6).
- *
- * Visualmente mais leve que uma aula, e é de propósito: ele não conta no
- * progresso e não é o caminho principal. Dar a ele o mesmo peso faria a Trilha
- * parecer mais longa do que é.
- */
-function ItemComplementar({ item }: { item: ItemResolvido }) {
-  const destino =
-    item.tipo === 'link'
-      ? item.url || '#'
-      : item.tipo === 'material'
-        ? `/materiais/${item.refId}`
-        : item.tipo === 'prova'
-          ? `/exam/${item.refId}`
-          : `/flashcards/d/${item.refId}`
+function Pilula({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wide text-white backdrop-blur-sm">
+      {children}
+    </span>
+  )
+}
 
-  const Icone = item.tipo === 'link' ? ExternalLink : item.tipo === 'flashcards' ? Layers : FileText
+/**
+ * A faixa que abre cada etapa.
+ *
+ * Ela é a única coisa entre dois trechos de caminho, e por isso precisa ser
+ * larga e inequívoca: o aluno tem de perceber que mudou de assunto sem parar
+ * para ler. Etapa concluída fica sólida com troféu; a em andamento, com o
+ * contador.
+ */
+function FaixaDaEtapa({
+  numero,
+  titulo,
+  descricao,
+  concluidos,
+  total,
+  completa,
+}: {
+  numero: number
+  titulo: string
+  descricao?: string
+  concluidos: number
+  total: number
+  completa: boolean
+}) {
+  const semMovimento = useReducedMotion()
 
   return (
-    <a
-      href={destino}
-      target={item.tipo === 'link' ? '_blank' : undefined}
-      rel={item.tipo === 'link' ? 'noopener noreferrer' : undefined}
-      className="group flex min-h-[3rem] items-center gap-3 rounded-xl px-3 py-2 transition hover:bg-muted/70"
+    <motion.div
+      initial={semMovimento ? false : { opacity: 0, y: 16 }}
+      whileInView={semMovimento ? {} : { opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-50px' }}
+      transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+      className={cn(
+        'mt-8 flex items-center gap-3 rounded-2xl px-4 py-3 shadow-[0_4px_0_rgb(0_0_0/0.14)] first:mt-0',
+        completa ? 'bg-primary text-primary-foreground' : 'bg-card ring-1 ring-border/70',
+      )}
     >
-      <span className="flex h-7 w-7 flex-none items-center justify-center rounded-full bg-muted text-muted-foreground">
-        <Icone className="h-3.5 w-3.5" />
+      <span
+        className={cn(
+          'flex h-10 w-10 flex-none items-center justify-center rounded-xl text-base font-extrabold tabular-nums',
+          completa ? 'bg-white/20' : 'bg-primary/12 text-primary',
+        )}
+      >
+        {completa ? <Trophy className="h-5 w-5" strokeWidth={2.5} /> : numero}
       </span>
-      <span className="min-w-0 flex-1 truncate text-sm text-muted-foreground transition group-hover:text-foreground">
-        {item.rotulo || 'Conteúdo complementar'}
+
+      <span className="min-w-0 flex-1">
+        <span className="block truncate font-heading text-base font-extrabold tracking-tight">
+          {titulo}
+        </span>
+        <span
+          className={cn(
+            'block truncate text-xs font-semibold',
+            completa ? 'opacity-85' : 'text-muted-foreground',
+          )}
+        >
+          {descricao || `${concluidos} de ${total} concluídas`}
+        </span>
       </span>
-      <Selo>Complementar</Selo>
-    </a>
+
+      {!completa && total > 0 ? (
+        <span className="flex-none text-sm font-extrabold tabular-nums text-muted-foreground">
+          {concluidos}/{total}
+        </span>
+      ) : null}
+    </motion.div>
   )
 }

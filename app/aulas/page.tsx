@@ -2,19 +2,29 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
+import { motion, useReducedMotion } from 'framer-motion'
 import {
   ArrowRight,
+  Clock,
   Compass,
+  Flame,
   GraduationCap,
   Play,
   Route,
   RotateCcw,
   Settings2,
   Sparkles,
+  Trophy,
 } from 'lucide-react'
 
 import { AppShell, useAppShell } from '@/components/app-shell'
 import { CabecalhoDeEnsino } from '@/components/ensino/cabecalho'
+import {
+  BotaoDuo,
+  Cascata,
+  FichaDeEstatistica,
+  ItemDaCascata,
+} from '@/components/ensino/duo'
 import {
   AnelDeProgresso,
   BarraDeProgresso,
@@ -88,6 +98,12 @@ interface RespostaDaHome {
   arvore: RamoNaTela[]
   aulasRecentes: AulaNaTela[]
   revisar: { concluidas: number }
+  estatisticas: {
+    aulasConcluidas: number
+    minutosEstudados: number
+    trilhasConcluidas: number
+    trilhasEmCurso: number
+  }
 }
 
 export default function AulasPage() {
@@ -104,6 +120,7 @@ function ConteudoDaHome() {
 
   const [dados, setDados] = useState<RespostaDaHome | null>(null)
   const [carregando, setCarregando] = useState(true)
+  const semMovimento = useReducedMotion()
 
   useEffect(() => {
     let cancelado = false
@@ -148,10 +165,15 @@ function ConteudoDaHome() {
     <div className="container mx-auto max-w-7xl px-4 pb-16">
       <CabecalhoDeEnsino />
 
-      <header className="mb-7 flex flex-wrap items-start justify-between gap-3">
+      <motion.header
+        initial={semMovimento ? false : { opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ type: 'spring', stiffness: 320, damping: 30 }}
+        className="mb-5 flex flex-wrap items-start justify-between gap-3"
+      >
         <div className="min-w-0">
-          <h1 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
-            {dados?.continuar?.length ? 'Bom te ver de volta' : 'O que você quer aprender?'}
+          <h1 className="font-heading text-2xl font-extrabold tracking-tight sm:text-4xl">
+            {dados?.continuar?.length ? 'Bom te ver de volta 👋' : 'O que você quer aprender?'}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Escolha uma Trilha e siga um caminho — ou vá direto à aula que você precisa.
@@ -159,14 +181,54 @@ function ConteudoDaHome() {
         </div>
 
         {podeGerenciar ? (
-          <Link
-            href="/aulas/gerenciar"
-            className="inline-flex h-10 flex-none items-center gap-2 rounded-lg border border-border bg-card px-4 text-sm font-semibold transition hover:bg-muted"
-          >
+          <BotaoDuo href="/aulas/gerenciar" tom="claro" tamanho="pequeno" className="flex-none">
             <Settings2 className="h-4 w-4" /> Gerenciar
-          </Link>
+          </BotaoDuo>
         ) : null}
-      </header>
+      </motion.header>
+
+      {/* ── As fichas do topo (§27) ─────────────────────────────────
+          Números reais do progresso da pessoa. Nada de moeda inventada:
+          o que aparece aqui é aula concluída, tempo estudado e Trilha
+          fechada — as três coisas que o sistema sabe de verdade. */}
+      {dados?.estatisticas && dados.logado ? (
+        <motion.div
+          initial={semMovimento ? false : { opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.08, type: 'spring', stiffness: 320, damping: 30 }}
+          className="mb-7 grid grid-cols-2 gap-2 sm:grid-cols-4"
+        >
+          <FichaDeEstatistica
+            valor={dados.estatisticas.aulasConcluidas}
+            rotulo="aulas concluídas"
+            icone={Flame}
+            tom="fogo"
+          />
+          <FichaDeEstatistica
+            valor={
+              dados.estatisticas.minutosEstudados >= 60
+                ? Math.round(dados.estatisticas.minutosEstudados / 60)
+                : dados.estatisticas.minutosEstudados
+            }
+            sufixo={dados.estatisticas.minutosEstudados >= 60 ? 'h' : 'min'}
+            rotulo="estudadas"
+            icone={Clock}
+            tom="primario"
+          />
+          <FichaDeEstatistica
+            valor={dados.estatisticas.trilhasEmCurso}
+            rotulo="trilhas em curso"
+            icone={Route}
+            tom="primario"
+          />
+          <FichaDeEstatistica
+            valor={dados.estatisticas.trilhasConcluidas}
+            rotulo="trilhas dominadas"
+            icone={Trophy}
+            tom="ouro"
+          />
+        </motion.div>
+      ) : null}
 
       {carregando ? (
         <div className="space-y-10">
@@ -182,17 +244,17 @@ function ConteudoDaHome() {
           acaoHref="/buy"
         />
       ) : (
-        <div className="space-y-10">
+        <Cascata className="space-y-10">
           {/* ── Continue estudando (§12) ────────────────────────────── */}
           {dados?.continuar?.length ? (
-            <section>
+            <ItemDaCascata>
               <TituloDaFaixa titulo="Continue estudando" icone={Play} />
               <div className="grid gap-3 lg:grid-cols-2">
                 {dados.continuar.slice(0, 4).map((item) => (
                   <CartaoDeRetomada key={item.aulaId} item={item} />
                 ))}
               </div>
-            </section>
+            </ItemDaCascata>
           ) : null}
 
           {/* ── Trilhas em curso ────────────────────────────────────── */}
@@ -243,10 +305,14 @@ function ConteudoDaHome() {
                   <Link
                     key={modulo._id}
                     href={`/aulas/explorar?no=${modulo._id}`}
-                    className="group rounded-2xl border border-border/70 bg-card p-4 transition hover:border-primary/40"
+                    className={cn(
+                      'group rounded-3xl bg-card p-4 ring-1 ring-border/70',
+                      'shadow-[0_4px_0_rgb(0_0_0/0.12)] transition-[transform,box-shadow] duration-150',
+                      'hover:-translate-y-0.5 hover:ring-primary/40 active:translate-y-[3px] active:shadow-none',
+                    )}
                   >
                     <div className="flex items-baseline justify-between gap-3">
-                      <h3 className="font-heading text-base font-semibold tracking-tight transition group-hover:text-primary">
+                      <h3 className="font-heading text-base font-extrabold tracking-tight transition group-hover:text-primary">
                         {modulo.nome}
                       </h3>
                       <span className="flex-none text-xs font-medium tabular-nums text-muted-foreground">
@@ -298,13 +364,17 @@ function ConteudoDaHome() {
             <section>
               <Link
                 href="/aulas/revisar"
-                className="group flex items-center gap-4 rounded-2xl border border-border/70 bg-card p-5 transition hover:border-primary/40"
+                className={cn(
+                  'group flex items-center gap-4 rounded-3xl bg-card p-5 ring-1 ring-border/70',
+                  'shadow-[0_4px_0_rgb(0_0_0/0.12)] transition-[transform,box-shadow] duration-150',
+                  'hover:-translate-y-0.5 hover:ring-primary/40 active:translate-y-[3px] active:shadow-none',
+                )}
               >
-                <span className="inline-flex h-11 w-11 flex-none items-center justify-center rounded-full bg-primary/12 text-primary">
-                  <RotateCcw className="h-5 w-5" />
+                <span className="inline-flex h-12 w-12 flex-none items-center justify-center rounded-2xl bg-primary/12 text-primary">
+                  <RotateCcw className="h-6 w-6" strokeWidth={2.5} />
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="block font-heading text-base font-semibold tracking-tight">
+                  <span className="block font-heading text-lg font-extrabold tracking-tight">
                     Revisar o que você estudou
                   </span>
                   <span className="mt-0.5 block text-sm text-muted-foreground">
@@ -317,7 +387,7 @@ function ConteudoDaHome() {
               </Link>
             </section>
           ) : null}
-        </div>
+        </Cascata>
       )}
     </div>
   )
@@ -334,9 +404,14 @@ function CartaoDeRetomada({ item }: { item: ItemDeContinuidade }) {
   return (
     <Link
       href={item.href}
-      className="group relative flex gap-3 overflow-hidden rounded-2xl border border-border/70 bg-card p-3 transition hover:border-primary/40"
+      className={cn(
+        'group relative flex gap-3 overflow-hidden rounded-3xl bg-card p-3 ring-1 ring-border/70',
+        'shadow-[0_4px_0_rgb(0_0_0/0.12)] transition-[transform,box-shadow] duration-150',
+        'hover:-translate-y-0.5 hover:shadow-[0_6px_0_rgb(0_0_0/0.14)] hover:ring-primary/40',
+        'active:translate-y-[3px] active:shadow-none',
+      )}
     >
-      <div className="relative aspect-video w-32 flex-none overflow-hidden rounded-xl bg-muted sm:w-40">
+      <div className="relative aspect-video w-32 flex-none overflow-hidden rounded-2xl bg-muted sm:w-40">
         {item.capa?.imagem ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={item.capa.imagem} alt="" loading="lazy" className="h-full w-full object-cover" />
@@ -348,6 +423,13 @@ function CartaoDeRetomada({ item }: { item: ItemDeContinuidade }) {
             <Play className="h-5 w-5 text-primary" />
           </div>
         )}
+        {/* O play sobre a capa: o gesto de "voltar ao vídeo" precisa de um
+            alvo óbvio, não de um cartão inteiro que talvez seja clicável. */}
+        <span className="absolute inset-0 flex items-center justify-center">
+          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/95 text-primary-foreground shadow-[0_3px_0_rgb(0_0_0/0.3)] transition group-hover:scale-110">
+            <Play className="ml-0.5 h-4 w-4" fill="currentColor" />
+          </span>
+        </span>
         <BarraDeProgresso
           percentual={item.percentual}
           className="absolute inset-x-0 bottom-0 rounded-none bg-black/40"
@@ -356,7 +438,7 @@ function CartaoDeRetomada({ item }: { item: ItemDeContinuidade }) {
 
       <div className="flex min-w-0 flex-1 flex-col justify-center">
         {item.trilha ? (
-          <p className="truncate text-[11px] font-bold uppercase tracking-wide text-primary">
+          <p className="truncate text-[11px] font-extrabold uppercase tracking-wide text-primary">
             {item.trilha.titulo}
           </p>
         ) : item.localizacao ? (
@@ -365,7 +447,7 @@ function CartaoDeRetomada({ item }: { item: ItemDeContinuidade }) {
           </p>
         ) : null}
 
-        <h3 className="mt-0.5 line-clamp-2 text-sm font-semibold leading-snug transition group-hover:text-primary">
+        <h3 className="mt-0.5 line-clamp-2 text-sm font-bold leading-snug transition group-hover:text-primary">
           {item.titulo}
         </h3>
 

@@ -22,7 +22,10 @@ import {
   X,
 } from 'lucide-react'
 
+import { motion, useReducedMotion } from 'framer-motion'
+
 import { AppShell } from '@/components/app-shell'
+import { BotaoDuo, Confete } from '@/components/ensino/duo'
 import { PlayerDaAula, type ControleDoPlayer } from '@/components/aulas/player'
 import { PainelDeAnotacoes } from '@/components/aulas/anotacoes-painel'
 import {
@@ -150,7 +153,15 @@ function Conteudo() {
   const [impedimento, setImpedimento] = useState('')
   const [mostrarReforco, setMostrarReforco] = useState(false)
   const [indiceAberto, setIndiceAberto] = useState(false)
+  const [celebrar, setCelebrar] = useState(false)
   const jaConcluidaAoAbrir = useRef(false)
+  const semMovimento = useReducedMotion()
+
+  /** Dispara a comemoração uma vez, na transição para concluída. */
+  const comemorar = useCallback(() => {
+    setCelebrar(true)
+    setTimeout(() => setCelebrar(false), 2400)
+  }, [])
 
   useEffect(() => {
     if (!aulaId) return
@@ -198,10 +209,13 @@ function Conteudo() {
       // O convite à revisão só aparece na TRANSIÇÃO para concluída, e nunca
       // para quem abriu uma aula que já tinha terminado: seria uma sugestão
       // repetida a cada visita (§17).
-      if (p.concluida && !antes && !jaConcluidaAoAbrir.current) setMostrarReforco(true)
+      if (p.concluida && !antes && !jaConcluidaAoAbrir.current) {
+        setMostrarReforco(true)
+        comemorar()
+      }
       return p.concluida
     })
-  }, [])
+  }, [comemorar])
 
   async function alternarConclusao() {
     setMarcando(true)
@@ -217,7 +231,10 @@ function Conteudo() {
         const virou = d.progresso?.concluida ?? !concluida
         setConcluida(virou)
         if (d.progresso) setPercentual(d.progresso.percentual)
-        if (virou && !jaConcluidaAoAbrir.current) setMostrarReforco(true)
+        if (virou && !jaConcluidaAoAbrir.current) {
+          setMostrarReforco(true)
+          comemorar()
+        }
       } else {
         setImpedimento(d.error || 'Não foi possível marcar a aula como concluída.')
       }
@@ -366,36 +383,41 @@ function Conteudo() {
               ) : null}
 
               {acesso.liberado ? (
-                <div className="mt-3 flex flex-wrap items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={alternarConclusao}
-                    disabled={marcando}
-                    className={cn(
-                      'inline-flex h-10 items-center gap-2 rounded-lg px-4 text-sm font-semibold transition disabled:opacity-60',
-                      concluida
-                        ? 'bg-primary text-primary-foreground'
-                        : 'border border-border bg-card hover:bg-muted',
-                    )}
+                <div className="relative mt-3 flex flex-wrap items-center gap-2">
+                  <Confete ativo={celebrar} />
+
+                  <motion.div
+                    // O botão dá um pulinho ao virar concluído. É meio segundo
+                    // de retorno para uma ação que, sem ele, só troca uma cor.
+                    animate={
+                      semMovimento || !concluida ? {} : { scale: [1, 1.08, 1] }
+                    }
+                    transition={{ duration: 0.35 }}
                   >
-                    {marcando ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <Check className="h-4 w-4" strokeWidth={concluida ? 3 : 2} />
-                    )}
-                    {concluida ? 'Concluída' : 'Marcar como concluída'}
-                  </button>
+                    <BotaoDuo
+                      onClick={alternarConclusao}
+                      disabled={marcando}
+                      tom={concluida ? 'primario' : 'claro'}
+                    >
+                      {marcando ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Check className="h-4 w-4" strokeWidth={concluida ? 3.5 : 2.5} />
+                      )}
+                      {concluida ? 'Concluída' : 'Marcar como concluída'}
+                    </BotaoDuo>
+                  </motion.div>
 
                   {(aula.botoesAcesso || []).map((botao) => (
-                    <a
+                    <BotaoDuo
                       key={botao.url}
+                      tom="claro"
                       href={botao.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex h-10 items-center rounded-lg border border-border px-4 text-sm font-semibold transition hover:bg-muted"
                     >
                       {botao.nome}
-                    </a>
+                    </BotaoDuo>
                   ))}
 
                   {percentual > 0 && !concluida ? (
@@ -418,13 +440,9 @@ function Conteudo() {
               <div className="mt-4 flex flex-wrap items-center gap-2 rounded-xl border border-primary/25 bg-primary/5 px-4 py-3">
                 <span className="text-sm font-semibold">Quer reforçar esse conteúdo?</span>
                 {dados.reforco.map((atalho) => (
-                  <Link
-                    key={atalho.href}
-                    href={atalho.href}
-                    className="inline-flex h-8 items-center rounded-lg bg-card px-3 text-xs font-semibold transition hover:bg-muted"
-                  >
+                  <BotaoDuo key={atalho.href} href={atalho.href} tom="claro" tamanho="pequeno">
                     {atalho.rotulo}
-                  </Link>
+                  </BotaoDuo>
                 ))}
                 <button
                   type="button"
@@ -443,7 +461,7 @@ function Conteudo() {
                 {trilha.anterior ? (
                   <Link
                     href={`${trilha.anterior.href}`}
-                    className="group flex items-center gap-3 rounded-xl border border-border/70 bg-card px-4 py-3 transition hover:border-primary/40"
+                    className="group flex items-center gap-3 rounded-2xl bg-card px-4 py-3 ring-1 ring-border/70 shadow-[0_3px_0_rgb(0_0_0/0.08)] transition-[transform,box-shadow] duration-150 hover:-translate-y-0.5 active:translate-y-[2px] active:shadow-none"
                   >
                     <ArrowLeft className="h-4 w-4 flex-none text-muted-foreground transition group-hover:-translate-x-0.5" />
                     <span className="min-w-0">
@@ -462,7 +480,7 @@ function Conteudo() {
                 {trilha.proxima ? (
                   <Link
                     href={`${trilha.proxima.href}`}
-                    className="group flex items-center gap-3 rounded-xl border border-primary/30 bg-primary/5 px-4 py-3 text-right transition hover:border-primary/60"
+                    className="group flex items-center gap-3 rounded-2xl bg-primary/10 px-4 py-3 text-right ring-1 ring-primary/30 shadow-[0_3px_0_rgb(0_0_0/0.08)] transition-[transform,box-shadow] duration-150 hover:-translate-y-0.5 active:translate-y-[2px] active:shadow-none"
                   >
                     <span className="min-w-0 flex-1">
                       <span className="block text-[11px] font-semibold uppercase tracking-wide text-primary">

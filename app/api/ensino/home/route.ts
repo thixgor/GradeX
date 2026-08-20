@@ -203,6 +203,41 @@ export async function GET() {
 
     const arvore = podarVazios(montarArvore(nos, contarAulasPorNo(catalogo as any)))
 
+    /*
+     * As três fichas do topo (§27).
+     *
+     * Números REAIS, e é isso que separa esta faixa de gamificação inventada:
+     * cada um sai do progresso que a pessoa realmente tem. Não há moeda de
+     * mentira nem pontuação que não signifique nada.
+     *
+     * Os minutos estudados saem da soma da duração das aulas concluídas, usando
+     * o catálogo que já está em memória para a contagem da navegação — nenhuma
+     * consulta a mais.
+     */
+    const duracaoPorAulaId = new Map<string, number>(
+      catalogo.map((a: any) => [String(a._id), Number(a.ensino?.duracaoSegundos) || 0]),
+    )
+
+    const concluidas = usuarioId
+      ? await db
+          .collection(COLECOES.progresso)
+          .find({ usuarioId, concluida: true }, { projection: { aulaId: 1 } })
+          .limit(5000)
+          .toArray()
+      : []
+
+    const estatisticas = {
+      aulasConcluidas: concluidas.length,
+      minutosEstudados: Math.round(
+        concluidas.reduce(
+          (soma: number, p: any) => soma + (duracaoPorAulaId.get(String(p.aulaId)) || 0),
+          0,
+        ) / 60,
+      ),
+      trilhasConcluidas: Array.from(progressoDasTrilhas.values()).filter((p) => p.concluida).length,
+      trilhasEmCurso: emCurso.length,
+    }
+
     return NextResponse.json(
       {
         logado: Boolean(usuarioId),
@@ -218,13 +253,8 @@ export async function GET() {
         // "Revisar o que você estudou" é só um contador aqui: a fila completa
         // mora em /aulas/revisar, e calculá-la na home custaria uma varredura
         // de progresso que a maioria dos visitantes nunca usa.
-        revisar: {
-          concluidas: usuarioId
-            ? await db
-                .collection(COLECOES.progresso)
-                .countDocuments({ usuarioId, concluida: true })
-            : 0,
-        },
+        revisar: { concluidas: estatisticas.aulasConcluidas },
+        estatisticas,
       },
       { headers: { 'Cache-Control': 'private, no-store' } },
     )

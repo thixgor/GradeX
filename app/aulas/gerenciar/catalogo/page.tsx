@@ -3,15 +3,22 @@
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
+import { AnimatePresence, motion } from 'framer-motion'
 import {
+  AlertTriangle,
+  Check,
+  Eye,
+  EyeOff,
   FileText,
   Layers,
+  Loader2,
   Pencil,
   Play,
   Plus,
   Route,
   Search,
   Sparkles,
+  Trash2,
   X,
 } from 'lucide-react'
 
@@ -23,6 +30,7 @@ import {
   PainelDeEnsino,
   classeDeEntrada,
 } from '@/components/ensino/painel'
+import { BotaoDuo } from '@/components/ensino/duo'
 import { EstadoVazio, Esqueleto, Selo } from '@/components/ensino/primitivos'
 import { cn } from '@/lib/utils'
 
@@ -106,6 +114,12 @@ function Conteudo() {
   )
   const [organizando, setOrganizando] = useState<AulaNoCatalogo | null>(null)
 
+  /** Ids marcados na lista. É a fonte de tudo que a barra de ações faz. */
+  const [marcadas, setMarcadas] = useState<Set<string>>(new Set())
+  const [confirmandoExclusao, setConfirmandoExclusao] = useState(false)
+  const [aplicando, setAplicando] = useState('')
+  const [aviso, setAviso] = useState('')
+
   const carregar = useCallback(() => {
     setCarregando(true)
     const q = new URLSearchParams({ admin: '1', limite: '200', nos: '1', tipo: 'todos' })
@@ -126,6 +140,11 @@ function Conteudo() {
       })
       .catch(() => {})
       .finally(() => setCarregando(false))
+
+    // A seleção não sobrevive a uma troca de filtro: manter marcada uma aula
+    // que saiu da tela é o caminho mais curto para alguém excluir o que não
+    // está vendo.
+    setMarcadas(new Set())
   }, [busca, no, profundidade, trilha, situacao, semClassificacao])
 
   // O atraso evita uma requisição por tecla digitada na busca.
@@ -170,6 +189,97 @@ function Conteudo() {
   }
 
   const filtrando = Boolean(busca || no || profundidade || trilha || situacao || semClassificacao)
+
+  const todasMarcadas = aulas.length > 0 && marcadas.size === aulas.length
+
+  function alternarMarcada(id: string) {
+    setMarcadas((atual) => {
+      const proximo = new Set(atual)
+      if (proximo.has(id)) proximo.delete(id)
+      else proximo.add(id)
+      return proximo
+    })
+  }
+
+  function alternarTodas() {
+    setMarcadas(todasMarcadas ? new Set() : new Set(aulas.map((a) => a._id)))
+  }
+
+  /**
+   * Marca TODAS as aulas que passam pelos filtros de agora, e não só as que a
+   * página desenhou.
+   *
+   * Ela pede ao servidor a lista crua de ids — os mesmos filtros, o mesmo motor
+   * de acesso — em vez de confiar no que está na tela. Marcar "todas" com base
+   * numa página de 200 e chamar aquilo de acervo inteiro seria mentira, e a
+   * ação seguinte é a exclusão.
+   */
+  async function marcarTodasDoFiltro() {
+    const q = new URLSearchParams({ admin: '1', soIds: '1', tipo: 'todos' })
+    if (busca.trim().length >= 2) q.set('q', busca.trim())
+    if (no) q.set('no', no)
+    if (profundidade) q.set('profundidade', profundidade)
+    if (trilha) q.set('trilha', trilha)
+    if (situacao) q.set('situacao', situacao)
+    if (semClassificacao) q.set('semClassificacao', '1')
+
+    setAplicando('selecionar')
+    try {
+      const resposta = await fetch(`/api/ensino/catalogo?${q}`, { cache: 'no-store' })
+      const d = await resposta.json().catch(() => ({}))
+      if (Array.isArray(d.ids)) setMarcadas(new Set(d.ids))
+    } catch {
+      setAviso('Não foi possível selecionar todas.')
+    } finally {
+      setAplicando('')
+    }
+  }
+
+  /**
+   * Aplica uma ação a tudo que está marcado.
+   *
+   * Em fatias de 200 porque a rota aceita 500 por chamada e um acervo grande
+   * estoura isso com facilidade. Fatiar aqui, e não pedir ao admin que
+   * selecione menos, é o que faz "excluir todas" significar todas de verdade.
+   */
+  async function aplicarEmLote(acao: 'publicar' | 'ocultar' | 'excluir') {
+    const ids = Array.from(marcadas)
+    if (ids.length === 0) return
+
+    setAplicando(acao)
+    setAviso('')
+    let afetadas = 0
+
+    try {
+      for (let i = 0; i < ids.length; i += 200) {
+        const resposta = await fetch('/api/aulas/lote', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            acao,
+            ids: ids.slice(i, i + 200),
+            ...(acao === 'excluir' ? { confirmar: true } : {}),
+          }),
+        })
+        const d = await resposta.json().catch(() => ({}))
+        if (!resposta.ok) throw new Error(d.error || 'Não foi possível aplicar a ação.')
+        afetadas += Number(d.afetadas) || 0
+      }
+
+      setMarcadas(new Set())
+      setConfirmandoExclusao(false)
+      setAviso(
+        acao === 'excluir'
+          ? `${afetadas} ${afetadas === 1 ? 'aula excluída' : 'aulas excluídas'}.`
+          : `${afetadas} ${afetadas === 1 ? 'aula atualizada' : 'aulas atualizadas'}.`,
+      )
+      carregar()
+    } catch (e: any) {
+      setAviso(e?.message || 'Não foi possível aplicar a ação.')
+    } finally {
+      setAplicando('')
+    }
+  }
 
   return (
     <PainelDeEnsino
@@ -268,6 +378,16 @@ function Conteudo() {
         </span>
       </div>
 
+      {aviso ? (
+        <div className="mb-3 flex items-center gap-2 rounded-xl bg-primary/10 px-4 py-2.5 text-sm font-semibold text-primary">
+          <Check className="h-4 w-4" />
+          <span className="flex-1">{aviso}</span>
+          <button type="button" onClick={() => setAviso('')} aria-label="Fechar">
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      ) : null}
+
       {/* ── Lista ───────────────────────────────────────────────────── */}
       {carregando && aulas.length === 0 ? (
         <div className="space-y-2">
@@ -290,8 +410,51 @@ function Conteudo() {
         />
       ) : (
         <div className="divide-y divide-border/60 overflow-hidden rounded-2xl border border-border/70 bg-card">
+          {/* A linha de seleção. Ela fica DENTRO da lista, colada ao primeiro
+              item, porque "selecionar todas" precisa deixar óbvio quais são
+              "todas": as que estão na tela, com os filtros que estão valendo. */}
+          <label className="flex cursor-pointer items-center gap-3 bg-muted/40 px-4 py-2.5 text-sm font-semibold transition hover:bg-muted/70">
+            <Caixa marcada={todasMarcadas} onChange={alternarTodas} />
+            <span className="flex-1">
+              {marcadas.size > 0
+                ? `${marcadas.size} ${marcadas.size === 1 ? 'selecionada' : 'selecionadas'}`
+                : 'Selecionar todas desta lista'}
+            </span>
+            {total > aulas.length ? (
+              todasMarcadas && marcadas.size < total ? (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    marcarTodasDoFiltro()
+                  }}
+                  className="text-xs font-bold text-primary underline"
+                >
+                  {aplicando === 'selecionar'
+                    ? 'selecionando…'
+                    : `selecionar todas as ${total}`}
+                </button>
+              ) : (
+                <span className="text-xs font-normal text-muted-foreground">
+                  mostrando {aulas.length} de {total}
+                </span>
+              )
+            ) : null}
+          </label>
+
           {aulas.map((aula) => (
-            <div key={aula._id} className="flex flex-wrap items-center gap-3 px-4 py-3">
+            <div
+              key={aula._id}
+              className={cn(
+                'flex flex-wrap items-center gap-3 px-4 py-3 transition',
+                marcadas.has(aula._id) && 'bg-primary/[0.06]',
+              )}
+            >
+              <Caixa
+                marcada={marcadas.has(aula._id)}
+                onChange={() => alternarMarcada(aula._id)}
+                rotulo={`Selecionar ${aula.titulo}`}
+              />
               <div className="min-w-[14rem] flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <Link
@@ -363,6 +526,87 @@ function Conteudo() {
             setOrganizando(null)
             carregar()
           }}
+        />
+      ) : null}
+
+      {/* ══ A barra de ações em lote ══════════════════════════════════
+          Ela só existe quando há seleção, e desliza de baixo. Uma barra
+          permanente com botões cinzentos ensinaria o olho a ignorá-la
+          justamente onde mora a ação mais destrutiva do painel. */}
+      <AnimatePresence>
+        {marcadas.size > 0 ? (
+          <motion.div
+            initial={{ y: 90, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 90, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+            className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 px-4 py-3 backdrop-blur-md"
+          >
+            <div className="container mx-auto flex max-w-[100rem] flex-wrap items-center gap-2">
+              <span className="flex items-center gap-2 font-heading text-base font-extrabold">
+                <span className="flex h-8 min-w-8 items-center justify-center rounded-full bg-primary px-2 text-sm text-primary-foreground">
+                  {marcadas.size}
+                </span>
+                {marcadas.size === 1 ? 'aula selecionada' : 'aulas selecionadas'}
+              </span>
+
+              <button
+                type="button"
+                onClick={() => setMarcadas(new Set())}
+                className="text-xs font-semibold text-muted-foreground underline transition hover:text-foreground"
+              >
+                limpar
+              </button>
+
+              <div className="ml-auto flex flex-wrap items-center gap-2">
+                <BotaoDuo
+                  tom="claro"
+                  tamanho="pequeno"
+                  onClick={() => aplicarEmLote('publicar')}
+                  disabled={Boolean(aplicando)}
+                >
+                  {aplicando === 'publicar' ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                  Publicar
+                </BotaoDuo>
+
+                <BotaoDuo
+                  tom="claro"
+                  tamanho="pequeno"
+                  onClick={() => aplicarEmLote('ocultar')}
+                  disabled={Boolean(aplicando)}
+                >
+                  {aplicando === 'ocultar' ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <EyeOff className="h-4 w-4" />
+                  )}
+                  Ocultar
+                </BotaoDuo>
+
+                <BotaoDuo
+                  tom="perigo"
+                  tamanho="pequeno"
+                  onClick={() => setConfirmandoExclusao(true)}
+                  disabled={Boolean(aplicando)}
+                >
+                  <Trash2 className="h-4 w-4" /> Excluir
+                </BotaoDuo>
+              </div>
+            </div>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
+
+      {confirmandoExclusao ? (
+        <ConfirmacaoDeExclusao
+          quantidade={marcadas.size}
+          ocupado={aplicando === 'excluir'}
+          aoCancelar={() => setConfirmandoExclusao(false)}
+          aoConfirmar={() => aplicarEmLote('excluir')}
         />
       ) : null}
     </PainelDeEnsino>
@@ -569,6 +813,134 @@ function PainelDeOrganizacao({
           {erro ? <span className="text-xs font-semibold text-destructive">{erro}</span> : null}
         </div>
       </div>
+    </div>
+  )
+}
+
+/* =================== SELEÇÃO =================== */
+
+/**
+ * A caixa de seleção.
+ *
+ * Desenhada à mão em vez de `<input type="checkbox">` cru por um motivo
+ * prático: o controle nativo é pequeno demais para o dedo e ignora a paleta do
+ * tema em boa parte dos navegadores. O input continua existindo, invisível, para
+ * o teclado e o leitor de tela funcionarem sem gambiarra de `role`.
+ */
+function Caixa({
+  marcada,
+  onChange,
+  rotulo,
+}: {
+  marcada: boolean
+  onChange: () => void
+  rotulo?: string
+}) {
+  return (
+    <span className="relative flex h-6 w-6 flex-none items-center justify-center">
+      <input
+        type="checkbox"
+        checked={marcada}
+        onChange={onChange}
+        aria-label={rotulo}
+        className="peer absolute inset-0 cursor-pointer opacity-0"
+      />
+      <span
+        className={cn(
+          'pointer-events-none flex h-5 w-5 items-center justify-center rounded-md transition',
+          'peer-focus-visible:ring-2 peer-focus-visible:ring-primary peer-focus-visible:ring-offset-2',
+          marcada
+            ? 'bg-primary text-primary-foreground'
+            : 'bg-card ring-2 ring-inset ring-border peer-hover:ring-primary/50',
+        )}
+      >
+        {marcada ? <Check className="h-3.5 w-3.5" strokeWidth={4} /> : null}
+      </span>
+    </span>
+  )
+}
+
+/**
+ * A confirmação de exclusão.
+ *
+ * ELA PEDE ESFORÇO PROPORCIONAL AO ESTRAGO
+ *
+ * Até dez aulas, um clique em "Excluir" basta — é uma limpeza normal e um
+ * diálogo pesado só treinaria o admin a confirmar sem ler. A partir de dez, é
+ * preciso digitar a palavra: nesse volume o clique errado apaga trabalho de
+ * semanas, e digitar seis letras é o único obstáculo que a pressa não vence
+ * por reflexo.
+ *
+ * O texto diz o que sobrevive e o que não: as Trilhas continuam, mas ficam sem
+ * essas aulas. Esconder isso faria a exclusão parecer menor do que é.
+ */
+function ConfirmacaoDeExclusao({
+  quantidade,
+  ocupado,
+  aoCancelar,
+  aoConfirmar,
+}: {
+  quantidade: number
+  ocupado: boolean
+  aoCancelar: () => void
+  aoConfirmar: () => void
+}) {
+  const exigeDigitar = quantidade > 10
+  const [texto, setTexto] = useState('')
+  const liberado = !exigeDigitar || texto.trim().toUpperCase() === 'EXCLUIR'
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+      onClick={aoCancelar}
+    >
+      <motion.div
+        initial={{ scale: 0.94, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ type: 'spring', stiffness: 420, damping: 30 }}
+        className="w-full max-w-md rounded-3xl bg-background p-6 shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-destructive/12 text-destructive">
+          <AlertTriangle className="h-7 w-7" strokeWidth={2.5} />
+        </span>
+
+        <h2 className="mt-4 font-heading text-xl font-extrabold tracking-tight">
+          Excluir {quantidade} {quantidade === 1 ? 'aula' : 'aulas'}?
+        </h2>
+
+        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+          Isso apaga {quantidade === 1 ? 'a aula' : 'as aulas'} de vez, junto com o progresso e as
+          anotações de quem já assistiu. As Trilhas que {quantidade === 1 ? 'a' : 'as'} usavam
+          continuam existindo — só ficam sem {quantidade === 1 ? 'ela' : 'elas'}.
+        </p>
+
+        <p className="mt-2 text-sm font-semibold">Não dá para desfazer.</p>
+
+        {exigeDigitar ? (
+          <label className="mt-4 block">
+            <span className="mb-1 block text-xs font-bold uppercase tracking-wide text-muted-foreground">
+              Digite EXCLUIR para confirmar
+            </span>
+            <input
+              value={texto}
+              autoFocus
+              onChange={(e) => setTexto(e.target.value)}
+              className={cn(classeDeEntrada, 'uppercase tracking-widest')}
+            />
+          </label>
+        ) : null}
+
+        <div className="mt-5 flex flex-wrap gap-2">
+          <BotaoDuo tom="perigo" onClick={aoConfirmar} disabled={!liberado || ocupado}>
+            {ocupado ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+            {ocupado ? 'Excluindo…' : 'Excluir'}
+          </BotaoDuo>
+          <BotaoDuo tom="contorno" onClick={aoCancelar}>
+            Cancelar
+          </BotaoDuo>
+        </div>
+      </motion.div>
     </div>
   )
 }

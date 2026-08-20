@@ -135,7 +135,7 @@ export function TituloDaFaixa({
   return (
     <div className="mb-3 flex items-end justify-between gap-4">
       <div className="min-w-0">
-        <h2 className="flex items-center gap-2 font-heading text-lg font-semibold tracking-tight sm:text-xl">
+        <h2 className="flex items-center gap-2 font-heading text-lg font-extrabold tracking-tight sm:text-xl">
           {Icone ? <Icone className="h-[1.1em] w-[1.1em] flex-none text-primary" /> : null}
           {titulo}
         </h2>
@@ -208,15 +208,19 @@ export function BarraDeProgresso({
       aria-valuemin={0}
       aria-valuemax={100}
       className={cn(
-        'w-full overflow-hidden rounded-full bg-muted',
-        altura === 'fina' ? 'h-1' : 'h-1.5',
+        'w-full overflow-hidden rounded-full bg-muted ring-1 ring-inset ring-black/5',
+        altura === 'fina' ? 'h-1.5' : 'h-2.5',
         className,
       )}
     >
+      {/* O brilho na aresta de cima é o que faz a barra parecer preenchida —
+          uma faixa chapada de cor lê como desenho, não como medida. */}
       <div
-        className="h-full rounded-full bg-primary transition-[width] duration-500"
+        className="relative h-full rounded-full bg-primary transition-[width] duration-700 ease-out"
         style={{ width: `${valor}%` }}
-      />
+      >
+        <span className="absolute inset-x-0.5 top-[1px] h-[3px] rounded-full bg-white/30" />
+      </div>
     </div>
   )
 }
@@ -299,7 +303,7 @@ export function Capa({
   return (
     <div
       className={cn(
-        'relative overflow-hidden rounded-xl bg-muted',
+        'relative overflow-hidden rounded-2xl bg-muted',
         aspecto === 'video' ? 'aspect-video' : 'aspect-[4/5]',
         className,
       )}
@@ -343,7 +347,7 @@ export function Selo({
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold leading-none',
+        'inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wide leading-none',
         tom === 'primario' && 'bg-primary/12 text-primary',
         tom === 'sucesso' && 'bg-primary text-primary-foreground',
         tom === 'aviso' && 'bg-accent/20 text-accent-foreground',
@@ -438,7 +442,7 @@ export function CartaoDeAula({
     <Link
       href={href}
       className={cn(
-        'group flex w-[260px] flex-none snap-start flex-col gap-2 sm:w-full',
+        'group flex w-[260px] flex-none snap-start flex-col gap-2 transition-transform duration-150 hover:-translate-y-0.5 active:translate-y-[2px] sm:w-full',
         className,
       )}
     >
@@ -446,7 +450,7 @@ export function CartaoDeAula({
         <Capa capa={aula.capa} titulo={aula.titulo} />
 
         {bloqueada ? (
-          <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-background/70 backdrop-blur-[2px]">
+          <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-background/70 backdrop-blur-[2px]">
             <Lock className="h-5 w-5 text-muted-foreground" />
           </div>
         ) : null}
@@ -468,13 +472,13 @@ export function CartaoDeAula({
         {aula.progresso && aula.progresso.percentual > 0 && !aula.progresso.concluida ? (
           <BarraDeProgresso
             percentual={aula.progresso.percentual}
-            className="absolute inset-x-0 bottom-0 rounded-none rounded-b-xl bg-black/40"
+            className="absolute inset-x-0 bottom-0 rounded-none rounded-b-2xl bg-black/40"
           />
         ) : null}
       </div>
 
       <div className="min-w-0">
-        <h3 className="line-clamp-2 text-sm font-semibold leading-snug transition group-hover:text-primary">
+        <h3 className="line-clamp-2 text-sm font-bold leading-snug transition group-hover:text-primary">
           {aula.titulo}
         </h3>
         <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
@@ -522,11 +526,11 @@ export function LinhaDeAula({
     >
       <span
         className={cn(
-          'flex h-7 w-7 flex-none items-center justify-center rounded-full text-xs font-bold tabular-nums transition',
+          'flex h-8 w-8 flex-none items-center justify-center rounded-full text-xs font-extrabold tabular-nums transition',
           concluida
-            ? 'bg-primary text-primary-foreground'
+            ? 'bg-primary text-primary-foreground shadow-[0_2px_0_rgb(0_0_0/0.2)]'
             : atual
-              ? 'bg-primary/20 text-primary'
+              ? 'bg-primary/20 text-primary ring-2 ring-primary/40'
               : 'bg-muted text-muted-foreground group-hover:bg-background',
         )}
       >
@@ -603,7 +607,13 @@ export function CartaoDeTrilha({
     <Link
       href={`/aulas/trilhas/${trilha.slug}`}
       className={cn(
-        'group relative flex flex-none snap-start flex-col overflow-hidden rounded-2xl border border-border/70 bg-card transition hover:border-primary/40 hover:shadow-[0_1px_20px_-8px_hsl(var(--primary)/0.5)]',
+        'group relative flex flex-none snap-start flex-col overflow-hidden rounded-3xl bg-card ring-1 ring-border/70',
+        // A mesma gramática do botão: a peça tem espessura, sobe no hover e
+        // afunda no toque. É o que faz um cartão parecer clicável antes de
+        // qualquer instrução.
+        'shadow-[0_4px_0_rgb(0_0_0/0.13)] transition-[transform,box-shadow] duration-150',
+        'hover:-translate-y-0.5 hover:shadow-[0_6px_0_rgb(0_0_0/0.15)] hover:ring-primary/40',
+        'active:translate-y-[3px] active:shadow-none',
         formato === 'cartao' ? 'w-[280px] sm:w-full' : 'w-full',
         className,
       )}
@@ -638,7 +648,7 @@ export function CartaoDeTrilha({
       </div>
 
       <div className="flex flex-1 flex-col gap-1 p-4">
-        <h3 className="font-heading text-base font-semibold leading-snug tracking-tight transition group-hover:text-primary">
+        <h3 className="font-heading text-base font-extrabold leading-snug tracking-tight transition group-hover:text-primary">
           {trilha.titulo}
         </h3>
         {trilha.subtitulo ? (
@@ -688,19 +698,21 @@ export function EstadoVazio({
   return (
     <div
       className={cn(
-        'flex flex-col items-center justify-center rounded-2xl border border-dashed border-border px-6 py-12 text-center',
+        'flex flex-col items-center justify-center rounded-3xl bg-muted/40 px-6 py-14 text-center ring-2 ring-dashed ring-border',
         className,
       )}
     >
-      <Icone className="h-8 w-8 text-muted-foreground/60" />
-      <p className="mt-3 font-heading text-base font-semibold">{titulo}</p>
+      <span className="flex h-16 w-16 items-center justify-center rounded-full bg-card ring-1 ring-border">
+        <Icone className="h-8 w-8 text-primary/60" strokeWidth={2} />
+      </span>
+      <p className="mt-4 font-heading text-lg font-extrabold tracking-tight">{titulo}</p>
       {descricao ? (
         <p className="mt-1 max-w-md text-sm text-muted-foreground">{descricao}</p>
       ) : null}
       {acaoLabel && acaoHref ? (
         <Link
           href={acaoHref}
-          className="mt-4 inline-flex h-10 items-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:opacity-90"
+          className="mt-5 inline-flex h-12 items-center rounded-2xl bg-primary px-5 text-sm font-extrabold uppercase tracking-wide text-primary-foreground shadow-[0_3px_0_rgb(0_0_0/0.28)] transition-[transform,box-shadow] duration-100 hover:brightness-110 active:translate-y-[3px] active:shadow-none"
         >
           {acaoLabel}
         </Link>
@@ -708,7 +720,7 @@ export function EstadoVazio({
         <button
           type="button"
           onClick={onAcao}
-          className="mt-4 inline-flex h-10 items-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:opacity-90"
+          className="mt-5 inline-flex h-12 items-center rounded-2xl bg-primary px-5 text-sm font-extrabold uppercase tracking-wide text-primary-foreground shadow-[0_3px_0_rgb(0_0_0/0.28)] transition-[transform,box-shadow] duration-100 hover:brightness-110 active:translate-y-[3px] active:shadow-none"
         >
           {acaoLabel}
         </button>
@@ -781,20 +793,20 @@ export function Cadeado({
   return (
     <div
       className={cn(
-        'flex flex-col items-center justify-center gap-3 rounded-2xl border border-border bg-card px-6 py-10 text-center',
+        'flex flex-col items-center justify-center gap-3 rounded-3xl bg-card px-6 py-10 text-center shadow-[0_4px_0_rgb(0_0_0/0.1)] ring-1 ring-border',
         className,
       )}
     >
-      <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-muted">
-        <Lock className="h-5 w-5 text-muted-foreground" />
+      <span className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-muted ring-1 ring-border">
+        <Lock className="h-6 w-6 text-muted-foreground" strokeWidth={2.5} />
       </span>
-      <p className="font-heading text-base font-semibold">
+      <p className="font-heading text-lg font-extrabold tracking-tight">
         {requisito?.titulo || 'Conteúdo indisponível'}
       </p>
       {requisito?.acaoLabel && requisito.acaoHref ? (
         <Link
           href={requisito.acaoHref}
-          className="inline-flex h-10 items-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:opacity-90"
+          className="inline-flex h-12 items-center rounded-2xl bg-primary px-5 text-sm font-extrabold uppercase tracking-wide text-primary-foreground shadow-[0_3px_0_rgb(0_0_0/0.28)] transition-[transform,box-shadow] duration-100 hover:brightness-110 active:translate-y-[3px] active:shadow-none"
         >
           {requisito.acaoLabel}
         </Link>
