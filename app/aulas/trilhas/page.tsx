@@ -88,8 +88,8 @@ function Conteudo() {
           Trilhas de Ensino
         </h1>
         <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-          Cada Trilha reúne aulas de vários pontos do acervo numa sequência que leva do que você
-          precisa saber primeiro até dominar o assunto.
+          Cada Trilha reúne aulas de vários assuntos numa sequência que leva do que você precisa
+          saber primeiro até dominar o tema.
         </p>
       </header>
 

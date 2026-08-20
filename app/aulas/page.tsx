@@ -50,11 +50,11 @@ import { cn } from '@/lib/utils'
  * Agora a tela abre com UMA decisão, grande, no topo: a próxima coisa que faz
  * sentido estudar. Ela é calculada, não perguntada (§11): retomar a aula
  * interrompida, se houver; senão a Trilha em andamento; senão a Trilha que a
- * equipe marcou como ponto de partida; senão a aula mais recente do acervo.
+ * equipe marcou como ponto de partida; senão a aula mais recente publicada.
  * O botão é um só, e ele é a resposta.
  *
  * Tudo o mais desce um degrau de hierarquia e vira material de descoberta —
- * Trilhas, acervo, novidades e revisão continuam ali, em faixas, para quem
+ * Trilhas, conteúdo, novidades e revisão continuam ali, em faixas, para quem
  * quiser escolher em vez de seguir.
  *
  * ══ TRILHAS E EXPLORAR NÃO SÃO LUGARES (§3, §7) ══════════════════════
@@ -234,7 +234,7 @@ function ConteudoDaHome() {
     const aula = dados.aulasRecentes[0]
     if (aula) {
       return {
-        contexto: aula.localizacao || 'Novo no acervo',
+        contexto: aula.localizacao || 'Novidade',
         titulo: aula.titulo,
         detalhe: aula.duracaoLabel,
         href: aula.href,
@@ -391,7 +391,7 @@ function ConteudoDaHome() {
             </ItemDaCascata>
           ) : null}
 
-          {/* ══ O acervo, como fileira de atalhos (§7, §26) ══════════
+          {/* ══ O conteúdo, como fileira de atalhos (§7, §26) ════════
               "Explorar" era uma aba; virou o que sempre foi — um jeito
               de chegar num assunto. Chips ocupam uma linha, e não a
               tela inteira, porque navegar por pasta é a exceção: a
@@ -402,7 +402,7 @@ function ConteudoDaHome() {
                 titulo="Por etapa da Medicina"
                 icone={Compass}
                 href="/aulas/explorar"
-                hrefLabel="Ver o acervo"
+                hrefLabel="Ver tudo"
               />
               <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                 {modulos.map((modulo) => (
@@ -427,7 +427,7 @@ function ConteudoDaHome() {
           {/* ══ Novidades ════════════════════════════════════════════ */}
           {dados && dados.aulasRecentes.length > 0 ? (
             <ItemDaCascata>
-              <TituloDaFaixa titulo="Novas aulas" href="/aulas/explorar" hrefLabel="Ver o acervo" />
+              <TituloDaFaixa titulo="Novas aulas" href="/aulas/explorar" hrefLabel="Ver tudo" />
               <Trilho>
                 {dados.aulasRecentes.map((aula) => (
                   <CartaoDeAula key={aula._id} aula={aula} />

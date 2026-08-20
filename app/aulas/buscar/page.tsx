@@ -166,7 +166,7 @@ function Conteudo() {
           icone={Search}
           titulo="O que você quer estudar?"
           descricao="Um assunto, o nome de uma aula ou de uma Trilha."
-          acaoLabel="Navegar pelo acervo"
+          acaoLabel="Navegar por assunto"
           acaoHref="/aulas/explorar"
         />
       ) : carregando ? (
@@ -183,8 +183,8 @@ function Conteudo() {
         <EstadoVazio
           icone={Search}
           titulo={`Nada encontrado para "${termoDaUrl}"`}
-          descricao="Tente outra palavra, ou navegue pelo acervo por assunto."
-          acaoLabel="Explorar o acervo"
+          descricao="Tente outra palavra, ou navegue pelo conteúdo por assunto."
+          acaoLabel="Navegar por assunto"
           acaoHref="/aulas/explorar"
         />
       ) : (

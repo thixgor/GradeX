@@ -51,7 +51,7 @@ const ROTULO_DO_NIVEL: Record<string, string> = {
 
 export default function ExplorarPage() {
   return (
-    <AppShell headerTitle="Explorar" headerSubtitle="Todo o acervo por assunto" comercio={false}>
+    <AppShell headerTitle="Explorar" headerSubtitle="Todo o conteúdo por assunto" comercio={false}>
       <Suspense
         fallback={
           <div className="container mx-auto max-w-6xl px-4 py-8">
@@ -146,7 +146,7 @@ function Conteudo() {
           ]}
         />
         <h1 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
-          {atual ? atual.nome : 'Explorar o acervo'}
+          {atual ? atual.nome : 'Explorar por assunto'}
         </h1>
         <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
           {atual?.descricao

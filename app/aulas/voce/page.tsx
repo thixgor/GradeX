@@ -180,7 +180,7 @@ function Conteudo() {
         <Linha
           href="/aulas/explorar"
           icone={Compass}
-          titulo="Acervo completo"
+          titulo="Todo o conteúdo"
           detalhe="Navegar por área, módulo e tópico"
         />
       </div>
