@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { revalidatePath } from 'next/cache'
 import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
+import { invalidarCacheDeServidor } from '@/lib/cache-de-servidor'
 import { PlanConfig, AdminSettings } from '@/lib/types'
 import {
   normalizeSidebarOrder,
@@ -145,6 +146,11 @@ export async function PUT(req: NextRequest) {
     // toggle do painel continua valendo na hora, sem devolver a página ao
     // regime de renderizar a cada visita.
     revalidatePath('/')
+
+    // Os layouts de seção leem `sidebarSections` por uma memória curta de
+    // servidor (ver lib/sidebar-section-access.ts). Descartá-la aqui faz o
+    // toggle valer na próxima navegação, e não só quando a janela expirar.
+    invalidarCacheDeServidor('sidebar-sections')
 
     // Buscar as configurações atualizadas para retornar
     const updatedSettings = await collection.findOne({})

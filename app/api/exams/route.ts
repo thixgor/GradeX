@@ -80,9 +80,41 @@ export async function GET(request: NextRequest) {
       createdAt: 1,
     }
 
-    const cursor = examsCollection
-      .find(query, resumo ? { projection: projecao } : {})
-      .sort({ createdAt: -1 })
+    /*
+     * `campos=lista` — tudo que /provas desenha, e nada do que ela não desenha.
+     *
+     * A diferença para `resumo=1` é a capa, a descrição, os portões, a pontuação
+     * e o autor: /provas mostra os cinco, então o resumo mínimo não serve para
+     * ela. O que ela NÃO usa é o array `questions`, e é ele que domina o
+     * documento — uma prova de 60 questões carrega os 60 enunciados, as
+     * alternativas de cada uma e o gabarito. Numa conta com dezenas de provas
+     * visíveis isso são megabytes de JSON para montar uma grade de cartões que
+     * só mostra título, capa e "60 questões".
+     *
+     * A tela precisa das questões em um lugar só: gerar o PDF de uma prova de
+     * treino. Isso acontece num clique, sobre UMA prova, e agora busca o
+     * documento completo em /api/exams/[id] na hora — em vez de todo visitante
+     * baixar o banco de questões de todas as provas por precaução.
+     */
+    const apenasParaLista = request.nextUrl.searchParams.get('campos') === 'lista'
+    const projecaoDeLista = {
+      ...projecao,
+      description: 1,
+      coverImage: 1,
+      createdBy: 1,
+      gatesOpen: 1,
+      gatesClose: 1,
+      totalPoints: 1,
+      scoringMethod: 1,
+    }
+
+    const projecaoEscolhida = apenasParaLista
+      ? { projection: projecaoDeLista }
+      : resumo
+        ? { projection: projecao }
+        : {}
+
+    const cursor = examsCollection.find(query, projecaoEscolhida).sort({ createdAt: -1 })
     const exams = await (limit ? cursor.limit(limit) : cursor).toArray()
 
     // Cache privado curto: lista pessoal de provas raramente muda em

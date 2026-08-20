@@ -24,8 +24,25 @@ export interface AcessoAoBanco {
   gratuito: EstadoGratuito
 }
 
+/**
+ * Só o que decide o acesso — e não o documento inteiro do usuário.
+ *
+ * O registro de uma pessoa carrega histórico de assinatura, preferências,
+ * dados de perfil e mais; nada disso muda quem pode ver qual questão. Trazer
+ * tudo era um documento grande vindo do Atlas em toda listagem do Banco, e a
+ * listagem é a tela mais aberta da seção.
+ */
+const CAMPOS_DE_ACESSO = {
+  role: 1,
+  accountType: 1,
+  bancoQuestoesLiberadas: 1,
+  freeQuestionsByPeriod: 1,
+} as const
+
 export async function lerAcessoAoBanco(db: Db, userId: string): Promise<AcessoAoBanco | null> {
-  const usuario = await db.collection<User>('users').findOne({ _id: new ObjectId(userId) })
+  const usuario = await db
+    .collection<User>('users')
+    .findOne({ _id: new ObjectId(userId) }, { projection: CAMPOS_DE_ACESSO })
   if (!usuario) return null
 
   const ehAdmin = usuario.role === 'admin'

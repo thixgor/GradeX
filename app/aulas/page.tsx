@@ -33,6 +33,7 @@ import {
   type AulaNaTela,
   type TrilhaNaTela,
 } from '@/components/ensino/primitivos'
+import { readPageCache, writePageCache } from '@/lib/page-cache'
 import { cn } from '@/lib/utils'
 
 /**
@@ -145,9 +146,27 @@ export default function AulasPage() {
   )
 }
 
+/**
+ * A home do Ensino guardada entre navegações.
+ *
+ * O `AppShell` é montado dentro de cada `page.tsx`, então entrar numa aula e
+ * voltar desmonta esta tela por inteiro e refaz a requisição — que é a mais
+ * pesada da área, porque monta continuar, Trilhas, árvore e recentes de uma vez.
+ * Com o cache, a volta pinta a tela da última visita no primeiro frame e
+ * revalida por baixo; sem ele, a mesma navegação custava um esqueleto inteiro.
+ *
+ * O que está guardado é catálogo e progresso — nada de saldo, crédito ou
+ * assinatura (ver o aviso em lib/page-cache.ts).
+ */
+const CACHE_DA_HOME = 'ensino:home'
+
 function ConteudoDaHome() {
-  const [dados, setDados] = useState<RespostaDaHome | null>(null)
-  const [carregando, setCarregando] = useState(true)
+  const [dados, setDados] = useState<RespostaDaHome | null>(
+    () => readPageCache<RespostaDaHome>(CACHE_DA_HOME),
+  )
+  const [carregando, setCarregando] = useState(
+    () => readPageCache<RespostaDaHome>(CACHE_DA_HOME) === null,
+  )
   const semMovimento = useReducedMotion()
 
   useEffect(() => {
@@ -155,7 +174,9 @@ function ConteudoDaHome() {
     fetch('/api/ensino/home', { cache: 'no-store' })
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => {
-        if (!cancelado && d && !d.error) setDados(d)
+        if (cancelado || !d || d.error) return
+        setDados(d)
+        writePageCache(CACHE_DA_HOME, d)
       })
       .catch(() => {})
       .finally(() => {
@@ -490,6 +511,12 @@ function CartaoDaProximaAcao({ acao }: { acao: ProximaAcao }) {
           capa={acao.capa}
           titulo={acao.titulo}
           className="absolute inset-0 h-full w-full rounded-none"
+          // A coluna tem 8rem no celular e 13rem a partir de `sm`.
+          sizes="(max-width: 640px) 128px, 208px"
+          // É a primeira dobra e quase sempre o maior elemento da tela — quem
+          // decide o LCP da home do Ensino. Esperar o observer aqui atrasaria
+          // justamente a imagem que mede a página.
+          prioridade
         />
         <span className="absolute inset-0 flex items-center justify-center">
           <span className="flex h-11 w-11 items-center justify-center rounded-full bg-primary/95 text-primary-foreground shadow-[0_3px_0_rgb(0_0_0/0.3)] transition group-hover:scale-110">

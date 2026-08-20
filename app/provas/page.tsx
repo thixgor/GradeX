@@ -121,6 +121,42 @@ type ViewMode = 'home' | 'faculdade' | 'plataforma'
 const PROVAS_EXAMS_CACHE_KEY = 'provas:exams'
 const PROVAS_GROUPS_CACHE_KEY = 'provas:groups'
 
+/** Provas já baixadas por inteiro nesta sessão — gerar os três PDFs da mesma
+ *  prova é o caso comum, e não há motivo para buscá-la três vezes. */
+const provasCompletas = new Map<string, Exam>()
+
+/**
+ * A prova com as questões.
+ *
+ * A listagem vem enxuta (`campos=lista`), então o objeto que os cartões
+ * carregam não tem `questions` — e o gerador de PDF precisa delas. Se por algum
+ * motivo elas já vierem preenchidas (uma prova recém-criada nesta sessão, por
+ * exemplo), a função devolve o que tem: buscar de novo seria uma ida à rede
+ * para receber o que já está na mão.
+ *
+ * Falha de rede devolve a prova como está, e o PDF sai com o que ela tiver —
+ * um documento incompleto é mais útil que um clique que não faz nada.
+ */
+async function carregarProvaCompleta(exam: Exam): Promise<Exam> {
+  const id = (exam as any)._id?.toString() || ''
+  if (Array.isArray((exam as any).questions) && (exam as any).questions.length > 0) return exam
+  if (!id) return exam
+
+  const emCache = provasCompletas.get(id)
+  if (emCache) return emCache
+
+  try {
+    const res = await fetch(`/api/exams/${id}`)
+    if (!res.ok) return exam
+    const dados = await res.json()
+    if (!dados?.exam) return exam
+    provasCompletas.set(id, dados.exam)
+    return dados.exam as Exam
+  } catch {
+    return exam
+  }
+}
+
 function ProvasContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -216,14 +252,47 @@ function ProvasContent() {
 
   useEffect(() => {
     loadExamsAndGroups()
-    // Pre-warm fonts + logo so they're cached before user clicks a PDF button
-    import('@/lib/pdf-generator').then(m => m.prewarmPDFAssets()).catch(() => {})
+
+    /*
+     * O gerador de PDF esquenta DEPOIS que a tela para de trabalhar.
+     *
+     * Ele era importado direto no mount, e isso não é de graça: o módulo puxa o
+     * jsPDF e o JsBarcode e, ao esquentar, ainda baixa a fonte Roboto e o logo.
+     * Tudo isso saía junto com a requisição das provas, disputando as mesmas
+     * conexões — para um botão que a maioria das visitas nunca aperta, e que
+     * quando é apertado já mostra um estado de carregando.
+     *
+     * `requestIdleCallback` empurra o trabalho para a primeira folga do
+     * navegador. Onde ele não existe (Safari mais antigo), um `setTimeout` de
+     * dois segundos serve ao mesmo propósito: sair da frente da primeira
+     * pintura.
+     */
+    const esquentarPdf = () => {
+      import('@/lib/pdf-generator').then(m => m.prewarmPDFAssets()).catch(() => {})
+    }
+    const ocioso = (window as any).requestIdleCallback as
+      | ((cb: () => void, opcoes?: { timeout: number }) => number)
+      | undefined
+    const agendado = ocioso
+      ? ocioso(esquentarPdf, { timeout: 5000 })
+      : window.setTimeout(esquentarPdf, 2000)
+
+    return () => {
+      const cancelar = (window as any).cancelIdleCallback as ((id: number) => void) | undefined
+      if (ocioso && cancelar) cancelar(agendado)
+      else window.clearTimeout(agendado)
+    }
   }, [])
 
   async function loadExamsAndGroups() {
     try {
       const [examsRes, groupsRes] = await Promise.all([
-        fetch('/api/exams'),
+        // `campos=lista`: os cartões desta tela mostram título, capa, período e
+        // contagem — nunca as questões em si. Sem o recorte, a lista traz o
+        // enunciado, as alternativas e o gabarito de TODAS as provas visíveis
+        // só para desenhar uma grade. Quem precisa do conteúdo é o PDF, e ele
+        // busca a prova inteira no clique (ver `handleDownloadPDF`).
+        fetch('/api/exams?campos=lista'),
         fetch('/api/groups'),
       ])
 
@@ -510,18 +579,27 @@ function ProvasContent() {
     }
     setPdfLoading(type)
     try {
-      const { generateExamPDF, generateExamWithAnswersPDF, generateGabaritoPDF, downloadPDF } = await import('@/lib/pdf-generator')
-      const slug = exam.title.replace(/\s+/g, '-').toLowerCase()
+      // A prova COMPLETA, com as questões — a lista desta tela vem sem elas de
+      // propósito (ver `loadExamsAndGroups`). Buscar aqui custa uma requisição
+      // no clique de quem realmente quer o PDF, em vez de custar o banco de
+      // questões de todas as provas na abertura da tela, para todo mundo.
+      const [{ generateExamPDF, generateExamWithAnswersPDF, generateGabaritoPDF, downloadPDF }, completa] =
+        await Promise.all([
+          import('@/lib/pdf-generator'),
+          carregarProvaCompleta(exam),
+        ])
+
+      const slug = completa.title.replace(/\s+/g, '-').toLowerCase()
 
       if (type === 'exam') {
-        const blob = await generateExamPDF(exam)
-        downloadPDF(blob, `prova-${slug}.pdf`, { type: 'exam_pdf', resourceId: (exam as any)._id, resourceTitle: exam.title })
+        const blob = await generateExamPDF(completa)
+        downloadPDF(blob, `prova-${slug}.pdf`, { type: 'exam_pdf', resourceId: (completa as any)._id, resourceTitle: completa.title })
       } else if (type === 'with-answers') {
-        const blob = await generateExamWithAnswersPDF(exam)
-        downloadPDF(blob, `prova-gabarito-comentado-${slug}.pdf`, { type: 'exam_answers_pdf', resourceId: (exam as any)._id, resourceTitle: exam.title })
+        const blob = await generateExamWithAnswersPDF(completa)
+        downloadPDF(blob, `prova-gabarito-comentado-${slug}.pdf`, { type: 'exam_answers_pdf', resourceId: (completa as any)._id, resourceTitle: completa.title })
       } else {
-        const blob = await generateGabaritoPDF(exam)
-        downloadPDF(blob, `gabarito-${slug}.pdf`, { type: 'gabarito_pdf', resourceId: (exam as any)._id, resourceTitle: exam.title })
+        const blob = await generateGabaritoPDF(completa)
+        downloadPDF(blob, `gabarito-${slug}.pdf`, { type: 'gabarito_pdf', resourceId: (completa as any)._id, resourceTitle: completa.title })
       }
     } catch (err) {
       console.error('Erro ao gerar PDF:', err)

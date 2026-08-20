@@ -92,6 +92,52 @@ export async function GET(request: NextRequest) {
     const limit = Math.min(parseInt(searchParams.get('limit') || '20'), 50)
     const skip = (page - 1) * limit
 
+    /*
+     * `campos=lista` — a resposta enxuta para quem só vai desenhar cartões.
+     *
+     * O cartão da listagem mostra assunto, tipo, dificuldade, período e as três
+     * primeiras linhas do enunciado; ele nunca mostra alternativa, gabarito,
+     * explicação nem imagem. Mesmo assim a rota devolvia o documento inteiro de
+     * cada questão — e numa prova de Medicina o enunciado é um caso clínico de
+     * vários parágrafos, com quatro ou cinco alternativas longas e uma
+     * explicação comentada embaixo. Vinte desses num JSON é a maior parte do
+     * tempo de espera da tela, para conteúdo que ninguém vai ler ali.
+     *
+     * É OPT-IN porque o painel do admin (/admin/exams/*) usa a MESMA rota para
+     * escolher questões e lê alternativas e gabarito direto do resultado —
+     * projetar por padrão apagaria a tela deles. Quem não pede continua
+     * recebendo o documento completo.
+     */
+    const apenasParaLista = searchParams.get('campos') === 'lista'
+
+    /** Quanto do enunciado cabe no cartão. `line-clamp-3` corta bem antes disso. */
+    const PREVIA_DO_ENUNCIADO = 400
+
+    const projecaoDeLista = {
+      $project: {
+        tipo: 1,
+        dificuldade: 1,
+        ano: 1,
+        periodoLetivo: 1,
+        fonte: 1,
+        moduloNome: 1,
+        topicoNome: 1,
+        subtopicoNome: 1,
+        jaResolvida: 1,
+        // Só o veredito da última tentativa entra: o cartão desenha "Acertou" ou
+        // "Errou", e o resto do registro (resposta dada, tempo, data) é assunto
+        // da página da questão.
+        ultimaResolucao: { correta: '$ultimaResolucao.correta' },
+        enunciado: {
+          $cond: [
+            { $eq: [{ $type: '$enunciado' }, 'string'] },
+            { $substrCP: ['$enunciado', 0, PREVIA_DO_ENUNCIADO] },
+            '$enunciado',
+          ],
+        },
+      },
+    }
+
     // Helper para construir filtro com $in quando múltiplos IDs
     function buildIdFilter(param: string | undefined) {
       if (!param) return null
@@ -186,9 +232,63 @@ export async function GET(request: NextRequest) {
     if (precisaResolucoes) countPipeline.push(resolucoesLookup, resolucoesAddFields, resolucoesMatch)
     countPipeline.push({ $count: 'total' })
 
-    const pipeline: any[] = [
-      { $match: matchStage },
-      // Lookup para hierarquia
+    /*
+     * ORDENAR E PAGINAR ANTES DE ENRIQUECER.
+     *
+     * Os cinco `$lookup` desta rota (período, módulo, tópico, subtópico e a
+     * última resolução do usuário) rodavam sobre TODAS as questões que casavam
+     * com o filtro, e só depois vinham `$sort`/`$skip`/`$limit`. Sem filtro
+     * nenhum — que é como a tela abre — isso significava enriquecer o acervo
+     * inteiro para jogar fora tudo menos as 20 primeiras, com o `$lookup` de
+     * resoluções executando um sub-pipeline POR QUESTÃO.
+     *
+     * Aqui a ordenação e o recorte da página vêm primeiro, direto sobre a
+     * coleção (e sobre os índices de `createdAt`/`totalRespostas`), e só as 20
+     * sobreviventes vão para os lookups. A única exceção é quando o filtro
+     * depende da resolução ("não resolvidas", "só as que errei"): aí a resolução
+     * PRECISA ser conhecida antes de contar a página, e esse lookup — só ele —
+     * sobe para antes do recorte.
+     */
+    const ordenacao: any[] =
+      filtros.ordenar === 'maisDificeis'
+        ? [
+            /*
+             * A ordenação por dificuldade real não é um campo do documento — é
+             * a razão entre acertos e respostas, calculada aqui. Questão sem
+             * nenhuma resposta ainda não tem taxa, e SOME para o fim: colocá-la
+             * entre as "mais difíceis" confundiria "ninguém tentou" com "quase
+             * ninguém acerta", que são coisas opostas para quem está escolhendo
+             * o que estudar.
+             */
+            {
+              $addFields: {
+                _temResposta: { $gt: ['$totalRespostas', 0] },
+                _taxaAcerto: {
+                  $cond: [
+                    { $gt: ['$totalRespostas', 0] },
+                    { $divide: ['$totalAcertos', '$totalRespostas'] },
+                    1,
+                  ],
+                },
+              },
+            },
+            { $sort: { _temResposta: -1, _taxaAcerto: 1, createdAt: -1 } },
+            { $project: { _temResposta: 0, _taxaAcerto: 0 } },
+          ]
+        : filtros.ordenar === 'menosPraticadas'
+          ? [{ $sort: { totalRespostas: 1, createdAt: -1 } }]
+          : [{ $sort: { createdAt: -1 } }]
+
+    const pipeline: any[] = [{ $match: matchStage }]
+
+    if (precisaResolucoes) {
+      pipeline.push(resolucoesLookup, resolucoesAddFields, resolucoesMatch)
+    }
+
+    pipeline.push(...ordenacao, { $skip: skip }, { $limit: limit })
+
+    // Hierarquia: agora sobre a página, não sobre o acervo.
+    pipeline.push(
       {
         $lookup: {
           from: 'banco_periodos',
@@ -221,15 +321,25 @@ export async function GET(request: NextRequest) {
           as: 'subtopico'
         }
       },
-      resolucoesLookup,
+    )
+
+    // Quando o filtro de resolução já rodou, `jaResolvida` e `ultimaResolucao`
+    // vieram junto e repetir o lookup seria fazer o mesmo trabalho duas vezes.
+    if (!precisaResolucoes) pipeline.push(resolucoesLookup)
+
+    pipeline.push(
       {
         $addFields: {
           periodoNome: { $arrayElemAt: ['$periodo.nome', 0] },
           moduloNome: { $arrayElemAt: ['$modulo.nome', 0] },
           topicoNome: { $arrayElemAt: ['$topico.nome', 0] },
           subtopicoNome: { $arrayElemAt: ['$subtopico.nome', 0] },
-          jaResolvida: { $gt: [{ $size: '$resolucoes' }, 0] },
-          ultimaResolucao: { $arrayElemAt: ['$resolucoes', 0] }
+          ...(precisaResolucoes
+            ? {}
+            : {
+                jaResolvida: { $gt: [{ $size: '$resolucoes' }, 0] },
+                ultimaResolucao: { $arrayElemAt: ['$resolucoes', 0] },
+              }),
         }
       },
       {
@@ -240,43 +350,10 @@ export async function GET(request: NextRequest) {
           subtopico: 0,
           resolucoes: 0
         }
-      }
-    ]
+      },
+    )
 
-    if (precisaResolucoes) pipeline.push(resolucoesMatch)
-
-    /*
-     * A ordenação por dificuldade real não é um campo do documento — é a
-     * razão entre acertos e respostas, calculada aqui. Questão sem nenhuma
-     * resposta ainda não tem taxa, e SOME para o fim: colocá-la entre as
-     * "mais difíceis" confundiria "ninguém tentou" com "quase ninguém acerta",
-     * que são coisas opostas para quem está escolhendo o que estudar.
-     */
-    if (filtros.ordenar === 'maisDificeis') {
-      pipeline.push(
-        {
-          $addFields: {
-            _temResposta: { $gt: ['$totalRespostas', 0] },
-            _taxaAcerto: {
-              $cond: [
-                { $gt: ['$totalRespostas', 0] },
-                { $divide: ['$totalAcertos', '$totalRespostas'] },
-                1,
-              ],
-            },
-          },
-        },
-        { $sort: { _temResposta: -1, _taxaAcerto: 1, createdAt: -1 } },
-        { $project: { _temResposta: 0, _taxaAcerto: 0 } },
-      )
-    } else if (filtros.ordenar === 'menosPraticadas') {
-      pipeline.push({ $sort: { totalRespostas: 1, createdAt: -1 } })
-    } else {
-      pipeline.push({ $sort: { createdAt: -1 } })
-    }
-
-    // Paginação
-    pipeline.push({ $skip: skip }, { $limit: limit })
+    if (apenasParaLista) pipeline.push(projecaoDeLista)
 
     // Contagem e página de dados não dependem uma da outra — rodar em
     // paralelo custa o tempo da mais lenta das duas, não a soma das duas.

@@ -1,9 +1,18 @@
 import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
+import { memoizarPorTempo } from '@/lib/cache-de-servidor'
 import { ordenarPeriodosLetivos } from '@/lib/banco/periodo-letivo'
 
 export const dynamic = 'force-dynamic'
+
+/** Muda quando uma prova nova é importada — raro, e sem urgência de aparecer. */
+const TTL_DO_EIXO_MS = 60_000
+
+interface EixoTemporal {
+  anos: number[]
+  periodos: Array<{ periodo: string; total: number }>
+}
 
 /**
  * O eixo temporal do catálogo: períodos letivos e anos.
@@ -17,7 +26,49 @@ export const dynamic = 'force-dynamic'
  * Os anos continuam saindo daqui porque nem toda questão tem período: as que
  * vieram de prova sem semestre no título têm só o ano (ver
  * lib/banco/periodo-letivo.ts).
+ *
+ * ## Uma varredura, não duas
+ *
+ * Períodos e anos saíam de duas consultas independentes — um `$group` e um
+ * `distinct` — cada uma percorrendo `banco_questoes` do começo ao fim. São duas
+ * leituras do mesmo acervo para responder à mesma pergunta ("quando"). O
+ * `$facet` abaixo faz as duas na mesma passada.
  */
+async function lerEixoTemporal(): Promise<EixoTemporal> {
+  const db = await getDb()
+
+  const [facetas] = await db
+    .collection('banco_questoes')
+    .aggregate([
+      {
+        $facet: {
+          periodos: [
+            { $match: { periodoLetivo: { $type: 'string', $ne: '' } } },
+            { $group: { _id: '$periodoLetivo', total: { $sum: 1 } } },
+          ],
+          anos: [{ $match: { ano: { $ne: null } } }, { $group: { _id: '$ano' } }],
+        },
+      },
+    ])
+    .toArray()
+
+  const totalPorPeriodo = new Map<string, number>(
+    ((facetas?.periodos as any[]) || []).map((p: any) => [String(p._id), p.total as number]),
+  )
+
+  const periodos = ordenarPeriodosLetivos(Array.from(totalPorPeriodo.keys())).map((rotulo) => ({
+    periodo: rotulo,
+    total: totalPorPeriodo.get(rotulo) || 0,
+  }))
+
+  const anos = ((facetas?.anos as any[]) || [])
+    .map((a: any) => Number(a._id))
+    .filter((a) => Number.isFinite(a))
+    .sort((a, b) => b - a)
+
+  return { anos, periodos }
+}
+
 export async function GET() {
   try {
     const session = await getSession()
@@ -25,31 +76,10 @@ export async function GET() {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
     }
 
-    const db = await getDb()
+    const eixo = await memoizarPorTempo('banco:eixo-temporal', TTL_DO_EIXO_MS, lerEixoTemporal)
 
-    const [periodosBrutos, anos] = await Promise.all([
-      db
-        .collection('banco_questoes')
-        .aggregate([
-          { $match: { periodoLetivo: { $type: 'string', $ne: '' } } },
-          { $group: { _id: '$periodoLetivo', total: { $sum: 1 } } },
-        ])
-        .toArray(),
-      db.collection('banco_questoes').distinct('ano', { ano: { $ne: null } }),
-    ])
-
-    const totalPorPeriodo = new Map<string, number>(
-      periodosBrutos.map((p: any) => [String(p._id), p.total as number]),
-    )
-
-    const periodos = ordenarPeriodosLetivos(Array.from(totalPorPeriodo.keys())).map((rotulo) => ({
-      periodo: rotulo,
-      total: totalPorPeriodo.get(rotulo) || 0,
-    }))
-
-    return NextResponse.json({
-      anos: (anos as number[]).filter((a) => Number.isFinite(a)).sort((a, b) => b - a),
-      periodos,
+    return NextResponse.json(eixo, {
+      headers: { 'Cache-Control': 'private, max-age=60, stale-while-revalidate=300' },
     })
   } catch (error) {
     console.error('Erro ao buscar anos:', error)
