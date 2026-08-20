@@ -23,6 +23,7 @@ import {
   Info,
   ListChecks,
   FolderPlus,
+  History,
 } from 'lucide-react'
 import { BancoImportacaoResult } from '@/lib/types/banco-questoes'
 import { lerArquivoDeImportacao, resumir } from '@/lib/banco/importar-questoes'
@@ -205,7 +206,17 @@ export default function AdminImportarPage() {
                 </p>
               </div>
             </div>
-            <ThemeToggle />
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => router.push('/admin/banco-questoes/importar/historico')}
+              >
+                <History className="h-4 w-4 mr-2" />
+                Histórico de importações
+              </Button>
+              <ThemeToggle />
+            </div>
           </div>
         </div>
       </header>
@@ -531,6 +542,15 @@ function Resultado({ resultado }: { resultado: BancoImportacaoResult }) {
               ))}
             </div>
           </div>
+        )}
+
+        {!conferencia && resultado.loteImportacaoId && (
+          <Button variant="outline" size="sm" asChild>
+            <a href="/admin/banco-questoes/importar/historico">
+              <History className="h-4 w-4 mr-2" />
+              Ver esta leva no histórico de importações
+            </a>
+          </Button>
         )}
 
         <Ocorrencias titulo="Erros" tom="erro" itens={resultado.erros || []} />

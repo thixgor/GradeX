@@ -20,7 +20,8 @@ import {
   Loader2,
   ArrowRightLeft,
   GraduationCap,
-  AlertCircle
+  AlertCircle,
+  History
 } from 'lucide-react'
 import { ZonaDeRisco } from '@/components/admin/banco/zona-de-risco'
 import { BancoEstatisticasAdmin } from '@/lib/types/banco-questoes'
@@ -118,6 +119,13 @@ export default function AdminBancoQuestoes() {
       icon: GraduationCap,
       href: '/admin/banco-questoes/importar-provas',
       color: 'from-indigo-500 to-violet-500'
+    },
+    {
+      title: 'Histórico de Importações',
+      description: 'Ver as levas de importação por TXT e apagar as questões de uma leva específica.',
+      icon: History,
+      href: '/admin/banco-questoes/importar/historico',
+      color: 'from-sky-500 to-blue-500'
     },
     {
       title: 'Extrair Questões',

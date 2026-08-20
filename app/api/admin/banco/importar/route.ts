@@ -138,6 +138,7 @@ function montarQuestao(
   topicoId: ObjectId,
   subtopicoId: ObjectId | null,
   autor: ObjectId | undefined,
+  loteImportacaoId: ObjectId,
 ): Omit<BancoQuestao, '_id'> {
   const periodoLetivo =
     q.ano && q.semestre ? formatarPeriodoLetivo({ ano: q.ano, semestre: q.semestre }) : null
@@ -170,6 +171,7 @@ function montarQuestao(
     createdAt: new Date(),
     updatedAt: new Date(),
     createdBy: autor as unknown as ObjectId,
+    loteImportacaoId,
   }
 }
 
@@ -268,6 +270,10 @@ export async function POST(request: NextRequest) {
       })
     }
 
+    // Um id só para toda a leva: é o que permite achar e apagar, de uma vez,
+    // tudo o que este arquivo trouxe — ver /admin/banco-questoes/importar/historico.
+    const loteImportacaoId = new ObjectId()
+
     const novas: { q: QuestaoLida; documento: Omit<BancoQuestao, '_id'> }[] = []
     let ignoradas = 0
 
@@ -278,7 +284,10 @@ export async function POST(request: NextRequest) {
         continue
       }
       chaves.add(chave)
-      novas.push({ q, documento: montarQuestao(q, moduloId, topicoId, subtopicoId, autor) })
+      novas.push({
+        q,
+        documento: montarQuestao(q, moduloId, topicoId, subtopicoId, autor, loteImportacaoId),
+      })
     }
 
     if (validar) {
@@ -333,6 +342,7 @@ export async function POST(request: NextRequest) {
       // resposta pesar mais do que o arquivo enviado.
       questoesImportadas: importadas.slice(0, 50),
       hierarquiaCriada: criados,
+      loteImportacaoId: importadas.length > 0 ? String(loteImportacaoId) : undefined,
     })
   } catch (error) {
     console.error('Erro ao importar questões:', error)

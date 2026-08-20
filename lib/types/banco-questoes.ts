@@ -110,6 +110,14 @@ export interface BancoQuestao {
   createdAt: Date
   updatedAt: Date
   createdBy: string | ObjectId
+
+  /**
+   * Identifica a leva de importação (arquivo TXT) que criou esta questão.
+   * Todas as questões gravadas numa mesma chamada de POST /api/admin/banco/importar
+   * recebem o mesmo id, gerado ali. Ausente em questões criadas manualmente,
+   * editadas na tela ou trazidas pelo importador de provas.
+   */
+  loteImportacaoId?: string | ObjectId
 }
 
 export type BancoModoResposta = 'imediato' | 'final'
@@ -317,6 +325,19 @@ export interface BancoImportacaoResult {
     topicos: string[]
     subtopicos: string[]
   }
+  /** Id da leva gravada — usado para achá-la depois no histórico de importações. */
+  loteImportacaoId?: string
+}
+
+/** Uma leva de importação, no histórico. Ver GET /api/admin/banco/importar/historico. */
+export interface BancoImportacaoLote {
+  loteId: string
+  criadoEm: string
+  criadoPorNome?: string
+  quantidade: number
+  objetivas: number
+  discursivas: number
+  modulos: string[]
 }
 
 // ============================================
