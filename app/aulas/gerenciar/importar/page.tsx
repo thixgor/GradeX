@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
 import { AlertTriangle, Check, Download, FileUp, History, Upload } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
@@ -106,11 +105,29 @@ function Conteudo() {
   async function enviar(acao: 'importar' | 'migrar', ensaio: boolean) {
     setOcupado(true)
     setErro('')
+
+    /*
+     * O `fetch` do navegador não tem prazo nenhum por padrão — se alguma
+     * peça no meio do caminho (um proxy, um balanceador) derrubar a conexão
+     * sem devolver um status HTTP de verdade, a requisição fica "pendente"
+     * para sempre e a tela mostra "carregando" indefinidamente, sem erro
+     * nenhum para a pessoa agir. `maxDuration = 300` na rota (ver
+     * app/api/ensino/importar/route.ts) já limita quanto tempo o SERVIDOR
+     * tenta; isto limita quanto tempo o NAVEGADOR espera, com uma folga de
+     * 20s para o servidor terminar de responder antes de desistir. O ensaio
+     * nunca escreve, então nunca deveria demorar — um prazo bem mais curto
+     * torna óbvio que travou por outro motivo, não pelo tamanho do arquivo.
+     */
+    const prazoMs = ensaio ? 30_000 : 320_000
+    const controle = new AbortController()
+    const cronometro = setTimeout(() => controle.abort(), prazoMs)
+
     try {
       const resposta = await fetch('/api/ensino/importar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ acao, ensaio, conteudo }),
+        signal: controle.signal,
       })
       // Um arquivo grande demora, e a aplicação de verdade (não o ensaio)
       // pode estourar o tempo do servidor antes de terminar de escrever. Nesse
@@ -129,8 +146,17 @@ function Conteudo() {
       if (acao === 'migrar') setMigracao(d)
       else setRelatorio(d.relatorio)
     } catch (e: any) {
-      setErro(e?.message || 'Não foi possível processar.')
+      if (e?.name === 'AbortError') {
+        setErro(
+          ensaio
+            ? 'A prévia demorou demais para responder. Tente de novo — se persistir, o arquivo pode ter um problema.'
+            : 'A importação demorou demais e o navegador desistiu de esperar, mas ela pode ter continuado rodando no servidor. Espere um instante, confira o Catálogo e as Trilhas — se o conteúdo já apareceu, está pronto; se não, pode tentar de novo (reimportar atualiza em vez de duplicar).',
+        )
+      } else {
+        setErro(e?.message || 'Não foi possível processar.')
+      }
     } finally {
+      clearTimeout(cronometro)
       setOcupado(false)
     }
   }
@@ -149,7 +175,7 @@ function Conteudo() {
       titulo="Importar conteúdo"
       descricao="Escreva o plano de ensino num arquivo Markdown ou JSON e deixe o sistema montar níveis, aulas, resumos e Trilhas."
       acoes={
-        <BotaoSecundario href="/docs/formato-importacao-aulas.md">
+        <BotaoSecundario href="/docs/formato-importacao-aulas.md" target="_blank" rel="noopener noreferrer">
           <Download className="h-4 w-4" /> Ver o formato
         </BotaoSecundario>
       }
@@ -373,9 +399,14 @@ function Conteudo() {
             </ul>
             <p className="mt-3">
               O formato completo, com todos os campos, está em{' '}
-              <Link href="/docs/formato-importacao-aulas.md" className="font-semibold underline">
+              <a
+                href="/docs/formato-importacao-aulas.md"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold underline"
+              >
                 docs/formato-importacao-aulas.md
-              </Link>
+              </a>
               .
             </p>
           </section>

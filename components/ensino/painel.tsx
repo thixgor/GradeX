@@ -222,6 +222,8 @@ export function BotaoSecundario({
   className,
   tom = 'neutro',
   disabled,
+  target,
+  rel,
 }: {
   children: React.ReactNode
   onClick?: () => void
@@ -229,6 +231,9 @@ export function BotaoSecundario({
   className?: string
   tom?: 'neutro' | 'perigo'
   disabled?: boolean
+  /** Só faz sentido com `href` — arquivo estático (ex.: um `.md` em /public) ou link externo. */
+  target?: string
+  rel?: string
 }) {
   const classe = cn(
     'inline-flex h-10 items-center gap-2 rounded-lg border px-3.5 text-sm font-semibold transition',
@@ -242,6 +247,20 @@ export function BotaoSecundario({
   // `disabled` só se aplica ao link em espírito — um <a> não tem esse
   // atributo — então ali a barreira é `pointer-events-none` no próprio
   // estilo acima.
+  //
+  // Com `target`, o destino não é uma rota do Next: é um arquivo estático ou
+  // outro site. `<Link>` trataria esse `href` como página interna e disparia
+  // prefetch (`?_rsc=...`) contra um caminho que não tem handler de Server
+  // Component — 404 garantido no console, mesmo com o arquivo existindo e
+  // abrindo normal ao clicar. Por isso aqui vira `<a>` puro.
+  if (href && target) {
+    return (
+      <a href={href} target={target} rel={rel} className={classe}>
+        {children}
+      </a>
+    )
+  }
+
   return href ? (
     <Link href={href} className={classe}>
       {children}
