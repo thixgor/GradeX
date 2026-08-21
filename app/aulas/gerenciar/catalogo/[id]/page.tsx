@@ -30,7 +30,17 @@ import {
   classeDeEntrada,
 } from '@/components/ensino/painel'
 import { Esqueleto, Selo } from '@/components/ensino/primitivos'
+import type { RegrasDeAcessoAula } from '@/lib/aulas/acesso'
 import { cn } from '@/lib/utils'
+
+/**
+ * `EditorDeRegras` lê `valor.liberarPara` já no primeiro render (a frase de
+ * resumo, o contador de condições) — passar `null` derruba a tela assim que
+ * a etapa "Publicação" abre. Aula nova, ou aula existente sem regra
+ * customizada, tem `regrasAcesso: null`; este é o valor que o editor entende
+ * como "nenhuma condição ainda".
+ */
+const REGRAS_VAZIAS: RegrasDeAcessoAula = { liberarPara: [] }
 
 /**
  * Criação e edição de aula, em etapas (§23).
@@ -834,7 +844,7 @@ function Conteudo() {
                   <p className="mb-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
                     Quem pode assistir
                   </p>
-                  <EditorDeRegras valor={regras} onChange={setRegras} />
+                  <EditorDeRegras valor={regras || REGRAS_VAZIAS} onChange={setRegras} />
                 </div>
 
                 <div className="grid gap-4 border-t border-border/60 pt-4 sm:grid-cols-2">

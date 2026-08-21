@@ -31,6 +31,7 @@ import {
 } from '@/components/ensino/painel'
 import { EditorDeRegras } from '@/components/aulas/editor-regras'
 import { Esqueleto, Selo } from '@/components/ensino/primitivos'
+import type { RegrasDeAcessoAula } from '@/lib/aulas/acesso'
 import { cn } from '@/lib/utils'
 
 /**
@@ -107,6 +108,16 @@ interface TrilhaEmEdicao {
   situacao: string
   etapas: EtapaEmEdicao[]
 }
+
+/**
+ * `EditorDeRegras` exige `{ liberarPara: [] }` — nunca `null` — porque lê
+ * `valor.liberarPara` já no primeiro render (a frase de resumo, o contador de
+ * condições). Trilha sem regra customizada guarda `regrasAcesso: null` no
+ * banco (é o estado normal: "siga o acesso de cada aula"), então esse valor
+ * teria que ser traduzido para o editor de qualquer forma — melhor uma vez
+ * aqui do que espalhar `?? { liberarPara: [] }` pelos pontos de leitura.
+ */
+const REGRAS_VAZIAS: RegrasDeAcessoAula = { liberarPara: [] }
 
 const idLocal = (prefixo: string) =>
   `${prefixo}${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`
@@ -707,7 +718,7 @@ function Conteudo() {
                     próprio cadeado — este aqui é a porta de entrada do caminho.
                   </p>
                   <EditorDeRegras
-                    valor={trilha.regrasAcesso || null}
+                    valor={trilha.regrasAcesso || REGRAS_VAZIAS}
                     onChange={(regras) => alterar({ regrasAcesso: regras })}
                   />
                 </div>
