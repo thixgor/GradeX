@@ -380,6 +380,7 @@ export function Capa({
   aspecto = 'video',
   sizes = CAPA_NO_TRILHO,
   prioridade = false,
+  mostrarTitulo = true,
 }: {
   capa?: { tipo?: string; imagem?: string; cor?: string; titulo?: string } | null
   titulo: string
@@ -395,6 +396,15 @@ export function Capa({
   sizes?: string
   /** Acima da dobra (a capa da próxima ação, por exemplo): entra sem lazy. */
   prioridade?: boolean
+  /**
+   * Desliga o título do PISO TIPOGRÁFICO (ver `tipografica` abaixo).
+   *
+   * Existe porque `CartaoDeNo` já desenha o próprio nome do assunto por cima
+   * da capa, num rótulo maior e com a sobreposição escura dele. Sem isto, uma
+   * capa sem imagem escrevia o título DUAS vezes, empilhado no mesmo canto —
+   * era exatamente o "bugado" que a capa placeholder aparentava.
+   */
+  mostrarTitulo?: boolean
 }) {
   const cor = capa?.cor
   const imagem = capa?.tipo === 'imagem' ? capa.imagem : capa?.imagem
@@ -422,16 +432,18 @@ export function Capa({
           : undefined
       }
     >
-      <span
-        className={cn(
-          // `break-words`: sem capa o cartão vira tipografia, e um termo longo
-          // sem espaço não teria onde quebrar dentro do quadro.
-          'line-clamp-3 break-words font-heading text-[13px] font-bold leading-snug',
-          cor ? 'drop-shadow-[0_1px_2px_rgb(0_0_0/0.45)]' : 'opacity-90',
-        )}
-      >
-        {capa?.titulo || titulo}
-      </span>
+      {mostrarTitulo ? (
+        <span
+          className={cn(
+            // `break-words`: sem capa o cartão vira tipografia, e um termo longo
+            // sem espaço não teria onde quebrar dentro do quadro.
+            'line-clamp-3 break-words font-heading text-[13px] font-bold leading-snug',
+            cor ? 'drop-shadow-[0_1px_2px_rgb(0_0_0/0.45)]' : 'opacity-90',
+          )}
+        >
+          {capa?.titulo || titulo}
+        </span>
+      ) : null}
     </div>
   )
 
@@ -533,6 +545,10 @@ export function CartaoDeNo({
           aspecto={formato === 'alto' ? 'alto' : 'video'}
           className="rounded-none"
           sizes={formato === 'alto' ? '(max-width: 640px) 152px, 176px' : '(max-width: 640px) 92vw, 320px'}
+          // O nome do assunto já vira o rótulo grande logo abaixo, sobre a
+          // sobreposição escura desta capa — mostrar de novo aqui empilharia
+          // os dois títulos no mesmo canto (ver `mostrarTitulo` em `Capa`).
+          mostrarTitulo={false}
         />
         {/* A sobreposição existe para o texto poder morar SOBRE a imagem sem
             depender de a imagem ser escura. Sem ela, uma capa clara engoliria
