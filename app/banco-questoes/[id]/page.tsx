@@ -45,7 +45,7 @@ import { HighlightableText } from '@/components/highlightable-text'
 import { ImageModal } from '@/components/image-modal'
 import { ReportQuestionModal } from '@/components/report-question-modal'
 import { cn } from '@/lib/utils'
-import { BarraInferior } from '@/components/ui/barra-inferior'
+import { BarraDoQuiz } from '@/components/banco/barra-do-quiz'
 import { CabecalhoQuiz } from '@/components/banco/cabecalho-quiz'
 import { AlternativaQuiz } from '@/components/banco/alternativa-quiz'
 import {
@@ -769,46 +769,6 @@ ${respostaAluno}`
           </PainelDaExplicacao>
         )}
 
-        {/* Ações do desktop. No celular elas vivem na barra do rodapé (a barra
-            é `apenasMobile`: no desktop ela passaria por baixo da sidebar, que
-            é fixa e mais alta na pilha). */}
-        <div className="hidden items-center justify-center gap-3 md:flex">
-          {mostrarResposta ? (
-            <>
-              <Button variant="outline" onClick={handleRefazer}>
-                <RotateCcw className="mr-2 h-4 w-4" />
-                Refazer questão
-              </Button>
-              <Button
-                onClick={() => router.push('/banco-questoes')}
-                className="btn-brand-glow text-white"
-              >
-                <BookOpen className="mr-2 h-4 w-4" />
-                Voltar ao banco
-              </Button>
-            </>
-          ) : (
-            <Button
-              size="lg"
-              onClick={handleResponder}
-              disabled={!podeVerificar}
-              className="btn-brand-glow text-white"
-            >
-              {respondendo ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Verificando...
-                </>
-              ) : (
-                <>
-                  <CheckCircle2 className="mr-2 h-4 w-4" />
-                  Verificar resposta
-                </>
-              )}
-            </Button>
-          )}
-        </div>
-
         {/* Modal de adicionar à lista */}
         <Dialog open={showAddToListModal} onOpenChange={setShowAddToListModal}>
           <DialogContent>
@@ -1014,10 +974,11 @@ ${respostaAluno}`
 
       {/* ── Barra de ações ─────────────────────────────────────────────────
           "Verificar resposta" era um botão centralizado DEPOIS das cinco
-          alternativas: no celular, responder exigia rolar de volta para baixo
-          o que se acabou de ler. Aqui a ação acompanha a leitura, e é a mesma
-          barra que passa a carregar o veredito. */}
-      <BarraInferior apenasMobile>
+          alternativas: respondia exigia rolar de volta para baixo o que se
+          acabou de ler — no desktop também, já que a barra só existia até
+          `md`. Aqui a ação acompanha a leitura em qualquer tamanho de tela, e
+          é a mesma barra que passa a carregar o veredito. */}
+      <BarraDoQuiz>
         <FolhaDeFeedback
           veredito={explicacaoNaTela ? null : veredito}
           letraCorreta={letraCorreta}
@@ -1062,7 +1023,7 @@ ${respostaAluno}`
             </Button>
           )}
         </FolhaDeFeedback>
-      </BarraInferior>
+      </BarraDoQuiz>
     </AppShell>
   )
 }

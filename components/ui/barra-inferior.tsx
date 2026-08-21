@@ -47,10 +47,23 @@ export function BarraInferior({
   className,
   /** Esconde a barra a partir deste ponto — o padrão a mantém em toda largura. */
   apenasMobile = false,
+  /**
+   * Desloca a borda esquerda da barra para o outro lado da sidebar, só a
+   * partir do breakpoint `lg` (onde a sidebar deixa de ser uma gaveta e passa
+   * a ocupar espaço fixo na tela — ver `sidebar.tsx`).
+   *
+   * Existe porque a ação principal de uma tela de resolução (verificar
+   * resposta, avançar) não pode depender do tamanho da janela: escondida no
+   * fim do fluxo no desktop, ela virava a mesma rolagem longa que a barra
+   * resolve no celular. Sem este deslocamento a barra ficaria por baixo da
+   * sidebar (que é `z-50`, acima do `z-45` daqui).
+   */
+  ladoDaSidebar,
 }: {
   children: React.ReactNode
   className?: string
   apenasMobile?: boolean
+  ladoDaSidebar?: 'aberta' | 'recolhida'
 }) {
   const ref = useRef<HTMLDivElement | null>(null)
   const [montado, setMontado] = useState(false)
@@ -97,6 +110,8 @@ export function BarraInferior({
         'border-t border-border/60 bg-background/85 backdrop-blur-xl',
         'shadow-[0_-8px_24px_-16px_rgba(21,61,31,0.45)]',
         apenasMobile && 'md:hidden',
+        ladoDaSidebar === 'aberta' && 'lg:left-[280px]',
+        ladoDaSidebar === 'recolhida' && 'lg:left-[72px]',
         className,
       )}
       style={{

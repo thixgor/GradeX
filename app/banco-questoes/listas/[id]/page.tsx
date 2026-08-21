@@ -40,7 +40,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
-import { BarraInferior } from '@/components/ui/barra-inferior'
+import { BarraDoQuiz } from '@/components/banco/barra-do-quiz'
 import { Portal } from '@/components/ui/portal'
 import { BancoListaUsuario, BancoQuestaoComHierarquia } from '@/lib/types/banco-questoes'
 import { QuestionAnnotation, TextHighlight } from '@/lib/types'
@@ -777,45 +777,6 @@ ${respostaAluno}`
             </PainelDaExplicacao>
           )}
 
-          {/* Navegação do desktop. No celular ela vive na barra do rodapé (a
-              barra é `apenasMobile`: no desktop ela passaria por baixo da
-              sidebar, que é fixa e mais alta na pilha). */}
-          <div className="hidden items-center justify-between gap-3 md:flex">
-            <Button
-              variant="outline"
-              onClick={questaoAnterior}
-              disabled={questaoAtual === 0}
-            >
-              <ChevronLeft className="mr-2 h-4 w-4" />
-              Anterior
-            </Button>
-
-            <div className="flex gap-2">
-              {podeVerResposta && (
-                <Button onClick={() => verificarResposta(questaoAtual)}>
-                  <Eye className="mr-2 h-4 w-4" />
-                  Ver resposta
-                </Button>
-              )}
-
-              {ehUltima ? (
-                <Button
-                  onClick={finalizarSimulado}
-                  className="btn-brand-glow text-white"
-                  disabled={finalizarBloqueado}
-                >
-                  <CheckCircle2 className="mr-2 h-4 w-4" />
-                  Finalizar
-                </Button>
-              ) : (
-                <Button onClick={proximaQuestao} className="btn-brand-glow text-white">
-                  Próxima
-                  <ChevronRight className="ml-2 h-4 w-4" />
-                </Button>
-              )}
-            </div>
-          </div>
-
           {/* Navegação rápida — no desktop ela cabe na página; no celular vira
               painel, aberto pelo botão do mapa na barra do rodapé. */}
           <Card className="hidden md:block">
@@ -902,10 +863,12 @@ ${respostaAluno}`
         {/* ── Barra de ações ───────────────────────────────────────────────
             O "Próxima" ficava no fim do cartão da questão: enunciado longo,
             cinco alternativas, gabarito e explicação depois de responder —
-            várias telas de rolagem para dar UM passo. Agora ele acompanha a
-            leitura, e é a MESMA barra que carrega o veredito: conferir a
-            resposta muda a tela exatamente onde o polegar já estava. */}
-        <BarraInferior apenasMobile>
+            várias telas de rolagem para dar UM passo, no desktop também (a
+            barra só existia até `md`). Agora ele acompanha a leitura em
+            qualquer tamanho de tela, e é a MESMA barra que carrega o
+            veredito: conferir a resposta muda a tela exatamente onde o
+            polegar já estava. */}
+        <BarraDoQuiz>
           <FolhaDeFeedback
             veredito={explicacaoNaTela ? null : veredito}
             letraCorreta={correta}
@@ -968,7 +931,7 @@ ${respostaAluno}`
               </Button>
             )}
           </FolhaDeFeedback>
-        </BarraInferior>
+        </BarraDoQuiz>
 
         {/* ── Mapa de questões no celular ──────────────────────────────── */}
         {mapaAberto ? (
