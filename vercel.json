@@ -74,6 +74,9 @@
     },
     "app/api/cron/email-scheduler/route.ts": {
       "maxDuration": 60
+    },
+    "app/api/admin/banco/importar/route.ts": {
+      "maxDuration": 60
     }
   },
   "crons": [
