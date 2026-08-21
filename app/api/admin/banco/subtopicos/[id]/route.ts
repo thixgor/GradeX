@@ -44,8 +44,28 @@ export async function PUT(
       updateData.ordem = body.ordem
     }
 
+    /*
+     * Mover o subtópico para dentro de outro tópico — com as questões dele.
+     *
+     * O destino pode estar em outro módulo, então a questão precisa dos DOIS
+     * campos atualizados: `topicoId` para o subtópico novo e `moduloId` para o
+     * módulo que aquele tópico tem. Gravar só o primeiro deixaria a questão
+     * contando para o módulo antigo enquanto aparece sob o tópico novo — uma
+     * inconsistência que só o filtro por módulo revelaria.
+     */
+    let topicoDestino: { _id: ObjectId; moduloId: ObjectId } | null = null
     if (body.topicoId !== undefined) {
-      updateData.topicoId = new ObjectId(body.topicoId)
+      if (!ObjectId.isValid(String(body.topicoId))) {
+        return NextResponse.json({ error: 'Tópico de destino inválido' }, { status: 400 })
+      }
+      const destino = await db
+        .collection('banco_topicos')
+        .findOne({ _id: new ObjectId(String(body.topicoId)) }, { projection: { moduloId: 1 } })
+      if (!destino) {
+        return NextResponse.json({ error: 'Tópico de destino não encontrado' }, { status: 404 })
+      }
+      topicoDestino = { _id: destino._id, moduloId: destino.moduloId }
+      updateData.topicoId = destino._id
     }
 
     const result = await db.collection('banco_subtopicos').updateOne(
@@ -57,7 +77,22 @@ export async function PUT(
       return NextResponse.json({ error: 'Subtópico não encontrado' }, { status: 404 })
     }
 
-    return NextResponse.json({ sucesso: true })
+    let questoesMovidas = 0
+    if (topicoDestino) {
+      const cascata = await db.collection('banco_questoes').updateMany(
+        { subtopicoid: new ObjectId(id) },
+        {
+          $set: {
+            topicoId: topicoDestino._id,
+            moduloId: topicoDestino.moduloId,
+            updatedAt: new Date(),
+          },
+        },
+      )
+      questoesMovidas = cascata.modifiedCount || 0
+    }
+
+    return NextResponse.json({ sucesso: true, questoesMovidas })
   } catch (error) {
     console.error('Erro ao atualizar subtópico:', error)
     return NextResponse.json({ error: 'Erro ao atualizar subtópico' }, { status: 500 })

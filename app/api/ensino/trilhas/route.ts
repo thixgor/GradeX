@@ -51,9 +51,14 @@ export async function GET(request: Request) {
     const querRascunhos = parametros.get('rascunhos') === '1' && editor
 
     const filtro: Record<string, any> = querRascunhos ? {} : { situacao: 'publicada' }
-    const topicoId = parametros.get('topico')
-    if (topicoId) {
-      filtro.$or = [{ topicoId }, { moduloId: topicoId }, { areaId: topicoId }]
+    // `no` é o nome usado pelo Catálogo de aulas; `topico` continua aceito
+    // por compatibilidade com quem já monta o link com o nome antigo. Os dois
+    // casam contra QUALQUER nível — a Trilha pode estar amarrada a uma Área
+    // inteira ou a um Subtópico específico, e a busca não sabe qual de
+    // antemão.
+    const noId = parametros.get('no') || parametros.get('topico')
+    if (noId) {
+      filtro.$or = [{ areaId: noId }, { moduloId: noId }, { topicoId: noId }, { subtopicoId: noId }]
     }
 
     const trilhas = await lerTrilhas(db, filtro)
@@ -121,6 +126,12 @@ export async function GET(request: Request) {
       ]),
     )
 
+    // A localização escrita por extenso só entra na resposta para quem
+    // administra — é o painel que precisa dela, para mostrar e para mover. A
+    // vitrine do aluno recebe `assunto`, que é outra coisa: um rótulo de
+    // prateleira, deduzido quando ninguém classificou a Trilha.
+    const nomeDoNo = querRascunhos ? new Map(nos.map((n) => [String(n._id), n.nome])) : null
+
     const agora = new Date()
 
     const itens = trilhas.map((trilha) => {
@@ -157,11 +168,26 @@ export async function GET(request: Request) {
         criadoEm: trilha.criadoEm,
         publicadaEm: trilha.publicadaEm || null,
         ...resumo,
+        // O assunto da prateleira: a curadoria explícita acima quando ela
+        // existe, deduzido das aulas quando não (agrupamento-trilhas.ts).
         assunto: assuntoDaTrilha(
           trilha,
           aulaIdsDaTrilha(trilha).map((id) => noPorAula.get(id) ?? null),
           nos,
         ),
+        ...(nomeDoNo
+          ? {
+              areaId: trilha.areaId || null,
+              moduloId: trilha.moduloId || null,
+              topicoId: trilha.topicoId || null,
+              subtopicoId: trilha.subtopicoId || null,
+              localizacao: [trilha.areaId, trilha.moduloId, trilha.topicoId, trilha.subtopicoId]
+                .filter(Boolean)
+                .map((id) => nomeDoNo.get(String(id)))
+                .filter(Boolean)
+                .join(' · '),
+            }
+          : {}),
         progresso: progresso.get(String(trilha._id)) || null,
         favorita: estado?.favorita === true,
         oculta: estado?.oculta === true,

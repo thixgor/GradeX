@@ -86,14 +86,24 @@ export function noDaAula(ensino: {
  * deveria receber o rótulo confiante da outra metade.
  */
 export function assuntoDaTrilha(
-  explicito: { areaId?: string | null; moduloId?: string | null; topicoId?: string | null },
+  explicito: {
+    areaId?: string | null
+    moduloId?: string | null
+    topicoId?: string | null
+    subtopicoId?: string | null
+  },
   nosDasAulas: Array<string | null>,
   nos: NoDeEnsino[],
 ): AssuntoDaTrilha | null {
   const porId = new Map(nos.map((n) => [String(n._id), n]))
 
   // 1. Curadoria explícita, do mais específico para o mais geral.
-  for (const campo of [explicito?.topicoId, explicito?.moduloId, explicito?.areaId]) {
+  for (const campo of [
+    explicito?.subtopicoId,
+    explicito?.topicoId,
+    explicito?.moduloId,
+    explicito?.areaId,
+  ]) {
     const no = campo ? porId.get(String(campo)) : null
     if (no) return { id: String(no._id), nome: no.nome, nivel: no.nivel, explicito: true }
   }

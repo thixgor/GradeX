@@ -538,6 +538,70 @@ function lerBloco(bloco: Bloco): BlocoLido {
   }
 }
 
+/**
+ * Divide o conteúdo em pedaços que cabem numa requisição, sem cortar nenhuma
+ * questão ao meio.
+ *
+ * Existe porque o corpo de uma função serverless da Vercel tem um teto fixo
+ * (4,5 MB) que nenhuma configuração aumenta — um arquivo de milhares de
+ * questões estoura isso numa importação só, e a resposta chega como HTML
+ * "413 Request Entity Too Large" em vez de JSON (a tela nem consegue mostrar
+ * o erro direito, porque `res.json()` quebra em cima de HTML). A tela de
+ * importação usa isto para mandar o arquivo em pedaços bem abaixo do teto,
+ * um de cada vez.
+ *
+ * O corte respeita as FRONTEIRAS DE BLOCO (a mesma que `cortarEmBlocos` usa),
+ * nunca o meio de uma questão. E preserva o número de linha original de cada
+ * pedaço enchendo o início com linhas em branco — elas são ignoradas pelo
+ * leitor (ver `cortarEmBlocos`), mas mantêm "Linha 842" do relatório de erro
+ * apontando para o lugar certo no arquivo inteiro, mesmo dentro de um pedaço
+ * que começa muito depois disso.
+ */
+export function dividirEmLotes(
+  conteudo: string,
+  opcoes: { maxBytesPorLote?: number; maxQuestoesPorLote?: number } = {},
+): string[] {
+  const maxBytes = opcoes.maxBytesPorLote ?? 1_500_000
+  const maxQuestoes = opcoes.maxQuestoesPorLote ?? 300
+
+  const normalizado = (conteudo || '').replace(/^﻿/, '').replace(/\r\n?/g, '\n')
+  const blocos = cortarEmBlocos(normalizado)
+  if (blocos.length <= 1) return [conteudo]
+
+  const linhas = normalizado.split('\n')
+  const totalDeLinhas = linhas.length
+  const codificador = new TextEncoder()
+
+  const lotes: string[] = []
+  let inicio = 0 // índice, em `blocos`, do primeiro bloco do lote em andamento
+
+  const fecharLote = (fimEmBlocos: number) => {
+    const linhaInicial = blocos[inicio].linha - 1
+    const linhaFinal =
+      fimEmBlocos + 1 < blocos.length ? blocos[fimEmBlocos + 1].linha - 1 : totalDeLinhas
+    lotes.push('\n'.repeat(linhaInicial) + linhas.slice(linhaInicial, linhaFinal).join('\n'))
+  }
+
+  for (let i = 0; i < blocos.length; i++) {
+    const questoesNoLote = i - inicio + 1
+    const linhaFinalProvisoria = i + 1 < blocos.length ? blocos[i + 1].linha - 1 : totalDeLinhas
+    const bytesNoLote = codificador.encode(
+      linhas.slice(blocos[inicio].linha - 1, linhaFinalProvisoria).join('\n'),
+    ).length
+
+    const estourou = questoesNoLote > maxQuestoes || bytesNoLote > maxBytes
+    // `i > inicio` evita fechar um lote vazio: uma questão sozinha maior que o
+    // teto ainda assim precisa formar um lote (do tamanho dela) e seguir em frente.
+    if (estourou && i > inicio) {
+      fecharLote(i - 1)
+      inicio = i
+    }
+  }
+  fecharLote(blocos.length - 1)
+
+  return lotes
+}
+
 /** Recorte curto do texto para caber numa mensagem de erro. */
 export function resumir(texto: string, limite = 60): string {
   const limpo = texto.replace(/\s+/g, ' ').trim()

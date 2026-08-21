@@ -10,7 +10,15 @@ import {
   podeEditarEnsino,
   contarAulasPorNo,
 } from '@/lib/ensino/repositorio'
-import { gerarSlug, slugUnico, validarNo, montarArvore } from '@/lib/ensino/taxonomia'
+import {
+  capasPorNo,
+  gerarSlug,
+  herdarCapas,
+  normalizarCapa,
+  slugUnico,
+  validarNo,
+  montarArvore,
+} from '@/lib/ensino/taxonomia'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -39,16 +47,22 @@ export async function GET(request: Request) {
             .collection(COLECOES.aulas)
             .find(
               { oculta: { $ne: true }, 'ensino.tipo': { $ne: 'resumo' } },
-              { projection: { ensino: 1 } },
+              // `capa` entra na projeção para os nós herdarem ilustração das
+              // próprias aulas (ver `herdarCapas`). É um campo pequeno — um
+              // objeto com url e cor —, e ele é o que separa a navegação por
+              // assunto de uma lista de pastas.
+              { projection: { ensino: 1, capa: 1 } },
             )
+            .sort({ criadoEm: -1 })
             .toArray()
         : Promise.resolve([]),
     ])
 
     const contagem = contarAulasPorNo(aulas as any)
+    const arvore = herdarCapas(montarArvore(nos, contagem), capasPorNo(aulas as any))
 
     return NextResponse.json(
-      { nos, arvore: montarArvore(nos, contagem) },
+      { nos, arvore },
       { headers: { 'Cache-Control': 'private, max-age=30' } },
     )
   } catch (erro) {
@@ -113,6 +127,7 @@ export async function POST(request: Request) {
       ),
       descricao: corpo.descricao ? String(corpo.descricao).trim().slice(0, 600) : undefined,
       cor: typeof corpo.cor === 'string' ? corpo.cor.slice(0, 16) : undefined,
+      capa: normalizarCapa(corpo.capa),
       ordem: Number.isFinite(Number(corpo.ordem))
         ? Number(corpo.ordem)
         : (ultimo[0]?.ordem || 0) + 1,

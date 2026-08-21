@@ -7,6 +7,7 @@ import {
   ChevronRight,
   FolderTree,
   Loader2,
+  Move,
   Pencil,
   Plus,
   Search,
@@ -18,7 +19,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
-import { filtrarArvore, montarArvore, type ModuloDaArvore } from '@/lib/banco/hierarquia'
+import { filtrarArvore, montarArvore, paraBusca, type ModuloDaArvore } from '@/lib/banco/hierarquia'
 
 /**
  * Gerenciar a hierarquia do Banco de Questões.
@@ -58,6 +59,19 @@ interface Edicao {
 }
 
 /**
+ * Levar um tópico para dentro de outro módulo, ou um subtópico para dentro de
+ * outro tópico — com as questões dele. Módulo não move: é o topo da árvore
+ * (ver lib/banco/hierarquia.ts), não existe "para dentro de outro módulo".
+ */
+interface Movimento {
+  nivel: 'topico' | 'subtopico'
+  id: string
+  nome: string
+  /** moduloId (tópico) ou topicoId (subtópico) atual — sai da lista de destinos. */
+  paiAtualId: string
+}
+
+/**
  * O que o admin pediu para excluir, com o tamanho do estrago já medido.
  *
  * A tela usava `confirm()` do navegador, que só cabe uma frase e só tem "ok" e
@@ -93,6 +107,11 @@ export default function HierarquiaPage() {
   const [erro, setErro] = useState('')
   const [recado, setRecado] = useState('')
 
+  const [movimento, setMovimento] = useState<Movimento | null>(null)
+  const [buscaMovimento, setBuscaMovimento] = useState('')
+  const [movendo, setMovendo] = useState(false)
+  const [erroMovimento, setErroMovimento] = useState('')
+
   const carregar = useCallback(async () => {
     const res = await fetch('/api/banco/hierarquia', { cache: 'no-store' })
     if (res.ok) {
@@ -114,6 +133,31 @@ export default function HierarquiaPage() {
   )
   const visivel = useMemo(() => filtrarArvore(arvore, busca), [arvore, busca])
   const buscando = busca.trim().length >= 2
+
+  /**
+   * Para onde o item em `movimento` pode ir: todo módulo (tópico) ou todo
+   * tópico com o módulo dele no caminho (subtópico), menos o pai atual — "mover
+   * para onde já está" não é um destino.
+   */
+  const destinosDeMovimento = useMemo(() => {
+    if (!movimento) return []
+
+    const alvo = paraBusca(buscaMovimento)
+    const lista =
+      movimento.nivel === 'topico'
+        ? modulos
+            .filter((m) => m._id !== movimento.paiAtualId)
+            .map((m) => ({ id: m._id, nome: m.nome, caminho: undefined as string | undefined }))
+        : topicos
+            .filter((t) => t._id !== movimento.paiAtualId)
+            .map((t) => ({
+              id: t._id,
+              nome: t.nome,
+              caminho: modulos.find((m) => m._id === t.moduloId)?.nome,
+            }))
+
+    return alvo.length < 2 ? lista : lista.filter((d) => paraBusca(d.nome).includes(alvo))
+  }, [movimento, buscaMovimento, modulos, topicos])
 
   async function salvar() {
     if (!edicao || !edicao.nome.trim()) return
@@ -171,6 +215,49 @@ export default function HierarquiaPage() {
       await carregar()
     } finally {
       setExcluindo(false)
+    }
+  }
+
+  function abrirMovimento(m: Movimento) {
+    setErro('')
+    setRecado('')
+    setBuscaMovimento('')
+    setErroMovimento('')
+    setMovimento(m)
+  }
+
+  async function confirmarMovimento(destinoId: string) {
+    if (!movimento) return
+    setMovendo(true)
+    setErroMovimento('')
+
+    const campo = movimento.nivel === 'topico' ? 'moduloId' : 'topicoId'
+
+    try {
+      const res = await fetch(`${ROTA[movimento.nivel]}/${movimento.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ [campo]: destinoId }),
+      })
+      const dados = await res.json().catch(() => ({}))
+
+      if (!res.ok) {
+        setErroMovimento(dados.error || 'Não foi possível mover')
+        return
+      }
+
+      const destino = destinosDeMovimento.find((d) => d.id === destinoId)
+      setErro('')
+      setRecado(
+        `${ROTULO[movimento.nivel]} "${movimento.nome}" movido para "${destino?.nome ?? ''}"` +
+          (dados.questoesMovidas > 0
+            ? ` — ${dados.questoesMovidas} questão(ões) foram junto.`
+            : '.'),
+      )
+      setMovimento(null)
+      await carregar()
+    } finally {
+      setMovendo(false)
     }
   }
 
@@ -261,6 +348,7 @@ export default function HierarquiaPage() {
                   setRecado('')
                   setExclusao(alvo)
                 }}
+                onMover={abrirMovimento}
               />
             ))
           )}
@@ -381,6 +469,99 @@ export default function HierarquiaPage() {
           </div>
         </div>
       ) : null}
+      {/* ── Mover ──────────────────────────────────────────────────────── */}
+      {movimento ? (
+        <div
+          className="fixed inset-0 z-[120] flex items-end justify-center bg-black/50 p-0 backdrop-blur-sm sm:items-center sm:p-4"
+          onClick={(e) => {
+            if (e.target === e.currentTarget && !movendo) setMovimento(null)
+          }}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Mover ${ROTULO[movimento.nivel]}`}
+            className="flex max-h-[80vh] w-full max-w-sm flex-col overflow-hidden rounded-t-2xl border border-border bg-card shadow-2xl sm:rounded-2xl"
+          >
+            <div className="flex items-start justify-between gap-3 border-b border-border px-4 py-3">
+              <div className="min-w-0">
+                <h2 className="flex items-center gap-2 truncate text-sm font-bold">
+                  <Move className="h-4 w-4 flex-none text-primary" />
+                  Mover &ldquo;{movimento.nome}&rdquo;
+                </h2>
+                <p className="mt-0.5 text-[11px] text-muted-foreground">
+                  {movimento.nivel === 'topico'
+                    ? 'Escolha o módulo de destino. As questões e os subtópicos vão junto.'
+                    : 'Escolha o tópico de destino. As questões vão junto.'}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setMovimento(null)}
+                disabled={movendo}
+                aria-label="Fechar"
+                className="-m-1 flex-none rounded-lg p-1 text-muted-foreground transition hover:bg-muted hover:text-foreground"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="border-b border-border px-4 py-2.5">
+              <div className="relative">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+                <input
+                  autoFocus
+                  value={buscaMovimento}
+                  onChange={(e) => setBuscaMovimento(e.target.value)}
+                  placeholder={movimento.nivel === 'topico' ? 'Buscar módulo…' : 'Buscar tópico…'}
+                  className="h-9 w-full rounded-lg border border-border bg-background pl-9 pr-3 text-[13px] outline-none focus:border-primary/50"
+                />
+              </div>
+            </div>
+
+            <div className="min-h-0 flex-1 overflow-y-auto px-2 py-2">
+              {movendo ? (
+                <p className="mx-1 mb-2 flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" /> Movendo…
+                </p>
+              ) : null}
+
+              {erroMovimento ? (
+                <p className="mx-1 mb-2 rounded-lg border border-destructive/30 bg-destructive/10 px-2.5 py-2 text-xs text-destructive">
+                  {erroMovimento}
+                </p>
+              ) : null}
+
+              {destinosDeMovimento.length === 0 ? (
+                <p className="px-2 py-8 text-center text-xs text-muted-foreground">
+                  {movimento.nivel === 'topico'
+                    ? 'Nenhum outro módulo disponível.'
+                    : 'Nenhum outro tópico disponível.'}
+                </p>
+              ) : (
+                destinosDeMovimento.map((destino) => (
+                  <button
+                    key={destino.id}
+                    type="button"
+                    disabled={movendo}
+                    onClick={() => confirmarMovimento(destino.id)}
+                    className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left transition hover:bg-muted disabled:opacity-50"
+                  >
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-[13px] font-medium">{destino.nome}</span>
+                      {destino.caminho ? (
+                        <span className="block truncate text-[11px] text-muted-foreground">
+                          {destino.caminho}
+                        </span>
+                      ) : null}
+                    </span>
+                  </button>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      ) : null}
     </AppShell>
   )
 }
@@ -402,12 +583,14 @@ function LinhaModulo({
   onAlternar,
   onEditar,
   onExcluir,
+  onMover,
 }: {
   modulo: ModuloDaArvore
   aberto: boolean
   onAlternar: () => void
   onEditar: (e: Edicao) => void
   onExcluir: (alvo: Exclusao) => void
+  onMover: (m: Movimento) => void
 }) {
   return (
     <div className="mb-0.5">
@@ -460,6 +643,14 @@ function LinhaModulo({
                     onNovo={() => onEditar({ nivel: 'subtopico', nome: '', paiId: topico._id })}
                     rotuloNovo="Novo subtópico"
                     onRenomear={() => onEditar({ nivel: 'topico', id: topico._id, nome: topico.nome })}
+                    onMover={() =>
+                      onMover({
+                        nivel: 'topico',
+                        id: topico._id,
+                        nome: topico.nome,
+                        paiAtualId: topico.moduloId,
+                      })
+                    }
                     onExcluir={() =>
                       onExcluir({
                         nivel: 'topico',
@@ -486,6 +677,14 @@ function LinhaModulo({
                         </span>
                         <Acoes
                           onRenomear={() => onEditar({ nivel: 'subtopico', id: sub._id, nome: sub.nome })}
+                          onMover={() =>
+                            onMover({
+                              nivel: 'subtopico',
+                              id: sub._id,
+                              nome: sub.nome,
+                              paiAtualId: topico._id,
+                            })
+                          }
                           onExcluir={() =>
                             onExcluir({
                               nivel: 'subtopico',
@@ -515,11 +714,14 @@ function Acoes({
   onNovo,
   rotuloNovo,
   onRenomear,
+  onMover,
   onExcluir,
 }: {
   onNovo?: () => void
   rotuloNovo?: string
   onRenomear: () => void
+  /** Só tópico e subtópico têm para onde ir — módulo é o topo da árvore. */
+  onMover?: () => void
   onExcluir: () => void
 }) {
   return (
@@ -544,6 +746,17 @@ function Acoes({
       >
         <Pencil className="h-3.5 w-3.5" />
       </button>
+      {onMover ? (
+        <button
+          type="button"
+          onClick={onMover}
+          aria-label="Mover"
+          title="Mover para outro grupo"
+          className="flex h-7 w-7 items-center justify-center rounded text-muted-foreground transition hover:bg-muted hover:text-foreground"
+        >
+          <Move className="h-3.5 w-3.5" />
+        </button>
+      ) : null}
       <button
         type="button"
         onClick={onExcluir}

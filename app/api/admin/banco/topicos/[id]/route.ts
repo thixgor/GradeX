@@ -44,8 +44,31 @@ export async function PUT(
       updateData.ordem = body.ordem
     }
 
+    /*
+     * Mover o tópico para dentro de outro módulo — com os subtópicos e as
+     * questões dele.
+     *
+     * O subtópico não precisa de nada: ele só guarda `topicoId`, então segue o
+     * tópico automaticamente. A questão é diferente — `banco_questoes` grava
+     * `moduloId` e `topicoId` os dois, direto no documento (é o que permite
+     * filtrar por módulo sem um JOIN a cada busca). Sem este `updateMany`, a
+     * árvore mostraria o tópico no módulo novo mas as questões dele ainda
+     * contariam para o módulo antigo — um total que não bate em nenhum dos
+     * dois lugares.
+     */
+    let moduloDestino: { _id: ObjectId; nome: string } | null = null
     if (body.moduloId !== undefined) {
-      updateData.moduloId = new ObjectId(body.moduloId)
+      if (!ObjectId.isValid(String(body.moduloId))) {
+        return NextResponse.json({ error: 'Módulo de destino inválido' }, { status: 400 })
+      }
+      const destino = await db
+        .collection('banco_modulos')
+        .findOne({ _id: new ObjectId(String(body.moduloId)) }, { projection: { nome: 1 } })
+      if (!destino) {
+        return NextResponse.json({ error: 'Módulo de destino não encontrado' }, { status: 404 })
+      }
+      moduloDestino = { _id: destino._id, nome: destino.nome }
+      updateData.moduloId = destino._id
     }
 
     const result = await db.collection('banco_topicos').updateOne(
@@ -57,7 +80,18 @@ export async function PUT(
       return NextResponse.json({ error: 'Tópico não encontrado' }, { status: 404 })
     }
 
-    return NextResponse.json({ sucesso: true })
+    let questoesMovidas = 0
+    if (moduloDestino) {
+      const cascata = await db
+        .collection('banco_questoes')
+        .updateMany(
+          { topicoId: new ObjectId(id) },
+          { $set: { moduloId: moduloDestino._id, updatedAt: new Date() } },
+        )
+      questoesMovidas = cascata.modifiedCount || 0
+    }
+
+    return NextResponse.json({ sucesso: true, questoesMovidas })
   } catch (error) {
     console.error('Erro ao atualizar tópico:', error)
     return NextResponse.json({ error: 'Erro ao atualizar tópico' }, { status: 500 })

@@ -196,7 +196,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
         .filter(Boolean)
         .slice(0, 24)
     }
-    for (const campo of ['areaId', 'moduloId', 'topicoId'] as const) {
+    for (const campo of ['areaId', 'moduloId', 'topicoId', 'subtopicoId'] as const) {
       if (campo in corpo) {
         mudanca[campo] = ObjectId.isValid(String(corpo[campo])) ? String(corpo[campo]) : null
       }

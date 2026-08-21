@@ -537,7 +537,7 @@ export function FichaDeEstatistica({
   sufixo?: string
 }) {
   return (
-    <div className="flex items-center gap-2.5 rounded-2xl bg-card px-3.5 py-2.5 ring-1 ring-border/70">
+    <div className="vidro-cartao vidro-reflexo flex items-center gap-2.5 rounded-2xl px-3.5 py-2.5">
       <span
         className={cn(
           'flex h-9 w-9 flex-none items-center justify-center rounded-xl',

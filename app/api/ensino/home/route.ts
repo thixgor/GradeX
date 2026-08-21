@@ -15,8 +15,8 @@ import {
   montarCartoes,
   progressoDeTrilhas,
 } from '@/lib/ensino/repositorio'
-import { montarArvore, podarVazios } from '@/lib/ensino/taxonomia'
-import { resumirTrilha } from '@/lib/ensino/trilha'
+import { capasPorNo, herdarCapas, montarArvore, podarVazios } from '@/lib/ensino/taxonomia'
+import { achatarItens, resumirTrilha } from '@/lib/ensino/trilha'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -40,7 +40,12 @@ const TTL_DO_CATALOGO_MS = 60_000
 interface AulaDoCatalogo {
   _id: any
   ensino?: { duracaoSegundos?: number; [chave: string]: any }
+  /** Alimenta a herança de capa dos nós da navegação (`herdarCapas`). */
+  capa?: { imagem?: string; cor?: string } | null
 }
+
+/** Quantos nós do caminho a home mostra — o passo de hoje, não a Trilha inteira. */
+const NOS_DO_CAMINHO = 6
 
 /**
  * A home da Área de Ensino (§12, §13).
@@ -120,8 +125,11 @@ export async function GET() {
           .collection(COLECOES.aulas)
           .find(
             { oculta: { $ne: true }, 'ensino.tipo': { $ne: 'resumo' } },
-            { projection: { ensino: 1 } },
+            { projection: { ensino: 1, capa: 1 } },
           )
+          // A ordem decide de qual aula cada nó da navegação herda a capa: a
+          // mais recente primeiro, que é a que tem mais chance de ter uma.
+          .sort({ criadoEm: -1 })
           .toArray() as Promise<AulaDoCatalogo[]>,
       ),
     ])
@@ -251,7 +259,10 @@ export async function GET() {
 
     /* ── Navegação por etapa da Medicina (§13) ───────────────────────── */
 
-    const arvore = podarVazios(montarArvore(nos, contarAulasPorNo(catalogo as any)))
+    const arvore = herdarCapas(
+      podarVazios(montarArvore(nos, contarAulasPorNo(catalogo as any))),
+      capasPorNo(catalogo as any),
+    )
 
     /*
      * As três fichas do topo (§27).
@@ -311,10 +322,118 @@ export async function GET() {
       },
     }
 
+    /* ── O caminho visual da home ────────────────────────────────────── */
+
+    /**
+     * O trecho de Trilha que a home desenha como percurso.
+     *
+     * A home mostrava o progresso como número ("3 de 12 aulas") e como barra.
+     * Nenhum dos dois responde à pergunta que faz alguém abrir o app à noite —
+     * "quanto falta para o próximo marco, e o que vem depois do que estou
+     * fazendo?". Um caminho responde: o passo de hoje tem um antes e um depois
+     * visíveis, e isso é o que transforma uma lista em jornada.
+     *
+     * A janela é curta de propósito. Mandar a Trilha inteira faria a home ter
+     * quarenta nós — que é um índice, não um próximo passo — e custaria montar
+     * quarenta cartões a cada abertura. Sete cabem numa rolagem e param no
+     * lugar certo: o resto está a um toque, na página da Trilha.
+     */
+    const slugDaRetomada = (continuar[0] as any)?.trilha?.slug || null
+    const trilhaFoco =
+      (slugDaRetomada ? trilhas.find((t) => t.slug === slugDaRetomada) : null) ||
+      emCurso[0] ||
+      recomendadas[0] ||
+      null
+
+    let caminho: any = null
+
+    if (trilhaFoco) {
+      const passos = achatarItens(trilhaFoco).filter(
+        (p) => p.item.tipo === 'aula' && p.item.refId,
+      )
+      const progressoFoco = progressoDasTrilhas.get(String(trilhaFoco._id)) || null
+      const alvo = progressoFoco?.proximo?.item?.refId || passos[0]?.item.refId || null
+
+      const indiceAlvo = Math.max(
+        0,
+        passos.findIndex((p) => p.item.refId === alvo),
+      )
+      // Duas aulas atrás do passo atual: o já-feito à vista é o que dá a
+      // sensação de avanço. Mais que isso e o "você está aqui" sai da dobra.
+      const inicio = Math.max(
+        0,
+        Math.min(indiceAlvo - 2, Math.max(0, passos.length - NOS_DO_CAMINHO)),
+      )
+      const janela = passos.slice(inicio, inicio + NOS_DO_CAMINHO)
+
+      const idsDoCaminho = janela.map((p) => p.item.refId).filter(ObjectId.isValid)
+      const documentosDoCaminho = idsDoCaminho.length
+        ? await db
+            .collection(COLECOES.aulas)
+            .find({ _id: { $in: idsDoCaminho.map((id) => new ObjectId(id)) } as any })
+            .toArray()
+        : []
+
+      // Passa pelo mesmo `montarCartoes` de todo o resto: o caminho não pode
+      // ser a porta que devolve o vídeo de uma aula paga.
+      const cartoesDoCaminho = await montarCartoes(
+        db,
+        documentosDoCaminho as any,
+        usuario,
+        { usuarioId, nos },
+      )
+      const cartaoPorId = new Map(cartoesDoCaminho.map((c) => [c._id, c]))
+
+      const nosDoCaminho = janela
+        .map((passo, i) => {
+          const cartao = cartaoPorId.get(passo.item.refId)
+          if (!cartao) return null
+
+          const concluida = cartao.progresso?.concluida === true
+          const seguinte = passos[inicio + i + 1]
+
+          return {
+            id: passo.item.refId,
+            titulo: cartao.titulo,
+            href: `${cartao.href}${cartao.href.includes('?') ? '&' : '?'}trilha=${trilhaFoco.slug}`,
+            estado: !cartao.acesso.liberado
+              ? 'bloqueado'
+              : concluida
+                ? 'concluido'
+                : passo.item.refId === alvo
+                  ? 'atual'
+                  : 'disponivel',
+            percentual: cartao.progresso?.percentual || 0,
+            duracaoLabel: cartao.duracaoLabel,
+            // O nó vira troféu quando a etapa muda logo depois dele: é o marco
+            // que dá ao percurso um "fim de capítulo" sem inventar recompensa.
+            fimDeEtapa: Boolean(seguinte && seguinte.etapaId !== passo.etapaId),
+            etiqueta: passo.etapaTitulo,
+          }
+        })
+        .filter(Boolean)
+
+      if (nosDoCaminho.length > 0) {
+        caminho = {
+          trilha: {
+            slug: trilhaFoco.slug,
+            titulo: trilhaFoco.titulo,
+            percentual: progressoFoco?.percentual ?? 0,
+            concluidos: progressoFoco?.concluidos ?? 0,
+            total: progressoFoco?.total ?? passos.length,
+            iniciada: progressoFoco?.iniciada === true,
+          },
+          restantes: Math.max(0, passos.length - (inicio + janela.length)),
+          nos: nosDoCaminho,
+        }
+      }
+    }
+
     return NextResponse.json(
       {
         logado: Boolean(usuarioId),
         continuar,
+        caminho,
         trilhas: {
           emCurso: emCurso.map(cartaoDeTrilha),
           recomendadas: recomendadas.map(cartaoDeTrilha),

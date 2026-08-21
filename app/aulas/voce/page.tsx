@@ -201,7 +201,7 @@ function Conteudo() {
         </section>
       ) : null}
 
-      <div className="divide-y divide-border/60 overflow-hidden rounded-2xl bg-card ring-1 ring-border/70">
+      <div className="vidro-cartao vidro-reflexo divide-y divide-border/40 overflow-hidden rounded-3xl">
         <Linha
           href="/aulas/anotacoes"
           icone={StickyNote}
@@ -237,7 +237,7 @@ function Conteudo() {
           <h2 className="mb-2 px-1 text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
             Equipe
           </h2>
-          <div className="overflow-hidden rounded-2xl bg-card ring-1 ring-border/70">
+          <div className="vidro-cartao vidro-reflexo overflow-hidden rounded-3xl">
             <Linha
               href="/aulas/gerenciar"
               icone={Settings2}
@@ -265,7 +265,7 @@ function Linha({
   return (
     <Link
       href={href}
-      className={cn('group flex items-center gap-3 px-4 py-3.5 transition hover:bg-muted/50')}
+      className={cn('group flex items-center gap-3 px-4 py-3.5 transition hover:bg-primary/5')}
     >
       <span className="inline-flex h-10 w-10 flex-none items-center justify-center rounded-xl bg-primary/12 text-primary">
         <Icone className="h-5 w-5" strokeWidth={2.4} />

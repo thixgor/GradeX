@@ -52,6 +52,8 @@ interface No {
   paiId: string | null
   slug: string
   descricao?: string
+  /** A imagem que representa o nível na navegação do aluno. Ver `taxonomia.ts`. */
+  capa?: { imagem?: string; cor?: string } | null
   ordem: number
   oculto?: boolean
 }
@@ -430,7 +432,38 @@ function FormularioDeNo({
             />
           </Campo>
 
+          {/* A capa é opcional em dois níveis: sem imagem o cartão usa a cor,
+              e sem nada o nível empresta a capa de uma aula de dentro dele
+              (`herdarCapas`). Este campo existe para a curadoria — a etapa
+              curricular que merece uma imagem escolhida, não a primeira que
+              apareceu. */}
+          <Campo
+            rotulo="Capa"
+            dica="URL da imagem que representa este nível na navegação. Sem ela, o nível usa a capa de uma aula de dentro."
+          >
+            <input
+              value={dados.capa?.imagem || ''}
+              onChange={(e) =>
+                setDados({ ...dados, capa: { ...dados.capa, imagem: e.target.value } })
+              }
+              placeholder="https://…"
+              inputMode="url"
+              className={classeDeEntrada}
+            />
+          </Campo>
+
           <div className="grid grid-cols-2 gap-3">
+            <Campo rotulo="Cor de acento" dica="Usada quando não há imagem.">
+              <input
+                type="color"
+                value={dados.capa?.cor || '#468152'}
+                onChange={(e) =>
+                  setDados({ ...dados, capa: { ...dados.capa, cor: e.target.value } })
+                }
+                className="h-11 w-full cursor-pointer rounded-lg border border-border bg-card p-1"
+              />
+            </Campo>
+
             <Campo rotulo="Ordem">
               <input
                 type="number"

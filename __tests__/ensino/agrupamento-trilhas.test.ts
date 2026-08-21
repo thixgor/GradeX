@@ -24,7 +24,7 @@ const NOS: NoDeEnsino[] = [
   no('pneumo', 'topico', 'Pneumologia', 'clinico'),
 ]
 
-const SEM_CURADORIA = { areaId: null, moduloId: null, topicoId: null }
+const SEM_CURADORIA = { areaId: null, moduloId: null, topicoId: null, subtopicoId: null }
 
 describe('noDaAula', () => {
   it('usa o nó mais específico que a aula declara', () => {
@@ -48,6 +48,18 @@ describe('assuntoDaTrilha', () => {
   it('entre os campos explícitos, o mais específico ganha', () => {
     const assunto = assuntoDaTrilha({ areaId: 'area', moduloId: 'clinico', topicoId: 'cardio' }, [], NOS)
     expect(assunto?.id).toBe('cardio')
+  })
+
+  it('subtopicoId é o mais específico dos campos explícitos', () => {
+    // O campo entrou depois (paridade com os 4 níveis das aulas) e precisa
+    // ganhar de todos os outros, senão a curadoria mais fina seria ignorada.
+    const assunto = assuntoDaTrilha(
+      { areaId: 'area', moduloId: 'clinico', topicoId: 'cardio', subtopicoId: 'semio' },
+      [],
+      NOS,
+    )
+    expect(assunto?.id).toBe('semio')
+    expect(assunto?.explicito).toBe(true)
   })
 
   it('campo explícito apontando para nó inexistente cai no cálculo', () => {
@@ -106,7 +118,7 @@ describe('assuntoDaTrilha', () => {
   it('o teto de nível vale para o cálculo, não para a curadoria explícita', () => {
     // Se alguém apontar a Trilha para um subtópico de propósito, é isso que
     // vale: o teto existe para o palpite, não para a decisão de uma pessoa.
-    const assunto = assuntoDaTrilha({ topicoId: 'fisio' }, [], NOS)
+    const assunto = assuntoDaTrilha({ subtopicoId: 'fisio' }, [], NOS)
     expect(assunto).toEqual({
       id: 'fisio',
       nome: 'Fisiologia Cardiovascular',

@@ -202,7 +202,7 @@ function Conteudo() {
   return (
     <div className={`container mx-auto max-w-7xl px-4 ${RESPIRO_DO_TOPO} ${RESPIRO_DA_DOCA}`}>
       <header className="mb-4">
-        <h1 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
+        <h1 className="font-heading text-2xl font-extrabold tracking-tight sm:text-3xl">
           Trilhas de Ensino
         </h1>
         <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
@@ -243,10 +243,10 @@ function Conteudo() {
             onClick={() => setFiltro(f.id)}
             aria-pressed={filtro === f.id}
             className={cn(
-              'inline-flex h-9 flex-none items-center rounded-full px-3.5 text-sm font-semibold transition',
+              'inline-flex h-10 flex-none items-center rounded-full px-4 text-sm font-semibold transition',
               filtro === f.id
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-muted text-muted-foreground hover:text-foreground',
+                ? 'bg-primary text-primary-foreground shadow-[0_6px_18px_-8px_hsl(var(--primary))]'
+                : 'vidro-sutil vidro-toque text-muted-foreground hover:text-foreground',
             )}
           >
             {f.rotulo}

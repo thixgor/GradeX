@@ -93,7 +93,7 @@ function Conteudo() {
     <div className={`container mx-auto max-w-4xl px-4 ${RESPIRO_DO_TOPO} ${RESPIRO_DA_DOCA}`}>
 
       <header className="mb-5">
-        <h1 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">Revisar</h1>
+        <h1 className="font-heading text-2xl font-extrabold tracking-tight sm:text-3xl">Revisar</h1>
         <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
           O que você já viu, ordenado por quanto está pedindo uma revisão. Comece pelo resumo — é o
           caminho mais curto de volta ao conteúdo.
@@ -115,10 +115,10 @@ function Conteudo() {
               onClick={() => setFiltro(f.id)}
               aria-pressed={filtro === f.id}
               className={cn(
-                'inline-flex h-9 flex-none items-center rounded-full px-3.5 text-sm font-semibold transition',
+                'inline-flex h-10 flex-none items-center rounded-full px-4 text-sm font-semibold transition',
                 filtro === f.id
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-muted text-muted-foreground hover:text-foreground',
+                  ? 'bg-primary text-primary-foreground shadow-[0_6px_18px_-8px_hsl(var(--primary))]'
+                  : 'vidro-sutil vidro-toque text-muted-foreground hover:text-foreground',
               )}
             >
               {f.rotulo}
@@ -168,7 +168,7 @@ function Conteudo() {
           {visiveis.map((item) => (
             <article
               key={item.aulaId}
-              className="rounded-2xl border border-border/70 bg-card p-4 transition hover:border-primary/30"
+              className="vidro-cartao vidro-reflexo rounded-3xl p-4 transition hover:border-primary/40"
             >
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div className="min-w-0 flex-1">
@@ -219,13 +219,17 @@ function Conteudo() {
                       key={ferramenta}
                       href={destino}
                       className={cn(
-                        'inline-flex h-9 items-center gap-1.5 rounded-lg px-3 text-xs font-semibold transition',
+                        'inline-flex items-center gap-1.5 rounded-xl font-semibold transition',
+                        // A primeira ferramenta é a mais barata que aquela aula
+                        // oferece, e ela é a única com peso de botão: quem chega
+                        // aqui cansado precisa de um alvo óbvio, não de quatro
+                        // opções equivalentes.
                         indice === 0
-                          ? 'bg-primary text-primary-foreground hover:opacity-90'
-                          : 'border border-border hover:bg-muted',
+                          ? 'h-11 bg-primary px-4 text-sm text-primary-foreground shadow-[0_6px_18px_-8px_hsl(var(--primary))] hover:brightness-110 active:translate-y-[2px]'
+                          : 'vidro-sutil vidro-toque h-11 px-3.5 text-xs text-muted-foreground hover:text-foreground',
                       )}
                     >
-                      <Icone className="h-3.5 w-3.5" />
+                      <Icone className={indice === 0 ? 'h-4 w-4' : 'h-3.5 w-3.5'} />
                       {rotulo}
                     </Link>
                   )
