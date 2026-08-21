@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -8,6 +8,7 @@ import {
   AlertTriangle,
   Eye,
   EyeOff,
+  FolderTree,
   Layers,
   Loader2,
   Plus,
@@ -55,6 +56,15 @@ import { cn } from '@/lib/utils'
  * (a mesma regra do botão individual, em `validarPublicacao`); numa seleção
  * grande e mista, o aviso diz quantas entraram e lista quais ficaram de fora,
  * em vez de aplicar a ação silenciosamente só nas prontas.
+ *
+ * MOVER PARA A ORGANIZAÇÃO (a mesma taxonomia das aulas)
+ *
+ * A Trilha sempre teve onde morar: `areaId`/`moduloId`/`topicoId`/
+ * `subtopicoId` já existiam no documento (é o que alimentaria "Trilhas de
+ * Cardiologia" numa página de tópico), só não havia tela para escrever esses
+ * campos. O filtro e o botão "Mover" usam a MESMA árvore de nós de
+ * `/aulas/gerenciar/taxonomia` — uma Trilha e uma aula sobre o mesmo assunto
+ * apontam para o mesmo nó, não para duas organizações paralelas.
  */
 
 interface TrilhaNaLista {
@@ -68,6 +78,27 @@ interface TrilhaNaLista {
   aulas: number
   etapas: number
   minutos: number
+  areaId?: string | null
+  moduloId?: string | null
+  topicoId?: string | null
+  subtopicoId?: string | null
+  localizacao?: string
+}
+
+interface NoNaTela {
+  _id: string
+  nome: string
+  nivel: string
+  paiId: string | null
+}
+
+const NIVEIS = ['area', 'modulo', 'topico', 'subtopico'] as const
+
+const ROTULO_DO_NIVEL: Record<string, string> = {
+  area: 'Área',
+  modulo: 'Módulo',
+  topico: 'Tópico',
+  subtopico: 'Subtópico',
 }
 
 export default function GerenciarTrilhasPage() {
@@ -91,7 +122,11 @@ function Conteudo() {
   const [confirmandoExclusao, setConfirmandoExclusao] = useState(false)
   const [excluindo, setExcluindo] = useState(false)
   const [aplicando, setAplicando] = useState<'publicar' | 'despublicar' | ''>('')
+  const [mostrandoMover, setMostrandoMover] = useState(false)
   const [aviso, setAviso] = useState('')
+
+  const [nos, setNos] = useState<NoNaTela[]>([])
+  const [no, setNo] = useState('')
 
   // Mesmo mecanismo do Catálogo (§ ver hooks/use-publica-altura.ts): sem
   // isso, o círculo de Suporte no canto inferior direito (telas grandes)
@@ -100,7 +135,9 @@ function Conteudo() {
 
   const carregar = useCallback(() => {
     setCarregando(true)
-    fetch('/api/ensino/trilhas?rascunhos=1', { cache: 'no-store' })
+    const q = new URLSearchParams({ rascunhos: '1' })
+    if (no) q.set('no', no)
+    fetch(`/api/ensino/trilhas?${q}`, { cache: 'no-store' })
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => {
         if (d?.trilhas) setTrilhas(d.trilhas)
@@ -108,9 +145,39 @@ function Conteudo() {
       .catch(() => {})
       .finally(() => setCarregando(false))
     setMarcadas(new Set())
-  }, [])
+  }, [no])
 
   useEffect(carregar, [carregar])
+
+  // A árvore de nós é a mesma do Catálogo de aulas — carregada uma vez, sem
+  // a contagem de aulas (`contagem=0`), que aqui não serve para nada.
+  useEffect(() => {
+    fetch('/api/ensino/taxonomia?contagem=0', { cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (d?.nos) setNos(d.nos)
+      })
+      .catch(() => {})
+  }, [])
+
+  const nosOrdenados = useMemo(() => {
+    // Achatado com recuo, para o seletor mostrar a hierarquia sem uma árvore
+    // — mesma ideia do Catálogo de aulas.
+    const filhos = new Map<string | null, NoNaTela[]>()
+    for (const item of nos) {
+      const chave = item.paiId || null
+      filhos.set(chave, [...(filhos.get(chave) || []), item])
+    }
+    const saida: Array<{ id: string; rotulo: string }> = []
+    const descer = (pai: string | null, nivel: number) => {
+      for (const item of filhos.get(pai) || []) {
+        saida.push({ id: item._id, rotulo: `${'— '.repeat(nivel)}${item.nome}` })
+        descer(item._id, nivel + 1)
+      }
+    }
+    descer(null, 0)
+    return saida
+  }, [nos])
 
   async function criar() {
     const nome = titulo.trim()
@@ -255,6 +322,17 @@ function Conteudo() {
         </p>
       ) : null}
 
+      <div className="mb-5 max-w-xs">
+        <select value={no} onChange={(e) => setNo(e.target.value)} className={classeDeEntrada}>
+          <option value="">Toda a organização</option>
+          {nosOrdenados.map((item) => (
+            <option key={item.id} value={item.id}>
+              {item.rotulo}
+            </option>
+          ))}
+        </select>
+      </div>
+
       {carregando ? (
         <div className="space-y-2">
           {Array.from({ length: 4 }).map((_, i) => (
@@ -262,13 +340,21 @@ function Conteudo() {
           ))}
         </div>
       ) : trilhas.length === 0 ? (
-        <EstadoVazio
-          icone={Route}
-          titulo="Nenhuma Trilha ainda"
-          descricao="Uma Trilha organiza aulas existentes numa sequência que leva o aluno do começo ao domínio do assunto."
-          acaoLabel="Criar a primeira"
-          onAcao={() => setCriando(true)}
-        />
+        no ? (
+          <EstadoVazio
+            icone={FolderTree}
+            titulo="Nenhuma Trilha neste ponto da organização"
+            descricao="Mova uma Trilha para cá pela seleção da lista, ou escolha outro lugar no filtro acima."
+          />
+        ) : (
+          <EstadoVazio
+            icone={Route}
+            titulo="Nenhuma Trilha ainda"
+            descricao="Uma Trilha organiza aulas existentes numa sequência que leva o aluno do começo ao domínio do assunto."
+            acaoLabel="Criar a primeira"
+            onAcao={() => setCriando(true)}
+          />
+        )
       ) : (
         <div className={`space-y-8 ${marcadas.size > 0 ? 'pb-24' : ''}`}>
           {/* A linha de seleção fica solta, acima das duas seções — a
@@ -374,6 +460,15 @@ function Conteudo() {
                 </BotaoDuo>
 
                 <BotaoDuo
+                  tom="claro"
+                  tamanho="pequeno"
+                  onClick={() => setMostrandoMover(true)}
+                  disabled={Boolean(aplicando) || excluindo}
+                >
+                  <FolderTree className="h-4 w-4" /> Mover
+                </BotaoDuo>
+
+                <BotaoDuo
                   tom="perigo"
                   tamanho="pequeno"
                   onClick={() => setConfirmandoExclusao(true)}
@@ -393,6 +488,20 @@ function Conteudo() {
           ocupado={excluindo}
           aoCancelar={() => setConfirmandoExclusao(false)}
           aoConfirmar={excluirMarcadas}
+        />
+      ) : null}
+
+      {mostrandoMover ? (
+        <ModalDeMoverTrilhas
+          ids={Array.from(marcadas)}
+          nos={nos}
+          aoFechar={() => setMostrandoMover(false)}
+          aoSalvar={(afetadas) => {
+            setMostrandoMover(false)
+            setMarcadas(new Set())
+            setAviso(`${afetadas} ${afetadas === 1 ? 'Trilha movida' : 'Trilhas movidas'}.`)
+            carregar()
+          }}
         />
       ) : null}
     </PainelDeEnsino>
@@ -449,6 +558,7 @@ function LinhaDeTrilha({
             `${trilha.aulas} ${trilha.aulas === 1 ? 'aula' : 'aulas'}`,
             `${trilha.etapas} ${trilha.etapas === 1 ? 'etapa' : 'etapas'}`,
             trilha.minutos > 0 ? formatarMinutos(trilha.minutos) : '',
+            trilha.localizacao || 'Sem organização',
             trilha.subtitulo || '',
           ]
             .filter(Boolean)
@@ -596,6 +706,141 @@ function ConfirmacaoDeExclusaoDeTrilhas({
             {ocupado ? 'Excluindo…' : 'Excluir'}
           </BotaoDuo>
           <BotaoDuo tom="contorno" onClick={aoCancelar}>
+            Cancelar
+          </BotaoDuo>
+        </div>
+      </motion.div>
+    </div>
+  )
+}
+
+/* =================== MOVER PARA A ORGANIZAÇÃO =================== */
+
+/**
+ * Move as Trilhas selecionadas para um ponto da mesma árvore de nós que o
+ * Catálogo de aulas usa (§ ver comentário no cabeçalho do arquivo).
+ *
+ * Escolher um nível acima invalida os de baixo — trocar a Área sem isso
+ * deixaria a Trilha "presa" a um Tópico de outra Área, um estado que a
+ * própria tela nunca produziria de propósito. É o mesmo `definir` de
+ * `PainelDeOrganizacao`, em app/aulas/gerenciar/catalogo/page.tsx (o editor
+ * de taxonomia de uma aula), só que aqui o destino vale para todo mundo que
+ * está marcado, não para um documento só.
+ */
+function ModalDeMoverTrilhas({
+  ids,
+  nos,
+  aoFechar,
+  aoSalvar,
+}: {
+  ids: string[]
+  nos: NoNaTela[]
+  aoFechar: () => void
+  aoSalvar: (afetadas: number) => void
+}) {
+  const [destino, setDestino] = useState<Record<string, string | null>>({
+    areaId: null,
+    moduloId: null,
+    topicoId: null,
+    subtopicoId: null,
+  })
+  const [salvando, setSalvando] = useState(false)
+  const [erro, setErro] = useState('')
+
+  const porNivel = (nivel: string, paiId?: string | null) =>
+    nos.filter((n) => n.nivel === nivel && (paiId === undefined || n.paiId === paiId))
+
+  function definir(campo: string, valor: string) {
+    setDestino((atual) => {
+      const proximo = { ...atual, [campo]: valor || null }
+      const indice = NIVEIS.indexOf(campo.replace('Id', '') as (typeof NIVEIS)[number])
+      if (indice >= 0) {
+        for (const abaixo of NIVEIS.slice(indice + 1)) proximo[`${abaixo}Id`] = null
+      }
+      return proximo
+    })
+  }
+
+  async function salvar() {
+    setSalvando(true)
+    setErro('')
+    try {
+      const resposta = await fetch('/api/ensino/trilhas/lote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ acao: 'mover', ids, destino }),
+      })
+      const d = await resposta.json().catch(() => ({}))
+      if (!resposta.ok) throw new Error(d.error || 'Não foi possível mover.')
+      aoSalvar(Number(d.afetadas) || 0)
+    } catch (e: any) {
+      setErro(e?.message || 'Não foi possível mover.')
+      setSalvando(false)
+    }
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+      onClick={aoFechar}
+    >
+      <motion.div
+        initial={{ scale: 0.94, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ type: 'spring', stiffness: 420, damping: 30 }}
+        className="w-full max-w-md rounded-3xl bg-background p-6 shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/12 text-primary">
+          <FolderTree className="h-7 w-7" strokeWidth={2.5} />
+        </span>
+
+        <h2 className="mt-4 font-heading text-xl font-extrabold tracking-tight">
+          Mover {ids.length} {ids.length === 1 ? 'Trilha' : 'Trilhas'}
+        </h2>
+        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+          Escolha até onde ela desce na organização — não precisa chegar ao Subtópico. Deixar tudo
+          em branco tira a Trilha de qualquer lugar em que ela estava.
+        </p>
+
+        <div className="mt-4 space-y-3">
+          {NIVEIS.map((nivel, indice) => {
+            const paiCampo = indice === 0 ? null : `${NIVEIS[indice - 1]}Id`
+            const paiId = paiCampo ? destino[paiCampo] : null
+            const opcoes = indice === 0 ? porNivel('area') : porNivel(nivel, paiId || null)
+
+            return (
+              <Campo key={nivel} rotulo={ROTULO_DO_NIVEL[nivel]}>
+                <select
+                  value={destino[`${nivel}Id`] || ''}
+                  onChange={(e) => definir(`${nivel}Id`, e.target.value)}
+                  disabled={indice > 0 && !paiId}
+                  className={cn(classeDeEntrada, indice > 0 && !paiId && 'opacity-50')}
+                >
+                  <option value="">— nenhum —</option>
+                  {opcoes.map((item) => (
+                    <option key={item._id} value={item._id}>
+                      {item.nome}
+                    </option>
+                  ))}
+                </select>
+              </Campo>
+            )
+          })}
+        </div>
+
+        {erro ? <p className="mt-3 text-sm text-destructive">{erro}</p> : null}
+
+        <div className="mt-5 flex flex-wrap gap-2">
+          <BotaoDuo tom="primario" onClick={salvar} disabled={salvando}>
+            {salvando ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <FolderTree className="h-4 w-4" />
+            )}
+            {salvando ? 'Movendo…' : 'Mover'}
+          </BotaoDuo>
+          <BotaoDuo tom="contorno" onClick={aoFechar} disabled={salvando}>
             Cancelar
           </BotaoDuo>
         </div>

@@ -33,6 +33,17 @@ export const runtime = 'nodejs'
  * de contornar essa regra: as Trilhas que ainda não têm o que o aluno vai abrir
  * ficam de fora, e a resposta diz quais foram, em vez de publicar um caminho
  * vazio silenciosamente.
+ *
+ * MOVER: A TRILHA SEMPRE TEVE ONDE MORAR, SÓ NÃO TINHA COMO CHEGAR LÁ
+ *
+ * `areaId`/`moduloId`/`topicoId`/`subtopicoId` já existiam no documento da
+ * Trilha — é o que alimentaria "Trilhas de Cardiologia" numa página de tópico
+ * — mas nenhuma tela escrevia esses campos. `mover` é o mesmo formato de
+ * `destino` que `/api/aulas/lote` usa para aulas: um campo ausente do corpo
+ * não muda nada, `null` desliga aquele nível (some da Trilha), e uma string
+ * de id grava. Trocar um nível sem apagar os de baixo deixaria a Trilha
+ * "presa" a um Subtópico de um Tópico que ela não está mais em — a tela é
+ * quem garante mandar os quatro campos juntos numa troca de nível acima.
  */
 export async function POST(request: Request) {
   try {
@@ -43,8 +54,7 @@ export async function POST(request: Request) {
     }
 
     const corpo = await request.json().catch(() => ({}))
-    const acao =
-      corpo?.acao === 'publicar' || corpo?.acao === 'despublicar' ? corpo.acao : 'excluir'
+    const acao = ['publicar', 'despublicar', 'mover'].includes(corpo?.acao) ? corpo.acao : 'excluir'
 
     const ids = Array.isArray(corpo?.ids) ? corpo.ids : []
     const objectIds = ids
@@ -73,6 +83,25 @@ export async function POST(request: Request) {
           { _id: { $in: objectIds } as any },
           { $set: { situacao: 'rascunho', atualizadoEm: new Date() } },
         )
+      return NextResponse.json({ success: true, afetadas: r.modifiedCount })
+    }
+
+    if (acao === 'mover') {
+      const destino = corpo?.destino || {}
+      const set: Record<string, any> = { atualizadoEm: new Date() }
+      const unset: Record<string, any> = {}
+      for (const campo of ['areaId', 'moduloId', 'topicoId', 'subtopicoId']) {
+        const valor = destino[campo]
+        if (valor === null || valor === '') unset[campo] = 1
+        else if (typeof valor === 'string' && ObjectId.isValid(valor)) set[campo] = valor
+      }
+      if (Object.keys(set).length === 1 && Object.keys(unset).length === 0) {
+        return NextResponse.json({ error: 'Informe o destino.' }, { status: 400 })
+      }
+      const update = Object.keys(unset).length > 0 ? { $set: set, $unset: unset } : { $set: set }
+      const r = await db
+        .collection(COLECOES.trilhas)
+        .updateMany({ _id: { $in: objectIds } as any }, update)
       return NextResponse.json({ success: true, afetadas: r.modifiedCount })
     }
 

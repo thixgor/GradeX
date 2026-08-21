@@ -107,6 +107,26 @@ interface TrilhaEmEdicao {
   destaque?: boolean
   situacao: string
   etapas: EtapaEmEdicao[]
+  areaId?: string | null
+  moduloId?: string | null
+  topicoId?: string | null
+  subtopicoId?: string | null
+}
+
+interface NoNaTela {
+  _id: string
+  nome: string
+  nivel: string
+  paiId: string | null
+}
+
+const NIVEIS = ['area', 'modulo', 'topico', 'subtopico'] as const
+
+const ROTULO_DO_NIVEL: Record<string, string> = {
+  area: 'Área',
+  modulo: 'Módulo',
+  topico: 'Tópico',
+  subtopico: 'Subtópico',
 }
 
 /**
@@ -150,7 +170,20 @@ function Conteudo() {
   /** Etapa com o formulário de conteúdo complementar aberto. */
   const [complementarEm, setComplementarEm] = useState('')
   const [trilhasIrmas, setTrilhasIrmas] = useState<Array<{ _id: string; titulo: string }>>([])
+  const [nos, setNos] = useState<NoNaTela[]>([])
   const arrastando = useRef<{ etapaId: string; itemId: string } | null>(null)
+
+  // A árvore de nós é a mesma do Catálogo de aulas (§ ver "Organizar na
+  // taxonomia" abaixo) — carregada uma vez, sem a contagem de aulas
+  // (`contagem=0`), que aqui não serve para nada.
+  useEffect(() => {
+    fetch('/api/ensino/taxonomia?contagem=0', { cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (d?.nos) setNos(d.nos)
+      })
+      .catch(() => {})
+  }, [])
 
   useEffect(() => {
     if (!trilhaId) return
@@ -285,6 +318,21 @@ function Conteudo() {
     setSujo(true)
     setMensagem('')
   }, [])
+
+  /**
+   * Escolher um nível acima invalida os de baixo — trocar a Área sem isso
+   * deixaria a Trilha "presa" a um Tópico de outra Área. Mesma regra do
+   * `definir` de `PainelDeOrganizacao` (o editor de taxonomia de uma aula).
+   */
+  const definirNoDaTrilha = useCallback(
+    (nivel: (typeof NIVEIS)[number], valor: string) => {
+      const indice = NIVEIS.indexOf(nivel)
+      const mudanca: Record<string, string | null> = { [`${nivel}Id`]: valor || null }
+      for (const abaixo of NIVEIS.slice(indice + 1)) mudanca[`${abaixo}Id`] = null
+      alterar(mudanca as Partial<TrilhaEmEdicao>)
+    },
+    [alterar],
+  )
 
   const alterarEtapas = useCallback(
     (proximas: EtapaEmEdicao[]) => {
@@ -685,6 +733,54 @@ function Conteudo() {
                  * X". O aluno não precisa entender nada disso — para ele a
                  * Trilha simplesmente aparece liberada.
                  */}
+                {/*
+                 * Organizar na taxonomia (§ ver cabeçalho de
+                 * /aulas/gerenciar/trilhas/page.tsx).
+                 *
+                 * A MESMA árvore de nós do Catálogo de aulas — uma Trilha e
+                 * uma aula sobre o mesmo assunto apontam para o mesmo nó, não
+                 * para duas organizações paralelas. Opcional: uma Trilha sem
+                 * localização continua funcionando normalmente, só não
+                 * aparece em "Trilhas de Cardiologia".
+                 */}
+                <div className="sm:col-span-2">
+                  <p className="mb-1 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                    Organizar na taxonomia
+                  </p>
+                  <p className="mb-2 text-xs text-muted-foreground">
+                    Onde a Trilha aparece nas páginas de tópico. Opcional — não precisa chegar ao
+                    Subtópico.
+                  </p>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {NIVEIS.map((nivel, indice) => {
+                      const paiCampo = indice === 0 ? null : `${NIVEIS[indice - 1]}Id`
+                      const paiId = paiCampo ? (trilha as any)[paiCampo] : null
+                      const opcoes =
+                        indice === 0
+                          ? nos.filter((n) => n.nivel === 'area')
+                          : nos.filter((n) => n.nivel === nivel && n.paiId === (paiId || null))
+
+                      return (
+                        <Campo key={nivel} rotulo={ROTULO_DO_NIVEL[nivel]}>
+                          <select
+                            value={(trilha as any)[`${nivel}Id`] || ''}
+                            onChange={(e) => definirNoDaTrilha(nivel, e.target.value)}
+                            disabled={indice > 0 && !paiId}
+                            className={cn(classeDeEntrada, indice > 0 && !paiId && 'opacity-50')}
+                          >
+                            <option value="">— nenhum —</option>
+                            {opcoes.map((item) => (
+                              <option key={item._id} value={item._id}>
+                                {item.nome}
+                              </option>
+                            ))}
+                          </select>
+                        </Campo>
+                      )
+                    })}
+                  </div>
+                </div>
+
                 <Campo
                   rotulo="Trilhas recomendadas antes desta"
                   dica="Recomendação, nunca bloqueio — o aluno decide se pula."

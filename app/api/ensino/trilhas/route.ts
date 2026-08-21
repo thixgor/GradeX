@@ -7,6 +7,7 @@ import { avaliarAcessoAula } from '@/lib/aulas/acesso'
 import { COLECOES } from '@/lib/ensino/compatibilidade'
 import {
   garantirIndicesDeEnsino,
+  lerNos,
   lerTrilhas,
   podeEditarEnsino,
   progressoDeTrilhas,
@@ -44,13 +45,24 @@ export async function GET(request: Request) {
     const querRascunhos = parametros.get('rascunhos') === '1' && editor
 
     const filtro: Record<string, any> = querRascunhos ? {} : { situacao: 'publicada' }
-    const topicoId = parametros.get('topico')
-    if (topicoId) {
-      filtro.$or = [{ topicoId }, { moduloId: topicoId }, { areaId: topicoId }]
+    // `no` é o nome usado pelo Catálogo de aulas; `topico` continua aceito
+    // por compatibilidade com quem já monta o link com o nome antigo. Os dois
+    // casam contra QUALQUER nível — a Trilha pode estar amarrada a uma Área
+    // inteira ou a um Subtópico específico, e a busca não sabe qual de
+    // antemão.
+    const noId = parametros.get('no') || parametros.get('topico')
+    if (noId) {
+      filtro.$or = [{ areaId: noId }, { moduloId: noId }, { topicoId: noId }, { subtopicoId: noId }]
     }
 
     const trilhas = await lerTrilhas(db, filtro)
     const usuario = await montarContextoDoUsuario(db, sessao as any)
+
+    // A localização só entra na resposta para quem administra — a vitrine
+    // pública não precisa baixar a taxonomia inteira para desenhar um cartão.
+    const nomeDoNo = querRascunhos
+      ? new Map((await lerNos(db)).map((n) => [String(n._id), n.nome]))
+      : null
 
     // Duração somada das aulas, quando o admin não deu estimativa. Uma consulta
     // para todas as Trilhas da vitrine, não uma por Trilha.
@@ -119,6 +131,19 @@ export async function GET(request: Request) {
         criadoEm: trilha.criadoEm,
         publicadaEm: trilha.publicadaEm || null,
         ...resumo,
+        ...(nomeDoNo
+          ? {
+              areaId: trilha.areaId || null,
+              moduloId: trilha.moduloId || null,
+              topicoId: trilha.topicoId || null,
+              subtopicoId: trilha.subtopicoId || null,
+              localizacao: [trilha.areaId, trilha.moduloId, trilha.topicoId, trilha.subtopicoId]
+                .filter(Boolean)
+                .map((id) => nomeDoNo.get(String(id)))
+                .filter(Boolean)
+                .join(' · '),
+            }
+          : {}),
         progresso: progresso.get(String(trilha._id)) || null,
         acesso: { liberado: veredito.liberado, requisito: veredito.requisito },
       }

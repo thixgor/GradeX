@@ -115,6 +115,7 @@ export interface TrilhaDeEnsino {
   areaId?: string | null
   moduloId?: string | null
   topicoId?: string | null
+  subtopicoId?: string | null
   /** Regras de acesso, no MESMO formato das aulas (§24). */
   regrasAcesso?: any
   certificado?: { ativo: boolean; cargaHoraria?: number } | null
