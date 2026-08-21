@@ -1,10 +1,10 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { AppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
@@ -27,18 +27,15 @@ import {
   ArrowLeft,
   ArrowRight,
   CheckCircle2,
-  XCircle,
   BookOpen,
   ListPlus,
-  Clock,
   Loader2,
   AlertCircle,
-  X,
-  ZoomIn,
   Flag,
   Copy,
   ClipboardCheck,
   Lock,
+  RotateCcw,
   Star
 } from 'lucide-react'
 import { BancoQuestaoComHierarquia, BancoListaUsuario } from '@/lib/types/banco-questoes'
@@ -48,6 +45,17 @@ import { HighlightableText } from '@/components/highlightable-text'
 import { ImageModal } from '@/components/image-modal'
 import { ReportQuestionModal } from '@/components/report-question-modal'
 import { cn } from '@/lib/utils'
+import { BarraInferior } from '@/components/ui/barra-inferior'
+import { CabecalhoQuiz } from '@/components/banco/cabecalho-quiz'
+import { AlternativaQuiz } from '@/components/banco/alternativa-quiz'
+import {
+  FolhaDeFeedback,
+  PainelDaExplicacao,
+  TrechoDaCorrecao,
+  type VereditoDaQuestao,
+} from '@/components/banco/feedback-questao'
+import { rolarAte } from '@/components/banco/rolagem-guiada'
+import { useEstaNaTela } from '@/components/banco/use-esta-na-tela'
 
 const formatText = (text: string) => text?.replace(/\\nl/g, '\n').replace(/\\n/g, '\n') || ''
 
@@ -107,6 +115,36 @@ export default function QuestaoPage() {
   // Highlights de texto
   const [highlights, setHighlights] = useState<TextHighlight[]>([])
 
+  // A correção fica no corpo da página (o texto é longo demais para caber num
+  // painel de rodapé), e o "Ver por que" da barra rola até ela.
+  // `explicacaoDestacada` acende um anel por um instante quando a rolagem
+  // chega — sem isso a animação termina e a pessoa ainda precisa procurar o
+  // que mudou.
+  const explicacaoRef = useRef<HTMLDivElement>(null)
+  // Com o painel de correção já na tela, a faixa do rodapé não tem o que
+  // dizer: ela existe para contar o que a pessoa NÃO está vendo.
+  const explicacaoNaTela = useEstaNaTela(explicacaoRef, mostrarResposta)
+  const [explicacaoDestacada, setExplicacaoDestacada] = useState(false)
+  const timerDoDestaque = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (timerDoDestaque.current) clearTimeout(timerDoDestaque.current)
+    }
+  }, [])
+
+  function irParaExplicacao() {
+    rolarAte(explicacaoRef.current, {
+      // Espaço para a barra fixa do topo.
+      margemTopo: 96,
+      aoChegar: () => {
+        setExplicacaoDestacada(true)
+        if (timerDoDestaque.current) clearTimeout(timerDoDestaque.current)
+        timerDoDestaque.current = setTimeout(() => setExplicacaoDestacada(false), 1700)
+      },
+    })
+  }
+
   // Copy prompt e auto-avaliação para discursivas
   const [copiedPrompt, setCopiedPrompt] = useState(false)
   const [selfScore, setSelfScore] = useState<number | null>(null)
@@ -147,8 +185,7 @@ export default function QuestaoPage() {
   }
 
   // Handler para riscar/desriscar alternativa
-  function toggleRiscarAlternativa(letra: string, e: React.MouseEvent) {
-    e.stopPropagation()
+  function toggleRiscarAlternativa(letra: string) {
     if (mostrarResposta) return
 
     setAlternativasRiscadas(prev => {
@@ -244,6 +281,7 @@ export default function QuestaoPage() {
     setAlternativasRiscadas(new Set())
     setSelfScore(null)
     setCopiedPrompt(false)
+    setExplicacaoDestacada(false)
   }
 
   function handleCopyDiscursivePrompt() {
@@ -459,395 +497,311 @@ ${respostaAluno}`
       </AppShell>
     )
   }
-  return (
-    <AppShell headerTitle="Questão">
-      <div className="container max-w-4xl mx-auto py-6 px-4 space-y-6">
-        {/* Navegação */}
-        <div className="flex items-center justify-between">
-          <Button
-            variant="ghost"
-            onClick={() => router.push('/banco-questoes')}
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Voltar
-          </Button>
+  const veredito: VereditoDaQuestao | null = !mostrarResposta
+    ? null
+    : questao.tipo === 'discursiva'
+      ? 'registrada'
+      : resultado?.correta
+        ? 'acertou'
+        : 'errou'
 
-          <Button
-            variant="outline"
-            onClick={() => setShowAddToListModal(true)}
-          >
-            <ListPlus className="h-4 w-4 mr-2" />
-            Adicionar à lista
-          </Button>
-        </div>
+  const letraCorreta =
+    resultado?.alternativaCorreta || questao.alternativas?.find((a) => a.correta)?.letra || null
 
-        {/* Informações da questão */}
-        <div className="flex items-center gap-2 flex-wrap">
-          <Badge variant={questao.tipo === 'objetiva' ? 'default' : 'secondary'}>
-            {questao.tipo === 'objetiva' ? 'Objetiva' : 'Discursiva'}
+  const temCorrecaoParaLer = !!(
+    resultado?.explicacao ||
+    resultado?.respostaModelo ||
+    questao.fonte
+  )
+
+  const podeVerificar =
+    !respondendo &&
+    ((questao.tipo === 'objetiva' && !!alternativaSelecionada) ||
+      (questao.tipo === 'discursiva' && !!respostaDiscursiva.trim()))
+
+  // Tudo o que classifica a questão fica aqui, fechado: durante a leitura do
+  // enunciado essas etiquetas não são usadas, e ocupavam justamente a faixa em
+  // que o olho começa a ler.
+  const detalhesDaQuestao = (
+    <>
+      <div className="flex flex-wrap items-center gap-1.5">
+        <Badge variant={questao.tipo === 'objetiva' ? 'default' : 'secondary'}>
+          {questao.tipo === 'objetiva' ? 'Objetiva' : 'Discursiva'}
+        </Badge>
+        <Badge variant="outline">{questao.periodoNome}</Badge>
+        {questao.moduloNome && <Badge variant="outline">{questao.moduloNome}</Badge>}
+        {questao.topicoNome && <Badge variant="outline">{questao.topicoNome}</Badge>}
+        {questao.ano && (
+          <Badge variant="outline" className="bg-primary/10">
+            {questao.ano}
           </Badge>
-          <Badge variant="outline">{questao.periodoNome}</Badge>
-          {questao.moduloNome && (
-            <Badge variant="outline">{questao.moduloNome}</Badge>
-          )}
-          {questao.topicoNome && (
-            <Badge variant="outline">{questao.topicoNome}</Badge>
-          )}
-          {questao.ano && (
-            <Badge variant="outline" className="bg-primary/10">
-              {questao.ano}
-            </Badge>
-          )}
-          {questao.dificuldade && (
-            <Badge
-              variant="outline"
-              className={
-                questao.dificuldade === 'facil'
-                  ? 'border-green-500 text-green-600'
-                  : questao.dificuldade === 'medio'
-                    ? 'border-yellow-500 text-yellow-600'
-                    : 'border-red-500 text-red-600'
-              }
-            >
-              {questao.dificuldade === 'facil' ? 'Fácil' :
-                questao.dificuldade === 'medio' ? 'Médio' : 'Difícil'}
-            </Badge>
-          )}
-        </div>
+        )}
+        {questao.dificuldade && (
+          <Badge
+            variant="outline"
+            className={
+              questao.dificuldade === 'facil'
+                ? 'border-green-500 text-green-600'
+                : questao.dificuldade === 'medio'
+                  ? 'border-yellow-500 text-yellow-600'
+                  : 'border-red-500 text-red-600'
+            }
+          >
+            {questao.dificuldade === 'facil'
+              ? 'Fácil'
+              : questao.dificuldade === 'medio'
+                ? 'Médio'
+                : 'Difícil'}
+          </Badge>
+        )}
+      </div>
 
-        {/* Enunciado */}
+      <div className="flex flex-wrap gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-9 rounded-xl text-xs"
+          onClick={() => setShowAddToListModal(true)}
+        >
+          <ListPlus className="mr-1.5 h-3.5 w-3.5" />
+          Adicionar à lista
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-9 rounded-xl text-xs text-muted-foreground hover:text-orange-500"
+          onClick={() => setShowReportModal(true)}
+        >
+          <Flag className="mr-1.5 h-3.5 w-3.5" />
+          Relatar erro
+        </Button>
+      </div>
+    </>
+  )
+
+  return (
+    // Sem o cabeçalho do app: resolver uma questão é leitura concentrada, e
+    // menu, carrinho, sino e tema não participam dela. Ver o comentário de
+    // `CabecalhoQuiz`.
+    <AppShell showHeader={false} controlesFlutuantes={false}>
+      <CabecalhoQuiz
+        aoSair={() => router.push('/banco-questoes')}
+        rotuloSair="Voltar ao banco"
+        iconeSair="seta"
+        detalhes={detalhesDaQuestao}
+      />
+
+      {/* A folga no rodapé é a altura REAL da barra fixa (ela publica a própria
+          altura), que cresce quando o veredito entra nela. */}
+      <div
+        className="container mx-auto max-w-4xl space-y-4 px-4 py-5"
+        style={{ paddingBottom: 'calc(var(--gx-barra-inferior-h, 6rem) + 1.5rem)' }}
+      >
         <InlineAnnotationCanvas
           questionId={String(questao._id)}
           questionNumber={1}
           annotation={getAnnotationForQuestion(String(questao._id))}
           onChange={handleSaveAnnotation}
-          className="space-y-6"
+          className="space-y-4"
         >
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <BookOpen className="h-5 w-5" />
-              Enunciado
-            </CardTitle>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-muted-foreground hover:text-orange-500"
-              onClick={() => setShowReportModal(true)}
-              title="Relatar erro na questão"
-            >
-              <Flag className="h-4 w-4 mr-2" />
-              Relatar Erro
-            </Button>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap">
-              <HighlightableText
-                text={formatText(questao.enunciado)}
-                highlights={highlights}
-                target="statement"
-                onHighlightsChange={setHighlights}
-                className="select-text"
-              />
-            </div>
-
-            {/* Imagem da questão */}
-            {questao.imagemUrl && (
-              <div className="mt-4 flex flex-col items-center gap-1.5">
-                <div
-                  className="group relative cursor-pointer select-none"
-                  style={{ touchAction: 'manipulation' }}
-                  onClick={() => {
-                    setModalImageUrl(questao.imagemUrl!)
-                    setShowImageModal(true)
-                  }}
-                >
-                  <img
-                    src={questao.imagemUrl}
-                    alt="Imagem da questão"
-                    className="max-w-full md:max-w-md max-h-80 w-auto h-auto rounded-lg border object-contain transition-all group-hover:brightness-95 pointer-events-none"
-                    draggable={false}
-                  />
-                  {/* Desktop: hover overlay */}
-                  <div className="absolute inset-0 hidden sm:flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-lg">
-                    <div className="bg-black/55 text-white text-xs px-3 py-1.5 rounded-lg backdrop-blur-sm">
-                      Clique para ampliar
-                    </div>
-                  </div>
-                  {/* Mobile/tablet: always-visible badge */}
-                  <div className="absolute bottom-2 right-2 sm:hidden bg-black/60 text-white text-[10px] px-2 py-1 rounded-lg flex items-center gap-1 backdrop-blur-sm pointer-events-none">
-                    Ampliar
-                  </div>
-                </div>
-                <p className="text-[11px] text-muted-foreground">Toque para ampliar a imagem</p>
-              </div>
-            )}
-
-          </CardContent>
-        </Card>
-
-        {/* Área de resposta */}
-        {questao.tipo === 'objetiva' ? (
           <Card>
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center justify-between">
-                <span>Alternativas</span>
-                {!mostrarResposta && (
-                  <span className="text-xs font-normal text-muted-foreground">
-                    Clique no X para riscar alternativas
-                  </span>
-                )}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {questao.alternativas?.map((alt) => {
-                const isSelected = alternativaSelecionada === alt.letra
-                const isCorrect = mostrarResposta && alt.correta
-                const isWrong = mostrarResposta && isSelected && !alt.correta
-                const isRiscada = alternativasRiscadas.has(alt.letra)
+            <CardContent className="space-y-4 p-4 sm:p-5">
+              <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap">
+                <HighlightableText
+                  text={formatText(questao.enunciado)}
+                  highlights={highlights}
+                  target="statement"
+                  onHighlightsChange={setHighlights}
+                  className="select-text"
+                />
+              </div>
 
-                return (
+              {/* Imagem da questão */}
+              {questao.imagemUrl && (
+                <div className="mt-4 flex flex-col items-center gap-1.5">
                   <div
-                    key={alt.letra}
-                    className={cn(
-                      "relative w-full text-left p-4 rounded-lg border transition-all",
-                      !mostrarResposta && !isRiscada && "hover:border-primary/50 cursor-pointer",
-                      isSelected && !mostrarResposta && "border-primary bg-primary/5",
-                      isCorrect && "border-green-500 bg-green-50 dark:bg-green-900/20",
-                      isWrong && "border-red-500 bg-red-50 dark:bg-red-900/20",
-                      isRiscada && !mostrarResposta && "opacity-50 bg-muted/50",
-                      mostrarResposta && "cursor-default"
-                    )}
+                    className="group relative cursor-pointer select-none"
+                    style={{ touchAction: 'manipulation' }}
                     onClick={() => {
-                      if (!mostrarResposta && !isRiscada) {
-                        setAlternativaSelecionada(alt.letra)
-                      }
+                      setModalImageUrl(questao.imagemUrl!)
+                      setShowImageModal(true)
                     }}
                   >
-                    <div className="flex items-start gap-3">
-                      <span className={cn(
-                        "flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-medium text-sm",
-                        isSelected && !mostrarResposta && "bg-primary text-primary-foreground",
-                        isCorrect && "bg-green-500 text-white",
-                        isWrong && "bg-red-500 text-white",
-                        !isSelected && !isCorrect && !isWrong && "bg-muted"
-                      )}>
-                        {isCorrect ? (
-                          <CheckCircle2 className="h-5 w-5" />
-                        ) : isWrong ? (
-                          <XCircle className="h-5 w-5" />
-                        ) : (
-                          alt.letra
-                        )}
-                      </span>
-                      <span className={cn(
-                        "flex-1 pt-1 whitespace-pre-line",
-                        isRiscada && "line-through text-muted-foreground"
-                      )}>
-                        {formatText(alt.texto)}
-                      </span>
-
-                      {/* Botão de riscar */}
-                      {!mostrarResposta && (
-                        <button
-                          onClick={(e) => toggleRiscarAlternativa(alt.letra, e)}
-                          className={cn(
-                            "flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center transition-all",
-                            isRiscada
-                              ? "bg-orange-100 dark:bg-orange-900/30 text-orange-600 hover:bg-orange-200 dark:hover:bg-orange-900/50"
-                              : "bg-gray-100 dark:bg-gray-800 text-gray-400 hover:text-red-500 hover:bg-red-100 dark:hover:bg-red-900/30"
-                          )}
-                          title={isRiscada ? "Desriscar alternativa" : "Riscar alternativa"}
-                        >
-                          <X className="h-4 w-4" />
-                        </button>
-                      )}
+                    <img
+                      src={questao.imagemUrl}
+                      alt="Imagem da questão"
+                      className="pointer-events-none h-auto max-h-80 w-auto max-w-full rounded-lg border object-contain transition-all group-hover:brightness-95 md:max-w-md"
+                      draggable={false}
+                    />
+                    {/* Desktop: hover overlay */}
+                    <div className="absolute inset-0 hidden items-center justify-center rounded-lg opacity-0 transition-opacity group-hover:opacity-100 sm:flex">
+                      <div className="rounded-lg bg-black/55 px-3 py-1.5 text-xs text-white backdrop-blur-sm">
+                        Clique para ampliar
+                      </div>
+                    </div>
+                    {/* Mobile/tablet: always-visible badge */}
+                    <div className="pointer-events-none absolute bottom-2 right-2 flex items-center gap-1 rounded-lg bg-black/60 px-2 py-1 text-[10px] text-white backdrop-blur-sm sm:hidden">
+                      Ampliar
                     </div>
                   </div>
-                )
-              })}
+                  <p className="text-[11px] text-muted-foreground">Toque para ampliar a imagem</p>
+                </div>
+              )}
             </CardContent>
           </Card>
-        ) : (
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Sua Resposta</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Textarea
-                placeholder="Digite sua resposta aqui..."
-                value={respostaDiscursiva}
-                onChange={(e) => setRespostaDiscursiva(e.target.value)}
-                disabled={mostrarResposta}
-                rows={8}
-                className="resize-none"
-              />
-            </CardContent>
-          </Card>
-        )}
+
+          {/* Área de resposta */}
+          {questao.tipo === 'objetiva' ? (
+            <div className="space-y-2.5">
+              {!mostrarResposta && (
+                <p className="text-xs text-muted-foreground">
+                  Toque no X para riscar uma alternativa
+                </p>
+              )}
+              {questao.alternativas?.map((alt) => (
+                <AlternativaQuiz
+                  key={alt.letra}
+                  letra={alt.letra}
+                  texto={formatText(alt.texto)}
+                  marcada={alternativaSelecionada === alt.letra}
+                  riscada={alternativasRiscadas.has(alt.letra)}
+                  conferida={mostrarResposta}
+                  correta={letraCorreta ? alt.letra === letraCorreta : !!alt.correta}
+                  aoMarcar={() => setAlternativaSelecionada(alt.letra)}
+                  aoRiscar={() => toggleRiscarAlternativa(alt.letra)}
+                />
+              ))}
+            </div>
+          ) : (
+            <Card>
+              <CardContent className="space-y-2 p-4 sm:p-5">
+                <Label className="text-sm font-medium">Sua resposta</Label>
+                <Textarea
+                  placeholder="Digite sua resposta aqui..."
+                  value={respostaDiscursiva}
+                  onChange={(e) => setRespostaDiscursiva(e.target.value)}
+                  disabled={mostrarResposta}
+                  rows={8}
+                  className="resize-none"
+                />
+              </CardContent>
+            </Card>
+          )}
         </InlineAnnotationCanvas>
 
-        {/* Botão de responder */}
-        {!mostrarResposta && (
-          <div className="flex justify-center">
+        {/* Correção — destino da rolagem guiada do "Ver por que". */}
+        {mostrarResposta && resultado && (
+          <PainelDaExplicacao
+            ref={explicacaoRef}
+            veredito={veredito}
+            letraCorreta={letraCorreta}
+            destacado={explicacaoDestacada}
+          >
+            {questao.tipo === 'discursiva' && resultado.respostaModelo && (
+              <TrechoDaCorrecao titulo="Resposta modelo">
+                {formatText(resultado.respostaModelo)}
+              </TrechoDaCorrecao>
+            )}
+
+            {resultado.explicacao && (
+              <TrechoDaCorrecao titulo="Explicação">
+                {formatText(resultado.explicacao)}
+              </TrechoDaCorrecao>
+            )}
+
+            {questao.fonte && (
+              <TrechoDaCorrecao titulo="Fonte">{formatText(questao.fonte)}</TrechoDaCorrecao>
+            )}
+
+            {/* Correção por Prompt e Auto-avaliação (discursivas) */}
+            {questao.tipo === 'discursiva' && (
+              <div className="space-y-3 rounded-xl border border-violet-200 bg-violet-50 p-4 dark:border-violet-800 dark:bg-violet-900/10">
+                <h4 className="flex items-center gap-2 text-sm font-semibold">
+                  <Star className="h-4 w-4 text-violet-600" />
+                  Correção via IA (prompt)
+                </h4>
+                <p className="text-xs text-muted-foreground">
+                  Copie o prompt e cole no ChatGPT, Claude ou outra IA para uma correção detalhada
+                  da sua resposta.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  <Button variant="outline" size="sm" onClick={handleCopyDiscursivePrompt}>
+                    {copiedPrompt ? (
+                      <>
+                        <ClipboardCheck className="mr-2 h-4 w-4 text-green-600" />
+                        Prompt copiado!
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="mr-2 h-4 w-4" />
+                        Copiar prompt de correção
+                      </>
+                    )}
+                  </Button>
+
+                  {selfScore !== null ? (
+                    <div className="flex items-center gap-2 rounded-md border border-violet-300 bg-violet-100 px-3 py-1.5 dark:border-violet-700 dark:bg-violet-900/30">
+                      <Star className="h-4 w-4 text-violet-600" />
+                      <span className="text-sm font-medium">Nota: {selfScore}%</span>
+                    </div>
+                  ) : (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setPendingSelfScore(null)
+                        setShowSelfScoreModal(true)
+                      }}
+                    >
+                      <Star className="mr-2 h-4 w-4" />
+                      Atribuir nota
+                    </Button>
+                  )}
+                </div>
+              </div>
+            )}
+          </PainelDaExplicacao>
+        )}
+
+        {/* Ações do desktop. No celular elas vivem na barra do rodapé (a barra
+            é `apenasMobile`: no desktop ela passaria por baixo da sidebar, que
+            é fixa e mais alta na pilha). */}
+        <div className="hidden items-center justify-center gap-3 md:flex">
+          {mostrarResposta ? (
+            <>
+              <Button variant="outline" onClick={handleRefazer}>
+                <RotateCcw className="mr-2 h-4 w-4" />
+                Refazer questão
+              </Button>
+              <Button
+                onClick={() => router.push('/banco-questoes')}
+                className="btn-brand-glow text-white"
+              >
+                <BookOpen className="mr-2 h-4 w-4" />
+                Voltar ao banco
+              </Button>
+            </>
+          ) : (
             <Button
               size="lg"
               onClick={handleResponder}
-              disabled={
-                respondendo ||
-                (questao.tipo === 'objetiva' && !alternativaSelecionada) ||
-                (questao.tipo === 'discursiva' && !respostaDiscursiva.trim())
-              }
-              className="bg-gradient-to-r from-[#468152] to-[#E2A43E] hover:from-[#468152]/90 hover:to-[#E2A43E]/90"
+              disabled={!podeVerificar}
+              className="btn-brand-glow text-white"
             >
               {respondendo ? (
                 <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Verificando...
                 </>
               ) : (
                 <>
-                  <CheckCircle2 className="h-4 w-4 mr-2" />
-                  Verificar Resposta
+                  <CheckCircle2 className="mr-2 h-4 w-4" />
+                  Verificar resposta
                 </>
               )}
             </Button>
-          </div>
-        )}
-
-        {/* Resultado */}
-        {mostrarResposta && resultado && (
-          <Card className={cn(
-            "border-2",
-            questao.tipo === 'objetiva'
-              ? resultado.correta
-                ? "border-green-500"
-                : "border-red-500"
-              : "border-blue-500"
-          )}>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                {questao.tipo === 'objetiva' ? (
-                  resultado.correta ? (
-                    <>
-                      <CheckCircle2 className="h-5 w-5 text-green-600" />
-                      <span className="text-green-600">Resposta Correta!</span>
-                    </>
-                  ) : (
-                    <>
-                      <XCircle className="h-5 w-5 text-red-600" />
-                      <span className="text-red-600">Resposta Incorreta</span>
-                    </>
-                  )
-                ) : (
-                  <>
-                    <CheckCircle2 className="h-5 w-5 text-blue-600" />
-                    <span className="text-blue-600">Resposta Registrada</span>
-                  </>
-                )}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {questao.tipo === 'discursiva' && resultado.respostaModelo && (
-                <div className="space-y-2">
-                  <Label className="font-medium">Resposta Modelo:</Label>
-                  <div className="p-4 bg-muted rounded-lg whitespace-pre-wrap">
-                    {formatText(resultado.respostaModelo)}
-                  </div>
-                </div>
-              )}
-
-              {resultado.explicacao && (
-                <div className="space-y-2">
-                  <Label className="font-medium">Explicação:</Label>
-                  <div className="p-4 bg-muted rounded-lg whitespace-pre-wrap">
-                    {formatText(resultado.explicacao)}
-                  </div>
-                </div>
-              )}
-
-              {questao.fonte && (
-                <div className="space-y-2">
-                  <Label className="font-medium">Fonte:</Label>
-                  <div className="p-4 bg-muted rounded-lg whitespace-pre-wrap">
-                    {formatText(questao.fonte)}
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Correção por Prompt e Auto-avaliação (discursivas) */}
-        {mostrarResposta && questao.tipo === 'discursiva' && (
-          <Card className="border-violet-500/30 bg-violet-50/50 dark:bg-violet-900/10">
-            <CardContent className="py-5 space-y-4">
-              <h4 className="font-semibold text-sm flex items-center gap-2">
-                <Star className="h-4 w-4 text-violet-600" />
-                Correção via IA (Prompt)
-              </h4>
-              <p className="text-xs text-muted-foreground">
-                Copie o prompt abaixo e cole no ChatGPT, Claude ou outra IA para obter uma correção detalhada da sua resposta.
-              </p>
-              <div className="flex flex-wrap gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleCopyDiscursivePrompt}
-                >
-                  {copiedPrompt ? (
-                    <>
-                      <ClipboardCheck className="h-4 w-4 mr-2 text-green-600" />
-                      Prompt Copiado!
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="h-4 w-4 mr-2" />
-                      Copiar Prompt de Correção
-                    </>
-                  )}
-                </Button>
-
-                {selfScore !== null ? (
-                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-violet-100 dark:bg-violet-900/30 border border-violet-300 dark:border-violet-700">
-                    <Star className="h-4 w-4 text-violet-600" />
-                    <span className="text-sm font-medium">Nota: {selfScore}%</span>
-                  </div>
-                ) : (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => { setPendingSelfScore(null); setShowSelfScoreModal(true) }}
-                  >
-                    <Star className="h-4 w-4 mr-2" />
-                    Atribuir Nota
-                  </Button>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Ações após resposta */}
-        {mostrarResposta && (
-          <div className="flex justify-center gap-4">
-            <Button
-              variant="outline"
-              onClick={() => router.push('/banco-questoes')}
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Voltar ao Banco
-            </Button>
-            <Button
-              variant="default"
-              onClick={handleRefazer}
-              className="bg-gradient-to-r from-[#468152] to-[#E2A43E] hover:from-[#468152]/90 hover:to-[#E2A43E]/90"
-            >
-              <ArrowRight className="h-4 w-4 mr-2" />
-              Refazer Questão
-            </Button>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* Modal de adicionar à lista */}
         <Dialog open={showAddToListModal} onOpenChange={setShowAddToListModal}>
@@ -989,7 +943,6 @@ ${respostaAluno}`
           </DialogContent>
         </Dialog>
 
-
         {/* Modal de Imagem Expandida */}
         <ImageModal
           isOpen={showImageModal}
@@ -1046,12 +999,64 @@ ${respostaAluno}`
                 disabled={pendingSelfScore === null}
                 className="bg-violet-600 hover:bg-violet-700"
               >
-                Confirmar Nota
+                Confirmar nota
               </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
+
+      {/* ── Barra de ações ─────────────────────────────────────────────────
+          "Verificar resposta" era um botão centralizado DEPOIS das cinco
+          alternativas: no celular, responder exigia rolar de volta para baixo
+          o que se acabou de ler. Aqui a ação acompanha a leitura, e é a mesma
+          barra que passa a carregar o veredito. */}
+      <BarraInferior apenasMobile>
+        <FolhaDeFeedback
+          veredito={explicacaoNaTela ? null : veredito}
+          letraCorreta={letraCorreta}
+          temExplicacao={temCorrecaoParaLer}
+          aoVerExplicacao={irParaExplicacao}
+        >
+          {mostrarResposta ? (
+            <>
+              <button
+                type="button"
+                onClick={handleRefazer}
+                aria-label="Refazer a questão"
+                className="tecla flex h-14 w-14 flex-none items-center justify-center"
+              >
+                <RotateCcw className="h-5 w-5" />
+              </button>
+              <Button
+                onClick={() => router.push('/banco-questoes')}
+                className="btn-brand-glow h-14 min-w-0 flex-1 gap-1.5 rounded-2xl text-[15px] font-bold text-white"
+              >
+                <BookOpen className="h-4 w-4" />
+                Voltar ao banco
+              </Button>
+            </>
+          ) : (
+            <Button
+              onClick={handleResponder}
+              disabled={!podeVerificar}
+              className="btn-brand-glow h-14 min-w-0 flex-1 gap-1.5 rounded-2xl text-[15px] font-bold text-white"
+            >
+              {respondendo ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Verificando...
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 className="h-4 w-4" />
+                  Verificar resposta
+                </>
+              )}
+            </Button>
+          )}
+        </FolhaDeFeedback>
+      </BarraInferior>
     </AppShell>
   )
 }

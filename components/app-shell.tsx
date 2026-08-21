@@ -141,6 +141,18 @@ interface AppShellProps {
    * sozinho, opaco continua sendo a leitura mais legível.
    */
   vidro?: boolean
+  /**
+   * Desenha o menu/tema/modo lite flutuantes quando `showHeader` é `false`.
+   *
+   * Existe para as telas de RESOLUÇÃO poderem ficar realmente limpas. Sem o
+   * cabeçalho, o shell reacende os mesmos controles como botões soltos nos
+   * cantos de cima — o que devolve exatamente a distração que a tela tinha
+   * acabado de tirar, e ainda por cima em cima da barra de progresso do quiz.
+   *
+   * O padrão continua `true`: nenhuma tela que hoje esconde o cabeçalho perde
+   * seus controles por causa desta opção.
+   */
+  controlesFlutuantes?: boolean
 }
 
 export function AppShell({
@@ -152,6 +164,7 @@ export function AppShell({
   guestNotice = true,
   comercio = true,
   vidro = false,
+  controlesFlutuantes = true,
 }: AppShellProps) {
   const router = useRouter()
   const pathname = usePathname()
@@ -443,7 +456,7 @@ export function AppShell({
         />
 
         {/* Floating controls when shell header is hidden */}
-        {!showHeader && (
+        {!showHeader && controlesFlutuantes && (
           <>
             <Button
               variant="outline"

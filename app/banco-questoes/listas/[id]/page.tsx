@@ -1,15 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { AppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { Progress } from '@/components/ui/progress'
 import {
   ArrowLeft,
   BookOpen,
@@ -27,7 +25,6 @@ import {
   RotateCcw,
   List,
   X,
-  ZoomIn,
   Flag,
   Copy,
   ClipboardCheck,
@@ -52,6 +49,16 @@ import { HighlightableText } from '@/components/highlightable-text'
 import { ImageModal } from '@/components/image-modal'
 import { ReportQuestionModal } from '@/components/report-question-modal'
 import { generateBancoListaPDF, downloadPDF, prewarmPDFAssets } from '@/lib/pdf-generator'
+import { CabecalhoQuiz } from '@/components/banco/cabecalho-quiz'
+import { AlternativaQuiz } from '@/components/banco/alternativa-quiz'
+import {
+  FolhaDeFeedback,
+  PainelDaExplicacao,
+  TrechoDaCorrecao,
+  type VereditoDaQuestao,
+} from '@/components/banco/feedback-questao'
+import { rolarAte } from '@/components/banco/rolagem-guiada'
+import { useEstaNaTela } from '@/components/banco/use-esta-na-tela'
 
 type ModoVisualizacao = 'lista' | 'simulado'
 type ModoCorrecao = 'imediato' | 'final'
@@ -112,6 +119,35 @@ export default function ListaDetalhePage() {
   // página; no celular, chegar até lá custava rolar a questão inteira, então
   // ele virou um painel que abre a partir da barra de ações.
   const [mapaAberto, setMapaAberto] = useState(false)
+
+  // A correção fica no corpo da página (o texto é longo demais para um painel
+  // de rodapé), e o "Ver por que" da barra rola até ela. `explicacaoDestacada`
+  // acende um anel por um instante quando a rolagem chega — sem isso a
+  // animação termina e a pessoa ainda precisa procurar o que mudou.
+  const explicacaoRef = useRef<HTMLDivElement>(null)
+  // Com o painel de correção já na tela, a faixa do rodapé não tem o que
+  // dizer: ela existe para contar o que a pessoa NÃO está vendo.
+  const explicacaoNaTela = useEstaNaTela(explicacaoRef, mostrarResultado[questaoAtual])
+  const [explicacaoDestacada, setExplicacaoDestacada] = useState(false)
+  const timerDoDestaque = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (timerDoDestaque.current) clearTimeout(timerDoDestaque.current)
+    }
+  }, [])
+
+  function irParaExplicacao() {
+    rolarAte(explicacaoRef.current, {
+      // Espaço para a barra de progresso, que é fixa no topo.
+      margemTopo: 96,
+      aoChegar: () => {
+        setExplicacaoDestacada(true)
+        if (timerDoDestaque.current) clearTimeout(timerDoDestaque.current)
+        timerDoDestaque.current = setTimeout(() => setExplicacaoDestacada(false), 1700)
+      },
+    })
+  }
 
   // Funções de anotações
   function handleSaveAnnotation(annotation: QuestionAnnotation) {
@@ -360,6 +396,7 @@ ${respostaAluno}`
     if (indice < 0 || indice >= questoes.length) return
     setQuestaoAtual(indice)
     setMapaAberto(false)
+    setExplicacaoDestacada(false)
     if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'auto' })
   }
 
@@ -434,7 +471,8 @@ ${respostaAluno}`
   // MODO SIMULADO
   if (modo === 'simulado') {
     const questao = questoes[questaoAtual]
-    const respostaAtual = getRespostaAtual(String(questao._id))
+    const questaoId = String(questao._id)
+    const respostaAtual = getRespostaAtual(questaoId)
     const mostrarResultadoAtual = mostrarResultado[questaoAtual]
     const correta = questao.tipo === 'objetiva' ? questao.alternativas?.find(a => a.correta)?.letra : null
     const acertou = questao.tipo === 'objetiva' && respostaAtual?.alternativaSelecionada === correta
@@ -447,80 +485,127 @@ ${respostaAluno}`
     const finalizarBloqueado = podeVerResposta
     const naoRespondidas = questoes.filter((q) => !getRespostaAtual(String(q._id))).length
 
+    // O veredito que aparece colado no polegar, na barra do rodapé. Numa
+    // discursiva não existe certo e errado automático: o que se diz é que a
+    // resposta foi registrada e que há um gabarito para comparar.
+    const veredito: VereditoDaQuestao | null = !mostrarResultadoAtual
+      ? null
+      : questao.tipo === 'discursiva'
+        ? 'registrada'
+        : acertou
+          ? 'acertou'
+          : 'errou'
+
+    const temCorrecaoParaLer = !!(questao.explicacao || questao.respostaModelo || questao.fonte)
+
+    // Tudo o que classifica a questão vive aqui, fechado. Durante a resolução
+    // essas etiquetas não são usadas — e ocupavam a faixa logo acima do
+    // enunciado, que é justamente onde o olho começa a ler.
+    const detalhesDaQuestao = (
+      <>
+        <div className="flex flex-wrap items-center gap-1.5">
+          <Badge variant={questao.tipo === 'objetiva' ? 'default' : 'secondary'}>
+            {questao.tipo === 'objetiva' ? 'Objetiva' : 'Discursiva'}
+          </Badge>
+          <Badge variant="outline">{questao.periodoNome}</Badge>
+          {questao.moduloNome && (
+            <Badge variant="outline" className="text-xs">{questao.moduloNome}</Badge>
+          )}
+          {questao.topicoNome && (
+            <Badge variant="outline" className="text-xs">{questao.topicoNome}</Badge>
+          )}
+          {questao.ano && (
+            <Badge variant="outline" className="bg-primary/10 text-xs">{questao.ano}</Badge>
+          )}
+        </div>
+
+        <p className="text-xs text-muted-foreground">
+          {modoCorrecao === 'imediato'
+            ? 'Correção a cada resposta.'
+            : 'Correção só no final.'}
+        </p>
+
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-9 rounded-xl text-xs"
+            onClick={() => handleDownloadPdf(false)}
+            disabled={downloadingPdf}
+          >
+            {downloadingPdf ? (
+              <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <Download className="mr-1.5 h-3.5 w-3.5" />
+            )}
+            PDF
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-9 rounded-xl text-xs"
+            onClick={() => handleDownloadPdf(true)}
+            disabled={downloadingPdf}
+          >
+            {downloadingPdf ? (
+              <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <FileText className="mr-1.5 h-3.5 w-3.5" />
+            )}
+            PDF com gabarito
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-9 rounded-xl text-xs text-muted-foreground hover:text-orange-500"
+            onClick={() => setReportQuestionId(questaoId)}
+          >
+            <Flag className="mr-1.5 h-3.5 w-3.5" />
+            Relatar erro
+          </Button>
+        </div>
+      </>
+    )
+
     return (
-      <AppShell headerTitle={lista.nome} headerSubtitle={`Questão ${questaoAtual + 1} de ${questoes.length}`}>
-        {/* A folga no rodapé é a altura da barra fixa do celular: sem ela, o
-            último cartão fica escondido atrás dos botões. */}
-        <div className="container max-w-4xl mx-auto space-y-6 px-4 py-6 pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:pb-6">
-          {/* Header do simulado */}
-          <div className="flex items-center justify-between gap-2">
-            <Button variant="ghost" className="h-9 flex-none rounded-xl text-xs" onClick={voltarParaLista}>
-              <ArrowLeft className="mr-1.5 h-4 w-4" />
-              Sair
-            </Button>
-            <div className="flex items-center gap-2">
-              <span className="hidden text-xs text-muted-foreground sm:inline">
-                {modoCorrecao === 'imediato' ? 'Correção Imediata' : 'Correção no Final'}
-              </span>
-              <div className="flex gap-1">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleDownloadPdf(false)}
-                  disabled={downloadingPdf}
-                >
-                  {downloadingPdf ? (
-                    <Loader2 className="h-3 w-3 animate-spin" />
-                  ) : (
-                    <Download className="h-3 w-3" />
-                  )}
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleDownloadPdf(true)}
-                  disabled={downloadingPdf}
-                  title="PDF com Gabarito"
-                >
-                  {downloadingPdf ? (
-                    <Loader2 className="h-3 w-3 animate-spin" />
-                  ) : (
-                    <FileText className="h-3 w-3" />
-                  )}
-                </Button>
-              </div>
-            </div>
-          </div>
+      // Sem o cabeçalho do app: durante a resolução, menu, carrinho, sino e
+      // tema não são usados — e eram a primeira coisa da tela. O que fica no
+      // topo é o que serve ali: sair, onde estou, quanto falta.
+      <AppShell showHeader={false} controlesFlutuantes={false}>
+        <CabecalhoQuiz
+          aoSair={voltarParaLista}
+          rotuloSair="Sair do simulado"
+          progresso={{ atual: questaoAtual, total: questoes.length }}
+          detalhes={detalhesDaQuestao}
+        />
 
-          {/* Progress */}
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm text-muted-foreground">
-              <span>Progresso</span>
-              <span>{questaoAtual + 1} / {questoes.length}</span>
-            </div>
-            <Progress value={((questaoAtual + 1) / questoes.length) * 100} />
-          </div>
-
+        {/* A folga no rodapé é a altura REAL da barra fixa (ela publica a
+            própria altura): sem isso, o último bloco fica escondido atrás dos
+            botões — e a barra cresce quando o veredito entra nela. */}
+        <div
+          className="container mx-auto max-w-4xl space-y-4 px-4 py-5"
+          style={{ paddingBottom: 'calc(var(--gx-barra-inferior-h, 6rem) + 1.5rem)' }}
+        >
           {/* Se finalizado, mostrar resultado */}
           {simuladoFinalizado && (
-            <Card className="bg-gradient-to-r from-[#468152]/10 to-[#E2A43E]/10 border-[#468152]/30">
+            <Card className="border-[#468152]/30 bg-gradient-to-r from-[#468152]/10 to-[#E2A43E]/10">
               <CardContent className="py-6">
-                <div className="text-center space-y-4">
-                  <h3 className="text-2xl font-bold">Simulado Finalizado!</h3>
+                <div className="space-y-4 text-center">
+                  <h3 className="font-heading text-2xl font-bold">Simulado finalizado!</h3>
                   <div className="text-4xl font-bold text-[#468152]">
                     {resultado.acertos} / {resultado.total}
                   </div>
                   <p className="text-lg text-muted-foreground">
                     Você acertou {resultado.porcentagem.toFixed(0)}% das questões objetivas
                   </p>
-                  <div className="flex gap-3 justify-center mt-4">
+                  <div className="mt-4 flex justify-center gap-3">
                     <Button onClick={() => iniciarSimulado(modoCorrecao)}>
-                      <RotateCcw className="h-4 w-4 mr-2" />
+                      <RotateCcw className="mr-2 h-4 w-4" />
                       Refazer
                     </Button>
                     <Button variant="outline" onClick={voltarParaLista}>
-                      <List className="h-4 w-4 mr-2" />
-                      Ver Lista
+                      <List className="mr-2 h-4 w-4" />
+                      Ver lista
                     </Button>
                   </div>
                 </div>
@@ -530,315 +615,207 @@ ${respostaAluno}`
 
           {/* Questão atual */}
           <Card>
-
-            <CardHeader className="flex flex-row items-center justify-between py-2 pb-2">
-              <div className="flex items-center gap-2 flex-wrap">
-                <Badge variant={questao.tipo === 'objetiva' ? 'default' : 'secondary'}>
-                  {questao.tipo === 'objetiva' ? 'Objetiva' : 'Discursiva'}
-                </Badge>
-                <Badge variant="outline">{questao.periodoNome}</Badge>
-                {questao.moduloNome && (
-                  <Badge variant="outline" className="text-xs">{questao.moduloNome}</Badge>
-                )}
-                {questao.topicoNome && (
-                  <Badge variant="outline" className="text-xs">{questao.topicoNome}</Badge>
-                )}
-                {questao.ano && (
-                  <Badge variant="outline" className="bg-primary/10 text-xs">
-                    {questao.ano}
-                  </Badge>
-                )}
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-muted-foreground hover:text-orange-500"
-                onClick={() => setReportQuestionId(String(questao._id))}
-                title="Relatar erro na questão"
+            <CardContent className="p-4 sm:p-5">
+              <InlineAnnotationCanvas
+                questionId={questaoId}
+                questionNumber={questaoAtual + 1}
+                annotation={getAnnotationForQuestion(questaoId)}
+                onChange={handleSaveAnnotation}
+                className="space-y-5"
               >
-                <Flag className="h-4 w-4 mr-2" />
-                Relatar Erro
-              </Button>
-            </CardHeader>
-            <CardContent>
-            <InlineAnnotationCanvas
-              questionId={String(questao._id)}
-              questionNumber={questaoAtual + 1}
-              annotation={getAnnotationForQuestion(String(questao._id))}
-              onChange={handleSaveAnnotation}
-              className="space-y-6"
-            >
-              {/* Enunciado */}
-              <div className="prose dark:prose-invert max-w-none">
-                <HighlightableText
-                  text={formatText(questao.enunciado)}
-                  highlights={highlights[String(questao._id)] || []}
-                  target="statement"
-                  onHighlightsChange={(newHighlights) => {
-                    setHighlights(prev => ({
-                      ...prev,
-                      [String(questao._id)]: newHighlights
-                    }))
-                  }}
-                  className="select-text"
-                />
-              </div>
-
-              {/* Imagem */}
-              {questao.imagemUrl && (
-                <div
-                  className="flex justify-center group relative cursor-pointer"
-                  onClick={() => {
-                    setModalImageUrl(questao.imagemUrl!)
-                    setShowImageModal(true)
-                  }}
-                >
-                  <img
-                    src={questao.imagemUrl}
-                    alt="Imagem da questão"
-                    className="max-w-full md:max-w-md max-h-80 w-auto h-auto rounded-lg border object-contain transition-all group-hover:scale-[1.02] group-hover:shadow-lg"
+                {/* Enunciado */}
+                <div className="prose dark:prose-invert max-w-none">
+                  <HighlightableText
+                    text={formatText(questao.enunciado)}
+                    highlights={highlights[questaoId] || []}
+                    target="statement"
+                    onHighlightsChange={(newHighlights) => {
+                      setHighlights(prev => ({
+                        ...prev,
+                        [questaoId]: newHighlights
+                      }))
+                    }}
+                    className="select-text"
                   />
                 </div>
-              )}
 
-              {/* Alternativas (objetiva) */}
-              {questao.tipo === 'objetiva' && questao.alternativas && (
-                <div className="space-y-3">
-                  {!mostrarResultadoAtual && (
-                    <p className="text-xs text-muted-foreground">
-                      Clique no X para riscar alternativas
-                    </p>
-                  )}
-                  {questao.alternativas.map((alt) => {
-                    const questaoIdStr = String(questao._id)
-                    const isSelected = respostaAtual?.alternativaSelecionada === alt.letra
-                    const isCorreta = alt.correta
-                    const isRiscada = isAlternativaRiscada(questaoIdStr, alt.letra)
-                    let bgClass = ''
+                {/* Imagem */}
+                {questao.imagemUrl && (
+                  <div
+                    className="group relative flex cursor-pointer justify-center"
+                    onClick={() => {
+                      setModalImageUrl(questao.imagemUrl!)
+                      setShowImageModal(true)
+                    }}
+                  >
+                    <img
+                      src={questao.imagemUrl}
+                      alt="Imagem da questão"
+                      className="h-auto max-h-80 w-auto max-w-full rounded-lg border object-contain transition-all group-hover:scale-[1.02] group-hover:shadow-lg md:max-w-md"
+                    />
+                  </div>
+                )}
 
-                    if (mostrarResultadoAtual) {
-                      if (isCorreta) {
-                        bgClass = 'bg-green-100 dark:bg-green-900/30 border-green-500'
-                      } else if (isSelected && !isCorreta) {
-                        bgClass = 'bg-red-100 dark:bg-red-900/30 border-red-500'
-                      }
-                    }
-
-                    return (
-                      <div
-                        key={alt.letra}
-                        className={cn(
-                          "flex items-start space-x-3 p-4 rounded-lg border transition-colors",
-                          bgClass,
-                          !mostrarResultadoAtual && !isRiscada && "hover:bg-muted/50 cursor-pointer",
-                          isRiscada && !mostrarResultadoAtual && "opacity-50 bg-muted/50",
-                          isSelected && !mostrarResultadoAtual && "border-primary bg-primary/5"
-                        )}
-                        onClick={() => {
-                          if (!mostrarResultadoAtual && !isRiscada) {
-                            setResposta(questaoIdStr, 'objetiva', alt.letra)
-                          }
-                        }}
-                      >
-                        <div className={cn(
-                          "flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center",
-                          isSelected ? "border-primary bg-primary" : "border-muted-foreground"
-                        )}>
-                          {isSelected && <div className="w-3 h-3 rounded-full bg-white" />}
-                        </div>
-                        <span className={cn(
-                          "flex-1 whitespace-pre-line",
-                          isRiscada && "line-through text-muted-foreground"
-                        )}>
-                          <span className="font-semibold mr-2">{alt.letra})</span>
-                          {alt.texto}
-                        </span>
-
-                        {/* Botão de riscar */}
-                        {!mostrarResultadoAtual && (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              toggleRiscarAlternativa(questaoIdStr, alt.letra)
-                            }}
-                            className={cn(
-                              "flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center transition-all",
-                              isRiscada
-                                ? "bg-orange-100 dark:bg-orange-900/30 text-orange-600 hover:bg-orange-200 dark:hover:bg-orange-900/50"
-                                : "bg-gray-100 dark:bg-gray-800 text-gray-400 hover:text-red-500 hover:bg-red-100 dark:hover:bg-red-900/30"
-                            )}
-                            title={isRiscada ? "Desriscar alternativa" : "Riscar alternativa"}
-                          >
-                            <X className="h-4 w-4" />
-                          </button>
-                        )}
-
-                        {mostrarResultadoAtual && isCorreta && (
-                          <CheckCircle2 className="h-5 w-5 text-green-600 flex-shrink-0" />
-                        )}
-                        {mostrarResultadoAtual && isSelected && !isCorreta && (
-                          <XCircle className="h-5 w-5 text-red-600 flex-shrink-0" />
-                        )}
-                      </div>
-                    )
-                  })}
-                </div>
-              )}
-
-              {/* Campo de resposta (discursiva) */}
-              {questao.tipo === 'discursiva' && (
-                <div className="space-y-2">
-                  <Label>Sua resposta:</Label>
-                  <Textarea
-                    value={respostaAtual?.respostaDiscursiva || ''}
-                    onChange={(e) => setResposta(String(questao._id), 'discursiva', e.target.value)}
-                    placeholder="Digite sua resposta..."
-                    rows={6}
-                    disabled={mostrarResultadoAtual}
-                  />
-                </div>
-              )}
-
-              {/* Feedback */}
-              {mostrarResultadoAtual && (
-                <div className="space-y-4 pt-4 border-t">
-                  {questao.tipo === 'objetiva' && (
-                    <div className={`p-4 rounded-lg ${acertou ? 'bg-green-100 dark:bg-green-900/30' : 'bg-red-100 dark:bg-red-900/30'}`}>
-                      <div className="flex items-center gap-2 font-semibold">
-                        {acertou ? (
-                          <>
-                            <CheckCircle2 className="h-5 w-5 text-green-600" />
-                            <span className="text-green-700 dark:text-green-400">Resposta Correta!</span>
-                          </>
-                        ) : (
-                          <>
-                            <XCircle className="h-5 w-5 text-red-600" />
-                            <span className="text-red-700 dark:text-red-400">Resposta Incorreta</span>
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  )}
-
-                  {questao.tipo === 'discursiva' && questao.respostaModelo && (
-                    <div className="p-4 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                      <h4 className="font-semibold mb-2 text-blue-800 dark:text-blue-300">Resposta Modelo:</h4>
-                      <p className="text-blue-900 dark:text-blue-200 whitespace-pre-wrap">{formatText(questao.respostaModelo)}</p>
-                    </div>
-                  )}
-
-                  {questao.explicacao && (
-                    <div className="p-4 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
-                      <h4 className="font-semibold mb-2 text-amber-800 dark:text-amber-300">Explicação:</h4>
-                      <p className="text-amber-900 dark:text-amber-200 whitespace-pre-wrap">{formatText(questao.explicacao)}</p>
-                    </div>
-                  )}
-
-                  {questao.fonte && (
-                    <div className="p-4 bg-muted rounded-lg">
-                      <h4 className="font-semibold mb-2">Fonte:</h4>
-                      <p className="whitespace-pre-wrap">{formatText(questao.fonte)}</p>
-                    </div>
-                  )}
-
-                  {/* Correção por Prompt e Auto-avaliação (discursivas) */}
-                  {questao.tipo === 'discursiva' && (
-                    <div className="p-4 bg-violet-50 dark:bg-violet-900/10 border border-violet-200 dark:border-violet-800 rounded-lg space-y-3">
-                      <h4 className="font-semibold text-sm flex items-center gap-2">
-                        <Star className="h-4 w-4 text-violet-600" />
-                        Correção via IA (Prompt)
-                      </h4>
+                {/* Alternativas (objetiva) */}
+                {questao.tipo === 'objetiva' && questao.alternativas && (
+                  <div className="space-y-2.5">
+                    {!mostrarResultadoAtual && (
                       <p className="text-xs text-muted-foreground">
-                        Copie o prompt e cole no ChatGPT, Claude ou outra IA para correção detalhada.
+                        Toque no X para riscar uma alternativa
                       </p>
-                      <div className="flex flex-wrap gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleCopyDiscursivePrompt(questao)}
-                        >
-                          {copiedPromptId === String(questao._id) ? (
-                            <>
-                              <ClipboardCheck className="h-4 w-4 mr-2 text-green-600" />
-                              Prompt Copiado!
-                            </>
-                          ) : (
-                            <>
-                              <Copy className="h-4 w-4 mr-2" />
-                              Copiar Prompt de Correção
-                            </>
-                          )}
-                        </Button>
+                    )}
+                    {questao.alternativas.map((alt) => (
+                      <AlternativaQuiz
+                        key={alt.letra}
+                        letra={alt.letra}
+                        texto={formatText(alt.texto)}
+                        marcada={respostaAtual?.alternativaSelecionada === alt.letra}
+                        riscada={isAlternativaRiscada(questaoId, alt.letra)}
+                        conferida={!!mostrarResultadoAtual}
+                        correta={!!alt.correta}
+                        aoMarcar={() => setResposta(questaoId, 'objetiva', alt.letra)}
+                        aoRiscar={() => toggleRiscarAlternativa(questaoId, alt.letra)}
+                      />
+                    ))}
+                  </div>
+                )}
 
-                        {selfScores[String(questao._id)] !== undefined ? (
-                          <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-violet-100 dark:bg-violet-900/30 border border-violet-300 dark:border-violet-700">
-                            <Star className="h-4 w-4 text-violet-600" />
-                            <span className="text-sm font-medium">Nota: {selfScores[String(questao._id)]}%</span>
-                          </div>
-                        ) : (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleOpenSelfScore(String(questao._id))}
-                          >
-                            <Star className="h-4 w-4 mr-2" />
-                            Atribuir Nota
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-            </InlineAnnotationCanvas>
-
-              {/* Botões de ação — no celular eles moram na barra do rodapé
-                  (ver o fim deste bloco), porque descer três telas de rolagem
-                  só para avançar era o gesto mais caro do fluxo. */}
-              <div className="hidden items-center justify-between pt-4 md:flex">
-                <Button
-                  variant="outline"
-                  onClick={questaoAnterior}
-                  disabled={questaoAtual === 0}
-                >
-                  <ChevronLeft className="h-4 w-4 mr-2" />
-                  Anterior
-                </Button>
-
-                <div className="flex gap-2">
-                  {podeVerResposta && (
-                    <Button onClick={() => verificarResposta(questaoAtual)}>
-                      <Eye className="h-4 w-4 mr-2" />
-                      Ver Resposta
-                    </Button>
-                  )}
-
-                  {ehUltima ? (
-                    <Button
-                      onClick={finalizarSimulado}
-                      className="bg-gradient-to-r from-[#468152] to-[#E2A43E]"
-                      disabled={finalizarBloqueado}
-                    >
-                      <CheckCircle2 className="h-4 w-4 mr-2" />
-                      Finalizar
-                    </Button>
-                  ) : (
-                    <Button onClick={proximaQuestao}>
-                      Próxima
-                      <ChevronRight className="h-4 w-4 ml-2" />
-                    </Button>
-                  )}
-                </div>
-              </div>
+                {/* Campo de resposta (discursiva) */}
+                {questao.tipo === 'discursiva' && (
+                  <div className="space-y-2">
+                    <Label>Sua resposta:</Label>
+                    <Textarea
+                      value={respostaAtual?.respostaDiscursiva || ''}
+                      onChange={(e) => setResposta(questaoId, 'discursiva', e.target.value)}
+                      placeholder="Digite sua resposta..."
+                      rows={6}
+                      disabled={mostrarResultadoAtual}
+                    />
+                  </div>
+                )}
+              </InlineAnnotationCanvas>
             </CardContent>
           </Card>
 
+          {/* Correção — destino da rolagem guiada do "Ver por que". */}
+          {mostrarResultadoAtual && (
+            <PainelDaExplicacao
+              ref={explicacaoRef}
+              veredito={veredito}
+              letraCorreta={correta}
+              destacado={explicacaoDestacada}
+            >
+              {questao.tipo === 'discursiva' && questao.respostaModelo && (
+                <TrechoDaCorrecao titulo="Resposta modelo">
+                  {formatText(questao.respostaModelo)}
+                </TrechoDaCorrecao>
+              )}
+
+              {questao.explicacao && (
+                <TrechoDaCorrecao titulo="Explicação">
+                  {formatText(questao.explicacao)}
+                </TrechoDaCorrecao>
+              )}
+
+              {questao.fonte && (
+                <TrechoDaCorrecao titulo="Fonte">{formatText(questao.fonte)}</TrechoDaCorrecao>
+              )}
+
+              {/* Correção por Prompt e Auto-avaliação (discursivas) */}
+              {questao.tipo === 'discursiva' && (
+                <div className="space-y-3 rounded-xl border border-violet-200 bg-violet-50 p-4 dark:border-violet-800 dark:bg-violet-900/10">
+                  <h4 className="flex items-center gap-2 text-sm font-semibold">
+                    <Star className="h-4 w-4 text-violet-600" />
+                    Correção via IA (prompt)
+                  </h4>
+                  <p className="text-xs text-muted-foreground">
+                    Copie o prompt e cole no ChatGPT, Claude ou outra IA para uma correção detalhada.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleCopyDiscursivePrompt(questao)}
+                    >
+                      {copiedPromptId === questaoId ? (
+                        <>
+                          <ClipboardCheck className="mr-2 h-4 w-4 text-green-600" />
+                          Prompt copiado!
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="mr-2 h-4 w-4" />
+                          Copiar prompt de correção
+                        </>
+                      )}
+                    </Button>
+
+                    {selfScores[questaoId] !== undefined ? (
+                      <div className="flex items-center gap-2 rounded-md border border-violet-300 bg-violet-100 px-3 py-1.5 dark:border-violet-700 dark:bg-violet-900/30">
+                        <Star className="h-4 w-4 text-violet-600" />
+                        <span className="text-sm font-medium">Nota: {selfScores[questaoId]}%</span>
+                      </div>
+                    ) : (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleOpenSelfScore(questaoId)}
+                      >
+                        <Star className="mr-2 h-4 w-4" />
+                        Atribuir nota
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              )}
+            </PainelDaExplicacao>
+          )}
+
+          {/* Navegação do desktop. No celular ela vive na barra do rodapé (a
+              barra é `apenasMobile`: no desktop ela passaria por baixo da
+              sidebar, que é fixa e mais alta na pilha). */}
+          <div className="hidden items-center justify-between gap-3 md:flex">
+            <Button
+              variant="outline"
+              onClick={questaoAnterior}
+              disabled={questaoAtual === 0}
+            >
+              <ChevronLeft className="mr-2 h-4 w-4" />
+              Anterior
+            </Button>
+
+            <div className="flex gap-2">
+              {podeVerResposta && (
+                <Button onClick={() => verificarResposta(questaoAtual)}>
+                  <Eye className="mr-2 h-4 w-4" />
+                  Ver resposta
+                </Button>
+              )}
+
+              {ehUltima ? (
+                <Button
+                  onClick={finalizarSimulado}
+                  className="btn-brand-glow text-white"
+                  disabled={finalizarBloqueado}
+                >
+                  <CheckCircle2 className="mr-2 h-4 w-4" />
+                  Finalizar
+                </Button>
+              ) : (
+                <Button onClick={proximaQuestao} className="btn-brand-glow text-white">
+                  Próxima
+                  <ChevronRight className="ml-2 h-4 w-4" />
+                </Button>
+              )}
+            </div>
+          </div>
+
           {/* Navegação rápida — no desktop ela cabe na página; no celular vira
-              painel, aberto pelo botão "Mapa" da barra do rodapé. */}
+              painel, aberto pelo botão do mapa na barra do rodapé. */}
           <Card className="hidden md:block">
             <CardContent className="py-4">
               {naoRespondidas > 0 && !simuladoFinalizado ? (
-                <div className="text-center mb-3 text-sm text-muted-foreground">
+                <div className="mb-3 text-center text-sm text-muted-foreground">
                   <span className="font-medium text-orange-500">{naoRespondidas}</span>
                   {naoRespondidas === 1 ? ' questão não respondida' : ' questões não respondidas'}
                 </div>
@@ -852,123 +829,6 @@ ${respostaAluno}`
               />
             </CardContent>
           </Card>
-
-          {/* ── Barra de ações do celular ─────────────────────────────────
-              O "Próxima" ficava no fim do cartão da questão: enunciado longo,
-              cinco alternativas, gabarito e explicação depois de responder —
-              várias telas de rolagem para dar UM passo. Agora ele acompanha a
-              leitura. Os botões flutuantes sobem sozinhos: a barra publica a
-              própria altura (ver components/ui/barra-inferior.tsx). */}
-          <BarraInferior apenasMobile>
-            <button
-              type="button"
-              onClick={questaoAnterior}
-              disabled={questaoAtual === 0}
-              aria-label="Questão anterior"
-              className="tecla flex h-12 w-12 flex-none items-center justify-center disabled:opacity-35"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setMapaAberto(true)}
-              aria-label="Abrir o mapa de questões"
-              className="tecla flex h-12 flex-none items-center gap-1.5 px-3 text-xs font-bold"
-            >
-              <LayoutGrid className="h-4 w-4" />
-              <span className="tabular-nums">
-                {questaoAtual + 1}/{questoes.length}
-              </span>
-            </button>
-
-            {simuladoFinalizado ? (
-              // Terminado, "Finalizar" de novo não faria nada. O que resta a
-              // fazer é ler o resultado, que está no topo da página.
-              <Button
-                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                className="btn-brand-glow h-12 min-w-0 flex-1 gap-1.5 rounded-xl text-sm font-bold text-white"
-              >
-                <CheckCircle2 className="h-4 w-4" />
-                Ver resultado
-              </Button>
-            ) : podeVerResposta ? (
-              <Button
-                onClick={() => verificarResposta(questaoAtual)}
-                className="h-12 min-w-0 flex-1 gap-1.5 rounded-xl text-sm font-bold"
-              >
-                <Eye className="h-4 w-4" />
-                Ver resposta
-              </Button>
-            ) : ehUltima ? (
-              <Button
-                onClick={finalizarSimulado}
-                disabled={finalizarBloqueado}
-                className="btn-brand-glow h-12 min-w-0 flex-1 gap-1.5 rounded-xl text-sm font-bold text-white"
-              >
-                <CheckCircle2 className="h-4 w-4" />
-                Finalizar
-              </Button>
-            ) : (
-              <Button
-                onClick={proximaQuestao}
-                className="btn-brand-glow h-12 min-w-0 flex-1 gap-1.5 rounded-xl text-sm font-bold text-white"
-              >
-                Próxima
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            )}
-          </BarraInferior>
-
-          {/* ── Mapa de questões no celular ──────────────────────────────── */}
-          {mapaAberto ? (
-            <Portal>
-              <div
-                className="fixed inset-0 z-[210] flex items-center justify-center bg-black/55 p-4 backdrop-blur-sm md:hidden"
-                style={{
-                  paddingTop: 'max(1rem, env(safe-area-inset-top))',
-                  paddingBottom: 'max(1rem, env(safe-area-inset-bottom))',
-                }}
-                onClick={(e) => {
-                  if (e.target === e.currentTarget) setMapaAberto(false)
-                }}
-              >
-                <div
-                  role="dialog"
-                  aria-modal="true"
-                  aria-label="Mapa de questões"
-                  className="vidro-denso vidro-brilho relevo flex max-h-full w-full max-w-sm flex-col rounded-[28px] p-4"
-                >
-                  <div className="flex items-center justify-between gap-2 pb-3">
-                    <h2 className="text-sm font-bold">Ir para a questão</h2>
-                    <button
-                      type="button"
-                      onClick={() => setMapaAberto(false)}
-                      aria-label="Fechar"
-                      className="-m-1 rounded-lg p-1 text-muted-foreground hover:bg-muted"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  </div>
-                  {naoRespondidas > 0 && !simuladoFinalizado ? (
-                    <p className="pb-3 text-center text-xs text-muted-foreground">
-                      <span className="font-semibold text-orange-500">{naoRespondidas}</span>
-                      {naoRespondidas === 1 ? ' questão não respondida' : ' questões não respondidas'}
-                    </p>
-                  ) : null}
-                  <div className="min-h-0 flex-1 overflow-y-auto">
-                    <MapaDeQuestoes
-                      questoes={questoes}
-                      questaoAtual={questaoAtual}
-                      mostrarResultado={mostrarResultado}
-                      getResposta={(id) => getRespostaAtual(id)}
-                      onIr={irParaQuestao}
-                    />
-                  </div>
-                </div>
-              </div>
-            </Portal>
-          ) : null}
 
           {/* Modal de Imagem Expandida */}
           <ImageModal
@@ -999,7 +859,7 @@ ${respostaAluno}`
                   Após corrigir com a IA, atribua uma nota de 0% a 100% para sua resposta.
                 </DialogDescription>
               </DialogHeader>
-              <div className="py-4 space-y-3">
+              <div className="space-y-3 py-4">
                 <div className="grid grid-cols-6 gap-2">
                   {[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map((score) => (
                     <Button
@@ -1026,13 +886,134 @@ ${respostaAluno}`
                   disabled={pendingSelfScore === null}
                   className="bg-violet-600 hover:bg-violet-700"
                 >
-                  Confirmar Nota
+                  Confirmar nota
                 </Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
         </div>
-      </AppShell >
+
+        {/* ── Barra de ações ───────────────────────────────────────────────
+            O "Próxima" ficava no fim do cartão da questão: enunciado longo,
+            cinco alternativas, gabarito e explicação depois de responder —
+            várias telas de rolagem para dar UM passo. Agora ele acompanha a
+            leitura, e é a MESMA barra que carrega o veredito: conferir a
+            resposta muda a tela exatamente onde o polegar já estava. */}
+        <BarraInferior apenasMobile>
+          <FolhaDeFeedback
+            veredito={explicacaoNaTela ? null : veredito}
+            letraCorreta={correta}
+            temExplicacao={temCorrecaoParaLer}
+            aoVerExplicacao={irParaExplicacao}
+          >
+            <button
+              type="button"
+              onClick={questaoAnterior}
+              disabled={questaoAtual === 0}
+              aria-label="Questão anterior"
+              className="tecla flex h-14 w-14 flex-none items-center justify-center disabled:opacity-35"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setMapaAberto(true)}
+              aria-label="Abrir o mapa de questões"
+              className="tecla flex h-14 w-14 flex-none items-center justify-center md:hidden"
+            >
+              <LayoutGrid className="h-5 w-5" />
+            </button>
+
+            {simuladoFinalizado ? (
+              // Terminado, "Finalizar" de novo não faria nada. O que resta a
+              // fazer é ler o resultado, que está no topo da página.
+              <Button
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                className="btn-brand-glow h-14 min-w-0 flex-1 gap-1.5 rounded-2xl text-[15px] font-bold text-white"
+              >
+                <CheckCircle2 className="h-4 w-4" />
+                Ver resultado
+              </Button>
+            ) : podeVerResposta ? (
+              <Button
+                onClick={() => verificarResposta(questaoAtual)}
+                className="h-14 min-w-0 flex-1 gap-1.5 rounded-2xl text-[15px] font-bold"
+              >
+                <Eye className="h-4 w-4" />
+                Ver resposta
+              </Button>
+            ) : ehUltima ? (
+              <Button
+                onClick={finalizarSimulado}
+                disabled={finalizarBloqueado}
+                className="btn-brand-glow h-14 min-w-0 flex-1 gap-1.5 rounded-2xl text-[15px] font-bold text-white"
+              >
+                <CheckCircle2 className="h-4 w-4" />
+                Finalizar
+              </Button>
+            ) : (
+              <Button
+                onClick={proximaQuestao}
+                className="btn-brand-glow h-14 min-w-0 flex-1 gap-1.5 rounded-2xl text-[15px] font-bold text-white"
+              >
+                Próxima
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            )}
+          </FolhaDeFeedback>
+        </BarraInferior>
+
+        {/* ── Mapa de questões no celular ──────────────────────────────── */}
+        {mapaAberto ? (
+          <Portal>
+            <div
+              className="fixed inset-0 z-[210] flex items-center justify-center bg-black/55 p-4 backdrop-blur-sm md:hidden"
+              style={{
+                paddingTop: 'max(1rem, env(safe-area-inset-top))',
+                paddingBottom: 'max(1rem, env(safe-area-inset-bottom))',
+              }}
+              onClick={(e) => {
+                if (e.target === e.currentTarget) setMapaAberto(false)
+              }}
+            >
+              <div
+                role="dialog"
+                aria-modal="true"
+                aria-label="Mapa de questões"
+                className="vidro-denso vidro-brilho relevo flex max-h-full w-full max-w-sm flex-col rounded-[28px] p-4"
+              >
+                <div className="flex items-center justify-between gap-2 pb-3">
+                  <h2 className="text-sm font-bold">Ir para a questão</h2>
+                  <button
+                    type="button"
+                    onClick={() => setMapaAberto(false)}
+                    aria-label="Fechar"
+                    className="-m-1 rounded-lg p-1 text-muted-foreground hover:bg-muted"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+                {naoRespondidas > 0 && !simuladoFinalizado ? (
+                  <p className="pb-3 text-center text-xs text-muted-foreground">
+                    <span className="font-semibold text-orange-500">{naoRespondidas}</span>
+                    {naoRespondidas === 1 ? ' questão não respondida' : ' questões não respondidas'}
+                  </p>
+                ) : null}
+                <div className="min-h-0 flex-1 overflow-y-auto">
+                  <MapaDeQuestoes
+                    questoes={questoes}
+                    questaoAtual={questaoAtual}
+                    mostrarResultado={mostrarResultado}
+                    getResposta={(id) => getRespostaAtual(id)}
+                    onIr={irParaQuestao}
+                  />
+                </div>
+              </div>
+            </div>
+          </Portal>
+        ) : null}
+      </AppShell>
     )
   }
 

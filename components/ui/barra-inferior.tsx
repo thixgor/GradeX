@@ -99,9 +99,16 @@ export function BarraInferior({
         apenasMobile && 'md:hidden',
         className,
       )}
-      style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}
+      style={{
+        // A folga de baixo não é decoração: no mapa de alcance do polegar, a
+        // faixa COLADA na borda inferior é tão desconfortável quanto o topo da
+        // tela — o polegar precisa se dobrar para trás para alcançá-la. Uns
+        // poucos pixels de respiro sobem a ação para dentro do arco natural.
+        // Em aparelhos com indicador de home a própria safe-area já faz isso.
+        paddingBottom: 'max(0.85rem, env(safe-area-inset-bottom))',
+      }}
     >
-      <div className="mx-auto flex max-w-3xl items-center gap-2 px-3 pt-2">{children}</div>
+      <div className="mx-auto flex max-w-3xl items-center gap-2 px-3 pt-2.5">{children}</div>
     </div>,
     document.body,
   )
