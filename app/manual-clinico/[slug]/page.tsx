@@ -45,6 +45,7 @@ import {
 } from 'lucide-react'
 import { type Patologia, type AreaSaude } from '@/lib/types/manual-clinico'
 import { FocusSessionButton } from '@/components/focus-session-button'
+import { useTrackView } from '@/hooks/use-track-view'
 import { RichTextRenderer, extractYouTubeId, tokenizeLine, AudioEmbed } from '@/components/manual-clinico/rich-text-renderer'
 import { HighlightableRichText } from '@/components/manual-clinico/highlightable-rich-text'
 import { ShareQRButton } from '@/components/manual-clinico/share-qr-button'
@@ -1641,6 +1642,19 @@ function PatologiaContent() {
     }
     load()
   }, [slug, router])
+
+  // Registra a abertura da patologia para o painel de estatísticas.
+  useTrackView(
+    patologia
+      ? {
+          kind: 'manual_patologia_open',
+          resourceId: slug,
+          resourceTitle: patologia.nome,
+          meta: { sistema: patologia.sistema || '' },
+        }
+      : null,
+    !!patologia
+  )
 
   // ── Build sections list for floating nav (must be before early returns) ──
   const farma = patologia?.farmacologia

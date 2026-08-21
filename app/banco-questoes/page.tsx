@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { AnimatePresence, motion } from 'framer-motion'
 import { TiltCard } from '@/components/tilt-card'
+import { useTrackView } from '@/hooks/use-track-view'
 import {
   ArrowDownWideNarrow,
   CalendarRange,
@@ -132,6 +133,9 @@ interface EixoTemporalEmCache {
 function Conteudo() {
   const router = useRouter()
   const { isAdmin } = useAppShell()
+
+  // Registra a visita ao Banco para o painel de estatísticas.
+  useTrackView({ kind: 'banco_questoes_open', resourceId: 'banco-questoes', resourceTitle: 'Banco de Questões' })
 
   const [hierarquia, setHierarquia] = useState<{ modulos: any[]; topicos: any[]; subtopicos: any[] }>(
     () =>

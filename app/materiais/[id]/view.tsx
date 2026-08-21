@@ -43,6 +43,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { AppShell } from '@/components/app-shell'
+import { useTrackView } from '@/hooks/use-track-view'
 import { VideoWatermark } from '@/components/video-watermark'
 import { PackageUpsellModal, UpsellPackage } from '@/components/materiais/package-upsell-modal'
 import {
@@ -273,6 +274,21 @@ export default function MaterialViewPage() {
   const [accessVersionId, setAccessVersionId] = useState<string | null>(null)
   const stepTimersRef = useRef<ReturnType<typeof setTimeout>[]>([])
   const { addItem } = useMaterialCart()
+
+  // Registra a abertura do material para o painel de estatísticas. Os logs do
+  // leitor (`material_pdf_viewer_logs`) só existem para quem abre o PDF — este
+  // evento cobre também quem só olhou a página do material.
+  useTrackView(
+    data?.material
+      ? {
+          kind: 'material_open',
+          resourceId: data.material._id,
+          resourceTitle: data.material.title,
+          meta: { tipo: data.material.type || '', temAcesso: data.hasAccess },
+        }
+      : null,
+    !!data?.material
+  )
 
   const fetchData = useCallback(async () => {
     setLoading(true)

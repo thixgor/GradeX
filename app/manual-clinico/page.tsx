@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
 import { AppShell, useAppShell } from '@/components/app-shell'
 import { FocusSessionButton } from '@/components/focus-session-button'
+import { useTrackView } from '@/hooks/use-track-view'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
@@ -433,6 +434,8 @@ function FloatingFocusGlass({ enabled }: { enabled: boolean }) {
 
 function ManualClinicoContent() {
   const router = useRouter()
+  // Registra a visita ao índice do Manual para o painel de estatísticas.
+  useTrackView({ kind: 'manual_home_open', resourceId: 'manual-clinico', resourceTitle: 'Manual Clínico' })
   const [busca, setBusca] = useState('')
   const [areasAtivas, setAreasAtivas] = useState<AreaSaude[]>([])
   const [sistemaAtivo, setSistemaAtivo] = useState<SistemaFisiologico | ''>('')

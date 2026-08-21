@@ -25,7 +25,10 @@ export async function POST(request: Request) {
 
     const db = await getDb()
     await db.collection('download_logs').insertOne({
-      userId: session.id,
+      // `session.userId` — o payload do token não tem `id`, então a versão
+      // anterior gravava `undefined` em todo registro e o ranking de downloads
+      // por usuário nunca conseguia agrupar nada.
+      userId: session.userId,
       userName: session.name || '',
       userEmail: session.email || '',
       type, // 'exam_pdf' | 'gabarito_pdf' | 'exam_answers_pdf' | 'group_pdf' | 'manual_completo_pdf' | 'patologia_pdf' | 'student_answers_pdf' | 'annotations_pdf'

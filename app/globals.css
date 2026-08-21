@@ -37,6 +37,26 @@
     --radius: 0.5rem;
     --surface-elevated: 40 50% 98%;
     --ink-soft: 140 8% 38%;
+
+    /* Paleta de gráficos do painel (/admin/stats) — mesma ordem de matizes
+       reestagiada para a superfície clara do card (#FFFCF7). Água, amarelo e
+       magenta ficam abaixo de 3:1 aqui: por isso todo gráfico traz rótulo
+       visível ou a tabela equivalente ao lado, nunca só a cor. */
+    --viz-1: #2a78d6; /* azul */
+    --viz-2: #eb6834; /* laranja */
+    --viz-3: #1baf7a; /* água */
+    --viz-4: #eda100; /* amarelo */
+    --viz-5: #e87ba4; /* magenta */
+    --viz-good: #0ca30c;
+    --viz-warning: #fab219;
+    --viz-serious: #ec835a;
+    --viz-critical: #d03b3b;
+    --viz-grid: rgba(11, 11, 11, 0.08);
+    --viz-axis: rgba(11, 11, 11, 0.16);
+    --viz-seq-100: #cde2fb;
+    --viz-seq-300: #6da7ec;
+    --viz-seq-500: #2a78d6;
+    --viz-seq-700: #0d366b;
   }
 
   .dark {
@@ -62,6 +82,26 @@
     --ring: 133 28% 48%;
     --surface-elevated: 150 16% 11%;
     --ink-soft: 140 10% 62%;
+
+    /* Paleta de gráficos do painel (/admin/stats) — passos escolhidos para a
+       superfície escura do card (#131C16): banda de luminosidade, piso de
+       croma, separação para daltonismo e contraste ≥ 3:1, todos validados
+       como conjunto. Não trocar um passo isolado sem revalidar a ordem. */
+    --viz-1: #3987e5; /* azul */
+    --viz-2: #d95926; /* laranja */
+    --viz-3: #199e70; /* água */
+    --viz-4: #c98500; /* amarelo */
+    --viz-5: #d55181; /* magenta */
+    --viz-good: #0ca30c;
+    --viz-warning: #fab219;
+    --viz-serious: #ec835a;
+    --viz-critical: #d03b3b;
+    --viz-grid: rgba(255, 255, 255, 0.09);
+    --viz-axis: rgba(255, 255, 255, 0.18);
+    --viz-seq-100: #104281;
+    --viz-seq-300: #1c5cab;
+    --viz-seq-500: #2a78d6;
+    --viz-seq-700: #6da7ec;
   }
 }
 
@@ -845,6 +885,29 @@
 
 .slide-in-from-bottom-4 {
   animation: slide-in-from-bottom-4 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Painel lateral de detalhe do /admin/stats. O projeto não usa o plugin
+   tailwindcss-animate, então a entrada é declarada aqui. */
+@keyframes stats-panel-in {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.stats-side-panel {
+  animation: stats-panel-in 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stats-side-panel {
+    animation: none;
+  }
 }
 
 /* ============================================

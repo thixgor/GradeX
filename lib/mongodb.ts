@@ -87,6 +87,28 @@ if (process.env.NODE_ENV === 'development') {
         db.collection('material_pdf_annotations').createIndex({ userId: 1, materialId: 1, pageNumber: 1 }),
         db.collection('material_pdf_viewer_logs').createIndex({ userId: 1, materialId: 1, createdAt: -1 }),
         db.collection('material_pdf_viewer_logs').createIndex({ materialId: 1, action: 1, createdAt: -1 }),
+        // ── Rastreamento de atividade (/admin/stats) ──
+        // Todo painel de estatísticas filtra por janela de tempo, então
+        // createdAt entra em todos os índices; os prefixos cobrem os três
+        // recortes usados: por conteúdo, por usuário e por área.
+        db.collection('activity_events').createIndex({ createdAt: -1 }),
+        db.collection('activity_events').createIndex({ kind: 1, createdAt: -1 }),
+        db.collection('activity_events').createIndex({ kind: 1, resourceId: 1, createdAt: -1 }),
+        db.collection('activity_events').createIndex({ userId: 1, createdAt: -1 }),
+        db.collection('activity_events').createIndex({ area: 1, createdAt: -1 }),
+        db.collection('exam_attempts').createIndex({ attemptId: 1 }, { unique: true }),
+        db.collection('exam_attempts').createIndex({ examId: 1, status: 1, lastSeenAt: -1 }),
+        db.collection('exam_attempts').createIndex({ userId: 1, lastSeenAt: -1 }),
+        db.collection('exam_attempts').createIndex({ status: 1, lastSeenAt: -1 }),
+        db.collection('exam_attempts').createIndex({ openedAt: -1 }),
+        // `download_logs` alimenta três rankings do painel e não tinha índice
+        // nenhum — cada aba varria a coleção inteira.
+        db.collection('download_logs').createIndex({ downloadedAt: -1 }),
+        db.collection('download_logs').createIndex({ type: 1, downloadedAt: -1 }),
+        db.collection('download_logs').createIndex({ userId: 1, downloadedAt: -1 }),
+        db.collection('download_logs').createIndex({ type: 1, resourceId: 1, downloadedAt: -1 }),
+        db.collection('material_html_viewer_logs').createIndex({ materialId: 1, ts: -1 }),
+        db.collection('material_html_viewer_logs').createIndex({ userId: 1, ts: -1 }),
         // ── Avaliações (reviews) ──
         db.collection('reviews').createIndex({ targetType: 1, targetId: 1, createdAt: -1 }),
         db.collection('reviews').createIndex({ targetType: 1, targetId: 1, isFeatured: -1, createdAt: -1 }),
@@ -213,6 +235,28 @@ if (process.env.NODE_ENV === 'development') {
       db.collection('material_pdf_annotations').createIndex({ userId: 1, materialId: 1, pageNumber: 1 }),
       db.collection('material_pdf_viewer_logs').createIndex({ userId: 1, materialId: 1, createdAt: -1 }),
       db.collection('material_pdf_viewer_logs').createIndex({ materialId: 1, action: 1, createdAt: -1 }),
+      // ── Rastreamento de atividade (/admin/stats) ──
+      // Todo painel de estatísticas filtra por janela de tempo, então
+      // createdAt entra em todos os índices; os prefixos cobrem os três
+      // recortes usados: por conteúdo, por usuário e por área.
+      db.collection('activity_events').createIndex({ createdAt: -1 }),
+      db.collection('activity_events').createIndex({ kind: 1, createdAt: -1 }),
+      db.collection('activity_events').createIndex({ kind: 1, resourceId: 1, createdAt: -1 }),
+      db.collection('activity_events').createIndex({ userId: 1, createdAt: -1 }),
+      db.collection('activity_events').createIndex({ area: 1, createdAt: -1 }),
+      db.collection('exam_attempts').createIndex({ attemptId: 1 }, { unique: true }),
+      db.collection('exam_attempts').createIndex({ examId: 1, status: 1, lastSeenAt: -1 }),
+      db.collection('exam_attempts').createIndex({ userId: 1, lastSeenAt: -1 }),
+      db.collection('exam_attempts').createIndex({ status: 1, lastSeenAt: -1 }),
+      db.collection('exam_attempts').createIndex({ openedAt: -1 }),
+      // `download_logs` alimenta três rankings do painel e não tinha índice
+      // nenhum — cada aba varria a coleção inteira.
+      db.collection('download_logs').createIndex({ downloadedAt: -1 }),
+      db.collection('download_logs').createIndex({ type: 1, downloadedAt: -1 }),
+      db.collection('download_logs').createIndex({ userId: 1, downloadedAt: -1 }),
+      db.collection('download_logs').createIndex({ type: 1, resourceId: 1, downloadedAt: -1 }),
+      db.collection('material_html_viewer_logs').createIndex({ materialId: 1, ts: -1 }),
+      db.collection('material_html_viewer_logs').createIndex({ userId: 1, ts: -1 }),
       // ── Avaliações (reviews) ──
       db.collection('reviews').createIndex({ targetType: 1, targetId: 1, createdAt: -1 }),
       db.collection('reviews').createIndex({ targetType: 1, targetId: 1, isFeatured: -1, createdAt: -1 }),

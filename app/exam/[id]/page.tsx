@@ -36,6 +36,7 @@ import { ImageModal } from '@/components/image-modal'
 import { PremiumPdfCtaModal } from '@/components/premium-pdf-cta-modal'
 import { canDownloadExamPdf } from '@/lib/tier-limits'
 import { useScrollToTopWhen } from '@/components/scroll-to-top'
+import { createExamAttemptTracker, clearExamAttempt, type ExamAttemptTracker } from '@/lib/tracking/track-client'
 
 export default function ExamPage({ params }: { params: { id: string } }) {
   const { id } = params
@@ -426,6 +427,60 @@ export default function ExamPage({ params }: { params: { id: string } }) {
       setPdfGenerating(null)
     }
   }
+
+  // ─── Rastreamento da tentativa (/admin/stats) ─────────────────
+  // Sem isto o painel só enxerga quem ENVIA a prova. Os pings abaixo contam
+  // a outra metade da história: quem abriu, quem começou, em que questão
+  // parou e quem sumiu no meio.
+  const attemptTrackerRef = useRef<ExamAttemptTracker | null>(null)
+  // Refs espelham o estado porque o snapshot é lido de dentro de um
+  // setInterval e de listeners de unload — closures que nunca reexecutam.
+  const answersRef = useRef<UserAnswer[]>([])
+  const currentQuestionRef = useRef(0)
+  const examRef = useRef<Exam | null>(null)
+
+  useEffect(() => { answersRef.current = answers }, [answers])
+  useEffect(() => { currentQuestionRef.current = currentQuestionIndex }, [currentQuestionIndex])
+  useEffect(() => { examRef.current = exam }, [exam])
+
+  function attemptSnapshot() {
+    const total = examRef.current?.questions?.length || 0
+    const answered = answersRef.current.filter(a =>
+      !!a.selectedAlternative ||
+      !!a.discursiveText?.trim() ||
+      !!a.essayText?.trim()
+    ).length
+    return {
+      totalQuestions: total,
+      answeredCount: answered,
+      currentQuestion: currentQuestionRef.current,
+    }
+  }
+
+  function getAttemptTracker(): ExamAttemptTracker | null {
+    if (!attemptTrackerRef.current && id) {
+      attemptTrackerRef.current = createExamAttemptTracker(id, examRef.current?.title)
+    }
+    return attemptTrackerRef.current
+  }
+
+  // Abertura da prova — dispara uma vez, quando o título já é conhecido.
+  const examTitle = exam?.title
+  useEffect(() => {
+    if (!examTitle) return
+    getAttemptTracker()?.send('open', attemptSnapshot())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [examTitle])
+
+  // Início efetivo + heartbeat enquanto a prova está em andamento.
+  useEffect(() => {
+    if (!started || submitted || alreadySubmitted) return
+    const tracker = getAttemptTracker()
+    if (!tracker) return
+    tracker.send('start', attemptSnapshot())
+    return tracker.startHeartbeat(attemptSnapshot)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [started, submitted, alreadySubmitted])
 
   useEffect(() => {
     checkExistingSubmission()
@@ -1090,6 +1145,17 @@ ${respostaAluno}`
       // Limpar localStorage
       localStorage.removeItem(`exam-${id}-start-time`)
 
+      // Fecha a tentativa no painel — sem isto ela ficaria como "saiu no meio".
+      getAttemptTracker()?.send('submit', {
+        ...attemptSnapshot(),
+        submissionId: data.submissionId,
+        score: typeof data.score === 'number' ? data.score : undefined,
+      })
+      // Zera o rastreador junto: numa prova de treino o aluno recomeça sem
+      // trocar de página, e reaproveitar o id reabriria a tentativa entregue.
+      clearExamAttempt(id)
+      attemptTrackerRef.current = null
+
       // Salvar score
       if (exam?.scoringMethod === 'normal' && data.score !== undefined) {
         setSubmissionScore(`${data.score} pontos`)
@@ -1171,6 +1237,17 @@ ${respostaAluno}`
 
       // Limpar localStorage após submissão bem-sucedida
       localStorage.removeItem(`exam-${id}-start-time`)
+
+      // Fecha a tentativa no painel — sem isto ela ficaria como "saiu no meio".
+      getAttemptTracker()?.send('submit', {
+        ...attemptSnapshot(),
+        submissionId: data.submissionId,
+        score: typeof data.score === 'number' ? data.score : undefined,
+      })
+      // Zera o rastreador junto: numa prova de treino o aluno recomeça sem
+      // trocar de página, e reaproveitar o id reabriria a tentativa entregue.
+      clearExamAttempt(id)
+      attemptTrackerRef.current = null
 
       // Salvar score para mostrar depois
       if (exam?.scoringMethod === 'normal' && data.score !== undefined) {
