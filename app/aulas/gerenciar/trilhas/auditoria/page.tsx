@@ -243,11 +243,15 @@ function LinhaDoProblema({ p, aoCorrigir }: { p: Problema; aoCorrigir: (p: Probl
             </Link>{' '}
             · {p.etapaTitulo}
           </p>
+          {/* `break-all` no id e `break-words` no título: os dois são conteúdo
+              do banco, sem limite de tamanho e sem espaços garantidos — um
+              ObjectId de 24 caracteres não quebra sozinho e vaza da tela no
+              celular. */}
           <p className="mt-1 text-sm">
             <span className="font-semibold">Referência antiga:</span>{' '}
-            <code className="rounded bg-muted px-1.5 py-0.5 text-xs">{p.refIdAtual}</code>
+            <code className="break-all rounded bg-muted px-1.5 py-0.5 text-xs">{p.refIdAtual}</code>
           </p>
-          <p className="mt-0.5 text-sm">
+          <p className="mt-0.5 break-words text-sm">
             <span className="font-semibold">Título salvo:</span>{' '}
             {p.tituloSalvo ? `"${p.tituloSalvo}"` : <span className="text-muted-foreground">nenhum</span>}
           </p>

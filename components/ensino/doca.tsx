@@ -4,26 +4,33 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { animate, motion, useMotionValue, useReducedMotion } from 'framer-motion'
-import { RotateCcw, Search, Sparkles, User, type LucideIcon } from 'lucide-react'
+import { RotateCcw, Route, Search, Sparkles, User, type LucideIcon } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 
 /**
  * A doca da Área de Ensino — um seletor deslizante de vidro.
  *
- * ══ TRÊS DESTINOS, NÃO CINCO (§1, §2, §17) ═══════════════════════════
+ * ══ OS DESTINOS, E POR QUE TRILHAS VOLTOU ════════════════════════════
  *
- * A versão anterior tinha cinco: Aprender, Trilhas, Explorar, Revisar e Notas.
- * Só que "Trilhas" e "Explorar" nunca foram lugares — são CONTEÚDO e uma AÇÃO,
- * respectivamente, e ambos já apareciam dentro de Aprender. "Notas" é o caderno
- * que se lê depois, não uma decisão de estudo. O resultado era uma barra em que
- * três dos cinco botões levavam a variações da mesma tela.
+ * A barra já teve cinco destinos, foi cortada para quatro (Aprender, Buscar,
+ * Revisar, Você) e agora tem cinco de novo — mas não os mesmos. O corte tinha
+ * uma razão certa e uma consequência errada.
  *
- * Aqui restam as três perguntas que um aluno realmente faz ao abrir a área —
- * "o que eu estudo agora?", "onde está aquele assunto?", "o que preciso rever?"
- * — mais o canto pessoal, onde moram o caderno, o progresso e (para quem tem)
- * a entrada do modo de gestão. Nada foi apagado: Trilhas e Explorar continuam
- * sendo rotas próprias, alcançáveis de dentro do Aprender e por link direto.
+ * A razão certa: "Explorar" não é um lugar, é uma AÇÃO, e ela já vive dentro
+ * do Aprender como a fileira de atalhos por assunto. "Notas" é o caderno que
+ * se lê depois, não uma decisão de estudo — foi para dentro de "Você". Esses
+ * dois continuam fora, e continuam alcançáveis por link direto.
+ *
+ * A consequência errada: Trilha é o OBJETO PRINCIPAL da área (§1), e ficou
+ * sem porta. Chegar a "todas as Trilhas" passou a exigir abrir o Aprender,
+ * rolar até a faixa certa e achar o "ver tudo" — três gestos para o conteúdo
+ * que a área inteira existe para organizar, e a queixa que trouxe Trilhas de
+ * volta foi exatamente essa ("tá difícil de achar todas as trilhas").
+ *
+ * O critério: um segmento aqui é para onde se VAI, não o que se FAZ. Trilhas é
+ * um acervo com endereço próprio e página completa; Explorar é um recorte do
+ * Aprender.
  *
  * ══ ELA É UM SLIDER DE VERDADE ═══════════════════════════════════════
  *
@@ -80,12 +87,12 @@ const DESTINOS: Destino[] = [
     rotulo: 'Aprender',
     icone: Sparkles,
     exato: true,
-    // Assistir, percorrer uma Trilha e navegar o acervo são tudo "aprender":
-    // são as telas para onde o Aprender manda. Acender outro segmento (ou
-    // nenhum) enquanto a pessoa assiste faria a barra mentir sobre onde ela
-    // está.
-    tambem: ['/aulas/trilhas', '/aulas/explorar', '/aulas/curso'],
+    // Navegar o conteúdo por assunto e assistir são tudo "aprender": são as
+    // telas para onde o Aprender manda. Acender outro segmento (ou nenhum)
+    // enquanto a pessoa assiste faria a barra mentir sobre onde ela está.
+    tambem: ['/aulas/explorar', '/aulas/curso'],
   },
+  { href: '/aulas/trilhas', rotulo: 'Trilhas', icone: Route },
   { href: '/aulas/buscar', rotulo: 'Buscar', icone: Search },
   { href: '/aulas/revisar', rotulo: 'Revisar', icone: RotateCcw },
   { href: '/aulas/voce', rotulo: 'Você', icone: User, tambem: ['/aulas/anotacoes'] },
@@ -273,7 +280,11 @@ export function DocaDeEnsino({ className }: { className?: string }) {
       >
         <div
           ref={pista}
-          className="relative flex h-full w-[min(24rem,calc(100vw-1.5rem))] items-stretch sm:w-[27rem]"
+          // Cinco segmentos e não quatro: a pista ganhou largura no desktop
+          // para o passo continuar confortável. No celular ela é limitada pela
+          // viewport de qualquer forma, e o rótulo mais longo ("Aprender")
+          // ainda cabe no menor passo que isso produz.
+          className="relative flex h-full w-[min(25rem,calc(100vw-1.5rem))] items-stretch sm:w-[30rem]"
         >
           {/* ── A pílula arrastável ──────────────────────────────────
               Ela fica ACIMA dos segmentos para receber o gesto. Como cobre

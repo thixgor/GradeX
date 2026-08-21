@@ -227,7 +227,7 @@ function Conteudo() {
               ) : (
                 <Grade>
                   {aulas.map((aula) => (
-                    <CartaoDeAula key={aula._id} aula={aula} className="w-full" />
+                    <CartaoDeAula key={aula._id} aula={aula} formato="largo" />
                   ))}
                 </Grade>
               )}

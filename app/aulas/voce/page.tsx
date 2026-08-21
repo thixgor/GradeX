@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import {
+  Bookmark,
   ChevronRight,
   Clock,
   Compass,
@@ -17,7 +18,14 @@ import {
 import { AppShell, useAppShell } from '@/components/app-shell'
 import { RESPIRO_DA_DOCA, RESPIRO_DO_TOPO } from '@/components/ensino/doca'
 import { FichaDeEstatistica } from '@/components/ensino/duo'
-import { Esqueleto, formatarMinutos } from '@/components/ensino/primitivos'
+import {
+  CartaoDeAula,
+  Esqueleto,
+  TituloDaFaixa,
+  Trilho,
+  formatarMinutos,
+  type AulaNaTela,
+} from '@/components/ensino/primitivos'
 import { cn } from '@/lib/utils'
 
 /**
@@ -71,6 +79,7 @@ function Conteudo() {
 
   const [estatisticas, setEstatisticas] = useState<Estatisticas | null>(null)
   const [anotacoes, setAnotacoes] = useState<number | null>(null)
+  const [salvas, setSalvas] = useState<AulaNaTela[]>([])
   const [carregando, setCarregando] = useState(true)
 
   useEffect(() => {
@@ -83,11 +92,29 @@ function Conteudo() {
       fetch('/api/ensino/anotacoes', { cache: 'no-store' })
         .then((r) => (r.ok ? r.json() : null))
         .catch(() => null),
+      // A estante (§21). Ela reaproveita a rota de histórico com
+      // `favoritos=1`: as duas telas mostram a mesma coisa — aulas com
+      // progresso — e só muda de onde vem a lista de ids.
+      fetch('/api/aulas/historico?favoritos=1&limite=24', { cache: 'no-store' })
+        .then((r) => (r.ok ? r.json() : null))
+        .catch(() => null),
     ])
-      .then(([home, caderno]) => {
+      .then(([home, caderno, estante]) => {
         if (cancelado) return
         if (home?.estatisticas) setEstatisticas(home.estatisticas)
         if (typeof caderno?.total === 'number') setAnotacoes(caderno.total)
+        if (Array.isArray(estante?.itens)) {
+          setSalvas(
+            estante.itens.map((item: any) => ({
+              _id: String(item._id),
+              titulo: item.titulo,
+              capa: item.capa || null,
+              href: `/aulas/${item._id}`,
+              progresso: item.progresso || null,
+              acesso: item.acesso,
+            })),
+          )
+        }
       })
       .finally(() => {
         if (!cancelado) setCarregando(false)
@@ -156,6 +183,22 @@ function Conteudo() {
             tom="ouro"
           />
         </div>
+      ) : null}
+
+      {/* ══ A estante (§21) ══════════════════════════════════════════
+          Só existe quando tem o que mostrar: uma faixa vazia com o
+          título "Aulas salvas" ensinaria que a função existe e não
+          serve para nada. Quem nunca salvou nada descobre o botão na
+          própria aula, que é onde a vontade de salvar aparece. */}
+      {salvas.length > 0 ? (
+        <section className="mb-7">
+          <TituloDaFaixa titulo="Aulas salvas" icone={Bookmark} />
+          <Trilho>
+            {salvas.map((aula) => (
+              <CartaoDeAula key={aula._id} aula={aula} />
+            ))}
+          </Trilho>
+        </section>
       ) : null}
 
       <div className="divide-y divide-border/60 overflow-hidden rounded-2xl bg-card ring-1 ring-border/70">

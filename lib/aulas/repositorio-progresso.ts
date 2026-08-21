@@ -2,6 +2,7 @@ import { ObjectId, type Db } from 'mongodb'
 import {
   aplicarBatida,
   PERCENTUAL_CONCLUSAO_PADRAO,
+  SEGUNDOS_MINIMOS_PARA_RETOMAR,
   type ProgressoDaAula,
 } from '@/lib/aulas/progresso'
 
@@ -201,6 +202,28 @@ export async function definirConclusaoManual(
  * As aulas que o aluno estava assistindo — alimenta "Continue estudando" (§35).
  *
  * Só o que está em andamento: aula concluída não é "continuar", é histórico.
+ *
+ * ══ POR QUE O CORTE É EM SEGUNDOS, E NÃO EM `percentual > 0` ═══════════
+ *
+ * Era `percentual > 0`, e isso deixava entrar coisa que ninguém assistiu. O
+ * player grava a cada dez segundos, ao pausar e ao sair da aula — então abrir
+ * uma aula, deixar o vídeo rodar dois segundos enquanto se lê o título e sair
+ * já grava uma batida. Em vídeo curto, dois segundos arredondam para 1%, e 1%
+ * é maior que zero: a aula subia para o TOPO da home (a lista é ordenada por
+ * `atualizadoEm`) como a próxima coisa a fazer, com o título "Bom te ver de
+ * volta" em cima — de um vídeo que a pessoa nunca viu.
+ *
+ * O corte agora é o mesmo `SEGUNDOS_MINIMOS_PARA_RETOMAR` que `podeRetomar`
+ * usa para decidir se vale oferecer "continuar de 18:42". Ter as duas
+ * perguntas — "entra na lista de retomada?" e "dá para retomar num ponto?" —
+ * respondidas pelo mesmo número é o que impede a home de anunciar uma
+ * retomada que a própria aula depois se recusa a oferecer.
+ *
+ * Aula em iframe (YouTube, Vimeo…) continua de fora, como já estava: o
+ * navegador não deixa ler o tempo de outro domínio, então a posição dela é
+ * sempre 0 e não existe evidência nenhuma de que foi assistida. Ela aparece no
+ * histórico, que é o lugar de "passei por aqui" — não em "continue de onde
+ * parou", que promete um ponto que não existe.
  */
 export async function lerEmAndamento(
   db: Db,
@@ -209,7 +232,11 @@ export async function lerEmAndamento(
 ): Promise<ProgressoDaAula[]> {
   if (!usuarioId) return []
   return db.collection<DocumentoProgresso>(COLECAO)
-    .find({ usuarioId, concluida: false, percentual: { $gt: 0 } })
+    .find({
+      usuarioId,
+      concluida: false,
+      posicaoSegundos: { $gte: SEGUNDOS_MINIMOS_PARA_RETOMAR },
+    })
     .sort({ atualizadoEm: -1 })
     .limit(Math.max(1, Math.min(50, limite)))
     .toArray()

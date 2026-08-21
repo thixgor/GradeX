@@ -5,14 +5,21 @@ import { getDb } from '@/lib/mongodb'
 import { montarContextoDoUsuario } from '@/lib/aulas/contexto'
 import { avaliarAcessoAula } from '@/lib/aulas/acesso'
 import { COLECOES } from '@/lib/ensino/compatibilidade'
+import { assuntoDaTrilha, noDaAula } from '@/lib/ensino/agrupamento-trilhas'
 import {
   garantirIndicesDeEnsino,
+  lerNos,
   lerTrilhas,
   podeEditarEnsino,
   progressoDeTrilhas,
 } from '@/lib/ensino/repositorio'
 import { gerarSlug, slugUnico } from '@/lib/ensino/taxonomia'
-import { normalizarEtapas, resumirTrilha, type TrilhaDeEnsino } from '@/lib/ensino/trilha'
+import {
+  aulaIdsDaTrilha,
+  normalizarEtapas,
+  resumirTrilha,
+  type TrilhaDeEnsino,
+} from '@/lib/ensino/trilha'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -84,7 +91,36 @@ export async function GET(request: Request) {
       aulas.map((a: any) => [String(a._id), Number(a.ensino?.duracaoSegundos) || 0]),
     )
 
-    const progresso = await progressoDeTrilhas(db, trilhas, sessao?.userId)
+    // Onde cada aula mora na taxonomia — é a partir disto que sai o assunto de
+    // cada Trilha, sem ninguém precisar classificar Trilha nenhuma à mão (ver
+    // lib/ensino/agrupamento-trilhas.ts).
+    const noPorAula = new Map<string, string | null>(
+      aulas.map((a: any) => [String(a._id), noDaAula(a.ensino)]),
+    )
+
+    const [nos, progresso, estados] = await Promise.all([
+      lerNos(db),
+      progressoDeTrilhas(db, trilhas, sessao?.userId),
+      // O que o ALUNO marcou nesta vitrine: favoritas e ocultas. Uma consulta
+      // para todas as Trilhas, não uma por cartão.
+      sessao?.userId
+        ? db
+            .collection(COLECOES.trilhaEstado)
+            .find(
+              { usuarioId: sessao.userId },
+              { projection: { trilhaId: 1, favorita: 1, oculta: 1 } },
+            )
+            .toArray()
+        : Promise.resolve([] as any[]),
+    ])
+
+    const estadoPorTrilha = new Map<string, { favorita: boolean; oculta: boolean }>(
+      estados.map((e: any) => [
+        String(e.trilhaId),
+        { favorita: e.favorita === true, oculta: e.oculta === true },
+      ]),
+    )
+
     const agora = new Date()
 
     const itens = trilhas.map((trilha) => {
@@ -103,6 +139,8 @@ export async function GET(request: Request) {
         agora,
       )
 
+      const estado = estadoPorTrilha.get(String(trilha._id))
+
       return {
         _id: String(trilha._id),
         slug: trilha.slug,
@@ -119,7 +157,14 @@ export async function GET(request: Request) {
         criadoEm: trilha.criadoEm,
         publicadaEm: trilha.publicadaEm || null,
         ...resumo,
+        assunto: assuntoDaTrilha(
+          trilha,
+          aulaIdsDaTrilha(trilha).map((id) => noPorAula.get(id) ?? null),
+          nos,
+        ),
         progresso: progresso.get(String(trilha._id)) || null,
+        favorita: estado?.favorita === true,
+        oculta: estado?.oculta === true,
         acesso: { liberado: veredito.liberado, requisito: veredito.requisito },
       }
     })

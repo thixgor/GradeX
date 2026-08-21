@@ -77,12 +77,18 @@ export async function GET() {
       lerNos(db),
       lerTrilhas(db, { situacao: 'publicada' }),
       usuarioId ? lerEmAndamento(db, usuarioId, 12) : Promise.resolve([]),
+      // Sem recorte por data: este registro passou a decidir também o que o
+      // aluno OCULTOU, e um `limit(12)` por `atualizadoEm` deixaria uma Trilha
+      // ocultada há tempo reaparecer na home assim que doze outras fossem
+      // tocadas. São poucos documentos por pessoa e a projeção é mínima.
       usuarioId
         ? db
             .collection(COLECOES.trilhaEstado)
-            .find({ usuarioId })
-            .sort({ atualizadoEm: -1 })
-            .limit(12)
+            .find(
+              { usuarioId },
+              { projection: { trilhaId: 1, iniciadaEm: 1, oculta: 1, favorita: 1 } },
+            )
+            .limit(500)
             .toArray()
         : Promise.resolve([]),
     ])
@@ -198,15 +204,35 @@ export async function GET() {
       progresso: progressoDasTrilhas.get(String(trilha._id)) || null,
     })
 
-    const iniciadas = new Set(estadosDeTrilha.map((e: any) => String(e.trilhaId)))
-    const emCurso = trilhas
+    /*
+     * "Iniciada" é o CAMPO, não a existência do documento.
+     *
+     * `ensino_trilha_estado` guarda quatro coisas no mesmo registro: iniciada,
+     * concluída, favorita e oculta (ver o POST de `trilhas/[id]`). Tratar
+     * "existe registro" como "está em andamento" faria uma Trilha apenas
+     * favoritada — ou apenas ocultada — aparecer em "Suas Trilhas" com 0% de
+     * progresso, anunciando um estudo que nunca começou.
+     */
+    const iniciadas = new Set(
+      estadosDeTrilha.filter((e: any) => e.iniciadaEm).map((e: any) => String(e.trilhaId)),
+    )
+
+    // O aluno pediu para não ver estas: elas somem da home inteira, não só de
+    // uma faixa. Continuam no banco e na vitrine de Trilhas, que oferece rever
+    // as ocultas — ocultar é uma preferência, não uma exclusão.
+    const ocultas = new Set(
+      estadosDeTrilha.filter((e: any) => e.oculta === true).map((e: any) => String(e.trilhaId)),
+    )
+    const visiveis = trilhas.filter((t) => !ocultas.has(String(t._id)))
+
+    const emCurso = visiveis
       .filter((t) => {
         const p = progressoDasTrilhas.get(String(t._id))
         return (iniciadas.has(String(t._id)) || p?.iniciada) && !p?.concluida
       })
       .slice(0, POR_FAIXA)
 
-    const naoIniciadas = trilhas.filter((t) => !progressoDasTrilhas.get(String(t._id))?.iniciada)
+    const naoIniciadas = visiveis.filter((t) => !progressoDasTrilhas.get(String(t._id))?.iniciada)
 
     const recomendadas = [
       // Destaque é curadoria explícita do admin e ganha de qualquer heurística:
@@ -215,7 +241,7 @@ export async function GET() {
       ...naoIniciadas.filter((t) => !t.destaque),
     ].slice(0, POR_FAIXA)
 
-    const novas = [...trilhas]
+    const novas = [...visiveis]
       .sort(
         (a, b) =>
           new Date(b.publicadaEm || b.criadoEm || 0).getTime() -
@@ -293,7 +319,7 @@ export async function GET() {
           emCurso: emCurso.map(cartaoDeTrilha),
           recomendadas: recomendadas.map(cartaoDeTrilha),
           novas: novas.map(cartaoDeTrilha),
-          total: trilhas.length,
+          total: visiveis.length,
         },
         arvore,
         aulasRecentes: cartoesRecentes.slice(0, POR_FAIXA),

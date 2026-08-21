@@ -279,13 +279,32 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
 }
 
 /**
- * Marca a Trilha como iniciada / concluída pelo aluno.
+ * O estado do ALUNO nesta Trilha.
  *
  * O progresso continua sendo derivado das aulas — este registro guarda só o que
- * NÃO dá para derivar: quando a pessoa entrou na Trilha (para "Continue
- * estudando" saber qual caminho ela escolheu, e não só qual aula abriu) e
- * quando ela concluiu (para a tela de conclusão e o certificado aparecerem uma
- * vez, e não a cada visita).
+ * NÃO dá para derivar:
+ *
+ *  • `iniciar` — quando a pessoa entrou na Trilha (para "Continue estudando"
+ *    saber qual caminho ela escolheu, e não só qual aula abriu);
+ *  • `concluir` — quando ela concluiu (para a tela de conclusão e o
+ *    certificado aparecerem uma vez, e não a cada visita);
+ *  • `favoritar` — a estante pessoal dela (§21);
+ *  • `ocultar` — as Trilhas que ela decidiu não ver mais na vitrine.
+ *
+ * ══ POR QUE FAVORITAR E OCULTAR NÃO ESCREVEM `iniciadaEm` ══════════════
+ *
+ * O mesmo documento serve às quatro coisas, mas só as duas primeiras dizem
+ * algo sobre ESTUDO. A home trata "tem registro nesta Trilha" como "está em
+ * andamento"; se favoritar criasse o registro com `iniciadaEm`, salvar uma
+ * Trilha para depois a anunciaria como já começada, com 0% de progresso — a
+ * mesma classe de mentira que fazia a home oferecer "continuar" um vídeo
+ * nunca assistido. Por isso o ramo de marcadores usa `$setOnInsert` sem
+ * `iniciadaEm`, e quem lê "iniciada" verifica o CAMPO, nunca a existência do
+ * documento.
+ *
+ * Ocultar é reversível e não apaga nada: some da vitrine do aluno, continua no
+ * banco, e a própria tela oferece rever as ocultas. Ninguém perde uma Trilha
+ * por um toque errado.
  */
 export async function POST(request: Request, { params }: { params: { id: string } }) {
   try {
@@ -298,6 +317,24 @@ export async function POST(request: Request, { params }: { params: { id: string 
 
     const corpo = await request.json().catch(() => ({}))
     const agora = new Date()
+    const chave = { usuarioId: sessao.userId, trilhaId: String(trilha._id) }
+    const identidade = { ...chave, trilhaSlug: trilha.slug }
+
+    if (corpo?.acao === 'favoritar' || corpo?.acao === 'ocultar') {
+      const campo = corpo.acao === 'favoritar' ? 'favorita' : 'oculta'
+      // O estado desejado vai explícito, como nos favoritos de aula: dois
+      // toques rápidos com "alterna" implícito podem chegar fora de ordem e
+      // acabar no valor errado.
+      const valor = corpo?.valor !== false
+
+      await db.collection(COLECOES.trilhaEstado).updateOne(
+        chave,
+        { $set: { [campo]: valor, atualizadoEm: agora }, $setOnInsert: identidade },
+        { upsert: true },
+      )
+
+      return NextResponse.json({ ok: true, [campo]: valor })
+    }
 
     const mudanca: Record<string, any> = { atualizadoEm: agora }
     if (corpo?.acao === 'concluir') mudanca.concluidaEm = agora
@@ -305,17 +342,22 @@ export async function POST(request: Request, { params }: { params: { id: string 
       mudanca.ultimaAulaId = String(corpo.aulaId)
     }
 
+    /*
+     * `$min` e não `$setOnInsert` para `iniciadaEm`.
+     *
+     * O documento pode já existir sem nunca ter sido iniciado — é o que
+     * acontece quando a pessoa favoritou ou ocultou a Trilha antes de
+     * começá-la. Com `$setOnInsert`, a inserção não aconteceria (o documento
+     * está lá) e `iniciadaEm` ficaria para sempre ausente: a Trilha nunca
+     * entraria em "Suas Trilhas" mesmo depois de a pessoa começar.
+     *
+     * `$min` grava quando o campo não existe e, quando existe, mantém a data
+     * MAIS ANTIGA — que é justamente a semântica de "quando ela entrou aqui
+     * pela primeira vez".
+     */
     await db.collection(COLECOES.trilhaEstado).updateOne(
-      { usuarioId: sessao.userId, trilhaId: String(trilha._id) },
-      {
-        $set: mudanca,
-        $setOnInsert: {
-          usuarioId: sessao.userId,
-          trilhaId: String(trilha._id),
-          trilhaSlug: trilha.slug,
-          iniciadaEm: agora,
-        },
-      },
+      chave,
+      { $set: mudanca, $min: { iniciadaEm: agora }, $setOnInsert: identidade },
       { upsert: true },
     )
 

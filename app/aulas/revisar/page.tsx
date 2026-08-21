@@ -177,7 +177,10 @@ function Conteudo() {
                       {item.localizacao}
                     </p>
                   ) : null}
-                  <h2 className="mt-0.5 font-heading text-base font-semibold leading-snug tracking-tight">
+                  {/* `break-words`: o título vem do acervo e um termo médico
+                      longo sem espaço não quebraria sozinho, atravessando a
+                      borda da tela no celular. */}
+                  <h2 className="mt-0.5 break-words font-heading text-base font-semibold leading-snug tracking-tight">
                     <Link href={item.href} className="transition hover:text-primary">
                       {item.titulo}
                     </Link>

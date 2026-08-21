@@ -33,6 +33,8 @@
  * sempre.
  */
 
+import { comecouDeVerdade } from '@/lib/aulas/progresso'
+
 /* =================== VOCABULÁRIO =================== */
 
 export const NIVEIS_DE_TRILHA = ['iniciante', 'intermediario', 'avancado'] as const
@@ -240,6 +242,8 @@ export function validarPublicacao(trilha: Partial<TrilhaDeEnsino>): ProblemaNaTr
 export interface ProgressoConhecido {
   concluida?: boolean
   percentual?: number
+  /** Segundos assistidos — é o que separa "começou" de "abriu e saiu". */
+  posicaoSegundos?: number
 }
 
 export interface ProgressoDaEtapa {
@@ -332,7 +336,11 @@ export function calcularProgressoDaTrilha(
       const contabilizavel = item.tipo === 'aula' && item.obrigatorio !== false
       const progresso = item.tipo === 'aula' ? progressoPorAula.get(item.refId) : undefined
 
-      if ((progresso?.percentual || 0) > 0 || progresso?.concluida) iniciada = true
+      // "Iniciada" usa o mesmo corte da retomada de aula, e não `percentual >
+      // 0`: dois segundos acidentais num vídeo curto arredondam para 1%, e
+      // isso bastava para a Trilha inteira aparecer em "Suas Trilhas" como
+      // começada. Ver `comecouDeVerdade`.
+      if (comecouDeVerdade(progresso)) iniciada = true
 
       if (!contabilizavel) continue
       totalEtapa += 1

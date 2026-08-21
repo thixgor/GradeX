@@ -58,12 +58,15 @@ import { cn } from '@/lib/utils'
  * Trilhas, conteúdo, novidades e revisão continuam ali, em faixas, para quem
  * quiser escolher em vez de seguir.
  *
- * ══ TRILHAS E EXPLORAR NÃO SÃO LUGARES (§3, §7) ══════════════════════
+ * ══ TRILHAS E EXPLORAR, AQUI DENTRO (§3, §7) ═════════════════════════
  *
- * Eles eram abas na barra de baixo, competindo com Aprender enquanto mostravam
- * a mesma coisa. Aqui voltam ao que sempre foram: uma faixa de conteúdo e uma
- * fileira de atalhos por assunto, com "ver tudo" levando às páginas completas,
- * que continuam existindo e recebendo link direto.
+ * Nesta tela os dois aparecem como CONTEÚDO: uma faixa de Trilhas e uma
+ * fileira de atalhos por assunto, com "ver tudo" levando às páginas completas.
+ * Isso não muda por Trilhas ter voltado à barra de baixo (ver `doca.tsx`) —
+ * são coisas diferentes. A faixa aqui responde "o que eu estudo agora?" com
+ * uma escolha curta e curada; a barra de baixo é a porta para a vitrine
+ * inteira, para quem já sabe que quer garimpar. Explorar segue só aqui: ele é
+ * um recorte desta tela, não um destino.
  *
  * ══ AS ESTATÍSTICAS VIRARAM UMA LINHA (§6) ═══════════════════════════
  *
@@ -535,7 +538,7 @@ function CartaoDaProximaAcao({ acao }: { acao: ProximaAcao }) {
         <p className="truncate text-[11px] font-extrabold uppercase tracking-wide text-primary">
           {acao.contexto}
         </p>
-        <h2 className="line-clamp-2 font-heading text-lg font-extrabold leading-tight tracking-tight sm:text-2xl">
+        <h2 className="line-clamp-2 break-words font-heading text-lg font-extrabold leading-tight tracking-tight sm:text-2xl">
           {acao.titulo}
         </h2>
         {acao.detalhe ? (

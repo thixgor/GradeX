@@ -127,9 +127,32 @@ describe('calcularProgressoDaTrilha', () => {
   })
 
   it('marca como iniciada quem só assistiu um pedaço', () => {
-    const p = calcularProgressoDaTrilha(TRILHA, progresso([[id(1), { percentual: 12 }]]))
+    const p = calcularProgressoDaTrilha(
+      TRILHA,
+      progresso([[id(1), { percentual: 12, posicaoSegundos: 110 }]]),
+    )
     expect(p.iniciada).toBe(true)
     expect(p.concluidos).toBe(0)
+  })
+
+  it('não marca como iniciada por causa de alguns segundos acidentais', () => {
+    // O player grava ao sair da aula. Dois segundos de vídeo curto viram 1%, e
+    // 1% bastava para a Trilha inteira se dizer começada em "Suas Trilhas".
+    const p = calcularProgressoDaTrilha(
+      TRILHA,
+      progresso([[id(1), { percentual: 1, posicaoSegundos: 2 }]]),
+    )
+    expect(p.iniciada).toBe(false)
+  })
+
+  it('aula concluída sem posição conta como iniciada', () => {
+    // Conclusão manual (§34) e vídeo em iframe param em `posicaoSegundos: 0` —
+    // o corte por segundos não pode apagar uma conclusão real.
+    const p = calcularProgressoDaTrilha(
+      TRILHA,
+      progresso([[id(1), { concluida: true, posicaoSegundos: 0 }]]),
+    )
+    expect(p.iniciada).toBe(true)
   })
 
   it('não inventa barra em trilha sem aula obrigatória', () => {

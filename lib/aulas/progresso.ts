@@ -117,6 +117,31 @@ export function aplicarBatida(
 }
 
 /**
+ * A pessoa realmente COMEÇOU esta aula?
+ *
+ * Existe porque "tem registro de progresso" e "assistiu" não são a mesma
+ * coisa. O player grava a cada dez segundos, ao pausar e ao sair; abrir uma
+ * aula e deixar o vídeo rodar dois segundos enquanto se lê o título já produz
+ * um registro, e num vídeo curto esses dois segundos arredondam para 1%. Com o
+ * corte em `percentual > 0`, esse 1% bastava para a aula virar "continue de
+ * onde parou" na home e para a Trilha inteira passar a se dizer iniciada.
+ *
+ * O corte é o mesmo `SEGUNDOS_MINIMOS_PARA_RETOMAR` de `podeRetomar`: um só
+ * número decide onde a retomada começa a existir, e as duas perguntas
+ * ("entrou na lista?" e "dá para retomar num ponto?") não podem discordar.
+ *
+ * Aula concluída conta como começada mesmo com posição zero: é o caso da
+ * conclusão manual (§34) e o do vídeo em iframe, onde não há tempo para ler.
+ */
+export function comecouDeVerdade(
+  progresso: { posicaoSegundos?: number; concluida?: boolean } | null | undefined,
+): boolean {
+  if (!progresso) return false
+  if (progresso.concluida) return true
+  return (Number(progresso.posicaoSegundos) || 0) >= SEGUNDOS_MINIMOS_PARA_RETOMAR
+}
+
+/**
  * Vale oferecer "continuar de 18:42"?
  *
  * Falso no começo (não há o que retomar) e no fim (retomar cairia nos créditos

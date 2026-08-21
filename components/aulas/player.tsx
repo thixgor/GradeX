@@ -102,8 +102,11 @@ export function PlayerDaAula({
 
   useEffect(() => {
     if (ehIframe) {
-      // Sem posição para ler; registra que começou, para a aula aparecer em
-      // "Continue estudando" e o aluno reencontrá-la.
+      // Sem posição para ler; registra a passagem para a aula aparecer no
+      // HISTÓRICO e o aluno reencontrá-la. Não em "continue de onde parou":
+      // com posição sempre 0 não há ponto nenhum para retomar, e anunciar uma
+      // retomada que não existe é o que fazia a home oferecer "continuar" um
+      // vídeo que ninguém tinha visto (ver `lerEmAndamento`).
       salvar(0, duracaoConhecida)
       return
     }

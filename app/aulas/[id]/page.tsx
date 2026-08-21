@@ -6,6 +6,7 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import {
   ArrowLeft,
   ArrowRight,
+  Bookmark,
   BookOpen,
   Check,
   ChevronDown,
@@ -29,6 +30,7 @@ import { RESPIRO_DA_DOCA, RESPIRO_DO_TOPO } from '@/components/ensino/doca'
 import { BotaoDuo, Confete } from '@/components/ensino/duo'
 import { PlayerDaAula, type ControleDoPlayer } from '@/components/aulas/player'
 import { PainelDeAnotacoes } from '@/components/aulas/anotacoes-painel'
+import { useFavoritosDeAula } from '@/components/aulas/use-favoritos-aula'
 import {
   BarraDeProgresso,
   Cadeado,
@@ -157,6 +159,12 @@ function Conteudo() {
   const [celebrar, setCelebrar] = useState(false)
   const jaConcluidaAoAbrir = useRef(false)
   const semMovimento = useReducedMotion()
+
+  // A estante do aluno (§21). O mesmo hook e a mesma coleção da área antiga —
+  // favorito de aula já existia e já atravessa aparelhos; o que faltava era
+  // uma porta para ele na tela onde a vontade de salvar aparece.
+  const favoritos = useFavoritosDeAula()
+  const salva = favoritos.ehFavorito(aulaId)
 
   /** Dispara a comemoração uma vez, na transição para concluída. */
   const comemorar = useCallback(() => {
@@ -408,6 +416,18 @@ function Conteudo() {
                       {concluida ? 'Concluída' : 'Marcar como concluída'}
                     </BotaoDuo>
                   </motion.div>
+
+                  {/* Salvar é diferente de concluir: concluir é sobre o que já
+                      passou, salvar é sobre voltar aqui depois. Os dois lado a
+                      lado porque são as duas coisas que se faz com uma aula
+                      além de assistir — e a estante mora em "Você". */}
+                  <BotaoDuo
+                    onClick={() => favoritos.alternar(String(aula._id))}
+                    tom={salva ? 'ouro' : 'claro'}
+                  >
+                    <Bookmark className="h-4 w-4" fill={salva ? 'currentColor' : 'none'} />
+                    {salva ? 'Salva' : 'Salvar'}
+                  </BotaoDuo>
 
                   {(aula.botoesAcesso || []).map((botao) => (
                     <BotaoDuo
@@ -751,7 +771,7 @@ function SobreAula({ dados }: { dados: RespostaDaAula }) {
               <Link
                 key={trilha.slug}
                 href={`/aulas/trilhas/${trilha.slug}`}
-                className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-sm font-medium transition hover:border-primary/40 hover:text-primary"
+                className="inline-flex max-w-full items-center gap-2 break-words rounded-full border border-border bg-card px-3 py-1.5 text-sm font-medium transition hover:border-primary/40 hover:text-primary"
               >
                 <Route className="h-3.5 w-3.5 text-primary" />
                 {trilha.titulo}

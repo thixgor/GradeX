@@ -396,9 +396,13 @@ export function NoDoCaminhoBotao({
         )}
       </motion.div>
 
+      {/* `break-words`: o nó é deslocado lateralmente e tem largura máxima
+          curta, então um título com uma palavra longa e sem espaço (um nome
+          de fármaco, uma sigla composta) não teria onde quebrar e vazaria
+          pela borda da tela no celular. */}
       <p
         className={cn(
-          'mt-2 max-w-[10.5rem] text-center text-[13px] font-bold leading-tight',
+          'mt-2 max-w-[10.5rem] break-words text-center text-[13px] font-bold leading-tight',
           bloqueado ? 'text-muted-foreground/70' : 'text-foreground',
         )}
       >

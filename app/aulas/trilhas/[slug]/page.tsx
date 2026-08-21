@@ -7,6 +7,7 @@ import { motion, useReducedMotion } from 'framer-motion'
 import {
   Award,
   Check,
+  ChevronDown,
   Clock,
   Layers,
   Pencil,
@@ -145,6 +146,29 @@ function Conteudo() {
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState('')
   const [celebrar, setCelebrar] = useState(false)
+
+  /**
+   * Quais etapas o aluno abriu ou fechou À MÃO.
+   *
+   * Guarda só a exceção, nunca o estado completo: o padrão é etapa CONCLUÍDA
+   * nasce fechada e etapa em aberto nasce aberta, e é esse padrão que faz uma
+   * Trilha inteira concluída caber numa tela em vez de virar uma parede de
+   * dezenas de nós que a pessoa precisa rolar toda vez que volta.
+   *
+   * Guardar o estado completo obrigaria a recalculá-lo quando os dados
+   * chegassem (a conclusão de cada etapa só se sabe depois da resposta), e a
+   * lista piscaria de aberta para fechada na frente de quem está olhando.
+   */
+  const [alternadas, setAlternadas] = useState<Record<string, boolean>>({})
+
+  const estaAberta = useCallback(
+    (etapaId: string, completa: boolean) => alternadas[etapaId] ?? !completa,
+    [alternadas],
+  )
+
+  const alternarEtapa = useCallback((etapaId: string, completa: boolean) => {
+    setAlternadas((atual) => ({ ...atual, [etapaId]: !(atual[etapaId] ?? !completa) }))
+  }, [])
 
   useEffect(() => {
     if (!slug) return
@@ -483,6 +507,9 @@ function Conteudo() {
           ) : (
             caminhoPorEtapa.map(({ etapa, nos }, indice) => {
               const p = progresso.etapas.find((e) => e.etapaId === etapa.id)
+              const completa = p?.completa === true
+              const aberta = estaAberta(etapa.id, completa)
+
               return (
                 <div key={etapa.id}>
                   <FaixaDaEtapa
@@ -491,9 +518,11 @@ function Conteudo() {
                     descricao={etapa.descricao}
                     concluidos={p?.concluidos ?? 0}
                     total={p?.total ?? nos.length}
-                    completa={p?.completa === true}
+                    completa={completa}
+                    aberta={aberta}
+                    aoAlternar={() => alternarEtapa(etapa.id, completa)}
                   />
-                  <CaminhoDeNos nos={nos} />
+                  {aberta ? <CaminhoDeNos nos={nos} /> : null}
                 </div>
               )
             })
@@ -548,12 +577,25 @@ function Pilula({ children }: { children: React.ReactNode }) {
 }
 
 /**
- * A faixa que abre cada etapa.
+ * A faixa que abre cada etapa — e o controle que a abre e fecha.
  *
  * Ela é a única coisa entre dois trechos de caminho, e por isso precisa ser
  * larga e inequívoca: o aluno tem de perceber que mudou de assunto sem parar
  * para ler. Etapa concluída fica sólida com troféu; a em andamento, com o
  * contador.
+ *
+ * ══ POR QUE ELA VIROU UM BOTÃO ═════════════════════════════════════════
+ *
+ * O caminho serpenteante desenha um nó grande por aula, e isso é ótimo para a
+ * etapa em que a pessoa está — e péssimo para as cinco que ela já terminou.
+ * Numa Trilha concluída, a tela inteira virava um corredor de troféus que só
+ * existia para ser rolado: o resumo de cada etapa ("8 de 8") já dizia tudo o
+ * que havia para saber, e ainda assim era preciso passar pelos oito nós para
+ * chegar na etapa seguinte.
+ *
+ * Fechar é o padrão da etapa CONCLUÍDA, nunca da etapa em aberto: esconder o
+ * que está por fazer transformaria o caminho num menu, e o caminho é a única
+ * coisa que esta tela tem de mostrar (§7).
  */
 function FaixaDaEtapa({
   numero,
@@ -562,6 +604,8 @@ function FaixaDaEtapa({
   concluidos,
   total,
   completa,
+  aberta,
+  aoAlternar,
 }: {
   numero: number
   titulo: string
@@ -569,17 +613,23 @@ function FaixaDaEtapa({
   concluidos: number
   total: number
   completa: boolean
+  aberta: boolean
+  aoAlternar: () => void
 }) {
   const semMovimento = useReducedMotion()
 
   return (
-    <motion.div
+    <motion.button
+      type="button"
+      onClick={aoAlternar}
+      aria-expanded={aberta}
       initial={semMovimento ? false : { opacity: 0, y: 16 }}
       whileInView={semMovimento ? {} : { opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-50px' }}
       transition={{ type: 'spring', stiffness: 320, damping: 28 }}
       className={cn(
-        'mt-8 flex items-center gap-3 rounded-2xl px-4 py-3 shadow-[0_4px_0_rgb(0_0_0/0.14)] first:mt-0',
+        'mt-8 flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left shadow-[0_4px_0_rgb(0_0_0/0.14)] first:mt-0',
+        'transition-[transform,box-shadow] duration-100 active:translate-y-[3px] active:shadow-none',
         completa ? 'bg-primary text-primary-foreground' : 'bg-card ring-1 ring-border/70',
       )}
     >
@@ -611,6 +661,18 @@ function FaixaDaEtapa({
           {concluidos}/{total}
         </span>
       ) : null}
-    </motion.div>
+
+      {/* A seta é o que diz que a faixa é clicável. Ela gira em vez de trocar
+          de ícone: o giro liga o estado novo ao anterior, e trocar ▸ por ▾
+          deixaria a mudança parecer outro elemento. */}
+      <ChevronDown
+        className={cn(
+          'h-5 w-5 flex-none transition-transform duration-200',
+          completa ? 'opacity-80' : 'text-muted-foreground',
+          !aberta && '-rotate-90',
+        )}
+        strokeWidth={2.5}
+      />
+    </motion.button>
   )
 }

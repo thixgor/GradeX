@@ -107,6 +107,11 @@ export interface TrilhaNaTela {
   etapas: number
   minutos: number
   destaque?: boolean
+  /** O nó da taxonomia que descreve a Trilha (ver lib/ensino/agrupamento-trilhas.ts). */
+  assunto?: { id: string; nome: string; nivel: string; explicito: boolean } | null
+  /** Marcadores do aluno, não do catálogo. */
+  favorita?: boolean
+  oculta?: boolean
   progresso?: { percentual: number; iniciada: boolean; concluida: boolean; concluidos: number; total: number } | null
   acesso?: AcessoNaTela
 }
@@ -185,18 +190,31 @@ export function Trilho({ children, className }: { children: React.ReactNode; cla
 /**
  * A grade de descoberta.
  *
- * O `[&>*]:w-full` não é preguiça: o cartão nasce com largura FIXA porque o
- * uso mais comum dele é o trilho horizontal, onde esticar não faz sentido. Era
- * o cartão que carregava um `sm:w-full` — e como o trilho é um container flex,
- * bastava a faixa ter um item só para ele ocupar a tela inteira. A largura de
- * um filho é decisão de quem o dispõe, e é aqui que ela vive.
+ * O `[&>*]:w-full` é a rede de segurança, não o mecanismo: o cartão nasce com
+ * largura FIXA porque o uso mais comum dele é o trilho horizontal, onde
+ * esticar não faz sentido. Quem for posto aqui deve declarar `formato="largo"`
+ * — é isso que ajusta também o `sizes` da capa, e a classe sozinha não faria.
+ * Ela fica para os filhos que não têm formato próprio.
+ *
+ * ══ POR QUE TAMBÉM `[&>*]:min-w-0` ═════════════════════════════════════
+ *
+ * `w-full` sozinho não segura a coluna. Item de grid nasce com
+ * `min-width: auto`, que é o tamanho MIN-CONTENT do conteúdo — e o
+ * min-content de um título com uma palavra longa e sem espaço (um termo médico
+ * composto, um nome de fármaco) é a palavra inteira. A coluna estica para
+ * caber a palavra, o cartão passa da largura da tela e o texto sai pela
+ * direita; num celular, com o `overflow-x` cortado mais acima, o sintoma é
+ * exatamente "o texto sumiu na borda".
+ *
+ * `min-w-0` devolve à coluna o direito de ser menor que o conteúdo — e aí o
+ * `break-words` dos títulos tem onde agir.
  */
 export function Grade({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
     <div
       className={cn(
         'grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4',
-        '[&>*]:w-full',
+        '[&>*]:w-full [&>*]:min-w-0',
         className,
       )}
     >
@@ -296,12 +314,39 @@ export function AnelDeProgresso({
 /* =================== CAPAS =================== */
 
 /**
- * O cartão de aula tem 15,5rem (248 px) no trilho e no máximo ~1/4 da largura
- * útil na Grade; no celular ele ocupa quase a tela toda. Esta é a resposta que
- * o otimizador precisa para escolher a variante — sem ela ele assume 100vw e
- * gera a maior imagem possível para um cartão que cabe na palma da mão.
+ * Quanto a capa de uma aula realmente mede, por layout.
+ *
+ * ══ POR QUE SÃO DUAS, E NÃO UMA ════════════════════════════════════════
+ *
+ * Era uma só — `(max-width: 640px) 92vw, 320px` — para os dois lugares onde o
+ * cartão aparece. Só que eles têm larguras diferentes, e medidas no navegador
+ * a diferença é grande:
+ *
+ *              trilho (home, "Você")      grade (explorar)
+ *   390px          248 px                     358 px
+ *   1280px         248 px                     233 px
+ *
+ * O cartão do trilho tem largura FIXA (15,5rem) em toda tela; o da grade
+ * acompanha a coluna, de 1 a 4 colunas conforme o breakpoint. Com um `sizes`
+ * só, o otimizador acertava um caso e errava o outro em quase 45%: no celular
+ * a home baixava uma imagem de 359 px para desenhá-la num quadro de 248, e no
+ * desktop o explorar baixava 320 px para um quadro de 233.
+ *
+ * `sizes` não muda o tamanho do QUADRO — isso é o CSS que faz. Ele diz ao
+ * otimizador qual variante gerar. Errar aqui não deforma nada: gasta banda e
+ * deixa a mesma capa nítida numa tela e reamostrada na outra, que é a
+ * diferença que se vê ao pular da home para o explorar.
  */
-const LARGURA_DA_CAPA = '(max-width: 640px) 92vw, 320px'
+const CAPA_NO_TRILHO = '248px'
+
+/**
+ * A grade é `1 → 2 (sm) → 3 (lg) → 4 (xl)` colunas dentro de um container de
+ * no máximo 72rem, com `gap-3` e `px-4`. As porcentagens abaixo são a largura
+ * de uma coluna em cada faixa, arredondadas para cima — melhor pedir um pouco
+ * a mais que servir uma imagem esticada.
+ */
+const CAPA_NA_GRADE =
+  '(max-width: 640px) 92vw, (max-width: 1024px) 46vw, (max-width: 1280px) 31vw, 23vw'
 
 /**
  * A capa de uma aula ou Trilha.
@@ -329,14 +374,20 @@ export function Capa({
   titulo,
   className,
   aspecto = 'video',
-  sizes = LARGURA_DA_CAPA,
+  sizes = CAPA_NO_TRILHO,
   prioridade = false,
 }: {
   capa?: { tipo?: string; imagem?: string; cor?: string; titulo?: string } | null
   titulo: string
   className?: string
   aspecto?: 'video' | 'alto'
-  /** Sobrescreve a largura estimada quando o cartão não tem o tamanho padrão. */
+  /**
+   * A largura REAL que este quadro terá, por breakpoint.
+   *
+   * O padrão é a do trilho, que é o uso mais comum e o único com largura fixa.
+   * Todo layout que não seja esse precisa passar a sua — ver `CAPA_NA_GRADE` e
+   * o comentário acima.
+   */
   sizes?: string
   /** Acima da dobra (a capa da próxima ação, por exemplo): entra sem lazy. */
   prioridade?: boolean
@@ -351,7 +402,7 @@ export function Capa({
         cor ? 'text-white' : 'bg-gradient-to-br from-primary/15 via-primary/5 to-transparent',
       )}
     >
-      <span className="line-clamp-3 font-heading text-[13px] font-bold leading-snug opacity-90">
+      <span className="line-clamp-3 break-words font-heading text-[13px] font-bold leading-snug opacity-90">
         {capa?.titulo || titulo}
       </span>
     </div>
@@ -472,9 +523,19 @@ export function SelosDeRecurso({
 export function CartaoDeAula({
   aula,
   className,
+  formato = 'cartao',
 }: {
   aula: AulaNaTela
   className?: string
+  /**
+   * Onde este cartão está — e, com isso, quanto ele mede.
+   *
+   * Mesmo vocabulário do `CartaoDeTrilha`: `cartao` é o trilho horizontal
+   * (largura fixa) e `largo` é a grade (largura da coluna). Não é só estilo:
+   * é o que decide o `sizes` da capa, e passar o formato errado faz o
+   * navegador baixar uma imagem de tamanho errado — ver `CAPA_NO_TRILHO`.
+   */
+  formato?: 'cartao' | 'largo'
 }) {
   const { trilha } = useEnsino()
   const bloqueada = aula.acesso ? !aula.acesso.liberado : false
@@ -486,12 +547,17 @@ export function CartaoDeAula({
     <Link
       href={href}
       className={cn(
-        'group flex w-[15.5rem] flex-none snap-start flex-col gap-2 transition-transform duration-150 hover:-translate-y-0.5 active:translate-y-[2px]',
+        'group flex flex-none snap-start flex-col gap-2 transition-transform duration-150 hover:-translate-y-0.5 active:translate-y-[2px]',
+        formato === 'cartao' ? 'w-[15.5rem]' : 'w-full',
         className,
       )}
     >
       <div className="relative">
-        <Capa capa={aula.capa} titulo={aula.titulo} />
+        <Capa
+          capa={aula.capa}
+          titulo={aula.titulo}
+          sizes={formato === 'cartao' ? CAPA_NO_TRILHO : CAPA_NA_GRADE}
+        />
 
         {bloqueada ? (
           <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-background/70 backdrop-blur-[2px]">
@@ -522,7 +588,7 @@ export function CartaoDeAula({
       </div>
 
       <div className="min-w-0">
-        <h3 className="line-clamp-2 text-sm font-bold leading-snug transition group-hover:text-primary">
+        <h3 className="line-clamp-2 break-words text-sm font-bold leading-snug transition group-hover:text-primary">
           {aula.titulo}
         </h3>
         <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
@@ -630,10 +696,21 @@ export function CartaoDeTrilha({
   trilha,
   className,
   formato = 'cartao',
+  acoes,
 }: {
   trilha: TrilhaNaTela
   className?: string
   formato?: 'cartao' | 'largo'
+  /**
+   * Controles do aluno sobre o cartão (favoritar, ocultar).
+   *
+   * Entram como IRMÃOS do link, e não dentro dele: um `<button>` dentro de um
+   * `<a>` é HTML inválido, o clique no botão dispararia a navegação junto, e o
+   * teclado passaria a ter dois destinos onde deveria haver um. Por isso o
+   * cartão inteiro virou um invólucro posicionado — o link continua sendo o
+   * cartão, e as ações flutuam por cima dele.
+   */
+  acoes?: React.ReactNode
 }) {
   const progresso = trilha.progresso
   const iniciada = progresso?.iniciada === true
@@ -648,66 +725,112 @@ export function CartaoDeTrilha({
     .join(' · ')
 
   return (
-    <Link
-      href={`/aulas/trilhas/${trilha.slug}`}
+    <div
       className={cn(
-        'group relative flex flex-none snap-start flex-col overflow-hidden rounded-3xl bg-card ring-1 ring-border/70',
-        // A mesma gramática do botão: a peça tem espessura, sobe no hover e
-        // afunda no toque. É o que faz um cartão parecer clicável antes de
-        // qualquer instrução.
-        'shadow-[0_4px_0_rgb(0_0_0/0.13)] transition-[transform,box-shadow] duration-150',
-        'hover:-translate-y-0.5 hover:shadow-[0_6px_0_rgb(0_0_0/0.15)] hover:ring-primary/40',
-        'active:translate-y-[3px] active:shadow-none',
+        'relative flex-none snap-start',
         formato === 'cartao' ? 'w-[17rem]' : 'w-full',
         className,
       )}
     >
-      <div className="relative">
-        <Capa capa={trilha.capa} titulo={trilha.titulo} className="rounded-none" />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+      {acoes ? <div className="absolute right-2 top-2 z-20 flex gap-1.5">{acoes}</div> : null}
 
-        <div className="absolute inset-x-3 bottom-2.5 flex items-end justify-between gap-2">
-          <div className="flex flex-wrap items-center gap-1.5">
-            {trilha.nivel && ROTULO_DO_NIVEL[trilha.nivel] ? (
-              <span className="rounded-full bg-white/15 px-2 py-0.5 text-[11px] font-semibold text-white backdrop-blur-sm">
-                {ROTULO_DO_NIVEL[trilha.nivel]}
-              </span>
-            ) : null}
-            {trilha.destaque ? (
-              <span className="rounded-full bg-accent px-2 py-0.5 text-[11px] font-bold text-accent-foreground">
-                Comece por aqui
-              </span>
-            ) : null}
-            {bloqueada ? (
-              <span className="inline-flex items-center gap-1 rounded-full bg-black/60 px-2 py-0.5 text-[11px] font-semibold text-white">
-                <Lock className="h-3 w-3" /> Bloqueada
-              </span>
+      <Link
+        href={`/aulas/trilhas/${trilha.slug}`}
+        className={cn(
+          'group relative flex h-full w-full flex-col overflow-hidden rounded-3xl bg-card ring-1 ring-border/70',
+          // A mesma gramática do botão: a peça tem espessura, sobe no hover e
+          // afunda no toque. É o que faz um cartão parecer clicável antes de
+          // qualquer instrução.
+          'shadow-[0_4px_0_rgb(0_0_0/0.13)] transition-[transform,box-shadow] duration-150',
+          'hover:-translate-y-0.5 hover:shadow-[0_6px_0_rgb(0_0_0/0.15)] hover:ring-primary/40',
+          'active:translate-y-[3px] active:shadow-none',
+        )}
+      >
+        <div className="relative">
+          <Capa capa={trilha.capa} titulo={trilha.titulo} className="rounded-none" />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+
+          <div className="absolute inset-x-3 bottom-2.5 flex items-end justify-between gap-2">
+            <div className="flex min-w-0 flex-wrap items-center gap-1.5">
+              {trilha.nivel && ROTULO_DO_NIVEL[trilha.nivel] ? (
+                <span className="max-w-full truncate rounded-full bg-white/15 px-2 py-0.5 text-[11px] font-semibold text-white backdrop-blur-sm">
+                  {ROTULO_DO_NIVEL[trilha.nivel]}
+                </span>
+              ) : null}
+              {trilha.destaque ? (
+                <span className="max-w-full truncate rounded-full bg-accent px-2 py-0.5 text-[11px] font-bold text-accent-foreground">
+                  Comece por aqui
+                </span>
+              ) : null}
+              {bloqueada ? (
+                <span className="inline-flex max-w-full items-center gap-1 truncate rounded-full bg-black/60 px-2 py-0.5 text-[11px] font-semibold text-white">
+                  <Lock className="h-3 w-3 flex-none" /> Bloqueada
+                </span>
+              ) : null}
+            </div>
+
+            {iniciada && progresso ? (
+              <AnelDeProgresso percentual={progresso.percentual} tamanho={40} />
             ) : null}
           </div>
-
-          {iniciada && progresso ? (
-            <AnelDeProgresso percentual={progresso.percentual} tamanho={40} />
-          ) : null}
         </div>
-      </div>
 
-      <div className="flex flex-1 flex-col gap-1 p-4">
-        <h3 className="font-heading text-base font-extrabold leading-snug tracking-tight transition group-hover:text-primary">
-          {trilha.titulo}
-        </h3>
-        {trilha.subtitulo ? (
-          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-            {trilha.subtitulo}
+        <div className="flex min-w-0 flex-1 flex-col gap-1 p-4">
+          <h3 className="break-words font-heading text-base font-extrabold leading-snug tracking-tight transition group-hover:text-primary">
+            {trilha.titulo}
+          </h3>
+          {trilha.subtitulo ? (
+            <p className="line-clamp-2 break-words text-sm leading-snug text-muted-foreground">
+              {trilha.subtitulo}
+            </p>
+          ) : null}
+
+          <p className="mt-auto truncate pt-2 text-xs font-medium text-muted-foreground">
+            {iniciada && progresso
+              ? `${progresso.concluidos} de ${progresso.total} aulas · continue`
+              : meta}
           </p>
-        ) : null}
+        </div>
+      </Link>
+    </div>
+  )
+}
 
-        <p className="mt-auto pt-2 text-xs font-medium text-muted-foreground">
-          {iniciada && progresso
-            ? `${progresso.concluidos} de ${progresso.total} aulas · continue`
-            : meta}
-        </p>
-      </div>
-    </Link>
+/**
+ * Um controle do aluno sobre um cartão — favoritar, ocultar.
+ *
+ * Vidro escuro e 36px de alvo: ele fica SOBRE a capa, onde a imagem pode ser
+ * clara ou escura, e um ícone sem fundo próprio desapareceria na metade das
+ * capas do acervo.
+ */
+export function AcaoDeCartao({
+  aoClicar,
+  titulo,
+  ativo,
+  children,
+}: {
+  aoClicar: () => void
+  titulo: string
+  ativo?: boolean
+  children: React.ReactNode
+}) {
+  return (
+    <button
+      type="button"
+      onClick={aoClicar}
+      title={titulo}
+      aria-label={titulo}
+      aria-pressed={ativo}
+      className={cn(
+        'inline-flex h-9 w-9 items-center justify-center rounded-full backdrop-blur-sm transition',
+        'shadow-[0_2px_0_rgb(0_0_0/0.2)] active:translate-y-[2px] active:shadow-none',
+        ativo
+          ? 'bg-accent text-accent-foreground'
+          : 'bg-black/55 text-white hover:bg-black/75',
+      )}
+    >
+      {children}
+    </button>
   )
 }
 
@@ -749,9 +872,14 @@ export function EstadoVazio({
       <span className="flex h-16 w-16 items-center justify-center rounded-full bg-card ring-1 ring-border">
         <Icone className="h-8 w-8 text-primary/60" strokeWidth={2} />
       </span>
-      <p className="mt-4 font-heading text-lg font-extrabold tracking-tight">{titulo}</p>
+      {/* `break-words` nos dois: o estado vazio costuma interpolar conteúdo do
+          acervo ("Nada encontrado para «...»"), e um termo de busca longo e
+          sem espaço não teria onde quebrar. */}
+      <p className="mt-4 max-w-full break-words font-heading text-lg font-extrabold tracking-tight">
+        {titulo}
+      </p>
       {descricao ? (
-        <p className="mt-1 max-w-md text-sm text-muted-foreground">{descricao}</p>
+        <p className="mt-1 max-w-md break-words text-sm text-muted-foreground">{descricao}</p>
       ) : null}
       {acaoLabel && acaoHref ? (
         <Link
@@ -811,14 +939,25 @@ export function Migalha({
       className={cn('flex flex-wrap items-center gap-1 text-xs text-muted-foreground', className)}
     >
       {itens.map((item, i) => (
-        <span key={item._id || item.nome} className="flex items-center gap-1">
-          {i > 0 ? <ChevronRight className="h-3 w-3 opacity-50" /> : null}
+        <span key={item._id || item.nome} className="flex min-w-0 items-center gap-1">
+          {i > 0 ? <ChevronRight className="h-3 w-3 flex-none opacity-50" /> : null}
+          {/* `overflow-wrap: anywhere`, e não `break-words`.
+              O nome do nó vem do acervo e pode ser uma palavra longa sem
+              espaço; `flex-wrap` quebra entre itens, nunca dentro de um. A
+              diferença entre os dois: `break-words` deixa a palavra quebrar
+              na hora de desenhar, mas NÃO reduz o tamanho min-content — o
+              item de flex continua reservando a palavra inteira e atravessa a
+              borda da tela do mesmo jeito. `anywhere` reduz, e só age quando
+              a palavra realmente não cabe. */}
           {item.href ? (
-            <Link href={item.href} className="transition hover:text-primary">
+            <Link
+              href={item.href}
+              className="[overflow-wrap:anywhere] transition hover:text-primary"
+            >
               {item.nome}
             </Link>
           ) : (
-            <span>{item.nome}</span>
+            <span className="[overflow-wrap:anywhere]">{item.nome}</span>
           )}
         </span>
       ))}
