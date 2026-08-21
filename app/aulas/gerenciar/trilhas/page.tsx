@@ -4,7 +4,17 @@ import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { AnimatePresence, motion } from 'framer-motion'
-import { AlertTriangle, Eye, Layers, Loader2, Plus, Route, ShieldCheck, Trash2 } from 'lucide-react'
+import {
+  AlertTriangle,
+  Eye,
+  EyeOff,
+  Layers,
+  Loader2,
+  Plus,
+  Route,
+  ShieldCheck,
+  Trash2,
+} from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
 import { BotaoDuo } from '@/components/ensino/duo'
@@ -36,6 +46,15 @@ import { cn } from '@/lib/utils'
  * para limpar, só o documento da Trilha e o estado de quem a tinha começado.
  * A seleção é sobre TODAS as Trilhas carregadas — rascunho e publicada juntas
  * —, porque a tela já traz a lista inteira de uma vez, sem paginação.
+ *
+ * PUBLICAR/DESPUBLICAR EM MASSA
+ *
+ * A mesma barra de seleção também publica e despublica em lote — "Selecionar
+ * todas" + "Publicar" é o caminho para pôr o acervo inteiro no ar de uma vez.
+ * O servidor ainda recusa publicar uma Trilha sem título ou sem nenhuma aula
+ * (a mesma regra do botão individual, em `validarPublicacao`); numa seleção
+ * grande e mista, o aviso diz quantas entraram e lista quais ficaram de fora,
+ * em vez de aplicar a ação silenciosamente só nas prontas.
  */
 
 interface TrilhaNaLista {
@@ -71,6 +90,7 @@ function Conteudo() {
   const [marcadas, setMarcadas] = useState<Set<string>>(new Set())
   const [confirmandoExclusao, setConfirmandoExclusao] = useState(false)
   const [excluindo, setExcluindo] = useState(false)
+  const [aplicando, setAplicando] = useState<'publicar' | 'despublicar' | ''>('')
   const [aviso, setAviso] = useState('')
 
   // Mesmo mecanismo do Catálogo (§ ver hooks/use-publica-altura.ts): sem
@@ -134,6 +154,47 @@ function Conteudo() {
       setAviso(e?.message || 'Não foi possível excluir.')
     } finally {
       setExcluindo(false)
+    }
+  }
+
+  /**
+   * Publica ou despublica tudo que está marcado — inclusive "todas as
+   * Trilhas", via o checkbox do topo (§ ver comentário no cabeçalho do
+   * arquivo). O servidor recusa publicar uma Trilha sem título ou sem
+   * nenhuma aula (`validarPublicacao`); a seleção pode ter uma mistura de
+   * prontas e vazias, então o aviso separa quantas entraram de quais
+   * ficaram de fora, em vez de um "concluído" que esconde a diferença.
+   */
+  async function aplicarEmLote(acao: 'publicar' | 'despublicar') {
+    const ids = Array.from(marcadas)
+    if (ids.length === 0) return
+    setAplicando(acao)
+    setAviso('')
+    try {
+      const resposta = await fetch('/api/ensino/trilhas/lote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ acao, ids }),
+      })
+      const d = await resposta.json().catch(() => ({}))
+      if (!resposta.ok) throw new Error(d.error || 'Não foi possível aplicar a ação.')
+
+      setMarcadas(new Set())
+      const base =
+        acao === 'publicar'
+          ? `${d.afetadas} ${d.afetadas === 1 ? 'Trilha publicada' : 'Trilhas publicadas'}.`
+          : `${d.afetadas} ${d.afetadas === 1 ? 'Trilha voltou' : 'Trilhas voltaram'} para rascunho.`
+      const ignoradas: string[] = Array.isArray(d.ignoradas) ? d.ignoradas : []
+      setAviso(
+        ignoradas.length > 0
+          ? `${base} ${ignoradas.length} ${ignoradas.length === 1 ? 'ficou' : 'ficaram'} de fora por não ter nenhuma aula: ${ignoradas.join(', ')}.`
+          : base,
+      )
+      carregar()
+    } catch (e: any) {
+      setAviso(e?.message || 'Não foi possível aplicar a ação.')
+    } finally {
+      setAplicando('')
     }
   }
 
@@ -283,11 +344,40 @@ function Conteudo() {
                 limpar
               </button>
 
-              <div className="ml-auto">
+              <div className="ml-auto flex flex-wrap items-center gap-2">
+                <BotaoDuo
+                  tom="claro"
+                  tamanho="pequeno"
+                  onClick={() => aplicarEmLote('publicar')}
+                  disabled={Boolean(aplicando) || excluindo}
+                >
+                  {aplicando === 'publicar' ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                  Publicar
+                </BotaoDuo>
+
+                <BotaoDuo
+                  tom="claro"
+                  tamanho="pequeno"
+                  onClick={() => aplicarEmLote('despublicar')}
+                  disabled={Boolean(aplicando) || excluindo}
+                >
+                  {aplicando === 'despublicar' ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <EyeOff className="h-4 w-4" />
+                  )}
+                  Despublicar
+                </BotaoDuo>
+
                 <BotaoDuo
                   tom="perigo"
                   tamanho="pequeno"
                   onClick={() => setConfirmandoExclusao(true)}
+                  disabled={Boolean(aplicando)}
                 >
                   <Trash2 className="h-4 w-4" /> Excluir
                 </BotaoDuo>
