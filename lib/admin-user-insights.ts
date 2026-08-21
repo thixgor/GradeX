@@ -178,8 +178,17 @@ export function buildPlusSubscription(
   if (!hasTier && !hasHistory) return null
 
   const planKey = user.premiumPlanType ? String(user.premiumPlanType) : null
-  const expiresAt = toDate(user.premiumExpiresAt)
+  let expiresAt = toDate(user.premiumExpiresAt)
   const startedAt = toDate(user.premiumActivatedAt)
+
+  // O cargo já caiu (rebaixamento por vencimento) mas o registro ainda carrega
+  // `premiumActivatedAt`/`premiumPrice` de quando era Plus+, sem
+  // `premiumExpiresAt`. Sem esse ajuste, "sem data" seria lido como vitalício
+  // e o admin veria "Plus+ Vitalício" numa conta que já é Gratuito/Trial —
+  // exatamente o bug de quem comprou um ciclo (ex.: mensal) uma vez só.
+  if (!hasTier && !expiresAt) {
+    expiresAt = startedAt || now
+  }
 
   return buildSubscription({
     product: 'plus',

@@ -89,6 +89,8 @@ export async function GET(request: NextRequest) {
             accountType: 'gratuito' as AccountType,
             premiumPlanType: undefined as any,
             premiumExpiresAt: undefined as any,
+            premiumActivatedAt: undefined as any,
+            premiumPrice: undefined as any,
             mercadoPagoPreapprovalId: undefined as any,
           },
         }
@@ -151,6 +153,8 @@ export async function GET(request: NextRequest) {
             accountType: 'gratuito' as AccountType,
             premiumPlanType: undefined as any,
             premiumExpiresAt: undefined as any,
+            premiumActivatedAt: undefined as any,
+            premiumPrice: undefined as any,
             mercadoPagoPreapprovalId: undefined as any,
           },
         }

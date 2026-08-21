@@ -114,6 +114,25 @@ describe('buildPlusSubscription', () => {
     expect(info!.autoRenew).toBe(true)
   })
 
+  it('não mostra vitalício para conta já rebaixada que só teve um ciclo pago', () => {
+    // Cargo já caiu para gratuito (cron rebaixou), mas o registro ainda
+    // carrega `premiumActivatedAt`/`premiumPrice` de quando comprou um Mensal
+    // — sem `premiumPlanType`/`premiumExpiresAt`, que o cron já limpou.
+    const info = buildPlusSubscription(
+      {
+        accountType: 'gratuito',
+        premiumActivatedAt: daysFromNow(-90),
+        premiumPrice: 76.98,
+      },
+      NOW,
+    )
+
+    expect(info).not.toBeNull()
+    expect(info!.lifetime).toBe(false)
+    expect(info!.active).toBe(false)
+    expect(info!.expired).toBe(true)
+  })
+
   it('usa o rótulo do plano personalizado quando o admin criou um', () => {
     const info = buildPlusSubscription(
       { accountType: 'plus', premiumPlanType: 'black_friday', premiumExpiresAt: daysFromNow(20) },
