@@ -26,7 +26,7 @@ import {
   History,
 } from 'lucide-react'
 import { BancoImportacaoResult } from '@/lib/types/banco-questoes'
-import { lerArquivoDeImportacao, resumir } from '@/lib/banco/importar-questoes'
+import { dividirEmLotes, lerArquivoDeImportacao, resumir } from '@/lib/banco/importar-questoes'
 
 /**
  * Importar questões em massa.
@@ -81,6 +81,7 @@ export default function AdminImportarPage() {
   const [conferindo, setConferindo] = useState(false)
   const [arrastando, setArrastando] = useState(false)
   const [resultado, setResultado] = useState<BancoImportacaoResult | null>(null)
+  const [progresso, setProgresso] = useState<{ atual: number; total: number } | null>(null)
   const entradaDeArquivo = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -115,49 +116,118 @@ export default function AdminImportarPage() {
   const podeImportar = !!leitura && leitura.questoes.length > 0
   const comErro = !!leitura && leitura.erros.length > 0
 
+  // Bem abaixo do teto fixo de 4,5 MB que a Vercel impõe ao corpo de uma
+  // função serverless (nenhuma configuração do projeto aumenta isso — foi o
+  // que gerou o 413 "Request Entity Too Large" num arquivo de 1500 questões).
+  // Um arquivo menor que isto sai numa requisição só, do jeito que sempre saiu.
+  const LIMITE_DE_BYTES_POR_LOTE = 1_500_000
+
   async function enviar(validar: boolean) {
     if (!conteudo.trim()) return
 
     if (validar) setConferindo(true)
     else setImportando(true)
     setResultado(null)
+    setProgresso(null)
+
+    // Dividido nas fronteiras de questão (nunca no meio de uma) e mandado em
+    // requisições sucessivas — ver dividirEmLotes em lib/banco/importar-questoes.ts.
+    const lotes = dividirEmLotes(conteudo, { maxBytesPorLote: LIMITE_DE_BYTES_POR_LOTE })
+
+    let loteImportacaoId: string | undefined
+    const acumulado: BancoImportacaoResult = {
+      sucesso: false,
+      validacao: validar,
+      totalImportadas: 0,
+      totalAImportar: 0,
+      totalIgnoradas: 0,
+      erros: [],
+      avisos: [],
+      questoesImportadas: [],
+      hierarquiaCriada: { modulos: [], topicos: [], subtopicos: [] },
+    }
 
     try {
-      const res = await fetch('/api/admin/banco/importar', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ conteudo, validar }),
-      })
+      for (let i = 0; i < lotes.length; i++) {
+        if (lotes.length > 1) setProgresso({ atual: i + 1, total: lotes.length })
 
-      const data = await res.json()
+        let res: Response
+        try {
+          res = await fetch('/api/admin/banco/importar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ conteudo: lotes[i], validar, loteImportacaoId }),
+          })
+        } catch {
+          acumulado.erros.push({
+            linha: 0,
+            mensagem:
+              lotes.length > 1
+                ? `Falha de rede no pedaço ${i + 1} de ${lotes.length} — o resto não foi enviado.`
+                : 'Falha de rede ao enviar o arquivo.',
+          })
+          break
+        }
 
-      if (!res.ok) {
-        setResultado({
-          sucesso: false,
-          totalImportadas: 0,
-          erros: [{ linha: 0, mensagem: data.error || 'Erro ao processar a importação' }],
-          questoesImportadas: [],
-        })
-        return
+        const data = await res.json().catch(() => null)
+
+        if (!res.ok || !data) {
+          acumulado.erros.push({
+            linha: 0,
+            mensagem:
+              res.status === 413
+                ? 'Este pedaço do arquivo ainda ficou grande demais para o servidor aceitar.'
+                : data?.error ||
+                  (lotes.length > 1
+                    ? `Erro ao processar o pedaço ${i + 1} de ${lotes.length}`
+                    : 'Erro ao processar a importação'),
+          })
+          continue
+        }
+
+        if (data.loteImportacaoId) loteImportacaoId = data.loteImportacaoId
+
+        acumulado.totalImportadas += data.totalImportadas || 0
+        acumulado.totalAImportar = (acumulado.totalAImportar || 0) + (data.totalAImportar || 0)
+        acumulado.totalIgnoradas = (acumulado.totalIgnoradas || 0) + (data.totalIgnoradas || 0)
+        acumulado.erros.push(...(data.erros || []))
+        acumulado.avisos!.push(...(data.avisos || []))
+        // A amostra é só para mostrar algo do que entrou — 50 questões já bastam.
+        if (acumulado.questoesImportadas.length < 50) {
+          acumulado.questoesImportadas.push(
+            ...(data.questoesImportadas || []).slice(0, 50 - acumulado.questoesImportadas.length),
+          )
+        }
+        if (data.hierarquiaCriada) {
+          acumulado.hierarquiaCriada!.modulos.push(...data.hierarquiaCriada.modulos)
+          acumulado.hierarquiaCriada!.topicos.push(...data.hierarquiaCriada.topicos)
+          acumulado.hierarquiaCriada!.subtopicos.push(...data.hierarquiaCriada.subtopicos)
+        }
       }
 
-      setResultado(data)
+      // Um módulo criado no primeiro pedaço aparece de novo como "já existe"
+      // nos pedaços seguintes — sem duplicar aqui, a lista mostraria o mesmo
+      // nome várias vezes.
+      acumulado.hierarquiaCriada = {
+        modulos: [...new Set(acumulado.hierarquiaCriada!.modulos)],
+        topicos: [...new Set(acumulado.hierarquiaCriada!.topicos)],
+        subtopicos: [...new Set(acumulado.hierarquiaCriada!.subtopicos)],
+      }
+      acumulado.sucesso = validar
+        ? (acumulado.totalAImportar || 0) > 0
+        : acumulado.totalImportadas > 0
+      acumulado.loteImportacaoId = !validar && acumulado.totalImportadas > 0 ? loteImportacaoId : undefined
 
-      if (!validar && data.totalImportadas > 0) {
+      setResultado(acumulado)
+
+      if (!validar && acumulado.totalImportadas > 0) {
         setConteudo('')
         setNomeDoArquivo('')
       }
-    } catch (error) {
-      console.error('Erro ao importar:', error)
-      setResultado({
-        sucesso: false,
-        totalImportadas: 0,
-        erros: [{ linha: 0, mensagem: 'Erro ao processar a importação' }],
-        questoesImportadas: [],
-      })
     } finally {
       setConferindo(false)
       setImportando(false)
+      setProgresso(null)
     }
   }
 
@@ -329,7 +399,7 @@ export default function AdminImportarPage() {
                   {importando ? (
                     <>
                       <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Importando...
+                      {progresso ? `Importando lote ${progresso.atual} de ${progresso.total}...` : 'Importando...'}
                     </>
                   ) : (
                     <>
@@ -350,7 +420,7 @@ export default function AdminImportarPage() {
                   {conferindo ? (
                     <>
                       <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Conferindo...
+                      {progresso ? `Conferindo lote ${progresso.atual} de ${progresso.total}...` : 'Conferindo...'}
                     </>
                   ) : (
                     'Conferir sem gravar'

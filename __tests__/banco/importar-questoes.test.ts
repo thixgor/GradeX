@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { lerArquivoDeImportacao, TOPICO_PADRAO } from '@/lib/banco/importar-questoes'
+import { dividirEmLotes, lerArquivoDeImportacao, TOPICO_PADRAO } from '@/lib/banco/importar-questoes'
 
 const OBJETIVA = `[OBJETIVA]
 MÓDULO: Cardiologia
@@ -356,5 +356,75 @@ SEMESTRE: 2`,
       ano: 2023,
       semestre: 2,
     })
+  })
+})
+
+describe('dividirEmLotes', () => {
+  it('devolve o conteúdo inteiro quando cabe num lote só', () => {
+    const conteudo = `${OBJETIVA}\n\n${DISCURSIVA}`
+    expect(dividirEmLotes(conteudo)).toEqual([conteudo])
+  })
+
+  it('divide por contagem de questões sem cortar nenhuma ao meio', () => {
+    const conteudo = `${OBJETIVA}\n\n${DISCURSIVA}\n\n${OBJETIVA}`
+    const lotes = dividirEmLotes(conteudo, { maxQuestoesPorLote: 1 })
+
+    expect(lotes).toHaveLength(3)
+    for (const lote of lotes) {
+      const { questoes, erros } = lerArquivoDeImportacao(lote)
+      expect(erros).toEqual([])
+      expect(questoes).toHaveLength(1)
+    }
+  })
+
+  it('divide por tamanho em bytes', () => {
+    // Dez questões distintas — se fossem idênticas, a própria leitura já
+    // descartaria as repetidas dentro de cada lote (ver 'importa a questão
+    // repetida...' acima), e o teste mediria a deduplicação, não o corte.
+    const questoes = Array.from(
+      { length: 10 },
+      (_, i) => `[OBJETIVA]
+MÓDULO: Cardiologia
+TÓPICO: Arritmias
+ENUNCIADO: Pergunta número ${i}?
+A) Sim
+B) Não
+CORRETA: A`,
+    )
+    const conteudo = questoes.join('\n\n')
+    const tamanhoDeUmaQuestao = new TextEncoder().encode(questoes[0]).length
+    const lotes = dividirEmLotes(conteudo, { maxBytesPorLote: tamanhoDeUmaQuestao * 3 })
+
+    expect(lotes.length).toBeGreaterThan(1)
+    const totalDeQuestoes = lotes.reduce(
+      (soma, lote) => soma + lerArquivoDeImportacao(lote).questoes.length,
+      0,
+    )
+    expect(totalDeQuestoes).toBe(10)
+  })
+
+  it('preserva o número de linha original em cada pedaço, para o erro apontar certo', () => {
+    const comErro = `[OBJETIVA]
+MÓDULO: Cardiologia
+TÓPICO: Arritmias
+ENUNCIADO: Sem alternativas nem gabarito.`
+    const conteudo = `${OBJETIVA}\n\n${comErro}`
+    const lotes = dividirEmLotes(conteudo, { maxQuestoesPorLote: 1 })
+
+    expect(lotes).toHaveLength(2)
+    const { erros } = lerArquivoDeImportacao(lotes[1])
+    // O bloco com erro começa na linha 9 do arquivo original (depois do
+    // OBJETIVA de 7 linhas + 1 linha em branco).
+    expect(erros[0].linha).toBe(9)
+  })
+
+  it('nunca produz um lote vazio, mesmo com uma questão sozinha maior que o teto', () => {
+    const conteudo = `${OBJETIVA}\n\n${DISCURSIVA}`
+    const lotes = dividirEmLotes(conteudo, { maxBytesPorLote: 1 })
+
+    expect(lotes).toHaveLength(2)
+    for (const lote of lotes) {
+      expect(lerArquivoDeImportacao(lote).questoes).toHaveLength(1)
+    }
   })
 })

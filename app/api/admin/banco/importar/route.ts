@@ -14,6 +14,12 @@ import {
 import { BancoAlternativaLetra, BancoQuestao } from '@/lib/types/banco-questoes'
 
 export const dynamic = 'force-dynamic'
+// Um arquivo de milhares de questões, mesmo já dividido em pedaços pelo
+// cliente (ver dividirEmLotes em lib/banco/importar-questoes.ts), resolve
+// hierarquia e grava em lotes de 200 — cada ida extra ao banco soma no tempo
+// total. 60s dá folga sobre o padrão de 30s do projeto sem chegar perto do
+// teto de duração de função da Vercel.
+export const maxDuration = 60
 
 /**
  * Importação em massa de questões pelo arquivo de texto.
@@ -272,7 +278,16 @@ export async function POST(request: NextRequest) {
 
     // Um id só para toda a leva: é o que permite achar e apagar, de uma vez,
     // tudo o que este arquivo trouxe — ver /admin/banco-questoes/importar/historico.
-    const loteImportacaoId = new ObjectId()
+    //
+    // Quando o arquivo é grande demais para uma requisição só, a tela manda
+    // pedaços em chamadas sucessivas (dividirEmLotes, em
+    // lib/banco/importar-questoes.ts) e reaproveita aqui o id que a PRIMEIRA
+    // chamada gerou — senão cada pedaço viraria uma leva separada no
+    // histórico, e apagar "a importação" apagaria só o último pedaço dela.
+    const loteImportacaoId =
+      typeof body.loteImportacaoId === 'string' && ObjectId.isValid(body.loteImportacaoId)
+        ? new ObjectId(body.loteImportacaoId)
+        : new ObjectId()
 
     const novas: { q: QuestaoLida; documento: Omit<BancoQuestao, '_id'> }[] = []
     let ignoradas = 0
@@ -342,7 +357,9 @@ export async function POST(request: NextRequest) {
       // resposta pesar mais do que o arquivo enviado.
       questoesImportadas: importadas.slice(0, 50),
       hierarquiaCriada: criados,
-      loteImportacaoId: importadas.length > 0 ? String(loteImportacaoId) : undefined,
+      // Sempre volta, mesmo quando este pedaço não gravou nada (só
+      // duplicadas) — é o id que a tela encadeia no próximo pedaço, se houver.
+      loteImportacaoId: String(loteImportacaoId),
     })
   } catch (error) {
     console.error('Erro ao importar questões:', error)
