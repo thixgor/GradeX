@@ -143,7 +143,7 @@ function Conteudo() {
             enterKeyHint="search"
             placeholder="hipercalemia, insuficiência cardíaca, ECG…"
             aria-label="Buscar"
-            className="campo-vidro h-14 w-full rounded-2xl pl-12 pr-12 text-base outline-none transition focus:border-primary/50 focus:ring-2 focus:ring-primary/15"
+            className="vidro-elevado h-14 w-full rounded-2xl pl-12 pr-12 text-base outline-none transition focus:border-primary/50 focus:ring-2 focus:ring-primary/15"
           />
           {termo ? (
             <button
@@ -203,7 +203,7 @@ function Conteudo() {
                     <Icone className="h-3.5 w-3.5" />
                     {grupo.rotulo}
                   </h2>
-                  <div className="divide-y divide-border/60 overflow-hidden rounded-2xl border border-border/70 bg-card">
+                  <div className="vidro-cartao vidro-reflexo divide-y divide-border/40 overflow-hidden rounded-3xl">
                     {grupo.itens.map((item) => (
                       <Link
                         key={item.id}

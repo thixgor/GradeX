@@ -347,7 +347,7 @@ function Conteudo() {
         <section className="relative mt-5">
           <Confete ativo={celebrar} />
 
-          <div className="rounded-3xl bg-card p-4 ring-1 ring-border/70 sm:p-5">
+          <div className="vidro-cartao vidro-reflexo rounded-3xl p-4 sm:p-5">
             <div className="flex items-end justify-between gap-3">
               <div>
                 <p className="font-heading text-3xl font-extrabold leading-none">
@@ -444,7 +444,7 @@ function Conteudo() {
         {trilha.objetivo || trilha.descricao || trilha.aprendizados?.length ? (
           <Cascata className="mt-6 grid gap-3 sm:grid-cols-2">
             {trilha.objetivo || trilha.descricao ? (
-              <ItemDaCascata className="rounded-2xl bg-card p-4 ring-1 ring-border/70">
+              <ItemDaCascata className="vidro-cartao vidro-reflexo rounded-3xl p-4">
                 <h2 className="mb-1.5 flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wide text-muted-foreground">
                   <Target className="h-4 w-4" /> Objetivo
                 </h2>
@@ -453,7 +453,7 @@ function Conteudo() {
             ) : null}
 
             {trilha.aprendizados?.length ? (
-              <ItemDaCascata className="rounded-2xl bg-card p-4 ring-1 ring-border/70">
+              <ItemDaCascata className="vidro-cartao vidro-reflexo rounded-3xl p-4">
                 <h2 className="mb-2 text-xs font-extrabold uppercase tracking-wide text-muted-foreground">
                   Ao concluir, você saberá
                 </h2>
@@ -580,7 +580,7 @@ function FaixaDaEtapa({
       transition={{ type: 'spring', stiffness: 320, damping: 28 }}
       className={cn(
         'mt-8 flex items-center gap-3 rounded-2xl px-4 py-3 shadow-[0_4px_0_rgb(0_0_0/0.14)] first:mt-0',
-        completa ? 'bg-primary text-primary-foreground' : 'bg-card ring-1 ring-border/70',
+        completa ? 'bg-primary text-primary-foreground' : 'vidro-sutil',
       )}
     >
       <span

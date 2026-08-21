@@ -6,7 +6,13 @@ import { excluirAulasComReferencias } from '@/lib/aulas/exclusao'
 import { getDb } from '@/lib/mongodb'
 import { COLECOES } from '@/lib/ensino/compatibilidade'
 import { lerNos, podeEditarEnsino } from '@/lib/ensino/repositorio'
-import { gerarSlug, idsDoRamo, slugUnico, validarNo } from '@/lib/ensino/taxonomia'
+import {
+  gerarSlug,
+  idsDoRamo,
+  normalizarCapa,
+  slugUnico,
+  validarNo,
+} from '@/lib/ensino/taxonomia'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -37,6 +43,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
       mudanca.descricao = corpo.descricao ? String(corpo.descricao).trim().slice(0, 600) : null
     }
     if ('cor' in corpo) mudanca.cor = corpo.cor ? String(corpo.cor).slice(0, 16) : null
+    if ('capa' in corpo) mudanca.capa = normalizarCapa(corpo.capa)
     if ('oculto' in corpo) mudanca.oculto = corpo.oculto === true
     if (Number.isFinite(Number(corpo.ordem))) mudanca.ordem = Number(corpo.ordem)
 

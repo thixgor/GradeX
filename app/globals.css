@@ -5516,80 +5516,6 @@ body.roller-dragging {
   border-color: hsl(var(--border)) !important;
 }
 
-/* ══════════════════════════════════════════════════════════════════════
-   A DOCA DA ÁREA DE ENSINO — vidro líquido
-
-   A navegação de /aulas é uma barra flutuante que acompanha a rolagem, e
-   por isso ela fica SOBRE o conteúdo o tempo todo. Isso muda o que o vidro
-   precisa fazer: não é enfeite, é a única forma de o aluno continuar vendo
-   o que está por baixo enquanto o controle permanece legível.
-
-   Três camadas fazem o material:
-
-     1. o fundo translúcido com desfoque e saturação — o desfoque sozinho
-        dá cinza leitoso; é a saturação que devolve a cor do que está atrás
-        e faz o vidro parecer vidro;
-     2. o brilho especular na aresta de cima (`inset 0 1px 0`), que é o que
-        o olho lê como "superfície curva pegando luz";
-     3. a sombra difusa embaixo, que descola a barra da página.
-
-   Tudo dentro de `@supports`: sem backdrop-filter (Firefox antigo, modo de
-   economia), o fundo vira sólido e o controle continua utilizável — vidro
-   que falha para "texto sobre texto" é pior que barra opaca.
-   ────────────────────────────────────────────────────────────────────── */
-
-.doca-vidro {
-  background: hsl(var(--card) / 0.92);
-  border: 1px solid hsl(var(--border));
-  box-shadow: 0 12px 34px -12px hsl(var(--foreground) / 0.3);
-}
-
-.doca-pilula {
-  background: hsl(var(--primary) / 0.14);
-}
-
-@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .doca-vidro {
-    background: hsl(var(--card) / 0.62);
-    -webkit-backdrop-filter: blur(28px) saturate(180%);
-    backdrop-filter: blur(28px) saturate(180%);
-    border-color: hsl(0 0% 100% / 0.5);
-    box-shadow:
-      inset 0 1px 0 hsl(0 0% 100% / 0.65),
-      inset 0 -1px 0 hsl(var(--foreground) / 0.04),
-      0 10px 30px -10px hsl(var(--foreground) / 0.28);
-  }
-
-  .dark .doca-vidro {
-    background: hsl(var(--card) / 0.55);
-    border-color: hsl(0 0% 100% / 0.12);
-    box-shadow:
-      inset 0 1px 0 hsl(0 0% 100% / 0.1),
-      inset 0 -1px 0 hsl(0 0% 0% / 0.2),
-      0 14px 40px -12px rgb(0 0 0 / 0.7);
-  }
-
-  /* A pílula que desliza sob o item ativo.
-     Ela é um segundo vidro POR CIMA do primeiro: mais clara, com brilho
-     próprio. É essa diferença de material — e não uma cor de fundo — que
-     faz o indicador parecer flutuar dentro da barra. */
-  .doca-pilula {
-    background: hsl(var(--primary) / 0.16);
-    -webkit-backdrop-filter: blur(8px) saturate(150%);
-    backdrop-filter: blur(8px) saturate(150%);
-    box-shadow:
-      inset 0 1px 0 hsl(0 0% 100% / 0.55),
-      0 2px 8px -2px hsl(var(--primary) / 0.45);
-  }
-
-  .dark .doca-pilula {
-    background: hsl(var(--primary) / 0.26);
-    box-shadow:
-      inset 0 1px 0 hsl(0 0% 100% / 0.16),
-      0 2px 10px -2px hsl(var(--primary) / 0.5);
-  }
-}
-
 /* Modo Lite e navegadores sem desfoque: superfície sólida. O `!important`
    acompanha o que o bloco do Modo Lite já faz com os outros vidros. */
 .lite-mode .doca-vidro {
@@ -5625,11 +5551,6 @@ body.roller-dragging {
   border-bottom: 1px solid hsl(var(--border));
 }
 
-.campo-vidro {
-  background: hsl(var(--card));
-  border: 1px solid hsl(var(--border));
-}
-
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .cabecalho-vidro {
     background: hsl(var(--card) / 0.58);
@@ -5648,23 +5569,6 @@ body.roller-dragging {
       inset 0 1px 0 hsl(0 0% 100% / 0.08),
       0 10px 28px -16px rgb(0 0 0 / 0.6);
   }
-
-  /* O campo de busca ganha o mesmo vidro, um degrau mais claro — é a
-     superfície que convida o toque, então precisa se destacar do
-     cabeçalho por trás dela, não só do conteúdo por trás de ambos. */
-  .campo-vidro {
-    background: hsl(var(--card) / 0.7);
-    -webkit-backdrop-filter: blur(16px) saturate(160%);
-    backdrop-filter: blur(16px) saturate(160%);
-    border-color: hsl(0 0% 100% / 0.4);
-    box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.4);
-  }
-
-  .dark .campo-vidro {
-    background: hsl(var(--card) / 0.6);
-    border-color: hsl(0 0% 100% / 0.1);
-    box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.08);
-  }
 }
 
 .lite-mode .cabecalho-vidro {
@@ -5673,8 +5577,371 @@ body.roller-dragging {
   backdrop-filter: none !important;
 }
 
-.lite-mode .campo-vidro {
+/* ══════════════════════════════════════════════════════════════════════
+   VIDRO LÍQUIDO — o material da Área de Ensino
+
+   A doca e o cabeçalho já eram vidro; o CONTEÚDO entre os dois continuava
+   sendo cartão opaco com borda cinza. Numa tela só isso lia como duas
+   plataformas coladas: uma barra flutuando sobre a página e uma página
+   feita de caixas.
+
+   Este bloco fecha a lacuna. Ele dá à área um material só, em três pesos,
+   e nada além de material: quem posiciona, arredonda e espaça continua
+   sendo o componente.
+
+     .vidro-cartao   — a superfície padrão. Substitui `bg-card ring-1`.
+     .vidro-elevado  — o herói: mais opacidade, mais sombra, mais brilho.
+                       Reservado a UM elemento por tela.
+     .vidro-sutil    — chips, linhas de lista, pílulas de filtro.
+
+   AS QUATRO CAMADAS QUE FAZEM O VIDRO
+
+     1. fundo translúcido com desfoque E saturação — o desfoque sozinho dá
+        cinza leitoso; é a saturação que devolve a cor do que está atrás;
+     2. o brilho especular na aresta de cima (`inset 0 1px 0`), que o olho
+        lê como superfície curva pegando luz;
+     3. a borda luminosa — branca a 40-50% no claro, branca a 10% no
+        escuro. Nunca `border-color` cinza: cinza lê como moldura, branco
+        translúcido lê como aresta de vidro;
+     4. a sombra difusa e larga por baixo, que descola a peça da página.
+
+   Tudo dentro de `@supports`. Sem `backdrop-filter` o fundo vira sólido e
+   a peça continua legível — vidro que degrada para "texto sobre texto" é
+   pior que cartão opaco. O Modo Lite desliga o desfoque por decisão do
+   usuário, e o piso é o mesmo.
+   ────────────────────────────────────────────────────────────────────── */
+
+.vidro-cartao,
+.vidro-elevado,
+.vidro-sutil {
+  position: relative;
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+}
+
+.vidro-cartao {
+  box-shadow: 0 6px 20px -12px hsl(var(--foreground) / 0.25);
+}
+
+.vidro-elevado {
+  box-shadow: 0 18px 44px -22px hsl(var(--foreground) / 0.4);
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .vidro-cartao {
+    background: hsl(var(--card) / 0.66);
+    -webkit-backdrop-filter: blur(20px) saturate(175%);
+    backdrop-filter: blur(20px) saturate(175%);
+    border-color: hsl(0 0% 100% / 0.45);
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.55),
+      0 1px 2px hsl(var(--foreground) / 0.04),
+      0 12px 30px -18px hsl(var(--foreground) / 0.3);
+  }
+
+  .vidro-elevado {
+    background: hsl(var(--card) / 0.74);
+    -webkit-backdrop-filter: blur(30px) saturate(190%);
+    backdrop-filter: blur(30px) saturate(190%);
+    border-color: hsl(0 0% 100% / 0.6);
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.7),
+      inset 0 -1px 0 hsl(var(--foreground) / 0.05),
+      0 2px 4px hsl(var(--foreground) / 0.04),
+      0 24px 50px -26px hsl(var(--foreground) / 0.42);
+  }
+
+  .vidro-sutil {
+    background: hsl(var(--card) / 0.5);
+    -webkit-backdrop-filter: blur(12px) saturate(160%);
+    backdrop-filter: blur(12px) saturate(160%);
+    border-color: hsl(0 0% 100% / 0.4);
+    box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.4);
+  }
+
+  .dark .vidro-cartao {
+    background: hsl(var(--card) / 0.6);
+    border-color: hsl(0 0% 100% / 0.09);
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.07),
+      0 14px 34px -20px rgb(0 0 0 / 0.75);
+  }
+
+  .dark .vidro-elevado {
+    background: hsl(var(--card) / 0.68);
+    border-color: hsl(0 0% 100% / 0.13);
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.11),
+      inset 0 -1px 0 rgb(0 0 0 / 0.25),
+      0 28px 56px -28px rgb(0 0 0 / 0.85);
+  }
+
+  .dark .vidro-sutil {
+    background: hsl(var(--card) / 0.45);
+    border-color: hsl(0 0% 100% / 0.08);
+    box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.06);
+  }
+}
+
+.lite-mode .vidro-cartao,
+.lite-mode .vidro-elevado,
+.lite-mode .vidro-sutil {
+  background: hsl(var(--card)) !important;
+  border-color: hsl(var(--border)) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+/* ---- O reflexo diagonal --------------------------------------------
+   Uma faixa clara atravessando o canto superior, a 6% de opacidade. É o
+   que separa "retângulo semitransparente" de "placa de vidro": vidro de
+   verdade reflete a fonte de luz, e o reflexo não acompanha o conteúdo
+   por baixo. Fica em `::before` para não roubar o `::after` de quem usa a
+   classe, e é `pointer-events: none` porque é pintura, não superfície. */
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .vidro-reflexo::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(
+      135deg,
+      hsl(0 0% 100% / 0.16) 0%,
+      hsl(0 0% 100% / 0.05) 22%,
+      transparent 46%
+    );
+  }
+
+  .dark .vidro-reflexo::before {
+    background: linear-gradient(
+      135deg,
+      hsl(0 0% 100% / 0.08) 0%,
+      hsl(0 0% 100% / 0.025) 22%,
+      transparent 46%
+    );
+  }
+}
+
+.lite-mode .vidro-reflexo::before {
+  display: none;
+}
+
+/* ---- A peça que responde ao toque -----------------------------------
+   Sobe alguns pixels no ponteiro, afunda no toque. É a mesma gramática do
+   botão 3D do Duolingo (`components/ensino/duo.tsx`), traduzida para o
+   vidro: em vez de uma sombra sólida de "espessura", o que cresce é a
+   difusão da sombra — a peça se afasta da página em vez de engordar. */
+
+.vidro-toque {
+  transition:
+    transform 200ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 200ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 200ms ease;
+}
+
+@media (hover: hover) {
+  .vidro-toque:hover {
+    transform: translateY(-2px);
+    border-color: hsl(var(--primary) / 0.4);
+  }
+
+  .vidro-cartao.vidro-toque:hover {
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.6),
+      0 20px 42px -20px hsl(var(--foreground) / 0.38);
+  }
+
+  /* O brilho da aresta é branco a 60% no claro e a 10% no escuro. Sem esta
+     regra, passar o ponteiro sobre um cartão no tema escuro acenderia uma
+     linha branca no topo dele — o valor do tema claro vencendo por
+     especificidade. */
+  .dark .vidro-cartao.vidro-toque:hover {
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.1),
+      0 22px 46px -20px rgb(0 0 0 / 0.85);
+  }
+}
+
+.vidro-toque:active {
+  transform: translateY(1px) scale(0.994);
+  transition-duration: 90ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vidro-toque,
+  .vidro-toque:hover,
+  .vidro-toque:active {
+    transform: none;
+    transition: border-color 200ms ease;
+  }
+}
+
+/* ---- O acento âmbar --------------------------------------------------
+   A marca é verde-escuro E âmbar, e o âmbar não podia virar só a cor de
+   um selo. Aqui ele é uma AURA por trás do vidro — um halo quente que
+   atravessa a translucidez — usada no que celebra progresso (ofensiva,
+   conclusão, "comece por aqui"). Cor sólida âmbar em superfície grande
+   deixaria a área infantil; halo atrás do vidro deixa madura. */
+
+.vidro-ambar {
+  border-color: hsl(var(--accent) / 0.45);
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .vidro-ambar {
+    background:
+      linear-gradient(135deg, hsl(var(--accent) / 0.16), hsl(var(--accent) / 0.04) 55%),
+      hsl(var(--card) / 0.6);
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.55),
+      0 16px 40px -24px hsl(var(--accent) / 0.7);
+  }
+
+  .dark .vidro-ambar {
+    background:
+      linear-gradient(135deg, hsl(var(--accent) / 0.2), hsl(var(--accent) / 0.05) 55%),
+      hsl(var(--card) / 0.6);
+    border-color: hsl(var(--accent) / 0.34);
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.1),
+      0 20px 46px -26px rgb(0 0 0 / 0.8);
+  }
+}
+
+.vidro-verde {
+  border-color: hsl(var(--primary) / 0.4);
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .vidro-verde {
+    background:
+      linear-gradient(135deg, hsl(var(--primary) / 0.16), hsl(var(--primary) / 0.03) 55%),
+      hsl(var(--card) / 0.62);
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.5),
+      0 16px 40px -24px hsl(var(--primary) / 0.6);
+  }
+
+  .dark .vidro-verde {
+    background:
+      linear-gradient(135deg, hsl(var(--primary) / 0.22), hsl(var(--primary) / 0.05) 55%),
+      hsl(var(--card) / 0.6);
+    border-color: hsl(var(--primary) / 0.3);
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.09),
+      0 20px 46px -26px rgb(0 0 0 / 0.8);
+  }
+}
+
+.lite-mode .vidro-ambar,
+.lite-mode .vidro-verde {
   background: hsl(var(--card)) !important;
   -webkit-backdrop-filter: none !important;
   backdrop-filter: none !important;
+}
+
+/* ---- O fundo da área -------------------------------------------------
+   Vidro precisa de algo atrás para refratar. Sobre o creme chapado do
+   tema, o desfoque não tem o que borrar e a translucidez vira uma
+   diferença de 4% de cinza — o efeito some e sobra o custo.
+
+   Dois halos muito abertos (verde no alto à esquerda, âmbar embaixo à
+   direita) resolvem isso sem virar papel de parede: eles não têm forma
+   reconhecível, só dão ao desfoque um gradiente para trabalhar. `fixed`
+   porque o fundo não deve rolar com a página — é a luz do ambiente, não
+   conteúdo. */
+
+.ambiente-de-ensino {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60rem 40rem at 12% -8%, hsl(var(--primary) / 0.14), transparent 62%),
+    radial-gradient(48rem 36rem at 108% 12%, hsl(var(--accent) / 0.12), transparent 60%),
+    radial-gradient(56rem 44rem at 50% 108%, hsl(var(--primary) / 0.09), transparent 64%);
+}
+
+.dark .ambiente-de-ensino {
+  background:
+    radial-gradient(60rem 40rem at 12% -8%, hsl(var(--primary) / 0.2), transparent 62%),
+    radial-gradient(48rem 36rem at 108% 12%, hsl(var(--accent) / 0.13), transparent 60%),
+    radial-gradient(56rem 44rem at 50% 108%, hsl(var(--primary) / 0.12), transparent 64%);
+}
+
+.lite-mode .ambiente-de-ensino {
+  display: none;
+}
+
+/* ---- A doca, revista -------------------------------------------------
+   O material continua o mesmo do bloco acima; o que muda aqui é o
+   contraste. A doca fica SOBRE conteúdo em movimento o tempo todo, e um
+   vidro calibrado para um cartão parado perde legibilidade quando uma
+   capa clara passa por baixo dele. Daí a opacidade mais alta e a sombra
+   mais funda que as do `.vidro-cartao`. */
+
+.doca-vidro {
+  background: hsl(var(--card) / 0.94);
+  border: 1px solid hsl(var(--border));
+  box-shadow: 0 12px 34px -12px hsl(var(--foreground) / 0.3);
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .doca-vidro {
+    background: hsl(var(--card) / 0.68);
+    -webkit-backdrop-filter: blur(32px) saturate(200%);
+    backdrop-filter: blur(32px) saturate(200%);
+    border-color: hsl(0 0% 100% / 0.55);
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.7),
+      inset 0 -1px 0 hsl(var(--foreground) / 0.05),
+      0 16px 40px -14px hsl(var(--foreground) / 0.34);
+  }
+
+  .dark .doca-vidro {
+    background: hsl(var(--card) / 0.62);
+    border-color: hsl(0 0% 100% / 0.13);
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.11),
+      inset 0 -1px 0 rgb(0 0 0 / 0.25),
+      0 18px 48px -14px rgb(0 0 0 / 0.8);
+  }
+}
+
+/* A pílula do destino ativo — um segundo vidro POR CIMA do primeiro.
+   É essa diferença de material, e não uma cor de fundo, que faz o
+   indicador parecer flutuar dentro da barra em vez de estar pintado
+   nela. */
+.doca-pilula {
+  background: hsl(var(--primary) / 0.15);
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .doca-pilula {
+    background: linear-gradient(
+      160deg,
+      hsl(var(--primary) / 0.24),
+      hsl(var(--primary) / 0.12)
+    );
+    -webkit-backdrop-filter: blur(8px) saturate(150%);
+    backdrop-filter: blur(8px) saturate(150%);
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.6),
+      inset 0 0 0 1px hsl(var(--primary) / 0.16),
+      0 3px 12px -3px hsl(var(--primary) / 0.5);
+  }
+
+  .dark .doca-pilula {
+    background: linear-gradient(
+      160deg,
+      hsl(var(--primary) / 0.36),
+      hsl(var(--primary) / 0.16)
+    );
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.18),
+      inset 0 0 0 1px hsl(var(--primary) / 0.24),
+      0 3px 14px -3px hsl(var(--primary) / 0.55);
+  }
 }

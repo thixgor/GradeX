@@ -2,66 +2,62 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { animate, motion, useMotionValue, useReducedMotion } from 'framer-motion'
-import { RotateCcw, Search, Sparkles, User, type LucideIcon } from 'lucide-react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { motion, useReducedMotion } from 'framer-motion'
+import { Compass, GraduationCap, RotateCcw, CircleUser, type LucideIcon } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 
 /**
- * A doca da Área de Ensino — um seletor deslizante de vidro.
+ * A doca da Área de Ensino — a barra de um app nativo, feita de vidro.
  *
- * ══ TRÊS DESTINOS, NÃO CINCO (§1, §2, §17) ═══════════════════════════
+ * ══ TRÊS VERBOS, E O CANTO PESSOAL ═══════════════════════════════════
  *
- * A versão anterior tinha cinco: Aprender, Trilhas, Explorar, Revisar e Notas.
- * Só que "Trilhas" e "Explorar" nunca foram lugares — são CONTEÚDO e uma AÇÃO,
- * respectivamente, e ambos já apareciam dentro de Aprender. "Notas" é o caderno
- * que se lê depois, não uma decisão de estudo. O resultado era uma barra em que
- * três dos cinco botões levavam a variações da mesma tela.
+ * A barra anterior era Aprender · Buscar · Revisar · Você, e "Explorar" não
+ * estava nela: para chegar ao acervo por assunto era preciso descer a home até
+ * uma fileira de chips e tocar em "ver tudo". Quem entrava querendo garimpar um
+ * tema não achava o lugar de garimpar — a queixa que originou esta reescrita.
  *
- * Aqui restam as três perguntas que um aluno realmente faz ao abrir a área —
- * "o que eu estudo agora?", "onde está aquele assunto?", "o que preciso rever?"
- * — mais o canto pessoal, onde moram o caderno, o progresso e (para quem tem)
- * a entrada do modo de gestão. Nada foi apagado: Trilhas e Explorar continuam
- * sendo rotas próprias, alcançáveis de dentro do Aprender e por link direto.
+ * Agora a barra diz o que a área faz, em três verbos:
  *
- * ══ ELA É UM SLIDER DE VERDADE ═══════════════════════════════════════
+ *     APRENDER · EXPLORAR · REVISAR
  *
- * A pílula não apenas escorrega quando a rota muda: ela é ARRASTÁVEL. O dedo
- * pega o vidro e o leva pelos destinos; enquanto atravessa, o ícone sob ela vai
- * acendendo, e ao soltar ela encaixa no segmento mais próximo e navega.
+ * Aprender é continuar de onde parou. Explorar é o acervo inteiro — por
+ * assunto, com capa, e com a BUSCA dentro dele (ver `explorar/page.tsx`):
+ * procurar e navegar são a mesma intenção com dois gestos diferentes, e separá-
+ * las em dois destinos obrigava a escolher o gesto antes de saber o que se quer.
+ * Revisar é a fila do que está esfriando. "Você" fecha a barra porque caderno,
+ * progresso e o modo de gestão precisam morar em algum lugar — mas ele não é um
+ * verbo de estudo, e por isso vem por último e sem peso.
  *
- * Para o arrasto existir, todos os segmentos têm a MESMA largura — sem passo
- * constante o encaixe ficaria imprevisível no meio do gesto. Foi por isso que a
- * lupa avulsa saiu: um sexto elemento de outro tamanho ao lado do seletor
- * quebrava a régua e, pior, competia visualmente com a barra (a queixa que
- * originou esta reescrita). Buscar virou um dos segmentos.
+ * ══ ELA SE COMPORTA COMO BARRA DE APP, NÃO COMO RODAPÉ DE SITE ═══════
  *
- * ══ ELA NÃO PISCA MAIS ENTRE PÁGINAS ═════════════════════════════════
+ *  • **Some ao descer, volta ao subir.** Enquanto a pessoa lê, a tela é toda
+ *    dela; no primeiro gesto para cima a navegação reaparece. É o comportamento
+ *    que todo app de leitura tem e nenhum site costuma ter — e é o que mais
+ *    aproxima esta área de um aplicativo instalado.
+ *  • **A pílula é um objeto, não uma cor.** Ela escorrega entre os destinos com
+ *    uma mola (`layoutId`), como o indicador do iOS. Trocar `bg-primary` de
+ *    lugar daria o mesmo estado sem dar nenhuma continuidade.
+ *  • **O alvo tem 56px de altura.** Barra inferior é tocada com o polegar em
+ *    movimento, quase sempre com uma mão só.
  *
- * Antes cada página montava a sua própria doca. Trocar de destino desmontava
- * uma e montava outra, e a animação de entrada rodava de novo — a barra sumia e
- * voltava a cada navegação, exatamente o oposto de "fluxo deslizante". Agora
- * ela é montada UMA vez, pelo layout de `/aulas` (ver `quadro.tsx`), e sobrevive
- * às trocas de rota: o que muda é a posição da pílula, com a mesma mola de
- * sempre.
+ * ══ O QUE SAIU: O ARRASTO ════════════════════════════════════════════
+ *
+ * A versão anterior deixava arrastar a pílula pelos destinos. Era bonito de
+ * demonstrar e caro de usar: para o arrasto encaixar, todos os segmentos
+ * precisavam da MESMA largura, o gesto competia com a rolagem da página no
+ * mesmo eixo do polegar, e ninguém navega arrastando — navega tocando. Sem ele
+ * a barra ganhou rótulos de larguras livres e um alvo de toque maior.
  *
  * ══ ELA AVISA A TELA DE QUE OCUPA ESPAÇO ═════════════════════════════
  *
- * O app já tem dois flutuantes no rodapé: o "voltar" do iOS (canto esquerdo) e
- * o "+" de música/suporte (canto direito). Os dois sobem quando alguém publica
- * `--gx-barra-inferior-h` — é a convenção de `components/ui/barra-inferior.tsx`.
- * A doca nunca publicava, então os três dividiam a mesma faixa e se
- * atropelavam. Agora ela mede a própria altura e publica: os outros dois sobem
- * sozinhos, sem precisar saber que a Área de Ensino existe.
- *
- * ══ O VIDRO NÃO É ENFEITE ════════════════════════════════════════════
- *
- * Como ela fica sobre o conteúdo o tempo todo, uma barra opaca esconderia
- * permanentemente uma faixa da tela. O material está em `globals.css`
- * (`.doca-vidro`), com fundo sólido de reserva para quem não tem
- * `backdrop-filter` — vidro que degrada para "texto sobre texto" é pior que
- * barra opaca.
+ * O app já tem dois flutuantes no rodapé: o "voltar" do iOS e o "+" de
+ * música/suporte. Ambos sobem quando alguém publica `--gx-barra-inferior-h` —
+ * a convenção de `components/ui/barra-inferior.tsx`. A doca mede a própria
+ * altura e publica. O valor NÃO muda quando ela se esconde na rolagem: os
+ * outros flutuantes descendo e subindo junto com ela seria três peças dançando
+ * a cada gesto.
  */
 
 interface Destino {
@@ -78,17 +74,23 @@ const DESTINOS: Destino[] = [
   {
     href: '/aulas',
     rotulo: 'Aprender',
-    icone: Sparkles,
+    icone: GraduationCap,
     exato: true,
-    // Assistir, percorrer uma Trilha e navegar o acervo são tudo "aprender":
-    // são as telas para onde o Aprender manda. Acender outro segmento (ou
-    // nenhum) enquanto a pessoa assiste faria a barra mentir sobre onde ela
-    // está.
-    tambem: ['/aulas/trilhas', '/aulas/explorar', '/aulas/curso'],
+    // Assistir e percorrer uma Trilha são "aprender": são as telas para onde o
+    // Aprender manda. Acender outro segmento (ou nenhum) enquanto a pessoa
+    // assiste faria a barra mentir sobre onde ela está.
+    tambem: ['/aulas/trilhas', '/aulas/curso'],
   },
-  { href: '/aulas/buscar', rotulo: 'Buscar', icone: Search },
+  {
+    href: '/aulas/explorar',
+    rotulo: 'Explorar',
+    icone: Compass,
+    // A busca vive DENTRO do Explorar. `/aulas/buscar` continua existindo para
+    // links diretos e para quem tem a rota salva, e acende este segmento.
+    tambem: ['/aulas/buscar'],
+  },
   { href: '/aulas/revisar', rotulo: 'Revisar', icone: RotateCcw },
-  { href: '/aulas/voce', rotulo: 'Você', icone: User, tambem: ['/aulas/anotacoes'] },
+  { href: '/aulas/voce', rotulo: 'Você', icone: CircleUser, tambem: ['/aulas/anotacoes'] },
 ]
 
 /**
@@ -104,15 +106,13 @@ export const RESPIRO_DA_DOCA = 'pb-32 sm:pb-36'
 /**
  * O respiro simétrico, no alto.
  *
- * Nenhuma das telas de `/aulas` passava um `pt-*` para o próprio conteúdo —
- * só a de assistir tinha um `pt-4` escrito à mão. O resultado era o título de
- * cada página colado direto na régua de baixo do cabeçalho fixo, sem nenhum
- * ar entre os dois: mais visível ainda agora que o cabeçalho virou vidro
- * (`vidro` do AppShell) e o texto por trás dele passou a se misturar com o
- * título da própria página. A mesma lógica do respiro de baixo — uma
+ * Nenhuma das telas de `/aulas` passava um `pt-*` para o próprio conteúdo, e o
+ * título de cada página nascia colado na régua de baixo do cabeçalho fixo. Mais
+ * visível ainda agora que o cabeçalho é vidro e o texto por trás dele se
+ * mistura com o título da página. A mesma lógica do respiro de baixo — uma
  * constante, não um número copiado em oito arquivos.
  */
-export const RESPIRO_DO_TOPO = 'pt-6 sm:pt-8'
+export const RESPIRO_DO_TOPO = 'pt-5 sm:pt-8'
 
 /** A variável que o "voltar" e o "+" já leem para subir. */
 const VARIAVEL_DE_ALTURA = '--gx-barra-inferior-h'
@@ -120,24 +120,33 @@ const VARIAVEL_DE_ALTURA = '--gx-barra-inferior-h'
 /**
  * As rotas de `/aulas` que NÃO são a experiência do aluno.
  *
- * O painel de gestão (§19) é outro modo de uso, com outra navegação e outro
- * público: deixar a doca do aluno flutuando sobre a tela de importar planilha
- * seria dizer que gerenciar é uma das quatro coisas que se faz na Área de
- * Ensino.
+ * O painel de gestão é outro modo de uso, com outra navegação e outro público:
+ * deixar a doca do aluno flutuando sobre a tela de importar planilha seria
+ * dizer que gerenciar é uma das quatro coisas que se faz na Área de Ensino.
  *
- * A verificação de certificado é a outra: ela é o próprio documento, feita
- * para ser aberta por um terceiro e impressa. Uma barra de navegação por cima
+ * A verificação de certificado é a outra: ela é o próprio documento, feita para
+ * ser aberta por um terceiro e impressa. Uma barra de navegação por cima
  * apareceria no papel.
  */
 function semDoca(pathname: string) {
   return pathname.startsWith('/aulas/gerenciar') || pathname.startsWith('/aulas/certificado')
 }
 
-const limitar = (valor: number, minimo: number, maximo: number) =>
-  Math.min(maximo, Math.max(minimo, valor))
-
 /** `useLayoutEffect` no cliente, `useEffect` no servidor — evita o aviso do SSR. */
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
+
+/**
+ * O halo de fundo da área.
+ *
+ * Vidro precisa de algo atrás para refratar. Sobre o creme chapado do tema o
+ * desfoque não tem o que borrar, a translucidez vira uma diferença de 4% de
+ * cinza e sobra só o custo do efeito. Dois halos muito abertos — verde no alto,
+ * âmbar embaixo — dão ao desfoque um gradiente para trabalhar sem virar papel
+ * de parede. O material está em `globals.css` (`.ambiente-de-ensino`).
+ */
+export function AmbienteDeEnsino() {
+  return <div aria-hidden className="ambiente-de-ensino" />
+}
 
 export function DocaDeEnsino({ className }: { className?: string }) {
   const pathname = usePathname() || ''
@@ -146,13 +155,8 @@ export function DocaDeEnsino({ className }: { className?: string }) {
 
   const oculta = semDoca(pathname)
 
-  /* ── A pista e o passo ────────────────────────────────────────────── */
-
   const moldura = useRef<HTMLDivElement>(null)
-  const pista = useRef<HTMLDivElement>(null)
-  const [passo, setPasso] = useState(0)
-  const x = useMotionValue(0)
-  const [arrastando, setArrastando] = useState(false)
+  const [recolhida, setRecolhida] = useState(false)
 
   const indiceDaRota = (() => {
     const achado = DESTINOS.findIndex((d) => {
@@ -163,28 +167,6 @@ export function DocaDeEnsino({ className }: { className?: string }) {
     // ela cai aqui e acende "Aprender", que é de onde se chega nela.
     return achado >= 0 ? achado : 0
   })()
-
-  /**
-   * O índice que a pílula está cobrindo AGORA.
-   *
-   * Durante o arrasto ele descola da rota: é o que faz o ícone acender antes
-   * de a navegação acontecer. Sem essa separação, o gesto não daria retorno
-   * nenhum até o dedo sair da tela.
-   */
-  const [indiceVisual, setIndiceVisual] = useState(indiceDaRota)
-
-  /** Mede o passo do seletor — a pista dividida pelo número de destinos. */
-  useEffect(() => {
-    const elemento = pista.current
-    if (!elemento || oculta) return
-
-    const medir = () => setPasso(elemento.clientWidth / DESTINOS.length)
-    medir()
-
-    const observador = new ResizeObserver(medir)
-    observador.observe(elemento)
-    return () => observador.disconnect()
-  }, [oculta])
 
   /**
    * Publica a altura ocupada para o "voltar" e o "+" subirem.
@@ -219,37 +201,47 @@ export function DocaDeEnsino({ className }: { className?: string }) {
     }
   }, [oculta])
 
-  /** Recoloca a pílula quando a rota muda — mas nunca no meio de um gesto. */
-  useEffect(() => {
-    if (arrastando || passo === 0) return
-    setIndiceVisual(indiceDaRota)
-    const destino = indiceDaRota * passo
-    if (semMovimento) {
-      x.set(destino)
-      return
-    }
-    const controle = animate(x, destino, { type: 'spring', stiffness: 420, damping: 38 })
-    return () => controle.stop()
-  }, [indiceDaRota, passo, arrastando, semMovimento, x])
-
-  /** O segmento sob a pílula, a partir da posição dela. */
-  const indiceEm = useCallback(
-    (posicao: number) =>
-      passo > 0 ? limitar(Math.round(posicao / passo), 0, DESTINOS.length - 1) : 0,
-    [passo],
-  )
-
   /**
-   * Adianta o JavaScript e os dados do destino sob o dedo (§16).
+   * Some ao descer, volta ao subir.
    *
-   * O gesto dura uns 300ms; é tempo suficiente para o Next buscar a rota que
-   * está sendo apontada. Quando o dedo solta, a tela já está pronta — que é a
-   * diferença entre "deslizar" e "esperar carregar".
+   * A folga de 8px existe porque o dedo nunca rola em linha reta: sem ela, o
+   * tremor de um gesto lento faria a barra piscar dezenas de vezes. E ela só
+   * começa a valer depois de 140px de rolagem — no topo da página a navegação
+   * fica sempre visível, que é onde quem acabou de chegar procura por ela.
    */
   useEffect(() => {
-    if (!arrastando) return
-    router.prefetch(DESTINOS[indiceVisual].href)
-  }, [arrastando, indiceVisual, router])
+    if (oculta) return
+    let anterior = window.scrollY
+    let quadro = 0
+
+    const avaliar = () => {
+      quadro = 0
+      const atual = window.scrollY
+      const delta = atual - anterior
+
+      if (Math.abs(delta) > 8) {
+        const fim = document.documentElement.scrollHeight - window.innerHeight - atual < 96
+        setRecolhida(delta > 0 && atual > 140 && !fim)
+        anterior = atual
+      }
+    }
+
+    const aoRolar = () => {
+      if (quadro) return
+      quadro = requestAnimationFrame(avaliar)
+    }
+
+    window.addEventListener('scroll', aoRolar, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', aoRolar)
+      if (quadro) cancelAnimationFrame(quadro)
+    }
+  }, [oculta])
+
+  /** Trocar de rota devolve a barra: a tela nova começa com a navegação à mão. */
+  useEffect(() => {
+    setRecolhida(false)
+  }, [pathname])
 
   if (oculta) return null
 
@@ -260,51 +252,28 @@ export function DocaDeEnsino({ className }: { className?: string }) {
         // `pointer-events-none` na moldura para a faixa vazia dos lados não
         // roubar cliques do conteúdo que passa por baixo.
         'pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center',
-        'px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]',
+        'px-3 pb-[max(0.6rem,env(safe-area-inset-bottom))]',
         className,
       )}
     >
       <motion.nav
         aria-label="Navegação da Área de Ensino"
-        initial={semMovimento ? false : { y: 80, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ type: 'spring', stiffness: 280, damping: 28, delay: 0.15 }}
-        className="doca-vidro pointer-events-auto h-[4.25rem] max-w-full rounded-[2rem] p-1.5"
+        initial={semMovimento ? false : { y: 90, opacity: 0 }}
+        animate={
+          semMovimento
+            ? {}
+            : { y: recolhida ? 130 : 0, opacity: recolhida ? 0 : 1 }
+        }
+        transition={{ type: 'spring', stiffness: 320, damping: 32 }}
+        className={cn(
+          'doca-vidro vidro-reflexo pointer-events-auto max-w-full overflow-hidden rounded-[1.75rem] p-1.5',
+          recolhida && 'pointer-events-none',
+        )}
       >
-        <div
-          ref={pista}
-          className="relative flex h-full w-[min(24rem,calc(100vw-1.5rem))] items-stretch sm:w-[27rem]"
-        >
-          {/* ── A pílula arrastável ──────────────────────────────────
-              Ela fica ACIMA dos segmentos para receber o gesto. Como cobre
-              exatamente o item ativo, o único clique que ela intercepta é o do
-              destino em que já se está — e esse clique não teria efeito de
-              qualquer forma. */}
-          {passo > 0 ? (
-            <motion.div
-              drag={semMovimento ? false : 'x'}
-              dragConstraints={{ left: 0, right: passo * (DESTINOS.length - 1) }}
-              dragElastic={0.04}
-              dragMomentum={false}
-              onDragStart={() => setArrastando(true)}
-              onDrag={() => setIndiceVisual(indiceEm(x.get()))}
-              onDragEnd={() => {
-                const alvo = indiceEm(x.get())
-                setArrastando(false)
-                setIndiceVisual(alvo)
-                animate(x, alvo * passo, { type: 'spring', stiffness: 500, damping: 40 })
-                if (alvo !== indiceDaRota) router.push(DESTINOS[alvo].href)
-              }}
-              whileDrag={{ scale: 1.06 }}
-              style={{ x, width: passo }}
-              className="doca-pilula absolute inset-y-0 left-0 z-10 cursor-grab touch-none rounded-[1.6rem] active:cursor-grabbing"
-              aria-hidden
-            />
-          ) : null}
-
+        <div className="flex w-[min(23rem,calc(100vw-1.75rem))] items-stretch gap-0.5 sm:w-auto sm:gap-1">
           {DESTINOS.map((destino, indice) => {
             const Icone = destino.icone
-            const aceso = indice === indiceVisual
+            const aceso = indice === indiceDaRota
 
             return (
               <Link
@@ -312,23 +281,36 @@ export function DocaDeEnsino({ className }: { className?: string }) {
                 href={destino.href}
                 prefetch
                 aria-current={aceso ? 'page' : undefined}
-                onClick={() => setIndiceVisual(indice)}
+                onPointerEnter={() => router.prefetch(destino.href)}
                 className={cn(
-                  'relative flex flex-1 flex-col items-center justify-center gap-0.5 rounded-[1.6rem]',
-                  'transition-colors duration-200',
+                  'relative flex h-14 flex-1 flex-col items-center justify-center gap-1 rounded-[1.35rem]',
+                  'px-2 transition-colors duration-200 sm:w-[5.5rem] sm:flex-none',
                   aceso ? 'text-primary' : 'text-muted-foreground hover:text-foreground',
                 )}
               >
+                {/* A pílula é UM elemento que se move entre os destinos. Um
+                    fundo aceso por segmento daria o mesmo estado sem dar
+                    nenhuma continuidade: o indicador apareceria no destino
+                    novo em vez de ir até ele. */}
+                {aceso ? (
+                  <motion.span
+                    layoutId={semMovimento ? undefined : 'doca-pilula'}
+                    transition={{ type: 'spring', stiffness: 480, damping: 40 }}
+                    className="doca-pilula absolute inset-0 rounded-[1.35rem]"
+                    aria-hidden
+                  />
+                ) : null}
+
                 <Icone
                   className={cn(
-                    'h-[1.35rem] w-[1.35rem] transition-transform duration-200',
+                    'relative h-[1.3rem] w-[1.3rem] transition-transform duration-200',
                     aceso && 'scale-110',
                   )}
-                  strokeWidth={aceso ? 2.6 : 2}
+                  strokeWidth={aceso ? 2.5 : 2}
                 />
                 <span
                   className={cn(
-                    'text-[10.5px] leading-none tracking-tight transition-all duration-200 sm:text-[11px]',
+                    'relative text-[10.5px] leading-none tracking-tight transition-all duration-200 sm:text-[11px]',
                     aceso ? 'font-extrabold' : 'font-semibold',
                   )}
                 >

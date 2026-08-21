@@ -3,7 +3,7 @@
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef } from 'react'
 
-import { DocaDeEnsino } from '@/components/ensino/doca'
+import { AmbienteDeEnsino, DocaDeEnsino } from '@/components/ensino/doca'
 
 /**
  * O quadro persistente da Área de Ensino (§14, §15, §16).
@@ -112,6 +112,10 @@ export function QuadroDeEnsino({ children }: { children: React.ReactNode }) {
 
   return (
     <>
+      {/* O halo fica no layout, e não em cada tela, pelo mesmo motivo da doca:
+          ele é o ambiente da área inteira. Montado por página, ele piscaria a
+          cada navegação — e o vidro por cima dele piscaria junto. */}
+      <AmbienteDeEnsino />
       {children}
       <DocaDeEnsino />
     </>

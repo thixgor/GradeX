@@ -169,7 +169,11 @@ export function Trilho({ children, className }: { children: React.ReactNode; cla
   return (
     <div
       className={cn(
-        '-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2',
+        // O respiro vertical não é enfeite: `overflow-x: auto` também recorta o
+        // que passa em cima e embaixo, e sem ele a sombra difusa dos cartões de
+        // vidro (e os 2px que eles sobem no ponteiro) sairiam cortados na régua
+        // do trilho.
+        '-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-6 pt-2',
         // Esconde a barra de rolagem sem impedir a rolagem: no desktop ela
         // ficaria atravessada sob os cartões, e o gesto continua funcionando.
         '[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
@@ -335,7 +339,7 @@ export function Capa({
   capa?: { tipo?: string; imagem?: string; cor?: string; titulo?: string } | null
   titulo: string
   className?: string
-  aspecto?: 'video' | 'alto'
+  aspecto?: 'video' | 'alto' | 'quadrado' | 'livre'
   /** Sobrescreve a largura estimada quando o cartão não tem o tamanho padrão. */
   sizes?: string
   /** Acima da dobra (a capa da próxima ação, por exemplo): entra sem lazy. */
@@ -344,14 +348,35 @@ export function Capa({
   const cor = capa?.cor
   const imagem = capa?.tipo === 'imagem' ? capa.imagem : capa?.imagem
 
+  /*
+   * O piso tipográfico.
+   *
+   * Com cor, a capa vira um degradê profundo daquela cor com o título por
+   * cima — o mesmo desenho de uma capa de livro, e não um retângulo chapado.
+   * `color-mix` escurece o canto de baixo sem exigir uma segunda cor
+   * cadastrada; navegador sem suporte simplesmente fica com a cor sólida, que
+   * continua legível.
+   */
   const tipografica = (
     <div
       className={cn(
-        'flex h-full w-full items-center p-4',
-        cor ? 'text-white' : 'bg-gradient-to-br from-primary/15 via-primary/5 to-transparent',
+        'flex h-full w-full items-end p-3.5',
+        cor ? 'text-white' : 'bg-gradient-to-br from-primary/20 via-primary/8 to-accent/10',
       )}
+      style={
+        cor
+          ? {
+              backgroundImage: `linear-gradient(150deg, ${cor} 0%, color-mix(in srgb, ${cor} 62%, #000) 100%)`,
+            }
+          : undefined
+      }
     >
-      <span className="line-clamp-3 font-heading text-[13px] font-bold leading-snug opacity-90">
+      <span
+        className={cn(
+          'line-clamp-3 font-heading text-[13px] font-bold leading-snug',
+          cor ? 'drop-shadow-[0_1px_2px_rgb(0_0_0/0.45)]' : 'opacity-90',
+        )}
+      >
         {capa?.titulo || titulo}
       </span>
     </div>
@@ -361,7 +386,9 @@ export function Capa({
     <div
       className={cn(
         'relative overflow-hidden rounded-2xl bg-muted',
-        aspecto === 'video' ? 'aspect-video' : 'aspect-[4/5]',
+        aspecto === 'video' && 'aspect-video',
+        aspecto === 'alto' && 'aspect-[4/5]',
+        aspecto === 'quadrado' && 'aspect-square',
         className,
       )}
       style={cor && !imagem ? { backgroundColor: cor } : undefined}
@@ -374,6 +401,110 @@ export function Capa({
         fallback={tipografica}
       />
     </div>
+  )
+}
+
+/* =================== CARTÃO DE ASSUNTO =================== */
+
+/** Um nível da taxonomia como a tela do aluno o recebe. */
+export interface NoNaTela {
+  _id: string
+  nome: string
+  nivel: string
+  descricao?: string
+  aulas?: number
+  aulasNaArvore: number
+  capa?: { imagem?: string; cor?: string } | null
+  oculto?: boolean
+  filhos?: NoNaTela[]
+}
+
+const ROTULO_DO_NIVEL_DE_ENSINO: Record<string, string> = {
+  area: 'Área',
+  modulo: 'Módulo',
+  topico: 'Tópico',
+  subtopico: 'Subtópico',
+}
+
+/**
+ * O cartão de um assunto — Módulo, Tópico ou Subtópico.
+ *
+ * ══ POR QUE ELE PRECISOU EXISTIR ═════════════════════════════════════
+ *
+ * A navegação por conteúdo era uma grade de retângulos brancos com um nome
+ * dentro e uma seta na ponta. Trinta deles são trinta linhas de texto: nada
+ * distingue Cardiologia de Farmacologia além das letras, e o olho não tem onde
+ * pousar. Trilha e aula tinham capa; o acervo, que é a maior parte do conteúdo,
+ * não tinha nenhuma — e era exatamente a queixa que originou esta reescrita.
+ *
+ * Aqui o assunto ganha a mesma dignidade visual da Trilha: capa, sobreposição
+ * escura para o texto viver em cima dela, e o contador de aulas como única
+ * informação secundária. Quando não há imagem cadastrada, o nível empresta a
+ * capa de uma aula de dentro dele (`herdarCapas`, no servidor) — e quando não
+ * há nem isso, cai numa cor estável derivada do nome, para dois assuntos nunca
+ * ficarem idênticos.
+ *
+ * O formato `alto` é o do carrossel da home (retrato, cabe mais na linha); o
+ * `largo` é o da grade do Explorar.
+ */
+export function CartaoDeNo({
+  no,
+  href,
+  className,
+  formato = 'largo',
+}: {
+  no: NoNaTela
+  href: string
+  className?: string
+  formato?: 'alto' | 'largo'
+}) {
+  const total = no.aulasNaArvore ?? no.aulas ?? 0
+  const secoes = no.filhos?.length || 0
+
+  return (
+    <Link
+      href={href}
+      prefetch={false}
+      className={cn(
+        'vidro-cartao vidro-toque vidro-reflexo group relative flex flex-none snap-start overflow-hidden',
+        formato === 'alto'
+          ? 'w-[9.5rem] flex-col rounded-3xl sm:w-[11rem]'
+          : 'w-full flex-col rounded-3xl',
+        className,
+      )}
+    >
+      <div className="relative">
+        <Capa
+          capa={no.capa}
+          titulo={no.nome}
+          aspecto={formato === 'alto' ? 'alto' : 'video'}
+          className="rounded-none"
+          sizes={formato === 'alto' ? '(max-width: 640px) 152px, 176px' : '(max-width: 640px) 92vw, 320px'}
+        />
+        {/* A sobreposição existe para o texto poder morar SOBRE a imagem sem
+            depender de a imagem ser escura. Sem ela, uma capa clara engoliria
+            o nome do assunto — e a capa deixaria de ser capa para virar
+            enfeite acima de um rótulo. */}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/78 via-black/28 to-transparent" />
+
+        <div className="absolute inset-x-3 bottom-2.5">
+          <p className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-white/70">
+            {ROTULO_DO_NIVEL_DE_ENSINO[no.nivel] || ''}
+          </p>
+          <h3 className="mt-0.5 line-clamp-2 font-heading text-[15px] font-extrabold leading-tight tracking-tight text-white drop-shadow-[0_1px_3px_rgb(0_0_0/0.5)]">
+            {no.nome}
+          </h3>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between gap-2 px-3.5 py-2.5">
+        <span className="text-xs font-semibold tabular-nums text-muted-foreground">
+          {total} {total === 1 ? 'aula' : 'aulas'}
+          {secoes > 0 ? ` · ${secoes} ${secoes === 1 ? 'seção' : 'seções'}` : ''}
+        </span>
+        <ChevronRight className="h-4 w-4 flex-none text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-primary" />
+      </div>
+    </Link>
   )
 }
 
@@ -486,12 +617,12 @@ export function CartaoDeAula({
     <Link
       href={href}
       className={cn(
-        'group flex w-[15.5rem] flex-none snap-start flex-col gap-2 transition-transform duration-150 hover:-translate-y-0.5 active:translate-y-[2px]',
+        'vidro-cartao vidro-toque vidro-reflexo group flex w-[15.5rem] flex-none snap-start flex-col overflow-hidden rounded-3xl',
         className,
       )}
     >
       <div className="relative">
-        <Capa capa={aula.capa} titulo={aula.titulo} />
+        <Capa capa={aula.capa} titulo={aula.titulo} className="rounded-none" />
 
         {bloqueada ? (
           <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-background/70 backdrop-blur-[2px]">
@@ -516,16 +647,16 @@ export function CartaoDeAula({
         {aula.progresso && aula.progresso.percentual > 0 && !aula.progresso.concluida ? (
           <BarraDeProgresso
             percentual={aula.progresso.percentual}
-            className="absolute inset-x-0 bottom-0 rounded-none rounded-b-2xl bg-black/40"
+            className="absolute inset-x-0 bottom-0 rounded-none bg-black/40"
           />
         ) : null}
       </div>
 
-      <div className="min-w-0">
+      <div className="min-w-0 p-3.5">
         <h3 className="line-clamp-2 text-sm font-bold leading-snug transition group-hover:text-primary">
           {aula.titulo}
         </h3>
-        <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
+        <div className="mt-1.5 flex items-center gap-2 text-xs text-muted-foreground">
           {aula.localizacao ? <span className="truncate">{aula.localizacao}</span> : null}
           <SelosDeRecurso recursos={aula.recursos} className="ml-auto flex-none" />
         </div>
@@ -651,13 +782,10 @@ export function CartaoDeTrilha({
     <Link
       href={`/aulas/trilhas/${trilha.slug}`}
       className={cn(
-        'group relative flex flex-none snap-start flex-col overflow-hidden rounded-3xl bg-card ring-1 ring-border/70',
-        // A mesma gramática do botão: a peça tem espessura, sobe no hover e
-        // afunda no toque. É o que faz um cartão parecer clicável antes de
-        // qualquer instrução.
-        'shadow-[0_4px_0_rgb(0_0_0/0.13)] transition-[transform,box-shadow] duration-150',
-        'hover:-translate-y-0.5 hover:shadow-[0_6px_0_rgb(0_0_0/0.15)] hover:ring-primary/40',
-        'active:translate-y-[3px] active:shadow-none',
+        // A peça flutua: ela sobe no ponteiro e afunda no toque, e o que cresce
+        // no hover é a DIFUSÃO da sombra — o cartão se afasta da página em vez
+        // de engordar. É a tradução da gramática do botão 3D para o vidro.
+        'vidro-cartao vidro-toque vidro-reflexo group relative flex flex-none snap-start flex-col overflow-hidden rounded-3xl',
         formato === 'cartao' ? 'w-[17rem]' : 'w-full',
         className,
       )}
@@ -742,11 +870,11 @@ export function EstadoVazio({
   return (
     <div
       className={cn(
-        'flex flex-col items-center justify-center rounded-3xl bg-muted/40 px-6 py-14 text-center ring-2 ring-dashed ring-border',
+        'vidro-cartao vidro-reflexo flex flex-col items-center justify-center rounded-3xl px-6 py-14 text-center',
         className,
       )}
     >
-      <span className="flex h-16 w-16 items-center justify-center rounded-full bg-card ring-1 ring-border">
+      <span className="vidro-sutil flex h-16 w-16 items-center justify-center rounded-full">
         <Icone className="h-8 w-8 text-primary/60" strokeWidth={2} />
       </span>
       <p className="mt-4 font-heading text-lg font-extrabold tracking-tight">{titulo}</p>
@@ -783,10 +911,15 @@ export function EsqueletoDeFaixa({ quantidade = 4 }: { quantidade?: number }) {
       <Esqueleto className="h-6 w-48" />
       <Trilho>
         {Array.from({ length: quantidade }).map((_, i) => (
-          <div key={i} className="w-[15.5rem] flex-none space-y-2">
-            <Esqueleto className="aspect-video w-full" />
-            <Esqueleto className="h-4 w-3/4" />
-            <Esqueleto className="h-3 w-1/2" />
+          <div
+            key={i}
+            className="vidro-cartao w-[15.5rem] flex-none overflow-hidden rounded-3xl"
+          >
+            <Esqueleto className="aspect-video w-full rounded-none" />
+            <div className="space-y-2 p-3.5">
+              <Esqueleto className="h-4 w-3/4" />
+              <Esqueleto className="h-3 w-1/2" />
+            </div>
           </div>
         ))}
       </Trilho>
@@ -837,11 +970,11 @@ export function Cadeado({
   return (
     <div
       className={cn(
-        'flex flex-col items-center justify-center gap-3 rounded-3xl bg-card px-6 py-10 text-center shadow-[0_4px_0_rgb(0_0_0/0.1)] ring-1 ring-border',
+        'vidro-cartao vidro-reflexo flex flex-col items-center justify-center gap-3 rounded-3xl px-6 py-10 text-center',
         className,
       )}
     >
-      <span className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-muted ring-1 ring-border">
+      <span className="vidro-sutil inline-flex h-14 w-14 items-center justify-center rounded-full">
         <Lock className="h-6 w-6 text-muted-foreground" strokeWidth={2.5} />
       </span>
       <p className="font-heading text-lg font-extrabold tracking-tight">
