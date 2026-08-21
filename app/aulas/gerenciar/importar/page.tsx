@@ -1,7 +1,19 @@
 'use client'
 
 import { useState } from 'react'
-import { AlertTriangle, Check, Download, FileUp, History, Upload } from 'lucide-react'
+import {
+  AlertTriangle,
+  Check,
+  CheckCircle2,
+  Download,
+  FileText,
+  FileUp,
+  History,
+  Layers,
+  Loader2,
+  Upload,
+  X,
+} from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
 import {
@@ -87,6 +99,29 @@ interface PlanoDeMigracao {
   }
 }
 
+type StatusDoItem = 'pendente' | 'ensaiando' | 'ensaiado' | 'aplicando' | 'aplicado' | 'erro'
+
+interface ItemDaFila {
+  id: string
+  nome: string
+  conteudo: string
+  status: StatusDoItem
+  relatorio?: Relatorio
+  erro?: string
+}
+
+function resumoDoRelatorio(relatorio: Relatorio): string {
+  const partes = [
+    `${relatorio.nos.criados} níveis`,
+    `${relatorio.aulas.criadas} aulas novas`,
+    relatorio.aulas.atualizadas ? `${relatorio.aulas.atualizadas} atualizadas` : null,
+    relatorio.trilhas.criadas + relatorio.trilhas.atualizadas
+      ? `${relatorio.trilhas.criadas + relatorio.trilhas.atualizadas} trilhas`
+      : null,
+  ].filter(Boolean)
+  return partes.join(' · ')
+}
+
 export default function ImportarPage() {
   return (
     <AppShell headerTitle="Importar" headerSubtitle="Administração de Ensino">
@@ -169,6 +204,118 @@ function Conteudo() {
     }
     leitor.readAsText(arquivo)
   }
+
+  /*
+   * Fila de importação em lote (múltiplos arquivos).
+   *
+   * Cada arquivo do lote é o pacote INTEIRO de um plano de ensino (suas
+   * próprias seções Taxonomia/Aulas/Trilhas) — não faz sentido juntar o
+   * conteúdo de vários arquivos num textarea só. Por isso a fila trata cada
+   * arquivo como um item independente, com sua própria requisição e seu
+   * próprio relatório.
+   *
+   * O mesmo princípio do formulário de cima vale aqui: nenhum item aplica de
+   * verdade sem antes passar pelo ensaio DESSE arquivo — "Aplicar tudo" só
+   * envia os itens já ensaiados com sucesso, nunca os pendentes.
+   */
+  const [fila, setFila] = useState<ItemDaFila[]>([])
+  const [processandoFila, setProcessandoFila] = useState(false)
+
+  function adicionarArquivosAoLote(arquivos: FileList | null) {
+    if (!arquivos) return
+    Array.from(arquivos).forEach((arquivo) => {
+      const leitor = new FileReader()
+      leitor.onload = () => {
+        setFila((atual) => [
+          ...atual,
+          {
+            id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+            nome: arquivo.name,
+            conteudo: String(leitor.result || ''),
+            status: 'pendente',
+          },
+        ])
+      }
+      leitor.readAsText(arquivo)
+    })
+  }
+
+  async function enviarItemDoLote(
+    item: ItemDaFila,
+    ensaio: boolean,
+  ): Promise<{ relatorio?: Relatorio; erro?: string }> {
+    const prazoMs = ensaio ? 30_000 : 320_000
+    const controle = new AbortController()
+    const cronometro = setTimeout(() => controle.abort(), prazoMs)
+
+    try {
+      const resposta = await fetch('/api/ensino/importar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ acao: 'importar', ensaio, conteudo: item.conteudo }),
+        signal: controle.signal,
+      })
+      const d = await resposta.json().catch(() => {
+        if (!ensaio && (resposta.status === 502 || resposta.status === 504)) {
+          throw new Error(
+            'Demorou demais para o servidor responder. Divida este arquivo em partes menores.',
+          )
+        }
+        return {}
+      })
+      if (!resposta.ok) throw new Error(d.error || 'Não foi possível processar.')
+      return { relatorio: d.relatorio }
+    } catch (e: any) {
+      if (e?.name === 'AbortError') {
+        return {
+          erro: ensaio
+            ? 'A prévia demorou demais para responder.'
+            : 'A importação demorou demais e o navegador desistiu — confira o Catálogo antes de tentar de novo.',
+        }
+      }
+      return { erro: e?.message || 'Não foi possível processar.' }
+    } finally {
+      clearTimeout(cronometro)
+    }
+  }
+
+  // `ensaio: true` roda (ou tenta de novo) todo item ainda não ensaiado com
+  // sucesso; `ensaio: false` só roda quem já foi conferido — nunca um item
+  // pendente pula direto para a gravação real.
+  async function processarLote(ensaio: boolean) {
+    const alvo = fila.filter((item) =>
+      ensaio ? item.status === 'pendente' || item.status === 'erro' : item.status === 'ensaiado',
+    )
+    if (alvo.length === 0) return
+
+    setProcessandoFila(true)
+    for (const item of alvo) {
+      setFila((atual) =>
+        atual.map((i) => (i.id === item.id ? { ...i, status: ensaio ? 'ensaiando' : 'aplicando' } : i)),
+      )
+      const resultado = await enviarItemDoLote(item, ensaio)
+      setFila((atual) =>
+        atual.map((i) => {
+          if (i.id !== item.id) return i
+          if (resultado.erro) return { ...i, status: 'erro', erro: resultado.erro }
+          return {
+            ...i,
+            status: ensaio ? 'ensaiado' : 'aplicado',
+            relatorio: resultado.relatorio,
+            erro: undefined,
+          }
+        }),
+      )
+    }
+    setProcessandoFila(false)
+  }
+
+  function removerDoLote(id: string) {
+    setFila((atual) => atual.filter((i) => i.id !== id))
+  }
+
+  const prontosParaAplicar = fila.filter((i) => i.status === 'ensaiado').length
+  const totalAplicado = fila.filter((i) => i.status === 'aplicado').length
 
   return (
     <PainelDeEnsino
@@ -412,6 +559,144 @@ function Conteudo() {
           </section>
         </aside>
       </div>
+
+      {/* ── Importação em lote (vários arquivos) ─────────────────────── */}
+      <section className="mt-6 rounded-2xl border border-border/70 bg-card p-4">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h2 className="flex items-center gap-2 font-heading text-base font-semibold tracking-tight">
+              <Layers className="h-4 w-4 text-primary" /> Importar vários arquivos
+            </h2>
+            <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
+              Envie um arquivo por plano de ensino. Cada um é conferido e aplicado
+              separadamente — como no formulário acima, nada é gravado até você mandar aplicar.
+            </p>
+          </div>
+
+          <label className="inline-flex h-10 flex-none cursor-pointer items-center gap-2 rounded-lg border border-border px-3.5 text-sm font-semibold transition hover:bg-muted">
+            <Upload className="h-4 w-4" /> Adicionar arquivos
+            <input
+              type="file"
+              multiple
+              accept=".md,.markdown,.json,.txt"
+              className="hidden"
+              onChange={(e) => {
+                adicionarArquivosAoLote(e.target.files)
+                e.target.value = ''
+              }}
+            />
+          </label>
+        </div>
+
+        {fila.length > 0 ? (
+          <>
+            <ul className="mt-4 space-y-2">
+              {fila.map((item) => (
+                <li
+                  key={item.id}
+                  className="flex flex-wrap items-center gap-3 rounded-xl border border-border/60 bg-background/60 px-3.5 py-2.5"
+                >
+                  <FileText className="h-4 w-4 flex-none text-muted-foreground" />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-semibold">{item.nome}</p>
+                    {item.status === 'erro' ? (
+                      <p className="text-xs text-destructive">{item.erro}</p>
+                    ) : item.relatorio ? (
+                      <p className="text-xs text-muted-foreground">{resumoDoRelatorio(item.relatorio)}</p>
+                    ) : null}
+                  </div>
+
+                  <StatusDoLote status={item.status} />
+
+                  <button
+                    type="button"
+                    onClick={() => removerDoLote(item.id)}
+                    disabled={item.status === 'ensaiando' || item.status === 'aplicando'}
+                    className="flex-none rounded-lg p-1.5 text-muted-foreground transition hover:bg-muted hover:text-destructive disabled:pointer-events-none disabled:opacity-40"
+                    aria-label={`Remover ${item.nome} da fila`}
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+
+            <div className="mt-4 flex flex-wrap items-center gap-2">
+              <BotaoPrincipal onClick={() => processarLote(true)} carregando={processandoFila}>
+                <FileUp className="h-4 w-4" /> Conferir todos sem gravar
+              </BotaoPrincipal>
+              <BotaoPrincipal
+                onClick={() => processarLote(false)}
+                carregando={processandoFila}
+                disabled={prontosParaAplicar === 0}
+              >
+                <Upload className="h-4 w-4" />
+                {prontosParaAplicar > 0 ? `Aplicar os ${prontosParaAplicar} ensaiados` : 'Aplicar os ensaiados'}
+              </BotaoPrincipal>
+              <BotaoSecundario onClick={() => setFila([])} disabled={processandoFila}>
+                Limpar fila
+              </BotaoSecundario>
+              {totalAplicado > 0 ? (
+                <span className="text-xs font-semibold text-primary">
+                  {totalAplicado} de {fila.length} já aplicados
+                </span>
+              ) : null}
+            </div>
+          </>
+        ) : (
+          <p className="mt-4 text-sm text-muted-foreground">
+            Nenhum arquivo na fila ainda. Adicione dois ou mais arquivos para importá-los em lote.
+          </p>
+        )}
+      </section>
     </PainelDeEnsino>
+  )
+}
+
+function StatusDoLote({ status }: { status: StatusDoItem }) {
+  const mapa: Record<StatusDoItem, { rotulo: string; classe: string; icone: React.ReactNode }> = {
+    pendente: {
+      rotulo: 'Na fila',
+      classe: 'bg-muted text-muted-foreground',
+      icone: null,
+    },
+    ensaiando: {
+      rotulo: 'Conferindo…',
+      classe: 'bg-accent/10 text-accent-foreground',
+      icone: <Loader2 className="h-3 w-3 animate-spin" />,
+    },
+    ensaiado: {
+      rotulo: 'Conferido',
+      classe: 'bg-accent/15 text-foreground',
+      icone: <AlertTriangle className="h-3 w-3" />,
+    },
+    aplicando: {
+      rotulo: 'Aplicando…',
+      classe: 'bg-primary/10 text-primary',
+      icone: <Loader2 className="h-3 w-3 animate-spin" />,
+    },
+    aplicado: {
+      rotulo: 'Aplicado',
+      classe: 'bg-primary/15 text-primary',
+      icone: <CheckCircle2 className="h-3 w-3" />,
+    },
+    erro: {
+      rotulo: 'Erro',
+      classe: 'bg-destructive/10 text-destructive',
+      icone: <AlertTriangle className="h-3 w-3" />,
+    },
+  }
+  const { rotulo, classe, icone } = mapa[status]
+
+  return (
+    <span
+      className={cn(
+        'inline-flex flex-none items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold',
+        classe,
+      )}
+    >
+      {icone}
+      {rotulo}
+    </span>
   )
 }
