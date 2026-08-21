@@ -1,7 +1,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
-import { hashPassword, createToken, setAuthCookie, generateSessionId } from '@/lib/auth'
+import { hashPassword, createToken, setAuthCookie, generateSessionId, normalizeEmail } from '@/lib/auth'
 import { recordLoginSession } from '@/lib/sessions'
 import { verifyRecaptcha } from '@/lib/recaptcha'
 import { User } from '@/lib/types'
@@ -30,12 +30,18 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json()
     const {
-      email, password, name, dateOfBirth,
+      password, name, dateOfBirth,
       profession, state, phone,
       specialty, residencySpecialty, residencyHospital, residencyYear,
       isAfyaMedicineStudent, afyaUnit, periodo,
       role = 'user', recaptchaToken,
     } = body
+
+    // Normaliza antes de qualquer uso: "Nome@gmail.com" e "nome@gmail.com"
+    // precisam ser a mesma conta. Sem isso, quem digita o e-mail com
+    // maiúscula (ex: autocomplete do teclado) passa pela checagem de
+    // duplicidade abaixo e cria uma segunda conta com o mesmo e-mail.
+    const email = typeof body.email === 'string' ? normalizeEmail(body.email) : body.email
 
     // Funil de baixa fricção: o cadastro grátis pede só o essencial (nome, email
     // e senha). Todo o resto — data de nascimento, profissão, estado, telefone,
@@ -81,7 +87,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (role === 'admin' && !ADMIN_EMAILS.includes(email.toLowerCase().trim())) {
+    if (role === 'admin' && !ADMIN_EMAILS.includes(email)) {
       return NextResponse.json(
         { error: 'Você não tem permissão para criar conta de administrador' },
         { status: 403 }

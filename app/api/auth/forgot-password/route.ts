@@ -1,6 +1,7 @@
 
 import { NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
+import { normalizeEmail } from '@/lib/auth'
 import { sendPasswordResetEmail } from '@/lib/mail'
 import { checkRateLimit } from '@/lib/rate-limit'
 import crypto from 'crypto'
@@ -23,7 +24,7 @@ export async function POST(req: Request) {
             )
         }
 
-        const { email } = result.data
+        const email = normalizeEmail(result.data.email)
 
         // Rate Limit
         const headersList = await headers()
@@ -38,7 +39,7 @@ export async function POST(req: Request) {
         }
 
         const db = await getDb()
-        const user = await db.collection('users').findOne({ email: email.toLowerCase() })
+        const user = await db.collection('users').findOne({ email })
 
         // Generic response for security
         const genericResponse = NextResponse.json({

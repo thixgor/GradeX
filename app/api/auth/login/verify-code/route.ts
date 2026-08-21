@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
-import { createToken, setAuthCookie, generateSessionId } from '@/lib/auth'
+import { createToken, setAuthCookie, generateSessionId, normalizeEmail } from '@/lib/auth'
 import { User } from '@/lib/types'
 import { secureApiEndpoint } from '@/lib/api-security'
 import { recordLoginSession } from '@/lib/sessions'
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const email = typeof body.email === 'string' ? body.email.trim() : ''
+    const email = typeof body.email === 'string' ? normalizeEmail(body.email) : ''
     const code = typeof body.code === 'string' ? body.code.trim() : ''
 
     if (!email || !code) {

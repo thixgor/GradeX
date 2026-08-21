@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
+import { normalizeEmail } from '@/lib/auth'
 import { User } from '@/lib/types'
 import { secureApiEndpoint } from '@/lib/api-security'
 import {
@@ -24,7 +25,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const email = typeof body.email === 'string' ? body.email.trim() : ''
+    const email = typeof body.email === 'string' ? normalizeEmail(body.email) : ''
     if (!email) {
       return NextResponse.json({ error: 'Email é obrigatório' }, { status: 400 })
     }

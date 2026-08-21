@@ -66,6 +66,13 @@ const BCRYPT_ROUNDS = (() => {
   return value
 })()
 
+// E-mail é o identificador de conta, então precisa de uma forma canônica
+// única: sem isso, "Nome@gmail.com" e "nome@gmail.com" viram duas contas
+// (o cadastro/login comparava a string exata digitada, sem normalizar).
+export function normalizeEmail(email: string): string {
+  return email.trim().toLowerCase()
+}
+
 export async function hashPassword(password: string): Promise<string> {
   return bcrypt.hash(password, BCRYPT_ROUNDS)
 }

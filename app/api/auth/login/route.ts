@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
-import { verifyPassword, createToken, setAuthCookie, generateSessionId } from '@/lib/auth'
+import { verifyPassword, createToken, setAuthCookie, generateSessionId, normalizeEmail } from '@/lib/auth'
 import { verifyRecaptcha } from '@/lib/recaptcha'
 import { User } from '@/lib/types'
 import { secureApiEndpoint } from '@/lib/api-security'
@@ -28,7 +28,8 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { email, password, recaptchaToken } = body
+    const { password, recaptchaToken } = body
+    const email = typeof body.email === 'string' ? normalizeEmail(body.email) : body.email
 
     if (!email || !password) {
       return NextResponse.json(
