@@ -519,43 +519,47 @@ ${respostaAluno}`
     ((questao.tipo === 'objetiva' && !!alternativaSelecionada) ||
       (questao.tipo === 'discursiva' && !!respostaDiscursiva.trim()))
 
-  // Tudo o que classifica a questão fica aqui, fechado: durante a leitura do
-  // enunciado essas etiquetas não são usadas, e ocupavam justamente a faixa em
-  // que o olho começa a ler.
+  // As etiquetas (tipo, período, tópico, ano, dificuldade) ficam visíveis
+  // acima do enunciado — é o que identifica QUAL questão está sendo lida, e
+  // esconder isso atrás de um toque confundia mais do que ajudava. O que
+  // fecha no painel de detalhes são só as AÇÕES (adicionar à lista, relatar
+  // erro), que não são usadas durante a leitura em si.
+  const badgesDaQuestao = (
+    <div className="flex flex-wrap items-center gap-1.5">
+      <Badge variant={questao.tipo === 'objetiva' ? 'default' : 'secondary'}>
+        {questao.tipo === 'objetiva' ? 'Objetiva' : 'Discursiva'}
+      </Badge>
+      <Badge variant="outline">{questao.periodoNome}</Badge>
+      {questao.moduloNome && <Badge variant="outline">{questao.moduloNome}</Badge>}
+      {questao.topicoNome && <Badge variant="outline">{questao.topicoNome}</Badge>}
+      {questao.ano && (
+        <Badge variant="outline" className="bg-primary/10">
+          {questao.ano}
+        </Badge>
+      )}
+      {questao.dificuldade && (
+        <Badge
+          variant="outline"
+          className={
+            questao.dificuldade === 'facil'
+              ? 'border-green-500 text-green-600'
+              : questao.dificuldade === 'medio'
+                ? 'border-yellow-500 text-yellow-600'
+                : 'border-red-500 text-red-600'
+          }
+        >
+          {questao.dificuldade === 'facil'
+            ? 'Fácil'
+            : questao.dificuldade === 'medio'
+              ? 'Médio'
+              : 'Difícil'}
+        </Badge>
+      )}
+    </div>
+  )
+
   const detalhesDaQuestao = (
     <>
-      <div className="flex flex-wrap items-center gap-1.5">
-        <Badge variant={questao.tipo === 'objetiva' ? 'default' : 'secondary'}>
-          {questao.tipo === 'objetiva' ? 'Objetiva' : 'Discursiva'}
-        </Badge>
-        <Badge variant="outline">{questao.periodoNome}</Badge>
-        {questao.moduloNome && <Badge variant="outline">{questao.moduloNome}</Badge>}
-        {questao.topicoNome && <Badge variant="outline">{questao.topicoNome}</Badge>}
-        {questao.ano && (
-          <Badge variant="outline" className="bg-primary/10">
-            {questao.ano}
-          </Badge>
-        )}
-        {questao.dificuldade && (
-          <Badge
-            variant="outline"
-            className={
-              questao.dificuldade === 'facil'
-                ? 'border-green-500 text-green-600'
-                : questao.dificuldade === 'medio'
-                  ? 'border-yellow-500 text-yellow-600'
-                  : 'border-red-500 text-red-600'
-            }
-          >
-            {questao.dificuldade === 'facil'
-              ? 'Fácil'
-              : questao.dificuldade === 'medio'
-                ? 'Médio'
-                : 'Difícil'}
-          </Badge>
-        )}
-      </div>
-
       <div className="flex flex-wrap gap-2">
         <Button
           variant="outline"
@@ -597,6 +601,8 @@ ${respostaAluno}`
         className="container mx-auto max-w-4xl space-y-4 px-4 py-5"
         style={{ paddingBottom: 'calc(var(--gx-barra-inferior-h, 6rem) + 1.5rem)' }}
       >
+        {badgesDaQuestao}
+
         <InlineAnnotationCanvas
           questionId={String(questao._id)}
           questionNumber={1}

@@ -498,27 +498,31 @@ ${respostaAluno}`
 
     const temCorrecaoParaLer = !!(questao.explicacao || questao.respostaModelo || questao.fonte)
 
-    // Tudo o que classifica a questão vive aqui, fechado. Durante a resolução
-    // essas etiquetas não são usadas — e ocupavam a faixa logo acima do
-    // enunciado, que é justamente onde o olho começa a ler.
+    // As etiquetas (tipo, período, tópico, ano) ficam visíveis acima do
+    // enunciado — é o que identifica QUAL questão está sendo lida, e esconder
+    // isso atrás de um toque confundia mais do que ajudava. O que fecha no
+    // painel de detalhes são só as AÇÕES (PDF, relatar erro) e o modo de
+    // correção, que não são usados durante a leitura em si.
+    const badgesDaQuestao = (
+      <div className="flex flex-wrap items-center gap-1.5">
+        <Badge variant={questao.tipo === 'objetiva' ? 'default' : 'secondary'}>
+          {questao.tipo === 'objetiva' ? 'Objetiva' : 'Discursiva'}
+        </Badge>
+        <Badge variant="outline">{questao.periodoNome}</Badge>
+        {questao.moduloNome && (
+          <Badge variant="outline" className="text-xs">{questao.moduloNome}</Badge>
+        )}
+        {questao.topicoNome && (
+          <Badge variant="outline" className="text-xs">{questao.topicoNome}</Badge>
+        )}
+        {questao.ano && (
+          <Badge variant="outline" className="bg-primary/10 text-xs">{questao.ano}</Badge>
+        )}
+      </div>
+    )
+
     const detalhesDaQuestao = (
       <>
-        <div className="flex flex-wrap items-center gap-1.5">
-          <Badge variant={questao.tipo === 'objetiva' ? 'default' : 'secondary'}>
-            {questao.tipo === 'objetiva' ? 'Objetiva' : 'Discursiva'}
-          </Badge>
-          <Badge variant="outline">{questao.periodoNome}</Badge>
-          {questao.moduloNome && (
-            <Badge variant="outline" className="text-xs">{questao.moduloNome}</Badge>
-          )}
-          {questao.topicoNome && (
-            <Badge variant="outline" className="text-xs">{questao.topicoNome}</Badge>
-          )}
-          {questao.ano && (
-            <Badge variant="outline" className="bg-primary/10 text-xs">{questao.ano}</Badge>
-          )}
-        </div>
-
         <p className="text-xs text-muted-foreground">
           {modoCorrecao === 'imediato'
             ? 'Correção a cada resposta.'
@@ -586,6 +590,8 @@ ${respostaAluno}`
           className="container mx-auto max-w-4xl space-y-4 px-4 py-5"
           style={{ paddingBottom: 'calc(var(--gx-barra-inferior-h, 6rem) + 1.5rem)' }}
         >
+          {badgesDaQuestao}
+
           {/* Se finalizado, mostrar resultado */}
           {simuladoFinalizado && (
             <Card className="border-[#468152]/30 bg-gradient-to-r from-[#468152]/10 to-[#E2A43E]/10">
