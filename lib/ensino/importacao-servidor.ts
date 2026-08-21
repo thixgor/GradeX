@@ -351,7 +351,15 @@ export async function aplicarPacote(
               if (!relatorio.naoResolvidas.includes(titulo)) relatorio.naoResolvidas.push(titulo)
               return null
             }
-            return { id: novoIdLocal('i'), tipo: 'aula', refId, obrigatorio: true }
+            // `rotulo` aqui não é para exibir por cima do título — a aula
+            // sempre resolve e mostra o próprio título quando existe (ver
+            // `ItemDaEtapa.rotulo`). É o retrato do título NO MOMENTO da
+            // importação: se um dia este id parar de resolver (a aula foi
+            // apagada por um caminho que não limpou a referência, por
+            // exemplo), é o que permite a auditoria de Trilhas propor uma
+            // recuperação por título em vez de um item mudo (§ ver
+            // app/api/ensino/trilhas/auditoria/route.ts).
+            return { id: novoIdLocal('i'), tipo: 'aula', refId, rotulo: titulo, obrigatorio: true }
           })
           .filter(Boolean),
       })),

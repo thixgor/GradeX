@@ -8,6 +8,7 @@ import {
   isValidObjectId,
   sanitizeObject
 } from '@/lib/api-security'
+import { excluirAulasComReferencias } from '@/lib/aulas/exclusao'
 import { getSession } from '@/lib/auth'
 import { avaliarAcessoAula, ocultarConteudoRestrito } from '@/lib/aulas/acesso'
 import { montarContextoDoUsuario } from '@/lib/aulas/contexto'
@@ -450,7 +451,6 @@ export async function DELETE(
 
     const session = security.session!
     const db = await getDb()
-    const aulasCollection = db.collection<AulaPostagem>('aulas_postagens')
 
     // Verificar se o monitor tem permissão para deletar esta aula
     // (deve ser o criador ou admin)
@@ -475,11 +475,17 @@ export async function DELETE(
       }
     }
 
-    const result = await aulasCollection.deleteOne({
-      _id: new ObjectId(params.id)
-    })
+    // `excluirAulasComReferencias` (lib/aulas/exclusao.ts) apaga o documento
+    // E limpa toda referência a ele — Trilhas, relacionadas, pré-requisitos,
+    // o vínculo de Aula Resumo, progresso, anotações, favoritos. Antes esta
+    // rota fazia só um `deleteOne` cru: qualquer Trilha que apontasse para
+    // esta aula ficava com um `refId` órfão para sempre, sem aviso nenhum —
+    // a mesma função que corrige a exclusão em massa do Catálogo e a cascata
+    // da Taxonomia evita que esta rota, mais antiga, continue abrindo essa
+    // brecha por um quarto caminho.
+    const apagadas = await excluirAulasComReferencias(db, [params.id])
 
-    if (result.deletedCount === 0) {
+    if (apagadas === 0) {
       return NextResponse.json(
         { error: 'Aula não encontrada' },
         { status: 404 }

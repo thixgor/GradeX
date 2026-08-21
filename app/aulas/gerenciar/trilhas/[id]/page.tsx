@@ -158,6 +158,33 @@ function Conteudo() {
     ])
       .then(([detalhe, catalogo, todas]) => {
         if (cancelado) return
+
+        /**
+         * O acervo do editor é a UNIÃO de duas fontes — não só o catálogo.
+         *
+         * O bug que isto conserta: `/api/ensino/trilhas/[id]` já resolve CADA
+         * item por uma consulta sem paginação (`_id: {$in: [...todos os
+         * refIds]}`) e devolve o cartão embutido em `item.aula`. O editor
+         * jogava essa resolução fora e reconstruía o mapa de aulas só a
+         * partir do catálogo (`limite=300`, as mais recentes) — então
+         * qualquer aula referenciada que não estivesse entre as 300 últimas
+         * criadas aparecia como "Aula removida do acervo" mesmo existindo de
+         * verdade, com o `refId` certo, resolvida pelo próprio servidor um
+         * instante antes.
+         *
+         * As aulas já embutidas na Trilha entram no `acervo` junto com as do
+         * catálogo: o catálogo continua servindo o SELETOR de "adicionar
+         * aula" (não precisa ser o acervo inteiro, 300 recentes + busca
+         * basta); a união garante que toda referência que a Trilha JÁ TEM
+         * resolve — nunca de novo por causa de paginação.
+         */
+        const aulasEmbutidas: any[] = []
+        for (const etapa of detalhe?.trilha?.etapas || []) {
+          for (const item of etapa.itens || []) {
+            if (item.tipo === 'aula' && item.aula) aulasEmbutidas.push(item.aula)
+          }
+        }
+
         if (detalhe?.trilha) {
           // O GET devolve os itens já resolvidos com a aula embutida; o editor
           // guarda só a referência, que é o que será salvo de volta.
@@ -177,7 +204,12 @@ function Conteudo() {
           setTrilha({ ...detalhe.trilha, etapas })
           setEtapaAlvo(etapas[0]?.id || '')
         }
-        if (catalogo?.aulas) setAcervo(catalogo.aulas)
+        {
+          const doCatalogo: any[] = catalogo?.aulas || []
+          const idsDoCatalogo = new Set(doCatalogo.map((a) => a._id))
+          const extras = aulasEmbutidas.filter((a) => a?._id && !idsDoCatalogo.has(a._id))
+          if (doCatalogo.length || extras.length) setAcervo([...doCatalogo, ...extras])
+        }
         if (todas?.trilhas) {
           setTrilhasIrmas(
             todas.trilhas
@@ -280,7 +312,16 @@ function Conteudo() {
               ...etapa,
               itens: [
                 ...etapa.itens,
-                { id: idLocal('i'), tipo: 'aula', refId: aulaId, obrigatorio: true },
+                // `rotulo` guarda o título de agora — nunca aparece por cima
+                // do título de verdade (o item sempre mostra o da aula viva),
+                // mas é o que sobra se um dia este id parar de resolver.
+                {
+                  id: idLocal('i'),
+                  tipo: 'aula',
+                  refId: aulaId,
+                  rotulo: aulaPorId.get(aulaId)?.titulo,
+                  obrigatorio: true,
+                },
               ],
             }
           : etapa,

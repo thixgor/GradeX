@@ -4,12 +4,13 @@ import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { AnimatePresence, motion } from 'framer-motion'
-import { AlertTriangle, Eye, Layers, Loader2, Plus, Route, Trash2 } from 'lucide-react'
+import { AlertTriangle, Eye, Layers, Loader2, Plus, Route, ShieldCheck, Trash2 } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
 import { BotaoDuo } from '@/components/ensino/duo'
 import {
   BotaoPrincipal,
+  BotaoSecundario,
   Campo,
   PainelDeEnsino,
   classeDeEntrada,
@@ -154,9 +155,14 @@ function Conteudo() {
       titulo="Trilhas de Ensino"
       descricao="Cada Trilha referencia aulas que já existem. Apagar a Trilha nunca apaga uma aula."
       acoes={
-        <BotaoPrincipal onClick={() => setCriando((v) => !v)}>
-          <Plus className="h-4 w-4" /> Nova Trilha
-        </BotaoPrincipal>
+        <div className="flex flex-wrap items-center gap-2">
+          <BotaoSecundario href="/aulas/gerenciar/trilhas/auditoria">
+            <ShieldCheck className="h-4 w-4" /> Auditar Trilhas
+          </BotaoSecundario>
+          <BotaoPrincipal onClick={() => setCriando((v) => !v)}>
+            <Plus className="h-4 w-4" /> Nova Trilha
+          </BotaoPrincipal>
+        </div>
       }
     >
       {criando ? (
