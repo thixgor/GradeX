@@ -23,6 +23,7 @@ import { PlanConfig } from '@/lib/types'
 import { AppShell } from '@/components/app-shell'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { cn } from '@/lib/utils'
+import { ProuniCta } from '@/components/prouni/prouni-cta'
 
 interface Plan {
   id: string
@@ -560,6 +561,9 @@ function BuyContent() {
                             </>
                           )}
                         </button>
+                        {/* Só aparece nos planos que o admin marcou; nos demais
+                            o componente não renderiza nada. */}
+                        <ProuniCta itemType="plus" itemId={plan.id} className="mt-3" />
                         <div className="mt-3 space-y-1.5">
                           <p className="flex items-center justify-center gap-1.5 text-center text-[11px] text-muted-foreground">
                             <Lock className="h-3 w-3 shrink-0 text-primary" />

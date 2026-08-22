@@ -26,6 +26,7 @@ const PROFILE_PROJECTION = {
   residencyHospital: 1,
   residencyYear: 1,
   afyaUnit: 1,
+  institution: 1,
   periodoBase: 1,
   periodoBaseRef: 1,
   emailVerified: 1,
@@ -67,6 +68,9 @@ export async function GET() {
       residencyHospital: user.residencyHospital || '',
       residencyYear: user.residencyYear || '',
       afyaUnit: user.afyaUnit || '',
+      // Faculdade em texto livre (ver `User.institution`). A tela do desconto
+      // PROUNI/FIES a usa para não fazer a pessoa redigitar a instituição.
+      institution: user.institution || '',
       periodo: user.periodoBase ? String(user.periodoBase) : '',
       fullName: user.fullName || '',
       dateOfBirth: user.dateOfBirth

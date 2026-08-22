@@ -71,6 +71,7 @@ import { PricingEventBadge } from '@/components/pricing-events/PricingEventBadge
 import { usePricingEventState } from '@/components/pricing-events/usePricingEventState'
 import { PrintedAddon } from '@/components/shop/printed-addon'
 import { PLUS_LABEL } from '@/lib/account-tier'
+import { ProuniCta } from '@/components/prouni/prouni-cta'
 import {
   TimedAccessBanner,
   TimedAccessOptions,
@@ -1108,6 +1109,7 @@ export default function MaterialViewPage() {
                           Pagamento único · acesso permanente
                         </p>
                       )}
+                      {!isFree && <ProuniCta itemType="material" itemId={id} className="mt-1" />}
                       {cartMessage && (
                         <p className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-center text-[11px] font-semibold text-emerald-700 dark:text-emerald-300">
                           {cartMessage}
@@ -1495,6 +1497,7 @@ export default function MaterialViewPage() {
                             Pagamento único · acesso permanente
                           </p>
                         )}
+                        {!isFree && <ProuniCta itemType="material" itemId={id} className="mt-1" />}
                         {cartMessage && (
                           <p className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-center text-[11px] font-semibold text-emerald-700 dark:text-emerald-300">
                             {cartMessage}

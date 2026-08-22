@@ -272,6 +272,11 @@ export interface User {
   // Informações sobre a instituição do estudante
   isAfyaMedicineStudent?: boolean // Se é estudante de Medicina (profession = 'academico')
   afyaUnit?: string // Unidade/faculdade do estudante (se isAfyaMedicineStudent = true)
+  // Faculdade em texto livre. Nasceu do formulário PROUNI/FIES, que precisa da
+  // instituição de qualquer pessoa — inclusive de quem não estuda numa das
+  // unidades cadastradas em `afyaUnit` e por isso nunca teve onde registrar
+  // isso. Só é gravado quando o campo está vazio (ver /api/prouni/solicitacoes).
+  institution?: string
   // Período acadêmico (semestre). Definido no cadastro ou pelo admin.
   // O período exibido avança automaticamente a cada virada de semestre a
   // partir de periodoBaseRef (ver lib/user-periodo.ts). Cadastros antigos que

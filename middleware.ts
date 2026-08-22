@@ -50,6 +50,11 @@ const publicRoutes = [
   // telas de compra sem login precisam dela para anunciar a promoção a quem
   // ainda não tem conta.
   '/api/coupons/promo',
+  // Existe desconto PROUNI/FIES neste item? O chamativo aparece na página do
+  // produto, que é pública — quem ainda não tem conta precisa ver o benefício
+  // antes de decidir criar uma. Sem sessão a rota só devolve a oferta; nada de
+  // solicitação ou dado pessoal.
+  '/api/prouni/beneficio',
   '/flashcards',
   '/ldpg-mnclinico',
   '/prescricao-real-no-sus',

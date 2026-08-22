@@ -13,6 +13,7 @@ import { CouponPromo } from '@/components/checkout/coupon-promo'
 import { PackageContents } from '@/components/shop/package-contents'
 import { useMaterialCart } from '@/context/MaterialCartContext'
 import { PricingEventCountdown, type PricingEventStatePayload } from '@/components/pricing-events/PricingEventCountdown'
+import { combineDiscountsWithProuni, type ProuniDiscountType } from '@/lib/prouni-shared'
 
 const pageStyle: React.CSSProperties = {
   minHeight: '100vh',
@@ -74,6 +75,10 @@ interface CartUpgradeSuggestion {
 interface CartPreviewItemWithEvent extends CartPreviewItem {
   tierDiscount?: number
   priceAfterTier?: number
+  /** Desconto PROUNI/FIES já combinado com o lote (ver /api/materiais/cart/preview). */
+  prouniDiscount?: number
+  prouniLabel?: string
+  priceAfterBenefits?: number
   pricingEventState?: PricingEventStatePayload | null
 }
 
@@ -85,6 +90,10 @@ interface CartPreview {
   amount: number
   tierDiscountTotal?: number
   amountAfterTier?: number
+  prouniDiscountTotal?: number
+  /** Lote e/ou PROUNI somados — é contra este total que o cupom disputa. */
+  benefitsDiscountTotal?: number
+  amountAfterBenefits?: number
   suggestions?: CartUpgradeSuggestion[]
 }
 
@@ -290,6 +299,14 @@ export default function MateriaisCheckoutPage() {
   const { items: cartItems, clearCart, removeItem, addItem } = useMaterialCart()
 
   const [item, setItem] = useState<any>(null)
+  /**
+   * Concessão PROUNI/FIES desta pessoa neste item, quando existe. É só para a
+   * tela mostrar o preço certo: quem aplica o desconto é o checkout no
+   * servidor, que recalcula tudo e ignora qualquer valor vindo daqui.
+   */
+  const [prouniGrant, setProuniGrant] = useState<
+    { discountType: ProuniDiscountType; discountValue: number; stackWithTier: boolean; discountLabel: string } | null
+  >(null)
   const [cartPreview, setCartPreview] = useState<CartPreview | null>(null)
   const [publicKey, setPublicKey] = useState('')
   const [loading, setLoading] = useState(true)
@@ -486,6 +503,24 @@ export default function MateriaisCheckoutPage() {
   }, [cartPayloadKey, isCartMode, itemId, itemType])
 
   useEffect(() => {
+    if (isCartMode || !itemId) return
+    let ativo = true
+    fetch(`/api/prouni/beneficio?itemType=${encodeURIComponent(itemType)}&itemId=${encodeURIComponent(itemId)}`, { cache: 'no-store' })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json) => {
+        if (!ativo) return
+        const pedido = json?.request
+        const concessao = pedido?.status === 'approved' ? pedido.grant : null
+        // Concessão já gasta não pode continuar aparecendo como desconto: o
+        // servidor não a aplicaria, e a tela prometeria um preço que não existe.
+        if (concessao && concessao.usage !== 'used') setProuniGrant(concessao)
+        else setProuniGrant(null)
+      })
+      .catch(() => {})
+    return () => { ativo = false }
+  }, [isCartMode, itemId, itemType])
+
+  useEffect(() => {
     if (isCartMode) {
       if (!cartPreview) return
       fetch('/api/analytics/checkout-event', {
@@ -621,10 +656,14 @@ export default function MateriaisCheckoutPage() {
   if (isCartMode && cartPreview) {
     const amount = Number(cartPreview.amount || 0)
     const tierTotal = Number(cartPreview.tierDiscountTotal || 0)
-    const amountAfterTier = Number(cartPreview.amountAfterTier ?? (amount - tierTotal))
+    const prouniTotal = Number(cartPreview.prouniDiscountTotal || 0)
+    // "Benefícios" = lote e/ou PROUNI, já combinados item a item pelo servidor.
+    const benefitsTotal = Number(cartPreview.benefitsDiscountTotal ?? tierTotal)
+    const amountAfterTier = Number(cartPreview.amountAfterBenefits ?? cartPreview.amountAfterTier ?? (amount - benefitsTotal))
     const hasTier = tierTotal > 0
+    const hasProuni = prouniTotal > 0
     const couponDiscount = appliedCoupon ? Number(appliedCoupon.discountAmount || 0) : 0
-    const couponWinsOverTier = couponDiscount > tierTotal
+    const couponWinsOverTier = couponDiscount > benefitsTotal
     const payableAmount = appliedCoupon
       ? (couponWinsOverTier ? Number(appliedCoupon.amountAfterCoupon || 0) : amountAfterTier)
       : amountAfterTier
@@ -1050,6 +1089,26 @@ export default function MateriaisCheckoutPage() {
                       </span>
                     </div>
                   )}
+                  {hasProuni && (
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      gap: '12px',
+                      marginBottom: '8px',
+                    }}>
+                      <span style={{
+                        fontSize: '12px',
+                        color: '#7dd3fc',
+                        fontWeight: 700,
+                      }}>
+                        Desconto PROUNI/FIES
+                      </span>
+                      <span style={{ fontSize: '13px', color: '#7dd3fc', fontWeight: 800 }}>
+                        − {formatBRL(prouniTotal)}
+                      </span>
+                    </div>
+                  )}
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px' }}>
                     <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.55)' }}>Total recalculado</span>
                     <span style={{ fontSize: '28px', fontWeight: 900, color: '#34d399', letterSpacing: '-0.03em' }}>
@@ -1286,12 +1345,23 @@ export default function MateriaisCheckoutPage() {
   // O cupom é avaliado separadamente; o servidor escolhe o maior desconto.
   // Aqui, no UI, mostramos o que aparece quando o usuário aplica um cupom
   // (caso vença o lote) ou o tier (caso contrário).
+  // Lote + PROUNI: mesma função que o servidor usa para cobrar. Versão por
+  // tempo fica de fora, como o lote (valor fechado).
+  const benefits = combineDiscountsWithProuni({
+    basePrice: priceBeforeTier,
+    tierDiscountAmount,
+    prouni: timedVersion || !prouniGrant ? null : prouniGrant,
+  })
+  const prouniDiscountAmount = benefits.prouniDiscountApplied
+  const benefitsDiscountAmount = benefits.appliedDiscountAmount
+  const priceAfterBenefits = benefits.finalPrice
+
   const couponWinsOverTier = appliedCoupon
-    ? Number(appliedCoupon.discountAmount || 0) > tierDiscountAmount
+    ? Number(appliedCoupon.discountAmount || 0) > benefitsDiscountAmount
     : false
   const baseForCoupon = appliedCoupon ? Number(appliedCoupon.amountAfterCoupon || 0) : priceBeforeTier
-  const price = couponWinsOverTier ? baseForCoupon : tierFinalPrice
-  const payablePrice = appliedCoupon ? (couponWinsOverTier ? baseForCoupon : tierFinalPrice) : tierFinalPrice
+  const price = couponWinsOverTier ? baseForCoupon : priceAfterBenefits
+  const payablePrice = appliedCoupon ? (couponWinsOverTier ? baseForCoupon : priceAfterBenefits) : priceAfterBenefits
   const typeLabel = itemType === 'package' ? 'Pacote' : 'Material'
 
   const unlockFreeSingle = async () => {
@@ -1410,6 +1480,16 @@ export default function MateriaisCheckoutPage() {
                   }}>
                     <Flame size={13} />
                     Lote "{eventState?.name}" · −{Math.round(tierPct)}% ({formatBRL(tierDiscountAmount)})
+                  </p>
+                )}
+                {prouniDiscountAmount > 0 && !couponWinsOverTier && (
+                  <p style={{
+                    fontSize: '12px',
+                    color: '#7dd3fc',
+                    marginTop: '6px',
+                    fontWeight: 700,
+                  }}>
+                    Desconto PROUNI/FIES {prouniGrant?.discountLabel ? `(${prouniGrant.discountLabel})` : ''} · − {formatBRL(prouniDiscountAmount)}
                   </p>
                 )}
                 {appliedCoupon && couponWinsOverTier && (

@@ -34,6 +34,7 @@ import {
   Network,
   Ticket,
   MessageSquareQuote,
+  GraduationCap,
 } from 'lucide-react'
 
 interface User {
@@ -125,6 +126,13 @@ export default function AdminDashboard() {
       icon: BadgePercent,
       href: '/admin/coupons',
       color: 'from-lime-500 to-emerald-500'
+    },
+    {
+      title: 'PROUNI / FIES',
+      description: 'Configurar desconto por produto para bolsistas e analisar as solicitações com os comprovantes enviados.',
+      icon: GraduationCap,
+      href: '/admin/prouni',
+      color: 'from-sky-500 to-cyan-500'
     },
     {
       title: 'Lotes por Evento',

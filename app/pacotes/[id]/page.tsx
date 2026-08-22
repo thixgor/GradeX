@@ -58,6 +58,7 @@ import { PrintedAddon } from '@/components/shop/printed-addon'
 import { PackageReviews } from '@/components/reviews/package-reviews'
 import { ReviewSummaryBlock } from '@/components/reviews/review-summary'
 import type { ReviewSummary } from '@/lib/reviews-shared'
+import { ProuniCta } from '@/components/prouni/prouni-cta'
 
 // ─── Types ───────────────────────────────────────────────────
 interface PackageMaterial {
@@ -711,6 +712,7 @@ export default function PackageDetailPage() {
                             : 'Pagamento único · acesso permanente'}
                         </p>
                       )}
+                      {!isFree && <ProuniCta itemType="package" itemId={id} className="mt-1" />}
                       {cartMessage && (
                         <p className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-center text-[11px] font-semibold text-emerald-700 dark:text-emerald-300">
                           {cartMessage}
@@ -1046,6 +1048,7 @@ export default function PackageDetailPage() {
                               : 'Pagamento único · acesso permanente'}
                           </p>
                         )}
+                        {!isFree && <ProuniCta itemType="package" itemId={id} className="mt-1" />}
                         {cartMessage && (
                           <p className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-center text-[11px] font-semibold text-emerald-700 dark:text-emerald-300">
                             {cartMessage}

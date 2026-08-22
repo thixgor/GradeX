@@ -17,6 +17,14 @@ import {
   validateCouponForCheckout,
   type CouponValidationResult,
 } from '@/lib/coupons'
+import {
+  combineDiscountsWithProuni,
+  prouniAnalyticsMetadata,
+  releaseProuniGrant,
+  reserveProuniGrant,
+  resolveProuniForCheckout,
+  type ProuniProgram,
+} from '@/lib/prouni-fies'
 import type { PaymentOrder, MaterialPurchase } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -111,6 +119,7 @@ export async function POST(request: NextRequest) {
   let commissionExcluded = false
 
   let couponValidation: CouponValidationResult | null = null
+  let prouniApplied: { requestId: string; program: ProuniProgram; discountAmount: number } | null = null
 
   if (data.type === 'plan') {
     const settings = await db.collection('admin_settings').findOne({})
@@ -119,6 +128,7 @@ export async function POST(request: NextRequest) {
     amount = Number(plano.preco)
     description = `${plano.nome} — ${plano.periodo || 'Plano'}`
 
+    let couponDiscountAmount = 0
     if (data.couponCode && amount > 0) {
       try {
         couponValidation = await validateCouponForCheckout(db, {
@@ -133,13 +143,46 @@ export async function POST(request: NextRequest) {
             price: amount,
           }],
         })
-        amount = couponValidation.amountAfterCoupon
+        couponDiscountAmount = couponValidation.discountAmount
       } catch (err: any) {
         if (err instanceof CouponError) {
           return NextResponse.json({ error: err.message }, { status: err.status })
         }
         throw err
       }
+    }
+
+    // Benefício PROUNI/FIES da assinatura. Concorre com o cupom pelo maior
+    // desconto — planos não têm lote, então não há o que empilhar aqui.
+    const prouni = await resolveProuniForCheckout(db, {
+      userId: session!.userId,
+      itemType: 'plus',
+      itemId: String(plano.tipo),
+    })
+    const combined = combineDiscountsWithProuni({
+      basePrice: amount,
+      couponDiscountAmount,
+      prouni,
+    })
+    amount = combined.finalPrice
+    if (combined.appliedSource !== 'coupon') couponValidation = null
+    if (prouni && combined.prouniDiscountApplied > 0) {
+      prouniApplied = {
+        requestId: prouni.requestId,
+        program: prouni.program as ProuniProgram,
+        discountAmount: combined.prouniDiscountApplied,
+      }
+    }
+
+    // Esta rota cria pagamento no provedor; ela não sabe liberar plano de
+    // graça (isso é serial key / concessão manual do admin). Zerar aqui daria
+    // "Valor inválido" — uma mensagem que não diz nada a quem acabou de ter o
+    // benefício aprovado.
+    if (amount <= 0) {
+      return NextResponse.json(
+        { error: 'Os descontos aplicados zeram o valor deste plano. Fale com o suporte para liberar seu acesso.' },
+        { status: 400 }
+      )
     }
   } else if (data.type === 'material') {
     if (!data.itemType) return NextResponse.json({ error: 'itemType obrigatório' }, { status: 400 })
@@ -183,6 +226,7 @@ export async function POST(request: NextRequest) {
     metadata: {
       itemType: data.itemType,
       ...couponAnalyticsMetadata(couponValidation),
+      ...prouniAnalyticsMetadata(prouniApplied),
     },
     createdAt: now,
     updatedAt: now,
@@ -194,6 +238,24 @@ export async function POST(request: NextRequest) {
     { _id: inserted.insertedId },
     { $set: { idempotencyKey } }
   )
+
+  if (prouniApplied) {
+    const reservado = await reserveProuniGrant(db, {
+      requestId: prouniApplied.requestId,
+      userId: orderUserId!,
+      orderId,
+    })
+    if (!reservado) {
+      await db.collection<PaymentOrder>('payment_orders').updateOne(
+        { _id: inserted.insertedId },
+        { $set: { status: 'rejected', statusDetail: 'prouni_unavailable', updatedAt: new Date() } }
+      )
+      return NextResponse.json(
+        { error: 'Seu desconto PROUNI/FIES acabou de ser usado em outra compra.' },
+        { status: 409 }
+      )
+    }
+  }
 
   if (couponValidation) {
     try {
@@ -209,6 +271,7 @@ export async function POST(request: NextRequest) {
         { _id: inserted.insertedId },
         { $set: { status: 'rejected', statusDetail: 'coupon_unavailable', updatedAt: new Date() } }
       )
+      if (prouniApplied) await releaseProuniGrant(db, orderId, 'coupon_unavailable')
       if (err instanceof CouponError) {
         return NextResponse.json({ error: err.message }, { status: err.status })
       }
@@ -261,6 +324,7 @@ export async function POST(request: NextRequest) {
         paymentMethod: data.paymentMethodId,
         providerPaymentId: result.providerOrderId,
         ...couponAnalyticsMetadata(couponValidation),
+        ...prouniAnalyticsMetadata(prouniApplied),
       },
       ip,
     })
@@ -279,6 +343,9 @@ export async function POST(request: NextRequest) {
     console.error('[orders] erro ao criar payment:', err)
     if (couponValidation) {
       await releaseCouponRedemption(db, orderId, 'provider_error')
+    }
+    if (prouniApplied) {
+      await releaseProuniGrant(db, orderId, 'provider_error')
     }
     await db.collection<PaymentOrder>('payment_orders').updateOne(
       { _id: inserted.insertedId },

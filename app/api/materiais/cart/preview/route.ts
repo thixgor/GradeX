@@ -10,6 +10,7 @@ import {
   serializeMaterialCartItem,
 } from '@/lib/material-cart'
 import { computeCartTierDiscounts, serializePricingEventState } from '@/lib/pricing-events'
+import { combineDiscountsWithProuni, resolveProuniForCart } from '@/lib/prouni-fies'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -63,14 +64,49 @@ export async function POST(request: NextRequest) {
     tierCalc.perItem.map((entry) => [`${entry.itemType}:${entry.itemId}`, entry])
   )
 
+  // Benefício PROUNI/FIES por item. A conta é a MESMA função que o checkout
+  // usa para cobrar — se a tela mostrasse um total e o servidor cobrasse outro,
+  // o desconto viraria motivo de desconfiança em vez de conversão.
+  const prouniByKey = new Map<string, { discountAmount: number; label: string }>()
+  const concessoes = await resolveProuniForCart(db, {
+    userId: session?.userId,
+    items: resolution.payableItems.map((item) => ({ itemType: item.itemType, itemId: item.itemId })),
+  })
+  for (const item of resolution.payableItems) {
+    const chave = `${item.itemType}:${item.itemId}`
+    const beneficio = concessoes.get(chave)
+    if (!beneficio) continue
+    const resultado = combineDiscountsWithProuni({
+      basePrice: item.price,
+      tierDiscountAmount: tierByKey.get(chave)?.tierDiscountAmount || 0,
+      prouni: beneficio,
+    })
+    if (resultado.prouniDiscountApplied > 0) {
+      prouniByKey.set(chave, {
+        discountAmount: resultado.appliedDiscountAmount,
+        label: beneficio.discountType === 'percentage'
+          ? `${beneficio.discountValue}% OFF`
+          : `R$ ${beneficio.discountValue.toFixed(2)} OFF`,
+      })
+    }
+  }
+
   const decorateItem = (item: ReturnType<typeof serializeMaterialCartItem>) => {
-    const tier = tierByKey.get(`${item.itemType}:${item.itemId}`)
+    const chave = `${item.itemType}:${item.itemId}`
+    const tier = tierByKey.get(chave)
     const tierDiscount = tier?.tierDiscountAmount || 0
     const priceAfterTier = Math.max(0, Math.round((item.price - tierDiscount) * 100) / 100)
+    const prouni = prouniByKey.get(chave) || null
+    // O desconto do PROUNI já vem "vencido ou empilhado" com o lote pela
+    // função de combinação, então ele substitui o valor do lote na exibição.
+    const melhorDesconto = prouni ? prouni.discountAmount : tierDiscount
     return {
       ...item,
       tierDiscount,
       priceAfterTier,
+      prouniDiscount: prouni?.discountAmount || 0,
+      prouniLabel: prouni?.label || '',
+      priceAfterBenefits: Math.max(0, Math.round((item.price - melhorDesconto) * 100) / 100),
       pricingEventState: tier?.state ? serializePricingEventState(tier.state) : null,
     }
   }
@@ -83,6 +119,18 @@ export async function POST(request: NextRequest) {
     Math.round((resolution.amount - tierCalc.totalTierDiscount) * 100) / 100
   )
 
+  // Total dos descontos que não dependem de cupom (lote e/ou PROUNI, item a
+  // item). É contra este número que o cupom disputa no checkout.
+  const benefitsDiscountTotal = Math.round(
+    payableItems.reduce(
+      (soma, item) => soma + Math.max(item.tierDiscount || 0, item.prouniDiscount || 0),
+      0
+    ) * 100
+  ) / 100
+  const prouniDiscountTotal = Math.round(
+    payableItems.reduce((soma, item) => soma + (item.prouniDiscount || 0), 0) * 100
+  ) / 100
+
   return NextResponse.json({
     items,
     payableItems,
@@ -91,6 +139,9 @@ export async function POST(request: NextRequest) {
     amount: resolution.amount,
     tierDiscountTotal: tierCalc.totalTierDiscount,
     amountAfterTier,
+    prouniDiscountTotal,
+    benefitsDiscountTotal,
+    amountAfterBenefits: Math.max(0, Math.round((resolution.amount - benefitsDiscountTotal) * 100) / 100),
     suggestions,
   })
 }

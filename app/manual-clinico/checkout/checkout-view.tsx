@@ -7,6 +7,7 @@ import { ArrowLeft, BookOpen, Check, Flame, Lock, Loader2, Percent, Sparkles, Tr
 import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
 import { CheckoutAccountNotice } from '@/components/checkout/checkout-account-notice'
 import { CouponPromo } from '@/components/checkout/coupon-promo'
+import { ProuniCta } from '@/components/prouni/prouni-cta'
 import { usePricingEventState, usePricingEventStates } from '@/components/pricing-events/usePricingEventState'
 import { ListaDoPacote } from '@/components/manual-clinico/pacote'
 import { TOTAL_DE_MODULOS, precoPorDia, precoPorModulo } from '@/lib/manual-clinico/pacote'
@@ -566,6 +567,13 @@ export default function ManualClinicoCheckoutView({
               planKey={selectedPlanKey}
               aparencia="dark"
               codigoAplicado={appliedCoupon?.code || null}
+              className="mt-3.5"
+            />
+
+            <ProuniCta
+              itemType="manual_clinico"
+              itemId={MANUAL_CLINICO_PRODUCT_ID}
+              aparencia="dark"
               className="mt-3.5"
             />
 

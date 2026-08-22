@@ -28,10 +28,19 @@ import {
 } from '@/lib/material-cart'
 import {
   computeCartTierDiscounts,
-  combineTierAndCouponDiscount,
   getPricingEventStateById,
   serializePricingEventState,
 } from '@/lib/pricing-events'
+import {
+  combineDiscountsWithProuni,
+  prouniAnalyticsMetadata,
+  releaseProuniGrant,
+  reserveProuniGrant,
+  resolveProuniForCart,
+  resolveProuniForCheckout,
+  spendProuniGrantNow,
+  type ProuniProgram,
+} from '@/lib/prouni-fies'
 import type { PaymentOrder, MaterialPurchase } from '@/lib/types'
 import { buildPhysicalShopOrder } from '@/lib/shop-order'
 import { isPlusAccount } from '@/lib/account-tier'
@@ -350,18 +359,39 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  // "Maior dos dois": lote OU cupom, o que der mais desconto vence.
-  const combined = combineTierAndCouponDiscount({
+  // Benefício PROUNI/FIES desta pessoa neste item. Fica de fora quando a compra
+  // é de uma versão por tempo: o passe temporário é um valor fechado, pela
+  // mesma razão que o lote não incide sobre ele.
+  const prouni = timedVersion
+    ? null
+    : await resolveProuniForCheckout(db, {
+        userId: session.userId,
+        itemType: data.itemType,
+        itemId: data.itemId,
+      })
+
+  // Maior desconto entre lote, cupom e PROUNI — ou lote + PROUNI empilhados,
+  // quando o benefício foi configurado para sobrepor o lote.
+  const combined = combineDiscountsWithProuni({
     basePrice: amount,
     tierDiscountAmount,
     couponDiscountAmount,
+    prouni,
   })
   amount = combined.finalPrice
 
-  // Se o lote venceu, não reserva o cupom (mantém disponível para o usuário).
+  // Se o lote/PROUNI venceu, não reserva o cupom (mantém disponível para o usuário).
   if (combined.appliedSource !== 'coupon') {
     couponValidation = null
   }
+
+  const prouniApplied = prouni && combined.prouniDiscountApplied > 0
+    ? {
+        requestId: prouni.requestId,
+        program: prouni.program as ProuniProgram,
+        discountAmount: combined.prouniDiscountApplied,
+      }
+    : null
 
   // ── Parte física (add-ons/produtos impressos pagos junto ao digital) ──
   let physicalShopOrderId: string | undefined
@@ -414,6 +444,15 @@ export async function POST(request: NextRequest) {
   const isFreePath = digitalFree && physicalTotal <= 0
 
   if (isFreePath) {
+    // O benefício zerou (ou ajudou a zerar) o preço: não há pagamento para
+    // confirmar depois, então ele é gasto agora.
+    if (prouniApplied) {
+      await spendProuniGrantNow(db, {
+        requestId: prouniApplied.requestId,
+        userId: session.userId,
+        reference: `material:${data.itemId}`,
+      })
+    }
     if (couponValidation) {
       try {
         await reserveCouponRedemption(db, {
@@ -484,6 +523,7 @@ export async function POST(request: NextRequest) {
       metadata: {
         free: true,
         ...couponAnalyticsMetadata(couponValidation),
+        ...prouniAnalyticsMetadata(prouniApplied),
         ...(pricingMeta && pricingMeta.discountApplied > 0
           ? {
               packageDiscountApplied: pricingMeta.discountApplied,
@@ -510,6 +550,7 @@ export async function POST(request: NextRequest) {
         itemType: data.itemType,
         materialType: item.type,
         ...couponAnalyticsMetadata(couponValidation),
+        ...prouniAnalyticsMetadata(prouniApplied),
         ...(pricingMeta && pricingMeta.discountApplied > 0
           ? {
               packageDiscountApplied: pricingMeta.discountApplied,
@@ -582,16 +623,17 @@ export async function POST(request: NextRequest) {
             ownedMaterialIds: pricingMeta.ownedMaterialIds,
           }
         : {}),
-      ...(combined.appliedSource === 'tier' && pricingEventState?.activeTier
+      ...(combined.tierDiscountApplied > 0 && pricingEventState?.activeTier
         ? {
             pricingEventId: pricingEventState.eventId,
             pricingEventName: pricingEventState.name,
             pricingEventTierIndex: pricingEventState.activeTier.index,
             pricingEventTierDiscountPercent: pricingEventState.activeTier.discountPercent,
-            pricingEventTierDiscountAmount: combined.appliedDiscountAmount,
+            pricingEventTierDiscountAmount: combined.tierDiscountApplied,
           }
         : {}),
       ...couponAnalyticsMetadata(couponValidation),
+      ...prouniAnalyticsMetadata(prouniApplied),
     },
     createdAt: now,
     updatedAt: now,
@@ -609,6 +651,26 @@ export async function POST(request: NextRequest) {
       { $set: { providerOrderId: orderId, updatedAt: new Date() } }
     )
   }
+  // Prende o benefício a este pedido. Se a corrida foi perdida (outro checkout
+  // da mesma conta reservou antes), o pedido é derrubado em vez de cobrar o
+  // preço com desconto sem ter o desconto — o preço já saiu daqui reduzido.
+  if (prouniApplied) {
+    const reservado = await reserveProuniGrant(db, {
+      requestId: prouniApplied.requestId,
+      userId: session.userId,
+      orderId,
+    })
+    if (!reservado) {
+      await db.collection<PaymentOrder>('payment_orders').updateOne(
+        { _id: inserted.insertedId },
+        { $set: { status: 'rejected', statusDetail: 'prouni_unavailable', updatedAt: new Date() } }
+      )
+      return NextResponse.json(
+        { error: 'Seu desconto PROUNI/FIES acabou de ser usado em outra compra.' },
+        { status: 409 }
+      )
+    }
+  }
   if (couponValidation) {
     try {
       await reserveCouponRedemption(db, {
@@ -623,6 +685,7 @@ export async function POST(request: NextRequest) {
         { _id: inserted.insertedId },
         { $set: { status: 'rejected', statusDetail: 'coupon_unavailable', updatedAt: new Date() } }
       )
+      if (prouniApplied) await releaseProuniGrant(db, orderId, 'coupon_unavailable')
       if (error instanceof CouponError) {
         return NextResponse.json({ error: error.message }, { status: error.status })
       }
@@ -671,7 +734,7 @@ export async function POST(request: NextRequest) {
       targetUserId: session.userId,
       resourceType: data.itemType,
       resourceId: data.itemId,
-      metadata: { amount, paymentMethod: data.paymentMethodId, providerPaymentId: result.providerOrderId, ...couponAnalyticsMetadata(couponValidation) },
+      metadata: { amount, paymentMethod: data.paymentMethodId, providerPaymentId: result.providerOrderId, ...couponAnalyticsMetadata(couponValidation), ...prouniAnalyticsMetadata(prouniApplied) },
       ip,
     })
 
@@ -694,6 +757,9 @@ export async function POST(request: NextRequest) {
     console.error('[materiais/checkout] erro:', err)
     if (couponValidation) {
       await releaseCouponRedemption(db, orderId, 'provider_error')
+    }
+    if (prouniApplied) {
+      await releaseProuniGrant(db, orderId, 'provider_error')
     }
     if (physicalShopOrderId) {
       await db.collection('shop_orders').updateOne(
@@ -786,32 +852,60 @@ async function handleCartCheckout(
     }
   }
 
-  const combined = combineTierAndCouponDiscount({
-    basePrice: amount,
-    tierDiscountAmount: tierCalc.totalTierDiscount,
-    couponDiscountAmount,
+  // ── Lote + PROUNI, item a item ──
+  // O cupom é do carrinho inteiro; lote e PROUNI são de cada item (cada um tem
+  // seu evento, e o benefício foi aprovado para um produto específico). Por
+  // isso o desconto "sem cupom" é somado item a item primeiro, e só o TOTAL
+  // disputa com o cupom — que continua sendo, como sempre foi, o maior dos dois.
+  const tierDiscountById = new Map(
+    tierCalc.perItem.map((entry) => [`${entry.itemType}:${entry.itemId}`, entry.tierDiscountAmount])
+  )
+  const prouniByItem = await resolveProuniForCart(db, {
+    userId: session.userId,
+    items: resolution.payableItems.map((item) => ({ itemType: item.itemType, itemId: item.itemId })),
   })
 
-  if (combined.appliedSource === 'coupon' && couponValidation) {
+  const semCupomPorItem = resolution.payableItems.map((item) => {
+    const chave = `${item.itemType}:${item.itemId}`
+    const resultado = combineDiscountsWithProuni({
+      basePrice: item.price,
+      tierDiscountAmount: tierDiscountById.get(chave) || 0,
+      couponDiscountAmount: 0,
+      prouni: prouniByItem.get(chave) || null,
+    })
+    return { chave, item, resultado, prouni: prouniByItem.get(chave) || null }
+  })
+  const totalSemCupom = Math.round(
+    semCupomPorItem.reduce((soma, entrada) => soma + entrada.resultado.appliedDiscountAmount, 0) * 100
+  ) / 100
+
+  let prouniAppliedItems: Array<{ requestId: string; program: ProuniProgram; itemId: string; discountAmount: number }> = []
+  let tierDiscountTotalApplied = 0
+
+  if (couponDiscountAmount > totalSemCupom && couponValidation) {
     amount = couponValidation.amountAfterCoupon
     payableItemsForOrder = applyCouponDiscountsToItems(resolution.payableItems, couponValidation.items)
     serializedPayableItemsForOrder = payableItemsForOrder.map(serializeMaterialCartItem)
-  } else if (combined.appliedSource === 'tier') {
-    amount = combined.finalPrice
+  } else if (totalSemCupom > 0) {
     couponValidation = null
-    // Atualiza preço por item refletindo o desconto do lote, para registro do pedido.
-    const tierDiscountById = new Map(
-      tierCalc.perItem.map((entry) => [`${entry.itemType}:${entry.itemId}`, entry.tierDiscountAmount])
-    )
-    payableItemsForOrder = resolution.payableItems.map((item) => {
-      const discount = tierDiscountById.get(`${item.itemType}:${item.itemId}`) || 0
-      return {
-        ...item,
-        price: Math.max(0, Math.round((item.price - discount) * 100) / 100),
-        discountApplied: Math.round((item.discountApplied + discount) * 100) / 100,
-      }
-    })
+    amount = Math.max(0, Math.round((amount - totalSemCupom) * 100) / 100)
+    payableItemsForOrder = semCupomPorItem.map(({ item, resultado }) => ({
+      ...item,
+      price: Math.max(0, Math.round((item.price - resultado.appliedDiscountAmount) * 100) / 100),
+      discountApplied: Math.round((item.discountApplied + resultado.appliedDiscountAmount) * 100) / 100,
+    }))
     serializedPayableItemsForOrder = payableItemsForOrder.map(serializeMaterialCartItem)
+    tierDiscountTotalApplied = Math.round(
+      semCupomPorItem.reduce((soma, entrada) => soma + entrada.resultado.tierDiscountApplied, 0) * 100
+    ) / 100
+    prouniAppliedItems = semCupomPorItem
+      .filter((entrada) => entrada.prouni && entrada.resultado.prouniDiscountApplied > 0)
+      .map((entrada) => ({
+        requestId: entrada.prouni!.requestId,
+        program: entrada.prouni!.program as ProuniProgram,
+        itemId: entrada.item.itemId,
+        discountAmount: entrada.resultado.prouniDiscountApplied,
+      }))
   } else {
     couponValidation = null
   }
@@ -861,6 +955,15 @@ async function handleCartCheckout(
   }
 
   if (amount <= 0 && physicalTotal <= 0) {
+    // Carrinho zerado: os benefícios que participaram são gastos aqui, porque
+    // não haverá pagamento nem webhook para confirmá-los depois.
+    for (const aplicado of prouniAppliedItems) {
+      await spendProuniGrantNow(db, {
+        requestId: aplicado.requestId,
+        userId: session.userId,
+        reference: `cart:${aplicado.itemId}`,
+      })
+    }
     if (couponValidation) {
       try {
         await reserveCouponRedemption(db, {
@@ -962,9 +1065,9 @@ async function handleCartCheckout(
       cartItems: serializedPayableItemsForOrder,
       freeItems: serializedFreeItems,
       skippedItems: resolution.skippedItems,
-      ...(combined.appliedSource === 'tier' && combined.appliedDiscountAmount > 0
+      ...(tierDiscountTotalApplied > 0
         ? {
-            pricingEventDiscountAmount: combined.appliedDiscountAmount,
+            pricingEventDiscountAmount: tierDiscountTotalApplied,
             pricingEventPerItem: tierCalc.perItem
               .filter((entry) => entry.tierDiscountAmount > 0 && entry.state)
               .map((entry) => ({
@@ -976,6 +1079,14 @@ async function handleCartCheckout(
                 discountPercent: entry.state?.activeTier?.discountPercent,
                 discountAmount: entry.tierDiscountAmount,
               })),
+          }
+        : {}),
+      ...(prouniAppliedItems.length > 0
+        ? {
+            prouniDiscountAmount: Math.round(
+              prouniAppliedItems.reduce((soma, entrada) => soma + entrada.discountAmount, 0) * 100
+            ) / 100,
+            prouniPerItem: prouniAppliedItems,
           }
         : {}),
       ...couponAnalyticsMetadata(couponValidation),
@@ -998,6 +1109,28 @@ async function handleCartCheckout(
     )
   }
 
+  for (const aplicado of prouniAppliedItems) {
+    const reservado = await reserveProuniGrant(db, {
+      requestId: aplicado.requestId,
+      userId: session.userId,
+      orderId,
+    })
+    if (!reservado) {
+      // Um benefício do carrinho já tinha sido usado em outra aba. Devolve os
+      // que este pedido chegou a reservar e derruba o pedido — cobrar o total
+      // com desconto sem ter todos os descontos seria prejuízo silencioso.
+      await releaseProuniGrant(db, orderId, 'prouni_unavailable')
+      await db.collection<PaymentOrder>('payment_orders').updateOne(
+        { _id: inserted.insertedId },
+        { $set: { status: 'rejected', statusDetail: 'prouni_unavailable', updatedAt: new Date() } }
+      )
+      return NextResponse.json(
+        { error: 'Um dos descontos PROUNI/FIES do carrinho acabou de ser usado em outra compra.' },
+        { status: 409 }
+      )
+    }
+  }
+
   if (couponValidation) {
     try {
       await reserveCouponRedemption(db, {
@@ -1012,6 +1145,7 @@ async function handleCartCheckout(
         { _id: inserted.insertedId },
         { $set: { status: 'rejected', statusDetail: 'coupon_unavailable', updatedAt: new Date() } }
       )
+      await releaseProuniGrant(db, orderId, 'coupon_unavailable')
       if (error instanceof CouponError) {
         return NextResponse.json({ error: error.message }, { status: error.status })
       }
@@ -1090,6 +1224,9 @@ async function handleCartCheckout(
     console.error('[materiais/checkout/cart] erro:', err)
     if (couponValidation) {
       await releaseCouponRedemption(db, orderId, 'provider_error')
+    }
+    if (prouniAppliedItems.length > 0) {
+      await releaseProuniGrant(db, orderId, 'provider_error')
     }
     if (physicalShopOrderId) {
       await db.collection('shop_orders').updateOne(

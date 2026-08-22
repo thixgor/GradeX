@@ -27,6 +27,12 @@ export type AuditAction =
   | 'plus_guard_action'
   | 'plus_claims_revoked'
   | 'plus_claims_restored'
+  | 'prouni_request_created'
+  | 'prouni_request_reviewed'
+  | 'prouni_attachments_purged'
+  | 'prouni_benefit_updated'
+  | 'prouni_benefit_deleted'
+  | 'prouni_discount_applied'
 
 export interface AuditLogEntry {
   action: AuditAction

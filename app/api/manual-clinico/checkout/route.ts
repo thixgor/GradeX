@@ -24,10 +24,16 @@ import {
   validateCouponForCheckout,
   type CouponValidationResult,
 } from '@/lib/coupons'
+import { getPricingEventStateById } from '@/lib/pricing-events'
 import {
-  combineTierAndCouponDiscount,
-  getPricingEventStateById,
-} from '@/lib/pricing-events'
+  combineDiscountsWithProuni,
+  prouniAnalyticsMetadata,
+  releaseProuniGrant,
+  reserveProuniGrant,
+  resolveProuniForCheckout,
+  spendProuniGrantNow,
+  type ProuniProgram,
+} from '@/lib/prouni-fies'
 import { getRequestAnalyticsMeta, recordCheckoutEvent, recordOrderCheckoutEvent } from '@/lib/analytics'
 import { sendManualClinicoPurchasedEmail } from '@/lib/mail'
 import type { PaymentOrder } from '@/lib/types'
@@ -139,30 +145,55 @@ export async function POST(request: NextRequest) {
     }
   }
 
+  // Benefício PROUNI/FIES desta pessoa neste produto, respeitando a restrição
+  // por plano (aprovado no semestral não vira desconto no vitalício).
+  const prouni = await resolveProuniForCheckout(db, {
+    userId: session.userId,
+    itemType: 'manual_clinico',
+    itemId: MANUAL_CLINICO_PRODUCT_ID,
+    manualPlanKey: plan.key,
+  })
+
   // Empilhamento (cupom sobre lote) quando o cupom é stackWithTier: aplica o
   // lote e, por cima, o cupom (já calculado sobre o preço pós-lote). Senão,
-  // vale o "maior dos dois".
+  // vale o "maior dos dois" — agora com o PROUNI como terceiro concorrente.
   const stackCoupon = couponValidation?.coupon.stackWithTier === true
   let appliedTierDiscount = 0
+  let prouniApplied: { requestId: string; program: ProuniProgram; discountAmount: number } | null = null
   if (stackCoupon && tierDiscountAmount > 0 && couponValidation) {
     appliedTierDiscount = tierDiscountAmount
     amount = Math.max(0, Math.round((amount - tierDiscountAmount - couponValidation.discountAmount) * 100) / 100)
   } else {
-    const combined = combineTierAndCouponDiscount({
+    const combined = combineDiscountsWithProuni({
       basePrice: amount,
       tierDiscountAmount,
       couponDiscountAmount,
+      prouni,
     })
     amount = combined.finalPrice
     if (combined.appliedSource !== 'coupon') {
       couponValidation = null
     }
-    appliedTierDiscount = combined.appliedSource === 'tier' ? combined.appliedDiscountAmount : 0
+    appliedTierDiscount = combined.tierDiscountApplied
+    if (prouni && combined.prouniDiscountApplied > 0) {
+      prouniApplied = {
+        requestId: prouni.requestId,
+        program: prouni.program as ProuniProgram,
+        discountAmount: combined.prouniDiscountApplied,
+      }
+    }
   }
 
   if (amount <= 0 || data.paymentMethodId === 'free') {
     if (amount > 0 && data.paymentMethodId === 'free') {
       return NextResponse.json({ error: 'Produto pago requer uma forma de pagamento valida.' }, { status: 400 })
+    }
+    if (prouniApplied) {
+      await spendProuniGrantNow(db, {
+        requestId: prouniApplied.requestId,
+        userId: session.userId,
+        reference: `manual_clinico:${plan.key}`,
+      })
     }
     if (couponValidation) {
       try {
@@ -225,6 +256,7 @@ export async function POST(request: NextRequest) {
         planDurationMonths: plan.durationMonths,
         accessType: plan.durationMonths ? 'temporary' : 'lifetime',
         ...couponAnalyticsMetadata(couponValidation),
+        ...prouniAnalyticsMetadata(prouniApplied),
       },
       ...getRequestAnalyticsMeta(request),
     })
@@ -271,6 +303,7 @@ export async function POST(request: NextRequest) {
           }
         : {}),
       ...couponAnalyticsMetadata(couponValidation),
+      ...prouniAnalyticsMetadata(prouniApplied),
     },
     createdAt: now,
     updatedAt: now,
@@ -283,6 +316,24 @@ export async function POST(request: NextRequest) {
     { _id: inserted.insertedId },
     { $set: { idempotencyKey } }
   )
+
+  if (prouniApplied) {
+    const reservado = await reserveProuniGrant(db, {
+      requestId: prouniApplied.requestId,
+      userId: session.userId,
+      orderId,
+    })
+    if (!reservado) {
+      await db.collection<PaymentOrder>('payment_orders').updateOne(
+        { _id: inserted.insertedId },
+        { $set: { status: 'rejected', statusDetail: 'prouni_unavailable', updatedAt: new Date() } }
+      )
+      return NextResponse.json(
+        { error: 'Seu desconto PROUNI/FIES acabou de ser usado em outra compra.' },
+        { status: 409 }
+      )
+    }
+  }
 
   if (couponValidation) {
     try {
@@ -298,6 +349,7 @@ export async function POST(request: NextRequest) {
         { _id: inserted.insertedId },
         { $set: { status: 'rejected', statusDetail: 'coupon_unavailable', updatedAt: new Date() } }
       )
+      if (prouniApplied) await releaseProuniGrant(db, orderId, 'coupon_unavailable')
       if (error instanceof CouponError) {
         return NextResponse.json({ error: error.message }, { status: error.status })
       }
@@ -353,6 +405,7 @@ export async function POST(request: NextRequest) {
         paymentMethod: data.paymentMethodId,
         providerPaymentId: result.providerOrderId,
         ...couponAnalyticsMetadata(couponValidation),
+        ...prouniAnalyticsMetadata(prouniApplied),
       },
       ip,
     })
@@ -372,6 +425,9 @@ export async function POST(request: NextRequest) {
     console.error('[manual-clinico/checkout] erro:', error)
     if (couponValidation) {
       await releaseCouponRedemption(db, orderId, 'provider_error')
+    }
+    if (prouniApplied) {
+      await releaseProuniGrant(db, orderId, 'provider_error')
     }
     await db.collection<PaymentOrder>('payment_orders').updateOne(
       { _id: inserted.insertedId },

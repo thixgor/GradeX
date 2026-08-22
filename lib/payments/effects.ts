@@ -30,6 +30,7 @@ import { audit } from './audit'
 import { recordOrderCheckoutEvent } from '../analytics'
 import { sendMetaCapiEvent } from '../meta-capi'
 import { approveCouponRedemption, releaseCouponRedemption } from '../coupons'
+import { consumeProuniGrant, releaseProuniGrant } from '../prouni-fies'
 import {
   grantMaterialCartItems,
   resolveTimedGrantFields,
@@ -119,6 +120,10 @@ export async function applyPaymentResult(
   // Disparar efeito apenas em transição para approved (1ª vez)
   if (TERMINAL_APPROVED.includes(newStatus) && !TERMINAL_APPROVED.includes(prevStatus)) {
     await approveCouponRedemption(db, String(order._id))
+    // O benefício PROUNI/FIES é de uso único: quando o pagamento entra, ele
+    // deixa de estar disponível. Antes disso ele só estava reservado — um Pix
+    // que vence devolve o desconto para a pessoa, ver abaixo.
+    await consumeProuniGrant(db, String(order._id))
     await recordOrderCheckoutEvent('payment_approved', updatedOrder)
     // Conversão para o Meta pelo servidor (Conversions API). É o único caminho
     // que captura Pix/boleto, que confirmam aqui no webhook depois que o usuário
@@ -141,6 +146,7 @@ export async function applyPaymentResult(
 
   if (TERMINAL_FAILED.includes(newStatus) && !TERMINAL_APPROVED.includes(prevStatus)) {
     await releaseCouponRedemption(db, String(order._id), newStatus)
+    await releaseProuniGrant(db, String(order._id), newStatus)
     await recordOrderCheckoutEvent('payment_failed', updatedOrder)
     if (order.type === 'raffle') {
       await releaseRafflePurchase(order, newStatus)
@@ -154,6 +160,9 @@ export async function applyPaymentResult(
     (newStatus === 'refunded' || newStatus === 'charged_back')
   ) {
     await releaseCouponRedemption(db, String(order._id), newStatus)
+    // Estorno/chargeback devolve o produto E o benefício: quem não ficou com a
+    // compra não pode ficar sem o desconto que conquistou na análise.
+    await releaseProuniGrant(db, String(order._id), newStatus)
     await runRevocationEffects(order, newStatus)
   }
 
