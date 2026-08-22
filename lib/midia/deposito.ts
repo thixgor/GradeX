@@ -88,8 +88,25 @@ export type Armazenador = (
   contentType: string,
 ) => Promise<{ url: string }>
 
-/** Implementação padrão: Vercel Blob. */
+/**
+ * Implementação padrão: Vercel Blob, no store PÚBLICO dedicado às imagens.
+ *
+ * O token é resolvido aqui e nunca é deixado a cargo do SDK. Sem `token`
+ * explícito, `put()` lê `BLOB_READ_WRITE_TOKEN` do ambiente — que neste projeto
+ * é o store **privado** dos PDFs de materiais. O envio daria certo, o arquivo
+ * iria para o store errado, e a URL `/midia/…` responderia 404 para todo
+ * visitante sem que nada acusasse erro. Falhar aqui, alto e claro, é o único
+ * desfecho aceitável.
+ */
 function armazenadorPadrao(token?: string): Armazenador {
+  const credencial = token ?? process.env.BLOB_READ_WRITE_TOKEN_MIDIA
+  if (!credencial) {
+    throw new Error(
+      'BLOB_READ_WRITE_TOKEN_MIDIA ausente — é o token do store público de imagens. ' +
+        'Não use BLOB_READ_WRITE_TOKEN: aquele store é privado e guarda os PDFs de materiais.',
+    )
+  }
+
   return (caminhoNoStore, bytes, contentType) =>
     put(caminhoNoStore, bytes, {
       access: 'public',
@@ -100,7 +117,7 @@ function armazenadorPadrao(token?: string): Armazenador {
       allowOverwrite: true,
       contentType,
       cacheControlMaxAge: 31_536_000,
-      ...(token ? { token } : {}),
+      token: credencial,
     })
 }
 
@@ -113,7 +130,11 @@ export interface OpcoesDeIngestao {
   timeoutMs?: number
   /** Não grava nada: só diz o que aconteceria. Usado pelo `--dry-run`. */
   simular?: boolean
-  /** Token do Blob. Ausente, o SDK lê `BLOB_READ_WRITE_TOKEN` do ambiente. */
+  /**
+   * Token do store público de imagens. Ausente, cai em
+   * `BLOB_READ_WRITE_TOKEN_MIDIA`; sem nenhum dos dois, a ingestão falha em vez
+   * de escorregar para o store privado dos PDFs.
+   */
   token?: string
   /** Substitui o fornecedor de armazenamento. Padrão: Vercel Blob. */
   armazenar?: Armazenador
@@ -307,8 +328,12 @@ export async function internalizarUrl(
 
     let urlBlob = ''
     if (!mesmoConteudo) {
-      const armazenar = opcoes.armazenar ?? armazenadorPadrao(opcoes.token)
       try {
+        // Dentro do try de propósito: `armazenadorPadrao` lança quando falta o
+        // token do store de imagens, e esta função promete não lançar — um
+        // ambiente mal configurado tem de virar falha registrada, não um 500 no
+        // salvamento de uma questão.
+        const armazenar = opcoes.armazenar ?? armazenadorPadrao(opcoes.token)
         const enviado = await armazenar(pathBlob, bytes, contentType)
         urlBlob = enviado.url
       } catch (erro) {

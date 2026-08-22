@@ -44,11 +44,14 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
   }
 
-  if (!process.env.BLOB_READ_WRITE_TOKEN) {
-    // Sem credencial de escrita não há para onde levar as imagens. Responder 200
-    // é deliberado: é uma rotina desligada, não uma rotina quebrada, e não deve
+  const token = process.env.BLOB_READ_WRITE_TOKEN_MIDIA
+  if (!token) {
+    // Sem credencial de escrita do store PÚBLICO de imagens não há para onde
+    // levar as imagens — este não é o `BLOB_READ_WRITE_TOKEN` genérico, que
+    // aponta para o store privado dos PDFs de materiais. Responder 200 é
+    // deliberado: é uma rotina desligada, não uma rotina quebrada, e não deve
     // encher o painel de alertas de cron falhando.
-    return NextResponse.json({ ok: true, pulado: 'BLOB_READ_WRITE_TOKEN ausente' })
+    return NextResponse.json({ ok: true, pulado: 'BLOB_READ_WRITE_TOKEN_MIDIA ausente' })
   }
 
   try {
@@ -58,6 +61,7 @@ export async function GET(request: NextRequest) {
     const resumo = await varrerUmPouco(db, {
       orcamentoMs: ORCAMENTO_MS,
       maxImagens: MAX_IMAGENS,
+      token,
     })
 
     console.log(

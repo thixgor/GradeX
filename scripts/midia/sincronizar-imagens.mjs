@@ -48,8 +48,10 @@
  *
  * ## Requisitos de ambiente
  *
- *   MONGODB_URI            base a migrar
- *   BLOB_READ_WRITE_TOKEN  credencial de escrita do armazenamento
+ *   MONGODB_URI                base a migrar
+ *   BLOB_READ_WRITE_TOKEN_MIDIA credencial de escrita do store PÚBLICO de
+ *                               imagens — não confundir com BLOB_READ_WRITE_TOKEN,
+ *                               que é do store PRIVADO dos PDFs de materiais.
  */
 
 import { MongoClient } from 'mongodb'
@@ -175,9 +177,11 @@ if (!uri) {
   console.error('Defina MONGODB_URI. Ex.: node --env-file=.env.local --experimental-strip-types ...')
   process.exit(1)
 }
-if (opcoes.aplicar && !process.env.BLOB_READ_WRITE_TOKEN && !opcoes.reverter) {
-  console.error('Defina BLOB_READ_WRITE_TOKEN — sem ele não há para onde enviar as imagens.')
-  console.error('Pegue em: Vercel → Storage → seu Blob store → .env.local')
+const tokenDeMidia = process.env.BLOB_READ_WRITE_TOKEN_MIDIA
+if (opcoes.aplicar && !tokenDeMidia && !opcoes.reverter) {
+  console.error('Defina BLOB_READ_WRITE_TOKEN_MIDIA — sem ele não há para onde enviar as imagens.')
+  console.error('É o token do store PÚBLICO dedicado a /midia (não o BLOB_READ_WRITE_TOKEN dos PDFs).')
+  console.error('Pegue em: Vercel → Storage → o Blob store público de imagens → .env.local')
   process.exit(1)
 }
 
@@ -339,7 +343,7 @@ async function ingerir(urls) {
   await emParalelo(alvo, opcoes.concorrencia, async (url) => {
     const resultado = await internalizarUrl(db, url, {
       simular: !opcoes.aplicar,
-      token: process.env.BLOB_READ_WRITE_TOKEN,
+      token: tokenDeMidia,
       ignorarFalhasConhecidas: opcoes.tentarFalhas,
     })
 

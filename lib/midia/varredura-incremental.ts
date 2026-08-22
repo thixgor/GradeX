@@ -54,6 +54,8 @@ export interface OpcoesDaVarredura {
   maxImagens?: number
   /** Teto de documentos lidos nesta execução. */
   maxDocumentos?: number
+  /** Token do store PÚBLICO de imagens. Ausente, cai em `BLOB_READ_WRITE_TOKEN_MIDIA`. */
+  token?: string
 }
 
 export interface ResumoDaVarredura {
@@ -183,7 +185,7 @@ export async function varrerUmPouco(db: Db, opcoes: OpcoesDaVarredura = {}): Pro
             resumo.falhas += 1
             continue
           }
-          const resultado = await internalizarUrl(db, url, { tentativas: 2 })
+          const resultado = await internalizarUrl(db, url, { tentativas: 2, token: opcoes.token })
           if (resultado.ok) {
             mapa.set(url, resultado.caminho)
             if (!resultado.reaproveitado) resumo.imagensNovas += 1

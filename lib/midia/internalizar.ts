@@ -47,10 +47,21 @@ export interface OpcoesDeInternalizacao {
 /**
  * `false` quando não há para onde enviar — em desenvolvimento sem token do
  * Blob, por exemplo. Aí a escrita segue com a URL original e nada quebra.
+ *
+ * O token é o do store PÚBLICO dedicado a `/midia` — `BLOB_READ_WRITE_TOKEN_MIDIA`
+ * — e não o `BLOB_READ_WRITE_TOKEN` genérico, que aponta para o store PRIVADO
+ * dos PDFs de materiais. Os dois nunca podem ser confundidos: um PDF de
+ * material não pode ganhar URL pública, e uma imagem do acervo perde o sentido
+ * se exigir autenticação para carregar numa página comum.
  */
 export function internalizacaoDisponivel(): boolean {
   if (process.env.MIDIA_INTERNALIZAR_NA_ESCRITA === '0') return false
-  return Boolean(process.env.BLOB_READ_WRITE_TOKEN)
+  return Boolean(process.env.BLOB_READ_WRITE_TOKEN_MIDIA)
+}
+
+/** Token do store público de imagens. `undefined` se a internalização estiver desligada. */
+export function tokenDoStoreDeMidia(): string | undefined {
+  return process.env.BLOB_READ_WRITE_TOKEN_MIDIA
 }
 
 async function emParalelo<T>(itens: T[], n: number, tarefa: (item: T) => Promise<void>): Promise<void> {
@@ -94,7 +105,11 @@ export async function mapearInternalizacao(
     try {
       // Uma tentativa só: dentro de um request, insistir custa o orçamento das
       // imagens seguintes. A varredura noturna tem paciência; esta rota não.
-      const resultado = await internalizarUrl(db, url, { tentativas: 1, timeoutMs: 8_000 })
+      const resultado = await internalizarUrl(db, url, {
+        tentativas: 1,
+        timeoutMs: 8_000,
+        token: tokenDoStoreDeMidia(),
+      })
       if (resultado.ok) mapa.set(url, resultado.caminho)
     } catch (erro) {
       console.warn('[midia] falha ao internalizar na escrita:', url, erro)

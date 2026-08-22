@@ -226,11 +226,33 @@ A varredura é incremental: guarda em `media_sync_estado` em que coleção e em 
 
 ## Variáveis de ambiente
 
+O acervo de imagens usa um Blob store **separado** do que já existia para os
+PDFs de materiais, e a razão é privacidade em direções opostas: o store dos
+PDFs (`BLOB_READ_WRITE_TOKEN`) é **privado** de propósito — um PDF só é lido
+pela rota autenticada, nunca por URL direta — e o das imagens precisa do
+oposto, carregar sem autenticação em qualquer página pública do site. Os dois
+tokens nunca devem ser o mesmo.
+
 | Variável | Papel |
 | --- | --- |
-| `BLOB_READ_WRITE_TOKEN` | credencial de escrita. Sem ela a internalização fica desligada (e o cron responde 200 dizendo que pulou) |
-| `BLOB_PUBLIC_BASE_URL` | domínio público do store, para a reescrita direta ao CDN |
+| `BLOB_READ_WRITE_TOKEN_MIDIA` | credencial de escrita do store **público** de imagens. Sem ela a internalização fica desligada (e o cron responde 200 dizendo que pulou) |
+| `BLOB_PUBLIC_BASE_URL` | domínio público desse mesmo store, para a reescrita direta ao CDN |
 | `MIDIA_INTERNALIZAR_NA_ESCRITA` | `0` desliga a internalização no momento da escrita |
+
+### Criando o store público
+
+1. Vercel → **Storage** → **Create Database** → **Blob**.
+2. Dê um nome (ex.: `gradex-midia`) e marque a opção **Public** na criação —
+   é o que faz cada blob ficar acessível por URL sem token. O store dos PDFs
+   continua como está, sem mexer nele.
+3. Na aba do store recém-criado, copie o **Read-Write Token** e cole em
+   `BLOB_READ_WRITE_TOKEN_MIDIA`.
+4. Abra qualquer arquivo de teste do store (ou olhe a URL de exemplo que a
+   Vercel mostra) para pegar o domínio — algo como
+   `https://<id>.public.blob.vercel-storage.com` — e cole em
+   `BLOB_PUBLIC_BASE_URL`.
+5. Redeploy. Sem o redeploy as funções continuam com as variáveis antigas em
+   cache.
 
 ---
 
