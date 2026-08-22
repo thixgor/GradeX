@@ -1,6 +1,6 @@
 import { ObjectId, type Db } from 'mongodb'
 import type { User } from '@/lib/types'
-import { isPlusAccount } from '@/lib/account-tier'
+import { temAcessoAoBanco } from '@/lib/account-tier'
 import {
   lerEstadoGratuito,
   tentarAbrir,
@@ -65,7 +65,9 @@ export async function lerAcessoAoBanco(db: Db, userId: string): Promise<AcessoAo
     premiumPlanType: usuario.premiumPlanType as string | null,
   })
 
-  const cargoDeAssinante = isPlusAccount(usuario.accountType) || usuario.accountType === 'trial'
+  // Plus+ (plataforma inteira), Quest (só o Banco) e trial passam pelo cargo;
+  // o plano assinado ainda pode fechar a área.
+  const cargoDeAssinante = temAcessoAoBanco(usuario.accountType) || usuario.accountType === 'trial'
   const ehAssinante = cargoDeAssinante && areaLiberada(permissoes, 'bancoQuestoes')
 
   return {
@@ -137,14 +139,16 @@ export async function abrirQuestaoGratuita(
  *
  * Substitui o `isPlusAccount(user.accountType)` solto que as rotas da seção
  * usavam: ter o cargo pago deixou de ser resposta suficiente, porque um plano
- * pode conceder o cargo sem incluir o Banco. Admin passa sempre.
+ * pode conceder o cargo sem incluir o Banco. Admin passa sempre, e o cargo
+ * **Quest** — que existe justamente para vender esta seção sozinha — passa
+ * pela mesma porta que o Plus+.
  */
 export async function bancoLiberadoPeloPlano(
   db: Db,
   usuario: Pick<User, 'role' | 'accountType' | 'premiumPlanType'> & { _id?: unknown },
 ): Promise<boolean> {
   if (usuario.role === 'admin') return true
-  if (!isPlusAccount(usuario.accountType)) return false
+  if (!temAcessoAoBanco(usuario.accountType)) return false
 
   const permissoes = await resolverPermissoes(db, {
     userId: String(usuario._id || ''),

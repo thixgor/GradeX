@@ -23,6 +23,7 @@ import { AppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { ROTA_ASSINATURA } from '@/lib/account-tier'
 import { cn } from '@/lib/utils'
 import { Portal } from '@/components/ui/portal'
 import { CriadorDeLista } from '@/components/banco/criador-de-lista'
@@ -172,7 +173,7 @@ export default function MinhasListasPage() {
           </p>
           <div className="mt-5 flex flex-wrap justify-center gap-2">
             <Link
-              href="/loja"
+              href={ROTA_ASSINATURA}
               className="btn-brand-glow inline-flex h-10 items-center rounded-xl px-5 text-sm font-bold text-white active:scale-[0.98]"
             >
               Assinar o Plus+

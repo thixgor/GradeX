@@ -35,9 +35,12 @@ import {
   Copy,
   ClipboardCheck,
   Lock,
+  PenLine,
   RotateCcw,
-  Star
+  Star,
+  XCircle
 } from 'lucide-react'
+import { ROTA_ASSINATURA } from '@/lib/account-tier'
 import { BancoQuestaoComHierarquia, BancoListaUsuario } from '@/lib/types/banco-questoes'
 import { QuestionAnnotation, TextHighlight } from '@/lib/types'
 import { InlineAnnotationCanvas } from '@/components/inline-annotation-canvas'
@@ -59,6 +62,29 @@ import { useEstaNaTela } from '@/components/banco/use-esta-na-tela'
 
 const formatText = (text: string) => text?.replace(/\\nl/g, '\n').replace(/\\n/g, '\n') || ''
 
+/**
+ * "hoje", "ontem", "há 3 dias"… — quando a pessoa respondeu isto antes.
+ *
+ * A data crua ("14/03/2026, 21:07") obriga a fazer a conta de cabeça. O que
+ * decide entre rever a correção e refazer do zero é a DISTÂNCIA: o que foi
+ * ontem ainda está fresco, o que foi há dois meses não está.
+ */
+function quandoFoi(iso?: string | null): string | null {
+  if (!iso) return null
+  const data = new Date(iso)
+  if (Number.isNaN(data.getTime())) return null
+
+  const dias = Math.floor((Date.now() - data.getTime()) / 86_400_000)
+  if (dias <= 0) return 'hoje'
+  if (dias === 1) return 'ontem'
+  if (dias < 30) return `há ${dias} dias`
+  const meses = Math.floor(dias / 30)
+  if (meses === 1) return 'há 1 mês'
+  if (meses < 12) return `há ${meses} meses`
+  const anos = Math.floor(meses / 12)
+  return anos === 1 ? 'há 1 ano' : `há ${anos} anos`
+}
+
 export default function QuestaoPage() {
   const { id } = useParams() // id from route /banco-questoes/[id]
   const router = useRouter()
@@ -68,6 +94,16 @@ export default function QuestaoPage() {
   const [error, setError] = useState<string | null>(null)
   const [bloqueio, setBloqueio] = useState<{ podeAbrir: boolean; restantes: number; limite: number } | null>(null)
   const [abrindo, setAbrindo] = useState(false)
+  /*
+   * Saldo do plano gratuito — presente SÓ para quem não assina.
+   *
+   * É o mesmo sinal que a listagem do banco usa, e é ele que responde "essa
+   * pessoa tem as listas?". A rota já mandava o campo; a tela ignorava, e por
+   * isso oferecia "Adicionar à lista" para quem recebia 403 ao clicar. Uma
+   * ação que só existe para falhar é pior do que ação nenhuma: ela promete o
+   * recurso e cobra a decepção na hora do clique.
+   */
+  const [saldoGratuito, setSaldoGratuito] = useState<{ restantes: number; limite: number } | null>(null)
 
   // Estado da resolução
   const [alternativaSelecionada, setAlternativaSelecionada] = useState<string | null>(null)
@@ -97,6 +133,7 @@ export default function QuestaoPage() {
     correta?: boolean
     alternativaSelecionada?: string
     respostaUsuario?: string
+    createdAt?: string
   } | null>(null)
 
   // Estado para riscar alternativas
@@ -220,10 +257,26 @@ export default function QuestaoPage() {
     return annotations.find(a => a.questionId === questionId)
   }
 
+  /*
+   * Assina o Banco?
+   *
+   * O servidor só manda o saldo gratuito para quem NÃO assina, então a
+   * ausência do campo é a resposta — mas só depois que a questão chegou:
+   * enquanto carrega, ninguém é assinante ainda, ou a tela pediria as listas
+   * antes de saber de quem elas são.
+   */
+  const ehAssinanteDoBanco = !!questao && saldoGratuito === null
+
   useEffect(() => {
     loadQuestao()
-    loadListas()
   }, [id])
+
+  // As listas são de assinante: para quem não é, a rota responde 403 e a tela
+  // não tem o que fazer com a resposta. Buscar só depois de saber quem é a
+  // pessoa evita uma requisição que nasce condenada em toda questão aberta.
+  useEffect(() => {
+    if (ehAssinanteDoBanco) loadListas()
+  }, [ehAssinanteDoBanco])
 
   async function loadQuestao() {
     try {
@@ -247,6 +300,7 @@ export default function QuestaoPage() {
       }
       const data = await res.json()
       setQuestao(data.questao)
+      setSaldoGratuito(data.gratuito ?? null)
 
       // Se já foi resolvida, mostrar modal perguntando o que fazer
       if (data.questao.jaResolvida && data.questao.ultimaResolucao) {
@@ -463,7 +517,7 @@ ${respostaAluno}`
                   Abrir questão
                 </Button>
               ) : (
-                <Button onClick={() => router.push('/loja')}>Assinar o Plus+</Button>
+                <Button onClick={() => router.push(ROTA_ASSINATURA)}>Assinar o Plus+</Button>
               )}
               <Button variant="outline" onClick={() => router.push('/banco-questoes')}>
                 Voltar ao banco
@@ -561,15 +615,30 @@ ${respostaAluno}`
   const detalhesDaQuestao = (
     <>
       <div className="flex flex-wrap gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          className="h-9 rounded-xl text-xs"
-          onClick={() => setShowAddToListModal(true)}
-        >
-          <ListPlus className="mr-1.5 h-3.5 w-3.5" />
-          Adicionar à lista
-        </Button>
+        {/* Só quem assina tem listas. Para quem não assina o botão não some sem
+            dizer por quê: vira o convite, com o cadeado no lugar do ícone —
+            some a frustração do 403 e fica a informação de que existe. */}
+        {ehAssinanteDoBanco ? (
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-9 rounded-xl text-xs"
+            onClick={() => setShowAddToListModal(true)}
+          >
+            <ListPlus className="mr-1.5 h-3.5 w-3.5" />
+            Adicionar à lista
+          </Button>
+        ) : (
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-9 rounded-xl border-primary/30 bg-primary/5 text-xs text-primary hover:bg-primary/10"
+            onClick={() => router.push(ROTA_ASSINATURA)}
+          >
+            <Lock className="mr-1.5 h-3.5 w-3.5" />
+            Listas são do Plus+
+          </Button>
+        )}
         <Button
           variant="outline"
           size="sm"
@@ -846,66 +915,141 @@ ${respostaAluno}`
         </Dialog>
 
         {/* Modal de questão já respondida */}
+        {/*
+          Esta é a primeira coisa que a pessoa vê ao reabrir uma questão que já
+          resolveu, e a versão anterior gastava esse momento sem dizer nada:
+          título com ícone de alerta, "o que deseja fazer?" e duas opções de
+          peso visual idêntico. Quem chega aqui já esqueceu o que respondeu —
+          e é justamente isso que decide entre rever e refazer.
+
+          Então o diálogo abre pelo VEREDITO (acertou/errou, o que marcou,
+          quando foi), e só depois oferece as saídas, com a recomendada em
+          destaque. As duas dizem o que custam: rever não mexe em nada,
+          refazer grava uma nova resposta e conta de novo no desempenho.
+        */}
         <Dialog open={showJaRespondidaModal} onOpenChange={setShowJaRespondidaModal}>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2 text-[#468152]">
-                <AlertCircle className="h-5 w-5" />
-                Opa! Você já fez essa questão
-              </DialogTitle>
-              <DialogDescription className="text-base pt-2">
-                Você já respondeu essa questão anteriormente. O que deseja fazer?
-              </DialogDescription>
-            </DialogHeader>
+          <DialogContent className="gap-0 overflow-hidden p-0 sm:max-w-md">
+            {(() => {
+              const acertou = dadosUltimaResolucao?.correta === true
+              const ehDiscursiva = questao?.tipo === 'discursiva'
+              // Discursiva não tem certo/errado automático: a nota é da
+              // auto-avaliação, e nunca vem no registro. Fingir um veredito
+              // aqui seria inventar informação.
+              const semVeredito = ehDiscursiva || dadosUltimaResolucao?.correta === undefined
+              const quando = quandoFoi(dadosUltimaResolucao?.createdAt)
+              const letra = dadosUltimaResolucao?.alternativaSelecionada
 
-            <div className="py-4 space-y-3">
-              <Button
-                variant="outline"
-                className="w-full justify-start h-auto py-4 px-4"
-                onClick={handleVerGabarito}
-              >
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-full bg-blue-100 dark:bg-blue-900/30">
-                    <BookOpen className="h-5 w-5 text-blue-600" />
-                  </div>
-                  <div className="text-left">
-                    <div className="font-medium">Ver Gabarito</div>
-                    <div className="text-sm text-muted-foreground">
-                      Rever a resposta correta e o que você marcou
+              return (
+                <>
+                  {/* ── Veredito ────────────────────────────────────────── */}
+                  <div
+                    className={cn(
+                      'px-6 pb-5 pt-6 text-center',
+                      semVeredito
+                        ? 'bg-violet-500/10'
+                        : acertou
+                          ? 'bg-emerald-500/10'
+                          : 'bg-red-500/10',
+                    )}
+                  >
+                    <div
+                      className={cn(
+                        'mx-auto flex h-14 w-14 items-center justify-center rounded-2xl',
+                        semVeredito
+                          ? 'bg-violet-500/15 text-violet-600 dark:text-violet-400'
+                          : acertou
+                            ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
+                            : 'bg-red-500/15 text-red-600 dark:text-red-400',
+                      )}
+                    >
+                      {semVeredito ? (
+                        <PenLine className="h-7 w-7" />
+                      ) : acertou ? (
+                        <CheckCircle2 className="h-7 w-7" />
+                      ) : (
+                        <XCircle className="h-7 w-7" />
+                      )}
                     </div>
-                  </div>
-                </div>
-              </Button>
 
-              <Button
-                variant="outline"
-                className="w-full justify-start h-auto py-4 px-4"
-                onClick={handleRefazerQuestao}
-              >
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-full bg-orange-100 dark:bg-orange-900/30">
-                    <ArrowRight className="h-5 w-5 text-orange-600" />
+                    {/* `p-0`: o respiro já vem da faixa do veredito acima. */}
+                    <DialogHeader className="mt-3 p-0">
+                      <DialogTitle className="text-center font-heading text-lg font-semibold tracking-tight">
+                        {semVeredito
+                          ? 'Você já respondeu esta questão'
+                          : acertou
+                            ? 'Você acertou esta questão'
+                            : 'Você errou esta questão'}
+                      </DialogTitle>
+                      <DialogDescription className="mt-1 text-center text-sm">
+                        {/* A frase junta o que a pessoa precisa lembrar: o que
+                            marcou e há quanto tempo. Cada pedaço some sozinho
+                            quando o registro não o tem. */}
+                        {[
+                          letra && !ehDiscursiva ? `Você marcou a alternativa ${letra}` : null,
+                          quando,
+                        ]
+                          .filter(Boolean)
+                          .join(' · ') || 'Ela já está no seu histórico.'}
+                      </DialogDescription>
+                    </DialogHeader>
                   </div>
-                  <div className="text-left">
-                    <div className="font-medium">Refazer Questão</div>
-                    <div className="text-sm text-muted-foreground">
-                      Tentar novamente do zero
-                    </div>
-                  </div>
-                </div>
-              </Button>
-            </div>
 
-            <DialogFooter>
-              <Button
-                variant="ghost"
-                onClick={() => router.push('/banco-questoes')}
-                className="w-full"
-              >
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Voltar ao Banco de Questões
-              </Button>
-            </DialogFooter>
+                  {/* ── Saídas ──────────────────────────────────────────── */}
+                  <div className="space-y-2 px-4 py-4">
+                    <button
+                      type="button"
+                      onClick={handleVerGabarito}
+                      className="group flex w-full items-center gap-3 rounded-2xl border border-primary/40 bg-primary/5 p-3.5 text-left transition hover:bg-primary/10 active:scale-[0.99]"
+                    >
+                      <span className="flex h-10 w-10 flex-none items-center justify-center rounded-xl bg-primary/15 text-primary">
+                        <BookOpen className="h-5 w-5" />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="flex items-center gap-1.5 text-sm font-bold">
+                          Ver a correção
+                          <span className="rounded bg-primary/15 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary">
+                            Recomendado
+                          </span>
+                        </span>
+                        <span className="mt-0.5 block text-xs leading-relaxed text-muted-foreground">
+                          Abre a resposta certa, a sua e o comentário. Não altera seu histórico.
+                        </span>
+                      </span>
+                      <ArrowRight className="h-4 w-4 flex-none text-primary opacity-0 transition group-hover:opacity-100" />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={handleRefazerQuestao}
+                      className="group flex w-full items-center gap-3 rounded-2xl border border-border p-3.5 text-left transition hover:bg-muted active:scale-[0.99]"
+                    >
+                      <span className="flex h-10 w-10 flex-none items-center justify-center rounded-xl bg-muted text-muted-foreground">
+                        <RotateCcw className="h-5 w-5" />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block text-sm font-bold">Refazer do zero</span>
+                        <span className="mt-0.5 block text-xs leading-relaxed text-muted-foreground">
+                          Limpa a tela e responde de novo. A nova resposta entra no seu desempenho.
+                        </span>
+                      </span>
+                      <ArrowRight className="h-4 w-4 flex-none text-muted-foreground opacity-0 transition group-hover:opacity-100" />
+                    </button>
+                  </div>
+
+                  <DialogFooter className="border-t border-border/60 bg-muted/30 px-4 py-3 sm:justify-center">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => router.push('/banco-questoes')}
+                      className="h-9 w-full text-xs font-semibold text-muted-foreground"
+                    >
+                      <ArrowLeft className="mr-1.5 h-3.5 w-3.5" />
+                      Voltar ao banco
+                    </Button>
+                  </DialogFooter>
+                </>
+              )
+            })()}
           </DialogContent>
         </Dialog>
 

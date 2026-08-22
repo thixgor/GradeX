@@ -32,6 +32,7 @@ import {
   Clock
 } from 'lucide-react'
 import { BancoPaginacao, BancoEstatisticasUsuario } from '@/lib/types/banco-questoes'
+import { ROTA_ASSINATURA } from '@/lib/account-tier'
 
 interface HistoricoItem {
   _id: string
@@ -165,7 +166,7 @@ export default function HistoricoPage() {
             </CardHeader>
             <CardContent>
               <Button
-                onClick={() => router.push('/buy')}
+                onClick={() => router.push(ROTA_ASSINATURA)}
                 className="w-full bg-gradient-to-r from-[#468152] to-[#E2A43E] hover:from-[#468152]/90 hover:to-[#E2A43E]/90"
                 size="lg"
               >

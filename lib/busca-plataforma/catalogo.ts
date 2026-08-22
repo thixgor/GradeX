@@ -231,7 +231,7 @@ const PAGINAS: ItemBusca[] = [
     ['quiz', 'identificacao', 'teste de anatomia']),
 
   // ── Materiais e loja ──────────────────────────────────────────────────
-  pagina('loja', 'Loja', '/loja', 'Materiais', 'store',
+  pagina('loja', 'Loja', '/materiais?tab=loja', 'Materiais', 'store',
     ['loja', 'comprar', 'produtos', 'fisico', 'camiseta'],
     { subtitulo: 'Produtos físicos e itens da plataforma.' }),
 

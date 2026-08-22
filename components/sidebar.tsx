@@ -36,7 +36,7 @@ import {
 } from '@/lib/sidebar-groups'
 import { normalizeSidebarIcons, type SidebarSectionIcons } from '@/lib/sidebar-icons'
 import { getSidebarIconComponent } from '@/components/sidebar-icon-map'
-import { isPlusAccount } from '@/lib/account-tier'
+import { temAcessoAoBanco } from '@/lib/account-tier'
 import { useLiteMode } from '@/hooks/use-lite-mode'
 import { ScrollRoller } from '@/components/ui/scroll-roller'
 import { BuscaGlobal } from '@/components/busca/busca-global'
@@ -444,8 +444,11 @@ export function Sidebar({
         label: section.label,
         href: section.href,
         badge:
+          // O selo "5 Questões" é o saldo de quem não tem o Banco. Quem tem o
+          // cargo Quest comprou justamente esta seção — para ele o selo seria
+          // uma mentira, e o teste é o mesmo do Plus+.
           section.key === 'bancoQuestoes'
-            ? !isPlusAccount(user?.accountType) && !isAdmin
+            ? !temAcessoAoBanco(user?.accountType) && !isAdmin
               ? '5 Questões'
               : undefined
             : SECTION_BADGES[section.key],

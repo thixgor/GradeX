@@ -10,7 +10,12 @@
  *
  *  - `normalizeAccountType()` traduz o legado na leitura;
  *  - `PLUS_ACCOUNT_TYPES` é o conjunto aceito em filtros do Mongo;
- *  - `isPlusAccount()` é o único teste de "esse usuário é pagante?".
+ *  - `isPlusAccount()` é o único teste de "esse usuário tem a plataforma toda?".
+ *
+ * Desde o lançamento do **Quest** (`accountType: 'quest'`, o produto avulso do
+ * Banco de Questões) existe um segundo cargo pago, e "pagante" deixou de ser
+ * sinônimo de "Plus+": use `isPaidAccount()` para dinheiro e
+ * `temAcessoAoBanco()` para o Banco.
  *
  * Nunca compare `accountType === 'premium'` diretamente. Use os helpers.
  */
@@ -22,6 +27,38 @@ export const PLUS_TIER = 'plus' as const
 
 /** Rótulo de marca do cargo pago. Não traduzir/abreviar. */
 export const PLUS_LABEL = 'Plus+'
+
+/**
+ * Cargo do **Quest** — o produto avulso do Banco de Questões.
+ *
+ * O Plus+ é "a plataforma inteira"; o Quest é uma fatia só: o Banco de
+ * Questões liberado por completo (questões ilimitadas, listas, histórico e
+ * desempenho) e nada além disso. Fora do Banco, a conta Quest vale o mesmo que
+ * uma conta gratuita — quem quiser Manual Clínico, materiais, aulas ou provas
+ * por IA continua precisando do Plus+.
+ *
+ * É um cargo pago de verdade (tem prazo, vence e é rebaixado pelo cron), então
+ * ele NUNCA passa em `isPlusAccount()`. O teste certo depende da pergunta:
+ *
+ *  - "essa conta paga alguma coisa?" → `isPaidAccount()`
+ *  - "essa conta tem a plataforma inteira?" → `isPlusAccount()`
+ *  - "essa conta tem o Banco?" → `temAcessoAoBanco()` (ou, no servidor,
+ *    `bancoLiberadoPeloPlano()` em `lib/banco/acesso-servidor.ts`)
+ */
+export const QUEST_TIER = 'quest' as const
+
+/** Rótulo de marca do cargo do Banco de Questões. */
+export const QUEST_LABEL = 'Quest'
+
+/**
+ * Para onde vai quem clica em "Assinar".
+ *
+ * Existe como constante porque a resposta errada é invisível em revisão de
+ * código: vários botões apontavam para `/loja`, que nunca teve página (só
+ * `/loja/[id]` e `/loja/checkout` existem), e o clique que mais importa —
+ * o de quem decidiu pagar — caía num 404. A vitrine de planos é `/buy`.
+ */
+export const ROTA_ASSINATURA = '/buy'
 
 /**
  * Cargos legados que hoje significam exatamente a mesma coisa que `plus`.
@@ -36,7 +73,13 @@ export const LEGACY_PLUS_TIERS = ['premium', 'essential'] as const
 export const PLUS_ACCOUNT_TYPES = [PLUS_TIER, ...LEGACY_PLUS_TIERS] as const
 
 /** Todos os cargos canônicos oferecidos hoje (o que o admin pode escolher). */
-export const CANONICAL_ACCOUNT_TYPES: AccountType[] = ['gratuito', 'trial', PLUS_TIER]
+export const CANONICAL_ACCOUNT_TYPES: AccountType[] = ['gratuito', 'trial', QUEST_TIER, PLUS_TIER]
+
+/**
+ * Cargos que representam dinheiro entrando — os que vencem e são rebaixados.
+ * Use em filtros de expiração, não em checagem de acesso.
+ */
+export const PAID_ACCOUNT_TYPES = [PLUS_TIER, QUEST_TIER, ...LEGACY_PLUS_TIERS] as const
 
 /**
  * Traduz qualquer valor vindo do banco/entrada do usuário para o cargo
@@ -46,6 +89,7 @@ export function normalizeAccountType(value?: string | null): AccountType {
   if (!value) return 'gratuito'
   const v = String(value).trim().toLowerCase()
   if (v === 'premium' || v === 'essential' || v === 'plus' || v === 'plus+') return PLUS_TIER
+  if (v === 'quest' || v === 'quest+') return QUEST_TIER
   if (v === 'trial') return 'trial'
   return 'gratuito'
 }
@@ -59,6 +103,38 @@ export function isPlusAccount(accountType?: string | null, isAdmin?: boolean): b
   return normalizeAccountType(accountType) === PLUS_TIER
 }
 
+/**
+ * O usuário tem o cargo Quest? Admin passa sempre.
+ *
+ * Isto responde "tem o cargo", e não "pode ver o Banco": um assinante Plus+
+ * também pode, e é `temAcessoAoBanco()` que junta os dois.
+ */
+export function isQuestAccount(accountType?: string | null, isAdmin?: boolean): boolean {
+  if (isAdmin) return true
+  return normalizeAccountType(accountType) === QUEST_TIER
+}
+
+/** A conta paga algum plano (Plus+ ou Quest)? Trial não conta — não é receita. */
+export function isPaidAccount(accountType?: string | null, isAdmin?: boolean): boolean {
+  if (isAdmin) return true
+  const t = normalizeAccountType(accountType)
+  return t === PLUS_TIER || t === QUEST_TIER
+}
+
+/**
+ * O cargo, sozinho, dá direito ao Banco de Questões?
+ *
+ * Plus+ (a plataforma inteira) e Quest (só o Banco) passam. O plano assinado
+ * ainda pode restringir a área — quem fecha a conta no servidor é
+ * `bancoLiberadoPeloPlano()`, que chama esta função e depois confere as
+ * permissões do plano.
+ */
+export function temAcessoAoBanco(accountType?: string | null, isAdmin?: boolean): boolean {
+  if (isAdmin) return true
+  const t = normalizeAccountType(accountType)
+  return t === PLUS_TIER || t === QUEST_TIER
+}
+
 /** Atalho para checagens de sessão (`session.role === 'admin'`). */
 export function isAdminRole(role?: string | null): boolean {
   return role === 'admin'
@@ -68,6 +144,7 @@ export function isAdminRole(role?: string | null): boolean {
 export const ACCOUNT_TYPE_LABELS: Record<string, string> = {
   gratuito: 'Gratuito',
   trial: 'Trial',
+  quest: QUEST_LABEL,
   plus: PLUS_LABEL,
   // Legado — usuários ainda não migrados aparecem como Plus+ na interface.
   premium: PLUS_LABEL,
@@ -90,6 +167,7 @@ export function getAccountTypeLabel(accountType?: string | null, isAdmin?: boole
 export const ACCESS_GROUP_OPTIONS = [
   { id: 'gratuito', label: 'Gratuito' },
   { id: 'trial', label: 'Trial' },
+  { id: QUEST_TIER, label: QUEST_LABEL },
   { id: PLUS_TIER, label: PLUS_LABEL },
   { id: 'monitor', label: 'Monitor' },
 ] as const
@@ -98,6 +176,7 @@ export const ACCESS_GROUP_OPTIONS = [
 export const VALID_ACCESS_GROUPS = [
   'gratuito',
   'trial',
+  QUEST_TIER,
   PLUS_TIER,
   'monitor',
   ...LEGACY_PLUS_TIERS,

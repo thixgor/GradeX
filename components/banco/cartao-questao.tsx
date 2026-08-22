@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { CheckCircle2, CircleSlash, ListPlus, Lock, Sparkles, XCircle } from 'lucide-react'
+import { ROTA_ASSINATURA } from '@/lib/account-tier'
 import { descreverCaminho } from '@/lib/banco/hierarquia'
 import { cn } from '@/lib/utils'
 
@@ -144,7 +145,7 @@ export function CartaoDeQuestao({
                 </button>
               ) : (
                 <Link
-                  href="/loja"
+                  href={ROTA_ASSINATURA}
                   className="inline-flex h-9 items-center gap-1.5 rounded-xl border border-border px-3.5 text-xs font-bold text-muted-foreground transition hover:bg-muted"
                 >
                   Assinar para ver

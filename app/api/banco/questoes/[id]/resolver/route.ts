@@ -4,7 +4,7 @@ import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { User } from '@/lib/types'
 import { BancoQuestao, BancoResolucao, BancoAlternativaLetra } from '@/lib/types/banco-questoes'
-import { isPlusAccount } from '@/lib/account-tier'
+import { temAcessoAoBanco } from '@/lib/account-tier'
 import { areaLiberada, resolverPermissoes } from '@/lib/plan-entitlements-server'
 
 export const dynamic = 'force-dynamic'
@@ -45,7 +45,7 @@ export async function POST(
       premiumPlanType: user.premiumPlanType as string | null,
     })
     const isPremiumOrTrial =
-      (isPlusAccount(user.accountType) || user.accountType === 'trial') &&
+      (temAcessoAoBanco(user.accountType) || user.accountType === 'trial') &&
       areaLiberada(permissoes, 'bancoQuestoes')
     const isFreeUser = !isAdmin && !isPremiumOrTrial
 

@@ -213,13 +213,16 @@ export interface ExamSubmission {
 }
 
 /**
- * Cargo da conta. `'plus'` (Plus+) é o único cargo pago oferecido.
+ * Cargo da conta. Dois cargos pagos são oferecidos:
+ *
+ *  - `'plus'` (Plus+) — a plataforma inteira, sem teto;
+ *  - `'quest'` (Quest) — só o Banco de Questões, o produto avulso.
  *
  * `'premium'` e `'essential'` continuam no union apenas porque documentos
  * antigos do Mongo ainda os carregam — nunca grave esses valores em código
  * novo. Use os helpers de `lib/account-tier.ts` para ler/comparar.
  */
-export type AccountType = 'gratuito' | 'trial' | 'plus' | LegacyPaidAccountType
+export type AccountType = 'gratuito' | 'trial' | 'quest' | 'plus' | LegacyPaidAccountType
 
 /** @deprecated Consolidados em `'plus'`. Somente leitura de registros antigos. */
 export type LegacyPaidAccountType = 'premium' | 'essential'

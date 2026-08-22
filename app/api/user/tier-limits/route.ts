@@ -4,7 +4,7 @@ import { getDb } from '@/lib/mongodb'
 import { getTierLimits, getCronogramasLimit, getFlashcardsLimit, getPersonalExamsLifetimeLimit } from '@/lib/tier-limits'
 import { ObjectId } from 'mongodb'
 import { sendOneTimePaymentEndedEmail } from '@/lib/mail'
-import { isPlusAccount } from '@/lib/account-tier'
+import { isPaidAccount } from '@/lib/account-tier'
 
 export const dynamic = 'force-dynamic'
 
@@ -51,8 +51,8 @@ export async function GET(request: NextRequest) {
     const now = new Date()
     let accountType = user.accountType || 'gratuito'
 
-    // Verificar expiração do Plus+ ou do Trial
-    const isPaid = isPlusAccount(accountType)
+    // Verificar expiração do cargo pago (Plus+ ou Quest) ou do Trial
+    const isPaid = isPaidAccount(accountType)
     const expiresAt = isPaid ? user.premiumExpiresAt : (accountType === 'trial' ? user.trialExpiresAt : null)
 
     if (expiresAt && new Date(expiresAt) <= now && session.role !== 'admin') {

@@ -19,12 +19,12 @@ import {
   BarChart3,
   Crown,
   KeyRound,
-  Mail,
   Package as PackageIcon,
   Phone,
   Settings,
   Sparkles,
   LifeBuoy,
+  Target,
   Ticket,
   Timer,
   AlertTriangle,
@@ -45,7 +45,7 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { AccountType } from '@/lib/types'
-import { PLUS_LABEL, isPlusAccount } from '@/lib/account-tier'
+import { PLUS_LABEL, QUEST_LABEL, ROTA_ASSINATURA, isPlusAccount, isQuestAccount } from '@/lib/account-tier'
 import { cn } from '@/lib/utils'
 
 type ProfileTab = 'visao-geral' | 'desempenho' | 'pedidos' | 'atendimento' | 'config'
@@ -116,7 +116,6 @@ export default function ProfilePage() {
   const [toastMessage, setToastMessage] = useState('')
   const [toastType, setToastType] = useState<'success' | 'error'>('success')
 
-  const [upgradeDialogOpen, setUpgradeDialogOpen] = useState(false)
   const [activateDialogOpen, setActivateDialogOpen] = useState(false)
   const [serialKey, setSerialKey] = useState('')
   const [activating, setActivating] = useState(false)
@@ -274,6 +273,13 @@ export default function ProfilePage() {
     if (isPlusAccount(accountType)) {
       return { label: PLUS_LABEL, colors: 'from-yellow-500 to-orange-500', icon: <Crown className="h-3.5 w-3.5" /> }
     }
+    if (isQuestAccount(accountType)) {
+      return {
+        label: QUEST_LABEL,
+        colors: 'from-emerald-500 to-teal-500',
+        icon: <Target className="h-3.5 w-3.5" />,
+      }
+    }
     if (accountType === 'trial') {
       return {
         label: `Trial - ${getTrialTimeRemaining()}`,
@@ -323,14 +329,25 @@ export default function ProfilePage() {
                   </div>
                 </div>
                 <div className="flex shrink-0 flex-wrap justify-center gap-2">
-                  {userRole !== 'admin' && accountType === 'gratuito' && (
+                  {/*
+                    O botão leva à vitrine de planos, e não a um diálogo com
+                    telefone e e-mail. Quem clica em "Assinar" já decidiu: o
+                    que essa pessoa precisa é ver preço, o que entra em cada
+                    plano e o botão de pagar — não uma instrução para mandar
+                    mensagem no WhatsApp e esperar resposta.
+
+                    Aparece para quem ainda não tem a plataforma inteira: além
+                    do gratuito, o trial (que vence) e o Quest (que cobre só o
+                    Banco de Questões).
+                  */}
+                  {userRole !== 'admin' && !isPlusAccount(accountType) && (
                     <Button
                       size="sm"
-                      onClick={() => setUpgradeDialogOpen(true)}
+                      onClick={() => router.push(ROTA_ASSINATURA)}
                       className="h-9 gap-1.5 rounded-md bg-secondary text-xs font-bold text-secondary-foreground hover:bg-secondary/90"
                     >
                       <Sparkles className="h-3.5 w-3.5" />
-                      Assinar Plus+
+                      {isQuestAccount(accountType) ? `Migrar para ${PLUS_LABEL}` : `Assinar ${PLUS_LABEL}`}
                     </Button>
                   )}
                   {userRole !== 'admin' && (
@@ -426,52 +443,6 @@ export default function ProfilePage() {
           {/* ====== DIÁLOGOS ====== */}
           <ToastAlert open={toastOpen} onOpenChange={setToastOpen} message={toastMessage} type={toastType} />
 
-          <Dialog open={upgradeDialogOpen} onOpenChange={setUpgradeDialogOpen}>
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader>
-                <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-yellow-400 to-orange-500">
-                  <Sparkles className="h-7 w-7 text-white" />
-                </div>
-                <DialogTitle className="text-center text-xl">Assinar Plus+</DialogTitle>
-                <DialogDescription className="text-center text-sm">
-                  Entre em contato para ter acesso a recursos premium ilimitados.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-3 py-3">
-                <div className="flex items-center gap-3 rounded-xl bg-muted/50 p-3">
-                  <Phone className="h-4 w-4 shrink-0 text-blue-600" />
-                  <div>
-                    <p className="text-xs text-muted-foreground">WhatsApp</p>
-                    <p className="text-sm font-semibold">(24) 99223-0908</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 rounded-xl bg-muted/50 p-3">
-                  <Mail className="h-4 w-4 shrink-0 text-green-600" />
-                  <div>
-                    <p className="text-xs text-muted-foreground">E-mail</p>
-                    <p className="text-sm font-semibold">throdrigf@gmail.com</p>
-                  </div>
-                </div>
-              </div>
-              <DialogFooter className="flex-col gap-2">
-                <Button
-                  onClick={() => {
-                    const msg = encodeURIComponent(
-                      `Ola, eu sou ${userName} e quero fazer o upgrade do meu plano no DomineAqui!`,
-                    )
-                    window.open(`https://wa.me/5524992230908?text=${msg}`, '_blank')
-                  }}
-                  className="w-full bg-green-600 text-white hover:bg-green-700"
-                >
-                  <Phone className="mr-2 h-4 w-4" />
-                  WhatsApp
-                </Button>
-                <Button onClick={() => setUpgradeDialogOpen(false)} variant="outline" className="w-full">
-                  Fechar
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
 
           <AnimatePresence>
             {activateDialogOpen && (

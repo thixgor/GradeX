@@ -37,7 +37,7 @@
  */
 
 import type { AccountType } from './types'
-import { normalizeAccountType, PLUS_TIER } from './account-tier'
+import { normalizeAccountType, PLUS_TIER, QUEST_TIER } from './account-tier'
 import { getTierLimits, MINDMAP_FREE_LIMIT } from './tier-limits'
 import { getFlashcardLimits } from './flashcard-limits'
 
@@ -371,6 +371,22 @@ export function permissoesPadraoParaCargo(role?: AccountType | string | null): P
 
   const tier = getTierLimits(cargo)
   const flashcards = getFlashcardLimits(cargo)
+
+  /*
+   * Quest é o Banco de Questões e nada mais. O plano nasce com a área do Banco
+   * aberta e sem teto, e todo o resto fechado — inclusive as áreas que o
+   * gratuito tem em conta-gotas (cronogramas, provas por IA, flashcards por
+   * IA, mapas mentais). Não é uma punição: o piso gratuito continua valendo
+   * para quem não assina nada, e é o cargo, não o plano, que responde por ele.
+   */
+  if (cargo === QUEST_TIER) {
+    for (const key of PLAN_FEATURE_KEYS) {
+      base.regras[key] = regra(false, 0, 'dia')
+    }
+    base.regras.bancoQuestoes = regra(true, 0, 'dia')
+    base.manualClinicoModulos = todosOsModulosDoManual(false)
+    return base
+  }
 
   // Gratuito e trial não têm acervo, PDF de prova, Manual nem aulas pela
   // assinatura — só o que a tabela de cargo concede.

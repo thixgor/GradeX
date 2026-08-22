@@ -6,7 +6,7 @@ import { getTierLimits } from '@/lib/tier-limits'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
-import { isPlusAccount } from '@/lib/account-tier'
+import { ROTA_ASSINATURA, isPlusAccount, isQuestAccount } from '@/lib/account-tier'
 
 interface LimitItem {
   label: string
@@ -46,7 +46,7 @@ export function PlanLimitsCard({
       label: 'Cronogramas',
       current: cronogramasCreated,
       max: limits.cronogramasTotal,
-      isLimited: accountType === 'gratuito',
+      isLimited: accountType === 'gratuito' || isQuestAccount(accountType),
       isNearLimit: limits.cronogramasTotal !== Infinity && cronogramasCreated >= limits.cronogramasTotal - 1,
       isAtLimit: limits.cronogramasTotal !== Infinity && cronogramasCreated >= limits.cronogramasTotal,
     },
@@ -54,7 +54,7 @@ export function PlanLimitsCard({
       label: 'Flashcards',
       current: flashcardsCreated,
       max: limits.flashcardsTotal,
-      isLimited: accountType === 'gratuito',
+      isLimited: accountType === 'gratuito' || isQuestAccount(accountType),
       isNearLimit: limits.flashcardsTotal !== Infinity && flashcardsCreated >= limits.flashcardsTotal - 1,
       isAtLimit: limits.flashcardsTotal !== Infinity && flashcardsCreated >= limits.flashcardsTotal,
     },
@@ -62,7 +62,7 @@ export function PlanLimitsCard({
       label: 'Provas Pessoais',
       current: personalExamsCreated,
       max: limits.personalExamsTotal,
-      isLimited: accountType === 'gratuito',
+      isLimited: accountType === 'gratuito' || isQuestAccount(accountType),
       isNearLimit: limits.personalExamsTotal !== Infinity && personalExamsCreated >= limits.personalExamsTotal - 1,
       isAtLimit: limits.personalExamsTotal !== Infinity && personalExamsCreated >= limits.personalExamsTotal,
     },
@@ -180,10 +180,12 @@ export function PlanLimitsCard({
           )
         })}
 
-        {accountType === 'gratuito' && !isAdmin && showUpgradeButton && (
+        {/* Quest cobre o Banco de Questões, não estes tetos — ele vê o mesmo
+            convite que a conta gratuita. */}
+        {(accountType === 'gratuito' || isQuestAccount(accountType)) && !isAdmin && showUpgradeButton && (
           <div className="pt-3 border-t">
             <Button
-              onClick={() => router.push('/buy')}
+              onClick={() => router.push(ROTA_ASSINATURA)}
               className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600"
             >
               <Crown className="h-4 w-4 mr-2" />

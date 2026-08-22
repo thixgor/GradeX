@@ -13,7 +13,7 @@ import { ArrowLeft, Settings, AlertCircle, CheckCircle, Eye, EyeOff, Trash2, Zap
 import { PlanConfig } from '@/lib/types'
 import { PlanPermissionsEditor } from '@/components/admin/plan-permissions-editor'
 import { normalizePlanPermissions } from '@/lib/plan-entitlements'
-import { PLUS_LABEL, normalizeAccountType } from '@/lib/account-tier'
+import { PLUS_LABEL, QUEST_LABEL, normalizeAccountType } from '@/lib/account-tier'
 import { PlusGuardPanel } from '@/components/admin/plus-guard-panel'
 import {
   normalizeSidebarOrder,
@@ -1251,12 +1251,14 @@ export default function SettingsPage() {
                           className="w-full h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors"
                         >
                           <option value="plus">{PLUS_LABEL}</option>
+                          <option value="quest">{QUEST_LABEL}</option>
                           <option value="trial">Trial</option>
                           <option value="gratuito">Gratuito</option>
                         </select>
                         <p className="mt-1 text-[11px] text-muted-foreground">
-                          Planos antigos com Premium/Essential aparecem aqui como {PLUS_LABEL} e são
-                          gravados como {PLUS_LABEL} ao salvar.
+                          {PLUS_LABEL} libera a plataforma inteira; {QUEST_LABEL} libera só o Banco
+                          de Questões. Planos antigos com Premium/Essential aparecem aqui como{' '}
+                          {PLUS_LABEL} e são gravados como {PLUS_LABEL} ao salvar.
                         </p>
                       </div>
                       <div>

@@ -6,7 +6,7 @@ import { mapMpPreapprovalStatus } from '@/lib/payments/mercado-pago/status-mappe
 import { audit } from '@/lib/payments/audit'
 import { sendSubscriptionCancelledEmail } from '@/lib/mail'
 import { revokePlusClaims } from '@/lib/plus-claims'
-import { PLUS_ACCOUNT_TYPES } from '@/lib/account-tier'
+import { PAID_ACCOUNT_TYPES, PLUS_ACCOUNT_TYPES } from '@/lib/account-tier'
 import type { SubscriptionRecord, User, AccountType } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -122,13 +122,14 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  // 3) Rede de segurança: contas com Plus+ vencido que não têm registro de
+  // 3) Rede de segurança: contas com cargo pago vencido que não têm registro de
   //    assinatura correspondente (plano avulso, key com prazo, grant do admin).
   //    Antes isso só era corrigido no próximo login — quem parava de usar o site
   //    ficava com o cargo e com os materiais resgatados por tempo indeterminado.
+  //    Vale para os dois cargos pagos: o Quest vence pela mesma data.
   const staleCandidates = await usersCol
     .find({
-      accountType: { $in: [...PLUS_ACCOUNT_TYPES] },
+      accountType: { $in: [...PAID_ACCOUNT_TYPES] },
       premiumExpiresAt: { $lt: now },
     })
     .limit(500)

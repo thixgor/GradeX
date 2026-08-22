@@ -45,7 +45,7 @@ import { getOdontologiaTopicos } from '@/lib/odontologia-periodos-helper'
 import { AppShell as LayoutShell } from '@/components/app-shell'
 import { FocusSessionButton } from '@/components/focus-session-button'
 import { NotificationsBell } from '@/components/notifications-bell'
-import { PLUS_LABEL } from '@/lib/account-tier'
+import { PLUS_LABEL, QUEST_LABEL } from '@/lib/account-tier'
 
 interface DeckWithId extends FlashcardDeck {
   _id: string
@@ -88,6 +88,13 @@ const tierLimits: Record<AccountType | 'admin', { daily: number | string; active
     active: '10 decks ativos',
     cards: 10,
     summary: 'Test drive com nitro: 10 decks por dia, 10 cartões cada, 10 decks ativos.',
+  },
+  // Quest paga pelo Banco de Questões; aqui ele vale o mesmo que o gratuito.
+  quest: {
+    daily: 5,
+    active: '10 decks ativos',
+    cards: 5,
+    summary: `O ${QUEST_LABEL} cobre o Banco de Questões — aqui valem os limites do plano gratuito.`,
   },
   plus: PLUS_TIER_LIMITS,
   // Legado — contas ainda não migradas veem o mesmo do Plus+.

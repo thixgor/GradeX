@@ -15,7 +15,7 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { PERIODO_OPTIONS, computeCurrentPeriodo, formatPeriodoLabel } from '@/lib/user-periodo'
 import { formatStateLabel } from '@/lib/brazil-states'
-import { isPlusAccount, normalizeAccountType, PLUS_LABEL } from '@/lib/account-tier'
+import { isPlusAccount, isQuestAccount, normalizeAccountType, PLUS_LABEL, QUEST_LABEL } from '@/lib/account-tier'
 import { AdminSecurityPanel } from '@/components/admin/admin-security-panel'
 import {
   buildAdminUserInsights,
@@ -643,7 +643,10 @@ export default function AdminUsersPage() {
           action: 'update_tier',
           accountType: selectedAccountType,
           trialPlanType: selectedAccountType === 'trial' ? selectedTrialSubtype : undefined,
-          premiumPlanType: isPlusAccount(selectedAccountType) ? selectedPremiumSubtype : undefined
+          premiumPlanType:
+            isPlusAccount(selectedAccountType) || isQuestAccount(selectedAccountType)
+              ? selectedPremiumSubtype
+              : undefined,
         })
       })
 
@@ -946,6 +949,15 @@ export default function AdminUsersPage() {
         <span className="text-xs bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-2 py-1 rounded flex items-center gap-1 w-fit">
           <Crown className="h-3 w-3" />
           {PLUS_LABEL}
+        </span>
+      )
+    }
+
+    if (isQuestAccount(accountType)) {
+      return (
+        <span className="text-xs bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-2 py-1 rounded flex items-center gap-1 w-fit">
+          <Target className="h-3 w-3" />
+          {QUEST_LABEL}
         </span>
       )
     }
@@ -1910,7 +1922,7 @@ export default function AdminUsersPage() {
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label>Tipo de Conta</Label>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 gap-2">
                 <Button
                   variant={selectedAccountType === 'gratuito' ? 'default' : 'outline'}
                   onClick={() => setSelectedAccountType('gratuito')}
@@ -1929,6 +1941,16 @@ export default function AdminUsersPage() {
                   <Timer className="h-4 w-4" />
                   <div className="font-semibold">Trial</div>
                   <div className="text-xs opacity-80">Temporário</div>
+                </Button>
+                <Button
+                  variant={isQuestAccount(selectedAccountType) ? 'default' : 'outline'}
+                  onClick={() => setSelectedAccountType('quest')}
+                  className="h-auto py-3 flex-col gap-1"
+                  size="sm"
+                >
+                  <Target className="h-4 w-4" />
+                  <div className="font-semibold">{QUEST_LABEL}</div>
+                  <div className="text-xs opacity-80">Só o Banco de Questões</div>
                 </Button>
                 <Button
                   variant={isPlusAccount(selectedAccountType) ? 'default' : 'outline'}
@@ -1969,7 +1991,9 @@ export default function AdminUsersPage() {
               </div>
             )}
 
-            {isPlusAccount(selectedAccountType) && (
+            {/* Quest usa a mesma tabela de duração do Plus+ — é o mesmo campo
+                de prazo no usuário, e é o que o cron varre para rebaixar. */}
+            {(isPlusAccount(selectedAccountType) || isQuestAccount(selectedAccountType)) && (
               <div className="space-y-2">
                 <Label>Subtipo de assinatura</Label>
                 <div className="grid grid-cols-2 gap-2">

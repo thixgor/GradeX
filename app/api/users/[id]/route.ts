@@ -7,7 +7,7 @@ import { sendAccountDeletedEmail } from '@/lib/mail'
 import { secureApiEndpoint, canAdminModifyUser } from '@/lib/api-security'
 import { getPaymentProvider } from '@/lib/payments'
 import { normalizePeriodo, getCurrentSemesterRef } from '@/lib/user-periodo'
-import { isPlusAccount } from '@/lib/account-tier'
+import { isPlusAccount, isQuestAccount, QUEST_TIER } from '@/lib/account-tier'
 import { revokePlusClaims, restorePlusClaims } from '@/lib/plus-claims'
 
 export const dynamic = 'force-dynamic'
@@ -184,7 +184,7 @@ export async function PATCH(
       successMessage = 'Usuário desbanido com sucesso'
 
     } else if (action === 'update_tier') {
-      const VALID_TYPES = ['gratuito', 'trial', 'plus', 'premium', 'essential']
+      const VALID_TYPES = ['gratuito', 'trial', 'quest', 'plus', 'premium', 'essential']
       if (!accountType || !VALID_TYPES.includes(accountType)) {
         return NextResponse.json({ error: 'Tipo de conta inválido' }, { status: 400 })
       }
@@ -217,6 +217,34 @@ export async function PATCH(
           trialActivatedAt: new Date(),
           premiumExpiresAt: undefined,
           premiumPlanType: undefined,
+          mercadoPagoPreapprovalId: undefined,
+          dailyPersonalExamsCreated: 0,
+          dailyPersonalExamsRemaining: newQuota,
+          lastDailyReset: new Date(),
+        }
+      } else if (isQuestAccount(accountType)) {
+        /*
+         * Quest usa os mesmos campos de prazo do Plus+ (`premiumPlanType` /
+         * `premiumExpiresAt`) de propósito: é a data que o cron varre e a que
+         * o `check-plan-expiration` lê. Um par de campos próprio significaria
+         * um cargo que ninguém rebaixa quando vence.
+         */
+        const planType = (premiumPlanType || 'vitalicio') as PremiumPlanType
+        const durationMonths = PLAN_DURATION_MONTHS[planType] ?? null
+
+        let questExpiresAt: Date | undefined = undefined
+        if (durationMonths !== null) {
+          questExpiresAt = new Date()
+          questExpiresAt.setMonth(questExpiresAt.getMonth() + durationMonths)
+        }
+
+        updateData = {
+          accountType: QUEST_TIER,
+          premiumPlanType: planType,
+          premiumActivatedAt: new Date(),
+          premiumExpiresAt: questExpiresAt,
+          trialExpiresAt: undefined,
+          trialPlanType: undefined,
           mercadoPagoPreapprovalId: undefined,
           dailyPersonalExamsCreated: 0,
           dailyPersonalExamsRemaining: newQuota,

@@ -33,6 +33,15 @@ const FLASHCARD_LIMITS: Record<AccountType | 'admin', FlashcardTierLimits> = {
     totalCardsLifetime: Infinity,
     totalDecksLifetime: Infinity,
   },
+  // Quest paga pelo Banco de Questões, não pelo gerador de IA: mesmo teto do
+  // gratuito.
+  quest: {
+    dailyDecks: Infinity,
+    maxActiveDecks: 10,
+    cardsPerDeck: 5,
+    totalCardsLifetime: Infinity,
+    totalDecksLifetime: 5,
+  },
   plus: PLUS_FLASHCARD_LIMITS,
   essential: PLUS_FLASHCARD_LIMITS,
   premium: PLUS_FLASHCARD_LIMITS,
@@ -90,6 +99,15 @@ const FLASHCARD_MANUAL_LIMITS: Record<AccountType | 'admin', FlashcardManualTier
     cardsPerDeck: 60,
     maxFolders: 8,
     maxImageSizeMB: 4,
+    canSetVisibilityPublic: true,
+    canShare: true,
+  },
+  // Idem: fora do Banco, Quest vale uma conta gratuita.
+  quest: {
+    maxDecks: 5,
+    cardsPerDeck: 30,
+    maxFolders: 3,
+    maxImageSizeMB: 2,
     canSetVisibilityPublic: true,
     canShare: true,
   },

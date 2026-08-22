@@ -34,6 +34,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { ROTA_ASSINATURA } from '@/lib/account-tier'
 import { cn } from '@/lib/utils'
 import { readPageCache, writePageCache } from '@/lib/page-cache'
 import {
@@ -534,7 +535,7 @@ function Conteudo() {
                 </p>
               </div>
               <Link
-                href="/loja"
+                href={ROTA_ASSINATURA}
                 className="btn-brand-glow inline-flex h-10 flex-none items-center justify-center rounded-xl px-4 text-xs font-bold text-white active:scale-[0.98]"
               >
                 Assinar o Plus+

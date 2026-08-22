@@ -1,5 +1,13 @@
 import { AccountType } from './types'
-import { isPlusAccount, normalizeAccountType, PLUS_LABEL, PLUS_TIER } from './account-tier'
+import {
+  isPlusAccount,
+  normalizeAccountType,
+  temAcessoAoBanco,
+  PLUS_LABEL,
+  PLUS_TIER,
+  QUEST_LABEL,
+  QUEST_TIER,
+} from './account-tier'
 
 export interface TierLimits {
   examsPerDay: number
@@ -44,6 +52,21 @@ export const TIER_LIMITS: Record<AccountType | 'admin', TierLimits> = {
     cronogramasTotal: Infinity,
     flashcardsTotal: Infinity,
     personalExamsTotal: Infinity,
+  },
+  /*
+   * Quest é o Banco de Questões avulso: dentro do Banco não há teto, fora dele
+   * a conta vale exatamente o que vale uma gratuita. Copiar os tetos do
+   * gratuito (em vez de deixar campos soltos) é o que garante que um recurso
+   * novo nasça fechado para o Quest até alguém decidir incluí-lo.
+   */
+  quest: {
+    examsPerDay: 3,
+    questionsPerExam: 5,
+    personalExamsPerDay: Infinity,
+    bancoQuestoes: true,
+    cronogramasTotal: 5,
+    flashcardsTotal: 5,
+    personalExamsTotal: 5,
   },
   plus: PLUS_LIMITS,
   // Legado — mesmo teto do Plus+.
@@ -104,9 +127,14 @@ export function canCreateUnlimitedMindMaps(accountType?: string | null, isAdmin?
   return isPlusAccount(accountType, isAdmin)
 }
 
-/** Banco de questões completo — exclusivo Plus+. */
+/**
+ * Banco de questões completo — Plus+ (que inclui tudo) ou Quest (que é só ele).
+ *
+ * Atenção: isso responde pelo CARGO. Um plano assinado ainda pode não incluir
+ * a área; no servidor, quem fecha a conta é `bancoLiberadoPeloPlano()`.
+ */
 export function canUseBancoQuestoes(accountType?: string | null, isAdmin?: boolean): boolean {
-  return isPlusAccount(accountType, isAdmin)
+  return temAcessoAoBanco(accountType, isAdmin)
 }
 
 /** Manual Clínico completo — incluso no Plus+ (também vendido avulso). */
@@ -122,4 +150,4 @@ Assine o ${PLUS_LABEL} e libere a plataforma inteira: Manual Clínico, materiais
 Contato: (24) 99223-0908`
 }
 
-export { PLUS_TIER, PLUS_LABEL }
+export { PLUS_TIER, PLUS_LABEL, QUEST_TIER, QUEST_LABEL }
