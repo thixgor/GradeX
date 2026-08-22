@@ -77,6 +77,10 @@
     },
     "app/api/admin/banco/importar/route.ts": {
       "maxDuration": 60
+    },
+    "app/api/cron/midia-sync/route.ts": {
+      "maxDuration": 300,
+      "memory": 1024
     }
   },
   "crons": [
@@ -95,6 +99,10 @@
     {
       "path": "/api/cron/revisao-espacada",
       "schedule": "0 21 * * *"
+    },
+    {
+      "path": "/api/cron/midia-sync",
+      "schedule": "0 5 * * *"
     }
   ],
   "redirects": [

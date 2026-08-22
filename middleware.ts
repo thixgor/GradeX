@@ -549,11 +549,14 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico, favicon.jpg
      * - public folder files (img/)
+     * - acervo de imagens internalizado (midia/): milhares de arquivos
+     *   imutáveis e públicos, servidos por reescrita direta ao CDN — passar
+     *   pelo middleware só somaria latência a cada figura de questão
      * - landing pages served directly from public/
      * - séries de imagens do Manual de Tomografia (TC_*): são centenas de
      *   requisições de imagem por série, e passar cada uma pelo middleware só
      *   adicionaria latência a um asset estático já público.
      */
-    '/((?!_next/static|_next/image|favicon\\.ico|favicon\\.jpg|img/|TC_ABDOME/|TC_CRANIO/|TC_TORAX/|logo_manual_tomografia|ldpg-mnclinico).*)',
+    '/((?!_next/static|_next/image|favicon\\.ico|favicon\\.jpg|img/|midia/|TC_ABDOME/|TC_CRANIO/|TC_TORAX/|logo_manual_tomografia|ldpg-mnclinico).*)',
   ],
 }

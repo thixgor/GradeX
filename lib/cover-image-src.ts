@@ -43,9 +43,24 @@ export function normalizeCoverSrc(src: string): string {
   }
 }
 
+/**
+ * O otimizador recusa SVG enquanto `images.dangerouslyAllowSVG` estiver
+ * desligado — e ele deve continuar desligado, porque SVG é documento executável
+ * e o acervo aceita arquivo de origem externa. A recusa vem como 400, que na
+ * página vira imagem quebrada; mandar SVG direto para `<img>` a mostra.
+ */
+function isSvg(src: string): boolean {
+  const semQuery = src.split('?')[0].split('#')[0]
+  return semQuery.toLowerCase().endsWith('.svg')
+}
+
 /** `true` quando a URL pode ir para `/_next/image` sem derrubar o render. */
 export function canUseNextImage(src: string): boolean {
-  // Caminho relativo (`/uploads/...`, `/img/...`) é servido por nós mesmos.
+  if (isSvg(src)) return false
+
+  // Caminho relativo é servido por nós mesmos — `/img/...`, `/uploads/...` e
+  // `/midia/...`, o acervo internalizado (ver `lib/midia/urls.ts`), que o
+  // `next.config.js` reescreve para o CDN do armazenamento.
   if (src.startsWith('/') && !src.startsWith('//')) return true
 
   try {

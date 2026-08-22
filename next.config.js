@@ -104,6 +104,36 @@ const nextConfig = {
    * Redirects de `next.config` rodam antes do middleware, então o visitante sem
    * sessão é levado ao endereço novo sem passar pelo portão de autenticação.
    */
+  /**
+   * `/midia/<aa>/<sha256>.<ext>` — o endereço interno das imagens do acervo.
+   *
+   * O banco guarda esse caminho relativo, e não a URL do armazenamento. É de
+   * propósito: gravar o domínio do fornecedor em milhares de documentos foi
+   * exatamente o que criou a dependência do Imgur que esta seção existe para
+   * desfazer. Com a indireção aqui, trocar de armazenamento é editar uma
+   * variável de ambiente — não varrer a base outra vez.
+   *
+   * `beforeFiles` porque o caminho não corresponde a nenhum arquivo nosso: a
+   * reescrita precisa acontecer antes do sistema de arquivos e das rotas.
+   *
+   * Sem `BLOB_PUBLIC_BASE_URL` não há reescrita, e o pedido cai em
+   * `app/midia/[...caminho]/route.ts`, que resolve o destino consultando
+   * `media_assets`. Um redirecionamento a mais por imagem é ruim; todas as
+   * imagens do site sumirem por uma variável esquecida seria pior.
+   */
+  async rewrites() {
+    const base = (process.env.BLOB_PUBLIC_BASE_URL || '').replace(/\/+$/, '')
+    if (!base) return { beforeFiles: [] }
+    return {
+      beforeFiles: [
+        {
+          source: '/midia/:caminho*',
+          destination: `${base}/midia/:caminho*`,
+        },
+      ],
+    }
+  },
+
   async redirects() {
     return [
       {
