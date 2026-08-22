@@ -2,8 +2,50 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
+import { isValidObjectId } from '@/lib/api-security'
+import { lerAcessoAoBanco } from '@/lib/banco/acesso-servidor'
 
 export const dynamic = 'force-dynamic'
+
+/*
+ * Esta rota sorteia questões do Banco para montar uma prova de treino.
+ *
+ * ## O buraco que ela era
+ *
+ * Ela pedia apenas "estar logado". Não consultava `lerAcessoAoBanco`, aceitava
+ * `?limit=500` e devolvia cada questão com `alternatives[].isCorrect`,
+ * `explanation` e `commentedFeedback` preenchidos. Somando: qualquer pessoa
+ * criava uma conta gratuita e, com uma dezena de requisições feitas do console
+ * do navegador, levava o acervo inteiro — enunciado, gabarito e resposta
+ * comentada — que é exatamente o produto que a plataforma vende.
+ *
+ * Todas as outras portas do Banco já eram guardadas: a listagem esconde o
+ * conteúdo de quem é gratuito (`ocultarConteudo`), a questão individual exige
+ * saldo, e a criação de listas aleatórias recusa quem não assina. Esta era a
+ * única que ficou de fora, e por isso anulava as três.
+ *
+ * ## O que mudou
+ *
+ * 1. Mesmo portão das demais: quem é gratuito recebe 403 com o convite de
+ *    assinar, como em `listas/aleatorias`.
+ * 2. Teto de sorteio de 500 para 200 — acima de qualquer prova real, longe de
+ *    servir como exportação. A tela usa o mesmo número, então ninguém pede 300
+ *    questões e recebe 200 sem entender por quê.
+ * 3. Ids malformados deixam de virar 500.
+ *
+ * O gabarito continua saindo — ver o comentário na montagem das alternativas.
+ * Escondê-lo aqui faria a prova pessoal nascer sem correção possível, que é
+ * remover o recurso em vez de protegê-lo.
+ */
+
+/**
+ * Teto de questões por sorteio.
+ *
+ * Precisa bater com o `max` do campo em
+ * `app/exams/personal/[id]/generate-questions/page.tsx`: um teto menor no
+ * servidor devolveria menos questões do que a tela deixou pedir, silenciosamente.
+ */
+export const MAXIMO_DE_QUESTOES_POR_SORTEIO = 200
 
 export async function GET(request: NextRequest) {
   try {
@@ -13,9 +55,28 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url)
-    const limit = Math.min(parseInt(searchParams.get('limit') || '10'), 500)
+    const limiteBruto = Number.parseInt(searchParams.get('limit') || '10', 10)
+    const limit = Number.isFinite(limiteBruto)
+      ? Math.min(Math.max(limiteBruto, 1), MAXIMO_DE_QUESTOES_POR_SORTEIO)
+      : 10
 
     const db = await getDb()
+
+    // Mesmo veredito que a listagem e a questão individual usam. Sem isto, esta
+    // rota era a porta dos fundos do Banco inteiro.
+    const acesso = await lerAcessoAoBanco(db, session.userId)
+    if (!acesso) {
+      return NextResponse.json({ error: 'Usuario nao encontrado' }, { status: 404 })
+    }
+    if (acesso.ehGratuito) {
+      return NextResponse.json(
+        {
+          error: 'Sortear questoes do Banco e exclusivo de assinantes Plus+',
+          requiresPlus: true,
+        },
+        { status: 403 },
+      )
+    }
 
     // Build match stage from filters — aceita múltiplos IDs separados por vírgula
     const matchStage: any = {}
@@ -28,9 +89,17 @@ export async function GET(request: NextRequest) {
     const dificuldade = searchParams.get('dificuldade')
     const anosParam = searchParams.get('anos')
 
+    // Ids malformados são descartados em vez de lançarem: `new ObjectId('x')`
+    // vira exceção, e a exceção virava 500 numa URL que qualquer um digita.
     function buildIdFilter(param: string | null) {
       if (!param) return null
-      const ids = param.split(',').filter(Boolean).map(id => new ObjectId(id.trim()))
+      const ids = param
+        .split(',')
+        .slice(0, 50)
+        .map((id) => id.trim())
+        .filter((id) => isValidObjectId(id))
+        .map((id) => new ObjectId(id))
+      if (ids.length === 0) return null
       return ids.length === 1 ? ids[0] : { $in: ids }
     }
 
@@ -101,7 +170,19 @@ export async function GET(request: NextRequest) {
       const isObjetiva = q.tipo === 'objetiva'
       const questionType = isObjetiva ? 'multiple-choice' : 'discursive'
 
-      // Build alternatives for objetiva
+      /*
+        * O gabarito CONTINUA saindo daqui, de propósito.
+        *
+        * Esta rota não entrega questões para responder: ela entrega o material
+        * com que o próprio aluno monta uma prova pessoal, que é gravada em
+        * seguida com `saveExamWithQuestions`. Sem `isCorrect` e sem a resposta
+        * comentada a prova nasceria sem gabarito e nunca poderia ser corrigida —
+        * o recurso deixaria de existir.
+        *
+        * O que fecha o abuso aqui é o portão de assinatura acima e o teto de
+        * sorteio, não esconder o campo: quem chega neste ponto é assinante e
+        * está montando a própria prova, com o conteúdo que ele paga para ter.
+        */
       const alternatives = isObjetiva
         ? (q.alternativas || []).map((alt: any) => ({
             id: `${q._id}-${alt.letra}`,

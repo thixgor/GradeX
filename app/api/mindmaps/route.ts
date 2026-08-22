@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
+import { prepararTermoDeBusca } from '@/lib/utils/escape-regex'
 import { ObjectId } from 'mongodb'
 import {
   MINDMAP_COLLECTIONS,
@@ -43,12 +44,13 @@ export async function GET(request: NextRequest) {
       filter.ownerId = session.userId
     }
 
-    if (q) {
+    const termo = prepararTermoDeBusca(q)
+    if (termo) {
       filter.$or = [
-        { title: { $regex: q, $options: 'i' } },
-        { description: { $regex: q, $options: 'i' } },
-        { tags: { $regex: q, $options: 'i' } },
-        ...(isAdmin && scope === 'all-admin' ? [{ ownerName: { $regex: q, $options: 'i' } }] : []),
+        { title: { $regex: termo, $options: 'i' } },
+        { description: { $regex: termo, $options: 'i' } },
+        { tags: { $regex: termo, $options: 'i' } },
+        ...(isAdmin && scope === 'all-admin' ? [{ ownerName: { $regex: termo, $options: 'i' } }] : []),
       ]
     }
 

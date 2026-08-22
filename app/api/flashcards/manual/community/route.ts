@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
+import { prepararTermoDeBusca } from '@/lib/utils/escape-regex'
 import { FLASHCARD_MANUAL_COLLECTIONS, normalizeDeckForResponse } from '@/lib/flashcard-manual'
 import type { FlashcardManualDeck } from '@/lib/types'
 
@@ -25,11 +26,12 @@ export async function GET(request: NextRequest) {
       // Decks pagos não aparecem na comunidade gratuita; aparecem no /materiais e na "loja" do hub
       pricing: { $ne: 'paid' },
     }
-    if (q) {
+    const termo = prepararTermoDeBusca(q)
+    if (termo) {
       filter.$or = [
-        { title: { $regex: q, $options: 'i' } },
-        { description: { $regex: q, $options: 'i' } },
-        { tags: { $regex: q, $options: 'i' } },
+        { title: { $regex: termo, $options: 'i' } },
+        { description: { $regex: termo, $options: 'i' } },
+        { tags: { $regex: termo, $options: 'i' } },
       ]
     }
     if (tag) filter.tags = tag

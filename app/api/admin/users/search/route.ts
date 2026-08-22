@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
+import { prepararTermoDeBusca, TEMPO_MAXIMO_DE_BUSCA_MS } from '@/lib/utils/escape-regex'
 
 export const dynamic = 'force-dynamic'
 
@@ -18,19 +19,28 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ users: [] })
     }
 
+    // O termo vira texto literal antes de encostar no Mongo: sem isto, um
+    // `(a+)+$` digitado na busca de usuários custa tempo exponencial POR
+    // documento e segura a conexão do Atlas até estourar.
+    const termo = prepararTermoDeBusca(q)
+    if (!termo) {
+      return NextResponse.json({ users: [] })
+    }
+
     const db = await getDb()
 
     const users = await db
       .collection('users')
       .find({
         $or: [
-          { name:  { $regex: q, $options: 'i' } },
-          { email: { $regex: q, $options: 'i' } },
+          { name:  { $regex: termo, $options: 'i' } },
+          { email: { $regex: termo, $options: 'i' } },
         ],
       })
       .project({ _id: 1, name: 1, email: 1, accountType: 1 })
       .sort({ name: 1 })
       .limit(20)
+      .maxTimeMS(TEMPO_MAXIMO_DE_BUSCA_MS)
       .toArray()
 
     return NextResponse.json({

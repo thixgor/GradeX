@@ -39,6 +39,15 @@ import { getPsicologiaTopicos } from '@/lib/psicologia-periodos-helper'
 import { getBiomedicinaTopicos } from '@/lib/biomedicina-periodos-helper'
 import { getOdontologiaTopicos } from '@/lib/odontologia-periodos-helper'
 
+/**
+ * Teto de questões vindas do Banco numa prova pessoal.
+ *
+ * O campo aceitava até 500 e o `onChange` não limitava nada — dava para digitar
+ * qualquer número e mandá-lo para a API. Precisa ser o mesmo valor de
+ * `MAXIMO_DE_QUESTOES_POR_SORTEIO` em `app/api/banco/questoes/random/route.ts`.
+ */
+const MAXIMO_DE_QUESTOES_DO_BANCO = 200
+
 // ─── Iridescent Glass Panel ─────────────────────────────────
 // Reusable glassmorphism container with animated chromatic border
 function GlassPanel({
@@ -1280,9 +1289,9 @@ export default function GenerateQuestionsPage() {
                           <input
                             type="number"
                             min={0}
-                            max={500}
+                            max={MAXIMO_DE_QUESTOES_DO_BANCO}
                             value={bankQuestionCount}
-                            onChange={(e) => setBankQuestionCount(Math.max(0, parseInt(e.target.value) || 0))}
+                            onChange={(e) => setBankQuestionCount(Math.max(0, Math.min(MAXIMO_DE_QUESTOES_DO_BANCO, parseInt(e.target.value) || 0)))}
                             disabled={generating}
                             className="glass-number-input w-full text-center text-lg font-bold"
                           />

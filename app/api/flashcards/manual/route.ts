@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
+import { prepararTermoDeBusca } from '@/lib/utils/escape-regex'
 import { ObjectId } from 'mongodb'
 import {
   FLASHCARD_MANUAL_COLLECTIONS,
@@ -43,11 +44,12 @@ export async function GET(request: NextRequest) {
     if (folderId) {
       filter.folderId = folderId === 'null' ? null : folderId
     }
-    if (q) {
+    const termo = prepararTermoDeBusca(q)
+    if (termo) {
       filter.$or = [
-        { title: { $regex: q, $options: 'i' } },
-        { description: { $regex: q, $options: 'i' } },
-        { tags: { $regex: q, $options: 'i' } },
+        { title: { $regex: termo, $options: 'i' } },
+        { description: { $regex: termo, $options: 'i' } },
+        { tags: { $regex: termo, $options: 'i' } },
       ]
     }
 

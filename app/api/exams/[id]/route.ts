@@ -75,20 +75,83 @@ export async function PUT(
       return NextResponse.json({ error: 'Sem permissão' }, { status: 403 })
     }
 
+    /*
+     * Só campos conhecidos entram no `$set`.
+     *
+     * ## O que isto conserta
+     *
+     * O corpo da requisição era espalhado inteiro (`{ ...body }`) no `$set`.
+     * Como qualquer aluno cria prova pessoal — e é o `createdBy` dela —, ele
+     * passava por esta autorização legitimamente e depois escrevia QUALQUER
+     * campo no documento, direto do console do navegador:
+     *
+     *   fetch('/api/exams/<prova dele>', { method: 'PUT',
+     *     headers: { 'Content-Type': 'application/json' },
+     *     body: JSON.stringify({ isPersonalExam: false, isHidden: false }) })
+     *
+     * Duas chaves, e a prova privada dele passava a ser listada em `/provas`
+     * para a plataforma inteira — porque é exatamente por esses dois campos que
+     * `GET /api/exams` decide o que é público. O mesmo caminho servia para
+     * plantar campos que o código nunca espera achar num documento de prova e
+     * quebrar as telas que o leem.
+     *
+     * ## Como está agora
+     *
+     * `CAMPOS_DO_CRIADOR` é o que o dono da prova mexe: conteúdo, aparência,
+     * tempo e monitoramento. `CAMPOS_SO_DE_ADMIN` é o que decide onde a prova
+     * aparece para os OUTROS — visibilidade, grupo, natureza pessoal/pública —
+     * e por isso só o painel escreve. O que não está em nenhuma das duas listas
+     * é silenciosamente ignorado, inclusive `_id`, `createdBy` e `createdAt`,
+     * que antes eram removidos um a um depois do espalhamento.
+     */
+    const CAMPOS_DO_CRIADOR = [
+      'title', 'description', 'coverImage', 'themePhrase', 'pdfUrl',
+      'numberOfAlternatives', 'numberOfQuestions', 'questions',
+      'scoringMethod', 'totalPoints', 'duration', 'durationMinutes',
+      'discursiveCorrectionMethod', 'discursiveAiRigor',
+      'essayStyle', 'essayCorrectionMethod', 'essayAiRigor',
+      'navigationMode', 'allowCustomName', 'requireSignature',
+      'shuffleQuestions', 'timeMode', 'generalizedTimeSeconds',
+      'feedbackMode',
+    ] as const
+
+    const CAMPOS_SO_DE_ADMIN = [
+      'isHidden', 'isPersonalExam', 'isPracticeExam',
+      'groupId', 'orderInGroup',
+    ] as const
+
+    const permitidos = new Set<string>([
+      ...CAMPOS_DO_CRIADOR,
+      ...(isAdmin ? CAMPOS_SO_DE_ADMIN : []),
+    ])
+
+    const camposEnviados: Record<string, any> = {}
+    for (const [chave, valor] of Object.entries(body)) {
+      if (permitidos.has(chave)) camposEnviados[chave] = valor
+    }
+
     // Para provas práticas sem datas, usar uma data muito distante no futuro
     const defaultFutureDate = new Date('2099-12-31T23:59:59')
-    const isPracticeExam = body.isPracticeExam !== undefined ? body.isPracticeExam : exam.isPracticeExam
+    // Lido de `camposEnviados`, não de `body`: para quem não é admin o campo foi
+    // descartado acima, e ler o corpo cru aqui deixaria um não-admin escolher
+    // as datas derivadas de uma prova que ele não pode reclassificar.
+    const isPracticeExam =
+      camposEnviados.isPracticeExam !== undefined
+        ? camposEnviados.isPracticeExam
+        : exam.isPracticeExam
 
     // Corrigir numeração das questões (começar em 1, não 0)
-    if (body.questions && Array.isArray(body.questions)) {
-      body.questions = body.questions.map((q: any, index: number) => ({
+    if (camposEnviados.questions && Array.isArray(camposEnviados.questions)) {
+      camposEnviados.questions = camposEnviados.questions.map((q: any, index: number) => ({
         ...q,
         number: index + 1
       }))
     }
 
-    const updateData = {
-      ...body,
+    // As datas e o bloco de proctoring são derivados, não copiados: eles entram
+    // já convertidos, fora da lista de campos permitidos.
+    const updateData: Record<string, any> = {
+      ...camposEnviados,
       gatesOpen: body.gatesOpen ? new Date(body.gatesOpen) : undefined,
       gatesClose: body.gatesClose ? new Date(body.gatesClose) : undefined,
       startTime: body.startTime ? new Date(body.startTime) : (isPracticeExam ? defaultFutureDate : exam.startTime),
@@ -103,16 +166,6 @@ export async function PUT(
       } : (body.proctoringEnabled === false ? undefined : exam.proctoring),
       updatedAt: new Date(),
     }
-
-    delete updateData._id
-    delete updateData.createdBy
-    delete updateData.createdAt
-    // Remover campos individuais de proctoring que foram consolidados
-    delete updateData.proctoringEnabled
-    delete updateData.proctoringCamera
-    delete updateData.proctoringAudio
-    delete updateData.proctoringScreen
-    delete updateData.proctoringScreenMode
 
     await examsCollection.updateOne(
       { _id: new ObjectId(id) },

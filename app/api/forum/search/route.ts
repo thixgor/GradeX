@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
+import { prepararTermoDeBusca, TEMPO_MAXIMO_DE_BUSCA_MS } from '@/lib/utils/escape-regex'
 import { ForumType } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -11,7 +12,12 @@ export async function GET(req: NextRequest) {
     const query = searchParams.get('q') || ''
     const forumType = (searchParams.get('type') || 'discussion') as ForumType
 
-    if (!query || query.trim().length === 0) {
+    // Busca do fórum é pública (sem sessão) e varre título e conteúdo de todos
+    // os posts — a superfície mais barata que existe para um regex hostil.
+    // `prepararTermoDeBusca` escapa os metacaracteres e recusa termo curto
+    // demais, que viraria varredura completa da coleção.
+    const termo = prepararTermoDeBusca(query)
+    if (!termo) {
       return NextResponse.json({
         posts: []
       })
@@ -21,9 +27,9 @@ export async function GET(req: NextRequest) {
     const searchQuery = {
       forumType,
       $or: [
-        { tags: { $in: [new RegExp(query, 'i')] } },
-        { title: { $regex: query, $options: 'i' } },
-        { content: { $regex: query, $options: 'i' } }
+        { tags: { $in: [new RegExp(termo, 'i')] } },
+        { title: { $regex: termo, $options: 'i' } },
+        { content: { $regex: termo, $options: 'i' } }
       ]
     }
 
@@ -32,6 +38,7 @@ export async function GET(req: NextRequest) {
       .find(searchQuery)
       .sort({ createdAt: -1 })
       .limit(50)
+      .maxTimeMS(TEMPO_MAXIMO_DE_BUSCA_MS)
       .toArray()
 
     return NextResponse.json({

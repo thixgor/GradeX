@@ -12,6 +12,8 @@ import { lerAcessoAoBanco, ocultarConteudo } from '@/lib/banco/acesso-servidor'
 import { jaDesbloqueada, restantes } from '@/lib/banco/gratuito'
 import { interpretarPeriodoLetivo } from '@/lib/banco/periodo-letivo'
 import { campoTextoPreenchido } from '@/lib/banco/filtros-conteudo'
+import { prepararTermoDeBusca } from '@/lib/utils/escape-regex'
+import { isValidObjectId } from '@/lib/api-security'
 
 export const dynamic = 'force-dynamic'
 
@@ -87,9 +89,27 @@ export async function GET(request: NextRequest) {
           .filter((p) => interpretarPeriodoLetivo(p) !== null)
       : undefined
 
-    // Paginação
-    const page = parseInt(searchParams.get('page') || '1')
-    const limit = Math.min(parseInt(searchParams.get('limit') || '20'), 50)
+    /*
+      * Paginação com piso e teto.
+      *
+      * `parseInt` sozinho aceita o que vier: `page=-5` produz `skip` negativo,
+      * que o Mongo rejeita com erro — a rota devolvia 500 para um parâmetro que
+      * qualquer pessoa consegue digitar na barra de endereço. E `page=1e9` manda
+      * o servidor percorrer bilhões de posições antes de devolver nada, que é
+      * uma varredura completa pedida de graça, quantas vezes o atacante quiser.
+      *
+      * O teto de páginas é generoso o bastante para percorrer o acervo inteiro
+      * pela tela e baixo o bastante para que `skip` nunca vire uma varredura.
+      */
+    const TETO_DE_PAGINAS = 2000
+    const paginaBruta = Number.parseInt(searchParams.get('page') || '1', 10)
+    const page = Number.isFinite(paginaBruta)
+      ? Math.min(Math.max(paginaBruta, 1), TETO_DE_PAGINAS)
+      : 1
+    const limiteBruto = Number.parseInt(searchParams.get('limit') || '20', 10)
+    const limit = Number.isFinite(limiteBruto)
+      ? Math.min(Math.max(limiteBruto, 1), 50)
+      : 20
     const skip = (page - 1) * limit
 
     /*
@@ -138,10 +158,27 @@ export async function GET(request: NextRequest) {
       },
     }
 
-    // Helper para construir filtro com $in quando múltiplos IDs
+    /*
+      * Helper para construir filtro com $in quando múltiplos IDs.
+      *
+      * `new ObjectId('xx')` LANÇA para qualquer coisa que não seja hex de 24
+      * caracteres, e a exceção subia até o `catch` do handler: um `?moduloId=x`
+      * na barra de endereço virava 500. Além de ruído no log, é um jeito barato
+      * de fazer o servidor gastar uma invocação inteira para nada.
+      *
+      * Ids inválidos agora são descartados; se sobrar nenhum, o filtro
+      * simplesmente não é aplicado.
+      */
+    const TETO_DE_IDS_POR_FILTRO = 50
     function buildIdFilter(param: string | undefined) {
       if (!param) return null
-      const ids = param.split(',').filter(Boolean).map(id => new ObjectId(id.trim()))
+      const ids = param
+        .split(',')
+        .slice(0, TETO_DE_IDS_POR_FILTRO)
+        .map((id) => id.trim())
+        .filter((id) => isValidObjectId(id))
+        .map((id) => new ObjectId(id))
+      if (ids.length === 0) return null
       return ids.length === 1 ? ids[0] : { $in: ids }
     }
 
@@ -166,8 +203,21 @@ export async function GET(request: NextRequest) {
     if (filtros.dificuldade) {
       matchStage.dificuldade = filtros.dificuldade
     }
-    if (filtros.busca) {
-      matchStage.enunciado = { $regex: filtros.busca, $options: 'i' }
+    /*
+      * O termo de busca vira TEXTO, nunca padrão.
+      *
+      * Este filtro roda sobre `enunciado`, que num banco de Medicina é um caso
+      * clínico de vários parágrafos, em dezenas de milhares de documentos sem
+      * índice de texto. Passar o termo cru para `$regex` significava que
+      * `?busca=(a%2B)%2B%24` — digitável no console em dois segundos — fazia o
+      * Mongo tentar casar um padrão de retrocesso catastrófico contra cada um
+      * desses enunciados. Uma requisição já segura uma conexão do Atlas por
+      * tempo indefinido; um punhado em paralelo derruba a plataforma inteira,
+      * inclusive as telas que não têm nada a ver com busca.
+      */
+    const termoDeBusca = prepararTermoDeBusca(filtros.busca)
+    if (termoDeBusca) {
+      matchStage.enunciado = { $regex: termoDeBusca, $options: 'i' }
     }
     if (anos && anos.length > 0) {
       matchStage.ano = { $in: anos }
