@@ -4,6 +4,7 @@ import { getDb } from './mongodb'
 import { User } from './types'
 import { ObjectId } from 'mongodb'
 import crypto from 'crypto'
+import { checkRateLimit } from './rate-limit'
 
 // ==========================================
 // VALIDACAO DE OBJECTID (NoSQL Injection Protection)
@@ -245,7 +246,20 @@ export const RATE_LIMITS = {
 
 export type RateLimitType = keyof typeof RATE_LIMITS
 
-// Cache em memoria para rate limit (mais performatico que MongoDB para rate limit)
+/*
+ * Cache em memória para rate limit.
+ *
+ * ATENÇÃO: em serverless isto NÃO limita nada de forma confiável. Cada
+ * invocação pode cair numa instância diferente, cada instância tem o seu
+ * próprio `Map`, e instâncias nascem e morrem o tempo todo — então a contagem
+ * recomeça do zero com uma frequência que o atacante controla, simplesmente
+ * mandando requisições em paralelo. Num endpoint de login isso significa que o
+ * teto de 5 tentativas por 15 minutos é, na prática, 5 tentativas POR INSTÂNCIA.
+ *
+ * Continua aqui como primeira barreira barata (rejeita sem ir ao banco quem já
+ * estourou a cota nesta instância), mas quem decide é o limitador durável em
+ * `lib/rate-limit.ts`, logo abaixo em `secureApiEndpoint`.
+ */
 const rateLimitCache = new Map<string, { count: number; resetAt: number }>()
 
 // Limpa entradas expiradas periodicamente
@@ -272,6 +286,26 @@ function getClientIp(request: NextRequest): string {
 
   // Fallback - nao ideal mas necessario
   return 'unknown'
+}
+
+/**
+ * A chave pela qual a cota é contada.
+ *
+ * IP sozinho não segura quem tem sessão: trocar de rede (celular no 4G, VPN,
+ * outro Wi-Fi) devolve uma cota inteira, e é exatamente o que um script faz. Ao
+ * mesmo tempo, IP é a única identidade disponível para quem ainda não entrou —
+ * e é o que precisa segurar a força bruta no login.
+ *
+ * Então: havendo cookie de sessão, a cota é da CONTA (o cookie é derivado, nunca
+ * usado inteiro como chave, para não gravar credencial na coleção de limites);
+ * não havendo, é do IP.
+ */
+function chaveDeLimite(request: NextRequest, ip: string): string {
+  const token = request.cookies.get('auth-token')?.value
+  if (token) {
+    return 'conta:' + crypto.createHash('sha256').update(token).digest('hex').slice(0, 32)
+  }
+  return 'ip:' + ip
 }
 
 export function checkRateLimitSync(
@@ -419,7 +453,21 @@ export async function secureApiEndpoint(
       ? RATE_LIMITS[config.rateLimit]
       : config.rateLimit
 
-    const rateLimitResult = checkRateLimitSync(ip, endpoint, rateLimitConfig)
+    const chave = chaveDeLimite(request, ip)
+
+    // Duas camadas: a de memória rejeita de graça quem já estourou NESTA
+    // instância; a durável é a que realmente conta, porque é a única que
+    // enxerga as outras instâncias. Sem a segunda, a cota reinicia sozinha a
+    // cada invocação nova — ver o comentário em `rateLimitCache`.
+    const memoria = checkRateLimitSync(chave, endpoint, rateLimitConfig)
+    const rateLimitResult = memoria.success
+      ? await checkRateLimit(chave, endpoint, rateLimitConfig.limit, rateLimitConfig.windowMs)
+          .then((r) => ({
+            success: r.success,
+            remaining: r.remaining,
+            retryAfterMs: r.resetAt ? Math.max(0, r.resetAt.getTime() - Date.now()) : undefined,
+          }))
+      : memoria
 
     if (!rateLimitResult.success) {
       return {
@@ -613,16 +661,28 @@ export async function canAdminModifyUser(
 // VALIDACAO DE INPUT
 // ==========================================
 
-// Lista de extensoes de arquivo permitidas para upload
+/*
+ * Extensões permitidas no upload.
+ *
+ * SVG está FORA, de propósito. Um `.svg` é um documento XML que pode conter
+ * `<script>` e handlers `onload`; servido da mesma origem do site — que é
+ * exatamente o que acontece com `/uploads/...` —, abrir a imagem executa esse
+ * script no domínio da plataforma, com acesso a tudo que a sessão da vítima
+ * alcança. Como o upload é aberto a qualquer usuário autenticado, era XSS
+ * armazenado ao alcance de qualquer conta: basta mandar o link para um admin.
+ *
+ * Nenhuma tela precisa de SVG enviado por usuário — os ícones do produto são
+ * componentes, não upload.
+ */
 export const ALLOWED_FILE_EXTENSIONS: Record<'images' | 'documents' | 'all', readonly string[]> = {
-  images: ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'],
+  images: ['.jpg', '.jpeg', '.png', '.gif', '.webp'],
   documents: ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.txt'],
-  all: ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.txt']
+  all: ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.txt']
 } as const
 
 // Lista de MIME types permitidos
 export const ALLOWED_MIME_TYPES: Record<'images' | 'documents' | 'all', readonly string[]> = {
-  images: ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'],
+  images: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
   documents: [
     'application/pdf',
     'application/msword',
@@ -634,7 +694,7 @@ export const ALLOWED_MIME_TYPES: Record<'images' | 'documents' | 'all', readonly
     'text/plain'
   ],
   all: [
-    'image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml',
+    'image/jpeg', 'image/png', 'image/gif', 'image/webp',
     'application/pdf',
     'application/msword',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
