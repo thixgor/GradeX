@@ -7,6 +7,7 @@ import {
   PROUNI_MAX_REQUESTS_PER_DAY,
   PROUNI_PROGRAM_LABELS,
   PROUNI_REJECTED_COOLDOWN_HOURS,
+  PROUNI_REJECTIONS_BEFORE_COOLDOWN,
   ProuniError,
   type ProuniDiscountType,
   type ProuniGrantUsage,
@@ -587,6 +588,43 @@ export function serializeProuniRequestForAdmin(request: ProuniRequest) {
 }
 
 /**
+ * A partir de quando esta pessoa pode tentar de novo neste item.
+ *
+ * A primeira recusa NÃO impõe espera: ela chega por e-mail com o motivo escrito
+ * pelo admin, e o caminho desejado é justamente corrigir o documento e reenviar
+ * na hora. Segurar aí só faria a pessoa esperar um dia para mandar a mesma foto
+ * de novo, agora legível.
+ *
+ * A espera aparece na SEGUNDA recusa em diante, quando o padrão deixa de ser
+ * "erro honesto" e passa a ser tentativa e erro em cima da fila de análise. O
+ * teto diário continua valendo em qualquer caso.
+ *
+ * Devolve `null` quando não há espera — inclusive quando nunca houve recusa.
+ */
+export async function prouniResubmitAvailableAt(
+  db: Db,
+  input: { userId: string; itemType: ProuniItemType; itemId: string; now?: Date }
+): Promise<Date | null> {
+  const collection = db.collection<ProuniRequest>(PROUNI_REQUESTS_COLLECTION)
+  const filtro = {
+    userId: String(input.userId),
+    itemType: input.itemType,
+    itemId: String(input.itemId),
+    status: 'rejected',
+  } as any
+
+  const recusas = await collection.countDocuments(filtro)
+  if (recusas < PROUNI_REJECTIONS_BEFORE_COOLDOWN) return null
+
+  const ultima = await collection.findOne(filtro, { sort: { reviewedAt: -1 } })
+  if (!ultima?.reviewedAt) return null
+  const reviewedAt = ultima.reviewedAt instanceof Date ? ultima.reviewedAt : new Date(ultima.reviewedAt)
+  if (Number.isNaN(reviewedAt.getTime())) return null
+
+  return new Date(reviewedAt.getTime() + PROUNI_REJECTED_COOLDOWN_HOURS * 3_600_000)
+}
+
+/**
  * Portões anti-enxurrada, verificados ANTES de aceitar uma solicitação.
  *
  * O rate limit por IP sozinho não resolve: quem quer entupir a fila de análise
@@ -615,28 +653,17 @@ export async function assertProuniRequestAllowed(
     throw new ProuniError('Seu desconto para este item já foi aprovado e está disponível no checkout.', 409)
   }
 
-  // Recusa recente no mesmo item: a espera existe para que a segunda tentativa
-  // venha com documento melhor, e não com o mesmo arquivo ilegível de novo.
-  const lastRejected = await collection.findOne(
-    {
-      userId: String(input.userId),
-      itemType: input.itemType,
-      itemId: String(input.itemId),
-      status: 'rejected',
-    } as any,
-    { sort: { reviewedAt: -1 } }
-  )
-  if (lastRejected?.reviewedAt) {
-    const reviewedAt = lastRejected.reviewedAt instanceof Date
-      ? lastRejected.reviewedAt
-      : new Date(lastRejected.reviewedAt)
-    const liberaEm = new Date(reviewedAt.getTime() + PROUNI_REJECTED_COOLDOWN_HOURS * 3_600_000)
-    if (!Number.isNaN(liberaEm.getTime()) && liberaEm > now) {
-      throw new ProuniError(
-        `Sua solicitação anterior para este item foi recusada. Você poderá tentar de novo depois de ${liberaEm.toLocaleString('pt-BR')}.`,
-        429
-      )
-    }
+  const liberaEm = await prouniResubmitAvailableAt(db, {
+    userId: String(input.userId),
+    itemType: input.itemType,
+    itemId: String(input.itemId),
+    now,
+  })
+  if (liberaEm && liberaEm > now) {
+    throw new ProuniError(
+      `Você já tentou este item algumas vezes. Poderá enviar de novo depois de ${liberaEm.toLocaleString('pt-BR')}.`,
+      429
+    )
   }
 
   const [pendentes, ultimas24h] = await Promise.all([

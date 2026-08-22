@@ -1,12 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { ObjectId } from 'mongodb'
+import { ObjectId, type Db } from 'mongodb'
 import { z } from 'zod'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { audit } from '@/lib/payments/audit'
 import { apagarAnexos } from '@/lib/prouni-anexos'
+import { resolveProuniProduto } from '@/lib/prouni-catalogo'
+import { sendProuniRequestApprovedEmail, sendProuniRequestRejectedEmail } from '@/lib/mail'
 import {
   getProuniBenefit,
+  getProuniDiscountLabel,
+  prouniResubmitAvailableAt,
   serializeProuniRequestForAdmin,
   PROUNI_REQUESTS_COLLECTION,
   type ProuniGrant,
@@ -69,6 +73,16 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     return NextResponse.json({ error: parsed.error.issues[0]?.message || 'Dados inválidos' }, { status: 400 })
   }
   const data = parsed.data
+
+  // O motivo é obrigatório na recusa porque ele VAI POR E-MAIL para a pessoa.
+  // Sem ele o aviso vira uma porta batida, e a resposta previsível é reenviar
+  // exatamente o mesmo documento — mais uma volta na fila para todo mundo.
+  if (data.action === 'reject' && !(data.notes || '').trim()) {
+    return NextResponse.json(
+      { error: 'Escreva o motivo da recusa: ele é enviado por e-mail para quem solicitou.' },
+      { status: 400 }
+    )
+  }
 
   try {
     const db = await getDb()
@@ -185,6 +199,12 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       { $set: set }
     )
 
+    notificarDecisao(db, solicitacao, {
+      decisao: data.action,
+      notas: (data.notes || '').trim(),
+      grant: set.grant as ProuniGrant | null,
+    })
+
     await audit({
       action: 'prouni_request_reviewed',
       actorUserId: session.userId,
@@ -211,6 +231,66 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     console.error('[admin/prouni/solicitacoes/:id] PATCH erro:', error)
     return NextResponse.json({ error: 'Erro ao analisar solicitação' }, { status: 500 })
   }
+}
+
+/**
+ * O e-mail que fecha o ciclo da análise.
+ *
+ * Sem `await` na rota: a decisão já está gravada, e o SMTP não pode segurar a
+ * resposta do painel — um admin analisando uma fila clica em "aprovar" dezenas
+ * de vezes seguidas. As funções de envio já engolem o próprio erro.
+ *
+ * Na recusa vai junto a data em que a pessoa poderá tentar de novo, quando
+ * houver espera; na primeira recusa não há, e o botão "Refazer solicitação" do
+ * e-mail funciona na hora.
+ */
+function notificarDecisao(
+  db: Db,
+  solicitacao: ProuniRequest,
+  decisao: { decisao: 'approve' | 'reject'; notas: string; grant: ProuniGrant | null }
+) {
+  const email = solicitacao.applicant?.email || solicitacao.userEmail
+  if (!email) return
+
+  void (async () => {
+    try {
+      if (decisao.decisao === 'approve' && decisao.grant) {
+        const produto = await resolveProuniProduto(db, solicitacao.itemType, solicitacao.itemId)
+        await sendProuniRequestApprovedEmail({
+          email,
+          name: solicitacao.applicant?.fullName || solicitacao.userName,
+          itemTitle: solicitacao.itemTitle,
+          itemType: solicitacao.itemType,
+          itemId: solicitacao.itemId,
+          program: solicitacao.program,
+          discountLabel: getProuniDiscountLabel(decisao.grant),
+          stackWithTier: decisao.grant.stackWithTier === true,
+          expiresAt: decisao.grant.expiresAt || null,
+          productUrl: produto?.href,
+          notes: decisao.notas || undefined,
+        })
+        return
+      }
+
+      const liberaEm = await prouniResubmitAvailableAt(db, {
+        userId: solicitacao.userId,
+        itemType: solicitacao.itemType,
+        itemId: solicitacao.itemId,
+      })
+      await sendProuniRequestRejectedEmail({
+        email,
+        name: solicitacao.applicant?.fullName || solicitacao.userName,
+        itemTitle: solicitacao.itemTitle,
+        itemType: solicitacao.itemType,
+        itemId: solicitacao.itemId,
+        program: solicitacao.program,
+        reason: decisao.notas,
+        canResubmitAt: liberaEm,
+      })
+    } catch (error) {
+      console.error('[admin/prouni] falha ao notificar decisão:', error)
+    }
+  })()
 }
 
 /**

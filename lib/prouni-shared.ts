@@ -52,8 +52,20 @@ export const PROUNI_ALLOWED_CONTENT_TYPES = [
 export const PROUNI_MAX_PENDING_PER_USER = 3
 /** Solicitações criadas por conta em 24h, somando aprovadas e recusadas. */
 export const PROUNI_MAX_REQUESTS_PER_DAY = 5
-/** Espera obrigatória para tentar de novo o MESMO item após uma recusa. */
+/**
+ * Espera para tentar de novo o MESMO item, aplicada só a partir da N-ésima
+ * recusa (ver `PROUNI_REJECTIONS_BEFORE_COOLDOWN`).
+ */
 export const PROUNI_REJECTED_COOLDOWN_HOURS = 24
+/**
+ * Quantas recusas no mesmo item antes de a espera passar a valer.
+ *
+ * A primeira recusa sai livre porque agora ela chega com o motivo por e-mail e
+ * um botão de refazer: corrigir e reenviar na hora é o comportamento que
+ * queremos, não o que estamos tentando conter. O teto de 5 solicitações por dia
+ * segue sendo o limite real de quanto uma conta pesa na fila.
+ */
+export const PROUNI_REJECTIONS_BEFORE_COOLDOWN = 2
 
 export class ProuniError extends Error {
   status: number

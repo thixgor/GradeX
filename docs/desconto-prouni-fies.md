@@ -100,16 +100,45 @@ desconto):
 - botão **Limpar analisadas** (`POST /api/admin/prouni/limpeza`), que varre em
   lote as solicitações já analisadas. Nunca alcança pendentes.
 
+## Avisos por e-mail
+
+A análise é humana e leva dias. Sem aviso, o único jeito de saber o que
+aconteceu com o comprovante é abrir o site e procurar — e, na dúvida, mandar
+tudo de novo. Quatro e-mails fecham as dúvidas que viram segunda solicitação:
+
+| quando | para quem | o que leva |
+| --- | --- | --- |
+| solicitação enviada | quem pediu | confirmação, prazo estimado e "não precisa enviar de novo" |
+| solicitação enviada | administradores (`ADMIN_EMAILS` / `ADMIN_ALERT_EMAIL`) | item, solicitante, CPF **mascarado**, faculdade, nº de anexos, tamanho da fila e link para a análise |
+| aprovada | quem pediu | o desconto, que ele entra sozinho no checkout, o prazo (se houver) e botão **Ir para a compra** |
+| recusada | quem pediu | **o motivo escrito pelo admin** e botão **Refazer solicitação** |
+
+Todos são disparados sem `await` na rota: a decisão (ou a solicitação) já está
+gravada, e o SMTP não pode segurar a resposta — um admin analisando a fila
+clica em "aprovar" dezenas de vezes seguidas, e quem envia o formulário
+acharia que falhou e clicaria de novo. Cada função engole o próprio erro e
+registra no log.
+
+O motivo da recusa é **obrigatório** na API, não só na tela: é ele que vai no
+e-mail, e "foi recusada" sem dizer por quê só produz o reenvio do mesmo
+documento ilegível.
+
 ## Anti-enxurrada
 
 Toda solicitação vira trabalho humano. As travas contam por **conta**, não por
-IP — quem quer entupir a fila troca de rede:
+IP — quem quer entupir a fila troca de rede.
+
+A primeira recusa **não** impõe espera: ela chega por e-mail com o motivo e um
+botão de refazer, e corrigir o documento e reenviar na hora é exatamente o
+comportamento desejado. A espera entra da segunda recusa em diante, quando o
+padrão deixa de ser erro honesto e passa a ser tentativa e erro em cima da fila.
+O teto diário é o limite real de quanto uma conta pesa na análise.
 
 | trava | valor |
 | --- | --- |
 | solicitações abertas por conta | 3 |
 | solicitações por conta em 24h | 5 |
-| espera após recusa, no mesmo item | 24h |
+| espera após recusa, no mesmo item | nenhuma na 1ª; 24h a partir da 2ª |
 | segunda solicitação aberta no mesmo item | bloqueada por índice único parcial |
 | rate limit de criação | 5/h por conta, 15/h por IP |
 | rate limit de upload | 12 arquivos/h por conta |
@@ -132,7 +161,12 @@ IP — quem quer entupir a fila troca de rede:
 - `/prouni-fies/[itemType]/[itemId]` — página exclusiva do produto para a
   condição de bolsista: mostra o preço já com o desconto **antes** de pedir
   qualquer documento, explica o fluxo e traz o formulário.
-- `/prouni-fies` — "onde está meu pedido".
+- `/profile?tab=atendimento` — **Atendimento**: solicitações de desconto e
+  tickets de suporte no mesmo lugar, com a próxima ação à mão (refazer, ir para
+  a compra, abrir a conversa). As duas eram conversas com a mesma equipe sem
+  endereço fixo — o ticket só existia dentro do balão flutuante, que some quando
+  a pessoa desliga o botão de suporte nas preferências.
+- `/prouni-fies` — endereço antigo; redireciona para Atendimento.
 - `/admin/prouni` — duas abas: descontos por produto e fila de solicitações.
 - `components/prouni/prouni-cta.tsx` — o chamativo "Sou PROUNI/FIES, quero
   desconto". Não renderiza nada quando o produto não participa, então pode ser

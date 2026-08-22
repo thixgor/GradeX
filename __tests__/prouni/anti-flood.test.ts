@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import {
   assertProuniRequestAllowed,
   isProuniGrantUsable,
+  prouniResubmitAvailableAt,
   PROUNI_MAX_PENDING_PER_USER,
   PROUNI_REJECTED_COOLDOWN_HOURS,
   type ProuniRequest,
@@ -24,6 +25,7 @@ const ITEM = { itemType: 'material' as const, itemId: 'mat-1' }
 function fakeDb(opts: {
   existente?: Partial<ProuniRequest> | null
   ultimaRecusa?: Partial<ProuniRequest> | null
+  recusas?: number
   pendentes?: number
   ultimas24h?: number
 }) {
@@ -36,6 +38,7 @@ function fakeDb(opts: {
           return null
         },
         async countDocuments(filtro: any) {
+          if (filtro.status === 'rejected') return opts.recusas ?? (opts.ultimaRecusa ? 1 : 0)
           if (filtro.status === 'pending') return opts.pendentes ?? 0
           return opts.ultimas24h ?? 0
         },
@@ -77,12 +80,22 @@ describe('assertProuniRequestAllowed', () => {
     ).resolves.toBeUndefined()
   })
 
-  it('segura reenvio logo após uma recusa no mesmo item', async () => {
+  it('deixa reenviar na hora depois da PRIMEIRA recusa', async () => {
+    // A recusa chega por e-mail com o motivo e um botão de refazer. Fazer a
+    // pessoa esperar aqui só adiaria o reenvio do documento já corrigido.
+    const agora = new Date()
+    const recusada: any = { status: 'rejected', reviewedAt: new Date(agora.getTime() - 60_000) }
+    await expect(
+      assertProuniRequestAllowed(fakeDb({ ultimaRecusa: recusada, recusas: 1 }), { userId: USER, ...ITEM, now: agora })
+    ).resolves.toBeUndefined()
+  })
+
+  it('segura o reenvio a partir da segunda recusa no mesmo item', async () => {
     const agora = new Date()
     const recusada: any = { status: 'rejected', reviewedAt: new Date(agora.getTime() - 3_600_000) }
     await expect(
-      assertProuniRequestAllowed(fakeDb({ ultimaRecusa: recusada }), { userId: USER, ...ITEM, now: agora })
-    ).rejects.toThrow(/recusada/i)
+      assertProuniRequestAllowed(fakeDb({ ultimaRecusa: recusada, recusas: 2 }), { userId: USER, ...ITEM, now: agora })
+    ).rejects.toThrow(/depois de/i)
   })
 
   it('libera o reenvio depois da espera', async () => {
@@ -92,7 +105,7 @@ describe('assertProuniRequestAllowed', () => {
       reviewedAt: new Date(agora.getTime() - (PROUNI_REJECTED_COOLDOWN_HOURS + 1) * 3_600_000),
     }
     await expect(
-      assertProuniRequestAllowed(fakeDb({ ultimaRecusa: recusada }), { userId: USER, ...ITEM, now: agora })
+      assertProuniRequestAllowed(fakeDb({ ultimaRecusa: recusada, recusas: 3 }), { userId: USER, ...ITEM, now: agora })
     ).resolves.toBeUndefined()
   })
 
@@ -106,6 +119,31 @@ describe('assertProuniRequestAllowed', () => {
     await expect(
       assertProuniRequestAllowed(fakeDb({ ultimas24h: 99 }), { userId: USER, ...ITEM })
     ).rejects.toThrow(/Limite diário/i)
+  })
+})
+
+describe('prouniResubmitAvailableAt', () => {
+  it('não impõe espera quando nunca houve recusa', async () => {
+    await expect(
+      prouniResubmitAvailableAt(fakeDb({}), { userId: USER, ...ITEM })
+    ).resolves.toBeNull()
+  })
+
+  it('não impõe espera na primeira recusa', async () => {
+    const recusada: any = { status: 'rejected', reviewedAt: new Date() }
+    await expect(
+      prouniResubmitAvailableAt(fakeDb({ ultimaRecusa: recusada, recusas: 1 }), { userId: USER, ...ITEM })
+    ).resolves.toBeNull()
+  })
+
+  it('devolve a data de liberação a partir da segunda recusa', async () => {
+    const reviewedAt = new Date()
+    const recusada: any = { status: 'rejected', reviewedAt }
+    const liberaEm = await prouniResubmitAvailableAt(
+      fakeDb({ ultimaRecusa: recusada, recusas: 2 }),
+      { userId: USER, ...ITEM }
+    )
+    expect(liberaEm?.getTime()).toBe(reviewedAt.getTime() + PROUNI_REJECTED_COOLDOWN_HOURS * 3_600_000)
   })
 })
 

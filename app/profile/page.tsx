@@ -24,6 +24,7 @@ import {
   Phone,
   Settings,
   Sparkles,
+  LifeBuoy,
   Ticket,
   Timer,
   AlertTriangle,
@@ -37,6 +38,7 @@ import { OrdersPanel } from '@/components/shop/orders-panel'
 import { OverviewTab, type OverviewStats } from '@/components/profile/overview-tab'
 import { PerformanceTab } from '@/components/profile/performance-tab'
 import { PurchaseHistory } from '@/components/profile/purchase-history'
+import { AtendimentoTab } from '@/components/profile/atendimento-tab'
 import { SettingsTab } from '@/components/profile/settings-tab'
 import type { UserSubmission } from '@/components/profile/submissions-list'
 import { Button } from '@/components/ui/button'
@@ -46,12 +48,17 @@ import { AccountType } from '@/lib/types'
 import { PLUS_LABEL, isPlusAccount } from '@/lib/account-tier'
 import { cn } from '@/lib/utils'
 
-type ProfileTab = 'visao-geral' | 'desempenho' | 'pedidos' | 'config'
+type ProfileTab = 'visao-geral' | 'desempenho' | 'pedidos' | 'atendimento' | 'config'
 
 const TABS = [
   { id: 'visao-geral', label: 'Visão geral', short: 'Visão', icon: UserIcon },
   { id: 'desempenho', label: 'Desempenho', short: 'Desemp.', icon: BarChart3 },
   { id: 'pedidos', label: 'Pedidos', short: 'Pedidos', icon: PackageIcon },
+  // "Atendimento" reúne o que a pessoa PEDIU e espera resposta: solicitações de
+  // desconto e tickets de suporte. As duas eram conversas com a mesma equipe
+  // sem endereço fixo — o ticket só existia dentro do balão flutuante, e a
+  // solicitação só aparecia na página do produto.
+  { id: 'atendimento', label: 'Atendimento', short: 'Atend.', icon: LifeBuoy },
   { id: 'config', label: 'Configurações', short: 'Config.', icon: Settings },
 ] as const
 
@@ -62,6 +69,10 @@ function parseTab(value: string | null | undefined): ProfileTab {
       return 'pedidos'
     case 'desempenho':
       return 'desempenho'
+    case 'atendimento':
+    case 'solicitacoes':
+    case 'tickets':
+      return 'atendimento'
     case 'config':
     case 'configuracoes':
       return 'config'
@@ -397,6 +408,8 @@ export default function ProfilePage() {
             </div>
           )}
 
+          {tab === 'atendimento' && <AtendimentoTab />}
+
           {tab === 'config' && (
             <SettingsTab
               userEmail={userEmail}
@@ -592,7 +605,7 @@ export default function ProfilePage() {
                   variant="outline"
                   onClick={() => {
                     setCancelDialogOpen(false)
-                    router.push('/tickets')
+                    router.push('/profile?tab=atendimento')
                   }}
                   className="w-full"
                 >

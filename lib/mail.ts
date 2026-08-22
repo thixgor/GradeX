@@ -1686,3 +1686,251 @@ export async function sendFulfillmentFailureAlert(input: {
     console.error('[mail] falha ao enviar alerta de fulfillment ao admin:', err)
   }
 }
+
+/* =================== DESCONTO PROUNI/FIES =================== */
+
+/**
+ * Os quatro e-mails do benefício PROUNI/FIES.
+ *
+ * A análise é humana e leva dias. Sem e-mail, o único jeito de a pessoa saber o
+ * que aconteceu com o comprovante que ela mandou é abrir o site e procurar — e,
+ * na dúvida, mandar tudo de novo. Cada aviso abaixo existe para fechar uma
+ * dessas dúvidas antes que ela vire uma segunda solicitação na fila.
+ *
+ * A recusa é a que mais importa: ela chega com o MOTIVO escrito pelo admin e um
+ * botão que leva de volta ao formulário. "Foi recusada" sem dizer por quê só
+ * produz reenvio do mesmo documento ilegível.
+ */
+
+function prouniProgramLabel(program: 'prouni' | 'fies') {
+  return program === 'fies' ? 'FIES' : 'ProUni'
+}
+
+/** Endereço da página exclusiva do item — onde se refaz a solicitação. */
+function prouniRequestUrl(itemType: string, itemId: string) {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.domineaqui.com.br'
+  return `${appUrl}/prouni-fies/${itemType}/${encodeURIComponent(itemId)}`
+}
+
+/** Confirmação para quem acabou de enviar: recebemos, e agora é esperar. */
+export async function sendProuniRequestReceivedEmail(input: {
+  email: string
+  name?: string
+  itemTitle: string
+  itemType: string
+  itemId: string
+  program: 'prouni' | 'fies'
+  attachments: number
+}): Promise<void> {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.domineaqui.com.br'
+  const firstName = escapeHtml((input.name || '').split(' ')[0] || 'estudante')
+
+  const content = `
+    <h1 class="h1">Solicitação recebida 🎓</h1>
+    <p>Olá, ${firstName}!</p>
+    <p>Recebemos sua solicitação de desconto <strong>${prouniProgramLabel(input.program)}</strong> para
+    <strong>${escapeHtml(input.itemTitle)}</strong>, com ${input.attachments}
+    ${input.attachments === 1 ? 'comprovante anexado' : 'comprovantes anexados'}.</p>
+    <div style="background-color:#eff6ff;border-left:4px solid #3b82f6;padding:15px;margin:20px 0;border-radius:4px;">
+      <p style="margin:0;color:#1e40af;"><strong>O que acontece agora:</strong> nossa equipe confere o
+      documento manualmente. Costuma levar até 2 dias úteis. Você recebe um e-mail assim que a análise
+      terminar — não é preciso enviar de novo.</p>
+    </div>
+    <p>Aprovado o desconto, ele passa a ser aplicado sozinho no seu checkout deste item. O benefício é
+    pessoal e vale apenas para a sua conta.</p>
+    <div style="text-align:center;">
+      <a href="${appUrl}/profile?tab=atendimento" class="button" target="_blank">Acompanhar minha solicitação</a>
+    </div>
+  `
+
+  try {
+    await transporter.sendMail({
+      from: '"DomineAqui" <no-reply@domineaqui.com.br>',
+      to: input.email,
+      subject: `Recebemos sua solicitação de desconto ${prouniProgramLabel(input.program)}`,
+      html: getEmailTemplate('Solicitação recebida', content),
+    })
+  } catch (err) {
+    console.error('[mail] falha ao enviar confirmação PROUNI/FIES:', err)
+  }
+}
+
+/**
+ * Aviso para os administradores: há documento esperando análise.
+ *
+ * Vai para os mesmos endereços dos demais alertas operacionais. Traz o
+ * suficiente para decidir se abre agora — nunca os arquivos, que só existem
+ * atrás da sessão de admin.
+ */
+export async function sendProuniRequestAdminAlert(input: {
+  requestId: string
+  userName?: string
+  userEmail?: string
+  applicantName: string
+  applicantCpf?: string
+  institution?: string
+  itemTitle: string
+  program: 'prouni' | 'fies'
+  attachments: number
+  pendingCount?: number
+}): Promise<void> {
+  const recipients = (process.env.ADMIN_ALERT_EMAIL || ADMIN_EMAILS.join(',')).trim()
+  if (!recipients) return
+
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.domineaqui.com.br'
+  // CPF mascarado: o e-mail serve para identificar o pedido na fila, não para
+  // transportar documento completo por um canal que ninguém controla.
+  const cpf = String(input.applicantCpf || '').replace(/\D/g, '')
+  const cpfMasked = cpf.length === 11 ? `***.${cpf.slice(3, 6)}.${cpf.slice(6, 9)}-**` : '—'
+
+  const content = `
+    <h1 class="h1">Nova solicitação PROUNI/FIES</h1>
+    <p>Uma pessoa enviou comprovante e aguarda análise.</p>
+    <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;padding:16px 20px;margin:20px 0;">
+      <p style="margin:0 0 6px 0;color:#4a5568;">Programa: <strong>${prouniProgramLabel(input.program)}</strong></p>
+      <p style="margin:0 0 6px 0;color:#4a5568;">Item: <strong>${escapeHtml(input.itemTitle)}</strong></p>
+      <p style="margin:0 0 6px 0;color:#4a5568;">Solicitante: <strong>${escapeHtml(input.applicantName)}</strong></p>
+      <p style="margin:0 0 6px 0;color:#4a5568;">Conta: <strong>${escapeHtml(input.userEmail || '—')}</strong></p>
+      <p style="margin:0 0 6px 0;color:#4a5568;">CPF: <strong>${cpfMasked}</strong></p>
+      <p style="margin:0 0 6px 0;color:#4a5568;">Faculdade: <strong>${escapeHtml(input.institution || '—')}</strong></p>
+      <p style="margin:0;color:#4a5568;">Anexos: <strong>${input.attachments}</strong></p>
+    </div>
+    ${typeof input.pendingCount === 'number' && input.pendingCount > 1
+      ? `<p style="color:#b45309;"><strong>${input.pendingCount} solicitações</strong> aguardando análise no total.</p>`
+      : ''}
+    <div style="text-align:center;">
+      <a href="${appUrl}/admin/prouni" class="button" target="_blank">Abrir fila de análise</a>
+    </div>
+    <p style="margin-top:24px;font-size:0.9em;color:#718096;">Lembre-se de apagar os comprovantes depois
+    de decidir — a caixa vem marcada por padrão na tela de análise.</p>
+  `
+
+  try {
+    await transporter.sendMail({
+      from: '"DomineAqui Alertas" <no-reply@domineaqui.com.br>',
+      to: recipients,
+      subject: `🎓 Nova solicitação ${prouniProgramLabel(input.program)} — ${input.itemTitle}`,
+      html: getEmailTemplate('Nova solicitação PROUNI/FIES', content),
+    })
+  } catch (err) {
+    console.error('[mail] falha ao alertar admin sobre solicitação PROUNI/FIES:', err)
+  }
+}
+
+/** Aprovada: o desconto já está valendo, e o botão leva direto à compra. */
+export async function sendProuniRequestApprovedEmail(input: {
+  email: string
+  name?: string
+  itemTitle: string
+  itemType: string
+  itemId: string
+  program: 'prouni' | 'fies'
+  discountLabel: string
+  stackWithTier?: boolean
+  expiresAt?: Date | null
+  productUrl?: string
+  notes?: string
+}): Promise<void> {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.domineaqui.com.br'
+  const firstName = escapeHtml((input.name || '').split(' ')[0] || 'estudante')
+  const productUrl = input.productUrl
+    ? `${appUrl}${input.productUrl}`
+    : prouniRequestUrl(input.itemType, input.itemId)
+  const expira = input.expiresAt
+    ? new Date(input.expiresAt).toLocaleDateString('pt-BR')
+    : null
+
+  const content = `
+    <h1 class="h1">Seu desconto foi aprovado! 🎉</h1>
+    <p>Olá, ${firstName}!</p>
+    <p>Conferimos seu comprovante do <strong>${prouniProgramLabel(input.program)}</strong> e liberamos o
+    desconto de <span class="highlight">${escapeHtml(input.discountLabel)}</span> em
+    <strong>${escapeHtml(input.itemTitle)}</strong>.</p>
+    <div style="background-color:#ecfdf5;border-left:4px solid #10b981;padding:15px;margin:20px 0;border-radius:4px;">
+      <p style="margin:0;color:#065f46;"><strong>Não precisa de código.</strong> O desconto é aplicado
+      sozinho quando você finalizar a compra deste item, na sua conta.</p>
+      ${input.stackWithTier
+        ? '<p style="margin:10px 0 0 0;color:#065f46;">Ele ainda soma com o desconto de lote em andamento — o valor final pode ficar menor do que o anunciado.</p>'
+        : ''}
+    </div>
+    ${expira
+      ? `<p style="color:#b45309;"><strong>Atenção ao prazo:</strong> o benefício vale até <strong>${expira}</strong>.</p>`
+      : ''}
+    ${input.notes ? `<p style="color:#4a5568;"><strong>Observação da equipe:</strong> ${escapeHtml(input.notes)}</p>` : ''}
+    <div style="text-align:center;">
+      <a href="${productUrl}" class="button" target="_blank">Ir para a compra</a>
+    </div>
+    <p style="margin-top:24px;font-size:0.9em;color:#718096;">O benefício é pessoal e intransferível: vale
+    para a sua conta e para este item.</p>
+  `
+
+  try {
+    await transporter.sendMail({
+      from: '"DomineAqui" <no-reply@domineaqui.com.br>',
+      to: input.email,
+      subject: `Desconto ${prouniProgramLabel(input.program)} aprovado — ${input.itemTitle}`,
+      html: getEmailTemplate('Desconto aprovado', content),
+    })
+  } catch (err) {
+    console.error('[mail] falha ao enviar aprovação PROUNI/FIES:', err)
+  }
+}
+
+/**
+ * Recusada: diz o motivo e devolve o caminho.
+ *
+ * O motivo é escrito pelo admin e é obrigatório — sem ele este e-mail seria só
+ * uma porta batida, e a pessoa reenviaria exatamente o mesmo documento.
+ */
+export async function sendProuniRequestRejectedEmail(input: {
+  email: string
+  name?: string
+  itemTitle: string
+  itemType: string
+  itemId: string
+  program: 'prouni' | 'fies'
+  reason: string
+  canResubmitAt?: Date | null
+}): Promise<void> {
+  const firstName = escapeHtml((input.name || '').split(' ')[0] || 'estudante')
+  const url = prouniRequestUrl(input.itemType, input.itemId)
+  const espera = input.canResubmitAt && input.canResubmitAt.getTime() > Date.now()
+    ? input.canResubmitAt.toLocaleString('pt-BR')
+    : null
+
+  const content = `
+    <h1 class="h1">Não conseguimos aprovar sua solicitação</h1>
+    <p>Olá, ${firstName}.</p>
+    <p>Analisamos os documentos que você enviou para o desconto
+    <strong>${prouniProgramLabel(input.program)}</strong> em
+    <strong>${escapeHtml(input.itemTitle)}</strong>, e desta vez não foi possível aprovar.</p>
+    <div style="background-color:#fef2f2;border-left:4px solid #ef4444;padding:15px;margin:20px 0;border-radius:4px;">
+      <p style="margin:0;color:#991b1b;"><strong>Motivo:</strong> ${escapeHtml(input.reason)}</p>
+    </div>
+    <p>Isso não encerra o assunto: corrija o ponto acima e envie de novo — a maioria das recusas é só um
+    documento ilegível, vencido ou de outra pessoa.</p>
+    ${espera
+      ? `<p style="color:#b45309;">Você poderá enviar uma nova solicitação a partir de <strong>${espera}</strong>.</p>`
+      : ''}
+    <div style="text-align:center;">
+      <a href="${url}" class="button" target="_blank">Refazer solicitação</a>
+    </div>
+    <p style="margin-top:24px;font-size:0.9em;color:#718096;">
+      Ou copie e cole este link no seu navegador:<br>
+      <a href="${url}" style="color:#0f3d2e;word-break:break-all;">${url}</a>
+    </p>
+    <p style="font-size:0.9em;color:#718096;">Seus arquivos são apagados do nosso armazenamento depois da
+    análise — por isso é preciso anexá-los novamente.</p>
+  `
+
+  try {
+    await transporter.sendMail({
+      from: '"DomineAqui" <no-reply@domineaqui.com.br>',
+      to: input.email,
+      subject: `Sobre sua solicitação de desconto ${prouniProgramLabel(input.program)}`,
+      html: getEmailTemplate('Solicitação não aprovada', content),
+    })
+  } catch (err) {
+    console.error('[mail] falha ao enviar recusa PROUNI/FIES:', err)
+  }
+}
