@@ -5,6 +5,7 @@ import { ObjectId } from 'mongodb'
 import { BancoQuestao, BancoQuestaoComHierarquia } from '@/lib/types/banco-questoes'
 import { ehObjectId, escaparRegex, lerQuestao } from '@/lib/banco/questao-admin'
 import { conferirHierarquia } from '@/lib/banco/questao-hierarquia'
+import { internalizarObjeto } from '@/lib/midia/internalizar'
 
 export const dynamic = 'force-dynamic'
 
@@ -157,9 +158,15 @@ export async function POST(request: NextRequest) {
     if (!leitura.ok) {
       return NextResponse.json({ error: leitura.erro, campo: leitura.campo }, { status: 400 })
     }
-    const questao = leitura.questao
 
     const db = await getDb()
+
+    // Link do Imgur colado no editor vira arquivo nosso antes de virar
+    // documento. Vale para a imagem principal e para qualquer embed escondido
+    // no enunciado, na explicação ou no texto de uma alternativa. Se o download
+    // falhar, a URL original passa intacta e a varredura noturna a recolhe —
+    // ver lib/midia/internalizar.ts.
+    const questao = await internalizarObjeto(leitura.questao, { db })
 
     const hierarquia = await conferirHierarquia(db, questao)
     if (!hierarquia.ok) {

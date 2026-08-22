@@ -4,6 +4,7 @@ import { getDb } from '@/lib/mongodb'
 import { Db, ObjectId } from 'mongodb'
 import { ehObjectId, lerQuestao, questaoDoBanco } from '@/lib/banco/questao-admin'
 import { conferirHierarquia } from '@/lib/banco/questao-hierarquia'
+import { internalizarObjeto } from '@/lib/midia/internalizar'
 
 export const dynamic = 'force-dynamic'
 
@@ -107,7 +108,11 @@ export async function PUT(
     if (!leitura.ok) {
       return NextResponse.json({ error: leitura.erro, campo: leitura.campo }, { status: 400 })
     }
-    const questao = leitura.questao
+
+    // Mesma regra da criação: imagem externa colada na edição é internalizada
+    // antes de gravar, para que o acervo não volte a depender do Imgur a cada
+    // ajuste de questão.
+    const questao = await internalizarObjeto(leitura.questao, { db })
 
     const hierarquia = await conferirHierarquia(db, questao)
     if (!hierarquia.ok) {

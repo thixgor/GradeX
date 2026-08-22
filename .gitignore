@@ -62,3 +62,6 @@ public/Manual-Histologia/dados/manifesto-derivadas.json
 # Cache do Python (scripts/pwa/gerar-icones-android.py)
 __pycache__/
 *.pyc
+
+# Relatórios da sincronização de imagens (scripts/midia)
+.midia/

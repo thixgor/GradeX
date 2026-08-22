@@ -12,6 +12,7 @@ import {
   type QuestaoLida,
 } from '@/lib/banco/importar-questoes'
 import { BancoAlternativaLetra, BancoQuestao } from '@/lib/types/banco-questoes'
+import { internalizarObjeto } from '@/lib/midia/internalizar'
 
 export const dynamic = 'force-dynamic'
 // Um arquivo de milhares de questões, mesmo já dividido em pedaços pelo
@@ -322,6 +323,20 @@ export async function POST(request: NextRequest) {
         },
       })
     }
+
+    // As imagens do arquivo entram no nosso armazenamento antes das questões
+    // entrarem no banco. É feito com os documentos todos de uma vez, e não um
+    // por um: uma prova repete a mesma figura em várias questões, e assim ela é
+    // baixada uma vez só. O orçamento de tempo existe porque esta função morre
+    // em 60s — o que não couber fica com a URL original e a varredura noturna
+    // recolhe depois (ver lib/midia/internalizar.ts).
+    const documentos = await internalizarObjeto(
+      novas.map((n) => n.documento),
+      { db, orcamentoMs: 25_000 },
+    )
+    novas.forEach((n, i) => {
+      n.documento = documentos[i]
+    })
 
     // Gravação em lotes: `insertMany` por questão faria uma ida ao banco por
     // linha do arquivo, e um arquivo de prova inteira tem centenas.

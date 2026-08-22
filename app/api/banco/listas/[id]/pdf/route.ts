@@ -5,6 +5,7 @@ import { ObjectId } from 'mongodb'
 import { User } from '@/lib/types'
 import { jsPDF } from 'jspdf'
 import { isPlusAccount } from '@/lib/account-tier'
+import { absoluteUrl } from '@/lib/seo'
 
 export const dynamic = 'force-dynamic'
 
@@ -17,9 +18,15 @@ const CINZA_TEXTO = '#333333'
 const CINZA_CLARO = '#f5f5f5'
 
 // Função para baixar imagem e converter para base64
+//
+// A URL pode chegar como caminho relativo — é o formato do acervo internalizado
+// (`/midia/<aa>/<sha>.<ext>`, ver docs/sincronizacao-de-imagens.md). Aqui
+// estamos dentro da função, onde não existe origem de página: `fetch('/midia/…')`
+// lança, o catch devolve `null` e a imagem some do PDF sem erro visível.
+// `absoluteUrl` resolve contra o domínio do site e deixa URL absoluta em paz.
 async function fetchImageAsBase64(url: string): Promise<{ data: string, format: string } | null> {
   try {
-    const response = await fetch(url, { next: { revalidate: 3600 } })
+    const response = await fetch(absoluteUrl(url), { next: { revalidate: 3600 } })
     if (!response.ok) return null
 
     const arrayBuffer = await response.arrayBuffer()
