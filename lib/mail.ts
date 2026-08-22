@@ -284,6 +284,56 @@ export async function sendLoginCodeEmail(email: string, name: string, code: stri
   })
 }
 
+/**
+ * Código de confirmação para esvaziar o banco de dados.
+ *
+ * É o fator que separa "tem o cookie do admin" de "tem a caixa de entrada do
+ * admin". Por isso o e-mail conta ONDE e DE ONDE a tentativa partiu: se chegar
+ * sem que ninguém tenha pedido, ele próprio é o alerta de invasão.
+ */
+export async function sendDatabaseResetCodeEmail(input: {
+  email: string
+  nome?: string
+  codigo: string
+  ip?: string
+  dispositivo?: string
+}) {
+  const primeiroNome = input.nome ? input.nome.split(' ')[0] : ''
+
+  const content = `
+    <h1 class="h1">Confirmação para esvaziar o banco de dados 🚨</h1>
+    <p>Olá${primeiroNome ? `, ${primeiroNome}` : ''}!</p>
+    <p>Alguém com acesso de <strong>administrador</strong> solicitou o esvaziamento completo do banco de dados do <strong>DomineAqui</strong>.</p>
+
+    <div style="text-align: center; margin: 30px 0;">
+      <div style="display: inline-block; background-color: #7f1d1d; color: #ffffff; font-size: 34px; font-weight: 800; letter-spacing: 10px; padding: 18px 30px; border-radius: 12px; font-family: 'Courier New', Courier, monospace;">
+        ${input.codigo}
+      </div>
+    </div>
+
+    <p style="text-align: center; color: #718096; font-size: 0.9em;">O código expira em 5 minutos.</p>
+
+    <div style="background-color: #fef2f2; border: 2px solid #fca5a5; border-radius: 10px; padding: 16px; margin: 24px 0;">
+      <p style="margin: 0 0 8px; font-weight: 700; color: #991b1b;">Detalhes da solicitação</p>
+      <p style="margin: 0; font-size: 0.9em; color: #7f1d1d;">
+        Endereço IP: <strong>${input.ip || 'desconhecido'}</strong><br>
+        Dispositivo: <strong>${input.dispositivo || 'desconhecido'}</strong>
+      </p>
+    </div>
+
+    <p style="color: #991b1b; font-weight: 700;">Se não foi você quem pediu isso, NÃO informe este código a ninguém e troque sua senha imediatamente — sua conta de administrador pode estar comprometida.</p>
+  `
+
+  const html = getEmailTemplate('Confirmação para esvaziar o banco de dados', content)
+
+  await transporter.sendMail({
+    from: '"DomineAqui" <no-reply@domineaqui.com.br>',
+    to: input.email,
+    subject: '🚨 Código de confirmação — esvaziamento do banco de dados',
+    html,
+  })
+}
+
 export async function sendAccountDeletedEmail(email: string, name: string) {
   const firstName = name.split(' ')[0]
 

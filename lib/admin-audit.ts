@@ -18,6 +18,9 @@ export type AdminSecurityEventType =
   | 'gate_locked'          // admin trancou o painel manualmente
   | 'gate_rate_limited'    // excesso de tentativas
   | 'admins_logged_out'    // logout em massa dos administradores
+  | 'database_reset_challenged'  // alguém pediu o desafio para esvaziar o banco
+  | 'database_reset'             // o banco foi esvaziado (coleções movidas para a lixeira)
+  | 'database_reset_failed'      // tentativa de esvaziar o banco recusada
 
 export interface AdminSecurityEvent {
   type: AdminSecurityEventType

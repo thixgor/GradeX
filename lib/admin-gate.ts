@@ -26,8 +26,19 @@ export const ADMIN_GATE_COOKIE = 'admin-gate'
 export const ADMIN_GATE_AUDIENCE = 'gradex:admin-gate'
 export const ADMIN_GATE_ISSUER = 'gradex:auth'
 
-/** Código padrão do painel. Sobrescrito por ADMIN_SECURITY_CODE. */
-const DEFAULT_ADMIN_SECURITY_CODE = '1302'
+/**
+ * Código do painel usado APENAS em desenvolvimento.
+ *
+ * Ele mora no repositório, então é público para qualquer pessoa que leia o
+ * código — inclusive um ex-colaborador. Como conveniência para rodar o projeto
+ * na máquina de alguém, tudo bem. Como segundo fator do painel de produção,
+ * seria o mesmo que não ter segundo fator: quem conseguisse um cookie de admin
+ * (notebook esquecido aberto, XSS, sessão roubada) já saberia o código e teria
+ * acesso às rotas destrutivas.
+ *
+ * Por isso ele não vale em produção — ver `getAdminSecurityCode`.
+ */
+const CODIGO_DE_DESENVOLVIMENTO = 'dev-1302'
 
 /** Erro devolvido às rotas /api/* quando falta o gate (o client usa para abrir a tela de código). */
 export const ADMIN_GATE_ERROR_CODE = 'ADMIN_CODE_REQUIRED'
@@ -61,9 +72,31 @@ export function getAdminGateAbsoluteSeconds(): number {
   return readIntEnv('ADMIN_GATE_MAX_HOURS', 12, 1, 168) * 3600
 }
 
-export function getAdminSecurityCode(): string {
+/**
+ * O código exigido para destravar o painel, ou `null` quando não há um válido.
+ *
+ * Em produção só vale o que está em `ADMIN_SECURITY_CODE`. Sem essa variável a
+ * função devolve `null` e NENHUM código destrava o painel — falha fechada, de
+ * propósito: preferimos que o administrador precise configurar a variável a
+ * deixar o painel protegido por um segredo que está no repositório.
+ *
+ * O log é ruidoso justamente para que a causa apareça na primeira vez que
+ * alguém tentar entrar, em vez de virar um "código incorreto" inexplicável.
+ */
+export function getAdminSecurityCode(): string | null {
   const configured = (process.env.ADMIN_SECURITY_CODE || '').trim()
-  return configured || DEFAULT_ADMIN_SECURITY_CODE
+  if (configured) return configured
+
+  if (process.env.NODE_ENV === 'production') {
+    console.error(
+      '[admin-gate] ADMIN_SECURITY_CODE não está configurado. O painel ficará ' +
+      'trancado até que a variável seja definida — o código padrão do repositório ' +
+      'não vale em produção.'
+    )
+    return null
+  }
+
+  return CODIGO_DE_DESENVOLVIMENTO
 }
 
 /**
@@ -84,7 +117,11 @@ export function isAdminSecurityCodeValid(input: unknown): boolean {
   if (typeof input !== 'string') return false
   const candidate = input.trim()
   if (!candidate) return false
-  return safeCompare(candidate, getAdminSecurityCode())
+
+  const esperado = getAdminSecurityCode()
+  if (!esperado) return false
+
+  return safeCompare(candidate, esperado)
 }
 
 function getSecret(): Uint8Array {

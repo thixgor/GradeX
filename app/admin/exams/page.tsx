@@ -30,6 +30,11 @@ export default function AdminExamsPage() {
   const [showVaultDialog, setShowVaultDialog] = useState(false)
   const [vaultPassword, setVaultPassword] = useState('')
   const [resettingDatabase, setResettingDatabase] = useState(false)
+  // Segunda etapa do cofre: o servidor devolve uma frase de uso único e manda um
+  // código por e-mail. Enquanto `vaultChallenge` for nulo, a tela está na etapa 1.
+  const [vaultChallenge, setVaultChallenge] = useState<{ desafioId: string; frase: string } | null>(null)
+  const [vaultEmailCode, setVaultEmailCode] = useState('')
+  const [vaultPhrase, setVaultPhrase] = useState('')
   const [search, setSearch] = useState('')
 
   useEffect(() => {
@@ -119,9 +124,24 @@ export default function AdminExamsPage() {
     }
   }
 
-  async function resetDatabase() {
+  function fecharCofre() {
+    setShowVaultDialog(false)
+    setVaultPassword('')
+    setVaultChallenge(null)
+    setVaultEmailCode('')
+    setVaultPhrase('')
+  }
+
+  /**
+   * Etapa 1: pedir o desafio.
+   *
+   * O servidor confere o código do cofre e a lista de administradores
+   * autorizados, devolve uma frase de uso único e manda um código de 6 dígitos
+   * para o e-mail do admin. Nada é apagado aqui.
+   */
+  async function solicitarDesafioDoCofre() {
     if (!vaultPassword) {
-      showToastMessage('Por favor, insira a senha do cofre', 'error')
+      showToastMessage('Por favor, insira o código do cofre', 'error')
       return
     }
 
@@ -130,24 +150,63 @@ export default function AdminExamsPage() {
       const res = await fetch('/api/settings/reset-database', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: vaultPassword })
+        body: JSON.stringify({ etapa: 'desafio', codigoDoCofre: vaultPassword })
+      })
+
+      if (res.status === 404) {
+        showToastMessage('O reset do banco está desligado neste ambiente (ALLOW_DB_RESET).', 'error')
+        return
+      }
+
+      const data = await res.json()
+
+      if (res.ok && data.desafioId) {
+        setVaultChallenge({ desafioId: data.desafioId, frase: data.frase })
+        showToastMessage(data.mensagem || 'Código enviado por e-mail.', 'success')
+      } else {
+        showToastMessage(data.error || 'Falha ao iniciar a operação', 'error')
+      }
+    } catch (error: any) {
+      showToastMessage('Erro ao iniciar: ' + error.message)
+    } finally {
+      setResettingDatabase(false)
+    }
+  }
+
+  /** Etapa 2: frase digitada + código do e-mail. Só aqui as coleções se movem. */
+  async function executarResetDoCofre() {
+    if (!vaultChallenge) return
+
+    setResettingDatabase(true)
+    try {
+      const res = await fetch('/api/settings/reset-database', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          etapa: 'executar',
+          codigoDoCofre: vaultPassword,
+          desafioId: vaultChallenge.desafioId,
+          frase: vaultPhrase,
+          codigo: vaultEmailCode,
+        })
       })
 
       const data = await res.json()
 
-      if (data.success) {
-        showToastMessage('⚠️ Banco de dados resetado! Faça logout e login novamente.', 'success')
-        setShowVaultDialog(false)
-        setVaultPassword('')
-        // Redirecionar para login após 2 segundos
+      if (res.ok && data.success) {
+        showToastMessage(
+          `⚠️ ${data.colecoesMovidas} coleções movidas para a lixeira (${data.prefixoDaLixeira}). Nada foi apagado.`,
+          'success',
+        )
+        fecharCofre()
         setTimeout(() => {
           router.push('/auth/login')
         }, 2000)
       } else {
-        showToastMessage(data.error || 'Falha ao resetar banco de dados', 'error')
+        showToastMessage(data.error || 'Falha ao executar a operação', 'error')
       }
     } catch (error: any) {
-      showToastMessage('Erro ao resetar: ' + error.message)
+      showToastMessage('Erro ao executar: ' + error.message)
     } finally {
       setResettingDatabase(false)
     }
@@ -646,8 +705,8 @@ export default function AdminExamsPage() {
 
       {/* Dialog do Cofre de Segurança Máxima */}
       <Dialog open={showVaultDialog} onOpenChange={(open) => {
-        setShowVaultDialog(open)
-        if (!open) setVaultPassword('')
+        if (!open) fecharCofre()
+        else setShowVaultDialog(true)
       }}>
         <DialogContent className="max-w-md border-4 border-red-500 dark:border-red-700 bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-950 dark:to-orange-950">
           <DialogHeader>
@@ -684,7 +743,11 @@ export default function AdminExamsPage() {
 
               <div className="bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-lg p-3 border-2 border-red-700">
                 <p className="text-sm font-bold">
-                  🔐 Esta operação NÃO pode ser desfeita!
+                  🔐 Exige código do cofre, código enviado por e-mail e frase de confirmação.
+                </p>
+                <p className="text-xs mt-2 opacity-90">
+                  As coleções são movidas para uma lixeira (prefixo <code>_lixeira_</code>),
+                  não apagadas — dá para restaurar pelo Atlas.
                 </p>
               </div>
             </DialogDescription>
@@ -694,35 +757,71 @@ export default function AdminExamsPage() {
             <div className="space-y-2">
               <Label htmlFor="vault-password" className="text-red-900 dark:text-red-100 font-semibold flex items-center gap-2">
                 <Lock className="h-4 w-4" />
-                Senha do Cofre
+                Código do Cofre
               </Label>
               <Input
                 id="vault-password"
                 type="password"
                 value={vaultPassword}
                 onChange={(e) => setVaultPassword(e.target.value)}
-                placeholder="Digite a senha de segurança"
+                placeholder="Digite o código de segurança"
                 className="border-2 border-red-400 dark:border-red-600 focus:border-red-600 dark:focus:border-red-500 bg-white dark:bg-gray-900"
-                disabled={resettingDatabase}
+                disabled={resettingDatabase || !!vaultChallenge}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !resettingDatabase) {
-                    resetDatabase()
+                  if (e.key === 'Enter' && !resettingDatabase && !vaultChallenge) {
+                    solicitarDesafioDoCofre()
                   }
                 }}
               />
               <p className="text-xs text-muted-foreground">
-                Insira a senha de acesso ao cofre para prosseguir
+                Definido em <code>DB_RESET_CODE</code>, diferente do código do painel
               </p>
             </div>
+
+            {vaultChallenge && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="vault-code" className="text-red-900 dark:text-red-100 font-semibold">
+                    Código enviado por e-mail
+                  </Label>
+                  <Input
+                    id="vault-code"
+                    inputMode="numeric"
+                    value={vaultEmailCode}
+                    onChange={(e) => setVaultEmailCode(e.target.value)}
+                    placeholder="6 dígitos"
+                    className="border-2 border-red-400 dark:border-red-600 bg-white dark:bg-gray-900 tracking-widest text-center"
+                    disabled={resettingDatabase}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="vault-phrase" className="text-red-900 dark:text-red-100 font-semibold">
+                    Digite exatamente esta frase
+                  </Label>
+                  <div className="rounded-lg bg-gray-900 text-red-200 font-mono text-sm px-3 py-2 select-all break-all">
+                    {vaultChallenge.frase}
+                  </div>
+                  <Input
+                    id="vault-phrase"
+                    value={vaultPhrase}
+                    onChange={(e) => setVaultPhrase(e.target.value)}
+                    placeholder="Repita a frase acima"
+                    className="border-2 border-red-400 dark:border-red-600 bg-white dark:bg-gray-900 font-mono"
+                    disabled={resettingDatabase}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Vale uma vez só e expira em 5 minutos
+                  </p>
+                </div>
+              </>
+            )}
           </div>
 
           <DialogFooter className="flex-col sm:flex-row gap-2">
             <Button
               variant="outline"
-              onClick={() => {
-                setShowVaultDialog(false)
-                setVaultPassword('')
-              }}
+              onClick={fecharCofre}
               disabled={resettingDatabase}
               className="w-full sm:w-auto"
             >
@@ -731,19 +830,29 @@ export default function AdminExamsPage() {
             </Button>
             <Button
               variant="destructive"
-              onClick={resetDatabase}
-              disabled={resettingDatabase || !vaultPassword}
+              onClick={vaultChallenge ? executarResetDoCofre : solicitarDesafioDoCofre}
+              disabled={
+                resettingDatabase ||
+                (vaultChallenge
+                  ? !vaultEmailCode.trim() || !vaultPhrase.trim()
+                  : !vaultPassword)
+              }
               className="w-full sm:w-auto bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 font-bold"
             >
               {resettingDatabase ? (
                 <>
                   <Lock className="h-4 w-4 mr-2 animate-spin" />
-                  Resetando...
+                  {vaultChallenge ? 'Executando...' : 'Enviando código...'}
+                </>
+              ) : vaultChallenge ? (
+                <>
+                  <Database className="h-4 w-4 mr-2" />
+                  Confirmar e mover para a lixeira
                 </>
               ) : (
                 <>
-                  <Database className="h-4 w-4 mr-2" />
-                  Confirmar Reset Completo
+                  <Lock className="h-4 w-4 mr-2" />
+                  Enviar código por e-mail
                 </>
               )}
             </Button>
