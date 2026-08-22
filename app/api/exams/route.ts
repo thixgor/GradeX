@@ -3,6 +3,13 @@ import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
 import { Exam } from '@/lib/types'
 import { getPersonalExamsLifetimeLimit, getPersonalExamsQuota } from '@/lib/tier-limits'
+import {
+  avaliarUsoDoPlano,
+  corpoDeRecusa,
+  registrarUsoDoPlano,
+  resolverPermissoes,
+  type ContextoDePermissoes,
+} from '@/lib/plan-entitlements-server'
 import { ObjectId } from 'mongodb'
 import { prepararProvaParaEntrega } from '@/lib/provas/sanitizar-prova'
 
@@ -303,6 +310,15 @@ export async function POST(request: NextRequest) {
     const examsCollection = db.collection<Exam>('exams')
     const usersCollection = db.collection('users')
 
+    /**
+     * Permissões do plano assinado, quando ele modula "Provas por IA".
+     *
+     * Fica fora do bloco de validação porque o registro de consumo só acontece
+     * depois que a prova entra no banco — cobrar a cota de uma prova que
+     * falhou ao gravar seria cobrar por nada.
+     */
+    let permissoesDoPlano: ContextoDePermissoes | null = null
+
     // Se for prova pessoal e não for admin, validar limites
     if (isPersonalExam && session.role !== 'admin') {
       // Obter tipo de conta primeiro
@@ -312,6 +328,25 @@ export async function POST(request: NextRequest) {
       }
 
       const accountType = tempUser.accountType || 'gratuito'
+
+      permissoesDoPlano = await resolverPermissoes(db, {
+        userId: session.userId,
+        role: session.role,
+        accountType,
+        premiumPlanType: tempUser.premiumPlanType,
+      })
+      const veredictoDoPlano = await avaliarUsoDoPlano(db, permissoesDoPlano, 'provasIa')
+      if (!veredictoDoPlano.permitido) {
+        return NextResponse.json(corpoDeRecusa(veredictoDoPlano), { status: 403 })
+      }
+      /**
+       * Com o plano modulando a área, ele é a única régua: os tetos abaixo
+       * (vitalício, diário e questões de IA por prova) ficam de fora. Rodar os
+       * dois daria ao aluno duas respostas diferentes para a mesma pergunta —
+       * e a tabela por cargo aqui embaixo não conhece o cargo `plus`, então
+       * ela derrubaria em 5 questões um plano configurado para 50 provas.
+       */
+      const usarTetosDoCargo = !veredictoDoPlano.aplicavel
 
       // Resetar limites se necessário
       const user = await resetDailyLimitsIfNeeded(db, session.userId, accountType)
@@ -337,7 +372,7 @@ export async function POST(request: NextRequest) {
 
       // Validar limite vitalício de provas pessoais para usuários gratuitos
       const personalExamsLifetimeLimit = getPersonalExamsLifetimeLimit(accountType)
-      if (personalExamsLifetimeLimit !== Infinity) {
+      if (usarTetosDoCargo && personalExamsLifetimeLimit !== Infinity) {
         // Usar contador vitalício se existir, senão contar documentos ativos como fallback
         let existingPersonalExams = user.totalPersonalExamsCreated
 
@@ -366,7 +401,7 @@ export async function POST(request: NextRequest) {
       }
 
       // Validar limite diário de provas pessoais
-      if (examsRemaining <= 0) {
+      if (usarTetosDoCargo && examsRemaining <= 0) {
         return NextResponse.json(
           {
             error: `Limite diário de provas pessoais atingido (${dailyExamsLimit}/dia para contas ${accountType})`,
@@ -376,7 +411,7 @@ export async function POST(request: NextRequest) {
       }
 
       // Validar limite de questões IA por prova
-      if (aiQuestionsCount > aiQuestionsPerExamLimit) {
+      if (usarTetosDoCargo && aiQuestionsCount > aiQuestionsPerExamLimit) {
         return NextResponse.json(
           {
             error: `Limite de questões geradas por IA atingido (máximo ${aiQuestionsPerExamLimit} por prova para contas ${accountType})`,
@@ -461,6 +496,12 @@ export async function POST(request: NextRequest) {
     }
 
     const result = await examsCollection.insertOne(newExam)
+
+    if (permissoesDoPlano) {
+      await registrarUsoDoPlano(db, permissoesDoPlano, 'provasIa', {
+        recurso: String(result.insertedId),
+      })
+    }
 
     return NextResponse.json({
       success: true,

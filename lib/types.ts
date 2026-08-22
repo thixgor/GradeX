@@ -1095,6 +1095,13 @@ export interface PlanConfig {
   badge?: string // Texto do badge (ex: "MAIS POPULAR")
   role?: AccountType // Cargo que o usuário ganha (premium, essential, trial)
   durationMonths?: number // Duração em meses (0 ou undefined = infinito/vitalício)
+  /**
+   * Permissões modulares: o que este plano libera, área por área, com teto
+   * opcional (X por janela de tempo). Ausente ou com `ativo: false` significa
+   * "sem modulação" — quem manda são os limites do cargo, como sempre foi.
+   * Ver `lib/plan-entitlements.ts`.
+   */
+  permissoes?: import('./plan-entitlements').PlanPermissions
   /** @deprecated Stripe foi removido — campo mantido só para leitura de planos antigos */
   stripePriceId?: string
   /** @deprecated Stripe foi removido */

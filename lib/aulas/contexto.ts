@@ -1,5 +1,6 @@
 import { ObjectId, type Db } from 'mongodb'
 import { isPlusAccount } from '@/lib/account-tier'
+import { areaLiberada, resolverPermissoes } from '@/lib/plan-entitlements-server'
 import type { ContextoDoUsuario } from '@/lib/aulas/acesso'
 import type { MaterialPurchase, User } from '@/lib/types'
 
@@ -66,7 +67,7 @@ export async function montarContextoDoUsuario(
   const [usuario, compras, grupos] = await Promise.all([
     db.collection<User>('users').findOne(
       { _id: usuarioId as any },
-      { projection: { accountType: 1, premiumExpiresAt: 1 } },
+      { projection: { accountType: 1, premiumExpiresAt: 1, premiumPlanType: 1, role: 1 } },
     ),
     db.collection<MaterialPurchase>('material_purchases')
       .find(
@@ -85,7 +86,21 @@ export async function montarContextoDoUsuario(
   // entrar quem cancelou e ainda não passou pelo sweeper.
   const expiraEm = usuario?.premiumExpiresAt ? new Date(usuario.premiumExpiresAt) : null
   const assinaturaNoPrazo = !expiraEm || Number.isNaN(expiraEm.getTime()) || expiraEm > new Date()
-  const ehPlus = isPlusAccount(usuario?.accountType) && assinaturaNoPrazo
+
+  /**
+   * Assinar não é mais sinônimo de ter tudo: o plano decide quais áreas
+   * entram. Aula e Manual são consultados separadamente porque um plano pode
+   * incluir um e não o outro — e uma aula amarrada ao Manual não deve abrir
+   * para quem tem só as aulas.
+   */
+  const permissoes = await resolverPermissoes(db, {
+    userId: sessao.userId,
+    role: usuario?.role,
+    accountType: usuario?.accountType,
+    premiumPlanType: usuario?.premiumPlanType as string | null,
+  })
+  const assinante = isPlusAccount(usuario?.accountType) && assinaturaNoPrazo
+  const ehPlus = assinante && areaLiberada(permissoes, 'aulas')
 
   const materiais: string[] = []
   const pacotes: string[] = []
@@ -102,7 +117,7 @@ export async function montarContextoDoUsuario(
     // O Manual Clínico entra junto com o Plus+ e pelas compras avulsas, que já
     // aparecem em `materiais`. Uma consulta dedicada só faria sentido quando
     // existir aula amarrada exclusivamente a ele.
-    temManualClinico: ehPlus,
+    temManualClinico: assinante && areaLiberada(permissoes, 'manualClinico'),
     materiais,
     pacotes,
     grupos: grupos.map((g) => String(g._id)),

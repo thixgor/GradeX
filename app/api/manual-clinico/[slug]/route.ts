@@ -31,7 +31,7 @@ export async function GET(
     }
 
     const config = await getManualClinicoConfig(db)
-    const access = await getManualClinicoAccess(db, session, config)
+    const access = await getManualClinicoAccess(db, session, config, 'patologias')
     const freeSlugs = await getManualClinicoFreeSlugSet(db, config)
     const isGlobalFree = isManualClinicoPathologyFree(patologia as any, freeSlugs)
     let freeQuota = await getManualClinicoFreeQuotaState(db, session, config)

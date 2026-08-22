@@ -35,6 +35,7 @@ import { ArrowLeft, Check, X, Send, FileDown, Clock, User, CheckCircle2, AlertCi
 import { ImageModal } from '@/components/image-modal'
 import { PremiumPdfCtaModal } from '@/components/premium-pdf-cta-modal'
 import { canDownloadExamPdf } from '@/lib/tier-limits'
+import { consumirCotaDoPlano } from '@/lib/plan-consume-client'
 import { useScrollToTopWhen } from '@/components/scroll-to-top'
 import { createExamAttemptTracker, clearExamAttempt, type ExamAttemptTracker } from '@/lib/tracking/track-client'
 
@@ -410,6 +411,13 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   const handleDownloadExamPDF = async () => {
     if (!canDownloadExamPdf(accountType, userRole === 'admin')) {
       setShowPdfCta(true)
+      return
+    }
+    // Teto de downloads de prova do plano, quando houver. O PDF é montado no
+    // navegador, então este é o único ponto em que o consumo pode ser contado.
+    const cota = await consumirCotaDoPlano('provasPdf', String(id))
+    if (!cota.permitido) {
+      showToastMessage(cota.mensagem || 'Limite de downloads do seu plano atingido.', 'info')
       return
     }
     try {

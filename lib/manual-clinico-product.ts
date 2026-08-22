@@ -10,6 +10,12 @@ import type {
 } from './types'
 import type { CouponValidationResult } from './coupons'
 import { PLUS_TIER, isPlusAccount } from './account-tier'
+import {
+  areaLiberada,
+  moduloDoManualLiberadoNoContexto,
+  resolverPermissoes,
+} from './plan-entitlements-server'
+import type { ManualClinicoModuleKey } from './plan-entitlements'
 
 export const MANUAL_CLINICO_PRODUCT_ID = 'manual-clinico-premium' as const
 export const MANUAL_CLINICO_PRODUCT_TYPE = 'manual_clinico' as const
@@ -443,10 +449,18 @@ export function serializeManualClinicoFreeQuota(quota: ManualClinicoFreeQuotaSta
   }
 }
 
+/**
+ * @param modulo Função específica do Manual sendo aberta (Ferramentas,
+ *   Farmacologia, Radiologia…). Só importa para quem recebeu o Manual **pela
+ *   assinatura**: o plano pode incluir a área e ainda assim não incluir aquela
+ *   função. Compra avulsa e admin ignoram o parâmetro — quem comprou o produto
+ *   comprou inteiro, e fatiar depois seria mudar o que foi vendido.
+ */
 export async function getManualClinicoAccess(
   db: Db,
   session: TokenPayload | null | undefined,
-  config?: ManualClinicoProductConfig
+  config?: ManualClinicoProductConfig,
+  modulo?: ManualClinicoModuleKey
 ): Promise<ManualClinicoAccessState> {
   if (session?.role === 'admin') return { hasFullAccess: true, reason: 'admin' }
   if (!session?.userId) return { hasFullAccess: false, reason: 'guest' }
@@ -454,7 +468,7 @@ export async function getManualClinicoAccess(
   // Acesso incluso na assinatura Plus+: dispensa compra avulsa.
   const resolvedConfig = config || await getManualClinicoConfig(db)
   if (resolvedConfig.includedInPlus) {
-    const includedPlan = await getManualClinicoIncludedPlanFor(db, session, resolvedConfig)
+    const includedPlan = await getManualClinicoIncludedPlanFor(db, session, resolvedConfig, modulo)
     if (includedPlan) {
       return { hasFullAccess: true, reason: 'included_plan', includedPlan }
     }
@@ -474,28 +488,53 @@ export async function getManualClinicoAccess(
 async function getManualClinicoIncludedPlanFor(
   db: Db,
   session: Pick<TokenPayload, 'userId'>,
-  config: ManualClinicoProductConfig
+  config: ManualClinicoProductConfig,
+  modulo?: ManualClinicoModuleKey
 ): Promise<string | null> {
   if (!config.includedInPlus) return null
-  let accountType: string | null | undefined
+  let user: any
   try {
-    const user = await db.collection('users').findOne(
+    user = await db.collection('users').findOne(
       { _id: new ObjectId(session.userId) },
-      { projection: { accountType: 1 } }
+      { projection: { role: 1, accountType: 1, premiumPlanType: 1 } }
     )
-    accountType = (user as any)?.accountType
   } catch {
     return null
   }
-  // Cargo único: o Manual Clínico entra junto do Plus+.
-  if (config.includedInPlus && isPlusAccount(accountType)) return PLUS_TIER
-  return null
+  const accountType = user?.accountType
+  if (!isPlusAccount(accountType)) return null
+
+  // O cargo pago inclui o Manual, mas o plano pode não incluir. Quando não
+  // inclui, a conta cai no produto avulso — a compra separada continua
+  // valendo, e é ela que decide logo adiante.
+  const permissoes = await resolverPermissoes(db, {
+    userId: session.userId,
+    role: user?.role,
+    accountType,
+    premiumPlanType: user?.premiumPlanType,
+  })
+  if (!areaLiberada(permissoes, 'manualClinico')) return null
+  if (modulo && !moduloDoManualLiberadoNoContexto(permissoes, modulo)) return null
+
+  return PLUS_TIER
 }
 
 /**
- * Retorna a compra ativa mais recente (não expirada, completed) ou null.
- * Considera tanto userId quanto userEmail (case-insensitive).
+ * O módulo pedido do Manual está incluído no plano desta conta?
+ *
+ * Só decide sobre o acesso concedido PELA ASSINATURA. Compra avulsa do Manual
+ * e conta de admin passam por cima — quem comprou o produto comprou inteiro, e
+ * fatiar depois seria mudar o que foi vendido.
  */
+export async function temModuloDoManualClinico(
+  db: Db,
+  session: TokenPayload | null | undefined,
+  modulo: ManualClinicoModuleKey,
+  config?: ManualClinicoProductConfig
+): Promise<boolean> {
+  return (await getManualClinicoAccess(db, session, config, modulo)).hasFullAccess
+}
+
 export async function getActiveManualClinicoPurchase(
   db: Db,
   session: Pick<TokenPayload, 'userId' | 'email'> | null | undefined

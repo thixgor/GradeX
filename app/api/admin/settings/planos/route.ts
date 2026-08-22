@@ -3,6 +3,8 @@ import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
 import { PlanConfig } from '@/lib/types'
 import { normalizeAccountType, PLUS_LABEL, PLUS_TIER } from '@/lib/account-tier'
+import { normalizePlanPermissions, sanitizePlanPermissions } from '@/lib/plan-entitlements'
+import { invalidarCatalogoDePlanos } from '@/lib/plan-entitlements-server'
 
 export const dynamic = 'force-dynamic'
 
@@ -90,13 +92,22 @@ export async function GET() {
           atualizadoEm: new Date()
         }
       ]
-      return NextResponse.json({ planos: defaultPlans })
+      return NextResponse.json({
+        planos: defaultPlans.map(p => ({
+          ...p,
+          permissoes: normalizePlanPermissions(null),
+        })),
+      })
     }
 
-    // Se há planos salvos, garantir que tenham benefícios
+    // Planos salvos: completa benefícios e permissões. A normalização das
+    // permissões é o que faz um plano gravado antes desta funcionalidade (ou
+    // antes de uma área nova existir) chegar ao editor com todos os campos —
+    // sem ela o formulário abriria com caixas indefinidas.
     const planosComBeneficios = settings.planos.map((p: PlanConfig) => ({
       ...p,
-      beneficios: p.beneficios && p.beneficios.length > 0 ? p.beneficios : defaultBeneficios
+      beneficios: p.beneficios && p.beneficios.length > 0 ? p.beneficios : defaultBeneficios,
+      permissoes: normalizePlanPermissions(p.permissoes),
     }))
 
     return NextResponse.json({ planos: planosComBeneficios })
@@ -148,6 +159,10 @@ export async function PUT(req: NextRequest) {
       durationMonths: plan.durationMonths !== undefined ? parseInt(plan.durationMonths) : 0,
       stripePriceId: plan.stripePriceId,
       stripeOneTimePriceId: plan.stripeOneTimePriceId,
+      // Permissões modulares. Sempre gravadas normalizadas: valor fora de
+      // faixa, período inventado ou área desconhecida caem no padrão em vez
+      // de virar uma regra que ninguém consegue interpretar depois.
+      permissoes: sanitizePlanPermissions(plan.permissoes),
       criadoEm: plan.criadoEm ? new Date(plan.criadoEm) : new Date(),
       atualizadoEm: new Date()
     }))
@@ -162,6 +177,11 @@ export async function PUT(req: NextRequest) {
       },
       { upsert: true }
     )
+
+    // As permissões são lidas de um catálogo memoizado por 30s. Sem descartar
+    // a chave aqui, o admin salvaria e a mudança só valeria meio minuto
+    // depois — tempo suficiente para ele achar que não salvou.
+    invalidarCatalogoDePlanos()
 
     return NextResponse.json({
       success: true,

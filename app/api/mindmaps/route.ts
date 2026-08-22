@@ -14,6 +14,12 @@ import {
   sanitizeStyle,
 } from '@/lib/mindmap'
 import { canCreateUnlimitedMindMaps, MINDMAP_FREE_LIMIT } from '@/lib/tier-limits'
+import {
+  avaliarUsoDoPlano,
+  corpoDeRecusa,
+  registrarUsoDoPlano,
+  resolverPermissoes,
+} from '@/lib/plan-entitlements-server'
 import type { MindMap, MindMapNode } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -89,12 +95,26 @@ export async function POST(request: NextRequest) {
 
     const user = await usersCollection.findOne(
       { _id: new ObjectId(session.userId) },
-      { projection: { name: 1, accountType: 1 } }
+      { projection: { name: 1, accountType: 1, premiumPlanType: 1 } }
     )
 
-    // Limite de plano: gratuito/trial podem manter apenas 1 mapa; Plus+ (e admin) criam mapas ilimitados.
     const isAdmin = session.role === 'admin'
-    if (!canCreateUnlimitedMindMaps(user?.accountType, isAdmin)) {
+
+    // Regra do plano assinado, quando ele modula esta área. Ela substitui o
+    // teto do cargo — não convive com ele.
+    const permissoes = await resolverPermissoes(db, {
+      userId: session.userId,
+      role: session.role,
+      accountType: user?.accountType,
+      premiumPlanType: user?.premiumPlanType as string | null,
+    })
+    const veredicto = await avaliarUsoDoPlano(db, permissoes, 'mapasMentais')
+    if (!veredicto.permitido) {
+      return NextResponse.json(corpoDeRecusa(veredicto), { status: 403 })
+    }
+
+    // Limite de plano: gratuito/trial podem manter apenas 1 mapa; Plus+ (e admin) criam mapas ilimitados.
+    if (!veredicto.aplicavel && !canCreateUnlimitedMindMaps(user?.accountType, isAdmin)) {
       const count = await maps.countDocuments({ ownerId: session.userId })
       if (count >= MINDMAP_FREE_LIMIT) {
         return NextResponse.json(
@@ -146,6 +166,11 @@ export async function POST(request: NextRequest) {
     }
 
     const result = await maps.insertOne(map)
+
+    await registrarUsoDoPlano(db, permissoes, 'mapasMentais', {
+      recurso: String(result.insertedId),
+    })
+
     return NextResponse.json(
       { map: normalizeMapForResponse({ ...map, _id: result.insertedId }) },
       { status: 201 }

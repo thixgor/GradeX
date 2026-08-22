@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
     const db = await getDb()
     const [config, access] = await Promise.all([
       getManualClinicoConfig(db),
-      getManualClinicoAccess(db, session),
+      getManualClinicoAccess(db, session, undefined, 'farmacologia'),
     ])
 
     const filter: any = {}

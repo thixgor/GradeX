@@ -4,7 +4,7 @@ import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { User } from '@/lib/types'
 import { BancoListaUsuario, BancoListaAleatoriaFiltros } from '@/lib/types/banco-questoes'
-import { isPlusAccount } from '@/lib/account-tier'
+import { bancoLiberadoPeloPlano } from '@/lib/banco/acesso-servidor'
 import { interpretarPeriodoLetivo } from '@/lib/banco/periodo-letivo'
 import { campoTextoPreenchido } from '@/lib/banco/filtros-conteudo'
 
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
     }
 
-    if (user.role !== 'admin' && !isPlusAccount(user.accountType)) {
+    if (!(await bancoLiberadoPeloPlano(db, user))) {
       return NextResponse.json({
         error: 'Acesso restrito a assinantes Plus+',
         requiresPlus: true

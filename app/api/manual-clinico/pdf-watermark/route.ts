@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     const mode = request.nextUrl.searchParams.get('mode') || 'single'
     const db = await getDb()
     const config = await getManualClinicoConfig(db)
-    const access = await getManualClinicoAccess(db, session, config)
+    const access = await getManualClinicoAccess(db, session, config, 'pdfCompleto')
 
     if (!access.hasFullAccess) {
       if (mode !== 'single' || !slug) {

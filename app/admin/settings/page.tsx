@@ -11,6 +11,8 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { LogoLoading } from '@/components/logo-loading'
 import { ArrowLeft, Settings, AlertCircle, CheckCircle, Eye, EyeOff, Trash2, Zap, Plus, ArrowUp, ArrowDown } from 'lucide-react'
 import { PlanConfig } from '@/lib/types'
+import { PlanPermissionsEditor } from '@/components/admin/plan-permissions-editor'
+import { normalizePlanPermissions } from '@/lib/plan-entitlements'
 import { PLUS_LABEL, normalizeAccountType } from '@/lib/account-tier'
 import { PlusGuardPanel } from '@/components/admin/plus-guard-panel'
 import {
@@ -1099,8 +1101,9 @@ export default function SettingsPage() {
             <CardHeader>
               <CardTitle>Gerenciar Planos {PLUS_LABEL}</CardTitle>
               <CardDescription>
-                Preços e durações do {PLUS_LABEL} exibidos em /buy. Todo plano pago concede o
-                mesmo cargo — o que muda entre eles é apenas preço e duração.
+                Preços, durações e permissões dos planos exibidos em /buy. Todo plano pago
+                concede o mesmo cargo; o que cada um libera da plataforma é definido no bloco
+                de permissões de cada plano.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -1321,6 +1324,16 @@ export default function SettingsPage() {
                         rows={6}
                       />
                     </div>
+                    <PlanPermissionsEditor
+                      permissoes={plano.permissoes}
+                      role={plano.role}
+                      onChange={(permissoes) => {
+                        const updated = [...planos]
+                        updated[idx] = { ...updated[idx], permissoes }
+                        setPlanos(updated)
+                      }}
+                    />
+
                     <div className="flex gap-2">
                       <Button
                         type="button"
@@ -1381,6 +1394,9 @@ export default function SettingsPage() {
                       durationMonths: 1,
                       oculto: true, // Start hidden
                       ordem: planos.length,
+                      // Nasce sem modulação: o plano novo se comporta como o
+                      // cargo até alguém decidir o contrário.
+                      permissoes: normalizePlanPermissions(null),
                       criadoEm: new Date(),
                       atualizadoEm: new Date()
                     }

@@ -5,6 +5,7 @@ import { ObjectId } from 'mongodb'
 import { User } from '@/lib/types'
 import { BancoQuestao, BancoResolucao, BancoAlternativaLetra } from '@/lib/types/banco-questoes'
 import { isPlusAccount } from '@/lib/account-tier'
+import { areaLiberada, resolverPermissoes } from '@/lib/plan-entitlements-server'
 
 export const dynamic = 'force-dynamic'
 
@@ -34,7 +35,18 @@ export async function POST(
     }
 
     const isAdmin = user.role === 'admin'
-    const isPremiumOrTrial = isPlusAccount(user.accountType) || user.accountType === 'trial'
+    // Assinar não basta: o plano precisa incluir o Banco. Quem tem um plano
+    // sem a seção cai no mesmo caminho do gratuito — resolve as questões que
+    // já desbloqueou e nada além disso.
+    const permissoes = await resolverPermissoes(db, {
+      userId: session.userId,
+      role: user.role,
+      accountType: user.accountType,
+      premiumPlanType: user.premiumPlanType as string | null,
+    })
+    const isPremiumOrTrial =
+      (isPlusAccount(user.accountType) || user.accountType === 'trial') &&
+      areaLiberada(permissoes, 'bancoQuestoes')
     const isFreeUser = !isAdmin && !isPremiumOrTrial
 
     // Verificar acesso para usuários gratuitos

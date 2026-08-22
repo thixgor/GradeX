@@ -4,6 +4,11 @@ import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { abrirQuestaoGratuita, lerAcessoAoBanco } from '@/lib/banco/acesso-servidor'
 import { restantes } from '@/lib/banco/gratuito'
+import {
+  avaliarUsoDoPlano,
+  corpoDeRecusa,
+  registrarUsoDoPlano,
+} from '@/lib/plan-entitlements-server'
 
 export const dynamic = 'force-dynamic'
 
@@ -43,6 +48,33 @@ export async function POST(_request: NextRequest, { params }: { params: { id: st
       .countDocuments({ _id: new ObjectId(id) }, { limit: 1 })
     if (existe === 0) {
       return NextResponse.json({ error: 'Questão não encontrada' }, { status: 404 })
+    }
+
+    /**
+     * Teto do plano ("X questões por dia"), quando houver.
+     *
+     * O `recurso` é o id da questão de propósito: reabrir a mesma questão
+     * dentro da janela não custa de novo. Sem isso, revisar o que já se
+     * resolveu gastaria cota, e a pessoa aprenderia a não voltar — que é o
+     * oposto do que o Banco existe para fazer.
+     */
+    if (acesso.ehAssinante) {
+      const veredicto = await avaliarUsoDoPlano(db, acesso.permissoes, 'bancoQuestoes', {
+        recurso: id,
+      })
+      if (!veredicto.permitido) {
+        return NextResponse.json(corpoDeRecusa(veredicto), { status: 403 })
+      }
+      await registrarUsoDoPlano(db, acesso.permissoes, 'bancoQuestoes', { recurso: id })
+      return NextResponse.json(
+        {
+          liberada: true,
+          plano: veredicto.limite
+            ? { limite: veredicto.limite, restante: veredicto.restante, periodo: veredicto.periodo }
+            : undefined,
+        },
+        { headers: { 'Cache-Control': 'private, no-store' } },
+      )
     }
 
     const resultado = await abrirQuestaoGratuita(db, acesso, id)

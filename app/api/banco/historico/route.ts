@@ -3,7 +3,7 @@ import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { User } from '@/lib/types'
-import { isPlusAccount } from '@/lib/account-tier'
+import { bancoLiberadoPeloPlano } from '@/lib/banco/acesso-servidor'
 
 export const dynamic = 'force-dynamic'
 
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
     }
 
-    if (user.role !== 'admin' && !isPlusAccount(user.accountType)) {
+    if (!(await bancoLiberadoPeloPlano(db, user))) {
       return NextResponse.json({
         error: 'Acesso restrito a assinantes Plus+',
         requiresPlus: true

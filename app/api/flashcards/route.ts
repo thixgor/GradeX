@@ -4,6 +4,12 @@ import { getDb } from '@/lib/mongodb'
 import { ObjectId, WithId } from 'mongodb'
 import { FlashcardDeck, FlashcardCard, FlashcardTheme, User } from '@/lib/types'
 import { getFlashcardLimits } from '@/lib/flashcard-limits'
+import {
+  avaliarUsoDoPlano,
+  corpoDeRecusa,
+  registrarUsoDoPlano,
+  resolverPermissoes,
+} from '@/lib/plan-entitlements-server'
 import { getGeminiApiKey, GEMINI_ENDPOINT } from '@/lib/gemini'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -196,22 +202,40 @@ export async function POST(request: NextRequest) {
     const isAdmin = session.role === 'admin'
     const limits = getFlashcardLimits(user.accountType, isAdmin)
 
+    // Regra do plano assinado para "Flashcards por IA". Quando ela vale, os
+    // tetos por cargo abaixo saem de cena: o admin configurou um número, e
+    // esse número precisa ser o que o aluno encontra.
+    const permissoesDoPlano = await resolverPermissoes(db, {
+      userId: session.userId,
+      role: session.role,
+      accountType: user.accountType,
+      premiumPlanType: user.premiumPlanType as string | null,
+    })
+    const veredictoDoPlano = await avaliarUsoDoPlano(db, permissoesDoPlano, 'flashcardsIa')
+    if (!veredictoDoPlano.permitido) {
+      return NextResponse.json(corpoDeRecusa(veredictoDoPlano), { status: 403 })
+    }
+    const usarTetosDoCargo = !veredictoDoPlano.aplicavel
+
     const deckCountToday = user.dailyFlashcardsGenerated || 0
-    if (deckCountToday >= limits.dailyDecks) {
+    if (usarTetosDoCargo && deckCountToday >= limits.dailyDecks) {
       return NextResponse.json({ error: 'Limite diário de flashcards atingido' }, { status: 403 })
     }
 
     const activeDecks = await decksCollection.countDocuments({ userId: session.userId, status: 'ativo' })
-    if (limits.maxActiveDecks !== null && activeDecks >= limits.maxActiveDecks) {
+    if (usarTetosDoCargo && limits.maxActiveDecks !== null && activeDecks >= limits.maxActiveDecks) {
       return NextResponse.json({ error: 'Limite de flashcards ativos atingido' }, { status: 403 })
     }
 
+    // Teto de cartões por deck continua valendo sempre: não é entitlement de
+    // plano, é o freio de custo de uma chamada à IA. Para o cargo pago ele já
+    // é infinito, então nada muda para quem assina.
     if (cardsRequested > limits.cardsPerDeck) {
       return NextResponse.json({ error: `Seu plano permite no máximo ${limits.cardsPerDeck} cartões por flashcard` }, { status: 403 })
     }
 
     const totalDecksCreated = user.totalFlashcardDecksCreated || 0
-    if (limits.totalDecksLifetime !== Infinity && totalDecksCreated >= limits.totalDecksLifetime) {
+    if (usarTetosDoCargo && limits.totalDecksLifetime !== Infinity && totalDecksCreated >= limits.totalDecksLifetime) {
       return NextResponse.json({
         error: `Limite vitalício de decks atingido (${limits.totalDecksLifetime} decks). Faça para o Plus+ para criar mais.`,
         requiresUpgrade: true,
@@ -221,7 +245,7 @@ export async function POST(request: NextRequest) {
       }, { status: 403 })
     }
 
-    if (limits.totalCardsLifetime !== Infinity) {
+    if (usarTetosDoCargo && limits.totalCardsLifetime !== Infinity) {
       const totalCardsCreated = await cardsCollection.countDocuments({ userId: session.userId })
       const cardsToCreate = Math.min(cardsRequested, limits.cardsPerDeck)
       const newTotal = totalCardsCreated + cardsToCreate
@@ -268,6 +292,10 @@ export async function POST(request: NextRequest) {
     }
 
     const deckInsert = await decksCollection.insertOne(deck)
+
+    await registrarUsoDoPlano(db, permissoesDoPlano, 'flashcardsIa', {
+      recurso: String(deckInsert.insertedId),
+    })
     const deckId = deckInsert.insertedId.toString()
 
     const cards: FlashcardCard[] = generatedCards.map((card, index) => ({

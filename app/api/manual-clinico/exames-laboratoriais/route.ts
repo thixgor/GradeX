@@ -86,7 +86,7 @@ export async function GET() {
   try {
     const [db, session] = await Promise.all([getDb(), getSession()])
     const config = await getManualClinicoConfig(db)
-    const access = await getManualClinicoAccess(db, session, config)
+    const access = await getManualClinicoAccess(db, session, config, 'exames')
 
     return NextResponse.json({
       isAuthenticated: !!session?.userId,

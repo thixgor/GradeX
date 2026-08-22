@@ -10,6 +10,12 @@ import {
 } from '@/lib/flashcard-manual'
 import { applyWatermark } from '@/lib/pdf-watermark'
 import { checkPlusDownloadAllowance, recordPlusDownload } from '@/lib/plus-guard'
+import {
+  avaliarUsoDoPlano,
+  corpoDeRecusa,
+  registrarUsoDoPlano,
+  resolverPermissoes,
+} from '@/lib/plan-entitlements-server'
 import { emailFingerprint } from '@/lib/watermark-fingerprint'
 import { flashcardPdfFileName, generateFlashcardManualPdf } from '@/lib/flashcard-manual-pdf'
 import { checkRateLimitSync } from '@/lib/api-security'
@@ -64,7 +70,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
     const user = await db.collection<User>('users').findOne(
       { _id: new ObjectId(session.userId) },
-      { projection: { name: 1, email: 1, accountType: 1, secondaryRole: 1, role: 1 } }
+      { projection: { name: 1, email: 1, accountType: 1, secondaryRole: 1, role: 1, premiumPlanType: 1 } }
     )
     if (!user) return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
 
@@ -104,6 +110,23 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       )
     }
 
+    // Um deck da loja é um material como qualquer outro — o próprio pedido do
+    // produto trata assim. Então ele responde à permissão "Materiais" do
+    // plano, e não a uma regra própria: dois lugares para o mesmo conceito
+    // acabariam divergindo.
+    const permissoesDoPlano = await resolverPermissoes(db, {
+      userId: session.userId,
+      role: user.role,
+      accountType: user.accountType,
+      premiumPlanType: user.premiumPlanType as string | null,
+    })
+    const veredictoDoPlano = await avaliarUsoDoPlano(db, permissoesDoPlano, 'materiais', {
+      recurso: `flashcard_deck:${String(deck._id)}`,
+    })
+    if (!veredictoDoPlano.permitido) {
+      return NextResponse.json(corpoDeRecusa(veredictoDoPlano), { status: 403 })
+    }
+
     // Plus+ Guard: cota antiabuso de downloads.
     const allowance = await checkPlusDownloadAllowance({ userId: session.userId, user, isAdmin, db })
     if (!allowance.allowed) {
@@ -140,6 +163,10 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     db.collection(FLASHCARD_MANUAL_COLLECTIONS.decks)
       .updateOne({ _id: deck._id }, { $inc: { pdfDownloadCount: 1 }, $set: { updatedAt: new Date() } })
       .catch(() => {})
+
+    await registrarUsoDoPlano(db, permissoesDoPlano, 'materiais', {
+      recurso: `flashcard_deck:${String(deck._id)}`,
+    })
 
     recordPlusDownload({
       userId: session.userId,

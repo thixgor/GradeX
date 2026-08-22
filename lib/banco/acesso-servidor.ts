@@ -6,6 +6,11 @@ import {
   tentarAbrir,
   type EstadoGratuito,
 } from '@/lib/banco/gratuito'
+import {
+  areaLiberada,
+  resolverPermissoes,
+  type ContextoDePermissoes,
+} from '@/lib/plan-entitlements-server'
 
 /**
  * Quem pode ver o quê no Banco de Questões.
@@ -22,6 +27,12 @@ export interface AcessoAoBanco {
   /** Sem assinatura e sem cargo — é quem vive do saldo gratuito. */
   ehGratuito: boolean
   gratuito: EstadoGratuito
+  /**
+   * Permissões do plano assinado. Quem paga um plano que não inclui o Banco
+   * não é assinante para efeito desta seção — cai no saldo gratuito, que é o
+   * piso de todo mundo, em vez de perder a seção por completo.
+   */
+  permissoes: ContextoDePermissoes
 }
 
 /**
@@ -35,6 +46,7 @@ export interface AcessoAoBanco {
 const CAMPOS_DE_ACESSO = {
   role: 1,
   accountType: 1,
+  premiumPlanType: 1,
   bancoQuestoesLiberadas: 1,
   freeQuestionsByPeriod: 1,
 } as const
@@ -46,7 +58,15 @@ export async function lerAcessoAoBanco(db: Db, userId: string): Promise<AcessoAo
   if (!usuario) return null
 
   const ehAdmin = usuario.role === 'admin'
-  const ehAssinante = isPlusAccount(usuario.accountType) || usuario.accountType === 'trial'
+  const permissoes = await resolverPermissoes(db, {
+    userId,
+    role: usuario.role,
+    accountType: usuario.accountType,
+    premiumPlanType: usuario.premiumPlanType as string | null,
+  })
+
+  const cargoDeAssinante = isPlusAccount(usuario.accountType) || usuario.accountType === 'trial'
+  const ehAssinante = cargoDeAssinante && areaLiberada(permissoes, 'bancoQuestoes')
 
   return {
     usuario,
@@ -54,6 +74,7 @@ export async function lerAcessoAoBanco(db: Db, userId: string): Promise<AcessoAo
     ehAssinante,
     ehGratuito: !ehAdmin && !ehAssinante,
     gratuito: lerEstadoGratuito(usuario as any),
+    permissoes,
   }
 }
 
@@ -109,4 +130,27 @@ export async function abrirQuestaoGratuita(
   }
 
   return { liberada: true, gratuito: acesso.gratuito }
+}
+
+/**
+ * O Banco de Questões faz parte do plano desta conta?
+ *
+ * Substitui o `isPlusAccount(user.accountType)` solto que as rotas da seção
+ * usavam: ter o cargo pago deixou de ser resposta suficiente, porque um plano
+ * pode conceder o cargo sem incluir o Banco. Admin passa sempre.
+ */
+export async function bancoLiberadoPeloPlano(
+  db: Db,
+  usuario: Pick<User, 'role' | 'accountType' | 'premiumPlanType'> & { _id?: unknown },
+): Promise<boolean> {
+  if (usuario.role === 'admin') return true
+  if (!isPlusAccount(usuario.accountType)) return false
+
+  const permissoes = await resolverPermissoes(db, {
+    userId: String(usuario._id || ''),
+    role: usuario.role,
+    accountType: usuario.accountType,
+    premiumPlanType: usuario.premiumPlanType as string | null,
+  })
+  return areaLiberada(permissoes, 'bancoQuestoes')
 }

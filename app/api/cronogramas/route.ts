@@ -2,6 +2,12 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
 import { getCronogramasLimit } from '@/lib/tier-limits'
+import {
+  avaliarUsoDoPlano,
+  corpoDeRecusa,
+  registrarUsoDoPlano,
+  resolverPermissoes,
+} from '@/lib/plan-entitlements-server'
 import { ObjectId } from 'mongodb'
 
 export const dynamic = 'force-dynamic'
@@ -63,20 +69,37 @@ export async function POST(req: NextRequest) {
 
     const isAdmin = session.role === 'admin'
     const accountType = user.accountType || 'gratuito'
-    const cronogramasLimit = getCronogramasLimit(accountType)
 
-    const existingCronogramas = await db
-      .collection('cronogramas')
-      .countDocuments({ usuarioId: session.userId })
+    // Permissões do plano assinado. Quando o plano modula esta área, a regra
+    // dele responde sozinha — somar com o teto do cargo daria duas contas
+    // diferentes para o mesmo aluno.
+    const permissoes = await resolverPermissoes(db, {
+      userId: session.userId,
+      role: session.role,
+      accountType,
+      premiumPlanType: user.premiumPlanType,
+    })
+    const veredicto = await avaliarUsoDoPlano(db, permissoes, 'cronogramas')
+    if (!veredicto.permitido) {
+      return NextResponse.json(corpoDeRecusa(veredicto), { status: 403 })
+    }
 
-    if (!isAdmin && cronogramasLimit !== Infinity && existingCronogramas >= cronogramasLimit) {
-      return NextResponse.json({
-        error: `Limite de cronogramas atingido (${cronogramasLimit} no total). Faça para o Plus+ para criar mais cronogramas.`,
-        requiresUpgrade: true,
-        upgradeUrl: '/buy',
-        limit: cronogramasLimit,
-        used: existingCronogramas
-      }, { status: 403 })
+    if (!veredicto.aplicavel) {
+      const cronogramasLimit = getCronogramasLimit(accountType)
+
+      const existingCronogramas = await db
+        .collection('cronogramas')
+        .countDocuments({ usuarioId: session.userId })
+
+      if (!isAdmin && cronogramasLimit !== Infinity && existingCronogramas >= cronogramasLimit) {
+        return NextResponse.json({
+          error: `Limite de cronogramas atingido (${cronogramasLimit} no total). Faça para o Plus+ para criar mais cronogramas.`,
+          requiresUpgrade: true,
+          upgradeUrl: '/buy',
+          limit: cronogramasLimit,
+          used: existingCronogramas
+        }, { status: 403 })
+      }
     }
 
     const cronograma = {
@@ -93,6 +116,10 @@ export async function POST(req: NextRequest) {
     }
 
     const result = await db.collection('cronogramas').insertOne(cronograma)
+
+    await registrarUsoDoPlano(db, permissoes, 'cronogramas', {
+      recurso: String(result.insertedId),
+    })
 
     // Atualizar contador total do usuário
     await usersCollection.updateOne(

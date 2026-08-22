@@ -14,6 +14,7 @@ import { CoverImage } from '@/components/cover-image'
 import { FileUpload } from '@/components/file-upload'
 import { PremiumPdfCtaModal } from '@/components/premium-pdf-cta-modal'
 import { canDownloadExamPdf } from '@/lib/tier-limits'
+import { consumirCotaDoPlano } from '@/lib/plan-consume-client'
 import { Exam } from '@/lib/types'
 import { formatDate } from '@/lib/utils'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
@@ -188,6 +189,10 @@ function ProvasContent() {
   const [pdfLoading, setPdfLoading] = useState<string | null>(null)
   const [groupPdfProgress, setGroupPdfProgress] = useState<{ done: number; total: number; label: string } | null>(null)
   const [showPdfCta, setShowPdfCta] = useState(false)
+  // Recusa vinda do teto do plano ("15 downloads por dia"). É diferente do CTA
+  // de upgrade: quem bate no teto já assina, e mandá-lo para /buy seria
+  // oferecer o que ele acabou de comprar.
+  const [planoPdfAviso, setPlanoPdfAviso] = useState<string | null>(null)
   const [pdfCtaExam, setPdfCtaExam] = useState<Exam | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | 'available' | 'finished' | 'personal' | 'general'>('all')
@@ -553,6 +558,12 @@ function ProvasContent() {
       setShowPdfCta(true)
       return
     }
+    // O pacote do grupo é um download só, e é assim que ele conta na cota.
+    const cota = await consumirCotaDoPlano('provasPdf', `grupo:${groupName}:${type}`)
+    if (!cota.permitido) {
+      setPlanoPdfAviso(cota.mensagem || 'Limite de downloads do seu plano atingido.')
+      return
+    }
     const labels = { exam: 'Provas', 'with-answers': 'Provas + Gabarito Comentado', gabarito: 'Gabaritos' }
     setGroupPdfProgress({ done: 0, total: groupExams.length, label: labels[type] })
     try {
@@ -575,6 +586,12 @@ function ProvasContent() {
       setPdfModalExam(null)
       setPdfCtaExam(exam)
       setShowPdfCta(true)
+      return
+    }
+    const cota = await consumirCotaDoPlano('provasPdf', `${(exam as any)._id}:${type}`)
+    if (!cota.permitido) {
+      setPdfModalExam(null)
+      setPlanoPdfAviso(cota.mensagem || 'Limite de downloads do seu plano atingido.')
       return
     }
     setPdfLoading(type)
@@ -1714,6 +1731,23 @@ function ProvasContent() {
       {renderEditGroupModal()}
       {renderPdfModal()}
       <PremiumPdfCtaModal open={showPdfCta} onClose={() => setShowPdfCta(false)} />
+
+      {/* Teto de downloads do plano. Fecha sozinho no clique — não há ação a
+          tomar além de esperar a janela renovar. */}
+      {planoPdfAviso && (
+        <div
+          role="alert"
+          onClick={() => setPlanoPdfAviso(null)}
+          className="fixed bottom-6 left-1/2 z-[110] -translate-x-1/2 cursor-pointer rounded-2xl border border-amber-300 bg-amber-50 px-5 py-3.5 shadow-2xl dark:border-amber-800 dark:bg-amber-950 max-w-md"
+        >
+          <p className="text-sm font-semibold text-amber-900 dark:text-amber-100">
+            Limite do seu plano
+          </p>
+          <p className="mt-0.5 text-xs leading-snug text-amber-800 dark:text-amber-200">
+            {planoPdfAviso}
+          </p>
+        </div>
+      )}
 
       {/* Single PDF generation toast */}
       {pdfLoading && (

@@ -180,7 +180,9 @@ async function consultarBanco(sessao: TokenPayload | null) {
     try {
       const db = await getDb()
       const config = await getManualClinicoConfig(db)
-      const estado = await getManualClinicoAccess(db, sessao, config)
+      // 'histologia' é o módulo deste manual dentro das permissões do plano:
+      // um plano pode incluir o Manual Clínico sem incluir a Histologia.
+      const estado = await getManualClinicoAccess(db, sessao, config, 'histologia')
       return { estado, produto: serializeManualClinicoProduct(config) }
     } catch (erro) {
       ultimoErro = erro

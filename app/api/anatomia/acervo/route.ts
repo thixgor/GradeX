@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
   try {
     const [db, session] = await Promise.all([getDb(), getSession()])
     const config = await getManualClinicoConfig(db)
-    liberado = (await getManualClinicoAccess(db, session, config)).hasFullAccess
+    liberado = (await getManualClinicoAccess(db, session, config, 'anatomia3d')).hasFullAccess
   } catch (error) {
     console.error('Erro ao verificar acesso ao acervo do Atlas:', error)
   }

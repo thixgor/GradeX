@@ -104,7 +104,7 @@ async function autorizar() {
   }
   const db = await getDb()
   const config = await getManualClinicoConfig(db)
-  const access = await getManualClinicoAccess(db, session, config)
+  const access = await getManualClinicoAccess(db, session, config, 'radiologia')
   if (!access.hasFullAccess) {
     return { erro: NextResponse.json({ error: 'Acesso não liberado' }, { status: 403 }) }
   }

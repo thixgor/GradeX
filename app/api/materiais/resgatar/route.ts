@@ -8,6 +8,12 @@ import { audit } from '@/lib/payments/audit'
 import { isPlusAccount, PLUS_LABEL } from '@/lib/account-tier'
 import { checkPlusDownloadAllowance, recordPlusDownload } from '@/lib/plus-guard'
 import { PLUS_CLAIM_REVOKED_STATUS } from '@/lib/plus-claims'
+import {
+  avaliarUsoDoPlano,
+  corpoDeRecusa,
+  registrarUsoDoPlano,
+  resolverPermissoes,
+} from '@/lib/plan-entitlements-server'
 import type { MaterialPurchase, User } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -69,7 +75,7 @@ export async function POST(request: NextRequest) {
 
   const user = await db.collection<User>('users').findOne(
     { _id: new ObjectId(session.userId) as any },
-    { projection: { accountType: 1, name: 1, email: 1, premiumExpiresAt: 1, plusDownloadsBlocked: 1 } },
+    { projection: { accountType: 1, name: 1, email: 1, premiumExpiresAt: 1, plusDownloadsBlocked: 1, premiumPlanType: 1, role: 1 } },
   )
   if (!user) return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
 
@@ -79,6 +85,16 @@ export async function POST(request: NextRequest) {
       { status: 403 },
     )
   }
+
+  // O acervo faz parte deste plano? A área cobre material e pacote — e também
+  // os flashcards manuais vendidos na loja, que são material como qualquer
+  // outro. A cota é avaliada mais abaixo, junto do Plus+ Guard.
+  const permissoesDoPlano = await resolverPermissoes(db, {
+    userId: session.userId,
+    role: user.role,
+    accountType: user.accountType,
+    premiumPlanType: user.premiumPlanType as string | null,
+  })
 
   // Assinatura vencida ainda carrega o cargo até o cron rebaixar — não pode
   // resgatar nesse intervalo.
@@ -134,6 +150,13 @@ export async function POST(request: NextRequest) {
   // O resgate é o evento que o Plus+ Guard contabiliza — é aqui que o acervo
   // sai da plataforma para a conta. Baixar depois o que já é seu não consome
   // cota de novo.
+  const veredictoDoPlano = await avaliarUsoDoPlano(db, permissoesDoPlano, 'materiais', {
+    recurso: `${itemType}:${itemId}`,
+  })
+  if (!veredictoDoPlano.permitido) {
+    return NextResponse.json(corpoDeRecusa(veredictoDoPlano), { status: 403 })
+  }
+
   const allowance = await checkPlusDownloadAllowance({ userId: session.userId, user, db })
   if (!allowance.allowed) {
     return NextResponse.json(
@@ -163,6 +186,10 @@ export async function POST(request: NextRequest) {
 
   await db.collection<MaterialPurchase>('material_purchases').insertOne(purchase as any)
   await db.collection(collection).updateOne({ _id: new ObjectId(itemId) }, { $inc: { downloadCount: 1 } })
+
+  await registrarUsoDoPlano(db, permissoesDoPlano, 'materiais', {
+    recurso: `${itemType}:${itemId}`,
+  })
 
   recordPlusDownload({
     userId: session.userId,

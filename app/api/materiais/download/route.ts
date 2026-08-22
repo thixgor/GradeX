@@ -24,6 +24,12 @@ import { isValidObjectId } from '@/lib/api-security'
 import { fetchMaterialPdfBytes } from '@/lib/material-pdf-viewer'
 import { applyWatermark } from '@/lib/pdf-watermark'
 import { checkPlusDownloadAllowance, recordPlusDownload } from '@/lib/plus-guard'
+import {
+  avaliarUsoDoPlano,
+  corpoDeRecusa,
+  registrarUsoDoPlano,
+  resolverPermissoes,
+} from '@/lib/plan-entitlements-server'
 import { matchesAccessGroups, isPlusAccount } from '@/lib/account-tier'
 import { emailFingerprint } from '@/lib/watermark-fingerprint'
 import { activeAccessFilter, summarizeTimedAccess } from '@/lib/material-timed-access'
@@ -119,7 +125,7 @@ async function createMaterialPdfDownloadResponse(request: NextRequest, materialI
     const sessionUser = !isAdmin
       ? await db.collection('users').findOne(
           { _id: new ObjectId(session.userId) },
-          { projection: { accountType: 1, secondaryRole: 1 } }
+          { projection: { accountType: 1, secondaryRole: 1, premiumPlanType: 1 } }
         )
       : null
 
@@ -243,6 +249,32 @@ async function createMaterialPdfDownloadResponse(request: NextRequest, materialI
       )
     }
 
+    // ── 5a-bis. Permissão de "Materiais" no plano assinado ────────────────
+    // Duas coisas diferentes acontecem aqui:
+    //
+    //  - o plano pode não incluir o acervo. Quem tem o item por COMPRA avulsa
+    //    baixa assim mesmo (é receita, não benefício de assinatura); quem o
+    //    tem por resgate da assinatura (`source: 'plus'`), ou por grupo, não;
+    //  - o teto de downloads do plano vale para o que ainda não é da conta —
+    //    o resgate já cobrou a sua parte, e recobrar na releitura seria
+    //    limitar quantas vezes a pessoa abre o próprio material.
+    const permissoesDoPlano = await resolverPermissoes(db, {
+      userId: session.userId,
+      role: session.role,
+      accountType: sessionUser?.accountType,
+      premiumPlanType: (sessionUser as any)?.premiumPlanType,
+    })
+    const acessoVeioDaAssinatura =
+      !purchaseForAudit || (purchaseForAudit as any).source === 'plus'
+    if (acessoVeioDaAssinatura) {
+      const veredictoDoPlano = await avaliarUsoDoPlano(db, permissoesDoPlano, 'materiais', {
+        recurso: `material:${materialId}`,
+      })
+      if (!veredictoDoPlano.permitido) {
+        return NextResponse.json(corpoDeRecusa(veredictoDoPlano), { status: 403 })
+      }
+    }
+
     // ── 5b. Plus+ Guard: cota antiabuso ───────────────────────────────────
     // O resgate (POST /api/materiais/resgatar) já consumiu cota ao trazer o
     // item para a conta. Baixar o que já é seu não consome de novo — a cota
@@ -310,6 +342,11 @@ async function createMaterialPdfDownloadResponse(request: NextRequest, materialI
     // O registro no Plus+ Guard é o que sustenta a cota e serve de prova de
     // consumo se o usuário abrir uma disputa de estorno depois.
     const ip = request.headers.get('x-forwarded-for')?.split(',')[0] || 'unknown'
+    if (!ownsItem) {
+      await registrarUsoDoPlano(db, permissoesDoPlano, 'materiais', {
+        recurso: `material:${materialId}`,
+      })
+    }
     Promise.all([
       recordPlusDownload({
         userId: session.userId,

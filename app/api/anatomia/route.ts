@@ -129,7 +129,7 @@ export async function GET() {
   try {
     const [db, session] = await Promise.all([getDb(), getSession()])
     const config = await getManualClinicoConfig(db)
-    const estado = await getManualClinicoAccess(db, session, config)
+    const estado = await getManualClinicoAccess(db, session, config, 'anatomia3d')
 
     isAuthenticated = !!session?.userId
     access = {

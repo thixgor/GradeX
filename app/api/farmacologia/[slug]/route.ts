@@ -44,7 +44,7 @@ export async function GET(
 
     const [config, access] = await Promise.all([
       getManualClinicoConfig(db),
-      getManualClinicoAccess(db, session),
+      getManualClinicoAccess(db, session, undefined, 'farmacologia'),
     ])
 
     const unlocked = access.hasFullAccess
