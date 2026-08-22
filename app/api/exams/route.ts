@@ -4,6 +4,7 @@ import { getSession } from '@/lib/auth'
 import { Exam } from '@/lib/types'
 import { getPersonalExamsLifetimeLimit, getPersonalExamsQuota } from '@/lib/tier-limits'
 import { ObjectId } from 'mongodb'
+import { prepararProvaParaEntrega } from '@/lib/provas/sanitizar-prova'
 
 export const dynamic = 'force-dynamic'
 
@@ -117,6 +118,25 @@ export async function GET(request: NextRequest) {
     const cursor = examsCollection.find(query, projecaoEscolhida).sort({ createdAt: -1 })
     const exams = await (limit ? cursor.limit(limit) : cursor).toArray()
 
+    /*
+     * Sem `resumo` nem `campos=lista`, esta rota devolve o documento completo de
+     * TODAS as provas visíveis — e "completo" inclui `questions[]` com o
+     * gabarito de cada uma. Era o dump do catálogo inteiro numa requisição só,
+     * para qualquer conta autenticada.
+     *
+     * O gabarito é preservado exatamente onde faz falta — prova de treino e
+     * prova pessoal de quem a criou, decidido por `podeVerGabarito` —, e some do
+     * resto. `jaSubmeteu` fica em falso de propósito: a listagem não precisa
+     * saber quem entregou o quê, e quem quer rever a prova entregue abre
+     * `/api/exams/[id]`, que faz essa conta corretamente.
+     */
+    const contexto = {
+      userId: session.userId,
+      isAdmin: session.role === 'admin',
+      jaSubmeteu: false,
+    }
+    const provasParaEntrega = exams.map((prova) => prepararProvaParaEntrega(prova, contexto))
+
     // Cache privado curto: lista pessoal de provas raramente muda em
     // alguns segundos. SWR mantém UI responsiva sem regerar imediato.
     const headers = new Headers({
@@ -124,7 +144,7 @@ export async function GET(request: NextRequest) {
       'Content-Type': 'application/json',
     })
 
-    return NextResponse.json({ exams }, { headers })
+    return NextResponse.json({ exams: provasParaEntrega }, { headers })
   } catch (error) {
     console.error('Get exams error:', error)
     return NextResponse.json(

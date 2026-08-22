@@ -3,6 +3,7 @@ import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
 import { Exam } from '@/lib/types'
 import { ObjectId } from 'mongodb'
+import { prepararProvaParaEntrega, podeVerGabarito } from '@/lib/provas/sanitizar-prova'
 
 export const dynamic = 'force-dynamic'
 
@@ -21,6 +22,10 @@ export async function GET(
     const db = await getDb()
     const examsCollection = db.collection<Exam>('exams')
 
+    if (!ObjectId.isValid(id)) {
+      return NextResponse.json({ error: 'Prova não encontrada' }, { status: 404 })
+    }
+
     const exam = await examsCollection.findOne({ _id: new ObjectId(id) })
 
     if (!exam) {
@@ -37,7 +42,30 @@ export async function GET(
       return NextResponse.json({ error: 'Prova não encontrada' }, { status: 404 })
     }
 
-    return NextResponse.json({ exam })
+    /*
+     * O gabarito só sai daqui para quem já pode vê-lo.
+     *
+     * Numa prova avaliativa, `alternatives[].isCorrect` e `explanation` iam no
+     * mesmo JSON que o enunciado — o aluno abria o console no meio da prova e
+     * lia as respostas em uma linha. Ver `lib/provas/sanitizar-prova.ts`.
+     *
+     * A consulta de submissão só roda quando ainda faz diferença: para admin,
+     * criador, prova de treino/pessoal ou prova já encerrada o veredito é
+     * conhecido sem ir ao banco, e uma prova aberta é o único caso que precisa
+     * saber se esta pessoa já entregou.
+     */
+    const contextoBase = { userId: session.userId, isAdmin: session.role === 'admin' }
+
+    let jaSubmeteu = false
+    if (!podeVerGabarito(exam, contextoBase)) {
+      jaSubmeteu = !!(await db
+        .collection('submissions')
+        .findOne({ examId: id, userId: session.userId }, { projection: { _id: 1 } }))
+    }
+
+    return NextResponse.json({
+      exam: prepararProvaParaEntrega(exam, { ...contextoBase, jaSubmeteu }),
+    })
   } catch (error) {
     console.error('Get exam error:', error)
     return NextResponse.json(
