@@ -41,7 +41,7 @@
 
 import { Db, ObjectId } from 'mongodb'
 import { getDb } from './mongodb'
-import { isPlusAccount, normalizeAccountType } from './account-tier'
+import { isPaidAccount, isPlusAccount, normalizeAccountType } from './account-tier'
 import type {
   PlusDownloadKind,
   PlusDownloadLog,
@@ -215,9 +215,17 @@ export async function checkPlusDownloadAllowance({
     }
   }
 
-  // As cotas do Guard só valem para assinantes Plus+. Gratuito/trial já são
-  // barrados antes, pelos limites de plano.
-  if (!isPlusAccount(userDoc.accountType)) return { allowed: true }
+  /*
+   * As cotas do Guard valem para quem paga — Plus+ e Quest. Gratuito/trial já
+   * são barrados antes, pelos limites de plano.
+   *
+   * Quest entrou aqui de propósito: ele vende só o Banco de Questões, mas o
+   * risco de "assina, extrai tudo, pede reembolso no dia 6" é o mesmo — só
+   * que sobre um acervo menor. A cota é a mesma do Plus+ porque o padrão de
+   * uso legítimo (alguns downloads por dia numa semana de prova) não muda
+   * com o tamanho do produto; o que protege é o teto, não o preço pago.
+   */
+  if (!isPaidAccount(userDoc.accountType)) return { allowed: true }
 
   const inWindow = isInRefundWindow(userDoc as User, settings)
   const quota = inWindow ? settings.trialWindow : settings.steadyState
@@ -383,7 +391,8 @@ export async function evaluatePlusRisk(
     { _id: new ObjectId(userId) as any },
     { projection: { accountType: 1, premiumActivatedAt: 1, plusDownloadsBlocked: 1 } },
   )
-  if (!user || !isPlusAccount(user.accountType)) return 0
+  // Mesmo critério de `checkPlusDownloadAllowance`: Quest também acumula risco.
+  if (!user || !isPaidAccount(user.accountType)) return 0
 
   const logs = database.collection<PlusDownloadLog>('plus_download_logs')
   const now = Date.now()

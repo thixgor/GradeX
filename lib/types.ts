@@ -1195,6 +1195,8 @@ export type PlusDownloadKind =
   | 'aula_pdf'
   | 'mapa_mental'
   | 'cronograma'
+  /** Exportação de lista do Banco de Questões em PDF — a superfície de download do Quest. */
+  | 'banco_lista_pdf'
   | 'outro'
 
 /** Registro server-side de cada download liberado (prova de consumo). */

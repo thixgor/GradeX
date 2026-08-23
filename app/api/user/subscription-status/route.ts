@@ -4,7 +4,7 @@ import { getDb } from '@/lib/mongodb'
 import { User } from '@/lib/types'
 import { ObjectId } from 'mongodb'
 import type { SubscriptionRecord } from '@/lib/types'
-import { isPlusAccount } from '@/lib/account-tier'
+import { getAccountTypeLabel, isPaidAccount, normalizeAccountType } from '@/lib/account-tier'
 
 export const dynamic = 'force-dynamic'
 
@@ -33,7 +33,13 @@ export async function GET(request: NextRequest) {
     const now = new Date()
     let activeSubscription = null
 
-    if (isPlusAccount(user.accountType)) {
+    /*
+     * Cobre Plus+ e Quest — os dois cargos pagos. Antes disto checava só
+     * `isPlusAccount`, e um assinante Quest chegava aqui sem `activeSubscription`
+     * nenhuma: a tela de compra (`/buy`) achava que ele não tinha plano e
+     * oferecia o grid inteiro de novo, em vez do aviso "você já tem um plano".
+     */
+    if (isPaidAccount(user.accountType)) {
       let expiresAt: Date | null = null
 
       if (user.premiumExpiresAt && new Date(user.premiumExpiresAt) > now) {
@@ -49,8 +55,13 @@ export async function GET(request: NextRequest) {
       }
 
       if (expiresAt) {
+        const cargo = normalizeAccountType(user.accountType)
         activeSubscription = {
-          type: 'premium',
+          // Cargo canônico ('plus' | 'quest'), não mais um rótulo fixo — o
+          // cliente decide como mostrar sem precisar adivinhar qual produto foi
+          // comprado.
+          type: cargo,
+          label: getAccountTypeLabel(cargo),
           planType: user.premiumPlanType,
           expiresAt,
           activatedAt: user.premiumActivatedAt,
@@ -69,6 +80,7 @@ export async function GET(request: NextRequest) {
       if (expiresAt) {
         activeSubscription = {
           type: 'trial',
+          label: 'Trial',
           planType: user.trialPlanType,
           expiresAt,
           activatedAt: user.trialActivatedAt,

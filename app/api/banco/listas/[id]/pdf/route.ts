@@ -5,6 +5,7 @@ import { ObjectId } from 'mongodb'
 import { User } from '@/lib/types'
 import { jsPDF } from 'jspdf'
 import { bancoLiberadoPeloPlano } from '@/lib/banco/acesso-servidor'
+import { checkPlusDownloadAllowance, recordPlusDownload } from '@/lib/plus-guard'
 import { absoluteUrl } from '@/lib/seo'
 
 export const dynamic = 'force-dynamic'
@@ -80,6 +81,30 @@ export async function GET(
         error: 'Acesso restrito a assinantes Plus+',
         requiresPlus: true
       }, { status: 403 })
+    }
+
+    /*
+     * Cota antiabuso do Plus+ Guard.
+     *
+     * Esta rota entrega o conteúdo inteiro de uma lista — enunciado, gabarito
+     * e explicação — num único PDF, sem marca d'água. É a superfície de
+     * download mais direta do Banco de Questões, e ficava fora do Guard: nem
+     * Plus+ nem Quest tinham cota aqui. Pouco importava enquanto o Banco era
+     * um item a mais dentro do Plus+; agora que o Quest vende exatamente este
+     * conteúdo sozinho, "assina, exporta o banco inteiro em listas, pede
+     * reembolso no dia 6" é o mesmo roteiro que o Guard existe para barrar.
+     */
+    const isAdmin = user.role === 'admin'
+    const allowance = await checkPlusDownloadAllowance({ userId: session.userId, user, isAdmin, db })
+    if (!allowance.allowed) {
+      return NextResponse.json(
+        {
+          error: allowance.message || 'Limite de downloads atingido.',
+          reason: allowance.reason,
+          retryAt: allowance.retryAt,
+        },
+        { status: 429 }
+      )
     }
 
     // Buscar a lista
@@ -640,6 +665,22 @@ export async function GET(
 
     // Gerar PDF como buffer
     const pdfBuffer = Buffer.from(doc.output('arraybuffer'))
+
+    // Registro do Guard: sustenta a cota e é a prova de consumo numa disputa
+    // de estorno. Fire-and-forget — o PDF já está pronto, e uma falha aqui
+    // não pode transformar em erro algo que o usuário já recebeu.
+    recordPlusDownload({
+      userId: session.userId,
+      userEmail: user.email,
+      userName: user.name,
+      accountType: user.accountType,
+      kind: 'banco_lista_pdf',
+      resourceId: id,
+      resourceTitle: lista.nome,
+      ip: request.headers.get('x-forwarded-for')?.split(',')[0] || 'unknown',
+      userAgent: request.headers.get('user-agent') || undefined,
+      db,
+    }).catch((e) => console.error('[banco-lista-pdf] falha ao registrar no Guard:', e))
 
     // Retornar o PDF
     return new NextResponse(pdfBuffer, {

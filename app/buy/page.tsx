@@ -111,7 +111,7 @@ function getPlanMonthly(plan: Plan): string | null {
 
 export default function BuyPage() {
   return (
-    <AppShell allowGuest headerTitle="Plus+" headerSubtitle="Assinatura DomineAqui">
+    <AppShell allowGuest headerTitle="Planos" headerSubtitle="Assinaturas DomineAqui">
       <BuyContent />
     </AppShell>
   )
@@ -244,6 +244,14 @@ function BuyContent() {
     [plans]
   )
 
+  // O nome do plano comprado, para o banner de sucesso. `successPlan` guarda
+  // o `id` (o `tipo` do plano no catálogo) — sem isso o banner dizia sempre
+  // "Plus+ ativado", mesmo quando o produto comprado era o Quest.
+  const successPlanName = useMemo(
+    () => plans.find((p) => p.id === successPlan)?.name,
+    [plans, successPlan]
+  )
+
   return (
     <div className="surface-page min-h-full">
       {/* Compact top bar */}
@@ -258,8 +266,8 @@ function BuyContent() {
             <ArrowLeft className="h-4 w-4" />
           </button>
           <div className="min-w-0 flex-1">
-            <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-secondary">Plus+</p>
-            <p className="truncate text-sm font-semibold text-foreground sm:hidden">Ative seu Plus+</p>
+            <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-secondary">Planos</p>
+            <p className="truncate text-sm font-semibold text-foreground sm:hidden">Escolha seu plano</p>
           </div>
           <span className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1.5 text-[11px] font-semibold text-muted-foreground">
             <Lock className="h-3 w-3 text-primary" /> Checkout seguro
@@ -290,7 +298,7 @@ function BuyContent() {
               <span className="text-primary"> e chegar na prova no piloto automático.</span>
             </h1>
             <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-              Ative o Plus+. Comece a treinar no ritmo de quem passa —
+              Escolha seu plano. Comece a treinar no ritmo de quem passa —
               sem planilha, sem caos, sem enrolação.
             </p>
             <div className="mt-5 flex flex-wrap items-center justify-center gap-3 text-xs font-semibold text-muted-foreground">
@@ -315,7 +323,7 @@ function BuyContent() {
             <div className="min-w-0 flex-1">
               <p className="font-heading text-lg font-semibold text-foreground">Pagamento aprovado</p>
               <p className="mt-1 text-sm text-muted-foreground">
-                Plus+ ativado{successPlan ? ` (${successPlan})` : ''}. Bora dominar.
+                {successPlanName ? `${successPlanName} ativado` : 'Plano ativado'}. Bora dominar.
               </p>
               <button
                 type="button"
@@ -334,7 +342,7 @@ function BuyContent() {
             <div className="min-w-0 flex-1">
               <p className="font-semibold text-foreground">Você já tem um plano ativo</p>
               <p className="mt-1 text-sm text-muted-foreground">
-                {sub.type === 'trial' ? 'Trial' : 'Plus+'}
+                {sub.label || (sub.type === 'trial' ? 'Trial' : 'Plus+')}
                 {sub.planType ? ` (${sub.planType})` : ''}
                 {' · '}
                 {new Date(sub.expiresAt).getFullYear() >= 9999 ? (
@@ -390,7 +398,7 @@ function BuyContent() {
                 <div>
                   <p className="editorial-mark mb-1">Acesso</p>
                   <h2 className="font-heading text-xl font-semibold text-foreground sm:text-2xl">
-                    Uma decisão. Acesso total.
+                    Escolha seu plano.
                   </h2>
                 </div>
               </div>
@@ -556,7 +564,7 @@ function BuyContent() {
                             'Abrindo checkout…'
                           ) : (
                             <>
-                              Quero acesso total
+                              Quero este plano
                               <ChevronRight className="h-4 w-4" />
                             </>
                           )}
@@ -656,7 +664,7 @@ function BuyContent() {
               </span>
             </span>
             <span className="inline-flex items-center gap-1 text-sm font-bold">
-              Quero acesso total <ChevronRight className="h-4 w-4" />
+              Quero este plano <ChevronRight className="h-4 w-4" />
             </span>
           </button>
         </div>
