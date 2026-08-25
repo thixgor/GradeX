@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useMemo, useRef, useTransition } from 'react'
+import { Suspense, useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { AnimatePresence } from 'framer-motion'
 import {
@@ -61,14 +61,24 @@ import {
   DEFAULT_PUBLIC_METRIC_SETTINGS,
   type PublicMetricSettings,
 } from '@/lib/display-settings'
+import { SectionSkeleton } from '@/components/section-skeleton'
 import { useMaterialCart } from '@/context/MaterialCartContext'
 import { Product3DCard, type Product3DCardData } from '@/components/shop/product-3d-card'
 
 type PhysicalProductCard = Product3DCardData
 
+/**
+ * Resposta do catálogo para uma consulta (busca + filtro de preço).
+ *
+ * **Sem recorte de pasta de propósito.** `/api/materiais` sem `folderId`
+ * devolve o acervo inteiro — que é exatamente o que a raiz de /materiais já
+ * pedia. Guardando esse retorno uma vez, entrar numa pasta deixa de ser uma ida
+ * ao servidor e vira um filtro em memória: era daí que vinha o "cliquei na
+ * pasta e não aconteceu nada por um tempo".
+ */
 interface BrowseSnapshot {
-  materials: Material[]
-  folders: Folder[]
+  /** Acervo completo da consulta, sem filtro de pasta. */
+  catalog: Material[]
   allFolders: Folder[]
   packages: MaterialPackage[]
   purchasedIds: string[]
@@ -76,8 +86,6 @@ interface BrowseSnapshot {
   userGroups: string[]
   isAuthenticated: boolean
 }
-
-const ROOT_FOLDER_KEY = 'root'
 
 /** Quantos cards a grade revela por vez. Ver `revealMore`. */
 const PAGE_SIZE = 24
@@ -109,12 +117,32 @@ function ownedTypeOf(material: Material): OwnedTypeFilter | null {
   return null
 }
 
-function getBrowseKey(folderId: string | null, search: string, filter: string) {
-  return [
-    folderId || ROOT_FOLDER_KEY,
-    search.trim().toLowerCase(),
-    filter,
-  ].join('::')
+/**
+ * Chave do cache de rede. Só busca e preço entram: a pasta é um recorte local
+ * do mesmo acervo, então incluí-la aqui só multiplicaria requisições idênticas.
+ */
+function getBrowseKey(search: string, filter: string) {
+  return [search.trim().toLowerCase(), filter].join('::')
+}
+
+/**
+ * Estado do histórico a repassar num `replaceState` feito DURANTE a montagem.
+ *
+ * O App Router só troca `history.pushState`/`replaceState` pelas versões dele
+ * num `useEffect` do `<AppRouter>`, e efeito de filho roda antes de efeito de
+ * pai: um `replaceState` no efeito de montagem desta página chama a função
+ * nativa, que substitui o estado inteiro da entrada. Passando `null` ali, o
+ * `__NA` e a árvore que o Next guarda naquela entrada iam junto — e a partir
+ * daí o Voltar do navegador caía no `window.location.reload()` do próprio Next,
+ * recarregando a página no meio da navegação.
+ *
+ * Depois da montagem isto não é necessário (nem desejável): a versão do Next já
+ * está instalada, copia os campos internos sozinha e ainda atualiza a URL
+ * canônica do router — por isso as chamadas de navegação seguem passando `null`.
+ */
+function mountTimeHistoryState() {
+  const state = typeof window !== 'undefined' ? window.history.state : null
+  return state && typeof state === 'object' ? state : null
 }
 
 function getFolderChildren(flat: Folder[], parentFolderId: string | null) {
@@ -163,9 +191,12 @@ function MateriaisContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
-  const [materials, setMaterials] = useState<Material[]>([])
+  // Acervo inteiro da consulta atual. `materials`, `folders` e `folderPath`
+  // são derivados dele + da pasta aberta — nunca estados próprios. Era a cópia
+  // manual desses três que ficava exibindo o conteúdo da pasta anterior até a
+  // resposta do servidor chegar.
+  const [catalog, setCatalog] = useState<Material[]>([])
   const [allFolders, setAllFolders] = useState<Folder[]>([])   // lista plana completa (resolve o caminho)
-  const [folders, setFolders] = useState<Folder[]>([])          // filhas da pasta atual
   const [packages, setPackages] = useState<MaterialPackage[]>([])
   const [purchasedIds, setPurchasedIds] = useState<string[]>([])
   const [purchasedPackageIds, setPurchasedPackageIds] = useState<string[]>([])
@@ -182,7 +213,6 @@ function MateriaisContent() {
   const [ownedType, setOwnedType] = useState<OwnedTypeFilter>('all')
   const [sort, setSort] = useState<SortKey>('relevance')
   const [currentFolderId, setCurrentFolderId] = useState<string | null>(null)
-  const [folderPath, setFolderPath] = useState<Folder[]>([])
   const [activeTab, setActiveTab] = useState<MateriaisTab>('materials')
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null)
   const [toast, setToast] = useState<{ open: boolean; message: string; type: 'success' | 'error' | 'info' }>({
@@ -198,10 +228,10 @@ function MateriaisContent() {
   const [pdfDownloadMaterial, setPdfDownloadMaterial] = useState<Material | null>(null)
   const [downloadTermsMaterial, setDownloadTermsMaterial] = useState<Material | null>(null)
   const [downloadState, setDownloadState] = useState<PdfDownloadState>(INITIAL_DOWNLOAD_STATE)
-  const [isRoutePending, startRouteTransition] = useTransition()
   const stepTimersRef = useRef<ReturnType<typeof setTimeout>[]>([])
   const highlightRef = useRef<HTMLDivElement | null>(null)
   const sentinelRef = useRef<HTMLDivElement | null>(null)
+  const panelTopRef = useRef<HTMLDivElement | null>(null)
   const requestSeqRef = useRef(0)
   // Voltar de "Meus materiais" para "Explorar" tem que devolver a pessoa à
   // seção e à pasta onde ela estava — não jogá-la na raiz do catálogo.
@@ -209,6 +239,7 @@ function MateriaisContent() {
   const lastFolderIdRef = useRef<string | null>(null)
   const browseCacheRef = useRef<Map<string, BrowseSnapshot>>(new Map())
   const inflightBrowseRef = useRef<Map<string, Promise<BrowseSnapshot>>>(new Map())
+  const appliedKeyRef = useRef<string | null>(null)
   const allFoldersCacheRef = useRef<Folder[] | null>(null)
   const packagesCacheRef = useRef<Pick<BrowseSnapshot, 'packages' | 'purchasedPackageIds' | 'userGroups'> | null>(null)
   const { copiedId, copy } = useCopyLink()
@@ -252,17 +283,46 @@ function MateriaisContent() {
     return path
   }, [])
 
-  const applySnapshot = useCallback((snapshot: BrowseSnapshot, folderId: string | null) => {
-    setMaterials(snapshot.materials)
-    setFolders(snapshot.folders)
+  const applySnapshot = useCallback((snapshot: BrowseSnapshot) => {
+    setCatalog(snapshot.catalog)
     setAllFolders(snapshot.allFolders)
     setPackages(snapshot.packages)
     setPurchasedIds(snapshot.purchasedIds)
     setPurchasedPackageIds(snapshot.purchasedPackageIds)
     setUserGroups(snapshot.userGroups)
     setIsAuthenticated(snapshot.isAuthenticated)
-    setFolderPath(folderId ? buildPath(folderId, snapshot.allFolders) : [])
-  }, [buildPath])
+  }, [])
+
+  /**
+   * Leva a grade de volta ao topo ao trocar de pasta/seção.
+   *
+   * Sem isto, quem clicava numa pasta lá embaixo continuava com a mesma rolagem
+   * e via um pedaço do meio da nova lista — parecia que o clique não pegou.
+   */
+  const scrollToPanelTop = useCallback(() => {
+    if (typeof window === 'undefined') return
+    const node = panelTopRef.current
+    if (!node) return
+    const top = node.getBoundingClientRect().top + window.scrollY - 12
+    if (window.scrollY <= top) return
+    window.scrollTo({ top: Math.max(0, top), behavior: 'auto' })
+  }, [])
+
+  // ─── Recortes derivados da pasta aberta ──────────────────
+  // Um único acervo em memória; a pasta é só a lente. Como são `useMemo` e não
+  // estados, é impossível a grade ficar exibindo a pasta anterior.
+  const folderPath = useMemo(
+    () => (currentFolderId ? buildPath(currentFolderId, allFolders) : []),
+    [allFolders, buildPath, currentFolderId]
+  )
+  const folders = useMemo(
+    () => getFolderChildren(allFolders, currentFolderId),
+    [allFolders, currentFolderId]
+  )
+  const materials = useMemo(
+    () => (currentFolderId ? catalog.filter(m => m.folderId === currentFolderId) : catalog),
+    [catalog, currentFolderId]
+  )
 
   useEffect(() => {
     let cancelled = false
@@ -277,34 +337,30 @@ function MateriaisContent() {
 
   // ─── Busca de dados ──────────────────────────────────────
   const fetchData = useCallback(async (
-    folderId: string | null,
     srch: string,
     filter: string,
-    options?: { force?: boolean; prefetchOnly?: boolean }
+    options?: { force?: boolean }
   ) => {
-    const key = getBrowseKey(folderId, srch, filter)
+    const key = getBrowseKey(srch, filter)
     const cached = browseCacheRef.current.get(key)
 
     if (cached && !options?.force) {
-      if (!options?.prefetchOnly) {
-        applySnapshot(cached, folderId)
-        setBrowseError(false)
-        setLoading(false)
-        setRefreshing(false)
-      }
+      applySnapshot(cached)
+      appliedKeyRef.current = key
+      setBrowseError(false)
+      setLoading(false)
+      setRefreshing(false)
       return
     }
 
-    if (!options?.prefetchOnly) {
-      // `browseCacheRef` guarda o que já está na tela: sem nada renderizado
-      // mostramos o esqueleto; com conteúdo visível é só um refresh suave.
-      const hasVisibleData = browseCacheRef.current.size > 0
-      setLoading(!hasVisibleData)
-      setRefreshing(hasVisibleData)
-      setBrowseError(false)
-    }
+    // Com algo já aplicado na tela é só um refresh suave (chip "Atualizando");
+    // sem nada aplicado, o esqueleto é a resposta honesta.
+    const hasVisibleData = appliedKeyRef.current !== null
+    setLoading(!hasVisibleData)
+    setRefreshing(hasVisibleData)
+    setBrowseError(false)
 
-    const requestId = options?.prefetchOnly ? requestSeqRef.current : ++requestSeqRef.current
+    const requestId = ++requestSeqRef.current
 
     try {
       let snapshotPromise = !options?.force ? inflightBrowseRef.current.get(key) : undefined
@@ -312,11 +368,9 @@ function MateriaisContent() {
       if (!snapshotPromise) {
         snapshotPromise = (async () => {
           const params = new URLSearchParams()
-          if (folderId) params.set('folderId', folderId)
           if (srch) params.set('search', srch)
           if (filter !== 'all') params.set('pricing', filter)
 
-          const childFolderQuery = folderId ? `?parentFolderId=${folderId}` : ''
           const allFoldersPromise = allFoldersCacheRef.current && !options?.force
             ? Promise.resolve({ folders: allFoldersCacheRef.current })
             : fetch('/api/materiais/folders?all=true', { cache: 'no-store' }).then(res => res.ok ? res.json() : { folders: [] })
@@ -324,14 +378,13 @@ function MateriaisContent() {
             ? Promise.resolve(packagesCacheRef.current)
             : fetch('/api/materiais/packages', { cache: 'no-store' }).then(res => res.ok ? res.json() : { packages: [], purchasedPackageIds: [], userGroups: [] })
 
-          const [materialsData, foldersData, allFoldersData, packagesData] = await Promise.all([
+          const [materialsData, allFoldersData, packagesData] = await Promise.all([
             // A consulta de materiais é a única obrigatória: se ela falhar, a
             // página precisa mostrar erro em vez de fingir catálogo vazio.
-            fetch(`/api/materiais?${params}`, { cache: 'no-store' }).then(res => {
+            fetch(`/api/materiais${params.toString() ? `?${params}` : ''}`, { cache: 'no-store' }).then(res => {
               if (!res.ok) throw new Error(`materiais: ${res.status}`)
               return res.json()
             }),
-            fetch(`/api/materiais/folders${childFolderQuery}`, { cache: 'no-store' }).then(res => res.ok ? res.json() : { folders: [] }),
             allFoldersPromise,
             packagesPromise,
           ])
@@ -350,8 +403,7 @@ function MateriaisContent() {
           }
 
           return {
-            materials: materialsData.materials || [],
-            folders: foldersData.folders || [],
+            catalog: materialsData.materials || [],
             allFolders: nextAllFolders,
             packages: nextPackages,
             purchasedIds: materialsData.purchasedIds || [],
@@ -371,22 +423,20 @@ function MateriaisContent() {
 
       const snapshot = await snapshotPromise
 
-      if (requestId !== requestSeqRef.current && !options?.prefetchOnly) return
+      if (requestId !== requestSeqRef.current) return
 
       browseCacheRef.current.set(key, snapshot)
-
-      if (!options?.prefetchOnly) {
-        applySnapshot(snapshot, folderId)
-      }
+      applySnapshot(snapshot)
+      appliedKeyRef.current = key
     } catch (err) {
       console.error('Erro ao carregar materiais:', err)
       // Sem isso o usuário caía no estado "Nenhum material encontrado" e a
       // página mentia sobre o catálogo estar vazio.
-      if (!options?.prefetchOnly && requestId === requestSeqRef.current) {
+      if (requestId === requestSeqRef.current) {
         setBrowseError(true)
       }
     } finally {
-      if (!options?.prefetchOnly && requestId === requestSeqRef.current) {
+      if (requestId === requestSeqRef.current) {
         setLoading(false)
         setRefreshing(false)
       }
@@ -417,7 +467,7 @@ function MateriaisContent() {
       setActiveTab('mine')
       // `replaceState` (e não push) para o botão Voltar continuar saindo de
       // /materiais em vez de alternar entre as abas.
-      window.history.replaceState(null, '', '/materiais?tab=mine')
+      window.history.replaceState(mountTimeHistoryState(), '', '/materiais?tab=mine')
     } else if (initialTab !== 'materials') {
       setActiveTab(initialTab)
     }
@@ -434,6 +484,8 @@ function MateriaisContent() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // Voltar/Avançar do navegador. Como pasta e aba são só recortes do mesmo
+  // acervo já carregado, restaurar o estado é síncrono — nada de refetch.
   useEffect(() => {
     const syncFromHistory = () => {
       const params = new URLSearchParams(window.location.search)
@@ -441,39 +493,32 @@ function MateriaisContent() {
       const tabParam = params.get('tab')
       const nextTab: MateriaisTab = tabParam === 'packages' || tabParam === 'mine' || tabParam === 'loja' ? tabParam : 'materials'
       const nextFolderId = nextTab === 'materials' ? folderId : null
-      const cached = browseCacheRef.current.get(getBrowseKey(nextFolderId, debouncedSearch, activeFilter))
       if (nextTab !== 'mine') lastBrowseTabRef.current = nextTab
-
-      startRouteTransition(() => {
-        setActiveTab(nextTab)
-        setCurrentFolderId(nextFolderId)
-        if (cached) {
-          applySnapshot(cached, nextFolderId)
-          return
-        }
-
-        const flat = allFoldersCacheRef.current || allFolders
-        if (!nextFolderId) {
-          setFolderPath([])
-          if (flat.length > 0) setFolders(getFolderChildren(flat, null))
-          return
-        }
-
-        if (flat.length > 0) {
-          setFolderPath(buildPath(nextFolderId, flat))
-          setFolders(getFolderChildren(flat, nextFolderId))
-        }
-      })
+      setActiveTab(nextTab)
+      setCurrentFolderId(nextFolderId)
     }
 
     window.addEventListener('popstate', syncFromHistory)
     return () => window.removeEventListener('popstate', syncFromHistory)
-  }, [activeFilter, allFolders, applySnapshot, buildPath, debouncedSearch])
+  }, [])
 
   useEffect(() => {
     if (!ready) return
-    fetchData(currentFolderId, debouncedSearch, activeFilter)
-  }, [ready, fetchData, currentFolderId, debouncedSearch, activeFilter])
+    fetchData(debouncedSearch, activeFilter)
+  }, [ready, fetchData, debouncedSearch, activeFilter])
+
+  // Link para uma pasta que não existe mais (ou que foi ocultada): em vez de
+  // deixar o aluno numa tela vazia sem migalhas nem saída, devolve para a
+  // biblioteca principal e limpa a URL — sem gastar uma entrada no histórico.
+  useEffect(() => {
+    if (!currentFolderId || loading || allFolders.length === 0) return
+    if (allFolders.some(folder => folder._id === currentFolderId)) return
+    setCurrentFolderId(null)
+    lastFolderIdRef.current = null
+    if (typeof window !== 'undefined') {
+      window.history.replaceState(null, '', '/materiais')
+    }
+  }, [allFolders, currentFolderId, loading])
 
   // Qualquer mudança de contexto reinicia a revelação incremental.
   useEffect(() => {
@@ -502,60 +547,29 @@ function MateriaisContent() {
     if (tab === 'materials' && folderId) params.set('folder', folderId)
 
     const nextUrl = params.toString() ? `/materiais?${params}` : '/materiais'
+    // `null` é o uso previsto pelo App Router: a versão dele copia os campos
+    // internos da entrada atual e sincroniza a URL canônica do router. Ver
+    // `mountTimeHistoryState` para o caso (único) em que isso não vale.
     window.history.pushState(null, '', nextUrl)
   }, [activeTab])
 
   // ─── Navegação (sincroniza a URL) ────────────────────────
+  //
+  // Trocar de pasta é uma atualização de estado e nada mais: o acervo já está
+  // em memória e `materials`/`folders`/`folderPath` derivam dele. Sem rede, sem
+  // `startTransition` — a tela muda no mesmo frame do clique.
   const navigateToFolder = useCallback((folder: Folder) => {
-    const cached = browseCacheRef.current.get(getBrowseKey(folder._id, debouncedSearch, activeFilter))
-
-    startRouteTransition(() => {
-      setCurrentFolderId(folder._id)
-      if (cached) {
-        applySnapshot(cached, folder._id)
-      } else {
-        const flat = allFoldersCacheRef.current || allFolders
-        if (flat.length > 0) {
-          setFolderPath(buildPath(folder._id, flat))
-          setFolders(getFolderChildren(flat, folder._id))
-        } else {
-          setFolderPath(prev => [...prev, folder])
-        }
-      }
-    })
+    setCurrentFolderId(folder._id)
     updateBrowserUrl(folder._id, 'materials')
-  }, [activeFilter, allFolders, applySnapshot, buildPath, debouncedSearch, updateBrowserUrl])
+    scrollToPanelTop()
+  }, [scrollToPanelTop, updateBrowserUrl])
 
   const navigateToPathIndex = useCallback((index: number) => {
-    const flat = allFoldersCacheRef.current || allFolders
-    const targetFolderId = index < 0 ? null : folderPath.slice(0, index + 1).at(-1)?._id || null
-    const cached = browseCacheRef.current.get(getBrowseKey(targetFolderId, debouncedSearch, activeFilter))
-
-    startRouteTransition(() => {
-      if (cached) {
-        setCurrentFolderId(targetFolderId)
-        applySnapshot(cached, targetFolderId)
-        return
-      }
-
-      if (index < 0) {
-        setCurrentFolderId(null)
-        setFolderPath([])
-        if (flat.length > 0) setFolders(getFolderChildren(flat, null))
-      } else {
-        const newPath = folderPath.slice(0, index + 1)
-        const target = newPath[newPath.length - 1]
-        setCurrentFolderId(target._id)
-        setFolderPath(newPath)
-        if (flat.length > 0) setFolders(getFolderChildren(flat, target._id))
-      }
-    })
+    const targetFolderId = index < 0 ? null : folderPath[index]?._id || null
+    setCurrentFolderId(targetFolderId)
     updateBrowserUrl(targetFolderId, 'materials')
-  }, [activeFilter, allFolders, applySnapshot, debouncedSearch, folderPath, updateBrowserUrl])
-
-  const prefetchFolder = useCallback((folderId: string) => {
-    fetchData(folderId, debouncedSearch, activeFilter, { prefetchOnly: true }).catch(() => {})
-  }, [activeFilter, debouncedSearch, fetchData])
+    scrollToPanelTop()
+  }, [folderPath, scrollToPanelTop, updateBrowserUrl])
 
   // Enquanto o aluno navega o catálogo, guardamos a pasta para devolvê-la
   // quando ele voltar de "Meus materiais" / "Pacotes" / "Loja".
@@ -573,12 +587,11 @@ function MateriaisContent() {
     // a pasta ativa fazia "Meus materiais" listar só os adquiridos daquela
     // pasta — a queixa de "sumiram meus materiais" vinha daqui.
     const nextFolderId = tab === 'materials' ? lastFolderIdRef.current : null
-    startRouteTransition(() => {
-      setActiveTab(tab)
-      setCurrentFolderId(nextFolderId)
-    })
+    setActiveTab(tab)
+    setCurrentFolderId(nextFolderId)
     updateBrowserUrl(nextFolderId, tab)
-  }, [updateBrowserUrl])
+    scrollToPanelTop()
+  }, [scrollToPanelTop, updateBrowserUrl])
 
   const handleScopeChange = useCallback((scope: MateriaisScope) => {
     handleTabChange(scope === 'mine' ? 'mine' : lastBrowseTabRef.current)
@@ -648,7 +661,7 @@ function MateriaisContent() {
         const data = await res.json()
         if (data.free) {
           notify('Material adquirido com sucesso! Faça o download agora.')
-          fetchData(currentFolderId, debouncedSearch, activeFilter, { force: true })
+          fetchData(debouncedSearch, activeFilter, { force: true })
         } else {
           notify(data.error || 'Erro ao processar a aquisição.', 'error')
         }
@@ -693,7 +706,7 @@ function MateriaisContent() {
       addResult === 'added' ? 'Item adicionado ao carrinho.' : 'Esse item já está no carrinho.',
       addResult === 'added' ? 'success' : 'info'
     )
-  }, [activeFilter, addItem, currentFolderId, debouncedSearch, fetchData, isAuthenticated, materials, notify, packages, router])
+  }, [activeFilter, addItem, debouncedSearch, fetchData, isAuthenticated, materials, notify, packages, router])
 
   /**
    * Resgate sem custo pela assinatura Plus+.
@@ -723,13 +736,13 @@ function MateriaisContent() {
         data.alreadyOwned ? 'Você já tem este item na sua conta.' : data.message || 'Resgatado!',
         'success',
       )
-      await fetchData(currentFolderId, debouncedSearch, activeFilter, { force: true })
+      await fetchData(debouncedSearch, activeFilter, { force: true })
     } catch {
       notify('Não foi possível resgatar este item. Tente novamente.', 'error')
     } finally {
       setCheckoutLoading(null)
     }
-  }, [activeFilter, currentFolderId, debouncedSearch, fetchData, isAuthenticated, notify, router])
+  }, [activeFilter, debouncedSearch, fetchData, isAuthenticated, notify, router])
 
   const handleMaterialAcquire = useCallback((material: Material, mode: 'cart' | 'buy' = 'cart') => {
     // Upsell roda só em buy-now: add-to-cart é fluxo leve de browse, modal
@@ -903,18 +916,18 @@ function MateriaisContent() {
     [physicalProducts]
   )
 
-  // Contagem estável de "Meus materiais": só é recalculada na raiz sem
-  // busca/filtro, senão o número mudava a cada pasta visitada.
+  // Contagem estável de "Meus materiais": lida do acervo inteiro (que não tem
+  // recorte de pasta) e só quando não há busca/filtro estreitando a consulta.
   useEffect(() => {
-    if (!currentFolderId && !debouncedSearch && activeFilter === 'all') {
-      setOwnedCount(materials.filter(m => m._hasAccess).length)
+    if (!debouncedSearch && activeFilter === 'all') {
+      setOwnedCount(catalog.filter(m => m._hasAccess).length)
     }
-  }, [activeFilter, currentFolderId, debouncedSearch, materials])
+  }, [activeFilter, catalog, debouncedSearch])
 
   const currentFolder = currentFolderId
     ? (allFolders.find(folder => folder._id === currentFolderId) || folderPath[folderPath.length - 1] || null)
     : null
-  const isSoftLoading = refreshing || isRoutePending
+  const isSoftLoading = refreshing
   const hasQuery = !!debouncedSearch.trim()
     || activeFilter !== 'all'
     || (activeTab === 'mine' && ownedType !== 'all')
@@ -1022,7 +1035,7 @@ function MateriaisContent() {
         Verifique sua conexão e tente novamente. Seus materiais adquiridos continuam disponíveis.
       </p>
       <Button
-        onClick={() => fetchData(currentFolderId, debouncedSearch, activeFilter, { force: true })}
+        onClick={() => fetchData(debouncedSearch, activeFilter, { force: true })}
         variant="outline"
         className="mt-4"
       >
@@ -1100,7 +1113,7 @@ function MateriaisContent() {
           )}
         </div>
 
-        <div id={MATERIAIS_PANEL_ID} role="tabpanel" aria-labelledby={`materiais-tab-${activeTab}`}>
+        <div ref={panelTopRef} id={MATERIAIS_PANEL_ID} role="tabpanel" aria-labelledby={`materiais-tab-${activeTab}`}>
         {/* ─── Aba Materiais ─── */}
         {activeTab === 'materials' && (
           <>
@@ -1135,7 +1148,6 @@ function MateriaisContent() {
                       folder={folder}
                       copiedId={copiedId}
                       onNavigate={() => navigateToFolder(folder)}
-                      onPrefetch={() => prefetchFolder(folder._id)}
                       onCopyLink={() => copyFolderLink(folder)}
                     />
                   ))}
@@ -1458,7 +1470,13 @@ function MateriaisContent() {
 export default function MateriaisPage() {
   return (
     <AppShell allowGuest headerTitle="Materiais" headerSubtitle="Pastas, pacotes e loja">
-      <MateriaisContent />
+      {/* `MateriaisContent` chama `useSearchParams()`. Sem esta fronteira o
+          Next desiste de renderizar a rota no servidor e joga a página inteira
+          para o cliente — o casco chegava vazio e a primeira pintura só vinha
+          depois do JS. Com o Suspense, o esqueleto é servido de imediato. */}
+      <Suspense fallback={<SectionSkeleton variant="catalog" />}>
+        <MateriaisContent />
+      </Suspense>
     </AppShell>
   )
 }

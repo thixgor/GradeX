@@ -13,6 +13,9 @@ import { CopyLinkBtn, type Folder } from './shared'
  *
  * O `onClick` intercepta a navegação normal para usar o cache em memória da
  * página, que é instantâneo — o href continua correto para todo o resto.
+ *
+ * `onPrefetch` é opcional: em /materiais entrar numa pasta não custa mais rede
+ * nenhuma (o acervo inteiro já está em memória), então não há o que aquecer.
  */
 export const FolderCard = memo(function FolderCard({
   folder,
@@ -24,7 +27,7 @@ export const FolderCard = memo(function FolderCard({
   folder: Folder
   copiedId: string | null
   onNavigate: () => void
-  onPrefetch: () => void
+  onPrefetch?: () => void
   onCopyLink: () => void
 }) {
   const accent = folder.color || '#468152'
