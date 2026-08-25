@@ -1,5 +1,6 @@
 import { AccountType } from './types'
 import {
+  isPaidAccount,
   isPlusAccount,
   normalizeAccountType,
   temAcessoAoBanco,
@@ -93,13 +94,21 @@ export function getTierLimits(accountType?: AccountType | string, isAdmin?: bool
 
 /**
  * Pode baixar PDFs de prova (prova, gabarito, pacote, resposta comentada)?
- * Restrito a assinantes Plus+ e admins.
+ * Vale para qualquer cargo pago — Plus+ e Quest+ — e para admins.
  *
- * Atenção: isso responde apenas "tem direito ao recurso". O teto de quantos
- * downloads cabem por hora/dia é do Plus+ Guard (`lib/plus-guard.ts`).
+ * O Quest+ entra aqui porque é assim que ele é vendido: a tela que aparece para
+ * quem está fazendo prova sem assinar oferece o Quest+ como o caminho para
+ * "baixar e imprimir" (`components/premium-pdf-cta-modal.tsx`). Se este teste
+ * continuasse sendo só `isPlusAccount()`, a pessoa pagaria o Quest+ e reencontraria
+ * exatamente o mesmo bloqueio — a promessa da venda e a regra do produto
+ * precisam ser a mesma frase.
+ *
+ * Atenção: isso responde apenas "tem direito ao recurso". Quantos downloads
+ * cabem por hora/dia é do plano (`provasPdf` em `lib/plan-entitlements.ts`) e do
+ * Plus+ Guard (`lib/plus-guard.ts`), que continuam valendo por cima.
  */
 export function canDownloadExamPdf(accountType?: string | null, isAdmin?: boolean): boolean {
-  return isPlusAccount(accountType, isAdmin)
+  return isPaidAccount(accountType, isAdmin)
 }
 
 export function getPersonalExamsQuota(accountType?: AccountType | string): number {

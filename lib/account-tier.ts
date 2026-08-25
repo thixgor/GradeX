@@ -12,7 +12,7 @@
  *  - `PLUS_ACCOUNT_TYPES` é o conjunto aceito em filtros do Mongo;
  *  - `isPlusAccount()` é o único teste de "esse usuário tem a plataforma toda?".
  *
- * Desde o lançamento do **Quest** (`accountType: 'quest'`, o produto avulso do
+ * Desde o lançamento do **Quest+** (`accountType: 'quest'`, o produto avulso do
  * Banco de Questões) existe um segundo cargo pago, e "pagante" deixou de ser
  * sinônimo de "Plus+": use `isPaidAccount()` para dinheiro e
  * `temAcessoAoBanco()` para o Banco.
@@ -29,13 +29,15 @@ export const PLUS_TIER = 'plus' as const
 export const PLUS_LABEL = 'Plus+'
 
 /**
- * Cargo do **Quest** — o produto avulso do Banco de Questões.
+ * Cargo do **Quest+** — o produto avulso do Banco de Questões.
  *
- * O Plus+ é "a plataforma inteira"; o Quest é uma fatia só: o Banco de
+ * O Plus+ é "a plataforma inteira"; o Quest+ é uma fatia só: o Banco de
  * Questões liberado por completo (questões ilimitadas, listas, histórico e
- * desempenho) e nada além disso. Fora do Banco, a conta Quest vale o mesmo que
- * uma conta gratuita — quem quiser Manual Clínico, materiais, aulas ou provas
- * por IA continua precisando do Plus+.
+ * desempenho) mais o download em PDF das provas — prova em branco, gabarito e
+ * resposta comentada, que é o par que a venda promete a quem quer estudar no
+ * papel (`canDownloadExamPdf()` em `lib/tier-limits.ts`). Fora disso, a conta
+ * Quest+ vale o mesmo que uma conta gratuita — quem quiser Manual Clínico,
+ * materiais, aulas ou provas por IA continua precisando do Plus+.
  *
  * É um cargo pago de verdade (tem prazo, vence e é rebaixado pelo cron), então
  * ele NUNCA passa em `isPlusAccount()`. O teste certo depende da pergunta:
@@ -47,8 +49,14 @@ export const PLUS_LABEL = 'Plus+'
  */
 export const QUEST_TIER = 'quest' as const
 
-/** Rótulo de marca do cargo do Banco de Questões. */
-export const QUEST_LABEL = 'Quest'
+/**
+ * Rótulo de marca do cargo do Banco de Questões.
+ *
+ * O "+" não é enfeite: é como o produto é vendido e como o aluno o chama. Todo
+ * cargo pago da plataforma carrega o sinal ("Plus+", "Quest+"), e escrever
+ * "Quest" solo numa tela de venda faz parecer outro produto. Não traduzir/abreviar.
+ */
+export const QUEST_LABEL = 'Quest+'
 
 /**
  * Para onde vai quem clica em "Assinar".
@@ -104,7 +112,7 @@ export function isPlusAccount(accountType?: string | null, isAdmin?: boolean): b
 }
 
 /**
- * O usuário tem o cargo Quest? Admin passa sempre.
+ * O usuário tem o cargo Quest+? Admin passa sempre.
  *
  * Isto responde "tem o cargo", e não "pode ver o Banco": um assinante Plus+
  * também pode, e é `temAcessoAoBanco()` que junta os dois.
@@ -114,7 +122,7 @@ export function isQuestAccount(accountType?: string | null, isAdmin?: boolean): 
   return normalizeAccountType(accountType) === QUEST_TIER
 }
 
-/** A conta paga algum plano (Plus+ ou Quest)? Trial não conta — não é receita. */
+/** A conta paga algum plano (Plus+ ou Quest+)? Trial não conta — não é receita. */
 export function isPaidAccount(accountType?: string | null, isAdmin?: boolean): boolean {
   if (isAdmin) return true
   const t = normalizeAccountType(accountType)
@@ -124,7 +132,7 @@ export function isPaidAccount(accountType?: string | null, isAdmin?: boolean): b
 /**
  * O cargo, sozinho, dá direito ao Banco de Questões?
  *
- * Plus+ (a plataforma inteira) e Quest (só o Banco) passam. O plano assinado
+ * Plus+ (a plataforma inteira) e Quest+ (o Banco) passam. O plano assinado
  * ainda pode restringir a área — quem fecha a conta no servidor é
  * `bancoLiberadoPeloPlano()`, que chama esta função e depois confere as
  * permissões do plano.
