@@ -401,6 +401,24 @@ export function Sidebar({
   const [canCollapse, setCanCollapse] = useState(false)
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() => _openGroups ?? {})
   const [layoutVersion, setLayoutVersion] = useState(0)
+  // Rótulo flutuante do rail. A 72px o item é só um ícone: sem isto o menu
+  // recolhido vira uma coluna de quatorze desenhos sem nome nenhum — e a
+  // única pista de destino era o hover não existir. Os grupos já tinham o
+  // painel lateral; as seções soltas não tinham nada.
+  const [railTooltip, setRailTooltip] = useState<{ label: string; top: number } | null>(null)
+  // Só ponteiro fino. Num tablet deitado o toque também dispara `mouseenter`,
+  // mas nunca dispara o `mouseleave` correspondente: o rótulo ficaria pendurado
+  // na tela depois que o dedo saísse.
+  const [pontoFino, setPontoFino] = useState(false)
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const media = window.matchMedia('(hover: hover) and (pointer: fine)')
+    const update = () => setPontoFino(media.matches)
+    update()
+    media.addEventListener('change', update)
+    return () => media.removeEventListener('change', update)
+  }, [])
 
   // Snapshot the "already mounted" flag before flipping it, so the first mount
   // still animates in while every subsequent navigation renders the nav instantly.
@@ -621,6 +639,7 @@ export function Sidebar({
       _lastClickedId = item.id
       setPressedId(null)
       setHoveredId(item.id)
+      setRailTooltip(null)
 
       if (item.onClick) item.onClick()
       else if (item.href) router.push(item.href)
@@ -638,11 +657,13 @@ export function Sidebar({
     _lastClickedId = null
     setIsInNav(false)
     setHoveredId(null)
+    setRailTooltip(null)
   }, [])
 
   const handleNavPress = useCallback((item: NavItem) => {
     setPressedId(item.id)
     setHoveredId(item.id)
+    setRailTooltip(null)
   }, [])
 
   const handleNavRelease = useCallback(() => {
@@ -710,7 +731,10 @@ export function Sidebar({
   }, [cancelFlyoutClose])
 
   useEffect(() => {
-    if (!isCollapsed) setFlyout(null)
+    if (!isCollapsed) {
+      setFlyout(null)
+      setRailTooltip(null)
+    }
   }, [isCollapsed])
 
   useEffect(() => () => cancelFlyoutClose(), [cancelFlyoutClose])
@@ -720,18 +744,26 @@ export function Sidebar({
       setHoveredId(item.id)
       handleNavPrefetch(item)
 
-      if (!isCollapsed) return
+      if (!isCollapsed) {
+        setRailTooltip(null)
+        return
+      }
       // No modo recolhido, passar por qualquer item fecha o painel do grupo
       // anterior; sobre o cabeçalho de um grupo, abre o dele.
+      const rect = event.currentTarget.getBoundingClientRect()
       const groupKey = item.id.startsWith('group:') ? item.id.slice('group:'.length) : null
       if (!groupKey) {
         scheduleFlyoutClose()
+        setRailTooltip(pontoFino ? { label: item.label, top: rect.top + rect.height / 2 } : null)
         return
       }
+      // Sobre um grupo quem nomeia é o próprio painel — dois rótulos ao lado
+      // do mesmo ícone se sobreporiam.
+      setRailTooltip(null)
       cancelFlyoutClose()
-      setFlyout({ groupKey, top: event.currentTarget.getBoundingClientRect().top })
+      setFlyout({ groupKey, top: rect.top })
     },
-    [handleNavPrefetch, isCollapsed, scheduleFlyoutClose, cancelFlyoutClose]
+    [handleNavPrefetch, isCollapsed, scheduleFlyoutClose, cancelFlyoutClose, pontoFino]
   )
 
   const flyoutNode = flyout
@@ -882,6 +914,10 @@ export function Sidebar({
       <aside
         className={cn(
           'pwa-safe-top pwa-safe-bottom sidebar-glass fixed inset-y-0 left-0 z-50 h-screen min-h-[100svh] max-h-[100dvh] flex flex-col overflow-hidden',
+          // `sidebar-rail` só existe recolhido (≥1024px). É o gancho do CSS que
+          // troca o chip-caixa de cada ícone pelo alvo liso do rail — a 72px a
+          // coluna de quadradinhos contornados era o que se via como bug.
+          isCollapsed && 'sidebar-rail',
           collapsed ? 'lg:w-[72px]' : 'lg:w-[280px]',
           'w-[min(280px,88vw)]',
           isOpen ? 'translate-x-0' : '-translate-x-full',
@@ -966,6 +1002,8 @@ export function Sidebar({
             <Button
               onClick={onCreateExam}
               disabled={tierLimitExceeded}
+              title={isCollapsed ? 'Nova Prova' : undefined}
+              aria-label={isCollapsed ? 'Nova Prova' : undefined}
               // Mesmo gradiente do "Nova Prova" do cabeçalho: é a ação
               // principal do menu e estava com a cor mais apagada da tela.
               className="w-full h-11 rounded-md bg-gradient-to-r from-[#468152] to-[#E2A43E] text-white hover:from-[#468152]/90 hover:to-[#E2A43E]/90 font-semibold overflow-hidden shadow-md shadow-[#468152]/20"
@@ -1005,7 +1043,7 @@ export function Sidebar({
 
           {/* Exams remaining counter */}
           <div
-            className="overflow-hidden"
+            className="sidebar-contador-provas overflow-hidden"
             style={{
               maxHeight: isCollapsed ? 0 : 30,
               opacity: isCollapsed ? 0 : 1,
@@ -1106,6 +1144,9 @@ export function Sidebar({
         />
       </aside>
 
+      {/* Rótulo do item no modo recolhido */}
+      {isCollapsed && railTooltip && <RailTooltip label={railTooltip.label} top={railTooltip.top} />}
+
       {/* Painel do grupo no modo recolhido */}
       {flyoutNode && flyout && (
         <GroupFlyout
@@ -1122,6 +1163,27 @@ export function Sidebar({
         />
       )}
     </>
+  )
+}
+
+// ─── Rótulo flutuante do rail (modo recolhido) ───────────────────────────────
+// Portal e `fixed` pelo mesmo motivo do painel de grupo: o <aside> é
+// `overflow-hidden`, então qualquer coisa desenhada para fora dos 72px seria
+// cortada na borda.
+function RailTooltip({ label, top }: { label: string; top: number }) {
+  const [montado, setMontado] = useState(false)
+  useEffect(() => setMontado(true), [])
+  if (!montado) return null
+
+  return createPortal(
+    <div
+      className="sidebar-rail-tooltip"
+      role="presentation"
+      style={{ left: 78, top: Math.max(24, Math.min(top, window.innerHeight - 24)) }}
+    >
+      {label}
+    </div>,
+    document.body
   )
 }
 
@@ -1269,6 +1331,7 @@ function SidebarAccountFooter({
           transition: `gap ${SB_DUR} ${SB_EASE}, padding ${SB_DUR} ${SB_EASE}`,
         }}
         aria-label="Upgrade"
+        title={collapsed ? 'Upgrade' : undefined}
       >
         <ShoppingCart className="h-[18px] w-[18px] shrink-0" />
         <span
@@ -1301,6 +1364,8 @@ function SidebarAccountFooter({
         onClick={() => (aberto ? setAberto(false) : abrir())}
         aria-haspopup="menu"
         aria-expanded={aberto}
+        title={collapsed ? user.name : undefined}
+        aria-label={collapsed ? `Conta de ${user.name}` : undefined}
         className={cn(
           'flex h-12 w-full items-center rounded-[12px] transition-colors hover:bg-muted overflow-hidden',
           aberto && 'bg-muted'

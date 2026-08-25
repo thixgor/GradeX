@@ -1647,11 +1647,16 @@
   box-shadow: inset 0 0 0 1px hsl(var(--primary) / 0.2);
 }
 
-/* Persistent active route indicator - subtle left accent bar */
+/* Marca de rota atual — traço vertical à esquerda.
+   Ficava em `left: -6px`, fora da caixa do botão. Só que o botão é
+   `overflow-hidden` (o clique precisa recortar o brilho do hover), então o
+   traço era cortado inteiro: nunca chegou a aparecer. Encostado na borda
+   interna ele existe de verdade — e no menu recolhido, onde não há rótulo, é
+   a única pista de "você está aqui" que se lê de canto de olho. */
 .sidebar-fluid-item-active::before {
   content: '';
   position: absolute;
-  left: -6px;
+  left: 2px;
   top: 16%;
   bottom: 16%;
   width: 4px;
@@ -1767,6 +1772,132 @@
 .sidebar-nav-chip-nested > svg {
   height: 1rem;
   width: 1rem;
+}
+
+/* ---- Rail recolhido (72px, só a partir de 1024px: PC e tablet deitado) ----
+   O chip-caixa foi desenhado para o menu aberto, onde ele é o ponto de fixação
+   ao lado de um rótulo. Recolhido não sobra rótulo: cada linha vira um quadrado
+   de 32px contornado, catorze deles empilhados a 2px um do outro — uma grade de
+   caixinhas que se lê como defeito de renderização, não como menu. No rail o
+   chip deixa de ser caixa: fica só o ícone, e o fundo aparece apenas sob o
+   cursor ou na rota atual, que é o único item que precisa se destacar. */
+.sidebar-rail .sidebar-nav-chip {
+  height: 2.25rem;
+  width: 2.25rem;
+  border-radius: 12px;
+  background: transparent;
+  box-shadow: none;
+  color: hsl(var(--foreground) / 0.7);
+}
+
+.sidebar-rail .sidebar-fluid-item:hover .sidebar-nav-chip,
+.sidebar-rail .sidebar-fluid-item:focus-visible .sidebar-nav-chip {
+  background: hsl(var(--primary) / 0.14);
+  box-shadow: none;
+  color: hsl(var(--primary));
+}
+
+.sidebar-rail .sidebar-fluid-item-active .sidebar-nav-chip {
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  box-shadow: 0 6px 16px -8px hsl(var(--primary) / 0.9);
+}
+
+/* Upgrade e Sair seguem a mesma regra: nada de caixa em repouso, cor só no
+   hover — senão voltariam a ser duas exceções contornadas no meio do rail. */
+.sidebar-rail .sidebar-nav-chip-gradient,
+.sidebar-rail .sidebar-nav-chip-danger {
+  background: transparent;
+  box-shadow: none;
+}
+
+.sidebar-rail .sidebar-fluid-item:hover .sidebar-nav-chip-gradient {
+  background: rgba(226, 164, 62, 0.18);
+  box-shadow: none;
+}
+
+.sidebar-rail .sidebar-fluid-item:hover .sidebar-nav-chip-danger {
+  background: hsl(0 84% 60% / 0.16);
+  box-shadow: none;
+}
+
+/* O destaque da rota atual passa a viver no chip preenchido; manter também o
+   fundo tingido da linha inteira empilharia dois retângulos concêntricos. */
+.sidebar-rail .sidebar-fluid-item-active {
+  background: transparent;
+  box-shadow: none;
+}
+
+/* A barrinha encosta na borda do menu: no rail ela é a única pista de "você
+   está aqui" que sobrevive a uma olhada de canto de olho. */
+.sidebar-rail .sidebar-fluid-item-active::before {
+  left: 0;
+  top: 26%;
+  bottom: 26%;
+  width: 3px;
+}
+
+/* Rótulo flutuante do item recolhido. Portal + `fixed` porque o <aside> é
+   `overflow-hidden` e cortaria qualquer coisa desenhada fora dos 72px. */
+.sidebar-rail-tooltip {
+  position: fixed;
+  z-index: 60;
+  transform: translateY(-50%);
+  max-width: 15rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border-radius: 10px;
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--popover));
+  padding: 0.3125rem 0.625rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: hsl(var(--popover-foreground));
+  box-shadow: 0 12px 32px -14px hsl(var(--foreground) / 0.5);
+  pointer-events: none;
+}
+
+.dark .sidebar-rail-tooltip {
+  box-shadow: 0 12px 32px -12px rgba(0, 0, 0, 0.75);
+}
+
+/* ---- Tela baixa e deitada (tablet na horizontal, notebook curto) ----
+   O menu foi dimensionado pela largura: a 1024px o layout já é "desktop", mas a
+   altura pode ser 768px. Cabeçalho, bloco de criação e rodapé comem ~330px e
+   sobra menos da metade da tela para uma lista de dezoito áreas. Aqui a linha e
+   o chip encolhem e o contador de provas some — ele é a única informação do
+   menu que também vive na dashboard. */
+@media (min-width: 1024px) and (max-height: 820px) {
+  .sidebar-glass .sidebar-fluid-item {
+    height: 2.5rem;
+  }
+
+  .sidebar-glass .sidebar-nav-chip {
+    height: 1.75rem;
+    width: 1.75rem;
+    border-radius: 9px;
+  }
+
+  .sidebar-glass .sidebar-nav-chip > svg {
+    height: 1.05rem;
+    width: 1.05rem;
+  }
+
+  .sidebar-glass .sidebar-nav-chip-nested {
+    height: 1.5rem;
+    width: 1.5rem;
+  }
+
+  .sidebar-glass .sidebar-nav-chip-nested > svg {
+    height: 0.9rem;
+    width: 0.9rem;
+  }
+
+  .sidebar-glass .sidebar-contador-provas {
+    display: none;
+  }
 }
 
 /* Painel que substitui o acordeão quando o menu está recolhido a 72px. */
@@ -6006,5 +6137,89 @@ body.roller-dragging {
       inset 0 1px 0 hsl(0 0% 100% / 0.18),
       inset 0 0 0 1px hsl(var(--primary) / 0.24),
       0 3px 14px -3px hsl(var(--primary) / 0.55);
+  }
+}
+
+
+/* ============================================
+   Estudo de flashcard em tela baixa e deitada
+   (tablet na horizontal, notebook curto, celular deitado)
+
+   A área de resolução se dimensionava só pela LARGURA da tela. Um iPad deitado
+   tem 1024px de largura — o mesmo `lg:` de um monitor — e por isso recebia card
+   de 500px de altura mínima, cabeçalho em cartão, paginador numerado e barra de
+   avaliação folgada. Somando tudo dava mais de 900px de conteúdo numa viewport
+   de 768px: o card ficava cortado pela barra fixa e o usuário não conseguia ver
+   a pergunta inteira e as notas ao mesmo tempo.
+
+   Aqui a tela baixa devolve a altura ao card, que é o único elemento que o
+   usuário realmente precisa ler. O que sai é sempre redundante: os atalhos de
+   teclado estão no rodapé da página do deck, e o rótulo "Como foi lembrar
+   dessa resposta?" é explicado pelos próprios três botões.
+   ============================================ */
+@media (orientation: landscape) and (max-height: 860px) {
+  /* Classe repetida de propósito: aqui o alvo é o próprio elemento que carrega
+     `py-4 sm:py-6`, e uma media query não soma especificidade — com um seletor
+     de classe só, o utilitário do Tailwind (que sai depois no bundle) ganhava e
+     o respiro continuava em 24px. */
+  .flashcard-estudo.flashcard-estudo {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .flashcard-estudo .flashcard-estudo-topo {
+    margin-bottom: 0.5rem;
+    padding: 0.375rem 0.5rem;
+  }
+
+  .flashcard-estudo .flashcard-estudo-progresso {
+    margin-bottom: 0.5rem;
+  }
+
+  .flashcard-estudo .flashcard-estudo-pager {
+    margin-bottom: 0.5rem;
+  }
+
+  /* O card já encolheu sozinho (min-height em `svh`); aqui sobra tirar o
+     respiro interno, que a 48px de padding comia meia pergunta. */
+  .flashcard-estudo .flashcard-face {
+    padding: 1rem 1.5rem;
+  }
+
+  .flashcard-estudo .flashcard-estudo-barra {
+    margin-top: 0.75rem;
+    padding-top: 0.5rem;
+  }
+
+  .flashcard-estudo .flashcard-estudo-revelar {
+    padding-top: 0.625rem;
+    padding-bottom: 0.625rem;
+  }
+
+  .flashcard-estudo .flashcard-estudo-nota {
+    min-height: 44px;
+    padding-top: 0.375rem;
+    padding-bottom: 0.375rem;
+  }
+
+  .flashcard-estudo .flashcard-estudo-rotulo,
+  .flashcard-estudo .flashcard-estudo-atalhos {
+    display: none;
+  }
+}
+
+/* Deitado e ainda mais baixo (celular na horizontal, ~390px de altura). Aqui
+   sai o paginador numerado: ele é atalho, não caminho — a posição continua no
+   "3 / 40" do cabeçalho e a troca de card no deslize, nas setas do teclado e
+   nos botões Anterior/Próximo, que ficam. E o card cede mais um pouco, porque
+   nessa altura ele e a barra de avaliação disputam a mesma faixa de tela. */
+@media (orientation: landscape) and (max-height: 560px) {
+  .flashcard-estudo .flashcard-estudo-pager {
+    display: none;
+  }
+
+  .flashcard-estudo .flashcard-face {
+    min-height: 38svh;
+    padding: 0.75rem 1rem;
   }
 }

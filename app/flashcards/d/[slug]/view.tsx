@@ -882,11 +882,13 @@ export default function DeckPage() {
           } : undefined}
         >
         <div className={cn(
-          'mx-auto px-3 sm:px-4 py-4 sm:py-6',
+          // `flashcard-estudo` é o gancho do CSS que aperta o supérfluo quando a
+          // tela é baixa e deitada (tablet na horizontal). Ver globals.css.
+          'flashcard-estudo mx-auto px-3 sm:px-4 py-4 sm:py-6',
           fullscreen ? 'flex min-h-full flex-col max-w-5xl lg:max-w-6xl' : 'max-w-3xl lg:max-w-5xl',
         )}>
           <div className={cn(
-            'mb-4 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm dark:border-border dark:bg-slate-900',
+            'flashcard-estudo-topo mb-4 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm dark:border-border dark:bg-slate-900',
             fullscreen && 'mb-3 border-transparent bg-transparent p-0 shadow-none dark:border-transparent dark:bg-transparent',
           )}>
             <div className="relative flex items-center justify-between gap-2">
@@ -951,7 +953,7 @@ export default function DeckPage() {
               </div>
             </div>
           </div>
-          <div className="h-1.5 bg-slate-200 dark:bg-muted rounded-full overflow-hidden mb-3">
+          <div className="flashcard-estudo-progresso h-1.5 bg-slate-200 dark:bg-muted rounded-full overflow-hidden mb-3">
             <motion.div
               className={cn('h-full bg-gradient-to-r', activeStudyMode === 'spaced' ? 'from-emerald-500 via-lime-400 to-amber-400' : 'from-emerald-500 to-amber-400')}
               animate={{ width: `${progress}%` }}
@@ -1031,7 +1033,7 @@ export default function DeckPage() {
               Funciona em PC, tablet e celular (com área segura de notch). */}
           <div
             className={cn(
-              'sticky bottom-0 z-30 mt-5 -mx-3 space-y-2.5 border-t border-border bg-background px-3 pt-3 sm:-mx-4 sm:px-4',
+              'flashcard-estudo-barra sticky bottom-0 z-30 mt-5 -mx-3 space-y-2.5 border-t border-border bg-background px-3 pt-3 sm:-mx-4 sm:px-4',
               'shadow-[0_-16px_40px_-28px_rgba(15,23,42,0.55)]',
             )}
             style={{
@@ -1141,7 +1143,7 @@ export default function DeckPage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.16 }}
-                  className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 px-5 py-3.5 text-base font-bold text-white shadow-lg shadow-amber-500/25 transition active:scale-[0.98]"
+                  className="flashcard-estudo-revelar flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 px-5 py-3.5 text-base font-bold text-white shadow-lg shadow-amber-500/25 transition active:scale-[0.98]"
                 >
                   <Sparkles className="h-5 w-5" /> Mostrar resposta
                 </motion.button>
@@ -1153,7 +1155,7 @@ export default function DeckPage() {
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.16 }}
                 >
-                  <p className="mb-1.5 text-center text-xs font-medium text-slate-500 dark:text-slate-400">
+                  <p className="flashcard-estudo-rotulo mb-1.5 text-center text-xs font-medium text-slate-500 dark:text-slate-400">
                     Como foi lembrar dessa resposta?
                   </p>
                   <div className="grid grid-cols-3 gap-2">
@@ -1163,7 +1165,7 @@ export default function DeckPage() {
                         onClick={() => rate(r.value)}
                         disabled={ratingBusyCard === card?._id}
                         className={cn(
-                          'flex min-h-[52px] flex-col items-center justify-center gap-0.5 rounded-2xl bg-gradient-to-r px-2 py-2.5 text-sm font-bold leading-tight text-foreground shadow-md transition active:scale-95',
+                          'flashcard-estudo-nota flex min-h-[52px] flex-col items-center justify-center gap-0.5 rounded-2xl bg-gradient-to-r px-2 py-2.5 text-sm font-bold leading-tight text-foreground shadow-md transition active:scale-95',
                           r.color,
                           ratingBusyCard === card?._id && 'cursor-wait opacity-60',
                           ratings[card?._id] === r.value && 'ring-2 ring-white ring-offset-2 ring-offset-white dark:ring-offset-slate-950',
@@ -1185,7 +1187,7 @@ export default function DeckPage() {
             </AnimatePresence>
 
             {/* Navegação compacta — anterior / posição / próximo ou concluir */}
-            <div className="flex items-center justify-between gap-2">
+            <div className="flashcard-estudo-navegacao flex items-center justify-between gap-2">
               <button
                 type="button"
                 onClick={goPrev}
@@ -1217,7 +1219,7 @@ export default function DeckPage() {
               Deslize ← → para trocar de card · toque para virar
               {voiceEnabled && ' · fale suave / no ponto / porrete'}
             </p>
-            <p className="hidden text-center text-[11px] text-slate-400 sm:block">
+            <p className="flashcard-estudo-atalhos hidden text-center text-[11px] text-slate-400 sm:block">
               {fullscreen
                 ? 'Espaço: virar · ← →: navegar · 1/2/3: avaliar · Esc ou F: sair da tela cheia'
                 : 'Espaço: virar · ← →: navegar · 1/2/3: avaliar · F: tela cheia'}
@@ -1662,7 +1664,7 @@ function CardPager({
   return (
     <nav
       aria-label="Navegação de cards"
-      className="mb-4 flex items-center justify-center gap-1.5"
+      className="flashcard-estudo-pager mb-4 flex items-center justify-center gap-1.5"
     >
       <button
         type="button"

@@ -504,7 +504,13 @@ export function FlashcardCardView({
             ref={frontRef}
             onClick={onFlip}
             className={cn(
-              'relative overflow-hidden rounded-3xl p-4 sm:p-7 md:p-9 lg:p-12 min-h-[300px] sm:min-h-[320px] md:min-h-[380px] lg:min-h-[500px] flex flex-col cursor-pointer select-none',
+              'flashcard-face relative overflow-hidden rounded-3xl p-4 sm:p-7 md:p-9 lg:p-12 flex flex-col cursor-pointer select-none',
+              // A altura mínima era escolhida só pela LARGURA: um tablet deitado
+              // (1024x768) caía no mesmo `lg:` de um monitor e recebia 500px de card.
+              // Somados ao cabeçalho, ao paginador e à barra de avaliação, davam mais
+              // conteúdo do que a tela tinha de altura — daí não caber o card inteiro.
+              // O `min()` mantém os 500px onde há altura sobrando e cede na tela baixa.
+              'min-h-[min(300px,54svh)] sm:min-h-[min(320px,54svh)] md:min-h-[min(380px,52svh)] lg:min-h-[min(500px,54svh)]',
               'bg-gradient-to-br from-white via-white to-slate-50',
               'dark:from-slate-900 dark:via-slate-900 dark:to-slate-950',
               'border border-slate-200 dark:border-white/10',
@@ -529,7 +535,7 @@ export function FlashcardCardView({
               <ClickableImage
                 src={card.front.image}
                 containerClassName="rounded-2xl overflow-hidden mb-4 border border-slate-200 dark:border-white/10"
-                className="w-full h-auto object-contain max-h-64 sm:max-h-72 md:max-h-96 lg:max-h-[30rem] bg-slate-100 dark:bg-slate-950"
+                className="w-full h-auto object-contain max-h-[min(16rem,34svh)] sm:max-h-[min(18rem,36svh)] md:max-h-[min(24rem,36svh)] lg:max-h-[min(30rem,38svh)] bg-slate-100 dark:bg-slate-950"
               />
             )}
 
@@ -600,7 +606,10 @@ export function FlashcardCardView({
             ref={backRef}
             onClick={onFlip}
             className={cn(
-              'absolute inset-x-0 top-0 rounded-3xl p-4 sm:p-7 md:p-9 lg:p-12 min-h-[300px] sm:min-h-[320px] md:min-h-[380px] lg:min-h-[500px] flex flex-col cursor-pointer select-none overflow-hidden',
+              'flashcard-face absolute inset-x-0 top-0 rounded-3xl p-4 sm:p-7 md:p-9 lg:p-12 flex flex-col cursor-pointer select-none overflow-hidden',
+              // Mesma escala da frente: as duas faces são medidas juntas (a altura do
+              // card é o max das duas), então divergir aqui reintroduziria o corte.
+              'min-h-[min(300px,54svh)] sm:min-h-[min(320px,54svh)] md:min-h-[min(380px,52svh)] lg:min-h-[min(500px,54svh)]',
               'bg-gradient-to-br from-emerald-700 via-emerald-800 to-emerald-900',
               'text-white border border-white/15',
               'shadow-[0_30px_120px_-40px_rgba(6,78,59,0.6)]',
@@ -628,7 +637,7 @@ export function FlashcardCardView({
                 src={card.back.image}
                 onDark
                 containerClassName="rounded-2xl overflow-hidden mb-4 border border-white/20"
-                className="w-full h-auto object-contain max-h-56 sm:max-h-64 md:max-h-80 lg:max-h-[26rem] bg-black/20"
+                className="w-full h-auto object-contain max-h-[min(14rem,32svh)] sm:max-h-[min(16rem,34svh)] md:max-h-[min(20rem,34svh)] lg:max-h-[min(26rem,36svh)] bg-black/20"
               />
             )}
 
