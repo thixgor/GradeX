@@ -17,7 +17,6 @@ import { InstalarApp } from '@/components/pwa/instalar-app'
 import heroBg from '@/public/landing/hero-bg.jpg'
 import heroMidLight from '@/public/landing/hero-mid-light.png'
 import heroMid from '@/public/landing/hero-mid.png'
-import heroFront from '@/public/landing/hero-front.png'
 import ausculta from '@/public/landing/ausculta.jpg'
 import manualImg from '@/public/landing/manual.jpg'
 import logoManual from '@/public/landing/logo-manual.png'
@@ -42,6 +41,10 @@ const LINKS = {
   manual: '/ldpg-mnclinico',
   sus: '/prescricao-real-no-sus',
   buy: '/buy',
+  // Uma única porta de entrada para a ação principal. Todo botão âmbar da
+  // página aponta para cá e diz a mesma coisa — "Começar grátis" —, para o
+  // visitante aprender o que a cor significa em vez de reler cada botão.
+  signup: '/auth/login?mode=register',
   equipe: '/equipe',
   termos: '/termos-de-servico',
   privacidade: '/politica-de-privacidade',
@@ -58,6 +61,8 @@ function SmartLink({
   href: string
   className?: string
   children: ReactNode
+  onClick?: () => void
+  tabIndex?: number
   'aria-label'?: string
 }) {
   const isAppRoute = href.startsWith('/') && !HTML_ROUTES.has(href)
@@ -329,9 +334,13 @@ function TiltCard({
 
 /* =================== ÍCONES =================== */
 
+// Nenhum destes ícones é clicável: são ornamento. Por isso eles usam o âmbar
+// dessaturado, e não o mesmo âmbar do botão. Quanto mais coisas recebem
+// exatamente o tratamento visual do CTA — ícone, marcador, selo, barra —,
+// menos o cérebro do visitante aprende que âmbar cheio significa AÇÃO.
 const st = {
   fill: 'none',
-  stroke: '#E8763A',
+  stroke: 'rgb(var(--da-amber-soft))',
   strokeWidth: 1.5,
   strokeLinecap: 'round' as const,
   strokeLinejoin: 'round' as const,
@@ -386,14 +395,17 @@ function PrimaryCTA({
   children,
   className = '',
   href,
+  tabIndex,
 }: {
   children: ReactNode
   className?: string
   href: string
+  tabIndex?: number
 }) {
   return (
     <SmartLink
       href={href}
+      tabIndex={tabIndex}
       className={
         'group relative inline-flex items-center justify-center gap-2 rounded-full bg-da-amber px-7 py-3.5 font-da-display font-semibold text-[#0B1F1A] transition-[transform,box-shadow] duration-200 hover:shadow-[0_0_34px_-6px_rgba(232,118,58,.7)] active:scale-[0.98] ' +
         className
@@ -429,7 +441,7 @@ function GhostCTA({
     <SmartLink
       href={href}
       className={
-        'group relative inline-flex items-center justify-center overflow-hidden rounded-full border border-da-amber/60 px-7 py-3.5 font-da-display font-semibold text-da-amber transition active:scale-[0.98] ' +
+        'group relative inline-flex items-center justify-center overflow-hidden rounded-full border border-da-amber/60 px-7 py-3.5 font-da-display font-semibold text-da-amber-ink transition active:scale-[0.98] ' +
         className
       }
     >
@@ -445,11 +457,262 @@ function GhostCTA({
 function SectionMark({ n, label }: { n: string; label: string }) {
   return (
     <div className="mb-6 flex items-center gap-4">
-      <span className="font-da-mono text-xs text-da-amber">{n}</span>
+      <span className="font-da-mono text-xs text-da-amber-soft">{n}</span>
       <span className="h-px flex-1 bg-[color:var(--da-neutral-line)]" />
       <span className="font-da-mono text-[10px] uppercase tracking-[0.3em] text-da-muted">
         {label}
       </span>
+    </div>
+  )
+}
+
+/* =================== JANELA DO PRODUTO =================== */
+
+/**
+ * Ícones de traço fino que herdam a cor do contexto (`currentColor`), ao
+ * contrário dos ícones editoriais acima, que fixam o âmbar. Os da janela
+ * precisam apagar quando o item está inativo e acender quando está ativo —
+ * é o que faz o desenho parecer software de verdade, e não uma ilustração.
+ */
+const stUi = {
+  fill: 'none',
+  stroke: 'currentColor',
+  strokeWidth: 1.6,
+  strokeLinecap: 'round' as const,
+  strokeLinejoin: 'round' as const,
+}
+const UiBank = () => (
+  <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" {...stUi} aria-hidden>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M8 12l3 3 5-6" />
+  </svg>
+)
+const UiBook = () => (
+  <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" {...stUi} aria-hidden>
+    <path d="M4 5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2V5Z" />
+    <path d="M8 3v18" />
+  </svg>
+)
+const UiPaper = () => (
+  <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" {...stUi} aria-hidden>
+    <path d="M6 3h8l4 4v14H6z" />
+    <path d="M14 3v4h4M9 13h6M9 17h4" />
+  </svg>
+)
+const UiCards = () => (
+  <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" {...stUi} aria-hidden>
+    <rect x="4" y="6" width="11" height="14" rx="2" />
+    <path d="M9 6V5a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-1" />
+  </svg>
+)
+const UiCalendar = () => (
+  <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" {...stUi} aria-hidden>
+    <rect x="3" y="5" width="18" height="16" rx="2" />
+    <path d="M3 10h18M8 3v4M16 3v4" />
+  </svg>
+)
+
+const WINDOW_NAV: { label: string; short: string; icon: ReactNode }[] = [
+  { label: 'Banco de Questões', short: 'Questões', icon: <UiBank /> },
+  { label: 'Manual Clínico', short: 'Manual', icon: <UiBook /> },
+  { label: 'Provas da faculdade', short: 'Provas', icon: <UiPaper /> },
+  { label: 'Flashcards', short: 'Cards', icon: <UiCards /> },
+  { label: 'Cronograma', short: 'Cronograma', icon: <UiCalendar /> },
+]
+
+/**
+ * A moldura do produto: barra de navegador, barra lateral com as ferramentas e
+ * uma área de conteúdo.
+ *
+ * Ela existe porque a primeira dobra precisava responder "que site é este?" em
+ * menos de um segundo — e nenhuma composição anatômica, por mais bonita que
+ * seja, responde isso. Uma janela com barra de endereço e menu lateral
+ * responde: é uma plataforma web de estudo, e é esta a tela que você vai abrir.
+ *
+ * Desenhada em CSS de propósito. Um print viraria uma imagem grande, borrada
+ * em tela retina, presa a um tema e desatualizada na próxima release.
+ */
+function AppWindow({
+  path,
+  active = 0,
+  children,
+  className = '',
+}: {
+  path: string
+  active?: number
+  children: ReactNode
+  className?: string
+}) {
+  return (
+    <div
+      className={
+        'da-window overflow-hidden rounded-xl border border-[color:var(--da-neutral-line)] md:rounded-2xl ' +
+        className
+      }
+    >
+      {/* Barra do navegador. O endereço é o que ancora a pergunta "em que site
+          eu estou?" — por isso ele aparece por extenso já no celular. */}
+      <div className="flex items-center gap-3 border-b border-[color:var(--da-neutral-line)] bg-da-panel/70 px-3 py-2.5 md:px-4">
+        <span className="hidden shrink-0 items-center gap-1.5 sm:flex" aria-hidden>
+          <span className="h-2.5 w-2.5 rounded-full bg-[color:var(--da-neutral-line)]" />
+          <span className="h-2.5 w-2.5 rounded-full bg-[color:var(--da-neutral-line)]" />
+          <span className="h-2.5 w-2.5 rounded-full bg-[color:var(--da-neutral-line)]" />
+        </span>
+        <span className="flex min-w-0 flex-1 items-center gap-2 rounded-full border border-[color:var(--da-neutral-line)] bg-da-ground px-3 py-1.5">
+          <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 shrink-0 text-da-muted" {...stUi} aria-hidden>
+            <rect x="5" y="11" width="14" height="9" rx="2" />
+            <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+          </svg>
+          <span className="truncate font-da-mono text-[11px] text-da-muted md:text-xs">{path}</span>
+        </span>
+      </div>
+
+      <div className="flex min-h-0">
+        {/* Barra lateral. No celular ela vira um trilho de ícones: sem os
+            rótulos ela ocupa 52px em vez de 180px, e o conteúdo — que é o que
+            vende — fica com a largura da tela quase inteira. */}
+        <nav
+          aria-hidden
+          className="flex w-[52px] shrink-0 flex-col gap-0.5 border-r border-[color:var(--da-neutral-line)] bg-da-panel/40 p-2 sm:w-[172px] sm:p-3"
+        >
+          <span className="mb-2 hidden items-center gap-2 px-2 sm:flex">
+            <span className="grid h-6 w-6 place-items-center rounded-md bg-da-amber font-da-display text-[11px] font-bold text-[#0B1F1A]">
+              D
+            </span>
+            <span className="font-da-display text-xs font-semibold tracking-tight">Domine Aqui</span>
+          </span>
+          {WINDOW_NAV.map((item, i) => (
+            <span
+              key={item.label}
+              className={
+                'flex items-center justify-center gap-2.5 rounded-lg px-2 py-2 sm:justify-start ' +
+                (i === active
+                  ? 'bg-da-amber/10 text-da-amber-ink'
+                  : 'text-da-muted')
+              }
+            >
+              {item.icon}
+              <span className="hidden truncate text-[12px] sm:inline">{item.short}</span>
+            </span>
+          ))}
+        </nav>
+
+        <div className="min-w-0 flex-1">{children}</div>
+      </div>
+    </div>
+  )
+}
+
+/* ---------- QUESTÃO INTERATIVA (o produto antes do cadastro) ---------- */
+
+// Uma questão de verdade, com o comentário no tom que a plataforma usa. Não é
+// enfeite: é a menor amostra possível do produto, e ela está na primeira dobra
+// porque o jeito mais rápido de explicar o Domine Aqui é deixar a pessoa usar
+// o Domine Aqui. Um toque, e ela já viu enunciado, gabarito e comentário.
+const DEMO = {
+  materia: 'Cardiologia',
+  posicao: 'Questão 7 de 10',
+  enunciado:
+    'Homem de 68 anos, dor torácica em aperto há 40 minutos, irradiada para o membro superior esquerdo, com sudorese. O ECG mostra supradesnivelamento de ST em V1–V4. Qual a conduta imediata?',
+  alternativas: [
+    { id: 'A', texto: 'Solicitar troponina seriada e reavaliar em 6 horas.' },
+    { id: 'B', texto: 'Acionar a terapia de reperfusão imediatamente.' },
+    { id: 'C', texto: 'Iniciar anticoagulação plena e manter em observação.' },
+    { id: 'D', texto: 'Programar teste ergométrico para estratificar o risco.' },
+  ],
+  correta: 'B',
+  comentario:
+    'Supra de ST em derivações contíguas com quadro clínico compatível já fecha o diagnóstico de IAM com supra — ele é clínico e eletrocardiográfico, não laboratorial. Esperar a troponina apenas atrasa a reperfusão: a meta é angioplastia primária em até 90 minutos, ou fibrinólise em até 30 se a hemodinâmica não estiver disponível.',
+}
+
+function QuestionDemo() {
+  const [escolha, setEscolha] = useState<string | null>(null)
+  const respondida = escolha !== null
+  const acertou = escolha === DEMO.correta
+
+  return (
+    <div className="p-4 md:p-6">
+      <div className="flex items-center justify-between gap-3">
+        <span className="rounded-full border border-[color:var(--da-amber-soft-line)] px-2.5 py-1 font-da-mono text-[10px] uppercase tracking-widest text-da-amber-soft">
+          {DEMO.materia}
+        </span>
+        <span className="font-da-mono text-[11px] text-da-muted">{DEMO.posicao}</span>
+      </div>
+
+      <p className="mt-3.5 text-[13.5px] leading-relaxed text-da-paper md:text-sm">
+        {DEMO.enunciado}
+      </p>
+
+      {/* Alternativas de verdade: 44px de altura mínima, o alvo que a WCAG 2.2
+          trata como critério aprimorado. Ninguém deveria mirar para tocar. */}
+      <ul className="mt-4 space-y-2">
+        {DEMO.alternativas.map((alt) => {
+          const escolhida = escolha === alt.id
+          const eCorreta = alt.id === DEMO.correta
+          // Depois de responder, a correta acende SEMPRE — inclusive quando a
+          // pessoa erra. Esconder o gabarito de quem errou seria a única coisa
+          // capaz de fazer alguém sair desta tela sem ter aprendido nada.
+          const destaque = respondida && (eCorreta || escolhida)
+          const cor = respondida
+            ? eCorreta
+              ? 'border-emerald-500/60 bg-emerald-500/10 text-da-paper'
+              : escolhida
+                ? 'border-red-500/50 bg-red-500/10 text-da-paper'
+                : 'border-[color:var(--da-neutral-line)] text-da-muted opacity-60'
+            : 'border-[color:var(--da-neutral-line)] text-da-paper hover:border-da-amber/60 hover:bg-da-amber/5'
+          return (
+            <li key={alt.id}>
+              <button
+                type="button"
+                onClick={() => setEscolha(alt.id)}
+                aria-pressed={escolhida}
+                className={
+                  'flex w-full min-h-[44px] items-center gap-3 rounded-lg border px-3 py-2.5 text-left transition ' +
+                  cor
+                }
+              >
+                <span
+                  className={
+                    'grid h-6 w-6 shrink-0 place-items-center rounded-md border font-da-mono text-[11px] font-semibold ' +
+                    (destaque
+                      ? eCorreta
+                        ? 'border-emerald-500/60 text-emerald-600 dark:text-emerald-400'
+                        : 'border-red-500/60 text-red-600 dark:text-red-400'
+                      : 'border-[color:var(--da-neutral-line)] text-da-muted')
+                  }
+                >
+                  {alt.id}
+                </span>
+                <span className="text-[13px] leading-snug md:text-[13.5px]">{alt.texto}</span>
+              </button>
+            </li>
+          )
+        })}
+      </ul>
+
+      {!respondida ? (
+        <p className="mt-3.5 font-da-mono text-[11px] text-da-muted">
+          Toque numa alternativa — o comentário aparece na hora.
+        </p>
+      ) : (
+        <div className="da-answer-in mt-4 rounded-xl border border-[color:var(--da-amber-line)] bg-da-tint/50 p-3.5 md:p-4">
+          <p className="font-da-mono text-[10px] uppercase tracking-widest text-da-amber-ink">
+            {acertou ? 'Você acertou · resposta comentada' : `Resposta correta: ${DEMO.correta} · comentada`}
+          </p>
+          <p className="mt-2 text-[13px] leading-relaxed text-da-muted md:text-[13.5px]">
+            {DEMO.comentario}
+          </p>
+          <SmartLink
+            href={LINKS.amostra}
+            className="mt-3.5 inline-flex min-h-[44px] items-center gap-2 font-da-display text-sm font-semibold text-da-amber-ink underline underline-offset-4"
+          >
+            Resolver as outras 9 sem cadastro
+            <svg viewBox="0 0 24 24" className="h-4 w-4" {...stUi} aria-hidden>
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+          </SmartLink>
+        </div>
+      )}
     </div>
   )
 }
@@ -521,14 +784,14 @@ function Stars({ value, className = 'h-4 w-4' }: { value: number; className?: st
           <svg key={i} viewBox="0 0 24 24" className={className}>
             <defs>
               <linearGradient id={`da-star-${i}-${Math.round(fill * 100)}`}>
-                <stop offset={`${fill * 100}%`} stopColor="rgb(var(--da-amber))" />
+                <stop offset={`${fill * 100}%`} stopColor="rgb(var(--da-amber-ink))" />
                 <stop offset={`${fill * 100}%`} stopColor="transparent" />
               </linearGradient>
             </defs>
             <path
               d="M12 2.6l2.9 5.9 6.5.95-4.7 4.58 1.11 6.47L12 17.45 6.19 20.5l1.11-6.47L2.6 9.45l6.5-.95L12 2.6Z"
               fill={`url(#da-star-${i}-${Math.round(fill * 100)})`}
-              stroke="rgb(var(--da-amber))"
+              stroke="rgb(var(--da-amber-ink))"
               strokeWidth="1.2"
               strokeLinejoin="round"
             />
@@ -609,7 +872,7 @@ function RailControls({
   label: string
 }) {
   const btn =
-    'grid h-11 w-11 place-items-center rounded-full border border-[color:var(--da-neutral-line)] text-da-paper transition hover:border-da-amber/60 hover:text-da-amber disabled:pointer-events-none disabled:opacity-30'
+    'grid h-11 w-11 place-items-center rounded-full border border-[color:var(--da-neutral-line)] text-da-paper transition hover:border-da-amber/60 hover:text-da-amber-ink disabled:pointer-events-none disabled:opacity-30'
   return (
     <div className="mt-8 flex items-center gap-5">
       <div className="h-px flex-1 overflow-hidden bg-[color:var(--da-neutral-line)]">
@@ -710,7 +973,7 @@ export default function LandingPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const signupHref = isLoggedIn ? '/dashboard' : '/auth/login?mode=register'
+  const signupHref = isLoggedIn ? '/dashboard' : LINKS.signup
 
   return (
     <div
@@ -718,20 +981,36 @@ export default function LandingPage() {
       className="da-landing relative overflow-x-clip bg-da-ground font-da-body text-da-paper"
     >
       <Nav signupHref={signupHref} isLoggedIn={isLoggedIn} />
+      {/* A ordem da página é a ordem da decisão, e ela é quase impossível de
+          interpretar errado:
+            problema (você estuda espalhado)
+            → solução e PRODUTO na mesma tela (o hero, com a questão de verdade)
+            → por que isso acontece (a banda do problema)
+            → prova (alunos, depois notas reais)
+            → como funciona (o ciclo em cinco passos)
+            → experimente (10 questões sem cadastro)
+            → o que está incluído (núcleo + ecossistema)
+            → por que aqui (arquivo solto × plataforma)
+            → quanto custa
+            → objeções
+            → CTA.
+          Antes, preço vinha antes de qualquer explicação de produto: ótimo para
+          quem já conhecia a marca, caro para quem chegou de um anúncio e ainda
+          estava tentando descobrir que site era este. */}
       <Hero signupHref={signupHref} isLoggedIn={isLoggedIn} summary={showcase?.summary} />
-      {/* Prova social primeiro, oferta logo em seguida: é o que o visitante de
-          anúncio precisa ver antes de qualquer explicação de produto. */}
+      <ProblemBand />
+      <Marquee />
       <Testimonials />
       <PlatformReviews data={showcase} />
-      <Plans />
-      <Marquee />
-      <ProblemBand />
-      <ProductsExplorer />
+      <HowItWorks />
       <SampleBand />
+      <ProductsExplorer />
       <Differentiators />
+      <Plans />
       <InstallApp />
       <FaqAndCTA signupHref={signupHref} isLoggedIn={isLoggedIn} />
       <Footer />
+      <MobileDock signupHref={signupHref} isLoggedIn={isLoggedIn} />
     </div>
   )
 }
@@ -762,30 +1041,68 @@ function Nav({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn: boole
     if (!menuOpen) return
     const original = document.body.style.overflow
     document.body.style.overflow = 'hidden'
+    // Marca no <html> para a doca de ação se recolher enquanto o menu está
+    // aberto: duas barras laranja na mesma tela, dizendo a mesma coisa, só
+    // fazem o visitante parar para decidir em qual delas tocar.
+    document.documentElement.setAttribute('data-da-menu', 'aberto')
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMenuOpen(false)
+    }
+    window.addEventListener('keydown', onKey)
     return () => {
       document.body.style.overflow = original
+      document.documentElement.removeAttribute('data-da-menu')
+      window.removeEventListener('keydown', onKey)
     }
   }, [menuOpen])
 
+  // O header não deveria explicar a arquitetura do site. Ele responde quatro
+  // perguntas e só: onde estou (logo), dá pra entender o produto (Produto),
+  // quanto custa (Planos), já tenho conta (Entrar) — mais a ação principal.
+  // Depoimentos, app e o resto continuam a um scroll de distância; o que eles
+  // não podem é disputar atenção com o único botão que importa aqui em cima.
   const navLinks = [
-    { label: 'Depoimentos', href: '#depoimentos' },
-    { label: 'Planos', href: '#planos' },
-    { label: 'Produtos', href: '#produtos' },
+    { label: 'Produto', href: '#como-funciona' },
     { label: 'Materiais', href: LINKS.materiais },
-    { label: 'App', href: '#app' },
+    { label: 'Planos', href: '#planos' },
   ]
 
+  const closeMenu = () => setMenuOpen(false)
+
   return (
-    <header
-      className={
-        'pwa-safe-top fixed inset-x-0 top-0 z-50 transition-colors duration-300 ' +
-        (solid
-          ? 'border-b border-[color:var(--da-neutral-line)] bg-da-ground/85 backdrop-blur-md'
-          : '')
-      }
-    >
-      <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-5 md:px-8">
-        <a href="#top" className="flex items-center gap-2.5" aria-label="Domine Aqui">
+    <>
+      {/* Véu por cima da página enquanto o menu está aberto. Fica FORA do
+          <header> de propósito: o cabeçalho usa `backdrop-blur`, e um elemento
+          com backdrop-filter vira bloco contentor dos filhos `position: fixed`
+          — dentro dele, `inset-0` cobria a altura do cabeçalho em vez da tela
+          inteira. E ele existe porque tocar fora do painel é como quase todo
+          mundo fecha um menu no celular. */}
+      {menuOpen && (
+        <button
+          type="button"
+          // Escondido do leitor de tela de propósito: quem navega por leitor já
+          // tem o botão "Fechar menu" do cabeçalho e a tecla Esc. Este aqui
+          // existe só para o dedo que toca fora do painel.
+          aria-hidden
+          tabIndex={-1}
+          onClick={closeMenu}
+          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
+        />
+      )}
+      <header
+        className={
+          'pwa-safe-top fixed inset-x-0 top-0 z-50 transition-colors duration-300 ' +
+          (solid || menuOpen
+            ? 'border-b border-[color:var(--da-neutral-line)] bg-da-ground/90 backdrop-blur-md'
+            : '')
+        }
+      >
+      <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between gap-3 px-5 md:px-8">
+        <a
+          href="#top"
+          className="flex min-h-[44px] shrink-0 items-center gap-2.5"
+          aria-label="Domine Aqui"
+        >
           <Logo variant="icon" size="md" className="h-9" />
           <span className="font-da-display text-lg font-semibold tracking-tight">Domine Aqui</span>
         </a>
@@ -795,38 +1112,42 @@ function Nav({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn: boole
             <SmartLink
               key={l.label}
               href={l.href}
-              className="text-sm text-da-muted transition hover:text-da-paper"
+              className="inline-flex min-h-[44px] items-center text-sm text-da-muted transition hover:text-da-paper"
             >
               {l.label}
             </SmartLink>
           ))}
         </nav>
 
-        <div className="flex items-center gap-3">
-          {/* Botão redondo da landing: tailwind-merge deixa estas classes
-              sobrescreverem o visual padrão (quadrado, bg-card) do app. */}
-          <LiteModeToggle className="h-10 w-10 rounded-full border-[color:var(--da-neutral-line)] bg-transparent text-da-paper shadow-none transition hover:border-da-amber/50 hover:bg-da-panel/40 active:scale-95" />
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Os interruptores de tema e de Modo Lite saíram da barra no
+              celular. Eles são preferência, não navegação: ficavam ali
+              apertando o espaço dos únicos dois alvos que importam num
+              aparelho de 390px — Entrar e o menu — e ainda deixavam a barra
+              com cara de painel de controle. Continuam inteiros, dentro do
+              menu. */}
+          <LiteModeToggle className="hidden h-11 w-11 rounded-full border-[color:var(--da-neutral-line)] bg-transparent text-da-paper shadow-none transition hover:border-da-amber/50 hover:bg-da-panel/40 active:scale-95 lg:inline-flex" />
           <ThemeToggle
             variant="icon"
-            className="h-10 w-10 rounded-full border-[color:var(--da-neutral-line)] bg-transparent text-da-paper shadow-none transition hover:border-da-amber/50 hover:bg-da-panel/40 active:scale-95"
+            className="hidden h-11 w-11 rounded-full border-[color:var(--da-neutral-line)] bg-transparent text-da-paper shadow-none transition hover:border-da-amber/50 hover:bg-da-panel/40 active:scale-95 lg:inline-flex"
           />
           {!isLoggedIn && (
             <SmartLink
               href="/auth/login"
-              className="hidden text-sm font-medium text-da-muted transition hover:text-da-paper sm:inline-flex"
+              className="inline-flex min-h-[44px] items-center px-1 text-sm font-medium text-da-muted transition hover:text-da-paper"
             >
               Entrar
             </SmartLink>
           )}
-          <PrimaryCTA href={signupHref} className="!hidden !px-5 !py-2.5 text-sm sm:!inline-flex">
-            {isLoggedIn ? 'Ir para o dashboard' : 'Criar conta grátis'}
+          <PrimaryCTA href={signupHref} className="!hidden !px-5 !py-3 text-sm lg:!inline-flex">
+            {isLoggedIn ? 'Ir para o dashboard' : 'Começar grátis'}
           </PrimaryCTA>
           <button
             type="button"
             onClick={() => setMenuOpen((v) => !v)}
             aria-label={menuOpen ? 'Fechar menu' : 'Abrir menu'}
             aria-expanded={menuOpen}
-            className="grid h-10 w-10 place-items-center rounded-full border border-[color:var(--da-neutral-line)] text-da-paper transition hover:border-da-amber/50 lg:hidden"
+            className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-[color:var(--da-neutral-line)] text-da-paper transition hover:border-da-amber/50 lg:hidden"
           >
             <svg
               viewBox="0 0 24 24"
@@ -844,34 +1165,57 @@ function Nav({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn: boole
       </div>
 
       {menuOpen && (
-        <div className="border-t border-[color:var(--da-neutral-line)] bg-da-ground/95 backdrop-blur-md lg:hidden">
-          <nav className="mx-auto flex max-w-7xl flex-col px-5 py-3 md:px-8">
-            {navLinks.map((l) => (
-              <SmartLink
-                key={l.label}
-                href={l.href}
-                className="border-b border-[color:var(--da-neutral-line)] py-3.5 text-sm text-da-muted transition last:border-b-0 hover:text-da-paper"
-              >
-                {l.label}
-              </SmartLink>
-            ))}
-            <div className="flex flex-col gap-3 pb-2 pt-4 sm:hidden">
-              {!isLoggedIn && (
+        <div className="max-h-[calc(100dvh-72px)] overflow-y-auto border-t border-[color:var(--da-neutral-line)] bg-da-ground/95 backdrop-blur-md lg:hidden">
+          <nav className="mx-auto flex max-w-7xl flex-col px-5 py-4 md:px-8">
+            {/* A ação principal em primeiro, e não enterrada no fim da lista:
+                quem abriu o menu no celular quase sempre quer entrar ou criar
+                a conta, não navegar. */}
+            <PrimaryCTA href={signupHref} className="w-full !py-4 text-base" >
+              {isLoggedIn ? 'Ir para o dashboard' : 'Começar grátis'}
+            </PrimaryCTA>
+            <div className="mt-4 flex flex-col">
+              {navLinks.map((l) => (
                 <SmartLink
-                  href="/auth/login"
-                  className="inline-flex w-full items-center justify-center rounded-full border border-[color:var(--da-neutral-line)] px-5 py-2.5 text-sm font-medium text-da-paper transition hover:border-da-amber/50"
+                  key={l.label}
+                  href={l.href}
+                  onClick={closeMenu}
+                  className="flex min-h-[52px] items-center border-b border-[color:var(--da-neutral-line)] text-[15px] text-da-paper transition active:text-da-amber-ink"
                 >
-                  Entrar
+                  {l.label}
                 </SmartLink>
-              )}
-              <PrimaryCTA href={signupHref} className="w-full">
-                {isLoggedIn ? 'Ir para o dashboard' : 'Criar conta grátis'}
-              </PrimaryCTA>
+              ))}
+              <SmartLink
+                href="#depoimentos"
+                onClick={closeMenu}
+                className="flex min-h-[52px] items-center border-b border-[color:var(--da-neutral-line)] text-[15px] text-da-paper transition active:text-da-amber-ink"
+              >
+                Depoimentos
+              </SmartLink>
+              <SmartLink
+                href={LINKS.amostra}
+                onClick={closeMenu}
+                className="flex min-h-[52px] items-center border-b border-[color:var(--da-neutral-line)] text-[15px] text-da-paper transition active:text-da-amber-ink"
+              >
+                Testar 10 questões
+              </SmartLink>
+            </div>
+            <div className="flex items-center justify-between gap-3 pb-2 pt-5">
+              <span className="font-da-mono text-[11px] uppercase tracking-widest text-da-muted">
+                Aparência
+              </span>
+              <span className="flex items-center gap-2">
+                <LiteModeToggle className="h-11 w-11 rounded-full border-[color:var(--da-neutral-line)] bg-transparent text-da-paper shadow-none active:scale-95" />
+                <ThemeToggle
+                  variant="icon"
+                  className="h-11 w-11 rounded-full border-[color:var(--da-neutral-line)] bg-transparent text-da-paper shadow-none active:scale-95"
+                />
+              </span>
             </div>
           </nav>
         </div>
       )}
-    </header>
+      </header>
+    </>
   )
 }
 
@@ -886,10 +1230,6 @@ const heroMidStyle: CSSProperties = {
   transform:
     'perspective(1200px) translate3d(calc(var(--da-mx, 0) * 22px), calc(var(--da-my, 0) * 16px - var(--da-sy, 0) * 0.06px), 0) rotateY(calc(var(--da-mx, 0) * 3deg)) rotateX(calc(var(--da-my, 0) * -2deg))',
 }
-const heroFrontStyle: CSSProperties = {
-  transform:
-    'translate3d(calc(var(--da-mx, 0) * 42px), calc(var(--da-my, 0) * 30px - var(--da-sy, 0) * 0.1px), 0)',
-}
 
 function Hero({
   signupHref,
@@ -902,7 +1242,7 @@ function Hero({
 }) {
   const hasRating = !!summary && summary.count >= 3 && summary.avg > 0
   return (
-    <section id="top" className="pwa-safe-hero da-scene relative min-h-dvh overflow-hidden pt-[72px]">
+    <section id="top" className="pwa-safe-hero relative overflow-hidden pt-[72px]">
       <div className="pointer-events-none absolute inset-0" style={heroBgStyle}>
         <Image
           src={heroBg}
@@ -912,7 +1252,7 @@ function Hero({
           priority
           placeholder="blur"
           sizes="100vw"
-          className="object-cover opacity-30"
+          className="object-cover opacity-20"
         />
       </div>
       <div
@@ -920,197 +1260,157 @@ function Hero({
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            'linear-gradient(90deg, rgb(var(--da-ground)) 0%, rgb(var(--da-ground) / 0.82) 42%, transparent 100%)',
+            'linear-gradient(90deg, rgb(var(--da-ground)) 0%, rgb(var(--da-ground) / 0.86) 45%, rgb(var(--da-ground) / 0.55) 100%)',
         }}
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-40"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-32"
         style={{ background: 'linear-gradient(0deg, rgb(var(--da-ground)), transparent)' }}
       />
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
         style={{
-          background: 'radial-gradient(1000px 600px at 82% 30%, rgba(232,118,58,.14), transparent 60%)',
+          background: 'radial-gradient(1000px 600px at 82% 30%, rgba(232,118,58,.12), transparent 60%)',
         }}
       />
 
-      {/* faixa editorial do topo */}
-      <div className="relative mx-auto max-w-7xl px-5 md:px-8">
-        <div className="flex items-center gap-4 border-b border-[color:var(--da-neutral-line)] py-3 font-da-mono text-[10px] uppercase tracking-[0.3em] text-da-muted">
-          <span className="text-da-amber">Domine Aqui</span>
-          <span className="hidden sm:inline">Educação médica de precisão</span>
-          <span className="ml-auto hidden items-center gap-2 sm:flex">
-            <IconPulse /> Estudantes · Residentes · Médicos
-          </span>
-        </div>
-      </div>
-
-      <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-5 pb-16 pt-10 md:px-8 lg:grid-cols-[1.05fr_1fr] lg:pt-16">
+      {/* Duas colunas só a partir de xl. Entre 1024 e 1279 o layout de duas
+          colunas espremia o texto em ~456px: a manchete quebrava em quatro
+          linhas, com "mal." órfã numa delas. Empilhado, o título respira e a
+          janela do produto aparece logo abaixo — o que continua respondendo
+          "que site é este?" sem uma rolagem inteira. */}
+      <div className="relative mx-auto grid max-w-7xl grid-cols-1 gap-10 px-5 pb-12 pt-8 md:px-8 md:pb-16 xl:grid-cols-[1.05fr_1fr] xl:items-start xl:gap-14 xl:pt-14">
         <div className="relative z-10 max-w-2xl">
           <Reveal>
-            <p className="font-da-mono text-xs uppercase tracking-[0.28em] text-da-amber">
-              Pare de estudar espalhado
+            <p className="font-da-mono text-[11px] uppercase tracking-[0.28em] text-da-amber-soft md:text-xs">
+              Para estudantes de Medicina
             </p>
           </Reveal>
-          <Reveal delay={80}>
-            <h1 className="mt-5 font-da-display text-[2.7rem] font-semibold leading-[0.98] tracking-tighter md:text-[4.4rem]">
+          <Reveal delay={70}>
+            {/* A headline fica. Ela tem identidade, nomeia um problema real e é
+                lembrada — trocá-la por "a plataforma completa para estudantes
+                de Medicina" seria correto e completamente esquecível. O que
+                faltava não era emoção: era a razão logo abaixo dela. */}
+            {/* Os tamanhos são os maiores em que cada frase cabe numa linha
+                só na respectiva largura de coluna. Uma manchete de quatro
+                linhas com uma palavra sozinha no fim perde exatamente o ritmo
+                que faz esta frase funcionar. */}
+            <h1 className="mt-4 font-da-display text-[clamp(1.6rem,8vw,2rem)] font-semibold leading-[1.02] tracking-tighter sm:text-[2.8rem] md:text-[3.4rem] md:leading-[0.98]">
               Você não estuda mal.
               <br />
               Você estuda espalhado.
             </h1>
           </Reveal>
-          <Reveal delay={160}>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-da-muted">
-              Quatorze abas abertas. Três PDFs pela metade. O resumo que alguém jogou no grupo.
-              O livro que você abriu uma vez. E a prova em cinco dias. O problema nunca foi
-              falta de material —{' '}
-              <span className="text-da-paper">foi material espalhado em lugar nenhum.</span>
+          <Reveal delay={140}>
+            {/* A frase mais importante da página inteira. Ela responde, sem
+                exigir interpretação, as três perguntas de quem chegou de um
+                anúncio e nunca ouviu a marca: o que é isto, para quem é e o que
+                eu ganho. Antes essa resposta estava diluída em dois parágrafos
+                — e quem não lia os dois saía sem saber que site era este. */}
+            <p className="mt-5 max-w-2xl text-[17px] leading-relaxed text-da-muted md:text-lg">
+              O Domine Aqui reúne{' '}
+              <span className="text-da-paper">
+                Manual Clínico, banco de questões, provas da sua faculdade, flashcards e
+                cronograma
+              </span>{' '}
+              em uma plataforma só. Você abre e já sabe o que estudar agora.
             </p>
           </Reveal>
-          <Reveal delay={200}>
-            <p className="mt-4 max-w-xl text-lg leading-relaxed text-da-muted">
-              Aqui, Manual Clínico, as provas da sua faculdade, banco de questões, flashcards,
-              mapas mentais e cronograma vivem no mesmo lugar. Você abre e já sabe o que estudar
-              agora.
-            </p>
-            <p className="mt-5 font-da-display text-xl font-semibold tracking-tight text-da-amber">
-              Uma conta. Uma aba. Tudo que a prova cobra.
-            </p>
-          </Reveal>
-          <Reveal delay={240}>
-            {/* Dois botões grandes, do mesmo tamanho: criar conta e entrar. Alvos
-                de toque generosos — o comprador impaciente não caça link pequeno. */}
-            <div className="mt-9 flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+          <Reveal delay={190}>
+            {/* Uma ação principal, uma saída de menor compromisso. O botão
+                âmbar diz sempre a mesma coisa no site inteiro — "Começar
+                grátis" —, então o visitante aprende o significado da cor em vez
+                de reler cada botão. E quem ainda está avaliando tem para onde
+                ir sem precisar se cadastrar para descobrir o que é isto. */}
+            <div className="mt-8 flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center">
               <PrimaryCTA
                 href={signupHref}
-                className="!px-9 !py-4 text-lg w-full justify-center sm:w-auto"
+                className="!px-8 !py-4 text-[17px] w-full justify-center sm:w-auto"
               >
-                {isLoggedIn ? 'Ir para o dashboard' : 'Criar minha conta grátis'}
+                {isLoggedIn ? 'Ir para o dashboard' : 'Começar grátis'}
               </PrimaryCTA>
               {!isLoggedIn && (
                 <GhostCTA
-                  href="/auth/login"
-                  className="!px-9 !py-4 text-lg w-full justify-center sm:w-auto"
+                  href={LINKS.amostra}
+                  className="!px-8 !py-4 text-[17px] w-full justify-center sm:w-auto"
                 >
-                  Já tenho conta
+                  Testar 10 questões
                 </GhostCTA>
               )}
             </div>
-            <p className="mt-4 font-da-mono text-xs text-da-muted">
-              Leva 10 segundos. Sem cartão. Sem pegadinha.
+            <p className="mt-4 font-da-mono text-[11px] text-da-muted md:text-xs">
+              Sem cartão · acesso imediato · celular e computador
             </p>
             {/* Nota real, calculada sobre as avaliações dos materiais. Só entra
                 depois do fetch e com amostra mínima — número inventado no hero
                 é o jeito mais rápido de perder a confiança do visitante. */}
             {hasRating && (
-              <div className="mt-6 inline-flex flex-wrap items-center gap-x-3 gap-y-1 rounded-full border border-[color:var(--da-amber-line)] bg-[color:var(--da-glass)] px-4 py-2 backdrop-blur-sm">
+              <div className="mt-5 inline-flex flex-wrap items-center gap-x-3 gap-y-1 rounded-full border border-[color:var(--da-amber-line)] bg-[color:var(--da-glass)] px-4 py-2 backdrop-blur-sm">
                 <Stars value={summary!.avg} />
                 <span className="font-da-display text-sm font-semibold">
                   {summary!.avg.toFixed(1).replace('.', ',')}
                 </span>
                 <span className="font-da-mono text-[11px] text-da-muted">
-                  {summary!.count} avaliações de quem já comprou
+                  {summary!.count} avaliações de quem já estuda aqui
                 </span>
               </div>
             )}
           </Reveal>
         </div>
 
-        <div className="relative">
-          <div className="relative aspect-square w-full">
-            <div
-              aria-hidden
-              className="absolute -inset-6 rounded-[2rem]"
-              style={{
-                background: 'radial-gradient(60% 60% at 50% 45%, rgba(232,118,58,.2), transparent 70%)',
-              }}
-            />
-            {/* Duas artes (clara/escura) trocadas por CSS: sem flash na primeira
-                pintura e sem depender do mount do JS pra saber o tema. */}
-            {/* As duas artes (clara e escura) somam ~510KB e antes as DUAS
-                eram `priority`: o `<link rel=preload>` baixa a imagem mesmo
-                quando o CSS a esconde, então todo visitante pagava a arte do
-                tema que nem ia ver. Sem `priority`, a que está com
-                `display:none` não chega a ser baixada, e a visível — que está
-                no topo da tela — é buscada logo após o primeiro layout.
-
-                A sombra projetada só entra do `md` para cima: `drop-shadow`
-                num PNG desse tamanho é das operações de pintura mais caras que
-                existem em GPU de celular. */}
-            <div className="absolute inset-0 z-10 dark:hidden" style={heroMidStyle}>
-              <Image
-                src={heroMidLight}
-                alt="Ecossistema do Domine Aqui: Manual Clínico, flashcards, provas, banco de questões, cronograma e ECG conectados"
-                fill
-                sizes="(max-width: 1024px) 100vw, 45vw"
-                className="object-contain md:drop-shadow-[0_40px_80px_rgba(0,0,0,.5)]"
-              />
-            </div>
-            <div className="absolute inset-0 z-10 hidden dark:block" style={heroMidStyle}>
-              <Image
-                src={heroMid}
-                alt="Ecossistema do Domine Aqui: Manual Clínico, flashcards, provas, banco de questões, cronograma e ECG conectados"
-                fill
-                sizes="(max-width: 1024px) 100vw, 45vw"
-                className="object-contain md:drop-shadow-[0_40px_80px_rgba(0,0,0,.5)]"
-              />
-            </div>
-            <div className="pointer-events-none absolute inset-0 z-20" style={heroFrontStyle}>
-              <Image
-                src={heroFront}
-                alt=""
-                aria-hidden
-                fill
-                // Sem `priority`: esta arte é puramente decorativa (aria-hidden)
-                // e 280KB dela competiam em prioridade máxima com o LCP real e
-                // com o preload das fontes. Continua carregando junto do hero,
-                // só deixa de disputar a frente da fila em rede móvel.
-                sizes="(max-width: 1024px) 100vw, 45vw"
-                className="object-contain"
-              />
-            </div>
-            <div
-              className="absolute right-2 top-4 z-30 hidden rounded-xl border border-[color:var(--da-amber-line)] bg-[color:var(--da-glass)] px-4 py-3 backdrop-blur-sm lg:block"
-              style={{
-                transform:
-                  'translate3d(calc(var(--da-mx, 0) * 34px), calc(var(--da-my, 0) * -22px), 0)',
-              }}
-            >
-              <p className="font-da-mono text-[10px] uppercase tracking-widest text-da-amber">
-                Interativo
-              </p>
-              <p className="mt-1 text-xs">Som, imagem e camadas</p>
-            </div>
-            <div
-              className="absolute -right-1 bottom-6 z-30 hidden rounded-xl border border-[color:var(--da-amber-line)] bg-[color:var(--da-glass)] px-4 py-3 backdrop-blur-sm lg:block"
-              style={{
-                transform:
-                  'translate3d(calc(var(--da-mx, 0) * 40px), calc(var(--da-my, 0) * 28px), 0)',
-              }}
-            >
-              <p className="font-da-mono text-[10px] uppercase tracking-widest text-da-amber">
-                Por IA
-              </p>
-              <p className="mt-1 text-xs">Na sua ementa</p>
-            </div>
-          </div>
+        {/* O produto na primeira dobra. Não é um print nem uma ilustração: é
+            uma questão de verdade, que responde ao toque e abre o comentário.
+            Em um gesto o visitante entende que isto é uma plataforma web de
+            estudo, vê a interface que vai usar e já experimentou o produto
+            antes de existir qualquer formulário no caminho. */}
+        <div className="relative mx-auto w-full max-w-2xl xl:max-w-none xl:pl-4">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -inset-6 rounded-[2.5rem]"
+            style={{
+              background: 'radial-gradient(60% 60% at 55% 45%, rgba(232,118,58,.16), transparent 70%)',
+            }}
+          />
+          <Reveal delay={120}>
+            <AppWindow path="domineaqui.com.br/banco-questoes" active={0} className="relative">
+              <QuestionDemo />
+            </AppWindow>
+          </Reveal>
+          <p className="relative mt-3 text-center font-da-mono text-[11px] text-da-muted xl:text-left">
+            Esta é a tela. Responda aqui mesmo, sem sair da página.
+          </p>
         </div>
+      </div>
+
+      {/* trilho de números */}
+      <div className="relative mx-auto max-w-7xl px-5 md:px-8">
+        <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-[color:var(--da-neutral-line)] bg-[color:var(--da-neutral-line)] sm:grid-cols-4">
+          {[
+            ['300+', 'patologias no Manual Clínico'],
+            ['9', 'ferramentas na mesma conta'],
+            ['Provas', 'reais da sua faculdade'],
+            ['Grátis', 'para começar hoje'],
+          ].map(([n, l]) => (
+            <div key={l} className="bg-da-ground p-4 md:p-5">
+              <dt className="font-da-display text-2xl font-semibold">{n}</dt>
+              <dd className="mt-1 font-da-mono text-[11px] leading-tight text-da-muted">{l}</dd>
+            </div>
+          ))}
+        </dl>
       </div>
 
       {/* Pista de rolagem: muito visitante de anúncio não percebe que a página
           continua abaixo da dobra. Uma seta que pulsa (e leva pra próxima seção
           num toque) resolve sem exigir que ele "descubra" o scroll. */}
-      <div className="relative mx-auto mb-2 mt-4 flex max-w-7xl justify-center px-5 md:px-8">
+      <div className="relative mx-auto mb-4 mt-6 flex max-w-7xl justify-center px-5 md:mb-2 md:px-8">
         <a
-          href="#depoimentos"
-          aria-label="Ver os depoimentos de alunos"
-          className="group inline-flex flex-col items-center gap-1 text-da-muted transition hover:text-da-amber"
+          href="#problema"
+          aria-label="Continuar lendo"
+          className="group inline-flex min-h-[44px] flex-col items-center justify-center gap-1 text-da-muted transition hover:text-da-amber-ink"
         >
-          <span className="font-da-mono text-[10px] uppercase tracking-[0.3em]">
-            Veja quem já estuda aqui
-          </span>
+          <span className="font-da-mono text-[10px] uppercase tracking-[0.3em]">Continuar</span>
           <svg
             viewBox="0 0 24 24"
             className="h-5 w-5 animate-bounce"
@@ -1124,23 +1424,6 @@ function Hero({
             <path d="M6 9l6 6 6-6" />
           </svg>
         </a>
-      </div>
-
-      {/* trilho de números */}
-      <div className="relative mx-auto max-w-7xl px-5 md:px-8">
-        <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-[color:var(--da-neutral-line)] bg-[color:var(--da-neutral-line)] sm:grid-cols-4">
-          {[
-            ['300+', 'patologias no Manual Clínico'],
-            ['1 aba', 'no lugar das suas quatorze'],
-            ['Provas', 'reais da sua faculdade'],
-            ['Grátis', 'para começar hoje'],
-          ].map(([n, l]) => (
-            <div key={l} className="bg-da-ground p-5">
-              <dt className="font-da-display text-2xl font-semibold">{n}</dt>
-              <dd className="mt-1 font-da-mono text-[11px] leading-tight text-da-muted">{l}</dd>
-            </div>
-          ))}
-        </dl>
       </div>
     </section>
   )
@@ -1173,7 +1456,7 @@ function Marquee() {
             className="flex items-center gap-8 font-da-mono text-xs uppercase tracking-[0.2em] text-da-muted"
           >
             {t}
-            <span className="text-da-amber">/</span>
+            <span className="text-da-amber-soft">/</span>
           </span>
         ))}
       </div>
@@ -1322,7 +1605,7 @@ const PRODUCTS: Product[] = [
     body: [
       'Cola a ementa, escolhe o assunto e a IA monta a prova ou o baralho em cima do que o seu curso cobra de verdade — não um genérico que serve para todo mundo e para ninguém. Está liberado já no acesso gratuito.',
     ],
-    cta: { label: 'Testar de graça', href: LINKS.amostra },
+    cta: { label: 'Começar grátis', href: LINKS.signup },
     media: () => <ProductImage src={flashcards3d} alt="Provas e flashcards gerados por IA" />,
   },
   {
@@ -1392,13 +1675,13 @@ function ProductRow({
             (open ? 'text-da-paper' : 'hover:bg-da-panel/40')
           }
         >
-          <span className="w-6 shrink-0 pt-1.5 font-da-mono text-xs text-da-amber">
+          <span className="w-6 shrink-0 pt-1.5 font-da-mono text-xs text-da-amber-soft">
             {String(index + 1).padStart(2, '0')}
           </span>
           <span
             className={
               'hidden shrink-0 pt-0.5 transition-colors sm:block ' +
-              (open ? 'text-da-amber' : 'text-da-muted group-hover:text-da-amber')
+              (open ? 'text-da-amber-ink' : 'text-da-muted group-hover:text-da-amber-ink')
             }
           >
             {product.icon}
@@ -1409,7 +1692,7 @@ function ProductRow({
                 {product.name}
               </span>
               {product.badge && (
-                <span className="rounded-full border border-[color:var(--da-amber-line)] px-2.5 py-0.5 font-da-mono text-[9px] uppercase tracking-widest text-da-amber">
+                <span className="rounded-full border border-[color:var(--da-amber-soft-line)] px-2.5 py-1 font-da-mono text-[10px] uppercase tracking-widest text-da-amber-soft">
                   {product.badge}
                 </span>
               )}
@@ -1419,7 +1702,7 @@ function ProductRow({
             </span>
           </span>
           <span
-            className="shrink-0 text-da-amber transition-transform duration-300"
+            className="shrink-0 text-da-amber-ink transition-transform duration-300"
             style={{ transform: open ? 'rotate(45deg)' : 'rotate(0)' }}
             aria-hidden
           >
@@ -1459,7 +1742,7 @@ function ProductRow({
                 <ul className="mt-6 space-y-3">
                   {product.bullets.map((b) => (
                     <li key={b} className="flex items-start gap-3">
-                      <span className="mt-0.5 shrink-0 text-da-amber">
+                      <span className="mt-0.5 shrink-0 text-da-amber-ink">
                         <IconLayers />
                       </span>
                       <span className="text-sm leading-relaxed">{b}</span>
@@ -1484,36 +1767,115 @@ function ProductRow({
   )
 }
 
+/**
+ * Os grupos existem porque nove ferramentas com o mesmo peso visual não são
+ * nove motivos de compra: na prática, três respondem pela quase totalidade do
+ * interesse e o resto é o que faz a conta valer a pena depois. Listar tudo no
+ * mesmo tamanho transformava a seção num inventário — e inventário cansa antes
+ * de convencer. Aqui o visitante lê três nomes, entende o produto, e o resto
+ * chega como bônus em vez de como lição de casa.
+ */
+const GRUPOS: { titulo: string; nota: string; keys: string[] }[] = [
+  {
+    titulo: 'O núcleo',
+    nota: 'É por aqui que quase todo mundo começa.',
+    keys: ['manual', 'banco', 'provas-fac'],
+  },
+  {
+    titulo: 'Também incluído na sua conta',
+    nota: 'Sem cobrança extra, sem plano à parte.',
+    keys: ['ia', 'flashcards', 'cronograma', 'mapas'],
+  },
+  {
+    titulo: 'Complementos',
+    nota: 'Condições próprias — está escrito em cada um.',
+    keys: ['eletro', 'sus'],
+  },
+]
+
 function ProductsExplorer() {
-  const [openKey, setOpenKey] = useState<string | null>(PRODUCTS[0].key)
+  const [openKey, setOpenKey] = useState<string | null>('manual')
+  const porChave = new Map(PRODUCTS.map((p) => [p.key, p]))
+  let n = 0
 
   return (
     <section id="produtos" className="relative border-t border-[color:var(--da-neutral-line)]">
-      <div className="mx-auto max-w-6xl px-5 py-20 md:px-8 md:py-28">
-        <Reveal>
-          <SectionMark n="04 / 05" label="Os produtos" />
-          <h2 className="max-w-3xl font-da-display text-4xl font-semibold leading-[1.04] tracking-tighter md:text-5xl">
-            Nove ferramentas. Uma conta. Abra a que te interessa.
-          </h2>
-          <p className="mt-5 max-w-2xl text-lg leading-relaxed text-da-muted">
-            Cada uma resolve um buraco que a faculdade deixa. Toque no nome para ver o que
-            aquela ferramenta faz por você — sem rolar página atrás do que importa.
-          </p>
-        </Reveal>
-
-        <Reveal delay={80}>
-          <div className="mt-12 border-t border-[color:var(--da-neutral-line)]">
-            {PRODUCTS.map((p, i) => (
-              <ProductRow
-                key={p.key}
-                product={p}
-                index={i}
-                open={openKey === p.key}
-                onToggle={() => setOpenKey((cur) => (cur === p.key ? null : p.key))}
+      <div className="mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-28">
+        <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[1.1fr_.9fr]">
+          <Reveal>
+            <SectionMark n="05 / 08" label="O que está incluído" />
+            <h2 className="max-w-2xl font-da-display text-[2rem] font-semibold leading-[1.05] tracking-tighter md:text-5xl">
+              Nove ferramentas. Uma conta. Abra a que te interessa.
+            </h2>
+            <p className="mt-4 max-w-2xl text-[16px] leading-relaxed text-da-muted md:mt-5 md:text-lg">
+              Três resolvem o dia a dia da prova. O resto já vem junto, para o dia em que você
+              precisar. Toque no nome para ver o que aquela ferramenta faz por você.
+            </p>
+          </Reveal>
+          {/* A arte do ecossistema saiu da primeira dobra e veio para cá, que é
+              onde ela finalmente quer dizer alguma coisa: são as ferramentas
+              desta lista, conectadas. No hero, ela comunicava "Medicina" —
+              nunca "esta é a tela que você vai usar". */}
+          <Reveal delay={80} className="hidden lg:block">
+            <div className="relative aspect-square w-full">
+              <div
+                aria-hidden
+                className="absolute -inset-4 rounded-[2rem]"
+                style={{
+                  background:
+                    'radial-gradient(60% 60% at 50% 45%, rgba(232,118,58,.16), transparent 70%)',
+                }}
               />
-            ))}
-          </div>
-        </Reveal>
+              <div className="absolute inset-0 dark:hidden" style={heroMidStyle}>
+                <Image
+                  src={heroMidLight}
+                  alt="As ferramentas do Domine Aqui conectadas: Manual Clínico, flashcards, provas, banco de questões, cronograma e ECG"
+                  fill
+                  sizes="45vw"
+                  className="object-contain drop-shadow-[0_40px_80px_rgba(0,0,0,.5)]"
+                />
+              </div>
+              <div className="absolute inset-0 hidden dark:block" style={heroMidStyle}>
+                <Image
+                  src={heroMid}
+                  alt="As ferramentas do Domine Aqui conectadas: Manual Clínico, flashcards, provas, banco de questões, cronograma e ECG"
+                  fill
+                  sizes="45vw"
+                  className="object-contain drop-shadow-[0_40px_80px_rgba(0,0,0,.5)]"
+                />
+              </div>
+            </div>
+          </Reveal>
+        </div>
+
+        <div className="mt-10 md:mt-14">
+          {GRUPOS.map((grupo, gi) => (
+            <div key={grupo.titulo} className={gi === 0 ? '' : 'mt-10 md:mt-12'}>
+              <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                <h3 className="font-da-display text-lg font-semibold tracking-tight md:text-xl">
+                  {grupo.titulo}
+                </h3>
+                <span className="font-da-mono text-[11px] text-da-muted">{grupo.nota}</span>
+              </div>
+              <div className="mt-3 border-t border-[color:var(--da-neutral-line)]">
+                {grupo.keys.map((key) => {
+                  const p = porChave.get(key)
+                  if (!p) return null
+                  const index = n++
+                  return (
+                    <ProductRow
+                      key={p.key}
+                      product={p}
+                      index={index}
+                      open={openKey === p.key}
+                      onToggle={() => setOpenKey((cur) => (cur === p.key ? null : p.key))}
+                    />
+                  )
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   )
@@ -1523,7 +1885,10 @@ function ProductsExplorer() {
 
 function ProblemBand() {
   return (
-    <section className="relative overflow-hidden border-t border-[color:var(--da-neutral-line)]">
+    <section
+      id="problema"
+      className="relative overflow-hidden border-t border-[color:var(--da-neutral-line)]"
+    >
       <Image
         src={ausculta}
         alt=""
@@ -1531,26 +1896,369 @@ function ProblemBand() {
         fill
         placeholder="blur"
         sizes="100vw"
-        className="object-cover opacity-40"
+        className="object-cover opacity-30"
       />
-      <div aria-hidden className="absolute inset-0 bg-da-ground/75" />
-      <div className="relative mx-auto max-w-5xl px-5 py-24 md:px-8 md:py-32">
+      <div aria-hidden className="absolute inset-0 bg-da-ground/80" />
+      <div className="relative mx-auto max-w-5xl px-5 py-16 md:px-8 md:py-32">
         <Reveal>
-          <p className="font-da-mono text-xs uppercase tracking-[0.28em] text-da-amber">
+          <p className="font-da-mono text-[11px] uppercase tracking-[0.28em] text-da-amber-soft md:text-xs">
             O problema que ninguém te conta
           </p>
-          <h2 className="mt-5 max-w-3xl font-da-display text-3xl font-semibold leading-[1.1] tracking-tight md:text-5xl">
-            O material que você baixou hoje já morreu na pasta de Downloads.
+          {/* O inimigo aqui é o conteúdo ESPALHADO, não o formato PDF.
+              Enquanto a headline era "o material que você baixou já morreu na
+              pasta de Downloads", a página atacava um produto que a própria
+              plataforma vende — e o visitante ouvia "PDF é uma porcaria;
+              aliás, aqui estão os nossos". Dito assim, a ideia de plataforma
+              viva continua inteira e para de trabalhar contra o catálogo. */}
+          <h2 className="mt-4 max-w-3xl font-da-display text-[1.9rem] font-semibold leading-[1.08] tracking-tight md:text-5xl">
+            O PDF deveria ser o começo do estudo. Não o fim.
           </h2>
         </Reveal>
-        <Reveal delay={120}>
-          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-da-muted">
-            Você abre o PDF, lê metade, fecha e nunca mais volta. Junta cinco fontes, cada uma pela
-            metade, e ainda sai com dúvida na véspera da prova. O problema nunca foi você. Foi
-            estudar com material morto. Aqui é o contrário: tudo é interativo, tudo tem som, imagem e
-            profundidade, e tudo continua vivo dentro da plataforma no dia que você mais precisa.
+        <Reveal delay={100}>
+          <p className="mt-5 max-w-2xl text-[16px] leading-relaxed text-da-muted md:mt-6 md:text-lg">
+            Quatorze abas abertas. Três PDFs pela metade. O resumo que alguém jogou no grupo. O
+            livro que você abriu uma vez. E a prova em cinco dias.
+          </p>
+          <p className="mt-4 max-w-2xl text-[16px] leading-relaxed text-da-muted md:text-lg">
+            Nada disso é material ruim. O problema é que cada peça vive sozinha:{' '}
+            <span className="text-da-paper">
+              o arquivo não sabe o que você errou na questão, a questão não te leva ao capítulo, e o
+              capítulo não vira revisão.
+            </span>{' '}
+            Material que não conversa com o resto do seu estudo vira só mais um arquivo na pasta.
+          </p>
+          <p className="mt-5 max-w-2xl font-da-display text-lg font-semibold tracking-tight text-da-paper md:text-xl">
+            O Domine Aqui liga essas peças. Uma conta, uma aba, tudo que a prova cobra.
           </p>
         </Reveal>
+      </div>
+    </section>
+  )
+}
+
+/* ---------- 30 SEGUNDOS DENTRO DA PLATAFORMA ---------- */
+
+/** Linha de "conteúdo" da UI desenhada — barrinha cinza no lugar de texto. */
+function UiLine({ w = '100%', dim = false }: { w?: string; dim?: boolean }) {
+  return (
+    <span
+      aria-hidden
+      className={'block h-2 rounded-full ' + (dim ? 'bg-da-muted/20' : 'bg-da-muted/35')}
+      style={{ width: w }}
+    />
+  )
+}
+
+const PASSOS: {
+  titulo: string
+  texto: string
+  path: string
+  nav: number
+  tela: ReactNode
+}[] = [
+  {
+    titulo: 'Diga o que você está estudando',
+    texto: 'Escolhe o módulo, o tema ou cola a ementa da sua faculdade. Tudo depois disso vem filtrado por isso.',
+    path: 'domineaqui.com.br/dashboard',
+    nav: 4,
+    tela: (
+      <div className="p-4 md:p-5">
+        <p className="font-da-mono text-[10px] uppercase tracking-widest text-da-amber-soft">
+          O que você está estudando?
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {['Cardiologia', 'Farmacologia', 'HAM III', 'Semiologia', 'SOI II'].map((t, i) => (
+            <span
+              key={t}
+              className={
+                'rounded-full border px-3 py-1.5 text-[12px] ' +
+                (i === 0
+                  ? 'border-da-amber/60 bg-da-amber/10 text-da-amber-ink'
+                  : 'border-[color:var(--da-neutral-line)] text-da-muted')
+              }
+            >
+              {t}
+            </span>
+          ))}
+        </div>
+        <div className="mt-5 space-y-2.5 rounded-lg border border-[color:var(--da-neutral-line)] p-3.5">
+          <p className="font-da-mono text-[10px] uppercase tracking-widest text-da-muted">
+            Hoje no seu cronograma
+          </p>
+          <UiLine w="82%" />
+          <UiLine w="64%" dim />
+          <UiLine w="71%" dim />
+        </div>
+      </div>
+    ),
+  },
+  {
+    titulo: 'Resolva questões ou uma prova inteira',
+    texto: 'O banco de questões, as provas que a sua faculdade já aplicou e as provas geradas na sua ementa. Você treina no que cai.',
+    path: 'domineaqui.com.br/banco-questoes',
+    nav: 0,
+    tela: (
+      <div className="p-4 md:p-5">
+        <div className="flex items-center justify-between">
+          <span className="rounded-full border border-[color:var(--da-amber-soft-line)] px-2.5 py-1 font-da-mono text-[10px] uppercase tracking-widest text-da-amber-soft">
+            Cardiologia
+          </span>
+          <span className="font-da-mono text-[11px] text-da-muted">Questão 3 de 20</span>
+        </div>
+        <div className="mt-3.5 space-y-2">
+          <UiLine w="100%" />
+          <UiLine w="93%" />
+          <UiLine w="47%" />
+        </div>
+        <div className="mt-4 space-y-2">
+          {['A', 'B', 'C', 'D'].map((id, i) => (
+            <span
+              key={id}
+              className={
+                'flex min-h-[40px] items-center gap-3 rounded-lg border px-3 ' +
+                (i === 1
+                  ? 'border-da-amber/60 bg-da-amber/10'
+                  : 'border-[color:var(--da-neutral-line)]')
+              }
+            >
+              <span className="grid h-6 w-6 shrink-0 place-items-center rounded-md border border-[color:var(--da-neutral-line)] font-da-mono text-[11px] text-da-muted">
+                {id}
+              </span>
+              <UiLine w={['74%', '61%', '80%', '55%'][i]} dim={i !== 1} />
+            </span>
+          ))}
+        </div>
+      </div>
+    ),
+  },
+  {
+    titulo: 'Leia por que a sua resposta estava errada',
+    texto: 'Gabarito na hora e comentário explicando o raciocínio — não só a letra certa. É aqui que a questão vira aprendizado.',
+    path: 'domineaqui.com.br/banco-questoes',
+    nav: 0,
+    tela: (
+      <div className="p-4 md:p-5">
+        <div className="flex min-h-[40px] items-center gap-3 rounded-lg border border-emerald-500/60 bg-emerald-500/10 px-3">
+          <span className="grid h-6 w-6 shrink-0 place-items-center rounded-md border border-emerald-500/60 font-da-mono text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
+            B
+          </span>
+          <span className="text-[12.5px] text-da-paper">Alternativa correta</span>
+        </div>
+        <div className="mt-3 rounded-xl border border-[color:var(--da-amber-line)] bg-da-tint/50 p-3.5">
+          <p className="font-da-mono text-[10px] uppercase tracking-widest text-da-amber-ink">
+            Resposta comentada
+          </p>
+          <div className="mt-2.5 space-y-2">
+            <UiLine w="100%" />
+            <UiLine w="96%" />
+            <UiLine w="88%" dim />
+            <UiLine w="52%" dim />
+          </div>
+          <p className="mt-3 font-da-mono text-[11px] text-da-amber-ink">
+            Aprofundar no Manual Clínico →
+          </p>
+        </div>
+      </div>
+    ),
+  },
+  {
+    titulo: 'Aprofunde no Manual, sem trocar de aba',
+    texto: 'O tema da questão abre direto no Manual Clínico: mecanismo, conduta, ausculta que toca e foto clínica com referência.',
+    path: 'domineaqui.com.br/manual-clinico',
+    nav: 1,
+    tela: (
+      <div className="p-4 md:p-5">
+        <div className="flex items-center gap-2 rounded-full border border-[color:var(--da-neutral-line)] px-3 py-2">
+          <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 shrink-0 text-da-muted" {...stUi} aria-hidden>
+            <circle cx="11" cy="11" r="6.5" />
+            <path d="M16 16l4 4" />
+          </svg>
+          <span className="font-da-mono text-[12px] text-da-paper">infarto agudo do miocárdio</span>
+        </div>
+        <div className="mt-3.5 grid grid-cols-3 gap-2">
+          {['Fisiopatologia', 'Conduta', 'Ausculta'].map((t, i) => (
+            <span
+              key={t}
+              className={
+                'truncate rounded-lg border px-2 py-2 text-center text-[10.5px] ' +
+                (i === 0
+                  ? 'border-da-amber/60 bg-da-amber/10 text-da-amber-ink'
+                  : 'border-[color:var(--da-neutral-line)] text-da-muted')
+              }
+            >
+              {t}
+            </span>
+          ))}
+        </div>
+        <div className="mt-3.5 space-y-2.5">
+          <UiLine w="100%" />
+          <UiLine w="91%" />
+          <UiLine w="97%" dim />
+          <UiLine w="63%" dim />
+        </div>
+      </div>
+    ),
+  },
+  {
+    titulo: 'Salve e deixe o card voltar na hora certa',
+    texto: 'O que você errou vira flashcard com repetição espaçada. Ele reaparece pouco antes de você esquecer — até virar seu.',
+    path: 'domineaqui.com.br/flashcards',
+    nav: 3,
+    tela: (
+      <div className="p-4 md:p-5">
+        <div className="rounded-xl border border-[color:var(--da-neutral-line)] bg-da-panel/50 p-4">
+          <p className="font-da-mono text-[10px] uppercase tracking-widest text-da-amber-soft">
+            Cardiologia · card novo
+          </p>
+          <div className="mt-3 space-y-2">
+            <UiLine w="88%" />
+            <UiLine w="59%" dim />
+          </div>
+        </div>
+        <div className="mt-3 grid grid-cols-4 gap-2">
+          {[
+            ['De novo', '<10min'],
+            ['Difícil', '1d'],
+            ['Bom', '4d'],
+            ['Fácil', '10d'],
+          ].map(([l, q], i) => (
+            <span
+              key={l}
+              className={
+                'rounded-lg border px-1.5 py-2 text-center ' +
+                (i === 2
+                  ? 'border-da-amber/60 bg-da-amber/10 text-da-amber-ink'
+                  : 'border-[color:var(--da-neutral-line)] text-da-muted')
+              }
+            >
+              <span className="block text-[11px] font-medium">{l}</span>
+              <span className="block font-da-mono text-[9.5px] opacity-80">{q}</span>
+            </span>
+          ))}
+        </div>
+        <p className="mt-3.5 font-da-mono text-[11px] text-da-muted">
+          Próxima revisão agendada automaticamente.
+        </p>
+      </div>
+    ),
+  },
+]
+
+/**
+ * O trecho que responde "como é estudar aqui?" — a pergunta que uma lista de
+ * funcionalidades nunca responde. Dizer "temos nove ferramentas" faz a pessoa
+ * pensar "legal"; mostrar questão → comentário → Manual → flashcard faz ela
+ * pensar "ah, entendi como eu usaria isso". A segunda reação é a que vende.
+ *
+ * Os cinco passos são clicáveis, mas nenhum clique é obrigatório: o primeiro
+ * já vem aberto e o texto de cada passo se explica sozinho. Quem quiser ver a
+ * tela correspondente troca com um toque; quem não quiser, lê e segue.
+ */
+function HowItWorks() {
+  const [passo, setPasso] = useState(0)
+  const atual = PASSOS[passo]
+
+  return (
+    <section
+      id="como-funciona"
+      className="relative border-t border-[color:var(--da-neutral-line)]"
+    >
+      <div className="mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-28">
+        <Reveal>
+          <SectionMark n="03 / 08" label="Como funciona" />
+          <h2 className="max-w-3xl font-da-display text-[2rem] font-semibold leading-[1.05] tracking-tighter md:text-5xl">
+            Trinta segundos aqui dentro, do começo ao fim.
+          </h2>
+          <p className="mt-4 max-w-2xl text-[16px] leading-relaxed text-da-muted md:mt-5 md:text-lg">
+            Um ciclo inteiro de estudo sem trocar de aba nenhuma vez. Toque num passo para ver a
+            tela.
+          </p>
+        </Reveal>
+
+        <div className="mt-9 grid grid-cols-1 gap-6 md:mt-12 lg:grid-cols-[1fr_.9fr] lg:gap-12">
+          <Reveal>
+            <ol className="flex flex-col">
+              {PASSOS.map((p, i) => {
+                const ativo = i === passo
+                return (
+                  <li key={p.titulo}>
+                    <button
+                      type="button"
+                      onClick={() => setPasso(i)}
+                      aria-current={ativo}
+                      className={
+                        'flex w-full items-start gap-4 border-l-2 py-3.5 pl-4 pr-1 text-left transition-colors md:py-4 ' +
+                        (ativo
+                          ? 'border-da-amber'
+                          : 'border-[color:var(--da-neutral-line)] hover:border-da-amber/40')
+                      }
+                    >
+                      <span
+                        className={
+                          'mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full border font-da-mono text-[11px] font-semibold transition-colors ' +
+                          (ativo
+                            ? 'border-da-amber bg-da-amber text-[#0B1F1A]'
+                            : 'border-[color:var(--da-neutral-line)] text-da-muted')
+                        }
+                      >
+                        {i + 1}
+                      </span>
+                      <span className="min-w-0">
+                        <span
+                          className={
+                            'block font-da-display text-[17px] font-semibold leading-snug tracking-tight transition-colors md:text-lg ' +
+                            (ativo ? 'text-da-paper' : 'text-da-muted')
+                          }
+                        >
+                          {p.titulo}
+                        </span>
+                        {/* O texto do passo ativo fica aberto; os outros também
+                            aparecem, só que apagados. Esconder o texto dos
+                            fechados obrigaria a tocar em cinco itens para ler
+                            cinco frases — exatamente o tipo de trabalho que a
+                            página não deveria pedir. */}
+                        <span
+                          className={
+                            'mt-1 block text-[14px] leading-relaxed transition-colors md:text-[15px] ' +
+                            (ativo ? 'text-da-muted' : 'text-da-muted/70')
+                          }
+                        >
+                          {p.texto}
+                        </span>
+                      </span>
+                    </button>
+                  </li>
+                )
+              })}
+            </ol>
+            <div className="mt-7 flex flex-wrap items-center gap-4">
+              <PrimaryCTA href={LINKS.signup} className="!py-3.5">
+                Começar grátis
+              </PrimaryCTA>
+              <SmartLink
+                href={LINKS.amostra}
+                className="inline-flex min-h-[44px] items-center font-da-display text-sm font-semibold text-da-amber-ink underline underline-offset-4"
+              >
+                Ou teste 10 questões sem cadastro
+              </SmartLink>
+            </div>
+          </Reveal>
+
+          <Reveal delay={80}>
+            {/* `key` no passo: troca de conteúdo remonta o bloco e a animação
+                de entrada roda de novo, deixando claro que a tela mudou. */}
+            <div className="lg:sticky lg:top-24">
+              <AppWindow path={atual.path} active={atual.nav}>
+                <div key={passo} className="da-panel-fade">
+                  {atual.tela}
+                </div>
+              </AppWindow>
+              <p className="mt-3 text-center font-da-mono text-[11px] text-da-muted lg:text-left">
+                Passo {passo + 1} de {PASSOS.length} · {atual.titulo}
+              </p>
+            </div>
+          </Reveal>
+        </div>
       </div>
     </section>
   )
@@ -1562,7 +2270,7 @@ function SampleBand() {
   return (
     <section className="relative border-t border-[color:var(--da-neutral-line)]">
       <div className="mx-auto max-w-7xl px-5 py-14 md:px-8 md:py-16">
-        <div className="relative overflow-hidden rounded-2xl border border-da-amber/50 bg-da-tint/40 p-8 md:p-10">
+        <div className="relative overflow-hidden rounded-2xl border border-da-amber/50 bg-da-tint/40 p-6 md:p-10">
           <div
             aria-hidden
             className="absolute -right-20 -top-20 h-56 w-56 rounded-full"
@@ -1570,20 +2278,22 @@ function SampleBand() {
           />
           <div className="relative flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
             <div className="max-w-2xl">
-              <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--da-amber-line)] px-3 py-1 font-da-mono text-[10px] uppercase tracking-widest text-da-amber">
+              <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--da-amber-soft-line)] px-3 py-1.5 font-da-mono text-[10px] uppercase tracking-widest text-da-amber-soft">
                 <IconPulse /> Amostra grátis · sem cadastro
               </span>
-              <h2 className="mt-4 font-da-display text-2xl font-semibold leading-tight tracking-tight md:text-3xl">
+              <h2 className="mt-4 font-da-display text-[1.6rem] font-semibold leading-tight tracking-tight md:text-3xl">
                 10 questões comentadas para testar agora
               </h2>
-              <p className="mt-3 leading-relaxed text-da-muted">
-                Responda, veja o gabarito na hora e leia o comentário. É só uma fatia do banco. A
-                plataforma completa tem provas, flashcards, cronograma e o Manual Clínico esperando
-                você do outro lado.
+              <p className="mt-3 text-[15px] leading-relaxed text-da-muted md:text-base">
+                Sem cadastro, sem cartão, sem e-mail. Você responde, vê o gabarito na hora e lê o
+                comentário — do mesmo jeito que acontece lá dentro. Se gostar do que sentiu aqui,
+                a conta grátis está a um toque.
               </p>
             </div>
             <div className="shrink-0">
-              <PrimaryCTA href={LINKS.amostra}>Ver 10 questões sem cadastro</PrimaryCTA>
+              <PrimaryCTA href={LINKS.amostra} className="w-full justify-center md:w-auto">
+                Testar 10 questões grátis
+              </PrimaryCTA>
             </div>
           </div>
         </div>
@@ -1681,45 +2391,76 @@ function PhoneMockup() {
 /* ---------- DIFERENCIAIS ---------- */
 
 function Differentiators() {
-  const items = [
-    [
-      'Vive dentro, não na sua caixa de e-mail',
-      'O Manual, o eletro e os flashcards não têm botão de download. Você entra para usar, e é isso que constrói o hábito que passa você de ano.',
-    ],
-    [
-      'Interação, não decoração',
-      'Sons de ausculta, coração em wireframe, camadas de patologia. Você opera a ferramenta com a mão, não assiste de braços cruzados.',
-    ],
-    [
-      'Moldado na sua ementa',
-      'Flashcards e provas por IA montados sobre o que a sua faculdade cobra de verdade. Não um genérico que serve pra todo mundo e pra ninguém.',
-    ],
-    [
-      'Difícil de copiar, fácil de amar',
-      'Ferramenta interativa que os gigantes ainda não fizeram. O tipo de diferencial que prende, não a commodity que qualquer PDF entrega.',
-    ],
+  // A comparação não é contra o PDF: é contra o arquivo SOLTO, que pode ser um
+  // PDF, um print no rolo da câmera ou um resumo do grupo. A diferença é o que
+  // acontece depois de ler — e é aí que uma plataforma faz o que um arquivo
+  // isolado nunca vai fazer.
+  const linhas: [string, string][] = [
+    ['Procurar no meio de vinte arquivos', 'Uma busca só, por doença ou por tema'],
+    ['Parado na versão que você baixou', 'Atualizado dentro da plataforma'],
+    ['Ler e torcer para lembrar', 'Praticar na questão e voltar no flashcard'],
+    ['Som e imagem que o papel não tem', 'Ausculta que toca e foto clínica com referência'],
+    ['Nenhum registro do que você já domina', 'Seu erro, seu progresso e sua revisão guardados'],
+    ['Serve para todo mundo e para ninguém', 'Provas e cards montados na ementa do seu curso'],
   ]
   return (
-    <section className="relative mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
+    <section className="relative mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-28">
       <Reveal>
-        <SectionMark n="05 / 05" label="Diferencial" />
-        <h2 className="max-w-3xl font-da-display text-4xl font-semibold leading-[1.04] tracking-tighter md:text-5xl">
-          O que uma plataforma viva faz e um arquivo morto nunca vai fazer
+        <SectionMark n="06 / 08" label="Por que aqui" />
+        <h2 className="max-w-3xl font-da-display text-[2rem] font-semibold leading-[1.05] tracking-tighter md:text-5xl">
+          Seu material é só uma parte do estudo. O Domine Aqui conecta o resto.
         </h2>
+        <p className="mt-4 max-w-2xl text-[16px] leading-relaxed text-da-muted md:mt-5 md:text-lg">
+          A mesma matéria, dos dois jeitos. À esquerda, o arquivo solto — ele até ensina, mas para
+          por aí. À direita, o que acontece quando o conteúdo está ligado ao resto do seu estudo.
+        </p>
       </Reveal>
-      <div className="mt-12 grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-[color:var(--da-neutral-line)] bg-[color:var(--da-neutral-line)] md:grid-cols-2">
-        {items.map(([t, d], i) => (
-          <Reveal key={t} delay={i * 70}>
-            <article className="flex h-full flex-col bg-da-ground p-8 transition-colors hover:bg-da-panel/40">
-              <span className="font-da-mono text-sm text-da-amber">
-                {String(i + 1).padStart(2, '0')}
-              </span>
-              <h3 className="mt-4 font-da-display text-xl font-semibold tracking-tight">{t}</h3>
-              <p className="mt-3 text-da-muted">{d}</p>
-            </article>
-          </Reveal>
-        ))}
-      </div>
+
+      <Reveal delay={80}>
+        <div className="mt-9 overflow-hidden rounded-2xl border border-[color:var(--da-neutral-line)] md:mt-12">
+          <div className="grid grid-cols-2 border-b border-[color:var(--da-neutral-line)] bg-da-panel/50">
+            <p className="px-4 py-3 font-da-mono text-[10px] uppercase tracking-widest text-da-muted md:px-6 md:text-[11px]">
+              Arquivo solto
+            </p>
+            <p className="border-l border-[color:var(--da-neutral-line)] px-4 py-3 font-da-mono text-[10px] uppercase tracking-widest text-da-amber-ink md:px-6 md:text-[11px]">
+              Domine Aqui
+            </p>
+          </div>
+          {linhas.map(([antes, depois]) => (
+            <div
+              key={antes}
+              className="grid grid-cols-2 border-b border-[color:var(--da-neutral-line)] last:border-b-0"
+            >
+              <p className="px-4 py-4 text-[13.5px] leading-snug text-da-muted md:px-6 md:py-5 md:text-[15px]">
+                {antes}
+              </p>
+              <p className="flex items-start gap-2.5 border-l border-[color:var(--da-neutral-line)] px-4 py-4 text-[13.5px] leading-snug text-da-paper md:px-6 md:py-5 md:text-[15px]">
+                <svg
+                  viewBox="0 0 24 24"
+                  className="mt-0.5 h-4 w-4 shrink-0 text-da-amber-ink"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden
+                >
+                  <path d="M5 13l4 4L19 7" />
+                </svg>
+                <span>{depois}</span>
+              </p>
+            </div>
+          ))}
+        </div>
+      </Reveal>
+
+      <Reveal delay={120}>
+        <p className="mt-6 max-w-2xl text-[15px] leading-relaxed text-da-muted md:text-base">
+          É por isso que o Manual, o eletro e os flashcards não têm botão de baixar: eles vivem
+          onde o seu estudo acontece. E o que faz sentido no papel — como o guia de prescrição no
+          SUS — continua sendo PDF, para abrir às três da manhã na UPA, sem sinal.
+        </p>
+      </Reveal>
     </section>
   )
 }
@@ -1735,18 +2476,48 @@ interface Testimonial {
   description: string
 }
 
+/**
+ * O cartão de depoimento entrega a conclusão ANTES do play.
+ *
+ * A maior parte do valor destes depoimentos estava presa dentro dos vídeos — e
+ * a maior parte das pessoas não aperta o play. Um cartão que só mostrava
+ * miniatura, nome e uma legenda cinza de três linhas exigia um clique para
+ * dizer qualquer coisa. Agora a frase do aluno vem primeiro, em tamanho de
+ * leitura, e o vídeo passa a ser prova ADICIONAL — não pré-requisito para
+ * entender a prova.
+ */
 function TestimonialCard({ t }: { t: Testimonial }) {
   const [play, setPlay] = useState(false)
   // Autoplay só depois do clique — o iframe do YouTube (~1MB) nunca entra no DOM
   // de quem não aperta o play, seguindo o mesmo cuidado do Manual do Eletro.
   const src = `${t.embedUrl}${t.embedUrl.includes('?') ? '&' : '?'}autoplay=1`
-  // Todos os slides usam a MESMA caixa 4:5, independente de o vídeo ser
-  // vertical ou horizontal. No trilho lateral, card de altura variável quebra o
-  // alinhamento e a rolagem com encaixe fica torta; a miniatura entra em
-  // object-cover e o player letterboxa sozinho o que não couber.
+  const frase = (t.description || '').trim()
+
   return (
     <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-[color:var(--da-neutral-line)] bg-da-ground transition-colors hover:border-da-amber/40">
-      <div className="relative w-full overflow-hidden bg-black" style={{ aspectRatio: '4 / 5' }}>
+      {frase && (
+        <div className="flex min-h-[132px] flex-col justify-between gap-3 p-5 pb-4">
+          {/* Clamp em 4 linhas: mantém todos os cartões do trilho na mesma
+              altura mesmo quando um depoimento tem legenda gigante. */}
+          <p className="line-clamp-4 whitespace-pre-line font-da-display text-[15.5px] font-medium leading-snug tracking-tight text-da-paper">
+            “{frase}”
+          </p>
+          {t.name && (
+            <p className="font-da-mono text-[11px] uppercase tracking-widest text-da-muted">
+              {t.name}
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* Todos os slides usam a MESMA caixa, independente de o vídeo ser
+          vertical ou horizontal. No trilho lateral, cartão de altura variável
+          quebra o alinhamento e a rolagem com encaixe fica torta; a miniatura
+          entra em object-cover e o player letterboxa sozinho o que não couber. */}
+      <div
+        className="relative mt-auto w-full overflow-hidden bg-black"
+        style={{ aspectRatio: frase ? '1 / 1' : '4 / 5' }}
+      >
         {play ? (
           <iframe
             src={src}
@@ -1774,28 +2545,23 @@ function TestimonialCard({ t }: { t: Testimonial }) {
             <span
               aria-hidden
               className="absolute inset-0"
-              style={{ background: 'radial-gradient(120% 90% at 50% 30%, transparent, rgba(5,16,13,.55))' }}
+              style={{ background: 'radial-gradient(120% 90% at 50% 30%, transparent, rgba(5,16,13,.6))' }}
             />
-            <span className="relative z-10 grid h-16 w-16 place-items-center rounded-full bg-da-amber text-[#0B1F1A] shadow-lg transition-transform duration-300 group-hover:scale-110">
-              <svg viewBox="0 0 24 24" className="h-7 w-7 translate-x-0.5" fill="currentColor" aria-hidden>
+            <span className="relative z-10 grid h-14 w-14 place-items-center rounded-full bg-da-amber text-[#0B1F1A] shadow-lg transition-transform duration-300 group-hover:scale-110">
+              <svg viewBox="0 0 24 24" className="h-6 w-6 translate-x-0.5" fill="currentColor" aria-hidden>
                 <path d="M8 5v14l11-7z" />
               </svg>
+            </span>
+            <span className="absolute bottom-3 left-0 right-0 px-4 text-center font-da-mono text-[10px] uppercase tracking-[0.22em] text-white/90">
+              Ver o depoimento
             </span>
           </button>
         )}
       </div>
-      {(t.name || t.description) && (
-        <div className="flex min-h-[104px] flex-col gap-1 p-5">
-          {t.name && (
-            <span className="font-da-display text-base font-semibold tracking-tight">{t.name}</span>
-          )}
-          {t.description && (
-            // Clamp em 3 linhas: mantém todos os cards do trilho com a mesma
-            // altura, mesmo quando um depoimento tem legenda gigante.
-            <p className="line-clamp-3 whitespace-pre-line text-sm leading-relaxed text-da-muted">
-              {t.description}
-            </p>
-          )}
+
+      {!frase && t.name && (
+        <div className="p-5">
+          <span className="font-da-display text-base font-semibold tracking-tight">{t.name}</span>
         </div>
       )}
     </article>
@@ -1846,15 +2612,16 @@ function TestimonialsRail({ items }: { items: Testimonial[] }) {
           background: 'radial-gradient(900px 500px at 15% 0%, rgba(232,118,58,.12), transparent 60%)',
         }}
       />
-      <div className="relative mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
+      <div className="relative mx-auto max-w-7xl px-5 py-14 md:px-8 md:py-28">
         <Reveal>
-          <SectionMark n="01 / 05" label="Quem já usa" />
-          <h2 className="max-w-3xl font-da-display text-4xl font-semibold leading-[1.04] tracking-tighter md:text-5xl">
+          <SectionMark n="01 / 08" label="Quem já usa" />
+          <h2 className="max-w-3xl font-da-display text-[2rem] font-semibold leading-[1.05] tracking-tighter md:text-5xl">
             Não acredite em mim. Escute eles.
           </h2>
-          <p className="mt-5 max-w-2xl text-lg leading-relaxed text-da-muted">
+          <p className="mt-4 max-w-2xl text-[16px] leading-relaxed text-da-muted md:mt-5 md:text-lg">
             Alunos que estavam exatamente onde você está agora — véspera de prova, material
-            espalhado, tempo curto. Arraste para o lado e escolha um para ouvir.
+            espalhado, tempo curto. A frase de cada um já está no cartão; o vídeo é para quem
+            quiser ouvir da boca deles.
           </p>
         </Reveal>
       </div>
@@ -1877,7 +2644,7 @@ function TestimonialsRail({ items }: { items: Testimonial[] }) {
         {/* Cartão final: quem chegou ao fim do trilho já está convencido. */}
         <div data-slide className="w-[76vw] shrink-0 sm:w-[300px]">
           <div className="flex h-full flex-col justify-center rounded-2xl border border-da-amber/50 bg-da-tint/40 p-7">
-            <p className="font-da-mono text-[10px] uppercase tracking-[0.3em] text-da-amber">
+            <p className="font-da-mono text-[10px] uppercase tracking-[0.3em] text-da-amber-soft">
               Próximo depoimento
             </p>
             <p className="mt-4 font-da-display text-2xl font-semibold leading-tight tracking-tight">
@@ -1887,7 +2654,7 @@ function TestimonialsRail({ items }: { items: Testimonial[] }) {
               Cria a conta grátis, usa por uma semana e vê se a sua rotina muda.
             </p>
             <div className="mt-6">
-              <GhostCTA href="/auth/login?mode=register" className="!px-5 !py-2.5 text-sm">
+              <GhostCTA href={LINKS.signup} className="!px-5 !py-2.5 text-sm">
                 Criar conta grátis
               </GhostCTA>
             </div>
@@ -1895,7 +2662,7 @@ function TestimonialsRail({ items }: { items: Testimonial[] }) {
         </div>
       </div>
 
-      <div className="mx-auto max-w-7xl px-5 pb-16 md:px-8 md:pb-20">
+      <div className="mx-auto max-w-7xl px-5 pb-12 md:px-8 md:pb-20">
         <RailControls edges={edges} nudge={nudge} barRef={barRef} label="Depoimentos" />
       </div>
     </section>
@@ -1908,7 +2675,7 @@ function ReviewChip({ r }: { r: ShowcaseReview }) {
   return (
     <article className="mr-4 flex w-[290px] shrink-0 flex-col rounded-2xl border border-[color:var(--da-neutral-line)] bg-da-ground p-5 sm:w-[330px]">
       <div className="flex items-center gap-3">
-        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-[color:var(--da-amber-line)] bg-da-amber/10 font-da-display text-sm font-semibold text-da-amber">
+        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-[color:var(--da-amber-line)] bg-da-amber/10 font-da-display text-sm font-semibold text-da-amber-ink">
           {(r.displayName || '?').charAt(0).toUpperCase()}
         </span>
         <div className="min-w-0">
@@ -1918,7 +2685,7 @@ function ReviewChip({ r }: { r: ShowcaseReview }) {
           <Stars value={r.rating} className="h-3.5 w-3.5" />
         </div>
         {r.isVerified && (
-          <span className="ml-auto shrink-0 font-da-mono text-[9px] uppercase tracking-widest text-da-amber">
+          <span className="ml-auto shrink-0 font-da-mono text-[10px] uppercase tracking-widest text-da-amber-soft">
             Verificado
           </span>
         )}
@@ -1965,15 +2732,15 @@ function PlatformReviews({ data }: { data: ShowcaseData | null }) {
 
   return (
     <section className="relative overflow-hidden border-t border-[color:var(--da-neutral-line)] bg-da-panel/40">
-      <div className="mx-auto max-w-7xl px-5 pb-10 pt-20 md:px-8 md:pb-12 md:pt-24">
+      <div className="mx-auto max-w-7xl px-5 pb-8 pt-14 md:px-8 md:pb-12 md:pt-24">
         <Reveal>
-          <SectionMark n="02 / 05" label="Avaliações dos materiais" />
+          <SectionMark n="02 / 08" label="Avaliações dos materiais" />
           <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
             <div>
-              <h2 className="max-w-2xl font-da-display text-4xl font-semibold leading-[1.04] tracking-tighter md:text-5xl">
+              <h2 className="max-w-2xl font-da-display text-[2rem] font-semibold leading-[1.05] tracking-tighter md:text-5xl">
                 Cada material daqui tem nota. Todas estão aqui.
               </h2>
-              <p className="mt-5 max-w-2xl text-lg leading-relaxed text-da-muted">
+              <p className="mt-4 max-w-2xl text-[16px] leading-relaxed text-da-muted md:mt-5 md:text-lg">
                 Nada de depoimento escolhido a dedo: o que passa abaixo é o que os alunos
                 escreveram dentro da plataforma, sobre os materiais que compraram.
               </p>
@@ -1981,7 +2748,7 @@ function PlatformReviews({ data }: { data: ShowcaseData | null }) {
             {summary.count > 0 && (
               <div className="shrink-0 rounded-2xl border border-[color:var(--da-amber-line)] bg-da-ground px-6 py-5">
                 <div className="flex items-end gap-2">
-                  <span className="font-da-display text-4xl font-semibold tracking-tighter text-da-amber">
+                  <span className="font-da-display text-4xl font-semibold tracking-tighter text-da-amber-ink">
                     {summary.avg.toFixed(1).replace('.', ',')}
                   </span>
                   <span className="pb-1 font-da-mono text-xs text-da-muted">/ 5</span>
@@ -2000,7 +2767,7 @@ function PlatformReviews({ data }: { data: ShowcaseData | null }) {
           `.da-rail-fade`). Antes era `mask-image` no contêiner: máscara em cima
           de conteúdo que anima obriga o navegador a recompor a camada inteira a
           cada quadro — caro no celular, e o resultado visual é o mesmo. */}
-      <div ref={railsRef} className="relative pb-20 md:pb-24">
+      <div ref={railsRef} className="relative pb-14 md:pb-24">
         {animate ? (
           rows.map((row, rowIndex) => {
             const copies = repeat(row)
@@ -2045,7 +2812,7 @@ function Plans() {
   // é contra a conta gratuita, não contra um segundo plano pago.
   const gratuito = [
     'Conta grátis, sem cartão',
-    'Provas e flashcards para experimentar',
+    'Provas e flashcards por IA na sua ementa',
     'Amostra do Banco de Questões',
     'Patologias liberadas do Manual Clínico',
     'Cronograma básico',
@@ -2063,68 +2830,91 @@ function Plans() {
       id="planos"
       className="relative border-t border-[color:var(--da-neutral-line)] bg-da-panel/40"
     >
-      <div className="mx-auto max-w-6xl px-5 py-20 md:px-8 md:py-28">
+      <div className="mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-28">
         <Reveal>
-          <SectionMark n="03 / 05" label="A oferta" />
-          <h2 className="max-w-2xl font-da-display text-4xl font-semibold leading-[1.04] tracking-tighter md:text-5xl">
-            Comece de graça. Suba de nível quando a prova apertar.
+          <SectionMark n="07 / 08" label="A oferta" />
+          {/* "Suba de nível quando a prova apertar" ensinava o cliente errado:
+              que o plano pago é remédio de emergência, para assinar na véspera
+              e cancelar depois. O produto quer ser o ambiente normal de estudo
+              — e a headline agora deixa a escolha do momento com quem paga. */}
+          <h2 className="max-w-2xl font-da-display text-[2rem] font-semibold leading-[1.05] tracking-tighter md:text-5xl">
+            Comece de graça. Suba de nível quando quiser.
           </h2>
+          <p className="mt-4 max-w-2xl text-[16px] leading-relaxed text-da-muted md:mt-5 md:text-lg">
+            Antes de comparar item por item, a pergunta é mais simples: qual desses dois é você
+            hoje?
+          </p>
         </Reveal>
-        <div className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div className="mt-9 grid grid-cols-1 gap-5 md:mt-12 md:gap-6 lg:grid-cols-2">
           <Reveal>
-            <div className="flex h-full flex-col rounded-2xl border border-[color:var(--da-neutral-line)] bg-da-ground p-8">
+            <div className="flex h-full flex-col rounded-2xl border border-[color:var(--da-neutral-line)] bg-da-ground p-6 md:p-8">
               <h3 className="font-da-display text-2xl font-semibold tracking-tight">Gratuito</h3>
-              <p className="mt-2 text-da-muted">Para sentir a plataforma antes de pagar.</p>
-              <ul className="mt-7 space-y-3">
+              {/* Posicionamento antes da lista: a pessoa precisa saber qual dos
+                  dois é ela, e só depois comparar caixinhas. */}
+              <p className="mt-2 text-[15px] leading-relaxed text-da-muted md:text-base">
+                Para conhecer o Domine Aqui e já começar a estudar hoje.
+              </p>
+              <ul className="mt-6 space-y-3">
                 {gratuito.map((f) => (
                   <li key={f} className="flex items-start gap-3">
-                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-da-amber" />
-                    <span>{f}</span>
+                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-da-amber-soft" />
+                    <span className="text-[15px] leading-relaxed">{f}</span>
                   </li>
                 ))}
               </ul>
               <div className="mt-8">
-                <GhostCTA href={LINKS.buy}>Criar conta grátis</GhostCTA>
+                {/* Ia para a página de compra com o rótulo "criar conta grátis":
+                    o destino não correspondia à promessa do clique. */}
+                <GhostCTA href={LINKS.signup} className="w-full justify-center sm:w-auto">
+                  Começar grátis
+                </GhostCTA>
               </div>
             </div>
           </Reveal>
-          <Reveal delay={120}>
-            <div className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-da-amber bg-da-tint p-8">
+          <Reveal delay={100}>
+            <div className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-da-amber bg-da-tint p-6 md:p-8">
               <div
                 aria-hidden
                 className="absolute -right-16 -top-16 h-48 w-48 rounded-full"
                 style={{ background: 'radial-gradient(circle, rgba(232,118,58,.35), transparent 70%)' }}
               />
-              <div className="relative flex items-center gap-3">
+              <div className="relative flex flex-wrap items-center gap-3">
                 <h3 className="font-da-display text-2xl font-semibold tracking-tight">Plus+</h3>
                 <span className="rounded-full bg-da-amber px-3 py-1 font-da-mono text-[10px] uppercase tracking-widest text-[#0B1F1A]">
                   Tudo liberado
                 </span>
               </div>
-              <p className="mt-2 text-da-muted">A plataforma inteira, sem trava. Um plano só.</p>
-              <ul className="relative mt-7 space-y-3">
+              <p className="relative mt-2 text-[15px] leading-relaxed text-da-muted md:text-base">
+                Para transformar a plataforma no seu ambiente completo de preparação.
+              </p>
+              <ul className="relative mt-6 space-y-3">
                 {plus.map((f) => (
                   <li key={f} className="flex items-start gap-3">
-                    <span className="mt-0.5 shrink-0 text-da-amber">
+                    <span className="mt-0.5 shrink-0 text-da-amber-ink">
                       <IconCheck />
                     </span>
-                    <span>{f}</span>
+                    <span className="text-[15px] leading-relaxed">{f}</span>
                   </li>
                 ))}
               </ul>
               <div className="relative mt-8">
-                <PrimaryCTA href={LINKS.buy}>Assinar Plus+</PrimaryCTA>
+                <PrimaryCTA href={LINKS.buy} className="w-full justify-center sm:w-auto">
+                  Ver os planos
+                </PrimaryCTA>
               </div>
             </div>
           </Reveal>
         </div>
         <Reveal>
-          <p className="mt-8 font-da-mono text-sm text-da-muted">
+          <p className="mt-7 text-[15px] text-da-muted">
             Na dúvida?{' '}
-            <Link href={LINKS.amostra} className="text-da-amber underline underline-offset-4">
-              veja 10 questões sem cadastro
+            <Link
+              href={LINKS.amostra}
+              className="font-medium text-da-amber-ink underline underline-offset-4"
+            >
+              Resolva 10 questões sem cadastro
             </Link>{' '}
-            e sinta a plataforma antes de pagar.
+            e sinta a plataforma antes de decidir qualquer coisa.
           </p>
         </Reveal>
       </div>
@@ -2214,7 +3004,7 @@ function InstallApp() {
       id="app"
       className="relative border-t border-[color:var(--da-neutral-line)] bg-da-panel/40"
     >
-      <div className="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
+      <div className="mx-auto max-w-7xl px-5 py-14 md:px-8 md:py-28">
         <Reveal>
           <SectionMark n="App" label="No seu bolso" />
         </Reveal>
@@ -2229,46 +3019,63 @@ function InstallApp() {
 /* ---------- FAQ + CTA ---------- */
 
 function FaqAndCTA({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn: boolean }) {
+  // FAQ aqui não é central de dúvidas: é quebra de objeção. Cada pergunta só
+  // ganha o espaço se alguém realmente deixaria de criar a conta por causa
+  // dela. Curiosidade que não trava ninguém vive melhor na central de ajuda.
   const faqs = [
     [
       'Preciso pagar para começar?',
-      'Não. Você cria uma conta grátis e já entra usando. O Plus+ libera o resto quando você quiser, no seu tempo.',
+      'Não. Você cria a conta grátis, sem cartão, e já entra usando. O Plus+ libera o resto quando (e se) você quiser.',
     ],
     [
-      'Para quem é o Domine Aqui?',
-      'Estudantes de Medicina, residentes e médicos. Algumas ferramentas, como os flashcards de neuroanatomia, também servem a áreas como Psicologia.',
+      'Qual a diferença entre o grátis e o Plus+?',
+      'O grátis é para conhecer a plataforma e começar a estudar: amostra do banco, patologias liberadas do Manual, cronograma básico e provas e flashcards por IA na sua ementa. O Plus+ é a plataforma inteira sem trava — Manual Clínico completo, todos os materiais, banco ilimitado, aulas, mapas mentais e cronogramas.',
     ],
     [
-      'O que exatamente está incluído?',
-      'Manual Clínico, flashcards, provas e questões por IA, banco de questões e cronograma. Tudo interativo e vivo dentro da plataforma.',
+      'É só para aluno da minha faculdade?',
+      'Não. As provas são organizadas por faculdade, mas o Manual Clínico, o banco de questões, os flashcards e as ferramentas de IA servem a qualquer estudante de Medicina, residente ou médico — e as provas por IA você gera colando a ementa do seu próprio curso.',
     ],
     [
-      'As provas e flashcards por IA seguem a minha faculdade?',
-      'Seguem. Você escolhe o conteúdo da ementa e a IA gera em cima do que o seu curso cobra, não um genérico.',
+      'Preciso instalar alguma coisa?',
+      'Não. Funciona no navegador, no computador e no celular. Se quiser, dá para instalar como aplicativo na tela de início em um toque — mas é opcional.',
     ],
     [
-      'O que o Plus+ inclui?',
-      'Tudo. Manual Clínico completo, todos os materiais, todos os flashcards, aulas, mapas mentais, provas por IA, flashcards por IA, cronogramas e Banco de Questões ilimitado. É um plano só, sem níveis.',
+      'Consigo estudar pelo celular?',
+      'Sim, a plataforma inteira. O comum é resolver questões e revisar flashcards no celular e usar o computador para prova longa e cronograma — a conta é a mesma e o progresso acompanha você.',
+    ],
+    [
+      'Os materiais são atualizados?',
+      'São. Eles vivem dentro da plataforma, então a correção e o conteúdo novo aparecem para você no mesmo dia — sem precisar baixar nada de novo.',
+    ],
+    [
+      'E se eu cancelar?',
+      'Sua conta continua existindo e você volta para o plano gratuito, com o que ele inclui. O que é pagamento único, como o ebook do SUS, é seu para sempre.',
     ],
   ]
   return (
     <section className="relative border-t border-[color:var(--da-neutral-line)] bg-da-panel/40">
-      <div className="mx-auto max-w-3xl px-5 py-20 md:px-8 md:py-24">
+      <div className="mx-auto max-w-3xl px-5 py-14 md:px-8 md:py-24">
         <Reveal>
-          <SectionMark n="FAQ" label="Antes de começar" />
-          <h2 className="font-da-display text-4xl font-semibold tracking-tighter md:text-5xl">
+          <SectionMark n="08 / 08" label="Antes de começar" />
+          <h2 className="font-da-display text-[2rem] font-semibold tracking-tighter md:text-5xl">
             Perguntas justas, respostas diretas
           </h2>
         </Reveal>
-        <div className="mt-10 divide-y divide-[color:var(--da-neutral-line)]">
+        <div className="mt-8 divide-y divide-[color:var(--da-neutral-line)] md:mt-10">
           {faqs.map(([q, a], i) => (
-            <Reveal key={q} delay={i * 40}>
+            <Reveal key={q} delay={i * 30}>
               <Faq q={q} a={a} />
             </Reveal>
           ))}
         </div>
       </div>
-      <div className="relative overflow-hidden border-t border-[color:var(--da-amber-line)]">
+      {/* Âncora da doca do celular: quando este bloco entra na tela, a barra
+          fixa se apaga — dois botões dizendo a mesma coisa na mesma tela só
+          fazem o visitante hesitar sobre qual dos dois é o certo. */}
+      <div
+        id="cta-final"
+        className="relative overflow-hidden border-t border-[color:var(--da-amber-line)]"
+      >
         <div
           aria-hidden
           className="absolute inset-0"
@@ -2276,24 +3083,37 @@ function FaqAndCTA({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn:
             background: 'radial-gradient(800px 400px at 50% 120%, rgba(232,118,58,.2), transparent 65%)',
           }}
         />
-        <div className="relative mx-auto max-w-4xl px-5 py-24 text-center md:px-8 md:py-28">
+        <div className="relative mx-auto max-w-4xl px-5 py-16 text-center md:px-8 md:py-28">
           <Reveal>
-            <p className="font-da-mono text-xs uppercase tracking-[0.28em] text-da-amber">
+            <p className="font-da-mono text-[11px] uppercase tracking-[0.28em] text-da-amber-soft md:text-xs">
               Sua próxima prova começa agora
             </p>
-            <h2 className="mx-auto mt-5 max-w-2xl font-da-display text-4xl font-semibold leading-[1.04] tracking-tighter md:text-6xl">
+            <h2 className="mx-auto mt-4 max-w-2xl font-da-display text-[2.1rem] font-semibold leading-[1.05] tracking-tighter md:text-6xl">
               Enquanto você decide, alguém já está estudando aqui.
             </h2>
           </Reveal>
-          <Reveal delay={120}>
-            <div className="mt-9 flex justify-center">
-              <PrimaryCTA href={signupHref}>
-                {isLoggedIn ? 'Ir para o dashboard' : 'Criar conta grátis'}
+          <Reveal delay={100}>
+            <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
+              <PrimaryCTA
+                href={signupHref}
+                className="!px-8 !py-4 text-[17px] w-full justify-center sm:w-auto"
+              >
+                {isLoggedIn ? 'Ir para o dashboard' : 'Começar grátis'}
               </PrimaryCTA>
+              {!isLoggedIn && (
+                <GhostCTA
+                  href={LINKS.amostra}
+                  className="!px-8 !py-4 text-[17px] w-full justify-center sm:w-auto"
+                >
+                  Testar 10 questões
+                </GhostCTA>
+              )}
             </div>
           </Reveal>
-          <Reveal delay={200}>
-            <p className="mt-4 font-da-mono text-xs text-da-muted">Grátis para começar. Sem cartão.</p>
+          <Reveal delay={160}>
+            <p className="mt-4 font-da-mono text-[11px] text-da-muted md:text-xs">
+              Sem cartão · acesso imediato · celular e computador
+            </p>
           </Reveal>
         </div>
       </div>
@@ -2313,7 +3133,7 @@ function Faq({ q, a }: { q: string; a: string }) {
       >
         <span className="font-da-display text-lg font-medium">{q}</span>
         <span
-          className="shrink-0 text-da-amber transition-transform duration-300"
+          className="shrink-0 text-da-amber-ink transition-transform duration-300"
           style={{ transform: open ? 'rotate(45deg)' : 'rotate(0)' }}
           aria-hidden
         >
@@ -2334,12 +3154,80 @@ function Faq({ q, a }: { q: string; a: string }) {
   )
 }
 
+/* ---------- DOCA DE AÇÃO DO CELULAR ---------- */
+
+/**
+ * A barra fixa que aparece no celular assim que o hero sai da tela e some
+ * quando o CTA final entra.
+ *
+ * O motivo é a fadiga do polegar, não a estética. No telefone esta página tem
+ * vários metros de rolagem; sem a doca, quem se convence no meio do caminho
+ * precisa CAÇAR um botão — rolar de volta ao topo ou até o fim. A doca
+ * transforma isso em um toque, no ponto mais fácil de alcançar da tela.
+ *
+ * Ela se apaga sozinha em cima do CTA final para não haver dois botões
+ * dizendo a mesma coisa na mesma tela, e nunca aparece no desktop, onde o
+ * header já fica sempre visível.
+ */
+function MobileDock({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn: boolean }) {
+  const [shown, setShown] = useState(false)
+
+  useEffect(() => {
+    const hero = document.getElementById('top')
+    const fim = document.getElementById('cta-final')
+    if (!hero) return
+
+    let heroFora = false
+    let fimNaTela = false
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.target === hero) heroFora = !entry.isIntersecting
+          else fimNaTela = entry.isIntersecting
+        }
+        setShown(heroFora && !fimNaTela)
+      },
+      { threshold: 0 }
+    )
+    io.observe(hero)
+    if (fim) io.observe(fim)
+    return () => io.disconnect()
+  }, [])
+
+  return (
+    <div
+      data-shown={shown}
+      aria-hidden={!shown}
+      className="da-dock fixed inset-x-0 bottom-0 z-40 border-t border-[color:var(--da-neutral-line)] bg-da-ground/95 px-4 pt-3 backdrop-blur-md lg:hidden"
+    >
+      <div className="flex items-center gap-2.5">
+        <PrimaryCTA
+          href={signupHref}
+          className="!py-3.5 flex-1 justify-center text-[15px]"
+          tabIndex={shown ? undefined : -1}
+        >
+          {isLoggedIn ? 'Ir para o dashboard' : 'Começar grátis'}
+        </PrimaryCTA>
+        {!isLoggedIn && (
+          <SmartLink
+            href={LINKS.amostra}
+            tabIndex={shown ? undefined : -1}
+            className="inline-flex min-h-[48px] shrink-0 items-center rounded-full border border-[color:var(--da-neutral-line)] px-4 text-[13px] font-medium text-da-paper"
+          >
+            10 questões
+          </SmartLink>
+        )}
+      </div>
+    </div>
+  )
+}
+
 /* ---------- RODAPÉ ---------- */
 
 function Footer() {
   return (
     <footer className="border-t border-[color:var(--da-neutral-line)] bg-da-ground">
-      <div className="mx-auto max-w-7xl px-5 py-14 md:px-8">
+      <div className="mx-auto max-w-7xl px-5 pb-24 pt-14 md:px-8 md:pb-14">
         <div className="flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
           <div className="max-w-sm">
             <div className="flex items-center gap-2.5">
@@ -2383,11 +3271,17 @@ function Footer() {
         </div>
         <div className="mt-12 flex flex-col gap-3 border-t border-[color:var(--da-neutral-line)] pt-6 text-xs text-da-muted sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} Domine Aqui. Todos os direitos reservados.</p>
-          <div className="flex flex-wrap items-center gap-4">
-            <Link href={LINKS.termos} className="transition hover:text-da-paper">
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-1">
+            <Link
+              href={LINKS.termos}
+              className="inline-flex min-h-[44px] items-center transition hover:text-da-paper"
+            >
               Termos de Serviço
             </Link>
-            <Link href={LINKS.privacidade} className="transition hover:text-da-paper">
+            <Link
+              href={LINKS.privacidade}
+              className="inline-flex min-h-[44px] items-center transition hover:text-da-paper"
+            >
               Política de Privacidade
             </Link>
             <span className="font-da-mono">domineaqui.com.br</span>
@@ -2401,11 +3295,19 @@ function Footer() {
 function FooterCol({ title, links }: { title: string; links: [string, string][] }) {
   return (
     <div>
-      <p className="font-da-mono text-[11px] uppercase tracking-[0.22em] text-da-amber">{title}</p>
-      <ul className="mt-4 space-y-2.5">
+      <p className="font-da-mono text-[11px] uppercase tracking-[0.22em] text-da-amber-soft">
+        {title}
+      </p>
+      {/* Alvo de 44px de altura em cada link. Antes eram 17px empilhados a 10px
+          de distância: no celular, as duas colunas do rodapé viravam um campo
+          minado de links vizinhos. */}
+      <ul className="mt-2 flex flex-col">
         {links.map(([l, href]) => (
           <li key={l}>
-            <SmartLink href={href} className="text-sm text-da-muted transition hover:text-da-paper">
+            <SmartLink
+              href={href}
+              className="flex min-h-[44px] items-center text-[15px] text-da-muted transition hover:text-da-paper"
+            >
               {l}
             </SmartLink>
           </li>
@@ -2430,7 +3332,7 @@ const SOCIALS: { label: string; href: string; hover: string; icon: ReactNode }[]
   {
     label: 'E-mail',
     href: 'mailto:contato@domineaqui.com.br',
-    hover: 'hover:border-da-amber/60 hover:text-da-amber',
+    hover: 'hover:border-da-amber/60 hover:text-da-amber-ink',
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
         <rect x="3" y="5" width="18" height="14" rx="2" />

@@ -3172,6 +3172,21 @@ body.roller-dragging {
   --da-amber-line: rgba(232, 118, 58, 0.35);
   --da-neutral-line: rgba(11, 31, 26, 0.12);
   --da-glass: rgba(255, 255, 255, 0.6);
+  /* Âmbar de ORNAMENTO. O âmbar cheio (--da-amber) fica reservado para AÇÃO:
+     botão, link de ação, estado ativo. Quando marcador de seção, ícone
+     decorativo e barra rolante usam exatamente a mesma cor do botão, o
+     visitante deixa de aprender "laranja = onde eu clico" — que é o sinal mais
+     valioso da página. O ornamento herda o matiz, com menos saturação. */
+  --da-amber-soft: 154 85 48;
+  --da-amber-soft-line: rgba(154, 85, 48, 0.28);
+  /* Âmbar para TEXTO. O âmbar da marca (232 118 58) rende 2,6:1 sobre o
+     off-white — reprovado no AA da WCAG, que pede 4,5:1 para texto normal. Ele
+     continua perfeito como PREENCHIMENTO de botão (ali o contraste que conta é
+     o do texto escuro por cima). Onde o âmbar é a própria tinta da letra —
+     botão fantasma, link de ação, rótulo — entra esta versão mais funda, que
+     mantém o mesmo matiz e passa com folga. No escuro os dois são o mesmo
+     valor: sobre o verde-profundo o âmbar da marca já rende 5,8:1. */
+  --da-amber-ink: 169 78 28;
 }
 
 .dark .da-landing {
@@ -3184,6 +3199,9 @@ body.roller-dragging {
   --da-amber-line: rgba(232, 118, 58, 0.22);
   --da-neutral-line: rgba(244, 241, 234, 0.1);
   --da-glass: rgba(14, 42, 34, 0.65);
+  --da-amber-soft: 190 148 122;
+  --da-amber-soft-line: rgba(190, 148, 122, 0.24);
+  --da-amber-ink: 232 118 58;
 }
 
 .da-landing ::selection {
@@ -3297,6 +3315,79 @@ body.roller-dragging {
   /* Sem animação, a esteira vira uma faixa rolável na mão. */
   .da-rail-wrap {
     overflow-x: auto !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   DOCA DE AÇÃO DO CELULAR
+   A barra que gruda no rodapé depois que o hero sai da tela. Existe por um
+   motivo bem prático: no celular a página tem vários metros de rolagem, e sem
+   ela o visitante convencido no meio do caminho precisa procurar um botão —
+   rolar para cima até o topo ou até o fim. A doca deixa a ação principal
+   sempre a um polegar de distância, o que é exatamente o oposto de cansar a
+   mão de quem já decidiu.
+   -------------------------------------------------------------------------- */
+.da-dock {
+  transform: translateY(120%);
+  transition: transform 0.32s cubic-bezier(0.2, 0.7, 0.2, 1);
+  will-change: transform;
+  /* O respiro de baixo mora aqui, e não numa classe utilitária, porque
+     `.pwa-safe-bottom` usa `!important` para vencer o padding do app — dentro
+     da doca ele zerava a folga e o botão encostava na borda da tela (e no
+     indicador de home do iPhone). Somando os dois no mesmo cálculo, a barra
+     respeita a área segura sem perder o respiro. */
+  padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
+}
+.da-dock[data-shown='true'] {
+  transform: translateY(0);
+}
+
+/* Menu aberto: a doca se recolhe (ver o efeito em Nav). */
+html[data-da-menu='aberto'] .da-dock[data-shown='true'] {
+  transform: translateY(120%);
+}
+
+/* --------------------------------------------------------------------------
+   JANELA DO PRODUTO (hero e seção "30 segundos")
+   O produto é desenhado em CSS, não fotografado. Um print viraria uma imagem
+   pesada, borrada em tela retina, presa a um tema e desatualizada no dia
+   seguinte; desenhado, ele é nítido em qualquer densidade, acompanha claro e
+   escuro sozinho e não custa um byte de download.
+   -------------------------------------------------------------------------- */
+.da-window {
+  background: rgb(var(--da-ground));
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.04) inset,
+    0 30px 70px -35px rgba(0, 0, 0, 0.55);
+}
+.dark .da-window {
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.05) inset,
+    0 40px 90px -35px rgba(0, 0, 0, 0.8);
+}
+
+/* Entrada do comentário da questão: o mesmo desenho do da-panel-fade, com
+   altura animada para o cartão não "pular" na tela quando aparece. */
+@keyframes da-answer-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.da-answer-in {
+  animation: da-answer-in 0.42s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .da-dock {
+    transition: none;
+  }
+  .da-answer-in {
+    animation: none;
   }
 }
 

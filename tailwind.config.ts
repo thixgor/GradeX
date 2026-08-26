@@ -96,6 +96,12 @@ const config: Config = {
         // opacidade do Tailwind (bg-da-panel/40) funcionarem.
         'da-amber': 'rgb(var(--da-amber) / <alpha-value>)',
         'da-amber-lift': 'rgb(var(--da-amber-lift) / <alpha-value>)',
+        // Ornamento: mesmo matiz, menos saturação. O âmbar cheio fica só
+        // para o que é clicável (ver globals.css).
+        'da-amber-soft': 'rgb(var(--da-amber-soft) / <alpha-value>)',
+        // Âmbar quando ele é a tinta da letra: no tema claro o âmbar da
+        // marca não passa no contraste AA como texto (ver globals.css).
+        'da-amber-ink': 'rgb(var(--da-amber-ink) / <alpha-value>)',
         'da-ground': 'rgb(var(--da-ground) / <alpha-value>)',
         'da-panel': 'rgb(var(--da-panel) / <alpha-value>)',
         'da-tint': 'rgb(var(--da-tint) / <alpha-value>)',
