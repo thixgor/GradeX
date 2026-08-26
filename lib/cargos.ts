@@ -47,6 +47,7 @@
  * daqui. Quem toca no banco é `lib/cargos-server.ts`.
  */
 
+import { PLUS_LABEL, QUEST_LABEL } from './account-tier'
 import {
   PLAN_FEATURE_KEYS,
   normalizePlanPermissions,
@@ -233,10 +234,19 @@ export function cargosEmbutidos(): CargoDefinicao[] {
       false,
       2,
     ),
+    /*
+     * Rótulo vindo das constantes de marca, e não escrito aqui.
+     *
+     * O "Quest" virou "Quest+" numa mudança de posicionamento, e um nome
+     * digitado neste arquivo teria sobrevivido à mudança: a plataforma inteira
+     * diria "Quest+" e só esta tela diria "Quest". O registro é a fonte da
+     * verdade sobre cargo, mas não sobre marca — a marca continua sendo de
+     * `account-tier`, e o admin pode reescrevê-la salvando por cima.
+     */
     base(
       'quest',
-      'Quest',
-      'O Banco de Questões vendido sozinho. Fora dele, vale uma conta gratuita.',
+      QUEST_LABEL,
+      'O Banco de Questões e o PDF das provas, vendidos sozinhos. Fora disso, vale uma conta gratuita.',
       'esmeralda',
       'target',
       true,
@@ -244,7 +254,7 @@ export function cargosEmbutidos(): CargoDefinicao[] {
     ),
     base(
       'plus',
-      'Plus+',
+      PLUS_LABEL,
       'A plataforma inteira, sem teto.',
       'ambar',
       'crown',
