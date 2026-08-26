@@ -51,6 +51,7 @@ import { cn } from '@/lib/utils'
 import { BarraDoQuiz } from '@/components/banco/barra-do-quiz'
 import { CabecalhoQuiz } from '@/components/banco/cabecalho-quiz'
 import { AlternativaQuiz } from '@/components/banco/alternativa-quiz'
+import { CLASSE_DA_DIFICULDADE } from '@/lib/banco/aparencia-da-questao'
 import {
   FolhaDeFeedback,
   PainelDaExplicacao,
@@ -591,22 +592,11 @@ ${respostaAluno}`
           {questao.ano}
         </Badge>
       )}
-      {questao.dificuldade && (
-        <Badge
-          variant="outline"
-          className={
-            questao.dificuldade === 'facil'
-              ? 'border-green-500 text-green-600'
-              : questao.dificuldade === 'medio'
-                ? 'border-yellow-500 text-yellow-600'
-                : 'border-red-500 text-red-600'
-          }
-        >
-          {questao.dificuldade === 'facil'
-            ? 'Fácil'
-            : questao.dificuldade === 'medio'
-              ? 'Médio'
-              : 'Difícil'}
+      {/* Rótulo e cor vêm do mesmo lugar que a amostra e a demonstração da
+          landing usam — ver lib/banco/aparencia-da-questao.ts. */}
+      {questao.dificuldade && CLASSE_DA_DIFICULDADE[questao.dificuldade] && (
+        <Badge variant="outline" className={CLASSE_DA_DIFICULDADE[questao.dificuldade].classe}>
+          {CLASSE_DA_DIFICULDADE[questao.dificuldade].texto}
         </Badge>
       )}
     </div>

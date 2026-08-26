@@ -12,24 +12,28 @@ import {
   normalizeAccountType,
   temAcessoAoBanco,
 } from '@/lib/account-tier'
-import { canUseBancoQuestoes, getTierLimits } from '@/lib/tier-limits'
+import { canDownloadExamPdf, canUseBancoQuestoes, getTierLimits } from '@/lib/tier-limits'
 import { getFlashcardLimits, getFlashcardManualLimits } from '@/lib/flashcard-limits'
+import type { PlanFeatureKey } from '@/lib/plan-entitlements'
 import { PLAN_FEATURE_KEYS, permissoesPadraoParaCargo, regraDaArea } from '@/lib/plan-entitlements'
 
 /**
- * O cargo **Quest** — o Banco de Questões vendido sozinho.
+ * O cargo **Quest+** — o Banco de Questões (mais o PDF das provas) vendido
+ * sozinho.
  *
  * O que estes testes seguram, em ordem de gravidade:
  *
- *  1. **Quest não vira Plus+ por acidente.** O acervo, o Manual Clínico e as
+ *  1. **Quest+ não vira Plus+ por acidente.** O acervo, o Manual Clínico e as
  *     aulas são o grosso do valor do Plus+; se `isPlusAccount()` passasse a
  *     aceitar o cargo novo, um produto barato abriria a plataforma inteira.
- *  2. **Quest realmente abre o Banco.** É a única coisa que a pessoa comprou —
- *     e o cargo precisa passar pela mesma porta que o Plus+ na seção.
- *  3. **Quest é dinheiro e vence.** Precisa aparecer nos filtros de expiração,
+ *  2. **Quest+ entrega o que a venda promete.** O Banco e o download em PDF das
+ *     provas são as duas coisas que o modal de assinatura oferece a quem está
+ *     fazendo prova sem assinar; se o cargo não abrisse as duas, a pessoa
+ *     pagaria e reencontraria o mesmo bloqueio.
+ *  3. **Quest+ é dinheiro e vence.** Precisa aparecer nos filtros de expiração,
  *     ou a conta fica com o cargo para sempre depois do prazo.
  */
-describe('cargo Quest', () => {
+describe('cargo Quest+', () => {
   it('normaliza as escritas conhecidas e ignora o resto', () => {
     expect(normalizeAccountType('quest')).toBe(QUEST_TIER)
     expect(normalizeAccountType('Quest')).toBe(QUEST_TIER)
@@ -68,7 +72,16 @@ describe('cargo Quest', () => {
     expect(getTierLimits(QUEST_TIER).bancoQuestoes).toBe(true)
   })
 
-  it('vale uma conta gratuita fora do Banco', () => {
+  it('baixa PDF de prova — é a outra metade da oferta', () => {
+    expect(canDownloadExamPdf(QUEST_TIER)).toBe(true)
+    expect(canDownloadExamPdf('plus')).toBe(true)
+    // Quem não paga continua fora: é este bloqueio que abre o modal de venda.
+    expect(canDownloadExamPdf('gratuito')).toBe(false)
+    expect(canDownloadExamPdf('trial')).toBe(false)
+    expect(canDownloadExamPdf(null, true)).toBe(true)
+  })
+
+  it('vale uma conta gratuita fora do Banco e das provas em PDF', () => {
     const quest = getTierLimits(QUEST_TIER)
     const gratuito = getTierLimits('gratuito')
     expect(quest.cronogramasTotal).toBe(gratuito.cronogramasTotal)
@@ -78,13 +91,16 @@ describe('cargo Quest', () => {
     expect(getFlashcardManualLimits(QUEST_TIER)).toEqual(getFlashcardManualLimits('gratuito'))
   })
 
-  it('nasce, no editor de planos, com o Banco aberto e o resto fechado', () => {
+  it('nasce, no editor de planos, com o Banco e o PDF abertos e o resto fechado', () => {
     const permissoes = permissoesPadraoParaCargo(QUEST_TIER)
-    expect(regraDaArea(permissoes, 'bancoQuestoes').liberado).toBe(true)
-    // Sem teto dentro do Banco: quem paga o Quest paga por ele inteiro.
-    expect(regraDaArea(permissoes, 'bancoQuestoes').limite).toBe(0)
+    const abertas: PlanFeatureKey[] = ['bancoQuestoes', 'provasPdf']
+    for (const key of abertas) {
+      expect(regraDaArea(permissoes, key).liberado, key).toBe(true)
+      // Sem teto no que foi vendido: quem paga o Quest+ paga por ele inteiro.
+      expect(regraDaArea(permissoes, key).limite, key).toBe(0)
+    }
     for (const key of PLAN_FEATURE_KEYS) {
-      if (key === 'bancoQuestoes') continue
+      if (abertas.includes(key)) continue
       expect(regraDaArea(permissoes, key).liberado, key).toBe(false)
     }
     expect(Object.values(permissoes.manualClinicoModulos).every(v => v === false)).toBe(true)
@@ -100,6 +116,6 @@ describe('cargo Quest', () => {
 
   it('aparece na lista de cargos que o admin pode atribuir, com rótulo próprio', () => {
     expect(CANONICAL_ACCOUNT_TYPES).toContain(QUEST_TIER)
-    expect(getAccountTypeLabel(QUEST_TIER)).toBe('Quest')
+    expect(getAccountTypeLabel(QUEST_TIER)).toBe('Quest+')
   })
 })

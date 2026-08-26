@@ -373,17 +373,29 @@ export function permissoesPadraoParaCargo(role?: AccountType | string | null): P
   const flashcards = getFlashcardLimits(cargo)
 
   /*
-   * Quest é o Banco de Questões e nada mais. O plano nasce com a área do Banco
-   * aberta e sem teto, e todo o resto fechado — inclusive as áreas que o
-   * gratuito tem em conta-gotas (cronogramas, provas por IA, flashcards por
-   * IA, mapas mentais). Não é uma punição: o piso gratuito continua valendo
-   * para quem não assina nada, e é o cargo, não o plano, que responde por ele.
+   * Quest+ é o Banco de Questões e o PDF das provas — e nada mais. O plano nasce
+   * com essas duas áreas abertas e sem teto, e todo o resto fechado, inclusive
+   * as áreas que o gratuito tem em conta-gotas (cronogramas, provas por IA,
+   * flashcards por IA, mapas mentais). Não é uma punição: o piso gratuito
+   * continua valendo para quem não assina nada, e é o cargo, não o plano, que
+   * responde por ele.
+   *
+   * `provasPdf` está aqui porque é o que o Quest+ promete na venda: a tela que
+   * aparece para quem está fazendo prova sem assinar oferece baixar a prova, o
+   * gabarito e a resposta comentada para imprimir
+   * (`components/premium-pdf-cta-modal.tsx`). Nascer fechado faria o plano
+   * cobrar por um download que ele mesmo recusa depois.
+   *
+   * Planos Quest+ que já existem no banco guardam o bloco antigo: se estiverem
+   * com `ativo: true`, é preciso ligar `provasPdf` no editor de planos — o
+   * padrão daqui só vale para o que nasce a partir de agora.
    */
   if (cargo === QUEST_TIER) {
     for (const key of PLAN_FEATURE_KEYS) {
       base.regras[key] = regra(false, 0, 'dia')
     }
     base.regras.bancoQuestoes = regra(true, 0, 'dia')
+    base.regras.provasPdf = regra(true, 0, 'dia')
     base.manualClinicoModulos = todosOsModulosDoManual(false)
     return base
   }

@@ -1647,11 +1647,16 @@
   box-shadow: inset 0 0 0 1px hsl(var(--primary) / 0.2);
 }
 
-/* Persistent active route indicator - subtle left accent bar */
+/* Marca de rota atual — traço vertical à esquerda.
+   Ficava em `left: -6px`, fora da caixa do botão. Só que o botão é
+   `overflow-hidden` (o clique precisa recortar o brilho do hover), então o
+   traço era cortado inteiro: nunca chegou a aparecer. Encostado na borda
+   interna ele existe de verdade — e no menu recolhido, onde não há rótulo, é
+   a única pista de "você está aqui" que se lê de canto de olho. */
 .sidebar-fluid-item-active::before {
   content: '';
   position: absolute;
-  left: -6px;
+  left: 2px;
   top: 16%;
   bottom: 16%;
   width: 4px;
@@ -1767,6 +1772,132 @@
 .sidebar-nav-chip-nested > svg {
   height: 1rem;
   width: 1rem;
+}
+
+/* ---- Rail recolhido (72px, só a partir de 1024px: PC e tablet deitado) ----
+   O chip-caixa foi desenhado para o menu aberto, onde ele é o ponto de fixação
+   ao lado de um rótulo. Recolhido não sobra rótulo: cada linha vira um quadrado
+   de 32px contornado, catorze deles empilhados a 2px um do outro — uma grade de
+   caixinhas que se lê como defeito de renderização, não como menu. No rail o
+   chip deixa de ser caixa: fica só o ícone, e o fundo aparece apenas sob o
+   cursor ou na rota atual, que é o único item que precisa se destacar. */
+.sidebar-rail .sidebar-nav-chip {
+  height: 2.25rem;
+  width: 2.25rem;
+  border-radius: 12px;
+  background: transparent;
+  box-shadow: none;
+  color: hsl(var(--foreground) / 0.7);
+}
+
+.sidebar-rail .sidebar-fluid-item:hover .sidebar-nav-chip,
+.sidebar-rail .sidebar-fluid-item:focus-visible .sidebar-nav-chip {
+  background: hsl(var(--primary) / 0.14);
+  box-shadow: none;
+  color: hsl(var(--primary));
+}
+
+.sidebar-rail .sidebar-fluid-item-active .sidebar-nav-chip {
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  box-shadow: 0 6px 16px -8px hsl(var(--primary) / 0.9);
+}
+
+/* Upgrade e Sair seguem a mesma regra: nada de caixa em repouso, cor só no
+   hover — senão voltariam a ser duas exceções contornadas no meio do rail. */
+.sidebar-rail .sidebar-nav-chip-gradient,
+.sidebar-rail .sidebar-nav-chip-danger {
+  background: transparent;
+  box-shadow: none;
+}
+
+.sidebar-rail .sidebar-fluid-item:hover .sidebar-nav-chip-gradient {
+  background: rgba(226, 164, 62, 0.18);
+  box-shadow: none;
+}
+
+.sidebar-rail .sidebar-fluid-item:hover .sidebar-nav-chip-danger {
+  background: hsl(0 84% 60% / 0.16);
+  box-shadow: none;
+}
+
+/* O destaque da rota atual passa a viver no chip preenchido; manter também o
+   fundo tingido da linha inteira empilharia dois retângulos concêntricos. */
+.sidebar-rail .sidebar-fluid-item-active {
+  background: transparent;
+  box-shadow: none;
+}
+
+/* A barrinha encosta na borda do menu: no rail ela é a única pista de "você
+   está aqui" que sobrevive a uma olhada de canto de olho. */
+.sidebar-rail .sidebar-fluid-item-active::before {
+  left: 0;
+  top: 26%;
+  bottom: 26%;
+  width: 3px;
+}
+
+/* Rótulo flutuante do item recolhido. Portal + `fixed` porque o <aside> é
+   `overflow-hidden` e cortaria qualquer coisa desenhada fora dos 72px. */
+.sidebar-rail-tooltip {
+  position: fixed;
+  z-index: 60;
+  transform: translateY(-50%);
+  max-width: 15rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border-radius: 10px;
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--popover));
+  padding: 0.3125rem 0.625rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: hsl(var(--popover-foreground));
+  box-shadow: 0 12px 32px -14px hsl(var(--foreground) / 0.5);
+  pointer-events: none;
+}
+
+.dark .sidebar-rail-tooltip {
+  box-shadow: 0 12px 32px -12px rgba(0, 0, 0, 0.75);
+}
+
+/* ---- Tela baixa e deitada (tablet na horizontal, notebook curto) ----
+   O menu foi dimensionado pela largura: a 1024px o layout já é "desktop", mas a
+   altura pode ser 768px. Cabeçalho, bloco de criação e rodapé comem ~330px e
+   sobra menos da metade da tela para uma lista de dezoito áreas. Aqui a linha e
+   o chip encolhem e o contador de provas some — ele é a única informação do
+   menu que também vive na dashboard. */
+@media (min-width: 1024px) and (max-height: 820px) {
+  .sidebar-glass .sidebar-fluid-item {
+    height: 2.5rem;
+  }
+
+  .sidebar-glass .sidebar-nav-chip {
+    height: 1.75rem;
+    width: 1.75rem;
+    border-radius: 9px;
+  }
+
+  .sidebar-glass .sidebar-nav-chip > svg {
+    height: 1.05rem;
+    width: 1.05rem;
+  }
+
+  .sidebar-glass .sidebar-nav-chip-nested {
+    height: 1.5rem;
+    width: 1.5rem;
+  }
+
+  .sidebar-glass .sidebar-nav-chip-nested > svg {
+    height: 0.9rem;
+    width: 0.9rem;
+  }
+
+  .sidebar-glass .sidebar-contador-provas {
+    display: none;
+  }
 }
 
 /* Painel que substitui o acordeão quando o menu está recolhido a 72px. */
@@ -3041,6 +3172,21 @@ body.roller-dragging {
   --da-amber-line: rgba(232, 118, 58, 0.35);
   --da-neutral-line: rgba(11, 31, 26, 0.12);
   --da-glass: rgba(255, 255, 255, 0.6);
+  /* Âmbar de ORNAMENTO. O âmbar cheio (--da-amber) fica reservado para AÇÃO:
+     botão, link de ação, estado ativo. Quando marcador de seção, ícone
+     decorativo e barra rolante usam exatamente a mesma cor do botão, o
+     visitante deixa de aprender "laranja = onde eu clico" — que é o sinal mais
+     valioso da página. O ornamento herda o matiz, com menos saturação. */
+  --da-amber-soft: 154 85 48;
+  --da-amber-soft-line: rgba(154, 85, 48, 0.28);
+  /* Âmbar para TEXTO. O âmbar da marca (232 118 58) rende 2,6:1 sobre o
+     off-white — reprovado no AA da WCAG, que pede 4,5:1 para texto normal. Ele
+     continua perfeito como PREENCHIMENTO de botão (ali o contraste que conta é
+     o do texto escuro por cima). Onde o âmbar é a própria tinta da letra —
+     botão fantasma, link de ação, rótulo — entra esta versão mais funda, que
+     mantém o mesmo matiz e passa com folga. No escuro os dois são o mesmo
+     valor: sobre o verde-profundo o âmbar da marca já rende 5,8:1. */
+  --da-amber-ink: 169 78 28;
 }
 
 .dark .da-landing {
@@ -3053,6 +3199,9 @@ body.roller-dragging {
   --da-amber-line: rgba(232, 118, 58, 0.22);
   --da-neutral-line: rgba(244, 241, 234, 0.1);
   --da-glass: rgba(14, 42, 34, 0.65);
+  --da-amber-soft: 190 148 122;
+  --da-amber-soft-line: rgba(190, 148, 122, 0.24);
+  --da-amber-ink: 232 118 58;
 }
 
 .da-landing ::selection {
@@ -3166,6 +3315,96 @@ body.roller-dragging {
   /* Sem animação, a esteira vira uma faixa rolável na mão. */
   .da-rail-wrap {
     overflow-x: auto !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   DOCA DE AÇÃO DO CELULAR
+   A barra que gruda no rodapé depois que o hero sai da tela. Existe por um
+   motivo bem prático: no celular a página tem vários metros de rolagem, e sem
+   ela o visitante convencido no meio do caminho precisa procurar um botão —
+   rolar para cima até o topo ou até o fim. A doca deixa a ação principal
+   sempre a um polegar de distância, o que é exatamente o oposto de cansar a
+   mão de quem já decidiu.
+   -------------------------------------------------------------------------- */
+.da-dock {
+  transform: translateY(120%);
+  transition: transform 0.32s cubic-bezier(0.2, 0.7, 0.2, 1);
+  will-change: transform;
+  /* O respiro de baixo mora aqui, e não numa classe utilitária, porque
+     `.pwa-safe-bottom` usa `!important` para vencer o padding do app — dentro
+     da doca ele zerava a folga e o botão encostava na borda da tela (e no
+     indicador de home do iPhone). Somando os dois no mesmo cálculo, a barra
+     respeita a área segura sem perder o respiro. */
+  padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
+}
+.da-dock[data-shown='true'] {
+  transform: translateY(0);
+}
+
+/* Menu aberto: a doca se recolhe (ver o efeito em Nav). */
+html[data-da-menu='aberto'] .da-dock[data-shown='true'] {
+  transform: translateY(120%);
+}
+
+/* --------------------------------------------------------------------------
+   JANELA DO PRODUTO (hero e seção "30 segundos")
+   O produto é desenhado em CSS, não fotografado. Um print viraria uma imagem
+   pesada, borrada em tela retina, presa a um tema e desatualizada no dia
+   seguinte; desenhado, ele é nítido em qualquer densidade, acompanha claro e
+   escuro sozinho e não custa um byte de download.
+   -------------------------------------------------------------------------- */
+.da-window {
+  background: rgb(var(--da-ground));
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.04) inset,
+    0 30px 70px -35px rgba(0, 0, 0, 0.55);
+}
+.dark .da-window {
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.05) inset,
+    0 40px 90px -35px rgba(0, 0, 0, 0.8);
+}
+
+/* Entrada do comentário da questão: o mesmo desenho do da-panel-fade, com
+   altura animada para o cartão não "pular" na tela quando aparece. */
+/* A tremida curta do erro. Na plataforma quem faz isso é o framer-motion
+   dentro da `AlternativaQuiz`; na landing, onde JavaScript a mais atrasa a
+   primeira pintura, o mesmo movimento sai de um keyframe. O corpo entende o
+   erro antes da leitura — é para isso que ela existe. */
+@keyframes da-tremida {
+  0% { transform: translateX(0); }
+  18% { transform: translateX(-7px); }
+  36% { transform: translateX(7px); }
+  58% { transform: translateX(-4px); }
+  78% { transform: translateX(4px); }
+  100% { transform: translateX(0); }
+}
+.da-tremida {
+  animation: da-tremida 0.42s ease-out both;
+}
+
+@keyframes da-answer-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.da-answer-in {
+  animation: da-answer-in 0.42s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .da-dock {
+    transition: none;
+  }
+  .da-answer-in,
+  .da-tremida {
+    animation: none;
   }
 }
 
@@ -6006,5 +6245,115 @@ body.roller-dragging {
       inset 0 1px 0 hsl(0 0% 100% / 0.18),
       inset 0 0 0 1px hsl(var(--primary) / 0.24),
       0 3px 14px -3px hsl(var(--primary) / 0.55);
+  }
+}
+
+
+/* ============================================
+   Estudo de flashcard em tela baixa e deitada
+   (tablet na horizontal, notebook curto, celular deitado)
+
+   A área de resolução se dimensionava só pela LARGURA da tela. Um iPad deitado
+   tem 1024px de largura — o mesmo `lg:` de um monitor — e por isso recebia card
+   de 500px de altura mínima, cabeçalho em cartão, paginador numerado e barra de
+   avaliação folgada. Somando tudo dava mais de 900px de conteúdo numa viewport
+   de 768px: o card ficava cortado pela barra fixa e o usuário não conseguia ver
+   a pergunta inteira e as notas ao mesmo tempo.
+
+   Aqui a tela baixa devolve a altura ao card, que é o único elemento que o
+   usuário realmente precisa ler. O que sai é sempre redundante: os atalhos de
+   teclado estão no rodapé da página do deck, e o rótulo "Como foi lembrar
+   dessa resposta?" é explicado pelos próprios três botões.
+   ============================================ */
+@media (orientation: landscape) and (max-height: 860px) {
+  /* Classe repetida de propósito: aqui o alvo é o próprio elemento que carrega
+     `py-4 sm:py-6`, e uma media query não soma especificidade — com um seletor
+     de classe só, o utilitário do Tailwind (que sai depois no bundle) ganhava e
+     o respiro continuava em 24px. */
+  .flashcard-estudo.flashcard-estudo {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .flashcard-estudo .flashcard-estudo-topo {
+    margin-bottom: 0.5rem;
+    padding: 0.375rem 0.5rem;
+  }
+
+  .flashcard-estudo .flashcard-estudo-progresso {
+    margin-bottom: 0.5rem;
+  }
+
+  .flashcard-estudo .flashcard-estudo-pager {
+    margin-bottom: 0.5rem;
+  }
+
+  /* O card já encolheu sozinho (min-height em `svh`); aqui sobra tirar o
+     respiro interno, que a 48px de padding comia meia pergunta. */
+  .flashcard-estudo .flashcard-face {
+    padding: 1rem 1.5rem;
+  }
+
+  .flashcard-estudo .flashcard-estudo-barra {
+    margin-top: 0.75rem;
+    padding-top: 0.5rem;
+  }
+
+  .flashcard-estudo .flashcard-estudo-revelar {
+    padding-top: 0.625rem;
+    padding-bottom: 0.625rem;
+  }
+
+  .flashcard-estudo .flashcard-estudo-nota {
+    min-height: 44px;
+    padding-top: 0.375rem;
+    padding-bottom: 0.375rem;
+  }
+
+  .flashcard-estudo .flashcard-estudo-rotulo,
+  .flashcard-estudo .flashcard-estudo-atalhos {
+    display: none;
+  }
+}
+
+/* Deitado e ainda mais baixo (celular na horizontal, ~390px de altura). Aqui
+   sai o paginador numerado: ele é atalho, não caminho — a posição continua no
+   "3 / 40" do cabeçalho e a troca de card no deslize, nas setas do teclado e
+   nos botões Anterior/Próximo, que ficam. E o card cede mais um pouco, porque
+   nessa altura ele e a barra de avaliação disputam a mesma faixa de tela. */
+@media (orientation: landscape) and (max-height: 560px) {
+  .flashcard-estudo .flashcard-estudo-pager {
+    display: none;
+  }
+
+  .flashcard-estudo .flashcard-face {
+    min-height: 38svh;
+    padding: 0.75rem 1rem;
+  }
+}
+
+/* ============================================
+   /buy — troca de plano no seletor
+   --------------------------------------------
+   Hallmark · macrostructure: Ledger · genre: editorial · tone: editorial-direto
+   accent hue: warm (secondary #CE5929) · enrichment: none (só tipografia)
+   pre-emit critique: P5 H5 E4 S5 R4 V4
+   --------------------------------------------
+   O painel da oferta é remontado (key={plano.id}) a cada troca de aba. Sem
+   nenhuma transição, o conteúdo inteiro salta de uma vez e a pessoa perde o
+   ponto onde estava lendo. É uma animação só, de opacidade + deslocamento —
+   nada de layout, para não custar reflow numa página que já tem tabela. */
+@keyframes buy-panel-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.buy-panel-in {
+  animation: buy-panel-in 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .buy-panel-in {
+    animation: none;
   }
 }

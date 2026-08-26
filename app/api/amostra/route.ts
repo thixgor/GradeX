@@ -47,6 +47,26 @@ export async function GET(request: NextRequest) {
           },
         },
         { $sample: { size: MAX_QUESTOES } },
+        // Módulo e tópico vêm junto porque a amostra mostra as MESMAS
+        // etiquetas que a tela de resolução de quem tem conta. Sem eles a
+        // questão chegava sem lugar na árvore, e a amostra virava um quiz
+        // genérico em vez de um pedaço do banco de verdade.
+        {
+          $lookup: {
+            from: 'banco_modulos',
+            localField: 'moduloId',
+            foreignField: '_id',
+            as: 'modulo',
+          },
+        },
+        {
+          $lookup: {
+            from: 'banco_topicos',
+            localField: 'topicoId',
+            foreignField: '_id',
+            as: 'topico',
+          },
+        },
         {
           $project: {
             _id: 1,
@@ -59,6 +79,8 @@ export async function GET(request: NextRequest) {
             dificuldade: 1,
             fonte: 1,
             ano: 1,
+            moduloNome: { $first: '$modulo.nome' },
+            topicoNome: { $first: '$topico.nome' },
           },
         },
       ])
@@ -78,6 +100,8 @@ export async function GET(request: NextRequest) {
       dificuldade: q.dificuldade || null,
       fonte: q.fonte || null,
       ano: q.ano || null,
+      moduloNome: q.moduloNome || null,
+      topicoNome: q.topicoNome || null,
     }))
 
     // 1 patologia liberada, quando o Manual está no modo de acesso por lista.

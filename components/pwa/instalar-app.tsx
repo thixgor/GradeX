@@ -104,8 +104,8 @@ const PELES: Record<AparenciaInstalacao, Pele> = {
     fonteMono: 'font-da-mono',
     titulo: 'font-da-display font-semibold tracking-tighter',
     texto: 'text-da-muted',
-    destaque: 'text-da-amber',
-    selo: 'border-da-amber/40 bg-da-amber/10 text-da-amber font-da-mono',
+    destaque: 'text-da-amber-ink',
+    selo: 'border-da-amber/40 bg-da-amber/10 text-da-amber-ink font-da-mono',
     botao:
       'bg-da-amber text-[#0B1F1A] hover:shadow-[0_0_34px_-6px_rgba(232,118,58,.7)] focus-visible:outline-da-amber',
     botaoSecundario:
@@ -114,11 +114,11 @@ const PELES: Record<AparenciaInstalacao, Pele> = {
     chipAtivo: 'border-da-amber bg-da-amber text-[#0B1F1A]',
     chipInativo:
       'border-[color:var(--da-neutral-line)] bg-da-panel/40 text-da-muted hover:text-da-paper hover:border-da-amber/40',
-    bolha: 'bg-da-amber/12 text-da-amber',
+    bolha: 'bg-da-amber/10 text-da-amber-ink',
     linha: 'bg-[color:var(--da-neutral-line)]',
-    sucesso: 'border-da-amber/50 bg-da-amber/10 text-da-amber',
-    aviso: 'border-da-amber/40 bg-da-amber/8 text-da-amber',
-    marcador: 'text-da-amber',
+    sucesso: 'border-da-amber/50 bg-da-amber/10 text-da-amber-ink',
+    aviso: 'border-da-amber/40 bg-da-amber/10 text-da-amber-ink',
+    marcador: 'text-da-amber-ink',
   },
 }
 

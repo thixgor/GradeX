@@ -26,11 +26,16 @@ const CONTACT_EMAIL = 'contato@domineaqui.com.br'
 //  - '/' e '/auth': landing e login já têm layout/rodapé próprios.
 //  - '/lead/*': as páginas de lead trazem o próprio rodapé (era rodapé dobrado).
 //  - Todo o app pós-login (AppShell com sidebar), provas, checkouts e afins.
+//  - '/amostra': desde que a amostra passou a ser a MESMA tela de resolução do
+//    banco (uma questão por vez, barra de progresso, barra de ação fixa no
+//    rodapé), ela virou justamente o caso que o parágrafo acima descreve: um
+//    bloco de canais de comunicação colado embaixo de quem está respondendo, e
+//    depois embaixo do placar. O convite para criar a conta já é a última seção
+//    da própria tela de resultado.
 const FOOTER_EXACT_ROUTES = [
   '/equipe',
   '/termos-de-servico',
   '/politica-de-privacidade',
-  '/amostra',
   '/comprar',
 ]
 const FOOTER_PREFIX_ROUTES = ['/rifas']

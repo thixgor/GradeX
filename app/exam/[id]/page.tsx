@@ -15,8 +15,8 @@ import { ToastAlert } from '@/components/ui/toast-alert'
 import { BanChecker } from '@/components/ban-checker'
 import { SignaturePad } from '@/components/signature-pad'
 import { ExamTimer } from '@/components/exam-timer'
+import { ExamBrandBadge } from '@/components/exam-brand-badge'
 import { Barcode } from '@/components/barcode'
-import { Logo } from '@/components/logo'
 import { Exam, UserAnswer, TextHighlight, QuestionAnnotation } from '@/lib/types'
 import { HighlightableText } from '@/components/highlightable-text'
 import { formatDate } from '@/lib/utils'
@@ -34,6 +34,7 @@ import { useWebRTC } from '@/hooks/use-webrtc'
 import { ArrowLeft, Check, X, Send, FileDown, Clock, User, CheckCircle2, AlertCircle, List, StickyNote, Copy, ClipboardCheck, Flag, ChevronRight, ChevronLeft, Bot, Maximize2, BookOpen, LogOut } from 'lucide-react'
 import { ImageModal } from '@/components/image-modal'
 import { PremiumPdfCtaModal } from '@/components/premium-pdf-cta-modal'
+import { PdfCtaBanner } from '@/components/pdf-cta-banner'
 import { canDownloadExamPdf } from '@/lib/tier-limits'
 import { consumirCotaDoPlano } from '@/lib/plan-consume-client'
 import { useScrollToTopWhen } from '@/components/scroll-to-top'
@@ -2305,6 +2306,8 @@ ${respostaAluno}`
                 >
                   {canStart ? 'Iniciar Prova' : 'Entrar na Sala'}
                 </Button>
+
+                <PdfCtaBanner accountType={accountType} isAdmin={userRole === 'admin'} compact />
               </div>
             </div>
           </div>
@@ -2462,6 +2465,29 @@ ${respostaAluno}`
   const progressPercent = exam.questions.length
     ? (answeredCount / exam.questions.length) * 100
     : 0
+
+  // ─── Cronômetro da prova ───
+  // Provas de treino e pessoais nascem com `endTime` um ano à frente, só para
+  // liberar o acesso. Usar essa data como prazo fazia o cabeçalho exibir uma
+  // contagem sem sentido ("17:13:38 restante") mesmo para quem escolheu "Sem
+  // limite". O cronômetro agora só aparece quando existe prazo de verdade: o
+  // limite escolhido no treino ou o fim de uma prova agendada.
+  const isSelfPacedExam = Boolean(exam.isPracticeExam || (exam as any).isPersonalExam)
+  const examDeadline: Date | null =
+    practiceTimeLimitMs && examStartTime
+      ? new Date(examStartTime.getTime() + practiceTimeLimitMs)
+      : isSelfPacedExam || !exam.endTime
+      ? null
+      : new Date(exam.endTime)
+  const handleExamTimeUp = () => {
+    if (exam.isPracticeExam) {
+      showToastMessage('Tempo esgotado! Finalizando prova...', 'info')
+      handleSubmit()
+    } else {
+      showToastMessage('O tempo da prova acabou!', 'info')
+      setTimeout(() => router.push('/'), 2000)
+    }
+  }
 
   // ─── Estado da navegação paginada ───
   const isLastQuestion = currentQuestionIndex === exam.questions.length - 1
@@ -2654,7 +2680,7 @@ ${respostaAluno}`
               >
                 <ArrowLeft className="h-4 w-4" />
               </Button>
-              <Logo variant="icon" size="sm" className="hidden sm:block" />
+              {examDeadline && <ExamBrandBadge compact className="hidden sm:flex" />}
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
                   <h1 className="text-sm sm:text-base md:text-lg lg:text-xl font-bold truncate">{exam.title}</h1>
@@ -2755,40 +2781,25 @@ ${respostaAluno}`
                 <FileDown className="h-4 w-4" />
               </Button>
               <div className="hidden sm:block">
-                <ExamTimer
-                  endTime={practiceTimeLimitMs && examStartTime
-                    ? new Date(examStartTime.getTime() + practiceTimeLimitMs)
-                    : exam.endTime}
-                  onTimeUp={() => {
-                    if (exam.isPracticeExam) {
-                      showToastMessage('Tempo esgotado! Finalizando prova...', 'info')
-                      handleSubmit()
-                    } else {
-                      showToastMessage('O tempo da prova acabou!', 'info')
-                      setTimeout(() => router.push('/'), 2000)
-                    }
-                  }}
-                />
+                {examDeadline ? (
+                  <ExamTimer endTime={examDeadline} onTimeUp={handleExamTimeUp} />
+                ) : (
+                  <ExamBrandBadge />
+                )}
               </div>
               <ThemeToggle />
             </div>
           </div>
-          {/* Exam Timer em linha separada no mobile */}
-          <div className="sm:hidden mt-2 flex justify-center">
-            <ExamTimer
-              endTime={practiceTimeLimitMs && examStartTime
-                ? new Date(examStartTime.getTime() + practiceTimeLimitMs)
-                : exam.endTime}
-              onTimeUp={() => {
-                if (exam.isPracticeExam) {
-                  showToastMessage('Tempo esgotado! Finalizando prova...', 'info')
-                  handleSubmit()
-                } else {
-                  showToastMessage('O tempo da prova acabou!', 'info')
-                  setTimeout(() => router.push('/'), 2000)
-                }
-              }}
-            />
+          {/* Cronômetro (ou, sem prazo, a marca) em linha separada no mobile */}
+          <div className="sm:hidden mt-2 flex items-center justify-center gap-2">
+            {examDeadline ? (
+              <>
+                <ExamBrandBadge compact />
+                <ExamTimer endTime={examDeadline} onTimeUp={handleExamTimeUp} />
+              </>
+            ) : (
+              <ExamBrandBadge />
+            )}
           </div>
         </div>
       </header>
@@ -3800,7 +3811,7 @@ ${respostaAluno}`
       {showFeedbackModal && feedbackData && (
         <div className="fixed inset-0 bg-black/55 backdrop-blur-sm z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in duration-200">
           <Card className="flex w-full max-h-[calc(100dvh-1rem)] sm:max-h-[calc(100dvh-2rem)] sm:max-w-3xl flex-col overflow-hidden rounded-t-3xl rounded-b-none sm:rounded-2xl border-border/60 bg-background/95 shadow-2xl backdrop-blur-xl">
-            <CardHeader className={`relative overflow-hidden border-b p-4 sm:p-6 ${
+            <CardHeader className={`relative shrink-0 overflow-hidden border-b p-4 sm:p-6 ${
               feedbackData.isCorrect
                 ? 'border-emerald-500/20 bg-gradient-to-br from-emerald-500/12 via-background to-background'
                 : 'border-red-500/20 bg-gradient-to-br from-red-500/12 via-background to-background'
