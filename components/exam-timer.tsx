@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Clock } from 'lucide-react'
 
 interface ExamTimerProps {
@@ -16,15 +16,21 @@ export function ExamTimer({ endTime, onTimeUp }: ExamTimerProps) {
     total: number
   } | null>(null)
 
+  // O prazo chega como Date recriado a cada render da prova; guardamos só o
+  // instante em milissegundos para o intervalo não ser reiniciado à toa. O
+  // callback vai por ref pela mesma razão.
+  const endMs = new Date(endTime).getTime()
+  const onTimeUpRef = useRef(onTimeUp)
+  onTimeUpRef.current = onTimeUp
+
   useEffect(() => {
     const calculateTimeLeft = () => {
       const now = new Date().getTime()
-      const end = new Date(endTime).getTime()
-      const difference = end - now
+      const difference = endMs - now
 
       if (difference <= 0) {
         setTimeLeft({ hours: 0, minutes: 0, seconds: 0, total: 0 })
-        if (onTimeUp) onTimeUp()
+        onTimeUpRef.current?.()
         return
       }
 
@@ -39,7 +45,7 @@ export function ExamTimer({ endTime, onTimeUp }: ExamTimerProps) {
     const interval = setInterval(calculateTimeLeft, 1000)
 
     return () => clearInterval(interval)
-  }, [endTime, onTimeUp])
+  }, [endMs])
 
   if (!timeLeft) {
     return null
