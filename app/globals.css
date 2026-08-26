@@ -6223,3 +6223,29 @@ body.roller-dragging {
     padding: 0.75rem 1rem;
   }
 }
+
+/* ============================================
+   /buy — troca de plano no seletor
+   --------------------------------------------
+   Hallmark · macrostructure: Ledger · genre: editorial · tone: editorial-direto
+   accent hue: warm (secondary #CE5929) · enrichment: none (só tipografia)
+   pre-emit critique: P5 H5 E4 S5 R4 V4
+   --------------------------------------------
+   O painel da oferta é remontado (key={plano.id}) a cada troca de aba. Sem
+   nenhuma transição, o conteúdo inteiro salta de uma vez e a pessoa perde o
+   ponto onde estava lendo. É uma animação só, de opacidade + deslocamento —
+   nada de layout, para não custar reflow numa página que já tem tabela. */
+@keyframes buy-panel-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.buy-panel-in {
+  animation: buy-panel-in 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .buy-panel-in {
+    animation: none;
+  }
+}
