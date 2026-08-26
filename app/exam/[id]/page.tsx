@@ -34,6 +34,7 @@ import { useWebRTC } from '@/hooks/use-webrtc'
 import { ArrowLeft, Check, X, Send, FileDown, Clock, User, CheckCircle2, AlertCircle, List, StickyNote, Copy, ClipboardCheck, Flag, ChevronRight, ChevronLeft, Bot, Maximize2, BookOpen, LogOut } from 'lucide-react'
 import { ImageModal } from '@/components/image-modal'
 import { PremiumPdfCtaModal } from '@/components/premium-pdf-cta-modal'
+import { PdfCtaBanner } from '@/components/pdf-cta-banner'
 import { canDownloadExamPdf } from '@/lib/tier-limits'
 import { consumirCotaDoPlano } from '@/lib/plan-consume-client'
 import { useScrollToTopWhen } from '@/components/scroll-to-top'
@@ -2305,6 +2306,8 @@ ${respostaAluno}`
                 >
                   {canStart ? 'Iniciar Prova' : 'Entrar na Sala'}
                 </Button>
+
+                <PdfCtaBanner accountType={accountType} isAdmin={userRole === 'admin'} compact />
               </div>
             </div>
           </div>

@@ -1,6 +1,5 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   Crown,
@@ -18,23 +17,13 @@ import {
 import type { LucideIcon } from 'lucide-react'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { PLUS_LABEL, QUEST_LABEL, ROTA_ASSINATURA } from '@/lib/account-tier'
-import { ACERVO_SEM_NUMERO, rotuloDoAcervo } from '@/lib/banco/acervo-publico'
+import { useRotuloDoAcervo } from '@/hooks/use-rotulo-do-acervo'
 
 interface PremiumPdfCtaModalProps {
   open: boolean
   onClose: () => void
   onTakeExam?: () => void
 }
-
-/**
- * A contagem do acervo, buscada uma vez por carregamento da página.
- *
- * O modal abre e fecha várias vezes na mesma sessão (uma por clique em
- * "baixar"), e o número do acervo não muda entre um clique e outro. Guardar
- * aqui fora do componente evita repetir a requisição a cada abertura e faz o
- * número aparecer instantaneamente da segunda vez em diante.
- */
-let acervoEmCache: number | null = null
 
 /**
  * O que o Quest+ entrega, na ordem em que resolve o problema de quem está
@@ -114,26 +103,7 @@ const BENEFICIOS: Beneficio[] = [
  */
 export function PremiumPdfCtaModal({ open, onClose, onTakeExam }: PremiumPdfCtaModalProps) {
   const router = useRouter()
-  const [acervo, setAcervo] = useState<number | null>(acervoEmCache)
-
-  useEffect(() => {
-    if (!open || acervoEmCache !== null) return
-    let vivo = true
-    fetch('/api/banco/contagem')
-      .then(r => (r.ok ? r.json() : null))
-      .then(data => {
-        const valor = Number(data?.aproximado)
-        if (!Number.isFinite(valor)) return
-        acervoEmCache = valor
-        if (vivo) setAcervo(valor)
-      })
-      // Sem número o texto ainda funciona ("Milhares de questões"): a venda não
-      // pode depender de uma requisição secundária dar certo.
-      .catch(() => {})
-    return () => { vivo = false }
-  }, [open])
-
-  const rotuloAcervo = rotuloDoAcervo(acervo) ?? ACERVO_SEM_NUMERO
+  const rotuloAcervo = useRotuloDoAcervo(open)
 
   function assinar() {
     onClose()

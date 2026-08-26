@@ -13,6 +13,7 @@ import { GroupCard } from '@/components/group-card'
 import { CoverImage } from '@/components/cover-image'
 import { FileUpload } from '@/components/file-upload'
 import { PremiumPdfCtaModal } from '@/components/premium-pdf-cta-modal'
+import { PdfCtaBanner } from '@/components/pdf-cta-banner'
 import { canDownloadExamPdf } from '@/lib/tier-limits'
 import { consumirCotaDoPlano } from '@/lib/plan-consume-client'
 import { Exam } from '@/lib/types'
@@ -1098,6 +1099,15 @@ function ProvasContent() {
               </TiltCard>
             </motion.div>
           </div>
+
+          {/* Anúncio do Quest+ — só aparece para quem não baixa PDF ainda */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.3 }}
+          >
+            <PdfCtaBanner accountType={accountType} isAdmin={user?.role === 'admin'} />
+          </motion.div>
 
           {/* Quick Actions */}
           <motion.div
