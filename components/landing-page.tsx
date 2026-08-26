@@ -647,18 +647,41 @@ function AppWindow({
  * canto do olho. O número fica ao lado para quem quer a precisão — pequeno,
  * tabular, sem legenda.
  */
-function BarraDeProgressoDemo({ atual, total }: { atual: number; total: number }) {
+function BarraDeProgressoDemo({
+  atual,
+  total,
+  /** Quando existe, a seta vira botão de verdade e volta uma questão. */
+  aoVoltar,
+}: {
+  atual: number
+  total: number
+  aoVoltar?: () => void
+}) {
   const percentual = Math.min(100, Math.max(0, (atual / Math.max(1, total)) * 100))
+  const seta = (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" {...stUi} aria-hidden>
+      <path d="M15 6l-6 6 6 6" />
+    </svg>
+  )
   return (
     <div className="flex items-center gap-3 border-b border-border/60 px-3 py-2.5 sm:px-4">
-      <span
-        aria-hidden
-        className="-ml-1 flex h-8 w-8 flex-none items-center justify-center rounded-full text-muted-foreground"
-      >
-        <svg viewBox="0 0 24 24" className="h-5 w-5" {...stUi}>
-          <path d="M15 6l-6 6 6 6" />
-        </svg>
-      </span>
+      {aoVoltar ? (
+        <button
+          type="button"
+          onClick={aoVoltar}
+          aria-label="Questão anterior"
+          className="-ml-1 flex h-9 w-9 flex-none items-center justify-center rounded-full text-muted-foreground transition hover:bg-muted hover:text-foreground active:scale-90"
+        >
+          {seta}
+        </button>
+      ) : (
+        <span
+          aria-hidden
+          className="-ml-1 flex h-9 w-9 flex-none items-center justify-center rounded-full text-muted-foreground/40"
+        >
+          {seta}
+        </span>
+      )}
       <span className="h-2.5 min-w-0 flex-1 overflow-hidden rounded-full bg-muted">
         <span
           className="block h-full rounded-full bg-primary transition-[width] duration-500"
@@ -708,66 +731,202 @@ function EtiquetaDemo({
 
 /* ---------- QUESTÃO INTERATIVA (o produto antes do cadastro) ---------- */
 
-// Uma questão de verdade, com o comentário no tom que a plataforma usa. Não é
-// enfeite: é a menor amostra possível do produto, e ela está na primeira dobra
-// porque o jeito mais rápido de explicar o Domine Aqui é deixar a pessoa usar
-// o Domine Aqui — marcar, riscar o que dá para eliminar, verificar e ler por
-// que errou, exatamente como em /amostra e no banco de quem tem conta.
-const DEMO = {
-  modulo: 'Cardiologia',
-  topico: 'Síndromes coronarianas agudas',
-  ano: 2024,
-  dificuldade: 'medio',
-  posicao: 3,
-  total: 10,
-  enunciado:
-    'Homem de 68 anos, dor torácica em aperto há 40 minutos, irradiada para o membro superior esquerdo, com sudorese. O ECG mostra supradesnivelamento de ST em V1–V4. Qual a conduta imediata?',
-  alternativas: [
-    { letra: 'A', texto: 'Solicitar troponina seriada e reavaliar em 6 horas.' },
-    { letra: 'B', texto: 'Acionar a terapia de reperfusão imediatamente.' },
-    { letra: 'C', texto: 'Iniciar anticoagulação plena e manter em observação.' },
-    { letra: 'D', texto: 'Programar teste ergométrico para estratificar o risco.' },
-  ],
-  correta: 'B',
-  explicacao:
-    'Supra de ST em derivações contíguas com quadro clínico compatível já fecha o diagnóstico de IAM com supra — ele é clínico e eletrocardiográfico, não laboratorial. Esperar a troponina apenas atrasa a reperfusão: a meta é angioplastia primária em até 90 minutos, ou fibrinólise em até 30 se a hemodinâmica não estiver disponível.',
-  fonte: 'Prova de Clínica Médica · 2024',
+interface QuestaoDemo {
+  id: string
+  modulo: string
+  topico: string
+  ano: number
+  dificuldade: string
+  enunciado: string
+  alternativas: { letra: string; texto: string }[]
+  correta: string
+  explicacao: string
+  fonte: string
 }
 
+/**
+ * Três questões de verdade, de três módulos diferentes.
+ *
+ * São três, e não uma, porque uma questão só não deixa a pessoa NAVEGAR — e é
+ * navegando que ela descobre que a barra de progresso anda, que o "Próxima"
+ * existe, que dá para voltar. Uma tela congelada num único item parece
+ * screenshot animado; três parecem o produto.
+ *
+ * São três, e não dez, porque isto é a amostra BÁSICA: o suficiente para
+ * entender o ritmo e querer mais. As dez completas vivem em /amostra, e é para
+ * lá que o botão da última leva.
+ *
+ * De módulos diferentes de propósito: cardiologia, farmacologia e semiologia
+ * respondem, sem escrever nenhuma frase de marketing, a objeção "isso aqui é
+ * só de cardio?".
+ */
+const DEMO_QUESTOES: QuestaoDemo[] = [
+  {
+    id: 'sca',
+    modulo: 'Cardiologia',
+    topico: 'Síndromes coronarianas agudas',
+    ano: 2024,
+    dificuldade: 'medio',
+    enunciado:
+      'Homem de 68 anos, dor torácica em aperto há 40 minutos, irradiada para o membro superior esquerdo, com sudorese. O ECG mostra supradesnivelamento de ST em V1–V4. Qual a conduta imediata?',
+    alternativas: [
+      { letra: 'A', texto: 'Solicitar troponina seriada e reavaliar em 6 horas.' },
+      { letra: 'B', texto: 'Acionar a terapia de reperfusão imediatamente.' },
+      { letra: 'C', texto: 'Iniciar anticoagulação plena e manter em observação.' },
+      { letra: 'D', texto: 'Programar teste ergométrico para estratificar o risco.' },
+    ],
+    correta: 'B',
+    explicacao:
+      'Supra de ST em derivações contíguas com quadro clínico compatível já fecha o diagnóstico de IAM com supra — ele é clínico e eletrocardiográfico, não laboratorial. Esperar a troponina apenas atrasa a reperfusão: a meta é angioplastia primária em até 90 minutos, ou fibrinólise em até 30 se a hemodinâmica não estiver disponível.',
+    fonte: 'Prova de Clínica Médica · 2024',
+  },
+  {
+    id: 'varfarina',
+    modulo: 'Farmacologia',
+    topico: 'Interações medicamentosas',
+    ano: 2023,
+    dificuldade: 'facil',
+    enunciado:
+      'Paciente em uso crônico de varfarina, com INR estável, inicia tratamento para infecção urinária. Qual dos antimicrobianos abaixo tem o maior potencial de elevar o INR e causar sangramento?',
+    alternativas: [
+      { letra: 'A', texto: 'Cefalexina.' },
+      { letra: 'B', texto: 'Nitrofurantoína.' },
+      { letra: 'C', texto: 'Sulfametoxazol-trimetoprima.' },
+      { letra: 'D', texto: 'Fosfomicina em dose única.' },
+    ],
+    correta: 'C',
+    explicacao:
+      'O sulfametoxazol-trimetoprima inibe a CYP2C9, principal via de metabolização da S-varfarina (o enantiômero mais potente), e ainda desloca o fármaco da albumina. O INR sobe rápido, e o risco de sangramento junto. Quando a associação é inevitável, o INR precisa ser reavaliado em poucos dias e a dose, ajustada. As outras opções têm interação pequena ou nenhuma por essa via.',
+    fonte: 'Prova de Farmacologia Clínica · 2023',
+  },
+  {
+    id: 'ausculta',
+    modulo: 'Semiologia',
+    topico: 'Ausculta cardíaca',
+    ano: 2024,
+    dificuldade: 'dificil',
+    enunciado:
+      'Homem de 74 anos com dispneia aos esforços. À ausculta, sopro sistólico ejetivo em foco aórtico com irradiação para as carótidas e segunda bulha hipofonética. O pulso carotídeo é de baixa amplitude e ascensão lenta. Qual a hipótese mais provável?',
+    alternativas: [
+      { letra: 'A', texto: 'Insuficiência mitral.' },
+      { letra: 'B', texto: 'Estenose aórtica.' },
+      { letra: 'C', texto: 'Insuficiência aórtica.' },
+      { letra: 'D', texto: 'Comunicação interventricular.' },
+    ],
+    correta: 'B',
+    explicacao:
+      'Sopro sistólico ejetivo em foco aórtico irradiado para as carótidas é a assinatura da estenose aórtica. O pulso parvus et tardus e a hipofonese da segunda bulha falam de gravidade: quanto mais rígida a valva, mais tardio o pico do sopro e mais apagado o componente aórtico de B2. A insuficiência mitral daria sopro holossistólico irradiado para a axila, e não para as carótidas.',
+    fonte: 'Prova de Semiologia · 2024',
+  },
+]
+
+/**
+ * A demonstração jogável do banco de questões, na primeira dobra.
+ *
+ * Não é enfeite: é a menor amostra possível do produto, e ela está aqui em
+ * cima porque o jeito mais rápido de explicar o Domine Aqui é deixar a pessoa
+ * usar o Domine Aqui. Marcar, riscar o que dá para eliminar, verificar, ler
+ * por que errou e passar para a próxima — o mesmo fluxo de /amostra e do banco
+ * de quem tem conta, com as mesmas classes (ver
+ * lib/banco/aparencia-da-questao.ts).
+ *
+ * O estado é guardado por questão, e não zerado ao trocar: voltar encontra a
+ * marcação, o que estava riscado e a correção como você deixou. É o que a
+ * plataforma faz, e é o que impede a navegação de parecer um carrossel de
+ * imagens.
+ */
 function QuestionDemo() {
-  const [marcada, setMarcada] = useState<string | null>(null)
-  const [riscadas, setRiscadas] = useState<string[]>([])
-  const [conferida, setConferida] = useState(false)
+  const [indice, setIndice] = useState(0)
+  const [marcadas, setMarcadas] = useState<Record<string, string>>({})
+  const [riscadas, setRiscadas] = useState<Record<string, string[]>>({})
+  const [conferidas, setConferidas] = useState<Record<string, true>>({})
   // Na plataforma o veredito aparece colado no polegar e a correção fica no
   // corpo da página, a um "Ver por que" de distância — a faixa do rodapé se
   // cala assim que a explicação entra na tela, porque o trabalho dela é contar
   // o que a pessoa NÃO está vendo. Aqui, numa janela que não rola, a mesma
   // regra vira isto: ou a faixa, ou o painel. Nunca os dois.
-  const [explicacaoAberta, setExplicacaoAberta] = useState(false)
+  const [explicacoes, setExplicacoes] = useState<Record<string, true>>({})
 
-  const acertou = marcada === DEMO.correta
+  // Altura reservada para o miolo. Os três enunciados têm tamanhos diferentes
+  // e a diferença não é pequena: 80px no computador, 114px num celular de
+  // 390px. Sem reserva, tocar em "Próxima" fazia a página inteira pular
+  // embaixo do dedo de quem só queria ver a questão seguinte.
+  //
+  // Um `min-height` fixo não resolve — a mesma questão ocupa 724px a 390px de
+  // largura e 573px a 768px, então qualquer número escolhido a dedo deixaria
+  // um buraco numa das pontas. Aqui a reserva é medida: guarda a MAIOR altura
+  // já vista com a questão ainda não conferida, e o redimensionamento zera a
+  // conta (girar o telefone recalcula tudo em vez de herdar um valor de outra
+  // largura).
+  const mioloRef = useRef<HTMLDivElement>(null)
+  const [alturaReservada, setAlturaReservada] = useState(0)
+
+  const questao = DEMO_QUESTOES[indice]
+  const total = DEMO_QUESTOES.length
+  const ultima = indice + 1 >= total
+  const marcada = marcadas[questao.id] ?? null
+  const riscadasDaQuestao = riscadas[questao.id] ?? []
+  const conferida = !!conferidas[questao.id]
+  const explicacaoAberta = !!explicacoes[questao.id]
+
+  const acertou = marcada === questao.correta
   const veredito: 'acertou' | 'errou' | null = !conferida ? null : acertou ? 'acertou' : 'errou'
   const visual = veredito ? VISUAL_DO_VEREDITO[veredito] : null
   const IconeVeredito = visual?.icone
-  const dificuldade = CLASSE_DA_DIFICULDADE[DEMO.dificuldade]
+  const dificuldade = CLASSE_DA_DIFICULDADE[questao.dificuldade]
 
-  const alternar = (letra: string) =>
-    setRiscadas((atuais) =>
-      atuais.includes(letra) ? atuais.filter((l) => l !== letra) : [...atuais, letra],
-    )
+  useEffect(() => {
+    if (conferida) return
+    const el = mioloRef.current
+    if (!el) return
+    const altura = el.getBoundingClientRect().height
+    setAlturaReservada((atual) => (altura > atual ? altura : atual))
+  }, [indice, conferida])
+
+  useEffect(() => {
+    const aoRedimensionar = () => setAlturaReservada(0)
+    window.addEventListener('resize', aoRedimensionar)
+    return () => window.removeEventListener('resize', aoRedimensionar)
+  }, [])
+
+  const alternarRiscada = (letra: string) =>
+    setRiscadas((atuais) => {
+      const daQuestao = atuais[questao.id] ?? []
+      return {
+        ...atuais,
+        [questao.id]: daQuestao.includes(letra)
+          ? daQuestao.filter((l) => l !== letra)
+          : [...daQuestao, letra],
+      }
+    })
+
+  const refazer = () => {
+    setConferidas(({ [questao.id]: _conferida, ...resto }) => resto)
+    setExplicacoes(({ [questao.id]: _aberta, ...resto }) => resto)
+    setMarcadas(({ [questao.id]: _marcada, ...resto }) => resto)
+    setRiscadas((atuais) => ({ ...atuais, [questao.id]: [] }))
+  }
 
   return (
     <div className="flex flex-col">
-      <BarraDeProgressoDemo atual={DEMO.posicao} total={DEMO.total} />
+      <BarraDeProgressoDemo
+        atual={indice + 1}
+        total={total}
+        aoVoltar={indice > 0 ? () => setIndice((i) => i - 1) : undefined}
+      />
 
-      <div className="space-y-3 p-3 sm:p-4">
+      <div
+        ref={mioloRef}
+        className="space-y-3 p-3 sm:p-4"
+        style={alturaReservada ? { minHeight: alturaReservada } : undefined}
+      >
         <div className="flex flex-wrap items-center gap-1.5">
           <EtiquetaDemo variante="cheia">Objetiva</EtiquetaDemo>
-          <EtiquetaDemo>{DEMO.modulo}</EtiquetaDemo>
+          <EtiquetaDemo>{questao.modulo}</EtiquetaDemo>
           <span className="hidden sm:inline-flex">
-            <EtiquetaDemo>{DEMO.topico}</EtiquetaDemo>
+            <EtiquetaDemo>{questao.topico}</EtiquetaDemo>
           </span>
-          <EtiquetaDemo variante="tinta">{DEMO.ano}</EtiquetaDemo>
+          <EtiquetaDemo variante="tinta">{questao.ano}</EtiquetaDemo>
           {dificuldade && (
             <span
               className={
@@ -781,7 +940,7 @@ function QuestionDemo() {
         </div>
 
         <div className="rounded-2xl border border-border bg-card p-3.5 sm:p-4">
-          <p className="text-[14.5px] leading-relaxed sm:text-[15px]">{DEMO.enunciado}</p>
+          <p className="text-[14.5px] leading-relaxed sm:text-[15px]">{questao.enunciado}</p>
         </div>
 
         {!conferida && (
@@ -791,10 +950,10 @@ function QuestionDemo() {
         )}
 
         <ul className="space-y-2.5">
-          {DEMO.alternativas.map((alt) => {
+          {questao.alternativas.map((alt) => {
             const estaMarcada = marcada === alt.letra
-            const estaRiscada = riscadas.includes(alt.letra)
-            const correta = alt.letra === DEMO.correta
+            const estaRiscada = riscadasDaQuestao.includes(alt.letra)
+            const correta = alt.letra === questao.correta
             const classes = classesDaAlternativa({
               marcada: estaMarcada,
               riscada: estaRiscada,
@@ -811,7 +970,7 @@ function QuestionDemo() {
                   <button
                     type="button"
                     disabled={conferida || estaRiscada}
-                    onClick={() => setMarcada(alt.letra)}
+                    onClick={() => setMarcadas((atuais) => ({ ...atuais, [questao.id]: alt.letra }))}
                     aria-pressed={estaMarcada}
                     className="absolute inset-0 rounded-2xl"
                     aria-label={`Alternativa ${alt.letra}`}
@@ -831,7 +990,7 @@ function QuestionDemo() {
                   {!conferida && (
                     <button
                       type="button"
-                      onClick={() => alternar(alt.letra)}
+                      onClick={() => alternarRiscada(alt.letra)}
                       aria-pressed={estaRiscada}
                       aria-label={
                         estaRiscada
@@ -866,7 +1025,7 @@ function QuestionDemo() {
                   </p>
                   {veredito === 'errou' && (
                     <p className="text-xs text-muted-foreground">
-                      A resposta correta era a {DEMO.correta}
+                      A resposta correta era a {questao.correta}
                     </p>
                   )}
                 </div>
@@ -875,11 +1034,11 @@ function QuestionDemo() {
             <h4 className="pb-1.5 text-xs font-bold uppercase tracking-wide text-muted-foreground">
               Explicação
             </h4>
-            <p className="text-[14.5px] leading-relaxed sm:text-[15px]">{DEMO.explicacao}</p>
+            <p className="text-[14.5px] leading-relaxed sm:text-[15px]">{questao.explicacao}</p>
             <h4 className="pb-1.5 pt-4 text-xs font-bold uppercase tracking-wide text-muted-foreground">
               Fonte
             </h4>
-            <p className="text-[14.5px] leading-relaxed sm:text-[15px]">{DEMO.fonte}</p>
+            <p className="text-[14.5px] leading-relaxed sm:text-[15px]">{questao.fonte}</p>
           </div>
         )}
       </div>
@@ -891,7 +1050,7 @@ function QuestionDemo() {
         {conferida && !explicacaoAberta && visual && IconeVeredito && (
           <button
             type="button"
-            onClick={() => setExplicacaoAberta(true)}
+            onClick={() => setExplicacoes((atuais) => ({ ...atuais, [questao.id]: true }))}
             className={
               'da-answer-in mb-2 flex w-full items-center gap-3 rounded-2xl border px-3 py-2.5 transition active:scale-[0.99] ' +
               visual.faixa
@@ -905,42 +1064,79 @@ function QuestionDemo() {
               <IconeVeredito className="h-5 w-5 text-white" strokeWidth={2.5} />
             </span>
             <span className="min-w-0 flex-1 text-left">
-              <span className={'block text-sm font-bold leading-tight ' + visual.titulo}>
+              <span className={'block truncate text-sm font-bold leading-tight ' + visual.titulo}>
                 {visual.rotulo}
               </span>
               {/* Saber QUAL era a certa é a informação mais urgente de um erro —
-                  ela vem antes de qualquer convite a ler. */}
-              <span className="mt-0.5 block truncate text-xs text-muted-foreground">
-                {veredito === 'errou' ? `A certa era a ${DEMO.correta}` : visual.convite}
-              </span>
+                  ela vem antes de qualquer convite a ler. No acerto não há
+                  linha de apoio: o convite ("toque para ver a explicação")
+                  repetia palavra por palavra o botão ao lado e, na largura
+                  desta janela, ainda chegava cortado no meio. */}
+              {veredito === 'errou' && (
+                <span className="mt-0.5 block truncate text-xs text-muted-foreground">
+                  A certa era a {questao.correta}
+                </span>
+              )}
             </span>
+            {/* O rótulo do convite só cabe a partir de `sm`. Abaixo disso, a
+                coluna de conteúdo desta janela tem menos de 300px e o chip
+                comia justamente a linha que mais importa num erro ("a certa
+                era a C"), que chegava cortada. No celular sobra a seta — a
+                faixa inteira já é o alvo de toque. */}
             <span
               className={
-                'flex flex-none items-center gap-1.5 rounded-xl px-2.5 py-2 text-xs font-bold ' +
+                'flex flex-none items-center gap-1.5 rounded-xl px-2 py-2 text-xs font-bold sm:px-2.5 ' +
                 visual.acao
               }
             >
-              {visual.rotuloAcao}
+              <span className="hidden sm:inline">{visual.rotuloAcao}</span>
               <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 animate-bounce" {...stUi} strokeWidth={2.4} aria-hidden>
                 <path d="M12 5v14M6 13l6 6 6-6" />
               </svg>
             </span>
           </button>
         )}
+
         {conferida ? (
-          <SmartLink
-            href={LINKS.amostra}
-            className="btn-brand-glow flex h-12 w-full items-center justify-center gap-2 rounded-2xl text-[15px] font-bold text-white"
-          >
-            Resolver as outras 9 sem cadastro
-            <svg viewBox="0 0 24 24" className="h-4 w-4" {...stUi} strokeWidth={2.2} aria-hidden>
-              <path d="M5 12h14M13 6l6 6-6 6" />
-            </svg>
-          </SmartLink>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={refazer}
+              aria-label="Refazer a questão"
+              className="flex h-12 w-12 flex-none items-center justify-center rounded-2xl border border-border bg-card text-muted-foreground transition hover:text-foreground active:scale-95"
+            >
+              <svg viewBox="0 0 24 24" className="h-5 w-5" {...stUi} aria-hidden>
+                <path d="M3 12a9 9 0 1 0 3-6.7L3 8" />
+                <path d="M3 3v5h5" />
+              </svg>
+            </button>
+            {ultima ? (
+              <SmartLink
+                href={LINKS.amostra}
+                className="btn-brand-glow flex h-12 min-w-0 flex-1 items-center justify-center gap-2 rounded-2xl text-[15px] font-bold text-white"
+              >
+                Continuar com 10 questões
+                <svg viewBox="0 0 24 24" className="h-4 w-4" {...stUi} strokeWidth={2.2} aria-hidden>
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              </SmartLink>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setIndice((i) => i + 1)}
+                className="btn-brand-glow flex h-12 min-w-0 flex-1 items-center justify-center gap-2 rounded-2xl text-[15px] font-bold text-white"
+              >
+                Próxima
+                <svg viewBox="0 0 24 24" className="h-4 w-4" {...stUi} strokeWidth={2.2} aria-hidden>
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              </button>
+            )}
+          </div>
         ) : (
           <button
             type="button"
-            onClick={() => setConferida(true)}
+            onClick={() => setConferidas((atuais) => ({ ...atuais, [questao.id]: true }))}
             disabled={!marcada}
             className="btn-brand-glow flex h-12 w-full items-center justify-center gap-2 rounded-2xl text-[15px] font-bold text-white disabled:pointer-events-none disabled:opacity-50"
           >
@@ -1618,7 +1814,7 @@ function Hero({
             </AppWindow>
           </Reveal>
           <p className="relative mt-3 text-center font-da-mono text-[11px] text-da-muted xl:text-left">
-            Esta é a tela. Responda aqui mesmo, sem sair da página.
+            Três questões de verdade, na tela de verdade. Responda sem sair da página.
           </p>
         </div>
       </div>
