@@ -3803,7 +3803,7 @@ ${respostaAluno}`
       {showFeedbackModal && feedbackData && (
         <div className="fixed inset-0 bg-black/55 backdrop-blur-sm z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in duration-200">
           <Card className="flex w-full max-h-[calc(100dvh-1rem)] sm:max-h-[calc(100dvh-2rem)] sm:max-w-3xl flex-col overflow-hidden rounded-t-3xl rounded-b-none sm:rounded-2xl border-border/60 bg-background/95 shadow-2xl backdrop-blur-xl">
-            <CardHeader className={`relative overflow-hidden border-b p-4 sm:p-6 ${
+            <CardHeader className={`relative shrink-0 overflow-hidden border-b p-4 sm:p-6 ${
               feedbackData.isCorrect
                 ? 'border-emerald-500/20 bg-gradient-to-br from-emerald-500/12 via-background to-background'
                 : 'border-red-500/20 bg-gradient-to-br from-red-500/12 via-background to-background'
