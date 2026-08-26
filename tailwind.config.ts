@@ -15,6 +15,15 @@ const config: Config = {
   content: [
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
+    // `lib/` entra aqui porque nem toda classe mora num componente: a
+    // aparência da questão (lib/banco/aparencia-da-questao.ts) é compartilhada
+    // pela tela de resolução, pela amostra e pela demonstração da landing, e
+    // vive num módulo puro para a landing não arrastar `framer-motion` junto.
+    // Fora do scanner, essas classes simplesmente não são geradas — e o
+    // sintoma é traiçoeiro: o CSS existe para o estado claro (a classe também
+    // aparece em algum componente) e some só no escuro, que é onde ninguém
+    // olha primeiro.
+    './lib/**/*.{ts,tsx}',
   ],
   theme: {
     extend: {

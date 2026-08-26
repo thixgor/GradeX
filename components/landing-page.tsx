@@ -9,6 +9,14 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { LiteModeToggle } from '@/components/lite-mode-toggle'
 import { useLiteMode } from '@/hooks/use-lite-mode'
 import { InstalarApp } from '@/components/pwa/instalar-app'
+// A demonstração desenha a questão com as MESMAS classes da tela de
+// resolução de quem tem conta. Este módulo é puro (sem framer-motion), então
+// a landing herda a aparência do produto sem herdar o peso dele.
+import {
+  CLASSE_DA_DIFICULDADE,
+  VISUAL_DO_VEREDITO,
+  classesDaAlternativa,
+} from '@/lib/banco/aparencia-da-questao'
 
 // Import estático: o Next lê as dimensões no build (zero layout shift) e gera o
 // blurDataURL embutido — as fotos aparecem borradas na hora em vez de deixar um
@@ -469,11 +477,28 @@ function SectionMark({ n, label }: { n: string; label: string }) {
 /* =================== JANELA DO PRODUTO =================== */
 
 /**
- * Ícones de traço fino que herdam a cor do contexto (`currentColor`), ao
- * contrário dos ícones editoriais acima, que fixam o âmbar. Os da janela
- * precisam apagar quando o item está inativo e acender quando está ativo —
- * é o que faz o desenho parecer software de verdade, e não uma ilustração.
+ * A demonstração do produto na landing.
+ *
+ * ## Por que ela não é um desenho parecido
+ *
+ * Uma maquete "no espírito" do produto é pior do que não ter maquete: ela
+ * promete uma tela que não existe. Quem gostou não viu o Domine Aqui; quem não
+ * gostou julgou uma coisa que a plataforma não é.
+ *
+ * Então o miolo desta janela usa os MESMOS tokens do aplicativo (`bg-card`,
+ * `border-border`, `bg-primary`…) e as MESMAS classes da tela de resolução —
+ * importadas de `lib/banco/aparencia-da-questao.ts`, o arquivo que a
+ * `AlternativaQuiz` de verdade também usa. Mudar o verde do acerto lá muda
+ * aqui; não há como esta demonstração envelhecer sozinha.
+ *
+ * O que não vem junto é o `framer-motion` que os componentes reais carregam:
+ * na landing, cada quilobyte de JavaScript atrasa a primeira pintura. A
+ * tremida do erro é um keyframe de CSS (`da-tremida`), e o resto é igual.
+ *
+ * A moldura de navegador em volta continua na paleta da landing — ela é o
+ * enquadramento, não o produto.
  */
+
 const stUi = {
   fill: 'none',
   stroke: 'currentColor',
@@ -481,6 +506,17 @@ const stUi = {
   strokeLinecap: 'round' as const,
   strokeLinejoin: 'round' as const,
 }
+const UiHome = () => (
+  <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" {...stUi} aria-hidden>
+    <path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z" />
+  </svg>
+)
+const UiPaper = () => (
+  <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" {...stUi} aria-hidden>
+    <path d="M6 3h8l4 4v14H6z" />
+    <path d="M14 3v4h4M9 13h6M9 17h4" />
+  </svg>
+)
 const UiBank = () => (
   <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" {...stUi} aria-hidden>
     <circle cx="12" cy="12" r="9" />
@@ -491,12 +527,6 @@ const UiBook = () => (
   <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" {...stUi} aria-hidden>
     <path d="M4 5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2V5Z" />
     <path d="M8 3v18" />
-  </svg>
-)
-const UiPaper = () => (
-  <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" {...stUi} aria-hidden>
-    <path d="M6 3h8l4 4v14H6z" />
-    <path d="M14 3v4h4M9 13h6M9 17h4" />
   </svg>
 )
 const UiCards = () => (
@@ -511,18 +541,24 @@ const UiCalendar = () => (
     <path d="M3 10h18M8 3v4M16 3v4" />
   </svg>
 )
+const UiX = ({ className = 'h-4 w-4' }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" className={className} {...stUi} aria-hidden>
+    <path d="M6 6l12 12M18 6L6 18" />
+  </svg>
+)
 
+// Os rótulos são os da barra lateral de verdade (lib/sidebar-sections.ts).
 const WINDOW_NAV: { label: string; short: string; icon: ReactNode }[] = [
-  { label: 'Banco de Questões', short: 'Questões', icon: <UiBank /> },
-  { label: 'Manual Clínico', short: 'Manual', icon: <UiBook /> },
-  { label: 'Provas da faculdade', short: 'Provas', icon: <UiPaper /> },
-  { label: 'Flashcards', short: 'Cards', icon: <UiCards /> },
-  { label: 'Cronograma', short: 'Cronograma', icon: <UiCalendar /> },
+  { label: 'Início', short: 'Início', icon: <UiHome /> },
+  { label: 'Banco de Questões', short: 'Banco de Questões', icon: <UiBank /> },
+  { label: 'Provas', short: 'Provas', icon: <UiPaper /> },
+  { label: 'Manual Clínico', short: 'Manual Clínico', icon: <UiBook /> },
+  { label: 'Flashcards', short: 'Flashcards', icon: <UiCards /> },
+  { label: 'Cronogramas', short: 'Cronogramas', icon: <UiCalendar /> },
 ]
 
 /**
- * A moldura do produto: barra de navegador, barra lateral com as ferramentas e
- * uma área de conteúdo.
+ * A moldura: barra de navegador, barra lateral e uma área de conteúdo.
  *
  * Ela existe porque a primeira dobra precisava responder "que site é este?" em
  * menos de um segundo — e nenhuma composição anatômica, por mais bonita que
@@ -534,7 +570,7 @@ const WINDOW_NAV: { label: string; short: string; icon: ReactNode }[] = [
  */
 function AppWindow({
   path,
-  active = 0,
+  active = 1,
   children,
   className = '',
 }: {
@@ -567,16 +603,18 @@ function AppWindow({
         </span>
       </div>
 
-      <div className="flex min-h-0">
-        {/* Barra lateral. No celular ela vira um trilho de ícones: sem os
-            rótulos ela ocupa 52px em vez de 180px, e o conteúdo — que é o que
-            vende — fica com a largura da tela quase inteira. */}
+      {/* Daqui para dentro tudo é o aplicativo: as cores são as do produto, não
+          as da página de vendas. */}
+      <div className="flex min-h-0 bg-background text-foreground">
+        {/* Barra lateral. No celular ela vira um trilho de ícones, exatamente
+            como a do produto quando recolhida: sem os rótulos ela ocupa 52px em
+            vez de 200px, e o conteúdo fica com a largura da tela quase inteira. */}
         <nav
           aria-hidden
-          className="flex w-[52px] shrink-0 flex-col gap-0.5 border-r border-[color:var(--da-neutral-line)] bg-da-panel/40 p-2 sm:w-[172px] sm:p-3"
+          className="flex w-[52px] shrink-0 flex-col gap-0.5 border-r border-border bg-card p-2 sm:w-[196px] sm:p-3"
         >
           <span className="mb-2 hidden items-center gap-2 px-2 sm:flex">
-            <span className="grid h-6 w-6 place-items-center rounded-md bg-da-amber font-da-display text-[11px] font-bold text-[#0B1F1A]">
+            <span className="grid h-6 w-6 place-items-center rounded-md bg-secondary text-[11px] font-bold text-white">
               D
             </span>
             <span className="font-da-display text-xs font-semibold tracking-tight">Domine Aqui</span>
@@ -585,10 +623,8 @@ function AppWindow({
             <span
               key={item.label}
               className={
-                'flex items-center justify-center gap-2.5 rounded-lg px-2 py-2 sm:justify-start ' +
-                (i === active
-                  ? 'bg-da-amber/10 text-da-amber-ink'
-                  : 'text-da-muted')
+                'flex items-center justify-center gap-2.5 rounded-xl px-2 py-2 sm:justify-start ' +
+                (i === active ? 'bg-primary/10 text-primary' : 'text-muted-foreground')
               }
             >
               {item.icon}
@@ -603,116 +639,319 @@ function AppWindow({
   )
 }
 
+/**
+ * A barra de topo de quem está resolvendo — o mesmo desenho do
+ * `CabecalhoQuiz`: sair, uma barra de progresso e o contador ao lado.
+ *
+ * "Questão 3 de 12" obriga a ler e comparar dois números; a barra é lida com o
+ * canto do olho. O número fica ao lado para quem quer a precisão — pequeno,
+ * tabular, sem legenda.
+ */
+function BarraDeProgressoDemo({ atual, total }: { atual: number; total: number }) {
+  const percentual = Math.min(100, Math.max(0, (atual / Math.max(1, total)) * 100))
+  return (
+    <div className="flex items-center gap-3 border-b border-border/60 px-3 py-2.5 sm:px-4">
+      <span
+        aria-hidden
+        className="-ml-1 flex h-8 w-8 flex-none items-center justify-center rounded-full text-muted-foreground"
+      >
+        <svg viewBox="0 0 24 24" className="h-5 w-5" {...stUi}>
+          <path d="M15 6l-6 6 6 6" />
+        </svg>
+      </span>
+      <span className="h-2.5 min-w-0 flex-1 overflow-hidden rounded-full bg-muted">
+        <span
+          className="block h-full rounded-full bg-primary transition-[width] duration-500"
+          style={{ width: `${percentual}%` }}
+        />
+      </span>
+      <span className="flex-none text-xs font-bold tabular-nums text-muted-foreground">
+        {atual}/{total}
+      </span>
+      <span
+        aria-hidden
+        className="-mr-1 flex h-8 w-8 flex-none items-center justify-center rounded-full text-muted-foreground"
+      >
+        <svg viewBox="0 0 24 24" className="h-5 w-5" {...stUi}>
+          <circle cx="5" cy="12" r="1.2" />
+          <circle cx="12" cy="12" r="1.2" />
+          <circle cx="19" cy="12" r="1.2" />
+        </svg>
+      </span>
+    </div>
+  )
+}
+
+/** Etiqueta de classificação — a mesma que a questão carrega lá dentro. */
+function EtiquetaDemo({
+  children,
+  variante = 'contorno',
+}: {
+  children: ReactNode
+  variante?: 'cheia' | 'contorno' | 'tinta'
+}) {
+  return (
+    <span
+      className={
+        'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ' +
+        (variante === 'cheia'
+          ? 'border-transparent bg-primary text-primary-foreground'
+          : variante === 'tinta'
+            ? 'border-border bg-primary/10 text-foreground'
+            : 'border-border text-foreground')
+      }
+    >
+      {children}
+    </span>
+  )
+}
+
 /* ---------- QUESTÃO INTERATIVA (o produto antes do cadastro) ---------- */
 
 // Uma questão de verdade, com o comentário no tom que a plataforma usa. Não é
 // enfeite: é a menor amostra possível do produto, e ela está na primeira dobra
 // porque o jeito mais rápido de explicar o Domine Aqui é deixar a pessoa usar
-// o Domine Aqui. Um toque, e ela já viu enunciado, gabarito e comentário.
+// o Domine Aqui — marcar, riscar o que dá para eliminar, verificar e ler por
+// que errou, exatamente como em /amostra e no banco de quem tem conta.
 const DEMO = {
-  materia: 'Cardiologia',
-  posicao: 'Questão 7 de 10',
+  modulo: 'Cardiologia',
+  topico: 'Síndromes coronarianas agudas',
+  ano: 2024,
+  dificuldade: 'medio',
+  posicao: 3,
+  total: 10,
   enunciado:
     'Homem de 68 anos, dor torácica em aperto há 40 minutos, irradiada para o membro superior esquerdo, com sudorese. O ECG mostra supradesnivelamento de ST em V1–V4. Qual a conduta imediata?',
   alternativas: [
-    { id: 'A', texto: 'Solicitar troponina seriada e reavaliar em 6 horas.' },
-    { id: 'B', texto: 'Acionar a terapia de reperfusão imediatamente.' },
-    { id: 'C', texto: 'Iniciar anticoagulação plena e manter em observação.' },
-    { id: 'D', texto: 'Programar teste ergométrico para estratificar o risco.' },
+    { letra: 'A', texto: 'Solicitar troponina seriada e reavaliar em 6 horas.' },
+    { letra: 'B', texto: 'Acionar a terapia de reperfusão imediatamente.' },
+    { letra: 'C', texto: 'Iniciar anticoagulação plena e manter em observação.' },
+    { letra: 'D', texto: 'Programar teste ergométrico para estratificar o risco.' },
   ],
   correta: 'B',
-  comentario:
+  explicacao:
     'Supra de ST em derivações contíguas com quadro clínico compatível já fecha o diagnóstico de IAM com supra — ele é clínico e eletrocardiográfico, não laboratorial. Esperar a troponina apenas atrasa a reperfusão: a meta é angioplastia primária em até 90 minutos, ou fibrinólise em até 30 se a hemodinâmica não estiver disponível.',
+  fonte: 'Prova de Clínica Médica · 2024',
 }
 
 function QuestionDemo() {
-  const [escolha, setEscolha] = useState<string | null>(null)
-  const respondida = escolha !== null
-  const acertou = escolha === DEMO.correta
+  const [marcada, setMarcada] = useState<string | null>(null)
+  const [riscadas, setRiscadas] = useState<string[]>([])
+  const [conferida, setConferida] = useState(false)
+  // Na plataforma o veredito aparece colado no polegar e a correção fica no
+  // corpo da página, a um "Ver por que" de distância — a faixa do rodapé se
+  // cala assim que a explicação entra na tela, porque o trabalho dela é contar
+  // o que a pessoa NÃO está vendo. Aqui, numa janela que não rola, a mesma
+  // regra vira isto: ou a faixa, ou o painel. Nunca os dois.
+  const [explicacaoAberta, setExplicacaoAberta] = useState(false)
+
+  const acertou = marcada === DEMO.correta
+  const veredito: 'acertou' | 'errou' | null = !conferida ? null : acertou ? 'acertou' : 'errou'
+  const visual = veredito ? VISUAL_DO_VEREDITO[veredito] : null
+  const IconeVeredito = visual?.icone
+  const dificuldade = CLASSE_DA_DIFICULDADE[DEMO.dificuldade]
+
+  const alternar = (letra: string) =>
+    setRiscadas((atuais) =>
+      atuais.includes(letra) ? atuais.filter((l) => l !== letra) : [...atuais, letra],
+    )
 
   return (
-    <div className="p-4 md:p-6">
-      <div className="flex items-center justify-between gap-3">
-        <span className="rounded-full border border-[color:var(--da-amber-soft-line)] px-2.5 py-1 font-da-mono text-[10px] uppercase tracking-widest text-da-amber-soft">
-          {DEMO.materia}
-        </span>
-        <span className="font-da-mono text-[11px] text-da-muted">{DEMO.posicao}</span>
-      </div>
+    <div className="flex flex-col">
+      <BarraDeProgressoDemo atual={DEMO.posicao} total={DEMO.total} />
 
-      <p className="mt-3.5 text-[13.5px] leading-relaxed text-da-paper md:text-sm">
-        {DEMO.enunciado}
-      </p>
+      <div className="space-y-3 p-3 sm:p-4">
+        <div className="flex flex-wrap items-center gap-1.5">
+          <EtiquetaDemo variante="cheia">Objetiva</EtiquetaDemo>
+          <EtiquetaDemo>{DEMO.modulo}</EtiquetaDemo>
+          <span className="hidden sm:inline-flex">
+            <EtiquetaDemo>{DEMO.topico}</EtiquetaDemo>
+          </span>
+          <EtiquetaDemo variante="tinta">{DEMO.ano}</EtiquetaDemo>
+          {dificuldade && (
+            <span
+              className={
+                'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ' +
+                dificuldade.classe
+              }
+            >
+              {dificuldade.texto}
+            </span>
+          )}
+        </div>
 
-      {/* Alternativas de verdade: 44px de altura mínima, o alvo que a WCAG 2.2
-          trata como critério aprimorado. Ninguém deveria mirar para tocar. */}
-      <ul className="mt-4 space-y-2">
-        {DEMO.alternativas.map((alt) => {
-          const escolhida = escolha === alt.id
-          const eCorreta = alt.id === DEMO.correta
-          // Depois de responder, a correta acende SEMPRE — inclusive quando a
-          // pessoa erra. Esconder o gabarito de quem errou seria a única coisa
-          // capaz de fazer alguém sair desta tela sem ter aprendido nada.
-          const destaque = respondida && (eCorreta || escolhida)
-          const cor = respondida
-            ? eCorreta
-              ? 'border-emerald-500/60 bg-emerald-500/10 text-da-paper'
-              : escolhida
-                ? 'border-red-500/50 bg-red-500/10 text-da-paper'
-                : 'border-[color:var(--da-neutral-line)] text-da-muted opacity-60'
-            : 'border-[color:var(--da-neutral-line)] text-da-paper hover:border-da-amber/60 hover:bg-da-amber/5'
-          return (
-            <li key={alt.id}>
-              <button
-                type="button"
-                onClick={() => setEscolha(alt.id)}
-                aria-pressed={escolhida}
-                className={
-                  'flex w-full min-h-[44px] items-center gap-3 rounded-lg border px-3 py-2.5 text-left transition ' +
-                  cor
-                }
-              >
+        <div className="rounded-2xl border border-border bg-card p-3.5 sm:p-4">
+          <p className="text-[14.5px] leading-relaxed sm:text-[15px]">{DEMO.enunciado}</p>
+        </div>
+
+        {!conferida && (
+          <p className="text-xs text-muted-foreground">
+            Selecione uma alternativa · toque no X para riscar
+          </p>
+        )}
+
+        <ul className="space-y-2.5">
+          {DEMO.alternativas.map((alt) => {
+            const estaMarcada = marcada === alt.letra
+            const estaRiscada = riscadas.includes(alt.letra)
+            const correta = alt.letra === DEMO.correta
+            const classes = classesDaAlternativa({
+              marcada: estaMarcada,
+              riscada: estaRiscada,
+              conferida,
+              correta,
+            })
+            const acertouEsta = conferida && correta
+            const errouEsta = conferida && estaMarcada && !correta
+            return (
+              <li key={alt.letra}>
+                {/* A tremida do erro é um keyframe de CSS: o componente real
+                    usa framer-motion, que não vale o peso nesta página. */}
+                <div className={classes.cartao + (errouEsta ? ' da-tremida' : '')}>
+                  <button
+                    type="button"
+                    disabled={conferida || estaRiscada}
+                    onClick={() => setMarcada(alt.letra)}
+                    aria-pressed={estaMarcada}
+                    className="absolute inset-0 rounded-2xl"
+                    aria-label={`Alternativa ${alt.letra}`}
+                  />
+                  <span className={classes.selo}>
+                    {acertouEsta ? (
+                      <svg viewBox="0 0 24 24" className="h-5 w-5" {...stUi} strokeWidth={3} aria-hidden>
+                        <path d="M5 13l4 4L19 7" />
+                      </svg>
+                    ) : errouEsta ? (
+                      <UiX className="h-5 w-5" />
+                    ) : (
+                      alt.letra
+                    )}
+                  </span>
+                  <span className={classes.texto}>{alt.texto}</span>
+                  {!conferida && (
+                    <button
+                      type="button"
+                      onClick={() => alternar(alt.letra)}
+                      aria-pressed={estaRiscada}
+                      aria-label={
+                        estaRiscada
+                          ? `Desriscar alternativa ${alt.letra}`
+                          : `Riscar alternativa ${alt.letra}`
+                      }
+                      className={'relative ' + classes.botaoRiscar}
+                    >
+                      <UiX />
+                    </button>
+                  )}
+                </div>
+              </li>
+            )
+          })}
+        </ul>
+
+        {conferida && explicacaoAberta && (
+          <div className="da-answer-in rounded-2xl border border-border bg-card p-3.5 sm:p-4">
+            {visual && IconeVeredito && (
+              <div className="flex items-center gap-2.5 pb-3">
                 <span
                   className={
-                    'grid h-6 w-6 shrink-0 place-items-center rounded-md border font-da-mono text-[11px] font-semibold ' +
-                    (destaque
-                      ? eCorreta
-                        ? 'border-emerald-500/60 text-emerald-600 dark:text-emerald-400'
-                        : 'border-red-500/60 text-red-600 dark:text-red-400'
-                      : 'border-[color:var(--da-neutral-line)] text-da-muted')
+                    'flex h-8 w-8 flex-none items-center justify-center rounded-full ' + visual.bolha
                   }
                 >
-                  {alt.id}
+                  <IconeVeredito className="h-4 w-4 text-white" strokeWidth={2.5} />
                 </span>
-                <span className="text-[13px] leading-snug md:text-[13.5px]">{alt.texto}</span>
-              </button>
-            </li>
-          )
-        })}
-      </ul>
+                <div className="min-w-0">
+                  <p className={'text-sm font-bold leading-tight ' + visual.titulo}>
+                    {visual.rotulo}
+                  </p>
+                  {veredito === 'errou' && (
+                    <p className="text-xs text-muted-foreground">
+                      A resposta correta era a {DEMO.correta}
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+            <h4 className="pb-1.5 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+              Explicação
+            </h4>
+            <p className="text-[14.5px] leading-relaxed sm:text-[15px]">{DEMO.explicacao}</p>
+            <h4 className="pb-1.5 pt-4 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+              Fonte
+            </h4>
+            <p className="text-[14.5px] leading-relaxed sm:text-[15px]">{DEMO.fonte}</p>
+          </div>
+        )}
+      </div>
 
-      {!respondida ? (
-        <p className="mt-3.5 font-da-mono text-[11px] text-da-muted">
-          Toque numa alternativa — o comentário aparece na hora.
-        </p>
-      ) : (
-        <div className="da-answer-in mt-4 rounded-xl border border-[color:var(--da-amber-line)] bg-da-tint/50 p-3.5 md:p-4">
-          <p className="font-da-mono text-[10px] uppercase tracking-widest text-da-amber-ink">
-            {acertou ? 'Você acertou · resposta comentada' : `Resposta correta: ${DEMO.correta} · comentada`}
-          </p>
-          <p className="mt-2 text-[13px] leading-relaxed text-da-muted md:text-[13.5px]">
-            {DEMO.comentario}
-          </p>
+      {/* A barra de ação. No produto ela é fixa no rodapé da tela, ao alcance
+          do polegar; aqui ela fecha a janela, no mesmo lugar e com o mesmo
+          conteúdo — o veredito colado no botão que a pessoa já ia tocar. */}
+      <div className="mt-auto border-t border-border bg-card/60 p-3 sm:p-4">
+        {conferida && !explicacaoAberta && visual && IconeVeredito && (
+          <button
+            type="button"
+            onClick={() => setExplicacaoAberta(true)}
+            className={
+              'da-answer-in mb-2 flex w-full items-center gap-3 rounded-2xl border px-3 py-2.5 transition active:scale-[0.99] ' +
+              visual.faixa
+            }
+          >
+            <span
+              className={
+                'flex h-9 w-9 flex-none items-center justify-center rounded-full ' + visual.bolha
+              }
+            >
+              <IconeVeredito className="h-5 w-5 text-white" strokeWidth={2.5} />
+            </span>
+            <span className="min-w-0 flex-1 text-left">
+              <span className={'block text-sm font-bold leading-tight ' + visual.titulo}>
+                {visual.rotulo}
+              </span>
+              {/* Saber QUAL era a certa é a informação mais urgente de um erro —
+                  ela vem antes de qualquer convite a ler. */}
+              <span className="mt-0.5 block truncate text-xs text-muted-foreground">
+                {veredito === 'errou' ? `A certa era a ${DEMO.correta}` : visual.convite}
+              </span>
+            </span>
+            <span
+              className={
+                'flex flex-none items-center gap-1.5 rounded-xl px-2.5 py-2 text-xs font-bold ' +
+                visual.acao
+              }
+            >
+              {visual.rotuloAcao}
+              <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 animate-bounce" {...stUi} strokeWidth={2.4} aria-hidden>
+                <path d="M12 5v14M6 13l6 6 6-6" />
+              </svg>
+            </span>
+          </button>
+        )}
+        {conferida ? (
           <SmartLink
             href={LINKS.amostra}
-            className="mt-3.5 inline-flex min-h-[44px] items-center gap-2 font-da-display text-sm font-semibold text-da-amber-ink underline underline-offset-4"
+            className="btn-brand-glow flex h-12 w-full items-center justify-center gap-2 rounded-2xl text-[15px] font-bold text-white"
           >
             Resolver as outras 9 sem cadastro
-            <svg viewBox="0 0 24 24" className="h-4 w-4" {...stUi} aria-hidden>
+            <svg viewBox="0 0 24 24" className="h-4 w-4" {...stUi} strokeWidth={2.2} aria-hidden>
               <path d="M5 12h14M13 6l6 6-6 6" />
             </svg>
           </SmartLink>
-        </div>
-      )}
+        ) : (
+          <button
+            type="button"
+            onClick={() => setConferida(true)}
+            disabled={!marcada}
+            className="btn-brand-glow flex h-12 w-full items-center justify-center gap-2 rounded-2xl text-[15px] font-bold text-white disabled:pointer-events-none disabled:opacity-50"
+          >
+            <svg viewBox="0 0 24 24" className="h-4 w-4" {...stUi} strokeWidth={2.2} aria-hidden>
+              <circle cx="12" cy="12" r="9" />
+              <path d="M8 12l3 3 5-6" />
+            </svg>
+            Verificar resposta
+          </button>
+        )}
+      </div>
     </div>
   )
 }
@@ -1374,7 +1613,7 @@ function Hero({
             }}
           />
           <Reveal delay={120}>
-            <AppWindow path="domineaqui.com.br/banco-questoes" active={0} className="relative">
+            <AppWindow path="domineaqui.com.br/banco-questoes" active={1} className="relative">
               <QuestionDemo />
             </AppWindow>
           </Reveal>
@@ -1943,7 +2182,9 @@ function UiLine({ w = '100%', dim = false }: { w?: string; dim?: boolean }) {
   return (
     <span
       aria-hidden
-      className={'block h-2 rounded-full ' + (dim ? 'bg-da-muted/20' : 'bg-da-muted/35')}
+      className={
+        'block h-2 rounded-full ' + (dim ? 'bg-muted-foreground/15' : 'bg-muted-foreground/30')
+      }
       style={{ width: w }}
     />
   )
@@ -1960,10 +2201,10 @@ const PASSOS: {
     titulo: 'Diga o que você está estudando',
     texto: 'Escolhe o módulo, o tema ou cola a ementa da sua faculdade. Tudo depois disso vem filtrado por isso.',
     path: 'domineaqui.com.br/dashboard',
-    nav: 4,
+    nav: 0,
     tela: (
       <div className="p-4 md:p-5">
-        <p className="font-da-mono text-[10px] uppercase tracking-widest text-da-amber-soft">
+        <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
           O que você está estudando?
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
@@ -1971,18 +2212,18 @@ const PASSOS: {
             <span
               key={t}
               className={
-                'rounded-full border px-3 py-1.5 text-[12px] ' +
+                'rounded-xl border px-3 py-2 text-[12px] font-medium ' +
                 (i === 0
-                  ? 'border-da-amber/60 bg-da-amber/10 text-da-amber-ink'
-                  : 'border-[color:var(--da-neutral-line)] text-da-muted')
+                  ? 'border-primary bg-primary/10 text-primary'
+                  : 'border-border bg-card text-muted-foreground')
               }
             >
               {t}
             </span>
           ))}
         </div>
-        <div className="mt-5 space-y-2.5 rounded-lg border border-[color:var(--da-neutral-line)] p-3.5">
-          <p className="font-da-mono text-[10px] uppercase tracking-widest text-da-muted">
+        <div className="mt-5 space-y-2.5 rounded-2xl border border-border bg-card p-3.5">
+          <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
             Hoje no seu cronograma
           </p>
           <UiLine w="82%" />
@@ -1996,37 +2237,38 @@ const PASSOS: {
     titulo: 'Resolva questões ou uma prova inteira',
     texto: 'O banco de questões, as provas que a sua faculdade já aplicou e as provas geradas na sua ementa. Você treina no que cai.',
     path: 'domineaqui.com.br/banco-questoes',
-    nav: 0,
+    nav: 1,
     tela: (
-      <div className="p-4 md:p-5">
-        <div className="flex items-center justify-between">
-          <span className="rounded-full border border-[color:var(--da-amber-soft-line)] px-2.5 py-1 font-da-mono text-[10px] uppercase tracking-widest text-da-amber-soft">
-            Cardiologia
-          </span>
-          <span className="font-da-mono text-[11px] text-da-muted">Questão 3 de 20</span>
-        </div>
-        <div className="mt-3.5 space-y-2">
-          <UiLine w="100%" />
-          <UiLine w="93%" />
-          <UiLine w="47%" />
-        </div>
-        <div className="mt-4 space-y-2">
-          {['A', 'B', 'C', 'D'].map((id, i) => (
-            <span
-              key={id}
-              className={
-                'flex min-h-[40px] items-center gap-3 rounded-lg border px-3 ' +
-                (i === 1
-                  ? 'border-da-amber/60 bg-da-amber/10'
-                  : 'border-[color:var(--da-neutral-line)]')
-              }
-            >
-              <span className="grid h-6 w-6 shrink-0 place-items-center rounded-md border border-[color:var(--da-neutral-line)] font-da-mono text-[11px] text-da-muted">
-                {id}
-              </span>
-              <UiLine w={['74%', '61%', '80%', '55%'][i]} dim={i !== 1} />
-            </span>
-          ))}
+      <div className="flex flex-col">
+        <BarraDeProgressoDemo atual={3} total={20} />
+        <div className="space-y-3 p-4 md:p-5">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <EtiquetaDemo variante="cheia">Objetiva</EtiquetaDemo>
+            <EtiquetaDemo>Cardiologia</EtiquetaDemo>
+          </div>
+          <div className="space-y-2 rounded-2xl border border-border bg-card p-3.5">
+            <UiLine w="100%" />
+            <UiLine w="93%" />
+            <UiLine w="47%" />
+          </div>
+          <div className="space-y-2.5">
+            {['A', 'B', 'C', 'D'].map((letra, i) => {
+              const classes = classesDaAlternativa({
+                marcada: i === 1,
+                riscada: i === 3,
+                conferida: false,
+                correta: false,
+              })
+              return (
+                <span key={letra} className={classes.cartao}>
+                  <span className={classes.selo}>{letra}</span>
+                  <span className={classes.texto}>
+                    <UiLine w={['74%', '61%', '80%', '55%'][i]} dim={i !== 1} />
+                  </span>
+                </span>
+              )
+            })}
+          </div>
         </div>
       </div>
     ),
@@ -2035,28 +2277,57 @@ const PASSOS: {
     titulo: 'Leia por que a sua resposta estava errada',
     texto: 'Gabarito na hora e comentário explicando o raciocínio — não só a letra certa. É aqui que a questão vira aprendizado.',
     path: 'domineaqui.com.br/banco-questoes',
-    nav: 0,
+    nav: 1,
     tela: (
-      <div className="p-4 md:p-5">
-        <div className="flex min-h-[40px] items-center gap-3 rounded-lg border border-emerald-500/60 bg-emerald-500/10 px-3">
-          <span className="grid h-6 w-6 shrink-0 place-items-center rounded-md border border-emerald-500/60 font-da-mono text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
-            B
-          </span>
-          <span className="text-[12.5px] text-da-paper">Alternativa correta</span>
-        </div>
-        <div className="mt-3 rounded-xl border border-[color:var(--da-amber-line)] bg-da-tint/50 p-3.5">
-          <p className="font-da-mono text-[10px] uppercase tracking-widest text-da-amber-ink">
-            Resposta comentada
-          </p>
-          <div className="mt-2.5 space-y-2">
+      <div className="space-y-3 p-4 md:p-5">
+        {[
+          { letra: 'B', correta: true },
+          { letra: 'C', correta: false },
+        ].map(({ letra, correta }) => {
+          const classes = classesDaAlternativa({
+            marcada: !correta,
+            riscada: false,
+            conferida: true,
+            correta,
+          })
+          return (
+            <span key={letra} className={classes.cartao}>
+              <span className={classes.selo}>
+                {correta ? (
+                  <svg viewBox="0 0 24 24" className="h-5 w-5" {...stUi} strokeWidth={3} aria-hidden>
+                    <path d="M5 13l4 4L19 7" />
+                  </svg>
+                ) : (
+                  <UiX className="h-5 w-5" />
+                )}
+              </span>
+              <span className={classes.texto}>
+                <UiLine w={correta ? '68%' : '54%'} dim={!correta} />
+              </span>
+            </span>
+          )
+        })}
+        <div className="rounded-2xl border border-border bg-card p-3.5">
+          <div className="flex items-center gap-2.5 pb-3">
+            <span className="flex h-8 w-8 flex-none items-center justify-center rounded-full bg-red-500">
+              <UiX className="h-4 w-4 text-white" />
+            </span>
+            <div>
+              <p className="text-sm font-bold leading-tight text-red-700 dark:text-red-300">
+                Não foi dessa vez
+              </p>
+              <p className="text-xs text-muted-foreground">A resposta correta era a B</p>
+            </div>
+          </div>
+          <h4 className="pb-1.5 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+            Explicação
+          </h4>
+          <div className="space-y-2">
             <UiLine w="100%" />
             <UiLine w="96%" />
             <UiLine w="88%" dim />
             <UiLine w="52%" dim />
           </div>
-          <p className="mt-3 font-da-mono text-[11px] text-da-amber-ink">
-            Aprofundar no Manual Clínico →
-          </p>
         </div>
       </div>
     ),
@@ -2065,32 +2336,32 @@ const PASSOS: {
     titulo: 'Aprofunde no Manual, sem trocar de aba',
     texto: 'O tema da questão abre direto no Manual Clínico: mecanismo, conduta, ausculta que toca e foto clínica com referência.',
     path: 'domineaqui.com.br/manual-clinico',
-    nav: 1,
+    nav: 3,
     tela: (
       <div className="p-4 md:p-5">
-        <div className="flex items-center gap-2 rounded-full border border-[color:var(--da-neutral-line)] px-3 py-2">
-          <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 shrink-0 text-da-muted" {...stUi} aria-hidden>
+        <div className="flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5">
+          <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0 text-muted-foreground" {...stUi} aria-hidden>
             <circle cx="11" cy="11" r="6.5" />
             <path d="M16 16l4 4" />
           </svg>
-          <span className="font-da-mono text-[12px] text-da-paper">infarto agudo do miocárdio</span>
+          <span className="text-[13px]">infarto agudo do miocárdio</span>
         </div>
         <div className="mt-3.5 grid grid-cols-3 gap-2">
           {['Fisiopatologia', 'Conduta', 'Ausculta'].map((t, i) => (
             <span
               key={t}
               className={
-                'truncate rounded-lg border px-2 py-2 text-center text-[10.5px] ' +
+                'truncate rounded-xl border px-2 py-2 text-center text-[11px] font-medium ' +
                 (i === 0
-                  ? 'border-da-amber/60 bg-da-amber/10 text-da-amber-ink'
-                  : 'border-[color:var(--da-neutral-line)] text-da-muted')
+                  ? 'border-primary bg-primary/10 text-primary'
+                  : 'border-border bg-card text-muted-foreground')
               }
             >
               {t}
             </span>
           ))}
         </div>
-        <div className="mt-3.5 space-y-2.5">
+        <div className="mt-3.5 space-y-2.5 rounded-2xl border border-border bg-card p-3.5">
           <UiLine w="100%" />
           <UiLine w="91%" />
           <UiLine w="97%" dim />
@@ -2103,11 +2374,11 @@ const PASSOS: {
     titulo: 'Salve e deixe o card voltar na hora certa',
     texto: 'O que você errou vira flashcard com repetição espaçada. Ele reaparece pouco antes de você esquecer — até virar seu.',
     path: 'domineaqui.com.br/flashcards',
-    nav: 3,
+    nav: 4,
     tela: (
       <div className="p-4 md:p-5">
-        <div className="rounded-xl border border-[color:var(--da-neutral-line)] bg-da-panel/50 p-4">
-          <p className="font-da-mono text-[10px] uppercase tracking-widest text-da-amber-soft">
+        <div className="rounded-2xl border border-border bg-card p-4">
+          <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
             Cardiologia · card novo
           </p>
           <div className="mt-3 space-y-2">
@@ -2125,18 +2396,18 @@ const PASSOS: {
             <span
               key={l}
               className={
-                'rounded-lg border px-1.5 py-2 text-center ' +
+                'rounded-xl border px-1.5 py-2 text-center ' +
                 (i === 2
-                  ? 'border-da-amber/60 bg-da-amber/10 text-da-amber-ink'
-                  : 'border-[color:var(--da-neutral-line)] text-da-muted')
+                  ? 'border-primary bg-primary/10 text-primary'
+                  : 'border-border bg-card text-muted-foreground')
               }
             >
-              <span className="block text-[11px] font-medium">{l}</span>
+              <span className="block text-[11px] font-semibold">{l}</span>
               <span className="block font-da-mono text-[9.5px] opacity-80">{q}</span>
             </span>
           ))}
         </div>
-        <p className="mt-3.5 font-da-mono text-[11px] text-da-muted">
+        <p className="mt-3.5 text-xs text-muted-foreground">
           Próxima revisão agendada automaticamente.
         </p>
       </div>

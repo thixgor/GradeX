@@ -3368,6 +3368,22 @@ html[data-da-menu='aberto'] .da-dock[data-shown='true'] {
 
 /* Entrada do comentário da questão: o mesmo desenho do da-panel-fade, com
    altura animada para o cartão não "pular" na tela quando aparece. */
+/* A tremida curta do erro. Na plataforma quem faz isso é o framer-motion
+   dentro da `AlternativaQuiz`; na landing, onde JavaScript a mais atrasa a
+   primeira pintura, o mesmo movimento sai de um keyframe. O corpo entende o
+   erro antes da leitura — é para isso que ela existe. */
+@keyframes da-tremida {
+  0% { transform: translateX(0); }
+  18% { transform: translateX(-7px); }
+  36% { transform: translateX(7px); }
+  58% { transform: translateX(-4px); }
+  78% { transform: translateX(4px); }
+  100% { transform: translateX(0); }
+}
+.da-tremida {
+  animation: da-tremida 0.42s ease-out both;
+}
+
 @keyframes da-answer-in {
   from {
     opacity: 0;
@@ -3386,7 +3402,8 @@ html[data-da-menu='aberto'] .da-dock[data-shown='true'] {
   .da-dock {
     transition: none;
   }
-  .da-answer-in {
+  .da-answer-in,
+  .da-tremida {
     animation: none;
   }
 }

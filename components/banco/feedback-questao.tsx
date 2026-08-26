@@ -2,10 +2,13 @@
 
 import { forwardRef } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowDown, CheckCircle2, PenLine, XCircle } from 'lucide-react'
+import { ArrowDown } from 'lucide-react'
+import { VISUAL_DO_VEREDITO, type VereditoDaQuestao } from '@/lib/banco/aparencia-da-questao'
 import { cn } from '@/lib/utils'
 
-export type VereditoDaQuestao = 'acertou' | 'errou' | 'registrada'
+// Reexportado para as telas que já importavam o tipo daqui não precisarem
+// mudar de endereço só porque a aparência mudou de arquivo.
+export type { VereditoDaQuestao }
 
 /**
  * O veredito e o caminho até o motivo dele.
@@ -146,57 +149,6 @@ function FaixaDeVeredito({
       {corpo}
     </button>
   )
-}
-
-const VISUAL_DO_VEREDITO: Record<
-  VereditoDaQuestao,
-  {
-    icone: typeof CheckCircle2
-    rotulo: string
-    /** Linha de apoio quando não há correção escrita para ler. */
-    apoio: string
-    /** Linha de apoio quando há: ela convida à leitura. */
-    convite: string
-    rotuloAcao: string
-    faixa: string
-    bolha: string
-    titulo: string
-    acao: string
-  }
-> = {
-  acertou: {
-    icone: CheckCircle2,
-    rotulo: 'Você acertou',
-    apoio: 'Resposta correta',
-    convite: 'Toque para ver a explicação',
-    rotuloAcao: 'Ver explicação',
-    faixa: 'border-emerald-500/40 bg-emerald-50 dark:bg-emerald-950/40',
-    bolha: 'bg-emerald-500',
-    titulo: 'text-emerald-700 dark:text-emerald-300',
-    acao: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300',
-  },
-  errou: {
-    icone: XCircle,
-    rotulo: 'Não foi dessa vez',
-    apoio: 'Resposta incorreta',
-    convite: 'Toque para ver por que',
-    rotuloAcao: 'Ver por que',
-    faixa: 'border-red-500/40 bg-red-50 dark:bg-red-950/40',
-    bolha: 'bg-red-500',
-    titulo: 'text-red-700 dark:text-red-300',
-    acao: 'bg-red-500/15 text-red-700 dark:text-red-300',
-  },
-  registrada: {
-    icone: PenLine,
-    rotulo: 'Resposta registrada',
-    apoio: 'Ainda não há gabarito para esta questão',
-    convite: 'Toque para ver a resposta modelo',
-    rotuloAcao: 'Ver gabarito',
-    faixa: 'border-sky-500/40 bg-sky-50 dark:bg-sky-950/40',
-    bolha: 'bg-sky-500',
-    titulo: 'text-sky-700 dark:text-sky-300',
-    acao: 'bg-sky-500/15 text-sky-700 dark:text-sky-300',
-  },
 }
 
 /**
