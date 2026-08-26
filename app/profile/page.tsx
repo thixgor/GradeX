@@ -45,7 +45,8 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { AccountType } from '@/lib/types'
-import { PLUS_LABEL, QUEST_LABEL, ROTA_ASSINATURA, isPlusAccount, isQuestAccount } from '@/lib/account-tier'
+import { PLUS_LABEL, ROTA_ASSINATURA, isPlusAccount, isQuestAccount } from '@/lib/account-tier'
+import { SeloDeCargo } from '@/components/cargo-badge'
 import { cn } from '@/lib/utils'
 
 type ProfileTab = 'visao-geral' | 'desempenho' | 'pedidos' | 'atendimento' | 'config'
@@ -265,33 +266,6 @@ export default function ProfilePage() {
     return `${minutes}min`
   }
 
-  function getAccountBadge() {
-    if (userRole === 'admin') {
-      return { label: 'Admin', colors: 'from-purple-600 to-pink-600', icon: <Crown className="h-3.5 w-3.5" /> }
-    }
-    // Cargo único: 'plus' e os legados premium/essential usam o mesmo selo.
-    if (isPlusAccount(accountType)) {
-      return { label: PLUS_LABEL, colors: 'from-yellow-500 to-orange-500', icon: <Crown className="h-3.5 w-3.5" /> }
-    }
-    if (isQuestAccount(accountType)) {
-      return {
-        label: QUEST_LABEL,
-        colors: 'from-emerald-500 to-teal-500',
-        icon: <Target className="h-3.5 w-3.5" />,
-      }
-    }
-    if (accountType === 'trial') {
-      return {
-        label: `Trial - ${getTrialTimeRemaining()}`,
-        colors: 'from-blue-500 to-cyan-500',
-        icon: <Timer className="h-3.5 w-3.5" />,
-      }
-    }
-    return { label: 'Gratuito', colors: 'from-gray-400 to-gray-500', icon: null }
-  }
-
-  const badge = getAccountBadge()
-
   return (
     <AppShell headerTitle="Meu Perfil" headerSubtitle={userName || 'Conta'}>
       <BanChecker />
@@ -318,15 +292,18 @@ export default function ProfilePage() {
                     {userName || 'Carregando…'}
                   </h1>
                   {userEmail && <p className="mt-0.5 truncate text-xs text-muted-foreground sm:text-sm">{userEmail}</p>}
-                  <div
-                    className={cn(
-                      'mt-2 inline-flex items-center gap-1.5 rounded-md bg-gradient-to-r px-2.5 py-1 text-xs font-semibold text-white',
-                      badge.colors,
-                    )}
-                  >
-                    {badge.icon}
-                    {badge.label}
-                  </div>
+                  {/*
+                    O selo vem do registro de cargos (`/admin/cargos`). A versão
+                    anterior era um `switch` com um ramo por cargo, e quem
+                    assinasse um cargo que ele não conhecesse via "Gratuito"
+                    logo depois de pagar.
+                  */}
+                  <SeloDeCargo
+                    className="mt-2"
+                    accountType={accountType}
+                    ehAdmin={userRole === 'admin'}
+                    sufixo={accountType === 'trial' ? getTrialTimeRemaining() : undefined}
+                  />
                 </div>
                 <div className="flex shrink-0 flex-wrap justify-center gap-2">
                   {/*

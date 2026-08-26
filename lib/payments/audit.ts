@@ -33,6 +33,8 @@ export type AuditAction =
   | 'prouni_benefit_updated'
   | 'prouni_benefit_deleted'
   | 'prouni_discount_applied'
+  /** Alguém editou o registro de cargos em /admin/cargos. */
+  | 'cargos_updated'
 
 export interface AuditLogEntry {
   action: AuditAction

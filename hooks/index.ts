@@ -50,3 +50,8 @@ export type {
   BootstrapTierUsage,
   BootstrapResponse,
 } from './use-bootstrap'
+
+// Registro de cargos (`/admin/cargos`) — quem é "Plus+", "Quest" ou qualquer
+// cargo que o admin criar, com rótulo, cor e áreas liberadas.
+export { useCargos, useGruposDeAcesso, limparCacheDeCargos } from './use-cargos'
+export type { RegistroDeCargosNoCliente, GrupoDeAcesso } from './use-cargos'

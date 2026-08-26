@@ -42,9 +42,28 @@ interface PlanPermissionsEditorProps {
   permissoes?: PlanPermissions | null
   role?: AccountType | string | null
   onChange: (permissoes: PlanPermissions) => void
+  /**
+   * Esconde o interruptor mestre e mostra as regras sempre abertas.
+   *
+   * Um **plano** precisa do interruptor: desligado, ele se comporta como o
+   * cargo, que é o estado de todo plano criado antes destas permissões
+   * existirem. Um **cargo criado em `/admin/cargos`** não tem esse estado —
+   * ele não herda de ninguém, e o bloco de regras é a definição dele. Mostrar
+   * um interruptor que nunca deve ser desligado só convidaria a desligá-lo e
+   * criar um cargo que não faz nada.
+   */
+  semInterruptor?: boolean
+  /** Cabeçalho do bloco. O padrão fala de plano. */
+  titulo?: string
 }
 
-export function PlanPermissionsEditor({ permissoes, role, onChange }: PlanPermissionsEditorProps) {
+export function PlanPermissionsEditor({
+  permissoes,
+  role,
+  onChange,
+  semInterruptor = false,
+  titulo,
+}: PlanPermissionsEditorProps) {
   // O formulário trabalha sempre com o objeto completo. Normalizar na entrada
   // evita o campo indefinido que vira input não-controlado no meio da edição.
   const valor = useMemo(() => normalizePlanPermissions(permissoes), [permissoes])
@@ -71,6 +90,10 @@ export function PlanPermissionsEditor({ permissoes, role, onChange }: PlanPermis
     return atualizar({ ativo: true })
   }
 
+  // Sem interruptor, as regras estão sempre valendo: o bloco só faz sentido
+  // aberto, e `ativo` fica ligado no objeto para o servidor ler igual.
+  const mostrarRegras = semInterruptor || valor.ativo
+
   const manualLiberado = valor.regras.manualClinico.liberado
   const modulosLigados = MANUAL_CLINICO_MODULE_DEFINITIONS.filter(
     m => valor.manualClinicoModulos[m.key] !== false,
@@ -82,10 +105,15 @@ export function PlanPermissionsEditor({ permissoes, role, onChange }: PlanPermis
         <div className="min-w-0">
           <div className="flex items-center gap-2">
             <ShieldCheck className="h-4 w-4 shrink-0 text-primary" />
-            <Label className="text-xs font-semibold">Permissões deste plano</Label>
+            <Label className="text-xs font-semibold">{titulo || 'Permissões deste plano'}</Label>
           </div>
           <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
-            {valor.ativo ? (
+            {semInterruptor ? (
+              <>
+                Marque o que este cargo abre. O que ficar desligado fica fechado
+                para quem tiver o cargo — <strong>não há herança</strong> de nenhum outro.
+              </>
+            ) : valor.ativo ? (
               <>
                 Ligado: <strong>estas regras substituem</strong> os limites padrão do cargo para
                 quem assina este plano. Não há soma — o que está aqui é o que vale.
@@ -98,10 +126,10 @@ export function PlanPermissionsEditor({ permissoes, role, onChange }: PlanPermis
             )}
           </p>
         </div>
-        <Switch checked={valor.ativo} onCheckedChange={alternarMestre} />
+        {!semInterruptor && <Switch checked={valor.ativo} onCheckedChange={alternarMestre} />}
       </div>
 
-      {valor.ativo && (
+      {mostrarRegras && (
         <>
           <div className="flex flex-wrap gap-2">
             <Button
@@ -113,15 +141,37 @@ export function PlanPermissionsEditor({ permissoes, role, onChange }: PlanPermis
             >
               Liberar tudo sem limite
             </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="h-7 text-[11px]"
-              onClick={() => onChange({ ...permissoesPadraoParaCargo(role), ativo: true })}
-            >
-              Voltar ao padrão do cargo
-            </Button>
+            {semInterruptor ? (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="h-7 text-[11px]"
+                onClick={() =>
+                  onChange({
+                    ...valor,
+                    ativo: true,
+                    regras: PLAN_FEATURE_DEFINITIONS.reduce(
+                      (acc, def) => ({ ...acc, [def.key]: { liberado: false, limite: 0, periodo: 'dia' as PlanLimitPeriod } }),
+                      { ...valor.regras },
+                    ),
+                    manualClinicoModulos: todosOsModulosDoManual(false),
+                  })
+                }
+              >
+                Fechar tudo
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="h-7 text-[11px]"
+                onClick={() => onChange({ ...permissoesPadraoParaCargo(role), ativo: true })}
+              >
+                Voltar ao padrão do cargo
+              </Button>
+            )}
           </div>
 
           <div className="space-y-2">

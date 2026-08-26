@@ -82,8 +82,24 @@ export const CANONICAL_ACCOUNT_TYPES: AccountType[] = ['gratuito', 'trial', QUES
 export const PAID_ACCOUNT_TYPES = [PLUS_TIER, QUEST_TIER, ...LEGACY_PLUS_TIERS] as const
 
 /**
+ * Formato de id que um cargo criado em `/admin/cargos` pode ter.
+ * Espelha `slugDeCargo()` em `lib/cargos.ts` — mudar um exige mudar o outro.
+ */
+const FORMATO_DE_SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
+
+/**
  * Traduz qualquer valor vindo do banco/entrada do usuário para o cargo
- * canônico. Valores desconhecidos ou ausentes viram `'gratuito'`.
+ * canônico.
+ *
+ * Os aliases legados viram o cargo de hoje (`premium` → `plus`). Um id de
+ * cargo criado pelo admin **passa direto**: esta função é um normalizador de
+ * formato, não um validador de existência — ela não pode consultar o registro
+ * (é síncrona e roda no navegador), e devolver `'gratuito'` para todo cargo
+ * que ela não conhece de fábrica rebaixaria silenciosamente cada conta com
+ * cargo personalizado. Quem precisa saber se o cargo existe de verdade
+ * consulta o registro (`acharCargo`), que devolve `null` para id órfão.
+ *
+ * Só valor ausente ou fora do formato de slug vira `'gratuito'`.
  */
 export function normalizeAccountType(value?: string | null): AccountType {
   if (!value) return 'gratuito'
@@ -91,7 +107,8 @@ export function normalizeAccountType(value?: string | null): AccountType {
   if (v === 'premium' || v === 'essential' || v === 'plus' || v === 'plus+') return PLUS_TIER
   if (v === 'quest' || v === 'quest+') return QUEST_TIER
   if (v === 'trial') return 'trial'
-  return 'gratuito'
+  if (v === 'gratuito') return 'gratuito'
+  return FORMATO_DE_SLUG.test(v) ? (v as AccountType) : 'gratuito'
 }
 
 /**

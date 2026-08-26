@@ -213,16 +213,29 @@ export interface ExamSubmission {
 }
 
 /**
- * Cargo da conta. Dois cargos pagos são oferecidos:
+ * Cargo da conta.
  *
- *  - `'plus'` (Plus+) — a plataforma inteira, sem teto;
- *  - `'quest'` (Quest) — só o Banco de Questões, o produto avulso.
+ * Os quatro cargos de fábrica são `'gratuito'`, `'trial'`, `'quest'` (só o
+ * Banco de Questões) e `'plus'` (a plataforma inteira). `'premium'` e
+ * `'essential'` continuam no union apenas porque documentos antigos do Mongo
+ * ainda os carregam — nunca grave esses valores em código novo.
  *
- * `'premium'` e `'essential'` continuam no union apenas porque documentos
- * antigos do Mongo ainda os carregam — nunca grave esses valores em código
- * novo. Use os helpers de `lib/account-tier.ts` para ler/comparar.
+ * O `(string & {})` no fim aceita os cargos criados pelo admin em
+ * `/admin/cargos` (ver `lib/cargos.ts`), sem perder o autocomplete dos de
+ * fábrica. Ele é o que impede o union de virar uma lista que precisa de deploy
+ * para crescer — mas também tira a checagem de exaustividade, então tabela
+ * indexada por cargo (`TIER_LIMITS`, `FLASHCARD_LIMITS`) precisa de fallback
+ * explícito para o id que ela não conhece.
+ *
+ * Use os helpers de `lib/account-tier.ts` para ler/comparar.
  */
-export type AccountType = 'gratuito' | 'trial' | 'quest' | 'plus' | LegacyPaidAccountType
+export type AccountType =
+  | 'gratuito'
+  | 'trial'
+  | 'quest'
+  | 'plus'
+  | LegacyPaidAccountType
+  | (string & {})
 
 /** @deprecated Consolidados em `'plus'`. Somente leitura de registros antigos. */
 export type LegacyPaidAccountType = 'premium' | 'essential'

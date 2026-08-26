@@ -4,7 +4,7 @@ import { getDb } from '@/lib/mongodb'
 import { User } from '@/lib/types'
 import { getPersonalExamsQuota } from '@/lib/tier-limits'
 import { ObjectId } from 'mongodb'
-import { isPaidAccount } from '@/lib/account-tier'
+import { contaEhPaga } from '@/lib/cargos-server'
 import { revokePlusClaims } from '@/lib/plus-claims'
 
 export const dynamic = 'force-dynamic'
@@ -29,9 +29,10 @@ export async function GET(request: NextRequest) {
     let plusExpired = false
     let updateData: Partial<User> = {}
 
-    // Verificar expiração do cargo pago (Plus+ ou Quest — os dois usam
-    // `premiumExpiresAt` como prazo).
-    if (isPaidAccount(user.accountType) && user.premiumExpiresAt) {
+    // Verificar expiração do cargo pago. Vale para qualquer cargo marcado como
+    // pago no registro — todos usam `premiumExpiresAt` como prazo.
+    const cargoEhPago = await contaEhPaga(user.accountType, db)
+    if (cargoEhPago && user.premiumExpiresAt) {
       if (new Date(user.premiumExpiresAt) <= now) {
         // Plano expirou, reverter para Gratuito
         const gratuitoQuota = getPersonalExamsQuota('gratuito')

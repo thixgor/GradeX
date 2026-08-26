@@ -6,7 +6,8 @@ import { mapMpPreapprovalStatus } from '@/lib/payments/mercado-pago/status-mappe
 import { audit } from '@/lib/payments/audit'
 import { sendSubscriptionCancelledEmail } from '@/lib/mail'
 import { revokePlusClaims } from '@/lib/plus-claims'
-import { PAID_ACCOUNT_TYPES, PLUS_ACCOUNT_TYPES } from '@/lib/account-tier'
+import { PLUS_ACCOUNT_TYPES } from '@/lib/account-tier'
+import { idsDeCargosPagos } from '@/lib/cargos-server'
 import type { SubscriptionRecord, User, AccountType } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -126,10 +127,13 @@ export async function GET(request: NextRequest) {
   //    assinatura correspondente (plano avulso, key com prazo, grant do admin).
   //    Antes isso só era corrigido no próximo login — quem parava de usar o site
   //    ficava com o cargo e com os materiais resgatados por tempo indeterminado.
-  //    Vale para os dois cargos pagos: o Quest vence pela mesma data.
+  //    Vale para todo cargo pago do registro (`/admin/cargos`), e não para uma
+  //    lista fixa: um cargo pago criado pelo admin que ficasse de fora daqui
+  //    seria, na prática, vitalício por omissão.
+  const cargosPagos = await idsDeCargosPagos(db)
   const staleCandidates = await usersCol
     .find({
-      accountType: { $in: [...PAID_ACCOUNT_TYPES] },
+      accountType: { $in: cargosPagos },
       premiumExpiresAt: { $lt: now },
     })
     .limit(500)

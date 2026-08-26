@@ -15,7 +15,9 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { PERIODO_OPTIONS, computeCurrentPeriodo, formatPeriodoLabel } from '@/lib/user-periodo'
 import { formatStateLabel } from '@/lib/brazil-states'
-import { isPlusAccount, isQuestAccount, normalizeAccountType, PLUS_LABEL, QUEST_LABEL } from '@/lib/account-tier'
+import { isPlusAccount, normalizeAccountType, PLUS_LABEL } from '@/lib/account-tier'
+import { useCargos } from '@/hooks/use-cargos'
+import { SeloDeCargo, iconeDoCargo } from '@/components/cargo-badge'
 import { AdminSecurityPanel } from '@/components/admin/admin-security-panel'
 import {
   buildAdminUserInsights,
@@ -321,6 +323,17 @@ export default function AdminUsersPage() {
   const [selectedAccountType, setSelectedAccountType] = useState<AccountType>('gratuito')
   const [selectedTrialSubtype, setSelectedTrialSubtype] = useState<TrialPlanType>('7dias')
   const [selectedPremiumSubtype, setSelectedPremiumSubtype] = useState<PremiumPlanType>('mensal')
+
+  /*
+   * O registro de cargos alimenta o seletor do diálogo de plano.
+   *
+   * `cargosDisponiveis` é a lista inteira — inclusive os criados pelo admin —,
+   * e `cargoSelecionadoEhPago` decide se o seletor de duração aparece. É a
+   * mesma pergunta que a rota faz ao gravar (`cargo.pago`), então a tela e o
+   * servidor não podem discordar sobre o que é uma assinatura.
+   */
+  const { cargos: cargosDisponiveis, acharCargo } = useCargos()
+  const cargoSelecionadoEhPago = !!acharCargo(selectedAccountType)?.pago
   const [examsQuota, setExamsQuota] = useState(0)
   const [toastOpen, setToastOpen] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
@@ -643,10 +656,7 @@ export default function AdminUsersPage() {
           action: 'update_tier',
           accountType: selectedAccountType,
           trialPlanType: selectedAccountType === 'trial' ? selectedTrialSubtype : undefined,
-          premiumPlanType:
-            isPlusAccount(selectedAccountType) || isQuestAccount(selectedAccountType)
-              ? selectedPremiumSubtype
-              : undefined,
+          premiumPlanType: cargoSelecionadoEhPago ? selectedPremiumSubtype : undefined,
         })
       })
 
@@ -940,43 +950,16 @@ export default function AdminUsersPage() {
     }
   }
 
+  /*
+   * O selo sai do registro de cargos, não de um `switch` local.
+   *
+   * A versão anterior tinha um ramo por cargo — e o Quest passou meses fora
+   * dela, aparecendo como "Gratuito" na lista para contas que tinham pago.
+   * Com o componente compartilhado, um cargo criado em `/admin/cargos` já
+   * aparece certo aqui, com o nome e a cor que o admin escolheu.
+   */
   function getAccountTypeBadge(user: User) {
-    const accountType = user.accountType || 'gratuito'
-
-    // Cargo único: 'plus' e os legados premium/essential mostram o mesmo selo.
-    if (isPlusAccount(accountType)) {
-      return (
-        <span className="text-xs bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-2 py-1 rounded flex items-center gap-1 w-fit">
-          <Crown className="h-3 w-3" />
-          {PLUS_LABEL}
-        </span>
-      )
-    }
-
-    if (isQuestAccount(accountType)) {
-      return (
-        <span className="text-xs bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-2 py-1 rounded flex items-center gap-1 w-fit">
-          <Target className="h-3 w-3" />
-          {QUEST_LABEL}
-        </span>
-      )
-    }
-
-    switch (accountType) {
-      case 'trial':
-        return (
-          <span className="text-xs bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-2 py-1 rounded flex items-center gap-1 w-fit">
-            <Timer className="h-3 w-3" />
-            Trial
-          </span>
-        )
-      default:
-        return (
-          <span className="text-xs bg-gray-500 text-white px-2 py-1 rounded w-fit">
-            Gratuito
-          </span>
-        )
-    }
+    return <SeloDeCargo accountType={user.accountType || 'gratuito'} tamanho="sm" />
   }
 
   return (
@@ -1922,46 +1905,33 @@ export default function AdminUsersPage() {
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label>Tipo de Conta</Label>
+              {/*
+                A grade sai do registro de cargos: um cargo criado em
+                `/admin/cargos` aparece aqui na hora, sem que ninguém precise
+                voltar neste arquivo para adicionar mais um botão. Era isso que
+                a lista escrita à mão custava — o Quest exigiu editar este bloco,
+                e o próximo cargo exigiria de novo.
+              */}
               <div className="grid grid-cols-2 gap-2">
-                <Button
-                  variant={selectedAccountType === 'gratuito' ? 'default' : 'outline'}
-                  onClick={() => setSelectedAccountType('gratuito')}
-                  className="h-auto py-3 flex-col gap-1"
-                  size="sm"
-                >
-                  <div className="font-semibold">Gratuito</div>
-                  <div className="text-xs opacity-80">Padrão</div>
-                </Button>
-                <Button
-                  variant={selectedAccountType === 'trial' ? 'default' : 'outline'}
-                  onClick={() => setSelectedAccountType('trial')}
-                  className="h-auto py-3 flex-col gap-1"
-                  size="sm"
-                >
-                  <Timer className="h-4 w-4" />
-                  <div className="font-semibold">Trial</div>
-                  <div className="text-xs opacity-80">Temporário</div>
-                </Button>
-                <Button
-                  variant={isQuestAccount(selectedAccountType) ? 'default' : 'outline'}
-                  onClick={() => setSelectedAccountType('quest')}
-                  className="h-auto py-3 flex-col gap-1"
-                  size="sm"
-                >
-                  <Target className="h-4 w-4" />
-                  <div className="font-semibold">{QUEST_LABEL}</div>
-                  <div className="text-xs opacity-80">Só o Banco de Questões</div>
-                </Button>
-                <Button
-                  variant={isPlusAccount(selectedAccountType) ? 'default' : 'outline'}
-                  onClick={() => setSelectedAccountType('plus')}
-                  className="h-auto py-3 flex-col gap-1"
-                  size="sm"
-                >
-                  <Crown className="h-4 w-4" />
-                  <div className="font-semibold">{PLUS_LABEL}</div>
-                  <div className="text-xs opacity-80">Acesso total</div>
-                </Button>
+                {cargosDisponiveis.map(cargo => {
+                  const Icone = iconeDoCargo(cargo.icone)
+                  const selecionado = normalizeAccountType(selectedAccountType) === cargo.id
+                  return (
+                    <Button
+                      key={cargo.id}
+                      variant={selecionado ? 'default' : 'outline'}
+                      onClick={() => setSelectedAccountType(cargo.id)}
+                      className="h-auto py-3 flex-col gap-1"
+                      size="sm"
+                    >
+                      {Icone ? <Icone className="h-4 w-4" /> : null}
+                      <div className="font-semibold">{cargo.nome}</div>
+                      <div className="text-xs opacity-80 line-clamp-2">
+                        {cargo.descricao || (cargo.pago ? 'Cargo pago' : 'Sem cobrança')}
+                      </div>
+                    </Button>
+                  )
+                })}
               </div>
             </div>
 
@@ -1991,9 +1961,9 @@ export default function AdminUsersPage() {
               </div>
             )}
 
-            {/* Quest usa a mesma tabela de duração do Plus+ — é o mesmo campo
+            {/* Todo cargo pago usa a mesma tabela de duração — é o mesmo campo
                 de prazo no usuário, e é o que o cron varre para rebaixar. */}
-            {(isPlusAccount(selectedAccountType) || isQuestAccount(selectedAccountType)) && (
+            {cargoSelecionadoEhPago && (
               <div className="space-y-2">
                 <Label>Subtipo de assinatura</Label>
                 <div className="grid grid-cols-2 gap-2">

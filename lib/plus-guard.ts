@@ -41,7 +41,8 @@
 
 import { Db, ObjectId } from 'mongodb'
 import { getDb } from './mongodb'
-import { isPaidAccount, isPlusAccount, normalizeAccountType } from './account-tier'
+import { isPlusAccount, normalizeAccountType } from './account-tier'
+import { contaEhPaga } from './cargos-server'
 import type {
   PlusDownloadKind,
   PlusDownloadLog,
@@ -224,8 +225,12 @@ export async function checkPlusDownloadAllowance({
    * que sobre um acervo menor. A cota é a mesma do Plus+ porque o padrão de
    * uso legítimo (alguns downloads por dia numa semana de prova) não muda
    * com o tamanho do produto; o que protege é o teto, não o preço pago.
+   *
+   * "Paga" sai do registro de cargos, e não de uma lista fixa: um cargo pago
+   * criado em `/admin/cargos` nasce protegido, sem ninguém precisar lembrar
+   * de vir aqui adicioná-lo.
    */
-  if (!isPaidAccount(userDoc.accountType)) return { allowed: true }
+  if (!(await contaEhPaga(userDoc.accountType, database))) return { allowed: true }
 
   const inWindow = isInRefundWindow(userDoc as User, settings)
   const quota = inWindow ? settings.trialWindow : settings.steadyState
@@ -391,8 +396,10 @@ export async function evaluatePlusRisk(
     { _id: new ObjectId(userId) as any },
     { projection: { accountType: 1, premiumActivatedAt: 1, plusDownloadsBlocked: 1 } },
   )
-  // Mesmo critério de `checkPlusDownloadAllowance`: Quest também acumula risco.
-  if (!user || !isPaidAccount(user.accountType)) return 0
+  // Mesmo critério de `checkPlusDownloadAllowance`: todo cargo pago do registro
+  // acumula risco.
+  if (!user) return 0
+  if (!(await contaEhPaga(user.accountType, database))) return 0
 
   const logs = database.collection<PlusDownloadLog>('plus_download_logs')
   const now = Date.now()

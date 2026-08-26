@@ -36,7 +36,7 @@ import {
 } from '@/lib/sidebar-groups'
 import { normalizeSidebarIcons, type SidebarSectionIcons } from '@/lib/sidebar-icons'
 import { getSidebarIconComponent } from '@/components/sidebar-icon-map'
-import { temAcessoAoBanco } from '@/lib/account-tier'
+import { useCargos } from '@/hooks/use-cargos'
 import { useLiteMode } from '@/hooks/use-lite-mode'
 import { ScrollRoller } from '@/components/ui/scroll-roller'
 import { BuscaGlobal } from '@/components/busca/busca-global'
@@ -394,6 +394,8 @@ export function Sidebar({
   const pathname = usePathname()
   const navRef = useRef<HTMLElement>(null)
   const { liteMode, preference: litePreference, toggleLiteMode } = useLiteMode()
+  // Quais seções o cargo desta conta abre — decide o selo "5 Questões".
+  const { liberaArea } = useCargos()
 
   const [hoveredId, setHoveredId] = useState<string | null>(_lastClickedId)
   const [isInNav, setIsInNav] = useState(_mouseInsideSidebar)
@@ -444,18 +446,18 @@ export function Sidebar({
         label: section.label,
         href: section.href,
         badge:
-          // O selo "5 Questões" é o saldo de quem não tem o Banco. Quem tem o
-          // cargo Quest comprou justamente esta seção — para ele o selo seria
-          // uma mentira, e o teste é o mesmo do Plus+.
+          // O selo "5 Questões" é o saldo de quem não tem o Banco. Quem tem um
+          // cargo que abre a seção — Plus+, Quest ou qualquer um criado em
+          // `/admin/cargos` — não deve vê-lo: para ele seria uma mentira.
           section.key === 'bancoQuestoes'
-            ? !temAcessoAoBanco(user?.accountType) && !isAdmin
+            ? !liberaArea(user?.accountType, 'bancoQuestoes') && !isAdmin
               ? '5 Questões'
               : undefined
             : SECTION_BADGES[section.key],
         sectionKey: section.key,
       }
     },
-    [resolvedIcons, isAdmin, user?.accountType]
+    [resolvedIcons, isAdmin, user?.accountType, liberaArea]
   )
 
   const homeItem: NavItem = {

@@ -7,7 +7,7 @@ import {
   type EstadoGratuito,
 } from '@/lib/banco/gratuito'
 import {
-  areaLiberada,
+  areaLiberadaOuEntao,
   resolverPermissoes,
   type ContextoDePermissoes,
 } from '@/lib/plan-entitlements-server'
@@ -65,10 +65,16 @@ export async function lerAcessoAoBanco(db: Db, userId: string): Promise<AcessoAo
     premiumPlanType: usuario.premiumPlanType as string | null,
   })
 
-  // Plus+ (plataforma inteira), Quest (só o Banco) e trial passam pelo cargo;
-  // o plano assinado ainda pode fechar a área.
-  const cargoDeAssinante = temAcessoAoBanco(usuario.accountType) || usuario.accountType === 'trial'
-  const ehAssinante = cargoDeAssinante && areaLiberada(permissoes, 'bancoQuestoes')
+  /*
+   * Com o bloco modular ligado (plano comprado ou cargo do registro), a regra
+   * do Banco é a única régua. Sem ele, vale o teste legado: Plus+ (plataforma
+   * inteira), Quest (só o Banco) e trial passam pelo cargo.
+   */
+  const ehAssinante = areaLiberadaOuEntao(
+    permissoes,
+    'bancoQuestoes',
+    () => temAcessoAoBanco(usuario.accountType) || usuario.accountType === 'trial',
+  )
 
   return {
     usuario,
@@ -139,16 +145,15 @@ export async function abrirQuestaoGratuita(
  *
  * Substitui o `isPlusAccount(user.accountType)` solto que as rotas da seção
  * usavam: ter o cargo pago deixou de ser resposta suficiente, porque um plano
- * pode conceder o cargo sem incluir o Banco. Admin passa sempre, e o cargo
- * **Quest** — que existe justamente para vender esta seção sozinha — passa
- * pela mesma porta que o Plus+.
+ * pode conceder o cargo sem incluir o Banco. Admin passa sempre; o cargo
+ * **Quest** passa pelo teste legado; e um cargo criado em `/admin/cargos` que
+ * marque esta área passa pela regra modular.
  */
 export async function bancoLiberadoPeloPlano(
   db: Db,
   usuario: Pick<User, 'role' | 'accountType' | 'premiumPlanType'> & { _id?: unknown },
 ): Promise<boolean> {
   if (usuario.role === 'admin') return true
-  if (!temAcessoAoBanco(usuario.accountType)) return false
 
   const permissoes = await resolverPermissoes(db, {
     userId: String(usuario._id || ''),
@@ -156,5 +161,7 @@ export async function bancoLiberadoPeloPlano(
     accountType: usuario.accountType,
     premiumPlanType: usuario.premiumPlanType as string | null,
   })
-  return areaLiberada(permissoes, 'bancoQuestoes')
+  return areaLiberadaOuEntao(permissoes, 'bancoQuestoes', () =>
+    temAcessoAoBanco(usuario.accountType),
+  )
 }

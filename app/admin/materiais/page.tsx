@@ -83,6 +83,7 @@ import {
   DEFAULT_PUBLIC_METRIC_SETTINGS,
   type PublicMetricSettings,
 } from '@/lib/display-settings'
+import { useGruposDeAcesso } from '@/hooks/use-cargos'
 
 type ModalMode = 'create' | 'edit'
 type ActiveSection = 'materials' | 'folders' | 'packages' | 'tracker'
@@ -339,12 +340,6 @@ const typeOptions = [
   { value: 'other', label: 'Outro', icon: <File className="h-4 w-4" /> },
 ]
 
-const ACCESS_GROUPS = [
-  { id: 'gratuito', label: 'Gratuito', color: '#6b7280', emoji: '🆓' },
-  { id: 'trial', label: 'Trial', color: '#3b82f6', emoji: '⏱️' },
-  { id: 'plus', label: 'Plus+', color: '#f59e0b', emoji: '👑' },
-  { id: 'monitor', label: 'Monitor', color: '#10b981', emoji: '🎓' },
-] as const
 
 const formatTraceDate = (value?: string | null, withTime = true) => {
   if (!value) return 'Nao informado'
@@ -412,6 +407,16 @@ function flattenTree(nodes: FolderTreeNode[]): FolderTreeNode[] {
 // Admin Content
 // ═══════════════════════════════════════════════════════════════
 function AdminMateriaisContent() {
+  /*
+   * Os grupos de restrição vêm do registro de cargos.
+   *
+   * Antes era um array escrito à mão aqui em cima — e ele listava só
+   * "Gratuito / Trial / Plus+ / Monitor". O Quest existia havia meses e não
+   * aparecia, então simplesmente não dava para marcar um material como
+   * exclusivo dele. Um cargo criado em `/admin/cargos` agora aparece sozinho.
+   */
+  const ACCESS_GROUPS = useGruposDeAcesso()
+
   const [activeSection, setActiveSection] = useState<ActiveSection>('materials')
   const [materials, setMaterials] = useState<Material[]>([])
   const [allFolders, setAllFolders] = useState<Folder[]>([])
@@ -2675,7 +2680,7 @@ function AdminMateriaisContent() {
                                 : p.allowedGroups.filter(g => g !== group.id)
                             }))}
                             className="rounded" style={checked ? { accentColor: group.color } : {}} />
-                          <span className="text-sm">{group.emoji} {group.label}</span>
+                          <span className="text-sm">{group.label}</span>
                         </label>
                       )
                     })}
@@ -3018,7 +3023,7 @@ function AdminMateriaisContent() {
                                 : p.allowedGroups.filter(g => g !== group.id)
                             }))}
                             className="rounded" style={checked ? { accentColor: group.color } : {}} />
-                          <span className="text-sm">{group.emoji} {group.label}</span>
+                          <span className="text-sm">{group.label}</span>
                         </label>
                       )
                     })}

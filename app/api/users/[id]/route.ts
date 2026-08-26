@@ -7,7 +7,8 @@ import { sendAccountDeletedEmail } from '@/lib/mail'
 import { secureApiEndpoint, canAdminModifyUser } from '@/lib/api-security'
 import { getPaymentProvider } from '@/lib/payments'
 import { normalizePeriodo, getCurrentSemesterRef } from '@/lib/user-periodo'
-import { isPlusAccount, isQuestAccount, QUEST_TIER } from '@/lib/account-tier'
+import { isPlusAccount } from '@/lib/account-tier'
+import { lerCargoDaConta } from '@/lib/cargos-server'
 import { revokePlusClaims, restorePlusClaims } from '@/lib/plus-claims'
 
 export const dynamic = 'force-dynamic'
@@ -184,29 +185,41 @@ export async function PATCH(
       successMessage = 'Usuário desbanido com sucesso'
 
     } else if (action === 'update_tier') {
-      const VALID_TYPES = ['gratuito', 'trial', 'quest', 'plus', 'premium', 'essential']
-      if (!accountType || !VALID_TYPES.includes(accountType)) {
-        return NextResponse.json({ error: 'Tipo de conta inválido' }, { status: 400 })
+      /*
+       * O cargo vem do registro (`/admin/cargos`), não de uma lista fixa.
+       *
+       * A lista fixa que estava aqui é a razão de este arquivo ter sido tocado
+       * na criação do Quest: cada cargo novo exigia mais um `else if` e mais
+       * uma entrada no array. Agora a rota pergunta ao registro se o cargo
+       * existe e o que ele é — e o ramo que roda depende de `cargo.pago`, não
+       * do id.
+       */
+      const cargo = await lerCargoDaConta(accountType, db)
+      if (!accountType || !cargo) {
+        return NextResponse.json(
+          { error: 'Cargo inválido — ele não existe no registro de cargos.' },
+          { status: 400 },
+        )
       }
 
       // Os materiais resgatados pelo Plus+ acompanham o cargo: caem quando o
-      // admin rebaixa, voltam quando ele concede. Aplicado depois do update do
-      // usuário, para não suspender nada se a gravação falhar.
-      plusClaimsAction = isPlusAccount(accountType) ? 'restore' : 'revoke'
+      // admin rebaixa, voltam quando ele concede. Continua sendo só o Plus+:
+      // esses resgates foram feitos com o acervo que só ele libera.
+      plusClaimsAction = isPlusAccount(cargo.id) ? 'restore' : 'revoke'
 
-      const newQuota = getPersonalExamsQuota(accountType as AccountType)
+      const newQuota = getPersonalExamsQuota(cargo.id)
 
-      // Se o usuário tem assinatura recorrente ativa e está sendo rebaixado (ou mudando de plano),
-      // cancelar o preapproval no MP para evitar cobranças futuras.
-      const isLosingPremium = !isPlusAccount(accountType)
-      const isChangingPremiumPlan =
-        isPlusAccount(accountType) &&
-        user.mercadoPagoPreapprovalId
-      if (isLosingPremium || isChangingPremiumPlan) {
+      // Assinatura recorrente ativa é cancelada em qualquer mudança de cargo
+      // que não seja "continuar Plus+ sem preapproval": ou a pessoa está sendo
+      // rebaixada, ou está trocando de plano, e nos dois casos a cobrança
+      // futura do preapproval antigo não tem mais lastro.
+      const perdeuOPlus = !isPlusAccount(cargo.id)
+      const trocouDePlano = isPlusAccount(cargo.id) && user.mercadoPagoPreapprovalId
+      if (perdeuOPlus || trocouDePlano) {
         await cancelUserMpSubscription(id)
       }
 
-      if (accountType === 'trial') {
+      if (cargo.id === 'trial') {
         let durationMs = 7 * 24 * 60 * 60 * 1000
         if (trialPlanType === 'teste') durationMs = 2 * 60 * 1000
 
@@ -222,49 +235,27 @@ export async function PATCH(
           dailyPersonalExamsRemaining: newQuota,
           lastDailyReset: new Date(),
         }
-      } else if (isQuestAccount(accountType)) {
+      } else if (cargo.pago) {
         /*
-         * Quest usa os mesmos campos de prazo do Plus+ (`premiumPlanType` /
-         * `premiumExpiresAt`) de propósito: é a data que o cron varre e a que
-         * o `check-plan-expiration` lê. Um par de campos próprio significaria
-         * um cargo que ninguém rebaixa quando vence.
+         * Todo cargo pago usa os mesmos campos de prazo (`premiumPlanType` /
+         * `premiumExpiresAt`), e não um par de campos por cargo: é essa data
+         * que o cron varre para rebaixar quem venceu. Campos próprios
+         * significariam um cargo que ninguém rebaixa.
          */
         const planType = (premiumPlanType || 'vitalicio') as PremiumPlanType
         const durationMonths = PLAN_DURATION_MONTHS[planType] ?? null
 
-        let questExpiresAt: Date | undefined = undefined
+        let expiraEm: Date | undefined = undefined
         if (durationMonths !== null) {
-          questExpiresAt = new Date()
-          questExpiresAt.setMonth(questExpiresAt.getMonth() + durationMonths)
+          expiraEm = new Date()
+          expiraEm.setMonth(expiraEm.getMonth() + durationMonths)
         }
 
         updateData = {
-          accountType: QUEST_TIER,
+          accountType: cargo.id,
           premiumPlanType: planType,
           premiumActivatedAt: new Date(),
-          premiumExpiresAt: questExpiresAt,
-          trialExpiresAt: undefined,
-          trialPlanType: undefined,
-          mercadoPagoPreapprovalId: undefined,
-          dailyPersonalExamsCreated: 0,
-          dailyPersonalExamsRemaining: newQuota,
-          lastDailyReset: new Date(),
-        }
-      } else if (isPlusAccount(accountType)) {
-        const planType = (premiumPlanType || 'vitalicio') as PremiumPlanType
-        const durationMonths = PLAN_DURATION_MONTHS[planType] ?? null
-
-        let premiumExpiresAt: Date | undefined = undefined
-        if (durationMonths !== null) {
-          premiumExpiresAt = new Date()
-          premiumExpiresAt.setMonth(premiumExpiresAt.getMonth() + durationMonths)
-        }
-
-        updateData = {
-          accountType: accountType as AccountType,
-          premiumPlanType: planType,
-          premiumActivatedAt: new Date(),
-          premiumExpiresAt,
+          premiumExpiresAt: expiraEm,
           trialExpiresAt: undefined,
           trialPlanType: undefined,
           mercadoPagoPreapprovalId: undefined, // admin grant não tem preapproval
@@ -273,9 +264,10 @@ export async function PATCH(
           lastDailyReset: new Date(),
         }
       } else {
-        // gratuito
+        // Gratuito e qualquer cargo de cortesia: sem prazo para vencer, então
+        // os campos de assinatura saem do documento.
         updateData = {
-          accountType: 'gratuito',
+          accountType: cargo.id,
           trialExpiresAt: undefined,
           trialPlanType: undefined,
           premiumExpiresAt: undefined,

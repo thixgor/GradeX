@@ -15,6 +15,7 @@ import {
   Settings,
   ArrowLeft,
   Shield,
+  ShieldCheck,
   Calendar,
   BookOpen,
   Sliders,
@@ -105,6 +106,13 @@ export default function AdminDashboard() {
       icon: Users,
       href: '/admin/users',
       color: 'from-green-500 to-emerald-500'
+    },
+    {
+      title: 'Cargos',
+      description: 'Criar e administrar os cargos da plataforma: o que cada um abre, se é pago e como aparece.',
+      icon: ShieldCheck,
+      href: '/admin/cargos',
+      color: 'from-emerald-500 to-teal-500'
     },
     {
       title: 'Estatísticas',

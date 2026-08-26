@@ -52,6 +52,7 @@ import {
   type PlanLimitPeriod,
   type PlanPermissions,
 } from './plan-entitlements'
+import { cargoRegeAsAreas, lerCargoDaConta } from './cargos-server'
 import type { PlanConfig, User } from './types'
 
 /** Log append-only de consumo, base de toda janela deslizante. */
@@ -79,10 +80,21 @@ export interface ContextoDePermissoes {
    */
   permissoes: PlanPermissions
   /**
-   * O plano da conta ativou as permissões modulares? Só aqui elas mandam.
+   * As permissões modulares estão ligadas para esta conta? Só aqui elas mandam.
    */
   aplicavel: boolean
+  /**
+   * Quem ligou: o plano comprado ou o cargo da conta. `null` quando nenhum dos
+   * dois — aí `aplicavel` é falso e o caminho legado responde.
+   *
+   * O plano vem primeiro de propósito: quem comprou um plano específico é
+   * regido por ele, e o cargo é o que responde por quem tem cargo mas nenhum
+   * plano modulado (todo cargo criado em `/admin/cargos`, por exemplo).
+   */
+  origem: 'plano' | 'cargo' | null
+  /** Id da origem — `PlanConfig.tipo` ou `CargoDefinicao.id`. */
   planoTipo: string | null
+  /** Nome de exibição da origem, usado nas mensagens de recusa. */
   planoNome: string | null
 }
 
@@ -93,6 +105,7 @@ function contextoNeutro(userId: string, isAdmin: boolean): ContextoDePermissoes 
     isAdmin,
     permissoes: permissoesLiberadas(),
     aplicavel: false,
+    origem: null,
     planoTipo: null,
     planoNome: null,
   }
@@ -134,7 +147,60 @@ export interface DadosDaConta {
 }
 
 /**
+ * O plano comprado modula as áreas desta conta? `null` quando não.
+ *
+ * Separado de `resolverPermissoes` para deixar a ordem de precedência visível
+ * lá: primeiro o plano, depois o cargo, depois o caminho legado.
+ */
+async function permissoesDoPlano(
+  db: Db,
+  conta: DadosDaConta,
+): Promise<ContextoDePermissoes | null> {
+  const tipo = conta.premiumPlanType ? String(conta.premiumPlanType) : null
+  if (!tipo) return null
+
+  let catalogo: PlanConfig[]
+  try {
+    catalogo = await lerCatalogoDePlanos(db)
+  } catch (erro) {
+    // Falha de leitura não pode fechar a plataforma para quem paga: sem
+    // catálogo, o caminho legado assume e ninguém perde acesso.
+    console.error('[plan-entitlements] falha ao ler catálogo de planos:', erro)
+    return null
+  }
+
+  const plano = catalogo.find(p => String(p.tipo) === tipo)
+  if (!plano) return null
+
+  const permissoes = normalizePlanPermissions(plano.permissoes)
+  if (!permissoes.ativo) return null
+
+  return {
+    userId: conta.userId,
+    isAdmin: false,
+    permissoes,
+    aplicavel: true,
+    origem: 'plano',
+    planoTipo: String(plano.tipo),
+    planoNome: plano.nome || plano.periodo || String(plano.tipo),
+  }
+}
+
+/**
  * Descobre as permissões que valem para uma conta.
+ *
+ * Três camadas, nesta ordem (a mesma documentada em `lib/cargos.ts`):
+ *
+ *  1. **plano** — quem comprou um plano com o interruptor ligado é regido por
+ *     ele, mesmo que o cargo diga outra coisa;
+ *  2. **cargo** — o registro de `/admin/cargos`. É por aqui que um cargo
+ *     criado pelo admin passa a valer, sem tabela nova em lugar nenhum;
+ *  3. **nada** — contexto neutro, e o caminho legado (as tabelas por cargo em
+ *     `lib/tier-limits.ts`) responde exatamente como antes.
+ *
+ * A camada 2 é a novidade, e ela é conservadora por construção: os cargos de
+ * fábrica nascem com o bloco desligado, então esta função continua devolvendo
+ * contexto neutro para eles até alguém ligar o interruptor na tela.
  *
  * Admin nunca é limitado — é a mesma regra de todo o resto da plataforma, e
  * sem ela o admin não consegue conferir nem o próprio catálogo.
@@ -146,33 +212,28 @@ export async function resolverPermissoes(
   const isAdmin = conta.role === 'admin'
   if (isAdmin) return contextoNeutro(conta.userId, true)
 
-  const tipo = conta.premiumPlanType ? String(conta.premiumPlanType) : null
-  if (!tipo) return contextoNeutro(conta.userId, false)
+  const doPlano = await permissoesDoPlano(db, conta)
+  if (doPlano) return doPlano
 
-  let catalogo: PlanConfig[]
   try {
-    catalogo = await lerCatalogoDePlanos(db)
+    const cargo = await lerCargoDaConta(conta.accountType, db)
+    if (cargoRegeAsAreas(cargo) && cargo) {
+      return {
+        userId: conta.userId,
+        isAdmin: false,
+        permissoes: cargo.permissoes,
+        aplicavel: true,
+        origem: 'cargo',
+        planoTipo: cargo.id,
+        planoNome: cargo.nome,
+      }
+    }
   } catch (erro) {
-    // Falha de leitura não pode fechar a plataforma para quem paga: sem
-    // catálogo, o caminho legado assume e ninguém perde acesso.
-    console.error('[plan-entitlements] falha ao ler catálogo de planos:', erro)
-    return contextoNeutro(conta.userId, false)
+    // Mesmo princípio do catálogo de planos: sem registro, o legado assume.
+    console.error('[plan-entitlements] falha ao ler o registro de cargos:', erro)
   }
 
-  const plano = catalogo.find(p => String(p.tipo) === tipo)
-  if (!plano) return contextoNeutro(conta.userId, false)
-
-  const permissoes = normalizePlanPermissions(plano.permissoes)
-  if (!permissoes.ativo) return contextoNeutro(conta.userId, false)
-
-  return {
-    userId: conta.userId,
-    isAdmin: false,
-    permissoes,
-    aplicavel: true,
-    planoTipo: String(plano.tipo),
-    planoNome: plano.nome || plano.periodo || String(plano.tipo),
-  }
+  return contextoNeutro(conta.userId, false)
 }
 
 /** Atalho que busca a conta quando o caller ainda não a carregou. */
@@ -448,6 +509,35 @@ async function garantirIndices(db: Db) {
 export function areaLiberada(contexto: ContextoDePermissoes, feature: PlanFeatureKey): boolean {
   if (!contexto.aplicavel || contexto.isAdmin) return true
   return regraDaArea(contexto.permissoes, feature).liberado
+}
+
+/**
+ * A área está liberada — perguntando ao caminho legado quando o modular não
+ * responde por esta conta.
+ *
+ * `areaLiberada()` sozinha devolve `true` para contexto neutro, o que é certo
+ * onde ela é usada (uma checagem *adicional* por cima de um portão que já
+ * existe). Mas o portão em si — "esta conta tem direito ao Banco?" — precisa
+ * de uma resposta de verdade nos dois casos, e antes do registro de cargos
+ * isso era escrito como duas linhas soltas:
+ *
+ *     if (!temAcessoAoBanco(accountType)) return false
+ *     return areaLiberada(permissoes, 'bancoQuestoes')
+ *
+ * O problema é que a primeira linha é uma lista fixa de cargos, e um cargo
+ * criado em `/admin/cargos` nunca está nela: ele passaria na regra modular e
+ * morreria no teste legado, sem que a tela do admin desse qualquer pista.
+ * Aqui a precedência fica explícita — com o modular ligado, ele é a única
+ * régua; sem ele, o legado responde, exatamente como antes.
+ */
+export function areaLiberadaOuEntao(
+  contexto: ContextoDePermissoes,
+  feature: PlanFeatureKey,
+  legado: () => boolean,
+): boolean {
+  if (contexto.isAdmin) return true
+  if (contexto.aplicavel) return regraDaArea(contexto.permissoes, feature).liberado
+  return legado()
 }
 
 export function moduloDoManualLiberadoNoContexto(

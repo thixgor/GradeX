@@ -34,8 +34,18 @@ describe('cargo Quest', () => {
     expect(normalizeAccountType('quest')).toBe(QUEST_TIER)
     expect(normalizeAccountType('Quest')).toBe(QUEST_TIER)
     expect(normalizeAccountType(' QUEST+ ')).toBe(QUEST_TIER)
-    // Nada parecido demais: valor desconhecido continua caindo em gratuito.
-    expect(normalizeAccountType('questao')).toBe('gratuito')
+    /*
+     * `'questao'` NÃO vira `quest` — e, desde o registro de cargos, também não
+     * vira `gratuito`: ele passa direto, porque é um slug válido e pode ser o
+     * id de um cargo criado em `/admin/cargos`.
+     *
+     * `normalizeAccountType` é um normalizador de FORMATO, não um validador de
+     * existência: ela é síncrona e roda no navegador, então não tem como
+     * consultar o registro. Quem precisa saber se o cargo existe usa
+     * `acharCargo()`, que devolve `null` para id órfão.
+     */
+    expect(normalizeAccountType('questao')).toBe('questao')
+    expect(normalizeAccountType('não é slug!')).toBe('gratuito')
   })
 
   it('não passa por assinante Plus+', () => {
