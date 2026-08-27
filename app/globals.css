@@ -3366,6 +3366,47 @@ html[data-da-menu='aberto'] .da-dock[data-shown='true'] {
     0 40px 90px -35px rgba(0, 0, 0, 0.8);
 }
 
+/* --------------------------------------------------------------------------
+   O MENU DA JANELA, RECOLHIDO
+   A barra lateral da demonstração usa as classes da sidebar de verdade
+   (.sidebar-glass, .sidebar-fluid-item, .sidebar-nav-chip). Abaixo de `sm` ela
+   precisa virar o trilho de ícones, que lá é a classe `.sidebar-rail` — só que
+   `.sidebar-rail` é aplicada por JavaScript quando a sidebar está recolhida, e
+   aqui quem decide é a largura da janela. Estas regras repetem o que o rail
+   faz, na única condição em que a demonstração precisa dele.
+   -------------------------------------------------------------------------- */
+@media (max-width: 639px) {
+  .da-nav-rail .sidebar-nav-chip {
+    height: 2.25rem;
+    width: 2.25rem;
+    border-radius: 12px;
+    background: transparent;
+    box-shadow: none;
+    color: hsl(var(--foreground) / 0.7);
+  }
+  .da-nav-rail .sidebar-fluid-item-active .sidebar-nav-chip {
+    background: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    box-shadow: 0 6px 16px -8px hsl(var(--primary) / 0.9);
+  }
+  .da-nav-rail .sidebar-nav-chip-gradient {
+    background: transparent;
+    box-shadow: none;
+  }
+  /* O destaque da rota atual passa a viver no chip preenchido; manter também o
+     fundo tingido da linha inteira empilharia dois retângulos concêntricos. */
+  .da-nav-rail .sidebar-fluid-item-active {
+    background: transparent;
+    box-shadow: none;
+  }
+  .da-nav-rail .sidebar-fluid-item-active::before {
+    left: 0;
+    top: 26%;
+    bottom: 26%;
+    width: 3px;
+  }
+}
+
 /* Entrada do comentário da questão: o mesmo desenho do da-panel-fade, com
    altura animada para o cartão não "pular" na tela quando aparece. */
 /* A tremida curta do erro. Na plataforma quem faz isso é o framer-motion

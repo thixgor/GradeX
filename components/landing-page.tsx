@@ -9,6 +9,23 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { LiteModeToggle } from '@/components/lite-mode-toggle'
 import { useLiteMode } from '@/hooks/use-lite-mode'
 import { InstalarApp } from '@/components/pwa/instalar-app'
+// Os ícones do menu são os mesmos de lib/sidebar-icons.ts — a barra lateral da
+// demonstração é a barra lateral do produto, não um desenho parecido.
+import {
+  BookMarked,
+  Brain,
+  Check,
+  ChevronLeft,
+  Database,
+  FileText,
+  HeartPulse,
+  Home,
+  type LucideIcon,
+  Plus,
+  Search,
+  User,
+  Zap,
+} from 'lucide-react'
 // A demonstração desenha a questão com as MESMAS classes da tela de
 // resolução de quem tem conta. Este módulo é puro (sem framer-motion), então
 // a landing herda a aparência do produto sem herdar o peso dele.
@@ -477,7 +494,7 @@ function SectionMark({ n, label }: { n: string; label: string }) {
 /* =================== JANELA DO PRODUTO =================== */
 
 /**
- * A demonstração do produto na landing.
+ * A plataforma inteira, jogável, na primeira dobra.
  *
  * ## Por que ela não é um desenho parecido
  *
@@ -485,17 +502,20 @@ function SectionMark({ n, label }: { n: string; label: string }) {
  * promete uma tela que não existe. Quem gostou não viu o Domine Aqui; quem não
  * gostou julgou uma coisa que a plataforma não é.
  *
- * Então o miolo desta janela usa os MESMOS tokens do aplicativo (`bg-card`,
- * `border-border`, `bg-primary`…) e as MESMAS classes da tela de resolução —
- * importadas de `lib/banco/aparencia-da-questao.ts`, o arquivo que a
- * `AlternativaQuiz` de verdade também usa. Mudar o verde do acerto lá muda
- * aqui; não há como esta demonstração envelhecer sozinha.
+ * Então esta janela não imita a barra lateral — ela usa AS CLASSES DELA.
+ * `sidebar-glass`, `sidebar-fluid-item`, `sidebar-fluid-item-active` e
+ * `sidebar-nav-chip` moram em globals.css e valem para o site inteiro; o menu
+ * aqui é o menu de lá, com o mesmo chip atrás do ícone, a mesma barrinha verde
+ * da rota atual e o mesmo botão "Nova Prova" em degradê. Mudou o menu do
+ * produto? Mudou aqui, sem ninguém lembrar de vir atualizar a landing.
  *
- * O que não vem junto é o `framer-motion` que os componentes reais carregam:
- * na landing, cada quilobyte de JavaScript atrasa a primeira pintura. A
- * tremida do erro é um keyframe de CSS (`da-tremida`), e o resto é igual.
+ * O mesmo vale para a questão: as classes vêm de
+ * `lib/banco/aparencia-da-questao.ts`, o arquivo que a `AlternativaQuiz` de
+ * verdade também usa. O que não vem junto é o `framer-motion` que os
+ * componentes reais carregam — na landing, cada quilobyte de JavaScript atrasa
+ * a primeira pintura, então a tremida do erro é um keyframe de CSS.
  *
- * A moldura de navegador em volta continua na paleta da landing — ela é o
+ * A moldura de navegador em volta continua na paleta da landing: ela é o
  * enquadramento, não o produto.
  */
 
@@ -506,59 +526,51 @@ const stUi = {
   strokeLinecap: 'round' as const,
   strokeLinejoin: 'round' as const,
 }
-const UiHome = () => (
-  <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" {...stUi} aria-hidden>
-    <path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z" />
-  </svg>
-)
-const UiPaper = () => (
-  <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" {...stUi} aria-hidden>
-    <path d="M6 3h8l4 4v14H6z" />
-    <path d="M14 3v4h4M9 13h6M9 17h4" />
-  </svg>
-)
-const UiBank = () => (
-  <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" {...stUi} aria-hidden>
-    <circle cx="12" cy="12" r="9" />
-    <path d="M8 12l3 3 5-6" />
-  </svg>
-)
-const UiBook = () => (
-  <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" {...stUi} aria-hidden>
-    <path d="M4 5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2V5Z" />
-    <path d="M8 3v18" />
-  </svg>
-)
-const UiCards = () => (
-  <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" {...stUi} aria-hidden>
-    <rect x="4" y="6" width="11" height="14" rx="2" />
-    <path d="M9 6V5a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-1" />
-  </svg>
-)
-const UiCalendar = () => (
-  <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" {...stUi} aria-hidden>
-    <rect x="3" y="5" width="18" height="16" rx="2" />
-    <path d="M3 10h18M8 3v4M16 3v4" />
-  </svg>
-)
 const UiX = ({ className = 'h-4 w-4' }: { className?: string }) => (
   <svg viewBox="0 0 24 24" className={className} {...stUi} aria-hidden>
     <path d="M6 6l12 12M18 6L6 18" />
   </svg>
 )
 
-// Os rótulos são os da barra lateral de verdade (lib/sidebar-sections.ts).
-const WINDOW_NAV: { label: string; short: string; icon: ReactNode }[] = [
-  { label: 'Início', short: 'Início', icon: <UiHome /> },
-  { label: 'Banco de Questões', short: 'Banco de Questões', icon: <UiBank /> },
-  { label: 'Provas', short: 'Provas', icon: <UiPaper /> },
-  { label: 'Manual Clínico', short: 'Manual Clínico', icon: <UiBook /> },
-  { label: 'Flashcards', short: 'Flashcards', icon: <UiCards /> },
-  { label: 'Cronogramas', short: 'Cronogramas', icon: <UiCalendar /> },
+/**
+ * As seções do menu.
+ *
+ * Rótulos, ordem e ícones são os de `lib/sidebar-sections.ts` e
+ * `lib/sidebar-icons.ts` — é o menu que a pessoa vai encontrar depois de criar
+ * a conta, não uma seleção de marketing.
+ */
+interface SecaoDemo {
+  chave: string
+  rotulo: string
+  path: string
+  icone: LucideIcon
+}
+const SECOES_DEMO: SecaoDemo[] = [
+  { chave: 'inicio', rotulo: 'Início', path: 'domineaqui.com.br/dashboard', icone: Home },
+  {
+    chave: 'banco',
+    rotulo: 'Banco de Questões',
+    path: 'domineaqui.com.br/banco-questoes',
+    icone: Database,
+  },
+  { chave: 'provas', rotulo: 'Provas', path: 'domineaqui.com.br/provas', icone: FileText },
+  {
+    chave: 'manual',
+    rotulo: 'Manual Clínico',
+    path: 'domineaqui.com.br/manual-clinico',
+    icone: HeartPulse,
+  },
+  { chave: 'flashcards', rotulo: 'Flashcards', path: 'domineaqui.com.br/flashcards', icone: Brain },
+  {
+    chave: 'cronogramas',
+    rotulo: 'Cronogramas',
+    path: 'domineaqui.com.br/cronogramas',
+    icone: BookMarked,
+  },
 ]
 
 /**
- * A moldura: barra de navegador, barra lateral e uma área de conteúdo.
+ * A moldura: barra de navegador, barra lateral navegável e a área de conteúdo.
  *
  * Ela existe porque a primeira dobra precisava responder "que site é este?" em
  * menos de um segundo — e nenhuma composição anatômica, por mais bonita que
@@ -570,15 +582,20 @@ const WINDOW_NAV: { label: string; short: string; icon: ReactNode }[] = [
  */
 function AppWindow({
   path,
-  active = 1,
+  ativa,
+  aoTrocarSecao,
   children,
   className = '',
 }: {
   path: string
-  active?: number
+  /** Chave da seção acesa no menu. */
+  ativa: string
+  /** Quando existe, os itens do menu viram botões de verdade. */
+  aoTrocarSecao?: (chave: string) => void
   children: ReactNode
   className?: string
 }) {
+  const navegavel = !!aoTrocarSecao
   return (
     <div
       className={
@@ -587,7 +604,8 @@ function AppWindow({
       }
     >
       {/* Barra do navegador. O endereço é o que ancora a pergunta "em que site
-          eu estou?" — por isso ele aparece por extenso já no celular. */}
+          eu estou?" — e ele acompanha a seção aberta, como acompanharia num
+          navegador de verdade. */}
       <div className="flex items-center gap-3 border-b border-[color:var(--da-neutral-line)] bg-da-panel/70 px-3 py-2.5 md:px-4">
         <span className="hidden shrink-0 items-center gap-1.5 sm:flex" aria-hidden>
           <span className="h-2.5 w-2.5 rounded-full bg-[color:var(--da-neutral-line)]" />
@@ -603,35 +621,90 @@ function AppWindow({
         </span>
       </div>
 
-      {/* Daqui para dentro tudo é o aplicativo: as cores são as do produto, não
-          as da página de vendas. */}
+      {/* Daqui para dentro tudo é o aplicativo: as cores e as classes são as do
+          produto, não as da página de vendas. */}
       <div className="flex min-h-0 bg-background text-foreground">
-        {/* Barra lateral. No celular ela vira um trilho de ícones, exatamente
-            como a do produto quando recolhida: sem os rótulos ela ocupa 52px em
-            vez de 200px, e o conteúdo fica com a largura da tela quase inteira. */}
-        <nav
-          aria-hidden
-          className="flex w-[52px] shrink-0 flex-col gap-0.5 border-r border-border bg-card p-2 sm:w-[196px] sm:p-3"
-        >
-          <span className="mb-2 hidden items-center gap-2 px-2 sm:flex">
-            <span className="grid h-6 w-6 place-items-center rounded-md bg-secondary text-[11px] font-bold text-white">
-              D
+        {/* A barra lateral do produto. Abaixo de `sm` ela vira o trilho de
+            ícones — exatamente o que a sidebar real faz quando recolhida — via
+            `da-nav-rail`, que repete as regras de `.sidebar-rail`. */}
+        <div className="sidebar-glass da-nav-rail flex w-[60px] shrink-0 flex-col sm:w-[228px]">
+          <div className="flex items-center justify-between border-b border-border px-2 py-3 sm:px-4 sm:py-4">
+            <span className="hidden sm:block">
+              <Logo variant="full" size="md" />
             </span>
-            <span className="font-da-display text-xs font-semibold tracking-tight">Domine Aqui</span>
-          </span>
-          {WINDOW_NAV.map((item, i) => (
-            <span
-              key={item.label}
-              className={
-                'flex items-center justify-center gap-2.5 rounded-xl px-2 py-2 sm:justify-start ' +
-                (i === active ? 'bg-primary/10 text-primary' : 'text-muted-foreground')
-              }
-            >
-              {item.icon}
-              <span className="hidden truncate text-[12px] sm:inline">{item.short}</span>
+            <span className="mx-auto sm:hidden">
+              <Logo variant="icon" size="md" className="h-7" />
             </span>
-          ))}
-        </nav>
+            <ChevronLeft className="hidden h-4 w-4 text-muted-foreground sm:block" aria-hidden />
+          </div>
+
+          <div className="space-y-2 border-b border-border p-2 sm:p-3">
+            {/* O mesmo degradê do "Nova Prova" de lá: é a ação principal do
+                menu e a única coisa colorida em repouso. */}
+            <span className="flex h-10 w-full items-center justify-center gap-2 rounded-md bg-gradient-to-r from-[#468152] to-[#E2A43E] font-semibold text-white shadow-md shadow-[#468152]/20 sm:h-11 sm:justify-start sm:px-3">
+              <Plus className="h-5 w-5 shrink-0" aria-hidden />
+              <span className="hidden text-sm sm:inline">Nova Prova</span>
+            </span>
+            <span className="flex h-9 w-full items-center justify-center gap-2 rounded-xl border border-border bg-background text-muted-foreground sm:justify-start sm:px-3">
+              <Search className="h-4 w-4 shrink-0" aria-hidden />
+              <span className="hidden text-[13px] sm:inline">Buscar</span>
+            </span>
+          </div>
+
+          <nav className="flex-1 space-y-0.5 p-2 sm:p-3" aria-label="Seções do Domine Aqui">
+            {SECOES_DEMO.map((secao) => {
+              const Icone = secao.icone
+              const acesa = secao.chave === ativa
+              const classes =
+                'sidebar-fluid-item flex w-full items-center gap-3 rounded-[14px] px-0 text-sm font-medium sm:px-3 ' +
+                (acesa
+                  ? 'sidebar-fluid-item-active text-primary font-semibold'
+                  : 'text-foreground/80') +
+                ' h-11 justify-center sm:justify-start'
+              const miolo = (
+                <>
+                  <span className="sidebar-nav-chip shrink-0">
+                    <Icone className="h-[18px] w-[18px]" aria-hidden />
+                  </span>
+                  <span className="hidden truncate sm:inline">{secao.rotulo}</span>
+                </>
+              )
+              return navegavel ? (
+                <button
+                  key={secao.chave}
+                  type="button"
+                  onClick={() => aoTrocarSecao(secao.chave)}
+                  aria-current={acesa ? 'page' : undefined}
+                  aria-label={secao.rotulo}
+                  className={classes}
+                >
+                  {miolo}
+                </button>
+              ) : (
+                <span key={secao.chave} className={classes} aria-hidden>
+                  {miolo}
+                </span>
+              )
+            })}
+          </nav>
+
+          {/* O rodapé de conta, como no menu de verdade: perfil, upgrade e sair
+              vivem fora da rolagem das áreas de estudo. */}
+          <div className="space-y-0.5 border-t border-border p-2 sm:p-3">
+            <span className="sidebar-fluid-item flex h-10 w-full items-center justify-center gap-3 rounded-[14px] text-sm text-foreground/80 sm:justify-start sm:px-3">
+              <span className="sidebar-nav-chip shrink-0">
+                <User className="h-[18px] w-[18px]" aria-hidden />
+              </span>
+              <span className="hidden truncate sm:inline">Meu Perfil</span>
+            </span>
+            <span className="sidebar-fluid-item flex h-10 w-full items-center justify-center gap-3 rounded-[14px] text-sm font-semibold text-amber-700 dark:text-amber-400 sm:justify-start sm:px-3">
+              <span className="sidebar-nav-chip sidebar-nav-chip-gradient shrink-0">
+                <Zap className="h-[18px] w-[18px]" aria-hidden />
+              </span>
+              <span className="hidden truncate sm:inline">Plus+</span>
+            </span>
+          </div>
+        </div>
 
         <div className="min-w-0 flex-1">{children}</div>
       </div>
@@ -726,6 +799,359 @@ function EtiquetaDemo({
     >
       {children}
     </span>
+  )
+}
+
+/* ---------- AS TELAS DE CADA SEÇÃO ---------- */
+
+/** Cartão de conteúdo — o `glass-page-card` que as páginas do produto usam. */
+function CartaoDemo({ children, className = '' }: { children: ReactNode; className?: string }) {
+  return <div className={'glass-page-card rounded-2xl ' + className}>{children}</div>
+}
+
+/** Linha de "texto" da UI desenhada — barrinha no lugar de conteúdo real. */
+function UiLine({ w = '100%', dim = false }: { w?: string; dim?: boolean }) {
+  return (
+    <span
+      aria-hidden
+      className={
+        'block h-2 rounded-full ' + (dim ? 'bg-muted-foreground/15' : 'bg-muted-foreground/30')
+      }
+      style={{ width: w }}
+    />
+  )
+}
+
+function TelaInicio() {
+  return (
+    <div className="space-y-3 p-3 sm:p-4">
+      <div>
+        <p className="font-heading text-lg font-semibold tracking-tight">Bom estudo, Marina</p>
+        <p className="text-[13px] text-muted-foreground">Você tem 12 revisões para hoje.</p>
+      </div>
+      <div className="grid grid-cols-3 gap-2">
+        {[
+          ['12', 'revisões hoje'],
+          ['84%', 'acerto na semana'],
+          ['5', 'dias seguidos'],
+        ].map(([n, l]) => (
+          <CartaoDemo key={l} className="p-3 text-center">
+            <p className="font-heading text-xl font-bold tabular-nums text-primary">{n}</p>
+            <p className="mt-0.5 text-[11px] leading-tight text-muted-foreground">{l}</p>
+          </CartaoDemo>
+        ))}
+      </div>
+      <CartaoDemo className="p-3.5">
+        <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
+          Continue de onde parou
+        </p>
+        <div className="mt-3 flex items-center gap-3">
+          <span className="sidebar-nav-chip shrink-0">
+            <Database className="h-[18px] w-[18px]" aria-hidden />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block truncate text-sm font-semibold">Cardiologia · Lista 3</span>
+            <span className="block text-[12px] text-muted-foreground">7 de 20 questões</span>
+          </span>
+          <span className="flex h-9 items-center rounded-xl bg-primary px-3 text-[13px] font-semibold text-primary-foreground">
+            Retomar
+          </span>
+        </div>
+        <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted">
+          <div className="h-full w-[35%] rounded-full bg-primary" />
+        </div>
+      </CartaoDemo>
+      <CartaoDemo className="space-y-2.5 p-3.5">
+        <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
+          Hoje no seu cronograma
+        </p>
+        <UiLine w="82%" />
+        <UiLine w="64%" dim />
+        <UiLine w="71%" dim />
+      </CartaoDemo>
+    </div>
+  )
+}
+
+function TelaProvas() {
+  const provas: [string, string, string][] = [
+    ['Cardiologia · N1 2024', '40 questões · 90 min', 'Oficial'],
+    ['Farmacologia · N2 2024', '30 questões · 60 min', 'Oficial'],
+    ['Semiologia · Simulado', '25 questões · 50 min', 'Por IA'],
+  ]
+  return (
+    <div className="space-y-3 p-3 sm:p-4">
+      <div className="flex items-center justify-between gap-3">
+        <p className="font-heading text-lg font-semibold tracking-tight">Provas</p>
+        <span className="flex h-9 items-center gap-1.5 rounded-xl bg-primary px-3 text-[13px] font-semibold text-primary-foreground">
+          <Plus className="h-4 w-4" aria-hidden />
+          Nova prova
+        </span>
+      </div>
+      <div className="space-y-2">
+        {provas.map(([titulo, meta, selo]) => (
+          <CartaoDemo key={titulo} className="flex items-center gap-3 p-3.5">
+            <span className="sidebar-nav-chip shrink-0">
+              <FileText className="h-[18px] w-[18px]" aria-hidden />
+            </span>
+            {/* O selo desceu para junto do "40 questões · 90 min" em vez de
+                disputar a linha do título: no celular, com a lateral recolhida,
+                a coluna tem menos de 300px e o nome da prova chegava cortado
+                logo no "Cardiologia — …", que é a única coisa que identifica o
+                cartão. */}
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-sm font-semibold">{titulo}</span>
+              <span className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1">
+                <span className="text-[12px] text-muted-foreground">{meta}</span>
+                <EtiquetaDemo variante={selo === 'Oficial' ? 'tinta' : 'contorno'}>
+                  {selo}
+                </EtiquetaDemo>
+              </span>
+            </span>
+          </CartaoDemo>
+        ))}
+      </div>
+      <p className="text-[12px] text-muted-foreground">
+        As provas que a sua faculdade já aplicou, prontas para resolver.
+      </p>
+    </div>
+  )
+}
+
+function TelaManual() {
+  return (
+    <div className="space-y-3 p-3 sm:p-4">
+      <div className="flex items-center gap-2 rounded-xl border border-border bg-background px-3 py-2.5">
+        <Search className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
+        <span className="text-[13px]">infarto agudo do miocárdio</span>
+      </div>
+      <div className="flex flex-wrap items-center gap-1.5">
+        <EtiquetaDemo variante="cheia">Cardiovascular</EtiquetaDemo>
+        <EtiquetaDemo>CID-10: I21</EtiquetaDemo>
+      </div>
+      <div className="grid grid-cols-3 gap-2">
+        {['Fisiopatologia', 'Conduta', 'Ausculta'].map((t, i) => (
+          <span
+            key={t}
+            className={
+              'truncate rounded-xl border px-2 py-2 text-center text-[11px] font-medium ' +
+              (i === 0
+                ? 'border-primary bg-primary/10 text-primary'
+                : 'border-border bg-card text-muted-foreground')
+            }
+          >
+            {t}
+          </span>
+        ))}
+      </div>
+      <CartaoDemo className="space-y-2.5 p-3.5">
+        <UiLine w="100%" />
+        <UiLine w="91%" />
+        <UiLine w="97%" dim />
+        <UiLine w="63%" dim />
+      </CartaoDemo>
+      {/* O som é o que nenhum PDF entrega — por isso ele aparece na
+          demonstração em vez de virar uma frase de marketing. */}
+      <CartaoDemo className="flex items-center gap-3 p-3">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+          <svg viewBox="0 0 24 24" className="h-4 w-4 translate-x-0.5" fill="currentColor" aria-hidden>
+            <path d="M8 5v14l11-7z" />
+          </svg>
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-[13px] font-semibold">Ausculta: sopro sistólico</span>
+          <span className="block text-[11px] text-muted-foreground">Áudio clínico · 0:18</span>
+        </span>
+        <svg viewBox="0 0 120 24" className="hidden h-6 w-24 shrink-0 text-primary/60 sm:block" aria-hidden>
+          <path
+            d="M0 12h6l3-7 4 14 3-9h5l3 5 4-11 3 8h6l3-6 4 12 3-8h5l3 4 4-9 3 7h6l3-5 4 10 3-7h5l3 3 4-8 3 6h6l3-4 4 9 3-6h5"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+          />
+        </svg>
+      </CartaoDemo>
+    </div>
+  )
+}
+
+function TelaFlashcards() {
+  const decks: [string, string, number][] = [
+    ['Anatomia · Membro superior', '18 para revisar', 62],
+    ['Farmacologia · Antibióticos', '7 para revisar', 84],
+    ['Cardiologia · Valvopatias', 'Em dia', 100],
+  ]
+  return (
+    <div className="space-y-3 p-3 sm:p-4">
+      <div className="grid grid-cols-3 gap-1 rounded-xl bg-foreground/[0.05] p-1 dark:bg-black/25">
+        {['Meus decks', 'Da plataforma', 'Comunidade'].map((t, i) => (
+          <span
+            key={t}
+            className={
+              'truncate rounded-lg px-1 py-1.5 text-center text-[11.5px] font-semibold ' +
+              (i === 0
+                ? 'bg-card text-foreground shadow-sm ring-1 ring-border/70'
+                : 'text-muted-foreground')
+            }
+          >
+            {t}
+          </span>
+        ))}
+      </div>
+      <div className="space-y-2">
+        {decks.map(([nome, meta, pct]) => (
+          <CartaoDemo key={nome} className="p-3.5">
+            <div className="flex items-center gap-3">
+              <span className="sidebar-nav-chip shrink-0">
+                <Brain className="h-[18px] w-[18px]" aria-hidden />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-sm font-semibold">{nome}</span>
+                <span className="block text-[12px] text-muted-foreground">{meta}</span>
+              </span>
+            </div>
+            <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted">
+              <div className="h-full rounded-full bg-primary" style={{ width: `${pct}%` }} />
+            </div>
+          </CartaoDemo>
+        ))}
+      </div>
+      {/* A repetição espaçada é o produto: o card volta pouco antes de você
+          esquecer, e são estes quatro botões que decidem quando. */}
+      <div className="grid grid-cols-4 gap-2">
+        {[
+          ['De novo', '<10min'],
+          ['Difícil', '1d'],
+          ['Bom', '4d'],
+          ['Fácil', '10d'],
+        ].map(([l, q], i) => (
+          <span
+            key={l}
+            className={
+              'rounded-xl border px-1 py-2 text-center ' +
+              (i === 2
+                ? 'border-primary bg-primary/10 text-primary'
+                : 'border-border bg-card text-muted-foreground')
+            }
+          >
+            <span className="block text-[11px] font-semibold">{l}</span>
+            <span className="block font-da-mono text-[9.5px] opacity-80">{q}</span>
+          </span>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function TelaCronograma() {
+  const dias: [string, string, boolean][] = [
+    ['Seg', 'Cardiologia · SCA', true],
+    ['Ter', 'Farmacologia · Antibióticos', true],
+    ['Qua', 'Semiologia · Ausculta', false],
+    ['Qui', 'Revisar flashcards atrasados', false],
+  ]
+  return (
+    <div className="space-y-3 p-3 sm:p-4">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <p className="font-heading text-lg font-semibold tracking-tight">Semana 7</p>
+          <p className="text-[13px] text-muted-foreground">2 de 4 blocos concluídos</p>
+        </div>
+        <span className="flex h-9 items-center rounded-xl border border-border bg-background px-3 text-[13px] font-semibold">
+          Editar
+        </span>
+      </div>
+      <div className="h-2 overflow-hidden rounded-full bg-muted">
+        <div className="h-full w-1/2 rounded-full bg-primary" />
+      </div>
+      <div className="space-y-2">
+        {dias.map(([dia, tema, feito]) => (
+          <CartaoDemo key={dia} className="flex items-center gap-3 p-3">
+            <span
+              className={
+                'flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-[11px] font-bold ' +
+                (feito ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground')
+              }
+            >
+              {feito ? <Check className="h-4 w-4" strokeWidth={3} aria-hidden /> : dia}
+            </span>
+            <span className="min-w-0 flex-1">
+              <span
+                className={
+                  'block truncate text-sm ' +
+                  (feito ? 'text-muted-foreground line-through' : 'font-medium')
+                }
+              >
+                {tema}
+              </span>
+            </span>
+          </CartaoDemo>
+        ))}
+      </div>
+      <p className="text-[12px] text-muted-foreground">
+        Abra e saiba o que estudar hoje. O cronograma acompanha o ritmo do seu curso.
+      </p>
+    </div>
+  )
+}
+
+/* ---------- A PLATAFORMA NAVEGÁVEL (o produto antes do cadastro) ---------- */
+
+/**
+ * A janela do hero, com o menu vivo.
+ *
+ * Ela existe porque "mostre o produto" não é o mesmo que "mostre uma tela do
+ * produto". Uma tela congelada prova que existe um design; um menu que ABRE
+ * prova que existe um produto. Aqui o visitante troca de seção como trocaria
+ * lá dentro — o endereço no alto muda junto —, e no Banco de Questões ele
+ * ainda resolve três questões de verdade.
+ *
+ * O Banco entra aberto por ser o que mais convence e o que a landing promete
+ * logo acima.
+ */
+function PlataformaDemo() {
+  const [secao, setSecao] = useState('banco')
+  const atual = SECOES_DEMO.find((s) => s.chave === secao) ?? SECOES_DEMO[1]
+
+  // Cada seção tem uma altura diferente — o Banco é quase o dobro do Manual.
+  // Sem reserva, trocar de área fazia a página inteira pular embaixo do dedo
+  // de quem só queria espiar o Cronograma. A medida é tirada a cada troca (e
+  // nunca com a explicação de uma questão aberta, que é crescimento pedido
+  // pela pessoa), e o redimensionamento zera a conta.
+  const conteudoRef = useRef<HTMLDivElement>(null)
+  const [alturaReservada, setAlturaReservada] = useState(0)
+
+  useEffect(() => {
+    const el = conteudoRef.current
+    if (!el) return
+    const altura = el.getBoundingClientRect().height
+    setAlturaReservada((atual) => (altura > atual ? altura : atual))
+  }, [secao])
+
+  useEffect(() => {
+    const aoRedimensionar = () => setAlturaReservada(0)
+    window.addEventListener('resize', aoRedimensionar)
+    return () => window.removeEventListener('resize', aoRedimensionar)
+  }, [])
+
+  return (
+    <AppWindow path={atual.path} ativa={secao} aoTrocarSecao={setSecao} className="relative">
+      {/* `key` na seção: trocar de área remonta o bloco e a entrada roda de
+          novo, deixando claro que a tela mudou. */}
+      <div
+        key={secao}
+        ref={conteudoRef}
+        className="da-panel-fade"
+        style={alturaReservada ? { minHeight: alturaReservada } : undefined}
+      >
+        {secao === 'inicio' && <TelaInicio />}
+        {secao === 'banco' && <QuestionDemo />}
+        {secao === 'provas' && <TelaProvas />}
+        {secao === 'manual' && <TelaManual />}
+        {secao === 'flashcards' && <TelaFlashcards />}
+        {secao === 'cronogramas' && <TelaCronograma />}
+      </div>
+    </AppWindow>
   )
 }
 
@@ -1809,9 +2235,7 @@ function Hero({
             }}
           />
           <Reveal delay={120}>
-            <AppWindow path="domineaqui.com.br/banco-questoes" active={1} className="relative">
-              <QuestionDemo />
-            </AppWindow>
+            <PlataformaDemo />
           </Reveal>
           <p className="relative mt-3 text-center font-da-mono text-[11px] text-da-muted xl:text-left">
             Três questões de verdade, na tela de verdade. Responda sem sair da página.
@@ -2373,31 +2797,18 @@ function ProblemBand() {
 
 /* ---------- 30 SEGUNDOS DENTRO DA PLATAFORMA ---------- */
 
-/** Linha de "conteúdo" da UI desenhada — barrinha cinza no lugar de texto. */
-function UiLine({ w = '100%', dim = false }: { w?: string; dim?: boolean }) {
-  return (
-    <span
-      aria-hidden
-      className={
-        'block h-2 rounded-full ' + (dim ? 'bg-muted-foreground/15' : 'bg-muted-foreground/30')
-      }
-      style={{ width: w }}
-    />
-  )
-}
-
 const PASSOS: {
   titulo: string
   texto: string
   path: string
-  nav: number
+  secao: string
   tela: ReactNode
 }[] = [
   {
     titulo: 'Diga o que você está estudando',
     texto: 'Escolhe o módulo, o tema ou cola a ementa da sua faculdade. Tudo depois disso vem filtrado por isso.',
     path: 'domineaqui.com.br/dashboard',
-    nav: 0,
+    secao: 'inicio',
     tela: (
       <div className="p-4 md:p-5">
         <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
@@ -2433,7 +2844,7 @@ const PASSOS: {
     titulo: 'Resolva questões ou uma prova inteira',
     texto: 'O banco de questões, as provas que a sua faculdade já aplicou e as provas geradas na sua ementa. Você treina no que cai.',
     path: 'domineaqui.com.br/banco-questoes',
-    nav: 1,
+    secao: 'banco',
     tela: (
       <div className="flex flex-col">
         <BarraDeProgressoDemo atual={3} total={20} />
@@ -2473,7 +2884,7 @@ const PASSOS: {
     titulo: 'Leia por que a sua resposta estava errada',
     texto: 'Gabarito na hora e comentário explicando o raciocínio — não só a letra certa. É aqui que a questão vira aprendizado.',
     path: 'domineaqui.com.br/banco-questoes',
-    nav: 1,
+    secao: 'banco',
     tela: (
       <div className="space-y-3 p-4 md:p-5">
         {[
@@ -2532,7 +2943,7 @@ const PASSOS: {
     titulo: 'Aprofunde no Manual, sem trocar de aba',
     texto: 'O tema da questão abre direto no Manual Clínico: mecanismo, conduta, ausculta que toca e foto clínica com referência.',
     path: 'domineaqui.com.br/manual-clinico',
-    nav: 3,
+    secao: 'manual',
     tela: (
       <div className="p-4 md:p-5">
         <div className="flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5">
@@ -2570,7 +2981,7 @@ const PASSOS: {
     titulo: 'Salve e deixe o card voltar na hora certa',
     texto: 'O que você errou vira flashcard com repetição espaçada. Ele reaparece pouco antes de você esquecer — até virar seu.',
     path: 'domineaqui.com.br/flashcards',
-    nav: 4,
+    secao: 'flashcards',
     tela: (
       <div className="p-4 md:p-5">
         <div className="rounded-2xl border border-border bg-card p-4">
@@ -2715,7 +3126,7 @@ function HowItWorks() {
             {/* `key` no passo: troca de conteúdo remonta o bloco e a animação
                 de entrada roda de novo, deixando claro que a tela mudou. */}
             <div className="lg:sticky lg:top-24">
-              <AppWindow path={atual.path} active={atual.nav}>
+              <AppWindow path={atual.path} ativa={atual.secao}>
                 <div key={passo} className="da-panel-fade">
                   {atual.tela}
                 </div>
