@@ -83,7 +83,7 @@
       "memory": 1024
     },
     "app/api/cron/avaliacoes-lembretes/route.ts": {
-      "maxDuration": 300
+      "maxDuration": 60
     }
   },
   "crons": [
@@ -106,10 +106,6 @@
     {
       "path": "/api/cron/midia-sync",
       "schedule": "0 5 * * *"
-    },
-    {
-      "path": "/api/cron/avaliacoes-lembretes",
-      "schedule": "0 * * * *"
     }
   ],
   "redirects": [

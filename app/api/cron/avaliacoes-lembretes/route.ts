@@ -16,35 +16,48 @@ import {
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
-export const maxDuration = 300
+export const maxDuration = 60
 
 /**
  * Disparo dos lembretes de avaliação.
  *
- * Roda de hora em hora e pergunta, para cada avaliação futura: hoje é um dos
- * dias configurados? Já passou do horário de envio (no relógio de Brasília)?
- * Quem, entre os alunos que acompanham essa seção e período, ligou o opt-in?
+ * O gatilho é EXTERNO — cron-job.org batendo nesta URL a cada 5 minutos (ver
+ * `docs/LEMBRETES_AVALIACOES_CRONJOB.md`). O projeto está no plano Hobby da
+ * Vercel, onde o Vercel Cron roda 1x por dia e o teto de jobs já está tomado
+ * pelas outras rotinas; uma execução diária não serviria aqui, porque o
+ * horário de envio é escolhido POR AVALIAÇÃO no painel.
+ *
+ * A cada chamada, para cada avaliação futura: hoje é um dos dias configurados?
+ * Já passou do horário de envio (no relógio de Brasília)? Quem, entre os
+ * alunos que acompanham essa seção e período, ligou o opt-in?
  *
  * Três travas contra o pior defeito possível aqui, que é virar spam:
  *
  * 1. **O opt-in manda.** Nenhum envio acontece sem `lembretesAtivos: true` na
  *    preferência do próprio aluno. Não há lista de "todos do período".
  * 2. **Um lembrete por avaliação por dia.** O índice único
- *    (avaliacaoId, userId, dia) é gravado ANTES do e-mail sair; se o cron
- *    rodar duas vezes na mesma hora, a segunda tentativa esbarra no índice e
- *    nada é enviado.
+ *    (avaliacaoId, userId, dia) é gravado ANTES do e-mail sair. É isso que
+ *    torna a rota segura para ser batida de 5 em 5 minutos: da segunda
+ *    chamada do dia em diante, toda tentativa esbarra no índice e nada sai.
  * 3. **Teto por execução.** Uma janela em que muitas avaliações coincidem não
- *    vira uma rajada que a Hostinger derruba pela metade — o que sobra vai na
- *    hora seguinte, porque a condição de envio continua verdadeira até o fim
+ *    vira uma rajada que a Hostinger derruba pela metade — o que sobra vai no
+ *    tique seguinte, porque a condição de envio continua verdadeira até o fim
  *    do dia.
  */
 
-/** Teto de e-mails por execução. Acima disso o SMTP começa a recusar. */
-const MAX_ENVIOS_POR_EXECUCAO = 300
+/**
+ * Teto de e-mails por execução.
+ *
+ * O transporte SMTP está limitado a 3 mensagens por segundo (ver
+ * `lib/mail.ts`), então 120 envios gastam ~40s — dentro do `maxDuration` de
+ * 60s com folga para a consulta. Pedir mais que isso não manda mais e-mail:
+ * só faz a função morrer no meio, deixando envios sem registro.
+ */
+const MAX_ENVIOS_POR_EXECUCAO = 120
 
 export async function GET(request: NextRequest) {
   if (!isCronAuthorized(request)) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   }
 
   const agora = new Date()
@@ -169,5 +182,15 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  return NextResponse.json({ ok: true, ...relatorio })
+  return NextResponse.json({ ok: true, at: agora.toISOString(), ...relatorio })
 }
+
+/**
+ * Mesmo disparo por POST.
+ *
+ * O cron-job.org usa GET por padrão, mas quem configurar um `crontab` próprio
+ * costuma escrever `curl -X POST` por hábito — e um 405 aí viraria um cron que
+ * "está configurado" e nunca envia nada. Espelhar o método é mais barato que
+ * depurar esse silêncio.
+ */
+export const POST = GET

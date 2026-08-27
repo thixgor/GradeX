@@ -108,14 +108,22 @@ sempre no dia dela.
 
 ### Configuração
 
-`/api/cron/avaliacoes-lembretes` roda de hora em hora (`vercel.json`). Fora da
-Vercel — que envia `x-vercel-cron` —, a rota exige `CRON_SECRET` via
-`Authorization: Bearer`, header `x-cron-secret` ou query `?secret=`/`?token=`.
-Sem o segredo a rota responde 401 e ninguém é lembrado.
+O gatilho é **externo**: cron-job.org batendo em
+`/api/cron/avaliacoes-lembretes` a cada 5 minutos. Passo a passo em
+[`docs/LEMBRETES_AVALIACOES_CRONJOB.md`](docs/LEMBRETES_AVALIACOES_CRONJOB.md).
 
-Cadência de hora em hora, e não uma vez por dia, porque o horário de envio é
-por avaliação: um lembrete marcado para 07:00 e outro para 21:00 precisam dos
-dois momentos.
+A rota não entra em `crons` no `vercel.json` de propósito: o plano Hobby roda
+cron 1x por dia e o teto de jobs já está tomado. Uma execução diária não
+serviria, porque o horário de envio é escolhido por avaliação, com precisão de
+minuto — um lembrete das 19:30 sairia às 20:00.
+
+A rota exige `CRON_SECRET` via `Authorization: Bearer`, header
+`x-cron-secret` ou query `?secret=`/`?token=`. Sem o segredo responde 401 e
+ninguém é lembrado.
+
+Bater de 5 em 5 minutos é seguro: da segunda chamada do dia em diante, toda
+tentativa esbarra no índice único e o relatório volta com `enviados: 0` e
+`duplicadosEvitados` no lugar.
 
 ## Testes
 
