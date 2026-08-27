@@ -1934,3 +1934,52 @@ export async function sendProuniRequestRejectedEmail(input: {
     console.error('[mail] falha ao enviar recusa PROUNI/FIES:', err)
   }
 }
+
+/**
+ * Lembrete de avaliação (cron /api/cron/avaliacoes-lembretes).
+ *
+ * O texto vem pronto de `lib/cronogramas/lembretes.ts` — este módulo só o
+ * veste. A separação existe porque a MESMA mensagem aparece na notificação
+ * dentro do site e na prévia que o admin vê antes de salvar a configuração:
+ * escrever o corpo aqui faria as três versões divergirem na primeira mudança.
+ *
+ * O rodapé com "como desligar" não é enfeite: o lembrete só existe porque o
+ * aluno ligou o botão no calendário, e ele precisa achar o caminho de volta no
+ * próprio e-mail.
+ */
+export async function sendAvaliacaoLembreteEmail(input: {
+  email: string
+  assunto: string
+  titulo: string
+  /** Parágrafos já formatados (podem conter <strong>). */
+  corpo: string[]
+  cta: string
+}) {
+  const url = `${process.env.NEXT_PUBLIC_APP_URL}/cronogramas`
+
+  const paragrafos = input.corpo.map(p => `<p>${p}</p>`).join('')
+
+  const content = `
+    <h1 class="h1">${escapeHtml(input.titulo)}</h1>
+    ${paragrafos}
+    <div style="text-align:center;">
+      <a href="${url}" class="button" target="_blank">${escapeHtml(input.cta)}</a>
+    </div>
+    <p style="margin-top:30px;font-size:0.85em;color:#718096;">
+      Você recebe isto porque ativou "Quero receber lembretes das minhas avaliações" no seu calendário.
+      Para desligar, é um clique em <a href="${url}" style="color:#0f3d2e;">Cronogramas</a>.
+    </p>
+  `
+
+  try {
+    await transporter.sendMail({
+      from: '"DomineAqui" <no-reply@domineaqui.com.br>',
+      to: input.email,
+      subject: input.assunto,
+      html: getEmailTemplate('Lembrete de avaliação', content),
+    })
+  } catch (err) {
+    console.error('[mail] falha ao enviar lembrete de avaliação:', err)
+    throw err
+  }
+}

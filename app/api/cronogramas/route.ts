@@ -111,6 +111,17 @@ export async function POST(req: NextRequest) {
       config: body.config,
       cronograma: body.cronograma || [],
       totalHoras: body.totalHoras || 0,
+      // Campos da geração com prioridade e repetição espaçada. Ficam separados
+      // de `config` porque descrevem o RESULTADO (quanto virou revisão, até
+      // quando vai o plano), não a escolha do aluno — e são o que a lista e o
+      // visualizador leem sem precisar varrer os dias de novo.
+      secao: body.secao ?? null,
+      periodo: Number(body.periodo) || null,
+      revisaoEspacada: body.revisaoEspacada !== false,
+      horasEstudo: Number(body.horasEstudo) || 0,
+      horasRevisao: Number(body.horasRevisao) || 0,
+      dataInicio: body.dataInicio ?? null,
+      dataTermino: body.dataTermino ?? null,
       dataCriacao: new Date(),
       dataAtualizacao: new Date()
     }

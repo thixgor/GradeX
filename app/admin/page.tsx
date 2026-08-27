@@ -143,6 +143,13 @@ export default function AdminDashboard() {
       color: 'from-sky-500 to-cyan-500'
     },
     {
+      title: 'Cronogramas & Avaliações',
+      description: 'Marcar provas e trabalhos por seção e período, e configurar quando cada avaliação lembra os alunos.',
+      icon: Calendar,
+      href: '/admin/cronogramas',
+      color: 'from-emerald-500 to-teal-600'
+    },
+    {
       title: 'Lotes por Evento',
       description: 'Configurar descontos progressivos vinculados a uma prova ou evento. Quanto antes comprar, maior o desconto.',
       icon: Calendar,

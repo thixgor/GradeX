@@ -840,7 +840,13 @@ export interface Notification {
   /** Pedido físico relacionado (type === 'order_update') */
   orderId?: string
   orderNumber?: string
-  type: 'correction_ready' | 'ticket_created' | 'ticket_reopened' | 'order_update' // Tipo de notificação
+  type:
+    | 'correction_ready'
+    | 'ticket_created'
+    | 'ticket_reopened'
+    | 'order_update'
+    /** Lembrete de avaliação (cron /api/cron/avaliacoes-lembretes) */
+    | 'avaliacao_lembrete'
   message: string
   read: boolean
   createdAt: Date

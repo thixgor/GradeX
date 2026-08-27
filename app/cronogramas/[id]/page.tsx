@@ -1,502 +1,421 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useRouter, useParams } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ThemeToggle } from '@/components/theme-toggle'
-import { LogoLoading } from '@/components/logo-loading'
-import { ArrowLeft, Download, CheckCircle2 } from 'lucide-react'
-import { CronogramaGerado, AtividadeCronograma } from '@/lib/cronograma-types'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useParams, useRouter } from 'next/navigation'
+import {
+  ArrowLeft,
+  BookOpen,
+  CheckCircle2,
+  Download,
+  Flame,
+  Image as ImageIcon,
+  RefreshCw,
+} from 'lucide-react'
 
-interface User {
+import { AppShell } from '@/components/app-shell'
+import { Button } from '@/components/ui/button'
+import { LogoLoading } from '@/components/logo-loading'
+import { abrirCronogramaImpresso } from '@/lib/cronogramas/pdf'
+import { ESTILO_PRIORIDADE, type Prioridade } from '@/lib/cronogramas/tipos'
+import { diaDaSemana, formatarDiaCurto, formatarDiaLongo, hojeBrasilia } from '@/lib/cronogramas/brasilia'
+
+/**
+ * Um cronograma, dia a dia.
+ *
+ * A mudança que importa aqui é o tipo da atividade ficar visível. Um plano com
+ * repetição espaçada tem três coisas diferentes acontecendo — conteúdo novo,
+ * revisão de algo já visto e reta final de véspera de prova —, e quando todas
+ * aparecem como um bloco cinza igual, o aluno trata revisão como releitura e o
+ * método inteiro se perde.
+ *
+ * Os dias são agrupados por semana: é a unidade em que qualquer aluno pensa o
+ * próprio estudo, e uma lista corrida de 60 cards não deixava enxergar nenhuma.
+ */
+
+type TipoAtividade = 'estudo' | 'revisao' | 'reta-final'
+
+interface Atividade {
   id: string
-  email: string
-  name: string
+  topico: string
+  subtopico: string
+  modulo: string
+  dificuldadeUsuario: 'facil' | 'medio' | 'dificil'
+  horas: number
+  descricao: string
+  concluido: boolean
+  tipo?: TipoAtividade
+  prioridade?: Prioridade
+  etapa?: number
 }
 
-export default function CronogramaDetalhePage() {
+interface DiaDoPlano {
+  dia: string
+  data: string
+  horasDisponivel: number
+  atividades: Atividade[]
+}
+
+const ESTILO_TIPO: Record<TipoAtividade, { rotulo: string; classe: string; barra: string; icone: typeof BookOpen }> = {
+  estudo: {
+    rotulo: 'Estudo',
+    classe: 'bg-[#468152]/12 text-[#468152] dark:text-[#7DCEA0] border-[#468152]/25',
+    barra: 'bg-[#468152]',
+    icone: BookOpen,
+  },
+  revisao: {
+    rotulo: 'Revisão',
+    classe: 'bg-[#2E8FA8]/12 text-[#2E8FA8] dark:text-[#7FCBDE] border-[#2E8FA8]/25',
+    barra: 'bg-[#2E8FA8]',
+    icone: RefreshCw,
+  },
+  'reta-final': {
+    rotulo: 'Reta final',
+    classe: 'bg-[#CE5929]/12 text-[#CE5929] dark:text-[#F3A588] border-[#CE5929]/25',
+    barra: 'bg-[#CE5929]',
+    icone: Flame,
+  },
+}
+
+const DIFICULDADE: Record<string, string> = { facil: 'Fácil', medio: 'Médio', dificil: 'Difícil' }
+
+/** Segunda-feira da semana de um dia — a chave do agrupamento. */
+function inicioDaSemana(dia: string): string {
+  const deslocamento = (diaDaSemana(dia) + 6) % 7
+  const base = Date.parse(`${dia}T00:00:00Z`)
+  return new Date(base - deslocamento * 86_400_000).toISOString().slice(0, 10)
+}
+
+function ConteudoDetalhe() {
   const router = useRouter()
   const params = useParams()
   const cronogramaId = params.id as string
 
-  const [user, setUser] = useState<User | null>(null)
-  const [cronograma, setCronograma] = useState<CronogramaGerado | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [editando, setEditando] = useState(false)
-  const [atividades, setAtividades] = useState<AtividadeCronograma[]>([])
+  const [cronograma, setCronograma] = useState<any>(null)
+  const [carregando, setCarregando] = useState(true)
+  const [hoje] = useState(() => hojeBrasilia())
+
+  const carregar = useCallback(async () => {
+    try {
+      const resposta = await fetch(`/api/cronogramas/${cronogramaId}`)
+      if (resposta.ok) {
+        const dados = await resposta.json()
+        setCronograma(dados.cronograma ?? dados)
+      }
+    } finally {
+      setCarregando(false)
+    }
+  }, [cronogramaId])
 
   useEffect(() => {
-    checkAuth()
-  }, [])
+    void carregar()
+  }, [carregar])
 
-  async function checkAuth() {
-    try {
-      const res = await fetch('/api/auth/me')
-      if (!res.ok) {
-        router.push('/auth/login')
-        return
+  // O `?? []` precisa ser memoizado: um array literal novo a cada render
+  // invalidaria os dois `useMemo` abaixo sempre, refazendo o agrupamento por
+  // semana de um plano que pode ter dois meses de dias.
+  const dias = useMemo<DiaDoPlano[]>(() => cronograma?.cronograma ?? [], [cronograma])
+
+  const numeros = useMemo(() => {
+    let total = 0
+    let feitas = 0
+    let revisoes = 0
+    for (const dia of dias) {
+      for (const atividade of dia.atividades ?? []) {
+        total += 1
+        if (atividade.concluido) feitas += 1
+        if (atividade.tipo === 'revisao') revisoes += 1
       }
-      const data = await res.json()
-      setUser(data.user)
-      loadCronograma()
-    } catch (error) {
-      router.push('/auth/login')
-    } finally {
-      setLoading(false)
     }
-  }
-
-  async function loadCronograma() {
-    try {
-      const res = await fetch(`/api/cronogramas/${cronogramaId}`)
-      if (res.ok) {
-        const data = await res.json()
-        const cronogramaData = data.cronograma || data
-        setCronograma(cronogramaData)
-        // Flatten todas as atividades
-        const todasAtividades: AtividadeCronograma[] = []
-        const cronogramaItems = cronogramaData.cronograma || []
-        cronogramaItems.forEach((item: any) => {
-          todasAtividades.push(...(item.atividades || []))
-        })
-        setAtividades(todasAtividades)
-      } else {
-        console.error('Erro ao carregar cronograma:', res.status)
-      }
-    } catch (error) {
-      console.error('Erro ao carregar cronograma:', error)
+    return {
+      total,
+      feitas,
+      revisoes,
+      percentual: total === 0 ? 0 : Math.round((feitas / total) * 100),
     }
-  }
+  }, [dias])
 
-  async function toggleAtividadeConcluida(atividadeId: string) {
-    // Encontrar o estado atual ANTES de atualizar
-    const atividadeAtual = atividades.find(a => a.id === atividadeId)
-    const novoEstado = !atividadeAtual?.concluido
-    
-    // Atualizar estado local IMEDIATAMENTE para refletir visualmente
-    const atividadeAtualizada = atividades.map(a =>
-      a.id === atividadeId ? { ...a, concluido: novoEstado } : a
+  /** Dias agrupados por semana, na ordem do calendário. */
+  const semanas = useMemo(() => {
+    const mapa = new Map<string, DiaDoPlano[]>()
+    for (const dia of dias) {
+      const chave = inicioDaSemana(dia.data)
+      mapa.set(chave, (mapa.get(chave) ?? []).concat(dia))
+    }
+    return [...mapa.entries()].sort((a, b) => a[0].localeCompare(b[0]))
+  }, [dias])
+
+  async function alternarConcluida(atividadeId: string, concluido: boolean) {
+    // Otimista: marcar uma tarefa feita não deveria esperar a rede.
+    setCronograma((anterior: any) =>
+      anterior
+        ? {
+            ...anterior,
+            cronograma: anterior.cronograma.map((dia: DiaDoPlano) => ({
+              ...dia,
+              atividades: dia.atividades.map(item =>
+                item.id === atividadeId ? { ...item, concluido } : item,
+              ),
+            })),
+          }
+        : anterior,
     )
-    setAtividades(atividadeAtualizada)
-    
-    // Atualizar também o cronograma para refletir visualmente
-    if (cronograma) {
-      const cronogramaAtualizado = {
-        ...cronograma,
-        cronograma: cronograma.cronograma.map(dia => ({
-          ...dia,
-          atividades: dia.atividades.map(a =>
-            a.id === atividadeId ? { ...a, concluido: novoEstado } : a
-          )
-        }))
-      }
-      setCronograma(cronogramaAtualizado)
-    }
 
-    // Atualizar no servidor
     try {
-      await fetch(`/api/cronogramas/${cronogramaId}/atividades/${atividadeId}`, {
+      const resposta = await fetch(`/api/cronogramas/${cronogramaId}/atividades/${atividadeId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ concluido: novoEstado })
+        body: JSON.stringify({ concluido }),
       })
-    } catch (error) {
-      console.error('Erro ao atualizar atividade:', error)
-      // Reverter estado se falhar
-      loadCronograma()
+      if (!resposta.ok) await carregar()
+    } catch {
+      await carregar()
     }
   }
 
-  async function marcarComoConcluido() {
-    try {
-      const res = await fetch(`/api/cronogramas/${cronogramaId}/concluir`, {
-        method: 'PATCH'
-      })
-      if (res.ok) {
-        alert('Cronograma marcado como concluído!')
-        loadCronograma()
-      }
-    } catch (error) {
-      console.error('Erro ao marcar como concluído:', error)
-    }
+  async function concluirCronograma() {
+    const resposta = await fetch(`/api/cronogramas/${cronogramaId}/concluir`, { method: 'PATCH' })
+    if (resposta.ok) await carregar()
   }
 
-  async function downloadPDF() {
-    if (!cronograma) return
+  /**
+   * Imagem do plano. Carrega o html2canvas sob demanda — é a única tela que
+   * usa, e embutir 200 KB no bundle por causa dela sairia caro para todo mundo.
+   */
+  function baixarImagem() {
+    const alvo = document.getElementById('plano-para-imagem')
+    if (!alvo || !cronograma) return
 
-    const printWindow = window.open('', '', 'width=1200,height=800')
-    if (!printWindow) {
-      alert('Por favor, desabilite o bloqueador de pop-ups')
+    const gerar = async () => {
+      const canvas = await (window as any).html2canvas(alvo, { backgroundColor: '#ffffff', scale: 2, logging: false })
+      const link = document.createElement('a')
+      link.href = canvas.toDataURL('image/png')
+      link.download = `cronograma-${cronograma.titulo}.png`
+      link.click()
+    }
+
+    if ((window as any).html2canvas) {
+      void gerar()
       return
     }
 
-    const html = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <meta charset="utf-8">
-          <title>${cronograma.titulo}</title>
-          <style>
-            * { margin: 0; padding: 0; box-sizing: border-box; }
-            body { 
-              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-              background: #f5f5f5;
-              padding: 40px 20px;
-            }
-            .container { max-width: 1000px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-            .header { text-align: center; margin-bottom: 40px; border-bottom: 3px solid #468152; padding-bottom: 20px; }
-            .header h1 { color: #333; font-size: 28px; margin-bottom: 10px; }
-            .header p { color: #666; font-size: 14px; }
-            .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 40px; }
-            .stat-box { background: linear-gradient(135deg, #468152 0%, #5a9a63 100%); color: white; padding: 20px; border-radius: 8px; text-align: center; }
-            .stat-box .label { font-size: 12px; opacity: 0.9; margin-bottom: 5px; }
-            .stat-box .value { font-size: 24px; font-weight: bold; }
-            .semana { margin-bottom: 30px; page-break-inside: avoid; }
-            .semana-title { background: #468152; color: white; padding: 12px 15px; border-radius: 4px; margin-bottom: 15px; font-weight: 600; }
-            .dias-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
-            .dia { background: #f9f9f9; border: 1px solid #e0e0e0; border-radius: 6px; padding: 15px; }
-            .dia-header { background: #e8f5e9; padding: 10px 12px; border-radius: 4px; margin-bottom: 12px; font-weight: 600; color: #2e7d32; font-size: 13px; }
-            .atividade { 
-              background: white; 
-              border-left: 4px solid #468152; 
-              padding: 12px; 
-              margin-bottom: 10px; 
-              border-radius: 4px;
-              font-size: 13px;
-            }
-            .atividade-titulo { font-weight: 600; color: #333; margin-bottom: 4px; }
-            .atividade-subtitulo { font-size: 12px; color: #666; margin-bottom: 6px; }
-            .atividade-footer { display: flex; justify-content: space-between; align-items: center; font-size: 11px; }
-            .horas { background: #468152; color: white; padding: 2px 8px; border-radius: 3px; font-weight: 600; }
-            .dificuldade { 
-              display: inline-block; 
-              padding: 3px 8px; 
-              border-radius: 3px; 
-              font-size: 11px; 
-              font-weight: 600;
-            }
-            .facil { background: #d4edda; color: #155724; }
-            .medio { background: #fff3cd; color: #856404; }
-            .dificil { background: #f8d7da; color: #721c24; }
-            .vazio { color: #999; font-style: italic; font-size: 12px; padding: 10px; text-align: center; }
-            @media print {
-              body { padding: 0; background: white; }
-              .container { box-shadow: none; padding: 20px; }
-              .dias-grid { grid-template-columns: repeat(2, 1fr); }
-            }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div class="header">
-              <h1>${cronograma.titulo}</h1>
-              <p>Modelo: ${cronograma.modelo.toUpperCase()} • Total: ${cronograma.totalHoras}h</p>
-            </div>
-            
-            <div class="stats">
-              <div class="stat-box">
-                <div class="label">Total de Horas</div>
-                <div class="value">${cronograma.totalHoras}h</div>
-              </div>
-              <div class="stat-box">
-                <div class="label">Semanas</div>
-                <div class="value">${Math.ceil(cronograma.cronograma.length / 7)}</div>
-              </div>
-              <div class="stat-box">
-                <div class="label">Atividades</div>
-                <div class="value">${atividades.length}</div>
-              </div>
-            </div>
-
-            ${cronograma.cronograma.map((dia, index) => {
-              const semanaNum = Math.floor(index / 7) + 1
-              const diaNumSemana = index % 7
-              
-              if (diaNumSemana === 0) {
-                return `
-                  <div class="semana">
-                    <div class="semana-title">Semana ${semanaNum}</div>
-                    <div class="dias-grid">
-                      ${gerarDiaHTML(dia)}
-                ` + (index + 1 < cronograma.cronograma.length && Math.floor((index + 1) / 7) !== semanaNum ? '</div></div>' : '')
-              } else if (diaNumSemana === 6 || index === cronograma.cronograma.length - 1) {
-                return `
-                      ${gerarDiaHTML(dia)}
-                    </div>
-                  </div>
-                `
-              } else {
-                return `${gerarDiaHTML(dia)}`
-              }
-            }).join('')}
-          </div>
-        </body>
-      </html>
-    `
-
-    function gerarDiaHTML(dia: any) {
-      return `
-        <div class="dia">
-          <div class="dia-header">${dia.dia} - ${dia.data}</div>
-          ${dia.atividades.length === 0 
-            ? '<div class="vazio">Sem atividades</div>'
-            : dia.atividades.map((ativ: any) => `
-              <div class="atividade">
-                <div class="atividade-titulo">${ativ.modulo}</div>
-                <div class="atividade-subtitulo">${ativ.topico} • ${ativ.subtopico}</div>
-                <div class="atividade-footer">
-                  <span class="horas">${ativ.horas}h</span>
-                  <span class="dificuldade ${ativ.dificuldadeUsuario}">${ativ.dificuldadeUsuario === 'facil' ? 'Fácil' : ativ.dificuldadeUsuario === 'medio' ? 'Médio' : 'Difícil'}</span>
-                </div>
-              </div>
-            `).join('')
-          }
-        </div>
-      `
-    }
-
-    printWindow.document.write(html)
-    printWindow.document.close()
-    
-    setTimeout(() => {
-      printWindow.print()
-    }, 250)
+    const script = document.createElement('script')
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'
+    script.onload = () => void gerar()
+    document.head.appendChild(script)
   }
 
-  async function downloadImagem() {
-    if (!cronograma) return
-
-    try {
-      const element = document.getElementById('cronograma-pdf')
-      if (!element) return
-
-      // Usar html2canvas se disponível, senão usar screenshot
-      const script = document.createElement('script')
-      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'
-      script.onload = async () => {
-        const canvas = await (window as any).html2canvas(element, {
-          backgroundColor: '#ffffff',
-          scale: 2,
-          logging: false
-        })
-        
-        const link = document.createElement('a')
-        link.href = canvas.toDataURL('image/png')
-        link.download = `cronograma-${cronograma.titulo}.png`
-        link.click()
-      }
-      document.head.appendChild(script)
-    } catch (error) {
-      alert('Erro ao gerar imagem. Tente novamente.')
-      console.error(error)
-    }
-  }
-
-  if (loading) {
-    return <LogoLoading message="Carregando cronograma..." size="lg" fullscreen />
-  }
+  if (carregando) return <LogoLoading message="Carregando cronograma..." size="lg" fullscreen />
 
   if (!cronograma) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Card>
-          <CardContent className="pt-6">
-            <p className="text-lg mb-4">Cronograma não encontrado</p>
-            <Button onClick={() => router.push('/cronogramas')}>
-              Voltar para Cronogramas
-            </Button>
-          </CardContent>
-        </Card>
+      <div className="container mx-auto max-w-md px-4 py-20 text-center">
+        <p className="mb-4 text-lg font-semibold text-foreground">Cronograma não encontrado</p>
+        <Button onClick={() => router.push('/cronogramas')}>Voltar para Cronogramas</Button>
       </div>
     )
   }
 
-  const totalAtividades = atividades.length
-  const atividadesConcluidas = atividades.filter(a => a.concluido).length
-  const percentualConclusao = totalAtividades > 0 ? Math.round((atividadesConcluidas / totalAtividades) * 100) : 0
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted">
-      {/* Header */}
-      <header className="glass sticky top-0 z-50 border-b">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between gap-4 flex-wrap">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => router.push('/cronogramas')}
-                className="shrink-0"
-              >
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-              <div>
-                <h1 className="text-xl sm:text-2xl font-bold">{cronograma.titulo}</h1>
-                <p className="text-sm text-muted-foreground">
-                  {new Date(cronograma.dataCriacao).toLocaleDateString('pt-BR')}
+    <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/20">
+      <div className="container mx-auto max-w-4xl px-4 py-6 sm:py-8">
+        <button
+          onClick={() => router.push('/cronogramas')}
+          className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Cronogramas
+        </button>
+
+        {/* ── Resumo e ações ── */}
+        <section className="glass-page-card mb-6 overflow-hidden rounded-2xl">
+          <div className="h-1.5 bg-muted/40">
+            <div
+              className="h-full rounded-r-full bg-gradient-to-r from-[#468152] to-[#E2A43E] transition-all duration-700"
+              style={{ width: `${numeros.percentual}%` }}
+            />
+          </div>
+
+          <div className="p-4 sm:p-5">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div className="min-w-0">
+                <h1 className="text-xl font-bold text-foreground sm:text-2xl">{cronograma.titulo}</h1>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {dias.length > 0 && `${formatarDiaCurto(dias[0].data)} → ${formatarDiaCurto(dias[dias.length - 1].data)} · `}
+                  {cronograma.totalHoras || 0}h
+                  {numeros.revisoes > 0 && ` · ${numeros.revisoes} revisões agendadas`}
+                </p>
+              </div>
+
+              <div className="text-right">
+                <p className="text-3xl font-bold tabular-nums text-foreground">{numeros.percentual}%</p>
+                <p className="text-xs text-muted-foreground">
+                  {numeros.feitas}/{numeros.total} atividades
                 </p>
               </div>
             </div>
-            <ThemeToggle />
-          </div>
-        </div>
-      </header>
 
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-8 max-w-6xl">
-        {/* Progresso */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle>Progresso do Cronograma</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div>
-                <div className="flex justify-between mb-2">
-                  <span className="text-sm font-medium">Conclusão</span>
-                  <span className="text-sm font-bold text-primary">{percentualConclusao}%</span>
-                </div>
-                <div className="w-full bg-muted rounded-full h-3 overflow-hidden">
-                  <div
-                    className="bg-gradient-to-r from-[#468152] to-[#E2A43E] h-full transition-all duration-300"
-                    style={{ width: `${percentualConclusao}%` }}
-                  />
-                </div>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                {atividadesConcluidas} de {totalAtividades} atividades concluídas
-              </p>
-              <div className="flex gap-2 flex-wrap">
+            <div className="mt-4 flex flex-wrap gap-2">
+              <Button size="sm" variant="outline" onClick={() => abrirCronogramaImpresso(cronograma)} className="h-9 rounded-lg">
+                <Download className="mr-1.5 h-3.5 w-3.5" />
+                PDF
+              </Button>
+              <Button size="sm" variant="outline" onClick={baixarImagem} className="h-9 rounded-lg">
+                <ImageIcon className="mr-1.5 h-3.5 w-3.5" />
+                Imagem
+              </Button>
+              {numeros.percentual === 100 && !cronograma.concluido && (
                 <Button
-                  onClick={downloadPDF}
-                  variant="outline"
                   size="sm"
+                  onClick={concluirCronograma}
+                  className="ml-auto h-9 rounded-lg bg-[#468152] text-white hover:bg-[#468152]/90"
                 >
-                  <Download className="h-4 w-4 mr-2" />
-                  Baixar PDF
+                  <CheckCircle2 className="mr-1.5 h-3.5 w-3.5" />
+                  Marcar como concluído
                 </Button>
-                <Button
-                  onClick={downloadImagem}
-                  variant="outline"
-                  size="sm"
-                >
-                  <Download className="h-4 w-4 mr-2" />
-                  Baixar Imagem
-                </Button>
-                {percentualConclusao === 100 && (
-                  <Button
-                    onClick={marcarComoConcluido}
-                    variant="default"
-                    size="sm"
-                    className="bg-green-600 hover:bg-green-700"
-                  >
-                    <CheckCircle2 className="h-4 w-4 mr-2" />
-                    Marcar como Concluído
-                  </Button>
-                )}
-              </div>
+              )}
+              {cronograma.concluido && (
+                <span className="ml-auto inline-flex items-center gap-1.5 rounded-lg bg-[#468152]/12 px-3 py-2 text-xs font-semibold text-[#468152] dark:text-[#7DCEA0]">
+                  <CheckCircle2 className="h-3.5 w-3.5" />
+                  Concluído
+                </span>
+              )}
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Cronograma por Dia */}
-        <div className="space-y-6" id="cronograma-pdf">
-          <div className="mb-8 print:mb-4">
-            <h2 className="text-2xl font-bold mb-2">{cronograma.titulo}</h2>
-            <p className="text-muted-foreground">
-              Modelo: {cronograma.modelo.toUpperCase()} • Total de horas: {cronograma.totalHoras}h
-            </p>
           </div>
+        </section>
 
-          {cronograma.cronograma.map((dia, index) => (
-            <Card key={index} className="print:break-inside-avoid">
-              <CardHeader>
-                <CardTitle className="text-lg">
-                  {dia.dia} - {dia.data}
-                </CardTitle>
-                <CardDescription>
-                  {dia.horasDisponivel}h disponível
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {dia.atividades.length === 0 ? (
-                  <p className="text-muted-foreground text-sm">Nenhuma atividade agendada</p>
-                ) : (
-                  <div className="space-y-3">
-                    {dia.atividades.map((atividade) => (
-                      <div
-                        key={atividade.id}
-                        className={`flex items-start gap-3 p-4 rounded-lg border-2 transition-all duration-200 cursor-pointer ${
-                          atividade.concluido
-                            ? 'bg-green-50 border-green-300 dark:bg-green-950 dark:border-green-700'
-                            : 'bg-background border-muted hover:border-primary/50 hover:bg-muted/30'
-                        }`}
-                        onClick={() => toggleAtividadeConcluida(atividade.id)}
-                      >
-                        <div className={`mt-1 flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
-                          atividade.concluido
-                            ? 'bg-green-500 border-green-600'
-                            : 'border-muted-foreground hover:border-primary'
-                        }`}>
-                          {atividade.concluido && (
-                            <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                            </svg>
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-start justify-between gap-2 mb-1">
-                            <div>
-                              <p className={`font-medium transition-all ${
-                                atividade.concluido 
-                                  ? 'line-through text-green-700 dark:text-green-300' 
-                                  : 'text-foreground'
-                              }`}>
-                                {atividade.modulo}
-                              </p>
-                              <p className={`text-xs transition-all ${
-                                atividade.concluido
-                                  ? 'text-green-600 dark:text-green-400'
-                                  : 'text-muted-foreground'
-                              }`}>
-                                {atividade.topico} • {atividade.subtopico}
-                              </p>
-                            </div>
-                            <span className={`text-sm font-semibold whitespace-nowrap px-2 py-1 rounded transition-all ${
-                              atividade.concluido
-                                ? 'bg-green-200 text-green-800 dark:bg-green-900 dark:text-green-200'
-                                : 'text-primary'
-                            }`}>
-                              {atividade.horas}h
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-2 mt-2">
-                            <span className={`text-xs px-2 py-1 rounded-full transition-all ${
-                              atividade.dificuldadeUsuario === 'facil'
-                                ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                                : atividade.dificuldadeUsuario === 'medio'
-                                ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-                                : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-                            }`}>
-                              {atividade.dificuldadeUsuario === 'facil' ? 'Fácil' : atividade.dificuldadeUsuario === 'medio' ? 'Médio' : 'Difícil'}
-                            </span>
-                            {atividade.concluido && (
-                              <span className="text-xs px-2 py-1 rounded-full bg-green-200 text-green-800 dark:bg-green-900 dark:text-green-200 font-semibold">
-                                ✓ Concluído
+        {/* ── Semanas ── */}
+        <div id="plano-para-imagem" className="space-y-5">
+          {semanas.length === 0 ? (
+            <p className="glass-page-card rounded-2xl px-6 py-12 text-center text-sm text-muted-foreground">
+              Este cronograma não tem nenhum dia com atividade.
+            </p>
+          ) : (
+            semanas.map(([inicio, diasDaSemana], indice) => {
+              const horas = diasDaSemana.reduce(
+                (soma, dia) => soma + dia.atividades.reduce((s, a) => s + (a.horas || 0), 0),
+                0,
+              )
+
+              return (
+                <section key={inicio} className="glass-page-card overflow-hidden rounded-2xl">
+                  <header className="flex flex-wrap items-center justify-between gap-2 border-b border-border/40 bg-muted/25 px-4 py-2.5">
+                    <h2 className="text-sm font-bold text-foreground">
+                      Semana {indice + 1}
+                      <span className="ml-2 font-normal text-muted-foreground">
+                        a partir de {formatarDiaCurto(inicio)}
+                      </span>
+                    </h2>
+                    <span className="text-xs font-semibold tabular-nums text-muted-foreground">
+                      {Math.round(horas * 2) / 2}h
+                    </span>
+                  </header>
+
+                  <div className="divide-y divide-border/30">
+                    {diasDaSemana.map(dia => (
+                      <div key={dia.data} className={dia.data === hoje ? 'bg-[#468152]/6' : ''}>
+                        <div className="flex items-center justify-between gap-2 px-4 pb-1.5 pt-3">
+                          <h3 className="text-xs font-semibold capitalize text-foreground">
+                            {formatarDiaLongo(dia.data)}
+                            {dia.data === hoje && (
+                              <span className="ml-2 rounded-full bg-[#468152] px-1.5 py-0.5 text-[10px] font-bold uppercase text-white">
+                                Hoje
                               </span>
                             )}
-                          </div>
+                          </h3>
+                          <span className="text-[11px] text-muted-foreground">{dia.horasDisponivel}h disponíveis</span>
                         </div>
+
+                        <ul className="space-y-1.5 px-3 pb-3">
+                          {dia.atividades.map(atividade => {
+                            const tipo = ESTILO_TIPO[atividade.tipo ?? 'estudo'] ?? ESTILO_TIPO.estudo
+                            const Icone = tipo.icone
+
+                            return (
+                              <li key={atividade.id}>
+                                <button
+                                  onClick={() => alternarConcluida(atividade.id, !atividade.concluido)}
+                                  className={`flex w-full items-stretch gap-3 rounded-xl border text-left transition-all ${
+                                    atividade.concluido
+                                      ? 'border-[#468152]/30 bg-[#468152]/8'
+                                      : 'border-border/50 bg-background/60 hover:border-foreground/20'
+                                  }`}
+                                >
+                                  <span className={`w-1 shrink-0 rounded-l-xl ${tipo.barra}`} aria-hidden />
+
+                                  <span className="flex flex-1 items-start gap-3 py-2.5 pr-3">
+                                    <span
+                                      className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-colors ${
+                                        atividade.concluido
+                                          ? 'border-[#468152] bg-[#468152] text-white'
+                                          : 'border-muted-foreground/40'
+                                      }`}
+                                      aria-hidden
+                                    >
+                                      {atividade.concluido && <CheckCircle2 className="h-3.5 w-3.5" />}
+                                    </span>
+
+                                    <span className="min-w-0 flex-1">
+                                      <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                                        <span
+                                          className={`inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${tipo.classe}`}
+                                        >
+                                          <Icone className="h-2.5 w-2.5" aria-hidden />
+                                          {tipo.rotulo}
+                                          {atividade.etapa ? ` ${atividade.etapa}ª` : ''}
+                                        </span>
+                                        <span
+                                          className={`text-sm font-medium ${
+                                            atividade.concluido ? 'text-muted-foreground line-through' : 'text-foreground'
+                                          }`}
+                                        >
+                                          {atividade.modulo}
+                                        </span>
+                                      </span>
+
+                                      <span className="mt-0.5 block truncate text-xs text-muted-foreground">
+                                        {atividade.topico} · {atividade.subtopico}
+                                      </span>
+
+                                      <span className="mt-1.5 flex flex-wrap items-center gap-1.5">
+                                        <span className="rounded-md bg-muted px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground">
+                                          {DIFICULDADE[atividade.dificuldadeUsuario] ?? 'Médio'}
+                                        </span>
+                                        {atividade.prioridade && atividade.prioridade !== 'normal' && (
+                                          <span
+                                            className={`rounded-md border px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${ESTILO_PRIORIDADE[atividade.prioridade].classe}`}
+                                          >
+                                            {ESTILO_PRIORIDADE[atividade.prioridade].rotulo}
+                                          </span>
+                                        )}
+                                      </span>
+                                    </span>
+
+                                    <span className="shrink-0 text-sm font-bold tabular-nums text-muted-foreground">
+                                      {atividade.horas}h
+                                    </span>
+                                  </span>
+                                </button>
+                              </li>
+                            )
+                          })}
+                        </ul>
                       </div>
                     ))}
                   </div>
-                )}
-              </CardContent>
-            </Card>
-          ))}
+                </section>
+              )
+            })
+          )}
         </div>
-      </main>
+      </div>
     </div>
+  )
+}
+
+export default function PaginaCronograma() {
+  return (
+    <AppShell headerTitle="Cronograma" headerSubtitle="Seu plano de estudos">
+      <ConteudoDetalhe />
+    </AppShell>
   )
 }

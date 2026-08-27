@@ -39,6 +39,7 @@ const KNOWN_ROUTES = new Set<string>([
   '/admin/banco-questoes/questoes',
   '/admin/banco-questoes/relatos',
   '/admin/coupons',
+  '/admin/cronogramas',
   '/admin/doacoes',
   '/admin/emails',
   '/admin/equipe',
