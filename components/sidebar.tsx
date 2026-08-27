@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter, usePathname } from 'next/navigation'
-import { useRef, useState, useCallback, useEffect, useMemo } from 'react'
+import { useRef, useState, useCallback, useEffect, useLayoutEffect, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, useMotionValue, useSpring, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
@@ -92,6 +92,9 @@ const SB_DUR = '400ms'
 const SB_EASE = 'cubic-bezier(0.4, 0, 0.2, 1)'
 
 const OPEN_GROUPS_STORAGE_KEY = 'gradex:sidebar-grupos-abertos'
+
+/** `useLayoutEffect` no cliente, `useEffect` no servidor — evita o aviso do SSR. */
+const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
 // ─── Fluid Glass Bubble ─────────────────────────────────────
 function FluidGlassBubble({
@@ -699,7 +702,16 @@ export function Sidebar({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname])
 
-  useEffect(() => {
+  // `useLayoutEffect`, não `useEffect`: a largura do <aside> já muda para 72px
+  // via CSS (`lg:w-[72px]`) assim que a tela atinge 1024px, sem esperar
+  // JavaScript nenhum. Se `canCollapse` só chegasse depois do primeiro paint,
+  // sobraria um quadro com o contêiner já estreito mas o conteúdo interno
+  // (rótulos, chip colorido, centralização) ainda desenhado para o menu
+  // aberto — o texto e o quadradinho do ícone vazando pela borda do rail. Como
+  // a sidebar remonta a cada navegação (ver `_hasMountedOnce` acima), isso
+  // piscava a cada clique no menu em PC e tablet deitado, não só na carga
+  // inicial.
+  useIsomorphicLayoutEffect(() => {
     if (typeof window === 'undefined') return
     const media = window.matchMedia('(min-width: 1024px)')
     const update = () => setCanCollapse(media.matches)
