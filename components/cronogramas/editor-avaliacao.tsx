@@ -12,6 +12,7 @@ import {
   Loader2,
   MapPin,
   Trash2,
+  Users,
   X,
 } from 'lucide-react'
 
@@ -30,6 +31,7 @@ import {
   LEMBRETE_PADRAO,
   SECOES,
   TIPOS_AVALIACAO,
+  descreverAlcance,
   getSecao,
   getTipoAvaliacao,
   type Avaliacao,
@@ -100,11 +102,13 @@ export function EditorAvaliacao({
 }: EditorAvaliacaoProps) {
   const [rascunho, setRascunho] = useState<RascunhoAvaliacao>(valor)
   const [periodos, setPeriodos] = useState<number[]>([valor.periodo])
+  const [todasAsTurmas, setTodasAsTurmas] = useState(valor.todosOsPeriodos === true)
   const [erro, setErro] = useState<string | null>(null)
 
   useEffect(() => {
     setRascunho(valor)
     setPeriodos([valor.periodo])
+    setTodasAsTurmas(valor.todosOsPeriodos === true)
   }, [valor])
 
   function mudar<C extends keyof RascunhoAvaliacao>(campo: C, novo: RascunhoAvaliacao[C]) {
@@ -131,10 +135,18 @@ export function EditorAvaliacao({
     }
     setErro(null)
 
+    // Vale para o curso inteiro: UMA avaliação, não uma por turma. É o que
+    // mantém o teste de progresso como uma linha só no painel, editável e
+    // apagável de uma vez.
+    if (todasAsTurmas) {
+      onSalvar([{ ...rascunho, periodo: 1, todosOsPeriodos: true }])
+      return
+    }
+
     onSalvar(
       existente
-        ? [rascunho]
-        : periodos.map(periodo => ({ ...rascunho, periodo })),
+        ? [{ ...rascunho, todosOsPeriodos: false }]
+        : periodos.map(periodo => ({ ...rascunho, periodo, todosOsPeriodos: false })),
     )
   }
 
@@ -187,7 +199,7 @@ export function EditorAvaliacao({
           </select>
         </label>
 
-        {existente && (
+        {existente && !todasAsTurmas && (
           <label className="block">
             <Rotulo>Período</Rotulo>
             <select
@@ -214,14 +226,38 @@ export function EditorAvaliacao({
           />
         </label>
 
-        {/* Criar é o momento em que a mesma prova vale para várias turmas: os
-            períodos ficam numa linha inteira, marcáveis de uma vez. */}
-        {!existente && (
-          <div className="sm:col-span-2">
-            <Rotulo>Períodos</Rotulo>
-            <SeletorPeriodos secao={rascunho.secao} valor={periodos} onChange={setPeriodos} />
+        {/* A mesma prova quase nunca é de uma turma só. Há dois casos, e eles
+            são diferentes: várias turmas com a MESMA prova em datas ou
+            horários próprios (cada uma vira uma avaliação), e a prova única do
+            curso inteiro — o teste de progresso —, que é um registro só. */}
+        <div className="sm:col-span-2">
+          <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+            <Rotulo>{todasAsTurmas ? 'Alcance' : 'Períodos'}</Rotulo>
+            <label className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+              <Users className="h-3.5 w-3.5" aria-hidden />
+              Prova única para o curso inteiro
+              <ToggleSwitch checked={todasAsTurmas} onChange={setTodasAsTurmas} />
+            </label>
           </div>
-        )}
+
+          {todasAsTurmas ? (
+            <p className="rounded-xl border border-[#468152]/30 bg-[#468152]/[0.07] px-3 py-2.5 text-xs text-muted-foreground">
+              Uma avaliação só, que aparece no calendário de{' '}
+              <span className="font-semibold text-foreground">
+                todos os {getSecao(rascunho.secao).periodos} períodos
+              </span>{' '}
+              de {getSecao(rascunho.secao).nome} — e lembra todas as turmas. É o caso do teste de
+              progresso: mudar a data depois é uma edição, não {getSecao(rascunho.secao).periodos}.
+            </p>
+          ) : existente ? (
+            <p className="text-xs text-muted-foreground">
+              Esta avaliação é do {rascunho.periodo}º período. Para valer no curso inteiro, ligue o
+              interruptor acima.
+            </p>
+          ) : (
+            <SeletorPeriodos secao={rascunho.secao} valor={periodos} onChange={setPeriodos} />
+          )}
+        </div>
 
         <label className="block">
           <Rotulo>Horário (opcional)</Rotulo>
@@ -388,9 +424,11 @@ export function EditorAvaliacao({
               <p className="mt-2 text-[11px] text-muted-foreground">
                 Só recebe quem ativou &ldquo;Quero receber lembretes das minhas avaliações&rdquo; e acompanha{' '}
                 {getSecao(rascunho.secao).nome} ·{' '}
-                {existente || periodos.length === 1
-                  ? `${existente ? rascunho.periodo : periodos[0]}º período`
-                  : `${periodos.map(numero => `${numero}º`).join(', ')} períodos`}
+                {todasAsTurmas
+                  ? 'todos os períodos'
+                  : existente || periodos.length === 1
+                    ? `${existente ? rascunho.periodo : periodos[0]}º período`
+                    : `${periodos.map(numero => `${numero}º`).join(', ')} períodos`}
                 .
               </p>
             </div>
@@ -405,9 +443,9 @@ export function EditorAvaliacao({
           {salvando ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : <Check className="mr-1.5 h-3.5 w-3.5" />}
           {existente
             ? 'Salvar'
-            : periodos.length > 1
-              ? `Criar ${periodos.length} avaliações`
-              : 'Criar avaliação'}
+            : todasAsTurmas || periodos.length === 1
+              ? 'Criar avaliação'
+              : `Criar ${periodos.length} avaliações`}
         </Button>
 
         <Button variant="ghost" onClick={onCancelar} className="h-10 rounded-xl">
@@ -493,7 +531,7 @@ export function LinhaAvaliacao({
 
           <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
             <span style={{ color: secao.cor }} className="font-semibold">
-              {secao.emoji} {secao.curto} · {avaliacao.periodo}º
+              {secao.emoji} {secao.curto} · {descreverAlcance(avaliacao)}
             </span>
             <span className="capitalize">{formatarDiaLongo(avaliacao.data)}</span>
             {avaliacao.hora && (

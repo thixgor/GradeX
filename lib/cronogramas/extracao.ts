@@ -73,6 +73,8 @@ export interface LinhaExtraida {
   horarioOutrosFusos?: string | null
   /** "SOI 1", "HAM 8", "IESC 3", "MCM I". */
   eixo?: string | null
+  /** "1ª Chamada Regular", "2ª Chamada PROUNI/FIES" — as reaplicações. */
+  chamada?: string | null
   /** "1º ao 8º período", ["1º Período", "2º Período"], "5". */
   periodos?: Array<string | number> | string | null
   local?: string | null
@@ -285,6 +287,12 @@ export function periodoDoEixo(eixo: unknown): number | null {
   return dentroDaFaixa(numero) ? numero : null
 }
 
+/** A célula de período diz, com todas as letras, que a prova é do curso todo. */
+export function dizTodosOsPeriodos(bruto: unknown): boolean {
+  const partes = Array.isArray(bruto) ? bruto : [bruto]
+  return partes.some(parte => /\btodos?\b|\btodas\b|curso inteiro/.test(chaveDeTexto(parte)))
+}
+
 /** Todos os períodos de um curso, de 1 até o total dele. */
 export function todosOsPeriodos(total: number): number[] {
   const teto = Math.min(PERIODO_MAXIMO, Math.max(1, Math.round(total) || 1))
@@ -441,7 +449,10 @@ function montarTitulo(linha: LinhaExtraida): string {
   const titulo = limpar(linha.titulo)
   if (titulo) return titulo.slice(0, 140)
 
-  const partes = [limpar(linha.categoria), limpar(linha.eixo)].filter(Boolean)
+  // O eixo distingue as provas de uma mesma N2; a chamada distingue as
+  // reaplicações de um mesmo TPI. Sem isso, três linhas do calendário viram
+  // três avaliações de nome idêntico e o aluno não sabe qual é a dele.
+  const partes = [limpar(linha.categoria), limpar(linha.eixo) || limpar(linha.chamada)].filter(Boolean)
   return (partes.join(' — ') || 'Avaliação').slice(0, 140)
 }
 
@@ -462,6 +473,9 @@ function montarRecado(linha: LinhaExtraida, horario: IntervaloDeHoras, titulo: s
 
   const eixo = limpar(linha.eixo)
   if (eixo && !chaveDeTexto(titulo).includes(chaveDeTexto(eixo))) detalhes.push(`Eixo: ${eixo}`)
+
+  const chamada = limpar(linha.chamada)
+  if (chamada && !chaveDeTexto(titulo).includes(chaveDeTexto(chamada))) detalhes.push(chamada)
 
   const quando = [limpar(linha.diaDaSemana), limpar(linha.turno)].filter(Boolean).join(', ')
   if (quando) detalhes.push(quando)
@@ -497,11 +511,13 @@ function montarRecado(linha: LinhaExtraida, horario: IntervaloDeHoras, titulo: s
 
 /** Identidade de uma avaliação para o painel: mesma turma, mesmo dia, mesmo título. */
 export function chaveDaAvaliacao(
-  avaliacao: Pick<Avaliacao, 'secao' | 'periodo' | 'data' | 'titulo'>,
+  avaliacao: Pick<Avaliacao, 'secao' | 'periodo' | 'data' | 'titulo' | 'todosOsPeriodos'>,
 ): string {
   return [
     avaliacao.secao,
-    avaliacao.periodo,
+    // A prova do curso inteiro não é a mesma coisa que a do 1º período, ainda
+    // que o `periodo` gravado seja 1 nos dois casos.
+    avaliacao.todosOsPeriodos ? 'todos' : avaliacao.periodo,
     avaliacao.data,
     chaveDeTexto(avaliacao.titulo).replace(/[^a-z0-9]+/g, ''),
   ].join('|')
@@ -550,21 +566,36 @@ export function expandirLinhas(linhas: LinhaExtraida[], opcoes: OpcoesExpansao):
 
     const totalDoCurso = getSecao(secao).periodos
 
-    let periodos = interpretarPeriodos(linha.periodos, totalDoCurso)
-    if (periodos.length === 0) {
+    /**
+     * Prova única do curso inteiro.
+     *
+     * O teste de progresso é a MESMA prova, no mesmo dia e horário, do 1º ao
+     * último período — e a tabela dele diz isso na cara ("TODOS OS PERÍODOS").
+     * Ele entra como UMA avaliação marcada para todas as turmas, não como oito
+     * cópias: oito linhas iguais no painel teriam que ser editadas e apagadas
+     * juntas, e uma correção de data que esquecesse uma turma passaria batido.
+     *
+     * O gatilho é estreito de propósito: só a categoria (TPI, teste de
+     * progresso) ou a célula que diz "todos". Uma tabela que LISTA os períodos
+     * continua virando uma avaliação por turma — ali cada uma costuma ter
+     * horário próprio, como a N3 de manhã e de tarde.
+     */
+    const cursoInteiro = ehDoCursoInteiro(linha) || dizTodosOsPeriodos(linha.periodos)
+
+    let periodos = cursoInteiro ? [1] : interpretarPeriodos(linha.periodos, totalDoCurso)
+    if (!cursoInteiro && periodos.length === 0) {
       const doEixo = periodoDoEixo(linha.eixo)
       if (doEixo) {
         periodos = [doEixo]
         avisosDaLinha.push(`Período deduzido do eixo ${limpar(linha.eixo)}.`)
       }
     }
-    if (periodos.length === 0 && ehDoCursoInteiro(linha)) {
-      periodos = todosOsPeriodos(totalDoCurso)
-      avisosDaLinha.push('Teste de progresso: marquei todos os períodos do curso.')
-    }
-    if (periodos.length === 0) {
+    if (!cursoInteiro && periodos.length === 0) {
       periodos = [1]
       avisosDaLinha.push('Não identifiquei o período — confira antes de aprovar.')
+    }
+    if (cursoInteiro) {
+      avisosDaLinha.push('Prova única para todos os períodos do curso.')
     }
 
     const recado = montarRecado(linha, horario, titulo)
@@ -576,6 +607,7 @@ export function expandirLinhas(linhas: LinhaExtraida[], opcoes: OpcoesExpansao):
       const avaliacao = {
         secao,
         periodo,
+        todosOsPeriodos: cursoInteiro,
         titulo,
         tipo: tipoDaLinha(linha),
         data: dia ?? '',
@@ -619,7 +651,7 @@ export function expandirLinhas(linhas: LinhaExtraida[], opcoes: OpcoesExpansao):
  */
 export function marcarDuplicadas<T extends PropostaAvaliacao>(
   propostas: T[],
-  existentes: Array<Pick<Avaliacao, 'secao' | 'periodo' | 'data' | 'titulo'>>,
+  existentes: Array<Pick<Avaliacao, 'secao' | 'periodo' | 'data' | 'titulo' | 'todosOsPeriodos'>>,
 ): Array<T & { duplicada: boolean }> {
   const agenda = new Set(existentes.map(chaveDaAvaliacao))
   return propostas.map(proposta => ({

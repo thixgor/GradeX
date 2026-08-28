@@ -30,7 +30,7 @@ import {
 import { ImportarAvaliacoes } from '@/components/cronogramas/importar-avaliacoes'
 import { ImportarEmenta, type EmentaImportada } from '@/components/cronogramas/importar-ementa'
 import { diasEntre, hojeBrasilia } from '@/lib/cronogramas/brasilia'
-import { SECOES, getSecao, type Avaliacao, type SecaoCurso } from '@/lib/cronogramas/tipos'
+import { SECOES, cobrePeriodo, getSecao, type Avaliacao, type SecaoCurso } from '@/lib/cronogramas/tipos'
 
 type Aba = 'avaliacoes' | 'ementas'
 type Visao = 'lista' | 'calendario'
@@ -137,7 +137,9 @@ function ConteudoAdminCronogramas() {
 
     return avaliacoes.filter(avaliacao => {
       if (secoesFiltro.size > 0 && !secoesFiltro.has(avaliacao.secao)) return false
-      if (periodoFiltro != null && avaliacao.periodo !== periodoFiltro) return false
+      // A prova do curso inteiro aparece em qualquer recorte de período: ela
+      // é daquela turma também.
+      if (periodoFiltro != null && !cobrePeriodo(avaliacao, periodoFiltro)) return false
 
       const dias = diasEntre(hoje, avaliacao.data)
       if (janela === 'proximas' && dias < 0) return false

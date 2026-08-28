@@ -52,6 +52,10 @@ export async function garantirIndices(db: Db): Promise<void> {
 
   await Promise.allSettled([
     db.collection(COLECAO_AVALIACOES).createIndex({ secao: 1, periodo: 1, data: 1 }),
+    // A prova do curso inteiro entra na consulta de TODO período, então ela
+    // precisa do próprio índice — senão cada calendário de aluno varreria a
+    // coleção atrás dela.
+    db.collection(COLECAO_AVALIACOES).createIndex({ secao: 1, todosOsPeriodos: 1, data: 1 }),
     db.collection(COLECAO_AVALIACOES).createIndex({ data: 1, publicada: 1 }),
     db.collection(COLECAO_PREFERENCIAS).createIndex({ userId: 1 }, { unique: true }),
     db.collection(COLECAO_PREFERENCIAS).createIndex({ secao: 1, periodo: 1, lembretesAtivos: 1 }),
@@ -72,6 +76,7 @@ export function serializarAvaliacao(doc: any): Avaliacao {
     _id: doc._id?.toString(),
     secao: doc.secao,
     periodo: doc.periodo,
+    todosOsPeriodos: doc.todosOsPeriodos === true,
     titulo: doc.titulo,
     tipo: doc.tipo,
     data: doc.data,
@@ -137,6 +142,7 @@ export function validarAvaliacao(bruto: any, parcial = false): ResultadoValidaca
       titulo,
       secao: (secao ?? 'medicina') as SecaoCurso,
       periodo,
+      todosOsPeriodos: entrada.todosOsPeriodos === true,
       tipo,
       data: entrada.data,
       hora: hora || undefined,
@@ -172,8 +178,14 @@ export async function listarAvaliacoes(filtro: FiltroAvaliacoes = {}): Promise<A
 
   const query: Record<string, any> = {}
   if (filtro.secao && isSecaoCurso(filtro.secao)) query.secao = filtro.secao
-  if (filtro.periodo) query.periodo = filtro.periodo
   if (filtro.somentePublicadas) query.publicada = { $ne: false }
+
+  // Filtrar por período tem que deixar passar a prova do curso inteiro: o
+  // aluno do 5º precisa ver o teste de progresso no calendário dele como
+  // qualquer outra prova.
+  if (filtro.periodo) {
+    query.$and = [{ $or: [{ periodo: filtro.periodo }, { todosOsPeriodos: true }] }]
+  }
 
   if (filtro.desde || filtro.ate) {
     query.data = {}
@@ -183,10 +195,18 @@ export async function listarAvaliacoes(filtro: FiltroAvaliacoes = {}): Promise<A
 
   if (filtro.busca) {
     const escapado = filtro.busca.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-    query.$or = [
-      { titulo: { $regex: escapado, $options: 'i' } },
-      { conteudo: { $regex: escapado, $options: 'i' } },
-      { local: { $regex: escapado, $options: 'i' } },
+    // Entra em `$and` junto com o filtro de período: dois `$or` soltos no
+    // mesmo objeto sobrescreveriam um ao outro, e a busca passaria a trazer
+    // avaliação de outra turma.
+    query.$and = [
+      ...(query.$and ?? []),
+      {
+        $or: [
+          { titulo: { $regex: escapado, $options: 'i' } },
+          { conteudo: { $regex: escapado, $options: 'i' } },
+          { local: { $regex: escapado, $options: 'i' } },
+        ],
+      },
     ]
   }
 

@@ -120,6 +120,7 @@ Colunas que costumam aparecer:
 - Denominação: "Aluno Regular" ou "Aluno Caso Especial" (a mesma prova com tempo estendido)
 - VÁRIAS colunas de horário, uma por fuso: "Horário (Brasília)", "Horário (Unidades Rondônia)", "Horário (CZS–AC)"
 - Período ("1º Período", "1º ao 8º Período", "Todos os períodos") OU Eixo ("SOI 1", "HAM 8", "MCM 3", "IESC 5", "CI 2")
+- Chamada, nas provas com reaplicação: "1ª Chamada Regular", "2ª Chamada Regular + 1ª Chamada PROUNI/FIES e entrada tardia"
 
 Regras:
 1. HORÁRIO: o campo "horario" recebe SEMPRE a coluna de Brasília, copiada como está ("10h – 11h20"). As outras colunas de fuso vão juntas em "horarioOutrosFusos" ("Rondônia 09h–10h20; CZS–AC 08h–09h20"). Se só existir uma coluna de horário, ela é a de Brasília.
@@ -130,7 +131,8 @@ Regras:
 6. Uma linha do JSON para cada linha real da tabela. Um bloco que se repete para manhã e tarde são duas linhas.
 7. Texto fora da tabela que valha para todas as linhas (duração, "N3 ESPECÍFICA – 1º AO 8º PERÍODO – MEDICINA") entra em "duracao"/"categoria"/"curso" das linhas correspondentes.
 8. CURSO INTEIRO: prova aplicada a todos os períodos no mesmo dia (TPI, Teste de Progresso, prova integrada geral) costuma não ter coluna de período. Copie em "periodos" o que estiver escrito ("Todos os períodos") e mantenha a categoria ("TPI", "Teste de Progresso") em "categoria". Não invente uma lista de períodos.
-9. Se a imagem não for um calendário de avaliações, devolva {"linhas": []}.
+9. CHAMADA: quando existir a coluna, copie-a em "chamada" — cada chamada é uma data diferente da MESMA prova, e cada linha do JSON é uma delas.
+10. Se a imagem não for um calendário de avaliações, devolva {"linhas": []}.
 
 Omita os campos que a tabela não traz — não devolva chave com string vazia. Cada campo a mais é tempo a mais de leitura.
 
@@ -156,6 +158,7 @@ const ESQUEMA = {
           horarioCasosEspeciais: { type: 'STRING' },
           horarioOutrosFusos: { type: 'STRING' },
           eixo: { type: 'STRING' },
+          chamada: { type: 'STRING' },
           periodos: { type: 'ARRAY', items: { type: 'STRING' } },
           local: { type: 'STRING' },
           duracao: { type: 'STRING' },

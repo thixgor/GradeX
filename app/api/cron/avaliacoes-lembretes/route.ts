@@ -96,9 +96,16 @@ export async function GET(request: NextRequest) {
     relatorio.avaliacoesNoHorario += 1
 
     // A audiência: quem acompanha essa seção e período E ligou o lembrete.
+    // Na prova do curso inteiro — o teste de progresso — o período sai do
+    // filtro: ela vale para todas as turmas da seção, e é justamente por isso
+    // que existe como um registro só.
     const preferencias = await db
       .collection(COLECAO_PREFERENCIAS)
-      .find({ secao: avaliacao.secao, periodo: avaliacao.periodo, lembretesAtivos: true })
+      .find({
+        secao: avaliacao.secao,
+        ...(avaliacao.todosOsPeriodos ? {} : { periodo: avaliacao.periodo }),
+        lembretesAtivos: true,
+      })
       .limit(MAX_ENVIOS_POR_EXECUCAO)
       .toArray()
 

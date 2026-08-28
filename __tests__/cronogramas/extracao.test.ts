@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 
 import {
   chaveDaAvaliacao,
+  dizTodosOsPeriodos,
   ehDoCursoInteiro,
   expandirLinhas,
   interpretarPeriodos,
@@ -15,7 +16,7 @@ import {
   todosOsPeriodos,
   type LinhaExtraida,
 } from '@/lib/cronogramas/extracao'
-import type { Avaliacao } from '@/lib/cronogramas/tipos'
+import { cobrePeriodo as cobre, descreverAlcance as descreve, type Avaliacao } from '@/lib/cronogramas/tipos'
 
 /**
  * Testes da metade determinística da importação por imagem.
@@ -80,15 +81,22 @@ const N2_POR_EIXO: LinhaExtraida[] = [
   },
 ]
 
-/** TPI: prova do curso inteiro no mesmo dia — a tabela não lista períodos. */
+/**
+ * TPI: a mesma prova para o curso inteiro, no mesmo dia e horário.
+ * Copiado do calendário real ("TESTE DE PROGRESSO INSTITUCIONAL – TODOS OS
+ * PERÍODOS – MEDICINA", 4 horas, 1ª chamada em 21/09).
+ */
 const TESTE_DE_PROGRESSO: LinhaExtraida[] = [
   {
     curso: 'Medicina',
-    categoria: 'TPI — Teste de Progresso Individual',
-    data: '20/09',
-    diaDaSemana: 'Sábado',
-    horario: '08h – 12h',
+    categoria: 'TPI',
+    data: '21/09',
+    diaDaSemana: 'Segunda-feira',
+    horario: '14h – 18h',
+    horarioOutrosFusos: 'Rondônia 13h–17h; CZS–AC 12h–16h',
     periodos: ['Todos os períodos'],
+    duracao: '4 horas',
+    chamada: '1ª Chamada Regular',
   },
 ]
 
@@ -306,32 +314,20 @@ describe('expansão em avaliações', () => {
   })
 })
 
-describe('prova do curso inteiro', () => {
-  it('"todos os períodos" vira uma avaliação por período do curso', () => {
+describe('prova única do curso inteiro', () => {
+  it('"todos os períodos" vira UMA avaliação, não uma por turma', () => {
     const propostas = expandir(TESTE_DE_PROGRESSO)
 
-    expect(propostas).toHaveLength(8)
-    expect(propostas.map(p => p.periodo)).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
-    expect(propostas.every(p => p.data === '2026-09-20' && p.hora === '08:00')).toBe(true)
-  })
-
-  it('respeita o tamanho do curso, não um número fixo', () => {
-    const propostas = expandirLinhas(TESTE_DE_PROGRESSO, {
-      origem: 'tpi.png',
-      secaoPadrao: 'biomedicina',
-      hoje: HOJE,
-      anoReferencia: 2026,
-    })
-
-    // A linha diz "Medicina", então a seção da imagem prevalece sobre a padrão.
-    expect(propostas.every(p => p.secao === 'medicina')).toBe(true)
-    expect(propostas).toHaveLength(8)
-
-    const semCurso = expandirLinhas(
-      [{ categoria: 'Teste de Progresso', data: '20/09', periodos: ['todos os períodos'] }],
-      { origem: 'tpi.png', secaoPadrao: 'biomedicina', hoje: HOJE, anoReferencia: 2026 },
-    )
-    expect(semCurso).toHaveLength(7)
+    // O TPI é a mesma prova para todo mundo: oito cópias teriam que ser
+    // editadas e apagadas juntas.
+    expect(propostas).toHaveLength(1)
+    expect(propostas[0].todosOsPeriodos).toBe(true)
+    expect(propostas[0].data).toBe('2026-09-21')
+    expect(propostas[0].hora).toBe('14:00')
+    expect(propostas[0].avisos.some(aviso => aviso.includes('todos os períodos'))).toBe(true)
+    // A chamada entra no título: as três linhas do TPI (1ª, 2ª, PROUNI) são a
+    // mesma prova em datas diferentes e precisam se distinguir na lista.
+    expect(propostas[0].titulo).toBe('TPI — 1ª Chamada Regular')
   })
 
   it('reconhece o TPI mesmo quando a tabela não tem coluna de período', () => {
@@ -339,9 +335,40 @@ describe('prova do curso inteiro', () => {
     expect(ehDoCursoInteiro({ titulo: 'Teste de Progresso 2026.2' })).toBe(true)
     expect(ehDoCursoInteiro({ categoria: 'N2 Específica' })).toBe(false)
 
+    expect(dizTodosOsPeriodos(['Todos os períodos'])).toBe(true)
+    expect(dizTodosOsPeriodos(['1º Período'])).toBe(false)
+
     const propostas = expandir([{ curso: 'Medicina', categoria: 'TPI', data: '20/09' }])
+    expect(propostas).toHaveLength(1)
+    expect(propostas[0].todosOsPeriodos).toBe(true)
+  })
+
+  it('tabela que LISTA períodos continua virando uma avaliação por turma', () => {
+    // A N3 tem horário próprio de manhã e de tarde: juntar tudo numa prova só
+    // perderia a diferença de horário entre as turmas.
+    const propostas = expandir(N3_ESPECIFICA)
+
     expect(propostas).toHaveLength(8)
-    expect(propostas[0].avisos.some(aviso => aviso.includes('Teste de progresso'))).toBe(true)
+    expect(propostas.every(p => p.todosOsPeriodos === false)).toBe(true)
+  })
+
+  it('a prova do curso inteiro alcança qualquer período', () => {
+    const [tpi] = expandir(TESTE_DE_PROGRESSO)
+
+    for (const periodo of todosOsPeriodos(8)) {
+      expect(cobre(tpi, periodo)).toBe(true)
+    }
+    expect(descreve(tpi)).toBe('todos os períodos')
+    expect(descreve({ periodo: 3, todosOsPeriodos: false })).toBe('3º período')
+  })
+
+  it('não se confunde com a prova do 1º período na hora de achar duplicata', () => {
+    const [tpi] = expandir(TESTE_DE_PROGRESSO)
+    const doPrimeiro = { ...tpi, todosOsPeriodos: false }
+
+    expect(chaveDaAvaliacao(tpi)).not.toBe(chaveDaAvaliacao(doPrimeiro))
+    expect(marcarDuplicadas([tpi], [doPrimeiro])[0].duplicada).toBe(false)
+    expect(marcarDuplicadas([tpi], [tpi])[0].duplicada).toBe(true)
   })
 
   it('todosOsPeriodos não passa do teto que a rota valida', () => {

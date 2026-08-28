@@ -249,7 +249,21 @@ export const LEMBRETE_PADRAO: ConfigLembrete = {
 export interface Avaliacao {
   _id?: string
   secao: SecaoCurso
+  /**
+   * O período da turma. Quando `todosOsPeriodos` é true ele deixa de valer
+   * como filtro e serve só de âncora para ordenação e telas antigas.
+   */
   periodo: number
+  /**
+   * A avaliação vale para o curso inteiro, como UMA prova.
+   *
+   * É o caso do teste de progresso: mesma prova, mesmo dia, mesmo horário,
+   * do 1º ao último período. Cadastrá-la como oito avaliações iguais era
+   * possível, mas errado — o painel ficava com oito linhas para editar e
+   * apagar juntas, e uma correção de data que esquecesse uma turma passaria
+   * despercebida. Uma prova, um registro.
+   */
+  todosOsPeriodos?: boolean
   titulo: string
   tipo: TipoAvaliacao
   /** Data no calendário de Brasília, "AAAA-MM-DD". */
@@ -267,6 +281,28 @@ export interface Avaliacao {
   criadaEm?: string
   atualizadaEm?: string
   criadaPor?: string
+}
+
+/**
+ * A avaliação alcança este período?
+ *
+ * Um único lugar responde isso — painel, calendário do aluno, consulta ao
+ * banco e cron dos lembretes — porque uma prova visível para a turma no
+ * calendário e invisível para o disparo do lembrete seria o pior defeito
+ * possível aqui.
+ */
+export function cobrePeriodo(
+  avaliacao: Pick<Avaliacao, 'periodo' | 'todosOsPeriodos'>,
+  periodo: number,
+): boolean {
+  return avaliacao.todosOsPeriodos === true || avaliacao.periodo === periodo
+}
+
+/** "3º período" ou "todos os períodos" — o alcance em uma expressão. */
+export function descreverAlcance(
+  avaliacao: Pick<Avaliacao, 'periodo' | 'todosOsPeriodos'>,
+): string {
+  return avaliacao.todosOsPeriodos ? 'todos os períodos' : `${avaliacao.periodo}º período`
 }
 
 /** Um disparo já feito, gravado para não repetir o mesmo lembrete no mesmo dia. */

@@ -115,10 +115,34 @@ ao curso inteiro no mesmo dia — antes eram oito cadastros iguais digitados em
 sequência, onde bastava errar a data de um para uma turma ficar com a agenda
 diferente das outras.
 
-Cada período continua sendo uma avaliação própria no banco, porque é assim que
-a agenda é consultada: o aluno do 3º abre o calendário dele, não o do curso.
+Cada período marcado vira uma avaliação própria no banco, porque é assim que a
+agenda é consultada: o aluno do 3º abre o calendário dele, não o do curso.
 **Editando** uma avaliação que já existe o período volta a ser um só —
 transformar uma avaliação salva em oito por engano não teria desfazer.
+
+### Prova única do curso inteiro (TPI)
+
+O teste de progresso é diferente: é a MESMA prova, no mesmo dia e horário, do
+1º ao último período. O interruptor **"Prova única para o curso inteiro"** grava
+`todosOsPeriodos: true` e cria **um registro só** — não uma cópia por turma.
+
+| | Vários períodos marcados | Prova única |
+| --- | --- | --- |
+| Registros no banco | um por período | **um** |
+| Quando usar | N3 de manhã (1º–4º) e de tarde (5º–8º): horários diferentes | TPI, prova integrada geral |
+| Mudar a data depois | uma edição por turma | **uma edição** |
+
+`cobrePeriodo()` em `lib/cronogramas/tipos.ts` é o único lugar que responde "essa
+prova alcança essa turma?" — painel, calendário do aluno, consulta ao banco
+(`$or: [{ periodo }, { todosOsPeriodos: true }]`, com índice próprio) e cron dos
+lembretes passam por ele. Uma prova visível no calendário e invisível para o
+disparo do lembrete seria o pior defeito possível aqui.
+
+Na importação por imagem, a linha vira prova única quando a categoria é TPI /
+teste de progresso ou quando a célula de período diz "todos". Tabela que LISTA
+os períodos continua virando uma avaliação por turma — ali cada uma costuma ter
+horário próprio. A coluna **Chamada** (1ª, 2ª, PROUNI/FIES) entra no título, que
+é o que distingue as reaplicações da mesma prova.
 
 ### Importar o calendário divulgado em imagem
 

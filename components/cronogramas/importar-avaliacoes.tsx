@@ -294,7 +294,12 @@ export function ImportarAvaliacoes({
                 item.titulo === base.titulo,
             ),
         )
-        .map(periodo => ({ ...base, periodo, id: `${base.id}+p${periodo}` }))
+        .map(periodo => ({
+          ...base,
+          periodo,
+          todosOsPeriodos: false,
+          id: `${base.id}+p${periodo}`,
+        }))
 
       if (novas.length === 0) return anterior
 
@@ -775,12 +780,22 @@ function LinhaProposta({
               ))}
             </select>
 
+            {/* "Todos" é a prova única do curso inteiro — um registro só, não
+                uma cópia por turma. Fica no mesmo seletor porque é a mesma
+                pergunta: para quem essa prova vale. */}
             <select
-              value={proposta.periodo}
-              onChange={evento => onMudar({ periodo: Number(evento.target.value) })}
+              value={proposta.todosOsPeriodos ? 'todos' : String(proposta.periodo)}
+              onChange={evento =>
+                onMudar(
+                  evento.target.value === 'todos'
+                    ? { todosOsPeriodos: true, periodo: 1 }
+                    : { todosOsPeriodos: false, periodo: Number(evento.target.value) },
+                )
+              }
               aria-label="Período"
               className="h-9 rounded-lg border border-border bg-background px-2 text-xs outline-none focus:border-[#468152]/50"
             >
+              <option value="todos">Todos os períodos</option>
               {periodosDoPainel(proposta.secao, proposta.periodo).map(numero => (
                 <option key={numero} value={numero}>
                   {numero}º período
@@ -884,14 +899,18 @@ function LinhaProposta({
                   Lida como <span className="font-semibold">{tipo.rotulo}</span> ·{' '}
                   {getSecao(proposta.secao).nome} · confiança {proposta.confianca}
                 </p>
-                <button
-                  onClick={onRepetirEmTodos}
-                  disabled={semData}
-                  className="inline-flex items-center gap-1 rounded-lg border border-border/60 px-2 py-1 text-[11px] font-medium text-muted-foreground transition-colors hover:text-foreground disabled:opacity-50"
-                >
-                  <Copy className="h-3 w-3" aria-hidden />
-                  Repetir nos {getSecao(proposta.secao).periodos} períodos
-                </button>
+                {/* Copiar a linha em N turmas é o oposto de "prova única": para
+                    a do curso inteiro, o certo é o registro só. */}
+                {!proposta.todosOsPeriodos && (
+                  <button
+                    onClick={onRepetirEmTodos}
+                    disabled={semData}
+                    className="inline-flex items-center gap-1 rounded-lg border border-border/60 px-2 py-1 text-[11px] font-medium text-muted-foreground transition-colors hover:text-foreground disabled:opacity-50"
+                  >
+                    <Copy className="h-3 w-3" aria-hidden />
+                    Repetir nos {getSecao(proposta.secao).periodos} períodos
+                  </button>
+                )}
               </div>
             </div>
           )}
@@ -981,6 +1000,7 @@ function paraAvaliacao(
   return {
     secao: proposta.secao,
     periodo: proposta.periodo,
+    todosOsPeriodos: proposta.todosOsPeriodos === true,
     titulo: proposta.titulo.trim(),
     tipo: proposta.tipo,
     data: proposta.data,
