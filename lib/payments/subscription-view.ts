@@ -23,7 +23,7 @@ export interface ResumoDaAssinatura {
   planName: string
   amount: number
   currency: string
-  billingIntervalMonths: 1 | 3 | 12
+  billingIntervalMonths: MesesDeRecorrencia
   status: string
   /** `true` = já cancelada; o acesso corre até `currentPeriodEndsAt`. */
   cancelAtPeriodEnd: boolean
@@ -65,7 +65,25 @@ export function montarResumoDaAssinatura(
 
 /** Rótulo do ciclo de cobrança, como a pessoa fala. */
 export function rotuloDeCicloDeCobranca(meses: number): string {
-  return meses === 1 ? 'mês' : meses === 3 ? '3 meses' : meses === 12 ? 'ano' : `${meses} meses`
+  return meses === 1 ? 'mês' : meses === 12 ? 'ano' : `${meses} meses`
+}
+
+/** Nome do período, como aparece em chip e cabeçalho ("Semestral"). */
+export function rotuloDePeriodoDeCobranca(meses: number): string {
+  return meses === 1
+    ? 'Mensal'
+    : meses === 3
+      ? 'Trimestral'
+      : meses === 6
+        ? 'Semestral'
+        : meses === 12
+          ? 'Anual'
+          : 'Vitalício'
+}
+
+/** Forma curta, para caber no botão de pagar ("R$ 197,00/sem."). */
+export function rotuloCurtoDeCiclo(meses: number): string {
+  return meses === 1 ? 'mês' : meses === 3 ? 'trim.' : meses === 6 ? 'sem.' : 'ano'
 }
 
 /**
@@ -135,20 +153,23 @@ export function calcularReceitaRecorrente(
 /**
  * Os únicos ciclos que viram cobrança recorrente.
  *
- * É a lista que o Mercado Pago aceita como `auto_recurring.frequency` no
- * preapproval do jeito que a plataforma o cria. Qualquer outro valor — 6
- * (semestral), 0 (vitalício) ou ausente — é vendido como pagamento único.
+ * Vira `auto_recurring.frequency` (com `frequency_type: 'months'`) no
+ * preapproval do Mercado Pago. São os ciclos que o catálogo oferece: mensal,
+ * trimestral, semestral e anual. Qualquer outro valor — 0 (vitalício), 2, 18 —
+ * é vendido como pagamento único.
  */
-export const MESES_DE_RECORRENCIA = [1, 3, 12] as const
+export const MESES_DE_RECORRENCIA = [1, 3, 6, 12] as const
+
+/** Os ciclos aceitos, como tipo. Evita repetir a união em seis arquivos. */
+export type MesesDeRecorrencia = (typeof MESES_DE_RECORRENCIA)[number]
 
 /**
  * Este plano cobra de novo sozinho?
  *
  * A REGRA MORAVA EM TRÊS LUGARES e divergia num deles. /buy/checkout e
- * /api/subscriptions conferiam {1, 3, 12}; o FAQ de /buy tratava como
- * recorrente tudo que não fosse vitalício — então um plano semestral
- * (durationMonths: 6) prometia "renovação automática pelo Mercado Pago" numa
- * tela e entregava pagamento único na seguinte.
+ * /api/subscriptions conferiam uma lista fixa; o FAQ de /buy tratava como
+ * recorrente tudo que não fosse vitalício. Hoje a lista é uma só, e o semestral
+ * — que ficava de fora e por isso era vendido avulso — entra nela.
  *
  * Atenção ao que NÃO decide isto: `periodo` é texto livre que o admin escreve
  * ("Anual", "Mensal") e serve só de rótulo. Um plano pode se chamar "Anual" e

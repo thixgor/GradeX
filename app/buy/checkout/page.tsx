@@ -52,7 +52,13 @@ import {
   type TerminalStatus,
 } from '@/components/payments/card-terminal'
 import { formatCpf, isValidCpf, onlyCpfDigits } from '@/lib/cpf'
-import { planoEhRecorrente } from '@/lib/payments/subscription-view'
+import {
+  planoEhRecorrente,
+  rotuloCurtoDeCiclo,
+  rotuloDeCicloDeCobranca,
+  rotuloDePeriodoDeCobranca,
+  type MesesDeRecorrencia,
+} from '@/lib/payments/subscription-view'
 import { cn } from '@/lib/utils'
 
 type PayMode = 'subscription' | 'one_time'
@@ -251,8 +257,8 @@ function BuyCheckoutContent() {
   }
 
   const months = plan.durationMonths || 0
-  const periodLabel = plan.periodo || (months === 1 ? 'Mensal' : months === 3 ? 'Trimestral' : months === 12 ? 'Anual' : 'Vitalício')
-  const cicloLabel = months === 1 ? 'mês' : months === 3 ? '3 meses' : '12 meses'
+  const periodLabel = plan.periodo || rotuloDePeriodoDeCobranca(months)
+  const cicloLabel = rotuloDeCicloDeCobranca(months)
   const beneficios: string[] = Array.isArray((plan as any).features) ? (plan as any).features : []
 
   const baseAmount = Number(plan.preco) || 0
@@ -569,7 +575,7 @@ function BuyCheckoutContent() {
             <CheckoutAccountNotice className="mb-4" />
 
             {payMode === 'subscription' && isRecurring ? (
-              <SubscriptionCheckout plan={plan} publicKey={publicKey} months={months as 1 | 3 | 12} />
+              <SubscriptionCheckout plan={plan} publicKey={publicKey} months={months as MesesDeRecorrencia} />
             ) : (
               <MercadoPagoCheckout
                 key={`buy-${payableAmount}-${appliedCoupon?.code || 'sem-cupom'}-${prouniDiscountAmount}`}
@@ -671,7 +677,7 @@ function OpcaoDePagamento({
  * "paguei duas vezes". Agora o pendente tem estado próprio, tom neutro e o
  * formulário sai da tela.
  */
-function SubscriptionCheckout({ plan, publicKey, months }: { plan: PlanConfig; publicKey: string; months: 1 | 3 | 12 }) {
+function SubscriptionCheckout({ plan, publicKey, months }: { plan: PlanConfig; publicKey: string; months: MesesDeRecorrencia }) {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [resultado, setResultado] = useState<'ativa' | 'pendente' | null>(null)
@@ -682,8 +688,8 @@ function SubscriptionCheckout({ plan, publicKey, months }: { plan: PlanConfig; p
   const [cpf, setCpf] = useState('')
   const [cpfTocado, setCpfTocado] = useState(false)
 
-  const cicloCurto = months === 1 ? 'mês' : months === 3 ? 'trim.' : 'ano'
-  const cicloLongo = months === 1 ? 'mês' : months === 3 ? '3 meses' : '12 meses'
+  const cicloCurto = rotuloCurtoDeCiclo(months)
+  const cicloLongo = rotuloDeCicloDeCobranca(months)
 
   const validacao = validateCard(card)
   const cpfDigits = onlyCpfDigits(cpf)

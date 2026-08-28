@@ -7,7 +7,9 @@ import {
   diasDeGarantiaRestantes,
   montarResumoDaAssinatura,
   planoEhRecorrente,
+  rotuloCurtoDeCiclo,
   rotuloDeCicloDeCobranca,
+  rotuloDePeriodoDeCobranca,
 } from '@/lib/payments/subscription-view'
 import type { SubscriptionRecord } from '@/lib/types'
 
@@ -86,7 +88,25 @@ describe('rótulo do ciclo de cobrança', () => {
   it('usa as palavras que a pessoa usa', () => {
     expect(rotuloDeCicloDeCobranca(1)).toBe('mês')
     expect(rotuloDeCicloDeCobranca(3)).toBe('3 meses')
+    expect(rotuloDeCicloDeCobranca(6)).toBe('6 meses')
     expect(rotuloDeCicloDeCobranca(12)).toBe('ano')
+  })
+
+  it('nomeia o período sem confundir semestral com anual', () => {
+    // Os ternários antigos caíam em "Anual"/"12 meses" para qualquer ciclo
+    // fora de 1 e 3 — um plano semestral anunciaria cobrança anual.
+    expect(rotuloDePeriodoDeCobranca(1)).toBe('Mensal')
+    expect(rotuloDePeriodoDeCobranca(3)).toBe('Trimestral')
+    expect(rotuloDePeriodoDeCobranca(6)).toBe('Semestral')
+    expect(rotuloDePeriodoDeCobranca(12)).toBe('Anual')
+    expect(rotuloDePeriodoDeCobranca(0)).toBe('Vitalício')
+  })
+
+  it('encurta o ciclo para caber no botão de pagar', () => {
+    expect(rotuloCurtoDeCiclo(1)).toBe('mês')
+    expect(rotuloCurtoDeCiclo(3)).toBe('trim.')
+    expect(rotuloCurtoDeCiclo(6)).toBe('sem.')
+    expect(rotuloCurtoDeCiclo(12)).toBe('ano')
   })
 })
 
@@ -178,19 +198,21 @@ describe('receita recorrente estimada (MRR)', () => {
  * Pago" numa tela e era vendido como pagamento único na seguinte.
  */
 describe('quais planos são recorrentes', () => {
-  it('aceita mensal, trimestral e anual', () => {
+  it('aceita mensal, trimestral, semestral e anual', () => {
     expect(planoEhRecorrente(1)).toBe(true)
     expect(planoEhRecorrente(3)).toBe(true)
+    expect(planoEhRecorrente(6)).toBe(true)
     expect(planoEhRecorrente(12)).toBe(true)
-    expect(MESES_DE_RECORRENCIA).toEqual([1, 3, 12])
-  })
-
-  it('NÃO aceita semestral — era a contradição entre /buy e /buy/checkout', () => {
-    expect(planoEhRecorrente(6)).toBe(false)
+    expect(MESES_DE_RECORRENCIA).toEqual([1, 3, 6, 12])
   })
 
   it('trata vitalício como avulso', () => {
     expect(planoEhRecorrente(0)).toBe(false)
+  })
+
+  it('recusa ciclo que o catálogo não oferece', () => {
+    expect(planoEhRecorrente(2)).toBe(false)
+    expect(planoEhRecorrente(18)).toBe(false)
   })
 
   it('trata plano sem duração definida como avulso', () => {

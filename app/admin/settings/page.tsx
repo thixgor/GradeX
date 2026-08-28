@@ -23,7 +23,12 @@ import {
   type SidebarSectionSettings,
 } from '@/lib/sidebar-sections'
 import { normalizeSidebarIcons, type SidebarSectionIcons } from '@/lib/sidebar-icons'
-import { MESES_DE_RECORRENCIA, planoEhRecorrente } from '@/lib/payments/subscription-view'
+import {
+  MESES_DE_RECORRENCIA,
+  planoEhRecorrente,
+  rotuloDeCicloDeCobranca,
+  rotuloDePeriodoDeCobranca,
+} from '@/lib/payments/subscription-view'
 import {
   normalizeSidebarGroups,
   normalizeSidebarSectionGroups,
@@ -1327,11 +1332,15 @@ export default function SettingsPage() {
                       </div>
                       <div className="md:col-span-2 p-3 rounded-lg bg-muted/40 text-xs text-muted-foreground">
                         <strong>Pagamentos via Mercado Pago.</strong> Preço, duração e cargo definem
-                        a fatura. Só <code>durationMonths</code> em {'{1, 3, 12}'} vira assinatura
-                        recorrente (Preapproval): o cartão é cobrado de novo sozinho e o cliente
-                        cancela no perfil. Qualquer outro valor — inclusive 6 e 0 — é cobrado uma
-                        vez (Order única), sem renovação. O campo <strong>Período</strong> é só o
-                        rótulo que aparece na vitrine e não muda nada na cobrança.
+                        a fatura. <code>durationMonths</code> em{' '}
+                        {'{'}
+                        {MESES_DE_RECORRENCIA.join(', ')}
+                        {'}'} (mensal, trimestral, semestral e anual) libera a escolha entre{' '}
+                        <strong>assinatura recorrente</strong> (Preapproval: cobra de novo sozinho,
+                        o cliente cancela no perfil) e <strong>pagamento único</strong> — quem
+                        compra decide no checkout. Qualquer outro valor, inclusive 0 (vitalício), só
+                        pode ser cobrado uma vez. O campo <strong>Período</strong> é só o rótulo da
+                        vitrine e não muda nada na cobrança.
                       </div>
                     </div>
 
@@ -1522,7 +1531,8 @@ function CobrancaDoPlano({ meses }: { meses?: number }) {
           Recorrente
         </span>
         <span className="text-muted-foreground">
-          cobra sozinho a cada {valor === 1 ? 'mês' : valor === 3 ? '3 meses' : 'ano'}; o cliente cancela no perfil.
+          {rotuloDePeriodoDeCobranca(valor).toLowerCase()}: cobra sozinho a cada{' '}
+          {rotuloDeCicloDeCobranca(valor)}, e o cliente cancela no perfil.
         </span>
       </p>
     )

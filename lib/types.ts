@@ -2184,7 +2184,8 @@ export interface SubscriptionRecord {
   role?: string                    // accountType atribuído quando ativa
   amount: number
   currency: 'BRL'
-  billingIntervalMonths: 1 | 3 | 12
+  /** Ciclo da cobrança. Ver MESES_DE_RECORRENCIA em lib/payments/subscription-view. */
+  billingIntervalMonths: 1 | 3 | 6 | 12
   provider: PaymentProviderId
   providerSubscriptionId: string   // preapproval id no MP
   status: SubscriptionStatus

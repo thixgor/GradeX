@@ -11,7 +11,11 @@ import { DEFAULT_PAYMENT_METHODS } from '@/lib/payment-methods'
 import { checkRefundCooldown } from '@/lib/plus-guard'
 import { restorePlusClaims } from '@/lib/plus-claims'
 import { normalizeAccountType } from '@/lib/account-tier'
-import { MESES_DE_RECORRENCIA, planoEhRecorrente } from '@/lib/payments/subscription-view'
+import {
+  MESES_DE_RECORRENCIA,
+  planoEhRecorrente,
+  type MesesDeRecorrencia,
+} from '@/lib/payments/subscription-view'
 import type { SubscriptionRecord, User } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -104,7 +108,7 @@ export async function POST(request: NextRequest) {
     amount,
     currency: 'BRL',
     reason: `${plano.nome} — ${plano.periodo || 'Assinatura'}`,
-    frequencyMonths: months as 1 | 3 | 12,
+    frequencyMonths: months as MesesDeRecorrencia,
     cardTokenId,
     backUrl: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/profile?subscription=success`,
     metadata: { userId: session.userId, planId },
@@ -120,7 +124,7 @@ export async function POST(request: NextRequest) {
     role: normalizeAccountType(plano.role),
     amount,
     currency: 'BRL',
-    billingIntervalMonths: months as 1 | 3 | 12,
+    billingIntervalMonths: months as MesesDeRecorrencia,
     provider: 'mercado_pago',
     providerSubscriptionId: sub.providerSubscriptionId,
     status: sub.status,

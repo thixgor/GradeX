@@ -48,6 +48,7 @@ import { Button } from '@/components/ui/button'
 import {
   diasDeGarantiaRestantes,
   rotuloDeCicloDeCobranca,
+  type MesesDeRecorrencia,
 } from '@/lib/payments/subscription-view'
 import { cn } from '@/lib/utils'
 
@@ -57,7 +58,7 @@ export interface RecurringSubscription {
   planName: string
   amount: number
   currency: string
-  billingIntervalMonths: 1 | 3 | 12
+  billingIntervalMonths: MesesDeRecorrencia
   status: string
   cancelAtPeriodEnd: boolean
   canceledAt: string | null

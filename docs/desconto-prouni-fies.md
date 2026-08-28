@@ -28,11 +28,22 @@ nem para mais, nem para menos.
 ## Alcance
 
 Material, flashcards (material do tipo `flashcard_deck`), pacote, Manual Clínico
-e plano de assinatura. Planos **recorrentes** (mensal/trimestral/anual) ficam de
-fora: eles são cobrados via preapproval do Mercado Pago, onde o valor combinado
-vale para todas as cobranças futuras — um benefício de uso único ali
-significaria desconto para sempre. O painel avisa o admin quando o plano
-escolhido é recorrente.
+e plano de assinatura.
+
+O desconto vale no **pagamento único** — inclusive quando o plano é de um ciclo
+recorrente (mensal, trimestral, semestral ou anual) e a pessoa escolhe pagar
+avulso no checkout. O que fica de fora é a **assinatura recorrente**: ela é
+cobrada via preapproval do Mercado Pago, onde o valor combinado vale para todas
+as cobranças futuras, e a concessão é de uso único (`available → reserved →
+used`, ver o ciclo de vida abaixo) — descontar ali transformaria um benefício
+de uma compra em desconto para sempre. Não existe, no preapproval, como
+descontar só a primeira cobrança.
+
+Por isso `/buy/checkout` **abre no pagamento único** quando o comprador tem uma
+concessão aprovada, em vez de deixar o benefício escondido atrás de uma escolha
+que ele não sabe que precisa fazer; e o resumo diz, quando ele troca para a
+assinatura, que ali o desconto não se aplica. O painel avisa o admin quando o
+plano escolhido é recorrente.
 
 ## Como o desconto se combina com lote e cupom
 

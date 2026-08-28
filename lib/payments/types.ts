@@ -71,7 +71,8 @@ export interface CreatePreapprovalInput {
   currency: 'BRL'
   reason: string
   /** mensal=1, trimestral=3, anual=12 */
-  frequencyMonths: 1 | 3 | 12
+  /** Vira `auto_recurring.frequency` com `frequency_type: 'months'`. */
+  frequencyMonths: 1 | 3 | 6 | 12
   cardTokenId?: string
   backUrl: string
   metadata?: Record<string, string>
