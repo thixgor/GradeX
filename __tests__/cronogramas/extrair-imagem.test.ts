@@ -119,7 +119,7 @@ describe('leitura das imagens', () => {
     await lerCalendarios([IMAGEM])
 
     const [url, opcoes] = chamada.mock.calls[0] as unknown as [string, RequestInit]
-    expect(url).toContain('gemini-2.5-flash')
+    expect(url).toContain('gemini-3.6-flash')
     expect((opcoes.headers as Record<string, string>)['X-goog-api-key']).toBe('chave-de-teste')
 
     const corpo = JSON.parse(String(opcoes.body))
@@ -134,7 +134,7 @@ describe('leitura das imagens', () => {
     expect(corpo.contents[0].parts[0].text).toContain('Brasília')
   })
 
-  it('desliga o raciocínio no 2.5 — e não manda o campo para quem não aceita', async () => {
+  it('desliga o raciocínio só no 2.5, que é quem conhece o campo', async () => {
     const chamada = vi
       .fn()
       .mockResolvedValueOnce(falhaDoGemini(400, 'unsupported'))
@@ -146,11 +146,52 @@ describe('leitura das imagens', () => {
     const primeira = JSON.parse(String((chamada.mock.calls[0] as any)[1].body))
     const segunda = JSON.parse(String((chamada.mock.calls[1] as any)[1].body))
 
-    // O "pensar" antes de responder é o que fazia a leitura da tabela estourar
-    // o tempo da função.
-    expect(primeira.generationConfig.thinkingConfig).toEqual({ thinkingBudget: 0 })
-    expect(String((chamada.mock.calls[1] as any)[0])).toContain('gemini-2.0-flash')
-    expect(segunda.generationConfig.thinkingConfig).toBeUndefined()
+    // O 3.6 não recebe `thinkingConfig`; o 2.5 recebe com orçamento zero,
+    // porque o "pensar" antes de responder é o que estourava o tempo.
+    expect(String((chamada.mock.calls[0] as any)[0])).toContain('gemini-3.6-flash')
+    expect(primeira.generationConfig.thinkingConfig).toBeUndefined()
+    expect(String((chamada.mock.calls[1] as any)[0])).toContain('gemini-2.5-flash')
+    expect(segunda.generationConfig.thinkingConfig).toEqual({ thinkingBudget: 0 })
+  })
+
+  it('insiste no mesmo modelo enquanto a sobrecarga for temporária', async () => {
+    const chamada = vi
+      .fn()
+      // A mensagem que o Gemini devolve quando está congestionado — e que na
+      // primeira vez derrubou a leitura logo na primeira tentativa.
+      .mockResolvedValueOnce(falhaDoGemini(429, 'This model is currently experiencing high demand.'))
+      .mockResolvedValueOnce(falhaDoGemini(500, 'high demand. Please try again later.'))
+      .mockResolvedValueOnce(respostaDoGemini(TRANSCRICAO))
+    vi.stubGlobal('fetch', chamada)
+
+    const [leitura] = await lerCalendarios([IMAGEM])
+
+    expect(leitura.linhas).toHaveLength(2)
+    expect(chamada).toHaveBeenCalledTimes(3)
+    for (const chamado of chamada.mock.calls) {
+      expect(String((chamado as any)[0])).toContain('gemini-3.6-flash')
+    }
+    // As esperas são reais (1,5s + 4s), então este caso precisa de mais que o
+    // limite padrão do vitest.
+  }, 20_000)
+
+  it('a escada de modelos é configurável por ambiente', async () => {
+    vi.resetModules()
+    process.env.GEMINI_MODELOS = 'modelo-a, modelo-b'
+
+    const chamada = vi.fn(async () => falhaDoGemini(400, 'ruim'))
+    vi.stubGlobal('fetch', chamada)
+
+    // Reimporta com a variável no lugar: a lista é lida na carga do módulo.
+    const { lerCalendarios: lerComOutraEscada } = await import('@/lib/cronogramas/extrair-imagem')
+    await lerComOutraEscada([IMAGEM])
+
+    const modelos = chamada.mock.calls.map(chamado => String((chamado as any)[0]))
+    expect(modelos[0]).toContain('modelo-a')
+    expect(modelos.some(url => url.includes('modelo-b'))).toBe(true)
+
+    delete process.env.GEMINI_MODELOS
+    vi.resetModules()
   })
 
   it('sem tempo para outra tentativa, devolve o erro real — não só "tempo esgotado"', async () => {
@@ -185,11 +226,11 @@ describe('leitura das imagens', () => {
 
     const [leitura] = await lerCalendarios([IMAGEM])
 
-    // Segunda tentativa no MESMO modelo: cair para o 2.0 por fila cheia
+    // Segunda tentativa no MESMO modelo: cair para um pior por causa de fila
     // trocaria qualidade de transcrição por nada.
     expect(leitura.linhas).toHaveLength(2)
     expect(chamada).toHaveBeenCalledTimes(2)
-    expect(String((chamada.mock.calls[1] as any)[0])).toContain('gemini-2.5-flash')
+    expect(String((chamada.mock.calls[1] as any)[0])).toContain('gemini-3.6-flash')
   })
 
   it('a falha traz o motivo de todos os modelos, não o do último', async () => {
@@ -201,18 +242,20 @@ describe('leitura das imagens', () => {
 
     const [leitura] = await lerCalendarios([IMAGEM])
 
-    expect(leitura.erro).toContain('gemini-2.5-flash: imagem ilegível')
-    expect(leitura.erro).toContain('gemini-2.0-flash: model not found')
+    expect(leitura.erro).toContain('gemini-3.6-flash: imagem ilegível')
+    expect(leitura.erro).toContain('gemini-2.5-flash: model not found')
   })
 
-  it('não tenta mais o 1.5-flash, que a API v1beta não serve mais', async () => {
+  it('não tenta mais os modelos aposentados', async () => {
     const chamada = vi.fn(async () => falhaDoGemini(400, 'ruim'))
     vi.stubGlobal('fetch', chamada)
 
     const [leitura] = await lerCalendarios([IMAGEM])
 
+    // 1.5 sumiu do v1beta; 2.0 respondeu "no longer available". Manter
+    // qualquer um dos dois na escada é gastar orçamento com falha certa.
     const modelos = chamada.mock.calls.map(chamado => String((chamado as any)[0]))
-    expect(modelos.some(url => url.includes('1.5'))).toBe(false)
+    expect(modelos.some(url => /1\.5|2\.0/.test(url))).toBe(false)
     expect(leitura.erro).not.toContain('1.5')
   })
 
@@ -266,7 +309,7 @@ describe('leitura das imagens', () => {
 
     expect(leitura.linhas).toHaveLength(2)
     expect(chamada).toHaveBeenCalledTimes(2)
-    expect(String((chamada.mock.calls[1] as any)[0])).toContain('gemini-2.0-flash')
+    expect(String((chamada.mock.calls[1] as any)[0])).toContain('gemini-2.5-flash')
   })
 
   it('um arquivo ilegível não derruba o resto do lote', async () => {

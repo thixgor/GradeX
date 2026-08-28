@@ -184,6 +184,22 @@ menos explica a falha. Fila cheia (429/503) ganha uma segunda tentativa no
 mesmo modelo, depois de uma espera curta: cinco imagens seguidas na mesma
 chave batem nisso com facilidade.
 
+**A escada de modelos envelhece sozinha.** O `1.5-flash` sumiu do v1beta e,
+poucos dias depois, o `2.0-flash` respondeu "no longer available". Por isso a
+lista é configurável por ambiente:
+
+```
+GEMINI_MODELOS=gemini-3.6-flash,gemini-2.5-flash,gemini-flash-latest
+```
+
+Sem a variável vale esse mesmo padrão — do modelo atual para o anterior,
+terminando no apelido `flash-latest`, que o Google mantém apontado para a
+geração vigente. Quando o próximo for aposentado, dá para trocar sem publicar
+código. Sobrecarga temporária ("This model is currently experiencing high
+demand") não troca de modelo: espera 1,5s, depois 4s, e repete no mesmo — a
+fila costuma andar em segundos, e cair para um modelo pior custaria qualidade
+de transcrição.
+
 Precisa de chave do Gemini configurada (Configurações → API Gemini,
 `settings.geminiApiKey`, ou `GEMINI_API_KEY` no ambiente) — a mesma escada de
 chaves do gerador de questões.

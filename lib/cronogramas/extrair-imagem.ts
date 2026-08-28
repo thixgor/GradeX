@@ -20,16 +20,38 @@ import { getAllAIKeys } from '@/lib/ai-keys'
 import type { LinhaExtraida } from './extracao'
 
 /**
- * O `gemini-2.5-flash` é o modelo que o resto da plataforma já usa e que a tela
- * de configurações testa; o `2.0-flash` é a queda suave para chave que ainda
- * não o alcança.
+ * A escada de modelos.
  *
- * O `1.5-flash` saiu da lista: a API responde "not found for API version
- * v1beta" para ele. Era um degrau morto que só gastava tempo do orçamento e,
- * pior, o erro DELE era o que aparecia na tela — escondendo o motivo real da
- * falha dos dois modelos que importam.
+ * Ela envelhece sozinha: o `1.5-flash` sumiu do v1beta, e logo depois o
+ * `2.0-flash` respondeu "no longer available, use models/gemini-3.6-flash".
+ * Duas aposentadorias em poucos dias, cada uma custando uma rodada de deploy.
+ *
+ * Por isso a lista é configurável por ambiente (`GEMINI_MODELOS`, separados
+ * por vírgula): quando o Google aposentar o próximo, dá para trocar sem
+ * publicar código. O padrão abaixo vai do modelo atual para o anterior e
+ * termina no apelido `flash-latest`, que o Google mantém sempre apontado para
+ * a geração vigente — é a rede que impede a lista inteira de morrer junto.
  */
-const MODELOS = ['gemini-2.5-flash', 'gemini-2.0-flash']
+const MODELOS = (process.env.GEMINI_MODELOS || 'gemini-3.6-flash,gemini-2.5-flash,gemini-flash-latest')
+  .split(',')
+  .map(modelo => modelo.trim())
+  .filter(Boolean)
+
+/** Esperas entre tentativas na mesma dupla modelo/chave. */
+const ESPERAS_MS = [1_500, 4_000]
+
+/**
+ * Fila cheia do lado deles: vale insistir, não trocar de modelo.
+ *
+ * "This model is currently experiencing high demand" chega como 429, 503 ou
+ * até 500, dependendo do dia — então o texto conta tanto quanto o código.
+ * Trocar de modelo aqui seria abrir mão da melhor transcrição por causa de uma
+ * fila que costuma andar em segundos.
+ */
+function ehSobrecarga(status: number | undefined, mensagem: string): boolean {
+  if (status === 429 || status === 503 || status === 500) return true
+  return /high demand|overloaded|unavailable|try again later|temporar/i.test(mensagem)
+}
 
 /**
  * Quanto uma tentativa pode demorar.
@@ -303,9 +325,10 @@ async function lerArquivo(
 
   for (const modelo of MODELOS) {
     for (const chave of chaves) {
-      // Duas passadas na mesma dupla modelo/chave: a segunda existe para fila
-      // cheia (429/503) e para a chave que não aceita desligar o raciocínio.
-      for (let tentativa = 1; tentativa <= 2; tentativa++) {
+      // Três passadas na mesma dupla modelo/chave: as extras existem para
+      // sobrecarga temporária do modelo e para a chave que não aceita desligar
+      // o raciocínio.
+      for (let tentativa = 1; tentativa <= ESPERAS_MS.length + 1; tentativa++) {
         // Só começa a tentativa que CABE no que sobrou. Perguntar apenas se o
         // prazo já passou deixava começar uma tentativa de 45s faltando 10s de
         // orçamento — e a função morria no meio dela, devolvendo 504 sem
@@ -327,16 +350,17 @@ async function lerArquivo(
           erros.push(`${modelo}: ${mensagem}`)
           console.error(`[cronogramas] ${modelo} falhou em "${arquivo.nome}":`, mensagem)
 
-          // Fila cheia do lado deles — cinco imagens seguidas na mesma chave
-          // batem nisso — e uma espera curta costuma resolver.
-          if ((status === 429 || status === 503) && tentativa === 1) {
-            await esperar(1500)
+          // Sobrecarga é transitória: esperar e repetir no MESMO modelo rende
+          // mais do que cair para um pior. As esperas crescem para não bater
+          // de novo na mesma fila.
+          if (ehSobrecarga(status, mensagem) && tentativa <= ESPERAS_MS.length) {
+            await esperar(ESPERAS_MS[tentativa - 1])
             continue
           }
 
           // Chave que não conhece `thinkingConfig`: vale repetir com o campo
           // fora antes de trocar de modelo.
-          if (comRaciocinioDesligado && /thinking/i.test(mensagem) && tentativa === 1) {
+          if (comRaciocinioDesligado && /thinking/i.test(mensagem) && tentativa <= ESPERAS_MS.length) {
             comRaciocinioDesligado = false
             continue
           }
