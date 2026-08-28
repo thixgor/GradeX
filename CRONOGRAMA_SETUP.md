@@ -9,7 +9,9 @@ configurado para os lembretes saírem.
 | --- | --- |
 | Leitor do markdown da ementa | `lib/cronogramas/analisar-ementa.ts` |
 | Ementa no banco | `lib/cronogramas/ementa.ts` |
-| Importação (painel) | `components/cronogramas/importar-ementa.tsx` |
+| Importação da ementa (painel) | `components/cronogramas/importar-ementa.tsx` |
+| Leitura do calendário em imagem | `lib/cronogramas/extracao.ts` (puro) + `lib/cronogramas/extrair-imagem.ts` (Gemini) |
+| Revisão da importação (painel) | `components/cronogramas/importar-avaliacoes.tsx` |
 | Vocabulário compartilhado | `lib/cronogramas/tipos.ts` |
 | Calendário de Brasília | `lib/cronogramas/brasilia.ts` |
 | Geração do plano | `lib/cronogramas/gerador.ts` |
@@ -103,6 +105,49 @@ lembrar (dias antes), a frequência (N dias ou N semanas), o horário do envio e
 o interruptor de liga/desliga. Tudo em **America/Sao_Paulo**. A tela mostra a
 prévia dos próximos envios usando a mesma função que o cron usa.
 
+### Importar o calendário divulgado em imagem
+
+O calendário oficial não chega em planilha: chega como aquela tabela em PNG no
+grupo da turma. Em `/admin/cronogramas` → **Importar de imagem** o admin solta
+até 6 arquivos (PNG, JPG, WEBP ou PDF), a leitura preenche as avaliações e ele
+**só aprova** — nada é gravado antes disso, e a criação passa pela mesma rota
+`POST /api/admin/cronogramas/avaliacoes` do formulário manual.
+
+O trabalho é dividido em duas metades, e a fronteira é a parte importante:
+
+- **`extrair-imagem.ts` (Gemini)** só TRANSCREVE a tabela para linhas cruas.
+  Uma chamada por arquivo, em paralelo, com queda de modelo e de chave; um
+  arquivo ilegível não derruba os outros.
+- **`extracao.ts` (puro, testado)** decide o que vira avaliação. É aqui que
+  moram as três armadilhas do documento real:
+
+  1. a tabela traz três colunas de fuso — vale a de **Brasília**, e as outras
+     viram recado no lembrete;
+  2. uma linha cobre vários períodos (`1º ao 8º Período` → 8 avaliações), e
+     quando não há coluna de período ele está no **eixo**: `SOI 1` é 1º
+     período, `HAM 8` é 8º;
+  3. cada prova aparece duas vezes, "Aluno Regular" e "Aluno Caso Especial" —
+     é a **mesma** prova com tempo estendido, então vira uma avaliação só e o
+     horário estendido entra no recado.
+
+A data vem em `24/11`, sem ano: o ano sai do campo **Ano letivo** da tela ou,
+sem ele, do calendário (uma data mais de 180 dias no passado é do ano que vem)
+— e nesse caso a proposta avisa que assumiu.
+
+Na revisão, cada linha é editável e mostra o que merece dúvida: ano assumido,
+período deduzido do eixo, horário ausente e **já cadastrada** (mesma seção,
+período, data e título). A duplicata entra desmarcada, porque reimportar a
+tabela corrigida é o caminho normal — e a marcação é refeita a cada mudança da
+agenda, inclusive depois de aprovar um lote.
+
+O recado do lembrete e a visibilidade valem para o lote inteiro; o campo
+**conteúdo cobrado** fica vazio de propósito: a tabela de datas não diz o que
+cai na prova.
+
+Precisa de chave do Gemini configurada (Configurações → API Gemini,
+`settings.geminiApiKey`, ou `GEMINI_API_KEY` no ambiente) — a mesma escada de
+chaves do gerador de questões.
+
 ### Regras de envio
 
 O lembrete só sai quando **todas** valem:
@@ -143,7 +188,8 @@ npx vitest run __tests__/cronogramas
 ```
 
 Cobrem o calendário de Brasília, a agenda e o texto dos lembretes, o gerador
-(capacidade dos dias, ordem das revisões, prazo das avaliações) e o parser da
-ementa — este último contra os arquivos reais de `public/`, que é onde moram os
+(capacidade dos dias, ordem das revisões, prazo das avaliações), a expansão do
+calendário lido de imagem (fuso de Brasília, faixa de períodos, período pelo
+eixo, caso especial, duplicata) e o parser da ementa — este último contra os arquivos reais de `public/`, que é onde moram os
 casos que quebram de verdade: indentação inconsistente, `└─` fora de lugar,
 negrito no meio do rótulo.

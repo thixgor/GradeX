@@ -13,6 +13,7 @@ import {
   List,
   Loader2,
   Plus,
+  ScanLine,
   Search,
   X,
 } from 'lucide-react'
@@ -26,6 +27,7 @@ import {
   avaliacaoVazia,
   type RascunhoAvaliacao,
 } from '@/components/cronogramas/editor-avaliacao'
+import { ImportarAvaliacoes } from '@/components/cronogramas/importar-avaliacoes'
 import { ImportarEmenta, type EmentaImportada } from '@/components/cronogramas/importar-ementa'
 import { diasEntre, hojeBrasilia } from '@/lib/cronogramas/brasilia'
 import { SECOES, getSecao, type Avaliacao, type SecaoCurso } from '@/lib/cronogramas/tipos'
@@ -82,6 +84,7 @@ function ConteudoAdminCronogramas() {
 
   const [editando, setEditando] = useState<string | null>(null)
   const [rascunhoNovo, setRascunhoNovo] = useState<RascunhoAvaliacao | null>(null)
+  const [importando, setImportando] = useState(false)
   const [salvando, setSalvando] = useState<string | null>(null)
   const [aviso, setAviso] = useState<{ tom: 'ok' | 'erro'; texto: string } | null>(null)
 
@@ -200,6 +203,52 @@ function ConteudoAdminCronogramas() {
     }
   }
 
+  /**
+   * Criação em lote, usada pela importação da imagem.
+   *
+   * Passa pela MESMA rota do formulário manual — o que a leitura da imagem
+   * produz não tem atalho de validação. A rota aceita até 60 por chamada, e um
+   * calendário de N1, N2 e N3 de um curso inteiro passa disso, então o lote é
+   * fatiado aqui em vez de o admin ter que importar em duas rodadas.
+   */
+  async function criarEmLote(novas: Array<Omit<Avaliacao, '_id'>>) {
+    const LOTE = 60
+    const criadas: Avaliacao[] = []
+
+    for (let inicio = 0; inicio < novas.length; inicio += LOTE) {
+      const resposta = await fetch('/api/admin/cronogramas/avaliacoes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ avaliacoes: novas.slice(inicio, inicio + LOTE) }),
+      })
+      const dados = await resposta.json().catch(() => ({}))
+
+      if (!resposta.ok) {
+        // O que já entrou continua valendo: a mensagem diz o que faltou, em vez
+        // de sugerir que nada foi criado.
+        if (criadas.length > 0) {
+          setAvaliacoes(anterior =>
+            [...anterior, ...criadas].sort((a, b) => a.data.localeCompare(b.data)),
+          )
+        }
+        setAviso({
+          tom: 'erro',
+          texto: dados?.error || 'Não foi possível criar todas as avaliações importadas.',
+        })
+        return null
+      }
+
+      criadas.push(...(dados.avaliacoes ?? []))
+    }
+
+    setAvaliacoes(anterior => [...anterior, ...criadas].sort((a, b) => a.data.localeCompare(b.data)))
+    setAviso({
+      tom: 'ok',
+      texto: `${criadas.length} avaliaç${criadas.length === 1 ? 'ão criada' : 'ões criadas'} a partir da imagem.`,
+    })
+    return criadas.length
+  }
+
   async function alterar(id: string, mudancas: Partial<Avaliacao>) {
     setSalvando(id)
     try {
@@ -306,17 +355,34 @@ function ConteudoAdminCronogramas() {
           </div>
 
           {aba === 'avaliacoes' && (
-            <Button
-              onClick={() => {
-                const secao = secoesFiltro.size === 1 ? [...secoesFiltro][0] : 'medicina'
-                setRascunhoNovo(avaliacaoVazia(secao, periodoFiltro ?? 1, hoje))
-                setVisao('lista')
-              }}
-              className="h-11 rounded-xl bg-gradient-to-r from-[#468152] to-[#5a9a63] px-5 font-semibold text-white shadow-lg shadow-[#468152]/20"
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              Nova avaliação
-            </Button>
+            <div className="flex flex-wrap items-center gap-2">
+              {/* O calendário oficial chega em imagem, não em formulário: o
+                  caminho de importar fica ao lado do de digitar, não escondido
+                  numa terceira aba. */}
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setImportando(aberto => !aberto)
+                  setVisao('lista')
+                }}
+                className="h-11 rounded-xl px-4 font-semibold"
+              >
+                <ScanLine className="mr-2 h-4 w-4" />
+                Importar de imagem
+              </Button>
+
+              <Button
+                onClick={() => {
+                  const secao = secoesFiltro.size === 1 ? [...secoesFiltro][0] : 'medicina'
+                  setRascunhoNovo(avaliacaoVazia(secao, periodoFiltro ?? 1, hoje))
+                  setVisao('lista')
+                }}
+                className="h-11 rounded-xl bg-gradient-to-r from-[#468152] to-[#5a9a63] px-5 font-semibold text-white shadow-lg shadow-[#468152]/20"
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Nova avaliação
+              </Button>
+            </div>
           )}
         </header>
 
@@ -491,6 +557,16 @@ function ConteudoAdminCronogramas() {
                 </div>
               )}
             </div>
+
+            {importando && (
+              <ImportarAvaliacoes
+                hoje={hoje}
+                existentes={avaliacoes}
+                secaoPadrao={secoesFiltro.size === 1 ? [...secoesFiltro][0] : 'medicina'}
+                onCriar={criarEmLote}
+                onFechar={() => setImportando(false)}
+              />
+            )}
 
             {rascunhoNovo && (
               <div className="mb-4">
