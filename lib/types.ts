@@ -2182,7 +2182,12 @@ export interface SubscriptionRecord {
   userId: string
   planId: string                   // 'monthly' | 'quarterly' | 'annual' | etc.
   role?: string                    // accountType atribuído quando ativa
+  /** BRL — valor efetivamente COBRADO em cada ciclo (base + taxa operacional). */
   amount: number
+  /** Preço de tabela do plano, antes da taxa repassada. */
+  baseAmount?: number
+  /** Taxa operacional do Mercado Pago somada ao `amount`. */
+  feeAmount?: number
   currency: 'BRL'
   /** Ciclo da cobrança. Ver MESES_DE_RECORRENCIA em lib/payments/subscription-view. */
   billingIntervalMonths: 1 | 3 | 6 | 12

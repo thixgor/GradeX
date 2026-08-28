@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import {
   computeCheckoutCharge,
+  computeSubscriptionCharge,
   feePercentFor,
   resolveFeeMethod,
   getFeePolicy,
@@ -249,5 +250,59 @@ describe('getFeePolicy (env)', () => {
     process.env.PAYMENT_FEE_TABLE = '{isso não é json'
     const p = getFeePolicy()
     expect(p.table.pixPercent).toBeCloseTo(0.99, 2)
+  })
+})
+
+/**
+ * Taxa da assinatura recorrente.
+ *
+ * O repasse valia só para o pagamento avulso: a assinatura cobrava
+ * `plano.preco` limpo e a taxa da recorrência saía do nosso bolso em TODA
+ * renovação — o custo que mais dói, porque se repete. As duas opções do mesmo
+ * checkout tinham política de preço diferente sem que nada na tela dissesse.
+ */
+describe('computeSubscriptionCharge', () => {
+  it('cobra a taxa de crédito à vista, nunca a de parcelamento', () => {
+    // O preapproval é uma cobrança de 1x por ciclo, não um parcelamento: o
+    // custo adicional de parcelas (até 14,80% em 12x) não se aplica.
+    const assinatura = computeSubscriptionCharge(100, DEFAULT_FEE_POLICY)
+    const creditoAVista = computeCheckoutCharge({
+      baseAmount: 100,
+      paymentMethodId: 'credit_card',
+      installments: 1,
+      hasCardToken: true,
+      policy: DEFAULT_FEE_POLICY,
+    })
+
+    expect(assinatura.totalAmount).toBe(creditoAVista.totalAmount)
+    expect(assinatura.installments).toBe(1)
+    expect(assinatura.feeAmount).toBeGreaterThan(0)
+  })
+
+  it('faz o gross-up, para o líquido bater com o preço de tabela', () => {
+    // total = base / (1 - 3,03%) — somar o percentual direto deixaria resíduo.
+    const { totalAmount, baseAmount } = computeSubscriptionCharge(100, DEFAULT_FEE_POLICY)
+    const liquido = totalAmount * (1 - MERCADO_PAGO_FEE_TABLE.creditPercent / 100)
+
+    expect(baseAmount).toBe(100)
+    expect(liquido).toBeGreaterThanOrEqual(100)
+    expect(liquido).toBeLessThan(100.05)
+  })
+
+  it('devolve o preço limpo quando o repasse do crédito está desligado', () => {
+    // PAYMENT_FEE_PASS_CREDIT=false vale para a assinatura junto: é a mesma
+    // taxa, do mesmo meio.
+    const semRepasse: FeePolicy = {
+      ...DEFAULT_FEE_POLICY,
+      pass: { ...DEFAULT_FEE_POLICY.pass, credit: false },
+    }
+    const cobranca = computeSubscriptionCharge(397, semRepasse)
+
+    expect(cobranca.feeAmount).toBe(0)
+    expect(cobranca.totalAmount).toBe(397)
+  })
+
+  it('não inventa cobrança a partir de base zerada', () => {
+    expect(computeSubscriptionCharge(0, DEFAULT_FEE_POLICY).totalAmount).toBe(0)
   })
 })

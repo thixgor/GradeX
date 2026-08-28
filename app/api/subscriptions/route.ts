@@ -8,6 +8,7 @@ import { getPaymentProvider } from '@/lib/payments'
 import { audit } from '@/lib/payments/audit'
 import { getRequestAnalyticsMeta, recordSubscriptionCheckoutEvent } from '@/lib/analytics'
 import { DEFAULT_PAYMENT_METHODS } from '@/lib/payment-methods'
+import { computeSubscriptionCharge, getFeePolicy } from '@/lib/payments/fees'
 import { checkRefundCooldown } from '@/lib/plus-guard'
 import { restorePlusClaims } from '@/lib/plus-claims'
 import { normalizeAccountType } from '@/lib/account-tier'
@@ -84,10 +85,24 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  const amount = Number(plano.preco)
-  if (!Number.isFinite(amount) || amount <= 0) {
+  const baseAmount = Number(plano.preco)
+  if (!Number.isFinite(baseAmount) || baseAmount <= 0) {
     return NextResponse.json({ error: 'Plano com preço inválido' }, { status: 400 })
   }
+
+  /*
+   * Taxa operacional, igual ao pagamento avulso.
+   *
+   * A assinatura cobrava `plano.preco` limpo enquanto o pagamento único somava
+   * a taxa do Mercado Pago — então o mesmo checkout tinha duas políticas de
+   * preço, e a taxa da recorrência saía do nosso bolso em TODA renovação. O
+   * preapproval é sempre crédito à vista, então é a taxa de crédito 1x.
+   *
+   * Este é o valor autoritativo: a tela mostra o mesmo número porque roda a
+   * mesma função, mas quem manda no que o Mercado Pago cobra é esta linha.
+   */
+  const charge = computeSubscriptionCharge(baseAmount, getFeePolicy())
+  const amount = charge.totalAmount
 
   // Bloqueia múltiplas assinaturas ativas
   const existing = await db.collection<SubscriptionRecord>('subscriptions').findOne({
@@ -122,7 +137,11 @@ export async function POST(request: NextRequest) {
     userId: session.userId,
     planId,
     role: normalizeAccountType(plano.role),
+    // `amount` é o COBRADO (base + taxa), como em PaymentOrder. Guardamos as
+    // duas parcelas para o painel poder separar receita de repasse.
     amount,
+    baseAmount: charge.baseAmount,
+    feeAmount: charge.feeAmount,
     currency: 'BRL',
     billingIntervalMonths: months as MesesDeRecorrencia,
     provider: 'mercado_pago',

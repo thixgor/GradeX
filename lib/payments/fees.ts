@@ -414,3 +414,31 @@ export function chargeMetadata(charge: CheckoutCharge): Record<string, number | 
     feeLabel: charge.label,
   }
 }
+
+/**
+ * Total de UMA cobrança da assinatura recorrente.
+ *
+ * O preapproval do Mercado Pago é sempre cartão de crédito e sempre à vista —
+ * cada ciclo é uma cobrança de 1x, nunca um parcelamento —, então a taxa é a
+ * de crédito à vista, sem o custo adicional de parcelas. O gross-up é o mesmo
+ * do pagamento único: `total = base / (1 - percentual)`.
+ *
+ * POR QUE ISTO PRECISA EXISTIR: o repasse já valia para o pagamento avulso, e
+ * a assinatura cobrava `plano.preco` limpo. A taxa da recorrência saía do
+ * nosso bolso em TODA renovação — o custo que mais dói, porque se repete —, e
+ * as duas opções do mesmo checkout tinham política de preço diferente sem que
+ * nada na tela dissesse isso.
+ *
+ * Respeita `PAYMENT_FEE_PASS_CREDIT=false` como qualquer outro método: quem
+ * desligar o repasse do crédito desliga o da assinatura junto, que é o
+ * comportamento coerente — é a mesma taxa, do mesmo meio.
+ */
+export function computeSubscriptionCharge(baseAmount: number, policy?: FeePolicy): CheckoutCharge {
+  return computeCheckoutCharge({
+    baseAmount,
+    paymentMethodId: 'credit_card',
+    installments: 1,
+    hasCardToken: true,
+    policy,
+  })
+}
