@@ -7,6 +7,8 @@ import { checkRateLimit } from '@/lib/rate-limit'
 import { getPaymentProvider, deriveIdempotencyKey } from '@/lib/payments'
 import { applyPaymentResult } from '@/lib/payments/effects'
 import { audit } from '@/lib/payments/audit'
+import { chargeMetadata, computeCheckoutCharge, getFeePolicy } from '@/lib/payments/fees'
+import { resolveCheckoutCpf } from '@/lib/payments/checkout-identity'
 import { computeFreight, estimateDeliveryDate, generateOrderNumber, defaultShopSettings, physicalFullPrice } from '@/lib/shop'
 import type { ProviderOrder } from '@/lib/payments/types'
 import type { PaymentOrder, PhysicalProduct, ShopOrder, ShopOrderItem, ShopSettings } from '@/lib/types'
@@ -166,6 +168,36 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Pedido pago exige uma forma de pagamento válida.' }, { status: 400 })
   }
 
+  // CPF obrigatório (nota fiscal), exceto no pedido 100% gratuito, que não
+  // gera cobrança nem nota. Vinculado ao perfil quando a conta não tem um.
+  let payerCpf = ''
+  if (!isFreeOrder) {
+    const cpfResult = await resolveCheckoutCpf(db, {
+      cpf: data.payerDocumentNumber,
+      documentType: data.payerDocumentType,
+      userId: session.userId,
+      paymentMethodId: data.paymentMethodId,
+      hasCardToken: !!data.cardToken,
+    })
+    if (!cpfResult.ok) {
+      return NextResponse.json({ error: cpfResult.error }, { status: cpfResult.status })
+    }
+    payerCpf = cpfResult.cpf
+  }
+
+  // Taxa operacional / juros do parcelamento, somados ao que será cobrado.
+  // `total` (mercadoria + frete) segue sendo o valor do PEDIDO — é o número
+  // com que a logística e o financeiro trabalham; `chargedTotal` é o que sai
+  // do cartão do comprador.
+  const charge = computeCheckoutCharge({
+    baseAmount: total,
+    paymentMethodId: data.paymentMethodId,
+    installments: data.installments,
+    hasCardToken: !!data.cardToken,
+    policy: getFeePolicy(),
+  })
+  const chargedTotal = charge.totalAmount
+
   const now = new Date()
 
   // ── Cria o pedido físico (draft) ──
@@ -180,6 +212,8 @@ export async function POST(request: NextRequest) {
     freight,
     discount: 0,
     total,
+    paymentFee: charge.feeAmount,
+    chargedTotal,
     ...(deliveryMeta as any),
     provider: 'mercado_pago',
     paymentStatus: 'pending',
@@ -199,11 +233,13 @@ export async function POST(request: NextRequest) {
     provider: 'mercado_pago',
     type: 'physical',
     refId: shopOrderId,
-    amount: total,
+    amount: chargedTotal,
+    baseAmount: charge.baseAmount,
+    feeAmount: charge.feeAmount,
     currency: 'BRL',
     status: 'pending',
     idempotencyKey: '',
-    metadata: { shopOrderId, orderNumber, itemCount: orderItems.length },
+    metadata: { shopOrderId, orderNumber, itemCount: orderItems.length, ...chargeMetadata(charge) },
     createdAt: now,
     updatedAt: now,
   }
@@ -276,7 +312,9 @@ export async function POST(request: NextRequest) {
     const provider = getPaymentProvider()
     const result = await provider.createPayment({
       externalReference: orderId,
-      amount: total,
+      amount: chargedTotal,
+      // A comissão do sócio incide sobre o pedido, não sobre a taxa do MP.
+      commissionableAmount: total,
       currency: 'BRL',
       description: `Pedido ${orderNumber} — DomineAqui`,
       payerEmail: session.email,
@@ -286,8 +324,8 @@ export async function POST(request: NextRequest) {
       cardToken: data.cardToken,
       installments: data.installments,
       issuer: data.issuer,
-      payerDocumentType: data.payerDocumentType,
-      payerDocumentNumber: data.payerDocumentNumber,
+      payerDocumentType: payerCpf ? 'CPF' : undefined,
+      payerDocumentNumber: payerCpf || undefined,
       metadata: { orderId, type: 'physical', shopOrderId },
     })
 
@@ -304,7 +342,7 @@ export async function POST(request: NextRequest) {
       targetUserId: session.userId,
       resourceType: 'physical',
       resourceId: shopOrderId,
-      metadata: { orderNumber, amount: total, freight, paymentMethod: data.paymentMethodId, providerPaymentId: result.providerOrderId },
+      metadata: { orderNumber, amount: chargedTotal, freight, paymentMethod: data.paymentMethodId, providerPaymentId: result.providerOrderId, ...chargeMetadata(charge) },
       ip,
     })
 
@@ -318,7 +356,10 @@ export async function POST(request: NextRequest) {
       pix: result.pix || null,
       boleto: result.boleto || null,
       statusDetail: result.statusDetail,
-      amount: total,
+      amount: chargedTotal,
+      baseAmount: total,
+      feeAmount: charge.feeAmount,
+      feeLabel: charge.label,
       freight,
       successRedirect: '/profile?tab=pedidos',
     })

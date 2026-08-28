@@ -4,26 +4,28 @@ import { cn } from '@/lib/utils'
 import { formatarBRL, linhaDeApoio, type PrecoApresentado } from '@/lib/buy/pricing'
 
 /**
- * O bloco de preço de /buy, em três tamanhos.
+ * O bloco de preço de /buy.
  *
  * A ordem de leitura é sempre a mesma e é ela que faz o trabalho: primeiro o
- * menor número honesto (o mês), depois o dia, depois — sem escapatória — o
- * total que vai ser cobrado de fato e o preço "de", quando existe. Inverter
- * essa ordem é o que deixava "R$ 327,00" batendo na cara de quem abria a
- * página semestral.
+ * menor número honesto (o mês), depois — sem escapatória — o total que vai ser
+ * cobrado de fato, e só então o preço "de", quando existe. Inverter essa ordem
+ * é o que deixava "R$ 327,00" batendo na cara de quem abria a página semestral.
+ *
+ * A leitura diária deixou de ser uma linha própria: virou o fim da linha de
+ * apoio. Eram quatro linhas de texto embaixo do número, e num bloco de preço a
+ * quarta linha já não é argumento, é ruído.
  *
  * `escala`:
- *   'card'   — dentro do seletor de planos, onde vários preços convivem;
- *   'painel' — o preço principal da oferta aberta;
- *   'ficha'  — a vitrine do topo da página ("a partir de").
+ *   'painel'   — o preço principal da oferta;
+ *   'compacto' — o mesmo bloco onde o espaço é curto (aviso de plano ativo,
+ *                telas estreitas em que o painel precisa caber inteiro).
  */
 
-export type EscalaDePreco = 'card' | 'painel' | 'ficha'
+export type EscalaDePreco = 'painel' | 'compacto'
 
 const TAMANHO_DO_NUMERO: Record<EscalaDePreco, string> = {
-  card: 'text-[1.75rem] sm:text-[2rem]',
-  painel: 'text-[2.75rem] sm:text-[3.5rem]',
-  ficha: 'text-[2.5rem] sm:text-[3rem]',
+  painel: 'text-[2.5rem] sm:text-[3.25rem]',
+  compacto: 'text-[1.75rem] sm:text-[2rem]',
 }
 
 export function PrecoEmDestaque({
@@ -35,7 +37,11 @@ export function PrecoEmDestaque({
   escala?: EscalaDePreco
   className?: string
 }) {
-  const compacto = escala === 'card'
+  const compacto = escala === 'compacto'
+  const apoio =
+    preco.diario !== null
+      ? `${linhaDeApoio(preco)} Dá R$ ${formatarBRL(preco.diario)} por dia.`
+      : linhaDeApoio(preco)
 
   return (
     <div className={cn('min-w-0', className)}>
@@ -56,37 +62,26 @@ export function PrecoEmDestaque({
         </span>
       </p>
 
-      {preco.diario !== null && (
-        <p
-          className={cn(
-            'mt-1 font-clinical tabular-nums text-primary',
-            compacto ? 'text-[11px]' : 'text-xs sm:text-[13px]'
-          )}
-        >
-          equivale a R$ {formatarBRL(preco.diario)} por dia
-        </p>
-      )}
-
       <p
         className={cn(
           'mt-2 leading-snug text-muted-foreground',
-          compacto ? 'text-[11px]' : 'text-xs sm:text-sm'
+          compacto ? 'text-[11px]' : 'text-[13px] sm:text-sm'
         )}
       >
-        {linhaDeApoio(preco)}
+        {apoio}
       </p>
 
       {preco.ancora !== null && preco.economia !== null && (
         <p
           className={cn(
             'mt-1.5 leading-snug text-muted-foreground',
-            compacto ? 'text-[11px]' : 'text-xs sm:text-sm'
+            compacto ? 'text-[11px]' : 'text-[13px] sm:text-sm'
           )}
         >
           De <s className="tabular-nums">R$ {formatarBRL(preco.ancora)}</s>
           {' · '}
           <strong className="font-semibold tabular-nums text-secondary">
-            você deixa de pagar R$ {formatarBRL(preco.economia)}
+            economia de R$ {formatarBRL(preco.economia)}
           </strong>
         </p>
       )}

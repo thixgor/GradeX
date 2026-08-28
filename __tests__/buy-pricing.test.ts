@@ -5,6 +5,7 @@ import {
   formatarBRL,
   linhaDeApoio,
   normalizarMeses,
+  rotuloCurtoDePreco,
   rotuloDeCiclo,
   rotuloDePeriodo,
 } from '@/lib/buy/pricing'
@@ -98,6 +99,19 @@ describe('linhaDeApoio', () => {
     )
     expect(linhaDeApoio(apresentarPreco({ preco: 997, durationMonths: 0 }))).toBe(
       'R$ 997,00 uma vez. Sem renovação.'
+    )
+  })
+})
+
+describe('rotuloCurtoDePreco', () => {
+  it('período fechado sai como mensalidade', () => {
+    expect(rotuloCurtoDePreco(apresentarPreco({ preco: 397, durationMonths: 12 }))).toBe('R$ 33,08/mês')
+    expect(rotuloCurtoDePreco(apresentarPreco({ preco: 327, durationMonths: 6 }))).toBe('R$ 54,50/mês')
+  })
+
+  it('vitalício não vira mensalidade em lugar nenhum', () => {
+    expect(rotuloCurtoDePreco(apresentarPreco({ preco: 997, durationMonths: 0 }))).toBe(
+      'R$ 997,00 à vista'
     )
   })
 })

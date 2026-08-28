@@ -1977,6 +1977,14 @@ export interface ShopOrder {
   discount: number
   total: number
   couponCode?: string
+  /**
+   * Taxa operacional do Mercado Pago repassada ao comprador (ver
+   * lib/payments/fees.ts). Fica FORA de `total` de propósito: `total` é o que
+   * o pedido vale em mercadoria + frete, que é o número que a logística e o
+   * financeiro usam. `chargedTotal` é o que foi debitado do cartão.
+   */
+  paymentFee?: number
+  chargedTotal?: number
 
   // Entrega
   deliveryType: 'pickup' | 'shipping'
@@ -2124,7 +2132,11 @@ export interface PaymentOrder {
   type: PaymentOrderType
   refId?: string                   // material id, plan id, donation id
   refSlug?: string                 // ex.: linkedDeckSlug
-  amount: number                   // BRL
+  amount: number                   // BRL — valor efetivamente COBRADO (base + taxa)
+  /** Preço de tabela, antes da taxa operacional repassada. */
+  baseAmount?: number
+  /** Taxa operacional / juros de parcelamento somados ao `amount`. */
+  feeAmount?: number
   currency: 'BRL'
   status: PaymentStatus
   paymentMethod?: PaymentMethodKind

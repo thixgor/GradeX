@@ -130,7 +130,7 @@ export default function SettingsPage() {
   const [mpTestResult, setMpTestResult] = useState<{ ok: boolean; message: string } | null>(null)
   const [mpDisconnecting, setMpDisconnecting] = useState(false)
   const [mpOauthBanner, setMpOauthBanner] = useState<{ ok: boolean; message: string } | null>(null)
-  const [paymentMethods, setPaymentMethods] = useState({ pix: true, credit_card: true, boleto: true, subscriptions: true })
+  const [paymentMethods, setPaymentMethods] = useState({ pix: true, credit_card: true, boleto: true, subscriptions: true, requireCpfForPix: true })
   const [savingPaymentMethods, setSavingPaymentMethods] = useState(false)
   const [planos, setPlanos] = useState<PlanConfig[]>([])
   const [savingPlanos, setSavingPlanos] = useState(false)
@@ -876,6 +876,35 @@ export default function SettingsPage() {
                     </div>
                   ))}
                 </div>
+                {/* CPF no Pix — o único meio onde exigir documento é escolha
+                    nossa. No cartão o CPF entra na tokenização e no boleto vai
+                    no registro: sem ele o Mercado Pago recusa o pagamento. */}
+                <div className="mt-4 flex items-start justify-between gap-4 p-3 border rounded-lg hover:bg-muted/50 transition-colors">
+                  <div className="min-w-0">
+                    <span className="text-sm font-medium">Exigir CPF no Pix</span>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {paymentMethods.requireCpfForPix
+                        ? 'O comprador precisa informar o CPF para pagar por Pix. É o dado da nota fiscal.'
+                        : 'O Pix segue sem CPF — um passo a menos no caminho mais rápido de conversão, mas a nota sai sem o CPF do comprador. Quem informar mesmo assim tem o CPF vinculado ao perfil.'}
+                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      Cartão e boleto sempre exigem CPF — é requisito do Mercado Pago, não uma escolha do painel.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={paymentMethods.requireCpfForPix}
+                    aria-label="Exigir CPF no Pix"
+                    onClick={() => setPaymentMethods(prev => ({ ...prev, requireCpfForPix: !prev.requireCpfForPix }))}
+                    className={`relative mt-0.5 inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+                      paymentMethods.requireCpfForPix ? 'bg-primary' : 'bg-input'
+                    }`}
+                  >
+                    <span className={`pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform ${paymentMethods.requireCpfForPix ? 'translate-x-5' : 'translate-x-0'}`} />
+                  </button>
+                </div>
+
                 <Button
                   size="sm"
                   className="mt-3"
