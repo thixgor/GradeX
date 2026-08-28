@@ -28,6 +28,7 @@ import {
   Ticket,
   Timer,
   AlertTriangle,
+  CheckCircle2,
   User as UserIcon,
   XCircle,
 } from 'lucide-react'
@@ -40,6 +41,7 @@ import { PerformanceTab } from '@/components/profile/performance-tab'
 import { PurchaseHistory } from '@/components/profile/purchase-history'
 import { AtendimentoTab } from '@/components/profile/atendimento-tab'
 import { SettingsTab } from '@/components/profile/settings-tab'
+import type { RecurringSubscription } from '@/components/profile/subscription-card'
 import type { UserSubmission } from '@/components/profile/submissions-list'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
@@ -112,6 +114,18 @@ export default function ProfilePage() {
     totalPersonalExamsCreated: 0,
   })
   const [hasRecurringSubscription, setHasRecurringSubscription] = useState(false)
+  /** Cobrança recorrente ativa — valor, ciclo, próxima cobrança, cancelamento. */
+  const [recurring, setRecurring] = useState<RecurringSubscription | null>(null)
+  /*
+   * Compra recém-aprovada. O checkout redireciona para cá com
+   * `?purchase=success` (pagamento único) ou `?subscription=success`
+   * (assinatura) e, até agora, esta página lia apenas `?tab` — os dois
+   * parâmetros caíam no vazio e quem acabava de pagar chegava numa Visão geral
+   * comum, sem uma palavra de confirmação. Pior: o webhook às vezes ainda não
+   * processou, então o selo do cargo ainda dizia "Gratuito" logo depois do
+   * pagamento.
+   */
+  const [purchaseSuccess, setPurchaseSuccess] = useState<'plan' | 'subscription' | null>(null)
 
   const [toastOpen, setToastOpen] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
@@ -130,6 +144,38 @@ export default function ProfilePage() {
     loadUserData()
     loadStatistics()
     loadSubscriptionStatus()
+  }, [])
+
+  /*
+   * Confirmação de compra.
+   *
+   * A liberação do cargo depende do webhook do Mercado Pago, que pode chegar
+   * depois do redirect. Por isso a tela não se contenta com a primeira leitura:
+   * ela recarrega usuário e assinatura alguns segundos depois, para o selo
+   * "Gratuito" não ficar contradizendo o pagamento que a pessoa acabou de
+   * fazer. O parâmetro sai da URL para o aviso não voltar em cada refresh.
+   */
+  useEffect(() => {
+    const tipo = searchParams?.get('subscription') === 'success'
+      ? 'subscription'
+      : searchParams?.get('purchase') === 'success'
+        ? 'plan'
+        : null
+    if (!tipo) return
+
+    setPurchaseSuccess(tipo)
+    const recarregar = setTimeout(() => {
+      loadUserData()
+      loadSubscriptionStatus()
+    }, 2500)
+
+    const url = new URL(window.location.href)
+    url.searchParams.delete('purchase')
+    url.searchParams.delete('subscription')
+    window.history.replaceState(null, '', url.pathname + url.search)
+
+    return () => clearTimeout(recarregar)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const showToast = useCallback((message: string, type: 'success' | 'error' = 'success') => {
@@ -204,10 +250,11 @@ export default function ProfilePage() {
 
   async function loadSubscriptionStatus() {
     try {
-      const res = await fetch('/api/user/subscription-status')
+      const res = await fetch('/api/user/subscription-status', { cache: 'no-store' })
       if (res.ok) {
         const data = await res.json()
         setHasRecurringSubscription(!!data.hasRecurringSubscription)
+        setRecurring(data.recurring || null)
       }
     } catch {}
   }
@@ -247,6 +294,10 @@ export default function ProfilePage() {
       showToast(data.message)
       setCancelDialogOpen(false)
       loadUserData()
+      // Sem isto o cartão continuaria mostrando "Ativa · renova sozinha": o
+      // status no banco segue 'authorized' de propósito, e quem marca o
+      // cancelamento é `cancelAtPeriodEnd`, que só chega numa nova leitura.
+      loadSubscriptionStatus()
     } catch (error: any) {
       showError(error.message)
     } finally {
@@ -343,6 +394,13 @@ export default function ProfilePage() {
             </div>
           </section>
 
+          {purchaseSuccess && (
+            <AvisoDeCompraAprovada
+              tipo={purchaseSuccess}
+              onFechar={() => setPurchaseSuccess(null)}
+            />
+          )}
+
           {/* ====== Navegação entre seções ====== */}
           <nav
             aria-label="Seções do perfil"
@@ -377,6 +435,9 @@ export default function ProfilePage() {
               submissions={submissions}
               submissionsLoading={submissionsLoading}
               onGoToPerformance={() => changeTab('desempenho')}
+              recurring={userRole === 'admin' ? null : recurring}
+              onCancelSubscription={() => setCancelDialogOpen(true)}
+              cancellingSubscription={cancelling}
             />
           )}
 
@@ -409,6 +470,8 @@ export default function ProfilePage() {
               userEmail={userEmail}
               userRole={userRole}
               hasRecurringSubscription={hasRecurringSubscription}
+              cancelamentoAgendado={!!recurring?.cancelAtPeriodEnd}
+              onVerAssinatura={() => changeTab('visao-geral')}
               onNameChange={setUserName}
               onToast={showToast}
               onReloadUser={loadUserData}
@@ -538,39 +601,97 @@ export default function ProfilePage() {
               <div className="space-y-3 py-3">
                 <p className="rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:bg-amber-950/50 dark:text-amber-200">
                   Ao cancelar, sua assinatura no Mercado Pago será encerrada imediatamente, mas você mantém acesso Plus+
-                  até o fim do período já pago. Após isso, sua conta voltará ao plano Gratuito automaticamente.
+                  {recurring?.currentPeriodEndsAt
+                    ? ` até ${new Date(recurring.currentPeriodEndsAt).toLocaleDateString('pt-BR')}`
+                    : ' até o fim do período já pago'}
+                  . Após isso, sua conta voltará ao plano Gratuito automaticamente.
                 </p>
-                <div className="flex items-center gap-3 rounded-xl bg-muted/50 p-3">
-                  <Phone className="h-4 w-4 shrink-0 text-blue-600" />
-                  <div>
-                    <p className="text-xs text-muted-foreground">Fale comigo antes</p>
-                    <p className="text-sm font-semibold">(24) 99223-0908</p>
-                  </div>
-                </div>
               </div>
+              {/*
+                A ordem importa. Antes, "Fale comigo antes" com telefone e o
+                botão "Abrir Ticket" vinham ANTES de qualquer ação — duas telas
+                de fricção na frente da coisa que a pessoa veio fazer, e em
+                contradição direta com o FAQ de /buy, que promete cancelamento
+                "sem multa e sem ligar para ninguém". A oferta de ajuda continua
+                (ver o rodapé abaixo), mas depois da decisão, não como pedágio.
+              */}
               <DialogFooter className="flex-col gap-2">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setCancelDialogOpen(false)
-                    router.push('/profile?tab=atendimento')
-                  }}
-                  className="w-full"
-                >
-                  <Ticket className="mr-2 h-4 w-4" />
-                  Abrir Ticket
-                </Button>
                 <Button variant="outline" onClick={() => setCancelDialogOpen(false)} className="w-full">
-                  Manter Assinatura
+                  Manter assinatura
                 </Button>
                 <Button variant="destructive" onClick={handleCancelSubscription} disabled={cancelling} className="w-full">
-                  {cancelling ? 'Cancelando...' : 'Sim, Cancelar'}
+                  {cancelling ? 'Cancelando...' : 'Sim, cancelar'}
                 </Button>
               </DialogFooter>
+              <div className="mt-1 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 border-t border-border pt-3 text-xs text-muted-foreground">
+                <span>Prefere resolver conversando?</span>
+                <a href="tel:+5524992230908" className="inline-flex items-center gap-1.5 font-semibold text-foreground hover:underline">
+                  <Phone className="h-3.5 w-3.5 text-blue-600" />
+                  (24) 99223-0908
+                </a>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCancelDialogOpen(false)
+                    changeTab('atendimento')
+                  }}
+                  className="inline-flex items-center gap-1.5 font-semibold text-primary hover:underline"
+                >
+                  <Ticket className="h-3.5 w-3.5" />
+                  Abrir ticket
+                </button>
+              </div>
             </DialogContent>
           </Dialog>
         </div>
       </div>
     </AppShell>
+  )
+}
+
+/**
+ * O aviso que a pessoa deveria ter visto ao voltar do pagamento.
+ *
+ * O checkout já mandava para cá com `?purchase=success` / `?subscription=success`,
+ * mas quem sabia ler esses parâmetros era /buy — página que ninguém visita
+ * depois de pagar. Na prática o cliente pagava e caía numa Visão geral idêntica
+ * à de sempre: sem confirmação, sem recibo, sem boas-vindas.
+ *
+ * O texto evita prometer liberação instantânea porque ela depende do webhook:
+ * diz o que é certo (o pagamento foi aprovado) e o que fazer se o acesso
+ * demorar alguns instantes para aparecer.
+ */
+function AvisoDeCompraAprovada({
+  tipo,
+  onFechar,
+}: {
+  tipo: 'plan' | 'subscription'
+  onFechar: () => void
+}) {
+  return (
+    <div
+      role="status"
+      className="mb-5 flex items-start gap-3 rounded-xl border border-primary/30 bg-primary/10 p-4 shadow-sm sm:p-5"
+    >
+      <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden />
+      <div className="min-w-0 flex-1">
+        <p className="font-heading text-base font-semibold tracking-tight text-foreground">
+          {tipo === 'subscription' ? 'Assinatura confirmada!' : 'Pagamento aprovado!'}
+        </p>
+        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+          {tipo === 'subscription'
+            ? 'Sua assinatura está ativa e aparece logo abaixo, com o valor e a data da próxima cobrança. Você pode cancelar por ali quando quiser.'
+            : 'Seu acesso está sendo liberado. Se o selo da conta ainda mostrar o plano antigo, atualize a página em alguns instantes — a confirmação do Mercado Pago leva alguns segundos.'}
+        </p>
+      </div>
+      <button
+        type="button"
+        onClick={onFechar}
+        aria-label="Fechar aviso"
+        className="shrink-0 rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+      >
+        <XCircle className="h-4 w-4" />
+      </button>
+    </div>
   )
 }

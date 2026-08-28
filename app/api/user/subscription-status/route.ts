@@ -5,6 +5,7 @@ import { User } from '@/lib/types'
 import { ObjectId } from 'mongodb'
 import type { SubscriptionRecord } from '@/lib/types'
 import { getAccountTypeLabel, isPaidAccount, normalizeAccountType } from '@/lib/account-tier'
+import { montarResumoDaAssinatura } from '@/lib/payments/subscription-view'
 
 export const dynamic = 'force-dynamic'
 
@@ -23,12 +24,42 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
     }
 
+    // Catálogo de planos — só para dar NOME à assinatura recorrente abaixo.
+    // Uma falha aqui não pode derrubar o status: cai no rótulo do cargo.
+    let settingsPlanos: any[] = []
+    try {
+      const settings = await db.collection('admin_settings').findOne({}, { projection: { planos: 1 } })
+      settingsPlanos = settings?.planos || []
+    } catch (err) {
+      console.error('[subscription-status] falha ao ler planos:', err)
+    }
+
     // Busca assinatura recorrente ativa (preapproval MP)
     const activeSub = await db.collection<SubscriptionRecord>('subscriptions').findOne({
       userId: session.userId,
       status: { $in: ['authorized', 'pending', 'paused'] },
     })
     const hasRecurringSubscription = !!activeSub
+
+    /*
+     * A RECORRÊNCIA EM SI, e não só "existe uma".
+     *
+     * Sem este bloco a única coisa que saía daqui era o booleano acima, e a
+     * consequência aparecia em duas telas: o perfil não conseguia dizer quanto
+     * a assinatura custa nem quando ela cobra de novo (a pessoa só descobria
+     * pela fatura do cartão), e — pior — quem cancelava não via diferença
+     * nenhuma, porque `cancelAtPeriodEnd` fica guardado enquanto o `status`
+     * continua 'authorized' de propósito, para o acesso durar até o fim do
+     * período pago. O botão "Cancelar assinatura" reaparecia igual no reload e
+     * o cancelamento parecia não ter funcionado.
+     */
+    const recurring = activeSub
+      ? montarResumoDaAssinatura(
+          activeSub,
+          (settingsPlanos || []).find((p: any) => p.tipo === activeSub.planId)?.nome ||
+            getAccountTypeLabel(normalizeAccountType(activeSub.role)),
+        )
+      : null
 
     const now = new Date()
     let activeSubscription = null
@@ -92,6 +123,8 @@ export async function GET(request: NextRequest) {
       hasActiveSubscription: !!activeSubscription,
       hasRecurringSubscription,
       subscription: activeSubscription,
+      /** Dados da cobrança recorrente (null quando não há). Ver bloco acima. */
+      recurring,
       accountType: user.accountType,
     })
   } catch (error) {

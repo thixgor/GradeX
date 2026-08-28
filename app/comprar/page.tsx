@@ -859,6 +859,31 @@ function GenericComprarContent({ productType }: { productType: string }) {
         Compra rápida e segura — você recebe sua <strong className="font-semibold text-primary">Serial Key</strong> por e-mail, mesmo sem ter conta.
       </p>
 
+      {/*
+        Quem chega aqui vindo de /buy leu uma página que fala em assinatura e em
+        "renovação automática pelo Mercado Pago". Esta compra é outra coisa:
+        pagamento único, Serial Key, sem recorrência. Dizer isso aqui evita as
+        duas leituras erradas — esperar uma renovação que não vem, ou procurar
+        onde cancelar uma assinatura que nunca existiu.
+      */}
+      {isPlusAccount(productType) && (
+        <div className="mb-7 flex items-start gap-2.5 rounded-lg border border-primary/20 bg-primary/5 p-3.5 text-sm">
+          <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden />
+          <p className="min-w-0 leading-relaxed text-muted-foreground">
+            <strong className="font-semibold text-foreground">Pagamento único, sem renovação.</strong>{' '}
+            Esta compra não cobra o seu cartão de novo e não vira assinatura — não há nada para cancelar
+            depois. Se você prefere a renovação automática,{' '}
+            <Link
+              href="/auth/login?redirect=%2Fbuy"
+              className="font-semibold text-primary underline-offset-4 hover:underline"
+            >
+              entre na sua conta
+            </Link>{' '}
+            e assine por lá.
+          </p>
+        </div>
+      )}
+
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] lg:items-start">
         <div className="flex flex-col gap-4">
           <div className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">

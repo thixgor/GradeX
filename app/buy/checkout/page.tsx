@@ -26,6 +26,7 @@ import {
   Lock,
   Tag,
   X,
+  Clock,
   GraduationCap,
 } from 'lucide-react'
 import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
@@ -35,6 +36,22 @@ import { CheckoutAccountNotice } from '@/components/checkout/checkout-account-no
 import { CouponPromo } from '@/components/checkout/coupon-promo'
 import { useProuniGrant } from '@/hooks/use-prouni-grant'
 import { combineDiscountsWithProuni } from '@/lib/prouni-shared'
+import {
+  computeCheckoutCharge,
+  DEFAULT_FEE_POLICY,
+  formatBrl,
+  type CheckoutCharge,
+  type FeePolicy,
+} from '@/lib/payments/fees'
+import {
+  CardTerminal,
+  EMPTY_CARD_FIELDS,
+  splitExpiry,
+  validateCard,
+  type CardFields,
+  type TerminalStatus,
+} from '@/components/payments/card-terminal'
+import { formatCpf, isValidCpf, onlyCpfDigits } from '@/lib/cpf'
 import { cn } from '@/lib/utils'
 
 type PayMode = 'subscription' | 'one_time'
@@ -50,6 +67,17 @@ interface AppliedCoupon {
 
 function formatBRL(value: number): string {
   return `R$ ${value.toFixed(2).replace('.', ',')}`
+}
+
+/** Estimativa de total no Pix — o meio que o formulário abre selecionado. */
+function estimarCobrancaNoPix(baseAmount: number, policy: FeePolicy): CheckoutCharge {
+  return computeCheckoutCharge({
+    baseAmount,
+    paymentMethodId: 'pix',
+    installments: 1,
+    hasCardToken: false,
+    policy,
+  })
 }
 
 export default function BuyCheckoutPage() {
@@ -68,9 +96,30 @@ function BuyCheckoutContent() {
   const [publicKey, setPublicKey] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [isRecurring, setIsRecurring] = useState(false)
+  const [planoERecorrente, setPlanoERecorrente] = useState(false)
   const [payMode, setPayMode] = useState<PayMode>('subscription')
   const [verDetalhes, setVerDetalhes] = useState(false)
+
+  /*
+   * Regras de cobrança que a TELA precisa saber antes de cobrar.
+   *
+   * `subscriptionsEnabled` é um toggle do painel que só era validado no
+   * servidor. Com ele desligado, esta página continuava abrindo com
+   * "Assinatura · Recomendado" pré-selecionada em todo plano de 1, 3 ou 12
+   * meses: a pessoa digitava cartão, validade, CVV e CPF e só ao enviar recebia
+   * "Assinaturas não estão disponíveis no momento", sem nenhuma pista de que a
+   * opção ao lado funcionaria.
+   *
+   * `feePolicy` é a mesma tabela que o formulário de pagamento usa para somar a
+   * taxa operacional. Ela vem para cá porque o RESUMO precisa mostrar o mesmo
+   * total que o botão de pagar — ver `totalDoResumo` mais abaixo.
+   */
+  const [feePolicy, setFeePolicy] = useState<FeePolicy>(DEFAULT_FEE_POLICY)
+  const [subscriptionsEnabled, setSubscriptionsEnabled] = useState(true)
+  const [charge, setCharge] = useState<CheckoutCharge | null>(null)
+
+  // Só é assinatura de verdade se o plano for recorrente E o painel permitir.
+  const isRecurring = planoERecorrente && subscriptionsEnabled
 
   // Cupom: só se aplica ao pagamento único — a assinatura recorrente cobra o
   // cartão pelo mesmo valor fixo em toda renovação (preapproval do Mercado
@@ -118,8 +167,11 @@ function BuyCheckoutContent() {
     Promise.all([
       fetch('/api/plans').then(r => r.json()),
       fetch('/api/payments/public-key').then(r => r.json()),
+      // Falhar aqui não pode derrubar a venda: cai nos defaults, que são os
+      // mesmos que o servidor aplica quando não há configuração salva.
+      fetch('/api/payments/fees').then(r => r.json()).catch(() => null),
     ])
-      .then(([planosResp, pkResp]) => {
+      .then(([planosResp, pkResp, feesResp]) => {
         const found = (planosResp.planos || []).find((p: PlanConfig) => p.tipo === planId)
         if (!found) {
           setError('Plano não encontrado')
@@ -127,19 +179,27 @@ function BuyCheckoutContent() {
         }
         setPlan(found)
         setPublicKey(pkResp.publicKey || '')
+
+        if (feesResp?.policy) setFeePolicy(feesResp.policy)
+        const assinaturaLiberada = feesResp?.checkout?.subscriptionsEnabled !== false
+        setSubscriptionsEnabled(assinaturaLiberada)
+
         const months = found.durationMonths || 0
-        if (months === 1 || months === 3 || months === 12) {
-          setIsRecurring(true)
-          setPayMode('subscription')
-        } else {
-          setIsRecurring(false)
-          setPayMode('one_time')
-        }
+        const recorrente = months === 1 || months === 3 || months === 12
+        setPlanoERecorrente(recorrente)
+        setPayMode(recorrente && assinaturaLiberada ? 'subscription' : 'one_time')
       })
       .catch(err => setError(String(err?.message || err)))
       .finally(() => setLoading(false))
   }, [planId])
 
+  /*
+   * `checkout_view` era sempre emitido como `productType: 'subscription'`,
+   * mesmo quando a pessoa terminava pagando no modo avulso — e a escolha entre
+   * recorrente e único, que muda preço, taxa e retenção, não aparecia em lugar
+   * nenhum dos dados. Agora o modo vai no payload, e o evento é reemitido
+   * quando ele muda.
+   */
   useEffect(() => {
     if (!plan) return
     fetch('/api/analytics/checkout-event', {
@@ -149,14 +209,19 @@ function BuyCheckoutContent() {
         event: 'checkout_view',
         productId: plan.tipo,
         productTitle: plan.nome,
-        productType: 'subscription',
+        productType: payMode === 'subscription' ? 'subscription' : 'plan',
         amount: plan.preco,
         source: 'Assinatura',
-        metadata: { period: plan.periodo, durationMonths: plan.durationMonths },
+        metadata: {
+          period: plan.periodo,
+          durationMonths: plan.durationMonths,
+          payMode,
+          subscriptionsEnabled,
+        },
       }),
       keepalive: true,
     }).catch(() => {})
-  }, [plan])
+  }, [plan, payMode, subscriptionsEnabled])
 
   if (loading) {
     return (
@@ -202,6 +267,40 @@ function BuyCheckoutContent() {
   const payableAmount = combinado.finalPrice
   const couponDiscountAmount = combinado.couponDiscountApplied
   const prouniDiscountAmount = combinado.prouniDiscountApplied
+
+  /*
+   * O TOTAL QUE VAI SER COBRADO — o mesmo do botão de pagar.
+   *
+   * No pagamento único o Mercado Pago cobra uma taxa operacional por meio
+   * escolhido (0,99% no Pix, R$ 3,49 no boleto, 3,03% no crédito à vista e até
+   * 17,83% em 12x), e essa taxa é somada ao preço de tabela. O formulário de
+   * pagamento já mostrava a conta discriminada; este resumo, não — exibia o
+   * preço-base em corpo três vezes maior, ao lado de um botão dizendo outro
+   * número. Quem não lia a linha da taxa achava que tinha sido cobrado a mais.
+   *
+   * `charge` chega do formulário via `onChargeChange` e reflete o meio e o
+   * parcelamento realmente selecionados. Enquanto ele não chega, estimamos pelo
+   * Pix — que é o meio que a tela abre e o mais barato, então o número só sobe
+   * quando a pessoa escolhe outro, nunca surpreende para cima sem aviso.
+   *
+   * A assinatura recorrente não passa por essa conta: o preapproval cobra
+   * `plano.preco` limpo, sem taxa.
+   */
+  const chargeEstimadoPix = estimarCobrancaNoPix(payableAmount, feePolicy)
+  /*
+   * Só aceita o total vindo do formulário se ele foi calculado sobre o preço
+   * ATUAL. Sem essa checagem, aplicar ou remover um cupom deixava o resumo
+   * mostrando o total anterior pelo instante entre a mudança de preço e a
+   * remontagem do formulário — e um resumo que pisca um valor errado no meio
+   * do checkout é pior que um resumo com estimativa.
+   */
+  const chargeValido = charge && charge.baseAmount === payableAmount ? charge : null
+  const chargeExibido = payMode === 'one_time' ? chargeValido || chargeEstimadoPix : null
+  const totalDoResumo = chargeExibido ? chargeExibido.totalAmount : payableAmount
+  const taxaDoResumo = chargeExibido ? chargeExibido.feeAmount : 0
+
+  /** Total do modo "Pagamento único" no cenário mais barato (Pix), para o seletor. */
+  const totalUnicoMaisBarato = chargeEstimadoPix.totalAmount
 
   // `override` é o caminho do chamativo: a faixa manda o código direto, sem
   // depender do que está digitado no campo.
@@ -269,12 +368,31 @@ function BuyCheckoutContent() {
                 </span>
               )}
               <span className="font-heading text-3xl font-semibold tabular-nums tracking-tight text-foreground">
-                {formatBRL(payableAmount)}
+                {formatBRL(totalDoResumo)}
               </span>
               <span className="text-xs text-muted-foreground">
                 {months > 0 && payMode === 'subscription' ? `a cada ${cicloLabel}` : 'pagamento único'}
               </span>
             </div>
+
+            {/* A taxa aberta, e não embutida num número maior sem explicação. */}
+            {taxaDoResumo > 0 && chargeExibido && (
+              <div className="mt-2 flex flex-col gap-0.5 rounded-lg bg-muted/50 px-3 py-2 text-[11px] text-muted-foreground">
+                <div className="flex items-baseline justify-between gap-3">
+                  <span>{plan.nome}</span>
+                  <span className="tabular-nums">{formatBrl(chargeExibido.baseAmount)}</span>
+                </div>
+                <div className="flex items-baseline justify-between gap-3">
+                  <span>{chargeExibido.label}</span>
+                  <span className="tabular-nums">+ {formatBrl(taxaDoResumo)}</span>
+                </div>
+                {!chargeValido && (
+                  <span className="mt-0.5 text-[10px] leading-snug">
+                    Estimativa no Pix. O valor final muda conforme o meio de pagamento escolhido ao lado.
+                  </span>
+                )}
+              </div>
+            )}
 
             {prouniDiscountAmount > 0 && (
               <p className="mt-1.5 flex items-center gap-1.5 text-xs font-bold text-emerald-600 dark:text-emerald-400">
@@ -413,13 +531,26 @@ function BuyCheckoutContent() {
                 <p className="mb-2 text-xs font-semibold text-muted-foreground">Como prefere pagar?</p>
                 {/* Segmentado, não dois cartões empilhados: são duas opções
                     curtas e a recomendada já vem escolhida. */}
+                {/*
+                  Cada opção mostra o VALOR que ela cobra. Os dois modos custam
+                  diferente — a assinatura cobra o preço de tabela limpo e o
+                  pagamento único soma a taxa do meio escolhido — e o seletor
+                  antigo falava só de conveniência ("renova sozinho", "Pix,
+                  cartão ou boleto"). A pessoa achava que escolhia um meio de
+                  pagamento e escolhia, sem saber, um preço.
+                */}
                 <div className="grid grid-cols-2 gap-2">
                   <OpcaoDePagamento
                     ativo={payMode === 'subscription'}
                     onClick={() => escolherModo('subscription')}
                     icone={CreditCard}
                     titulo="Assinatura"
-                    detalhe={prouniGrant ? 'Cartão · sem o seu desconto' : 'Cartão · renova sozinho'}
+                    valor={formatBRL(baseAmount)}
+                    detalhe={
+                      prouniGrant
+                        ? `Cartão · a cada ${cicloLabel} · sem o seu desconto`
+                        : `Cartão · a cada ${cicloLabel}, sem taxa`
+                    }
                     selo={prouniGrant ? undefined : 'Recomendado'}
                   />
                   <OpcaoDePagamento
@@ -427,7 +558,8 @@ function BuyCheckoutContent() {
                     onClick={() => escolherModo('one_time')}
                     icone={Zap}
                     titulo="Pagamento único"
-                    detalhe="Pix, cartão ou boleto"
+                    valor={`a partir de ${formatBrl(totalUnicoMaisBarato)}`}
+                    detalhe="Pix, cartão ou boleto · com taxa do meio escolhido"
                     selo={prouniGrant ? 'Com seu desconto' : undefined}
                   />
                 </div>
@@ -450,6 +582,8 @@ function BuyCheckoutContent() {
                   refId: plan.tipo,
                   couponCode: appliedCoupon?.code,
                 }}
+                // O resumo ao lado mostra este mesmo total, taxa inclusa.
+                onChargeChange={setCharge}
                 analytics={{
                   productId: plan.tipo,
                   productTitle: plan.nome,
@@ -471,6 +605,7 @@ function OpcaoDePagamento({
   onClick,
   icone: Icone,
   titulo,
+  valor,
   detalhe,
   selo,
 }: {
@@ -478,6 +613,8 @@ function OpcaoDePagamento({
   onClick: () => void
   icone: typeof CreditCard
   titulo: string
+  /** Quanto esta opção cobra. É a informação que decide a escolha. */
+  valor: string
   detalhe: string
   selo?: string
 }) {
@@ -497,7 +634,15 @@ function OpcaoDePagamento({
           {titulo}
         </span>
       </span>
-      <span className="mt-1 block text-[11px] leading-snug text-muted-foreground">{detalhe}</span>
+      <span
+        className={cn(
+          'mt-1 block text-[13px] font-semibold tabular-nums leading-snug',
+          ativo ? 'text-foreground' : 'text-muted-foreground'
+        )}
+      >
+        {valor}
+      </span>
+      <span className="mt-0.5 block text-[11px] leading-snug text-muted-foreground">{detalhe}</span>
       {selo && (
         <span className="mt-1.5 inline-block rounded bg-primary/15 px-1.5 py-px text-[10px] font-bold text-primary">
           {selo}
@@ -506,20 +651,54 @@ function OpcaoDePagamento({
     </button>
   )
 }
-
 /**
- * Para assinaturas, o MP exige cartão (preapproval). Reaproveitamos o Brick
- * de cartão local para tokenizar e enviamos para /api/subscriptions.
+ * Assinatura recorrente — o preapproval do Mercado Pago exige cartão.
+ *
+ * ESTE FORMULÁRIO ERA O SEGUNDO da plataforma, e o mais fraco. O resto dos
+ * checkouts usa o `CardTerminal`: máscara de número por bandeira, validade num
+ * campo só (MM/AA), Luhn conferido enquanto digita, avanço automático entre
+ * campos e CPF validado com `isValidCpf`. Aqui havia uma pilha de inputs sem
+ * máscara nenhuma, um campo de ano de 4 dígitos (erro clássico de digitação),
+ * CPF sem validação e as mensagens cruas do SDK do Mercado Pago vazando para o
+ * comprador. Agora é o mesmo terminal, com a mesma tokenização.
+ *
+ * O ESTADO PENDENTE também era tratado errado: quando o Mercado Pago devolvia
+ * algo diferente de `authorized`, a tela mostrava "Assinatura criada,
+ * aguardando autorização do cartão" dentro da CAIXA VERMELHA DE ERRO, com o
+ * botão ainda ativo — sendo que a assinatura já existia. Quem reenviava tomava
+ * um 409 ("Você já possui uma assinatura ativa ou pendente"): dois erros
+ * vermelhos seguidos para um caso de sucesso parcial, e a leitura natural era
+ * "paguei duas vezes". Agora o pendente tem estado próprio, tom neutro e o
+ * formulário sai da tela.
  */
 function SubscriptionCheckout({ plan, publicKey, months }: { plan: PlanConfig; publicKey: string; months: 1 | 3 | 12 }) {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
+  const [resultado, setResultado] = useState<'ativa' | 'pendente' | null>(null)
   const [mpInstance, setMpInstance] = useState<any>(null)
 
-  const inputCls =
-    'w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-base text-foreground outline-none transition focus:border-primary/45 focus:ring-2 focus:ring-primary/15 sm:text-sm'
-  const labelCls = 'mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground'
+  const [card, setCard] = useState<CardFields>(EMPTY_CARD_FIELDS)
+  const [focado, setFocado] = useState<keyof CardFields | null>(null)
+  const [cpf, setCpf] = useState('')
+  const [cpfTocado, setCpfTocado] = useState(false)
+
+  const cicloCurto = months === 1 ? 'mês' : months === 3 ? 'trim.' : 'ano'
+  const cicloLongo = months === 1 ? 'mês' : months === 3 ? '3 meses' : '12 meses'
+
+  const validacao = validateCard(card)
+  const cpfDigits = onlyCpfDigits(cpf)
+  const cpfOk = isValidCpf(cpfDigits)
+  const cpfErrado = cpfTocado && cpfDigits.length > 0 && !cpfOk
+  const cpfFaltando = cpfTocado && cpfDigits.length === 0
+  const podeEnviar = !submitting && !!mpInstance && validacao.complete && cpfOk
+
+  const statusDoTerminal: TerminalStatus = submitting
+    ? 'processing'
+    : validacao.complete
+      ? 'ready'
+      : card.number
+        ? 'filling'
+        : 'idle'
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -540,26 +719,24 @@ function SubscriptionCheckout({ plan, publicKey, months }: { plan: PlanConfig; p
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    if (!podeEnviar) {
+      setCpfTocado(true)
+      return
+    }
     setError(null)
     setSubmitting(true)
     try {
-      if (!mpInstance) throw new Error('SDK não carregou')
-      const f = e.currentTarget
-      const cardNumber = (f.elements.namedItem('cardNumber') as HTMLInputElement).value.replace(/\s/g, '')
-      const cardholderName = (f.elements.namedItem('cardholderName') as HTMLInputElement).value
-      const cardExpirationMonth = (f.elements.namedItem('cardExpirationMonth') as HTMLInputElement).value
-      const cardExpirationYear = (f.elements.namedItem('cardExpirationYear') as HTMLInputElement).value
-      const securityCode = (f.elements.namedItem('securityCode') as HTMLInputElement).value
-      const docNumber = (f.elements.namedItem('docNumber') as HTMLInputElement).value
+      if (!mpInstance) throw new Error('O formulário de pagamento ainda está carregando. Tente de novo em instantes.')
 
+      const { month, year } = splitExpiry(card.expiry)
       const tk = await mpInstance.createCardToken({
-        cardNumber,
-        cardholderName,
-        cardExpirationMonth,
-        cardExpirationYear: cardExpirationYear.length === 2 ? `20${cardExpirationYear}` : cardExpirationYear,
-        securityCode,
+        cardNumber: card.number.replace(/\s/g, ''),
+        cardholderName: card.holder.trim(),
+        cardExpirationMonth: month,
+        cardExpirationYear: year,
+        securityCode: card.cvv,
         identificationType: 'CPF',
-        identificationNumber: docNumber.replace(/\D/g, ''),
+        identificationNumber: cpfDigits,
       })
 
       fetch('/api/analytics/checkout-event', {
@@ -573,7 +750,7 @@ function SubscriptionCheckout({ plan, publicKey, months }: { plan: PlanConfig; p
           amount: plan.preco,
           paymentMethod: 'credit_card',
           source: 'Assinatura',
-          metadata: { recurring: true },
+          metadata: { recurring: true, payMode: 'subscription' },
         }),
         keepalive: true,
       }).catch(() => {})
@@ -584,127 +761,199 @@ function SubscriptionCheckout({ plan, publicKey, months }: { plan: PlanConfig; p
         body: JSON.stringify({ planId: plan.tipo, cardTokenId: tk.id }),
       })
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Falha ao criar assinatura')
+      if (!res.ok) throw new Error(data.error || 'Não foi possível criar a assinatura. Confira os dados do cartão.')
+
       if (data.status === 'authorized') {
-        setSuccess(true)
+        setResultado('ativa')
         setTimeout(() => (window.location.href = '/profile?subscription=success'), 1500)
       } else {
-        setError('Assinatura criada, aguardando autorização do cartão. Você receberá uma confirmação.')
+        // A assinatura EXISTE. Reenviar daqui só produziria um 409.
+        setResultado('pendente')
       }
     } catch (err: any) {
-      setError(err?.message || 'Erro')
+      setError(mensagemDeErro(err))
     } finally {
       setSubmitting(false)
     }
   }
 
-  if (success) {
+  if (resultado === 'ativa') {
     return (
       <div className="py-5 text-center">
         <CheckCircle2 className="mx-auto mb-3 h-10 w-10 text-primary" />
         <p className="text-base font-bold text-primary">Assinatura ativada com sucesso!</p>
+        <p className="mt-1 text-sm text-muted-foreground">Levando você para o seu perfil…</p>
+      </div>
+    )
+  }
+
+  if (resultado === 'pendente') {
+    return (
+      <div className="rounded-xl border border-primary/25 bg-primary/5 p-5 text-center">
+        <Clock className="mx-auto mb-3 h-9 w-9 text-primary" aria-hidden />
+        <p className="font-heading text-base font-semibold text-foreground">
+          Assinatura criada — falta a autorização do seu banco
+        </p>
+        <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+          Está tudo certo do nosso lado: o cartão foi enviado ao Mercado Pago e agora depende do seu banco
+          liberar a cobrança. <strong className="text-foreground">Não envie de novo</strong> — a assinatura já
+          existe e uma segunda tentativa seria recusada. Você recebe um e-mail assim que for aprovada.
+        </p>
+        <button
+          type="button"
+          onClick={() => (window.location.href = '/profile')}
+          className="mt-4 inline-flex items-center justify-center gap-2 rounded-xl bg-secondary px-5 py-3 text-sm font-bold text-secondary-foreground transition hover:bg-secondary/90"
+        >
+          Acompanhar no meu perfil
+        </button>
       </div>
     )
   }
 
   return (
-    // `text-base` nos campos e `inputMode`/`autoComplete` em todos: no iOS,
-    // campo com fonte menor que 16px faz a tela dar zoom sozinha ao focar, e
-    // sem inputMode o teclado abre em letras para digitar número de cartão.
-    <form onSubmit={submit} className="flex flex-col gap-3.5">
+    <form onSubmit={submit} className="flex flex-col gap-4">
       <p className="rounded-lg border border-primary/15 bg-primary/5 p-3 text-[13px] leading-relaxed text-muted-foreground">
         Você será cobrado{' '}
         <strong className="text-primary">R$ {plan.preco.toFixed(2).replace('.', ',')}</strong> a cada{' '}
-        {months === 1 ? 'mês' : months === 3 ? '3 meses' : '12 meses'}. Cancele quando quiser no seu perfil.
+        {cicloLongo}, no mesmo cartão, até você cancelar.{' '}
+        {/*
+          "Cancele quando quiser no seu perfil" era texto puro, sem link — e o
+          perfil não tinha nada sobre a assinatura para quem chegasse lá. Agora
+          o endereço existe e a frase leva até ele.
+        */}
+        <a href="/profile" className="font-semibold text-primary underline-offset-4 hover:underline">
+          Cancele quando quiser no seu perfil
+        </a>
+        , sem multa, mantendo o acesso até o fim do período já pago.
       </p>
-      <input className="hidden" name="cardholderEmail" />
-      <div>
-        <label className={labelCls} htmlFor="cardNumber">Número do cartão</label>
-        <input
-          id="cardNumber"
-          name="cardNumber"
-          required
-          className={inputCls}
-          inputMode="numeric"
-          autoComplete="cc-number"
-          maxLength={19}
-          placeholder="0000 0000 0000 0000"
-        />
-      </div>
-      <div>
-        <label className={labelCls} htmlFor="cardholderName">Nome impresso no cartão</label>
-        <input id="cardholderName" name="cardholderName" required autoComplete="cc-name" className={inputCls} />
-      </div>
-      <div className="grid grid-cols-3 gap-2">
+
+      <CardTerminal
+        fields={card}
+        onChange={setCard}
+        amountLabel={`R$ ${plan.preco.toFixed(2).replace('.', ',')}`}
+        installmentLabel={`a cada ${cicloLongo}`}
+        focused={focado}
+        onFocusedChange={setFocado}
+        status={statusDoTerminal}
+        disabled={submitting}
+      >
         <div>
-          <label className={labelCls} htmlFor="cardExpirationMonth">Mês</label>
+          <label
+            htmlFor="docNumber"
+            className="mb-1.5 block text-[11px] font-bold uppercase tracking-[0.06em] text-muted-foreground"
+          >
+            CPF do titular
+          </label>
           <input
-            id="cardExpirationMonth"
-            name="cardExpirationMonth"
-            required
-            maxLength={2}
+            id="docNumber"
+            name="docNumber"
             inputMode="numeric"
-            autoComplete="cc-exp-month"
-            placeholder="MM"
-            className={inputCls}
-          />
-        </div>
-        <div>
-          <label className={labelCls} htmlFor="cardExpirationYear">Ano</label>
-          <input
-            id="cardExpirationYear"
-            name="cardExpirationYear"
+            autoComplete="off"
             required
-            maxLength={4}
-            inputMode="numeric"
-            autoComplete="cc-exp-year"
-            placeholder="AAAA"
-            className={inputCls}
+            disabled={submitting}
+            value={formatCpf(cpf)}
+            onChange={(e) => setCpf(onlyCpfDigits(e.target.value))}
+            onBlur={() => setCpfTocado(true)}
+            placeholder="000.000.000-00"
+            aria-invalid={cpfErrado || cpfFaltando}
+            className={cn(
+              'h-11 w-full rounded-[10px] border-[1.5px] bg-background px-3.5 font-mono text-base text-foreground outline-none transition focus:ring-2 focus:ring-primary/15 sm:text-sm',
+              cpfErrado || cpfFaltando ? 'border-destructive/60' : 'border-border focus:border-primary/45'
+            )}
           />
+          {cpfErrado ? (
+            <span className="mt-1.5 block text-[11px] text-destructive">
+              CPF inválido. Confira os números digitados.
+            </span>
+          ) : cpfFaltando ? (
+            <span className="mt-1.5 block text-[11px] text-destructive">
+              Informe o CPF do titular do cartão.
+            </span>
+          ) : (
+            <span className="mt-1.5 block text-[11px] text-muted-foreground">
+              O Mercado Pago exige o documento do titular para cobrar no cartão.
+            </span>
+          )}
         </div>
-        <div>
-          <label className={labelCls} htmlFor="securityCode">CVV</label>
-          <input
-            id="securityCode"
-            name="securityCode"
-            required
-            maxLength={4}
-            inputMode="numeric"
-            autoComplete="cc-csc"
-            placeholder="123"
-            className={inputCls}
-          />
-        </div>
-      </div>
-      <div>
-        <label className={labelCls} htmlFor="docNumber">CPF</label>
-        <input
-          id="docNumber"
-          name="docNumber"
-          required
-          inputMode="numeric"
-          className={inputCls}
-          placeholder="000.000.000-00"
-        />
-      </div>
+      </CardTerminal>
+
       {error && (
-        <div className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+        <div
+          role="alert"
+          className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive"
+        >
           {error}
         </div>
       )}
+
       <button
         type="submit"
-        disabled={submitting || !mpInstance}
+        disabled={!podeEnviar}
         className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-secondary px-5 py-4 text-[15px] font-bold text-secondary-foreground shadow-sm transition hover:bg-secondary/90 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
-        Ativar assinatura — R$ {plan.preco.toFixed(2).replace('.', ',')}/
-        {months === 1 ? 'mês' : months === 3 ? 'trim.' : 'ano'}
+        Ativar assinatura — R$ {plan.preco.toFixed(2).replace('.', ',')}/{cicloCurto}
       </button>
+
       <p className="flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground">
         <Lock className="h-3 w-3 shrink-0 text-primary" aria-hidden />
         Pagamento seguro · Mercado Pago · dados criptografados
       </p>
+
+      {/* O mesmo rodapé legal que o formulário de pagamento único já traz. */}
+      <p className="text-center text-[11px] leading-relaxed text-muted-foreground">
+        Ao ativar a assinatura você concorda com os{' '}
+        <a
+          href="/termos-de-servico"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-semibold text-primary hover:underline"
+        >
+          Termos de Serviço
+        </a>{' '}
+        e a{' '}
+        <a
+          href="/politica-de-privacidade"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-semibold text-primary hover:underline"
+        >
+          Política de Privacidade
+        </a>
+        .
+      </p>
     </form>
   )
+}
+
+/**
+ * Traduz o que o SDK do Mercado Pago devolve.
+ *
+ * O SDK responde com códigos (`invalid_card_number`, `cc_rejected_...`) e às
+ * vezes em inglês. Mostrar isso cru para quem está pagando não diz o que fazer
+ * — e "o que fazer" é a única coisa que importa numa mensagem de erro.
+ */
+function mensagemDeErro(err: any): string {
+  const bruto = String(err?.message || err?.[0]?.description || err || '')
+  const codigo = bruto.toLowerCase()
+
+  if (codigo.includes('card_number')) return 'Número do cartão inválido. Confira os dígitos.'
+  if (codigo.includes('expiration')) return 'Validade inválida. Confira o mês e o ano do cartão.'
+  if (codigo.includes('security_code') || codigo.includes('cvv'))
+    return 'Código de segurança inválido. Ele fica no verso do cartão.'
+  if (codigo.includes('cardholder') || codigo.includes('holder'))
+    return 'Nome do titular inválido. Digite exatamente como está impresso no cartão.'
+  if (codigo.includes('identification') || codigo.includes('doc'))
+    return 'CPF inválido para este cartão. Use o CPF do titular.'
+  if (codigo.includes('insufficient')) return 'Cartão sem limite disponível. Tente outro cartão.'
+  if (codigo.includes('rejected') || codigo.includes('recus'))
+    return 'O banco recusou o cartão. Tente outro cartão ou fale com o seu banco.'
+  if (codigo.includes('já possui') || codigo.includes('409'))
+    return 'Você já tem uma assinatura ativa ou pendente. Confira no seu perfil antes de criar outra.'
+  if (codigo.includes('não estão disponíveis') || codigo.includes('nao estao disponiveis'))
+    return 'As assinaturas estão temporariamente indisponíveis. Use a opção "Pagamento único" ao lado.'
+
+  // Sobrou algo que não sabemos traduzir: devolver o texto do servidor é
+  // melhor que uma frase genérica, desde que ele já venha em português.
+  return bruto && /[áàâãéêíóôõúç ]/i.test(bruto) ? bruto : 'Não foi possível ativar a assinatura. Confira os dados e tente de novo.'
 }

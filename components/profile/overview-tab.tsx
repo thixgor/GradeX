@@ -22,6 +22,7 @@ import {
   Target,
 } from 'lucide-react'
 import { PlanLimitsCard } from '@/components/plan-limits-card'
+import { SubscriptionCard, type RecurringSubscription } from '@/components/profile/subscription-card'
 import { AccountType } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import type { UserSubmission } from '@/components/profile/submissions-list'
@@ -50,6 +51,9 @@ export function OverviewTab({
   submissions,
   submissionsLoading,
   onGoToPerformance,
+  recurring,
+  onCancelSubscription,
+  cancellingSubscription,
 }: {
   stats: OverviewStats
   accountType: AccountType
@@ -62,6 +66,10 @@ export function OverviewTab({
   submissions: UserSubmission[]
   submissionsLoading: boolean
   onGoToPerformance: () => void
+  /** Cobrança recorrente ativa, quando existe. Ver subscription-card.tsx. */
+  recurring: RecurringSubscription | null
+  onCancelSubscription: () => void
+  cancellingSubscription: boolean
 }) {
   const router = useRouter()
   const recent = submissions.slice(0, 3)
@@ -95,6 +103,24 @@ export function OverviewTab({
 
   return (
     <div className="space-y-8">
+      {/*
+        ── Sua assinatura ──────────────────────────────────────────────────
+        Primeiro bloco da página, e não um item perdido em "Configurações":
+        é a única cobrança da plataforma que se repete sozinha, então valor,
+        ciclo, próxima cobrança e o botão de cancelar ficam onde a pessoa
+        naturalmente procura quando quer conferir o que está pagando.
+      */}
+      {recurring && (
+        <section>
+          <h2 className="editorial-mark mb-3">Sua assinatura</h2>
+          <SubscriptionCard
+            recurring={recurring}
+            onCancelar={onCancelSubscription}
+            cancelando={cancellingSubscription}
+          />
+        </section>
+      )}
+
       {/* ── Números do momento ─────────────────────────────────────────────── */}
       <section>
         <div className="mb-3 flex items-center justify-between">

@@ -94,6 +94,17 @@ export interface MercadoPagoCheckoutProps {
   payerNameHint?: string
   onApproved?: (resp: CheckoutOrderResponse) => void
   onRejected?: (resp: CheckoutOrderResponse) => void
+  /**
+   * Avisa a página do total REAL sempre que ele muda (troca de método, de
+   * parcelas, ou quando a política de taxas chega do servidor).
+   *
+   * Existe porque a taxa operacional é somada aqui dentro, e as páginas de
+   * checkout mostram um resumo do pedido ao lado deste formulário. Sem este
+   * retorno, o resumo ficava preso ao preço de tabela enquanto o botão dizia
+   * outro valor — dois números diferentes na mesma tela, sendo o maior
+   * justamente o que vai ser cobrado.
+   */
+  onChargeChange?: (charge: CheckoutCharge) => void
   analytics?: {
     productId?: string
     productTitle?: string
@@ -413,6 +424,13 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
       }),
     [props.amount, pricingMethodId, method, isDebitCard, installments, feePolicy]
   )
+
+  // O resumo do pedido, que vive fora deste componente, precisa do mesmo total
+  // que o botão de pagar mostra. `onChargeChange` é a única via entre os dois.
+  const onChargeChange = props.onChargeChange
+  useEffect(() => {
+    onChargeChange?.(charge)
+  }, [charge, onChargeChange])
 
   /**
    * Total por MÉTODO, para as abas. O cartão entra à vista, que é como a aba
@@ -948,9 +966,39 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
           </button>
         </div>
 
-        {/* Trust footer */}
+        {/*
+          Trust footer + rodapé legal.
+
+          Os Termos e a Política existiam como páginas e nenhum checkout da
+          plataforma apontava para elas — nem /comprar, nem /buy/checkout, nem
+          a loja, nem os materiais. Como todos os formulários de pagamento
+          passam por este componente, o link entra uma vez aqui e vale para
+          todos, no único ponto em que ele é realmente exigível: ao lado do
+          botão que cobra.
+        */}
         <p style={{ textAlign: 'center', fontSize: '11px', color: 'hsl(var(--muted-foreground) / 0.6)', marginTop: '4px' }}>
           🔒 Pagamento seguro · Mercado Pago · Dados criptografados
+        </p>
+        <p style={{ textAlign: 'center', fontSize: '11px', color: 'hsl(var(--muted-foreground))', lineHeight: 1.6 }}>
+          Ao concluir a compra você concorda com os{' '}
+          <a
+            href="/termos-de-servico"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: 'hsl(var(--primary))', fontWeight: 600 }}
+          >
+            Termos de Serviço
+          </a>{' '}
+          e a{' '}
+          <a
+            href="/politica-de-privacidade"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: 'hsl(var(--primary))', fontWeight: 600 }}
+          >
+            Política de Privacidade
+          </a>
+          .
         </p>
       </form>
     </div>

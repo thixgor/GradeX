@@ -355,7 +355,7 @@ function BuyContent() {
           </>
         )}
 
-        {!loadingSub && <Faq plano={selecionado} />}
+        {!loadingSub && <Faq plano={selecionado} visitante={isGuest} />}
 
         <p className="mt-10 text-center text-[13px] text-muted-foreground">
           Ficou alguma dúvida?{' '}
@@ -689,15 +689,20 @@ function PainelDaOferta({
           {visitante && (
             <p className="mt-2 flex items-start gap-2 text-[11px] leading-relaxed text-muted-foreground">
               <UserCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" aria-hidden />
+              {/*
+                O aviso dizia só "o acesso vai por e-mail" — e omitia a
+                diferença que mais importa: sem conta, a compra é ÚNICA e não
+                renova, enquanto a página inteira fala em assinatura.
+              */}
               <span>
-                Você está como visitante: o acesso vai por e-mail.{' '}
+                Você está como visitante: a compra é única (não renova) e o acesso vai por e-mail.{' '}
                 <a
                   href="/auth/login?redirect=%2Fbuy"
                   className="font-semibold text-primary underline-offset-4 hover:underline"
                 >
                   Entrar na conta
                 </a>{' '}
-                para cair direto nela.
+                para assinar com renovação automática e acesso imediato.
               </span>
             </p>
           )}
@@ -894,7 +899,18 @@ function Comparativo({ planos }: { planos: PlanoComPreco[] }) {
  * página que está mostrando o plano vitalício é o tipo de detalhe errado que
  * derruba a confiança bem na hora de pagar.
  */
-function perguntasDoPlano(plano?: PlanoComPreco) {
+/**
+ * `visitante` muda a resposta sobre cobrança, e não é detalhe.
+ *
+ * Quem está deslogado e clica em "Assinar" NÃO vai para o checkout de
+ * assinatura: vai para /comprar, que vende o mesmo plano como Serial Key de
+ * pagamento único, sem renovação nenhuma. O FAQ afirmava "a renovação é
+ * automática pelo Mercado Pago" para todo mundo — então quem comprava sem
+ * conta ou esperava uma renovação que nunca vinha (e perdia o acesso sem
+ * entender por quê), ou saía procurando onde cancelar uma assinatura que não
+ * existe. A diferença é favorável ao comprador; o problema era ninguém avisar.
+ */
+function perguntasDoPlano(plano?: PlanoComPreco, visitante = false) {
   const nome = plano?.name || 'o plano'
   const preco = plano?.preco
 
@@ -902,11 +918,15 @@ function perguntasDoPlano(plano?: PlanoComPreco) {
     ? 'A cobrança e a renovação aparecem no checkout antes de você confirmar qualquer coisa.'
     : plano.meses === 0
       ? `${nome} é pagamento único: R$ ${formatarBRL(preco!.total)} uma vez, sem renovação e sem mensalidade escondida.`
-      : `${nome} é cobrado em R$ ${formatarBRL(preco!.total)} a cada ${rotuloDeCiclo(plano.meses)}${
-          preco?.mensal != null
-            ? ` — o que dá R$ ${formatarBRL(preco.mensal)} por mês de acesso`
-            : ''
-        }. A renovação é automática pelo Mercado Pago e você cancela quando quiser, sem multa e sem ligar para ninguém, mantendo o acesso até o fim do período já pago.`
+      : visitante
+        ? `Comprando sem conta, ${nome} sai por R$ ${formatarBRL(preco!.total)} de uma vez, com acesso por ${rotuloDeCiclo(plano.meses)}${
+            preco?.mensal != null ? ` — o que dá R$ ${formatarBRL(preco.mensal)} por mês` : ''
+          }. É pagamento único: NÃO renova sozinho e não fica cobrando o seu cartão. Você recebe uma Serial Key por e-mail e ativa quando quiser. Se preferir a renovação automática, entre na sua conta antes de assinar.`
+        : `${nome} é cobrado em R$ ${formatarBRL(preco!.total)} a cada ${rotuloDeCiclo(plano.meses)}${
+            preco?.mensal != null
+              ? ` — o que dá R$ ${formatarBRL(preco.mensal)} por mês de acesso`
+              : ''
+          }. A renovação é automática pelo Mercado Pago e você cancela quando quiser, direto no seu perfil, sem multa e sem ligar para ninguém, mantendo o acesso até o fim do período já pago.`
 
   return [
     {
@@ -932,9 +952,9 @@ function perguntasDoPlano(plano?: PlanoComPreco) {
   ]
 }
 
-function Faq({ plano }: { plano?: PlanoComPreco }) {
+function Faq({ plano, visitante }: { plano?: PlanoComPreco; visitante: boolean }) {
   const [aberta, setAberta] = useState<number | null>(null)
-  const perguntas = useMemo(() => perguntasDoPlano(plano), [plano])
+  const perguntas = useMemo(() => perguntasDoPlano(plano, visitante), [plano, visitante])
 
   return (
     <section className="mt-8">

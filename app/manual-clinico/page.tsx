@@ -307,20 +307,24 @@ function RenewalBanner({
             >
               <CreditCard className="h-3.5 w-3.5" /> Renovar agora
             </button>
-            {!isCard && (
-              <button
-                onClick={onDecline}
-                disabled={declining}
-                className={`inline-flex h-9 items-center gap-1.5 rounded-lg border px-3 text-xs font-bold transition disabled:opacity-60 ${
-                  declineConfirm
-                    ? 'border-red-400/40 bg-red-500/15 text-red-300'
-                    : 'border-border bg-card text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                {declining ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <XCircle className="h-3.5 w-3.5" />}
-                {declineConfirm ? 'Confirmar e remover acesso' : 'Não quero mais, obrigado'}
-              </button>
-            )}
+            {/*
+              O botão existe para TODOS os meios de pagamento. Antes ele só
+              aparecia para quem não pagou com cartão — quem pagou com cartão
+              não tinha, na interface, nenhuma forma de dizer que não queria
+              renovar, e só lhe restava esperar o e-mail de cobrança.
+            */}
+            <button
+              onClick={onDecline}
+              disabled={declining}
+              className={`inline-flex h-9 items-center gap-1.5 rounded-lg border px-3 text-xs font-bold transition disabled:opacity-60 ${
+                declineConfirm
+                  ? 'border-amber-400/50 bg-amber-500/15 text-amber-700 dark:text-amber-300'
+                  : 'border-border bg-card text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              {declining ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <XCircle className="h-3.5 w-3.5" />}
+              {declineConfirm ? 'Confirmar — mantenho o acesso até o vencimento' : 'Não quero renovar'}
+            </button>
           </div>
         </div>
       </div>

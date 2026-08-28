@@ -47,6 +47,22 @@ export async function GET() {
           // Cartão e boleto não entram: o Mercado Pago recusa os dois sem
           // documento, então ali não há o que configurar.
           cpfRequiredForPix: methods.requireCpfForPix !== false,
+          /*
+           * Assinatura recorrente ligada no painel?
+           *
+           * Isto existe pelo mesmo motivo que o CPF acima: a regra é do
+           * servidor, mas a tela precisa dela ANTES de cobrar. Sem este campo,
+           * /buy/checkout abria com "Assinatura · Recomendado" pré-selecionada
+           * mesmo com o toggle desligado — a pessoa digitava cartão, validade,
+           * CVV e CPF e só então recebia "Assinaturas não estão disponíveis no
+           * momento", sem nenhuma indicação de que a aba ao lado funcionaria.
+           *
+           * Erra para o lado seguro pelo mesmo critério do CPF: se a leitura do
+           * painel falhar, `DEFAULT_PAYMENT_METHODS` mantém `true` e o pior
+           * caso volta a ser o comportamento antigo, nunca esconder uma opção
+           * que existe.
+           */
+          subscriptionsEnabled: methods.subscriptions !== false,
         },
       },
       // Curto porque acompanha um toggle do painel — 60s limita a janela em

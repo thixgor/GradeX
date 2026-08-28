@@ -7,7 +7,7 @@
  */
 
 import { useRouter } from 'next/navigation'
-import { BookOpen, KeyRound, MessageCircle, Music, XCircle } from 'lucide-react'
+import { ArrowRight, BookOpen, KeyRound, MessageCircle, Music, XCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { LiteModeSettingsCard } from '@/components/lite-mode-settings-card'
 import { PersonalDataCard } from '@/components/profile/personal-data-card'
@@ -18,20 +18,26 @@ export function SettingsTab({
   userEmail,
   userRole,
   hasRecurringSubscription,
+  cancelamentoAgendado,
   onNameChange,
   onToast,
   onReloadUser,
   onActivateKey,
   onCancelSubscription,
+  onVerAssinatura,
 }: {
   userEmail: string
   userRole: 'admin' | 'user'
   hasRecurringSubscription: boolean
+  /** Já cancelada — o acesso corre até o fim do período pago. */
+  cancelamentoAgendado: boolean
   onNameChange: (name: string) => void
   onToast: (message: string, type?: 'success' | 'error') => void
   onReloadUser: () => void
   onActivateKey: () => void
   onCancelSubscription: () => void
+  /** Leva para o cartão "Sua assinatura", na Visão geral. */
+  onVerAssinatura: () => void
 }) {
   const router = useRouter()
   const { showMusic, showSupport, toggle } = useUIPreferences()
@@ -91,7 +97,16 @@ export function SettingsTab({
             <BookOpen className="mr-1.5 h-3.5 w-3.5" />
             Banco de questões
           </Button>
-          {userRole !== 'admin' && hasRecurringSubscription && (
+          {/*
+            O cancelamento continua aqui — é onde parte das pessoas procura —
+            mas o endereço oficial passou a ser o cartão "Sua assinatura", na
+            Visão geral, que é o único lugar que mostra valor, ciclo e próxima
+            cobrança. E quando o cancelamento já foi feito o botão SOME: antes
+            ele reaparecia idêntico depois de cancelar (o status no banco segue
+            'authorized' de propósito, para o acesso durar até o fim do período
+            pago), e a leitura natural era que o cancelamento não tinha pegado.
+          */}
+          {userRole !== 'admin' && hasRecurringSubscription && !cancelamentoAgendado && (
             <Button
               variant="outline"
               size="sm"
@@ -103,6 +118,19 @@ export function SettingsTab({
             </Button>
           )}
         </div>
+
+        {userRole !== 'admin' && hasRecurringSubscription && (
+          <button
+            type="button"
+            onClick={onVerAssinatura}
+            className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-primary underline-offset-4 hover:underline"
+          >
+            {cancelamentoAgendado
+              ? 'Cancelamento agendado — ver até quando seu acesso vale'
+              : 'Ver valor, ciclo e próxima cobrança da sua assinatura'}
+            <ArrowRight className="h-3.5 w-3.5" />
+          </button>
+        )}
       </section>
     </div>
   )

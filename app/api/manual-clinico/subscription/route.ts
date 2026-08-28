@@ -18,10 +18,17 @@ const PatchSchema = z.object({
 /**
  * PATCH /api/manual-clinico/subscription
  *
- * decline_renewal: usuário (pix) opta por NÃO renovar. Marca a compra atual
- * com renewalDeclined=true e revoga imediatamente o acesso (status='revoked').
+ * decline_renewal: o usuário avisa que NÃO quer renovar. Marca a compra com
+ * renewalDeclined=true e MANTÉM o acesso até `expiresAt` — recusar a próxima
+ * cobrança não é o mesmo que abrir mão do período que já foi pago.
  *
- * undo_decline: caso o usuário se arrependa antes do acesso ser revogado.
+ * Antes daqui a ação gravava `status: 'revoked'` na hora: um clique em "Não
+ * quero mais, obrigado" apagava dias de acesso comprado, e o aviso só aparecia
+ * no segundo clique do botão ("Confirmar e remover acesso"), nunca antes. É a
+ * mesma política que a assinatura Plus+ já aplica no cancelamento — cancelar
+ * encerra a cobrança futura, não o que a pessoa pagou.
+ *
+ * undo_decline: caso o usuário se arrependa antes do acesso expirar.
  */
 export async function PATCH(request: NextRequest) {
   const session = await getSession()
@@ -41,21 +48,18 @@ export async function PATCH(request: NextRequest) {
   }
 
   if (parsed.data.action === 'decline_renewal') {
-    // Para pix: marca como recusado + remove acesso imediatamente.
-    // (O acesso pago temporário continua até expiresAt em outros casos, mas
-    //  o usuário pediu pra "remover acesso" ao recusar a renovação.)
+    // Só desliga a renovação. O acesso segue valendo até `expiresAt` e o fluxo
+    // normal de expiração cuida do resto — nada é revogado aqui.
     await db.collection<ManualClinicoPurchase>(MANUAL_CLINICO_PURCHASES_COLLECTION).updateOne(
       { _id: purchase._id as any },
-      {
-        $set: {
-          renewalDeclined: true,
-          status: 'revoked',
-          revokedAt: new Date(),
-          revokedByName: 'Usuário (recusou renovação)',
-        },
-      }
+      { $set: { renewalDeclined: true } }
     )
-    return NextResponse.json({ success: true, declined: true, revoked: true })
+    return NextResponse.json({
+      success: true,
+      declined: true,
+      revoked: false,
+      accessUntil: purchase.expiresAt || null,
+    })
   }
 
   if (parsed.data.action === 'undo_decline') {
