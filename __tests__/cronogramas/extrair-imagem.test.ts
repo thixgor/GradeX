@@ -134,6 +134,48 @@ describe('leitura das imagens', () => {
     expect(corpo.contents[0].parts[0].text).toContain('Brasília')
   })
 
+  it('desliga o raciocínio no 2.5 — e não manda o campo para quem não aceita', async () => {
+    const chamada = vi
+      .fn()
+      .mockResolvedValueOnce(falhaDoGemini(400, 'unsupported'))
+      .mockResolvedValueOnce(respostaDoGemini(TRANSCRICAO))
+    vi.stubGlobal('fetch', chamada)
+
+    await lerCalendarios([IMAGEM])
+
+    const primeira = JSON.parse(String((chamada.mock.calls[0] as any)[1].body))
+    const segunda = JSON.parse(String((chamada.mock.calls[1] as any)[1].body))
+
+    // O "pensar" antes de responder é o que fazia a leitura da tabela estourar
+    // o tempo da função.
+    expect(primeira.generationConfig.thinkingConfig).toEqual({ thinkingBudget: 0 })
+    expect(String((chamada.mock.calls[1] as any)[0])).toContain('gemini-2.0-flash')
+    expect(segunda.generationConfig.thinkingConfig).toBeUndefined()
+  })
+
+  it('sem tempo para outra tentativa, devolve o erro real — não só "tempo esgotado"', async () => {
+    const inicio = Date.now()
+    let tentativas = 0
+
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => {
+        tentativas += 1
+        return falhaDoGemini(429, 'quota exceeded')
+      }),
+    )
+    // O relógio pula o orçamento inteiro depois da primeira tentativa.
+    vi.spyOn(Date, 'now').mockImplementation(() =>
+      tentativas === 0 ? inicio : inicio + 120_000,
+    )
+
+    const [leitura] = await lerCalendarios([IMAGEM])
+
+    expect(tentativas).toBe(1)
+    expect(leitura.erro).toContain('quota exceeded')
+    expect(leitura.erro).toContain('tempo')
+  })
+
   it('cai para o próximo modelo quando o primeiro recusa', async () => {
     const chamada = vi
       .fn()
@@ -165,6 +207,20 @@ describe('leitura das imagens', () => {
     expect(leituras).toHaveLength(2)
     expect(leituras[0].linhas).toHaveLength(2)
     expect(leituras[1].linhas).toHaveLength(0)
+  })
+
+  it('resposta cortada diz por que veio vazia', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => ({
+        ok: true,
+        json: async () => ({ candidates: [{ finishReason: 'MAX_TOKENS', content: {} }] }),
+      })) as unknown as typeof fetch,
+    )
+
+    const [leitura] = await lerCalendarios([IMAGEM])
+
+    expect(leitura.erro).toContain('MAX_TOKENS')
   })
 
   it('resposta sem JSON válido vira erro do arquivo, não exceção', async () => {

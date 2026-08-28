@@ -24,9 +24,23 @@ export const maxDuration = 60
  * é uma avaliação por período coberto, com data e horário de Brasília.
  */
 
-/** Quatro tabelas por vez cobrem N1, N2, N3 e a de recuperação de um semestre. */
-const MAX_ARQUIVOS = 6
-const MAX_BYTES = 8 * 1024 * 1024
+/**
+ * Uma imagem por requisição.
+ *
+ * O painel manda os arquivos em série, um por chamada, e não é economia de
+ * código: é o que dá a CADA imagem os 60s da função inteira. Quando as cinco
+ * dividiam uma requisição só, as duas primeiras consumiam o orçamento e as
+ * outras voltavam sem leitura nenhuma. O teto de dois é folga para quem chamar
+ * a rota na mão, não o caminho normal.
+ */
+const MAX_ARQUIVOS = 2
+
+/**
+ * O corpo inteiro de uma função na Vercel não passa de ~4,5MB, e o multipart
+ * ainda infla o que vai dentro. O painel já reduz a imagem antes de enviar;
+ * este teto é a rede de segurança de quem não passou por ele.
+ */
+const MAX_BYTES = 4 * 1024 * 1024
 
 const MIMES_ACEITOS = ['image/png', 'image/jpeg', 'image/webp', 'application/pdf']
 
@@ -49,7 +63,7 @@ export async function POST(request: NextRequest) {
   }
   if (enviados.length > MAX_ARQUIVOS) {
     return NextResponse.json(
-      { error: `Envie no máximo ${MAX_ARQUIVOS} arquivos por vez.` },
+      { error: `Envie no máximo ${MAX_ARQUIVOS} arquivos por chamada.` },
       { status: 400 },
     )
   }
@@ -65,7 +79,9 @@ export async function POST(request: NextRequest) {
     if (arquivo.size === 0) continue
     if (arquivo.size > MAX_BYTES) {
       return NextResponse.json(
-        { error: `"${arquivo.name}" passa de ${MAX_BYTES / 1024 / 1024}MB.` },
+        {
+          error: `"${arquivo.name}" tem ${(arquivo.size / 1024 / 1024).toFixed(1)}MB e o limite é ${MAX_BYTES / 1024 / 1024}MB. Reduza a imagem ou recorte só a tabela.`,
+        },
         { status: 400 },
       )
     }

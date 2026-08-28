@@ -27,14 +27,22 @@ import type { LinhaExtraida } from './extracao'
 const MODELOS = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash']
 
 /**
- * Uma tentativa demora ~10s numa tabela típica. O corte em 25s descarta a
- * chamada travada com folga para a próxima queda de modelo caber no orçamento
- * da função (60s na Vercel).
+ * Quanto uma tentativa pode demorar.
+ *
+ * O `2.5-flash` é modelo *thinking*: numa tabela densa ele passa fácil de 20s
+ * mesmo com o raciocínio desligado (o gerador de questões, que usa o mesmo
+ * modelo, espera 45s). Cortar antes disso não protege ninguém — só transforma
+ * leitura lenta em leitura perdida, que foi exatamente o que acontecia quando
+ * cinco imagens dividiam uma requisição só.
  */
-const TIMEOUT_MS = 25_000
+const TIMEOUT_MS = 45_000
 
-/** Orçamento da requisição inteira: depois disso, o que não leu volta como erro. */
-const ORCAMENTO_MS = 50_000
+/**
+ * Orçamento da requisição inteira. Como o painel manda UMA imagem por
+ * requisição, o orçamento é todo dela — e ainda sobra folga dentro dos 60s da
+ * função para uma segunda tentativa curta.
+ */
+const ORCAMENTO_MS = 55_000
 
 export interface ArquivoParaLer {
   nome: string
@@ -191,9 +199,16 @@ async function chamarGemini(
             // Transcrição não é lugar para criatividade.
             temperature: 0,
             topP: 0.95,
-            maxOutputTokens: 8192,
+            // Uma tabela de quinze linhas transcrita passa dos 4k tokens; a
+            // folga evita resposta cortada no meio, que voltaria como JSON
+            // inválido em vez de erro claro.
+            maxOutputTokens: 16384,
             responseMimeType: 'application/json',
             responseSchema: ESQUEMA,
+            // Copiar uma tabela não precisa de raciocínio, e no 2.5 o
+            // "pensar" antes de responder é o que fazia a leitura estourar o
+            // tempo. Só o 2.5 aceita o campo; mandá-lo para os outros vira 400.
+            ...(modelo.startsWith('gemini-2.5') ? { thinkingConfig: { thinkingBudget: 0 } } : {}),
           },
         }),
       },
@@ -205,8 +220,17 @@ async function chamarGemini(
     }
 
     const dados = await resposta.json()
-    const texto = dados?.candidates?.[0]?.content?.parts?.[0]?.text
-    if (!texto) throw new Error('resposta vazia')
+    const candidato = dados?.candidates?.[0]
+    const texto = candidato?.content?.parts?.[0]?.text
+
+    if (!texto) {
+      // `finishReason` é o que separa "a imagem não é um calendário" de
+      // "a resposta foi cortada no meio" (MAX_TOKENS) e de bloqueio por
+      // política. Sem ele, toda falha vira o mesmo "resposta vazia" e a
+      // próxima investigação começa do zero.
+      const motivo = candidato?.finishReason || dados?.promptFeedback?.blockReason || 'sem conteúdo'
+      throw new Error(`resposta vazia (${motivo})`)
+    }
 
     return normalizarLinhas(extrairJson(texto))
   } finally {
@@ -227,13 +251,23 @@ async function lerArquivo(
   chaves: string[],
   prazo: number,
 ): Promise<LeituraDeArquivo> {
-  let ultimoErro = 'não foi possível ler'
+  let ultimoErro = ''
 
   for (const modelo of MODELOS) {
     for (const chave of chaves) {
       // A função tem tempo contado: insistir até o processo ser morto devolveria
-      // 504 sem nenhuma das outras imagens, que talvez já estivessem prontas.
-      if (Date.now() > prazo) return { nome: arquivo.nome, linhas: [], erro: 'tempo esgotado' }
+      // 504 sem resposta nenhuma. Mas o motivo que volta é o da ÚLTIMA tentativa
+      // de verdade — dizer só "tempo esgotado" escondia o erro que explicava a
+      // falha e deixava a tela sem nada de útil para mostrar.
+      if (Date.now() > prazo) {
+        return {
+          nome: arquivo.nome,
+          linhas: [],
+          erro: ultimoErro
+            ? `${ultimoErro} — e o tempo acabou antes de outra tentativa`
+            : 'a leitura demorou demais',
+        }
+      }
 
       try {
         return { nome: arquivo.nome, linhas: await chamarGemini(modelo, chave, arquivo) }
@@ -244,7 +278,7 @@ async function lerArquivo(
     }
   }
 
-  return { nome: arquivo.nome, linhas: [], erro: ultimoErro }
+  return { nome: arquivo.nome, linhas: [], erro: ultimoErro || 'não foi possível ler' }
 }
 
 export async function lerCalendarios(arquivos: ArquivoParaLer[]): Promise<LeituraDeArquivo[]> {

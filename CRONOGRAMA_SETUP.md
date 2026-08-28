@@ -164,6 +164,14 @@ O recado do lembrete e a visibilidade valem para o lote inteiro; o campo
 **conteúdo cobrado** fica vazio de propósito: a tabela de datas não diz o que
 cai na prova.
 
+**Uma imagem por requisição.** O painel envia os arquivos em série, um por
+chamada, e reduz cada imagem para 1600px no maior lado antes de subir. Não é
+detalhe de implementação: quando as cinco iam juntas, dividiam os 60s de uma
+invocação só — as duas primeiras consumiam o orçamento e o resto voltava com
+"tempo esgotado" sem nunca ter sido lido. O raciocínio do `2.5-flash`
+(`thinkingConfig.thinkingBudget: 0`) fica desligado pelo mesmo motivo: copiar
+uma tabela não precisa dele, e era ele que estourava o tempo.
+
 Precisa de chave do Gemini configurada (Configurações → API Gemini,
 `settings.geminiApiKey`, ou `GEMINI_API_KEY` no ambiente) — a mesma escada de
 chaves do gerador de questões.

@@ -103,6 +103,7 @@ export function ImportarAvaliacoes({
   const [ano, setAno] = useState(() => Number(hoje.slice(0, 4)))
 
   const [lendo, setLendo] = useState(false)
+  const [progresso, setProgresso] = useState<{ atual: number; total: number } | null>(null)
   const [criando, setCriando] = useState(false)
   const [erro, setErro] = useState<string | null>(null)
   const [arrastando, setArrastando] = useState(false)
@@ -159,33 +160,78 @@ export function ImportarAvaliacoes({
     })
   }
 
+  /**
+   * Lê as imagens, UMA REQUISIÇÃO POR ARQUIVO.
+   *
+   * Mandar as cinco juntas era o que quebrava: elas dividiam os 60s de uma
+   * invocação só, as duas primeiras consumiam o orçamento e o resto voltava
+   * sem leitura nenhuma. Em série cada imagem tem a função inteira para si — e
+   * o admin vê o progresso em vez de encarar um botão travado.
+   */
   async function ler() {
     if (arquivos.length === 0) return
     setLendo(true)
     setErro(null)
+    setResumo([])
+
+    const lidas: PropostaAvaliacao[] = []
+    const relatos: ResumoArquivo[] = []
 
     try {
-      const corpo = new FormData()
-      for (const item of arquivos) corpo.append('arquivos', item.arquivo)
-      corpo.append('secao', secao)
-      corpo.append('ano', String(ano))
-      corpo.append('lembrete', JSON.stringify(lembrete))
-      corpo.append('publicada', String(publicada))
+      for (const [indice, item] of arquivos.entries()) {
+        setProgresso({ atual: indice + 1, total: arquivos.length })
 
-      const resposta = await fetch('/api/admin/cronogramas/extrair', { method: 'POST', body: corpo })
-      const dados = await resposta.json().catch(() => ({}))
+        try {
+          const arquivo = await prepararParaEnvio(item.arquivo)
 
-      if (!resposta.ok) {
-        setErro(dados?.error || 'Não foi possível ler as imagens.')
-        return
+          const corpo = new FormData()
+          corpo.append('arquivos', arquivo)
+          corpo.append('secao', secao)
+          corpo.append('ano', String(ano))
+          corpo.append('lembrete', JSON.stringify(lembrete))
+          corpo.append('publicada', String(publicada))
+
+          const resposta = await fetch('/api/admin/cronogramas/extrair', {
+            method: 'POST',
+            body: corpo,
+          })
+          const dados = await resposta.json().catch(() => ({}))
+
+          if (!resposta.ok) {
+            relatos.push({
+              nome: item.arquivo.name,
+              linhas: 0,
+              propostas: 0,
+              erro: dados?.error || `erro ${resposta.status}`,
+            })
+            continue
+          }
+
+          lidas.push(...(dados.propostas ?? []))
+          relatos.push(
+            ...(dados.arquivos ?? [
+              { nome: item.arquivo.name, linhas: 0, propostas: 0 },
+            ]),
+          )
+        } catch {
+          relatos.push({
+            nome: item.arquivo.name,
+            linhas: 0,
+            propostas: 0,
+            erro: 'falha de conexão',
+          })
+        }
       }
 
-      const lidas: PropostaAvaliacao[] = dados.propostas ?? []
-      setResumo(dados.arquivos ?? [])
+      setResumo(relatos)
 
       if (lidas.length === 0) {
-        setErro('Não encontrei nenhuma avaliação nessas imagens. Confira se a tabela está legível.')
         setPropostas([])
+        setErro(
+          relatos.some(item => item.erro)
+            ? 'Nenhuma imagem pôde ser lida — o motivo de cada uma está abaixo.'
+            : 'Não encontrei nenhuma avaliação nessas imagens. Confira se a tabela está legível.',
+        )
         return
       }
 
@@ -197,10 +243,9 @@ export function ImportarAvaliacoes({
           selecionada: !proposta.duplicada && Boolean(proposta.data),
         })),
       )
-    } catch {
-      setErro('Falha de conexão ao ler as imagens.')
     } finally {
       setLendo(false)
+      setProgresso(null)
     }
   }
 
@@ -444,12 +489,14 @@ export function ImportarAvaliacoes({
             <Sparkles className="mr-1.5 h-3.5 w-3.5" />
           )}
           {lendo
-            ? 'Lendo as imagens…'
+            ? progresso
+              ? `Lendo ${progresso.atual} de ${progresso.total}…`
+              : 'Lendo…'
             : `Ler ${arquivos.length || ''} ${arquivos.length === 1 ? 'imagem' : 'imagens'}`.trim()}
         </Button>
         {lendo && (
           <span className="text-xs text-muted-foreground">
-            Costuma levar alguns segundos por imagem.
+            Uma imagem por vez, alguns segundos cada — não feche a página.
           </span>
         )}
       </div>
@@ -852,6 +899,58 @@ function LinhaProposta({
       </div>
     </div>
   )
+}
+
+/** Maior lado da imagem enviada ao modelo. */
+const LADO_MAXIMO = 1600
+/** Acima disso o corpo da requisição não passa pela função. */
+const LIMITE_DE_ENVIO = 3.5 * 1024 * 1024
+
+/**
+ * Reduz a imagem antes de subir.
+ *
+ * O print do calendário costuma vir em resolução de tela cheia, e o base64
+ * dele infla a requisição em um terço. Além do limite de corpo da Vercel, o
+ * arquivo grande é justamente o que faz a leitura demorar mais do que a função
+ * pode esperar. Mil e seiscentos pixels no maior lado mantêm a tabela legível
+ * para o modelo — é a mesma ordem de grandeza que ele usa internamente.
+ *
+ * Qualquer tropeço (navegador sem `createImageBitmap`, PDF, canvas bloqueado)
+ * devolve o arquivo original: reduzir é otimização, não pré-requisito.
+ */
+async function prepararParaEnvio(arquivo: File): Promise<File> {
+  if (arquivo.type === 'application/pdf') return arquivo
+
+  try {
+    const bitmap = await createImageBitmap(arquivo)
+    const maiorLado = Math.max(bitmap.width, bitmap.height)
+    const escala = Math.min(1, LADO_MAXIMO / maiorLado)
+
+    if (escala === 1 && arquivo.size <= LIMITE_DE_ENVIO) return arquivo
+
+    const canvas = document.createElement('canvas')
+    canvas.width = Math.round(bitmap.width * escala)
+    canvas.height = Math.round(bitmap.height * escala)
+
+    const contexto = canvas.getContext('2d')
+    if (!contexto) return arquivo
+
+    // Fundo branco: a tabela costuma vir com transparência, e JPEG sem fundo
+    // fica com o texto sobre preto.
+    contexto.fillStyle = '#ffffff'
+    contexto.fillRect(0, 0, canvas.width, canvas.height)
+    contexto.drawImage(bitmap, 0, 0, canvas.width, canvas.height)
+    bitmap.close()
+
+    const blob = await new Promise<Blob | null>(resolver =>
+      canvas.toBlob(resolver, 'image/jpeg', 0.88),
+    )
+    if (!blob || blob.size >= arquivo.size) return arquivo
+
+    return new File([blob], `${arquivo.name.replace(/\.[^.]+$/, '')}.jpg`, { type: 'image/jpeg' })
+  } catch {
+    return arquivo
+  }
 }
 
 /**
