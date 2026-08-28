@@ -9,6 +9,8 @@ import { applyPaymentResult } from '@/lib/payments/effects'
 import { audit } from '@/lib/payments/audit'
 import { getRequestAnalyticsMeta, recordOrderCheckoutEvent } from '@/lib/analytics'
 import { DEFAULT_PAYMENT_METHODS } from '@/lib/payment-methods'
+import { chargeMetadata, computeCheckoutCharge, getFeePolicy } from '@/lib/payments/fees'
+import { resolveCheckoutCpf } from '@/lib/payments/checkout-identity'
 import {
   CouponError,
   couponAnalyticsMetadata,
@@ -209,6 +211,31 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Valor inválido' }, { status: 400 })
   }
 
+  // CPF obrigatório (nota fiscal). Vinculado ao perfil quando a conta ainda
+  // não tem um. Validar aqui, e não só no formulário, é o que impede um POST
+  // direto na rota de criar compra sem documento.
+  const cpfResult = await resolveCheckoutCpf(db, {
+    cpf: data.payerDocumentNumber,
+    documentType: data.payerDocumentType,
+    userId: session!.userId,
+  })
+  if (!cpfResult.ok) {
+    return NextResponse.json({ error: cpfResult.error }, { status: cpfResult.status })
+  }
+
+  // Taxa operacional / juros do parcelamento somados ao valor cobrado. O
+  // cliente já mostrou essa mesma conta; aqui ela é refeita porque quem manda
+  // no valor cobrado é o servidor.
+  const charge = computeCheckoutCharge({
+    baseAmount: amount,
+    paymentMethodId: data.paymentMethodId,
+    installments: data.installments,
+    hasCardToken: !!data.cardToken,
+    policy: getFeePolicy(),
+  })
+  const baseAmount = charge.baseAmount
+  amount = charge.totalAmount
+
   // Cria order interna primeiro (para usar o _id como external_reference)
   const now = new Date()
   const orderDoc: Omit<PaymentOrder, '_id'> = {
@@ -227,6 +254,7 @@ export async function POST(request: NextRequest) {
       itemType: data.itemType,
       ...couponAnalyticsMetadata(couponValidation),
       ...prouniAnalyticsMetadata(prouniApplied),
+      ...chargeMetadata(charge),
     },
     createdAt: now,
     updatedAt: now,
@@ -290,7 +318,9 @@ export async function POST(request: NextRequest) {
     const result = await provider.createPayment({
       externalReference: orderId,
       amount,
-      ...(commissionExcluded ? { commissionableAmount: 0 } : {}),
+      // A comissão do sócio incide sobre o preço do produto — a taxa do
+      // Mercado Pago não é receita nossa para ser dividida.
+      commissionableAmount: commissionExcluded ? 0 : baseAmount,
       currency: 'BRL',
       description,
       payerEmail,
@@ -300,8 +330,8 @@ export async function POST(request: NextRequest) {
       cardToken: data.cardToken,
       installments: data.installments,
       issuer: data.issuer,
-      payerDocumentType: data.payerDocumentType,
-      payerDocumentNumber: data.payerDocumentNumber,
+      payerDocumentType: 'CPF',
+      payerDocumentNumber: cpfResult.cpf,
       metadata: {
         orderId,
         type: data.type,
@@ -325,6 +355,7 @@ export async function POST(request: NextRequest) {
         providerPaymentId: result.providerOrderId,
         ...couponAnalyticsMetadata(couponValidation),
         ...prouniAnalyticsMetadata(prouniApplied),
+        ...chargeMetadata(charge),
       },
       ip,
     })
@@ -338,6 +369,9 @@ export async function POST(request: NextRequest) {
       boleto: result.boleto || null,
       statusDetail: result.statusDetail,
       amount,
+      baseAmount,
+      feeAmount: charge.feeAmount,
+      feeLabel: charge.label,
     })
   } catch (err: any) {
     console.error('[orders] erro ao criar payment:', err)

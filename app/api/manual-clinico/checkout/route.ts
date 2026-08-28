@@ -6,6 +6,8 @@ import { checkRateLimit } from '@/lib/rate-limit'
 import { getPaymentProvider, deriveIdempotencyKey } from '@/lib/payments'
 import { applyPaymentResult } from '@/lib/payments/effects'
 import { audit } from '@/lib/payments/audit'
+import { chargeMetadata, computeCheckoutCharge, getFeePolicy } from '@/lib/payments/fees'
+import { resolveCheckoutCpf } from '@/lib/payments/checkout-identity'
 import {
   buildManualClinicoCouponItem,
   computePlanExpiresAt,
@@ -269,6 +271,27 @@ export async function POST(request: NextRequest) {
     })
   }
 
+  // CPF obrigatório (nota fiscal), vinculado ao perfil quando faltar.
+  const cpfResult = await resolveCheckoutCpf(db, {
+    cpf: data.payerDocumentNumber,
+    documentType: data.payerDocumentType,
+    userId: session.userId,
+  })
+  if (!cpfResult.ok) {
+    return NextResponse.json({ error: cpfResult.error }, { status: cpfResult.status })
+  }
+
+  // Taxa operacional / juros do parcelamento somados ao valor cobrado.
+  const charge = computeCheckoutCharge({
+    baseAmount: amount,
+    paymentMethodId: data.paymentMethodId,
+    installments: data.installments,
+    hasCardToken: !!data.cardToken,
+    policy: getFeePolicy(),
+  })
+  const baseAmount = charge.baseAmount
+  amount = charge.totalAmount
+
   const now = new Date()
   const plannedExpiresAt = computePlanExpiresAt(plan, now)
   const orderDoc: Omit<PaymentOrder, '_id'> = {
@@ -279,10 +302,13 @@ export async function POST(request: NextRequest) {
     type: 'product',
     refId: MANUAL_CLINICO_PRODUCT_ID,
     amount,
+    baseAmount,
+    feeAmount: charge.feeAmount,
     currency: 'BRL',
     status: 'pending',
     idempotencyKey: '',
     metadata: {
+      ...chargeMetadata(charge),
       productType: MANUAL_CLINICO_PRODUCT_TYPE,
       itemTitle: `${config.label} - ${plan.label}`,
       originalPrice: plan.price,
@@ -372,6 +398,9 @@ export async function POST(request: NextRequest) {
     const result = await provider.createPayment({
       externalReference: orderId,
       amount,
+      // A comissão do sócio incide sobre o preço do produto — a taxa do
+      // Mercado Pago não é receita nossa para ser dividida.
+      commissionableAmount: baseAmount,
       currency: 'BRL',
       description: `${config.label} - ${plan.label}`,
       payerEmail: session.email,
@@ -381,8 +410,8 @@ export async function POST(request: NextRequest) {
       cardToken: data.cardToken,
       installments: data.installments,
       issuer: data.issuer,
-      payerDocumentType: data.payerDocumentType,
-      payerDocumentNumber: data.payerDocumentNumber,
+      payerDocumentType: 'CPF',
+      payerDocumentNumber: cpfResult.cpf,
       metadata: {
         orderId,
         type: 'product',
@@ -406,6 +435,7 @@ export async function POST(request: NextRequest) {
         providerPaymentId: result.providerOrderId,
         ...couponAnalyticsMetadata(couponValidation),
         ...prouniAnalyticsMetadata(prouniApplied),
+        ...chargeMetadata(charge),
       },
       ip,
     })
@@ -419,6 +449,9 @@ export async function POST(request: NextRequest) {
       boleto: result.boleto || null,
       statusDetail: result.statusDetail,
       amount,
+      baseAmount,
+      feeAmount: charge.feeAmount,
+      feeLabel: charge.label,
       successRedirect: `/manual-clinico?purchase=success&value=${amount}&plan=${plan.key}&oid=${orderId}`,
     })
   } catch (error: any) {

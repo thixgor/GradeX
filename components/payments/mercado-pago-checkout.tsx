@@ -10,10 +10,32 @@
  *
  * Nunca envia PAN/CVV ao backend — apenas o cardToken gerado no client.
  * O backend valida o amount usando a fonte autoritativa (admin_settings/materials).
+ *
+ * DUAS REGRAS QUE VALEM PARA TODOS OS CHECKOUTS passam por aqui, porque este é
+ * o único formulário de pagamento da plataforma (/comprar, /buy/checkout,
+ * /loja/checkout, /materiais/checkout, /manual-clinico/checkout e /rifas):
+ *
+ *  1. TAXA OPERACIONAL / JUROS. O `amount` que as páginas passam é o preço de
+ *     tabela; o que o comprador paga é esse preço MAIS a taxa que o Mercado
+ *     Pago cobra pelo meio escolhido (ver lib/payments/fees.ts). O acréscimo
+ *     aparece discriminado antes de confirmar — o servidor refaz exatamente a
+ *     mesma conta, então o total da tela é o total cobrado.
+ *
+ *  2. CPF OBRIGATÓRIO em qualquer meio de pagamento (antes só cartão e boleto
+ *     pediam; o Pix passava batido). É o dado da nota fiscal, e para quem está
+ *     logado sem CPF no cadastro ele é anexado ao perfil pelo servidor.
  */
 
 import { useEffect, useMemo, useState } from 'react'
-import { Loader2, CheckCircle2, AlertCircle, Copy, QrCode, CreditCard, Barcode, ExternalLink, Lock, ShieldCheck } from 'lucide-react'
+import { Loader2, CheckCircle2, AlertCircle, Copy, QrCode, CreditCard, Barcode, ExternalLink, Lock, ShieldCheck, Info, FileText } from 'lucide-react'
+import { formatCpf, isValidCpf, onlyCpfDigits } from '@/lib/cpf'
+import {
+  computeCheckoutCharge,
+  DEFAULT_FEE_POLICY,
+  formatBrl,
+  type CheckoutCharge,
+  type FeePolicy,
+} from '@/lib/payments/fees'
 
 declare global {
   interface Window {
@@ -193,6 +215,21 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [order, setOrder] = useState<CheckoutOrderResponse | null>(null)
+  // Política de taxas vinda do servidor. Enquanto não chega, usamos a tabela
+  // padrão — que é a mesma que o servidor usa quando não há override de env.
+  const [feePolicy, setFeePolicy] = useState<FeePolicy>(DEFAULT_FEE_POLICY)
+  const [installments, setInstallments] = useState(1)
+  const [cpf, setCpf] = useState('')
+  const [cpfTouched, setCpfTouched] = useState(false)
+  const [cardNumber, setCardNumber] = useState('')
+  /**
+   * Bandeira detectada pelo BIN enquanto o comprador digita o cartão. Serve
+   * para dois fins: mandar o `payment_method_id` certo ao criar o pagamento e
+   * — o que importa aqui — saber se é DÉBITO, cuja taxa é bem menor que a do
+   * crédito e não admite parcelamento. Sem isso a tela mostraria juros de
+   * crédito para quem vai pagar no débito.
+   */
+  const [detectedCardMethodId, setDetectedCardMethodId] = useState<string | null>(null)
 
   useEffect(() => {
     if (!allowed.includes(method)) {
@@ -217,6 +254,22 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
       keepalive: true,
     }).catch(() => {})
   }
+
+  // Política de taxas — a tela precisa mostrar o mesmo total que o servidor
+  // vai cobrar. Se a rota falhar, seguimos com a tabela padrão em vez de
+  // travar o checkout: no pior caso o total exibido empata com o cobrado.
+  useEffect(() => {
+    let cancelled = false
+    fetch('/api/payments/fees')
+      .then(res => (res.ok ? res.json() : null))
+      .then(data => {
+        if (!cancelled && data?.policy) setFeePolicy(data.policy as FeePolicy)
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   // Carregar mp.js v2
   useEffect(() => {
@@ -263,54 +316,158 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
     return () => clearInterval(interval)
   }, [order?.orderId, order?.status, method])
 
+  /**
+   * `payment_method_id` usado para PRECIFICAR. No cartão ele vem da detecção de
+   * bandeira pelo BIN (`debvisa`, `visa`, ...); antes disso assumimos crédito,
+   * que é a taxa maior — errar para cima e corrigir ao digitar é melhor do que
+   * mostrar um total menor do que o que será cobrado.
+   */
+  const pricingMethodId = useMemo(() => {
+    if (method === 'pix') return 'pix'
+    if (method === 'boleto') return 'bolbradesco'
+    return detectedCardMethodId || 'credit_card'
+  }, [method, detectedCardMethodId])
+
+  const isDebitCard = useMemo(
+    () => method === 'card' && !!detectedCardMethodId && /^deb|^maestro/.test(detectedCardMethodId),
+    [method, detectedCardMethodId]
+  )
+
+  const maxInstallments = Math.max(1, Math.min(12, feePolicy?.maxInstallments || 12))
+
+  const installmentOptions = useMemo(
+    () => [1, 2, 3, 4, 5, 6, 8, 10, 12].filter(n => n <= maxInstallments),
+    [maxInstallments]
+  )
+
+  // Débito não parcela, e mudar o limite de parcelas pela política não pode
+  // deixar uma seleção órfã (ex.: 12x com o limite baixado para 6).
+  useEffect(() => {
+    if (isDebitCard && installments !== 1) setInstallments(1)
+    else if (installments > maxInstallments) setInstallments(1)
+  }, [isDebitCard, installments, maxInstallments])
+
+  /**
+   * Total a cobrar = preço de tabela + taxa do meio escolhido. Mesma função
+   * que roda no servidor (lib/payments/fees.ts), com a mesma política.
+   */
+  const charge: CheckoutCharge = useMemo(
+    () =>
+      computeCheckoutCharge({
+        baseAmount: props.amount,
+        paymentMethodId: pricingMethodId,
+        installments: method === 'card' && !isDebitCard ? installments : 1,
+        hasCardToken: method === 'card',
+        policy: feePolicy,
+      }),
+    [props.amount, pricingMethodId, method, isDebitCard, installments, feePolicy]
+  )
+
+  /** Total de cada opção do <select> de parcelas, com os juros já somados. */
+  const chargeForInstallments = useMemo(
+    () => (n: number) =>
+      computeCheckoutCharge({
+        baseAmount: props.amount,
+        paymentMethodId: pricingMethodId,
+        installments: n,
+        hasCardToken: true,
+        policy: feePolicy,
+      }),
+    [props.amount, pricingMethodId, feePolicy]
+  )
+
+  // Detecção de bandeira pelo BIN enquanto digita (6 dígitos bastam).
+  useEffect(() => {
+    if (method !== 'card' || !mpInstance) return
+    const bin = cardNumber.replace(/\D/g, '').slice(0, 6)
+    if (bin.length < 6) {
+      setDetectedCardMethodId(null)
+      return
+    }
+    let cancelled = false
+    const timer = setTimeout(async () => {
+      try {
+        const resp = await mpInstance.getPaymentMethods({ bin })
+        const id = resp?.results?.[0]?.id
+        if (!cancelled && id) setDetectedCardMethodId(id)
+      } catch {
+        // Falha na detecção não quebra nada: o submit refaz a consulta e, até
+        // lá, a tela segue precificando como crédito.
+      }
+    }, 350)
+    return () => {
+      cancelled = true
+      clearTimeout(timer)
+    }
+  }, [cardNumber, method, mpInstance])
+
+  const cpfDigits = onlyCpfDigits(cpf)
+  const cpfValid = isValidCpf(cpfDigits)
+
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setError(null)
     setSubmitting(true)
     try {
       const form = e.currentTarget
-      let body: Record<string, any> = { ...props.extraBody }
+
+      // CPF é obrigatório em TODOS os meios de pagamento — é o dado da nota
+      // fiscal. A validação de verdade é a do servidor; esta aqui só evita a
+      // ida ao servidor (e, no cartão, uma tokenização) com um CPF errado.
+      if (!cpfValid) {
+        setCpfTouched(true)
+        throw new Error('Informe um CPF válido para concluir a compra.')
+      }
+
+      let body: Record<string, any> = {
+        ...props.extraBody,
+        payerDocumentType: 'CPF',
+        payerDocumentNumber: cpfDigits,
+      }
 
       if (method === 'card') {
         if (!mpInstance) throw new Error('SDK não carregou')
-        const cardNumber = (form.elements.namedItem('cardNumber') as HTMLInputElement).value.replace(/\s/g, '')
+        const digitsOnlyCard = cardNumber.replace(/\D/g, '')
         const cardholderName = (form.elements.namedItem('cardholderName') as HTMLInputElement).value
         const cardExpirationMonth = (form.elements.namedItem('cardExpirationMonth') as HTMLInputElement).value
         const cardExpirationYear = (form.elements.namedItem('cardExpirationYear') as HTMLInputElement).value
         const securityCode = (form.elements.namedItem('securityCode') as HTMLInputElement).value
-        const docNumber = (form.elements.namedItem('docNumber') as HTMLInputElement).value
-        const installments = Number((form.elements.namedItem('installments') as HTMLInputElement)?.value || 1)
 
         // Tokeniza no client
         const cardToken = await mpInstance.createCardToken({
-          cardNumber,
+          cardNumber: digitsOnlyCard,
           cardholderName,
           cardExpirationMonth,
           cardExpirationYear: cardExpirationYear.length === 2 ? `20${cardExpirationYear}` : cardExpirationYear,
           securityCode,
           identificationType: 'CPF',
-          identificationNumber: docNumber.replace(/\D/g, ''),
+          identificationNumber: cpfDigits,
         })
 
-        // Detecta bandeira
-        const pmResp = await mpInstance.getPaymentMethods({ bin: cardNumber.slice(0, 6) })
-        const paymentMethodId = pmResp?.results?.[0]?.id || 'visa'
+        // Bandeira: a detecção já rodou enquanto ele digitava; refazemos aqui
+        // só quando ela não chegou a valer (digitação rápida, rede lenta).
+        let paymentMethodId: string = detectedCardMethodId || ''
+        if (!paymentMethodId) {
+          const pmResp = await mpInstance.getPaymentMethods({ bin: digitsOnlyCard.slice(0, 6) })
+          paymentMethodId = pmResp?.results?.[0]?.id || 'visa'
+        }
+
+        // Se a bandeira só apareceu agora e for de débito, a tela precificou
+        // como crédito parcelado — e débito não parcela. Mandar as parcelas
+        // assim mesmo faria o Mercado Pago recusar o pagamento.
+        const debito = /^deb|^maestro/.test(paymentMethodId)
 
         body = {
           ...body,
           paymentMethodId,
           cardToken: cardToken.id,
-          installments,
-          payerDocumentType: 'CPF',
-          payerDocumentNumber: docNumber.replace(/\D/g, ''),
+          installments: debito ? 1 : charge.installments,
         }
       } else if (method === 'pix') {
         body = { ...body, paymentMethodId: 'pix' }
       } else if (method === 'boleto') {
         const getVal = (name: string) =>
           ((form.elements.namedItem(name) as HTMLInputElement | null)?.value || '').trim()
-        const docNumber = getVal('docNumber')
-        const payerName = getVal('payerName')
         const zip = getVal('addrZip').replace(/\D/g, '')
         const streetName = getVal('addrStreet')
         const streetNumber = getVal('addrNumber')
@@ -318,7 +475,6 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
         const city = getVal('addrCity')
         const federalUnit = getVal('addrState').toUpperCase()
 
-        if (!docNumber.replace(/\D/g, '')) throw new Error('Informe um CPF válido para o boleto.')
         if (!zip || !streetName || !streetNumber) {
           throw new Error('Preencha o endereço completo (CEP, rua e número) para gerar o boleto.')
         }
@@ -326,13 +482,16 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
         body = {
           ...body,
           paymentMethodId: 'bolbradesco',
-          payerDocumentType: 'CPF',
-          payerDocumentNumber: docNumber.replace(/\D/g, ''),
           payerAddress: { zipCode: zip, streetName, streetNumber, neighborhood, city, federalUnit },
         }
       }
 
-      trackCheckout('checkout_submit', { paymentMethod: method })
+      trackCheckout('checkout_submit', {
+        paymentMethod: method,
+        installments: charge.installments,
+        feeAmount: charge.feeAmount,
+        totalAmount: charge.totalAmount,
+      })
 
       const res = await fetch(props.endpoint, {
         method: 'POST',
@@ -378,6 +537,46 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
       </div>
 
       <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        {/* CPF — obrigatório em qualquer meio de pagamento, para a nota fiscal. */}
+        <div>
+          <label style={labelStyle}>CPF do comprador</label>
+          <input
+            id="docNumber"
+            name="docNumber"
+            inputMode="numeric"
+            autoComplete="off"
+            required
+            value={formatCpf(cpf)}
+            onChange={e => setCpf(onlyCpfDigits(e.target.value))}
+            onBlur={() => setCpfTouched(true)}
+            placeholder="000.000.000-00"
+            aria-invalid={cpfTouched && !cpfValid}
+            style={{
+              ...glassInput,
+              borderColor: cpfTouched && !cpfValid ? 'hsl(var(--destructive) / 0.6)' : 'hsl(var(--border))',
+            }}
+          />
+          {cpfTouched && !cpfValid ? (
+            <span style={{ display: 'block', marginTop: '5px', fontSize: '11px', color: 'hsl(var(--destructive))' }}>
+              CPF inválido. Confira os números digitados.
+            </span>
+          ) : (
+            <span
+              style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '5px',
+                marginTop: '5px',
+                fontSize: '11px',
+                color: 'hsl(var(--muted-foreground))',
+              }}
+            >
+              <FileText size={12} style={{ flexShrink: 0, marginTop: '1px' }} />
+              Obrigatório para a emissão da nota fiscal. Se a sua conta ainda não tiver CPF, ele fica vinculado ao seu perfil.
+            </span>
+          )}
+        </div>
+
         {method === 'card' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             <div>
@@ -388,6 +587,8 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
                 inputMode="numeric"
                 maxLength={19}
                 required
+                value={cardNumber}
+                onChange={e => setCardNumber(e.target.value.replace(/[^\d\s]/g, ''))}
                 placeholder="0000 0000 0000 0000"
                 style={glassInput}
               />
@@ -440,34 +641,37 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
                 />
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-2.5">
-              <div>
-                <label style={labelStyle}>CPF</label>
-                <input
-                  id="docNumber"
-                  name="docNumber"
-                  inputMode="numeric"
-                  required
-                  placeholder="000.000.000-00"
-                  style={glassInput}
-                />
-              </div>
+            {isDebitCard ? (
+              <p style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))' }}>
+                Cartão de débito identificado — a cobrança é à vista, sem juros de parcelamento.
+              </p>
+            ) : (
               <div>
                 <label style={labelStyle}>Parcelas</label>
                 <select
                   id="installments"
                   name="installments"
-                  defaultValue={1}
+                  value={installments}
+                  onChange={e => setInstallments(Number(e.target.value) || 1)}
                   style={{ ...glassInput, cursor: 'pointer' }}
                 >
-                  {[1, 2, 3, 4, 5, 6, 8, 10, 12].map(n => (
-                    <option key={n} value={n} style={{ background: 'hsl(var(--card))' }}>
-                      {n}x de R$ {(props.amount / n).toFixed(2).replace('.', ',')}
-                    </option>
-                  ))}
+                  {installmentOptions.map(n => {
+                    const opt = chargeForInstallments(n)
+                    return (
+                      <option key={n} value={n} style={{ background: 'hsl(var(--card))' }}>
+                        {n}x de {formatBrl(opt.installmentAmount)}
+                        {' — total '}
+                        {formatBrl(opt.totalAmount)}
+                        {n > 1 && opt.feeAmount > 0 ? ' (com juros)' : ''}
+                      </option>
+                    )
+                  })}
                 </select>
+                <span style={{ display: 'block', marginTop: '5px', fontSize: '11px', color: 'hsl(var(--muted-foreground))' }}>
+                  O juro do parcelamento é o custo que o Mercado Pago cobra por financiar as parcelas.
+                </span>
               </div>
-            </div>
+            )}
           </div>
         )}
 
@@ -496,17 +700,6 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
                 name="payerName"
                 required
                 defaultValue={props.payerNameHint}
-                style={glassInput}
-              />
-            </div>
-            <div>
-              <label style={labelStyle}>CPF</label>
-              <input
-                id="docNumber"
-                name="docNumber"
-                inputMode="numeric"
-                required
-                placeholder="000.000.000-00"
                 style={glassInput}
               />
             </div>
@@ -602,25 +795,65 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
           </div>
         )}
 
+        {/* De onde vem o acréscimo — dito em português, não só somado. */}
+        {charge.feeAmount > 0 && charge.description && (
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '8px',
+              padding: '10px 12px',
+              background: 'hsl(var(--muted) / 0.5)',
+              borderRadius: '10px',
+              fontSize: '12px',
+              lineHeight: 1.5,
+              color: 'hsl(var(--muted-foreground))',
+            }}
+          >
+            <Info size={14} style={{ flexShrink: 0, marginTop: '2px' }} />
+            <span>
+              <strong style={{ color: 'hsl(var(--foreground))' }}>{charge.label}: {formatBrl(charge.feeAmount)}</strong>{' '}
+              {charge.description}
+            </span>
+          </div>
+        )}
+
         {/* Footer with amount + submit */}
         <div
           style={{ borderTop: '1px solid hsl(var(--primary) / 0.12)', paddingTop: '16px' }}
           className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
         >
-          <div>
+          <div style={{ minWidth: 0 }}>
             <p style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginBottom: '2px' }}>{props.description}</p>
+            {charge.feeAmount > 0 && (
+              <div style={{ marginBottom: '6px', fontSize: '12px', color: 'hsl(var(--muted-foreground))' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px' }}>
+                  <span>Subtotal</span>
+                  <span>{formatBrl(charge.baseAmount)}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px' }}>
+                  <span>{charge.label}</span>
+                  <span>+ {formatBrl(charge.feeAmount)}</span>
+                </div>
+              </div>
+            )}
             <p style={{ fontSize: '26px', fontWeight: 800, color: 'hsl(var(--primary))', letterSpacing: '-0.02em' }}>
-              R$ {props.amount.toFixed(2).replace('.', ',')}
+              {formatBrl(charge.totalAmount)}
             </p>
+            {method === 'card' && charge.installments > 1 && (
+              <p style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', marginTop: '2px' }}>
+                em {charge.installments}x de {formatBrl(charge.installmentAmount)}
+              </p>
+            )}
           </div>
           <button
             type="submit"
-            disabled={submitting || (method === 'card' && !mpReady)}
+            disabled={submitting || !cpfValid || (method === 'card' && !mpReady)}
             className="w-full sm:w-auto justify-center"
             style={{
               ...submitBtn,
-              opacity: (submitting || (method === 'card' && !mpReady)) ? 0.6 : 1,
-              cursor: (submitting || (method === 'card' && !mpReady)) ? 'not-allowed' : 'pointer',
+              opacity: (submitting || !cpfValid || (method === 'card' && !mpReady)) ? 0.6 : 1,
+              cursor: (submitting || !cpfValid || (method === 'card' && !mpReady)) ? 'not-allowed' : 'pointer',
             }}
           >
             {submitting && <Loader2 size={16} className="animate-spin" />}

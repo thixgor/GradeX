@@ -8,6 +8,8 @@ import { getPaymentProvider, deriveIdempotencyKey } from '@/lib/payments'
 import { applyPaymentResult } from '@/lib/payments/effects'
 import { audit } from '@/lib/payments/audit'
 import { DEFAULT_PAYMENT_METHODS } from '@/lib/payment-methods'
+import { chargeMetadata, computeCheckoutCharge, getFeePolicy } from '@/lib/payments/fees'
+import { resolveCheckoutCpf } from '@/lib/payments/checkout-identity'
 import { findRaffleByIdOrSlug, canPurchase, reserveNumbers, releaseReservation, RAFFLE_RESERVATION_MINUTES, sanitizeRaffleText } from '@/lib/raffles'
 import type { PaymentOrder, RaffleParticipant, RafflePurchase } from '@/lib/types'
 
@@ -95,6 +97,29 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     return NextResponse.json({ error: 'Valor inválido' }, { status: 400 })
   }
 
+  // CPF obrigatório (nota fiscal). A rifa aceita compra sem conta, então aqui
+  // ele pode ser só validado — sem perfil para vincular.
+  const cpfResult = await resolveCheckoutCpf(db, {
+    cpf: data.payerDocumentNumber,
+    documentType: data.payerDocumentType,
+    userId: session?.userId,
+  })
+  if (!cpfResult.ok) {
+    return NextResponse.json({ error: cpfResult.error }, { status: cpfResult.status })
+  }
+
+  // Taxa operacional / juros do parcelamento. `amount` continua sendo o valor
+  // dos números (é o que a rifa vale e o que a apuração usa); `chargedAmount`
+  // é o que sai do bolso do comprador.
+  const charge = computeCheckoutCharge({
+    baseAmount: amount,
+    paymentMethodId: data.paymentMethodId,
+    installments: data.installments,
+    hasCardToken: !!data.cardToken,
+    policy: getFeePolicy(),
+  })
+  const chargedAmount = charge.totalAmount
+
   const now = new Date()
   const name = sanitizeRaffleText(data.name, 120)
   const email = data.email.toLowerCase().trim()
@@ -122,11 +147,14 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     type: 'raffle',
     refId: String(raffle._id),
     refSlug: raffle.slug,
-    amount,
+    amount: chargedAmount,
+    baseAmount: amount,
+    feeAmount: charge.feeAmount,
     currency: 'BRL',
     status: 'pending',
     idempotencyKey: '',
     metadata: {
+      ...chargeMetadata(charge),
       raffleId: String(raffle._id),
       raffleName: raffle.name,
       numbers,
@@ -194,7 +222,9 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     const provider = getPaymentProvider()
     const result = await provider.createPayment({
       externalReference: orderId,
-      amount,
+      amount: chargedAmount,
+      // A comissão do sócio incide sobre a rifa, não sobre a taxa do MP.
+      commissionableAmount: amount,
       currency: 'BRL',
       description: `Rifa: ${raffle.name} — ${numbers.length} número(s)`,
       payerEmail: email,
@@ -204,8 +234,8 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       cardToken: data.cardToken,
       installments: data.installments,
       issuer: data.issuer,
-      payerDocumentType: data.payerDocumentType,
-      payerDocumentNumber: data.payerDocumentNumber,
+      payerDocumentType: 'CPF',
+      payerDocumentNumber: cpfResult.cpf,
       metadata: {
         orderId,
         type: 'raffle',
@@ -227,7 +257,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       actorUserId: session?.userId,
       resourceType: 'raffle',
       resourceId: String(raffle._id),
-      metadata: { orderId, amount, numbers, paymentMethod: data.paymentMethodId },
+      metadata: { orderId, amount: chargedAmount, numbers, paymentMethod: data.paymentMethodId, ...chargeMetadata(charge) },
       ip,
     })
 
@@ -240,7 +270,10 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       pix: result.pix || null,
       boleto: result.boleto || null,
       statusDetail: result.statusDetail,
-      amount,
+      amount: chargedAmount,
+      baseAmount: amount,
+      feeAmount: charge.feeAmount,
+      feeLabel: charge.label,
       successRedirect: `/rifas/${raffle.slug}?compra=ok`,
     })
   } catch (err: any) {

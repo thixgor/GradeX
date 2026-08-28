@@ -7,6 +7,8 @@ import { checkRateLimit } from '@/lib/rate-limit'
 import { getPaymentProvider, deriveIdempotencyKey } from '@/lib/payments'
 import { applyPaymentResult } from '@/lib/payments/effects'
 import { audit } from '@/lib/payments/audit'
+import { chargeMetadata, computeCheckoutCharge, getFeePolicy } from '@/lib/payments/fees'
+import { resolveCheckoutCpf } from '@/lib/payments/checkout-identity'
 import { getRequestAnalyticsMeta, recordCheckoutEvent, recordOrderCheckoutEvent } from '@/lib/analytics'
 import { computeEffectivePackagePrice } from '@/lib/material-package-pricing'
 import { DEFAULT_PAYMENT_METHODS, paymentMethodDisabledError } from '@/lib/payment-methods'
@@ -580,7 +582,29 @@ export async function POST(request: NextRequest) {
   }
 
   const description = timedVersion ? `${item.title} — ${timedVersion.label}` : item.title
+  // CPF obrigatório (nota fiscal), vinculado ao perfil quando faltar.
+  const cpfResult = await resolveCheckoutCpf(db, {
+    cpf: data.payerDocumentNumber,
+    documentType: data.payerDocumentType,
+    userId: session.userId,
+  })
+  if (!cpfResult.ok) {
+    return NextResponse.json({ error: cpfResult.error }, { status: cpfResult.status })
+  }
+
   const paidAmount = Math.round((amount + physicalTotal) * 100) / 100
+
+  // Taxa operacional / juros do parcelamento somados ao valor cobrado.
+  // `paidAmount` (digital + impressos) segue sendo o valor da COMPRA;
+  // `chargedAmount` é o que sai do bolso do comprador.
+  const charge = computeCheckoutCharge({
+    baseAmount: paidAmount,
+    paymentMethodId: data.paymentMethodId,
+    installments: data.installments,
+    hasCardToken: !!data.cardToken,
+    policy: getFeePolicy(),
+  })
+  const chargedAmount = charge.totalAmount
 
   // Comissão do sócio (split marketplace): se este material/pacote está marcado
   // como "sem comissão", a parte digital fica de fora da comissão. Add-ons
@@ -599,7 +623,9 @@ export async function POST(request: NextRequest) {
     type: 'material',
     refId: data.itemId,
     refSlug: item.linkedDeckSlug || undefined,
-    amount: paidAmount,
+    amount: chargedAmount,
+    baseAmount: paidAmount,
+    feeAmount: charge.feeAmount,
     currency: 'BRL',
     status: 'pending',
     idempotencyKey: '',
@@ -704,7 +730,9 @@ export async function POST(request: NextRequest) {
     const provider = getPaymentProvider()
     const result = await provider.createPayment({
       externalReference: orderId,
-      amount: paidAmount,
+      amount: chargedAmount,
+      // A comissão do sócio incide sobre a compra — a taxa do Mercado Pago
+      // não é receita nossa para ser dividida.
       commissionableAmount,
       currency: 'BRL',
       description,
@@ -715,8 +743,8 @@ export async function POST(request: NextRequest) {
       cardToken: data.cardToken,
       installments: data.installments,
       issuer: data.issuer,
-      payerDocumentType: data.payerDocumentType,
-      payerDocumentNumber: data.payerDocumentNumber,
+      payerDocumentType: 'CPF',
+      payerDocumentNumber: cpfResult.cpf,
       payerAddress: data.payerAddress,
       metadata: {
         orderId,
@@ -734,7 +762,7 @@ export async function POST(request: NextRequest) {
       targetUserId: session.userId,
       resourceType: data.itemType,
       resourceId: data.itemId,
-      metadata: { amount, paymentMethod: data.paymentMethodId, providerPaymentId: result.providerOrderId, ...couponAnalyticsMetadata(couponValidation), ...prouniAnalyticsMetadata(prouniApplied) },
+      metadata: { amount, paymentMethod: data.paymentMethodId, providerPaymentId: result.providerOrderId, ...couponAnalyticsMetadata(couponValidation), ...prouniAnalyticsMetadata(prouniApplied), ...chargeMetadata(charge) },
       ip,
     })
 
@@ -746,7 +774,10 @@ export async function POST(request: NextRequest) {
       pix: result.pix || null,
       boleto: result.boleto || null,
       statusDetail: result.statusDetail,
-      amount: paidAmount,
+      amount: chargedAmount,
+      baseAmount: paidAmount,
+      feeAmount: charge.feeAmount,
+      feeLabel: charge.label,
       successRedirect: physicalShopOrderId
         ? '/profile?tab=pedidos'
         : item.type === 'flashcard_deck' && item.linkedDeckSlug
@@ -1036,7 +1067,29 @@ async function handleCartCheckout(
 
   const itemCount = payableItemsForOrder.length
   const description = `Carrinho DomineAqui - ${itemCount} ${itemCount === 1 ? 'item' : 'itens'}`
+  // CPF obrigatório (nota fiscal), vinculado ao perfil quando faltar.
+  const cpfResult = await resolveCheckoutCpf(db, {
+    cpf: data.payerDocumentNumber,
+    documentType: data.payerDocumentType,
+    userId: session.userId,
+  })
+  if (!cpfResult.ok) {
+    return NextResponse.json({ error: cpfResult.error }, { status: cpfResult.status })
+  }
+
   const paidAmount = Math.round((amount + physicalTotal) * 100) / 100
+
+  // Taxa operacional / juros do parcelamento somados ao valor cobrado.
+  // `paidAmount` (digital + impressos) segue sendo o valor da COMPRA;
+  // `chargedAmount` é o que sai do bolso do comprador.
+  const charge = computeCheckoutCharge({
+    baseAmount: paidAmount,
+    paymentMethodId: data.paymentMethodId,
+    installments: data.installments,
+    hasCardToken: !!data.cardToken,
+    policy: getFeePolicy(),
+  })
+  const chargedAmount = charge.totalAmount
 
   // Comissão do sócio: exclui do split o valor (já com desconto) dos itens do
   // carrinho marcados como "sem comissão". Add-ons físicos seguem comissionáveis.
@@ -1054,7 +1107,9 @@ async function handleCartCheckout(
     provider: 'mercado_pago',
     type: 'material',
     refId: payableItemsForOrder[0]?.itemId,
-    amount: paidAmount,
+    amount: chargedAmount,
+    baseAmount: paidAmount,
+    feeAmount: charge.feeAmount,
     currency: 'BRL',
     status: 'pending',
     idempotencyKey: '',
@@ -1173,7 +1228,9 @@ async function handleCartCheckout(
     const provider = getPaymentProvider()
     const result = await provider.createPayment({
       externalReference: orderId,
-      amount: paidAmount,
+      amount: chargedAmount,
+      // A comissão do sócio incide sobre a compra — a taxa do Mercado Pago
+      // não é receita nossa para ser dividida.
       commissionableAmount,
       currency: 'BRL',
       description,
@@ -1184,8 +1241,8 @@ async function handleCartCheckout(
       cardToken: data.cardToken,
       installments: data.installments,
       issuer: data.issuer,
-      payerDocumentType: data.payerDocumentType,
-      payerDocumentNumber: data.payerDocumentNumber,
+      payerDocumentType: 'CPF',
+      payerDocumentNumber: cpfResult.cpf,
       payerAddress: data.payerAddress,
       metadata: {
         orderId,
@@ -1203,7 +1260,7 @@ async function handleCartCheckout(
       targetUserId: session.userId,
       resourceType: 'material_cart',
       resourceId: orderId,
-      metadata: { amount, paymentMethod: data.paymentMethodId, providerPaymentId: result.providerOrderId, ...couponAnalyticsMetadata(couponValidation) },
+      metadata: { amount, paymentMethod: data.paymentMethodId, providerPaymentId: result.providerOrderId, ...couponAnalyticsMetadata(couponValidation), ...chargeMetadata(charge) },
       ip,
     })
 
@@ -1215,7 +1272,10 @@ async function handleCartCheckout(
       pix: result.pix || null,
       boleto: result.boleto || null,
       statusDetail: result.statusDetail,
-      amount: paidAmount,
+      amount: chargedAmount,
+      baseAmount: paidAmount,
+      feeAmount: charge.feeAmount,
+      feeLabel: charge.label,
       freeItems: serializedFreeItems,
       skippedItems: resolution.skippedItems,
       successRedirect: physicalShopOrderId ? '/profile?tab=pedidos' : '/materiais?tab=mine&purchase=success',

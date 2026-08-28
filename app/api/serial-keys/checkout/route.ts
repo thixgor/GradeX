@@ -6,6 +6,8 @@ import { checkRateLimit } from '@/lib/rate-limit'
 import { getPaymentProvider, deriveIdempotencyKey } from '@/lib/payments'
 import { applyPaymentResult } from '@/lib/payments/effects'
 import { audit } from '@/lib/payments/audit'
+import { chargeMetadata, computeCheckoutCharge, getFeePolicy } from '@/lib/payments/fees'
+import { resolveCheckoutCpf } from '@/lib/payments/checkout-identity'
 import { getRequestAnalyticsMeta, recordOrderCheckoutEvent } from '@/lib/analytics'
 import { DEFAULT_PAYMENT_METHODS, paymentMethodDisabledError } from '@/lib/payment-methods'
 import {
@@ -317,6 +319,28 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Valor inválido após o desconto.' }, { status: 400 })
   }
 
+  // CPF obrigatório (nota fiscal). Este checkout aceita compra sem conta —
+  // nesse caso o CPF é só validado, sem perfil para vincular.
+  const cpfResult = await resolveCheckoutCpf(db, {
+    cpf: data.payerDocumentNumber,
+    documentType: data.payerDocumentType,
+    userId: session?.userId,
+  })
+  if (!cpfResult.ok) {
+    return NextResponse.json({ error: cpfResult.error }, { status: cpfResult.status })
+  }
+
+  // Taxa operacional / juros do parcelamento somados ao valor cobrado.
+  const charge = computeCheckoutCharge({
+    baseAmount: amount,
+    paymentMethodId: data.paymentMethodId,
+    installments: data.installments,
+    hasCardToken: !!data.cardToken,
+    policy: getFeePolicy(),
+  })
+  const baseAmount = charge.baseAmount
+  const chargedAmount = charge.totalAmount
+
   const receiptToken = generateReceiptToken()
   const now = new Date()
 
@@ -327,7 +351,9 @@ export async function POST(request: NextRequest) {
     provider: 'mercado_pago',
     type: orderTypeFor(resolved.productType),
     refId: resolved.productId,
-    amount,
+    amount: chargedAmount,
+    baseAmount,
+    feeAmount: charge.feeAmount,
     currency: 'BRL',
     status: 'pending',
     idempotencyKey: '',
@@ -403,10 +429,11 @@ export async function POST(request: NextRequest) {
     const provider = getPaymentProvider()
     const result = await provider.createPayment({
       externalReference: orderId,
-      amount,
+      amount: chargedAmount,
       // Se o material/pacote está marcado como "sem comissão do sócio", tira o
-      // valor digital do split (o sócio não recebe percentual sobre ele).
-      commissionableAmount: resolved.excludeFromCommission === true ? 0 : amount,
+      // valor digital do split (o sócio não recebe percentual sobre ele). A
+      // taxa do Mercado Pago também fica de fora: não é receita nossa.
+      commissionableAmount: resolved.excludeFromCommission === true ? 0 : baseAmount,
       currency: 'BRL',
       description: resolved.description,
       payerEmail: buyer.email,
@@ -416,8 +443,8 @@ export async function POST(request: NextRequest) {
       cardToken: data.cardToken,
       installments: data.installments,
       issuer: data.issuer,
-      payerDocumentType: data.payerDocumentType,
-      payerDocumentNumber: data.payerDocumentNumber,
+      payerDocumentType: 'CPF',
+      payerDocumentNumber: cpfResult.cpf,
       payerAddress: data.payerAddress,
       metadata: {
         orderId,
@@ -435,7 +462,7 @@ export async function POST(request: NextRequest) {
       actorUserId: session?.userId,
       resourceType: 'serial_key',
       resourceId: orderId,
-      metadata: { amount, productType: resolved.productType, paymentMethod: data.paymentMethodId, guest: !session },
+      metadata: { amount: chargedAmount, productType: resolved.productType, paymentMethod: data.paymentMethodId, guest: !session, ...chargeMetadata(charge) },
       ip,
       userAgent,
     })
@@ -449,7 +476,10 @@ export async function POST(request: NextRequest) {
       pix: result.pix || null,
       boleto: result.boleto || null,
       statusDetail: result.statusDetail,
-      amount,
+      amount: chargedAmount,
+      baseAmount,
+      feeAmount: charge.feeAmount,
+      feeLabel: charge.label,
       successRedirect: getSuccessUrl(orderId, receiptToken),
     })
   } catch (err: any) {
@@ -610,6 +640,28 @@ async function handleCartCheckout(
       .reduce((sum, item) => sum + Math.max(0, item.price), 0) * 100
   ) / 100
 
+  // CPF obrigatório (nota fiscal). Este checkout aceita compra sem conta —
+  // nesse caso o CPF é só validado, sem perfil para vincular.
+  const cpfResult = await resolveCheckoutCpf(db, {
+    cpf: data.payerDocumentNumber,
+    documentType: data.payerDocumentType,
+    userId: session?.userId,
+  })
+  if (!cpfResult.ok) {
+    return NextResponse.json({ error: cpfResult.error }, { status: cpfResult.status })
+  }
+
+  // Taxa operacional / juros do parcelamento somados ao valor cobrado.
+  const charge = computeCheckoutCharge({
+    baseAmount: amount,
+    paymentMethodId: data.paymentMethodId,
+    installments: data.installments,
+    hasCardToken: !!data.cardToken,
+    policy: getFeePolicy(),
+  })
+  const baseAmount = charge.baseAmount
+  const chargedAmount = charge.totalAmount
+
   const receiptToken = generateReceiptToken()
   const now = new Date()
   const itemCount = serialKeyCart.length
@@ -622,7 +674,9 @@ async function handleCartCheckout(
     provider: 'mercado_pago',
     type: 'material',
     refId: serialKeyCart[0]?.grant.itemId,
-    amount,
+    amount: chargedAmount,
+    baseAmount,
+    feeAmount: charge.feeAmount,
     currency: 'BRL',
     status: 'pending',
     idempotencyKey: '',
@@ -689,7 +743,7 @@ async function handleCartCheckout(
     const provider = getPaymentProvider()
     const result = await provider.createPayment({
       externalReference: orderId,
-      amount,
+      amount: chargedAmount,
       commissionableAmount,
       currency: 'BRL',
       description,
@@ -700,8 +754,8 @@ async function handleCartCheckout(
       cardToken: data.cardToken,
       installments: data.installments,
       issuer: data.issuer,
-      payerDocumentType: data.payerDocumentType,
-      payerDocumentNumber: data.payerDocumentNumber,
+      payerDocumentType: 'CPF',
+      payerDocumentNumber: cpfResult.cpf,
       payerAddress: data.payerAddress,
       metadata: { orderId, type: 'serial_key_cart', cartSize: String(itemCount) },
     })
@@ -712,7 +766,7 @@ async function handleCartCheckout(
       actorUserId: session?.userId,
       resourceType: 'serial_key',
       resourceId: orderId,
-      metadata: { amount, cartSize: itemCount, paymentMethod: data.paymentMethodId, guest: !session },
+      metadata: { amount: chargedAmount, cartSize: itemCount, paymentMethod: data.paymentMethodId, guest: !session, ...chargeMetadata(charge) },
       ip,
       userAgent,
     })
@@ -726,7 +780,10 @@ async function handleCartCheckout(
       pix: result.pix || null,
       boleto: result.boleto || null,
       statusDetail: result.statusDetail,
-      amount,
+      amount: chargedAmount,
+      baseAmount,
+      feeAmount: charge.feeAmount,
+      feeLabel: charge.label,
       successRedirect: getSuccessUrl(orderId, receiptToken),
     })
   } catch (err: any) {
