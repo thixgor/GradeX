@@ -1,8 +1,32 @@
 'use client'
 
+/*
+ * /buy/checkout — a segunda (e última) tela da compra de um plano.
+ *
+ * Quem chega aqui já escolheu. Então a tela existe para uma coisa só: pagar.
+ * Tudo o que não ajuda a pagar foi recolhido ou removido — o resumo cabe em um
+ * cartão curto, a lista de benefícios vira um "ver o que entra" fechado, e o
+ * cupom deixou de ocupar dois blocos permanentes (a faixa da campanha e um
+ * formulário sempre aberto) para virar um link que só se abre quem tem código.
+ *
+ * No celular a ordem do DOM é resumo curto → pagamento → detalhes. Antes a
+ * lista inteira de benefícios ficava entre o preço e o formulário.
+ */
+
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Loader2, ChevronLeft, CreditCard, Zap, CheckCircle2, Star, Percent, X } from 'lucide-react'
+import {
+  Loader2,
+  ChevronLeft,
+  ChevronDown,
+  CreditCard,
+  Zap,
+  CheckCircle2,
+  Check,
+  Lock,
+  Tag,
+  X,
+} from 'lucide-react'
 import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
 import type { PlanConfig } from '@/lib/types'
 import { AppShell } from '@/components/app-shell'
@@ -43,6 +67,7 @@ function BuyCheckoutContent() {
   const [error, setError] = useState<string | null>(null)
   const [isRecurring, setIsRecurring] = useState(false)
   const [payMode, setPayMode] = useState<PayMode>('subscription')
+  const [verDetalhes, setVerDetalhes] = useState(false)
 
   // Cupom: só se aplica ao pagamento único — a assinatura recorrente cobra o
   // cartão pelo mesmo valor fixo em toda renovação (preapproval do Mercado
@@ -53,6 +78,7 @@ function BuyCheckoutContent() {
   const [couponCode, setCouponCode] = useState('')
   const [couponLoading, setCouponLoading] = useState(false)
   const [couponError, setCouponError] = useState('')
+  const [couponAberto, setCouponAberto] = useState(false)
   const couponSupported = payMode === 'one_time'
 
   useEffect(() => {
@@ -133,6 +159,8 @@ function BuyCheckoutContent() {
 
   const months = plan.durationMonths || 0
   const periodLabel = plan.periodo || (months === 1 ? 'Mensal' : months === 3 ? 'Trimestral' : months === 12 ? 'Anual' : 'Vitalício')
+  const cicloLabel = months === 1 ? 'mês' : months === 3 ? '3 meses' : '12 meses'
+  const beneficios: string[] = Array.isArray((plan as any).features) ? (plan as any).features : []
 
   const baseAmount = Number(plan.preco) || 0
   const couponDiscountAmount = couponSupported && appliedCoupon ? appliedCoupon.discountAmount : 0
@@ -170,224 +198,176 @@ function BuyCheckoutContent() {
   }
 
   return (
-    <div className="surface-page min-h-full px-4 py-6 sm:px-6 lg:px-8">
+    <div className="surface-page min-h-full px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
       <div className="mx-auto max-w-5xl">
         <button
           type="button"
           onClick={() => router.push('/buy')}
-          className="mb-6 inline-flex items-center gap-1.5 text-sm font-semibold text-muted-foreground transition hover:text-foreground"
+          className="mb-4 inline-flex items-center gap-1.5 text-sm font-semibold text-muted-foreground transition hover:text-foreground"
         >
           <ChevronLeft className="h-4 w-4" /> Voltar aos planos
         </button>
 
-        <p className="editorial-mark mb-2">Checkout · assinatura</p>
         <h1 className="font-heading text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
           Finalizar compra
         </h1>
-        <p className="mt-2 mb-8 text-sm text-muted-foreground">
-          Você está adquirindo o plano{' '}
-          <strong className="font-semibold text-primary">{plan.nome}</strong>
-        </p>
 
-        <div className="grid gap-5 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.25fr)] lg:items-start">
-          {/* Left: Plan summary */}
-          <div className="flex flex-col gap-4">
-            <div className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
-              <div className="mb-5 flex items-start justify-between gap-3">
-                <div>
-                  <span className="mb-3 inline-flex rounded-md bg-secondary px-3 py-1 text-xs font-bold text-secondary-foreground">
-                    {periodLabel}
-                  </span>
-                  <h2 className="font-heading text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
-                    {plan.nome}
-                  </h2>
-                </div>
-                <Star className="h-5 w-5 shrink-0 text-primary" />
-              </div>
+        <div className="mt-5 grid gap-4 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-start lg:gap-5">
+          {/* Resumo. Curto de propósito: quem chegou aqui já leu a página de
+              vendas — o que falta é conferir o valor e pagar. */}
+          <div className="rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-5">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="rounded-md bg-primary/10 px-2 py-0.5 font-clinical text-[10px] font-bold uppercase tracking-[0.14em] text-primary">
+                {periodLabel}
+              </span>
+            </div>
+            <h2 className="mt-2 font-heading text-lg font-semibold tracking-tight text-foreground sm:text-xl">
+              {plan.nome}
+            </h2>
 
-              <div className="mb-3.5 rounded-lg border border-primary/15 bg-primary/5 p-4">
-                <p className="text-xs font-medium text-muted-foreground">Valor</p>
-                {baseAmount > payableAmount && (
-                  <p className="mb-0.5 text-sm text-muted-foreground line-through">
-                    {formatBRL(baseAmount)}
-                  </p>
-                )}
-                <p className="font-heading text-3xl font-semibold tabular-nums tracking-tight text-primary">
-                  {formatBRL(payableAmount)}
+            <div className="mt-3 flex flex-wrap items-baseline gap-x-2 gap-y-1 border-t border-border pt-3">
+              {baseAmount > payableAmount && (
+                <span className="text-sm tabular-nums text-muted-foreground line-through">
+                  {formatBRL(baseAmount)}
+                </span>
+              )}
+              <span className="font-heading text-3xl font-semibold tabular-nums tracking-tight text-foreground">
+                {formatBRL(payableAmount)}
+              </span>
+              <span className="text-xs text-muted-foreground">
+                {months > 0 && payMode === 'subscription' ? `a cada ${cicloLabel}` : 'pagamento único'}
+              </span>
+            </div>
+
+            {appliedCoupon && couponSupported && (
+              <p className="mt-1.5 text-xs font-bold text-primary">
+                Cupom {appliedCoupon.code}: − {formatBRL(appliedCoupon.discountAmount)}
+              </p>
+            )}
+
+            {couponSupported && (
+              <CouponPromo
+                itens={[{ itemType: 'plus', itemId: plan.tipo }]}
+                onAplicar={(code) => applyCoupon(code)}
+                codigoAplicado={appliedCoupon?.code || null}
+                className="mt-3"
+              />
+            )}
+
+            {/* Cupom: um link, não um bloco. Quem não tem código não precisa
+                olhar para um campo vazio no meio do caminho até o pagamento. */}
+            <div className="mt-3">
+              {!couponSupported ? (
+                <p className="text-[11px] leading-relaxed text-muted-foreground">
+                  {appliedCoupon
+                    ? `Cupom ${appliedCoupon.code} guardado — escolha "Pagamento único" para aplicá-lo.`
+                    : 'Cupom vale no "Pagamento único" — a assinatura recorrente cobra sempre o valor cheio.'}
                 </p>
-                {months > 0 && payMode === 'subscription' && (
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    cobrado a cada {months === 1 ? 'mês' : months === 3 ? '3 meses' : '12 meses'}
+              ) : appliedCoupon ? (
+                <div className="flex items-center justify-between gap-2.5 rounded-lg border border-primary/25 bg-primary/10 px-3 py-2">
+                  <p className="min-w-0 truncate text-xs font-bold text-primary">
+                    {appliedCoupon.code} aplicado · {formatBRL(appliedCoupon.discountAmount)} de desconto
                   </p>
-                )}
-                {appliedCoupon && couponSupported && (
-                  <p className="mt-1 text-xs font-bold text-primary">
-                    Cupom {appliedCoupon.code}: − {formatBRL(appliedCoupon.discountAmount)}
-                  </p>
-                )}
-              </div>
-
-              {couponSupported ? (
-                <CouponPromo
-                  itens={[{ itemType: 'plus', itemId: plan.tipo }]}
-                  onAplicar={(code) => applyCoupon(code)}
-                  codigoAplicado={appliedCoupon?.code || null}
-                  className="mb-3.5"
-                />
-              ) : null}
-
-              <div className="mb-5 rounded-lg border border-border bg-background p-3.5">
-                <div className="mb-2.5 flex items-center gap-2 text-sm font-bold text-foreground">
-                  <Percent className="h-4 w-4 text-primary" /> Cupom de desconto
+                  <button
+                    type="button"
+                    onClick={removeCoupon}
+                    className="inline-flex shrink-0 items-center gap-1 text-xs font-bold text-destructive transition hover:underline"
+                  >
+                    <X className="h-3.5 w-3.5" /> Remover
+                  </button>
                 </div>
-                {!couponSupported ? (
-                  <p className="text-xs leading-relaxed text-muted-foreground">
-                    {appliedCoupon
-                      ? `Cupom ${appliedCoupon.code} guardado — escolha "Pagamento único" ao lado para aplicá-lo.`
-                      : 'Disponível para quem escolher "Pagamento único" ao lado — a assinatura recorrente cobra sempre o valor cheio.'}
-                  </p>
-                ) : appliedCoupon ? (
-                  <div className="flex items-center justify-between gap-2.5">
-                    <div className="min-w-0">
-                      <p className="text-sm font-extrabold text-primary">{appliedCoupon.code} aplicado</p>
-                      <p className="text-xs text-muted-foreground">
-                        {formatBRL(appliedCoupon.discountAmount)} de desconto
-                      </p>
-                    </div>
+              ) : couponAberto ? (
+                <>
+                  <div className="flex gap-2">
+                    <input
+                      autoFocus
+                      value={couponCode}
+                      onChange={(e) => { setCouponCode(e.target.value.toUpperCase()); setCouponError('') }}
+                      onKeyDown={(e) => { if (e.key === 'Enter') applyCoupon() }}
+                      disabled={couponLoading}
+                      placeholder="Digite seu cupom"
+                      aria-label="Código do cupom"
+                      className="h-10 min-w-0 flex-1 rounded-lg border border-border bg-background px-3 text-sm uppercase text-foreground outline-none focus:border-primary/45 focus:ring-2 focus:ring-primary/15"
+                    />
                     <button
                       type="button"
-                      onClick={removeCoupon}
-                      className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-destructive/25 bg-destructive/10 px-2.5 py-1.5 text-xs font-extrabold text-destructive"
+                      onClick={() => applyCoupon()}
+                      disabled={couponLoading || !couponCode.trim()}
+                      className="inline-flex h-10 items-center gap-1.5 rounded-lg bg-secondary px-4 text-xs font-black text-secondary-foreground disabled:cursor-not-allowed disabled:opacity-55"
                     >
-                      <X className="h-3.5 w-3.5" /> Remover
+                      {couponLoading && <Loader2 className="h-3.5 w-3.5 animate-spin" />} Aplicar
                     </button>
                   </div>
-                ) : (
-                  <>
-                    <div className="flex gap-2">
-                      <input
-                        value={couponCode}
-                        onChange={(e) => { setCouponCode(e.target.value.toUpperCase()); setCouponError('') }}
-                        onKeyDown={(e) => { if (e.key === 'Enter') applyCoupon() }}
-                        disabled={couponLoading}
-                        placeholder="Digite seu cupom"
-                        className="h-9 min-w-0 flex-1 rounded-lg border border-border bg-card px-3 text-sm uppercase text-foreground outline-none focus:border-primary/45 focus:ring-2 focus:ring-primary/15"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => applyCoupon()}
-                        disabled={couponLoading || !couponCode.trim()}
-                        className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-secondary px-3.5 text-xs font-black text-secondary-foreground disabled:cursor-not-allowed disabled:opacity-55"
-                      >
-                        {couponLoading && <Loader2 className="h-3.5 w-3.5 animate-spin" />} Aplicar
-                      </button>
-                    </div>
-                    {couponError ? <p className="mt-2 text-xs text-destructive">{couponError}</p> : null}
-                  </>
+                  {couponError ? <p className="mt-2 text-xs text-destructive">{couponError}</p> : null}
+                </>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setCouponAberto(true)}
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary underline-offset-4 hover:underline"
+                >
+                  <Tag className="h-3.5 w-3.5" /> Tenho um cupom
+                </button>
+              )}
+            </div>
+
+            {beneficios.length > 0 && (
+              <div className="mt-3 border-t border-border pt-3">
+                <button
+                  type="button"
+                  onClick={() => setVerDetalhes((v) => !v)}
+                  aria-expanded={verDetalhes}
+                  aria-controls="beneficios-do-plano"
+                  className="flex w-full items-center justify-between gap-2 text-left text-xs font-semibold text-muted-foreground transition hover:text-foreground"
+                >
+                  Ver os {beneficios.length} itens inclusos
+                  <ChevronDown
+                    className={cn('h-4 w-4 shrink-0 text-secondary transition-transform', verDetalhes && 'rotate-180')}
+                    aria-hidden
+                  />
+                </button>
+                {verDetalhes && (
+                  <ul id="beneficios-do-plano" className="mt-2.5 flex flex-col gap-1.5">
+                    {beneficios.map((f, i) => (
+                      <li key={i} className="flex items-start gap-2 text-[13px] leading-snug text-muted-foreground">
+                        <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" aria-hidden />
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
                 )}
               </div>
+            )}
 
-              {plan.descricao && (
-                <p className="mb-4 text-sm leading-relaxed text-muted-foreground">
-                  {plan.descricao}
-                </p>
-              )}
-
-              {Array.isArray((plan as any).features) && (plan as any).features.length > 0 && (
-                <ul className="flex flex-col gap-2">
-                  {(plan as any).features.map((f: string, i: number) => (
-                    <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-primary" />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-
-            <div className="flex flex-col gap-2.5 rounded-lg border border-border bg-card p-4 text-xs text-muted-foreground shadow-sm">
-              <div className="flex items-center gap-2.5">
-                <span aria-hidden>🔒</span>
-                <span>Ambiente 100% seguro · Mercado Pago</span>
-              </div>
-              <div className="flex items-center gap-2.5">
-                <span aria-hidden>🛡️</span>
-                <span>Dados criptografados · Nunca armazenamos seu cartão</span>
-              </div>
-            </div>
+            <p className="mt-3 flex items-center gap-2 border-t border-border pt-3 text-[11px] text-muted-foreground">
+              <Lock className="h-3.5 w-3.5 shrink-0 text-primary" aria-hidden />
+              Ambiente seguro do Mercado Pago · não guardamos o seu cartão
+            </p>
           </div>
 
-          {/* Right: Payment */}
-          <div className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
+          {/* Pagamento */}
+          <div className="rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-5">
             {isRecurring && (
-              <div className="mb-6">
-                <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-primary">
-                  Como deseja pagar?
-                </p>
-                <div className="flex flex-col gap-2.5">
-                  <button
-                    type="button"
+              <div className="mb-4">
+                <p className="mb-2 text-xs font-semibold text-muted-foreground">Como prefere pagar?</p>
+                {/* Segmentado, não dois cartões empilhados: são duas opções
+                    curtas e a recomendada já vem escolhida. */}
+                <div className="grid grid-cols-2 gap-2">
+                  <OpcaoDePagamento
+                    ativo={payMode === 'subscription'}
                     onClick={() => setPayMode('subscription')}
-                    className={cn(
-                      'w-full rounded-lg border p-4 text-left transition',
-                      payMode === 'subscription'
-                        ? 'border-primary/50 bg-primary/10 shadow-sm'
-                        : 'border-border bg-background hover:bg-muted/50'
-                    )}
-                  >
-                    <div className="mb-1 flex items-center gap-2.5">
-                      <CreditCard
-                        className={cn(
-                          'h-4 w-4',
-                          payMode === 'subscription' ? 'text-primary' : 'text-muted-foreground'
-                        )}
-                      />
-                      <span
-                        className={cn(
-                          'text-sm font-bold',
-                          payMode === 'subscription' ? 'text-primary' : 'text-foreground'
-                        )}
-                      >
-                        Assinatura automática
-                      </span>
-                      <span className="ml-auto rounded-md bg-primary/15 px-2 py-0.5 text-[11px] font-bold text-primary">
-                        Recomendado
-                      </span>
-                    </div>
-                    <p className="ml-6 text-xs text-muted-foreground">
-                      Cartão de crédito · Renova automaticamente · Cancele quando quiser
-                    </p>
-                  </button>
-                  <button
-                    type="button"
+                    icone={CreditCard}
+                    titulo="Assinatura"
+                    detalhe="Cartão · renova sozinho"
+                    selo="Recomendado"
+                  />
+                  <OpcaoDePagamento
+                    ativo={payMode === 'one_time'}
                     onClick={() => setPayMode('one_time')}
-                    className={cn(
-                      'w-full rounded-lg border p-4 text-left transition',
-                      payMode === 'one_time'
-                        ? 'border-primary/50 bg-primary/10 shadow-sm'
-                        : 'border-border bg-background hover:bg-muted/50'
-                    )}
-                  >
-                    <div className="mb-1 flex items-center gap-2.5">
-                      <Zap
-                        className={cn(
-                          'h-4 w-4',
-                          payMode === 'one_time' ? 'text-primary' : 'text-muted-foreground'
-                        )}
-                      />
-                      <span
-                        className={cn(
-                          'text-sm font-bold',
-                          payMode === 'one_time' ? 'text-primary' : 'text-foreground'
-                        )}
-                      >
-                        Pagamento único
-                      </span>
-                    </div>
-                    <p className="ml-6 text-xs text-muted-foreground">
-                      Pix, cartão ou boleto · Sem renovação automática · Acesso pelo período escolhido
-                    </p>
-                  </button>
+                    icone={Zap}
+                    titulo="Pagamento único"
+                    detalhe="Pix, cartão ou boleto"
+                  />
                 </div>
               </div>
             )}
@@ -424,6 +404,47 @@ function BuyCheckoutContent() {
   )
 }
 
+function OpcaoDePagamento({
+  ativo,
+  onClick,
+  icone: Icone,
+  titulo,
+  detalhe,
+  selo,
+}: {
+  ativo: boolean
+  onClick: () => void
+  icone: typeof CreditCard
+  titulo: string
+  detalhe: string
+  selo?: string
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={ativo}
+      className={cn(
+        'rounded-xl border p-3 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+        ativo ? 'border-primary/50 bg-primary/10 shadow-sm' : 'border-border bg-background hover:bg-muted/50'
+      )}
+    >
+      <span className="flex items-center gap-1.5">
+        <Icone className={cn('h-4 w-4 shrink-0', ativo ? 'text-primary' : 'text-muted-foreground')} aria-hidden />
+        <span className={cn('truncate text-[13px] font-bold', ativo ? 'text-primary' : 'text-foreground')}>
+          {titulo}
+        </span>
+      </span>
+      <span className="mt-1 block text-[11px] leading-snug text-muted-foreground">{detalhe}</span>
+      {selo && (
+        <span className="mt-1.5 inline-block rounded bg-primary/15 px-1.5 py-px text-[10px] font-bold text-primary">
+          {selo}
+        </span>
+      )}
+    </button>
+  )
+}
+
 /**
  * Para assinaturas, o MP exige cartão (preapproval). Reaproveitamos o Brick
  * de cartão local para tokenizar e enviamos para /api/subscriptions.
@@ -435,7 +456,8 @@ function SubscriptionCheckout({ plan, publicKey, months }: { plan: PlanConfig; p
   const [mpInstance, setMpInstance] = useState<any>(null)
 
   const inputCls =
-    'w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-sm text-foreground outline-none transition focus:border-primary/45 focus:ring-2 focus:ring-primary/15'
+    'w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-base text-foreground outline-none transition focus:border-primary/45 focus:ring-2 focus:ring-primary/15 sm:text-sm'
+  const labelCls = 'mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground'
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -524,60 +546,84 @@ function SubscriptionCheckout({ plan, publicKey, months }: { plan: PlanConfig; p
   }
 
   return (
+    // `text-base` nos campos e `inputMode`/`autoComplete` em todos: no iOS,
+    // campo com fonte menor que 16px faz a tela dar zoom sozinha ao focar, e
+    // sem inputMode o teclado abre em letras para digitar número de cartão.
     <form onSubmit={submit} className="flex flex-col gap-3.5">
-      <p className="rounded-lg border border-primary/15 bg-primary/5 p-3 text-sm leading-relaxed text-muted-foreground">
-        Assinatura recorrente: você será cobrado{' '}
-        <strong className="text-primary">
-          R$ {plan.preco.toFixed(2).replace('.', ',')}
-        </strong>{' '}
-        a cada {months === 1 ? 'mês' : months === 3 ? '3 meses' : '12 meses'}. Você pode cancelar a
-        qualquer momento em /profile.
+      <p className="rounded-lg border border-primary/15 bg-primary/5 p-3 text-[13px] leading-relaxed text-muted-foreground">
+        Você será cobrado{' '}
+        <strong className="text-primary">R$ {plan.preco.toFixed(2).replace('.', ',')}</strong> a cada{' '}
+        {months === 1 ? 'mês' : months === 3 ? '3 meses' : '12 meses'}. Cancele quando quiser no seu perfil.
       </p>
       <input className="hidden" name="cardholderEmail" />
       <div>
-        <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-primary">
-          Número do cartão
-        </label>
+        <label className={labelCls} htmlFor="cardNumber">Número do cartão</label>
         <input
+          id="cardNumber"
           name="cardNumber"
           required
           className={inputCls}
           inputMode="numeric"
+          autoComplete="cc-number"
           maxLength={19}
           placeholder="0000 0000 0000 0000"
         />
       </div>
       <div>
-        <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-primary">
-          Nome impresso no cartão
-        </label>
-        <input name="cardholderName" required className={inputCls} />
+        <label className={labelCls} htmlFor="cardholderName">Nome impresso no cartão</label>
+        <input id="cardholderName" name="cardholderName" required autoComplete="cc-name" className={inputCls} />
       </div>
       <div className="grid grid-cols-3 gap-2">
         <div>
-          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-primary">
-            Mês
-          </label>
-          <input name="cardExpirationMonth" required maxLength={2} placeholder="MM" className={inputCls} />
+          <label className={labelCls} htmlFor="cardExpirationMonth">Mês</label>
+          <input
+            id="cardExpirationMonth"
+            name="cardExpirationMonth"
+            required
+            maxLength={2}
+            inputMode="numeric"
+            autoComplete="cc-exp-month"
+            placeholder="MM"
+            className={inputCls}
+          />
         </div>
         <div>
-          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-primary">
-            Ano
-          </label>
-          <input name="cardExpirationYear" required maxLength={4} placeholder="AAAA" className={inputCls} />
+          <label className={labelCls} htmlFor="cardExpirationYear">Ano</label>
+          <input
+            id="cardExpirationYear"
+            name="cardExpirationYear"
+            required
+            maxLength={4}
+            inputMode="numeric"
+            autoComplete="cc-exp-year"
+            placeholder="AAAA"
+            className={inputCls}
+          />
         </div>
         <div>
-          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-primary">
-            CVV
-          </label>
-          <input name="securityCode" required maxLength={4} placeholder="CVV" className={inputCls} />
+          <label className={labelCls} htmlFor="securityCode">CVV</label>
+          <input
+            id="securityCode"
+            name="securityCode"
+            required
+            maxLength={4}
+            inputMode="numeric"
+            autoComplete="cc-csc"
+            placeholder="123"
+            className={inputCls}
+          />
         </div>
       </div>
       <div>
-        <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-primary">
-          CPF
-        </label>
-        <input name="docNumber" required className={inputCls} placeholder="000.000.000-00" />
+        <label className={labelCls} htmlFor="docNumber">CPF</label>
+        <input
+          id="docNumber"
+          name="docNumber"
+          required
+          inputMode="numeric"
+          className={inputCls}
+          placeholder="000.000.000-00"
+        />
       </div>
       {error && (
         <div className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
@@ -587,14 +633,15 @@ function SubscriptionCheckout({ plan, publicKey, months }: { plan: PlanConfig; p
       <button
         type="submit"
         disabled={submitting || !mpInstance}
-        className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-secondary px-5 py-3.5 text-[15px] font-bold text-secondary-foreground shadow-sm transition hover:bg-secondary/90 disabled:cursor-not-allowed disabled:opacity-60"
+        className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-secondary px-5 py-4 text-[15px] font-bold text-secondary-foreground shadow-sm transition hover:bg-secondary/90 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
         Ativar assinatura — R$ {plan.preco.toFixed(2).replace('.', ',')}/
         {months === 1 ? 'mês' : months === 3 ? 'trim.' : 'ano'}
       </button>
-      <p className="text-center text-[11px] text-muted-foreground">
-        🔒 Pagamento seguro · Mercado Pago · Dados criptografados
+      <p className="flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground">
+        <Lock className="h-3 w-3 shrink-0 text-primary" aria-hidden />
+        Pagamento seguro · Mercado Pago · dados criptografados
       </p>
     </form>
   )

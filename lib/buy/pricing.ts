@@ -128,6 +128,17 @@ export function linhaDeApoio(preco: PrecoApresentado): string {
   return `R$ ${formatarBRL(preco.total)} cobrados de uma vez, a cada ${rotuloDeCiclo(preco.meses)}.`
 }
 
+/**
+ * O preço em uma linha só, para os lugares apertados: as pastilhas do seletor,
+ * o cabeçalho do comparativo e a barra fixa do celular. Todos os três montavam
+ * o mesmo ternário à mão — e bastava um deles esquecer o caso vitalício para a
+ * página anunciar mensalidade em plano que não tem renovação.
+ */
+export function rotuloCurtoDePreco(preco: PrecoApresentado): string {
+  const valor = `R$ ${formatarBRL(preco.chamada.valor)}`
+  return preco.chamada.unidade === 'unico' ? `${valor} à vista` : `${valor}/mês`
+}
+
 /** "12" → "12 meses"; "6" → "6 meses"; "1" → "mês". Usado dentro de frases. */
 export function rotuloDeCiclo(meses: number): string {
   if (meses <= 0) return 'sempre'
