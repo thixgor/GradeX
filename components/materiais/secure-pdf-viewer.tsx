@@ -5624,8 +5624,8 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   const rafRef = useRef<number | null>(null)
   // Medida da página guardada entre eventos do ponteiro — ver readOverlayRect.
   const overlayRectRef = useRef<{ left: number; top: number; width: number; height: number } | null>(null)
-  // Contexto do rascunho pedido uma vez só (com `desynchronized`), a superfície
-  // preparada para o traço em curso e até onde ele já foi pintado.
+  // Contexto do rascunho pedido uma vez só, a superfície preparada para o
+  // traço em curso e até onde ele já foi pintado.
   const draftCtxRef = useRef<CanvasRenderingContext2D | null>(null)
   const draftCtxOwnerRef = useRef<HTMLCanvasElement | null>(null)
   const draftSurfaceRef = useRef<{
@@ -6191,16 +6191,29 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   }, [readOverlayRect])
 
   // ── Tela do rascunho ────────────────────────────────────────────────────
-  // O contexto é pedido UMA vez, com `desynchronized`. É a bandeira de baixa
-  // latência do canvas: o navegador pode entregar o traço à tela sem esperar a
-  // composição do resto da página. É o que tira aquele meio quadro de atraso
-  // entre a ponta da caneta e a tinta.
+  // O contexto é pedido UMA vez, e SEM `desynchronized`.
+  //
+  // `desynchronized` é a bandeira de baixa latência do canvas: o navegador
+  // pode entregar o traço à tela sem esperar a composição do resto da página.
+  // Ela custava caro demais pelo que dava. No Chromium (Chrome e Edge) essa
+  // bandeira tira o canvas da composição normal e o promove a uma camada
+  // própria — e uma camada dessas não sabe ser transparente. O resultado, no
+  // Edge do Windows, é o defeito que a captura de tela mostra: no instante em
+  // que o traço começa, a página inteira vira um retângulo PRETO com apenas a
+  // tinta por cima. É o rascunho (que cobre a página toda, `inset-0`) sendo
+  // pintado opaco, com preto no lugar do que deveria ser transparente.
+  //
+  // E o que se ganhava em troca era zero justamente onde doía: no iPad, que é
+  // onde a latência da Pencil se nota, o Safari nem implementa a bandeira.
+  // Pior: este canvas é composto com `opacity` e `mix-blend-mode` do CSS —
+  // duas coisas que já obrigam o navegador a compor a camada do jeito normal,
+  // ou seja, o caminho de baixa latência não era nem elegível aqui.
   const getDraftContext = useCallback(() => {
     const canvas = draftCanvasRef.current
     if (!canvas) return null
     if (draftCtxOwnerRef.current !== canvas) {
       draftCtxOwnerRef.current = canvas
-      draftCtxRef.current = canvas.getContext('2d', { desynchronized: true, alpha: true })
+      draftCtxRef.current = canvas.getContext('2d', { alpha: true })
       draftSurfaceRef.current = null
     }
     return draftCtxRef.current
@@ -6435,7 +6448,11 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
     canvas.style.height = `${rect.height}px`
     if (laserCtxOwnerRef.current !== canvas) {
       laserCtxOwnerRef.current = canvas
-      laserCtxRef.current = canvas.getContext('2d', { desynchronized: true })
+      // Sem `desynchronized`, pelo mesmo motivo do canvas de rascunho: no
+      // Chromium a bandeira promove o canvas a uma camada que não sabe ser
+      // transparente, e a página some atrás de um retângulo preto com só o
+      // rastro do laser por cima.
+      laserCtxRef.current = canvas.getContext('2d', { alpha: true })
     }
     const context = laserCtxRef.current
     if (!context) {
@@ -6734,6 +6751,26 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   const canDrawWith = (event: React.PointerEvent) =>
     event.pointerType !== 'touch' || allowTouchDrawing
 
+  /**
+   * Prende o ponteiro ao overlay — sem deixar a exceção derrubar o gesto.
+   *
+   * `setPointerCapture` LANÇA (`NotFoundError`) quando o ponteiro já não está
+   * mais ativo. Acontece de verdade no Edge/Windows: um toque muito curto, ou
+   * uma caneta que o sistema tira no meio do caminho, e o `pointerdown` chega
+   * a um ponteiro que já acabou. Como isto era a primeira linha de cada
+   * ferramenta, a exceção abortava o resto do manipulador: a interação nunca
+   * era registrada e a ferramenta simplesmente não fazia nada naquele toque —
+   * sem erro visível, sem traço.
+   *
+   * Falhar em prender o ponteiro não impede desenhar: os eventos continuam
+   * chegando no elemento enquanto o ponteiro estiver em cima dele.
+   */
+  const capturePointer = (event: React.PointerEvent<HTMLDivElement>) => {
+    try {
+      event.currentTarget.setPointerCapture(event.pointerId)
+    } catch {}
+  }
+
   // Ferramentas que deixam tinta na página — as únicas em que o modo caneta
   // muda alguma coisa. Nota, texto e marcador nascem de um TOQUE, não de um
   // traço: recusar o dedo neles só tiraria uma forma de usar o leitor.
@@ -6767,7 +6804,7 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
 
     if (tool === 'eraser' || penErasing) {
       event.preventDefault()
-      event.currentTarget.setPointerCapture(event.pointerId)
+      capturePointer(event)
       const point = getPosition(event.clientX, event.clientY)
       clearDraftCanvas()
       interactionRef.current = {
@@ -6790,7 +6827,7 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
 
     if (tool === 'laser') {
       event.preventDefault()
-      event.currentTarget.setPointerCapture(event.pointerId)
+      capturePointer(event)
       const point = getPosition(event.clientX, event.clientY)
       laserDrawingRef.current = true
       laserPointerIdRef.current = event.pointerId
@@ -6803,7 +6840,7 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
 
     if (tool === 'drawing') {
       event.preventDefault()
-      event.currentTarget.setPointerCapture(event.pointerId)
+      capturePointer(event)
       const point = getPosition(event.clientX, event.clientY)
       const rect = readOverlayRect()
       const widthRatio = drawingStyle.width / Math.max(rect?.width || 1, 1)
@@ -6835,7 +6872,7 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
 
     if (tool === 'highlight') {
       event.preventDefault()
-      event.currentTarget.setPointerCapture(event.pointerId)
+      capturePointer(event)
       const point = getPosition(event.clientX, event.clientY)
       const rect = readOverlayRect()
       interactionRef.current = {
@@ -6948,6 +6985,46 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
     if (interaction.kind === 'drawing') finishDrawing()
     if (interaction.kind === 'highlight') finishHighlight()
     if (interaction.kind === 'eraser') finishErasing()
+    setInkActive(false)
+  }
+
+  /**
+   * A rede de segurança do gesto.
+   *
+   * O navegador pode TIRAR a captura do ponteiro sem nunca mandar `pointerup`
+   * nem `pointercancel`: a caneta sai do alcance da tela, a janela perde o
+   * foco no meio do traço, o sistema assume o gesto. Quando isso acontecia, a
+   * interação ficava aberta para sempre — e como `handlePointerDown` recusa
+   * começar um gesto novo enquanto houver um em curso ("UM gesto de cada
+   * vez"), a ferramenta morria: nenhum traço mais, até recarregar a página.
+   * Era esse o "bugado" do PC.
+   *
+   * `lostpointercapture` também chega no caminho normal, logo depois do
+   * `releasePointerCapture` do `pointerup` — mas aí a interação já foi
+   * encerrada e zerada, então este manipulador não faz nada. Ele só age no
+   * caso em que o fim do gesto não chegou por conta própria, e aí fecha o que
+   * já foi desenhado em vez de descartar: quem estava escrevendo não perde o
+   * traço.
+   */
+  const handleLostPointerCapture = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (laserDrawingRef.current && laserPointerIdRef.current === event.pointerId) {
+      laserDrawingRef.current = false
+      laserPointerIdRef.current = null
+      ensureLaserLoop()
+      setInkActive(false)
+      return
+    }
+
+    const interaction = interactionRef.current
+    if (!interaction || interaction.pointerId !== event.pointerId) return
+    if (interaction.kind === 'drawing') finishDrawing()
+    if (interaction.kind === 'highlight') finishHighlight()
+    if (interaction.kind === 'eraser') finishErasing()
+    // `finish*` zera `interactionRef` no caminho que lhe interessa; se algum
+    // não reconheceu o gesto, o ref não pode sobreviver assim mesmo — é ele
+    // que trancaria a ferramenta.
+    interactionRef.current = null
+    clearDraftCanvas()
     setInkActive(false)
   }
 
@@ -7177,6 +7254,7 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerEnd}
             onPointerCancel={handlePointerEnd}
+            onLostPointerCapture={handleLostPointerCapture}
             style={{
               cursor: tool === 'cursor'
                 ? 'default'
