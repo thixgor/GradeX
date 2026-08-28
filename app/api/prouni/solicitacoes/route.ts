@@ -7,7 +7,11 @@ import { checkRateLimit } from '@/lib/rate-limit'
 import { isValidCpf, onlyCpfDigits } from '@/lib/cpf'
 import { isValidBrazilPhone } from '@/lib/phone'
 import { audit } from '@/lib/payments/audit'
-import { sendProuniRequestAdminAlert, sendProuniRequestReceivedEmail } from '@/lib/mail'
+import {
+  deliverTransactionalEmails,
+  sendProuniRequestAdminAlert,
+  sendProuniRequestReceivedEmail,
+} from '@/lib/mail'
 import { resolveProuniProduto } from '@/lib/prouni-catalogo'
 import { apagarAnexos, prouniBlobPrefix, verificarAnexos } from '@/lib/prouni-anexos'
 import {
@@ -196,42 +200,43 @@ export async function POST(request: NextRequest) {
       institution: doc.applicant.institution,
     })
 
-    // Avisos por e-mail. Disparados sem `await` de propósito: a solicitação já
-    // está gravada, e o SMTP da Hostinger costuma ser o passo mais lento aqui —
-    // segurar a resposta por causa dele faria a pessoa achar que o envio falhou
-    // e clicar de novo. As próprias funções engolem o erro e registram no log.
-    void (async () => {
-      const pendentes = await db
-        .collection(PROUNI_REQUESTS_COLLECTION)
-        .countDocuments({ status: 'pending' })
-        .catch(() => undefined)
+    // Avisos por e-mail — aguardados, e não disparados em segundo plano: ver
+    // `deliverTransactionalEmails`. O destino do aviso da pessoa é o e-mail da
+    // CONTA (é de lá que ela abre `/profile?tab=atendimento`); o do formulário
+    // entra junto quando for outro, porque foi o que ela pediu para usar.
+    const destinatarios = Array.from(
+      new Set([session.email, doc.applicant.email].filter((valor): valor is string => Boolean(valor)))
+    )
+    const pendentes = await db
+      .collection(PROUNI_REQUESTS_COLLECTION)
+      .countDocuments({ status: 'pending' })
+      .catch(() => undefined)
 
-      await Promise.allSettled([
-        session.email
-          ? sendProuniRequestReceivedEmail({
-              email: session.email,
-              name: doc.applicant.fullName || session.name,
-              itemTitle: produto.title,
-              itemType,
-              itemId: data.itemId,
-              program: doc.program,
-              attachments: anexos.length,
-            })
-          : Promise.resolve(),
-        sendProuniRequestAdminAlert({
-          requestId: String(inserido.insertedId),
-          userName: session.name,
-          userEmail: session.email,
-          applicantName: doc.applicant.fullName,
-          applicantCpf: doc.applicant.cpf,
-          institution: doc.applicant.institution,
+    await deliverTransactionalEmails([
+      ...destinatarios.map((email) =>
+        sendProuniRequestReceivedEmail({
+          email,
+          name: doc.applicant.fullName || session.name,
           itemTitle: produto.title,
+          itemType,
+          itemId: data.itemId,
           program: doc.program,
           attachments: anexos.length,
-          pendingCount: typeof pendentes === 'number' ? pendentes : undefined,
-        }),
-      ])
-    })()
+        })
+      ),
+      sendProuniRequestAdminAlert({
+        requestId: String(inserido.insertedId),
+        userName: session.name,
+        userEmail: session.email,
+        applicantName: doc.applicant.fullName,
+        applicantCpf: doc.applicant.cpf,
+        institution: doc.applicant.institution,
+        itemTitle: produto.title,
+        program: doc.program,
+        attachments: anexos.length,
+        pendingCount: typeof pendentes === 'number' ? pendentes : undefined,
+      }),
+    ])
 
     await audit({
       action: 'prouni_request_created',

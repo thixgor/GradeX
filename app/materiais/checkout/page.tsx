@@ -13,7 +13,8 @@ import { CouponPromo } from '@/components/checkout/coupon-promo'
 import { PackageContents } from '@/components/shop/package-contents'
 import { useMaterialCart } from '@/context/MaterialCartContext'
 import { PricingEventCountdown, type PricingEventStatePayload } from '@/components/pricing-events/PricingEventCountdown'
-import { combineDiscountsWithProuni, type ProuniDiscountType } from '@/lib/prouni-shared'
+import { combineDiscountsWithProuni } from '@/lib/prouni-shared'
+import { useProuniGrant } from '@/hooks/use-prouni-grant'
 
 const pageStyle: React.CSSProperties = {
   minHeight: '100vh',
@@ -303,10 +304,10 @@ export default function MateriaisCheckoutPage() {
    * Concessão PROUNI/FIES desta pessoa neste item, quando existe. É só para a
    * tela mostrar o preço certo: quem aplica o desconto é o checkout no
    * servidor, que recalcula tudo e ignora qualquer valor vindo daqui.
+   *
+   * No carrinho quem resolve isto é `/api/materiais/cart/preview`, item a item.
    */
-  const [prouniGrant, setProuniGrant] = useState<
-    { discountType: ProuniDiscountType; discountValue: number; stackWithTier: boolean; discountLabel: string } | null
-  >(null)
+  const { concessao: prouniGrant } = useProuniGrant(isCartMode ? null : itemType, itemId)
   const [cartPreview, setCartPreview] = useState<CartPreview | null>(null)
   const [publicKey, setPublicKey] = useState('')
   const [loading, setLoading] = useState(true)
@@ -501,24 +502,6 @@ export default function MateriaisCheckoutPage() {
       .catch(err => setError(String(err?.message || err)))
       .finally(() => setLoading(false))
   }, [cartPayloadKey, isCartMode, itemId, itemType])
-
-  useEffect(() => {
-    if (isCartMode || !itemId) return
-    let ativo = true
-    fetch(`/api/prouni/beneficio?itemType=${encodeURIComponent(itemType)}&itemId=${encodeURIComponent(itemId)}`, { cache: 'no-store' })
-      .then((res) => (res.ok ? res.json() : null))
-      .then((json) => {
-        if (!ativo) return
-        const pedido = json?.request
-        const concessao = pedido?.status === 'approved' ? pedido.grant : null
-        // Concessão já gasta não pode continuar aparecendo como desconto: o
-        // servidor não a aplicaria, e a tela prometeria um preço que não existe.
-        if (concessao && concessao.usage !== 'used') setProuniGrant(concessao)
-        else setProuniGrant(null)
-      })
-      .catch(() => {})
-    return () => { ativo = false }
-  }, [isCartMode, itemId, itemType])
 
   useEffect(() => {
     if (isCartMode) {
