@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import type { Avaliacao, EmentaTopico, IndiceCurso, SecaoCurso } from '@/lib/cronogramas/tipos'
-import { normalizarSecao } from '@/lib/cronogramas/tipos'
+import { getSecao, normalizarSecao } from '@/lib/cronogramas/tipos'
 
 /**
  * Estado compartilhado da área de cronogramas: qual seção e período o aluno
@@ -24,7 +24,10 @@ interface EstadoCronogramaSecao {
   lembretesAtivos: boolean
   salvandoLembretes: boolean
   indice: IndiceCurso[]
+  /** Todos os períodos que o curso tem — o aluno pode olhar qualquer um. */
   periodosDisponiveis: number[]
+  /** Quais deles já têm ementa importada pelo admin. */
+  periodosComEmenta: number[]
   /**
    * A seção que o aluno acompanha de fato, que pode ser diferente da que ele
    * está OLHANDO agora — espiar Odontologia não muda o curso de ninguém.
@@ -161,13 +164,11 @@ export function useCronogramaSecao(): EstadoCronogramaSecao {
       definirSecao(nova)
       definirSecaoAcompanhada(nova)
       // O período pode não existir na seção nova (Medicina vai até 5).
-      const disponiveis = indice.find(curso => curso.id === nova)?.periodos ?? []
-      const maximo = disponiveis.length > 0 ? disponiveis[disponiveis.length - 1].periodo : 12
-      const ajustado = Math.min(periodo, maximo)
+      const ajustado = Math.min(periodo, getSecao(nova).periodos)
       if (ajustado !== periodo) definirPeriodo(ajustado)
       void gravar({ secao: nova, periodo: ajustado })
     },
-    [gravar, indice, periodo],
+    [gravar, periodo],
   )
 
   const setPeriodo = useCallback(
@@ -194,11 +195,21 @@ export function useCronogramaSecao(): EstadoCronogramaSecao {
     [gravar, lembretesAtivos],
   )
 
-  const periodosDisponiveis = useMemo(() => {
-    const curso = indice.find(item => item.id === secao)
-    if (curso && curso.periodos.length > 0) return curso.periodos.map(p => p.periodo)
-    return []
-  }, [indice, secao])
+  /**
+   * Os períodos do curso, todos. A ementa importada NÃO limita essa lista de
+   * propósito: uma avaliação pode estar marcada para o 3º período antes de
+   * alguém importar a ementa dele, e esconder o 3º deixaria essa prova
+   * invisível para a turma.
+   */
+  const periodosDisponiveis = useMemo(
+    () => Array.from({ length: getSecao(secao).periodos }, (_, i) => i + 1),
+    [secao],
+  )
+
+  const periodosComEmenta = useMemo(
+    () => indice.find(item => item.id === secao)?.periodos.map(p => p.periodo) ?? [],
+    [indice, secao],
+  )
 
   const recarregarAvaliacoes = useCallback(() => setVersaoAvaliacoes(v => v + 1), [])
 
@@ -210,6 +221,7 @@ export function useCronogramaSecao(): EstadoCronogramaSecao {
     salvandoLembretes,
     indice,
     periodosDisponiveis,
+    periodosComEmenta,
     secaoAcompanhada,
     topicos,
     carregandoEmenta,

@@ -7,8 +7,9 @@ configurado para os lembretes saírem.
 
 | Peça | Onde |
 | --- | --- |
-| Ementa (dados gerados) | `data/cronogramas/ementas/*.json` |
-| Gerador da ementa | `scripts/cronogramas/construir-ementas.mjs` |
+| Leitor do markdown da ementa | `lib/cronogramas/analisar-ementa.ts` |
+| Ementa no banco | `lib/cronogramas/ementa.ts` |
+| Importação (painel) | `components/cronogramas/importar-ementa.tsx` |
 | Vocabulário compartilhado | `lib/cronogramas/tipos.ts` |
 | Calendário de Brasília | `lib/cronogramas/brasilia.ts` |
 | Geração do plano | `lib/cronogramas/gerador.ts` |
@@ -21,20 +22,22 @@ configurado para os lembretes saírem.
 
 ## Ementa
 
-A fonte de verdade são os arquivos em `public/*.md`, mantidos à mão. Depois de
-editar qualquer um deles:
+A ementa é **conteúdo, não código**: o admin importa em `/admin/cronogramas`,
+aba **Ementas**, e passa a valer na hora — sem editar arquivo, sem build, sem
+deploy. Cada (seção, período) é um documento em `cronograma_ementas`.
 
-```bash
-npm run cronogramas:ementas
-```
+Na tela dá para arrastar vários `.md` de uma vez; a seção e o período saem do
+nome de cada arquivo e podem ser corrigidos antes de gravar. A tela mostra o
+que o parser leu de cada arquivo (tópicos, módulos, quantos itens com
+prioridade declarada) **antes** de importar — ler antes de gravar é o que evita
+descobrir que um arquivo veio truncado depois de ele já ter substituído um
+período inteiro.
 
-O script regrava `data/cronogramas/ementas/` (um JSON por curso mais um
-`indice.json`) e imprime a conciliação. **O JSON gerado vai para o
-repositório** — o build não roda o script, e a rota `/api/cronogramas/ementa`
-serve exatamente esses arquivos.
+Os arquivos em `public/*.md` continuam no repositório como material de origem
+para copiar e colar, mas o app não os lê mais.
 
-Dois formatos de markdown são aceitos, e o parser decide o nível pelo rótulo
-escrito na linha, não pela indentação:
+Dois formatos são aceitos, e o parser decide o nível pelo rótulo escrito na
+linha, não pela indentação:
 
 ```
 # Árvore (Medicina)
@@ -55,9 +58,15 @@ TÓPICO: SOI I:
 declara nada entra como **normal** — a regra combinada: se não estiver
 estabelecido, trate como normal.
 
-Quando dois arquivos descrevem o mesmo bloco (`MEDICINA SOI I.md` e
-`MEDICINA - SOI I.md`), vence o que tem prioridade declarada; contagem de nós
-desempata.
+**Vários arquivos no mesmo período.** Em Medicina, SOI I e HAM I são os dois o
+1º período. Suba os dois juntos e eles viram uma ementa só; para acrescentar um
+a um período já importado depois, marque *"Somar aos tópicos já importados"* —
+sem isso a importação substitui o período inteiro. Tópico de mesmo nome é
+atualizado, nunca duplicado.
+
+**Ids são derivados do nome**, não da posição. Reimportar com um tópico a mais
+no topo não renumera o resto, então as avaliações que apontam para um subtópico
+continuam apontando para o mesmo assunto.
 
 ## Geração do plano
 
@@ -80,6 +89,8 @@ mostra antes de salvar.
 
 Coleções:
 
+- `cronograma_ementas` — um documento por (seção, período), com os tópicos
+  inteiros dentro. Índice único no par.
 - `cronograma_avaliacoes` — a avaliação, com a config de lembrete dentro.
   Pertence a uma **seção** e um **período**, não a um aluno.
 - `cronograma_preferencias` — a seção que o aluno acompanha e o opt-in
@@ -132,6 +143,7 @@ npx vitest run __tests__/cronogramas
 ```
 
 Cobrem o calendário de Brasília, a agenda e o texto dos lembretes, o gerador
-(capacidade dos dias, ordem das revisões, prazo das avaliações) e a integridade
-da ementa gerada — inclusive que as prioridades declaradas em SOI I e HAM I
-chegaram ao JSON.
+(capacidade dos dias, ordem das revisões, prazo das avaliações) e o parser da
+ementa — este último contra os arquivos reais de `public/`, que é onde moram os
+casos que quebram de verdade: indentação inconsistente, `└─` fora de lugar,
+negrito no meio do rótulo.

@@ -1,6 +1,9 @@
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
+
 import { describe, it, expect } from 'vitest'
 
-import ementaMedicina from '@/data/cronogramas/ementas/medicina.json'
+import { analisarEmenta, montarEmenta } from '@/lib/cronogramas/analisar-ementa'
 import { achatarSelecao, estimar, gerarCronograma } from '@/lib/cronogramas/gerador'
 import type { EmentaTopico } from '@/lib/cronogramas/tipos'
 import type { StudyTime } from '@/lib/cronograma-types'
@@ -9,9 +12,20 @@ const TEMPO: StudyTime = {
   segunda: 2, terca: 2, quarta: 2, quinta: 2, sexta: 2, sabado: 3, domingo: 1,
 }
 
+/**
+ * A ementa entra pelo mesmo caminho do painel — markdown real de `public/`
+ * passando pelo parser —, e não por um fixture escrito à mão. Assim o gerador
+ * é testado contra o formato que os alunos de fato recebem.
+ */
+const EMENTA = montarEmenta(
+  'medicina',
+  1,
+  analisarEmenta(readFileSync(join(process.cwd(), 'public', 'MEDICINA SOI I.md'), 'utf8')).topicos,
+)
+
 /** 1º período de Medicina com os dois primeiros subtópicos marcados. */
 function selecao(): EmentaTopico[] {
-  const topicos = JSON.parse(JSON.stringify((ementaMedicina as any)['1'])) as EmentaTopico[]
+  const topicos = JSON.parse(JSON.stringify(EMENTA)) as EmentaTopico[]
   topicos[0].incluido = true
   for (const sub of topicos[0].subtopicos.slice(0, 2)) {
     sub.incluido = true
@@ -122,7 +136,7 @@ describe('gerador de cronograma', () => {
   })
 
   it('sem módulo marcado não gera nada', () => {
-    const topicos = JSON.parse(JSON.stringify((ementaMedicina as any)['1'])) as EmentaTopico[]
+    const topicos = JSON.parse(JSON.stringify(EMENTA)) as EmentaTopico[]
     const plano = gerarCronograma({ topicos, tempoEstudo: TEMPO, dataInicio: '2026-03-02' })
 
     expect(plano.dias).toHaveLength(0)

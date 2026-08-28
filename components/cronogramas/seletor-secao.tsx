@@ -8,6 +8,8 @@ interface SeletorSecaoProps {
   secao: SecaoCurso
   periodo: number
   periodosDisponiveis: number[]
+  /** Períodos com ementa importada — ganham um ponto discreto. */
+  periodosComEmenta?: number[]
   onSecaoChange: (secao: SecaoCurso) => void
   onPeriodoChange: (periodo: number) => void
   /** Seção que veio do cadastro do aluno — ganha o selo "sua seção". */
@@ -30,12 +32,14 @@ export function SeletorSecao({
   secao,
   periodo,
   periodosDisponiveis,
+  periodosComEmenta = [],
   onSecaoChange,
   onPeriodoChange,
   secaoPadrao,
   compacto = false,
 }: SeletorSecaoProps) {
   const periodos = periodosDisponiveis.length > 0 ? periodosDisponiveis : [1]
+  const comEmenta = new Set(periodosComEmenta)
 
   return (
     <div className={compacto ? 'space-y-2' : 'space-y-3'}>
@@ -82,18 +86,26 @@ export function SeletorSecao({
         </span>
         {periodos.map(numero => {
           const ativo = numero === periodo
+          const temEmenta = comEmenta.has(numero)
           return (
             <button
               key={numero}
               onClick={() => onPeriodoChange(numero)}
               aria-pressed={ativo}
-              className={`h-8 min-w-[2.25rem] rounded-lg px-2 text-sm font-semibold transition-all duration-200 ${
+              title={temEmenta ? undefined : 'Ementa ainda não publicada para este período'}
+              className={`relative h-8 min-w-[2.25rem] rounded-lg px-2 text-sm font-semibold transition-all duration-200 ${
                 ativo
                   ? 'bg-foreground text-background shadow-sm'
                   : 'bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground'
               }`}
             >
               {numero}º
+              {temEmenta && (
+                <span
+                  className={`absolute right-1 top-1 h-1 w-1 rounded-full ${ativo ? 'bg-background/70' : 'bg-[#468152]'}`}
+                  aria-hidden
+                />
+              )}
             </button>
           )
         })}

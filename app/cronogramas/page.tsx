@@ -148,6 +148,7 @@ function ConteudoCronogramas() {
               secao={contexto.secao}
               periodo={contexto.periodo}
               periodosDisponiveis={contexto.periodosDisponiveis}
+              periodosComEmenta={contexto.periodosComEmenta}
               onSecaoChange={contexto.setSecao}
               onPeriodoChange={contexto.setPeriodo}
               secaoPadrao={contexto.secaoAcompanhada}

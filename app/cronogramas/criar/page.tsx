@@ -306,6 +306,7 @@ function ConteudoCriar() {
                 secao={contexto.secao}
                 periodo={contexto.periodo}
                 periodosDisponiveis={contexto.periodosDisponiveis}
+                periodosComEmenta={contexto.periodosComEmenta}
                 onSecaoChange={contexto.setSecao}
                 onPeriodoChange={contexto.setPeriodo}
                 secaoPadrao={contexto.secaoAcompanhada}
@@ -320,7 +321,8 @@ function ConteudoCriar() {
               </div>
             ) : todosOsModulos.length === 0 ? (
               <p className="mt-4 rounded-xl bg-muted/40 p-3 text-sm text-muted-foreground">
-                Este período ainda não tem ementa publicada. Escolha outro período acima.
+                A coordenação ainda não importou a ementa deste período. Escolha um período com o
+                ponto verde no seletor acima.
               </p>
             ) : (
               <>

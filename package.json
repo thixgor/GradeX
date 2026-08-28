@@ -15,7 +15,6 @@
     "lint:histopatologia": "next lint --dir components/histopatologia --dir lib/histopatologia --dir app/manual-clinico/histologia/histopatologia --dir app/api/manual-clinico/histopatologia --dir scripts/histopatologia --dir __tests__/histopatologia",
     "test": "vitest run",
     "test:watch": "vitest",
-    "cronogramas:ementas": "node scripts/cronogramas/construir-ementas.mjs",
     "histologia:dados": "node --experimental-strip-types --no-warnings scripts/histologia/construir-dados.mjs",
     "histopatologia:catalogo": "node public/patologia/scripts/validar-catalogo.mjs",
     "histopatologia:conteudo": "node --experimental-strip-types --no-warnings scripts/histopatologia/validar-conteudo.mjs",

@@ -191,7 +191,7 @@ export function EmentaNavegador({ topicos, carregando, contexto, acoes, selecao 
         ) : topicos.length === 0 ? (
           <EstadoVazio
             titulo="Ementa ainda não publicada"
-            descricao="Este período não tem conteúdo programático cadastrado. Escolha outro período ou outra seção acima."
+            descricao="A coordenação ainda não importou o conteúdo programático deste período. Os períodos que já têm ementa aparecem com um ponto verde no seletor acima."
           />
         ) : visiveis.length === 0 ? (
           <EstadoVazio
