@@ -163,7 +163,7 @@ export function useCronogramaSecao(): EstadoCronogramaSecao {
     (nova: SecaoCurso) => {
       definirSecao(nova)
       definirSecaoAcompanhada(nova)
-      // O período pode não existir na seção nova (Medicina vai até 5).
+      // O período pode não existir na seção nova: os cursos têm tamanhos diferentes.
       const ajustado = Math.min(periodo, getSecao(nova).periodos)
       if (ajustado !== periodo) definirPeriodo(ajustado)
       void gravar({ secao: nova, periodo: ajustado })

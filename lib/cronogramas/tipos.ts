@@ -16,14 +16,22 @@ export interface DefinicaoSecao {
   /** Nome curto para chips e filtros onde o nome inteiro não cabe. */
   curto: string
   emoji: string
-  /** Quantos períodos o curso tem na ementa publicada. */
+  /**
+   * Quantos períodos o curso tem. É a lista inteira, não só a parte com ementa
+   * importada: uma avaliação do 7º período existe na agenda antes de alguém
+   * publicar o conteúdo programático dele, e esconder o período deixaria essa
+   * prova invisível para a turma.
+   */
   periodos: number
   /** Cor da marca usada nos destaques da seção (hex, tema-agnóstica). */
   cor: string
 }
 
 export const SECOES: DefinicaoSecao[] = [
-  { id: 'medicina', nome: 'Medicina', curto: 'Med', emoji: '🩺', periodos: 5, cor: '#468152' },
+  // Medicina vai até o 8º: é o alcance dos calendários de avaliação que a
+  // coordenação publica ("N3 ESPECÍFICA – 1º AO 8º PERÍODO – MEDICINA") e dos
+  // eixos que aparecem neles (HAM 8, IESC 8).
+  { id: 'medicina', nome: 'Medicina', curto: 'Med', emoji: '🩺', periodos: 8, cor: '#468152' },
   { id: 'psicologia', nome: 'Psicologia', curto: 'Psico', emoji: '🧠', periodos: 10, cor: '#7C6BD8' },
   { id: 'biomedicina', nome: 'Biomedicina', curto: 'Biomed', emoji: '🔬', periodos: 7, cor: '#2E8FA8' },
   { id: 'odontologia', nome: 'Odontologia', curto: 'Odonto', emoji: '🦷', periodos: 10, cor: '#CE5929' },

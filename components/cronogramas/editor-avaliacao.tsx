@@ -18,6 +18,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ToggleSwitch } from '@/components/ui/toggle-switch'
+import { SeletorPeriodos } from '@/components/cronogramas/seletor-periodos'
 import {
   diasEntre,
   formatarDiaCurto,
@@ -61,7 +62,11 @@ interface EditorAvaliacaoProps {
   /** Já existe no banco: mostra apagar e salva com PATCH. */
   existente?: boolean
   salvando?: boolean
-  onSalvar: (valor: RascunhoAvaliacao) => void
+  /**
+   * Recebe uma avaliação por período marcado — sempre lista, mesmo quando é
+   * uma só. Editando uma existente vem sempre com um item.
+   */
+  onSalvar: (valores: RascunhoAvaliacao[]) => void
   onCancelar: () => void
   onApagar?: () => void
 }
@@ -77,6 +82,12 @@ interface EditorAvaliacaoProps {
  * A configuração de lembrete fica no mesmo formulário, e não atrás de outro
  * clique, porque "quando avisa" é parte de marcar a prova — separar as duas
  * coisas produz avaliações cadastradas com lembrete que ninguém revisou.
+ *
+ * Ao criar, o período é MÚLTIPLO: a mesma prova costuma valer para várias
+ * turmas — a N3 do 1º ao 4º, o teste de progresso no curso inteiro — e cada
+ * período marcado vira uma avaliação, criadas juntas. Editando uma que já
+ * existe o período volta a ser um só: mudar a turma de uma avaliação salva é
+ * outra coisa, e transformá-la em oito por engano seria irreversível.
  */
 export function EditorAvaliacao({
   valor,
@@ -88,9 +99,13 @@ export function EditorAvaliacao({
   onApagar,
 }: EditorAvaliacaoProps) {
   const [rascunho, setRascunho] = useState<RascunhoAvaliacao>(valor)
+  const [periodos, setPeriodos] = useState<number[]>([valor.periodo])
   const [erro, setErro] = useState<string | null>(null)
 
-  useEffect(() => setRascunho(valor), [valor])
+  useEffect(() => {
+    setRascunho(valor)
+    setPeriodos([valor.periodo])
+  }, [valor])
 
   function mudar<C extends keyof RascunhoAvaliacao>(campo: C, novo: RascunhoAvaliacao[C]) {
     setRascunho(anterior => ({ ...anterior, [campo]: novo }))
@@ -115,10 +130,18 @@ export function EditorAvaliacao({
       return
     }
     setErro(null)
-    onSalvar(rascunho)
+
+    onSalvar(
+      existente
+        ? [rascunho]
+        : periodos.map(periodo => ({ ...rascunho, periodo })),
+    )
   }
 
-  const periodos = Array.from({ length: getSecao(rascunho.secao).periodos }, (_, i) => i + 1)
+  const periodosDaSecao = Array.from(
+    { length: Math.max(getSecao(rascunho.secao).periodos, rascunho.periodo) },
+    (_, i) => i + 1,
+  )
 
   return (
     <div className="rounded-2xl border border-[#468152]/35 bg-background/80 p-4 shadow-lg">
@@ -141,11 +164,18 @@ export function EditorAvaliacao({
             value={rascunho.secao}
             onChange={event => {
               const nova = event.target.value as SecaoCurso
+              const teto = getSecao(nova).periodos
               setRascunho(anterior => ({
                 ...anterior,
                 secao: nova,
-                periodo: Math.min(anterior.periodo, getSecao(nova).periodos),
+                periodo: Math.min(anterior.periodo, teto),
               }))
+              // O curso novo pode ser mais curto: períodos que não existem
+              // nele saem da seleção em vez de virarem avaliação recusada.
+              setPeriodos(anterior => {
+                const cortados = anterior.filter(numero => numero <= teto)
+                return cortados.length > 0 ? cortados : [1]
+              })
             }}
             className="h-11 w-full rounded-xl border border-border bg-background px-3 text-sm outline-none focus:border-[#468152]/50"
           >
@@ -157,20 +187,22 @@ export function EditorAvaliacao({
           </select>
         </label>
 
-        <label className="block">
-          <Rotulo>Período</Rotulo>
-          <select
-            value={rascunho.periodo}
-            onChange={event => mudar('periodo', Number(event.target.value))}
-            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-sm outline-none focus:border-[#468152]/50"
-          >
-            {periodos.map(numero => (
-              <option key={numero} value={numero}>
-                {numero}º período
-              </option>
-            ))}
-          </select>
-        </label>
+        {existente && (
+          <label className="block">
+            <Rotulo>Período</Rotulo>
+            <select
+              value={rascunho.periodo}
+              onChange={event => mudar('periodo', Number(event.target.value))}
+              className="h-11 w-full rounded-xl border border-border bg-background px-3 text-sm outline-none focus:border-[#468152]/50"
+            >
+              {periodosDaSecao.map(numero => (
+                <option key={numero} value={numero}>
+                  {numero}º período
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
 
         <label className="block">
           <Rotulo>Data</Rotulo>
@@ -181,6 +213,15 @@ export function EditorAvaliacao({
             className="h-11 rounded-xl"
           />
         </label>
+
+        {/* Criar é o momento em que a mesma prova vale para várias turmas: os
+            períodos ficam numa linha inteira, marcáveis de uma vez. */}
+        {!existente && (
+          <div className="sm:col-span-2">
+            <Rotulo>Períodos</Rotulo>
+            <SeletorPeriodos secao={rascunho.secao} valor={periodos} onChange={setPeriodos} />
+          </div>
+        )}
 
         <label className="block">
           <Rotulo>Horário (opcional)</Rotulo>
@@ -346,7 +387,11 @@ export function EditorAvaliacao({
               )}
               <p className="mt-2 text-[11px] text-muted-foreground">
                 Só recebe quem ativou &ldquo;Quero receber lembretes das minhas avaliações&rdquo; e acompanha{' '}
-                {getSecao(rascunho.secao).nome} · {rascunho.periodo}º período.
+                {getSecao(rascunho.secao).nome} ·{' '}
+                {existente || periodos.length === 1
+                  ? `${existente ? rascunho.periodo : periodos[0]}º período`
+                  : `${periodos.map(numero => `${numero}º`).join(', ')} períodos`}
+                .
               </p>
             </div>
           </>
@@ -358,7 +403,11 @@ export function EditorAvaliacao({
       <div className="mt-4 flex flex-wrap items-center gap-2">
         <Button onClick={salvar} disabled={salvando} className="h-10 rounded-xl">
           {salvando ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : <Check className="mr-1.5 h-3.5 w-3.5" />}
-          {existente ? 'Salvar' : 'Criar avaliação'}
+          {existente
+            ? 'Salvar'
+            : periodos.length > 1
+              ? `Criar ${periodos.length} avaliações`
+              : 'Criar avaliação'}
         </Button>
 
         <Button variant="ghost" onClick={onCancelar} className="h-10 rounded-xl">
