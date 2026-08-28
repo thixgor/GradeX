@@ -131,3 +131,31 @@ export function calcularReceitaRecorrente(
     canceladasVigentes: vigentes.length - renovando.length,
   }
 }
+
+/**
+ * Os únicos ciclos que viram cobrança recorrente.
+ *
+ * É a lista que o Mercado Pago aceita como `auto_recurring.frequency` no
+ * preapproval do jeito que a plataforma o cria. Qualquer outro valor — 6
+ * (semestral), 0 (vitalício) ou ausente — é vendido como pagamento único.
+ */
+export const MESES_DE_RECORRENCIA = [1, 3, 12] as const
+
+/**
+ * Este plano cobra de novo sozinho?
+ *
+ * A REGRA MORAVA EM TRÊS LUGARES e divergia num deles. /buy/checkout e
+ * /api/subscriptions conferiam {1, 3, 12}; o FAQ de /buy tratava como
+ * recorrente tudo que não fosse vitalício — então um plano semestral
+ * (durationMonths: 6) prometia "renovação automática pelo Mercado Pago" numa
+ * tela e entregava pagamento único na seguinte.
+ *
+ * Atenção ao que NÃO decide isto: `periodo` é texto livre que o admin escreve
+ * ("Anual", "Mensal") e serve só de rótulo. Um plano pode se chamar "Anual" e
+ * cobrar avulso, se `durationMonths` estiver 0, vazio ou 6 — é o caso dos
+ * planos criados antes de o campo existir, que ficam com `undefined`.
+ */
+export function planoEhRecorrente(durationMonths?: number | null): boolean {
+  const meses = Number(durationMonths)
+  return (MESES_DE_RECORRENCIA as readonly number[]).includes(meses)
+}

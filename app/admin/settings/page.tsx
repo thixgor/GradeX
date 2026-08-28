@@ -23,6 +23,7 @@ import {
   type SidebarSectionSettings,
 } from '@/lib/sidebar-sections'
 import { normalizeSidebarIcons, type SidebarSectionIcons } from '@/lib/sidebar-icons'
+import { MESES_DE_RECORRENCIA, planoEhRecorrente } from '@/lib/payments/subscription-view'
 import {
   normalizeSidebarGroups,
   normalizeSidebarSectionGroups,
@@ -1314,11 +1315,23 @@ export default function SettingsPage() {
                           }}
                           placeholder="Ex: 1 (Mensal), 12 (Anual)"
                         />
+                        {/*
+                          Como este plano vai cobrar, dito em vez de deduzido.
+                          A regra estava só no parágrafo abaixo, e o campo
+                          "Período" logo acima é TEXTO LIVRE: dava para ter um
+                          plano escrito "Anual" com duração 0 ou 6, que o
+                          checkout vende como pagamento único. Quem configurou
+                          não tinha como perceber sem conhecer a regra de cor.
+                        */}
+                        <CobrancaDoPlano meses={plano.durationMonths} />
                       </div>
                       <div className="md:col-span-2 p-3 rounded-lg bg-muted/40 text-xs text-muted-foreground">
                         <strong>Pagamentos via Mercado Pago.</strong> Preço, duração e cargo definem
-                        a fatura. Planos com <code>durationMonths</code> em {'{1, 3, 12}'} são
-                        recorrentes (Preapproval). Demais (ex.: vitalício) são Order única.
+                        a fatura. Só <code>durationMonths</code> em {'{1, 3, 12}'} vira assinatura
+                        recorrente (Preapproval): o cartão é cobrado de novo sozinho e o cliente
+                        cancela no perfil. Qualquer outro valor — inclusive 6 e 0 — é cobrado uma
+                        vez (Order única), sem renovação. O campo <strong>Período</strong> é só o
+                        rótulo que aparece na vitrine e não muda nada na cobrança.
                       </div>
                     </div>
 
@@ -1487,5 +1500,47 @@ export default function SettingsPage() {
         </div>
       </main>
     </div>
+  )
+}
+
+/**
+ * Como este plano cobra, do lado do campo que decide isso.
+ *
+ * Vale para o admin o mesmo que o selo de /admin/analytics vale para o
+ * relatório: um plano recorrente e um avulso valem o mesmo na primeira
+ * cobrança e nada parecido depois, e a diferença estava escondida numa regra
+ * de cabeça ({1, 3, 12}) que o formulário só descrevia em prosa.
+ */
+function CobrancaDoPlano({ meses }: { meses?: number }) {
+  const valor = Number(meses) || 0
+  const recorrente = planoEhRecorrente(valor)
+
+  if (recorrente) {
+    return (
+      <p className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[11px] leading-relaxed">
+        <span className="inline-flex rounded-full border border-violet-500/30 bg-violet-500/10 px-2 py-0.5 font-bold text-violet-700 dark:text-violet-300">
+          Recorrente
+        </span>
+        <span className="text-muted-foreground">
+          cobra sozinho a cada {valor === 1 ? 'mês' : valor === 3 ? '3 meses' : 'ano'}; o cliente cancela no perfil.
+        </span>
+      </p>
+    )
+  }
+
+  return (
+    <p className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[11px] leading-relaxed">
+      <span className="inline-flex rounded-full border border-border bg-muted px-2 py-0.5 font-bold text-muted-foreground">
+        Avulso
+      </span>
+      <span className="text-muted-foreground">
+        {valor === 0
+          ? 'vitalício: cobra uma vez e o acesso não expira.'
+          : `cobra uma vez e libera ${valor} ${valor === 1 ? 'mês' : 'meses'} de acesso, sem renovar.`}
+        {valor > 0 && (
+          <> Para renovar sozinho, use {MESES_DE_RECORRENCIA.join(', ')} meses.</>
+        )}
+      </span>
+    </p>
   )
 }

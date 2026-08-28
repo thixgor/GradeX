@@ -66,6 +66,7 @@ import {
 } from '@/lib/buy/pricing'
 import { useProuniGrant, type ProuniConcessaoNaTela } from '@/hooks/use-prouni-grant'
 import { combineDiscountsWithProuni } from '@/lib/prouni-shared'
+import { planoEhRecorrente } from '@/lib/payments/subscription-view'
 
 const WHATSAPP = '5524992230908'
 
@@ -681,9 +682,12 @@ function PainelDaOferta({
               dúvidas, que é onde alguém vai procurar por isso. */}
           <p className="mt-3 border-t border-border pt-3 text-[11px] leading-relaxed text-muted-foreground">
             Pix, cartão ou boleto pelo Mercado Pago.{' '}
-            {plano.meses === 0
-              ? 'Pagamento único: não existe renovação para cancelar.'
-              : `Renova a cada ${rotuloDeCiclo(plano.meses)} e você cancela quando quiser.`}
+            {/* Mesma regra do checkout: só {1, 3, 12} meses renovam. */}
+            {!visitante && planoEhRecorrente(plano.durationMonths)
+              ? `Renova a cada ${rotuloDeCiclo(plano.meses)} e você cancela quando quiser.`
+              : plano.meses === 0
+                ? 'Pagamento único: não existe renovação para cancelar.'
+                : `Pagamento único por ${rotuloDeCiclo(plano.meses)} de acesso: não renova sozinho.`}
           </p>
 
           {visitante && (
@@ -702,7 +706,9 @@ function PainelDaOferta({
                 >
                   Entrar na conta
                 </a>{' '}
-                para assinar com renovação automática e acesso imediato.
+                {planoEhRecorrente(plano.durationMonths)
+                  ? 'para assinar com renovação automática e acesso imediato.'
+                  : 'para o acesso cair direto nela, sem Serial Key.'}
               </span>
             </p>
           )}
@@ -914,6 +920,15 @@ function perguntasDoPlano(plano?: PlanoComPreco, visitante = false) {
   const nome = plano?.name || 'o plano'
   const preco = plano?.preco
 
+  /*
+   * Só {1, 3, 12} meses viram cobrança recorrente. Antes daqui a condição era
+   * "não é vitalício, logo renova", e um plano SEMESTRAL prometia neste
+   * parágrafo "a renovação é automática pelo Mercado Pago" enquanto o checkout
+   * o vendia como pagamento único — /buy/checkout e /api/subscriptions sempre
+   * conferiram {1, 3, 12}, e só este texto discordava.
+   */
+  const renova = !!plano && !visitante && planoEhRecorrente(plano.durationMonths)
+
   const cobranca = !plano
     ? 'A cobrança e a renovação aparecem no checkout antes de você confirmar qualquer coisa.'
     : plano.meses === 0
@@ -921,12 +936,20 @@ function perguntasDoPlano(plano?: PlanoComPreco, visitante = false) {
       : visitante
         ? `Comprando sem conta, ${nome} sai por R$ ${formatarBRL(preco!.total)} de uma vez, com acesso por ${rotuloDeCiclo(plano.meses)}${
             preco?.mensal != null ? ` — o que dá R$ ${formatarBRL(preco.mensal)} por mês` : ''
-          }. É pagamento único: NÃO renova sozinho e não fica cobrando o seu cartão. Você recebe uma Serial Key por e-mail e ativa quando quiser. Se preferir a renovação automática, entre na sua conta antes de assinar.`
-        : `${nome} é cobrado em R$ ${formatarBRL(preco!.total)} a cada ${rotuloDeCiclo(plano.meses)}${
-            preco?.mensal != null
-              ? ` — o que dá R$ ${formatarBRL(preco.mensal)} por mês de acesso`
+          }. É pagamento único: NÃO renova sozinho e não fica cobrando o seu cartão. Você recebe uma Serial Key por e-mail e ativa quando quiser.${
+            planoEhRecorrente(plano.durationMonths)
+              ? ' Se preferir a renovação automática, entre na sua conta antes de assinar.'
               : ''
-          }. A renovação é automática pelo Mercado Pago e você cancela quando quiser, direto no seu perfil, sem multa e sem ligar para ninguém, mantendo o acesso até o fim do período já pago.`
+          }`
+        : renova
+          ? `${nome} é cobrado em R$ ${formatarBRL(preco!.total)} a cada ${rotuloDeCiclo(plano.meses)}${
+              preco?.mensal != null
+                ? ` — o que dá R$ ${formatarBRL(preco.mensal)} por mês de acesso`
+                : ''
+            }. A renovação é automática pelo Mercado Pago e você cancela quando quiser, direto no seu perfil, sem multa e sem ligar para ninguém, mantendo o acesso até o fim do período já pago.`
+          : `${nome} é pagamento único: R$ ${formatarBRL(preco!.total)} uma vez, com acesso por ${rotuloDeCiclo(plano.meses)}${
+              preco?.mensal != null ? ` — o que dá R$ ${formatarBRL(preco.mensal)} por mês` : ''
+            }. NÃO renova sozinho: quando o prazo acabar, você decide se quer comprar de novo. Nada fica cobrando o seu cartão.`
 
   return [
     {

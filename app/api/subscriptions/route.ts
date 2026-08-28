@@ -11,6 +11,7 @@ import { DEFAULT_PAYMENT_METHODS } from '@/lib/payment-methods'
 import { checkRefundCooldown } from '@/lib/plus-guard'
 import { restorePlusClaims } from '@/lib/plus-claims'
 import { normalizeAccountType } from '@/lib/account-tier'
+import { MESES_DE_RECORRENCIA, planoEhRecorrente } from '@/lib/payments/subscription-view'
 import type { SubscriptionRecord, User } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -70,9 +71,11 @@ export async function POST(request: NextRequest) {
   if (!plano) return NextResponse.json({ error: 'Plano não encontrado' }, { status: 400 })
 
   const months = plano.durationMonths
-  if (![1, 3, 12].includes(months)) {
+  if (!planoEhRecorrente(months)) {
     return NextResponse.json(
-      { error: 'Este plano não é recorrente — use /api/payments/orders' },
+      {
+        error: `Este plano não é recorrente — só ${MESES_DE_RECORRENCIA.join(', ')} meses viram assinatura. Use /api/payments/orders.`,
+      },
       { status: 400 }
     )
   }

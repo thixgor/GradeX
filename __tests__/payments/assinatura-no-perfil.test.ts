@@ -1,10 +1,12 @@
 import { describe, it, expect } from 'vitest'
 import {
   DIAS_DE_GARANTIA,
+  MESES_DE_RECORRENCIA,
   calcularReceitaRecorrente,
   classificarCobrancaDoPedido,
   diasDeGarantiaRestantes,
   montarResumoDaAssinatura,
+  planoEhRecorrente,
   rotuloDeCicloDeCobranca,
 } from '@/lib/payments/subscription-view'
 import type { SubscriptionRecord } from '@/lib/types'
@@ -164,5 +166,38 @@ describe('receita recorrente estimada (MRR)', () => {
     expect(resultado.total).toBe(0)
     expect(resultado.renovando).toBe(0)
     expect(resultado.canceladasVigentes).toBe(2)
+  })
+})
+
+/**
+ * Quais ciclos viram cobrança recorrente.
+ *
+ * A regra morava em três lugares: /buy/checkout e /api/subscriptions conferiam
+ * {1, 3, 12}, e o FAQ de /buy tratava como recorrente tudo que não fosse
+ * vitalício. Um plano semestral prometia "renovação automática pelo Mercado
+ * Pago" numa tela e era vendido como pagamento único na seguinte.
+ */
+describe('quais planos são recorrentes', () => {
+  it('aceita mensal, trimestral e anual', () => {
+    expect(planoEhRecorrente(1)).toBe(true)
+    expect(planoEhRecorrente(3)).toBe(true)
+    expect(planoEhRecorrente(12)).toBe(true)
+    expect(MESES_DE_RECORRENCIA).toEqual([1, 3, 12])
+  })
+
+  it('NÃO aceita semestral — era a contradição entre /buy e /buy/checkout', () => {
+    expect(planoEhRecorrente(6)).toBe(false)
+  })
+
+  it('trata vitalício como avulso', () => {
+    expect(planoEhRecorrente(0)).toBe(false)
+  })
+
+  it('trata plano sem duração definida como avulso', () => {
+    // Planos criados antes de o campo existir chegam com `undefined`, e é o
+    // caso mais comum de "o plano diz Anual e o checkout cobra avulso": o
+    // campo `periodo` é só um rótulo de texto e não decide nada.
+    expect(planoEhRecorrente(undefined)).toBe(false)
+    expect(planoEhRecorrente(null)).toBe(false)
   })
 })

@@ -52,6 +52,7 @@ import {
   type TerminalStatus,
 } from '@/components/payments/card-terminal'
 import { formatCpf, isValidCpf, onlyCpfDigits } from '@/lib/cpf'
+import { planoEhRecorrente } from '@/lib/payments/subscription-view'
 import { cn } from '@/lib/utils'
 
 type PayMode = 'subscription' | 'one_time'
@@ -184,8 +185,7 @@ function BuyCheckoutContent() {
         const assinaturaLiberada = feesResp?.checkout?.subscriptionsEnabled !== false
         setSubscriptionsEnabled(assinaturaLiberada)
 
-        const months = found.durationMonths || 0
-        const recorrente = months === 1 || months === 3 || months === 12
+        const recorrente = planoEhRecorrente(found.durationMonths)
         setPlanoERecorrente(recorrente)
         setPayMode(recorrente && assinaturaLiberada ? 'subscription' : 'one_time')
       })
