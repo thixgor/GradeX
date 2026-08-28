@@ -83,3 +83,51 @@ export function diasDeGarantiaRestantes(
   const decorridos = (agora.getTime() - inicioMs) / 86_400_000
   return Math.max(0, Math.ceil(DIAS_DE_GARANTIA - decorridos))
 }
+
+/**
+ * Recorrente ou avulso — a regra que o painel administrativo usa.
+ *
+ * Um plano pode ser vendido de dois jeitos que valem o mesmo na primeira
+ * cobrança e nada parecido depois:
+ *
+ *  - RECORRENTE: preapproval do Mercado Pago, na coleção `subscriptions`.
+ *    Renova sozinho, entra no MRR, tem churn e pode ser cancelado.
+ *  - AVULSO: `payment_orders` com `type: 'plan'` — o modo "Pagamento único" do
+ *    /buy/checkout — ou uma Serial Key comprada em /comprar. Cobra uma vez,
+ *    nunca renova e não há o que cancelar.
+ *
+ * `/admin/analytics` chamava os dois de "Assinatura", com a mesma origem, e
+ * não havia como responder "quanto dessa receita volta no mês que vem?" — que
+ * é a única pergunta que a distinção existe para responder.
+ */
+export type TipoDeCobranca = 'recorrente' | 'avulso'
+
+/**
+ * Classifica um `payment_orders.type`.
+ *
+ * Só `'subscription'` é recorrente. `'plan'` NÃO é: a recorrência nunca passa
+ * por /api/payments/orders — ela vira preapproval e mora em `subscriptions`.
+ * Confundir os dois foi exatamente o que produziu o rótulo errado no painel.
+ */
+export function classificarCobrancaDoPedido(orderType?: string | null): TipoDeCobranca {
+  return orderType === 'subscription' ? 'recorrente' : 'avulso'
+}
+
+/**
+ * MRR estimado a partir das assinaturas vigentes.
+ *
+ * Exclui as que já foram canceladas. O cancelamento grava `cancelAtPeriodEnd`
+ * e MANTÉM `status: 'authorized'` — é o que preserva o acesso até o fim do
+ * período pago —, então uma soma pelo status inflava a projeção justamente com
+ * quem acabou de sair: o número subia quando deveria cair.
+ */
+export function calcularReceitaRecorrente(
+  vigentes: Array<{ amount?: number; cancelAtPeriodEnd?: boolean }>,
+): { total: number; renovando: number; canceladasVigentes: number } {
+  const renovando = vigentes.filter((sub) => !sub.cancelAtPeriodEnd)
+  return {
+    total: renovando.reduce((soma, sub) => soma + Number(sub.amount || 0), 0),
+    renovando: renovando.length,
+    canceladasVigentes: vigentes.length - renovando.length,
+  }
+}

@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest'
 import {
   DIAS_DE_GARANTIA,
+  calcularReceitaRecorrente,
+  classificarCobrancaDoPedido,
   diasDeGarantiaRestantes,
   montarResumoDaAssinatura,
   rotuloDeCicloDeCobranca,
@@ -102,5 +104,65 @@ describe('garantia de 7 dias', () => {
   it('zera quando não há data de início', () => {
     expect(diasDeGarantiaRestantes(null)).toBe(0)
     expect(diasDeGarantiaRestantes('data-quebrada')).toBe(0)
+  })
+})
+
+/**
+ * Recorrente vs avulso no painel administrativo.
+ *
+ * /admin/analytics chamava as duas vendas de "Assinatura": o preapproval que
+ * renova sozinho e o plano pago uma vez no modo "Pagamento único". Com o mesmo
+ * rótulo e a mesma origem, não havia como responder "quanto dessa receita
+ * volta no mês que vem?".
+ */
+describe('classificação de cobrança do pedido', () => {
+  it('só trata preapproval como recorrente', () => {
+    expect(classificarCobrancaDoPedido('subscription')).toBe('recorrente')
+  })
+
+  it('trata plano pago uma vez como avulso', () => {
+    // payment_orders.type === 'plan' é SEMPRE o modo "Pagamento único": a
+    // recorrência não passa por /api/payments/orders.
+    expect(classificarCobrancaDoPedido('plan')).toBe('avulso')
+  })
+
+  it('trata material, pacote e doação como avulsos', () => {
+    expect(classificarCobrancaDoPedido('material')).toBe('avulso')
+    expect(classificarCobrancaDoPedido('donation')).toBe('avulso')
+    expect(classificarCobrancaDoPedido(undefined)).toBe('avulso')
+  })
+})
+
+describe('receita recorrente estimada (MRR)', () => {
+  it('soma apenas as assinaturas que vão renovar', () => {
+    const resultado = calcularReceitaRecorrente([
+      { amount: 100 },
+      { amount: 50 },
+    ])
+    expect(resultado.total).toBe(150)
+    expect(resultado.renovando).toBe(2)
+    expect(resultado.canceladasVigentes).toBe(0)
+  })
+
+  it('exclui a assinatura já cancelada que ainda está vigente', () => {
+    // O cancelamento mantém status 'authorized' até o período pago acabar, e
+    // somar essa no MRR fazia a projeção subir justamente quando devia cair.
+    const resultado = calcularReceitaRecorrente([
+      { amount: 100 },
+      { amount: 397, cancelAtPeriodEnd: true },
+    ])
+    expect(resultado.total).toBe(100)
+    expect(resultado.renovando).toBe(1)
+    expect(resultado.canceladasVigentes).toBe(1)
+  })
+
+  it('devolve zero quando todas foram canceladas', () => {
+    const resultado = calcularReceitaRecorrente([
+      { amount: 100, cancelAtPeriodEnd: true },
+      { amount: 200, cancelAtPeriodEnd: true },
+    ])
+    expect(resultado.total).toBe(0)
+    expect(resultado.renovando).toBe(0)
+    expect(resultado.canceladasVigentes).toBe(2)
   })
 })

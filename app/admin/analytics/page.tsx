@@ -33,6 +33,17 @@ import { LogoLoading } from '@/components/logo-loading'
 import { SerialKeysPanel } from '@/components/admin/serial-keys-panel'
 
 type SeriesPoint = { key?: string; label: string; value: number; count?: number; type?: string; revenue?: number }
+
+/**
+ * Recorrente ou avulso.
+ *
+ * Um plano vendido como preapproval do Mercado Pago renova sozinho, entra no
+ * MRR e pode ser cancelado; o mesmo plano vendido no modo "Pagamento único" ou
+ * por Serial Key cobra uma vez e acabou. O painel chamava os dois de
+ * "Assinatura", e não havia como responder "quanto dessa receita volta no mês
+ * que vem?".
+ */
+type TipoDeCobranca = 'recorrente' | 'avulso'
 type FunnelStep = { key: string; label: string; count: number; conversionFromPrevious: number; conversionFromStart: number }
 
 type OrderRow = {
@@ -41,6 +52,7 @@ type OrderRow = {
   userEmail: string
   product: string
   productType: string
+  recurrence: TipoDeCobranca
   value: number
   status: string
   rawStatus: string
@@ -68,7 +80,9 @@ type SubscriptionRow = {
   expiresAt: string | null
   status: string
   origin: string
+  recurrence: TipoDeCobranca
   autoRenew: boolean
+  cancelAtPeriodEnd: boolean
   lastPaymentAt: string | null
   nextBillingAt: string | null
   canceledAt: string | null
@@ -80,6 +94,7 @@ type AbandonedRow = {
   userEmail: string
   product: string
   productType: string
+  recurrence: TipoDeCobranca
   value: number
   startedAt: string | null
   lastStage: string
@@ -179,6 +194,12 @@ type AnalyticsPayload = {
     cancelled: number
     cancellationRate: number
     estimatedRecurringRevenue: number
+    renewing: number
+    cancelledStillActive: number
+  }
+  planRevenueSplit: {
+    recurring: { count: number; revenue: number }
+    oneTime: { count: number; revenue: number }
   }
   funnel: FunnelStep[]
   funnelFailed: number
@@ -194,6 +215,42 @@ type AnalyticsPayload = {
   cancellations: CancellationRow[]
   donations: DonationRow[]
   couponStats: CouponStatRow[]
+}
+
+/**
+ * O selo que responde "isso volta mês que vem?".
+ *
+ * Cor semântica, não decorativa: a receita recorrente é a que se projeta, e
+ * distinguir as duas por um "Sim/Não" numa coluna chamada "Renova" obrigava a
+ * ler a tabela inteira para responder uma pergunta de um olhar.
+ */
+function SeloDeCobranca({
+  tipo,
+  canceladaVigente = false,
+}: {
+  tipo: TipoDeCobranca
+  /** Recorrente já cancelada: ainda vigente, mas não cobra de novo. */
+  canceladaVigente?: boolean
+}) {
+  if (tipo === 'recorrente' && canceladaVigente) {
+    return (
+      <span className="inline-flex whitespace-nowrap rounded-full border border-amber-300/25 bg-amber-400/10 px-2.5 py-1 text-xs font-bold text-amber-100">
+        Cancelada · não renova
+      </span>
+    )
+  }
+  if (tipo === 'recorrente') {
+    return (
+      <span className="inline-flex whitespace-nowrap rounded-full border border-violet-300/25 bg-violet-400/10 px-2.5 py-1 text-xs font-bold text-violet-100">
+        Recorrente
+      </span>
+    )
+  }
+  return (
+    <span className="inline-flex whitespace-nowrap rounded-full border border-white/15 bg-white/[0.06] px-2.5 py-1 text-xs font-bold text-white/65">
+      Avulso
+    </span>
+  )
 }
 
 const currency = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
@@ -498,10 +555,10 @@ function OrdersTable({ rows, onApproved }: { rows: OrderRow[]; onApproved: () =>
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[1360px] text-left text-sm">
+      <table className="w-full min-w-[1480px] text-left text-sm">
         <thead className="text-xs uppercase text-white/40">
           <tr className="border-b border-white/10">
-            {['Usuário', 'Produto', 'Tipo', 'Valor', 'Cupom', 'Status', 'Método', 'Pagamento MP', 'Preferência MP', 'Criação', 'Pagamento', 'Origem', 'Ações'].map((head) => (
+            {['Usuário', 'Produto', 'Tipo', 'Cobrança', 'Valor', 'Cupom', 'Status', 'Método', 'Pagamento MP', 'Preferência MP', 'Criação', 'Pagamento', 'Origem', 'Ações'].map((head) => (
               <th key={head} className="px-3 py-3 font-bold">{head}</th>
             ))}
           </tr>
@@ -515,6 +572,7 @@ function OrdersTable({ rows, onApproved }: { rows: OrderRow[]; onApproved: () =>
               </td>
               <td className="max-w-[220px] truncate px-3 py-3">{row.product}</td>
               <td className="px-3 py-3">{row.productType}</td>
+              <td className="px-3 py-3"><SeloDeCobranca tipo={row.recurrence} /></td>
               <td className="px-3 py-3 font-bold text-emerald-200">{formatCurrency(row.value)}</td>
               <td className="px-3 py-3">
                 {row.couponCode ? (
@@ -576,6 +634,8 @@ export default function AdminAnalyticsPage() {
   const [data, setData] = useState<AnalyticsPayload | null>(null)
   const [query, setQuery] = useState('')
   const [type, setType] = useState('')
+  /** '' = todas; 'recorrente' | 'avulso'. Ver SeloDeCobranca. */
+  const [recurrence, setRecurrence] = useState('')
   const [status, setStatus] = useState('')
   const [method, setMethod] = useState('')
   const [couponFilter, setCouponFilter] = useState('')
@@ -623,6 +683,7 @@ export default function AdminAnalyticsPage() {
       const created = row.createdAt ? new Date(row.createdAt) : null
       if (q && !hay.includes(q)) return false
       if (type && row.productType !== type) return false
+      if (recurrence && row.recurrence !== recurrence) return false
       if (status && row.status !== status) return false
       if (method && row.paymentMethod !== method) return false
       if (couponFilter && row.couponCode !== couponFilter) return false
@@ -632,7 +693,7 @@ export default function AdminAnalyticsPage() {
       if (maxValue && row.value > Number(maxValue)) return false
       return true
     })
-  }, [data, query, type, status, method, couponFilter, dateFrom, dateTo, minValue, maxValue])
+  }, [data, query, type, recurrence, status, method, couponFilter, dateFrom, dateTo, minValue, maxValue])
 
   const visibleDonations = useMemo(() => {
     if (!data || donationView === 'hide') return []
@@ -833,6 +894,12 @@ export default function AdminAnalyticsPage() {
               <div className="rounded-2xl border border-white/10 bg-black/15 px-4 py-3">
                 <p className="text-xs uppercase text-white/45">MRR estimado</p>
                 <p className="text-sm font-bold text-emerald-200">{formatCurrency(data.subscriptionSummary.estimatedRecurringRevenue)}</p>
+                {/* Só as recorrentes que ainda renovam. Antes o número incluía
+                    quem já tinha cancelado (o status segue 'authorized' até o
+                    período pago acabar) e subia justamente quando devia cair. */}
+                <p className="mt-0.5 text-[11px] text-white/40">
+                  {number.format(data.subscriptionSummary.renewing)} recorrentes que renovam
+                </p>
               </div>
               <div className="col-span-2 rounded-2xl border border-white/10 bg-black/15 px-4 py-3 sm:col-span-1">
                 <p className="text-xs uppercase text-white/45">Produto líder</p>
@@ -847,10 +914,38 @@ export default function AdminAnalyticsPage() {
           <StatCard title="Receita no mês" value={formatCurrency(data.cards.monthRevenue)} hint="Mês corrente" icon={TrendingUp} tone="gold" />
           <StatCard title="Receita na semana" value={formatCurrency(data.cards.weekRevenue)} hint="Semana corrente" icon={CalendarClock} tone="forest" />
           <StatCard title="Total de vendas" value={number.format(data.cards.totalSales)} hint="Materiais, planos e pacotes" icon={ShoppingCart} tone="blue" />
-          <StatCard title="Assinaturas ativas" value={number.format(data.cards.activeSubscriptions)} hint={`${data.subscriptionSummary.expiring7} vencem em 7 dias`} icon={Crown} tone="gold" />
+          <StatCard
+            title="Assinaturas ativas"
+            value={number.format(data.cards.activeSubscriptions)}
+            hint={
+              data.subscriptionSummary.cancelledStillActive > 0
+                ? `${data.subscriptionSummary.cancelledStillActive} já canceladas (não renovam)`
+                : `${data.subscriptionSummary.expiring7} vencem em 7 dias`
+            }
+            icon={Crown}
+            tone="gold"
+          />
           <StatCard title="Cancelamentos" value={number.format(data.cards.cancellations)} hint={`Taxa: ${formatPercent(data.cards.cancellationRate)}`} icon={XCircle} tone="red" />
           <StatCard title="Pedidos pendentes" value={number.format(data.cards.pendingOrders)} hint="Aguardando MercadoPago" icon={Receipt} />
           <StatCard title="Checkouts abandonados" value={number.format(data.cards.abandonedCheckouts)} hint="Sem pagamento aprovado" icon={Percent} tone="red" />
+          {/*
+            Os dois cartões que faltavam: o mesmo plano pode ser vendido como
+            recorrência (renova, entra no MRR) ou avulso (cobra uma vez, e não
+            há o que cancelar). O painel somava os dois sob "Assinatura".
+          */}
+          <StatCard
+            title="Planos recorrentes"
+            value={formatCurrency(data.planRevenueSplit.recurring.revenue)}
+            hint={`${number.format(data.planRevenueSplit.recurring.count)} vendas que renovam`}
+            icon={RefreshCw}
+            tone="blue"
+          />
+          <StatCard
+            title="Planos avulsos"
+            value={formatCurrency(data.planRevenueSplit.oneTime.revenue)}
+            hint={`${number.format(data.planRevenueSplit.oneTime.count)} vendas sem renovação`}
+            icon={Receipt}
+          />
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
@@ -943,7 +1038,12 @@ export default function AdminAnalyticsPage() {
 
           <TabsContent value="subscriptions" className="space-y-6">
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
-              <StatCard title="Vigentes" value={number.format(data.subscriptionSummary.active)} icon={Users} />
+              <StatCard
+                title="Vigentes"
+                value={number.format(data.subscriptionSummary.active)}
+                hint={`${number.format(data.subscriptionSummary.renewing)} renovam · ${number.format(data.subscriptionSummary.cancelledStillActive)} já canceladas`}
+                icon={Users}
+              />
               <StatCard title="Vencem em 7 dias" value={number.format(data.subscriptionSummary.expiring7)} icon={CalendarClock} tone="gold" />
               <StatCard title="Vencem em 30 dias" value={number.format(data.subscriptionSummary.expiring30)} icon={CalendarClock} tone="forest" />
               <StatCard title="Canceladas" value={number.format(data.subscriptionSummary.cancelled)} icon={XCircle} tone="red" />
@@ -955,11 +1055,14 @@ export default function AdminAnalyticsPage() {
               <GlassPanel title="Assinaturas por status"><BarChart data={data.charts.subscriptionActive} /></GlassPanel>
               <GlassPanel title="Cancelamentos por período"><BarChart data={data.charts.subscriptionCancelled} /></GlassPanel>
             </div>
-            <GlassPanel title="Assinaturas vigentes e históricas">
+            <GlassPanel
+              title="Assinaturas vigentes e históricas"
+              description="A coluna Cobrança separa a recorrência do Mercado Pago (renova sozinha) da concessão avulsa por Serial Key ou pelo admin, que nunca cobra de novo."
+            >
               <div className="overflow-x-auto">
-                <table className="w-full min-w-[1000px] text-left text-sm">
+                <table className="w-full min-w-[1120px] text-left text-sm">
                   <thead className="border-b border-white/10 text-xs uppercase text-white/40">
-                    <tr>{['Usuário', 'Plano', 'Tipo', 'Ciclo', 'Valor', 'Compra', 'Vencimento', 'Status', 'Origem', 'Renova', 'Último pagamento', 'Próxima cobrança', 'Cancelamento'].map((h) => <th key={h} className="px-3 py-3">{h}</th>)}</tr>
+                    <tr>{['Usuário', 'Plano', 'Tipo', 'Cobrança', 'Ciclo', 'Valor', 'Compra', 'Vencimento', 'Status', 'Origem', 'Último pagamento', 'Próxima cobrança', 'Cancelamento'].map((h) => <th key={h} className="px-3 py-3">{h}</th>)}</tr>
                   </thead>
                   <tbody>
                     {data.subscriptions.map((row) => (
@@ -967,13 +1070,15 @@ export default function AdminAnalyticsPage() {
                         <td className="px-3 py-3"><div className="font-bold text-white">{row.userName || '-'}</div><div className="text-xs text-white/40">{row.userEmail}</div></td>
                         <td className="px-3 py-3">{row.plan}</td>
                         <td className="px-3 py-3">{row.type}</td>
+                        <td className="px-3 py-3">
+                          <SeloDeCobranca tipo={row.recurrence} canceladaVigente={row.cancelAtPeriodEnd} />
+                        </td>
                         <td className="px-3 py-3">{row.cycle}</td>
                         <td className="px-3 py-3 font-bold text-emerald-200">{formatCurrency(row.value)}</td>
                         <td className="px-3 py-3">{formatDate(row.purchasedAt)}</td>
                         <td className="px-3 py-3">{formatDate(row.expiresAt)}</td>
                         <td className="px-3 py-3"><StatusPill status={row.status} /></td>
                         <td className="px-3 py-3">{row.origin}</td>
-                        <td className="px-3 py-3">{row.autoRenew ? 'Sim' : 'Não'}</td>
                         <td className="px-3 py-3">{formatDate(row.lastPaymentAt)}</td>
                         <td className="px-3 py-3">{formatDate(row.nextBillingAt)}</td>
                         <td className="px-3 py-3">{formatDate(row.canceledAt)}</td>
@@ -1035,8 +1140,9 @@ export default function AdminAnalyticsPage() {
                         <span className="rounded-full border border-amber-200/20 bg-amber-300/10 px-3 py-1 text-xs font-bold text-amber-100">{row.lastStage}</span>
                       </div>
                       <p className="mt-3 text-sm text-white/65">{row.sentence}</p>
-                      <div className="mt-3 flex flex-wrap gap-2 text-xs text-white/45">
+                      <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-white/45">
                         <span>{row.productType}</span>
+                        <SeloDeCobranca tipo={row.recurrence} />
                         <span>{formatCurrency(row.value)}</span>
                         <span>{formatDate(row.startedAt)}</span>
                         <span>{row.minutesSinceAbandonment} min desde abandono</span>
@@ -1123,6 +1229,13 @@ export default function AdminAnalyticsPage() {
                   </div>
                 </div>
                 <FilterSelect label="Tipo" value={type} onChange={setType} options={productTypes} />
+                <FilterSelect
+                  label="Cobrança"
+                  value={recurrence}
+                  onChange={setRecurrence}
+                  options={['recorrente', 'avulso']}
+                  rotulos={{ recorrente: 'Recorrente', avulso: 'Avulso' }}
+                />
                 <FilterSelect label="Status" value={status} onChange={setStatus} options={statuses} />
                 <FilterSelect label="Método" value={method} onChange={setMethod} options={methods} />
                 <FilterSelect label="Cupom" value={couponFilter} onChange={setCouponFilter} options={couponCodes} />
@@ -1168,13 +1281,26 @@ export default function AdminAnalyticsPage() {
   )
 }
 
-function FilterSelect({ label, value, onChange, options }: { label: string; value: string; onChange: (value: string) => void; options: string[] }) {
+function FilterSelect({
+  label,
+  value,
+  onChange,
+  options,
+  rotulos,
+}: {
+  label: string
+  value: string
+  onChange: (value: string) => void
+  options: string[]
+  /** Rótulo legível quando o valor filtrado é um código, e não um nome. */
+  rotulos?: Record<string, string>
+}) {
   return (
     <div>
       <Label className="text-white/60">{label}</Label>
       <select value={value} onChange={(e) => onChange(e.target.value)} className="mt-1 h-10 w-full rounded-md border border-white/10 bg-[#06140a] px-3 text-sm text-white outline-none">
         <option value="">Todos</option>
-        {options.map((option) => <option key={option} value={option}>{option}</option>)}
+        {options.map((option) => <option key={option} value={option}>{rotulos?.[option] || option}</option>)}
       </select>
     </div>
   )

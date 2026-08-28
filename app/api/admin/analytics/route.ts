@@ -6,6 +6,11 @@ import type { AdminSettings, DonationPayment, Material, MaterialPackage, Payment
 import type { CheckoutEventRecord } from '@/lib/analytics'
 import type { Coupon, CouponRedemption } from '@/lib/coupons'
 import { isPlusAccount, PLUS_LABEL } from '@/lib/account-tier'
+import {
+  calcularReceitaRecorrente,
+  classificarCobrancaDoPedido,
+  type TipoDeCobranca,
+} from '@/lib/payments/subscription-view'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -75,6 +80,48 @@ function getUser(usersById: Map<string, User>, userId?: string) {
   return userId ? usersById.get(userId) : undefined
 }
 
+/**
+ * Recorrente ou avulso — a distinção que o painel não fazia.
+ *
+ * Um plano pode ser vendido de dois jeitos, e os dois valem o mesmo dinheiro
+ * na primeira cobrança e nada parecido depois:
+ *
+ *  - RECORRENTE: preapproval do Mercado Pago, na coleção `subscriptions`.
+ *    Renova sozinho, entra no MRR, tem churn.
+ *  - AVULSO: `payment_orders` com `type: 'plan'` (o modo "Pagamento único" do
+ *    /buy/checkout) ou uma Serial Key comprada em /comprar. Cobra uma vez,
+ *    nunca renova e não tem o que cancelar.
+ *
+ * O painel chamava os dois de "Assinatura", com a mesma origem "Assinatura".
+ * Na tabela de pedidos e no gráfico de receita por tipo eles se misturavam, e
+ * não havia como responder "quanto dessa receita volta mês que vem?" — que é a
+ * única pergunta que a diferença existe para responder.
+ */
+/**
+ * `checkout_events` guarda o productType em código ('plan', 'subscription',
+ * 'material'…), e a lista de abandonos mostrava esses códigos crus. Desde que
+ * o /buy/checkout passou a distinguir o modo escolhido, 'plan' e 'subscription'
+ * chegam separados aqui — e vale traduzir os dois para o mesmo vocabulário das
+ * outras tabelas, em vez de expor o código do banco.
+ */
+const ROTULO_DE_EVENTO: Record<string, { label: string; recurrence: TipoDeCobranca }> = {
+  subscription: { label: 'Assinatura', recurrence: 'recorrente' },
+  plan: { label: 'Plano avulso', recurrence: 'avulso' },
+  material: { label: 'Material', recurrence: 'avulso' },
+  flashcard: { label: 'Flashcard', recurrence: 'avulso' },
+  package: { label: 'Pacote', recurrence: 'avulso' },
+  donation: { label: 'Doação', recurrence: 'avulso' },
+  product: { label: 'Produto', recurrence: 'avulso' },
+  unknown: { label: 'Não identificado', recurrence: 'avulso' },
+}
+
+function rotuloDeEvento(productType?: string) {
+  return ROTULO_DE_EVENTO[productType || 'unknown'] || {
+    label: productType || 'Não identificado',
+    recurrence: 'avulso' as TipoDeCobranca,
+  }
+}
+
 function inferOrderProduct(
   order: PaymentOrder,
   materialsById: Map<string, Material>,
@@ -84,10 +131,13 @@ function inferOrderProduct(
   if (order.type === 'plan') {
     const plan = (settings?.planos || []).find((item) => item.tipo === order.refId)
     return {
-      title: plan?.nome || order.metadata?.planName || order.refId || 'Assinatura',
-      type: 'Assinatura',
-      typeKey: 'subscription',
-      origin: 'Assinatura',
+      title: plan?.nome || order.metadata?.planName || order.refId || 'Plano',
+      // `type: 'plan'` em payment_orders é SEMPRE o pagamento único: a
+      // recorrência não passa por /api/payments/orders, ela vira preapproval.
+      type: 'Plano avulso',
+      typeKey: 'plan_one_time',
+      origin: 'Plano avulso',
+      recurrence: classificarCobrancaDoPedido(order.type),
     }
   }
 
@@ -96,7 +146,8 @@ function inferOrderProduct(
       title: order.metadata?.planName || order.refId || 'Assinatura',
       type: 'Assinatura',
       typeKey: 'subscription',
-      origin: 'Assinatura',
+      origin: 'Assinatura recorrente',
+      recurrence: classificarCobrancaDoPedido(order.type),
     }
   }
 
@@ -108,6 +159,7 @@ function inferOrderProduct(
         type: 'Pacote',
         typeKey: 'package',
         origin: 'Pacote',
+        recurrence: 'avulso' as TipoDeCobranca,
       }
     }
 
@@ -118,6 +170,7 @@ function inferOrderProduct(
       type: isFlashcard ? 'Flashcard' : 'Material',
       typeKey: isFlashcard ? 'flashcard' : 'material',
       origin: 'Compra direta',
+      recurrence: 'avulso' as TipoDeCobranca,
     }
   }
 
@@ -126,6 +179,7 @@ function inferOrderProduct(
     type: order.type === 'donation' ? 'Doação' : 'Pedido',
     typeKey: order.type || 'unknown',
     origin: order.type === 'donation' ? 'Doação' : 'Compra direta',
+    recurrence: 'avulso' as TipoDeCobranca,
   }
 }
 
@@ -245,6 +299,7 @@ export async function GET() {
           productTitle: plan?.nome || sub.planId,
           productType: 'Assinatura',
           typeKey: 'subscription',
+          recurrence: 'recorrente' as TipoDeCobranca,
           userName: user?.name || '',
           userEmail: user?.email || '',
         }
@@ -260,6 +315,7 @@ export async function GET() {
           productTitle: product.title,
           productType: product.type,
           typeKey: product.typeKey,
+          recurrence: product.recurrence,
           userName: order.payerName || getUser(usersById, order.userId)?.name || '',
           userEmail: order.payerEmail || getUser(usersById, order.userId)?.email || '',
         }
@@ -468,6 +524,8 @@ export async function GET() {
         userEmail: order.payerEmail || user?.email || '',
         product: product.title,
         productType: product.type,
+        /** 'recorrente' = renova sozinho; 'avulso' = cobra uma vez e acabou. */
+        recurrence: product.recurrence,
         value: Number(order.amount || 0),
         status: statusLabel(order.status),
         rawStatus: order.status,
@@ -501,7 +559,11 @@ export async function GET() {
           status: statusLabel(sub.status),
           rawStatus: sub.status,
           origin: 'MercadoPago',
+          // Preapproval: é a única linha desta tabela que cobra de novo sozinha.
+          recurrence: 'recorrente' as TipoDeCobranca,
           autoRenew: !sub.cancelAtPeriodEnd,
+          /** Cancelada mas ainda vigente — não renova, e o acesso corre até vencer. */
+          cancelAtPeriodEnd: !!sub.cancelAtPeriodEnd,
           lastPaymentAt: serializeDate(sub.lastPaymentAt),
           nextBillingAt: serializeDate(sub.nextBillingAt),
           canceledAt: serializeDate(sub.canceledAt),
@@ -524,7 +586,12 @@ export async function GET() {
             status: user.premiumExpiresAt && new Date(user.premiumExpiresAt) < now ? 'Expirada' : 'Ativa',
             rawStatus: 'manual',
             origin: key ? 'Serial key' : 'Atribuição manual/admin',
+            // Serial Key e concessão manual dão o mesmo cargo, mas nunca
+            // cobram de novo — apareciam nesta tabela lado a lado com as
+            // recorrentes, distinguidas só por um "Não" na coluna "Renova".
+            recurrence: 'avulso' as TipoDeCobranca,
             autoRenew: false,
+            cancelAtPeriodEnd: false,
             lastPaymentAt: serializeDate(user.premiumActivatedAt),
             nextBillingAt: null,
             canceledAt: null,
@@ -563,6 +630,7 @@ export async function GET() {
           userEmail: order.payerEmail || getUser(usersById, order.userId)?.email || '',
           product: product.title,
           productType: product.type,
+          recurrence: product.recurrence,
           value: Number(order.amount || 0),
           startedAt: serializeDate(order.createdAt),
           lastStage: lastEvent?.event || 'order_created',
@@ -578,7 +646,8 @@ export async function GET() {
           userName: event.userName || '',
           userEmail: event.userEmail || '',
           product: event.productTitle || 'Produto',
-          productType: event.productType,
+          productType: rotuloDeEvento(event.productType).label,
+          recurrence: rotuloDeEvento(event.productType).recurrence,
           value: Number(event.amount || 0),
           startedAt: serializeDate(event.createdAt),
           lastStage: event.event,
@@ -587,7 +656,36 @@ export async function GET() {
         })),
     ]
 
-    const renewEstimate = activeSubscriptions.reduce((total, sub) => total + Number(sub.amount || 0), 0)
+    /*
+     * MRR estimado — só o que REALMENTE vai cobrar de novo.
+     *
+     * `activeSubscriptions` inclui assinaturas já canceladas: o cancelamento
+     * grava `cancelAtPeriodEnd` e MANTÉM `status: 'authorized'` de propósito,
+     * porque é o que preserva o acesso até o fim do período pago. Somar essas
+     * no MRR inflava a projeção justamente com quem acabou de sair — o número
+     * subia quando deveria cair.
+     */
+    const recorrencia = calcularReceitaRecorrente(activeSubscriptions)
+    const renewEstimate = recorrencia.total
+    const canceladasAindaVigentes = recorrencia.canceladasVigentes
+
+    /*
+     * A receita de planos partida em duas: a que volta e a que não volta.
+     * É a leitura que o painel não permitia — "Assinatura" cobria os dois.
+     */
+    const receitaDePlanos = revenueItems.filter(
+      (item) => item.typeKey === 'subscription' || item.typeKey === 'plan_one_time'
+    )
+    const planRevenueSplit = {
+      recurring: {
+        count: receitaDePlanos.filter((item) => item.recurrence === 'recorrente').length,
+        revenue: sum(receitaDePlanos.filter((item) => item.recurrence === 'recorrente')),
+      },
+      oneTime: {
+        count: receitaDePlanos.filter((item) => item.recurrence === 'avulso').length,
+        revenue: sum(receitaDePlanos.filter((item) => item.recurrence === 'avulso')),
+      },
+    }
     const expiring7 = subscriptionRows.filter((row) => row.expiresAt && new Date(row.expiresAt) <= new Date(now.getTime() + 7 * 86_400_000) && new Date(row.expiresAt) >= now).length
     const expiring30 = subscriptionRows.filter((row) => row.expiresAt && new Date(row.expiresAt) <= new Date(now.getTime() + 30 * 86_400_000) && new Date(row.expiresAt) >= now).length
 
@@ -681,7 +779,12 @@ export async function GET() {
         cancelled: cancelledSubscriptions.length,
         cancellationRate: cancellationRate(cancelledSubscriptions.length, Math.max(subscriptions.length, 1)),
         estimatedRecurringRevenue: renewEstimate,
+        /** Vigentes que renovam de fato (base do MRR acima). */
+        renewing: recorrencia.renovando,
+        /** Vigentes já canceladas: contam como ativas hoje, mas não renovam. */
+        cancelledStillActive: canceladasAindaVigentes,
       },
+      planRevenueSplit,
       couponStats,
       funnel,
       funnelFailed,
