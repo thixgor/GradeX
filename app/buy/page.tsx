@@ -38,6 +38,7 @@ import {
   ChevronDown,
   ChevronRight,
   Clock,
+  GraduationCap,
   Lock,
   MessageCircle,
   Minus,
@@ -63,6 +64,8 @@ import {
   rotuloDePeriodo,
   type PrecoApresentado,
 } from '@/lib/buy/pricing'
+import { useProuniGrant, type ProuniConcessaoNaTela } from '@/hooks/use-prouni-grant'
+import { combineDiscountsWithProuni } from '@/lib/prouni-shared'
 
 const WHATSAPP = '5524992230908'
 
@@ -281,6 +284,20 @@ function BuyContent() {
     [plans, successPlan]
   )
 
+  /**
+   * O desconto PROUNI/FIES já aprovado para o plano aberto.
+   *
+   * Sem isto a página anunciava o preço de tabela para quem já tinha passado
+   * pela análise e ganhado o benefício — e o desconto só reaparecia dentro do
+   * checkout. Ver o valor antigo aqui é indistinguível de o benefício ter se
+   * perdido, e quem acha que perdeu abre outra solicitação.
+   */
+  const { concessao: prouniGrant } = useProuniGrant('plus', selecionado?.id || null)
+  const oferta = useMemo(
+    () => aplicarDescontoProuni(selecionado, prouniGrant),
+    [selecionado, prouniGrant]
+  )
+
   const mostrarVenda = !loadingSub && !hasActiveSub && catalogo.length > 0
 
   return (
@@ -322,6 +339,9 @@ function BuyContent() {
               <PainelDaOferta
                 key={selecionado.id}
                 plano={selecionado}
+                preco={oferta.preco ?? selecionado.preco}
+                descontoProuni={oferta.desconto}
+                rotuloProuni={prouniGrant?.discountLabel || ''}
                 emAbas={catalogo.length > 1}
                 visitante={isGuest}
                 comprando={selecting === selecionado.id}
@@ -354,6 +374,7 @@ function BuyContent() {
       {mostrarVenda && selecionado && (
         <BarraFixa
           plano={selecionado}
+          preco={oferta.preco ?? selecionado.preco}
           comprando={selecting === selecionado.id}
           onComprar={() => handleSelect(selecionado)}
         />
@@ -530,14 +551,55 @@ function SeletorDePlanos({
 
 /* ─────────────────────────── Oferta ─────────────────────────── */
 
+/**
+ * O preço do plano já com o benefício PROUNI/FIES desta conta.
+ *
+ * A conta é a MESMA de `/api/payments/orders` — `combineDiscountsWithProuni`,
+ * importada dos dois lados justamente para que a página não possa divergir de
+ * quem cobra. Aqui ela só serve para a tela dizer a verdade antes do clique.
+ *
+ * O "de" passa a ser o preço de tabela do plano, porque é ele que dimensiona o
+ * benefício para quem o recebeu. O `precoOriginal` do catálogo continua sendo o
+ * âncora nas pastilhas e no comparativo, onde os planos aparecem sem conta.
+ */
+function aplicarDescontoProuni(
+  plano: PlanoComPreco | undefined,
+  concessao: ProuniConcessaoNaTela | null
+): { preco: PrecoApresentado | undefined; desconto: number } {
+  if (!plano) return { preco: undefined, desconto: 0 }
+  if (!concessao) return { preco: plano.preco, desconto: 0 }
+
+  const beneficios = combineDiscountsWithProuni({
+    basePrice: plano.preco.total,
+    prouni: concessao,
+  })
+  if (beneficios.prouniDiscountApplied <= 0) return { preco: plano.preco, desconto: 0 }
+
+  return {
+    preco: apresentarPreco({
+      preco: beneficios.finalPrice,
+      precoOriginal: plano.preco.total,
+      durationMonths: plano.durationMonths,
+    }),
+    desconto: beneficios.prouniDiscountApplied,
+  }
+}
+
 function PainelDaOferta({
   plano,
+  preco,
+  descontoProuni,
+  rotuloProuni,
   emAbas,
   visitante,
   comprando,
   onComprar,
 }: {
   plano: PlanoComPreco
+  /** Já com o benefício PROUNI/FIES, quando existe. */
+  preco: PrecoApresentado
+  descontoProuni: number
+  rotuloProuni: string
   /** Com um plano só não existe seletor — e sem seletor não pode haver
    *  `role="tabpanel"`, senão o painel aponta `aria-labelledby` para uma aba
    *  que não está no documento. */
@@ -584,8 +646,18 @@ function PainelDaOferta({
           </h2>
 
           <div className="mt-4">
-            <PrecoEmDestaque preco={plano.preco} />
+            <PrecoEmDestaque preco={preco} />
           </div>
+
+          {descontoProuni > 0 && (
+            <p className="mt-2 flex items-start gap-1.5 text-[13px] font-semibold leading-snug text-emerald-600 dark:text-emerald-400">
+              <GraduationCap className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
+              <span>
+                Seu desconto ProUni/FIES{rotuloProuni ? ` de ${rotuloProuni}` : ''} já está neste valor
+                {plano.meses > 0 ? ' — o checkout abre no pagamento único, que é onde ele vale' : ''}.
+              </span>
+            </p>
+          )}
 
           <button
             type="button"
@@ -921,10 +993,13 @@ function Faq({ plano }: { plano?: PlanoComPreco }) {
  */
 function BarraFixa({
   plano,
+  preco,
   comprando,
   onComprar,
 }: {
   plano: PlanoComPreco
+  /** O mesmo preço do painel — com o benefício PROUNI/FIES, quando existe. */
+  preco: PrecoApresentado
   comprando: boolean
   onComprar: () => void
 }) {
@@ -941,7 +1016,7 @@ function BarraFixa({
             {plano.name}
           </span>
           <span className="block truncate text-base font-bold tabular-nums">
-            {rotuloCurtoDePreco(plano.preco)}
+            {rotuloCurtoDePreco(preco)}
           </span>
         </span>
         <span className="inline-flex shrink-0 items-center gap-1 text-sm font-bold">

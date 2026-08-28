@@ -31,6 +31,41 @@ export const transporter = nodemailer.createTransport({
   socketTimeout: Number(process.env.SMTP_SOCKET_TIMEOUT) || 20_000,
 })
 
+/**
+ * Entrega avisos transacionais ANTES de a rota responder.
+ *
+ * Disparar `void (async () => …)()` e devolver a resposta parece a troca certa
+ * (a pessoa não espera pelo SMTP), mas em serverless não existe "depois": a
+ * instância congela assim que a resposta sai, e o `sendMail` que estava no meio
+ * do handshake morre calado — sem erro, sem log, sem e-mail. Foi assim que os
+ * avisos de solicitação PROUNI/FIES sumiram enquanto os de aprovação, que
+ * saíam de rotas com mais trabalho pela frente, chegavam quase sempre.
+ *
+ * O orçamento existe para que esperar não vire refém do provedor: passado o
+ * prazo, a rota responde e o envio segue até onde a instância viver. É o mesmo
+ * raciocínio dos timeouts do transporter acima — falhar rápido, nunca pendurar.
+ */
+export async function deliverTransactionalEmails(
+  tasks: Array<Promise<unknown>>,
+  budgetMs = 8_000
+): Promise<void> {
+  if (tasks.length === 0) return
+
+  let timer: ReturnType<typeof setTimeout> | undefined
+  try {
+    await Promise.race([
+      // As funções de envio já engolem o próprio erro; o `catch` aqui é para
+      // que um rejeitado inesperado não vire unhandled rejection.
+      Promise.all(tasks.map((task) => Promise.resolve(task).catch(() => undefined))),
+      new Promise<void>((resolve) => {
+        timer = setTimeout(resolve, budgetMs)
+      }),
+    ])
+  } finally {
+    if (timer) clearTimeout(timer)
+  }
+}
+
 // Estilos e Layout Base (Verde: #0f3d2e, Laranja: #f57c00)
 const getEmailTemplate = (title: string, content: string) => {
   const resetUrl = process.env.NEXT_PUBLIC_APP_URL

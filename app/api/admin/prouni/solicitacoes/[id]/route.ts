@@ -6,7 +6,11 @@ import { getDb } from '@/lib/mongodb'
 import { audit } from '@/lib/payments/audit'
 import { apagarAnexos } from '@/lib/prouni-anexos'
 import { resolveProuniProduto } from '@/lib/prouni-catalogo'
-import { sendProuniRequestApprovedEmail, sendProuniRequestRejectedEmail } from '@/lib/mail'
+import {
+  deliverTransactionalEmails,
+  sendProuniRequestApprovedEmail,
+  sendProuniRequestRejectedEmail,
+} from '@/lib/mail'
 import {
   getProuniBenefit,
   getProuniDiscountLabel,
@@ -199,7 +203,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       { $set: set }
     )
 
-    notificarDecisao(db, solicitacao, {
+    await notificarDecisao(db, solicitacao, {
       decisao: data.action,
       notas: (data.notes || '').trim(),
       grant: set.grant as ProuniGrant | null,
@@ -236,61 +240,81 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 /**
  * O e-mail que fecha o ciclo da análise.
  *
- * Sem `await` na rota: a decisão já está gravada, e o SMTP não pode segurar a
- * resposta do painel — um admin analisando uma fila clica em "aprovar" dezenas
- * de vezes seguidas. As funções de envio já engolem o próprio erro.
+ * Aguardado na rota, com o orçamento de `deliverTransactionalEmails`: em
+ * serverless a instância congela junto com a resposta, e o que estava
+ * pendurado num disparo em segundo plano nunca sai. O orçamento é o que impede
+ * que esperar trave o painel de quem está analisando uma fila inteira.
+ *
+ * Vai para o e-mail da CONTA e, quando for outro, também para o que a pessoa
+ * digitou no formulário — as duas caixas são endereços que ela indicou.
  *
  * Na recusa vai junto a data em que a pessoa poderá tentar de novo, quando
  * houver espera; na primeira recusa não há, e o botão "Refazer solicitação" do
  * e-mail funciona na hora.
  */
-function notificarDecisao(
+async function notificarDecisao(
   db: Db,
   solicitacao: ProuniRequest,
   decisao: { decisao: 'approve' | 'reject'; notas: string; grant: ProuniGrant | null }
 ) {
-  const email = solicitacao.applicant?.email || solicitacao.userEmail
-  if (!email) return
+  const destinatarios = Array.from(
+    new Set(
+      [solicitacao.applicant?.email, solicitacao.userEmail].filter(
+        (valor): valor is string => Boolean(valor)
+      )
+    )
+  )
+  if (destinatarios.length === 0) return
 
-  void (async () => {
-    try {
-      if (decisao.decisao === 'approve' && decisao.grant) {
-        const produto = await resolveProuniProduto(db, solicitacao.itemType, solicitacao.itemId)
-        await sendProuniRequestApprovedEmail({
-          email,
-          name: solicitacao.applicant?.fullName || solicitacao.userName,
-          itemTitle: solicitacao.itemTitle,
-          itemType: solicitacao.itemType,
-          itemId: solicitacao.itemId,
-          program: solicitacao.program,
-          discountLabel: getProuniDiscountLabel(decisao.grant),
-          stackWithTier: decisao.grant.stackWithTier === true,
-          expiresAt: decisao.grant.expiresAt || null,
-          productUrl: produto?.href,
-          notes: decisao.notas || undefined,
-        })
-        return
-      }
+  const nome = solicitacao.applicant?.fullName || solicitacao.userName
+  const comum = {
+    itemTitle: solicitacao.itemTitle,
+    itemType: solicitacao.itemType,
+    itemId: solicitacao.itemId,
+    program: solicitacao.program,
+  }
 
-      const liberaEm = await prouniResubmitAvailableAt(db, {
-        userId: solicitacao.userId,
-        itemType: solicitacao.itemType,
-        itemId: solicitacao.itemId,
-      })
-      await sendProuniRequestRejectedEmail({
-        email,
-        name: solicitacao.applicant?.fullName || solicitacao.userName,
-        itemTitle: solicitacao.itemTitle,
-        itemType: solicitacao.itemType,
-        itemId: solicitacao.itemId,
-        program: solicitacao.program,
-        reason: decisao.notas,
-        canResubmitAt: liberaEm,
-      })
-    } catch (error) {
-      console.error('[admin/prouni] falha ao notificar decisão:', error)
+  try {
+    if (decisao.decisao === 'approve' && decisao.grant) {
+      const produto = await resolveProuniProduto(db, solicitacao.itemType, solicitacao.itemId)
+      await deliverTransactionalEmails(
+        destinatarios.map((email) =>
+          sendProuniRequestApprovedEmail({
+            ...comum,
+            email,
+            name: nome,
+            discountLabel: getProuniDiscountLabel(decisao.grant!),
+            stackWithTier: decisao.grant!.stackWithTier === true,
+            expiresAt: decisao.grant!.expiresAt || null,
+            productUrl: produto?.href,
+            notes: decisao.notas || undefined,
+          })
+        )
+      )
+      return
     }
-  })()
+
+    const liberaEm = await prouniResubmitAvailableAt(db, {
+      userId: solicitacao.userId,
+      itemType: solicitacao.itemType,
+      itemId: solicitacao.itemId,
+    })
+    await deliverTransactionalEmails(
+      destinatarios.map((email) =>
+        sendProuniRequestRejectedEmail({
+          ...comum,
+          email,
+          name: nome,
+          reason: decisao.notas,
+          canResubmitAt: liberaEm,
+        })
+      )
+    )
+  } catch (error) {
+    // Notificar é consequência da decisão, nunca condição dela: a análise já
+    // está gravada e não pode voltar atrás por causa do SMTP.
+    console.error('[admin/prouni] falha ao notificar decisão:', error)
+  }
 }
 
 /**

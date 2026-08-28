@@ -3,11 +3,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { trackMeta } from '@/lib/meta-pixel'
-import { ArrowLeft, BookOpen, Check, Flame, Lock, Loader2, Percent, Sparkles, TrendingDown, X, Clock, Crown } from 'lucide-react'
+import { ArrowLeft, BookOpen, Check, Flame, GraduationCap, Lock, Loader2, Percent, Sparkles, TrendingDown, X, Clock, Crown } from 'lucide-react'
 import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
 import { CheckoutAccountNotice } from '@/components/checkout/checkout-account-notice'
 import { CouponPromo } from '@/components/checkout/coupon-promo'
 import { ProuniCta } from '@/components/prouni/prouni-cta'
+import { useProuniGrant } from '@/hooks/use-prouni-grant'
+import { combineDiscountsWithProuni } from '@/lib/prouni-shared'
 import { usePricingEventState, usePricingEventStates } from '@/components/pricing-events/usePricingEventState'
 import { ListaDoPacote } from '@/components/manual-clinico/pacote'
 import { TOTAL_DE_MODULOS, precoPorDia, precoPorModulo } from '@/lib/manual-clinico/pacote'
@@ -243,6 +245,17 @@ export default function ManualClinicoCheckoutView({
   const pricingEventStateData = usePricingEventState(selectedPlan?.pricingEventId || product?.pricingEventId || null)
   const pricingEventState = pricingEventStateData.state
 
+  /**
+   * Benefício PROUNI/FIES desta conta neste produto. Passa o plano escolhido
+   * porque a oferta pode restringir quais planos alcança — e a mesma restrição
+   * roda no servidor, que é quem cobra.
+   */
+  const { concessao: prouniGrant } = useProuniGrant(
+    'manual_clinico',
+    MANUAL_CLINICO_PRODUCT_ID,
+    selectedPlan?.key || null
+  )
+
   const planEventIds = useMemo(
     () => enabledPlans.map((p) => p.pricingEventId || product?.pricingEventId || null),
     [enabledPlans, product]
@@ -340,13 +353,27 @@ export default function ManualClinicoCheckoutView({
     : 0
   const couponDiscountAmount = appliedCoupon ? appliedCoupon.discountAmount : 0
   // Empilhamento: cupom stackWithTier soma-se ao lote (cupom já vem do servidor
-  // calculado sobre o preço pós-lote). Senão, vale o maior dos dois.
+  // calculado sobre o preço pós-lote). Senão, a decisão é a de
+  // `combineDiscountsWithProuni` — a MESMA função que /api/manual-clinico/
+  // checkout usa para cobrar, com lote, cupom e benefício disputando o maior
+  // desconto (e o empate favorecendo o benefício).
   const stackCoupon = appliedCoupon?.stackWithTier === true && hasActiveTier
+  const combinado = combineDiscountsWithProuni({
+    basePrice: baseAmount,
+    tierDiscountAmount,
+    couponDiscountAmount,
+    prouni: prouniGrant,
+  })
   const effectiveDiscount = stackCoupon
     ? Math.min(baseAmount, tierDiscountAmount + couponDiscountAmount)
-    : Math.max(tierDiscountAmount, couponDiscountAmount)
-  const tierBeatsCoupon = !stackCoupon && hasActiveTier && tierDiscountAmount >= couponDiscountAmount
+    : combinado.appliedDiscountAmount
   const payableAmount = Math.max(0, Math.round((baseAmount - effectiveDiscount) * 100) / 100)
+
+  // Que descontos a tela declara. Com o cupom empilhado o PROUNI sai de cena —
+  // igual ao servidor, que nesse caminho nem chega a consultar a concessão.
+  const prouniDiscountAmount = stackCoupon ? 0 : combinado.prouniDiscountApplied
+  const mostrarLote = tierDiscountAmount > 0 && (stackCoupon || combinado.tierDiscountApplied > 0)
+  const mostrarCupom = !!appliedCoupon && (stackCoupon || combinado.couponDiscountApplied > 0)
 
   const lifetimePlan = enabledPlans.find((p) => p.key === 'vitalicio') || null
   const longestTemporary = enabledPlans
@@ -522,7 +549,7 @@ export default function ManualClinicoCheckoutView({
               {product.hasActivePromotion && (
                 <p className="mt-1 text-sm font-bold text-white/40 line-through">{formatBRL(product.price)}</p>
               )}
-              {hasActiveTier && baseAmount > payableAmount && (
+              {baseAmount > payableAmount && (
                 <p className="mt-1 text-sm font-bold text-white/40 line-through">{formatBRL(baseAmount)}</p>
               )}
               <p className={`text-4xl font-black ${selectedIsLifetime ? 'text-amber-200' : 'text-emerald-200'}`}>
@@ -543,21 +570,30 @@ export default function ManualClinicoCheckoutView({
                   {precoDiario != null ? ` · cerca de ${formatBRL(precoDiario)} por dia` : ''}
                 </p>
               )}
-              {hasActiveTier && (tierBeatsCoupon || stackCoupon) && tierDiscountAmount > 0 ? (
+              {mostrarLote ? (
                 <p className="mt-1 inline-flex items-center gap-1 text-xs font-bold text-emerald-200">
                   <Flame className="h-3 w-3" />
-                  Lote {pricingEventState?.activeTier?.label || ''}: − {formatBRL(tierDiscountAmount)} ({Math.round(tierPct)}% OFF)
+                  Lote {pricingEventState?.activeTier?.label || ''}: − {formatBRL(combinado.tierDiscountApplied || tierDiscountAmount)} ({Math.round(tierPct)}% OFF)
                 </p>
               ) : null}
-              {appliedCoupon && !tierBeatsCoupon ? (
+              {prouniDiscountAmount > 0 ? (
+                <p className="mt-1 inline-flex items-center gap-1 text-xs font-bold text-emerald-200">
+                  <GraduationCap className="h-3 w-3" />
+                  Desconto ProUni/FIES{prouniGrant?.discountLabel ? ` (${prouniGrant.discountLabel})` : ''}: −{' '}
+                  {formatBRL(prouniDiscountAmount)}
+                  {combinado.appliedSource === 'prouni_tier' ? ' (sobre o lote)' : ''}
+                </p>
+              ) : null}
+              {mostrarCupom ? (
                 <p className="mt-1 text-xs font-bold text-emerald-200">
-                  Cupom {appliedCoupon.code}: - {formatBRL(appliedCoupon.discountAmount)}
+                  Cupom {appliedCoupon!.code}: - {formatBRL(combinado.couponDiscountApplied || couponDiscountAmount)}
                   {stackCoupon ? ' (sobre o lote)' : ''}
                 </p>
               ) : null}
-              {appliedCoupon && tierBeatsCoupon && tierDiscountAmount > 0 ? (
+              {appliedCoupon && !mostrarCupom ? (
                 <p className="mt-1 text-[10px] font-medium text-emerald-200/70">
-                  Cupom {appliedCoupon.code} mantido — o desconto do lote já é maior.
+                  Cupom {appliedCoupon.code} mantido — o desconto{' '}
+                  {prouniDiscountAmount > 0 ? 'ProUni/FIES' : 'do lote'} já é maior.
                 </p>
               ) : null}
             </div>

@@ -55,3 +55,12 @@ export type {
 // cargo que o admin criar, com rótulo, cor e áreas liberadas.
 export { useCargos, useGruposDeAcesso, limparCacheDeCargos } from './use-cargos'
 export type { RegistroDeCargosNoCliente, GrupoDeAcesso } from './use-cargos'
+
+// Desconto PROUNI/FIES desta conta num item — para a tela mostrar o preço que
+// o servidor vai cobrar, e não o preço cheio.
+export { useProuniGrant } from './use-prouni-grant'
+export type {
+  ProuniBeneficioNaTela,
+  ProuniConcessaoNaTela,
+  UseProuniGrantResult,
+} from './use-prouni-grant'

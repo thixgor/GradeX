@@ -26,12 +26,15 @@ import {
   Lock,
   Tag,
   X,
+  GraduationCap,
 } from 'lucide-react'
 import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
 import type { PlanConfig } from '@/lib/types'
 import { AppShell } from '@/components/app-shell'
 import { CheckoutAccountNotice } from '@/components/checkout/checkout-account-notice'
 import { CouponPromo } from '@/components/checkout/coupon-promo'
+import { useProuniGrant } from '@/hooks/use-prouni-grant'
+import { combineDiscountsWithProuni } from '@/lib/prouni-shared'
 import { cn } from '@/lib/utils'
 
 type PayMode = 'subscription' | 'one_time'
@@ -80,6 +83,31 @@ function BuyCheckoutContent() {
   const [couponError, setCouponError] = useState('')
   const [couponAberto, setCouponAberto] = useState(false)
   const couponSupported = payMode === 'one_time'
+
+  /**
+   * Desconto PROUNI/FIES aprovado para este plano.
+   *
+   * Vale pelas mesmas razões do cupom, e com o mesmo limite: só o pagamento
+   * único o respeita. A assinatura recorrente é um preapproval do Mercado Pago
+   * que cobra o mesmo valor em toda renovação — descontar ali venderia o
+   * benefício de uso único como se fosse permanente. Por isso o benefício
+   * ABRE a tela no pagamento único quando existe (`modoEscolhido`), em vez de
+   * ficar escondido atrás de uma escolha que a pessoa não sabe que precisa
+   * fazer.
+   */
+  const { concessao: prouniGrant } = useProuniGrant('plus', planId)
+  const prouniSupported = payMode === 'one_time'
+  const [modoEscolhido, setModoEscolhido] = useState(false)
+
+  useEffect(() => {
+    if (!prouniGrant || modoEscolhido || !isRecurring) return
+    setPayMode('one_time')
+  }, [prouniGrant, modoEscolhido, isRecurring])
+
+  const escolherModo = (modo: PayMode) => {
+    setModoEscolhido(true)
+    setPayMode(modo)
+  }
 
   useEffect(() => {
     if (!planId) {
@@ -163,8 +191,17 @@ function BuyCheckoutContent() {
   const beneficios: string[] = Array.isArray((plan as any).features) ? (plan as any).features : []
 
   const baseAmount = Number(plan.preco) || 0
-  const couponDiscountAmount = couponSupported && appliedCoupon ? appliedCoupon.discountAmount : 0
-  const payableAmount = Math.max(0, Math.round((baseAmount - couponDiscountAmount) * 100) / 100)
+  // A MESMA conta que /api/payments/orders faz para cobrar. Planos não têm
+  // lote, então aqui cupom e PROUNI só disputam entre si pelo maior desconto —
+  // e o empate favorece o benefício, como no servidor.
+  const combinado = combineDiscountsWithProuni({
+    basePrice: baseAmount,
+    couponDiscountAmount: couponSupported && appliedCoupon ? appliedCoupon.discountAmount : 0,
+    prouni: prouniSupported ? prouniGrant : null,
+  })
+  const payableAmount = combinado.finalPrice
+  const couponDiscountAmount = combinado.couponDiscountApplied
+  const prouniDiscountAmount = combinado.prouniDiscountApplied
 
   // `override` é o caminho do chamativo: a faixa manda o código direto, sem
   // depender do que está digitado no campo.
@@ -239,9 +276,33 @@ function BuyCheckoutContent() {
               </span>
             </div>
 
+            {prouniDiscountAmount > 0 && (
+              <p className="mt-1.5 flex items-center gap-1.5 text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                <GraduationCap className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                Desconto ProUni/FIES{prouniGrant?.discountLabel ? ` (${prouniGrant.discountLabel})` : ''}: −{' '}
+                {formatBRL(prouniDiscountAmount)}
+              </p>
+            )}
+
             {appliedCoupon && couponSupported && (
-              <p className="mt-1.5 text-xs font-bold text-primary">
-                Cupom {appliedCoupon.code}: − {formatBRL(appliedCoupon.discountAmount)}
+              <p
+                className={cn(
+                  'mt-1.5 text-xs font-bold',
+                  couponDiscountAmount > 0 ? 'text-primary' : 'text-muted-foreground'
+                )}
+              >
+                {couponDiscountAmount > 0
+                  ? `Cupom ${appliedCoupon.code}: − ${formatBRL(couponDiscountAmount)}`
+                  : `Cupom ${appliedCoupon.code} mantido — o seu desconto ProUni/FIES já é maior.`}
+              </p>
+            )}
+
+            {/* O benefício existe mas a pessoa está na assinatura recorrente:
+                dizer onde ele vale é mais útil que sumir com ele da tela. */}
+            {prouniGrant && !prouniSupported && (
+              <p className="mt-1.5 text-[11px] leading-relaxed text-muted-foreground">
+                Seu desconto ProUni/FIES{prouniGrant.discountLabel ? ` de ${prouniGrant.discountLabel}` : ''} vale
+                no “Pagamento único” — a assinatura recorrente cobra sempre o valor cheio, em toda renovação.
               </p>
             )}
 
@@ -355,18 +416,19 @@ function BuyCheckoutContent() {
                 <div className="grid grid-cols-2 gap-2">
                   <OpcaoDePagamento
                     ativo={payMode === 'subscription'}
-                    onClick={() => setPayMode('subscription')}
+                    onClick={() => escolherModo('subscription')}
                     icone={CreditCard}
                     titulo="Assinatura"
-                    detalhe="Cartão · renova sozinho"
-                    selo="Recomendado"
+                    detalhe={prouniGrant ? 'Cartão · sem o seu desconto' : 'Cartão · renova sozinho'}
+                    selo={prouniGrant ? undefined : 'Recomendado'}
                   />
                   <OpcaoDePagamento
                     ativo={payMode === 'one_time'}
-                    onClick={() => setPayMode('one_time')}
+                    onClick={() => escolherModo('one_time')}
                     icone={Zap}
                     titulo="Pagamento único"
                     detalhe="Pix, cartão ou boleto"
+                    selo={prouniGrant ? 'Com seu desconto' : undefined}
                   />
                 </div>
               </div>
@@ -378,7 +440,7 @@ function BuyCheckoutContent() {
               <SubscriptionCheckout plan={plan} publicKey={publicKey} months={months as 1 | 3 | 12} />
             ) : (
               <MercadoPagoCheckout
-                key={`buy-${payableAmount}-${appliedCoupon?.code || 'sem-cupom'}`}
+                key={`buy-${payableAmount}-${appliedCoupon?.code || 'sem-cupom'}-${prouniDiscountAmount}`}
                 publicKey={publicKey}
                 amount={payableAmount}
                 description={`${plan.nome} — ${periodLabel}`}
