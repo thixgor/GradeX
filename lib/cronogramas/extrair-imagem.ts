@@ -20,11 +20,16 @@ import { getAllAIKeys } from '@/lib/ai-keys'
 import type { LinhaExtraida } from './extracao'
 
 /**
- * O `gemini-2.5-flash` é o modelo que o resto da plataforma já usa e que a
- * tela de configurações testa. Os outros são queda suave para chave antiga ou
- * modelo indisponível na região — a mesma escada do gerador de questões.
+ * O `gemini-2.5-flash` é o modelo que o resto da plataforma já usa e que a tela
+ * de configurações testa; o `2.0-flash` é a queda suave para chave que ainda
+ * não o alcança.
+ *
+ * O `1.5-flash` saiu da lista: a API responde "not found for API version
+ * v1beta" para ele. Era um degrau morto que só gastava tempo do orçamento e,
+ * pior, o erro DELE era o que aparecia na tela — escondendo o motivo real da
+ * falha dos dois modelos que importam.
  */
-const MODELOS = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash']
+const MODELOS = ['gemini-2.5-flash', 'gemini-2.0-flash']
 
 /**
  * Quanto uma tentativa pode demorar.
@@ -175,6 +180,7 @@ async function chamarGemini(
   modelo: string,
   chave: string,
   arquivo: ArquivoParaLer,
+  desligarRaciocinio: boolean,
 ): Promise<LinhaExtraida[]> {
   const controlador = new AbortController()
   const alarme = setTimeout(() => controlador.abort(), TIMEOUT_MS)
@@ -208,7 +214,9 @@ async function chamarGemini(
             // Copiar uma tabela não precisa de raciocínio, e no 2.5 o
             // "pensar" antes de responder é o que fazia a leitura estourar o
             // tempo. Só o 2.5 aceita o campo; mandá-lo para os outros vira 400.
-            ...(modelo.startsWith('gemini-2.5') ? { thinkingConfig: { thinkingBudget: 0 } } : {}),
+            ...(desligarRaciocinio && modelo.startsWith('gemini-2.5')
+              ? { thinkingConfig: { thinkingBudget: 0 } }
+              : {}),
           },
         }),
       },
@@ -216,7 +224,11 @@ async function chamarGemini(
 
     if (!resposta.ok) {
       const detalhe = await resposta.json().catch(() => null)
-      throw new Error(detalhe?.error?.message || `HTTP ${resposta.status}`)
+      const falha = new Error(detalhe?.error?.message || `HTTP ${resposta.status}`)
+      // O código vai junto: 429 e 503 são fila cheia do lado deles, e merecem
+      // outra tentativa; 400 e 404 são definitivos e insistir só gasta o prazo.
+      ;(falha as Error & { status?: number }).status = resposta.status
+      throw falha
     }
 
     const dados = await resposta.json()
@@ -238,6 +250,20 @@ async function chamarGemini(
   }
 }
 
+/** Espera curta entre tentativas, para não bater na mesma fila cheia. */
+function esperar(ms: number): Promise<void> {
+  return new Promise(resolver => setTimeout(resolver, ms))
+}
+
+/** Junta os motivos das tentativas sem repetir o mesmo texto duas vezes. */
+function resumirErros(erros: string[], semTempo: boolean): string {
+  const unicos = [...new Set(erros)]
+  const texto = unicos.join(' · ').slice(0, 400)
+
+  if (!texto) return semTempo ? 'a leitura demorou demais' : 'não foi possível ler'
+  return semTempo ? `${texto} — e o tempo acabou antes de outra tentativa` : texto
+}
+
 /**
  * Lê um arquivo, tentando cada modelo com cada chave até um responder.
  *
@@ -245,40 +271,63 @@ async function chamarGemini(
  * a falha quase sempre é do modelo (indisponível para aquela chave), e insistir
  * no melhor modelo com todas as chaves antes de cair para o mais fraco é o que
  * mantém a qualidade da transcrição.
+ *
+ * O que volta em caso de falha são TODOS os motivos, não o último. Guardar só o
+ * último fazia a tela mostrar o erro do degrau mais fraco da escada — o que
+ * menos explica a falha — e escondia o que o modelo principal tinha dito.
  */
 async function lerArquivo(
   arquivo: ArquivoParaLer,
   chaves: string[],
   prazo: number,
 ): Promise<LeituraDeArquivo> {
-  let ultimoErro = ''
+  const erros: string[] = []
+  let comRaciocinioDesligado = true
 
   for (const modelo of MODELOS) {
     for (const chave of chaves) {
-      // A função tem tempo contado: insistir até o processo ser morto devolveria
-      // 504 sem resposta nenhuma. Mas o motivo que volta é o da ÚLTIMA tentativa
-      // de verdade — dizer só "tempo esgotado" escondia o erro que explicava a
-      // falha e deixava a tela sem nada de útil para mostrar.
-      if (Date.now() > prazo) {
-        return {
-          nome: arquivo.nome,
-          linhas: [],
-          erro: ultimoErro
-            ? `${ultimoErro} — e o tempo acabou antes de outra tentativa`
-            : 'a leitura demorou demais',
+      // Duas passadas na mesma dupla modelo/chave: a segunda existe para fila
+      // cheia (429/503) e para a chave que não aceita desligar o raciocínio.
+      for (let tentativa = 1; tentativa <= 2; tentativa++) {
+        // A função tem tempo contado: insistir até o processo ser morto
+        // devolveria 504 sem resposta nenhuma.
+        if (Date.now() > prazo) {
+          return { nome: arquivo.nome, linhas: [], erro: resumirErros(erros, true) }
         }
-      }
 
-      try {
-        return { nome: arquivo.nome, linhas: await chamarGemini(modelo, chave, arquivo) }
-      } catch (erro) {
-        ultimoErro = erro instanceof Error ? erro.message : String(erro)
-        console.error(`[cronogramas] ${modelo} falhou em "${arquivo.nome}":`, ultimoErro)
+        try {
+          return {
+            nome: arquivo.nome,
+            linhas: await chamarGemini(modelo, chave, arquivo, comRaciocinioDesligado),
+          }
+        } catch (erro) {
+          const mensagem = erro instanceof Error ? erro.message : String(erro)
+          const status = (erro as { status?: number })?.status
+
+          erros.push(`${modelo}: ${mensagem}`)
+          console.error(`[cronogramas] ${modelo} falhou em "${arquivo.nome}":`, mensagem)
+
+          // Fila cheia do lado deles — cinco imagens seguidas na mesma chave
+          // batem nisso — e uma espera curta costuma resolver.
+          if ((status === 429 || status === 503) && tentativa === 1) {
+            await esperar(1500)
+            continue
+          }
+
+          // Chave que não conhece `thinkingConfig`: vale repetir com o campo
+          // fora antes de trocar de modelo.
+          if (comRaciocinioDesligado && /thinking/i.test(mensagem) && tentativa === 1) {
+            comRaciocinioDesligado = false
+            continue
+          }
+
+          break
+        }
       }
     }
   }
 
-  return { nome: arquivo.nome, linhas: [], erro: ultimoErro || 'não foi possível ler' }
+  return { nome: arquivo.nome, linhas: [], erro: resumirErros(erros, false) }
 }
 
 export async function lerCalendarios(arquivos: ArquivoParaLer[]): Promise<LeituraDeArquivo[]> {

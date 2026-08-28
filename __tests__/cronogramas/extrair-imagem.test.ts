@@ -176,6 +176,46 @@ describe('leitura das imagens', () => {
     expect(leitura.erro).toContain('tempo')
   })
 
+  it('insiste uma vez quando a fila do Gemini está cheia (429)', async () => {
+    const chamada = vi
+      .fn()
+      .mockResolvedValueOnce(falhaDoGemini(429, 'rate limit exceeded'))
+      .mockResolvedValueOnce(respostaDoGemini(TRANSCRICAO))
+    vi.stubGlobal('fetch', chamada)
+
+    const [leitura] = await lerCalendarios([IMAGEM])
+
+    // Segunda tentativa no MESMO modelo: cair para o 2.0 por fila cheia
+    // trocaria qualidade de transcrição por nada.
+    expect(leitura.linhas).toHaveLength(2)
+    expect(chamada).toHaveBeenCalledTimes(2)
+    expect(String((chamada.mock.calls[1] as any)[0])).toContain('gemini-2.5-flash')
+  })
+
+  it('a falha traz o motivo de todos os modelos, não o do último', async () => {
+    const chamada = vi
+      .fn()
+      .mockResolvedValueOnce(falhaDoGemini(400, 'imagem ilegível'))
+      .mockResolvedValueOnce(falhaDoGemini(404, 'model not found'))
+    vi.stubGlobal('fetch', chamada)
+
+    const [leitura] = await lerCalendarios([IMAGEM])
+
+    expect(leitura.erro).toContain('gemini-2.5-flash: imagem ilegível')
+    expect(leitura.erro).toContain('gemini-2.0-flash: model not found')
+  })
+
+  it('não tenta mais o 1.5-flash, que a API v1beta não serve mais', async () => {
+    const chamada = vi.fn(async () => falhaDoGemini(400, 'ruim'))
+    vi.stubGlobal('fetch', chamada)
+
+    const [leitura] = await lerCalendarios([IMAGEM])
+
+    const modelos = chamada.mock.calls.map(chamado => String((chamado as any)[0]))
+    expect(modelos.some(url => url.includes('1.5'))).toBe(false)
+    expect(leitura.erro).not.toContain('1.5')
+  })
+
   it('cai para o próximo modelo quando o primeiro recusa', async () => {
     const chamada = vi
       .fn()

@@ -172,6 +172,12 @@ invocação só — as duas primeiras consumiam o orçamento e o resto voltava c
 (`thinkingConfig.thinkingBudget: 0`) fica desligado pelo mesmo motivo: copiar
 uma tabela não precisa dele, e era ele que estourava o tempo.
 
+Quando um arquivo falha, a tela mostra o motivo de **todos** os modelos
+tentados, não o do último — o degrau mais fraco da escada é justamente o que
+menos explica a falha. Fila cheia (429/503) ganha uma segunda tentativa no
+mesmo modelo, depois de uma espera curta: cinco imagens seguidas na mesma
+chave batem nisso com facilidade.
+
 Precisa de chave do Gemini configurada (Configurações → API Gemini,
 `settings.geminiApiKey`, ou `GEMINI_API_KEY` no ambiente) — a mesma escada de
 chaves do gerador de questões.
