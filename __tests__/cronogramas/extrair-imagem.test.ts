@@ -166,7 +166,7 @@ describe('leitura das imagens', () => {
     )
     // O relógio pula o orçamento inteiro depois da primeira tentativa.
     vi.spyOn(Date, 'now').mockImplementation(() =>
-      tentativas === 0 ? inicio : inicio + 120_000,
+      tentativas === 0 ? inicio : inicio + 239_000,
     )
 
     const [leitura] = await lerCalendarios([IMAGEM])
@@ -214,6 +214,45 @@ describe('leitura das imagens', () => {
     const modelos = chamada.mock.calls.map(chamado => String((chamado as any)[0]))
     expect(modelos.some(url => url.includes('1.5'))).toBe(false)
     expect(leitura.erro).not.toContain('1.5')
+  })
+
+  it('não começa tentativa que não caberia no orçamento', async () => {
+    const inicio = Date.now()
+    const chamada = vi.fn(async () => respostaDoGemini(TRANSCRICAO))
+    vi.stubGlobal('fetch', chamada)
+
+    // O relógio já gastou quase tudo antes da primeira tentativa: começar uma
+    // leitura de 90s aqui era o que fazia a função morrer em 504.
+    let leituras = 0
+    vi.spyOn(Date, 'now').mockImplementation(() => {
+      leituras += 1
+      return leituras <= 1 ? inicio : inicio + 239_000
+    })
+
+    const [leitura] = await lerCalendarios([IMAGEM])
+
+    expect(chamada).not.toHaveBeenCalled()
+    expect(leitura.erro).toContain('demorou')
+  })
+
+  it('encurta o corte da tentativa ao tempo que ainda resta', async () => {
+    const inicio = Date.now()
+    let chamadas = 0
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (_url: string, opcoes: RequestInit) => {
+        chamadas += 1
+        // O sinal precisa existir: é ele que corta a chamada travada.
+        expect(opcoes.signal).toBeTruthy()
+        return respostaDoGemini(TRANSCRICAO)
+      }),
+    )
+    vi.spyOn(Date, 'now').mockImplementation(() =>
+      chamadas === 0 ? inicio : inicio + 200_000,
+    )
+
+    const [leitura] = await lerCalendarios([IMAGEM])
+    expect(leitura.linhas).toHaveLength(2)
   })
 
   it('cai para o próximo modelo quando o primeiro recusa', async () => {

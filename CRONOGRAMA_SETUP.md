@@ -172,6 +172,12 @@ invocação só — as duas primeiras consumiam o orçamento e o resto voltava c
 (`thinkingConfig.thinkingBudget: 0`) fica desligado pelo mesmo motivo: copiar
 uma tabela não precisa dele, e era ele que estourava o tempo.
 
+O tempo de leitura cresce com o **tamanho da transcrição**, não com o do
+arquivo: a tabela de N3 (8 linhas) sai em segundos, a de N2 com quinze linhas
+e eixo passa de um minuto. Por isso a rota vale 300s e a leitura tem orçamento
+próprio, que só começa a tentativa que ainda cabe nele — assim uma demora vira
+erro explicado na tela, e não 504 da função morta no meio.
+
 Quando um arquivo falha, a tela mostra o motivo de **todos** os modelos
 tentados, não o do último — o degrau mais fraco da escada é justamente o que
 menos explica a falha. Fila cheia (429/503) ganha uma segunda tentativa no

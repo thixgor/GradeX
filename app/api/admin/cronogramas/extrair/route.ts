@@ -10,7 +10,12 @@ import { normalizarSecao } from '@/lib/cronogramas/tipos'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
-export const maxDuration = 60
+// Ler uma tabela densa passa de um minuto: o tempo de transcrição cresce com o
+// número de linhas, não com o tamanho do arquivo. O teto aqui é o mesmo que o
+// projeto já usa nas rotas longas; quem se protege de demora é o orçamento
+// interno da leitura, que devolve erro explicado em vez de deixar a função
+// morrer em 504.
+export const maxDuration = 300
 
 /**
  * Leitura do calendário de provas divulgado em imagem.

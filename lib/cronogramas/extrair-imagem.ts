@@ -34,20 +34,34 @@ const MODELOS = ['gemini-2.5-flash', 'gemini-2.0-flash']
 /**
  * Quanto uma tentativa pode demorar.
  *
- * O `2.5-flash` é modelo *thinking*: numa tabela densa ele passa fácil de 20s
- * mesmo com o raciocínio desligado (o gerador de questões, que usa o mesmo
- * modelo, espera 45s). Cortar antes disso não protege ninguém — só transforma
- * leitura lenta em leitura perdida, que foi exatamente o que acontecia quando
- * cinco imagens dividiam uma requisição só.
+ * O tempo de leitura cresce com o TAMANHO da transcrição, não com o da imagem:
+ * a tabela de N3 (8 linhas) sai em segundos, a de N2 com quinze linhas e eixo
+ * leva bem mais. Noventa segundos cobrem a maior que a coordenação publica.
  */
-const TIMEOUT_MS = 45_000
+const TIMEOUT_MS = 90_000
 
 /**
- * Orçamento da requisição inteira. Como o painel manda UMA imagem por
- * requisição, o orçamento é todo dela — e ainda sobra folga dentro dos 60s da
- * função para uma segunda tentativa curta.
+ * Orçamento da requisição inteira, com folga para a função (300s) responder.
+ *
+ * O corte de 45s com orçamento de 55s produzia 504: a primeira tentativa ia
+ * até 45s, o teste de prazo passava por pouco, a segunda começava e a função
+ * era morta no meio dela. Agora o que decide não é "o prazo já passou?" e sim
+ * "ainda cabe uma tentativa inteira?" — ver `tempoDisponivel`.
  */
-const ORCAMENTO_MS = 55_000
+const ORCAMENTO_MS = 240_000
+
+/** Abaixo disso não vale começar: a tentativa não terminaria a tempo. */
+const MINIMO_POR_TENTATIVA = 20_000
+
+/**
+ * Quanto uma tentativa pode durar agora, sem estourar o orçamento.
+ * `null` quando não sobra tempo para tentar de novo.
+ */
+function tempoDisponivel(prazo: number): number | null {
+  const restante = prazo - Date.now()
+  if (restante < MINIMO_POR_TENTATIVA) return null
+  return Math.min(TIMEOUT_MS, restante - 2_000)
+}
 
 export interface ArquivoParaLer {
   nome: string
@@ -95,6 +109,8 @@ Regras:
 7. Texto fora da tabela que valha para todas as linhas (duração, "N3 ESPECÍFICA – 1º AO 8º PERÍODO – MEDICINA") entra em "duracao"/"categoria"/"curso" das linhas correspondentes.
 8. CURSO INTEIRO: prova aplicada a todos os períodos no mesmo dia (TPI, Teste de Progresso, prova integrada geral) costuma não ter coluna de período. Copie em "periodos" o que estiver escrito ("Todos os períodos") e mantenha a categoria ("TPI", "Teste de Progresso") em "categoria". Não invente uma lista de períodos.
 9. Se a imagem não for um calendário de avaliações, devolva {"linhas": []}.
+
+Omita os campos que a tabela não traz — não devolva chave com string vazia. Cada campo a mais é tempo a mais de leitura.
 
 Responda SOMENTE com o JSON.`
 
@@ -181,9 +197,10 @@ async function chamarGemini(
   chave: string,
   arquivo: ArquivoParaLer,
   desligarRaciocinio: boolean,
+  timeoutMs: number,
 ): Promise<LinhaExtraida[]> {
   const controlador = new AbortController()
-  const alarme = setTimeout(() => controlador.abort(), TIMEOUT_MS)
+  const alarme = setTimeout(() => controlador.abort(), timeoutMs)
 
   try {
     const resposta = await fetch(
@@ -289,16 +306,19 @@ async function lerArquivo(
       // Duas passadas na mesma dupla modelo/chave: a segunda existe para fila
       // cheia (429/503) e para a chave que não aceita desligar o raciocínio.
       for (let tentativa = 1; tentativa <= 2; tentativa++) {
-        // A função tem tempo contado: insistir até o processo ser morto
-        // devolveria 504 sem resposta nenhuma.
-        if (Date.now() > prazo) {
+        // Só começa a tentativa que CABE no que sobrou. Perguntar apenas se o
+        // prazo já passou deixava começar uma tentativa de 45s faltando 10s de
+        // orçamento — e a função morria no meio dela, devolvendo 504 sem
+        // motivo nenhum na tela.
+        const limite = tempoDisponivel(prazo)
+        if (limite == null) {
           return { nome: arquivo.nome, linhas: [], erro: resumirErros(erros, true) }
         }
 
         try {
           return {
             nome: arquivo.nome,
-            linhas: await chamarGemini(modelo, chave, arquivo, comRaciocinioDesligado),
+            linhas: await chamarGemini(modelo, chave, arquivo, comRaciocinioDesligado, limite),
           }
         } catch (erro) {
           const mensagem = erro instanceof Error ? erro.message : String(erro)

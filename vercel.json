@@ -79,7 +79,7 @@
       "maxDuration": 60
     },
     "app/api/admin/cronogramas/extrair/route.ts": {
-      "maxDuration": 60,
+      "maxDuration": 300,
       "memory": 1024
     },
     "app/api/cron/midia-sync/route.ts": {

@@ -202,7 +202,7 @@ export function ImportarAvaliacoes({
               nome: item.arquivo.name,
               linhas: 0,
               propostas: 0,
-              erro: dados?.error || `erro ${resposta.status}`,
+              erro: dados?.error || descreverFalhaDeRede(resposta.status),
             })
             continue
           }
@@ -496,7 +496,7 @@ export function ImportarAvaliacoes({
         </Button>
         {lendo && (
           <span className="text-xs text-muted-foreground">
-            Uma imagem por vez, alguns segundos cada — não feche a página.
+            Uma imagem por vez. Tabela grande pode levar mais de um minuto — não feche a página.
           </span>
         )}
       </div>
@@ -899,6 +899,21 @@ function LinhaProposta({
       </div>
     </div>
   )
+}
+
+/**
+ * O que dizer quando o servidor não chegou a responder com um motivo.
+ *
+ * "erro 504" não ajuda ninguém: o número sozinho não diz o que fazer. Estes
+ * dois códigos têm causa conhecida e uma saída prática, então é isso que a
+ * tela mostra.
+ */
+function descreverFalhaDeRede(status: number): string {
+  if (status === 504) {
+    return 'a leitura passou do tempo — tabela muito densa. Tente recortar a imagem em duas partes.'
+  }
+  if (status === 413) return 'imagem grande demais para enviar. Recorte só a tabela.'
+  return `erro ${status}`
 }
 
 /** Maior lado da imagem enviada ao modelo. */
