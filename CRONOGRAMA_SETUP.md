@@ -12,6 +12,7 @@ configurado para os lembretes saírem.
 | Importação da ementa (painel) | `components/cronogramas/importar-ementa.tsx` |
 | Leitura do calendário em imagem | `lib/cronogramas/extracao.ts` (puro) + `lib/cronogramas/extrair-imagem.ts` (Gemini) |
 | Revisão da importação (painel) | `components/cronogramas/importar-avaliacoes.tsx` |
+| Seleção de períodos (painel) | `components/cronogramas/seletor-periodos.tsx` |
 | Vocabulário compartilhado | `lib/cronogramas/tipos.ts` |
 | Calendário de Brasília | `lib/cronogramas/brasilia.ts` |
 | Geração do plano | `lib/cronogramas/gerador.ts` |
@@ -105,6 +106,20 @@ lembrar (dias antes), a frequência (N dias ou N semanas), o horário do envio e
 o interruptor de liga/desliga. Tudo em **America/Sao_Paulo**. A tela mostra a
 prévia dos próximos envios usando a mesma função que o cron usa.
 
+### Uma prova, várias turmas
+
+Ao **criar**, o período é múltiplo: marque quantos quiser (ou **Todos**) e sai
+uma avaliação por período, criadas juntas na mesma chamada. É o caso da N3 do
+1º ao 4º de manhã e, principalmente, do **teste de progresso (TPI)**, aplicado
+ao curso inteiro no mesmo dia — antes eram oito cadastros iguais digitados em
+sequência, onde bastava errar a data de um para uma turma ficar com a agenda
+diferente das outras.
+
+Cada período continua sendo uma avaliação própria no banco, porque é assim que
+a agenda é consultada: o aluno do 3º abre o calendário dele, não o do curso.
+**Editando** uma avaliação que já existe o período volta a ser um só —
+transformar uma avaliação salva em oito por engano não teria desfazer.
+
 ### Importar o calendário divulgado em imagem
 
 O calendário oficial não chega em planilha: chega como aquela tabela em PNG no
@@ -129,6 +144,11 @@ O trabalho é dividido em duas metades, e a fronteira é a parte importante:
   3. cada prova aparece duas vezes, "Aluno Regular" e "Aluno Caso Especial" —
      é a **mesma** prova com tempo estendido, então vira uma avaliação só e o
      horário estendido entra no recado.
+
+Prova do curso inteiro sem coluna de período (TPI, teste de progresso, "todos
+os períodos") é reconhecida e expandida para todos os períodos da seção. Quando
+a imagem não deixa isso claro, cada linha da revisão tem **Repetir nos N
+períodos**, que duplica a avaliação para o curso todo em um clique.
 
 A data vem em `24/11`, sem ano: o ano sai do campo **Ano letivo** da tela ou,
 sem ele, do calendário (uma data mais de 180 dias no passado é do ano que vem)
@@ -190,6 +210,8 @@ npx vitest run __tests__/cronogramas
 Cobrem o calendário de Brasília, a agenda e o texto dos lembretes, o gerador
 (capacidade dos dias, ordem das revisões, prazo das avaliações), a expansão do
 calendário lido de imagem (fuso de Brasília, faixa de períodos, período pelo
-eixo, caso especial, duplicata) e o parser da ementa — este último contra os arquivos reais de `public/`, que é onde moram os
+eixo, prova do curso inteiro, caso especial, duplicata), o encanamento da
+chamada ao Gemini com o modelo dublê (queda de modelo, arquivo ilegível, JSON
+inválido, chave ausente) e o parser da ementa — este último contra os arquivos reais de `public/`, que é onde moram os
 casos que quebram de verdade: indentação inconsistente, `└─` fora de lugar,
 negrito no meio do rótulo.

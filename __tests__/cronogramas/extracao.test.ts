@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 
 import {
   chaveDaAvaliacao,
+  ehDoCursoInteiro,
   expandirLinhas,
   interpretarPeriodos,
   marcarDuplicadas,
@@ -11,6 +12,7 @@ import {
   periodoDoEixo,
   periodosDoPainel,
   tipoDaLinha,
+  todosOsPeriodos,
   type LinhaExtraida,
 } from '@/lib/cronogramas/extracao'
 import type { Avaliacao } from '@/lib/cronogramas/tipos'
@@ -75,6 +77,18 @@ const N2_POR_EIXO: LinhaExtraida[] = [
     diaDaSemana: 'Quarta-feira',
     horario: '11h50 – 13h50',
     eixo: 'SOI 1',
+  },
+]
+
+/** TPI: prova do curso inteiro no mesmo dia — a tabela não lista períodos. */
+const TESTE_DE_PROGRESSO: LinhaExtraida[] = [
+  {
+    curso: 'Medicina',
+    categoria: 'TPI — Teste de Progresso Individual',
+    data: '20/09',
+    diaDaSemana: 'Sábado',
+    horario: '08h – 12h',
+    periodos: ['Todos os períodos'],
   },
 ]
 
@@ -289,6 +303,51 @@ describe('expansão em avaliações', () => {
     expect(proposta.lembrete.ativo).toBe(true)
     expect(proposta.itensEmenta).toEqual([])
     expect(proposta.titulo.length).toBeGreaterThan(1)
+  })
+})
+
+describe('prova do curso inteiro', () => {
+  it('"todos os períodos" vira uma avaliação por período do curso', () => {
+    const propostas = expandir(TESTE_DE_PROGRESSO)
+
+    expect(propostas).toHaveLength(8)
+    expect(propostas.map(p => p.periodo)).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
+    expect(propostas.every(p => p.data === '2026-09-20' && p.hora === '08:00')).toBe(true)
+  })
+
+  it('respeita o tamanho do curso, não um número fixo', () => {
+    const propostas = expandirLinhas(TESTE_DE_PROGRESSO, {
+      origem: 'tpi.png',
+      secaoPadrao: 'biomedicina',
+      hoje: HOJE,
+      anoReferencia: 2026,
+    })
+
+    // A linha diz "Medicina", então a seção da imagem prevalece sobre a padrão.
+    expect(propostas.every(p => p.secao === 'medicina')).toBe(true)
+    expect(propostas).toHaveLength(8)
+
+    const semCurso = expandirLinhas(
+      [{ categoria: 'Teste de Progresso', data: '20/09', periodos: ['todos os períodos'] }],
+      { origem: 'tpi.png', secaoPadrao: 'biomedicina', hoje: HOJE, anoReferencia: 2026 },
+    )
+    expect(semCurso).toHaveLength(7)
+  })
+
+  it('reconhece o TPI mesmo quando a tabela não tem coluna de período', () => {
+    expect(ehDoCursoInteiro({ categoria: 'TPI' })).toBe(true)
+    expect(ehDoCursoInteiro({ titulo: 'Teste de Progresso 2026.2' })).toBe(true)
+    expect(ehDoCursoInteiro({ categoria: 'N2 Específica' })).toBe(false)
+
+    const propostas = expandir([{ curso: 'Medicina', categoria: 'TPI', data: '20/09' }])
+    expect(propostas).toHaveLength(8)
+    expect(propostas[0].avisos.some(aviso => aviso.includes('Teste de progresso'))).toBe(true)
+  })
+
+  it('todosOsPeriodos não passa do teto que a rota valida', () => {
+    expect(todosOsPeriodos(8)).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
+    expect(todosOsPeriodos(40)).toHaveLength(12)
+    expect(todosOsPeriodos(0)).toEqual([1])
   })
 })
 

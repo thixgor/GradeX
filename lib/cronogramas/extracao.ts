@@ -285,11 +285,22 @@ export function periodoDoEixo(eixo: unknown): number | null {
   return dentroDaFaixa(numero) ? numero : null
 }
 
+/** Todos os períodos de um curso, de 1 até o total dele. */
+export function todosOsPeriodos(total: number): number[] {
+  const teto = Math.min(PERIODO_MAXIMO, Math.max(1, Math.round(total) || 1))
+  return Array.from({ length: teto }, (_, indice) => indice + 1)
+}
+
 /**
  * Lê a coluna de período em qualquer das formas em que ela é publicada:
- * "1º ao 8º período", "5º–8º", ["1º Período", "2º Período"], "3".
+ * "1º ao 8º período", "5º–8º", ["1º Período", "2º Período"], "3", "todos os
+ * períodos".
+ *
+ * `totalDoCurso` é o que dá sentido a "todos": uma prova que vale para o curso
+ * inteiro — o teste de progresso é a de sempre — não lista os períodos, e sem
+ * saber quantos existem a célula viraria período nenhum.
  */
-export function interpretarPeriodos(bruto: unknown): number[] {
+export function interpretarPeriodos(bruto: unknown, totalDoCurso?: number): number[] {
   const partes = Array.isArray(bruto) ? bruto : [bruto]
   const encontrados = new Set<number>()
 
@@ -301,6 +312,11 @@ export function interpretarPeriodos(bruto: unknown): number[] {
 
     const texto = chaveDeTexto(parte)
     if (!texto) continue
+
+    if (totalDoCurso && /\btodos?\b|\btodas\b|curso inteiro/.test(texto)) {
+      for (const numero of todosOsPeriodos(totalDoCurso)) encontrados.add(numero)
+      continue
+    }
 
     // "1º ao 8º", "5 a 8", "1º–4º": uma faixa cobre todos os períodos entre as pontas.
     const faixa = texto.match(/(\d{1,2})\s*[º°o]?\s*(?:ao|a|ate|-|–|—)\s*(\d{1,2})\s*[º°o]?/)
@@ -337,6 +353,21 @@ const PISTAS_DE_TIPO: Array<{ tipo: TipoAvaliacao; termos: string[] }> = [
   { tipo: 'trabalho', termos: ['trabalho', 'relatorio', 'portfolio', 'entrega'] },
   { tipo: 'prova', termos: ['prova', 'avaliacao', 'exame', 'n1', 'n2', 'n3', 'integrada', 'especifica'] },
 ]
+
+/**
+ * Prova que vale para o curso inteiro.
+ *
+ * O teste de progresso (TPI) é aplicado no mesmo dia, do 1º ao último período,
+ * e por isso a tabela dele não tem coluna de período: não há o que listar. Sem
+ * reconhecê-lo, a linha entraria como avaliação de um período só — e as outras
+ * turmas nunca saberiam da prova.
+ */
+export function ehDoCursoInteiro(linha: LinhaExtraida): boolean {
+  const texto = chaveDeTexto(
+    [linha.categoria, linha.titulo, linha.tipo, linha.observacao, linha.eixo].filter(Boolean).join(' '),
+  )
+  return /\btpi\b|teste de progresso|progresso individual/.test(texto)
+}
 
 /** O tipo que a imagem sugere. Sem pista, prova — é o que essas tabelas trazem. */
 export function tipoDaLinha(linha: LinhaExtraida): TipoAvaliacao {
@@ -517,13 +548,19 @@ export function expandirLinhas(linhas: LinhaExtraida[], opcoes: OpcoesExpansao):
       avisosDaLinha.push('Linha de “caso especial” sem linha regular equivalente — confira o horário.')
     }
 
-    let periodos = interpretarPeriodos(linha.periodos)
+    const totalDoCurso = getSecao(secao).periodos
+
+    let periodos = interpretarPeriodos(linha.periodos, totalDoCurso)
     if (periodos.length === 0) {
       const doEixo = periodoDoEixo(linha.eixo)
       if (doEixo) {
         periodos = [doEixo]
         avisosDaLinha.push(`Período deduzido do eixo ${limpar(linha.eixo)}.`)
       }
+    }
+    if (periodos.length === 0 && ehDoCursoInteiro(linha)) {
+      periodos = todosOsPeriodos(totalDoCurso)
+      avisosDaLinha.push('Teste de progresso: marquei todos os períodos do curso.')
     }
     if (periodos.length === 0) {
       periodos = [1]

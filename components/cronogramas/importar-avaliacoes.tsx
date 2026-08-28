@@ -5,6 +5,7 @@ import {
   AlertTriangle,
   Bell,
   Check,
+  Copy,
   CopyCheck,
   FileImage,
   Image as ImageIcon,
@@ -22,6 +23,7 @@ import { formatarDiaLongo } from '@/lib/cronogramas/brasilia'
 import {
   marcarDuplicadas,
   periodosDoPainel,
+  todosOsPeriodos,
   type PropostaAvaliacao,
 } from '@/lib/cronogramas/extracao'
 import {
@@ -220,6 +222,47 @@ export function ImportarAvaliacoes({
     setPropostas(anterior =>
       anterior.map(item => (item.id === id ? { ...item, ...mudancas } : item)),
     )
+  }
+
+  /**
+   * Repete a linha em todos os períodos do curso.
+   *
+   * É o caso do teste de progresso e das provas integradas: a tabela não lista
+   * período nenhum porque a prova é do curso inteiro. Quando a leitura entende
+   * isso sozinha, os períodos já vêm expandidos; quando a imagem não deixa
+   * claro, este botão faz o mesmo em um clique, em vez de o admin duplicar a
+   * linha à mão oito vezes.
+   */
+  function repetirEmTodosOsPeriodos(id: string) {
+    setPropostas(anterior => {
+      const base = anterior.find(item => item.id === id)
+      if (!base) return anterior
+
+      const novas = todosOsPeriodos(getSecao(base.secao).periodos)
+        .filter(
+          periodo =>
+            !anterior.some(
+              item =>
+                item.secao === base.secao &&
+                item.periodo === periodo &&
+                item.data === base.data &&
+                item.titulo === base.titulo,
+            ),
+        )
+        .map(periodo => ({ ...base, periodo, id: `${base.id}+p${periodo}` }))
+
+      if (novas.length === 0) return anterior
+
+      const marcadas = marcarDuplicadas(novas, existentes).map(proposta => ({
+        ...proposta,
+        selecionada: !proposta.duplicada && Boolean(proposta.data),
+      }))
+
+      // Entram logo abaixo da linha de origem: revisar oito cópias espalhadas
+      // pelo fim da lista seria o mesmo trabalho que digitar.
+      const posicao = anterior.findIndex(item => item.id === id)
+      return [...anterior.slice(0, posicao + 1), ...marcadas, ...anterior.slice(posicao + 1)]
+    })
   }
 
   function marcarTodas(valor: boolean | 'novas') {
@@ -568,6 +611,7 @@ export function ImportarAvaliacoes({
                           setExpandida(atual => (atual === proposta.id ? null : proposta.id))
                         }
                         onMudar={mudancas => ajustar(proposta.id, mudancas)}
+                        onRepetirEmTodos={() => repetirEmTodosOsPeriodos(proposta.id)}
                       />
                     </li>
                   ))}
@@ -624,11 +668,13 @@ function LinhaProposta({
   aberta,
   onAlternarDetalhes,
   onMudar,
+  onRepetirEmTodos,
 }: {
   proposta: PropostaRevisao
   aberta: boolean
   onAlternarDetalhes: () => void
   onMudar: (mudancas: Partial<PropostaRevisao>) => void
+  onRepetirEmTodos: () => void
 }) {
   const semData = !proposta.data
   const tipo = getTipoAvaliacao(proposta.tipo)
@@ -786,10 +832,20 @@ function LinhaProposta({
                   className="w-full rounded-lg border border-border bg-background px-2.5 py-1.5 text-xs outline-none focus:border-[#468152]/50"
                 />
               </label>
-              <p className="text-[11px] text-muted-foreground">
-                Lida como <span className="font-semibold">{tipo.rotulo}</span> ·{' '}
-                {getSecao(proposta.secao).nome} · confiança {proposta.confianca}
-              </p>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="text-[11px] text-muted-foreground">
+                  Lida como <span className="font-semibold">{tipo.rotulo}</span> ·{' '}
+                  {getSecao(proposta.secao).nome} · confiança {proposta.confianca}
+                </p>
+                <button
+                  onClick={onRepetirEmTodos}
+                  disabled={semData}
+                  className="inline-flex items-center gap-1 rounded-lg border border-border/60 px-2 py-1 text-[11px] font-medium text-muted-foreground transition-colors hover:text-foreground disabled:opacity-50"
+                >
+                  <Copy className="h-3 w-3" aria-hidden />
+                  Repetir nos {getSecao(proposta.secao).periodos} períodos
+                </button>
+              </div>
             </div>
           )}
         </div>

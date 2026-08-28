@@ -176,13 +176,23 @@ function ConteudoAdminCronogramas() {
     })
   }
 
-  async function criar(rascunho: RascunhoAvaliacao) {
+  /**
+   * Cria o que o formulário devolveu — uma avaliação por período marcado.
+   *
+   * A rota já aceitava lista; o que mudou é que o formulário usa isso: marcar
+   * o teste de progresso do curso inteiro é um envio só, não oito cadastros
+   * iguais digitados em sequência (onde basta errar a data de um para uma
+   * turma ficar com a agenda diferente das outras).
+   */
+  async function criar(rascunhos: RascunhoAvaliacao[]) {
+    if (rascunhos.length === 0) return
     setSalvando('novo')
+
     try {
       const resposta = await fetch('/api/admin/cronogramas/avaliacoes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(rascunho),
+        body: JSON.stringify({ avaliacoes: rascunhos }),
       })
       const dados = await resposta.json().catch(() => ({}))
 
@@ -191,13 +201,21 @@ function ConteudoAdminCronogramas() {
         return
       }
 
+      const criadas: Avaliacao[] = dados.avaliacoes ?? []
       setAvaliacoes(anterior =>
-        [...anterior, ...(dados.avaliacoes ?? [])].sort((a, b) => a.data.localeCompare(b.data)),
+        [...anterior, ...criadas].sort((a, b) => a.data.localeCompare(b.data)),
       )
       // O formulário continua aberto com a mesma seção, período e data: marcar
       // o calendário do semestre é preencher várias parecidas em sequência.
-      setRascunhoNovo(avaliacaoVazia(rascunho.secao, rascunho.periodo, rascunho.data))
-      setAviso({ tom: 'ok', texto: 'Avaliação criada.' })
+      const primeira = rascunhos[0]
+      setRascunhoNovo(avaliacaoVazia(primeira.secao, primeira.periodo, primeira.data))
+      setAviso({
+        tom: 'ok',
+        texto:
+          criadas.length > 1
+            ? `${criadas.length} avaliações criadas, uma por período.`
+            : 'Avaliação criada.',
+      })
     } finally {
       setSalvando(null)
     }
@@ -623,7 +641,7 @@ function ConteudoAdminCronogramas() {
                         hoje={hoje}
                         existente
                         salvando={salvando === avaliacao._id}
-                        onSalvar={async atualizada => {
+                        onSalvar={async ([atualizada]) => {
                           const ok = await alterar(avaliacao._id!, atualizada)
                           if (ok) {
                             setEditando(null)

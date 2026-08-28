@@ -70,7 +70,7 @@ Colunas que costumam aparecer:
 - Data (quase sempre só dia/mês, ex.: "24/11"), Dia da Semana
 - Denominação: "Aluno Regular" ou "Aluno Caso Especial" (a mesma prova com tempo estendido)
 - VÁRIAS colunas de horário, uma por fuso: "Horário (Brasília)", "Horário (Unidades Rondônia)", "Horário (CZS–AC)"
-- Período ("1º Período", "1º ao 8º Período") OU Eixo ("SOI 1", "HAM 8", "MCM 3", "IESC 5", "CI 2")
+- Período ("1º Período", "1º ao 8º Período", "Todos os períodos") OU Eixo ("SOI 1", "HAM 8", "MCM 3", "IESC 5", "CI 2")
 
 Regras:
 1. HORÁRIO: o campo "horario" recebe SEMPRE a coluna de Brasília, copiada como está ("10h – 11h20"). As outras colunas de fuso vão juntas em "horarioOutrosFusos" ("Rondônia 09h–10h20; CZS–AC 08h–09h20"). Se só existir uma coluna de horário, ela é a de Brasília.
@@ -80,7 +80,8 @@ Regras:
 5. CASO ESPECIAL: uma linha "Aluno Regular" e a linha "Aluno Caso Especial" logo abaixo são a MESMA prova. Devolva a linha regular com "denominacao": "Aluno Regular" e "horarioCasosEspeciais" preenchido com o horário de Brasília da linha de caso especial. Não devolva a linha de caso especial separada.
 6. Uma linha do JSON para cada linha real da tabela. Um bloco que se repete para manhã e tarde são duas linhas.
 7. Texto fora da tabela que valha para todas as linhas (duração, "N3 ESPECÍFICA – 1º AO 8º PERÍODO – MEDICINA") entra em "duracao"/"categoria"/"curso" das linhas correspondentes.
-8. Se a imagem não for um calendário de avaliações, devolva {"linhas": []}.
+8. CURSO INTEIRO: prova aplicada a todos os períodos no mesmo dia (TPI, Teste de Progresso, prova integrada geral) costuma não ter coluna de período. Copie em "periodos" o que estiver escrito ("Todos os períodos") e mantenha a categoria ("TPI", "Teste de Progresso") em "categoria". Não invente uma lista de períodos.
+9. Se a imagem não for um calendário de avaliações, devolva {"linhas": []}.
 
 Responda SOMENTE com o JSON.`
 
