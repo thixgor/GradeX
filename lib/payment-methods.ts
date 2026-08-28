@@ -3,6 +3,20 @@ export type PaymentMethodsConfig = {
   credit_card: boolean
   boleto: boolean
   subscriptions: boolean
+  /**
+   * CPF obrigatório nas compras por Pix.
+   *
+   * O Pix é o único meio em que essa exigência é uma ESCOLHA nossa: no cartão
+   * o CPF entra na tokenização e no boleto ele vai no registro — nos dois o
+   * Mercado Pago recusa o pagamento sem documento. Sobra o Pix, onde pedir o
+   * CPF é sobre emitir nota fiscal, não sobre conseguir cobrar.
+   *
+   * Ligado por padrão (a nota continua sendo a regra); desligar troca um passo
+   * a menos no caminho mais rápido de conversão por uma nota sem CPF do
+   * comprador. Quem informar o CPF mesmo assim segue tendo ele vinculado ao
+   * perfil.
+   */
+  requireCpfForPix: boolean
 }
 
 export const DEFAULT_PAYMENT_METHODS: PaymentMethodsConfig = {
@@ -10,6 +24,7 @@ export const DEFAULT_PAYMENT_METHODS: PaymentMethodsConfig = {
   credit_card: true,
   boleto: true,
   subscriptions: true,
+  requireCpfForPix: true,
 }
 
 /**

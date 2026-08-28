@@ -218,6 +218,9 @@ export async function POST(request: NextRequest) {
     cpf: data.payerDocumentNumber,
     documentType: data.payerDocumentType,
     userId: session!.userId,
+    paymentMethodId: data.paymentMethodId,
+    hasCardToken: !!data.cardToken,
+    enabledMethods,
   })
   if (!cpfResult.ok) {
     return NextResponse.json({ error: cpfResult.error }, { status: cpfResult.status })
@@ -330,8 +333,8 @@ export async function POST(request: NextRequest) {
       cardToken: data.cardToken,
       installments: data.installments,
       issuer: data.issuer,
-      payerDocumentType: 'CPF',
-      payerDocumentNumber: cpfResult.cpf,
+      payerDocumentType: cpfResult.cpf ? 'CPF' : undefined,
+      payerDocumentNumber: cpfResult.cpf || undefined,
       metadata: {
         orderId,
         type: data.type,

@@ -1,26 +1,57 @@
 import { NextResponse } from 'next/server'
+import { getDb } from '@/lib/mongodb'
 import { getFeePolicy } from '@/lib/payments/fees'
+import { DEFAULT_PAYMENT_METHODS, type PaymentMethodsConfig } from '@/lib/payment-methods'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 
 /**
- * Política de taxas operacionais para o checkout no navegador.
+ * Regras de checkout que a tela precisa saber ANTES de o comprador confirmar:
+ * quanto de taxa será somado e se o CPF é obrigatório no meio escolhido.
  *
- * O valor cobrado é decidido no servidor; esta rota existe para que a tela
- * mostre exatamente a mesma conta ANTES de o comprador confirmar — um total na
- * tela diferente do total cobrado é a receita de chargeback.
+ * O valor cobrado e a exigência de CPF são decididos no servidor; esta rota
+ * existe para que a tela mostre exatamente as mesmas regras — um total na tela
+ * diferente do total cobrado é a receita de chargeback, e um campo marcado como
+ * opcional que o servidor rejeita é a receita de carrinho abandonado.
  *
  * Nada aqui é sigiloso: é o acréscimo que o próprio comprador vê somado ao
- * preço. Sem rate limit de propósito — o checkout já não carrega sem esta
- * resposta, e derrubar a rota por um soluço no Mongo derrubaria a venda junto.
+ * preço e a obrigatoriedade de um campo do formulário. Sem rate limit de
+ * propósito — o checkout já não carrega sem esta resposta, e derrubar a rota
+ * por um soluço no Mongo derrubaria a venda junto.
  */
 export async function GET() {
   try {
     const policy = getFeePolicy()
+
+    // Uma falha ao ler a config do painel NÃO pode virar "CPF dispensado" na
+    // tela: o default exige, então o formulário erra para o lado seguro e o
+    // servidor (que aplica a mesma regra) não recusa nada que a tela deixou
+    // passar.
+    let methods: PaymentMethodsConfig = DEFAULT_PAYMENT_METHODS
+    try {
+      const db = await getDb()
+      const settings = await db.collection('admin_settings').findOne(
+        {},
+        { projection: { paymentMethods: 1 } }
+      )
+      methods = { ...DEFAULT_PAYMENT_METHODS, ...(settings?.paymentMethods || {}) }
+    } catch (err) {
+      console.error('[payments/fees] falha ao ler paymentMethods, exigindo CPF:', err)
+    }
+
     return NextResponse.json(
-      { policy },
-      { headers: { 'Cache-Control': 'public, max-age=300' } }
+      {
+        policy,
+        checkout: {
+          // Cartão e boleto não entram: o Mercado Pago recusa os dois sem
+          // documento, então ali não há o que configurar.
+          cpfRequiredForPix: methods.requireCpfForPix !== false,
+        },
+      },
+      // Curto porque acompanha um toggle do painel — 60s limita a janela em
+      // que o formulário segue pedindo (ou dispensando) o CPF pela regra antiga.
+      { headers: { 'Cache-Control': 'public, max-age=60' } }
     )
   } catch (err: any) {
     return NextResponse.json({ policy: null, error: err?.message }, { status: 500 })

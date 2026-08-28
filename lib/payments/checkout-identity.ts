@@ -1,6 +1,11 @@
 import { ObjectId } from 'mongodb'
 import type { Db } from 'mongodb'
 import { isValidCpf, onlyCpfDigits } from '@/lib/cpf'
+import {
+  canonicalPaymentMethod,
+  DEFAULT_PAYMENT_METHODS,
+  type PaymentMethodsConfig,
+} from '@/lib/payment-methods'
 
 /**
  * CPF do comprador no checkout.
@@ -14,11 +19,22 @@ import { isValidCpf, onlyCpfDigits } from '@/lib/cpf'
  * propósito que ele não SOBRESCREVA um CPF já gravado: trocar o titular de uma
  * conta é operação de cadastro (com conferência na Receita, em
  * /api/user/complete-profile), não efeito colateral de uma compra.
+ *
+ * NO PIX a exigência é configurável em /admin/settings (`requireCpfForPix`).
+ * É o único meio em que ela é escolha nossa: no cartão o CPF entra na
+ * tokenização e no boleto vai no registro — nos dois, o Mercado Pago recusa o
+ * pagamento sem documento. Com a exigência desligada, o CPF continua sendo
+ * validado e vinculado ao perfil quando o comprador escolhe informá-lo; só
+ * deixa de barrar quem não informa.
  */
 
 export interface CheckoutCpfOk {
   ok: true
-  /** 11 dígitos, sem pontuação. */
+  /**
+   * 11 dígitos, sem pontuação. VAZIO quando a compra é por Pix, o painel
+   * dispensa o CPF e o comprador não informou nenhum — nesse caso o pagamento
+   * segue sem `payer.identification`.
+   */
   cpf: string
   /** `true` quando este checkout foi quem gravou o CPF no perfil. */
   linkedToProfile: boolean
@@ -44,15 +60,40 @@ export const CPF_MISMATCH_MESSAGE =
   'Este CPF é diferente do que está no seu perfil. Use o CPF do titular da conta ou atualize seu cadastro no perfil.'
 
 /**
+ * `true` quando o CPF é obrigatório para este meio de pagamento.
+ *
+ * Só o Pix pode dispensar, e só se o painel mandar. Qualquer outro meio exige
+ * — inclusive quando o método não foi reconhecido, porque aí não dá para
+ * afirmar que é Pix.
+ */
+export function isCpfRequiredForMethod(
+  paymentMethodId: string | undefined,
+  enabled: PaymentMethodsConfig,
+  opts: { hasCardToken?: boolean } = {}
+): boolean {
+  if (canonicalPaymentMethod(paymentMethodId, opts) !== 'pix') return true
+  return enabled.requireCpfForPix !== false
+}
+
+/**
  * Valida o CPF recebido no checkout e, quando houver conta logada, o vincula
  * ao perfil.
  *
- * @param userId  id do usuário logado; ausente em compra sem conta (/comprar),
- *                onde só cabe a validação estrutural.
+ * @param userId           id do usuário logado; ausente em compra sem conta
+ *                         (/comprar), onde só cabe a validação estrutural.
+ * @param paymentMethodId  meio escolhido — decide se o CPF é obrigatório.
+ * @param enabledMethods   config do painel; se omitida, é lida do banco.
  */
 export async function resolveCheckoutCpf(
   db: Db,
-  input: { cpf?: string | null; documentType?: 'CPF' | 'CNPJ'; userId?: string | null }
+  input: {
+    cpf?: string | null
+    documentType?: 'CPF' | 'CNPJ'
+    userId?: string | null
+    paymentMethodId?: string
+    hasCardToken?: boolean
+    enabledMethods?: PaymentMethodsConfig
+  }
 ): Promise<CheckoutCpfResult> {
   // CNPJ tem 14 dígitos e outra regra de validação. A obrigatoriedade aqui é
   // de CPF (pessoa física); quem paga como empresa segue pelo suporte.
@@ -63,6 +104,13 @@ export async function resolveCheckoutCpf(
   const digits = onlyCpfDigits(input.cpf || '')
   const users = db.collection('users')
 
+  const enabledMethods =
+    input.enabledMethods ||
+    (await readEnabledMethods(db))
+  const required = isCpfRequiredForMethod(input.paymentMethodId, enabledMethods, {
+    hasCardToken: input.hasCardToken,
+  })
+
   let profileCpf = ''
   let userObjectId: ObjectId | null = null
   if (input.userId && ObjectId.isValid(input.userId)) {
@@ -71,10 +119,12 @@ export async function resolveCheckoutCpf(
     profileCpf = onlyCpfDigits(user?.cpf || '')
   }
 
-  // Sem CPF no corpo: só dá para seguir se o perfil já tiver um. É o caso de
-  // um cliente antigo cujo checkout em cache ainda não manda o campo.
+  // Sem CPF no corpo: o do perfil serve (é o caso de um cliente antigo cujo
+  // checkout em cache ainda não manda o campo). Sem nenhum dos dois, só passa
+  // se este meio dispensar.
   if (!digits) {
     if (profileCpf) return { ok: true, cpf: profileCpf, linkedToProfile: false }
+    if (!required) return { ok: true, cpf: '', linkedToProfile: false }
     return { ok: false, error: CPF_REQUIRED_MESSAGE, status: 400 }
   }
 
@@ -127,4 +177,22 @@ export async function resolveCheckoutCpf(
   }
 
   return { ok: true, cpf: digits, linkedToProfile: true }
+}
+
+/**
+ * Config de métodos do painel. Uma falha de leitura NÃO pode virar "CPF
+ * dispensado": o default exige, então um soluço no banco erra para o lado
+ * seguro (pedir o documento) em vez de deixar passar compra sem nota.
+ */
+async function readEnabledMethods(db: Db): Promise<PaymentMethodsConfig> {
+  try {
+    const settings = await db.collection('admin_settings').findOne(
+      {},
+      { projection: { paymentMethods: 1 } }
+    )
+    return { ...DEFAULT_PAYMENT_METHODS, ...(settings?.paymentMethods || {}) }
+  } catch (err) {
+    console.error('[checkout-identity] falha ao ler paymentMethods, exigindo CPF:', err)
+    return DEFAULT_PAYMENT_METHODS
+  }
 }

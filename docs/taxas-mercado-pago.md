@@ -131,6 +131,55 @@ pela Receita Federal; quem confere é o modal de perfil). Um CPF já gravado nun
 cadastro, em `/api/user/complete-profile`. Compras sem conta (rifa, serial key)
 só validam o número.
 
+### O Pix pode dispensar — os outros não
+
+Em **/admin/settings → Pagamentos** há o toggle *"Exigir CPF no Pix"*
+(`paymentMethods.requireCpfForPix`, ligado por padrão). Desligar troca um passo
+a menos no caminho mais rápido de conversão por uma nota sem o CPF do comprador.
+Quem informar o CPF mesmo assim continua tendo ele vinculado ao perfil, e um CPF
+pela metade segue sendo recusado — "opcional" vale para o campo em branco, não
+para um número errado.
+
+O Pix é o único meio onde isso é uma escolha: no cartão o CPF entra na
+tokenização e no boleto vai no registro, e o Mercado Pago recusa os dois sem
+documento. Por isso o painel não oferece o toggle para eles.
+
+Uma falha ao ler a config **nunca** vira "CPF dispensado": tanto
+`readEnabledMethods` quanto `/api/payments/fees` caem no default, que exige.
+Errar para o lado de pedir o documento custa um campo; errar para o outro custa
+uma nota fiscal.
+
+## O terminal de cartão
+
+`components/payments/card-terminal.tsx` é o formulário de cartão — uma
+"maquininha" onde o cartão desenhado preenche enquanto o comprador digita.
+Antes era uma pilha de inputs soltos (número, nome, mês, ano, CVV) sem nenhum
+retorno visual: dava para digitar o cartão inteiro sem a tela reagir uma vez.
+
+O que veio junto, e não é enfeite:
+
+- **Validade num campo só** (MM/AA, com a barra entrando sozinha). Eram dois
+  inputs, e "ano" com 4 dígitos é erro clássico de digitação.
+- **Avanço automático** entre campos completos, na ordem em que os dados estão
+  impressos no cartão: número → validade → CVV → nome.
+- **Bandeira ao vivo**, detectada localmente pelo prefixo (resposta instantânea)
+  e confirmada pelo `payment_method_id` do Mercado Pago quando o BIN volta — que
+  é também quem distingue débito de crédito, e portanto quem define a taxa.
+- **Agrupamento e comprimento por bandeira**: Amex é 4-6-5, 15 dígitos e CVV de
+  4; o resto, 4-4-4-4 e CVV de 3.
+- **Luhn e validade conferidos enquanto digita**, para o erro aparecer antes do
+  submit em vez de voltar como "pagamento recusado".
+- **O cartão vira no CVV**, que é onde o número fica no cartão de verdade.
+- **Display de status** ("Insira os dados" → "Lendo cartão..." → "Cartão pronto"
+  → "Processando...") com o total ao lado.
+
+As abas de método mostram quanto fica a compra em cada uma. Com a taxa embutida
+no preço, Pix e cartão deixaram de custar o mesmo; esconder isso até o comprador
+trocar de aba é o tipo de surpresa que faz abandonar carrinho.
+
+O componente é controlado — quem guarda o estado é o checkout, que precisa dos
+mesmos valores para tokenizar o cartão.
+
 ## Onde mexer
 
 | Arquivo | Papel |
@@ -139,8 +188,11 @@ só validam o número.
 | `lib/payments/checkout-identity.ts` | CPF obrigatório e vínculo com o perfil |
 | `app/api/payments/fees/route.ts` | Serve a política para o navegador |
 | `components/payments/mercado-pago-checkout.tsx` | Formulário único de todos os checkouts |
+| `components/payments/card-terminal.tsx` | O terminal de cartão (visual + validação) |
+| `lib/payment-methods.ts` | Config do painel, incluindo `requireCpfForPix` |
 | `__tests__/payments/taxas-operacionais.test.ts` | Garante que o líquido nunca cai abaixo da base |
 | `__tests__/payments/cpf-obrigatorio-checkout.test.ts` | Garante as regras de CPF |
+| `__tests__/payments/terminal-de-cartao.test.ts` | Formatação, Luhn, validade e bandeiras |
 
 Rotas que aplicam a taxa e exigem CPF: `/api/payments/orders`,
 `/api/materiais/checkout`, `/api/serial-keys/checkout`,
