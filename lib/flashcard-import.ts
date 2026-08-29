@@ -341,8 +341,10 @@ export function applyImagesToCards(
     for (let cardIndex = 0; cardIndex < resolved.length; cardIndex++) {
       if (cursor >= queue.length) break
       const card = resolved[cardIndex]
-      // Palavra oculta não tem frente/verso próprios para receber imagem.
-      if (card.kind === 'hidden_word') continue
+      // Palavra oculta entra na fila como qualquer outro cartão: ela tem
+      // `front.image` e `back.image` próprios, oferecidos no editor e
+      // renderizados no card. Pulá-la desalinhava tudo daquele ponto em
+      // diante — a imagem 1 caía no cartão 2 e o baralho inteiro andava.
       const sides: Array<'front' | 'back'> =
         mode === 'front' ? ['front'] : mode === 'back' ? ['back'] : ['front', 'back']
       for (const side of sides) {

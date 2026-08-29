@@ -9,7 +9,7 @@
  * reordenáveis e o número é grande.
  */
 
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useRef, useState, type ReactNode } from 'react'
 import { ArrowLeft, ArrowRight, ImagePlus, Loader2, Trash2, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
@@ -32,6 +32,12 @@ interface FlashcardBulkImagesProps {
   onChange: (items: BulkImageItem[]) => void
   /** Rótulo curto de para onde cada posição vai (ex.: "Cartão 2 · verso"). */
   describeSlot?: (index: number) => string | undefined
+  /**
+   * Controles que precisam ficar acima da grade. Com uma centena de imagens a
+   * grade fica alta demais para caber na tela, e qualquer coisa depois dela é
+   * na prática inalcançável.
+   */
+  toolbar?: ReactNode
   disabled?: boolean
   className?: string
 }
@@ -44,6 +50,7 @@ export function FlashcardBulkImages({
   items,
   onChange,
   describeSlot,
+  toolbar,
   disabled,
   className,
 }: FlashcardBulkImagesProps) {
@@ -175,6 +182,8 @@ export function FlashcardBulkImages({
         </p>
       </div>
 
+      {items.length > 0 && toolbar}
+
       {items.length > 0 && (
         <>
           <div className="mt-3 flex items-center justify-between text-xs text-slate-500">
@@ -192,7 +201,7 @@ export function FlashcardBulkImages({
             </button>
           </div>
 
-          <ul className="mt-2 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
+          <ul className="mt-2 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2 max-h-[22rem] overflow-y-auto pr-1">
             {items.map((item, index) => {
               const slot = describeSlot?.(index)
               return (

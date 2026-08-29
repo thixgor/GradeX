@@ -910,32 +910,31 @@ Conteúdo:
             onChange={setImages}
             describeSlot={describeSlot}
             disabled={busy}
-          />
-
-          {images.length > 0 && (
-            <div className="mt-3">
-              <Label className="text-xs text-slate-500">Como distribuir</Label>
-              <div className="mt-1.5 flex flex-wrap gap-1.5">
-                {modeTabs.map(tab => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setImageMode(tab.id)}
-                    className={cn(
-                      'rounded-full px-2.5 py-1 text-[11px] font-medium border',
-                      imageMode === tab.id
-                        ? 'border-violet-500 bg-violet-500/10 text-violet-700 dark:text-violet-200'
-                        : 'border-slate-200 dark:border-white/10 text-slate-500',
-                    )}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
+            toolbar={
+              <div className="mt-3">
+                <Label className="text-xs text-slate-500">Como distribuir</Label>
+                <div className="mt-1.5 flex flex-wrap gap-1.5">
+                  {modeTabs.map(tab => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setImageMode(tab.id)}
+                      className={cn(
+                        'rounded-full px-2.5 py-1 text-[11px] font-medium border',
+                        imageMode === tab.id
+                          ? 'border-violet-500 bg-violet-500/10 text-violet-700 dark:text-violet-200'
+                          : 'border-slate-200 dark:border-white/10 text-slate-500',
+                      )}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+                <p className="mt-1.5 text-[11px] text-slate-500">
+                  {modeTabs.find(t => t.id === imageMode)?.hint}
+                </p>
               </div>
-              <p className="mt-1.5 text-[11px] text-slate-500">
-                {modeTabs.find(t => t.id === imageMode)?.hint}
-              </p>
-            </div>
-          )}
+            }
+          />
         </div>
 
         {(payload.trim() || uploadedUrls.length > 0) && (
