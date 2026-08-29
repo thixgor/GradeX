@@ -38,11 +38,15 @@ import {
   DEFAULT_OG_IMAGE,
   SITE_DESCRIPTION,
   SITE_KEYWORDS,
+  SITE_LEGAL_NAME,
   SITE_NAME,
+  SITE_TITLE,
+  SITE_TITLE_LONG,
   absoluteUrl,
   buildJsonLd,
   getSiteUrl,
   publicIndexingRobots,
+  siteAlternateNames,
 } from '@/lib/seo'
 
 // Editorial / textbook serif — medical journal feel (not Space Grotesk / Rowdies AI stack)
@@ -70,7 +74,12 @@ export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
   applicationName: SITE_NAME,
   title: {
-    default: 'DomineAqui — Plataforma de Estudo Inteligente para Medicina',
+    // O título carrega as DUAS grafias da marca. Era só "DomineAqui": quem
+    // procurava "Domine Aqui" (separado) chegava pelo corpo da landing, que
+    // escreve assim, mas o título — o sinal mais forte que o Google tem para
+    // casar uma busca com uma página — não confirmava o nome separado, e a
+    // recíproca valia para quem digitava tudo junto em páginas internas.
+    default: SITE_TITLE,
     template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
@@ -116,8 +125,8 @@ export const metadata: Metadata = {
     apple: [{ url: '/apple-icon.png', sizes: '180x180', type: 'image/png' }],
   },
   openGraph: {
-    title: 'DomineAqui — Plataforma de Estudo Inteligente para Medicina',
-    description: 'Provas, flashcards, cronogramas, materiais e estudo guiado por dados e IA. Estude para residência com inteligência.',
+    title: SITE_TITLE_LONG,
+    description: 'O Domine Aqui (DomineAqui) reúne provas, flashcards, cronogramas, materiais e estudo guiado por dados e IA. Estude para residência com inteligência.',
     url: '/',
     siteName: SITE_NAME,
     locale: 'pt_BR',
@@ -127,14 +136,14 @@ export const metadata: Metadata = {
         url: DEFAULT_OG_IMAGE,
         width: 1200,
         height: 630,
-        alt: 'DomineAqui — Plataforma de Estudo Inteligente para Medicina',
+        alt: SITE_TITLE_LONG,
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'DomineAqui — Plataforma de Estudo Inteligente para Medicina',
-    description: 'Provas, flashcards, cronogramas, materiais e estudo guiado por IA.',
+    title: SITE_TITLE_LONG,
+    description: 'O Domine Aqui (DomineAqui) reúne provas, flashcards, cronogramas, materiais e estudo guiado por IA.',
     images: [DEFAULT_OG_IMAGE],
     creator: '@domineaqui',
   },
@@ -177,6 +186,12 @@ export default function RootLayout({
     '@context': 'https://schema.org',
     '@type': 'EducationalOrganization',
     name: SITE_NAME,
+    // As outras grafias do mesmo nome. É por este campo que o Google entende
+    // que "Domine Aqui", "DomineAqui" e "domineaqui.com.br" são uma entidade
+    // só — sem ele, cada busca precisa casar por texto e a grafia que não
+    // aparece escrita na página simplesmente não encontra o site.
+    alternateName: siteAlternateNames(),
+    legalName: SITE_LEGAL_NAME,
     url: siteUrl,
     logo: {
       '@type': 'ImageObject',
@@ -199,13 +214,18 @@ export default function RootLayout({
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: SITE_NAME,
-    alternateName: 'Domine Aqui',
+    // Era uma string só ("Domine Aqui"). Como array cobre também o domínio,
+    // que é o que muita gente digita na busca em vez de na barra de endereço.
+    // Este é o par name/alternateName que o Google usa para escrever o nome do
+    // site acima do resultado.
+    alternateName: siteAlternateNames(),
     url: siteUrl,
     inLanguage: 'pt-BR',
     description: SITE_DESCRIPTION,
     publisher: {
       '@type': 'Organization',
       name: SITE_NAME,
+      alternateName: siteAlternateNames(),
       logo: {
         '@type': 'ImageObject',
         url: absoluteUrl('/logo.png'),

@@ -4148,7 +4148,16 @@ function Footer() {
           </div>
         </div>
         <div className="mt-12 flex flex-col gap-3 border-t border-[color:var(--da-neutral-line)] pt-6 text-xs text-da-muted sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} Domine Aqui. Todos os direitos reservados.</p>
+          {/* A linha legal é o único lugar da landing em que a marca aparece
+              escrita das DUAS formas — "DomineAqui" (razão social, domínio) e
+              "Domine Aqui" (como o site escreve no resto da página). Não é
+              enfeite de SEO: é a mesma informação que o rodapé do app já dava,
+              e serve de âncora em texto visível para quem procura o nome junto,
+              já que o corpo inteiro da página só escreve o nome separado. */}
+          <p>
+            © {new Date().getFullYear()} DomineAqui LTDA — Domine Aqui. Todos os direitos
+            reservados.
+          </p>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-1">
             <Link
               href={LINKS.termos}

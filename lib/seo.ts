@@ -1,9 +1,40 @@
 import type { Metadata } from 'next'
 
+// A marca é escrita de dois jeitos na vida real: JUNTA — "DomineAqui", como no
+// domínio, na razão social e no @ do Instagram — e SEPARADA, "Domine Aqui", que
+// é como a landing escreve e como a maioria das pessoas digita na busca. Para o
+// Google são duas cadeias de caracteres diferentes, e um site que só publica uma
+// delas costuma só ser encontrado por uma delas.
+//
+// A forma junta é a CANÔNICA: é o domínio, é o nome que o buscador usa para
+// nomear o site no resultado e é um token único (ninguém mais disputa
+// "domineaqui"). A separada entra como NOME ALTERNATIVO — declarada no
+// schema.org, no título da home, na descrição e no texto visível, que são os
+// lugares que o Google de fato lê para ligar um nome a um site. Trocar qual das
+// duas é a canônica é mudar `SITE_NAME` aqui: todo o resto deriva daqui.
 export const SITE_NAME = 'DomineAqui'
+export const SITE_NAME_SPACED = 'Domine Aqui'
+export const SITE_LEGAL_NAME = 'DomineAqui LTDA'
 export const SITE_DOMAIN = 'domineaqui.com.br'
 export const CANONICAL_ORIGIN = `https://${SITE_DOMAIN}`
 export const DEFAULT_OG_IMAGE = 'https://i.imgur.com/zHm5aSx.jpeg'
+
+/** Todas as grafias da marca que precisam levar até aqui numa busca. */
+export const SITE_NAME_VARIANTS = [SITE_NAME, SITE_NAME_SPACED, SITE_DOMAIN]
+
+/**
+ * O `alternateName` do schema.org: as variantes, menos a que já está no `name`
+ * daquele nó (repetir o próprio nome ali não acrescenta nada e o validador
+ * reclama). É este campo que o Google lê para aceitar "Domine Aqui" e
+ * "DomineAqui" como o MESMO site.
+ */
+export function siteAlternateNames(name: string = SITE_NAME) {
+  const normalized = name.trim().toLowerCase()
+  return SITE_NAME_VARIANTS.filter(variant => variant.toLowerCase() !== normalized)
+}
+
+/** "DomineAqui (Domine Aqui)" — as duas grafias num rótulo só, para títulos. */
+export const SITE_BRAND_LABEL = `${SITE_NAME} (${SITE_NAME_SPACED})`
 
 const SENSITIVE_SEO_TERMS = [
   'afya',
@@ -144,8 +175,17 @@ export function joinSeoParts(parts: Array<string | null | undefined>, separator 
   return parts.map(p => (p || '').trim()).filter(Boolean).join(separator)
 }
 
+// Título da home. As duas grafias cabem juntas em ~58 caracteres — abaixo do
+// ponto em que o Google reescreve o título por ficar longo demais.
+export const SITE_TITLE = `${SITE_BRAND_LABEL} — Estudo Inteligente para Medicina`
+
+// A versão sem corte, para Open Graph e Twitter, onde não há limite de largura.
+export const SITE_TITLE_LONG = `${SITE_BRAND_LABEL} — Plataforma de Estudo Inteligente para Medicina`
+
+// A descrição abre com as duas grafias porque a meta description é o único
+// trecho de texto que aparece no resultado de busca junto com o título.
 export const SITE_DESCRIPTION =
-  'Plataforma de estudo inteligente com provas, flashcards, cronogramas, materiais, TRI e avaliação com IA para estudantes de medicina e saúde.'
+  'O Domine Aqui (DomineAqui) é a plataforma de estudo com provas, flashcards, cronogramas, materiais, TRI e correção por IA para estudantes de medicina.'
 
 export const SITE_KEYWORDS = [
   'plataforma de estudos',
@@ -160,5 +200,12 @@ export const SITE_KEYWORDS = [
   'estudo para residência',
   'banco de questões medicina',
   'plataforma educacional',
+  // As duas grafias da marca, mais o domínio. `keywords` sozinho não posiciona
+  // nada (o Google ignora esta meta desde 2009), mas o Bing ainda a lê e ela
+  // mantém o par de grafias declarado em um lugar a mais.
   'DomineAqui',
+  'Domine Aqui',
+  'domineaqui.com.br',
+  'Domine Aqui medicina',
+  'DomineAqui plataforma de estudos',
 ]
