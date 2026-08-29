@@ -42,10 +42,31 @@ mais no build frio compram builds incrementais de 66 s no lugar de 140 s — que
 ## As demais mudanças
 
 **Não gastar build com commit que não muda o site** — `ignoreCommand` em
-`vercel.json`, apontando para `scripts/vercel/ignorar-build.sh`. Commit que só
-toca `.md`, `docs/`, `__tests__/` ou configuração de editor não vira build. Na
-dúvida o script constrói: sair com erro também constrói, então uma falha do
-próprio script degrada para o comportamento de hoje.
+`vercel.json`. Commit que só toca `.md`, `.txt`, `docs/`, `__tests__/` ou
+configuração de editor não vira build. Nos 75 commits dos últimos 60 dias a
+regra ignoraria 4 e construiria 71.
+
+O comando é `git diff --quiet` com pathspecs de exclusão, escrito direto no
+`vercel.json`:
+
+```
+git rev-parse HEAD~1 >/dev/null 2>&1 && git diff --quiet HEAD~1 HEAD -- ':(exclude)*.md' ... || exit 1
+```
+
+`git diff --quiet` já usa a convenção da Vercel: sai 0 quando não há diferença
+(ignora o build) e 1 quando há (constrói). O `git rev-parse` na frente cobre o
+clone raso sem `HEAD~1`, e o `|| exit 1` no fim garante que **qualquer** falha
+— pathspec inválido, git ausente, o que for — vire "constrói", nunca um código
+de saída que a Vercel interprete como build quebrado.
+
+> Duas armadilhas custaram um deploy vermelho antes de acertar. A primeira: a
+> Vercel trata exit 127 como **falha do build**, não como "construa" — a regra
+> de "qualquer código diferente de 0 constrói" não vale para todos os códigos.
+> A segunda: a primeira versão vivia em `scripts/vercel/ignorar-build.sh`, e o
+> `.vercelignore` exclui `scripts/`. Re-incluir com `!scripts/vercel/` não
+> funciona, porque a regra é a mesma do `.gitignore` — não se re-inclui o que
+> está dentro de um diretório já excluído. O comando inline não depende de
+> arquivo nenhum e some com as duas.
 
 **Índices do Mongo fora do caminho da requisição** — `lib/mongodb.ts` disparava
 114 chamadas de `createIndex` **em toda instância fria de toda função**,

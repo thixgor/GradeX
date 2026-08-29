@@ -9,10 +9,6 @@ nul
 # Server-side only (not needed for Vercel deployment)
 server/
 scripts/
-# ...menos o que a própria Vercel executa antes do build. `ignoreCommand` roda
-# dentro do repositório clonado: sem esta exceção o script sumiria e a Vercel
-# construiria sempre (que é o comportamento seguro, mas não o desejado).
-!scripts/vercel/
 
 # Documentation and data files in public (not used by the app)
 public/*.md
