@@ -7,7 +7,7 @@ import {
 } from '@/lib/manual-clinico-product'
 import {
   buildManualSubscription,
-  buildPlusSubscription,
+  buildPaidSubscription,
   pickBestManualPurchase,
   type AdminUserRow,
 } from '@/lib/admin-user-insights'
@@ -74,11 +74,16 @@ export async function GET(_request: NextRequest) {
 
     // Rótulos dos planos personalizados criados em /admin/settings — sem eles,
     // um `premiumPlanType` fora da tabela padrão apareceria como chave crua.
+    // `planRoles` guarda o cargo que cada plano concede: é o que diz se uma
+    // assinatura já vencida era Plus+ ou Quest+, depois de o cron rebaixar a
+    // conta e o `accountType` não responder mais.
     const planLabels: Record<string, string> = {}
+    const planRoles: Record<string, string> = {}
     for (const plano of ((settings?.planos || []) as PlanConfig[])) {
       const key = String(plano?.tipo || '').trim().toLowerCase()
       if (!key) continue
       planLabels[key] = String(plano?.periodo || plano?.nome || key)
+      if (plano?.role) planRoles[key] = String(plano.role)
     }
 
     // Melhor compra do Manual Clínico por identidade. A chave de e-mail cobre
@@ -113,7 +118,7 @@ export async function GET(_request: NextRequest) {
 
       return {
         ...user,
-        plusSubscription: buildPlusSubscription(user, now, planLabels),
+        paidSubscription: buildPaidSubscription(user, now, planLabels, planRoles),
         manualSubscription: buildManualSubscription(manualPurchase, now),
         spend: {
           total: round2(material.total + manual.total),
