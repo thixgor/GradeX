@@ -8,6 +8,7 @@ import { sendSubscriptionCancelledEmail } from '@/lib/mail'
 import { revokePlusClaims } from '@/lib/plus-claims'
 import { PLUS_ACCOUNT_TYPES } from '@/lib/account-tier'
 import { idsDeCargosPagos } from '@/lib/cargos-server'
+import { reconciliarPagamentosPendentes } from '@/lib/payments/sweep'
 import type { SubscriptionRecord, User, AccountType } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -178,6 +179,39 @@ export async function GET(request: NextRequest) {
       stats.errors++
       console.error('[cron-subs] expirar plano vencido falhou', userId, err)
     }
+  }
+
+  // 4) De carona: reconcilia pagamentos ÚNICOS (Pix/cartão/boleto) presos em
+  //    pending/in_process — Plano avulso, materiais, loja, manual clínico.
+  //
+  //    Esse é o `payments-sweeper`, que existe como rota própria mas nunca
+  //    tinha agendador nenhum batendo nele: nem entrada no Vercel Cron (o
+  //    Hobby já está com o teto de jobs tomado pelos outros cinco), nem
+  //    cron-job.org configurado como os outros crons "externos" do projeto.
+  //    Um pedido cujo webhook do MP se perdesse ficava preso até um admin
+  //    abrir o /admin/analytics e clicar "Aprovar manualmente" um por um —
+  //    foi exatamente isso que aconteceu com uma compra em cartão presa em
+  //    `pending_review_manual`.
+  //
+  //    Rodar aqui, e não criar mais um cron, é o que resolve sem depender de
+  //    nada novo: este cron já é um Vercel Cron agendado e já roda sozinho
+  //    todo dia. `limite` e `prazo` mantêm essa segunda varredura pequena e
+  //    com prazo próprio, para nunca competir pelo orçamento de tempo do que
+  //    já rodou acima.
+  try {
+    const pagamentos = await reconciliarPagamentosPendentes(db, {
+      limite: 100,
+      prazo: now.getTime() + 4 * 60_000,
+    })
+    Object.assign(stats, {
+      paymentsChecked: pagamentos.checked,
+      paymentsReconciled: pagamentos.reconciled,
+      paymentsApproved: pagamentos.approved,
+    })
+    stats.errors += pagamentos.errors
+  } catch (err) {
+    stats.errors++
+    console.error('[cron-subs] varredura de pagamentos únicos falhou', err)
   }
 
   return NextResponse.json({ ok: true, ...stats })
