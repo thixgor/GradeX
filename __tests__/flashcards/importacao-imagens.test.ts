@@ -325,17 +325,48 @@ Explicação`)
 })
 
 describe('cartões de palavra oculta', () => {
-  it('não recebem imagem da distribuição automática', () => {
+  const hidden = (n: number) => ({
+    kind: 'hidden_word' as const,
+    front: { text: '' },
+    back: { text: '' },
+    hiddenWord: { phrase: `Frase ${n}`, word: `palavra${n}` },
+  })
+
+  it('recebem imagem como qualquer outro cartão', () => {
     const { cards } = applyImagesToCards(
-      [
-        { kind: 'hidden_word', front: { text: '' }, back: { text: '' }, hiddenWord: { phrase: 'A capital é Brasília', word: 'Brasília' } },
-        { kind: 'standard', front: { text: 'P' }, back: { text: 'R' } },
-      ],
-      [IMG(1)],
-      'alternate',
+      [hidden(1), { kind: 'standard', front: { text: 'P' }, back: { text: 'R' } }],
+      [IMG(1), IMG(2)],
+      'front',
     )
-    expect(cards[0].front.image).toBeUndefined()
-    expect(cards[1].front.image).toBe(IMG(1))
+    expect(cards[0].front.image).toBe(IMG(1))
+    expect(cards[1].front.image).toBe(IMG(2))
+  })
+
+  it('não desloca a numeração quando o baralho mistura os dois tipos', () => {
+    // O caso que quebrou em produção: palavra oculta no cartão 1 e no 6
+    // empurrava a imagem 1 para o cartão 2 e abria um buraco no meio.
+    const cards = [
+      hidden(1),
+      { kind: 'standard' as const, front: { text: 'P2' }, back: { text: 'R2' } },
+      { kind: 'standard' as const, front: { text: 'P3' }, back: { text: 'R3' } },
+      hidden(4),
+      { kind: 'standard' as const, front: { text: 'P5' }, back: { text: 'R5' } },
+    ]
+    const { assignments } = applyImagesToCards(cards, [IMG(1), IMG(2), IMG(3), IMG(4), IMG(5)], 'front')
+
+    expect(assignments).toEqual([
+      { cardIndex: 0, side: 'front' },
+      { cardIndex: 1, side: 'front' },
+      { cardIndex: 2, side: 'front' },
+      { cardIndex: 3, side: 'front' },
+      { cardIndex: 4, side: 'front' },
+    ])
+  })
+
+  it('no modo alternado ocupa frente e verso, como os demais', () => {
+    const { cards } = applyImagesToCards([hidden(1)], [IMG(1), IMG(2)], 'alternate')
+    expect(cards[0].front.image).toBe(IMG(1))
+    expect(cards[0].back.image).toBe(IMG(2))
   })
 })
 
