@@ -273,11 +273,24 @@ async function fetchImageAsBase64(url: string): Promise<ImgData | null> {
   return result
 }
 
+/**
+ * As questões da prova — sempre um array.
+ *
+ * A lista de /provas vem sem `questions` de propósito (`campos=lista`), e um
+ * caminho que chegue aqui sem ter buscado a prova completa quebrava em
+ * `undefined.filter`: uma exceção no console e nenhum arquivo. O PDF sai com o
+ * que a prova tiver; quem precisa das questões as busca antes (ver
+ * `carregarProvasCompletas` em app/provas/page.tsx).
+ */
+function questoesDaProva(exam: Partial<Exam>): Question[] {
+  return Array.isArray(exam.questions) ? exam.questions : []
+}
+
 // Pre-fetch all question images for an exam (uses session cache automatically)
-async function prefetchExamImages(questions: Question[]): Promise<Map<string, ImgData>> {
+async function prefetchExamImages(questions: Question[] | undefined): Promise<Map<string, ImgData>> {
   const imageMap = new Map<string, ImgData>()
   await Promise.all(
-    questions
+    (questions || [])
       .filter(q => q.imageUrl)
       .map(async (q) => {
         const result = await fetchImageAsBase64(q.imageUrl!)
@@ -360,6 +373,10 @@ function addDomineAquiFooter(doc: jsPDF, pageNum: number, totalPages: number, pa
 }
 
 export async function generateGabaritoPDF(exam: Exam): Promise<Blob> {
+  const questoes = questoesDaProva(exam)
+  // `numberOfQuestions` é o número declarado na prova; quando ele falta, o que
+  // está escrito no documento é a contagem real do que foi impresso.
+  const totalDeQuestoes = exam.numberOfQuestions ?? questoes.length
   const doc = new jsPDF()
   await registerFonts(doc)
   const logo = await loadLogo()
@@ -415,7 +432,7 @@ export async function generateGabaritoPDF(exam: Exam): Promise<Blob> {
   doc.text('TOTAL DE QUESTÕES', margin + 5, y + 8)
   doc.setFontSize(16)
   doc.setFont(FONT, 'bold')
-  doc.text(exam.numberOfQuestions.toString(), margin + 5, y + 19)
+  doc.text(totalDeQuestoes.toString(), margin + 5, y + 19)
 
   // Coluna 2 - Pontuação
   doc.setFillColor(...LARANJA_CLARO)
@@ -452,7 +469,7 @@ export async function generateGabaritoPDF(exam: Exam): Promise<Blob> {
   const rowHeight = 12
   const cellPadding = 2
 
-  exam.questions.forEach((question: Question, index: number) => {
+  questoes.forEach((question: Question, index: number) => {
     // Verifica se precisa de nova página
     if (checkPage(rowHeight + 5)) {
       currentRow = 0
@@ -493,7 +510,7 @@ export async function generateGabaritoPDF(exam: Exam): Promise<Blob> {
   })
 
   // Ajusta y para após o grid
-  y += Math.ceil(exam.questions.length / columns) * rowHeight + 15
+  y += Math.ceil(questoes.length / columns) * rowHeight + 15
 
   // === INFORMAÇÕES ADICIONAIS ===
   checkPage(60)
@@ -527,10 +544,10 @@ export async function generateGabaritoPDF(exam: Exam): Promise<Blob> {
     doc.setFontSize(9)
     doc.setFont(FONT, 'normal')
     doc.setTextColor(...CINZA_TEXTO)
-    const pointsPerQuestion = (exam.totalPoints || 100) / exam.numberOfQuestions
+    const pointsPerQuestion = (exam.totalPoints || 100) / (totalDeQuestoes || 1)
     doc.text(`Pontuação máxima: ${exam.totalPoints} pontos`, margin + 5, y + 20)
     doc.text(`Cada questão vale: ${pointsPerQuestion.toFixed(2)} pontos`, margin + 5, y + 27)
-    doc.text(`Total de questões: ${exam.numberOfQuestions}`, margin + 5, y + 34)
+    doc.text(`Total de questões: ${totalDeQuestoes}`, margin + 5, y + 34)
   }
 
   // === RODAPÉ EM TODAS AS PÁGINAS ===
@@ -572,7 +589,8 @@ export function downloadPDF(
  * Mostra cada questão com a alternativa correta destacada em verde e a explicação abaixo.
  */
 export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
-  const [imageMap, logo] = await Promise.all([prefetchExamImages(exam.questions), loadLogo()])
+  const questoes = questoesDaProva(exam)
+  const [imageMap, logo] = await Promise.all([prefetchExamImages(questoes), loadLogo()])
 
   const doc = new jsPDF()
   await registerFonts(doc)
@@ -617,7 +635,7 @@ export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
   y += 16
 
   // Questões
-  exam.questions.forEach((question, idx) => {
+  questoes.forEach((question, idx) => {
     checkPage(50)
 
     // Header da questão
@@ -845,7 +863,9 @@ export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
 
 // Gerar PDF da prova para alunos preencherem (client-side com jsPDF)
 export async function generateExamPDF(exam: Exam, userId?: string): Promise<Blob> {
-  const [imageMap, logo] = await Promise.all([prefetchExamImages(exam.questions), loadLogo()])
+  const questoes = questoesDaProva(exam)
+  const totalDeQuestoes = exam.numberOfQuestions ?? questoes.length
+  const [imageMap, logo] = await Promise.all([prefetchExamImages(questoes), loadLogo()])
 
   const doc = new jsPDF()
   await registerFonts(doc)
@@ -890,7 +910,7 @@ export async function generateExamPDF(exam: Exam, userId?: string): Promise<Blob
   doc.setFont(FONT, 'normal')
   doc.text(`Data: ${new Date().toLocaleDateString('pt-BR')}`, pageWidth - margin, y, { align: 'right' })
   y += 5
-  doc.text(`Duração: ${exam.duration} minutos | Questões: ${exam.numberOfQuestions}`, pageWidth - margin, y, { align: 'right' })
+  doc.text(`Duração: ${exam.duration} minutos | Questões: ${totalDeQuestoes}`, pageWidth - margin, y, { align: 'right' })
   y += 10
 
   // === IDENTIFICAÇÃO DO CANDIDATO ===
@@ -967,7 +987,7 @@ export async function generateExamPDF(exam: Exam, userId?: string): Promise<Blob
   y += 8
 
   // === QUESTÕES ===
-  exam.questions.forEach((question, idx) => {
+  questoes.forEach((question, idx) => {
     checkPage(50)
 
     // Header da questão
@@ -1134,7 +1154,8 @@ export async function generateExamPDF(exam: Exam, userId?: string): Promise<Blob
  * Gera PDF da prova com as respostas do aluno marcadas (sem mostrar gabarito)
  */
 export async function generateStudentAnswersPDF(exam: Exam, answers: UserAnswer[], userName: string): Promise<Blob> {
-  const [imageMap, logo] = await Promise.all([prefetchExamImages(exam.questions), loadLogo()])
+  const questoes = questoesDaProva(exam)
+  const [imageMap, logo] = await Promise.all([prefetchExamImages(questoes), loadLogo()])
   const doc = new jsPDF()
   await registerFonts(doc)
 
@@ -1182,7 +1203,7 @@ export async function generateStudentAnswersPDF(exam: Exam, answers: UserAnswer[
   y += 10
 
   // === QUESTÕES ===
-  exam.questions.forEach((question, idx) => {
+  questoes.forEach((question, idx) => {
     checkPage(40)
 
     // Header da questão
