@@ -3470,6 +3470,18 @@ html[data-da-menu='aberto'] .da-dock[data-shown='true'] {
   padding-bottom: env(safe-area-inset-bottom) !important;
 }
 
+/* Aviso "você está vendo como visitante": no mobile ele é uma barra fixa no
+   rodapé, então a página reserva a altura dela para não cobrir o conteúdo
+   final (avaliações, CTAs). No desktop o aviso é flutuante e arrastável. */
+body.has-guest-notice {
+  padding-bottom: calc(4.25rem + env(safe-area-inset-bottom));
+}
+@media (min-width: 640px) {
+  body.has-guest-notice {
+    padding-bottom: 0;
+  }
+}
+
 /* Botões fixos no canto superior (menu, tema) descem abaixo da barra. */
 .pwa-safe-fixed-top {
   top: calc(0.75rem + env(safe-area-inset-top)) !important;
