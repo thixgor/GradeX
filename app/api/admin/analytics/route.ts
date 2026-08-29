@@ -5,7 +5,7 @@ import { getDb } from '@/lib/mongodb'
 import type { AdminSettings, DonationPayment, Material, MaterialPackage, PaymentOrder, SubscriptionRecord, User } from '@/lib/types'
 import type { CheckoutEventRecord } from '@/lib/analytics'
 import type { Coupon, CouponRedemption } from '@/lib/coupons'
-import { isPlusAccount, PLUS_LABEL } from '@/lib/account-tier'
+import { PLUS_TIER, getAccountTypeLabel, isPaidAccount, normalizeAccountType } from '@/lib/account-tier'
 import {
   calcularReceitaRecorrente,
   classificarCobrancaDoPedido,
@@ -551,7 +551,11 @@ export async function GET() {
           userName: user?.name || '',
           userEmail: user?.email || '',
           plan: plan?.nome || sub.planId,
-          type: PLUS_LABEL,
+          // O cargo que a assinatura concede, e não "Plus+" fixo: Quest+ cobra
+          // pelo mesmo caminho e aparecia nesta tabela como se fosse Plus+.
+          // Registro antigo sem `role` e plano já removido do catálogo caem no
+          // Plus+, que era o único cargo recorrente quando foram gravados.
+          type: getAccountTypeLabel(normalizeAccountType(sub.role || plan?.role || PLUS_TIER)),
           cycle: PLAN_CYCLE[sub.billingIntervalMonths] || `${sub.billingIntervalMonths} meses`,
           value: Number(sub.amount || 0),
           purchasedAt: serializeDate(sub.createdAt),
@@ -570,7 +574,9 @@ export async function GET() {
         }
       }),
       ...users
-        .filter((user) => isPlusAccount(user.accountType) && !subscriptions.some((sub) => sub.userId === String(user._id)))
+        // `isPaidAccount`: a concessão manual e a Serial Key também dão Quest+,
+        // e o filtro por Plus+ deixava essas contas fora da tabela inteira.
+        .filter((user) => isPaidAccount(user.accountType) && !subscriptions.some((sub) => sub.userId === String(user._id)))
         .map((user) => {
           const key = serialByUser.get(String(user._id)) as any
           return {
@@ -578,7 +584,7 @@ export async function GET() {
             userName: user.name || '',
             userEmail: user.email || '',
             plan: user.premiumPlanType || user.accountType || 'manual',
-            type: PLUS_LABEL,
+            type: getAccountTypeLabel(normalizeAccountType(user.accountType)),
             cycle: user.premiumPlanType === 'vitalicio' ? 'Vitalício' : 'Manual',
             value: Number(user.premiumPrice || key?.price || 0),
             purchasedAt: serializeDate(user.premiumActivatedAt || user.createdAt),

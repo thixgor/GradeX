@@ -15,7 +15,7 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { PERIODO_OPTIONS, computeCurrentPeriodo, formatPeriodoLabel } from '@/lib/user-periodo'
 import { formatStateLabel } from '@/lib/brazil-states'
-import { isPlusAccount, normalizeAccountType, PLUS_LABEL } from '@/lib/account-tier'
+import { isPlusAccount, normalizeAccountType, PLUS_LABEL, QUEST_LABEL } from '@/lib/account-tier'
 import { useCargos } from '@/hooks/use-cargos'
 import { SeloDeCargo, iconeDoCargo } from '@/components/cargo-badge'
 import { AdminSecurityPanel } from '@/components/admin/admin-security-panel'
@@ -189,13 +189,25 @@ function CycleBreakdown({
   )
 }
 
+/*
+ * Identidade visual por produto, igual à do selo de cargo: Plus+ é a coroa
+ * âmbar, Quest+ é o alvo esmeralda, Manual Clínico é o livro azul. O card lia
+ * só `product === 'plus'`, então a assinatura Quest+ — que mora nos mesmos
+ * campos do usuário — vinha com a coroa e o rótulo do Plus+.
+ */
+const PRODUCT_STYLES = {
+  plus: { Icon: Crown, iconClass: 'text-amber-500', bar: 'bg-gradient-to-r from-yellow-500 to-orange-500' },
+  quest: { Icon: Target, iconClass: 'text-emerald-500', bar: 'bg-emerald-500' },
+  manual_clinico: { Icon: BookOpen, iconClass: 'text-sky-500', bar: 'bg-sky-500' },
+} as const
+
 /**
  * Bloco de uma assinatura no card do usuário: o que comprou, até quando vale e
  * quanto falta. Também aparece para assinatura vencida — é a fila do
  * rebaixamento, e escondê-la esconderia o problema.
  */
 function SubscriptionTile({ info }: { info: AdminSubscriptionInfo }) {
-  const isPlus = info.product === 'plus'
+  const style = PRODUCT_STYLES[info.product] ?? PRODUCT_STYLES.plus
   const state = info.lifetime
     ? { label: 'Vitalício', className: 'bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-300' }
     : info.expired
@@ -208,13 +220,13 @@ function SubscriptionTile({ info }: { info: AdminSubscriptionInfo }) {
     ? 'bg-red-500'
     : info.expiringSoon
       ? 'bg-amber-500'
-      : isPlus ? 'bg-gradient-to-r from-yellow-500 to-orange-500' : 'bg-sky-500'
+      : style.bar
 
   return (
     <div className="rounded-lg border bg-muted/20 p-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-          {isPlus ? <Crown className="h-3.5 w-3.5 text-amber-500" /> : <BookOpen className="h-3.5 w-3.5 text-sky-500" />}
+          <style.Icon className={`h-3.5 w-3.5 ${style.iconClass}`} />
           {info.productLabel}
         </div>
         <span className={`rounded px-2 py-0.5 text-[11px] font-medium ${state.className}`}>
@@ -483,7 +495,10 @@ export default function AdminUsersPage() {
 
     const header = [
       'Nome', 'Email', 'Telefone', 'Cargo', 'Periodo', 'Profissao', 'Estado',
-      'Plus - plano', 'Plus - situacao', 'Plus - termina em', 'Plus - dias restantes',
+      // "Produto" antes do plano: a coluna dizia "Plus" para toda assinatura,
+      // e a planilha do suporte contava Quest+ como assinante da plataforma.
+      'Cargo pago - produto', 'Cargo pago - plano', 'Cargo pago - situacao',
+      'Cargo pago - termina em', 'Cargo pago - dias restantes',
       'Manual Clinico - plano', 'Manual Clinico - situacao', 'Manual Clinico - termina em', 'Manual Clinico - dias restantes',
       'Total gasto (R$)', 'Compras', 'Cadastro', 'Ultimo acesso',
     ]
@@ -503,10 +518,11 @@ export default function AdminUsersPage() {
       formatPeriodoLabel(computeCurrentPeriodo(user.periodoBase, user.periodoBaseRef)),
       user.profession ? PROFESSION_LABELS[user.profession] || user.profession : '',
       user.state || '',
-      user.plusSubscription?.planLabel || '',
-      situation(user.plusSubscription),
-      endDate(user.plusSubscription),
-      daysLeft(user.plusSubscription),
+      user.paidSubscription?.productLabel || '',
+      user.paidSubscription?.planLabel || '',
+      situation(user.paidSubscription),
+      endDate(user.paidSubscription),
+      daysLeft(user.paidSubscription),
       user.manualSubscription?.planLabel || '',
       situation(user.manualSubscription),
       endDate(user.manualSubscription),
@@ -1041,13 +1057,24 @@ export default function AdminUsersPage() {
             </section>
 
             {/* ── Assinaturas ─────────────────────────────────────────────── */}
-            <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-6">
+            {/* Sete cards: o Quest+ é um produto à parte, e somá-lo ao Plus+
+                fazia o painel anunciar assinantes da plataforma inteira que só
+                tinham comprado o Banco de Questões. */}
+            <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
               <StatCard
                 icon={<Crown className="h-4 w-4 text-amber-500" />}
                 label={`${PLUS_LABEL} ativos`}
                 value={insights.plus.active}
                 hint={`${insights.plus.lifetime} vitalício(s) · ${insights.plus.expiringSoon} vencem em ${EXPIRING_SOON_DAYS}d`}
                 onClick={() => applyQuickFilter({ subscription: 'plus_active', sort: 'expiresAt' })}
+                tone="success"
+              />
+              <StatCard
+                icon={<Target className="h-4 w-4 text-emerald-500" />}
+                label={`${QUEST_LABEL} ativos`}
+                value={insights.quest.active}
+                hint={`${insights.quest.lifetime} vitalício(s) · ${insights.quest.expiringSoon} vencem em ${EXPIRING_SOON_DAYS}d`}
+                onClick={() => applyQuickFilter({ subscription: 'quest_active', sort: 'expiresAt' })}
                 tone="success"
               />
               <StatCard
@@ -1068,7 +1095,7 @@ export default function AdminUsersPage() {
               <StatCard
                 icon={<CalendarClock className="h-4 w-4 text-amber-500" />}
                 label="Vencem em 30 dias"
-                value={insights.plus.expiringMonth + insights.manual.expiringMonth}
+                value={insights.plus.expiringMonth + insights.quest.expiringMonth + insights.manual.expiringMonth}
                 hint="Janela de renovação"
                 onClick={() => applyQuickFilter({ expiry: 'expiring30', sort: 'expiresAt' })}
                 tone="warning"
@@ -1076,7 +1103,7 @@ export default function AdminUsersPage() {
               <StatCard
                 icon={<AlertCircle className="h-4 w-4 text-red-500" />}
                 label="Expirados"
-                value={insights.plus.expired + insights.manual.expired}
+                value={insights.plus.expired + insights.quest.expired + insights.manual.expired}
                 hint="Ainda com o acesso — fila do rebaixamento"
                 onClick={() => applyQuickFilter({ expiry: 'expired', sort: 'expiresAt' })}
                 tone="danger"
@@ -1089,7 +1116,7 @@ export default function AdminUsersPage() {
               />
             </section>
 
-            <section className="grid gap-4 lg:grid-cols-3">
+            <section className="grid gap-4 lg:grid-cols-2 xl:grid-cols-4">
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-lg">
@@ -1106,6 +1133,27 @@ export default function AdminUsersPage() {
                     accent="bg-gradient-to-r from-yellow-500 to-orange-500"
                     onSelectCycle={(cycle) =>
                       applyQuickFilter({ subscription: 'plus_active', cycle, sort: 'expiresAt' })
+                    }
+                  />
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <Target className="h-5 w-5 text-emerald-500" />
+                    Planos {QUEST_LABEL}
+                  </CardTitle>
+                  <CardDescription>
+                    {insights.quest.active} assinante(s) ativo(s) por ciclo contratado.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <CycleBreakdown
+                    insights={insights.quest}
+                    accent="bg-emerald-500"
+                    onSelectCycle={(cycle) =>
+                      applyQuickFilter({ subscription: 'quest_active', cycle, sort: 'expiresAt' })
                     }
                   />
                 </CardContent>
@@ -1229,7 +1277,8 @@ export default function AdminUsersPage() {
                     onClick={() => applyQuickFilter({ expiry: 'expiring7', sort: 'expiresAt' })}
                   >
                     <CalendarClock className="mr-2 h-4 w-4 text-amber-500" />
-                    Vencem em 7 dias ({insights.plus.expiringSoon + insights.manual.expiringSoon})
+                    Vencem em 7 dias (
+                    {insights.plus.expiringSoon + insights.quest.expiringSoon + insights.manual.expiringSoon})
                   </Button>
                   <Button
                     variant="outline"
@@ -1237,7 +1286,8 @@ export default function AdminUsersPage() {
                     onClick={() => applyQuickFilter({ expiry: 'expired', sort: 'expiresAt' })}
                   >
                     <AlertCircle className="mr-2 h-4 w-4 text-red-500" />
-                    Expirados ({insights.plus.expired + insights.manual.expired})
+                    Expirados (
+                    {insights.plus.expired + insights.quest.expired + insights.manual.expired})
                   </Button>
                   <Button
                     variant="outline"
@@ -1250,7 +1300,7 @@ export default function AdminUsersPage() {
                   <Button
                     variant="outline"
                     className="justify-start"
-                    onClick={() => applyQuickFilter({ subscription: 'plus_recurring', sort: 'expiresAt' })}
+                    onClick={() => applyQuickFilter({ subscription: 'paid_recurring', sort: 'expiresAt' })}
                   >
                     <Repeat className="mr-2 h-4 w-4 text-blue-500" />
                     Assinaturas recorrentes
@@ -1406,6 +1456,9 @@ export default function AdminUsersPage() {
                       <SelectItem value="plus_recurring">{PLUS_LABEL} — recorrentes</SelectItem>
                       <SelectItem value="plus_expired">{PLUS_LABEL} — expirados</SelectItem>
                       <SelectItem value="plus">{PLUS_LABEL} — histórico completo</SelectItem>
+                      <SelectItem value="quest_active">{QUEST_LABEL} — ativos</SelectItem>
+                      <SelectItem value="quest_expired">{QUEST_LABEL} — expirados</SelectItem>
+                      <SelectItem value="quest">{QUEST_LABEL} — histórico completo</SelectItem>
                       <SelectItem value="manual_active">Manual Clínico — ativos</SelectItem>
                       <SelectItem value="manual_lifetime">Manual Clínico — vitalícios</SelectItem>
                       <SelectItem value="manual_expired">Manual Clínico — expirados</SelectItem>
@@ -1450,6 +1503,7 @@ export default function AdminUsersPage() {
                       <SelectItem value="monitor">Monitores</SelectItem>
                       <SelectItem value="gratuito">Gratuito</SelectItem>
                       <SelectItem value="trial">Trial</SelectItem>
+                      <SelectItem value="quest">{QUEST_LABEL}</SelectItem>
                       <SelectItem value="plus">{PLUS_LABEL}</SelectItem>
                       <SelectItem value="banned">Banidos</SelectItem>
                     </SelectContent>
@@ -1510,10 +1564,18 @@ export default function AdminUsersPage() {
                         )}
                         {user.role !== 'admin' && getAccountTypeBadge(user)}
                         {/* Ciclo contratado direto no título: é a primeira coisa
-                            que o suporte precisa saber ao abrir a conta. */}
-                        {user.plusSubscription?.active && (
-                          <span className="rounded bg-amber-100 px-2 py-1 text-xs font-medium text-amber-800 dark:bg-amber-950 dark:text-amber-300">
-                            {PLUS_LABEL} {user.plusSubscription.planLabel}
+                            que o suporte precisa saber ao abrir a conta. O
+                            produto sai da própria assinatura — escrito fixo,
+                            uma conta Quest+ aparecia aqui como "Plus+". */}
+                        {user.paidSubscription?.active && (
+                          <span
+                            className={
+                              user.paidSubscription.product === 'quest'
+                                ? 'rounded bg-emerald-100 px-2 py-1 text-xs font-medium text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
+                                : 'rounded bg-amber-100 px-2 py-1 text-xs font-medium text-amber-800 dark:bg-amber-950 dark:text-amber-300'
+                            }
+                          >
+                            {user.paidSubscription.productLabel} {user.paidSubscription.planLabel}
                           </span>
                         )}
                         {user.manualSubscription?.active && (
@@ -1566,9 +1628,9 @@ export default function AdminUsersPage() {
                     </div>
                   )}
 
-                  {(user.plusSubscription || user.manualSubscription) && (
+                  {(user.paidSubscription || user.manualSubscription) && (
                     <div className="mb-4 grid gap-3 sm:grid-cols-2">
-                      {user.plusSubscription && <SubscriptionTile info={user.plusSubscription} />}
+                      {user.paidSubscription && <SubscriptionTile info={user.paidSubscription} />}
                       {user.manualSubscription && <SubscriptionTile info={user.manualSubscription} />}
                     </div>
                   )}
