@@ -40,11 +40,22 @@ export async function uploadFlashcardImage(file: File): Promise<string> {
     : Math.random().toString(36).slice(2)
   const pathname = `flashcards/${Date.now()}-${id}.${safeExtension(file)}`
 
-  const blob = await upload(pathname, file, {
-    access: 'public',
-    contentType: file.type,
-    handleUploadUrl: '/api/flashcards/upload',
-  })
-
-  return blob.url
+  try {
+    const blob = await upload(pathname, file, {
+      access: 'public',
+      contentType: file.type,
+      handleUploadUrl: '/api/flashcards/upload',
+    })
+    return blob.url
+  } catch (error) {
+    // Quando a API do Blob recusa o envio ela responde sem cabeçalho de CORS, e
+    // o navegador troca a mensagem real por "blocked by CORS policy" — que não
+    // diz nada a quem está só tentando montar um baralho. Vale mais dizer o que
+    // fazer do que repassar isso.
+    const raw = error instanceof Error ? error.message : ''
+    if (!raw || /failed to fetch|networkerror|load failed|cors/i.test(raw)) {
+      throw new Error('O servidor de imagens recusou o envio. Recarregue a página e tente de novo; se persistir, avise o suporte.')
+    }
+    throw new Error(raw)
+  }
 }
