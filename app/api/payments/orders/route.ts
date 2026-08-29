@@ -11,6 +11,7 @@ import { getRequestAnalyticsMeta, recordOrderCheckoutEvent } from '@/lib/analyti
 import { DEFAULT_PAYMENT_METHODS } from '@/lib/payment-methods'
 import { chargeMetadata, computeCheckoutCharge, getFeePolicy } from '@/lib/payments/fees'
 import { resolveCheckoutCpf } from '@/lib/payments/checkout-identity'
+import { minutosDesde, pagamentoEmCartaoJaAberto } from '@/lib/payments/duplicate-guard'
 import {
   CouponError,
   couponAnalyticsMetadata,
@@ -238,6 +239,22 @@ export async function POST(request: NextRequest) {
   })
   const baseAmount = charge.baseAmount
   amount = charge.totalAmount
+
+  // Trava contra cobrança dupla: outra tentativa em cartão do mesmo usuário
+  // ainda em análise/aguardando não pode virar um segundo pagamento aberto.
+  if (data.cardToken) {
+    const aberto = await pagamentoEmCartaoJaAberto(db, session!.userId)
+    if (aberto) {
+      return NextResponse.json(
+        {
+          error: `Você já tem um pagamento em cartão em análise, iniciado há ${minutosDesde(aberto.createdAt)} min. Aguarde o resultado antes de tentar com outro cartão — evita cobrança em dobro se os dois forem aprovados.`,
+          duplicatePayment: true,
+          existingOrderId: aberto.orderId,
+        },
+        { status: 409 },
+      )
+    }
+  }
 
   // Cria order interna primeiro (para usar o _id como external_reference)
   const now = new Date()
