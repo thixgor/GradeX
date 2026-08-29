@@ -354,11 +354,20 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
     document.head.appendChild(s)
   }, [props.publicKey])
 
-  // Polling de status para Pix/boleto
+  /**
+   * Polling de status.
+   *
+   * Pix e boleto são assíncronos por natureza — sempre passam por aqui. Cartão
+   * normalmente resolve na hora (approved/rejected já vem na resposta do
+   * submit, e a condição acima corta o polling). Mas quando o cartão volta
+   * `pending`/`in_process` — antifraude do Mercado Pago em revisão manual, que
+   * pode levar até 2 dias úteis — o polling É necessário: sem ele a tela ficava
+   * presa no spinner "Em análise" para sempre, mesmo depois do MP decidir do
+   * lado deles. O comprador saía sem saber se a compra tinha ido ou não.
+   */
   useEffect(() => {
     if (!order || !order.orderId) return
     if (order.status === 'approved' || order.status === 'rejected' || order.status === 'cancelled' || order.status === 'expired') return
-    if (method === 'card') return // cartão é síncrono
 
     const interval = setInterval(async () => {
       try {
@@ -1187,12 +1196,25 @@ function ResultPanel({ order, method, onReset }: { order: CheckoutOrderResponse;
     )
   }
 
+  /**
+   * `pending_review_manual` é o antifraude do Mercado Pago segurando o cartão
+   * para revisão — do lado deles, não nosso. Chega em qualquer cartão, mesmo
+   * sem nada errado com ele; o gatilho é o perfil da transação, não um erro.
+   * "Processando..." dava a entender que era questão de segundos; a revisão
+   * deles pode levar até 2 dias úteis, e a tela agora atualiza sozinha (via
+   * polling) quando resolver — sem o comprador precisar pagar de novo.
+   */
+  const detalhe =
+    order.statusDetail === 'pending_review_manual'
+      ? 'Seu cartão está em análise de segurança do Mercado Pago — pode levar até 2 dias úteis. Não é preciso pagar de novo: esta tela atualiza sozinha assim que sair o resultado.'
+      : order.statusDetail || 'Processando...'
+
   // Generic pending
   return (
     <div style={{ ...glassCard, padding: '28px', textAlign: 'center' }}>
       <Loader2 size={36} style={{ color: 'hsl(var(--primary))', margin: '0 auto 12px', animation: 'spin 1s linear infinite' }} />
       <h3 style={{ fontSize: '17px', fontWeight: 600, color: 'hsl(var(--foreground))', marginBottom: '6px' }}>{STATUS_LABELS[order.status]}</h3>
-      <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))' }}>{order.statusDetail || 'Processando...'}</p>
+      <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))' }}>{detalhe}</p>
     </div>
   )
 }
