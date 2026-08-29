@@ -138,8 +138,11 @@ prova alcança essa turma?" — painel, calendário do aluno, consulta ao banco
 lembretes passam por ele. Uma prova visível no calendário e invisível para o
 disparo do lembrete seria o pior defeito possível aqui.
 
-Na importação por imagem, a linha vira prova única quando a categoria é TPI /
-teste de progresso ou quando a célula de período diz "todos". Tabela que LISTA
+Na importação por imagem, a linha vira prova única em três situações: a
+categoria é TPI / teste de progresso, a célula de período diz "todos", **ou** a
+linha cobre o curso inteiro na mesma data e horário. A terceira é a que não
+depende de palavra nenhuma — reconhecer o texto só funciona quando a
+transcrição veio assim, e ela pode listar as turmas uma a uma. Tabela que LISTA
 os períodos continua virando uma avaliação por turma — ali cada uma costuma ter
 horário próprio. A coluna **Chamada** (1ª, 2ª, PROUNI/FIES) entra no título, que
 é o que distingue as reaplicações da mesma prova.

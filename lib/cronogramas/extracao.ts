@@ -580,9 +580,24 @@ export function expandirLinhas(linhas: LinhaExtraida[], opcoes: OpcoesExpansao):
      * continua virando uma avaliação por turma — ali cada uma costuma ter
      * horário próprio, como a N3 de manhã e de tarde.
      */
-    const cursoInteiro = ehDoCursoInteiro(linha) || dizTodosOsPeriodos(linha.periodos)
+    let cursoInteiro = ehDoCursoInteiro(linha) || dizTodosOsPeriodos(linha.periodos)
 
     let periodos = cursoInteiro ? [1] : interpretarPeriodos(linha.periodos, totalDoCurso)
+
+    /**
+     * A rede que não depende de palavra nenhuma.
+     *
+     * Reconhecer "TPI" ou "todos os períodos" no texto só funciona quando o
+     * texto veio assim — e a transcrição pode listar as turmas uma a uma, ou
+     * chamar a prova de outro nome. Mas o FATO continua visível: uma linha
+     * cuja mesma prova, no mesmo dia e horário, cobre o curso inteiro é uma
+     * prova só. É isso que decide aqui, e não como a tabela escolheu escrever.
+     */
+    if (!cursoInteiro && periodos.length >= totalDoCurso && periodos[0] === 1) {
+      cursoInteiro = true
+      periodos = [1]
+      avisosDaLinha.push('A linha cobre o curso inteiro — virou uma prova única.')
+    }
     if (!cursoInteiro && periodos.length === 0) {
       const doEixo = periodoDoEixo(linha.eixo)
       if (doEixo) {
@@ -594,7 +609,7 @@ export function expandirLinhas(linhas: LinhaExtraida[], opcoes: OpcoesExpansao):
       periodos = [1]
       avisosDaLinha.push('Não identifiquei o período — confira antes de aprovar.')
     }
-    if (cursoInteiro) {
+    if (cursoInteiro && avisosDaLinha.length === 0) {
       avisosDaLinha.push('Prova única para todos os períodos do curso.')
     }
 

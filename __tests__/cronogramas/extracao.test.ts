@@ -343,6 +343,25 @@ describe('prova única do curso inteiro', () => {
     expect(propostas[0].todosOsPeriodos).toBe(true)
   })
 
+  it('vira prova única mesmo quando a transcrição lista as turmas uma a uma', () => {
+    // A rede que não depende de palavra: se a MESMA prova, no mesmo dia e
+    // horário, cobre o curso inteiro, é uma prova só — não importa se a
+    // tabela escreveu "TPI", "todos os períodos" ou listou os oito.
+    const propostas = expandir([
+      {
+        curso: 'Medicina',
+        categoria: 'Teste institucional',
+        data: '21/09',
+        horario: '14h – 18h',
+        periodos: ['1º', '2º', '3º', '4º', '5º', '6º', '7º', '8º'],
+      },
+    ])
+
+    expect(propostas).toHaveLength(1)
+    expect(propostas[0].todosOsPeriodos).toBe(true)
+    expect(propostas[0].avisos.some(aviso => aviso.includes('curso inteiro'))).toBe(true)
+  })
+
   it('tabela que LISTA períodos continua virando uma avaliação por turma', () => {
     // A N3 tem horário próprio de manhã e de tarde: juntar tudo numa prova só
     // perderia a diferença de horário entre as turmas.

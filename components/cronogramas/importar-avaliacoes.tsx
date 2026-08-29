@@ -264,9 +264,27 @@ export function ImportarAvaliacoes({
   }, [existentes])
 
   function ajustar(id: string, mudancas: Partial<PropostaRevisao>) {
-    setPropostas(anterior =>
-      anterior.map(item => (item.id === id ? { ...item, ...mudancas } : item)),
-    )
+    setPropostas(anterior => {
+      const atualizadas = anterior.map(item => (item.id === id ? { ...item, ...mudancas } : item))
+      if (mudancas.todosOsPeriodos !== true) return atualizadas
+
+      // Virou prova única: as cópias da MESMA prova em outras turmas saem da
+      // seleção. Sem isso, marcar "todos os períodos" numa linha e aprovar
+      // criaria a prova do curso inteiro e mais sete iguais ao lado dela.
+      const unica = atualizadas.find(item => item.id === id)
+      if (!unica) return atualizadas
+
+      return atualizadas.map(item =>
+        item.id !== id &&
+        item.titulo === unica.titulo &&
+        item.data === unica.data &&
+        (item.hora ?? '') === (unica.hora ?? '') &&
+        item.secao === unica.secao &&
+        !item.todosOsPeriodos
+          ? { ...item, selecionada: false }
+          : item,
+      )
+    })
   }
 
   /**
