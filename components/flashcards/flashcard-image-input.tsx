@@ -4,6 +4,11 @@ import { useRef, useState } from 'react'
 import Image from 'next/image'
 import { ImagePlus, X, Loader2, Link as LinkIcon, Upload } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import {
+  FLASHCARD_IMAGE_ACCEPT,
+  uploadFlashcardImage,
+  validateFlashcardImage,
+} from '@/lib/flashcard-image-upload'
 
 interface FlashcardImageInputProps {
   value?: string
@@ -23,23 +28,15 @@ export function FlashcardImageInput({ value, onChange, className, label = 'Adici
 
   async function handleSelect(file: File) {
     if (!file) return
-    if (!file.type.startsWith('image/')) {
-      setError('Selecione uma imagem')
-      return
-    }
-    if (file.size > 8 * 1024 * 1024) {
-      setError('Imagem muito grande (max 8 MB)')
+    const invalid = validateFlashcardImage(file)
+    if (invalid) {
+      setError(invalid)
       return
     }
     setError(null)
     setUploading(true)
     try {
-      const fd = new FormData()
-      fd.append('file', file)
-      const res = await fetch('/api/upload', { method: 'POST', body: fd })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data?.error || 'Falha no upload')
-      onChange(data.url)
+      onChange(await uploadFlashcardImage(file))
     } catch (err: any) {
       setError(err?.message || 'Erro ao enviar imagem')
     } finally {
@@ -122,7 +119,7 @@ export function FlashcardImageInput({ value, onChange, className, label = 'Adici
           <input
             ref={inputRef}
             type="file"
-            accept="image/*"
+            accept={FLASHCARD_IMAGE_ACCEPT}
             className="hidden"
             onChange={(e) => {
               const file = e.target.files?.[0]

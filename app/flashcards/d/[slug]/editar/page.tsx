@@ -25,6 +25,8 @@ import {
   MessageSquare,
   Download,
   Shuffle,
+  Image as ImageIcon,
+  Copy,
 } from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
@@ -33,8 +35,10 @@ import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { FlashcardImageInput } from '@/components/flashcards/flashcard-image-input'
+import { FlashcardBulkImages, type BulkImageItem } from '@/components/flashcards/flashcard-bulk-images'
 import { PricingEventSelector } from '@/components/pricing-events/PricingEventSelector'
 import { cn } from '@/lib/utils'
+import { buildImportCards, type ImageMode, type ImportFormat } from '@/lib/flashcard-import'
 import type { FlashcardManualCard, FlashcardManualDeck } from '@/lib/types'
 
 const VALID_GROUPS = ['gratuito', 'trial', 'essential', 'premium', 'monitor'] as const
@@ -684,11 +688,24 @@ function CardEditor({
   )
 }
 
+/**
+ * Diálogo de importação.
+ *
+ * A parte de texto sempre funcionou: o LLM devolve o Markdown de frente/verso
+ * e ele é colado aqui. O que faltava era a imagem — cada uma precisava ser
+ * hospedada fora e ter a URL colada cartão por cartão. Agora as imagens sobem
+ * em lote e são distribuídas pela ordem (imagem 1 na frente do cartão 1,
+ * imagem 2 no verso do cartão 1, e assim por diante), com um preview mostrando
+ * onde cada uma caiu antes de gravar qualquer coisa.
+ */
 function ImportDialog({ slug, onClose, onImported }: { slug: string; onClose: () => void; onImported: (count: number) => void }) {
-  const [format, setFormat] = useState<'json' | 'csv' | 'markdown'>('markdown')
+  const [format, setFormat] = useState<ImportFormat>('markdown')
   const [payload, setPayload] = useState('')
+  const [images, setImages] = useState<BulkImageItem[]>([])
+  const [imageMode, setImageMode] = useState<ImageMode>('alternate')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [promptCopied, setPromptCopied] = useState(false)
 
   const sampleJson = `[
   {"front": {"text": "Pergunta?"}, "back": {"text": "Resposta"}, "comment": "Explicação extra"},
@@ -711,18 +728,95 @@ Ocorre nos cloroplastos, especificamente nos tilacóides.
 ---
 
 ## Frente
-Qual é a capital do Brasil?
+Qual estrutura está indicada?
 
 ## Verso
-Brasília
+Núcleo da célula
 
 ---
 
 ## Frente
 Defina mitose.
+{{img5}}
 
 ## Verso
-Divisão celular que origina duas células-filhas geneticamente idênticas à célula-mãe.`
+Divisão celular que origina duas células-filhas geneticamente idênticas.`
+
+  const uploadedUrls = useMemo(
+    () => images.filter(i => i.status === 'done' && i.url).map(i => i.url as string),
+    [images],
+  )
+  const uploading = images.some(i => i.status === 'uploading')
+
+  // Mesma função que a rota usa no servidor: o que aparece no preview é
+  // exatamente o que vai ser gravado.
+  const preview = useMemo(() => {
+    try {
+      return {
+        result: buildImportCards({ format, payload, images: uploadedUrls, imageMode }),
+        parseError: null as string | null,
+      }
+    } catch (err: any) {
+      return { result: null, parseError: err?.message || 'Não consegui ler esse conteúdo' }
+    }
+  }, [format, payload, uploadedUrls, imageMode])
+
+  const cards = preview.result?.cards || []
+
+  // A miniatura de cada imagem mostra para onde ela vai. `uploadedUrls` pula
+  // as que ainda estão subindo, então o índice do preview precisa ser
+  // recalculado sobre a lista completa.
+  const describeSlot = useCallback((index: number) => {
+    const item = images[index]
+    if (!item || item.status !== 'done') return undefined
+    const uploadedIndex = images.slice(0, index).filter(i => i.status === 'done' && i.url).length
+    const target = preview.result?.assignments[uploadedIndex]
+    if (!target) return 'sem cartão'
+    return `Cartão ${target.cardIndex + 1} · ${target.side === 'front' ? 'frente' : 'verso'}`
+  }, [images, preview])
+
+  // O usuário já gera o Markdown num LLM; este é o texto que faz o LLM
+  // devolver exatamente o formato que a tela entende, marcadores inclusive.
+  const aiPrompt = `Transforme o conteúdo abaixo (ou as imagens que eu enviar) em flashcards no formato de importação do Domine Aqui.
+
+Regras do formato:
+- Cada cartão usa "## Frente", "## Verso" e, opcionalmente, "## Comentário".
+- Separe um cartão do outro com uma linha contendo apenas ---
+- Não escreva mais nada fora desses blocos: nada de introdução, numeração ou conclusão.
+- Se eu mandar imagens, elas entram na ordem: imagem 1 na frente do cartão 1, imagem 2 no verso do cartão 1, imagem 3 na frente do cartão 2, e assim por diante. Nesse caso deixe o texto do lado correspondente vazio (só o cabeçalho) ou escreva um enunciado curto.
+- Se alguma imagem precisar ir para um lugar fora dessa ordem, escreva {{img5}} (o número é a posição da imagem na lista que eu enviei) dentro da Frente ou do Verso daquele cartão.
+
+Exemplo:
+
+## Frente
+O que é fotossíntese?
+
+## Verso
+Processo pelo qual plantas convertem luz solar em glicose usando CO₂ e água.
+
+## Comentário
+Ocorre nos cloroplastos.
+
+---
+
+## Frente
+Qual estrutura está indicada?
+
+## Verso
+Núcleo da célula
+
+Conteúdo:
+`
+
+  async function copyPrompt() {
+    try {
+      await navigator.clipboard.writeText(aiPrompt)
+      setPromptCopied(true)
+      setTimeout(() => setPromptCopied(false), 2000)
+    } catch {
+      setError('Não consegui copiar. Selecione o texto do exemplo manualmente.')
+    }
+  }
 
   async function submit() {
     setBusy(true); setError(null)
@@ -730,7 +824,7 @@ Divisão celular que origina duas células-filhas geneticamente idênticas à c�
       const res = await fetch(`/api/flashcards/manual/${encodeURIComponent(slug)}/import`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ format, payload }),
+        body: JSON.stringify({ format, payload, images: uploadedUrls, imageMode }),
       })
       const json = await res.json()
       if (!res.ok) throw new Error(json.error || 'Falha ao importar')
@@ -742,26 +836,160 @@ Divisão celular que origina duas células-filhas geneticamente idênticas à c�
   }
 
   const sample = format === 'json' ? sampleJson : format === 'csv' ? sampleCsv : sampleMarkdown
+  const canSubmit = !busy && !uploading && cards.length > 0
+
+  const formatTabs: Array<{ id: ImportFormat; label: string }> = [
+    { id: 'markdown', label: 'Markdown (recomendado)' },
+    { id: 'images', label: 'Só imagens' },
+    { id: 'json', label: 'JSON' },
+    { id: 'csv', label: 'CSV' },
+  ]
+
+  const modeTabs: Array<{ id: ImageMode; label: string; hint: string }> = [
+    { id: 'alternate', label: 'Frente e verso alternados', hint: '1 → frente do cartão 1, 2 → verso do cartão 1, 3 → frente do cartão 2...' },
+    { id: 'front', label: 'Uma por frente', hint: 'Cada imagem vai para a frente de um cartão, na ordem.' },
+    { id: 'back', label: 'Uma por verso', hint: 'Cada imagem vai para o verso de um cartão, na ordem.' },
+    { id: 'none', label: 'Só pelos marcadores', hint: 'Nada é distribuído automaticamente: valem apenas os {{img1}} escritos no texto.' },
+  ]
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-end md:items-center justify-center" onClick={onClose}>
       <div className="bg-white dark:bg-slate-900 w-full md:max-w-2xl md:rounded-3xl rounded-t-3xl border border-slate-200 dark:border-white/10 p-6 max-h-[90vh] overflow-auto" onClick={e => e.stopPropagation()}>
-        <h3 className="text-lg font-semibold mb-1">Importar cartões</h3>
-        <p className="text-sm text-slate-500 mb-4">Cole o conteúdo no formato escolhido, vários cartões de uma vez.</p>
-
-        <div className="flex gap-2 mb-3 flex-wrap">
-          <button onClick={() => setFormat('markdown')} className={cn('rounded-full px-3 py-1 text-xs font-medium border', format === 'markdown' ? 'border-violet-500 bg-violet-500/10 text-violet-700 dark:text-violet-200' : 'border-slate-200 dark:border-white/10 text-slate-500')}>Markdown (recomendado)</button>
-          <button onClick={() => setFormat('json')} className={cn('rounded-full px-3 py-1 text-xs font-medium border', format === 'json' ? 'border-violet-500 bg-violet-500/10 text-violet-700 dark:text-violet-200' : 'border-slate-200 dark:border-white/10 text-slate-500')}>JSON</button>
-          <button onClick={() => setFormat('csv')} className={cn('rounded-full px-3 py-1 text-xs font-medium border', format === 'csv' ? 'border-violet-500 bg-violet-500/10 text-violet-700 dark:text-violet-200' : 'border-slate-200 dark:border-white/10 text-slate-500')}>CSV</button>
+        <div className="flex items-start justify-between gap-3 mb-4">
+          <div>
+            <h3 className="text-lg font-semibold mb-1">Importar cartões</h3>
+            <p className="text-sm text-slate-500">
+              Cole o texto, mande as imagens na ordem e confira o preview antes de gravar.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={copyPrompt}
+            className="shrink-0 inline-flex items-center gap-1 rounded-full border border-violet-300 dark:border-violet-400/40 px-2.5 py-1 text-[11px] font-medium text-violet-700 dark:text-violet-200 hover:bg-violet-500/10 transition"
+            title="Copia um prompt pronto para o ChatGPT/Claude devolver o Markdown já neste formato"
+          >
+            <Copy className="h-3 w-3" /> {promptCopied ? 'Copiado!' : 'Prompt para IA'}
+          </button>
         </div>
 
-        <Textarea
-          rows={12}
-          value={payload}
-          onChange={e => setPayload(e.target.value)}
-          placeholder={sample}
-          className="font-mono text-xs"
-        />
+        <div className="flex gap-2 mb-3 flex-wrap">
+          {formatTabs.map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setFormat(tab.id)}
+              className={cn(
+                'rounded-full px-3 py-1 text-xs font-medium border',
+                format === tab.id
+                  ? 'border-violet-500 bg-violet-500/10 text-violet-700 dark:text-violet-200'
+                  : 'border-slate-200 dark:border-white/10 text-slate-500',
+              )}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {format !== 'images' && (
+          <Textarea
+            rows={10}
+            value={payload}
+            onChange={e => setPayload(e.target.value)}
+            placeholder={sample}
+            className="font-mono text-xs"
+          />
+        )}
+
+        <div className={cn('rounded-2xl border border-slate-200 dark:border-white/10 p-3', format === 'images' ? 'mt-0' : 'mt-4')}>
+          <div className="flex items-center gap-1.5 mb-2">
+            <ImageIcon className="h-4 w-4 text-violet-500" />
+            <Label className="text-sm">Imagens dos cartões</Label>
+          </div>
+
+          <FlashcardBulkImages
+            items={images}
+            onChange={setImages}
+            describeSlot={describeSlot}
+            disabled={busy}
+          />
+
+          {images.length > 0 && (
+            <div className="mt-3">
+              <Label className="text-xs text-slate-500">Como distribuir</Label>
+              <div className="mt-1.5 flex flex-wrap gap-1.5">
+                {modeTabs.map(tab => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setImageMode(tab.id)}
+                    className={cn(
+                      'rounded-full px-2.5 py-1 text-[11px] font-medium border',
+                      imageMode === tab.id
+                        ? 'border-violet-500 bg-violet-500/10 text-violet-700 dark:text-violet-200'
+                        : 'border-slate-200 dark:border-white/10 text-slate-500',
+                    )}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+              <p className="mt-1.5 text-[11px] text-slate-500">
+                {modeTabs.find(t => t.id === imageMode)?.hint}
+              </p>
+            </div>
+          )}
+        </div>
+
+        {(payload.trim() || uploadedUrls.length > 0) && (
+          <div className="mt-4 rounded-2xl border border-slate-200 dark:border-white/10 p-3">
+            <div className="flex items-center justify-between mb-2">
+              <Label className="text-sm">Preview</Label>
+              <span className="text-xs text-slate-500">
+                {cards.length} {cards.length === 1 ? 'cartão' : 'cartões'}
+                {(preview.result?.leftoverImages || 0) > 0 && (
+                  <span className="ml-1 text-amber-600 dark:text-amber-400">
+                    · {preview.result?.leftoverImages} imagem(ns) sem cartão
+                  </span>
+                )}
+              </span>
+            </div>
+
+            {preview.parseError && <p className="text-xs text-rose-500">{preview.parseError}</p>}
+
+            {!preview.parseError && cards.length === 0 && (
+              <p className="text-xs text-slate-500">Nada para importar ainda.</p>
+            )}
+
+            <ul className="space-y-1.5 max-h-56 overflow-auto">
+              {cards.slice(0, 40).map((card, i) => (
+                <li
+                  key={i}
+                  className="flex items-center gap-2 rounded-xl bg-slate-50 dark:bg-white/5 px-2 py-1.5 text-xs"
+                >
+                  <span className="shrink-0 rounded-md bg-violet-500/10 px-1.5 py-0.5 font-bold text-violet-700 dark:text-violet-200">
+                    {i + 1}
+                  </span>
+                  <span className="flex-1 min-w-0 truncate text-slate-600 dark:text-slate-300">
+                    {card.front.text.trim() || (card.front.image ? '(só imagem)' : '(frente vazia)')}
+                    <span className="mx-1 text-slate-400">→</span>
+                    {card.back.text.trim() || (card.back.image ? '(só imagem)' : '(verso vazio)')}
+                  </span>
+                  <span className="shrink-0 flex gap-1">
+                    {card.front.image && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={card.front.image} alt="" className="h-7 w-7 rounded object-cover" />
+                    )}
+                    {card.back.image && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={card.back.image} alt="" className="h-7 w-7 rounded object-cover ring-1 ring-violet-300" />
+                    )}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            {cards.length > 40 && (
+              <p className="mt-1.5 text-[11px] text-slate-500">... e mais {cards.length - 40} cartões.</p>
+            )}
+          </div>
+        )}
 
         {error && <p className="mt-2 text-xs text-rose-500">{error}</p>}
 
@@ -772,18 +1000,28 @@ Divisão celular que origina duas células-filhas geneticamente idênticas à c�
               <p>Cada cartão usa <code>## Frente</code>, <code>## Verso</code> e opcionalmente <code>## Comentário</code>. Separe os cartões com <code>---</code>.</p>
             </>
           )}
+          {format === 'images' && (
+            <p><strong>Só imagens:</strong> os cartões saem direto das imagens enviadas, sem texto nenhum. No modo alternado, cada par vira um cartão (frente e verso).</p>
+          )}
           {format === 'json' && (
             <p><strong>Formato JSON:</strong> array de objetos com <code>front.text</code>, <code>back.text</code>, <code>comment</code>, <code>kind</code> ('standard' ou 'hidden_word'), <code>hiddenWord</code>.</p>
           )}
           {format === 'csv' && (
             <p><strong>Formato CSV:</strong> cabeçalhos: <code>front, back, comment, hiddenWord, hint</code> (ou <code>frente, verso, comentario, palavra_oculta, dica</code>).</p>
           )}
+          {format !== 'images' && (
+            <p>
+              <strong>Fixar uma imagem específica:</strong> escreva <code>{'{{img3}}'}</code> (ou <code>![](img3)</code>) dentro da frente ou do verso para usar a
+              3ª imagem enviada ali. As que não forem citadas continuam entrando pela ordem.
+            </p>
+          )}
         </div>
 
         <div className="mt-5 flex justify-end gap-2">
           <Button variant="ghost" onClick={onClose}>Cancelar</Button>
-          <Button onClick={submit} disabled={busy || !payload.trim()}>
-            {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />} Importar
+          <Button onClick={submit} disabled={!canSubmit}>
+            {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+            {uploading ? 'Enviando imagens...' : `Importar${cards.length ? ` ${cards.length}` : ''}`}
           </Button>
         </div>
       </div>
