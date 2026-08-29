@@ -4144,6 +4144,25 @@ body.has-guest-notice {
   --rx-barra: 2.875rem;
 }
 
+/* --------------------------------------------------------------------------
+   Onde a seção troca de layout: `xl`, não `lg`.
+
+   A barra lateral do AppShell encaixa a partir de `lg` e come 280 px do
+   corpo. Uma janela de 1024 px — que é o tablet deitado, e o iPad é o
+   aparelho em que esta seção mais é aberta — passa a ter 712 px úteis
+   exatamente no ponto em que `lg:` mandava abrir duas colunas. A
+   radiografia caía para uns 400 px de coluna com a lista espremida ao
+   lado: as duas coisas ilegíveis ao mesmo tempo.
+
+   Por isso, em toda a `/manual-clinico/radiologia`, o desdobramento em
+   colunas e as grades de três ou quatro cartões vivem em `xl:` para
+   cima. Entre 768 e 1279 px o filme fica em coluna única, com a largura
+   inteira do corpo — que é o que uma imagem para ser lida pede. As
+   classes `md:` que aparecem por lá são o oposto: o que era tratamento de
+   celular (sangria de borda a borda, listas de uma coluna) e não deveria
+   sobreviver até o tablet.
+   -------------------------------------------------------------------------- */
+
 /* Barra fixa principal: encosta logo abaixo dos botões do shell. */
 .rx-fixo-topo {
   top: var(--rx-flutuantes);
@@ -4164,10 +4183,15 @@ body.has-guest-notice {
   scroll-margin-top: calc(var(--rx-flutuantes) + var(--rx-barra) + 0.75rem);
 }
 
-/* Topo de cabeçalho editorial: o primeiro link não pode nascer sob o menu. */
+/* Topo de cabeçalho editorial: o primeiro link não pode nascer sob o menu.
+   O fallback do `var()` é o que faz a classe valer também fora de `.rx` — o
+   índice da tomografia e a landing da seção não usam o escopo do
+   negatoscópio, mas o shell solta os mesmos botões flutuantes por cima
+   deles. Sem o fallback a declaração inteira seria inválida ali e a trilha
+   de volta continuaria escondida atrás do menu no celular e no tablet. */
 @media (max-width: 1023.98px) {
   .rx-abaixo-flutuantes {
-    padding-top: var(--rx-flutuantes);
+    padding-top: var(--rx-flutuantes, calc(3.5rem + env(safe-area-inset-top)));
   }
 }
 

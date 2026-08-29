@@ -73,7 +73,7 @@ export function CatalogoQuizClinico({
   return (
     <div className="rx surface-page min-h-screen">
       <header className="rx-painel rx-grade rx-varredura relative overflow-hidden border-b border-sky-400/15">
-        <div className="container relative mx-auto max-w-6xl px-4 pb-7 pt-6">
+        <div className="rx-abaixo-flutuantes container relative mx-auto max-w-6xl px-4 pb-7 pt-6">
           <Link
             href="/manual-clinico/radiologia/raio-x/casos"
             className="-m-2 inline-flex items-center gap-1.5 rounded-lg p-2 text-sm text-sky-100/60 transition hover:text-sky-100"
@@ -149,7 +149,7 @@ export function CatalogoQuizClinico({
             </p>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {capitulos.map((quiz, indice) => (
               <CardQuiz
                 key={quiz.slug}

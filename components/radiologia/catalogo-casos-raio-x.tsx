@@ -131,7 +131,7 @@ export function CatalogoCasosRaioX({
             <ArrowLeft className="h-4 w-4" /> Atlas de Raio-X
           </Link>
 
-          <div className="mt-5 grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-end lg:gap-10">
+          <div className="mt-5 grid gap-6 xl:grid-cols-[minmax(0,1fr)_340px] xl:items-end xl:gap-10">
             <div>
               <p className="editorial-mark !text-sky-300/80 [&::before]:bg-sky-300/60">Raio-X de tórax · prática guiada</p>
               <h1 className="mt-2 max-w-3xl font-heading text-3xl font-semibold tracking-tight sm:text-[2.6rem] sm:leading-[1.1]">
@@ -241,7 +241,7 @@ export function CatalogoCasosRaioX({
             <h2 className="mt-1.5 font-heading text-xl font-semibold tracking-tight sm:text-2xl">
               Sete capítulos, uma pergunta cada
             </h2>
-            <div className="mt-4 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-4 grid gap-2.5 sm:grid-cols-2 xl:grid-cols-3">
               {grupos.map(({ guia, itens }, indice) => {
                 const Icone = ICONES[guia.id]
                 const cor = PALETA[guia.id]
@@ -359,7 +359,7 @@ function Colecao({ casos, visao, detalhes }: { casos: CasoRaioX[]; visao: Visao;
     )
   }
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
       {casos.map((caso, indice) => (
         <CardCaso key={caso.slug} caso={caso} indice={indice} detalhe={detalhes[caso.slug]} />
       ))}
@@ -372,7 +372,7 @@ function GuiaCapitulo({ guia }: { guia: GuiaCategoriaCasoRaioX }) {
   const cor = PALETA[guia.id]
   return (
     <section className={`mb-8 overflow-hidden rounded-2xl border bg-card ${cor.borda}`}>
-      <div className="grid gap-5 p-5 lg:grid-cols-[0.85fr_1.15fr] lg:p-6">
+      <div className="grid gap-5 p-5 xl:grid-cols-[0.85fr_1.15fr] xl:p-6">
         <div>
           <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-widest ${cor.chip}`}>
             <Icone className="h-3 w-3" /> Pergunta de abertura

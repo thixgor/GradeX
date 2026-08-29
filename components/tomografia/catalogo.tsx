@@ -61,7 +61,7 @@ export function CatalogoTomografia({ catalogo }: { catalogo: CatalogoTC }) {
           }}
         />
 
-        <div className="container relative z-10 mx-auto max-w-6xl px-4 pb-10 pt-8">
+        <div className="rx-abaixo-flutuantes container relative z-10 mx-auto max-w-6xl px-4 pb-10 pt-8">
           <Link
             href="/manual-clinico/radiologia"
             className="-m-3 mb-3 inline-flex items-center gap-1.5 rounded-lg p-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
@@ -353,7 +353,7 @@ function Fundamentos() {
         </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-4">
         {HU.map((h) => (
           <div key={h.t} className="overflow-hidden rounded-lg border border-border">
             <div className={`px-3 py-4 text-center font-mono text-sm font-bold ${h.cor}`}>{h.v}</div>
@@ -362,7 +362,7 @@ function Fundamentos() {
         ))}
       </div>
 
-      <div className="mt-6 grid gap-3 sm:grid-cols-3">
+      <div className="mt-6 grid gap-3 md:grid-cols-3">
         <div className="rounded-xl border border-border bg-muted/30 p-4">
           <Sparkles className="mb-2 h-4 w-4 text-primary" />
           <p className="text-sm font-bold">Por que a janela muda tudo</p>
