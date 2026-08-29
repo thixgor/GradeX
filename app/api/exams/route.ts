@@ -11,7 +11,7 @@ import {
   type ContextoDePermissoes,
 } from '@/lib/plan-entitlements-server'
 import { ObjectId } from 'mongodb'
-import { prepararProvaParaEntrega } from '@/lib/provas/sanitizar-prova'
+import { podeVerGabarito, prepararProvaParaEntrega } from '@/lib/provas/sanitizar-prova'
 
 export const dynamic = 'force-dynamic'
 
@@ -122,7 +122,33 @@ export async function GET(request: NextRequest) {
         ? { projection: projecao }
         : {}
 
-    const cursor = examsCollection.find(query, projecaoEscolhida).sort({ createdAt: -1 })
+    /*
+     * `?ids=a,b,c` — as provas completas de um conjunto conhecido, numa
+     * requisição só.
+     *
+     * Quem precisa disso é o PDF de um grupo: a tela lista as provas enxutas
+     * (`campos=lista`, sem `questions`) e o gerador precisa das questões. O
+     * caminho óbvio seria pedir `/api/exams/[id]` uma vez por prova — e um
+     * grupo de vinte provas viram vinte requisições, vinte leituras de sessão e
+     * vinte idas ao banco para montar um arquivo só. Aqui é uma consulta com
+     * `$in`, sob o MESMO filtro de visibilidade do restante da rota: pedir um id
+     * não dá acesso a nada que a listagem já não devolveria.
+     *
+     * O teto de 100 ids existe para o parâmetro não virar uma consulta
+     * arbitrariamente grande vinda do cliente.
+     */
+    const idsParam = (request.nextUrl.searchParams.get('ids') || '').trim()
+    const idsPedidos = idsParam
+      ? idsParam.split(',').map((valor) => valor.trim()).filter((valor) => ObjectId.isValid(valor)).slice(0, 100)
+      : []
+    if (idsParam && idsPedidos.length === 0) {
+      return NextResponse.json({ exams: [] })
+    }
+    if (idsPedidos.length > 0) {
+      query = { ...query, _id: { $in: idsPedidos.map((valor) => new ObjectId(valor)) } }
+    }
+
+    const cursor = examsCollection.find(query, idsPedidos.length > 0 ? {} : projecaoEscolhida).sort({ createdAt: -1 })
     const exams = await (limit ? cursor.limit(limit) : cursor).toArray()
 
     /*
@@ -133,16 +159,46 @@ export async function GET(request: NextRequest) {
      *
      * O gabarito é preservado exatamente onde faz falta — prova de treino e
      * prova pessoal de quem a criou, decidido por `podeVerGabarito` —, e some do
-     * resto. `jaSubmeteu` fica em falso de propósito: a listagem não precisa
-     * saber quem entregou o quê, e quem quer rever a prova entregue abre
-     * `/api/exams/[id]`, que faz essa conta corretamente.
+     * resto. Na listagem `jaSubmeteu` fica em falso de propósito: ela não
+     * precisa saber quem entregou o quê, e é uma consulta a menos por
+     * requisição.
      */
-    const contexto = {
+    const contextoBase = {
       userId: session.userId,
       isAdmin: session.role === 'admin',
-      jaSubmeteu: false,
     }
-    const provasParaEntrega = exams.map((prova) => prepararProvaParaEntrega(prova, contexto))
+
+    /*
+     * Com `?ids=`, `jaSubmeteu` importa: é o caso em que a pessoa quer o
+     * gabarito comentado de provas que já entregou, e responder `false` para
+     * todas devolveria um PDF com as alternativas zeradas. A conta sai numa
+     * consulta só — as submissões desta pessoa entre as provas pedidas — e
+     * apenas para as provas cujo veredito ainda depende dela.
+     */
+    let submetidas = new Set<string>()
+    if (idsPedidos.length > 0) {
+      const dependemDeSubmissao = exams
+        .filter((prova) => !podeVerGabarito(prova, contextoBase))
+        .map((prova) => prova._id.toString())
+
+      if (dependemDeSubmissao.length > 0) {
+        const encontradas = await db
+          .collection('submissions')
+          .find(
+            { examId: { $in: dependemDeSubmissao }, userId: session.userId },
+            { projection: { examId: 1 } },
+          )
+          .toArray()
+        submetidas = new Set(encontradas.map((submissao: any) => String(submissao.examId)))
+      }
+    }
+
+    const provasParaEntrega = exams.map((prova) =>
+      prepararProvaParaEntrega(prova, {
+        ...contextoBase,
+        jaSubmeteu: submetidas.has(prova._id.toString()),
+      }),
+    )
 
     // Cache privado curto: lista pessoal de provas raramente muda em
     // alguns segundos. SWR mantém UI responsiva sem regerar imediato.

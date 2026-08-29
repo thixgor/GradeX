@@ -159,6 +159,52 @@ async function carregarProvaCompleta(exam: Exam): Promise<Exam> {
   }
 }
 
+/**
+ * As provas de um grupo, todas com as questões, numa requisição só.
+ *
+ * O PDF de grupo recebia as provas como elas vêm da listagem — sem
+ * `questions` — e o gerador quebrava em `undefined.filter` no primeiro
+ * `prefetchExamImages`: erro no console e nenhum arquivo. Faltava, aqui, o
+ * mesmo passo que o download de uma prova já fazia.
+ *
+ * Faz em lote (`/api/exams?ids=`) em vez de uma chamada por prova: um grupo de
+ * vinte provas custaria vinte requisições, vinte leituras de sessão e vinte
+ * idas ao banco para montar um único arquivo. O que já está no cache da sessão
+ * nem entra no pedido — gerar os três PDFs do mesmo grupo faz uma busca só.
+ *
+ * A montagem do PDF continua inteira no navegador; o servidor só entrega o
+ * JSON das provas.
+ */
+async function carregarProvasCompletas(exams: Exam[]): Promise<Exam[]> {
+  const pendentes = exams.filter((exam) => {
+    const id = (exam as any)._id?.toString() || ''
+    if (Array.isArray((exam as any).questions) && (exam as any).questions.length > 0) return false
+    return !!id && !provasCompletas.has(id)
+  })
+
+  if (pendentes.length > 0) {
+    const ids = pendentes.map((exam) => (exam as any)._id.toString())
+    try {
+      const res = await fetch(`/api/exams?ids=${encodeURIComponent(ids.join(','))}`)
+      if (res.ok) {
+        const dados = await res.json()
+        for (const prova of (dados?.exams || []) as Exam[]) {
+          const id = (prova as any)._id?.toString()
+          if (id) provasCompletas.set(id, prova)
+        }
+      }
+    } catch {
+      // Rede fora: cada prova segue com o que já tem — o PDF sai incompleto,
+      // que ainda é melhor que um clique sem resposta.
+    }
+  }
+
+  return exams.map((exam) => {
+    const id = (exam as any)._id?.toString() || ''
+    return (id && provasCompletas.get(id)) || exam
+  })
+}
+
 function ProvasContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -194,6 +240,10 @@ function ProvasContent() {
   // de upgrade: quem bate no teto já assina, e mandá-lo para /buy seria
   // oferecer o que ele acabou de comprar.
   const [planoPdfAviso, setPlanoPdfAviso] = useState<string | null>(null)
+  /* Falha ao montar o PDF. Antes só ia para o console: quem clicava via a
+     barra de progresso sumir e nenhum arquivo aparecer, sem saber se tinha
+     falhado ou se ainda estava trabalhando. */
+  const [pdfErro, setPdfErro] = useState<string | null>(null)
   const [pdfCtaExam, setPdfCtaExam] = useState<Exam | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | 'available' | 'finished' | 'personal' | 'general'>('all')
@@ -568,15 +618,22 @@ function ProvasContent() {
     const labels = { exam: 'Provas', 'with-answers': 'Provas + Gabarito Comentado', gabarito: 'Gabaritos' }
     setGroupPdfProgress({ done: 0, total: groupExams.length, label: labels[type] })
     try {
-      const { generateGroupPDF, downloadPDF } = await import('@/lib/pdf-generator')
+      // As questões não vêm na listagem (ver `carregarProvasCompletas`), e sem
+      // elas o gerador não tem o que escrever. O import do gerador acontece em
+      // paralelo com a busca: são duas esperas independentes.
+      const [{ generateGroupPDF, downloadPDF }, provas] = await Promise.all([
+        import('@/lib/pdf-generator'),
+        carregarProvasCompletas(groupExams),
+      ])
       const slug = groupName.replace(/\s+/g, '-').toLowerCase()
       const suffixes = { exam: 'provas', 'with-answers': 'provas-gabarito', gabarito: 'gabaritos' }
-      const blob = await generateGroupPDF(groupExams, type, (done, total) => {
+      const blob = await generateGroupPDF(provas, type, (done, total) => {
         setGroupPdfProgress({ done, total, label: labels[type] })
       })
       downloadPDF(blob, `${slug}-${suffixes[type]}.pdf`, { type: 'group_pdf', resourceId: groupName, resourceTitle: `${groupName} (${labels[type]})` })
     } catch (err) {
       console.error('Erro ao gerar PDF do grupo:', err)
+      setPdfErro('Não foi possível montar o PDF deste grupo. Tente novamente em instantes.')
     } finally {
       setGroupPdfProgress(null)
     }
@@ -621,6 +678,7 @@ function ProvasContent() {
       }
     } catch (err) {
       console.error('Erro ao gerar PDF:', err)
+      setPdfErro('Não foi possível montar o PDF desta prova. Tente novamente em instantes.')
     } finally {
       setPdfLoading(null)
     }
@@ -1755,6 +1813,22 @@ function ProvasContent() {
           </p>
           <p className="mt-0.5 text-xs leading-snug text-amber-800 dark:text-amber-200">
             {planoPdfAviso}
+          </p>
+        </div>
+      )}
+
+      {/* Falha na geração do PDF. Fecha no clique. */}
+      {pdfErro && (
+        <div
+          role="alert"
+          onClick={() => setPdfErro(null)}
+          className="fixed bottom-6 left-1/2 z-[110] -translate-x-1/2 cursor-pointer rounded-2xl border border-red-300 bg-red-50 px-5 py-3.5 shadow-2xl dark:border-red-800 dark:bg-red-950 max-w-md"
+        >
+          <p className="text-sm font-semibold text-red-900 dark:text-red-100">
+            Erro ao gerar o PDF
+          </p>
+          <p className="mt-0.5 text-xs leading-snug text-red-800 dark:text-red-200">
+            {pdfErro}
           </p>
         </div>
       )}
