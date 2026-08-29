@@ -36,7 +36,7 @@ import {
 } from '@/components/ui/dialog'
 import { ROTA_ASSINATURA } from '@/lib/account-tier'
 import { cn } from '@/lib/utils'
-import { readPageCache, writePageCache } from '@/lib/page-cache'
+import { invalidatePageCache, readPageCache, writePageCache } from '@/lib/page-cache'
 import {
   ArvoreDoBanco,
   SELECAO_VAZIA,
@@ -126,9 +126,39 @@ const POR_PAGINA = 20
 const CACHE_HIERARQUIA = 'banco:hierarquia'
 const CACHE_EIXO = 'banco:eixo'
 
+/*
+ * ── O recorte de quem estava navegando ──────────────────────────────────────
+ *
+ * Escolher três tópicos, marcar "só as que errei", ordenar e chegar à página 4
+ * é trabalho. Abrir uma questão dali e voltar desfazia tudo: a tela remontava
+ * com o banco inteiro, sem filtro, na página 1 — e a pessoa tinha de refazer o
+ * caminho a cada questão que resolvia. É o "se saio, perde a ordem".
+ *
+ * Vai para o mesmo cache de página da árvore e do eixo (`sessionStorage`, meia
+ * hora): é preferência de navegação, não dado de conta. O botão "Limpar", que
+ * já existia, é o "começar do zero" — e agora limpa o cache junto, senão a
+ * próxima visita ressuscitaria o filtro que a pessoa acabou de descartar.
+ */
+const CACHE_NAVEGACAO = 'banco:navegacao'
+
 interface EixoTemporalEmCache {
   anos: number[]
   periodos: PeriodoDisponivel[]
+}
+
+interface NavegacaoEmCache {
+  selecao: SelecaoDaArvore
+  buscaAplicada: string
+  tipo: BancoQuestaoTipo | ''
+  dificuldade: BancoDificuldade | ''
+  periodos: string[]
+  anos: number[]
+  apenasNaoResolvidas: boolean
+  apenasErradas: boolean
+  comImagem: boolean
+  comExplicacao: boolean
+  ordenar: BancoOrdenacao
+  pagina: number
 }
 
 function Conteudo() {
@@ -151,7 +181,20 @@ function Conteudo() {
   const [carregando, setCarregando] = useState(
     () => readPageCache<unknown>(CACHE_HIERARQUIA) === null,
   )
-  const [selecao, setSelecao] = useState<SelecaoDaArvore>(SELECAO_VAZIA)
+
+  /*
+   * Lido UMA vez, na montagem, e usado para semear todos os filtros abaixo.
+   * Reler a cada `useState` daria doze leituras do `sessionStorage` por
+   * renderização inicial e, pior, abriria a chance de dois campos discordarem
+   * se a entrada expirasse no meio.
+   */
+  const navegacaoSalva = useRef<NavegacaoEmCache | null>(
+    typeof window === 'undefined' ? null : readPageCache<NavegacaoEmCache>(CACHE_NAVEGACAO),
+  )
+
+  const [selecao, setSelecao] = useState<SelecaoDaArvore>(
+    () => navegacaoSalva.current?.selecao ?? SELECAO_VAZIA,
+  )
 
   const [questoes, setQuestoes] = useState<QuestaoDoCartao[]>([])
   const [paginacao, setPaginacao] = useState<BancoPaginacao | null>(null)
@@ -163,26 +206,40 @@ function Conteudo() {
   const [gratuito, setGratuito] = useState<SaldoGratuito | null>(null)
   const [abrindo, setAbrindo] = useState<string | null>(null)
 
-  const [busca, setBusca] = useState('')
-  const [buscaAplicada, setBuscaAplicada] = useState('')
-  const [tipo, setTipo] = useState<BancoQuestaoTipo | ''>('')
-  const [dificuldade, setDificuldade] = useState<BancoDificuldade | ''>('')
-  const [periodos, setPeriodos] = useState<string[]>([])
+  // A busca volta escrita no campo, e não só aplicada por baixo: um resultado
+  // filtrado por um termo invisível é um resultado que a pessoa não entende.
+  const [busca, setBusca] = useState(() => navegacaoSalva.current?.buscaAplicada ?? '')
+  const [buscaAplicada, setBuscaAplicada] = useState(
+    () => navegacaoSalva.current?.buscaAplicada ?? '',
+  )
+  const [tipo, setTipo] = useState<BancoQuestaoTipo | ''>(() => navegacaoSalva.current?.tipo ?? '')
+  const [dificuldade, setDificuldade] = useState<BancoDificuldade | ''>(
+    () => navegacaoSalva.current?.dificuldade ?? '',
+  )
+  const [periodos, setPeriodos] = useState<string[]>(() => navegacaoSalva.current?.periodos ?? [])
   const [periodosDisponiveis, setPeriodosDisponiveis] = useState<PeriodoDisponivel[]>(
     () => readPageCache<EixoTemporalEmCache>(CACHE_EIXO)?.periodos ?? [],
   )
-  const [anos, setAnos] = useState<number[]>([])
+  const [anos, setAnos] = useState<number[]>(() => navegacaoSalva.current?.anos ?? [])
   const [anosDisponiveis, setAnosDisponiveis] = useState<number[]>(
     () => readPageCache<EixoTemporalEmCache>(CACHE_EIXO)?.anos ?? [],
   )
   // "Não resolvidas" e "erradas" são mutuamente exclusivas: a primeira exclui
   // quem já respondeu, a segunda exige ter respondido errado — nunca fazem
   // sentido juntas. Ver o mesmo par no criador de listas.
-  const [apenasNaoResolvidas, setApenasNaoResolvidas] = useState(false)
-  const [apenasErradas, setApenasErradas] = useState(false)
-  const [comImagem, setComImagem] = useState(false)
-  const [comExplicacao, setComExplicacao] = useState(false)
-  const [ordenar, setOrdenar] = useState<BancoOrdenacao>('recentes')
+  const [apenasNaoResolvidas, setApenasNaoResolvidas] = useState(
+    () => navegacaoSalva.current?.apenasNaoResolvidas ?? false,
+  )
+  const [apenasErradas, setApenasErradas] = useState(
+    () => navegacaoSalva.current?.apenasErradas ?? false,
+  )
+  const [comImagem, setComImagem] = useState(() => navegacaoSalva.current?.comImagem ?? false)
+  const [comExplicacao, setComExplicacao] = useState(
+    () => navegacaoSalva.current?.comExplicacao ?? false,
+  )
+  const [ordenar, setOrdenar] = useState<BancoOrdenacao>(
+    () => navegacaoSalva.current?.ordenar ?? 'recentes',
+  )
   const [filtrosAbertos, setFiltrosAbertos] = useState(false)
   const [arvoreAberta, setArvoreAberta] = useState(false)
 
@@ -244,19 +301,45 @@ function Conteudo() {
     async (pagina = 1) => {
       setCarregandoQuestoes(true)
       try {
-        const p = new URLSearchParams(parametros)
-        p.set('page', String(pagina))
-        // `campos=lista`: o cartão desenha assunto, etiquetas e as três
-        // primeiras linhas do enunciado. Sem isso o servidor manda o documento
-        // inteiro de vinte questões — alternativas, gabarito e explicação
-        // comentada — e a tela espera por texto que ela não vai mostrar.
-        p.set('campos', 'lista')
-        const res = await fetch(`/api/banco/questoes?${p.toString()}`, { cache: 'no-store' })
-        if (!res.ok) return
-        const dados = await res.json()
-        setQuestoes((dados.questoes || []).map((q: any) => ({ ...q, _id: String(q._id) })))
-        setPaginacao(dados.paginacao || null)
-        if (dados.gratuito) setGratuito(dados.gratuito)
+        /*
+         * Duas voltas no máximo: a segunda existe só para o caso da página
+         * guardada não existir mais.
+         *
+         * Quem volta para a página 4 depois de o recorte encolher (uma questão
+         * removida, "só as que errei" com menos erros do que antes) recebe um
+         * `skip` além do fim — zero questões e a mensagem de banco vazio, com o
+         * filtro certo aplicado. Cair na primeira página é o único desfecho que
+         * mostra alguma coisa.
+         */
+        let alvo = pagina
+        for (let tentativa = 0; tentativa < 2; tentativa++) {
+          const p = new URLSearchParams(parametros)
+          p.set('page', String(alvo))
+          // `campos=lista`: o cartão desenha assunto, etiquetas e as três
+          // primeiras linhas do enunciado. Sem isso o servidor manda o documento
+          // inteiro de vinte questões — alternativas, gabarito e explicação
+          // comentada — e a tela espera por texto que ela não vai mostrar.
+          p.set('campos', 'lista')
+          const res = await fetch(`/api/banco/questoes?${p.toString()}`, { cache: 'no-store' })
+          if (!res.ok) return
+          const dados = await res.json()
+          const paginacaoRecebida: BancoPaginacao | null = dados.paginacao || null
+
+          if (
+            alvo > 1 &&
+            paginacaoRecebida &&
+            paginacaoRecebida.totalPages > 0 &&
+            alvo > paginacaoRecebida.totalPages
+          ) {
+            alvo = 1
+            continue
+          }
+
+          setQuestoes((dados.questoes || []).map((q: any) => ({ ...q, _id: String(q._id) })))
+          setPaginacao(paginacaoRecebida)
+          if (dados.gratuito) setGratuito(dados.gratuito)
+          return
+        }
       } finally {
         setCarregandoQuestoes(false)
       }
@@ -276,7 +359,7 @@ function Conteudo() {
     // num `Promise.all` e a página inteira só saía do esqueleto quando a mais
     // lenta das quatro voltasse — a lista de questões ficava pronta e escondida
     // esperando as listas do usuário, que a maior parte das contas nem tem.
-    const questoesProntas = carregarQuestoes(1).finally(() => {
+    const questoesProntas = carregarQuestoes(navegacaoSalva.current?.pagina ?? 1).finally(() => {
       if (vivo) setCarregando(false)
     })
 
@@ -324,6 +407,45 @@ function Conteudo() {
     if (primeiraCarga.current) return
     carregarQuestoes(1)
   }, [carregarQuestoes])
+
+  /*
+   * Guarda o recorte para a volta.
+   *
+   * A página vem de `paginacao`, que é o que o SERVIDOR respondeu — e não de um
+   * contador da tela. Assim, se o filtro encurtou o resultado e a página 4 não
+   * existe mais, o que fica salvo é a página que de fato foi mostrada.
+   */
+  useEffect(() => {
+    if (carregando) return
+    writePageCache<NavegacaoEmCache>(CACHE_NAVEGACAO, {
+      selecao,
+      buscaAplicada,
+      tipo,
+      dificuldade,
+      periodos,
+      anos,
+      apenasNaoResolvidas,
+      apenasErradas,
+      comImagem,
+      comExplicacao,
+      ordenar,
+      pagina: paginacao?.page ?? 1,
+    })
+  }, [
+    carregando,
+    selecao,
+    buscaAplicada,
+    tipo,
+    dificuldade,
+    periodos,
+    anos,
+    apenasNaoResolvidas,
+    apenasErradas,
+    comImagem,
+    comExplicacao,
+    ordenar,
+    paginacao,
+  ])
 
   /** Nome legível de cada nó escolhido — as pastilhas mostram o assunto, não o id. */
   const nomePorId = useMemo(() => {
@@ -421,6 +543,10 @@ function Conteudo() {
     setComImagem(false)
     setComExplicacao(false)
     setOrdenar('recentes')
+    // Sem isto, a próxima visita ressuscitaria exatamente o que o "Limpar"
+    // acabou de descartar: o efeito acima só grava depois da renderização, e a
+    // entrada antiga continuaria valendo até lá.
+    invalidatePageCache(CACHE_NAVEGACAO)
   }
 
   if (carregando) {

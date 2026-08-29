@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { AppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
@@ -30,6 +30,7 @@ import {
   ClipboardCheck,
   Star,
   LayoutGrid,
+  Clock,
 } from 'lucide-react'
 import {
   Dialog,
@@ -59,6 +60,15 @@ import {
 } from '@/components/banco/feedback-questao'
 import { rolarAte } from '@/components/banco/rolagem-guiada'
 import { useEstaNaTela } from '@/components/banco/use-esta-na-tela'
+import {
+  apagarSessao,
+  lerSessao,
+  quandoFoi,
+  resumoDaSessao,
+  salvarSessao,
+  vaiPelaPenaRetomar,
+  type SessaoDeLista,
+} from '@/lib/banco/sessao-de-lista'
 
 type ModoVisualizacao = 'lista' | 'simulado'
 type ModoCorrecao = 'imediato' | 'final'
@@ -91,6 +101,38 @@ export default function ListaDetalhePage() {
   const [respostas, setRespostas] = useState<RespostaUsuario[]>([])
   const [mostrarResultado, setMostrarResultado] = useState<boolean[]>([])
   const [simuladoFinalizado, setSimuladoFinalizado] = useState(false)
+
+  /*
+   * ── Retomada ─────────────────────────────────────────────────────────────
+   *
+   * Todo o simulado vivia em `useState` e em mais nada. Atualizar a aba, ou
+   * sair do navegador tempo suficiente para o celular descartar a página,
+   * apagava a sessão inteira sem aviso — "fiz 50 e tal, voltei na tela,
+   * atualizou, e perdi tudo".
+   *
+   * Agora cada mudança é gravada no dispositivo (`lib/banco/sessao-de-lista`)
+   * e a tela de abertura da lista PERGUNTA: continuar de onde parou ou começar
+   * do zero. Ninguém retoma sem querer, e ninguém perde sem escolher.
+   */
+  const [sessaoSalva, setSessaoSalva] = useState<SessaoDeLista | null>(null)
+  /** Confirmação antes de descartar uma sessão salva para recomeçar. */
+  const [recomecoPendente, setRecomecoPendente] = useState<ModoCorrecao | null>(null)
+
+  /*
+   * O simulado nunca lançou nada em `banco_resolucoes`: responder 26 questões
+   * numa lista não movia o histórico, o painel de desempenho nem a barra de
+   * progresso da própria lista — daí o "e parece que não fiz". Cada resposta
+   * conferida passa a ser registrada no servidor.
+   *
+   * `registradasRef` é a memória de quem já foi lançada, para que retomar uma
+   * sessão não conte a mesma resposta duas vezes; `registradas` é a cópia em
+   * estado, que existe só para o efeito de salvamento reagir ao registro.
+   */
+  const registradasRef = useRef<Set<string>>(new Set())
+  const [registradas, setRegistradas] = useState<string[]>([])
+  const registrandoRef = useRef<Set<string>>(new Set())
+  /** Quando a questão atual entrou na tela — vira `tempoGasto` da resolução. */
+  const questaoAbertaEm = useRef<number>(Date.now())
 
   // Estado para riscar alternativas por questão (mapa questaoId -> Set de letras riscadas)
   const [alternativasRiscadas, setAlternativasRiscadas] = useState<Record<string, Set<string>>>({})
@@ -185,6 +227,64 @@ export default function ListaDetalhePage() {
     }
   }, [modo, questaoAtual, questoes])
 
+  const questaoIds = useMemo(() => questoes.map((q) => String(q._id)), [questoes])
+
+  /*
+   * Existe sessão para retomar?
+   *
+   * A pergunta é refeita toda vez que a tela volta ao modo lista — inclusive
+   * ao sair do simulado — porque é exatamente aí que a resposta muda e é aí
+   * que o cartão de retomada precisa aparecer.
+   */
+  useEffect(() => {
+    if (loading || modo === 'simulado' || questaoIds.length === 0) {
+      return
+    }
+    const salva = lerSessao(id)
+    setSessaoSalva(salva && vaiPelaPenaRetomar(salva, questaoIds) ? salva : null)
+  }, [loading, modo, questaoIds, id])
+
+  /*
+   * Grava a sessão a cada mudança.
+   *
+   * Sem `debounce` de propósito: o que dispara aqui é toque em alternativa,
+   * troca de questão e digitação em discursiva. Adiar a gravação para ganhar
+   * escritas de `localStorage` — que custam microssegundos — seria abrir de
+   * novo, em menor escala, a janela em que o trabalho existe só na memória da
+   * aba. É essa janela que o usuário perdeu.
+   */
+  useEffect(() => {
+    if (modo !== 'simulado' || questaoIds.length === 0) return
+    salvarSessao(id, {
+      modoCorrecao,
+      questaoIdAtual: questaoIds[questaoAtual] ?? null,
+      respostas,
+      conferidas: questaoIds.filter((_, i) => mostrarResultado[i]),
+      riscadas: Object.fromEntries(
+        Object.entries(alternativasRiscadas)
+          .map(([qid, letras]) => [qid, Array.from(letras)] as const)
+          .filter(([, letras]) => letras.length > 0),
+      ),
+      notas: selfScores,
+      registradas,
+      destaques: highlights,
+      finalizado: simuladoFinalizado,
+    })
+  }, [
+    modo,
+    id,
+    questaoIds,
+    questaoAtual,
+    respostas,
+    mostrarResultado,
+    alternativasRiscadas,
+    selfScores,
+    registradas,
+    highlights,
+    simuladoFinalizado,
+    modoCorrecao,
+  ])
+
   async function loadLista() {
     try {
       const res = await fetch(`/api/banco/listas/${id}`)
@@ -260,7 +360,15 @@ export default function ListaDetalhePage() {
     }
   }
 
+  /**
+   * Começa do zero: descarta a sessão salva e zera tudo que a pessoa tinha
+   * feito. É destrutivo de propósito — por isso, quando existe sessão, a tela
+   * pede confirmação antes de chegar aqui.
+   */
   function iniciarSimulado(correcao: ModoCorrecao) {
+    apagarSessao(id)
+    setSessaoSalva(null)
+    setRecomecoPendente(null)
     setModoCorrecao(correcao)
     setModo('simulado')
     setQuestaoAtual(0)
@@ -268,6 +376,66 @@ export default function ListaDetalhePage() {
     setMostrarResultado(new Array(questoes.length).fill(false))
     setSimuladoFinalizado(false)
     setAlternativasRiscadas({})
+    setSelfScores({})
+    setHighlights({})
+    registradasRef.current = new Set()
+    registrandoRef.current = new Set()
+    setRegistradas([])
+    questaoAbertaEm.current = Date.now()
+    if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'auto' })
+  }
+
+  /**
+   * Retoma a sessão salva.
+   *
+   * Tudo é remontado A PARTIR DOS IDS das questões que a lista tem HOJE: se
+   * uma questão foi removida depois, a resposta dela é descartada em vez de
+   * deslocar todas as outras uma casa. `mostrarResultado` é um array por
+   * posição na tela, mas o que foi salvo são ids — a conversão acontece aqui,
+   * e é ela que mantém o gabarito colado na questão certa.
+   */
+  function retomarSimulado(sessao: SessaoDeLista) {
+    const presentes = new Set(questaoIds)
+    const conferidas = new Set(sessao.conferidas)
+
+    setModoCorrecao(sessao.modoCorrecao)
+    setRespostas(sessao.respostas.filter((r) => presentes.has(r.questaoId)))
+    setMostrarResultado(
+      questaoIds.map((qid) => sessao.finalizado || conferidas.has(qid)),
+    )
+    setAlternativasRiscadas(
+      Object.fromEntries(
+        Object.entries(sessao.riscadas)
+          .filter(([qid]) => presentes.has(qid))
+          .map(([qid, letras]) => [qid, new Set(letras)]),
+      ),
+    )
+    setSelfScores({ ...sessao.notas })
+    setHighlights({ ...sessao.destaques })
+    setSimuladoFinalizado(sessao.finalizado)
+    registradasRef.current = new Set(sessao.registradas)
+    registrandoRef.current = new Set()
+    setRegistradas(sessao.registradas)
+    setQuestaoAtual(resumoDaSessao(sessao, questaoIds).indiceAtual)
+    questaoAbertaEm.current = Date.now()
+    setSessaoSalva(null)
+    setModo('simulado')
+    if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'auto' })
+  }
+
+  /**
+   * O clique em "começar" quando já existe trabalho salvo.
+   *
+   * Os dois botões de início sempre significaram "do zero"; com uma sessão
+   * guardada, o mesmo clique passou a poder apagar uma hora de estudo. Ele
+   * agora para num diálogo que diz o tamanho do estrago antes de acontecer.
+   */
+  function pedirParaComecar(correcao: ModoCorrecao) {
+    if (sessaoSalva) {
+      setRecomecoPendente(correcao)
+      return
+    }
+    iniciarSimulado(correcao)
   }
 
   // Função para verificar se alternativa está riscada
@@ -327,12 +495,76 @@ export default function ListaDetalhePage() {
     })
   }
 
+  /**
+   * Lança a resposta em `banco_resolucoes`.
+   *
+   * Antes disto, responder dentro de uma lista não deixava rastro nenhum: o
+   * histórico, o painel de desempenho e a barra "N de M resolvidas" da própria
+   * lista continuavam zerados depois de uma sessão inteira. Quem tinha feito
+   * 26 questões voltava e via uma lista intocada — "parece que não fiz".
+   *
+   * Três cuidados:
+   *
+   * - **uma vez por questão.** `registradasRef` atravessa a retomada (vai
+   *   salvo junto com a sessão), então sair e voltar não duplica a resposta no
+   *   histórico. `registrandoRef` cobre a janela em que a requisição está no
+   *   ar.
+   * - **falhar em silêncio.** Rede caída não pode travar a correção que a
+   *   pessoa acabou de pedir; a questão só não entra em `registradas` e a
+   *   finalização tenta de novo.
+   * - **nada sem resposta.** Pular uma questão em branco não é uma resolução.
+   */
+  async function registrarResolucao(
+    questao: BancoQuestaoComHierarquia,
+    resposta: RespostaUsuario | undefined,
+    tempoGasto?: number,
+  ) {
+    const questaoId = String(questao._id)
+    if (!resposta) return
+    if (registradasRef.current.has(questaoId) || registrandoRef.current.has(questaoId)) return
+
+    const corpo: Record<string, unknown> = {}
+    if (questao.tipo === 'objetiva') {
+      if (!resposta.alternativaSelecionada) return
+      corpo.alternativaSelecionada = resposta.alternativaSelecionada
+    } else {
+      const texto = (resposta.respostaDiscursiva || '').trim()
+      if (!texto) return
+      corpo.respostaUsuario = texto
+    }
+    if (tempoGasto && tempoGasto > 0) corpo.tempoGasto = tempoGasto
+
+    registrandoRef.current.add(questaoId)
+    try {
+      const res = await fetch(`/api/banco/questoes/${questaoId}/resolver`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(corpo),
+      })
+      if (!res.ok) return
+      registradasRef.current.add(questaoId)
+      setRegistradas(Array.from(registradasRef.current))
+    } catch {
+      /* sem rede: a resolução é tentada de novo ao finalizar */
+    } finally {
+      registrandoRef.current.delete(questaoId)
+    }
+  }
+
   function verificarResposta(index: number) {
     setMostrarResultado(prev => {
       const novo = [...prev]
       novo[index] = true
       return novo
     })
+
+    // Conferir é o momento em que a resposta deixa de ser rascunho: é ela que
+    // vale para o histórico, e não o último toque antes de trocar de questão.
+    const questao = questoes[index]
+    if (questao) {
+      const gasto = Math.round((Date.now() - questaoAbertaEm.current) / 1000)
+      void registrarResolucao(questao, getRespostaAtual(String(questao._id)), gasto)
+    }
   }
 
   function handleCopyDiscursivePrompt(questao: BancoQuestaoComHierarquia) {
@@ -397,6 +629,7 @@ ${respostaAluno}`
     setQuestaoAtual(indice)
     setMapaAberto(false)
     setExplicacaoDestacada(false)
+    questaoAbertaEm.current = Date.now()
     if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'auto' })
   }
 
@@ -412,6 +645,22 @@ ${respostaAluno}`
     setMostrarResultado(new Array(questoes.length).fill(true))
     setSimuladoFinalizado(true)
     setMapaAberto(false)
+
+    /*
+     * Na correção só no final, nenhuma resposta passou por "Ver resposta" — é
+     * aqui que todas entram no histórico. Também é a segunda chance das que
+     * falharam por rede durante a correção imediata.
+     *
+     * Uma de cada vez: uma lista de 200 questões dispararia 200 requisições no
+     * mesmo instante, e o navegador enfileiraria tudo atrás de seis conexões
+     * enquanto a tela do resultado espera. Em série, o resultado aparece na
+     * hora e as gravações vão acontecendo por baixo.
+     */
+    void (async () => {
+      for (const q of questoes) {
+        await registrarResolucao(q, getRespostaAtual(String(q._id)))
+      }
+    })()
     // O resultado é desenhado no TOPO da página; terminar a última questão e
     // continuar olhando para o rodapé faria parecer que nada aconteceu.
     if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -1050,6 +1299,20 @@ ${respostaAluno}`
           </div>
         ) : (
           <>
+            {/* ── Retomar ────────────────────────────────────────────────
+                O que o usuário perdeu não estava em lugar nenhum; agora está,
+                e a tela abre com a escolha em vez de decidir por ele. O cartão
+                só aparece quando há o que retomar (ver `vaiPelaPenaRetomar`):
+                sessão vazia não merece uma pergunta. */}
+            {sessaoSalva ? (
+              <CartaoDeRetomada
+                sessao={sessaoSalva}
+                questaoIds={questaoIds}
+                onContinuar={() => retomarSimulado(sessaoSalva)}
+                onRecomecar={() => setRecomecoPendente(sessaoSalva.modoCorrecao)}
+              />
+            ) : null}
+
             {/* ── Começar ────────────────────────────────────────────────
                 Havia dois cartões de contorno lado a lado, do mesmo peso
                 visual, e nenhum deles parecia o botão de começar: a tela abria
@@ -1061,7 +1324,7 @@ ${respostaAluno}`
               <div className="flex flex-wrap items-end justify-between gap-2">
                 <div className="min-w-0">
                   <h3 className="font-heading text-base font-bold">
-                    Responder em sequência
+                    {sessaoSalva ? 'Ou recomeçar' : 'Responder em sequência'}
                   </h3>
                   <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
                     As {questoes.length} questões, uma de cada vez, com o gabarito e a explicação a
@@ -1072,16 +1335,23 @@ ${respostaAluno}`
 
               <button
                 type="button"
-                onClick={() => iniciarSimulado('imediato')}
-                className="btn-brand-glow mt-3 flex h-14 w-full items-center justify-center gap-2 rounded-2xl text-base font-bold text-white active:scale-[0.99]"
+                onClick={() => pedirParaComecar('imediato')}
+                className={cn(
+                  'mt-3 flex h-14 w-full items-center justify-center gap-2 rounded-2xl text-base font-bold active:scale-[0.99]',
+                  // Com uma sessão em andamento, o botão primário da tela é o
+                  // "Continuar" lá em cima; começar do zero vira a alternativa.
+                  sessaoSalva
+                    ? 'border border-border text-foreground hover:bg-muted'
+                    : 'btn-brand-glow text-white',
+                )}
               >
                 <Play className="h-5 w-5 fill-current" />
-                Começar as {questoes.length} questões
+                {sessaoSalva ? 'Começar do zero' : `Começar as ${questoes.length} questões`}
               </button>
 
               <button
                 type="button"
-                onClick={() => iniciarSimulado('final')}
+                onClick={() => pedirParaComecar('final')}
                 className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl border border-border px-3 py-2.5 text-xs font-semibold text-muted-foreground transition hover:bg-muted hover:text-foreground active:scale-[0.99]"
               >
                 <Eye className="h-3.5 w-3.5" />
@@ -1197,7 +1467,112 @@ ${respostaAluno}`
           onClose={() => setReportQuestionId(null)}
         />
       )}
+
+      {/* ── Recomeçar apaga o que estava salvo ─────────────────────────────
+          O diálogo diz QUANTAS respostas somem. "Tem certeza?" sem número é
+          uma pergunta que não dá o que a pessoa precisa para responder. */}
+      <Dialog open={!!recomecoPendente} onOpenChange={(aberto) => !aberto && setRecomecoPendente(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Recomeçar do zero?</DialogTitle>
+            <DialogDescription>
+              {sessaoSalva
+                ? `Você tem ${resumoDaSessao(sessaoSalva, questaoIds).respondidas} de ${questoes.length} respondidas nesta sessão. Recomeçar apaga essas respostas da tela e devolve a lista ao início.`
+                : 'A lista volta ao início.'}
+              {sessaoSalva && sessaoSalva.registradas.length > 0
+                ? ' O que já foi conferido continua no seu histórico e no seu desempenho.'
+                : ''}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setRecomecoPendente(null)}>
+              Cancelar
+            </Button>
+            <Button
+              onClick={() => recomecoPendente && iniciarSimulado(recomecoPendente)}
+              className="btn-brand-glow text-white"
+            >
+              <RotateCcw className="mr-2 h-4 w-4" />
+              Recomeçar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </AppShell>
+  )
+}
+
+/**
+ * O cartão de "você parou aqui".
+ *
+ * Ele existe para uma decisão só, e por isso mostra exatamente os três dados
+ * que a decisão pede: onde a pessoa parou, quanto já respondeu e há quanto
+ * tempo. Sem o "há quanto tempo", retomar uma sessão de duas semanas atrás e
+ * uma de dois minutos atrás são o mesmo botão.
+ *
+ * Sessão já finalizada não vira "continuar": o que resta ali é reler o
+ * resultado, e o botão diz isso.
+ */
+function CartaoDeRetomada({
+  sessao,
+  questaoIds,
+  onContinuar,
+  onRecomecar,
+}: {
+  sessao: SessaoDeLista
+  questaoIds: string[]
+  onContinuar: () => void
+  onRecomecar: () => void
+}) {
+  const { respondidas, total, indiceAtual, finalizado } = resumoDaSessao(sessao, questaoIds)
+  const percentual = total > 0 ? Math.round((respondidas / total) * 100) : 0
+
+  return (
+    <div className="glass-page-card relevo rounded-2xl border border-primary/30 bg-primary/[0.04] p-4 sm:p-5">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div className="min-w-0">
+          <h3 className="font-heading text-base font-bold">
+            {finalizado ? 'Você terminou esta lista' : 'Você parou no meio'}
+          </h3>
+          <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
+            {finalizado
+              ? `${respondidas} de ${total} respondidas — o resultado ainda está aqui.`
+              : `Parou na questão ${indiceAtual + 1} de ${total}, com ${respondidas} ${
+                  respondidas === 1 ? 'respondida' : 'respondidas'
+                }.`}
+          </p>
+        </div>
+        <span className="inline-flex flex-none items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
+          <Clock className="h-3 w-3" />
+          {quandoFoi(sessao.atualizadoEm)}
+        </span>
+      </div>
+
+      <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-muted">
+        <div
+          className="h-full rounded-full bg-primary transition-[width] duration-500"
+          style={{ width: `${percentual}%` }}
+        />
+      </div>
+
+      <button
+        type="button"
+        onClick={onContinuar}
+        className="btn-brand-glow mt-3 flex h-14 w-full items-center justify-center gap-2 rounded-2xl text-base font-bold text-white active:scale-[0.99]"
+      >
+        <Play className="h-5 w-5 fill-current" />
+        {finalizado ? 'Ver o resultado' : `Continuar da questão ${indiceAtual + 1}`}
+      </button>
+
+      <button
+        type="button"
+        onClick={onRecomecar}
+        className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl border border-border px-3 py-2.5 text-xs font-semibold text-muted-foreground transition hover:bg-muted hover:text-foreground active:scale-[0.99]"
+      >
+        <RotateCcw className="h-3.5 w-3.5" />
+        Recomeçar do zero
+      </button>
+    </div>
   )
 }
 
