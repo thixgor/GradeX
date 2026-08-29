@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Lock, Loader2, MessageSquarePlus, ShieldCheck, AlertCircle } from 'lucide-react'
+import { Lock, Loader2, MessageSquarePlus, ShieldCheck, LogIn } from 'lucide-react'
 import { ReviewCard } from './review-card'
 import { ReviewForm } from './review-form'
 import { ReviewSummaryBlock } from './review-summary'
@@ -57,7 +57,15 @@ export function ReviewsSection({
   const [confirmDelete, setConfirmDelete] = useState<PublicReview | null>(null)
   const [moreReviews, setMoreReviews] = useState<PublicReview[]>([])
   const [nextCursor, setNextCursor] = useState<string | null>(null)
+  const [loginHref, setLoginHref] = useState('/auth/login')
   const summaryNotified = useRef<number>(-1)
+
+  // O redirect só existe no cliente — evita divergência de hidratação.
+  useEffect(() => {
+    setLoginHref(
+      `/auth/login?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`
+    )
+  }, [])
 
   const fetchInitial = useCallback(async () => {
     setLoading(true)
@@ -268,11 +276,28 @@ export function ReviewsSection({
 
       {/* Não autenticado */}
       {!data?.reviewsLocked && data && !data.isAuthenticated && (
-        <div className="glass-irish-soft px-4 py-3 flex items-start gap-2.5">
-          <AlertCircle className="h-4 w-4 text-muted-foreground flex-shrink-0 mt-0.5" />
-          <p className="text-xs text-muted-foreground leading-relaxed">
-            Faça login para avaliar este conteúdo.
-          </p>
+        <div className="glass-irish-soft px-4 py-4 sm:px-5 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+          <div className="flex items-start gap-3 flex-1 min-w-0">
+            <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl border border-irish-emerald/25 bg-irish-emerald/10 text-irish-emerald">
+              <LogIn className="h-4 w-4" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-foreground leading-tight">
+                Entre para avaliar
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+                Faça login na sua conta para dar sua nota e comentar este{' '}
+                {targetType === 'material' ? 'material' : 'deck'}.
+              </p>
+            </div>
+          </div>
+          <a
+            href={loginHref}
+            className="inline-flex h-9 w-full sm:w-auto flex-shrink-0 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-irish-emerald to-irish-forest px-4 text-sm font-semibold text-white shadow-md shadow-irish-emerald/20 transition hover:opacity-95"
+          >
+            <LogIn className="h-4 w-4" />
+            Entrar
+          </a>
         </div>
       )}
 

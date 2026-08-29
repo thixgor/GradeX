@@ -565,7 +565,24 @@ export const config = {
      * - séries de imagens do Manual de Tomografia (TC_*): são centenas de
      *   requisições de imagem por série, e passar cada uma pelo middleware só
      *   adicionaria latência a um asset estático já público.
+     *
+     * A lista abaixo cresceu para cobrir os acervos que faltavam. O critério é
+     * o mesmo dos que já estavam: arquivo estático e público, servido direto da
+     * borda. O middleware verifica sessão e portão de admin — nada disso se
+     * aplica a uma prancha de anatomia ou a uma fonte. Cada uma dessas
+     * requisições que ainda passava por aqui gastava CPU de borda (foram
+     * 442.643 requisições de borda em agosto) e somava latência ao que já
+     * estava em cache.
+     *
+     * - atlas-anatomia/: 428 pranchas, 240 MB — a maior pasta do deploy
+     * - Manual-Histologia/: marca e documentos do manual
+     * - models/: modelos 3D (.glb) da Anatomia 3D
+     * - patologia/: catálogo comprimido da Histopatologia
+     * - fonts/: as fontes próprias, já com cache imutável
+     * - pwa/, shortcuts/, icon-, logo, apple-: ícones e telas de partida do app
+     * - manifest, robots.txt, sitemap.xml: metadados públicos por definição
+     * - sw.js: o service worker, que precisa ser buscável sem sessão
      */
-    '/((?!_next/static|_next/image|favicon\\.ico|favicon\\.jpg|img/|midia/|TC_ABDOME/|TC_CRANIO/|TC_TORAX/|logo_manual_tomografia|ldpg-mnclinico).*)',
+    '/((?!_next/static|_next/image|favicon\\.ico|favicon\\.jpg|img/|midia/|TC_ABDOME/|TC_CRANIO/|TC_TORAX/|atlas-anatomia/|Manual-Histologia/|models/|patologia/|fonts/|pwa/|shortcuts/|icon-|apple-|logo[-0-9_.]|manifest\\.|robots\\.txt|sitemap\\.xml|sw\\.js|logo_manual_tomografia|ldpg-mnclinico).*)',
   ],
 }

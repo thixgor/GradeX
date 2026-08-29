@@ -38,6 +38,7 @@ import { useProuniGrant } from '@/hooks/use-prouni-grant'
 import { combineDiscountsWithProuni } from '@/lib/prouni-shared'
 import {
   computeCheckoutCharge,
+  computeSubscriptionCharge,
   DEFAULT_FEE_POLICY,
   formatBrl,
   type CheckoutCharge,
@@ -104,18 +105,18 @@ function BuyCheckoutContent() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [planoERecorrente, setPlanoERecorrente] = useState(false)
-  const [payMode, setPayMode] = useState<PayMode>('subscription')
+  // Abre no avulso. Ver o comentário em `setPayMode` dentro do carregamento.
+  const [payMode, setPayMode] = useState<PayMode>('one_time')
   const [verDetalhes, setVerDetalhes] = useState(false)
 
   /*
    * Regras de cobrança que a TELA precisa saber antes de cobrar.
    *
    * `subscriptionsEnabled` é um toggle do painel que só era validado no
-   * servidor. Com ele desligado, esta página continuava abrindo com
-   * "Assinatura · Recomendado" pré-selecionada em todo plano de 1, 3 ou 12
-   * meses: a pessoa digitava cartão, validade, CVV e CPF e só ao enviar recebia
+   * servidor. Com ele desligado, a opção "Assinatura" continuava na tela: a
+   * pessoa digitava cartão, validade, CVV e CPF e só ao enviar recebia
    * "Assinaturas não estão disponíveis no momento", sem nenhuma pista de que a
-   * opção ao lado funcionaria.
+   * opção ao lado funcionaria. Agora o seletor inteiro some.
    *
    * `feePolicy` é a mesma tabela que o formulário de pagamento usa para somar a
    * taxa operacional. Ela vem para cá porque o RESUMO precisa mostrar o mesmo
@@ -146,24 +147,18 @@ function BuyCheckoutContent() {
    * Vale pelas mesmas razões do cupom, e com o mesmo limite: só o pagamento
    * único o respeita. A assinatura recorrente é um preapproval do Mercado Pago
    * que cobra o mesmo valor em toda renovação — descontar ali venderia o
-   * benefício de uso único como se fosse permanente. Por isso o benefício
-   * ABRE a tela no pagamento único quando existe (`modoEscolhido`), em vez de
-   * ficar escondido atrás de uma escolha que a pessoa não sabe que precisa
-   * fazer.
+   * benefício de uso único como se fosse permanente.
+   *
+   * Antes existia aqui um efeito que TROCAVA a tela para o pagamento único
+   * quando havia concessão, porque o padrão era a assinatura e o benefício
+   * ficava escondido atrás de uma escolha que a pessoa não sabia que precisava
+   * fazer. Com o avulso virando o padrão para todo mundo, o efeito virou
+   * redundante e saiu: quem tem o benefício já cai onde ele vale.
    */
   const { concessao: prouniGrant } = useProuniGrant('plus', planId)
   const prouniSupported = payMode === 'one_time'
-  const [modoEscolhido, setModoEscolhido] = useState(false)
 
-  useEffect(() => {
-    if (!prouniGrant || modoEscolhido || !isRecurring) return
-    setPayMode('one_time')
-  }, [prouniGrant, modoEscolhido, isRecurring])
-
-  const escolherModo = (modo: PayMode) => {
-    setModoEscolhido(true)
-    setPayMode(modo)
-  }
+  const escolherModo = (modo: PayMode) => setPayMode(modo)
 
   useEffect(() => {
     if (!planId) {
@@ -193,7 +188,14 @@ function BuyCheckoutContent() {
 
         const recorrente = planoEhRecorrente(found.durationMonths)
         setPlanoERecorrente(recorrente)
-        setPayMode(recorrente && assinaturaLiberada ? 'subscription' : 'one_time')
+        /*
+         * A tela ABRE no pagamento único, mesmo quando a assinatura está
+         * disponível. É a opção sem compromisso: cobra uma vez, aceita Pix e
+         * boleto além do cartão, e não deixa nada renovando no cartão de quem
+         * só queria comprar. Quem quer a recorrência escolhe — deixá-la
+         * pré-marcada era vender assinatura a quem não pediu.
+         */
+        setPayMode('one_time')
       })
       .catch(err => setError(String(err?.message || err)))
       .finally(() => setLoading(false))
@@ -289,10 +291,14 @@ function BuyCheckoutContent() {
    * Pix — que é o meio que a tela abre e o mais barato, então o número só sobe
    * quando a pessoa escolhe outro, nunca surpreende para cima sem aviso.
    *
-   * A assinatura recorrente não passa por essa conta: o preapproval cobra
-   * `plano.preco` limpo, sem taxa.
+   * A ASSINATURA TAMBÉM tem taxa, desde que o repasse passou a valer para ela:
+   * o preapproval é sempre crédito à vista, então é a taxa de crédito 1x, e
+   * ela incide em toda renovação. `computeSubscriptionCharge` roda aqui e no
+   * servidor que cria o preapproval — mesma função, mesmo número.
    */
   const chargeEstimadoPix = estimarCobrancaNoPix(payableAmount, feePolicy)
+  /** O que cada ciclo da assinatura cobra: preço de tabela + taxa de crédito. */
+  const chargeDaAssinatura = computeSubscriptionCharge(baseAmount, feePolicy)
   /*
    * Só aceita o total vindo do formulário se ele foi calculado sobre o preço
    * ATUAL. Sem essa checagem, aplicar ou remover um cupom deixava o resumo
@@ -301,9 +307,10 @@ function BuyCheckoutContent() {
    * do checkout é pior que um resumo com estimativa.
    */
   const chargeValido = charge && charge.baseAmount === payableAmount ? charge : null
-  const chargeExibido = payMode === 'one_time' ? chargeValido || chargeEstimadoPix : null
-  const totalDoResumo = chargeExibido ? chargeExibido.totalAmount : payableAmount
-  const taxaDoResumo = chargeExibido ? chargeExibido.feeAmount : 0
+  const chargeExibido =
+    payMode === 'one_time' ? chargeValido || chargeEstimadoPix : chargeDaAssinatura
+  const totalDoResumo = chargeExibido.totalAmount
+  const taxaDoResumo = chargeExibido.feeAmount
 
   /** Total do modo "Pagamento único" no cenário mais barato (Pix), para o seletor. */
   const totalUnicoMaisBarato = chargeEstimadoPix.totalAmount
@@ -392,9 +399,14 @@ function BuyCheckoutContent() {
                   <span>{chargeExibido.label}</span>
                   <span className="tabular-nums">+ {formatBrl(taxaDoResumo)}</span>
                 </div>
-                {!chargeValido && (
+                {payMode === 'one_time' && !chargeValido && (
                   <span className="mt-0.5 text-[10px] leading-snug">
                     Estimativa no Pix. O valor final muda conforme o meio de pagamento escolhido ao lado.
+                  </span>
+                )}
+                {payMode === 'subscription' && (
+                  <span className="mt-0.5 text-[10px] leading-snug">
+                    Este é o valor de cada cobrança, e ele se repete a cada {cicloLabel}.
                   </span>
                 )}
               </div>
@@ -534,7 +546,9 @@ function BuyCheckoutContent() {
           <div className="rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-5">
             {isRecurring && (
               <div className="mb-4">
-                <p className="mb-2 text-xs font-semibold text-muted-foreground">Como prefere pagar?</p>
+                <p className="mb-2 text-xs font-semibold text-muted-foreground">
+                  Como prefere pagar?
+                </p>
                 {/* Segmentado, não dois cartões empilhados: são duas opções
                     curtas e a recomendada já vem escolhida. */}
                 {/*
@@ -547,26 +561,25 @@ function BuyCheckoutContent() {
                 */}
                 <div className="grid grid-cols-2 gap-2">
                   <OpcaoDePagamento
-                    ativo={payMode === 'subscription'}
-                    onClick={() => escolherModo('subscription')}
-                    icone={CreditCard}
-                    titulo="Assinatura"
-                    valor={formatBRL(baseAmount)}
-                    detalhe={
-                      prouniGrant
-                        ? `Cartão · a cada ${cicloLabel} · sem o seu desconto`
-                        : `Cartão · a cada ${cicloLabel}, sem taxa`
-                    }
-                    selo={prouniGrant ? undefined : 'Recomendado'}
-                  />
-                  <OpcaoDePagamento
                     ativo={payMode === 'one_time'}
                     onClick={() => escolherModo('one_time')}
                     icone={Zap}
                     titulo="Pagamento único"
                     valor={`a partir de ${formatBrl(totalUnicoMaisBarato)}`}
-                    detalhe="Pix, cartão ou boleto · com taxa do meio escolhido"
-                    selo={prouniGrant ? 'Com seu desconto' : undefined}
+                    detalhe="Pix, cartão ou boleto · cobra uma vez, não renova"
+                    selo={prouniGrant ? 'Com seu desconto' : 'Recomendado'}
+                  />
+                  <OpcaoDePagamento
+                    ativo={payMode === 'subscription'}
+                    onClick={() => escolherModo('subscription')}
+                    icone={CreditCard}
+                    titulo="Assinatura"
+                    valor={`${formatBrl(chargeDaAssinatura.totalAmount)} a cada ${cicloLabel}`}
+                    detalhe={
+                      prouniGrant
+                        ? 'Cartão · renova sozinho · sem o seu desconto'
+                        : 'Cartão · renova sozinho até você cancelar'
+                    }
                   />
                 </div>
               </div>
@@ -575,7 +588,12 @@ function BuyCheckoutContent() {
             <CheckoutAccountNotice className="mb-4" />
 
             {payMode === 'subscription' && isRecurring ? (
-              <SubscriptionCheckout plan={plan} publicKey={publicKey} months={months as MesesDeRecorrencia} />
+              <SubscriptionCheckout
+                plan={plan}
+                publicKey={publicKey}
+                months={months as MesesDeRecorrencia}
+                feePolicy={feePolicy}
+              />
             ) : (
               <MercadoPagoCheckout
                 key={`buy-${payableAmount}-${appliedCoupon?.code || 'sem-cupom'}-${prouniDiscountAmount}`}
@@ -677,7 +695,17 @@ function OpcaoDePagamento({
  * "paguei duas vezes". Agora o pendente tem estado próprio, tom neutro e o
  * formulário sai da tela.
  */
-function SubscriptionCheckout({ plan, publicKey, months }: { plan: PlanConfig; publicKey: string; months: MesesDeRecorrencia }) {
+function SubscriptionCheckout({
+  plan,
+  publicKey,
+  months,
+  feePolicy,
+}: {
+  plan: PlanConfig
+  publicKey: string
+  months: MesesDeRecorrencia
+  feePolicy: FeePolicy
+}) {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [resultado, setResultado] = useState<'ativa' | 'pendente' | null>(null)
@@ -690,6 +718,14 @@ function SubscriptionCheckout({ plan, publicKey, months }: { plan: PlanConfig; p
 
   const cicloCurto = rotuloCurtoDeCiclo(months)
   const cicloLongo = rotuloDeCicloDeCobranca(months)
+
+  /*
+   * O que cada cobrança realmente tira do cartão: preço de tabela + taxa
+   * operacional. Mesma função que /api/subscriptions usa para montar o
+   * preapproval — anunciar `plan.preco` aqui e cobrar outro valor no Mercado
+   * Pago é o defeito que este cálculo existe para impedir.
+   */
+  const cobranca = computeSubscriptionCharge(Number(plan.preco) || 0, feePolicy)
 
   const validacao = validateCard(card)
   const cpfDigits = onlyCpfDigits(cpf)
@@ -753,10 +789,16 @@ function SubscriptionCheckout({ plan, publicKey, months }: { plan: PlanConfig; p
           productId: plan.tipo,
           productTitle: plan.nome,
           productType: 'subscription',
-          amount: plan.preco,
+          // O valor COBRADO, não o de tabela — é o que o painel soma.
+          amount: cobranca.totalAmount,
           paymentMethod: 'credit_card',
           source: 'Assinatura',
-          metadata: { recurring: true, payMode: 'subscription' },
+          metadata: {
+            recurring: true,
+            payMode: 'subscription',
+            baseAmount: cobranca.baseAmount,
+            feeAmount: cobranca.feeAmount,
+          },
         }),
         keepalive: true,
       }).catch(() => {})
@@ -820,7 +862,7 @@ function SubscriptionCheckout({ plan, publicKey, months }: { plan: PlanConfig; p
     <form onSubmit={submit} className="flex flex-col gap-4">
       <p className="rounded-lg border border-primary/15 bg-primary/5 p-3 text-[13px] leading-relaxed text-muted-foreground">
         Você será cobrado{' '}
-        <strong className="text-primary">R$ {plan.preco.toFixed(2).replace('.', ',')}</strong> a cada{' '}
+        <strong className="text-primary">{formatBrl(cobranca.totalAmount)}</strong> a cada{' '}
         {cicloLongo}, no mesmo cartão, até você cancelar.{' '}
         {/*
           "Cancele quando quiser no seu perfil" era texto puro, sem link — e o
@@ -833,10 +875,28 @@ function SubscriptionCheckout({ plan, publicKey, months }: { plan: PlanConfig; p
         , sem multa, mantendo o acesso até o fim do período já pago.
       </p>
 
+      {/* A taxa aberta, e não embutida num total sem explicação. */}
+      {cobranca.feeAmount > 0 && (
+        <div className="flex flex-col gap-1 rounded-lg bg-muted/50 px-3 py-2.5 text-[11px] text-muted-foreground">
+          <div className="flex items-baseline justify-between gap-3">
+            <span>{plan.nome}</span>
+            <span className="tabular-nums">{formatBrl(cobranca.baseAmount)}</span>
+          </div>
+          <div className="flex items-baseline justify-between gap-3">
+            <span>{cobranca.label}</span>
+            <span className="tabular-nums">+ {formatBrl(cobranca.feeAmount)}</span>
+          </div>
+          <div className="mt-0.5 flex items-baseline justify-between gap-3 border-t border-border pt-1.5 text-xs font-bold text-foreground">
+            <span>Total por cobrança</span>
+            <span className="tabular-nums">{formatBrl(cobranca.totalAmount)}</span>
+          </div>
+        </div>
+      )}
+
       <CardTerminal
         fields={card}
         onChange={setCard}
-        amountLabel={`R$ ${plan.preco.toFixed(2).replace('.', ',')}`}
+        amountLabel={formatBrl(cobranca.totalAmount)}
         installmentLabel={`a cada ${cicloLongo}`}
         focused={focado}
         onFocusedChange={setFocado}
@@ -898,7 +958,7 @@ function SubscriptionCheckout({ plan, publicKey, months }: { plan: PlanConfig; p
         className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-secondary px-5 py-4 text-[15px] font-bold text-secondary-foreground shadow-sm transition hover:bg-secondary/90 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
-        Ativar assinatura — R$ {plan.preco.toFixed(2).replace('.', ',')}/{cicloCurto}
+        Ativar assinatura — {formatBrl(cobranca.totalAmount)}/{cicloCurto}
       </button>
 
       <p className="flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground">

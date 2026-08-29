@@ -259,6 +259,78 @@ const nextConfig = {
           },
         ],
       },
+      /**
+       * Os acervos de imagem — o resto do Fast Origin Transfer.
+       *
+       * Arquivo em `public/` sem `Cache-Control` sai da Vercel como
+       * `public, max-age=0, must-revalidate`. O navegador guarda, mas revalida
+       * a cada visita, e cada revalidação atravessa a borda até a origem. São
+       * ~370 MB de imagem servidos assim: 240 MB do Atlas de Anatomia, 106 MB
+       * das séries de tomografia, os modelos 3D e o catálogo de patologia.
+       * Foram 10,49 GB de Fast Origin Transfer em agosto (US$ 3,72) para
+       * entregar bytes que nunca mudaram.
+       *
+       * `immutable` é honesto aqui, e não uma aposta: são prancha de anatomia,
+       * corte de tomografia e modelo 3D, publicados uma vez sob nome próprio.
+       * O acervo cresce por arquivo novo — nenhum deles é editado no lugar. É o
+       * mesmo tratamento que `/img/` já recebia; só não tinha sido estendido
+       * para as pastas que carregam quase todo o peso.
+       */
+      {
+        source: '/atlas-anatomia/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        source: '/:serie(TC_ABDOME|TC_CRANIO|TC_TORAX)/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        source: '/models/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        source: '/patologia/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      /**
+       * Marca e ícones do PWA: mesma lógica, prazo menor.
+       *
+       * Estes podem ser trocados no lugar — um ícone redesenhado mantém o nome,
+       * senão o manifesto quebra. `s-maxage` alto tira a origem do caminho (é a
+       * borda que responde), `max-age` de um dia deixa o navegador reconferir
+       * com a borda, e `stale-while-revalidate` faz essa reconferência
+       * acontecer em segundo plano. Troca de logo se propaga em um dia sem
+       * custar transferência de origem no resto do ano.
+       */
+      {
+        source: '/:pasta(landing|pwa|shortcuts|Manual-Histologia)/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=86400, s-maxage=31536000, stale-while-revalidate=604800',
+          },
+        ],
+      },
     ]
   },
 
@@ -272,7 +344,7 @@ const nextConfig = {
   },
 
   // Otimização de webpack
-  webpack: (config, { isServer }) => {
+  webpack: (config, { isServer, dev }) => {
     // Não incluir módulos pesados desnecessários no client bundle
     if (!isServer) {
       config.resolve.fallback = {
@@ -284,9 +356,31 @@ const nextConfig = {
       }
     }
 
-    // Desabilitar cache de filesystem em produção (Vercel já faz cache)
-    // e otimizar resolução de módulos
+    // Otimizar resolução de módulos
     config.resolve.symlinks = false
+
+    /**
+     * Comprimir o cache de filesystem do webpack.
+     *
+     * O cache sem compressão deste projeto ocupava 1,9 GB (1,4 GB só do
+     * `server-production`, que carrega as 429 rotas de API). O cache de build da
+     * Vercel tem teto de 1 GB: acima disso ele simplesmente não é guardado, e
+     * **todo build recomeça do zero** — foi exatamente o que aconteceu o mês
+     * inteiro, com Build CPU respondendo por 69% da fatura.
+     *
+     * `gzip` e não `brotli`: brotli comprime mais, mas o tempo de compressão
+     * entra em todo build, inclusive nos que já estariam rápidos. Gzip corta o
+     * suficiente para caber no teto sem cobrar caro por isso.
+     *
+     * A checagem de tipo existe porque em `next dev` o cache é de memória, e
+     * `compression` não se aplica a ele.
+     */
+    if (!dev && config.cache && typeof config.cache === 'object' && config.cache.type === 'filesystem') {
+      config.cache = {
+        ...config.cache,
+        compression: 'gzip',
+      }
+    }
 
     return config
   },

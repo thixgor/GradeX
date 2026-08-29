@@ -646,6 +646,14 @@ function GuestAccessNotice() {
     return () => window.removeEventListener('resize', setInitialPosition)
   }, [])
 
+  // No mobile a barra é fixa no rodapé: reserva espaço no fim da página para
+  // que ela não cubra o último bloco de conteúdo (avaliações, CTAs, etc.).
+  useEffect(() => {
+    if (!mounted || dismissed || !isMobile) return
+    document.body.classList.add('has-guest-notice')
+    return () => document.body.classList.remove('has-guest-notice')
+  }, [mounted, dismissed, isMobile])
+
   useEffect(() => {
     if (!dragging || isMobile) return
 

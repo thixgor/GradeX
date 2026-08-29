@@ -32,3 +32,12 @@ public/Manual-Histologia/dados/**
 public/Manual-Histologia/documentacao/**
 public/Manual-Histologia/scripts/**
 public/Manual-Histologia/*.json
+
+# Documentação e anotações na raiz — não são servidas, só engordam o upload de
+# cada deploy.
+*.md
+docs/
+last_commit.diff
+novo*.txt
+temp_*.txt
+AUDIT_COMPLETE.txt

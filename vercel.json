@@ -1,12 +1,14 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
+  "ignoreCommand": "git rev-parse HEAD~1 >/dev/null 2>&1 && git diff --quiet HEAD~1 HEAD -- ':(exclude)*.md' ':(exclude)*.txt' ':(exclude)docs' ':(exclude)__tests__' ':(exclude).claude' ':(exclude).windsurf' ':(exclude).github' ':(exclude)last_commit.diff' || exit 1",
   "regions": [
     "gru1"
   ],
   "functions": {
     "app/api/**/*.ts": {
-      "maxDuration": 30
+      "maxDuration": 30,
+      "memory": 1024
     },
     "app/api/materiais/[id]/pdf-viewer/access/route.ts": {
       "maxDuration": 60,
@@ -88,6 +90,42 @@
     },
     "app/api/cron/avaliacoes-lembretes/route.ts": {
       "maxDuration": 60
+    },
+    "app/api/admin/banco/exportar/route.ts": {
+      "maxDuration": 60,
+      "memory": 2048
+    },
+    "app/api/banco/listas/[id]/pdf/route.ts": {
+      "maxDuration": 60,
+      "memory": 2048
+    },
+    "app/api/forms/[id]/submit/route.ts": {
+      "maxDuration": 60,
+      "memory": 2048
+    },
+    "app/api/forum/upload/route.ts": {
+      "maxDuration": 60,
+      "memory": 2048
+    },
+    "app/api/forum/uploads/[id]/route.ts": {
+      "maxDuration": 60,
+      "memory": 2048
+    },
+    "app/api/manual-clinico/pdf-watermark/route.ts": {
+      "maxDuration": 60,
+      "memory": 2048
+    },
+    "app/api/materiais/[id]/complementary/[itemId]/content/route.ts": {
+      "maxDuration": 60,
+      "memory": 2048
+    },
+    "app/api/og/material/[id]/route.ts": {
+      "maxDuration": 60,
+      "memory": 2048
+    },
+    "app/api/upload/route.ts": {
+      "maxDuration": 60,
+      "memory": 2048
     }
   },
   "crons": [
