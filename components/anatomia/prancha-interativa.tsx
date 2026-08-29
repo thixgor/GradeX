@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { Maximize2, Minus, Move, Plus, RotateCcw, Shrink } from 'lucide-react'
 import type { AtlasMarker } from '@/lib/atlas-anatomia/estrutura'
+import { MarcaDaguaDoAcervo } from '@/components/anatomia/marca-dagua'
 import {
   criarControladorDeGestos,
   limitarTransformacao,
@@ -24,7 +25,7 @@ import {
  *
  * O zoom é aplicado num contêiner que envolve imagem e marcadores juntos, de
  * modo que os pinos acompanhem a peça; a escala inversa aplicada a cada pino
- * mantém o círculo do mesmo tamanho na tela em qualquer nível de aproximação.
+ * mantém o alfinete do mesmo tamanho na tela em qualquer nível de aproximação.
  */
 
 export interface PranchaInterativaProps {
@@ -42,6 +43,16 @@ export interface PranchaInterativaProps {
   prioridade?: boolean
 }
 
+/**
+ * Acima desta altura o alfinete é desenhado de cabeça para baixo.
+ *
+ * O alfinete aponta para baixo: a ponta fica na estrutura e a cabeça sobe uns
+ * 30 px. Para os poucos marcadores colados no topo da prancha (38 dos 2.382),
+ * essa cabeça sairia da moldura e seria cortada — então eles são desenhados
+ * espelhados, com a ponta em cima e a cabeça pendurada abaixo dela.
+ */
+const LIMITE_DE_TOPO = 0.075
+
 export function PranchaInterativa({
   imagem,
   alt,
@@ -54,6 +65,9 @@ export function PranchaInterativa({
   prioridade,
 }: PranchaInterativaProps) {
   const palcoRef = useRef<HTMLDivElement>(null)
+  // A moldura do gesto é o filme, não o palco: é sobre a largura dele que o
+  // arraste é convertido em porcentagem, e é ele que a transformação move.
+  const filmeRef = useRef<HTMLDivElement>(null)
   const [transformacao, setTransformacao] = useState<Transformacao>(TRANSFORMACAO_INICIAL)
   const [arrastando, setArrastando] = useState(false)
   const [telaCheia, setTelaCheia] = useState(false)
@@ -119,7 +133,7 @@ export function PranchaInterativa({
   function aoMover(evento: React.PointerEvent) {
     const ajuste = gestos.current.mover(
       { id: evento.pointerId, x: evento.clientX, y: evento.clientY },
-      { largura: palcoRef.current?.clientWidth || 1, altura: palcoRef.current?.clientHeight || 1 },
+      { largura: filmeRef.current?.clientWidth || 1, altura: filmeRef.current?.clientHeight || 1 },
     )
     // `ajuste` já carrega os números do gesto: pode ser executado pelo React
     // quando ele quiser, sem depender de nada que ainda esteja vivo aqui.
@@ -146,15 +160,15 @@ export function PranchaInterativa({
   return (
     <div
       ref={palcoRef}
-      className={`group/palco anatomia-palco relative isolate overflow-hidden ${
+      className={`group/palco anatomia-mesa relative isolate overflow-hidden ${
         telaCheia ? 'flex h-full w-full items-center justify-center !rounded-none !border-0' : 'rounded-[22px]'
       }`}
     >
       {/* `pb-14` reserva a faixa dos controles: sem ela, um marcador no rodapé
           da prancha ficaria escondido atrás dos botões de zoom. */}
       <div
-        className={`relative mx-auto w-full touch-none select-none pb-14 ${
-          telaCheia ? 'h-full max-h-full' : 'aspect-square max-w-[900px]'
+        className={`relative mx-auto flex w-full touch-none select-none items-center justify-center pb-14 ${
+          telaCheia ? 'h-full max-h-full' : 'max-w-[900px]'
         } ${transformacao.escala > 1 ? (arrastando ? 'cursor-grabbing' : 'cursor-grab') : 'cursor-zoom-in'}`}
         onPointerDown={aoPressionar}
         onPointerMove={aoMover}
@@ -162,8 +176,23 @@ export function PranchaInterativa({
         onPointerCancel={aoSoltar}
         onDoubleClick={() => (transformacao.escala > 1 ? reiniciar() : aplicarZoom(ZOOM_PASSO * 3))}
       >
+        {/*
+          O filme é quadrado, sempre — e essa é a única forma de o marcador cair
+          onde deve. As coordenadas do acervo são normalizadas sobre a prancha,
+          que é quadrada (900×900) nas 418 peças; se a moldura dos marcadores
+          fosse a área do palco, o `object-contain` centralizaria a imagem
+          dentro dela e sobrariam faixas laterais que os marcadores ignorariam.
+          O erro chegava a 3% da prancha fora da tela cheia — o suficiente para
+          o pino apontar a estrutura vizinha — e a muito mais dentro dela, onde
+          a área é larga e a peça continua quadrada. Com a moldura quadrada, a
+          imagem preenche o quadro inteiro e os dois sistemas de coordenadas
+          passam a ser o mesmo.
+        */}
         <div
-          className="absolute inset-x-0 bottom-14 top-0 origin-center transition-transform duration-100 ease-out"
+          ref={filmeRef}
+          className={`relative aspect-square origin-center transition-transform duration-100 ease-out ${
+            telaCheia ? 'landscape:h-full landscape:w-auto portrait:h-auto portrait:w-full' : 'w-full'
+          }`}
           style={{ transform: `translate(${transformacao.x}%, ${transformacao.y}%) scale(${transformacao.escala})` }}
         >
           <Image
@@ -180,6 +209,7 @@ export function PranchaInterativa({
           {marcadores.map((marcador, indice) => {
             const ativo = indiceAtivo === indice
             const oculto = modoEstudo && !revelados.has(indice) && !ativo
+            const invertido = marcador.y < LIMITE_DE_TOPO
             return (
               <button
                 key={`${marcador.title}-${indice}`}
@@ -193,30 +223,43 @@ export function PranchaInterativa({
                 style={{
                   left: `${marcador.x * 100}%`,
                   top: `${marcador.y * 100}%`,
-                  transform: `translate(-50%, -50%) scale(${1 / transformacao.escala})`,
+                  // A origem é a ponta do alfinete. Assim tanto o recuo de
+                  // metade da largura quanto a escala inversa do zoom giram em
+                  // torno dela, e a ponta permanece cravada na estrutura em
+                  // qualquer aproximação.
+                  transformOrigin: invertido ? 'top center' : 'bottom center',
+                  transform: `translate(-50%, ${invertido ? '0' : '-100%'}) scale(${1 / transformacao.escala})`,
                 }}
-                className="absolute z-10 origin-center focus:outline-none"
+                /* O `after` é a área de toque: o alfinete é estreito de
+                   propósito, e o dedo não é. Ele cresce a região clicável sem
+                   mexer na caixa que ancora a ponta. */
+                className={`absolute focus:outline-none after:absolute after:-inset-1.5 after:content-[''] ${
+                  ativo ? 'z-20' : 'z-10'
+                }`}
               >
-                <span
-                  className={`relative flex items-center justify-center rounded-full border font-black tabular-nums shadow-[0_2px_10px_rgba(0,0,0,0.55)] transition duration-200 ${
-                    ativo
-                      ? 'h-9 w-9 border-amber-200 bg-amber-400 text-[13px] text-amber-950 ring-4 ring-amber-400/30'
-                      : oculto
-                        ? 'h-7 w-7 border-white/70 bg-white/20 text-[12px] text-white/80 backdrop-blur-sm hover:bg-white/35 sm:h-8 sm:w-8'
-                        : 'h-7 w-7 border-white/85 bg-sky-600 text-[11px] text-white hover:scale-110 hover:bg-sky-500 sm:h-8 sm:w-8 sm:text-xs'
-                  }`}
-                >
-                  {oculto ? '?' : indice + 1}
-                  {ativo && (
-                    <span className="absolute inset-0 animate-ping rounded-full bg-amber-400/40" aria-hidden />
-                  )}
-                </span>
+                {/* Halo na ponta, e não em volta da cabeça: o que o aluno
+                    procura ao voltar para a peça é o ponto apontado. */}
+                {ativo && (
+                  <span
+                    aria-hidden
+                    className={`pointer-events-none absolute left-1/2 h-3 w-3 -translate-x-1/2 animate-ping rounded-full bg-amber-400/50 ${
+                      invertido ? '-top-1.5' : '-bottom-1.5'
+                    }`}
+                  />
+                )}
 
-                {/* O nome sai junto do pino: na maior parte das vezes a pergunta
-                    é só "que estrutura é essa?", e a resposta não deveria exigir
-                    procurar o painel do lado. */}
+                <Alfinete numero={indice + 1} estado={ativo ? 'ativo' : oculto ? 'oculto' : 'normal'} invertido={invertido} />
+
+                {/* O nome sai junto do pino, do lado oposto à ponta: na maior
+                    parte das vezes a pergunta é só "que estrutura é essa?", e a
+                    resposta não deveria exigir procurar o painel do lado — nem
+                    o rótulo deveria cobrir justamente o que o pino aponta. */}
                 {ativo && !oculto && mostrarRotulos && (
-                  <span className="pointer-events-none absolute left-1/2 top-[calc(100%+6px)] max-w-[42vw] -translate-x-1/2 whitespace-nowrap rounded-lg border border-amber-300/40 bg-amber-400 px-2 py-1 text-[11px] font-bold text-amber-950 shadow-lg sm:max-w-[260px]">
+                  <span
+                    className={`pointer-events-none absolute left-1/2 max-w-[42vw] -translate-x-1/2 whitespace-nowrap rounded-lg border border-amber-300/50 bg-amber-400 px-2 py-1 text-[11px] font-bold text-amber-950 shadow-lg sm:max-w-[260px] ${
+                      invertido ? 'top-[calc(100%+4px)]' : 'bottom-[calc(100%+4px)]'
+                    }`}
+                  >
                     <span className="block overflow-hidden text-ellipsis">{marcador.title}</span>
                   </span>
                 )}
@@ -226,8 +269,13 @@ export function PranchaInterativa({
         </div>
       </div>
 
+      {/* A marca fica sobre tudo o que é acervo e por baixo só dos controles:
+          é o print que ela precisa alcançar, e um print pega o palco inteiro,
+          com zoom ou em tela cheia. */}
+      <MarcaDaguaDoAcervo className="z-20" />
+
       {/* Controles: discretos no desktop, sempre visíveis no toque. */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-2.5 sm:p-3">
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30 flex items-end justify-between gap-2 p-2.5 sm:p-3">
         <span className="anatomia-controles pointer-events-none hidden items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-[11px] font-medium text-white/75 sm:inline-flex">
           <Move className="h-3.5 w-3.5" />
           {transformacao.escala > 1 ? 'Arraste para navegar' : 'Duplo clique, pinça ou Ctrl + roda para aproximar'}
@@ -251,6 +299,73 @@ export function PranchaInterativa({
         </div>
       </div>
     </div>
+  )
+}
+
+/* ─────────────────────────────── Alfinete ─────────────────────────────── */
+
+/**
+ * O marcador é um alfinete numerado, não uma bolha.
+ *
+ * A diferença não é de gosto: a bolha ficava *sobre* a estrutura, e numa
+ * prancha densa isso significa esconder o que ela deveria indicar. O alfinete
+ * separa as duas funções — a ponta crava no ponto exato, a cabeça com o número
+ * fica um pouco acima, fora do caminho — e por isso ele também pode ser menor.
+ *
+ * O contorno claro em volta do corpo é o que faz o mesmo pino ser legível sobre
+ * osso quase branco e sobre a sombra escura da mesa. Sem ele, era só olhar uma
+ * prancha escura para perder metade dos marcadores.
+ */
+
+const CORPO_DO_ALFINETE =
+  'M11 29.4C11 29.4 1.8 17.6 1.8 10.5a9.2 9.2 0 1 1 18.4 0c0 7.1-9.2 18.9-9.2 18.9Z'
+
+const PALETA = {
+  normal: { corpo: '#0369a1', contorno: '#f8fafc', texto: '#ffffff' },
+  ativo: { corpo: '#f59e0b', contorno: '#fffbeb', texto: '#431407' },
+  oculto: { corpo: '#475569', contorno: '#f1f5f9', texto: '#f8fafc' },
+} as const
+
+function Alfinete({
+  numero,
+  estado,
+  invertido,
+}: {
+  numero: number
+  estado: keyof typeof PALETA
+  invertido: boolean
+}) {
+  const cores = PALETA[estado]
+  const rotulo = estado === 'oculto' ? '?' : String(numero)
+  const largura = estado === 'ativo' ? 27 : 22
+  const altura = estado === 'ativo' ? 37 : 30
+  // Três dígitos ainda cabem na cabeça; o corpo da fonte é que cede.
+  const corpoDaFonte = rotulo.length >= 3 ? 7.5 : rotulo.length === 2 ? 9.2 : 11
+
+  return (
+    <svg
+      width={largura}
+      height={altura}
+      viewBox="0 0 22 30"
+      aria-hidden
+      className="block overflow-visible drop-shadow-[0_2px_3px_rgba(2,6,23,0.55)] transition-[width,height] duration-150"
+    >
+      <g transform={invertido ? 'translate(0,30) scale(1,-1)' : undefined}>
+        <path d={CORPO_DO_ALFINETE} fill={cores.corpo} stroke={cores.contorno} strokeWidth={1.7} strokeLinejoin="round" />
+      </g>
+      <text
+        x={11}
+        y={invertido ? 19.5 : 10.5}
+        textAnchor="middle"
+        dominantBaseline="central"
+        fontSize={corpoDaFonte}
+        fontWeight={800}
+        fill={cores.texto}
+        style={{ fontVariantNumeric: 'tabular-nums' }}
+      >
+        {rotulo}
+      </text>
+    </svg>
   )
 }
 

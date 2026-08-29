@@ -708,10 +708,13 @@ function AreaDeEstudo({
                         type="button"
                         onClick={() => trocarPeca(posicao)}
                         title={item.title}
-                        className={`relative h-14 w-14 shrink-0 overflow-hidden rounded-xl border bg-slate-950 transition ${
+                        /* Mesma razão da mesa do visualizador: a miniatura é o
+                           mesmo PNG recortado, e sobre o quase-preto as peças
+                           de tom fechado viravam silhuetas iguais entre si. */
+                        className={`relative h-14 w-14 shrink-0 overflow-hidden rounded-xl border bg-slate-100 transition dark:bg-slate-700 ${
                           posicao === indicePeca
                             ? 'border-primary ring-2 ring-primary/30'
-                            : 'border-white/10 opacity-60 hover:opacity-100'
+                            : 'border-border opacity-60 hover:opacity-100'
                         }`}
                       >
                         <Image src={item.image} alt="" fill sizes="56px" className="object-contain" />

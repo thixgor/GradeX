@@ -5751,15 +5751,58 @@ body.has-guest-notice {
     inset 0 1px 0 rgba(255, 255, 255, 0.14);
 }
 
-/* Palco da prancha. Fundo escuro fixo nos dois temas — prancha anatômica
-   é impressa em papel claro e precisa de um contorno escuro para o
-   recorte não se dissolver no fundo da página. */
+/* Palco do modelo 3D. Fundo escuro fixo nos dois temas: ali o conteúdo é um
+   embed com fundo transparente e uma miniatura em cima, e toda a rotulagem
+   por cima dele é branca. */
 .anatomia-palco {
   background: radial-gradient(ellipse at center, #18202a 0%, #070a0f 78%);
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.07),
     0 20px 50px -30px rgba(0, 0, 0, 0.8);
+}
+
+/* --------------------------------------------------------------------------
+   Mesa da prancha.
+
+   Era o mesmo fundo quase preto do palco 3D, e ali ele atrapalhava por um
+   motivo concreto: as 418 pranchas são PNG recortado, com fundo transparente,
+   então o preto não ficava atrás de uma moldura — ficava atrás da peça, colado
+   nela. Tudo o que é escuro na própria peça (sombra de sulco, cavidade,
+   ligamento em corte) desaparecia contra ele, e o mesmo valia para qualquer
+   marcador de tom fechado.
+
+   A mesa é clara, como a bancada em que a peça seria fotografada: a silhueta
+   do recorte volta a existir, o tecido escuro volta a ter contorno e o
+   alfinete tem sobre o que projetar sombra. No escuro ela é uma ardósia
+   iluminada — mais fechada que o papel, nunca preta — para a tela não brilhar
+   na cara de quem estuda à noite.
+   -------------------------------------------------------------------------- */
+.anatomia-mesa {
+  background: radial-gradient(115% 85% at 50% 8%, #ffffff 0%, #eef1f6 46%, #dbe1ea 100%);
+  border: 1px solid rgba(21, 61, 31, 0.12);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 20px 50px -34px rgba(15, 23, 42, 0.5);
+}
+
+.dark .anatomia-mesa {
+  background: radial-gradient(115% 85% at 50% 8%, #4b5769 0%, #2e3849 46%, #1d2532 100%);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 20px 50px -30px rgba(0, 0, 0, 0.75);
+}
+
+/* Ladrilho da marca d'água da prancha. O azulejo chega por variável, montada
+   no componente com o nome e o CPF de quem está logado; a regra fica aqui
+   porque um `style="background-image:…"` inline seria apagado pelo Modo Lite
+   junto com os fundos decorativos — e esta é a única imagem de fundo do site
+   que existe para não poder ser removida. */
+.anatomia-marca-dagua {
+  background-image: var(--marca-dagua);
+  background-repeat: repeat;
+  background-position: center;
 }
 
 /* Cluster de controles sobre o palco: vidro escuro, para os botões
