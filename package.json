@@ -26,6 +26,7 @@
     "midia:ensaio": "node --experimental-strip-types --no-warnings --env-file-if-exists=.env.local scripts/midia/sincronizar-imagens.mjs --relatorio=.midia/relatorio.json",
     "midia:sincronizar": "node --experimental-strip-types --no-warnings --env-file-if-exists=.env.local scripts/midia/sincronizar-imagens.mjs --aplicar --relatorio=.midia/relatorio.json",
     "pwa:splash": "python3 scripts/pwa/gerar-telas-de-partida.py",
+    "db:indexes": "node --experimental-strip-types --no-warnings --env-file-if-exists=.env.local scripts/ensure-indexes.mjs",
     "create-admin": "node scripts/create-admin.js",
     "make-admin": "node scripts/make-admin.js",
     "backfill-lead-uuid": "node scripts/backfill-lead-uuid.js",

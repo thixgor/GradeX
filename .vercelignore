@@ -9,6 +9,10 @@ nul
 # Server-side only (not needed for Vercel deployment)
 server/
 scripts/
+# ...menos o que a própria Vercel executa antes do build. `ignoreCommand` roda
+# dentro do repositório clonado: sem esta exceção o script sumiria e a Vercel
+# construiria sempre (que é o comportamento seguro, mas não o desejado).
+!scripts/vercel/
 
 # Documentation and data files in public (not used by the app)
 public/*.md
@@ -32,3 +36,12 @@ public/Manual-Histologia/dados/**
 public/Manual-Histologia/documentacao/**
 public/Manual-Histologia/scripts/**
 public/Manual-Histologia/*.json
+
+# Documentação e anotações na raiz — não são servidas, só engordam o upload de
+# cada deploy.
+*.md
+docs/
+last_commit.diff
+novo*.txt
+temp_*.txt
+AUDIT_COMPLETE.txt
