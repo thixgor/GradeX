@@ -5,6 +5,7 @@ import { ObjectId } from 'mongodb'
 import { getPricingEventStatesByIds, serializePricingEventState } from '@/lib/pricing-events'
 import { FLASHCARD_MANUAL_COLLECTIONS } from '@/lib/flashcard-manual'
 import { normalizePreviewRanges } from '@/lib/material-pdf-viewer'
+import { materialMetadataPaths, revalidateMetadataPaths } from '@/lib/metadata-revalidate'
 import { expandUserAccessGroups, isPlusAccount } from '@/lib/account-tier'
 import {
   activeAccessFilter,
@@ -630,7 +631,7 @@ export async function PUT(request: NextRequest) {
     // lendo o pricingEventId/preço antigo direto do deck.
     const material = await db.collection('materials').findOne(
       { _id: new ObjectId(_id) },
-      { projection: { linkedDeckId: 1 } }
+      { projection: { linkedDeckId: 1, linkedDeckSlug: 1 } }
     )
     if (material?.linkedDeckId && ObjectId.isValid(String(material.linkedDeckId))) {
       const deckUpdates: Record<string, any> = {}
@@ -646,6 +647,10 @@ export async function PUT(request: NextRequest) {
         )
       }
     }
+
+    // O <head> de /materiais/<id> (e do deck vinculado) é cacheado junto com o
+    // HTML estático da rota; sem isto o preço novo não aparece nos metatags.
+    revalidateMetadataPaths(materialMetadataPaths({ _id, linkedDeckSlug: material?.linkedDeckSlug }))
 
     return NextResponse.json({ success: true })
   } catch (error) {
@@ -676,7 +681,14 @@ export async function DELETE(request: NextRequest) {
       { $pull: { materialIds: id } as any }
     )
 
+    const removed = await db.collection('materials').findOne(
+      { _id: new ObjectId(id) },
+      { projection: { linkedDeckSlug: 1 } }
+    )
+
     await db.collection('materials').deleteOne({ _id: new ObjectId(id) })
+
+    revalidateMetadataPaths(materialMetadataPaths({ _id: id, linkedDeckSlug: removed?.linkedDeckSlug }))
 
     return NextResponse.json({ success: true })
   } catch (error) {

@@ -3,6 +3,7 @@ import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { computeEffectivePackagePrice } from '@/lib/material-package-pricing'
+import { packageMetadataPaths, revalidateMetadataPaths } from '@/lib/metadata-revalidate'
 import { getPricingEventStatesByIds, serializePricingEventState } from '@/lib/pricing-events'
 import { expandUserAccessGroups, isPlusAccount } from '@/lib/account-tier'
 import {
@@ -285,6 +286,10 @@ export async function PUT(request: NextRequest) {
       { $set: updates }
     )
 
+    // Mesmo motivo do material: os metatags de /pacotes/<id> vêm do HTML
+    // cacheado da rota e precisam ser invalidados na alteração de preço.
+    revalidateMetadataPaths(packageMetadataPaths(_id))
+
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Error updating package:', error)
@@ -309,6 +314,8 @@ export async function DELETE(request: NextRequest) {
     }
 
     await db.collection('material_packages').deleteOne({ _id: new ObjectId(id) })
+
+    revalidateMetadataPaths(packageMetadataPaths(id))
 
     return NextResponse.json({ success: true })
   } catch (error) {
