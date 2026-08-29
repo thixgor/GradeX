@@ -12,6 +12,7 @@ import {
   Filter,
   List,
   Loader2,
+  Merge,
   Plus,
   ScanLine,
   Search,
@@ -29,8 +30,16 @@ import {
 } from '@/components/cronogramas/editor-avaliacao'
 import { ImportarAvaliacoes } from '@/components/cronogramas/importar-avaliacoes'
 import { ImportarEmenta, type EmentaImportada } from '@/components/cronogramas/importar-ementa'
-import { diasEntre, hojeBrasilia } from '@/lib/cronogramas/brasilia'
-import { SECOES, cobrePeriodo, getSecao, type Avaliacao, type SecaoCurso } from '@/lib/cronogramas/tipos'
+import { diasEntre, formatarDiaCurto, hojeBrasilia } from '@/lib/cronogramas/brasilia'
+import {
+  SECOES,
+  agruparMesmaProva,
+  cobrePeriodo,
+  getSecao,
+  type Avaliacao,
+  type GrupoMesmaProva,
+  type SecaoCurso,
+} from '@/lib/cronogramas/tipos'
 
 type Aba = 'avaliacoes' | 'ementas'
 type Visao = 'lista' | 'calendario'
@@ -267,6 +276,57 @@ function ConteudoAdminCronogramas() {
       texto: `${criadas.length} avaliaç${criadas.length === 1 ? 'ão criada' : 'ões criadas'} a partir da imagem.`,
     })
     return criadas.length
+  }
+
+  /**
+   * A mesma prova cadastrada uma vez por turma.
+   *
+   * Aparece quando o calendário foi importado antes de existir a prova única —
+   * ou quando alguém preencheu turma a turma. Não é erro, mas é trabalho
+   * repetido esperando para dar errado: corrigir a data exige editar todas.
+   */
+  const repetidas = useMemo(() => agruparMesmaProva(avaliacoes), [avaliacoes])
+
+  /**
+   * Funde o grupo numa avaliação só, marcada para todos os períodos.
+   *
+   * A primeira vira a prova única e as outras são apagadas. A confirmação diz
+   * quais períodos a fusão passaria a cobrir: a N3 da manhã tem quatro turmas
+   * com o mesmo horário porque as outras quatro fazem à tarde, e fundir ali
+   * estenderia a prova para turmas que fazem em outro horário.
+   */
+  async function juntarEmProvaUnica(grupo: GrupoMesmaProva) {
+    const [primeira, ...extras] = grupo.avaliacoes
+    const secao = getSecao(primeira.secao)
+
+    const aviso = grupo.cobreOCursoInteiro
+      ? `Juntar ${grupo.avaliacoes.length} avaliações de "${primeira.titulo}" em uma só, válida para todos os ${secao.periodos} períodos de ${secao.nome}?`
+      : `"${primeira.titulo}" está em ${grupo.periodos.map(p => `${p}º`).join(', ')}. ` +
+        `Juntar em uma prova única faz ela valer TAMBÉM para ${grupo.faltando.map(p => `${p}º`).join(', ')}. Confirma?`
+
+    if (!confirm(aviso)) return
+
+    setSalvando(primeira._id ?? null)
+    try {
+      const ok = await alterar(primeira._id!, { todosOsPeriodos: true, periodo: 1 })
+      if (!ok) return
+
+      for (const extra of extras) {
+        const resposta = await fetch(`/api/admin/cronogramas/avaliacoes/${extra._id}`, {
+          method: 'DELETE',
+        })
+        if (resposta.ok) {
+          setAvaliacoes(anterior => anterior.filter(item => item._id !== extra._id))
+        }
+      }
+
+      setAviso({
+        tom: 'ok',
+        texto: `${grupo.avaliacoes.length} avaliações viraram uma prova única para todos os períodos.`,
+      })
+    } finally {
+      setSalvando(null)
+    }
   }
 
   async function alterar(id: string, mudancas: Partial<Avaliacao>) {
@@ -577,6 +637,68 @@ function ConteudoAdminCronogramas() {
                 </div>
               )}
             </div>
+
+            {repetidas.length > 0 && (
+              <section className="mb-4 rounded-2xl border border-[#E2A43E]/40 bg-[#E2A43E]/[0.07] p-3.5">
+                <p className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                  <Merge className="h-4 w-4 text-[#9A6D12] dark:text-[#E2A43E]" aria-hidden />
+                  {repetidas.length === 1
+                    ? 'Uma prova está cadastrada turma a turma'
+                    : `${repetidas.length} provas estão cadastradas turma a turma`}
+                </p>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  Mesma data, mesmo horário e mesmo título em vários períodos. Juntar em uma prova
+                  única deixa a correção de data valendo para todo mundo de uma vez.
+                </p>
+
+                <ul className="mt-2.5 space-y-2">
+                  {repetidas.map(grupo => {
+                    const primeira = grupo.avaliacoes[0]
+                    const secao = getSecao(primeira.secao)
+
+                    return (
+                      <li
+                        key={grupo.chave}
+                        className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-background/70 px-3 py-2"
+                      >
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-semibold text-foreground">
+                            {primeira.titulo}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            <span style={{ color: secao.cor }} className="font-semibold">
+                              {secao.emoji} {secao.curto}
+                            </span>{' '}
+                            · {formatarDiaCurto(primeira.data)}
+                            {primeira.hora ? ` às ${primeira.hora}` : ''} ·{' '}
+                            {grupo.avaliacoes.length} turmas ({grupo.periodos.map(p => `${p}º`).join(', ')})
+                            {!grupo.cobreOCursoInteiro && (
+                              <span className="ml-1 text-[#9A6D12] dark:text-[#E2A43E]">
+                                — juntar estende para {grupo.faltando.map(p => `${p}º`).join(', ')}
+                              </span>
+                            )}
+                          </p>
+                        </div>
+
+                        <Button
+                          variant="outline"
+                          onClick={() => juntarEmProvaUnica(grupo)}
+                          disabled={salvando === primeira._id}
+                          className="h-9 shrink-0 rounded-lg text-xs font-semibold"
+                        >
+                          {salvando === primeira._id ? (
+                            <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                          ) : (
+                            <Merge className="mr-1.5 h-3.5 w-3.5" />
+                          )}
+                          Juntar em uma
+                        </Button>
+                      </li>
+                    )
+                  })}
+                </ul>
+              </section>
+            )}
 
             {importando && (
               <ImportarAvaliacoes

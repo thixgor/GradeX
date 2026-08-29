@@ -132,6 +132,14 @@ O teste de progresso é diferente: é a MESMA prova, no mesmo dia e horário, do
 | Quando usar | N3 de manhã (1º–4º) e de tarde (5º–8º): horários diferentes | TPI, prova integrada geral |
 | Mudar a data depois | uma edição por turma | **uma edição** |
 
+**Limpando o que já foi cadastrado turma a turma.** Quando a mesma prova (mesma
+seção, data, horário e título) aparece em vários períodos, o painel mostra um
+aviso no topo da lista com o botão **Juntar em uma**: a primeira vira a prova
+única e as outras são apagadas. A confirmação diz quais turmas a fusão passaria
+a incluir — a N3 da manhã tem quatro turmas com o mesmo horário porque as outras
+quatro fazem à tarde, e fundir ali estenderia a prova para quem faz em outro
+horário. `agruparMesmaProva()` só agrupa e mede; quem decide é o admin.
+
 `cobrePeriodo()` em `lib/cronogramas/tipos.ts` é o único lugar que responde "essa
 prova alcança essa turma?" — painel, calendário do aluno, consulta ao banco
 (`$or: [{ periodo }, { todosOsPeriodos: true }]`, com índice próprio) e cron dos

@@ -305,6 +305,76 @@ export function descreverAlcance(
   return avaliacao.todosOsPeriodos ? 'todos os períodos' : `${avaliacao.periodo}º período`
 }
 
+// ── Provas repetidas turma a turma ──────────────────────────────────────────
+
+export interface GrupoMesmaProva {
+  chave: string
+  /** As avaliações do grupo, em ordem de período. */
+  avaliacoes: Avaliacao[]
+  /** Períodos que o grupo já cobre hoje. */
+  periodos: number[]
+  /** Períodos que a fusão passaria a cobrir e hoje não estão no grupo. */
+  faltando: number[]
+  /** true quando o grupo já cobre o curso inteiro — fundir não amplia nada. */
+  cobreOCursoInteiro: boolean
+}
+
+function assinaturaDaProva(avaliacao: Avaliacao): string {
+  const titulo = avaliacao.titulo
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '')
+
+  return [avaliacao.secao, avaliacao.data, avaliacao.hora ?? '', titulo].join('|')
+}
+
+/**
+ * Acha a MESMA prova cadastrada uma vez por turma.
+ *
+ * Mesma seção, mesma data, mesmo horário e mesmo título em vários períodos é
+ * quase sempre uma prova só que entrou copiada — o teste de progresso é o caso
+ * clássico. Elas não estão erradas, mas viram trabalho repetido: corrigir a
+ * data exige editar todas, e esquecer uma deixa a turma com a agenda diferente.
+ *
+ * Só agrupa; a decisão de fundir é do admin, e a tela mostra quais períodos a
+ * fusão passaria a cobrir — a N3 de manhã, por exemplo, tem quatro turmas com
+ * mesmo horário porque as outras quatro fazem à tarde, e fundir ali estaria
+ * errado.
+ */
+export function agruparMesmaProva(avaliacoes: Avaliacao[]): GrupoMesmaProva[] {
+  const porAssinatura = new Map<string, Avaliacao[]>()
+
+  for (const avaliacao of avaliacoes) {
+    if (avaliacao.todosOsPeriodos) continue
+    const chave = assinaturaDaProva(avaliacao)
+    porAssinatura.set(chave, [...(porAssinatura.get(chave) ?? []), avaliacao])
+  }
+
+  const grupos: GrupoMesmaProva[] = []
+
+  for (const [chave, doGrupo] of porAssinatura) {
+    if (doGrupo.length < 2) continue
+
+    const ordenadas = [...doGrupo].sort((a, b) => a.periodo - b.periodo)
+    const periodos = [...new Set(ordenadas.map(item => item.periodo))]
+    const total = getSecao(ordenadas[0].secao).periodos
+    const faltando = Array.from({ length: total }, (_, i) => i + 1).filter(
+      numero => !periodos.includes(numero),
+    )
+
+    grupos.push({
+      chave,
+      avaliacoes: ordenadas,
+      periodos,
+      faltando,
+      cobreOCursoInteiro: faltando.length === 0,
+    })
+  }
+
+  return grupos.sort((a, b) => a.avaliacoes[0].data.localeCompare(b.avaliacoes[0].data))
+}
+
 /** Um disparo já feito, gravado para não repetir o mesmo lembrete no mesmo dia. */
 export interface EnvioLembrete {
   avaliacaoId: string

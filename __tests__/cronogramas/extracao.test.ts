@@ -16,7 +16,13 @@ import {
   todosOsPeriodos,
   type LinhaExtraida,
 } from '@/lib/cronogramas/extracao'
-import { cobrePeriodo as cobre, descreverAlcance as descreve, type Avaliacao } from '@/lib/cronogramas/tipos'
+import {
+  agruparMesmaProva,
+  cobrePeriodo as cobre,
+  descreverAlcance as descreve,
+  LEMBRETE_PADRAO,
+  type Avaliacao,
+} from '@/lib/cronogramas/tipos'
 
 /**
  * Testes da metade determinística da importação por imagem.
@@ -394,6 +400,76 @@ describe('prova única do curso inteiro', () => {
     expect(todosOsPeriodos(8)).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
     expect(todosOsPeriodos(40)).toHaveLength(12)
     expect(todosOsPeriodos(0)).toEqual([1])
+  })
+})
+
+describe('provas repetidas turma a turma', () => {
+  function avaliacao(periodo: number, extras: Partial<Avaliacao> = {}): Avaliacao {
+    return {
+      _id: `id-${periodo}-${extras.data ?? '2026-09-21'}-${extras.hora ?? '14:00'}`,
+      secao: 'medicina',
+      periodo,
+      titulo: 'TPI',
+      tipo: 'prova',
+      data: '2026-09-21',
+      hora: '14:00',
+      lembrete: { ...LEMBRETE_PADRAO },
+      publicada: true,
+      ...extras,
+    }
+  }
+
+  it('acha a mesma prova copiada em várias turmas', () => {
+    const agenda = [1, 2, 3, 4, 5, 6, 7, 8].map(periodo => avaliacao(periodo))
+    const [grupo] = agruparMesmaProva(agenda)
+
+    expect(grupo.avaliacoes).toHaveLength(8)
+    expect(grupo.periodos).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
+    // Cobre o curso todo: juntar não estende para ninguém novo.
+    expect(grupo.cobreOCursoInteiro).toBe(true)
+    expect(grupo.faltando).toEqual([])
+  })
+
+  it('avisa quais turmas a fusão passaria a incluir', () => {
+    // A N3 da manhã: quatro turmas com o mesmo horário porque as outras quatro
+    // fazem à tarde. Juntar aqui estaria errado, e a tela precisa dizer isso.
+    const manha = [1, 2, 3, 4].map(periodo => avaliacao(periodo, { titulo: 'N3 Específica' }))
+    const [grupo] = agruparMesmaProva(manha)
+
+    expect(grupo.cobreOCursoInteiro).toBe(false)
+    expect(grupo.faltando).toEqual([5, 6, 7, 8])
+  })
+
+  it('não agrupa provas diferentes nem a que já é do curso inteiro', () => {
+    expect(agruparMesmaProva([avaliacao(1), avaliacao(2, { hora: '08:00' })])).toEqual([])
+    expect(agruparMesmaProva([avaliacao(1), avaliacao(2, { data: '2026-10-08' })])).toEqual([])
+    expect(agruparMesmaProva([avaliacao(1)])).toEqual([])
+    expect(
+      agruparMesmaProva([
+        avaliacao(1, { todosOsPeriodos: true }),
+        avaliacao(2, { todosOsPeriodos: true }),
+      ]),
+    ).toEqual([])
+  })
+
+  it('ignora acento, caixa e pontuação do título', () => {
+    const agenda = [
+      avaliacao(1, { titulo: 'TPI — 1ª Chamada Regular' }),
+      avaliacao(2, { titulo: 'tpi 1ª chamada, regular' }),
+    ]
+    expect(agruparMesmaProva(agenda)).toHaveLength(1)
+  })
+
+  it('separa as chamadas do TPI, que são datas diferentes', () => {
+    const agenda = [
+      ...[1, 2].map(periodo => avaliacao(periodo)),
+      ...[1, 2].map(periodo => avaliacao(periodo, { data: '2026-10-08' })),
+    ]
+
+    const grupos = agruparMesmaProva(agenda)
+    expect(grupos).toHaveLength(2)
+    expect(grupos[0].avaliacoes[0].data).toBe('2026-09-21')
+    expect(grupos[1].avaliacoes[0].data).toBe('2026-10-08')
   })
 })
 
