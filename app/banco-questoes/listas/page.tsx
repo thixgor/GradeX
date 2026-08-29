@@ -27,6 +27,7 @@ import { ROTA_ASSINATURA } from '@/lib/account-tier'
 import { cn } from '@/lib/utils'
 import { Portal } from '@/components/ui/portal'
 import { CriadorDeLista } from '@/components/banco/criador-de-lista'
+import { lerSessao, quandoFoi, resumoDaSessao, vaiPelaPenaRetomar } from '@/lib/banco/sessao-de-lista'
 import type { BancoListaUsuario, BancoModoResposta } from '@/lib/types/banco-questoes'
 
 /**
@@ -407,6 +408,28 @@ function CartaoDeLista({
   onEditar: () => void
   onApagar: () => void
 }) {
+  /*
+   * Sessão interrompida neste dispositivo.
+   *
+   * `totalResolvidas` vem do servidor e conta questões RESOLVIDAS — não sabe
+   * de uma sessão parada na metade, com respostas ainda não conferidas. É
+   * justamente essa lista, a que ficou pela metade, que quem volta procura
+   * primeiro; sem isto ela parecia igual a todas as outras. A leitura acontece
+   * num efeito porque `localStorage` não existe na renderização do servidor.
+   */
+  const [emAndamento, setEmAndamento] = useState<{ parouNa: number; total: number; quando: number } | null>(null)
+
+  useEffect(() => {
+    const ids = (lista.questaoIds || []).map((qid) => String(qid))
+    const sessao = lerSessao(String(lista._id))
+    if (!sessao || sessao.finalizado || ids.length === 0 || !vaiPelaPenaRetomar(sessao, ids)) {
+      setEmAndamento(null)
+      return
+    }
+    const resumo = resumoDaSessao(sessao, ids)
+    setEmAndamento({ parouNa: resumo.indiceAtual + 1, total: resumo.total, quando: sessao.atualizadoEm })
+  }, [lista._id, lista.questaoIds])
+
   const total = lista.totalQuestoes || 0
   const feitas = Math.min(lista.totalResolvidas || 0, total)
   const percentual = total > 0 ? Math.round((feitas / total) * 100) : 0
@@ -457,6 +480,13 @@ function CartaoDeLista({
           </button>
         </div>
       </div>
+
+      {emAndamento ? (
+        <p className="mt-2 inline-flex w-fit items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-[11px] font-semibold text-primary">
+          <Play className="h-3 w-3 fill-current" />
+          Parou na {emAndamento.parouNa} de {emAndamento.total} · {quandoFoi(emAndamento.quando)}
+        </p>
+      ) : null}
 
       <div className="mt-2 flex items-center gap-1.5 text-[11px] text-muted-foreground">
         <BookOpen className="h-3 w-3" />
@@ -515,6 +545,10 @@ function CartaoDeLista({
       >
         {total === 0 ? (
           'Abrir'
+        ) : emAndamento ? (
+          <>
+            <Play className="h-3.5 w-3.5 fill-current" /> Continuar de onde parei
+          </>
         ) : concluida ? (
           <>
             <RotateCcw className="h-3.5 w-3.5" /> Refazer

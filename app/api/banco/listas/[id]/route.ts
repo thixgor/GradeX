@@ -100,6 +100,30 @@ export async function GET(
       ])
       .toArray()
 
+    /*
+     * A ordem devolvida é a da LISTA, não a do banco.
+     *
+     * `$match: { _id: { $in: [...] } }` devolve os documentos na ordem em que o
+     * Mongo os encontra no índice — que não tem relação nenhuma com a ordem de
+     * `questaoIds`. Para uma lista sorteada isso é o embaralhamento inteiro
+     * jogado fora: a lista foi criada com uma ordem (ver a rota
+     * `listas/aleatorias`), e a tela mostrava outra. Quem parava na questão 12
+     * e voltava depois encontrava uma "questão 12" diferente — o relato de que
+     * "se sai, perde a ordem".
+     *
+     * O reordenamento é feito aqui, em memória, e não com `$indexOfArray` no
+     * pipeline: são no máximo algumas centenas de questões por lista, e um
+     * passo a menos de agregação é um passo a menos para quebrar.
+     */
+    const posicaoNaLista = new Map(
+      lista.questaoIds.map((qid, i) => [String(qid), i] as const),
+    )
+    questoes.sort(
+      (a, b) =>
+        (posicaoNaLista.get(String(a._id)) ?? Number.MAX_SAFE_INTEGER) -
+        (posicaoNaLista.get(String(b._id)) ?? Number.MAX_SAFE_INTEGER),
+    )
+
     return NextResponse.json({
       lista,
       questoes

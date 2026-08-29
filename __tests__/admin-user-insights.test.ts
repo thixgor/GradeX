@@ -2,7 +2,8 @@ import { describe, expect, it } from 'vitest'
 import {
   buildAdminUserInsights,
   buildManualSubscription,
-  buildPlusSubscription,
+  buildPaidSubscription,
+  describeAccountRole,
   formatDurationBreakdown,
   formatSubscriptionRemaining,
   matchesCycleFilter,
@@ -29,20 +30,20 @@ function makeRow(overrides: Partial<AdminUserRow> = {}): AdminUserRow {
     email: 'user@example.com',
     role: 'user',
     createdAt: new Date('2026-01-01T00:00:00.000Z'),
-    plusSubscription: null,
+    paidSubscription: null,
     manualSubscription: null,
     spend: { total: 0, count: 0, materialTotal: 0, manualTotal: 0, lastPurchaseAt: null },
     ...overrides,
   } as AdminUserRow
 }
 
-describe('buildPlusSubscription', () => {
-  it('devolve null para conta que nunca passou pelo Plus+', () => {
-    expect(buildPlusSubscription({ accountType: 'gratuito' }, NOW)).toBeNull()
+describe('buildPaidSubscription', () => {
+  it('devolve null para conta que nunca pagou nada', () => {
+    expect(buildPaidSubscription({ accountType: 'gratuito' }, NOW)).toBeNull()
   })
 
   it('lê o ciclo contratado e o tempo restante', () => {
-    const info = buildPlusSubscription(
+    const info = buildPaidSubscription(
       {
         accountType: 'plus',
         premiumPlanType: 'semestral',
@@ -66,7 +67,7 @@ describe('buildPlusSubscription', () => {
   })
 
   it('trata cargo pago legado (premium/essential) como Plus+', () => {
-    const info = buildPlusSubscription(
+    const info = buildPaidSubscription(
       { accountType: 'premium', premiumPlanType: 'anual', premiumExpiresAt: daysFromNow(10) },
       NOW,
     )
@@ -75,7 +76,7 @@ describe('buildPlusSubscription', () => {
   })
 
   it('sem data de expiração é vitalício e nunca vence', () => {
-    const info = buildPlusSubscription({ accountType: 'plus', premiumPlanType: 'vitalicio' }, NOW)
+    const info = buildPaidSubscription({ accountType: 'plus', premiumPlanType: 'vitalicio' }, NOW)
     expect(info!.lifetime).toBe(true)
     expect(info!.active).toBe(true)
     expect(info!.daysRemaining).toBeNull()
@@ -83,7 +84,7 @@ describe('buildPlusSubscription', () => {
   })
 
   it('mantém a assinatura vencida visível — é a fila do rebaixamento', () => {
-    const info = buildPlusSubscription(
+    const info = buildPaidSubscription(
       { accountType: 'plus', premiumPlanType: 'mensal', premiumExpiresAt: daysFromNow(-3) },
       NOW,
     )
@@ -93,7 +94,7 @@ describe('buildPlusSubscription', () => {
   })
 
   it('marca como "vence logo" quem está dentro da janela de 7 dias', () => {
-    const info = buildPlusSubscription(
+    const info = buildPaidSubscription(
       { accountType: 'plus', premiumPlanType: 'mensal', premiumExpiresAt: daysFromNow(5) },
       NOW,
     )
@@ -102,7 +103,7 @@ describe('buildPlusSubscription', () => {
   })
 
   it('reconhece recorrência pelo preapproval do provedor', () => {
-    const info = buildPlusSubscription(
+    const info = buildPaidSubscription(
       {
         accountType: 'plus',
         premiumPlanType: 'mensal',
@@ -118,7 +119,7 @@ describe('buildPlusSubscription', () => {
     // Cargo já caiu para gratuito (cron rebaixou), mas o registro ainda
     // carrega `premiumActivatedAt`/`premiumPrice` de quando comprou um Mensal
     // — sem `premiumPlanType`/`premiumExpiresAt`, que o cron já limpou.
-    const info = buildPlusSubscription(
+    const info = buildPaidSubscription(
       {
         accountType: 'gratuito',
         premiumActivatedAt: daysFromNow(-90),
@@ -133,8 +134,63 @@ describe('buildPlusSubscription', () => {
     expect(info!.expired).toBe(true)
   })
 
+  it('não chama de Plus+ quem comprou o Quest+', () => {
+    // Os dois cargos gravam nos mesmos campos do usuário; só `accountType`
+    // separa. O painel mostrava "Plus+ Semestral" com o preço do Quest+.
+    const info = buildPaidSubscription(
+      {
+        accountType: 'quest',
+        premiumPlanType: 'semestral',
+        premiumActivatedAt: daysFromNow(-1),
+        premiumExpiresAt: daysFromNow(183),
+        premiumPrice: 80.81,
+      },
+      NOW,
+    )
+
+    expect(info!.product).toBe('quest')
+    expect(info!.productLabel).toBe('Quest+')
+    expect(info!.planLabel).toBe('Semestral')
+    expect(info!.price).toBe(80.81)
+    expect(info!.active).toBe(true)
+  })
+
+  it('Quest+ vitalício não é lido como assinatura vencida', () => {
+    const info = buildPaidSubscription(
+      { accountType: 'quest', premiumPlanType: 'vitalicio' },
+      NOW,
+    )
+    expect(info!.product).toBe('quest')
+    expect(info!.lifetime).toBe(true)
+    expect(info!.active).toBe(true)
+  })
+
+  it('conta já rebaixada guarda o produto pelo cargo do plano comprado', () => {
+    const info = buildPaidSubscription(
+      {
+        accountType: 'gratuito',
+        premiumPlanType: 'quest_semestral',
+        premiumActivatedAt: daysFromNow(-200),
+        premiumExpiresAt: daysFromNow(-10),
+      },
+      NOW,
+      null,
+      { quest_semestral: 'quest' },
+    )
+    expect(info!.product).toBe('quest')
+    expect(info!.expired).toBe(true)
+  })
+
+  it('sem catálogo para consultar, a assinatura vencida fica como Plus+', () => {
+    const info = buildPaidSubscription(
+      { accountType: 'gratuito', premiumPlanType: 'mensal', premiumExpiresAt: daysFromNow(-3) },
+      NOW,
+    )
+    expect(info!.product).toBe('plus')
+  })
+
   it('usa o rótulo do plano personalizado quando o admin criou um', () => {
-    const info = buildPlusSubscription(
+    const info = buildPaidSubscription(
       { accountType: 'plus', premiumPlanType: 'black_friday', premiumExpiresAt: daysFromNow(20) },
       NOW,
       { black_friday: 'Black Friday 3 meses' },
@@ -221,7 +277,7 @@ describe('formatDurationBreakdown', () => {
 describe('filtros da lista', () => {
   const plusMensal = makeRow({
     _id: 'plus-mensal',
-    plusSubscription: buildPlusSubscription(
+    paidSubscription: buildPaidSubscription(
       { accountType: 'plus', premiumPlanType: 'mensal', premiumExpiresAt: daysFromNow(4) },
       NOW,
     ),
@@ -235,8 +291,15 @@ describe('filtros da lista', () => {
   })
   const plusExpirado = makeRow({
     _id: 'plus-expirado',
-    plusSubscription: buildPlusSubscription(
+    paidSubscription: buildPaidSubscription(
       { accountType: 'plus', premiumPlanType: 'semestral', premiumExpiresAt: daysFromNow(-2) },
+      NOW,
+    ),
+  })
+  const questSemestral = makeRow({
+    _id: 'quest-semestral',
+    paidSubscription: buildPaidSubscription(
+      { accountType: 'quest', premiumPlanType: 'semestral', premiumExpiresAt: daysFromNow(120) },
       NOW,
     ),
   })
@@ -247,6 +310,16 @@ describe('filtros da lista', () => {
     expect(matchesSubscriptionFilter(manualAnual, 'plus_active')).toBe(false)
     expect(matchesSubscriptionFilter(manualAnual, 'manual_active')).toBe(true)
     expect(matchesSubscriptionFilter(plusMensal, 'manual_active')).toBe(false)
+  })
+
+  it('o recorte Plus+ não devolve quem tem só o Quest+', () => {
+    expect(matchesSubscriptionFilter(questSemestral, 'plus_active')).toBe(false)
+    expect(matchesSubscriptionFilter(questSemestral, 'plus')).toBe(false)
+    expect(matchesSubscriptionFilter(questSemestral, 'quest_active')).toBe(true)
+    expect(matchesSubscriptionFilter(plusMensal, 'quest_active')).toBe(false)
+    // Quest+ é assinatura: entra em "com assinatura" e sai de "sem nenhuma".
+    expect(matchesSubscriptionFilter(questSemestral, 'any')).toBe(true)
+    expect(matchesSubscriptionFilter(questSemestral, 'none')).toBe(false)
   })
 
   it('expirado não conta como ativo, mas continua no histórico', () => {
@@ -281,7 +354,7 @@ describe('buildAdminUserInsights', () => {
   const users: AdminUserRow[] = [
     makeRow({
       _id: 'a',
-      plusSubscription: buildPlusSubscription(
+      paidSubscription: buildPaidSubscription(
         {
           accountType: 'plus',
           premiumPlanType: 'mensal',
@@ -294,7 +367,7 @@ describe('buildAdminUserInsights', () => {
     }),
     makeRow({
       _id: 'b',
-      plusSubscription: buildPlusSubscription(
+      paidSubscription: buildPaidSubscription(
         {
           accountType: 'plus',
           premiumPlanType: 'semestral',
@@ -311,8 +384,20 @@ describe('buildAdminUserInsights', () => {
     }),
     makeRow({
       _id: 'c',
-      plusSubscription: buildPlusSubscription(
+      paidSubscription: buildPaidSubscription(
         { accountType: 'plus', premiumPlanType: 'mensal', premiumExpiresAt: daysFromNow(-1) },
+        NOW,
+      ),
+    }),
+    makeRow({
+      _id: 'q',
+      paidSubscription: buildPaidSubscription(
+        {
+          accountType: 'quest',
+          premiumPlanType: 'semestral',
+          premiumExpiresAt: daysFromNow(150),
+          premiumPrice: 80.81,
+        },
         NOW,
       ),
     }),
@@ -328,6 +413,13 @@ describe('buildAdminUserInsights', () => {
     expect(insights.manual.active).toBe(1)
   })
 
+  it('Quest+ tem bucket próprio e não infla o de Plus+', () => {
+    expect(insights.quest.active).toBe(1)
+    expect(insights.quest.cycles).toEqual([{ key: 'semestral', label: 'Semestral', count: 1 }])
+    // O assinante Quest+ continua contando como assinante da base.
+    expect(insights.payingUsers).toBe(3)
+  })
+
   it('agrupa os ativos por ciclo contratado', () => {
     expect(insights.plus.cycles).toEqual([
       { key: 'mensal', label: 'Mensal', count: 1 },
@@ -341,7 +433,7 @@ describe('buildAdminUserInsights', () => {
   })
 
   it('conta assinantes únicos e quem tem os dois produtos', () => {
-    expect(insights.payingUsers).toBe(2)
+    expect(insights.payingUsers).toBe(3)
     expect(insights.bothProducts).toBe(1)
   })
 
@@ -351,14 +443,15 @@ describe('buildAdminUserInsights', () => {
     expect(insights.averageTicket).toBe(99)
   })
 
-  it('estima o MRR dividindo o preço pela duração do ciclo', () => {
-    // 30/1 (mensal) + 120/6 (semestral) + 48/12 (anual do Manual) = 54
-    expect(insights.estimatedMrr).toBeCloseTo(54, 5)
+  it('estima o MRR somando os três produtos', () => {
+    // 30/1 (mensal) + 120/6 (semestral) + 48/12 (anual do Manual)
+    // + 80,81/6 (semestral do Quest+) = 54 + 13,468…
+    expect(insights.estimatedMrr).toBeCloseTo(54 + 80.81 / 6, 5)
   })
 
   it('mede conversão sobre as contas de usuário, fora os admins', () => {
-    // 2 assinantes ativos entre 4 contas não-admin.
-    expect(insights.conversionRate).toBeCloseTo(50, 5)
+    // 3 assinantes ativos entre 5 contas não-admin.
+    expect(insights.conversionRate).toBeCloseTo(60, 5)
   })
 
   it('lista os maiores gastos primeiro', () => {
@@ -376,5 +469,25 @@ describe('resolvePlanLabel', () => {
 
   it('capitaliza chaves desconhecidas em vez de escondê-las', () => {
     expect(resolvePlanLabel('promo_natal')).toBe('Promo_natal')
+  })
+})
+
+describe('describeAccountRole', () => {
+  it('nomeia o cargo pago que a conta tem de verdade', () => {
+    expect(describeAccountRole({ accountType: 'quest' } as any)).toBe('Quest+')
+    expect(describeAccountRole({ accountType: 'plus' } as any)).toBe('Plus+')
+    // Legado ainda gravado como premium/essential continua sendo Plus+.
+    expect(describeAccountRole({ accountType: 'premium' } as any)).toBe('Plus+')
+    expect(describeAccountRole({ accountType: 'trial' } as any)).toBe('Trial')
+    expect(describeAccountRole({ accountType: 'gratuito' } as any)).toBe('Gratuito')
+  })
+
+  it('cargo criado em /admin/cargos aparece pelo id, não como Gratuito', () => {
+    expect(describeAccountRole({ accountType: 'residencia' } as any)).toBe('Residencia')
+  })
+
+  it('admin e banido vêm antes do cargo', () => {
+    expect(describeAccountRole({ role: 'admin', accountType: 'quest' } as any)).toBe('Administrador')
+    expect(describeAccountRole({ banned: true, accountType: 'plus' } as any)).toBe('Banido')
   })
 })

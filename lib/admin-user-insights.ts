@@ -3,11 +3,13 @@
  *
  * ## Por que este arquivo existe
  *
- * A plataforma vende duas coisas por assinatura, e elas moram em lugares
+ * A plataforma vende três coisas por assinatura, e elas moram em lugares
  * diferentes do banco:
  *
- *  - **Plus+** — gravado no próprio documento do usuário
- *    (`accountType`, `premiumPlanType`, `premiumActivatedAt`, `premiumExpiresAt`);
+ *  - **Plus+** e **Quest+** — os dois cargos pagos, gravados no próprio
+ *    documento do usuário (`accountType`, `premiumPlanType`,
+ *    `premiumActivatedAt`, `premiumExpiresAt`). Dividem os mesmos campos de
+ *    prazo: quem diz qual dos dois foi comprado é `accountType`;
  *  - **Manual Clínico** — gravado em `manual_clinico_purchases`, uma compra por
  *    contratação, com `planKey`/`expiresAt` próprios.
  *
@@ -26,10 +28,25 @@
  */
 
 import type { ManualClinicoPurchase, User } from './types'
-import { isPlusAccount, normalizeAccountType } from './account-tier'
+import {
+  ACCOUNT_TYPE_LABELS,
+  PLUS_LABEL,
+  QUEST_LABEL,
+  QUEST_TIER,
+  isPaidAccount,
+  normalizeAccountType,
+} from './account-tier'
 
-/** Produtos com assinatura própria. */
-export type SubscriptionProduct = 'plus' | 'manual_clinico'
+/**
+ * Produtos com assinatura própria.
+ *
+ * `plus` e `quest` são cargos, e moram nos MESMOS campos do documento do
+ * usuário (`premiumPlanType`/`premiumExpiresAt`) — quem separa os dois é
+ * `accountType`, não o campo de prazo. Enquanto este tipo tinha só `'plus'`,
+ * uma conta Quest+ aparecia no painel como "Plus+ Semestral": o ciclo e o
+ * preço eram os da compra certa, mas o produto era o errado.
+ */
+export type SubscriptionProduct = 'plus' | 'quest' | 'manual_clinico'
 
 /** Quanto tempo antes do vencimento a assinatura entra em "vence logo". */
 export const EXPIRING_SOON_DAYS = 7
@@ -149,13 +166,13 @@ export interface AdminSubscriptionInfo {
 }
 
 /**
- * Campos do usuário que descrevem a assinatura Plus+.
+ * Campos do usuário que descrevem a assinatura de um cargo pago.
  *
  * Declarado à mão em vez de `Pick<User, …>` porque `premiumPlanType` aqui é
  * qualquer chave de plano — inclusive as personalizadas criadas em
  * `/admin/settings` — e esta função tem que saber lidar com todas.
  */
-export interface PlusSubscriptionSource {
+export interface PaidSubscriptionSource {
   accountType?: string | null
   premiumPlanType?: string | null
   premiumActivatedAt?: Date | string | null
@@ -164,35 +181,72 @@ export interface PlusSubscriptionSource {
   mercadoPagoPreapprovalId?: string | null
 }
 
-/** Assinatura Plus+ lida do documento do usuário. `null` se nunca assinou. */
-export function buildPlusSubscription(
-  user: PlusSubscriptionSource | null | undefined,
+/**
+ * Qual produto essa assinatura é: Plus+ ou Quest+.
+ *
+ * O cargo que a conta carrega agora manda. Quando ela já foi rebaixada (venceu
+ * e o cron derrubou para gratuito), o cargo não diz mais nada — aí quem
+ * responde é o plano comprado, pelo `role` que o catálogo do admin dá a ele
+ * (`planRoles`). Sem essa segunda leitura, toda assinatura vencida virava
+ * "Plus+", inclusive a de quem só teve Quest+.
+ */
+function resolvePaidProduct(
+  accountType: string,
+  planKey: string | null,
+  planRoles?: Record<string, string> | null,
+): Extract<SubscriptionProduct, 'plus' | 'quest'> {
+  if (normalizeAccountType(accountType) === QUEST_TIER) return 'quest'
+  if (isPaidAccount(accountType)) return 'plus'
+  const key = String(planKey || '').trim().toLowerCase()
+  const roleDoPlano = key && planRoles?.[key] ? normalizeAccountType(planRoles[key]) : null
+  return roleDoPlano === QUEST_TIER ? 'quest' : 'plus'
+}
+
+/**
+ * Assinatura do cargo pago lida do documento do usuário. `null` se a conta
+ * nunca comprou nada.
+ *
+ * Plus+ e Quest+ dividem os mesmos campos de prazo — `premiumPlanType`,
+ * `premiumExpiresAt`, `premiumPrice` —, de propósito: é essa data que o cron
+ * varre para rebaixar quem venceu, e um par de campos por cargo significaria um
+ * cargo que ninguém rebaixa. O que os separa é `accountType`, e é por isso que
+ * esta função não pode devolver "Plus+" fixo.
+ *
+ * `planRoles` mapeia a chave do plano (`premiumPlanType`) para o cargo que ele
+ * concede, lido do catálogo em `/admin/settings`. Serve só para as contas já
+ * rebaixadas — ver `resolvePaidProduct`.
+ */
+export function buildPaidSubscription(
+  user: PaidSubscriptionSource | null | undefined,
   now: Date = new Date(),
   extraLabels?: Record<string, string> | null,
+  planRoles?: Record<string, string> | null,
 ): AdminSubscriptionInfo | null {
   if (!user) return null
 
-  const hasTier = isPlusAccount(user.accountType)
+  const planKey = user.premiumPlanType ? String(user.premiumPlanType) : null
+  const product = resolvePaidProduct(user.accountType || '', planKey, planRoles)
+
+  const hasTier = isPaidAccount(user.accountType)
   const hasHistory = !!user.premiumPlanType || !!user.premiumExpiresAt || !!user.premiumActivatedAt
-  // Sem cargo pago e sem rastro de assinatura: a conta nunca passou pelo Plus+.
+  // Sem cargo pago e sem rastro de assinatura: a conta nunca pagou nada.
   if (!hasTier && !hasHistory) return null
 
-  const planKey = user.premiumPlanType ? String(user.premiumPlanType) : null
   let expiresAt = toDate(user.premiumExpiresAt)
   const startedAt = toDate(user.premiumActivatedAt)
 
   // O cargo já caiu (rebaixamento por vencimento) mas o registro ainda carrega
-  // `premiumActivatedAt`/`premiumPrice` de quando era Plus+, sem
+  // `premiumActivatedAt`/`premiumPrice` de quando era pago, sem
   // `premiumExpiresAt`. Sem esse ajuste, "sem data" seria lido como vitalício
-  // e o admin veria "Plus+ Vitalício" numa conta que já é Gratuito/Trial —
+  // e o admin veria "Vitalício" numa conta que já é Gratuito/Trial —
   // exatamente o bug de quem comprou um ciclo (ex.: mensal) uma vez só.
   if (!hasTier && !expiresAt) {
     expiresAt = startedAt || now
   }
 
   return buildSubscription({
-    product: 'plus',
-    productLabel: 'Plus+',
+    product,
+    productLabel: product === 'quest' ? QUEST_LABEL : PLUS_LABEL,
     planKey,
     planLabel: resolvePlanLabel(planKey || (expiresAt ? null : 'vitalicio'), extraLabels),
     durationMonths: resolvePlanDurationMonths(planKey, expiresAt ? undefined : null),
@@ -401,7 +455,11 @@ export interface AdminUserSpend {
 
 /** Usuário da lista já enriquecido pela rota de overview. */
 export interface AdminUserRow extends User {
-  plusSubscription: AdminSubscriptionInfo | null
+  /**
+   * Assinatura do cargo pago — Plus+ **ou** Quest+. Um campo só porque a conta
+   * tem um cargo só; `product`/`productLabel` dizem qual dos dois é.
+   */
+  paidSubscription: AdminSubscriptionInfo | null
   manualSubscription: AdminSubscriptionInfo | null
   spend: AdminUserSpend
 }
@@ -439,8 +497,13 @@ export interface AdminUserInsights {
   newLast7Days: number
   newLast30Days: number
   plus: ProductInsights
+  /**
+   * Quest+ tem bucket próprio: somado ao Plus+, o card "Plus+ ativos" contava
+   * como assinante da plataforma inteira quem só comprou o Banco de Questões.
+   */
+  quest: ProductInsights
   manual: ProductInsights
-  /** Contas com pelo menos uma assinatura ativa. */
+  /** Contas com pelo menos uma assinatura ativa (qualquer produto). */
   payingUsers: number
   /** Contas com Plus+ **e** Manual Clínico ativos. */
   bothProducts: number
@@ -471,8 +534,10 @@ export function buildAdminUserInsights(
   const nowMs = now.getTime()
 
   const plusActive: AdminSubscriptionInfo[] = []
+  const questActive: AdminSubscriptionInfo[] = []
   const manualActive: AdminSubscriptionInfo[] = []
   let plusExpired = 0
+  let questExpired = 0
   let manualExpired = 0
   let payingUsers = 0
   let bothProducts = 0
@@ -505,13 +570,20 @@ export function buildAdminUserInsights(
       if (nowMs - createdAt <= NEW_30D_MS) newLast30Days += 1
     }
 
-    const plus = user.plusSubscription
+    // Um campo, dois produtos: o cargo pago da conta é Plus+ ou Quest+, e cada
+    // um vai para o seu bucket. Misturá-los é o que fazia "Plus+ ativos" contar
+    // quem só comprou o Quest+.
+    const paid = user.paidSubscription
+    const plus = paid?.product === 'plus' ? paid : null
+    const quest = paid?.product === 'quest' ? paid : null
     const manual = user.manualSubscription
     if (plus?.active) plusActive.push(plus)
     if (plus?.expired) plusExpired += 1
+    if (quest?.active) questActive.push(quest)
+    if (quest?.expired) questExpired += 1
     if (manual?.active) manualActive.push(manual)
     if (manual?.expired) manualExpired += 1
-    if (plus?.active || manual?.active) payingUsers += 1
+    if (paid?.active || manual?.active) payingUsers += 1
     if (plus?.active && manual?.active) bothProducts += 1
 
     revenueTotal += user.spend?.total || 0
@@ -519,6 +591,7 @@ export function buildAdminUserInsights(
   }
 
   const plusInsights = summarizeProduct(plusActive, plusExpired, now)
+  const questInsights = summarizeProduct(questActive, questExpired, now)
   const manualInsights = summarizeProduct(manualActive, manualExpired, now)
 
   const nonAdminTotal = Math.max(0, users.length - admins)
@@ -545,6 +618,7 @@ export function buildAdminUserInsights(
     newLast7Days,
     newLast30Days,
     plus: plusInsights,
+    quest: questInsights,
     manual: manualInsights,
     payingUsers,
     bothProducts,
@@ -552,7 +626,8 @@ export function buildAdminUserInsights(
     revenueTotal,
     averageTicket: buyers > 0 ? revenueTotal / buyers : 0,
     buyers,
-    estimatedMrr: plusInsights.estimatedMrr + manualInsights.estimatedMrr,
+    estimatedMrr:
+      plusInsights.estimatedMrr + questInsights.estimatedMrr + manualInsights.estimatedMrr,
     topSpenders,
   }
 }
@@ -612,6 +687,10 @@ export type SubscriptionFilter =
   | 'plus_expired'
   | 'plus_lifetime'
   | 'plus_recurring'
+  | 'quest'
+  | 'quest_active'
+  | 'quest_expired'
+  | 'paid_recurring'
   | 'manual'
   | 'manual_active'
   | 'manual_expired'
@@ -622,12 +701,20 @@ export type SubscriptionFilter =
 
 export type ExpiryFilter = 'all' | 'expiring7' | 'expiring15' | 'expiring30' | 'expired'
 
-/** O usuário passa no filtro de assinatura escolhido? */
+/**
+ * O usuário passa no filtro de assinatura escolhido?
+ *
+ * Os recortes `plus_*` valem só para quem tem o cargo Plus+ — com um assinante
+ * Quest+ caindo neles, o filtro "Plus+ — ativos" devolvia contas que não têm a
+ * plataforma. Quem quiser os dois cargos juntos usa `any`/`paid_recurring`.
+ */
 export function matchesSubscriptionFilter(
   user: AdminUserRow,
   filter: SubscriptionFilter,
 ): boolean {
-  const plus = user.plusSubscription
+  const paid = user.paidSubscription
+  const plus = paid?.product === 'plus' ? paid : null
+  const quest = paid?.product === 'quest' ? paid : null
   const manual = user.manualSubscription
 
   switch (filter) {
@@ -643,6 +730,14 @@ export function matchesSubscriptionFilter(
       return !!plus?.lifetime && !!plus?.active
     case 'plus_recurring':
       return !!plus?.autoRenew
+    case 'quest':
+      return !!quest
+    case 'quest_active':
+      return !!quest?.active
+    case 'quest_expired':
+      return !!quest?.expired
+    case 'paid_recurring':
+      return !!paid?.autoRenew
     case 'manual':
       return !!manual
     case 'manual_active':
@@ -654,9 +749,9 @@ export function matchesSubscriptionFilter(
     case 'both':
       return !!plus?.active && !!manual?.active
     case 'any':
-      return !!plus?.active || !!manual?.active
+      return !!paid?.active || !!manual?.active
     case 'none':
-      return !plus?.active && !manual?.active
+      return !paid?.active && !manual?.active
     default:
       return true
   }
@@ -668,7 +763,7 @@ export function matchesSubscriptionFilter(
  */
 export function matchesCycleFilter(user: AdminUserRow, cycle: string): boolean {
   if (cycle === 'all') return true
-  const keys = [user.plusSubscription, user.manualSubscription]
+  const keys = [user.paidSubscription, user.manualSubscription]
     .filter((info): info is AdminSubscriptionInfo => !!info && info.active)
     .map(info => (info.planKey || '').toLowerCase())
   if (cycle === 'outro') {
@@ -680,7 +775,7 @@ export function matchesCycleFilter(user: AdminUserRow, cycle: string): boolean {
 /** Filtro por proximidade do vencimento, olhando a assinatura mais urgente. */
 export function matchesExpiryFilter(user: AdminUserRow, filter: ExpiryFilter): boolean {
   if (filter === 'all') return true
-  const subs = [user.plusSubscription, user.manualSubscription].filter(
+  const subs = [user.paidSubscription, user.manualSubscription].filter(
     (info): info is AdminSubscriptionInfo => !!info,
   )
   if (subs.length === 0) return false
@@ -698,7 +793,7 @@ export function matchesExpiryFilter(user: AdminUserRow, filter: ExpiryFilter): b
 
 /** Vencimento mais próximo entre as assinaturas ativas, para ordenar a lista. */
 export function nextExpiryValue(user: AdminUserRow): number {
-  const times = [user.plusSubscription, user.manualSubscription]
+  const times = [user.paidSubscription, user.manualSubscription]
     .filter((info): info is AdminSubscriptionInfo => !!info && info.active && !info.lifetime)
     .map(info => (info.expiresAt ? new Date(info.expiresAt).getTime() : Number.POSITIVE_INFINITY))
   if (times.length === 0) return Number.POSITIVE_INFINITY
@@ -723,12 +818,19 @@ function clamp01(value: number): number {
   return Math.min(1, Math.max(0, value))
 }
 
-/** Cargo textual usado no CSV e nos filtros de plano. */
+/**
+ * Cargo textual usado no card da conta e no CSV.
+ *
+ * Sai da tabela de rótulos de `account-tier`, e não de uma escada de `if`: a
+ * escada não tinha ramo para o Quest+, então uma conta que acabara de comprar
+ * aparecia como "Gratuito" no campo Cargo — ao lado do selo dizendo Quest+.
+ * Cargo criado em `/admin/cargos` não está na tabela; em vez de virar
+ * "Gratuito", aparece com o id capitalizado.
+ */
 export function describeAccountRole(user: Pick<User, 'role' | 'accountType' | 'banned'>): string {
   if (user.role === 'admin') return 'Administrador'
   if (user.banned) return 'Banido'
   const normalized = normalizeAccountType(user.accountType)
-  if (normalized === 'plus') return 'Plus+'
-  if (normalized === 'trial') return 'Trial'
-  return 'Gratuito'
+  if (ACCOUNT_TYPE_LABELS[normalized]) return ACCOUNT_TYPE_LABELS[normalized]
+  return normalized.charAt(0).toUpperCase() + normalized.slice(1)
 }
