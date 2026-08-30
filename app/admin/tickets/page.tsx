@@ -564,6 +564,14 @@ export default function AdminTicketsPage() {
                 <p className="text-sm text-muted-foreground font-mono">{selectedTicket.userId}</p>
               </div>
               <div>
+                <p className="text-sm font-medium">Viu a conversa:</p>
+                <p className="text-sm text-muted-foreground">
+                  {selectedTicket.userLastSeenAt
+                    ? tempoRelativo(selectedTicket.userLastSeenAt)
+                    : 'ainda não abriu depois da última resposta'}
+                </p>
+              </div>
+              <div>
                 <p className="text-sm font-medium">Atendimento:</p>
                 <p className="text-sm text-muted-foreground">
                   {selectedTicket.assignedToName || 'Ninguém assumiu ainda'}

@@ -2032,6 +2032,36 @@ export async function sendAvaliacaoLembreteEmail(input: {
 // apenas barulho.
 // ─────────────────────────────────────────────────────────────────────────────
 
+/**
+ * Envia e **registra o resultado**. Quando o aviso de um ticket não chega, a
+ * primeira pergunta é sempre "saiu daqui?" — sem uma linha de log com o que o
+ * servidor SMTP aceitou ou recusou, a investigação começa no escuro. O aviso de
+ * credencial ausente cobre o caso mais bobo e mais comum: ambiente novo sem
+ * SMTP_USER/SMTP_PASS, em que o envio falha antes de sair da máquina.
+ */
+async function enviarEmailDeTicket(
+  rotulo: string,
+  opcoes: Parameters<typeof transporter.sendMail>[0],
+) {
+  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    console.error(
+      `[mail] ${rotulo}: SMTP_USER/SMTP_PASS não configurados — o e-mail não tem como sair.`,
+    )
+  }
+
+  try {
+    const info = await transporter.sendMail(opcoes)
+    console.log(
+      `[mail] ${rotulo} enviado — aceitos: ${(info.accepted || []).join(', ') || 'nenhum'}` +
+        `${info.rejected?.length ? ` | recusados: ${info.rejected.join(', ')}` : ''}`,
+    )
+    return info
+  } catch (err) {
+    console.error(`[mail] ${rotulo}: falha no envio:`, err)
+    throw err
+  }
+}
+
 /** Preserva as quebras de linha que a pessoa digitou, sem deixar passar HTML. */
 function textoDeChatParaHtml(texto: string): string {
   return escapeHtml(texto).replace(/\n/g, '<br>')
@@ -2159,7 +2189,7 @@ export async function sendTicketReplyEmail(input: {
     ${RODAPE_TICKET}
   `
 
-  await transporter.sendMail({
+  await enviarEmailDeTicket(`resposta do ticket #${input.protocolo}`, {
     from: '"DomineAqui - Suporte" <no-reply@domineaqui.com.br>',
     to: input.email,
     subject: `Resposta no seu ticket #${input.protocolo} — ${input.titulo}`,
@@ -2247,7 +2277,7 @@ export async function sendTicketStatusEmail(input: {
     ${RODAPE_TICKET}
   `
 
-  await transporter.sendMail({
+  await enviarEmailDeTicket(`ticket #${input.protocolo} (${input.evento})`, {
     from: '"DomineAqui - Suporte" <no-reply@domineaqui.com.br>',
     to: input.email,
     subject: textos.assunto,
@@ -2298,7 +2328,7 @@ export async function sendNewTicketAdminEmail(input: {
     </div>
   `
 
-  await transporter.sendMail({
+  await enviarEmailDeTicket(`novo ticket #${input.protocolo} para a equipe`, {
     from: '"DomineAqui - Suporte" <no-reply@domineaqui.com.br>',
     to: destinatarios.join(', '),
     subject: `Novo ticket #${input.protocolo} — ${input.titulo}`,

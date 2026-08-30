@@ -158,7 +158,11 @@ export function SupportChat() {
   useEffect(() => {
     carregarLista()
     if (!isOpen) return
-    const intervalo = setInterval(carregarLista, INTERVALO_LISTA)
+    // `document.hidden` corta o polling da aba em segundo plano: ninguém está
+    // lendo, e cada volta é uma invocação serverless paga.
+    const intervalo = setInterval(() => {
+      if (!document.hidden) carregarLista()
+    }, INTERVALO_LISTA)
     return () => clearInterval(intervalo)
   }, [isOpen, carregarLista])
 
@@ -170,7 +174,9 @@ export function SupportChat() {
     }
     carregarConversa(activeId)
     if (!isOpen) return
-    const intervalo = setInterval(() => carregarConversa(activeId), INTERVALO_CONVERSA)
+    const intervalo = setInterval(() => {
+      if (!document.hidden) carregarConversa(activeId)
+    }, INTERVALO_CONVERSA)
     return () => clearInterval(intervalo)
   }, [activeId, isOpen, carregarConversa])
 

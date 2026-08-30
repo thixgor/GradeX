@@ -71,27 +71,31 @@ describe('devoAvisarPorEmail', () => {
   const agora = new Date('2026-03-10T12:00:00Z')
   const minutosAtras = (n: number) => new Date(agora.getTime() - n * 60_000)
 
-  it('avisa quem está fora da conversa', () => {
-    expect(devoAvisarPorEmail({ userLastSeenAt: minutosAtras(60) }, { agora })).toBe(true)
+  it('avisa por padrão — é o pedido original do recurso', () => {
     expect(devoAvisarPorEmail({}, { agora })).toBe(true)
-  })
-
-  it('não avisa quem acabou de abrir o chat — a resposta já chegou por lá', () => {
-    expect(devoAvisarPorEmail({ userLastSeenAt: minutosAtras(1) }, { agora })).toBe(false)
-  })
-
-  it('segura o segundo e-mail do mesmo ticket dentro do intervalo', () => {
-    expect(devoAvisarPorEmail({ lastEmailAt: minutosAtras(2) }, { agora })).toBe(false)
     expect(devoAvisarPorEmail({ lastEmailAt: minutosAtras(30) }, { agora })).toBe(true)
   })
 
-  it('mudança de situação passa por cima do intervalo, mas não da presença', () => {
+  it('não deixa a presença no chat engolir o aviso', () => {
+    // Regressão: `userLastSeenAt` vem do polling do painel, não de atenção
+    // real, e chegou a suprimir todo e-mail de resposta.
+    expect(
+      devoAvisarPorEmail(
+        { userLastSeenAt: minutosAtras(0) } as Parameters<typeof devoAvisarPorEmail>[0],
+        { agora },
+      ),
+    ).toBe(true)
+  })
+
+  it('agrupa a rajada: segundo e-mail do mesmo ticket em menos de 5 min espera', () => {
+    expect(devoAvisarPorEmail({ lastEmailAt: minutosAtras(2) }, { agora })).toBe(false)
+    expect(devoAvisarPorEmail({ lastEmailAt: minutosAtras(6) }, { agora })).toBe(true)
+  })
+
+  it('mudança de situação passa por cima do intervalo', () => {
     expect(
       devoAvisarPorEmail({ lastEmailAt: minutosAtras(2) }, { agora, ignorarIntervalo: true }),
     ).toBe(true)
-    expect(
-      devoAvisarPorEmail({ userLastSeenAt: minutosAtras(1) }, { agora, ignorarIntervalo: true }),
-    ).toBe(false)
   })
 })
 

@@ -300,7 +300,12 @@ export async function PATCH(
             createdAt: agora,
           })
 
-          if (devoAvisarPorEmail(ticket, { agora })) {
+          if (!devoAvisarPorEmail(ticket, { agora })) {
+            // Nunca em silêncio: quando um aviso não sai, o log diz por quê.
+            console.log(
+              `[tickets] e-mail de resposta do ticket ${protocolo} adiado — outro aviso saiu há menos de 5 min`,
+            )
+          } else {
             const dono = await emailDoDono(db, ticket)
             const pergunta = ultimaMensagemDe(ticket, 'user')
 

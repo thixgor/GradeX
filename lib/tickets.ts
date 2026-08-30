@@ -179,36 +179,41 @@ export function contarNaoLidas(
 
 // ── Política de e-mail ────────────────────────────────────────────────────
 
-/** Quanto tempo depois de abrir a conversa a pessoa ainda é considerada online. */
-export const TICKET_JANELA_ONLINE_MS = 3 * 60 * 1000
-/** Intervalo mínimo entre dois e-mails do mesmo ticket. */
-export const TICKET_INTERVALO_EMAIL_MS = 10 * 60 * 1000
+/**
+ * Intervalo mínimo entre dois e-mails do mesmo ticket.
+ *
+ * Só existe para o caso do atendente que manda três mensagens seguidas
+ * ("oi", "achei o problema", "resolvido"): vira um e-mail, não três.
+ */
+export const TICKET_INTERVALO_EMAIL_MS = 5 * 60 * 1000
 
 /**
- * Avisar por e-mail vale a pena quando a pessoa NÃO está com o chat aberto.
- * Numa conversa de ida e volta (que é o caso comum de suporte) mandar um e-mail
- * por mensagem transforma o atendimento em spam e treina o usuário a ignorar o
- * remetente — justamente o remetente que também manda recibo de compra.
+ * Resposta do admin avisa por e-mail. Ponto.
  *
- * Mudanças de status (resolvido/reaberto/fechado) escapam do intervalo mínimo:
- * são eventos únicos e a pessoa precisa saber mesmo que tenha acabado de ler
- * uma resposta.
+ * A primeira versão disto era mais esperta e por isso não funcionava: ela
+ * pulava o e-mail quando `userLastSeenAt` era recente, na ideia de não
+ * incomodar quem já estava lendo a resposta no chat. Só que esse carimbo vem
+ * do *polling* do painel de suporte, que bate na API a cada 12s enquanto a
+ * janelinha estiver aberta — mesmo com a aba em segundo plano, mesmo com a
+ * pessoa longe do computador. Ou seja: "chat aberto" nunca foi sinônimo de
+ * "pessoa olhando", e o efeito prático foi o oposto do pedido — no fluxo mais
+ * comum de todos (abrir o ticket e deixar a aba aberta) o aviso nunca saía, e
+ * saía calado, sem nada no log dizendo por quê.
+ *
+ * Agora a única razão para segurar um e-mail é ter mandado outro há pouco.
+ * Mudanças de situação (resolvido/reaberto/fechado) furam até esse intervalo:
+ * são eventos únicos e é a mensagem que a pessoa guarda.
  */
 export function devoAvisarPorEmail(
-  ticket: Pick<Ticket, 'userLastSeenAt' | 'lastEmailAt'>,
+  ticket: Pick<Ticket, 'lastEmailAt'>,
   opcoes: { agora?: Date; ignorarIntervalo?: boolean } = {},
 ): boolean {
-  const agora = (opcoes.agora || new Date()).getTime()
-
-  const visto = ticket.userLastSeenAt ? new Date(ticket.userLastSeenAt).getTime() : 0
-  if (visto && agora - visto < TICKET_JANELA_ONLINE_MS) return false
-
   if (opcoes.ignorarIntervalo) return true
 
+  const agora = (opcoes.agora || new Date()).getTime()
   const ultimo = ticket.lastEmailAt ? new Date(ticket.lastEmailAt).getTime() : 0
-  if (ultimo && agora - ultimo < TICKET_INTERVALO_EMAIL_MS) return false
 
-  return true
+  return !(ultimo && agora - ultimo < TICKET_INTERVALO_EMAIL_MS)
 }
 
 /** Link que abre o chat de suporte já com o ticket selecionado. */
