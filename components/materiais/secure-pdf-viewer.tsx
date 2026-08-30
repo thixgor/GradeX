@@ -515,7 +515,13 @@ function getSharedPdfWorker(pdfjs: Awaited<ReturnType<typeof getPdfJs>>) {
 // requisições travavam ou falhavam, deixando a página presa no spinner até um
 // F5 reativá-la. As constantes/fila abaixo resolvem isso na origem.
 const PAGE_FETCH_MAX_CONCURRENCY = 3
-const PAGE_FETCH_TIMEOUT_MS = 25000
+// Num material grande (escaneado, instância fria no servidor), o servidor
+// pode legitimamente levar mais de 25s para baixar+parsear+marcar a página
+// (ver maxDuration da rota /pdf-viewer/page, subido para 120s pelo mesmo
+// motivo). Com 25s, TODA tentativa era abortada antes de terminar — a
+// página nunca chegava a abrir, sempre no mesmo material, mesmo com retry.
+// 60s dá a uma tentativa chance real de terminar em vez de garantir a falha.
+const PAGE_FETCH_TIMEOUT_MS = 60000
 const PAGE_FETCH_MAX_ATTEMPTS = 4
 
 // Prioridade da requisição. As miniaturas do painel lateral usam exatamente o
@@ -1327,8 +1333,12 @@ const ACCESS_FETCH_TIMEOUT_MS = 12000
 const ACCESS_FETCH_ATTEMPTS = 3
 // Prazo até considerar que uma página travou (ver o vigia em PdfCanvasPage).
 // Folgado de propósito: a rasterização é enfileirada, então uma página pode
-// esperar a vez legitimamente por alguns segundos.
-const PAGE_STALL_TIMEOUT_MS = 30000
+// esperar a vez legitimamente por alguns segundos. Precisa ficar ACIMA de
+// PAGE_FETCH_TIMEOUT_MS — senão este vigia dispara o erro "demorou demais"
+// enquanto a própria tentativa de busca ainda está em andamento e prestes a
+// dar certo (era exatamente esse descompasso, 30s aqui contra 25s lá, que
+// fazia o aviso aparecer antes mesmo do fetch desistir).
+const PAGE_STALL_TIMEOUT_MS = 65000
 
 /**
  * `fetch` que DESISTE. O padrão da plataforma não tem prazo: uma requisição

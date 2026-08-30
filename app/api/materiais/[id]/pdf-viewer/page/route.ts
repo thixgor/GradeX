@@ -12,7 +12,15 @@ import {
 import { ObjectId } from 'mongodb'
 
 export const dynamic = 'force-dynamic'
-export const maxDuration = 60
+// Materiais grandes (escaneados, dezenas/centenas de MB — acima do teto de
+// contar páginas no upload, ver MATERIAL_PAGECOUNT_MAX_MB) baixam o PDF
+// inteiro e o parseiam do zero numa instância fria: isso sozinho já passava
+// de 60s, e o cliente (PAGE_FETCH_TIMEOUT_MS) dava timeout ANTES da função
+// terminar — toda tentativa era abortada cedo demais para ter chance de
+// terminar, então a página nunca abria, sempre para o mesmo material grande.
+// 120s dá fôlego real para esse parse frio; memória subiu para 2048MB pelo
+// mesmo motivo (pdf-lib carrega o documento inteiro em memória).
+export const maxDuration = 120
 
 // Esta rota é a mais cara em CPU do app (parse + copyPages + watermark por
 // página). Agora aceita visitante (sem login) para a prévia, então o limite
