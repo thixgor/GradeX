@@ -844,6 +844,14 @@ export interface Notification {
     | 'correction_ready'
     | 'ticket_created'
     | 'ticket_reopened'
+    /** Admin respondeu o ticket do usuário */
+    | 'ticket_reply'
+    /** Admin marcou o ticket como resolvido */
+    | 'ticket_resolved'
+    /** Admin fechou o ticket */
+    | 'ticket_closed'
+    /** Usuário respondeu — avisa o admin que atende o ticket */
+    | 'ticket_user_reply'
     | 'order_update'
     /** Lembrete de avaliação (cron /api/cron/avaliacoes-lembretes) */
     | 'avaliacao_lembrete'
@@ -854,11 +862,28 @@ export interface Notification {
 
 export type TicketStatus = 'open' | 'assigned' | 'resolved' | 'closed'
 
+/** Prioridade de atendimento — definida pelo admin, nunca pelo usuário. */
+export type TicketPriority = 'low' | 'normal' | 'high' | 'urgent'
+
+/** Assunto escolhido por quem abre o ticket (ver TICKET_CATEGORIES). */
+export type TicketCategory =
+  | 'financeiro'
+  | 'acesso'
+  | 'conteudo'
+  | 'bug'
+  | 'sugestao'
+  | 'outro'
+
 export interface TicketMessage {
   id: string
   senderId: string
   senderName: string
-  senderRole: 'admin' | 'user'
+  /**
+   * 'system' é o valor novo para os avisos automáticos. Documentos antigos
+   * gravavam 'user' com `senderId === 'system'` — por isso a interface aceita
+   * os dois e a UI decide pelo helper `ehMensagemDoSistema`.
+   */
+  senderRole: 'admin' | 'user' | 'system'
   text: string
   sentAt: Date
   readAt?: Date // Quando foi lida
@@ -871,6 +896,8 @@ export interface Ticket {
   userEmail: string
   title: string
   status: TicketStatus
+  category?: TicketCategory
+  priority?: TicketPriority
   assignedTo?: string // ID do admin que pegou o ticket
   assignedToName?: string // Nome do admin
   messages: TicketMessage[]
@@ -878,6 +905,38 @@ export interface Ticket {
   updatedAt: Date
   resolvedAt?: Date
   closedAt?: Date
+  /** Quem encerrou — muda o texto do aviso e evita e-mail redundante. */
+  closedBy?: 'user' | 'admin'
+  reopenedAt?: Date
+  /** Primeira resposta humana de um admin — base do tempo de resposta. */
+  firstResponseAt?: Date
+  /**
+   * Última vez que cada lado abriu a conversa. Serve para não mandar e-mail
+   * para quem está com o chat aberto lendo a resposta em tempo real.
+   */
+  userLastSeenAt?: Date
+  adminLastSeenAt?: Date
+  /** Último aviso por e-mail deste ticket — evita rajada em conversa rápida. */
+  lastEmailAt?: Date
+  /**
+   * Marca desde quando existe resposta do admin que a trava de rajada segurou.
+   * É o que a varredura procura para entregar o agrupado — sem isso, a
+   * mensagem segurada simplesmente nunca chegaria à caixa de entrada.
+   */
+  pendingEmailSince?: Date
+}
+
+/**
+ * O que a listagem devolve: tudo do ticket menos o histórico completo de
+ * mensagens, que só é carregado ao abrir a conversa. A lista é consultada em
+ * polling — mandar todas as mensagens de todos os tickets a cada 30s era o
+ * maior desperdício do sistema antigo.
+ */
+export interface TicketSummary extends Omit<Ticket, 'messages'> {
+  lastMessage?: Pick<TicketMessage, 'senderId' | 'senderName' | 'senderRole' | 'text' | 'sentAt'>
+  messageCount: number
+  /** Mensagens ainda não lidas por quem fez a consulta. */
+  unreadCount: number
 }
 
 export interface CustomContext {

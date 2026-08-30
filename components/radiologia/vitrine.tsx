@@ -248,7 +248,7 @@ export function VitrineRadiologia({
       {/* pb reserva o espaço da barra fixa do celular */}
       <div className="pb-28 lg:pb-0">
         {/* ══════════ ABERTURA ══════════ */}
-        <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-start lg:gap-10">
+        <div className="grid gap-8 xl:grid-cols-[1.05fr_0.95fr] xl:items-start xl:gap-10">
           <div>
             <SeloDoPacote />
 
@@ -302,7 +302,7 @@ export function VitrineRadiologia({
           </div>
 
           {/* ── Prévias + preço ── */}
-          <div className="space-y-5 lg:sticky lg:top-6">
+          <div className="space-y-5 xl:sticky xl:top-6">
             <div className="glass-panel-dark overflow-hidden rounded-2xl p-4 sm:p-5">
               <div className="mb-3 flex flex-wrap gap-1.5">
                 <BotaoPrevia ativo={modalidade === 'raio-x'} onClick={() => setModalidade('raio-x')}>
@@ -372,7 +372,7 @@ export function VitrineRadiologia({
             Não é uma galeria de imagens. É uma estação de trabalho com um professor ao lado.
           </h2>
 
-          <div className="mt-6 grid gap-6 lg:grid-cols-2">
+          <div className="mt-6 grid gap-6 xl:grid-cols-2">
             <BlocoModalidade
               etiqueta="No atlas de Raio-X"
               icone={ImageIcon}
@@ -446,7 +446,7 @@ export function VitrineRadiologia({
               <p className="mt-5 flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-sky-600 dark:text-sky-400">
                 <ImageIcon className="h-3.5 w-3.5" /> Raio-X
               </p>
-              <div className="mt-2.5 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="mt-2.5 grid gap-2.5 sm:grid-cols-2 xl:grid-cols-3">
                 {rx.regioes.map((regiao) => (
                   <div
                     key={regiao.id}
@@ -473,7 +473,7 @@ export function VitrineRadiologia({
               <p className="mt-8 flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-violet-600 dark:text-violet-400">
                 <Layers3 className="h-3.5 w-3.5" /> Tomografia
               </p>
-              <div className="mt-2.5 grid gap-4 lg:grid-cols-3">
+              <div className="mt-2.5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                 {resumo.secoes.map((s, i) => {
                   const t = tema(['vermelho', 'violeta', 'azul'][i] || 'ardosia')
                   return (
@@ -510,7 +510,7 @@ export function VitrineRadiologia({
             Não é uma legenda com o nome da estrutura. É o dossiê completo — o que você leria num tratado, mas
             organizado na ordem em que a dúvida aparece enquanto você olha a imagem.
           </p>
-          <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {CAMPOS_FICHA.map((c) => (
               <div key={c.t} className="rounded-xl border border-border bg-muted/30 p-4">
                 <c.icon className="mb-2 h-4 w-4 text-primary" />

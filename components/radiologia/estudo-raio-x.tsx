@@ -204,16 +204,17 @@ export function EstudoRaioXView({ estudo, guia, irmaos, notas }: EstudoRaioXView
         <CabecalhoEstudo estudo={estudo} irmaos={irmaos} />
 
         <main className="container mx-auto max-w-7xl px-4 pb-16">
-          <section className="grid gap-5 lg:grid-cols-[minmax(0,1.5fr)_minmax(300px,0.85fr)] lg:items-start">
+          <section className="grid gap-5 xl:grid-cols-[minmax(0,1.5fr)_minmax(320px,0.85fr)] xl:items-start">
             {/* ── Negatoscópio ── */}
             {/*
-              Sticky só a partir de `lg`: em coluna única a área de grade do
-              viewer tem exatamente a altura dele, e sticky não teria curso.
-              No celular, escolher uma estrutura na lista rola o filme de volta
-              para a tela — ver `aoEscolher`.
+              Sticky só a partir de `xl`, que é onde a coluna da lista de fato
+              nasce: em coluna única a área de grade do viewer tem exatamente a
+              altura dele, e sticky não teria curso. Abaixo disso, escolher uma
+              estrutura na lista rola o filme de volta para a tela — ver
+              `aoEscolher`.
             */}
-            <div ref={viewer} className="-mx-4 scroll-mt-2 lg:sticky lg:top-4 lg:mx-0">
-              <div className="overflow-hidden border-y border-sky-400/20 bg-black shadow-2xl shadow-black/40 lg:rounded-2xl lg:border">
+            <div ref={viewer} className="-mx-4 scroll-mt-2 sm:mx-0 xl:sticky xl:top-4">
+              <div className="overflow-hidden border-y border-sky-400/20 bg-black shadow-2xl shadow-black/40 sm:rounded-2xl sm:border">
                 <BarraFilme
                   estudo={estudo}
                   indice={indice}
@@ -224,7 +225,7 @@ export function EstudoRaioXView({ estudo, guia, irmaos, notas }: EstudoRaioXView
                   onMarcar={() => setMarcando((atual) => !atual)}
                 />
 
-                <div className="relative h-[44vh] min-h-[240px] w-full overflow-hidden bg-black sm:h-[52vh] lg:h-[min(66vh,700px)]">
+                <div className="relative h-[44vh] min-h-[240px] w-full overflow-hidden bg-black sm:h-[52vh] md:h-[58vh] xl:h-[min(66vh,700px)]">
                   <FilmeImagem
                     src={estudo.imagem}
                     alt={`Radiografia de ${estudo.titulo} em ${estudo.incidencia}`}
@@ -338,7 +339,7 @@ export function EstudoRaioXView({ estudo, guia, irmaos, notas }: EstudoRaioXView
                   </div>
                 )}
 
-                <div className="rx-rolagem grid max-h-[340px] gap-1.5 overflow-y-auto pr-1 sm:grid-cols-2 lg:max-h-[46vh] lg:grid-cols-1">
+                <div className="rx-rolagem grid max-h-[340px] gap-1.5 overflow-y-auto pr-1 sm:grid-cols-2 md:max-h-[420px] xl:max-h-[46vh] xl:grid-cols-1">
                   {visiveis.map(({ item, posicao }) => {
                     const ativa = posicao === indice
                     return (
@@ -374,12 +375,13 @@ export function EstudoRaioXView({ estudo, guia, irmaos, notas }: EstudoRaioXView
                 </div>
               </div>
 
-              {/* No celular o dossiê fica logo abaixo do filme; no desktop,
-                  abaixo da lista, onde há espaço vertical de sobra. */}
+              {/* Em coluna única — celular e tablet — o dossiê fica logo abaixo
+                  do filme; em coluna dupla, abaixo da lista, onde há espaço
+                  vertical de sobra. */}
               <DossieEstrutura
                 estrutura={estrutura}
                 nota={nota}
-                className="order-first lg:order-none"
+                className="order-first xl:order-none"
               />
             </aside>
           </section>
@@ -409,7 +411,7 @@ export function EstudoRaioXView({ estudo, guia, irmaos, notas }: EstudoRaioXView
 function CabecalhoEstudo({ estudo, irmaos }: { estudo: EstudoRaioX; irmaos: IrmaoEstudo[] }) {
   return (
     <header className="rx-painel rx-grade relative overflow-hidden border-b border-sky-400/15">
-      <div className="container relative mx-auto max-w-7xl px-4 pb-5 pt-5">
+      <div className="rx-abaixo-flutuantes container relative mx-auto max-w-7xl px-4 pb-5 pt-5">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
           <Link
             href="/manual-clinico/radiologia/raio-x"

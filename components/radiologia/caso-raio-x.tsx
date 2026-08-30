@@ -117,7 +117,7 @@ export function CasoRaioXPagina({
             <span className="truncate">{caso.categoriaTitulo}</span>
           </nav>
 
-          <div className="mt-5 grid gap-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+          <div className="mt-5 grid gap-6 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-end">
             <div>
               <p className="editorial-mark !text-sky-300/80 [&::before]:bg-sky-300/60">
                 Caso {posicao.indice} de {posicao.total} · {caso.categoriaTitulo}
@@ -128,7 +128,7 @@ export function CasoRaioXPagina({
               <p className="mt-3 max-w-3xl text-sm leading-relaxed text-sky-100/60 sm:text-base">{caso.resumo}</p>
             </div>
 
-            <dl className="grid grid-cols-3 gap-2 text-center lg:w-[300px]">
+            <dl className="grid grid-cols-3 gap-2 text-center xl:w-[300px]">
               <Metrica valor={caso.imagens.length} rotulo={caso.imagens.length === 1 ? 'radiografia' : 'radiografias'} />
               <Metrica valor={totalMarcacoes} rotulo="marcações" destaque />
               <Metrica valor={detalhe?.estruturas.length ?? 0} rotulo="estruturas" />
@@ -170,7 +170,7 @@ export function CasoRaioXPagina({
       <main ref={conteudo} className="container mx-auto max-w-7xl px-4 py-7 sm:py-10">
         {/* ══════════════════ Panorama ══════════════════ */}
         <section id="panorama" className="rx-ancora">
-          <div className="grid gap-4 lg:grid-cols-[1.35fr_0.65fr]">
+          <div className="grid gap-4 xl:grid-cols-[1.35fr_0.65fr]">
             <article className="rounded-2xl border border-border bg-card p-5 sm:p-6">
               <p className="editorial-mark">Entenda o padrão</p>
               <h2 className="mt-2 font-heading text-xl font-semibold tracking-tight">
@@ -311,7 +311,7 @@ export function CasoRaioXPagina({
                     <h3 className="min-w-0 font-heading text-base font-semibold leading-tight sm:text-lg">{estrutura.nome}</h3>
                   </div>
 
-                  <div className="grid gap-px bg-border sm:grid-cols-3">
+                  <div className="grid gap-px bg-border md:grid-cols-3">
                     <Campo rotulo="O que é" icone={Layers}>{estrutura.anatomia}</Campo>
                     <Campo rotulo="No filme normal" icone={CheckCircle2}>{estrutura.normal}</Campo>
                     <Campo rotulo="Neste caso" icone={Crosshair} destaque>{estrutura.neste}</Campo>
@@ -337,7 +337,7 @@ export function CasoRaioXPagina({
             descricao="A ordem de leitura que evita que o achado óbvio encerre a busca."
           />
 
-          <div className="mt-6 grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
+          <div className="mt-6 grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
             <div className="rounded-2xl border border-border bg-card p-5">
               <ol className="space-y-3">
                 {guia.roteiro.map((passo, i) => (
@@ -355,7 +355,7 @@ export function CasoRaioXPagina({
               <h3 className="flex items-center gap-2 font-heading text-base font-semibold">
                 <Keyboard className="h-4 w-4 text-sky-500" /> Controles do visualizador
               </h3>
-              <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+              <div className="mt-4 grid gap-2 sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2">
                 {[
                   ['M', 'Liga e desliga os marcadores'],
                   ['C', 'Entra e sai da comparação'],

@@ -185,7 +185,7 @@ function Cabecalho({
 }) {
   return (
     <header className="rx-painel rx-grade rx-varredura relative overflow-hidden border-b border-sky-400/15">
-      <div className="container relative mx-auto max-w-6xl px-4 pb-7 pt-6">
+      <div className="rx-abaixo-flutuantes container relative mx-auto max-w-6xl px-4 pb-7 pt-6">
         <Link
           href="/manual-clinico/radiologia"
           className="-m-2 inline-flex items-center gap-1.5 rounded-lg p-2 text-sm text-sky-100/60 transition hover:text-sky-100"
@@ -193,7 +193,7 @@ function Cabecalho({
           <ArrowLeft className="h-4 w-4" /> Manual de Radiologia
         </Link>
 
-        <div className="mt-5 grid gap-7 lg:grid-cols-[minmax(0,1fr)_minmax(300px,380px)] lg:items-end">
+        <div className="mt-5 grid gap-7 xl:grid-cols-[minmax(0,1fr)_minmax(300px,380px)] xl:items-end">
           <div>
             <div className="[filter:invert(1)_hue-rotate(180deg)_brightness(1.2)]">
               <LogoRadiologia className="max-w-[300px]" />
@@ -349,7 +349,7 @@ function GradeRegioes({
         </p>
       </div>
 
-      <div className="grid gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-3.5 sm:grid-cols-2 xl:grid-cols-3">
         {regioes.map((item, indice) => (
           <button
             key={item.id}
@@ -438,7 +438,7 @@ function DetalheRegiao({
         </Link>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {estudos.map((estudo, indice) => (
           <CardEstudo key={estudo.id} estudo={estudo} indice={indice} />
         ))}
@@ -575,7 +575,7 @@ function ResultadosBusca({
           <h2 className="editorial-mark mb-3">
             {estudos.length} incidência{estudos.length === 1 ? '' : 's'}
           </h2>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {estudos.map((estudo, indice) => (
               <CardEstudo key={estudo.id} estudo={estudo} indice={Math.min(indice, 10)} />
             ))}

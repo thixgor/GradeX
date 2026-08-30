@@ -265,7 +265,7 @@ export function QuizCasoClinicoView({ quiz, irmaos }: QuizCasoClinicoViewProps) 
 function CabecalhoQuiz({ quiz }: { quiz: QuizCasoClinico }) {
   return (
     <header className="rx-painel rx-grade relative overflow-hidden border-b border-sky-400/15">
-      <div className="container relative mx-auto max-w-6xl px-4 pb-5 pt-5">
+      <div className="rx-abaixo-flutuantes container relative mx-auto max-w-6xl px-4 pb-5 pt-5">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
           <Link
             href="/manual-clinico/radiologia/raio-x/casos/quiz"
@@ -316,7 +316,7 @@ function Abertura({
   const opcoes = [...TAMANHOS.filter((valor) => valor < quiz.total), quiz.total]
 
   return (
-    <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(300px,380px)] lg:items-start">
+    <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(300px,380px)] xl:items-start">
       <section className="rx-entra rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
         <p className="text-sm leading-relaxed text-muted-foreground">{quiz.descricao}</p>
 
@@ -503,9 +503,9 @@ function Rodada({
       {/* ── Prontuário ── */}
       <Prontuario vinheta={questao.vinheta} />
 
-      <div className="grid gap-5 lg:grid-cols-[minmax(0,1.25fr)_minmax(320px,1fr)] lg:items-start">
+      <div className="grid gap-5 xl:grid-cols-[minmax(0,1.25fr)_minmax(320px,1fr)] xl:items-start">
         {/* ── Negatoscópio ── */}
-        <div className="-mx-4 lg:sticky lg:top-4 lg:mx-0">
+        <div className="-mx-4 sm:mx-0 xl:sticky xl:top-4">
           <Negatoscopio
             imagem={questao.imagem}
             marcado={marcado}
@@ -601,7 +601,7 @@ function Rodada({
               {/* Grudada no rodapé enquanto o comentário rola: ele é longo de
                   propósito — é ele que ensina —, mas com o botão só no fim era
                   preciso percorrer tudo para poder seguir. */}
-              <div className="sticky bottom-0 z-30 -mx-4 px-4 pb-3 pt-2 lg:mx-0 lg:px-0">
+              <div className="sticky bottom-0 z-30 -mx-4 px-4 pb-3 pt-2 sm:mx-0 sm:px-0">
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background via-background/95 to-transparent" />
                 <div className="relative flex flex-wrap items-center gap-2">
                   <button
@@ -655,13 +655,13 @@ function Prontuario({ vinheta }: { vinheta: VinhetaClinica }) {
         </span>
       </div>
 
-      <div className="grid gap-x-6 gap-y-4 p-4 sm:p-5 lg:grid-cols-2">
-        <div className="lg:col-span-2">
+      <div className="grid gap-x-6 gap-y-4 p-4 sm:p-5 md:grid-cols-2">
+        <div className="md:col-span-2">
           <Rotulo>Queixa e duração</Rotulo>
           <p className="mt-1 text-[15px] font-semibold leading-snug">{vinheta.queixa}</p>
         </div>
 
-        <div className="lg:col-span-2">
+        <div className="md:col-span-2">
           <Rotulo>História da doença atual</Rotulo>
           <p className="mt-1 text-[13px] leading-relaxed text-foreground/85">{vinheta.historia}</p>
         </div>
@@ -690,7 +690,7 @@ function Prontuario({ vinheta }: { vinheta: VinhetaClinica }) {
           </ul>
         </div>
 
-        <div className="lg:col-span-2">
+        <div className="md:col-span-2">
           <Rotulo>
             <Gauge className="mr-1 inline h-3 w-3 align-[-1px]" /> Sinais vitais
           </Rotulo>
@@ -703,7 +703,7 @@ function Prontuario({ vinheta }: { vinheta: VinhetaClinica }) {
           </dl>
         </div>
 
-        <div className="lg:col-span-2">
+        <div className="md:col-span-2">
           <div className="rounded-xl border border-sky-500/25 bg-sky-500/[0.06] p-3.5">
             <p className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-sky-600 dark:text-sky-400">
               <ScanLine className="h-3.5 w-3.5" /> Por que a radiografia foi pedida
@@ -789,7 +789,7 @@ function Negatoscopio({
   const temMarcacoes = marcacoes.length > 0
 
   return (
-    <section className="overflow-hidden border-y border-sky-400/20 bg-[#05070d] shadow-2xl shadow-black/40 lg:rounded-2xl lg:border">
+    <section className="overflow-hidden border-y border-sky-400/20 bg-[#05070d] shadow-2xl shadow-black/40 sm:rounded-2xl sm:border">
       <div className="flex items-center justify-between gap-3 border-b border-white/10 bg-white/[0.02] px-3 py-2 text-white">
         <span className="inline-flex min-w-0 items-center gap-2 font-clinical text-[10px] uppercase tracking-widest text-sky-300/80">
           <span className="relative flex h-1.5 w-1.5">
@@ -851,10 +851,20 @@ function Negatoscopio({
       )}
 
       <div className="relative bg-black">
+        {/* O teto de largura é a altura da janela reescrita em largura: com a
+            proporção presa à do filme, um tórax quase quadrado ocupando a
+            largura inteira de um tablet ficaria mais alto que a tela, e a
+            pergunta é justamente olhar o filme por inteiro antes de responder.
+            Em coluna dupla a coluna já é mais estreita que este teto, então
+            ele só age onde precisa. */}
         <div
           data-imagem-clinica
           className="relative mx-auto w-full select-none overflow-hidden"
-          style={{ aspectRatio: `${imagem.largura} / ${imagem.altura}`, filter: filtro }}
+          style={{
+            aspectRatio: `${imagem.largura} / ${imagem.altura}`,
+            maxWidth: `calc(72vh * ${imagem.largura} / ${imagem.altura})`,
+            filter: filtro,
+          }}
           role="img"
           aria-label={
             marcado
@@ -1279,7 +1289,7 @@ function Resultado({
   }, [rodada, respostas])
 
   return (
-    <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(300px,360px)] lg:items-start">
+    <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(300px,360px)] xl:items-start">
       <div className="flex flex-col gap-5">
         <section className="rx-entra rounded-2xl border border-border bg-card p-6 text-center shadow-sm">
           <div

@@ -269,10 +269,20 @@ export function CasoRaioXImagem({
           className={`relative mx-auto select-none overflow-hidden ${
             modo === 'comparar' ? 'cursor-ew-resize' : zoom > 1 ? 'cursor-grab active:cursor-grabbing' : ''
           }`}
+          /* Sem zoom o filme cabe na moldura: o teto de largura é os 74vh do
+             contêiner reescritos em largura pela própria proporção da imagem,
+             então um tórax quase quadrado numa coluna larga de tablet para de
+             nascer mais alto que a janela e exigir rolagem interna para ser
+             visto inteiro. Com zoom o transbordo é o recurso — aí o teto sai
+             do caminho e volta o `minWidth`, que é quem garante o arraste. */
           style={{
             aspectRatio: `${imagem.largura} / ${imagem.altura}`,
             width: `${zoom * 100}%`,
-            minWidth: zoom > 1 ? `${zoom * 100}%` : '100%',
+            ...(zoom > 1
+              ? { minWidth: `${zoom * 100}%` }
+              : ampliada
+                ? { maxWidth: `calc(94vh * ${imagem.largura} / ${imagem.altura})` }
+                : { maxWidth: `calc(74vh * ${imagem.largura} / ${imagem.altura})` }),
             filter: filtro,
           }}
           role="img"
