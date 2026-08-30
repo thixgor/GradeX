@@ -234,7 +234,7 @@ function SerieConteudo() {
     return (
       <div className="surface-page min-h-screen">
         <div className="border-b border-border bg-muted/30">
-          <div className="container mx-auto max-w-6xl px-4 pb-4 pt-6">
+          <div className="rx-abaixo-flutuantes container mx-auto max-w-6xl px-4 pb-4 pt-6">
             <Link
               href="/manual-clinico/radiologia"
               className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
@@ -259,10 +259,10 @@ function SerieConteudo() {
   }
 
   return (
-    <div className="surface-page min-h-screen pb-20 lg:pb-0">
+    <div className="surface-page min-h-screen pb-20 xl:pb-0">
       {/* ══════════ CABEÇALHO ══════════ */}
       <div className="border-b border-border bg-muted/30">
-        <div className="container mx-auto max-w-7xl px-4 pb-5 pt-6">
+        <div className="rx-abaixo-flutuantes container mx-auto max-w-7xl px-4 pb-5 pt-6">
           {/* -my-1.5/py-1.5: a linha do texto tem 16 px e nenhum dedo acerta
               isso. O padding cria o alvo de toque e a margem negativa devolve a
               altura, então a trilha continua ocupando o mesmo espaço. */}
@@ -331,7 +331,7 @@ function SerieConteudo() {
 
       {/* ══════════ CORPO ══════════ */}
       <div className="container mx-auto max-w-7xl px-4 py-6">
-        <div className="grid gap-5 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:items-start">
+        <div className="grid gap-5 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] xl:items-start">
           {/* ── Coluna do visualizador ── */}
           {/* min-w-0 nas duas colunas: item de grid tem min-width auto, então o
               conteúdo mais largo (a régua do visor, a lista de estruturas)
@@ -345,7 +345,7 @@ function SerieConteudo() {
               motivo de a coluna grudar, e a leitura, que rola por dentro. */}
           <div
             ref={visorRef}
-            className="min-w-0 space-y-5 lg:sticky lg:top-4 lg:flex lg:max-h-[calc(100vh-2rem)] lg:flex-col lg:space-y-0"
+            className="min-w-0 space-y-5 xl:sticky xl:top-4 xl:flex xl:max-h-[calc(100vh-2rem)] xl:flex-col xl:space-y-0"
           >
             <VisualizadorTC
               urls={urls}
@@ -356,13 +356,13 @@ function SerieConteudo() {
               destaque={selecionada?.nome ?? null}
               orientacao={sub.orientacao}
               serie={sub.titulo}
-              className="lg:shrink-0"
+              className="xl:shrink-0"
             />
 
             {/* `flex-auto` (base automática) e não `flex-1` (base zero): num
                 contêiner de altura limitada por max-height, a base zero deixa o
                 bloco sem altura no Firefox. */}
-            <div className="space-y-5 lg:mt-5 lg:min-h-0 lg:flex-auto lg:space-y-5 lg:overflow-y-auto lg:overscroll-contain lg:pr-1">
+            <div className="space-y-5 xl:mt-5 xl:min-h-0 xl:flex-auto xl:space-y-5 xl:overflow-y-auto xl:overscroll-contain xl:pr-1">
               <details className="group rounded-xl border border-border bg-card p-4" open>
                 <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-bold">
                   <Syringe className="h-4 w-4 text-primary" />
@@ -486,9 +486,9 @@ function SerieConteudo() {
                   )}
                 </div>
 
-                {/* Ficha no desktop */}
+                {/* Ficha ao lado, onde a coluna dupla existe */}
                 {selecionada && (
-                  <div ref={dossieRef} className="hidden scroll-mt-4 lg:block">
+                  <div ref={dossieRef} className="hidden scroll-mt-4 xl:block">
                     <Dossie
                       estrutura={selecionada}
                       corteAtual={corte}
@@ -571,9 +571,9 @@ function SerieConteudo() {
         secaoAtual={selecionada?.id}
       />
 
-      {/* ══════════ FICHA COMO FOLHA INFERIOR (celular) ══════════ */}
+      {/* ══════════ FICHA COMO FOLHA INFERIOR (coluna única) ══════════ */}
       {selecionada && folhaAberta && (
-        <div className="fixed inset-0 z-50 flex items-end lg:hidden" role="dialog" aria-modal="true">
+        <div className="fixed inset-0 z-50 flex items-end xl:hidden" role="dialog" aria-modal="true">
           <button
             className="absolute inset-0 bg-black/50 backdrop-blur-[2px]"
             onClick={() => setFolhaAberta(false)}
@@ -597,9 +597,9 @@ function SerieConteudo() {
         </div>
       )}
 
-      {/* Barra fixa do celular: reabre a ficha da estrutura selecionada */}
+      {/* Barra fixa de quem está em coluna única: reabre a ficha selecionada */}
       {selecionada && !folhaAberta && (
-        <div className="glass-panel fixed inset-x-0 bottom-0 z-40 rounded-none border-x-0 border-b-0 px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 lg:hidden">
+        <div className="glass-panel fixed inset-x-0 bottom-0 z-40 rounded-none border-x-0 border-b-0 px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 xl:hidden">
           <button
             onClick={() => setFolhaAberta(true)}
             className="flex w-full items-center gap-2.5 rounded-lg bg-primary px-4 py-2.5 text-left text-sm font-bold text-primary-foreground"

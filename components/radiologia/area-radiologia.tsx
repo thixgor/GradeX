@@ -40,7 +40,7 @@ function ConteudoProtegido({ children, alvo }: { children: ReactNode; alvo?: str
   if (dados?.access?.hasFullAccess !== true) {
     return (
       <div className="surface-page min-h-screen">
-        <div className="container mx-auto max-w-6xl px-4 py-8">
+        <div className="rx-abaixo-flutuantes container mx-auto max-w-6xl px-4 py-8">
           <VitrineRadiologia
             onCheckout={() => router.push('/manual-clinico/checkout')}
             isAuthenticated={!!user}
@@ -75,7 +75,7 @@ function EsqueletoRadiologia() {
       <span className="sr-only">Carregando o Manual de Radiologia…</span>
 
       <header className="rx-painel rx-grade rx-varredura relative overflow-hidden border-b border-sky-400/15">
-        <div className="container relative mx-auto max-w-6xl px-4 pb-9 pt-8">
+        <div className="rx-abaixo-flutuantes container relative mx-auto max-w-6xl px-4 pb-9 pt-8">
           <div className="h-3 w-40 rounded bg-sky-400/10" />
           <div className="mt-5 h-8 w-64 rounded bg-sky-400/15 sm:h-10 sm:w-80" />
           <div className="mt-4 h-3.5 w-full max-w-xl rounded bg-sky-400/10" />
@@ -89,7 +89,7 @@ function EsqueletoRadiologia() {
       </header>
 
       <main className="container mx-auto max-w-6xl px-4 py-9">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {Array.from({ length: 6 }, (_, i) => (
             <div key={i} className="overflow-hidden rounded-2xl border border-border bg-card">
               <div className="relative aspect-[4/3] w-full overflow-hidden bg-black">

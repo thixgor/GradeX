@@ -100,7 +100,7 @@ export function HomeRadiologia({
     <div className="rx surface-page min-h-screen">
       {/* ══════════ NEGATOSCÓPIO ══════════ */}
       <header className="rx-painel rx-grade rx-varredura relative overflow-hidden border-b border-sky-400/15">
-        <div className="container relative mx-auto max-w-6xl px-4 pb-8 pt-6 sm:pb-10">
+        <div className="rx-abaixo-flutuantes container relative mx-auto max-w-6xl px-4 pb-8 pt-6 sm:pb-10">
           <Link
             href="/manual-clinico"
             className="-m-2 inline-flex items-center gap-1.5 rounded-lg p-2 text-sm text-sky-100/55 transition hover:text-sky-100"
@@ -177,7 +177,7 @@ export function HomeRadiologia({
           </h2>
         </div>
 
-        <div className="grid gap-5 lg:grid-cols-2">
+        <div className="grid gap-5 xl:grid-cols-2">
           <CartaoModalidade modalidade={raioX} tom="sky" />
           <CartaoModalidade modalidade={tomografia} tom="violet" />
         </div>
@@ -185,7 +185,7 @@ export function HomeRadiologia({
         {/* ══════════ ATALHOS ══════════ */}
         {/* items-start: a coluna da TC tem três regiões e a do Raio-X tem nove;
             sem isso o cartão menor esticaria até a altura do maior. */}
-        <section className="mt-11 grid items-start gap-5 lg:grid-cols-2">
+        <section className="mt-11 grid items-start gap-5 xl:grid-cols-2">
           <BlocoAtalhos
             etiqueta="Regiões do atlas de Raio-X"
             icone={ImageIcon}
@@ -208,7 +208,7 @@ export function HomeRadiologia({
           <h2 className="font-heading text-xl font-semibold tracking-tight sm:text-2xl">
             Quatro hábitos que separam quem vê de quem lê
           </h2>
-          <div className="mt-5 grid gap-3.5 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="mt-5 grid gap-3.5 sm:grid-cols-2 2xl:grid-cols-4">
             {COMO_ESTUDAR.map(({ icone: Icone, titulo, texto }) => (
               <div
                 key={titulo}

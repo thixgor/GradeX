@@ -185,7 +185,7 @@ export function ModoTreino({ estruturas, corteAtual, onIrParaCorte, onVerVisor }
           {onVerVisor && (
             <button
               onClick={onVerVisor}
-              className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-border bg-muted/40 px-4 text-sm font-bold transition hover:bg-muted lg:hidden"
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-border bg-muted/40 px-4 text-sm font-bold transition hover:bg-muted xl:hidden"
             >
               <Eye className="h-4 w-4" /> Ver o visualizador
             </button>
