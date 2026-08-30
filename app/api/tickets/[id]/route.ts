@@ -5,22 +5,22 @@ import { Notification, Ticket, TicketMessage } from '@/lib/types'
 import { ObjectId } from 'mongodb'
 import type { Db } from 'mongodb'
 import { checkRateLimit } from '@/lib/rate-limit'
+import { deliverTransactionalEmails, sendTicketStatusEmail } from '@/lib/mail'
 import {
-  deliverTransactionalEmails,
-  sendTicketReplyEmail,
-  sendTicketStatusEmail,
-} from '@/lib/mail'
+  emailDoDono,
+  enviarAvisoDeRespostas,
+  ultimaMensagemDe,
+} from '@/lib/tickets-avisos'
 import {
   TICKET_MENSAGEM_MAX,
-  TICKET_STATUS_LABEL,
   contarNaoLidas,
   devoAvisarPorEmail,
-  ehMensagemDoSistema,
   ehPrioridadeValida,
   mensagemDoSistema,
   normalizarTexto,
   novaMensagem,
   protocoloDoTicket,
+  respostasPendentes,
   rotuloDaCategoria,
 } from '@/lib/tickets'
 
@@ -36,29 +36,19 @@ function idValido(id: string) {
 }
 
 /**
- * Última fala de verdade de um dos lados — o aviso automático não conta, senão
- * o e-mail de resposta citaria "Sistema" como se fosse o atendente.
+ * Respostas que acompanham o e-mail de mudança de situação.
+ *
+ * Prioriza o que a trava de rajada ainda não entregou — assim um atendimento
+ * que terminou em três mensagens seguidas e um "resolvido" não deixa nenhuma
+ * delas fora da caixa de entrada. Sem nada pendente, mostra a última resposta
+ * só como contexto.
  */
-function ultimaMensagemDe(ticket: Ticket, papel: 'admin' | 'user'): TicketMessage | undefined {
-  for (let i = ticket.messages.length - 1; i >= 0; i--) {
-    const msg = ticket.messages[i]
-    if (ehMensagemDoSistema(msg)) continue
-    if (papel === 'admin' ? msg.senderRole === 'admin' : msg.senderRole !== 'admin') return msg
-  }
-  return undefined
-}
+function contextoDeRespostas(ticket: Ticket): { texto: string; data?: Date | string }[] {
+  const pendentes = respostasPendentes(ticket.messages, ticket.lastEmailAt)
+  if (pendentes.length > 0) return pendentes
 
-/** E-mail atual do dono do ticket (o gravado na abertura pode ter mudado). */
-async function emailDoDono(db: Db, ticket: Ticket): Promise<{ email: string; name: string }> {
-  try {
-    const dono = await db
-      .collection('users')
-      .findOne({ _id: new ObjectId(ticket.userId) }, { projection: { email: 1, name: 1 } })
-    if (dono?.email) return { email: String(dono.email), name: String(dono.name || ticket.userName) }
-  } catch {
-    // Id fora do formato de ObjectId em base antiga: cai no que o ticket guarda.
-  }
-  return { email: ticket.userEmail, name: ticket.userName }
+  const ultima = ultimaMensagemDe(ticket, 'admin')
+  return ultima ? [{ texto: ultima.text, data: ultima.sentAt }] : []
 }
 
 async function notificar(db: Db, notificacao: Omit<Notification, '_id'>) {
@@ -301,33 +291,33 @@ export async function PATCH(
           })
 
           if (!devoAvisarPorEmail(ticket, { agora })) {
-            // Nunca em silêncio: quando um aviso não sai, o log diz por quê.
+            // Segurou por causa da rajada: marca a dívida em vez de descartar a
+            // mensagem. Ou o próximo envio a leva junto, ou a varredura
+            // (/api/cron/ticket-replies) entrega quando esfriar — nunca em
+            // silêncio, e o log diz o que aconteceu.
+            await ticketsCollection.updateOne(
+              { _id },
+              { $set: { pendingEmailSince: ticket.pendingEmailSince || agora } },
+            )
             console.log(
-              `[tickets] e-mail de resposta do ticket ${protocolo} adiado — outro aviso saiu há menos de 5 min`,
+              `[tickets] resposta do ticket ${protocolo} entra no próximo e-mail — o anterior saiu há menos de 5 min`,
             )
           } else {
-            const dono = await emailDoDono(db, ticket)
-            const pergunta = ultimaMensagemDe(ticket, 'user')
+            // Vai tudo que o atendente escreveu desde o último aviso, não só
+            // esta mensagem: é o que transforma a trava em agrupamento.
+            const respostas = [
+              ...respostasPendentes(ticket.messages, ticket.lastEmailAt),
+              { texto, data: agora },
+            ]
 
             await deliverTransactionalEmails([
-              sendTicketReplyEmail({
-                email: dono.email,
-                name: dono.name,
-                ticketId: id,
-                protocolo,
-                titulo: ticket.title,
-                status: TICKET_STATUS_LABEL[(mudancas.status as Ticket['status']) || ticket.status],
-                categoria: rotuloDaCategoria(ticket.category),
-                criadoEm: ticket.createdAt,
+              enviarAvisoDeRespostas(db, ticket, {
+                respostas,
                 adminNome: nome,
-                resposta: texto,
-                respondidoEm: agora,
-                perguntaDoUsuario: pergunta?.text,
-                perguntaEm: pergunta?.sentAt,
-              }).catch((err) => console.error('[tickets] falha no e-mail de resposta:', err)),
+                status: (mudancas.status as Ticket['status']) || ticket.status,
+                agora,
+              }),
             ])
-
-            await ticketsCollection.updateOne({ _id }, { $set: { lastEmailAt: agora } })
           }
         } else {
           // O admin que atende é quem precisa saber; sem dono, a fila inteira.
@@ -415,6 +405,8 @@ export async function PATCH(
               lastEmailAt: agora,
               ...(ticket.assignedTo ? {} : { assignedTo: session.userId, assignedToName: nome }),
             },
+            // O e-mail abaixo leva o que estava pendente; a dívida está paga.
+            $unset: { pendingEmailSince: '' },
             $push: {
               messages: mensagemDoSistema(
                 `${nome} marcou este ticket como resolvido. Se ainda ficou alguma dúvida, é só responder aqui que ele volta para atendimento.`,
@@ -434,7 +426,6 @@ export async function PATCH(
         })
 
         const dono = await emailDoDono(db, ticket)
-        const ultimaResposta = ultimaMensagemDe(ticket, 'admin')
         await deliverTransactionalEmails([
           sendTicketStatusEmail({
             email: dono.email,
@@ -446,8 +437,7 @@ export async function PATCH(
             criadoEm: ticket.createdAt,
             evento: 'resolved',
             adminNome: nome,
-            ultimaResposta: ultimaResposta?.text,
-            ultimaRespostaEm: ultimaResposta?.sentAt,
+            ultimasRespostas: contextoDeRespostas(ticket),
           }).catch((err) => console.error('[tickets] falha no e-mail de resolução:', err)),
         ])
 
@@ -494,7 +484,6 @@ export async function PATCH(
           })
 
           const dono = await emailDoDono(db, ticket)
-          const ultimaResposta = ultimaMensagemDe(ticket, 'admin')
           await deliverTransactionalEmails([
             sendTicketStatusEmail({
               email: dono.email,
@@ -506,11 +495,13 @@ export async function PATCH(
               criadoEm: ticket.createdAt,
               evento: 'closed',
               adminNome: nome,
-              ultimaResposta: ultimaResposta?.text,
-              ultimaRespostaEm: ultimaResposta?.sentAt,
+              ultimasRespostas: contextoDeRespostas(ticket),
             }).catch((err) => console.error('[tickets] falha no e-mail de encerramento:', err)),
           ])
-          await ticketsCollection.updateOne({ _id }, { $set: { lastEmailAt: agora } })
+          await ticketsCollection.updateOne(
+            { _id },
+            { $set: { lastEmailAt: agora }, $unset: { pendingEmailSince: '' } },
+          )
         }
 
         return NextResponse.json({ success: true, message: 'Ticket fechado' })
@@ -576,7 +567,10 @@ export async function PATCH(
               adminNome: nome,
             }).catch((err) => console.error('[tickets] falha no e-mail de reabertura:', err)),
           ])
-          await ticketsCollection.updateOne({ _id }, { $set: { lastEmailAt: agora } })
+          await ticketsCollection.updateOne(
+            { _id },
+            { $set: { lastEmailAt: agora }, $unset: { pendingEmailSince: '' } },
+          )
         } else {
           const destinatarios = ticket.assignedTo
             ? [ticket.assignedTo]

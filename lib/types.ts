@@ -918,6 +918,12 @@ export interface Ticket {
   adminLastSeenAt?: Date
   /** Último aviso por e-mail deste ticket — evita rajada em conversa rápida. */
   lastEmailAt?: Date
+  /**
+   * Marca desde quando existe resposta do admin que a trava de rajada segurou.
+   * É o que a varredura procura para entregar o agrupado — sem isso, a
+   * mensagem segurada simplesmente nunca chegaria à caixa de entrada.
+   */
+  pendingEmailSince?: Date
 }
 
 /**

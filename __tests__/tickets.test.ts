@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   TICKET_MENSAGEM_MAX,
   contarNaoLidas,
+  respostasPendentes,
   devoAvisarPorEmail,
   ehMensagemDoSistema,
   normalizarTexto,
@@ -96,6 +97,41 @@ describe('devoAvisarPorEmail', () => {
     expect(
       devoAvisarPorEmail({ lastEmailAt: minutosAtras(2) }, { agora, ignorarIntervalo: true }),
     ).toBe(true)
+  })
+})
+
+describe('respostasPendentes', () => {
+  const t = (min: number) => new Date(Date.UTC(2026, 2, 10, 12, min, 0))
+
+  const conversa = [
+    { senderId: 'u1', senderRole: 'user' as const, text: 'não consigo entrar', sentAt: t(0) },
+    { senderId: 'a1', senderRole: 'admin' as const, text: 'já olho', sentAt: t(1) },
+    { senderId: 'system', senderRole: 'system' as const, text: 'aviso automático', sentAt: t(2) },
+    { senderId: 'a1', senderRole: 'admin' as const, text: 'achei o erro', sentAt: t(3) },
+    { senderId: 'a1', senderRole: 'admin' as const, text: 'corrigido', sentAt: t(4) },
+  ]
+
+  it('junta tudo que o admin escreveu depois do último e-mail', () => {
+    // Regressão: a trava de rajada precisa AGRUPAR, não descartar — antes
+    // as mensagens seguradas nunca chegavam à caixa de entrada.
+    expect(respostasPendentes(conversa, t(1)).map((r) => r.texto)).toEqual([
+      'achei o erro',
+      'corrigido',
+    ])
+  })
+
+  it('sem e-mail anterior, leva a conversa inteira do admin', () => {
+    expect(respostasPendentes(conversa, undefined)).toHaveLength(3)
+  })
+
+  it('não leva fala do usuário nem aviso do sistema', () => {
+    const textos = respostasPendentes(conversa, undefined).map((r) => r.texto)
+    expect(textos).not.toContain('não consigo entrar')
+    expect(textos).not.toContain('aviso automático')
+  })
+
+  it('nada pendente quando o último e-mail é mais novo que tudo', () => {
+    expect(respostasPendentes(conversa, t(10))).toEqual([])
   })
 })
 

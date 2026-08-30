@@ -49,6 +49,10 @@ export async function ensureIndexes(db: Db): Promise<void> {
     db.collection('tickets').createIndex({ userId: 1, updatedAt: -1 }),
     db.collection('tickets').createIndex({ status: 1, updatedAt: -1 }),
     db.collection('tickets').createIndex({ assignedTo: 1, status: 1 }),
+    // Sustenta a varredura de respostas pendentes (/api/cron/ticket-replies),
+    // que roda de 5 em 5 minutos: esparso porque só um punhado de tickets
+    // carrega a marca a qualquer momento.
+    db.collection('tickets').createIndex({ pendingEmailSince: 1 }, { sparse: true }),
     db.collection('personal_exams').createIndex({ createdBy: 1 }),
     db.collection('leads').createIndex({ campaignId: 1, email: 1 }),
     db.collection('lead_page_views').createIndex({ campaignId: 1, ip: 1 }),

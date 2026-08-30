@@ -2129,8 +2129,13 @@ const RODAPE_TICKET = `
 /**
  * Aviso de que um administrador respondeu o ticket.
  *
- * Traz a resposta na íntegra e, quando existe, a última fala da própria pessoa,
- * para ela se lembrar do que perguntou sem abrir nada.
+ * Recebe uma LISTA de respostas, não uma só: quando o atendente escreve três
+ * mensagens em sequência, a trava de rajada segura o envio e o próximo e-mail
+ * leva as três juntas. Uma mensagem por e-mail seria flood; e-mail só da última
+ * seria perder as outras pelo caminho.
+ *
+ * Vai junto, quando existe, a última fala da própria pessoa, para ela se
+ * lembrar do que perguntou sem abrir nada.
  */
 export async function sendTicketReplyEmail(input: {
   email: string
@@ -2142,25 +2147,35 @@ export async function sendTicketReplyEmail(input: {
   categoria?: string
   criadoEm?: Date | string
   adminNome: string
-  resposta: string
-  respondidoEm?: Date | string
+  respostas: { texto: string; data?: Date | string }[]
   perguntaDoUsuario?: string
   perguntaEm?: Date | string
 }) {
   const primeiroNome = (input.name || '').split(' ')[0] || 'Aluno'
   const url = `${process.env.NEXT_PUBLIC_APP_URL || ''}/?suporte=${encodeURIComponent(input.ticketId)}`
+  const respostas = input.respostas.filter((r) => r && r.texto)
+  if (respostas.length === 0) return
+
+  const varias = respostas.length > 1
 
   const content = `
     <h1 class="h1">${escapeHtml(input.adminNome)} respondeu o seu ticket 💬</h1>
     <p>Olá, ${escapeHtml(primeiroNome)}!</p>
-    <p>O nosso suporte respondeu o ticket que você abriu. A resposta está logo abaixo:</p>
+    <p>
+      O nosso suporte ${varias ? `enviou <strong>${respostas.length} respostas</strong> no` : 'respondeu o'}
+      ticket que você abriu. ${varias ? 'Elas estão' : 'A resposta está'} logo abaixo:
+    </p>
 
-    ${blocoDeMensagemDoTicket({
-      autor: `${input.adminNome} • Suporte DomineAqui`,
-      texto: input.resposta,
-      data: input.respondidoEm,
-      tom: 'admin',
-    })}
+    ${respostas
+      .map((resposta) =>
+        blocoDeMensagemDoTicket({
+          autor: `${input.adminNome} • Suporte DomineAqui`,
+          texto: resposta.texto,
+          data: resposta.data,
+          tom: 'admin',
+        }),
+      )
+      .join('')}
 
     ${
       input.perguntaDoUsuario
@@ -2189,12 +2204,17 @@ export async function sendTicketReplyEmail(input: {
     ${RODAPE_TICKET}
   `
 
-  await enviarEmailDeTicket(`resposta do ticket #${input.protocolo}`, {
-    from: '"DomineAqui - Suporte" <no-reply@domineaqui.com.br>',
-    to: input.email,
-    subject: `Resposta no seu ticket #${input.protocolo} — ${input.titulo}`,
-    html: getEmailTemplate('Resposta do suporte', content),
-  })
+  await enviarEmailDeTicket(
+    `resposta do ticket #${input.protocolo} (${respostas.length} mensagem${varias ? 's' : ''})`,
+    {
+      from: '"DomineAqui - Suporte" <no-reply@domineaqui.com.br>',
+      to: input.email,
+      subject: varias
+        ? `${respostas.length} respostas no seu ticket #${input.protocolo} — ${input.titulo}`
+        : `Resposta no seu ticket #${input.protocolo} — ${input.titulo}`,
+      html: getEmailTemplate('Resposta do suporte', content),
+    },
+  )
 }
 
 /**
@@ -2212,11 +2232,17 @@ export async function sendTicketStatusEmail(input: {
   criadoEm?: Date | string
   evento: 'resolved' | 'reopened' | 'closed'
   adminNome: string
-  ultimaResposta?: string
-  ultimaRespostaEm?: Date | string
+  /**
+   * Respostas do suporte que vão junto como contexto. É uma lista porque o
+   * atendimento pode ter terminado com várias mensagens seguidas que a trava
+   * de rajada ainda não tinha entregado — elas viajam neste e-mail em vez de
+   * ficarem só no chat.
+   */
+  ultimasRespostas?: { texto: string; data?: Date | string }[]
 }) {
   const primeiroNome = (input.name || '').split(' ')[0] || 'Aluno'
   const url = `${process.env.NEXT_PUBLIC_APP_URL || ''}/?suporte=${encodeURIComponent(input.ticketId)}`
+  const respostas = (input.ultimasRespostas || []).filter((r) => r && r.texto)
 
   const textos = {
     resolved: {
@@ -2251,14 +2277,20 @@ export async function sendTicketStatusEmail(input: {
     ${textos.corpo}
 
     ${
-      input.ultimaResposta
-        ? `<p style="margin-top: 24px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: #a0aec0; font-weight: 700;">Última resposta do suporte</p>
-           ${blocoDeMensagemDoTicket({
-             autor: `${input.adminNome} • Suporte DomineAqui`,
-             texto: input.ultimaResposta,
-             data: input.ultimaRespostaEm,
-             tom: 'admin',
-           })}`
+      respostas.length > 0
+        ? `<p style="margin-top: 24px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: #a0aec0; font-weight: 700;">${
+            respostas.length > 1 ? 'Últimas respostas do suporte' : 'Última resposta do suporte'
+          }</p>
+           ${respostas
+             .map((resposta) =>
+               blocoDeMensagemDoTicket({
+                 autor: `${input.adminNome} • Suporte DomineAqui`,
+                 texto: resposta.texto,
+                 data: resposta.data,
+                 tom: 'admin',
+               }),
+             )
+             .join('')}`
         : ''
     }
 

@@ -216,6 +216,28 @@ export function devoAvisarPorEmail(
   return !(ultimo && agora - ultimo < TICKET_INTERVALO_EMAIL_MS)
 }
 
+/**
+ * Respostas do admin que ainda não saíram por e-mail.
+ *
+ * `lastEmailAt` é o corte: tudo que o atendente escreveu depois do último aviso
+ * enviado entra no próximo. É isto que faz a trava de rajada AGRUPAR em vez de
+ * DESCARTAR — a primeira versão simplesmente pulava o envio, e as mensagens
+ * seguradas nunca chegavam à caixa de entrada de ninguém.
+ */
+export function respostasPendentes(
+  mensagens: Pick<TicketMessage, 'senderId' | 'senderRole' | 'text' | 'sentAt'>[],
+  desde?: Date | string | null,
+): { texto: string; data: Date }[] {
+  const corte = desde ? new Date(desde).getTime() : 0
+
+  return mensagens
+    .filter((msg) => {
+      if (msg.senderRole !== 'admin' || ehMensagemDoSistema(msg)) return false
+      return new Date(msg.sentAt).getTime() > corte
+    })
+    .map((msg) => ({ texto: msg.text, data: new Date(msg.sentAt) }))
+}
+
 /** Link que abre o chat de suporte já com o ticket selecionado. */
 export function urlDoTicket(ticketId: unknown): string {
   const base = process.env.NEXT_PUBLIC_APP_URL || ''
