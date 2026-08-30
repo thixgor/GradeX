@@ -136,10 +136,17 @@ export function NotificationsBell() {
     markAsRead(String(notification._id!))
 
     // Redirect based on notification type
-    if (notification.type === 'ticket_created') {
+    if (notification.type === 'ticket_created' || notification.type === 'ticket_user_reply') {
       router.push('/admin/tickets')
-    } else if (notification.type === 'ticket_reopened') {
-      router.push('/')
+    } else if (
+      notification.type === 'ticket_reply' ||
+      notification.type === 'ticket_resolved' ||
+      notification.type === 'ticket_closed' ||
+      notification.type === 'ticket_reopened'
+    ) {
+      // `?suporte=<id>` abre o balão de suporte já na conversa certa — antes
+      // isto jogava a pessoa na home e ela tinha de procurar o ticket na mão.
+      router.push(notification.ticketId ? `/?suporte=${notification.ticketId}` : '/')
     } else if (notification.type === 'order_update') {
       router.push('/profile?tab=pedidos')
     } else {
@@ -208,7 +215,7 @@ export function NotificationsBell() {
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex-1">
                     <p className="text-sm font-medium">
-                      {(notification.type === 'ticket_created' || notification.type === 'ticket_reopened')
+                      {notification.ticketId
                         ? notification.ticketTitle
                         : notification.examTitle}
                     </p>

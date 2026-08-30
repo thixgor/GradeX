@@ -42,6 +42,13 @@ export async function ensureIndexes(db: Db): Promise<void> {
     db.collection('submissions').createIndex({ userId: 1 }),
     db.collection('exam_submissions').createIndex({ userId: 1 }),
     db.collection('notifications').createIndex({ userId: 1, read: 1 }),
+    // ── Suporte / tickets ──
+    // A listagem é ordenada por updatedAt e filtrada por dono (usuário) ou por
+    // situação (painel do admin); sem estes índices, cada volta do polling era
+    // uma varredura da coleção inteira.
+    db.collection('tickets').createIndex({ userId: 1, updatedAt: -1 }),
+    db.collection('tickets').createIndex({ status: 1, updatedAt: -1 }),
+    db.collection('tickets').createIndex({ assignedTo: 1, status: 1 }),
     db.collection('personal_exams').createIndex({ createdBy: 1 }),
     db.collection('leads').createIndex({ campaignId: 1, email: 1 }),
     db.collection('lead_page_views').createIndex({ campaignId: 1, ip: 1 }),

@@ -2018,3 +2018,290 @@ export async function sendAvaliacaoLembreteEmail(input: {
     throw err
   }
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Suporte / tickets
+//
+// O chat de suporte só existe enquanto a aba está aberta: quem escreve à noite
+// e fecha o navegador não descobre que foi respondido. Estes e-mails são a
+// ponte — trazem a resposta inteira no corpo (a pessoa entende sem precisar
+// entrar) e um botão que abre o chat já naquele ticket.
+//
+// Quem decide SE o e-mail sai é `devoAvisarPorEmail` em lib/tickets.ts: com o
+// chat aberto do outro lado, a resposta já chegou por lá e o e-mail seria
+// apenas barulho.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Preserva as quebras de linha que a pessoa digitou, sem deixar passar HTML. */
+function textoDeChatParaHtml(texto: string): string {
+  return escapeHtml(texto).replace(/\n/g, '<br>')
+}
+
+function blocoDeMensagemDoTicket(input: {
+  autor: string
+  texto: string
+  data?: Date | string
+  tom: 'admin' | 'usuario'
+}): string {
+  const admin = input.tom === 'admin'
+  const fundo = admin ? '#f0faf4' : '#f7fafc'
+  const borda = admin ? '#43a047' : '#cbd5e0'
+  const cor = admin ? '#0f3d2e' : '#4a5568'
+  const data = input.data
+    ? new Date(input.data).toLocaleString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      })
+    : ''
+
+  return `
+    <div style="background-color: ${fundo}; border-left: 4px solid ${borda}; border-radius: 8px; padding: 16px 18px; margin: 16px 0;">
+      <p style="margin: 0 0 8px 0; font-size: 13px; color: ${cor}; font-weight: 700;">
+        ${escapeHtml(input.autor)}${data ? ` <span style="font-weight: 400; color: #718096;">• ${data}</span>` : ''}
+      </p>
+      <p style="margin: 0; font-size: 15px; color: #2d3748; line-height: 1.6;">${textoDeChatParaHtml(input.texto)}</p>
+    </div>
+  `
+}
+
+function fichaDoTicket(input: {
+  protocolo: string
+  titulo: string
+  status: string
+  categoria?: string
+  aberto?: Date | string
+}): string {
+  const aberto = input.aberto
+    ? new Date(input.aberto).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })
+    : ''
+
+  return `
+    <div style="background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 10px; padding: 16px 18px; margin: 20px 0;">
+      <p style="margin: 0 0 8px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #d97706; font-weight: 700;">Protocolo #${escapeHtml(input.protocolo)}</p>
+      <p style="margin: 0 0 4px 0; font-size: 16px; font-weight: 700; color: #92400e;">${escapeHtml(input.titulo)}</p>
+      <p style="margin: 4px 0 0 0; font-size: 13px; color: #718096;">Situação: <strong>${escapeHtml(input.status)}</strong></p>
+      ${input.categoria ? `<p style="margin: 4px 0 0 0; font-size: 13px; color: #718096;">Assunto: ${escapeHtml(input.categoria)}</p>` : ''}
+      ${aberto ? `<p style="margin: 4px 0 0 0; font-size: 13px; color: #718096;">Aberto em: ${aberto}</p>` : ''}
+    </div>
+  `
+}
+
+const RODAPE_TICKET = `
+  <p style="margin-top: 28px; font-size: 13px; color: #718096;">
+    Responder a este e-mail não chega até o atendimento — a conversa continua dentro da plataforma,
+    pelo botão acima ou pelo balão de suporte no canto da tela.
+  </p>
+`
+
+/**
+ * Aviso de que um administrador respondeu o ticket.
+ *
+ * Traz a resposta na íntegra e, quando existe, a última fala da própria pessoa,
+ * para ela se lembrar do que perguntou sem abrir nada.
+ */
+export async function sendTicketReplyEmail(input: {
+  email: string
+  name: string
+  ticketId: string
+  protocolo: string
+  titulo: string
+  status: string
+  categoria?: string
+  criadoEm?: Date | string
+  adminNome: string
+  resposta: string
+  respondidoEm?: Date | string
+  perguntaDoUsuario?: string
+  perguntaEm?: Date | string
+}) {
+  const primeiroNome = (input.name || '').split(' ')[0] || 'Aluno'
+  const url = `${process.env.NEXT_PUBLIC_APP_URL || ''}/?suporte=${encodeURIComponent(input.ticketId)}`
+
+  const content = `
+    <h1 class="h1">${escapeHtml(input.adminNome)} respondeu o seu ticket 💬</h1>
+    <p>Olá, ${escapeHtml(primeiroNome)}!</p>
+    <p>O nosso suporte respondeu o ticket que você abriu. A resposta está logo abaixo:</p>
+
+    ${blocoDeMensagemDoTicket({
+      autor: `${input.adminNome} • Suporte DomineAqui`,
+      texto: input.resposta,
+      data: input.respondidoEm,
+      tom: 'admin',
+    })}
+
+    ${
+      input.perguntaDoUsuario
+        ? `<p style="margin-top: 24px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: #a0aec0; font-weight: 700;">Sua última mensagem</p>
+           ${blocoDeMensagemDoTicket({
+             autor: 'Você',
+             texto: input.perguntaDoUsuario,
+             data: input.perguntaEm,
+             tom: 'usuario',
+           })}`
+        : ''
+    }
+
+    ${fichaDoTicket({
+      protocolo: input.protocolo,
+      titulo: input.titulo,
+      status: input.status,
+      categoria: input.categoria,
+      aberto: input.criadoEm,
+    })}
+
+    <div style="text-align: center;">
+      <a href="${url}" class="button" target="_blank">Continuar a conversa</a>
+    </div>
+
+    ${RODAPE_TICKET}
+  `
+
+  await transporter.sendMail({
+    from: '"DomineAqui - Suporte" <no-reply@domineaqui.com.br>',
+    to: input.email,
+    subject: `Resposta no seu ticket #${input.protocolo} — ${input.titulo}`,
+    html: getEmailTemplate('Resposta do suporte', content),
+  })
+}
+
+/**
+ * Mudança de situação do ticket (resolvido, reaberto ou fechado pelo suporte).
+ * Sai mesmo que a pessoa tenha acabado de receber outro e-mail: é o desfecho do
+ * atendimento e costuma ser a mensagem que ela guarda.
+ */
+export async function sendTicketStatusEmail(input: {
+  email: string
+  name: string
+  ticketId: string
+  protocolo: string
+  titulo: string
+  categoria?: string
+  criadoEm?: Date | string
+  evento: 'resolved' | 'reopened' | 'closed'
+  adminNome: string
+  ultimaResposta?: string
+  ultimaRespostaEm?: Date | string
+}) {
+  const primeiroNome = (input.name || '').split(' ')[0] || 'Aluno'
+  const url = `${process.env.NEXT_PUBLIC_APP_URL || ''}/?suporte=${encodeURIComponent(input.ticketId)}`
+
+  const textos = {
+    resolved: {
+      h1: 'Seu ticket foi resolvido ✅',
+      assunto: `Ticket #${input.protocolo} resolvido — ${input.titulo}`,
+      status: 'Resolvido',
+      corpo: `<p>${escapeHtml(input.adminNome)} marcou o seu ticket como <strong>resolvido</strong>.</p>
+        <p>Se a sua dúvida foi mesmo solucionada, não precisa fazer nada — o ticket se encerra sozinho.
+        <strong>Se ainda ficou alguma ponta solta, é só responder por lá</strong> que ele volta para a fila de atendimento.</p>`,
+      cta: 'Ver o atendimento',
+    },
+    reopened: {
+      h1: 'Seu ticket foi reaberto 🔄',
+      assunto: `Ticket #${input.protocolo} reaberto — ${input.titulo}`,
+      status: 'Em atendimento',
+      corpo: `<p>${escapeHtml(input.adminNome)} reabriu o seu ticket para continuar o atendimento.</p>`,
+      cta: 'Abrir a conversa',
+    },
+    closed: {
+      h1: 'Seu ticket foi encerrado',
+      assunto: `Ticket #${input.protocolo} encerrado — ${input.titulo}`,
+      status: 'Fechado',
+      corpo: `<p>${escapeHtml(input.adminNome)} encerrou o seu ticket. O histórico fica guardado na sua conta.</p>
+        <p>Precisando de novo, é só abrir um novo ticket pelo balão de suporte — leva menos de um minuto.</p>`,
+      cta: 'Ver o histórico',
+    },
+  }[input.evento]
+
+  const content = `
+    <h1 class="h1">${textos.h1}</h1>
+    <p>Olá, ${escapeHtml(primeiroNome)}!</p>
+    ${textos.corpo}
+
+    ${
+      input.ultimaResposta
+        ? `<p style="margin-top: 24px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: #a0aec0; font-weight: 700;">Última resposta do suporte</p>
+           ${blocoDeMensagemDoTicket({
+             autor: `${input.adminNome} • Suporte DomineAqui`,
+             texto: input.ultimaResposta,
+             data: input.ultimaRespostaEm,
+             tom: 'admin',
+           })}`
+        : ''
+    }
+
+    ${fichaDoTicket({
+      protocolo: input.protocolo,
+      titulo: input.titulo,
+      status: textos.status,
+      categoria: input.categoria,
+      aberto: input.criadoEm,
+    })}
+
+    <div style="text-align: center;">
+      <a href="${url}" class="button" target="_blank">${textos.cta}</a>
+    </div>
+
+    ${RODAPE_TICKET}
+  `
+
+  await transporter.sendMail({
+    from: '"DomineAqui - Suporte" <no-reply@domineaqui.com.br>',
+    to: input.email,
+    subject: textos.assunto,
+    html: getEmailTemplate('Atualização do seu ticket', content),
+  })
+}
+
+/**
+ * Aviso de ticket novo para a equipe. A notificação no sino só aparece para
+ * quem já está com o painel aberto; o e-mail é o que faz alguém abrir.
+ */
+export async function sendNewTicketAdminEmail(input: {
+  destinatarios: string[]
+  protocolo: string
+  ticketId: string
+  titulo: string
+  categoria?: string
+  usuarioNome: string
+  usuarioEmail: string
+  mensagem: string
+}) {
+  const destinatarios = Array.from(new Set(input.destinatarios.filter(Boolean)))
+  if (destinatarios.length === 0) return
+
+  const url = `${process.env.NEXT_PUBLIC_APP_URL || ''}/admin/tickets`
+
+  const content = `
+    <h1 class="h1">Novo ticket de suporte 🎫</h1>
+    <p><strong>${escapeHtml(input.usuarioNome)}</strong> (${escapeHtml(input.usuarioEmail)}) abriu um ticket.</p>
+
+    ${fichaDoTicket({
+      protocolo: input.protocolo,
+      titulo: input.titulo,
+      status: 'Aguardando atendimento',
+      categoria: input.categoria,
+      aberto: new Date(),
+    })}
+
+    ${blocoDeMensagemDoTicket({
+      autor: input.usuarioNome,
+      texto: input.mensagem,
+      data: new Date(),
+      tom: 'usuario',
+    })}
+
+    <div style="text-align: center;">
+      <a href="${url}" class="button" target="_blank">Atender no painel</a>
+    </div>
+  `
+
+  await transporter.sendMail({
+    from: '"DomineAqui - Suporte" <no-reply@domineaqui.com.br>',
+    to: destinatarios.join(', '),
+    subject: `Novo ticket #${input.protocolo} — ${input.titulo}`,
+    html: getEmailTemplate('Novo ticket de suporte', content),
+  })
+}
