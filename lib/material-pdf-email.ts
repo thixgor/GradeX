@@ -169,12 +169,16 @@ export async function prepareWatermarkedItems(
         buffer: Buffer.from(watermarked),
       })
       sentMaterialIds.push(String(material._id))
-    } catch (err) {
+    } catch (err: any) {
       console.error(
         `[material-pdf-email] Falha ao preparar PDF do material ${material._id}:`,
         err
       )
-      skipped.push({ title, reason: 'falha ao processar' })
+      // O motivo vai junto: quando o carimbo recusa entregar um material que
+      // perdeu figura, o admin precisa ver isso na tela do envio — "falha ao
+      // processar" mandaria ele procurar no log de produção.
+      const reason = String(err?.message || err || '').replace(/\s+/g, ' ').trim()
+      skipped.push({ title, reason: reason ? reason.slice(0, 200) : 'falha ao processar' })
     }
   }
 
