@@ -83,8 +83,17 @@ export async function GET(request: NextRequest) {
       material: {
         id: String(material._id),
         titulo: material.title || '',
-        arquivo: material.pdfFile?.filename || '',
-        tamanhoNoStorage: material.pdfFile?.size ?? null,
+        arquivo: material.pdfFile?.originalFilename || '',
+        // Tamanho e páginas anotados no momento do upload. Divergência entre
+        // isso e o que foi baixado agora significa que o arquivo no storage
+        // não é o mesmo que saiu do navegador do admin — outro jeito de o
+        // material chegar sem as figuras do fim do arquivo.
+        bytesNoUpload: material.pdfFile?.sizeBytes ?? null,
+        paginasNoUpload: Number(material.pdfFile?.pageCount) || null,
+        arquivoIntegro:
+          material.pdfFile?.sizeBytes == null
+            ? null
+            : Number(material.pdfFile.sizeBytes) === original.byteLength,
       },
       origem: {
         paginas: original.pageCount,
