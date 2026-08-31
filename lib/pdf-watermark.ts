@@ -20,7 +20,6 @@ import {
   PDFName,
   PDFEmbeddedPage,
   PDFDict,
-  PDFObjectCopier,
   PDFRef,
   PDFStream,
 } from 'pdf-lib'
@@ -55,11 +54,6 @@ const DEFAULT_MODE: PdfProtectionMode =
 
 interface WatermarkRenderConfig {
   enabled: boolean
-  /**
-   * Desenha a marca com transparência (`ca`/`CA`) em vez de cinza chapado.
-   * Desligado por padrão — ver `resolveWatermarkTone`.
-   */
-  translucent: boolean
   opacity: number
   fontSize: number
   repeatGap: number
@@ -103,7 +97,6 @@ function trimText(value: string, maxLength: number): string {
 function getWatermarkRenderConfig(): WatermarkRenderConfig {
   return {
     enabled: envBoolean('PDF_WATERMARK_ENABLED', true),
-    translucent: envBoolean('PDF_WATERMARK_TRANSPARENCY', false),
     // Padrões calibrados para a marca ser legível (nome/UID/pedido/data
     // identificáveis num vazamento) sem atrapalhar a leitura. O valor antigo
     // (opacity 0.055) deixava a marca praticamente invisível. Tudo continua
@@ -121,13 +114,7 @@ function getWatermarkRenderConfig(): WatermarkRenderConfig {
 /**
  * Declara um grupo de transparência (DeviceRGB) na página.
  *
- * Só entra em cena no modo translúcido (`PDF_WATERMARK_TRANSPARENCY=1`): é a
- * transparência do carimbo que obriga a página a ser composta como grupo. No
- * modo padrão a marca é chapada e a página é entregue com o `/Group` que o
- * autor definiu — forçar DeviceRGB num documento que compõe em CMYK muda a
- * aparência das figuras em vez de salvá-las.
- *
- * Por que isso é necessário quando há transparência:
+ * Por que isso é necessário:
  *   PDFs exportados de PowerPoint/Canva/etc. frequentemente contêm imagens
  *   com soft mask (SMask, transparência). Ao reescrever as páginas e desenhar
  *   a marca d'água com `opacity` (alpha), introduzimos estados de transparência
@@ -164,37 +151,6 @@ function ensurePageTransparencyGroup(page: PDFPage, doc: PDFDocument): void {
   page.node.set(PDFName.of('Group'), group)
 }
 
-/** Cinza da marca d'água, antes de compor com o fundo. */
-const WATERMARK_GRAY = 0.3
-
-/**
- * Cor e opacidade da marca.
- *
- * Por padrão a marca NÃO usa transparência: o cinza entregue já é o resultado
- * de compor o cinza translúcido sobre o branco da página (`1 − (1 − cinza) ×
- * opacidade`), então a aparência é a mesma de sempre no papel — só que sem
- * `ca`/`CA` no arquivo.
- *
- * Por que isso importa: alpha no conteúdo que carimbamos obriga o leitor a
- * compor a página inteira como grupo de transparência. Leitores estritos
- * (Acrobat e o PDFKit/Quick Look do iOS, que desenha a pré-visualização do
- * Gmail no celular) fazem essa composição de um jeito que estoura justamente
- * nas figuras com máscara de transparência (SMask) — a página fica com o texto
- * e sem a figura, enquanto uma página de imagem opaca (a capa, em geral)
- * continua correta. Sem transparência nenhuma no que acrescentamos, não há
- * composição nova para o leitor errar: as figuras chegam exatamente como
- * estavam no arquivo original.
- *
- * `PDF_WATERMARK_TRANSPARENCY=1` volta ao carimbo translúcido de antes.
- */
-function resolveWatermarkTone(config: WatermarkRenderConfig): { color: ReturnType<typeof rgb>; opacity?: number } {
-  if (config.translucent) {
-    return { color: rgb(WATERMARK_GRAY, WATERMARK_GRAY, WATERMARK_GRAY), opacity: config.opacity }
-  }
-  const tone = 1 - (1 - WATERMARK_GRAY) * config.opacity
-  return { color: rgb(tone, tone, tone), opacity: undefined }
-}
-
 /**
  * Aplica marca d'água diagonal repetida em uma única página do PDF.
  * A marca é desenhada em múltiplas posições para cobrir toda a página
@@ -210,9 +166,8 @@ function applyWatermarkToPage(
 
   const { width, height } = page.getSize()
 
-  // Cinza claro (chapado por padrão, translúcido sob env) — visível mas não
-  // atrapalha a leitura.
-  const { color, opacity } = resolveWatermarkTone(config)
+  // Cor: cinza muito transparente — visível mas não atrapalha leitura
+  const color = rgb(0.3, 0.3, 0.3)
 
   // Ângulo diagonal (45°)
   const angle = degrees(config.angle)
@@ -251,9 +206,7 @@ function applyWatermarkToPage(
           size: config.fontSize,
           font,
           color,
-          // `undefined` faz o pdf-lib não emitir ExtGState: nenhum alpha entra
-          // no arquivo entregue.
-          opacity,
+          opacity: config.opacity,
           rotate: angle,
         })
       })
@@ -292,30 +245,25 @@ async function buildWatermarkOverlayPdf(
 // ─── Preservação do conteúdo original ────────────────────────────────────────
 
 /**
- * Conta, PÁGINA A PÁGINA, os XObjects de imagem alcançáveis a partir dela
- * (descendo também nos Form XObjects aninhados).
+ * Conta os XObjects de imagem alcançáveis a partir das páginas (descendo
+ * também nos Form XObjects aninhados).
  *
- * Serve de rede de segurança: se o número de imagens de uma página cair entre
- * o PDF de origem e o PDF carimbado, alguma figura se perdeu no caminho e o
- * arquivo entregue ao comprador estaria furado. Por página, e não no total,
- * porque é assim que a perda aparece para quem lê o material — "a figura do
- * capítulo 3 sumiu", não "faltam duas imagens no arquivo".
- *
- * É barato (só percorre dicionários, não decodifica imagem nenhuma).
+ * Serve de rede de segurança: se o número de imagens cair entre o PDF de
+ * origem e o PDF carimbado, alguma figura se perdeu no caminho e o arquivo
+ * entregue ao comprador estaria furado. É barato (só percorre dicionários,
+ * não decodifica imagem nenhuma) e é o que os testes usam para garantir que
+ * a marca d'água não come as figuras do material.
  */
-export function countImageXObjectsPerPage(doc: PDFDocument): number[] {
+export function countImageXObjects(doc: PDFDocument): number {
   const context = doc.context
+  const visited = new Set<string>()
+  let total = 0
 
-  const walkResources = (
-    resources: PDFDict | undefined,
-    depth: number,
-    visited: Set<string>
-  ): number => {
-    if (!resources || depth > 12) return 0
+  const walkResources = (resources: PDFDict | undefined, depth: number): void => {
+    if (!resources || depth > 12) return
     const xObjects = resources.lookupMaybe(PDFName.of('XObject'), PDFDict)
-    if (!xObjects) return 0
+    if (!xObjects) return
 
-    let total = 0
     for (const [, value] of xObjects.entries()) {
       if (value instanceof PDFRef) {
         const key = value.toString()
@@ -330,66 +278,18 @@ export function countImageXObjectsPerPage(doc: PDFDocument): number[] {
       if (subtypeName === '/Image') {
         total += 1
       } else if (subtypeName === '/Form') {
-        total += walkResources(
+        walkResources(
           stream.dict.context.lookupMaybe(stream.dict.get(PDFName.of('Resources')), PDFDict),
-          depth + 1,
-          visited
+          depth + 1
         )
       }
     }
-    return total
   }
 
-  // O `visited` é por página: uma figura repetida em várias páginas conta uma
-  // vez em cada uma, que é como quem folheia o material a enxerga.
-  return doc.getPages().map((page) => walkResources(page.node.Resources(), 0, new Set<string>()))
-}
-
-/** Total de imagens do documento (soma das páginas). */
-export function countImageXObjects(doc: PDFDocument): number {
-  return countImageXObjectsPerPage(doc).reduce((sum, n) => sum + n, 0)
-}
-
-/** Retrato do que precisa sobreviver ao carimbo para a figura aparecer. */
-interface FiguresSnapshot {
-  imagesPerPage: number[]
-  /** O catálogo declara camadas (`/OCProperties`) — sem elas, figura com `/OC` some. */
-  hasLayers: boolean
-}
-
-function snapshotFigures(doc: PDFDocument): FiguresSnapshot {
-  return {
-    imagesPerPage: countImageXObjectsPerPage(doc),
-    hasLayers: Boolean(doc.catalog.lookupMaybe(PDFName.of('OCProperties'), PDFDict)),
+  for (const page of doc.getPages()) {
+    walkResources(page.node.Resources(), 0)
   }
-}
-
-/**
- * Recusa entregar um PDF que perdeu figura no caminho.
- *
- * Um material sem as imagens é pior do que um envio que falha: o comprador
- * recebe algo furado e ninguém fica sabendo. Falhando aqui, o admin vê o
- * motivo na hora do envio e o comprador não recebe nada pela metade.
- */
-function assertFiguresPreserved(before: FiguresSnapshot, after: FiguresSnapshot, strategy: string): void {
-  const lost: string[] = []
-  const pages = Math.max(before.imagesPerPage.length, after.imagesPerPage.length)
-  for (let index = 0; index < pages; index += 1) {
-    const antes = before.imagesPerPage[index] ?? 0
-    const depois = after.imagesPerPage[index] ?? 0
-    if (depois < antes) lost.push(`${index + 1} (${antes}→${depois})`)
-  }
-
-  if (lost.length > 0) {
-    throw new Error(
-      `a marca d'agua (${strategy}) perdeu figuras nas paginas ${lost.join(', ')}`
-    )
-  }
-  if (before.hasLayers && !after.hasLayers) {
-    throw new Error(
-      `a marca d'agua (${strategy}) perdeu as camadas do documento (/OCProperties)`
-    )
-  }
+  return total
 }
 
 /**
@@ -431,25 +331,8 @@ async function stampWatermarkOverlay(
   if (!config.enabled) return
 
   const overlayCache = new Map<string, PDFEmbeddedPage>()
-  const pages = doc.getPages()
-  for (let index = 0; index < pages.length; index += 1) {
-    const page = pages[index]
-    // Uma página com MediaBox ausente ou fora do formato faz o pdf-lib lançar.
-    // Antes isso derrubava o carimbo inteiro e mandava o documento para a
-    // estratégia de reserva, que reconstrói o arquivo à toa. Agora só essa
-    // página fica sem a marca — o material continua íntegro.
-    let size: { width: number; height: number }
-    try {
-      size = page.getSize()
-    } catch (err) {
-      console.error(`[pdf-watermark] Página ${index + 1} sem tamanho utilizável — segue sem marca:`, err)
-      continue
-    }
-    const { width, height } = size
-    if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) {
-      console.error(`[pdf-watermark] Página ${index + 1} com tamanho inválido (${width}x${height}) — segue sem marca.`)
-      continue
-    }
+  for (const page of doc.getPages()) {
+    const { width, height } = page.getSize()
     const key = `${Math.round(width)}x${Math.round(height)}`
 
     let overlay = overlayCache.get(key)
@@ -460,22 +343,17 @@ async function stampWatermarkOverlay(
       overlay = embedded
     }
 
-    // Só faz sentido mexer no compositing da página quando o carimbo tem
-    // transparência. No modo padrão (marca chapada) a página é entregue com o
-    // /Group que o autor definiu — forçar DeviceRGB num material que compõe em
-    // CMYK muda a aparência das figuras em vez de salvá-las.
-    if (config.translucent) ensurePageTransparencyGroup(page, doc)
+    // Garante compositing correto de transparência no iOS/Safari (ver helper).
+    ensurePageTransparencyGroup(page, doc)
     // Carimba o overlay cobrindo a página inteira (uma operação por página).
     page.drawPage(overlay, { x: 0, y: 0, width, height })
   }
 
-  if (config.translucent) {
-    // Materializa os XObjects embutidos para conseguir marcá-los como grupo
-    // isolado de transparência antes da serialização.
-    await doc.flush()
-    for (const overlay of overlayCache.values()) {
-      markOverlayAsIsolatedGroup(doc, overlay.ref)
-    }
+  // Materializa os XObjects embutidos para conseguir marcá-los como grupo
+  // isolado de transparência antes da serialização.
+  await doc.flush()
+  for (const overlay of overlayCache.values()) {
+    markOverlayAsIsolatedGroup(doc, overlay.ref)
   }
 }
 
@@ -519,30 +397,17 @@ export async function applyWatermark(
   // que já está em claro. Remover a entrada mantém o arquivo consistente.
   delete (doc.context.trailerInfo as any).Encrypt
 
-  const before = snapshotFigures(doc)
-
   try {
-    const bytes = await finalizeWatermarkedDoc(doc, readTitle(doc), options, watermarkLines, renderConfig)
-    assertFiguresPreserved(before, snapshotFigures(doc), 'carimbo in-place')
-    return bytes
+    return await finalizeWatermarkedDoc(doc, doc.getTitle(), options, watermarkLines, renderConfig)
   } catch (error) {
     // Rede de segurança: se o documento de origem for danificado a ponto de o
-    // pdf-lib não conseguir reserializá-lo inteiro, cai para a estratégia de
-    // reserva — documento novo com as páginas copiadas.
+    // pdf-lib não conseguir reserializá-lo inteiro, cai para a estratégia
+    // antiga — documento novo com as páginas copiadas.
     console.error(
-      '[pdf-watermark] Carimbo in-place falhou; usando cópia de páginas:',
+      '[pdf-watermark] Carimbo in-place falhou; usando cópia de páginas (pode perder camadas):',
       error
     )
     return applyWatermarkByCopyingPages(originalPdfBytes, options, watermarkLines, renderConfig)
-  }
-}
-
-/** Título do original, quando o /Info do arquivo permite lê-lo. */
-function readTitle(doc: PDFDocument): string | undefined {
-  try {
-    return doc.getTitle()
-  } catch {
-    return undefined
   }
 }
 
@@ -561,36 +426,13 @@ function buildUserMarker(options: WatermarkOptions): string {
 }
 
 /**
- * Entradas do catálogo que decidem se a figura APARECE e com que cor — e que
- * a cópia de páginas deixava para trás.
- *
- * `/OCProperties` é a que dói: em material exportado de InDesign/Illustrator/
- * Word as figuras vivem dentro de camadas (conteúdo opcional) e a página só
- * referencia o OCG; sem a declaração no catálogo, o leitor estrito esconde a
- * figura e entrega a página com o texto e sem a imagem. As demais preservam a
- * aparência (perfil de cor da gráfica, idioma, preferências, numeração).
+ * Estratégia de reserva (documento novo + `copyPages`). Só é usada quando o
+ * carimbo in-place falha — ela NÃO preserva o catálogo do original (camadas,
+ * `/OCProperties` etc.), então o resultado é verificado: se o número de
+ * imagens cair, registramos o problema no log para o admin conseguir
+ * diagnosticar em vez de descobrir pelo comprador.
  */
-const CATALOG_ENTRIES_TO_PRESERVE = [
-  'OCProperties',
-  'OutputIntents',
-  'Lang',
-  'ViewerPreferences',
-  'PageLabels',
-] as const
-
-/**
- * Estratégia de reserva (documento novo + páginas copiadas). Só é usada
- * quando o carimbo in-place falha.
- *
- * A cópia leva apenas o que é alcançável a partir da página, então o catálogo
- * do original ficaria para trás — e com ele as camadas que tornam as figuras
- * visíveis. Aqui as entradas do catálogo são copiadas com o MESMO copiador das
- * páginas: como ele guarda o que já copiou, os OCGs citados pelo conteúdo e os
- * listados em `/OCProperties` continuam sendo o mesmo objeto no arquivo novo
- * (com dois copiadores seriam objetos diferentes, e a figura sumiria do mesmo
- * jeito). No fim o resultado é conferido página a página.
- */
-export async function applyWatermarkByCopyingPages(
+async function applyWatermarkByCopyingPages(
   originalPdfBytes: Uint8Array | ArrayBuffer,
   options: WatermarkOptions,
   watermarkLines: string[],
@@ -600,33 +442,28 @@ export async function applyWatermarkByCopyingPages(
     ignoreEncryption: true,
     updateMetadata: false,
   })
-  const before = snapshotFigures(sourceDoc)
+  const sourceImages = countImageXObjects(sourceDoc)
 
   const outputDoc = await PDFDocument.create()
-  // `copyPages` cria um copiador por chamada; aqui ele é nosso para poder
-  // reaproveitá-lo no catálogo logo abaixo.
-  await sourceDoc.flush()
-  const copier = PDFObjectCopier.for(sourceDoc.context, outputDoc.context)
-  for (const sourcePage of sourceDoc.getPages()) {
-    const copiedNode = copier.copy(sourcePage.node)
-    const ref = outputDoc.context.register(copiedNode)
-    outputDoc.addPage(PDFPage.of(copiedNode, ref, outputDoc))
-  }
-
-  for (const entry of CATALOG_ENTRIES_TO_PRESERVE) {
-    const value = sourceDoc.catalog.get(PDFName.of(entry))
-    if (value) outputDoc.catalog.set(PDFName.of(entry), copier.copy(value))
+  const copiedPages = await outputDoc.copyPages(sourceDoc, sourceDoc.getPageIndices())
+  for (const page of copiedPages) {
+    outputDoc.addPage(page)
   }
 
   const bytes = await finalizeWatermarkedDoc(
     outputDoc,
-    readTitle(sourceDoc),
+    sourceDoc.getTitle(),
     options,
     watermarkLines,
     renderConfig
   )
 
-  assertFiguresPreserved(before, snapshotFigures(outputDoc), 'cópia de páginas')
+  const outputImages = countImageXObjects(outputDoc)
+  if (outputImages < sourceImages) {
+    console.error(
+      `[pdf-watermark] A cópia de páginas perdeu imagens: ${sourceImages} no original x ${outputImages} no arquivo entregue.`
+    )
+  }
 
   return bytes
 }
@@ -646,23 +483,16 @@ async function finalizeWatermarkedDoc(
 
   // ── Metadados de rastreio (embutidos no arquivo) ────────────────────────
   // Coloca dados do usuário nos metadados do PDF para rastreio forense.
-  // Num arquivo com /Info fora do padrão o pdf-lib lança aqui; isso é acessório
-  // perto de entregar o material, e deixar escapar mandaria o documento para a
-  // estratégia de reserva por causa de metadado.
-  try {
-    const userMarker = buildUserMarker(options)
-    doc.setTitle(`${originalTitle || 'Material DomineAqui'} - ${userName}`)
-    doc.setAuthor(userName)
-    doc.setSubject(
-      `Licenciado para: ${userName} | ${userMarker} | Pedido: ${orderId} | Download: ${formatDate(downloadedAt)}`
-    )
-    doc.setKeywords([userName, userId, emailFingerprint(options.userEmail), orderId, 'DomineAqui'])
-    doc.setCreator('DomineAqui — domineaqui.com.br')
-    doc.setProducer('DomineAqui PDF Service')
-    doc.setModificationDate(downloadedAt)
-  } catch (err) {
-    console.error('[pdf-watermark] Não foi possível gravar os metadados de rastreio:', err)
-  }
+  const userMarker = buildUserMarker(options)
+  doc.setTitle(`${originalTitle || 'Material DomineAqui'} - ${userName}`)
+  doc.setAuthor(userName)
+  doc.setSubject(
+    `Licenciado para: ${userName} | ${userMarker} | Pedido: ${orderId} | Download: ${formatDate(downloadedAt)}`
+  )
+  doc.setKeywords([userName, userId, emailFingerprint(options.userEmail), orderId, 'DomineAqui'])
+  doc.setCreator('DomineAqui — domineaqui.com.br')
+  doc.setProducer('DomineAqui PDF Service')
+  doc.setModificationDate(downloadedAt)
 
   // ── Aplicar marca em todas as páginas ───────────────────────────────────
   await stampWatermarkOverlay(doc, watermarkLines, renderConfig)

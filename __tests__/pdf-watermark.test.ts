@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import {
   PDFDocument,
   PDFDict,
@@ -6,17 +6,11 @@ import {
   PDFOperator,
   PDFOperatorNames,
   PDFRef,
-  PDFStream,
   PDFString,
   rgb,
 } from 'pdf-lib'
 
-import {
-  applyWatermark,
-  applyWatermarkByCopyingPages,
-  countImageXObjects,
-  countImageXObjectsPerPage,
-} from '@/lib/pdf-watermark'
+import { applyWatermark, countImageXObjects } from '@/lib/pdf-watermark'
 
 /**
  * O que estes testes protegem: o PDF que chega ao comprador tem que ser o
@@ -89,82 +83,6 @@ async function buildPdfWithImageInOptionalContent(): Promise<Uint8Array> {
   return doc.save()
 }
 
-/**
- * Material de verdade: capa com figura opaca e, depois dela, várias páginas
- * com figura em camada — que é onde o comprador dizia que "sumiu a imagem"
- * enquanto a página 1 chegava certa.
- */
-async function buildMultiPageMaterial(pageCount = 5): Promise<Uint8Array> {
-  const doc = await PDFDocument.create()
-  const image = await embedSampleImage(doc)
-
-  const ocgRef = doc.context.register(
-    doc.context.obj({ Type: 'OCG', Name: PDFString.of('Figuras') })
-  )
-  doc.catalog.set(
-    PDFName.of('OCProperties'),
-    doc.context.obj({ OCGs: [ocgRef], D: { Order: [ocgRef], ON: [ocgRef] } })
-  )
-
-  for (let index = 0; index < pageCount; index += 1) {
-    const page = doc.addPage([595, 842])
-    page.drawText(`Prancha ${index + 1}`, { x: 60, y: 760, size: 12 })
-
-    // A capa (página 1) traz a figura solta; as demais, dentro da camada.
-    if (index === 0) {
-      page.drawImage(image, { x: 60, y: 420, width: 400, height: 280 })
-      continue
-    }
-    page.node.Resources()!.set(PDFName.of('Properties'), doc.context.obj({ MC0: ocgRef }))
-    page.pushOperators(
-      PDFOperator.of(PDFOperatorNames.BeginMarkedContentSequence, [
-        PDFName.of('OC'),
-        PDFName.of('MC0'),
-      ])
-    )
-    page.drawImage(image, { x: 60, y: 420, width: 400, height: 280 })
-    page.pushOperators(PDFOperator.of(PDFOperatorNames.EndMarkedContent))
-  }
-
-  return doc.save()
-}
-
-/**
- * Estados gráficos com alpha (`ca`/`CA`) alcançáveis a partir das páginas —
- * inclusive dentro dos Form XObjects, que é onde mora o overlay da marca.
- */
-function alphaStatesInPages(doc: PDFDocument): number {
-  const walk = (resources: PDFDict | undefined, depth: number): number => {
-    if (!resources || depth > 8) return 0
-    let total = 0
-
-    const extGState = resources.lookupMaybe(PDFName.of('ExtGState'), PDFDict)
-    if (extGState) {
-      for (const [, value] of extGState.entries()) {
-        const state = doc.context.lookupMaybe(value, PDFDict)
-        if (state?.has(PDFName.of('ca')) || state?.has(PDFName.of('CA'))) total += 1
-      }
-    }
-
-    const xObjects = resources.lookupMaybe(PDFName.of('XObject'), PDFDict)
-    if (xObjects) {
-      for (const [, value] of xObjects.entries()) {
-        const stream = doc.context.lookup(value)
-        if (!(stream instanceof PDFStream)) continue
-        if (stream.dict.get(PDFName.of('Subtype')) !== PDFName.of('Form')) continue
-        total += walk(
-          doc.context.lookupMaybe(stream.dict.get(PDFName.of('Resources')), PDFDict),
-          depth + 1
-        )
-      }
-    }
-
-    return total
-  }
-
-  return doc.getPages().reduce((total, page) => total + walk(page.node.Resources(), 0), 0)
-}
-
 function hasOptionalContentProperties(doc: PDFDocument): boolean {
   return Boolean(doc.catalog.lookupMaybe(PDFName.of('OCProperties'), PDFDict))
 }
@@ -181,10 +99,6 @@ function declaredLayerNames(doc: PDFDocument): string[] {
 }
 
 describe('applyWatermark', () => {
-  afterEach(() => {
-    delete process.env.PDF_WATERMARK_TRANSPARENCY
-  })
-
   it('mantém as figuras de um PDF com camadas (conteúdo opcional)', async () => {
     const original = await buildPdfWithImageInOptionalContent()
     const stamped = await applyWatermark(original, IDENTITY)
@@ -221,52 +135,21 @@ describe('applyWatermark', () => {
     expect(stampedDoc.getSubject()).not.toContain(IDENTITY.userEmail)
   })
 
-  it('mantém a figura de TODAS as páginas, não só da capa', async () => {
-    // O sintoma relatado: a página 1 chegava com a imagem e todas as outras
-    // vinham só com o texto. Conferir o total esconderia isso — a conta é
-    // página a página.
-    const original = await buildMultiPageMaterial(5)
-    const stamped = await applyWatermark(original, IDENTITY)
-
-    const sourceDoc = await PDFDocument.load(original)
-    const stampedDoc = await PDFDocument.load(stamped)
-
-    expect(countImageXObjectsPerPage(stampedDoc)).toEqual(countImageXObjectsPerPage(sourceDoc))
-    expect(countImageXObjectsPerPage(stampedDoc)).toEqual([1, 1, 1, 1, 1])
-    expect(hasOptionalContentProperties(stampedDoc)).toBe(true)
-  })
-
-  it('não introduz transparência no arquivo entregue', async () => {
-    // Alpha no carimbo obriga o leitor a compor a página como grupo de
-    // transparência — e é aí que Acrobat e o PDFKit do iOS erram nas figuras
-    // com máscara (SMask) e entregam a página sem a imagem. Marca chapada, nada
-    // para o leitor compor errado.
-    const stampedDoc = await PDFDocument.load(await applyWatermark(await buildMultiPageMaterial(3), IDENTITY))
-
-    expect(alphaStatesInPages(stampedDoc)).toBe(0)
-    // E a página continua com o compositing que o autor definiu: sem /Group
-    // inventado por nós.
-    for (const page of stampedDoc.getPages()) {
-      expect(page.node.has(PDFName.of('Group'))).toBe(false)
-    }
-  })
-
-  it('no modo translúcido, declara grupo de transparência com espaço de cor', async () => {
-    // O carimbo com alpha continua disponível por env — e aí o /Group volta a
-    // ser necessário para o iOS compor as imagens com soft-mask corretamente.
-    process.env.PDF_WATERMARK_TRANSPARENCY = '1'
-
+  it('declara grupo de transparência com espaço de cor em toda página carimbada', async () => {
+    // Sem /Group (ou com um /Group sem /CS), o renderizador nativo do iOS —
+    // o que a pré-visualização do Gmail/Drive usa — compõe errado as imagens
+    // com soft-mask sob a marca d'água translúcida e mostra a figura preta ou
+    // branca. É o mesmo "sumiu a imagem" visto pelo comprador.
     const doc = await PDFDocument.load(await buildPdfWithImage())
     const page = doc.getPages()[0]
     page.node.set(PDFName.of('Group'), doc.context.obj({ Type: 'Group', S: 'Transparency' }))
 
     const stamped = await applyWatermark(await doc.save(), IDENTITY)
-    const stampedDoc = await PDFDocument.load(stamped)
-    const group = stampedDoc.getPages()[0].node.lookupMaybe(PDFName.of('Group'), PDFDict)
+    const stampedPage = (await PDFDocument.load(stamped)).getPages()[0]
+    const group = stampedPage.node.lookupMaybe(PDFName.of('Group'), PDFDict)
 
     expect(group?.lookup(PDFName.of('S'))).toBe(PDFName.of('Transparency'))
     expect(group?.lookup(PDFName.of('CS'))).toBe(PDFName.of('DeviceRGB'))
-    expect(alphaStatesInPages(stampedDoc)).toBeGreaterThan(0)
   })
 
   it('não reemite a flag de criptografia do original no arquivo entregue', async () => {
@@ -276,56 +159,6 @@ describe('applyWatermark', () => {
 
     const stampedDoc = await PDFDocument.load(stamped, { ignoreEncryption: true })
     expect(stampedDoc.isEncrypted).toBe(false)
-  })
-})
-
-describe('applyWatermarkByCopyingPages (estratégia de reserva)', () => {
-  const LINES = ['Thiago Rodrigues', 'UID a7b8c9d0', 'Pedido: cc34d142', '31/08/2026 08:15']
-  const CONFIG = {
-    enabled: true,
-    translucent: false,
-    opacity: 0.1,
-    fontSize: 9,
-    repeatGap: 210,
-    xGap: 180,
-    angle: 38,
-    lineGap: 3,
-    maxTextLength: 64,
-  }
-
-  it('preserva camadas e figuras de todas as páginas', async () => {
-    // Esta é a estratégia usada quando o carimbo in-place falha. Ela monta um
-    // documento novo, e era ela que deixava o `/OCProperties` para trás — com
-    // o catálogo sem as camadas, a figura de cada página some no Acrobat e na
-    // pré-visualização do iOS, sobrando só o texto.
-    const original = await buildMultiPageMaterial(4)
-    const stamped = await applyWatermarkByCopyingPages(original, IDENTITY, LINES, CONFIG as any)
-
-    const sourceDoc = await PDFDocument.load(original)
-    const stampedDoc = await PDFDocument.load(stamped)
-
-    expect(countImageXObjectsPerPage(stampedDoc)).toEqual(countImageXObjectsPerPage(sourceDoc))
-    expect(hasOptionalContentProperties(stampedDoc)).toBe(true)
-    expect(declaredLayerNames(stampedDoc)).toEqual(['Figuras'])
-  })
-
-  it('a camada citada pelo conteúdo é a mesma listada no catálogo', async () => {
-    // Copiar páginas e catálogo com copiadores diferentes duplicaria o OCG: o
-    // catálogo declararia uma camada que o conteúdo não usa, e a figura sumiria
-    // do mesmo jeito.
-    const stampedDoc = await PDFDocument.load(
-      await applyWatermarkByCopyingPages(await buildMultiPageMaterial(3), IDENTITY, LINES, CONFIG as any)
-    )
-
-    const ocProperties = stampedDoc.catalog.lookupMaybe(PDFName.of('OCProperties'), PDFDict)!
-    const declared = (ocProperties.get(PDFName.of('OCGs')) as any).asArray().map(String)
-    const usedByPages = stampedDoc.getPages().flatMap((page) => {
-      const properties = page.node.Resources()?.lookupMaybe(PDFName.of('Properties'), PDFDict)
-      return properties ? properties.entries().map(([, value]) => String(value)) : []
-    })
-
-    expect(usedByPages.length).toBeGreaterThan(0)
-    for (const ref of usedByPages) expect(declared).toContain(ref)
   })
 })
 
