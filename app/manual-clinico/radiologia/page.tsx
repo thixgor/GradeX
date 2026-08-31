@@ -8,6 +8,7 @@ import {
   caminhoDoCorte,
 } from '@/lib/tomografia'
 import { ESTUDOS_RAIO_X, REGIOES_RAIO_X, TOTAL_ESTRUTURAS_RAIO_X } from '@/lib/radiologia/raio-x'
+import { TOTAL_TERRITORIOS_PRANCHAS, resumosPranchas } from '@/lib/radiologia/pranchas'
 
 /**
  * Home do Manual de Radiologia — montada no servidor.
@@ -53,6 +54,7 @@ export default function RadiologiaPage() {
             { valor: String(TOTAL_ESTRUTURAS_RAIO_X), rotulo: 'demarcações' },
           ],
           itens: [
+            'Pranchas de lobos e segmentos pulmonares em PA e perfil, com filme limpo para autoavaliação',
             'Casos clínicos de tórax: a consulta inteira, o filme limpo e a resposta comentada',
             'Quizzes de identificação: a marcação acende e você nomeia, com resposta comentada',
             'Casos e alterações do tórax com filme limpo, marcações e comparação interativa',
@@ -86,6 +88,18 @@ export default function RadiologiaPage() {
           titulo: regiao.titulo,
           detalhe: `${regiao.totalEstudos} inc · ${regiao.totalEstruturas} estr`,
         }))}
+        // A fita de cores é o que identifica cada prancha de relance; o dossiê
+        // dos territórios fica no servidor e só desce na página da figura.
+        pranchas={resumosPranchas().map((prancha) => ({
+          href: `/manual-clinico/radiologia/pranchas/${prancha.slug}`,
+          figura: prancha.figura,
+          titulo: prancha.titulo,
+          incidencia: prancha.incidencia,
+          capa: prancha.imagem,
+          alt: prancha.altImagem,
+          cores: prancha.amostras.map((amostra) => amostra.cor),
+        }))}
+        totalTerritoriosPranchas={TOTAL_TERRITORIOS_PRANCHAS}
         atalhosTomografia={SECOES.map((secao) => ({
           href: `/manual-clinico/radiologia/tomografia#secao-${secao.id}`,
           titulo: secao.titulo,

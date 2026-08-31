@@ -33,7 +33,7 @@ import {
  *    aba fechada por engano, celular travado — o texto continua lá.
  */
 
-export type EscopoCaderno = 'raio-x' | 'tomografia'
+export type EscopoCaderno = 'raio-x' | 'tomografia' | 'pranchas'
 export type CorFicha = 'papel' | 'amarelo' | 'verde' | 'azul' | 'rosa'
 
 export interface SecaoCaderno {

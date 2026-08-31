@@ -47,6 +47,18 @@ export interface AtalhoHome {
   detalhe: string
 }
 
+/** Uma prancha de anatomia pulmonar na faixa da home. */
+export interface PranchaHome {
+  href: string
+  figura: number
+  titulo: string
+  incidencia: string
+  capa: string
+  alt: string
+  /** As cores da chave, reduzidas a uma fita — a impressão digital da prancha. */
+  cores: string[]
+}
+
 export interface HomeRadiologiaProps {
   totais: {
     incidencias: number
@@ -59,6 +71,9 @@ export interface HomeRadiologiaProps {
   tomografia: ModalidadeHome
   atalhosRaioX: AtalhoHome[]
   atalhosTomografia: AtalhoHome[]
+  pranchas: PranchaHome[]
+  /** Quantos territórios as pranchas nomeiam, somados. */
+  totalTerritoriosPranchas: number
 }
 
 const COMO_ESTUDAR = [
@@ -95,6 +110,8 @@ export function HomeRadiologia({
   tomografia,
   atalhosRaioX,
   atalhosTomografia,
+  pranchas,
+  totalTerritoriosPranchas,
 }: HomeRadiologiaProps) {
   return (
     <div className="rx surface-page min-h-screen">
@@ -181,6 +198,77 @@ export function HomeRadiologia({
           <CartaoModalidade modalidade={raioX} tom="sky" />
           <CartaoModalidade modalidade={tomografia} tom="violet" />
         </div>
+
+        {/* ══════════ PRANCHAS ══════════ */}
+        {/* Ficam entre as modalidades e os atalhos de propósito: não são um
+            terceiro atlas, são a camada de anatomia que o aluno precisa ter na
+            cabeça antes de percorrer qualquer incidência de tórax. */}
+        {pranchas.length > 0 && (
+          <section className="mt-11">
+            <div className="flex flex-wrap items-end justify-between gap-3">
+              <div>
+                <p className="editorial-mark mb-2">Pranchas de anatomia pulmonar</p>
+                <h2 className="font-heading text-xl font-semibold tracking-tight sm:text-2xl">
+                  Lobos e segmentos, nas duas incidências
+                </h2>
+                <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+                  Radiografias reais com a demarcação pintada, a mesma imagem disponível limpa para
+                  você delimitar antes de conferir, e {totalTerritoriosPranchas} territórios com
+                  dossiê próprio — incluindo o sinal da silhueta, o sinal da coluna e os endereços
+                  clássicos da aspiração e da tuberculose.
+                </p>
+              </div>
+              <Link
+                href="/manual-clinico/radiologia/pranchas"
+                className="group inline-flex shrink-0 items-center gap-1 text-sm font-bold text-sky-600 dark:text-sky-400"
+              >
+                Ver as pranchas
+                <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+              </Link>
+            </div>
+
+            <div className="mt-5 grid gap-3.5 sm:grid-cols-2 xl:grid-cols-4">
+              {pranchas.map((prancha) => (
+                <Link
+                  key={prancha.href}
+                  href={prancha.href}
+                  prefetch={false}
+                  className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition duration-300 hover:-translate-y-1 hover:border-sky-500/50 hover:shadow-lg hover:shadow-sky-500/10"
+                >
+                  <div className="relative aspect-[4/3] overflow-hidden bg-black">
+                    <FilmeImagem
+                      src={prancha.capa}
+                      alt={prancha.alt}
+                      larguraMobile={384}
+                      larguraDesktop={384}
+                      qualidade={58}
+                      comEsqueleto
+                      className="absolute inset-0 h-full w-full object-cover object-top opacity-90 transition duration-700 group-hover:scale-[1.04] group-hover:opacity-100"
+                    />
+                    <CantosFilme />
+                    <span className="absolute left-2 top-2 rounded-full border border-white/15 bg-black/70 px-2 py-0.5 font-clinical text-[9px] font-black uppercase tracking-widest text-sky-200 backdrop-blur">
+                      Fig. {prancha.figura} · {prancha.incidencia}
+                    </span>
+                  </div>
+                  <div className="flex flex-1 flex-col p-3.5">
+                    <h3 className="font-heading text-sm font-semibold leading-tight">
+                      {prancha.titulo}
+                    </h3>
+                    <ul aria-hidden className="mt-2.5 flex flex-wrap gap-1">
+                      {prancha.cores.map((cor, indice) => (
+                        <li
+                          key={`${cor}-${indice}`}
+                          className="h-2.5 w-2.5 rounded-[2px] ring-1 ring-inset ring-black/20"
+                          style={{ backgroundColor: cor }}
+                        />
+                      ))}
+                    </ul>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* ══════════ ATALHOS ══════════ */}
         {/* items-start: a coluna da TC tem três regiões e a do Raio-X tem nove;

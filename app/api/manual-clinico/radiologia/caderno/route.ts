@@ -12,10 +12,11 @@ export const dynamic = 'force-dynamic'
 /**
  * Caderno radiográfico — as anotações do aluno dentro do Manual de Radiologia.
  *
- * Uma folha por seção do atlas: cada série de tomografia e cada incidência de
- * Raio-X tem a sua, e dentro dela cada ficha pode ficar ancorada numa estrutura
- * (`secao`). A chave é `escopo + chave`, que é o endereço do exame — assim a
- * anotação reaparece exatamente onde foi escrita.
+ * Uma folha por seção do atlas: cada série de tomografia, cada incidência de
+ * Raio-X e cada prancha de anatomia pulmonar tem a sua, e dentro dela cada ficha
+ * pode ficar ancorada numa estrutura ou território (`secao`). A chave é
+ * `escopo + chave`, que é o endereço do exame — assim a anotação reaparece
+ * exatamente onde foi escrita.
  *
  * Fica na conta, e não no `localStorage`, porque a promessa é justamente
  * atravessar dispositivos: anota-se no notebook estudando e revê-se no celular
@@ -23,7 +24,7 @@ export const dynamic = 'force-dynamic'
  * escreve aqui.
  */
 
-const ESCOPOS = ['raio-x', 'tomografia'] as const
+const ESCOPOS = ['raio-x', 'tomografia', 'pranchas'] as const
 type Escopo = (typeof ESCOPOS)[number]
 
 const CORES = ['papel', 'amarelo', 'verde', 'azul', 'rosa'] as const
@@ -37,7 +38,7 @@ interface FichaCaderno {
   _id?: ObjectId
   userId: ObjectId
   escopo: Escopo
-  /** Slug do exame: `thoraxBones`, `tc-torax-coracao`… */
+  /** Slug do exame ou da prancha: `thoraxBones`, `tc-torax-coracao`, `lobos-pa`… */
   chave: string
   /** Estrutura ou bloco a que a ficha se refere. */
   secao: string

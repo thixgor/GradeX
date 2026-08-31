@@ -159,6 +159,11 @@ const RECURSOS_RX = [
     d: 'O que é, como identificar no filme, o que avaliar e por quê, e a armadilha que aquela estrutura costuma provocar.',
   },
   {
+    icon: Layers3,
+    t: 'Pranchas de lobos e segmentos',
+    d: 'Os cinco lobos, a língula e os 18 segmentos broncopulmonares pintados sobre radiografias reais em PA e perfil — com a mesma imagem limpa para você delimitar antes de conferir.',
+  },
+  {
     icon: GraduationCap,
     t: 'Leitura sistemática por região',
     d: 'Técnica e posicionamento, critérios de qualidade, roteiro na ordem clínica, armadilhas, pérolas, medidas de referência e quando a radiografia não basta.',
