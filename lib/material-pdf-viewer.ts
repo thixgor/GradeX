@@ -482,6 +482,26 @@ export async function fetchMaterialPdfBytes(blobUrl: string): Promise<ArrayBuffe
       throw new Error('Arquivo recuperado nao e um PDF valido')
     }
 
+    // Download interrompido no meio entrega um PDF que ainda começa com %PDF
+    // e continua abrindo — só que sem os objetos do fim do arquivo, que é
+    // justamente onde costumam estar as imagens. O resultado seria um
+    // material entregue ao comprador com figuras faltando, sem nenhum erro.
+    // Quando o storage informa o tamanho, exigimos o arquivo inteiro.
+    // (Só dá para comparar quando a resposta não veio comprimida: aí o
+    // content-length é do conteúdo já decodificado.)
+    const contentEncoding = (response.headers.get('content-encoding') || 'identity').toLowerCase()
+    const declaredLength = Number(response.headers.get('content-length'))
+    if (
+      contentEncoding === 'identity' &&
+      Number.isFinite(declaredLength) &&
+      declaredLength > 0 &&
+      bytes.byteLength !== declaredLength
+    ) {
+      throw new Error(
+        `Download do PDF veio incompleto (${bytes.byteLength} de ${declaredLength} bytes)`
+      )
+    }
+
     if (cacheEnabled && ttlMs > 0 && bytes.byteLength <= maxCacheBytes) {
       while (pdfBytesCache.size >= maxEntries) {
         const oldestKey = pdfBytesCache.keys().next().value

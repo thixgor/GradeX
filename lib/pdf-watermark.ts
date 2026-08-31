@@ -11,7 +11,18 @@
  *   WATERMARK_AND_RESTRICT  – Acima + permissões de leitura (sem cópia/impressão via viewer)
  */
 
-import { PDFDocument, rgb, degrees, StandardFonts, PDFPage, PDFName, PDFEmbeddedPage } from 'pdf-lib'
+import {
+  PDFDocument,
+  rgb,
+  degrees,
+  StandardFonts,
+  PDFPage,
+  PDFName,
+  PDFEmbeddedPage,
+  PDFDict,
+  PDFRef,
+  PDFStream,
+} from 'pdf-lib'
 import { emailFingerprint } from './watermark-fingerprint'
 
 // ─── Tipos ────────────────────────────────────────────────────────────────────
@@ -118,7 +129,18 @@ function getWatermarkRenderConfig(): WatermarkRenderConfig {
  *   imagens da fonte. Sem efeito colateral nos demais leitores.
  */
 function ensurePageTransparencyGroup(page: PDFPage, doc: PDFDocument): void {
-  // Não sobrescreve um grupo já existente no PDF de origem.
+  const existing = page.node.lookupMaybe(PDFName.of('Group'), PDFDict)
+  if (existing) {
+    // Grupo já declarado no PDF de origem: preserva como está, apenas
+    // completando o espaço de cor quando ele falta — o iOS precisa do /CS
+    // para compor a transparência, e um grupo sem ele cai no mesmo problema
+    // de grupo nenhum.
+    if (!existing.has(PDFName.of('CS'))) {
+      existing.set(PDFName.of('CS'), PDFName.of('DeviceRGB'))
+    }
+    return
+  }
+  // Entrada /Group presente mas fora do formato esperado: não mexe.
   if (page.node.has(PDFName.of('Group'))) return
 
   const group = doc.context.obj({
@@ -220,11 +242,139 @@ async function buildWatermarkOverlayPdf(
   return doc.save()
 }
 
+// ─── Preservação do conteúdo original ────────────────────────────────────────
+
+/**
+ * Conta os XObjects de imagem alcançáveis a partir das páginas (descendo
+ * também nos Form XObjects aninhados).
+ *
+ * Serve de rede de segurança: se o número de imagens cair entre o PDF de
+ * origem e o PDF carimbado, alguma figura se perdeu no caminho e o arquivo
+ * entregue ao comprador estaria furado. É barato (só percorre dicionários,
+ * não decodifica imagem nenhuma) e é o que os testes usam para garantir que
+ * a marca d'água não come as figuras do material.
+ */
+export function countImageXObjects(doc: PDFDocument): number {
+  const context = doc.context
+  const visited = new Set<string>()
+  let total = 0
+
+  const walkResources = (resources: PDFDict | undefined, depth: number): void => {
+    if (!resources || depth > 12) return
+    const xObjects = resources.lookupMaybe(PDFName.of('XObject'), PDFDict)
+    if (!xObjects) return
+
+    for (const [, value] of xObjects.entries()) {
+      if (value instanceof PDFRef) {
+        const key = value.toString()
+        if (visited.has(key)) continue
+        visited.add(key)
+      }
+      const stream = context.lookup(value)
+      if (!(stream instanceof PDFStream)) continue
+
+      const subtype = stream.dict.get(PDFName.of('Subtype'))
+      const subtypeName = subtype instanceof PDFName ? subtype.asString() : ''
+      if (subtypeName === '/Image') {
+        total += 1
+      } else if (subtypeName === '/Form') {
+        walkResources(
+          stream.dict.context.lookupMaybe(stream.dict.get(PDFName.of('Resources')), PDFDict),
+          depth + 1
+        )
+      }
+    }
+  }
+
+  for (const page of doc.getPages()) {
+    walkResources(page.node.Resources(), 0)
+  }
+  return total
+}
+
+/**
+ * Marca o Form XObject do overlay como grupo de transparência ISOLADO.
+ *
+ * O overlay é desenhado com alpha (`ca`/`CA` < 1). Sem um `/Group` próprio,
+ * renderizadores estritos (Quartz/PDFKit no iOS) compõem o overlay usando o
+ * fundo da página como backdrop do grupo — o que, em páginas que já têm
+ * imagens com soft-mask, produz figuras pretas ou brancas. Declarando o
+ * grupo como isolado (`/I true`), o overlay é composto contra um fundo
+ * transparente e só depois aplicado sobre a página, que é o comportamento
+ * que os demais leitores já assumem.
+ *
+ * Precisa rodar DEPOIS de `doc.flush()`: só aí o pdf-lib materializa o
+ * objeto do XObject embutido no contexto.
+ */
+function markOverlayAsIsolatedGroup(doc: PDFDocument, ref: PDFRef): void {
+  const stream = doc.context.lookup(ref)
+  if (!(stream instanceof PDFStream)) return
+  if (stream.dict.has(PDFName.of('Group'))) return
+  stream.dict.set(
+    PDFName.of('Group'),
+    doc.context.obj({ Type: 'Group', S: 'Transparency', CS: 'DeviceRGB', I: true })
+  )
+}
+
+/**
+ * Carimba o overlay de marca d'água em todas as páginas do documento.
+ *
+ * A grade é construída uma vez por TAMANHO de página e reaproveitada como
+ * XObject (ver buildWatermarkOverlayPdf), então o custo é O(nº de tamanhos
+ * distintos) e não O(nº de páginas).
+ */
+async function stampWatermarkOverlay(
+  doc: PDFDocument,
+  watermarkLines: string[],
+  config: WatermarkRenderConfig
+): Promise<void> {
+  if (!config.enabled) return
+
+  const overlayCache = new Map<string, PDFEmbeddedPage>()
+  for (const page of doc.getPages()) {
+    const { width, height } = page.getSize()
+    const key = `${Math.round(width)}x${Math.round(height)}`
+
+    let overlay = overlayCache.get(key)
+    if (!overlay) {
+      const overlayBytes = await buildWatermarkOverlayPdf(width, height, watermarkLines, config)
+      const [embedded] = await doc.embedPdf(overlayBytes)
+      overlayCache.set(key, embedded)
+      overlay = embedded
+    }
+
+    // Garante compositing correto de transparência no iOS/Safari (ver helper).
+    ensurePageTransparencyGroup(page, doc)
+    // Carimba o overlay cobrindo a página inteira (uma operação por página).
+    page.drawPage(overlay, { x: 0, y: 0, width, height })
+  }
+
+  // Materializa os XObjects embutidos para conseguir marcá-los como grupo
+  // isolado de transparência antes da serialização.
+  await doc.flush()
+  for (const overlay of overlayCache.values()) {
+    markOverlayAsIsolatedGroup(doc, overlay.ref)
+  }
+}
+
 // ─── Exportação principal ────────────────────────────────────────────────────
 
 /**
- * Baixa o PDF original do storage, aplica marca d'água com dados do usuário
- * e retorna os bytes do PDF personalizado.
+ * Aplica marca d'água com dados do usuário sobre o PDF original e retorna os
+ * bytes do PDF personalizado.
+ *
+ * O carimbo é feito SOBRE O PRÓPRIO documento de origem (in-place). Isso é
+ * essencial para não perder figuras: a abordagem anterior copiava as páginas
+ * para um documento novo (`copyPages`), e o copiador do pdf-lib leva só o que
+ * é alcançável a partir da página — o catálogo do documento fica para trás.
+ * Em PDFs com conteúdo opcional (camadas/OCG — comuns em arquivos exportados
+ * de InDesign/Illustrator/Word), o `/OCProperties` do catálogo se perdia e as
+ * figuras marcadas com `/OC` sumiam nos leitores estritos (Acrobat e o
+ * PDFKit/Quick Look do iOS, usado na pré-visualização do Gmail/Drive no
+ * celular), enquanto continuavam aparecendo no pdf.js do visualizador do site
+ * — exatamente o sintoma de "chegou sem imagem" no PDF enviado por e-mail.
+ * Editando o documento original, catálogo, camadas, perfis de cor e demais
+ * estruturas ficam intactos.
  *
  * @param originalPdfBytes  Bytes do PDF original
  * @param options           Dados do usuário e modo de proteção
@@ -234,90 +384,125 @@ export async function applyWatermark(
   originalPdfBytes: Uint8Array | ArrayBuffer,
   options: WatermarkOptions
 ): Promise<Uint8Array> {
-  const {
-    userName,
-    userEmail,
-    userId,
-    orderId,
-    downloadedAt,
-    mode = DEFAULT_MODE,
-  } = options
+  const renderConfig = getWatermarkRenderConfig()
+  const watermarkLines = buildWatermarkLines(options, renderConfig)
 
-  // Carrega o PDF de origem. Em vez de modificar `sourceDoc` direto e
-  // re-serializar (padrão que faz pdf-lib descartar XObjects de imagem em
-  // PDFs gerados por PowerPoint/Canva/outros com estruturas indiretas),
-  // copiamos todas as páginas para um novo documento — mesma abordagem
-  // usada pelo viewer protegido (createWatermarkedSinglePagePdf), que
-  // preserva imagens corretamente.
+  const doc = await PDFDocument.load(originalPdfBytes, {
+    ignoreEncryption: true,
+    // Os metadados são reescritos adiante com os dados do licenciado.
+    updateMetadata: false,
+  })
+  // O pdf-lib não decripta streams: se o original vier com /Encrypt, ele
+  // seria reemitido no trailer e o leitor tentaria decriptar um conteúdo
+  // que já está em claro. Remover a entrada mantém o arquivo consistente.
+  delete (doc.context.trailerInfo as any).Encrypt
+
+  try {
+    return await finalizeWatermarkedDoc(doc, doc.getTitle(), options, watermarkLines, renderConfig)
+  } catch (error) {
+    // Rede de segurança: se o documento de origem for danificado a ponto de o
+    // pdf-lib não conseguir reserializá-lo inteiro, cai para a estratégia
+    // antiga — documento novo com as páginas copiadas.
+    console.error(
+      '[pdf-watermark] Carimbo in-place falhou; usando cópia de páginas (pode perder camadas):',
+      error
+    )
+    return applyWatermarkByCopyingPages(originalPdfBytes, options, watermarkLines, renderConfig)
+  }
+}
+
+/** Linhas que aparecem na marca d'água. */
+function buildWatermarkLines(options: WatermarkOptions, config: WatermarkRenderConfig): string[] {
+  return [
+    trimText(options.userName, config.maxTextLength),
+    buildUserMarker(options),
+    `Pedido: ${options.orderId.slice(-8)}`,
+    formatDate(options.downloadedAt),
+  ]
+}
+
+function buildUserMarker(options: WatermarkOptions): string {
+  return `UID ${options.userId.slice(-8)} | ${emailFingerprint(options.userEmail)}`
+}
+
+/**
+ * Estratégia de reserva (documento novo + `copyPages`). Só é usada quando o
+ * carimbo in-place falha — ela NÃO preserva o catálogo do original (camadas,
+ * `/OCProperties` etc.), então o resultado é verificado: se o número de
+ * imagens cair, registramos o problema no log para o admin conseguir
+ * diagnosticar em vez de descobrir pelo comprador.
+ */
+async function applyWatermarkByCopyingPages(
+  originalPdfBytes: Uint8Array | ArrayBuffer,
+  options: WatermarkOptions,
+  watermarkLines: string[],
+  renderConfig: WatermarkRenderConfig
+): Promise<Uint8Array> {
   const sourceDoc = await PDFDocument.load(originalPdfBytes, {
     ignoreEncryption: true,
+    updateMetadata: false,
   })
+  const sourceImages = countImageXObjects(sourceDoc)
 
   const outputDoc = await PDFDocument.create()
-  const pageIndices = sourceDoc.getPageIndices()
-  const copiedPages = await outputDoc.copyPages(sourceDoc, pageIndices)
+  const copiedPages = await outputDoc.copyPages(sourceDoc, sourceDoc.getPageIndices())
   for (const page of copiedPages) {
     outputDoc.addPage(page)
   }
 
+  const bytes = await finalizeWatermarkedDoc(
+    outputDoc,
+    sourceDoc.getTitle(),
+    options,
+    watermarkLines,
+    renderConfig
+  )
+
+  const outputImages = countImageXObjects(outputDoc)
+  if (outputImages < sourceImages) {
+    console.error(
+      `[pdf-watermark] A cópia de páginas perdeu imagens: ${sourceImages} no original x ${outputImages} no arquivo entregue.`
+    )
+  }
+
+  return bytes
+}
+
+/**
+ * Passo final comum às duas estratégias: metadados de rastreio, carimbo da
+ * marca d'água e serialização.
+ */
+async function finalizeWatermarkedDoc(
+  doc: PDFDocument,
+  originalTitle: string | undefined,
+  options: WatermarkOptions,
+  watermarkLines: string[],
+  renderConfig: WatermarkRenderConfig
+): Promise<Uint8Array> {
+  const { userName, userId, orderId, downloadedAt, mode = DEFAULT_MODE } = options
+
   // ── Metadados de rastreio (embutidos no arquivo) ────────────────────────
   // Coloca dados do usuário nos metadados do PDF para rastreio forense.
-  const originalTitle = sourceDoc.getTitle() || 'Material DomineAqui'
-  const emailMarker = emailFingerprint(userEmail)
-  const userMarker = `UID ${userId.slice(-8)} | ${emailMarker}`
-  outputDoc.setTitle(`${originalTitle} - ${userName}`)
-  outputDoc.setAuthor(userName)
-  outputDoc.setSubject(
+  const userMarker = buildUserMarker(options)
+  doc.setTitle(`${originalTitle || 'Material DomineAqui'} - ${userName}`)
+  doc.setAuthor(userName)
+  doc.setSubject(
     `Licenciado para: ${userName} | ${userMarker} | Pedido: ${orderId} | Download: ${formatDate(downloadedAt)}`
   )
-  outputDoc.setKeywords([userName, userId, emailMarker, orderId, 'DomineAqui'])
-  outputDoc.setCreator('DomineAqui — domineaqui.com.br')
-  outputDoc.setProducer('DomineAqui PDF Service')
-  outputDoc.setModificationDate(downloadedAt)
-
-  const renderConfig = getWatermarkRenderConfig()
-
-  // Linhas que aparecem na marca d'água
-  const watermarkLines = [
-    trimText(userName, renderConfig.maxTextLength),
-    userMarker,
-    `Pedido: ${orderId.slice(-8)}`,
-    formatDate(downloadedAt),
-  ]
+  doc.setKeywords([userName, userId, emailFingerprint(options.userEmail), orderId, 'DomineAqui'])
+  doc.setCreator('DomineAqui — domineaqui.com.br')
+  doc.setProducer('DomineAqui PDF Service')
+  doc.setModificationDate(downloadedAt)
 
   // ── Aplicar marca em todas as páginas ───────────────────────────────────
-  // Estratégia por overlay: a grade de marca d'água é construída uma única
-  // vez por tamanho de página e reutilizada como XObject em todas as páginas
-  // daquele tamanho. Isso mantém o custo baixo mesmo em PDFs com centenas de
-  // páginas (ver buildWatermarkOverlayPdf).
-  const pages = outputDoc.getPages()
-  if (renderConfig.enabled) {
-    const overlayCache = new Map<string, PDFEmbeddedPage>()
-    for (const page of pages) {
-      const { width, height } = page.getSize()
-      const key = `${Math.round(width)}x${Math.round(height)}`
-
-      let overlay = overlayCache.get(key)
-      if (!overlay) {
-        const overlayBytes = await buildWatermarkOverlayPdf(width, height, watermarkLines, renderConfig)
-        const [embedded] = await outputDoc.embedPdf(overlayBytes)
-        overlayCache.set(key, embedded)
-        overlay = embedded
-      }
-
-      // Garante compositing correto de transparência no iOS/Safari (ver helper).
-      ensurePageTransparencyGroup(page, outputDoc)
-      // Carimba o overlay cobrindo a página inteira (uma operação por página).
-      page.drawPage(overlay, { x: 0, y: 0, width, height })
-    }
-  }
+  await stampWatermarkOverlay(doc, watermarkLines, renderConfig)
 
   // ── Modo WATERMARK_AND_FLATTEN ──────────────────────────────────────────
   // Flattening converte campos de formulário interativos em conteúdo estático,
   // impedindo que scripts/formulários sejam manipulados.
   if (mode === 'WATERMARK_AND_FLATTEN' || mode === 'WATERMARK_AND_RESTRICT') {
     try {
-      const form = outputDoc.getForm()
+      const form = doc.getForm()
       form.flatten()
     } catch {
       // PDF sem formulários — ignorar
@@ -335,23 +520,18 @@ export async function applyWatermark(
   if (mode === 'WATERMARK_AND_RESTRICT') {
     try {
       // Definir preferências de visualização que sugerem restrições
-      const catalog = outputDoc.catalog
+      const catalog = doc.catalog
       // Instrução ao viewer: não mostrar barra de ferramentas, não abrir em tela cheia
       // A restrição de cópia real requer encryption — apenas setamos a flag de hint
-      catalog.set(
-        catalog.context.obj('Perms'),
-        catalog.context.obj('{}')
-      )
+      catalog.set(catalog.context.obj('Perms'), catalog.context.obj('{}'))
     } catch {
       // Silencioso — não crítico
     }
   }
 
   // useObjectStreams: false — formato PDF mais conservador (sem PDF 1.5
-  // compressed object streams). Em PDFs com imagens em estruturas indiretas,
-  // a compressão de objetos do pdf-lib pode quebrar refs de XObject; o
-  // formato tradicional preserva melhor o conteúdo original.
-  return outputDoc.save({ useObjectStreams: false })
+  // compressed object streams), melhor tolerado por leitores antigos.
+  return doc.save({ useObjectStreams: false })
 }
 
 /**
