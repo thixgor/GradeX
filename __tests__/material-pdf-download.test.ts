@@ -1,6 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { fetchMaterialPdfBytes } from '@/lib/material-pdf-viewer'
+import {
+  describePdfDownloadFailure,
+  downloadPdfResponse,
+  PdfDownloadTransferError,
+} from '@/lib/material-download-client'
+import { pdfBytesToStream } from '@/lib/pdf-response'
 
 /**
  * Um download que morre no meio ainda começa com %PDF e ainda abre — só que
@@ -66,5 +72,127 @@ describe('fetchMaterialPdfBytes', () => {
     ))
 
     await expect(fetchMaterialPdfBytes(uniqueUrl())).rejects.toThrow(/nao e um PDF valido/i)
+  })
+})
+
+/**
+ * A entrega do arquivo ao navegador.
+ *
+ * O sintoma que originou estes testes foi um `POST /api/materiais/download`
+ * registrado no console como "200 (OK) net::ERR_FAILED": a borda da Vercel
+ * corta o corpo de uma função que responde de uma vez acima de ~4,5 MB, e o
+ * corte acontece depois de os cabeçalhos já terem saído. Daí as duas metades
+ * da correção — o servidor entrega em pedaços, e o cliente confere se o que
+ * chegou está inteiro antes de salvar.
+ */
+describe('pdfBytesToStream', () => {
+  it('entrega o arquivo inteiro, em pedaços', async () => {
+    const bytes = new Uint8Array(1000).map((_, i) => i % 251)
+    const stream = pdfBytesToStream(bytes, 256)
+
+    const chunks: Uint8Array[] = []
+    const reader = stream.getReader()
+    for (;;) {
+      const { done, value } = await reader.read()
+      if (done) break
+      chunks.push(value)
+    }
+
+    // Um pedaço só significaria resposta "de uma vez" — exatamente o que a
+    // borda corta.
+    expect(chunks.length).toBe(4)
+    expect(chunks.every(c => c.byteLength <= 256)).toBe(true)
+
+    const recebido = new Uint8Array(chunks.reduce((n, c) => n + c.byteLength, 0))
+    let offset = 0
+    for (const chunk of chunks) {
+      recebido.set(chunk, offset)
+      offset += chunk.byteLength
+    }
+    expect(Array.from(recebido)).toEqual(Array.from(bytes))
+  })
+
+  it('fecha sem emitir nada quando não há bytes', async () => {
+    const reader = pdfBytesToStream(new Uint8Array(0)).getReader()
+    expect((await reader.read()).done).toBe(true)
+  })
+})
+
+describe('downloadPdfResponse', () => {
+  const PDF = new TextEncoder().encode('%PDF-1.7\nconteudo\n%%EOF\n')
+
+  function pdfResponse(body: Uint8Array, contentLength: number) {
+    return new Response(body.slice().buffer as ArrayBuffer, {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/pdf',
+        'Content-Length': String(contentLength),
+        'Content-Disposition': 'attachment; filename="material.pdf"',
+      },
+    })
+  }
+
+  // O salvamento toca no DOM; aqui só precisamos que ele não exploda.
+  function stubDom() {
+    const anchor: any = { click: vi.fn(), remove: vi.fn() }
+    vi.stubGlobal('URL', { createObjectURL: () => 'blob:teste', revokeObjectURL: () => {} })
+    vi.stubGlobal('document', {
+      createElement: () => anchor,
+      body: { appendChild: () => {} },
+    })
+    vi.stubGlobal('window', { setTimeout: () => 0 })
+    return anchor
+  }
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it('salva o arquivo quando o corpo chega inteiro', async () => {
+    const anchor = stubDom()
+
+    await downloadPdfResponse(pdfResponse(PDF, PDF.byteLength), 'fallback.pdf')
+
+    expect(anchor.click).toHaveBeenCalled()
+    // O nome vem do Content-Disposition, não do fallback.
+    expect(anchor.download).toBe('material.pdf')
+  })
+
+  it('recusa um corpo cortado no meio em vez de salvar um PDF quebrado', async () => {
+    const anchor = stubDom()
+
+    await expect(
+      downloadPdfResponse(pdfResponse(PDF, PDF.byteLength * 4), 'fallback.pdf')
+    ).rejects.toBeInstanceOf(PdfDownloadTransferError)
+
+    expect(anchor.click).not.toHaveBeenCalled()
+  })
+
+  it('não confunde resposta comprimida com corpo cortado', async () => {
+    // Content-Length menor que o corpo é o caso da resposta comprimida no
+    // caminho: comparar por excesso derrubaria toda entrega.
+    const anchor = stubDom()
+
+    await downloadPdfResponse(pdfResponse(PDF, 4), 'fallback.pdf')
+
+    expect(anchor.click).toHaveBeenCalled()
+  })
+})
+
+describe('describePdfDownloadFailure', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it('não culpa a internet do aluno quando ele está online', () => {
+    vi.stubGlobal('navigator', { onLine: true })
+    const mensagem = describePdfDownloadFailure(new TypeError('Failed to fetch'))
+    expect(mensagem).toMatch(/interrompido/i)
+    expect(mensagem).not.toMatch(/sem conexão/i)
+  })
+
+  it('avisa da falta de rede quando o aparelho está offline', () => {
+    vi.stubGlobal('navigator', { onLine: false })
+    expect(describePdfDownloadFailure(new TypeError('Failed to fetch'))).toMatch(/sem conexão/i)
   })
 })

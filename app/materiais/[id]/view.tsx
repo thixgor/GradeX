@@ -54,6 +54,7 @@ import {
 } from '@/components/materiais/pdf-download-progress'
 import { PdfDownloadTermsModal } from '@/components/materiais/pdf-download-terms-modal'
 import {
+  describePdfDownloadFailure,
   downloadPdfResponse,
   shouldUseNativePdfDownload,
   triggerNativePdfDownload,
@@ -385,13 +386,13 @@ export default function MaterialViewPage() {
       const tClose = setTimeout(() => setDownloadState(INITIAL_DOWNLOAD_STATE), 2800)
       stepTimersRef.current = [tClose]
 
-    } catch {
+    } catch (error) {
       stepTimersRef.current.forEach(clearTimeout)
       stepTimersRef.current = []
       setDownloadState(s => ({
         ...s,
         status: 'error',
-        error: 'Erro de conexão. Verifique sua internet e tente novamente.',
+        error: describePdfDownloadFailure(error),
         errorStep: s.step as DownloadStepId,
       }))
     }
@@ -1626,6 +1627,14 @@ export default function MaterialViewPage() {
         state={downloadState}
         onRetry={startPdfDownload}
         onClose={() => setDownloadState(INITIAL_DOWNLOAD_STATE)}
+        onOpenViewer={
+          canViewPdf
+            ? () => {
+                setDownloadState(INITIAL_DOWNLOAD_STATE)
+                handleOpenPdfViewer()
+              }
+            : undefined
+        }
       />
 
       {upsellPkg && data && (

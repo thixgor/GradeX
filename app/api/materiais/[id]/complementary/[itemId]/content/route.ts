@@ -12,6 +12,7 @@ import { getSession } from '@/lib/auth'
 import { validateComplementaryContentAccess, fetchMaterialHtml, buildWatermarkedHtml } from '@/lib/material-complementary-viewer'
 import { fetchMaterialPdfBytes } from '@/lib/material-pdf-viewer'
 import { applyWatermark } from '@/lib/pdf-watermark'
+import { pdfBytesToStream } from '@/lib/pdf-response'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
@@ -88,11 +89,16 @@ export async function GET(
       downloadedAt: new Date(),
     })
 
-    return new NextResponse(Buffer.from(watermarked), {
+    // Em pedaços, e não como um buffer só: a borda da Vercel corta o corpo de
+    // uma resposta entregue de uma vez acima de ~4,5 MB, depois de os
+    // cabeçalhos já terem saído — o iframe ficaria em branco sem erro nenhum.
+    // Ver `lib/pdf-response.ts`.
+    return new NextResponse(pdfBytesToStream(watermarked), {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `inline; filename="${(item.title || 'documento').replace(/[^\w\- ]/g, '').slice(0, 60)}.pdf"`,
+        'Content-Length': String(watermarked.byteLength),
         'X-Content-Type-Options': 'nosniff',
         // Sobrescreve o X-Frame-Options: DENY global (next.config.js) —
         // esta rota é servida DENTRO de um <iframe> pelo leitor.

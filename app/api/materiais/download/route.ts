@@ -23,6 +23,7 @@ import { ObjectId } from 'mongodb'
 import { isValidObjectId } from '@/lib/api-security'
 import { fetchMaterialPdfBytes } from '@/lib/material-pdf-viewer'
 import { applyWatermark } from '@/lib/pdf-watermark'
+import { pdfBytesToStream } from '@/lib/pdf-response'
 import { checkPlusDownloadAllowance, recordPlusDownload } from '@/lib/plus-guard'
 import {
   avaliarUsoDoPlano,
@@ -387,11 +388,23 @@ async function createMaterialPdfDownloadResponse(request: NextRequest, materialI
       .substring(0, 80)
     const filename = `${safeTitle}.pdf`
 
-    return new NextResponse(Buffer.from(watermarkedPdf), {
+    // O corpo sai em pedaços, e não como um buffer só: acima de ~4,5 MB a
+    // borda da Vercel corta a resposta de uma função que responde de uma vez
+    // — e corta depois dos cabeçalhos, o que o navegador registrava como
+    // "200 (OK) net::ERR_FAILED" e o aluno via como "erro de conexão".
+    // Ver `lib/pdf-response.ts`.
+    console.log(
+      `[pdf-download] entregando material=${materialId} bytes=${watermarkedPdf.byteLength} origem=${material.pdfFile?.sizeBytes ?? '?'}`
+    )
+
+    return new NextResponse(pdfBytesToStream(watermarkedPdf), {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `attachment; filename="${filename}"`,
+        // Mantido mesmo em streaming: é o que permite ao navegador mostrar
+        // progresso real e ao cliente perceber um arquivo que chegou pela
+        // metade em vez de salvar um PDF truncado.
         'Content-Length': String(watermarkedPdf.byteLength),
         'Content-Transfer-Encoding': 'binary',
         'Accept-Ranges': 'none',

@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion'
 import {
+  BookOpen,
   Shield,
   Cloud,
   Fingerprint,
@@ -102,6 +103,14 @@ interface PdfDownloadProgressProps {
   state: PdfDownloadState
   onRetry: () => void
   onClose: () => void
+  /**
+   * Saída alternativa quando o download falha: ler o material no visualizador
+   * protegido. Quem tentou baixar quer o conteúdo, não o arquivo — deixar
+   * "Tentar novamente" como única porta obriga a repetir uma operação que pode
+   * falhar de novo (PDF grande demais para a resposta da função). Só é passada
+   * quando o material tem visualizador habilitado.
+   */
+  onOpenViewer?: () => void
 }
 
 export function PdfDownloadProgress({
@@ -109,6 +118,7 @@ export function PdfDownloadProgress({
   state,
   onRetry,
   onClose,
+  onOpenViewer,
 }: PdfDownloadProgressProps) {
   const { step, status, error, errorStep } = state
   const progress = computeProgress(step, status)
@@ -289,28 +299,41 @@ export function PdfDownloadProgress({
 
             {/* Footer actions */}
             {(status === 'error' || status === 'success') && (
-              <div className="flex gap-2 px-5 pb-5">
-                {status === 'error' && (
+              <div className="px-5 pb-5 space-y-2">
+                <div className="flex gap-2">
+                  {status === 'error' && (
+                    <Button
+                      onClick={onRetry}
+                      size="sm"
+                      className="flex-1 h-9 rounded-2xl bg-primary text-white font-semibold shadow-lg shadow-primary/20"
+                    >
+                      Tentar novamente
+                    </Button>
+                  )}
                   <Button
-                    onClick={onRetry}
+                    onClick={onClose}
                     size="sm"
-                    className="flex-1 h-9 rounded-2xl bg-primary text-white font-semibold shadow-lg shadow-primary/20"
+                    variant={status === 'error' ? 'outline' : undefined}
+                    className={
+                      status === 'success'
+                        ? 'flex-1 h-9 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-semibold shadow-lg shadow-emerald-500/20'
+                        : 'h-9 rounded-2xl'
+                    }
                   >
-                    Tentar novamente
+                    {status === 'success' ? 'Perfeito!' : 'Fechar'}
+                  </Button>
+                </div>
+                {status === 'error' && onOpenViewer && (
+                  <Button
+                    onClick={onOpenViewer}
+                    size="sm"
+                    variant="ghost"
+                    className="w-full h-9 rounded-2xl text-xs font-medium text-muted-foreground hover:text-foreground"
+                  >
+                    <BookOpen className="h-3.5 w-3.5 mr-1.5" />
+                    Ler no visualizador protegido
                   </Button>
                 )}
-                <Button
-                  onClick={onClose}
-                  size="sm"
-                  variant={status === 'error' ? 'outline' : undefined}
-                  className={
-                    status === 'success'
-                      ? 'flex-1 h-9 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-semibold shadow-lg shadow-emerald-500/20'
-                      : 'h-9 rounded-2xl'
-                  }
-                >
-                  {status === 'success' ? 'Perfeito!' : 'Fechar'}
-                </Button>
               </div>
             )}
 

@@ -53,6 +53,7 @@ import {
   type MaterialPackage,
 } from '@/components/materiais/shared'
 import {
+  describePdfDownloadFailure,
   downloadPdfResponse,
   shouldUseNativePdfDownload,
   triggerNativePdfDownload,
@@ -818,13 +819,13 @@ function MateriaisContent() {
       setDownloadState({ step: 'ready', status: 'success' })
       const tClose = setTimeout(() => setDownloadState(INITIAL_DOWNLOAD_STATE), 2800)
       stepTimersRef.current = [tClose]
-    } catch {
+    } catch (error) {
       stepTimersRef.current.forEach(clearTimeout)
       stepTimersRef.current = []
       setDownloadState(s => ({
         ...s,
         status: 'error',
-        error: 'Erro de conexão. Verifique sua internet e tente novamente.',
+        error: describePdfDownloadFailure(error),
         errorStep: s.step as DownloadStepId,
       }))
     } finally {
@@ -1454,6 +1455,14 @@ function MateriaisContent() {
         state={downloadState}
         onRetry={() => startPdfDownload()}
         onClose={() => setDownloadState(INITIAL_DOWNLOAD_STATE)}
+        onOpenViewer={
+          pdfDownloadMaterial?.pdfViewerEnabled
+            ? () => {
+                setDownloadState(INITIAL_DOWNLOAD_STATE)
+                handleOpenPdfViewer(pdfDownloadMaterial)
+              }
+            : undefined
+        }
       />
 
       <ToastAlert
