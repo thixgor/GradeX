@@ -13,12 +13,25 @@ import { Db, ObjectId } from 'mongodb'
 import { isValidObjectId } from './api-security'
 import { fetchMaterialPdfBytes } from './material-pdf-viewer'
 import { applyWatermark } from './pdf-watermark'
+import {
+  MAX_EMAIL_ATTACHMENT_BYTES,
+  formatMb,
+  trimAttachmentsToEmailLimit,
+} from './email-attachment-size'
 
 // Teto do PDF de origem, alinhado ao limite de upload de materiais (100MB).
 // O pdf-lib carrega e duplica o arquivo ao aplicar a marca d'água, então
 // arquivos acima disso tendem a estourar a memória da função. Ajustável via env.
 export const PDF_EMAIL_MAX_ORIGINAL_MB = Number(process.env.PDF_EMAIL_MAX_ORIGINAL_MB) || 100
-const MAX_ORIGINAL_BYTES = PDF_EMAIL_MAX_ORIGINAL_MB * 1024 * 1024
+
+// Um arquivo que sozinho não cabe na mensagem (ver email-attachment-size) nunca
+// vai sair por e-mail: pular antes de baixar e marcar d'água economiza o
+// trabalho e devolve o motivo certo — tamanho, não "falha de SMTP".
+const MAX_ORIGINAL_BYTES = Math.min(
+  PDF_EMAIL_MAX_ORIGINAL_MB * 1024 * 1024,
+  MAX_EMAIL_ATTACHMENT_BYTES
+)
+const MAX_ORIGINAL_LABEL = formatMb(MAX_ORIGINAL_BYTES)
 
 export type PdfEmailItem = { title: string; filename: string; buffer: Buffer }
 
@@ -149,11 +162,11 @@ export async function prepareWatermarkedItems(
       const original = await fetchMaterialPdfBytes(material.pdfFile.blobUrl)
       const originalBytes = original.byteLength
       if (originalBytes > MAX_ORIGINAL_BYTES) {
-        const sizeMb = (originalBytes / 1024 / 1024).toFixed(1)
+        const sizeLabel = formatMb(originalBytes)
         console.warn(
-          `[material-pdf-email] PDF "${title}" (${material._id}) tem ${sizeMb}MB, acima do limite de ${PDF_EMAIL_MAX_ORIGINAL_MB}MB — pulado.`
+          `[material-pdf-email] PDF "${title}" (${material._id}) tem ${sizeLabel}, acima do limite de ${MAX_ORIGINAL_LABEL} por e-mail — pulado.`
         )
-        skipped.push({ title, reason: `${sizeMb}MB (máx. ${PDF_EMAIL_MAX_ORIGINAL_MB}MB)` })
+        skipped.push({ title, reason: `${sizeLabel} (máx. ${MAX_ORIGINAL_LABEL} por e-mail)` })
         continue
       }
       const watermarked = await applyWatermark(original, {
@@ -209,7 +222,17 @@ export async function buildAutoEmailPdfAttachments(
 
     if (eligibleMaterials.length === 0) return { items: [], eligible: false }
     const { items } = await prepareWatermarkedItems(eligibleMaterials, identity)
-    return { items, eligible: true }
+    // O e-mail de compra vale mais que o anexo: se o conjunto não couber na
+    // mensagem, sai sem o(s) PDF(s) grande(s) em vez de morrer com 552 e deixar
+    // o comprador sem confirmação nenhuma.
+    const { kept, dropped } = trimAttachmentsToEmailLimit(items)
+    if (dropped.length > 0) {
+      console.warn(
+        '[material-pdf-email] Anexos removidos por excederem o limite da mensagem:',
+        dropped.map((d) => `${d.title} (${formatMb(d.buffer.byteLength)})`).join(', ')
+      )
+    }
+    return { items: kept, eligible: true }
   } catch (err) {
     console.error('[material-pdf-email] buildAutoEmailPdfAttachments falhou:', err)
     return { items: [], eligible: false }

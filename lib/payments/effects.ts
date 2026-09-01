@@ -44,6 +44,7 @@ import {
 } from '../material-timed-access'
 import { restorePlusClaims } from '../plus-claims'
 import { buildAutoEmailPdfAttachments, type PdfEmailItem } from '../material-pdf-email'
+import { trimAttachmentsToEmailLimit } from '../email-attachment-size'
 import {
   getManualClinicoConfig,
   getManualClinicoPlan,
@@ -564,6 +565,15 @@ async function applyMaterialPurchase(order: PaymentOrder, result?: ProviderOrder
         })
         autoPdfs.push(...items)
       }
+      // Cada item cabia sozinho; a soma do carrinho pode não caber. Corta o
+      // excedente aqui para o e-mail do carrinho não morrer com 552.
+      const { kept: fittingPdfs, dropped: oversizedPdfs } = trimAttachmentsToEmailLimit(autoPdfs)
+      if (oversizedPdfs.length > 0) {
+        console.warn(
+          '[effects] PDFs do carrinho removidos por excederem o limite da mensagem:',
+          oversizedPdfs.map(p => p.title).join(', ')
+        )
+      }
 
       sendCartPurchasedEmail(
         order.payerEmail,
@@ -575,7 +585,7 @@ async function applyMaterialPurchase(order: PaymentOrder, result?: ProviderOrder
         })),
         order.amount,
         skippedItems,
-        autoPdfs
+        fittingPdfs
       ).catch(err => console.error('[effects] e-mail carrinho falhou:', err))
     }
     return
