@@ -34,6 +34,11 @@ import {
   resolveMaterialsWithPdf,
   prepareWatermarkedItems,
 } from '@/lib/material-pdf-email'
+import {
+  checkEmailAttachmentSize,
+  emailTooLargeMessage,
+  isMessageTooLargeError,
+} from '@/lib/email-attachment-size'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
@@ -61,18 +66,33 @@ function checkSizeLimits(items: PdfItem[], skipped: { title: string; reason: str
     )
   }
 
-  const totalBytes = items.reduce((sum, item) => sum + item.buffer.byteLength, 0)
-  const MAX_TOTAL_MB = Number(process.env.PDF_EMAIL_MAX_TOTAL_MB) || 100
-  const MAX_TOTAL_BYTES = MAX_TOTAL_MB * 1024 * 1024
-  if (totalBytes > MAX_TOTAL_BYTES) {
+  // O que decide o 552 do servidor é o tamanho da mensagem depois do base64,
+  // não a soma dos arquivos em disco. Conferimos aí, antes de abrir a conexão.
+  const size = checkEmailAttachmentSize(items)
+  if (!size.ok) {
+    return NextResponse.json({ error: emailTooLargeMessage(size) }, { status: 413 })
+  }
+  return null
+}
+
+/**
+ * Traduz a falha do nodemailer para a resposta certa. Recusa por tamanho (552)
+ * é 413 com instrução de o que fazer — não 502 "verifique o SMTP", que mandava
+ * o admin caçar credenciais por causa de um PDF grande demais.
+ */
+function smtpErrorResponse(err: any, items: PdfItem[]): NextResponse {
+  if (isMessageTooLargeError(err)) {
+    const size = checkEmailAttachmentSize(items)
     return NextResponse.json(
-      {
-        error: `O(s) arquivo(s) somam ${(totalBytes / 1024 / 1024).toFixed(1)}MB, acima do limite para envio por e-mail (${MAX_TOTAL_MB}MB). Reduza o tamanho do PDF ou envie por outro meio.`,
-      },
+      { error: `O servidor de e-mail recusou a mensagem por tamanho. ${emailTooLargeMessage(size)}` },
       { status: 413 }
     )
   }
-  return null
+  const detail = err?.responseCode || err?.code || err?.message
+  return NextResponse.json(
+    { error: `Falha ao enviar o e-mail${detail ? ` (${detail})` : ''}. Verifique a configuração de SMTP.` },
+    { status: 502 }
+  )
 }
 
 export async function POST(request: NextRequest) {
@@ -156,11 +176,7 @@ export async function POST(request: NextRequest) {
       }
     } catch (err: any) {
       console.error('[admin-send-pdf-email] Falha ao enviar e-mail (SMTP):', err)
-      const detail = err?.responseCode || err?.code || err?.message
-      return NextResponse.json(
-        { error: `Falha ao enviar o e-mail${detail ? ` (${detail})` : ''}. Verifique a configuração de SMTP.` },
-        { status: 502 }
-      )
+      return smtpErrorResponse(err, items)
     }
 
     // Auditoria não deve bloquear a resposta: o e-mail já foi enviado com
@@ -259,11 +275,7 @@ async function handleGuestSerialKey(db: Db, session: any, serialKeyId: string): 
     })
   } catch (err: any) {
     console.error('[admin-send-pdf-email] Falha ao enviar e-mail convidado (SMTP):', err)
-    const detail = err?.responseCode || err?.code || err?.message
-    return NextResponse.json(
-      { error: `Falha ao enviar o e-mail${detail ? ` (${detail})` : ''}. Verifique a configuração de SMTP.` },
-      { status: 502 }
-    )
+    return smtpErrorResponse(err, items)
   }
 
   const now = new Date()
