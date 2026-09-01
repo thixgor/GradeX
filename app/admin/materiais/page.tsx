@@ -61,6 +61,10 @@ import {
   Copy,
   Check,
   Wand2,
+  Lock,
+  Unlock,
+  BellRing,
+  FileDown,
 } from 'lucide-react'
 import {
   buildSummaryPrompt,
@@ -69,6 +73,7 @@ import {
   type ParsedSummaryEntry,
 } from '@/lib/pdf-summary-import'
 import { upload } from '@vercel/blob/client'
+import { describePdfDownloadFailure, downloadPdfResponse } from '@/lib/material-download-client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -87,6 +92,18 @@ import { useGruposDeAcesso } from '@/hooks/use-cargos'
 
 type ModalMode = 'create' | 'edit'
 type ActiveSection = 'materials' | 'folders' | 'packages' | 'tracker'
+
+/**
+ * O que o painel de acesso precisa saber sobre o item aberto para decidir o
+ * que mostrar na faixa de download de cada usuário.
+ */
+interface AccessItemInfo {
+  itemId: string
+  itemType: string
+  /** Download ligado por padrão no material/pacote (o que vale sem liberação individual). */
+  pdfDownloadEnabled: boolean
+  materials: { id: string; title: string; pdfDownloadEnabled: boolean }[]
+}
 
 interface Material {
   _id: string
@@ -458,6 +475,17 @@ function AdminMateriaisContent() {
   // `mode` distingue qual botão da linha está em envio.
   const [sendingPdfEmail, setSendingPdfEmail] = useState<{ id: string; mode: string } | null>(null)
   const [pdfEmailSentId, setPdfEmailSentId] = useState<string | null>(null)
+  // Contexto do item aberto no painel de acesso: se o download está ligado por
+  // padrão e quais PDFs existem (o admin escolhe qual baixar por um usuário).
+  const [accessItem, setAccessItem] = useState<AccessItemInfo | null>(null)
+  const [downloadPermSaving, setDownloadPermSaving] = useState<string | null>(null)
+  const [notifyingDownload, setNotifyingDownload] = useState<string | null>(null)
+  const [notifiedDownloadId, setNotifiedDownloadId] = useState<string | null>(null)
+  const [downloadingAs, setDownloadingAs] = useState<string | null>(null)
+  // Pacote com vários PDFs: o servidor devolve a lista e o admin escolhe.
+  const [materialPicker, setMaterialPicker] = useState<
+    { target: { purchaseId?: string; serialKeyId?: string }; label: string; materials: { id: string; title: string }[] } | null
+  >(null)
   // User picker
   const [userSearch, setUserSearch] = useState('')
   const [userResults, setUserResults] = useState<{ id: string; name: string; email: string; accountType: string }[]>([])
@@ -615,6 +643,7 @@ function AdminMateriaisContent() {
     setUserResults([])
     setSelectedUser(null)
     setShowDropdown(false)
+    setAccessItem(null)
     setAccessLoading(true)
     try {
       const res = await fetch(`/api/materiais/admin-access?itemId=${itemId}&itemType=${itemType}`)
@@ -622,6 +651,7 @@ function AdminMateriaisContent() {
         const data = await res.json()
         setAccessPurchases(data.purchases || [])
         setAccessGuests(data.guests || [])
+        setAccessItem(data.item || null)
       }
     } finally {
       setAccessLoading(false)
@@ -654,6 +684,7 @@ function AdminMateriaisContent() {
         const listData = await listRes.json()
         setAccessPurchases(listData.purchases || [])
         setAccessGuests(listData.guests || [])
+        setAccessItem(listData.item || null)
       }
     } catch { setGrantError('Erro ao conceder acesso') }
     finally { setGrantLoading(false) }
@@ -665,6 +696,108 @@ function AdminMateriaisContent() {
       await fetch(`/api/materiais/admin-access?purchaseId=${purchaseId}`, { method: 'DELETE' })
       setAccessPurchases(prev => prev.filter(p => p._id !== purchaseId))
     } catch { alert('Erro ao revogar acesso') }
+  }
+
+  // ─── Download individual (a alternativa ao PDF por e-mail) ──────────────
+  // O material pode ficar com o download desligado para todo mundo e a
+  // liberação sair nominalmente, pessoa a pessoa: o arquivo continua saindo
+  // pela rota normal, com marca d'água, sem passar pelo limite de anexo de
+  // ninguém. `allowed: null` devolve a decisão ao padrão do material.
+  const setDownloadPermission = async (purchaseId: string, allowed: boolean | null) => {
+    setDownloadPermSaving(purchaseId)
+    try {
+      const res = await fetch('/api/materiais/admin-access', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ purchaseId, pdfDownloadAllowed: allowed }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        alert(data.error || 'Erro ao atualizar a permissão de download')
+        return
+      }
+      const itemDefault = accessItem?.pdfDownloadEnabled !== false
+      setAccessPurchases(prev => prev.map(p => (
+        p._id === purchaseId
+          ? {
+              ...p,
+              pdfDownloadAllowed: allowed,
+              pdfDownloadEffective: allowed === null ? itemDefault : allowed,
+            }
+          : p
+      )))
+    } catch {
+      alert('Erro ao atualizar a permissão de download')
+    } finally {
+      setDownloadPermSaving(null)
+    }
+  }
+
+  // Avisa que o material está disponível para download, com o link — e libera
+  // o download para essa pessoa junto, para o link não cair num botão morto.
+  const notifyDownloadAvailable = async (purchaseId: string, email: string) => {
+    if (!confirm(`Avisar ${email || 'este usuário'} de que o material está liberado para download? A liberação individual é aplicada junto, se ainda faltar.`)) return
+    const note = window.prompt('Observação para o e-mail (opcional):', '') ?? ''
+
+    setNotifyingDownload(purchaseId)
+    try {
+      const res = await fetch('/api/admin/materiais/notify-download', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ purchaseId, note: note.trim() || undefined }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        alert(data.error || `Erro ao enviar o aviso (HTTP ${res.status})`)
+        return
+      }
+      if (data.granted) {
+        setAccessPurchases(prev => prev.map(p => (
+          p._id === purchaseId ? { ...p, pdfDownloadAllowed: true, pdfDownloadEffective: true } : p
+        )))
+      }
+      setNotifiedDownloadId(purchaseId)
+      setTimeout(() => setNotifiedDownloadId(prev => (prev === purchaseId ? null : prev)), 2500)
+    } catch (err: any) {
+      alert(`Erro ao enviar o aviso: ${err?.message || 'falha de rede'}`)
+    } finally {
+      setNotifyingDownload(null)
+    }
+  }
+
+  // Baixa o PDF já com a marca d'água (e os metadados) do usuário que tem o
+  // acesso — para o admin entregar por fora sem perder o rastro forense.
+  const downloadPdfAsUser = async (
+    target: { purchaseId?: string; serialKeyId?: string },
+    opts: { materialId?: string; label?: string } = {}
+  ) => {
+    const id = target.purchaseId || target.serialKeyId || ''
+    setDownloadingAs(id)
+    try {
+      const res = await fetch('/api/admin/materiais/download-as', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...target, materialId: opts.materialId }),
+      })
+
+      if (!res.ok || !res.headers.get('content-type')?.includes('application/pdf')) {
+        const data = await res.json().catch(() => ({}))
+        // 409 = o item tem mais de um PDF; o admin escolhe qual baixar.
+        if (res.status === 409 && Array.isArray(data.materials)) {
+          setMaterialPicker({ target, label: opts.label || '', materials: data.materials })
+          return
+        }
+        alert(data.error || `Erro ao gerar o PDF (HTTP ${res.status})`)
+        return
+      }
+
+      await downloadPdfResponse(res, 'material.pdf')
+      setMaterialPicker(null)
+    } catch (err) {
+      alert(describePdfDownloadFailure(err))
+    } finally {
+      setDownloadingAs(null)
+    }
   }
 
   // Envia o PDF (com marca d'água) por e-mail.
@@ -2401,6 +2534,19 @@ function AdminMateriaisContent() {
                         </p>
                       )}
 
+                      {/* Com o download desligado, a entrega ainda pode ser
+                          nominal: liberar pessoa por pessoa evita o anexo por
+                          e-mail (que morre no limite da caixa de quem recebe). */}
+                      {pdfInfo && !materialForm.pdfDownloadEnabled && (
+                        <p className="text-[11px] text-muted-foreground flex items-start gap-1.5">
+                          <Lock className="h-3.5 w-3.5 mt-px flex-shrink-0" />
+                          <span>
+                            Ninguém baixa este PDF por padrão. Em <strong>Gerenciar acesso</strong>, você libera o download
+                            individualmente para quem pedir — e pode avisar por e-mail com o link, sem anexar o arquivo.
+                          </span>
+                        </p>
+                      )}
+
                       {/* Envio automático do PDF por e-mail na compra.
                           Só faz sentido com PDF interno + download ativado. */}
                       <label className={`flex items-start gap-2 rounded-lg border p-2 text-sm ${pdfInfo && materialForm.pdfDownloadEnabled ? 'cursor-pointer hover:bg-muted/40' : 'opacity-50 cursor-not-allowed'}`}>
@@ -3238,8 +3384,25 @@ function AdminMateriaisContent() {
                 {grantError && <p className="text-xs text-destructive flex items-center gap-1"><X className="h-3 w-3" />{grantError}</p>}
               </div>
 
+              {/* Como o download deste item está hoje — o padrão que a
+                  liberação individual de cada usuário sobrescreve. */}
+              {accessItem && accessItem.materials.length > 0 && (
+                <div className={`mt-4 rounded-lg border p-2.5 text-xs flex items-start gap-2 ${accessItem.pdfDownloadEnabled ? 'border-amber-500/25 bg-amber-500/10' : 'border-border bg-muted/40'}`}>
+                  {accessItem.pdfDownloadEnabled
+                    ? <Unlock className="h-3.5 w-3.5 text-amber-500 mt-0.5 flex-shrink-0" />
+                    : <Lock className="h-3.5 w-3.5 text-muted-foreground mt-0.5 flex-shrink-0" />}
+                  <p className="text-muted-foreground leading-relaxed">
+                    {accessItem.pdfDownloadEnabled ? (
+                      <>Download <strong className="text-amber-600">liberado para todos</strong> que têm acesso. Use <em>Não permitir</em> para tirar o download de alguém sem tirar de todos.</>
+                    ) : (
+                      <>Download <strong className="text-foreground">bloqueado por padrão</strong>: ninguém baixa, a não ser quem for liberado individualmente abaixo — sem precisar mandar o PDF por e-mail.</>
+                    )}
+                  </p>
+                </div>
+              )}
+
               {/* Users list */}
-              <div className="space-y-1">
+              <div className="space-y-1 mt-4">
                 <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1.5">
                   <Users className="h-3.5 w-3.5" />
                   {accessLoading ? 'Carregando...' : `${accessPurchases.length} usuário${accessPurchases.length !== 1 ? 's' : ''} com acesso`}
@@ -3255,7 +3418,7 @@ function AdminMateriaisContent() {
                     <p className="text-sm">Nenhum usuário com acesso ainda</p>
                   </div>
                 ) : (
-                  <div className="max-h-72 overflow-y-auto space-y-1 pr-1">
+                  <div className="max-h-96 overflow-y-auto space-y-1 pr-1">
                     {accessPurchases.map(p => {
                       const sourceIcon = p.source === 'manual'
                         ? <BadgeCheck className="h-3.5 w-3.5 text-violet-500" />
@@ -3273,8 +3436,19 @@ function AdminMateriaisContent() {
                           }[p.userAccountType as string]
                         : null
 
+                      const hasPdf = !!accessItem && accessItem.materials.length > 0
+                      const itemDefault = accessItem?.pdfDownloadEnabled !== false
+                      const override: boolean | null =
+                        typeof p.pdfDownloadAllowed === 'boolean' ? p.pdfDownloadAllowed : null
+                      const canDownload =
+                        typeof p.pdfDownloadEffective === 'boolean'
+                          ? p.pdfDownloadEffective
+                          : (override === null ? itemDefault : override)
+                      const permBusy = downloadPermSaving === p._id
+
                       return (
-                        <div key={p._id} className="flex items-center gap-3 p-2.5 rounded-lg border hover:bg-muted/40 transition-colors">
+                        <div key={p._id} className="p-2.5 rounded-lg border hover:bg-muted/40 transition-colors">
+                        <div className="flex items-center gap-3">
                           <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 text-xs font-bold text-primary">
                             {(p.userName || p.userEmail || '?')[0].toUpperCase()}
                           </div>
@@ -3328,6 +3502,81 @@ function AdminMateriaisContent() {
                             </Button>
                           </div>
                         </div>
+
+                        {/* Faixa de download: quem pode baixar o PDF, o aviso
+                            com o link, e o arquivo já marcado para o admin
+                            entregar por fora. Sem anexo, sem limite de caixa. */}
+                        {hasPdf && (
+                          <div className="mt-2 pt-2 border-t border-dashed flex flex-wrap items-center gap-1.5">
+                            <span className="text-[10px] uppercase tracking-wide text-muted-foreground flex items-center gap-1">
+                              {canDownload
+                                ? <Unlock className="h-3 w-3 text-amber-500" />
+                                : <Lock className="h-3 w-3" />}
+                              Download
+                            </span>
+                            <div className="flex items-center rounded-lg border overflow-hidden">
+                              {([
+                                { value: true as boolean | null, label: 'Permitir' },
+                                { value: false as boolean | null, label: 'Não permitir' },
+                                { value: null as boolean | null, label: itemDefault ? 'Padrão (permitido)' : 'Padrão (bloqueado)' },
+                              ]).map(opt => {
+                                const active = override === opt.value
+                                return (
+                                  <button
+                                    key={String(opt.value)}
+                                    type="button"
+                                    disabled={permBusy}
+                                    onClick={() => setDownloadPermission(p._id, opt.value)}
+                                    className={`px-2 py-0.5 text-[10px] font-medium transition-colors disabled:opacity-50 ${
+                                      active
+                                        ? opt.value === true
+                                          ? 'bg-amber-500/15 text-amber-600'
+                                          : opt.value === false
+                                            ? 'bg-destructive/10 text-destructive'
+                                            : 'bg-muted text-foreground'
+                                        : 'text-muted-foreground hover:bg-muted/60'
+                                    }`}
+                                  >
+                                    {opt.label}
+                                  </button>
+                                )
+                              })}
+                            </div>
+                            {permBusy && <Loader2 className="h-3 w-3 animate-spin text-muted-foreground" />}
+
+                            <div className="flex items-center gap-1 ml-auto">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-6 px-2 gap-1 text-[11px] text-violet-500 hover:text-violet-600"
+                                onClick={() => notifyDownloadAvailable(p._id, p.userEmail)}
+                                disabled={notifyingDownload === p._id}
+                                title="Avisar por e-mail que o material está liberado para download (com o link) — libera o download junto, sem anexar o PDF"
+                              >
+                                {notifyingDownload === p._id
+                                  ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                  : notifiedDownloadId === p._id
+                                    ? <CheckCheck className="h-3.5 w-3.5 text-green-500" />
+                                    : <BellRing className="h-3.5 w-3.5" />}
+                                Avisar
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-6 px-2 gap-1 text-[11px] text-amber-600 hover:text-amber-700"
+                                onClick={() => downloadPdfAsUser({ purchaseId: p._id }, { label: p.userName || p.userEmail })}
+                                disabled={downloadingAs === p._id}
+                                title="Baixar o PDF com a marca d'água e os metadados deste usuário (para entregar por fora)"
+                              >
+                                {downloadingAs === p._id
+                                  ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                  : <FileDown className="h-3.5 w-3.5" />}
+                                PDF marcado
+                              </Button>
+                            </div>
+                          </div>
+                        )}
+                        </div>
                       )
                     })}
                   </div>
@@ -3374,10 +3623,53 @@ function AdminMateriaisContent() {
                                 ? <CheckCheck className="h-3.5 w-3.5 text-green-500" />
                                 : <MailCheck className="h-3.5 w-3.5" />}
                           </Button>
+                          {/* Mesmo PDF que sairia no e-mail, mas baixado aqui:
+                              serve quando o arquivo é grande demais para anexo. */}
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6 text-amber-600 hover:text-amber-700 flex-shrink-0"
+                            onClick={() => downloadPdfAsUser({ serialKeyId: g._id }, { label: g.buyerName || g.buyerEmail })}
+                            disabled={downloadingAs === g._id}
+                            title="Baixar o PDF com a marca d'água e os metadados deste comprador"
+                          >
+                            {downloadingAs === g._id
+                              ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                              : <FileDown className="h-3.5 w-3.5" />}
+                          </Button>
                         </div>
                       </div>
                     ))}
                   </div>
+                </div>
+              )}
+
+              {/* Pacote com mais de um PDF: o servidor devolveu a lista e o
+                  admin escolhe qual arquivo baixar com a marca d'água. */}
+              {materialPicker && (
+                <div className="mt-4 rounded-xl border p-3 space-y-2">
+                  <p className="text-xs font-medium flex items-center gap-1.5">
+                    <FileDown className="h-3.5 w-3.5 text-amber-600" />
+                    Qual PDF baixar{materialPicker.label ? ` para ${materialPicker.label}` : ''}?
+                  </p>
+                  <div className="space-y-1 max-h-48 overflow-y-auto pr-1">
+                    {materialPicker.materials.map(m => (
+                      <button
+                        key={m.id}
+                        type="button"
+                        disabled={!!downloadingAs}
+                        onClick={() => downloadPdfAsUser(materialPicker.target, { materialId: m.id, label: materialPicker.label })}
+                        className="w-full text-left text-xs px-2.5 py-2 rounded-lg border hover:bg-muted/60 transition-colors disabled:opacity-50 flex items-center gap-2"
+                      >
+                        <FileText className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+                        <span className="truncate flex-1">{m.title}</span>
+                        {downloadingAs && <Loader2 className="h-3 w-3 animate-spin" />}
+                      </button>
+                    ))}
+                  </div>
+                  <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => setMaterialPicker(null)}>
+                    Cancelar
+                  </Button>
                 </div>
               )}
 

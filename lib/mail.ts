@@ -916,6 +916,84 @@ export async function sendMaterialPdfDeliveryEmail(input: {
 }
 
 /**
+ * Aviso de que o material JÁ ESTÁ DISPONÍVEL PARA DOWNLOAD na plataforma —
+ * sem anexo nenhum.
+ *
+ * É o par do envio manual acima, para quando o PDF é grande demais para caber
+ * na caixa de quem receberia: em vez de anexar o arquivo, o admin libera o
+ * download para aquela pessoa e dispara este aviso com o link direto. O
+ * arquivo baixado sai com a mesma marca d'água — só não passa pelo e-mail.
+ */
+export async function sendMaterialDownloadAvailableEmail(input: {
+  email: string
+  name: string
+  /** Título do item (material ou pacote) liberado. */
+  itemTitle: string
+  /** Link direto para a página onde o botão de download aparece. */
+  itemUrl: string
+  /** Materiais cobertos pela liberação (um pacote traz vários). */
+  materials?: { title: string }[]
+  /** Observação livre do admin ("conforme você pediu no ticket #123"). */
+  note?: string
+}) {
+  const firstName = input.name ? input.name.split(' ')[0] : 'Aluno'
+  const materials = (input.materials || []).filter((m) => m?.title)
+  const multiple = materials.length > 1
+
+  const itemsList = materials
+    .map(item => `<li style="margin-bottom: 4px;">${escapeHtml(item.title)}</li>`)
+    .join('')
+
+  const listBlock = materials.length > 0
+    ? `
+    <div style="background-color: #f0faf4; border: 1px solid #c6f0d8; border-radius: 10px; padding: 18px 20px; margin: 20px 0;">
+      <p style="margin: 0 0 10px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: #43a047; font-weight: 700;">
+        Liberado${multiple ? 's' : ''} para download
+      </p>
+      <ul style="margin: 0; padding-left: 18px; color: #0f3d2e; font-weight: 600; font-size: 14px;">
+        ${itemsList}
+      </ul>
+    </div>
+    `
+    : ''
+
+  const noteBlock = input.note
+    ? `<p style="background-color: #f7fafc; border-left: 3px solid #cbd5e0; padding: 10px 14px; margin: 18px 0; font-size: 14px; color: #4a5568;">${escapeHtml(input.note)}</p>`
+    : ''
+
+  const content = `
+    <h1 class="h1">Seu material está liberado para download ⬇️</h1>
+    <p>Olá, ${firstName}!</p>
+    <p>Conforme solicitado, liberamos o <strong>download do PDF</strong> de <strong>${escapeHtml(input.itemTitle)}</strong> na sua conta. É só entrar e baixar — o arquivo é grande demais para ir por e-mail, então ele fica disponível aqui.</p>
+
+    ${listBlock}
+    ${noteBlock}
+
+    <div style="text-align: center;">
+      <a href="${input.itemUrl}" class="button" target="_blank">Baixar meu material</a>
+    </div>
+
+    <p style="margin-top: 16px; font-size: 13px; color: #718096; text-align: center;">
+      Ou copie e cole este link no seu navegador:<br>
+      <a href="${input.itemUrl}" style="color: #0f3d2e; word-break: break-all;">${input.itemUrl}</a>
+    </p>
+
+    <p style="font-size: 13px; color: #718096;">
+      O arquivo baixado contém uma marca d'água exclusiva vinculada à sua conta, para uso pessoal e intransferível — assim como o restante do conteúdo da plataforma.
+    </p>
+  `
+
+  const html = getEmailTemplate('Material liberado para download', content)
+
+  await transporter.sendMail({
+    from: '"DomineAqui" <no-reply@domineaqui.com.br>',
+    to: input.email,
+    subject: `Liberado para download: ${input.itemTitle}`,
+    html,
+  })
+}
+
+/**
  * Confirmação de aquisição enviada pelo admin: avisa o comprador que ele
  * adquiriu o produto e já tem acesso, anexando o(s) PDF(s) com marca d'água.
  *

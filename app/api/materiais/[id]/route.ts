@@ -9,6 +9,7 @@ import {
   serializeTimedAccessVersions,
   summarizeTimedAccess,
 } from '@/lib/material-timed-access'
+import { resolvePdfDownloadPermission } from '@/lib/material-download-permission'
 
 export const dynamic = 'force-dynamic'
 
@@ -74,6 +75,8 @@ export async function GET(
     let isPurchased = false
     /** Prazo restante quando a posse veio de uma versão por tempo limitado. */
     let timedAccess: ReturnType<typeof summarizeTimedAccess> = null
+    /** Registro de acesso que valeu — carrega a liberação individual de download. */
+    let accessRecord: any = null
     if (session && !isAdmin) {
       const emailFilter = session.email
         ? { userEmail: new RegExp(`^${session.email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') }
@@ -92,7 +95,7 @@ export async function GET(
               ? { $or: [{ userId: session.userId }, emailFilter] }
               : { userId: session.userId }),
           },
-          { projection: { _id: 1, accessMode: 1, accessVersionId: 1, accessVersionLabel: 1, accessDuration: 1, accessDurationMinutes: 1, accessStartsAt: 1, accessExpiresAt: 1 } }
+          { projection: { _id: 1, accessMode: 1, accessVersionId: 1, accessVersionLabel: 1, accessDuration: 1, accessDurationMinutes: 1, accessStartsAt: 1, accessExpiresAt: 1, pdfDownloadAllowed: 1 } }
         ),
         db.collection('material_packages')
           .find({ materialIds: id, isHidden: { $ne: true } }, { projection: { _id: 1 } })
@@ -101,6 +104,7 @@ export async function GET(
 
       if (directPurchase) {
         isPurchased = true
+        accessRecord = directPurchase
         timedAccess = summarizeTimedAccess(directPurchase)
       } else {
         const packageIds = candidatePackages.map((pkg: any) => String(pkg._id))
@@ -115,10 +119,13 @@ export async function GET(
                 ? { $or: [{ userId: session.userId }, emailFilter] }
                 : { userId: session.userId }),
             },
-            { projection: { _id: 1, accessMode: 1, accessVersionId: 1, accessVersionLabel: 1, accessDuration: 1, accessDurationMinutes: 1, accessStartsAt: 1, accessExpiresAt: 1 } }
+            { projection: { _id: 1, accessMode: 1, accessVersionId: 1, accessVersionLabel: 1, accessDuration: 1, accessDurationMinutes: 1, accessStartsAt: 1, accessExpiresAt: 1, pdfDownloadAllowed: 1 } }
           ).toArray()
           isPurchased = pkgPurchases.length > 0
           if (isPurchased) {
+            // Basta um pacote liberar o download para o material sair liberado.
+            accessRecord =
+              pkgPurchases.find((p: any) => p.pdfDownloadAllowed === true) || pkgPurchases[0]
             // Vários pacotes cobrindo o mesmo material: vale o de maior prazo,
             // e qualquer pacote vitalício encerra a contagem.
             const statuses = pkgPurchases.map((p: any) => summarizeTimedAccess(p))
@@ -269,6 +276,9 @@ export async function GET(
       }
     }).filter(Boolean)
 
+    // Liberação individual de download desta conta (ver material-download-permission).
+    const downloadPermission = resolvePdfDownloadPermission(material, accessRecord)
+
     const res = NextResponse.json({
       material: {
         ...materialWithoutPdf,
@@ -276,7 +286,9 @@ export async function GET(
         _hasPdf,
         _hasHtml,
         pdfViewerEnabled: material.pdfViewerEnabled === true,
-        pdfDownloadEnabled: material.pdfDownloadEnabled !== false,
+        // Efetivo PARA ESTA CONTA: a liberação individual (gravada no registro
+        // de acesso pelo admin) vence o padrão do material, nos dois sentidos.
+        pdfDownloadEnabled: downloadPermission.allowed,
         htmlViewerEnabled: material.htmlViewerEnabled === true,
         pricingEventId: material.pricingEventId ? String(material.pricingEventId) : null,
         ...(_hasPdf && material.pdfFile?.pageCount ? { _pageCount: material.pdfFile.pageCount } : {}),

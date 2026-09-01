@@ -1849,6 +1849,18 @@ export interface MaterialPurchase {
   accessExpiresAt?: Date
   /** Compra por tempo: o PDF só pode ser lido no viewer, nunca baixado. */
   downloadDisabled?: boolean
+
+  // ── Liberação individual de download ──────────────────────────────────────
+  /**
+   * Decisão do admin só para esta pessoa, que vence o `pdfDownloadEnabled` do
+   * material: `true` libera o download mesmo com o material bloqueado (é o que
+   * substitui mandar o PDF por e-mail), `false` bloqueia só para ela. Ausente =
+   * segue o material. Ver `lib/material-download-permission.ts`.
+   */
+  pdfDownloadAllowed?: boolean
+  pdfDownloadAllowedAt?: Date
+  pdfDownloadAllowedBy?: string
+  pdfDownloadAllowedByName?: string
 }
 
 // ─── Loja física (produtos físicos / impressos) ──────────────────

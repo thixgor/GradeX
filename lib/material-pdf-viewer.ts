@@ -33,6 +33,12 @@ export type MaterialPdfAccessResult =
        * para nunca oferecer download.
        */
       timedAccess: TimedAccessStatus | null
+      /**
+       * Registro de `material_purchases` que deu o acesso (null quando veio
+       * por grupo/gratuito ou é admin). Carrega a liberação individual de
+       * download — ver `lib/material-download-permission.ts`.
+       */
+      accessRecord: any | null
     }
   | {
       ok: false
@@ -327,6 +333,8 @@ export async function validateMaterialPdfAccess(
 
   let hasAccess = isAdmin
   let timedAccess: TimedAccessStatus | null = null
+  /** Registro de acesso que valeu — fonte da liberação individual de download. */
+  let accessRecord: any = null
   const userGroups: string[] = []
 
   // Sem sessão (visitante): nunca há acesso pleno — pula toda a checagem de
@@ -358,6 +366,7 @@ export async function validateMaterialPdfAccess(
 
       if (byUserId) {
         hasAccess = true
+        accessRecord = byUserId
         timedAccess = summarizeTimedAccess(byUserId)
       } else if (emailRegex) {
         const byEmail = await db.collection('material_purchases').findOne({
@@ -365,7 +374,10 @@ export async function validateMaterialPdfAccess(
           userEmail: { $regex: emailRegex },
         })
         hasAccess = !!byEmail
-        if (byEmail) timedAccess = summarizeTimedAccess(byEmail)
+        if (byEmail) {
+          accessRecord = byEmail
+          timedAccess = summarizeTimedAccess(byEmail)
+        }
       }
 
       if (!hasAccess) {
@@ -389,6 +401,7 @@ export async function validateMaterialPdfAccess(
 
           if (packageByUserId) {
             hasAccess = true
+            accessRecord = packageByUserId
             timedAccess = summarizeTimedAccess(packageByUserId)
           } else if (emailRegex) {
             const packageByEmail = await db.collection('material_purchases').findOne({
@@ -396,7 +409,10 @@ export async function validateMaterialPdfAccess(
               userEmail: { $regex: emailRegex },
             })
             hasAccess = !!packageByEmail
-            if (packageByEmail) timedAccess = summarizeTimedAccess(packageByEmail)
+            if (packageByEmail) {
+              accessRecord = packageByEmail
+              timedAccess = summarizeTimedAccess(packageByEmail)
+            }
           }
         }
       }
@@ -425,6 +441,7 @@ export async function validateMaterialPdfAccess(
         accessLevel: 'preview',
         previewRanges: preview.ranges,
         timedAccess: null,
+        accessRecord: null,
       }
     }
     return { ok: false, status: 403, error: 'Voce nao tem acesso a este material' }
@@ -441,6 +458,7 @@ export async function validateMaterialPdfAccess(
     accessLevel: 'full',
     previewRanges: preview.ranges,
     timedAccess,
+    accessRecord,
   }
 }
 

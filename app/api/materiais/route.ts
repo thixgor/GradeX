@@ -13,6 +13,7 @@ import {
   serializeTimedAccessVersions,
   summarizeTimedAccess,
 } from '@/lib/material-timed-access'
+import { resolvePdfDownloadPermissionFrom } from '@/lib/material-download-permission'
 
 export const dynamic = 'force-dynamic'
 
@@ -245,12 +246,20 @@ export async function GET(request: NextRequest) {
     let purchasedIds: string[] = []
     /** materialId → prazo restante, quando a compra foi por tempo limitado. */
     const timedAccessByMaterialId: Record<string, any> = {}
+    /**
+     * materialId → liberação individual de download gravada pelo admin no
+     * registro de acesso desta conta (true = liberado, false = bloqueado).
+     * Ausente = segue o padrão do material. Ver material-download-permission.
+     */
+    const downloadOverrideByMaterialId: Record<string, boolean> = {}
     if (session && !isAdmin) {
       // Compras vencidas (acesso por tempo) não contam como posse — o filtro
       // deixa passar apenas o que ainda está no prazo.
       const baseFilter = { itemType: 'material', status: 'completed', ...activeAccessFilter() }
       const accessProjection = {
         itemId: 1,
+        // Liberação individual de download gravada pelo admin nesse acesso.
+        pdfDownloadAllowed: 1,
         accessMode: 1,
         accessVersionId: 1,
         accessVersionLabel: 1,
@@ -281,6 +290,13 @@ export async function GET(request: NextRequest) {
       // Merge, deduplicate and normalise to plain strings
       purchasedIds = [...new Set([...byUserId, ...byEmail].map((p: any) => String(p.itemId)))]
       for (const purchase of [...byUserId, ...byEmail]) {
+        if (typeof purchase.pdfDownloadAllowed === 'boolean') {
+          const key = String(purchase.itemId)
+          // Dois registros do mesmo material: uma liberação vale mais que um
+          // bloqueio — quem liberou para essa pessoa quis que ela baixasse.
+          downloadOverrideByMaterialId[key] =
+            downloadOverrideByMaterialId[key] === true || purchase.pdfDownloadAllowed
+        }
         const status = summarizeTimedAccess(purchase)
         if (!status) continue
         const key = String(purchase.itemId)
@@ -311,9 +327,18 @@ export async function GET(request: NextRequest) {
       const purchasedPackageIds = [...new Set([...packageByUserId, ...packageByEmail].map((p: any) => String(p.itemId)))]
       /** packageId → prazo, para propagar aos materiais que vêm pelo pacote. */
       const timedByPackageId = new Map<string, any>()
+      /** packageId → liberação individual, propagada aos materiais do pacote. */
+      const downloadOverrideByPackageId = new Map<string, boolean>()
       for (const purchase of [...packageByUserId, ...packageByEmail]) {
         const status = summarizeTimedAccess(purchase)
         if (status) timedByPackageId.set(String(purchase.itemId), status)
+        if (typeof purchase.pdfDownloadAllowed === 'boolean') {
+          const key = String(purchase.itemId)
+          downloadOverrideByPackageId.set(
+            key,
+            downloadOverrideByPackageId.get(key) === true || purchase.pdfDownloadAllowed
+          )
+        }
       }
       if (purchasedPackageIds.length > 0) {
         const packageObjectIds = purchasedPackageIds
@@ -335,6 +360,15 @@ export async function GET(request: NextRequest) {
           // Material herdado de um pacote por tempo herda o prazo do pacote —
           // a não ser que o usuário já tenha uma posse melhor do mesmo item.
           for (const pkg of ownedPackages as any[]) {
+            const pkgOverride = downloadOverrideByPackageId.get(String(pkg._id))
+            if (typeof pkgOverride === 'boolean') {
+              for (const materialId of (pkg.materialIds || []).map(String)) {
+                // A posse direta do material manda mais que a herdada do pacote.
+                if (typeof downloadOverrideByMaterialId[materialId] !== 'boolean') {
+                  downloadOverrideByMaterialId[materialId] = pkgOverride
+                }
+              }
+            }
             const pkgStatus = timedByPackageId.get(String(pkg._id))
             for (const materialId of (pkg.materialIds || []).map(String)) {
               if (!pkgStatus) {
@@ -483,7 +517,12 @@ export async function GET(request: NextRequest) {
         _hasPdf: hasPdf,
         _hasHtml: hasHtml,
         pdfViewerEnabled: m.pdfViewerEnabled === true,
-        pdfDownloadEnabled: m.pdfDownloadEnabled !== false,
+        // Efetivo PARA ESTA CONTA: a liberação individual vence o padrão do
+        // material (nos dois sentidos). Ver material-download-permission.
+        pdfDownloadEnabled: resolvePdfDownloadPermissionFrom(
+          m.pdfDownloadEnabled,
+          idStr in downloadOverrideByMaterialId ? downloadOverrideByMaterialId[idStr] : null
+        ).allowed,
         htmlViewerEnabled: m.htmlViewerEnabled === true,
         ...(hasPdf && m.pdfFile?.pageCount ? { _pageCount: m.pdfFile.pageCount } : {}),
         ...(pdfFileMeta && { _pdfFile: pdfFileMeta }),

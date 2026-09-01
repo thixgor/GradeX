@@ -34,6 +34,10 @@ import {
 import { matchesAccessGroups, isPlusAccount } from '@/lib/account-tier'
 import { emailFingerprint } from '@/lib/watermark-fingerprint'
 import { activeAccessFilter, summarizeTimedAccess } from '@/lib/material-timed-access'
+import {
+  pdfDownloadDeniedMessage,
+  resolvePdfDownloadPermission,
+} from '@/lib/material-download-permission'
 
 export const dynamic = 'force-dynamic'
 
@@ -104,13 +108,6 @@ async function createMaterialPdfDownloadResponse(request: NextRequest, materialI
       return NextResponse.json(
         { error: 'Este material não possui PDF para download direto' },
         { status: 422 }
-      )
-    }
-
-    if (material.pdfDownloadEnabled === false && session.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'O download deste PDF foi desabilitado. Use o visualizador protegido quando disponivel.' },
-        { status: 403 }
       )
     }
 
@@ -234,6 +231,40 @@ async function createMaterialPdfDownloadResponse(request: NextRequest, materialI
       )
     }
 
+    // ── 5-bis. Liberação individual de download ───────────────────────────
+    // O material pode estar com o download desligado para todo mundo e, ainda
+    // assim, uma pessoa específica ter a liberação individual gravada no seu
+    // registro de acesso (é o que substitui mandar o PDF por e-mail). O
+    // inverso também vale: `pdfDownloadAllowed: false` tira o download de uma
+    // pessoa sem tirar de todas. Ver `lib/material-download-permission.ts`.
+    const accessRecord = purchaseForAudit || (isAdmin
+      ? null
+      : await db.collection('material_purchases').findOne(
+          {
+            userId: session.userId,
+            itemId: materialId,
+            itemType: 'material',
+            status: 'completed',
+          },
+          {
+            projection: {
+              _id: 1,
+              providerPaymentId: 1,
+              providerOrderId: 1,
+              pdfDownloadAllowed: 1,
+              source: 1,
+            },
+          }
+        ))
+
+    const downloadPermission = resolvePdfDownloadPermission(material, accessRecord)
+    if (!downloadPermission.allowed && !isAdmin) {
+      return NextResponse.json(
+        { error: pdfDownloadDeniedMessage(downloadPermission), downloadBlocked: true },
+        { status: 403 }
+      )
+    }
+
     // ── 5a. Acesso por tempo limitado: leitura sim, download não ──────────
     // A versão temporária é vendida como "leia dentro da plataforma". Baixar o
     // PDF criaria uma cópia que sobrevive ao fim do prazo — exatamente o que a
@@ -299,14 +330,7 @@ async function createMaterialPdfDownloadResponse(request: NextRequest, materialI
     // ── 6. Buscar orderId para metadados da marca d'água ──────────────────
     let orderId = 'ADMIN'
     if (!isAdmin) {
-      const purchase = purchaseForAudit || await db.collection('material_purchases').findOne(
-        {
-          userId: session.userId,
-          itemId: materialId,
-          status: 'completed',
-        },
-        { projection: { _id: 1, providerPaymentId: 1, providerOrderId: 1 } }
-      )
+      const purchase = accessRecord
       // `String(undefined)` vira a string "undefined" (truthy) — sem essa
       // guarda, quem acessa sem registro de compra (Plus+, grupo gratuito)
       // ganhava um orderId literalmente igual a "undefined" na marca d'água.

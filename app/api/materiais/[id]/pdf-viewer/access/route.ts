@@ -6,6 +6,7 @@ import {
   getClientIp,
   validateMaterialPdfAccess,
 } from '@/lib/material-pdf-viewer'
+import { resolvePdfDownloadPermission } from '@/lib/material-download-permission'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
@@ -158,9 +159,11 @@ export async function GET(
           viewerEnabled: access.material.pdfViewerEnabled === true,
           // Prévia nunca permite download do arquivo completo — e o acesso por
           // tempo limitado também não: essa versão é só para ler aqui dentro.
+          // Fora da prévia/tempo limitado, vale a liberação individual desta
+          // conta quando existir (ver material-download-permission).
           downloadEnabled: isPreview || access.timedAccess
             ? false
-            : access.material.pdfDownloadEnabled !== false,
+            : resolvePdfDownloadPermission(access.material, access.accessRecord).allowed,
         },
         // Prazo restante do acesso (null = vitalício). O leitor mostra o
         // contador no cabeçalho e bloqueia o download quando presente.

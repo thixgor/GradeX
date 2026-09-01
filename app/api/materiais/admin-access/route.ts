@@ -2,6 +2,14 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
+import { isValidObjectId } from '@/lib/api-security'
+import {
+  normalizeDownloadOverride,
+  PDF_DOWNLOAD_OVERRIDE_FIELD,
+  readDownloadOverride,
+  resolvePdfDownloadPermission,
+} from '@/lib/material-download-permission'
+import { resolveMaterialsWithPdf } from '@/lib/material-pdf-email'
 
 export const dynamic = 'force-dynamic'
 
@@ -40,11 +48,29 @@ export async function GET(request: NextRequest) {
     const usersMap: Record<string, any> = {}
     users.forEach((u: any) => { usersMap[u._id.toString()] = u })
 
+    // Materiais com PDF por trás do item (um material avulso, ou todos os do
+    // pacote). Alimentam tanto a leitura de "quem pode baixar" quanto o botão
+    // de baixar o PDF já com a marca d'água do usuário.
+    const materialsWithPdf = await resolveMaterialsWithPdf(db, itemType, itemId)
+    // O padrão do item: um pacote está liberado quando qualquer material dele
+    // está — é assim que o download se comporta, material a material.
+    const itemDownloadEnabled = materialsWithPdf.some(
+      (m: any) => m.pdfDownloadEnabled !== false
+    )
+
     const enriched = purchases.map((p: any) => ({
       ...p,
       _id: p._id.toString(),
       userAccountType: usersMap[p.userId]?.accountType || null,
       userSecondaryRole: usersMap[p.userId]?.secondaryRole || null,
+      // Liberação individual de download: true (liberado), false (bloqueado)
+      // ou null (segue o material). Ver lib/material-download-permission.ts.
+      pdfDownloadAllowed: readDownloadOverride(p),
+      // O resultado que essa pessoa vê hoje, já cruzado com o padrão do item.
+      pdfDownloadEffective: resolvePdfDownloadPermission(
+        { pdfDownloadEnabled: itemDownloadEnabled },
+        p
+      ).allowed,
     }))
 
     // Compras feitas SEM login: serial keys de compra ainda NÃO ativadas para
@@ -72,7 +98,22 @@ export async function GET(request: NextRequest) {
       purchasedAt: k.generatedAt || k.createdAt || null,
     }))
 
-    return NextResponse.json({ purchases: enriched, guests })
+    return NextResponse.json({
+      purchases: enriched,
+      guests,
+      // Contexto do item para o painel: se o download está ligado por padrão e
+      // quais PDFs existem (o admin escolhe qual baixar em nome do usuário).
+      item: {
+        itemId,
+        itemType,
+        pdfDownloadEnabled: itemDownloadEnabled,
+        materials: materialsWithPdf.map((m: any) => ({
+          id: String(m._id),
+          title: m.title || 'Material',
+          pdfDownloadEnabled: m.pdfDownloadEnabled !== false,
+        })),
+      },
+    })
   } catch (error) {
     console.error('Error fetching admin access:', error)
     return NextResponse.json({ error: 'Erro ao buscar acessos' }, { status: 500 })
@@ -144,6 +185,80 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error granting access:', error)
     return NextResponse.json({ error: 'Erro ao conceder acesso' }, { status: 500 })
+  }
+}
+
+/**
+ * PATCH - Liberar (ou bloquear) o download do PDF para UMA pessoa.
+ *
+ * É a alternativa sustentável ao envio do PDF por e-mail: em vez de um anexo
+ * pesado que esbarra no limite da caixa de quem recebe, o material fica com o
+ * download desligado por padrão e o admin libera nominalmente quem precisa —
+ * o arquivo continua saindo pela rota normal, com a marca d'água da pessoa.
+ *
+ * Body: { purchaseId: string, pdfDownloadAllowed: true | false | null }
+ *   true  → libera para essa pessoa mesmo com o material bloqueado
+ *   false → bloqueia só para ela, mesmo com o material liberado
+ *   null  → volta a seguir o padrão do material
+ */
+export async function PATCH(request: NextRequest) {
+  try {
+    const session = await getSession()
+    if (!session || session.role !== 'admin') {
+      return NextResponse.json({ error: 'Não autorizado' }, { status: 403 })
+    }
+
+    const body = await request.json().catch(() => null)
+    const purchaseId = typeof body?.purchaseId === 'string' ? body.purchaseId : ''
+    if (!purchaseId || !isValidObjectId(purchaseId)) {
+      return NextResponse.json({ error: 'purchaseId inválido' }, { status: 400 })
+    }
+
+    const allowed = normalizeDownloadOverride(body?.pdfDownloadAllowed)
+
+    const db = await getDb()
+    const purchase = await db.collection('material_purchases').findOne({
+      _id: new ObjectId(purchaseId),
+    })
+    if (!purchase) {
+      return NextResponse.json({ error: 'Acesso não encontrado' }, { status: 404 })
+    }
+
+    const now = new Date()
+    await db.collection('material_purchases').updateOne(
+      { _id: new ObjectId(purchaseId) },
+      allowed === null
+        ? { $unset: { [PDF_DOWNLOAD_OVERRIDE_FIELD]: '' } }
+        : {
+            $set: {
+              [PDF_DOWNLOAD_OVERRIDE_FIELD]: allowed,
+              pdfDownloadAllowedAt: now,
+              pdfDownloadAllowedBy: session.userId,
+              pdfDownloadAllowedByName: session.name,
+            },
+          }
+    )
+
+    // Quem liberou o download de um material pago para uma pessoa específica
+    // precisa aparecer na auditoria: é a mesma decisão que antes virava um
+    // e-mail com o PDF anexado.
+    db.collection('audit_logs').insertOne({
+      action: 'material_pdf_download_permission',
+      allowed,
+      adminId: session.userId,
+      adminName: session.name,
+      purchaseId,
+      userId: purchase.userId || null,
+      userEmail: purchase.userEmail || null,
+      itemType: purchase.itemType,
+      itemId: purchase.itemId,
+      changedAt: now,
+    }).catch((e) => console.error('[admin-access] Falha ao gravar auditoria:', e))
+
+    return NextResponse.json({ success: true, pdfDownloadAllowed: allowed })
+  } catch (error) {
+    console.error('Error updating download permission:', error)
+    return NextResponse.json({ error: 'Erro ao atualizar a permissão de download' }, { status: 500 })
   }
 }
 
