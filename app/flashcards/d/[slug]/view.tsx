@@ -57,6 +57,10 @@ import { FlashcardCardView } from '@/components/flashcards/flashcard-card'
 import { FlashcardTour } from '@/components/flashcards/flashcard-tour'
 import { GlassHeroSurface } from '@/components/glass-hero-surface'
 import { cn } from '@/lib/utils'
+import {
+  describePdfDownloadFailure,
+  downloadPdfResponse,
+} from '@/lib/material-download-client'
 import type { FlashcardManualCard, FlashcardManualDeck } from '@/lib/types'
 import {
   DEFAULT_PUBLIC_METRIC_SETTINGS,
@@ -65,6 +69,13 @@ import {
 import { ReviewsSection } from '@/components/reviews/reviews-section'
 import { ReviewSummaryBlock } from '@/components/reviews/review-summary'
 import type { ReviewSummary } from '@/lib/reviews-shared'
+
+/**
+ * Recusa vinda do servidor (403, 429, 404...), que já traz uma mensagem
+ * escrita para o usuário. Marcá-la com um tipo próprio evita que ela seja
+ * confundida com uma falha de transferência e reescrita.
+ */
+class RespostaRecusada extends Error {}
 import {
   loadProgress,
   saveProgress,
@@ -803,26 +814,28 @@ export default function DeckPage() {
       const res = await fetch(`/api/flashcards/manual/${encodeURIComponent(data.deck.slug)}/pdf`, { cache: 'no-store' })
       if (!res.ok) {
         const json = await res.json().catch(() => null)
-        throw new Error(json?.error || 'Não foi possível baixar o PDF')
+        throw new RespostaRecusada(json?.error || 'Não foi possível baixar o PDF')
       }
-      const blob = await res.blob()
-      const url = window.URL.createObjectURL(blob)
-      const a = document.createElement('a')
       const safeTitle = data.deck.title
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '')
         .replace(/[^a-zA-Z0-9]+/g, '-')
         .replace(/^-+|-+$/g, '')
         .slice(0, 80) || 'flashcards'
-      a.href = url
-      a.download = `${safeTitle}-DomineAqui.pdf`
-      document.body.appendChild(a)
-      a.click()
-      a.remove()
-      window.URL.revokeObjectURL(url)
+      // O helper compartilhado confere se o corpo chegou inteiro antes de
+      // salvar (uma resposta cortada no meio virava um PDF que não abre) e
+      // só revoga o object URL depois que o download começou.
+      await downloadPdfResponse(res, `${safeTitle}-DomineAqui.pdf`)
       setToast({ open: true, message: "PDF baixado com marca d'água.", type: 'success' })
     } catch (err: any) {
-      setToast({ open: true, message: err.message || 'Erro ao baixar PDF', type: 'error' })
+      // A recusa do servidor tem texto próprio ("sem acesso", "limite de
+      // downloads") e é o que o usuário precisa ler. O resto é falha de
+      // transferência, e aí quem sabe descrever é o helper — a mensagem antiga
+      // culpava a internet de quem estava online.
+      const message = err instanceof RespostaRecusada
+        ? err.message
+        : describePdfDownloadFailure(err)
+      setToast({ open: true, message, type: 'error' })
     } finally {
       setDownloadingPdf(false)
     }

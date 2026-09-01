@@ -22,6 +22,10 @@ import {
   PDFDict,
   PDFRef,
   PDFStream,
+  drawObject,
+  popGraphicsState,
+  pushGraphicsState,
+  scale,
 } from 'pdf-lib'
 import { emailFingerprint } from './watermark-fingerprint'
 
@@ -164,6 +168,16 @@ function applyWatermarkToPage(
 ): void {
   if (!config.enabled) return
 
+  // A fonte é definida UMA vez na página, e não passada em cada `drawText`.
+  //
+  // `page.drawText(..., { font })` faz o pdf-lib registrar a fonte no
+  // dicionário de recursos com uma chave nova a cada chamada (o nome recebe um
+  // sufixo aleatório). O tiling abaixo faz centenas de chamadas por página, e o
+  // overlay saía com ~780 entradas `/Helvetica-Bold-<aleatório>` apontando
+  // todas para o MESMO objeto de fonte — 63 KB de dicionário para uma fonte só.
+  // Definida na página, a chave já registrada é reaproveitada.
+  page.setFont(font)
+
   const { width, height } = page.getSize()
 
   // Cor: cinza muito transparente — visível mas não atrapalha leitura
@@ -204,7 +218,6 @@ function applyWatermarkToPage(
           x,
           y: y - i * (config.fontSize + config.lineGap),
           size: config.fontSize,
-          font,
           color,
           opacity: config.opacity,
           rotate: angle,
@@ -317,6 +330,40 @@ function markOverlayAsIsolatedGroup(doc: PDFDocument, ref: PDFRef): void {
 }
 
 /**
+ * Desenha o overlay na página sob um nome de XObject ESTÁVEL.
+ *
+ * `page.drawPage()` seria o caminho natural, mas ele inventa um nome novo a
+ * cada chamada (`EmbeddedPdfPage-<aleatório>`) e o próprio pdf-lib registra a
+ * pendência num TODO. Documentos em que as páginas compartilham um mesmo
+ * dicionário `/Resources` — o que o jsPDF e vários geradores produzem — ficavam
+ * com uma entrada por página acumulada nesse dicionário único, todas apontando
+ * para o MESMO overlay; e como o `/Resources` herdado é escrito dentro de cada
+ * página na serialização, um deck de 121 páginas carregava 121 cópias de uma
+ * lista de 121 nomes. Era o grosso do arquivo final.
+ *
+ * O nome carrega o tamanho da página (`DAMarcaDagua595x842`) porque esse
+ * dicionário compartilhado é justamente o caso em que um nome fixo faria as
+ * páginas de tamanhos diferentes disputarem a mesma chave — cada tamanho tem o
+ * seu overlay e precisa do seu nome.
+ */
+function stampOverlayOnPage(
+  page: PDFPage,
+  overlay: PDFEmbeddedPage,
+  sizeKey: string,
+  width: number,
+  height: number
+): void {
+  const name = `DAMarcaDagua${sizeKey}`
+  page.node.setXObject(PDFName.of(name), overlay.ref)
+  page.pushOperators(
+    pushGraphicsState(),
+    scale(width / overlay.width, height / overlay.height),
+    drawObject(name),
+    popGraphicsState()
+  )
+}
+
+/**
  * Carimba o overlay de marca d'água em todas as páginas do documento.
  *
  * A grade é construída uma vez por TAMANHO de página e reaproveitada como
@@ -346,7 +393,7 @@ async function stampWatermarkOverlay(
     // Garante compositing correto de transparência no iOS/Safari (ver helper).
     ensurePageTransparencyGroup(page, doc)
     // Carimba o overlay cobrindo a página inteira (uma operação por página).
-    page.drawPage(overlay, { x: 0, y: 0, width, height })
+    stampOverlayOnPage(page, overlay, key, width, height)
   }
 
   // Materializa os XObjects embutidos para conseguir marcá-los como grupo

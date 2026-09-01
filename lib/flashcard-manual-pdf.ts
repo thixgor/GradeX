@@ -25,6 +25,23 @@ const CINZA_CLARO = [245, 245, 245] as const
 const CINZA_BORDA = [215, 224, 216] as const
 const imageCache = new Map<string, Promise<ImageData | null>>()
 
+/**
+ * Largura em que as imagens entram no PDF.
+ *
+ * Uma figura é desenhada em no máximo ~178 x 82 mm (ver `renderImage`), o que
+ * a 150 dpi dá pouco mais de 1000 px de largura. Embutir o arquivo original —
+ * uma foto de 3 MB tirada no celular, por exemplo — era jogar megabytes num
+ * espaço de sete centímetros de altura: o PDF ficava pesado, a geração ficava
+ * cara e a resposta estourava o teto de corpo da função.
+ *
+ * 1080 é um valor de `deviceSizes` (next.config.js) de propósito: o otimizador
+ * do Next recusa larguras fora dessa lista, e usar uma que a plataforma já
+ * serve para o `next/image` do próprio deck faz a transformação cair no cache
+ * em vez de ser refeita.
+ */
+const PDF_IMAGE_WIDTH = 1080
+const PDF_IMAGE_QUALITY = 70
+
 function cleanText(value: unknown): string {
   return String(value || '')
     .replace(/\r\n/g, '\n')
@@ -114,6 +131,45 @@ async function fetchImageAsDataUrl(url: string, origin: string): Promise<ImageDa
   return task
 }
 
+/**
+ * Endereço da imagem já redimensionada pelo otimizador do próprio Next.
+ *
+ * Não pedimos WebP: o formato PDF não tem filtro para ele, e o jsPDF teria de
+ * decodificar por conta própria. Com um `Accept` sem webp, o otimizador
+ * devolve a imagem no formato de origem — só que redimensionada e recomprimida,
+ * que é tudo o que precisamos aqui.
+ */
+function optimizedImageUrl(url: string, origin: string): string {
+  return `${origin}/_next/image?url=${encodeURIComponent(url)}&w=${PDF_IMAGE_WIDTH}&q=${PDF_IMAGE_QUALITY}`
+}
+
+async function fetchImageBytes(
+  target: string,
+  timeoutMs: number
+): Promise<{ bytes: Buffer; contentType: string } | null> {
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), timeoutMs)
+  try {
+    const response = await fetch(target, {
+      signal: controller.signal,
+      headers: {
+        // Sem webp/avif de propósito — ver `optimizedImageUrl`.
+        Accept: 'image/jpeg,image/png,image/*;q=0.8',
+        'User-Agent': 'Domine-Aqui-Flashcard-PDF/1.0',
+      },
+    })
+    if (!response.ok) return null
+    const contentType = response.headers.get('content-type') || 'image/jpeg'
+    if (!contentType.startsWith('image/')) return null
+    if (contentType.includes('svg') || contentType.includes('gif')) return null
+    return { bytes: Buffer.from(await response.arrayBuffer()), contentType }
+  } catch {
+    return null
+  } finally {
+    clearTimeout(timeout)
+  }
+}
+
 async function fetchImageAsDataUrlUncached(url: string, origin: string): Promise<ImageData | null> {
   try {
     if (!url) return null
@@ -127,25 +183,22 @@ async function fetchImageAsDataUrlUncached(url: string, origin: string): Promise
       ? url
       : new URL(url, origin).toString()
 
-    const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), 6000)
-    const response = await fetch(absoluteUrl, {
-      signal: controller.signal,
-      headers: {
-        Accept: 'image/*,*/*',
-        'User-Agent': 'Domine-Aqui-Flashcard-PDF/1.0',
-      },
-    }).finally(() => clearTimeout(timeout))
+    // Primeiro a versão redimensionada; o original só se ela falhar. O
+    // otimizador recusa host fora de `remotePatterns` e não existe fora da
+    // Vercel, então o plano B precisa existir — mas buscar os dois sempre
+    // dobraria a transferência de origem para descartar metade.
+    const escolhida =
+      (await fetchImageBytes(optimizedImageUrl(url, origin), 9000)) ||
+      (await fetchImageBytes(absoluteUrl, 6000))
+    if (!escolhida) return null
 
-    if (!response.ok) return null
-    const contentType = response.headers.get('content-type') || 'image/jpeg'
-    if (!contentType.startsWith('image/')) return null
-    if (contentType.includes('svg') || contentType.includes('gif')) return null
-
-    const buffer = Buffer.from(await response.arrayBuffer())
-    const format = contentType.includes('png') ? 'PNG' : contentType.includes('webp') ? 'WEBP' : 'JPEG'
+    const format = escolhida.contentType.includes('png')
+      ? 'PNG'
+      : escolhida.contentType.includes('webp')
+      ? 'WEBP'
+      : 'JPEG'
     return {
-      dataUrl: `data:${contentType};base64,${buffer.toString('base64')}`,
+      dataUrl: `data:${escolhida.contentType};base64,${escolhida.bytes.toString('base64')}`,
       format,
     }
   } catch {
@@ -159,7 +212,11 @@ export async function generateFlashcardManualPdf(
   user: PdfUser,
   origin: string
 ): Promise<ArrayBuffer> {
-  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
+  // `compress: true` liga o filtro Flate nos content streams. O documento é
+  // quase todo operação de texto — duas páginas por card, cabeçalho e rodapé em
+  // cada uma —, e esse é o tipo de conteúdo que comprime muito bem. Custa
+  // alguns milissegundos de CPU e derruba boa parte do arquivo final.
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4', compress: true })
   const pageWidth = doc.internal.pageSize.getWidth()
   const pageHeight = doc.internal.pageSize.getHeight()
   const margin = 18
@@ -306,6 +363,10 @@ export async function generateFlashcardManualPdf(
       doc.setDrawColor(...CINZA_BORDA)
       doc.setLineWidth(0.3)
       doc.roundedRect(x - 2, y - 2, width + 4, height + 4, 2, 2, 'S')
+      // Sem `alias` nem nível de compressão explícitos: o jsPDF já deriva o
+      // alias do conteúdo (a mesma figura em vários cards vira um XObject só)
+      // e o seu padrão comprime o PNG melhor do que 'FAST' — medido, passar os
+      // dois à mão engordava o arquivo em vez de enxugá-lo.
       doc.addImage(image.dataUrl, image.format, x, y, width, height)
       y += height + 9
     } catch {

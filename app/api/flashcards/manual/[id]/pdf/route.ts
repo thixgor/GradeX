@@ -9,6 +9,7 @@ import {
   resolveDeckAccess,
 } from '@/lib/flashcard-manual'
 import { applyWatermark } from '@/lib/pdf-watermark'
+import { pdfBytesToStream } from '@/lib/pdf-response'
 import { checkPlusDownloadAllowance, recordPlusDownload } from '@/lib/plus-guard'
 import {
   avaliarUsoDoPlano,
@@ -183,10 +184,23 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     }).catch(() => {})
 
     const filename = flashcardPdfFileName(deck.title)
-    return new NextResponse(Buffer.from(stamped), {
+
+    // O corpo sai em pedaços, e não como um buffer só: acima de ~4,5 MB a
+    // borda da Vercel corta a resposta de uma função que entrega tudo de uma
+    // vez, e corta DEPOIS de os cabeçalhos terem saído — o navegador
+    // registrava "GET .../pdf net::ERR_FAILED 200 (OK)". Um deck com imagens
+    // passa desse tamanho com facilidade. Ver `lib/pdf-response.ts`.
+    console.log(
+      `[flashcard-pdf] entregando deck=${String(deck._id)} cards=${cards.length} bytes=${stamped.byteLength}`
+    )
+
+    return new NextResponse(pdfBytesToStream(stamped), {
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': encodeContentDisposition(filename),
+        // Permite progresso real no navegador e deixa o cliente perceber um
+        // arquivo que chegou pela metade em vez de salvar um PDF quebrado.
+        'Content-Length': String(stamped.byteLength),
         // Cache privado curto: re-cliques dentro de 5 min reaproveitam
         // o PDF do browser sem invocar esta função. SWR mantém UX boa
         // após expiração sem gerar nova função enquanto valida.

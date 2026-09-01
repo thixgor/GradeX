@@ -10,6 +10,8 @@ import {
   rgb,
 } from 'pdf-lib'
 
+import { jsPDF } from 'jspdf'
+
 import { applyWatermark, countImageXObjects } from '@/lib/pdf-watermark'
 
 /**
@@ -159,6 +161,83 @@ describe('applyWatermark', () => {
 
     const stampedDoc = await PDFDocument.load(stamped, { ignoreEncryption: true })
     expect(stampedDoc.isEncrypted).toBe(false)
+  })
+})
+
+/**
+ * O custo do carimbo no tamanho do arquivo.
+ *
+ * O carimbo desenha o MESMO overlay em todas as páginas, então o que ele
+ * acrescenta deveria ser aproximadamente constante — um XObject e uma operação
+ * por página. Duas armadilhas do pdf-lib faziam o oposto, e o resultado
+ * aparecia como PDF de vários megabytes que a borda da Vercel cortava no meio
+ * do download:
+ *
+ *   - `drawText({ font })` registra a fonte com um nome novo a cada chamada, e
+ *     o tiling faz centenas de chamadas por página;
+ *   - `drawPage()` registra o XObject com um nome novo a cada chamada. Em
+ *     documentos cujas páginas compartilham um único `/Resources` — o formato
+ *     que o jsPDF gera, e é dele que sai o PDF dos flashcards — as entradas se
+ *     acumulavam nesse dicionário, que é escrito dentro de cada página.
+ */
+describe('applyWatermark — peso do carimbo', () => {
+  /** Documento no formato do jsPDF: várias páginas, um `/Resources` só. */
+  function buildJsPdfDocument(pages: number): ArrayBuffer {
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4', compress: true })
+    for (let i = 0; i < pages; i += 1) {
+      if (i > 0) doc.addPage()
+      doc.setFont('helvetica', 'normal')
+      doc.setFontSize(11)
+      doc.text(`Pagina ${i + 1} do material`, 20, 30)
+    }
+    return doc.output('arraybuffer')
+  }
+
+  /** Chaves de XObject declaradas nos recursos de cada página. */
+  async function xObjectKeysPorPagina(bytes: Uint8Array): Promise<number[]> {
+    const doc = await PDFDocument.load(bytes)
+    return doc.getPages().map((page) => {
+      const xObjects = page.node.Resources()?.lookupMaybe(PDFName.of('XObject'), PDFDict)
+      return (xObjects?.keys() ?? []).length
+    })
+  }
+
+  it('registra o overlay uma única vez por página, não uma por carimbo dado', async () => {
+    const paginas = 40
+    const original = buildJsPdfDocument(paginas)
+    // O documento de origem não tem XObject nenhum: tudo o que aparecer nos
+    // recursos depois é obra do carimbo.
+    expect(await xObjectKeysPorPagina(new Uint8Array(original))).toEqual(Array(paginas).fill(0))
+
+    const stamped = await applyWatermark(original, IDENTITY)
+
+    // Uma entrada por página. Com um nome novo a cada `drawPage`, o dicionário
+    // compartilhado deste formato acumulava as 40 — e era escrito inteiro
+    // dentro de cada uma das 40 páginas.
+    expect(await xObjectKeysPorPagina(stamped)).toEqual(Array(paginas).fill(1))
+  })
+
+  it('carimba todas as páginas, inclusive as de tamanhos diferentes', async () => {
+    const doc = await PDFDocument.create()
+    doc.addPage([595, 842])
+    doc.addPage([842, 595])
+    doc.addPage([595, 842])
+
+    const stamped = await applyWatermark(await doc.save(), IDENTITY)
+    const carimbado = await PDFDocument.load(stamped)
+
+    // Um overlay por TAMANHO de página — nunca o overlay retrato esticado
+    // sobre a página paisagem.
+    const nomes = carimbado.getPages().map((page) => {
+      const xObjects = page.node.Resources()?.lookupMaybe(PDFName.of('XObject'), PDFDict)
+      return (xObjects?.keys() ?? [])
+        .map((key) => key.asString())
+        .filter((key) => key.includes('DAMarcaDagua'))
+    })
+
+    expect(nomes.map((lista) => lista.length)).toEqual([1, 1, 1])
+    expect(nomes[0][0]).toBe(nomes[2][0])
+    expect(nomes[1][0]).not.toBe(nomes[0][0])
   })
 })
 
