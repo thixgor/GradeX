@@ -188,7 +188,7 @@ async function fetchImageAsDataUrlUncached(url: string, origin: string): Promise
     // Vercel, então o plano B precisa existir — mas buscar os dois sempre
     // dobraria a transferência de origem para descartar metade.
     const escolhida =
-      (await fetchImageBytes(optimizedImageUrl(url, origin), 9000)) ||
+      (await fetchImageBytes(optimizedImageUrl(url, origin), 7000)) ||
       (await fetchImageBytes(absoluteUrl, 6000))
     if (!escolhida) return null
 
@@ -234,6 +234,24 @@ export async function generateFlashcardManualPdf(
     Array.from(imageUrls).map(async url => [url, await fetchImageAsDataUrl(url, origin)] as const)
   )
   const images = new Map<string, ImageData | null>(imageEntries)
+
+  // Dimensões medidas UMA vez por imagem.
+  //
+  // `doc.getImageProperties()` decodifica o arquivo a cada chamada, e a mesma
+  // figura costuma aparecer em vários cards: num deck de 60 cards com 5 imagens
+  // eram 60 decodificações para descobrir 5 pares de largura e altura — mais
+  // tempo do que a montagem inteira do resto do documento. Uma imagem que não
+  // decodifica fica de fora aqui e cai no aviso de "não pôde ser inserida".
+  const imageSizes = new Map<string, { width: number; height: number }>()
+  for (const [url, image] of images) {
+    if (!image) continue
+    try {
+      const props = doc.getImageProperties(image.dataUrl)
+      imageSizes.set(url, { width: props.width, height: props.height })
+    } catch {
+      // Segue sem tamanho: o `renderImage` avisa que a figura não entrou.
+    }
+  }
 
   function setFont(style: TextStyle = 'normal', size = 10) {
     doc.setFont('helvetica', style)
@@ -352,7 +370,8 @@ export async function generateFlashcardManualPdf(
     }
 
     try {
-      const props = doc.getImageProperties(image.dataUrl)
+      const props = imageSizes.get(url)
+      if (!props) throw new Error('sem dimensões')
       const maxWidth = contentWidth - 8
       const maxHeight = 82
       const ratio = Math.min(maxWidth / props.width, maxHeight / props.height, 1)
