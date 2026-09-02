@@ -1025,6 +1025,25 @@ export default function MaterialViewPage() {
                         )}
                       </>
                     )
+                  ) : includedInPlus ? (
+                    <>
+                      <span className="flex items-center justify-center gap-1.5 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm font-semibold text-amber-700 dark:text-amber-300">
+                        <Crown className="h-4 w-4" /> Incluído no {PLUS_LABEL}
+                      </span>
+                      <Button
+                        onClick={handleClaimWithPlus}
+                        disabled={checkoutLoading}
+                        className="h-11 w-full rounded-lg bg-gradient-to-r from-primary to-primary/80 font-semibold text-white shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
+                      >
+                        {checkoutLoading
+                          ? <span className="h-4 w-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          : <Gift className="h-4 w-4 mr-2" />}
+                        Resgatar material
+                      </Button>
+                      <p className="text-center text-[10px] text-muted-foreground/70">
+                        Sem custo — já faz parte da sua assinatura.
+                      </p>
+                    </>
                   ) : (
                     <>
                       {canPreview && (
@@ -1576,7 +1595,11 @@ export default function MaterialViewPage() {
             <div className="min-w-0 flex-1">
               <p className="truncate text-xs font-semibold text-foreground">{material.title}</p>
               <p className="text-sm font-black text-emerald-700 dark:text-emerald-300">
-                {isFree ? 'Gratuito' : selectedTimedVersion ? (
+                {includedInPlus ? (
+                  <span className="flex items-center gap-1 text-amber-700 dark:text-amber-300">
+                    <Crown className="h-3.5 w-3.5" /> Incluído no {PLUS_LABEL}
+                  </span>
+                ) : isFree ? 'Gratuito' : selectedTimedVersion ? (
                   <>
                     R$ {purchasePrice.toFixed(2)}
                     <span className="ml-1.5 text-[10px] font-bold text-sky-500">
@@ -1595,16 +1618,22 @@ export default function MaterialViewPage() {
               </p>
             </div>
             <Button
-              onClick={isFree ? () => handleAcquire() : () => handleBuyNow()}
+              onClick={
+                includedInPlus
+                  ? handleClaimWithPlus
+                  : isFree
+                    ? () => handleAcquire()
+                    : () => handleBuyNow()
+              }
               disabled={checkoutLoading}
               className="h-11 min-w-[9rem] rounded-lg bg-gradient-to-r from-accent to-secondary px-4 font-bold text-white shadow-lg shadow-accent/20 transition-all active:scale-[0.98]"
             >
               {checkoutLoading ? (
                 <span className="h-4 w-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              ) : isFree ? (
+              ) : includedInPlus || isFree ? (
                 <Gift className="h-4 w-4 mr-2" />
               ) : null}
-              {isFree ? 'Adquirir' : 'Comprar agora'}
+              {includedInPlus ? 'Resgatar' : isFree ? 'Adquirir' : 'Comprar agora'}
             </Button>
           </div>
         </div>
