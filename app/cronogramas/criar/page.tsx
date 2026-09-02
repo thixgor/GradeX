@@ -377,6 +377,7 @@ function ConteudoCriar() {
                     <EmentaNavegador
                       topicos={contexto.topicos}
                       contexto={rotuloContexto}
+                      limitarAltura
                       selecao={{
                         modulosSelecionados: selecionados,
                         onToggleModulo: alternarModulo,

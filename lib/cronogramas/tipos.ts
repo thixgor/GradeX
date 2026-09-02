@@ -398,3 +398,71 @@ export interface PreferenciasCronograma {
   secaoEscolhida?: boolean
   atualizadoEm?: string
 }
+
+// ── Urgência de uma avaliação ───────────────────────────────────────────────
+
+/**
+ * Estilo de cada faixa de proximidade (`faixaProximidade` em `brasilia.ts`).
+ *
+ * A cor aqui é leitura, não decoração: laranja da marca para o que é hoje ou
+ * está em cima, âmbar para a janela de estudo produtiva, verde para o que
+ * ainda está longe, cinza para o que já passou. O aluno aprende as quatro numa
+ * olhada e nunca mais precisa ler o rótulo.
+ *
+ * Mora em `tipos.ts` — e não no componente do calendário, onde nasceu —
+ * porque a barra de foco da página, o cartão de avaliação e a grade do mês
+ * precisam pintar a MESMA prova da mesma cor. Duas cópias divergiam na
+ * primeira vez que alguém ajustasse um tom.
+ */
+export interface EstiloFaixa {
+  /** Filete vertical do cartão. */
+  barra: string
+  /** Pílula com borda (grade do mês, selos). */
+  chip: string
+  /** A cor como tinta de texto, já legível nos dois temas. */
+  texto: string
+  /** Fundo suave para painéis inteiros. */
+  fundo: string
+  anel: string
+}
+
+export const ESTILO_FAIXA: Record<
+  'passada' | 'hoje' | 'critica' | 'proxima' | 'distante',
+  EstiloFaixa
+> = {
+  hoje: {
+    barra: 'bg-[#CE5929]',
+    chip: 'bg-[#CE5929]/15 text-[#CE5929] dark:text-[#F3A588] border-[#CE5929]/30',
+    texto: 'text-[#CE5929] dark:text-[#F3A588]',
+    fundo: 'bg-[#CE5929]/8 border-[#CE5929]/25',
+    anel: 'ring-[#CE5929]/40',
+  },
+  critica: {
+    barra: 'bg-[#CE5929]',
+    chip: 'bg-[#CE5929]/12 text-[#CE5929] dark:text-[#F3A588] border-[#CE5929]/25',
+    texto: 'text-[#CE5929] dark:text-[#F3A588]',
+    fundo: 'bg-[#CE5929]/6 border-[#CE5929]/20',
+    anel: 'ring-[#CE5929]/30',
+  },
+  proxima: {
+    barra: 'bg-[#E2A43E]',
+    chip: 'bg-[#E2A43E]/14 text-[#9A6D12] dark:text-[#E2A43E] border-[#E2A43E]/30',
+    texto: 'text-[#9A6D12] dark:text-[#E2A43E]',
+    fundo: 'bg-[#E2A43E]/8 border-[#E2A43E]/25',
+    anel: 'ring-[#E2A43E]/30',
+  },
+  distante: {
+    barra: 'bg-[#468152]',
+    chip: 'bg-[#468152]/12 text-[#468152] dark:text-[#7DCEA0] border-[#468152]/25',
+    texto: 'text-[#468152] dark:text-[#7DCEA0]',
+    fundo: 'bg-[#468152]/6 border-[#468152]/20',
+    anel: 'ring-[#468152]/25',
+  },
+  passada: {
+    barra: 'bg-muted-foreground/40',
+    chip: 'bg-muted text-muted-foreground border-border',
+    texto: 'text-muted-foreground',
+    fundo: 'bg-muted/40 border-border',
+    anel: 'ring-border',
+  },
+}
