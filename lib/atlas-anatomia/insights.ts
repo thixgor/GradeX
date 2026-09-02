@@ -1,7 +1,8 @@
 import type { AtlasMarker } from './estrutura'
 import { classificar, classePorId, type ClasseEstrutural } from './classes'
 import { resolverRegiao, type RegiaoAnatomica } from './regioes'
-import { DICIONARIO, type EntradaDicionario } from './dicionario'
+import { DICIONARIO } from './dicionario'
+import type { EntradaDicionario } from './dicionario/tipos'
 
 /**
  * Motor de conteúdo do Atlas de Anatomia.
@@ -46,6 +47,13 @@ export interface MarkerInsight {
   relacoes?: string
   clinica: string
   /**
+   * O gancho de memória da estrutura: mnemônico, imagem mental ou o raciocínio
+   * que dispensa decorar. Só existe quando há ficha curada — inventar um gancho
+   * a partir do texto de classe daria a mesma frase para cinquenta estruturas,
+   * que é exatamente o oposto de lembrar.
+   */
+  memoria?: string
+  /**
    * `true` quando vascularização/inervação vieram da região, e não da estrutura.
    * A interface rotula esses blocos como regionais para não induzir a erro.
    */
@@ -68,21 +76,61 @@ const normalizar = (valor: string) =>
     .replace(/\s+/g, ' ')
     .trim()
 
-/** Índice montado uma única vez: normalizar 1.300 títulos a cada clique é desperdício. */
-const ENTRADAS = DICIONARIO.map(entrada => ({
-  entrada,
-  termos: entrada.termos.map(normalizar),
-}))
+/**
+ * Índices montados uma única vez: normalizar 1.300 títulos a cada clique é
+ * desperdício, e a busca acontece a cada marcador tocado e a cada distrator do
+ * quiz.
+ *
+ * São dois índices porque são dois casamentos com prioridades diferentes. O
+ * exato responde pelo título tal como o acervo escreveu; o por conteúdo só
+ * entra depois, quando nenhuma ficha própria reivindicou aquele nome. Essa
+ * ordem é o que impede a ficha do rim de responder por "Articulação
+ * Carpometacarpal do Polegar (entre o osso trapézio e o primeiro metacarpo)",
+ * ou a do osso ulna de explicar o nervo ulnar.
+ */
+const EXATOS = new Map<string, EntradaDicionario[]>()
+const POR_CONTEUDO: Array<{ termo: string; entrada: EntradaDicionario }> = []
 
-function buscarEntrada(titulo: string): EntradaDicionario | undefined {
-  const nome = normalizar(titulo)
-  for (const { entrada, termos } of ENTRADAS) {
-    const casou = entrada.exato
-      ? termos.some(termo => nome === termo)
-      : termos.some(termo => nome === termo || nome.includes(termo))
-    if (casou) return entrada
+for (const entrada of DICIONARIO) {
+  for (const termo of entrada.termos) {
+    const chave = normalizar(termo)
+    const lista = EXATOS.get(chave)
+    if (lista) lista.push(entrada)
+    else EXATOS.set(chave, [entrada])
   }
-  return undefined
+  for (const termo of entrada.contem || []) {
+    POR_CONTEUDO.push({ termo: normalizar(termo), entrada })
+  }
+}
+
+// Do mais longo para o mais curto: "arco anterior do atlas" deve vencer "atlas".
+POR_CONTEUDO.sort((a, b) => b.termo.length - a.termo.length)
+
+/**
+ * Entre as fichas que respondem pelo mesmo título, vence a que declara o
+ * sistema da prancha aberta; depois, a que não declara sistema nenhum (a ficha
+ * geral). Só assim "Margem Superior" pode ser a borda da escápula na prancha do
+ * cíngulo e a borda do coração na prancha do mediastino.
+ */
+function melhorEntrada(candidatas: EntradaDicionario[], sistema: string): EntradaDicionario {
+  return (
+    candidatas.find(entrada => entrada.sistemas?.includes(sistema)) ||
+    candidatas.find(entrada => !entrada.sistemas) ||
+    candidatas[0]
+  )
+}
+
+function buscarEntrada(titulo: string, sistema: string): EntradaDicionario | undefined {
+  const nome = normalizar(titulo)
+  const exatas = EXATOS.get(nome)
+  if (exatas) return melhorEntrada(exatas, sistema)
+
+  const porConteudo = POR_CONTEUDO.filter(({ termo }) => nome.includes(termo))
+  if (porConteudo.length === 0) return undefined
+  return melhorEntrada(
+    porConteudo.map(item => item.entrada),
+    sistema,
+  )
 }
 
 /**
@@ -105,7 +153,7 @@ export interface ContextoMarcador {
 }
 
 export function getMarkerInsight(marker: AtlasMarker, contexto: ContextoMarcador): MarkerInsight {
-  const entrada = buscarEntrada(marker.title)
+  const entrada = buscarEntrada(marker.title, contexto.sistema)
   const classe: ClasseEstrutural = entrada?.classe
     ? classePorId(entrada.classe)
     : classificar(marker.title, contexto.sistema)
@@ -140,6 +188,7 @@ export function getMarkerInsight(marker: AtlasMarker, contexto: ContextoMarcador
     vasosRegionais: !entrada?.vascularizacao && !entrada?.inervacao,
     linfaticos: entrada?.linfaticos || (classe.mostraVasos ? regiao.linfaticos : undefined),
     relacoes: entrada?.relacoes,
+    memoria: entrada?.memoria,
     // Sem entrada curada, a correlação da região é mais específica que a da
     // classe — e o que vem primeiro é o que o aluno de fato lê.
     clinica: entrada?.clinica ? entrada.clinica : `${regiao.clinica || ''} ${classe.clinica}`.trim(),
@@ -151,6 +200,6 @@ export function getMarkerInsight(marker: AtlasMarker, contexto: ContextoMarcador
 }
 
 /** Quantos marcadores distintos do acervo têm ficha curada — usado em testes e na interface. */
-export function temAprofundamento(titulo: string): boolean {
-  return Boolean(buscarEntrada(titulo))
+export function temAprofundamento(titulo: string, sistema = ''): boolean {
+  return Boolean(buscarEntrada(titulo, sistema))
 }

@@ -14,6 +14,7 @@ import {
   Heart,
   Info,
   Layers,
+  Lightbulb,
   MapPin,
   Network,
   Sparkles,
@@ -324,6 +325,21 @@ export function FichaEstrutura({ titulo, numero, insight, compacta, onRecolher }
       <Bloco icone={Layers} titulo="Relações anatômicas" texto={insight.relacoes} cor={cores.realce} />
       <Bloco icone={Target} titulo="Reparos no exame físico" texto={compacta ? undefined : insight.reparos} cor={cores.realce} />
       <Bloco icone={Stethoscope} titulo="Correlação clínica" texto={insight.clinica} cor="text-sky-500" />
+
+      {/* O gancho de memória vem depois da clínica e antes do autoteste: é a
+          frase que resume a estrutura numa imagem e a que o aluno leva quando
+          fecha a ficha. Ganha destaque próprio para não se perder entre os
+          demais blocos de texto corrido. */}
+      {insight.memoria && (
+        <section className="border-t border-border/60 px-4 py-3.5 sm:px-5">
+          <div className="rounded-xl border border-primary/25 bg-primary/[0.07] p-3">
+            <h3 className="mb-1 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-primary">
+              <Lightbulb className="h-3 w-3" /> Para não esquecer
+            </h3>
+            <p className="text-[13px] font-medium leading-relaxed text-foreground/85">{insight.memoria}</p>
+          </div>
+        </section>
+      )}
 
       {insight.pontos.length > 0 && (
         <section className="border-t border-border/60 bg-foreground/[0.035] px-4 py-3.5 sm:px-5">

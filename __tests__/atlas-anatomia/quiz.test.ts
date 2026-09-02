@@ -149,6 +149,71 @@ describe('quiz de identificação do Atlas', () => {
     }
   })
 
+  it('aprofunda o comentário: identidade, vizinhança, clínica e gancho de memória', () => {
+    for (const questao of sortear({}, 12, 2024)) {
+      const comentario = comentar(questao, questao.correta)
+      const titulos = comentario.blocos.map(bloco => bloco.titulo)
+
+      // Toda estrutura do acervo tem ficha própria, então função e clínica são
+      // obrigatórias — e o gancho de memória fecha os blocos, que é onde o aluno
+      // para de ler.
+      expect(titulos).toContain('O que ela faz')
+      expect(titulos).toContain('Por que isso importa na clínica')
+      if (questao.insight.memoria) {
+        expect(titulos[titulos.length - 1]).toBe('Para não esquecer')
+      }
+
+      for (const bloco of comentario.blocos) {
+        expect(bloco.texto.trim().length, `${questao.id} · ${bloco.titulo}`).toBeGreaterThan(40)
+      }
+    }
+  })
+
+  it('ensina o que separa cada distrator da resposta, e não só o que ele é', () => {
+    for (const questao of sortear({}, 12, 555)) {
+      const comentario = comentar(questao, null)
+      const nomeCerto = questao.ocorrencia.marcador.title
+
+      for (const [indice, alternativa] of comentario.alternativas.entries()) {
+        if (alternativa.correta) continue
+        const ficha = questao.alternativas[indice].insight
+        if (!ficha?.aprofundado) continue
+
+        // O comentário do distrator precisa dizer onde ele está — é a posição,
+        // e não o nome, que decide a resposta numa prancha marcada.
+        const dizOndeFica =
+          alternativa.comentario.includes('Ela fica em outro lugar') ||
+          alternativa.comentario.includes('região diferente') ||
+          alternativa.comentario.includes('muda a região')
+        expect(dizOndeFica, `${nomeCerto} × ${alternativa.texto}: ${alternativa.comentario}`).toBe(true)
+      }
+    }
+  })
+
+  it('nomeia a resposta certa ao comparar o distrator mais parecido', () => {
+    // Quando o distrator é da mesma região e da mesma classe, o comentário tem
+    // de dizer com quem comparar — senão o aluno lê duas definições soltas e não
+    // sai com um critério.
+    const questoes = sortear({}, 25, 909)
+    const gemeos = questoes.flatMap(questao =>
+      questao.alternativas
+        .map((alternativa, indice) => ({ alternativa, indice, questao }))
+        .filter(
+          ({ alternativa }) =>
+            !alternativa.correta &&
+            alternativa.insight?.aprofundado &&
+            alternativa.insight.regiao === questao.insight.regiao &&
+            alternativa.insight.classeId === questao.insight.classeId,
+        ),
+    )
+    expect(gemeos.length).toBeGreaterThan(0)
+
+    for (const { questao, indice } of gemeos) {
+      const comentario = comentar(questao, null)
+      expect(comentario.alternativas[indice].comentario).toContain(questao.ocorrencia.marcador.title)
+    }
+  })
+
   it('muda a abertura conforme o aluno acertou ou errou', () => {
     const questao = sortear({}, 1, 1234)[0]
     const acerto = comentar(questao, questao.correta)

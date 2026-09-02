@@ -1,4 +1,5 @@
-import { readFileSync, statSync } from 'node:fs'
+import { gzipSync } from 'node:zlib'
+import { readdirSync, readFileSync, statSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 
@@ -96,6 +97,29 @@ describe('peso do pacote de Domine Anatomia', () => {
   it.each(ENTRADAS_DO_CLIENTE)('%s não arrasta o acervo para o navegador', entrada => {
     const caminho = caminhoAteOAcervo(resolve(RAIZ, entrada))
     expect(caminho, caminho ? `import de valor até o acervo:\n  ${caminho.join('\n  → ')}` : '').toBeNull()
+  })
+
+  /**
+   * O dicionário é o maior conteúdo do Atlas e cresce a cada estrutura escrita.
+   *
+   * Ele fica atrás de um `import()` em `motor-fichas.ts`, então não pesa na
+   * primeira tela — mas pesa no momento em que o aluno abre uma prancha, e num
+   * celular em rede ruim isso se sente. A trava aqui não é para impedir o
+   * crescimento: é para que ele seja uma decisão. Quem passar deste teto precisa
+   * escolher entre subir o número e dividir o dicionário por sistema.
+   */
+  it('o dicionário cabe num pedaço que dá para baixar enquanto se olha a peça', () => {
+    const pasta = resolve(RAIZ, 'lib/atlas-anatomia/dicionario')
+    const fonte = readdirSync(pasta)
+      .filter(nome => nome.endsWith('.ts'))
+      .map(nome => readFileSync(resolve(pasta, nome), 'utf8'))
+      // Comentários e indentação somem na compilação; medir com eles seria
+      // medir o que o navegador nunca baixa.
+      .map(texto => texto.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, ''))
+      .join('\n')
+
+    const kbComprimidos = gzipSync(Buffer.from(fonte), { level: 9 }).byteLength / 1024
+    expect(kbComprimidos).toBeLessThan(480)
   })
 
   it('o acervo continua vivo, e num módulo só', () => {

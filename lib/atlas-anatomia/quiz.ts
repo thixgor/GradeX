@@ -190,6 +190,7 @@ const ABERTURAS_ACERTO = [
   'Exato. E já que você identificou, vamos aproveitar para amarrar o que costuma vir junto dessa estrutura.',
   'Certíssimo. Agora repare no que a peça está te mostrando, porque é isso que você vai reconhecer no cadáver e na imagem.',
   'É essa mesmo. Guarde o raciocínio que te levou até ela — é ele que se repete nas outras pranchas da região.',
+  'Acertou. Falta uma coisa só: conseguir explicar em voz alta por que não era nenhuma das outras três. É o que vem agora.',
 ]
 
 const ABERTURAS_ERRO = [
@@ -197,6 +198,7 @@ const ABERTURAS_ERRO = [
   'Escorregou nessa — e olha, é uma confusão clássica. Vale mais entender o que separa as duas do que decorar o nome.',
   'Ainda não. Antes de olhar o nome certo, repare no que a peça mostra: quase sempre a pista está na própria imagem.',
   'Passou perto. A boa notícia é que esse tipo de erro some quando você para de decorar nome e começa a ler a posição.',
+  'Errou, e tudo bem: essa é daquelas que a gente só acerta depois de errar uma vez. Vamos deixar o motivo bem gravado.',
 ]
 
 const FECHAMENTOS = [
@@ -210,10 +212,16 @@ const FECHAMENTOS = [
  * Monta a resposta comentada.
  *
  * A régua foi escrever como um professor comenta uma questão em voz alta: abre
- * conversando, mostra o raciocínio antes do nome, aprofunda, passa alternativa
- * por alternativa dizendo o que cada uma é de verdade — porque metade do
- * aprendizado de uma questão de identificação está nos distratores — e fecha com
- * o detalhe que costuma ser cobrado.
+ * conversando, mostra o raciocínio antes do nome, aprofunda camada por camada,
+ * entrega o gancho de memória, passa alternativa por alternativa dizendo o que
+ * cada uma é *de verdade* e o que a separa da resposta — porque metade do
+ * aprendizado de uma questão de identificação está nos distratores — e fecha
+ * com o autoteste.
+ *
+ * A ordem dos blocos não é arbitrária: identidade, depois localização e
+ * relações (o que a peça mostra), depois vasos e nervos (o que não se vê),
+ * depois clínica (por que isso importa) e, por último, o gancho de memória —
+ * que é o que o aluno leva quando fecha a tela.
  */
 export function comentar(questao: QuestaoQuiz, indiceEscolhido: number | null): Comentario {
   const { insight, ocorrencia } = questao
@@ -249,6 +257,15 @@ export function comentar(questao: QuestaoQuiz, indiceEscolhido: number | null): 
     })
   }
 
+  // Relações vêm antes de vasos e nervos por um motivo prático: é o que a peça
+  // mostra. O aluno ainda está olhando a imagem quando lê este bloco.
+  if (insight.relacoes) {
+    blocos.push({
+      titulo: 'Com quem ela faz vizinhança',
+      texto: `${insight.relacoes} Em anatomia, quase todo risco cirúrgico e quase todo achado de imagem nascem de uma relação de vizinhança como essa — e é ela que transforma a lista de nomes em raciocínio.`,
+    })
+  }
+
   if (insight.vascularizacao) {
     blocos.push({
       titulo: insight.vasosRegionais ? 'Quem irriga a região' : 'Vascularização',
@@ -265,10 +282,10 @@ export function comentar(questao: QuestaoQuiz, indiceEscolhido: number | null): 
     })
   }
 
-  if (insight.relacoes) {
+  if (insight.linfaticos) {
     blocos.push({
-      titulo: 'Com quem ela faz vizinhança',
-      texto: `${insight.relacoes} Em anatomia, quase todo risco cirúrgico e quase todo achado de imagem nascem de uma relação de vizinhança como essa.`,
+      titulo: 'Para onde a linfa vai',
+      texto: `${insight.linfaticos} Drenagem linfática é assunto de oncologia: é ela que diz onde procurar a primeira metástase e onde o esvaziamento precisa alcançar.`,
     })
   }
 
@@ -288,12 +305,18 @@ export function comentar(questao: QuestaoQuiz, indiceEscolhido: number | null): 
     blocos.push({ titulo: 'Nota do acervo', texto: insight.notaAcervo })
   }
 
+  // O gancho de memória fecha os blocos de propósito: é a última coisa lida
+  // antes das alternativas, e a que o aluno leva quando fecha a tela.
+  if (insight.memoria) {
+    blocos.push({ titulo: 'Para não esquecer', texto: insight.memoria })
+  }
+
   const alternativas: ComentarioAlternativa[] = questao.alternativas.map((alternativa, indice) => ({
     texto: alternativa.texto,
     correta: alternativa.correta,
     comentario: alternativa.correta
-      ? `É esta. ${definicao}`
-      : comentarDistrator(alternativa, insight, indice === indiceEscolhido, indice),
+      ? comentarCorreta(insight, nome, acertou)
+      : comentarDistrator(alternativa, insight, nome, indice === indiceEscolhido, indice),
   }))
 
   // `pontos` são perguntas ("Origem, inserção e ação principal"), não afirmações.
@@ -307,12 +330,29 @@ export function comentar(questao: QuestaoQuiz, indiceEscolhido: number | null): 
 }
 
 /**
+ * Comentário da alternativa correta.
+ *
+ * Não basta repetir a definição: quem acertou precisa saber o que confirmou a
+ * resposta, e quem errou precisa ver o critério que deixou passar. Por isso o
+ * texto entrega o dado que decide — a localização — e não só o nome.
+ */
+function comentarCorreta(insight: MarkerInsight, nome: string, acertou: boolean): string {
+  const confirmacao = insight.aprofundado
+    ? `O que fecha a identificação é a posição: ${minusculaInicial(insight.localizacao)}`
+    : ''
+  return acertou
+    ? `É esta, e é assim que se confirma. ${insight.resumo} ${confirmacao}`.trim()
+    : `Era esta. ${insight.resumo} ${confirmacao}`.trim()
+}
+
+/**
  * Comentário de um distrator.
  *
  * Metade do aprendizado de uma questão de identificação está aqui: saber por
  * que **não** é a outra estrutura é o que constrói o diagnóstico diferencial
- * anatômico. Por isso o critério de exclusão fica mais específico quanto mais
- * perto o distrator estiver da resposta.
+ * anatômico. Cada comentário responde a duas perguntas — o que essa alternativa
+ * é de verdade, e o que a separa da resposta certa — e o critério de separação
+ * fica mais fino conforme o distrator estiver mais perto.
  *
  * O cuidado extra é não repetir texto: três distratores da mesma classe e da
  * mesma região caem todos no mesmo molde, e o aluno lê a mesma frase três
@@ -322,6 +362,7 @@ export function comentar(questao: QuestaoQuiz, indiceEscolhido: number | null): 
 function comentarDistrator(
   alternativa: Alternativa,
   correto: MarkerInsight,
+  nomeCorreto: string,
   foiEscolhida: boolean,
   indice: number,
 ): string {
@@ -336,18 +377,21 @@ function comentarDistrator(
   // curada ou a descrição do acervo. O texto de classe é o mesmo para dezenas
   // de marcadores e não diz nada sobre esta.
   const especifico = ficha.aprofundado ? ficha.resumo : ficha.notaAcervo || ''
+  // O critério que separa as duas: quando ambas têm ficha própria, o dado que
+  // decide é onde cada uma está — e é isso que o aluno precisa treinar a ver.
+  const ondeEsta = ficha.aprofundado ? ` Ela fica em outro lugar: ${minusculaInicial(ficha.localizacao)}` : ''
 
   if (especifico) {
     if (mesmaRegiao && mesmaClasse) {
-      return `${prefixo}Chega perto — mesma região, mesma natureza. ${especifico} O que decide é a posição do marcador na peça.`
+      return `${prefixo}Chega perto — mesma região, mesma natureza, e é justamente por isso que essa dupla confunde. ${especifico}${ondeEsta} Compare essa posição com a de ${nomeCorreto} e você tem o critério que decide.`
     }
     if (mesmaRegiao) {
-      return `${prefixo}Está na mesma região, mas é outra coisa: ${minusculaInicial(ficha.classe)}. ${especifico}`
+      return `${prefixo}Está na mesma região, mas é outra coisa: ${minusculaInicial(ficha.classe)}, e não ${minusculaInicial(correto.classe)}. ${especifico}${ondeEsta}`
     }
     if (mesmaClasse) {
-      return `${prefixo}Mesma classe de estrutura, região diferente — pertence a ${ficha.regiao.toLowerCase()}. ${especifico}`
+      return `${prefixo}Mesma classe de estrutura, região diferente — pertence a ${ficha.regiao.toLowerCase()}, e a prancha é de ${correto.regiao.toLowerCase()}. ${especifico}`
     }
-    return `${prefixo}Não é esta. ${especifico}`
+    return `${prefixo}Não é esta, e nem chega perto: muda a natureza e muda a região. ${especifico}`
   }
 
   // Sem conteúdo específico, o comentário se apoia no que é verdadeiro e

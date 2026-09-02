@@ -53,15 +53,71 @@ describe('motor de conteúdo do Atlas de Anatomia', () => {
     }
   })
 
-  it('mantém a cobertura de estruturas com conteúdo curado', () => {
-    const curados = OCORRENCIAS.filter(
-      ({ sistema, caminho, prancha, marcador }) =>
-        getMarkerInsight(marcador, { sistema, caminho, prancha }).aprofundado,
+  it('tem ficha própria para todas as estruturas do acervo, sem exceção', () => {
+    // O texto de classe existe como rede de segurança para um marcador novo que
+    // apareça no acervo, mas nenhuma estrutura de hoje deve cair nele: a
+    // reclamação que motivou o dicionário atual era exatamente essa — dezenas de
+    // estruturas lendo "órgão de uma cavidade corporal" em vez do que elas são.
+    const semFicha = new Set(
+      OCORRENCIAS.filter(
+        ({ sistema, caminho, prancha, marcador }) =>
+          !getMarkerInsight(marcador, { sistema, caminho, prancha }).aprofundado,
+      ).map(item => item.marcador.title),
+    )
+
+    expect([...semFicha]).toEqual([])
+  })
+
+  it('entrega o gancho de memória na esmagadora maioria das estruturas', () => {
+    const comGancho = OCORRENCIAS.filter(
+      ({ sistema, caminho, prancha, marcador }) => getMarkerInsight(marcador, { sistema, caminho, prancha }).memoria,
     ).length
 
-    // Trava de regressão: o dicionário específico cobre hoje quase metade das
-    // ocorrências. Quem remover entradas precisa perceber a queda aqui.
-    expect(curados / OCORRENCIAS.length).toBeGreaterThan(0.45)
+    // `memoria` é o que faz a estrutura grudar: o mnemônico, a imagem mental ou
+    // o raciocínio que dispensa decorar. Só falta nas poucas fichas herdadas que
+    // ainda não foram revisitadas.
+    expect(comGancho / OCORRENCIAS.length).toBeGreaterThan(0.6)
+  })
+
+  it('não deixa uma ficha responder por estrutura que só parece com ela', () => {
+    // O casamento por substring do dicionário antigo produzia absurdos: a ficha
+    // do rim explicava a "Articulação Carpometacarpal do Polegar (entre o osso
+    // trapézio e o **prim**eiro metacarpo)", a da ulna respondia pelo nervo
+    // ulnar e a da fíbula descrevia o músculo fibular longo. Cada par abaixo
+    // casava por conter o nome do outro, e não pode voltar a casar.
+    const paresQueNaoPodemSeConfundir: Array<[string, string]> = [
+      ['Rim', 'Articulação Carpometacarpal do Polegar (entre o osso trapézio e o primeiro metacarpo)'],
+      ['Ulna', 'Nervo Ulnar'],
+      ['Rádio', 'Artéria Radial'],
+      ['Fíbula', 'Músculo Fibular Longo'],
+      ['Tíbia', 'Músculo Tibial Anterior'],
+      ['Escápula', 'Músculo Levantador da Escápula'],
+      ['Língua', 'Veia Lingual Profunda'],
+      ['Artéria Aorta', 'Arco da Aorta'],
+      ['Osso Frontal', 'Sutura Frontal'],
+    ]
+
+    for (const [estrutura, impostor] of paresQueNaoPodemSeConfundir) {
+      expect(fichaDe(estrutura).resumo, `${impostor} não pode herdar a ficha de ${estrutura}`).not.toBe(
+        fichaDe(impostor).resumo,
+      )
+    }
+  })
+
+  it('escolhe a ficha certa quando o mesmo nome é coisa diferente em cada sistema', () => {
+    // O acervo reaproveita nomes genéricos entre pranchas: "Margem Superior" é a
+    // borda da escápula no esquelético e a borda do coração no circulatório.
+    const escapula = getMarkerInsight(
+      { title: 'Margem Superior', description: '', x: 0, y: 0, placement: '', color: '' },
+      { sistema: 'esqueletico', caminho: ['Membro Superior', 'Cíngulo do Membro Superior'] },
+    )
+    const coracao = getMarkerInsight(
+      { title: 'Margem Superior', description: '', x: 0, y: 0, placement: '', color: '' },
+      { sistema: 'circulatorio', caminho: ['Coração'] },
+    )
+
+    expect(escapula.resumo).not.toBe(coracao.resumo)
+    expect(escapula.resumo.toLowerCase()).toContain('escápula')
   })
 
   it('classifica praticamente todo marcador em uma família anatômica', () => {
@@ -117,6 +173,15 @@ describe('motor de conteúdo do Atlas de Anatomia', () => {
     const espinhoso = fichaDe('Processo Espinhoso')
     expect(espinhoso.regiao).toBe('Coluna vertebral')
     expect(espinhoso.pontos.length).toBeGreaterThanOrEqual(3)
+
+    // Estruturas que antes dividiam uma ficha de família agora têm a sua, com o
+    // dado que só vale para elas.
+    const vastoMedial = fichaDe('Músculo Vasto Medial')
+    expect(vastoMedial.resumo).not.toBe(fichaDe('Músculo Reto Femoral').resumo)
+    expect(vastoMedial.clinica.toLowerCase()).toContain('atrofi')
+
+    const suturaSagital = fichaDe('Sutura Sagital')
+    expect(suturaSagital.resumo).not.toBe(fichaDe('Sutura Coronal').resumo)
   })
 
   it('preserva a descrição original do acervo como nota, quando existe', () => {
