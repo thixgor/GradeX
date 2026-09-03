@@ -492,6 +492,8 @@ export const PERNA_PE: EntradaDicionario[] = [
     resumo: 'Osso lateral do tarso, entre o calcâneo e os dois últimos metatarsos, sulcado pelo tendão do fibular longo.',
     localizacao: 'Face lateral do médio-pé, à frente do calcâneo; sua face plantar tem um sulco profundo para o fibular longo.',
     funcao: 'Sustenta o arco longitudinal lateral e serve de polia para o tendão do fibular longo, que muda de direção sobre ele para cruzar a planta até o primeiro metatarso.',
+    vascularizacao:
+      'Artérias tarsal lateral e plantar lateral, com ramos da fibular. Recebe forames nutrícios pelas faces dorsal e plantar, o que lhe garante irrigação redundante e boa consolidação.',
     relacoes: 'A tuberosidade do cuboide fica atrás do sulco; um sesamoide costuma existir dentro do tendão nesse ponto.',
     clinica:
       'A síndrome do cuboide, subluxação sutil da articulação calcaneocuboidea, produz dor lateral do pé que se confunde com entorse crônica e responde à manipulação. As fraturas por compressão do cuboide — "quebra-nozes" — acompanham lesões de Lisfranc e encurtam a coluna lateral, alterando toda a biomecânica do pé.',
@@ -510,6 +512,8 @@ export const PERNA_PE: EntradaDicionario[] = [
     localizacao: 'Fileira distal medial do tarso: medial, intermédio e lateral, da borda medial para a lateral.',
     funcao:
       'Suas cunhas apontam em direções opostas — o medial com a base para baixo, os outros dois com a base para cima —, e é justamente essa alternância que constrói o arco transverso do pé, como as aduelas de um arco romano.',
+    vascularizacao:
+      'Ramos das artérias tarsais medial e lateral, do arco plantar e da dorsal do pé, com múltiplos forames nutrícios. Irrigação redundante — e é por isso que fraturas dos cuneiformes consolidam bem, ao contrário do escafoide do carpo.',
     relacoes: 'O cuneiforme intermédio é recuado em relação aos vizinhos, formando um encaixe onde se aloja a base do 2º metatarso.',
     clinica:
       'Esse encaixe é o que trava a articulação de Lisfranc e é a chave da sua estabilidade. A lesão de Lisfranc é a lesão do médio-pé mais frequentemente perdida: dor e equimose plantar no médio-pé após trauma, com alargamento entre o 1º e o 2º metatarso na radiografia com carga. Não diagnosticada, evolui para artrose e colapso do arco.',
@@ -527,6 +531,8 @@ export const PERNA_PE: EntradaDicionario[] = [
     resumo: 'O maior dos cuneiformes, base do primeiro metatarso e inserção do tibial anterior.',
     localizacao: 'Borda medial do pé, entre o navicular e o primeiro metatarso.',
     funcao: 'Recebe o tendão do tibial anterior na face medial e o do fibular longo na face plantar lateral — dois músculos antagonistas puxando o mesmo osso em direções opostas, o que o estabiliza.',
+    vascularizacao:
+      'Artérias tarsal medial e plantar medial. É o maior dos três e recebe o tendão do tibial anterior por cima e o do fibular longo por baixo — duas trações opostas que equilibram o arco.',
     relacoes: 'Sua articulação com o primeiro metatarso tem mobilidade sagital significativa.',
     clinica:
       'A hipermobilidade dessa articulação é fator de risco para hálux valgo, e é isso que a osteotomia de Lapidus corrige, artrodesando a primeira cunha ao metatarso. O equilíbrio entre tibial anterior e fibular longo é também o que o pé cavo perde, com o fibular longo dominante empurrando o primeiro raio para baixo.',
@@ -544,6 +550,8 @@ export const PERNA_PE: EntradaDicionario[] = [
     resumo: 'O menor dos cuneiformes, recuado entre os vizinhos, formando o encaixe da base do 2º metatarso.',
     localizacao: 'Entre os cuneiformes medial e lateral, mais curto que ambos.',
     funcao: 'Seu recuo cria uma mortalha em que a base do 2º metatarso se encaixa, tornando o 2º raio o mais rígido do pé.',
+    vascularizacao:
+      'Ramos da artéria dorsal do pé e do arco plantar profundo. É o menor dos três e o mais recuado, o que cria o encaixe (mortalha) em que a base do segundo metatarso se aloja — a chave de abóbada do arco transverso e o ponto de fratura por estresse do militar e do corredor.',
     relacoes: 'O ligamento de Lisfranc vai do cuneiforme medial à base do 2º metatarso, atravessando obliquamente.',
     clinica:
       'É a chave de abóbada do médio-pé. Como o 2º raio é rígido, ele absorve carga desproporcional: é o local mais frequente da fratura de estresse metatarsal ("fratura da marcha") e da metatarsalgia. A ruptura do ligamento de Lisfranc desestabiliza todo esse conjunto.',
@@ -561,6 +569,7 @@ export const PERNA_PE: EntradaDicionario[] = [
     resumo: 'Cuneiforme mais lateral, entre o intermédio e o cuboide, base do 3º metatarso.',
     localizacao: 'Entre o cuneiforme intermédio, medialmente, e o cuboide, lateralmente.',
     funcao: 'Articula-se com o navicular, com os dois cuneiformes vizinhos, com o cuboide e com o 3º metatarso, além de tocar a base do 2º e do 4º.',
+    vascularizacao: 'Artérias tarsal lateral e arqueada, com ramos do arco plantar.',
     relacoes: 'Dá inserção a parte do tibial posterior e ao flexor curto do hálux.',
     clinica:
       'Sua posição faz dele a transição entre a coluna medial, móvel, e a lateral, mais rígida na frente e mais móvel atrás. Nas artrodeses do médio-pé por artrose pós-Lisfranc, as articulações mediais são fundidas e as laterais preservadas — porque a coluna lateral precisa de mobilidade para o pé se adaptar ao terreno irregular.',
@@ -579,6 +588,8 @@ export const PERNA_PE: EntradaDicionario[] = [
     localizacao: 'Entre o tarso e as falanges; o primeiro é curto e robusto, o segundo é o mais longo.',
     funcao:
       'Distribuem a carga na fase de apoio: o primeiro raio suporta cerca do dobro de cada um dos demais. As cabeças formam a região metatarsal, onde se apoia todo o peso na fase de propulsão.',
+    vascularizacao:
+      'Artérias metatarsais dorsais, da arqueada, e plantares, do arco plantar profundo, com uma artéria nutrícia por diáfise. O segundo e o terceiro metatarsos são os mais rígidos e os que recebem mais carga — daí concentrarem as fraturas por estresse, e a cabeça do segundo ser o sítio da osteocondrose de Freiberg.',
     relacoes: 'O ligamento metatarsal transverso profundo une as cabeças; os interósseos ocupam os espaços.',
     clinica:
       'O neuroma de Morton se instala entre a 3ª e a 4ª cabeças metatarsais, onde o nervo plantar digital é mais espesso pela união de ramos medial e lateral, com dor em queimação e sensação de "pedra no sapato". A metatarsalgia de transferência aparece quando o primeiro raio deixa de carregar sua parte — no hálux valgo grave ou após cirurgias mal dimensionadas.',
@@ -653,6 +664,10 @@ export const PERNA_PE: EntradaDicionario[] = [
     localizacao: 'Entre a face inferior do tálus e a superior do calcâneo; anatomicamente compreende as facetas posterior, média e anterior, separadas pelo seio do tarso.',
     funcao:
       'É a articulação que adapta o pé ao terreno. Sua supinação transforma o pé numa alavanca rígida para a propulsão; sua pronação o torna flexível para absorver o impacto. O pé alterna entre esses dois estados a cada passo.',
+    vascularizacao:
+      'Ramos do seio do tarso, vindos da artéria tarsal lateral e da maleolar anterior lateral, e ramos da fibular. A artéria do seio do tarso é o principal vaso do colo do tálus, e sua lesão na fratura de colo é o que produz a necrose avascular do corpo do tálus.',
+    inervacao:
+      'Pela lei de Hilton, recebe ramos dos nervos que cruzam a articulação: tibial e fibular profundo, com contribuição do sural. É a articulação da inversão e eversão, e sua rigidez é o que a coalizão tarsal produz no adolescente.',
     relacoes: 'O ligamento talocalcâneo interósseo, no seio do tarso, é seu principal estabilizador.',
     clinica:
       'A rigidez subtalar — por coalizão társica na adolescência, por artrose pós-fratura de calcâneo ou por artrodese — impede essa adaptação e produz o "pé plano rígido doloroso", com marcha desconfortável em terreno irregular. Testa-se a mobilidade segurando o calcâneo e movendo-o em inversão e eversão com o tornozelo bloqueado em dorsiflexão.',
@@ -671,6 +686,10 @@ export const PERNA_PE: EntradaDicionario[] = [
     localizacao: 'Entre a cabeça do tálus e a concavidade formada pelo navicular, pelo sustentáculo do tálus e pelo ligamento calcaneonavicular plantar.',
     funcao:
       'Funciona como o "quadril do pé": uma bola apoiada numa cavidade formada em parte por osso e em parte por ligamento. Com a subtalar, compõe a unidade funcional que inverte e everte o retropé.',
+    vascularizacao:
+      'Ramos da artéria dorsal do pé, da tarsal medial e da plantar medial, com contribuição da artéria do seio do tarso.',
+    inervacao:
+      'Nervos fibular profundo e plantar medial, ramo do tibial. É a articulação em bola e soquete do retropé, cujo assoalho é o ligamento calcaneonavicular plantar — o ligamento \'mola\', cuja falência derruba o arco longitudinal medial.',
     relacoes: 'O tendão do tibial posterior corre sob o ligamento mola e o reforça dinamicamente.',
     clinica:
       'É a articulação central do pé plano adquirido: a disfunção do tibial posterior sobrecarrega o ligamento mola, que cede, e a cabeça do tálus desliza medial e plantarmente. A artrodese talonavicular isolada elimina cerca de 90% do movimento do retropé — motivo pelo qual é a articulação mais "cara" de fundir no pé.',
@@ -689,6 +708,9 @@ export const PERNA_PE: EntradaDicionario[] = [
     localizacao: 'Entre a face anterior do calcâneo e a posterior do cuboide, lateralmente à talonavicular.',
     funcao:
       'Com a talonavicular, forma a articulação transversa do tarso (de Chopart), a linha em S por onde se faz a amputação de Chopart. Os eixos das duas se tornam paralelos na pronação — liberando movimento — e divergentes na supinação — travando o pé.',
+    vascularizacao: 'Artérias tarsal lateral e plantar lateral, com ramos da fibular.',
+    inervacao:
+      'Nervos sural e plantar lateral. Junto com a talonavicular, forma a articulação transversa do tarso (de Chopart) — a linha de amputação clássica do médio-pé e o eixo em que o pé se torce na entorse por inversão forçada.',
     relacoes: 'O ligamento bifurcado, em Y, une o calcâneo ao cuboide e ao navicular.',
     clinica:
       'Esse mecanismo de eixos paralelos e divergentes é a explicação biomecânica do "windlass" e do travamento do médio-pé na propulsão: quando o calcanhar sai do chão, o pé precisa virar uma barra rígida, e é essa divergência que a produz. O ligamento bifurcado é o mais lesado nas entorses do médio-pé.',
@@ -707,6 +729,10 @@ export const PERNA_PE: EntradaDicionario[] = [
     localizacao: 'Entre os três cuneiformes e o cuboide, atrás, e as bases dos cinco metatarsos, à frente.',
     funcao:
       'Dividem-se em três colunas com mobilidades diferentes: a medial (1º raio), com mobilidade sagital; a central (2º e 3º), praticamente rígida; e a lateral (4º e 5º), a mais móvel, para adaptação ao terreno.',
+    vascularizacao:
+      'Arco arterial dorsal, da dorsal do pé, e arco plantar profundo, da plantar lateral, unidos pela artéria perfurante do primeiro espaço interósseo — vaso que atravessa a articulação de Lisfranc e cuja lesão causa isquemia do antepé na fratura-luxação.',
+    inervacao:
+      'Nervos fibular profundo, plantar medial e plantar lateral. Formam a linha de Lisfranc, estabilizada pelo ligamento de Lisfranc entre o cuneiforme medial e a base do segundo metatarso — a lesão mais frequentemente perdida na radiografia do pé.',
     relacoes: 'Não há ligamento entre o 1º e o 2º metatarso; o ligamento de Lisfranc supre essa falta, ligando o cuneiforme medial à base do 2º.',
     clinica:
       'Essa ausência de ligamento intermetatarsal proximal é o ponto fraco: na lesão de Lisfranc, o diastasse entre o 1º e o 2º metatarso é o achado radiográfico, mais evidente na incidência com carga ou em abdução forçada. Até 20% dessas lesões passam despercebidas na avaliação inicial, e o resultado é artrose com colapso do arco.',
@@ -725,6 +751,10 @@ export const PERNA_PE: EntradaDicionario[] = [
     localizacao: 'Base dos dedos, com placa plantar à frente e ligamentos colaterais nas laterais.',
     funcao:
       'Permitem a extensão de até 70° necessária ao desprendimento do pé no fim do passo. É essa extensão que aciona o mecanismo de windlass: a aponeurose plantar se enrola sobre as cabeças metatarsais, encurta e eleva o arco, transformando o pé numa alavanca rígida.',
+    vascularizacao:
+      'Artérias metatarsais dorsais e plantares, que se dividem em digitais próprias ao nível de cada articulação.',
+    inervacao:
+      'Nervos digitais plantares, ramos dos plantares medial e lateral, e digitais dorsais do fibular superficial. É entre a terceira e a quarta cabeças metatarsais que os nervos plantares medial e lateral se anastomosam — e é justamente aí que se forma o neuroma de Morton.',
     relacoes: 'A placa plantar é a estrutura estabilizadora principal; sua degeneração produz instabilidade do dedo.',
     clinica:
       'A insuficiência da placa plantar do 2º dedo é causa comum de metatarsalgia com dedo em garra progressivo e sinal da gaveta positivo. Já a limitação da extensão da primeira metatarsofalângica é o hálux rigidus, que dói justamente no fim do passo, quando o windlass deveria acontecer.',
@@ -743,6 +773,10 @@ export const PERNA_PE: EntradaDicionario[] = [
     localizacao: 'Entre a cabeça do 1º metatarso e a falange proximal do hálux, com sesamoides medial e lateral na face plantar.',
     funcao:
       'Suporta cerca de duas vezes a carga de cada uma das outras cabeças e precisa de 60 a 70° de extensão para o passo normal. Os sesamoides, dentro do tendão do flexor curto do hálux, aumentam o braço de alavanca e protegem o tendão do flexor longo, que corre entre eles.',
+    vascularizacao:
+      'Primeira artéria metatarsal dorsal e primeira plantar, com um plexo periarticular abundante. Os dois ossos sesamoides no seu assoalho têm irrigação terminal e frágil — a razão da osteonecrose sesamoide do corredor e da bailarina.',
+    inervacao:
+      'Nervo fibular profundo no dorso e nervo plantar medial na planta. Recebe todo o peso na fase de propulsão da marcha, e é a articulação do hálux valgo, do hálux rígido e da crise clássica de gota — a podagra.',
     relacoes: 'O adutor e o abdutor do hálux inserem-se nos sesamoides lateral e medial, respectivamente.',
     clinica:
       'O hálux valgo é um desequilíbrio dessa dupla: o metatarso desvia medialmente enquanto os sesamoides permanecem no lugar, e o abdutor migra para baixo do dedo, deixando de opor-se ao adutor. Entender isso explica por que a cirurgia não é "raspar o osso": é realinhar o metatarso e reequilibrar as partes moles. A sesamoidite e o turf toe (lesão da placa plantar por hiperextensão) são as outras duas queixas frequentes.',
@@ -838,6 +872,8 @@ export const PERNA_PE: EntradaDicionario[] = [
     resumo: 'O mais forte dorsiflexor do pé, e o tendão mais medial e mais volumoso do dorso do tornozelo.',
     localizacao: 'Desce medialmente no compartimento anterior, cruza sob os retináculos e insere-se no cuneiforme medial e na base do 1º metatarso.',
     funcao: 'Dorsiflete e inverte o pé; na marcha, controla excentricamente o abaixamento do pé após o contato do calcanhar, evitando o "tapa" do pé no chão.',
+    vascularizacao:
+      'Artéria tibial anterior no ventre e ramos da maleolar anterior medial e da tarsal medial no tendão. Existe uma zona hipovascular a 1 ou 2 cm da inserção no cuneiforme medial — e é exatamente ali que ele rompe espontaneamente no idoso, com pé caído de instalação insidiosa.',
     inervacao: 'Nervo fibular profundo (L4–L5).',
     relacoes: 'Antagoniza o fibular longo, que se insere no mesmo cuneiforme pela face plantar.',
     clinica:
@@ -858,6 +894,8 @@ export const PERNA_PE: EntradaDicionario[] = [
       'Do compartimento posterior profundo, contorna o maléolo medial, passa sob o sustentáculo do tálus e se abre em leque para o navicular, os cuneiformes e as bases dos metatarsos médios.',
     funcao:
       'Inverte o pé e sustenta o arco medial. Na marcha, é ele que bloqueia o retropé em varo no fim do apoio, permitindo que o pé se transforme em alavanca rígida para a propulsão.',
+    vascularizacao:
+      'Artéria tibial posterior, com uma zona hipovascular bem descrita de 1 a 2 cm distal ao maléolo medial, onde o tendão muda de direção. É a região exata da degeneração que leva à disfunção do tibial posterior — a causa mais comum de pé plano adquirido do adulto.',
     inervacao: 'Nervo tibial (L4–L5).',
     relacoes: 'É a estrutura mais anterior no túnel do tarso; passa por trás do eixo da subtalar, o que lhe dá o vetor inversor.',
     clinica:
@@ -933,6 +971,8 @@ export const PERNA_PE: EntradaDicionario[] = [
     resumo: 'Músculo pequeno e vestigial com ventre curto e o tendão mais longo do corpo.',
     localizacao: 'Da linha supracondilar lateral do fêmur, com ventre de poucos centímetros e um tendão fino que desce medialmente até o calcâneo.',
     funcao: 'Auxilia fracamente a flexão plantar e a flexão do joelho; ausente em cerca de 10% das pessoas, sem consequência funcional.',
+    vascularizacao:
+      'Artéria poplítea, por um ramo sural próprio. Músculo vestigial, ausente em cerca de 10% das pessoas, cujo tendão longo e fino é retirado para enxerto — e cuja rotura isola produz a \'perna de tenista\', dor súbita na panturrilha que imita trombose venosa profunda.',
     inervacao: 'Nervo tibial (S1–S2).',
     relacoes: 'Seu tendão corre entre o gastrocnêmio e o sóleo, e depois medialmente ao tendão do calcâneo.',
     clinica:
@@ -965,11 +1005,13 @@ export const PERNA_PE: EntradaDicionario[] = [
     ],
   },
   {
-    termos: ['Músculo Abdutor do Hálux', 'Músculo Abdutor Longo do Hálux'],
+    termos: ['Músculo Abdutor do Hálux'],
     classe: 'musculo',
     resumo: 'Músculo da primeira camada plantar, na borda medial do pé, que abduz e flete o hálux.',
     localizacao: 'Do processo medial da tuberosidade do calcâneo e da aponeurose plantar até o lado medial da base da falange proximal do hálux.',
     funcao: 'Abduz e flete o hálux; funciona como estabilizador do arco medial e como antagonista do adutor do hálux.',
+    vascularizacao:
+      'Artéria plantar medial, ramo da tibial posterior, que corre sob ele. Sob esse mesmo ventre passa o nervo plantar medial — e é o abdutor do hálux, junto com o retináculo dos flexores, que forma o teto do túnel do tarso.',
     inervacao: 'Nervo plantar medial (S1–S2).',
     relacoes: 'Forma o teto do túnel do tarso distal; o nervo de Baxter passa profundamente à sua origem.',
     clinica:
@@ -988,6 +1030,8 @@ export const PERNA_PE: EntradaDicionario[] = [
     resumo: 'Músculo central da primeira camada plantar, análogo ao flexor superficial dos dedos da mão.',
     localizacao: 'Do processo medial da tuberosidade do calcâneo e da aponeurose plantar até as falanges médias dos dedos 2 a 5, dividindo-se para deixar passar o flexor longo.',
     funcao: 'Flete as articulações interfalângicas proximais e ajuda a manter o arco longitudinal durante o apoio.',
+    vascularizacao:
+      'Artérias plantares medial e lateral. Está na primeira camada da planta, logo sob a aponeurose plantar — vizinhança que faz a fasciíte plantar e a tendinopatia desse músculo se confundirem no exame.',
     inervacao: 'Nervo plantar medial (S1–S2).',
     relacoes: 'Seus tendões se dividem em Y, como na mão, para dar passagem aos tendões do flexor longo dos dedos.',
     clinica:
@@ -1007,6 +1051,8 @@ export const PERNA_PE: EntradaDicionario[] = [
     localizacao: 'Das duas faces do calcâneo até a borda lateral do tendão do flexor longo dos dedos, na planta do pé.',
     funcao:
       'O flexor longo dos dedos vem de trás do maléolo medial e puxa os dedos obliquamente. O quadrado plantar corrige esse vetor, alinhando a tração com o eixo dos dedos — é literalmente um "acessório de direção".',
+    vascularizacao:
+      'Artéria plantar lateral, que corre entre a primeira e a segunda camadas da planta. Este músculo corrige a tração oblíqua do flexor longo dos dedos, alinhando-a com o eixo dos dedos — é uma correção mecânica que só existe em bípedes.',
     inervacao: 'Nervo plantar lateral (S1–S2).',
     relacoes: 'O nervo de Baxter corre entre ele e o abdutor do hálux.',
     clinica:
@@ -1025,6 +1071,8 @@ export const PERNA_PE: EntradaDicionario[] = [
     resumo: 'Porção maior do adutor do hálux, que nasce das bases dos metatarsos médios.',
     localizacao: 'Terceira camada plantar, das bases do 2º ao 4º metatarso e da bainha do fibular longo até o sesamoide lateral e a base da falange proximal do hálux.',
     funcao: 'Aduz e flete o hálux; com a cabeça transversa, mantém o arco transverso anterior do pé.',
+    vascularizacao:
+      'Arco plantar profundo, formado pela artéria plantar lateral e pelo ramo plantar profundo da dorsal do pé. É o mesmo arco que atravessa o primeiro espaço interósseo — e a razão de o pulso dorsal do pé desaparecer quando o arco plantar é o dominante.',
     inervacao: 'Ramo profundo do nervo plantar lateral (S2–S3).',
     relacoes: 'Insere-se no sesamoide lateral, junto com a cabeça transversa.',
     clinica:
@@ -1045,6 +1093,8 @@ export const PERNA_PE: EntradaDicionario[] = [
       'Do compartimento posterior profundo, passa entre os tubérculos posteriores do tálus, sob o sustentáculo do tálus e cruza a planta do pé sobre o flexor longo dos dedos, no quiasma plantar.',
     funcao:
       'Flete o hálux e é o último tendão a empurrar o corpo para a frente no fim do passo — é o "motor do impulso". Contribui também para o arco longitudinal medial.',
+    vascularizacao:
+      'Artéria fibular no ventre e ramos da tibial posterior no tendão. Corre num sulco entre os tubérculos do tálus e sob o sustentáculo do tálus — trajeto angulado que o torna o tendão do tornozelo mais sujeito a tenossinovite estenosante na bailarina.',
     inervacao: 'Nervo tibial (S1–S3).',
     relacoes: 'É o mais posterior dos tendões no túnel do tarso; corre num túnel fibro-ósseo entre os tubérculos do tálus.',
     clinica:
@@ -1063,6 +1113,8 @@ export const PERNA_PE: EntradaDicionario[] = [
     resumo: 'Tendão que cruza a planta do pé obliquamente e se divide para os quatro dedos laterais.',
     localizacao: 'Passa atrás do maléolo medial, cruza superficialmente o tendão do flexor longo do hálux no quiasma plantar e se divide em quatro tendões.',
     funcao: 'Flete as interfalângicas distais dos dedos 2 a 5 e ajuda na flexão plantar e na inversão. Recebe o quadrado plantar, que alinha sua tração, e origina os lumbricais.',
+    vascularizacao:
+      'Artéria tibial posterior. Cruza por cima do tendão do flexor longo do hálux na planta, no chamado quiasma plantar, onde os dois trocam fibras — a razão de a lesão de um deles alterar a função do outro.',
     inervacao: 'Nervo tibial (L5–S2).',
     relacoes: 'É o segundo tendão no túnel do tarso, entre o tibial posterior e o feixe vasculonervoso.',
     clinica:
@@ -1082,6 +1134,8 @@ export const PERNA_PE: EntradaDicionario[] = [
     localizacao: 'Do compartimento lateral, passa atrás do maléolo lateral, abaixo da tróclea fibular, entra no sulco do cuboide e cruza a planta obliquamente até o cuneiforme medial e a base do 1º metatarso.',
     funcao:
       'Everte o pé e, mais importante, faz a flexão plantar do primeiro raio — ele empurra a cabeça do 1º metatarso contra o chão, estabilizando o apoio medial na propulsão.',
+    vascularizacao:
+      'Artéria fibular. Existe uma zona hipovascular onde o tendão contorna o maléolo lateral e outra onde ele cruza o cuboide para atravessar a planta — os dois pontos em que ele rompe e onde surge o os peroneum doloroso.',
     inervacao: 'Nervo fibular superficial (L5–S1).',
     relacoes: 'É o único tendão que cruza a planta do pé de lateral para medial, sustentando o arco transverso como uma corda de estribo com o tibial anterior.',
     clinica:
@@ -1100,6 +1154,8 @@ export const PERNA_PE: EntradaDicionario[] = [
     resumo: 'Tendão que corre atrás do maléolo lateral e se insere na tuberosidade do 5º metatarso.',
     localizacao: 'Atrás do maléolo lateral, acima da tróclea fibular, até a tuberosidade da base do 5º metatarso.',
     funcao: 'É o principal eversor do pé; seu braço de alavanca lateral o torna mais eficiente nessa ação que o fibular longo.',
+    vascularizacao:
+      'Artéria fibular, com ramos das maleolares laterais. Sua região hipovascular fica atrás do maléolo lateral, onde ele é comprimido contra o osso pelo fibular longo — mecanismo das lesões longitudinais em fenda, típicas do tornozelo instável crônico.',
     inervacao: 'Nervo fibular superficial (L5–S1).',
     relacoes: 'No sulco retromaleolar, é o tendão que fica em contato direto com o osso, com o fibular longo por trás dele.',
     clinica:
@@ -1118,6 +1174,8 @@ export const PERNA_PE: EntradaDicionario[] = [
     resumo: 'Tendão inconstante do compartimento anterior, que ajuda na dorsiflexão e na eversão.',
     localizacao: 'Parte lateral do extensor longo dos dedos, inserindo-se na base do 5º metatarso pelo lado dorsal.',
     funcao: 'Dorsiflete e everte o pé. Ausente em 5 a 10% das pessoas, sem prejuízo funcional.',
+    vascularizacao:
+      'Artéria tibial anterior e ramos da maleolar anterior lateral. Presente em cerca de 90% das pessoas e exclusivo da espécie humana — apareceu com a marcha bípede, para elevar a borda lateral do pé.',
     inervacao: 'Nervo fibular profundo (L5–S1) — e é essa a chave: apesar do nome "fibular", ele pertence ao compartimento anterior.',
     relacoes: 'Corre sob os retináculos extensores, junto ao extensor longo dos dedos.',
     clinica:
@@ -1136,6 +1194,8 @@ export const PERNA_PE: EntradaDicionario[] = [
     resumo: 'Quatro tendões que se abrem em expansões extensoras no dorso dos dedos 2 a 5.',
     localizacao: 'Do dorso do pé até as falanges médias e distais, formando o capuz extensor de cada dedo.',
     funcao: 'Estendem as metatarsofalângicas diretamente; a extensão das interfalângicas depende dos lumbricais e interósseos, que se inserem no mesmo capuz — exatamente como na mão.',
+    vascularizacao:
+      'Artéria tibial anterior e artéria dorsal do pé, por ramos do paratendão. Sendo tendões extrassinoviais no dorso do pé, têm irrigação difusa e cicatrizam bem — o oposto dos flexores dentro de bainha.',
     relacoes: 'Recebem, lateralmente, os tendões do extensor curto dos dedos.',
     clinica:
       'Essa dependência dos intrínsecos é a base do dedo em garra: com a fraqueza dos intrínsecos — no diabético neuropata, no pé cavo neurológico —, os extensores longos hiperestendem as metatarsofalângicas e os flexores longos fletem as interfalângicas. O resultado é a cabeça metatarsal empurrada para o chão e o calo plantar, porta de entrada da úlcera diabética.',
@@ -1148,12 +1208,14 @@ export const PERNA_PE: EntradaDicionario[] = [
     ],
   },
   {
-    termos: ['Tendões do Músculo Extensor Curto dos Dedos', 'Tendão do Músculo Extensor Curto do Hálux'],
+    termos: ['Tendões do Músculo Extensor Curto dos Dedos'],
     classe: 'tendao',
     resumo: 'Tendões do único músculo intrínseco do dorso do pé, que nasce no calcâneo.',
     localizacao:
       'Da face dorsolateral do calcâneo, formando um ventre carnoso visível na frente do maléolo lateral; envia tendões para os dedos 1 a 4. A parte destinada ao hálux chama-se extensor curto do hálux.',
     funcao: 'Auxilia a extensão dos quatro dedos mediais, com vantagem quando as metatarsofalângicas já estão estendidas.',
+    vascularizacao:
+      'Artéria tarsal lateral, ramo da dorsal do pé, que corre sob o ventre muscular. Esse ventre carnoso no dorso do pé é a \'massa\' que pode ser confundida com edema ou tumor no exame — e cuja identificação evita uma investigação desnecessária.',
     inervacao: 'Nervo fibular profundo (L5–S1).',
     relacoes: 'Seu ventre é palpável e visível à frente do maléolo lateral quando os dedos são estendidos.',
     clinica:
@@ -1302,6 +1364,56 @@ export const PERNA_PE: EntradaDicionario[] = [
       'Que território o ramo medial do fibular profundo inerva?',
       'Como esse território ajuda a localizar a lesão nervosa?',
       'O que diferencia lesão do fibular profundo e do comum?',
+    ],
+  },
+  {
+    termos: [
+      'Tendão do Músculo Extensor Curto do Hálux',
+    ],
+    classe: 'tendao',
+    resumo: 'Tendão medial do extensor curto dos dedos, destinado exclusivamente ao hálux.',
+    localizacao:
+      'Do ventre medial do extensor curto dos dedos, cruza obliquamente por baixo do tendão do extensor longo do hálux e insere-se na base da falange proximal do hálux.',
+    funcao:
+      'Estende a articulação metatarsofalângica do hálux. Diferença que decide o exame: o extensor longo insere-se na falange distal e estende a interfalângica; o curto para na proximal. Testar a extensão da ponta do hálux testa o longo; testar a base testa o curto.',
+    vascularizacao: 'Artéria dorsal do pé e ramos da tarsal lateral.',
+    inervacao: 'Nervo fibular profundo (L5–S1) — o mesmo do extensor longo, mas de raiz predominantemente S1 aqui.',
+    linfaticos: 'Linfonodos inguinais superficiais.',
+    relacoes:
+      'Cruza por BAIXO do tendão do extensor longo do hálux, e não por cima — inversão que confunde na dissecção.',
+    clinica:
+      'É o único músculo do dorso do pé inervado pelo fibular profundo abaixo do tornozelo, e por isso o teste de sua função distingue lesão alta de lesão baixa do nervo: numa compressão do fibular profundo no tornozelo (síndrome do túnel do tarso anterior), o extensor curto atrofia e o dorso do pé afunda, enquanto os extensores longos, inervados acima, continuam funcionando. Um pé que estende os dedos mas perdeu o ventre carnoso lateral tem lesão distal.',
+    memoria: 'Longo vai até a ponta, curto para na base. Se só o curto atrofiou, o nervo foi pego no tornozelo.',
+    pontos: [
+      'Onde o extensor curto do hálux se insere, e o longo?',
+      'Que nervo o inerva?',
+      'Como sua atrofia isolada localiza a lesão nervosa?',
+    ],
+  },
+  {
+    termos: [
+      'Músculo Abdutor Longo do Hálux',
+    ],
+    classe: 'musculo',
+    resumo: 'Variação anatômica em que uma porção acessória do tibial anterior se prolonga até o hálux.',
+    localizacao:
+      'Quando presente, parte do terço distal do tibial anterior ou da fáscia da perna e desce medialmente até a base do primeiro metatarso ou da falange proximal do hálux.',
+    funcao:
+      'Abduz e estende o hálux, somando-se ao tibial anterior na dorsiflexão e inversão do pé. É um músculo supranumerário, presente em uma parcela pequena das pessoas — não deve ser confundido com o abdutor do hálux, que é constante e ocupa a planta.',
+    vascularizacao: 'Ramos da artéria tibial anterior e da dorsal do pé.',
+    inervacao:
+      'Nervo fibular profundo (L4–L5), o mesmo do tibial anterior de que ele deriva — e não o plantar medial, que inerva o abdutor do hálux verdadeiro.',
+    linfaticos: 'Linfonodos inguinais superficiais.',
+    relacoes:
+      'Corre no dorso e na face medial do pé, superficialmente ao retináculo; o abdutor do hálux verdadeiro corre na PLANTA, sob a aponeurose plantar.',
+    clinica:
+      'Sua importância é a de toda variação anatômica: ser reconhecida para não virar diagnóstico. Um ventre muscular acessório no dorsomedial do pé é confundido com tumor de partes moles ou com tenossinovite na ressonância, e já motivou biópsias desnecessárias. Quando volumoso, pode comprimir o nervo fibular profundo sob o retináculo e produzir a síndrome do túnel do tarso anterior.',
+    memoria:
+      'Abdutor do hálux é da planta e é do plantar medial; abdutor longo do hálux é do dorso, é raro e é do fibular profundo. Nomes parecidos, endereços opostos.',
+    pontos: [
+      'Onde corre o abdutor longo do hálux, e onde corre o abdutor do hálux?',
+      'Que nervos inervam cada um?',
+      'Por que essa variação importa na interpretação da ressonância?',
     ],
   },
 ]

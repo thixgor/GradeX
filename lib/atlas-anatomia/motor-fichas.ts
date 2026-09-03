@@ -9,10 +9,10 @@ import type { ContextoMarcador, MarkerInsight } from './insights'
  *
  * `insights` puxa o dicionário de estruturas, os contextos regionais e o
  * classificador. Desde que o dicionário passou a cobrir as 1.324 estruturas do
- * acervo — uma ficha própria por marcador, em vez de texto de família —, esse
- * módulo é o maior pedaço de conteúdo do Atlas: cerca de 400 KB comprimidos de
- * texto editorial, contra os 111 KB de quando metade das estruturas caía no
- * texto genérico da classe.
+ * acervo — uma ficha própria por marcador, com vasos e nervos da própria peça em
+ * vez dos da região da prancha —, esse módulo é o maior pedaço de conteúdo do
+ * Atlas: cerca de 495 KB comprimidos de texto editorial, contra os 111 KB de
+ * quando metade das estruturas caía no texto genérico da classe.
  *
  * Nada disso é preciso para escolher um sistema, escolher uma região ou olhar a
  * prancha — só quando o aluno toca num marcador. Deixar tudo no pacote
@@ -24,10 +24,12 @@ import type { ContextoMarcador, MarkerInsight } from './insights'
  * termina de chegar enquanto o aluno ainda está olhando a peça, e o toque no
  * marcador abre a ficha na hora.
  *
- * Se um dia esses 400 KB pesarem demais, o caminho natural é dividir o
- * dicionário por sistema e carregar só o que a prancha aberta usa — os arquivos
- * já estão separados por região em `dicionario/`, e o teste de peso guarda o
- * tamanho para que o crescimento continue sendo uma decisão, e não um acidente.
+ * Se esses 495 KB pesarem demais, o caminho é dividir o dicionário por sistema e
+ * carregar só o que a prancha aberta usa. Os arquivos já estão separados por
+ * região em `dicionario/`, mas o recorte não é direto: a mesma região serve
+ * várias coleções do acervo, e dividir errado faz um marcador perder a ficha sem
+ * avisar. O teste de peso guarda o tamanho para que esse passo continue sendo
+ * uma decisão, e não um acidente.
  */
 
 type Motor = typeof import('./insights')

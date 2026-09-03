@@ -39,10 +39,12 @@ export const RESPIRATORIO: EntradaDicionario[] = [
     pontos: ['Valécula: apoio da lâmina Macintosh', 'Laríngeo superior interno (reflexo de tosse)', 'Epiglotite e sinal do polegar'],
   },
   {
-    termos: ['Prega Vocal', 'Glote'],
+    termos: ['Prega Vocal'],
     resumo: 'Pregas que delimitam a rima da glote — a parte mais estreita da via aérea do adulto.',
     localizacao: 'Entre a cartilagem tireóidea, à frente, e os processos vocais das aritenóideas, atrás.',
     funcao: 'Produzem o som pela vibração ao passar o ar e protegem a via aérea inferior fechando-se reflexamente.',
+    vascularizacao:
+      'Artéria laríngea superior por cima e inferior por baixo, mas a prega em si é notavelmente avascular: sua camada superficial da lâmina própria — o espaço de Reinke — quase não tem vasos, e é essa transparência que dá à prega vocal sua cor branca nacarada, distinta da mucosa vermelha ao redor. É também o que faz o edema de Reinke, do tabagista, se acumular ali sem resistência.',
     inervacao: 'Motora pelo laríngeo recorrente (todos os músculos, exceto o cricotireóideo); sensitiva pelo laríngeo superior interno acima e pelo recorrente abaixo.',
     clinica:
       'A glote é o ponto mais estreito da via aérea do adulto (na criança, é a cricoide) — o que define o calibre do tubo orotraqueal. A paralisia recorrencial bilateral fecha a via aérea. A visualização das pregas é o padrão-ouro da confirmação da intubação.',
@@ -106,11 +108,13 @@ export const RESPIRATORIO: EntradaDicionario[] = [
     ],
   },
   {
-    termos: ['Ádito da Laringe', 'Vestíbulo da Laringe'],
+    termos: ['Ádito da Laringe'],
     classe: 'via-aerea',
     resumo: 'Entrada da laringe, delimitada pela epiglote, pelas pregas ariepiglóticas e pelas aritenoides.',
     localizacao: 'Voltado para trás e para cima, abrindo-se na laringofaringe; de cada lado ficam os recessos piriformes.',
     funcao: 'Porta de passagem do ar e ponto onde o reflexo de fechamento protege a via aérea inferior durante a deglutição.',
+    vascularizacao:
+      'Artéria laríngea superior, ramo da tireóidea superior, que perfura a membrana tireo-hióidea junto com o nervo laríngeo interno.',
     inervacao: 'Ramo interno do nervo laríngeo superior — a aferência do reflexo de tosse.',
     clinica:
       'É a estrutura que se procura na laringoscopia, e o recesso piriforme ao lado é onde corpos estranhos pontiagudos, como espinha de peixe, costumam encravar. A remoção às cegas ali arrisca o laríngeo superior interno.',
@@ -118,6 +122,62 @@ export const RESPIRATORIO: EntradaDicionario[] = [
       'Epiglote, pregas ariepiglóticas e aritenoides',
       'Recesso piriforme: corpo estranho encravado',
       'Laríngeo superior interno e o reflexo de tosse',
+    ],
+  },
+  {
+    termos: [
+      'Vestíbulo da Laringe',
+    ],
+    classe: 'via-aerea',
+    resumo: 'Andar superior da cavidade laríngea, do ádito até as pregas vestibulares — o espaço, e não a porta.',
+    localizacao:
+      'Entre o ádito da laringe, acima, e as pregas vestibulares, abaixo; limitado à frente pela face posterior da epiglote e atrás pelas cartilagens aritenóideas.',
+    funcao:
+      'É o primeiro dos três andares da laringe (vestíbulo, ventrículo e cavidade infraglótica). Funciona como funil de convergência do ar e como câmara de ressonância — parte do timbre da voz nasce da forma deste espaço, e não das pregas vocais.',
+    vascularizacao:
+      'Artéria laríngea superior, ramo da tireóidea superior, que perfura a membrana tireo-hióidea. Território inteiramente supraglótico: sua irrigação vem de cima, e não da tireóidea inferior.',
+    inervacao:
+      'Nervo laríngeo interno, ramo do laríngeo superior (X) — sensibilidade acima das pregas vocais. É o nervo do reflexo de fechamento glótico, e anestesiá-lo é o passo obrigatório da intubação acordada com fibroscópio.',
+    linfaticos:
+      'Rede linfática densa que drena BILATERALMENTE para os linfonodos cervicais profundos superiores — e essa riqueza é a razão de o câncer supraglótico metastatizar cedo e para os dois lados.',
+    relacoes:
+      'Suas paredes laterais são as pregas ariepiglóticas, e o recesso piriforme fica por fora delas, já na faringe.',
+    clinica:
+      'A diferença entre supraglote e glote não é acadêmica: o câncer supraglótico, nascido aqui, tem drenagem linfática abundante, dá metástase cervical precoce e exige esvaziamento bilateral; o câncer glótico, poucos milímetros abaixo, nasce num território quase sem linfáticos, rouqueja cedo e é curável com cirurgia local. Dois tumores vizinhos, dois prognósticos opostos — e a fronteira é a prega vocal.',
+    memoria:
+      'Acima da prega vocal há linfático de sobra e o câncer se espalha; na prega vocal quase não há, e ele fica preso. A fronteira vale uma cirurgia inteira.',
+    pontos: [
+      'Quais são os três andares da laringe?',
+      'Que nervo dá sensibilidade ao vestíbulo?',
+      'Por que o câncer supraglótico metastatiza mais que o glótico?',
+    ],
+  },
+  {
+    termos: [
+      'Glote',
+    ],
+    classe: 'via-aerea',
+    resumo: 'O aparelho fonador completo: as duas pregas vocais mais a fenda entre elas — a rima da glote.',
+    localizacao:
+      'Andar médio da laringe, ao nível das pregas vocais, entre a comissura anterior, na cartilagem tireóidea, e os processos vocais das aritenóideas, atrás.',
+    funcao:
+      'É a parte estreita da via aérea e o gerador do som. Divide-se em porção intermembranácea, os dois terços anteriores entre as pregas, onde a voz é produzida, e porção intercartilagínea, o terço posterior entre as aritenóideas, que é a parte respiratória — aberta na inspiração e fechada na fonação.',
+    vascularizacao:
+      'Encontro de dois territórios: artéria laríngea superior por cima e inferior por baixo. As pregas vocais em si são notavelmente pouco vascularizadas, e é essa pobreza que lhes dá a cor branca.',
+    inervacao:
+      'Aqui está a fronteira que organiza a laringe inteira: acima da glote, o nervo laríngeo interno; ABAIXO dela e na própria mucosa das pregas, o nervo laríngeo RECORRENTE. E todos os músculos intrínsecos são do recorrente, exceto o cricotireóideo, do laríngeo externo.',
+    linfaticos:
+      'Quase inexistentes na porção intermembranácea — a glote é um dos poucos territórios do corpo praticamente sem drenagem linfática, e essa é a razão anatômica de o câncer glótico ficar confinado por muito tempo.',
+    relacoes:
+      'A rima da glote é a abertura mais estreita da laringe do adulto — no lactente, o ponto mais estreito é a cricoide.',
+    clinica:
+      'Ser o ponto mais estreito e o gerador do som produz três consequências que se veem toda semana. O corpo estranho grande para aqui. O tubo endotraqueal é dimensionado por ela, e a lesão de sua mucosa pelo balonete produz granuloma e estenose. E a paralisia bilateral do recorrente fecha a rima, com estridor e insuficiência respiratória — o paciente fica sem voz e sem ar ao mesmo tempo, e precisa de traqueostomia.',
+    memoria:
+      'Glote é prega mais fenda. É o lugar mais estreito, o que faz a voz e o que quase não tem linfático — três fatos que explicam quase toda a clínica da laringe.',
+    pontos: [
+      'O que compõe a glote e quais suas duas porções?',
+      'Onde está a fronteira de inervação entre laríngeo interno e recorrente?',
+      'Por que o câncer glótico tem melhor prognóstico?',
     ],
   },
 ]

@@ -23,6 +23,8 @@ export const MEMBRO_INFERIOR: EntradaDicionario[] = [
     resumo: 'Peça posteroinferior do osso do quadril, sobre a qual nos sentamos.',
     localizacao: 'Inferoposteriormente no osso do quadril, com o túber isquiático embaixo e a espinha isquiática entre as incisuras isquiáticas maior e menor.',
     funcao: 'Suporta o peso na posição sentada e dá origem aos isquiotibiais e a parte do adutor magno.',
+    vascularizacao:
+      'Artéria obturatória, artéria glútea inferior e artéria pudenda interna, com o ramo acetabular da obturatória alcançando a fossa do acetábulo. O túber isquiático, que sustenta o peso ao sentar, recebe irrigação periosteal abundante — e é por isso que a úlcera de pressão isquiática do paciente cadeirante compromete o osso rapidamente.',
     inervacao: 'Nervo pudendo contorna a espinha isquiática ao voltar para o períneo.',
     clinica:
       'A espinha isquiática é o reparo palpável pelo toque vaginal para o bloqueio do nervo pudendo e é o ponto de referência do plano zero de De Lee na avaliação da descida fetal. A avulsão do túber isquiático acomete atletas adolescentes.',
@@ -33,6 +35,8 @@ export const MEMBRO_INFERIOR: EntradaDicionario[] = [
     resumo: 'Peça anterior do osso do quadril, que se une à do lado oposto na sínfise púbica.',
     localizacao: 'Na parte anterior da pelve, com corpo, ramo superior e ramo inferior delimitando o forame obturado.',
     funcao: 'Fecha o anel pélvico à frente e dá inserção aos adutores, ao reto do abdome e ao ligamento inguinal.',
+    vascularizacao:
+      'Artéria obturatória e ramo púbico da epigástrica inferior, que se anastomosam por trás do ramo superior do púbis. Em cerca de 25% das pessoas esse ramo é calibroso e substitui a obturatória — é a corona mortis, que sangra de forma alarmante na fratura de pelve e na hernioplastia inguinal, e cujo nome traduz o que acontecia antes de ela ser conhecida.',
     clinica:
       'O tubérculo púbico é o reparo que diferencia a hérnia inguinal (acima e medial a ele) da femoral (abaixo e lateral). A diástase da sínfise integra as fraturas em livro aberto da pelve, com risco de sangramento maciço do plexo venoso pélvico.',
     pontos: ['Tubérculo púbico diferencia hérnia inguinal de femoral', 'Sínfise púbica é articulação cartilagínea', 'Fratura em livro aberto e sangramento pélvico'],
@@ -211,6 +215,8 @@ export const MEMBRO_INFERIOR: EntradaDicionario[] = [
     resumo: 'Músculo em pera que sai da pelve pelo forame isquiático maior — a referência da região glútea.',
     localizacao: 'Da face anterior do sacro até o trocanter maior, atravessando o forame isquiático maior.',
     funcao: 'Roda lateralmente o quadril estendido e abduz o quadril fletido.',
+    vascularizacao:
+      'Artéria glútea superior, acima dele, e glútea inferior, abaixo — as duas saem da pelve justamente contornando suas bordas, pelos forames supra e infrapiriforme. É a chave anatômica da região glútea: tudo o que entra ou sai da pelve por trás passa acima ou abaixo do piriforme.',
     inervacao: 'Ramos do plexo sacral (S1–S2).',
     relacoes: 'Divide o forame isquiático maior: acima dele passam os vasos e o nervo glúteos superiores; abaixo, os glúteos inferiores, o nervo isquiático, o pudendo e o cutâneo femoral posterior.',
     clinica:
@@ -257,6 +263,8 @@ export const MEMBRO_INFERIOR: EntradaDicionario[] = [
     resumo: 'O músculo mais longo do corpo, cruzando a coxa em diagonal.',
     localizacao: 'Da espinha ilíaca anterossuperior até a face medial superior da tíbia, na pata de ganso.',
     funcao: 'Flexiona, abduz e roda lateralmente o quadril e flexiona o joelho — a posição de sentar de pernas cruzadas, que lhe deu o nome (alfaiate).',
+    vascularizacao:
+      'Ramos musculares da artéria femoral e da circunflexa femoral lateral, em pedículos segmentares múltiplos ao longo do músculo. Essa irrigação segmentar limita seu uso como retalho pediculado, mas é o que permite mobilizá-lo em partes para cobrir o trígono femoral após infecção de prótese vascular.',
     inervacao: 'Nervo femoral (L2–L3).',
     relacoes: 'Forma o limite lateral do trígono femoral e o teto do canal dos adutores.',
     clinica: 'Sua borda medial é reparo do trígono femoral, onde se palpa o pulso femoral. A pata de ganso (sartório, grácil e semitendíneo) é sítio de bursite, causa comum de dor medial do joelho.',

@@ -321,7 +321,12 @@ export function FichaEstrutura({ titulo, numero, insight, compacta, onRecolher }
         texto={insight.inervacao}
         cor="text-violet-500"
       />
-      <Bloco icone={Network} titulo="Drenagem linfática da região" texto={insight.linfaticos} cor="text-emerald-500" />
+      <Bloco
+        icone={Network}
+        titulo={insight.vasosRegionais ? 'Drenagem linfática da região' : 'Drenagem linfática'}
+        texto={insight.linfaticos}
+        cor="text-emerald-500"
+      />
       <Bloco icone={Layers} titulo="Relações anatômicas" texto={insight.relacoes} cor={cores.realce} />
       <Bloco icone={Target} titulo="Reparos no exame físico" texto={compacta ? undefined : insight.reparos} cor={cores.realce} />
       <Bloco icone={Stethoscope} titulo="Correlação clínica" texto={insight.clinica} cor="text-sky-500" />

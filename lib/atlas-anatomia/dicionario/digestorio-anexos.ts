@@ -18,6 +18,8 @@ export const DIGESTORIO_ANEXOS: EntradaDicionario[] = [
     localizacao: 'Ocupa o hipocôndrio direito e parte do epigástrio, sob a cúpula diafragmática direita, da 5ª costela ao rebordo.',
     funcao:
       'A divisão anatômica pelo ligamento falciforme não corresponde à divisão funcional: a linha de Cantlie, que vai da fossa da vesícula à veia cava inferior, é a verdadeira fronteira entre os lobos funcionais direito e esquerdo, porque separa os territórios da veia porta direita e esquerda.',
+    inervacao:
+      'Plexo hepático, do celíaco, com simpático de T7 a T9 e parassimpático do vago. A cápsula de Glisson, porém, recebe também ramos do nervo frênico direito (C3–C5) — e é por isso que a distensão hepática aguda dói no ombro direito, e não no fígado.',
     vascularizacao: 'Ramo direito da artéria hepática própria e da veia porta; drena pelas veias hepáticas direita e média.',
     relacoes: 'Abaixo dele estão a flexura cólica direita, o rim e a glândula suprarrenal direitos e o duodeno.',
     clinica:
@@ -37,6 +39,8 @@ export const DIGESTORIO_ANEXOS: EntradaDicionario[] = [
     resumo: 'Lobo hepático à esquerda do ligamento falciforme, que se estende ao epigástrio.',
     localizacao: 'Cruza a linha média e alcança o hipocôndrio esquerdo, repousando sobre o estômago e o esôfago abdominal.',
     funcao: 'Compreende os segmentos II e III (setor lateral esquerdo) e o IV (setor medial esquerdo).',
+    inervacao:
+      'Plexo hepático (T7–T9 e vago), com contribuição do frênico esquerdo na cápsula. Vale a diferença embriológica: a irrigação do lobo esquerdo pela artéria gástrica esquerda, presente como variante em cerca de 15% das pessoas, é um resquício da origem comum com o estômago.',
     vascularizacao: 'Ramo esquerdo da artéria hepática e da veia porta; drena pelas veias hepáticas esquerda e média.',
     relacoes: 'Sua face inferior apresenta a impressão gástrica e a esofágica.',
     clinica:
@@ -56,6 +60,10 @@ export const DIGESTORIO_ANEXOS: EntradaDicionario[] = [
     localizacao: 'Face posterior do fígado, entre a veia cava inferior, à direita, e a fissura do ligamento venoso, à esquerda.',
     funcao:
       'É o único segmento que recebe sangue dos ramos portais direito e esquerdo e que drena diretamente para a veia cava inferior por veias próprias, sem passar pelas veias hepáticas principais.',
+    vascularizacao:
+      'Único no fígado inteiro: recebe ramos das artérias hepáticas direita E esquerda e de ambos os ramos da veia porta, e drena por veias hepáticas curtas diretamente para a veia cava inferior, sem passar pelas três veias hepáticas principais. Essa autonomia é o que faz o lobo caudado hipertrofiar na síndrome de Budd-Chiari, quando todo o resto do fígado congestiona.',
+    inervacao:
+      'Plexo hepático (T7–T9 e vago). É o segmento I de Couinaud, e sua ressecção isolada é tecnicamente das mais difíceis por estar encaixado entre a cava e a porta.',
     relacoes: 'Está imediatamente à frente da veia cava inferior e atrás do omento menor.',
     clinica:
       'Essa autonomia vascular é o que explica sua hipertrofia compensatória na síndrome de Budd-Chiari, em que as veias hepáticas principais se ocluem mas as veias caudadas permanecem pérvias — o caudado aumentado com o restante do fígado atrofiado é o achado de imagem mais característico da síndrome. Sua ressecção é uma das mais difíceis da cirurgia hepática, pela proximidade com a cava.',
@@ -73,6 +81,10 @@ export const DIGESTORIO_ANEXOS: EntradaDicionario[] = [
     resumo: 'Segmento IV do fígado, na face visceral, entre a vesícula biliar e a fissura do ligamento redondo.',
     localizacao: 'Face inferior do fígado, delimitado pela fossa da vesícula à direita, pela fissura do ligamento redondo à esquerda e pela porta hepática atrás.',
     funcao: 'Apesar de estar à direita do ligamento falciforme na face visceral, pertence funcionalmente ao lobo esquerdo, por ser irrigado pelo ramo portal esquerdo.',
+    vascularizacao:
+      'Ramos da artéria hepática esquerda, com contribuição frequente da direita. Corresponde ao segmento IVb de Couinaud — e não a um lobo verdadeiro: a divisão funcional do fígado é pela veia hepática média, e não pelo ligamento falciforme.',
+    inervacao:
+      'Plexo hepático (T7–T9 e vago). Está entre a vesícula e o ligamento redondo, e é o segmento que se ressecа junto com a vesícula no câncer de vesícula.',
     relacoes: 'Repousa sobre o piloro e a parte superior do duodeno.',
     clinica:
       'Esse descompasso entre aparência e função é o exemplo clássico da diferença entre anatomia morfológica e cirúrgica: quadrado e caudado parecem do lobo direito, mas pertencem ao esquerdo. Na colecistectomia, o segmento IV forma o teto do triângulo hepatocístico e é a referência superior da dissecção.',
@@ -144,6 +156,10 @@ export const DIGESTORIO_ANEXOS: EntradaDicionario[] = [
     localizacao: 'Face visceral do fígado, entre o lobo quadrado, à frente, e o caudado, atrás.',
     funcao:
       'Dá passagem, de trás para a frente, à veia porta, à artéria hepática própria e aos ductos hepáticos — a regra é que o ducto é anterior e à direita, a artéria anterior e à esquerda, e a veia porta posterior às duas.',
+    vascularizacao:
+      'É o pedículo: a veia porta atrás, a artéria hepática própria à esquerda e à frente, e o ducto colédoco à direita e à frente — a disposição que o cirurgião confirma antes de qualquer manobra. O forame omental fica imediatamente atrás dele, e por ele se passa o dedo para a manobra de Pringle, que clampeia o pedículo e interrompe o sangramento hepático.',
+    inervacao:
+      'Plexo hepático, formado por fibras do gânglio celíaco (T7–T9) e do vago, que envolvem a artéria hepática ao entrar.',
     relacoes: 'O pedículo é envolvido pelo ligamento hepatoduodenal, borda livre do omento menor, que forma a parede anterior do forame omental.',
     clinica:
       'Essa disposição é o que orienta toda dissecção do hilo: o ducto colédoco é a primeira estrutura encontrada na dissecção anterior direita. A manobra de Pringle clampeia o ligamento hepatoduodenal inteiro e controla a hemorragia de fígado — se o sangramento persiste apesar dela, a origem é das veias hepáticas ou da cava, e não do pedículo. Um teste diagnóstico feito com uma pinça.',
@@ -179,6 +195,10 @@ export const DIGESTORIO_ANEXOS: EntradaDicionario[] = [
     resumo: 'Ducto formado pela união dos ductos hepáticos direito e esquerdo, na porta hepática.',
     localizacao: 'Da confluência hilar até a junção com o ducto cístico, com cerca de 3 cm de comprimento.',
     funcao: 'Conduz a bile produzida pelo fígado; sua confluência, no hilo, é a placa hilar.',
+    vascularizacao:
+      'Artérias axiais nas posições de 3 e 9 horas, vindas da hepática direita e da cística. Irrigação longitudinal e delicada, e sua lesão na colecistectomia produz a estenose biliar iatrogênica — a complicação que transforma uma cirurgia de rotina numa hepatectomia.',
+    inervacao:
+      'Plexo hepático (T7–T9 e vago). Sua compressão por um cálculo impactado no ducto cístico ou no infundíbulo é a síndrome de Mirizzi, que simula tumor de via biliar.',
     relacoes: 'Corre à direita da artéria hepática e à frente da veia porta.',
     clinica:
       'A confluência é o sítio do tumor de Klatskin, o colangiocarcinoma peri-hilar, que produz icterícia obstrutiva com vesícula não palpável — porque a obstrução está acima da entrada do cístico. A comparação com o sinal de Courvoisier é elegante: vesícula palpável indica obstrução abaixo do cístico; vesícula vazia, obstrução acima. A anatomia diz o nível pela palpação.',
@@ -197,6 +217,10 @@ export const DIGESTORIO_ANEXOS: EntradaDicionario[] = [
     localizacao: 'Do colo da vesícula até a junção com o hepático comum, com 2 a 4 cm e trajeto muito variável.',
     funcao:
       'Permite o enchimento e o esvaziamento da vesícula. A válvula espiral de Heister, uma prega mucosa helicoidal, mantém o ducto pérvio e impede seu colapso ou distensão brusca.',
+    vascularizacao:
+      'Artéria cística, ramo da hepática direita, que o acompanha. Ducto cístico, ducto hepático comum e borda inferior do fígado delimitam o triângulo de Calot — dentro do qual a artéria cística deve ser encontrada antes de qualquer clipe, na chamada visão crítica de segurança.',
+    inervacao:
+      'Plexo hepático (T7–T9 e vago). Suas pregas espirais (válvula de Heister) mantêm a luz pérvia, mas dificultam a passagem de cateter e de cálculo.',
     relacoes: 'Com o ducto hepático comum e a borda inferior do fígado, delimita o triângulo hepatocístico (de Calot), onde corre a artéria cística.',
     clinica:
       'Identificar o triângulo de Calot e obter a "visão crítica de segurança" — apenas duas estruturas entrando na vesícula, com o infundíbulo liberado — é o padrão que reduziu drasticamente a lesão iatrogênica de via biliar na colecistectomia laparoscópica. A válvula de Heister é também o motivo de a canulação retrógrada do cístico ser difícil. A obstrução do cístico por cálculo produz colecistite aguda sem icterícia.',
@@ -232,6 +256,10 @@ export const DIGESTORIO_ANEXOS: EntradaDicionario[] = [
     localizacao:
       'Percorre quatro segmentos: supraduodenal, no ligamento hepatoduodenal; retroduodenal; pancreático, dentro da cabeça do pâncreas; e intramural, na parede duodenal.',
     funcao: 'Conduz a bile ao duodeno; seu calibre normal é de até 6 mm, aumentando cerca de 1 mm por década após os 60 anos e após colecistectomia.',
+    vascularizacao:
+      'Aqui a anatomia é milimétrica: duas artérias axiais correm nas posições de 3 e 9 horas ao longo do ducto, alimentadas de baixo pela retroduodenal e de cima pela hepática direita e pela cística. Toda a irrigação é longitudinal — e é por isso que dissecar circunferencialmente o colédoco produz estenose isquêmica meses depois, uma das complicações mais temidas da cirurgia biliar.',
+    inervacao:
+      'Plexo hepático, com simpático de T7 a T9 e parassimpático do vago. A dor da obstrução biliar é epigástrica e no hipocôndrio direito, com irradiação para a escápula direita.',
     relacoes: 'No pedículo, é a estrutura mais anterior e à direita; o segmento pancreático é envolvido pela cabeça do pâncreas.',
     clinica:
       'O trajeto intrapancreático explica a icterícia obstrutiva do tumor de cabeça de pâncreas e da pancreatite crônica. E é a passagem pela ampola que faz um único cálculo produzir colangite — a tríade de Charcot: febre, icterícia e dor no hipocôndrio direito; com hipotensão e confusão, é a pêntade de Reynolds, que indica drenagem biliar de urgência.',
@@ -250,6 +278,10 @@ export const DIGESTORIO_ANEXOS: EntradaDicionario[] = [
     localizacao: 'Face posterossuperior do fígado, onde as veias hepáticas direita, média e esquerda desembocam na cava.',
     funcao:
       'Drenam todo o sangue do fígado. As veias hepáticas correm nas fissuras entre os setores — são intersegmentares —, enquanto os ramos portais são intrassegmentares. Essa alternância define os planos de ressecção.',
+    vascularizacao:
+      'São a própria via de saída do fígado: as veias hepáticas direita, média e esquerda desembocam na veia cava inferior imediatamente abaixo do diafragma, com as veias curtas do lobo caudado entrando separadamente.',
+    inervacao:
+      'Fibras autonômicas do plexo hepático. Sua obstrução é a síndrome de Budd-Chiari, com a tríade de dor abdominal, hepatomegalia e ascite — e o lobo caudado hipertrofiado, que drena por outra via, é a pista diagnóstica na imagem.',
     relacoes: 'A veia hepática média corre no plano da linha de Cantlie; a esquerda frequentemente forma um tronco comum com ela.',
     clinica:
       'A obstrução desses óstios é a síndrome de Budd-Chiari, com hepatomegalia dolorosa, ascite e insuficiência hepática. E o segmento suprahepático da cava é o ponto de controle nas hepatectomias e nos traumas hepáticos graves — a exclusão vascular total do fígado clampeia a cava acima e abaixo, além do pedículo.',
@@ -268,6 +300,8 @@ export const DIGESTORIO_ANEXOS: EntradaDicionario[] = [
     resumo: 'Porção mais volumosa do pâncreas, encaixada na curva do duodeno, com o processo uncinado.',
     localizacao: 'Retroperitoneal, ao nível de L2, abraçada pelas três primeiras porções do duodeno; o processo uncinado passa atrás dos vasos mesentéricos superiores.',
     funcao: 'Contém o ducto pancreático principal em seu trajeto final e o ducto acessório; compartilha com o duodeno as arcadas pancreaticoduodenais.',
+    inervacao:
+      'Plexo celíaco, com simpático de T5 a T9 pelos nervos esplâncnicos maior e menor, e parassimpático do vago. As aferentes de dor sobem por essas fibras até a medula torácica baixa — e é por isso que a dor pancreática é epigástrica, em faixa, com irradiação para o dorso, e alivia quando o paciente se curva para a frente.',
     vascularizacao: 'Artérias pancreaticoduodenais superior e inferior — irrigação compartilhada com o duodeno.',
     relacoes: 'O ducto colédoco atravessa sua face posterior; a veia porta se forma atrás do seu colo.',
     clinica:
@@ -286,6 +320,8 @@ export const DIGESTORIO_ANEXOS: EntradaDicionario[] = [
     resumo: 'Porção média do pâncreas, que cruza a coluna à frente da aorta e da mesentérica superior.',
     localizacao: 'Retroperitoneal, ao nível de L1, cruzando a linha média; sua face anterior forma parte da parede posterior da bolsa omental.',
     funcao: 'Contém a maior parte do ducto pancreático principal e das ilhotas pancreáticas.',
+    inervacao:
+      'Plexo celíaco (T5–T9 e vago). O gânglio celíaco fica imediatamente atrás dele, o que explica a intensidade da dor do câncer de corpo de pâncreas — e fundamenta a neurólise do plexo celíaco, bloqueio que alivia essa dor quando os opioides já não bastam.',
     vascularizacao: 'Artéria esplênica, que corre sinuosa ao longo da sua borda superior, e artéria pancreática dorsal.',
     relacoes: 'A veia esplênica corre no seu sulco posterior, unindo-se à mesentérica superior atrás do colo.',
     clinica:
@@ -304,6 +340,8 @@ export const DIGESTORIO_ANEXOS: EntradaDicionario[] = [
     resumo: 'Extremidade esquerda do pâncreas, a única porção intraperitoneal, que alcança o hilo esplênico.',
     localizacao: 'No ligamento esplenorrenal, junto com os vasos esplênicos, chegando ao hilo do baço em cerca de 30% a 50% das pessoas.',
     funcao: 'Contém a maior concentração de ilhotas pancreáticas de toda a glândula.',
+    inervacao:
+      'Plexo celíaco (T5–T9 e vago). É a porção mais móvel e a única intraperitoneal, alojada no ligamento esplenorrenal — vizinhança que faz a pancreatite de cauda trombosar a veia esplênica e produzir hipertensão portal segmentar.',
     vascularizacao: 'Artéria esplênica e artéria pancreática caudal.',
     relacoes: 'É a única parte do pâncreas revestida por peritônio em quase toda a circunferência.',
     clinica:
@@ -324,6 +362,10 @@ export const DIGESTORIO_ANEXOS: EntradaDicionario[] = [
     resumo: 'Rim situado no retroperitônio esquerdo, ligeiramente mais alto que o direito.',
     localizacao: 'De T11 a L2 aproximadamente, mais alto que o direito porque não é empurrado para baixo pelo fígado.',
     funcao: 'Filtra o plasma e regula volume, eletrólitos e equilíbrio ácido-base; nesta prancha aparece como vizinho posterior dos órgãos digestórios.',
+    vascularizacao:
+      'Artéria renal esquerda, mais curta que a direita porque a aorta está à esquerda da linha média. A veia renal esquerda, ao contrário, é cerca de três vezes mais longa: ela precisa cruzar a linha média por diante da aorta e sob a artéria mesentérica superior para alcançar a cava — passagem apertada que é a base da síndrome do quebra-nozes, com hematúria e dor em flanco. Ela recebe ainda a veia suprarrenal e a gonadal esquerdas.',
+    inervacao:
+      'Plexo renal, de fibras simpáticas de T10 a L1 pelos esplâncnicos menor e imo. As aferentes de dor sobem por esses mesmos segmentos — daí a dor de flanco irradiando para a virilha e para o testículo esquerdo.',
     relacoes:
       'À frente estão o estômago, o baço, o pâncreas, a flexura cólica esquerda e alças de jejuno; atrás, o diafragma, o quadrado do lombo e o psoas.',
     clinica:
@@ -343,6 +385,8 @@ export const DIGESTORIO_ANEXOS: EntradaDicionario[] = [
     localizacao:
       'Da margem costal e do processo xifoide, acima, às cristas ilíacas, ao ligamento inguinal e ao púbis, abaixo. Suas camadas, de fora para dentro: pele, tela subcutânea (fáscias de Camper e de Scarpa), músculos, fáscia transversal, gordura extraperitoneal e peritônio.',
     funcao: 'Contém e protege as vísceras, gera pressão intra-abdominal e move o tronco.',
+    vascularizacao:
+      'Artérias epigástricas superior, ramo da torácica interna, e inferior, ramo da ilíaca externa, que se anastomosam dentro da bainha do reto — a comunicação que sustenta a circulação colateral na coarctação da aorta e o retalho TRAM na reconstrução mamária. Lateralmente, as intercostais posteriores e a circunflexa ilíaca profunda.',
     inervacao: 'Nervos intercostais T7 a T11, subcostal (T12), ílio-hipogástrico e ilioinguinal (L1), com distribuição em dermátomos.',
     clinica:
       'Os dermátomos da parede são a régua da anestesia e do exame: T10 é o umbigo, T7 o processo xifoide, L1 a região inguinal. A fáscia de Scarpa, por se continuar com a fáscia de Colles no períneo, explica o trajeto do extravasamento urinário na rotura de uretra: o líquido sobe pela parede abdominal e não desce para a coxa. O teste de Carnett — dor que piora ao contrair a parede — distingue dor parietal de dor visceral em segundos.',

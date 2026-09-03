@@ -17,6 +17,8 @@ export const TORAX_OSSEO: EntradaDicionario[] = [
       'Parte alta da parede anterior do tórax, entre as duas articulações esternoclaviculares. Sua borda superior é escavada pela incisura jugular; abaixo, encontra o corpo no ângulo esternal.',
     funcao:
       'É a peça de ancoragem do cíngulo do membro superior ao esqueleto axial: a única ligação óssea entre braço e tronco passa pela clavícula e termina aqui. Dá inserção ainda ao esternocleidomastóideo e ao esterno-hióideo.',
+    vascularizacao:
+      'Ramos perfurantes da artéria torácica interna e do tronco costocervical. Contém medula óssea vermelha ativa mesmo no adulto, o que o torna via de acesso intraósseo de emergência e sítio de biópsia medular quando a crista ilíaca não é acessível.',
     relacoes:
       'Atrás dele estão o arco aórtico e seus ramos, as veias braquiocefálicas, a traqueia e o timo (ou seu resíduo gorduroso). A veia braquiocefálica esquerda cruza a linha média imediatamente por trás.',
     clinica:

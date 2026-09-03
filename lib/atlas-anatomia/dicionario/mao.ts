@@ -56,6 +56,8 @@ export const MAO: EntradaDicionario[] = [
     localizacao: 'Extremidade radial da fileira distal, entre o escafoide e o primeiro metacarpo; tem um tubérculo palmar e um sulco para o flexor radial do carpo.',
     funcao:
       'Sua superfície em sela é o que torna o polegar humano oponível: permite flexão-extensão, abdução-adução e, na combinação das duas, rotação axial. É a articulação que separa a mão humana da mão de qualquer outro primata em precisão.',
+    vascularizacao:
+      'Ramos da artéria radial e do arco palmar profundo, entrando pelas faces dorsal e palmar. Irrigação redundante, e por isso não sofre necrose avascular — ao contrário do escafoide, seu vizinho.',
     relacoes: 'O tendão do flexor radial do carpo corre num sulco próprio na sua face palmar; o retináculo dos flexores se prende ao seu tubérculo.',
     clinica:
       'A rizartrose — artrose da articulação trapeziometacarpal — é a artrose sintomática mais comum da mão, especialmente em mulheres após os 50 anos, com dor na base do polegar e perda da força de pinça. O teste de grind (compressão e rotação) reproduz a dor. Nos casos avançados, a trapeziectomia resolve o sintoma trocando estabilidade por alívio.',
@@ -74,6 +76,8 @@ export const MAO: EntradaDicionario[] = [
     localizacao: 'Fileira distal, entre trapézio (radial) e capitato (ulnar), articulando-se com o escafoide acima e o 2º metacarpo abaixo.',
     funcao:
       'Forma, com o segundo metacarpo, uma articulação praticamente imóvel. Essa rigidez é proposital: os dedos indicador e médio são as colunas fixas da mão, contra as quais o polegar e os dedos móveis fazem força.',
+    vascularizacao:
+      'Ramos da rede carpal dorsal e do arco palmar profundo. É o menor osso da fileira distal e o mais protegido: encaixado entre trapézio e capitato, quase nunca fratura ou luxa isoladamente.',
     relacoes: 'Está profundamente encaixado, protegido pelos ossos vizinhos.',
     clinica:
       'É o osso do carpo que menos fratura e menos luxa, justamente por estar tão encaixado — sua lesão isolada indica trauma de altíssima energia. A rigidez do 2º e 3º raios é o que se procura preservar em qualquer reconstrução da mão: uma mão sem coluna central estável não faz pinça.',
@@ -92,6 +96,8 @@ export const MAO: EntradaDicionario[] = [
     localizacao: 'Fileira proximal, medialmente ao semilunar; sua face palmar tem uma faceta oval para o pisiforme.',
     funcao:
       'Não toca a ulna diretamente: entre eles está a fibrocartilagem triangular. Articula-se com o hamato numa superfície helicoidal, e é esse encaixe que traduz o desvio ulnar do punho em extensão da fileira proximal.',
+    vascularizacao:
+      'Ramos da artéria ulnar e da rede carpal dorsal, entrando pela face dorsal — em cerca de 20% das pessoas por um único vaso, o que explica a pseudartrose ocasional das suas fraturas.',
     relacoes: 'O ligamento lunopiramidal o une ao semilunar; sua ruptura produz o padrão de instabilidade VISI.',
     clinica:
       'É o segundo osso do carpo que mais fratura, geralmente por avulsão dorsal em queda com o punho em extensão e desvio ulnar — a fratura aparece como uma pequena lasca dorsal no perfil, facilmente perdida. A dor ulnar do punho tem no piramidal e no complexo triangular seus dois suspeitos principais.',
@@ -130,6 +136,8 @@ export const MAO: EntradaDicionario[] = [
     localizacao: 'Entre a cabeça do primeiro metacarpo e a falange distal; o polegar tem apenas duas falanges.',
     funcao:
       'Sua base recebe, na face palmar, o flexor curto e o abdutor curto (lateralmente) e o adutor do polegar (medialmente), e, no dorso, o extensor curto. É o ponto onde a força dos tenares se converte em pinça.',
+    vascularizacao:
+      'Artéria principal do polegar, ramo da radial, que se divide nas digitais próprias e emite ramos nutrícios para a diáfise.',
     relacoes: 'Dois ossos sesamoides costumam existir na face palmar da metacarpofalângica, dentro dos tendões tenares.',
     clinica:
       'A avulsão do ligamento colateral ulnar dessa articulação é o "polegar do esquiador" (agudo) ou "do guarda-caça" (crônico): perde-se a pinça lateral. Na lesão de Stener, a aponeurose do adutor se interpõe entre o ligamento roto e o osso, impedindo a cicatrização — e por isso essa lesão é cirúrgica, ao contrário da maioria das entorses.',
@@ -148,6 +156,8 @@ export const MAO: EntradaDicionario[] = [
     localizacao: 'Extremidade do polegar, articulando-se com a falange proximal na interfalângica; sua tuberosidade alarga a ponta.',
     funcao:
       'Recebe o tendão do flexor longo do polegar na face palmar e o do extensor longo no dorso. É o segmento que aplica pressão na pinça de precisão.',
+    vascularizacao:
+      'Arcada terminal das artérias digitais próprias do polegar, na polpa. É a mesma arcada que nutre o leito ungueal, e sua interrupção produz necrose de ponta com perda da unha.',
     relacoes: 'A matriz ungueal repousa sobre sua face dorsal, e a polpa, densamente septada, está na palmar.',
     clinica:
       'A perda de sensibilidade da polpa do polegar equivale funcionalmente a perder metade da mão — daí o esforço para preservá-la em qualquer amputação. A rotura do flexor longo produz incapacidade de fletir a interfalângica: o polegar fica reto. E o panarício da polpa, por causa dos septos fibrosos, é uma infecção em compartimento fechado, que provoca dor desproporcional e exige drenagem precoce.',
@@ -187,6 +197,10 @@ export const MAO: EntradaDicionario[] = [
     localizacao: 'Entre a incisura ulnar do rádio e a circunferência articular da cabeça da ulna, com a fibrocartilagem triangular como assoalho.',
     funcao:
       'Funciona sempre em conjunto com a radioulnar proximal: o rádio gira em torno de um eixo que passa da fóvea da cabeça do rádio até a fóvea da cabeça da ulna. Um só eixo, duas articulações.',
+    vascularizacao:
+      'Artérias interósseas anterior e posterior e ramos da rede carpal palmar. O disco articular (fibrocartilagem triangular) é avascular no seu terço central e vascularizado apenas na periferia — motivo de as lesões centrais não cicatrizarem e serem apenas desbridadas, enquanto as periféricas se suturam.',
+    inervacao:
+      'Ramo interósseo posterior do nervo radial e ramo interósseo anterior do mediano, ambos puramente proprioceptivos nesta altura. Sua secção — a denervação do punho — alivia a dor sem perder força, e é uma cirurgia real de salvamento na artrose do punho.',
     relacoes: 'O complexo da fibrocartilagem triangular — disco, ligamentos radioulnares dorsal e palmar, bainha do extensor ulnar do carpo — é o estabilizador principal.',
     clinica:
       'Sua instabilidade é subdiagnosticada e responde por boa parte da dor ulnar do punho após fratura do rádio distal. Testa-se pela manobra da tecla de piano, comparando com o lado contralateral. A lesão de Galeazzi (fratura do rádio distal com luxação radioulnar distal) é chamada "fratura da necessidade" porque exige fixação — o tratamento conservador falha sempre.',
@@ -225,6 +239,10 @@ export const MAO: EntradaDicionario[] = [
     localizacao: 'Entre a cabeça de cada metacarpo e a base da falange proximal correspondente, com placa volar à frente e capuz extensor atrás.',
     funcao:
       'Permitem flexão, extensão, abdução e adução. Mas há um detalhe decisivo: a cabeça do metacarpo é mais larga na frente do que atrás, o que faz os ligamentos colaterais ficarem frouxos em extensão e tensos em flexão. Por isso os dedos só se abrem com a mão estendida.',
+    vascularizacao:
+      'Artérias metacarpais palmares e dorsais, com ramos das digitais próprias formando um anel periarticular.',
+    inervacao:
+      'Nervos digitais palmares do mediano e do ulnar e digitais dorsais do radial e do ulnar. São articulações condilares que fazem flexão, extensão e abdução — mas só em extensão: fletidas, os ligamentos colaterais tensionam e a abdução desaparece, e é por isso que a mão é imobilizada com as metacarpofalângicas fletidas a 70 graus.',
     relacoes: 'O ligamento metacarpal transverso profundo une as placas volares do 2º ao 5º dedo.',
     clinica:
       'Essa mecânica dita a posição de imobilização da mão — a "posição intrínseca plus", com metacarpofalângicas em 70–90° de flexão e interfalângicas estendidas. Imobilizar com as MCF estendidas encurta os colaterais e produz rigidez permanente em extensão, um erro clássico e evitável.',
@@ -243,6 +261,9 @@ export const MAO: EntradaDicionario[] = [
     localizacao: 'Entre a cabeça do 1º metacarpo e a base da falange proximal do polegar; sua amplitude de flexão varia muito entre indivíduos.',
     funcao:
       'Contribui pouco com movimento e muito com estabilidade: é o batente contra o qual a pinça faz força. Os sesamoides, dentro dos tendões tenares, aumentam o braço de alavanca da flexão.',
+    vascularizacao: 'Artéria principal do polegar e ramos da radial.',
+    inervacao:
+      'Ramos do nervo mediano e do radial. Sua estabilidade depende do ligamento colateral ulnar, cuja rotura é o polegar do esquiador — e cuja lesão de Stener, em que a aponeurose do adutor se interpõe entre os cotos, impede a cicatrização e obriga à cirurgia.',
     relacoes: 'A aponeurose do adutor do polegar cobre o colateral ulnar — relação decisiva na lesão de Stener.',
     clinica:
       'É a articulação do polegar do esquiador. O teste é o estresse em valgo comparativo, e a suspeita de interposição da aponeurose (lesão de Stener) indica cirurgia. Instabilidade crônica dessa articulação inviabiliza a pinça lateral, o gesto de virar uma chave.',
@@ -261,6 +282,10 @@ export const MAO: EntradaDicionario[] = [
     localizacao: 'Entre a cabeça da falange proximal e a base da média, nos quatro dedos longos.',
     funcao:
       'Movem-se em um só plano. Sua estabilidade vem de uma "caixa": os dois colaterais nas laterais e a placa volar à frente, que impede a hiperextensão. É a articulação mais importante para a preensão — cerca de 85% do arco de movimento útil do dedo passa por ela.',
+    vascularizacao:
+      'Ramos das artérias digitais palmares próprias, que formam arcadas transversais ao nível de cada articulação.',
+    inervacao:
+      'Nervos digitais palmares próprios e dorsais. É a articulação que mais enrijece de toda a mão, porque sua placa volar retrai com facilidade — e a razão de a imobilização das interfalângicas ser sempre em extensão, ao contrário das metacarpofalângicas.',
     relacoes: 'A banda central do aparelho extensor se insere na base da falange média; as bandas laterais correm nas laterais.',
     clinica:
       'Duas deformidades clássicas nascem aqui. A lesão da banda central produz o dedo em botoeira: a IFP fica fletida e a distal estendida, porque as bandas laterais escorregam para baixo do eixo. E a rigidez em flexão da IFP é a mais difícil de recuperar da mão inteira — por isso ela nunca é imobilizada por muito tempo.',
@@ -278,6 +303,9 @@ export const MAO: EntradaDicionario[] = [
     resumo: 'Dobradiças terminais dos dedos, movidas apenas pelo flexor profundo e pelo tendão terminal extensor.',
     localizacao: 'Entre a cabeça da falange média e a base da distal, nos quatro dedos longos.',
     funcao: 'Ajustam a ponta do dedo ao objeto; contribuem com pouca amplitude, mas são decisivas na pinça de precisão e no toque fino.',
+    vascularizacao: 'Arcadas terminais das artérias digitais próprias, que se anastomosam na polpa.',
+    inervacao:
+      'Ramos terminais dos nervos digitais palmares próprios. É a articulação acometida pelos nódulos de Heberden na osteoartrite — e a que a artrite reumatoide caracteristicamente poupa, distinção que se faz à inspeção, antes de qualquer exame.',
     relacoes: 'O tendão terminal do aparelho extensor insere-se na base dorsal da falange distal; o flexor profundo, na base palmar.',
     clinica:
       'A avulsão do tendão terminal produz o dedo em martelo, com queda da ponta do dedo — trata-se com órtese em extensão contínua por 6 a 8 semanas, e qualquer flexão nesse período reinicia a contagem. Já a avulsão do flexor profundo é o "jersey finger", típico de quem agarra a camisa de um adversário, e essa é cirúrgica.',
@@ -295,6 +323,9 @@ export const MAO: EntradaDicionario[] = [
     resumo: 'Única interfalângica do polegar, movida pelo flexor e pelo extensor longos.',
     localizacao: 'Entre a falange proximal e a distal do polegar.',
     funcao: 'Permite fletir a ponta do polegar contra a do indicador; a flexão depende exclusivamente do flexor longo do polegar.',
+    vascularizacao: 'Ramos terminais da artéria principal do polegar.',
+    inervacao:
+      'Nervos digitais próprios do mediano. É uma articulação em dobradiça pura, e sua rigidez pouco compromete a função — ao contrário da trapeziometacarpal, cuja artrose incapacita a pinça.',
     relacoes: 'O tendão do extensor longo do polegar se insere na sua base dorsal.',
     clinica:
       'A incapacidade de fletir essa articulação, com o "sinal do O" alterado, é o achado da síndrome do interósseo anterior — uma neuropatia puramente motora, sem alteração de sensibilidade, que costuma ser confundida com rotura tendínea. A distinção se faz pelo efeito tenodese: no nervo, o tendão está íntegro e o dedo se move passivamente com o punho.',
@@ -370,7 +401,7 @@ export const MAO: EntradaDicionario[] = [
     ],
   },
   {
-    termos: ['Músculos Interósseos Dorsais', 'Músculo Interósseo Dorsal I'],
+    termos: ['Músculos Interósseos Dorsais'],
     classe: 'musculo',
     resumo: 'Quatro músculos bipenados entre os metacarpos que afastam os dedos da linha média da mão.',
     localizacao:
@@ -496,6 +527,8 @@ export const MAO: EntradaDicionario[] = [
     localizacao: 'No dorso da mão, próximo às cabeças dos metacarpos, ligando os tendões do extensor dos dedos uns aos outros.',
     funcao:
       'Distribuem a tração entre os tendões e limitam a extensão independente dos dedos. São a razão de você não conseguir estender o anular sozinho com os outros dedos fletidos — a conexão o prende ao médio e ao mínimo.',
+    vascularizacao:
+      'Rede dorsal do carpo e ramos da interóssea posterior, por vasos delgados no paratendão. Essas bandas ligam os tendões extensores entre si sobre os metacarpos, e é por causa delas que a secção isolada de um tendão extensor proximal ainda permite alguma extensão do dedo — armadilha que faz uma lesão parcial parecer íntegra no exame.',
     relacoes: 'São mais fortes entre o 3º, 4º e 5º dedos; entre o indicador e o médio costumam ser tênues, o que dá ao indicador maior independência.',
     clinica:
       'Elas mascaram roturas: um tendão extensor seccionado proximalmente às conexões pode manter alguma extensão passiva do dedo, retardando o diagnóstico. Diante de uma ferida no dorso da mão, testa-se cada dedo isoladamente e contra resistência, nunca em conjunto.',
@@ -513,6 +546,8 @@ export const MAO: EntradaDicionario[] = [
     resumo: 'Tendão próprio do indicador, situado sempre ulnarmente ao tendão comum.',
     localizacao: 'Quarto compartimento extensor, unindo-se ao capuz extensor do indicador; sua posição ulnar em relação ao comum é constante.',
     funcao: 'Estende o indicador de forma independente, permitindo apontar.',
+    vascularizacao:
+      'Artéria interóssea posterior e rede dorsal do carpo. Corre no quarto compartimento, medialmente ao extensor dos dedos, e é o tendão de escolha para transferência quando o extensor longo do polegar rompe — porque o indicador tem dois extensores e sobrevive bem com um.',
     relacoes: 'Seu ventre muscular é o mais distal do dorso do antebraço, o que permite reconhecê-lo em cirurgia.',
     clinica:
       'É o tendão doador padrão para transferência ao extensor longo do polegar após rotura — a cirurgia mais comum de transferência tendínea da mão. A posição sempre ulnar é o que permite identificá-lo com segurança no dorso do dedo.',
@@ -529,6 +564,8 @@ export const MAO: EntradaDicionario[] = [
     resumo: 'Tendão do quinto compartimento extensor, que dá extensão independente ao dedo mínimo.',
     localizacao: 'Quinto compartimento, sobre a articulação radioulnar distal, dividindo-se frequentemente em duas bandas antes do capuz.',
     funcao: 'Estende o dedo mínimo isoladamente, permitindo o gesto de separar o dedo dos demais.',
+    vascularizacao:
+      'Artéria interóssea posterior e rede dorsal do carpo. Ocupa sozinho o quinto compartimento extensor, sobre a articulação radioulnar distal — posição que o torna o primeiro a romper na artrite reumatoide, pelo atrito com a cabeça da ulna.',
     relacoes: 'Sua posição sobre a radioulnar distal o torna vulnerável nas cirurgias dessa articulação.',
     clinica:
       'É o primeiro tendão a romper na mão reumatoide, por atrito com a cabeça da ulna dorsalmente subluxada — a rotura em cascata de Vaughan-Jackson começa por ele e progride para o anular e o médio. A perda da extensão do dedo mínimo em um paciente com artrite reumatoide é, portanto, um sinal de alerta cirúrgico.',
@@ -547,6 +584,8 @@ export const MAO: EntradaDicionario[] = [
     localizacao: 'Segundo compartimento extensor, radialmente ao tubérculo dorsal, até a base do 2º metacarpo.',
     funcao:
       'Estende e faz desvio radial do punho. Como é o único extensor do punho inervado pelo nervo radial antes da divisão em interósseo posterior, ele permanece funcionante nas lesões do interósseo posterior.',
+    vascularizacao:
+      'Artéria radial e rede dorsal do carpo. Divide o segundo compartimento extensor com o curto, e o cruzamento dos tendões do primeiro compartimento sobre eles é o que produz a síndrome da intersecção, com crepitação palpável no antebraço distal.',
     inervacao: 'Nervo radial, ramo direto (C6–C7).',
     relacoes: 'Corre com o extensor radial curto sob o abdutor longo e o extensor curto do polegar, que os cruzam obliquamente.',
     clinica:
@@ -565,6 +604,8 @@ export const MAO: EntradaDicionario[] = [
     resumo: 'Companheiro do radial longo no segundo compartimento, inserindo-se na base do 3º metacarpo.',
     localizacao: 'Segundo compartimento extensor, medialmente ao radial longo, até a base do 3º metacarpo.',
     funcao: 'Extensor puro do punho: como se insere no 3º metacarpo, que está no eixo da mão, ele estende sem desviar. É o principal estabilizador do punho durante a preensão.',
+    vascularizacao:
+      'Artéria interóssea posterior e artéria radial, pela rede dorsal do carpo. Sua origem no epicôndilo lateral tem uma zona hipovascular na face profunda — e é ali, e não no tendão inteiro, que começa a epicondilite lateral.',
     inervacao: 'Ramo profundo do nervo radial (C7–C8).',
     relacoes: 'Sua origem no epicôndilo lateral é a mais profunda do tendão extensor comum.',
     clinica:
@@ -584,6 +625,8 @@ export const MAO: EntradaDicionario[] = [
     localizacao: 'Terceiro compartimento, contornando o tubérculo dorsal do rádio, cruzando os radiais do carpo e formando a borda posterior da tabaqueira anatômica.',
     funcao:
       'Estende a interfalângica do polegar e, sobretudo, retropulsa o polegar — levanta o polegar do plano da mesa com a palma apoiada, movimento que só ele faz.',
+    vascularizacao:
+      'Artéria interóssea posterior, com uma zona hipovascular exatamente onde ele contorna o tubérculo dorsal do rádio (de Lister). É essa avascularidade relativa que explica a rotura tardia do tendão depois de uma fratura de Colles, às vezes semanas após o trauma e sem novo esforço.',
     inervacao: 'Nervo interósseo posterior (C7–C8).',
     relacoes: 'Sua mudança de direção sobre o tubérculo de Lister cria um ponto de atrito e de vascularização precária.',
     clinica:
@@ -602,6 +645,8 @@ export const MAO: EntradaDicionario[] = [
     resumo: 'Tendão do primeiro compartimento que estende a metacarpofalângica do polegar.',
     localizacao: 'Primeiro compartimento extensor, junto ao abdutor longo do polegar, formando a borda anterior da tabaqueira anatômica.',
     funcao: 'Estende a articulação metacarpofalângica do polegar e auxilia a abdução da carpometacarpal.',
+    vascularizacao:
+      'Artéria radial e ramos da interóssea posterior. Forma a borda anterior da tabaqueira anatômica e divide o primeiro compartimento extensor com o abdutor longo — os dois tendões da tenossinovite de De Quervain.',
     inervacao: 'Nervo interósseo posterior (C7–C8).',
     relacoes: 'Em cerca de 30% das pessoas ocupa um subcompartimento separado, com septo próprio.',
     clinica:
@@ -684,6 +729,33 @@ export const MAO: EntradaDicionario[] = [
       'Por onde a radial passa do dorso para a palma?',
       'Que arco ela forma e o que ele origina?',
       'Por que a radial pode ser usada como enxerto?',
+    ],
+  },
+  {
+    termos: [
+      'Músculo Interósseo Dorsal I',
+    ],
+    classe: 'musculo',
+    resumo:
+      'O maior dos interósseos, entre o polegar e o indicador — e o músculo que denuncia a lesão do nervo ulnar antes de qualquer exame.',
+    localizacao:
+      'Preenche o primeiro espaço interósseo, entre o primeiro e o segundo metacarpos, com duas cabeças que abraçam a artéria radial na sua passagem para a palma.',
+    funcao:
+      'Abduz o indicador e, sobretudo, estabiliza-o contra o polegar na pinça lateral. É o único interósseo com massa suficiente para ser visível e palpável no dorso da mão.',
+    vascularizacao:
+      'Ramo da artéria radial, que atravessa o próprio músculo entre suas duas cabeças a caminho do arco palmar profundo — passagem que faz do primeiro interósseo o único músculo da mão perfurado por uma artéria de grande calibre.',
+    inervacao: 'Ramo profundo do nervo ulnar (C8–T1), como todos os interósseos.',
+    linfaticos: 'Linfonodos supratrocleares e axilares.',
+    relacoes:
+      'Sua borda proximal delimita a tabaqueira anatômica, no assoalho da qual a artéria radial pode ser palpada.',
+    clinica:
+      'É o músculo intrínseco mais volumoso da mão, e por isso o primeiro cuja atrofia se vê: na lesão do nervo ulnar, o primeiro espaço interósseo afunda e o dorso da mão fica escavado — um sinal visível a metros de distância, antes de qualquer teste de força. É também o músculo cuja fraqueza produz o sinal de Froment: ao segurar um papel entre polegar e indicador, o paciente compensa fletindo a interfalângica do polegar, recrutando o flexor longo, que é do mediano. Uma inspeção e um pedaço de papel bastam para o diagnóstico.',
+    memoria:
+      'Ulnar lesado: o buraco entre polegar e indicador afunda. Peça para segurar um papel — se o polegar dobrar, é Froment.',
+    pontos: [
+      'Que artéria atravessa o primeiro interósseo dorsal?',
+      'Por que sua atrofia é o sinal mais visível da lesão ulnar?',
+      'O que é o sinal de Froment?',
     ],
   },
 ]

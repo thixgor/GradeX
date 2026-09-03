@@ -172,6 +172,8 @@ export const DORSO_PAREDE: EntradaDicionario[] = [
     resumo: 'Porção inferior do esplênio, que se insere nos processos transversos cervicais superiores.',
     localizacao: 'Dos processos espinhosos de T3 a T6 até os tubérculos posteriores dos processos transversos de C1 a C3.',
     funcao: 'Estende o pescoço bilateralmente e o roda para o mesmo lado unilateralmente, atuando junto com o esplênio da cabeça.',
+    vascularizacao:
+      'Artérias occipital e cervical profunda, ramo do tronco costocervical. Corre lateralmente ao esplênio da cabeça e insere-se nos processos transversos das vértebras cervicais altas — o que faz dele um rotador ipsilateral da cabeça e um dos músculos envolvidos no torcicolo.',
     inervacao: 'Ramos posteriores dos nervos cervicais inferiores.',
     relacoes: 'Está profundamente ao serrátil posterior superior e superficialmente aos eretores da espinha.',
     clinica:
@@ -228,6 +230,8 @@ export const DORSO_PAREDE: EntradaDicionario[] = [
     resumo: 'Lâmina muscular que abaixa as últimas costelas, resistindo à tração do diafragma.',
     localizacao: 'Dos processos espinhosos de T11 a L2, pela aponeurose toracolombar, até as bordas inferiores da 9ª à 12ª costela.',
     funcao: 'Abaixa e estabiliza as últimas costelas durante a inspiração, impedindo que o diafragma as puxe para cima.',
+    vascularizacao:
+      'Ramos dorsais das artérias intercostais posteriores inferiores e das lombares. É um músculo delgado, quase aponeurótico, cujo papel respiratório é hoje considerado desprezível — o que interessa nele é ser a camada que o cirurgião atravessa no acesso posterior ao rim.',
     inervacao: 'Nervos intercostais inferiores (T9–T12), ramos anteriores.',
     relacoes: 'Sua aponeurose funde-se com a lâmina posterior da fáscia toracolombar.',
     clinica:
@@ -366,6 +370,8 @@ export const DORSO_PAREDE: EntradaDicionario[] = [
     localizacao: 'Do esterno até os ângulos das costelas, onde continuam como a membrana intercostal posterior; fibras de baixo e de trás para cima e para a frente.',
     funcao:
       'A porção interóssea abaixa as costelas na expiração forçada; a porção intercondral, entre as cartilagens, na verdade eleva as costelas e é inspiratória — um detalhe que costuma escapar.',
+    vascularizacao:
+      'Artérias intercostais posteriores, da aorta, e anteriores, da torácica interna, correndo no sulco da costela na ordem VAN — veia, artéria e nervo de cima para baixo. É por isso que a punção torácica entra rente à borda de cima da costela de baixo: o feixe está protegido embaixo da costela de cima.',
     inervacao: 'Nervos intercostais correspondentes.',
     relacoes: 'O feixe intercostal (veia, artéria, nervo) corre entre o intercostal interno e o íntimo, protegido no sulco costal.',
     clinica:
@@ -427,6 +433,10 @@ export const DORSO_PAREDE: EntradaDicionario[] = [
     localizacao: 'Três a quatro faixas fibrosas transversais no ventre — uma no umbigo, uma no xifoide e uma entre elas — e a inserção tendínea na crista e na sínfise púbica.',
     funcao:
       'As intersecções impedem que o músculo se "enrole" ao contrair, mantendo-o achatado contra a parede, e aderem à lâmina anterior da bainha, compartimentando eventuais hematomas na parte alta.',
+    vascularizacao:
+      'Ramos das artérias epigástricas superior e inferior, que se anastomosam dentro da bainha. As intersecções tendíneas aderem firmemente à lâmina anterior da bainha e não à posterior — e é essa aderência que compartimenta o hematoma da bainha do reto e o mantém localizado.',
+    inervacao:
+      'Nervos intercostais de T7 a T11 e subcostal, que entram pela borda lateral do músculo. As intersecções tendíneas dividem o ventre em segmentos, cada um com sua inervação própria — a razão de o reto do abdome sobreviver a uma incisão transversa que corte parte da sua inervação.',
     relacoes: 'A inserção púbica funde-se com o ligamento inguinal e com a aponeurose do oblíquo externo.',
     clinica:
       'Essa inserção compartilhada é onde se instala a pubalgia do atleta ("hérnia do esporte"): a tração conflitante entre o reto do abdome, que puxa para cima, e os adutores, que puxam para baixo, sobre um mesmo ponto do púbis. Entender que se trata de um conflito de vetores, e não de uma hérnia, é o que orienta o tratamento com reabilitação antes de cirurgia.',
@@ -500,7 +510,7 @@ export const DORSO_PAREDE: EntradaDicionario[] = [
     ],
   },
   {
-    termos: ['Osso Esponjoso', 'Trabéculas Ósseas'],
+    termos: ['Osso Esponjoso'],
     classe: 'osso',
     resumo: 'Rede tridimensional de trabéculas orientadas nas linhas de força, que ocupa as epífises e as metáfises.',
     localizacao: 'Interior das epífises dos ossos longos, dos corpos vertebrais e dos ossos curtos e planos, com a medula óssea entre as trabéculas.',
@@ -535,6 +545,33 @@ export const DORSO_PAREDE: EntradaDicionario[] = [
       'O que ocupa a cavidade medular na criança e no adulto?',
       'Por que o acesso intraósseo funciona em choque?',
       'Que estrutura reveste a cavidade medular?',
+    ],
+  },
+  {
+    termos: [
+      'Trabéculas Ósseas',
+    ],
+    classe: 'osso',
+    resumo: 'As lamelas individuais que compõem o osso esponjoso — as vigas, e não o tecido inteiro.',
+    localizacao:
+      'No interior do osso esponjoso, nas epífises, nos corpos vertebrais e nos ossos chatos, orientadas ao longo das linhas de força.',
+    funcao:
+      'Não são dispostas ao acaso: alinham-se exatamente com as linhas de tensão e compressão que o osso recebe — a lei de Wolff. É por isso que a radiografia do colo do fêmur mostra feixes trabeculares organizados em arcos, e que essas linhas mudam quando a carga muda.',
+    vascularizacao:
+      'Sinusoides medulares entre elas, alimentados pela artéria nutrícia e pelos vasos metafisários. A medula óssea hematopoiética ocupa os espaços intertrabeculares — as trabéculas são o andaime, e a medula é o que mora nele.',
+    inervacao:
+      'Fibras do nervo nutrício, com aferentes que respondem à pressão intraóssea. É o aumento dessa pressão, e não a fratura em si, que produz a dor intensa e imediata da fratura vertebral por compressão.',
+    linfaticos: 'Ausentes no interior do osso; o periósteo tem drenagem linfática própria.',
+    relacoes:
+      'Distinguem-se do osso compacto por serem lamelas isoladas banhadas em medula, e não ósteons cilíndricos justapostos.',
+    clinica:
+      'A perda de trabéculas é o que a osteoporose de fato é: não é o osso ficar \'mole\', é ele perder vigas. Primeiro afinam-se as trabéculas horizontais, que funcionam como travessas de sustentação, e as verticais ficam longas e sem apoio lateral — passam a flambar sob carga, exatamente como uma coluna esbelta demais. É por isso que a fratura vertebral por compressão ocorre com um esforço trivial, e por que a densitometria mede densidade mas não enxerga essa desorganização da arquitetura.',
+    memoria:
+      'Osteoporose não amolece o osso: tira as travessas. Sobram vigas altas sem apoio, e elas dobram com o peso do próprio corpo.',
+    pontos: [
+      'O que é a lei de Wolff?',
+      'O que ocupa os espaços entre as trabéculas?',
+      'Por que a perda das trabéculas horizontais é tão decisiva na osteoporose?',
     ],
   },
 ]

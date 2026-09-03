@@ -105,8 +105,20 @@ describe('peso do pacote de Domine Anatomia', () => {
    * Ele fica atrás de um `import()` em `motor-fichas.ts`, então não pesa na
    * primeira tela — mas pesa no momento em que o aluno abre uma prancha, e num
    * celular em rede ruim isso se sente. A trava aqui não é para impedir o
-   * crescimento: é para que ele seja uma decisão. Quem passar deste teto precisa
-   * escolher entre subir o número e dividir o dicionário por sistema.
+   * crescimento: é para que ele seja uma decisão.
+   *
+   * O teto já foi elevado uma vez, de 480 para 560 KB, quando cada estrutura
+   * passou a ter vascularização, inervação e drenagem linfática próprias — o
+   * conteúdo que antes vinha, errado, da região da prancha. Foram cerca de 95 KB
+   * comprimidos a mais, e eles compram a correção de 374 fichas que exibiam os
+   * vasos do vizinho.
+   *
+   * O próximo aumento não deve ser concedido: acima disto o caminho é dividir o
+   * dicionário por sistema e carregar só o que a prancha aberta usa. Os arquivos
+   * já estão separados por região em `dicionario/`, mas a divisão não é trivial
+   * — uma mesma região serve várias coleções do acervo, e um recorte errado faz
+   * um marcador perder a ficha em silêncio. Por isso a divisão precisa vir junto
+   * com o teste de cobertura total rodando sobre todos os pedaços.
    */
   it('o dicionário cabe num pedaço que dá para baixar enquanto se olha a peça', () => {
     const pasta = resolve(RAIZ, 'lib/atlas-anatomia/dicionario')
@@ -119,7 +131,7 @@ describe('peso do pacote de Domine Anatomia', () => {
       .join('\n')
 
     const kbComprimidos = gzipSync(Buffer.from(fonte), { level: 9 }).byteLength / 1024
-    expect(kbComprimidos).toBeLessThan(480)
+    expect(kbComprimidos).toBeLessThan(560)
   })
 
   it('o acervo continua vivo, e num módulo só', () => {

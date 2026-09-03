@@ -18,6 +18,8 @@ export const CRANIO_BASE: EntradaDicionario[] = [
       'Desce do osso temporal logo atrás e abaixo do meato acústico externo. Você acha no vivo em um segundo: passe o dedo atrás da orelha e a proeminência óssea que resiste é o mastoide.',
     funcao:
       'Dá inserção ao esternocleidomastóideo, ao esplênio da cabeça e ao longuíssimo da cabeça — por isso é robusto: ele é o braço de alavanca da rotação da cabeça. Por dentro é oco, pneumatizado, e essas células comunicam-se com a cavidade timpânica pelo ádito do antro mastóideo.',
+    vascularizacao:
+      'Artéria occipital e artéria auricular posterior, com a artéria estilomastóidea entrando pelo forame homônimo. A veia emissária mastóidea o atravessa e liga o seio sigmóideo às veias do couro cabeludo — via de disseminação da infecção mastóidea para a trombose de seio sigmóideo.',
     relacoes:
       'Medial a ele passa o forame estilomastóideo (nervo facial saindo) e, mais fundo, o seio sigmoide escava a face interna. Anteriormente está o meato acústico externo; medialmente, o processo estiloide.',
     clinica:
@@ -38,6 +40,8 @@ export const CRANIO_BASE: EntradaDicionario[] = [
       'Na linha média da cavidade nasal, entre as duas coanas. Articula-se acima com a lâmina perpendicular do etmoide e com o rostro do esfenoide, e abaixo com a crista nasal da maxila e do palatino.',
     funcao:
       'Completa o septo ósseo e mantém as duas fossas nasais separadas e simétricas — condição para que o fluxo de ar seja turbulento e condicionado dos dois lados.',
+    vascularizacao:
+      'Artéria esfenopalatina, pelo ramo nasopalatino, que desce pela sua face e atravessa o canal incisivo. É esse vaso que sangra na epistaxe posterior de septo e o que se cauteriza na septoplastia.',
     relacoes:
       'É a única peça óssea que você vê na linha média olhando as coanas de baixo. Atrás dele está a nasofaringe; à frente, a cartilagem do septo.',
     clinica:
@@ -58,6 +62,8 @@ export const CRANIO_BASE: EntradaDicionario[] = [
       'Desce verticalmente da junção entre o corpo e a asa maior do esfenoide, atrás do último molar superior. Divide-se em lâmina medial e lâmina lateral, separadas pela fossa pterigóidea.',
     funcao:
       'É a plataforma de origem dos músculos pterigóideos, que fazem a mandíbula protruir e mover-se lateralmente na mastigação. A lâmina medial termina no hâmulo, que serve de roldana para o tensor do véu palatino.',
+    vascularizacao:
+      'Ramos pterigóideos da artéria maxilar e artéria do canal pterigóideo, que atravessa sua base. O plexo venoso pterigóideo, que o envolve, comunica-se com o seio cavernoso pelas veias emissárias do forame oval — a via pela qual uma infecção dentária pode chegar ao crânio.',
     relacoes:
       'À frente está a fossa pterigopalatina, encruzilhada de nervos e vasos da face; lateralmente, a fossa infratemporal com o plexo pterigóideo; medialmente, a coana e a tuba auditiva.',
     clinica:
@@ -153,6 +159,8 @@ export const CRANIO_BASE: EntradaDicionario[] = [
       'Fecha o palato ósseo por trás. Encontra sua homóloga na linha média pela sutura palatina mediana e a maxila pela sutura palatina transversa.',
     funcao:
       'Completa o assoalho do nariz e o teto da boca, separando definitivamente respiração de deglutição. Sua borda posterior livre dá inserção à aponeurose do palato mole.',
+    vascularizacao:
+      'Artéria palatina maior, ramo terminal da palatina descendente, que emerge do forame palatino maior junto ao terceiro molar e corre para a frente num sulco ósseo. É o vaso que limita a largura do enxerto de palato na periodontia e o que sangra na palatoplastia.',
     relacoes:
       'Perfurada nas suas bordas pelos forames palatinos maior e menores, por onde chegam vasos e nervos palatinos vindos da fossa pterigopalatina.',
     clinica:
@@ -172,6 +180,8 @@ export const CRANIO_BASE: EntradaDicionario[] = [
     localizacao:
       'Parte medialmente do corpo da maxila, logo acima do arco alveolar, e encontra o do lado oposto na sutura palatina mediana.',
     funcao: 'Sustenta o teto da boca e o assoalho do nariz e transmite ao crânio a carga da mastigação vinda dos dentes superiores.',
+    vascularizacao:
+      'Artéria palatina maior, vindo de trás, e artéria nasopalatina, que desce pelo canal incisivo — as duas se anastomosam na porção anterior do palato duro.',
     relacoes:
       'Perfura-se à frente pelo canal incisivo (nervo nasopalatino). Acima está o assoalho da cavidade nasal; abaixo, a mucosa palatina.',
     clinica:
@@ -225,6 +235,10 @@ export const CRANIO_BASE: EntradaDicionario[] = [
     localizacao:
       'Vistas de baixo, na base do crânio: duas janelas retangulares separadas na linha média pelo vômer, limitadas em cima pelo corpo do esfenoide, embaixo pela lâmina horizontal do palatino e lateralmente pela lâmina medial do pterigoide.',
     funcao: 'São a saída do ar condicionado pelo nariz — aquecido, umidificado e filtrado — para a faringe e a via aérea inferior.',
+    vascularizacao:
+      'Artéria esfenopalatina, que emerge do forame homônimo poucos milímetros acima e lateralmente a eles — o vaso da epistaxe posterior grave.',
+    inervacao:
+      'Nervo nasopalatino e ramos nasais posteriores de V2. A atresia coanal bilateral é emergência do recém-nascido, porque ele é respirador nasal obrigatório: a criança fica cianótica ao repouso e melhora ao chorar, o padrão paradoxal que faz o diagnóstico.',
     relacoes: 'Imediatamente atrás está a nasofaringe, com o óstio faríngeo da tuba auditiva na parede lateral e a tonsila faríngea no teto.',
     clinica:
       'A atresia de coanas é emergência neonatal: o recém-nascido é respirador nasal obrigatório, e a obstrução bilateral produz cianose que melhora ao chorar (porque aí ele abre a boca) e piora à mamada — um padrão paradoxal que fecha o diagnóstico à beira do leito. Testa-se passando uma sonda pela narina.',
@@ -421,6 +435,10 @@ export const CRANIO_BASE: EntradaDicionario[] = [
     localizacao: 'Na linha média da fossa craniana anterior, imediatamente anterior à crista galli.',
     funcao:
       'No adulto costuma ser fechado — daí "cego". Quando patente, transmite uma veia emissária que liga o seio sagital superior às veias da cavidade nasal. Na criança, é frequentemente permeável.',
+    vascularizacao:
+      'Transmite, quando pérvio, uma veia emissária que liga as veias nasais ao seio sagital superior — comunicação sem válvulas entre o nariz e o interior do crânio.',
+    inervacao:
+      'Não transmite nervo. Sua importância é outra: é o trajeto embrionário do divertículo dural que dá origem ao trato nasal, e a persistência dele produz o glioma nasal, o encefalocele nasofrontal e o cisto dermoide da linha média — massas nasais da criança que jamais devem ser biopsiadas sem imagem antes.',
     relacoes: 'Está entre a lâmina cribiforme, atrás, e o seio frontal, à frente.',
     clinica:
       'A permeabilidade explica as encefaloceles e os gliomas nasais da linha média na criança: tecido neural herniado por um forame cego que não se fechou. Toda massa nasal mediana em criança precisa de imagem antes de qualquer biópsia — biopsiar cérebro herniado é desastre.',
@@ -439,6 +457,8 @@ export const CRANIO_BASE: EntradaDicionario[] = [
     resumo: 'Lâmina óssea vertical do etmoide que se projeta para a fossa craniana anterior — a crista galli.',
     localizacao: 'Na linha média da fossa craniana anterior, entre as duas lâminas cribiformes, apontando para cima.',
     funcao: 'Ancora a foice do cérebro, a prega de dura-máter que separa os dois hemisférios e impede que eles deslizem um sobre o outro nos movimentos da cabeça.',
+    vascularizacao:
+      'Artérias etmoidais anterior e posterior, ramos da oftálmica e portanto da carótida interna. Correm sobre a base do crânio em canais ósseos por vezes deiscentes — e a retração de uma delas para a órbita, na cirurgia endoscópica, produz hematoma retro-orbitário com risco de cegueira.',
     relacoes: 'À frente está o forame cego; lateralmente, as lâminas cribiformes com os filamentos olfatórios; abaixo, a cavidade nasal.',
     clinica:
       'É a âncora anterior da foice; quando a pressão intracraniana desloca o encéfalo, a foice é a lâmina rígida contra a qual o giro do cíngulo se hernia (hérnia subfalcina), comprimindo a artéria cerebral anterior. Meningiomas da goteira olfatória crescem exatamente aqui e produzem anosmia insidiosa.',
@@ -476,6 +496,8 @@ export const CRANIO_BASE: EntradaDicionario[] = [
       'No centro geométrico da base do crânio, entre as duas asas maiores. Acima está a fossa hipofisária; à frente, o tubérculo da sela e o sulco pré-quiasmático; atrás, o dorso da sela e o clivo.',
     funcao:
       'Aloja e protege a hipófise e ancora as demais peças da base — o esfenoide se articula com doze ossos, o que faz dele a chave de abóbada do crânio. O seio esfenoidal aligeira o bloco e é a porta de acesso cirúrgico à sela.',
+    vascularizacao:
+      'Ramos da artéria esfenopalatina e da artéria do canal pterigóideo para o osso e a mucosa do seio; a artéria carótida interna corre no sulco carótico da sua face lateral, dentro do seio cavernoso, separada do seio esfenoidal por uma lâmina óssea às vezes deiscente — o risco maior da cirurgia transesfenoidal da hipófise.',
     relacoes:
       'Lateralmente, os seios cavernosos com a carótida interna e os pares III, IV, V1, V2 e VI; acima, o quiasma óptico.',
     clinica:
@@ -530,6 +552,8 @@ export const CRANIO_BASE: EntradaDicionario[] = [
       'Encravada entre o esfenoide e o occipital, com o ápice apontando anteromedialmente. Sua face anterossuperior forma o assoalho da fossa média; a posterior, a parede anterior da fossa posterior.',
     funcao:
       'Protege a cóclea, o vestíbulo e os canais semicirculares — as estruturas mais delicadas do corpo, que exigem o osso mais compacto do corpo. Transmite ainda a carótida interna pelo canal carótico e o facial e o vestibulococlear pelo meato acústico interno.',
+    vascularizacao:
+      'Artéria carótida interna atravessa-a pelo canal carótico; a artéria estilomastóidea e ramos da meníngea média irrigam o osso. O ápice petroso tem medula óssea vascularizada em cerca de 30% das pessoas — a razão de a apicite petrosa (síndrome de Gradenigo) existir: otorreia, dor retro-orbitária e paralisia do VI par.',
     relacoes:
       'Sua borda superior aloja o seio petroso superior e sustenta a tenda do cerebelo; a borda posterior, o seio petroso inferior; a face posterior tem o meato acústico interno.',
     clinica:
@@ -833,6 +857,10 @@ export const CRANIO_BASE: EntradaDicionario[] = [
     localizacao: 'Parede lateral da cavidade nasal, projetando-se medialmente a partir do labirinto etmoidal, acima da concha inferior.',
     funcao:
       'Aumenta a superfície mucosa e cria turbulência no ar inspirado, mas seu papel decisivo é abrigar, sob si, o meato médio, onde se abrem o seio maxilar, o frontal e as células etmoidais anteriores — o chamado complexo ostiomeatal.',
+    vascularizacao:
+      'Artéria esfenopalatina e artéria etmoidal anterior, que se encontram nela — carótida externa e interna irrigando o mesmo osso.',
+    inervacao:
+      'Ramos nasais posteriores superiores de V2 e ramo nasal interno do etmoidal anterior (V1). É a referência anatômica central da cirurgia endoscópica: sua inserção na base do crânio define o limite superior seguro, e sua lateralização é o passo que abre o complexo ostiomeatal.',
     relacoes: 'Sob sua inserção corre o processo uncinado e a bula etmoidal; medialmente está o septo, formando a fenda olfatória em cima.',
     clinica:
       'É a estrutura-chave da cirurgia endoscópica nasal: quase toda sinusite crônica se resolve desobstruindo o complexo ostiomeatal sob a concha média. Sua pneumatização (concha bolhosa) estreita o meato e é causa anatômica reconhecida de sinusite de repetição.',
@@ -851,6 +879,10 @@ export const CRANIO_BASE: EntradaDicionario[] = [
     localizacao: 'Presa à parede lateral do nariz, abaixo da concha média; é um osso próprio, não uma parte do etmoide.',
     funcao:
       'É a principal responsável por aquecer e umidificar o ar: sua mucosa é rica em sinusoides venosos que enchem e esvaziam alternadamente, produzindo o ciclo nasal. Sob ela abre-se o ducto nasolacrimal.',
+    vascularizacao:
+      'Artéria nasal posterior lateral, ramo da esfenopalatina, que entra pela sua extremidade posterior e corre num sulco ósseo próprio. Sob a mucosa há sinusoides venosos cavernosos que enchem e esvaziam alternadamente — o ciclo nasal, responsável por uma narina entupir a cada poucas horas em pessoa saudável.',
+    inervacao:
+      'Nervo nasal posterior inferior lateral, ramo de V2, com fibras parassimpáticas do gânglio pterigopalatino que comandam a vasodilatação e a secreção. É o alvo da turbinectomia e da cauterização na rinite crônica.',
     relacoes: 'Articula-se com a maxila, o lacrimal, o etmoide e o palatino; medialmente está o septo.',
     clinica:
       'A hipertrofia de conchas inferiores é a causa mais comum de obstrução nasal crônica na rinite, e responde a corticoide tópico antes de qualquer cirurgia. O ducto nasolacrimal abrindo no meato inferior explica por que se chora pelo nariz — e é a via da dacriocistorrinostomia.',
@@ -945,6 +977,8 @@ export const CRANIO_BASE: EntradaDicionario[] = [
       'Neurocrânio proporcionalmente enorme (a face é cerca de 1/8 do crânio, contra 1/2 no adulto), ossos planos ainda sem díploe, sem processo mastoide e sem seios paranasais desenvolvidos.',
     funcao:
       'A separação entre os ossos serve a duas coisas ao mesmo tempo: permite o cavalgamento das peças na passagem pelo canal de parto (moldagem) e deixa o crânio crescer junto com o encéfalo, que triplica de volume no primeiro ano.',
+    vascularizacao:
+      'Rede periosteal densa alimentada pelas artérias do couro cabeludo, ainda sem os sulcos meníngeos profundos do adulto. Os seios venosos durais e as fontanelas permitem que o crânio se molde no parto — e o cavalgamento das suturas é normal nas primeiras horas de vida, não sinal de fratura.',
     relacoes: 'Os fontículos anterior e posterior, na linha média, são as janelas mais úteis; o anterior fecha entre 18 e 24 meses, o posterior por volta dos 2 a 3 meses.',
     clinica:
       'O fontículo anterior é um manômetro clínico gratuito: abaulado e tenso na hipertensão intracraniana e na meningite, deprimido na desidratação. Fechamento precoce de suturas é craniossinostose e deforma o crânio de modo previsível pela regra de Virchow — o crânio cresce paralelamente à sutura fundida e perpendicular às abertas. E a ausência de mastoide explica por que o nervo facial é superficial e vulnerável no neonato.',
@@ -990,7 +1024,7 @@ export const CRANIO_BASE: EntradaDicionario[] = [
     ],
   },
   {
-    termos: ['Fontículo Anterolateral (Astérica)', 'Fontículo Posterolateral (Ptérica)'],
+    termos: ['Fontículo Anterolateral (Astérica)'],
     classe: 'fonticulo',
     resumo: 'Fontículos laterais, pequenos e pares, que correspondem no adulto ao ptério e ao astério.',
     localizacao:
@@ -1005,6 +1039,33 @@ export const CRANIO_BASE: EntradaDicionario[] = [
       'Que ossos se encontram em cada fontículo lateral?',
       'Que vaso corre sob o ptério?',
       'Quando esses fontículos se fecham?',
+    ],
+  },
+  {
+    termos: [
+      'Fontículo Posterolateral (Ptérica)',
+    ],
+    classe: 'fonticulo',
+    resumo:
+      'Fontanela mastóidea, no encontro do parietal, do occipital e do temporal — a que fecha por último entre as laterais.',
+    localizacao:
+      'De cada lado, na junção das suturas lambdóidea, occipitomastóidea e parietomastóidea, atrás da orelha. Corresponde, no adulto, ao ponto craniométrico ástrio.',
+    funcao:
+      'Permite o cavalgamento dos ossos no parto e acomoda o crescimento encefálico. Fecha entre o sexto e o décimo oitavo mês — bem depois da fontanela anterolateral, que fecha por volta do sexto mês.',
+    vascularizacao:
+      'Ramos da artéria occipital e da auricular posterior. Sob ela passa a veia emissária mastóidea, que liga o seio sigmóideo às veias extracranianas.',
+    inervacao: 'Ramos do nervo occipital menor (C2) e do auricular magno na pele suprajacente.',
+    linfaticos: 'Linfonodos mastóideos (retroauriculares).',
+    relacoes:
+      'No adulto, sob esse ponto correm o seio sigmóideo e as células mastóideas — vizinhança que muda o risco de qualquer abordagem cirúrgica na região.',
+    clinica:
+      'A nomenclatura do acervo troca os nomes tradicionais, e vale fixar o que importa de fato: a fontanela ASTÉRICA (posterolateral, mastóidea) recobre o seio sigmóideo, e é por isso que a mastoidite do lactente pode evoluir para trombose de seio sigmóideo. Já o PTÉRIO, no lado oposto, à frente da orelha, é onde a artéria meníngea média corre sob osso fino — o ponto do hematoma epidural. Duas regiões, dois vasos, duas emergências diferentes.',
+    memoria:
+      'Atrás da orelha corre veia (seio sigmóideo); à frente da orelha corre artéria (meníngea média). Uma tromboso, a outra sangra.',
+    pontos: [
+      'Quando fecha a fontanela posterolateral?',
+      'Que seio venoso corre sob ela?',
+      'Qual a diferença de risco entre a região astérica e o ptério?',
     ],
   },
 ]

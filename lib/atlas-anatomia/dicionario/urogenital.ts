@@ -128,21 +128,27 @@ export const UROGENITAL: EntradaDicionario[] = [
     ],
   },
   {
-    termos: ['Tuba Uterina Direita', 'Tuba Uterina Esquerda'],
+    termos: ['Tuba Uterina Direita'],
     classe: 'viscera',
-    resumo: 'Conduto par que capta o ovócito e o leva ao útero — e onde a fecundação de fato acontece.',
+    resumo: 'Tuba uterina do lado direito, que capta o oócito e o conduz ao útero — e onde a fecundação de fato acontece.',
     localizacao:
-      'Na margem livre do ligamento largo, com quatro partes: intramural, istmo, ampola e infundíbulo com as fímbrias, que abraçam o ovário e abrem na cavidade peritoneal.',
-    funcao: 'As fímbrias capturam o ovócito na ovulação, e o batimento ciliar somado à peristalse o conduz até o útero, geralmente em três a quatro dias.',
-    vascularizacao: 'Ramos tubários das artérias uterina e ovárica.',
-    inervacao: 'Plexos ovárico e uterovaginal.',
-    relacoes: 'É o único ponto do corpo em que a cavidade peritoneal se comunica com o meio externo — pela vagina, útero e tuba.',
+      'Na borda superior do ligamento largo direito, com cerca de 10 cm e quatro partes: intramural, istmo, ampola e infundíbulo com as fímbrias, que se debruçam sobre o ovário direito.',
+    funcao:
+      'As fímbrias capturam o oócito na ovulação, e o batimento ciliar somado à peristalse o conduz ao útero em três a quatro dias. A fecundação ocorre na ampola, e não no útero — o embrião chega já com vários dias de idade.',
+    vascularizacao:
+      'Ramo tubário da artéria uterina direita, vindo de medial, e ramo tubário da artéria ovárica direita, vindo de lateral, anastomosados em arcada dentro da mesossalpinge. O retorno venoso à direita é direto para a veia cava inferior, sem o desvio pela renal que existe à esquerda.',
+    inervacao: 'Plexos ovárico (T10–T11) e uterovaginal (T12–L2 e S2–S4). As aferentes de dor sobem pelo simpático, o que torna a dor tubária inicialmente vaga e periumbilical.',
+    linfaticos: 'Linfonodos lombares (para-aórticos), acompanhando a artéria ovárica — e não os pélvicos, como o útero.',
+    relacoes:
+      'À direita, o apêndice vermiforme e o ceco estão a poucos centímetros do infundíbulo — vizinhança que não existe do lado esquerdo e que muda o raciocínio diagnóstico.',
     clinica:
-      'A fecundação ocorre na ampola, o sítio mais comum de gravidez ectópica: quando rompe, dá abdome agudo hemorrágico. Essa comunicação com o peritônio é também a via da doença inflamatória pélvica ascendente e da peri-hepatite de Fitz-Hugh-Curtis.',
+      'É a vizinhança com o apêndice que torna a tuba direita a mais problemática de diagnosticar. Uma salpingite direita, uma ectópica direita rota e uma apendicite produzem dor em fossa ilíaca direita com defesa — e a inversão do erro é igualmente frequente: apendicectomias em mulheres jovens com anexo inflamado e apêndice normal são caso conhecido. A dosagem de beta-HCG antes de qualquer decisão cirúrgica em mulher em idade fértil existe exatamente por causa dessa sobreposição anatômica.',
+    memoria:
+      'A tuba direita mora ao lado do apêndice. Dor em fossa ilíaca direita em mulher fértil pede beta-HCG antes da mesa de cirurgia.',
     pontos: [
-      'Fecundação na ampola; ectópica no mesmo lugar',
-      'Única comunicação do peritônio com o exterior',
-      'Via ascendente da doença inflamatória pélvica',
+      'Onde ocorre a fecundação e por que isso importa na ectópica?',
+      'Que duas artérias irrigam a tuba e onde se anastomosam?',
+      'Por que a tuba direita se confunde com o apêndice no diagnóstico?',
     ],
   },
   {
@@ -151,6 +157,8 @@ export const UROGENITAL: EntradaDicionario[] = [
     resumo: 'Recesso circular entre o colo do útero e a parede vaginal, dividido em fórnices anterior, posterior e laterais.',
     localizacao: 'Em torno da porção vaginal do colo; o fórnice posterior é o mais profundo, e logo atrás dele está a escavação retouterina.',
     funcao: 'Acomoda a projeção do colo dentro da vagina e é onde se depositam as secreções cervicais.',
+    vascularizacao:
+      'Artérias vaginais e ramos cervicais da artéria uterina, formando os plexos ázigos anterior e posterior na linha média. O fórnice posterior está separado da cavidade peritoneal apenas pela parede vaginal e pelo peritônio — e é essa espessura mínima que permite a culdocentese e o acesso vaginal à cavidade abdominal.',
     clinica:
       'A profundidade do fórnice posterior é o que permite a culdocentese — puncionar o fundo de saco de Douglas pela vagina para confirmar hemoperitônio, como na ruptura de gravidez ectópica. É também por ali que se palpa a espinha isquiática para o bloqueio do pudendo.',
     pontos: [

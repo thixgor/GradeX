@@ -380,6 +380,10 @@ export const COXA_JOELHO: EntradaDicionario[] = [
     localizacao: 'Da gordura de Hoffa até o teto da fossa intercondilar, à frente do ligamento cruzado anterior.',
     funcao:
       'É o vestígio do septo que dividia o joelho embrionário em três compartimentos separados. Não tem função mecânica no adulto; sua importância é topográfica e clínica.',
+    vascularizacao:
+      'Ramos das artérias geniculares inferiores e da genicular média, que penetram o coxim adiposo de Hoffa.',
+    inervacao:
+      'Ramos articulares dos nervos femoral, tibial e fibular comum. O coxim de Hoffa é uma das estruturas mais ricamente inervadas do joelho — e por isso o impacto do coxim (síndrome de Hoffa) dói de forma desproporcional ao seu tamanho, com dor anterior ao joelho que piora na hiperextensão.',
     relacoes: 'As demais pregas — suprapatelar, medial e lateral — têm a mesma origem embrionária.',
     clinica:
       'A prega medial é a que dá sintomas: espessada e fibrosada, ela cavalga o côndilo medial e produz estalido, dor medial e sensação de travamento que simula lesão meniscal — a síndrome da plica. Já a prega infrapatelar é, sobretudo, um obstáculo visual na artroscopia, escondendo o cruzado anterior.',
@@ -398,6 +402,10 @@ export const COXA_JOELHO: EntradaDicionario[] = [
     localizacao:
       'Limitado acima pelo ligamento inguinal, lateralmente pelo sartório e medialmente pelo adutor longo; o assoalho é feito pelo iliopsoas e pelo pectíneo.',
     funcao: 'Corredor por onde os grandes vasos e o nervo femoral entram na coxa; contém também os linfonodos inguinais profundos e o canal femoral.',
+    vascularizacao:
+      'É o próprio corredor vascular do membro inferior: a artéria femoral desce no seu vértice, com a veia femoral medialmente e o nervo femoral lateralmente — a disposição NAV de lateral para medial que orienta toda punção inguinal.',
+    inervacao:
+      'Nervo femoral (L2–L4), lateral à artéria, e ramo femoral do genitofemoral. O nervo fica FORA da bainha femoral, que envolve apenas artéria e veia — e é por isso que puncionar a artéria não anestesia o nervo, e o bloqueio femoral precisa ser feito lateralmente à pulsação.',
     relacoes:
       'De lateral para medial: Nervo, Artéria, Veia, e o Espaço vazio do canal femoral com os Linfonodos — a ordem que se decora como NAVEL.',
     clinica:
@@ -473,6 +481,8 @@ export const COXA_JOELHO: EntradaDicionario[] = [
     resumo: 'Pequeno rotador externo que nasce da espinha isquiática e se une ao tendão do obturador interno.',
     localizacao: 'Entre o piriforme, acima, e o gêmeo inferior, abaixo; funde-se ao tendão do obturador interno.',
     funcao: 'Roda lateralmente o quadril estendido e abduz o quadril fletido; com os demais rotadores curtos, é o "manguito rotador do quadril".',
+    vascularizacao:
+      'Artéria glútea inferior e ramos da pudenda interna. Nasce da espinha isquiática e funde-se ao tendão do obturador interno, formando com o gêmeo inferior o tríceps coxal.',
     inervacao: 'Nervo do obturador interno (L5–S2).',
     relacoes: 'O feixe pudendo cruza a espinha isquiática imediatamente medial à sua origem.',
     clinica:
@@ -491,6 +501,8 @@ export const COXA_JOELHO: EntradaDicionario[] = [
     resumo: 'Rotador externo curto que nasce do túber isquiático e acompanha o obturador interno.',
     localizacao: 'Entre o obturador interno, acima, e o quadrado femoral, abaixo, inserindo-se com o tendão do obturador interno na fossa trocantérica.',
     funcao: 'Roda lateralmente o quadril e o estabiliza; funciona junto com o obturador interno como uma unidade funcional tríplice.',
+    vascularizacao:
+      'Artéria glútea inferior e circunflexa femoral medial. Nasce do túber isquiático, abaixo do tendão do obturador interno, completando o tríceps coxal.',
     inervacao: 'Nervo do quadrado femoral (L4–S1).',
     relacoes: 'Está imediatamente acima da artéria circunflexa femoral medial, na sua passagem para o colo femoral.',
     clinica:
@@ -510,6 +522,8 @@ export const COXA_JOELHO: EntradaDicionario[] = [
     localizacao: 'Da face interna da membrana obturatória, atravessa o forame isquiático menor e insere-se na face medial do trocânter maior.',
     funcao:
       'Roda lateralmente o quadril. A curva de quase 90° sobre a margem do ísquio funciona como polia, e a superfície óssea nesse ponto é revestida de cartilagem, com uma bolsa entre eles.',
+    vascularizacao:
+      'Artéria pudenda interna e ramos da glútea inferior. O tendão dobra em ângulo reto na incisura isquiática menor, usando o osso como roldana — e essa é a única polia óssea de um músculo do quadril.',
     inervacao: 'Nervo do obturador interno (L5–S2).',
     relacoes: 'Sua saída da pelve é o marco do canal pudendo (de Alcock), formado por um desdobramento da fáscia obturatória, por onde correm o nervo e os vasos pudendos internos.',
     clinica:

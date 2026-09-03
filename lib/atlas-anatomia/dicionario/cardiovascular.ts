@@ -159,6 +159,8 @@ export const CARDIOVASCULAR: EntradaDicionario[] = [
     resumo: 'Câmara de bombeamento da circulação pulmonar, a mais anterior do coração.',
     localizacao: 'Forma a maior parte da face esternocostal do coração, atrás do esterno, com parede fina (3–5 mm) e trabéculas carnosas grosseiras.',
     funcao: 'Bombeia o sangue venoso ao tronco pulmonar contra a baixa resistência do circuito pulmonar — por isso a parede é fina.',
+    inervacao:
+      'Plexo cardíaco, com maior densidade de aferentes vagais que o ventrículo esquerdo, sobretudo na parede inferior. É a base do reflexo de Bezold-Jarisch, e a razão de o infarto de ventrículo direito cursar com bradicardia, hipotensão e resposta paradoxal aos vasodilatadores — nitrato aqui derruba a pressão em vez de aliviar a dor.',
     vascularizacao: 'Artéria coronária direita.',
     relacoes: 'A trabécula septomarginal (banda moderadora) conduz o ramo direito do feixe atrioventricular até o músculo papilar anterior.',
     clinica:
@@ -170,6 +172,8 @@ export const CARDIOVASCULAR: EntradaDicionario[] = [
     resumo: 'Câmara mais posterior do coração, que recebe o sangue oxigenado dos pulmões.',
     localizacao: 'Na face posterior do coração, à frente do esôfago, recebendo as quatro veias pulmonares.',
     funcao: 'Recebe o sangue arterializado e o entrega ao ventrículo esquerdo pela valva mitral.',
+    inervacao:
+      'Plexo cardíaco, com predomínio vagal, e gânglios autonômicos concentrados em coxins de gordura epicárdica ao redor das veias pulmonares. São esses gânglios que modulam os focos ectópicos da fibrilação atrial, e sua ablação é feita junto com o isolamento das veias.',
     vascularizacao: 'Artéria circunflexa.',
     relacoes: 'Sua relação posterior com o esôfago é o que torna possível o ecocardiograma transesofágico com imagens tão nítidas dessa câmara.',
     clinica:
@@ -181,6 +185,8 @@ export const CARDIOVASCULAR: EntradaDicionario[] = [
     resumo: 'Câmara de maior pressão do coração, que bombeia o sangue para toda a circulação sistêmica.',
     localizacao: 'Forma o ápice e a margem esquerda do coração, com parede de 8 a 12 mm — cerca de três vezes a do direito.',
     funcao: 'Ejeta o sangue na aorta contra a alta resistência sistêmica; sua fração de ejeção é a medida central da função cardíaca.',
+    inervacao:
+      'Plexo cardíaco. As aferentes de dor sobem com o simpático até T1–T5, e é essa a razão de o infarto de parede anterior doer no tórax, no braço esquerdo e na mandíbula: as fibras cardíacas convergem, na medula, com as aferentes somáticas desses dermátomos. As fibras vagais são escassas no ventrículo esquerdo, o oposto do que ocorre nos átrios.',
     vascularizacao: 'Artérias interventricular anterior, circunflexa e, na parede inferior, coronária direita ou circunflexa conforme a dominância.',
     clinica:
       'O ictus cordis, no 5º espaço intercostal esquerdo na linha hemiclavicular, corresponde ao seu ápice; desvio lateral indica dilatação. A hipertrofia por sobrecarga de pressão (hipertensão, estenose aórtica) difere da dilatação por sobrecarga de volume (insuficiência mitral ou aórtica).',
@@ -191,6 +197,8 @@ export const CARDIOVASCULAR: EntradaDicionario[] = [
     resumo: 'Valva semilunar de três válvulas entre o ventrículo esquerdo e a aorta.',
     localizacao: 'Na saída do ventrículo esquerdo, com os seios aórticos direito e esquerdo dando origem às artérias coronárias.',
     funcao: 'Impede o refluxo da aorta para o ventrículo durante a diástole; sua abertura define o início da ejeção.',
+    vascularizacao:
+      'As cúspides são avasculares e vivem por difusão; apenas o terço basal recebe capilares. Do fundo dos seios que as abrigam nascem as duas coronárias — as cúspides ficam a milímetros de toda a irrigação do coração e não recebem nada. É essa avascularidade que impede o remodelamento e faz desta a valva que mais calcifica.',
     clinica:
       'A estenose aórtica dá sopro sistólico em ejeção irradiado para as carótidas, com a tríade angina, síncope e dispneia. A valva aórtica bicúspide é a malformação cardíaca mais comum e antecipa a estenose. A insuficiência aórtica dá sopro diastólico aspirativo e pulso amplo (martelo d\'água).',
     pontos: ['Coronárias nascem dos seios aórticos', 'Estenose: angina, síncope e dispneia', 'Valva bicúspide é a malformação mais comum'],
@@ -200,6 +208,8 @@ export const CARDIOVASCULAR: EntradaDicionario[] = [
     resumo: 'Valva semilunar entre o ventrículo direito e o tronco pulmonar.',
     localizacao: 'Na via de saída do ventrículo direito, no infundíbulo (cone arterial).',
     funcao: 'Impede o refluxo do tronco pulmonar para o ventrículo direito na diástole.',
+    vascularizacao:
+      'Cúspides avasculares, nutridas por difusão, com capilares apenas junto ao anel. Sob um sexto da pressão da aórtica, acumulam muito menos dano mecânico — e por isso quase nunca calcificam, apesar de terem exatamente a mesma nutrição precária. A prova de que o problema da valva aórtica é a carga, não a irrigação.',
     clinica:
       'Ausculta-se no 2º espaço intercostal esquerdo. O desdobramento fisiológico da segunda bulha na inspiração acontece porque o componente pulmonar atrasa com o aumento do retorno venoso. A estenose pulmonar integra a tetralogia de Fallot.',
     pontos: ['2º EIC esquerdo', 'Desdobramento fisiológico de B2', 'Estenose na tetralogia de Fallot'],
@@ -209,6 +219,8 @@ export const CARDIOVASCULAR: EntradaDicionario[] = [
     resumo: 'Parede que separa os dois ventrículos, com uma porção muscular espessa e uma membranácea fina.',
     localizacao: 'Entre os ventrículos, com a parte membranácea logo abaixo da valva aórtica e a muscular formando o restante.',
     funcao: 'Separa as circulações e conduz, na sua porção subendocárdica, os ramos do feixe atrioventricular.',
+    inervacao:
+      'Plexo cardíaco. O que percorre o septo, porém, não é nervo autonômico e sim o sistema de condução: o feixe de His desce pela sua porção membranosa e se divide nos ramos direito e esquerdo. Uma comunicação interventricular perimembranosa e sua correção cirúrgica arriscam exatamente esse feixe — motivo do bloqueio atrioventricular total pós-operatório.',
     vascularizacao: 'Dois terços anteriores pela interventricular anterior; terço posterior pela interventricular posterior.',
     clinica:
       'A comunicação interventricular é a cardiopatia congênita mais comum e acomete tipicamente a porção membranácea. A ruptura do septo pós-infarto é complicação mecânica grave, com sopro holossistólico novo e choque.',

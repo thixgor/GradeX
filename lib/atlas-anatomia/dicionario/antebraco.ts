@@ -90,6 +90,10 @@ export const ANTEBRACO: EntradaDicionario[] = [
     resumo: 'Segmento estreito do rádio entre a cabeça e a tuberosidade radial.',
     localizacao: 'Imediatamente abaixo da cabeça do rádio, oblíquo em relação ao corpo do osso.',
     funcao: 'Faz a transição da cabeça para a diáfise e transmite a rotação; é envolvido por uma bolsa e cercado pelo ramo profundo do nervo radial ao entrar no supinador.',
+    vascularizacao:
+      'Ramos da artéria recorrente radial e da interóssea recorrente, que formam a rede anastomótica periarticular do cotovelo. A cabeça do rádio, logo acima, tem irrigação terminal por vasos que entram pelo colo — e por isso a fratura do colo com desvio pode necrosar a cabeça.',
+    inervacao:
+      'O nervo interósseo posterior contorna o colo do rádio dentro do músculo supinador, colado ao osso. É a relação que explica a paralisia do interósseo posterior após fratura do colo ou luxação da cabeça do rádio: queda do punho e dos dedos, com sensibilidade preservada.',
     relacoes: 'O nervo interósseo posterior contorna o colo lateralmente, dentro do músculo supinador.',
     clinica:
       'A fratura do colo do rádio é a mais comum na criança, e a redução deve respeitar o nervo interósseo posterior, que está a milímetros. Nas abordagens laterais do cotovelo, prona-se o antebraço antes de expor o colo: a manobra afasta o nervo do campo, e é o tipo de detalhe que só a anatomia justifica.',

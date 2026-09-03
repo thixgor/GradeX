@@ -54,8 +54,9 @@ export interface MarkerInsight {
    */
   memoria?: string
   /**
-   * `true` quando vascularização/inervação vieram da região, e não da estrutura.
-   * A interface rotula esses blocos como regionais para não induzir a erro.
+   * `true` quando vascularização, inervação e linfáticos vieram da região, e não
+   * da estrutura — o que hoje só acontece em marcador sem ficha curada. A
+   * interface rotula esses blocos como regionais para não induzir a erro.
    */
   vasosRegionais: boolean
   /** Reparos anatômicos da região, úteis no exame físico. */
@@ -167,13 +168,23 @@ export function getMarkerInsight(marker: AtlasMarker, contexto: ContextoMarcador
   const localizacao = entrada?.localizacao || classe.localizacao
   const contextoRegional = entrada?.localizacao ? undefined : regiao.topografia
 
-  const vascularizacao = entrada?.vascularizacao
+  // Ter ficha própria significa responder pela própria estrutura, inclusive no
+  // que se cala. O texto da região só entra onde não há ficha nenhuma — é a rede
+  // de segurança de um marcador novo, não um complemento.
+  //
+  // Misturar as duas camadas produzia erro grosseiro: numa prancha do coração o
+  // acervo marca o lobo superior do pulmão direito, e a ficha dele exibia as
+  // artérias coronárias como irrigação. O lobo pulmonar não vê uma coronária na
+  // vida. O rótulo "da região" não salvava: o aluno lê o bloco, não o rótulo.
+  const vascularizacao = entrada
     ? entrada.vascularizacao
     : classe.mostraVasos
       ? `${regiao.arterias} ${regiao.veias}`
       : undefined
 
-  const inervacao = entrada?.inervacao ? entrada.inervacao : classe.mostraNervos ? regiao.nervos : undefined
+  const inervacao = entrada ? entrada.inervacao : classe.mostraNervos ? regiao.nervos : undefined
+
+  const linfaticos = entrada ? entrada.linfaticos : classe.mostraVasos ? regiao.linfaticos : undefined
 
   return {
     classe: classe.rotulo,
@@ -185,8 +196,8 @@ export function getMarkerInsight(marker: AtlasMarker, contexto: ContextoMarcador
     funcao: compor(entrada?.funcao, classe.funcao),
     vascularizacao,
     inervacao,
-    vasosRegionais: !entrada?.vascularizacao && !entrada?.inervacao,
-    linfaticos: entrada?.linfaticos || (classe.mostraVasos ? regiao.linfaticos : undefined),
+    vasosRegionais: !entrada,
+    linfaticos,
     relacoes: entrada?.relacoes,
     memoria: entrada?.memoria,
     // Sem entrada curada, a correlação da região é mais específica que a da

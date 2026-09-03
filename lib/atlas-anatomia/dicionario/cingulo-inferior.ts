@@ -411,6 +411,8 @@ export const CINGULO_INFERIOR: EntradaDicionario[] = [
     localizacao: 'Do rebordo acetabular à linha intertrocantérica, anteriormente, e a dois terços do colo, posteriormente.',
     funcao:
       'Os ligamentos iliofemoral, pubofemoral e isquiofemoral formam uma espiral que se enrola na extensão: em pé, o quadril "trava" sozinho, e a musculatura quase não trabalha para mantê-lo estendido. É uma economia energética que só a disposição espiralada permite.',
+    inervacao:
+      'Pela lei de Hilton, recebe ramos dos nervos que cruzam a articulação: femoral à frente, obturatório medialmente, isquiático e nervo do quadrado femoral atrás, e glúteo superior acima. É essa inervação compartilhada com o joelho pelo obturatório que faz a doença do quadril na criança se manifestar como dor no joelho — e a razão de todo joelho doloroso na criança exigir exame do quadril.',
     vascularizacao: 'Anel arterial extracapsular das circunflexas femorais, do qual partem os vasos retinaculares que sobem pelo colo.',
     relacoes: 'A porção posterior descoberta do colo é extracapsular — informação que muda a classificação das fraturas.',
     clinica:

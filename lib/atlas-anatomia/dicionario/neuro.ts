@@ -121,6 +121,8 @@ export const NEURO: EntradaDicionario[] = [
     resumo: 'Pequena região do diencéfalo que comanda o sistema autônomo e o eixo endócrino.',
     localizacao: 'Abaixo do tálamo, formando o assoalho e as paredes inferiores do III ventrículo, ligado à hipófise pelo infundíbulo.',
     funcao: 'Regula temperatura, fome, sede, sono, comportamento sexual, resposta ao estresse e controla a hipófise por hormônios liberadores e pela neuro-hipófise.',
+    vascularizacao:
+      'Ramos perfurantes do polígono de Willis: artérias hipofisárias superiores da carótida interna, perfurantes da comunicante anterior e da comunicante posterior, e ramos da cerebral posterior. Nenhuma artéria nomeada o irriga inteiro — ele vive de dezenas de vasos minúsculos, e é por isso que infartos hipotalâmicos extensos são raros, mas a compressão por aneurisma de comunicante anterior é comum.',
     clinica:
       'Lesões hipotalâmicas produzem diabetes insípido central, alterações de temperatura, distúrbios do apetite e do ciclo sono-vigília. O núcleo supraquiasmático é o relógio biológico central.',
     pontos: ['Controla a hipófise e o sistema autônomo', 'Termorregulação, fome, sede e sono', 'Diabetes insípido central nas lesões'],
@@ -175,6 +177,8 @@ export const NEURO: EntradaDicionario[] = [
     resumo: 'Meninge mais interna, finíssima e vascularizada, aderida à superfície do tecido nervoso.',
     localizacao: 'Reveste intimamente giros e sulcos do encéfalo e a superfície da medula, acompanhando os vasos que penetram o parênquima.',
     funcao: 'Sustenta os vasos superficiais, forma o espaço perivascular (de Virchow-Robin) e, na medula, os ligamentos denticulados e o filamento terminal.',
+    vascularizacao:
+      'É ela que carrega os vasos: as artérias corticais correm no espaço subaracnóideo aderidas à sua superfície e mergulham no encéfalo revestidas por ela, formando o espaço perivascular de Virchow-Robin. Esse espaço é a via de drenagem do líquido intersticial cerebral — o sistema glinfático —, e seu alargamento é achado comum na ressonância do idoso e do hipertenso.',
     clinica: 'Os espaços de Virchow-Robin são vias de disseminação de infecções e de células neoplásicas; sua dilatação aparece na ressonância como pequenos focos liquóricos.',
     pontos: ['Aderida ao tecido nervoso', 'Espaços de Virchow-Robin', 'Forma os ligamentos denticulados na medula'],
   },

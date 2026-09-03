@@ -307,6 +307,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'Flexor superficial cujo tendão é a referência do pulso radial e do acesso à artéria radial.',
     localizacao: 'Do epicôndilo medial à base do 2º metacarpo, passando por um compartimento próprio do retináculo dos flexores.',
     funcao: 'Flete e faz o desvio radial do punho; é o segundo tendão mais medial visível na face anterior do punho.',
+    vascularizacao:
+      'Ramos musculares da artéria ulnar no antebraço proximal e da radial no distal. Seu tendão é o reparo que se palpa para achar o pulso radial: a artéria corre imediatamente lateral a ele, no punho.',
     inervacao: 'Nervo mediano (C6–C7).',
     relacoes: 'A artéria radial corre imediatamente lateral ao seu tendão no punho; o nervo mediano fica medial a ele.',
     clinica:
@@ -325,6 +327,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'O único flexor do antebraço inervado pelo nervo ulnar, com duas cabeças formando o túnel cubital.',
     localizacao: 'Da cabeça umeral, no epicôndilo medial, e da cabeça ulnar, no olécrano e na borda posterior da ulna, até o pisiforme.',
     funcao: 'Flete e faz o desvio ulnar do punho; o pisiforme funciona como sesamoide no seu tendão.',
+    vascularizacao:
+      'Artéria ulnar, que corre sob sua borda radial em todo o antebraço, mais os ramos colaterais ulnares superior e inferior no cotovelo. É o músculo que serve de teto ao pacote vasculonervoso ulnar — artéria e nervo escondidos debaixo dele.',
     inervacao: 'Nervo ulnar (C7–T1).',
     relacoes: 'O nervo ulnar entra no antebraço passando entre suas duas cabeças, na arcada de Osborne.',
     clinica:
@@ -343,6 +347,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'Músculo fino e dispensável do antebraço, ausente em cerca de 15% das pessoas.',
     localizacao: 'Do epicôndilo medial à aponeurose palmar, com ventre curto e tendão longo que passa por cima do retináculo.',
     funcao: 'Tensiona a aponeurose palmar e auxilia fracamente a flexão do punho; sua ausência não produz déficit algum.',
+    vascularizacao:
+      'Ramos musculares da artéria ulnar. Vaso fino, condizente com um músculo pequeno e ausente em cerca de 15% das pessoas — variação que é justamente o que o torna o tendão preferido para enxerto.',
     inervacao: 'Nervo mediano (C7–C8).',
     relacoes: 'Seu tendão é superficial ao retináculo dos flexores, e não dentro do túnel do carpo.',
     clinica:
@@ -361,6 +367,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'Principal extensor dos quatro dedos longos, com quatro tendões unidos por conexões intertendíneas.',
     localizacao: 'Do epicôndilo lateral, pelo tendão extensor comum, até as expansões extensoras dos dedos 2 a 5.',
     funcao: 'Estende as metacarpofalângicas; a extensão das interfalângicas depende dos lumbricais e interósseos, que se inserem no mesmo capuz.',
+    vascularizacao:
+      'Artéria interóssea posterior, que desce entre as camadas do compartimento extensor acompanhada do nervo homônimo. Todo o compartimento posterior do antebraço depende dela — um único vaso para muitos músculos.',
     inervacao: 'Nervo interósseo posterior (C7–C8).',
     relacoes: 'Ocupa o quarto compartimento extensor, junto com o extensor do indicador.',
     clinica:
@@ -379,6 +387,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'Extensor do sexto compartimento, que estende e faz o desvio ulnar do punho.',
     localizacao: 'Do epicôndilo lateral e da borda posterior da ulna à base do 5º metacarpo, correndo num sulco na cabeça da ulna.',
     funcao: 'Estende e desvia ulnarmente o punho; sua bainha é um estabilizador dinâmico da articulação radioulnar distal.',
+    vascularizacao:
+      'Artéria interóssea posterior. Seu tendão corre num túnel fibro-ósseo próprio sobre a ulna, e a instabilidade desse túnel é causa frequente de dor ulnar do punho no tenista.',
     inervacao: 'Nervo interósseo posterior (C7–C8).',
     relacoes: 'Sua bainha fibro-óssea é parte do complexo da fibrocartilagem triangular.',
     clinica:
@@ -397,6 +407,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'Extensor próprio do quinto dedo, no quinto compartimento extensor.',
     localizacao: 'Do tendão extensor comum, no epicôndilo lateral, até o capuz extensor do dedo mínimo, correndo sobre a articulação radioulnar distal.',
     funcao: 'Estende o dedo mínimo isoladamente; junto com o extensor do indicador, permite os únicos dois dedos com extensão independente.',
+    vascularizacao:
+      'Artéria interóssea posterior, por ramos finos. É o mais delgado dos extensores, e seu tendão ocupa sozinho o quinto compartimento extensor do punho.',
     inervacao: 'Nervo interósseo posterior (C7–C8).',
     relacoes: 'Corre imediatamente sobre a articulação radioulnar distal e a cabeça da ulna.',
     clinica:
@@ -416,6 +428,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     localizacao:
       'Do epicôndilo medial, do processo coronoide e da linha oblíqua do rádio até as falanges médias dos dedos 2 a 5, com os tendões dispostos em dois planos no túnel do carpo.',
     funcao: 'Flete a interfalângica proximal de cada dedo independentemente, porque cada tendão tem ventre muscular próprio.',
+    vascularizacao:
+      'Ramos musculares das artérias ulnar e radial. Dentro do dedo, seus tendões recebem sangue por vínculas — pregas sinoviais curtas que trazem vasos das artérias digitais e cuja lesão condena a sutura tendínea a não cicatrizar.',
     inervacao: 'Nervo mediano (C7–T1).',
     relacoes: 'O nervo mediano passa profundamente ao seu arco fibroso de origem.',
     clinica:
@@ -434,6 +448,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'Flexor da camada profunda, único capaz de fletir as interfalângicas distais, com dupla inervação.',
     localizacao: 'Das faces anterior e medial da ulna e da membrana interóssea às falanges distais dos dedos 2 a 5.',
     funcao: 'Flete as interfalângicas distais; seus tendões perfuram os do flexor superficial no quiasma de Camper.',
+    vascularizacao:
+      'Artéria ulnar e artéria interóssea anterior, que desce sobre a membrana interóssea entre este músculo e o flexor longo do polegar. No dedo, também depende das vínculas.',
     inervacao:
       'Metade radial (indicador e médio) pelo nervo interósseo anterior, ramo do mediano; metade ulnar (anular e mínimo) pelo nervo ulnar — uma das duplas inervações mais cobradas.',
     relacoes: 'Dá origem aos músculos lumbricais na palma.',
@@ -453,6 +469,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'Único flexor longo do polegar, na camada profunda do antebraço.',
     localizacao: 'Da face anterior do rádio e da membrana interóssea à base da falange distal do polegar.',
     funcao: 'Flete a interfalângica do polegar e contribui para a flexão das articulações mais proximais.',
+    vascularizacao:
+      'Artéria interóssea anterior, seu vaso dominante, com contribuição da radial. Artéria e nervo interósseos anteriores correm juntos sobre a membrana interóssea, motivo de a síndrome desse nervo poder acompanhar sinais isquêmicos.',
     inervacao: 'Nervo interósseo anterior, ramo do mediano (C7–C8).',
     relacoes: 'Passa pelo túnel do carpo na bursa radial, com bainha própria.',
     clinica:
@@ -471,6 +489,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'Músculo profundo do dorso do antebraço que abduz o polegar e forma a borda anterior da tabaqueira.',
     localizacao: 'Das faces posteriores da ulna, do rádio e da membrana interóssea à base do 1º metacarpo, no primeiro compartimento extensor.',
     funcao: 'Abduz e estende o polegar na carpometacarpal e auxilia o desvio radial do punho.',
+    vascularizacao:
+      'Artéria interóssea posterior no ventre e ramos da radial junto ao tendão. Seu tendão forma a borda anterior da tabaqueira anatômica, no assoalho da qual corre a artéria radial.',
     inervacao: 'Nervo interósseo posterior (C7–C8).',
     relacoes: 'Cruza obliquamente por cima dos tendões extensores radiais do carpo.',
     clinica:
@@ -489,6 +509,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'Companheiro do abdutor longo no primeiro compartimento, que estende a metacarpofalângica do polegar.',
     localizacao: 'Da face posterior do rádio e da membrana interóssea à base da falange proximal do polegar.',
     funcao: 'Estende a metacarpofalângica do polegar; forma, com o abdutor longo, a borda anterior da tabaqueira anatômica.',
+    vascularizacao:
+      'Artéria interóssea posterior, com ramos da radial na porção distal. Divide com o abdutor longo o primeiro compartimento extensor — o que inflama na tenossinovite de De Quervain.',
     inervacao: 'Nervo interósseo posterior (C7–C8).',
     relacoes: 'Em cerca de 30% das pessoas ocupa um subcompartimento próprio, separado por um septo.',
     clinica:
@@ -507,6 +529,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'Extensor do terceiro compartimento, que contorna o tubérculo de Lister e retropulsa o polegar.',
     localizacao: 'Da face posterior da ulna e da membrana interóssea à base da falange distal do polegar, contornando o tubérculo dorsal do rádio.',
     funcao: 'Estende a interfalângica e retropulsa o polegar — o único movimento que levanta o polegar do plano da mesa.',
+    vascularizacao:
+      'Artéria interóssea posterior. Seu tendão contorna o tubérculo dorsal do rádio numa zona de irrigação precária — a razão anatômica de ele romper tardiamente após fratura de Colles, às vezes semanas depois do trauma.',
     inervacao: 'Nervo interósseo posterior (C7–C8).',
     relacoes: 'Forma a borda posterior da tabaqueira anatômica; sua curva sobre o tubérculo é um ponto de atrito e de vascularização precária.',
     clinica:
@@ -525,6 +549,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'Músculo tenar mais superficial, o mais confiável para testar o nervo mediano na mão.',
     localizacao: 'Do retináculo dos flexores, do escafoide e do trapézio à base da falange proximal do polegar e ao capuz extensor.',
     funcao: 'Abduz o polegar perpendicularmente ao plano da palma — movimento que nenhum outro músculo realiza.',
+    vascularizacao:
+      'Ramo palmar superficial da artéria radial, que nasce logo antes do punho e mergulha na eminência tenar. Território terminal e pouco colateralizado.',
     inervacao: 'Ramo recorrente do nervo mediano (C8–T1), sem contribuição ulnar.',
     relacoes: 'É o músculo tenar mais superficial e o mais facilmente palpável.',
     clinica:
@@ -543,6 +569,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'Músculo em leque do compartimento adutor da mão, inervado pelo nervo ulnar.',
     localizacao: 'Cabeça oblíqua, do capitato e das bases dos metacarpos, e cabeça transversa, do 3º metacarpo, até o sesamoide medial e a base da falange proximal do polegar.',
     funcao: 'Aduz o polegar contra a palma e é o principal responsável pela força da pinça lateral — o gesto de segurar uma chave.',
+    vascularizacao:
+      'Arco palmar profundo e artéria principal do polegar, que atravessa suas duas cabeças. É o músculo mais profundo da mão, e a artéria principal do polegar passa entre as cabeças oblíqua e transversa.',
     inervacao: 'Ramo profundo do nervo ulnar (C8–T1).',
     relacoes: 'A artéria radial passa entre suas duas cabeças ao entrar na palma.',
     clinica:
@@ -561,6 +589,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'Músculo hipotenar mais superficial e mais medial, abdutor do quinto dedo.',
     localizacao: 'Do pisiforme e do tendão do flexor ulnar do carpo à base da falange proximal do dedo mínimo e ao capuz extensor.',
     funcao: 'Abduz o dedo mínimo e contribui para aprofundar a concavidade da palma.',
+    vascularizacao:
+      'Ramo palmar profundo da artéria ulnar, que penetra a eminência hipotenar junto com o ramo profundo do nervo ulnar — vaso e nervo entram lado a lado no mesmo canal de Guyon.',
     inervacao: 'Ramo profundo do nervo ulnar (C8–T1).',
     relacoes: 'Forma a borda medial da mão e cobre o canal de Guyon distalmente.',
     clinica:
@@ -580,6 +610,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     localizacao: 'Dos tendões do flexor profundo dos dedos, na palma, ao lado radial do capuz extensor de cada dedo.',
     funcao:
       'São os únicos músculos do corpo que se originam e se inserem em tendões. Fletem as metacarpofalângicas e estendem as interfalângicas — exatamente a posição de escrever.',
+    vascularizacao:
+      'Arcos palmares superficial e profundo, pelas artérias digitais palmares comuns. São músculos minúsculos com irrigação generosa, condizente com a exigência de trabalho fino e contínuo.',
     inervacao:
       'Os dois laterais (indicador e médio) pelo nervo mediano; os dois mediais (anular e mínimo) pelo ramo profundo do ulnar — a mesma divisão do flexor profundo que os origina.',
     relacoes: 'Correm palmarmente ao ligamento metacarpal transverso profundo, ao contrário dos interósseos.',
@@ -599,6 +631,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'Primeira fileira de falanges, a mais longa e a que sustenta o aparelho extensor.',
     localizacao: 'Entre as cabeças dos metacarpos e as falanges médias; sua base é côncava e sua cabeça, em polia.',
     funcao: 'Recebem os interósseos e os lumbricais na base, e o capuz extensor no dorso; formam a alavanca principal da preensão.',
+    vascularizacao:
+      'Artérias digitais palmares próprias, que correm de cada lado do dedo e emitem ramos nutrícios para a diáfise e ramos metafisários para as extremidades. A drenagem venosa é sobretudo dorsal, e é por isso que o dedo inchado incha por cima.',
     relacoes: 'A placa volar reforça a face palmar da metacarpofalângica.',
     clinica:
       'É a falange que mais fratura da mão, e sua angulação é mal tolerada: o desvio apical volar, produzido pela tração dos intrínsecos na base e dos extensores no dorso, encurta o dedo e altera o arco de movimento. Fraturas com mais de 10° de angulação ou qualquer rotação exigem redução.',
@@ -616,6 +650,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'Segunda fileira de falanges, presente apenas nos quatro dedos longos.',
     localizacao: 'Entre as falanges proximal e distal dos dedos 2 a 5; ausente no polegar.',
     funcao: 'Recebe, na base dorsal, a banda central do aparelho extensor, e na face palmar, o tendão do flexor superficial dos dedos.',
+    vascularizacao:
+      'Ramos das artérias digitais palmares próprias, com um pedículo nutrício único e frágil. Fratura com desvio pode interromper essa irrigação e retardar a consolidação.',
     relacoes: 'A inserção do flexor superficial ocupa quase toda a sua diáfise palmar.',
     clinica:
       'Essa dupla inserção explica o padrão de desvio das fraturas: acima da inserção do flexor superficial, o fragmento distal é fletido; abaixo dela, é estendido. Prever o desvio pelo nível do traço é o que orienta a redução — e é um dos raciocínios mais úteis da traumatologia da mão.',
@@ -633,6 +669,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'Última falange de cada dedo, com tuberosidade que sustenta a polpa e o leito ungueal.',
     localizacao: 'Extremidade de cada dedo, com base articular e tuberosidade distal alargada.',
     funcao: 'Recebe o tendão terminal do aparelho extensor no dorso e o flexor profundo na face palmar; sustenta a unha e a polpa digital.',
+    vascularizacao:
+      'Arcada terminal formada pela anastomose das duas artérias digitais na polpa, que irriga o osso, o leito ungueal e a polpa digital num só território. É essa arcada que faz o dedo sangrar tanto e cicatrizar tão bem — e sua interrupção que produz a necrose da ponta.',
     relacoes: 'A polpa é dividida em compartimentos por septos fibrosos que ligam a pele ao periósteo.',
     clinica:
       'Esses septos criam um compartimento fechado, e é por isso que o panarício da polpa produz dor pulsátil desproporcional e necrose se não for drenado precocemente. As fraturas de tufo, por esmagamento, quase sempre vêm com hematoma subungueal — e quando ele ocupa mais de 50% da unha, o leito deve ser explorado, sob risco de deformidade ungueal permanente.',
@@ -766,6 +804,11 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     localizacao: 'Linha média anterior da pelve, com um disco interpúbico de fibrocartilagem entre as faces sinfisiais.',
     funcao:
       'Permite deslocamento mínimo — cerca de 2 mm e 1° de rotação — e resiste às forças de cisalhamento vertical entre os dois hemi-pelves durante a marcha. Reforçada pelos ligamentos púbicos superior e inferior.',
+    vascularizacao:
+      'Ramos das artérias obturatória, pudenda interna e epigástrica inferior, que formam uma rede periarticular escassa — o disco interpúbico em si é avascular e se nutre por difusão, como todo fibrocartilagem.',
+    inervacao:
+      'Ramos dos nervos ílio-hipogástrico, ilioinguinal, genitofemoral e pudendo. Essa inervação múltipla é a razão de a dor da osteíte púbica ser difusa e irradiar para a virilha, o períneo e a face medial da coxa ao mesmo tempo.',
+    linfaticos: 'Linfonodos inguinais profundos e ilíacos externos.',
     relacoes: 'Atrás dela está o espaço retropúbico de Retzius, extraperitoneal, com o plexo venoso vesical.',
     clinica:
       'Sua frouxidão hormonal na gestação amplia a pelve e é normal; a diástase acima de 10 mm, com dor e incapacidade de deambular, é disjunção púbica e exige tratamento. E na fratura em livro aberto, a estabilização anterior sobre a sínfise é o primeiro passo do controle da hemorragia pélvica — a cinta pélvica pré-hospitalar funciona pelo mesmo princípio, fechando o anel e reduzindo o volume de sangramento.',
@@ -921,6 +964,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'Único componente do quadríceps que cruza o quadril, nascendo da espinha ilíaca ântero-inferior.',
     localizacao: 'Da espinha ilíaca ântero-inferior (cabeça direta) e da borda do acetábulo (cabeça refletida) ao tendão do quadríceps.',
     funcao: 'Estende o joelho e flete o quadril — e por ser biarticular, sua eficiência depende da posição do quadril.',
+    vascularizacao:
+      'Ramo descendente da artéria circunflexa femoral lateral, um pedículo único, longo e constante — a razão de o reto femoral ser músculo de escolha para retalho pediculado em reconstrução de parede abdominal e de períneo.',
     inervacao: 'Nervo femoral (L2–L4).',
     relacoes: 'É o mais superficial dos quatro ventres, cobrindo o vasto intermédio.',
     clinica:
@@ -940,6 +985,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     localizacao: 'Da linha áspera e da linha intertrocantérica ao tendão do quadríceps e ao retináculo patelar medial.',
     funcao:
       'Suas fibras mais distais e mais oblíquas — o vasto medial oblíquo — inserem-se quase horizontalmente na patela e são o principal freio muscular contra o deslocamento lateral dela.',
+    vascularizacao:
+      'Ramos musculares da artéria femoral no canal dos adutores e a artéria genicular descendente, que nasce dela pouco antes do hiato. Essa irrigação distal generosa sustenta as fibras oblíquas que estabilizam a patela.',
     inervacao: 'Nervo femoral (L2–L4).',
     relacoes: 'É o ventre que forma a proeminência muscular acima e medialmente à patela.',
     clinica:
@@ -958,6 +1005,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'O maior e mais potente ventre do quadríceps, na face lateral da coxa.',
     localizacao: 'Do trocanter maior e do lábio lateral da linha áspera ao tendão do quadríceps e ao retináculo patelar lateral.',
     funcao: 'Estende o joelho; sua tração lateral é contrabalançada pelo vasto medial oblíquo.',
+    vascularizacao:
+      'Ramo descendente da artéria circunflexa femoral lateral, que desce entre ele e o reto femoral, com contribuição das artérias perfurantes. É o músculo mais volumoso do quadríceps e o de irrigação mais segmentar.',
     inervacao: 'Nervo femoral (L2–L4).',
     relacoes: 'Está profundo ao trato iliotibial, com o qual pode formar aderências.',
     clinica:
@@ -976,6 +1025,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'Ventre profundo do quadríceps, coberto pelo reto femoral, com o articular do joelho na sua face profunda.',
     localizacao: 'Das faces anterior e lateral do corpo do fêmur ao tendão do quadríceps, profundamente ao reto femoral.',
     funcao: 'Estende o joelho; suas fibras mais profundas formam o músculo articular do joelho, que traciona a bolsa suprapatelar e impede que ela seja pinçada na extensão.',
+    vascularizacao:
+      'Ramos da artéria circunflexa femoral lateral e artérias perfurantes da femoral profunda, que o alcançam diretamente sobre o corpo do fêmur — posição que o torna o primeiro a aderir ao osso e a se retrair após fratura de fêmur.',
     inervacao: 'Nervo femoral (L2–L4).',
     relacoes: 'Adere diretamente ao periósteo do fêmur em boa parte da sua extensão.',
     clinica:
@@ -994,6 +1045,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'Isquiotibial medial superficial, com um tendão longo que integra a pata de ganso.',
     localizacao: 'Do túber isquiático à face medial da tíbia, na pata de ganso, junto com o sartório e o grácil.',
     funcao: 'Estende o quadril, flete o joelho e roda a perna medialmente.',
+    vascularizacao:
+      'Artérias perfurantes da femoral profunda e ramos da glútea inferior no terço proximal. Seu tendão longo e a irrigação segmentar são o que permitem retirá-lo para reconstrução do ligamento cruzado anterior sem perda funcional relevante.',
     inervacao: 'Divisão tibial do nervo isquiático (L5–S2).',
     relacoes: 'Seu tendão é o mais posterior e o mais palpável da face medial do joelho.',
     clinica:
@@ -1012,6 +1065,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'Isquiotibial medial profundo, com aponeurose ampla e inserção complexa no côndilo medial da tíbia.',
     localizacao: 'Do túber isquiático ao côndilo medial da tíbia, com expansões para o ligamento poplíteo oblíquo e para a fáscia do poplíteo.',
     funcao: 'Estende o quadril, flete o joelho, roda a perna medialmente e traciona o menisco medial posteriormente na flexão, evitando que ele seja pinçado.',
+    vascularizacao:
+      'Artérias perfurantes da femoral profunda e artéria glútea inferior. Sua expansão distal forma o ligamento poplíteo oblíquo, no assoalho da fossa poplítea, junto da artéria poplítea — vizinhança que importa na luxação de joelho.',
     inervacao: 'Divisão tibial do nervo isquiático (L5–S2).',
     relacoes: 'Sua bolsa, entre ele e a cabeça medial do gastrocnêmio, é onde se forma o cisto de Baker.',
     clinica:
@@ -1030,6 +1085,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'Isquiotibial lateral com duas cabeças e duas inervações distintas.',
     localizacao: 'Cabeça longa do túber isquiático e cabeça curta da linha áspera, unindo-se num tendão que se insere na cabeça da fíbula.',
     funcao: 'Flete o joelho e roda a perna lateralmente; a cabeça longa também estende o quadril.',
+    vascularizacao:
+      'Cabeça longa pelas artérias perfurantes da femoral profunda; cabeça curta pela perfurante distal e por ramos da poplítea. Duas cabeças com nervos diferentes e também com pedículos diferentes.',
     inervacao:
       'Cabeça longa pela divisão tibial e cabeça curta pela divisão fibular comum do nervo isquiático — o único músculo do corpo inervado pelas duas divisões.',
     relacoes: 'Seu tendão forma a borda superolateral da fossa poplítea, com o nervo fibular comum imediatamente medial a ele.',
@@ -1050,6 +1107,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     localizacao: 'Da face glútea do ílio, entre as linhas glúteas anterior e posterior, à face lateral do trocânter maior.',
     funcao:
       'Abduz o quadril, mas sua função decisiva é outra: na fase de apoio da marcha, ele impede que a pelve caia para o lado que está no ar. Sem ele, cada passo seria uma queda lateral.',
+    vascularizacao:
+      'Ramo profundo da artéria glútea superior, que sai da pelve pelo forame suprapiriforme junto com o nervo homônimo. Artéria e nervo entram no mesmo ponto, e um trauma ali compromete os dois.',
     inervacao: 'Nervo glúteo superior (L4–S1), que sai acima do piriforme.',
     relacoes: 'Suas fibras anteriores rodam medialmente o quadril; as posteriores, lateralmente.',
     clinica:
@@ -1068,6 +1127,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'O mais profundo dos glúteos, abdutor e rotador medial do quadril.',
     localizacao: 'Da face glútea do ílio, entre as linhas glúteas anterior e inferior, à face anterior do trocânter maior.',
     funcao: 'Abduz e roda medialmente o quadril, atuando junto com o glúteo médio; sua parte profunda tem expansão para a cápsula articular, que ele traciona e protege do pinçamento.',
+    vascularizacao:
+      'Ramo profundo da artéria glútea superior e ramos da circunflexa femoral lateral. Está diretamente sobre a cápsula do quadril, e a artéria que o irriga é vizinha da que nutre a cabeça femoral.',
     inervacao: 'Nervo glúteo superior (L4–S1).',
     relacoes: 'Está profundo ao glúteo médio e superficial à cápsula do quadril.',
     clinica:
@@ -1086,6 +1147,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'Músculo mais superficial e mais medial da coxa, o único adutor que cruza o joelho.',
     localizacao: 'Do ramo inferior do púbis à face medial da tíbia, na pata de ganso.',
     funcao: 'Aduz o quadril e flete e roda medialmente o joelho — por ser biarticular, é o único adutor com ação sobre o joelho.',
+    vascularizacao:
+      'Pedículo dominante da artéria circunflexa femoral medial, que entra no terço proximal, com pedículos menores da femoral profunda. Esse pedículo único e proximal é o que faz do grácil o retalho muscular livre mais usado em reanimação facial e reconstrução de membro.',
     inervacao: 'Nervo obturatório (L2–L4).',
     relacoes: 'Seu tendão é o mais anterior dos três da pata de ganso a partir do plano profundo.',
     clinica:
@@ -1104,6 +1167,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'Adutor mais anterior e mais palpável da coxa, cujo tendão delimita o trígono femoral.',
     localizacao: 'Do corpo do púbis, abaixo da crista, ao terço médio do lábio medial da linha áspera.',
     funcao: 'Aduz e auxilia a flexão do quadril; seu tendão de origem é estreito e facilmente palpável na virilha.',
+    vascularizacao:
+      'Ramos da artéria femoral profunda e da obturatória. Forma a borda medial do trígono femoral, e a artéria femoral corre justamente sobre a sua margem — reparo do acesso vascular inguinal.',
     inervacao: 'Ramo anterior do nervo obturatório (L2–L4).',
     relacoes: 'Sua borda medial forma o limite medial do trígono femoral e o limite lateral do canal dos adutores.',
     clinica:
@@ -1123,6 +1188,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     localizacao: 'Das faces posteriores dos côndilos femorais ao tendão do calcâneo.',
     funcao:
       'Flete plantarmente o pé e flete o joelho. Por ser biarticular, sua força de flexão plantar cai quando o joelho está fletido — o que permite testá-lo separadamente do sóleo.',
+    vascularizacao:
+      'Artérias surais, ramos diretos da poplítea, uma para cada cabeça, entrando pela face profunda no terço proximal. Pedículo alto, constante e único por cabeça: a base anatômica do retalho de gastrocnêmio para cobrir o joelho e o terço proximal da tíbia.',
     inervacao: 'Nervo tibial (S1–S2).',
     relacoes: 'Suas cabeças formam as bordas inferiores da fossa poplítea.',
     clinica:
@@ -1142,6 +1209,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     localizacao: 'Da linha do sóleo na tíbia, da cabeça e da margem posterior da fíbula, até o tendão do calcâneo, sob o gastrocnêmio.',
     funcao:
       'Flete plantarmente o pé independentemente da posição do joelho, por ser monoarticular. É rico em fibras tipo I, de contração lenta e resistentes à fadiga — o músculo que mantém a postura em pé por horas.',
+    vascularizacao:
+      'Irrigação tripla e segmentar: poplítea e tibial posterior na metade proximal, fibular na distal. Suas veias intramusculares largas formam o coração periférico da panturrilha — e é nesses seios venosos que a trombose venosa profunda começa.',
     inervacao: 'Nervo tibial (S1–S2).',
     relacoes: 'Seu arco tendíneo é atravessado pelo feixe tibial posterior; suas veias intramusculares são amplas e sinusoidais.',
     clinica:
@@ -1160,6 +1229,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'Músculo do compartimento lateral cujo tendão cruza toda a planta do pé.',
     localizacao: 'Da cabeça e dos dois terços proximais da fíbula, contornando o maléolo lateral e o cuboide até o cuneiforme medial e a base do 1º metatarso.',
     funcao: 'Everte o pé e faz a flexão plantar do primeiro raio, empurrando a cabeça do 1º metatarso contra o chão na propulsão.',
+    vascularizacao:
+      'Artéria fibular no ventre e ramos da tibial anterior no terço proximal. O tendão contorna o maléolo lateral e cruza a planta do pé numa zona de irrigação escassa, o que explica a lentidão de cicatrização das suas lesões.',
     inervacao: 'Nervo fibular superficial (L5–S1).',
     relacoes: 'Sua origem forma um túnel fibroso em torno do nervo fibular comum, no colo da fíbula.',
     clinica:
@@ -1178,6 +1249,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'Músculo do compartimento lateral que se insere na base do 5º metatarso — o principal eversor do pé.',
     localizacao: 'Dos dois terços distais da face lateral da fíbula à tuberosidade da base do 5º metatarso.',
     funcao: 'É o eversor mais eficiente, pelo maior braço de alavanca lateral; sua tração é a que arranca a base do 5º metatarso na inversão forçada.',
+    vascularizacao:
+      'Artéria fibular, por ramos musculares diretos. Sua inserção na base do quinto metatarso é o local da fratura por avulsão do tornozelo em inversão — a fratura de Jones falsa, que confunde no pronto-socorro.',
     inervacao: 'Nervo fibular superficial (L5–S1).',
     relacoes: 'No sulco retromaleolar, corre em contato direto com o osso, com o fibular longo por trás.',
     clinica:
@@ -1197,6 +1270,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'Camada mais superficial da parede abdominal lateral, com fibras que descem para dentro.',
     localizacao: 'Das oito últimas costelas à crista ilíaca, ao ligamento inguinal e à linha alba; suas fibras correm "como as mãos nos bolsos".',
     funcao: 'Flete e roda o tronco para o lado oposto; sua aponeurose forma a lâmina anterior da bainha do reto e o ligamento inguinal.',
+    vascularizacao:
+      'Artérias intercostais posteriores inferiores e subcostal, artéria circunflexa ilíaca profunda e ramos da epigástrica inferior. Irrigação segmentar, em faixas — cada nível costal traz seu próprio vaso e seu próprio nervo.',
     inervacao: 'Nervos intercostais T7 a T11 e subcostal.',
     relacoes: 'A borda inferior enrolada da sua aponeurose forma o ligamento inguinal, e a abertura nele é o anel inguinal superficial.',
     clinica:
@@ -1215,6 +1290,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'Camada média da parede abdominal, com fibras que sobem para dentro, cruzando as do externo.',
     localizacao: 'Da fáscia toracolombar, da crista ilíaca e do ligamento inguinal às três últimas costelas e à linha alba.',
     funcao: 'Flete e roda o tronco para o mesmo lado; sua aponeurose se desdobra e contribui para as duas lâminas da bainha do reto acima da linha arqueada.',
+    vascularizacao:
+      'As mesmas fontes segmentares do oblíquo externo, mais contribuição da artéria circunflexa ilíaca profunda, que corre justamente ao longo da crista ilíaca — vaso lesado em incisões de McBurney feitas muito lateralmente.',
     inervacao: 'Nervos intercostais T7 a T11, subcostal, ílio-hipogástrico e ilioinguinal.',
     relacoes: 'Suas fibras inferiores, com as do transverso, formam o tendão conjunto e originam o músculo cremaster.',
     clinica:
@@ -1233,6 +1310,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'Coluna intermediária e mais longa do eretor da espinha, do sacro ao processo mastoide.',
     localizacao: 'Entre o iliocostal, lateralmente, e o espinal, medialmente; divide-se em porções torácica, cervical e da cabeça.',
     funcao: 'Estende e inclina lateralmente a coluna; a porção da cabeça estende e roda a cabeça para o mesmo lado.',
+    vascularizacao:
+      'Ramos dorsais das artérias intercostais posteriores, lombares e sacrais laterais, entrando segmento a segmento junto com o ramo posterior de cada nervo espinal. Vaso e nervo compartilham o mesmo endereço em cada nível.',
     inervacao: 'Ramos posteriores dos nervos espinais.',
     relacoes: 'É a coluna mais extensa das três e a que alcança o crânio.',
     clinica:
@@ -1251,6 +1330,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'Coluna mais lateral do eretor da espinha, que se insere nos ângulos das costelas.',
     localizacao: 'Da crista ilíaca e do sacro aos ângulos das costelas e aos processos transversos cervicais, em porções lombar, torácica e cervical.',
     funcao: 'Estende e inclina lateralmente a coluna; por se inserir nas costelas, participa também da mecânica respiratória.',
+    vascularizacao:
+      'Ramos dorsais das artérias intercostais posteriores e lombares. Por ser a coluna mais lateral do eretor da espinha, recebe também ramos da circunflexa ilíaca profunda na porção mais baixa.',
     inervacao: 'Ramos posteriores dos nervos espinais.',
     relacoes: 'É a coluna mais lateral e mais superficial das três.',
     clinica:
@@ -1389,6 +1470,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'Crista sagital na bifurcação da traqueia, entre os dois brônquios principais.',
     localizacao: 'Ao nível do ângulo esternal (T4–T5), no plano transverso do tórax.',
     funcao: 'Marca a divisão da traqueia; sua mucosa é a região mais sensível de toda a via aérea inferior.',
+    vascularizacao:
+      'Ramos das artérias brônquicas, de pressão sistêmica, formando uma rede submucosa densa; drenagem pelas veias brônquicas para a ázigo. Essa vascularização abundante é o que faz a biópsia de carina sangrar mais do que a de brônquios distais.',
     inervacao: 'Nervo vago, com fibras do reflexo de tosse.',
     relacoes: 'Está imediatamente abaixo do arco aórtico e à frente do esôfago.',
     clinica:
@@ -1407,6 +1490,10 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'Brônquio mais curto, mais largo e mais vertical, o destino natural dos corpos estranhos.',
     localizacao: 'Da carina ao hilo direito, com cerca de 2,5 cm e ângulo de aproximadamente 25° com a vertical.',
     funcao: 'Ventila o pulmão direito; divide-se em três brônquios lobares, sendo o superior eparterial.',
+    vascularizacao:
+      'Artéria brônquica direita, que costuma nascer de um tronco comum com a terceira artéria intercostal posterior e corre na face posterior do brônquio. Veias brônquicas drenam para a veia ázigo.',
+    inervacao:
+      'Plexo pulmonar direito: vago para broncoconstrição, secreção e reflexo de tosse — aqui muito intenso —, e simpático de T1 a T5 para broncodilatação.',
     relacoes: 'A veia ázigo arqueia-se sobre ele; a artéria pulmonar direita está à sua frente.',
     clinica:
       'Ser mais vertical e mais largo é a razão de a aspiração de corpo estranho e a intubação seletiva acidental ocorrerem quase sempre à direita — e de a atelectasia do lobo superior direito ser a consequência mais comum de um tubo introduzido além do necessário. Em adultos em decúbito dorsal, a pneumonia aspirativa segue o mesmo caminho.',
@@ -1424,6 +1511,10 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'Brônquio mais longo, mais estreito e mais horizontal, que passa sob o arco aórtico.',
     localizacao: 'Da carina ao hilo esquerdo, com cerca de 5 cm e ângulo de aproximadamente 45° com a vertical.',
     funcao: 'Ventila o pulmão esquerdo; divide-se em apenas dois brônquios lobares.',
+    vascularizacao:
+      'Duas artérias brônquicas esquerdas, que nascem diretamente da aorta torácica descendente. As veias brônquicas drenam para a hemiázigo e a hemiázigo acessória — a assimetria venosa que acompanha a assimetria arterial.',
+    inervacao:
+      'Plexo pulmonar esquerdo. Vale o alerta de vizinhança: o nervo laríngeo recorrente esquerdo passa logo acima dele, sob o arco aórtico, e é por isso que a intubação seletiva e a cirurgia hilar esquerda podem deixar o paciente rouco.',
     relacoes: 'Passa sob o arco aórtico e à frente do esôfago; a artéria pulmonar esquerda está acima dele.',
     clinica:
       'Seu trajeto sob o arco aórtico e a relação com o átrio esquerdo explicam o sinal de Ortner: o aumento do átrio esquerdo na estenose mitral eleva o brônquio principal esquerdo e estira o nervo laríngeo recorrente, produzindo rouquidão. E a intubação seletiva esquerda, necessária na ventilação monopulmonar, é tecnicamente mais difícil justamente por causa do ângulo.',
@@ -1441,6 +1532,10 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'Projeção em língua do lobo superior esquerdo, equivalente funcional do lobo médio direito.',
     localizacao: 'Porção anteroinferior do lobo superior esquerdo, abaixo da incisura cardíaca, sobre o pericárdio.',
     funcao: 'Contém os segmentos lingulares superior e inferior, ventilados por um brônquio próprio que nasce do brônquio lobar superior esquerdo.',
+    vascularizacao:
+      'Artéria lingular, ramo da artéria pulmonar esquerda, para a circulação funcional; as artérias brônquicas esquerdas para a nutritiva. O retorno vai pela veia lingular à veia pulmonar superior esquerda.',
+    inervacao:
+      'Plexo pulmonar esquerdo, sem componente somático — a língula não dói. A dor de uma consolidação lingular vem da pleura parietal vizinha, por nervos intercostais.',
     relacoes: 'Repousa diretamente sobre a borda esquerda do coração.',
     clinica:
       'Sua consolidação apaga a borda cardíaca esquerda na radiografia — o sinal da silhueta —, o que a localiza sem necessidade de perfil. É também um sítio frequente de bronquiectasias e de infecção por micobactérias não tuberculosas na "síndrome de Lady Windermere", em mulheres idosas que suprimem a tosse, com acometimento característico de língula e lobo médio.',
@@ -1458,6 +1553,12 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'Pulmão de três lobos e duas fissuras, maior e mais pesado que o esquerdo.',
     localizacao: 'Cavidade pleural direita, com base mais alta pelo fígado e hilo com brônquio posterior à artéria.',
     funcao: 'Contém dez segmentos broncopulmonares e responde por cerca de 55% da função ventilatória total.',
+    vascularizacao:
+      'Duas circulações. A funcional é a artéria pulmonar direita, que traz sangue venoso, com retorno pelas veias pulmonares superior e inferior direitas. A nutritiva é a artéria brônquica direita, ramo sistêmico de alta pressão — e é dela que vem a hemoptise maciça, não da pulmonar.',
+    inervacao:
+      'Plexo pulmonar direito: vago (broncoconstrição, secreção, tosse) e simpático de T1 a T5 (broncodilatação). O parênquima não tem fibra de dor; a dor torácica de origem pulmonar vem sempre da pleura parietal.',
+    linfaticos:
+      'Plexos superficial e profundo convergem aos linfonodos broncopulmonares, traqueobrônquicos e paratraqueais direitos, terminando no ducto linfático direito — drenagem inteiramente homolateral.',
     relacoes: 'Sua face mediastinal apresenta impressões da veia cava superior, da veia ázigo e do esôfago.',
     clinica:
       'Sua maior participação funcional é o que orienta a decisão cirúrgica: uma pneumonectomia direita retira mais função e tem mortalidade maior que a esquerda, e por isso a avaliação funcional pré-operatória é mais rigorosa. E é para ele que vão os corpos estranhos e as aspirações, pela geometria do brônquio principal.',
@@ -1475,6 +1576,11 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'Pulmão de dois lobos, uma fissura e uma incisura cardíaca que abriga o coração.',
     localizacao: 'Cavidade pleural esquerda, com hilo em que a artéria pulmonar é superior ao brônquio.',
     funcao: 'Contém oito a nove segmentos broncopulmonares e é menor em volume por causa do coração.',
+    vascularizacao:
+      'Artéria pulmonar esquerda para a circulação funcional, com retorno pelas veias pulmonares superior e inferior esquerdas; duas artérias brônquicas esquerdas, diretamente da aorta torácica, para a nutritiva.',
+    inervacao: 'Plexo pulmonar esquerdo, de vago e simpático torácico alto. Sem sensibilidade dolorosa própria.',
+    linfaticos:
+      'Hilares esquerdos, subaórticos e para-aórticos — e, do lobo inferior, boa parte cruza para os paratraqueais direitos. Essa travessia contralateral muda o estádio de um tumor e, com ele, a conduta.',
     relacoes: 'Sua face mediastinal apresenta a impressão cardíaca profunda, o sulco da aorta e o da subclávia esquerda.',
     clinica:
       'A ausência de fissura horizontal é o que faz um derrame cisural ou uma consolidação lobar terem apresentações radiográficas distintas dos dois lados. E a maior tolerância à pneumonectomia esquerda, por sua menor contribuição funcional, é um dos fatores considerados no planejamento de ressecções pulmonares extensas.',
@@ -1492,6 +1598,10 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'Apêndice em orelha do átrio direito, de base larga e interior trabeculado.',
     localizacao: 'Prolonga-se para a frente e para a esquerda a partir do átrio direito, cobrindo a raiz da aorta.',
     funcao: 'Sua parede interna é revestida por músculos pectíneos; a base larga a distingue da aurícula esquerda.',
+    vascularizacao:
+      'Ramos atriais da artéria coronária direita, entre eles a artéria do nó sinoatrial, que corre na base da aurícula em cerca de 60% das pessoas. Drenagem por pequenas veias atriais para o seio coronário e diretamente para a cavidade.',
+    inervacao:
+      'Plexo cardíaco com forte predomínio vagal; o coxim gorduroso vizinho à sua base concentra gânglios parassimpáticos que comandam a frequência cardíaca.',
     relacoes: 'O nó sinoatrial está na sua junção com a veia cava superior.',
     clinica:
       'É a estrutura canulada na circulação extracorpórea para drenagem venosa, e a base larga é o que permite a canulação segura — ao contrário da esquerda. É também onde se posiciona a ponta do eletrodo atrial de marca-passo, e onde a canulação inadvertida do nó sinoatrial pode causar disfunção transitória.',
@@ -1509,6 +1619,10 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'Apêndice tubular e estreito do átrio esquerdo, principal sítio de trombos na fibrilação atrial.',
     localizacao: 'Prolonga-se para a frente a partir do átrio esquerdo, sobre o sulco coronário e a artéria circunflexa.',
     funcao: 'Diferentemente da direita, tem base estreita, forma tubular e frequentemente múltiplos lobos.',
+    vascularizacao:
+      'Ramos atriais da artéria circunflexa, que corre no sulco coronário logo abaixo dela. Drenagem por veias atriais para a veia cardíaca magna e o seio coronário.',
+    inervacao:
+      'Plexo cardíaco. O manguito de miocárdio que se estende às veias pulmonares vizinhas é o gerador dos focos ectópicos da fibrilação atrial, e a aurícula é o reservatório onde o trombo se forma quando a contração se perde.',
     relacoes: 'Sua parede é fina e o fluxo em seu interior é lento.',
     clinica:
       'Base estreita, fluxo lento e superfície trabeculada formam a receita do trombo: mais de 90% dos trombos da fibrilação atrial não valvar se formam aqui. É por isso que o ecocardiograma transesofágico é obrigatório antes da cardioversão eletiva sem anticoagulação plena, e é por isso que existem dispositivos de oclusão da aurícula para pacientes que não podem anticoagular.',
@@ -1526,6 +1640,8 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'Extremidade cônica do corpo esponjoso, coberta pelo prepúcio e com o meato uretral no ápice.',
     localizacao: 'Extremidade distal do pênis, expandindo o corpo esponjoso; sua borda posterior é a coroa.',
     funcao: 'É a região mais ricamente inervada do pênis, e a única parte do órgão erétil que permanece relativamente macia na ereção, por sua albugínea muito fina.',
+    vascularizacao:
+      'Artérias dorsais do pênis, ramos da pudenda interna, que terminam nela em leque; recebe também a artéria bulbouretral. O retorno é pela veia dorsal profunda, que atravessa o ligamento suspensor e alcança o plexo prostático — e não pela veia dorsal superficial, que é subcutânea.',
     inervacao: 'Nervo dorsal do pênis (S2–S4), com a maior densidade de corpúsculos sensitivos.',
     clinica:
       'Sua albugínea fina explica por que a glande permanece flácida no priapismo isquêmico — sinal que ajuda a distinguir a condição do simples ingurgitamento. E é na glande que se manifestam a balanite, o líquen escleroso (balanite xerótica obliterante), causa de fimose adquirida e de estenose de meato, e o carcinoma espinocelular, cujo principal fator de risco é a fimose com inflamação crônica.',
@@ -1543,6 +1659,12 @@ export const DESDOBRAMENTOS: EntradaDicionario[] = [
     resumo: 'Porção pêndula do pênis, formada pelos dois corpos cavernosos e pelo corpo esponjoso.',
     localizacao: 'Da raiz, no períneo, até a glande; suspenso pelos ligamentos suspensor e fundiforme.',
     funcao: 'Contém os três cilindros eréteis, envolvidos pela fáscia profunda (de Buck) e pela fáscia superficial (de Dartos).',
+    vascularizacao:
+      'Três ramos terminais da artéria pudenda interna: a artéria profunda do pênis, dentro de cada corpo cavernoso, responsável pela ereção por suas artérias helicinas; a artéria dorsal, sob a fáscia profunda; e a artéria bulbouretral, para o corpo esponjoso. O retorno é pela veia dorsal profunda ao plexo prostático.',
+    inervacao:
+      'Nervo dorsal do pênis, ramo do pudendo (S2–S4), para a sensibilidade; nervos cavernosos do plexo prostático, parassimpáticos (S2–S4), para a ereção, e simpáticos (T11–L2) para a ejaculação. É a base do \'point and shoot\': parassimpático ereção, simpático ejaculação.',
+    linfaticos:
+      'Pele e prepúcio drenam para os linfonodos inguinais superficiais; a glande e os corpos cavernosos, para os inguinais profundos e ilíacos externos — distinção que decide o estadiamento do câncer de pênis.',
     relacoes: 'A fáscia de Buck contém os corpos eréteis e o feixe dorsal; a de Dartos é contínua com Scarpa e Colles.',
     clinica:
       'A fáscia de Buck é o que determina o padrão do hematoma na fratura peniana: íntegra, o hematoma fica confinado ao corpo, dando a deformidade em berinjela; rompida, ele se espalha pelo escroto e pela parede abdominal, seguindo Colles e Scarpa. A fratura é uma emergência cirúrgica, e a extensão do hematoma prevê o que o cirurgião vai encontrar.',

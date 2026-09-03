@@ -11,46 +11,104 @@ import type { EntradaDicionario } from './tipos'
 export const RESPIRATORIO_VIAS: EntradaDicionario[] = [
   /* ─────────────────── Nariz externo e vestíbulo ─────────────────── */
   {
-    termos: ['Raiz do Nariz', 'Dorso do Nariz'],
+    termos: ['Raiz do Nariz'],
     classe: 'via-aerea',
-    resumo: 'Parte superior e crista do nariz externo, sustentadas por osso em cima e cartilagem embaixo.',
-    localizacao: 'A raiz está entre os olhos, na sutura frontonasal (o násio); o dorso desce dela até o ápice, com terço superior ósseo e dois terços inferiores cartilagíneos.',
-    funcao: 'Sustentam a pirâmide nasal e definem o perfil facial; a transição osso-cartilagem é o ponto de maior mobilidade.',
-    relacoes: 'Os ossos nasais e os processos frontais das maxilas formam a parte óssea; as cartilagens laterais e alares, a parte móvel.',
+    resumo: 'Extremidade superior do nariz, onde ele se implanta na testa — o ponto mais fixo da pirâmide nasal.',
+    localizacao: 'Entre os dois olhos, na sutura frontonasal, que corresponde ao ponto craniométrico násio. É a única parte do nariz apoiada diretamente no crânio.',
+    funcao:
+      'Ancora o nariz ao esqueleto facial e define a profundidade do ângulo nasofrontal, que dá o perfil. Por ser osso puro, é rígida: não colabora com a respiração e não se deforma no sopro.',
+    vascularizacao:
+      'Artéria dorsal do nariz, ramo terminal da oftálmica, e artéria angular, ramo terminal da facial. É aqui que a carótida interna e a externa se encontram na face — anastomose que explica como uma injeção de preenchedor nesta região pode embolizar e cegar o olho.',
+    inervacao: 'Nervo infratroclear, ramo do nasociliar (V1).',
+    relacoes:
+      'Atrás dela estão o seio frontal, acima, e as células etmoidais anteriores, atrás — separados da fossa craniana anterior por lâminas ósseas de menos de um milímetro.',
     clinica:
-      'A fratura nasal é a fratura facial mais comum, e ocorre justamente na transição entre osso e cartilagem. A avaliação obrigatória é a do septo: um hematoma septal não drenado necrosa a cartilagem em poucos dias e produz o nariz em sela, deformidade permanente e de correção difícil.',
+      'Um trauma frontal que atinja a raiz do nariz não é uma fratura nasal: é uma fratura naso-órbito-etmoidal, que pode romper a lâmina crivosa e produzir fístula liquórica. O sinal é rinorreia clara que aumenta ao inclinar a cabeça para a frente, e a confirmação é a dosagem de beta-2-transferrina no líquido. Telecanto — aumento da distância entre os cantos internos dos olhos — é o achado que denuncia essa fratura à inspeção.',
     memoria:
-      'Todo trauma nasal exige olhar dentro do nariz. Hematoma de septo é urgência de drenagem, não de estética.',
+      'Trauma na raiz do nariz é trauma de base de crânio até prova em contrário. Líquido claro pingando do nariz é liquor, não coriza.',
     pontos: [
-      'Que estruturas sustentam a raiz e o dorso do nariz?',
-      'Por que a fratura ocorre na transição osso-cartilagem?',
-      'O que acontece se um hematoma septal não for drenado?',
+      'Que ponto craniométrico corresponde à raiz do nariz?',
+      'Que estruturas estão imediatamente atrás dela?',
+      'Como se reconhece uma fístula liquórica após trauma nasal?',
     ],
   },
   {
-    termos: ['Ápice do Nariz', 'Asa do Nariz'],
+    termos: ['Dorso do Nariz'],
     classe: 'via-aerea',
-    resumo: 'Ponta e paredes laterais móveis do nariz, sustentadas pelas cartilagens alares.',
-    localizacao: 'Extremidade inferior do nariz externo; as asas delimitam lateralmente as narinas.',
+    resumo: 'Crista que desce da raiz até a ponta — a parte do nariz que muda de osso para cartilagem no meio do caminho.',
+    localizacao:
+      'Do násio ao ápice. O terço superior é ósseo, formado pelos ossos nasais e pelos processos frontais das maxilas; os dois terços inferiores são cartilagíneos, formados pelas cartilagens laterais e pelo septo.',
     funcao:
-      'As cartilagens alares mantêm as narinas abertas contra a pressão negativa da inspiração. Os músculos dilatadores da narina, inervados pelo facial, aumentam ativamente essa abertura no esforço.',
-    inervacao: 'Sensibilidade pelo nervo etmoidal anterior (V1) na ponta e pelo infraorbital (V2) nas asas; motricidade pelo facial.',
+      'Sustenta o teto da pirâmide nasal e mantém aberta a via aérea logo abaixo. A cartilagem do septo funciona como a viga central de um telhado: é ela, e não o osso, que segura a altura do dorso.',
+    vascularizacao:
+      'Artéria dorsal do nariz, ramo terminal da oftálmica, descendo pela linha média, com anastomose distal com a nasal lateral da facial. Nessa anastomose a carótida interna e a externa se encontram — e é por ela que um preenchedor injetado no dorso pode refluir até a artéria central da retina e cegar o olho.',
+    inervacao: 'Nervo infratroclear (V1) na porção proximal e ramo nasal externo do nervo etmoidal anterior (V1) na distal.',
+    relacoes: 'A transição entre osso e cartilagem, no terço médio, é o ponto de menor resistência de todo o nariz.',
     clinica:
-      'O batimento de asa de nariz é um dos sinais de desconforto respiratório mais precoces e mais confiáveis no lactente, e nada mais é do que o recrutamento visível desses dilatadores. O colapso alar na inspiração — teste de Cottle positivo — é causa frequente de obstrução nasal que nenhuma cirurgia de septo resolve.',
+      'A fratura nasal é a fratura facial mais comum e ocorre justamente nessa transição osso-cartilagem. Mas o achado que decide a conduta não está no dorso e sim dentro do nariz: um hematoma septal não drenado necrosa a cartilagem em poucos dias, o dorso perde sua viga de sustentação e desaba — é o nariz em sela, deformidade permanente e de correção difícil.',
     memoria:
-      'Asa de nariz batendo em criança é sinal de esforço respiratório. É músculo tentando abrir a porta.',
+      'Todo trauma de dorso nasal exige olhar dentro do nariz. Hematoma de septo é urgência de drenagem, não de estética.',
     pontos: [
-      'Que estruturas mantêm as narinas abertas?',
-      'O que significa o batimento de asa de nariz?',
+      'Qual a proporção entre osso e cartilagem no dorso do nariz?',
+      'Por que a fratura ocorre na transição osso-cartilagem?',
+      'Como o hematoma septal produz o nariz em sela?',
+    ],
+  },
+  {
+    termos: ['Ápice do Nariz'],
+    classe: 'via-aerea',
+    resumo: 'A ponta do nariz — extremidade mais anterior e mais projetada da pirâmide nasal.',
+    localizacao:
+      'Extremidade inferior e anterior do nariz externo, sustentada pelas cúpulas das duas cartilagens alares maiores, que se encontram na linha média sobre a extremidade da cartilagem do septo.',
+    funcao:
+      'Define a projeção e a rotação do nariz, os dois parâmetros centrais da rinoplastia. Seu suporte não vem de osso nenhum: é um tripé de cartilagem, e ceder qualquer perna do tripé faz a ponta cair.',
+    vascularizacao:
+      'Artéria nasal lateral, ramo terminal da facial, e artéria do septo nasal, ramo da labial superior — território de carótida externa, com anastomose ampla na ponta. É essa rede dupla que faz a ponta do nariz raramente necrosar mesmo após trauma extenso.',
+    inervacao:
+      'Ramo nasal externo do nervo etmoidal anterior, ramo do nasociliar, da divisão oftálmica do trigêmeo (V1) — o mesmo nervo que inerva a córnea.',
+    relacoes: 'Apoia-se sobre a columela, que contém os ramos mediais das cartilagens alares.',
+    clinica:
+      'Que a ponta do nariz seja território do nasociliar, e não da divisão maxilar, produz um dos sinais mais úteis da medicina: o sinal de Hutchinson. Vesículas de herpes-zóster na ponta do nariz indicam acometimento do nervo nasociliar e, portanto, risco alto de ceratite e uveíte — porque o mesmo nervo inerva o olho. Zóster na ponta do nariz é encaminhamento urgente ao oftalmologista.',
+    memoria:
+      'Vesícula na ponta do nariz: olhe o olho. Ponta do nariz e córnea compartilham o nervo nasociliar.',
+    pontos: [
+      'Que cartilagens sustentam a ponta do nariz?',
+      'Que nervo a inerva e que outro território ele cobre?',
+      'O que é o sinal de Hutchinson?',
+    ],
+  },
+  {
+    termos: ['Asa do Nariz'],
+    classe: 'via-aerea',
+    resumo: 'Parede lateral móvel do nariz, que delimita a narina por fora.',
+    localizacao:
+      'De cada lado da ponta, do sulco alar até a columela. É sustentada pelo ramo lateral da cartilagem alar maior e por cartilagens alares menores, ligadas por tecido fibroadiposo.',
+    funcao:
+      'Mantém a narina aberta contra a pressão negativa da inspiração. Os músculos dilatadores da narina, inervados pelo facial, aumentam ativamente essa abertura no esforço — é o único ponto do nariz com músculo capaz de mudar o calibre da via aérea.',
+    vascularizacao:
+      'Artéria nasal lateral, ramo terminal da facial, que contorna o sulco alar de modo constante. Esse vaso é o pedículo do retalho nasogeniano, o mais usado para reconstruir a asa depois da ressecção de um carcinoma basocelular — tumor que tem justamente aqui um dos seus sítios prediletos.',
+    inervacao: 'Nervo infraorbital, da divisão maxilar do trigêmeo (V2), para a sensibilidade; nervo facial para os músculos dilatadores.',
+    relacoes: 'O sulco alar marca a transição para a bochecha e é o limite estético da subunidade nasal.',
+    clinica:
+      'O batimento de asa de nariz é um dos sinais de desconforto respiratório mais precoces e mais confiáveis no lactente, e nada mais é do que o recrutamento visível desses dilatadores. Já o colapso alar na inspiração — teste de Cottle positivo, quando tracionar a bochecha lateralmente melhora a respiração — é causa frequente de obstrução nasal que nenhuma cirurgia de septo resolve.',
+    memoria:
+      'Asa de nariz batendo em criança é músculo tentando abrir a porta. Asa que colaba no adulto é porta que não para em pé — e septoplastia não conserta.',
+    pontos: [
+      'Que estrutura mantém a asa do nariz aberta?',
+      'Que nervo dá sensibilidade à asa, diferente do que inerva a ponta?',
       'O que é o teste de Cottle?',
     ],
   },
   {
-    termos: ['Narina Direita', 'Narina Esquerda'],
+    termos: ['Narina Direita'],
     classe: 'via-aerea',
     resumo: 'Aberturas anteriores das cavidades nasais, entrada da via aérea.',
     localizacao: 'Face inferior do nariz externo, separadas na linha média pela columela.',
     funcao: 'Entrada do ar; sua área e forma determinam a resistência inicial ao fluxo.',
+    vascularizacao:
+      'Artéria labial superior, ramo da facial, que emite o ramo septal para a área de Kiesselbach, no septo anterior — a origem de mais de 90% das epistaxes. Território de carótida externa.',
+    inervacao:
+      'Ramo nasal externo do nervo etmoidal anterior (V1) na parte alta e nervo infraorbital (V2) na parte baixa. Duas divisões do trigêmeo dividindo a mesma narina.',
     relacoes: 'Conduzem ao vestíbulo do nariz, revestido de pele com vibrissas.',
     clinica:
       'O recém-nascido é respirador nasal obrigatório nas primeiras semanas, porque a laringe é alta e a epiglote toca o palato mole — por isso a obstrução nasal bilateral nele é emergência. E é pela narina que se estima o calibre de sondas e cânulas: a sonda nasogástrica segue o assoalho do nariz, paralela ao palato duro, e não para cima, erro que causa dor e sangramento.',
@@ -63,11 +121,16 @@ export const RESPIRATORIO_VIAS: EntradaDicionario[] = [
     ],
   },
   {
-    termos: ['Vestíbulo do Nariz', 'Vestíbulo', 'Limiar do Nariz'],
+    termos: ['Vestíbulo do Nariz', 'Vestíbulo'],
+    sistemas: ['respiratorio'],
     classe: 'via-aerea',
     resumo: 'Porção mais anterior da cavidade nasal, revestida de pele com pelos, até o limiar do nariz.',
     localizacao: 'Imediatamente atrás da narina, delimitado acima pelo limiar do nariz — a crista onde a pele dá lugar à mucosa respiratória.',
     funcao: 'Filtra partículas grandes pelas vibrissas e contém glândulas sebáceas e sudoríparas, como qualquer pele.',
+    vascularizacao:
+      'Artéria labial superior e ramos da nasal lateral, formando uma rede subcutânea densa sob pele com vibrissas e glândulas sebáceas.',
+    inervacao:
+      'Ramo nasal externo do nervo etmoidal anterior (V1). É pele, e não mucosa: dói como pele, e é por isso que a foliculite do vestíbulo é tão dolorosa.',
     relacoes: 'A área da válvula nasal, logo acima, é o ponto mais estreito de toda a via aérea.',
     clinica:
       'Por ser pele, o vestíbulo é colonizado por Staphylococcus aureus e é a sede da foliculite e do furúnculo nasal — que ocupa o "triângulo da morte" da face, cujas veias drenam sem válvulas para o seio cavernoso. Espremer um furúnculo nessa região é a via clássica descrita de trombose do seio cavernoso.',
@@ -75,8 +138,31 @@ export const RESPIRATORIO_VIAS: EntradaDicionario[] = [
       'Do nariz até os cantos da boca: o triângulo perigoso. Ali as veias correm para dentro do crânio, não para fora.',
     pontos: [
       'Que tipo de epitélio reveste o vestíbulo do nariz?',
-      'O que é o limiar do nariz?',
+      'Que estrutura marca o seu limite posterior?',
       'Por que infecções dessa região são perigosas?',
+    ],
+  },
+  {
+    termos: ['Limiar do Nariz'],
+    classe: 'via-aerea',
+    resumo: 'Crista curva no fundo do vestíbulo onde a pele acaba e a mucosa respiratória começa.',
+    localizacao:
+      'Ao fundo do vestíbulo, marcando a borda inferior da cartilagem lateral. Junto com o septo e a cabeça da concha inferior, delimita a válvula nasal interna.',
+    funcao:
+      'É o ponto mais estreito de toda a via aérea humana, com ângulo normal de 10 a 15 graus entre o septo e a cartilagem lateral. Responde sozinho por cerca de metade da resistência total ao fluxo respiratório — mais do que a laringe, mais do que os brônquios.',
+    vascularizacao:
+      'Encontro de dois territórios: a artéria labial superior, da carótida externa, vem de baixo pela pele, e ramos da esfenopalatina vêm de dentro pela mucosa. A transição vascular acompanha exatamente a transição de epitélio.',
+    inervacao:
+      'Nervo etmoidal anterior (V1) na vertente cutânea; adiante, a mucosa passa a ser território de V2 pelos ramos da esfenopalatina. O limiar é também a fronteira da inervação.',
+    relacoes: 'Acima dele começa a área da válvula nasal interna; abaixo, o vestíbulo revestido de pele.',
+    clinica:
+      'Por ser o ponto mais estreito, é onde a lei de Poiseuille cobra caro: reduzir o raio pela metade multiplica a resistência por dezesseis. É por isso que um estreitamento milimétrico da válvula nasal causa obstrução importante, e por que a fita adesiva dilatadora usada por atletas funciona — ela age exatamente aqui, e não no septo. Uma septoplastia que ignore a válvula deixa o paciente obstruído com o septo reto.',
+    memoria:
+      'O lugar mais apertado da via aérea inteira fica logo na entrada do nariz. Raio pela metade, resistência dezesseis vezes maior.',
+    pontos: [
+      'Onde fica o ponto mais estreito da via aérea?',
+      'Que estruturas delimitam a válvula nasal interna?',
+      'Por que uma septoplastia pode não resolver a obstrução nasal?',
     ],
   },
   {
@@ -105,6 +191,8 @@ export const RESPIRATORIO_VIAS: EntradaDicionario[] = [
     localizacao: 'Teto da cavidade nasal, na lâmina cribiforme, e nas faces adjacentes do septo e da concha superior — cerca de 2 a 5 cm² de cada lado.',
     funcao:
       'Contém neurônios bipolares olfatórios, células de sustentação e células basais. Os neurônios olfatórios são as únicas células nervosas do corpo que se renovam continuamente ao longo da vida, a partir das células basais.',
+    vascularizacao:
+      'Artérias etmoidais anterior e posterior, ramos da artéria oftálmica — e portanto da carótida INTERNA. É o único território da mucosa nasal irrigado pela carótida interna, e a razão de a epistaxe alta e posterior não parar com a ligadura da maxilar interna.',
     inervacao: 'Nervo olfatório (I par), cujos filamentos atravessam a lâmina cribiforme.',
     clinica:
       'A capacidade de regeneração explica por que a anosmia pós-viral pode melhorar ao longo de meses — e por que o treinamento olfatório funciona. Já a anosmia pós-traumática, por secção dos filamentos na lâmina cribiforme, raramente recupera, porque o problema não é o neurônio e sim a via.',
@@ -122,6 +210,9 @@ export const RESPIRATORIO_VIAS: EntradaDicionario[] = [
     resumo: 'A menor das conchas, projeção do etmoide que cobre o meato superior.',
     localizacao: 'Parede lateral da cavidade nasal, acima da concha média, próxima ao teto.',
     funcao: 'Delimita o meato superior, para onde drenam as células etmoidais posteriores, e protege a fenda olfatória, medialmente a ela.',
+    vascularizacao: 'Artéria etmoidal posterior e ramos da esfenopalatina, sobre um esqueleto ósseo delgado do etmoide.',
+    inervacao:
+      'Ramos nasais posteriores superiores de V2. Sua face medial, voltada para a fenda olfatória, é revestida de epitélio olfatório e inervada pelo I par.',
     relacoes: 'Acima e atrás dela, o recesso esfenoetmoidal recebe a abertura do seio esfenoidal.',
     clinica:
       'É a referência endoscópica para localizar o óstio do seio esfenoidal e, portanto, o passo inicial de toda cirurgia hipofisária transesfenoidal. Sua proximidade com a fenda olfatória exige cuidado: manipulação excessiva nessa altura provoca anosmia iatrogênica.',
@@ -139,6 +230,10 @@ export const RESPIRATORIO_VIAS: EntradaDicionario[] = [
     resumo: 'Espaço sob a concha inferior, onde se abre o ducto nasolacrimal.',
     localizacao: 'Entre a concha nasal inferior e o assoalho da cavidade nasal.',
     funcao: 'Recebe exclusivamente o ducto nasolacrimal, protegido por uma prega de mucosa — a válvula de Hasner.',
+    vascularizacao:
+      'Ramos nasais posteriores laterais da artéria esfenopalatina, ramo terminal da maxilar. Território de carótida externa — o oposto da região olfatória.',
+    inervacao:
+      'Nervo nasal posterior inferior lateral e ramo alveolar superior anterior, ambos de V2. É por isso que a dor da rinossinusite baixa se confunde com dor de dente superior.',
     relacoes: 'É o mais amplo dos meatos, e o caminho por onde a sonda nasal deve passar.',
     clinica:
       'A obstrução congênita da válvula de Hasner é a causa mais comum de lacrimejamento persistente no lactente, e se resolve espontaneamente na maioria dos casos no primeiro ano. E é no meato inferior que se cria a janela na dacriocistorrinostomia, quando o ducto obstrui no adulto.',
@@ -156,6 +251,9 @@ export const RESPIRATORIO_VIAS: EntradaDicionario[] = [
     resumo: 'Espaço sob a concha média, para onde drena a maioria dos seios paranasais.',
     localizacao: 'Entre a concha média e a parede lateral do nariz; contém o processo uncinado, a bula etmoidal e o hiato semilunar.',
     funcao: 'Recebe o seio frontal, o seio maxilar e as células etmoidais anteriores — o conjunto conhecido como complexo ostiomeatal.',
+    vascularizacao:
+      'Artéria esfenopalatina e artéria etmoidal anterior, que se encontram justamente aqui — carótida externa e interna irrigando o mesmo meato. Na cirurgia endoscópica, a etmoidal anterior é o vaso cuja retração para a órbita produz hematoma retro-orbitário.',
+    inervacao: 'Ramos nasais posteriores superiores laterais (V2) e ramo nasal interno do etmoidal anterior (V1).',
     relacoes: 'O infundíbulo etmoidal, no hiato semilunar, é o funil comum de drenagem.',
     clinica:
       'A obstrução do complexo ostiomeatal é a causa central da rinossinusite crônica, e sua desobstrução endoscópica é o princípio de toda a cirurgia funcional dos seios. Uma pólipo ou uma concha bolhosa que ocupe esse espaço bloqueia três seios de uma vez — o que explica por que a sinusite raramente é de um seio só.',
@@ -173,6 +271,9 @@ export const RESPIRATORIO_VIAS: EntradaDicionario[] = [
     resumo: 'Espaço sob a concha superior, drenagem das células etmoidais posteriores.',
     localizacao: 'Entre as conchas superior e média, na parte posterossuperior da parede lateral do nariz.',
     funcao: 'Recebe as células etmoidais posteriores; o seio esfenoidal drena mais acima, no recesso esfenoetmoidal.',
+    vascularizacao:
+      'Artéria etmoidal posterior, da oftálmica, e ramos da esfenopalatina. A etmoidal posterior corre a poucos milímetros do nervo óptico no canal — a referência de segurança da etmoidectomia posterior.',
+    inervacao: 'Ramos nasais posteriores superiores (V2). Acima dele, no teto, é território do nervo olfatório.',
     relacoes: 'Está próximo do forame esfenopalatino, atrás da cauda da concha média.',
     clinica:
       'A etmoidite posterior pode se estender para o ápice orbitário e produzir a síndrome do ápice orbitário, com perda visual e oftalmoplegia — complicação rara, mas de reconhecimento urgente. A proximidade com o nervo óptico nessa região é a razão de a cirurgia endoscópica posterior ser a de maior risco visual.',
@@ -282,6 +383,8 @@ export const RESPIRATORIO_VIAS: EntradaDicionario[] = [
     resumo: 'Orofaringe: porção comum às vias respiratória e digestória, do palato mole à epiglote.',
     localizacao: 'Do palato mole à borda superior da epiglote, comunicando-se com a boca pelo istmo das fauces.',
     funcao: 'Passagem de ar e de alimento; contém as tonsilas palatinas, entre os arcos palatoglosso e palatofaríngeo.',
+    vascularizacao:
+      'Artérias faríngea ascendente, palatina ascendente e tonsilar, ramos da carótida externa; a drenagem vai ao plexo venoso faríngeo e à jugular interna.',
     inervacao: 'Nervo glossofaríngeo (IX), responsável pelo componente aferente do reflexo de vômito.',
     relacoes: 'Reveste-se de epitélio escamoso estratificado, adaptado ao atrito do bolo alimentar.',
     clinica:
@@ -300,6 +403,8 @@ export const RESPIRATORIO_VIAS: EntradaDicionario[] = [
     resumo: 'Laringofaringe: porção inferior da faringe, da epiglote à borda inferior da cartilagem cricóidea.',
     localizacao: 'Da borda superior da epiglote até C6, onde se continua com o esôfago; envolve a laringe por trás e pelos lados.',
     funcao: 'Encaminha o bolo alimentar pelos recessos piriformes, de cada lado da laringe, para o esôfago — desviando-o da via aérea.',
+    vascularizacao:
+      'Artérias faríngea ascendente e tireóidea superior, com contribuição da tireóidea inferior no limite com o esôfago — justamente no ponto em que o divertículo de Zenker se forma.',
     inervacao: 'Nervo laríngeo interno (X) na mucosa; plexo faríngeo na musculatura.',
     relacoes: 'A junção faringoesofágica é marcada pelo músculo cricofaríngeo, o esfíncter esofágico superior.',
     clinica:
@@ -318,6 +423,9 @@ export const RESPIRATORIO_VIAS: EntradaDicionario[] = [
     resumo: 'Abertura posterior de uma cavidade nasal para a nasofaringe.',
     localizacao: 'Limite entre a cavidade nasal e a nasofaringe, delimitada pelo vômer, pelo palatino, pelo esfenoide e pela lâmina medial do pterigoide.',
     funcao: 'Passagem do ar já condicionado do nariz para a faringe.',
+    vascularizacao:
+      'Artéria esfenopalatina, que emerge do forame homônimo poucos milímetros acima e lateralmente ao cóano — o vaso da epistaxe posterior grave e o alvo da cauterização endoscópica.',
+    inervacao: 'Nervo nasopalatino e ramos nasais posteriores de V2.',
     relacoes: 'Imediatamente atrás está a nasofaringe, com a tonsila faríngea no teto.',
     clinica:
       'A hipertrofia da tonsila faríngea (adenoide) obstrui as coanas na criança e produz a fácies adenoideana: respiração bucal, boca entreaberta, palato ogival e alterações do crescimento facial. O pólipo antrocoanal, que nasce no seio maxilar e cresce pela coana, é a causa de obstrução nasal unilateral com massa visível na nasofaringe.',
@@ -336,6 +444,8 @@ export const RESPIRATORIO_VIAS: EntradaDicionario[] = [
     localizacao: 'Parede lateral da nasofaringe, cerca de 1 a 1,5 cm atrás da cauda da concha inferior, limitado atrás pelo toro tubário.',
     funcao:
       'Permite equalizar a pressão da orelha média com a atmosférica. A tuba fica fechada em repouso e abre-se pela contração do tensor do véu palatino ao deglutir e ao bocejar.',
+    vascularizacao:
+      'Artéria faríngea ascendente e artéria meníngea média, por ramos finos; o músculo tensor do véu palatino que o abre é irrigado pela maxilar.',
     inervacao: 'Ramos do plexo faríngeo e do nervo mandibular.',
     relacoes: 'Na criança, a tuba é mais curta, mais horizontal e mais larga que no adulto.',
     clinica:
@@ -354,6 +464,9 @@ export const RESPIRATORIO_VIAS: EntradaDicionario[] = [
     resumo: 'Elevação de mucosa atrás do óstio da tuba, produzida pela cartilagem tubária.',
     localizacao: 'Parede lateral da nasofaringe, contornando o óstio da tuba auditiva por cima e por trás.',
     funcao: 'Marca a extremidade da porção cartilagínea da tuba e origina as pregas salpingofaríngea e salpingopalatina.',
+    vascularizacao: 'Artéria faríngea ascendente e artéria do canal pterigóideo, ramos da carótida externa.',
+    inervacao:
+      'Plexo faríngeo, de glossofaríngeo e vago, com contribuição de V2 pelos ramos faríngeos do gânglio pterigopalatino. A dor referida ao ouvido na faringite nasce dessa mistura.',
     relacoes: 'Atrás dele está o recesso faríngeo (fosseta de Rosenmüller).',
     clinica:
       'É a referência endoscópica que orienta toda a nasofibroscopia: encontrado o toro, encontram-se o óstio tubário à frente e a fosseta de Rosenmüller atrás — o ponto que se deve inspecionar obrigatoriamente em qualquer suspeita de tumor de nasofaringe. É também o reparo da dilatação tubária por balão.',
@@ -371,6 +484,10 @@ export const RESPIRATORIO_VIAS: EntradaDicionario[] = [
     resumo: 'Fosseta de Rosenmüller: depressão da parede lateral da nasofaringe atrás do toro tubário.',
     localizacao: 'Parede lateral e posterior da nasofaringe, atrás e acima do toro tubário.',
     funcao: 'É o ponto mais alto e mais lateral da nasofaringe; não tem função conhecida além de ser um recesso da mucosa.',
+    vascularizacao:
+      'Artéria faríngea ascendente, que sobe justamente pela parede lateral da faringe até a base do crânio.',
+    inervacao:
+      'Plexo faríngeo (IX e X). A dor deste recesso é referida ao ouvido pelo ramo timpânico do glossofaríngeo — otalgia sem doença de ouvido, sinal de alerta para tumor de nasofaringe.',
     relacoes: 'Separado do forame lacerado e da carótida interna por poucos milímetros.',
     clinica:
       'É o sítio de origem da grande maioria dos carcinomas de nasofaringe — motivo pelo qual toda nasofibroscopia por suspeita de tumor precisa visualizar essa fosseta, e não apenas o centro da nasofaringe. Sua proximidade com a base do crânio explica a invasão precoce e o acometimento de nervos cranianos como primeira manifestação.',
@@ -388,6 +505,9 @@ export const RESPIRATORIO_VIAS: EntradaDicionario[] = [
     resumo: 'Prega vertical de mucosa que desce do toro tubário, cobrindo o músculo salpingofaríngeo.',
     localizacao: 'Parede lateral da faringe, descendo do toro tubário em direção à parede lateral da laringofaringe.',
     funcao: 'Recobre o músculo salpingofaríngeo, que eleva a faringe na deglutição e auxilia a abertura da tuba auditiva.',
+    vascularizacao: 'Artéria faríngea ascendente, por ramos submucosos.',
+    inervacao:
+      'Plexo faríngeo, ramo do vago, que inerva o músculo salpingofaríngeo contido na prega — músculo que abre a tuba na deglutição e é a razão de engolir \'destapar\' o ouvido.',
     relacoes: 'Faz par com a prega salpingopalatina, mais anterior.',
     clinica:
       'A ação desse músculo na abertura tubária é complementar à do tensor do véu palatino, e sua disfunção contribui para a otite média com efusão no adulto. Em cirurgia da apneia do sono, as pregas faríngeas laterais são parte da anatomia que se reposiciona nas faringoplastias modernas.',
@@ -443,6 +563,8 @@ export const RESPIRATORIO_VIAS: EntradaDicionario[] = [
     localizacao: 'Da borda do palato mole à lateral da língua, cobrindo o músculo palatoglosso.',
     funcao:
       'Delimita o istmo das fauces — a fronteira entre cavidade oral e orofaringe. O músculo palatoglosso eleva a raiz da língua e estreita esse istmo, iniciando a deglutição.',
+    vascularizacao:
+      'Artéria palatina ascendente, ramo da facial, e artéria palatina menor, ramo da palatina descendente. É o arco anterior do istmo das fauces, e sua secção na amigdalectomia é o passo em que o sangramento começa.',
     inervacao: 'Plexo faríngeo (X) — é o único músculo da língua não inervado pelo hipoglosso.',
     relacoes: 'Está à frente da tonsila palatina.',
     clinica:
@@ -461,6 +583,8 @@ export const RESPIRATORIO_VIAS: EntradaDicionario[] = [
     resumo: 'Prega posterior da fossa tonsilar, que cobre o músculo palatofaríngeo.',
     localizacao: 'Do palato mole à parede lateral da faringe, atrás da tonsila palatina.',
     funcao: 'O músculo palatofaríngeo eleva a faringe e a laringe na deglutição e traciona o palato para baixo, participando do fechamento do istmo faríngeo.',
+    vascularizacao:
+      'Artéria palatina ascendente e faríngea ascendente. Contém o músculo palatofaríngeo, elevador da laringe na deglutição, e forma o arco posterior da loja amigdaliana.',
     inervacao: 'Plexo faríngeo (X).',
     relacoes: 'Contribui para formar a prega de Passavant, um rebordo muscular na parede posterior da faringe.',
     clinica:
@@ -480,6 +604,8 @@ export const RESPIRATORIO_VIAS: EntradaDicionario[] = [
     localizacao: 'Da borda posterior do palato duro até a úvula, com a aponeurose palatina como esqueleto.',
     funcao:
       'Cinco músculos o movem: tensor do véu palatino (V3), levantador do véu, palatoglosso, palatofaríngeo e músculo da úvula (todos pelo plexo faríngeo, X). Sua elevação fecha o istmo faríngeo e impede o refluxo nasal do alimento.',
+    vascularizacao:
+      'Artéria palatina menor, ramo da maxilar pela palatina descendente, artéria palatina ascendente, ramo da facial, e ramos da faríngea ascendente. Rede tripla e redundante — a razão de o retalho de palato sobreviver bem na palatoplastia.',
     inervacao: 'Todos os músculos pelo vago, exceto o tensor do véu palatino, pelo V3.',
     clinica:
       'A regra "todos pelo X, menos o tensor pelo V3" é a mais cobrada da região. Clinicamente, a paralisia unilateral do vago faz a úvula desviar para o lado sadio ao dizer "a" — o palato sobe só de um lado. E é o palato mole flácido e alongado que vibra no ronco e colapsa na apneia, alvo das uvulopalatofaringoplastias.',
@@ -497,6 +623,8 @@ export const RESPIRATORIO_VIAS: EntradaDicionario[] = [
     resumo: 'Goteira de cada lado da entrada da laringe, por onde escorre o bolo alimentar.',
     localizacao: 'Na laringofaringe, entre a prega ariepiglótica, medialmente, e a cartilagem tireóidea e a membrana tireo-hióidea, lateralmente.',
     funcao: 'Canaliza o bolo alimentar em torno da laringe, dos dois lados, até o esôfago — a solução anatômica para o cruzamento entre as vias aérea e digestória.',
+    vascularizacao:
+      'Artéria laríngea superior, ramo da tireóidea superior, que perfura a membrana tireo-hióidea logo acima dele.',
     inervacao: 'Nervo laríngeo interno, que corre submucoso no seu assoalho.',
     relacoes: 'A submucosa do recesso é fina, e o nervo é palpável logo abaixo dela.',
     clinica:
@@ -510,7 +638,7 @@ export const RESPIRATORIO_VIAS: EntradaDicionario[] = [
     ],
   },
   {
-    termos: ['Lábio Superior', 'Lábio Inferior'],
+    termos: ['Lábio Superior'],
     classe: 'via-aerea',
     resumo: 'Pregas musculocutâneas que fecham a boca, com o orbicular da boca no seu esqueleto.',
     localizacao: 'Delimitam a rima da boca; o superior estende-se até o sulco nasolabial e o filtro, o inferior até o sulco mentolabial.',
@@ -549,12 +677,16 @@ export const RESPIRATORIO_VIAS: EntradaDicionario[] = [
     ],
   },
   {
-    termos: ['Cartilagem Tireóidea', 'Proeminência Laríngea', 'Proeminência da Laringe'],
+    termos: ['Cartilagem Tireóidea'],
     classe: 'cartilagem',
     resumo: 'Maior cartilagem da laringe, formada por duas lâminas que se encontram na linha média no pomo de Adão.',
     localizacao: 'Ao nível de C4–C5; suas lâminas formam um ângulo de cerca de 90° no homem e 120° na mulher.',
     funcao:
       'Protege as pregas vocais, que se inserem na sua face interna, na comissura anterior. O ângulo mais fechado do homem alonga as pregas vocais e é a razão anatômica da voz mais grave após a puberdade.',
+    vascularizacao:
+      'Pericôndrio irrigado pelas artérias laríngeas superior e inferior; a cartilagem em si é avascular e se nutre por difusão. Essa avascularidade é o que a torna vulnerável à condrorradionecrose depois de radioterapia de laringe.',
+    inervacao:
+      'O pericôndrio e a mucosa interna recebem o nervo laríngeo interno acima da prega vocal e o recorrente abaixo dela; o músculo cricotireóideo, aplicado à sua face externa, é do laríngeo externo.',
     relacoes: 'Os cornos superiores ligam-se ao hioide pela membrana tireo-hióidea; os inferiores articulam-se com a cricóidea.',
     clinica:
       'A diferença de ângulo entre os sexos é a base da cirurgia de feminilização vocal e da condrolaringoplastia. Na fratura laríngea por trauma cervical direto, a perda da proeminência com enfisema subcutâneo, disfonia e hemoptise é uma emergência de via aérea — em que a intubação pode ser catastrófica e a traqueostomia é a conduta.',
@@ -567,7 +699,7 @@ export const RESPIRATORIO_VIAS: EntradaDicionario[] = [
     ],
   },
   {
-    termos: ['Cartilagem Cricóidea', 'Cartilagem Cricóidea - Lâmina', 'Cartilagem Cricóidea (Lâmina)'],
+    termos: ['Cartilagem Cricóidea'],
     classe: 'cartilagem',
     resumo: 'Único anel cartilagíneo completo de toda a via aérea, em forma de anel de sinete.',
     localizacao: 'Ao nível de C6, abaixo da tireóidea, com arco estreito à frente e lâmina larga atrás.',
@@ -591,6 +723,8 @@ export const RESPIRATORIO_VIAS: EntradaDicionario[] = [
     localizacao: 'Acima das pregas vocais verdadeiras, separada delas pelo ventrículo da laringe.',
     funcao:
       'Contém o ligamento vestibular e glândulas mucosas abundantes, que lubrificam as pregas vocais verdadeiras — estas não têm glândulas próprias. Fecham-se na manobra de Valsalva, trancando o ar nos pulmões.',
+    vascularizacao:
+      'Artéria laríngea superior. Sua mucosa é frouxa e rica em glândulas seromucosas, o oposto da prega vocal — e é essa frouxidão que permite o edema volumoso do angioedema.',
     inervacao: 'Nervo laríngeo interno (sensitiva).',
     relacoes: 'A prega vocal verdadeira é branca e nacarada; a vestibular é rosada e vascularizada — a diferença de cor é o que as distingue na laringoscopia.',
     clinica:
@@ -609,6 +743,10 @@ export const RESPIRATORIO_VIAS: EntradaDicionario[] = [
     resumo: 'Recesso entre a prega vestibular e a prega vocal de cada lado.',
     localizacao: 'Entre as duas pregas, estendendo-se lateralmente e para cima como sáculo laríngeo.',
     funcao: 'Aloja as glândulas que lubrificam as pregas vocais e funciona como câmara de ressonância.',
+    vascularizacao:
+      'Artéria laríngea superior; sua mucosa é rica em glândulas seromucosas, que são a única fonte de lubrificação das pregas vocais.',
+    inervacao:
+      'Nervo laríngeo interno. A perda dessa lubrificação glandular, por radioterapia ou por secção do nervo, produz voz rouca e cansada mesmo com pregas vocais móveis.',
     relacoes: 'O sáculo, sua extensão anterossuperior, pode dilatar-se anormalmente.',
     clinica:
       'A dilatação do sáculo forma a laringocele, que se apresenta como massa cervical que aumenta à manobra de Valsalva — clássica em sopradores de instrumentos de vidro e de instrumentos de sopro. Uma laringocele em adulto sem essa história obriga a excluir tumor obstruindo o ventrículo.',
@@ -626,6 +764,8 @@ export const RESPIRATORIO_VIAS: EntradaDicionario[] = [
     resumo: 'Porção da laringe abaixo das pregas vocais, até a borda inferior da cricóidea.',
     localizacao: 'Da face inferior das pregas vocais até o início da traqueia, delimitada pela cartilagem cricóidea.',
     funcao: 'Conduz o ar entre a glote e a traqueia; sua mucosa é frouxamente aderida, ao contrário da glote.',
+    vascularizacao:
+      'Artéria laríngea inferior, ramo da tireóidea inferior, que sobe com o nervo recorrente — e essa é a fronteira vascular que acompanha a fronteira nervosa e a embriológica: acima da glote tudo vem de cima, abaixo dela tudo vem de baixo.',
     inervacao: 'Nervo laríngeo recorrente (sensitiva abaixo das pregas).',
     relacoes: 'A membrana cricotireóidea, à frente, é subcutânea e palpável.',
     clinica:
@@ -644,6 +784,9 @@ export const RESPIRATORIO_VIAS: EntradaDicionario[] = [
     resumo: 'Prega de mucosa que vai da epiglote à aritenoide, delimitando a entrada da laringe.',
     localizacao: 'Borda lateral do ádito da laringe, separando-o do recesso piriforme.',
     funcao: 'Contém o músculo ariepiglótico, que estreita o ádito na deglutição, e as cartilagens cuneiforme e corniculada, que a enrijecem.',
+    vascularizacao: 'Artéria laríngea superior, por ramos submucosos.',
+    inervacao:
+      'Nervo laríngeo interno, ramo do laríngeo superior — o nervo do reflexo de fechamento glótico. Anestesiar essa mucosa abole o reflexo e é exatamente o que se faz antes da intubação acordado com fibroscópio.',
     relacoes: 'Forma o limite entre a via aérea e a via alimentar na altura da laringe.',
     clinica:
       'Pregas ariepiglóticas curtas e flácidas que se dobram para dentro na inspiração produzem a laringomalácia, causa mais comum de estridor no lactente — estridor inspiratório que piora em decúbito dorsal e no choro e melhora em decúbito ventral, com resolução espontânea até os 18 meses na maioria dos casos. A supraglotoplastia trata os casos graves seccionando essas pregas.',
@@ -661,6 +804,8 @@ export const RESPIRATORIO_VIAS: EntradaDicionario[] = [
     resumo: 'Único músculo abdutor das pregas vocais — o único que abre a via aérea.',
     localizacao: 'Face posterior da lâmina da cricóidea, indo até o processo muscular da aritenoide.',
     funcao: 'Roda a aritenoide lateralmente, afastando as pregas vocais e abrindo a rima da glote a cada inspiração.',
+    vascularizacao:
+      'Artéria laríngea inferior, ramo da tireóidea inferior, que sobe junto com o nervo laríngeo recorrente. Vaso e nervo chegam pelo mesmo caminho, e a ligadura alta da tireóidea inferior na tireoidectomia arrisca os dois.',
     inervacao: 'Nervo laríngeo recorrente.',
     relacoes: 'Todos os demais músculos intrínsecos são adutores ou tensores.',
     clinica:
@@ -680,6 +825,8 @@ export const RESPIRATORIO_VIAS: EntradaDicionario[] = [
     localizacao: 'Face externa da laringe, do arco da cricóidea à borda inferior da tireóidea.',
     funcao:
       'Aproxima a cartilagem tireóidea da cricóidea, alongando e tensionando as pregas vocais e elevando a frequência fundamental da voz. É o músculo do agudo.',
+    vascularizacao:
+      'Artéria cricotireóidea, ramo da tireóidea superior, que cruza a membrana cricotireóidea transversalmente — o vaso que sangra na cricotireoidostomia de emergência.',
     inervacao: 'Ramo externo do nervo laríngeo superior.',
     relacoes: 'O ramo externo corre junto à artéria tireóidea superior, no polo superior da tireoide.',
     clinica:
@@ -698,6 +845,8 @@ export const RESPIRATORIO_VIAS: EntradaDicionario[] = [
     resumo: 'Único músculo intrínseco ímpar da laringe, que aproxima as duas aritenoides.',
     localizacao: 'Face posterior das cartilagens aritenóideas, unindo-as transversalmente.',
     funcao: 'Fecha a porção posterior da rima da glote, aproximando os corpos das aritenoides — o componente final do fechamento glótico.',
+    vascularizacao:
+      'Artérias laríngeas superior e inferior, com anastomose através da linha média — coerente com ser o único músculo ímpar da laringe.',
     inervacao: 'Nervo laríngeo recorrente, com contribuição bilateral.',
     relacoes: 'É o único músculo laríngeo que não é par.',
     clinica:
@@ -716,6 +865,8 @@ export const RESPIRATORIO_VIAS: EntradaDicionario[] = [
     resumo: 'Músculo infra-hióideo curto que aproxima a laringe do osso hioide.',
     localizacao: 'Da linha oblíqua da cartilagem tireóidea à borda inferior do corpo e ao corno maior do hioide.',
     funcao: 'Eleva a laringe quando o hioide está fixo — passo essencial da deglutição — e abaixa o hioide quando a laringe está fixa.',
+    vascularizacao:
+      'Artéria tireóidea superior, por ramos infra-hióideos. Sua contração aproxima o osso hioide da cartilagem tireóidea e é o que fecha a membrana tireo-hióidea na deglutição.',
     inervacao: 'Fibras de C1 que trafegam com o nervo hipoglosso, e não pela alça cervical como os demais infra-hióideos.',
     relacoes: 'Coberto pelo esterno-hióideo e pelo omo-hióideo.',
     clinica:
@@ -734,6 +885,10 @@ export const RESPIRATORIO_VIAS: EntradaDicionario[] = [
     resumo: 'Início do esôfago, atrás da laringe e da traqueia, com o esfíncter cricofaríngeo na entrada.',
     localizacao: 'Começa em C6, na borda inferior da cricóidea, e desce atrás da traqueia no pescoço, ligeiramente à esquerda.',
     funcao: 'Conduz o bolo ao estômago; seu esfíncter superior, o músculo cricofaríngeo, permanece tonicamente contraído e relaxa apenas na deglutição.',
+    vascularizacao:
+      'Três territórios em série: artéria tireóidea inferior no esôfago cervical, ramos esofágicos diretos da aorta torácica e das brônquicas no torácico, artéria gástrica esquerda e frênica inferior esquerda no abdominal. A drenagem venosa é o que importa: ázigo e hemiázigo acima (sistêmica) e gástrica esquerda abaixo (portal) — e é nesse encontro que nascem as varizes esofágicas.',
+    inervacao:
+      'Plexo esofágico, formado pelos vagos, para o músculo liso e as glândulas; o terço superior, de músculo estriado, recebe o nervo laríngeo recorrente. O simpático torácico traz as aferentes de dor, e é por isso que o espasmo esofágico dói exatamente como angina.',
     relacoes: 'O nervo laríngeo recorrente sobe no sulco traqueoesofágico, entre o esôfago e a traqueia.',
     clinica:
       'A posição do recorrente nesse sulco é a razão de ele ser identificado e preservado em toda tireoidectomia e em toda esofagectomia cervical. E o desvio do esôfago para a esquerda no pescoço é o que torna a abordagem cervical esquerda a via de escolha para acessá-lo. A falha de relaxamento do cricofaríngeo é a base da acalasia cricofaríngea e do divertículo de Zenker.',
@@ -752,6 +907,10 @@ export const RESPIRATORIO_VIAS: EntradaDicionario[] = [
     localizacao: 'Face posterior da traqueia, fechando a abertura dos anéis cartilagíneos em C.',
     funcao:
       'A ausência de cartilagem atrás permite que o esôfago se distenda durante a passagem do bolo alimentar, e permite também que o músculo traqueal reduza o calibre da traqueia na tosse, aumentando a velocidade do ar expelido.',
+    vascularizacao:
+      'Artéria tireóidea inferior nos anéis cervicais e artérias brônquicas nos torácicos, com anastomose longitudinal frágil na face lateral. Dissecar a traqueia circunferencialmente por mais de dois centímetros a desvasculariza — regra de ouro da cirurgia traqueal.',
+    inervacao:
+      'Nervo laríngeo recorrente para o músculo traqueal e para a mucosa, com fibras vagais aferentes densas. É o músculo traqueal que estreita a luz na tosse, acelerando o ar e arrancando a secreção.',
     relacoes: 'Está em contato direto com o esôfago.',
     clinica:
       'Essa parede é o ponto de menor resistência: é onde o balão da cânula pode erodir e criar a fístula traqueoesofágica — complicação temida da ventilação prolongada, que se manifesta por tosse à deglutição e secreção com alimento. É também por ela que o broncoscopista se orienta, já que a face membranácea sempre indica posterior.',
@@ -788,6 +947,10 @@ export const RESPIRATORIO_VIAS: EntradaDicionario[] = [
     resumo: 'Espaço entre os lábios e o istmo das fauces, dividido em vestíbulo e cavidade oral própria.',
     localizacao: 'Limitada acima pelo palato, abaixo pelo assoalho e pela língua, à frente pelos lábios e atrás pelo istmo das fauces.',
     funcao: 'Primeira etapa da digestão e via aérea alternativa; participa da fala e da mastigação.',
+    vascularizacao:
+      'Artérias lingual, facial e maxilar, todas ramos da carótida externa, com anastomoses generosas através da linha média. Essa vascularização abundante é o que faz a mucosa oral cicatrizar mais rápido que qualquer outro epitélio do corpo.',
+    inervacao:
+      'Sensibilidade geral pelos nervos maxilar (V2), no palato e na arcada superior, e mandibular (V3), na arcada inferior, no assoalho e nos dois terços anteriores da língua. Gustação pela corda do tímpano (VII) à frente e pelo glossofaríngeo (IX) atrás.',
     relacoes: 'O vestíbulo fica entre lábios/bochechas e dentes; a cavidade própria, dentro das arcadas dentárias.',
     clinica:
       'A distinção entre vestíbulo e cavidade própria tem consequência prática direta: no paciente com trismo por qualquer causa, o vestíbulo continua acessível, e é por ele que se administram medicações e se aspira secreção. Em anestesia, a abertura bucal limitada é um dos preditores mais fortes de via aérea difícil.',
@@ -800,7 +963,7 @@ export const RESPIRATORIO_VIAS: EntradaDicionario[] = [
     ],
   },
   {
-    termos: ['Corpo da Língua', 'Raiz da Língua'],
+    termos: ['Corpo da Língua'],
     classe: 'viscera',
     resumo: 'As duas porções da língua, separadas pelo sulco terminal e com origens embrionárias e inervações distintas.',
     localizacao:
@@ -817,6 +980,114 @@ export const RESPIRATORIO_VIAS: EntradaDicionario[] = [
       'Como se divide a inervação da língua e por quê?',
       'O que é o forame cego da língua?',
       'Que sinal caracteriza o cisto do ducto tireoglosso?',
+    ],
+  },
+  {
+    termos: [
+      'Narina Esquerda',
+    ],
+    classe: 'via-aerea',
+    resumo: 'Abertura anterior da cavidade nasal esquerda, separada da direita pela columela.',
+    localizacao: 'Face inferior do nariz externo, à esquerda da columela, delimitada pela cartilagem alar esquerda.',
+    funcao:
+      'Entrada do ar do lado esquerdo. Sua área e a do lado direito raramente são iguais: o ciclo nasal alterna a congestão das conchas a cada 2 a 7 horas, e a qualquer momento uma narina conduz mais ar que a outra.',
+    vascularizacao:
+      'Artéria labial superior esquerda, ramo da facial, que emite o ramo septal para a área de Kiesselbach do lado esquerdo — sítio de mais de 90% das epistaxes.',
+    inervacao:
+      'Ramo nasal externo do nervo etmoidal anterior (V1) em cima e nervo infraorbital (V2) embaixo, ambos do lado esquerdo.',
+    linfaticos: 'Linfonodos submandibulares esquerdos.',
+    relacoes:
+      'O septo nasal, que a separa da direita, é desviado para um dos lados em cerca de 80% dos adultos — e o lado do desvio decide qual narina obstrui.',
+    clinica:
+      'A assimetria entre as narinas é o achado central da avaliação nasal, e ela quase nunca é simétrica: o desvio de septo torna uma narina estreita e a outra ampla, com hipertrofia compensatória da concha inferior do lado amplo. Tratar apenas o septo e ignorar a concha hipertrofiada do lado oposto é a causa clássica de insucesso da septoplastia — o paciente sai com o septo reto e a narina do outro lado entupida.',
+    memoria:
+      'Septo desviado entope um lado e faz a concha do outro crescer. Endireitar o septo sem reduzir a concha troca a narina obstruída de lugar.',
+    pontos: [
+      'O que é o ciclo nasal?',
+      'Que artéria irriga a área de Kiesselbach?',
+      'Por que a septoplastia isolada pode falhar?',
+    ],
+  },
+  {
+    termos: [
+      'Proeminência Laríngea',
+      'Proeminência da Laringe',
+    ],
+    classe: 'cartilagem',
+    resumo: 'O pomo de Adão — a saliência formada pelo encontro das duas lâminas da cartilagem tireóidea na linha média.',
+    localizacao:
+      'Na linha média anterior do pescoço, ao nível de C4–C5, no ponto em que as lâminas direita e esquerda da cartilagem tireóidea se unem.',
+    funcao:
+      'É o ângulo de encontro das lâminas, e não uma estrutura separada. Esse ângulo mede cerca de 90 graus no homem e 120 graus na mulher — diferença que aparece na puberdade sob ação da testosterona e que alonga as pregas vocais, baixando a voz.',
+    vascularizacao: 'Ramos da artéria cricotireóidea, da tireóidea superior, que cruzam a membrana logo abaixo dela.',
+    inervacao:
+      'Nervo laríngeo externo para o músculo cricotireóideo, aplicado à sua face lateral; a pele sobre ela é do plexo cervical (C2–C3).',
+    linfaticos:
+      'Linfonodos pré-laríngeos (délficos), no plano mediano — cuja presença palpável sugere câncer de laringe ou de tireoide.',
+    relacoes: 'Imediatamente abaixo dela está a membrana cricotireóidea, o alvo da via aérea cirúrgica de emergência.',
+    clinica:
+      'É o reparo de superfície mais confiável do pescoço. Da proeminência, o dedo desce e cai numa depressão: a membrana cricotireóidea, o ponto da cricotireoidostomia — a via aérea que se abre em segundos quando não se consegue intubar nem ventilar. Descer demais leva à traqueia, cercada pelo istmo da tireoide e por veias, e transforma um procedimento rápido num sangramento. Achar a proeminência é achar a segurança.',
+    memoria:
+      'Ache o pomo de Adão, escorregue o dedo para baixo e pare no primeiro buraco. É ali que a lâmina entra — nem um centímetro mais.',
+    pontos: [
+      'Por que a proeminência é maior no homem?',
+      'Que estrutura fica imediatamente abaixo dela?',
+      'Por que descer demais na cricotireoidostomia é perigoso?',
+    ],
+  },
+  {
+    termos: [
+      'Raiz da Língua',
+    ],
+    classe: 'viscera',
+    resumo: 'Terço posterior da língua, atrás do sulco terminal — outro órgão, com outro nervo e outra origem.',
+    localizacao:
+      'Do sulco terminal à epiglote, formando a parede anterior da orofaringe. Não é visível na inspeção comum da boca: exige laringoscopia ou espelho.',
+    funcao:
+      'Não tem papilas gustativas em relevo nem papilas filiformes: sua superfície é irregular por causa da tonsila lingual, tecido linfoide que faz parte do anel de Waldeyer. Participa da fase faríngea da deglutição, empurrando o bolo para trás, e não da mastigação.',
+    vascularizacao:
+      'Ramos dorsais da artéria lingual e artéria faríngea ascendente. A drenagem venosa é para a veia lingual e a jugular interna.',
+    inervacao:
+      'Nervo glossofaríngeo (IX) para TUDO: sensibilidade geral e gustação juntas — ao contrário dos dois terços anteriores, em que V3 leva o tato e a corda do tímpano leva o gosto. É o IX que carrega a via aferente do reflexo de vômito.',
+    linfaticos:
+      'Bilateralmente para os linfonodos cervicais profundos, com cruzamento livre da linha média — e é essa drenagem bilateral que faz o câncer de base de língua exigir esvaziamento cervical dos dois lados.',
+    relacoes: 'Está separada da epiglote pelas valéculas; abaixo dela começa a via aérea.',
+    clinica:
+      'A diferença de inervação é o que se testa à beira do leito: o reflexo de vômito é aferente pelo IX (raiz da língua) e eferente pelo X, e sua ausência unilateral localiza a lesão. Já o câncer de base de língua é diagnosticado tarde justamente porque a região não se vê à inspeção — cresce silencioso, com drenagem bilateral, e a primeira manifestação costuma ser um linfonodo cervical ou otalgia reflexa pelo ramo timpânico do IX.',
+    memoria:
+      'À frente do V, dois nervos dividem o trabalho; atrás do V, um só faz tudo. E o que dá o reflexo de vômito é o de trás.',
+    pontos: [
+      'Que nervo inerva a raiz da língua e o que ele conduz?',
+      'O que é a tonsila lingual?',
+      'Por que o câncer de base de língua é diagnosticado tardiamente?',
+    ],
+  },
+  {
+    termos: [
+      'Cartilagem Cricóidea - Lâmina',
+      'Cartilagem Cricóidea (Lâmina)',
+    ],
+    classe: 'cartilagem',
+    resumo: 'A placa posterior alta da cricoide — a parte larga do anel de sinete, e não o anel inteiro.',
+    localizacao:
+      'Parede posterior da cartilagem cricóidea, com 2 a 3 cm de altura, ao nível de C6; o arco anterior, muito mais baixo, completa o anel à frente.',
+    funcao:
+      'É a plataforma da laringe: sobre sua borda superior articulam-se as duas cartilagens aritenóideas, e é o deslizamento e a rotação delas sobre esta lâmina que abre e fecha a glote. Todo movimento das pregas vocais acontece em cima desta peça.',
+    vascularizacao:
+      'Artéria laríngea inferior, ramo da tireóidea inferior, que sobe pela sua face posterior junto com o nervo recorrente. Cartilagem hialina, nutre-se por difusão a partir do pericôndrio.',
+    inervacao:
+      'O músculo cricoaritenóideo posterior, o único abdutor das pregas vocais, nasce da sua face posterior e é inervado pelo nervo laríngeo recorrente.',
+    linfaticos: 'Linfonodos paratraqueais e cervicais profundos inferiores.',
+    relacoes:
+      'Sua face posterior forma a parede anterior da hipofaringe, e é contra ela que o esôfago é comprimido na manobra de Sellick.',
+    clinica:
+      'É a lâmina, e não o arco, que serve de bigorna na pressão cricoide: comprimir o arco anterior empurra a lâmina para trás e achata o esôfago contra o corpo de C6, ocluindo-o para prevenir a regurgitação na intubação de sequência rápida. A eficácia da manobra depende de existir uma placa rígida atrás — se a compressão for feita sobre a tireóidea, que é aberta atrás, nada se ocluide. E é a partir desta lâmina que o cricoaritenóideo posterior trabalha: sua paralisia bilateral fecha a glote e obriga à traqueostomia.',
+    memoria:
+      'A cricoide é um anel de sinete: fino na frente, largo atrás. A pressão cricoide funciona porque a parte larga é uma bigorna.',
+    pontos: [
+      'Que estruturas se articulam sobre a lâmina da cricoide?',
+      'Por que a manobra de Sellick depende dela?',
+      'Que músculo nasce da sua face posterior?',
     ],
   },
 ]

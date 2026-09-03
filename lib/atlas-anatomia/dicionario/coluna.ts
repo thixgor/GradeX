@@ -771,6 +771,8 @@ export const COLUNA: EntradaDicionario[] = [
     localizacao: 'Entre o processo articular inferior de uma vértebra e o superior da vértebra de baixo, com cápsula própria e líquido sinovial.',
     funcao:
       'Guia a direção do movimento e divide a carga com o disco: em pé, cerca de 20% do peso passa pelas facetas; na extensão, essa fração aumenta muito. É a articulação que decide o que a coluna pode fazer em cada região.',
+    vascularizacao:
+      'Ramos das artérias intercostais posteriores e lombares, pelos ramos espinais que entram pelo forame intervertebral.',
     inervacao: 'Ramo medial do ramo posterior, que inerva duas articulações consecutivas — por isso a denervação exige tratar dois níveis.',
     relacoes: 'Sua cápsula forma a parede posterior do forame intervertebral; um cisto sinovial facetário pode comprimir a raiz.',
     clinica:
@@ -790,6 +792,9 @@ export const COLUNA: EntradaDicionario[] = [
     localizacao: 'Entre a cabeça costal, com sua crista, e as fóveas costais superior e inferior de duas vértebras vizinhas mais o disco entre elas.',
     funcao:
       'Um dos dois pontos de apoio do eixo de rotação costal. O ligamento radiado, em leque, e o intra-articular, que fixa a crista ao disco, dão-lhe estabilidade quase absoluta.',
+    vascularizacao: 'Ramos das artérias intercostais posteriores, que passam imediatamente à sua frente.',
+    inervacao:
+      'Ramo posterior do nervo espinal e ramos do tronco simpático, que corre sobre as cabeças das costelas. É a articulação em que a cabeça da costela se apoia em duas vértebras adjacentes e no disco entre elas — arranjo que faz cada costela pertencer a dois níveis vertebrais ao mesmo tempo.',
     relacoes: 'A cadeia simpática torácica corre imediatamente sobre a cabeça das costelas; os vasos intercostais correm logo acima.',
     clinica:
       'Sua rigidez é por que o trauma torácico fratura costela em vez de luxar a articulação. Na espondilite anquilosante, a fusão dessas articulações reduz a expansibilidade torácica — parâmetro medido com fita métrica e critério diagnóstico da doença.',
@@ -807,6 +812,9 @@ export const COLUNA: EntradaDicionario[] = [
     localizacao: 'Entre a faceta do tubérculo costal e a fóvea costal do processo transverso, de T1 a T10.',
     funcao:
       'Fecha o eixo de rotação da costela, junto com a costovertebral. A mudança de orientação da faceta ao longo do tórax — mais plana em cima, mais curva embaixo — é o que muda o movimento de braço de bomba para alça de balde.',
+    vascularizacao: 'Ramos dorsais das artérias intercostais posteriores.',
+    inervacao:
+      'Ramo posterior do nervo espinal correspondente. Junto com a costovertebral, forma o eixo em que a costela gira — e a artrose dessas articulações é causa subestimada de dor torácica posterior, muitas vezes investigada como cardiopatia.',
     relacoes: 'Reforçada pelos ligamentos costotransversário superior, lateral e o interósseo.',
     clinica:
       'A disfunção dessas articulações é causa reconhecida de dorsalgia mecânica que se reproduz à respiração profunda. Em cirurgia, elas são liberadas na costotransversectomia para acessar o corpo vertebral torácico por via posterolateral, sem abrir o tórax.',
@@ -825,6 +833,9 @@ export const COLUNA: EntradaDicionario[] = [
     localizacao: 'Da 1ª à 7ª cartilagem costal, nas bordas laterais do manúbrio, do corpo e do processo xifoide.',
     funcao:
       'Transmitem ao esterno o movimento das costelas. A primeira é uma sincondrose — a cartilagem funde-se ao manúbrio, sem cavidade —, e as demais são sinoviais.',
+    vascularizacao: 'Ramos perfurantes da artéria torácica interna, que passam ao lado de cada articulação.',
+    inervacao:
+      'Ramos cutâneos anteriores dos nervos intercostais. A síndrome de Tietze acomete tipicamente a segunda e a terceira, com edema visível — o que a distingue da costocondrite comum, que dói mas não incha.',
     relacoes: 'A artéria torácica interna desce atrás delas, a cerca de 1 cm da borda do esterno.',
     clinica:
       'A costocondrite (síndrome de Tietze quando há tumefação) é causa muito comum de dor torácica que simula angina e se caracteriza por dor reproduzível à palpação — um dado de exame físico que resolve o diagnóstico em segundos. A proximidade da torácica interna importa na punção esternal e na dissecção da mamária interna para revascularização coronária.',
@@ -842,6 +853,9 @@ export const COLUNA: EntradaDicionario[] = [
     resumo: 'União fibrocartilagínea entre a extremidade anterior da costela óssea e sua cartilagem costal.',
     localizacao: 'Na extremidade anterior de cada costela, onde o osso se continua na cartilagem hialina.',
     funcao: 'É uma sincondrose sem cavidade nem movimento: o periósteo continua-se diretamente com o pericôndrio, e por isso não há deslocamento entre as duas partes.',
+    vascularizacao: 'Ramos das artérias intercostais anteriores, da torácica interna.',
+    inervacao:
+      'Nervos intercostais correspondentes. É uma sincondrose sem cavidade nem cápsula, e sua inflamação é a costocondrite — dor torácica reproduzível à palpação, causa benigna e frequentíssima de dor no peito na emergência.',
     relacoes: 'Forma, com as demais, a linha costocondral, palpável como uma fileira de saliências na parede anterior do tórax.',
     clinica:
       'É a sede do rosário raquítico na criança com deficiência de vitamina D — alargamento das junções costocondrais palpável como contas. No adulto, é a linha em que costuma se localizar a dor da costocondrite.',
@@ -858,6 +872,9 @@ export const COLUNA: EntradaDicionario[] = [
     resumo: 'Sínfise entre o manúbrio e o corpo do esterno, que forma o ângulo esternal.',
     localizacao: 'Na parede anterior do tórax, palpável como uma crista transversal a cerca de 5 cm abaixo da incisura jugular.',
     funcao: 'Permite pequeno movimento em dobradiça durante a inspiração profunda; ossifica-se com a idade em boa parte das pessoas.',
+    vascularizacao: 'Ramos da artéria torácica interna.',
+    inervacao:
+      'Nervos intercostais superiores. É uma sínfise que se ossifica em cerca de 30% das pessoas depois dos 30 anos, e o ângulo que ela forma — o ângulo esternal de Louis — é o reparo de superfície mais útil do tórax: marca a segunda costela, o nível de T4, a bifurcação da traqueia e o limite entre mediastino superior e inferior.',
     relacoes:
       'O ângulo esternal (de Louis) é o reparo mais rentável do tórax: marca o nível da 2ª cartilagem costal, o disco T4–T5, o início e o fim do arco aórtico, a bifurcação da traqueia, o limite entre mediastino superior e inferior e o nível em que a veia ázigo desemboca.',
     clinica:
@@ -876,6 +893,9 @@ export const COLUNA: EntradaDicionario[] = [
     resumo: 'Sínfise entre o corpo do esterno e o processo xifoide, que ossifica por volta dos 40 anos.',
     localizacao: 'Extremidade inferior do corpo do esterno, no ápice do ângulo infraesternal.',
     funcao: 'Une o xifoide ao corpo; é ponto de inserção do diafragma, do reto do abdome e da linha alba.',
+    vascularizacao: 'Ramos da artéria torácica interna e da musculofrênica.',
+    inervacao:
+      'Nervos intercostais inferiores. Sincondrose que se ossifica por volta dos 40 anos; é a referência da compressão torácica na reanimação — as mãos ficam acima dela, porque comprimir sobre o xifoide fratura o processo e lacera o fígado.',
     relacoes: 'Marca o limite superior do fígado e o nível aproximado de T9.',
     clinica:
       'É a referência de posicionamento das mãos na compressão torácica da reanimação — dois dedos acima do processo xifoide —, precaução que existe justamente para não fraturar o xifoide e lacerar o fígado. É também o ponto de punção no acesso pericárdico subxifoide.',
@@ -893,6 +913,9 @@ export const COLUNA: EntradaDicionario[] = [
     localizacao: 'Entre a cartilagem da 1ª costela e a incisura costal correspondente do manúbrio.',
     funcao:
       'Ao contrário das demais esternocostais, não tem cavidade sinovial: é uma sincondrose, praticamente imóvel. Essa rigidez faz da primeira costela uma peça de sustentação, e não de respiração.',
+    vascularizacao: 'Ramos da artéria torácica interna e do tronco costocervical.',
+    inervacao:
+      'Primeiro nervo intercostal. Ao contrário das demais cartilagens costais, esta se ossifica precocemente e forma uma união rígida com o manúbrio — motivo de a primeira costela quase não se mover na respiração e de sua fratura indicar trauma de altíssima energia, com risco de lesão de subclávia e de plexo braquial.',
     relacoes: 'Sobre a primeira costela cruzam a artéria e a veia subclávias e o plexo braquial; abaixo dela passa a pleura cervical.',
     clinica:
       'A rigidez explica por que a fratura da primeira costela exige energia altíssima e é marcador de trauma grave, com alta associação a lesão de grandes vasos e do plexo braquial. Já a sua relação com o feixe vasculonervoso é a base da síndrome do desfiladeiro torácico e das ressecções da primeira costela.',

@@ -138,6 +138,8 @@ export const MEMBRO_SUPERIOR: EntradaDicionario[] = [
     resumo: 'Osso central da fileira proximal do carpo, entre o escafoide e o piramidal.',
     localizacao: 'Articula-se acima com o rádio, sendo o osso do carpo mais frequentemente luxado.',
     funcao: 'Transmite carga do rádio para a fileira distal do carpo.',
+    vascularizacao:
+      'Vasos que entram pelas faces palmar e dorsal, em padrão de Y, I ou X. Em cerca de 20% das pessoas há um único pedículo — e é essa variante que predispõe à doença de Kienböck, a necrose avascular do semilunar, com dor e rigidez progressivas do punho no adulto jovem.',
     clinica:
       'A doença de Kienböck é a osteonecrose do semilunar, associada à variância ulnar negativa. A luxação do semilunar (com o sinal do "copo derramado" no perfil) pode comprimir o nervo mediano.',
     pontos: ['Osso do carpo mais luxado', 'Doença de Kienböck', 'Luxação comprime o nervo mediano'],
@@ -147,6 +149,8 @@ export const MEMBRO_SUPERIOR: EntradaDicionario[] = [
     resumo: 'Pequeno osso sesamoide da fileira proximal do carpo, no tendão do flexor ulnar do carpo.',
     localizacao: 'Face palmar e ulnar do punho, facilmente palpável na base da eminência hipotenar.',
     funcao: 'Aumenta o braço de alavanca do flexor ulnar do carpo.',
+    vascularizacao:
+      'Ramos da artéria ulnar, abundantes. Não é um osso do carpo propriamente dito: é um sesamoide dentro do tendão do flexor ulnar do carpo, e por isso tem irrigação generosa e não necrosa. Forma a parede medial do canal de Guyon, por onde passam o nervo e a artéria ulnares.',
     relacoes: 'Forma, com o hâmulo do hamato, o canal de Guyon, por onde passam o nervo e a artéria ulnares.',
     clinica: 'É reparo palpável para localizar o canal de Guyon; a compressão do nervo ulnar aí (ciclistas, trauma repetitivo) causa fraqueza dos intrínsecos com sensibilidade dorsal preservada.',
     pontos: ['Sesamoide no flexor ulnar do carpo', 'Limite do canal de Guyon', 'Reparo palpável do punho ulnar'],
@@ -156,6 +160,8 @@ export const MEMBRO_SUPERIOR: EntradaDicionario[] = [
     resumo: 'Osso da fileira distal do carpo, reconhecível pelo seu hâmulo em gancho.',
     localizacao: 'No lado ulnar da fileira distal, com o hâmulo projetando-se palmarmente.',
     funcao: 'Articula-se com o 4º e o 5º metacarpos e ancora o retináculo dos flexores.',
+    vascularizacao:
+      'Ramos do arco palmar profundo e da rede carpal dorsal. O hâmulo, seu gancho, tem irrigação terminal e frágil — a razão de a fratura do hâmulo, típica do golfista e do jogador de tênis, evoluir com pseudartrose e ser tratada por ressecção do fragmento.',
     relacoes: 'O hâmulo forma a parede lateral do canal de Guyon e o pilar ulnar do túnel do carpo.',
     clinica: 'A fratura do hâmulo do hamato ocorre em esportes de raquete e golfe e pode lesar o nervo ulnar; costuma ser invisível na radiografia simples e exigir tomografia.',
     pontos: ['Hâmulo forma o túnel do carpo e o canal de Guyon', 'Fratura em esportes de bastão', 'Risco para o nervo ulnar'],
@@ -286,7 +292,7 @@ export const MEMBRO_SUPERIOR: EntradaDicionario[] = [
     ],
   },
   {
-    termos: ['Músculo Extensor dos Dedos', 'Músculo Extensor Radial Longo do Carpo', 'Músculo Extensor Radial Curto do Carpo', 'Músculo Extensor Ulnar do Carpo', 'Músculo Extensor do Dedo Mínimo'],
+    termos: ['Músculo Extensor dos Dedos', 'Músculo Extensor Radial Longo do Carpo', 'Músculo Extensor Ulnar do Carpo', 'Músculo Extensor do Dedo Mínimo'],
     resumo: 'Músculos do compartimento posterior do antebraço, com origem comum no epicôndilo lateral.',
     localizacao: 'Da origem comum no epicôndilo lateral, descem pelo dorso do antebraço e passam sob o retináculo dos extensores em seis compartimentos.',
     funcao: 'Estendem o punho e os dedos; os extensores radiais fazem desvio radial e o ulnar do carpo, desvio ulnar.',
@@ -348,6 +354,33 @@ export const MEMBRO_SUPERIOR: EntradaDicionario[] = [
       '3 falanges por dedo; 2 no polegar e no hálux',
       'Bloqueio digital nas laterais da base',
       'Dedo em martelo x deformidade em botoeira',
+    ],
+  },
+  {
+    termos: [
+      'Músculo Extensor Radial Curto do Carpo',
+    ],
+    classe: 'musculo',
+    resumo: 'Extensor do punho que nasce do epicôndilo lateral — o tendão da epicondilite lateral.',
+    localizacao:
+      'Do epicôndilo lateral do úmero, por um tendão comum com os demais extensores, à base do TERCEIRO metacarpo; corre no segundo compartimento extensor, junto com o longo.',
+    funcao:
+      'Estende e faz o desvio radial do punho. Por se inserir no terceiro metacarpo, no eixo do punho, é o principal estabilizador do punho em extensão durante a preensão — cada vez que se aperta a mão, ele contrai.',
+    vascularizacao:
+      'Artéria radial e artéria interóssea recorrente. Sua origem no epicôndilo tem uma zona hipovascular na face profunda do tendão, e não na superfície, e é ali, e não na superfície, que a degeneração começa.',
+    inervacao:
+      'Nervo radial (C7–C8), habitualmente antes da divisão em interósseo posterior — ao contrário do extensor radial longo, que costuma receber o ramo antes ainda.',
+    linfaticos: 'Linfonodos cubitais e axilares.',
+    relacoes:
+      'Sua borda proximal forma a arcada sob a qual o nervo interósseo posterior passa antes de entrar no supinador.',
+    clinica:
+      'É o tendão da epicondilite lateral — o cotovelo de tenista — em mais de 90% dos casos. E o nome engana: não há inflamação, e sim degeneração angiofibroblástica na zona hipovascular profunda do tendão. É por isso que anti-inflamatório e corticoide dão alívio curto e resultado ruim a longo prazo, e o tratamento eficaz é excêntrico: carga progressiva que estimula a remodelação do colágeno. Anatomia que corrigiu a terapêutica.',
+    memoria:
+      'Cotovelo de tenista não inflama: degenera, e no fundo do tendão. Por isso corticoide não resolve e exercício resolve.',
+    pontos: [
+      'Onde se insere o extensor radial curto do carpo?',
+      'Por que a epicondilite não é uma inflamação?',
+      'Por que o tratamento excêntrico é superior ao corticoide?',
     ],
   },
 ]

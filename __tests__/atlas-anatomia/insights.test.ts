@@ -68,6 +68,93 @@ describe('motor de conteúdo do Atlas de Anatomia', () => {
     expect([...semFicha]).toEqual([])
   })
 
+  it('nunca serve a irrigação da região no lugar da irrigação da estrutura', () => {
+    // O erro que motivou esta trava: numa prancha do coração o acervo marca o
+    // lobo superior do pulmão direito, e a ficha dele exibia as artérias
+    // coronárias como vascularização — porque a região da prancha era "Coração".
+    // O lobo pulmonar não vê uma coronária na vida. Ter ficha própria passou a
+    // significar responder pela própria estrutura, inclusive no que se cala.
+    const comVasosDaRegiao = new Set(
+      OCORRENCIAS.filter(({ sistema, caminho, prancha, marcador }) => {
+        const ficha = getMarkerInsight(marcador, { sistema, caminho, prancha })
+        return ficha.aprofundado && ficha.vasosRegionais
+      }).map(item => item.marcador.title),
+    )
+
+    expect([...comVasosDaRegiao]).toEqual([])
+  })
+
+  it('dá vasos e nervos próprios a toda estrutura que os tenha', () => {
+    // Vaso e nervo são o que o estudante procura na ficha depois de saber o
+    // nome. Onde a classe da estrutura prevê esses blocos, eles precisam existir
+    // e ser dela — não do vizinho, não da prancha.
+    const semVasos = new Set<string>()
+    const semNervos = new Set<string>()
+
+    for (const { sistema, caminho, prancha, marcador } of OCORRENCIAS) {
+      const classe = classificar(marcador.title, sistema)
+      const ficha = getMarkerInsight(marcador, { sistema, caminho, prancha })
+      if (classe.mostraVasos && !ficha.vascularizacao) semVasos.add(marcador.title)
+      if (classe.mostraNervos && !ficha.inervacao) semNervos.add(marcador.title)
+    }
+
+    expect([...semVasos]).toEqual([])
+    expect([...semNervos]).toEqual([])
+  })
+
+  it('não repete o mesmo texto em estruturas que são coisas diferentes', () => {
+    // Sobram grupos com texto igual, e são legítimos: o acervo escreve a mesma
+    // peça de dois jeitos ("Traqueia" e "Traquéia", "Bexiga" e "Bexiga
+    // Urinária", "Músculo Serrátil Posterior Superior" e "Afastamento do
+    // Músculo Serrátil Posterior Superior"). Separar esses seria inventar uma
+    // diferença que não existe. O que não pode voltar é o texto único servindo
+    // estruturas de fato distintas — a valva e o óstio, o detrusor e a mucosa,
+    // a pele e a fáscia peitoral.
+    const porResumo = new Map<string, Set<string>>()
+    for (const { sistema, caminho, prancha, marcador } of OCORRENCIAS) {
+      const ficha = getMarkerInsight(marcador, { sistema, caminho, prancha })
+      const grupo = porResumo.get(ficha.resumo) || new Set<string>()
+      grupo.add(marcador.title)
+      porResumo.set(ficha.resumo, grupo)
+    }
+
+    const compartilhados = [...porResumo.values()].filter(grupo => grupo.size > 1)
+    const titulos = new Set(compartilhados.flatMap(grupo => [...grupo]))
+
+    // Eram 143 grupos e 328 títulos antes da separação.
+    expect(compartilhados.length).toBeLessThanOrEqual(81)
+    expect(titulos.size).toBeLessThanOrEqual(173)
+  })
+
+  it('separa as estruturas que só pareciam a mesma coisa', () => {
+    // Cada par abaixo dividia uma única ficha e é, de fato, duas coisas: o
+    // aparelho valvar e o buraco que ele guarda; o músculo da bexiga e a mucosa
+    // que o forra; a pele da mama e a fáscia sob ela; o rim direito e o
+    // esquerdo, cujas veias têm comprimentos e destinos diferentes.
+    const paresQuePrecisamDiferir: Array<[string, string]> = [
+      ['Valva Atrioventricular Direita (Tricúspide)', 'Óstio Atrioventricular Direito'],
+      ['Válvula Atrioventricular Esquerda', 'Óstio Atrioventricular Esquerdo'],
+      ['Músculo Detrusor da Bexiga', 'Túnica Mucosa'],
+      ['Pele', 'Fáscia Peitoral'],
+      ['Veia Renal Direita', 'Veia Renal Esquerda'],
+      ['Glândula Suprarrenal Direita', 'Glândula Suprarrenal Esquerda'],
+      ['Testículo Direito', 'Testículo Esquerdo'],
+      ['Cabeça do Epidídimo', 'Cauda do Epidídimo'],
+      ['Corpo da Língua', 'Raiz da Língua'],
+      ['Lábio Superior', 'Lábio Inferior'],
+      ['Prega Vocal', 'Glote'],
+      ['Piloro', 'Esfíncter Pilórico'],
+      ['Canal Vertebral', 'Forame Vertebral'],
+      ['Hemisfério Cerebelar Direito', 'Hemisfério Cerebelar Esquerdo'],
+      ['Corpo do Útero', 'Cavidade do Útero'],
+      ['Quadrante Superior Medial', 'Quadrante Inferior Medial'],
+    ]
+
+    for (const [uma, outra] of paresQuePrecisamDiferir) {
+      expect(fichaDe(uma).resumo, `${uma} e ${outra} não podem dividir a mesma ficha`).not.toBe(fichaDe(outra).resumo)
+    }
+  })
+
   it('entrega o gancho de memória na esmagadora maioria das estruturas', () => {
     const comGancho = OCORRENCIAS.filter(
       ({ sistema, caminho, prancha, marcador }) => getMarkerInsight(marcador, { sistema, caminho, prancha }).memoria,

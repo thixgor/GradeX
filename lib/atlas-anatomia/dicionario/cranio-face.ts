@@ -46,7 +46,7 @@ export const CRANIO_FACE: EntradaDicionario[] = [
     ],
   },
   {
-    termos: ['Osso Occipital', 'Parte Basilar do Osso Occipital'],
+    termos: ['Osso Occipital'],
     resumo: 'Osso ímpar posteroinferior do crânio, atravessado pelo forame magno.',
     localizacao:
       'Forma a parte posterior e inferior do crânio: escama atrás, partes laterais com os côndilos occipitais e parte basilar à frente, fundida ao esfenoide no clivo.',
@@ -499,6 +499,31 @@ export const CRANIO_FACE: EntradaDicionario[] = [
       'Maxilas à frente, palatinos atrás',
       'Palatino maior (V2) e nasopalatino',
       'Fenda palatina e voz hipernasal',
+    ],
+  },
+  {
+    termos: [
+      'Parte Basilar do Osso Occipital',
+    ],
+    classe: 'acidente-osseo',
+    resumo: 'Porção do occipital à frente do forame magno — o clivo, plataforma óssea da base do crânio.',
+    localizacao:
+      'Entre o forame magno, atrás, e o corpo do esfenoide, à frente, com quem se funde na sincondrose esfeno-occipital. Sua face superior forma o clivo; a inferior, o teto da nasofaringe.',
+    funcao:
+      'É a viga central da base do crânio. A sincondrose esfeno-occipital, cartilagínea até por volta dos 25 anos, é o principal centro de crescimento em comprimento da base craniana — e é seu fechamento que define o fim do crescimento facial.',
+    vascularizacao: 'Ramos da artéria faríngea ascendente e do plexo basilar de veias durais, que reveste o clivo.',
+    inervacao: 'Ramos meníngeos do nervo mandibular (V3) e das raízes cervicais altas.',
+    linfaticos: 'Linfonodos retrofaríngeos.',
+    relacoes:
+      'Sobre o clivo repousa o tronco encefálico, apoiado na ponte; a artéria basilar corre exatamente sobre ele. O ligamento longitudinal anterior e a membrana tectória se fixam na sua borda.',
+    clinica:
+      'É a via de acesso da cirurgia endoscópica transclival ao tronco encefálico e à artéria basilar — chega-se ao clivo pelo nariz, atravessando o seio esfenoidal. E é o sítio do cordoma, tumor raro derivado de restos da notocorda, que cresce lentamente no clivo e se manifesta por paralisia do VI par (diplopia), porque o nervo abducente sobe colado ao osso no canal de Dorello.',
+    memoria:
+      'O clivo é a prateleira onde o tronco encefálico se apoia. Diplopia por abducente em adulto pede olhar o clivo.',
+    pontos: [
+      'Que estruturas se apoiam sobre o clivo?',
+      'O que é a sincondrose esfeno-occipital?',
+      'Por que o cordoma de clivo se manifesta por paralisia do VI par?',
     ],
   },
 ]

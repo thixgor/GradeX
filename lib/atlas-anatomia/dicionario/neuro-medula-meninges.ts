@@ -53,6 +53,8 @@ export const NEURO_MEDULA_MENINGES: EntradaDicionario[] = [
     resumo: 'Extremidade cônica e inferior da medula espinal, que termina em L1–L2 no adulto.',
     localizacao: 'Termina na borda inferior de L1 ou na superior de L2 no adulto; no recém-nascido desce até L3.',
     funcao: 'Contém os segmentos sacrais e coccígeos, com os centros parassimpáticos da micção, da defecação e da ereção.',
+    vascularizacao:
+      'Artéria espinal anterior, sustentada pela artéria radicular magna (de Adamkiewicz), que entra entre T9 e L2. É a região de menor reserva vascular da medula, e sua isquemia produz a síndrome do cone: retenção urinária, anestesia em sela e disfunção erétil, com força relativamente preservada.',
     relacoes: 'Continua-se pelo filamento terminal; as raízes lombossacrais descem em torno dele formando a cauda equina.',
     clinica:
       'A síndrome do cone medular é simétrica, com disfunção esfincteriana precoce, anestesia em sela e sinais de neurônio motor superior — enquanto a síndrome da cauda equina é assimétrica, com dor radicular intensa e sinais de neurônio motor inferior. A retenção urinária aguda com anestesia em sela é emergência cirúrgica em ambas: a descompressão precoce é o que preserva a continência.',
@@ -88,6 +90,8 @@ export const NEURO_MEDULA_MENINGES: EntradaDicionario[] = [
     resumo: 'Sulco profundo na linha média anterior da medula, ocupado pela artéria espinal anterior.',
     localizacao: 'Linha média da face anterior da medula, em toda a sua extensão.',
     funcao: 'Divide a medula anteriormente e aloja a artéria espinal anterior, cujos ramos sulcais penetram alternadamente para cada lado.',
+    vascularizacao:
+      'Artéria espinal anterior, que corre dentro dela em toda a extensão da medula e emite as artérias sulcocomissurais para os dois terços anteriores — território do trato corticoespinal, do espinotalâmico e da coluna anterior.',
     relacoes: 'No seu fundo cruzam as fibras espinotalâmicas na comissura branca anterior.',
     clinica:
       'A artéria espinal anterior irriga os dois terços anteriores da medula: sua oclusão produz a síndrome da artéria espinal anterior, com paralisia abaixo da lesão, perda de dor e temperatura e — o dado característico — preservação da propriocepção e do tato fino, porque os funículos posteriores são irrigados pelas espinais posteriores. Uma síndrome que se diagnostica pelo que está preservado.',
@@ -105,6 +109,8 @@ export const NEURO_MEDULA_MENINGES: EntradaDicionario[] = [
     resumo: 'Sulco raso na linha média posterior da medula, com um septo que penetra até quase o canal central.',
     localizacao: 'Linha média da face posterior da medula, em toda a extensão.',
     funcao: 'Divide os funículos posteriores em duas metades e dá passagem ao septo mediano posterior, de tecido glial.',
+    vascularizacao:
+      'Rede anastomótica das artérias espinais posteriores. É a linha de entrada da mielotomia posterior, porque não há vaso importante na linha média dorsal — o contrário do que ocorre na fissura mediana anterior.',
     relacoes: 'Nos segmentos acima de T6, o sulco intermédio posterior o subdivide, separando o fascículo grácil do cuneiforme.',
     clinica:
       'É o plano da mielotomia mediana posterior, usada para acessar cavidades siringomiélicas e tumores intramedulares centrais — uma via que aproveita o septo glial avascular. A localização exata da linha média é crítica: um desvio de milímetros lesa os funículos posteriores e produz perda proprioceptiva permanente.',
@@ -122,6 +128,8 @@ export const NEURO_MEDULA_MENINGES: EntradaDicionario[] = [
     resumo: 'Canal microscópico no centro da medula, resto do lúmen do tubo neural.',
     localizacao: 'Centro da comissura cinzenta, percorrendo toda a medula; comunica-se acima com o quarto ventrículo.',
     funcao: 'Revestido de epêndima e contendo líquor, é o vestígio da cavidade do tubo neural embrionário. No adulto é frequentemente obliterado em parte da extensão.',
+    vascularizacao:
+      'Artérias sulcocomissurais, ramos da espinal anterior, que se aproximam dele antes de se distribuírem para cada metade da medula. Essa vizinhança é o que faz a siringomielia começar justamente aqui e interromper primeiro as fibras espinotalâmicas que cruzam à sua frente — a perda dissociada de dor e temperatura em capa.',
     relacoes: 'Está cercado pela comissura cinzenta, entre os cornos posteriores.',
     clinica:
       'Sua dilatação patológica é a hidromielia; quando a cavidade se estende além do epêndima, é siringomielia — associada classicamente à malformação de Chiari tipo I. A cavidade cresce de dentro para fora e por isso interrompe primeiro as fibras que cruzam a linha média, gerando a perda suspensa e dissociada da sensibilidade.',
@@ -140,6 +148,8 @@ export const NEURO_MEDULA_MENINGES: EntradaDicionario[] = [
     localizacao: 'Porção anterior do H de substância cinzenta, mais volumosa nas intumescências.',
     funcao:
       'Contém os motoneurônios alfa e gama, organizados somatotopicamente: os que inervam a musculatura axial ficam mediais e os dos membros, laterais; os flexores são mais posteriores e os extensores mais anteriores.',
+    vascularizacao:
+      'Artéria espinal anterior, pelas sulcocomissurais. Abriga os motoneurônios alfa, que são as células mais vulneráveis à isquemia de toda a medula — e a razão de a paraplegia flácida dominar a síndrome da artéria espinal anterior.',
     relacoes: 'Suas fibras saem pelas raízes ventrais.',
     clinica:
       'É a estrutura destruída na poliomielite e degenerada na esclerose lateral amiotrófica e na atrofia muscular espinal, com o quadro típico de neurônio motor inferior: fraqueza, atrofia, fasciculações, hipotonia e arreflexia, sem alteração sensitiva. A ausência de déficit sensitivo, com fraqueza grave, é o dado que aponta para o corno anterior.',
@@ -158,6 +168,8 @@ export const NEURO_MEDULA_MENINGES: EntradaDicionario[] = [
     localizacao: 'Porção posterior do H de substância cinzenta, alcançando quase a superfície da medula.',
     funcao:
       'Recebe as fibras aferentes da raiz dorsal. A substância gelatinosa, na sua ponta, é onde as fibras de dor fazem sinapse e onde funciona o portão da dor — o mecanismo pelo qual estímulos táteis inibem a transmissão dolorosa.',
+    vascularizacao:
+      'Artérias espinais posteriores, duas, que descem sobre as raízes dorsais e formam uma rede anastomótica generosa — bem mais segura que a espinal anterior, única. É por isso que a síndrome da artéria espinal anterior poupa a propriocepção e o tato fino: a coluna posterior tem outra irrigação.',
     relacoes: 'Os axônios de segunda ordem cruzam pela comissura branca anterior e sobem como trato espinotalâmico.',
     clinica:
       'A teoria do portão explica por que esfregar o local de uma batida alivia a dor e por que a estimulação elétrica transcutânea funciona: fibras grossas do tato ativam interneurônios inibitórios que fecham o portão às fibras finas da dor. É um dos poucos mecanismos anatômicos que o paciente aplica intuitivamente todos os dias.',
@@ -176,6 +188,7 @@ export const NEURO_MEDULA_MENINGES: EntradaDicionario[] = [
     localizacao: 'Face anterior da medula, de cada lado da fissura mediana anterior.',
     funcao:
       'Conduz o trato corticoespinal anterior (as fibras que não cruzaram na decussação), os tratos vestibuloespinal, tectoespinal e reticuloespinal, e parte do espinotalâmico anterior.',
+    vascularizacao: 'Artéria espinal anterior, pelas sulcocomissurais e pela coroa arterial periférica.',
     relacoes: 'Continua-se lateralmente com o funículo lateral, sem limite nítido.',
     clinica:
       'Os tratos vestibuloespinal e reticuloespinal que aqui correm são as vias extrapiramidais responsáveis pelo tônus antigravitacional — e sua liberação, quando o controle cortical se perde, produz as posturas de decorticação e descerebração. A postura observada no coma diz o nível da lesão: decorticação acima do núcleo rubro, descerebração abaixo.',
@@ -194,6 +207,8 @@ export const NEURO_MEDULA_MENINGES: EntradaDicionario[] = [
     localizacao: 'Face lateral da medula, entre a saída da raiz ventral e a entrada da raiz dorsal.',
     funcao:
       'Conduz o trato corticoespinal lateral — a principal via motora voluntária —, o trato espinotalâmico lateral (dor e temperatura, já cruzado) e os tratos espinocerebelares.',
+    vascularizacao:
+      'Território de fronteira: as sulcocomissurais da espinal anterior alcançam sua metade profunda e a coroa arterial periférica, alimentada pelas espinais posteriores e pelas radiculares, cobre a superficial. Por conduzir o trato corticoespinal lateral, é a região cuja isquemia decide se o paciente anda.',
     relacoes: 'O corticoespinal lateral é somatotópico, com as fibras cervicais mediais e as sacrais laterais.',
     clinica:
       'Essa somatotopia explica o poupamento sacral nas lesões intramedulares centrais — a sensibilidade perianal permanece porque suas fibras estão nas bordas — e, ao contrário, a preservação relativa dos membros superiores nas compressões extramedulares, que começam de fora. Reconhecer o poupamento sacral distingue lesão intra de extramedular à beira do leito.',
@@ -230,6 +245,8 @@ export const NEURO_MEDULA_MENINGES: EntradaDicionario[] = [
     resumo: 'Feixes finos que emergem da medula e se reúnem para formar as raízes dorsal e ventral.',
     localizacao: 'Emergem em série ao longo dos sulcos laterais anterior e posterior de cada segmento medular.',
     funcao: 'Os anteriores são motores (axônios dos motoneurônios), os posteriores são sensitivos (prolongamentos centrais dos neurônios do gânglio espinal).',
+    vascularizacao:
+      'Artérias radiculares, ramos segmentares das intercostais posteriores e lombares, que acompanham cada raiz pelo forame intervertebral. A maioria só irriga a própria raiz; poucas alcançam a medula, e a maior delas é a de Adamkiewicz.',
     relacoes: 'Reúnem-se em raízes que se unem no forame intervertebral formando o nervo espinal.',
     clinica:
       'Essa separação anatômica entre motor e sensitivo tem consequência prática: a radiculopatia por hérnia comprime a raiz já formada e dá déficit misto, enquanto a poliomielite atinge apenas o corno anterior e dá déficit puramente motor. A anatomia da lesão dita a composição do déficit.',
@@ -339,6 +356,8 @@ export const NEURO_MEDULA_MENINGES: EntradaDicionario[] = [
     resumo: 'Prega falciforme da dura-máter que desce na fissura longitudinal, entre os hemisférios.',
     localizacao: 'Da crista galli à protuberância occipital interna, fixando-se acima ao sulco do seio sagital superior.',
     funcao: 'Separa os hemisférios e limita seu deslocamento lateral. Contém o seio sagital superior na borda superior, o inferior na borda livre inferior e o seio reto na sua junção com a tenda.',
+    vascularizacao:
+      'Artéria meníngea média, principalmente, e artéria falcina anterior, ramo da etmoidal anterior. Sua borda superior aloja o seio sagital superior e a inferior, o seio sagital inferior — dois seios numa lâmina de dura-máter.',
     relacoes: 'Sua borda livre inferior está próxima do corpo caloso e do giro do cíngulo.',
     clinica:
       'É a estrutura contra a qual ocorre a herniação subfalcina, em que o giro do cíngulo desliza sob a borda livre e pode comprimir a artéria cerebral anterior. Os meningiomas da foice e parassagitais são dos mais comuns e crescem lentamente até produzir paraparesia — um tumor de cabeça que se apresenta como problema de perna.',
@@ -358,6 +377,8 @@ export const NEURO_MEDULA_MENINGES: EntradaDicionario[] = [
       'Da protuberância occipital interna e dos sulcos dos seios transversos até os processos clinoides, com uma borda livre anterior que delimita a incisura da tenda.',
     funcao:
       'Divide a cavidade craniana em compartimentos supra e infratentorial e sustenta o peso dos lobos occipitais, impedindo que comprimam o cerebelo.',
+    vascularizacao:
+      'Ramo tentorial da artéria meningo-hipofisária, da carótida interna, e ramos da meníngea média e da occipital. É inervado pelo ramo tentorial do nervo oftálmico (V1), e é essa inervação trigeminal que faz a lesão supratentorial doer na fronte e a infratentorial doer na nuca — o padrão de dor que ajuda a localizar a lesão.',
     relacoes: 'Pela incisura da tenda passam o mesencéfalo, o III par e a artéria cerebral posterior.',
     clinica:
       'Essa incisura é o palco da herniação uncal: o unco desce por ela e comprime o III par (midríase), o mesencéfalo e a artéria cerebral posterior — cuja oclusão produz infarto occipital com hemianopsia, sequela frequente de quem sobrevive. A divisão em compartimentos organiza também a classificação de todos os tumores encefálicos entre supra e infratentoriais.',
@@ -448,6 +469,8 @@ export const NEURO_MEDULA_MENINGES: EntradaDicionario[] = [
     localizacao: 'Atravessa o terceiro ventrículo na sua porção média, unindo as faces mediais dos dois tálamos.',
     funcao:
       'Apesar do nome "comissura intertalâmica" às vezes usado, ela contém poucas fibras cruzadas: é sobretudo uma aderência de contato, ausente em cerca de 20 a 30% das pessoas, sem qualquer déficit associado.',
+    vascularizacao:
+      'Artérias talamoperfurantes, ramos da cerebral posterior e da comunicante posterior. Ponte de substância cinzenta que cruza o terceiro ventrículo e está ausente em cerca de 20% das pessoas — sem qualquer consequência funcional, o que mostra que não é uma comissura.',
     relacoes: 'Atravessa o líquor do terceiro ventrículo.',
     clinica:
       'Sua ausência é variante normal e não deve ser interpretada como patologia. Em cirurgia endoscópica do terceiro ventrículo, ela é um obstáculo à visualização e às vezes precisa ser contornada — e sua secção inadvertida não produz déficit reconhecível, o que confirma seu papel funcional mínimo.',
@@ -465,6 +488,8 @@ export const NEURO_MEDULA_MENINGES: EntradaDicionario[] = [
     resumo: 'Feixe de fibras que cruza a linha média na transição entre o diencéfalo e o mesencéfalo.',
     localizacao: 'Na parede posterior do terceiro ventrículo, acima da abertura do aqueduto e abaixo da glândula pineal.',
     funcao: 'Conecta as áreas pré-tectais dos dois lados, sendo a via do componente consensual do reflexo fotomotor, e participa do controle do olhar vertical.',
+    vascularizacao:
+      'Artéria coroidea posterior medial e ramos quadrigeminais da cerebral posterior. Por ela cruzam as fibras do reflexo fotomotor consensual, e é sua lesão que produz a dissociação luz-perto da síndrome de Parinaud: pupilas que não reagem à luz mas reagem à convergência.',
     relacoes: 'É o limite posterior do plano CA–CP usado em estereotaxia.',
     clinica:
       'Sua lesão é o elemento central da síndrome de Parinaud: paralisia do olhar vertical para cima, retração palpebral (sinal de Collier) e dissociação luz-perto das pupilas. Como está logo abaixo da pineal, qualquer tumor dessa região a compromete — e nos meninos é o pinealoma que se apresenta, além disso, com puberdade precoce.',
@@ -483,6 +508,8 @@ export const NEURO_MEDULA_MENINGES: EntradaDicionario[] = [
     localizacao: 'Na haste da glândula pineal, à frente e acima da comissura posterior.',
     funcao:
       'Conecta as habênulas, que recebem do sistema límbico pela estria medular do tálamo e projetam aos núcleos monoaminérgicos do tronco pelo fascículo retroflexo.',
+    vascularizacao:
+      'Artéria coroidea posterior medial, ramo da cerebral posterior. Faz parte do epitálamo, e o núcleo habenular que ela conecta é hoje alvo de neuromodulação na depressão refratária.',
     relacoes: 'Faz parte do epitálamo, junto com a pineal e as habênulas.',
     clinica:
       'A habênula lateral é hoje uma das estruturas mais estudadas na neurobiologia da depressão: ela é ativada por eventos aversivos e pela ausência de recompensa esperada, e sua hiperatividade está associada ao comportamento depressivo — sendo alvo experimental de estimulação cerebral profunda em depressão refratária.',
@@ -501,6 +528,8 @@ export const NEURO_MEDULA_MENINGES: EntradaDicionario[] = [
     localizacao: 'No teto posterior do terceiro ventrículo, entre os colículos superiores e sob o esplênio do corpo caloso.',
     funcao:
       'Converte o sinal de luz — que chega pela retina, pelo núcleo supraquiasmático e por uma via simpática que passa pelo gânglio cervical superior — em secreção de melatonina, que sobe no escuro e sincroniza o ritmo circadiano.',
+    inervacao:
+      'Caso singular no encéfalo: não recebe inervação central direta, e sim fibras simpáticas pós-ganglionares do gânglio cervical superior, que chegam pelos nervos conários. A informação de luz percorre um caminho longo — retina, núcleo supraquiasmático, medula torácica, gânglio cervical superior e só então pineal —, e é por isso que a luz à noite suprime a melatonina.',
     vascularizacao: 'Artérias coroideas posteriores.',
     relacoes: 'Calcifica-se com a idade na maioria dos adultos.',
     clinica:
@@ -557,6 +586,8 @@ export const NEURO_MEDULA_MENINGES: EntradaDicionario[] = [
     localizacao: 'No sulco olfatório, do bulbo até o trígono olfatório, onde se divide em estrias olfatórias medial e lateral.',
     funcao:
       'Leva a informação olfatória diretamente ao córtex piriforme, ao unco e à amígdala, sem relé talâmico — a única via sensorial com essa característica.',
+    vascularizacao:
+      'Ramo orbitofrontal medial da artéria cerebral anterior. Corre no sulco olfatório, sobre a lâmina crivosa — e é essa fixação ao osso que faz o trauma com desaceleração cisalhar os filamentos olfatórios e produzir anosmia pós-traumática, muitas vezes definitiva.',
     relacoes: 'Termina no trígono olfatório, à frente da substância perfurada anterior.',
     clinica:
       'A conexão direta com a amígdala e o córtex entorrinal, sem filtro talâmico, é a base neural de um fenômeno que todo mundo já viveu: um cheiro que evoca uma memória vívida e uma emoção imediata, sem mediação consciente. É também a razão de as crises uncinadas — epilepsia do lobo temporal mesial — começarem com uma alucinação olfatória desagradável.',
@@ -594,6 +625,8 @@ export const NEURO_MEDULA_MENINGES: EntradaDicionario[] = [
     localizacao: 'Sobre o diafragma da sela, à frente da haste hipofisária, no assoalho do terceiro ventrículo.',
     funcao:
       'As fibras nasais de cada retina — que captam o campo visual temporal — cruzam para o lado oposto; as temporais seguem sem cruzar. É esse cruzamento parcial que permite a visão binocular e a representação de cada hemicampo num só hemisfério.',
+    vascularizacao:
+      'Ramos da artéria carótida interna, da comunicante anterior, da cerebral anterior e das hipofisárias superiores, que formam um plexo em torno dele. Irrigação por múltiplas fontes, mas de vasos finíssimos — e é a compressão desses vasos, tanto quanto a das fibras, que produz a hemianopsia bitemporal do adenoma hipofisário.',
     relacoes: 'Está imediatamente acima da hipófise e entre as duas artérias carótidas internas.',
     clinica:
       'A compressão de baixo, pelo macroadenoma hipofisário, atinge primeiro as fibras nasais cruzadas e produz hemianopsia bitemporal — o paciente perde a visão periférica dos dois lados e frequentemente só percebe ao bater em batentes de porta ou ao dirigir. É o defeito de campo mais característico da neuroanatomia, e ele nasce inteiramente da geometria do cruzamento.',
@@ -612,6 +645,8 @@ export const NEURO_MEDULA_MENINGES: EntradaDicionario[] = [
     localizacao: 'Do quiasma, contorna o pedúnculo cerebral e termina no corpo geniculado lateral do tálamo.',
     funcao:
       'Cada trato conduz as fibras temporais ipsilaterais e as nasais contralaterais — ou seja, todo o hemicampo visual oposto. Alguns axônios se desviam para a área pré-tectal, mediando o reflexo fotomotor, e para o núcleo supraquiasmático, sincronizando o relógio biológico.',
+    vascularizacao:
+      'Artéria coroidea anterior, principalmente, com contribuição da comunicante posterior. A coroidea anterior é uma artéria fina e longa, de território extenso, e sua oclusão produz a tríade clássica: hemiparesia, hemi-hipoestesia e hemianopsia contralaterais.',
     relacoes: 'Contorna o pedúnculo cerebral; o corpo geniculado lateral tem seis camadas laminadas.',
     clinica:
       'A partir do trato óptico, todo defeito de campo é homônimo — atinge o mesmo hemicampo dos dois olhos. Essa é a regra que localiza a lesão: defeito monocular é anterior ao quiasma; heterônimo é quiasmático; homônimo é retroquiasmático. Três perguntas resolvem a topografia da via visual inteira.',
@@ -625,7 +660,7 @@ export const NEURO_MEDULA_MENINGES: EntradaDicionario[] = [
   },
   /* ─────────────────── Visão geral do encéfalo ─────────────────── */
   {
-    termos: ['Telencéfalo', 'Telencéfalo - Hemisfério Direito', 'Telencéfalo - Hemisfério Esquerdo', 'Hemisfério Cerebral Direito', 'Hemisfério Cerebral Esquerdo'],
+    termos: ['Telencéfalo'],
     classe: 'snc',
     resumo: 'A maior divisão do encéfalo: os dois hemisférios cerebrais, com córtex, substância branca e núcleos da base.',
     localizacao: 'Ocupa as fossas cranianas anterior e média e a região supratentorial, cobrindo o diencéfalo e o mesencéfalo.',
@@ -649,6 +684,8 @@ export const NEURO_MEDULA_MENINGES: EntradaDicionario[] = [
     resumo: 'Fenda sagital profunda que separa os dois hemisférios cerebrais.',
     localizacao: 'Linha média, da região frontal à occipital, ocupada pela foice do cérebro.',
     funcao: 'Separa os hemisférios; no seu fundo está o corpo caloso, que os reconecta.',
+    vascularizacao:
+      'Artérias cerebrais anteriores, que sobem por dentro dela e se unem pela comunicante anterior no seu fundo, à frente. O seio sagital superior corre no seu teto, na borda da foice — e as veias-ponte que o alcançam são as que rompem no hematoma subdural.',
     relacoes: 'As artérias cerebrais anteriores sobem por ela e se tornam pericalosas.',
     clinica:
       'É a via de acesso inter-hemisférica, usada para lesões do corpo caloso, do terceiro ventrículo e da região pineal — um corredor natural que evita atravessar córtex funcional. O sangue na fissura inter-hemisférica na tomografia é sinal de hemorragia subaracnóidea por aneurisma da comunicante anterior, e no lactente levanta a suspeita de trauma não acidental.',
@@ -681,7 +718,7 @@ export const NEURO_MEDULA_MENINGES: EntradaDicionario[] = [
   },
   /* ─────────────────── Vascularização encefálica ─────────────────── */
   {
-    termos: ['Artéria Vertebral Direita', 'Artéria Vertebral Esquerda'],
+    termos: ['Artéria Vertebral Direita'],
     classe: 'arteria',
     resumo: 'Primeiro ramo da artéria subclávia, que sobe pelos forames transversos e entra no crânio pelo forame magno.',
     localizacao:
@@ -717,7 +754,7 @@ export const NEURO_MEDULA_MENINGES: EntradaDicionario[] = [
     ],
   },
   {
-    termos: ['Artéria Cerebral Posterior Direita', 'Artéria Cerebral Posterior Esquerda'],
+    termos: ['Artéria Cerebral Posterior Direita'],
     classe: 'arteria',
     resumo: 'Ramo terminal da artéria basilar, que irriga o lobo occipital, o temporal medial e o tálamo.',
     localizacao: 'Da bifurcação da basilar, contorna o mesencéfalo e alcança a face medial do lobo occipital.',
@@ -751,7 +788,7 @@ export const NEURO_MEDULA_MENINGES: EntradaDicionario[] = [
     ],
   },
   {
-    termos: ['Artéria Cerebelar Superior Direita', 'Artéria Cerebelar Superior Esquerda'],
+    termos: ['Artéria Cerebelar Superior Direita'],
     classe: 'arteria',
     resumo: 'Último ramo da basilar antes de sua bifurcação, que irriga a face superior do cerebelo.',
     localizacao: 'Nasce da basilar imediatamente abaixo da sua bifurcação, contorna o mesencéfalo abaixo do nervo oculomotor.',
@@ -816,6 +853,139 @@ export const NEURO_MEDULA_MENINGES: EntradaDicionario[] = [
       'De que artéria a labiríntica costuma se originar?',
       'Que estruturas ela irriga?',
       'Por que sua oclusão causa perda auditiva irreversível?',
+    ],
+  },
+  {
+    termos: [
+      'Hemisfério Cerebral Direito',
+      'Telencéfalo - Hemisfério Direito',
+    ],
+    classe: 'snc',
+    resumo: 'Metade direita do telencéfalo — o hemisfério do espaço, da atenção e da prosódia.',
+    localizacao:
+      'À direita da fissura longitudinal do cérebro, unido ao esquerdo pelo corpo caloso e pelas comissuras anterior e posterior.',
+    funcao:
+      'Comanda o hemicorpo esquerdo. Na maioria esmagadora das pessoas — inclusive na maior parte dos canhotos — ele é o hemisfério não dominante para a linguagem, e se especializa em atenção espacial, reconhecimento de faces, prosódia da fala e integração visuoespacial.',
+    vascularizacao:
+      'Artérias cerebral anterior, média e posterior direitas, com o polígono de Willis fazendo a ponte com o lado esquerdo pelas comunicantes anterior e posterior.',
+    inervacao:
+      'Não recebe inervação sensitiva: o parênquima cerebral é indolor. A dor de uma lesão hemisférica vem da dura-máter e dos vasos, inervados pelo trigêmeo — daí a cefaleia frontal nas lesões supratentoriais.',
+    linfaticos:
+      'Não há vasos linfáticos convencionais; a drenagem do líquido intersticial faz-se pelos espaços perivasculares e pelo sistema glinfático até os linfáticos meníngeos.',
+    relacoes: 'Sua atenção espacial cobre os DOIS hemicampos, ao contrário da esquerda, que cobre apenas o direito.',
+    clinica:
+      'Essa assimetria de atenção é a explicação de um achado que confunde muita gente: a heminegligência é quase sempre por lesão do lado direito. Como o hemisfério direito atende aos dois lados e o esquerdo só ao direito, uma lesão à esquerda é compensada pelo direito, mas uma lesão à direita deixa o lado esquerdo do mundo sem ninguém para atendê-lo — o paciente não come metade do prato, não barbeia metade do rosto e nega o próprio déficit. É anatomia funcional que se enxerga à beira do leito.',
+    memoria:
+      'O direito olha para os dois lados; o esquerdo só para a direita. Por isso a negligência é do lado esquerdo, por lesão à direita.',
+    pontos: [
+      'Que hemicorpo o hemisfério direito comanda?',
+      'Por que a heminegligência decorre quase sempre de lesão direita?',
+      'Por que o parênquima cerebral não dói?',
+    ],
+  },
+  {
+    termos: [
+      'Hemisfério Cerebral Esquerdo',
+      'Telencéfalo - Hemisfério Esquerdo',
+    ],
+    classe: 'snc',
+    resumo: 'Metade esquerda do telencéfalo — o hemisfério dominante para a linguagem em mais de 95% das pessoas.',
+    localizacao: 'À esquerda da fissura longitudinal, unido ao direito pelo corpo caloso.',
+    funcao:
+      'Comanda o hemicorpo direito e abriga, na esmagadora maioria das pessoas, as áreas de linguagem: Broca no giro frontal inferior, Wernicke no temporal superior, ligadas pelo fascículo arqueado. Domina também o cálculo, a praxia e o processamento sequencial.',
+    vascularizacao:
+      'Artérias cerebral anterior, média e posterior esquerdas. O ramo superior da cerebral média irriga Broca e o inferior irriga Wernicke — e é por isso que a oclusão de um ramo produz afasia de expressão e a do outro, afasia de compreensão.',
+    inervacao: 'Sem inervação sensitiva própria; a dor vem das meninges e dos vasos.',
+    linfaticos: 'Espaços perivasculares e sistema glinfático, drenando para os linfáticos meníngeos.',
+    relacoes:
+      'O plano temporal, na parede superior do sulco temporal superior, é anatomicamente maior à esquerda já no recém-nascido — assimetria estrutural que antecede o aprendizado da fala.',
+    clinica:
+      'A dominância para a linguagem é o que torna um AVC de cerebral média esquerda tão mais incapacitante que o mesmo AVC à direita: além da hemiplegia direita, o paciente perde a fala. E é a razão de existir o teste de Wada e o mapeamento cortical com o paciente acordado antes de cirurgias de epilepsia à esquerda — retirar tecido de linguagem é um prejuízo que não se reabilita.',
+    memoria: 'Esquerdo fala, direito situa. AVC à esquerda tira a fala; à direita, tira a noção do espaço.',
+    pontos: [
+      'Que áreas de linguagem o hemisfério esquerdo abriga?',
+      'Que ramo da cerebral média irriga cada uma?',
+      'Por que se faz mapeamento acordado em cirurgias à esquerda?',
+    ],
+  },
+  {
+    termos: [
+      'Artéria Cerebral Posterior Esquerda',
+    ],
+    classe: 'arteria',
+    resumo:
+      'Ramo terminal esquerdo da artéria basilar, irrigando o lobo occipital e a face medial do temporal esquerdos.',
+    localizacao:
+      'Da bifurcação da basilar, contorna o mesencéfalo pela cisterna ambiente e alcança a face medial do lobo occipital esquerdo, correndo no sulco calcarino.',
+    funcao:
+      'Irriga o córtex visual primário esquerdo, o esplênio do corpo caloso, o tálamo esquerdo por ramos perfurantes e a face inferomedial do lobo temporal, incluindo o hipocampo.',
+    vascularizacao:
+      'Vasa vasorum da adventícia; recebe a artéria comunicante posterior esquerda, que a liga à carótida interna — a ponte entre a circulação anterior e a posterior.',
+    inervacao:
+      'Plexo simpático perivascular do gânglio cervical superior e fibras trigeminovasculares, cuja ativação participa da dor da enxaqueca.',
+    linfaticos: 'Ausentes; drenagem perivascular.',
+    relacoes:
+      'O nervo oculomotor (III) emerge entre ela e a artéria cerebelar superior — vizinhança que a torna causa de paralisia do III par quando um aneurisma se forma na comunicante posterior.',
+    clinica:
+      'Sua oclusão produz hemianopsia homônima direita com preservação macular. Mas há uma síndrome que só existe deste lado: quando o infarto atinge o occipital esquerdo E o esplênio do corpo caloso, o paciente perde a visão do campo direito e, ao mesmo tempo, a via que traria a informação visual do occipital direito às áreas de linguagem à esquerda. O resultado é a alexia sem agrafia — ele escreve normalmente e não consegue ler o que acabou de escrever. É a desconexão anatômica mais elegante da neurologia.',
+    memoria:
+      'Occipital esquerdo mais esplênio: o paciente escreve e não lê o que escreveu. Alexia sem agrafia só acontece à esquerda.',
+    pontos: [
+      'Que territórios a cerebral posterior esquerda irriga?',
+      'Que nervo craniano emerge ao lado dela?',
+      'O que é a alexia sem agrafia e por que ela é exclusiva do lado esquerdo?',
+    ],
+  },
+  {
+    termos: [
+      'Artéria Cerebelar Superior Esquerda',
+    ],
+    classe: 'arteria',
+    resumo: 'Último ramo da basilar antes da bifurcação, para a face superior do cerebelo esquerdo.',
+    localizacao:
+      'Nasce da artéria basilar imediatamente abaixo da sua bifurcação, contorna a ponte e o mesencéfalo e distribui-se pela face superior do hemisfério cerebelar esquerdo e pelo vérmis.',
+    funcao:
+      'Irriga a face superior do cerebelo, o núcleo denteado, o pedúnculo cerebelar superior e parte do tegmento pontino alto.',
+    vascularizacao: 'Vasa vasorum da adventícia.',
+    inervacao: 'Plexo simpático perivascular e fibras trigeminovasculares.',
+    linfaticos: 'Ausentes.',
+    relacoes:
+      'O nervo oculomotor (III) passa ENTRE ela e a artéria cerebral posterior; o nervo trigêmeo emerge logo abaixo, e uma alça desta artéria comprimindo a raiz do V é a causa mais comum de neuralgia do trigêmeo.',
+    clinica:
+      'Duas coisas nascem daqui. A alça arterial sobre a raiz do trigêmeo é o alvo da descompressão microvascular de Jannetta — afastar a artéria da raiz e interpor um coxim de teflon cura a neuralgia, e é a prova de que a doença é mecânica. E o infarto de cerebelar superior é o que mais frequentemente evolui com edema e compressão do quarto ventrículo, produzindo hidrocefalia aguda — o infarto cerebelar que exige craniectomia descompressiva de urgência.',
+    memoria:
+      'É a artéria que encosta no trigêmeo e o faz doer. Afastar a artéria da raiz cura a neuralgia — anatomia virando cirurgia.',
+    pontos: [
+      'Que estruturas a cerebelar superior irriga?',
+      'Que nervo craniano passa entre ela e a cerebral posterior?',
+      'Por que ela causa neuralgia do trigêmeo?',
+    ],
+  },
+  {
+    termos: [
+      'Artéria Vertebral Esquerda',
+    ],
+    classe: 'arteria',
+    resumo: 'Primeiro ramo da artéria subclávia esquerda, habitualmente a dominante das duas vertebrais.',
+    localizacao:
+      'Da subclávia esquerda, sobe pelos forames transversários de C6 a C1, contorna o atlas no sulco da artéria vertebral, perfura a membrana atlantoccipital e entra no crânio pelo forame magno.',
+    funcao:
+      'Junta-se à direita para formar a artéria basilar. Antes disso emite a artéria espinal anterior, a espinal posterior e a cerebelar inferior posterior (PICA), que irrigam o bulbo e o cerebelo inferior.',
+    vascularizacao:
+      'Vasa vasorum da adventícia. A parede é fina no segmento V3, entre o atlas e o crânio — o segmento mais móvel e o mais vulnerável.',
+    inervacao:
+      'Plexo simpático perivascular, vindo do gânglio cervicotorácico (estrelado), que acompanha a artéria ao longo de todo o trajeto cervical.',
+    linfaticos: 'Linfonodos cervicais profundos no trajeto extracraniano.',
+    relacoes:
+      'É dominante em cerca de 60% das pessoas, e em uma parcela pequena nasce diretamente do arco aórtico — variante a reconhecer antes de qualquer cateterismo.',
+    clinica:
+      'O segmento V3, no ponto em que a artéria contorna o atlas, é o mais sujeito à dissecção vertebral: uma manipulação cervical brusca, um trauma leve ou até um movimento de rotação extrema estiram a artéria sobre o osso e rompem a íntima. O quadro é dor cervical posterior e occipital em adulto jovem, seguida horas ou dias depois de infarto de tronco ou de cerebelo. É a causa mais comum de AVC em jovem sem fator de risco — e a suspeita começa pela dor, não pelo déficit.',
+    memoria:
+      'Dor na nuca em adulto jovem depois de manipular o pescoço, e dias depois um AVC de tronco: é dissecção de vertebral até prova em contrário.',
+    pontos: [
+      'Que ramos a artéria vertebral emite antes de formar a basilar?',
+      'Que segmento é o mais vulnerável à dissecção e por quê?',
+      'Como se apresenta a dissecção vertebral?',
     ],
   },
 ]

@@ -78,7 +78,7 @@ export const COLUNA_TORAX: EntradaDicionario[] = [
     ],
   },
   {
-    termos: ['Forame Vertebral', 'Canal Vertebral'],
+    termos: ['Forame Vertebral'],
     resumo: 'Abertura entre o corpo e o arco vertebral; o empilhamento de todos forma o canal vertebral.',
     localizacao: 'Entre a face posterior do corpo, os pedículos e as lâminas. É triangular e amplo nas cervicais e lombares, e circular e estreito nas torácicas.',
     funcao: 'Aloja e protege a medula espinal, suas meninges, o líquido cerebrospinal, o plexo venoso vertebral interno e, abaixo de L2, a cauda equina.',
@@ -145,6 +145,8 @@ export const COLUNA_TORAX: EntradaDicionario[] = [
     resumo: 'A porção superior do esterno, articulada com a clavícula e com a primeira costela.',
     localizacao: 'Acima do corpo do esterno, com a incisura jugular no alto e as incisuras claviculares nas laterais.',
     funcao: 'Ancora o cíngulo do membro superior ao esqueleto axial pela articulação esternoclavicular e protege os grandes vasos da base do pescoço.',
+    vascularizacao:
+      'Ramos da artéria torácica interna e do tronco costocervical, com rica medula óssea hematopoiética mantida por toda a vida — a razão de o manúbrio ser sítio alternativo de punção intraóssea no adulto.',
     relacoes: 'Atrás dele passam o arco da aorta e seus ramos, a veia braquiocefálica esquerda e o timo (no jovem).',
     clinica:
       'A incisura jugular é reparo palpável da traqueia. O ângulo do esterno, na junção manúbrio-corpo, marca a 2ª costela e o plano transverso do tórax — nível da bifurcação da traqueia e do início e fim do arco aórtico.',
@@ -155,6 +157,8 @@ export const COLUNA_TORAX: EntradaDicionario[] = [
     resumo: 'A extremidade inferior e cartilaginosa do esterno, que ossifica com a idade.',
     localizacao: 'Abaixo do corpo do esterno, na junção com as cartilagens costais inferiores.',
     funcao: 'Ponto de inserção do diafragma, do reto do abdome e da linha alba.',
+    vascularizacao:
+      'Ramos da artéria torácica interna e da musculofrênica, com irrigação escassa — cartilagem no jovem, osso no adulto, e sempre pouco vascularizado. É por isso que a fratura do xifoide na reanimação consolida mal e dói por meses.',
     clinica:
       'É o reparo para posicionar as mãos na compressão torácica: dois dedos acima dele, para não fraturá-lo e lacerar o fígado. Também marca o ápice do ângulo infraesternal e o ponto de punção pericárdica subxifóidea.',
     pontos: ['Inserção do diafragma e do reto do abdome', 'Referência da RCP e da pericardiocentese', 'Ossifica com a idade'],
@@ -248,6 +252,35 @@ export const COLUNA_TORAX: EntradaDicionario[] = [
       'Sagital = escafocefalia quando fecha cedo',
       'Sutura serrilhada x fratura retilínea',
       'Crescimento perpendicular à linha da sutura',
+    ],
+  },
+  {
+    termos: [
+      'Canal Vertebral',
+    ],
+    classe: 'passagem-ossea',
+    resumo:
+      'O tubo formado pela soma de todos os forames vertebrais empilhados — o continente da medula, não um forame isolado.',
+    localizacao:
+      'Do forame magno ao hiato sacral, formado pela sobreposição dos forames vertebrais unidos pelos discos, pelos ligamentos amarelos e pelo ligamento longitudinal posterior.',
+    funcao:
+      'Aloja a medula espinal, as meninges, o líquido cerebrospinal, as raízes e o plexo venoso vertebral interno. Muda de forma ao longo do trajeto: triangular e amplo na cervical e na lombar, onde há intumescências, e circular e estreito na torácica.',
+    vascularizacao:
+      'Ramos espinais das artérias segmentares entram por cada forame intervertebral; o plexo venoso vertebral interno de Batson, sem válvulas, forra suas paredes em toda a extensão.',
+    inervacao:
+      'Nervo sinuvertebral de Luschka, ramo recorrente de cada nervo espinal, que reentra pelo forame e inerva o ligamento longitudinal posterior, a dura-máter e o anel fibroso — a via da dor discogênica.',
+    linfaticos:
+      'Ausentes no espaço subaracnóideo; a drenagem do líquido cerebrospinal faz-se por vias linfáticas perineurais ao longo das raízes.',
+    relacoes:
+      'O diâmetro anteroposterior normal do canal lombar é de 15 a 25 mm; abaixo de 10 mm é estenose absoluta. O forame VERTEBRAL é o buraco de uma vértebra; o canal é o tubo que todos eles formam juntos.',
+    clinica:
+      'Pensar em canal, e não em forame, é o que torna a estenose de canal lombar inteligível: nenhuma vértebra isolada está doente — o estreitamento é a soma de hipertrofia facetária, abaulamento discal e espessamento do ligamento amarelo em vários níveis. Daí a claudicação neurogênica, com dor que aparece ao andar e alivia ao sentar ou inclinar-se para a frente, porque a flexão AUMENTA o diâmetro do canal. É o sinal do carrinho de supermercado — o paciente anda longe empurrando o carrinho e não anda um quarteirão ereto.',
+    memoria:
+      'Forame é um buraco; canal é o corredor inteiro. Quem se curva alarga o corredor — por isso o paciente empurra o carrinho e anda.',
+    pontos: [
+      'Qual a diferença entre forame vertebral e canal vertebral?',
+      'Que nervo inerva as estruturas do canal?',
+      'Por que a flexão alivia a claudicação neurogênica?',
     ],
   },
 ]

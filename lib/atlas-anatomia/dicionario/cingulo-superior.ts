@@ -232,6 +232,10 @@ export const CINGULO_SUPERIOR: EntradaDicionario[] = [
     localizacao: 'Do ângulo superior ao ângulo inferior, paralela à coluna, a cerca de 5 cm dos processos espinhosos.',
     funcao:
       'Recebe, na face anterior, o serrátil anterior, e na posterior os romboides maior e menor e o elevador da escápula. É a corda de um cabo de guerra: o serrátil puxa para a frente, os romboides puxam para trás.',
+    vascularizacao:
+      'Artéria dorsal da escápula, ramo do tronco costocervical ou da subclávia, que desce ao longo dela sob os músculos romboides. É o vaso que sangra na liberação dos romboides e a referência da dissecção do retalho.',
+    inervacao:
+      'Ramos do nervo dorsal da escápula (C5) no periósteo, o mesmo que inerva os romboides e o levantador da escápula. Sua lesão produz escápula alada com deslocamento lateral — diferente da alada por lesão do torácico longo, em que a escápula desloca medialmente.',
     relacoes: 'O nervo dorsal da escápula (C5) desce ao longo dela, sob os romboides, junto com a artéria escapular dorsal.',
     clinica:
       'A dor interescapular crônica frequentemente vem do desequilíbrio dessa dupla, com romboides sobrecarregados. A lesão do nervo dorsal da escápula produz um alamento medial discreto e lateralização da escápula em repouso, que se distingue do alado clássico do serrátil pela direção do desvio.',
@@ -250,6 +254,10 @@ export const CINGULO_SUPERIOR: EntradaDicionario[] = [
     resumo: 'Borda espessa da escápula que desce da cavidade glenoidal ao ângulo inferior — a margem axilar.',
     localizacao: 'Do tubérculo infraglenoidal ao ângulo inferior, voltada para a axila; é a borda mais espessa do osso.',
     funcao: 'Dá origem ao redondo menor, em cima, e ao redondo maior, embaixo. Sua espessura é a resposta à tração desses músculos e à transmissão de carga do braço para o osso.',
+    vascularizacao:
+      'Artéria circunflexa da escápula, ramo da subescapular, que contorna a margem lateral pelo espaço triangular e alcança a fossa infraespinal. É o pedículo do retalho escapular e circunflexo, usado em reconstrução de cabeça e pescoço.',
+    inervacao:
+      'Ramos do nervo axilar e do subescapular no periósteo. A margem lateral é a borda espessa da escápula, a que suporta a tração do redondo menor e do maior — e a referência do acesso posterior ao ombro.',
     relacoes: 'A artéria circunflexa da escápula contorna a margem lateral pelo espaço triangular; o nervo axilar e a artéria circunflexa umeral posterior atravessam o espaço quadrangular, mais acima.',
     clinica:
       'A margem lateral é o "pilar" da escápula e o corredor onde as placas de fixação são posicionadas nas fraturas do corpo escapular. Os espaços triangular e quadrangular, delimitados por ela, são sedes de síndromes compressivas raras mas cobradas — a do espaço quadrangular cursa com dor e atrofia do redondo menor e do deltoide.',

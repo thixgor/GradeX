@@ -37,6 +37,8 @@ export const NEURO_TELENCEFALO: EntradaDicionario[] = [
     localizacao:
       'Corre obliquamente na face lateral, de cima e de trás para baixo e para a frente, começando um pouco atrás do ponto médio do hemisfério e terminando acima do sulco lateral.',
     funcao: 'É a fronteira funcional mais importante do córtex: à frente, o giro pré-central, motor; atrás, o giro pós-central, sensitivo.',
+    vascularizacao:
+      'Artéria cerebral média nos dois terços inferiores e cerebral anterior no terço superior, que transborda a borda do hemisfério. Essa fronteira arterial no alto do sulco é o que produz a diferença clínica mais útil do AVC: cerebral média poupa a perna, cerebral anterior poupa a face e a mão.',
     relacoes: 'Sua extremidade superior atravessa a margem do hemisfério e desce um pouco na face medial, junto ao lóbulo paracentral.',
     clinica:
       'Localizá-lo na ressonância é o primeiro passo do planejamento neurocirúrgico: um tumor à frente ou atrás dele tem implicações funcionais completamente diferentes. O "sinal do ômega", a alça do giro pré-central que corresponde à mão, é o marco usado para identificá-lo no corte axial — e é a referência para preservar a motricidade da mão numa ressecção.',
@@ -54,6 +56,8 @@ export const NEURO_TELENCEFALO: EntradaDicionario[] = [
     resumo: 'Sulco paralelo e anterior ao central, que limita à frente o giro pré-central.',
     localizacao: 'Face lateral do lobo frontal, à frente e paralelo ao sulco central; frequentemente descontínuo, em porções superior e inferior.',
     funcao: 'Delimita o córtex motor primário à frente e separa-o do córtex pré-motor.',
+    vascularizacao:
+      'Ramos pré-frontais e pré-centrais da artéria cerebral média, com a porção superior pela cerebral anterior.',
     relacoes: 'Os sulcos frontais superior e inferior partem dele em direção anterior.',
     clinica:
       'Sua identificação é o método clássico de localizar o sulco central na ressonância: acha-se o sulco frontal superior, segue-se para trás até o pré-central, e o próximo sulco é o central. Um roteiro de três passos que resolve a leitura de qualquer corte axial encefálico.',
@@ -90,6 +94,8 @@ export const NEURO_TELENCEFALO: EntradaDicionario[] = [
     resumo: 'Sulco posterior e paralelo ao central, que limita atrás o giro pós-central.',
     localizacao: 'Face lateral do lobo parietal, atrás e paralelo ao sulco central; dele parte, para trás, o sulco intraparietal.',
     funcao: 'Delimita o córtex somatossensitivo primário e separa-o do córtex de associação parietal.',
+    vascularizacao:
+      'Ramos parietais da artéria cerebral média; a porção mais superior, junto à borda do hemisfério, é da cerebral anterior.',
     relacoes: 'Encontra o sulco intraparietal em ângulo reto, formando um T deitado característico.',
     clinica:
       'É o marco que separa o "sentir" do "interpretar o que se sente". Lesões à frente dele produzem perda sensitiva elementar; atrás dele, agnosias táteis — o paciente sente o objeto na mão mas não consegue reconhecê-lo, a astereognosia.',
@@ -145,6 +151,8 @@ export const NEURO_TELENCEFALO: EntradaDicionario[] = [
     resumo: 'Sulco anteroposterior que separa os giros frontais superior e médio.',
     localizacao: 'Face lateral do lobo frontal, correndo da região pré-central para a frente.',
     funcao: 'Delimita os dois giros e serve de referência: sua extremidade posterior encontra o sulco pré-central.',
+    vascularizacao:
+      'Ramos frontais da artéria cerebral anterior e da cerebral média. Sua extremidade posterior encontra o sulco pré-central e marca o campo ocular frontal — a área cuja lesão faz os olhos se desviarem para o lado da lesão.',
     relacoes: 'Na sua junção com o pré-central está o campo ocular frontal.',
     clinica:
       'O campo ocular frontal comanda os movimentos oculares sacádicos para o lado oposto. Sua lesão destrutiva faz os olhos desviarem para o lado da lesão — "o paciente olha para a lesão"; uma crise epiléptica na mesma área faz o oposto, os olhos desviam para longe do foco. Duas regras opostas que se explicam pela mesma anatomia.',
@@ -181,6 +189,8 @@ export const NEURO_TELENCEFALO: EntradaDicionario[] = [
     resumo: 'Sulco que separa o giro frontal médio do inferior na face lateral do lobo frontal.',
     localizacao: 'Face lateral do lobo frontal, abaixo do sulco frontal superior e acima do giro frontal inferior.',
     funcao: 'Delimita os dois giros; sua extremidade posterior alcança o sulco pré-central inferior.',
+    vascularizacao:
+      'Ramos frontais da artéria cerebral média. Delimita por cima o giro frontal inferior, onde mora a área de Broca no hemisfério dominante.',
     relacoes: 'Abaixo dele está o giro frontal inferior, com a área de Broca no hemisfério dominante.',
     clinica:
       'É a referência que orienta a localização da área de Broca em cirurgia com paciente acordado: o mapeamento por estimulação elétrica busca as partes triangular e opercular abaixo desse sulco, e a interrupção da fala durante a estimulação identifica o território que não pode ser ressecado.',
@@ -215,6 +225,8 @@ export const NEURO_TELENCEFALO: EntradaDicionario[] = [
     resumo: 'Porção posterior do giro frontal inferior, entre os ramos ascendente e posterior do sulco lateral — área 44.',
     localizacao: 'Imediatamente à frente do giro pré-central inferior, cobrindo a ínsula como um opérculo.',
     funcao: 'Componente posterior da área de Broca, mais ligado à programação motora articulatória da fala.',
+    vascularizacao:
+      'Ramos pré-centrais da artéria cerebral média. Junto com a parte triangular, forma a área de Broca — e é o território do ramo superior da cerebral média, cuja oclusão produz afasia de expressão com compreensão preservada.',
     relacoes: 'Cobre a porção anterior da ínsula.',
     clinica:
       'A lesão isolada da parte opercular tende a produzir apraxia de fala — o paciente sabe a palavra e tenta articulá-la, errando os sons de forma inconsistente —, distinta da afasia de Broca completa. Essa dissociação, entre programar o som e construir a frase, é o que separa as áreas 44 e 45.',
@@ -232,6 +244,8 @@ export const NEURO_TELENCEFALO: EntradaDicionario[] = [
     resumo: 'Porção média e triangular do giro frontal inferior, entre os ramos anterior e ascendente do sulco lateral — área 45.',
     localizacao: 'Entre os ramos anterior e ascendente do sulco lateral, com formato de triângulo bem reconhecível.',
     funcao: 'Componente anterior da área de Broca, mais relacionado ao processamento semântico e à seleção de palavras.',
+    vascularizacao:
+      'Ramos frontais ascendentes da artéria cerebral média. Com a parte opercular, compõe a área 44/45 de Brodmann — a área de Broca.',
     relacoes: 'É o marco anatômico mais fácil de reconhecer na face lateral do lobo frontal.',
     clinica:
       'Sua forma triangular característica é o que permite localizar a área de Broca numa peça ou numa reconstrução tridimensional em segundos: procura-se o V formado pelos dois ramos do sulco lateral, e o triângulo entre eles é a área 45. Um reparo visual que substitui a memorização de coordenadas.',
@@ -249,6 +263,8 @@ export const NEURO_TELENCEFALO: EntradaDicionario[] = [
     resumo: 'Porção anterior e inferior do giro frontal inferior, que se continua com a face orbital do lobo frontal.',
     localizacao: 'À frente do ramo anterior do sulco lateral, curvando-se para a face inferior do lobo frontal.',
     funcao: 'Faz parte do córtex órbito-frontal lateral, envolvido na avaliação de recompensa, na inibição comportamental e no julgamento social.',
+    vascularizacao:
+      'Ramos orbitofrontais da artéria cerebral média. É a porção mais anterior do giro frontal inferior e a menos envolvida na linguagem, ao contrário das partes triangular e opercular.',
     relacoes: 'Continua-se com os giros orbitários na face inferior.',
     clinica:
       'A lesão órbito-frontal produz a síndrome de desinibição: impulsividade, comportamento social inadequado, jocosidade inapropriada e perda do julgamento — o caso de Phineas Gage é o exemplo histórico. É a variante comportamental da demência frontotemporal, em que a personalidade muda antes da memória.',
@@ -282,6 +298,8 @@ export const NEURO_TELENCEFALO: EntradaDicionario[] = [
     resumo: 'Ramo vertical do sulco lateral, que separa as partes triangular e opercular.',
     localizacao: 'Sobe verticalmente do tronco do sulco lateral, na face lateral do lobo frontal.',
     funcao: 'Delimita, atrás, a parte triangular e, à frente, a parte opercular.',
+    vascularizacao:
+      'Ramos da artéria cerebral média, que emerge do sulco lateral justamente aqui para se distribuir pela convexidade — é o ponto em que a artéria sai da profundidade e se torna cortical.',
     relacoes: 'É o segundo braço do V característico.',
     clinica:
       'A distinção entre as duas partes que ele separa tem valor clínico real: lesões predominantemente operculares produzem apraxia de fala, e lesões triangulares, dificuldade de acesso lexical. A ressonância funcional consegue separar essas duas ativações em torno do ramo ascendente.',
@@ -316,6 +334,8 @@ export const NEURO_TELENCEFALO: EntradaDicionario[] = [
     resumo: 'Sulco que divide o lobo parietal em lóbulos parietais superior e inferior.',
     localizacao: 'Face lateral do lobo parietal, correndo para trás a partir do sulco pós-central.',
     funcao: 'Delimita os dois lóbulos parietais e abriga, nas suas paredes, áreas envolvidas na atenção visuoespacial e no controle do alcance e da preensão.',
+    vascularizacao:
+      'Ramos parietais posteriores da artéria cerebral média. Separa os lóbulos parietais superior e inferior, e sua margem inferior abriga os giros supramarginal e angular — cuja lesão à esquerda produz a síndrome de Gerstmann.',
     relacoes: 'Acima está o lóbulo parietal superior; abaixo, o inferior, com os giros supramarginal e angular.',
     clinica:
       'É a região central da síndrome de Balint quando a lesão é bilateral: simultanagnosia (o paciente vê partes, não o todo), apraxia óptica e ataxia óptica — não consegue alcançar objetos guiado pela visão. Uma síndrome rara, mas que demonstra melhor que qualquer outra a função do parietal na integração visuoespacial.',
@@ -388,6 +408,8 @@ export const NEURO_TELENCEFALO: EntradaDicionario[] = [
     resumo: 'Ramo ascendente terminal do sulco do cíngulo, na face medial, que separa o lóbulo paracentral do pré-cúneo.',
     localizacao: 'Face medial do hemisfério, subindo do sulco do cíngulo até a margem superior, atrás do lóbulo paracentral.',
     funcao: 'Delimita posteriormente o lóbulo paracentral e marca, na face medial, o limite entre os lobos frontal-parietal anterior e o pré-cúneo.',
+    vascularizacao:
+      'Artéria calosomarginal, ramo da cerebral anterior. É a referência mais confiável para localizar o sulco central na tomografia e na ressonância no plano axial — o \'sinal do bigode\' que o neurorradiologista procura.',
     relacoes: 'É um dos marcos mais confiáveis para localizar o sulco central na face medial da ressonância sagital.',
     clinica:
       'Na leitura da ressonância sagital, encontrar o ramo marginal — em forma de gancho ascendente — é o passo que permite identificar o lóbulo paracentral e, com ele, o córtex motor e sensitivo do membro inferior. Um tumor parassagital nessa região explica a paraparesia com liberação esfincteriana.',
@@ -423,6 +445,8 @@ export const NEURO_TELENCEFALO: EntradaDicionario[] = [
     resumo: 'Ramo ascendente do sulco do cíngulo que delimita à frente o lóbulo paracentral.',
     localizacao: 'Face medial do hemisfério, subindo do sulco do cíngulo à margem superior, à frente do lóbulo paracentral.',
     funcao: 'Separa o lóbulo paracentral do giro frontal superior medial.',
+    vascularizacao:
+      'Artéria cerebral anterior, pelos ramos calosomarginais. Delimita o lóbulo paracentral, onde estão representados o pé e a região perineal — e por isso o infarto de cerebral anterior produz paresia da perna com incontinência urinária.',
     relacoes: 'Faz par com o ramo marginal, que delimita o lóbulo por trás.',
     clinica:
       'Junto com o ramo marginal, forma as duas "balizas" do lóbulo paracentral na ressonância sagital — a referência mais prática para localizar o córtex da perna antes de uma ressecção parassagital.',
@@ -459,6 +483,8 @@ export const NEURO_TELENCEFALO: EntradaDicionario[] = [
     resumo: 'Sulco profundo da face medial que separa o lobo parietal do occipital.',
     localizacao: 'Face medial do hemisfério, correndo obliquamente de baixo e da frente para cima e para trás, encontrando o sulco calcarino.',
     funcao: 'Delimita o pré-cúneo, à frente, e o cúneo, atrás; é um dos poucos limites lobares reais e visíveis do encéfalo.',
+    vascularizacao:
+      'Artéria cerebral anterior e cerebral posterior, que se encontram no seu fundo, na face medial. Junto com o sulco calcarino, delimita a cunha (cuneus) — território visual da cerebral posterior.',
     relacoes: 'Encontra o sulco calcarino formando um Y deitado, com o cúneo entre os dois braços.',
     clinica:
       'É a referência da via interemisférica posterior para acesso à região pineal e ao esplênio. E o encontro com o calcarino é o marco para localizar o córtex visual primário na ressonância, essencial para interpretar defeitos de campo visual de origem cortical.',
@@ -496,6 +522,8 @@ export const NEURO_TELENCEFALO: EntradaDicionario[] = [
     resumo: 'Sulco longo e paralelo ao lateral, que separa os giros temporais superior e médio.',
     localizacao: 'Face lateral do lobo temporal, correndo paralelamente ao sulco lateral; sua extremidade posterior é contornada pelo giro angular.',
     funcao: 'Além de delimitar os giros, suas paredes contêm áreas envolvidas na percepção de movimento biológico, de faces e de vozes.',
+    vascularizacao:
+      'Ramos temporais da artéria cerebral média. Sua parede superior, no plano temporal, contém a área de Wernicke no hemisfério dominante — território do ramo inferior da cerebral média.',
     relacoes: 'Sua ponta posterior é abraçada pelo giro angular, assim como a ponta do sulco lateral é abraçada pelo supramarginal.',
     clinica:
       'A porção posterior do sulco temporal superior é hoje reconhecida como parte do sistema de cognição social, e sua alteração funcional está associada ao transtorno do espectro autista, com dificuldade na leitura de intenção pelo olhar e pela expressão facial.',
@@ -531,6 +559,8 @@ export const NEURO_TELENCEFALO: EntradaDicionario[] = [
     resumo: 'Sulco que separa os giros temporais médio e inferior, frequentemente descontínuo.',
     localizacao: 'Face lateral do lobo temporal, abaixo do sulco temporal superior; costuma se apresentar em segmentos.',
     funcao: 'Delimita os dois giros; suas paredes participam do processamento visual de alto nível da via ventral.',
+    vascularizacao:
+      'Ramos temporais da artéria cerebral média em cima e da cerebral posterior embaixo — o sulco é, na prática, a fronteira entre os dois territórios na face lateral do lobo temporal.',
     relacoes: 'Contorna a margem inferolateral do hemisfério.',
     clinica:
       'A via ventral — do occipital ao temporal, a "via do quê" — passa por essa região. Sua lesão bilateral produz agnosia visual: o paciente vê o objeto, descreve sua forma, mas não sabe o que é, e o reconhece imediatamente ao tocá-lo ou ouvi-lo.',
@@ -584,6 +614,8 @@ export const NEURO_TELENCEFALO: EntradaDicionario[] = [
     resumo: 'Extremidade anterior do hemisfério cerebral, correspondente ao córtex pré-frontal mais anterior.',
     localizacao: 'Ponta anterior do lobo frontal, apoiada sobre a fossa craniana anterior.',
     funcao: 'Área 10 de Brodmann, a maior região do córtex pré-frontal humano, envolvida em metacognição, planejamento de longo prazo e alternância entre objetivos.',
+    vascularizacao:
+      'Ramo polar frontal da artéria cerebral anterior e ramos orbitofrontais da cerebral média. Território de divisor de águas entre as duas — e por isso o polo frontal é uma das áreas que infartam na hipotensão sistêmica prolongada, sem oclusão de vaso nenhum.',
     relacoes: 'Repousa sobre o teto da órbita, superfície irregular do osso frontal.',
     clinica:
       'A superfície óssea irregular sob ele explica a contusão por golpe-contragolpe: nas desacelerações, os polos frontal e temporal se chocam contra saliências ósseas e são as regiões mais frequentemente contundidas no traumatismo cranioencefálico — independentemente do lado do impacto. É por isso que alterações de comportamento e de julgamento são sequela tão comum do TCE.',
@@ -601,6 +633,8 @@ export const NEURO_TELENCEFALO: EntradaDicionario[] = [
     resumo: 'Extremidade anterior do lobo temporal, apoiada na fossa craniana média.',
     localizacao: 'Ponta anterior do lobo temporal, acima da asa maior do esfenoide e da parte petrosa do temporal.',
     funcao: 'Área de convergência multimodal ligada ao sistema límbico, importante para memória semântica, emoção e reconhecimento de pessoas.',
+    vascularizacao:
+      'Ramo temporal anterior da artéria cerebral média e ramos da cerebral posterior. Sua vizinhança com a asa menor do esfenoide é o que o torna o alvo preferencial da contusão por golpe e contragolpe no traumatismo craniano.',
     relacoes: 'Vizinho imediato do unco e da amígdala, medialmente.',
     clinica:
       'É a segunda região mais contundida no TCE, e sua lesão bilateral, associada à das amígdalas, produz a síndrome de Klüver-Bucy: hiperoralidade, hipersexualidade, docilidade e agnosia visual. A atrofia do polo temporal esquerdo é a marca da demência semântica, em que o paciente perde o significado das palavras mantendo a fluência.',
@@ -693,6 +727,8 @@ export const NEURO_TELENCEFALO: EntradaDicionario[] = [
     resumo: 'Sulco que separa o giro do cíngulo dos giros frontais e do lóbulo paracentral na face medial.',
     localizacao: 'Face medial do hemisfério, arqueando-se acima do giro do cíngulo, paralelo ao corpo caloso.',
     funcao: 'Delimita o giro do cíngulo superiormente; emite os ramos paracentral e marginal.',
+    vascularizacao:
+      'Artéria calosomarginal, ramo da cerebral anterior, que corre dentro dele em quase toda a extensão. Separa o giro do cíngulo dos giros frontais mediais.',
     relacoes: 'É o marco que separa o córtex límbico do neocórtex na face medial.',
     clinica:
       'Sua identificação organiza a leitura da ressonância sagital: seguindo-o de frente para trás, encontram-se sucessivamente o ramo paracentral, o lóbulo paracentral e o ramo marginal — a sequência que permite localizar o córtex da perna e planejar acessos parassagitais.',
@@ -729,6 +765,8 @@ export const NEURO_TELENCEFALO: EntradaDicionario[] = [
     resumo: 'Curvatura anterior do corpo caloso, cujas fibras formam o fórceps menor.',
     localizacao: 'Extremidade anterior do corpo caloso, curvando-se para baixo e para trás em direção ao rostro.',
     funcao: 'Suas fibras se irradiam para os lobos frontais formando o fórceps menor (frontal), que conecta os córtices pré-frontais dos dois lados.',
+    vascularizacao:
+      'Artéria pericalosa, ramo terminal da cerebral anterior, que o contorna, e ramos da comunicante anterior. É a curva anterior do corpo caloso, e suas fibras formam o fórceps menor, que une os dois lobos frontais.',
     relacoes: 'A artéria cerebral anterior o contorna para se tornar pericalosa.',
     clinica:
       'É a região atingida na esclerose múltipla com lesões perpendiculares ao corpo caloso — os "dedos de Dawson" —, achado altamente sugestivo na ressonância. Lesões do joelho e do rostro também aparecem na doença de Marchiafava-Bignami, associada ao alcoolismo crônico, com desconexão frontal e alteração de comportamento.',
@@ -764,6 +802,8 @@ export const NEURO_TELENCEFALO: EntradaDicionario[] = [
     resumo: 'Prolongamento afilado que desce do joelho até a lâmina terminal.',
     localizacao: 'Face inferior do joelho do corpo caloso, dirigindo-se para trás e para baixo até a comissura anterior e a lâmina terminal.',
     funcao: 'Conecta as porções orbitais e mediais dos lobos frontais; delimita, com o joelho, o limite anterior do septo pelúcido.',
+    vascularizacao:
+      'Ramos da artéria comunicante anterior e da cerebral anterior. É a porção mais fina e mais anterior, e um dos alvos da desmielinização na doença de Marchiafava-Bignami, associada ao alcoolismo.',
     relacoes: 'A lâmina terminal, atrás dele, marca a extremidade anterior do terceiro ventrículo e do tubo neural.',
     clinica:
       'A agenesia do corpo caloso costuma poupar ou afetar segmentos em ordem inversa ao desenvolvimento: como a formação vai do joelho para trás e o rostro é o último a se formar, ele é o primeiro a faltar nas agenesias parciais. Essa lógica de desenvolvimento permite datar aproximadamente a época da agressão embrionária pela extensão da malformação.',
@@ -781,6 +821,8 @@ export const NEURO_TELENCEFALO: EntradaDicionario[] = [
     resumo: 'Lâmina dupla e translúcida que separa os cornos anteriores dos dois ventrículos laterais.',
     localizacao: 'Entre o corpo caloso, acima, e o fórnix, abaixo, na linha média.',
     funcao: 'Separa os ventrículos laterais; entre suas duas lâminas pode persistir uma cavidade — o cavum do septo pelúcido, presente em todos os fetos e em cerca de 15% dos adultos.',
+    vascularizacao:
+      'Ramos subcalosos da artéria cerebral anterior e da comunicante anterior. Lâmina dupla e fina, praticamente translúcida; sua ausência é marcador de displasia septo-óptica, e o cavum entre suas lâminas é achado normal em prematuros.',
     relacoes: 'Suas lâminas fazem parte da parede medial dos cornos frontais.',
     clinica:
       'A ausência do septo pelúcido é achado de imagem que exige investigação: associa-se à displasia septo-óptica (síndrome de De Morsier), com hipoplasia do nervo óptico e disfunção hipofisária, e à holoprosencefalia. Nos boxeadores, o cavum alargado é um dos marcadores de encefalopatia traumática crônica.',
@@ -799,6 +841,8 @@ export const NEURO_TELENCEFALO: EntradaDicionario[] = [
     localizacao:
       'Da fímbria do hipocampo, sobe como a perna do fórnix, curva-se sob o corpo caloso formando o corpo, e desce como coluna até o corpo mamilar; as duas metades se unem na comissura do fórnix.',
     funcao: 'Principal eferente do hipocampo, componente central do circuito de Papez: hipocampo → fórnix → corpo mamilar → trato mamilotalâmico → núcleo anterior do tálamo → giro do cíngulo → hipocampo.',
+    vascularizacao:
+      'Artéria comunicante posterior, artéria coroidea anterior e ramos da pericalosa posterior. É a principal via eferente do hipocampo, e sua secção bilateral — em cirurgias de terceiro ventrículo — produz amnésia anterógrada grave.',
     relacoes: 'Forma o assoalho do septo pelúcido e o limite do forame interventricular.',
     clinica:
       'Sua lesão produz amnésia anterógrada — a incapacidade de formar novas memórias declarativas —, mesma síndrome da lesão hipocampal bilateral. É também a estrutura lesada na síndrome de Korsakoff, junto com os corpos mamilares, na deficiência de tiamina do alcoolista. E é alvo de estimulação cerebral profunda em estudos sobre doença de Alzheimer.',
@@ -816,6 +860,8 @@ export const NEURO_TELENCEFALO: EntradaDicionario[] = [
     resumo: 'Pequeno feixe comissural que atravessa a linha média à frente das colunas do fórnix.',
     localizacao: 'Na parede anterior do terceiro ventrículo, à frente das colunas do fórnix e acima do quiasma óptico.',
     funcao: 'Conecta os lobos temporais dos dois lados, incluindo as amígdalas e os bulbos olfatórios, e parte dos córtices occipitais.',
+    vascularizacao:
+      'Artéria coroidea anterior e ramos estriados mediais da cerebral anterior. Conecta os lobos temporais e os bulbos olfatórios, e é a única comissura que permanece íntegra na agenesia de corpo caloso — o que preserva alguma transferência inter-hemisférica.',
     relacoes: 'É um marco de referência do plano CA–CP (comissura anterior–comissura posterior), padrão de coordenadas da neuroimagem.',
     clinica:
       'A linha entre as duas comissuras é o referencial estereotáxico universal: toda cirurgia funcional — estimulação cerebral profunda para Parkinson, talamotomias, palidotomias — é planejada nesse sistema de coordenadas. Um feixe pequeno que se tornou o eixo cartesiano do cérebro.',
@@ -869,6 +915,8 @@ export const NEURO_TELENCEFALO: EntradaDicionario[] = [
     resumo: 'Sulco entre o giro denteado e o giro para-hipocampal, marca do enrolamento do córtex hipocampal.',
     localizacao: 'Face medial do lobo temporal, entre o giro denteado e o subículo.',
     funcao: 'É o vestígio da invaginação que enrolou o arquicórtex sobre si mesmo durante o desenvolvimento, formando o hipocampo.',
+    vascularizacao:
+      'Artérias hipocampais, ramos da cerebral posterior, e artéria coroidea anterior. O hipocampo é território de irrigação terminal e de altíssima demanda metabólica — a combinação que o torna a região mais vulnerável do encéfalo à hipóxia e à hipoglicemia.',
     relacoes: 'Resíduos císticos ao longo dele são achado normal e comum na ressonância.',
     clinica:
       'Os remanescentes císticos do sulco hipocampal são um dos falsos positivos mais frequentes da ressonância de crânio — pequenos cistos alinhados na face medial do temporal, que não precisam de investigação. Reconhecê-los como variante normal poupa exames e ansiedade.',
@@ -886,6 +934,8 @@ export const NEURO_TELENCEFALO: EntradaDicionario[] = [
     resumo: 'Extremidade anteromedial recurvada do giro para-hipocampal, vizinha imediata do mesencéfalo.',
     localizacao: 'Face medial do lobo temporal, projetando-se medialmente sobre a borda livre da tenda do cerebelo.',
     funcao: 'Contém parte do córtex olfatório primário e recobre a amígdala.',
+    vascularizacao:
+      'Artéria coroidea anterior e ramos da cerebral posterior. É a saliência que hernia sobre a incisura da tenda do cerebelo na hipertensão intracraniana, comprimindo o III par — daí a pupila fixa e dilatada ipsilateral ser o sinal de alarme da herniação uncal.',
     relacoes: 'Está imediatamente lateral ao mesencéfalo e ao nervo oculomotor, na incisura da tenda.',
     clinica:
       'A herniação uncal é a mais clássica e a mais temida: o unco desliza sobre a borda da tenda e comprime, na ordem, o III nervo (midríase fixa ipsilateral, o primeiro sinal), o pedúnculo cerebral (hemiparesia contralateral) e o tronco encefálico (rebaixamento e apneia). A compressão do pedúnculo contralateral contra a tenda produz hemiparesia do mesmo lado da lesão — o falso sinal localizatório de Kernohan.',
@@ -903,6 +953,8 @@ export const NEURO_TELENCEFALO: EntradaDicionario[] = [
     resumo: 'Sulco da face inferior do lobo temporal que separa o giro para-hipocampal do occipitotemporal medial.',
     localizacao: 'Face inferior do lobo temporal, lateralmente ao giro para-hipocampal, estendendo-se para trás até o lobo occipital.',
     funcao: 'Delimita o córtex para-hipocampal lateralmente; sua profundidade forma a eminência colateral no assoalho do corno temporal do ventrículo lateral.',
+    vascularizacao:
+      'Ramos temporais da artéria cerebral posterior. Delimita lateralmente o giro para-hipocampal, e sua profundidade é a referência da amigdalo-hipocampectomia na cirurgia de epilepsia.',
     relacoes: 'A eminência colateral é visível no interior do corno temporal.',
     clinica:
       'É a referência lateral da amígdalo-hipocampectomia seletiva, a cirurgia da epilepsia do lobo temporal mesial. O sulco delimita o quanto se pode ressecar sem invadir o córtex temporal lateral, preservando funções de linguagem no hemisfério dominante.',
@@ -920,6 +972,8 @@ export const NEURO_TELENCEFALO: EntradaDicionario[] = [
     resumo: 'Sulco da face inferior do hemisfério que separa os giros occipitotemporais medial e lateral.',
     localizacao: 'Face inferior dos lobos temporal e occipital, lateralmente ao sulco colateral.',
     funcao: 'Delimita o giro fusiforme (occipitotemporal medial) do giro occipitotemporal lateral.',
+    vascularizacao:
+      'Ramos temporais inferiores da artéria cerebral posterior, com contribuição da cerebral média na porção anterior.',
     relacoes: 'Costuma ser descontínuo e variável.',
     clinica:
       'É a referência para localizar o giro fusiforme, sede da área de reconhecimento de faces e da área visual da forma das palavras — cuja lesão à esquerda produz alexia pura. Um sulco pouco lembrado que emoldura duas das regiões mais estudadas da neurociência cognitiva.',
@@ -956,6 +1010,8 @@ export const NEURO_TELENCEFALO: EntradaDicionario[] = [
     resumo: 'Giro mais lateral da face inferior do lobo temporal, contínuo com o giro temporal inferior.',
     localizacao: 'Lateralmente ao sulco occipitotemporal, na face inferior do lobo temporal, dobrando-se para a face lateral.',
     funcao: 'Participa do processamento visual de alto nível da via ventral, junto com o giro temporal inferior.',
+    vascularizacao:
+      'Artéria cerebral posterior, por seus ramos temporais inferiores. Corresponde ao giro fusiforme, cuja porção posterior abriga a área de reconhecimento facial — e cuja lesão bilateral produz prosopagnosia, a incapacidade de reconhecer rostos.',
     relacoes: 'É a transição entre a face inferior e a lateral do lobo temporal.',
     clinica:
       'Faz parte da região ressecada na lobectomia temporal anterior para epilepsia refratária, cirurgia com uma das melhores taxas de sucesso da neurologia — cerca de 60 a 70% de pacientes livres de crises. Conhecer os limites desses giros é o que define a extensão segura da ressecção.',
@@ -991,6 +1047,8 @@ export const NEURO_TELENCEFALO: EntradaDicionario[] = [
     resumo: 'Sulco retilíneo da face orbital do lobo frontal que aloja o bulbo e o trato olfatórios.',
     localizacao: 'Face inferior do lobo frontal, entre o giro reto, medialmente, e os giros orbitários, lateralmente.',
     funcao: 'Aloja o bulbo olfatório, que recebe os filamentos do nervo olfatório vindos da lâmina cribiforme, e o trato olfatório.',
+    vascularizacao:
+      'Ramos orbitofrontais da artéria cerebral anterior. Aloja o trato olfatório, e sua profundidade separa o giro reto, medialmente, dos giros orbitais.',
     relacoes: 'Sua profundidade é usada como indicador da formação da lâmina cribiforme em imagens fetais.',
     clinica:
       'A avaliação da profundidade do sulco olfatório na ressonância é o método de imagem para o diagnóstico da síndrome de Kallmann — hipogonadismo hipogonadotrófico com anosmia, causado pela falha de migração dos neurônios de GnRH junto com os axônios olfatórios. Uma migração embrionária que, quando falha, produz duas doenças aparentemente sem relação.',
@@ -1026,6 +1084,8 @@ export const NEURO_TELENCEFALO: EntradaDicionario[] = [
     resumo: 'Sulco curto na face medial do polo temporal, continuação anterior do sulco colateral.',
     localizacao: 'Extremidade anterior da face inferomedial do lobo temporal, à frente do sulco colateral.',
     funcao: 'Delimita lateralmente o córtex entorrinal, marcando a fronteira entre o alocórtex límbico e o neocórtex temporal.',
+    vascularizacao:
+      'Ramos da artéria cerebral posterior e da coroidea anterior. Delimita o córtex entorrinal, a porta de entrada do hipocampo — e a primeira região do córtex a acumular emaranhados neurofibrilares na doença de Alzheimer.',
     relacoes: 'Sua presença e extensão são variáveis.',
     clinica:
       'É a fronteira citoarquitetônica entre dois tipos de córtex, e por isso serve de referência para a delimitação do córtex entorrinal em estudos de neuroimagem quantitativa do Alzheimer — onde se mede a espessura cortical dessa região como marcador precoce da doença.',
@@ -1083,6 +1143,8 @@ export const NEURO_TELENCEFALO: EntradaDicionario[] = [
     localizacao: 'Medialmente ao putame e lateralmente ao segmento medial, separado dele pela lâmina medular medial.',
     funcao:
       'Recebe do estriado e projeta ao núcleo subtalâmico. É a estação intermediária da via indireta, que inibe movimentos indesejados — o "freio" do sistema motor.',
+    vascularizacao:
+      'Artérias lenticuloestriadas laterais, ramos da cerebral média. Território de perfurantes terminais, sem anastomose — e por isso um dos sítios preferenciais do infarto lacunar e da necrose por intoxicação por monóxido de carbono.',
     relacoes: 'Junto com o putame, forma o núcleo lentiforme.',
     clinica:
       'A via indireta é a chave para entender os distúrbios do movimento: se ela está hipofuncionante, aparecem movimentos involuntários (coreia, balismo); se hiperfuncionante, aparece bradicinesia — o quadro do parkinsonismo. A lesão do núcleo subtalâmico, seu alvo, produz hemibalismo contralateral, com movimentos amplos e violentos do membro.',
@@ -1101,6 +1163,8 @@ export const NEURO_TELENCEFALO: EntradaDicionario[] = [
     localizacao: 'Porção mais medial do núcleo lentiforme, adjacente ao braço posterior da cápsula interna.',
     funcao:
       'É a saída final: projeta fibras inibitórias GABAérgicas ao tálamo motor. As vias direta e indireta convergem aqui, e o resultado dessa soma é o que libera ou bloqueia o movimento.',
+    vascularizacao:
+      'Artéria coroidea anterior, principalmente — e essa é a diferença que importa: os dois segmentos do globo pálido têm irrigação de artérias distintas, e a oclusão da coroidea anterior atinge o segmento medial, o alvo da estimulação cerebral profunda na distonia e na doença de Parkinson.',
     relacoes: 'Suas fibras eferentes formam a alça lenticular e o fascículo lenticular, que atravessam a cápsula interna.',
     clinica:
       'É um dos alvos consagrados da estimulação cerebral profunda na doença de Parkinson e o alvo de eleição na distonia generalizada, com resultados que transformam a vida do paciente. A palidotomia, sua lesão cirúrgica, foi por décadas o tratamento da rigidez parkinsoniana — e voltou com o ultrassom focalizado guiado por ressonância.',
@@ -1119,6 +1183,8 @@ export const NEURO_TELENCEFALO: EntradaDicionario[] = [
     localizacao: 'Entre o putame, medialmente, e o córtex da ínsula, lateralmente, separado de cada um por uma cápsula.',
     funcao:
       'Sua função permanece incerta. É a estrutura cerebral com maior densidade de conexões recíprocas com o córtex, o que levou à hipótese de que participe da integração de informações sensoriais e da geração de estados conscientes unificados.',
+    vascularizacao:
+      'Artéria coroidea anterior e ramos lenticuloestriados da cerebral média. Lâmina fina de substância cinzenta entre as cápsulas externa e extrema, com conexões recíprocas com quase todo o córtex — a razão de ter sido proposto como um dos substratos da consciência.',
     relacoes: 'Separado do putame pela cápsula externa e da ínsula pela cápsula extrema.',
     clinica:
       'É uma das poucas estruturas do encéfalo cuja função ainda é objeto de investigação básica. Relatos de estimulação elétrica do claustro humano descrevendo interrupção reversível da consciência, e sua descrição na encefalite límbica com anticorpos, mantiveram o interesse — mas nenhuma síndrome clínica clássica se atribui a ele isoladamente.',
@@ -1136,6 +1202,8 @@ export const NEURO_TELENCEFALO: EntradaDicionario[] = [
     resumo: 'Lâmina de substância branca entre o putame e o claustro.',
     localizacao: 'Entre a face lateral do putame e a face medial do claustro.',
     funcao: 'Contém fibras corticoestriatais e parte do fascículo unciforme e do fascículo fronto-occipital inferior.',
+    vascularizacao:
+      'Artérias lenticuloestriadas laterais, ramos da cerebral média. Vasos perfurantes finos, de parede sem colateral, que são justamente os que se rompem na hemorragia hipertensiva e os que se ocluem no infarto lacunar.',
     relacoes: 'É a mais medial das duas lâminas brancas que separam putame e ínsula.',
     clinica:
       'É o plano atravessado na abordagem transinsular a hematomas e gliomas dos núcleos da base — uma via que preserva a cápsula interna, ao custo de atravessar a ínsula e seus vasos. Conhecer a sequência putame–cápsula externa–claustro–cápsula extrema–ínsula é o que torna essa via segura.',
@@ -1153,6 +1221,8 @@ export const NEURO_TELENCEFALO: EntradaDicionario[] = [
     resumo: 'Lâmina de substância branca entre o claustro e o córtex da ínsula.',
     localizacao: 'A mais lateral das lâminas brancas dos núcleos da base, imediatamente sob o córtex insular.',
     funcao: 'Contém fibras que conectam a ínsula ao claustro e ao córtex temporal, incluindo parte da via ventral da linguagem.',
+    vascularizacao:
+      'Ramos da artéria coroidea anterior e lenticuloestriados da cerebral média. Separa o claustro da ínsula e conduz o fascículo fronto-occipital inferior, uma das vias ventrais da linguagem.',
     relacoes: 'Separa o claustro do córtex insular.',
     clinica:
       'A via ventral da linguagem, que passa pela cápsula extrema e pelo fascículo fascículo fronto-occipital inferior, é hoje reconhecida como a rota do processamento semântico — complementar ao fascículo arqueado, que faz a rota fonológica. É o correlato anatômico do modelo de dupla via da linguagem, que substituiu o modelo clássico de Wernicke-Geschwind.',

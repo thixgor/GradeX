@@ -104,6 +104,8 @@ export const DIGESTORIO: EntradaDicionario[] = [
     localizacao:
       'Quatro porções: superior (bulbo, intraperitoneal), descendente (com a papila duodenal maior), horizontal (cruzada pela mesentérica superior) e ascendente, terminando na flexura duodenojejunal, fixada pelo ligamento de Treitz.',
     funcao: 'Recebe o quimo, a bile e o suco pancreático, neutraliza a acidez e inicia a digestão intestinal.',
+    inervacao:
+      'Fronteira embriológica no meio do órgão: acima da papila maior é intestino anterior, com vago e simpático de T5 a T9, e dor referida ao epigástrio; abaixo dela é intestino médio, com simpático de T10, e dor periumbilical. A papila divide o duodeno em dois territórios de dor distintos.',
     vascularizacao: 'Pancreatoduodenais superiores (tronco celíaco) e inferiores (mesentérica superior) — a fronteira entre intestino anterior e médio.',
     clinica:
       'O ligamento de Treitz é o divisor entre hemorragia digestiva alta e baixa. A úlcera do bulbo é a mais comum e, quando posterior, sangra pela gastroduodenal; quando anterior, perfura. A terceira porção pode ser comprimida entre a aorta e a mesentérica superior.',
