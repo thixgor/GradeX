@@ -1,16 +1,59 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { Barcode } from '@/components/barcode'
-import { Exam, ExamSubmission } from '@/lib/types'
+import { Exam, ExamSubmission, Question } from '@/lib/types'
 import { formatDate } from '@/lib/utils'
-import { ArrowLeft, User, CheckCircle, XCircle, Download, Clock } from 'lucide-react'
-// User report generator loaded dynamically to reduce initial bundle size
+import {
+  ArrowLeft,
+  CheckCircle2,
+  ChevronRight,
+  Clock,
+  Download,
+  FileDown,
+  History,
+  Lock,
+  MinusCircle,
+  Sparkles,
+  User,
+  XCircle,
+} from 'lucide-react'
+import { aplicarOrdemDaSubmissao } from '@/lib/provas/embaralhar'
+import { resolverDownloadsDaProva } from '@/lib/provas/downloads-da-prova'
+import { resolverJanelaDaProva } from '@/lib/provas/janela-da-prova'
+import { cn } from '@/lib/utils'
+
+/**
+ * O relatório de uma prova entregue.
+ *
+ * ## O que a tela antiga fazia de errado
+ *
+ * 1. **Numerava pela ordem do banco.** Numa prova embaralhada, a "questão 7" do
+ *    relatório não era a questão 7 que o aluno respondeu. Agora a ordem vem da
+ *    submissão (`questionOrder`) — a prova é remontada exatamente como ela
+ *    apareceu para aquela pessoa.
+ * 2. **Vazava a resposta comentada das discursivas.** O gabarito das objetivas
+ *    esperava o término (`isExamFinished`), mas o `question.explanation` das
+ *    discursivas era renderizado sem nenhuma condição — com a prova em
+ *    andamento.
+ * 3. **Baixava PDF sem checar nada.** O botão de relatório não passava por
+ *    plano nem por tempo, ao contrário de todos os outros da plataforma.
+ * 4. **Um `console.log` de depuração** rodava a cada carregamento, imprimindo
+ *    título e horários da prova no console de quem abrisse a tela.
+ *
+ * ## A leitura
+ *
+ * Um relatório é lido em duas velocidades. Primeiro a pessoa quer o veredito —
+ * quanto tirou, quanto acertou, o que ficou pendente; isso está no alto, em
+ * números grandes. Depois ela quer UMA questão específica, quase sempre uma que
+ * errou; por isso a lista abre fechada, com filtro por acerto/erro/branco, e
+ * cada questão expande no lugar. A versão antiga despejava as questões inteiras
+ * numa coluna só, e achar a errada exigia rolar a prova toda de novo.
+ */
 
 // Render text with \n line breaks and **bold** / *italic* inline markdown
 function renderRichText(text: string | undefined | null): React.ReactNode {
@@ -26,470 +69,653 @@ function renderRichText(text: string | undefined | null): React.ReactNode {
   })
 }
 
+type Situacao = 'certa' | 'errada' | 'branco' | 'aberta'
+type Filtro = 'todas' | 'certa' | 'errada' | 'branco'
+
+const CORES: Record<Situacao, { chip: string; borda: string; fundo: string; rotulo: string }> = {
+  certa: {
+    chip: 'bg-emerald-500 text-white',
+    borda: 'border-emerald-500/30',
+    fundo: 'bg-emerald-50/40 dark:bg-emerald-950/15',
+    rotulo: 'Acertou',
+  },
+  errada: {
+    chip: 'bg-rose-500 text-white',
+    borda: 'border-rose-500/30',
+    fundo: 'bg-rose-50/40 dark:bg-rose-950/15',
+    rotulo: 'Errou',
+  },
+  branco: {
+    chip: 'bg-slate-400 text-white',
+    borda: 'border-border',
+    fundo: 'bg-muted/30',
+    rotulo: 'Em branco',
+  },
+  aberta: {
+    chip: 'bg-violet-500 text-white',
+    borda: 'border-violet-500/30',
+    fundo: 'bg-violet-50/40 dark:bg-violet-950/15',
+    rotulo: 'Discursiva',
+  },
+}
+
 export default function UserSubmissionPage({ params }: { params: { id: string; userId: string } }) {
   const { id, userId } = params
   const router = useRouter()
   const [exam, setExam] = useState<Exam | null>(null)
   const [submission, setSubmission] = useState<ExamSubmission | null>(null)
   const [loading, setLoading] = useState(true)
-  const [isExamFinished, setIsExamFinished] = useState(false)
+  const [conta, setConta] = useState<{ accountType?: string; role?: string; id?: string }>({})
+  const [filtro, setFiltro] = useState<Filtro>('todas')
+  const [aberta, setAberta] = useState<string | null>(null)
+  const [gerandoPdf, setGerandoPdf] = useState<string | null>(null)
   const [toastOpen, setToastOpen] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
+  const [toastType, setToastType] = useState<'error' | 'info' | 'success'>('error')
+
+  const avisar = useCallback((mensagem: string, tipo: 'error' | 'info' | 'success' = 'error') => {
+    setToastMessage(mensagem)
+    setToastType(tipo)
+    setToastOpen(true)
+  }, [])
 
   useEffect(() => {
-    loadData()
-  }, [id, userId])
+    async function carregar() {
+      try {
+        // `ordem=original` para o relatório receber a prova como está no banco:
+        // a ordem que interessa aqui é a da submissão, aplicada logo abaixo, e
+        // não a que o servidor sortearia para quem está lendo a tela.
+        const [resExam, resSub, resMe] = await Promise.all([
+          fetch(`/api/exams/${id}?ordem=original`),
+          fetch(`/api/exams/${id}/submissions/${userId}`),
+          fetch('/api/auth/me'),
+        ])
 
-  async function loadData() {
+        const dadosExam = await resExam.json()
+        if (!resExam.ok) throw new Error(dadosExam.error)
+        setExam(dadosExam.exam)
+
+        const dadosSub = await resSub.json()
+        if (!resSub.ok) throw new Error(dadosSub.error)
+        setSubmission(dadosSub.submission)
+
+        if (resMe.ok) {
+          const dadosMe = await resMe.json()
+          setConta({
+            accountType: dadosMe.user?.accountType,
+            role: dadosMe.user?.role,
+            id: dadosMe.user?._id || dadosMe.user?.id,
+          })
+        }
+      } catch (error: any) {
+        avisar(error.message || 'Não foi possível carregar o relatório.')
+      } finally {
+        setLoading(false)
+      }
+    }
+    carregar()
+  }, [id, userId, avisar])
+
+  const janela = useMemo(() => (exam ? resolverJanelaDaProva(exam) : null), [exam])
+  const gabaritoLiberado = !!janela && (janela.encerrada || janela.fase === 'livre')
+
+  const downloads = useMemo(
+    () =>
+      resolverDownloadsDaProva(exam, {
+        accountType: conta.accountType,
+        isAdmin: conta.role === 'admin',
+        jaEnviou: true,
+      }),
+    [exam, conta],
+  )
+
+  /** A prova na ordem em que ESTE aluno a viu. */
+  const questoes: Question[] = useMemo(
+    () => (exam ? aplicarOrdemDaSubmissao(exam.questions || [], submission?.questionOrder) : []),
+    [exam, submission],
+  )
+
+  const analise = useMemo(() => {
+    if (!submission) return []
+    return questoes.map((questao) => {
+      const resposta = submission.answers?.find((a) => a.questionId === questao.id)
+
+      if (questao.type !== 'multiple-choice') {
+        return { questao, resposta, situacao: 'aberta' as Situacao, marcada: null, correta: null }
+      }
+
+      const marcada = questao.alternatives?.find((a) => a.id === resposta?.selectedAlternative) || null
+      const correta = questao.alternatives?.find((a) => a.isCorrect) || null
+      const situacao: Situacao = !marcada ? 'branco' : marcada.id === correta?.id ? 'certa' : 'errada'
+      return { questao, resposta, situacao, marcada, correta }
+    })
+  }, [questoes, submission])
+
+  const resumo = useMemo(() => {
+    const objetivas = analise.filter((a) => a.questao.type === 'multiple-choice')
+    const certas = objetivas.filter((a) => a.situacao === 'certa').length
+    const erradas = objetivas.filter((a) => a.situacao === 'errada').length
+    const brancos = objetivas.filter((a) => a.situacao === 'branco').length
+    const discursivas = analise.filter((a) => a.questao.type !== 'multiple-choice').length
+    return {
+      objetivas: objetivas.length,
+      certas,
+      erradas,
+      brancos,
+      discursivas,
+      // O aproveitamento é sobre as objetivas: misturar discursiva pendente na
+      // conta daria um número que muda sozinho quando a correção sai.
+      aproveitamento: objetivas.length > 0 ? (certas / objetivas.length) * 100 : null,
+    }
+  }, [analise])
+
+  const visiveis = useMemo(
+    () => (filtro === 'todas' ? analise : analise.filter((a) => a.situacao === filtro)),
+    [analise, filtro],
+  )
+
+  async function baixar(tipo: 'relatorio' | 'gabarito') {
+    if (!exam || !submission) return
+    const veredito = tipo === 'relatorio' ? downloads.relatorio : downloads.gabarito
+    if (!veredito.permitido) {
+      avisar(veredito.motivo || 'Download não disponível.', 'info')
+      return
+    }
     try {
-      // Carrega a prova
-      const examRes = await fetch(`/api/exams/${id}`)
-      const examData = await examRes.json()
-      if (!examRes.ok) throw new Error(examData.error)
-      setExam(examData.exam)
-
-      // Verifica se a prova terminou ou se é prova prática
-      const now = new Date()
-      const endTime = new Date(examData.exam.endTime)
-      const isPractice = examData.exam.isPracticeExam
-      const finished = isPractice || now > endTime
-      setIsExamFinished(finished)
-
-      console.log('🔍 Verificando prova na página de relatório:', {
-        title: examData.exam.title,
-        now: now.toISOString(),
-        endTime: endTime.toISOString(),
-        finished
-      })
-
-      // Carrega a submissão do usuário
-      const subRes = await fetch(`/api/exams/${id}/submissions/${userId}`)
-      const subData = await subRes.json()
-      if (!subRes.ok) throw new Error(subData.error)
-      setSubmission(subData.submission)
+      setGerandoPdf(tipo)
+      const gerador = await import('@/lib/user-report-generator')
+      const dados = {
+        // O PDF recebe a prova já na ordem do aluno: se ele reclamar da
+        // "questão 12", a folha impressa precisa concordar com a tela.
+        exam: { ...exam, questions: questoes },
+        examId: id,
+        userName: submission.userName,
+        signature: submission.signature || '',
+        answers: submission.answers || [],
+      }
+      if (tipo === 'relatorio') await gerador.downloadUserReportPDF(dados)
+      else await gerador.generateUserReportWithGabaritoPDF(dados)
     } catch (error: any) {
-      setToastMessage(error.message)
-      setToastOpen(true)
-      // Só redireciona para resultados em erros de prova (não encontrada)
-      // Erros de submissão (sem permissão, não encontrada) ficam na página
+      avisar('Erro ao gerar PDF: ' + error.message)
     } finally {
-      setLoading(false)
+      setGerandoPdf(null)
     }
   }
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg">Carregando relatório...</div>
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="flex items-center gap-3 text-muted-foreground">
+          <span className="h-5 w-5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+          Carregando relatório…
+        </div>
       </div>
     )
   }
 
   if (!exam || !submission) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg">Dados não encontrados</div>
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 px-6 text-center">
+        <p className="text-lg font-semibold">Relatório indisponível</p>
+        <p className="max-w-sm text-sm text-muted-foreground">
+          {toastMessage || 'Não encontramos esta entrega. Ela pode ter sido removida ou pertencer a outra conta.'}
+        </p>
+        <Button variant="outline" onClick={() => router.push('/provas')} className="rounded-xl">
+          Voltar para as provas
+        </Button>
       </div>
     )
   }
 
-  // Calcular estatísticas (apenas para questões de múltipla escolha)
-  const multipleChoiceQuestions = exam.questions.filter(q => q.type === 'multiple-choice')
-  const discursiveQuestions = exam.questions.filter(q => q.type === 'discursive')
-  const totalQuestions = exam.questions.length
-  const isPracticeExam = !!exam.isPracticeExam
-
-  // Média de autoavaliação para provas práticas
-  const selfScores = discursiveQuestions
-    .map(q => submission.answers.find(a => a.questionId === q.id)?.discursiveSelfScore)
-    .filter((s): s is number => s !== undefined)
-  const avgSelfScore = selfScores.length > 0
-    ? Math.round(selfScores.reduce((a, b) => a + b, 0) / selfScores.length)
-    : null
-
-  const correctAnswers = submission.answers.filter(a => {
-    const question = exam.questions.find(q => q.id === a.questionId)
-    if (!question || question.type !== 'multiple-choice') return false
-    const correctAlt = question.alternatives.find(alt => alt.isCorrect)
-    return correctAlt && a.selectedAlternative === correctAlt.id
-  }).length
-
-  const accuracy = multipleChoiceQuestions.length > 0
-    ? (correctAnswers / multipleChoiceQuestions.length) * 100
-    : 0
+  const notaMaxima = exam.scoringMethod === 'tri' ? 1000 : exam.totalPoints || 100
+  const nota = exam.scoringMethod === 'tri' ? submission.triScore : submission.score
+  const notaEmPercentual =
+    typeof nota === 'number' && notaMaxima > 0 ? Math.max(0, Math.min(100, (nota / notaMaxima) * 100)) : null
+  const corDaNota =
+    notaEmPercentual === null ? '#94a3b8' : notaEmPercentual >= 70 ? '#10b981' : notaEmPercentual >= 40 ? '#f59e0b' : '#ef4444'
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted">
-      <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="icon" onClick={() => router.push(`/exam/${id}/results`)}>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/40">
+      <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur-xl">
+        <div className="container mx-auto flex items-center justify-between gap-3 px-4 py-3">
+          <div className="flex min-w-0 items-center gap-3">
+            <Button variant="ghost" size="icon" onClick={() => router.back()} aria-label="Voltar">
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            <div>
-              <h1 className="text-2xl font-bold">Relatório do Usuário</h1>
-              <p className="text-sm text-muted-foreground">{exam.title}</p>
+            <div className="min-w-0">
+              <h1 className="truncate text-base font-bold leading-tight sm:text-lg">Relatório da prova</h1>
+              <p className="truncate text-xs text-muted-foreground">{exam.title}</p>
             </div>
           </div>
           <ThemeToggle />
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8 max-w-4xl">
-        <div className="space-y-6">
-          {/* Informações do Usuário */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <User className="h-5 w-5" />
-                {submission.userName}
-              </CardTitle>
-              <CardDescription>
-                Submetido em: {formatDate(submission.submittedAt)}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {/* Barcode Individual */}
-              <div className="border-b pb-4">
-                <Barcode
-                  value={`${id}-${submission.userName.replace(/[^a-zA-Z0-9]/g, '').toUpperCase()}`}
-                  height={60}
-                  fontSize={14}
-                />
+      <main className="container mx-auto max-w-4xl space-y-6 px-4 py-6 sm:py-8">
+        {/* ── Veredito ─────────────────────────────────────────────── */}
+        <section
+          className="exam-resultado-entra relative overflow-hidden rounded-3xl border border-border/60 bg-background/70 p-6 shadow-lg backdrop-blur-md sm:p-8"
+          style={{ '--exam-ordem': 0 } as React.CSSProperties}
+        >
+          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#468152] via-emerald-400 to-[#E2A43E]" />
+
+          <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-center sm:gap-8">
+            <div
+              className="exam-anel-de-nota flex h-32 w-32 flex-shrink-0 items-center justify-center rounded-full"
+              style={{ '--exam-nota': notaEmPercentual ?? 0, '--exam-anel-cor': corDaNota } as React.CSSProperties}
+              role="img"
+              aria-label={`Nota: ${nota ?? 'aguardando correção'}`}
+            >
+              <div className="flex h-[7.25rem] w-[7.25rem] flex-col items-center justify-center rounded-full bg-background">
+                {typeof nota === 'number' ? (
+                  <>
+                    <span className="exam-numero-sobe text-3xl font-black leading-none tabular-nums">
+                      {nota.toFixed(exam.scoringMethod === 'tri' ? 0 : 1)}
+                    </span>
+                    <span className="mt-1 text-[11px] text-muted-foreground">de {notaMaxima}</span>
+                  </>
+                ) : (
+                  <span className="px-3 text-center text-xs font-medium leading-tight text-muted-foreground">
+                    Aguardando correção
+                  </span>
+                )}
+              </div>
+            </div>
+
+            <div className="min-w-0 flex-1 space-y-3 text-center sm:text-left">
+              <div>
+                <p className="flex items-center justify-center gap-2 text-lg font-bold sm:justify-start">
+                  <User className="h-4 w-4 text-muted-foreground" />
+                  {submission.userName}
+                </p>
+                <p className="mt-0.5 text-sm text-muted-foreground">
+                  Entregue em {formatDate(submission.submittedAt)}
+                </p>
               </div>
 
-              {/* Estatísticas */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="bg-muted rounded-lg p-4 text-center">
-                  <p className="text-sm text-muted-foreground mb-1">
-                    {multipleChoiceQuestions.length > 0 ? 'Múltipla Escolha' : 'Pontuação'}
-                  </p>
-                  <p className="text-2xl font-bold text-primary">
-                    {exam.scoringMethod === 'tri'
-                      ? submission.triScore || 'Calculando...'
-                      : submission.score?.toFixed(2) || 0}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {exam.scoringMethod === 'tri' ? '/ 1000' : `/ ${exam.totalPoints}`}
-                  </p>
-                </div>
-
-                {discursiveQuestions.length > 0 && (
-                  <div className="bg-purple-100 dark:bg-purple-900 rounded-lg p-4 text-center">
-                    <p className="text-sm text-muted-foreground mb-1">Discursivas</p>
-                    <p className="text-2xl font-bold text-purple-700 dark:text-purple-300">
-                      {isPracticeExam
-                        ? (avgSelfScore !== null ? `${avgSelfScore}%` : '—')
-                        : submission.correctionStatus === 'corrected'
-                          ? submission.discursiveScore?.toFixed(2) || 0
-                          : 'Pendente'}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {isPracticeExam
-                        ? 'Autoavaliação'
-                        : submission.correctionStatus === 'corrected'
-                          ? `/ ${discursiveQuestions.reduce((sum, q) => sum + (q.maxScore || 10), 0)}`
-                          : 'Aguardando correção'}
-                    </p>
-                  </div>
-                )}
-
-                {multipleChoiceQuestions.length > 0 && (
+              <div className="flex flex-wrap justify-center gap-2 sm:justify-start">
+                {resumo.objetivas > 0 && (
                   <>
-                    <div className="bg-green-100 dark:bg-green-900 rounded-lg p-4 text-center">
-                      <p className="text-sm text-muted-foreground mb-1">Acertos</p>
-                      <p className="text-2xl font-bold text-green-700 dark:text-green-300">
-                        {correctAnswers}
-                      </p>
-                      <p className="text-xs text-muted-foreground">de {multipleChoiceQuestions.length}</p>
-                    </div>
-
-                    <div className="bg-red-100 dark:bg-red-900 rounded-lg p-4 text-center">
-                      <p className="text-sm text-muted-foreground mb-1">Erros</p>
-                      <p className="text-2xl font-bold text-red-700 dark:text-red-300">
-                        {multipleChoiceQuestions.length - correctAnswers}
-                      </p>
-                      <p className="text-xs text-muted-foreground">de {multipleChoiceQuestions.length}</p>
-                    </div>
-
-                    <div className="bg-blue-100 dark:bg-blue-900 rounded-lg p-4 text-center">
-                      <p className="text-sm text-muted-foreground mb-1">Aproveitamento</p>
-                      <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">
-                        {accuracy.toFixed(1)}%
-                      </p>
-                    </div>
+                    <Selo cor="emerald" icone={CheckCircle2} valor={resumo.certas} rotulo="acertos" />
+                    <Selo cor="rose" icone={XCircle} valor={resumo.erradas} rotulo="erros" />
+                    {resumo.brancos > 0 && (
+                      <Selo cor="slate" icone={MinusCircle} valor={resumo.brancos} rotulo="em branco" />
+                    )}
                   </>
                 )}
+                {resumo.discursivas > 0 && (
+                  <Selo cor="violet" icone={Sparkles} valor={resumo.discursivas} rotulo="discursivas" />
+                )}
+                {(submission.resumesUsed || 0) > 0 && (
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/25 bg-amber-500/10 px-3 py-1.5 text-xs font-medium text-amber-700 dark:text-amber-400">
+                    <History className="h-3.5 w-3.5" />
+                    Prova retomada após queda
+                  </span>
+                )}
               </div>
 
-              {/* Assinatura */}
-              {submission.signature && (
-                <div className="border-t pt-4">
-                  <p className="text-sm font-medium mb-2">Assinatura Digital:</p>
-                  <img src={submission.signature} alt="Assinatura" className="border rounded-lg p-2 bg-white dark:bg-gray-900 max-w-xs" />
-                </div>
-              )}
-
-              {/* Botão Download PDF */}
-              <Button
-                className="w-full"
-                onClick={async () => {
-                  const { downloadUserReportPDF } = await import('@/lib/user-report-generator')
-                  downloadUserReportPDF({
-                    exam,
-                    examId: id,
-                    userName: submission.userName,
-                    signature: submission.signature || '',
-                    answers: submission.answers,
-                  })
-                }}
-              >
-                <Download className="h-4 w-4 mr-2" />
-                Baixar Relatório em PDF
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* Respostas Detalhadas */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Respostas Detalhadas</CardTitle>
-              <CardDescription>
-                {isExamFinished
-                  ? 'Gabarito completo com respostas do usuário'
-                  : 'Suas respostas (gabarito liberado após término da prova)'}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {!isExamFinished && (
-                <div className="mb-6 p-4 bg-orange-50 dark:bg-orange-950 rounded-lg border border-orange-200 dark:border-orange-800">
-                  <p className="text-sm text-orange-800 dark:text-orange-200 text-center">
-                    <Clock className="h-4 w-4 inline mr-2" />
-                    A prova ainda está em andamento. O gabarito será liberado após o término.
+              {resumo.aproveitamento !== null && (
+                <div className="space-y-1">
+                  <div className="h-2 overflow-hidden rounded-full bg-muted">
+                    <div
+                      className="exam-retomada-barra h-full rounded-full transition-all"
+                      style={{ width: `${resumo.aproveitamento}%`, background: corDaNota }}
+                    />
+                  </div>
+                  <p className="text-xs font-medium tabular-nums text-muted-foreground">
+                    {resumo.aproveitamento.toFixed(1)}% de aproveitamento nas objetivas
                   </p>
                 </div>
               )}
-              <div className="space-y-6">
-                {exam.questions.map((question) => {
-                  const userAnswer = submission.answers.find(a => a.questionId === question.id)
+            </div>
+          </div>
 
-                  if (question.type === 'multiple-choice') {
-                    const selectedAlt = question.alternatives.find(alt => alt.id === userAnswer?.selectedAlternative)
-                    const correctAlt = question.alternatives.find(alt => alt.isCorrect)
-                    const isCorrect = selectedAlt?.id === correctAlt?.id
+          {!gabaritoLiberado && (
+            <div className="mt-6 flex items-start gap-2.5 rounded-xl border border-amber-500/25 bg-amber-500/10 p-3.5">
+              <Lock className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-600 dark:text-amber-400" />
+              <p className="text-xs leading-relaxed text-amber-800 dark:text-amber-200">
+                Suas respostas já estão aqui, mas o <strong>gabarito só aparece quando a prova terminar</strong>
+                {janela?.terminaEm
+                  ? ` (${new Date(janela.terminaEm).toLocaleString('pt-BR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })})`
+                  : ''}
+                . Enquanto a turma responde, a resposta certa não circula.
+              </p>
+            </div>
+          )}
+        </section>
 
-                    return (
-                      <div key={question.id} className="border rounded-lg p-4">
-                        <div className="flex items-start justify-between mb-3">
-                          <h3 className="font-semibold">Questão {question.number} (Múltipla Escolha)</h3>
-                          {isExamFinished && (
-                            <>
-                              {isCorrect ? (
-                                <div className="flex items-center gap-1 text-green-600 dark:text-green-400">
-                                  <CheckCircle className="h-5 w-5" />
-                                  <span className="text-sm font-medium">Correta</span>
-                                </div>
-                              ) : (
-                                <div className="flex items-center gap-1 text-red-600 dark:text-red-400">
-                                  <XCircle className="h-5 w-5" />
-                                  <span className="text-sm font-medium">Incorreta</span>
-                                </div>
+        {/* ── Downloads ────────────────────────────────────────────── */}
+        <section
+          className="exam-resultado-entra rounded-2xl border border-border/60 bg-background/60 p-5 backdrop-blur-md"
+          style={{ '--exam-ordem': 1 } as React.CSSProperties}
+        >
+          <h2 className="mb-3 text-xs font-bold uppercase tracking-wider text-muted-foreground">Documentos</h2>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Button
+              className="h-12 w-full rounded-xl bg-gradient-to-r from-[#468152] to-[#3a6d44] font-semibold text-white hover:from-[#3a6d44] hover:to-[#2f5a38] disabled:bg-none"
+              disabled={!!gerandoPdf}
+              onClick={() => baixar('relatorio')}
+            >
+              {gerandoPdf === 'relatorio' ? (
+                <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+              ) : (
+                <Download className="mr-2 h-5 w-5" />
+              )}
+              Minha prova respondida
+            </Button>
+
+            <Button
+              variant="outline"
+              className="h-12 w-full rounded-xl font-semibold"
+              disabled={!!gerandoPdf || downloads.gabarito.esperandoOFim}
+              title={downloads.gabarito.motivo || undefined}
+              onClick={() => baixar('gabarito')}
+            >
+              {gerandoPdf === 'gabarito' ? (
+                <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+              ) : downloads.gabarito.esperandoOFim ? (
+                <Lock className="mr-2 h-4 w-4" />
+              ) : (
+                <FileDown className="mr-2 h-5 w-5" />
+              )}
+              {downloads.gabarito.esperandoOFim ? 'Gabarito após o término' : 'Com respostas comentadas'}
+            </Button>
+          </div>
+          {!downloads.relatorio.permitido && !downloads.relatorio.esperandoOFim && (
+            <p className="mt-2.5 text-[11px] leading-snug text-muted-foreground">{downloads.relatorio.motivo}</p>
+          )}
+        </section>
+
+        {/* ── Questão a questão ────────────────────────────────────── */}
+        <section
+          className="exam-resultado-entra space-y-3"
+          style={{ '--exam-ordem': 2 } as React.CSSProperties}
+        >
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 className="text-lg font-bold">Questão a questão</h2>
+            {/*
+              O filtro é a razão desta lista existir. Quem abre um relatório
+              quase sempre quer as que errou — antes era preciso rolar a prova
+              inteira de novo para encontrá-las.
+            */}
+            <div className="flex flex-wrap gap-1.5">
+              {([
+                ['todas', `Todas (${analise.length})`],
+                ['errada', `Erros (${resumo.erradas})`],
+                ['certa', `Acertos (${resumo.certas})`],
+                ['branco', `Em branco (${resumo.brancos})`],
+              ] as [Filtro, string][]).map(([chave, rotulo]) => (
+                <button
+                  key={chave}
+                  onClick={() => setFiltro(chave)}
+                  className={cn(
+                    'rounded-full px-3 py-1.5 text-xs font-semibold transition-colors',
+                    filtro === chave
+                      ? 'bg-foreground text-background'
+                      : 'bg-muted text-muted-foreground hover:bg-muted/70',
+                  )}
+                >
+                  {rotulo}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {visiveis.length === 0 && (
+            <p className="rounded-2xl border border-dashed border-border py-10 text-center text-sm text-muted-foreground">
+              Nenhuma questão nesta situação.
+            </p>
+          )}
+
+          {visiveis.map(({ questao, resposta, situacao, marcada, correta }) => {
+            const expandida = aberta === questao.id
+            const cor = CORES[situacao]
+            const correcao = submission.corrections?.find((c) => c.questionId === questao.id)
+
+            return (
+              <article
+                key={questao.id}
+                className={cn('overflow-hidden rounded-2xl border transition-colors', cor.borda, cor.fundo)}
+              >
+                <button
+                  onClick={() => setAberta(expandida ? null : questao.id)}
+                  className="flex w-full items-center gap-3 p-4 text-left"
+                  aria-expanded={expandida}
+                >
+                  <span
+                    className={cn(
+                      'flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl text-sm font-bold',
+                      cor.chip,
+                    )}
+                  >
+                    {questao.number}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-sm font-medium">
+                      {renderRichText((questao.statement || '').slice(0, 110))}
+                    </span>
+                    <span className="mt-0.5 block text-xs text-muted-foreground">
+                      {gabaritoLiberado || situacao === 'aberta' || situacao === 'branco'
+                        ? cor.rotulo
+                        : 'Respondida'}
+                      {situacao !== 'aberta' && marcada ? ` · você marcou ${marcada.letter}` : ''}
+                    </span>
+                  </span>
+                  <ChevronRight
+                    className={cn(
+                      'h-4 w-4 flex-shrink-0 text-muted-foreground transition-transform duration-200',
+                      expandida && 'rotate-90',
+                    )}
+                  />
+                </button>
+
+                {expandida && (
+                  <div className="space-y-4 border-t border-border/40 px-4 pb-5 pt-4">
+                    <div>
+                      <h3 className="mb-1.5 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                        Enunciado
+                      </h3>
+                      <p className="whitespace-pre-wrap text-sm leading-relaxed">
+                        {renderRichText(questao.statement)}
+                      </p>
+                      {questao.command && (
+                        <p className="mt-2 whitespace-pre-wrap text-sm font-medium leading-relaxed">
+                          {renderRichText(questao.command)}
+                        </p>
+                      )}
+                    </div>
+
+                    {questao.type === 'multiple-choice' ? (
+                      <div className="space-y-2">
+                        {questao.alternatives?.map((alternativa) => {
+                          const foiMarcada = alternativa.id === marcada?.id
+                          const eACerta = gabaritoLiberado && alternativa.id === correta?.id
+                          return (
+                            <div
+                              key={alternativa.id}
+                              className={cn(
+                                'flex items-start gap-2.5 rounded-xl border p-3 text-sm',
+                                eACerta
+                                  ? 'border-emerald-500/40 bg-emerald-500/10'
+                                  : foiMarcada
+                                    ? 'border-rose-500/40 bg-rose-500/10'
+                                    : 'border-border/50 bg-background/50',
                               )}
-                            </>
-                          )}
-                        </div>
-
-                        <p className="text-sm text-muted-foreground mb-3 whitespace-pre-wrap">{renderRichText(question.statement)}</p>
-
-                        <div className={`grid grid-cols-1 ${isExamFinished ? 'md:grid-cols-2' : ''} gap-3 bg-muted p-3 rounded`}>
-                          <div>
-                            <p className="text-xs font-medium text-muted-foreground mb-1">Resposta do Usuário:</p>
-                            <p className={`text-sm font-semibold ${isExamFinished ? (isCorrect ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400') : ''}`}>
-                              {selectedAlt ? `${selectedAlt.letter}) ${selectedAlt.text}` : 'Não respondida'}
-                            </p>
-                          </div>
-                          {isExamFinished && (
-                            <div>
-                              <p className="text-xs font-medium text-muted-foreground mb-1">Gabarito:</p>
-                              <p className="text-sm font-semibold text-primary">
-                                {correctAlt ? `${correctAlt.letter}) ${correctAlt.text}` : 'N/A'}
-                              </p>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Feedback Comentado da IA */}
-                        {isExamFinished && (question as any).commentedFeedback?.explanations && (
-                          <div className="mt-4 bg-blue-50 dark:bg-blue-950 rounded-lg p-4 space-y-3 border border-blue-200 dark:border-blue-800">
-                            <h4 className="font-semibold text-sm text-blue-900 dark:text-blue-100 flex items-center gap-2">
-                              <span>🤖</span> Análise das Alternativas (IA):
-                            </h4>
-                            <div className="space-y-2">
-                              {Object.entries((question as any).commentedFeedback.explanations).map(([letter, explanation]) => {
-                                const isThisCorrect = letter === (question as any).commentedFeedback?.correctAlternative;
-                                return (
-                                  <div
-                                    key={letter}
-                                    className={`p-3 rounded border-l-4 ${isThisCorrect
-                                        ? 'border-l-green-500 bg-green-50/50 dark:bg-green-950/30'
-                                        : 'border-l-red-500 bg-red-50/50 dark:bg-red-950/30'
-                                      }`}
-                                  >
-                                    <p className={`text-sm font-semibold ${isThisCorrect
-                                        ? 'text-green-700 dark:text-green-300'
-                                        : 'text-red-700 dark:text-red-300'
-                                      }`}>
-                                      {letter}) {isThisCorrect ? '✓ Correta' : '✗ Incorreta'}
-                                    </p>
-                                    <p className="text-sm text-muted-foreground mt-1">
-                                      {explanation as string}
-                                    </p>
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Explicação Geral */}
-                        {isExamFinished && question.explanation && (
-                          <div className="mt-3 bg-muted rounded-lg p-4 space-y-2">
-                            <h4 className="font-semibold text-sm">💡 Resposta Comentada:</h4>
-                            <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed">
-                              {renderRichText(question.explanation)}
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    )
-                  } else {
-                    // Questão discursiva
-                    const correction = submission.corrections?.find(c => c.questionId === question.id)
-                    const selfScore = userAnswer?.discursiveSelfScore
-
-                    return (
-                      <div key={question.id} className="border-2 border-purple-200 dark:border-purple-800 rounded-lg p-4">
-                        <div className="flex items-start justify-between mb-3">
-                          <h3 className="font-semibold">Questão {question.number} (Discursiva)</h3>
-                          {isPracticeExam ? (
-                            selfScore !== undefined ? (
-                              <div className="flex items-center gap-1.5">
-                                <span className={`text-sm font-bold px-2 py-0.5 rounded-full ${
-                                  selfScore >= 70 ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300' :
-                                  selfScore >= 40 ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300' :
-                                  'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300'
-                                }`}>
-                                  {selfScore}%
+                            >
+                              <span className="font-bold">{alternativa.letter})</span>
+                              <span className="min-w-0 flex-1">{renderRichText(alternativa.text)}</span>
+                              {eACerta && (
+                                <span className="flex-shrink-0 text-xs font-semibold text-emerald-700 dark:text-emerald-400">
+                                  Gabarito
                                 </span>
-                                <span className="text-xs text-muted-foreground">Autoavaliação</span>
-                              </div>
-                            ) : (
-                              <span className="text-xs text-muted-foreground italic">Sem autoavaliação</span>
-                            )
-                          ) : correction ? (
-                            <div className="flex items-center gap-1 text-purple-600 dark:text-purple-400">
-                              <CheckCircle className="h-5 w-5" />
-                              <span className="text-sm font-medium">Corrigida</span>
-                            </div>
-                          ) : (
-                            <div className="flex items-center gap-1 text-yellow-600 dark:text-yellow-400">
-                              <Clock className="h-5 w-5" />
-                              <span className="text-sm font-medium">Aguardando Correção</span>
-                            </div>
-                          )}
-                        </div>
-
-                        <p className="text-sm text-muted-foreground mb-3 whitespace-pre-wrap">{renderRichText(question.statement)}</p>
-                        {question.command && <p className="text-sm font-medium mb-3 whitespace-pre-wrap">{renderRichText(question.command)}</p>}
-
-                        <div className="space-y-3">
-                          <div>
-                            <p className="text-xs font-medium text-muted-foreground mb-1">Sua Resposta:</p>
-                            <div className="bg-muted p-3 rounded text-sm whitespace-pre-wrap">
-                              {userAnswer?.discursiveText || 'Não respondida'}
-                            </div>
-                          </div>
-
-                          {correction && (
-                            <div className="bg-purple-50 dark:bg-purple-950 border border-purple-200 dark:border-purple-800 p-4 rounded space-y-2">
-                              <div className="flex items-center justify-between">
-                                <h4 className="font-semibold text-sm text-purple-900 dark:text-purple-100">
-                                  Correção
-                                </h4>
-                                <span className="text-sm text-purple-700 dark:text-purple-300">
-                                  {correction.method === 'ai' ? '🤖 Correção Automática' : '👤 Correção Manual'}
+                              )}
+                              {foiMarcada && !eACerta && (
+                                <span className="flex-shrink-0 text-xs font-semibold text-muted-foreground">
+                                  Sua marcação
                                 </span>
-                              </div>
-
-                              <div className="grid grid-cols-2 gap-2 text-sm">
-                                <div>
-                                  <strong className="text-purple-900 dark:text-purple-100">Nota:</strong>
-                                  <span className="ml-2 text-2xl font-bold text-purple-700 dark:text-purple-300">
-                                    {correction.score}/{correction.maxScore}
-                                  </span>
-                                </div>
-                                <div>
-                                  <strong className="text-purple-900 dark:text-purple-100">Data:</strong>
-                                  <span className="ml-2">
-                                    {new Date(correction.correctedAt).toLocaleDateString()}
-                                  </span>
-                                </div>
-                              </div>
-
-                              <div>
-                                <strong className="text-sm text-purple-900 dark:text-purple-100">Feedback:</strong>
-                                <p className="text-sm mt-1 text-purple-800 dark:text-purple-200">
-                                  {correction.feedback}
-                                </p>
-                              </div>
-
-                              {correction.keyPointsFound && correction.keyPointsFound.length > 0 && (
-                                <div>
-                                  <strong className="text-sm text-purple-900 dark:text-purple-100">
-                                    Pontos-Chave Identificados:
-                                  </strong>
-                                  <ul className="mt-1 space-y-1">
-                                    {correction.keyPointsFound.map((kpId) => {
-                                      const keyPoint = question.keyPoints?.find(kp => kp.id === kpId)
-                                      return keyPoint ? (
-                                        <li key={kpId} className="text-sm flex items-start gap-2">
-                                          <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                                          <span>{keyPoint.description}</span>
-                                        </li>
-                                      ) : null
-                                    })}
-                                  </ul>
-                                </div>
                               )}
                             </div>
-                          )}
-
-                          {/* Resposta Comentada da questão discursiva */}
-                          {question.explanation && (
-                            <div className="bg-amber-50 dark:bg-amber-950/30 rounded-lg p-4 space-y-2 border border-amber-200/50 dark:border-amber-800/30">
-                              <h4 className="font-semibold text-sm text-amber-800 dark:text-amber-200">💡 Resposta Comentada:</h4>
-                              <p className="text-sm text-amber-900 dark:text-amber-100 whitespace-pre-wrap leading-relaxed">
-                                {renderRichText(question.explanation)}
-                              </p>
-                            </div>
+                          )
+                        })}
+                        {!marcada && (
+                          <p className="text-xs italic text-muted-foreground">Você não respondeu esta questão.</p>
+                        )}
+                      </div>
+                    ) : (
+                      <div>
+                        <h3 className="mb-1.5 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                          Sua resposta
+                        </h3>
+                        <div className="whitespace-pre-wrap rounded-xl bg-background/60 p-3 text-sm leading-relaxed">
+                          {resposta?.discursiveText || resposta?.essayText || (
+                            <span className="italic text-muted-foreground">Não respondida</span>
                           )}
                         </div>
+                        {resposta?.discursiveSelfScore !== undefined && (
+                          <p className="mt-2 text-xs font-medium text-muted-foreground">
+                            Autoavaliação: {resposta.discursiveSelfScore}%
+                          </p>
+                        )}
                       </div>
-                    )
-                  }
-                })}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </main >
+                    )}
 
-      <ToastAlert
-        open={toastOpen}
-        onOpenChange={setToastOpen}
-        message={toastMessage}
-        type="error"
-      />
-    </div >
+                    {correcao && (
+                      <div className="space-y-2 rounded-xl border border-violet-500/30 bg-violet-500/10 p-4">
+                        <div className="flex items-center justify-between gap-2">
+                          <h3 className="text-sm font-bold text-violet-800 dark:text-violet-200">Correção</h3>
+                          <span className="text-lg font-black tabular-nums text-violet-700 dark:text-violet-300">
+                            {correcao.score}/{correcao.maxScore}
+                          </span>
+                        </div>
+                        <p className="whitespace-pre-wrap text-sm leading-relaxed text-violet-900 dark:text-violet-100">
+                          {correcao.feedback}
+                        </p>
+                        {correcao.keyPointsFound && correcao.keyPointsFound.length > 0 && (
+                          <ul className="space-y-1 pt-1">
+                            {correcao.keyPointsFound.map((kpId) => {
+                              const ponto = questao.keyPoints?.find((kp) => kp.id === kpId)
+                              return ponto ? (
+                                <li key={kpId} className="flex items-start gap-2 text-xs">
+                                  <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-emerald-600" />
+                                  <span>{ponto.description}</span>
+                                </li>
+                              ) : null
+                            })}
+                          </ul>
+                        )}
+                      </div>
+                    )}
+
+                    {/*
+                      A resposta comentada espera o término — inclusive nas
+                      discursivas, onde ela era renderizada sem condição
+                      nenhuma e vazava o gabarito com a prova em andamento.
+                    */}
+                    {gabaritoLiberado && (questao as any).commentedFeedback?.explanations && (
+                      <div className="space-y-2 rounded-xl border border-blue-500/25 bg-blue-500/10 p-4">
+                        <h3 className="text-sm font-bold text-blue-900 dark:text-blue-100">
+                          Análise das alternativas
+                        </h3>
+                        {Object.entries((questao as any).commentedFeedback.explanations).map(([letra, texto]) => {
+                          const eACerta = letra === (questao as any).commentedFeedback?.correctAlternative
+                          return (
+                            <div
+                              key={letra}
+                              className={cn(
+                                'rounded-lg border-l-4 p-2.5',
+                                eACerta
+                                  ? 'border-l-emerald-500 bg-emerald-500/10'
+                                  : 'border-l-rose-400 bg-rose-500/5',
+                              )}
+                            >
+                              <p
+                                className={cn(
+                                  'text-xs font-bold',
+                                  eACerta ? 'text-emerald-700 dark:text-emerald-300' : 'text-rose-700 dark:text-rose-300',
+                                )}
+                              >
+                                {letra}) {eACerta ? 'Correta' : 'Incorreta'}
+                              </p>
+                              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{texto as string}</p>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    )}
+
+                    {gabaritoLiberado && questao.explanation && (
+                      <div className="rounded-xl border border-amber-500/25 bg-amber-500/10 p-4">
+                        <h3 className="mb-1.5 text-sm font-bold text-amber-800 dark:text-amber-200">
+                          Resposta comentada
+                        </h3>
+                        <p className="whitespace-pre-wrap text-sm leading-relaxed text-amber-900 dark:text-amber-100">
+                          {renderRichText(questao.explanation)}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </article>
+            )
+          })}
+        </section>
+
+        {/* ── Comprovante ──────────────────────────────────────────── */}
+        <section className="rounded-2xl border border-border/60 bg-background/60 p-5 text-center backdrop-blur-md">
+          <h2 className="mb-3 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            Comprovante de entrega
+          </h2>
+          <Barcode
+            value={`${id}-${submission.userName.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 15)}`}
+            height={52}
+            fontSize={12}
+          />
+          {submission.signature && (
+            <div className="mt-4 flex flex-col items-center gap-1.5">
+              <img
+                src={submission.signature}
+                alt="Assinatura do candidato"
+                className="h-20 rounded-lg border border-border bg-white p-1.5"
+              />
+              <p className="text-[11px] text-muted-foreground">Assinatura registrada no início da prova</p>
+            </div>
+          )}
+          {submission.startedAt && (
+            <p className="mt-3 inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+              <Clock className="h-3.5 w-3.5" />
+              Início em {formatDate(submission.startedAt)}
+            </p>
+          )}
+        </section>
+      </main>
+
+      <ToastAlert open={toastOpen} onOpenChange={setToastOpen} message={toastMessage} type={toastType} />
+    </div>
+  )
+}
+
+function Selo({
+  cor,
+  icone: Icone,
+  valor,
+  rotulo,
+}: {
+  cor: 'emerald' | 'rose' | 'slate' | 'violet'
+  icone: typeof CheckCircle2
+  valor: number
+  rotulo: string
+}) {
+  const classes = {
+    emerald: 'border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400',
+    rose: 'border-rose-500/25 bg-rose-500/10 text-rose-700 dark:text-rose-400',
+    slate: 'border-border bg-muted text-muted-foreground',
+    violet: 'border-violet-500/25 bg-violet-500/10 text-violet-700 dark:text-violet-400',
+  }[cor]
+
+  return (
+    <span className={cn('inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium', classes)}>
+      <Icone className="h-3.5 w-3.5" />
+      <strong className="tabular-nums">{valor}</strong> {rotulo}
+    </span>
   )
 }
