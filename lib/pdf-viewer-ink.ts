@@ -95,6 +95,31 @@ export function traceStroke(
 }
 
 /**
+ * Os pontos que vão para o banco — e a regra que faz o PINGO do "i" existir.
+ *
+ * Um toque rápido de caneta produz UM ponto (ou dois, quando a mão treme meio
+ * pixel): a caneta desce e sobe antes de o navegador ter o que reportar de
+ * movimento. A versão anterior exigia três pontos para salvar e jogava fora
+ * todo o resto — o pingo aparecia embaixo da ponta enquanto a caneta estava
+ * encostada e sumia ao levantar. Escrever "i", "j", dois-pontos ou um ponto
+ * final virava uma perseguição: só saía quando o toque escorregava o bastante
+ * para virar um risquinho.
+ *
+ * Um ponto vira um traço de dois pontos IGUAIS, e não um caso especial: quem
+ * desenha (o SVG salvo), quem apaga (a borracha) e quem mede (os limites da
+ * anotação) continuam recebendo a mesma lista de sempre. Um trecho de
+ * comprimento zero com ponta redonda é exatamente o círculo que a ponta da
+ * caneta desenharia — ou seja, o pingo sai do tamanho certo de graça.
+ *
+ * Devolve `null` quando não há nada para salvar.
+ */
+export function normalizeInkStroke(points: InkPoint[]): InkPoint[] | null {
+  if (points.length === 0) return null
+  if (points.length === 1) return [points[0], points[0]]
+  return points
+}
+
+/**
  * Espessura do traço em pixels de tela.
  *
  * A raiz do produto das duas dimensões, e não a largura, porque é ela que o
