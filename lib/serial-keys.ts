@@ -690,9 +690,30 @@ export interface ActivationTarget {
   email?: string
 }
 
+/**
+ * O que a concessão precisa contar num e-mail de confirmação de compra.
+ *
+ * Existe para a compra sem login que o comprador mandou aplicar direto na conta
+ * dele: o resultado ali é idêntico ao de uma compra logada, então a confirmação
+ * também tem de ser a mesma — e quem sabe o plano concedido, o prazo e o título
+ * do item é esta função, não quem envia o e-mail.
+ */
+export type GrantedPurchaseFacts =
+  | { kind: 'plan'; planLabel: string; durationMonths: number }
+  | {
+      kind: 'manual_clinico'
+      planLabel: string
+      planKey: ManualClinicoPlanKey
+      durationMonths: number | null
+      expiresAt: Date | null
+    }
+  | { kind: 'material'; itemType: 'material' | 'package'; itemTitle: string }
+
 export interface ActivationResult {
   productLabel: string
   redirectTo: string
+  /** Dados do e-mail de confirmação equivalente ao do checkout logado. */
+  purchase?: GrantedPurchaseFacts
 }
 
 /**
@@ -757,13 +778,18 @@ export async function grantSerialKeyProduct(
       return {
         productLabel: serial.productTitle || `Assinatura ${PLUS_LABEL}`,
         redirectTo: '/dashboard',
+        purchase: {
+          kind: 'plan',
+          planLabel: serial.productTitle || `Assinatura ${PLUS_LABEL}`,
+          durationMonths: grant.durationMonths || 0,
+        },
       }
     }
 
     case 'manual_clinico': {
       const config = await getManualClinicoConfig(db)
       const plan = getManualClinicoPlan(config, grant.manualClinicoPlanKey || 'vitalicio')
-      await grantManualClinicoAccess(db, {
+      const manualPurchase = await grantManualClinicoAccess(db, {
         userId: target.userId,
         userName: target.name || serial.buyerName || '',
         userEmail: target.email || serial.buyerEmail || '',
@@ -783,7 +809,17 @@ export async function grantSerialKeyProduct(
         resourceId: String(serial._id),
         metadata: { planKey: plan.key, via: 'serial_key' },
       })
-      return { productLabel: serial.productTitle || config.label, redirectTo: '/manual-clinico' }
+      return {
+        productLabel: serial.productTitle || config.label,
+        redirectTo: '/manual-clinico',
+        purchase: {
+          kind: 'manual_clinico',
+          planLabel: plan.label,
+          planKey: plan.key,
+          durationMonths: plan.durationMonths ?? null,
+          expiresAt: manualPurchase?.expiresAt || null,
+        },
+      }
     }
 
     case 'material':
@@ -838,7 +874,15 @@ export async function grantSerialKeyProduct(
           : grant.linkedDeckSlug
             ? `/flashcards/d/${grant.linkedDeckSlug}`
             : `/materiais/${grant.itemId}`
-      return { productLabel: grant.itemTitle || serial.productTitle || 'Material', redirectTo }
+      return {
+        productLabel: grant.itemTitle || serial.productTitle || 'Material',
+        redirectTo,
+        purchase: {
+          kind: 'material',
+          itemType,
+          itemTitle: grant.itemTitle || serial.productTitle || 'Material',
+        },
+      }
     }
 
     default:
