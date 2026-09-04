@@ -309,6 +309,17 @@ export default function ManualClinicoCheckoutView({
     }
   }
 
+  /*
+   * Destino do atalho do celular (ver components/checkout/barra-de-pagamento).
+   *
+   * Fica ACIMA dos `return` de carregamento e de erro logo abaixo, e não
+   * junto do resto do cálculo: `useRef` é hook, e hook que nasce depois de
+   * um return antecipado só é chamado em ALGUNS renders — na primeira
+   * pintura (carregando) ele não roda, na seguinte roda, e o React quebra a
+   * tela inteira com o erro #310 por ver a contagem de hooks mudar.
+   */
+  const refDoPagamento = useRef<HTMLDivElement>(null)
+
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#04130b] text-emerald-200">
@@ -369,8 +380,6 @@ export default function ManualClinicoCheckoutView({
     ? Math.min(baseAmount, tierDiscountAmount + couponDiscountAmount)
     : combinado.appliedDiscountAmount
   const payableAmount = Math.max(0, Math.round((baseAmount - effectiveDiscount) * 100) / 100)
-  // Destino do atalho do celular — ver components/checkout/barra-de-pagamento.
-  const refDoPagamento = useRef<HTMLDivElement>(null)
 
   // Que descontos a tela declara. Com o cupom empilhado o PROUNI sai de cena —
   // igual ao servidor, que nesse caminho nem chega a consultar a concessão.

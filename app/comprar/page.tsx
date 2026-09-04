@@ -327,6 +327,17 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
   const accountDelivery = useAccountDeliveryChoice(email, emailValid)
   const canGoToPayment = buyerValid && accountDelivery.canProceed
 
+  /*
+   * Destino do atalho do celular (ver components/checkout/barra-de-pagamento).
+   *
+   * Fica ACIMA dos `return` de carregamento e de erro logo abaixo, e não
+   * junto do resto do cálculo: `useRef` é hook, e hook que nasce depois de
+   * um return antecipado só é chamado em ALGUNS renders — na primeira
+   * pintura (carregando) ele não roda, na seguinte roda, e o React quebra a
+   * tela inteira com o erro #310 por ver a contagem de hooks mudar.
+   */
+  const refDoFormulario = useRef<HTMLDivElement>(null)
+
   if (loading) {
     return (
       <div className="mx-auto max-w-6xl">
@@ -395,8 +406,6 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
   const selectedIsLifetime = selectedPlan?.key === 'vitalicio'
   const precoDoManual = precoPorModulo(payableAmount)
   const precoDiario = precoPorDia(payableAmount, selectedPlan?.durationMonths ?? null)
-  // Destino do atalho do celular — ver components/checkout/barra-de-pagamento.
-  const refDoFormulario = useRef<HTMLDivElement>(null)
 
   const extraBody = {
     productType: 'manual_clinico',

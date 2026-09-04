@@ -233,6 +233,17 @@ function BuyCheckoutContent() {
     }).catch(() => {})
   }, [plan, payMode, subscriptionsEnabled])
 
+  /*
+   * Destino do atalho do celular (ver components/checkout/barra-de-pagamento).
+   *
+   * Fica ACIMA dos `return` de carregamento e de erro logo abaixo, e não
+   * junto do resto do cálculo: `useRef` é hook, e hook que nasce depois de
+   * um return antecipado só é chamado em ALGUNS renders — na primeira
+   * pintura (carregando) ele não roda, na seguinte roda, e o React quebra a
+   * tela inteira com o erro #310 por ver a contagem de hooks mudar.
+   */
+  const refDoPagamento = useRef<HTMLDivElement>(null)
+
   if (loading) {
     return (
       <div className="surface-page flex min-h-[60vh] items-center justify-center px-4 py-6">
@@ -312,8 +323,6 @@ function BuyCheckoutContent() {
   const chargeExibido =
     payMode === 'one_time' ? chargeValido || chargeEstimadoPix : chargeDaAssinatura
   const totalDoResumo = chargeExibido.totalAmount
-  // Destino do atalho do celular — ver components/checkout/barra-de-pagamento.
-  const refDoPagamento = useRef<HTMLDivElement>(null)
   const taxaDoResumo = chargeExibido.feeAmount
 
   /** Total do modo "Pagamento único" no cenário mais barato (Pix), para o seletor. */
