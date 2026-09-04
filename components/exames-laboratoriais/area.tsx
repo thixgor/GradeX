@@ -341,6 +341,7 @@ export function VitrineDosExames({
         precoFinal={precoFinal}
         temLote={temLote}
         pctLote={pctLote}
+        mesesDoPlano={maisBarato?.durationMonths ?? null}
         mostrarPreco={mostrarPreco}
       />
     </>

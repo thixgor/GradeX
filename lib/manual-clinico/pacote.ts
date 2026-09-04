@@ -235,6 +235,104 @@ export function precoPorModulo(preco: number): number | null {
 }
 
 /**
+ * O preço em reais, escrito como o Brasil escreve.
+ *
+ * Estava duplicado como função local em `components/manual-clinico/pacote.tsx`
+ * — mas quem calcula o preço aqui também precisa escrevê-lo (ver
+ * `apresentarPreco`), e duas cópias do mesmo formatador são duas chances de a
+ * vitrine e o cálculo discordarem sobre uma vírgula.
+ */
+export function reais(v: number) {
+  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(v || 0))
+}
+
+/**
+ * O mesmo preço dito por mês.
+ *
+ * Só faz sentido para plano com prazo — no vitalício não existe "por mês",
+ * porque não existe fim. Devolve `null` nesse caso.
+ */
+export function precoPorMes(preco: number, meses: number | null | undefined): number | null {
+  if (!Number.isFinite(preco) || preco <= 0) return null
+  if (!meses || meses <= 0) return null
+  return Math.round((preco / meses) * 100) / 100
+}
+
+/** "1 mês", "6 meses", "12 meses". `null` quando não há prazo. */
+export function prazoEmMeses(meses: number | null | undefined): string | null {
+  if (!meses || meses <= 0) return null
+  return meses === 1 ? '1 mês' : `${meses} meses`
+}
+
+export interface PrecoApresentado {
+  /** O número grande. */
+  destaque: string
+  /** Sufixo do número grande — `"/mês"` quando há prazo, `null` quando não há. */
+  sufixo: string | null
+  /** O mesmo número grande no preço cheio, para riscar. `null` sem lote. */
+  destaqueRiscado: string | null
+  /** O que será REALMENTE cobrado. Nunca é `null`, nunca é letra miúda. */
+  cobranca: string
+}
+
+/**
+ * Como o preço é dito na vitrine.
+ *
+ * ## Por que o número grande é o mensal
+ *
+ * "R$ 197,00" é verdade e é a coisa errada a gritar primeiro: ele é o número
+ * de um semestre inteiro, e quem lê compara com o preço de UMA coisa. O mesmo
+ * valor dito por mês — "R$ 32,83" — é a mesma verdade na unidade em que a
+ * pessoa pensa gasto, e é ela que decide se vale.
+ *
+ * ## Por que a cobrança vem junto, e não em letra miúda
+ *
+ * Porque isto NÃO é assinatura. Não há renovação, não há débito mensal: é um
+ * pagamento só que abre um prazo. Um "R$ 32,83/mês" solto numa página de
+ * compra promete uma cobrança recorrente que não existe, e a pessoa descobre
+ * o valor real no cartão — que é o jeito mais rápido de transformar uma venda
+ * em estorno. Por isso `cobranca` sai daqui SEMPRE preenchido, para ser
+ * desenhado logo abaixo do número grande e em tamanho legível: "R$ 197,00 uma
+ * vez · acesso por 6 meses".
+ *
+ * Sem prazo (vitalício, ou produto sem plano) não existe mensal a calcular: o
+ * número grande volta a ser o total e `sufixo` é `null`.
+ */
+export function apresentarPreco({
+  precoBase,
+  precoFinal,
+  temLote = false,
+  mesesDoPlano,
+}: {
+  precoBase: number
+  precoFinal: number
+  temLote?: boolean
+  mesesDoPlano: number | null | undefined
+}): PrecoApresentado {
+  const porMes = precoPorMes(precoFinal, mesesDoPlano)
+  const prazo = prazoEmMeses(mesesDoPlano)
+
+  if (porMes == null || prazo == null) {
+    return {
+      destaque: reais(precoFinal),
+      sufixo: null,
+      destaqueRiscado: temLote && precoBase > precoFinal ? reais(precoBase) : null,
+      cobranca: 'Pagamento único, sem mensalidade.',
+    }
+  }
+
+  const porMesCheio = precoPorMes(precoBase, mesesDoPlano)
+
+  return {
+    destaque: reais(porMes),
+    sufixo: '/mês',
+    destaqueRiscado:
+      temLote && porMesCheio != null && precoBase > precoFinal ? reais(porMesCheio) : null,
+    cobranca: `${reais(precoFinal)} uma vez · acesso por ${prazo}`,
+  }
+}
+
+/**
  * Custo por dia de um plano com prazo — o outro jeito de encolher o número.
  *
  * Só faz sentido para plano com duração: no vitalício não existe "por dia",

@@ -22,15 +22,18 @@ import {
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { PLUS_LABEL } from '@/lib/account-tier'
+import { usePublicaAltura } from '@/hooks/use-publica-altura'
 import { ProuniCta } from '@/components/prouni/prouni-cta'
 import { MANUAL_CLINICO_PRODUCT_ID } from '@/lib/manual-clinico/identidade'
 import {
   MODULOS_DO_PACOTE,
   TOTAL_DE_MODULOS,
+  apresentarPreco,
   modulosOrdenados,
   outrosModulos,
   precoPorDia,
   precoPorModulo,
+  reais,
   type IdDoModulo,
   type ModuloDoPacote,
 } from '@/lib/manual-clinico/pacote'
@@ -109,10 +112,6 @@ const T = {
     botao: 'bg-emerald-300 text-emerald-950 hover:bg-emerald-200',
   },
 } as const
-
-function reais(v: number) {
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(v || 0))
-}
 
 /* ══════════════════════════════ SELO ══════════════════════════════ */
 
@@ -377,6 +376,7 @@ export function OfertaDoPacote({
   const t = T[tom]
   const porManual = precoPorModulo(precoFinal)
   const porDia = precoPorDia(precoFinal, mesesDoPlano)
+  const preco = apresentarPreco({ precoBase, precoFinal, temLote, mesesDoPlano })
 
   const garantias = [
     'Acesso liberado na hora em que o pagamento é aprovado',
@@ -418,10 +418,18 @@ export function OfertaDoPacote({
                 Os {TOTAL_DE_MODULOS} manuais por
                 {rotuloPlano ? ` · plano ${rotuloPlano}` : ''}
               </p>
+              {/* O número grande é o MENSAL quando o plano tem prazo, e a
+                  cobrança de verdade vem logo abaixo em tamanho legível —
+                  nunca em letra miúda. Ver `apresentarPreco`. */}
               <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                {temLote && <span className={`text-base line-through ${t.riscado}`}>{reais(precoBase)}</span>}
+                {preco.destaqueRiscado && (
+                  <span className={`text-base line-through ${t.riscado}`}>{preco.destaqueRiscado}</span>
+                )}
                 <span className={`font-heading text-3xl font-black tracking-tight sm:text-4xl ${t.precoTexto}`}>
-                  {reais(precoFinal)}
+                  {preco.destaque}
+                  {preco.sufixo && (
+                    <span className="text-lg font-bold sm:text-xl">{preco.sufixo}</span>
+                  )}
                 </span>
                 {temLote && pctLote > 0 && (
                   <span
@@ -431,6 +439,10 @@ export function OfertaDoPacote({
                   </span>
                 )}
               </div>
+
+              <p className={`mt-1.5 text-[13px] font-semibold leading-snug ${t.fraco}`}>
+                {preco.cobranca}
+              </p>
 
               {porManual != null && (
                 <p className={`mt-2 text-[13px] font-bold leading-snug ${t.destaqueTexto}`}>
@@ -509,6 +521,7 @@ export function BarraDoPacote({
   precoFinal,
   temLote = false,
   pctLote = 0,
+  mesesDoPlano = null,
   mostrarPreco,
   tom = 'tema',
 }: {
@@ -517,14 +530,28 @@ export function BarraDoPacote({
   precoFinal: number
   temLote?: boolean
   pctLote?: number
+  /** Prazo do plano, para a barra dizer o mesmo que o cartão de preço. */
+  mesesDoPlano?: number | null
   mostrarPreco: boolean
   tom?: Tom
 }) {
   const t = T[tom]
   const porManual = precoPorModulo(precoFinal)
+  const preco = apresentarPreco({ precoBase, precoFinal, temLote, mesesDoPlano })
+  /*
+   * A barra publica a própria altura.
+   *
+   * Ela é `fixed` no rodapé e o "voltar" flutuante do iOS também é — e ele
+   * soma `--gx-barra-inferior-h` ao próprio `bottom` justamente para não
+   * pousar em cima de barra nenhuma. Sem publicar, a variável valia `0px` e o
+   * círculo do voltar caía bem em cima do PREÇO, que é a primeira coisa que
+   * alguém procura aqui. Ver hooks/use-publica-altura.ts.
+   */
+  const ref = usePublicaAltura<HTMLDivElement>('--gx-barra-inferior-h', true)
 
   return (
     <div
+      ref={ref}
       className={`fixed inset-x-0 bottom-0 z-40 border-t ${t.borda} px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 backdrop-blur-md lg:hidden ${
         tom === 'escuro' ? 'bg-[#04130b]/95' : 'bg-background/95'
       }`}
@@ -532,16 +559,29 @@ export function BarraDoPacote({
       <div className="flex items-center gap-3">
         {mostrarPreco && (
           <div className="min-w-0">
-            <p className={`truncate text-[11px] font-bold ${t.destaqueTexto}`}>
-              {temLote && pctLote > 0
-                ? `−${Math.round(pctLote)}% · ${TOTAL_DE_MODULOS} manuais`
-                : porManual != null
-                  ? `${TOTAL_DE_MODULOS} manuais · ${reais(porManual)} cada`
-                  : `${TOTAL_DE_MODULOS} manuais inclusos`}
+            {/* Com mensal em destaque, esta linha vira a cobrança real — é a
+                única coisa que a barra tem espaço para dizer e que a pessoa
+                precisa saber antes de tocar no botão. */}
+            <p className={`truncate text-[11px] font-bold ${preco.sufixo ? t.fraco : t.destaqueTexto}`}>
+              {preco.sufixo
+                ? preco.cobranca
+                : temLote && pctLote > 0
+                  ? `−${Math.round(pctLote)}% · ${TOTAL_DE_MODULOS} manuais`
+                  : porManual != null
+                    ? `${TOTAL_DE_MODULOS} manuais · ${reais(porManual)} cada`
+                    : `${TOTAL_DE_MODULOS} manuais inclusos`}
             </p>
+            {/* Mesmo número do cartão lá em cima: o mensal quando há prazo.
+                Uma barra dizendo o total e um cartão dizendo o mensal seriam
+                dois preços para o mesmo produto na mesma tela. */}
             <p className="flex items-baseline gap-1.5">
-              {temLote && <span className={`text-[11px] line-through ${t.riscado}`}>{reais(precoBase)}</span>}
-              <span className={`text-lg font-black leading-tight ${t.precoTexto}`}>{reais(precoFinal)}</span>
+              {preco.destaqueRiscado && (
+                <span className={`text-[11px] line-through ${t.riscado}`}>{preco.destaqueRiscado}</span>
+              )}
+              <span className={`text-lg font-black leading-tight ${t.precoTexto}`}>
+                {preco.destaque}
+                {preco.sufixo && <span className="text-xs font-bold">{preco.sufixo}</span>}
+              </span>
             </p>
           </div>
         )}

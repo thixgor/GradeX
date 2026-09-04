@@ -22,6 +22,7 @@ import { PricingEventCountdown, type PricingEventStatePayload } from '@/componen
 import { combineDiscountsWithProuni } from '@/lib/prouni-shared'
 import { useProuniGrant } from '@/hooks/use-prouni-grant'
 import { ProuniCta } from '@/components/prouni/prouni-cta'
+import { BarraDePagamento } from '@/components/checkout/barra-de-pagamento'
 
 const pageStyle: React.CSSProperties = {
   minHeight: '100vh',
@@ -315,6 +316,13 @@ export default function MateriaisCheckoutPage() {
    * No carrinho quem resolve isto é `/api/materiais/cart/preview`, item a item.
    */
   const { concessao: prouniGrant } = useProuniGrant(isCartMode ? null : itemType, itemId)
+  /*
+   * Destino do atalho do celular (ver components/checkout/barra-de-pagamento).
+   * Nasce aqui, e não dentro do ramo que desenha o cartão, porque `useRef` é
+   * hook: carrinho e item avulso são ramos exclusivos, então só um deles
+   * chega a montar o cartão e a prender o ref.
+   */
+  const refDoPagamento = useRef<HTMLDivElement>(null)
   const [cartPreview, setCartPreview] = useState<CartPreview | null>(null)
   const [publicKey, setPublicKey] = useState('')
   const [loading, setLoading] = useState(true)
@@ -845,6 +853,10 @@ export default function MateriaisCheckoutPage() {
             packageIds={cartPreview.items.filter(i => i.itemType === 'package').map(i => i.itemId)}
           />
 
+          {/* No celular o cartão de pagamento cai inteiro embaixo do resumo do
+              carrinho — ver components/checkout/barra-de-pagamento. */}
+          <BarraDePagamento alvo={refDoPagamento} valor={formatBRL(payableAmount)} rotulo="Pagar agora" />
+
           <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] gap-6 items-start">
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div style={{ ...glassCard, padding: '24px' }}>
@@ -1153,7 +1165,7 @@ export default function MateriaisCheckoutPage() {
               </div>
             </div>
 
-            <div style={{ ...glassCard, padding: '28px' }}>
+            <div ref={refDoPagamento} style={{ ...glassCard, padding: '28px' }}>
               {hasAlreadyOwnedItems ? (
                 <div style={{ textAlign: 'center', color: 'white' }}>
                   <div style={{
@@ -1422,6 +1434,10 @@ export default function MateriaisCheckoutPage() {
           packageIds={itemType === 'package' ? [itemId] : []}
         />
 
+        {/* Mesma razão do carrinho: no celular o pagamento nasce depois da
+            capa, do preço, do ProUni e do cupom. */}
+        <BarraDePagamento alvo={refDoPagamento} valor={formatBRL(payablePrice)} rotulo="Pagar agora" />
+
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] gap-6 items-start">
           {/* Left: Item summary */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -1607,7 +1623,7 @@ export default function MateriaisCheckoutPage() {
           </div>
 
           {/* Right: Payment */}
-          <div style={{ ...glassCard, padding: '28px' }}>
+          <div ref={refDoPagamento} style={{ ...glassCard, padding: '28px' }}>
             <>
             <CheckoutAccountNotice tone="dark" className="mb-4" />
             <UnifiedCheckoutPayment

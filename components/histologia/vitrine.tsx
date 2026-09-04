@@ -31,8 +31,10 @@ import {
 import { usePricingEventState } from '@/components/pricing-events/usePricingEventState'
 import { FaixaDoPacote, GradeDoPacote, ListaDoPacote } from '@/components/manual-clinico/pacote'
 import { TOTAL_DE_MODULOS, precoPorModulo } from '@/lib/manual-clinico/pacote'
+import { apresentarPreco } from '@/lib/manual-clinico/pacote'
 import { MANUAL_CLINICO_PRODUCT_ID } from '@/lib/manual-clinico/identidade'
 import { ProuniCta } from '@/components/prouni/prouni-cta'
+import { usePublicaAltura } from '@/hooks/use-publica-altura'
 import { LogoDaHistologia } from '@/components/histologia/marca'
 import { setorDe, tema } from '@/components/histologia/tema'
 import { AVISO_EDUCACIONAL, CREDITO_BASE } from '@/lib/histologia/licenca'
@@ -171,6 +173,7 @@ export function VitrineDaHistologia({
         desconto={desconto}
         rotuloDoLote={evento?.activeTier?.label ?? null}
         planoMaisBarato={planoMaisBarato?.label ?? null}
+        mesesDoPlano={planoMaisBarato?.durationMonths ?? null}
         aoComprar={irParaCheckout}
       />
 
@@ -183,6 +186,7 @@ export function VitrineDaHistologia({
         precoFinal={precoFinal}
         temLote={temLote}
         desconto={desconto}
+        mesesDoPlano={planoMaisBarato?.durationMonths ?? null}
         aoComprar={irParaCheckout}
       />
     </div>
@@ -855,6 +859,7 @@ function Preco({
   desconto,
   rotuloDoLote,
   planoMaisBarato,
+  mesesDoPlano,
   aoComprar,
 }: {
   acesso: AcessoDaVitrine
@@ -867,11 +872,14 @@ function Preco({
   desconto: number
   rotuloDoLote: string | null
   planoMaisBarato: string | null
+  /** Prazo do plano — é o que permite dizer o preço por mês. */
+  mesesDoPlano: number | null
   aoComprar: () => void
 }) {
   // O total sobre sete: é o número que se compara com o preço de um manual
   // avulso, e o que desarma a objeção sem precisar de mais desconto.
   const porManual = precoPorModulo(precoFinal)
+  const preco = apresentarPreco({ precoBase, precoFinal, temLote, mesesDoPlano })
 
   return (
     <section className="border-t border-border bg-muted/25" aria-labelledby="preco">
@@ -928,14 +936,17 @@ function Preco({
                   Os {TOTAL_DE_MODULOS} manuais por
                   {planoMaisBarato ? ` · plano ${planoMaisBarato}` : ''}
                 </p>
+                {/* O número grande é o MENSAL quando o plano tem prazo, com a
+                    cobrança de verdade logo abaixo — ver `apresentarPreco`. */}
                 <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                  {temLote && (
+                  {preco.destaqueRiscado && (
                     <span className="text-base text-muted-foreground line-through">
-                      {reais(precoBase)}
+                      {preco.destaqueRiscado}
                     </span>
                   )}
                   <span className="text-3xl font-black tracking-tight text-teal-700 dark:text-teal-300 sm:text-4xl">
-                    {reais(precoFinal)}
+                    {preco.destaque}
+                    {preco.sufixo && <span className="text-lg font-bold sm:text-xl">{preco.sufixo}</span>}
                   </span>
                   {temLote && (
                     <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 text-xs font-bold text-emerald-700 dark:text-emerald-300">
@@ -943,6 +954,9 @@ function Preco({
                     </span>
                   )}
                 </div>
+                <p className="mt-1.5 text-[13px] font-semibold leading-snug text-muted-foreground">
+                  {preco.cobranca}
+                </p>
                 {porManual != null && (
                   <p className="mt-2 text-[13px] font-bold leading-snug text-teal-700 dark:text-teal-300">
                     Dá {reais(porManual)} por manual.
@@ -1068,6 +1082,7 @@ function BarraDoCelular({
   precoFinal,
   temLote,
   desconto,
+  mesesDoPlano,
   aoComprar,
 }: {
   rotuloCta: string
@@ -1076,26 +1091,47 @@ function BarraDoCelular({
   precoFinal: number
   temLote: boolean
   desconto: number
+  mesesDoPlano: number | null
   aoComprar: () => void
 }) {
+  // O mesmo número do cartão de preço: um mensal lá em cima e um total aqui
+  // embaixo seriam dois preços para o mesmo produto na mesma tela.
+  const preco = apresentarPreco({ precoBase, precoFinal, temLote, mesesDoPlano })
+  /*
+   * A barra publica a própria altura — ver o comentário gêmeo em
+   * components/manual-clinico/pacote.tsx (`BarraDoPacote`): sem isso o
+   * "voltar" flutuante do iOS pousa em cima do preço.
+   */
+  const refDaBarra = usePublicaAltura<HTMLDivElement>('--gx-barra-inferior-h', true)
+
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 backdrop-blur-md lg:hidden">
+    <div
+      ref={refDaBarra}
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 backdrop-blur-md lg:hidden"
+    >
       <div className="flex items-center gap-3">
         {mostrarPreco && (
           <div className="min-w-0">
-            <p className="truncate text-[11px] font-bold text-teal-700 dark:text-teal-300">
-              {temLote
-                ? `−${Math.round(desconto)}% · ${TOTAL_DE_MODULOS} manuais`
-                : `${TOTAL_DE_MODULOS} manuais inclusos`}
+            <p
+              className={`truncate text-[11px] font-bold ${
+                preco.sufixo ? 'text-muted-foreground' : 'text-teal-700 dark:text-teal-300'
+              }`}
+            >
+              {preco.sufixo
+                ? preco.cobranca
+                : temLote
+                  ? `−${Math.round(desconto)}% · ${TOTAL_DE_MODULOS} manuais`
+                  : `${TOTAL_DE_MODULOS} manuais inclusos`}
             </p>
             <p className="flex items-baseline gap-1.5">
-              {temLote && (
+              {preco.destaqueRiscado && (
                 <span className="text-[11px] text-muted-foreground line-through">
-                  {reais(precoBase)}
+                  {preco.destaqueRiscado}
                 </span>
               )}
               <span className="text-lg font-black leading-tight text-teal-700 dark:text-teal-300">
-                {reais(precoFinal)}
+                {preco.destaque}
+                {preco.sufixo && <span className="text-xs font-bold">{preco.sufixo}</span>}
               </span>
             </p>
           </div>

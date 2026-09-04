@@ -392,6 +392,7 @@ function FarmacologiaContent() {
           precoFinal={precoFinal}
           temLote={temLote}
           pctLote={pctLote}
+          mesesDoPlano={planoMaisBarato?.durationMonths ?? null}
           mostrarPreco={mostrarPreco}
         />
       )}

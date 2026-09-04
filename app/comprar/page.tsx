@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, useEffect, useMemo, useState } from 'react'
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { ArrowRight, BookOpen, Check, ChevronLeft, Clock, Crown, Flame, Loader2, Lock, Mail, Percent, Phone, ShieldCheck, Sparkles, User, X } from 'lucide-react'
 import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
@@ -13,6 +13,7 @@ import { AccountDeliveryChoice, useAccountDeliveryChoice } from '@/components/ch
 import { BuyerDataConfirmation, EmailQualityNotice } from '@/components/checkout/buyer-data-confirmation'
 import { CouponPromo } from '@/components/checkout/coupon-promo'
 import { ProuniCta } from '@/components/prouni/prouni-cta'
+import { BarraDePagamento } from '@/components/checkout/barra-de-pagamento'
 import { PackageContents } from '@/components/shop/package-contents'
 import { ListaDoPacote } from '@/components/manual-clinico/pacote'
 import { TOTAL_DE_MODULOS, precoPorDia, precoPorModulo } from '@/lib/manual-clinico/pacote'
@@ -394,6 +395,8 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
   const selectedIsLifetime = selectedPlan?.key === 'vitalicio'
   const precoDoManual = precoPorModulo(payableAmount)
   const precoDiario = precoPorDia(payableAmount, selectedPlan?.durationMonths ?? null)
+  // Destino do atalho do celular — ver components/checkout/barra-de-pagamento.
+  const refDoFormulario = useRef<HTMLDivElement>(null)
 
   const extraBody = {
     productType: 'manual_clinico',
@@ -408,6 +411,14 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
 
   return (
     <div className="mx-auto max-w-6xl text-foreground">
+      {/* No celular a coluna do formulário cai depois da capa, da descrição, do
+          preço e do cupom — quem já decidiu comprar rolava tudo isso à procura
+          do primeiro campo. */}
+      <BarraDePagamento
+        alvo={refDoFormulario}
+        valor={formatBRL(payableAmount)}
+        ativa={product.isActive !== false && step === 'buyer'}
+      />
       <div className="grid gap-5 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
         <div className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
           <div className="relative mb-5 overflow-hidden rounded-lg border border-border">
@@ -642,7 +653,7 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
           <SecurityBadges className="mt-3" />
         </div>
 
-        <div className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
+        <div ref={refDoFormulario} className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
           {!product.isActive ? (
             <div className="flex flex-col items-center justify-center py-16 text-center">
               <Lock className="mb-4 h-10 w-10 text-muted-foreground" />
@@ -816,6 +827,8 @@ function GenericComprarContent({ productType }: { productType: string }) {
   const effectiveDiscount = Math.max(tierDiscountAmount, couponDiscountAmount)
   const tierBeatsCoupon = hasActiveTier && tierDiscountAmount >= couponDiscountAmount
   const payableAmount = Math.max(0, Math.round((baseAmount - effectiveDiscount) * 100) / 100)
+  // Destino do atalho do celular — ver components/checkout/barra-de-pagamento.
+  const refDoFormulario = useRef<HTMLDivElement>(null)
 
   const extraBody = useMemo(() => ({
     productType, productId: productId || undefined, planKey: planKey || undefined,
@@ -936,6 +949,13 @@ function GenericComprarContent({ productType }: { productType: string }) {
         </div>
       )}
 
+      {/* Mesma razão da variante do Manual Clínico: no celular o formulário
+          nasce depois da capa, do preço, do ProUni e do cupom. */}
+      <BarraDePagamento
+        alvo={refDoFormulario}
+        valor={formatBRL(payableAmount)}
+        ativa={step === 'buyer'}
+      />
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] lg:items-start">
         <div className="flex flex-col gap-4">
           <div className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
@@ -1088,7 +1108,7 @@ function GenericComprarContent({ productType }: { productType: string }) {
           </div>
         </div>
 
-        <div className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
+        <div ref={refDoFormulario} className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
           {step === 'buyer' ? (
             <div className="flex flex-col gap-4">
               {/* Quem escolheu aplicar na conta não recebe Serial Key nenhuma —

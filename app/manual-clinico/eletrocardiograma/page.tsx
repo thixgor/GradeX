@@ -354,6 +354,7 @@ function Paywall({
         precoFinal={finalPrice}
         temLote={hasTier}
         pctLote={tierPct}
+        mesesDoPlano={planMonths}
         mostrarPreco={showPrice}
       />
     </>

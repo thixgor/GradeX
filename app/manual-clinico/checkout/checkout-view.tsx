@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { trackMeta } from '@/lib/meta-pixel'
 import { ArrowLeft, BookOpen, Check, Flame, GraduationCap, Lock, Loader2, Percent, Sparkles, TrendingDown, X, Clock, Crown } from 'lucide-react'
 import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
+import { BarraDePagamento } from '@/components/checkout/barra-de-pagamento'
 import { CheckoutAccountNotice } from '@/components/checkout/checkout-account-notice'
 import { CouponPromo } from '@/components/checkout/coupon-promo'
 import { ProuniCta } from '@/components/prouni/prouni-cta'
@@ -368,6 +369,8 @@ export default function ManualClinicoCheckoutView({
     ? Math.min(baseAmount, tierDiscountAmount + couponDiscountAmount)
     : combinado.appliedDiscountAmount
   const payableAmount = Math.max(0, Math.round((baseAmount - effectiveDiscount) * 100) / 100)
+  // Destino do atalho do celular — ver components/checkout/barra-de-pagamento.
+  const refDoPagamento = useRef<HTMLDivElement>(null)
 
   // Que descontos a tela declara. Com o cupom empilhado o PROUNI sai de cena —
   // igual ao servidor, que nesse caminho nem chega a consultar a concessão.
@@ -398,6 +401,14 @@ export default function ManualClinicoCheckoutView({
           <ArrowLeft className="h-4 w-4" />
           Voltar ao Manual
         </button>
+
+        {/* No celular o cartão de pagamento nasce depois da capa, dos planos,
+            do preço, do ProUni e do cupom — ver a barra para o porquê. */}
+        <BarraDePagamento
+          alvo={refDoPagamento}
+          valor={formatBRL(payableAmount)}
+          ativa={product.isActive !== false}
+        />
 
         <div className="grid gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
           <div className="rounded-3xl border border-white/10 bg-white/[0.07] p-5 shadow-2xl shadow-black/20 backdrop-blur-2xl sm:p-7">
@@ -628,7 +639,10 @@ export default function ManualClinicoCheckoutView({
             </div>
           </div>
 
-          <div className="rounded-3xl border border-white/10 bg-white/[0.07] p-5 shadow-2xl shadow-black/20 backdrop-blur-2xl sm:p-7">
+          <div
+            ref={refDoPagamento}
+            className="rounded-3xl border border-white/10 bg-white/[0.07] p-5 shadow-2xl shadow-black/20 backdrop-blur-2xl sm:p-7"
+          >
             {!product.isActive ? (
               <div className="flex flex-col items-center justify-center py-16 text-center">
                 <Lock className="mb-4 h-10 w-10 text-white/35" />

@@ -5,9 +5,10 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { usePricingEventState } from '@/components/pricing-events/usePricingEventState'
 import { FaixaDoPacote, GradeDoPacote, ListaDoPacote } from '@/components/manual-clinico/pacote'
-import { TOTAL_DE_MODULOS, precoPorModulo } from '@/lib/manual-clinico/pacote'
+import { TOTAL_DE_MODULOS, apresentarPreco, precoPorModulo } from '@/lib/manual-clinico/pacote'
 import { MANUAL_CLINICO_PRODUCT_ID } from '@/lib/manual-clinico/identidade'
 import { ProuniCta } from '@/components/prouni/prouni-cta'
+import { usePublicaAltura } from '@/hooks/use-publica-altura'
 import { PranchaInterativa } from '@/components/anatomia/prancha-interativa'
 import { FichaMarcador } from '@/components/anatomia/ficha-estrutura'
 import type { ResumoAnatomia, RespostaAcessoAnatomia } from '@/lib/anatomia/tipos'
@@ -89,6 +90,12 @@ export function VitrineAnatomia({ dados, secao = 'hub' }: VitrineAnatomiaProps) 
   const router = useRouter()
   const catalogo = dados.catalogo
   const autenticado = dados.isAuthenticated
+  /*
+   * A barra fixa do celular publica a própria altura — ver o comentário gêmeo
+   * em components/manual-clinico/pacote.tsx (`BarraDoPacote`): sem isso o
+   * "voltar" flutuante do iOS pousa em cima do preço.
+   */
+  const refDaBarra = usePublicaAltura<HTMLDivElement>('--gx-barra-inferior-h', true)
 
   const planosAtivos = (dados.product?.plans || []).filter(plano => plano.enabled && plano.price > 0)
   const planoMaisBarato = planosAtivos.reduce<(typeof planosAtivos)[number] | null>(
@@ -111,6 +118,14 @@ export function VitrineAnatomia({ dados, secao = 'hub' }: VitrineAnatomiaProps) 
   const rotuloCta = `Quero os ${TOTAL_DE_MODULOS} manuais`
   // O total sobre sete — o número que se compara com o preço de um atlas avulso.
   const porManual = precoPorModulo(precoFinal)
+  // O preço dito por mês quando o plano tem prazo — mesma regra e mesmo texto
+  // das outras vitrines do pacote. Ver `apresentarPreco`.
+  const preco = apresentarPreco({
+    precoBase,
+    precoFinal,
+    temLote,
+    mesesDoPlano: planoMaisBarato?.durationMonths ?? null,
+  })
 
   const chamadas = {
     hub: {
@@ -408,14 +423,22 @@ export function VitrineAnatomia({ dados, secao = 'hub' }: VitrineAnatomiaProps) 
                   {planoMaisBarato?.label ? ` · plano ${planoMaisBarato.label}` : ''}
                 </p>
                 <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                  {temLote && <span className="text-base text-muted-foreground line-through">{reais(precoBase)}</span>}
-                  <span className="text-3xl font-black tracking-tight text-primary sm:text-4xl">{reais(precoFinal)}</span>
+                  {preco.destaqueRiscado && (
+                    <span className="text-base text-muted-foreground line-through">{preco.destaqueRiscado}</span>
+                  )}
+                  <span className="text-3xl font-black tracking-tight text-primary sm:text-4xl">
+                    {preco.destaque}
+                    {preco.sufixo && <span className="text-lg font-bold sm:text-xl">{preco.sufixo}</span>}
+                  </span>
                   {temLote && (
                     <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 text-xs font-bold text-emerald-700 dark:text-emerald-300">
                       <Flame className="h-3 w-3" /> −{Math.round(descontoPct)}%
                     </span>
                   )}
                 </div>
+                <p className="mt-1.5 text-[13px] font-semibold leading-snug text-muted-foreground">
+                  {preco.cobranca}
+                </p>
                 {porManual != null && (
                   <p className="mt-2 text-[13px] font-bold leading-snug text-emerald-700 dark:text-emerald-300">
                     Dá {reais(porManual)} por manual.
@@ -483,18 +506,33 @@ export function VitrineAnatomia({ dados, secao = 'hub' }: VitrineAnatomiaProps) 
       </section>
 
       {/* ══════════════ Barra fixa do celular ══════════════ */}
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 backdrop-blur-md lg:hidden">
+      <div
+        ref={refDaBarra}
+        className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 backdrop-blur-md lg:hidden"
+      >
         <div className="flex items-center gap-3">
           {mostrarPreco && (
             <div className="min-w-0">
-              <p className="truncate text-[11px] font-bold text-emerald-700 dark:text-emerald-300">
-                {temLote
-                  ? `−${Math.round(descontoPct)}% · ${TOTAL_DE_MODULOS} manuais`
-                  : `${TOTAL_DE_MODULOS} manuais inclusos`}
+              {/* Mesmo número do cartão de preço lá em cima. */}
+              <p
+                className={`truncate text-[11px] font-bold ${
+                  preco.sufixo ? 'text-muted-foreground' : 'text-emerald-700 dark:text-emerald-300'
+                }`}
+              >
+                {preco.sufixo
+                  ? preco.cobranca
+                  : temLote
+                    ? `−${Math.round(descontoPct)}% · ${TOTAL_DE_MODULOS} manuais`
+                    : `${TOTAL_DE_MODULOS} manuais inclusos`}
               </p>
               <p className="flex items-baseline gap-1.5">
-                {temLote && <span className="text-[11px] text-muted-foreground line-through">{reais(precoBase)}</span>}
-                <span className="text-lg font-black leading-tight text-primary">{reais(precoFinal)}</span>
+                {preco.destaqueRiscado && (
+                  <span className="text-[11px] text-muted-foreground line-through">{preco.destaqueRiscado}</span>
+                )}
+                <span className="text-lg font-black leading-tight text-primary">
+                  {preco.destaque}
+                  {preco.sufixo && <span className="text-xs font-bold">{preco.sufixo}</span>}
+                </span>
               </p>
             </div>
           )}

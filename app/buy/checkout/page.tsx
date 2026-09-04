@@ -13,7 +13,7 @@
  * lista inteira de benefícios ficava entre o preço e o formulário.
  */
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import {
   Loader2,
@@ -36,6 +36,7 @@ import { CheckoutAccountNotice } from '@/components/checkout/checkout-account-no
 import { CouponPromo } from '@/components/checkout/coupon-promo'
 import { useProuniGrant } from '@/hooks/use-prouni-grant'
 import { ProuniCta } from '@/components/prouni/prouni-cta'
+import { BarraDePagamento } from '@/components/checkout/barra-de-pagamento'
 import { combineDiscountsWithProuni } from '@/lib/prouni-shared'
 import {
   computeCheckoutCharge,
@@ -311,6 +312,8 @@ function BuyCheckoutContent() {
   const chargeExibido =
     payMode === 'one_time' ? chargeValido || chargeEstimadoPix : chargeDaAssinatura
   const totalDoResumo = chargeExibido.totalAmount
+  // Destino do atalho do celular — ver components/checkout/barra-de-pagamento.
+  const refDoPagamento = useRef<HTMLDivElement>(null)
   const taxaDoResumo = chargeExibido.feeAmount
 
   /** Total do modo "Pagamento único" no cenário mais barato (Pix), para o seletor. */
@@ -361,6 +364,19 @@ function BuyCheckoutContent() {
         <h1 className="font-heading text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
           Finalizar compra
         </h1>
+
+        {/* No celular o cartão de pagamento cai inteiro embaixo do resumo —
+            ver components/checkout/barra-de-pagamento.
+
+            O valor é `totalDoResumo`, e não `payableAmount`: é o número que o
+            botão de pagar cobra, com a taxa do meio escolhido já somada.
+            Anunciar o preço-base numa barra fixa e cobrar outro no fim é
+            exatamente o defeito que o resumo desta tela já tinha corrigido. */}
+        <BarraDePagamento
+          alvo={refDoPagamento}
+          valor={formatBRL(totalDoResumo)}
+          rotulo="Pagar agora"
+        />
 
         <div className="mt-5 grid gap-4 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-start lg:gap-5">
           {/* Resumo. Curto de propósito: quem chegou aqui já leu a página de
@@ -555,7 +571,7 @@ function BuyCheckoutContent() {
           </div>
 
           {/* Pagamento */}
-          <div className="rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-5">
+          <div ref={refDoPagamento} className="rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-5">
             {isRecurring && (
               <div className="mb-4">
                 <p className="mb-2 text-xs font-semibold text-muted-foreground">
