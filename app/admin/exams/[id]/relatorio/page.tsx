@@ -10,12 +10,16 @@ import {
   CheckCircle2,
   Clock,
   DoorOpen,
+  FileDown,
   History,
   RefreshCw,
   Target,
   TrendingDown,
   Users,
 } from 'lucide-react'
+import { ModalDeAnalise } from '@/components/admin/provas/modal-de-analise'
+import type { OpcoesDaAnalise } from '@/lib/pdf/analise-da-prova'
+import { ToastAlert } from '@/components/ui/toast-alert'
 import { ExamGateStatus } from '@/components/exam/exam-gate-status'
 import { ATTEMPT_STATUS_LABELS } from '@/lib/tracking/exam-attempts'
 import { cn } from '@/lib/utils'
@@ -70,6 +74,9 @@ export default function AdminExamReportPage({ params }: { params: { id: string }
   const [atualizando, setAtualizando] = useState(false)
   const [erro, setErro] = useState<string | null>(null)
   const [aba, setAba] = useState<Aba>('presenca')
+  const [modalDeAnalise, setModalDeAnalise] = useState(false)
+  const [gerandoAnalise, setGerandoAnalise] = useState(false)
+  const [aviso, setAviso] = useState<string | null>(null)
 
   const carregar = useCallback(
     async (silencioso = false) => {
@@ -104,6 +111,27 @@ export default function AdminExamReportPage({ params }: { params: { id: string }
     const relogio = setInterval(() => carregar(true), 30_000)
     return () => clearInterval(relogio)
   }, [dados, carregar])
+
+  /**
+   * O PDF de análise.
+   *
+   * O gerador entra por `import()` dinâmico: ele carrega o jsPDF e as fontes
+   * Roboto, e essa é a metade do peso desta rota para quem só veio olhar a
+   * presença da turma.
+   */
+  async function gerarAnalise(opcoes: OpcoesDaAnalise) {
+    if (!dados) return
+    setGerandoAnalise(true)
+    try {
+      const { baixarAnaliseDaProvaPDF } = await import('@/lib/pdf/analise-da-prova')
+      await baixarAnaliseDaProvaPDF(dados as any, opcoes)
+      setModalDeAnalise(false)
+    } catch (error: any) {
+      setAviso('Não foi possível montar o PDF: ' + (error?.message || 'erro desconhecido'))
+    } finally {
+      setGerandoAnalise(false)
+    }
+  }
 
   const questoesOrdenadas = useMemo(() => {
     if (!dados) return []
@@ -154,6 +182,20 @@ export default function AdminExamReportPage({ params }: { params: { id: string }
             </div>
           </div>
           <div className="flex items-center gap-2">
+            {/*
+              O documento que fecha a prova com a turma. Fica no cabeçalho e não
+              no fim da página porque é o que o admin vem buscar quando a prova
+              já acabou — e a página, aí, é longa.
+            */}
+            <Button
+              onClick={() => setModalDeAnalise(true)}
+              size="sm"
+              className="bg-gradient-to-r from-[#468152] to-[#3a6d44] font-semibold text-white hover:from-[#3a6d44] hover:to-[#2f5a38]"
+            >
+              <FileDown className="mr-2 h-4 w-4" />
+              <span className="hidden sm:inline">PDF de análise</span>
+              <span className="sm:hidden">PDF</span>
+            </Button>
             <Button
               variant="ghost"
               size="icon"
@@ -506,6 +548,21 @@ export default function AdminExamReportPage({ params }: { params: { id: string }
           </section>
         )}
       </main>
+
+      <ModalDeAnalise
+        aberto={modalDeAnalise}
+        onOpenChange={setModalDeAnalise}
+        dados={dados as any}
+        onGerar={gerarAnalise}
+        gerando={gerandoAnalise}
+      />
+
+      <ToastAlert
+        open={!!aviso}
+        onOpenChange={(aberto) => !aberto && setAviso(null)}
+        message={aviso || ''}
+        type="error"
+      />
     </div>
   )
 }

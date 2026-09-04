@@ -3,71 +3,38 @@ import JsBarcode from 'jsbarcode'
 import { Exam, Question, UserAnswer, QuestionAnnotation, Form, FormBlock } from './types'
 import { decodeHtmlEntities } from './html-entities'
 
-// ── Cores da paleta DomineAqui ───────────────────────────────────
-const VERDE_ESCURO = [26, 71, 42] as const
-const VERDE_MEDIO = [70, 129, 82] as const
-const LARANJA = [226, 164, 62] as const
-const LARANJA_CLARO = [245, 216, 154] as const
-const CINZA_TEXTO = [51, 51, 51] as const
-const CINZA_CLARO = [245, 245, 245] as const
+// ── Base da marca (fontes, logo, cabeçalho e rodapé) ─────────────
+// Tudo isto morava aqui e havia sido reescrito pela metade em
+// `lib/user-report-generator.ts` — com `helvetica` no lugar da Roboto, o que
+// soletrava qualquer linha com um caractere fora do WinAnsi. Agora é um lugar
+// só; ver `lib/pdf/marca.ts`.
+import {
+  CINZA_CLARO,
+  CINZA_TEXTO,
+  LARANJA,
+  LARANJA_CLARO,
+  VERDE_ESCURO,
+  VERDE_MEDIO,
+  aquecerAssetsDePdf,
+  aquecerFontes as prewarmFontsCache,
+  carregarLogo as loadLogo,
+  desenharCabecalho,
+  desenharRodape,
+  registrarFontes,
+  sanitizarParaPdf as sanitizeForPdf,
+} from './pdf/marca'
 
-// ── Font registration (Roboto TTF for full Unicode/PT-BR) ────────
-type FontStyle = 'normal' | 'bold' | 'italic' | 'bolditalic'
+/**
+ * A família ativa neste arquivo.
+ *
+ * Continua sendo uma variável de módulo porque as centenas de
+ * `doc.setFont(FONT, ...)` daqui dependem dela; quem a mantém em dia é
+ * `registerFonts`, logo abaixo.
+ */
 let FONT = 'helvetica'
-const fontCache: { file: string; style: FontStyle; b64: string }[] = []
-// Ongoing prewarm promise so multiple callers don't trigger parallel fetches
-let _fontPrewarmPromise: Promise<void> | null = null
-
-function arrayBufferToBase64(buffer: ArrayBuffer): string {
-  const bytes = new Uint8Array(buffer)
-  const chunks: string[] = []
-  const chunkSize = 8192
-  for (let i = 0; i < bytes.length; i += chunkSize) {
-    chunks.push(String.fromCharCode(...bytes.subarray(i, i + chunkSize)))
-  }
-  return btoa(chunks.join(''))
-}
-
-/** Populates fontCache without needing a jsPDF instance.  Safe to call early. */
-async function prewarmFontsCache(): Promise<void> {
-  if (fontCache.length > 0) return
-  if (_fontPrewarmPromise) return _fontPrewarmPromise
-  _fontPrewarmPromise = (async () => {
-    try {
-      const variants: { file: string; style: FontStyle }[] = [
-        { file: 'Roboto-Regular.ttf',    style: 'normal' },
-        { file: 'Roboto-Bold.ttf',        style: 'bold' },
-        { file: 'Roboto-Italic.ttf',      style: 'italic' },
-        { file: 'Roboto-BoldItalic.ttf',  style: 'bolditalic' },
-      ]
-      const results = await Promise.all(
-        variants.map(async (v) => {
-          const res = await fetch(`/fonts/${v.file}`)
-          if (!res.ok) throw new Error(`Font not found: ${v.file}`)
-          return { ...v, data: await res.arrayBuffer() }
-        })
-      )
-      for (const r of results) {
-        fontCache.push({ file: r.file, style: r.style, b64: arrayBufferToBase64(r.data) })
-      }
-      FONT = 'Roboto'
-    } catch {
-      FONT = 'helvetica'
-    }
-  })()
-  return _fontPrewarmPromise
-}
 
 async function registerFonts(doc: jsPDF): Promise<void> {
-  await prewarmFontsCache()
-  if (fontCache.length > 0) {
-    for (const f of fontCache) {
-      doc.addFileToVFS(f.file, f.b64)
-      doc.addFont(f.file, 'Roboto', f.style)
-    }
-    FONT = 'Roboto'
-    doc.setFont('Roboto')
-  }
+  FONT = await registrarFontes(doc)
 }
 
 /**
@@ -75,60 +42,7 @@ async function registerFonts(doc: jsPDF): Promise<void> {
  * the user clicks a PDF button.
  */
 export function prewarmPDFAssets(): void {
-  if (typeof window === 'undefined') return
-  prewarmFontsCache().catch(() => {})
-  loadLogo().catch(() => {})
-}
-
-// ── Text sanitizer (Helvetica fallback only) ─────────────────────
-function sanitizeForPdf(text: string): string {
-  if (!text) return text
-  let t = text.replace(/[\u200B\u200C\u200D\uFEFF\u00AD]/g, '')
-  if (FONT === 'Roboto') return t
-  return t
-    .replace(/₀/g,'0').replace(/₁/g,'1').replace(/₂/g,'2').replace(/₃/g,'3')
-    .replace(/₄/g,'4').replace(/₅/g,'5').replace(/₆/g,'6').replace(/₇/g,'7')
-    .replace(/₈/g,'8').replace(/₉/g,'9')
-    .replace(/⁰/g,'0').replace(/⁴/g,'4').replace(/⁵/g,'5').replace(/⁶/g,'6')
-    .replace(/⁷/g,'7').replace(/⁸/g,'8').replace(/⁹/g,'9')
-    .replace(/≥/g,'>=').replace(/≤/g,'<=').replace(/≠/g,'!=').replace(/≈/g,'~')
-    .replace(/→/g,'->').replace(/←/g,'<-').replace(/↑/g,'^').replace(/↓/g,'v')
-    .replace(/↔/g,'<->').replace(/∞/g,'inf')
-    .replace(/α/g,'alfa').replace(/β/g,'beta').replace(/γ/g,'gama')
-    .replace(/δ/g,'delta').replace(/Δ/g,'Delta').replace(/μ/g,'u')
-    .replace(/✓/g,'V').replace(/✔/g,'V').replace(/✗/g,'X').replace(/✘/g,'X')
-}
-
-// ── Logo (cached from /logo.png) ─────────────────────────────────
-let logoCache: string | null | undefined = undefined
-
-async function loadLogo(): Promise<string | null> {
-  if (logoCache !== undefined) return logoCache
-  try {
-    return await new Promise<string | null>((resolve) => {
-      const img = new Image()
-      img.crossOrigin = 'anonymous'
-      const timeout = setTimeout(() => { logoCache = null; resolve(null) }, 6000)
-      img.onload = () => {
-        clearTimeout(timeout)
-        try {
-          const canvas = document.createElement('canvas')
-          canvas.width = img.naturalWidth
-          canvas.height = img.naturalHeight
-          const ctx = canvas.getContext('2d')
-          if (!ctx) { logoCache = null; resolve(null); return }
-          // Fill with header background so transparent pixels don't go black in JPEG
-          ctx.fillStyle = 'rgb(26, 71, 41)'
-          ctx.fillRect(0, 0, canvas.width, canvas.height)
-          ctx.drawImage(img, 0, 0)
-          logoCache = canvas.toDataURL('image/jpeg', 0.92)
-          resolve(logoCache)
-        } catch { logoCache = null; resolve(null) }
-      }
-      img.onerror = () => { clearTimeout(timeout); logoCache = null; resolve(null) }
-      img.src = '/logo.png'
-    })
-  } catch { logoCache = null; return null }
+  aquecerAssetsDePdf()
 }
 
 // Custom text wrapping function - melhorada para preservar quebras de linha
@@ -302,74 +216,12 @@ async function prefetchExamImages(questions: Question[] | undefined): Promise<Ma
 
 // Adiciona header padrão DomineAqui (com logo se disponível)
 function addDomineAquiHeader(doc: jsPDF, pageWidth: number, margin: number, subtitle?: string, logoData?: string | null) {
-  // Barra superior verde escuro
-  doc.setFillColor(...VERDE_ESCURO)
-  doc.rect(0, 0, pageWidth, 30, 'F')
-
-  // Detalhe laranja no canto
-  doc.setFillColor(...LARANJA)
-  doc.rect(pageWidth - 65, 0, 65, 30, 'F')
-
-  // Logo image or text fallback
-  if (logoData) {
-    try {
-      doc.addImage(logoData, 'PNG', margin, 4, 22, 22)
-    } catch { logoData = null }
-  }
-  const textX = logoData ? margin + 26 : margin
-
-  doc.setTextColor(255, 255, 255)
-  doc.setFontSize(16)
-  doc.setFont(FONT, 'bold')
-  doc.text('DomineAqui', textX, subtitle ? 12 : 18)
-
-  if (subtitle) {
-    doc.setFontSize(9)
-    doc.setFont(FONT, 'normal')
-    doc.text(sanitizeForPdf(subtitle), textX, 22)
-  }
-
-  // Link (laranja box area — white text)
-  doc.setFontSize(7.5)
-  doc.setTextColor(255, 255, 255)
-  doc.text('www.domineaqui.com.br', pageWidth - 62, 19, { align: 'left' })
-
-  // Reset text color to body default so callers don't inherit white text
-  doc.setTextColor(...CINZA_TEXTO)
-  doc.setFontSize(10)
-  doc.setFont(FONT, 'normal')
-
-  return 40
+  return desenharCabecalho(doc, pageWidth, margin, subtitle, logoData)
 }
 
 // Adiciona footer padrão DomineAqui
 function addDomineAquiFooter(doc: jsPDF, pageNum: number, totalPages: number, pageWidth: number, pageHeight: number, margin: number, extraText?: string) {
-  const footerY = pageHeight - 12
-
-  doc.setFillColor(...CINZA_CLARO)
-  doc.rect(0, footerY - 6, pageWidth, 18, 'F')
-
-  doc.setDrawColor(...VERDE_MEDIO)
-  doc.setLineWidth(1)
-  doc.line(0, footerY - 6, pageWidth * 0.7, footerY - 6)
-  doc.setDrawColor(...LARANJA)
-  doc.line(pageWidth * 0.7, footerY - 6, pageWidth, footerY - 6)
-
-  doc.setFontSize(8)
-  doc.setTextColor(70, 70, 70)
-  doc.setFont(FONT, 'bold')
-  doc.text('DomineAqui', margin, footerY + 1)
-  doc.setFont(FONT, 'normal')
-  const daqW = doc.getTextWidth('DomineAqui')
-  doc.text(' - Manual / Provas', margin + daqW + 1, footerY + 1)
-  doc.text(`Página ${pageNum} de ${totalPages}`, pageWidth - margin, footerY + 1, { align: 'right' })
-
-  const dataGeracao = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })
-  doc.setFontSize(6.5)
-  doc.setTextColor(100, 100, 100)
-  doc.text(sanitizeForPdf(extraText || `Gerado em ${dataGeracao}`), pageWidth / 2, footerY - 1, { align: 'center' })
-  doc.setFont(FONT, 'italic')
-  doc.text('Criado por Thiago Rodrigues', pageWidth / 2, footerY + 4, { align: 'center' })
+  desenharRodape(doc, pageNum, totalPages, pageWidth, pageHeight, margin, extraText)
 }
 
 export async function generateGabaritoPDF(exam: Exam): Promise<Blob> {

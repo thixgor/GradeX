@@ -44,12 +44,32 @@ interface EstatisticaDeQuestao {
   questionId: string
   number: number
   type: string
+  /** Recorte curto, para a tela. O texto inteiro vai em `enunciadoCompleto`. */
   enunciado: string
+  /*
+   * O material que o PDF de análise imprime quando o admin marca "com
+   * enunciado / com imagem / com resposta comentada" numa questão em
+   * destaque. A tela do relatório não usa nada disto — ela mostra o recorte —,
+   * mas buscá-lo numa segunda rota significaria uma segunda leitura da prova
+   * inteira só para montar duas páginas do PDF. É rota de admin: enunciado,
+   * gabarito e comentário já são dele.
+   */
+  enunciadoCompleto: string
+  comando: string | null
+  imageUrl: string | null
+  imageSource: string | null
+  respostaComentada: string | null
   respondidas: number
   acertos: number
   percentualDeAcerto: number | null
   /** Quantos escolheram cada alternativa, na ordem canônica da prova. */
-  porAlternativa: { id: string; letter: string; isCorrect: boolean; escolhas: number }[]
+  porAlternativa: {
+    id: string
+    letter: string
+    text: string
+    isCorrect: boolean
+    escolhas: number
+  }[]
   emBranco: number
 }
 
@@ -154,6 +174,11 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
           number: questao.number,
           type: questao.type,
           enunciado: (questao.statement || '').slice(0, 220),
+          enunciadoCompleto: questao.statement || '',
+          comando: questao.command || null,
+          imageUrl: questao.imageUrl || null,
+          imageSource: (questao as any).imageSource || null,
+          respostaComentada: (questao as any).explanation || null,
           respondidas,
           acertos: 0,
           percentualDeAcerto: null,
@@ -179,6 +204,11 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         number: questao.number,
         type: questao.type,
         enunciado: (questao.statement || '').slice(0, 220),
+        enunciadoCompleto: questao.statement || '',
+        comando: questao.command || null,
+        imageUrl: questao.imageUrl || null,
+        imageSource: (questao as any).imageSource || null,
+        respostaComentada: (questao as any).explanation || null,
         respondidas,
         acertos,
         // Sobre quem RESPONDEU, não sobre quem entregou: uma questão respondida
@@ -188,6 +218,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         porAlternativa: (questao.alternatives || []).map((alternativa) => ({
           id: alternativa.id,
           letter: alternativa.letter,
+          text: alternativa.text || '',
           isCorrect: !!alternativa.isCorrect,
           escolhas: escolhas.get(alternativa.id) || 0,
         })),
@@ -196,11 +227,24 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     })
 
     // ── Participantes ──────────────────────────────────────────────────────
+    // Quantas objetivas a prova tem: o denominador do "acertou 14 de 20" que a
+    // classificação do PDF de análise imprime. Uma nota sozinha não diz isso —
+    // ela já vem ponderada pelos pontos de cada questão.
+    const objetivasDaProva = (exam.questions || []).filter((q) => q.type === 'multiple-choice')
+    const gabaritoPorQuestao = new Map(
+      objetivasDaProva.map((q) => [q.id, q.alternatives?.find((a) => a.isCorrect)?.id ?? null]),
+    )
+
     const participantes = submissoes
       .map((s) => ({
         userId: s.userId,
         userName: s.userName,
         score: usaTri ? s.triScore ?? null : s.score ?? null,
+        acertos: objetivasDaProva.reduce((total, questao) => {
+          const marcada = s.answers?.find((a) => a.questionId === questao.id)?.selectedAlternative
+          const correta = gabaritoPorQuestao.get(questao.id)
+          return total + (correta && marcada === correta ? 1 : 0)
+        }, 0),
         correctionStatus: s.correctionStatus || null,
         startedAt: s.startedAt || null,
         submittedAt: s.submittedAt,
@@ -218,10 +262,37 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       }))
       .sort((a, b) => (b.score ?? -1) - (a.score ?? -1))
 
+    /*
+     * Quanto tempo a turma levou.
+     *
+     * Só entram as entregas com início E fim registrados: `startedAt` vem do
+     * rascunho no servidor e falta nas provas entregues antes de a retomada
+     * existir. Medir a média sobre um denominador que inclui essas seria
+     * inventar zeros — por isso `comRegistro` sai junto do número.
+     */
+    const duracoes = participantes
+      .map((p) => p.duracaoMin)
+      .filter((d): d is number => typeof d === 'number' && Number.isFinite(d) && d >= 0)
+      .sort((a, b) => a - b)
+
+    const tempos = {
+      comRegistro: duracoes.length,
+      media: duracoes.length > 0 ? duracoes.reduce((a, b) => a + b, 0) / duracoes.length : null,
+      mediana: mediana(duracoes),
+      menor: duracoes.length > 0 ? duracoes[0] : null,
+      maior: duracoes.length > 0 ? duracoes[duracoes.length - 1] : null,
+      /** A duração declarada da prova, para o PDF dizer "de 120 min". */
+      duracaoDaProva: exam.duration ?? null,
+    }
+
     return NextResponse.json({
       prova: {
         id,
         title: exam.title,
+        // A capa e a descrição são do PDF de análise, que abre com elas.
+        description: exam.description || null,
+        coverImage: exam.coverImage || null,
+        totalPoints: exam.totalPoints ?? null,
         scoringMethod: exam.scoringMethod,
         notaMaxima,
         numberOfQuestions: exam.numberOfQuestions,
@@ -256,6 +327,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         distribuicao,
         aguardandoCorrecao: submissoes.filter((s) => s.correctionStatus === 'pending').length,
       },
+      tempos,
       questoes: estatisticas,
       participantes,
     })
