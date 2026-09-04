@@ -58,6 +58,11 @@ interface Purchase extends TimedAccessInfo {
   paidAt?: string
   pix?: { qrCode: string; qrCodeBase64: string } | null
   generating?: boolean
+  /** O comprador pediu o acesso na conta existente dele (em vez da Serial Key). */
+  deliveryMode?: 'account' | 'serial_key'
+  accountEmail?: string
+  /** Só é `true` quando a aplicação na conta realmente aconteceu. */
+  appliedToAccount?: boolean
 }
 
 function CopyButton({ text, label = 'Copiar' }: { text: string; label?: string }) {
@@ -132,6 +137,11 @@ function ApprovedView({ data }: { data: Purchase }) {
     ? new Date(data.paidAt || data.createdAt!).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
     : ''
 
+  // Compra aplicada direto na conta: não existe key para ativar, e mostrar uma
+  // faria a pessoa procurar um passo que não existe.
+  const appliedToAccount = data.appliedToAccount === true
+  const accountEmail = data.accountEmail || data.buyerEmail
+
   return (
     <div style={{ maxWidth: '720px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {/* Selo + animação */}
@@ -152,13 +162,49 @@ function ApprovedView({ data }: { data: Purchase }) {
           Obrigado pela compra, {firstName}! 🎉
         </h1>
         <p style={{ fontSize: '15px', color: 'rgba(255,255,255,0.7)', lineHeight: '1.6', maxWidth: '560px', margin: '0 auto' }}>
-          Seu acesso foi aprovado com sucesso. Enviamos todas as informações da compra e ativação para o e-mail{' '}
-          <strong style={{ color: '#34d399' }}>{data.buyerEmail}</strong>. Guarde sua Serial Key com segurança e use o botão abaixo para ativar seu produto.
+          {appliedToAccount ? (
+            <>
+              Seu acesso foi aprovado e <strong style={{ color: '#34d399' }}>já está na conta {accountEmail}</strong> —
+              você pediu que o material fosse aplicado direto nela, então não há chave para ativar. Entre com esse
+              e-mail e use agora. O comprovante foi enviado para {data.buyerEmail}.
+            </>
+          ) : (
+            <>
+              Seu acesso foi aprovado com sucesso. Enviamos todas as informações da compra e ativação para o e-mail{' '}
+              <strong style={{ color: '#34d399' }}>{data.buyerEmail}</strong>. Guarde sua Serial Key com segurança e use o botão abaixo para ativar seu produto.
+            </>
+          )}
         </p>
       </motion.div>
 
-      {/* Serial Key(s) */}
-      {data.isCart && data.serialKeys && data.serialKeys.length > 1 ? (
+      {/* Acesso já aplicado na conta — nada a ativar. */}
+      {appliedToAccount ? (
+        <div style={{ ...glassCard, padding: '24px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+            <ShieldCheck size={18} style={{ color: '#34d399' }} />
+            <span style={{ fontSize: '12px', fontWeight: 700, color: 'rgba(52,211,153,0.85)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+              Acesso liberado na sua conta
+            </span>
+          </div>
+          <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.7)', lineHeight: '1.6', marginBottom: '18px' }}>
+            {data.isCart && data.serialKeys && data.serialKeys.length > 1
+              ? `Os ${data.serialKeys.length} produtos já estão liberados na conta ${accountEmail}.`
+              : `${data.productTitle || 'Seu produto'} já está liberado na conta ${accountEmail}.`}{' '}
+            Entre com esse e-mail para usar — não há Serial Key para ativar.
+          </p>
+          <a
+            href={data.isCart ? '/materiais?tab=mine' : '/dashboard'}
+            style={{
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+              background: 'linear-gradient(135deg, #059669, #34d399)', boxShadow: '0 0 30px rgba(52,211,153,0.3)',
+              border: 'none', borderRadius: '12px', color: 'white', fontWeight: 700, fontSize: '15px',
+              padding: '14px 24px', cursor: 'pointer', width: '100%', textDecoration: 'none',
+            }}
+          >
+            Acessar agora <ArrowRight size={16} />
+          </a>
+        </div>
+      ) : data.isCart && data.serialKeys && data.serialKeys.length > 1 ? (
         <div style={{ ...glassCard, padding: '24px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
             <KeyRound size={18} style={{ color: '#34d399' }} />
@@ -266,9 +312,10 @@ function ApprovedView({ data }: { data: Purchase }) {
         <SummaryRow
           label="Modalidade de acesso"
           value={data.accessMode === 'timed' && data.accessDurationLabel
-            ? `${data.accessVersionLabel || 'Acesso temporário'} — ${data.accessDurationLabel} a partir da ativação, sem download`
+            ? `${data.accessVersionLabel || 'Acesso temporário'} — ${data.accessDurationLabel} a partir ${appliedToAccount ? 'de agora' : 'da ativação'}, sem download`
             : 'Acesso vitalício'}
         />
+        {appliedToAccount && <SummaryRow label="Destino do acesso" value={`Conta ${accountEmail}`} />}
         <SummaryRow label="Status do pagamento" value={data.statusLabel} />
         <SummaryRow label="Data e hora" value={dateStr} />
         <SummaryRow label="Nome completo" value={data.buyerName} />
@@ -326,6 +373,10 @@ function AprovadaContent() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
   const timer = useRef<ReturnType<typeof setInterval> | null>(null)
+  // Quantas consultas já esperaram a entrega na conta acontecer. Se a ativação
+  // automática falhou, ela nunca vai acontecer — passado o limite mostramos a
+  // Serial Key, que é justamente o caminho para onde o servidor voltou.
+  const accountWaits = useRef(0)
 
   useEffect(() => {
     if (!orderId || !token) { setError('Link inválido.'); setLoading(false); return }
@@ -339,8 +390,14 @@ function AprovadaContent() {
         setData(json)
         setLoading(false)
         // Para de pollar quando aprovado com key ou em estado de erro terminal.
+        // Na compra que vai direto para a conta existente, a key nasce e é
+        // ativada na mesma passagem do fulfillment: se a consulta pegou o meio
+        // desse caminho, seguimos pollando para não deixar na tela uma Serial
+        // Key que já não tem o que ativar.
         const terminalError = ['rejected', 'cancelled', 'expired', 'refunded', 'charged_back'].includes(json.status)
-        if ((json.approved && json.serialKey) || terminalError) {
+        const awaitingAccountDelivery =
+          json.deliveryMode === 'account' && !json.appliedToAccount && accountWaits.current++ < 8
+        if ((json.approved && json.serialKey && !awaitingAccountDelivery) || terminalError) {
           if (timer.current) clearInterval(timer.current)
         }
       } catch {

@@ -9,6 +9,11 @@ import { computeAccessExpiry, formatAccessDate } from '@/lib/material-timed-acce
 import { CheckoutAddonOffers } from '@/components/shop/checkout-addon-offers'
 import { UnifiedCheckoutPayment } from '@/components/shop/unified-checkout-payment'
 import { CheckoutAccountNotice } from '@/components/checkout/checkout-account-notice'
+import {
+  AccountDeliveryChoice,
+  useAccountDeliveryChoice,
+  type AccountDeliveryState,
+} from '@/components/checkout/account-delivery-choice'
 import { CouponPromo } from '@/components/checkout/coupon-promo'
 import { PackageContents } from '@/components/shop/package-contents'
 import { useMaterialCart } from '@/context/MaterialCartContext'
@@ -320,6 +325,13 @@ export default function MateriaisCheckoutPage() {
   const [isGuest, setIsGuest] = useState<boolean | null>(null)
   const [buyer, setBuyer] = useState({ name: '', email: '', phone: '' })
   const [buyerConfirmed, setBuyerConfirmed] = useState(false)
+  // O e-mail digitado já tem conta? Se tiver, perguntamos antes do pagamento se
+  // o carrinho deve cair direto nela ou virar Serial Keys no e-mail.
+  const accountDelivery = useAccountDeliveryChoice(
+    buyer.email,
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(buyer.email.trim())
+  )
+  const cartAppliesToAccount = accountDelivery.deliveryMode === 'account'
 
   // Usuário logado que já possui o item avulso: mostramos um aviso claro (em vez
   // de redirecionar em silêncio para a página do material, o que confundia).
@@ -1220,12 +1232,22 @@ export default function MateriaisCheckoutPage() {
                 </div>
               ) : isGuest ? (
                 !buyerConfirmed ? (
-                  <GuestBuyerForm buyer={buyer} setBuyer={setBuyer} onConfirm={() => setBuyerConfirmed(true)} />
+                  <GuestBuyerForm
+                    buyer={buyer}
+                    setBuyer={setBuyer}
+                    accountDelivery={accountDelivery}
+                    onConfirm={() => setBuyerConfirmed(true)}
+                  />
                 ) : (
                   <>
                     <div style={{ background: 'rgba(255,255,255,0.03)', borderRadius: '10px', padding: '10px 12px', marginBottom: '16px', fontSize: '12px', color: 'rgba(255,255,255,0.55)' }}>
                       Comprando como <strong style={{ color: 'white' }}>{buyer.name}</strong> · {buyer.email}
                       <button onClick={() => setBuyerConfirmed(false)} style={{ marginLeft: '8px', background: 'transparent', border: 'none', color: '#34d399', cursor: 'pointer', fontSize: '12px', textDecoration: 'underline' }}>editar</button>
+                      <span style={{ display: 'block', marginTop: '4px', color: 'white', fontWeight: 600 }}>
+                        {cartAppliesToAccount
+                          ? `Os itens vão direto para a conta ${accountDelivery.email}.`
+                          : 'As Serial Keys (uma por produto) vão para esse e-mail.'}
+                      </span>
                     </div>
                     <MercadoPagoCheckout
                       key={`cart-guest-${payableAmount}-${appliedCoupon?.code || 'sem-cupom'}`}
@@ -1233,7 +1255,7 @@ export default function MateriaisCheckoutPage() {
                       amount={payableAmount}
                       description={`Carrinho DomineAqui - ${cartPreview.payableItems.length} itens`}
                       endpoint="/api/serial-keys/checkout"
-                      extraBody={{ cart: cartPayload, buyerName: buyer.name, buyerEmail: buyer.email, buyerPhone: buyer.phone, couponCode: appliedCoupon?.code }}
+                      extraBody={{ cart: cartPayload, buyerName: buyer.name, buyerEmail: buyer.email, buyerPhone: buyer.phone, couponCode: appliedCoupon?.code, ...accountDelivery.checkoutBody }}
                       payerEmailHint={buyer.email}
                       payerNameHint={buyer.name}
                       analytics={{ productId: 'cart', productTitle: `Carrinho (${cartPreview.items.length} itens)`, productType: 'material', source: 'Serial Key' }}
@@ -1657,10 +1679,12 @@ export default function MateriaisCheckoutPage() {
 function GuestBuyerForm({
   buyer,
   setBuyer,
+  accountDelivery,
   onConfirm,
 }: {
   buyer: { name: string; email: string; phone: string }
   setBuyer: (b: { name: string; email: string; phone: string }) => void
+  accountDelivery: AccountDeliveryState
   onConfirm: () => void
 }) {
   const [touched, setTouched] = useState(false)
@@ -1668,7 +1692,8 @@ function GuestBuyerForm({
   const nameValid = buyer.name.trim().includes(' ') && buyer.name.trim().length >= 3
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(buyer.email.trim())
   const phoneValid = digits(buyer.phone).length >= 10 && digits(buyer.phone).length <= 15
-  const valid = nameValid && emailValid && phoneValid
+  // Com conta encontrada, só avança depois de responder para onde vai a compra.
+  const valid = nameValid && emailValid && phoneValid && accountDelivery.canProceed
 
   const label: React.CSSProperties = { display: 'block', fontSize: '12px', fontWeight: 600, color: 'rgba(52,211,153,0.8)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em' }
   const input: React.CSSProperties = { width: '100%', boxSizing: 'border-box', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(52,211,153,0.2)', color: 'white', borderRadius: '10px', padding: '12px 14px', fontSize: '14px', outline: 'none' }
@@ -1678,7 +1703,9 @@ function GuestBuyerForm({
       <div>
         <h2 style={{ fontSize: '18px', fontWeight: 800, color: 'white', marginBottom: '4px' }}>Seus dados</h2>
         <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)' }}>
-          Você comprará sem login. Enviaremos sua(s) Serial Key(s) por e-mail — uma para cada produto.
+          {accountDelivery.deliveryMode === 'account'
+            ? `Você comprará sem login, e o acesso entra direto na conta ${accountDelivery.email} — não há chave para ativar.`
+            : 'Você comprará sem login. Enviaremos sua(s) Serial Key(s) por e-mail — uma para cada produto.'}
         </p>
       </div>
       <div>
@@ -1696,6 +1723,7 @@ function GuestBuyerForm({
         <input value={buyer.phone} onChange={(e) => setBuyer({ ...buyer, phone: e.target.value })} onBlur={() => setTouched(true)} placeholder="(00) 00000-0000" style={input} />
         {touched && !phoneValid && <span style={{ fontSize: '11px', color: '#f87171' }}>Telefone inválido.</span>}
       </div>
+      <AccountDeliveryChoice state={accountDelivery} tone="dark" highlightMissing={touched} />
       <button
         onClick={() => { setTouched(true); if (valid) onConfirm() }}
         disabled={!valid}

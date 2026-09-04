@@ -9,6 +9,7 @@ import { PricingEventCountdown } from '@/components/pricing-events/PricingEventC
 import { PublicPageShell } from '@/components/public-page-shell'
 import { TimedAccessNotice } from '@/components/materiais/timed-access'
 import { CheckoutAccountNotice } from '@/components/checkout/checkout-account-notice'
+import { AccountDeliveryChoice, useAccountDeliveryChoice } from '@/components/checkout/account-delivery-choice'
 import { CouponPromo } from '@/components/checkout/coupon-promo'
 import { PackageContents } from '@/components/shop/package-contents'
 import { ListaDoPacote } from '@/components/manual-clinico/pacote'
@@ -318,6 +319,11 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
   const phoneValid = digits(phone).length >= 10 && digits(phone).length <= 15
   const buyerValid = nameValid && emailValid && phoneValid
 
+  // O e-mail digitado já tem conta? Se tiver, perguntamos antes do pagamento se
+  // o acesso deve entrar direto nela ou vir por Serial Key.
+  const accountDelivery = useAccountDeliveryChoice(email, emailValid)
+  const canGoToPayment = buyerValid && accountDelivery.canProceed
+
   if (loading) {
     return (
       <div className="mx-auto max-w-6xl">
@@ -394,7 +400,9 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
     buyerEmail: email.trim().toLowerCase(),
     buyerPhone: phone.trim(),
     couponCode: appliedCoupon?.code,
+    ...accountDelivery.checkoutBody,
   }
+  const appliesToAccount = accountDelivery.deliveryMode === 'account'
 
   return (
     <div className="mx-auto max-w-6xl text-foreground">
@@ -629,7 +637,9 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
             </div>
           ) : step === 'buyer' ? (
             <div className="flex flex-col gap-4">
-              <CheckoutAccountNotice variant="serial-key" />
+              {/* Quem escolheu aplicar na conta não recebe Serial Key nenhuma —
+                  o aviso de "o acesso vai para o e-mail digitado" mentiria. */}
+              {!appliesToAccount && <CheckoutAccountNotice variant="serial-key" />}
               <div>
                 <label style={labelStyle}><User size={12} style={{ display: 'inline', marginRight: 4 }} /> Nome completo</label>
                 <input value={name} onChange={(e) => setName(e.target.value)} onBlur={() => setTouched(true)} placeholder="Seu nome completo" style={inputStyle} />
@@ -645,12 +655,15 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
                 <input value={phone} onChange={(e) => setPhone(e.target.value)} onBlur={() => setTouched(true)} placeholder="(00) 00000-0000" style={inputStyle} />
                 {touched && !phoneValid && <span className="text-[11px] text-destructive">Telefone inválido.</span>}
               </div>
+              <AccountDeliveryChoice state={accountDelivery} highlightMissing={touched} />
               <p className="text-xs leading-relaxed text-muted-foreground">
-                Usamos esses dados para vincular sua compra, gerar sua Serial Key e enviar o comprovante. Não é necessário criar conta agora.
+                {appliesToAccount
+                  ? `Usamos esses dados para vincular sua compra e enviar o comprovante. O acesso entra direto na conta ${accountDelivery.email} — não há chave para ativar.`
+                  : 'Usamos esses dados para vincular sua compra, gerar sua Serial Key e enviar o comprovante. Não é necessário criar conta agora.'}
               </p>
               <button
-                onClick={() => { setTouched(true); if (buyerValid) setStep('payment') }}
-                disabled={!buyerValid}
+                onClick={() => { setTouched(true); if (canGoToPayment) setStep('payment') }}
+                disabled={!canGoToPayment}
                 className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-secondary text-sm font-bold text-secondary-foreground shadow-sm transition hover:bg-secondary/90 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 Ir para pagamento <ArrowRight className="h-4 w-4" />
@@ -666,6 +679,11 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
               </button>
               <div className="rounded-lg border border-border bg-muted/40 px-3.5 py-3 text-xs text-muted-foreground">
                 Comprando como <strong className="text-foreground">{name}</strong> · {email} · {phone}
+                <span className="mt-1 block font-semibold text-foreground">
+                  {appliesToAccount
+                    ? `O acesso vai direto para a conta ${accountDelivery.email}.`
+                    : `A Serial Key vai para ${email.trim().toLowerCase()}.`}
+                </span>
               </div>
 
               <MercadoPagoCheckout
@@ -754,6 +772,12 @@ function GenericComprarContent({ productType }: { productType: string }) {
   const phoneValid = digits(phone).length >= 10 && digits(phone).length <= 15
   const buyerValid = nameValid && emailValid && phoneValid
 
+  // O e-mail digitado já tem conta? Se tiver, perguntamos antes do pagamento se
+  // o acesso deve entrar direto nela ou vir por Serial Key.
+  const accountDelivery = useAccountDeliveryChoice(email, emailValid)
+  const appliesToAccount = accountDelivery.deliveryMode === 'account'
+  const canGoToPayment = buyerValid && accountDelivery.canProceed
+
   const baseAmount = Number(product?.amount ?? 0)
   const tierPct = pricingEventState?.activeTier?.discountPercent || 0
   const hasActiveTier = !!pricingEventState?.activeTier && pricingEventState?.isActive !== false && tierPct > 0 && baseAmount > 0
@@ -772,7 +796,8 @@ function GenericComprarContent({ productType }: { productType: string }) {
     accessVersionId: accessVersionId || undefined,
     buyerName: name.trim(), buyerEmail: email.trim().toLowerCase(), buyerPhone: phone.trim(),
     couponCode: appliedCoupon?.code,
-  }), [productType, productId, planKey, itemType, accessVersionId, name, email, phone, appliedCoupon])
+    ...(accountDelivery.deliveryMode ? { deliveryMode: accountDelivery.deliveryMode } : {}),
+  }), [productType, productId, planKey, itemType, accessVersionId, name, email, phone, appliedCoupon, accountDelivery.deliveryMode])
 
   // `override` é o caminho do chamativo: a faixa manda o código direto, sem
   // depender do que está digitado no campo.
@@ -1028,7 +1053,9 @@ function GenericComprarContent({ productType }: { productType: string }) {
         <div className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
           {step === 'buyer' ? (
             <div className="flex flex-col gap-4">
-              <CheckoutAccountNotice variant="serial-key" />
+              {/* Quem escolheu aplicar na conta não recebe Serial Key nenhuma —
+                  o aviso de "o acesso vai para o e-mail digitado" mentiria. */}
+              {!appliesToAccount && <CheckoutAccountNotice variant="serial-key" />}
               <div>
                 <label style={labelStyle}><User size={12} style={{ display: 'inline', marginRight: 4 }} /> Nome completo</label>
                 <input value={name} onChange={(e) => setName(e.target.value)} onBlur={() => setTouched(true)} placeholder="Seu nome completo" style={inputStyle} />
@@ -1044,13 +1071,16 @@ function GenericComprarContent({ productType }: { productType: string }) {
                 <input value={phone} onChange={(e) => setPhone(e.target.value)} onBlur={() => setTouched(true)} placeholder="(00) 00000-0000" style={inputStyle} />
                 {touched && !phoneValid && <span className="text-[11px] text-destructive">Telefone inválido.</span>}
               </div>
+              <AccountDeliveryChoice state={accountDelivery} highlightMissing={touched} />
               <p className="text-xs leading-relaxed text-muted-foreground">
-                Usamos esses dados para vincular sua compra, gerar sua Serial Key e enviar o comprovante. Não é necessário criar conta agora.
+                {appliesToAccount
+                  ? `Usamos esses dados para vincular sua compra e enviar o comprovante. O acesso entra direto na conta ${accountDelivery.email} — não há chave para ativar.`
+                  : 'Usamos esses dados para vincular sua compra, gerar sua Serial Key e enviar o comprovante. Não é necessário criar conta agora.'}
               </p>
               <button
                 type="button"
-                onClick={() => { setTouched(true); if (buyerValid) setStep('payment') }}
-                disabled={!buyerValid}
+                onClick={() => { setTouched(true); if (canGoToPayment) setStep('payment') }}
+                disabled={!canGoToPayment}
                 className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-secondary text-[15px] font-bold text-secondary-foreground shadow-sm transition hover:bg-secondary/90 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 Ir para pagamento <ArrowRight className="h-4 w-4" />
@@ -1067,6 +1097,11 @@ function GenericComprarContent({ productType }: { productType: string }) {
               </button>
               <div className="mb-4 rounded-lg border border-border bg-muted/40 px-3.5 py-3 text-xs text-muted-foreground">
                 Comprando como <strong className="text-foreground">{name}</strong> · {email} · {phone}
+                <span className="mt-1 block font-semibold text-foreground">
+                  {appliesToAccount
+                    ? `O acesso vai direto para a conta ${accountDelivery.email}.`
+                    : `A Serial Key vai para ${email.trim().toLowerCase()}.`}
+                </span>
               </div>
               <MercadoPagoCheckout
                 key={`comprar-${payableAmount}-${appliedCoupon?.code || 'sem-cupom'}`}

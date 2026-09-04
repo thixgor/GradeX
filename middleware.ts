@@ -152,6 +152,10 @@ const publicPrefixes = [
   '/api/serial-keys/checkout',
   '/api/serial-keys/purchase',
   '/api/serial-keys/activate',
+  // "Este e-mail já tem conta?" — perguntado pelas telas de compra sem login
+  // antes do pagamento. Só devolve um booleano e o primeiro nome; tem rate
+  // limit próprio e nunca decide para onde o material vai (isso é do checkout).
+  '/api/serial-keys/account-lookup',
   '/compra/aprovada',
   '/compra',
   '/api/plans',

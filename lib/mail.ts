@@ -1479,6 +1479,116 @@ export async function sendSerialKeyPurchaseEmail(input: {
 }
 
 /**
+ * Compra sem login que o comprador mandou aplicar DIRETO na conta existente
+ * dele (o e-mail informado no checkout já tinha cadastro).
+ *
+ * É o oposto do e-mail de Serial Key: aqui não há nada para ativar — o produto
+ * já está liberado na conta. Por isso o e-mail não mostra key nem QR, e o botão
+ * leva direto para onde o material está. A key existe no banco só como registro
+ * da compra, já marcada como ativada nessa conta.
+ */
+export async function sendSerialKeyAccountDeliveryEmail(input: {
+  email: string
+  accountName: string
+  accountEmail: string
+  buyerName: string
+  buyerPhone: string
+  items: { productTitle: string; productTypeLabel: string; amount: number; accessNotice?: string }[]
+  totalAmount: number
+  paymentStatusLabel: string
+  paymentMethodLabel?: string
+  transactionId?: string
+  purchasedAt: Date
+  accessUrl: string
+  receiptText: string
+  materialAttachments?: MaterialEmailAttachment[]
+}) {
+  const firstName = input.accountName ? input.accountName.split(' ')[0] : 'Aluno'
+  const dateStr = new Intl.DateTimeFormat('pt-BR', {
+    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit',
+    timeZone: 'America/Sao_Paulo',
+  }).format(input.purchasedAt)
+  const materialPdfs = input.materialAttachments || []
+  const hasMaterialPdf = materialPdfs.length > 0
+  const multiple = input.items.length > 1
+
+  const itemsList = input.items
+    .map(item => `
+      <tr>
+        <td style="padding: 10px 0; border-bottom: 1px solid #edf2f7;">
+          <p style="margin: 0; font-size: 15px; font-weight: 700; color: #0f3d2e;">${escapeHtml(item.productTitle)}</p>
+          <p style="margin: 2px 0 0 0; font-size: 12px; color: #718096;">${escapeHtml(item.productTypeLabel)}</p>
+          ${item.accessNotice ? `<p style="margin: 4px 0 0 0; font-size: 12px; color: #b45309;">${escapeHtml(item.accessNotice)}</p>` : ''}
+        </td>
+        <td style="padding: 10px 0; border-bottom: 1px solid #edf2f7; text-align: right; font-weight: 700; color: #0f3d2e; white-space: nowrap;">R$ ${item.amount.toFixed(2).replace('.', ',')}</td>
+      </tr>
+    `)
+    .join('')
+
+  const content = `
+    <h1 class="h1">Pronto, ${firstName} — já está na sua conta! 🎉</h1>
+    <p>
+      Você comprou sem entrar, mas pediu que o acesso fosse aplicado direto na conta
+      <strong>${escapeHtml(input.accountEmail)}</strong> — e foi exatamente isso que fizemos.
+      <strong>Não há Serial Key para ativar:</strong> é só entrar e usar.
+    </p>
+
+    <div style="background-color: #ecfdf5; border: 1px solid #a7f3d0; border-left: 4px solid #059669; border-radius: 10px; padding: 16px 18px; margin: 22px 0;">
+      <p style="margin: 0; font-size: 14px; color: #065f46;">
+        <strong>Acesso liberado na conta ${escapeHtml(input.accountEmail)}.</strong>
+        Entre com esse e-mail e ${multiple ? 'os produtos aparecem' : 'o produto aparece'} liberado${multiple ? 's' : ''} para você.
+      </p>
+    </div>
+
+    <div style="text-align: center;">
+      <a href="${input.accessUrl}" class="button" target="_blank">Acessar agora</a>
+    </div>
+
+    <p style="margin-top: 16px; font-size: 13px; color: #718096; text-align: center;">
+      Ou copie e cole este link no seu navegador:<br>
+      <a href="${input.accessUrl}" style="color: #0f3d2e; word-break: break-all;">${input.accessUrl}</a>
+    </p>
+
+    ${hasMaterialPdf ? `<hr>${materialAttachmentsBlock(materialPdfs, { deliveredToEmail: input.email })}` : ''}
+
+    <hr>
+
+    <!-- Resumo / comprovante -->
+    <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px 20px; margin: 20px 0;">
+      <p style="margin: 0 0 10px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: #0f3d2e; font-weight: 700;">Comprovante da compra</p>
+      <table role="presentation" width="100%" style="font-size: 14px; color: #4a5568; border-collapse: collapse;">
+        ${itemsList}
+        <tr><td style="padding: 10px 0 3px 0; color: #718096;">Total pago</td><td style="padding: 10px 0 3px 0; text-align: right; font-weight: 800; color: #0f3d2e;">R$ ${input.totalAmount.toFixed(2).replace('.', ',')}</td></tr>
+        <tr><td style="padding: 3px 0; color: #718096;">Comprador</td><td style="padding: 3px 0; text-align: right; font-weight: 600;">${escapeHtml(input.buyerName)}</td></tr>
+        <tr><td style="padding: 3px 0; color: #718096;">Conta de destino</td><td style="padding: 3px 0; text-align: right; font-weight: 600;">${escapeHtml(input.accountEmail)}</td></tr>
+        ${input.buyerPhone ? `<tr><td style="padding: 3px 0; color: #718096;">Telefone</td><td style="padding: 3px 0; text-align: right; font-weight: 600;">${escapeHtml(input.buyerPhone)}</td></tr>` : ''}
+        <tr><td style="padding: 3px 0; color: #718096;">Status</td><td style="padding: 3px 0; text-align: right; font-weight: 600; color: #059669;">${escapeHtml(input.paymentStatusLabel)}</td></tr>
+        ${input.paymentMethodLabel ? `<tr><td style="padding: 3px 0; color: #718096;">Forma de pagamento</td><td style="padding: 3px 0; text-align: right; font-weight: 600;">${escapeHtml(input.paymentMethodLabel)}</td></tr>` : ''}
+        ${input.transactionId ? `<tr><td style="padding: 3px 0; color: #718096;">ID da transação</td><td style="padding: 3px 0; text-align: right; font-weight: 600;">${escapeHtml(input.transactionId)}</td></tr>` : ''}
+        <tr><td style="padding: 3px 0; color: #718096;">Data e hora</td><td style="padding: 3px 0; text-align: right; font-weight: 600;">${dateStr}</td></tr>
+      </table>
+    </div>
+
+    <p style="font-size: 12px; color: #a0aec0;">
+      Não reconhece esta compra ou queria o acesso em outra conta? Responda este e-mail que nós resolvemos.
+    </p>
+  `
+
+  const html = getEmailTemplate('Acesso liberado na sua conta', content)
+
+  await transporter.sendMail({
+    from: '"DomineAqui" <no-reply@domineaqui.com.br>',
+    to: input.email,
+    subject: multiple
+      ? `✅ Compra aprovada — ${input.items.length} produtos liberados na sua conta`
+      : `✅ Compra aprovada — ${input.items[0]?.productTitle || 'seu produto'} liberado na sua conta`,
+    html,
+    text: input.receiptText,
+    attachments: hasMaterialPdf ? toPdfMailAttachments(materialPdfs) : undefined,
+  })
+}
+
+/**
  * E-mail premium pós-compra de VÁRIAS Serial Keys (carrinho com mais de um
  * produto). Lista cada produto com sua Serial Key, link e QR de ativação, e
  * anexa um comprovante em PDF consolidado. Responsivo (Gmail/Outlook/mobile).

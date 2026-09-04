@@ -14,10 +14,12 @@ import {
   resolveSerialKeyProduct,
   parseBuyerInfo,
   isSerialKeyProductType,
+  findAccountByEmail,
   generateReceiptToken,
   getSuccessUrl,
   logSerialKeySecurity,
   productTypeLabel,
+  type BuyerAccountMatch,
 } from '@/lib/serial-keys'
 import {
   MAX_MATERIAL_CART_ITEMS,
@@ -74,6 +76,11 @@ const Schema = z.object({
   buyerName: z.string().max(140),
   buyerEmail: z.string().max(180),
   buyerPhone: z.string().max(40),
+  /**
+   * Para onde vai o que foi comprado quando o e-mail informado já tem conta:
+   * `account` aplica direto nela; `serial_key` (padrão) manda a key por e-mail.
+   */
+  deliveryMode: z.enum(['serial_key', 'account']).optional(),
   // Pagamento
   paymentMethodId: z.string().min(1),
   cardToken: z.string().optional(),
@@ -89,6 +96,7 @@ const buyerFields = {
   buyerName: z.string().max(140),
   buyerEmail: z.string().max(180),
   buyerPhone: z.string().max(40),
+  deliveryMode: z.enum(['serial_key', 'account']).optional(),
 }
 const paymentFields = {
   paymentMethodId: z.string().min(1),
@@ -125,6 +133,48 @@ function analyticsTypeFor(productType: SerialKeyProductType): AnalyticsProductTy
   if (productType === 'material') return 'material'
   if (productType === 'manual_clinico') return 'product'
   return 'plan'
+}
+
+/**
+ * Resolve para ONDE a compra sem login deve ir.
+ *
+ * O comprador que digitou um e-mail com conta existente foi perguntado, antes
+ * de pagar, se queria o material aplicado direto nela. `deliveryMode` carrega a
+ * resposta — mas o id da conta NUNCA vem do client: procuramos a conta aqui
+ * pelo e-mail já validado da compra. Assim ninguém aponta a entrega para a
+ * conta de outra pessoa mandando um id no corpo da requisição.
+ *
+ * Se a conta não existir mais (apagada entre a pergunta e o pagamento), devolve
+ * `null` e a compra segue pela Serial Key — o comprador recebe o produto por
+ * e-mail de qualquer jeito, que é melhor do que recusar um pagamento.
+ */
+async function resolveAccountDelivery(
+  db: Awaited<ReturnType<typeof getDb>>,
+  deliveryMode: 'serial_key' | 'account' | undefined,
+  buyerEmail: string
+): Promise<BuyerAccountMatch | null> {
+  if (deliveryMode !== 'account') return null
+  const account = await findAccountByEmail(db, buyerEmail).catch((err) => {
+    console.error('[serial-keys/checkout] falha ao procurar conta do comprador:', err)
+    return null
+  })
+  if (!account) {
+    console.warn('[serial-keys/checkout] entrega em conta pedida sem conta correspondente; seguindo por Serial Key')
+  }
+  return account
+}
+
+/** Registra na order o destino escolhido (lido depois no fulfillment). */
+function accountDeliveryMetadata(target: BuyerAccountMatch | null) {
+  if (!target) return { deliveryMode: 'serial_key' as const }
+  return {
+    deliveryMode: 'account' as const,
+    accountDelivery: {
+      userId: target.userId,
+      email: target.email,
+      name: target.name,
+    },
+  }
 }
 
 // GET — resolve produto e preço para exibição no checkout (sem criar order).
@@ -347,6 +397,9 @@ export async function POST(request: NextRequest) {
   const receiptToken = generateReceiptToken()
   const now = new Date()
 
+  // Conta existente escolhida pelo comprador (revalidada aqui pelo e-mail).
+  const accountDelivery = await resolveAccountDelivery(db, data.deliveryMode, buyer.email)
+
   const orderDoc: Omit<PaymentOrder, '_id'> = {
     userId: session?.userId,
     payerEmail: buyer.email,
@@ -383,6 +436,7 @@ export async function POST(request: NextRequest) {
       ip,
       userAgent,
       source: 'Serial Key',
+      ...accountDeliveryMetadata(accountDelivery),
       ...couponAnalyticsMetadata(couponValidation),
     },
     createdAt: now,
@@ -670,6 +724,8 @@ async function handleCartCheckout(
 
   const receiptToken = generateReceiptToken()
   const now = new Date()
+  // Conta existente escolhida pelo comprador (revalidada aqui pelo e-mail).
+  const accountDelivery = await resolveAccountDelivery(db, data.deliveryMode, buyer.email)
   const itemCount = serialKeyCart.length
   const description = `Carrinho DomineAqui - ${itemCount} ${itemCount === 1 ? 'item' : 'itens'}`
 
@@ -700,6 +756,7 @@ async function handleCartCheckout(
       ip,
       userAgent,
       source: 'Serial Key (carrinho)',
+      ...accountDeliveryMetadata(accountDelivery),
       ...couponAnalyticsMetadata(couponValidation),
     },
     createdAt: now,

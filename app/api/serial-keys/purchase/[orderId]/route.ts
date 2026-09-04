@@ -89,6 +89,11 @@ export async function GET(request: NextRequest, { params }: { params: { orderId:
     createdAt: current.createdAt,
     paidAt: current.paidAt,
     transactionId: current.providerPaymentId,
+    // Compra que o comprador mandou aplicar direto na conta existente dele.
+    deliveryMode: current.metadata?.deliveryMode === 'account' ? 'account' : 'serial_key',
+    accountEmail: current.metadata?.deliveryMode === 'account'
+      ? String(current.metadata?.accountDelivery?.email || '')
+      : undefined,
   }
 
   if (current.status !== 'approved') {
@@ -133,10 +138,19 @@ export async function GET(request: NextRequest, { params }: { params: { orderId:
     }
   }))
 
+  // A entrega na conta só pode ser anunciada quando ela de fato aconteceu: se a
+  // ativação automática falhou, a key volta a ser o caminho e a página precisa
+  // mostrá-la. Por isso conferimos as keys, não só a intenção gravada na order.
+  const accountUserId = String(current.metadata?.accountDelivery?.userId || '')
+  const appliedToAccount = base.deliveryMode === 'account'
+    && !!accountUserId
+    && serials.every((serial) => serial.activatedByUserId === accountUserId)
+
   const primary = serials[0]
   return NextResponse.json({
     ...base,
     approved: true,
+    appliedToAccount,
     // Compat: campos únicos apontam para a primeira key.
     serialKey: primary.key,
     serialKeyStatus: primary.status,

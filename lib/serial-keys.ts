@@ -166,6 +166,41 @@ export function parseBuyerInfo(input: {
   return { ok: true, buyer: { name, firstName: firstNameOf(name), email, phone } }
 }
 
+// ── Conta existente com o e-mail informado na compra ─────────────────────────
+
+/**
+ * Conta encontrada a partir do e-mail digitado numa compra SEM LOGIN.
+ *
+ * Existe porque quem compra sem entrar quase sempre JÁ TEM conta: digita o
+ * mesmo e-mail, paga, recebe a Serial Key e só descobre depois que precisaria
+ * ativá-la. Com a conta identificada antes do pagamento dá para perguntar o que
+ * ele quer — aplicar o material direto nela, ou receber a key no e-mail.
+ */
+export interface BuyerAccountMatch {
+  userId: string
+  name: string
+  email: string
+}
+
+/**
+ * Procura a conta dona de `email`. Retorna apenas o mínimo necessário para a
+ * pergunta do checkout e para a entrega direta; nada de dados pessoais.
+ */
+export async function findAccountByEmail(db: Db, email: unknown): Promise<BuyerAccountMatch | null> {
+  const normalized = String(email ?? '').trim().toLowerCase()
+  if (!isValidEmail(normalized)) return null
+  const user = await db.collection<User>('users').findOne(
+    { email: normalized },
+    { projection: { name: 1, email: 1 } }
+  )
+  if (!user?._id) return null
+  return {
+    userId: String(user._id),
+    name: sanitizeName(user.name || ''),
+    email: String(user.email || normalized).toLowerCase(),
+  }
+}
+
 // ── URLs ─────────────────────────────────────────────────────────────────────
 
 export function getAppUrl(): string {

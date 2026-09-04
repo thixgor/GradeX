@@ -9,6 +9,9 @@ import { getDb } from './mongodb'
 import {
   createSerialKeysForOrder,
   getActivationUrl,
+  getAppUrl,
+  grantSerialKeyProduct,
+  markSerialKeyActivated,
   productTypeLabel,
   paymentStatusLabel,
   SERIAL_KEYS_COLLECTION,
@@ -19,7 +22,12 @@ import {
   buildReceiptText,
   type SerialKeyReceiptData,
 } from './serial-key-receipt'
-import { sendSerialKeyPurchaseEmail, sendSerialKeyCartPurchaseEmail, type MaterialEmailAttachment } from './mail'
+import {
+  sendSerialKeyPurchaseEmail,
+  sendSerialKeyCartPurchaseEmail,
+  sendSerialKeyAccountDeliveryEmail,
+  type MaterialEmailAttachment,
+} from './mail'
 import { buildAutoEmailPdfAttachments } from './material-pdf-email'
 import { formatDuration, formatDurationMinutes, normalizeDuration } from './material-timed-access'
 import type { PaymentOrder, SerialKey, SerialKeyEmailLog } from './types'
@@ -334,6 +342,199 @@ export async function sendSerialKeyCartEmail(
   return ok
 }
 
+// ── Entrega direto na conta existente do comprador ──────────────────────────
+
+/** Conta de destino gravada na order pelo checkout (nunca vinda do client). */
+export interface AccountDeliveryTarget {
+  userId: string
+  email: string
+  name: string
+}
+
+/**
+ * A compra pediu para ser aplicada direto numa conta existente?
+ *
+ * Quem responde é a order: o checkout já procurou a conta pelo e-mail da compra
+ * e gravou o destino em `metadata.accountDelivery`. Aqui só lemos.
+ */
+export function accountDeliveryTargetOf(order: PaymentOrder): AccountDeliveryTarget | null {
+  if (order.metadata?.deliveryMode !== 'account') return null
+  const target = order.metadata?.accountDelivery
+  const userId = String(target?.userId || '')
+  if (!userId || !ObjectId.isValid(userId)) return null
+  return {
+    userId,
+    email: String(target?.email || order.metadata?.buyerEmail || '').toLowerCase(),
+    name: String(target?.name || order.payerName || ''),
+  }
+}
+
+export interface AccountDeliveryOutcome {
+  /** Keys que ficaram (ou já estavam) ativadas na conta de destino. */
+  applied: SerialKey[]
+  /** Keys que continuam sem ativação — precisam ir por e-mail como Serial Key. */
+  pending: SerialKey[]
+  /** Para onde mandar a pessoa: a página do produto (1 item) ou "meus materiais". */
+  accessPath: string
+}
+
+/**
+ * Ativa as keys da compra na conta escolhida, exatamente como se a pessoa
+ * tivesse clicado no link de ativação.
+ *
+ * É idempotente por natureza: `grantSerialKeyProduct` roda uma vez por key e a
+ * key já ativada nesta conta é contada como aplicada sem repetir a concessão —
+ * o webhook do Mercado Pago repete a mesma notificação com frequência.
+ *
+ * Nada aqui pode derrubar a entrega: a key que falhar volta em `pending` e sai
+ * pelo caminho normal (e-mail com Serial Key), para o comprador nunca ficar sem
+ * o que pagou.
+ */
+export async function activateKeysForAccount(
+  db: Db,
+  keys: SerialKey[],
+  target: AccountDeliveryTarget
+): Promise<AccountDeliveryOutcome> {
+  const applied: SerialKey[] = []
+  const pending: SerialKey[] = []
+  const redirects: string[] = []
+
+  for (const key of keys) {
+    // Já ativada: nesta conta é sucesso (reentrega do webhook); em outra conta
+    // não há nada a fazer — e o e-mail daquela ativação já foi.
+    if (key.status === 'activated' || key.used) {
+      if (key.activatedByUserId === target.userId) applied.push(key)
+      continue
+    }
+    if (!key.grant || !key._id) {
+      pending.push(key)
+      continue
+    }
+    try {
+      const granted = await grantSerialKeyProduct(db, key, target)
+      await markSerialKeyActivated(db, key._id as any, target)
+      redirects.push(granted.redirectTo)
+      applied.push({
+        ...key,
+        used: true,
+        status: 'activated',
+        activatedByUserId: target.userId,
+        activatedByEmail: target.email,
+        activatedAt: new Date(),
+      })
+    } catch (err) {
+      console.error('[serial-key] falha ao aplicar key na conta do comprador:', key.key, err)
+      pending.push(key)
+    }
+  }
+
+  return {
+    applied,
+    pending,
+    accessPath: applied.length === 1 && redirects.length === 1 ? redirects[0] : '/materiais?tab=mine',
+  }
+}
+
+/**
+ * Avisa que a compra já está na conta — sem key, sem QR, sem "ative aqui".
+ * Registra o envio no histórico das keys aplicadas, o que também torna o
+ * reenvio do webhook inofensivo.
+ */
+async function sendAccountDeliveryEmail(
+  db: Db,
+  keys: SerialKey[],
+  target: AccountDeliveryTarget,
+  outcome: AccountDeliveryOutcome,
+  opts: { paymentMethod?: string; kind?: 'purchase' | 'resend'; sentBy?: string } = {}
+): Promise<boolean> {
+  const first = keys[0]
+  if (!first) return false
+  const kind = opts.kind || 'purchase'
+  const to = target.email || first.buyerEmail || ''
+  if (!to) return false
+
+  let ok = false
+  let error: string | undefined
+  try {
+    // PDFs com marca d'água dos materiais que têm envio automático habilitado.
+    // A marca sai no nome do comprador, como em qualquer compra.
+    const materialAttachments: MaterialEmailAttachment[] = []
+    for (const key of keys) {
+      const res = await buildSerialMaterialAttachments(db, key)
+      if (res.eligible) materialAttachments.push(...res.attachments)
+    }
+
+    const items = keys.map((key) => {
+      const timed = timedAccessOf(key)
+      return {
+        productTitle: key.productTitle || 'Produto',
+        productTypeLabel: productTypeLabel(key.productType),
+        amount: key.amount || 0,
+        accessNotice: timed
+          ? `${timed.versionLabel || 'Acesso temporário'} — ${timed.durationLabel} a partir de agora, sem download.`
+          : undefined,
+      }
+    })
+    const totalAmount = keys.reduce((sum, key) => sum + (key.amount || 0), 0)
+    const purchasedAt = first.generatedAt ? new Date(first.generatedAt) : new Date()
+    const paymentMethodLabel = opts.paymentMethod
+      ? (PAYMENT_METHOD_LABELS[opts.paymentMethod] || opts.paymentMethod)
+      : undefined
+    const accessUrl = `${getAppUrl()}${outcome.accessPath}`
+
+    const receiptText = [
+      'COMPROVANTE DE COMPRA - DomineAqui',
+      '===================================',
+      `Comprador: ${first.buyerName || ''}`,
+      `Conta de destino: ${target.email}`,
+      first.buyerPhone ? `Telefone: ${first.buyerPhone}` : '',
+      ...items.map(item => `Produto: ${item.productTitle} (${item.productTypeLabel}) - R$ ${item.amount.toFixed(2).replace('.', ',')}`),
+      `Total pago: R$ ${totalAmount.toFixed(2).replace('.', ',')}`,
+      `Status do pagamento: ${paymentStatusLabel(first.paymentStatus)}`,
+      paymentMethodLabel ? `Forma de pagamento: ${paymentMethodLabel}` : '',
+      first.providerPaymentId ? `ID da transação: ${first.providerPaymentId}` : '',
+      '-----------------------------------',
+      'O acesso JÁ FOI APLICADO na conta acima. Não há Serial Key para ativar.',
+      `Acesse: ${accessUrl}`,
+      '-----------------------------------',
+      'Suporte: suporte@domineaqui.com.br',
+    ].filter(Boolean).join('\n')
+
+    await sendWithRetry('envio de acesso aplicado na conta', () => sendSerialKeyAccountDeliveryEmail({
+      email: to,
+      accountName: target.name || first.buyerName || '',
+      accountEmail: target.email,
+      buyerName: first.buyerName || '',
+      buyerPhone: first.buyerPhone || '',
+      items,
+      totalAmount,
+      paymentStatusLabel: paymentStatusLabel(first.paymentStatus),
+      paymentMethodLabel,
+      transactionId: first.providerPaymentId,
+      purchasedAt,
+      accessUrl,
+      receiptText,
+      materialAttachments,
+    }))
+    ok = true
+  } catch (err: any) {
+    console.error('[serial-key] falha ao enviar e-mail de acesso aplicado na conta:', err)
+    error = String(err?.message || err)
+  }
+
+  const log: SerialKeyEmailLog = {
+    to, status: ok ? 'sent' : 'failed', kind, sentAt: new Date(), error, sentBy: opts.sentBy,
+  }
+  const ids = keys.filter(k => k._id).map(k => new ObjectId(String(k._id)))
+  if (ids.length > 0) {
+    await db.collection<SerialKey>(SERIAL_KEYS_COLLECTION).updateMany(
+      { _id: { $in: ids } as any },
+      { $push: { emailHistory: log } }
+    ).catch(err => console.error('[serial-key] falha ao registrar histórico de e-mail:', err))
+  }
+  return ok
+}
+
 /**
  * Ponto de entrada chamado pelos efeitos de pagamento aprovado. Cria a(s)
  * serial key(s) da compra e dispara o e-mail apenas uma vez (idempotente).
@@ -345,12 +546,26 @@ export async function fulfillSerialKeyOrder(order: PaymentOrder, result?: Provid
   if (keys.length === 0) return
 
   const alreadySent = keys.some(k => (k.emailHistory || []).some(e => e.kind === 'purchase' && e.status === 'sent'))
-  if (alreadySent) return
-
   const paymentMethod = result?.paymentMethod || order.paymentMethod
-  if (keys.length === 1) {
-    await sendSerialKeyEmail(db, keys[0], { paymentMethod, kind: 'purchase' })
+
+  // Compra sem login que o comprador mandou aplicar direto na conta dele: as
+  // keys são ativadas aqui, e o e-mail que sai é o de "já está na sua conta".
+  // O que não puder ser aplicado segue pelo caminho normal da Serial Key.
+  const target = accountDeliveryTargetOf(order)
+  let pendingKeys = keys
+  if (target) {
+    const outcome = await activateKeysForAccount(db, keys, target)
+    pendingKeys = outcome.pending
+    if (outcome.applied.length > 0 && !alreadySent) {
+      await sendAccountDeliveryEmail(db, outcome.applied, target, outcome, { paymentMethod, kind: 'purchase' })
+    }
+  }
+
+  if (pendingKeys.length === 0 || alreadySent) return
+
+  if (pendingKeys.length === 1) {
+    await sendSerialKeyEmail(db, pendingKeys[0], { paymentMethod, kind: 'purchase' })
   } else {
-    await sendSerialKeyCartEmail(db, keys, { paymentMethod, kind: 'purchase' })
+    await sendSerialKeyCartEmail(db, pendingKeys, { paymentMethod, kind: 'purchase' })
   }
 }
