@@ -2126,11 +2126,15 @@ ${respostaAluno}`
                     try {
                       setPdfGenerating('Relatório')
                       await downloadUserReportPDF({
-                        exam,
+                        exam: { ...exam, questions: exam.questions },
                         examId: id,
                         userName,
                         signature,
                         answers,
+                        submittedAt: new Date(),
+                        score: notaGeralEmPercentual !== null && exam.totalPoints
+                          ? (notaGeralEmPercentual / 100) * exam.totalPoints
+                          : null,
                       })
                     } catch (error: any) {
                       showToastMessage('Erro ao gerar PDF: ' + error.message)
@@ -2165,6 +2169,7 @@ ${respostaAluno}`
                         userName,
                         signature,
                         answers,
+                        submittedAt: new Date(),
                       })
                     } catch (error: any) {
                       showToastMessage('Erro ao gerar PDF: ' + error.message)

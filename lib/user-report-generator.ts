@@ -8,6 +8,13 @@ interface UserReportData {
   userName: string
   signature: string // base64 image
   answers: UserAnswer[]
+  /**
+   * Quando a prova foi entregue. Sem ela o cabeçalho imprimia a data de HOJE —
+   * o relatório de uma prova de março, baixado em julho, dizia julho.
+   */
+  submittedAt?: Date | string
+  /** Nota obtida, quando já existe. */
+  score?: number | null
 }
 
 // Cores DomineAqui
@@ -216,11 +223,36 @@ export async function generateUserReportPDF(data: UserReportData): Promise<Blob>
 
   doc.setFont('helvetica', 'normal')
   doc.setTextColor(...CINZA_TEXTO)
-  doc.text('Data:', margin + 5, y + 16)
-  doc.text(new Date().toLocaleDateString('pt-BR'), margin + 18, y + 16)
+  doc.text('Entrega:', margin + 5, y + 16)
+  doc.text(
+    new Date(data.submittedAt || Date.now()).toLocaleString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    }),
+    margin + 24,
+    y + 16,
+  )
 
-  doc.text(`Questões: ${data.exam.numberOfQuestions}`, margin + 5, y + 24)
-  doc.text(`Duração: ${data.exam.duration} min`, margin + 60, y + 24)
+  doc.text(`Questões: ${data.exam.questions?.length || data.exam.numberOfQuestions}`, margin + 5, y + 24)
+  // A duração é opcional na prova; imprimi-la sem checar dava "Duração:
+  // undefined min" em toda prova que não define um limite.
+  if (data.exam.duration) {
+    doc.text(`Duração: ${data.exam.duration} min`, margin + 60, y + 24)
+  }
+  if (typeof data.score === 'number') {
+    doc.setFont('helvetica', 'bold')
+    doc.setTextColor(...VERDE_ESCURO)
+    doc.text(
+      `Nota: ${data.score.toFixed(2)} / ${data.exam.scoringMethod === 'tri' ? 1000 : data.exam.totalPoints || 100}`,
+      margin + 115,
+      y + 24,
+    )
+    doc.setFont('helvetica', 'normal')
+    doc.setTextColor(...CINZA_TEXTO)
+  }
   y += 38
 
   // === ASSINATURA ===
@@ -305,7 +337,7 @@ export async function generateUserReportPDF(data: UserReportData): Promise<Blob>
       doc.setTextColor(...CINZA_TEXTO)
       y += 2
 
-      question.alternatives.forEach(alt => {
+      ;(question.alternatives || []).forEach(alt => {
         checkPage(12)
         const isSelected = alt.id === answer?.selectedAlternative
 
@@ -350,19 +382,28 @@ export async function generateUserReportPDF(data: UserReportData): Promise<Blob>
         y
       )
       y += 5
-    } else if (question.type === 'discursive') {
+    } else {
+      /*
+       * Discursiva E redação.
+       *
+       * O ramo só cobria `discursive`: numa prova com redação, o PDF imprimia o
+       * enunciado e passava para a questão seguinte — o texto que o aluno
+       * escreveu não aparecia em lugar nenhum do "relatório da minha prova".
+       */
+      const textoDoAluno = answer?.discursiveText || answer?.essayText
+
       checkPage(20)
       doc.setFontSize(9)
       doc.setTextColor(...LARANJA)
       doc.setFont('helvetica', 'bold')
-      doc.text('Resposta do candidato:', margin, y)
+      doc.text(question.type === 'essay' ? 'Redação do candidato:' : 'Resposta do candidato:', margin, y)
       y += 5
 
-      if (answer?.discursiveText) {
+      if (textoDoAluno) {
         doc.setFontSize(10)
         doc.setFont('helvetica', 'normal')
         doc.setTextColor(...CINZA_TEXTO)
-        const ansLines = wrapText(doc, answer.discursiveText, pageWidth - 2 * margin - 4)
+        const ansLines = wrapText(doc, textoDoAluno, pageWidth - 2 * margin - 4)
         ansLines.forEach(line => {
           checkPage(7)
           doc.text(line, margin + 2, y)
@@ -373,6 +414,15 @@ export async function generateUserReportPDF(data: UserReportData): Promise<Blob>
         doc.setTextColor(150, 150, 150)
         doc.text('(Não respondida)', margin + 2, y)
         y += 6
+      }
+
+      if (answer?.discursiveSelfScore !== undefined) {
+        checkPage(8)
+        doc.setFontSize(9)
+        doc.setFont('helvetica', 'bold')
+        doc.setTextColor(...VERDE_ESCURO)
+        doc.text(`Autoavaliação: ${answer.discursiveSelfScore}%`, margin + 2, y + 3)
+        y += 8
       }
     }
 
@@ -405,7 +455,7 @@ export async function generateUserReportPDF(data: UserReportData): Promise<Blob>
   doc.setFont('helvetica', 'normal')
   data.exam.questions.forEach((question, index) => {
     const answer = data.answers.find(a => a.questionId === question.id)
-    const selectedAlt = question.alternatives.find(alt => alt.id === answer?.selectedAlternative)
+    const selectedAlt = question.alternatives?.find(alt => alt.id === answer?.selectedAlternative)
 
     checkPage(8)
 
@@ -418,10 +468,13 @@ export async function generateUserReportPDF(data: UserReportData): Promise<Blob>
     doc.setFontSize(9)
     doc.text(`${question.number}`, margin + 15, y + 5, { align: 'center' })
 
-    if (question.type === 'discursive') {
-      doc.text(answer?.discursiveText ? 'Respondida' : 'Não respondida', margin + 40, y + 5)
-    } else {
+    if (question.type === 'multiple-choice') {
       doc.text(selectedAlt ? selectedAlt.letter : 'Não respondida', margin + 40, y + 5)
+    } else {
+      // Discursiva e redação: a tabela dizia "Não respondida" para toda redação,
+      // porque só olhava `discursiveText`.
+      const respondeu = !!(answer?.discursiveText?.trim() || answer?.essayText?.trim())
+      doc.text(respondeu ? 'Respondida' : 'Não respondida', margin + 40, y + 5)
     }
 
     doc.setDrawColor(220, 220, 220)
@@ -607,7 +660,7 @@ async function generateUserReportWithGabaritoPDFBlob(data: UserReportData): Prom
       doc.setFontSize(10)
       y += 2
 
-      question.alternatives.forEach(alt => {
+      ;(question.alternatives || []).forEach(alt => {
         checkPage(12)
         const isSelected = alt.id === answer?.selectedAlternative
         const isCorrectAlt = alt.isCorrect

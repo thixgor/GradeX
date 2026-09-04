@@ -232,6 +232,8 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
         userName: submission.userName,
         signature: submission.signature || '',
         answers: submission.answers || [],
+        submittedAt: submission.submittedAt,
+        score: typeof nota === 'number' ? nota : null,
       }
       if (tipo === 'relatorio') await gerador.downloadUserReportPDF(dados)
       else await gerador.generateUserReportWithGabaritoPDF(dados)
