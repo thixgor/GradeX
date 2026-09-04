@@ -22,6 +22,7 @@ import { isPlusAccount, normalizeAccountType, PLUS_ACCOUNT_TYPES, PLUS_LABEL, PL
 import { getPersonalExamsQuota } from './tier-limits'
 import { grantMaterialCartItems, type MaterialCartResolvedItem } from './material-cart'
 import { restorePlusClaims } from './plus-claims'
+import { onlyCpfDigits } from './cpf'
 import {
   computeAccessExpiry,
   findTimedAccessVersion,
@@ -199,6 +200,94 @@ export async function findAccountByEmail(db: Db, email: unknown): Promise<BuyerA
     name: sanitizeName(user.name || ''),
     email: String(user.email || normalized).toLowerCase(),
   }
+}
+
+/**
+ * "Essa conta é minha mesmo?" — conferência opcional, antes de pagar.
+ *
+ * Saber que existe conta com o e-mail não diz de QUEM ela é, e o comprador está
+ * prestes a mandar o material para lá. Quem quiser certeza informa CPF e data
+ * de nascimento e recebe de volta o nome cadastrado — o único dado que sai
+ * daqui, e só para quem provou conhecer os dois.
+ *
+ * Os dois JUNTOS, sempre. Conta sem CPF ou sem data de nascimento não pode ser
+ * conferida: aceitar só um dos campos transformaria a rota num oráculo de "esse
+ * CPF tem conta no site?" para qualquer CPF vazado por aí.
+ */
+export type AccountIdentityCheck =
+  | { verified: true; name: string }
+  | { verified: false }
+
+/** `false` uniforme: sem conta, sem CPF/nascimento cadastrados ou sem bater. */
+const IDENTITY_MISMATCH: AccountIdentityCheck = { verified: false }
+
+/**
+ * Data de nascimento em 'AAAA-MM-DD' (UTC), a forma como o perfil grava e
+ * mostra. Aceita o que vem de `<input type="date">` e o formato brasileiro
+ * digitado à mão. Devolve `null` para qualquer coisa que não seja uma data.
+ */
+export function normalizeBirthDate(value: unknown): string | null {
+  const raw = String(value ?? '').trim()
+  if (!raw) return null
+
+  const brazilian = raw.match(/^(\d{2})\/(\d{2})\/(\d{4})$/)
+  const iso = brazilian
+    ? `${brazilian[3]}-${brazilian[2]}-${brazilian[1]}`
+    : raw.slice(0, 10)
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return null
+
+  const parsed = new Date(`${iso}T00:00:00.000Z`)
+  if (Number.isNaN(parsed.getTime())) return null
+  // Rejeita 31/02 e afins, que o construtor "conserta" para o mês seguinte.
+  if (parsed.toISOString().slice(0, 10) !== iso) return null
+
+  const year = parsed.getUTCFullYear()
+  if (year < 1900 || year > new Date().getUTCFullYear()) return null
+  return iso
+}
+
+/** Comparação sem vazar, pelo tempo de resposta, ONDE os valores divergem. */
+function constantTimeEquals(a: string, b: string): boolean {
+  if (a.length !== b.length) return false
+  let diff = 0
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i)
+  return diff === 0
+}
+
+/**
+ * Confere CPF + data de nascimento contra a conta dona de `email`.
+ *
+ * A resposta negativa é SEMPRE a mesma, venha de onde vier: e-mail sem conta,
+ * conta sem CPF, conta sem nascimento, ou dados que não batem. Distinguir esses
+ * casos contaria ao visitante coisas sobre uma conta que talvez não seja dele —
+ * e é justamente isso que esta rota existe para evitar.
+ */
+export async function verifyAccountIdentity(
+  db: Db,
+  input: { email: unknown; cpf: unknown; dateOfBirth: unknown }
+): Promise<AccountIdentityCheck> {
+  const email = String(input.email ?? '').trim().toLowerCase()
+  const cpf = onlyCpfDigits(String(input.cpf ?? ''))
+  const birthDate = normalizeBirthDate(input.dateOfBirth)
+  if (!isValidEmail(email) || cpf.length !== 11 || !birthDate) return IDENTITY_MISMATCH
+
+  const user = await db.collection<User>('users').findOne(
+    { email },
+    { projection: { name: 1, fullName: 1, cpf: 1, dateOfBirth: 1 } }
+  )
+  if (!user) return IDENTITY_MISMATCH
+
+  const storedCpf = onlyCpfDigits(String(user.cpf || ''))
+  const storedBirth = user.dateOfBirth
+    ? new Date(user.dateOfBirth).toISOString().slice(0, 10)
+    : ''
+  // Os dois juntos ou nada — ver o comentário do tipo acima.
+  if (storedCpf.length !== 11 || !storedBirth) return IDENTITY_MISMATCH
+
+  if (!constantTimeEquals(storedCpf, cpf)) return IDENTITY_MISMATCH
+  if (!constantTimeEquals(storedBirth, birthDate)) return IDENTITY_MISMATCH
+
+  return { verified: true, name: sanitizeName(user.name || user.fullName || '') }
 }
 
 // ── URLs ─────────────────────────────────────────────────────────────────────
@@ -917,7 +1006,7 @@ export async function markSerialKeyActivated(
 // ── Logs de segurança / anti-fraude ──────────────────────────────────────────
 
 export interface SerialKeySecurityLog {
-  kind: 'activation_failed' | 'activation_blocked' | 'checkout_blocked' | 'invalid_key' | 'rate_limited' | 'duplicate'
+  kind: 'activation_failed' | 'activation_blocked' | 'checkout_blocked' | 'invalid_key' | 'rate_limited' | 'duplicate' | 'identity_check_failed'
   ip?: string
   userAgent?: string
   userId?: string

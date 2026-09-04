@@ -153,9 +153,12 @@ const publicPrefixes = [
   '/api/serial-keys/purchase',
   '/api/serial-keys/activate',
   // "Este e-mail já tem conta?" — perguntado pelas telas de compra sem login
-  // antes do pagamento. Só devolve um booleano e o primeiro nome; tem rate
-  // limit próprio e nunca decide para onde o material vai (isso é do checkout).
+  // antes do pagamento. Devolve só um booleano; tem rate limit próprio e nunca
+  // decide para onde o material vai (isso é do checkout).
   '/api/serial-keys/account-lookup',
+  // "Essa conta é minha mesmo?" — conferência opcional por CPF + data de
+  // nascimento que devolve o nome cadastrado. Valida e limita internamente.
+  '/api/serial-keys/account-verify',
   '/compra/aprovada',
   '/compra',
   '/api/plans',

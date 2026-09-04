@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
 import { checkRateLimit } from '@/lib/rate-limit'
-import { findAccountByEmail, firstNameOf, isValidEmail, logSerialKeySecurity } from '@/lib/serial-keys'
+import { findAccountByEmail, isValidEmail, logSerialKeySecurity } from '@/lib/serial-keys'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -16,14 +16,17 @@ export const runtime = 'nodejs'
  * conta identificada ANTES do pagamento, o checkout pergunta o que ele quer —
  * aplicar o material direto na conta ou receber a key no e-mail informado.
  *
- * A resposta é a mínima possível: existe ou não, mais o primeiro nome (para o
- * aviso soar como "é você mesmo"). Nada de sobrenome, telefone, plano ou id.
- * O e-mail devolvido é o que a pessoa acabou de digitar, normalizado.
+ * A resposta é UM BOOLEANO e nada mais. Nem nome, nem telefone, nem plano, nem
+ * id: existir conta com um e-mail não diz de quem ela é, e quem digitou o
+ * endereço não provou nada sobre ele. Quem quiser saber a quem a conta pertence
+ * passa por /api/serial-keys/account-verify, que cobra CPF e data de nascimento
+ * antes de devolver o nome. O e-mail que volta aqui é o que a própria pessoa
+ * acabou de digitar, normalizado.
  *
- * Enumeração de e-mails: a resposta é um booleano sobre um endereço que o
- * próprio visitante digitou, então o risco é o de qualquer tela de "esqueci
- * minha senha". O rate limit por IP (20/min) mantém isso longe de uma varredura
- * em massa, e cada estouro vira log de segurança.
+ * Enumeração de e-mails: um booleano sobre um endereço digitado pelo visitante
+ * é o mesmo que qualquer tela de "esqueci minha senha" entrega. O rate limit
+ * por IP mantém isso longe de uma varredura em massa, e cada estouro vira log
+ * de segurança.
  *
  * ATENÇÃO: esta rota NÃO decide nada. A escolha do comprador é revalidada no
  * checkout autoritativo (/api/serial-keys/checkout), que procura a conta de
@@ -33,7 +36,7 @@ export async function POST(request: NextRequest) {
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
   const userAgent = request.headers.get('user-agent') || undefined
 
-  const rl = await checkRateLimit(ip, 'serial_key_account_lookup', 20, 60_000)
+  const rl = await checkRateLimit(ip, 'serial_key_account_lookup', 12, 60_000)
   if (!rl.success) {
     await logSerialKeySecurity({ kind: 'rate_limited', ip, userAgent, detail: 'account_lookup' })
     return NextResponse.json({ error: 'Muitas tentativas. Tente novamente em instantes.' }, { status: 429 })
@@ -48,11 +51,7 @@ export async function POST(request: NextRequest) {
   try {
     const db = await getDb()
     const account = await findAccountByEmail(db, email)
-    return NextResponse.json({
-      email,
-      exists: !!account,
-      firstName: account ? firstNameOf(account.name) : undefined,
-    })
+    return NextResponse.json({ email, exists: !!account })
   } catch (err) {
     console.error('[serial-keys/account-lookup] falha ao consultar conta:', err)
     // Falha aqui não pode travar a compra: a tela segue no caminho da Serial Key.
