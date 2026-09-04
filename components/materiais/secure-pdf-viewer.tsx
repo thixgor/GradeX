@@ -102,7 +102,14 @@ import {
   invertEntry,
   pushEntry,
 } from '@/lib/pdf-viewer-history'
-import { inkPixelWidth, normalizeInkStroke, traceStroke } from '@/lib/pdf-viewer-ink'
+import {
+  INK_MIN_STEP_PX,
+  MARKER_MIN_STEP_PX,
+  inkPixelWidth,
+  inkPointMoved,
+  normalizeInkStroke,
+  traceStroke,
+} from '@/lib/pdf-viewer-ink'
 import {
   readReadingAnchor,
   readingAnchorDrift,
@@ -454,6 +461,15 @@ const LASER_FADE_MS = 900
 // 10 faixas dão um degradê indistinguível do ponto a ponto, com um punhado de
 // traçados por quadro em vez de um por ponto.
 const LASER_FADE_BANDS = 10
+/**
+ * Quanto tempo sem escrever até a superfície do rascunho devolver a memória.
+ *
+ * Ver `clearDraftCanvas`: entre uma letra e a outra o buffer FICA, para começar
+ * um traço não custar uma alocação de dezenas de megabytes. Cinco segundos é
+ * mais do que a pausa de quem está pensando no meio de uma frase e bem menos do
+ * que a de quem voltou a ler.
+ */
+const DRAFT_SURFACE_IDLE_MS = 5000
 const FONT_OPTIONS = ['Inter', 'Arial', 'Georgia', 'Times New Roman', 'Courier New']
 /**
  * Cursor da borracha: um círculo do TAMANHO REAL do apagador. Com um ícone
@@ -5771,6 +5787,13 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
     blend: 'normal' | 'multiply'
   } | null>(null)
   const draftPaintedRef = useRef(0)
+  // Há tinta na superfície do rascunho? Serve para não limpar de novo o que já
+  // está limpo — a superfície tem o tamanho da página, e limpá-la à toa no
+  // começo de cada traço é trabalho no pior momento possível.
+  const draftDirtyRef = useRef(false)
+  // Devolução da memória do rascunho, agendada para quando a escrita parar
+  // (ver clearDraftCanvas). Zero = nada agendado.
+  const draftIdleRef = useRef(0)
   // Ferramenta de tinta ativa, para o ouvinte nativo de toque decidir sem ser
   // reanexado a cada troca de ferramenta.
   const inkToolRef = useRef(false)
@@ -6140,6 +6163,7 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
     return () => {
       if (rafRef.current) window.cancelAnimationFrame(rafRef.current)
       if (laserRafRef.current) window.cancelAnimationFrame(laserRafRef.current)
+      if (draftIdleRef.current) window.clearTimeout(draftIdleRef.current)
       // O Safari do iOS segura o buffer do canvas mesmo depois de o nó sair do
       // DOM; zerar as dimensões devolve na hora. Vale para os dois auxiliares,
       // como já valia para o canvas da página.
@@ -6369,14 +6393,28 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   const setupDraftSurface = useCallback((opacity: number, blend: 'normal' | 'multiply') => {
     const canvas = draftCanvasRef.current
     const context = getDraftContext()
-    const rect = readOverlayRect(true)
+    // A medida CACHEADA, não uma forçada. Quem começa um gesto já mediu a
+    // página fresca uma linha antes (ver handlePointerDown), e quem refaz a
+    // superfície no meio do traço acabou de medir no ponto mais recente — os
+    // dois casos já têm a medida certa em mãos. Forçar de novo aqui era um
+    // recálculo de layout do documento inteiro no instante mais sensível que
+    // existe: o começo do traço, quando a caneta acabou de encostar.
+    const rect = readOverlayRect()
     if (!canvas || !context || !rect || !(rect.width > 0) || !(rect.height > 0)) return null
+    // O traço vai usar a superfície agora: cancela a devolução da memória que
+    // o fim do traço anterior tinha agendado (ver clearDraftCanvas).
+    if (draftIdleRef.current) {
+      window.clearTimeout(draftIdleRef.current)
+      draftIdleRef.current = 0
+    }
     const dpr = Math.min(window.devicePixelRatio || 1, 2)
     const width = Math.max(1, Math.floor(rect.width * dpr))
     const height = Math.max(1, Math.floor(rect.height * dpr))
     if (canvas.width !== width || canvas.height !== height) {
       canvas.width = width
       canvas.height = height
+      // Buffer novo nasce transparente: não há o que limpar.
+      draftDirtyRef.current = false
     }
     canvas.style.width = `${rect.width}px`
     canvas.style.height = `${rect.height}px`
@@ -6388,7 +6426,11 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
     // O contexto é reaproveitado entre gestos: sem zerar o tracejado aqui, um
     // traço livre desenhado logo depois de uma linha tracejada sairia picotado.
     context.setLineDash([])
-    context.clearRect(0, 0, rect.width, rect.height)
+    // Limpar uma superfície do tamanho da página não é de graça, e o fim do
+    // traço anterior já a deixou limpa. Só volta a valer a pena quando há
+    // mesmo tinta ali — um traço que a página remontou por baixo, por exemplo.
+    if (draftDirtyRef.current) context.clearRect(0, 0, rect.width, rect.height)
+    draftDirtyRef.current = false
     // Opacidade e mistura ficam guardadas junto: se a página mudar de tamanho
     // no meio do traço (uma pinça, uma rotação de tela), dá para refazer a
     // superfície exatamente igual sem perguntar nada ao gesto.
@@ -6397,6 +6439,38 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
     return { context, width: rect.width, height: rect.height }
   }, [getDraftContext, readOverlayRect])
 
+  /**
+   * Devolve a memória da superfície do rascunho.
+   *
+   * Zerar as dimensões DEVOLVE o buffer do canvas, em vez de só apagar o
+   * desenho. Não é detalhe: a superfície tem o tamanho da página vezes a
+   * densidade da tela — numa página ampliada num tablet são dezenas de
+   * megabytes por página viva.
+   */
+  const releaseDraftSurface = useCallback(() => {
+    draftIdleRef.current = 0
+    draftDirtyRef.current = false
+    const canvas = draftCanvasRef.current
+    if (!canvas || canvas.width === 0) return
+    canvas.width = 0
+    canvas.height = 0
+  }, [])
+
+  /**
+   * Fim de um gesto: apaga o desenho do rascunho, mas GUARDA o buffer por um
+   * instante.
+   *
+   * Antes, cada levantada de caneta devolvia a memória na hora e cada nova
+   * encostada alocava tudo de novo. Quem escreve não faz um traço: faz
+   * dezenas por minuto, uma por letra. Então essa troca virava, a cada letra,
+   * uma alocação de dezenas de megabytes que o navegador ainda precisa zerar —
+   * e, logo depois, lixo para o coletor recolher no meio da escrita seguinte.
+   * Era um engasgo pequeno, sempre no mesmo lugar: o começo do traço.
+   *
+   * Agora a memória só volta quando a escrita realmente para. Enquanto a
+   * caneta estiver trabalhando, começar um traço é um `clearRect` — nenhuma
+   * alocação, nenhum lixo.
+   */
   const clearDraftCanvas = useCallback(() => {
     const canvas = draftCanvasRef.current
     draftPaintedRef.current = 0
@@ -6404,15 +6478,23 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
     if (!canvas) return
     canvas.style.opacity = '1'
     canvas.style.mixBlendMode = 'normal'
-    // Zerar as dimensões DEVOLVE a memória do canvas, em vez de só apagar o
-    // desenho. Não é detalhe: a superfície do rascunho tem o tamanho da página
-    // vezes a densidade da tela — numa página ampliada são dezenas de
-    // megabytes, que ficavam retidos em cada página viva depois do primeiro
-    // traço, para nunca mais serem usados. O próximo traço recria a superfície
-    // (ver setupDraftSurface), que é barato perto de segurar isso à toa.
-    canvas.width = 0
-    canvas.height = 0
-  }, [])
+    const context = canvas.width > 0 ? draftCtxRef.current : null
+    if (!context) {
+      canvas.width = 0
+      canvas.height = 0
+      draftDirtyRef.current = false
+      return
+    }
+    // Em pixels do buffer: a transformação de densidade é da pintura, e aqui o
+    // que se quer é limpar o buffer inteiro, seja qual for a escala em vigor.
+    if (draftDirtyRef.current) {
+      context.setTransform(1, 0, 0, 1, 0, 0)
+      context.clearRect(0, 0, canvas.width, canvas.height)
+      draftDirtyRef.current = false
+    }
+    if (draftIdleRef.current) window.clearTimeout(draftIdleRef.current)
+    draftIdleRef.current = window.setTimeout(releaseDraftSurface, DRAFT_SURFACE_IDLE_MS)
+  }, [releaseDraftSurface])
 
   // Espessura em pixels de tela — ver inkPixelWidth: a mesma conta que o traço
   // já salvo usa, para levantar a caneta não mudar nada na tela.
@@ -6451,6 +6533,9 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
       restart = true
     }
     const { width, height } = surface
+    // A partir daqui alguma coisa vai ser pintada: a superfície fica suja até
+    // alguém limpá-la (ver setupDraftSurface e clearDraftCanvas).
+    draftDirtyRef.current = true
 
     if (interaction.kind === 'eraser') {
       context.clearRect(0, 0, width, height)
@@ -6696,10 +6781,18 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
     interaction.draft.current = point
     const points = interaction.draft.points
     const last = points[points.length - 1]
-    const minStep = interaction.draft.mode === 'marker' ? 0.0024 : 0.0014
-    if (last && distance(last, point) < minStep) return
+    // A peneira mede em PIXELS DE TELA (ver INK_MIN_STEP_PX): em fração de
+    // página ela engrossava junto com o zoom, e era isso que fazia a tinta
+    // andar em degraus quando se amplia para escrever miúdo. Sem medida da
+    // página, o ponto entra — perder tinta é pior do que guardar um ponto a
+    // mais.
+    const rect = readOverlayRect()
+    if (last && rect) {
+      const minPx = interaction.draft.mode === 'marker' ? MARKER_MIN_STEP_PX : INK_MIN_STEP_PX
+      if (!inkPointMoved(last, point, rect.width, rect.height, minPx)) return
+    }
     points.push(point)
-  }, [])
+  }, [readOverlayRect])
 
   const finishDrawing = useCallback(() => {
     const interaction = interactionRef.current
@@ -7092,12 +7185,21 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
       return
     }
 
+    // Marca-texto: a mesma peneira em pixels de tela da caneta, com o passo do
+    // traço grosso (ver MARKER_MIN_STEP_PX).
+    const highlightRect = readOverlayRect()
     for (const pointerEvent of events) {
       const point = getPosition(pointerEvent.clientX, pointerEvent.clientY)
       interaction.draft.current = point
       const points = interaction.draft.points
       const last = points[points.length - 1]
-      if (!last || distance(last, point) >= 0.0015) points.push(point)
+      if (
+        !last
+        || !highlightRect
+        || inkPointMoved(last, point, highlightRect.width, highlightRect.height, MARKER_MIN_STEP_PX)
+      ) {
+        points.push(point)
+      }
     }
     paintDraft()
   }
@@ -7890,6 +7992,27 @@ const INK_DOCK_GLASS: React.CSSProperties = {
   transform: 'translateZ(0)',
 }
 
+/**
+ * O mesmo vidro, SEM o borrão — a versão que fica no ar enquanto a caneta
+ * escreve.
+ *
+ * `backdrop-filter` é um borrão do que está ATRÁS do elemento, e por isso ele
+ * precisa ser recalculado sempre que o fundo muda. O fundo, aqui, é a página em
+ * que a caneta está desenhando: escrevendo perto da barra, o navegador refaz um
+ * borrão de 28px a cada quadro do traço — no mesmo quadro em que a tinta
+ * precisa sair. É o tipo de custo que não aparece em nenhuma medição de
+ * JavaScript e mesmo assim rouba quadros da escrita.
+ *
+ * Enquanto a caneta trabalha a barra está a 15% de opacidade, um fantasma no
+ * canto da tela: ninguém consegue dizer se aquele fantasma está borrado ou não.
+ * Então o borrão sai de cena junto com a barra e volta quando ela volta.
+ */
+const INK_DOCK_GLASS_WRITING: React.CSSProperties = {
+  ...INK_DOCK_GLASS,
+  backdropFilter: 'none',
+  WebkitBackdropFilter: 'none',
+}
+
 const INK_DOCK_PRIMARY: Array<{ value: AnnotationTool; label: string; icon: React.ReactNode }> = [
   { value: 'cursor', label: 'Navegar', icon: <MousePointer2 className="h-[18px] w-[18px]" /> },
   { value: 'drawing', label: 'Caneta', icon: <PenLine className="h-[18px] w-[18px]" /> },
@@ -8012,7 +8135,7 @@ const InkDock = memo(function InkDock({
           className={`pointer-events-auto flex h-12 w-12 items-center justify-center rounded-full text-white transition-opacity duration-200 lg:h-11 lg:w-11 ${
             inking ? 'opacity-20' : 'opacity-100'
           }`}
-          style={INK_DOCK_GLASS}
+          style={inking ? INK_DOCK_GLASS_WRITING : INK_DOCK_GLASS}
         >
           {active.icon}
         </button>
@@ -8033,7 +8156,7 @@ const InkDock = memo(function InkDock({
         {showOptions && hasOptions && (
           <div
             className="pointer-events-auto w-full overflow-hidden rounded-3xl px-2 pb-2 pt-1"
-            style={INK_DOCK_GLASS}
+            style={inking ? INK_DOCK_GLASS_WRITING : INK_DOCK_GLASS}
           >
             {/* A mesma barra de opções do computador, dentro do vidro: uma só
                 fonte de verdade para cor, grossura, tipo de borracha e quem
@@ -8049,7 +8172,7 @@ const InkDock = memo(function InkDock({
           </div>
         )}
 
-        <div className="pointer-events-auto flex flex-col items-center gap-1 rounded-[26px] p-1.5" style={INK_DOCK_GLASS}>
+        <div className="pointer-events-auto flex flex-col items-center gap-1 rounded-[26px] p-1.5" style={inking ? INK_DOCK_GLASS_WRITING : INK_DOCK_GLASS}>
           {showExtra && (
             <div className="flex items-center gap-1 border-b border-white/10 pb-1">
               {INK_DOCK_SECONDARY.map(toolButton)}
