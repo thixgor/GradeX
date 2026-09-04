@@ -707,7 +707,15 @@ function PassoRecorte({
 
           E cada uma some quando não tem o que fazer neste recorte: sem nada
           resolvido, "ainda não resolvi" não filtra nada; sem nenhum erro, "só
-          as que errei" devolve zero. */}
+          as que errei" devolve zero.
+
+          As facetas decidem se a opção APARECE, mas não viram texto na
+          pastilha. Elas são contadas sobre o recorte de assunto e ignoram os
+          outros filtros de propósito (ver o comentário do componente), então
+          "3.356 disponíveis" aqui embaixo convivia com "187 questões
+          disponíveis" no rodapé — a mesma palavra, dois números, e o certo era
+          o de baixo. Quem diz quantas questões a lista terá é o rodapé, que
+          soma TODOS os filtros e é recontado a cada mexida. */}
       {mostrarNaoResolvidas || mostrarErradas ? (
         <Campo titulo="Sobre o que você já resolveu" opcional>
           <div className={cn('grid gap-2', mostrarNaoResolvidas && mostrarErradas ? 'grid-cols-2' : 'grid-cols-1')}>
@@ -723,11 +731,7 @@ function PassoRecorte({
                 }
                 icone={<Check className="h-3.5 w-3.5" />}
                 titulo="Ainda não resolvi"
-                descricao={
-                  facetas
-                    ? `${(facetas.total - facetas.jaResolvidas).toLocaleString('pt-BR')} disponíveis`
-                    : 'Evita repetir questão'
-                }
+                descricao="Evita repetir questão"
               />
             ) : null}
             {mostrarErradas ? (
@@ -742,9 +746,7 @@ function PassoRecorte({
                 }
                 icone={<XCircle className="h-3.5 w-3.5" />}
                 titulo="Só as que errei"
-                descricao={
-                  facetas ? `${facetas.erradas.toLocaleString('pt-BR')} erradas aqui` : 'Lista de revisão'
-                }
+                descricao="Lista de revisão"
               />
             ) : null}
           </div>
@@ -765,9 +767,7 @@ function PassoRecorte({
                 onClick={() => onChange({ ...filtros, comImagem: !filtros.comImagem })}
                 icone={<ImageIcon className="h-3.5 w-3.5" />}
                 titulo="Só com imagem"
-                descricao={
-                  facetas ? `${facetas.comImagem.toLocaleString('pt-BR')} com imagem` : 'ECG, raio-X, lâmina…'
-                }
+                descricao="ECG, raio-X, lâmina…"
               />
             ) : null}
             {mostrarComExplicacao ? (
@@ -776,11 +776,7 @@ function PassoRecorte({
                 onClick={() => onChange({ ...filtros, comExplicacao: !filtros.comExplicacao })}
                 icone={<MessageSquareText className="h-3.5 w-3.5" />}
                 titulo="Com comentário"
-                descricao={
-                  facetas
-                    ? `${facetas.comExplicacao.toLocaleString('pt-BR')} comentadas`
-                    : 'Resposta explicada'
-                }
+                descricao="Resposta explicada"
               />
             ) : null}
           </div>

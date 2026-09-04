@@ -3,7 +3,7 @@ import { ObjectId } from 'mongodb'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { isValidObjectId } from '@/lib/api-security'
-import { campoTextoPreenchido } from '@/lib/banco/filtros-conteudo'
+import { campoTextoPreenchido, textoPreenchidoNaExpressao } from '@/lib/banco/filtros-conteudo'
 import { ordenarPeriodosLetivos } from '@/lib/banco/periodo-letivo'
 
 export const dynamic = 'force-dynamic'
@@ -117,12 +117,12 @@ export async function GET(request: NextRequest) {
                   facil: { $sum: { $cond: [{ $eq: ['$dificuldade', 'facil'] }, 1, 0] } },
                   medio: { $sum: { $cond: [{ $eq: ['$dificuldade', 'medio'] }, 1, 0] } },
                   dificil: { $sum: { $cond: [{ $eq: ['$dificuldade', 'dificil'] }, 1, 0] } },
-                  comImagem: {
-                    $sum: { $cond: [{ $eq: [{ $type: '$imagemUrl' }, 'string'] }, 1, 0] },
-                  },
-                  comExplicacao: {
-                    $sum: { $cond: [{ $eq: [{ $type: '$explicacao' }, 'string'] }, 1, 0] },
-                  },
+                  // A MESMA condição de `campoTextoPreenchido()`, escrita como
+                  // expressão: ser string E não ser vazia. Só `$type` deixaria
+                  // passar a string vazia, que o filtro real recusa — e o
+                  // número anunciaria um recorte que volta sem nada.
+                  comImagem: { $sum: { $cond: [textoPreenchidoNaExpressao('$imagemUrl'), 1, 0] } },
+                  comExplicacao: { $sum: { $cond: [textoPreenchidoNaExpressao('$explicacao'), 1, 0] } },
                 },
               },
             ],
@@ -140,19 +140,6 @@ export async function GET(request: NextRequest) {
       .toArray()
 
     const resumo = (agregado?.resumo?.[0] as Record<string, number> | undefined) || {}
-
-    /*
-     * O `$sum` acima conta `imagemUrl`/`explicacao` como preenchidos por serem
-     * string — inclusive a string vazia, que o filtro real recusa
-     * (`campoTextoPreenchido`). Contar a mais aqui só ofereceria um filtro que
-     * volta vazio, que é exatamente o defeito que esta rota existe para
-     * eliminar; então os dois números vêm de uma contagem que usa a MESMA
-     * condição do filtro.
-     */
-    const [comImagem, comExplicacao] = await Promise.all([
-      db.collection('banco_questoes').countDocuments({ ...recorte, imagemUrl: preenchido }, { limit: 1 }),
-      db.collection('banco_questoes').countDocuments({ ...recorte, explicacao: preenchido }, { limit: 1 }),
-    ])
 
     /*
      * O que esta conta já resolveu dentro do recorte.
@@ -205,8 +192,8 @@ export async function GET(request: NextRequest) {
         .map((a) => ({ ano: Number(a._id), total: Number(a.total || 0) }))
         .sort((a, b) => b.ano - a.ano),
       periodos: [],
-      comImagem: Number(comImagem || 0),
-      comExplicacao: Number(comExplicacao || 0),
+      comImagem: Number(resumo.comImagem || 0),
+      comExplicacao: Number(resumo.comExplicacao || 0),
       jaResolvidas: Number(resolucoes?.jaResolvidas || 0),
       erradas: Number(resolucoes?.erradas || 0),
     }

@@ -19,3 +19,22 @@
 export function campoTextoPreenchido() {
   return { $type: 'string' as const, $ne: '' }
 }
+
+/**
+ * A MESMA regra, escrita como EXPRESSÃO de agregação.
+ *
+ * `campoTextoPreenchido()` devolve um operador de CONSULTA (`{ $type, $ne }`),
+ * que serve num `$match` e não dentro de um `$cond` — e o `$cond` é onde a
+ * contagem por faceta do criador de listas decide se uma questão tem imagem ou
+ * resposta comentada (ver app/api/banco/facetas/route.ts).
+ *
+ * As duas moram juntas de propósito: o número que a tela mostra ao lado de um
+ * filtro precisa bater com o que aquele filtro devolve. Uma versão só com
+ * `$type` contaria a string vazia, e a tela ofereceria um recorte que volta
+ * sem nada — que é exatamente o defeito que as facetas existem para eliminar.
+ */
+export function textoPreenchidoNaExpressao(campo: string) {
+  return {
+    $and: [{ $eq: [{ $type: campo }, 'string'] }, { $ne: [campo, ''] }],
+  }
+}
