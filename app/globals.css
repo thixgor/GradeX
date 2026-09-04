@@ -1802,6 +1802,22 @@
  * apenas com o menu recolhido (ver components/sidebar.tsx). Aberto, as margens
  * automáticas voltam a valer e são o que joga selo e seta para a direita.
  */
+/*
+ * No rail, os grupos ganham uma fronteira.
+ *
+ * Aberto, o menu separa as seções por grupos que abrem e fecham, com rótulo e
+ * seta. Recolhido, os filhos somem e sobram só os ícones — e o que era uma
+ * lista organizada em blocos vira uma coluna corrida de doze desenhos, sem
+ * nada dizendo onde um assunto termina e o outro começa. Um traço curto e
+ * discreto entre um grupo e o seguinte devolve a leitura em blocos sem ocupar
+ * altura (é uma borda, não um item).
+ */
+.sidebar-rail .sidebar-group + .sidebar-group {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid hsl(var(--border) / 0.7);
+}
+
 .sidebar-rail :is(button, a) > * {
   margin-left: 0 !important;
   margin-right: 0 !important;

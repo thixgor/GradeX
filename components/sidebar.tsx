@@ -1,25 +1,32 @@
 'use client'
 
 import { useRouter, usePathname } from 'next/navigation'
-import { useRef, useState, useCallback, useEffect, useLayoutEffect, useMemo } from 'react'
+import { cloneElement, isValidElement, useRef, useState, useCallback, useEffect, useLayoutEffect, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, useMotionValue, useSpring, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Logo } from '@/components/logo'
 import { cn } from '@/lib/utils'
-import {
-  User as UserIcon,
-  Settings,
-  Plus,
-  ChevronLeft,
-  ChevronDown,
-  ChevronRight,
-  ShoppingCart,
-  LogOut,
-  Home,
-  X,
-  Zap,
-} from 'lucide-react'
+/*
+ * Ícones do Phosphor, não do lucide.
+ *
+ * A coluna do menu é a moldura permanente da plataforma, e os ícones das
+ * seções passaram para o Phosphor (ver components/sidebar-icon-map.ts). Estes
+ * aqui — casa, carrinho, lupa, engrenagem — são os do próprio menu, e precisam
+ * vir da MESMA família: dois traços diferentes empilhados na mesma coluna de
+ * 72px se leem como defeito, não como variedade.
+ */
+import { CaretDown } from '@phosphor-icons/react/dist/ssr/CaretDown'
+import { CaretLeft } from '@phosphor-icons/react/dist/ssr/CaretLeft'
+import { CaretRight } from '@phosphor-icons/react/dist/ssr/CaretRight'
+import { Gear as Settings } from '@phosphor-icons/react/dist/ssr/Gear'
+import { House as Home } from '@phosphor-icons/react/dist/ssr/House'
+import { Lightning as Zap } from '@phosphor-icons/react/dist/ssr/Lightning'
+import { Plus } from '@phosphor-icons/react/dist/ssr/Plus'
+import { ShoppingCart } from '@phosphor-icons/react/dist/ssr/ShoppingCart'
+import { SignOut as LogOut } from '@phosphor-icons/react/dist/ssr/SignOut'
+import { User as UserIcon } from '@phosphor-icons/react/dist/ssr/User'
+import { X } from '@phosphor-icons/react/dist/ssr/X'
 import {
   getVisibleSidebarSections,
   type SidebarSectionKey,
@@ -86,6 +93,19 @@ const SECTION_BADGES: Partial<Record<SidebarSectionKey, string>> = {
   materiais: 'Novo',
   rifas: 'Novo',
 }
+
+/**
+ * O peso dos ícones do menu em repouso.
+ *
+ * `duotone` é a assinatura do Phosphor e o que de fato tira a coluna do visual
+ * de template: o mesmo desenho ganha uma segunda camada em opacidade baixa, e
+ * o ícone deixa de ser um contorno de 2px igual ao de qualquer outro produto.
+ * No peso `regular` a troca de biblioteca seria quase invisível — o contorno
+ * simples do Phosphor e o do lucide se parecem demais a 20px.
+ *
+ * O item ATIVO troca este peso por `fill` (ver `NavItemButton`).
+ */
+const PESO_ICONE = 'duotone' as const
 
 // Shared easing & duration for all sidebar collapse animations
 const SB_DUR = '400ms'
@@ -289,7 +309,19 @@ function NavItemButton({
           nested && 'sidebar-nav-chip-nested',
         )}
       >
-        {item.icon}
+        {/*
+          O item ativo é o MESMO ícone em peso `fill`.
+
+          É o que o Phosphor traz e o lucide não tinha: seis pesos do mesmo
+          desenho. Antes, "onde eu estou" dependia de um fundo verde atrás do
+          ícone — cor sozinha, que é o sinal que falha primeiro para quem não
+          distingue bem o verde, e o único sinal que sobra no rail de 72px,
+          onde não há rótulo para ler. Preenchido, a diferença é de FORMA:
+          enxerga-se em escala de cinza.
+        */}
+        {isItemActive && isValidElement(item.icon)
+          ? cloneElement(item.icon as React.ReactElement<{ weight?: string }>, { weight: 'fill' })
+          : item.icon}
       </motion.span>
 
       {/* Label — always rendered, collapsed via CSS max-width + opacity */}
@@ -463,7 +495,7 @@ export function Sidebar({
       const Icon = getSidebarIconComponent(resolvedIcons[section.key])
       return {
         id: `section:${section.key}`,
-        icon: <Icon className="h-5 w-5" />,
+        icon: <Icon className="h-5 w-5" weight={PESO_ICONE} />,
         label: section.label,
         href: section.href,
         badge:
@@ -483,7 +515,7 @@ export function Sidebar({
 
   const homeItem: NavItem = {
     id: 'section:inicio',
-    icon: <Home className="h-5 w-5" />,
+    icon: <Home className="h-5 w-5" weight={PESO_ICONE} />,
     label: 'Início',
     href: '/dashboard',
   }
@@ -548,13 +580,13 @@ export function Sidebar({
   }, [])
 
   const secondaryNavItems: NavItem[] = [
-    { id: 'nav:profile', icon: <UserIcon className="h-5 w-5" />, label: 'Meu Perfil', href: '/profile' },
+    { id: 'nav:profile', icon: <UserIcon className="h-5 w-5" weight={PESO_ICONE} />, label: 'Meu Perfil', href: '/profile' },
   ]
 
   if (isAdmin) {
     secondaryNavItems.push({
       id: 'nav:admin',
-      icon: <Settings className="h-5 w-5" />,
+      icon: <Settings className="h-5 w-5" weight={PESO_ICONE} />,
       label: 'Painel Admin',
       href: '/admin',
     })
@@ -564,7 +596,7 @@ export function Sidebar({
   // no fim do /profile — quem tem aparelho fraco nunca chegava lá.
   const liteNavItem: NavItem = {
     id: 'action:lite',
-    icon: <Zap className={cn('h-5 w-5', liteMode && 'fill-current')} />,
+    icon: <Zap className={cn('h-5 w-5', liteMode && 'fill-current')} weight={PESO_ICONE} />,
     label: 'Modo Lite',
     badge: liteMode ? (litePreference === 'auto' ? 'Auto' : 'Ativo') : 'Off',
     onClick: toggleLiteMode,
@@ -572,7 +604,7 @@ export function Sidebar({
 
   const upgradeItem: NavItem = {
     id: 'nav:upgrade',
-    icon: <ShoppingCart className="h-5 w-5" />,
+    icon: <ShoppingCart className="h-5 w-5" weight={PESO_ICONE} />,
     label: 'Upgrade',
     href: '/buy',
     variant: 'gradient',
@@ -818,7 +850,7 @@ export function Sidebar({
     const hasActive = groupHasActiveSection(node)
     const groupItem: NavItem = {
       id: node.id,
-      icon: <GroupIcon className="h-5 w-5" />,
+      icon: <GroupIcon className="h-5 w-5" weight={PESO_ICONE} />,
       label: node.group.label,
     }
 
@@ -859,7 +891,7 @@ export function Sidebar({
                 transition={liteMode ? { duration: 0 } : { type: 'spring', stiffness: 300, damping: 25 }}
                 className="flex text-foreground/40"
               >
-                <ChevronDown className="h-4 w-4" />
+                <CaretDown className="h-4 w-4" />
               </motion.span>
             )
           }
@@ -1000,7 +1032,7 @@ export function Sidebar({
                 animate={{ rotate: collapsed ? 180 : 0 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 25 }}
               >
-                <ChevronLeft className="h-4 w-4" />
+                <CaretLeft className="h-4 w-4" />
               </motion.div>
             </Button>
           </div>
@@ -1256,7 +1288,7 @@ function GroupFlyout({
               ativo ? 'bg-primary/10 text-primary font-semibold' : 'text-foreground/80 hover:bg-muted'
             )}
           >
-            <Icon className="h-4 w-4 shrink-0" />
+            <Icon className="h-4 w-4 shrink-0" weight={ativo ? 'fill' : PESO_ICONE} />
             <span className="truncate">{section.label}</span>
           </button>
         )
@@ -1347,7 +1379,7 @@ function SidebarAccountFooter({
         aria-label="Upgrade"
         title={collapsed ? 'Upgrade' : undefined}
       >
-        <ShoppingCart className="h-[18px] w-[18px] shrink-0" />
+        <ShoppingCart className="h-[18px] w-[18px] shrink-0" weight={PESO_ICONE} />
         <span
           className="truncate whitespace-nowrap text-sm"
           style={{
@@ -1407,7 +1439,7 @@ function SidebarAccountFooter({
           <span className="block truncate text-sm font-medium">{user.name}</span>
           <span className="block truncate text-xs text-muted-foreground">{user.email}</span>
         </span>
-        <ChevronRight
+        <CaretRight
           className="h-4 w-4 shrink-0 text-muted-foreground"
           style={{
             maxWidth: collapsed ? 0 : 16,
@@ -1472,7 +1504,7 @@ function SidebarAccountFooter({
                   }}
                   className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm text-foreground/85 transition-colors hover:bg-red-500/10 hover:text-red-500 dark:hover:text-red-400"
                 >
-                  <LogOut className="h-[18px] w-[18px] shrink-0" />
+                  <LogOut className="h-[18px] w-[18px] shrink-0" weight={PESO_ICONE} />
                   <span>Sair</span>
                 </button>
               </motion.div>

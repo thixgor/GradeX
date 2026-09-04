@@ -4,7 +4,10 @@ import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import dynamic from 'next/dynamic'
 import { AnimatePresence } from 'framer-motion'
-import { Search } from 'lucide-react'
+// Phosphor, como o resto da sidebar — a lupa fica no meio da coluna de ícones
+// do menu, e um traço diferente ali se lê como defeito. Ver
+// components/sidebar-icon-map.ts.
+import { MagnifyingGlass as Search } from '@phosphor-icons/react/dist/ssr/MagnifyingGlass'
 
 import { cn } from '@/lib/utils'
 
