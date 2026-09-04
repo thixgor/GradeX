@@ -14,6 +14,7 @@ import { CoverImage } from '@/components/cover-image'
 import { FileUpload } from '@/components/file-upload'
 import { PremiumPdfCtaModal } from '@/components/premium-pdf-cta-modal'
 import { PdfCtaBanner } from '@/components/pdf-cta-banner'
+import { MinhasProvasDialog } from '@/components/provas/minhas-provas-dialog'
 import { canDownloadExamPdf } from '@/lib/tier-limits'
 import { resolverDownloadsDaProva } from '@/lib/provas/downloads-da-prova'
 import { resolverJanelaDaProva } from '@/lib/provas/janela-da-prova'
@@ -29,6 +30,7 @@ import {
   Clock,
   Calendar,
   FileText,
+  ClipboardList,
   Info,
   Sparkles,
   Users,
@@ -229,6 +231,8 @@ function ProvasContent() {
   const [deleteConfirmation, setDeleteConfirmation] = useState<{ examId: string; examTitle: string } | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
   const [showExamsInfo, setShowExamsInfo] = useState(false)
+  // Ver Minhas Provas & Resultados sem sair de /provas — ver components/provas/minhas-provas-dialog.tsx
+  const [showMinhasProvas, setShowMinhasProvas] = useState(false)
   const [viewMode, setViewMode] = useState<ViewMode>('home')
   const [editingGroup, setEditingGroup] = useState<Group | null>(null)
   const [editGroupForm, setEditGroupForm] = useState({ name: '', description: '', color: '#3B82F6', icon: '', imageUrl: '', category: '', course: '' })
@@ -1198,6 +1202,22 @@ function ProvasContent() {
               <Info className="h-3.5 w-3.5 mr-1.5" />
               Sobre as Provas
             </Button>
+            {/*
+              A maioria não sabe que já pode ver nota, correção e baixar PDF de
+              toda prova que fez — isso morava só na aba "Desempenho" de
+              /profile, uma aba entre quatro dentro de uma página que a pessoa
+              abre para configurações, não para provas. Aqui, ao lado de "Nova
+              Prova", é onde ela já está olhando.
+            */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowMinhasProvas(true)}
+              className="rounded-xl text-xs"
+            >
+              <ClipboardList className="h-3.5 w-3.5 mr-1.5" />
+              Minhas Provas & Resultados
+            </Button>
             <Button
               onClick={handleCreateExam}
               disabled={tierLimitExceeded}
@@ -1214,6 +1234,12 @@ function ProvasContent() {
         {renderInfoDialog()}
         {renderEditGroupModal()}
         {renderPdfModal()}
+        <MinhasProvasDialog
+          open={showMinhasProvas}
+          onOpenChange={setShowMinhasProvas}
+          userName={user?.name || ''}
+          onError={setPdfErro}
+        />
         <PremiumPdfCtaModal
           open={showPdfCta}
           onClose={() => { setShowPdfCta(false); setPdfCtaExam(null) }}
