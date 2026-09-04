@@ -622,7 +622,8 @@ export default function GenerateQuestionsPage() {
           router.back()
         }
       } else {
-        const res = await fetch(`/api/exams/${examId}`)
+        // Editor de questões: precisa da ordem do banco, não da sorteada.
+        const res = await fetch(`/api/exams/${examId}?ordem=original`)
         if (res.ok) {
           const data = await res.json()
           setExam(data.exam)

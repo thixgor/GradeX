@@ -15,6 +15,8 @@ import { FileUpload } from '@/components/file-upload'
 import { PremiumPdfCtaModal } from '@/components/premium-pdf-cta-modal'
 import { PdfCtaBanner } from '@/components/pdf-cta-banner'
 import { canDownloadExamPdf } from '@/lib/tier-limits'
+import { resolverDownloadsDaProva } from '@/lib/provas/downloads-da-prova'
+import { resolverJanelaDaProva } from '@/lib/provas/janela-da-prova'
 import { consumirCotaDoPlano } from '@/lib/plan-consume-client'
 import { Exam } from '@/lib/types'
 import { formatDate } from '@/lib/utils'
@@ -640,8 +642,28 @@ function ProvasContent() {
   }
 
   async function handleDownloadPDF(exam: Exam, type: 'exam' | 'with-answers' | 'gabarito') {
-    if (!canDownloadPdf) {
+    /*
+     * Duas regras, e só uma delas se resolve assinando.
+     *
+     * `canDownloadPdf` respondia só pelo cargo. Faltavam a exceção que o admin
+     * pode abrir nesta prova (`freeDownloads`) e o tempo: gabarito e gabarito
+     * comentado não saem antes do término, nem para quem paga, porque o arquivo
+     * circula enquanto a turma ainda responde.
+     * Ver lib/provas/downloads-da-prova.ts.
+     */
+    const veredito = resolverDownloadsDaProva(exam, {
+      accountType,
+      isAdmin: user?.role === 'admin',
+      jaEnviou: true,
+    })
+    const arquivo = type === 'exam' ? veredito.prova : veredito.gabarito
+
+    if (!arquivo.permitido) {
       setPdfModalExam(null)
+      if (arquivo.esperandoOFim) {
+        setPdfErro(arquivo.motivo)
+        return
+      }
       setPdfCtaExam(exam)
       setShowPdfCta(true)
       return
@@ -684,47 +706,40 @@ function ProvasContent() {
     }
   }
 
+  /**
+   * O selo de estado de cada prova na lista.
+   *
+   * Esta função era um terceiro relógio: ela decidia uma coisa, a tela da prova
+   * decidia outra (ignorando portões) e o servidor uma terceira (só `endTime`).
+   * Uma prova cujo portão ainda não abriu ganhava o mesmo rótulo de uma cujo
+   * portão já fechou — "Portoes fechados" para as duas —, embora a primeira vá
+   * abrir daqui a pouco e a segunda não abra mais.
+   *
+   * Agora as três telas leem a mesma `resolverJanelaDaProva`.
+   */
   function getExamStatus(exam: Exam) {
-    const now = new Date()
-    const startTime = new Date(exam.startTime)
-    const endTime = new Date(exam.endTime)
-
     if (exam.isPracticeExam) {
       return { text: 'Praticar', color: 'text-emerald-600 dark:text-emerald-400', bgColor: 'bg-emerald-500/10', dotColor: 'bg-emerald-500', canTake: true }
     }
 
-    if (now > endTime) {
-      return { text: 'Finalizada', color: 'text-red-500', bgColor: 'bg-red-500/10', dotColor: 'bg-red-500', canTake: false }
-    }
+    const janela = resolverJanelaDaProva(exam)
 
-    if (exam.gatesOpen && exam.gatesClose) {
-      const gatesOpen = new Date(exam.gatesOpen)
-      const gatesClose = new Date(exam.gatesClose)
-
-      if (now < gatesOpen) {
-        return { text: 'Portoes fechados', color: 'text-muted-foreground', bgColor: 'bg-muted', dotColor: 'bg-gray-400', canTake: false }
-      }
-
-      if (now > gatesClose) {
-        return { text: 'Portoes fechados', color: 'text-muted-foreground', bgColor: 'bg-muted', dotColor: 'bg-gray-400', canTake: false }
-      }
-
-      if (now >= startTime && now <= endTime) {
+    switch (janela.fase) {
+      case 'livre':
         return { text: 'Disponivel', color: 'text-emerald-600 dark:text-emerald-400', bgColor: 'bg-emerald-500/10', dotColor: 'bg-emerald-500', canTake: true }
-      } else if (now < startTime) {
-        return { text: 'Aguardando', color: 'text-blue-600 dark:text-blue-400', bgColor: 'bg-blue-500/10', dotColor: 'bg-blue-500', canTake: true }
-      }
+      case 'encerrada':
+        return { text: 'Finalizada', color: 'text-red-500', bgColor: 'bg-red-500/10', dotColor: 'bg-red-500', canTake: false }
+      case 'antes-do-portao':
+        return { text: 'Aguardando', color: 'text-amber-600 dark:text-amber-400', bgColor: 'bg-amber-500/10', dotColor: 'bg-amber-500', canTake: false }
+      case 'sala-de-espera':
+        return { text: 'Portoes abertos', color: 'text-blue-600 dark:text-blue-400', bgColor: 'bg-blue-500/10', dotColor: 'bg-blue-500', canTake: true }
+      case 'em-andamento':
+        return { text: 'Disponivel', color: 'text-emerald-600 dark:text-emerald-400', bgColor: 'bg-emerald-500/10', dotColor: 'bg-emerald-500', canTake: true }
+      case 'portao-fechado':
+        return { text: 'Portoes fechados', color: 'text-muted-foreground', bgColor: 'bg-muted', dotColor: 'bg-gray-400', canTake: false }
+      default:
+        return { text: 'Indisponivel', color: 'text-muted-foreground', bgColor: 'bg-muted', dotColor: 'bg-gray-400', canTake: false }
     }
-
-    if (now < startTime) {
-      return { text: 'Aguardando', color: 'text-amber-600 dark:text-amber-400', bgColor: 'bg-amber-500/10', dotColor: 'bg-amber-500', canTake: false }
-    }
-
-    if (now >= startTime && now <= endTime) {
-      return { text: 'Disponivel', color: 'text-emerald-600 dark:text-emerald-400', bgColor: 'bg-emerald-500/10', dotColor: 'bg-emerald-500', canTake: true }
-    }
-
-    return { text: 'Indisponivel', color: 'text-muted-foreground', bgColor: 'bg-muted', dotColor: 'bg-gray-400', canTake: false }
   }
 
   // ─── Computed Data ──────────────────────────────────────────

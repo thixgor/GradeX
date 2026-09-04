@@ -43,7 +43,8 @@ export default function AdminCorrectionsPage({ params }: { params: { id: string 
   async function loadData() {
     try {
       // Carregar prova
-      const examRes = await fetch(`/api/exams/${id}`)
+      // A correção lista as questões pela numeração oficial da prova.
+      const examRes = await fetch(`/api/exams/${id}?ordem=original`)
       const examData = await examRes.json()
       if (!examRes.ok) throw new Error(examData.error)
 

@@ -10,7 +10,9 @@ import { ToastAlert } from '@/components/ui/toast-alert'
 import { Exam } from '@/lib/types'
 import { formatDate } from '@/lib/utils'
 // PDF generator loaded dynamically to reduce initial bundle size
-import { ArrowLeft, Edit, Trash2, Eye, EyeOff, Plus, Play, StopCircle, RotateCcw, FileCheck, FileDown, AlertTriangle, Settings, Check, X, Lock, ShieldAlert, Database, Video, Search } from 'lucide-react'
+import { ArrowLeft, Edit, Trash2, Eye, EyeOff, Plus, Play, StopCircle, RotateCcw, FileCheck, FileDown, AlertTriangle, Settings, Check, X, Lock, ShieldAlert, Database, Video, Search, BarChart3, Users, Download } from 'lucide-react'
+import { normalizarPublico, rotuloDoPublico } from '@/lib/provas/publico-da-prova'
+import { algumaLiberacaoLigada, normalizarLiberacoes } from '@/lib/provas/downloads-da-prova'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
@@ -517,11 +519,36 @@ export default function AdminExamsPage() {
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div className="space-y-1">
-                      <div className="flex items-center space-x-2">
+                      <div className="flex flex-wrap items-center gap-2">
                         <CardTitle>{exam.title}</CardTitle>
                         {exam.isHidden && (
                           <span className="text-xs bg-muted px-2 py-1 rounded">
                             Oculto
+                          </span>
+                        )}
+                        {/*
+                          Os dois selos que mudam quem recebe a prova. Sem eles,
+                          uma prova aplicada a um período e uma prova com os PDFs
+                          liberados para contas gratuitas são visualmente
+                          idênticas às demais — e a diferença só aparece quando
+                          alguém reclama.
+                        */}
+                        {(() => {
+                          const publico = normalizarPublico((exam as any).audience)
+                          return publico.modo === 'periodos' ? (
+                            <span className="inline-flex items-center gap-1 rounded bg-blue-500/10 px-2 py-1 text-xs font-medium text-blue-700 dark:text-blue-400">
+                              <Users className="h-3 w-3" />
+                              {rotuloDoPublico(publico)}
+                            </span>
+                          ) : null
+                        })()}
+                        {algumaLiberacaoLigada(normalizarLiberacoes((exam as any).freeDownloads)) && (
+                          <span
+                            className="inline-flex items-center gap-1 rounded bg-amber-500/10 px-2 py-1 text-xs font-medium text-amber-700 dark:text-amber-400"
+                            title="Esta prova libera PDFs para contas sem assinatura"
+                          >
+                            <Download className="h-3 w-3" />
+                            Downloads liberados
                           </span>
                         )}
                       </div>
@@ -629,6 +656,22 @@ export default function AdminExamsPage() {
                       </Button>
                     )}
 
+                    {/*
+                      O relatório vem ANTES do PDF e não espera o término.
+                      "Ver Resultados" só aparecia depois que a prova acabava —
+                      durante a aplicação, que é quando o admin mais precisa
+                      saber se a turma está conseguindo entrar, não havia tela.
+                    */}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => router.push(`/admin/exams/${exam._id}/relatorio`)}
+                      className="border-emerald-500 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950"
+                    >
+                      <BarChart3 className="h-4 w-4 mr-2" />
+                      Relatório e Resultados
+                    </Button>
+
                     <Button
                       variant="outline"
                       size="sm"
@@ -654,7 +697,7 @@ export default function AdminExamsPage() {
                         size="sm"
                         onClick={() => router.push(`/exam/${exam._id}/results`)}
                       >
-                        Ver Resultados
+                        Ranking público
                       </Button>
                     )}
                   </div>

@@ -15,6 +15,9 @@ import { Question, Alternative, ScoringMethod, QuestionType, KeyPoint, EssayStyl
 import { generateRandomTRIParameters } from '@/lib/tri-calculator'
 import { v4 as uuidv4 } from 'uuid'
 import { ArrowLeft, Plus, Trash2, Shuffle, Save, ArrowUp, ArrowDown, Search, Database, Loader2 } from 'lucide-react'
+import { PainelDeAplicacao } from '@/components/admin/provas/painel-de-aplicacao'
+import { LIBERACOES_PADRAO, type LiberacoesDeDownload } from '@/lib/provas/downloads-da-prova'
+import { type PublicoDaProva } from '@/lib/provas/publico-da-prova'
 
 export default function CreateExamPage() {
   const router = useRouter()
@@ -53,6 +56,11 @@ export default function CreateExamPage() {
     allowCustomName: false,
     requireSignature: false,
     shuffleQuestions: false,
+    shuffleAlternatives: false,
+    // A quem a prova é aplicada e quais PDFs ela libera sem assinatura.
+    // Ver components/admin/provas/painel-de-aplicacao.tsx.
+    audience: { modo: 'todos', periodos: [] } as PublicoDaProva,
+    freeDownloads: { ...LIBERACOES_PADRAO } as LiberacoesDeDownload,
     // Tempo por questão
     timeMode: 'none' as 'none' | 'generalized' | 'individual',
     generalizedTimeSeconds: 0,
@@ -564,6 +572,9 @@ export default function CreateExamPage() {
         allowCustomName: examData.allowCustomName,
         requireSignature: examData.requireSignature,
         shuffleQuestions: examData.shuffleQuestions,
+        shuffleAlternatives: examData.shuffleAlternatives,
+        audience: examData.audience,
+        freeDownloads: examData.freeDownloads,
         // Campos de tempo
         timeMode: examData.timeMode,
         generalizedTimeSeconds: examData.generalizedTimeSeconds,
@@ -1135,26 +1146,34 @@ export default function CreateExamPage() {
                       </div>
                     </div>
 
-                    {/* Embaralhar Questões */}
-                    <div className="flex items-start space-x-3">
-                      <input
-                        type="checkbox"
-                        id="shuffleQuestions"
-                        checked={examData.shuffleQuestions}
-                        onChange={(e) => setExamData({ ...examData, shuffleQuestions: e.target.checked })}
-                        className="mt-1 h-4 w-4 rounded border-input"
-                      />
-                      <div className="flex-1">
-                        <Label htmlFor="shuffleQuestions" className="cursor-pointer font-semibold">
-                          🔀 Embaralhar Ordem das Questões
-                        </Label>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          A ordem das questões será randomizada para cada aluno (gabarito e alternativas não mudam)
-                        </p>
-                      </div>
-                    </div>
                   </div>
                 </div>
+              </div>
+
+              {/*
+                Aplicação da prova: a quem, com que embaralhamento e com quais
+                PDFs liberados. As três decisões vivem juntas porque são a mesma
+                — o que a turma recebe.
+              */}
+              <div className="border-t pt-4">
+                <h3 className="font-semibold mb-1 flex items-center gap-2">🎯 Aplicação da prova</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Para quem esta prova abre, como ela é embaralhada e o que pode ser baixado
+                </p>
+                <PainelDeAplicacao
+                  publico={examData.audience}
+                  onPublicoChange={(audience) => setExamData({ ...examData, audience })}
+                  liberacoes={examData.freeDownloads}
+                  onLiberacoesChange={(freeDownloads) => setExamData({ ...examData, freeDownloads })}
+                  embaralharQuestoes={examData.shuffleQuestions}
+                  embaralharAlternativas={examData.shuffleAlternatives}
+                  onEmbaralharChange={(campo, valor) =>
+                    setExamData({
+                      ...examData,
+                      ...(campo === 'questoes' ? { shuffleQuestions: valor } : { shuffleAlternatives: valor }),
+                    })
+                  }
+                />
               </div>
 
               {/* Sistema de Monitoramento (Proctoring) */}
