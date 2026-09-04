@@ -1,9 +1,12 @@
 import { describe, expect, it } from 'vitest'
 
 import {
+  INK_MIN_STEP_PX,
+  MARKER_MIN_STEP_PX,
   type InkPathSink,
   type InkPoint,
   inkPixelWidth,
+  inkPointMoved,
   normalizeInkStroke,
   traceStroke,
 } from '@/lib/pdf-viewer-ink'
@@ -193,5 +196,63 @@ describe('normalizeInkStroke', () => {
 
   it('não tem o que salvar quando não houve toque nenhum', () => {
     expect(normalizeInkStroke([])).toBeNull()
+  })
+})
+
+/**
+ * A peneira de pontos. O que estes testes protegem é a unidade: o passo mínimo
+ * é medido em PIXELS DE TELA, e não em fração da página. Enquanto era fração, a
+ * peneira engrossava junto com o zoom — ampliado, escrevendo devagar, a tinta
+ * andava em degraus de vários pixels.
+ */
+describe('inkPointMoved', () => {
+  // Uma A4 em pé: largura e altura bem diferentes, para qualquer troca de eixo
+  // na conta aparecer.
+  const pageWidth = 600
+  const pageHeight = 850
+
+  it('deixa passar o que a tela consegue separar', () => {
+    const from = { x: 0.5, y: 0.5 }
+    // Um pixel para a direita.
+    const to = { x: 0.5 + 1 / pageWidth, y: 0.5 }
+    expect(inkPointMoved(from, to, pageWidth, pageHeight, INK_MIN_STEP_PX)).toBe(true)
+  })
+
+  it('barra o tremor de quem está quase parado', () => {
+    const from = { x: 0.5, y: 0.5 }
+    const to = { x: 0.5 + 0.2 / pageWidth, y: 0.5 + 0.2 / pageHeight }
+    expect(inkPointMoved(from, to, pageWidth, pageHeight, INK_MIN_STEP_PX)).toBe(false)
+  })
+
+  it('mede um círculo, não uma elipse: os dois eixos valem o mesmo', () => {
+    const from = { x: 0.5, y: 0.5 }
+    const step = INK_MIN_STEP_PX + 0.05
+    const sideways = { x: 0.5 + step / pageWidth, y: 0.5 }
+    const upwards = { x: 0.5, y: 0.5 + step / pageHeight }
+    expect(inkPointMoved(from, sideways, pageWidth, pageHeight, INK_MIN_STEP_PX)).toBe(true)
+    expect(inkPointMoved(from, upwards, pageWidth, pageHeight, INK_MIN_STEP_PX)).toBe(true)
+
+    const shortSideways = { x: 0.5 + (INK_MIN_STEP_PX - 0.05) / pageWidth, y: 0.5 }
+    const shortUpwards = { x: 0.5, y: 0.5 + (INK_MIN_STEP_PX - 0.05) / pageHeight }
+    expect(inkPointMoved(from, shortSideways, pageWidth, pageHeight, INK_MIN_STEP_PX)).toBe(false)
+    expect(inkPointMoved(from, shortUpwards, pageWidth, pageHeight, INK_MIN_STEP_PX)).toBe(false)
+  })
+
+  it('guarda o MESMO detalhe com a página ampliada', () => {
+    // O ponto seguinte anda um pixel de tela nos dois casos. Com a peneira em
+    // fração de página, o mesmo passo passava sem zoom e era engolido com zoom.
+    const zoomed = { width: pageWidth * 3, height: pageHeight * 3 }
+    const from = { x: 0.5, y: 0.5 }
+    const step = (width: number) => ({ x: 0.5 + 1 / width, y: 0.5 })
+    expect(inkPointMoved(from, step(pageWidth), pageWidth, pageHeight, INK_MIN_STEP_PX)).toBe(true)
+    expect(inkPointMoved(from, step(zoomed.width), zoomed.width, zoomed.height, INK_MIN_STEP_PX)).toBe(true)
+  })
+
+  it('o traço grosso guarda menos pontos que a caneta', () => {
+    expect(MARKER_MIN_STEP_PX).toBeGreaterThan(INK_MIN_STEP_PX)
+    const from = { x: 0.5, y: 0.5 }
+    const to = { x: 0.5 + 0.8 / pageWidth, y: 0.5 }
+    expect(inkPointMoved(from, to, pageWidth, pageHeight, INK_MIN_STEP_PX)).toBe(true)
+    expect(inkPointMoved(from, to, pageWidth, pageHeight, MARKER_MIN_STEP_PX)).toBe(false)
   })
 })

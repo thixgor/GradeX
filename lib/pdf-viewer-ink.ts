@@ -95,6 +95,57 @@ export function traceStroke(
 }
 
 /**
+ * ── Quantos pontos vale a pena guardar ──────────────────────────────────────
+ *
+ * Passo mínimo entre dois pontos capturados, em pixels de TELA.
+ *
+ * A unidade é o ponto inteiro deste bloco. Os traços são guardados em fração da
+ * página (0..1) para valerem em qualquer zoom, e a peneira de pontos vivia
+ * nessa mesma unidade — um passo fixo de 0,0014 da largura. Só que "0,0014 da
+ * página" não quer dizer nada para a mão: num celular com a página em 380 px
+ * são 0,5 px, e com a mesma página ampliada em 3× são 4 px. Ou seja: a peneira
+ * ficava mais grossa exatamente quando a pessoa amplia para escrever miúdo.
+ *
+ * O efeito era visível e é a razão desta mudança: ampliado, escrevendo devagar,
+ * a tinta só andava de 4 em 4 pixels. O traço saía em degraus e a ponta parecia
+ * "presa", como se a caneta patinasse antes de sair.
+ *
+ * Em pixels de tela a peneira passa a querer dizer sempre a mesma coisa: pontos
+ * que a tela não consegue separar não entram. Meio pixel é esse limite. Nada
+ * disso enche o traço de pontos: quando a mão anda, cada amostra da caneta já
+ * vem a vários pixels da anterior e nenhuma é descartada — a peneira só existe
+ * para o tremor de quem está quase parado.
+ */
+export const INK_MIN_STEP_PX = 0.5
+/**
+ * Pincel e marca-texto são traços GROSSOS (dezenas de pixels): detalhe abaixo
+ * de um pixel desaparece embaixo da própria tinta. Um passo maior guarda menos
+ * pontos sem que nada mude na tela.
+ */
+export const MARKER_MIN_STEP_PX = 1.1
+
+/**
+ * O ponto novo andou o bastante para virar amostra?
+ *
+ * A distância é medida em PIXELS, e não na fração da página, porque os dois
+ * eixos têm escalas diferentes: uma A4 é bem mais alta que larga, então o mesmo
+ * "0,001" vale 40% mais na vertical. Medindo em pixels a peneira é um círculo,
+ * e não uma elipse — traço na horizontal e traço na vertical guardam o mesmo
+ * tanto de detalhe.
+ */
+export function inkPointMoved(
+  from: InkPoint,
+  to: InkPoint,
+  width: number,
+  height: number,
+  minPx: number
+) {
+  const dx = (to.x - from.x) * width
+  const dy = (to.y - from.y) * height
+  return Math.hypot(dx, dy) >= minPx
+}
+
+/**
  * Os pontos que vão para o banco — e a regra que faz o PINGO do "i" existir.
  *
  * Um toque rápido de caneta produz UM ponto (ou dois, quando a mão treme meio
