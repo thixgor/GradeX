@@ -165,9 +165,26 @@ export function PranchaInterativa({
       }`}
     >
       {/* `pb-14` reserva a faixa dos controles: sem ela, um marcador no rodapé
-          da prancha ficaria escondido atrás dos botões de zoom. */}
+          da prancha ficaria escondido atrás dos botões de zoom.
+
+          Sobre o `touch-action`: ele era `none` sempre, e isso prendia a página.
+          Uma prancha ocupa quase toda a altura de um iPad, então o dedo que
+          tenta rolar quase sempre pousa em cima dela — e `none` diz ao
+          navegador "eu cuido de todo gesto aqui", inclusive do que o
+          componente não faz nada com. Sem zoom, um dedo só é literalmente um
+          no-op (`gestos-prancha` devolve 'nada' quando `escala === 1`): a
+          página simplesmente travava, e não havia como descer até o resto da
+          lâmina.
+
+          Agora o palco só toma o gesto quando tem o que fazer com ele — com
+          zoom aplicado, em que arrastar move a peça, e em tela cheia, onde não
+          existe página atrás para rolar. Em repouso vale `pan-y`: a rolagem
+          vertical volta a ser do navegador e a pinça de dois dedos continua
+          sendo nossa, que é o que abre o zoom. */}
       <div
-        className={`relative mx-auto flex w-full touch-none select-none items-center justify-center pb-14 ${
+        className={`relative mx-auto flex w-full select-none items-center justify-center pb-14 ${
+          telaCheia || transformacao.escala > 1 ? 'touch-none' : 'touch-pan-y'
+        } ${
           telaCheia ? 'h-full max-h-full' : 'max-w-[900px]'
         } ${transformacao.escala > 1 ? (arrastando ? 'cursor-grabbing' : 'cursor-grab') : 'cursor-zoom-in'}`}
         onPointerDown={aoPressionar}
