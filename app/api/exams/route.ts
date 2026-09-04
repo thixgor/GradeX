@@ -12,6 +12,9 @@ import {
 } from '@/lib/plan-entitlements-server'
 import { ObjectId } from 'mongodb'
 import { podeVerGabarito, prepararProvaParaEntrega } from '@/lib/provas/sanitizar-prova'
+import { normalizarPublico, ramosDePublicoParaMongo } from '@/lib/provas/publico-da-prova'
+import { lerPeriodoDoAluno } from '@/lib/provas/periodo-do-aluno'
+import { normalizarLiberacoes } from '@/lib/provas/downloads-da-prova'
 
 export const dynamic = 'force-dynamic'
 
@@ -49,6 +52,30 @@ export async function GET(request: NextRequest) {
           createdBy: session.userId
         },
       ],
+    }
+
+    /*
+     * Prova aplicada a um período só aparece para quem é daquele período.
+     *
+     * O `$and` é necessário: a query já usa `$or` no nível de cima (visibilidade
+     * e prova pessoal) e um segundo `$or` na mesma chave sobrescreveria o
+     * primeiro — a prova restrita de um período apareceria para a plataforma
+     * inteira, que é o avesso do que a restrição promete.
+     *
+     * O admin não é filtrado: o painel dele lista tudo. O criador da prova
+     * também passa, pelo ramo `createdBy` do `$or` de cima.
+     */
+    if (session.role !== 'admin') {
+      const periodo = await lerPeriodoDoAluno(db, session.userId)
+
+      query = {
+        $and: [
+          query,
+          // Os ramos entram achatados num `$or` só: um `$or` aninhado dentro de
+          // outro é válido, mas o planner não usa índice nele.
+          { $or: [{ createdBy: session.userId }, ...ramosDePublicoParaMongo(periodo)] },
+        ],
+      }
     }
 
     // Sem projeção: o frontend (app/provas, app/admin/exams) lê campos
@@ -114,6 +141,10 @@ export async function GET(request: NextRequest) {
       gatesClose: 1,
       totalPoints: 1,
       scoringMethod: 1,
+      // A tela mostra o selo do período alvo e decide quais botões de download
+      // desenhar; sem os dois campos ela desenha para todo mundo o mesmo.
+      audience: 1,
+      freeDownloads: 1,
     }
 
     const projecaoEscolhida = apenasParaLista
@@ -157,48 +188,23 @@ export async function GET(request: NextRequest) {
      * gabarito de cada uma. Era o dump do catálogo inteiro numa requisição só,
      * para qualquer conta autenticada.
      *
-     * O gabarito é preservado exatamente onde faz falta — prova de treino e
-     * prova pessoal de quem a criou, decidido por `podeVerGabarito` —, e some do
-     * resto. Na listagem `jaSubmeteu` fica em falso de propósito: ela não
-     * precisa saber quem entregou o quê, e é uma consulta a menos por
-     * requisição.
+     * O gabarito é preservado exatamente onde faz falta — prova de treino, prova
+     * pessoal de quem a criou e prova já encerrada, decidido por
+     * `podeVerGabarito` —, e some do resto.
+     *
+     * Aqui havia uma consulta a `submissions` (por `?ids=`), de quando entregar
+     * a prova liberava o gabarito dela. Não libera mais: numa prova aplicada à
+     * turma inteira, quem entrega primeiro receberia o gabarito com os colegas
+     * ainda respondendo (ver `lib/provas/sanitizar-prova.ts`). Sem efeito sobre
+     * o veredito, a consulta virou uma ida ao banco por requisição que não muda
+     * nada — e saiu.
      */
     const contextoBase = {
       userId: session.userId,
       isAdmin: session.role === 'admin',
     }
 
-    /*
-     * Com `?ids=`, `jaSubmeteu` importa: é o caso em que a pessoa quer o
-     * gabarito comentado de provas que já entregou, e responder `false` para
-     * todas devolveria um PDF com as alternativas zeradas. A conta sai numa
-     * consulta só — as submissões desta pessoa entre as provas pedidas — e
-     * apenas para as provas cujo veredito ainda depende dela.
-     */
-    let submetidas = new Set<string>()
-    if (idsPedidos.length > 0) {
-      const dependemDeSubmissao = exams
-        .filter((prova) => !podeVerGabarito(prova, contextoBase))
-        .map((prova) => prova._id.toString())
-
-      if (dependemDeSubmissao.length > 0) {
-        const encontradas = await db
-          .collection('submissions')
-          .find(
-            { examId: { $in: dependemDeSubmissao }, userId: session.userId },
-            { projection: { examId: 1 } },
-          )
-          .toArray()
-        submetidas = new Set(encontradas.map((submissao: any) => String(submissao.examId)))
-      }
-    }
-
-    const provasParaEntrega = exams.map((prova) =>
-      prepararProvaParaEntrega(prova, {
-        ...contextoBase,
-        jaSubmeteu: submetidas.has(prova._id.toString()),
-      }),
-    )
+    const provasParaEntrega = exams.map((prova) => prepararProvaParaEntrega(prova, contextoBase))
 
     // Cache privado curto: lista pessoal de provas raramente muda em
     // alguns segundos. SWR mantém UI responsiva sem regerar imediato.
@@ -327,6 +333,9 @@ export async function POST(request: NextRequest) {
       allowCustomName = false,
       requireSignature = false,
       shuffleQuestions = false,
+      shuffleAlternatives = false,
+      audience,
+      freeDownloads,
       // Novos campos
       isPersonalExam = false,
       groupId,
@@ -542,6 +551,11 @@ export async function POST(request: NextRequest) {
       allowCustomName,
       requireSignature,
       shuffleQuestions,
+      shuffleAlternatives,
+      // Público e exceção de download só existem em prova pública: numa prova
+      // pessoal não há a quem aplicar nem plano de terceiro a excetuar.
+      audience: isPersonalExam ? undefined : normalizarPublico(audience),
+      freeDownloads: isPersonalExam ? undefined : normalizarLiberacoes(freeDownloads),
       // Novos campos
       groupId: groupId || null,
       isPersonalExam,

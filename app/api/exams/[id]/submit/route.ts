@@ -3,6 +3,10 @@ import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
 import { Exam, ExamSubmission, UserAnswer } from '@/lib/types'
 import { ObjectId } from 'mongodb'
+import { resolverJanelaDaProva } from '@/lib/provas/janela-da-prova'
+import { pessoaEstaNoPublico } from '@/lib/provas/publico-da-prova'
+import { lerPeriodoDoAluno } from '@/lib/provas/periodo-do-aluno'
+import { COLECAO_DE_PROGRESSO } from '@/lib/provas/retomada'
 
 export const dynamic = 'force-dynamic'
 
@@ -37,13 +41,46 @@ export async function POST(
       return NextResponse.json({ error: 'Prova não encontrada' }, { status: 404 })
     }
 
-    // Verifica se a prova já terminou (exceto para provas práticas)
+    /*
+     * A janela da prova, decidida pelo relógio do servidor.
+     *
+     * Antes a checagem era só `now > endTime`. Faltavam os dois outros lados da
+     * mesma porta: nada impedia uma entrega ANTES do início (a prova nem tinha
+     * começado e já havia nota no ranking) e o portão não existia aqui. A
+     * `resolverJanelaDaProva` responde as três de uma vez — e é a mesma função
+     * que a tela usa para desenhar, então servidor e cliente não podem mais
+     * discordar sobre quando a prova está aberta.
+     *
+     * Fechar o PORTÃO não bloqueia a entrega: quem entrou antes dele fechar
+     * continua respondendo até o término. É o término que encerra a prova.
+     */
     const now = new Date()
-    if (!exam.isPracticeExam && now > exam.endTime) {
+    const janela = resolverJanelaDaProva(exam, now)
+    if (!janela.podeEnviar) {
       return NextResponse.json(
-        { error: 'Prova já encerrada' },
+        { error: janela.motivo || 'Prova fora do horário' },
         { status: 400 }
       )
+    }
+
+    /*
+     * Prova aplicada a um período não recebe entrega de fora dele.
+     *
+     * Sem isto, a restrição de público seria só de exibição: quem descobrisse o
+     * id da prova entregaria por `fetch` e entraria no ranking da turma.
+     */
+    if (session.role !== 'admin') {
+      const noPublico = pessoaEstaNoPublico(exam, {
+        userId: session.userId,
+        isAdmin: false,
+        periodo: await lerPeriodoDoAluno(db, session.userId),
+      })
+      if (!noPublico) {
+        return NextResponse.json(
+          { error: 'Esta prova não foi aplicada para você.' },
+          { status: 403 }
+        )
+      }
     }
 
     // Verifica se já existe submissão (exceto para provas práticas que permitem múltiplas tentativas)
@@ -135,6 +172,25 @@ export async function POST(
       correctionStatus = 'pending'
     }
 
+    /*
+     * O rascunho é a fonte do que não veio do formulário.
+     *
+     * `startedAt` sai dele, e não do corpo da requisição: o cliente mandava o
+     * horário lido do próprio `localStorage`, que é do aluno — ele podia
+     * reescrever o início da prova e, com ele, a duração registrada. O rascunho
+     * grava o início na primeira vez e nunca o reescreve, nem numa retomada.
+     */
+    const progresso = await db
+      .collection(COLECAO_DE_PROGRESSO)
+      .findOne({ examId: id, userId: session.userId })
+
+    const inicioDoCliente = startedAt ? new Date(startedAt) : undefined
+    const inicioConfiavel = progresso?.startedAt
+      ? new Date(progresso.startedAt)
+      : inicioDoCliente && Number.isFinite(inicioDoCliente.getTime())
+        ? inicioDoCliente
+        : undefined
+
     const submission: ExamSubmission = {
       examId: id,
       userId: session.userId,
@@ -145,11 +201,26 @@ export async function POST(
       score,
       corrections: needsCorrection ? [] : undefined,
       correctionStatus,
-      startedAt: startedAt ? new Date(startedAt) : undefined,
+      startedAt: inicioConfiavel,
+      // A ordem em que ESTE aluno viu as questões, para o relatório numerar
+      // como ele viu. Ver lib/provas/embaralhar.ts.
+      questionOrder: Array.isArray(body.questionOrder) && body.questionOrder.length > 0
+        ? body.questionOrder.map((qid: unknown) => String(qid))
+        : progresso?.questionOrder,
+      resumesUsed: progresso?.resumesUsed || 0,
+      submittedFromSavedProgress: body.fromSavedProgress === true ? true : undefined,
       submittedAt: new Date(),
     }
 
     const result = await submissionsCollection.insertOne(submission)
+
+    // O rascunho existia para sobreviver à queda. Entregue a prova, ele não tem
+    // mais o que guardar — e deixá-lo para trás faria a tela oferecer "continuar
+    // de onde parou" numa prova que já foi entregue.
+    await db
+      .collection(COLECAO_DE_PROGRESSO)
+      .deleteOne({ examId: id, userId: session.userId })
+      .catch(() => {})
 
     // Se tem questões com correção automática (discursivas ou redações), corrigir agora
     if (needsCorrection) {

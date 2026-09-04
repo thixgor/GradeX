@@ -1,4 +1,5 @@
 import type { Exam, Question, Alternative } from '@/lib/types'
+import { fimDaProva } from './janela-da-prova'
 
 /**
  * O gabarito de uma prova avaliativa não viaja até o navegador do aluno.
@@ -25,9 +26,9 @@ import type { Exam, Question, Alternative } from '@/lib/types'
  * ## O critério
  *
  * A pergunta certa não é "esconder ou não", é **para quem a resposta ainda é
- * uma resposta**. Quando o aluno já entregou, ou quando a prova encerrou, o
- * gabarito é justamente o que ele foi buscar — a revisão comentada é metade do
- * valor da plataforma. Antes disso, é cola.
+ * uma resposta**. Quando a prova encerrou, o gabarito é justamente o que o
+ * aluno foi buscar — a revisão comentada é metade do valor da plataforma. Antes
+ * disso, é cola.
  *
  * Por isso `podeVerGabarito` libera em quatro casos e sanitiza no resto.
  *
@@ -77,7 +78,13 @@ export interface ContextoDoGabarito {
   /** Quem está pedindo. */
   userId: string
   isAdmin: boolean
-  /** O aluno já entregou esta prova? */
+  /**
+   * O aluno já entregou esta prova?
+   *
+   * Não libera mais o gabarito por si só (ver acima) — continua no contexto
+   * porque as telas de resultado usam o mesmo objeto para decidir o que
+   * mostrar das respostas do próprio aluno.
+   */
   jaSubmeteu?: boolean
   /** Momento da avaliação; injetável para teste. */
   agora?: Date
@@ -94,8 +101,22 @@ export interface ContextoDoGabarito {
  *    não protege nada.
  * 3. **Prova de treino ou pessoal.** Não tem nota valendo nem ranking; o
  *    feedback imediato é o recurso.
- * 4. **Já entregou, ou a prova encerrou.** O gabarito virou revisão, que é o
- *    que a pessoa veio buscar.
+ * 4. **A prova encerrou.** O gabarito virou revisão, que é o que a pessoa veio
+ *    buscar.
+ *
+ * ## Por que entregar cedo NÃO libera o gabarito
+ *
+ * Havia um quinto caso: `jaSubmeteu`. Ele fazia sentido quando cada aluno fazia
+ * a prova no seu tempo — entregou, acabou, pode revisar. Numa prova aplicada à
+ * turma inteira no mesmo horário, ele é um vazamento com hora marcada: quem
+ * entrega às 14h05 recebe o gabarito enquanto os colegas respondem até as 16h,
+ * e o gabarito é um arquivo que se manda no grupo. Terminar cedo virava
+ * vantagem para a sala.
+ *
+ * Quem entregou continua vendo as PRÓPRIAS respostas na hora (elas são dele, e
+ * saem da submissão, não da prova). O que espera o fim é a resposta certa.
+ * Treino e prova pessoal seguem liberando na entrega pelo caso 3 — não há turma
+ * esperando neles.
  */
 export function podeVerGabarito(
   prova: Partial<Exam> | null | undefined,
@@ -105,16 +126,14 @@ export function podeVerGabarito(
   if (contexto.isAdmin) return true
   if (prova.createdBy && prova.createdBy === contexto.userId) return true
   if (prova.isPracticeExam || prova.isPersonalExam) return true
-  if (contexto.jaSubmeteu) return true
 
   const agora = contexto.agora ?? new Date()
 
-  // Encerrada pelo portão de saída, quando existe; senão pelo fim da prova.
-  const fim = prova.gatesClose ?? prova.endTime
-  if (fim) {
-    const fimEmMs = new Date(fim).getTime()
-    if (Number.isFinite(fimEmMs) && fimEmMs <= agora.getTime()) return true
-  }
+  // `endTime` e não `gatesClose`: o portão fecha a ENTRADA, e fechá-lo antes do
+  // fim (o padrão numa prova com tolerância de atraso) liberava o gabarito com
+  // a turma ainda respondendo. Ver lib/provas/janela-da-prova.ts.
+  const fim = fimDaProva(prova)
+  if (fim && fim.getTime() <= agora.getTime()) return true
 
   return false
 }

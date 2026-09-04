@@ -112,10 +112,18 @@ describe('podeVerGabarito', () => {
     ).toBe(true)
   })
 
-  it('libera depois de o aluno entregar', () => {
+  it('NÃO libera só porque o aluno entregou — a turma ainda está respondendo', () => {
     expect(
       podeVerGabarito(prova(), {
         userId: ALUNO, isAdmin: false, jaSubmeteu: true, agora: durante,
+      }),
+    ).toBe(false)
+  })
+
+  it('quem entregou recebe o gabarito quando a prova encerra', () => {
+    expect(
+      podeVerGabarito(prova(), {
+        userId: ALUNO, isAdmin: false, jaSubmeteu: true, agora: depois,
       }),
     ).toBe(true)
   })
@@ -126,18 +134,20 @@ describe('podeVerGabarito', () => {
     ).toBe(true)
   })
 
-  it('respeita o portão de saída quando ele existe', () => {
-    const comPortao = prova({ gatesClose: new Date('2026-08-01T14:00:00Z') })
+  it('o portão de entrada não encerra a prova para quem está respondendo', () => {
+    // Portão fecha às 11h (tolerância de atraso), prova vai até o endTime.
+    const comPortao = prova({ gatesClose: new Date('2026-08-01T11:00:00Z') })
 
-    // Passou do endTime, mas o portão ainda não fechou: segue escondido.
-    expect(
-      podeVerGabarito(comPortao, { userId: ALUNO, isAdmin: false, agora: depois }),
-    ).toBe(false)
-
+    // 11h30: portão fechado há meia hora, prova ainda correndo. Nada de gabarito.
     expect(
       podeVerGabarito(comPortao, {
-        userId: ALUNO, isAdmin: false, agora: new Date('2026-08-01T15:00:00Z'),
+        userId: ALUNO, isAdmin: false, agora: new Date('2026-08-01T11:30:00Z'),
       }),
+    ).toBe(false)
+
+    // Depois do término, sim.
+    expect(
+      podeVerGabarito(comPortao, { userId: ALUNO, isAdmin: false, agora: depois }),
     ).toBe(true)
   })
 })

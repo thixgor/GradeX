@@ -4,6 +4,12 @@ import { getSession } from '@/lib/auth'
 import { Exam } from '@/lib/types'
 import { ObjectId } from 'mongodb'
 import { prepararProvaParaEntrega, podeVerGabarito } from '@/lib/provas/sanitizar-prova'
+import { montarProvaParaAluno, sementeDaProva } from '@/lib/provas/embaralhar'
+import { pessoaEstaNoPublico } from '@/lib/provas/publico-da-prova'
+import { lerPeriodoDoAluno } from '@/lib/provas/periodo-do-aluno'
+import { resolverJanelaDaProva } from '@/lib/provas/janela-da-prova'
+import { normalizarPublico } from '@/lib/provas/publico-da-prova'
+import { normalizarLiberacoes } from '@/lib/provas/downloads-da-prova'
 
 export const dynamic = 'force-dynamic'
 
@@ -42,6 +48,25 @@ export async function GET(
       return NextResponse.json({ error: 'Prova não encontrada' }, { status: 404 })
     }
 
+    const isAdmin = session.role === 'admin'
+
+    /*
+     * Prova aplicada a um período só existe para esse período.
+     *
+     * O filtro de listagem (`GET /api/exams`) já esconde a prova de quem não é
+     * do público, mas esconder da lista não é proteger: o endereço da prova é
+     * um id que circula em grupo de turma. Aqui a prova simplesmente não existe
+     * para quem não foi convocado — 404, o mesmo que ela já devolve para uma
+     * prova oculta.
+     */
+    if (!isAdmin) {
+      const periodoDoAluno = await lerPeriodoDoAluno(db, session.userId)
+
+      if (!pessoaEstaNoPublico(exam, { userId: session.userId, isAdmin, periodo: periodoDoAluno })) {
+        return NextResponse.json({ error: 'Prova não encontrada' }, { status: 404 })
+      }
+    }
+
     /*
      * O gabarito só sai daqui para quem já pode vê-lo.
      *
@@ -54,7 +79,7 @@ export async function GET(
      * conhecido sem ir ao banco, e uma prova aberta é o único caso que precisa
      * saber se esta pessoa já entregou.
      */
-    const contextoBase = { userId: session.userId, isAdmin: session.role === 'admin' }
+    const contextoBase = { userId: session.userId, isAdmin }
 
     let jaSubmeteu = false
     if (!podeVerGabarito(exam, contextoBase)) {
@@ -63,8 +88,48 @@ export async function GET(
         .findOne({ examId: id, userId: session.userId }, { projection: { _id: 1 } }))
     }
 
+    const entregue = prepararProvaParaEntrega(exam, { ...contextoBase, jaSubmeteu })
+
+    /*
+     * O embaralhamento acontece aqui, e não no navegador.
+     *
+     * Antes a tela da prova sorteava a ordem com `Math.random()` a cada
+     * montagem do componente — recarregar a página devolvia outra prova, e a
+     * ordem que o aluno viu não existia em lugar nenhum para o relatório
+     * reproduzir. A semente estável (`examId:userId`) resolve as duas coisas, e
+     * fazer isso no servidor resolve uma terceira: a ordem original nunca chega
+     * ao navegador de quem está respondendo.
+     *
+     * `?ordem=original` devolve a prova como ela está no banco. É o que as
+     * telas de admin precisam — editor, correção de discursivas e o PDF em
+     * branco — e não revela nada a mais: quem tem direito ao gabarito já o
+     * recebe inteiro de qualquer forma.
+     */
+    const querOrdemOriginal = request.nextUrl.searchParams.get('ordem') === 'original'
+    const embaralha =
+      !querOrdemOriginal && (exam.shuffleQuestions || (exam as any).shuffleAlternatives)
+
+    const provaFinal = embaralha
+      ? {
+          ...entregue,
+          questions: montarProvaParaAluno(
+            entregue.questions || [],
+            sementeDaProva(id, session.userId),
+            {
+              embaralharQuestoes: !!exam.shuffleQuestions,
+              embaralharAlternativas: !!(exam as any).shuffleAlternatives,
+            },
+          ).questions,
+        }
+      : entregue
+
     return NextResponse.json({
-      exam: prepararProvaParaEntrega(exam, { ...contextoBase, jaSubmeteu }),
+      exam: provaFinal,
+      // A janela sai calculada pelo relógio do SERVIDOR. O cliente desenha
+      // portões e contagem regressiva a partir daqui em vez de comparar datas
+      // com o relógio da máquina do aluno, que ele controla.
+      janela: resolverJanelaDaProva(exam),
+      jaSubmeteu,
     })
   } catch (error) {
     console.error('Get exam error:', error)
@@ -139,13 +204,19 @@ export async function PUT(
       'discursiveCorrectionMethod', 'discursiveAiRigor',
       'essayStyle', 'essayCorrectionMethod', 'essayAiRigor',
       'navigationMode', 'allowCustomName', 'requireSignature',
-      'shuffleQuestions', 'timeMode', 'generalizedTimeSeconds',
+      'shuffleQuestions', 'shuffleAlternatives', 'timeMode', 'generalizedTimeSeconds',
       'feedbackMode',
     ] as const
 
+    // `audience` e `freeDownloads` decidem quem VÊ a prova e quem BAIXA os PDFs
+    // dela — as duas coisas valem para os outros, não para o dono. Ficam do lado
+    // do admin pela mesma razão que `isHidden`: um aluno criando prova pessoal
+    // não escolhe para qual período da faculdade ela é aplicada, nem se abre uma
+    // exceção no plano de quem baixa.
     const CAMPOS_SO_DE_ADMIN = [
       'isHidden', 'isPersonalExam', 'isPracticeExam',
       'groupId', 'orderInGroup',
+      'audience', 'freeDownloads',
     ] as const
 
     const permitidos = new Set<string>([
@@ -156,6 +227,16 @@ export async function PUT(
     const camposEnviados: Record<string, any> = {}
     for (const [chave, valor] of Object.entries(body)) {
       if (permitidos.has(chave)) camposEnviados[chave] = valor
+    }
+
+    // Os dois blocos entram normalizados: o formulário manda o que o admin
+    // marcou, e a normalização é o que impede um período 0, um período 47 ou um
+    // "true" em texto de virar regra de acesso.
+    if ('audience' in camposEnviados) {
+      camposEnviados.audience = normalizarPublico(camposEnviados.audience)
+    }
+    if ('freeDownloads' in camposEnviados) {
+      camposEnviados.freeDownloads = normalizarLiberacoes(camposEnviados.freeDownloads)
     }
 
     // Para provas práticas sem datas, usar uma data muito distante no futuro
@@ -178,10 +259,22 @@ export async function PUT(
 
     // As datas e o bloco de proctoring são derivados, não copiados: eles entram
     // já convertidos, fora da lista de campos permitidos.
+    /*
+     * Os portões só são reescritos quando a requisição fala deles.
+     *
+     * `gatesOpen: undefined` dentro de um `$set` não é "não mexer" — o driver
+     * grava `null` no documento, e a prova perdia os portões em qualquer PUT
+     * parcial que não os reenviasse (uma mudança de ordem, um ajuste de título
+     * pela tela de edição de outro campo). Quem quiser TIRAR o portão manda
+     * `null` explicitamente; quem não mandar nada fica com o que já estava.
+     */
+    const portoes: Record<string, any> = {}
+    if ('gatesOpen' in body) portoes.gatesOpen = body.gatesOpen ? new Date(body.gatesOpen) : null
+    if ('gatesClose' in body) portoes.gatesClose = body.gatesClose ? new Date(body.gatesClose) : null
+
     const updateData: Record<string, any> = {
       ...camposEnviados,
-      gatesOpen: body.gatesOpen ? new Date(body.gatesOpen) : undefined,
-      gatesClose: body.gatesClose ? new Date(body.gatesClose) : undefined,
+      ...portoes,
       startTime: body.startTime ? new Date(body.startTime) : (isPracticeExam ? defaultFutureDate : exam.startTime),
       endTime: body.endTime ? new Date(body.endTime) : (isPracticeExam ? defaultFutureDate : exam.endTime),
       // Configurações de proctoring

@@ -136,6 +136,27 @@ export interface Exam {
   // Sistema de grupos e provas pessoais
   groupId?: string // ID do grupo ao qual a prova pertence (null = página inicial)
   isPersonalExam?: boolean // Se é uma prova pessoal (criada por usuário, só visível para ele)
+  // Embaralhar também as alternativas de cada questão (a letra vira posição,
+  // não identidade). Ver lib/provas/embaralhar.ts.
+  shuffleAlternatives?: boolean
+  /**
+   * A quem esta prova é aplicada. Ausente = todos os alunos.
+   * Ver lib/provas/publico-da-prova.ts.
+   */
+  audience?: {
+    modo: 'todos' | 'periodos'
+    periodos?: number[]
+  }
+  /**
+   * Exceção de download desta prova: libera os PDFs para contas sem plano.
+   * Nasce desligada e nunca antecipa o gabarito.
+   * Ver lib/provas/downloads-da-prova.ts.
+   */
+  freeDownloads?: {
+    prova?: boolean
+    relatorio?: boolean
+    gabarito?: boolean
+  }
   aiQuestionsCount?: number // Quantidade de questões geradas por IA nesta prova (para controle de limites)
   feedbackMode?: 'end' | 'immediate' // Modo de feedback para provas pessoais: 'end' (ao final) ou 'immediate' (imediato)
   createdAt: Date
@@ -210,6 +231,16 @@ export interface ExamSubmission {
   discursiveScore?: number // Soma das notas das questões discursivas
   startedAt?: Date // Quando o aluno iniciou a prova
   submittedAt: Date // Quando o aluno submeteu a prova
+  /**
+   * Ordem em que as questões foram apresentadas a este aluno (ids), quando a
+   * prova embaralha. Sem isso o relatório numera pela ordem do banco e não pela
+   * que a pessoa viu. Ver lib/provas/embaralhar.ts.
+   */
+  questionOrder?: string[]
+  /** Quantas retomadas o aluno consumiu antes de entregar. */
+  resumesUsed?: number
+  /** Entrega feita a partir do progresso salvo, sem a pessoa voltar à prova. */
+  submittedFromSavedProgress?: boolean
 }
 
 /**
