@@ -10,6 +10,7 @@ import { PublicPageShell } from '@/components/public-page-shell'
 import { TimedAccessNotice } from '@/components/materiais/timed-access'
 import { CheckoutAccountNotice } from '@/components/checkout/checkout-account-notice'
 import { AccountDeliveryChoice, useAccountDeliveryChoice } from '@/components/checkout/account-delivery-choice'
+import { BuyerDataConfirmation, EmailQualityNotice } from '@/components/checkout/buyer-data-confirmation'
 import { CouponPromo } from '@/components/checkout/coupon-promo'
 import { PackageContents } from '@/components/shop/package-contents'
 import { ListaDoPacote } from '@/components/manual-clinico/pacote'
@@ -255,7 +256,7 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
-  const [step, setStep] = useState<'buyer' | 'payment'>('buyer')
+  const [step, setStep] = useState<'buyer' | 'confirm' | 'payment'>('buyer')
   const [touched, setTouched] = useState(false)
 
   const enabledPlans = useMemo<ProductPlan[]>(
@@ -649,6 +650,7 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
                 <label style={labelStyle}><Mail size={12} style={{ display: 'inline', marginRight: 4 }} /> E-mail</label>
                 <input value={email} onChange={(e) => setEmail(e.target.value)} onBlur={() => setTouched(true)} type="email" placeholder="seu@email.com" style={inputStyle} />
                 {touched && !emailValid && <span className="text-[11px] text-destructive">E-mail inválido.</span>}
+                <EmailQualityNotice state={accountDelivery} onUseSuggestion={setEmail} />
               </div>
               <div>
                 <label style={labelStyle}><Phone size={12} style={{ display: 'inline', marginRight: 4 }} /> Telefone (com DDD)</label>
@@ -662,13 +664,25 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
                   : 'Usamos esses dados para vincular sua compra, gerar sua Serial Key e enviar o comprovante. Não é necessário criar conta agora.'}
               </p>
               <button
-                onClick={() => { setTouched(true); if (canGoToPayment) setStep('payment') }}
+                onClick={() => { setTouched(true); if (canGoToPayment) setStep('confirm') }}
                 disabled={!canGoToPayment}
                 className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-secondary text-sm font-bold text-secondary-foreground shadow-sm transition hover:bg-secondary/90 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                Ir para pagamento <ArrowRight className="h-4 w-4" />
+                Conferir meus dados <ArrowRight className="h-4 w-4" />
               </button>
             </div>
+          ) : step === 'confirm' ? (
+            <BuyerDataConfirmation
+              name={name.trim()}
+              email={email.trim().toLowerCase()}
+              phone={phone.trim()}
+              deliveryLine={appliesToAccount
+                ? `O acesso entra direto na conta ${accountDelivery.email} assim que o pagamento for aprovado — não há chave para ativar.`
+                : `A Serial Key será enviada para ${email.trim().toLowerCase()} — é por esse e-mail que você libera o acesso.`}
+              emailSuspicious={accountDelivery.emailCheck.suspicious}
+              onEdit={() => setStep('buyer')}
+              onConfirm={() => setStep('payment')}
+            />
           ) : (
             <div className="space-y-4">
               <button
@@ -731,7 +745,7 @@ function GenericComprarContent({ productType }: { productType: string }) {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
-  const [step, setStep] = useState<'buyer' | 'payment'>('buyer')
+  const [step, setStep] = useState<'buyer' | 'confirm' | 'payment'>('buyer')
   const [touched, setTouched] = useState(false)
 
   // Cupom (compra sem login). Só é elegível para material/pacote/flashcard.
@@ -1065,6 +1079,7 @@ function GenericComprarContent({ productType }: { productType: string }) {
                 <label style={labelStyle}><Mail size={12} style={{ display: 'inline', marginRight: 4 }} /> E-mail</label>
                 <input value={email} onChange={(e) => setEmail(e.target.value)} onBlur={() => setTouched(true)} type="email" placeholder="seu@email.com" style={inputStyle} />
                 {touched && !emailValid && <span className="text-[11px] text-destructive">E-mail inválido.</span>}
+                <EmailQualityNotice state={accountDelivery} onUseSuggestion={setEmail} />
               </div>
               <div>
                 <label style={labelStyle}><Phone size={12} style={{ display: 'inline', marginRight: 4 }} /> Telefone (com DDD)</label>
@@ -1079,13 +1094,25 @@ function GenericComprarContent({ productType }: { productType: string }) {
               </p>
               <button
                 type="button"
-                onClick={() => { setTouched(true); if (canGoToPayment) setStep('payment') }}
+                onClick={() => { setTouched(true); if (canGoToPayment) setStep('confirm') }}
                 disabled={!canGoToPayment}
                 className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-secondary text-[15px] font-bold text-secondary-foreground shadow-sm transition hover:bg-secondary/90 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                Ir para pagamento <ArrowRight className="h-4 w-4" />
+                Conferir meus dados <ArrowRight className="h-4 w-4" />
               </button>
             </div>
+          ) : step === 'confirm' ? (
+            <BuyerDataConfirmation
+              name={name.trim()}
+              email={email.trim().toLowerCase()}
+              phone={phone.trim()}
+              deliveryLine={appliesToAccount
+                ? `O acesso entra direto na conta ${accountDelivery.email} assim que o pagamento for aprovado — não há chave para ativar.`
+                : `A Serial Key será enviada para ${email.trim().toLowerCase()} — é por esse e-mail que você libera o acesso.`}
+              emailSuspicious={accountDelivery.emailCheck.suspicious}
+              onEdit={() => setStep('buyer')}
+              onConfirm={() => setStep('payment')}
+            />
           ) : (
             <div>
               <button

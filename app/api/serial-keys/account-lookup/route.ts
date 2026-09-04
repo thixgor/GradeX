@@ -2,14 +2,19 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { findAccountByEmail, isValidEmail, logSerialKeySecurity } from '@/lib/serial-keys'
+import { emailDomainOf } from '@/lib/email-check'
+import { checkEmailDomain } from '@/lib/email-domain-check'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 
 /**
- * POST — "este e-mail já tem conta no site?", perguntado pelas telas de compra
- * SEM LOGIN (/comprar e o carrinho de /materiais/checkout) logo depois que o
- * comprador informa nome, e-mail e telefone.
+ * POST — o que o servidor sabe sobre o e-mail digitado numa compra SEM LOGIN
+ * (/comprar e o carrinho de /materiais/checkout), perguntado logo depois que o
+ * comprador informa nome, e-mail e telefone. Duas coisas, uma ida só:
+ *
+ *  1. Esse e-mail já tem conta no site?
+ *  2. O domínio dele consegue receber e-mail?
  *
  * Quem compra sem entrar quase sempre já tem conta: digita o mesmo e-mail,
  * paga, recebe a Serial Key e só então descobre que precisaria ativá-la. Com a
@@ -27,6 +32,12 @@ export const runtime = 'nodejs'
  * é o mesmo que qualquer tela de "esqueci minha senha" entrega. O rate limit
  * por IP mantém isso longe de uma varredura em massa, e cada estouro vira log
  * de segurança.
+ *
+ * A pergunta 2 existe por um prejuízo concreto: na compra sem login o e-mail é
+ * o único endereço do que foi comprado. Quem digita um domínio que não existe
+ * paga, não recebe nada, e o desfecho é sempre reembolso. O DNS responde isso
+ * antes do pagamento — e nunca bloqueia sozinho, só avisa: `unknown` (timeout,
+ * SERVFAIL) não pode custar uma venda de verdade.
  *
  * ATENÇÃO: esta rota NÃO decide nada. A escolha do comprador é revalidada no
  * checkout autoritativo (/api/serial-keys/checkout), que procura a conta de
@@ -48,13 +59,22 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Informe um e-mail válido.' }, { status: 400 })
   }
 
+  // As duas perguntas são independentes: uma consulta ao Mongo e uma ao DNS,
+  // lado a lado, para a tela não esperar a soma das duas.
+  const domainStatus = checkEmailDomain(emailDomainOf(email))
+
   try {
     const db = await getDb()
-    const account = await findAccountByEmail(db, email)
-    return NextResponse.json({ email, exists: !!account })
+    const [account, emailDomain] = await Promise.all([findAccountByEmail(db, email), domainStatus])
+    return NextResponse.json({ email, exists: !!account, emailDomain })
   } catch (err) {
     console.error('[serial-keys/account-lookup] falha ao consultar conta:', err)
     // Falha aqui não pode travar a compra: a tela segue no caminho da Serial Key.
-    return NextResponse.json({ email, exists: false, unavailable: true })
+    return NextResponse.json({
+      email,
+      exists: false,
+      unavailable: true,
+      emailDomain: await domainStatus.catch(() => 'unknown' as const),
+    })
   }
 }

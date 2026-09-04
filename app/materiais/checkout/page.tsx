@@ -14,6 +14,7 @@ import {
   useAccountDeliveryChoice,
   type AccountDeliveryState,
 } from '@/components/checkout/account-delivery-choice'
+import { BuyerDataConfirmation, EmailQualityNotice } from '@/components/checkout/buyer-data-confirmation'
 import { CouponPromo } from '@/components/checkout/coupon-promo'
 import { PackageContents } from '@/components/shop/package-contents'
 import { useMaterialCart } from '@/context/MaterialCartContext'
@@ -1236,6 +1237,9 @@ export default function MateriaisCheckoutPage() {
                     buyer={buyer}
                     setBuyer={setBuyer}
                     accountDelivery={accountDelivery}
+                    deliveryLine={cartAppliesToAccount
+                      ? `Os ${cartPreview.payableItems.length} itens entram direto na conta ${accountDelivery.email} assim que o pagamento for aprovado — não há chave para ativar.`
+                      : `As Serial Keys (uma por produto) serão enviadas para ${buyer.email.trim().toLowerCase()} — é por elas que você libera o acesso.`}
                     onConfirm={() => setBuyerConfirmed(true)}
                   />
                 ) : (
@@ -1680,14 +1684,19 @@ function GuestBuyerForm({
   buyer,
   setBuyer,
   accountDelivery,
+  deliveryLine,
   onConfirm,
 }: {
   buyer: { name: string; email: string; phone: string }
   setBuyer: (b: { name: string; email: string; phone: string }) => void
   accountDelivery: AccountDeliveryState
+  deliveryLine: string
   onConfirm: () => void
 }) {
   const [touched, setTouched] = useState(false)
+  // Parada obrigatória antes do pagamento: na compra sem login o e-mail é o
+  // único endereço da compra, e errar uma letra nele só aparece depois de pagar.
+  const [reviewing, setReviewing] = useState(false)
   const digits = (v: string) => v.replace(/\D/g, '')
   const nameValid = buyer.name.trim().includes(' ') && buyer.name.trim().length >= 3
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(buyer.email.trim())
@@ -1697,6 +1706,21 @@ function GuestBuyerForm({
 
   const label: React.CSSProperties = { display: 'block', fontSize: '12px', fontWeight: 600, color: 'rgba(52,211,153,0.8)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em' }
   const input: React.CSSProperties = { width: '100%', boxSizing: 'border-box', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(52,211,153,0.2)', color: 'white', borderRadius: '10px', padding: '12px 14px', fontSize: '14px', outline: 'none' }
+
+  if (reviewing) {
+    return (
+      <BuyerDataConfirmation
+        name={buyer.name.trim()}
+        email={buyer.email.trim().toLowerCase()}
+        phone={buyer.phone.trim()}
+        deliveryLine={deliveryLine}
+        emailSuspicious={accountDelivery.emailCheck.suspicious}
+        tone="dark"
+        onEdit={() => setReviewing(false)}
+        onConfirm={onConfirm}
+      />
+    )
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
@@ -1717,6 +1741,11 @@ function GuestBuyerForm({
         <label style={label}>E-mail</label>
         <input value={buyer.email} onChange={(e) => setBuyer({ ...buyer, email: e.target.value })} onBlur={() => setTouched(true)} type="email" placeholder="seu@email.com" style={input} />
         {touched && !emailValid && <span style={{ fontSize: '11px', color: '#f87171' }}>E-mail inválido.</span>}
+        <EmailQualityNotice
+          state={accountDelivery}
+          tone="dark"
+          onUseSuggestion={(fixed) => setBuyer({ ...buyer, email: fixed })}
+        />
       </div>
       <div>
         <label style={label}>Telefone (com DDD)</label>
@@ -1725,11 +1754,11 @@ function GuestBuyerForm({
       </div>
       <AccountDeliveryChoice state={accountDelivery} tone="dark" highlightMissing={touched} />
       <button
-        onClick={() => { setTouched(true); if (valid) onConfirm() }}
+        onClick={() => { setTouched(true); if (valid) setReviewing(true) }}
         disabled={!valid}
         style={{ background: 'linear-gradient(135deg, #059669, #34d399)', boxShadow: '0 0 30px rgba(52,211,153,0.3)', border: 'none', borderRadius: '12px', color: 'white', fontWeight: 700, fontSize: '15px', padding: '14px 24px', width: '100%', cursor: valid ? 'pointer' : 'not-allowed', opacity: valid ? 1 : 0.6 }}
       >
-        Ir para pagamento
+        Conferir meus dados
       </button>
     </div>
   )

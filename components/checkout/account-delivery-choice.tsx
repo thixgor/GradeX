@@ -1,7 +1,8 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Check, KeyRound, Loader2, ShieldCheck, UserCheck } from 'lucide-react'
+import { suggestEmailFix } from '@/lib/email-check'
 
 /**
  * "Encontramos uma conta com esse e-mail — quer o material aplicado nela?"
@@ -42,6 +43,25 @@ export interface AccountDeliveryState {
   checkoutBody: { deliveryMode?: DeliveryMode }
   /** Conferência opcional "essa conta é minha mesmo?" (CPF + nascimento). */
   identity: AccountIdentityState
+  /** Qualidade do e-mail digitado — erro de digitação e domínio que recebe. */
+  emailCheck: EmailCheckState
+}
+
+/**
+ * O que sabemos sobre o e-mail digitado.
+ *
+ * Na compra sem login esse endereço é o único caminho até o que foi comprado:
+ * errar nele significa pagar e não receber nada. `suggestion` é instantânea
+ * (comparação com os provedores conhecidos, sem rede); `domain` vem do DNS,
+ * junto da consulta de conta.
+ */
+export interface EmailCheckState {
+  /** E-mail corrigido para oferecer com um clique, quando há um palpite. */
+  suggestion: string | null
+  /** `undeliverable` = o DNS disse que esse domínio não recebe e-mail. */
+  domain: 'ok' | 'undeliverable' | 'unknown'
+  /** Vale mostrar um alerta? Verdadeiro para erro de digitação ou domínio morto. */
+  suspicious: boolean
 }
 
 /**
@@ -80,6 +100,7 @@ function formatCpfInput(value: string): string {
 export function useAccountDeliveryChoice(email: string, emailValid: boolean): AccountDeliveryState {
   const [status, setStatus] = useState<LookupStatus>('idle')
   const [checkedEmail, setCheckedEmail] = useState('')
+  const [emailDomain, setEmailDomain] = useState<EmailCheckState['domain']>('unknown')
   const [deliveryMode, setDeliveryMode] = useState<DeliveryMode | null>(null)
   const [cpf, setCpf] = useState('')
   const [birthDate, setBirthDate] = useState('')
@@ -105,6 +126,8 @@ export function useAccountDeliveryChoice(email: string, emailValid: boolean): Ac
     setDeliveryMode(null)
     resetIdentity()
 
+    setEmailDomain('unknown')
+
     if (!emailValid) {
       setStatus('idle')
       setCheckedEmail('')
@@ -124,6 +147,11 @@ export function useAccountDeliveryChoice(email: string, emailValid: boolean): Ac
           if (id !== requestId.current) return
           setCheckedEmail(normalized)
           setStatus(data?.exists ? 'found' : 'none')
+          setEmailDomain(
+            data?.emailDomain === 'ok' || data?.emailDomain === 'undeliverable'
+              ? data.emailDomain
+              : 'unknown'
+          )
         })
         .catch(() => {
           // Sem consulta não há pergunta a fazer: segue pela Serial Key.
@@ -171,6 +199,12 @@ export function useAccountDeliveryChoice(email: string, emailValid: boolean): Ac
       .finally(() => setCheckingIdentity(false))
   }, [cpf, birthDate, normalized])
 
+  // Palpite de digitação: instantâneo, sem esperar rede nenhuma.
+  const suggestion = useMemo(
+    () => (emailValid ? suggestEmailFix(normalized) : null),
+    [normalized, emailValid]
+  )
+
   const found = status === 'found'
   return {
     status,
@@ -195,6 +229,11 @@ export function useAccountDeliveryChoice(email: string, emailValid: boolean): Ac
       error: identityError,
       submit: submitIdentity,
       reset: resetIdentity,
+    },
+    emailCheck: {
+      suggestion,
+      domain: emailDomain,
+      suspicious: Boolean(suggestion) || emailDomain === 'undeliverable',
     },
   }
 }
