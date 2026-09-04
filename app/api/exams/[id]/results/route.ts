@@ -5,6 +5,7 @@ import { Exam, ExamSubmission } from '@/lib/types'
 import { ObjectId } from 'mongodb'
 import { calculateTRIScores } from '@/lib/tri-calculator'
 import { resolverJanelaDaProva } from '@/lib/provas/janela-da-prova'
+import { mostraClassificacao, posicaoNaTurma, resumirTurma } from '@/lib/provas/classificacao'
 
 export const dynamic = 'force-dynamic'
 
@@ -78,8 +79,11 @@ export async function GET(
       .find({ examId: id })
       .toArray()
 
-    // Se for TRI, calcula as notas
-    if (exam.scoringMethod === 'tri') {
+    const scoringMethod: 'tri' | 'normal' = exam.scoringMethod === 'tri' ? 'tri' : 'normal'
+
+    let resultados: { userId: string; userName: string; nota: number }[]
+
+    if (scoringMethod === 'tri') {
       const triResults = calculateTRIScores(
         exam.questions,
         submissions.map(sub => ({
@@ -97,26 +101,53 @@ export async function GET(
         )
       }
 
-      return NextResponse.json({
-        scoringMethod: 'tri',
-        results: triResults,
-        encerrada: janela.encerrada || !!exam.isPracticeExam,
-        souAdmin: isAdmin,
-      })
-    }
-
-    // Se for método normal, retorna as pontuações
-    const normalResults = submissions
-      .map(sub => ({
+      resultados = triResults.map(r => ({ userId: r.userId, userName: r.userName, nota: r.triScore }))
+    } else {
+      resultados = submissions.map(sub => ({
         userId: sub.userId,
         userName: sub.userName,
-        score: sub.score || 0,
+        nota: sub.score || 0,
       }))
-      .sort((a, b) => a.userName.localeCompare(b.userName, 'pt-BR'))
+    }
+
+    /*
+     * A classificação é decidida AQUI, não na tela.
+     *
+     * Com `showRanking: false` a rota devolvia a mesma lista de sempre — nome e
+     * nota de toda a turma — e esconder a seção no React deixaria a lista a um
+     * `fetch` de distância, no console ou na aba de rede. O que a tela não
+     * mostra, esta rota não manda.
+     *
+     * O que continua saindo é o resumo ANÔNIMO da turma e a nota de quem está
+     * pedindo: desligar a classificação tira os nomes, não o retorno.
+     */
+    const podeVerClassificacao = mostraClassificacao(exam, isAdmin)
+    const notaMaxima = scoringMethod === 'tri' ? 1000 : exam.totalPoints || 100
+    const notas = resultados.map(r => r.nota)
+
+    const minhaLinha = resultados.find(r => r.userId === session.userId) || null
 
     return NextResponse.json({
-      scoringMethod: 'normal',
-      results: normalResults,
+      scoringMethod,
+      // Ordenada por nota: a tela lista por colocação, e ordenar por nome aqui
+      // só obrigava o cliente a reordenar tudo de novo.
+      results: podeVerClassificacao
+        ? [...resultados]
+            .sort((a, b) => b.nota - a.nota)
+            .map(r => (scoringMethod === 'tri'
+              ? { userId: r.userId, userName: r.userName, triScore: r.nota }
+              : { userId: r.userId, userName: r.userName, score: r.nota }))
+        : [],
+      mostrarClassificacao: podeVerClassificacao,
+      // O resumo vem do servidor mesmo quando a lista vai junto: sem ele, a
+      // tela com a classificação desligada não teria como calcular a média de
+      // notas que ela não recebeu.
+      estatisticas: resumirTurma(notas, notaMaxima),
+      minhaNota: minhaLinha ? minhaLinha.nota : null,
+      minhaPosicao: minhaLinha && podeVerClassificacao
+        ? posicaoNaTurma(notas, minhaLinha.nota)
+        : null,
+      notaMaxima,
       encerrada: janela.encerrada || !!exam.isPracticeExam,
       souAdmin: isAdmin,
     })

@@ -130,6 +130,17 @@ export interface Exam {
   allowCustomName?: boolean // Permitir que o aluno digite um nome diferente do nome de usuário
   requireSignature?: boolean // Exigir assinatura desenhada antes de iniciar
   shuffleQuestions?: boolean // Embaralhar a ordem das questões (não as alternativas)
+  /**
+   * A classificação (ranking) desta prova aparece para o aluno?
+   *
+   * Ausente ou `true` = aparece, que é como todas as provas se comportavam
+   * antes deste campo existir. `false` esconde a lista de nomes e notas e a
+   * posição de cada um — a nota da pessoa e a distribuição anônima da turma
+   * continuam. Ver `app/api/exams/[id]/results/route.ts`, onde a decisão é
+   * aplicada no servidor: esconder só na tela deixaria a lista a um `fetch` de
+   * distância.
+   */
+  showRanking?: boolean
   // Tempo por questão
   timeMode?: 'none' | 'generalized' | 'individual' // none: sem tempo, generalized: mesmo tempo para todas, individual: tempo diferente por questão
   generalizedTimeSeconds?: number // Tempo em segundos quando timeMode = 'generalized'

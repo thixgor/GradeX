@@ -57,6 +57,8 @@ export default function CreateExamPage() {
     isPracticeExam: false,
     allowCustomName: false,
     requireSignature: false,
+    // Nasce ligada: é como toda prova se comportava antes do campo existir.
+    showRanking: true,
     shuffleQuestions: false,
     shuffleAlternatives: false,
     // A quem a prova é aplicada e quais PDFs ela libera sem assinatura.
@@ -602,6 +604,7 @@ export default function CreateExamPage() {
         isPracticeExam: examData.isPracticeExam,
         allowCustomName: examData.allowCustomName,
         requireSignature: examData.requireSignature,
+        showRanking: examData.showRanking,
         shuffleQuestions: examData.shuffleQuestions,
         shuffleAlternatives: examData.shuffleAlternatives,
         audience: examData.audience,
@@ -1173,6 +1176,34 @@ export default function CreateExamPage() {
                         </Label>
                         <p className="text-xs text-muted-foreground mt-1">
                           O aluno deverá assinar (desenhar) antes de iniciar. A assinatura aparecerá no PDF e relatórios.
+                        </p>
+                      </div>
+                    </div>
+
+                    {/*
+                      Classificação pública.
+
+                      A mesma chave existe em /admin/exams, num botão do cartão
+                      da prova — é lá que ela costuma ser virada, depois que as
+                      notas saem. Aqui ela existe para a prova que já nasce sem
+                      ranking: um diagnóstico, uma recuperação, uma turma
+                      pequena onde a última colocação tem nome e sobrenome.
+                    */}
+                    <div className="flex items-start space-x-3">
+                      <input
+                        type="checkbox"
+                        id="showRanking"
+                        checked={examData.showRanking}
+                        onChange={(e) => setExamData({ ...examData, showRanking: e.target.checked })}
+                        className="mt-1 h-4 w-4 rounded border-input"
+                      />
+                      <div className="flex-1">
+                        <Label htmlFor="showRanking" className="cursor-pointer font-semibold">
+                          🏅 Mostrar Classificação para os alunos
+                        </Label>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Desmarcado, o aluno vê a própria nota e o desempenho geral da turma, mas não a
+                          lista de nomes e notas.
                         </p>
                       </div>
                     </div>

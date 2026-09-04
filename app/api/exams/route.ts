@@ -362,6 +362,9 @@ export async function POST(request: NextRequest) {
       requireSignature = false,
       shuffleQuestions = false,
       shuffleAlternatives = false,
+      // Ausente = classificação visível, que é como toda prova se comportava
+      // antes de o campo existir.
+      showRanking = true,
       audience,
       freeDownloads,
       // Novos campos
@@ -610,6 +613,7 @@ export async function POST(request: NextRequest) {
       requireSignature,
       shuffleQuestions,
       shuffleAlternatives,
+      showRanking: showRanking !== false,
       // Público e exceção de download só existem em prova pública: numa prova
       // pessoal não há a quem aplicar nem plano de terceiro a excetuar.
       audience: isPersonalExam ? undefined : normalizarPublico(audience),

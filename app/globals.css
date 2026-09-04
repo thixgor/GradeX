@@ -6675,6 +6675,85 @@ body.has-guest-notice {
   animation: exam-selo-estoura 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
+/* ---------------------------------------------------------------
+   O botão que chama para começar.
+
+   Na sala de espera o botão "Iniciar Prova Agora" nascia igual a
+   qualquer outro botão verde da tela — e ele não é: é o único que
+   a pessoa está esperando há minutos. O halo pulsa devagar (1.8s,
+   não 0.6s: pressa não é urgência) e some assim que o botão é
+   desabilitado, porque um botão travado que pisca é uma promessa
+   quebrada a cada segundo.
+   --------------------------------------------------------------- */
+@keyframes exam-chama {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.55), 0 8px 20px -8px rgba(16, 185, 129, 0.6); }
+  50%      { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0), 0 8px 26px -6px rgba(16, 185, 129, 0.75); }
+}
+
+.exam-botao-chama:not(:disabled) {
+  animation: exam-chama 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* O brilho que atravessa o botão uma vez a cada ciclo. Sozinho o halo já
+   chama; a faixa é o que faz o olho voltar depois de ter desviado. */
+@keyframes exam-brilho-passa {
+  0%   { transform: translateX(-130%) skewX(-18deg); }
+  55%, 100% { transform: translateX(230%) skewX(-18deg); }
+}
+
+.exam-botao-chama:not(:disabled)::after {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 45%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  animation: exam-brilho-passa 2.6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* A marca e o ícone da sala de espera: uma flutuação de 4s, longa o
+   bastante para ser percebida como respiração e não como piscada. */
+@keyframes exam-flutua {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-5px); }
+}
+
+.exam-flutua {
+  animation: exam-flutua 4.5s ease-in-out infinite;
+}
+
+/* O anel que gira devagar em volta do relógio da sala de espera. */
+@keyframes exam-orbita {
+  to { transform: rotate(360deg); }
+}
+
+.exam-orbita {
+  animation: exam-orbita 9s linear infinite;
+}
+
+/* A entrada da tela inteira: usada no cabeçalho de marca do resultado e
+   da sala de espera, para a página não aparecer de uma vez. */
+@keyframes exam-desce {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.exam-desce {
+  animation: exam-desce 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* O gradiente que anda por trás do cartão de resultado. Devagar (14s) e
+   com opacidade baixa: é textura, não animação. */
+@keyframes exam-aurora {
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
+
+.exam-aurora {
+  background-size: 200% 200%;
+  animation: exam-aurora 14s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .exam-marco-pulsa,
   .exam-retomada-entra,
@@ -6682,8 +6761,15 @@ body.has-guest-notice {
   .exam-resultado-entra,
   .exam-anel-de-nota,
   .exam-numero-sobe,
-  .exam-selo-estoura {
+  .exam-selo-estoura,
+  .exam-botao-chama:not(:disabled),
+  .exam-botao-chama:not(:disabled)::after,
+  .exam-flutua,
+  .exam-orbita,
+  .exam-desce,
+  .exam-aurora {
     animation: none;
   }
   .exam-retomada-barra { transform: none; }
+  .exam-botao-chama:not(:disabled)::after { display: none; }
 }

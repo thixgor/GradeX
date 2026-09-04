@@ -38,9 +38,30 @@ describe('avaliarRetomada', () => {
   })
 
   it('a prova encerrada fecha a retomada — o portão não é contornável', () => {
-    const v = avaliarRetomada(entrada({ janelaAberta: false }))
+    const v = avaliarRetomada(entrada({ janelaAberta: false, jaEncerrou: true }))
     expect(v.podeRetomar).toBe(false)
     expect(v.podeEntregarOSalvo).toBe(false)
+    expect(v.motivo).toBe('prova-encerrada')
+    expect(v.mensagem).toMatch(/já terminou/)
+  })
+
+  it('antes do início a prova NÃO terminou — e o aviso não pode dizer que sim', () => {
+    /*
+     * `janelaAberta` é falso nos dois extremos, e o veredito tratava os dois
+     * como o mesmo. Quem abria a prova antes de ela começar (o admin corrigiu
+     * o horário, ou mandou o começo para trás e voltou) lia "A prova já
+     * terminou" com o portão ainda fechado — sobre uma prova que ia acontecer
+     * dali a pouco.
+     */
+    const v = avaliarRetomada(entrada({ janelaAberta: false, jaEncerrou: false }))
+    expect(v.motivo).toBe('prova-nao-comecou')
+    expect(v.mensagem).toMatch(/ainda não começou/)
+    expect(v.mensagem).not.toMatch(/terminou/)
+    expect(v.podeRetomar).toBe(false)
+  })
+
+  it('sem `jaEncerrou`, o veredito antigo continua valendo', () => {
+    const v = avaliarRetomada(entrada({ janelaAberta: false }))
     expect(v.motivo).toBe('prova-encerrada')
   })
 

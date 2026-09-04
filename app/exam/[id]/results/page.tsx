@@ -6,12 +6,17 @@ import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { Barcode } from '@/components/barcode'
-import { Exam, TRIResult } from '@/lib/types'
+import { ExamBrandFooter, ExamBrandHeader } from '@/components/exam/exam-brand-header'
+import { Exam, ExamSubmission, TRIResult } from '@/lib/types'
 import {
   ArrowLeft,
   BarChart3,
+  BookOpenCheck,
   Download,
+  EyeOff,
+  FileCheck2,
   FileText,
+  ListChecks,
   Lock,
   Medal,
   Search,
@@ -19,6 +24,7 @@ import {
   Users,
 } from 'lucide-react'
 import { resolverDownloadsDaProva } from '@/lib/provas/downloads-da-prova'
+import { FAIXAS_DE_NOTA, type EstatisticasDaTurma } from '@/lib/provas/classificacao'
 import { cn } from '@/lib/utils'
 
 /**
@@ -45,6 +51,19 @@ import { cn } from '@/lib/utils'
  *   tirou 71 diz mais, e mais rápido, do que oitenta linhas de nome e nota.
  * - **Ordenação por nota, com busca.** A lista alfabética servia à chamada, não
  *   ao resultado.
+ *
+ * ## A marca, e os quatro documentos
+ *
+ * A tela não tinha logo, nome nem endereço da plataforma — e ela é a mais
+ * compartilhada da prova (é dela que sai o print para o grupo da turma). Passa
+ * a ter cabeçalho e rodapé de marca, como a tela de entrada e a sala de espera.
+ *
+ * E os downloads: havia UM botão, "Gabarito oficial". As liberações por prova
+ * são três (`freeDownloads`: prova, relatório, gabarito) e produzem quatro
+ * arquivos diferentes — o admin liberava a resposta comentada e ela não
+ * aparecia em lugar nenhum, porque o botão dela não existia. Agora a seção
+ * lista os quatro, cada um com o motivo da recusa quando é o caso, em vez de
+ * simplesmente não existir.
  */
 
 interface NormalResult {
@@ -55,13 +74,7 @@ interface NormalResult {
 
 type Linha = { userId: string; userName: string; nota: number }
 
-const FAIXAS = [
-  { rotulo: '0–20%', min: 0, max: 20 },
-  { rotulo: '20–40%', min: 20, max: 40 },
-  { rotulo: '40–60%', min: 40, max: 60 },
-  { rotulo: '60–80%', min: 60, max: 80 },
-  { rotulo: '80–100%', min: 80, max: 100.0001 },
-]
+type Arquivo = 'prova' | 'gabarito' | 'comentado' | 'meu'
 
 export default function ExamResultsPage({ params }: { params: { id: string } }) {
   const { id } = params
@@ -69,11 +82,17 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
   const [exam, setExam] = useState<Exam | null>(null)
   const [linhas, setLinhas] = useState<Linha[]>([])
   const [scoringMethod, setScoringMethod] = useState<'tri' | 'normal'>('normal')
+  const [mostrarClassificacao, setMostrarClassificacao] = useState(true)
+  const [estatisticas, setEstatisticas] = useState<EstatisticasDaTurma | null>(null)
+  const [minhaNota, setMinhaNota] = useState<number | null>(null)
+  const [minhaColocacao, setMinhaColocacao] = useState<{ posicao: number; percentil: number } | null>(null)
+  const [notaMaximaServidor, setNotaMaximaServidor] = useState<number | null>(null)
+  const [minhaEntrega, setMinhaEntrega] = useState<ExamSubmission | null>(null)
   const [loading, setLoading] = useState(true)
   const [erro, setErro] = useState<string | null>(null)
   const [conta, setConta] = useState<{ id?: string; role?: string; accountType?: string }>({})
   const [busca, setBusca] = useState('')
-  const [gerando, setGerando] = useState(false)
+  const [gerando, setGerando] = useState<Arquivo | null>(null)
   const [toastOpen, setToastOpen] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
 
@@ -94,10 +113,12 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
         if (!resExam.ok) throw new Error(dadosExam.error)
         setExam(dadosExam.exam)
 
+        let meuId: string | undefined
         if (resMe.ok) {
           const dadosMe = await resMe.json()
+          meuId = dadosMe.user?._id || dadosMe.user?.id
           setConta({
-            id: dadosMe.user?._id || dadosMe.user?.id,
+            id: meuId,
             role: dadosMe.user?.role,
             accountType: dadosMe.user?.accountType,
           })
@@ -114,6 +135,11 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
         }
 
         setScoringMethod(dados.scoringMethod)
+        setMostrarClassificacao(dados.mostrarClassificacao !== false)
+        setEstatisticas(dados.estatisticas ?? null)
+        setMinhaNota(typeof dados.minhaNota === 'number' ? dados.minhaNota : null)
+        setMinhaColocacao(dados.minhaPosicao ?? null)
+        setNotaMaximaServidor(typeof dados.notaMaxima === 'number' ? dados.notaMaxima : null)
         setLinhas(
           (dados.results || []).map((r: TRIResult | NormalResult) => ({
             userId: r.userId,
@@ -121,6 +147,20 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
             nota: dados.scoringMethod === 'tri' ? (r as TRIResult).triScore : (r as NormalResult).score,
           })),
         )
+
+        /*
+         * A própria entrega, para o PDF "minhas respostas corrigidas".
+         *
+         * Falha em silêncio de propósito: quem é admin e não fez a prova não
+         * tem entrega nenhuma, e isso não é um erro — apenas um botão a menos.
+         */
+        if (meuId) {
+          const resEntrega = await fetch(`/api/exams/${id}/submissions/${meuId}`)
+          if (resEntrega.ok) {
+            const dadosEntrega = await resEntrega.json()
+            setMinhaEntrega(dadosEntrega.submission || null)
+          }
+        }
       } catch (error: any) {
         setErro(error.message || 'Não foi possível carregar os resultados.')
       } finally {
@@ -130,52 +170,19 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
     carregar()
   }, [id])
 
-  const notaMaxima = scoringMethod === 'tri' ? 1000 : exam?.totalPoints || 100
+  const notaMaxima = notaMaximaServidor ?? (scoringMethod === 'tri' ? 1000 : exam?.totalPoints || 100)
 
   const downloads = useMemo(
     () =>
       resolverDownloadsDaProva(exam, {
         accountType: conta.accountType,
         isAdmin: conta.role === 'admin',
-        jaEnviou: true,
+        jaEnviou: !!minhaEntrega,
       }),
-    [exam, conta],
+    [exam, conta, minhaEntrega],
   )
 
   const ordenadas = useMemo(() => [...linhas].sort((a, b) => b.nota - a.nota), [linhas])
-
-  const estatisticas = useMemo(() => {
-    if (ordenadas.length === 0) return null
-    const notas = ordenadas.map((l) => l.nota)
-    const soma = notas.reduce((a, b) => a + b, 0)
-    return {
-      participantes: ordenadas.length,
-      media: soma / notas.length,
-      maior: notas[0],
-      menor: notas[notas.length - 1],
-      distribuicao: FAIXAS.map((faixa) => ({
-        rotulo: faixa.rotulo,
-        quantidade: notas.filter((n) => {
-          const pct = notaMaxima > 0 ? (n / notaMaxima) * 100 : 0
-          return pct >= faixa.min && pct < faixa.max
-        }).length,
-      })),
-    }
-  }, [ordenadas, notaMaxima])
-
-  /** Onde EU fiquei — a pergunta que traz a pessoa a esta tela. */
-  const minhaPosicao = useMemo(() => {
-    if (!conta.id) return null
-    const indice = ordenadas.findIndex((l) => l.userId === conta.id)
-    if (indice < 0) return null
-    const melhoresQueEu = ordenadas.filter((l) => l.nota > ordenadas[indice].nota).length
-    return {
-      posicao: melhoresQueEu + 1,
-      linha: ordenadas[indice],
-      // Percentil: quantos por cento da turma ficaram abaixo.
-      percentil: Math.round(((ordenadas.length - melhoresQueEu - 1) / Math.max(1, ordenadas.length - 1)) * 100),
-    }
-  }, [ordenadas, conta.id])
 
   const filtradas = useMemo(() => {
     const termo = busca.trim().toLowerCase()
@@ -183,25 +190,85 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
     return ordenadas.filter((l) => l.userName.toLowerCase().includes(termo))
   }, [ordenadas, busca])
 
-  async function baixarGabarito() {
-    if (!exam) return
-    if (!downloads.gabarito.permitido) {
-      avisar(downloads.gabarito.motivo || 'Download não disponível.')
+  /** Em qual faixa da distribuição a minha nota caiu — para pintar a barra. */
+  const minhaFaixa = useMemo(() => {
+    if (minhaNota === null || notaMaxima <= 0) return -1
+    const pct = (minhaNota / notaMaxima) * 100
+    return FAIXAS_DE_NOTA.findIndex((f) => pct >= f.min && pct < f.max)
+  }, [minhaNota, notaMaxima])
+
+  /**
+   * Um download, com o veredito e o gerador que ele usa.
+   *
+   * Os quatro passam por aqui para que a recusa seja sempre contada da mesma
+   * forma: um botão que some não explica nada, e um que abre um PDF proibido
+   * explica menos ainda.
+   */
+  async function baixar(arquivo: Arquivo) {
+    if (!exam || gerando) return
+
+    const veredito =
+      arquivo === 'prova' ? downloads.prova : arquivo === 'meu' ? downloads.relatorio : downloads.gabarito
+
+    if (!veredito.permitido) {
+      avisar(veredito.motivo || 'Download não disponível.')
       return
     }
+    if (arquivo === 'meu' && !minhaEntrega) {
+      avisar('Não encontramos a sua entrega desta prova.')
+      return
+    }
+
+    const nomeBase = exam.title.replace(/\s+/g, '-')
+
     try {
-      setGerando(true)
-      const { generateGabaritoPDF, downloadPDF } = await import('@/lib/pdf-generator')
-      const blob = await generateGabaritoPDF(exam)
-      downloadPDF(blob, `gabarito-${exam.title.replace(/\s/g, '-')}.pdf`, {
-        type: 'gabarito_pdf',
-        resourceId: exam._id?.toString() || '',
+      setGerando(arquivo)
+
+      if (arquivo === 'meu') {
+        const gerador = await import('@/lib/user-report-generator')
+        await gerador.generateUserReportWithGabaritoPDF({
+          exam,
+          examId: id,
+          userName: minhaEntrega!.userName,
+          signature: minhaEntrega!.signature || '',
+          answers: minhaEntrega!.answers || [],
+          submittedAt: minhaEntrega!.submittedAt,
+          score: typeof minhaEntrega!.score === 'number' ? minhaEntrega!.score : null,
+        })
+        return
+      }
+
+      const { generateExamPDF, generateGabaritoPDF, generateExamWithAnswersPDF, downloadPDF } =
+        await import('@/lib/pdf-generator')
+
+      const receita = {
+        prova: {
+          blob: () => generateExamPDF(exam, conta.id),
+          nome: `prova-${nomeBase}.pdf`,
+          tipo: 'exam_pdf' as const,
+        },
+        gabarito: {
+          blob: () => generateGabaritoPDF(exam),
+          nome: `gabarito-${nomeBase}.pdf`,
+          tipo: 'gabarito_pdf' as const,
+        },
+        comentado: {
+          blob: () => generateExamWithAnswersPDF(exam),
+          nome: `gabarito-comentado-${nomeBase}.pdf`,
+          tipo: 'exam_answers_pdf' as const,
+        },
+      }[arquivo]
+
+      const blob = await receita.blob()
+      downloadPDF(blob, receita.nome, {
+        type: receita.tipo,
+        resourceId: exam._id?.toString() || id,
         resourceTitle: exam.title,
       })
     } catch (error: any) {
-      avisar('Erro ao gerar gabarito: ' + error.message)
+      avisar('Erro ao gerar o PDF: ' + error.message)
     } finally {
-      setGerando(false)
+      setGerando(null)
     }
   }
 
@@ -234,10 +301,11 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
           </Button>
           {conta.id && (
             <Button onClick={() => router.push(`/exam/${id}/user/${conta.id}`)} className="rounded-xl">
-              Meu relatório
+              Meu resumo
             </Button>
           )}
         </div>
+        <ExamBrandFooter className="mt-4" />
       </div>
     )
   }
@@ -245,51 +313,80 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/40">
       <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur-xl">
-        <div className="container mx-auto flex items-center justify-between gap-3 px-4 py-3">
-          <div className="flex min-w-0 items-center gap-3">
+        <div className="container mx-auto flex items-center justify-between gap-3 px-4 py-2.5">
+          <div className="flex min-w-0 items-center gap-2">
             <Button variant="ghost" size="icon" onClick={() => router.push('/provas')} aria-label="Voltar">
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            <div className="min-w-0">
-              <h1 className="truncate text-base font-bold leading-tight sm:text-lg">Resultados</h1>
-              <p className="truncate text-xs text-muted-foreground">{exam.title}</p>
-            </div>
+            {/* A marca no lugar do "Resultados" genérico; o título da prova
+                vira a segunda linha, que é a informação que muda de página
+                para página. */}
+            <ExamBrandHeader durante className="min-w-0" />
           </div>
           <ThemeToggle />
+        </div>
+        <div className="container mx-auto border-t border-border/40 px-4 py-2">
+          <p className="truncate text-xs text-muted-foreground">
+            Resultados · <span className="font-medium text-foreground">{exam.title}</span>
+          </p>
         </div>
       </header>
 
       <main className="container mx-auto max-w-4xl space-y-6 px-4 py-6 sm:py-8">
         {/* ── Onde eu fiquei ───────────────────────────────────────── */}
-        {minhaPosicao && (
+        {minhaNota !== null && (
           <section
-            className="exam-resultado-entra relative overflow-hidden rounded-3xl border border-emerald-500/30 bg-gradient-to-br from-emerald-500/10 to-transparent p-6 shadow-lg"
+            className="exam-resultado-entra exam-aurora relative overflow-hidden rounded-3xl border border-emerald-500/30 bg-[linear-gradient(120deg,rgba(70,129,82,0.16),transparent_45%,rgba(226,164,62,0.16))] p-6 shadow-lg"
             style={{ '--exam-ordem': 0 } as React.CSSProperties}
           >
             <div className="flex flex-wrap items-center gap-5">
-              <div className="exam-selo-estoura flex h-20 w-20 flex-shrink-0 flex-col items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 text-white shadow-lg">
-                <span className="text-2xl font-black leading-none tabular-nums">{minhaPosicao.posicao}º</span>
-                <span className="text-[10px] font-medium opacity-90">lugar</span>
-              </div>
+              {minhaColocacao ? (
+                <div className="exam-selo-estoura flex h-20 w-20 flex-shrink-0 flex-col items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 text-white shadow-lg">
+                  <span className="text-2xl font-black leading-none tabular-nums">
+                    {minhaColocacao.posicao}º
+                  </span>
+                  <span className="text-[10px] font-medium opacity-90">lugar</span>
+                </div>
+              ) : (
+                /* Sem classificação não há colocação para mostrar — o anel de
+                   nota ocupa o lugar dela e responde a mesma pergunta sem
+                   comparar a pessoa com ninguém. */
+                <div
+                  className="exam-anel-de-nota flex h-20 w-20 flex-shrink-0 items-center justify-center rounded-full"
+                  style={
+                    {
+                      '--exam-nota': notaMaxima > 0 ? (minhaNota / notaMaxima) * 100 : 0,
+                      '--exam-anel-cor': '#468152',
+                    } as React.CSSProperties
+                  }
+                >
+                  <span className="flex h-[62px] w-[62px] items-center justify-center rounded-full bg-background text-sm font-black tabular-nums">
+                    {notaMaxima > 0 ? Math.round((minhaNota / notaMaxima) * 100) : 0}%
+                  </span>
+                </div>
+              )}
               <div className="min-w-0 flex-1">
                 <p className="text-xs font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
                   Seu resultado
                 </p>
-                <p className="mt-0.5 text-2xl font-black tabular-nums">
-                  {minhaPosicao.linha.nota}
+                <p className="exam-numero-sobe mt-0.5 text-3xl font-black tabular-nums">
+                  {minhaNota}
                   <span className="ml-1 text-sm font-normal text-muted-foreground">/ {notaMaxima}</span>
                 </p>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  {ordenadas.length > 1
-                    ? `Você ficou à frente de ${minhaPosicao.percentil}% da turma.`
-                    : 'Você é a única entrega registrada até agora.'}
+                  {minhaColocacao && estatisticas && estatisticas.participantes > 1
+                    ? `Você ficou à frente de ${minhaColocacao.percentil}% da turma.`
+                    : estatisticas && estatisticas.participantes > 1
+                      ? `A média da turma foi ${estatisticas.media.toFixed(1)}.`
+                      : 'Você é a única entrega registrada até agora.'}
                 </p>
               </div>
               <Button
                 onClick={() => router.push(`/exam/${id}/user/${conta.id}`)}
-                className="rounded-xl bg-emerald-600 font-semibold text-white hover:bg-emerald-700"
+                className="exam-botao-chama relative overflow-hidden rounded-xl bg-gradient-to-r from-[#468152] to-[#3a6d44] font-semibold text-white hover:from-[#3a6d44] hover:to-[#2f5a38]"
               >
-                Ver meu relatório
+                <BarChart3 className="mr-2 h-4 w-4" />
+                Quero ver meu resumo
               </Button>
             </div>
           </section>
@@ -307,10 +404,10 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
             </h2>
 
             <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-              <Numero icone={Users} rotulo="Participantes" valor={String(estatisticas.participantes)} />
-              <Numero rotulo="Média" valor={estatisticas.media.toFixed(1)} />
-              <Numero icone={Trophy} rotulo="Maior nota" valor={String(estatisticas.maior)} destaque />
-              <Numero rotulo="Menor nota" valor={String(estatisticas.menor)} />
+              <Numero icone={Users} rotulo="Participantes" valor={String(estatisticas.participantes)} ordem={0} />
+              <Numero rotulo="Média" valor={estatisticas.media.toFixed(1)} ordem={1} />
+              <Numero icone={Trophy} rotulo="Maior nota" valor={String(estatisticas.maior)} destaque ordem={2} />
+              <Numero rotulo="Menor nota" valor={String(estatisticas.menor)} ordem={3} />
             </div>
 
             {/*
@@ -320,11 +417,8 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
             */}
             <div className="space-y-2">
               {estatisticas.distribuicao.map((faixa, i) => {
-                const proporcao = (faixa.quantidade / estatisticas.participantes) * 100
-                const minhaFaixa =
-                  minhaPosicao &&
-                  (minhaPosicao.linha.nota / notaMaxima) * 100 >= FAIXAS[i].min &&
-                  (minhaPosicao.linha.nota / notaMaxima) * 100 < FAIXAS[i].max
+                const proporcao = (faixa.quantidade / Math.max(1, estatisticas.participantes)) * 100
+                const ehMinhaFaixa = i === minhaFaixa
                 return (
                   <div key={faixa.rotulo} className="flex items-center gap-3">
                     <span className="w-16 flex-shrink-0 text-right text-[11px] tabular-nums text-muted-foreground">
@@ -334,9 +428,12 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
                       <div
                         className={cn(
                           'exam-retomada-barra h-full rounded-lg transition-all',
-                          minhaFaixa ? 'bg-emerald-500' : 'bg-slate-400/60 dark:bg-slate-500/60',
+                          ehMinhaFaixa ? 'bg-emerald-500' : 'bg-slate-400/60 dark:bg-slate-500/60',
                         )}
-                        style={{ width: `${Math.max(proporcao, faixa.quantidade > 0 ? 4 : 0)}%` }}
+                        style={{
+                          width: `${Math.max(proporcao, faixa.quantidade > 0 ? 4 : 0)}%`,
+                          animationDelay: `${0.2 + i * 0.07}s`,
+                        }}
                       />
                     </div>
                     <span className="w-8 flex-shrink-0 text-[11px] font-semibold tabular-nums text-muted-foreground">
@@ -345,7 +442,7 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
                   </div>
                 )
               })}
-              {minhaPosicao && (
+              {minhaFaixa >= 0 && (
                 <p className="pt-1 text-[11px] text-muted-foreground">
                   <span className="mr-1 inline-block h-2 w-2 rounded-sm bg-emerald-500 align-middle" />
                   A faixa em verde é a sua.
@@ -365,7 +462,7 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
               <Medal className="h-4 w-4 text-muted-foreground" />
               {scoringMethod === 'tri' ? 'Classificação (TRI)' : 'Classificação'}
             </h2>
-            {ordenadas.length > 6 && (
+            {mostrarClassificacao && ordenadas.length > 6 && (
               <div className="relative">
                 <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
                 <input
@@ -378,7 +475,24 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
             )}
           </div>
 
-          {ordenadas.length === 0 ? (
+          {!mostrarClassificacao ? (
+            /*
+              A classificação desligada pelo admin. A tela diz o que aconteceu
+              em vez de simplesmente não desenhar a seção: uma turma que viu a
+              lista na prova passada e não vê nesta merece saber que foi uma
+              decisão, não um defeito.
+            */
+            <div className="flex flex-col items-center gap-2 py-8 text-center">
+              <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-muted text-muted-foreground">
+                <EyeOff className="h-5 w-5" />
+              </span>
+              <p className="text-sm font-semibold">A classificação desta prova não é pública</p>
+              <p className="max-w-sm text-xs leading-relaxed text-muted-foreground">
+                O professor optou por não divulgar a lista de notas. Sua nota e o desempenho geral da
+                turma continuam acima.
+              </p>
+            </div>
+          ) : ordenadas.length === 0 ? (
             <p className="py-10 text-center text-sm text-muted-foreground">
               Nenhuma entrega registrada nesta prova.
             </p>
@@ -386,7 +500,7 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
             <p className="py-10 text-center text-sm text-muted-foreground">Nenhum nome encontrado.</p>
           ) : (
             <ol className="space-y-1.5">
-              {filtradas.map((linha) => {
+              {filtradas.map((linha, i) => {
                 const posicao = ordenadas.filter((l) => l.nota > linha.nota).length + 1
                 const souEu = linha.userId === conta.id
                 const podeAbrir = conta.role === 'admin' || souEu
@@ -396,9 +510,13 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
                   <li
                     key={linha.userId}
                     className={cn(
-                      'relative flex items-center gap-3 overflow-hidden rounded-xl border px-3 py-2.5 transition-colors',
+                      'exam-resultado-entra relative flex items-center gap-3 overflow-hidden rounded-xl border px-3 py-2.5 transition-colors',
                       souEu ? 'border-emerald-500/40 bg-emerald-500/5' : 'border-border/50 hover:bg-muted/40',
                     )}
+                    // A cascata para de contar depois da décima linha: numa
+                    // turma de 80, atrasar a última em 7 segundos é fazer a
+                    // pessoa esperar a lista aparecer.
+                    style={{ '--exam-ordem': Math.min(i, 10) + 2 } as React.CSSProperties}
                   >
                     {/* A barra de fundo dá a nota sem exigir a leitura do número. */}
                     <span
@@ -436,7 +554,7 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
                         className="h-8 flex-shrink-0 rounded-lg text-xs"
                         onClick={() => router.push(`/exam/${id}/user/${linha.userId}`)}
                       >
-                        Relatório
+                        Resumo
                       </Button>
                     )}
                   </li>
@@ -451,31 +569,66 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
           className="exam-resultado-entra rounded-2xl border border-border/60 bg-background/60 p-5 backdrop-blur-md"
           style={{ '--exam-ordem': 3 } as React.CSSProperties}
         >
-          <h2 className="mb-3 text-xs font-bold uppercase tracking-wider text-muted-foreground">Documentos</h2>
-          <div className="flex flex-wrap gap-3">
-            <Button
-              onClick={baixarGabarito}
-              disabled={gerando || downloads.gabarito.esperandoOFim}
-              className="rounded-xl"
-              title={downloads.gabarito.motivo || undefined}
-            >
-              {gerando ? (
-                <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-              ) : (
-                <Download className="mr-2 h-4 w-4" />
-              )}
-              Gabarito oficial (PDF)
-            </Button>
+          <h2 className="mb-1 flex items-center gap-2 text-sm font-bold">
+            <Download className="h-4 w-4 text-muted-foreground" />
+            Documentos da prova
+          </h2>
+          <p className="mb-4 text-xs text-muted-foreground">
+            Os quatro PDFs que esta prova produz. O que estiver indisponível diz o porquê.
+          </p>
 
-            {exam.pdfUrl && (
-              <Button variant="outline" onClick={() => window.open(exam.pdfUrl, '_blank')} className="rounded-xl">
-                <FileText className="mr-2 h-4 w-4" />
-                PDF original da prova
-              </Button>
-            )}
+          <div className="grid gap-3 sm:grid-cols-2">
+            <CartaoDeDownload
+              icone={FileText}
+              titulo="Prova em branco"
+              descricao="Enunciados e alternativas, sem gabarito. Para imprimir e refazer no papel."
+              veredito={downloads.prova}
+              gerando={gerando === 'prova'}
+              ocupado={!!gerando}
+              onBaixar={() => baixar('prova')}
+            />
+            <CartaoDeDownload
+              icone={ListChecks}
+              titulo="Gabarito oficial"
+              descricao="A folha de respostas certas, questão a questão."
+              veredito={downloads.gabarito}
+              gerando={gerando === 'gabarito'}
+              ocupado={!!gerando}
+              onBaixar={() => baixar('gabarito')}
+            />
+            <CartaoDeDownload
+              icone={BookOpenCheck}
+              titulo="Gabarito comentado"
+              descricao="Cada questão com a alternativa correta e a explicação dela."
+              veredito={downloads.gabarito}
+              gerando={gerando === 'comentado'}
+              ocupado={!!gerando}
+              onBaixar={() => baixar('comentado')}
+            />
+            <CartaoDeDownload
+              icone={FileCheck2}
+              titulo="Minhas respostas corrigidas"
+              descricao="A sua prova com o que você marcou, o que era certo e a sua nota."
+              veredito={
+                minhaEntrega
+                  ? downloads.relatorio
+                  : { permitido: false, motivo: 'Você não tem uma entrega registrada nesta prova.', esperandoOFim: false }
+              }
+              gerando={gerando === 'meu'}
+              ocupado={!!gerando}
+              onBaixar={() => baixar('meu')}
+            />
           </div>
-          {!downloads.gabarito.permitido && (
-            <p className="mt-2.5 text-[11px] leading-snug text-muted-foreground">{downloads.gabarito.motivo}</p>
+
+          {exam.pdfUrl && (
+            <Button
+              variant="outline"
+              onClick={() => window.open(exam.pdfUrl, '_blank')}
+              className="mt-3 w-full rounded-xl sm:w-auto"
+            >
+              <FileText className="mr-2 h-4 w-4" />
+              PDF original enviado pelo professor
+            </Button>
           )}
         </section>
 
@@ -483,6 +636,8 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
           <Barcode value={id} height={48} fontSize={12} />
           <p className="mt-2 text-[11px] text-muted-foreground">Código da prova: {id}</p>
         </section>
+
+        <ExamBrandFooter />
       </main>
 
       <ToastAlert open={toastOpen} onOpenChange={setToastOpen} message={toastMessage} type="info" />
@@ -495,11 +650,13 @@ function Numero({
   rotulo,
   valor,
   destaque,
+  ordem = 0,
 }: {
   icone?: typeof Users
   rotulo: string
   valor: string
   destaque?: boolean
+  ordem?: number
 }) {
   return (
     <div
@@ -512,7 +669,89 @@ function Numero({
         {Icone && <Icone className="h-3 w-3" />}
         {rotulo}
       </p>
-      <p className="exam-numero-sobe mt-1 text-2xl font-black tabular-nums">{valor}</p>
+      <p
+        className="exam-numero-sobe mt-1 text-2xl font-black tabular-nums"
+        style={{ animationDelay: `${0.35 + ordem * 0.08}s` }}
+      >
+        {valor}
+      </p>
+    </div>
+  )
+}
+
+/**
+ * Um documento e o motivo de ele não estar disponível.
+ *
+ * O botão indisponível continua na tela, desligado e com a explicação embaixo.
+ * Sumir seria mais limpo e pior: o aluno que ouviu do professor "liberei o
+ * gabarito comentado" precisa ver o arquivo existir para entender que o que
+ * falta é o plano dele, não o arquivo.
+ */
+function CartaoDeDownload({
+  icone: Icone,
+  titulo,
+  descricao,
+  veredito,
+  gerando,
+  ocupado,
+  onBaixar,
+}: {
+  icone: typeof FileText
+  titulo: string
+  descricao: string
+  veredito: { permitido: boolean; motivo: string | null; esperandoOFim: boolean }
+  gerando: boolean
+  ocupado: boolean
+  onBaixar: () => void
+}) {
+  return (
+    <div
+      className={cn(
+        'flex flex-col rounded-xl border p-4 transition-colors',
+        veredito.permitido ? 'border-border/60 bg-muted/20 hover:border-emerald-500/40' : 'border-border/40 bg-muted/10',
+      )}
+    >
+      <div className="flex items-start gap-3">
+        <span
+          className={cn(
+            'flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg',
+            veredito.permitido
+              ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+              : 'bg-muted text-muted-foreground',
+          )}
+        >
+          <Icone className="h-4 w-4" />
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-semibold leading-tight">{titulo}</p>
+          <p className="mt-0.5 text-[11px] leading-snug text-muted-foreground">{descricao}</p>
+        </div>
+      </div>
+
+      <Button
+        onClick={onBaixar}
+        disabled={ocupado || !veredito.permitido}
+        variant={veredito.permitido ? 'default' : 'outline'}
+        size="sm"
+        className="mt-3 w-full rounded-lg"
+        title={veredito.motivo || undefined}
+      >
+        {gerando ? (
+          <>
+            <span className="mr-2 inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+            Gerando…
+          </>
+        ) : (
+          <>
+            <Download className="mr-2 h-3.5 w-3.5" />
+            {veredito.permitido ? 'Baixar PDF' : 'Indisponível'}
+          </>
+        )}
+      </Button>
+
+      {!veredito.permitido && veredito.motivo && (
+        <p className="mt-2 text-[11px] leading-snug text-muted-foreground">{veredito.motivo}</p>
+      )}
     </div>
   )
 }

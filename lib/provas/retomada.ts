@@ -69,6 +69,8 @@ export type MotivoSemRetomada =
   | 'sem-progresso'
   | 'ja-entregou'
   | 'prova-encerrada'
+  /** A janela está fechada porque a prova ainda NÃO começou. */
+  | 'prova-nao-comecou'
   | 'retomadas-esgotadas'
 
 export interface VereditoDeRetomada {
@@ -92,6 +94,17 @@ export interface EntradaDoVeredito {
   jaEntregou: boolean
   /** Da janela da prova: ainda dá para enviar respostas? */
   janelaAberta: boolean
+  /**
+   * Da janela da prova: já passou do término?
+   *
+   * `janelaAberta` é falso nos DOIS extremos — antes do início e depois do
+   * término —, e sem este segundo dado o veredito tratava os dois como o
+   * mesmo: quem abria a prova antes de ela começar (uma correção de horário
+   * pelo admin, um `force-time` para trás) lia "A prova já terminou" sobre uma
+   * prova cujo portão nem tinha aberto. Ausente = trata como encerrada, que é
+   * o comportamento antigo.
+   */
+  jaEncerrou?: boolean
   respostasGravadas: number
 }
 
@@ -124,13 +137,19 @@ export function avaliarRetomada(entrada: EntradaDoVeredito): VereditoDeRetomada 
   }
 
   if (!janelaAberta) {
+    // Antes do início a prova não acabou — ela ainda vai acontecer, e o
+    // rascunho continua esperando. Dizer "já terminou" aqui é assustar quem
+    // chegou cedo com a notícia errada.
+    const jaEncerrou = entrada.jaEncerrou ?? true
+
     return {
       ...base,
       podeRetomar: false,
       podeEntregarOSalvo: false,
-      motivo: 'prova-encerrada',
-      mensagem:
-        'A prova já terminou. Não é possível continuar — o que você respondeu ficou registrado até o encerramento.',
+      motivo: jaEncerrou ? 'prova-encerrada' : 'prova-nao-comecou',
+      mensagem: jaEncerrou
+        ? 'A prova já terminou. Não é possível continuar — o que você respondeu ficou registrado até o encerramento.'
+        : 'A prova ainda não começou. O que você já respondeu está guardado e volta assim que ela abrir.',
     }
   }
 

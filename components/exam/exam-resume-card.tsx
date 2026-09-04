@@ -1,6 +1,6 @@
 'use client'
 
-import { AlertTriangle, History, Send, ShieldCheck } from 'lucide-react'
+import { AlertTriangle, Clock, History, Send, ShieldCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { VereditoDeRetomada } from '@/lib/provas/retomada'
 
@@ -38,32 +38,58 @@ export function ExamResumeCard({
   if (!veredito.temProgresso) return null
 
   const podeContinuar = veredito.podeRetomar
+
+  /*
+   * O título vem do MOTIVO, não de "pode continuar ou não".
+   *
+   * Ele era um ternário de dois lados: continuar → "Sua prova não foi
+   * perdida"; qualquer outra coisa → "Retomada já utilizada". Só que "qualquer
+   * outra coisa" inclui a prova encerrada e a prova que ainda nem começou —
+   * e quem chegava cedo lia, sobre uma prova cujo portão nem abriu, que tinha
+   * gastado uma retomada que ninguém usou.
+   */
+  const aparencia = podeContinuar
+    ? {
+        titulo: 'Sua prova não foi perdida',
+        Icone: History,
+        moldura: 'border-emerald-500/35 bg-emerald-50/50 dark:bg-emerald-950/20',
+        selo: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400',
+      }
+    : veredito.motivo === 'prova-nao-comecou'
+      ? {
+          titulo: 'Suas respostas estão guardadas',
+          Icone: Clock,
+          moldura: 'border-blue-500/35 bg-blue-50/50 dark:bg-blue-950/20',
+          selo: 'bg-blue-500/15 text-blue-600 dark:text-blue-400',
+        }
+      : veredito.motivo === 'prova-encerrada'
+        ? {
+            titulo: 'A prova foi encerrada',
+            Icone: AlertTriangle,
+            moldura: 'border-amber-500/35 bg-amber-50/50 dark:bg-amber-950/20',
+            selo: 'bg-amber-500/15 text-amber-600 dark:text-amber-400',
+          }
+        : {
+            titulo: 'Retomada já utilizada',
+            Icone: AlertTriangle,
+            moldura: 'border-amber-500/35 bg-amber-50/50 dark:bg-amber-950/20',
+            selo: 'bg-amber-500/15 text-amber-600 dark:text-amber-400',
+          }
+
   const quando = salvoEm
     ? new Date(salvoEm).toLocaleString('pt-BR', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short' })
     : null
 
   return (
-    <div
-      className={`exam-retomada-entra relative overflow-hidden rounded-2xl border p-5 ${
-        podeContinuar
-          ? 'border-emerald-500/35 bg-emerald-50/50 dark:bg-emerald-950/20'
-          : 'border-amber-500/35 bg-amber-50/50 dark:bg-amber-950/20'
-      }`}
-    >
+    <div className={`exam-retomada-entra relative overflow-hidden rounded-2xl border p-5 ${aparencia.moldura}`}>
       <div className="flex items-start gap-4">
-        <div
-          className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl ${
-            podeContinuar ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400' : 'bg-amber-500/15 text-amber-600 dark:text-amber-400'
-          }`}
-        >
-          {podeContinuar ? <History className="h-5 w-5" /> : <AlertTriangle className="h-5 w-5" />}
+        <div className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl ${aparencia.selo}`}>
+          <aparencia.Icone className="h-5 w-5" />
         </div>
 
         <div className="min-w-0 flex-1 space-y-3">
           <div>
-            <h3 className="text-base font-bold leading-tight">
-              {podeContinuar ? 'Sua prova não foi perdida' : 'Retomada já utilizada'}
-            </h3>
+            <h3 className="text-base font-bold leading-tight">{aparencia.titulo}</h3>
             <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
               {veredito.mensagem ??
                 `Encontramos ${respondidas} ${respondidas === 1 ? 'resposta salva' : 'respostas salvas'}${

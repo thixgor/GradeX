@@ -10,7 +10,7 @@ import { ToastAlert } from '@/components/ui/toast-alert'
 import { Exam } from '@/lib/types'
 import { formatDate } from '@/lib/utils'
 // PDF generator loaded dynamically to reduce initial bundle size
-import { ArrowLeft, Edit, Trash2, Eye, EyeOff, Plus, Play, StopCircle, RotateCcw, FileCheck, FileDown, AlertTriangle, Settings, Check, X, Lock, ShieldAlert, Database, Video, Search, BarChart3, Users, Download } from 'lucide-react'
+import { ArrowLeft, Edit, Trash2, Eye, EyeOff, Plus, Play, StopCircle, RotateCcw, FileCheck, FileDown, AlertTriangle, Settings, Check, X, Lock, ShieldAlert, Database, Video, Search, BarChart3, Users, Download, Copy, Medal } from 'lucide-react'
 import { normalizarPublico, rotuloDoPublico } from '@/lib/provas/publico-da-prova'
 import { algumaLiberacaoLigada, normalizarLiberacoes } from '@/lib/provas/downloads-da-prova'
 import { Input } from '@/components/ui/input'
@@ -38,6 +38,7 @@ export default function AdminExamsPage() {
   const [vaultEmailCode, setVaultEmailCode] = useState('')
   const [vaultPhrase, setVaultPhrase] = useState('')
   const [search, setSearch] = useState('')
+  const [duplicando, setDuplicando] = useState<string | null>(null)
 
   useEffect(() => {
     loadExams()
@@ -307,18 +308,83 @@ export default function AdminExamsPage() {
     }
   }
 
+  /**
+   * Zerar a prova.
+   *
+   * O aviso lista o que sai porque o que sai deixou de ser só "as submissões":
+   * rascunhos, tentativas, anotações e relatos de questão vão junto (ver
+   * `lib/provas/reset-da-prova.ts`). Um admin que leia "as submissões" e perca
+   * as anotações dos alunos foi avisado da coisa errada.
+   */
   async function resetSubmissions(examId: string) {
-    if (!confirm('⚠️ ATENÇÃO! Isso irá DELETAR PERMANENTEMENTE todas as submissões desta prova.\n\nTodos os usuários poderão refazer a prova. Esta ação NÃO pode ser desfeita!\n\nDeseja continuar?')) return
+    if (!confirm(
+      '⚠️ ATENÇÃO! Isso vai APAGAR PERMANENTEMENTE tudo o que os alunos deixaram nesta prova:\n\n' +
+      '• entregas, notas e correções\n' +
+      '• rascunhos salvos e retomadas já usadas\n' +
+      '• registros de tentativa (inclusive as em andamento)\n' +
+      '• anotações dos alunos nas questões\n' +
+      '• relatos de erro enviados sobre as questões\n\n' +
+      'As questões e as configurações da prova NÃO são alteradas, e todos poderão refazê-la.\n\n' +
+      'Esta ação NÃO pode ser desfeita. Deseja continuar?'
+    )) return
 
     try {
       const res = await fetch(`/api/exams/${examId}/reset-submissions`, {
         method: 'DELETE',
       })
 
-      if (!res.ok) throw new Error('Erro ao zerar resultados')
-
       const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Erro ao zerar a prova')
+
       showToastMessage(data.message, 'success')
+      loadExams()
+    } catch (error: any) {
+      showToastMessage(error.message)
+    }
+  }
+
+  /**
+   * Duplicar a prova.
+   *
+   * A cópia nasce OCULTA (ver `app/api/exams/[id]/duplicate/route.ts`) e o
+   * painel vai direto para o editor dela: quem duplica uma prova está prestes
+   * a mudar alguma coisa nela — a data, quase sempre —, e devolver a lista
+   * obrigaria a procurar a cópia no meio das outras para fazer isso.
+   */
+  async function duplicarProva(examId: string) {
+    if (duplicando) return
+    setDuplicando(examId)
+    try {
+      const res = await fetch(`/api/exams/${examId}/duplicate`, { method: 'POST' })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Erro ao duplicar prova')
+
+      showToastMessage(data.message, 'success')
+      router.push(`/admin/exams/${data.examId}/edit`)
+    } catch (error: any) {
+      showToastMessage(error.message)
+    } finally {
+      setDuplicando(null)
+    }
+  }
+
+  /** Liga/desliga a classificação pública desta prova para os alunos. */
+  async function alternarClassificacao(exam: Exam) {
+    const passaAExibir = exam.showRanking === false
+    try {
+      const res = await fetch(`/api/exams/${exam._id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ showRanking: passaAExibir }),
+      })
+      if (!res.ok) throw new Error('Erro ao atualizar a classificação')
+
+      showToastMessage(
+        passaAExibir
+          ? 'Classificação visível: os alunos voltam a ver a lista de notas.'
+          : 'Classificação oculta: os alunos veem a própria nota e a média da turma, sem a lista de nomes.',
+        'success',
+      )
       loadExams()
     } catch (error: any) {
       showToastMessage(error.message)
@@ -542,6 +608,15 @@ export default function AdminExamsPage() {
                             </span>
                           ) : null
                         })()}
+                        {exam.showRanking === false && (
+                          <span
+                            className="inline-flex items-center gap-1 rounded bg-slate-500/10 px-2 py-1 text-xs font-medium text-slate-600 dark:text-slate-300"
+                            title="Os alunos não veem a lista de notas desta prova"
+                          >
+                            <Medal className="h-3 w-3" />
+                            Sem classificação
+                          </span>
+                        )}
                         {algumaLiberacaoLigada(normalizarLiberacoes((exam as any).freeDownloads)) && (
                           <span
                             className="inline-flex items-center gap-1 rounded bg-amber-500/10 px-2 py-1 text-xs font-medium text-amber-700 dark:text-amber-400"
@@ -595,6 +670,26 @@ export default function AdminExamsPage() {
                     <Button
                       variant="outline"
                       size="sm"
+                      disabled={duplicando === exam._id?.toString()}
+                      onClick={() => duplicarProva(exam._id!.toString())}
+                      title="Cria uma cópia oculta com as mesmas questões e configurações"
+                    >
+                      {duplicando === exam._id?.toString() ? (
+                        <>
+                          <span className="mr-2 inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                          Duplicando…
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="h-4 w-4 mr-2" />
+                          Duplicar
+                        </>
+                      )}
+                    </Button>
+
+                    <Button
+                      variant="outline"
+                      size="sm"
                       onClick={() => toggleVisibility(exam)}
                     >
                       {exam.isHidden ? (
@@ -608,6 +703,32 @@ export default function AdminExamsPage() {
                           Ocultar
                         </>
                       )}
+                    </Button>
+
+                    {/*
+                      A classificação é uma decisão por prova, e ela vive aqui
+                      pelo mesmo motivo que "Ocultar": é uma chave que o admin
+                      precisa virar depois que a prova já existe — normalmente
+                      depois de ver a lista de notas — e não no formulário de
+                      criação, onde ainda não há nota nenhuma para julgar.
+                    */}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => alternarClassificacao(exam)}
+                      title={
+                        exam.showRanking === false
+                          ? 'Os alunos não veem a lista de notas desta prova'
+                          : 'Os alunos veem a lista de notas desta prova'
+                      }
+                      className={
+                        exam.showRanking === false
+                          ? 'border-slate-400 text-slate-600 dark:text-slate-300'
+                          : 'border-amber-500 text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950'
+                      }
+                    >
+                      <Medal className="h-4 w-4 mr-2" />
+                      {exam.showRanking === false ? 'Classificação oculta' : 'Classificação visível'}
                     </Button>
 
                     {new Date() < new Date(exam.startTime) && (
@@ -632,17 +753,22 @@ export default function AdminExamsPage() {
                       </Button>
                     )}
 
-                    {new Date() >= new Date(exam.startTime) && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => resetSubmissions(exam._id!.toString())}
-                        className="border-orange-500 text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-950"
-                      >
-                        <RotateCcw className="h-4 w-4 mr-2" />
-                        Zerar Resultados
-                      </Button>
-                    )}
+                    {/*
+                      Sem a condição `agora >= startTime` que existia aqui: uma
+                      prova pode ter rascunho e tentativa ANTES do início (o
+                      admin adiantou o começo, depois corrigiu a data), e era
+                      justamente nesse estado que o botão de limpar sumia.
+                    */}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => resetSubmissions(exam._id!.toString())}
+                      className="border-orange-500 text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-950"
+                      title="Apaga entregas, rascunhos, tentativas e anotações desta prova"
+                    >
+                      <RotateCcw className="h-4 w-4 mr-2" />
+                      Zerar Prova
+                    </Button>
 
                     {exam.questions.some(q => q.type === 'discursive') && (
                       <Button

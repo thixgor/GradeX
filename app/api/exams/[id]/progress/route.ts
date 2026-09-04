@@ -114,6 +114,9 @@ function vereditoDe(
       progresso,
       jaEntregou,
       janelaAberta: janela.podeEnviar,
+      // Os dois extremos da janela precisam ser distinguíveis: `podeEnviar` é
+      // falso tanto antes do início quanto depois do término.
+      jaEncerrou: janela.encerrada,
       respostasGravadas: contarRespondidas(progresso?.answers),
     }),
     janela,

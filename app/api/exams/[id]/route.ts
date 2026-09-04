@@ -218,6 +218,9 @@ export async function PUT(
       'isHidden', 'isPersonalExam', 'isPracticeExam',
       'groupId', 'orderInGroup',
       'audience', 'freeDownloads',
+      // `showRanking` decide se a turma inteira vê a lista de notas com nome —
+      // uma decisão sobre os OUTROS, como `isHidden` e `audience`.
+      'showRanking',
     ] as const
 
     const permitidos = new Set<string>([

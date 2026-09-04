@@ -9,11 +9,13 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { LogoLoading } from '@/components/logo-loading'
+import { Logo } from '@/components/logo'
 import { Countdown } from '@/components/countdown'
 import { Toast } from '@/components/toast'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { BanChecker } from '@/components/ban-checker'
 import { SignaturePad } from '@/components/signature-pad'
+import { ExamBrandFooter, ExamBrandHeader } from '@/components/exam/exam-brand-header'
 import { ExamTimer } from '@/components/exam-timer'
 import { ExamBrandBadge } from '@/components/exam-brand-badge'
 import { Barcode } from '@/components/barcode'
@@ -31,7 +33,7 @@ import { useProctoring } from '@/hooks/use-proctoring'
 import { useWebSocket } from '@/hooks/use-websocket'
 import { useVisibilityDetection } from '@/hooks/use-visibility-detection'
 import { useWebRTC } from '@/hooks/use-webrtc'
-import { ArrowLeft, Check, X, Send, FileDown, Clock, User, CheckCircle2, AlertCircle, List, StickyNote, Copy, ClipboardCheck, Flag, ChevronRight, ChevronLeft, Bot, Maximize2, BookOpen, LogOut } from 'lucide-react'
+import { ArrowLeft, Check, X, Send, FileDown, Clock, User, CheckCircle2, AlertCircle, List, StickyNote, Copy, ClipboardCheck, Flag, ChevronRight, ChevronLeft, Bot, Maximize2, BookOpen, LogOut, Play, BarChart3, Trophy } from 'lucide-react'
 import { ImageModal } from '@/components/image-modal'
 import { PremiumPdfCtaModal } from '@/components/premium-pdf-cta-modal'
 import { PdfCtaBanner } from '@/components/pdf-cta-banner'
@@ -2546,14 +2548,24 @@ ${respostaAluno}`
         {proctoringModal}
         <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/40 flex items-center justify-center p-4 sm:p-6">
           <div className="max-w-3xl w-full">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="mb-3 rounded-xl text-muted-foreground hover:text-foreground -ml-2"
-              onClick={() => router.push('/')}
-            >
-              <ArrowLeft className="h-4 w-4 mr-1.5" /> Voltar
-            </Button>
+            {/*
+              A marca antes da prova. Esta tela é a porta de entrada de quem
+              chega pelo link direto — e ela não tinha logo, nome nem endereço:
+              um cartão de vidro com um botão verde, igual ao de qualquer lugar.
+            */}
+            <ExamBrandHeader
+              className="mb-3 px-1"
+              acao={
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="rounded-xl text-muted-foreground hover:text-foreground"
+                  onClick={() => router.push('/')}
+                >
+                  <ArrowLeft className="h-4 w-4 mr-1.5" /> Voltar
+                </Button>
+              }
+            />
 
             <div className="relative overflow-hidden rounded-3xl border border-border/50 bg-background/60 backdrop-blur-xl shadow-2xl">
               {/* Top accent */}
@@ -2566,7 +2578,22 @@ ${respostaAluno}`
                   <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
                 </div>
               ) : (
-                <div className="relative h-20 sm:h-24 bg-gradient-to-br from-emerald-500/10 via-background to-amber-500/10" />
+                /*
+                  Sem capa, esta faixa era um degradê mudo de 80px. Agora ela
+                  carrega a marca em marca-d'água: a prova sem imagem própria
+                  passa a ter, ainda assim, uma identidade.
+                */
+                <div className="relative h-20 overflow-hidden bg-gradient-to-br from-emerald-500/10 via-background to-amber-500/10 sm:h-24">
+                  {/*
+                    No canto, e não no centro: o conteúdo do cartão sobe por
+                    cima desta faixa (`-mt-14`), e uma marca centralizada
+                    apareceria por trás do título da prova.
+                  */}
+                  <div className="absolute right-5 top-3 opacity-[0.16]">
+                    <Logo variant="icon" size="lg" className="exam-flutua block !h-12 w-auto dark:hidden" />
+                    <Logo variant="dark" size="lg" className="exam-flutua hidden !h-12 w-auto dark:block" />
+                  </div>
+                </div>
               )}
 
               <div className="p-6 sm:p-8 -mt-10 sm:-mt-14 relative space-y-6">
@@ -2701,7 +2728,12 @@ ${respostaAluno}`
                   abrir para ela, e só descobria no botão seguinte.
                 */}
                 <Button
-                  className="w-full rounded-xl h-12 font-semibold bg-gradient-to-r from-[#468152] to-[#3a6d44] hover:from-[#3a6d44] hover:to-[#2f5a38] text-white shadow-md shadow-emerald-500/20 disabled:bg-none"
+                  className={`relative w-full overflow-hidden rounded-xl h-12 font-semibold bg-gradient-to-r from-[#468152] to-[#3a6d44] hover:from-[#3a6d44] hover:to-[#2f5a38] text-white shadow-md shadow-emerald-500/20 disabled:bg-none ${
+                    // A mesma chamada da sala de espera, no botão que a maioria
+                    // de fato clica: quem chega com a prova já em andamento
+                    // nunca passa pela sala.
+                    canStart && (!exam.requireSignature || signature) ? 'exam-botao-chama' : ''
+                  }`}
                   size="lg"
                   onClick={() => {
                     if (canStart) {
@@ -2731,6 +2763,8 @@ ${respostaAluno}`
                 </Button>
 
                 <PdfCtaBanner accountType={accountType} isAdmin={userRole === 'admin'} compact />
+
+                <ExamBrandFooter className="border-t border-border/40 pt-4" />
               </div>
             </div>
           </div>
@@ -2746,28 +2780,49 @@ ${respostaAluno}`
         {proctoringModal}
         <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/40 flex items-center justify-center p-4 sm:p-6">
           <div className="max-w-3xl w-full">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="mb-3 rounded-xl text-muted-foreground hover:text-foreground -ml-2"
-              onClick={() => router.push('/')}
-            >
-              <ArrowLeft className="h-4 w-4 mr-1.5" /> Voltar para a tela inicial
-            </Button>
+            <ExamBrandHeader
+              className="mb-3 px-1"
+              acao={
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="rounded-xl text-muted-foreground hover:text-foreground"
+                  onClick={() => router.push('/')}
+                >
+                  <ArrowLeft className="h-4 w-4 mr-1.5" /> Sair
+                </Button>
+              }
+            />
 
             <div className="relative overflow-hidden rounded-3xl border border-border/50 bg-background/60 backdrop-blur-xl shadow-2xl">
-              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-500 via-violet-400 to-fuchsia-500" />
+              {/*
+                A faixa do topo era azul-violeta-fúcsia — três cores que não
+                são da plataforma. Passa a ser a mesma da tela de entrada:
+                verde e âmbar da marca.
+              */}
+              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#468152] via-emerald-400 to-[#E2A43E]" />
 
               <div className="p-6 sm:p-8 space-y-6">
                 <div className="text-center space-y-2.5">
-                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500/20 to-violet-500/20 mb-1">
-                    <div className="relative">
-                      <Clock className="h-8 w-8 text-primary" />
-                      <div className="absolute inset-0 rounded-full bg-primary/20 blur-lg animate-pulse" />
-                    </div>
+                  {/*
+                    O relógio da espera, com a órbita girando em volta. A sala
+                    de espera é a tela em que a pessoa fica mais tempo parada
+                    olhando — e ela era um ícone estático num quadrado violeta.
+                  */}
+                  <div className="relative mx-auto mb-1 inline-flex h-20 w-20 items-center justify-center">
+                    <span
+                      aria-hidden
+                      className="exam-orbita absolute inset-0 rounded-full border-2 border-dashed border-emerald-500/35"
+                    />
+                    <span className="exam-flutua flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500/20 to-amber-500/20 shadow-inner">
+                      <Clock className="h-7 w-7 text-[#468152] dark:text-emerald-400" />
+                    </span>
                   </div>
                   <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{exam.title}</h1>
-                  <p className="text-sm text-muted-foreground">Sala de Espera · Bem-vindo(a), <span className="font-semibold text-foreground">{userName}</span></p>
+                  <p className="text-sm text-muted-foreground">
+                    <span className="font-semibold text-[#468152] dark:text-emerald-400">Sala de Espera</span>
+                    {' · '}Bem-vindo(a), <span className="font-semibold text-foreground">{userName}</span>
+                  </p>
                 </div>
 
                 <div className="rounded-2xl border border-border/50 bg-gradient-to-br from-muted/40 to-background p-6">
@@ -2817,22 +2872,38 @@ ${respostaAluno}`
                   </Button>
                 )}
 
+                {/*
+                  O botão que a pessoa está esperando.
+
+                  Ele nascia igual a qualquer outro botão verde da tela — e ele
+                  não é: é o único que ela veio esperar, às vezes por vinte
+                  minutos, e o momento em que ele destrava não tinha nenhuma
+                  marca visual. `exam-botao-chama` pulsa o halo e passa um
+                  brilho por cima, e a classe é aplicada SÓ quando ele está de
+                  fato clicável: um botão travado que pisca é uma promessa
+                  quebrada a cada segundo. Ver app/globals.css.
+                */}
                 <div className="flex gap-2">
                   <Button
-                    className={`flex-1 rounded-xl h-12 font-semibold transition-all ${
+                    className={`relative flex-1 overflow-hidden rounded-xl h-12 font-semibold transition-all ${
                       canStart && (!exam.requireSignature || signature)
-                        ? 'bg-gradient-to-r from-[#468152] to-[#3a6d44] hover:from-[#3a6d44] hover:to-[#2f5a38] text-white shadow-md shadow-emerald-500/20'
+                        ? 'exam-botao-chama bg-gradient-to-r from-[#468152] to-[#3a6d44] hover:from-[#3a6d44] hover:to-[#2f5a38] text-white'
                         : ''
                     }`}
                     size="lg"
                     onClick={handleStartExam}
                     disabled={!canStart || (exam.requireSignature && !signature)}
                   >
-                    {(exam.requireSignature && !signature)
-                      ? 'Assine antes de iniciar'
-                      : canStart
-                      ? 'Iniciar Prova Agora'
-                      : 'Aguardando Início...'}
+                    {(exam.requireSignature && !signature) ? (
+                      'Assine antes de iniciar'
+                    ) : canStart ? (
+                      <>
+                        <Play className="mr-2 h-4 w-4 fill-current" />
+                        Iniciar Prova Agora
+                      </>
+                    ) : (
+                      'Aguardando Início...'
+                    )}
                   </Button>
                   <Button
                     variant="outline"
@@ -2845,6 +2916,8 @@ ${respostaAluno}`
                     Sair
                   </Button>
                 </div>
+
+                <ExamBrandFooter className="border-t border-border/40 pt-4" />
               </div>
             </div>
           </div>
@@ -2980,18 +3053,26 @@ ${respostaAluno}`
         </>
       )}
 
-      {/* Modal - Prova já realizada (não exibir para provas práticas) */}
+      {/*
+        Prova já finalizada.
+
+        O cartão anunciava uma proibição — "Prova Já Realizada! Você já realizou
+        esta prova. Não é possível refazê-la." —, que é a leitura mais fria
+        possível de alguém acabar de terminar uma prova. Quem chega aqui
+        terminou: a primeira frase é sobre o que ele fez, e a primeira ação é
+        para onde ele quer ir, o próprio resumo.
+      */}
       {alreadySubmitted && !exam?.isPracticeExam && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200">
           <Card className="max-w-md w-full shadow-2xl">
             <CardHeader className="text-center space-y-4">
-              <div className="mx-auto w-16 h-16 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
-                <CheckCircle2 className="h-8 w-8 text-green-600 dark:text-green-300" />
+              <div className="exam-selo-estoura mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500/20 to-emerald-500/5">
+                <CheckCircle2 className="h-8 w-8 text-emerald-600 dark:text-emerald-400" />
               </div>
               <div>
-                <CardTitle className="text-2xl">Prova Já Realizada!</CardTitle>
+                <CardTitle className="text-2xl">Você finalizou essa prova</CardTitle>
                 <CardDescription className="mt-2">
-                  Você já realizou esta prova. Não é possível refazê-la.
+                  Sua entrega está registrada. Não é possível refazê-la.
                 </CardDescription>
               </div>
             </CardHeader>
@@ -2999,19 +3080,34 @@ ${respostaAluno}`
               <div className="p-4 bg-muted rounded-lg">
                 <p className="text-sm text-center text-muted-foreground">
                   {downloads.gabarito.esperandoOFim
-                    ? 'Você pode visualizar seu relatório. O gabarito é liberado quando a prova termina.'
-                    : 'Você pode visualizar seu relatório ou baixar o gabarito da prova.'}
+                    ? 'Seu resumo já está disponível. O gabarito é liberado quando a prova termina.'
+                    : 'Veja seu resumo com as respostas e a correção, ou baixe o gabarito da prova.'}
                 </p>
               </div>
               <div className="flex flex-col gap-2">
                 <Button
                   onClick={() => router.push(`/exam/${id}/user/${userId}`)}
-                  className="w-full"
+                  className="exam-botao-chama relative w-full overflow-hidden bg-gradient-to-r from-[#468152] to-[#3a6d44] font-semibold text-white hover:from-[#3a6d44] hover:to-[#2f5a38]"
                   size="lg"
                 >
-                  <FileDown className="h-4 w-4 mr-2" />
-                  Ver Meu Relatório
+                  <BarChart3 className="h-4 w-4 mr-2" />
+                  Quero ver meu resumo
                 </Button>
+                {/*
+                  A classificação da turma só existe depois do término — antes
+                  disso o botão levaria a uma tela que recusa a entrada.
+                */}
+                {janela?.encerrada && (
+                  <Button
+                    onClick={() => router.push(`/exam/${id}/results`)}
+                    variant="outline"
+                    className="w-full"
+                    size="lg"
+                  >
+                    <Trophy className="h-4 w-4 mr-2" />
+                    Ver resultados da turma
+                  </Button>
+                )}
                 {!downloads.gabarito.esperandoOFim ? (
                   <Button
                     onClick={async () => {
