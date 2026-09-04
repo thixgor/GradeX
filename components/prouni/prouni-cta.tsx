@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { ArrowRight, BadgeCheck, Clock, GraduationCap, XCircle } from 'lucide-react'
+import { ArrowRight, BadgeCheck, Clock, GraduationCap, LogIn, XCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 /**
@@ -48,6 +48,15 @@ interface Solicitacao {
 export function ProuniCta({ itemType, itemId, className, variante = 'compacto', aparencia = 'app' }: ProuniCtaProps) {
   const [beneficio, setBeneficio] = useState<Beneficio | null>(null)
   const [solicitacao, setSolicitacao] = useState<Solicitacao | null>(null)
+  /*
+   * A rota é aberta a visitante de propósito (ver app/api/prouni/beneficio),
+   * e devolve junto se há sessão. Isso importa porque o benefício NÃO é cupom:
+   * ele não tem código, não vale por link e não se aplica sozinho numa compra
+   * anônima — ele nasce de uma solicitação analisada, presa a uma conta. Sem
+   * dizer isso, a tela de compra anuncia um desconto que a pessoa não tem como
+   * usar ali, e a promessa vira reclamação depois do pagamento.
+   */
+  const [autenticado, setAutenticado] = useState<boolean | null>(null)
 
   useEffect(() => {
     let ativo = true
@@ -60,6 +69,7 @@ export function ProuniCta({ itemType, itemId, className, variante = 'compacto', 
         if (!ativo || !json?.benefit) return
         setBeneficio(json.benefit)
         setSolicitacao(json.request || null)
+        setAutenticado(json.authenticated === true)
       })
       // Silêncio proposital: isto decora uma página de venda. Uma falha aqui
       // não pode aparecer como erro numa tela onde a pessoa está comprando.
@@ -126,6 +136,14 @@ export function ProuniCta({ itemType, itemId, className, variante = 'compacto', 
                   Soma com o desconto de lote em andamento.
                 </p>
               )}
+              {/* O desconto não é código nem link: é uma solicitação analisada,
+                  presa a uma conta. Dito aqui, antes do pagamento — e não
+                  descoberto depois, quando o preço cheio já foi cobrado. */}
+              <p className={cn('mt-1.5 text-[11px] leading-snug', corTexto)}>
+                {autenticado === false
+                  ? 'Não é cupom: o desconto vale por conta. Entre (ou crie uma conta), envie o comprovante e, aprovado, ele entra sozinho no checkout deste item.'
+                  : 'Não é cupom: peça o desconto pela sua conta, envie o comprovante e, aprovado, ele entra sozinho no checkout deste item.'}
+              </p>
               {recusado && solicitacao?.reviewNotes && (
                 <p className="mt-1 flex items-start gap-1 text-[11px] text-rose-600 dark:text-rose-300">
                   <XCircle className="mt-0.5 h-3 w-3 shrink-0" />
@@ -136,7 +154,10 @@ export function ProuniCta({ itemType, itemId, className, variante = 'compacto', 
                 href={href}
                 className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-sky-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-sky-700"
               >
-                Sou PROUNI/FIES, quero desconto
+                {autenticado === false ? <LogIn className="h-3.5 w-3.5" /> : null}
+                {autenticado === false
+                  ? 'Entrar e solicitar o desconto'
+                  : 'Sou PROUNI/FIES, quero desconto'}
                 <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </>

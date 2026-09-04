@@ -31,6 +31,8 @@ import {
 import { usePricingEventState } from '@/components/pricing-events/usePricingEventState'
 import { FaixaDoPacote, GradeDoPacote, ListaDoPacote } from '@/components/manual-clinico/pacote'
 import { TOTAL_DE_MODULOS, precoPorModulo } from '@/lib/manual-clinico/pacote'
+import { MANUAL_CLINICO_PRODUCT_ID } from '@/lib/manual-clinico/identidade'
+import { ProuniCta } from '@/components/prouni/prouni-cta'
 import { LogoDaHistologia } from '@/components/histologia/marca'
 import { setorDe, tema } from '@/components/histologia/tema'
 import { AVISO_EDUCACIONAL, CREDITO_BASE } from '@/lib/histologia/licenca'
@@ -982,6 +984,14 @@ function Preco({
                 </li>
               ))}
             </ul>
+
+            {/* Desconto PROUNI/FIES do Manual Clínico, quando existe. Some
+                sozinho quando não há (ver ProuniCta). */}
+            <ProuniCta
+              itemType="manual_clinico"
+              itemId={MANUAL_CLINICO_PRODUCT_ID}
+              className="mt-4"
+            />
 
             <p className="mt-3 flex items-center gap-1.5 border-t border-border pt-3 text-[11px] text-muted-foreground">
               <ShieldCheck className="h-3.5 w-3.5 shrink-0" aria-hidden /> Pix, cartão ou boleto ·

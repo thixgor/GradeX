@@ -85,10 +85,13 @@ export function classesDaAlternativa({
       'min-w-0 flex-1 whitespace-pre-line text-[15px] leading-snug',
       riscada && !conferida && 'text-muted-foreground line-through',
     ),
-    // O "riscar" ganhou 36px próprios, com o toque afastado da borda do texto,
-    // para não riscar sem querer ao tentar marcar.
+    // O "riscar" tem 44px próprios — o mínimo de alvo de toque da plataforma,
+    // e não os 36px de antes: no celular ele é o único jeito de eliminar uma
+    // alternativa, e disputa a borda direita do cartão com o que estiver
+    // flutuando no canto. O toque fica afastado da borda do texto para não
+    // riscar sem querer ao tentar marcar.
     botaoRiscar: cn(
-      'flex h-9 w-9 flex-none items-center justify-center rounded-xl transition active:scale-90',
+      'flex h-11 w-11 flex-none items-center justify-center rounded-xl transition active:scale-90',
       riscada
         ? 'bg-orange-100 text-orange-600 dark:bg-orange-900/40 dark:text-orange-300'
         : 'text-muted-foreground/50 hover:bg-muted hover:text-foreground',

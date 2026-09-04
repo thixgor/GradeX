@@ -422,7 +422,12 @@ function FloatingFocusGlass({ enabled }: { enabled: boolean }) {
   useEffect(() => { setMounted(true) }, [])
   if (!mounted || !enabled) return null
   return createPortal(
-    <div className="fixed top-3 right-3 sm:top-4 sm:right-4 z-[55]">
+    // O canto superior direito já é do tema (ThemeToggle, `right-3`) e do modo
+    // leve (`right-[6.25rem]`), ambos `z-[60]` e vindos do AppShell. A sessão de
+    // foco nascia no MESMO ponto com `z-[55]`: no celular e no tablet ela ficava
+    // literalmente atrás dos dois, sem toque possível. Aqui ela entra à esquerda
+    // deles, na mesma faixa e com a mesma folga de safe-area.
+    <div className="pwa-safe-fixed-top fixed top-3 right-[9.75rem] z-[60]">
       <div className="relative liquid-glass-bubble overflow-visible rounded-full">
         <div className="liquid-glass-surface !rounded-full" />
         <div className="liquid-glass-refraction-top !left-[10%] !right-[10%] !rounded-full" />

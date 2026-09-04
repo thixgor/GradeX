@@ -21,6 +21,7 @@ import { useMaterialCart } from '@/context/MaterialCartContext'
 import { PricingEventCountdown, type PricingEventStatePayload } from '@/components/pricing-events/PricingEventCountdown'
 import { combineDiscountsWithProuni } from '@/lib/prouni-shared'
 import { useProuniGrant } from '@/hooks/use-prouni-grant'
+import { ProuniCta } from '@/components/prouni/prouni-cta'
 
 const pageStyle: React.CSSProperties = {
   minHeight: '100vh',
@@ -1562,6 +1563,16 @@ export default function MateriaisCheckoutPage() {
                 aparencia="dark"
                 codigoAplicado={appliedCoupon?.code || null}
               />
+
+              {/* A oferta PROUNI/FIES deste item, para quem ainda NÃO tem a
+                  concessão — quem já tem vê o abatimento no resumo e não
+                  precisa do convite. O chamativo some sozinho quando não há
+                  benefício configurado, e é ele que diz o que a tela calava:
+                  o desconto sai de uma solicitação aprovada na conta, não de
+                  um código digitado no checkout. */}
+              {!prouniGrant && (
+                <ProuniCta itemType={itemType} itemId={itemId} aparencia="dark" className="mt-3" />
+              )}
 
               <CouponBox
                 amount={price}

@@ -113,6 +113,16 @@ interface InlineAnnotationCanvasProps {
   onChange: (annotation: QuestionAnnotation) => void
   children: React.ReactNode
   className?: string
+  /**
+   * De que lado o botão flutuante de anotar encosta. Padrão: direita.
+   *
+   * Ele é `sticky`, então enquanto a questão rola ele passa POR CIMA do que
+   * estiver naquela faixa — e nas telas de resolução do Banco de Questões o
+   * que está ali, do lado direito de cada alternativa, é o "X" de riscar: um
+   * alvo de 36px que o botão cobria por inteiro. Encostado à esquerda, ele
+   * passa sobre a letra da alternativa (A/B/C/D), que não é botão nenhum.
+   */
+  alinhamentoDoBotao?: 'direita' | 'esquerda'
 }
 
 /**
@@ -129,6 +139,7 @@ export function InlineAnnotationCanvas({
   onChange,
   children,
   className,
+  alinhamentoDoBotao = 'direita',
 }: InlineAnnotationCanvasProps) {
   const { isActive, activate, deactivate } = useIsActiveAnnotator(questionId)
 
@@ -881,7 +892,12 @@ export function InlineAnnotationCanvas({
       {!isActive && (
         // `--anotacao-espaco-inferior` deixa a página empurrar o FAB para cima
         // quando existe uma barra fixa no rodapé (ex.: navegação da prova).
-        <div className="sticky bottom-[calc(0.75rem+var(--anotacao-espaco-inferior,0px))] z-30 flex justify-end pr-0.5 pointer-events-none">
+        <div
+          className={cn(
+            'sticky bottom-[calc(0.75rem+var(--anotacao-espaco-inferior,0px))] z-30 flex pointer-events-none',
+            alinhamentoDoBotao === 'esquerda' ? 'justify-start pl-0.5' : 'justify-end pr-0.5',
+          )}
+        >
           <AnnotateFab hasInk={hasInk} onClick={activate} />
         </div>
       )}

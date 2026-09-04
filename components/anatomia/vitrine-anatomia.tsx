@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation'
 import { usePricingEventState } from '@/components/pricing-events/usePricingEventState'
 import { FaixaDoPacote, GradeDoPacote, ListaDoPacote } from '@/components/manual-clinico/pacote'
 import { TOTAL_DE_MODULOS, precoPorModulo } from '@/lib/manual-clinico/pacote'
+import { MANUAL_CLINICO_PRODUCT_ID } from '@/lib/manual-clinico/identidade'
+import { ProuniCta } from '@/components/prouni/prouni-cta'
 import { PranchaInterativa } from '@/components/anatomia/prancha-interativa'
 import { FichaMarcador } from '@/components/anatomia/ficha-estrutura'
 import type { ResumoAnatomia, RespostaAcessoAnatomia } from '@/lib/anatomia/tipos'
@@ -455,6 +457,16 @@ export function VitrineAnatomia({ dados, secao = 'hub' }: VitrineAnatomiaProps) 
                 </li>
               ))}
             </ul>
+
+            {/* Desconto PROUNI/FIES, quando o admin configurou um para o Manual
+                Clínico. Some sozinho quando não há (ver ProuniCta): esta é a
+                página onde a pessoa DECIDE, e descobrir o benefício depois de
+                pagar o preço cheio é descobrir tarde demais. */}
+            <ProuniCta
+              itemType="manual_clinico"
+              itemId={MANUAL_CLINICO_PRODUCT_ID}
+              className="mt-4"
+            />
 
             <p className="mt-3 flex items-center gap-1.5 border-t border-border pt-3 text-[11px] text-muted-foreground">
               <ShieldCheck className="h-3.5 w-3.5 shrink-0" /> Pix, cartão ou boleto · pagamento processado com

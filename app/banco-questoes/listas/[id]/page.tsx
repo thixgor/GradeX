@@ -837,7 +837,17 @@ ${respostaAluno}`
             botões — e a barra cresce quando o veredito entra nela. */}
         <div
           className="container mx-auto max-w-4xl space-y-4 px-4 py-5"
-          style={{ paddingBottom: 'calc(var(--gx-barra-inferior-h, 6rem) + 1.5rem)' }}
+          style={
+            {
+              paddingBottom: 'calc(var(--gx-barra-inferior-h, 6rem) + 1.5rem)',
+              // O botão de anotar é `sticky`: sem esta folga ele encostava a
+              // 0,75rem do fim do VIEWPORT, ou seja, atrás da barra de ações
+              // (que é `fixed` e portalada, `z-45`). Aqui ele para acima dela,
+              // visível — e acima também do "voltar" flutuante do iOS.
+              '--anotacao-espaco-inferior':
+                'calc(var(--gx-barra-inferior-h, 0px) + env(safe-area-inset-bottom) + 3.5rem)',
+            } as React.CSSProperties
+          }
         >
           {badgesDaQuestao}
 
@@ -877,6 +887,9 @@ ${respostaAluno}`
                 annotation={getAnnotationForQuestion(questaoId)}
                 onChange={handleSaveAnnotation}
                 className="space-y-5"
+                // À direita ele cobre exatamente a coluna do "X" de riscar de
+                // cada alternativa. Ver o comentário da prop.
+                alinhamentoDoBotao="esquerda"
               >
                 {/* Enunciado */}
                 <div className="prose dark:prose-invert max-w-none">

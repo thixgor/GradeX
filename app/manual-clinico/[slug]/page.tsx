@@ -950,7 +950,10 @@ function FloatingFocusSession() {
   useEffect(() => { setMounted(true) }, [])
   if (!mounted) return null
   return createPortal(
-    <div className="fixed top-3 right-3 sm:top-4 sm:right-4 z-[55]">
+    // Mesma correção do índice do Manual: o tema (`right-3`) e o modo leve
+    // (`right-[6.25rem]`) são `z-[60]` e desenhados pelo AppShell no mesmo
+    // canto. Com `z-[55]` no mesmo ponto, a sessão de foco ficava atrás deles.
+    <div className="pwa-safe-fixed-top fixed top-3 right-[9.75rem] z-[60]">
       <div className="relative rounded-lg border border-border bg-card shadow-sm overflow-visible rounded-full">
         {/* Glass surface + iridescent wave */}
         
@@ -1190,6 +1193,17 @@ function FloatingDiseaseName({ nome, heroRef, slug }: { nome: string; heroRef: R
 /* ═══════════════════════════════════════════
    SECTION NAV (floating glassmorphism TOC)
    ═══════════════════════════════════════════ */
+
+/**
+ * Largura da pastilha de navegação, em px.
+ *
+ * O botão é arrastável e nasce colado na direita, então a posição inicial e o
+ * limite do arrasto precisam saber quanto ele ocupa. Antes era um quadrado de
+ * 44/56px e os números estavam espalhados como literais; com o rótulo escrito
+ * dentro ("Seções"), errar essa conta joga metade do botão para fora da tela.
+ */
+const LARGURA_NAV_FLUTUANTE = 108
+
 function SectionNav({ sections, media = [], slug }: { sections: SectionEntry[]; media?: MediaItem[]; slug: string }) {
   const [activeId, setActiveId] = useState<string | null>(null)
   const [expanded, setExpanded] = useState(() =>
@@ -1211,14 +1225,14 @@ function SectionNav({ sections, media = [], slug }: { sections: SectionEntry[]; 
   // Set initial position on mount (top-right corner)
   useEffect(() => {
     const isDesktop = window.innerWidth >= 1024
-    // On desktop, offset enough for the expanded panel (~200px); on mobile just the FAB
-    const rightOffset = isDesktop ? 210 : 60
+    // On desktop, offset enough for the expanded panel (~200px); on mobile the pill itself
+    const rightOffset = isDesktop ? 210 : LARGURA_NAV_FLUTUANTE + 12
     setPos({ x: window.innerWidth - rightOffset, y: isDesktop ? 120 : 72 })
     const onResize = () => {
       setPos(prev => {
         if (!prev) return { x: window.innerWidth - 210, y: 120 }
         return {
-          x: Math.min(prev.x, window.innerWidth - 44),
+          x: Math.min(prev.x, window.innerWidth - LARGURA_NAV_FLUTUANTE - 8),
           y: Math.max(12, Math.min(prev.y, window.innerHeight - 44)),
         }
       })
@@ -1309,7 +1323,7 @@ function SectionNav({ sections, media = [], slug }: { sections: SectionEntry[]; 
     if (Math.abs(dx) > 3 || Math.abs(dy) > 3) dragRef.current.moved = true
     if (!dragRef.current.moved) return
     setPos({
-      x: Math.max(12, Math.min(window.innerWidth - 44, dragRef.current.origX + dx)),
+      x: Math.max(12, Math.min(window.innerWidth - LARGURA_NAV_FLUTUANTE - 8, dragRef.current.origX + dx)),
       y: Math.max(12, Math.min(window.innerHeight - 44, dragRef.current.origY + dy)),
     })
   }, [])
@@ -1375,19 +1389,27 @@ function SectionNav({ sections, media = [], slug }: { sections: SectionEntry[]; 
       className="fixed z-50"
       style={{ left: pos.x, top: pos.y }}
     >
-      {/* ── FAB (draggable floating button) ── */}
+      {/* ── FAB (draggable floating button) ──
+          Eram três tracinhos a 70% de opacidade, sem fundo, sem borda e sem
+          rótulo, flutuando por cima do texto da patologia. Quem não tivesse
+          visto o aviso da primeira visita não tinha como saber que aquilo era
+          um botão — muito menos que ele navega entre as seções. Agora é uma
+          pastilha opaca, com borda e sombra, e com a palavra escrita: o que ele
+          faz está DITO, não subentendido. */}
       <button
         onPointerDown={onDragStart}
         onPointerMove={onDragMove}
         onPointerUp={onDragEnd}
-        className={`relative w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center transition-all duration-300 touch-none select-none ${
+        title="Ir para uma seção desta patologia"
+        style={{ width: LARGURA_NAV_FLUTUANTE }}
+        className={`relative h-12 rounded-2xl border flex items-center justify-center gap-2 shadow-lg transition-all duration-300 touch-none select-none ${
           expanded
             ? 'opacity-0 pointer-events-none scale-75'
             : showHint
-              ? 'opacity-100 bg-primary/10 border border-primary/40 shadow-lg shadow-primary/20 active:scale-95'
-              : 'opacity-70 hover:opacity-100 active:scale-95'
+              ? 'border-primary/50 bg-primary/15 shadow-primary/25 active:scale-95'
+              : 'border-border bg-card/95 backdrop-blur-md hover:bg-card active:scale-95'
         }`}
-        aria-label="Navegação de seções"
+        aria-label="Abrir navegação de seções"
       >
         {/* Attention ring while the coach mark is active */}
         {showHint && !expanded && (
@@ -1396,11 +1418,14 @@ function SectionNav({ sections, media = [], slug }: { sections: SectionEntry[]; 
             <span className="absolute inset-0 rounded-2xl ring-2 ring-primary/50" />
           </>
         )}
-        <div className="relative z-10 flex flex-col items-center gap-1">
-          <span className={`block w-4 sm:w-5 h-[2.5px] rounded-full ${showHint ? 'bg-primary' : 'bg-foreground/60'}`} />
-          <span className={`block w-3 sm:w-3.5 h-[2.5px] rounded-full ${showHint ? 'bg-primary/70' : 'bg-foreground/40'}`} />
-          <span className={`block w-4 sm:w-5 h-[2.5px] rounded-full ${showHint ? 'bg-primary' : 'bg-foreground/60'}`} />
-        </div>
+        <span className="relative z-10 flex flex-col items-center gap-[3px]">
+          <span className={`block w-4 h-[2.5px] rounded-full ${showHint ? 'bg-primary' : 'bg-foreground/70'}`} />
+          <span className={`block w-3 h-[2.5px] rounded-full ${showHint ? 'bg-primary/70' : 'bg-foreground/50'}`} />
+          <span className={`block w-4 h-[2.5px] rounded-full ${showHint ? 'bg-primary' : 'bg-foreground/70'}`} />
+        </span>
+        <span className={`relative z-10 text-[12.5px] font-bold leading-none ${showHint ? 'text-primary' : 'text-foreground'}`}>
+          Seções
+        </span>
         {/* Active section dot indicator */}
         {activeId && (
           <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-primary shadow-sm shadow-primary/50 border border-background" />

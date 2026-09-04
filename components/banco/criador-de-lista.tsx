@@ -31,9 +31,13 @@ import {
   corpoDaRequisicao,
   descreverLista,
   nomeSugerido,
+  parametrosDasFacetas,
   parametrosDeContagem,
+  podeExcluirJaResolvidas,
+  reconciliarComAsFacetas,
   temAssuntoEscolhido,
   type ConfiguracaoDaLista,
+  type FacetasDoRecorte,
   type FiltrosDaLista,
 } from '@/lib/banco/criacao-lista'
 import type { BancoDificuldade, BancoModoResposta, BancoQuestaoTipo } from '@/lib/types/banco-questoes'
@@ -96,6 +100,13 @@ export function CriadorDeLista({
 
   const [disponiveis, setDisponiveis] = useState<number | null>(null)
   const [contando, setContando] = useState(false)
+  /*
+   * O que o recorte de assuntos escolhido REALMENTE tem.
+   *
+   * `null` = ainda não sei; nesse estado a tela oferece tudo, como antes. Ver
+   * `FacetasDoRecorte` em lib/banco/criacao-lista.ts para o porquê.
+   */
+  const [facetas, setFacetas] = useState<FacetasDoRecorte | null>(null)
   const [criando, setCriando] = useState(false)
   const [erro, setErro] = useState('')
 
@@ -130,6 +141,7 @@ export function CriadorDeLista({
     setNomeTocado(false)
     setErro('')
     setDisponiveis(null)
+    setFacetas(null)
   }, [aberto, selecaoInicial])
 
   // O nome acompanha as escolhas até a pessoa digitar o dela. `aberto` entra
@@ -162,6 +174,38 @@ export function CriadorDeLista({
     const t = setTimeout(() => void contar(), atraso)
     return () => clearTimeout(t)
   }, [aberto, contar])
+
+  /*
+   * As facetas dependem SÓ do recorte de assunto, então a busca é refeita
+   * quando ele muda — não a cada mexida num filtro. Marcar "difícil" não pode
+   * refazer a pergunta "que dificuldades existem aqui?": a resposta encolheria
+   * para a própria escolha e apagaria as outras opções da tela.
+   */
+  const chaveDoRecorte = parametrosDasFacetas(filtros).toString()
+  useEffect(() => {
+    if (!aberto) return
+    let ativo = true
+    const t = setTimeout(() => {
+      fetch(`/api/banco/facetas?${chaveDoRecorte}`, { cache: 'no-store' })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((d) => {
+          if (ativo && d?.facetas) setFacetas(d.facetas as FacetasDoRecorte)
+        })
+        // Silêncio proposital: sem as facetas a tela volta a oferecer tudo,
+        // que é o comportamento antigo — nunca uma tela quebrada.
+        .catch(() => {})
+    }, 250)
+    return () => {
+      ativo = false
+      clearTimeout(t)
+    }
+  }, [aberto, chaveDoRecorte])
+
+  // Some a opção, some o filtro: um filtro invisível zerando a contagem é pior
+  // do que nenhum. Ver `reconciliarComAsFacetas`.
+  useEffect(() => {
+    setFiltros((atuais) => reconciliarComAsFacetas(atuais, facetas))
+  }, [facetas])
 
   async function criar() {
     setCriando(true)
@@ -276,11 +320,13 @@ export function CriadorDeLista({
                   <PassoOrigem
                     hierarquia={hierarquia}
                     filtros={filtros}
+                    facetas={facetas}
                     onChange={setFiltros}
                   />
                 ) : passo === 'recorte' ? (
                   <PassoRecorte
                     filtros={filtros}
+                    facetas={facetas}
                     anosDisponiveis={anosDisponiveis}
                     periodosDisponiveis={periodosDisponiveis}
                     onChange={setFiltros}
@@ -386,36 +432,66 @@ export function CriadorDeLista({
 }
 
 // ── Passo 1: de onde ──────────────────────────────────────────────────
+/**
+ * Havia duas pastilhas aqui, "Todo o banco" e "Por assunto", desenhadas como
+ * uma escolha entre dois modos. Só que "Por assunto" tinha `onClick={() => {}}`
+ * — clicar nela não fazia absolutamente nada, porque quem escolhe assunto é a
+ * árvore logo abaixo. Ela existia para PARECER simétrica, e o preço da simetria
+ * era um botão que a pessoa clica, não vê reação nenhuma e conclui que a tela
+ * está quebrada.
+ *
+ * O que sobra é o que é verdade: a árvore manda, e existe um botão para
+ * desfazer a escolha e voltar a sortear de tudo.
+ */
 function PassoOrigem({
   hierarquia,
   filtros,
+  facetas,
   onChange,
 }: {
   hierarquia: Hierarquia
   filtros: FiltrosDaLista
+  facetas: FacetasDoRecorte | null
   onChange: (f: FiltrosDaLista) => void
 }) {
   const daArvore = temAssuntoEscolhido(filtros)
+  const escolhidos =
+    filtros.moduloIds.length + filtros.topicoIds.length + filtros.subtopicoIds.length
 
   return (
     <div className="space-y-3 py-1">
-      <div className="grid grid-cols-2 gap-2">
-        <Pastilha
-          marcado={!daArvore}
-          onClick={() =>
-            onChange({ ...filtros, moduloIds: [], topicoIds: [], subtopicoIds: [] })
-          }
-          icone={<Shuffle className="h-4 w-4" />}
-          titulo="Todo o banco"
-          descricao="Sorteia de tudo"
-        />
-        <Pastilha
-          marcado={daArvore}
-          onClick={() => {}}
-          icone={<Layers className="h-4 w-4" />}
-          titulo="Por assunto"
-          descricao="Escolha abaixo"
-        />
+      <div className="flex items-start gap-2.5 rounded-2xl border border-foreground/10 bg-background/40 p-3">
+        <span
+          className={cn(
+            'flex h-8 w-8 flex-none items-center justify-center rounded-xl',
+            daArvore ? 'bg-primary text-primary-foreground' : 'bg-foreground/5 text-muted-foreground',
+          )}
+        >
+          {daArvore ? <Layers className="h-4 w-4" /> : <Shuffle className="h-4 w-4" />}
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="text-[13px] font-bold leading-tight">
+            {daArvore
+              ? `${escolhidos} ${escolhidos === 1 ? 'assunto escolhido' : 'assuntos escolhidos'}`
+              : 'Sorteando de todo o banco'}
+          </p>
+          <p className="mt-0.5 text-[11px] leading-snug text-muted-foreground">
+            {daArvore
+              ? facetas
+                ? `${facetas.total.toLocaleString('pt-BR')} ${facetas.total === 1 ? 'questão' : 'questões'} neste recorte.`
+                : 'Contando as questões deste recorte…'
+              : 'Marque abaixo para restringir — ou deixe como está.'}
+          </p>
+        </div>
+        {daArvore ? (
+          <button
+            type="button"
+            onClick={() => onChange({ ...filtros, moduloIds: [], topicoIds: [], subtopicoIds: [] })}
+            className="flex-none rounded-lg bg-foreground/5 px-2.5 py-1.5 text-[11px] font-semibold text-muted-foreground transition hover:bg-foreground/10 hover:text-foreground"
+          >
+            Limpar
+          </button>
+        ) : null}
       </div>
 
       <div className="rounded-2xl border border-foreground/10 bg-background/40 p-2">
@@ -436,76 +512,145 @@ function PassoOrigem({
 
       <p className="text-[11px] leading-relaxed text-muted-foreground">
         Sem nenhum assunto marcado, a lista sorteia de todo o banco. Marcar um módulo já inclui os
-        tópicos dele.
+        tópicos dele — e a seta ao lado do nome abre o módulo para você escolher só um tópico ou
+        só uma prova.
       </p>
     </div>
   )
 }
 
 // ── Passo 2: o quê ────────────────────────────────────────────────────
+/**
+ * Só os filtros que EXISTEM no recorte escolhido.
+ *
+ * Antes o passo desenhava sempre as mesmas opções — objetiva/discursiva,
+ * fácil/média/difícil, "só com imagem", "só as que errei" — independentemente
+ * de haver ou não questão assim no que a pessoa marcou no passo anterior.
+ * Marcar um filtro inexistente não avisava nada: a lista era montada até o fim
+ * e só o botão "Criar lista" respondia "nenhuma questão combina com esses
+ * filtros", depois de três telas de trabalho.
+ *
+ * Com as contagens de `/api/banco/facetas`, o que tem zero não é desenhado, e
+ * o que tem aparece com o número ao lado. Enquanto as facetas não chegam
+ * (`facetas === null`), a tela oferece tudo — o antigo comportamento, que erra
+ * para o lado de mostrar demais em vez de esconder por desconhecimento.
+ */
 function PassoRecorte({
   filtros,
+  facetas,
   anosDisponiveis,
   periodosDisponiveis,
   onChange,
 }: {
   filtros: FiltrosDaLista
+  facetas: FacetasDoRecorte | null
   anosDisponiveis: number[]
   periodosDisponiveis: { periodo: string; total: number }[]
   onChange: (f: FiltrosDaLista) => void
 }) {
+  /** Sem facetas, tudo passa. Com elas, passa o que tem ao menos uma questão. */
+  const temQuestao = (quantas: number | undefined) => !facetas || (quantas || 0) > 0
+
+  const tipos = (
+    [
+      { valor: '', titulo: 'Ambas', total: facetas?.total },
+      { valor: 'objetiva', titulo: 'Objetiva', total: facetas?.tipos.objetiva },
+      { valor: 'discursiva', titulo: 'Discursiva', total: facetas?.tipos.discursiva },
+    ] as const
+  ).filter((o) => o.valor === '' || temQuestao(o.total))
+
+  const dificuldades = (
+    [
+      { valor: '', titulo: 'Qualquer', total: facetas?.total },
+      { valor: 'facil', titulo: 'Fácil', total: facetas?.dificuldades.facil },
+      { valor: 'medio', titulo: 'Média', total: facetas?.dificuldades.medio },
+      { valor: 'dificil', titulo: 'Difícil', total: facetas?.dificuldades.dificil },
+    ] as const
+  ).filter((o) => o.valor === '' || temQuestao(o.total))
+
+  // Períodos e anos: quando as facetas chegam, valem os DELAS — as listas que
+  // vêm por prop são do acervo inteiro e ofereceriam 2019 num módulo que só
+  // tem prova de 2026.
+  const periodos = facetas ? facetas.periodos : periodosDisponiveis
+  const anos = facetas ? facetas.anos.map((a) => a.ano) : anosDisponiveis
+
+  const mostrarNaoResolvidas = !facetas || podeExcluirJaResolvidas(facetas)
+  const mostrarErradas = temQuestao(facetas?.erradas)
+  const mostrarComImagem = temQuestao(facetas?.comImagem)
+  const mostrarComExplicacao = temQuestao(facetas?.comExplicacao)
+
+  // Um passo pode ficar sem nada a oferecer (um subtópico com três questões
+  // objetivas, todas médias, sem imagem e nunca resolvidas). Dizer isso é
+  // melhor que uma tela em branco que parece defeito.
+  const semNadaAOferecer =
+    tipos.length <= 1 &&
+    dificuldades.length <= 1 &&
+    periodos.length === 0 &&
+    anos.length === 0 &&
+    !mostrarNaoResolvidas &&
+    !mostrarErradas &&
+    !mostrarComImagem &&
+    !mostrarComExplicacao
+
   return (
     <div className="space-y-4 py-1">
-      <Campo titulo="Tipo de questão">
-        <div className="grid grid-cols-3 gap-2">
-          {(
-            [
-              { valor: '', titulo: 'Ambas' },
-              { valor: 'objetiva', titulo: 'Objetiva' },
-              { valor: 'discursiva', titulo: 'Discursiva' },
-            ] as const
-          ).map((o) => (
-            <PastilhaCurta
-              key={o.valor || 'ambas'}
-              marcado={(filtros.tipo || '') === o.valor}
-              onClick={() => onChange({ ...filtros, tipo: o.valor as BancoQuestaoTipo | '' })}
-            >
-              {o.titulo}
-            </PastilhaCurta>
-          ))}
-        </div>
-      </Campo>
+      {semNadaAOferecer ? (
+        <p className="rounded-2xl border border-foreground/10 bg-background/40 p-3 text-[12px] leading-relaxed text-muted-foreground">
+          As questões deste recorte são todas do mesmo tipo e do mesmo nível — não há o que
+          filtrar aqui. Siga para o próximo passo, ou volte e escolha um recorte mais amplo.
+        </p>
+      ) : null}
 
-      <Campo titulo="Dificuldade">
-        <div className="grid grid-cols-4 gap-2">
-          {(
-            [
-              { valor: '', titulo: 'Qualquer' },
-              { valor: 'facil', titulo: 'Fácil' },
-              { valor: 'medio', titulo: 'Média' },
-              { valor: 'dificil', titulo: 'Difícil' },
-            ] as const
-          ).map((o) => (
-            <PastilhaCurta
-              key={o.valor || 'qualquer'}
-              marcado={(filtros.dificuldade || '') === o.valor}
-              onClick={() =>
-                onChange({ ...filtros, dificuldade: o.valor as BancoDificuldade | '' })
-              }
-            >
-              {o.titulo}
-            </PastilhaCurta>
-          ))}
-        </div>
-      </Campo>
+      {tipos.length > 1 ? (
+        <Campo titulo="Tipo de questão">
+          <div className={cn('grid gap-2', tipos.length === 2 ? 'grid-cols-2' : 'grid-cols-3')}>
+            {tipos.map((o) => (
+              <PastilhaCurta
+                key={o.valor || 'ambas'}
+                marcado={(filtros.tipo || '') === o.valor}
+                onClick={() => onChange({ ...filtros, tipo: o.valor as BancoQuestaoTipo | '' })}
+              >
+                {o.titulo}
+              </PastilhaCurta>
+            ))}
+          </div>
+        </Campo>
+      ) : null}
+
+      {dificuldades.length > 1 ? (
+        <Campo titulo="Dificuldade">
+          <div
+            className={cn(
+              'grid gap-2',
+              dificuldades.length === 2
+                ? 'grid-cols-2'
+                : dificuldades.length === 3
+                  ? 'grid-cols-3'
+                  : 'grid-cols-4',
+            )}
+          >
+            {dificuldades.map((o) => (
+              <PastilhaCurta
+                key={o.valor || 'qualquer'}
+                marcado={(filtros.dificuldade || '') === o.valor}
+                onClick={() =>
+                  onChange({ ...filtros, dificuldade: o.valor as BancoDificuldade | '' })
+                }
+              >
+                {o.titulo}
+              </PastilhaCurta>
+            ))}
+          </div>
+        </Campo>
+      ) : null}
 
       {/* Período letivo antes do ano: é o recorte que a prova usa de fato
           ("N1 SOI I - 2026.2"), e a contagem aparece na própria pastilha. O ano
           continua logo abaixo, para as questões cuja prova não diz o semestre. */}
-      {periodosDisponiveis.length > 0 ? (
+      {periodos.length > 0 ? (
         <Campo titulo="Período letivo" opcional>
           <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
-            {periodosDisponiveis.slice(0, 16).map((p) => {
+            {periodos.slice(0, 16).map((p) => {
               const marcado = filtros.periodos.includes(p.periodo)
               return (
                 <PastilhaCurta
@@ -530,10 +675,10 @@ function PassoRecorte({
         </Campo>
       ) : null}
 
-      {anosDisponiveis.length > 0 ? (
+      {anos.length > 0 ? (
         <Campo titulo="Ano" opcional>
           <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
-            {anosDisponiveis.slice(0, 12).map((ano) => {
+            {anos.slice(0, 12).map((ano) => {
               const marcado = filtros.anos.includes(ano)
               return (
                 <PastilhaCurta
@@ -558,61 +703,89 @@ function PassoRecorte({
       {/* ── O que já foi resolvido ────────────────────────────────────
           As duas opções são mutuamente exclusivas: "ainda não resolvi" exclui
           quem já respondeu, "só as que errei" exige ter respondido errado.
-          Marcar uma desmarca a outra — nunca fazem sentido juntas. */}
-      <Campo titulo="Sobre o que você já resolveu" opcional>
-        <div className="grid grid-cols-2 gap-2">
-          <ToggleCurto
-            marcado={filtros.excluirJaResolvidas}
-            onClick={() =>
-              onChange({
-                ...filtros,
-                excluirJaResolvidas: !filtros.excluirJaResolvidas,
-                apenasErradas: false,
-              })
-            }
-            icone={<Check className="h-3.5 w-3.5" />}
-            titulo="Ainda não resolvi"
-            descricao="Evita repetir questão"
-          />
-          <ToggleCurto
-            marcado={filtros.apenasErradas}
-            onClick={() =>
-              onChange({
-                ...filtros,
-                apenasErradas: !filtros.apenasErradas,
-                excluirJaResolvidas: false,
-              })
-            }
-            icone={<XCircle className="h-3.5 w-3.5" />}
-            titulo="Só as que errei"
-            descricao="Lista de revisão"
-          />
-        </div>
-      </Campo>
+          Marcar uma desmarca a outra — nunca fazem sentido juntas.
+
+          E cada uma some quando não tem o que fazer neste recorte: sem nada
+          resolvido, "ainda não resolvi" não filtra nada; sem nenhum erro, "só
+          as que errei" devolve zero. */}
+      {mostrarNaoResolvidas || mostrarErradas ? (
+        <Campo titulo="Sobre o que você já resolveu" opcional>
+          <div className={cn('grid gap-2', mostrarNaoResolvidas && mostrarErradas ? 'grid-cols-2' : 'grid-cols-1')}>
+            {mostrarNaoResolvidas ? (
+              <ToggleCurto
+                marcado={filtros.excluirJaResolvidas}
+                onClick={() =>
+                  onChange({
+                    ...filtros,
+                    excluirJaResolvidas: !filtros.excluirJaResolvidas,
+                    apenasErradas: false,
+                  })
+                }
+                icone={<Check className="h-3.5 w-3.5" />}
+                titulo="Ainda não resolvi"
+                descricao={
+                  facetas
+                    ? `${(facetas.total - facetas.jaResolvidas).toLocaleString('pt-BR')} disponíveis`
+                    : 'Evita repetir questão'
+                }
+              />
+            ) : null}
+            {mostrarErradas ? (
+              <ToggleCurto
+                marcado={filtros.apenasErradas}
+                onClick={() =>
+                  onChange({
+                    ...filtros,
+                    apenasErradas: !filtros.apenasErradas,
+                    excluirJaResolvidas: false,
+                  })
+                }
+                icone={<XCircle className="h-3.5 w-3.5" />}
+                titulo="Só as que errei"
+                descricao={
+                  facetas ? `${facetas.erradas.toLocaleString('pt-BR')} erradas aqui` : 'Lista de revisão'
+                }
+              />
+            ) : null}
+          </div>
+        </Campo>
+      ) : null}
 
       {/* ── Conteúdo da questão ───────────────────────────────────────
           "Com imagem" é o pedido mais direto: ECG, radiografia, lâmina — quem
           quer treinar leitura de imagem não pode sortear questão de texto
           puro. "Com resposta comentada" é para quem estuda pela explicação,
-          não só treina. */}
-      <Campo titulo="Conteúdo da questão" opcional>
-        <div className="grid grid-cols-2 gap-2">
-          <ToggleCurto
-            marcado={filtros.comImagem}
-            onClick={() => onChange({ ...filtros, comImagem: !filtros.comImagem })}
-            icone={<ImageIcon className="h-3.5 w-3.5" />}
-            titulo="Só com imagem"
-            descricao="ECG, raio-X, lâmina…"
-          />
-          <ToggleCurto
-            marcado={filtros.comExplicacao}
-            onClick={() => onChange({ ...filtros, comExplicacao: !filtros.comExplicacao })}
-            icone={<MessageSquareText className="h-3.5 w-3.5" />}
-            titulo="Com comentário"
-            descricao="Resposta explicada"
-          />
-        </div>
-      </Campo>
+          não só treina. Cada um só aparece se o recorte tiver alguma. */}
+      {mostrarComImagem || mostrarComExplicacao ? (
+        <Campo titulo="Conteúdo da questão" opcional>
+          <div className={cn('grid gap-2', mostrarComImagem && mostrarComExplicacao ? 'grid-cols-2' : 'grid-cols-1')}>
+            {mostrarComImagem ? (
+              <ToggleCurto
+                marcado={filtros.comImagem}
+                onClick={() => onChange({ ...filtros, comImagem: !filtros.comImagem })}
+                icone={<ImageIcon className="h-3.5 w-3.5" />}
+                titulo="Só com imagem"
+                descricao={
+                  facetas ? `${facetas.comImagem.toLocaleString('pt-BR')} com imagem` : 'ECG, raio-X, lâmina…'
+                }
+              />
+            ) : null}
+            {mostrarComExplicacao ? (
+              <ToggleCurto
+                marcado={filtros.comExplicacao}
+                onClick={() => onChange({ ...filtros, comExplicacao: !filtros.comExplicacao })}
+                icone={<MessageSquareText className="h-3.5 w-3.5" />}
+                titulo="Com comentário"
+                descricao={
+                  facetas
+                    ? `${facetas.comExplicacao.toLocaleString('pt-BR')} comentadas`
+                    : 'Resposta explicada'
+                }
+              />
+            ) : null}
+          </div>
+        </Campo>
+      ) : null}
     </div>
   )
 }

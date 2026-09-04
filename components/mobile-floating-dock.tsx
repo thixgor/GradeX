@@ -69,6 +69,30 @@ export function MobileFloatingDock() {
   // Mesmo tratamento que o Footer e o PlatformAds já dão a estas rotas.
   const isPdfViewer = (pathname || '').includes('/viewer')
   if (isPdfViewer) return null
+  /*
+   * Resolver questão do Banco (avulsa ou lista).
+   *
+   * O "+" mora no canto inferior direito, logo acima da barra de ações — que
+   * é exatamente a faixa onde as ÚLTIMAS alternativas param quando a pessoa
+   * rola até o fim. E a coluna da direita de uma alternativa não é decoração:
+   * é o "X" de riscar, um alvo de 36px. Com o FAB por cima dele, riscar a
+   * última alternativa no celular era simplesmente impossível — o toque ia
+   * todo para o "+".
+   *
+   * Estas telas já têm barra de ações própria no rodapé, o "voltar" no
+   * cabeçalho e o botão de anotar dentro da questão; música e suporte não
+   * fazem parte de resolver uma questão. Mesmo tratamento que o baralho de
+   * flashcards e o leitor de PDF já recebem acima.
+   */
+  const trechos = (pathname || '').split('/').filter(Boolean)
+  const isBancoResolucao =
+    trechos[0] === 'banco-questoes' &&
+    // `/banco-questoes/<id>` (avulsa) e `/banco-questoes/listas/<id>` (lista).
+    // O índice do Banco, o histórico e o índice de listas são telas de
+    // navegação normais e continuam com o FAB.
+    ((trechos.length === 2 && trechos[1] !== 'historico' && trechos[1] !== 'listas') ||
+      (trechos.length === 3 && trechos[1] === 'listas'))
+  if (isBancoResolucao) return null
 
   return (
     <div

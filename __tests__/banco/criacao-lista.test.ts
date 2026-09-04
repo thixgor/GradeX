@@ -7,9 +7,13 @@ import {
   corpoDaRequisicao,
   descreverLista,
   nomeSugerido,
+  parametrosDasFacetas,
   parametrosDeContagem,
+  podeExcluirJaResolvidas,
+  reconciliarComAsFacetas,
   temAssuntoEscolhido,
   type ConfiguracaoDaLista,
+  type FacetasDoRecorte,
 } from '@/lib/banco/criacao-lista'
 
 function config(extra: Partial<ConfiguracaoDaLista> = {}): ConfiguracaoDaLista {
@@ -194,5 +198,132 @@ describe('filtros', () => {
     const p = parametrosDeContagem({ ...FILTROS_VAZIOS, comImagem: true, comExplicacao: true })
     expect(p.get('comImagem')).toBe('true')
     expect(p.get('comExplicacao')).toBe('true')
+  })
+})
+
+/* ═══════════════════════════════════════════════════════════════════════
+   O QUE EXISTE NO RECORTE
+
+   O criador oferecia sempre os mesmos filtros, viesse a questão do acervo
+   inteiro ou de um subtópico com três questões. Marcar "só com imagem" num
+   módulo sem nenhuma imagem só dava erro no fim, depois dos três passos. Estas
+   provas fixam as duas metades da correção: o que não tem, some da tela — e o
+   filtro correspondente é apagado junto, para não ficar zerando a contagem de
+   um jeito invisível.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+function facetas(extra: Partial<FacetasDoRecorte> = {}): FacetasDoRecorte {
+  return {
+    total: 100,
+    tipos: { objetiva: 100, discursiva: 0 },
+    dificuldades: { facil: 30, medio: 70, dificil: 0 },
+    anos: [{ ano: 2026, total: 100 }],
+    periodos: [{ periodo: '2026.2', total: 100 }],
+    comImagem: 0,
+    comExplicacao: 40,
+    jaResolvidas: 10,
+    erradas: 0,
+    ...extra,
+  }
+}
+
+describe('parametrosDasFacetas', () => {
+  it('leva só o recorte de assunto — os outros filtros não entram', () => {
+    const p = parametrosDasFacetas({
+      ...FILTROS_VAZIOS,
+      moduloIds: ['m1'],
+      topicoIds: ['t1', 't2'],
+      subtopicoIds: ['s1'],
+      dificuldade: 'dificil',
+      comImagem: true,
+      anos: [2026],
+    })
+    expect(p.get('moduloId')).toBe('m1')
+    expect(p.get('topicoId')).toBe('t1,t2')
+    expect(p.get('subtopicoId')).toBe('s1')
+    // Se a dificuldade entrasse, a resposta só conheceria as difíceis e a tela
+    // apagaria "fácil" e "média" no instante em que alguém escolhesse uma.
+    expect(p.get('dificuldade')).toBeNull()
+    expect(p.get('comImagem')).toBeNull()
+    expect(p.get('anos')).toBeNull()
+  })
+
+  it('sem assunto escolhido, não manda parâmetro nenhum', () => {
+    expect(parametrosDasFacetas(FILTROS_VAZIOS).toString()).toBe('')
+  })
+})
+
+describe('podeExcluirJaResolvidas', () => {
+  it('não oferece quando a pessoa não resolveu nada — o filtro não tiraria nada', () => {
+    expect(podeExcluirJaResolvidas(facetas({ jaResolvidas: 0 }))).toBe(false)
+  })
+
+  it('não oferece quando já resolveu todas — o filtro devolveria lista vazia', () => {
+    expect(podeExcluirJaResolvidas(facetas({ total: 40, jaResolvidas: 40 }))).toBe(false)
+  })
+
+  it('oferece quando há resolvidas e sobra o que sortear', () => {
+    expect(podeExcluirJaResolvidas(facetas({ total: 40, jaResolvidas: 10 }))).toBe(true)
+  })
+})
+
+describe('reconciliarComAsFacetas', () => {
+  it('sem facetas, não mexe em nada — apagar por desconhecimento é pior', () => {
+    const filtros = { ...FILTROS_VAZIOS, dificuldade: 'dificil' as const, comImagem: true }
+    expect(reconciliarComAsFacetas(filtros, null)).toBe(filtros)
+  })
+
+  it('apaga a dificuldade que o recorte não tem', () => {
+    const saida = reconciliarComAsFacetas(
+      { ...FILTROS_VAZIOS, dificuldade: 'dificil' },
+      facetas(),
+    )
+    expect(saida.dificuldade).toBe('')
+  })
+
+  it('mantém a dificuldade que o recorte tem', () => {
+    const saida = reconciliarComAsFacetas({ ...FILTROS_VAZIOS, dificuldade: 'facil' }, facetas())
+    expect(saida.dificuldade).toBe('facil')
+  })
+
+  it('apaga o tipo sem nenhuma questão no recorte', () => {
+    const saida = reconciliarComAsFacetas({ ...FILTROS_VAZIOS, tipo: 'discursiva' }, facetas())
+    expect(saida.tipo).toBe('')
+  })
+
+  it('apaga "só com imagem" quando o recorte não tem imagem, e mantém "com comentário"', () => {
+    const saida = reconciliarComAsFacetas(
+      { ...FILTROS_VAZIOS, comImagem: true, comExplicacao: true },
+      facetas(),
+    )
+    expect(saida.comImagem).toBe(false)
+    expect(saida.comExplicacao).toBe(true)
+  })
+
+  it('descarta anos e períodos que o recorte não tem, preservando os que tem', () => {
+    const saida = reconciliarComAsFacetas(
+      { ...FILTROS_VAZIOS, anos: [2019, 2026], periodos: ['2019.1', '2026.2'] },
+      facetas(),
+    )
+    expect(saida.anos).toEqual([2026])
+    expect(saida.periodos).toEqual(['2026.2'])
+  })
+
+  it('apaga "só as que errei" quando não há erro nenhum no recorte', () => {
+    const saida = reconciliarComAsFacetas({ ...FILTROS_VAZIOS, apenasErradas: true }, facetas())
+    expect(saida.apenasErradas).toBe(false)
+  })
+
+  it('apaga "ainda não resolvi" quando a pessoa já resolveu tudo do recorte', () => {
+    const saida = reconciliarComAsFacetas(
+      { ...FILTROS_VAZIOS, excluirJaResolvidas: true },
+      facetas({ total: 12, jaResolvidas: 12 }),
+    )
+    expect(saida.excluirJaResolvidas).toBe(false)
+  })
+
+  it('devolve o MESMO objeto quando nada muda — senão o efeito que grava o resultado se realimenta', () => {
+    const filtros = { ...FILTROS_VAZIOS, dificuldade: 'facil' as const, anos: [2026] }
+    expect(reconciliarComAsFacetas(filtros, facetas())).toBe(filtros)
   })
 })

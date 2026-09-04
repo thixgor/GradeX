@@ -17,8 +17,17 @@ import {
 } from './plan-entitlements-server'
 import type { ManualClinicoModuleKey } from './plan-entitlements'
 
-export const MANUAL_CLINICO_PRODUCT_ID = 'manual-clinico-premium' as const
-export const MANUAL_CLINICO_PRODUCT_TYPE = 'manual_clinico' as const
+// A identidade do produto mora num módulo puro para que as telas de compra
+// (componentes de cliente) possam importá-la sem trazer o driver do Mongo
+// junto. Ver lib/manual-clinico/identidade.ts.
+export {
+  MANUAL_CLINICO_PRODUCT_ID,
+  MANUAL_CLINICO_PRODUCT_TYPE,
+} from './manual-clinico/identidade'
+import {
+  MANUAL_CLINICO_PRODUCT_ID,
+  MANUAL_CLINICO_PRODUCT_TYPE,
+} from './manual-clinico/identidade'
 
 export const MANUAL_CLINICO_CONFIG_COLLECTION = 'manual_clinico_product_settings'
 export const MANUAL_CLINICO_PURCHASES_COLLECTION = 'manual_clinico_purchases'

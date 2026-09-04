@@ -235,6 +235,115 @@ export function corpoDaRequisicao(config: ConfiguracaoDaLista) {
   }
 }
 
+/* =================== O QUE EXISTE NO RECORTE =================== */
+
+/**
+ * O que o recorte de assuntos escolhido REALMENTE tem, vindo de
+ * `/api/banco/facetas`.
+ *
+ * Existe porque a tela oferecia sempre os mesmos filtros — tipo, dificuldade,
+ * período, ano, "só com imagem", "só as que errei" — venham eles do acervo
+ * inteiro ou não. Quem marcava um módulo de Bioquímica e pedia "só com imagem"
+ * percorria os três passos até o botão de criar para então receber "nenhuma
+ * questão combina com esses filtros". A tela ofereceu, deixou avançar, e só no
+ * fim contou que aquilo não existia ali.
+ *
+ * Com as contagens por opção, o que não tem questão nenhuma simplesmente não é
+ * desenhado: o caminho para a frustração deixa de ser oferecido.
+ */
+export interface FacetasDoRecorte {
+  /** Questões no recorte de assunto, sem nenhum outro filtro. */
+  total: number
+  /** Por tipo: `{ objetiva: 120, discursiva: 0 }`. */
+  tipos: Record<string, number>
+  /** Por dificuldade: `{ facil: 12, medio: 0, dificil: 40 }`. */
+  dificuldades: Record<string, number>
+  anos: Array<{ ano: number; total: number }>
+  periodos: Array<{ periodo: string; total: number }>
+  comImagem: number
+  comExplicacao: number
+  /** Do recorte, quantas esta conta já respondeu. */
+  jaResolvidas: number
+  /** Do recorte, quantas esta conta errou na última tentativa. */
+  erradas: number
+}
+
+/** O recorte de ASSUNTO — a única pergunta que as facetas respondem. */
+export function parametrosDasFacetas(filtros: FiltrosDaLista): URLSearchParams {
+  const p = new URLSearchParams()
+  if (filtros.moduloIds.length) p.set('moduloId', filtros.moduloIds.join(','))
+  if (filtros.topicoIds.length) p.set('topicoId', filtros.topicoIds.join(','))
+  if (filtros.subtopicoIds.length) p.set('subtopicoId', filtros.subtopicoIds.join(','))
+  return p
+}
+
+/**
+ * Apaga dos filtros tudo o que o recorte atual não tem.
+ *
+ * Esconder a opção não basta: quem marcou "difícil" num módulo e depois trocou
+ * para outro, onde não há nenhuma difícil, ficaria com um filtro INVISÍVEL
+ * zerando a contagem — e sem nada na tela explicando por quê. Some a opção,
+ * some o filtro.
+ *
+ * `facetas` nula significa "ainda não sei": nada é apagado, porque apagar por
+ * desconhecimento é pior do que oferecer demais.
+ */
+export function reconciliarComAsFacetas(
+  filtros: FiltrosDaLista,
+  facetas: FacetasDoRecorte | null,
+): FiltrosDaLista {
+  if (!facetas) return filtros
+
+  const anos = new Set(facetas.anos.map((a) => a.ano))
+  const periodos = new Set(facetas.periodos.map((p) => p.periodo))
+
+  const proximo: FiltrosDaLista = {
+    ...filtros,
+    tipo: filtros.tipo && (facetas.tipos[filtros.tipo] || 0) > 0 ? filtros.tipo : '',
+    dificuldade:
+      filtros.dificuldade && (facetas.dificuldades[filtros.dificuldade] || 0) > 0
+        ? filtros.dificuldade
+        : '',
+    anos: filtros.anos.filter((a) => anos.has(a)),
+    periodos: filtros.periodos.filter((p) => periodos.has(p)),
+    comImagem: filtros.comImagem && facetas.comImagem > 0,
+    comExplicacao: filtros.comExplicacao && facetas.comExplicacao > 0,
+    excluirJaResolvidas: filtros.excluirJaResolvidas && podeExcluirJaResolvidas(facetas),
+    apenasErradas: filtros.apenasErradas && facetas.erradas > 0,
+  }
+
+  // Igualdade por valor: devolver o mesmo objeto quando nada mudou evita um
+  // ciclo de renderização (o efeito que chama isto grava no mesmo estado que
+  // lê).
+  return mesmosFiltros(filtros, proximo) ? filtros : proximo
+}
+
+/**
+ * "Ainda não resolvi" só faz sentido quando há o que esconder E o que sobrar.
+ *
+ * Sem nenhuma resolvida o filtro não tira nada (é ruído); com TODAS resolvidas
+ * ele não deixa nada (é a lista vazia que esta reconciliação existe para
+ * evitar).
+ */
+export function podeExcluirJaResolvidas(facetas: FacetasDoRecorte): boolean {
+  return facetas.jaResolvidas > 0 && facetas.jaResolvidas < facetas.total
+}
+
+function mesmosFiltros(a: FiltrosDaLista, b: FiltrosDaLista): boolean {
+  return (
+    a.tipo === b.tipo &&
+    a.dificuldade === b.dificuldade &&
+    a.comImagem === b.comImagem &&
+    a.comExplicacao === b.comExplicacao &&
+    a.excluirJaResolvidas === b.excluirJaResolvidas &&
+    a.apenasErradas === b.apenasErradas &&
+    a.anos.length === b.anos.length &&
+    a.periodos.length === b.periodos.length &&
+    a.anos.every((x, i) => x === b.anos[i]) &&
+    a.periodos.every((x, i) => x === b.periodos[i])
+  )
+}
+
 /** Os mesmos filtros como parâmetros de consulta, para contar quantas existem. */
 export function parametrosDeContagem(filtros: FiltrosDaLista): URLSearchParams {
   const p = new URLSearchParams()

@@ -22,6 +22,8 @@ import {
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { PLUS_LABEL } from '@/lib/account-tier'
+import { ProuniCta } from '@/components/prouni/prouni-cta'
+import { MANUAL_CLINICO_PRODUCT_ID } from '@/lib/manual-clinico/identidade'
 import {
   MODULOS_DO_PACOTE,
   TOTAL_DE_MODULOS,
@@ -463,6 +465,19 @@ export function OfertaDoPacote({
                 : 'Comprar e desbloquear'}
             <ArrowRight className="h-4 w-4" />
           </button>
+
+          {/* Desconto PROUNI/FIES do Manual Clínico, quando existe.
+              Todas as vitrines de seção (radiologia, ferramentas, exames,
+              farmacologia) desenham a oferta por aqui — pendurar o chamativo
+              neste ponto é dizê-lo uma vez e valer em todas, em vez de sete
+              cópias que envelhecem separadas. Ele some sozinho quando o admin
+              não configurou benefício nenhum (ver ProuniCta). */}
+          <ProuniCta
+            itemType="manual_clinico"
+            itemId={MANUAL_CLINICO_PRODUCT_ID}
+            className="mt-4"
+            aparencia={tom === 'escuro' ? 'dark' : 'app'}
+          />
 
           <p className={`mt-3 flex items-center gap-1.5 border-t ${t.borda} pt-3 text-[11px] ${t.apagado}`}>
             <ShieldCheck className="h-3.5 w-3.5 shrink-0" /> Pix, cartão ou boleto · pagamento processado com

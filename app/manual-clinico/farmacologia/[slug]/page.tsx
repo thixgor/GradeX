@@ -30,6 +30,7 @@ import {
   X,
   Tags,
   Shuffle,
+  MousePointerClick,
 } from 'lucide-react'
 import { RichTextRenderer } from '@/components/manual-clinico/rich-text-renderer'
 import {
@@ -438,6 +439,13 @@ function NavGlassBubble({
   )
 }
 
+/**
+ * Largura da pastilha de navegação, em px. Ver o mesmo comentário em
+ * app/manual-clinico/[slug]/page.tsx: o botão é arrastável e nasce colado na
+ * direita, então a posição inicial e o limite do arrasto dependem dela.
+ */
+const LARGURA_NAV_FLUTUANTE = 108
+
 function SectionNav({ sections }: { sections: SectionEntry[] }) {
   const [activeId, setActiveId] = useState<string | null>(null)
   const [expanded, setExpanded] = useState(() =>
@@ -445,6 +453,7 @@ function SectionNav({ sections }: { sections: SectionEntry[] }) {
   )
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
   const [isTouching, setIsTouching] = useState(false)
+  const [showHint, setShowHint] = useState(false)
   const navRef = useRef<HTMLElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -454,13 +463,13 @@ function SectionNav({ sections }: { sections: SectionEntry[] }) {
 
   useEffect(() => {
     const isDesktop = window.innerWidth >= 1024
-    const rightOffset = isDesktop ? 210 : 60
+    const rightOffset = isDesktop ? 210 : LARGURA_NAV_FLUTUANTE + 12
     setPos({ x: window.innerWidth - rightOffset, y: isDesktop ? 120 : 72 })
     const onResize = () => {
       setPos(prev => {
         if (!prev) return { x: window.innerWidth - 210, y: 120 }
         return {
-          x: Math.min(prev.x, window.innerWidth - 44),
+          x: Math.min(prev.x, window.innerWidth - LARGURA_NAV_FLUTUANTE - 8),
           y: Math.max(12, Math.min(prev.y, window.innerHeight - 44)),
         }
       })
@@ -468,6 +477,29 @@ function SectionNav({ sections }: { sections: SectionEntry[] }) {
     window.addEventListener('resize', onResize)
     return () => window.removeEventListener('resize', onResize)
   }, [])
+
+  // ── First-visit coach mark for the nav button ──────────────────
+  // Mesma chave da página de patologia (`mc-nav-hint-seen`): é o MESMO botão,
+  // no mesmo canto, com a mesma função. Quem já entendeu na patologia não
+  // precisa levar o aviso de novo na farmacologia.
+  const dismissHint = useCallback(() => {
+    setShowHint(false)
+    try { localStorage.setItem('mc-nav-hint-seen', '1') } catch {}
+  }, [])
+
+  useEffect(() => {
+    if (sections.length === 0 || typeof window === 'undefined') return
+    try {
+      if (localStorage.getItem('mc-nav-hint-seen') === '1') return
+    } catch {}
+    const t = setTimeout(() => setShowHint(true), 1100)
+    const auto = setTimeout(() => setShowHint(false), 13000)
+    return () => { clearTimeout(t); clearTimeout(auto) }
+  }, [sections.length])
+
+  useEffect(() => {
+    if (expanded) dismissHint()
+  }, [expanded, dismissHint])
 
   // ── Intersection Observer ───────────────────────────────────────
   useEffect(() => {
@@ -516,7 +548,7 @@ function SectionNav({ sections }: { sections: SectionEntry[] }) {
     if (Math.abs(dx) > 3 || Math.abs(dy) > 3) dragRef.current.moved = true
     if (!dragRef.current.moved) return
     setPos({
-      x: Math.max(12, Math.min(window.innerWidth - 44, dragRef.current.origX + dx)),
+      x: Math.max(12, Math.min(window.innerWidth - LARGURA_NAV_FLUTUANTE - 8, dragRef.current.origX + dx)),
       y: Math.max(12, Math.min(window.innerHeight - 44, dragRef.current.origY + dy)),
     })
   }, [])
@@ -580,30 +612,90 @@ function SectionNav({ sections }: { sections: SectionEntry[] }) {
       className="fixed z-50"
       style={{ left: pos.x, top: pos.y }}
     >
-      {/* ── FAB (draggable floating button) ── */}
+      {/* ── FAB (draggable floating button) ──
+          Ver o comentário gêmeo em app/manual-clinico/[slug]/page.tsx: o vidro
+          translúcido a 70% de opacidade não se lia como botão, e nada na tela
+          dizia que ele navega entre as seções. Pastilha opaca, com borda,
+          sombra e a palavra escrita. */}
       <button
         onPointerDown={onDragStart}
         onPointerMove={onDragMove}
         onPointerUp={onDragEnd}
-        className={`relative w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center transition-all duration-300 touch-none select-none ${
+        title="Ir para uma seção deste medicamento"
+        style={{ width: LARGURA_NAV_FLUTUANTE }}
+        className={`relative h-12 rounded-2xl border flex items-center justify-center gap-2 shadow-lg transition-all duration-300 touch-none select-none ${
           expanded
             ? 'opacity-0 pointer-events-none scale-75'
-            : 'opacity-70 hover:opacity-100 active:scale-95'
+            : showHint
+              ? 'border-primary/50 bg-primary/15 shadow-primary/25 active:scale-95'
+              : 'border-border bg-card/95 backdrop-blur-md hover:bg-card active:scale-95'
         }`}
-        aria-label="Navegação de seções"
+        aria-label="Abrir navegação de seções"
       >
-        <div className="liquid-glass-surface !rounded-2xl" />
-        <div className="liquid-glass-refraction-top" style={{ borderRadius: '16px' }} />
-        <div className="liquid-glass-refraction-bottom" style={{ borderRadius: '16px' }} />
-        <div className="relative z-10 flex flex-col items-center gap-1">
-          <span className="block w-4 sm:w-5 h-[2.5px] rounded-full bg-foreground/60" />
-          <span className="block w-3 sm:w-3.5 h-[2.5px] rounded-full bg-foreground/40" />
-          <span className="block w-4 sm:w-5 h-[2.5px] rounded-full bg-foreground/60" />
-        </div>
+        {showHint && !expanded && (
+          <>
+            <span className="absolute inset-0 rounded-2xl ring-2 ring-primary/50 animate-ping" />
+            <span className="absolute inset-0 rounded-2xl ring-2 ring-primary/50" />
+          </>
+        )}
+        <span className="relative z-10 flex flex-col items-center gap-[3px]">
+          <span className={`block w-4 h-[2.5px] rounded-full ${showHint ? 'bg-primary' : 'bg-foreground/70'}`} />
+          <span className={`block w-3 h-[2.5px] rounded-full ${showHint ? 'bg-primary/70' : 'bg-foreground/50'}`} />
+          <span className={`block w-4 h-[2.5px] rounded-full ${showHint ? 'bg-primary' : 'bg-foreground/70'}`} />
+        </span>
+        <span className={`relative z-10 text-[12.5px] font-bold leading-none ${showHint ? 'text-primary' : 'text-foreground'}`}>
+          Seções
+        </span>
         {activeId && (
           <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-primary shadow-sm shadow-primary/50 border border-background" />
         )}
       </button>
+
+      {/* ── First-visit coach mark ── */}
+      <AnimatePresence>
+        {showHint && !expanded && (
+          <motion.div
+            initial={{ opacity: 0, y: -8, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, scale: 0.9 }}
+            transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+            className="absolute top-full mt-3 z-20 w-max max-w-[250px]"
+            style={{ [opensLeft ? 'right' : 'left']: 0 }}
+          >
+            <div
+              className={`absolute -top-1.5 h-3 w-3 rotate-45 rounded-[3px] bg-primary ${opensLeft ? 'right-4' : 'left-4'}`}
+            />
+            <div className="relative rounded-2xl bg-primary px-3.5 py-3 text-primary-foreground shadow-xl shadow-primary/30">
+              <button
+                onClick={dismissHint}
+                className="absolute top-2 right-2 rounded-lg p-1 text-primary-foreground/70 transition-colors hover:bg-white/15 hover:text-primary-foreground"
+                aria-label="Fechar aviso"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+              <div className="flex items-start gap-2.5 pr-4">
+                <div className="mt-0.5 shrink-0 rounded-lg bg-white/15 p-1.5">
+                  <MousePointerClick className="h-4 w-4" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-[13px] font-bold leading-snug">Navegue por aqui 👆</p>
+                  <p className="mt-1 text-[11.5px] leading-snug text-primary-foreground/85">
+                    Use este botão para pular entre as seções do medicamento.
+                  </p>
+                </div>
+              </div>
+              <div className="mt-2.5 flex justify-end">
+                <button
+                  onClick={() => { setExpanded(true) }}
+                  className="rounded-lg bg-white/15 px-2.5 py-1 text-[11px] font-bold transition-colors hover:bg-white/25"
+                >
+                  Mostrar seções
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ── Expanded panel ── */}
       <AnimatePresence>

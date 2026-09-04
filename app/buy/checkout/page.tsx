@@ -35,6 +35,7 @@ import { AppShell } from '@/components/app-shell'
 import { CheckoutAccountNotice } from '@/components/checkout/checkout-account-notice'
 import { CouponPromo } from '@/components/checkout/coupon-promo'
 import { useProuniGrant } from '@/hooks/use-prouni-grant'
+import { ProuniCta } from '@/components/prouni/prouni-cta'
 import { combineDiscountsWithProuni } from '@/lib/prouni-shared'
 import {
   computeCheckoutCharge,
@@ -449,6 +450,17 @@ function BuyCheckoutContent() {
                 codigoAplicado={appliedCoupon?.code || null}
                 className="mt-3"
               />
+            )}
+
+            {/* A oferta PROUNI/FIES deste plano, para quem AINDA não tem a
+                concessão. Quem já tem vê o abatimento algumas linhas acima e
+                não precisa do convite de novo — por isso o `!prouniGrant`. O
+                chamativo some sozinho quando o admin não configurou benefício
+                para este plano (ver ProuniCta), e ele é quem diz que o
+                desconto sai de uma solicitação aprovada na conta, não de um
+                código digitado aqui. */}
+            {!prouniGrant && (
+              <ProuniCta itemType="plus" itemId={plan.tipo} className="mt-3" />
             )}
 
             {/* Cupom: um link, não um bloco. Quem não tem código não precisa

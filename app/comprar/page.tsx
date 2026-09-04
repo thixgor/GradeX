@@ -12,6 +12,7 @@ import { CheckoutAccountNotice } from '@/components/checkout/checkout-account-no
 import { AccountDeliveryChoice, useAccountDeliveryChoice } from '@/components/checkout/account-delivery-choice'
 import { BuyerDataConfirmation, EmailQualityNotice } from '@/components/checkout/buyer-data-confirmation'
 import { CouponPromo } from '@/components/checkout/coupon-promo'
+import { ProuniCta } from '@/components/prouni/prouni-cta'
 import { PackageContents } from '@/components/shop/package-contents'
 import { ListaDoPacote } from '@/components/manual-clinico/pacote'
 import { TOTAL_DE_MODULOS, precoPorDia, precoPorModulo } from '@/lib/manual-clinico/pacote'
@@ -604,6 +605,18 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
             className="mt-4"
           />
 
+          {/* Desconto PROUNI/FIES, quando o admin configurou um.
+              Esta tela é comprável SEM conta, e é justamente por isso que o
+              aviso precisa estar aqui: o benefício não é cupom — ele nasce de
+              uma solicitação analisada, presa a uma conta, e não tem como ser
+              aplicado numa compra anônima. Sem dizer isso antes do pagamento,
+              quem tem direito paga o preço cheio e descobre depois. */}
+          <ProuniCta
+            itemType="manual_clinico"
+            itemId={MANUAL_CLINICO_PRODUCT_ID}
+            className="mt-4"
+          />
+
           {/* Cupom logo abaixo do Total: antes só aparecia depois de preencher
               nome/e-mail/telefone e clicar em "Ir para pagamento" — quem só
               queria testar um código nem chegava lá. */}
@@ -1002,6 +1015,17 @@ function GenericComprarContent({ productType }: { productType: string }) {
                 }]}
                 onAplicar={(code) => applyCoupon(code)}
                 codigoAplicado={appliedCoupon?.code || null}
+                className="mt-3.5"
+              />
+            ) : null}
+
+            {/* Ver o comentário gêmeo na variante do Manual Clínico: a compra
+                aqui pode ser anônima, e o benefício PROUNI/FIES não é cupom —
+                ele exige uma solicitação aprovada numa conta. */}
+            {product.productId ? (
+              <ProuniCta
+                itemType={couponItemType}
+                itemId={product.productId}
                 className="mt-3.5"
               />
             ) : null}

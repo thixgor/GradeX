@@ -178,6 +178,18 @@ export function ArvoreDoBanco({
         </button>
       ) : null}
 
+      {/* Uma linha que diz o que a árvore faz. A hierarquia inteira estava na
+          tela, mas nada dizia que a seta desce um nível — e a diferença entre
+          "quero HAM I" e "quero a prova N1 SOI I - 2026.2" é exatamente essa
+          descida. */}
+      <p className="mb-2 flex items-start gap-1.5 rounded-lg bg-muted/50 px-2 py-1.5 text-[11px] leading-snug text-muted-foreground">
+        <ChevronRight className="mt-[1px] h-3.5 w-3.5 flex-none rounded border border-border bg-background text-foreground/70" />
+        <span>
+          Toque na seta para abrir um módulo e escolher tópicos ou provas específicas. Toque no nome
+          para levar o nível inteiro.
+        </span>
+      </p>
+
       {/* ── Árvore ─────────────────────────────────────────────────────── */}
       <div className="min-h-0 flex-1 space-y-0.5 overflow-y-auto pr-1">
         {visivel.length === 0 ? (
@@ -238,15 +250,29 @@ function Modulo({
   return (
     <div>
       <div className="flex items-stretch gap-0.5">
+        {/* A seta ABRE o módulo; o resto da linha ESCOLHE o módulo inteiro.
+            São duas ações diferentes na mesma linha, e a seta era um chevron
+            cinza-claro de 3,5px sobre fundo transparente: quem não a
+            experimentasse por acaso nunca descobria que dá para descer até o
+            tópico ou até a prova. Agora ela tem superfície própria — borda,
+            fundo e a cor da marca —, o que a lê como botão à primeira vista. */}
         <button
           type="button"
           onClick={() => onAlternarAberto(modulo._id)}
           aria-label={aberto ? `Recolher ${modulo.nome}` : `Expandir ${modulo.nome}`}
           aria-expanded={aberto}
           disabled={modulo.ramos.length === 0}
-          className="flex w-6 flex-none items-center justify-center rounded-lg text-muted-foreground transition hover:bg-muted disabled:opacity-25"
+          title={aberto ? 'Recolher' : 'Abrir e escolher tópicos'}
+          className={cn(
+            'flex w-8 flex-none items-center justify-center rounded-lg border transition',
+            modulo.ramos.length === 0
+              ? 'border-transparent text-muted-foreground opacity-20'
+              : aberto
+                ? 'border-primary/30 bg-primary/10 text-primary'
+                : 'border-border bg-muted/60 text-foreground/70 hover:border-primary/40 hover:bg-primary/10 hover:text-primary',
+          )}
         >
-          <ChevronRight className={cn('h-3.5 w-3.5 transition-transform', aberto && 'rotate-90')} />
+          <ChevronRight className={cn('h-4 w-4 transition-transform', aberto && 'rotate-90')} />
         </button>
 
         <button
@@ -352,15 +378,24 @@ function Ramo({
   return (
     <div>
       <div className="flex items-center gap-0.5">
+        {/* Mesma razão da seta do módulo, um nível abaixo. */}
         <button
           type="button"
           onClick={() => onAlternarAberto(chave)}
           aria-label={aberto ? `Recolher ${ramo.nome}` : `Expandir ${ramo.nome}`}
           aria-expanded={aberto}
           disabled={!temFilhos}
-          className="flex h-8 w-5 flex-none items-center justify-center rounded text-muted-foreground transition hover:bg-muted disabled:opacity-0"
+          title={aberto ? 'Recolher' : 'Abrir'}
+          className={cn(
+            'flex h-7 w-7 flex-none items-center justify-center rounded-md border transition',
+            !temFilhos
+              ? 'border-transparent opacity-0'
+              : aberto
+                ? 'border-primary/30 bg-primary/10 text-primary'
+                : 'border-border bg-muted/50 text-foreground/60 hover:border-primary/40 hover:bg-primary/10 hover:text-primary',
+          )}
         >
-          <ChevronRight className={cn('h-3 w-3 transition-transform', aberto && 'rotate-90')} />
+          <ChevronRight className={cn('h-3.5 w-3.5 transition-transform', aberto && 'rotate-90')} />
         </button>
 
         <button
