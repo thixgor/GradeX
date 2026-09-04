@@ -109,9 +109,9 @@ const tierLimits: Record<AccountType | 'admin', { daily: number | string; active
 }
 
 const difficultyLegend = [
-  { label: 'Suave', description: 'Aqueci com facilidade', value: 'facil' as FlashcardDifficultyFeedback, color: 'from-emerald-400 to-emerald-600' },
-  { label: 'No ponto', description: 'Peguei, mas precisei insistir', value: 'equilibrado' as FlashcardDifficultyFeedback, color: 'from-amber-400 to-amber-600' },
-  { label: 'Porrete', description: 'Me deu trabalho e precisa voltar', value: 'porrada' as FlashcardDifficultyFeedback, color: 'from-rose-500 to-orange-600' },
+  { label: 'Fácil', description: 'Lembrei na hora', value: 'facil' as FlashcardDifficultyFeedback, color: 'from-emerald-400 to-emerald-600' },
+  { label: 'Médio', description: 'Lembrei com esforço', value: 'equilibrado' as FlashcardDifficultyFeedback, color: 'from-amber-400 to-amber-600' },
+  { label: 'Difícil', description: 'Travei e precisa voltar', value: 'porrada' as FlashcardDifficultyFeedback, color: 'from-rose-500 to-orange-600' },
 ]
 
 function LiquidGlassPanel({ children, className = '' }: { children: React.ReactNode; className?: string }) {

@@ -578,7 +578,15 @@ export interface FlashcardManualLike {
   createdAt: Date
 }
 
-export type FlashcardSpacedRating = 'SUAVE' | 'NO_PONTO' | 'PORRETE'
+/**
+ * Como o usuário se saiu ao lembrar do card. Os valores antigos
+ * (`SUAVE`/`NO_PONTO`/`PORRETE`) continuam sendo lidos do banco — ver
+ * `normalizeSpacedRating` — mas o que se grava daqui para frente é isto.
+ */
+export type FlashcardSpacedRating = 'FACIL' | 'MEDIO' | 'DIFICIL'
+
+/** Fase do card na fila: aprendendo, em revisão ou reaprendendo após erro. */
+export type FlashcardSpacedState = 'learning' | 'review' | 'relearning'
 
 export interface FlashcardSpacedProgress {
   _id?: string | import('mongodb').ObjectId
@@ -588,12 +596,26 @@ export interface FlashcardSpacedProgress {
   rating: FlashcardSpacedRating
   reviewCount: number
   correctStreak: number
+  /** Espelho do modelo SM-2 antigo, mantido para compatibilidade de leitura. */
   easeFactor: number
   intervalDays: number
   nextReviewAt: Date
   lastReviewedAt: Date
   createdAt: Date
   updatedAt: Date
+
+  // ── Estado de memória do FSRS (ausente nos documentos antigos) ────────────
+  /** Dias até a chance de lembrar cair para 90%. */
+  stability?: number
+  /** De 1 a 10: o quanto este card resiste a ficar estável. */
+  difficulty?: number
+  state?: FlashcardSpacedState
+  /** Passo curto já cumprido dentro da fase de aprendizado. */
+  learningStep?: number
+  /** Quantas vezes o card já foi esquecido depois de graduado. */
+  lapses?: number
+  /** Meta de retenção usada no último agendamento (0,80–0,97). */
+  retention?: number
 }
 
 // Sessão de estudo de deck manual (estatística leve)

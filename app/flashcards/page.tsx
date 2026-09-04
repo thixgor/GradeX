@@ -18,6 +18,8 @@ import {
   Eye,
   ChevronRight,
   ChevronDown,
+  Brain,
+  CalendarClock,
   Trash2,
   Edit3,
   ShoppingCart,
@@ -157,6 +159,9 @@ export default function FlashcardsHubPage() {
   const [authChecked, setAuthChecked] = useState(false)
   const [isGuest, setIsGuest] = useState(false)
   const [metricSettings, setMetricSettings] = useState<PublicMetricSettings>(DEFAULT_PUBLIC_METRIC_SETTINGS)
+  // Cards vencidos por deck. É o que transforma a repetição espaçada de
+  // recurso escondido dentro do deck em chamado visível na porta de entrada.
+  const [dueByDeck, setDueByDeck] = useState<Record<string, number>>({})
   const initialLoadDoneRef = useRef(false)
   const topRef = useRef<HTMLDivElement>(null)
   const mineCacheRef = useRef<Map<string, DeckWithId[]>>(new Map())
@@ -299,6 +304,15 @@ export default function FlashcardsHubPage() {
     }
   }, [])
 
+  const loadDue = useCallback(async () => {
+    try {
+      const res = await fetch('/api/flashcards/manual/due', { cache: 'no-store' })
+      if (!res.ok) return
+      const json = await res.json()
+      setDueByDeck(json.decks || {})
+    } catch {}
+  }, [])
+
   const loadShared = useCallback(async () => {
     try {
       const res = await fetch('/api/flashcards/manual/shares?direction=incoming')
@@ -358,7 +372,7 @@ export default function FlashcardsHubPage() {
     }
     const loaders = isGuest
       ? [loadStore()]
-      : [loadMine(), loadFolders(), loadCommunity(), loadStore(), loadShared()]
+      : [loadMine(), loadFolders(), loadCommunity(), loadStore(), loadShared(), loadDue()]
 
     Promise.all(loaders).finally(() => {
       if (cancelled) return
@@ -499,6 +513,7 @@ export default function FlashcardsHubPage() {
             {/* ── Biblioteca ─────────────────────────────────────────────── */}
             {section === 'library' && !isGuest && (
               <div key="library" className="fc-enter">
+                <ReviewTodayStrip decks={libraryAll} dueByDeck={dueByDeck} />
                 {showLibraryTabs && (
                   <FilterRail>
                     <FilterPill active={libraryTab === 'all'} onClick={() => selectLibraryTab('all')}>
@@ -598,6 +613,7 @@ export default function FlashcardsHubPage() {
                         editableIds={mineIds}
                         onDelete={deleteDeck}
                         metricSettings={metricSettings.flashcards}
+                        dueByDeck={dueByDeck}
                       />
                     )}
 
@@ -1122,12 +1138,13 @@ function DeckGridSkeleton({ count = 4 }: { count?: number }) {
   )
 }
 
-const DeckGrid = memo(function DeckGrid({ decks, variant, editableIds, onDelete, metricSettings }: {
+const DeckGrid = memo(function DeckGrid({ decks, variant, editableIds, onDelete, metricSettings, dueByDeck }: {
   decks: DeckWithId[]
   variant: 'library' | 'store' | 'community'
   editableIds?: Set<string>
   onDelete?: (id: string) => void
   metricSettings: FlashcardMetricSettings
+  dueByDeck?: Record<string, number>
 }) {
   // Duas colunas já no celular: com uma só, cada deck ocupava a tela inteira e
   // folhear a biblioteca virava rolagem infinita.
@@ -1141,18 +1158,21 @@ const DeckGrid = memo(function DeckGrid({ decks, variant, editableIds, onDelete,
           editable={!!editableIds?.has(deck._id)}
           onDelete={onDelete}
           metricSettings={metricSettings}
+          due={dueByDeck?.[deck._id] || 0}
         />
       ))}
     </div>
   )
 })
 
-const DeckCard = memo(function DeckCard({ deck, variant, editable, onDelete, metricSettings }: {
+const DeckCard = memo(function DeckCard({ deck, variant, editable, onDelete, metricSettings, due = 0 }: {
   deck: DeckWithId
   variant: 'library' | 'store' | 'community'
   editable?: boolean
   onDelete?: (id: string) => void
   metricSettings: FlashcardMetricSettings
+  /** Cards vencidos na repetição espaçada. 0 esconde o selo. */
+  due?: number
 }) {
   const owned = !!(deck._isPurchased || deck._hasAccess)
 
@@ -1217,6 +1237,14 @@ const DeckCard = memo(function DeckCard({ deck, variant, editable, onDelete, met
             {deck.cardCount ?? 0} {deck.cardCount === 1 ? 'cartão' : 'cartões'}
             {deck.ownerName ? ` · ${deck.ownerName}` : ''}
           </p>
+          {/* Chamado da repetição espaçada: o deck avisa que tem revisão
+              vencida sem a pessoa precisar abrir um por um para descobrir. */}
+          {due > 0 && (
+            <p className="mt-1.5 inline-flex w-fit items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10.5px] font-bold text-primary">
+              <CalendarClock className="h-3 w-3" />
+              {due} para revisar
+            </p>
+          )}
           {showMetrics && (
             <p className="mt-1 flex items-center gap-3 text-[11px] text-muted-foreground">
               {metricSettings.showLikes && (
@@ -1257,6 +1285,63 @@ const DeckCard = memo(function DeckCard({ deck, variant, editable, onDelete, met
     </article>
   )
 })
+
+/**
+ * Faixa "Revisar hoje".
+ *
+ * A repetição espaçada só funciona se a revisão acontecer no dia marcado — e
+ * até aqui não havia nada, em nenhuma tela, que avisasse que havia revisão
+ * vencida. O aluno tinha que abrir deck por deck para descobrir. Esta faixa é
+ * esse aviso: aparece só quando existe trabalho a fazer e leva direto a ele.
+ */
+function ReviewTodayStrip({ decks, dueByDeck }: {
+  decks: DeckWithId[]
+  dueByDeck: Record<string, number>
+}) {
+  const pending = useMemo(
+    () => decks
+      .map(deck => ({ deck, due: dueByDeck[deck._id] || 0 }))
+      .filter(item => item.due > 0)
+      .sort((a, b) => b.due - a.due),
+    [decks, dueByDeck],
+  )
+  if (pending.length === 0) return null
+
+  const total = pending.reduce((sum, item) => sum + item.due, 0)
+
+  return (
+    <section className="mb-4 rounded-2xl border border-primary/25 bg-primary/5 p-3 sm:p-3.5">
+      <div className="flex items-center gap-2.5">
+        <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
+          <Brain className="h-4 w-4" />
+        </span>
+        <div className="min-w-0">
+          <p className="text-[13px] font-semibold text-foreground">
+            {total} {total === 1 ? 'card venceu' : 'cards venceram'} hoje
+          </p>
+          <p className="truncate text-[11.5px] text-muted-foreground">
+            A repetição espaçada marcou {pending.length === 1 ? 'este deck' : `estes ${pending.length} decks`} para agora.
+          </p>
+        </div>
+      </div>
+      <div className="scrollbar-hide -mx-1 mt-2.5 flex gap-2 overflow-x-auto overscroll-x-contain px-1 pb-0.5">
+        {pending.slice(0, 12).map(({ deck, due }) => (
+          <Link
+            key={deck._id}
+            href={`/flashcards/d/${deck.slug}`}
+            className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-border bg-card px-3 py-2 text-[12.5px] font-semibold text-foreground shadow-sm transition active:scale-[0.97] hover:border-primary/40"
+            style={{ touchAction: 'manipulation' }}
+          >
+            <span className="max-w-[11rem] truncate">{deck.title}</span>
+            <span className="rounded-full bg-primary/10 px-1.5 py-0.5 text-[10.5px] font-bold tabular-nums text-primary">
+              {due}
+            </span>
+          </Link>
+        ))}
+      </div>
+    </section>
+  )
+}
 
 /** Fileira rolável da loja no pé da biblioteca — descoberta sem vitrine. */
 function StoreStrip({ decks, onSeeAll }: { decks: DeckWithId[]; onSeeAll: () => void }) {

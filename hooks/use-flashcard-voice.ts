@@ -4,16 +4,18 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 /**
  * Modo voz dos flashcards — reconhecimento de fala restrito às três avaliações
- * (Suave / No ponto / Porrete).
+ * (Fácil / Médio / Difícil).
  *
  * Regra central: NENHUMA palavra fora do dicionário abaixo pode disparar ação.
  * O usuário lê a resposta em voz alta, comenta, xinga — nada disso pode virar
  * uma avaliação. Por isso o casamento é por igualdade exata contra um conjunto
  * fechado de frases (depois de tirar acento, pontuação e algumas partículas de
- * apoio), e não por "contém" — que marcaria "não achei fácil não" como Suave.
+ * apoio), e não por "contém" — que marcaria "não achei fácil não" como Fácil.
  */
 
-export type VoiceRating = 'facil' | 'equilibrado' | 'porrada'
+import type { FlashcardSpacedRating } from '@/lib/types'
+
+export type VoiceRating = FlashcardSpacedRating
 
 export type VoiceStatus =
   | 'unsupported' // navegador sem Web Speech API (Firefox, WebViews antigas)
@@ -30,11 +32,15 @@ interface UseFlashcardVoiceOptions {
   lang?: string
 }
 
-/** Frases aceitas por avaliação. Tudo aqui já vem normalizado (sem acento). */
+/**
+ * Frases aceitas por avaliação. Tudo aqui já vem normalizado (sem acento).
+ * Os nomes antigos (suave / no ponto / porrete) continuam valendo: quem se
+ * acostumou a falar assim não precisa reaprender por causa da troca de rótulo.
+ */
 const RATING_PHRASES: Record<VoiceRating, string[]> = {
-  facil: ['facil', 'suave', 'facinho', 'facilimo', 'tranquilo'],
-  equilibrado: ['medio', 'media', 'no ponto', 'ponto', 'mediano'],
-  porrada: ['dificil', 'porrete', 'porrada', 'pesado', 'complicado'],
+  FACIL: ['facil', 'suave', 'facinho', 'facilimo', 'tranquilo'],
+  MEDIO: ['medio', 'media', 'no ponto', 'ponto', 'mediano'],
+  DIFICIL: ['dificil', 'porrete', 'porrada', 'pesado', 'complicado', 'errei'],
 }
 
 /**

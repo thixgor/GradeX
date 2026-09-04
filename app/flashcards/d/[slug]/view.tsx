@@ -47,6 +47,11 @@ import {
   MicOff,
   Undo2,
   Gift,
+  Zap,
+  Gauge,
+  Check,
+  CloudOff,
+  Timer,
 } from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
 import { Logo } from '@/components/logo'
@@ -61,7 +66,7 @@ import {
   describePdfDownloadFailure,
   downloadPdfResponse,
 } from '@/lib/material-download-client'
-import type { FlashcardManualCard, FlashcardManualDeck } from '@/lib/types'
+import type { FlashcardManualCard, FlashcardManualDeck, FlashcardSpacedRating, FlashcardSpacedState } from '@/lib/types'
 import {
   DEFAULT_PUBLIC_METRIC_SETTINGS,
   type PublicMetricSettings,
@@ -82,8 +87,18 @@ import {
   clearProgress,
   type FlashcardProgress,
 } from '@/lib/flashcard-progress'
-import { sortCardsForSpacedRepetition } from '@/lib/flashcard-spaced-repetition'
-import { useFlashcardVoice, type VoiceRating } from '@/hooks/use-flashcard-voice'
+import {
+  FLASHCARD_RATING_LABELS,
+  RETENTION_PRESETS,
+  buildSpacedQueue,
+  calculateNextSpacedReview,
+  formatIntervalLabel,
+  getReviewFeedbackMessage,
+  toLegacyRating,
+  type RetentionPreset,
+} from '@/lib/flashcard-spaced-repetition'
+import { createReviewSync, type ReviewSyncHandle, type ReviewSyncStatus } from '@/lib/flashcard-review-queue'
+import { useFlashcardVoice } from '@/hooks/use-flashcard-voice'
 import {
   PricingEventCountdown,
   type PricingEventStatePayload,
@@ -121,18 +136,23 @@ interface DeckResponse {
 }
 
 type StudyMode = 'normal' | 'spaced'
-type SpacedRating = 'SUAVE' | 'NO_PONTO' | 'PORRETE'
 
 interface SpacedProgressResponse {
   _id?: string
   userId: string
   cardId: string
   deckId: string
-  rating: SpacedRating
+  rating: FlashcardSpacedRating
   reviewCount: number
   correctStreak: number
   easeFactor: number
   intervalDays: number
+  stability?: number
+  difficulty?: number
+  state?: FlashcardSpacedState
+  learningStep?: number
+  lapses?: number
+  retention?: number
   nextReviewAt: string | null
   lastReviewedAt: string | null
   createdAt: string | null
@@ -144,6 +164,9 @@ interface SpacedRepetitionStats {
   newCards: number
   mastered: number
   difficult: number
+  learning?: number
+  scheduled?: number
+  total?: number
 }
 
 type DeckCard = FlashcardManualCard & { _id: string; spacedProgress?: SpacedProgressResponse | null }
@@ -151,27 +174,95 @@ type DeckCard = FlashcardManualCard & { _id: string; spacedProgress?: SpacedProg
 const FULLSCREEN_HINT_KEY = 'gdx:flashcard-fullscreen-hint'
 const FULLSCREEN_PREF_KEY = 'gdx:flashcard-fullscreen-pref'
 const VOICE_PREF_KEY = 'gdx:flashcard-voice-pref'
+/** Último modo escolhido (normal / espaçado) — decide como o deck abre. */
+const STUDY_MODE_PREF_KEY = 'gdx:flashcard-study-mode'
+/** Intensidade da repetição espaçada: leve, padrão ou prova. */
+const RETENTION_PREF_KEY = 'gdx:flashcard-retention'
+/** Faixa que apresenta a repetição espaçada a quem nunca reparou nela. */
+const SPACED_HINT_KEY = 'gdx:flashcard-spaced-hint'
+
+/** Teto de cards inéditos por sessão — evita a sessão que nunca acaba. */
+const NEW_CARDS_PER_SESSION = 20
+/** Quantos cards separam um card errado da sua volta na mesma sessão. */
+const REQUEUE_GAP = 4
+/** Nunca mais de 3 aparições do mesmo card na mesma sessão. */
+const MAX_REQUEUES_PER_CARD = 2
 
 // Quanto tempo o aviso "Ouvi: X" fica na tela — é também a janela para desfazer
 // uma avaliação que o reconhecimento entendeu errado.
 const VOICE_UNDO_MS = 2600
 
-// A ordem da fixação intensa é determinística e depende só do progresso que já
-// veio junto com os cards — dá para calcular aqui e entrar no estudo na hora,
-// em vez de refazer a requisição do deck inteiro e piscar a página.
-function orderCardsForStudy(cards: DeckCard[], mode: StudyMode): DeckCard[] {
-  if (mode !== 'spaced') return cards
-  const progressByCardId = new Map<string, any>()
+function progressMapOf(cards: DeckCard[]): Map<string, any> {
+  const map = new Map<string, any>()
   for (const card of cards) {
-    if (card.spacedProgress) progressByCardId.set(String(card._id), card.spacedProgress)
+    if (card.spacedProgress) map.set(String(card._id), card.spacedProgress)
   }
-  return sortCardsForSpacedRepetition(cards as any, progressByCardId as any) as DeckCard[]
+  return map
 }
 
-const RATINGS = [
-  { value: 'facil' as const, label: 'Suave', color: 'from-emerald-500 to-emerald-600', shortcut: '1' },
-  { value: 'equilibrado' as const, label: 'No ponto', color: 'from-amber-500 to-amber-600', shortcut: '2' },
-  { value: 'porrada' as const, label: 'Porrete', color: 'from-rose-500 to-orange-600', shortcut: '3' },
+/**
+ * Fila da sessão. No modo normal é o baralho inteiro na ordem do deck; na
+ * repetição espaçada é só o que vence hoje (mais um punhado de inéditos), que
+ * é a diferença entre "revisar 14 cards" e "arrastar 300".
+ *
+ * O cálculo é local e determinístico: depende apenas do progresso que já veio
+ * junto com os cards, então o estudo começa no clique, sem uma ida ao servidor
+ * antes do primeiro card aparecer.
+ */
+function buildStudyQueue(
+  cards: DeckCard[],
+  mode: StudyMode,
+  opts: { ahead?: boolean } = {}
+): { cards: DeckCard[]; counts: { learning: number; due: number; newCards: number; future: number; heldBack: number } } {
+  if (mode !== 'spaced') {
+    return { cards, counts: { learning: 0, due: 0, newCards: cards.length, future: 0, heldBack: 0 } }
+  }
+  const queue = buildSpacedQueue(cards as any, progressMapOf(cards) as any, {
+    newCardLimit: opts.ahead ? null : NEW_CARDS_PER_SESSION,
+    includeFuture: !!opts.ahead,
+  })
+  return { cards: queue.cards as DeckCard[], counts: queue.counts }
+}
+
+/**
+ * As três avaliações. Os nomes são o que o aluno usa para descrever o próprio
+ * esforço — "foi fácil", "foi médio", "foi difícil" —, não gíria interna: a
+ * palavra precisa ser óbvia no primeiro card, sem tutorial.
+ */
+const RATINGS: {
+  value: FlashcardSpacedRating
+  label: string
+  hint: string
+  color: string
+  shortcut: string
+}[] = [
+  {
+    value: 'FACIL',
+    label: FLASHCARD_RATING_LABELS.FACIL,
+    hint: 'Lembrei na hora',
+    color: 'from-emerald-500 to-emerald-600',
+    shortcut: '1',
+  },
+  {
+    value: 'MEDIO',
+    label: FLASHCARD_RATING_LABELS.MEDIO,
+    hint: 'Lembrei com esforço',
+    color: 'from-amber-500 to-amber-600',
+    shortcut: '2',
+  },
+  {
+    value: 'DIFICIL',
+    label: FLASHCARD_RATING_LABELS.DIFICIL,
+    hint: 'Travei ou errei',
+    color: 'from-rose-500 to-orange-600',
+    shortcut: '3',
+  },
+]
+
+const RETENTION_OPTIONS: { value: RetentionPreset; label: string; description: string }[] = [
+  { value: 'leve', label: 'Leve', description: 'Menos revisões, mais espaço entre elas.' },
+  { value: 'padrao', label: 'Padrão', description: 'O equilíbrio recomendado para o dia a dia.' },
+  { value: 'prova', label: 'Prova', description: 'Cobra mais vezes. Para a semana da prova.' },
 ]
 
 // Skeleton de carregamento — reserva o mesmo espaço do hero + conteúdo real
@@ -220,12 +311,16 @@ export default function DeckPage() {
   const [studyOrder, setStudyOrder] = useState<string[] | null>(null)
   const [fullscreenHint, setFullscreenHint] = useState(false)
   const [fullscreenPref, setFullscreenPref] = useState(false)
+  const [spacedHint, setSpacedHint] = useState(false)
+  // Marca que o modo de estudo já foi decidido (pelo usuário ou pelo padrão),
+  // para o palpite automático não sobrescrever uma escolha explícita.
+  const modePrefRef = useRef(false)
   const autoFullscreenRef = useRef(false)
   // Modo voz: ligado na página antes de iniciar e mantido durante a sessão.
   const [voicePref, setVoicePref] = useState(false)
   const [voiceEnabled, setVoiceEnabled] = useState(false)
   const [voiceFeedback, setVoiceFeedback] = useState<
-    { rating: 'facil' | 'equilibrado' | 'porrada'; heard: string; cardId: string } | null
+    { rating: FlashcardSpacedRating; heard: string; cardId: string } | null
   >(null)
   // O avanço automático vira um timer nomeado para que "Desfazer" consiga
   // cancelá-lo antes de o card trocar embaixo do usuário.
@@ -234,9 +329,24 @@ export default function DeckPage() {
   const [flipped, setFlipped] = useState(false)
   const [showComment, setShowComment] = useState(false)
   const [showHint, setShowHint] = useState(false)
-  const [ratings, setRatings] = useState<Record<string, 'facil' | 'equilibrado' | 'porrada'>>({})
-  const [ratingBusyCard, setRatingBusyCard] = useState<string | null>(null)
+  const [ratings, setRatings] = useState<Record<string, FlashcardSpacedRating>>({})
   const [scheduleFeedback, setScheduleFeedback] = useState<string | null>(null)
+  // Intensidade da repetição espaçada (meta de retenção). É o único parâmetro
+  // do algoritmo que o usuário controla — e o que mais muda a rotina dele.
+  const [retentionPreset, setRetentionPreset] = useState<RetentionPreset>('padrao')
+  // Estado do envio em segundo plano das avaliações. Só vira aviso na tela
+  // quando alguma coisa realmente ficou para trás.
+  const [syncStatus, setSyncStatus] = useState<ReviewSyncStatus>('idle')
+  const [pendingReviews, setPendingReviews] = useState(0)
+  const reviewSyncRef = useRef<ReviewSyncHandle | null>(null)
+  // Quantos cards a sessão atual reuniu, por origem — alimenta o cabeçalho do
+  // estudo ("12 vencidos · 5 novos") e a tela de fim de fila.
+  const [queueCounts, setQueueCounts] = useState<{ learning: number; due: number; newCards: number; future: number; heldBack: number } | null>(null)
+  const [studyingAhead, setStudyingAhead] = useState(false)
+  const requeueCountRef = useRef<Record<string, number>>({})
+  // Estado do card antes da última avaliação — o "Desfazer" do modo voz o usa
+  // para devolver o agendamento junto com a marca.
+  const undoSnapshotRef = useRef<{ cardId: string; progress: SpacedProgressResponse | null } | null>(null)
   const [liked, setLiked] = useState(false)
   const [likeCount, setLikeCount] = useState(0)
   const [toast, setToast] = useState<{ open: boolean; message: string; type?: 'success' | 'error' | 'info' }>({ open: false, message: '' })
@@ -264,8 +374,21 @@ export default function DeckPage() {
     const ordered = studyOrder
       .map(id => byId.get(id))
       .filter((card): card is DeckCard => !!card)
+    // Fila explicitamente vazia (nada vencido hoje) é um resultado legítimo e
+    // tem tela própria; cair no baralho inteiro só faz sentido quando os ids
+    // deixaram de resolver — o deck mudou embaixo da sessão.
+    if (studyOrder.length === 0) return []
     return ordered.length > 0 ? ordered : all
   }, [data?.cards, studyOrder])
+
+  // Composição da próxima sessão espaçada — é o que o botão principal promete
+  // ("Revisar 14 cards") e o que o painel de modos detalha.
+  const spacedPreview = useMemo(
+    () => (data?.cards?.length ? buildStudyQueue(data.cards as DeckCard[], 'spaced').counts : null),
+    [data?.cards]
+  )
+  const dueNowCount = spacedPreview ? spacedPreview.due + spacedPreview.learning : 0
+  const newNowCount = spacedPreview ? spacedPreview.newCards : 0
 
   useEffect(() => {
     if (purchaseSuccess) {
@@ -293,7 +416,27 @@ export default function DeckPage() {
       const res = await fetch(url.toString(), { cache: 'no-store' })
       const json = await res.json()
       if (!res.ok) throw new Error(json?.error || 'Erro ao carregar deck')
-      setData(json)
+      // A recarga em segundo plano não pode atropelar uma avaliação que
+      // acabou de acontecer e ainda está subindo na fila: quando o progresso
+      // local é mais recente que o do servidor, ele é que vale.
+      setData(prev => {
+        if (!prev) return json
+        const localByCardId = new Map(
+          prev.cards.map(card => [String(card._id), card.spacedProgress])
+        )
+        return {
+          ...json,
+          cards: json.cards.map((card: DeckCard) => {
+            const local = localByCardId.get(String(card._id))
+            if (!local?.lastReviewedAt) return card
+            const remoteAt = card.spacedProgress?.lastReviewedAt
+            if (remoteAt && new Date(remoteAt).getTime() >= new Date(local.lastReviewedAt).getTime()) {
+              return card
+            }
+            return { ...card, spacedProgress: local }
+          }),
+        }
+      })
       setLikeCount(json.deck?.likeCount || 0)
       return true
     } catch (err: any) {
@@ -314,10 +457,90 @@ export default function DeckPage() {
       setFullscreenHint(window.localStorage.getItem(FULLSCREEN_HINT_KEY) !== 'dismissed')
       setFullscreenPref(window.localStorage.getItem(FULLSCREEN_PREF_KEY) === '1')
       setVoicePref(window.localStorage.getItem(VOICE_PREF_KEY) === '1')
+      setSpacedHint(window.localStorage.getItem(SPACED_HINT_KEY) !== 'dismissed')
+      const storedRetention = window.localStorage.getItem(RETENTION_PREF_KEY)
+      if (storedRetention === 'leve' || storedRetention === 'padrao' || storedRetention === 'prova') {
+        setRetentionPreset(storedRetention)
+      }
+      const storedMode = window.localStorage.getItem(STUDY_MODE_PREF_KEY)
+      if (storedMode === 'normal' || storedMode === 'spaced') {
+        setStudyModeChoice(storedMode)
+        modePrefRef.current = true
+      }
     } catch {
       setFullscreenHint(true)
     }
   }, [])
+
+  /**
+   * Modo de entrada do deck.
+   *
+   * A repetição espaçada era o recurso mais forte da tela e o mais escondido:
+   * quem nunca reparou no seletor lá embaixo estudava para sempre na ordem do
+   * baralho. Agora, quem tem acesso e nunca escolheu nada entra direto nela —
+   * o modo normal continua a um toque de distância, no mesmo seletor.
+   */
+  useEffect(() => {
+    if (modePrefRef.current || !data) return
+    if (!data.viewer.isAuthenticated || !data.access.hasAccess) return
+    modePrefRef.current = true
+    setStudyModeChoice('spaced')
+  }, [data])
+
+  const chooseStudyMode = useCallback((mode: StudyMode) => {
+    modePrefRef.current = true
+    setStudyModeChoice(mode)
+    try { window.localStorage.setItem(STUDY_MODE_PREF_KEY, mode) } catch {}
+  }, [])
+
+  const chooseRetention = useCallback((preset: RetentionPreset) => {
+    setRetentionPreset(preset)
+    try { window.localStorage.setItem(RETENTION_PREF_KEY, preset) } catch {}
+  }, [])
+
+  const dismissSpacedHint = useCallback(() => {
+    setSpacedHint(false)
+    try { window.localStorage.setItem(SPACED_HINT_KEY, 'dismissed') } catch {}
+  }, [])
+
+  /**
+   * Fila de envio das avaliações. Vive fora do ciclo de render porque ela
+   * sobrevive ao fim da sessão: o que não foi entregue fica no localStorage e
+   * sai sozinho na próxima abertura do deck.
+   */
+  useEffect(() => {
+    if (!data?.viewer.isAuthenticated || !data.access.hasAccess) return
+    const sync = createReviewSync({
+      slug,
+      userKey,
+      onStatus: (status, pending) => {
+        setSyncStatus(status)
+        setPendingReviews(pending)
+      },
+      onSynced: (progresses) => {
+        // O servidor é a fonte da verdade: se o cálculo local divergiu (o card
+        // foi avaliado em outro aparelho, por exemplo), o valor dele vale.
+        setData(prev => {
+          if (!prev) return prev
+          const byCardId = new Map(progresses.map((p: any) => [String(p.cardId), p]))
+          if (byCardId.size === 0) return prev
+          return {
+            ...prev,
+            cards: prev.cards.map(card =>
+              byCardId.has(String(card._id))
+                ? { ...card, spacedProgress: byCardId.get(String(card._id)) }
+                : card
+            ),
+          }
+        })
+      },
+    })
+    reviewSyncRef.current = sync
+    return () => {
+      sync.dispose()
+      reviewSyncRef.current = null
+    }
+  }, [slug, userKey, data?.viewer.isAuthenticated, data?.access.hasAccess])
 
   const dismissFullscreenHint = useCallback(() => {
     setFullscreenHint(false)
@@ -458,9 +681,9 @@ export default function DeckPage() {
       else if (e.key === 'f' || e.key === 'F') { e.preventDefault(); toggleFullscreen() }
       else if (e.key === 'Escape' && fullscreen) { e.preventDefault(); toggleFullscreen() }
       else if (flipped) {
-        if (e.key === '1') rate('facil')
-        else if (e.key === '2') rate('equilibrado')
-        else if (e.key === '3') rate('porrada')
+        if (e.key === '1') rate('FACIL')
+        else if (e.key === '2') rate('MEDIO')
+        else if (e.key === '3') rate('DIFICIL')
       }
     }
     window.addEventListener('keydown', onKey)
@@ -476,7 +699,10 @@ export default function DeckPage() {
       advanceTimerRef.current = null
     }
     setFlipped(false); setShowComment(false); setShowHint(false)
-    setScheduleFeedback(null); setVoiceFeedback(null)
+    setVoiceFeedback(null)
+    // `scheduleFeedback` NÃO é limpo aqui: ele é o recibo da avaliação que
+    // acabou de acontecer e some sozinho, um instante depois. Limpá-lo junto
+    // com a troca de card fazia a mensagem piscar e sumir antes de ser lida.
   }
 
   function goNext() {
@@ -501,14 +727,33 @@ export default function DeckPage() {
   // Entra no estudo imediatamente: a ordem é calculada aqui e os dados só são
   // revalidados em segundo plano. Antes isso disparava um fetch bloqueante que
   // trocava a página inteira pelo skeleton antes do primeiro card aparecer.
-  function startStudy(mode: StudyMode, resumeFrom?: FlashcardProgress | null) {
+  function startStudy(mode: StudyMode, resumeFrom?: FlashcardProgress | null, opts?: { ahead?: boolean }) {
     if (!data || data.cards.length === 0) return
     const effectiveMode: StudyMode = resumeFrom?.mode ?? mode
-    const ordered = orderCardsForStudy(data.cards as DeckCard[], effectiveMode)
-    setStudyOrder(ordered.map(card => String(card._id)))
+    const ahead = !!opts?.ahead
+    const queue = buildStudyQueue(data.cards as DeckCard[], effectiveMode, { ahead })
+    // Fila vazia significa "não há nada vencido hoje" — e isso é uma boa
+    // notícia, não um erro. A tela de fim de fila cuida do resto.
+    if (queue.cards.length === 0) {
+      setQueueCounts(queue.counts)
+      setStudyingAhead(false)
+      setActiveStudyMode(effectiveMode)
+      setStudyOrder([])
+      setStudying(true)
+      return
+    }
+    requeueCountRef.current = {}
+    setQueueCounts(queue.counts)
+    setStudyingAhead(ahead)
+    setStudyOrder(queue.cards.map(card => String(card._id)))
     setActiveStudyMode(effectiveMode)
     setRatings(resumeFrom?.ratings ?? {})
-    setCurrentIndex(Math.min(Math.max(resumeFrom?.index ?? 0, 0), Math.max(ordered.length - 1, 0)))
+    // Retomar no modo espaçado começa do zero de propósito: a fila já é
+    // exatamente o que falta (o que foi avaliado saiu dela ao ganhar data
+    // futura). Pular para o índice antigo saltaria por cima de cards que
+    // continuam pendentes.
+    const resumeIndex = effectiveMode === 'spaced' ? 0 : Math.max(resumeFrom?.index ?? 0, 0)
+    setCurrentIndex(Math.min(resumeIndex, Math.max(queue.cards.length - 1, 0)))
     setFlipped(false)
     setShowComment(false)
     setShowHint(false)
@@ -526,6 +771,12 @@ export default function DeckPage() {
     setStudyOrder(null)
     setVoiceEnabled(false)
     setVoiceFeedback(null)
+    setScheduleFeedback(null)
+    setStudyingAhead(false)
+    requeueCountRef.current = {}
+    // Sair do estudo é o melhor momento para despachar o que ainda está na
+    // fila: a rede está livre e o usuário não está esperando nada.
+    void reviewSyncRef.current?.flush()
     if (advanceTimerRef.current) {
       clearTimeout(advanceTimerRef.current)
       advanceTimerRef.current = null
@@ -570,49 +821,103 @@ export default function DeckPage() {
     setSavedProgress(null)
   }
 
-  function mapRatingToSpaced(value: 'facil' | 'equilibrado' | 'porrada'): SpacedRating {
-    if (value === 'facil') return 'SUAVE'
-    if (value === 'equilibrado') return 'NO_PONTO'
-    return 'PORRETE'
+  /**
+   * Devolve o card errado para o fim da fila da própria sessão.
+   *
+   * É metade do valor da repetição espaçada: o card que travou não pode sumir
+   * por um dia inteiro, ele precisa voltar em minutos, enquanto a resposta
+   * ainda está fresca. O teto de repetições evita que um único card difícil
+   * transforme a sessão num loop.
+   */
+  function requeueCard(cardId: string): boolean {
+    const seen = requeueCountRef.current[cardId] || 0
+    if (seen >= MAX_REQUEUES_PER_CARD) return false
+    requeueCountRef.current[cardId] = seen + 1
+    setStudyOrder(prev => {
+      if (!prev) return prev
+      const insertAt = Math.min(currentIndex + 1 + REQUEUE_GAP, prev.length)
+      const next = [...prev]
+      next.splice(insertAt, 0, cardId)
+      return next
+    })
+    return true
   }
 
-  async function rate(value: 'facil' | 'equilibrado' | 'porrada', opts?: { source?: 'voice' }) {
+  /**
+   * Avaliação de um card.
+   *
+   * Nada aqui espera a rede. O mesmo motor que roda no servidor calcula o
+   * agendamento no navegador, a tela já mostra quando o card volta e o
+   * registro sai por uma fila em segundo plano — que reenvia sozinha se a
+   * conexão cair e retoma na próxima abertura do deck se a aba fechar.
+   */
+  function rate(value: FlashcardSpacedRating, opts?: { source?: 'voice' }) {
     if (!data) return
     const card = studyCards[currentIndex]
     if (!card) return
-    if (ratingBusyCard === card._id) return
-    setRatings(prev => ({ ...prev, [card._id]: value }))
+    const cardId = String(card._id)
+    setRatings(prev => ({ ...prev, [cardId]: value }))
+
+    let requeued = false
+
     if (activeStudyMode === 'spaced') {
-      setRatingBusyCard(card._id)
-      try {
-        const res = await fetch(`/api/flashcards/manual/${encodeURIComponent(slug)}/reviews`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ cardId: card._id, rating: mapRatingToSpaced(value) }),
-        })
-        const json = await res.json()
-        if (!res.ok) throw new Error(json?.error || 'Erro ao registrar revisão')
-        setScheduleFeedback(json.feedbackMessage || 'Revisão agendada.')
-        if (json.progress) {
-          setData(prev => prev ? {
-            ...prev,
-            cards: prev.cards.map(c => c._id === card._id ? { ...c, spacedProgress: json.progress } : c),
-          } : prev)
-        }
-      } catch (err: any) {
-        setToast({ open: true, message: err.message || 'Erro ao registrar revisão', type: 'error' })
-        setRatingBusyCard(null)
-        return
-      } finally {
-        setRatingBusyCard(null)
+      const reviewedAt = new Date()
+      const retention = RETENTION_PRESETS[retentionPreset]
+      const result = calculateNextSpacedReview(card.spacedProgress as any, value, reviewedAt, {
+        retention,
+        seed: cardId,
+      })
+
+      setScheduleFeedback(getReviewFeedbackMessage(result))
+      // Guarda o estado anterior para o "Desfazer" do modo voz conseguir
+      // devolver o card ao ponto em que ele estava.
+      undoSnapshotRef.current = { cardId, progress: card.spacedProgress ?? null }
+
+      // Progresso otimista: o cálculo é determinístico e idêntico ao do
+      // servidor, então isto não é um "quase" — é o mesmo agendamento.
+      const optimistic: SpacedProgressResponse = {
+        ...(card.spacedProgress || {}),
+        userId: data.viewer.userId || '',
+        cardId,
+        deckId: String(data.deck._id),
+        rating: result.rating,
+        reviewCount: result.reviewCount,
+        correctStreak: result.correctStreak,
+        easeFactor: result.easeFactor,
+        intervalDays: result.intervalDays,
+        stability: result.stability,
+        difficulty: result.difficulty,
+        state: result.state,
+        learningStep: result.learningStep,
+        lapses: result.lapses,
+        retention: result.retention,
+        nextReviewAt: result.nextReviewAt.toISOString(),
+        lastReviewedAt: reviewedAt.toISOString(),
+        createdAt: card.spacedProgress?.createdAt || reviewedAt.toISOString(),
+        updatedAt: reviewedAt.toISOString(),
       }
+      setData(prev => prev ? {
+        ...prev,
+        cards: prev.cards.map(c => String(c._id) === cardId ? { ...c, spacedProgress: optimistic } : c),
+      } : prev)
+
+      reviewSyncRef.current?.push({
+        cardId,
+        rating: value,
+        reviewedAt: reviewedAt.toISOString(),
+        retention,
+      })
+
+      if (result.returnsThisSession) requeued = requeueCard(cardId)
     }
-    if (currentIndex < studyCards.length - 1) {
+
+    // `requeued` conta: a fila cresceu neste mesmo instante, então mesmo no
+    // último card ainda existe um próximo para onde ir.
+    if (currentIndex < studyCards.length - 1 || requeued) {
       // Por voz o avanço espera a janela de "Desfazer" fechar — se o
       // reconhecimento errou, o card ainda está na tela para corrigir.
-      const delay = opts?.source === 'voice'
-        ? VOICE_UNDO_MS
-        : activeStudyMode === 'spaced' ? 850 : 250
+      // Fora dela, o atraso é só o suficiente para o toque ser visto.
+      const delay = opts?.source === 'voice' ? VOICE_UNDO_MS : 160
       if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current)
       advanceTimerRef.current = setTimeout(() => {
         advanceTimerRef.current = null
@@ -627,18 +932,46 @@ export default function DeckPage() {
   // desligado de verdade — nada de gravação em segundo plano.
   const currentStudyCard = studyCards[currentIndex]
   const currentCardId = currentStudyCard ? String(currentStudyCard._id) : null
+
+  /**
+   * Quando cada resposta traz o card de volta, calculado ANTES de o usuário
+   * escolher. É o que faz a repetição espaçada deixar de ser mágica: dá para
+   * ver que "Fácil" joga o card para 12 dias e "Difícil" o traz em 5 minutos.
+   */
+  const ratingPreviews = useMemo(() => {
+    if (activeStudyMode !== 'spaced' || !currentStudyCard) return null
+    const now = new Date()
+    const retention = RETENTION_PRESETS[retentionPreset]
+    const previews: Partial<Record<FlashcardSpacedRating, string>> = {}
+    for (const option of RATINGS) {
+      previews[option.value] = formatIntervalLabel(
+        calculateNextSpacedReview(currentStudyCard.spacedProgress as any, option.value, now, {
+          retention,
+          seed: String(currentStudyCard._id),
+        })
+      )
+    }
+    return previews
+  }, [activeStudyMode, currentStudyCard, retentionPreset])
   const voiceListeningAllowed =
-    studying && voiceEnabled && flipped && !!currentCardId &&
-    !ratingBusyCard && !ratings[currentCardId]
+    studying && voiceEnabled && flipped && !!currentCardId && !ratings[currentCardId]
 
   const voice = useFlashcardVoice({
     enabled: voiceListeningAllowed,
-    onRating: (rating: VoiceRating, heard: string) => {
+    onRating: (rating: FlashcardSpacedRating, heard: string) => {
       if (!currentCardId) return
       setVoiceFeedback({ rating, heard, cardId: currentCardId })
       rate(rating, { source: 'voice' })
     },
   })
+
+  // O recibo do agendamento ("Volta em 12 dias") é uma confirmação, não um
+  // estado: aparece, é lido e sai — sem prender o avanço do card.
+  useEffect(() => {
+    if (!scheduleFeedback) return
+    const timer = setTimeout(() => setScheduleFeedback(null), 1800)
+    return () => clearTimeout(timer)
+  }, [scheduleFeedback])
 
   // O aviso "Ouvi: X" se apaga sozinho quando a janela de desfazer termina.
   useEffect(() => {
@@ -679,14 +1012,34 @@ export default function DeckPage() {
       delete next[feedback.cardId]
       return next
     })
+    const snapshot = undoSnapshotRef.current
+    if (snapshot && snapshot.cardId === feedback.cardId) {
+      setData(prev => prev ? {
+        ...prev,
+        cards: prev.cards.map(c => String(c._id) === snapshot.cardId
+          ? { ...c, spacedProgress: snapshot.progress }
+          : c),
+      } : prev)
+      undoSnapshotRef.current = null
+    }
     setScheduleFeedback(null)
     setVoiceFeedback(null)
   }
 
   async function finishSession() {
     if (!data) return
+    const ratedCount = Object.keys(ratings).length
     try {
-      const entries = Object.entries(ratings).map(([cardId, rating]) => ({ cardId, rating, completedAt: new Date() }))
+      // No modo espaçado cada avaliação já virou uma revisão gravada; mandar
+      // as mesmas notas de novo só duplicaria o histórico. O que falta aqui é
+      // registrar que o deck foi estudado.
+      const entries = activeStudyMode === 'spaced'
+        ? []
+        : Object.entries(ratings).map(([cardId, rating]) => ({
+            cardId,
+            rating: toLegacyRating(rating),
+            completedAt: new Date(),
+          }))
       await fetch(`/api/flashcards/manual/${encodeURIComponent(slug)}/sessions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -696,7 +1049,13 @@ export default function DeckPage() {
     clearProgress(slug, userKey)
     setSavedProgress(null)
     exitStudy()
-    setToast({ open: true, message: 'Sessão concluída!', type: 'success' })
+    setToast({
+      open: true,
+      message: ratedCount > 0
+        ? `Sessão concluída · ${ratedCount} ${ratedCount === 1 ? 'card avaliado' : 'cards avaliados'}`
+        : 'Sessão concluída!',
+      type: 'success',
+    })
   }
 
   async function toggleLike() {
@@ -875,6 +1234,50 @@ export default function DeckPage() {
     ? Math.max(0, Math.round(originalDeckPrice * (1 - tierPct / 100) * 100) / 100)
     : originalDeckPrice
 
+  if (studying && studyCards.length === 0 && activeStudyMode === 'spaced') {
+    // Fim de fila: não sobrou nada vencido para hoje. Em vez de abrir uma
+    // sessão vazia (ou pior, o baralho inteiro sem aviso), a tela diz o que
+    // aconteceu e oferece as duas saídas possíveis.
+    return (
+      <AppShell allowGuest>
+        <div className="mx-auto max-w-xl px-4 py-10">
+          <div className="rounded-3xl border border-emerald-300/40 bg-emerald-500/10 p-6 text-center">
+            <span className="mx-auto mb-3 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-600 to-lime-500 text-white shadow-lg shadow-emerald-700/25">
+              <Check className="h-7 w-7" />
+            </span>
+            <h1 className="text-lg font-bold text-emerald-950 dark:text-emerald-50">
+              Revisões de hoje em dia
+            </h1>
+            <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-emerald-900/80 dark:text-emerald-100/80">
+              Nenhum card deste deck está vencido agora. Voltar antes da hora atrapalha a
+              fixação — o ganho está justamente em revisar no limite do esquecimento.
+              {queueCounts && queueCounts.future > 0 && (
+                <> Os próximos {queueCounts.future} cards já têm data marcada.</>
+              )}
+            </p>
+            <div className="mt-5 flex flex-col items-center gap-2 sm:flex-row sm:justify-center">
+              <button
+                type="button"
+                onClick={() => startStudy('spaced', null, { ahead: true })}
+                className="inline-flex h-11 items-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 px-5 text-sm font-bold text-white shadow-md transition active:scale-95"
+              >
+                <Zap className="h-4 w-4" /> Adiantar revisões
+              </button>
+              <button
+                type="button"
+                onClick={exitStudy}
+                className="inline-flex h-11 items-center gap-2 rounded-2xl border border-border bg-card px-5 text-sm font-semibold text-foreground transition active:scale-95"
+              >
+                <ArrowLeft className="h-4 w-4" /> Voltar ao deck
+              </button>
+            </div>
+          </div>
+        </div>
+        <ToastAlert open={toast.open} message={toast.message} type={toast.type} onOpenChange={(open) => setToast(t => ({ ...t, open }))} />
+      </AppShell>
+    )
+  }
+
   if (studying) {
     const card = studyCards[currentIndex]
     const total = studyCards.length
@@ -921,8 +1324,17 @@ export default function DeckPage() {
               </Button>
               <div className="flex min-w-0 items-center gap-2">
                 {activeStudyMode === 'spaced' && !fullscreen && (
-                  <span className="hidden items-center gap-1 rounded-full border border-emerald-300/40 bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-200 backdrop-blur sm:inline-flex">
-                    <CalendarClock className="h-3.5 w-3.5" /> Fixação intensa
+                  <span
+                    className="hidden items-center gap-1 rounded-full border border-emerald-300/40 bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-200 backdrop-blur sm:inline-flex"
+                    title={
+                      queueCounts
+                        ? `${queueCounts.due + queueCounts.learning} para revisar · ${queueCounts.newCards} novos`
+                        : undefined
+                    }
+                  >
+                    <Brain className="h-3.5 w-3.5" />
+                    Repetição espaçada
+                    {studyingAhead && <span className="opacity-70">· adiantando</span>}
                   </span>
                 )}
                 <span className="rounded-full bg-slate-100 px-3 py-1 text-sm font-semibold tabular-nums text-slate-700 dark:bg-muted dark:text-slate-100">
@@ -1041,7 +1453,7 @@ export default function DeckPage() {
 
           {/* Barra de ações fixa — sempre acessível sem rolar a página.
               Quando o card está na frente, mostra "Mostrar resposta"; ao virar,
-              as avaliações (Suave / No ponto / Porrete) aparecem no MESMO lugar,
+              as avaliações (Fácil / Médio / Difícil) aparecem no MESMO lugar,
               fixadas na base da tela. Sem precisar descer o scroll.
               Funciona em PC, tablet e celular (com área segura de notch). */}
           <div
@@ -1062,15 +1474,28 @@ export default function DeckPage() {
               <AnimatePresence>
                 {scheduleFeedback && (
                   <motion.div
+                    key="schedule-feedback"
                     initial={{ opacity: 0, y: 6 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 6 }}
-                    className="mx-auto max-w-md rounded-2xl border border-emerald-300/40 bg-emerald-500/10 px-4 py-2 text-center text-sm font-medium text-emerald-800 dark:text-emerald-100"
+                    transition={{ duration: 0.14 }}
+                    className="mx-auto flex max-w-md items-center justify-center gap-1.5 rounded-2xl border border-emerald-300/40 bg-emerald-500/10 px-4 py-2 text-center text-sm font-medium text-emerald-800 dark:text-emerald-100"
                   >
+                    <CalendarClock className="h-3.5 w-3.5 shrink-0" />
                     {scheduleFeedback}
                   </motion.div>
                 )}
               </AnimatePresence>
+            )}
+
+            {/* Envio em segundo plano. Em condição normal o usuário nunca vê
+                nada aqui — a faixa só aparece quando a rede falhou e ainda há
+                avaliações esperando, para ninguém achar que perdeu o estudo. */}
+            {activeStudyMode === 'spaced' && syncStatus === 'error' && pendingReviews > 0 && (
+              <div className="mx-auto flex max-w-md items-center justify-center gap-2 rounded-2xl border border-amber-300/40 bg-amber-500/10 px-3 py-1.5 text-[11px] font-medium text-amber-800 dark:text-amber-100">
+                <CloudOff className="h-3.5 w-3.5 shrink-0" />
+                Sem conexão · {pendingReviews} {pendingReviews === 1 ? 'avaliação guardada' : 'avaliações guardadas'}. Continue estudando, elas sobem sozinhas.
+              </div>
             )}
 
             {/* Modo voz: o que o microfone está fazendo agora e o que ele ouviu.
@@ -1119,7 +1544,7 @@ export default function DeckPage() {
                         ? 'Abrindo o microfone...'
                         : voice.status === 'error'
                           ? 'Microfone instável — use os botões abaixo.'
-                          : 'Ouvindo: diga suave, no ponto ou porrete'}
+                          : 'Ouvindo: diga fácil, médio ou difícil'}
                     </span>
                     <button
                       type="button"
@@ -1171,26 +1596,29 @@ export default function DeckPage() {
                   <p className="flashcard-estudo-rotulo mb-1.5 text-center text-xs font-medium text-slate-500 dark:text-slate-400">
                     Como foi lembrar dessa resposta?
                   </p>
+                  {/* Sem estado de espera: a avaliação vale na hora e o registro
+                      sai por uma fila em segundo plano. O que aparece dentro do
+                      botão é quando o card volta se você escolher aquela nota —
+                      a agenda deixa de ser caixa-preta. */}
                   <div className="grid grid-cols-3 gap-2">
                     {RATINGS.map(r => (
                       <button
                         key={r.value}
                         onClick={() => rate(r.value)}
-                        disabled={ratingBusyCard === card?._id}
+                        title={`${r.label} — ${r.hint}`}
                         className={cn(
-                          'flashcard-estudo-nota flex min-h-[52px] flex-col items-center justify-center gap-0.5 rounded-2xl bg-gradient-to-r px-2 py-2.5 text-sm font-bold leading-tight text-foreground shadow-md transition active:scale-95',
+                          'flashcard-estudo-nota flex min-h-[54px] flex-col items-center justify-center gap-0.5 rounded-2xl bg-gradient-to-r px-2 py-2.5 text-sm font-bold leading-tight text-white shadow-md transition active:scale-95',
                           r.color,
-                          ratingBusyCard === card?._id && 'cursor-wait opacity-60',
                           ratings[card?._id] === r.value && 'ring-2 ring-white ring-offset-2 ring-offset-white dark:ring-offset-slate-950',
                         )}
                       >
-                        {ratingBusyCard === card?._id ? (
-                          <Loader2 className="h-5 w-5 animate-spin" />
+                        <span>{r.label}</span>
+                        {ratingPreviews?.[r.value] ? (
+                          <span className="text-[10.5px] font-semibold tabular-nums opacity-85">
+                            {ratingPreviews[r.value]}
+                          </span>
                         ) : (
-                          <>
-                            <span>{r.label}</span>
-                            <span className="hidden text-[10px] font-medium opacity-70 sm:block">tecla {r.shortcut}</span>
-                          </>
+                          <span className="hidden text-[10px] font-medium opacity-70 sm:block">tecla {r.shortcut}</span>
                         )}
                       </button>
                     ))}
@@ -1230,13 +1658,13 @@ export default function DeckPage() {
 
             <p className="text-center text-[11px] text-slate-400 sm:hidden">
               Deslize ← → para trocar de card · toque para virar
-              {voiceEnabled && ' · fale suave / no ponto / porrete'}
+              {voiceEnabled && ' · fale fácil / médio / difícil'}
             </p>
             <p className="flashcard-estudo-atalhos hidden text-center text-[11px] text-slate-400 sm:block">
               {fullscreen
                 ? 'Espaço: virar · ← →: navegar · 1/2/3: avaliar · Esc ou F: sair da tela cheia'
                 : 'Espaço: virar · ← →: navegar · 1/2/3: avaliar · F: tela cheia'}
-              {voiceEnabled && ' · voz: suave / no ponto / porrete'}
+              {voiceEnabled && ' · voz: fácil / médio / difícil'}
             </p>
           </div>
         </div>
@@ -1439,9 +1867,29 @@ export default function DeckPage() {
                   {savedProgress
                     ? `Continuar (${savedProgress.index + 1}/${savedProgress.total})`
                     : studyModeChoice === 'spaced'
-                    ? 'Iniciar fixação intensa'
+                    ? dueNowCount > 0
+                      ? `Revisar ${dueNowCount} ${dueNowCount === 1 ? 'card' : 'cards'}`
+                      : newNowCount > 0
+                        ? `Estudar ${newNowCount} ${newNowCount === 1 ? 'card novo' : 'cards novos'}`
+                        : 'Estudar com repetição espaçada'
                     : 'Estudar agora'}
                 </button>
+                {/* O botão diz em que modo vai começar, e trocar de modo é um
+                    toque aqui mesmo — sem depender de o usuário descobrir o
+                    seletor mais abaixo na página. */}
+                {cards.length > 0 && !savedProgress && (
+                  <button
+                    type="button"
+                    onClick={() => chooseStudyMode(studyModeChoice === 'spaced' ? 'normal' : 'spaced')}
+                    className="inline-flex items-center justify-center gap-1.5 rounded-xl px-2 py-1 text-xs font-medium text-muted-foreground transition hover:text-foreground"
+                  >
+                    {studyModeChoice === 'spaced' ? (
+                      <><Brain className="h-3.5 w-3.5" /> Repetição espaçada · trocar para a ordem do deck</>
+                    ) : (
+                      <><Play className="h-3.5 w-3.5" /> Ordem do deck · trocar para repetição espaçada</>
+                    )}
+                  </button>
+                )}
                 {/* Sugestão de estudar em tela cheia — fica ao lado do botão de
                     começar, que é onde a decisão realmente acontece. */}
                 {cards.length > 0 && (
@@ -1472,7 +1920,7 @@ export default function DeckPage() {
                       disabled={!voice.supported}
                       title={
                         voice.supported
-                          ? 'Avalie os cards falando: suave, no ponto ou porrete'
+                          ? 'Avalie os cards falando: fácil, médio ou difícil'
                           : 'Seu navegador não reconhece voz. Use Chrome, Edge ou Safari.'
                       }
                       className={cn(
@@ -1492,8 +1940,8 @@ export default function DeckPage() {
                     </button>
                     {voicePref && voice.supported && (
                       <p className="max-w-[15rem] text-right text-[11px] leading-snug text-muted-foreground sm:text-right">
-                        O microfone liga sozinho quando o card vira. Diga <strong>suave</strong>,{' '}
-                        <strong>no ponto</strong> ou <strong>porrete</strong>.
+                        O microfone liga sozinho quando o card vira. Diga <strong>fácil</strong>,{' '}
+                        <strong>médio</strong> ou <strong>difícil</strong>.
                       </p>
                     )}
                     {!voice.supported && (
@@ -1552,9 +2000,13 @@ export default function DeckPage() {
             </AnimatePresence>
             <StudyModePanel
               selected={studyModeChoice}
-              onSelect={setStudyModeChoice}
+              onSelect={chooseStudyMode}
               stats={data.spacedRepetition?.stats}
               cards={cards}
+              retention={retentionPreset}
+              onRetentionChange={chooseRetention}
+              showHint={spacedHint}
+              onDismissHint={dismissSpacedHint}
             />
             <button
               onClick={() => setShowCards(s => !s)}
@@ -1665,7 +2117,7 @@ function CardPager({
 }: {
   total: number
   current: number
-  ratings: Record<string, 'facil' | 'equilibrado' | 'porrada'>
+  ratings: Record<string, FlashcardSpacedRating>
   cards: { _id: string }[]
   onJump: (index: number) => void
 }) {
@@ -1736,27 +2188,84 @@ function CardPager({
   )
 }
 
+/**
+ * Seletor de modo de estudo.
+ *
+ * Este painel existia, mas era discreto demais: quem não reparasse nele
+ * estudava para sempre na ordem do baralho, sem nunca descobrir que o deck
+ * tinha repetição espaçada. Três coisas mudaram — o nome agora diz o que é
+ * ("Repetição espaçada", não só "fixação intensa"), quem chega sem escolha
+ * salva já entra nela, e o painel mostra na hora o que a próxima sessão vai
+ * cobrar. A opção de estudar na ordem continua a um toque, do lado.
+ */
 function StudyModePanel({
   selected,
   onSelect,
   stats,
   cards,
+  retention,
+  onRetentionChange,
+  showHint,
+  onDismissHint,
 }: {
   selected: StudyMode
   onSelect: (mode: StudyMode) => void
   stats?: SpacedRepetitionStats
   cards: (FlashcardManualCard & { _id: string; spacedProgress?: SpacedProgressResponse | null })[]
+  retention: RetentionPreset
+  onRetentionChange: (preset: RetentionPreset) => void
+  showHint: boolean
+  onDismissHint: () => void
 }) {
   const [open, setOpen] = useState(false)
   const [explained, setExplained] = useState(false)
   const safeStats = stats || { dueToday: 0, newCards: cards.length, mastered: 0, difficult: 0 }
 
+  // O que a próxima sessão vai trazer, calculado com o mesmo motor do estudo.
+  const preview = useMemo(
+    () => buildStudyQueue(cards as DeckCard[], 'spaced').counts,
+    [cards]
+  )
+  const sessionTotal = preview.due + preview.learning + preview.newCards
+  const hasProgress = cards.some(card => !!card.spacedProgress)
+
   return (
     <section className="mb-4 overflow-hidden rounded-3xl border border-emerald-200/50 bg-white/70 p-4 shadow-[0_18px_70px_-35px_rgba(4,120,87,0.45)] backdrop-blur-2xl dark:border-emerald-300/15 dark:bg-slate-950/55">
+      {/* Apresentação do recurso para quem nunca reparou nele. Some para
+          sempre no primeiro "entendi" — e nem aparece para quem já estuda
+          com repetição espaçada neste deck. */}
+      {showHint && !hasProgress && (
+        <div className="mb-3 flex flex-col gap-2.5 rounded-2xl border border-emerald-300/40 bg-emerald-500/10 px-3.5 py-3 sm:flex-row sm:items-center">
+          <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-600 via-lime-500 to-amber-400 text-white shadow-sm">
+            <Brain className="h-4 w-4" />
+          </span>
+          <p className="flex-1 text-sm leading-snug text-emerald-900 dark:text-emerald-100">
+            <strong className="font-semibold">Este deck tem repetição espaçada.</strong>{' '}
+            <span className="opacity-85">
+              Em vez de reler tudo, você revisa cada card no dia em que estava prestes a
+              esquecê-lo. Escolha aqui embaixo como quer estudar.
+            </span>
+          </p>
+          <button
+            type="button"
+            onClick={onDismissHint}
+            aria-label="Dispensar explicação"
+            className="inline-flex h-9 w-9 shrink-0 items-center justify-center self-end rounded-xl text-emerald-800/70 transition hover:bg-emerald-500/15 dark:text-emerald-100/70 sm:self-auto"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      )}
+
+      <p className="mb-2 px-0.5 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+        Como você quer estudar?
+      </p>
+
       <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch">
         <button
           type="button"
           onClick={() => onSelect('normal')}
+          aria-pressed={selected === 'normal'}
           className={cn(
             'flex-1 rounded-2xl border p-3.5 text-left transition',
             selected === 'normal'
@@ -1765,19 +2274,23 @@ function StudyModePanel({
           )}
         >
           <div className="flex items-center gap-3">
-            <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-slate-900 text-foreground dark:bg-white dark:text-slate-950">
+            <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-slate-900 text-white dark:bg-white dark:text-slate-950">
               <Play className="h-4 w-4 fill-current" />
             </span>
-            <div>
+            <div className="min-w-0">
               <h2 className="text-sm font-bold">Estudo normal</h2>
-              <p className="mt-0.5 text-xs opacity-75">Na ordem do deck.</p>
+              <p className="mt-0.5 text-xs opacity-75">
+                Os {cards.length} cards na ordem do deck.
+              </p>
             </div>
+            {selected === 'normal' && <Check className="ml-auto h-4 w-4 shrink-0 opacity-70" />}
           </div>
         </button>
 
         <button
           type="button"
           onClick={() => onSelect('spaced')}
+          aria-pressed={selected === 'spaced'}
           className={cn(
             'relative flex-1 overflow-hidden rounded-2xl border p-3.5 text-left transition',
             selected === 'spaced'
@@ -1787,13 +2300,23 @@ function StudyModePanel({
         >
           <span className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-white/70 to-transparent" />
           <div className="flex items-center gap-3">
-            <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-600 via-lime-500 to-amber-400 text-foreground shadow-lg shadow-emerald-700/25">
+            <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-600 via-lime-500 to-amber-400 text-white shadow-lg shadow-emerald-700/25">
               <Brain className="h-4 w-4" />
             </span>
-            <div>
-              <h2 className="text-sm font-bold">Fixação intensa</h2>
-              <p className="mt-0.5 text-xs opacity-80">Repetição espaçada antes da prova.</p>
+            <div className="min-w-0">
+              <h2 className="flex flex-wrap items-center gap-1.5 text-sm font-bold">
+                Repetição espaçada
+                <span className="rounded-full bg-emerald-600/90 px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wide text-white">
+                  Recomendado
+                </span>
+              </h2>
+              <p className="mt-0.5 text-xs opacity-80">
+                {sessionTotal > 0
+                  ? `${sessionTotal} ${sessionTotal === 1 ? 'card' : 'cards'} para hoje. O que você erra volta antes.`
+                  : 'Revisa cada card no dia em que você ia esquecê-lo.'}
+              </p>
             </div>
+            {selected === 'spaced' && <Check className="ml-auto h-4 w-4 shrink-0 opacity-70" />}
           </div>
         </button>
       </div>
@@ -1811,6 +2334,55 @@ function StudyModePanel({
             <StatTile icon={<Sparkles className="h-4 w-4" />} label="Novos" value={safeStats.newCards} tone="sky" />
             <StatTile icon={<BarChart3 className="h-4 w-4" />} label="Dominados" value={safeStats.mastered} tone="lime" />
             <StatTile icon={<Flame className="h-4 w-4" />} label="Difíceis" value={safeStats.difficult} tone="rose" />
+          </div>
+
+          {sessionTotal > 0 && (
+            <p className="mt-3 flex flex-wrap items-center gap-1.5 text-xs text-slate-600 dark:text-slate-300">
+              <Timer className="h-3.5 w-3.5 shrink-0 text-emerald-600 dark:text-emerald-300" />
+              <span>
+                Próxima sessão:{' '}
+                <strong className="font-semibold">
+                  {preview.due + preview.learning} para revisar
+                </strong>
+                {preview.newCards > 0 && <> e <strong className="font-semibold">{preview.newCards} novos</strong></>}
+                {preview.heldBack > 0 && (
+                  <span className="opacity-70"> · {preview.heldBack} inéditos ficam para a próxima</span>
+                )}
+              </span>
+            </p>
+          )}
+
+          {/* Intensidade: o único parâmetro do algoritmo na mão do usuário.
+              É o botão de "estou de boa" versus "a prova é sexta". */}
+          <div className="mt-3">
+            <p className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300">
+              <Gauge className="h-3.5 w-3.5" /> Intensidade das revisões
+            </p>
+            <div className="grid grid-cols-3 gap-2">
+              {RETENTION_OPTIONS.map(option => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => onRetentionChange(option.value)}
+                  aria-pressed={retention === option.value}
+                  title={option.description}
+                  className={cn(
+                    'rounded-xl border px-2 py-2 text-center transition',
+                    retention === option.value
+                      ? 'border-emerald-400/60 bg-emerald-500/15 text-emerald-800 shadow-sm dark:text-emerald-100'
+                      : 'border-white/50 bg-white/55 text-slate-600 hover:bg-white dark:border-border dark:bg-card dark:text-slate-300'
+                  )}
+                >
+                  <span className="block text-xs font-bold">{option.label}</span>
+                  <span className="mt-0.5 block text-[10px] tabular-nums opacity-70">
+                    {Math.round(RETENTION_PRESETS[option.value] * 100)}% de acerto
+                  </span>
+                </button>
+              ))}
+            </div>
+            <p className="mt-1.5 text-[11px] leading-snug text-slate-500 dark:text-slate-400">
+              {RETENTION_OPTIONS.find(o => o.value === retention)?.description}
+            </p>
           </div>
 
           <div className="mt-3 flex flex-wrap gap-2">
@@ -1841,12 +2413,15 @@ function StudyModePanel({
                 className="overflow-hidden"
               >
                 <p className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
-                  Os cards que você erra voltam mais cedo; os fáceis voltam depois de mais tempo. É assim que o conteúdo fixa sem você revisar tudo toda vez.
+                  Cada card guarda quanto tempo a sua memória dele aguenta. Depois de cada
+                  resposta esse prazo é recalculado e o card volta no dia em que você
+                  estaria prestes a esquecê-lo — nem antes (desperdício), nem depois
+                  (esquecimento). É o mesmo modelo usado pelo Anki.
                 </p>
                 <div className="mt-3 grid gap-2 sm:grid-cols-3">
-                  <RatingExplain label="Suave" tone="emerald" text="Você lembrou com facilidade, então o card volta depois de mais tempo." />
-                  <RatingExplain label="No ponto" tone="amber" text="Você lembrou, mas ainda precisa revisar em breve." />
-                  <RatingExplain label="Porrete" tone="rose" text="Você teve dificuldade ou errou, então o card volta logo." />
+                  <RatingExplain label={FLASHCARD_RATING_LABELS.FACIL} tone="emerald" text="Você lembrou na hora. O prazo estica bastante e o card sai da frente." />
+                  <RatingExplain label={FLASHCARD_RATING_LABELS.MEDIO} tone="amber" text="Você lembrou com esforço. O prazo cresce menos e o card volta antes." />
+                  <RatingExplain label={FLASHCARD_RATING_LABELS.DIFICIL} tone="rose" text="Travou ou errou. O card volta em minutos, ainda nesta sessão." />
                 </div>
               </motion.div>
             )}
@@ -1926,10 +2501,23 @@ function StatTile({ icon, label, value, tone }: { icon: React.ReactNode; label: 
 }
 
 function formatProgressLine(progress?: SpacedProgressResponse | null): string {
-  if (!progress) return 'Novo card pendente de primeira revisão.'
-  const ratingLabel = progress.rating === 'SUAVE' ? 'Suave' : progress.rating === 'NO_PONTO' ? 'No ponto' : 'Porrete'
-  const next = progress.nextReviewAt ? new Date(progress.nextReviewAt).toLocaleDateString('pt-BR') : 'em breve'
-  return `${progress.reviewCount} revisões · sequência ${progress.correctStreak} · ${ratingLabel} · volta ${next}`
+  if (!progress) return 'Card novo, ainda sem primeira revisão.'
+  const ratingLabel = FLASHCARD_RATING_LABELS[progress.rating] || 'Médio'
+  const next = progress.nextReviewAt
+    ? new Date(progress.nextReviewAt).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })
+    : 'em breve'
+  const parts = [
+    `${progress.reviewCount} ${progress.reviewCount === 1 ? 'revisão' : 'revisões'}`,
+    `última: ${ratingLabel}`,
+    `volta ${next}`,
+  ]
+  // A estabilidade é o número que o algoritmo realmente persegue: quantos dias
+  // a lembrança aguenta. Mostrar isso explica o intervalo sem jargão.
+  if (progress.stability && progress.stability >= 1) {
+    parts.push(`memória ~${Math.round(progress.stability)} ${Math.round(progress.stability) === 1 ? 'dia' : 'dias'}`)
+  }
+  if ((progress.lapses || 0) > 0) parts.push(`${progress.lapses} ${progress.lapses === 1 ? 'recaída' : 'recaídas'}`)
+  return parts.join(' · ')
 }
 
 function ProgressBadge({ progress }: { progress?: SpacedProgressResponse | null }) {
@@ -1940,14 +2528,14 @@ function ProgressBadge({ progress }: { progress?: SpacedProgressResponse | null 
       </span>
     )
   }
-  if (progress.rating === 'PORRETE') {
+  if (progress.rating === 'DIFICIL' || (progress.lapses || 0) >= 2 || (progress.difficulty || 0) >= 7.5) {
     return (
       <span className="inline-flex items-center gap-1 rounded-full bg-rose-500/10 px-2.5 py-1 text-xs font-semibold text-rose-700 ring-1 ring-rose-300/40 dark:text-rose-200">
         <AlertTriangle className="h-3 w-3" /> Difícil
       </span>
     )
   }
-  if (progress.correctStreak >= 3 && progress.intervalDays >= 15) {
+  if ((progress.stability || 0) >= 21) {
     return (
       <span className="inline-flex items-center gap-1 rounded-full bg-lime-500/15 px-2.5 py-1 text-xs font-semibold text-lime-700 ring-1 ring-lime-300/40 dark:text-lime-200">
         <CheckCircle2 className="h-3 w-3" /> Dominado
@@ -2055,7 +2643,7 @@ function ResumeBanner({
               <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 ring-1 ring-white/15 backdrop-blur">
                 {isSpaced ? (
                   <>
-                    <Brain className="h-3 w-3" /> Fixação intensa
+                    <Brain className="h-3 w-3" /> Repetição espaçada
                   </>
                 ) : (
                   <>

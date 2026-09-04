@@ -1,10 +1,13 @@
 // Lightweight localStorage-backed progress tracker for flashcard study sessions.
 // Saved per (user, deck) so the user can resume where they left off.
 
+import { normalizeSpacedRating } from './flashcard-spaced-repetition'
+import type { FlashcardSpacedRating } from './types'
+
 const KEY_PREFIX = 'gdx:flashcard-progress:'
 const STALE_MS = 14 * 24 * 60 * 60 * 1000 // 14 days
 
-export type StoredRating = 'facil' | 'equilibrado' | 'porrada'
+export type StoredRating = FlashcardSpacedRating
 export type StoredMode = 'normal' | 'spaced'
 
 export interface FlashcardProgress {
@@ -38,7 +41,14 @@ export function loadProgress(slug: string, userKey: string): FlashcardProgress |
       window.localStorage.removeItem(getKey(slug, userKey))
       return null
     }
-    return parsed
+    // Sessões salvas antes da troca de nomes guardaram facil/equilibrado/porrada.
+    // Elas continuam retomáveis: o valor antigo é traduzido na leitura.
+    const ratings: Record<string, StoredRating> = {}
+    for (const [cardId, rating] of Object.entries(parsed.ratings || {})) {
+      const normalized = normalizeSpacedRating(rating)
+      if (normalized) ratings[cardId] = normalized
+    }
+    return { ...parsed, ratings }
   } catch {
     return null
   }

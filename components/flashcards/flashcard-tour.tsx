@@ -76,25 +76,25 @@ const DEMO_CARDS: Record<DemoKind, FlashcardManualCard> = {
 
 const RATING_DEMO = [
   {
-    value: 'facil' as const,
-    label: 'Suave',
+    value: 'FACIL' as const,
+    label: 'Fácil',
     color: 'from-emerald-500 to-emerald-600',
     speech: '"fácil" ou "suave"',
     explain: 'Você lembrou sem esforço. O card sai da frente e só volta depois de bastante tempo.',
   },
   {
-    value: 'equilibrado' as const,
-    label: 'No ponto',
+    value: 'MEDIO' as const,
+    label: 'Médio',
     color: 'from-amber-500 to-amber-600',
     speech: '"médio" ou "no ponto"',
     explain: 'Você lembrou, mas suou um pouco. O card volta em alguns dias para firmar.',
   },
   {
-    value: 'porrada' as const,
-    label: 'Porrete',
+    value: 'DIFICIL' as const,
+    label: 'Difícil',
     color: 'from-rose-500 to-orange-600',
     speech: '"difícil" ou "porrete"',
-    explain: 'Travou ou errou. O card volta logo, ainda nesta sessão ou no dia seguinte.',
+    explain: 'Travou ou errou. O card volta em minutos, ainda nesta sessão.',
   },
 ]
 
@@ -107,18 +107,18 @@ const FEATURES: { icon: React.ReactNode; title: string; text: string; highlight?
   {
     icon: <Sparkles className="h-4 w-4" />,
     title: 'Avalie em 1 toque',
-    text: 'Suave, No ponto ou Porrete — é isso que ensina o sistema quando te cobrar de novo.',
+    text: 'Fácil, Médio ou Difícil — é isso que ensina o sistema quando te cobrar de novo. Cada botão já mostra quando o card volta.',
   },
   {
     icon: <Mic className="h-4 w-4" />,
     title: 'Modo voz',
-    text: 'O microfone liga sozinho na resposta: fale “suave”, “no ponto” ou “porrete” e o card já é marcado.',
+    text: 'O microfone liga sozinho na resposta: fale “fácil”, “médio” ou “difícil” e o card já é marcado.',
     highlight: true,
   },
   {
     icon: <Brain className="h-4 w-4" />,
-    title: 'Fixação intensa',
-    text: 'Repetição espaçada: o que você erra volta cedo, o que domina volta depois.',
+    title: 'Repetição espaçada',
+    text: 'O deck calcula quanto a sua memória de cada card aguenta e cobra no dia certo: o que você erra volta em minutos, o que domina só daqui a semanas.',
   },
   {
     icon: <CalendarClock className="h-4 w-4" />,
