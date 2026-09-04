@@ -124,6 +124,18 @@ export async function ensureIndexes(db: Db): Promise<void> {
     db.collection('exam_attempts').createIndex({ userId: 1, lastSeenAt: -1 }),
     db.collection('exam_attempts').createIndex({ status: 1, lastSeenAt: -1 }),
     db.collection('exam_attempts').createIndex({ openedAt: -1 }),
+    /*
+     * `exam_progress` — o rascunho da prova em andamento.
+     *
+     * A chave (`examId`, `userId`) é consultada em toda gravação automática
+     * (uma por aluno a cada 12 segundos, e uma turma inteira grava ao mesmo
+     * tempo): sem índice, cada gravação varre a coleção. Única, porque um
+     * segundo rascunho para a mesma pessoa na mesma prova é o que faria a
+     * retomada devolver a metade errada do trabalho — e é o que o `upsert`
+     * criaria numa corrida entre duas abas.
+     */
+    db.collection('exam_progress').createIndex({ examId: 1, userId: 1 }, { unique: true }),
+    db.collection('exam_progress').createIndex({ examId: 1, updatedAt: -1 }),
     // `download_logs` alimenta três rankings do painel e não tinha índice
     // nenhum — cada aba varria a coleção inteira.
     db.collection('download_logs').createIndex({ downloadedAt: -1 }),
