@@ -102,7 +102,13 @@ import {
   invertEntry,
   pushEntry,
 } from '@/lib/pdf-viewer-history'
-import { inkPixelWidth, traceStroke } from '@/lib/pdf-viewer-ink'
+import { inkPixelWidth, normalizeInkStroke, traceStroke } from '@/lib/pdf-viewer-ink'
+import {
+  readReadingAnchor,
+  readingAnchorDrift,
+  ZOOM_ANCHOR_HOLD_MS,
+  ZOOM_STEP,
+} from '@/lib/pdf-viewer-zoom'
 import { fitToCanvasBudget } from '@/lib/pdf-viewer-canvas-budget'
 import {
   isViewportRelayout,
@@ -1369,6 +1375,39 @@ function clampZoom(value: number, min = 0.55, max = 2.6) {
   return Math.min(max, Math.max(min, Number(value.toFixed(2))))
 }
 
+/**
+ * Rola a leitura alguns pixels — sem saber QUEM rola.
+ *
+ * O leitor tem dois contêineres de rolagem possíveis, e a diferença não é
+ * detalhe: no fluxo normal quem rola é o documento (`window`), mas em tela
+ * cheia o próprio invólucro do leitor vira o elemento rolável (ver
+ * `.pdf-viewer-shell:fullscreen`). Um ajuste escrito em `window.scrollY` não
+ * mexeria nada em tela cheia — e é justamente lá que a correção de zoom
+ * precisa funcionar igual.
+ *
+ * Então subimos a partir da página procurando o primeiro ancestral que rola de
+ * verdade. `overflow-x: auto` faz o `overflow-y` computado virar `auto`
+ * também, por isso não basta olhar o estilo: só conta quem tem sobra vertical
+ * para rolar (é o que descarta a linha da página, que rola de lado).
+ */
+function scrollReadingBy(delta: number, from: HTMLElement | null) {
+  if (!Number.isFinite(delta) || delta === 0) return
+  let element = from?.parentElement ?? null
+  while (element) {
+    const style = window.getComputedStyle(element)
+    const scrolls = style.overflowY === 'auto' || style.overflowY === 'scroll'
+    if (scrolls && element.scrollHeight - element.clientHeight > 1) {
+      element.scrollTop += delta
+      return
+    }
+    element = element.parentElement
+  }
+  // `instant` e não `auto`: `auto` obedeceria a um `scroll-behavior: smooth` do
+  // CSS, e uma correção de posição animada é exatamente o solavanco que ela
+  // existe para evitar.
+  window.scrollTo({ top: window.scrollY + delta, behavior: 'instant' })
+}
+
 function clamp01(value: number) {
   return Math.min(1, Math.max(0, value))
 }
@@ -1538,7 +1577,14 @@ function getAnnotationBounds(annotation: PdfAnnotation) {
 
 function pointsToSvgPath(points: PdfPoint[]) {
   if (points.length === 0) return ''
-  if (points.length === 1) return `M ${points[0].x * 100} ${points[0].y * 100}`
+  // Um ponto só vira um trecho de comprimento ZERO, e não um `M` solitário: um
+  // caminho que só se move não desenha nada, enquanto o trecho de comprimento
+  // zero com ponta redonda é justamente o círculo que a ponta da caneta faria.
+  // É o que põe o pingo do "i" na tela depois de salvo.
+  if (points.length === 1) {
+    const only = points[0]
+    return `M ${only.x * 100} ${only.y * 100} L ${only.x * 100} ${only.y * 100}`
+  }
   const segments = [`M ${points[0].x * 100} ${points[0].y * 100}`]
   for (let index = 1; index < points.length - 1; index++) {
     const current = points[index]
@@ -2764,6 +2810,85 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     requestAnimationFrame(step)
   }, [])
 
+  /**
+   * ── Zoom que não troca de página ────────────────────────────────────────
+   *
+   * Segura o PONTO DE LEITURA no lugar enquanto o zoom refaz o layout. A conta
+   * mora em `lib/pdf-viewer-zoom.ts`, junto com o porquê; aqui fica a ponte
+   * com o DOM.
+   *
+   * Chamada ANTES de `setZoom`, de propósito: a medida da âncora tem que ser a
+   * do layout velho (o React só toca no DOM depois que o manipulador termina),
+   * senão ancoraríamos no estrago que se quer desfazer.
+   *
+   * Na fileira horizontal não há o que segurar — ali a casa de cada página é a
+   * largura visível, que o zoom não muda —, então o gesto sai de cena.
+   */
+  const holdReadingAnchor = useCallback(() => {
+    if (typeof window === 'undefined' || horizontalRef.current) return
+    const page = currentPageRef.current
+    const element = document.getElementById(`pdf-page-${page}`)
+    if (!element) return
+    // `documentElement.clientHeight` acompanha o layout; `window.innerHeight`
+    // encolhe e cresce com a pinça do iOS e daria uma linha de leitura falsa.
+    const viewport = document.documentElement.clientHeight || window.innerHeight
+    const rect = element.getBoundingClientRect()
+    const ratio = readReadingAnchor({ top: rect.top, height: rect.height, viewport })
+    if (ratio == null) return
+
+    const deadline = Date.now() + ZOOM_ANCHOR_HOLD_MS
+    let abandoned = false
+    const abandon = () => { abandoned = true }
+    // O leitor encostou na tela: a partir daí a posição é dele. Insistir
+    // contra o dedo é pior do que a página escorregar um pouco.
+    window.addEventListener('pointerdown', abandon, { capture: true, once: true, passive: true })
+
+    const step = () => {
+      const now = Date.now()
+      if (abandoned || now > deadline) {
+        window.removeEventListener('pointerdown', abandon, true)
+        // Folga curta: a última correção ainda gera um evento de rolagem, e ele
+        // não pode ser lido como "o leitor mudou de página".
+        suppressFocusUntilRef.current = Math.max(suppressFocusUntilRef.current, now + 200)
+        return
+      }
+      // Enquanto a correção acontece, o foco por rolagem fica suspenso: cada
+      // ajuste dispara um evento de rolagem, e é exatamente ele que o
+      // observador leria como troca de página.
+      suppressFocusUntilRef.current = Math.max(suppressFocusUntilRef.current, now + 300)
+      const live = document.getElementById(`pdf-page-${page}`)
+      if (live) {
+        const measured = live.getBoundingClientRect()
+        const drift = readingAnchorDrift(
+          { top: measured.top, height: measured.height, viewport },
+          ratio
+        )
+        // Meio pixel é arredondamento de layout, não deriva.
+        if (Math.abs(drift) > 0.5) scrollReadingBy(drift, live)
+      }
+      requestAnimationFrame(step)
+    }
+
+    requestAnimationFrame(step)
+  }, [])
+
+  /**
+   * O único caminho para mexer no zoom. Existe para os botões, os atalhos e a
+   * pastilha de "ajustar" nunca esquecerem a âncora de leitura — foi assim que
+   * o defeito nasceu: cada um deles chamava `setZoom` por conta própria.
+   */
+  const applyZoom = useCallback((next: number | ((current: number) => number)) => {
+    zoomTouchedRef.current = true
+    const current = zoomRef.current
+    const value = clampZoom(typeof next === 'function' ? next(current) : next, minZoom, maxZoom)
+    if (value === current) return
+    // O espelho anda junto, e não só no efeito que roda depois do render: dois
+    // toques no mesmo quadro precisam somar dois passos, não um.
+    zoomRef.current = value
+    holdReadingAnchor()
+    setZoom(value)
+  }, [holdReadingAnchor, maxZoom, minZoom])
+
   // ── Rotação de tela ─────────────────────────────────────────────────────
   // Girar o iPad piscava e trocava de página em rajada — "um trilhão de trocas
   // de página", nas palavras de quem reportou.
@@ -3111,11 +3236,12 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const fitToWidth = useCallback(() => {
     const element = contentRef.current || viewerRef.current
     if (!element || !pageSize) return
-    zoomTouchedRef.current = true
     const availableWidth = element.clientWidth - 24
-    setZoom(clampZoom(availableWidth / pageSize.width, minZoom, maxZoom))
+    // Mesma âncora dos botões de zoom: "ajustar à largura" também engorda todas
+    // as páginas de uma vez, e sem ela a leitura escorregaria do mesmo jeito.
+    applyZoom(availableWidth / pageSize.width)
     setMode('width')
-  }, [maxZoom, minZoom, pageSize])
+  }, [applyZoom, pageSize])
 
   const fitToPage = useCallback(() => {
     const element = contentRef.current || viewerRef.current
@@ -3526,10 +3652,10 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
         // edição, Ctrl/Cmd do anti-pirataria, tutorial aberto).
         case '+':
         case '=':
-          event.preventDefault(); zoomTouchedRef.current = true; setZoom((z) => clampZoom(z + 0.12, minZoom, maxZoom)); break
+          event.preventDefault(); applyZoom((z) => z + ZOOM_STEP); break
         case '-':
         case '_':
-          event.preventDefault(); zoomTouchedRef.current = true; setZoom((z) => clampZoom(z - 0.12, minZoom, maxZoom)); break
+          event.preventDefault(); applyZoom((z) => z - ZOOM_STEP); break
         case '0':
           event.preventDefault(); fitToPage(); break
         case 'f':
@@ -3563,7 +3689,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [
-    access, pageCount, goToPage, stepPage, previewActive, allowedPages, minZoom, maxZoom,
+    access, pageCount, goToPage, stepPage, previewActive, allowedPages, applyZoom,
     fitToPage, toggleFullScreen, openSidePanel, applyMode, hasSummary,
     applyScrollAxis, scrollAxis, undoAnnotation, redoAnnotation, toggleCompactChrome,
   ])
@@ -3830,7 +3956,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                   antes gastava um botão escrito inteiro na faixa de baixo.
                   Ler o tamanho atual e desfazê-lo viraram o mesmo gesto. */}
               <div className="hidden items-center gap-0.5 rounded-lg border border-white/10 bg-white/10 p-0.5 lg:flex" data-tour="viewer-zoom">
-                <ToolbarButton compact subtle onClick={() => { zoomTouchedRef.current = true; setZoom((z) => clampZoom(z - 0.12, minZoom, maxZoom)) }} title="Diminuir zoom">
+                <ToolbarButton compact subtle onClick={() => applyZoom((z) => z - ZOOM_STEP)} title="Diminuir zoom">
                   <Minus className="h-4 w-4" />
                 </ToolbarButton>
                 <button
@@ -3843,7 +3969,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                   <Scan className="h-3.5 w-3.5 shrink-0 text-white/45" />
                   {Math.round(zoom * 100)}%
                 </button>
-                <ToolbarButton compact subtle onClick={() => { zoomTouchedRef.current = true; setZoom((z) => clampZoom(z + 0.12, minZoom, maxZoom)) }} title="Aumentar zoom">
+                <ToolbarButton compact subtle onClick={() => applyZoom((z) => z + ZOOM_STEP)} title="Aumentar zoom">
                   <Plus className="h-4 w-4" />
                 </ToolbarButton>
               </div>
@@ -4415,7 +4541,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
         {zoomedIn && (
           <button
             type="button"
-            onClick={() => { zoomTouchedRef.current = true; if (fitWidthZoom) setZoom(clampZoom(fitWidthZoom, minZoom, maxZoom)) }}
+            onClick={() => { if (fitWidthZoom) applyZoom(fitWidthZoom) }}
             // Sobe quando a barra de ferramentas está na tela: os dois moram no
             // mesmo canto, e sobrepostos nenhum dos dois serve para nada.
             className={`pointer-events-auto fixed left-1/2 z-40 -translate-x-1/2 rounded-full border border-white/20 bg-zinc-950/90 px-3 py-1.5 text-[11px] font-semibold text-white shadow-lg backdrop-blur-sm ${
@@ -4701,7 +4827,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                onClick={() => { zoomTouchedRef.current = true; setZoom((z) => clampZoom(z - 0.12, minZoom, maxZoom)) }}
+                onClick={() => applyZoom((z) => z - ZOOM_STEP)}
                 className="flex h-11 flex-1 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-white"
                 aria-label="Diminuir"
               >
@@ -4710,7 +4836,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
               <span className="min-w-16 text-center text-sm font-semibold text-white">{Math.round(zoom * 100)}%</span>
               <button
                 type="button"
-                onClick={() => { zoomTouchedRef.current = true; setZoom((z) => clampZoom(z + 0.12, minZoom, maxZoom)) }}
+                onClick={() => applyZoom((z) => z + ZOOM_STEP)}
                 className="flex h-11 flex-1 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-white"
                 aria-label="Aumentar"
               >
@@ -6615,13 +6741,19 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
       return
     }
 
-    if (points.length < 3) return
+    // O pingo do "i" é um traço como qualquer outro — ver `normalizeInkStroke`.
+    // Antes daqui saía um `return` quando havia menos de três pontos, e era ele
+    // que engolia todo toque rápido de caneta: o ponto aparecia embaixo da
+    // ponta enquanto ela estava encostada (o rascunho já desenha um ponto
+    // isolado) e sumia ao levantar.
+    const strokePoints = normalizeInkStroke(points)
+    if (!strokePoints) return
     onCreateAnnotation({
       pageNumber,
       type: 'drawing',
       content: draft.mode === 'marker' ? 'Pincel' : 'Caneta',
       color: draft.color,
-      position: { points },
+      position: { points: strokePoints },
       data: { drawingMode: draft.mode, strokeWidthRatio: draft.strokeWidthRatio, opacity: draft.opacity },
     })
   }, [clearDraftCanvas, onCreateAnnotation, pageNumber])
@@ -7216,7 +7348,13 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
         // não aparece — mas o navegador recalcula a camada desfocada a cada
         // quadro de pinça e de rolagem. Num celular isso é caro de graça.
         className="relative shrink-0 overflow-hidden rounded-xl border border-white/15 bg-white/10 p-2 shadow-2xl shadow-black/35"
-        style={{ width: frameOuterWidth }}
+        // `isolation: isolate` fecha a moldura como grupo de mistura: o que o
+        // marca-texto multiplica é a PÁGINA embaixo dele, e nada além. Sem
+        // isso o grupo é o que o navegador tiver escolhido como camada — e a
+        // resposta muda entre navegadores e entre quadros de rolagem, o que dá
+        // grifo que muda de tom sozinho. Também barateia a conta: a mistura
+        // passa a ser recalculada só dentro da página, não na tela inteira.
+        style={{ width: frameOuterWidth, isolation: 'isolate' }}
       >
         <div className="absolute left-3 top-3 z-10 rounded-lg border border-zinc-200/30 bg-zinc-950/65 px-2 py-1 text-[11px] font-semibold text-zinc-50 backdrop-blur-md">
           Pag. {pageNumber}
@@ -7508,12 +7646,36 @@ const AnnotationItem = memo(function AnnotationItem({
   )
 })
 
+/**
+ * O grifo salvo.
+ *
+ * A mistura `multiply` mora no ELEMENTO `<svg>`, não no `<path>` — e isso não é
+ * arrumação de código, é o conserto do marca-texto no celular e no tablet.
+ *
+ * No WebKit — o motor de TODO navegador do iPhone e do iPad, Chrome incluído —
+ * uma mistura declarada dentro do SVG não alcança o que está atrás do SVG: o
+ * traço acaba composto por cima da página do jeito normal. E aí a tinta amarela
+ * a 34% deixa de ser um filtro que só escurece e vira uma cortina translúcida
+ * por cima da letra: o preto do texto some para trás de um cinza-amarelado, e o
+ * trecho grifado fica MAIS APAGADO que o texto ao redor — o contrário do que um
+ * marca-texto faz. No `<svg>`, que para o navegador é uma caixa comum de CSS, a
+ * mistura é a de sempre e funciona em todo lugar.
+ *
+ * O resultado é o mesmo desenho: um traço por SVG, então misturar o grupo
+ * inteiro ou o traço sozinho dá pixel por pixel a mesma coisa. Sobre papel
+ * branco nada muda; sobre a letra, o preto continua preto.
+ */
 const HighlightLayer = memo(function HighlightLayer({ annotation }: { annotation: PdfAnnotation }) {
   const points = annotation.position.points || []
-  if (points.length < 2) return null
+  if (points.length === 0) return null
   const strokeWidth = `${((annotation.data?.strokeWidthRatio || 0.018) * 100).toFixed(3)}`
   return (
-    <svg className="absolute inset-0 h-full w-full overflow-visible pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
+    <svg
+      className="absolute inset-0 h-full w-full overflow-visible pointer-events-none"
+      viewBox="0 0 100 100"
+      preserveAspectRatio="none"
+      style={{ mixBlendMode: 'multiply' }}
+    >
       <path
         d={pointsToSvgPath(points)}
         fill="none"
@@ -7522,7 +7684,6 @@ const HighlightLayer = memo(function HighlightLayer({ annotation }: { annotation
         strokeLinecap="round"
         strokeLinejoin="round"
         opacity={annotation.data?.opacity || 0.34}
-        style={{ mixBlendMode: 'multiply' }}
       />
     </svg>
   )
@@ -7558,7 +7719,9 @@ const DrawingLayer = memo(function DrawingLayer({ annotation, isDraft }: { annot
     )
   }
 
-  if (points.length < 2) return null
+  // Um ponto basta: o pingo do "i" é um traço de comprimento zero, desenhado
+  // pela ponta redonda da própria caneta (ver `pointsToSvgPath`).
+  if (points.length === 0) return null
   return (
     <svg className="absolute inset-0 h-full w-full overflow-visible pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
       <path d={pointsToSvgPath(points)} strokeDasharray={dashArray} {...common} />

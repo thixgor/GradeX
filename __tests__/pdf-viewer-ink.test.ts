@@ -4,6 +4,7 @@ import {
   type InkPathSink,
   type InkPoint,
   inkPixelWidth,
+  normalizeInkStroke,
   traceStroke,
 } from '@/lib/pdf-viewer-ink'
 
@@ -166,5 +167,31 @@ describe('inkPixelWidth', () => {
   it('nunca some da tela', () => {
     expect(inkPixelWidth(0, 800, 500)).toBe(1)
     expect(inkPixelWidth(0.0000001, 800, 500)).toBe(1)
+  })
+})
+
+/**
+ * O pingo do "i". Um toque rápido de caneta produz um ponto só, e a versão
+ * anterior descartava tudo que tivesse menos de três — o ponto aparecia
+ * embaixo da ponta e sumia ao levantar a caneta.
+ */
+describe('normalizeInkStroke', () => {
+  it('transforma um toque num traço de comprimento zero', () => {
+    const dot = { x: 0.4, y: 0.62 }
+    expect(normalizeInkStroke([dot])).toEqual([dot, dot])
+  })
+
+  it('não mexe num traço de verdade', () => {
+    const points = scribble(9)
+    expect(normalizeInkStroke(points)).toBe(points)
+  })
+
+  it('guarda o traço curtinho de dois pontos em vez de jogá-lo fora', () => {
+    const points = [{ x: 0.2, y: 0.2 }, { x: 0.205, y: 0.204 }]
+    expect(normalizeInkStroke(points)).toBe(points)
+  })
+
+  it('não tem o que salvar quando não houve toque nenhum', () => {
+    expect(normalizeInkStroke([])).toBeNull()
   })
 })
