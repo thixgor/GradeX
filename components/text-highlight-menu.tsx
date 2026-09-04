@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Copy, Highlighter, Eraser, Strikethrough, Bold, Underline } from 'lucide-react'
 import { HighlightColor, HighlightType } from '@/lib/types'
 
@@ -24,17 +24,42 @@ const HIGHLIGHT_COLORS: { color: HighlightColor; label: string; bgClass: string 
 export function TextHighlightMenu({ position, onHighlight, onApplyStyle, onRemoveHighlight, onCopy, onClose }: TextHighlightMenuProps) {
   const [showColorPicker, setShowColorPicker] = useState(false)
   const [customColor, setCustomColor] = useState('#ffff00')
+  const menuRef = useRef<HTMLDivElement>(null)
+
+  /*
+   * "Fechar ao tocar fora", sem cobrir a tela.
+   *
+   * Aqui existia um `<div className="fixed inset-0" onClick={onClose} />` — uma
+   * folha invisível sobre a página inteira, montada no instante em que uma
+   * seleção era detectada. No mouse isso passa despercebido: quem seleciona
+   * arrastando já terminou o gesto quando o menu abre.
+   *
+   * No celular e no tablet, não. Ali selecionar texto é um gesto em DUAS
+   * etapas: o toque longo pega uma palavra, e depois se arrastam as alcinhas
+   * para esticar até o trecho que se quer de fato. A folha caía exatamente
+   * entre as duas — as alcinhas ficavam por baixo dela, e cada tentativa de
+   * ajustar a seleção virava um toque no overlay, que fechava o menu e (na
+   * tela do Manual) ainda limpava a seleção. Na prática, era impossível
+   * escolher QUAL trecho marcar.
+   *
+   * Uma escuta no documento faz o mesmo trabalho sem pôr nada sobre a página:
+   * ela observa o toque em vez de interceptá-lo, então o gesto nativo de
+   * seleção continua funcionando por baixo.
+   */
+  useEffect(() => {
+    const aoApontarFora = (e: PointerEvent) => {
+      if (menuRef.current?.contains(e.target as Node)) return
+      onClose()
+    }
+    document.addEventListener('pointerdown', aoApontarFora, true)
+    return () => document.removeEventListener('pointerdown', aoApontarFora, true)
+  }, [onClose])
 
   return (
     <>
-      {/* Overlay para fechar ao clicar fora */}
-      <div
-        className="fixed inset-0 z-40"
-        onClick={onClose}
-      />
-
       {/* Menu principal */}
       <div
+        ref={menuRef}
         className="fixed z-50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl select-none"
         style={{
           left: `${position.x}px`,

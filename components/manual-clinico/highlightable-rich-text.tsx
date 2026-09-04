@@ -159,6 +159,14 @@ export function HighlightableRichText({
   const [selText, setSelText] = useState('')
   const [selRange, setSelRange] = useState<{ start: number; end: number } | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+  /*
+   * De onde veio o último toque/clique.
+   *
+   * `contextmenu` é um MouseEvent e não diz se nasceu de um clique direito ou
+   * de um toque longo — e os dois pedem tratamentos opostos (ver
+   * `handleContextMenu`). O tipo de ponteiro só existe no evento anterior.
+   */
+  const ultimoPonteiro = useRef<string>('mouse')
 
   useEffect(() => {
     const onEsc = (e: KeyboardEvent) => { if (e.key === 'Escape') setMenu(null) }
@@ -216,19 +224,63 @@ export function HighlightableRichText({
     } catch {}
   }, [])
 
+  /*
+   * O menu também acompanha a seleção que muda SEM passar por nós.
+   *
+   * No celular, esticar a seleção é arrastar as alcinhas — que são interface
+   * do navegador, não elementos da página: o `pointerup` desse arrasto nunca
+   * chega ao nosso container, e por isso o menu ficava preso ao recorte da
+   * palavra inicial. `selectionchange` é o único aviso que existe.
+   *
+   * A espera de 350ms é o que separa "terminou de ajustar" de "está no meio do
+   * arrasto": sem ela o menu saltaria a cada pixel de alcinha arrastada.
+   */
+  useEffect(() => {
+    let espera: ReturnType<typeof setTimeout>
+    const aoMudarSelecao = () => {
+      clearTimeout(espera)
+      espera = setTimeout(() => detectSelection(), 350)
+    }
+    document.addEventListener('selectionchange', aoMudarSelecao)
+    return () => {
+      document.removeEventListener('selectionchange', aoMudarSelecao)
+      clearTimeout(espera)
+    }
+  }, [detectSelection])
+
+  const handlePointerDown = (e: React.PointerEvent) => {
+    ultimoPonteiro.current = e.pointerType || 'mouse'
+  }
+
   const handlePointerUp = (e: React.PointerEvent) => {
     const touch = e.pointerType === 'touch'
     setTimeout(() => detectSelection(e.clientX, e.clientY), touch ? 150 : 20)
   }
 
+  /*
+   * No mouse, `contextmenu` é o clique direito e cancelá-lo é o certo: quem
+   * manda no menu aqui somos nós.
+   *
+   * No toque, `contextmenu` É O TOQUE LONGO — o mesmo gesto com que o
+   * navegador seleciona a palavra sob o dedo e mostra as alcinhas. Cancelá-lo
+   * cancela a seleção nativa junto, e o que sobra é o comportamento sem
+   * granularidade: em vez da palavra tocada, o navegador acaba pegando o bloco
+   * inteiro. Por isso o `preventDefault` só vale para ponteiro de mouse.
+   */
   const handleContextMenu = (e: React.MouseEvent) => {
-    e.preventDefault()
+    if (ultimoPonteiro.current === 'mouse') e.preventDefault()
     detectSelection(e.clientX, e.clientY)
   }
 
-  const closeMenu = () => {
+  /**
+   * Fecha o menu. `limparSelecao` só é verdadeiro depois de a seleção ter
+   * CUMPRIDO o papel dela (uma marcação aplicada ou removida): apagá-la quando
+   * a pessoa apenas tocou fora desfaria, sem pedir, o trecho que ela acabou de
+   * escolher a dedo — que é justamente o gesto mais caro no celular.
+   */
+  const closeMenu = (limparSelecao = false) => {
     setMenu(null)
-    window.getSelection()?.removeAllRanges()
+    if (limparSelecao) window.getSelection()?.removeAllRanges()
   }
 
   const applyHighlight = (type: HighlightType, color?: HighlightColor, customColor?: string) => {
@@ -247,7 +299,7 @@ export function HighlightableRichText({
       return h.endOffset <= selRange.start || h.startOffset >= selRange.end
     })
     onHighlightsChange([...filtered, newH])
-    closeMenu()
+    closeMenu(true)
   }
 
   const removeHighlight = () => {
@@ -256,7 +308,7 @@ export function HighlightableRichText({
       h.endOffset <= selRange.start || h.startOffset >= selRange.end
     )
     onHighlightsChange(filtered)
-    closeMenu()
+    closeMenu(true)
   }
 
   const handleCopy = () => {
@@ -268,6 +320,7 @@ export function HighlightableRichText({
       <div
         ref={containerRef}
         onContextMenu={handleContextMenu}
+        onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
         className={`select-text text-[15px] leading-[1.8] text-foreground/90 selection:bg-primary/20 ${className}`}
         style={{ userSelect: 'text' }}
@@ -282,7 +335,7 @@ export function HighlightableRichText({
           onApplyStyle={(type) => applyHighlight(type)}
           onRemoveHighlight={removeHighlight}
           onCopy={handleCopy}
-          onClose={closeMenu}
+          onClose={() => closeMenu()}
         />,
         document.body
       )}

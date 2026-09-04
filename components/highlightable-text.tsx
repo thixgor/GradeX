@@ -39,6 +39,12 @@ export function HighlightableText({
   const [selectedText, setSelectedText] = useState<string>('')
   const [selectionRange, setSelectionRange] = useState<{ start: number; end: number } | null>(null)
   const textRef = useRef<HTMLDivElement>(null)
+  /*
+   * De onde veio o último toque/clique. `contextmenu` é um MouseEvent e não
+   * diz se nasceu de clique direito ou de toque longo — e os dois pedem
+   * tratamentos opostos (ver `handleContextMenu`).
+   */
+  const ultimoPonteiro = useRef<string>('mouse')
 
   // Fechar menu ao pressionar ESC
   useEffect(() => {
@@ -51,8 +57,15 @@ export function HighlightableText({
     return () => document.removeEventListener('keydown', handleEsc)
   }, [])
 
+  /*
+   * No mouse, `contextmenu` é o clique direito e cancelá-lo é o certo. No
+   * toque, ele É O TOQUE LONGO — o mesmo gesto com que o navegador seleciona a
+   * palavra sob o dedo e mostra as alcinhas —, e cancelá-lo leva a seleção
+   * nativa junto. Ver o comentário gêmeo em
+   * components/manual-clinico/highlightable-rich-text.tsx.
+   */
   const handleContextMenu = (e: React.MouseEvent) => {
-    e.preventDefault()
+    if (ultimoPonteiro.current === 'mouse') e.preventDefault()
     handleSelection(e.clientX, e.clientY)
   }
 
@@ -124,6 +137,10 @@ export function HighlightableText({
     } catch (err) {
       // Ignorar erros na seleção
     }
+  }
+
+  const handlePointerDown = (e: React.PointerEvent) => {
+    ultimoPonteiro.current = e.pointerType || 'mouse'
   }
 
   const handlePointerUp = (e: React.PointerEvent) => {
@@ -292,6 +309,7 @@ export function HighlightableText({
       <div
         ref={textRef}
         onContextMenu={handleContextMenu}
+        onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
         className={`select-text whitespace-pre-line ${className}`}
         style={{ userSelect: 'text' }}
