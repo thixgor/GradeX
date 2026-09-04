@@ -1781,6 +1781,33 @@
    caixinhas que se lê como defeito de renderização, não como menu. No rail o
    chip deixa de ser caixa: fica só o ícone, e o fundo aparece apenas sob o
    cursor ou na rota atual, que é o único item que precisa se destacar. */
+/*
+ * No rail, nada come o espaço livre.
+ *
+ * Cada linha do menu recolhido é um flex com `justify-content: center` e um
+ * ícone só — o rótulo, o selo "Novo", o atalho de teclado e a seta ficam com
+ * `max-width: 0`. Zerar a LARGURA, porém, não zera o que esses elementos fazem
+ * com a sobra: `margin-left: auto` (o `ml-auto` do selo, do atalho e do "PRO")
+ * absorve TODO o espaço livre da linha antes que o `justify-content` chegue a
+ * distribuí-lo, e `flex-grow: 1` (o rótulo da conta) faz o mesmo. O ícone
+ * então encosta na borda em vez de ficar no meio.
+ *
+ * Era o que se via no tablet: a lupa da busca, o carrinho do Upgrade, a inicial
+ * da conta e todo item com selo ("Mapas Mentais", "Games", "Materiais",
+ * "Rifas") desalinhados dos demais — de 6px no selo a 19px no Upgrade —, numa
+ * coluna em que o alinhamento é a única coisa que dá ordem à lista.
+ *
+ * A regra vale para os filhos DIRETOS das linhas, que é exatamente o conjunto
+ * que precisa estar centrado; e vive só sob `.sidebar-rail`, classe que existe
+ * apenas com o menu recolhido (ver components/sidebar.tsx). Aberto, as margens
+ * automáticas voltam a valer e são o que joga selo e seta para a direita.
+ */
+.sidebar-rail :is(button, a) > * {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  flex-grow: 0 !important;
+}
+
 .sidebar-rail .sidebar-nav-chip {
   height: 2.25rem;
   width: 2.25rem;
