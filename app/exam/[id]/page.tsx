@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -35,10 +35,25 @@ import { ArrowLeft, Check, X, Send, FileDown, Clock, User, CheckCircle2, AlertCi
 import { ImageModal } from '@/components/image-modal'
 import { PremiumPdfCtaModal } from '@/components/premium-pdf-cta-modal'
 import { PdfCtaBanner } from '@/components/pdf-cta-banner'
+import { ExamGateStatus } from '@/components/exam/exam-gate-status'
+import { ExamResumeCard } from '@/components/exam/exam-resume-card'
 import { canDownloadExamPdf } from '@/lib/tier-limits'
 import { consumirCotaDoPlano } from '@/lib/plan-consume-client'
 import { useScrollToTopWhen } from '@/components/scroll-to-top'
 import { createExamAttemptTracker, clearExamAttempt, type ExamAttemptTracker } from '@/lib/tracking/track-client'
+import {
+  ROTULO_DA_FASE,
+  prazoDeEntrega,
+  resolverJanelaDaProva,
+  type JanelaDaProva,
+} from '@/lib/provas/janela-da-prova'
+import { resolverDownloadsDaProva } from '@/lib/provas/downloads-da-prova'
+import {
+  INTERVALO_DE_GRAVACAO_MS,
+  contarRespondidas,
+  mesclarRespostas,
+  type VereditoDeRetomada,
+} from '@/lib/provas/retomada'
 
 export default function ExamPage({ params }: { params: { id: string } }) {
   const { id } = params
@@ -49,6 +64,21 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   const [started, setStarted] = useState(false)
   const [inWaitingRoom, setInWaitingRoom] = useState(false)
   const [canStart, setCanStart] = useState(false)
+  /**
+   * A janela da prova como o SERVIDOR a enxerga.
+   *
+   * Vem de `GET /api/exams/[id]` e é recalculada localmente a cada segundo a
+   * partir do documento da prova — o relógio do navegador serve para animar a
+   * contagem regressiva, nunca para decidir. Quem decide é o servidor, na
+   * entrega; aqui a janela só determina o que a tela desenha.
+   */
+  const [janela, setJanela] = useState<JanelaDaProva | null>(null)
+  /** Progresso salvo de uma tentativa interrompida, e se dá para continuar. */
+  const [retomada, setRetomada] = useState<VereditoDeRetomada | null>(null)
+  const [progressoSalvo, setProgressoSalvo] = useState<any>(null)
+  const [retomando, setRetomando] = useState(false)
+  const [salvandoProgresso, setSalvandoProgresso] = useState<'salvando' | 'salvo' | 'erro' | null>(null)
+  const [ordemDasQuestoes, setOrdemDasQuestoes] = useState<string[]>([])
   const [examImageModal, setExamImageModal] = useState<{ src: string } | null>(null)
   const [pdfGenerating, setPdfGenerating] = useState<string | null>(null)
   const [accountType, setAccountType] = useState<string | undefined>(undefined)
@@ -408,9 +438,30 @@ export default function ExamPage({ params }: { params: { id: string } }) {
       .filter((item) => item !== null) as { question: any; index: number }[]
   }
 
+  /**
+   * O veredito de download desta prova, para esta conta, agora.
+   *
+   * Antes cada botão decidia sozinho: a tela inicial checava o cargo, os dois
+   * botões da tela de resultado não checavam nada, e o gabarito tinha três
+   * critérios de tempo diferentes espalhados. Uma conta gratuita ouvia "assine
+   * para baixar" antes da prova e baixava dois PDFs depois dela.
+   * Ver lib/provas/downloads-da-prova.ts.
+   */
+  const downloads = resolverDownloadsDaProva(exam, {
+    accountType,
+    isAdmin: userRole === 'admin',
+    jaEnviou: submitted || alreadySubmitted,
+  })
+
   // Função para baixar PDF da prova
   const handleDownloadExamPDF = async () => {
-    if (!canDownloadExamPdf(accountType, userRole === 'admin')) {
+    if (!downloads.prova.permitido) {
+      // A recusa por tempo não se resolve assinando — mostrar o convite do
+      // plano nela seria vender o que a pessoa já tem.
+      if (downloads.prova.esperandoOFim) {
+        showToastMessage(downloads.prova.motivo || 'Ainda não liberado.', 'info')
+        return
+      }
       setShowPdfCta(true)
       return
     }
@@ -447,10 +498,22 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   const answersRef = useRef<UserAnswer[]>([])
   const currentQuestionRef = useRef(0)
   const examRef = useRef<Exam | null>(null)
+  // Os mesmos espelhos servem à gravação de progresso, que roda dentro de um
+  // `setInterval` e de listeners de `pagehide` — closures que nunca reexecutam.
+  const ordemDasQuestoesRef = useRef<string[]>([])
+  const userNameRef = useRef('')
+  const themeTranscriptionRef = useRef('')
+  const assinaturaRef = useRef('')
+  const examStartTimeRef = useRef<Date | null>(null)
 
   useEffect(() => { answersRef.current = answers }, [answers])
   useEffect(() => { currentQuestionRef.current = currentQuestionIndex }, [currentQuestionIndex])
   useEffect(() => { examRef.current = exam }, [exam])
+  useEffect(() => { ordemDasQuestoesRef.current = ordemDasQuestoes }, [ordemDasQuestoes])
+  useEffect(() => { userNameRef.current = userName }, [userName])
+  useEffect(() => { themeTranscriptionRef.current = themeTranscription }, [themeTranscription])
+  useEffect(() => { assinaturaRef.current = signature }, [signature])
+  useEffect(() => { examStartTimeRef.current = examStartTime }, [examStartTime])
 
   function attemptSnapshot() {
     const total = examRef.current?.questions?.length || 0
@@ -491,10 +554,166 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [started, submitted, alreadySubmitted])
 
+  /*
+   * ═══ Retomada: a prova que sobrevive à queda ═══
+   *
+   * Nada da prova era gravado até o clique em "Entregar". O `localStorage`
+   * guardava um único dado — o instante de início — e as respostas viviam só no
+   * estado do React: fechar a aba sem querer, o navegador do celular recolher a
+   * página ou a energia cair apagavam duas horas de prova.
+   *
+   * O rascunho vai para o servidor a cada `INTERVALO_DE_GRAVACAO_MS` e quando a
+   * aba é escondida. Ao voltar, a pessoa recebe a oferta de continuar — uma
+   * vez, contada no servidor. Ver lib/provas/retomada.ts.
+   */
+  const ultimaGravacaoRef = useRef(0)
+  const gravandoRef = useRef(false)
+  const inicioNoServidorRef = useRef<Date | null>(null)
+
+  const montarRascunho = useCallback(() => ({
+    answers: answersRef.current,
+    currentQuestionIndex: currentQuestionRef.current,
+    questionOrder: ordemDasQuestoesRef.current,
+    userName: userNameRef.current,
+    themeTranscription: themeTranscriptionRef.current,
+    signature: assinaturaRef.current || undefined,
+    startedAt: (examStartTimeRef.current || new Date()).toISOString(),
+  }), [])
+
+  const gravarProgresso = useCallback(
+    async (forcar = false) => {
+      if (!id || gravandoRef.current) return
+      if (!forcar && Date.now() - ultimaGravacaoRef.current < INTERVALO_DE_GRAVACAO_MS) return
+
+      gravandoRef.current = true
+      ultimaGravacaoRef.current = Date.now()
+      setSalvandoProgresso('salvando')
+      try {
+        const res = await fetch(`/api/exams/${id}/progress`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(montarRascunho()),
+        })
+        setSalvandoProgresso(res.ok ? 'salvo' : 'erro')
+      } catch {
+        // Queda de rede é exatamente o cenário desta funcionalidade: o
+        // indicador avisa, e a próxima gravação tenta de novo sozinha.
+        setSalvandoProgresso('erro')
+      } finally {
+        gravandoRef.current = false
+      }
+    },
+    [id, montarRascunho],
+  )
+
+  // Prova em andamento: grava periodicamente e sempre que a aba some.
+  useEffect(() => {
+    if (!started || submitted || alreadySubmitted) return
+    if (exam?.isPracticeExam || (exam as any)?.isPersonalExam) return
+
+    gravarProgresso(true)
+    const relogio = setInterval(() => gravarProgresso(), INTERVALO_DE_GRAVACAO_MS)
+
+    const aoEsconder = () => {
+      if (document.visibilityState === 'hidden') gravarProgresso(true)
+    }
+    document.addEventListener('visibilitychange', aoEsconder)
+    window.addEventListener('pagehide', aoEsconder)
+
+    return () => {
+      clearInterval(relogio)
+      document.removeEventListener('visibilitychange', aoEsconder)
+      window.removeEventListener('pagehide', aoEsconder)
+    }
+  }, [started, submitted, alreadySubmitted, exam, gravarProgresso])
+
+  /** Busca o rascunho ao abrir a prova, para oferecer "continuar". */
+  const carregarRetomada = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/exams/${id}/progress`)
+      if (!res.ok) return
+      const dados = await res.json()
+      setRetomada(dados.veredito || null)
+      setProgressoSalvo(dados.progresso || null)
+    } catch {
+      // Sem rascunho a prova começa do zero — que é o comportamento antigo.
+    }
+  }, [id])
+
+  /** Consome a retomada e devolve a prova de onde parou. */
+  async function continuarProva() {
+    setRetomando(true)
+    try {
+      const res = await fetch(`/api/exams/${id}/progress`, { method: 'POST' })
+      const dados = await res.json()
+      if (!res.ok) {
+        setRetomada(dados.veredito || retomada)
+        showToastMessage(dados.error || 'Não foi possível retomar a prova.', 'info')
+        return
+      }
+
+      const salvo = dados.progresso
+      setAnswers((atuais) => mesclarRespostas(atuais, salvo.answers))
+      setCurrentQuestionIndex(Math.min(salvo.currentQuestionIndex || 0, (exam?.questions.length || 1) - 1))
+      if (salvo.userName) setUserName(salvo.userName)
+      if (salvo.themeTranscription) setThemeTranscription(salvo.themeTranscription)
+      if (salvo.signature) setSignature(salvo.signature)
+
+      // O cronômetro continua de onde estava: o início é o da PRIMEIRA vez,
+      // guardado no servidor. Retomar devolve as respostas, não o tempo.
+      const inicio = salvo.startedAt ? new Date(salvo.startedAt) : new Date()
+      inicioNoServidorRef.current = inicio
+      setExamStartTime(inicio)
+      localStorage.setItem(`exam-${id}-start-time`, inicio.toISOString())
+
+      setRetomada(null)
+      setProgressoSalvo(null)
+      setInWaitingRoom(false)
+      setStarted(true)
+      showToastMessage('Prova retomada de onde você parou.', 'info')
+    } catch (error: any) {
+      showToastMessage('Erro ao retomar a prova: ' + error.message)
+    } finally {
+      setRetomando(false)
+    }
+  }
+
+  /** Entrega o que ficou gravado, para quem já gastou a retomada. */
+  async function entregarRascunho() {
+    if (!progressoSalvo) return
+    setSubmitting(true)
+    try {
+      const res = await fetch(`/api/exams/${id}/submit`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userName: progressoSalvo.userName || loggedUserName || 'Aluno',
+          themeTranscription: progressoSalvo.themeTranscription,
+          answers: progressoSalvo.answers || [],
+          signature: progressoSalvo.signature,
+          questionOrder: progressoSalvo.questionOrder,
+          fromSavedProgress: true,
+        }),
+      })
+      const dados = await res.json()
+      if (!res.ok) throw new Error(dados.error)
+
+      setAlreadySubmitted(true)
+      if (dados.submissionId) setExistingSubmissionId(dados.submissionId)
+      setRetomada(null)
+      showToastMessage('Suas respostas salvas foram entregues.', 'info')
+    } catch (error: any) {
+      showToastMessage(error.message)
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
   useEffect(() => {
     checkExistingSubmission()
     loadExam()
     loadUserInfo()
+    carregarRetomada()
     // Pre-warm PDF assets in background
     import('@/lib/pdf-generator').then(m => m.prewarmPDFAssets()).catch(() => {})
   }, [id])
@@ -505,39 +724,29 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   // interessa. Sobe para o topo assim que a submissão é confirmada.
   useScrollToTopWhen(submitted)
 
+  /*
+   * O relógio da tela.
+   *
+   * Antes esta checagem olhava só `startTime`/`endTime` — os portões nunca
+   * chegaram até aqui. E quando a prova terminava com o aluno na tela inicial,
+   * ela o empurrava para `/exam/[id]/results`, uma rota que devolvia 403 para
+   * quem não é admin e o jogava para a home. Agora a fase vem de
+   * `resolverJanelaDaProva` (a mesma função que o servidor usa para recusar a
+   * entrega) e a prova encerrada mostra uma tela em vez de um redirecionamento.
+   */
   useEffect(() => {
     if (!exam) return
 
-    // Se for prova prática, sempre pode iniciar
-    if (exam.isPracticeExam) {
-      setCanStart(true)
-      return
+    const recalcular = () => {
+      const atual = resolverJanelaDaProva(exam)
+      setJanela(atual)
+      setCanStart(atual.podeIniciar)
     }
 
-    const checkExamStatus = () => {
-      const now = new Date()
-      const startTime = new Date(exam.startTime)
-      const endTime = new Date(exam.endTime)
-
-      // Verifica se a prova já terminou
-      if (now > endTime) {
-        router.push(`/exam/${id}/results`)
-        return
-      }
-
-      // Verifica se a prova já começou
-      if (now >= startTime) {
-        setCanStart(true)
-      } else {
-        setCanStart(false)
-      }
-    }
-
-    checkExamStatus()
-    const interval = setInterval(checkExamStatus, 1000)
-
+    recalcular()
+    const interval = setInterval(recalcular, 1000)
     return () => clearInterval(interval)
-  }, [exam, id, router])
+  }, [exam])
 
   async function checkExistingSubmission() {
     try {
@@ -577,27 +786,23 @@ export default function ExamPage({ params }: { params: { id: string } }) {
 
       if (!res.ok) throw new Error(data.error)
 
-      let examData = data.exam
-
-      // Se shuffleQuestions estiver ativado, embaralhar a ordem das questões
-      if (examData.shuffleQuestions) {
-        const shuffled = [...examData.questions]
-
-        // Fisher-Yates shuffle
-        for (let i = shuffled.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
-        }
-
-        // Renumerar questões após embaralhar
-        shuffled.forEach((q: any, idx: number) => {
-          q.number = idx + 1
-        })
-
-        examData = { ...examData, questions: shuffled }
-      }
+      /*
+       * A prova já chega embaralhada — o sorteio agora é do servidor.
+       *
+       * Aqui havia um Fisher-Yates com `Math.random()`, sem semente. Ele rodava
+       * a cada montagem do componente: recarregar a página no meio da prova
+       * devolvia outra ordem, e a "questão 12" passava a ser outra questão. Com
+       * a retomada, isso deixaria de ser um incômodo e viraria perda de
+       * referência — o progresso volta por `questionId`, mas a pessoa não
+       * reconhece mais onde estava. Ver lib/provas/embaralhar.ts.
+       */
+      const examData = data.exam
 
       setExam(examData)
+      if (data.janela) setJanela(data.janela)
+      // A ordem que ESTE aluno recebeu segue junto na entrega, para o relatório
+      // numerar as questões como ele as viu.
+      setOrdemDasQuestoes((examData.questions || []).map((q: any) => q.id))
 
       // Inicializa respostas
       const initialAnswers: UserAnswer[] = examData.questions.map((q: any) => ({
@@ -1142,6 +1347,10 @@ ${respostaAluno}`
           answers,
           signature,
           startedAt: examStartTime?.toISOString(),
+          // A ordem em que ESTE aluno viu as questões: sem ela o relatório
+          // numera pela ordem do banco, e a "questão 7" da reclamação não é a
+          // mesma que o admin abre. Ver lib/provas/embaralhar.ts.
+          questionOrder: ordemDasQuestoes,
           forcedSubmit: true,
           forcedSubmitReason: reason,
         }),
@@ -1237,6 +1446,10 @@ ${respostaAluno}`
           answers,
           signature,
           startedAt: examStartTime?.toISOString(),
+          // A ordem em que ESTE aluno viu as questões: sem ela o relatório
+          // numera pela ordem do banco, e a "questão 7" da reclamação não é a
+          // mesma que o admin abre. Ver lib/provas/embaralhar.ts.
+          questionOrder: ordemDasQuestoes,
         }),
       })
 
@@ -1365,6 +1578,14 @@ ${respostaAluno}`
         }, 0) / discursiveWithScore.length)
       : null
 
+    /**
+     * O percentual que o anel desenha.
+     *
+     * `overallScore` é texto — pode ser "72%", "8 pontos" ou uma mensagem de
+     * "aguardando correção". O anel precisa de um número de 0 a 100, e quando
+     * não há como extrair um (correção pendente, nota TRI), ele fica vazio em
+     * vez de mostrar um preenchimento inventado.
+     */
     // Overall score
     let overallScore = submissionScore
     if (!overallScore && isPracticeOrPersonal) {
@@ -1374,6 +1595,18 @@ ${respostaAluno}`
         overallScore = `${mcPercentage}%`
       }
     }
+
+    const notaGeralEmPercentual: number | null = (() => {
+      if (isPracticeOrPersonal) {
+        if (discursiveAvg !== null && mcTotal > 0) return Math.round((mcPercentage + discursiveAvg) / 2)
+        if (mcTotal > 0) return mcPercentage
+        return discursiveAvg
+      }
+      const pontos = Number(String(submissionScore || '').replace(/[^\d.,]/g, '').replace(',', '.'))
+      const total = exam.totalPoints || 100
+      if (!Number.isFinite(pontos) || total <= 0) return null
+      return Math.max(0, Math.min(100, Math.round((pontos / total) * 100)))
+    })()
 
     return (
       <>
@@ -1386,30 +1619,47 @@ ${respostaAluno}`
               <div className="flex justify-center">
                 <div className="relative">
                   <div className="absolute inset-0 bg-green-500/20 rounded-full blur-2xl animate-pulse" />
-                  <div className="relative bg-gradient-to-br from-green-400 to-emerald-600 rounded-full p-5 shadow-2xl shadow-green-500/30">
+                  {/* O selo entra com um leve estouro: é o momento em que a
+                      pessoa descobre que a prova foi mesmo entregue. */}
+                  <div className="exam-selo-estoura relative bg-gradient-to-br from-green-400 to-emerald-600 rounded-full p-5 shadow-2xl shadow-green-500/30">
                     <CheckCircle2 className="h-12 w-12 text-white" />
                   </div>
                 </div>
               </div>
-              <div>
+              <div className="exam-resultado-entra" style={{ '--exam-ordem': 1 } as React.CSSProperties}>
                 <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-500 bg-clip-text text-transparent">
-                  Prova Concluída!
+                  Prova entregue
                 </h1>
                 <p className="text-muted-foreground mt-2 text-lg">{exam.title}</p>
               </div>
-              {examDuration && (
-                <div className="inline-flex items-center gap-2 text-sm text-muted-foreground bg-muted/50 backdrop-blur-sm px-4 py-2 rounded-full border border-border/50">
-                  <Clock className="h-4 w-4" />
-                  <span>Duração: {examDuration}</span>
-                </div>
-              )}
+              <div className="exam-resultado-entra flex flex-wrap items-center justify-center gap-2" style={{ '--exam-ordem': 2 } as React.CSSProperties}>
+                {examDuration && (
+                  <span className="inline-flex items-center gap-2 text-sm text-muted-foreground bg-muted/50 backdrop-blur-sm px-4 py-2 rounded-full border border-border/50">
+                    <Clock className="h-4 w-4" />
+                    Duração: {examDuration}
+                  </span>
+                )}
+                <span className="inline-flex items-center gap-2 text-sm text-muted-foreground bg-muted/50 backdrop-blur-sm px-4 py-2 rounded-full border border-border/50">
+                  <User className="h-4 w-4" />
+                  {userName}
+                </span>
+                {/* Numa prova avaliativa a nota não é o fim da história: a
+                    correção e o gabarito ainda dependem do término. Dizer isso
+                    aqui evita a pergunta "e agora?" logo depois da entrega. */}
+                {!isPracticeOrPersonal && janela && !janela.encerrada && (
+                  <span className="inline-flex items-center gap-2 text-sm text-amber-700 dark:text-amber-400 bg-amber-500/10 px-4 py-2 rounded-full border border-amber-500/25">
+                    <Clock className="h-4 w-4" />
+                    Gabarito em {new Date(exam.endTime).toLocaleString('pt-BR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                )}
+              </div>
             </div>
 
             {/* ═══ SCORE CARDS ═══ */}
             {isPracticeOrPersonal && (
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {mcTotal > 0 && (
-                  <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-background/60 backdrop-blur-md p-6 text-center shadow-lg">
+                  <div className="exam-resultado-entra relative overflow-hidden rounded-2xl border border-border/50 bg-background/60 backdrop-blur-md p-6 text-center shadow-lg" style={{ '--exam-ordem': 3 } as React.CSSProperties}>
                     <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-cyan-400" />
                     <div className="absolute -top-12 -right-12 w-32 h-32 bg-blue-500/5 rounded-full" />
                     <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">Objetivas</p>
@@ -1433,27 +1683,77 @@ ${respostaAluno}`
                     )}
                   </div>
                 )}
-                <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-background/60 backdrop-blur-md p-6 text-center shadow-lg">
+                {/*
+                  A nota geral em anel, e não só em número.
+
+                  Um "72%" isolado não diz se foi bom. O anel dá a proporção de
+                  imediato — quanto do total foi preenchido — e a cor faz o
+                  julgamento sem uma frase julgando. O ângulo vai por variável
+                  CSS (`--exam-nota`) e a animação mora no globals.css.
+                */}
+                <div className="exam-resultado-entra relative overflow-hidden rounded-2xl border border-border/50 bg-background/60 backdrop-blur-md p-6 text-center shadow-lg" style={{ '--exam-ordem': 5 } as React.CSSProperties}>
                   <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#468152] to-[#E2A43E]" />
-                  <div className="absolute -top-12 -right-12 w-32 h-32 bg-[#468152]/5 rounded-full" />
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">Nota Geral</p>
-                  <div className="text-5xl font-black bg-gradient-to-r from-[#468152] to-[#E2A43E] bg-clip-text text-transparent">
-                    {overallScore}
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-4">Nota Geral</p>
+                  <div
+                    className="exam-anel-de-nota mx-auto flex h-28 w-28 items-center justify-center rounded-full"
+                    style={{
+                      '--exam-nota': notaGeralEmPercentual ?? 0,
+                      '--exam-anel-cor':
+                        (notaGeralEmPercentual ?? 0) >= 70 ? '#10b981'
+                          : (notaGeralEmPercentual ?? 0) >= 40 ? '#f59e0b'
+                          : '#ef4444',
+                    } as React.CSSProperties}
+                    role="img"
+                    aria-label={`Nota geral: ${overallScore}`}
+                  >
+                    <div className="flex h-[6.25rem] w-[6.25rem] flex-col items-center justify-center rounded-full bg-background">
+                      <span className="exam-numero-sobe text-2xl font-black leading-none bg-gradient-to-r from-[#468152] to-[#E2A43E] bg-clip-text text-transparent">
+                        {overallScore}
+                      </span>
+                    </div>
                   </div>
-                  <div className="text-xs text-muted-foreground mt-2">{exam.questions.length} questões</div>
+                  <div className="text-xs text-muted-foreground mt-3">{exam.questions.length} questões</div>
                 </div>
               </div>
             )}
 
             {/* ═══ NON-PRACTICE CONGRATS ═══ */}
             {!isPracticeOrPersonal && (
-              <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-background/60 backdrop-blur-md p-8 text-center shadow-lg">
+              <div className="exam-resultado-entra relative overflow-hidden rounded-2xl border border-border/50 bg-background/60 backdrop-blur-md p-8 text-center shadow-lg" style={{ '--exam-ordem': 3 } as React.CSSProperties}>
                 <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#468152] to-[#E2A43E]" />
-                <h3 className="text-xl font-bold mb-2">Parabéns, {userName}!</h3>
-                <p className="text-muted-foreground">Sua prova foi submetida com sucesso.</p>
-                {submissionScore && (
-                  <p className="text-3xl font-black mt-3 bg-gradient-to-r from-[#468152] to-[#E2A43E] bg-clip-text text-transparent">{submissionScore}</p>
+
+                {notaGeralEmPercentual !== null ? (
+                  <div
+                    className="exam-anel-de-nota mx-auto mb-4 flex h-32 w-32 items-center justify-center rounded-full"
+                    style={{
+                      '--exam-nota': notaGeralEmPercentual,
+                      '--exam-anel-cor':
+                        notaGeralEmPercentual >= 70 ? '#10b981'
+                          : notaGeralEmPercentual >= 40 ? '#f59e0b'
+                          : '#ef4444',
+                    } as React.CSSProperties}
+                    role="img"
+                    aria-label={`Sua nota: ${submissionScore}`}
+                  >
+                    <div className="flex h-[7.25rem] w-[7.25rem] flex-col items-center justify-center rounded-full bg-background">
+                      <span className="exam-numero-sobe text-3xl font-black leading-none bg-gradient-to-r from-[#468152] to-[#E2A43E] bg-clip-text text-transparent">
+                        {submissionScore}
+                      </span>
+                      <span className="mt-1 text-[11px] text-muted-foreground">de {exam.totalPoints} pontos</span>
+                    </div>
+                  </div>
+                ) : (
+                  submissionScore && (
+                    <p className="exam-numero-sobe text-2xl font-black mt-1 mb-3 bg-gradient-to-r from-[#468152] to-[#E2A43E] bg-clip-text text-transparent">
+                      {submissionScore}
+                    </p>
+                  )
                 )}
+
+                <h3 className="text-xl font-bold mb-1">Tudo certo, {userName}.</h3>
+                <p className="text-sm text-muted-foreground">
+                  Sua prova foi registrada{examDuration ? ` em ${examDuration}` : ''}. Guarde o comprovante abaixo.
+                </p>
               </div>
             )}
 
@@ -1800,14 +2100,29 @@ ${respostaAluno}`
             )}
 
             {/* ═══ AÇÕES / DOWNLOADS ═══ */}
-            <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-background/60 backdrop-blur-md p-6 shadow-lg space-y-3">
+            <div className="exam-resultado-entra relative overflow-hidden rounded-2xl border border-border/50 bg-background/60 backdrop-blur-md p-6 shadow-lg space-y-3" style={{ '--exam-ordem': 4 } as React.CSSProperties}>
               <h3 className="font-bold text-sm text-muted-foreground uppercase tracking-wider mb-4">Downloads e Ações</h3>
 
+              {/*
+                Os dois botões abaixo não checavam nada: a mesma conta gratuita
+                que ouvia "assine para baixar" na tela inicial da prova baixava
+                relatório e gabarito aqui. Agora os dois passam pelo mesmo
+                veredito do resto da plataforma — e o do gabarito espera a prova
+                terminar, mesmo para quem paga.
+              */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <Button
-                  className="w-full rounded-xl h-12 bg-gradient-to-r from-[#468152] to-[#3a6d44] hover:from-[#3a6d44] hover:to-[#2f5a38] text-white font-semibold shadow-md"
+                  className="w-full rounded-xl h-12 bg-gradient-to-r from-[#468152] to-[#3a6d44] hover:from-[#3a6d44] hover:to-[#2f5a38] text-white font-semibold shadow-md disabled:bg-none"
                   disabled={!!pdfGenerating}
                   onClick={async () => {
+                    if (!downloads.relatorio.permitido) {
+                      if (downloads.relatorio.esperandoOFim) {
+                        showToastMessage(downloads.relatorio.motivo!, 'info')
+                      } else {
+                        setShowPdfCta(true)
+                      }
+                      return
+                    }
                     try {
                       setPdfGenerating('Relatório')
                       await downloadUserReportPDF({
@@ -1817,42 +2132,58 @@ ${respostaAluno}`
                         signature,
                         answers,
                       })
+                    } catch (error: any) {
+                      showToastMessage('Erro ao gerar PDF: ' + error.message)
                     } finally {
                       setPdfGenerating(null)
                     }
                   }}
                 >
                   <FileDown className="h-5 w-5 mr-2" />
-                  Relatório (sem gabarito)
+                  Minha prova respondida (PDF)
                 </Button>
 
-                {isPracticeOrPersonal && (
-                  <Button
-                    className="w-full rounded-xl h-12 bg-gradient-to-r from-[#E2A43E] to-[#d4912e] hover:from-[#d4912e] hover:to-[#c07f22] text-white font-semibold shadow-md"
-                    disabled={!!pdfGenerating}
-                    onClick={async () => {
-                      try {
-                        setPdfGenerating('Relatório + Gabarito')
-                        const { generateUserReportWithGabaritoPDF } = await import('@/lib/user-report-generator')
-                        await generateUserReportWithGabaritoPDF({
-                          exam,
-                          examId: id,
-                          userName,
-                          signature,
-                          answers,
-                        })
-                      } catch (error: any) {
-                        showToastMessage('Erro ao gerar PDF: ' + error.message)
-                      } finally {
-                        setPdfGenerating(null)
+                <Button
+                  className="w-full rounded-xl h-12 bg-gradient-to-r from-[#E2A43E] to-[#d4912e] hover:from-[#d4912e] hover:to-[#c07f22] text-white font-semibold shadow-md disabled:bg-none"
+                  disabled={!!pdfGenerating || downloads.gabarito.esperandoOFim}
+                  title={downloads.gabarito.motivo || undefined}
+                  onClick={async () => {
+                    if (!downloads.gabarito.permitido) {
+                      if (downloads.gabarito.esperandoOFim) {
+                        showToastMessage(downloads.gabarito.motivo!, 'info')
+                      } else {
+                        setShowPdfCta(true)
                       }
-                    }}
-                  >
-                    <FileDown className="h-5 w-5 mr-2" />
-                    Relatório + Gabarito
-                  </Button>
-                )}
+                      return
+                    }
+                    try {
+                      setPdfGenerating('Relatório + Gabarito')
+                      const { generateUserReportWithGabaritoPDF } = await import('@/lib/user-report-generator')
+                      await generateUserReportWithGabaritoPDF({
+                        exam,
+                        examId: id,
+                        userName,
+                        signature,
+                        answers,
+                      })
+                    } catch (error: any) {
+                      showToastMessage('Erro ao gerar PDF: ' + error.message)
+                    } finally {
+                      setPdfGenerating(null)
+                    }
+                  }}
+                >
+                  <FileDown className="h-5 w-5 mr-2" />
+                  {downloads.gabarito.esperandoOFim ? 'Gabarito após o término' : 'Respostas comentadas (PDF)'}
+                </Button>
               </div>
+
+              {downloads.gabarito.esperandoOFim && (
+                <p className="flex items-start gap-1.5 text-[11px] leading-snug text-muted-foreground">
+                  <Clock className="mt-0.5 h-3 w-3 flex-shrink-0" />
+                  {downloads.gabarito.motivo}
+                </p>
+              )}
 
               {annotations.length > 0 && (
                 <Button
@@ -2229,6 +2560,23 @@ ${respostaAluno}`
                   )}
                 </div>
 
+                {/* Retomada — a primeira coisa que quem caiu precisa ler. */}
+                {retomada?.temProgresso && (
+                  <ExamResumeCard
+                    veredito={retomada}
+                    respondidas={progressoSalvo?.respondidas ?? contarRespondidas(progressoSalvo?.answers)}
+                    totalDeQuestoes={exam.questions.length}
+                    salvoEm={progressoSalvo?.atualizadoEm}
+                    retomando={retomando}
+                    entregando={submitting}
+                    onContinuar={continuarProva}
+                    onEntregar={entregarRascunho}
+                  />
+                )}
+
+                {/* Portões — os quatro marcos que só existiam no banco. */}
+                {janela && janela.fase !== 'livre' && <ExamGateStatus janela={janela} />}
+
                 {/* Stats */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {[
@@ -2292,8 +2640,14 @@ ${respostaAluno}`
                   )}
                 </div>
 
+                {/*
+                  O botão agora responde à fase, não só a "começou ou não".
+                  Antes ele oferecia "Entrar na Sala" com os portões fechados —
+                  a pessoa entrava numa sala de espera de uma prova que nunca ia
+                  abrir para ela, e só descobria no botão seguinte.
+                */}
                 <Button
-                  className="w-full rounded-xl h-12 font-semibold bg-gradient-to-r from-[#468152] to-[#3a6d44] hover:from-[#3a6d44] hover:to-[#2f5a38] text-white shadow-md shadow-emerald-500/20"
+                  className="w-full rounded-xl h-12 font-semibold bg-gradient-to-r from-[#468152] to-[#3a6d44] hover:from-[#3a6d44] hover:to-[#2f5a38] text-white shadow-md shadow-emerald-500/20 disabled:bg-none"
                   size="lg"
                   onClick={() => {
                     if (canStart) {
@@ -2302,9 +2656,21 @@ ${respostaAluno}`
                       setInWaitingRoom(true)
                     }
                   }}
-                  disabled={!userName.trim() || (exam.themePhrase ? !themeTranscription.trim() : false)}
+                  disabled={
+                    !userName.trim() ||
+                    (exam.themePhrase ? !themeTranscription.trim() : false) ||
+                    (!!janela && !janela.podeEntrar)
+                  }
                 >
-                  {canStart ? 'Iniciar Prova' : 'Entrar na Sala'}
+                  {janela?.fase === 'encerrada'
+                    ? 'Prova encerrada'
+                    : janela?.fase === 'portao-fechado'
+                      ? 'Portões fechados'
+                      : janela?.fase === 'antes-do-portao'
+                        ? 'Aguardando abertura dos portões'
+                        : canStart
+                          ? 'Iniciar Prova'
+                          : 'Entrar na Sala'}
                 </Button>
 
                 <PdfCtaBanner accountType={accountType} isAdmin={userRole === 'admin'} compact />
@@ -2357,22 +2723,27 @@ ${respostaAluno}`
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
-                  {[
-                    { label: 'Início', value: formatDate(exam.startTime) },
-                    { label: 'Término', value: formatDate(exam.endTime) },
-                  ].map((s, i) => (
-                    <div key={i} className="rounded-xl border border-border/40 bg-muted/30 p-3">
-                      <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">{s.label}</p>
-                      <p className="text-sm font-semibold mt-0.5">{s.value}</p>
-                    </div>
-                  ))}
-                </div>
+                {janela && janela.fase !== 'livre' ? (
+                  <ExamGateStatus janela={janela} />
+                ) : (
+                  <div className="grid grid-cols-2 gap-3">
+                    {[
+                      { label: 'Início', value: formatDate(exam.startTime) },
+                      { label: 'Término', value: formatDate(exam.endTime) },
+                    ].map((s, i) => (
+                      <div key={i} className="rounded-xl border border-border/40 bg-muted/30 p-3">
+                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">{s.label}</p>
+                        <p className="text-sm font-semibold mt-0.5">{s.value}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
 
                 {/* Campo de Assinatura - Opcional se requireSignature for false */}
                 {exam.requireSignature !== false && (
                   <SignaturePad
                     onSignatureChange={setSignature}
+                    valorInicial={signature}
                     label={`Assinatura Digital ${exam.requireSignature ? '*' : '(opcional)'}`}
                   />
                 )}
@@ -2476,9 +2847,13 @@ ${respostaAluno}`
   const examDeadline: Date | null =
     practiceTimeLimitMs && examStartTime
       ? new Date(examStartTime.getTime() + practiceTimeLimitMs)
-      : isSelfPacedExam || !exam.endTime
+      : isSelfPacedExam
       ? null
-      : new Date(exam.endTime)
+      // `prazoDeEntrega` é o menor entre o fim da prova e a duração individual
+      // (`duration`, em minutos). Uma prova de 90 minutos dentro de uma janela
+      // de 3 horas mostrava a contagem da janela — o aluno via 3 horas
+      // sobrando e o tempo dele acabava antes.
+      : prazoDeEntrega(exam, examStartTime)
   const handleExamTimeUp = () => {
     if (exam.isPracticeExam) {
       showToastMessage('Tempo esgotado! Finalizando prova...', 'info')
@@ -2566,11 +2941,9 @@ ${respostaAluno}`
             <CardContent className="space-y-4">
               <div className="p-4 bg-muted rounded-lg">
                 <p className="text-sm text-center text-muted-foreground">
-                  {exam && (new Date() > new Date(exam.endTime) || exam.isPracticeExam)
-                    ? exam.isPracticeExam
-                      ? 'Você pode visualizar seu relatório ou baixar o gabarito da prova (prova prática - gabarito sempre disponível)'
-                      : 'Você pode visualizar seu relatório ou baixar o gabarito da prova'
-                    : 'Você pode visualizar seu relatório. O gabarito será liberado após o término da prova.'}
+                  {downloads.gabarito.esperandoOFim
+                    ? 'Você pode visualizar seu relatório. O gabarito é liberado quando a prova termina.'
+                    : 'Você pode visualizar seu relatório ou baixar o gabarito da prova.'}
                 </p>
               </div>
               <div className="flex flex-col gap-2">
@@ -2582,9 +2955,13 @@ ${respostaAluno}`
                   <FileDown className="h-4 w-4 mr-2" />
                   Ver Meu Relatório
                 </Button>
-                {exam && (new Date() > new Date(exam.endTime) || exam.isPracticeExam) ? (
+                {!downloads.gabarito.esperandoOFim ? (
                   <Button
                     onClick={async () => {
+                      if (!downloads.gabarito.permitido) {
+                        setShowPdfCta(true)
+                        return
+                      }
                       try {
                         setPdfGenerating('Gabarito')
                         const res = await fetch(`/api/exams/${id}`)
@@ -2610,7 +2987,7 @@ ${respostaAluno}`
                   <div className="w-full p-3 bg-orange-50 dark:bg-orange-950 rounded-lg border border-orange-200 dark:border-orange-800">
                     <p className="text-sm text-center text-orange-800 dark:text-orange-200">
                       <Clock className="h-4 w-4 inline mr-2" />
-                      Prova ainda em andamento. O gabarito será liberado após o término.
+                      {downloads.gabarito.motivo}
                     </p>
                   </div>
                 )}
@@ -2700,6 +3077,46 @@ ${respostaAluno}`
               </div>
             </div>
             <div className="flex items-center gap-1 sm:gap-2 flex-wrap justify-end">
+              {/*
+                O selo de gravação automática.
+
+                Ele existe para uma pessoa só: a que está com a internet
+                oscilando e não sabe se perder a conexão custa a prova. Sem esse
+                sinal, a resposta honesta era "não custa, mas confie" — e no
+                meio de uma prova ninguém confia. Fica discreto enquanto tudo
+                vai bem e fica vermelho quando a gravação falha, que é o único
+                momento em que ele precisa ser lido.
+              */}
+              {salvandoProgresso && (
+                <div
+                  className={`hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium transition-colors ${
+                    salvandoProgresso === 'erro'
+                      ? 'bg-red-100 dark:bg-red-950/50 text-red-700 dark:text-red-300'
+                      : 'bg-muted text-muted-foreground'
+                  }`}
+                  title={
+                    salvandoProgresso === 'erro'
+                      ? 'A última gravação falhou. Suas respostas continuam nesta tela e a próxima tentativa é automática.'
+                      : 'Suas respostas são gravadas automaticamente. Se você cair, dá para continuar.'
+                  }
+                >
+                  <span
+                    className={`h-1.5 w-1.5 rounded-full ${
+                      salvandoProgresso === 'salvando'
+                        ? 'bg-amber-500 animate-pulse'
+                        : salvandoProgresso === 'erro'
+                          ? 'bg-red-500'
+                          : 'bg-emerald-500'
+                    }`}
+                  />
+                  {salvandoProgresso === 'salvando'
+                    ? 'Salvando…'
+                    : salvandoProgresso === 'erro'
+                      ? 'Falha ao salvar'
+                      : 'Salvo'}
+                </div>
+              )}
+
               {/* 🔥 Streak Fire Widget */}
               {exam?.feedbackMode === 'immediate' && streak >= 3 && (
                 <div

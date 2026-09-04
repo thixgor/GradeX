@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 interface CountdownProps {
   targetDate: Date
@@ -15,16 +15,38 @@ export function Countdown({ targetDate, onComplete }: CountdownProps) {
     seconds: number
   } | null>(null)
 
+  /*
+   * Duas armadilhas do contrato antigo, as duas visíveis na sala de espera:
+   *
+   * 1. `onComplete` era chamado a CADA TICK depois que o alvo passava. Quem
+   *    chegava com a prova já liberada via o aviso "você já pode iniciar"
+   *    reaparecer uma vez por segundo, indefinidamente.
+   * 2. `onComplete` entrava no array de dependências. Como a tela o passa como
+   *    arrow inline, ele é uma função nova a cada render — o efeito era
+   *    desmontado e remontado sem parar, derrubando o intervalo junto.
+   *
+   * O ref carrega o callback (sempre o mais recente, sem virar dependência) e o
+   * `disparado` garante que ele acontece uma vez só.
+   */
+  const onCompleteRef = useRef(onComplete)
+  onCompleteRef.current = onComplete
+  const disparadoRef = useRef(false)
+  const alvoEmMs = new Date(targetDate).getTime()
+
+  useEffect(() => {
+    disparadoRef.current = false
+  }, [alvoEmMs])
+
   useEffect(() => {
     const calculateTimeLeft = () => {
       const now = new Date().getTime()
-      const target = new Date(targetDate).getTime()
-      const difference = target - now
+      const difference = alvoEmMs - now
 
       if (difference <= 0) {
         setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 })
-        if (onComplete) {
-          onComplete()
+        if (!disparadoRef.current) {
+          disparadoRef.current = true
+          onCompleteRef.current?.()
         }
         return
       }
@@ -41,7 +63,7 @@ export function Countdown({ targetDate, onComplete }: CountdownProps) {
     const timer = setInterval(calculateTimeLeft, 1000)
 
     return () => clearInterval(timer)
-  }, [targetDate, onComplete])
+  }, [alvoEmMs])
 
   if (!timeLeft) return null
 
