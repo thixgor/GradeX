@@ -159,6 +159,46 @@ export function resolverJanelaDaProva(
   }
 }
 
+/**
+ * A conferência que o formulário do admin nunca fez.
+ *
+ * Havia combinações de portões que o painel aceitava em silêncio e que
+ * produzem uma prova em que NINGUÉM entra — e o admin só descobria pelo aluno
+ * que não conseguiu abrir a página. As duas que importam:
+ *
+ *  - portão que fecha antes de abrir: a janela de entrada é vazia;
+ *  - portão que fecha antes de a prova começar: dá para entrar na sala de
+ *    espera, mas `podeIniciar` exige o portão ainda aberto — às 14h, quando a
+ *    prova começa, o portão já fechou e o botão nunca destrava.
+ *
+ * Devolve a frase pronta para a tela, ou `null` quando está tudo de pé.
+ */
+export function validarJanelaDoFormulario(campos: {
+  gatesOpen?: string | Date | null
+  gatesClose?: string | Date | null
+  startTime?: string | Date | null
+  endTime?: string | Date | null
+}): string | null {
+  const abre = paraData(campos.gatesOpen)
+  const fecha = paraData(campos.gatesClose)
+  const comeca = paraData(campos.startTime)
+  const termina = paraData(campos.endTime)
+
+  if (abre && fecha && abre.getTime() >= fecha.getTime()) {
+    return 'Os portões fecham antes (ou no mesmo instante) de abrirem — ninguém conseguiria entrar na prova.'
+  }
+
+  if (fecha && comeca && fecha.getTime() < comeca.getTime()) {
+    return 'Os portões fecham antes de a prova começar — quem esperasse na sala não conseguiria iniciar. Feche os portões depois do início.'
+  }
+
+  if (abre && termina && abre.getTime() > termina.getTime()) {
+    return 'Os portões abrem depois de a prova terminar — a prova nunca ficaria acessível.'
+  }
+
+  return null
+}
+
 export function motivoDaFase(fase: FaseDaProva): string | null {
   switch (fase) {
     case 'antes-do-portao':

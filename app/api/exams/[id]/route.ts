@@ -7,7 +7,8 @@ import { prepararProvaParaEntrega, podeVerGabarito } from '@/lib/provas/sanitiza
 import { montarProvaParaAluno, sementeDaProva } from '@/lib/provas/embaralhar'
 import { pessoaEstaNoPublico } from '@/lib/provas/publico-da-prova'
 import { lerPeriodoDoAluno } from '@/lib/provas/periodo-do-aluno'
-import { resolverJanelaDaProva } from '@/lib/provas/janela-da-prova'
+import { resolverJanelaDaProva, validarJanelaDoFormulario } from '@/lib/provas/janela-da-prova'
+import { interpretarInstante } from '@/lib/provas/horario-local'
 import { normalizarPublico } from '@/lib/provas/publico-da-prova'
 import { normalizarLiberacoes } from '@/lib/provas/downloads-da-prova'
 
@@ -267,16 +268,43 @@ export async function PUT(
      * parcial que não os reenviasse (uma mudança de ordem, um ajuste de título
      * pela tela de edição de outro campo). Quem quiser TIRAR o portão manda
      * `null` explicitamente; quem não mandar nada fica com o que já estava.
+     *
+     * A conversão é `interpretarInstante`, não `new Date`: o painel manda ISO
+     * com fuso, mas um texto no formato do `<input datetime-local>`
+     * ("2026-05-10T14:00") seria lido no fuso de quem executa — UTC — e o
+     * portão das 14h de Brasília entrava no banco como 11h. Ver
+     * lib/provas/horario-local.ts.
      */
     const portoes: Record<string, any> = {}
-    if ('gatesOpen' in body) portoes.gatesOpen = body.gatesOpen ? new Date(body.gatesOpen) : null
-    if ('gatesClose' in body) portoes.gatesClose = body.gatesClose ? new Date(body.gatesClose) : null
+    if ('gatesOpen' in body) portoes.gatesOpen = interpretarInstante(body.gatesOpen)
+    if ('gatesClose' in body) portoes.gatesClose = interpretarInstante(body.gatesClose)
+
+    const comecaEm = interpretarInstante(body.startTime)
+    const terminaEm = interpretarInstante(body.endTime)
+
+    /*
+     * A janela é validada como ela FICARÁ, não só com o que veio no corpo: um
+     * PUT parcial que mexe só no fechamento precisa ser conferido contra a
+     * abertura que já está gravada, senão a conferência passa por cima do
+     * defeito que ela existe para pegar.
+     */
+    if (!isPracticeExam) {
+      const erroDaJanela = validarJanelaDoFormulario({
+        gatesOpen: 'gatesOpen' in portoes ? portoes.gatesOpen : exam.gatesOpen,
+        gatesClose: 'gatesClose' in portoes ? portoes.gatesClose : exam.gatesClose,
+        startTime: comecaEm ?? exam.startTime,
+        endTime: terminaEm ?? exam.endTime,
+      })
+      if (erroDaJanela) {
+        return NextResponse.json({ error: erroDaJanela }, { status: 400 })
+      }
+    }
 
     const updateData: Record<string, any> = {
       ...camposEnviados,
       ...portoes,
-      startTime: body.startTime ? new Date(body.startTime) : (isPracticeExam ? defaultFutureDate : exam.startTime),
-      endTime: body.endTime ? new Date(body.endTime) : (isPracticeExam ? defaultFutureDate : exam.endTime),
+      startTime: comecaEm ?? (isPracticeExam ? defaultFutureDate : exam.startTime),
+      endTime: terminaEm ?? (isPracticeExam ? defaultFutureDate : exam.endTime),
       // Configurações de proctoring
       proctoring: body.proctoringEnabled ? {
         enabled: body.proctoringEnabled,

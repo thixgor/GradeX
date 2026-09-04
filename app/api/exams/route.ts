@@ -15,6 +15,8 @@ import { podeVerGabarito, prepararProvaParaEntrega } from '@/lib/provas/sanitiza
 import { normalizarPublico, ramosDePublicoParaMongo } from '@/lib/provas/publico-da-prova'
 import { lerPeriodoDoAluno } from '@/lib/provas/periodo-do-aluno'
 import { normalizarLiberacoes } from '@/lib/provas/downloads-da-prova'
+import { interpretarInstante } from '@/lib/provas/horario-local'
+import { validarJanelaDoFormulario } from '@/lib/provas/janela-da-prova'
 
 export const dynamic = 'force-dynamic'
 
@@ -31,22 +33,48 @@ export async function GET(request: NextRequest) {
 
     let query: any = {}
 
-    // Administradores veem:
-    // - Todas as provas públicas (isPersonalExam = false ou undefined)
-    // - Suas próprias provas pessoais (isPersonalExam = true E createdBy = userId)
-    // Usuários comuns veem:
-    // - Provas não ocultas públicas (isPersonalExam = false ou undefined)
-    // - Suas próprias provas pessoais (isPersonalExam = true E createdBy = userId)
+    /*
+     * Quem vê o quê.
+     *
+     * Administradores veem:
+     * - Todas as provas públicas, OCULTAS INCLUSIVE
+     * - Suas próprias provas pessoais
+     * Usuários comuns veem:
+     * - Provas públicas não ocultas
+     * - Suas próprias provas pessoais
+     *
+     * ## O que "oculta" deixou de significar
+     *
+     * O comentário acima sempre disse "administradores veem todas", mas o
+     * filtro dizia `isHidden: false` para todo mundo. Ocultar uma prova a fazia
+     * sumir também de `/admin/exams` — a única tela onde existe o botão "Tornar
+     * Visível". O admin escondia a prova e perdia o caminho de volta: para
+     * reexibi-la era preciso mexer no banco. O selo "Oculto" e o botão de
+     * reexibir estavam desenhados naquela tela para uma prova que a rota nunca
+     * entregava.
+     *
+     * `isHidden` é uma decisão sobre o CATÁLOGO DO ALUNO, não sobre o painel de
+     * quem administra a prova. Agora ela é aplicada só a quem não é admin.
+     *
+     * O `$ne: true` no lugar de `=== false` é a mesma ideia aplicada aos
+     * documentos antigos: prova criada antes do campo existir não tem
+     * `isHidden`, e `isHidden: false` a excluía da lista de todo mundo — some
+     * do catálogo uma prova que ninguém escondeu.
+     */
+    const ehAdmin = session.role === 'admin'
+
+    const ramoPublico: Record<string, any> = {
+      $or: [
+        { isPersonalExam: false },
+        { isPersonalExam: { $exists: false } }
+      ]
+    }
+    if (!ehAdmin) ramoPublico.isHidden = { $ne: true }
+
     query = {
       isDeleted: { $ne: true }, // Extra safety filter
       $or: [
-        {
-          isHidden: false,
-          $or: [
-            { isPersonalExam: false },
-            { isPersonalExam: { $exists: false } }
-          ]
-        },
+        ramoPublico,
         {
           isPersonalExam: true,
           createdBy: session.userId
@@ -65,7 +93,7 @@ export async function GET(request: NextRequest) {
      * O admin não é filtrado: o painel dele lista tudo. O criador da prova
      * também passa, pelo ramo `createdBy` do `$or` de cima.
      */
-    if (session.role !== 'admin') {
+    if (!ehAdmin) {
       const periodo = await lerPeriodoDoAluno(db, session.userId)
 
       query = {
@@ -371,6 +399,34 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    /*
+     * As quatro datas viram instantes num lugar só.
+     *
+     * `new Date('2026-05-10T14:00')` — o formato que o `<input datetime-local>`
+     * produz — é lido no fuso de QUEM EXECUTA, e quem executa aqui é uma função
+     * rodando em UTC. As 14h de Brasília viravam 11h, e os portões da prova
+     * abriam e fechavam três horas antes de o primeiro aluno chegar. O painel
+     * agora manda ISO com fuso; `interpretarInstante` é a rede para o que
+     * chegar sem ele. Ver lib/provas/horario-local.ts.
+     */
+    const abrePortaoEm = interpretarInstante(gatesOpen)
+    const fechaPortaoEm = interpretarInstante(gatesClose)
+    const comecaEm = interpretarInstante(startTime)
+    const terminaEm = interpretarInstante(endTime)
+
+    // Prova de treino não tem janela ('livre'), então não há o que conferir.
+    if (!isPracticeExam) {
+      const erroDaJanela = validarJanelaDoFormulario({
+        gatesOpen: abrePortaoEm,
+        gatesClose: fechaPortaoEm,
+        startTime: comecaEm,
+        endTime: terminaEm,
+      })
+      if (erroDaJanela) {
+        return NextResponse.json({ error: erroDaJanela }, { status: 400 })
+      }
+    }
+
     const db = await getDb()
     const examsCollection = db.collection<Exam>('exams')
     const usersCollection = db.collection('users')
@@ -528,10 +584,12 @@ export async function POST(request: NextRequest) {
       totalPoints: pointsTotal,
       questions: questions || [],
       pdfUrl,
-      gatesOpen: gatesOpen ? new Date(gatesOpen) : undefined,
-      gatesClose: gatesClose ? new Date(gatesClose) : undefined,
-      startTime: startTime ? new Date(startTime) : (isPracticeExam ? now : new Date()),
-      endTime: endTime ? new Date(endTime) : (isPracticeExam ? defaultFutureDate : new Date()),
+      // Prova de treino não tem portão: ela é 'livre' na janela, e um portão
+      // gravado nela só confundiria quem abrisse o formulário depois.
+      gatesOpen: isPracticeExam ? undefined : (abrePortaoEm ?? undefined),
+      gatesClose: isPracticeExam ? undefined : (fechaPortaoEm ?? undefined),
+      startTime: comecaEm ?? (isPracticeExam ? now : new Date()),
+      endTime: terminaEm ?? (isPracticeExam ? defaultFutureDate : new Date()),
       createdBy: session.userId,
       isHidden,
       discursiveCorrectionMethod,

@@ -191,13 +191,45 @@ export async function POST(
         ? inicioDoCliente
         : undefined
 
+    /*
+     * A assinatura exigida é exigida também aqui.
+     *
+     * `requireSignature` era uma decisão do painel que só existia no desenho da
+     * tela — e mal: o campo aparecia apenas na sala de espera, que só quem
+     * chega adiantado vê. Quem entrava com a prova em andamento nunca assinava,
+     * e uma prova "com assinatura obrigatória" acumulava entregas sem nenhuma.
+     * A tela foi consertada; esta checagem é o que faz a exigência valer
+     * também para quem entrega por fora dela.
+     *
+     * O rascunho é consultado antes de recusar: a assinatura é gravada nele na
+     * primeira vez em que existe, e quem recarregou a página no meio da prova
+     * pode chegar aqui sem ela em mãos. Recusar uma prova respondida por causa
+     * de uma imagem que o servidor já tem guardada seria trocar um defeito de
+     * exigência por um bem pior.
+     */
+    const assinaturaValida = (valor: unknown): valor is string =>
+      typeof valor === 'string' && valor.startsWith('data:image/')
+
+    const assinaturaDaEntrega = assinaturaValida(signature)
+      ? signature
+      : assinaturaValida(progresso?.signature)
+        ? (progresso!.signature as string)
+        : undefined
+
+    if (exam.requireSignature && !assinaturaDaEntrega) {
+      return NextResponse.json(
+        { error: 'Esta prova exige assinatura digital. Assine no campo de assinatura antes de entregar.' },
+        { status: 400 }
+      )
+    }
+
     const submission: ExamSubmission = {
       examId: id,
       userId: session.userId,
       userName,
       themeTranscription,
       answers,
-      signature,
+      signature: assinaturaDaEntrega ?? signature,
       score,
       corrections: needsCorrection ? [] : undefined,
       correctionStatus,

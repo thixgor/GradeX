@@ -335,6 +335,27 @@ export default function ExamPage({ params }: { params: { id: string } }) {
       showProctoringConsent,
     })
 
+    /*
+     * A assinatura, quando exigida, é condição para começar — em qualquer
+     * caminho.
+     *
+     * O campo de assinatura só existia na SALA DE ESPERA, e a sala de espera só
+     * aparece para quem chega antes de a prova começar. Quem abre a página com a
+     * prova já em andamento — o caso normal, e o único caso de quem chega
+     * atrasado — via na tela inicial um botão "Iniciar Prova" que chamava esta
+     * função direto: a prova começava sem que a assinatura fosse pedida uma vez
+     * sequer. "Exigir assinatura digital" estava marcado no painel e não exigia
+     * nada de ninguém.
+     *
+     * A tela inicial agora desenha o campo (ver mais abaixo), e a checagem mora
+     * aqui porque é por aqui que passam os dois caminhos — o da tela inicial e
+     * o da sala de espera — e também a volta do termo de monitoramento.
+     */
+    if (exam?.requireSignature && !signature) {
+      showToastMessage('Assine no campo de assinatura antes de iniciar a prova.', 'info')
+      return
+    }
+
     // Se a prova tem proctoring e ainda não foi aceito, mostrar termo
     if (hasProctoring && !proctoringAccepted) {
       console.log('[PROCTORING DEBUG] Mostrando termo de consentimento')
@@ -690,7 +711,10 @@ export default function ExamPage({ params }: { params: { id: string } }) {
           userName: progressoSalvo.userName || loggedUserName || 'Aluno',
           themeTranscription: progressoSalvo.themeTranscription,
           answers: progressoSalvo.answers || [],
-          signature: progressoSalvo.signature,
+          // `|| signature`: quem assinou agora na tela inicial (porque a prova
+          // passou a exigir assinatura depois que o rascunho começou) tem a
+          // assinatura no estado, não no rascunho.
+          signature: progressoSalvo.signature || signature,
           questionOrder: progressoSalvo.questionOrder,
           fromSavedProgress: true,
         }),
@@ -2646,6 +2670,31 @@ ${respostaAluno}`
                 </div>
 
                 {/*
+                  A assinatura, na tela em que a prova de fato começa.
+
+                  Ela morava só na sala de espera — e a sala de espera é para
+                  quem chega ANTES do início. Quem abre a página com a prova já
+                  em andamento pula direto daqui para dentro da prova, e nunca
+                  via o campo: a exigência de assinatura valia apenas para quem
+                  chegava adiantado. Aqui o campo aparece nos dois caminhos, e o
+                  botão abaixo só destrava com ela.
+
+                  Não aparece quando a entrada está fechada (portão fechado,
+                  prova encerrada): pedir assinatura para uma porta trancada é
+                  pedir trabalho por nada. A exceção é quem tem rascunho para
+                  retomar ou entregar — para esse, o portão fechado não é o fim
+                  do caminho, e sem o campo aqui ele não teria onde assinar.
+                */}
+                {exam.requireSignature !== false &&
+                  (!janela || janela.podeEntrar || (!!retomada?.temProgresso && !janela.encerrada)) && (
+                  <SignaturePad
+                    onSignatureChange={setSignature}
+                    valorInicial={signature}
+                    label={`Assinatura Digital ${exam.requireSignature ? '*' : '(opcional)'}`}
+                  />
+                )}
+
+                {/*
                   O botão agora responde à fase, não só a "começou ou não".
                   Antes ele oferecia "Entrar na Sala" com os portões fechados —
                   a pessoa entrava numa sala de espera de uma prova que nunca ia
@@ -2664,7 +2713,10 @@ ${respostaAluno}`
                   disabled={
                     !userName.trim() ||
                     (exam.themePhrase ? !themeTranscription.trim() : false) ||
-                    (!!janela && !janela.podeEntrar)
+                    (!!janela && !janela.podeEntrar) ||
+                    // Só trava o caminho que ENTRA na prova: para a sala de
+                    // espera a assinatura ainda pode ser feita lá dentro.
+                    (canStart && !!exam.requireSignature && !signature)
                   }
                 >
                   {janela?.fase === 'encerrada'
@@ -2674,7 +2726,7 @@ ${respostaAluno}`
                       : janela?.fase === 'antes-do-portao'
                         ? 'Aguardando abertura dos portões'
                         : canStart
-                          ? 'Iniciar Prova'
+                          ? (exam.requireSignature && !signature ? 'Assine antes de iniciar' : 'Iniciar Prova')
                           : 'Entrar na Sala'}
                 </Button>
 

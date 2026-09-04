@@ -18,6 +18,8 @@ import { ArrowLeft, Plus, Trash2, Shuffle, Save, ArrowUp, ArrowDown, Search, Dat
 import { PainelDeAplicacao } from '@/components/admin/provas/painel-de-aplicacao'
 import { LIBERACOES_PADRAO, type LiberacoesDeDownload } from '@/lib/provas/downloads-da-prova'
 import { type PublicoDaProva } from '@/lib/provas/publico-da-prova'
+import { deCampoLocal, paraInstanteLocal } from '@/lib/provas/horario-local'
+import { validarJanelaDoFormulario } from '@/lib/provas/janela-da-prova'
 
 export default function CreateExamPage() {
   const router = useRouter()
@@ -524,12 +526,36 @@ export default function CreateExamPage() {
         }
       }
 
+      /*
+       * Os campos de data são hora de parede do admin (`datetime-local`, sem
+       * fuso). `deCampoLocal` os converte no navegador, onde o fuso é o dele —
+       * mandar o texto cru fazia o servidor, que roda em UTC, ler "14:00" como
+       * 14:00 UTC e gravar a prova três horas antes. Ver lib/provas/horario-local.ts.
+       */
+      const gatesOpenISO = examData.isPracticeExam ? null : deCampoLocal(examData.gatesOpen)
+      const gatesCloseISO = examData.isPracticeExam ? null : deCampoLocal(examData.gatesClose)
+      const startTimeISO = deCampoLocal(examData.startTime)
+
       // Calcular endTime baseado em startTime + durationMinutes (se não for prova prática)
       let endTimeISO = null
       if (!examData.isPracticeExam && examData.startTime) {
-        const startDate = new Date(examData.startTime)
-        const endDate = new Date(startDate.getTime() + examData.durationMinutes * 60000)
-        endTimeISO = endDate.toISOString()
+        const startDate = paraInstanteLocal(examData.startTime)
+        if (startDate) {
+          endTimeISO = new Date(startDate.getTime() + examData.durationMinutes * 60000).toISOString()
+        }
+      }
+
+      // Portão que fecha antes de abrir, ou antes de a prova começar, é uma
+      // prova em que ninguém entra — e isso era gravado em silêncio.
+      const erroDaJanela = validarJanelaDoFormulario({
+        gatesOpen: gatesOpenISO,
+        gatesClose: gatesCloseISO,
+        startTime: startTimeISO,
+        endTime: endTimeISO,
+      })
+      if (erroDaJanela) {
+        alert(erroDaJanela)
+        return
       }
 
       // Preencher comando padrão quando não informado
@@ -557,6 +583,11 @@ export default function CreateExamPage() {
 
       const payload = {
         ...examData,
+        // Depois do espalhamento: `examData` ainda carrega os textos crus dos
+        // campos, e são estes três que devem chegar à API.
+        gatesOpen: gatesOpenISO,
+        gatesClose: gatesCloseISO,
+        startTime: startTimeISO,
         endTime: endTimeISO,
         duration: examData.durationMinutes,
         numberOfQuestions: questions.length,

@@ -23,6 +23,8 @@ import {
   type LiberacoesDeDownload,
 } from '@/lib/provas/downloads-da-prova'
 import { normalizarPublico, type PublicoDaProva } from '@/lib/provas/publico-da-prova'
+import { deCampoLocal, paraCampoLocal, paraInstanteLocal } from '@/lib/provas/horario-local'
+import { validarJanelaDoFormulario } from '@/lib/provas/janela-da-prova'
 
 export default function EditExamPage({ params }: { params: { id: string } }) {
   const { id } = params
@@ -111,13 +113,21 @@ export default function EditExamPage({ params }: { params: { id: string } }) {
 
       const exam: Exam = data.exam
 
-      // Formata datas para datetime-local
+      /*
+       * Formata datas para `datetime-local` — no fuso de quem edita.
+       *
+       * Aqui havia `toISOString().slice(0, 16)`, que é UTC: o campo mostrava
+       * 17:00 para uma prova marcada às 14h em Brasília. Como o formulário
+       * também mandava o texto cru de volta (lido como UTC pelo servidor), os
+       * dois erros se cancelavam num ciclo abrir-e-salvar e o defeito só
+       * aparecia no relógio do aluno. Ver lib/provas/horario-local.ts.
+       */
       const formatDateTime = (date: Date | string) => {
         const d = new Date(date)
         // Verificar se é a data futura padrão (provas práticas)
         const year = d.getFullYear()
         if (year === 2099) return '' // Não mostrar data para provas práticas
-        return d.toISOString().slice(0, 16)
+        return paraCampoLocal(d)
       }
 
       // Calcular duration em minutos
@@ -152,7 +162,17 @@ export default function EditExamPage({ params }: { params: { id: string } }) {
         // Configurações adicionais
         isPracticeExam: exam.isPracticeExam || false,
         allowCustomName: exam.allowCustomName || false,
-        requireSignature: exam.requireSignature !== false, // Default true para compatibilidade
+        /*
+         * A caixinha mostra o que está GRAVADO, e nada mais.
+         *
+         * Ela era `!== false`, o que marcava "Exigir Assinatura Digital" em
+         * toda prova antiga (o campo nem existia nesses documentos) e gravava
+         * `true` no primeiro salvamento. Enquanto a exigência não valia nada,
+         * isso não tinha consequência; agora que a prova de fato não começa sem
+         * assinatura, herdar a exigência por um mero clique em "Salvar" é
+         * mudar a regra da prova pelas costas de quem a edita.
+         */
+        requireSignature: exam.requireSignature === true,
         shuffleQuestions: exam.shuffleQuestions || false,
         shuffleAlternatives: (exam as any).shuffleAlternatives || false,
         // Normalizados na leitura: um documento antigo não tem os campos, e um
@@ -609,12 +629,33 @@ export default function EditExamPage({ params }: { params: { id: string } }) {
         }
       }
 
+      /*
+       * Os campos de data são hora de parede do admin (`datetime-local`, sem
+       * fuso) e viram ISO aqui, no navegador — o único lugar que sabe o fuso
+       * dele. Ver lib/provas/horario-local.ts.
+       */
+      const gatesOpenISO = examData.isPracticeExam ? null : deCampoLocal(examData.gatesOpen)
+      const gatesCloseISO = examData.isPracticeExam ? null : deCampoLocal(examData.gatesClose)
+      const startTimeISO = deCampoLocal(examData.startTime)
+
       // Calcular endTime baseado em startTime + durationMinutes (se não for prova prática)
       let endTimeISO = null
       if (!examData.isPracticeExam && examData.startTime) {
-        const startDate = new Date(examData.startTime)
-        const endDate = new Date(startDate.getTime() + examData.durationMinutes * 60000)
-        endTimeISO = endDate.toISOString()
+        const startDate = paraInstanteLocal(examData.startTime)
+        if (startDate) {
+          endTimeISO = new Date(startDate.getTime() + examData.durationMinutes * 60000).toISOString()
+        }
+      }
+
+      const erroDaJanela = validarJanelaDoFormulario({
+        gatesOpen: gatesOpenISO,
+        gatesClose: gatesCloseISO,
+        startTime: startTimeISO,
+        endTime: endTimeISO,
+      })
+      if (erroDaJanela) {
+        alert(erroDaJanela)
+        return
       }
 
       // Aplicar tempo generalizado em todas as questões se timeMode = 'generalized'
@@ -635,6 +676,12 @@ export default function EditExamPage({ params }: { params: { id: string } }) {
 
       const payload = {
         ...examData,
+        // Depois do espalhamento: `examData` ainda carrega os textos crus dos
+        // campos, e são estes três que devem chegar à API. `null` num portão é
+        // significativo — é assim que se TIRA um portão que existia.
+        gatesOpen: gatesOpenISO,
+        gatesClose: gatesCloseISO,
+        startTime: startTimeISO,
         endTime: endTimeISO,
         duration: examData.durationMinutes,
         numberOfQuestions: questions.length,

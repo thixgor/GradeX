@@ -43,6 +43,7 @@ import {
   AlertCircle,
   Play,
   Eye,
+  EyeOff,
   GraduationCap,
   BookOpen,
   Layers,
@@ -983,6 +984,17 @@ function ProvasContent() {
               <span className={cn("h-1.5 w-1.5 rounded-full", status.dotColor)} />
               <span className={status.color}>{status.text}</span>
             </span>
+            {/*
+              Prova oculta só chega até aqui para admin — `GET /api/exams`
+              filtra o resto. Sem o selo ela fica idêntica às outras no catálogo
+              do admin, e "por que essa prova ainda aparece?" é a pergunta
+              seguinte.
+            */}
+            {exam.isHidden && (
+              <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+                <EyeOff className="h-2.5 w-2.5" /> Oculta
+              </span>
+            )}
           </div>
 
           <h3 className="font-semibold text-sm line-clamp-2 group-hover:text-primary transition-colors">
