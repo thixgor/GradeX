@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { CalendarClock } from 'lucide-react'
+import { useRelogioDaLista } from '@/hooks/use-relogio-da-lista'
 import type { Exam } from '@/lib/types'
 import { horariosDaProva } from '@/lib/provas/horarios-da-prova'
 import { cn } from '@/lib/utils'
@@ -24,39 +24,10 @@ import { cn } from '@/lib/utils'
  * `setInterval` por cartão numa página com dezenas de provas são dezenas de
  * timers acordando o React para, quase sempre, redesenhar o mesmo texto.
  *
- * Aqui há um relógio só, no módulo, com passo de 30 segundos: ele existe
- * enquanto houver ao menos um cartão inscrito e some junto com o último. O
- * passo é de 30s porque a menor unidade que a tela mostra é o minuto — um
- * relógio de 1s gastaria trinta renderizações para mudar um dígito. A contagem
- * fina, de segundos, continua sendo do portão da tela da prova, que é onde ela
- * muda o que a pessoa faz.
+ * `useRelogioDaLista` (hooks/use-relogio-da-lista.ts) é um relógio só, no
+ * módulo, com passo de 30 segundos: ele existe enquanto houver ao menos um
+ * inscrito e some junto com o último. O painel de `/admin/exams` usa o mesmo.
  */
-
-const inscritos = new Set<(agora: number) => void>()
-let relogio: ReturnType<typeof setInterval> | null = null
-
-function assinarRelogio(avisar: (agora: number) => void): () => void {
-  inscritos.add(avisar)
-  if (!relogio) {
-    relogio = setInterval(() => {
-      const agora = Date.now()
-      inscritos.forEach((f) => f(agora))
-    }, 30_000)
-  }
-  return () => {
-    inscritos.delete(avisar)
-    if (inscritos.size === 0 && relogio) {
-      clearInterval(relogio)
-      relogio = null
-    }
-  }
-}
-
-function useRelogioDaLista(): number {
-  const [agora, setAgora] = useState(() => Date.now())
-  useEffect(() => assinarRelogio(setAgora), [])
-  return agora
-}
 
 export function HorariosDaProva({
   prova,

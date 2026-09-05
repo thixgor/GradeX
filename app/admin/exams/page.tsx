@@ -1,26 +1,50 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import type { ReactNode } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
 import { ToastAlert } from '@/components/ui/toast-alert'
+import { useRelogioDaLista } from '@/hooks/use-relogio-da-lista'
+import { CartaoDeProva, type AcaoNaProva, type AcoesDaProva } from '@/components/admin/provas/cartao-de-prova'
 import { Exam } from '@/lib/types'
-import { formatDate } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 // PDF generator loaded dynamically to reduce initial bundle size
-import { ArrowLeft, Edit, Trash2, Eye, EyeOff, Plus, Play, StopCircle, RotateCcw, FileCheck, FileDown, AlertTriangle, Settings, Check, X, Lock, ShieldAlert, Database, Video, Search, BarChart3, Users, Download, Copy, Medal } from 'lucide-react'
-import { normalizarPublico, rotuloDoPublico } from '@/lib/provas/publico-da-prova'
-import { algumaLiberacaoLigada, normalizarLiberacoes } from '@/lib/provas/downloads-da-prova'
+import { ArrowLeft, Trash2, Plus, AlertTriangle, Settings, Check, X, Lock, ShieldAlert, Database, Video, Search, RefreshCw } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+
+/** O que uma confirmação precisa dizer antes de algo irreversível acontecer. */
+interface PedidoDeConfirmacao {
+  titulo: string
+  descricao: ReactNode
+  rotuloDeConfirmar: string
+  aoConfirmar: () => void
+}
+
+/** Abaixo disto, voltar para a aba não vale uma nova leitura da lista. */
+const IDADE_ACEITAVEL_DA_LISTA = 30_000
+
+const idDaProva = (prova: Exam) => prova._id!.toString()
 
 export default function AdminExamsPage() {
   const router = useRouter()
   const [exams, setExams] = useState<Exam[]>([])
   const [loading, setLoading] = useState(true)
-  const [showDeleteAllDialog, setShowDeleteAllDialog] = useState(false)
+  const [atualizando, setAtualizando] = useState(false)
+  const [atualizadoEm, setAtualizadoEm] = useState<number | null>(null)
+  /**
+   * Qual ação está rodando em cada prova, por id.
+   *
+   * É o que substitui o "a tela inteira ficou parada e depois piscou": o cartão
+   * que está em movimento se anuncia sozinho, e os outros continuam clicáveis.
+   */
+  const [acoesEmCurso, setAcoesEmCurso] = useState<Record<string, AcaoNaProva>>({})
+  const [confirmacao, setConfirmacao] = useState<PedidoDeConfirmacao | null>(null)
   const [toastOpen, setToastOpen] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
   const [toastType, setToastType] = useState<'error' | 'success' | 'info'>('error')
@@ -38,30 +62,122 @@ export default function AdminExamsPage() {
   const [vaultEmailCode, setVaultEmailCode] = useState('')
   const [vaultPhrase, setVaultPhrase] = useState('')
   const [search, setSearch] = useState('')
-  const [duplicando, setDuplicando] = useState<string | null>(null)
 
-  useEffect(() => {
-    loadExams()
-    loadSettings()
-  }, [])
+  /**
+   * O relógio da lista.
+   *
+   * As decisões de tempo desta tela — qual selo de fase mostrar, se cabe
+   * "Forçar Início" ou "Forçar Término" — eram tomadas com `new Date()` no meio
+   * do JSX, o que só acontece quando algo faz a página renderizar de novo. Uma
+   * prova que começava às 14h continuava oferecendo "Forçar Início" às 14h30
+   * até alguém recarregar. É o mesmo relógio compartilhado dos cartões de
+   * `/provas` (ver hooks/use-relogio-da-lista.ts).
+   *
+   * O `pisoDoRelogio` existe porque o passo é de 30 segundos e forçar o início
+   * de uma prova não pode esperar o próximo: no clique, "Forçar Início" tem de
+   * virar "Forçar Término". Ele guarda o instante que a ação acabou de
+   * estabelecer — o do SERVIDOR, não o desta máquina — e o relógio o ultrapassa
+   * sozinho no passo seguinte.
+   */
+  const tiqueDoRelogio = useRelogioDaLista()
+  const [pisoDoRelogio, setPisoDoRelogio] = useState(0)
+  const agora = Math.max(tiqueDoRelogio, pisoDoRelogio)
 
-  const showToastMessage = (message: string, type: 'error' | 'success' | 'info' = 'error') => {
+  const buscandoRef = useRef(false)
+  const atualizadoEmRef = useRef<number | null>(null)
+  const temAcaoEmCursoRef = useRef(false)
+
+  useEffect(() => { atualizadoEmRef.current = atualizadoEm }, [atualizadoEm])
+  useEffect(() => { temAcaoEmCursoRef.current = Object.keys(acoesEmCurso).length > 0 }, [acoesEmCurso])
+
+  const showToastMessage = useCallback((message: string, type: 'error' | 'success' | 'info' = 'error') => {
     setToastMessage(message)
     setToastType(type)
     setToastOpen(true)
-  }
+  }, [])
 
-  async function loadExams() {
+  /**
+   * Relê a lista inteira.
+   *
+   * `silencioso` é o modo que não apaga a tela: o botão "Atualizar" e a volta
+   * para a aba usam ele, e a lista só troca quando a resposta chega. O modo
+   * ruidoso (a primeira carga) é o único que tem direito ao esqueleto.
+   *
+   * Nenhuma ação da lista chama isto: `GET /api/exams` devolve os documentos
+   * completos, com todas as questões de todas as provas, e pedir isso de volta
+   * para confirmar um booleano que o servidor já aceitou é o que fazia a tela
+   * inteira se remontar a cada clique.
+   */
+  const carregarProvas = useCallback(async (opcoes: { silencioso?: boolean } = {}) => {
+    if (buscandoRef.current) return
+    buscandoRef.current = true
+    if (opcoes.silencioso) setAtualizando(true)
+
     try {
-      const res = await fetch('/api/exams')
+      const res = await fetch('/api/exams', { cache: 'no-store' })
+      if (!res.ok) throw new Error('Não foi possível carregar as provas')
       const data = await res.json()
       setExams(data.exams || [])
-    } catch (error) {
+      setAtualizadoEm(Date.now())
+    } catch (error: any) {
       console.error('Erro ao carregar provas:', error)
+      if (opcoes.silencioso) showToastMessage(error.message || 'Erro ao atualizar a lista')
     } finally {
+      buscandoRef.current = false
       setLoading(false)
+      setAtualizando(false)
     }
-  }
+  }, [showToastMessage])
+
+  useEffect(() => {
+    carregarProvas()
+    loadSettings()
+  }, [carregarProvas])
+
+  /**
+   * Voltar para a aba vale uma conferência.
+   *
+   * Painel de prova costuma ficar aberto do lado enquanto a prova acontece; o
+   * hábito de recarregar a página vinha em parte de não haver outro jeito de
+   * saber se a lista ainda valia. Não recarrega no meio de uma ação em curso —
+   * a resposta do servidor chegaria por cima da mudança que ainda está a
+   * caminho.
+   */
+  useEffect(() => {
+    function aoVoltarParaAba() {
+      if (document.visibilityState !== 'visible') return
+      if (temAcaoEmCursoRef.current) return
+      const idade = Date.now() - (atualizadoEmRef.current ?? 0)
+      if (idade < IDADE_ACEITAVEL_DA_LISTA) return
+      carregarProvas({ silencioso: true })
+    }
+
+    document.addEventListener('visibilitychange', aoVoltarParaAba)
+    return () => document.removeEventListener('visibilitychange', aoVoltarParaAba)
+  }, [carregarProvas])
+
+  /** Corrige UMA prova no estado. É o coração da atualização sem recarga. */
+  const aplicarNaProva = useCallback((examId: string, mudancas: Partial<Exam>) => {
+    setExams(atual => atual.map(prova => (idDaProva(prova) === examId ? { ...prova, ...mudancas } : prova)))
+  }, [])
+
+  const removerDaLista = useCallback((examId: string) => {
+    setExams(atual => atual.filter(prova => idDaProva(prova) !== examId))
+  }, [])
+
+  const marcarAcao = useCallback((examId: string, acao: AcaoNaProva | null) => {
+    setAcoesEmCurso(atual => {
+      if (!acao) {
+        if (!(examId in atual)) return atual
+        const proximo = { ...atual }
+        delete proximo[examId]
+        return proximo
+      }
+      return { ...atual, [examId]: acao }
+    })
+  }, [])
+
+  const pedirConfirmacao = useCallback((pedido: PedidoDeConfirmacao) => setConfirmacao(pedido), [])
 
   async function loadSettings() {
     try {
@@ -215,164 +331,90 @@ export default function AdminExamsPage() {
     }
   }
 
-  async function handleDelete(examId: string) {
-    if (!confirm('Tem certeza que deseja deletar esta prova?')) return
+  /*
+   * As ações de uma prova.
+   *
+   * Todas seguem a mesma forma: marcam a ação no cartão, mandam a requisição e
+   * corrigem no estado APENAS o que mudou. As que só viram uma chave
+   * (visibilidade, classificação) mudam a tela antes da resposta e desfazem se
+   * o servidor recusar — o clique responde na hora, e o erro, quando existe,
+   * chega como aviso e não como uma tela que voltou sozinha.
+   */
 
+  const deletarProva = useCallback(async (prova: Exam) => {
+    const id = idDaProva(prova)
+    marcarAcao(id, 'deletar')
     try {
-      const res = await fetch(`/api/exams/${examId}`, {
-        method: 'DELETE',
-      })
+      const res = await fetch(`/api/exams/${id}`, { method: 'DELETE' })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(data.error || 'Erro ao deletar')
 
-      if (!res.ok) throw new Error('Erro ao deletar')
-
+      // Some da lista aqui mesmo. Antes vinha um `router.refresh()` junto com a
+      // releitura: dois recarregamentos para apagar uma linha da tela.
+      removerDaLista(id)
       showToastMessage('Prova deletada com sucesso!', 'success')
-      loadExams()
-      router.refresh()
-    } catch (error: any) {
-      showToastMessage(error.message)
-    }
-  }
-
-  async function handleDeleteAll() {
-    try {
-      const res = await fetch('/api/exams', {
-        method: 'DELETE',
-      })
-
-      if (!res.ok) throw new Error('Erro ao deletar')
-
-      const data = await res.json()
-      showToastMessage(data.message, 'success')
-      setShowDeleteAllDialog(false)
-      loadExams()
-      router.refresh()
-    } catch (error: any) {
-      showToastMessage(error.message)
-      setShowDeleteAllDialog(false)
-    }
-  }
-
-  async function toggleVisibility(exam: Exam) {
-    try {
-      const res = await fetch(`/api/exams/${exam._id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ isHidden: !exam.isHidden }),
-      })
-
-      if (!res.ok) throw new Error('Erro ao atualizar')
-
-      loadExams()
-    } catch (error: any) {
-      showToastMessage(error.message)
-    }
-  }
-
-  async function forceStart(examId: string) {
-    if (!confirm('Tem certeza que deseja forçar o início da prova AGORA?')) return
-
-    try {
-      const res = await fetch(`/api/exams/${examId}/force-time`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'start' }),
-      })
-
-      if (!res.ok) throw new Error('Erro ao forçar início')
-
-      const data = await res.json()
-      showToastMessage(data.message, 'success')
-      loadExams()
-    } catch (error: any) {
-      showToastMessage(error.message)
-    }
-  }
-
-  async function forceEnd(examId: string) {
-    if (!confirm('Tem certeza que deseja forçar o TÉRMINO da prova AGORA?')) return
-
-    try {
-      const res = await fetch(`/api/exams/${examId}/force-time`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'end' }),
-      })
-
-      if (!res.ok) throw new Error('Erro ao forçar término')
-
-      const data = await res.json()
-      showToastMessage(data.message, 'success')
-      loadExams()
-    } catch (error: any) {
-      showToastMessage(error.message)
-    }
-  }
-
-  /**
-   * Zerar a prova.
-   *
-   * O aviso lista o que sai porque o que sai deixou de ser só "as submissões":
-   * rascunhos, tentativas, anotações e relatos de questão vão junto (ver
-   * `lib/provas/reset-da-prova.ts`). Um admin que leia "as submissões" e perca
-   * as anotações dos alunos foi avisado da coisa errada.
-   */
-  async function resetSubmissions(examId: string) {
-    if (!confirm(
-      '⚠️ ATENÇÃO! Isso vai APAGAR PERMANENTEMENTE tudo o que os alunos deixaram nesta prova:\n\n' +
-      '• entregas, notas e correções\n' +
-      '• rascunhos salvos e retomadas já usadas\n' +
-      '• registros de tentativa (inclusive as em andamento)\n' +
-      '• anotações dos alunos nas questões\n' +
-      '• relatos de erro enviados sobre as questões\n\n' +
-      'As questões e as configurações da prova NÃO são alteradas, e todos poderão refazê-la.\n\n' +
-      'Esta ação NÃO pode ser desfeita. Deseja continuar?'
-    )) return
-
-    try {
-      const res = await fetch(`/api/exams/${examId}/reset-submissions`, {
-        method: 'DELETE',
-      })
-
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Erro ao zerar a prova')
-
-      showToastMessage(data.message, 'success')
-      loadExams()
-    } catch (error: any) {
-      showToastMessage(error.message)
-    }
-  }
-
-  /**
-   * Duplicar a prova.
-   *
-   * A cópia nasce OCULTA (ver `app/api/exams/[id]/duplicate/route.ts`) e o
-   * painel vai direto para o editor dela: quem duplica uma prova está prestes
-   * a mudar alguma coisa nela — a data, quase sempre —, e devolver a lista
-   * obrigaria a procurar a cópia no meio das outras para fazer isso.
-   */
-  async function duplicarProva(examId: string) {
-    if (duplicando) return
-    setDuplicando(examId)
-    try {
-      const res = await fetch(`/api/exams/${examId}/duplicate`, { method: 'POST' })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Erro ao duplicar prova')
-
-      showToastMessage(data.message, 'success')
-      router.push(`/admin/exams/${data.examId}/edit`)
     } catch (error: any) {
       showToastMessage(error.message)
     } finally {
-      setDuplicando(null)
+      marcarAcao(id, null)
     }
-  }
+  }, [marcarAcao, removerDaLista, showToastMessage])
+
+  const deletarTodasAsProvas = useCallback(async () => {
+    setAtualizando(true)
+    try {
+      const res = await fetch('/api/exams', { method: 'DELETE' })
+      if (!res.ok) throw new Error('Erro ao deletar')
+
+      const data = await res.json()
+      setExams([])
+      setAtualizadoEm(Date.now())
+      showToastMessage(data.message, 'success')
+    } catch (error: any) {
+      showToastMessage(error.message)
+    } finally {
+      setAtualizando(false)
+    }
+  }, [showToastMessage])
+
+  const alternarVisibilidade = useCallback(async (prova: Exam) => {
+    const id = idDaProva(prova)
+    const eraOculta = !!prova.isHidden
+    marcarAcao(id, 'visibilidade')
+    aplicarNaProva(id, { isHidden: !eraOculta })
+
+    try {
+      const res = await fetch(`/api/exams/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isHidden: !eraOculta }),
+      })
+      if (!res.ok) throw new Error('Erro ao atualizar a visibilidade')
+
+      showToastMessage(
+        eraOculta
+          ? 'Prova visível: ela volta ao catálogo dos alunos.'
+          : 'Prova oculta: ela sai do catálogo dos alunos e fica só no painel.',
+        'success',
+      )
+    } catch (error: any) {
+      aplicarNaProva(id, { isHidden: eraOculta })
+      showToastMessage(error.message)
+    } finally {
+      marcarAcao(id, null)
+    }
+  }, [aplicarNaProva, marcarAcao, showToastMessage])
 
   /** Liga/desliga a classificação pública desta prova para os alunos. */
-  async function alternarClassificacao(exam: Exam) {
-    const passaAExibir = exam.showRanking === false
+  const alternarClassificacao = useCallback(async (prova: Exam) => {
+    const id = idDaProva(prova)
+    const estadoAnterior = prova.showRanking
+    const passaAExibir = prova.showRanking === false
+    marcarAcao(id, 'classificacao')
+    aplicarNaProva(id, { showRanking: passaAExibir })
+
     try {
-      const res = await fetch(`/api/exams/${exam._id}`, {
+      const res = await fetch(`/api/exams/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ showRanking: passaAExibir }),
@@ -385,22 +427,213 @@ export default function AdminExamsPage() {
           : 'Classificação oculta: os alunos veem a própria nota e a média da turma, sem a lista de nomes.',
         'success',
       )
-      loadExams()
+    } catch (error: any) {
+      aplicarNaProva(id, { showRanking: estadoAnterior })
+      showToastMessage(error.message)
+    } finally {
+      marcarAcao(id, null)
+    }
+  }, [aplicarNaProva, marcarAcao, showToastMessage])
+
+  /**
+   * Forçar início e término.
+   *
+   * As datas voltam do servidor e são gravadas no cartão. É a diferença entre
+   * "o botão mudou porque o relógio DESTA máquina achou que devia" e "o botão
+   * mudou porque a prova começou": o instante que vale é o do servidor, e é ele
+   * que a lista passa a exibir.
+   */
+  const forcarHorario = useCallback(async (prova: Exam, acao: 'start' | 'end') => {
+    const id = idDaProva(prova)
+    marcarAcao(id, acao === 'start' ? 'forcar-inicio' : 'forcar-termino')
+
+    try {
+      const res = await fetch(`/api/exams/${id}/force-time`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: acao }),
+      })
+
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(data.error || `Erro ao forçar ${acao === 'start' ? 'início' : 'término'}`)
+
+      const aplicadoEm = data.aplicadoEm ? new Date(data.aplicadoEm) : new Date()
+      aplicarNaProva(
+        id,
+        acao === 'start'
+          ? { startTime: aplicadoEm, gatesOpen: aplicadoEm }
+          : { endTime: aplicadoEm, gatesClose: aplicadoEm },
+      )
+      setPisoDoRelogio(aplicadoEm.getTime() + 1)
+      showToastMessage(data.message, 'success')
     } catch (error: any) {
       showToastMessage(error.message)
+    } finally {
+      marcarAcao(id, null)
     }
-  }
+  }, [aplicarNaProva, marcarAcao, showToastMessage])
 
-  async function handleDownloadExamPDF(exam: Exam) {
+  /**
+   * Zerar a prova.
+   *
+   * O documento da prova não muda — o que sai são as entregas, os rascunhos, as
+   * tentativas e as anotações (ver `lib/provas/reset-da-prova.ts`). Por isso
+   * aqui não há nada a corrigir na lista: reler as provas para descobrir que
+   * nenhuma delas mudou era trabalho puro.
+   */
+  const zerarProva = useCallback(async (prova: Exam) => {
+    const id = idDaProva(prova)
+    marcarAcao(id, 'zerar')
+    try {
+      const res = await fetch(`/api/exams/${id}/reset-submissions`, { method: 'DELETE' })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Erro ao zerar a prova')
+
+      showToastMessage(data.message, 'success')
+    } catch (error: any) {
+      showToastMessage(error.message)
+    } finally {
+      marcarAcao(id, null)
+    }
+  }, [marcarAcao, showToastMessage])
+
+  /**
+   * Duplicar a prova.
+   *
+   * A cópia nasce OCULTA (ver `app/api/exams/[id]/duplicate/route.ts`) e o
+   * painel vai direto para o editor dela: quem duplica uma prova está prestes
+   * a mudar alguma coisa nela — a data, quase sempre —, e devolver a lista
+   * obrigaria a procurar a cópia no meio das outras para fazer isso.
+   *
+   * É a única ação que não desmarca o cartão no sucesso: o spinner continua até
+   * a navegação acontecer, senão o botão volta ao normal e parece que nada foi
+   * feito no intervalo entre a resposta e a troca de tela.
+   */
+  const duplicarProva = useCallback(async (prova: Exam) => {
+    const id = idDaProva(prova)
+    marcarAcao(id, 'duplicar')
+    try {
+      const res = await fetch(`/api/exams/${id}/duplicate`, { method: 'POST' })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Erro ao duplicar prova')
+
+      showToastMessage(data.message, 'success')
+      router.push(`/admin/exams/${data.examId}/edit`)
+    } catch (error: any) {
+      showToastMessage(error.message)
+      marcarAcao(id, null)
+    }
+  }, [marcarAcao, router, showToastMessage])
+
+  const gerarPDFDaProva = useCallback(async (prova: Exam) => {
+    const id = idDaProva(prova)
+    marcarAcao(id, 'pdf')
     try {
       const { generateExamPDF, downloadPDF } = await import('@/lib/pdf-generator')
-      const blob = await generateExamPDF(exam)
-      downloadPDF(blob, `${exam.title}.pdf`, { type: 'exam_pdf', resourceId: (exam as any)._id, resourceTitle: exam.title })
+      const blob = await generateExamPDF(prova)
+      downloadPDF(blob, `${prova.title}.pdf`, { type: 'exam_pdf', resourceId: id, resourceTitle: prova.title })
     } catch (error: any) {
       console.error('Erro ao gerar PDF:', error)
       showToastMessage('Erro ao gerar PDF: ' + error.message)
+    } finally {
+      marcarAcao(id, null)
     }
-  }
+  }, [marcarAcao, showToastMessage])
+
+  /*
+   * As confirmações não são mais `window.confirm`.
+   *
+   * O `confirm` do navegador trava a aba inteira, ignora o tema, não formata a
+   * lista do que vai ser apagado e — em vários navegadores — ganha um "não
+   * perguntar de novo" que desarma a última trava antes de uma exclusão. Um
+   * diálogo do próprio painel cabe no texto que essas ações precisam ter.
+   */
+  const acoes = useMemo<AcoesDaProva>(() => ({
+    editar: prova => router.push(`/admin/exams/${idDaProva(prova)}/edit`),
+    duplicar: duplicarProva,
+    alternarVisibilidade,
+    alternarClassificacao,
+    forcarInicio: prova =>
+      pedirConfirmacao({
+        titulo: 'Forçar o início agora?',
+        descricao: (
+          <>
+            <strong>{prova.title}</strong> passa a valer como iniciada neste instante: o horário de
+            início e a abertura dos portões vão para agora, e quem estiver na sala de espera pode
+            começar.
+          </>
+        ),
+        rotuloDeConfirmar: 'Sim, iniciar agora',
+        aoConfirmar: () => forcarHorario(prova, 'start'),
+      }),
+    forcarTermino: prova =>
+      pedirConfirmacao({
+        titulo: 'Forçar o término agora?',
+        descricao: (
+          <>
+            <strong>{prova.title}</strong> encerra neste instante. Quem estiver respondendo perde a
+            possibilidade de enviar, e o gabarito e os resultados são liberados.
+          </>
+        ),
+        rotuloDeConfirmar: 'Sim, encerrar agora',
+        aoConfirmar: () => forcarHorario(prova, 'end'),
+      }),
+    /*
+     * O aviso lista o que sai porque o que sai deixou de ser só "as submissões":
+     * rascunhos, tentativas, anotações e relatos de questão vão junto (ver
+     * `lib/provas/reset-da-prova.ts`). Um admin que leia "as submissões" e perca
+     * as anotações dos alunos foi avisado da coisa errada.
+     */
+    zerar: prova =>
+      pedirConfirmacao({
+        titulo: 'Zerar a prova?',
+        descricao: (
+          <>
+            Isso apaga <strong>permanentemente</strong> tudo o que os alunos deixaram em{' '}
+            <strong>{prova.title}</strong>:
+            <ul className="mt-3 space-y-1 text-left list-disc list-inside">
+              <li>entregas, notas e correções</li>
+              <li>rascunhos salvos e retomadas já usadas</li>
+              <li>registros de tentativa (inclusive as em andamento)</li>
+              <li>anotações dos alunos nas questões</li>
+              <li>relatos de erro enviados sobre as questões</li>
+            </ul>
+            <p className="mt-3">
+              As questões e as configurações da prova não são alteradas, e todos poderão refazê-la.
+              Esta ação não pode ser desfeita.
+            </p>
+          </>
+        ),
+        rotuloDeConfirmar: 'Sim, zerar a prova',
+        aoConfirmar: () => zerarProva(prova),
+      }),
+    corrigirDiscursivas: prova => router.push(`/admin/exams/${idDaProva(prova)}/corrections`),
+    verRelatorio: prova => router.push(`/admin/exams/${idDaProva(prova)}/relatorio`),
+    gerarPDF: gerarPDFDaProva,
+    deletar: prova =>
+      pedirConfirmacao({
+        titulo: 'Deletar esta prova?',
+        descricao: (
+          <>
+            <strong>{prova.title}</strong> e todas as submissões dela são apagadas
+            permanentemente. Esta ação não pode ser desfeita.
+          </>
+        ),
+        rotuloDeConfirmar: 'Sim, deletar',
+        aoConfirmar: () => deletarProva(prova),
+      }),
+    verRankingPublico: prova => router.push(`/exam/${idDaProva(prova)}/results`),
+  }), [
+    alternarClassificacao,
+    alternarVisibilidade,
+    deletarProva,
+    duplicarProva,
+    forcarHorario,
+    gerarPDFDaProva,
+    pedirConfirmacao,
+    router,
+    zerarProva,
+  ])
 
   const q = search.trim().toLowerCase()
   const filteredExams = q
@@ -410,17 +643,42 @@ export default function AdminExamsPage() {
       )
     : exams
 
+  const horaDaAtualizacao = atualizadoEm
+    ? new Intl.DateTimeFormat('pt-BR', { hour: '2-digit', minute: '2-digit' }).format(atualizadoEm)
+    : null
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+        {/*
+          A barra quebra em linha em vez de estourar a tela: são seis controles
+          numa fileira que era `flex` sem `wrap`, e num monitor menor (ou num
+          celular) os últimos saíam pela direita — inclusive "Nova Prova".
+        */}
+        <div className="container mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center space-x-4">
             <Button variant="ghost" size="icon" onClick={() => router.push('/')}>
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <h1 className="text-2xl font-bold">Gerenciar Provas</h1>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex flex-wrap items-center justify-end gap-2">
+            {/*
+              O botão que substitui o F5.
+              A lista se corrige sozinha a cada ação, mas provas mudam por fora
+              do painel (outro admin, a prova que começou). Este é o jeito de
+              conferir sem perder a busca digitada nem a rolagem.
+            */}
+            <Button
+              variant="outline"
+              onClick={() => carregarProvas({ silencioso: true })}
+              disabled={atualizando || loading}
+              title="Relê a lista sem recarregar a página"
+              aria-busy={atualizando}
+            >
+              <RefreshCw className={cn('h-4 w-4 mr-2', atualizando && 'animate-spin')} />
+              Atualizar
+            </Button>
             <Button
               variant="outline"
               onClick={() => setShowSettings(!showSettings)}
@@ -439,7 +697,19 @@ export default function AdminExamsPage() {
             {exams.length > 0 && (
               <Button
                 variant="destructive"
-                onClick={() => setShowDeleteAllDialog(true)}
+                onClick={() =>
+                  pedirConfirmacao({
+                    titulo: 'Deletar todas as provas?',
+                    descricao: (
+                      <>
+                        Todas as {exams.length} prova(s) e suas submissões serão deletadas
+                        permanentemente do sistema. Esta ação é <strong>irreversível</strong>.
+                      </>
+                    ),
+                    rotuloDeConfirmar: 'Sim, deletar tudo',
+                    aoConfirmar: deletarTodasAsProvas,
+                  })
+                }
               >
                 <Trash2 className="h-4 w-4 mr-2" />
                 Deletar Todas
@@ -546,19 +816,53 @@ export default function AdminExamsPage() {
 
         {/* Campo de busca */}
         {!loading && exams.length > 0 && (
-          <div className="relative mb-6">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-            <Input
-              placeholder="Pesquisar provas por título ou descrição…"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              className="pl-9"
-            />
+          <div className="mb-6 space-y-2">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+              <Input
+                placeholder="Pesquisar provas por título ou descrição…"
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {filteredExams.length === exams.length
+                ? `${exams.length} prova(s)`
+                : `${filteredExams.length} de ${exams.length} prova(s)`}
+              {horaDaAtualizacao && ` · lista lida às ${horaDaAtualizacao}`}
+              {atualizando && ' · atualizando…'}
+            </p>
           </div>
         )}
 
         {loading ? (
-          <div className="text-center py-12">Carregando...</div>
+          /*
+            Esqueleto no lugar de "Carregando...": a lista já ocupa o espaço que
+            vai ocupar, então a chegada dos dados não empurra a página.
+          */
+          <div className="space-y-4" aria-busy="true">
+            {[0, 1, 2].map(i => (
+              <Card key={i}>
+                <CardHeader>
+                  <Skeleton className="h-6 w-1/3" />
+                  <Skeleton className="h-4 w-2/3 mt-2" />
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Skeleton className="h-10 w-full" />
+                    <Skeleton className="h-10 w-full" />
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <Skeleton className="h-9 w-24" />
+                    <Skeleton className="h-9 w-28" />
+                    <Skeleton className="h-9 w-24" />
+                    <Skeleton className="h-9 w-40" />
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         ) : exams.length === 0 ? (
           <Card>
             <CardContent className="py-12 text-center">
@@ -575,298 +879,66 @@ export default function AdminExamsPage() {
           <Card>
             <CardContent className="py-12 text-center">
               <Search className="h-8 w-8 text-muted-foreground mx-auto mb-3 opacity-40" />
-              <p className="text-muted-foreground">Nenhuma prova encontrada para "{search}"</p>
+              <p className="text-muted-foreground">Nenhuma prova encontrada para &ldquo;{search}&rdquo;</p>
+              <Button variant="outline" size="sm" className="mt-4" onClick={() => setSearch('')}>
+                Limpar busca
+              </Button>
             </CardContent>
           </Card>
         ) : (
           <div className="space-y-4">
-            {filteredExams.map((exam) => (
-              <Card key={exam._id?.toString()}>
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-1">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <CardTitle>{exam.title}</CardTitle>
-                        {exam.isHidden && (
-                          <span className="text-xs bg-muted px-2 py-1 rounded">
-                            Oculto
-                          </span>
-                        )}
-                        {/*
-                          Os dois selos que mudam quem recebe a prova. Sem eles,
-                          uma prova aplicada a um período e uma prova com os PDFs
-                          liberados para contas gratuitas são visualmente
-                          idênticas às demais — e a diferença só aparece quando
-                          alguém reclama.
-                        */}
-                        {(() => {
-                          const publico = normalizarPublico((exam as any).audience)
-                          return publico.modo === 'periodos' ? (
-                            <span className="inline-flex items-center gap-1 rounded bg-blue-500/10 px-2 py-1 text-xs font-medium text-blue-700 dark:text-blue-400">
-                              <Users className="h-3 w-3" />
-                              {rotuloDoPublico(publico)}
-                            </span>
-                          ) : null
-                        })()}
-                        {exam.showRanking === false && (
-                          <span
-                            className="inline-flex items-center gap-1 rounded bg-slate-500/10 px-2 py-1 text-xs font-medium text-slate-600 dark:text-slate-300"
-                            title="Os alunos não veem a lista de notas desta prova"
-                          >
-                            <Medal className="h-3 w-3" />
-                            Sem classificação
-                          </span>
-                        )}
-                        {algumaLiberacaoLigada(normalizarLiberacoes((exam as any).freeDownloads)) && (
-                          <span
-                            className="inline-flex items-center gap-1 rounded bg-amber-500/10 px-2 py-1 text-xs font-medium text-amber-700 dark:text-amber-400"
-                            title="Esta prova libera PDFs para contas sem assinatura"
-                          >
-                            <Download className="h-3 w-3" />
-                            Downloads liberados
-                          </span>
-                        )}
-                      </div>
-                      {exam.description && (
-                        <CardDescription>{exam.description}</CardDescription>
-                      )}
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div className="space-y-1 text-sm">
-                      <p>
-                        <span className="text-muted-foreground">Questões:</span>{' '}
-                        {exam.numberOfQuestions}
-                      </p>
-                      <p>
-                        <span className="text-muted-foreground">Pontuação:</span>{' '}
-                        {exam.scoringMethod === 'tri' ? 'TRI (1000 pts)' : `${exam.totalPoints} pts`}
-                      </p>
-                    </div>
-                    <div className="space-y-1 text-sm">
-                      <p>
-                        <span className="text-muted-foreground">Início:</span>{' '}
-                        {formatDate(exam.startTime)}
-                      </p>
-                      <p>
-                        <span className="text-muted-foreground">Término:</span>{' '}
-                        {formatDate(exam.endTime)}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-wrap gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => router.push(`/admin/exams/${exam._id}/edit`)}
-                    >
-                      <Edit className="h-4 w-4 mr-2" />
-                      Editar
-                    </Button>
-
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      disabled={duplicando === exam._id?.toString()}
-                      onClick={() => duplicarProva(exam._id!.toString())}
-                      title="Cria uma cópia oculta com as mesmas questões e configurações"
-                    >
-                      {duplicando === exam._id?.toString() ? (
-                        <>
-                          <span className="mr-2 inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                          Duplicando…
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="h-4 w-4 mr-2" />
-                          Duplicar
-                        </>
-                      )}
-                    </Button>
-
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => toggleVisibility(exam)}
-                    >
-                      {exam.isHidden ? (
-                        <>
-                          <Eye className="h-4 w-4 mr-2" />
-                          Tornar Visível
-                        </>
-                      ) : (
-                        <>
-                          <EyeOff className="h-4 w-4 mr-2" />
-                          Ocultar
-                        </>
-                      )}
-                    </Button>
-
-                    {/*
-                      A classificação é uma decisão por prova, e ela vive aqui
-                      pelo mesmo motivo que "Ocultar": é uma chave que o admin
-                      precisa virar depois que a prova já existe — normalmente
-                      depois de ver a lista de notas — e não no formulário de
-                      criação, onde ainda não há nota nenhuma para julgar.
-                    */}
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => alternarClassificacao(exam)}
-                      title={
-                        exam.showRanking === false
-                          ? 'Os alunos não veem a lista de notas desta prova'
-                          : 'Os alunos veem a lista de notas desta prova'
-                      }
-                      className={
-                        exam.showRanking === false
-                          ? 'border-slate-400 text-slate-600 dark:text-slate-300'
-                          : 'border-amber-500 text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950'
-                      }
-                    >
-                      <Medal className="h-4 w-4 mr-2" />
-                      {exam.showRanking === false ? 'Classificação oculta' : 'Classificação visível'}
-                    </Button>
-
-                    {new Date() < new Date(exam.startTime) && (
-                      <Button
-                        variant="default"
-                        size="sm"
-                        onClick={() => forceStart(exam._id!.toString())}
-                      >
-                        <Play className="h-4 w-4 mr-2" />
-                        Forçar Início
-                      </Button>
-                    )}
-
-                    {new Date() < new Date(exam.endTime) && new Date() >= new Date(exam.startTime) && (
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => forceEnd(exam._id!.toString())}
-                      >
-                        <StopCircle className="h-4 w-4 mr-2" />
-                        Forçar Término
-                      </Button>
-                    )}
-
-                    {/*
-                      Sem a condição `agora >= startTime` que existia aqui: uma
-                      prova pode ter rascunho e tentativa ANTES do início (o
-                      admin adiantou o começo, depois corrigiu a data), e era
-                      justamente nesse estado que o botão de limpar sumia.
-                    */}
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => resetSubmissions(exam._id!.toString())}
-                      className="border-orange-500 text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-950"
-                      title="Apaga entregas, rascunhos, tentativas e anotações desta prova"
-                    >
-                      <RotateCcw className="h-4 w-4 mr-2" />
-                      Zerar Prova
-                    </Button>
-
-                    {exam.questions.some(q => q.type === 'discursive') && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => router.push(`/admin/exams/${exam._id}/corrections`)}
-                        className="border-purple-500 text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-950"
-                      >
-                        <FileCheck className="h-4 w-4 mr-2" />
-                        Corrigir Discursivas
-                      </Button>
-                    )}
-
-                    {/*
-                      O relatório vem ANTES do PDF e não espera o término.
-                      "Ver Resultados" só aparecia depois que a prova acabava —
-                      durante a aplicação, que é quando o admin mais precisa
-                      saber se a turma está conseguindo entrar, não havia tela.
-                    */}
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => router.push(`/admin/exams/${exam._id}/relatorio`)}
-                      className="border-emerald-500 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950"
-                    >
-                      <BarChart3 className="h-4 w-4 mr-2" />
-                      Relatório e Resultados
-                    </Button>
-
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDownloadExamPDF(exam)}
-                      className="border-blue-500 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950"
-                    >
-                      <FileDown className="h-4 w-4 mr-2" />
-                      Gerar PDF da Prova
-                    </Button>
-
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => handleDelete(exam._id!.toString())}
-                    >
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Deletar
-                    </Button>
-
-                    {new Date() > new Date(exam.endTime) && (
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={() => router.push(`/exam/${exam._id}/results`)}
-                      >
-                        Ranking público
-                      </Button>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+            {filteredExams.map((exam) => {
+              const id = idDaProva(exam)
+              return (
+                <CartaoDeProva
+                  key={id}
+                  prova={exam}
+                  agora={agora}
+                  // A ação DESTE cartão, não o mapa inteiro: passar o objeto
+                  // todo faria qualquer clique invalidar a memoização de todos.
+                  acaoEmCurso={acoesEmCurso[id] ?? null}
+                  acoes={acoes}
+                />
+              )
+            })}
           </div>
         )}
       </main>
 
-      {/* Dialog de confirmação para deletar todas as provas */}
-      <Dialog open={showDeleteAllDialog} onOpenChange={setShowDeleteAllDialog}>
+      {/* Confirmação das ações que não dá para desfazer */}
+      <Dialog open={!!confirmacao} onOpenChange={(open) => { if (!open) setConfirmacao(null) }}>
         <DialogContent className="max-w-md">
           <DialogHeader>
             <div className="mx-auto w-12 h-12 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center mb-4">
               <AlertTriangle className="h-6 w-6 text-red-600 dark:text-red-300" />
             </div>
             <DialogTitle className="text-center text-xl">
-              Deletar Todas as Provas?
+              {confirmacao?.titulo}
             </DialogTitle>
-            <DialogDescription className="text-center mt-2">
-              ⚠️ <strong>ATENÇÃO!</strong> Esta ação é <strong>IRREVERSÍVEL</strong>.
-              <br /><br />
-              Todas as {exams.length} prova(s) e suas submissões serão deletadas permanentemente do sistema.
-              <br /><br />
-              Tem certeza que deseja continuar?
+            <DialogDescription asChild>
+              <div className="text-center mt-2 space-y-2">{confirmacao?.descricao}</div>
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="flex-col sm:flex-row gap-2">
             <Button
               variant="outline"
-              onClick={() => setShowDeleteAllDialog(false)}
+              onClick={() => setConfirmacao(null)}
               className="w-full sm:w-auto"
             >
               Cancelar
             </Button>
             <Button
               variant="destructive"
-              onClick={handleDeleteAll}
+              onClick={() => {
+                const pedido = confirmacao
+                // O diálogo sai na hora: quem mostra o andamento daqui em diante
+                // é o próprio cartão, com o botão que virou spinner.
+                setConfirmacao(null)
+                pedido?.aoConfirmar()
+              }}
               className="w-full sm:w-auto"
             >
-              <Trash2 className="h-4 w-4 mr-2" />
-              Sim, Deletar Tudo
+              {confirmacao?.rotuloDeConfirmar}
             </Button>
           </DialogFooter>
         </DialogContent>
