@@ -16,7 +16,7 @@ import { PremiumPdfCtaModal } from '@/components/premium-pdf-cta-modal'
 import { PdfCtaBanner } from '@/components/pdf-cta-banner'
 import { MinhasProvasDialog } from '@/components/provas/minhas-provas-dialog'
 import { canDownloadExamPdf } from '@/lib/tier-limits'
-import { resolverDownloadsDaProva } from '@/lib/provas/downloads-da-prova'
+import { provaJaEncerrou, resolverDownloadsDaProva } from '@/lib/provas/downloads-da-prova'
 import { resolverJanelaDaProva } from '@/lib/provas/janela-da-prova'
 import { consumirCotaDoPlano } from '@/lib/plan-consume-client'
 import { Exam } from '@/lib/types'
@@ -616,6 +616,27 @@ function ProvasContent() {
       setShowPdfCta(true)
       return
     }
+
+    /*
+     * O pacote com gabarito não pode incluir prova que ainda está correndo.
+     *
+     * O servidor já não entrega `isCorrect` antes do término, então o arquivo
+     * não vazaria resposta — ele sairia PIOR que isso: um caderno de gabaritos
+     * com nenhuma alternativa marcada, que parece um erro do gerador. Melhor
+     * dizer o que falta do que entregar um documento errado.
+     */
+    if (type !== 'exam') {
+      const aindaCorrendo = groupExams.filter((prova) => !provaJaEncerrou(prova))
+      if (aindaCorrendo.length > 0) {
+        setPdfErro(
+          aindaCorrendo.length === 1
+            ? `"${aindaCorrendo[0].title}" ainda não terminou. O gabarito do grupo fica disponível quando todas as provas encerrarem.`
+            : `${aindaCorrendo.length} provas deste grupo ainda não terminaram. O gabarito fica disponível quando todas encerrarem.`,
+        )
+        return
+      }
+    }
+
     // O pacote do grupo é um download só, e é assim que ele conta na cota.
     const cota = await consumirCotaDoPlano('provasPdf', `grupo:${groupName}:${type}`)
     if (!cota.permitido) {
@@ -1250,6 +1271,8 @@ function ProvasContent() {
           open={showMinhasProvas}
           onOpenChange={setShowMinhasProvas}
           userName={user?.name || ''}
+          accountType={accountType}
+          isAdmin={user?.role === 'admin'}
           onError={setPdfErro}
         />
         <PremiumPdfCtaModal

@@ -3,12 +3,38 @@
 /**
  * Histórico de provas realizadas, com nota, correções discursivas e os PDFs.
  * Cada linha abre no lugar — a lista continua legível mesmo com dezenas de provas.
+ *
+ * ## O portão que faltava aqui
+ *
+ * Esta lista oferece três downloads — a prova em branco, as respostas do aluno
+ * e o gabarito — e os gerava **sem consultar portão nenhum**. Enquanto
+ * `/provas` e a tela da prova checavam o cargo antes de montar qualquer PDF,
+ * uma conta gratuita baixava os três por aqui, tanto em `/profile` quanto no
+ * diálogo de `/provas`. A porta da frente estava trancada e a dos fundos, não.
+ *
+ * Agora os três passam por `resolverDownloadsDaProva`, o mesmo veredito do
+ * resto da plataforma, e consomem a cota do plano como qualquer outro download
+ * de prova.
+ *
+ * ## O que este portão é, e o que ele não é
+ *
+ * A regra de **tempo** (gabarito só depois do término) é de verdade: o servidor
+ * não entrega `isCorrect` antes da hora (ver `lib/provas/sanitizar-prova.ts`),
+ * então um PDF gerado cedo sairia sem resposta nenhuma marcada.
+ *
+ * A regra de **cargo** é de produto, não de segurança — o PDF é montado no
+ * navegador a partir de dados que a pessoa já pode ler legitimamente para fazer
+ * a prova. O que ela garante é que o aplicativo não *entrega* o arquivo por um
+ * botão a quem não assinou, e que o consumo de quem assinou seja contado.
  */
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ChevronDown, ClipboardList, Download, FileText, Printer } from 'lucide-react'
+import { ChevronDown, ClipboardList, Download, FileText, Lock, Printer } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { QUEST_LABEL, ROTA_ASSINATURA } from '@/lib/account-tier'
+import { consumirCotaDoPlano } from '@/lib/plan-consume-client'
+import { provaDaSubmissao, resolverDownloadsDaProva } from '@/lib/provas/downloads-da-prova'
 import { cn } from '@/lib/utils'
 
 export interface UserSubmission {
@@ -33,6 +59,9 @@ export interface UserSubmission {
   }>
   hasDiscursiveQuestions: boolean
   isPracticeExam?: boolean
+  isPersonalExam?: boolean
+  /** Exceção de download que o admin abriu nesta prova, quando houver. */
+  freeDownloads?: { prova?: boolean; relatorio?: boolean; gabarito?: boolean } | null
   examEndTime?: Date
   answers?: any[]
   exam?: any
@@ -57,17 +86,40 @@ export function SubmissionsList({
   submissions,
   loading,
   userName,
+  accountType,
+  isAdmin,
   onError,
 }: {
   submissions: UserSubmission[]
   loading: boolean
   userName: string
+  /** Cargo de quem está olhando — decide se os PDFs saem. */
+  accountType?: string | null
+  isAdmin?: boolean
   onError: (message: string) => void
 }) {
   const router = useRouter()
   const [expanded, setExpanded] = useState<string | null>(null)
+  const [gerando, setGerando] = useState<string | null>(null)
+
+  /**
+   * Pergunta a cota do plano antes de montar o arquivo.
+   *
+   * O cargo diz se a pessoa TEM o recurso; a cota diz quantos ela ainda pode
+   * gastar na janela. Sem esta chamada, esta lista era também o caminho para
+   * furar o teto de quem assina um plano com limite diário.
+   */
+  async function cotaLiberada(recurso: string): Promise<boolean> {
+    const cota = await consumirCotaDoPlano('provasPdf', recurso)
+    if (!cota.permitido) {
+      onError(cota.mensagem || 'Limite de downloads do seu plano atingido.')
+      return false
+    }
+    return true
+  }
 
   async function handleDownloadAnswerSheet(examId: string) {
+    if (!(await cotaLiberada(`${examId}:gabarito`))) return
     try {
       const res = await fetch(`/api/exams/${examId}`)
       if (!res.ok) throw new Error('Erro ao buscar prova')
@@ -85,6 +137,7 @@ export function SubmissionsList({
   }
 
   async function handleDownloadExamPDF(examId: string, userId: string) {
+    if (!(await cotaLiberada(`${examId}:prova`))) return
     try {
       const res = await fetch(`/api/exams/${examId}`)
       if (!res.ok) throw new Error('Erro ao buscar prova')
@@ -102,6 +155,7 @@ export function SubmissionsList({
   }
 
   async function handleDownloadAnswersPDF(submission: UserSubmission) {
+    if (!(await cotaLiberada(`${submission.examId}:respostas`))) return
     try {
       const res = await fetch(`/api/exams/${submission.examId}`)
       if (!res.ok) throw new Error('Erro ao buscar prova')
@@ -147,6 +201,18 @@ export function SubmissionsList({
           !submission.hasDiscursiveQuestions ||
           !!submission.isPracticeExam
         const finished = isExamFinished(submission)
+        // O mesmo veredito que /provas e a tela da prova usam. Ver o cabeçalho
+        // deste arquivo para a diferença entre a regra de tempo e a de cargo.
+        const downloads = resolverDownloadsDaProva(provaDaSubmissao(submission), {
+          accountType,
+          isAdmin,
+          jaEnviou: true,
+        })
+        // A recusa por cargo é a única que se resolve assinando — a de tempo
+        // some sozinha quando a prova encerra, e oferecer plano nela seria
+        // vender o que a pessoa já tem.
+        const bloqueadoPeloPlano =
+          !downloads.prova.permitido && !downloads.prova.esperandoOFim
 
         return (
           <div key={submission._id} className="overflow-hidden rounded-xl border border-border/50 bg-card transition-all duration-200">
@@ -221,50 +287,99 @@ export function SubmissionsList({
                 )}
 
                 <div className="flex flex-wrap gap-2 pt-1">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-7 text-xs"
-                    onClick={() => handleDownloadExamPDF(submission.examId, submission.userId)}
-                  >
-                    <Printer className="mr-1.5 h-3 w-3" />
-                    Prova PDF
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-7 text-xs"
-                    onClick={() => handleDownloadAnswersPDF(submission)}
-                  >
-                    <ClipboardList className="mr-1.5 h-3 w-3" />
-                    Respostas PDF
-                  </Button>
+                  {/* O relatório é uma TELA, não um arquivo: ver as próprias
+                      respostas nunca dependeu de assinatura. */}
                   {finished && (
-                    <>
-                      <Button
-                        size="sm"
-                        className="h-7 text-xs"
-                        onClick={() => router.push(`/exam/${submission.examId}/user/${submission.userId}`)}
-                      >
-                        <FileText className="mr-1.5 h-3 w-3" />
-                        Relatório
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="h-7 text-xs"
-                        onClick={() => handleDownloadAnswerSheet(submission.examId)}
-                      >
-                        <Download className="mr-1.5 h-3 w-3" />
-                        Gabarito
-                      </Button>
-                    </>
+                    <Button
+                      size="sm"
+                      className="h-7 text-xs"
+                      onClick={() => router.push(`/exam/${submission.examId}/user/${submission.userId}`)}
+                    >
+                      <FileText className="mr-1.5 h-3 w-3" />
+                      Relatório
+                    </Button>
+                  )}
+
+                  {downloads.prova.permitido && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-7 text-xs"
+                      disabled={gerando === `${submission._id}:prova`}
+                      onClick={async () => {
+                        setGerando(`${submission._id}:prova`)
+                        try {
+                          await handleDownloadExamPDF(submission.examId, submission.userId)
+                        } finally {
+                          setGerando(null)
+                        }
+                      }}
+                    >
+                      <Printer className="mr-1.5 h-3 w-3" />
+                      Prova PDF
+                    </Button>
+                  )}
+
+                  {downloads.relatorio.permitido && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-7 text-xs"
+                      disabled={gerando === `${submission._id}:respostas`}
+                      onClick={async () => {
+                        setGerando(`${submission._id}:respostas`)
+                        try {
+                          await handleDownloadAnswersPDF(submission)
+                        } finally {
+                          setGerando(null)
+                        }
+                      }}
+                    >
+                      <ClipboardList className="mr-1.5 h-3 w-3" />
+                      Respostas PDF
+                    </Button>
+                  )}
+
+                  {downloads.gabarito.permitido && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-7 text-xs"
+                      disabled={gerando === `${submission._id}:gabarito`}
+                      onClick={async () => {
+                        setGerando(`${submission._id}:gabarito`)
+                        try {
+                          await handleDownloadAnswerSheet(submission.examId)
+                        } finally {
+                          setGerando(null)
+                        }
+                      }}
+                    >
+                      <Download className="mr-1.5 h-3 w-3" />
+                      Gabarito
+                    </Button>
                   )}
                 </div>
+
+                {/* Duas esperas diferentes, duas frases diferentes. A de tempo
+                    passa sozinha; a de plano precisa de uma decisão. */}
                 {!finished && (
                   <p className="text-[11px] text-orange-600 dark:text-orange-400">
                     Prova em andamento. Gabarito e relatório liberados após o término.
                   </p>
+                )}
+
+                {bloqueadoPeloPlano && (
+                  <button
+                    onClick={() => router.push(ROTA_ASSINATURA)}
+                    className="flex w-full items-start gap-2 rounded-lg border border-amber-500/25 bg-amber-500/10 px-3 py-2 text-left transition-colors hover:bg-amber-500/15"
+                  >
+                    <Lock className="mt-0.5 h-3 w-3 shrink-0 text-amber-600 dark:text-amber-400" />
+                    <span className="text-[11px] leading-snug text-amber-800 dark:text-amber-200">
+                      Baixar prova, respostas e gabarito em PDF é um recurso do{' '}
+                      <strong>{QUEST_LABEL}</strong>. <span className="underline">Ver planos</span>
+                    </span>
+                  </button>
                 )}
               </div>
             )}

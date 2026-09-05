@@ -60,11 +60,16 @@ export function PerformanceTab({
   submissions,
   submissionsLoading,
   userName,
+  accountType,
+  isAdmin,
   onError,
 }: {
   submissions: UserSubmission[]
   submissionsLoading: boolean
   userName: string
+  /** Repassado à lista: é o cargo que decide se os PDFs saem. */
+  accountType?: string | null
+  isAdmin?: boolean
   onError: (message: string) => void
 }) {
   const [data, setData] = useState<PerformanceData | null>(null)
@@ -363,6 +368,8 @@ export function PerformanceTab({
           submissions={submissions}
           loading={submissionsLoading}
           userName={userName}
+          accountType={accountType}
+          isAdmin={isAdmin}
           onError={onError}
         />
       </section>

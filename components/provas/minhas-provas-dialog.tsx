@@ -55,11 +55,16 @@ export function MinhasProvasDialog({
   open,
   onOpenChange,
   userName,
+  accountType,
+  isAdmin,
   onError,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
   userName: string
+  /** Repassado à lista: é o cargo que decide se os PDFs saem. */
+  accountType?: string | null
+  isAdmin?: boolean
   onError: (message: string) => void
 }) {
   const router = useRouter()
@@ -144,7 +149,14 @@ export function MinhasProvasDialog({
               ))}
             </div>
           ) : temProvas ? (
-            <SubmissionsList submissions={submissions} loading={false} userName={userName} onError={onError} />
+            <SubmissionsList
+              submissions={submissions}
+              loading={false}
+              userName={userName}
+              accountType={accountType}
+              isAdmin={isAdmin}
+              onError={onError}
+            />
           ) : (
             <div className="px-2 py-8 text-center">
               <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-muted">

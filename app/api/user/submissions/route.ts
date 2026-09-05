@@ -52,6 +52,18 @@ export async function GET(request: NextRequest) {
           hasDiscursiveQuestions: exam.questions.some(q => q.type === 'discursive') || false,
           examEndTime: exam.endTime, // Adicionar endTime para verificar se prova terminou
           isPracticeExam: exam.isPracticeExam || false,
+          /*
+           * Os dois campos que decidem quem pode baixar os PDFs desta prova.
+           *
+           * A lista de provas feitas oferece três downloads (prova, respostas e
+           * gabarito) e os gerava sem consultar portão nenhum — nem o cargo nem
+           * a exceção que o admin abre por prova. Sem estes campos aqui, a tela
+           * não tem como aplicar `resolverDownloadsDaProva`: ela conheceria só o
+           * fim da prova, e não a natureza dela nem a liberação.
+           * Ver lib/provas/downloads-da-prova.ts.
+           */
+          isPersonalExam: exam.isPersonalExam || false,
+          freeDownloads: (exam as any).freeDownloads || null,
         }
       })
     )).filter(submission => submission !== null) // Remove provas deletadas
