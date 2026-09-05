@@ -208,11 +208,76 @@ export function InlineAnnotationCanvas({
   const laserPointsRef = useRef<Point[]>([])
   const laserFadeStartRef = useRef<number | null>(null)
   const laserRafRef = useRef<number | null>(null)
+  const laserLoopRunningRef = useRef(false)
 
   type HistorySnapshot = { strokes: DrawingStroke[]; texts: TextAnnotation[] }
   const historyRef = useRef<HistorySnapshot[]>([{ strokes: annotation?.strokes || [], texts: annotation?.texts || [] }])
   const historyIndexRef = useRef(0)
   const [, bumpHistory] = useState(0)
+
+  // ───────────────────────────────────────────────────────────
+  // Ressincronizar ao TROCAR DE QUESTÃO.
+  //
+  // No modo paginado (prova em /exam/<id> e resolução de listas do Banco de
+  // Questões) só existe UMA instância deste componente: ao avançar para a
+  // próxima questão, o React reaproveita a mesma instância e apenas troca as
+  // props. Como `strokes`/`texts` só eram inicializados no mount, o desenho
+  // da questão anterior continuava na tela — e o próximo `onChange` gravava
+  // esses traços antigos no id da questão nova.
+  //
+  // Aqui, sempre que o `questionId` muda, carregamos a anotação salva da nova
+  // questão (ou nada) e zeramos histórico, seleção e qualquer interação em
+  // andamento.
+  // ───────────────────────────────────────────────────────────
+  const syncedQuestionIdRef = useRef(questionId)
+  useEffect(() => {
+    if (syncedQuestionIdRef.current === questionId) return
+    syncedQuestionIdRef.current = questionId
+
+    const nextStrokes = annotation?.strokes || []
+    const nextTexts = annotation?.texts || []
+    setStrokes(nextStrokes)
+    setTexts(nextTexts)
+    strokesRef.current = nextStrokes
+    textsRef.current = nextTexts
+
+    historyRef.current = [{ strokes: nextStrokes, texts: nextTexts }]
+    historyIndexRef.current = 0
+    bumpHistory(v => v + 1)
+
+    setSelectedStrokeIds([])
+    setSelectedTextIds([])
+    setIsAddingText(false)
+    setTextDraft('')
+    setTextPosition(null)
+    setShowClearConfirm(false)
+    setIsClearingAnim(false)
+    setShowShapePicker(false)
+    setShowCustomize(false)
+    setIsSelecting(false)
+    setSelectionPath([])
+    setShapePreviewStart(null)
+    setShapePreviewEnd(null)
+
+    isPointerDownRef.current = false
+    freehandPointsRef.current = []
+    lastDrawnPointRef.current = null
+    shapeStartRef.current = null
+    dragStartRef.current = null
+
+    // O laser é puro overlay animado: se o loop estava rodando com o ponteiro
+    // ainda pressionado, ele nunca receberia o "solta" da questão anterior e
+    // ficaria redesenhando para sempre.
+    if (laserRafRef.current) cancelAnimationFrame(laserRafRef.current)
+    laserRafRef.current = null
+    laserLoopRunningRef.current = false
+    laserPointsRef.current = []
+    laserFadeStartRef.current = null
+    // Lemos `annotation` aqui de propósito sem declará-la como dependência: a
+    // guarda acima já limita o efeito à troca de questão, e nesse render a
+    // prop já é a anotação da questão nova.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [questionId])
 
   // ───── Normalization helpers (fraction of current width) ─────
   const toFrac = useCallback((p: Point): Point => {
@@ -505,7 +570,6 @@ export function InlineAnnotationCanvas({
     ctx.restore()
   }, [])
 
-  const laserLoopRunningRef = useRef(false)
   const runLaserLoop = useCallback(() => {
     const step = () => {
       const fadeStart = laserFadeStartRef.current
