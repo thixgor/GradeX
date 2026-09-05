@@ -1,8 +1,13 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { CheckCircle2, DoorOpen, Flag, Lock, PlayCircle, Timer } from 'lucide-react'
-import type { FaseDaProva, JanelaDaProva } from '@/lib/provas/janela-da-prova'
+import { DoorOpen, Flag, Lock, PlayCircle } from 'lucide-react'
+import {
+  indiceDoProximoMarco,
+  marcosDaJanela,
+  type FaseDaProva,
+  type JanelaDaProva,
+} from '@/lib/provas/janela-da-prova'
 import { cn } from '@/lib/utils'
 
 /**
@@ -133,6 +138,12 @@ function contagem(ms: number): string {
   return h > 0 ? `${h}:${dois(m)}:${dois(s)}` : `${m}:${dois(s)}`
 }
 
+/** Só o relógio (`13:50`) — para citar um horário no meio de uma frase. */
+function apenasHora(data: Date | string | null): string {
+  if (!data) return '—'
+  return new Date(data).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+}
+
 function hora(data: Date | string | null): string {
   if (!data) return '—'
   return new Date(data).toLocaleString('pt-BR', {
@@ -209,13 +220,10 @@ export function ExamGateStatus({
     )
   }
 
-  const marcos = [
-    { rotulo: 'Portão abre', quando: janela.abrePortaoEm },
-    { rotulo: 'Prova começa', quando: janela.comecaEm },
-    { rotulo: 'Prova termina', quando: janela.terminaEm },
-    { rotulo: 'Portão fecha', quando: janela.fechaPortaoEm },
-  ]
-  const passados = marcos.filter((m) => m.quando && new Date(m.quando).getTime() <= agora).length
+  // A linha do tempo, ordenada pelo relógio e com cada marco respondendo pelo
+  // próprio horário — ver `marcosDaJanela` em lib/provas/janela-da-prova.ts.
+  const marcos = marcosDaJanela(janela, new Date(agora))
+  const indiceDoProximo = indiceDoProximoMarco(marcos)
 
   return (
     <div className={cn('overflow-hidden rounded-2xl border border-border/60 bg-muted/25', className)}>
@@ -226,7 +234,7 @@ export function ExamGateStatus({
           <div className="min-w-0">
             <p className={cn('text-base font-bold leading-tight', texto)}>{titulo}</p>
             <p className="mt-0.5 text-xs leading-snug text-muted-foreground">
-              {janela.motivo ?? descricaoDaFase(janela)}
+              {janela.motivo ?? descricaoDaFase(janela, apenasHora(janela.fechaPortaoEm))}
             </p>
           </div>
 
@@ -242,34 +250,29 @@ export function ExamGateStatus({
           )}
         </div>
 
-        {/*
-          O selo de quem chegou a tempo.
-          
-          Sem ele, um portão que fechou às 13h50 numa prova das 14h deixa a
-          pessoa sem saber se ela está dentro ou se vai bater na porta às 14h.
-        */}
-        {janela.jaEntrou && !janela.encerrada && (
-          <p className="mt-3 flex items-start gap-1.5 rounded-lg bg-emerald-500/10 px-2.5 py-2 text-xs leading-snug text-emerald-700 dark:text-emerald-400">
-            <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
-            <span>
-              <strong>Você passou pelo portão.</strong> Fechar o portão vale para quem ainda não
-              entrou — a sua prova segue normalmente.
-            </span>
-          </p>
-        )}
       </div>
 
       {/* A linha do tempo, agora como rodapé do portão e não como o cartão inteiro. */}
-      <ol className="grid grid-cols-2 gap-x-4 border-t border-border/50 bg-background/40 px-4 py-3 sm:grid-cols-4">
+      <ol
+        className="grid grid-cols-2 gap-x-4 border-t border-border/50 bg-background/40 px-4 py-3 sm:grid-cols-4"
+        // A cor da fase desce para o rodapé: o ponto do próximo marco pulsa na
+        // mesma cor do portão, em vez de um verde fixo discordando de um
+        // cartão âmbar.
+        style={{ ['--portao-cor' as string]: rgb }}
+      >
         {marcos.map((m, i) => {
-          const jaPassou = i < passados
-          const eOAtual = i === passados - 1
+          const jaPassou = m.jaPassou
+          const eOProximo = i === indiceDoProximo
           return (
             <li key={m.rotulo} className="flex items-center gap-2 py-0.5">
               <span
                 className={cn(
                   'h-1.5 w-1.5 flex-shrink-0 rounded-full',
-                  eOAtual ? 'exam-marco-pulsa bg-emerald-500' : jaPassou ? 'bg-emerald-500/50' : 'bg-border',
+                  eOProximo
+                    ? 'exam-marco-pulsa'
+                    : jaPassou
+                      ? 'bg-[rgb(var(--portao-cor)/0.45)]'
+                      : 'bg-border',
                 )}
                 aria-hidden
               />
@@ -294,14 +297,33 @@ export function ExamGateStatus({
   )
 }
 
-/** A frase da fase quando a janela não traz um motivo (nada está bloqueado). */
-function descricaoDaFase(janela: JanelaDaProva): string {
+/**
+ * UMA frase, e só uma.
+ *
+ * O cartão dizia a mesma coisa três vezes empilhadas: o título ("Você está
+ * dentro"), a descrição ("Você entrou dentro do horário e pode iniciar a
+ * prova.") e um selo verde ("Você passou pelo portão. Fechar o portão vale
+ * para quem ainda não entrou…"). Três camadas para uma informação — e a
+ * terceira só existia porque a segunda não contava a parte que interessa.
+ *
+ * A parte que interessa é a contradição aparente: o portão fechou E você está
+ * dentro. Quando ela existe, a frase a resolve, com o horário; quando não
+ * existe, a frase diz o que fazer agora e o selo não tem por que aparecer.
+ */
+function descricaoDaFase(janela: JanelaDaProva, horaDoFechamento: string): string {
+  const portaoAberto = janela.podeEntrar
+
   switch (janela.fase) {
     case 'sala-de-espera':
-      return 'Você já pode entrar e esperar. A prova abre no horário marcado.'
-    case 'em-andamento':
       return janela.jaEntrou
-        ? 'Você entrou dentro do horário e pode iniciar a prova.'
+        ? 'Você está na sala. A prova abre no horário marcado.'
+        : 'Você já pode entrar e esperar. A prova abre no horário marcado.'
+    case 'em-andamento':
+      if (janela.jaEntrou && !portaoAberto) {
+        return `Os portões fecharam às ${horaDoFechamento} para quem ainda não tinha entrado. Você entrou a tempo — sua prova segue normalmente.`
+      }
+      return janela.jaEntrou
+        ? 'Você já pode iniciar a prova.'
         : 'A prova está acontecendo e os portões ainda estão abertos.'
     default:
       return ''

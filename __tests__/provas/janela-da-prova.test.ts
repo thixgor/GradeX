@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import {
   fimDaProva,
+  indiceDoProximoMarco,
+  marcosDaJanela,
   prazoDeEntrega,
   resolverJanelaDaProva,
 } from '@/lib/provas/janela-da-prova'
@@ -171,5 +173,95 @@ describe('prazoDeEntrega', () => {
     const inicio = new Date('2026-05-10T14:00:00Z')
     const prazo = prazoDeEntrega(prova({ duration: 120 }), inicio)
     expect(prazo!.getTime() - inicio.getTime()).toBe(2 * HORA)
+  })
+})
+
+
+/*
+ * A linha do tempo que se contradizia.
+ *
+ * Ela era uma lista fixa (abre, começa, termina, fecha) e o "já passou" vinha
+ * de uma CONTAGEM: `passados` contava quantos marcos tinham acontecido e os
+ * primeiros dessa quantidade eram pintados de verde. Só funciona se a lista
+ * estiver em ordem cronológica — e o vestibular, que a correção do portão
+ * tornou válido, é exatamente o caso em que ela não está.
+ *
+ * Com portão fechando às 00:12 e prova começando às 00:15, às 00:45 a tela
+ * marcava "Prova termina 01:35" como concluída e deixava "Portão fecha 00:12"
+ * em negrito, como se ainda fosse acontecer.
+ */
+describe('marcosDaJanela', () => {
+  const vestibular = resolverJanelaDaProva(
+    {
+      startTime: new Date('2026-09-05T00:15:00Z'),
+      endTime: new Date('2026-09-05T01:35:00Z'),
+      gatesOpen: new Date('2026-09-05T00:09:00Z'),
+      gatesClose: new Date('2026-09-05T00:12:00Z'),
+    } as any,
+    new Date('2026-09-05T00:45:00Z'),
+    { jaEntrou: true },
+  )
+
+  const agora = new Date('2026-09-05T00:45:00Z')
+
+  it('ordena pelo relógio, não pela ordem em que os campos foram escritos', () => {
+    expect(marcosDaJanela(vestibular, agora).map((m) => m.rotulo)).toEqual([
+      'Portão abre',
+      'Portão fecha',
+      'Prova começa',
+      'Prova termina',
+    ])
+  })
+
+  it('cada marco responde pelo próprio horário', () => {
+    const marcos = marcosDaJanela(vestibular, agora)
+    const porRotulo = Object.fromEntries(marcos.map((m) => [m.rotulo, m.jaPassou]))
+    expect(porRotulo['Portão abre']).toBe(true)
+    expect(porRotulo['Portão fecha']).toBe(true)
+    expect(porRotulo['Prova começa']).toBe(true)
+    // O defeito: às 00:45 a contagem marcava o término das 01:35 como passado.
+    expect(porRotulo['Prova termina']).toBe(false)
+  })
+
+  it('o destaque vai para o PRÓXIMO marco, não para o último que passou', () => {
+    const marcos = marcosDaJanela(vestibular, agora)
+    expect(marcos[indiceDoProximoMarco(marcos)].rotulo).toBe('Prova termina')
+  })
+
+  it('depois do último marco não há próximo', () => {
+    const marcos = marcosDaJanela(vestibular, new Date('2026-09-05T02:00:00Z'))
+    expect(marcos.every((m) => m.jaPassou)).toBe(true)
+    expect(indiceDoProximoMarco(marcos)).toBe(-1)
+  })
+
+  it('na ordem clássica (portão fecha por último) nada muda', () => {
+    const classico = resolverJanelaDaProva(
+      {
+        startTime: new Date('2026-05-10T14:00:00Z'),
+        endTime: new Date('2026-05-10T18:00:00Z'),
+        gatesOpen: new Date('2026-05-10T13:00:00Z'),
+        gatesClose: new Date('2026-05-10T18:30:00Z'),
+      } as any,
+      new Date('2026-05-10T15:00:00Z'),
+    )
+    expect(marcosDaJanela(classico, new Date('2026-05-10T15:00:00Z')).map((m) => m.rotulo)).toEqual([
+      'Portão abre',
+      'Prova começa',
+      'Prova termina',
+      'Portão fecha',
+    ])
+  })
+
+  it('prova sem portões cai para as datas da própria prova, sem duplicar rótulo', () => {
+    const semPortoes = resolverJanelaDaProva(
+      { startTime: new Date('2026-05-10T14:00:00Z'), endTime: new Date('2026-05-10T18:00:00Z') } as any,
+      new Date('2026-05-10T13:00:00Z'),
+    )
+    const marcos = marcosDaJanela(semPortoes, new Date('2026-05-10T13:00:00Z'))
+    expect(marcos).toHaveLength(4)
+    expect(marcos.every((m) => m.quando !== null)).toBe(true)
+    // Sem portão, "abre" coincide com o início e "fecha" com o término.
+    expect(marcos[0].ms).toBe(marcos[1].ms)
+    expect(marcos[2].ms).toBe(marcos[3].ms)
   })
 })

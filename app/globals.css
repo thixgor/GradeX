@@ -6604,12 +6604,17 @@ body.has-guest-notice {
    é declarado aqui, e some inteiro sob prefers-reduced-motion: numa prova
    cronometrada, movimento é distração, não enfeite.
    ============================================ */
+/* O ponto do próximo marco. A cor vem da fase (`--portao-cor`), não fixa em
+   verde: numa prova com o portão fechado o cartão inteiro é âmbar e um pulso
+   verde no rodapé é a única coisa discordando. O verde continua sendo o
+   padrão para quem usa a classe fora do portão. */
 @keyframes exam-marco-pulsa {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
-  50%      { box-shadow: 0 0 0 5px rgba(16, 185, 129, 0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgb(var(--portao-cor, 16 185 129) / 0.5); }
+  50%      { box-shadow: 0 0 0 5px rgb(var(--portao-cor, 16 185 129) / 0); }
 }
 
 .exam-marco-pulsa {
+  background-color: rgb(var(--portao-cor, 16 185 129));
   animation: exam-marco-pulsa 2s ease-out infinite;
 }
 

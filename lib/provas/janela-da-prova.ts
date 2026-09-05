@@ -241,6 +241,70 @@ export function validarJanelaDoFormulario(campos: {
   return null
 }
 
+/** Um marco da janela, já situado no tempo. */
+export interface MarcoDaJanela {
+  rotulo: string
+  quando: Date | null
+  /** `null` quando o marco não tem data. */
+  ms: number | null
+  jaPassou: boolean
+}
+
+/**
+ * Os quatro marcos, em ordem cronológica de verdade.
+ *
+ * ## O que estava errado
+ *
+ * A tela listava os marcos numa ordem fixa — abre, começa, termina, fecha — e
+ * decidia o "já passou" de cada um por CONTAGEM: contava quantos tinham
+ * acontecido e pintava de verde os primeiros dessa quantidade. Isso só está
+ * certo se a lista estiver em ordem cronológica.
+ *
+ * E o vestibular é justamente o caso em que ela não está. Portão que fecha às
+ * 00:12 numa prova que começa às 00:15 ocupa o QUARTO lugar na lista e o
+ * SEGUNDO no relógio. Com três marcos já passados, a contagem pintava os três
+ * primeiros da lista — marcando "Prova termina 01:35" como concluída às 00:45
+ * e deixando "Portão fecha 00:12" em negrito, como se ainda fosse acontecer.
+ *
+ * Uma linha do tempo que se contradiz é pior do que nenhuma: ela é lida como
+ * verdade sobre o que já aconteceu.
+ *
+ * Aqui cada marco responde pelo próprio horário, e a ordem na tela é a ordem
+ * em que as coisas acontecem. Marco sem data vai para o fim — ele não tem
+ * lugar numa cronologia.
+ */
+export function marcosDaJanela(janela: JanelaDaProva, agora: Date = new Date()): MarcoDaJanela[] {
+  const t = agora.getTime()
+
+  return [
+    { rotulo: 'Portão abre', quando: janela.abrePortaoEm },
+    { rotulo: 'Prova começa', quando: janela.comecaEm },
+    { rotulo: 'Prova termina', quando: janela.terminaEm },
+    { rotulo: 'Portão fecha', quando: janela.fechaPortaoEm },
+  ]
+    .map(({ rotulo, quando }) => {
+      const data = paraData(quando)
+      const ms = data ? data.getTime() : null
+      return { rotulo, quando: data, ms, jaPassou: ms !== null && ms <= t }
+    })
+    .sort((a, b) => {
+      if (a.ms === null) return 1
+      if (b.ms === null) return -1
+      return a.ms - b.ms
+    })
+}
+
+/**
+ * O índice do próximo marco a acontecer, ou `-1` quando não há mais nenhum.
+ *
+ * É o que a contagem regressiva está contando, e por isso é ele que recebe o
+ * destaque. O pulso ficava no ÚLTIMO marco já passado — a informação que a
+ * pessoa já tem, em vez da que ela está esperando.
+ */
+export function indiceDoProximoMarco(marcos: readonly MarcoDaJanela[]): number {
+  return marcos.findIndex((m) => !m.jaPassou && m.ms !== null)
+}
+
 export function motivoDaFase(fase: FaseDaProva): string | null {
   switch (fase) {
     case 'antes-do-portao':

@@ -2663,20 +2663,62 @@ ${respostaAluno}`
                 {/* Portões — os quatro marcos que só existiam no banco. */}
                 {janela && janela.fase !== 'livre' && <ExamGateStatus janela={janela} />}
 
-                {/* Stats */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  {[
+                {/*
+                  Os números da prova.
+
+                  "Início" e "Término" saem daqui quando o painel de portões
+                  está na tela: ele já mostra os dois, no mesmo formato, dois
+                  centímetros acima. Repetir a mesma data duas vezes na mesma
+                  dobra não reforça nada — só faz o leitor conferir se são a
+                  mesma coisa. No lugar entra a duração, que o painel não diz.
+                */}
+                {(() => {
+                  const temPainelDePortoes = !!janela && janela.fase !== 'livre'
+                  const dataCurta = (valor: Date | string) =>
+                    new Date(valor).toLocaleDateString('pt-BR', {
+                      day: '2-digit',
+                      month: 'short',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })
+
+                  const stats: { label: string; value: React.ReactNode; color: string }[] = [
                     { label: 'Questões', value: exam.numberOfQuestions, color: 'from-emerald-500/15 to-emerald-500/5 text-emerald-700 dark:text-emerald-400 border-emerald-500/20' },
                     { label: 'Pontuação', value: exam.scoringMethod === 'tri' ? 'TRI · 1000' : `${exam.totalPoints} pts`, color: 'from-amber-500/15 to-amber-500/5 text-amber-700 dark:text-amber-400 border-amber-500/20' },
-                    { label: 'Início', value: new Date(exam.startTime).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }), color: 'from-blue-500/15 to-blue-500/5 text-blue-700 dark:text-blue-400 border-blue-500/20' },
-                    { label: 'Término', value: new Date(exam.endTime).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }), color: 'from-rose-500/15 to-rose-500/5 text-rose-700 dark:text-rose-400 border-rose-500/20' },
-                  ].map((stat, i) => (
-                    <div key={i} className={`rounded-xl border bg-gradient-to-br p-3 ${stat.color}`}>
-                      <p className="text-[10px] uppercase tracking-wider opacity-80 font-semibold">{stat.label}</p>
-                      <p className="text-sm font-bold mt-0.5 tabular-nums">{stat.value}</p>
+                  ]
+
+                  if (exam.duration) {
+                    stats.push({
+                      label: 'Duração',
+                      value: exam.duration >= 60
+                        ? `${Math.floor(exam.duration / 60)}h${exam.duration % 60 ? ` ${String(exam.duration % 60).padStart(2, '0')}min` : ''}`
+                        : `${exam.duration} min`,
+                      color: 'from-violet-500/15 to-violet-500/5 text-violet-700 dark:text-violet-400 border-violet-500/20',
+                    })
+                  }
+
+                  if (!temPainelDePortoes) {
+                    stats.push(
+                      { label: 'Início', value: dataCurta(exam.startTime), color: 'from-blue-500/15 to-blue-500/5 text-blue-700 dark:text-blue-400 border-blue-500/20' },
+                      { label: 'Término', value: dataCurta(exam.endTime), color: 'from-rose-500/15 to-rose-500/5 text-rose-700 dark:text-rose-400 border-rose-500/20' },
+                    )
+                  }
+
+                  return (
+                    <div
+                      className={`grid gap-3 ${
+                        stats.length <= 2 ? 'grid-cols-2' : stats.length === 3 ? 'grid-cols-3' : 'grid-cols-2 sm:grid-cols-4'
+                      }`}
+                    >
+                      {stats.map((stat, i) => (
+                        <div key={i} className={`rounded-xl border bg-gradient-to-br p-3 ${stat.color}`}>
+                          <p className="text-[10px] uppercase tracking-wider opacity-80 font-semibold">{stat.label}</p>
+                          <p className="text-sm font-bold mt-0.5 tabular-nums">{stat.value}</p>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  )
+                })()}
 
                 {/* Form */}
                 <div className="space-y-4 pt-2 border-t border-border/40">
