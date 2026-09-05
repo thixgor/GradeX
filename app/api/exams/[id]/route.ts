@@ -9,6 +9,7 @@ import { pessoaEstaNoPublico } from '@/lib/provas/publico-da-prova'
 import { lerPeriodoDoAluno } from '@/lib/provas/periodo-do-aluno'
 import { resolverJanelaDaProva, validarJanelaDoFormulario } from '@/lib/provas/janela-da-prova'
 import { interpretarInstante } from '@/lib/provas/horario-local'
+import { jaEntrouNaProva } from '@/lib/provas/entrada-na-prova'
 import { normalizarPublico } from '@/lib/provas/publico-da-prova'
 import { normalizarLiberacoes } from '@/lib/provas/downloads-da-prova'
 
@@ -124,12 +125,23 @@ export async function GET(
         }
       : entregue
 
+    /*
+     * Quem já passou pelo portão continua dentro depois que ele fecha.
+     *
+     * Sem este dado a janela do servidor diria `podeIniciar: false` às 14h para
+     * a sala de espera inteira de uma prova cujo portão fechou às 13h50 — o
+     * portão é o limite da CHEGADA, não do começo. Ver
+     * `lib/provas/entrada-na-prova.ts`.
+     */
+    const jaEntrou = await jaEntrouNaProva(db, id, session.userId)
+
     return NextResponse.json({
       exam: provaFinal,
       // A janela sai calculada pelo relógio do SERVIDOR. O cliente desenha
       // portões e contagem regressiva a partir daqui em vez de comparar datas
       // com o relógio da máquina do aluno, que ele controla.
-      janela: resolverJanelaDaProva(exam),
+      janela: resolverJanelaDaProva(exam, new Date(), { jaEntrou }),
+      jaEntrou,
       jaSubmeteu,
     })
   } catch (error) {

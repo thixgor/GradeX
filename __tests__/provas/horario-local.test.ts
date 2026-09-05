@@ -102,16 +102,20 @@ describe('validarJanelaDoFormulario', () => {
     ).toMatch(/fecham antes/)
   })
 
-  it('recusa portão que fecha antes de a prova começar — ninguém conseguiria iniciar', () => {
-    // `podeIniciar` exige o portão ainda aberto: com o portão fechado às 13h30
-    // e a prova começando às 14h, o botão nunca destravaria para ninguém.
+  it('ACEITA portão que fecha antes de a prova começar — é o vestibular clássico', () => {
+    /*
+     * Portão das 13h às 13h30, prova às 14h: chega quem chegar até 13h30, e
+     * todos começam juntos às 14h. Isto era recusado enquanto `podeIniciar`
+     * exigia o portão aberto no clique — a regra errada tinha transformado a
+     * montagem mais comum de todas num erro de formulário.
+     */
     expect(
       validarJanelaDoFormulario({
         ...base,
         gatesOpen: '2026-05-10T13:00:00Z',
         gatesClose: '2026-05-10T13:30:00Z',
       }),
-    ).toMatch(/antes de a prova começar/)
+    ).toBeNull()
   })
 
   it('recusa portão que abre depois do término', () => {

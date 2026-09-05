@@ -75,6 +75,14 @@ export default function ExamPage({ params }: { params: { id: string } }) {
    * entrega; aqui a janela só determina o que a tela desenha.
    */
   const [janela, setJanela] = useState<JanelaDaProva | null>(null)
+  /**
+   * Esta pessoa já passou pelo portão.
+   *
+   * Vem do servidor (`GET /api/exams/[id]`) e é o que mantém o botão
+   * "Iniciar" destravado depois que o portão fecha: o portão limita a
+   * CHEGADA, não o começo. Ver `lib/provas/entrada-na-prova.ts`.
+   */
+  const [jaEntrou, setJaEntrou] = useState(false)
   /** Progresso salvo de uma tentativa interrompida, e se dá para continuar. */
   const [retomada, setRetomada] = useState<VereditoDeRetomada | null>(null)
   const [progressoSalvo, setProgressoSalvo] = useState<any>(null)
@@ -764,7 +772,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     if (!exam) return
 
     const recalcular = () => {
-      const atual = resolverJanelaDaProva(exam)
+      const atual = resolverJanelaDaProva(exam, new Date(), { jaEntrou })
       setJanela(atual)
       setCanStart(atual.podeIniciar)
     }
@@ -772,7 +780,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     recalcular()
     const interval = setInterval(recalcular, 1000)
     return () => clearInterval(interval)
-  }, [exam])
+  }, [exam, jaEntrou])
 
   async function checkExistingSubmission() {
     try {
@@ -826,6 +834,28 @@ export default function ExamPage({ params }: { params: { id: string } }) {
 
       setExam(examData)
       if (data.janela) setJanela(data.janela)
+      if (data.jaEntrou) setJaEntrou(true)
+
+      /*
+       * Passar pelo portão.
+       *
+       * Abrir esta tela com o portão aberto É entrar — e o registro disso é o
+       * que sustenta o botão "Iniciar" quando o portão fecha antes de a prova
+       * começar (portão 13h–13h50, prova às 14h). Falha em silêncio: quem já
+       * está dentro recebe 200 sem gravar nada, e quem chegou tarde recebe 403,
+       * que a tela já conta pela fase da janela.
+       */
+      if (!data.jaEntrou && data.janela?.podeEntrar) {
+        fetch(`/api/exams/${id}/entrada`, { method: 'POST' })
+          .then((res) => (res.ok ? res.json() : null))
+          .then((entrada) => {
+            if (entrada?.dentro) {
+              setJaEntrou(true)
+              if (entrada.janela) setJanela(entrada.janela)
+            }
+          })
+          .catch(() => {})
+      }
       // A ordem que ESTE aluno recebeu segue junto na entrega, para o relatório
       // numerar as questões como ele as viu.
       setOrdemDasQuestoes((examData.questions || []).map((q: any) => q.id))
@@ -2713,7 +2743,10 @@ ${respostaAluno}`
                   do caminho, e sem o campo aqui ele não teria onde assinar.
                 */}
                 {exam.requireSignature !== false &&
-                  (!janela || janela.podeEntrar || (!!retomada?.temProgresso && !janela.encerrada)) && (
+                  (!janela ||
+                    janela.podeEntrar ||
+                    janela.podeIniciar ||
+                    (!!retomada?.temProgresso && !janela.encerrada)) && (
                   <SignaturePad
                     onSignatureChange={setSignature}
                     valorInicial={signature}
@@ -2745,7 +2778,17 @@ ${respostaAluno}`
                   disabled={
                     !userName.trim() ||
                     (exam.themePhrase ? !themeTranscription.trim() : false) ||
-                    (!!janela && !janela.podeEntrar) ||
+                    /*
+                     * `podeEntrar` sozinho travava quem JÁ ESTÁ DENTRO.
+                     *
+                     * Numa prova de portão 13h–13h50 e início às 14h, quem
+                     * entrou às 13h30 chega às 14h com `podeEntrar: false` (o
+                     * portão fechou) e `podeIniciar: true` (ele está dentro) —
+                     * e o botão ficava desabilitado justamente para a pessoa
+                     * que a prova está esperando. A porta abre para os dois
+                     * caminhos: entrar agora, ou iniciar por já ter entrado.
+                     */
+                    (!!janela && !janela.podeEntrar && !janela.podeIniciar) ||
                     // Só trava o caminho que ENTRA na prova: para a sala de
                     // espera a assinatura ainda pode ser feita lá dentro.
                     (canStart && !!exam.requireSignature && !signature)

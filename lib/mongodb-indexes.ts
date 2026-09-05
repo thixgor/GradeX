@@ -136,6 +136,17 @@ export async function ensureIndexes(db: Db): Promise<void> {
      */
     db.collection('exam_progress').createIndex({ examId: 1, userId: 1 }, { unique: true }),
     db.collection('exam_progress').createIndex({ examId: 1, updatedAt: -1 }),
+    /*
+     * `exam_entries` — quem passou pelo portão da prova.
+     *
+     * Consultada a cada carregamento da tela da prova, por cada aluno, ao mesmo
+     * tempo: é o registro que decide se o botão "Iniciar" destrava para quem
+     * chegou antes de o portão fechar. Única pela mesma razão do rascunho —
+     * duas abas abrindo juntas fariam o `upsert` gravar duas entradas, e a
+     * segunda apagaria o horário real da primeira em qualquer leitura ordenada.
+     */
+    db.collection('exam_entries').createIndex({ examId: 1, userId: 1 }, { unique: true }),
+    db.collection('exam_entries').createIndex({ examId: 1, entrouEm: 1 }),
     // `download_logs` alimenta três rankings do painel e não tinha índice
     // nenhum — cada aba varria a coleção inteira.
     db.collection('download_logs').createIndex({ downloadedAt: -1 }),

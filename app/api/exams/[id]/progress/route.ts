@@ -4,6 +4,7 @@ import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
 import type { Exam, ExamSubmission, UserAnswer } from '@/lib/types'
 import { resolverJanelaDaProva } from '@/lib/provas/janela-da-prova'
+import { jaEntrouNaProva } from '@/lib/provas/entrada-na-prova'
 import { pessoaEstaNoPublico } from '@/lib/provas/publico-da-prova'
 import { lerPeriodoDoAluno } from '@/lib/provas/periodo-do-aluno'
 import {
@@ -107,8 +108,9 @@ function vereditoDe(
   progresso: ProgressoDaProva | null,
   exam: Exam,
   jaEntregou: boolean,
+  jaEntrou = false,
 ) {
-  const janela = resolverJanelaDaProva(exam)
+  const janela = resolverJanelaDaProva(exam, new Date(), { jaEntrou })
   return {
     veredito: avaliarRetomada({
       progresso,
@@ -137,7 +139,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       .collection<ProgressoDaProva>(COLECAO_DE_PROGRESSO)
       .findOne({ examId: id, userId: session.userId })
 
-    const { veredito, janela } = vereditoDe(progresso as any, ctx.exam!, ctx.jaEntregou!)
+    const jaEntrou = await jaEntrouNaProva(ctx.db!, id, session.userId)
+    const { veredito, janela } = vereditoDe(progresso as any, ctx.exam!, ctx.jaEntregou!, jaEntrou)
 
     return NextResponse.json({
       progresso: progresso
@@ -247,7 +250,12 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const colecao = ctx.db!.collection<ProgressoDaProva>(COLECAO_DE_PROGRESSO)
     const progresso = await colecao.findOne({ examId: id, userId: session.userId })
 
-    const { veredito } = vereditoDe(progresso as any, ctx.exam!, ctx.jaEntregou!)
+    const { veredito } = vereditoDe(
+      progresso as any,
+      ctx.exam!,
+      ctx.jaEntregou!,
+      await jaEntrouNaProva(ctx.db!, id, session.userId),
+    )
     if (!veredito.podeRetomar) {
       return NextResponse.json({ error: veredito.mensagem || 'Não é possível retomar esta prova', veredito }, { status: 409 })
     }

@@ -727,7 +727,9 @@ function ProvasContent() {
       return { text: 'Praticar', color: 'text-emerald-600 dark:text-emerald-400', bgColor: 'bg-emerald-500/10', dotColor: 'bg-emerald-500', canTake: true }
     }
 
-    const janela = resolverJanelaDaProva(exam)
+    // `jaEntrou` vem por pessoa em `GET /api/exams` (ver a rota): sem ele o
+    // selo diria "Portões fechados" para quem está dentro e só precisa clicar.
+    const janela = resolverJanelaDaProva(exam, new Date(), { jaEntrou: !!(exam as any).jaEntrou })
 
     switch (janela.fase) {
       case 'livre':
@@ -741,7 +743,16 @@ function ProvasContent() {
       case 'em-andamento':
         return { text: 'Disponivel', color: 'text-emerald-600 dark:text-emerald-400', bgColor: 'bg-emerald-500/10', dotColor: 'bg-emerald-500', canTake: true }
       case 'portao-fechado':
-        return { text: 'Portoes fechados', color: 'text-muted-foreground', bgColor: 'bg-muted', dotColor: 'bg-gray-400', canTake: false }
+        // `canTake` segue `podeIniciar`, e não a fase: quem passou pelo portão
+        // antes de ele fechar continua com a prova aberta — a fase
+        // 'portao-fechado' só existe para quem ficou do lado de fora.
+        return {
+          text: janela.podeIniciar ? 'Em andamento' : 'Portoes fechados',
+          color: janela.podeIniciar ? 'text-emerald-600 dark:text-emerald-400' : 'text-muted-foreground',
+          bgColor: janela.podeIniciar ? 'bg-emerald-500/10' : 'bg-muted',
+          dotColor: janela.podeIniciar ? 'bg-emerald-500' : 'bg-gray-400',
+          canTake: janela.podeIniciar,
+        }
       default:
         return { text: 'Indisponivel', color: 'text-muted-foreground', bgColor: 'bg-muted', dotColor: 'bg-gray-400', canTake: false }
     }

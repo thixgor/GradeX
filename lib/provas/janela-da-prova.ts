@@ -31,9 +31,24 @@ import type { Exam } from '@/lib/types'
  *    passa a poder iniciar.
  *  - **Término** (`endTime`): acabou. Ninguém mais responde nem entrega.
  *  - **Portão fechado** (`gatesClose`): o atraso máximo tolerado para ENTRAR.
- *    Fechar o portão não expulsa quem já está dentro — quem entrou antes
- *    continua respondendo até o término. É por isso que `gatesClose` não é o
- *    fim da prova: é o fim da entrada.
+ *    Fechar o portão não expulsa nem trava quem já está dentro — quem passou
+ *    pelo portão continua, começa quando a prova começar e responde até o
+ *    término. É por isso que `gatesClose` não é o fim da prova: é o fim da
+ *    ENTRADA, e só isso.
+ *
+ * ## Estar dentro é um fato do servidor, não do navegador
+ *
+ * `podeIniciar` exigia o portão ABERTO no instante do clique. Numa prova
+ * montada como vestibular — portão das 13h às 13h50, prova às 14h — isso
+ * significava que ninguém iniciava: às 14h o portão já tinha fechado, e a sala
+ * de espera inteira ficava olhando um botão travado. O erro era tratar o
+ * portão como se ele governasse o começo da prova, quando ele só governa a
+ * chegada.
+ *
+ * Quem chegou é registrado (`lib/provas/entrada-na-prova.ts`) no momento em
+ * que passa pelo portão, com o relógio do servidor. Daí em diante o portão
+ * fechado não diz mais respeito a essa pessoa — ele existe para os que ainda
+ * estão do lado de fora.
  *
  * Portões são opcionais. Sem eles a entrada segue a própria prova
  * (`gatesOpen = startTime`, `gatesClose = endTime`), que é o comportamento de
@@ -59,8 +74,21 @@ export type FaseDaProva =
   /** Passou do término. */
   | 'encerrada'
 
+/** O que o servidor sabe sobre ESTA pessoa nesta prova. */
+export interface ContextoDaPessoa {
+  /**
+   * Passou pelo portão enquanto ele estava aberto.
+   *
+   * Não é "abriu a página": é um registro gravado pelo servidor quando a
+   * entrada foi de fato permitida. Ver `lib/provas/entrada-na-prova.ts`.
+   */
+  jaEntrou?: boolean
+}
+
 export interface JanelaDaProva {
   fase: FaseDaProva
+  /** Esta pessoa já passou pelo portão (ou a prova não tem portão). */
+  jaEntrou: boolean
   /** Instantes já normalizados (portões caem para a própria prova quando ausentes). */
   abrePortaoEm: Date | null
   fechaPortaoEm: Date | null
@@ -101,9 +129,11 @@ export function fimDaProva(prova: Partial<Exam> | null | undefined): Date | null
 export function resolverJanelaDaProva(
   prova: Partial<Exam> | null | undefined,
   agora: Date = new Date(),
+  pessoa: ContextoDaPessoa = {},
 ): JanelaDaProva {
   const livre: JanelaDaProva = {
     fase: 'livre',
+    jaEntrou: true,
     abrePortaoEm: null,
     fechaPortaoEm: null,
     comecaEm: null,
@@ -133,20 +163,34 @@ export function resolverJanelaDaProva(
   const portaoAberto = t >= abrePortaoEm.getTime() && t <= fechaPortaoEm.getTime()
   const comecou = t >= comecaEm.getTime()
 
+  const jaEntrou = !!pessoa.jaEntrou
+
   let fase: FaseDaProva
   if (encerrada) fase = 'encerrada'
   else if (t < abrePortaoEm.getTime()) fase = 'antes-do-portao'
   else if (!comecou) fase = 'sala-de-espera'
-  else if (portaoAberto) fase = 'em-andamento'
+  // Para quem já está dentro, o portão fechado é um fato sobre os OUTROS: a
+  // prova dele está simplesmente em andamento.
+  else if (portaoAberto || jaEntrou) fase = 'em-andamento'
   else fase = 'portao-fechado'
 
   const podeEntrar = !encerrada && portaoAberto
-  const podeIniciar = podeEntrar && comecou
+  /*
+   * Começar depende de a PROVA ter começado, não de o portão continuar aberto.
+   *
+   * A regra era `podeEntrar && comecou`, e ela quebrava o caso mais comum de
+   * todos: portão das 13h às 13h50 para uma prova das 14h. Quem entrou na sala
+   * às 13h30 chegava às 14h com o portão fechado e o botão travado — a prova
+   * simplesmente não começava para ninguém. O portão marca até que horas dá
+   * para CHEGAR; depois disso ele não tem mais nada a dizer sobre quem chegou.
+   */
+  const podeIniciar = !encerrada && comecou && (portaoAberto || jaEntrou)
   // Quem já está respondendo entrega até o término, mesmo com o portão fechado.
   const podeEnviar = !encerrada && comecou
 
   return {
     fase,
+    jaEntrou,
     abrePortaoEm,
     fechaPortaoEm,
     comecaEm,
@@ -160,16 +204,18 @@ export function resolverJanelaDaProva(
 }
 
 /**
- * A conferência que o formulário do admin nunca fez.
+ * A conferência do formulário do admin.
  *
- * Havia combinações de portões que o painel aceitava em silêncio e que
- * produzem uma prova em que NINGUÉM entra — e o admin só descobria pelo aluno
- * que não conseguiu abrir a página. As duas que importam:
+ * Ela recusava o portão que fecha ANTES do início da prova — que é o
+ * vestibular clássico: portão das 13h às 13h50, prova às 14h. A recusa existia
+ * porque `podeIniciar` exigia o portão aberto no clique, e nessa montagem
+ * ninguém começava. Consertada a regra (o portão governa a chegada, não o
+ * começo), a montagem passou a ser não só válida como a mais comum — e a
+ * conferência que a barrava saiu.
  *
- *  - portão que fecha antes de abrir: a janela de entrada é vazia;
- *  - portão que fecha antes de a prova começar: dá para entrar na sala de
- *    espera, mas `podeIniciar` exige o portão ainda aberto — às 14h, quando a
- *    prova começa, o portão já fechou e o botão nunca destrava.
+ * Sobrou o que continua sendo impossível de qualquer ângulo: um portão que
+ * fecha antes de abrir (janela de entrada vazia) e um que abre depois de a
+ * prova acabar (ninguém chega a tempo de nada).
  *
  * Devolve a frase pronta para a tela, ou `null` quando está tudo de pé.
  */
@@ -186,10 +232,6 @@ export function validarJanelaDoFormulario(campos: {
 
   if (abre && fecha && abre.getTime() >= fecha.getTime()) {
     return 'Os portões fecham antes (ou no mesmo instante) de abrirem — ninguém conseguiria entrar na prova.'
-  }
-
-  if (fecha && comeca && fecha.getTime() < comeca.getTime()) {
-    return 'Os portões fecham antes de a prova começar — quem esperasse na sala não conseguiria iniciar. Feche os portões depois do início.'
   }
 
   if (abre && termina && abre.getTime() > termina.getTime()) {

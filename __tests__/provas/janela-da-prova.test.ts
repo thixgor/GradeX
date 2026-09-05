@@ -46,6 +46,70 @@ describe('resolverJanelaDaProva', () => {
     expect(janela.podeIniciar).toBe(false)
   })
 
+  /*
+   * O vestibular: portão das 13h às 13h50, prova das 14h às 18h.
+   *
+   * `podeIniciar` era `podeEntrar && comecou`, e nessa montagem — a mais comum
+   * que existe — ninguém começava: às 14h o portão já tinha fechado, e a sala
+   * de espera inteira ficava olhando um botão travado. O portão limita a
+   * CHEGADA; quem chegou faz a prova.
+   */
+  describe('o portão limita a chegada, não o começo', () => {
+    const vestibular = () =>
+      prova({
+        gatesOpen: new Date('2026-05-10T13:00:00Z'),
+        gatesClose: new Date('2026-05-10T13:50:00Z'),
+      })
+
+    it('quem entrou na sala às 13h30 começa às 14h, com o portão já fechado', () => {
+      const janela = resolverJanelaDaProva(vestibular(), new Date('2026-05-10T14:05:00Z'), {
+        jaEntrou: true,
+      })
+      expect(janela.podeIniciar).toBe(true)
+      // Para quem está dentro, o portão fechado é um fato sobre os outros.
+      expect(janela.fase).toBe('em-andamento')
+      expect(janela.jaEntrou).toBe(true)
+    })
+
+    it('quem NÃO entrou continua barrado às 14h05', () => {
+      const janela = resolverJanelaDaProva(vestibular(), new Date('2026-05-10T14:05:00Z'), {
+        jaEntrou: false,
+      })
+      expect(janela.podeIniciar).toBe(false)
+      expect(janela.podeEntrar).toBe(false)
+      expect(janela.fase).toBe('portao-fechado')
+    })
+
+    it('sem contexto, o veredito é o de quem está do lado de fora', () => {
+      const janela = resolverJanelaDaProva(vestibular(), new Date('2026-05-10T14:05:00Z'))
+      expect(janela.jaEntrou).toBe(false)
+      expect(janela.podeIniciar).toBe(false)
+    })
+
+    it('ter entrado não adianta a prova: às 13h30 ainda é sala de espera', () => {
+      const janela = resolverJanelaDaProva(vestibular(), new Date('2026-05-10T13:30:00Z'), {
+        jaEntrou: true,
+      })
+      expect(janela.fase).toBe('sala-de-espera')
+      expect(janela.podeIniciar).toBe(false)
+    })
+
+    it('ter entrado não ressuscita a prova encerrada', () => {
+      const janela = resolverJanelaDaProva(vestibular(), new Date('2026-05-10T18:30:00Z'), {
+        jaEntrou: true,
+      })
+      expect(janela.fase).toBe('encerrada')
+      expect(janela.podeIniciar).toBe(false)
+      expect(janela.podeEnviar).toBe(false)
+    })
+
+    it('prova sem janela ignora o portão e conta todo mundo como dentro', () => {
+      const janela = resolverJanelaDaProva(prova({ isPracticeExam: true }), new Date())
+      expect(janela.jaEntrou).toBe(true)
+      expect(janela.podeIniciar).toBe(true)
+    })
+  })
+
   it('portão fechado impede entrar, mas não impede quem já está dentro de entregar', () => {
     const janela = resolverJanelaDaProva(
       prova({ gatesOpen: new Date('2026-05-10T13:00:00Z'), gatesClose: new Date('2026-05-10T14:30:00Z') }),

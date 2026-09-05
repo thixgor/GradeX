@@ -15,6 +15,7 @@ import { podeVerGabarito, prepararProvaParaEntrega } from '@/lib/provas/sanitiza
 import { normalizarPublico, ramosDePublicoParaMongo } from '@/lib/provas/publico-da-prova'
 import { lerPeriodoDoAluno } from '@/lib/provas/periodo-do-aluno'
 import { normalizarLiberacoes } from '@/lib/provas/downloads-da-prova'
+import { COLECAO_DE_ENTRADAS, type EntradaNaProva } from '@/lib/provas/entrada-na-prova'
 import { interpretarInstante } from '@/lib/provas/horario-local'
 import { validarJanelaDoFormulario } from '@/lib/provas/janela-da-prova'
 
@@ -232,7 +233,38 @@ export async function GET(request: NextRequest) {
       isAdmin: session.role === 'admin',
     }
 
-    const provasParaEntrega = exams.map((prova) => prepararProvaParaEntrega(prova, contextoBase))
+    /*
+     * Quais dessas provas esta pessoa já entrou.
+     *
+     * O selo da lista (`/provas`) é calculado pela mesma `resolverJanelaDaProva`
+     * da tela da prova. Sem este dado ela diria "Portões fechados" e travaria o
+     * cartão de alguém que está dentro e só precisa clicar para começar — a
+     * lista contradizendo a tela em que a pessoa acabou de estar.
+     *
+     * Uma consulta com `$in` sobre os ids já carregados; a coleção é indexada
+     * por (`examId`, `userId`).
+     */
+    const idsVisiveis = exams
+      .map((prova) => prova._id?.toString())
+      .filter((valor): valor is string => !!valor)
+
+    const entradas = idsVisiveis.length
+      ? new Set(
+          (
+            await db
+              .collection<EntradaNaProva>(COLECAO_DE_ENTRADAS)
+              .find({ userId: session.userId, examId: { $in: idsVisiveis } }, { projection: { examId: 1 } })
+              .toArray()
+          ).map((entrada) => entrada.examId),
+        )
+      : new Set<string>()
+
+    const provasParaEntrega = exams.map((prova) => ({
+      ...prepararProvaParaEntrega(prova, contextoBase),
+      // Estado desta requisição, não do documento: é por pessoa, e por isso
+      // não está em `Exam`.
+      jaEntrou: entradas.has(prova._id?.toString() || ''),
+    }))
 
     // Cache privado curto: lista pessoal de provas raramente muda em
     // alguns segundos. SWR mantém UI responsiva sem regerar imediato.
