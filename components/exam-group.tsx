@@ -9,6 +9,7 @@ import { ChevronDown, Trash2, Edit2, FolderPlus, FolderInput, MoreHorizontal, Ar
 import { Exam } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { contarQuestoes } from '@/lib/provas/arvore-grupos'
+import { HorariosDaProva } from '@/components/provas/horarios-da-prova'
 
 interface GroupData {
   _id: string
@@ -485,6 +486,10 @@ export function ExamGroup({
                         <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-semibold">Treino</span>
                       )}
                       <span className="text-[10px] text-muted-foreground/50 tabular-nums">{exam.numberOfQuestions} questões</span>
+                      {/* Na linha só cabe o próximo marco — portão que abre,
+                          prova que começa, portão que fecha. Prova de treino
+                          não tem agenda e o componente some sozinho. */}
+                      <HorariosDaProva prova={exam} jaEntrou={!!(exam as any).jaEntrou} variante="linha" />
                     </div>
                   </div>
 

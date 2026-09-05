@@ -18,6 +18,7 @@ import { MinhasProvasDialog } from '@/components/provas/minhas-provas-dialog'
 import { canDownloadExamPdf } from '@/lib/tier-limits'
 import { provaJaEncerrou, resolverDownloadsDaProva } from '@/lib/provas/downloads-da-prova'
 import { resolverJanelaDaProva } from '@/lib/provas/janela-da-prova'
+import { HorariosDaProva } from '@/components/provas/horarios-da-prova'
 import { consumirCotaDoPlano } from '@/lib/plan-consume-client'
 import { Exam } from '@/lib/types'
 import { formatDate } from '@/lib/utils'
@@ -1047,6 +1048,14 @@ function ProvasContent() {
               <span>{exam.scoringMethod === 'tri' ? 'TRI' : `${exam.totalPoints} pts`}</span>
             </div>
           </div>
+
+          {/*
+            A agenda da prova. Só aparece para prova com janela — treino e
+            prova pessoal não têm horário de verdade (ver
+            `lib/provas/horarios-da-prova.ts`), e o próprio componente devolve
+            nada nesse caso, em vez de o cartão ter de saber a regra.
+          */}
+          <HorariosDaProva prova={exam} jaEntrou={!!(exam as any).jaEntrou} />
 
           <div className="flex gap-2 pt-1">
             {status.canTake ? (
