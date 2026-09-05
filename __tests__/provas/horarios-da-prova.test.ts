@@ -3,6 +3,7 @@ import {
   descreverEspera,
   formatarDiaEHora,
   horariosDaProva,
+  proximoInstanteDaJanela,
 } from '@/lib/provas/horarios-da-prova'
 
 const MINUTO = 60 * 1000
@@ -48,8 +49,18 @@ describe('descreverEspera', () => {
     expect(descreverEspera(12 * MINUTO)).toBe('em 12 min')
     expect(descreverEspera(2 * HORA)).toBe('em 2 h')
     expect(descreverEspera(2 * HORA + 15 * MINUTO)).toBe('em 2 h 15 min')
-    expect(descreverEspera(DIA + HORA)).toBe('em 1 dia')
     expect(descreverEspera(3 * DIA)).toBe('em 3 dias')
+  })
+
+  it('não engole as horas que sobram de um dia inteiro', () => {
+    // Truncar aqui não é arredondar, é dizer outro dia: às 23h de segunda,
+    // "em 1 dia" para uma prova de quarta às 11h manda a pessoa se preparar
+    // para terça.
+    expect(descreverEspera(DIA + 12 * HORA)).toBe('em 1 dia e 12 h')
+    expect(descreverEspera(2 * DIA + 3 * HORA)).toBe('em 2 dias e 3 h')
+    // A unidade menor só some quando não tem nada a corrigir.
+    expect(descreverEspera(2 * DIA)).toBe('em 2 dias')
+    expect(descreverEspera(DIA + 30 * MINUTO)).toBe('em 1 dia')
   })
 
   it('cala quando a contagem não decide mais nada', () => {
@@ -109,5 +120,30 @@ describe('horariosDaProva', () => {
 
   it('prova antiga sem datas não vira uma agenda inventada', () => {
     expect(horariosDaProva({ title: 'antiga' } as any, local(2026, 5, 10, 12))).toEqual([])
+  })
+})
+
+describe('proximoInstanteDaJanela', () => {
+  it('aponta a próxima virada de fase, e não a próxima data qualquer', () => {
+    const prova13h = prova({
+      gatesOpen: local(2026, 5, 10, 13),
+      gatesClose: local(2026, 5, 10, 13, 50),
+    })
+
+    // Esperando o portão abrir: a tela precisa acordar às 13h em ponto.
+    expect(proximoInstanteDaJanela(prova13h, local(2026, 5, 10, 12, 30))).toBe(
+      local(2026, 5, 10, 13).getTime(),
+    )
+    // Na sala de espera: o próximo é o portão fechando, não a prova começando.
+    expect(proximoInstanteDaJanela(prova13h, local(2026, 5, 10, 13, 30))).toBe(
+      local(2026, 5, 10, 13, 50).getTime(),
+    )
+  })
+
+  it('devolve null quando não há mais nada para acordar', () => {
+    // Encerrada: nenhum marco à frente.
+    expect(proximoInstanteDaJanela(prova(), local(2026, 5, 11, 9))).toBeNull()
+    // Sem janela: um timer aqui seria um despertador para um evento que não existe.
+    expect(proximoInstanteDaJanela(prova({ isPracticeExam: true }), local(2026, 5, 10, 12))).toBeNull()
   })
 })

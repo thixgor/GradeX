@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, Suspense } from 'react'
+import { useEffect, useRef, useState, Suspense } from 'react'
 import { readPageCache, writePageCache } from '@/lib/page-cache'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { AppShell, useAppShell } from '@/components/app-shell'
@@ -19,6 +19,7 @@ import { canDownloadExamPdf } from '@/lib/tier-limits'
 import { provaJaEncerrou, resolverDownloadsDaProva } from '@/lib/provas/downloads-da-prova'
 import { resolverJanelaDaProva } from '@/lib/provas/janela-da-prova'
 import { HorariosDaProva } from '@/components/provas/horarios-da-prova'
+import { useRelogioDeProvas } from '@/hooks/use-relogio-de-provas'
 import { consumirCotaDoPlano } from '@/lib/plan-consume-client'
 import { Exam } from '@/lib/types'
 import { formatDate } from '@/lib/utils'
@@ -128,6 +129,25 @@ type ViewMode = 'home' | 'faculdade' | 'plataforma'
 // não são dados sensíveis, então podem ser exibidas na hora e revalidadas.
 const PROVAS_EXAMS_CACHE_KEY = 'provas:exams'
 const PROVAS_GROUPS_CACHE_KEY = 'provas:groups'
+
+/**
+ * Duas listas têm o mesmo conteúdo?
+ *
+ * `JSON.stringify` porque é exatamente disto que se trata: a resposta acabou
+ * de ser desserializada de JSON, e a pergunta é se ela diz a mesma coisa que a
+ * anterior. Comparar campo a campo pediria uma lista de campos que ficaria
+ * desatualizada no primeiro campo novo — e um campo esquecido aqui vira uma
+ * tela que não atualiza, que é o bug que este arquivo está justamente
+ * consertando. As listas vêm sem o array `questions` (`campos=lista`), então
+ * são poucos KB.
+ */
+function mesmoConteudo(a: unknown, b: unknown): boolean {
+  try {
+    return JSON.stringify(a) === JSON.stringify(b)
+  } catch {
+    return false
+  }
+}
 
 /** Provas já baixadas por inteiro nesta sessão — gerar os três PDFs da mesma
  *  prova é o caso comum, e não há motivo para buscá-la três vezes. */
@@ -266,6 +286,9 @@ function ProvasContent() {
   const [alvoParaMover, setAlvoParaMover] = useState<AlvoDaMovimentacao | null>(null)
   const [avisoDeMovimentacao, setAvisoDeMovimentacao] = useState('')
 
+  /** Quando a lista veio do servidor pela última vez — o piso da revalidação. */
+  const ultimaCarga = useRef(0)
+
   // O aviso da movimentação some sozinho: ele confirma o que acabou de
   // acontecer e não é algo que precise ser descartado à mão.
   useEffect(() => {
@@ -313,6 +336,56 @@ function ProvasContent() {
       }
     }
   }, [searchParams, groups])
+
+  /*
+   * A lista se mantém viva enquanto a aba está aberta.
+   *
+   * ## O buraco que isto fecha
+   *
+   * `loadExamsAndGroups` rodava uma vez, no mount, e nunca mais. Para o
+   * relógio isso não bastava (resolvido no `useRelogioDeProvas`, que redesenha
+   * o cartão quando a fase vira), mas sobrava a outra metade: os DADOS. Se o
+   * admin adia a prova, corrige o portão ou publica uma prova nova enquanto
+   * alguém espera com a página aberta, essa pessoa continua olhando o horário
+   * antigo — e vai bater num portão que mudou de lugar. Pior: ela não tem como
+   * desconfiar, porque a tela está viva, com a contagem correndo, contando
+   * para o horário errado.
+   *
+   * ## Quando revalidar
+   *
+   * Ao voltar para a aba, porque é quando a pessoa volta a olhar; e de dois em
+   * dois minutos enquanto ela está de fato olhando. Aba escondida não pede
+   * nada: a página em segundo plano não tem ninguém para enganar, e o
+   * `visibilitychange` já a atualiza no instante em que volta a ter.
+   *
+   * O piso de 30 segundos existe porque `focus` e `visibilitychange` disparam
+   * juntos ao voltar de outra aba — sem ele seriam duas requisições para a
+   * mesma volta. É o mesmo tempo do `max-age` privado da rota.
+   *
+   * Nada disso repinta a tela à toa: resposta igual mantém a referência
+   * anterior do estado (ver `mesmoConteudo` em `loadExamsAndGroups`).
+   */
+  useEffect(() => {
+    const PISO_MS = 30_000
+    const INTERVALO_MS = 2 * 60_000
+
+    const revalidar = () => {
+      if (document.visibilityState !== 'visible') return
+      if (Date.now() - ultimaCarga.current < PISO_MS) return
+      loadExamsAndGroups()
+    }
+
+    const aoVoltar = () => revalidar()
+    document.addEventListener('visibilitychange', aoVoltar)
+    window.addEventListener('focus', aoVoltar)
+    const relogio = setInterval(revalidar, INTERVALO_MS)
+
+    return () => {
+      document.removeEventListener('visibilitychange', aoVoltar)
+      window.removeEventListener('focus', aoVoltar)
+      clearInterval(relogio)
+    }
+  }, [])
 
   useEffect(() => {
     loadExamsAndGroups()
@@ -366,11 +439,24 @@ function ProvasContent() {
       const nextExams: Exam[] = examsData.exams || []
       const nextGroups: Group[] = groupsData.groups || []
 
-      setExams(nextExams)
-      setGroups(nextGroups)
+      /*
+       * Resposta igual não vira estado novo.
+       *
+       * Esta função também é a revalidação silenciosa de quem está esperando o
+       * portão abrir (ver o efeito que a chama de tempos em tempos), e nessa
+       * revalidação quase nada mudou. Trocar o array mesmo assim redesenharia
+       * a página inteira — e como `ExamCard` é declarado dentro deste
+       * componente, cada redesenho do pai REMONTA todos os cartões: a lista
+       * inteira refaria a animação de entrada, piscando na cara de quem só
+       * estava esperando. Mantendo a referência anterior quando o conteúdo é o
+       * mesmo, o React não redesenha nada.
+       */
+      setExams(prev => (mesmoConteudo(prev, nextExams) ? prev : nextExams))
+      setGroups(prev => (mesmoConteudo(prev, nextGroups) ? prev : nextGroups))
       // Guarda para a próxima visita abrir instantânea.
       writePageCache(PROVAS_EXAMS_CACHE_KEY, nextExams)
       writePageCache(PROVAS_GROUPS_CACHE_KEY, nextGroups)
+      ultimaCarga.current = Date.now()
     } catch (error) {
       console.error('Erro ao carregar provas e grupos:', error)
     } finally {
@@ -744,14 +830,19 @@ function ProvasContent() {
    *
    * Agora as três telas leem a mesma `resolverJanelaDaProva`.
    */
-  function getExamStatus(exam: Exam) {
+  function getExamStatus(exam: Exam, agora: Date = new Date()) {
     if (exam.isPracticeExam) {
       return { text: 'Praticar', color: 'text-emerald-600 dark:text-emerald-400', bgColor: 'bg-emerald-500/10', dotColor: 'bg-emerald-500', canTake: true }
     }
 
     // `jaEntrou` vem por pessoa em `GET /api/exams` (ver a rota): sem ele o
     // selo diria "Portões fechados" para quem está dentro e só precisa clicar.
-    const janela = resolverJanelaDaProva(exam, new Date(), { jaEntrou: !!(exam as any).jaEntrou })
+    //
+    // `agora` é parâmetro, e não `new Date()` fixo aqui dentro, porque o selo
+    // precisa de duas leituras diferentes do relógio: o cartão desenha com o
+    // instante do relógio compartilhado (que o redesenha quando a fase muda),
+    // e um clique pergunta pela hora do próprio clique.
+    const janela = resolverJanelaDaProva(exam, agora, { jaEntrou: !!(exam as any).jaEntrou })
 
     switch (janela.fase) {
       case 'livre':
@@ -942,7 +1033,19 @@ function ProvasContent() {
   }
 
   function ExamCard({ exam, index = 0 }: { exam: Exam; index?: number }) {
-    const status = getExamStatus(exam)
+    /*
+     * O cartão tem relógio próprio porque o estado dele é uma CONTA sobre a
+     * hora, não um dado que chega do servidor. Sem isto, quem abre a lista às
+     * 12h50 para esperar o portão das 13h continua vendo "Aguardando" e o
+     * botão travado às 13h05 — o portão abriu em todo lugar menos na tela, e o
+     * único jeito de descobrir seria apertar F5.
+     *
+     * `useRelogioDeProvas` acorda o cartão no instante exato do próximo marco
+     * desta prova (ver o hook), então a virada acontece na hora certa e não no
+     * próximo batimento.
+     */
+    const agora = useRelogioDeProvas(exam, { jaEntrou: !!(exam as any).jaEntrou })
+    const status = getExamStatus(exam, new Date(agora))
     const examId = exam._id?.toString() || ''
     const marcada = selecionadas.includes(examId)
     return (

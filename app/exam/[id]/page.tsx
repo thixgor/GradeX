@@ -2827,10 +2827,22 @@ ${respostaAluno}`
                      * entrou às 13h30 chega às 14h com `podeEntrar: false` (o
                      * portão fechou) e `podeIniciar: true` (ele está dentro) —
                      * e o botão ficava desabilitado justamente para a pessoa
-                     * que a prova está esperando. A porta abre para os dois
-                     * caminhos: entrar agora, ou iniciar por já ter entrado.
+                     * que a prova está esperando. A porta abre para os três
+                     * caminhos: entrar agora, iniciar por já ter entrado, ou
+                     * VOLTAR PARA A SALA por já ter entrado.
+                     *
+                     * O terceiro é o intervalo entre o portão fechar e a prova
+                     * começar — das 13h50 às 14h no exemplo. Ali quem entrou
+                     * às 13h30 tem `podeEntrar: false` (o portão fechou) e
+                     * `podeIniciar: false` (a prova ainda não começou): um
+                     * F5 nesses dez minutos trancava do lado de fora quem
+                     * estava dentro, e a única coisa que ele tinha feito de
+                     * diferente foi chegar cedo.
                      */
-                    (!!janela && !janela.podeEntrar && !janela.podeIniciar) ||
+                    (!!janela &&
+                      !janela.podeEntrar &&
+                      !janela.podeIniciar &&
+                      !(janela.jaEntrou && !janela.encerrada)) ||
                     // Só trava o caminho que ENTRA na prova: para a sala de
                     // espera a assinatura ainda pode ser feita lá dentro.
                     (canStart && !!exam.requireSignature && !signature)

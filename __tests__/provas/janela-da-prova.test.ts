@@ -38,6 +38,43 @@ describe('resolverJanelaDaProva', () => {
     expect(durante.podeIniciar).toBe(true)
   })
 
+  it('portão que fecha antes do início fecha a entrada, mesmo com a prova por começar', () => {
+    /*
+     * O vestibular: portão 13h–13h50, prova às 14h. Das 13h50 às 14h a fase
+     * era 'sala-de-espera' — rótulo "Portões abertos" — para quem tinha
+     * acabado de perder a entrada. O cartão convidava a entrar e a tela da
+     * prova recusava.
+     */
+    const campos = {
+      gatesOpen: new Date('2026-05-10T13:00:00Z'),
+      gatesClose: new Date('2026-05-10T13:50:00Z'),
+    }
+    const deFora = resolverJanelaDaProva(prova(campos), new Date('2026-05-10T13:51:00Z'))
+    expect(deFora.fase).toBe('portao-fechado')
+    expect(deFora.podeEntrar).toBe(false)
+    expect(deFora.motivo).toBe('Os portões desta prova já fecharam — não é mais possível entrar.')
+
+    // Quem já entrou continua esperando na sala: o portão fechado é um fato
+    // sobre os outros.
+    const deDentro = resolverJanelaDaProva(
+      prova(campos),
+      new Date('2026-05-10T13:51:00Z'),
+      { jaEntrou: true },
+    )
+    expect(deDentro.fase).toBe('sala-de-espera')
+    // Continua sem poder iniciar: a prova é que ainda não começou.
+    expect(deDentro.podeIniciar).toBe(false)
+
+    // E às 14h a prova começa normalmente para ele.
+    const asDuas = resolverJanelaDaProva(
+      prova(campos),
+      new Date('2026-05-10T14:00:00Z'),
+      { jaEntrou: true },
+    )
+    expect(asDuas.fase).toBe('em-andamento')
+    expect(asDuas.podeIniciar).toBe(true)
+  })
+
   it('portão aberto antes do início abre a sala de espera, não a prova', () => {
     const janela = resolverJanelaDaProva(
       prova({ gatesOpen: new Date('2026-05-10T13:00:00Z'), gatesClose: new Date('2026-05-10T14:30:00Z') }),

@@ -1,9 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { CalendarClock } from 'lucide-react'
 import type { Exam } from '@/lib/types'
 import { horariosDaProva } from '@/lib/provas/horarios-da-prova'
+import { useRelogioDeProvas } from '@/hooks/use-relogio-de-provas'
 import { cn } from '@/lib/utils'
 
 /**
@@ -18,45 +18,9 @@ import { cn } from '@/lib/utils'
  * de `components/exam/exam-gate-status.tsx`. Lá é tarde: naquele ponto a
  * pessoa já chegou.
  *
- * ## Um relógio para a lista inteira
- *
- * Cada cartão precisa saber que horas são para dizer "em 2 h 15 min". Um
- * `setInterval` por cartão numa página com dezenas de provas são dezenas de
- * timers acordando o React para, quase sempre, redesenhar o mesmo texto.
- *
- * Aqui há um relógio só, no módulo, com passo de 30 segundos: ele existe
- * enquanto houver ao menos um cartão inscrito e some junto com o último. O
- * passo é de 30s porque a menor unidade que a tela mostra é o minuto — um
- * relógio de 1s gastaria trinta renderizações para mudar um dígito. A contagem
- * fina, de segundos, continua sendo do portão da tela da prova, que é onde ela
- * muda o que a pessoa faz.
+ * O relógio que mantém estes horários vivos (e o botão do cartão destravando
+ * na hora certa) é o `useRelogioDeProvas`, compartilhado por toda a lista.
  */
-
-const inscritos = new Set<(agora: number) => void>()
-let relogio: ReturnType<typeof setInterval> | null = null
-
-function assinarRelogio(avisar: (agora: number) => void): () => void {
-  inscritos.add(avisar)
-  if (!relogio) {
-    relogio = setInterval(() => {
-      const agora = Date.now()
-      inscritos.forEach((f) => f(agora))
-    }, 30_000)
-  }
-  return () => {
-    inscritos.delete(avisar)
-    if (inscritos.size === 0 && relogio) {
-      clearInterval(relogio)
-      relogio = null
-    }
-  }
-}
-
-function useRelogioDaLista(): number {
-  const [agora, setAgora] = useState(() => Date.now())
-  useEffect(() => assinarRelogio(setAgora), [])
-  return agora
-}
 
 export function HorariosDaProva({
   prova,
@@ -70,7 +34,7 @@ export function HorariosDaProva({
   variante?: 'cartao' | 'linha'
   className?: string
 }) {
-  const agora = useRelogioDaLista()
+  const agora = useRelogioDeProvas(prova, { jaEntrou })
   const marcos = horariosDaProva(prova, new Date(agora), { jaEntrou })
 
   if (marcos.length === 0) return null

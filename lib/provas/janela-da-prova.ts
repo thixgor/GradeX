@@ -69,7 +69,7 @@ export type FaseDaProva =
   | 'sala-de-espera'
   /** Prova em andamento e portão ainda aberto: dá para entrar e começar. */
   | 'em-andamento'
-  /** Prova em andamento, portão fechado: quem está dentro continua; ninguém entra. */
+  /** Portão fechado para quem está de fora — antes ou depois do início da prova. */
   | 'portao-fechado'
   /** Passou do término. */
   | 'encerrada'
@@ -168,7 +168,24 @@ export function resolverJanelaDaProva(
   let fase: FaseDaProva
   if (encerrada) fase = 'encerrada'
   else if (t < abrePortaoEm.getTime()) fase = 'antes-do-portao'
-  else if (!comecou) fase = 'sala-de-espera'
+  /*
+   * Antes de a prova começar, o que decide a fase é o portão — não o relógio
+   * da prova.
+   *
+   * A regra era `if (!comecou) 'sala-de-espera'`, sem olhar o portão, e ela
+   * mentia exatamente no vestibular: portão das 13h às 13h50, prova às 14h.
+   * Das 13h50 às 14h a fase continuava 'sala-de-espera', cujo rótulo é
+   * "Portões abertos" — com o portão fechado. O cartão de /provas oferecia
+   * "Entrar na Sala" a quem tinha acabado de perder a entrada, e a tela da
+   * prova recusava (`podeEntrar: false`), porque ela lê os campos e não a
+   * fase. Dez minutos de tela convidando para uma porta trancada, para a
+   * pessoa que mais precisava de uma resposta clara.
+   *
+   * Quem JÁ entrou continua na sala de espera: para essa pessoa o portão
+   * fechado é um fato sobre os outros. É a mesma distinção que 'em-andamento'
+   * faz depois do início.
+   */
+  else if (!comecou) fase = portaoAberto || jaEntrou ? 'sala-de-espera' : 'portao-fechado'
   // Para quem já está dentro, o portão fechado é um fato sobre os OUTROS: a
   // prova dele está simplesmente em andamento.
   else if (portaoAberto || jaEntrou) fase = 'em-andamento'

@@ -98,6 +98,17 @@ export function formatarDiaEHora(quando: Date | string | null | undefined, agora
  * "em 12 min" é uma decisão (fico por aqui); "em 43 dias" não é decisão
  * nenhuma, é a data por escrito de novo. Acima de uma semana devolve `null` e
  * a tela mostra só a data.
+ *
+ * ## Por que o resto sempre aparece
+ *
+ * Truncar "1 dia e 12 h" para "em 1 dia" não é arredondar: é dizer outro dia.
+ * Às 23h de segunda, uma prova de quarta às 11h fica a 1 dia e 12 horas — e
+ * "em 1 dia" lido às 23h de segunda é terça. A pessoa se programa para o dia
+ * errado, e o texto que a enganou estava tecnicamente correto.
+ *
+ * O erro nasce de truncar a unidade GRANDE perto da virada dela, e é o mesmo
+ * em "em 2 h" para 2 h 55 min. Por isso a unidade menor acompanha sempre que
+ * existe — e some quando é zero, que é quando ela não tem nada a corrigir.
  */
 export function descreverEspera(ms: number): string | null {
   if (ms <= 0) return null
@@ -111,9 +122,11 @@ export function descreverEspera(ms: number): string | null {
   if (horas < 24) return restoEmMin === 0 ? `em ${horas} h` : `em ${horas} h ${restoEmMin} min`
 
   const dias = Math.floor(horas / 24)
-  if (dias === 1) return 'em 1 dia'
-  if (dias <= 7) return `em ${dias} dias`
-  return null
+  if (dias > 7) return null
+
+  const restoEmHoras = horas % 24
+  const nomeDoDia = dias === 1 ? '1 dia' : `${dias} dias`
+  return restoEmHoras === 0 ? `em ${nomeDoDia}` : `em ${nomeDoDia} e ${restoEmHoras} h`
 }
 
 /**
@@ -166,4 +179,34 @@ export function horariosDaProva(
   if (proximo >= 0) marcos[proximo].eOProximo = true
 
   return marcos
+}
+
+/**
+ * O instante em que esta prova muda de fase — o momento exato em que a tela
+ * precisa se redesenhar sozinha.
+ *
+ * ## O problema que isto resolve
+ *
+ * A fase de uma prova não vem do servidor: ela é DERIVADA da hora atual
+ * (`resolverJanelaDaProva`). Quer dizer que o selo "Aguardando" e o botão
+ * travado do cartão não são um dado que chega — são o resultado de uma conta
+ * feita na renderização. E uma conta só é refeita quando algo redesenha o
+ * componente.
+ *
+ * Sem isso, quem abre `/provas` às 12h50 para esperar o portão das 13h fica
+ * olhando "Aguardando" às 13h05, às 13h30, para sempre: o portão abriu no
+ * relógio e não abriu na tela. O único jeito de descobrir era apertar F5 — e
+ * exigir F5 de quem está esperando é fazer a pessoa desconfiar da página
+ * justamente na hora em que ela mais depende dela.
+ *
+ * Devolve `null` quando não há mais nada a acontecer (prova encerrada, prova
+ * de treino, prova sem datas): nesses casos não há o que acordar.
+ */
+export function proximoInstanteDaJanela(
+  prova: Partial<Exam> | null | undefined,
+  agora: Date = new Date(),
+  pessoa: ContextoDaPessoa = {},
+): number | null {
+  const proximo = horariosDaProva(prova, agora, pessoa).find((m) => m.eOProximo)
+  return proximo ? proximo.quando.getTime() : null
 }
