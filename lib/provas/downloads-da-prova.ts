@@ -67,6 +67,32 @@ export function algumaLiberacaoLigada(liberacoes: LiberacoesDeDownload): boolean
   return liberacoes.prova || liberacoes.relatorio || liberacoes.gabarito
 }
 
+/**
+ * A prova, vista de uma submissão.
+ *
+ * A lista de provas feitas (`/profile` e o diálogo de `/provas`) não carrega o
+ * documento da prova — ela tem a submissão, com alguns campos da prova
+ * anexados. Este mapeamento é o que permite aplicar o mesmo veredito ali, e
+ * mora aqui porque é ele que quebra em silêncio: esquecer `freeDownloads`
+ * derruba a exceção do admin sem erro nenhum, e esquecer `isPersonalExam` faz
+ * uma prova pessoal esperar um término que nunca chega.
+ */
+export interface ProvaDeUmaSubmissao {
+  examEndTime?: Date | string | null
+  isPracticeExam?: boolean
+  isPersonalExam?: boolean
+  freeDownloads?: { prova?: boolean; relatorio?: boolean; gabarito?: boolean } | null
+}
+
+export function provaDaSubmissao(submissao: ProvaDeUmaSubmissao): Partial<Exam> {
+  return {
+    endTime: (submissao.examEndTime ?? undefined) as Exam['endTime'],
+    isPracticeExam: !!submissao.isPracticeExam,
+    isPersonalExam: !!submissao.isPersonalExam,
+    freeDownloads: submissao.freeDownloads || undefined,
+  } as Partial<Exam>
+}
+
 export interface ContextoDeDownload {
   accountType?: string | null
   isAdmin?: boolean

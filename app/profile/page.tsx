@@ -446,6 +446,8 @@ export default function ProfilePage() {
               submissions={submissions}
               submissionsLoading={submissionsLoading}
               userName={userName}
+              accountType={accountType}
+              isAdmin={userRole === 'admin'}
               onError={showError}
             />
           )}
