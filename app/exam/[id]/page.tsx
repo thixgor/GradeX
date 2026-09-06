@@ -51,6 +51,7 @@ import {
 } from '@/lib/provas/janela-da-prova'
 import { resolverDownloadsDaProva } from '@/lib/provas/downloads-da-prova'
 import { travasDaProva } from '@/lib/provas/anti-cola'
+import { exigeEntregaAutomatica, inicioBloqueadoPorProgresso } from '@/lib/provas/retomada'
 import { EscudoAntiCola } from '@/components/exam/escudo-anti-cola'
 import {
   INTERVALO_DE_GRAVACAO_MS,
@@ -365,6 +366,22 @@ export default function ExamPage({ params }: { params: { id: string } }) {
      */
     if (exam?.requireSignature && !signature) {
       showToastMessage('Assine no campo de assinatura antes de iniciar a prova.', 'info')
+      return
+    }
+
+    /*
+     * Não se começa do zero por cima de um rascunho que não pode ser retomado.
+     *
+     * Fica aqui pela mesma razão da assinatura logo acima: é por esta função
+     * que passam os dois caminhos de iniciar — o botão da tela inicial e o da
+     * sala de espera — e também a volta do termo de monitoramento. Desabilitar
+     * só um dos botões deixaria os outros dois abertos.
+     */
+    if (inicioBloqueadoPorProgresso(retomada)) {
+      showToastMessage(
+        retomada?.mensagem || 'Esta prova não pode ser reiniciada.',
+        'info',
+      )
       return
     }
 
@@ -744,6 +761,30 @@ export default function ExamPage({ params }: { params: { id: string } }) {
       setSubmitting(false)
     }
   }
+
+  /*
+   * A entrega que acontece sozinha.
+   *
+   * Sem retomada e com respostas gravadas, a pessoa fica num limbo: não pode
+   * continuar respondendo, e o que ela já fez só vira nota se ela clicar num
+   * botão. Quem caiu duas vezes é justamente quem pode não voltar para clicar
+   * — e o rascunho ficava esperando um gesto que talvez nunca acontecesse.
+   *
+   * O `useRef` é o que impede a segunda tentativa: o veredito continua sendo
+   * `retomadas-esgotadas` até a resposta do servidor chegar, e sem a trava
+   * este efeito dispararia uma entrega a cada redesenho.
+   */
+  const entregaAutomaticaDisparada = useRef(false)
+  useEffect(() => {
+    if (!retomada || !progressoSalvo) return
+    if (alreadySubmitted || submitted || submitting) return
+    if (!exigeEntregaAutomatica(retomada)) return
+    if (entregaAutomaticaDisparada.current) return
+
+    entregaAutomaticaDisparada.current = true
+    showToastMessage('Você não tem mais retomadas. Entregando o que ficou gravado…', 'info')
+    entregarRascunho()
+  }, [retomada, progressoSalvo, alreadySubmitted, submitted, submitting])
 
   useEffect(() => {
     checkExistingSubmission()
@@ -3006,9 +3047,18 @@ ${respostaAluno}`
                     }`}
                     size="lg"
                     onClick={handleStartExam}
-                    disabled={!canStart || (exam.requireSignature && !signature)}
+                    // `inicioBloqueadoPorProgresso`: começar do zero por cima
+                    // de um rascunho que não pode ser retomado apagaria as
+                    // respostas que a própria tela promete preservar.
+                    disabled={
+                      !canStart ||
+                      (exam.requireSignature && !signature) ||
+                      inicioBloqueadoPorProgresso(retomada)
+                    }
                   >
-                    {(exam.requireSignature && !signature) ? (
+                    {inicioBloqueadoPorProgresso(retomada) ? (
+                      'Retomada já utilizada'
+                    ) : (exam.requireSignature && !signature) ? (
                       'Assine antes de iniciar'
                     ) : canStart ? (
                       <>

@@ -176,6 +176,44 @@ export function avaliarRetomada(entrada: EntradaDoVeredito): VereditoDeRetomada 
 }
 
 /**
+ * A prova acabou para esta pessoa — e o que ela respondeu precisa ser entregue.
+ *
+ * ## Por que a entrega é automática
+ *
+ * Sem retomada e com respostas gravadas, a pessoa está num limbo: não pode
+ * continuar respondendo, e o que ela já fez só vira nota se ela clicar num
+ * botão. Quem caiu duas vezes — a conexão do celular, a bateria, a aba
+ * descartada — é justamente quem pode não voltar para clicar. O rascunho ficava
+ * esperando um gesto que talvez nunca acontecesse, e a prova terminava zerada
+ * com as respostas guardadas no banco.
+ *
+ * A entrega não perde nada: é o mesmo conteúdo que o botão mandaria, pelo
+ * mesmo caminho (`POST /submit`), com as mesmas conferências do servidor. O
+ * que muda é quem toma a iniciativa.
+ */
+export function exigeEntregaAutomatica(veredito: VereditoDeRetomada): boolean {
+  return veredito.motivo === 'retomadas-esgotadas' && veredito.podeEntregarOSalvo
+}
+
+/**
+ * Começar do zero apagaria uma prova que existe.
+ *
+ * O botão "Iniciar Prova" olhava só a janela e a assinatura — nunca a
+ * retomada. Quem tinha esgotado a retomada lia "Você já usou a sua única
+ * retomada" e, logo abaixo, um botão que começava a prova de novo: a gravação
+ * automática seguinte passava por cima do rascunho com o estado vazio, e as
+ * respostas que a mensagem prometia preservar sumiam.
+ *
+ * Havendo progresso que não pode ser retomado, não há prova nova para começar
+ * — há uma prova para entregar.
+ */
+export function inicioBloqueadoPorProgresso(veredito: VereditoDeRetomada | null | undefined): boolean {
+  if (!veredito) return false
+  if (veredito.motivo === 'ja-entregou') return false
+  return veredito.temProgresso && !veredito.podeRetomar
+}
+
+/**
  * Mescla o que voltou do servidor com o esqueleto de respostas da prova.
  *
  * O esqueleto (uma entrada por questão, na ordem em que a pessoa a vê) manda na

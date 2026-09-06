@@ -3,6 +3,8 @@ import {
   RETOMADAS_PERMITIDAS,
   avaliarRetomada,
   contarRespondidas,
+  exigeEntregaAutomatica,
+  inicioBloqueadoPorProgresso,
   mesclarRespostas,
 } from '@/lib/provas/retomada'
 import type { UserAnswer } from '@/lib/types'
@@ -127,3 +129,73 @@ describe('contarRespondidas', () => {
     ).toBe(4)
   })
 })
+
+const esgotada = () => avaliarRetomada(entrada({ progresso: { resumesUsed: RETOMADAS_PERMITIDAS } }))
+
+describe('exigeEntregaAutomatica', () => {
+  it('entrega sozinha quando a retomada acabou e há o que entregar', () => {
+    /*
+     * Quem caiu duas vezes — conexão do celular, bateria, aba descartada — é
+     * justamente quem pode não voltar para clicar em "entregar". Sem isto, o
+     * rascunho esperava um gesto que talvez nunca acontecesse e a prova
+     * terminava zerada com as respostas guardadas no banco.
+     */
+    const veredito = esgotada()
+    expect(veredito.podeRetomar).toBe(false)
+    expect(veredito.podeEntregarOSalvo).toBe(true)
+    expect(exigeEntregaAutomatica(veredito)).toBe(true)
+  })
+
+  it('não entrega nada quando não há resposta gravada', () => {
+    const semRespostas = avaliarRetomada(
+      entrada({ progresso: { resumesUsed: RETOMADAS_PERMITIDAS }, respostasGravadas: 0 }),
+    )
+    expect(exigeEntregaAutomatica(semRespostas)).toBe(false)
+  })
+
+  it('não se intromete em quem ainda pode continuar', () => {
+    expect(exigeEntregaAutomatica(avaliarRetomada(entrada()))).toBe(false)
+  })
+
+  it('não reentrega o que já foi entregue', () => {
+    expect(exigeEntregaAutomatica(avaliarRetomada(entrada({ jaEntregou: true })))).toBe(false)
+  })
+
+  it('prova encerrada não dispara entrega: a janela fechou para enviar', () => {
+    // O servidor recusaria a entrega, e insistir viraria um erro na cara de
+    // quem só abriu a tela para ver o que tinha ficado.
+    const encerrada = avaliarRetomada(entrada({ janelaAberta: false, jaEncerrou: true }))
+    expect(exigeEntregaAutomatica(encerrada)).toBe(false)
+  })
+})
+
+describe('inicioBloqueadoPorProgresso', () => {
+  it('não deixa começar do zero por cima de um rascunho que não pode ser retomado', () => {
+    /*
+     * O botão "Iniciar Prova" olhava só a janela e a assinatura. Quem tinha
+     * esgotado a retomada lia "Você já usou a sua única retomada" e, logo
+     * abaixo, um botão que recomeçava a prova — e a gravação automática
+     * seguinte passava por cima do rascunho com o estado vazio.
+     */
+    expect(inicioBloqueadoPorProgresso(esgotada())).toBe(true)
+  })
+
+  it('quem ainda pode retomar não fica travado', () => {
+    expect(inicioBloqueadoPorProgresso(avaliarRetomada(entrada()))).toBe(false)
+  })
+
+  it('sem progresso nenhum, a prova começa normalmente', () => {
+    const semNada = avaliarRetomada(entrada({ progresso: null }))
+    expect(inicioBloqueadoPorProgresso(semNada)).toBe(false)
+  })
+
+  it('quem já entregou é caso do modal de prova finalizada, não deste bloqueio', () => {
+    expect(inicioBloqueadoPorProgresso(avaliarRetomada(entrada({ jaEntregou: true })))).toBe(false)
+  })
+
+  it('aceita veredito ausente (a tela ainda não carregou)', () => {
+    expect(inicioBloqueadoPorProgresso(null)).toBe(false)
+    expect(inicioBloqueadoPorProgresso(undefined)).toBe(false)
+  })
+})
+
