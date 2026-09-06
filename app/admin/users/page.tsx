@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -45,18 +45,51 @@ const PROFESSION_LABELS: Record<string, string> = {
   residente: 'Residente',
 }
 
+/** Uma pessoa online, do jeito que a rota de presença devolve. */
 type OnlineUser = {
   id?: string
   name: string
   email: string
+  accountType?: string
+  admin?: boolean
+  /** Aparelhos vivos desta pessoa (celular + notebook = 2). */
+  devices?: number
+  deviceName?: string
+  /** Último sinal de vida REAL — não o último login. */
+  lastActiveAt?: string
+  idleSeconds?: number | null
   lastLoginAt?: string
+  exam?: {
+    title: string
+    status: string
+    statusLabel: string
+    answered: number
+    total: number
+    question: number
+  } | null
+}
+
+/** Resposta da rota de contagem, guardada inteira para alimentar a tela. */
+type OnlineSummary = {
+  count: number
+  devices: number
+  inExam: number
+  ids: string[]
+  windowMinutes: number
 }
 
 type UserSortMode = 'lastLogin' | 'createdAt' | 'name' | 'expiresAt' | 'spend'
 type UserActivityFilter = 'all' | 'online' | 'active7d' | 'never'
 type UserPlanFilter = 'all' | AccountType | 'admin' | 'banned' | 'monitor'
 
-const ONLINE_THRESHOLD_MS = 10 * 60 * 1000
+/*
+ * Reserva usada só enquanto a contagem de presença não chega do servidor
+ * (primeiro paint, ou a rota fora do ar). É uma aproximação por último
+ * login — justamente a medida ruim que esta tela deixou de usar —, então
+ * ela nunca decide nada sozinha: assim que `onlineSummary` chega, quem
+ * manda são os ids de presença.
+ */
+const ONLINE_FALLBACK_THRESHOLD_MS = 10 * 60 * 1000
 const ACTIVE_7D_THRESHOLD_MS = 7 * 24 * 60 * 60 * 1000
 
 function getUserDateValue(value?: Date | string | null) {
@@ -98,9 +131,18 @@ function formatRelativeActivity(value?: Date | string | null) {
   return formatDateTime(value)
 }
 
-function isRecentlyOnline(user: User) {
+function isProbablyOnline(user: User) {
   const time = getUserDateValue(user.lastLoginAt)
-  return !!time && Date.now() - time <= ONLINE_THRESHOLD_MS && !user.banned
+  return !!time && Date.now() - time <= ONLINE_FALLBACK_THRESHOLD_MS && !user.banned
+}
+
+/** "há 12 s" / "há 3 min" — a régua do online é de minutos, não de dias. */
+function formatIdle(seconds?: number | null) {
+  if (seconds === null || seconds === undefined) return 'agora'
+  if (seconds < 45) return 'agora mesmo'
+  const minutes = Math.round(seconds / 60)
+  if (minutes <= 1) return 'há 1 min'
+  return `há ${minutes} min`
 }
 
 function formatPercent(value: number) {
@@ -283,7 +325,7 @@ export default function AdminUsersPage() {
   const router = useRouter()
   const [users, setUsers] = useState<AdminUserRow[]>([])
   const [loading, setLoading] = useState(true)
-  const [onlineCount, setOnlineCount] = useState<number | null>(null)
+  const [onlineSummary, setOnlineSummary] = useState<OnlineSummary | null>(null)
   const [onlineUsers, setOnlineUsers] = useState<OnlineUser[]>([])
   const [onlineLoading, setOnlineLoading] = useState(false)
   const [showOnlineDialog, setShowOnlineDialog] = useState(false)
@@ -363,15 +405,46 @@ export default function AdminUsersPage() {
   const [manualPlanKey, setManualPlanKey] = useState<'semestral' | 'anual' | 'vitalicio'>('anual')
   const [manualSaving, setManualSaving] = useState(false)
 
+  /*
+   * A contagem se atualiza sozinha a cada minuto — mas SÓ com a aba do
+   * painel à vista. Um admin que deixa /admin/users aberto num monitor
+   * lateral e vai almoçar disparava 60 invocações por hora para ninguém
+   * ler. Ao voltar para a aba, o número é buscado na hora, então a pausa
+   * nunca aparece como dado velho na tela.
+   */
   useEffect(() => {
     loadUsers()
     loadOnlineCount()
-    // CHANGED: Polling reduced from 30s to 60s to reduce serverless invocations
-    const intervalId = setInterval(() => {
-      loadOnlineCount()
-    }, 60000)
 
-    return () => clearInterval(intervalId)
+    let intervalId: number | undefined
+
+    const stop = () => {
+      if (intervalId === undefined) return
+      window.clearInterval(intervalId)
+      intervalId = undefined
+    }
+
+    const start = () => {
+      if (intervalId !== undefined) return
+      intervalId = window.setInterval(loadOnlineCount, 60000)
+    }
+
+    const onVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        loadOnlineCount()
+        start()
+      } else {
+        stop()
+      }
+    }
+
+    if (document.visibilityState === 'visible') start()
+    document.addEventListener('visibilitychange', onVisibility)
+
+    return () => {
+      stop()
+      document.removeEventListener('visibilitychange', onVisibility)
+    }
   }, [])
 
   const showToastMessage = (message: string, type: 'error' | 'success' | 'info' = 'error') => {
@@ -383,6 +456,30 @@ export default function AdminUsersPage() {
   // Todos os indicadores saem do mesmo módulo que a rota usa para montar as
   // assinaturas, então o que o card diz e o que a lista mostra nunca divergem.
   const insights = useMemo(() => buildAdminUserInsights(users), [users])
+
+  /*
+   * Quem está online é decidido pelo servidor, não pela lista carregada.
+   *
+   * A lista de usuários traz `lastLoginAt` (quando a pessoa ENTROU) e nada
+   * sobre atividade — era daí que vinha o selo "Online" mentiroso. A rota de
+   * presença devolve os ids de quem deu sinal de vida na janela, e é esse
+   * conjunto que manda aqui. Enquanto ele não chega, cai na aproximação por
+   * último login para a tela não nascer sem nenhum selo.
+   */
+  const onlineIds = useMemo(
+    () => new Set(onlineSummary?.ids ?? []),
+    [onlineSummary],
+  )
+
+  const isOnline = useCallback(
+    (user: User) => {
+      if (user.banned) return false
+      if (!onlineSummary) return isProbablyOnline(user)
+      const id = user._id?.toString()
+      return !!id && onlineIds.has(id)
+    },
+    [onlineIds, onlineSummary],
+  )
 
   const recentUsers = useMemo(() => {
     return [...users]
@@ -419,7 +516,7 @@ export default function AdminUsersPage() {
       .filter((user) => {
         const lastLogin = getUserDateValue(user.lastLoginAt)
         if (activityFilter === 'all') return true
-        if (activityFilter === 'online') return isRecentlyOnline(user)
+        if (activityFilter === 'online') return isOnline(user)
         if (activityFilter === 'active7d') return !!lastLogin && now - lastLogin <= ACTIVE_7D_THRESHOLD_MS
         if (activityFilter === 'never') return !lastLogin
         return true
@@ -431,7 +528,7 @@ export default function AdminUsersPage() {
         if (sortMode === 'expiresAt') return nextExpiryValue(a) - nextExpiryValue(b)
         return getUserDateValue(b.lastLoginAt) - getUserDateValue(a.lastLoginAt)
       })
-  }, [activityFilter, cycleFilter, expiryFilter, planFilter, searchTerm, sortMode, subscriptionFilter, users])
+  }, [activityFilter, cycleFilter, expiryFilter, isOnline, planFilter, searchTerm, sortMode, subscriptionFilter, users])
 
   const visibleUsers = useMemo(
     () => filteredUsers.slice(0, visibleCount),
@@ -568,15 +665,25 @@ export default function AdminUsersPage() {
 
   async function loadOnlineCount() {
     try {
-      const res = await fetch('/api/admin/users/online/count')
+      const res = await fetch('/api/admin/users/online/count', { cache: 'no-store' })
       if (!res.ok) {
-        setOnlineCount(null)
+        setOnlineSummary(null)
         return
       }
       const data = await res.json()
-      setOnlineCount(typeof data.count === 'number' ? data.count : 0)
+      if (typeof data?.count !== 'number') {
+        setOnlineSummary(null)
+        return
+      }
+      setOnlineSummary({
+        count: data.count,
+        devices: typeof data.devices === 'number' ? data.devices : data.count,
+        inExam: typeof data.inExam === 'number' ? data.inExam : 0,
+        ids: Array.isArray(data.ids) ? data.ids : [],
+        windowMinutes: typeof data.windowMinutes === 'number' ? data.windowMinutes : 5,
+      })
     } catch {
-      setOnlineCount(null)
+      setOnlineSummary(null)
     }
   }
 
@@ -584,7 +691,7 @@ export default function AdminUsersPage() {
     setShowOnlineDialog(true)
     setOnlineLoading(true)
     try {
-      const res = await fetch('/api/admin/users/online/list')
+      const res = await fetch('/api/admin/users/online/list', { cache: 'no-store' })
       if (!res.ok) {
         throw new Error('Erro ao buscar usuários online')
       }
@@ -1029,8 +1136,12 @@ export default function AdminUsersPage() {
               <StatCard
                 icon={<Activity className="h-4 w-4 text-emerald-500" />}
                 label="Online agora"
-                value={onlineCount === null ? insights.onlineNow : onlineCount}
-                hint="Ativos nos últimos 10 min"
+                value={onlineSummary ? onlineSummary.count : insights.onlineNow}
+                hint={
+                  onlineSummary
+                    ? `${onlineSummary.devices} aparelho(s) · ${onlineSummary.inExam} em prova`
+                    : 'Carregando presença...'
+                }
                 onClick={openOnlineUsersDialog}
               />
               <StatCard
@@ -1354,7 +1465,7 @@ export default function AdminUsersPage() {
                               <p className="truncate text-sm font-medium">{user.name}</p>
                               <p className="mt-1 truncate text-xs text-muted-foreground">{user.email}</p>
                             </div>
-                            {isRecentlyOnline(user) && (
+                            {isOnline(user) && (
                               <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
                                 Online
                               </span>
@@ -1378,7 +1489,9 @@ export default function AdminUsersPage() {
                     Monitoramento
                   </CardTitle>
                   <CardDescription>
-                    A contagem online atualiza automaticamente.
+                    {onlineSummary
+                      ? `Conta quem deu sinal de vida nos últimos ${onlineSummary.windowMinutes} min — atividade real, não último login.`
+                      : 'A contagem online atualiza automaticamente enquanto esta aba estiver à vista.'}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
@@ -1550,7 +1663,7 @@ export default function AdminUsersPage() {
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 flex-wrap">
                         <CardTitle>{user.name}</CardTitle>
-                        {isRecentlyOnline(user) && (
+                        {isOnline(user) && (
                           <span className="text-xs bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 px-2 py-1 rounded flex items-center gap-1">
                             <Activity className="h-3 w-3" />
                             Online
@@ -2517,11 +2630,13 @@ export default function AdminUsersPage() {
           <DialogHeader>
             <DialogTitle>Usuários Online</DialogTitle>
             <DialogDescription>
-              Lista de usuários com atividade recente.
+              {onlineSummary
+                ? `Quem deu sinal de vida nos últimos ${onlineSummary.windowMinutes} min — navegando, respondendo prova ou lendo material.`
+                : 'Quem está usando a plataforma neste momento.'}
             </DialogDescription>
           </DialogHeader>
 
-          <div className="py-4">
+          <div className="max-h-[60vh] overflow-y-auto py-4">
             {onlineLoading ? (
               <div className="text-sm text-muted-foreground">Carregando...</div>
             ) : onlineUsers.length === 0 ? (
@@ -2536,12 +2651,39 @@ export default function AdminUsersPage() {
                         <div className="text-xs text-muted-foreground break-words mt-1">{u.email}</div>
                       </div>
                       <span className="shrink-0 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
-                        Online
+                        {formatIdle(u.idleSeconds)}
                       </span>
                     </div>
-                    <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
-                      <Clock className="h-3.5 w-3.5" />
-                      {formatRelativeActivity(u.lastLoginAt)}
+
+                    {/* O que a pessoa está fazendo — a pergunta que o admin
+                        realmente faz ao abrir esta lista. */}
+                    {u.exam ? (
+                      <div className="mt-3 flex items-start gap-2 text-xs text-emerald-700 dark:text-emerald-300">
+                        <FileTextIcon className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                        <span className="break-words">
+                          {u.exam.statusLabel}: {u.exam.title}
+                          {u.exam.total > 0
+                            ? ` · questão ${u.exam.question}/${u.exam.total} (${u.exam.answered} respondida(s))`
+                            : ''}
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+                        <Activity className="h-3.5 w-3.5" />
+                        Navegando pela plataforma
+                      </div>
+                    )}
+
+                    <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                      <span className="inline-flex items-center gap-1">
+                        <MonitorSmartphone className="h-3.5 w-3.5" />
+                        {u.deviceName || 'Dispositivo desconhecido'}
+                        {(u.devices ?? 1) > 1 ? ` (+${(u.devices ?? 1) - 1})` : ''}
+                      </span>
+                      <span className="inline-flex items-center gap-1">
+                        <Clock className="h-3.5 w-3.5" />
+                        Entrou {formatRelativeActivity(u.lastLoginAt)}
+                      </span>
                     </div>
                   </div>
                 ))}

@@ -21,6 +21,13 @@ const TrialExpirationChecker = dynamic(
   () => import('@/components/trial-expiration-checker').then((m) => m.TrialExpirationChecker),
   { ssr: false },
 )
+// Batida de ponto da presença. Não renderiza nada e quase nunca fala com a
+// rede (ver o cabeçalho do arquivo) — mas é o que faz o "usuários online" do
+// painel contar quem está de fato usando o site, e não quem logou faz pouco.
+const PresenceHeartbeat = dynamic(
+  () => import('@/components/presence-heartbeat').then((m) => m.PresenceHeartbeat),
+  { ssr: false },
+)
 
 // Em rotas sem login (landing e /auth) o player de música e o verificador de
 // trial são inúteis (exigem usuário autenticado) e só geram fetch + JS pesado.
@@ -90,6 +97,7 @@ export function AppChrome() {
   return (
     <>
       {!authless && <TrialExpirationChecker />}
+      {!authless && <PresenceHeartbeat />}
       {!authless && !noMusic && showMusic && <StudyMusicPlayer />}
       {adsReady && <PlatformAds />}
     </>

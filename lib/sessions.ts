@@ -3,6 +3,11 @@ import { ObjectId } from 'mongodb'
 import { getDb } from './mongodb'
 import { UserSession } from './types'
 import { invalidateSessionCache } from './auth'
+// Uma sessão conta como "online" se teve atividade dentro da janela de
+// presença — a mesma que o painel usa para contar quem está no site agora.
+// Duas réguas diferentes para a mesma pergunta era o que fazia o ponto verde
+// do aparelho discordar do card "Online agora".
+import { PRESENCE_WINDOW_MS as ONLINE_THRESHOLD_MS } from './presence/shared'
 
 // Limite padrão de dispositivos logados simultaneamente por conta. Acima disso,
 // o login mais novo derruba o mais antigo (sessão deslizante). Isso transforma
@@ -13,9 +18,6 @@ export const DEFAULT_MAX_DEVICES = (() => {
   if (!Number.isInteger(value) || value < 1 || value > 20) return 3
   return value
 })()
-
-// Considera uma sessão "online" se teve atividade nos últimos 10 min.
-const ONLINE_THRESHOLD_MS = 10 * 60 * 1000
 
 function sessionsCollection() {
   return getDb().then((db) => db.collection<UserSession>('sessions'))

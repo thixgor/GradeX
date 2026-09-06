@@ -10,6 +10,10 @@
       "maxDuration": 30,
       "memory": 1024
     },
+    "app/api/presence/route.ts": {
+      "maxDuration": 10,
+      "memory": 512
+    },
     "app/api/materiais/[id]/pdf-viewer/access/route.ts": {
       "maxDuration": 60,
       "memory": 1024

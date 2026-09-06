@@ -119,6 +119,22 @@ export async function ensureIndexes(db: Db): Promise<void> {
     db.collection('activity_events').createIndex({ kind: 1, resourceId: 1, createdAt: -1 }),
     db.collection('activity_events').createIndex({ userId: 1, createdAt: -1 }),
     db.collection('activity_events').createIndex({ area: 1, createdAt: -1 }),
+    /*
+     * `sessions` — presença ("quem está no site agora").
+     *
+     * O painel pergunta pelas sessões carimbadas nos últimos minutos e só
+     * precisa de `userId`. Com `lastActiveAt` na frente, a leitura percorre
+     * exatamente a fatia da janela (algumas dezenas de entradas) em vez de
+     * varrer a coleção inteira de sessões, e `userId` junto evita ir buscar
+     * o documento para descobrir de quem é cada aparelho.
+     *
+     * O índice de TTL criado em `lib/sessions.ts` já atende essa consulta;
+     * este só a torna mais barata, então nada quebra se ele ainda não existir.
+     */
+    db.collection('sessions').createIndex(
+      { lastActiveAt: -1, userId: 1 },
+      { name: 'presenca_online' }
+    ),
     db.collection('exam_attempts').createIndex({ attemptId: 1 }, { unique: true }),
     db.collection('exam_attempts').createIndex({ examId: 1, status: 1, lastSeenAt: -1 }),
     db.collection('exam_attempts').createIndex({ userId: 1, lastSeenAt: -1 }),

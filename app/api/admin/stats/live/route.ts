@@ -11,11 +11,9 @@ import {
   type ExamAttempt,
 } from '@/lib/tracking/exam-attempts'
 import { ACTIVITY_COLLECTION, ACTIVITY_KIND_LABELS } from '@/lib/tracking/activity-events'
+import { presenceWindowMs } from '@/lib/presence/server'
 
 export const dynamic = 'force-dynamic'
-
-/** Janela de "online" — mesma usada pelo painel de usuários. */
-const ONLINE_WINDOW_MS = 10 * 60 * 1000
 
 /** Quanto tempo para trás o feed ao vivo olha. */
 const FEED_WINDOW_MS = 60 * 60 * 1000
@@ -33,7 +31,9 @@ export async function GET() {
 
   try {
     const now = Date.now()
-    const onlineSince = new Date(now - ONLINE_WINDOW_MS)
+    // Mesma janela do painel de usuários: as duas telas não podem discordar
+    // sobre quantas pessoas estão no site neste momento.
+    const onlineSince = new Date(now - presenceWindowMs())
     const attemptSince = new Date(now - ABANDON_THRESHOLD_MS)
     const feedSince = new Date(now - FEED_WINDOW_MS)
 

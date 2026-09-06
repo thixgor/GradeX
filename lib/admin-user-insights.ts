@@ -491,6 +491,15 @@ export interface AdminUserInsights {
   admins: number
   banned: number
   monitors: number
+  /**
+   * Aproximação de "online" por último login, calculada sobre a lista já
+   * carregada. NÃO é a contagem de presença: login não é atividade — quem
+   * entrou às 8h e passou a manhã fazendo prova não aparece aqui, e quem
+   * logou e fechou a aba aparece.
+   *
+   * Serve só de reserva para o card não nascer vazio; a verdade vem de
+   * `/api/admin/users/online/count`, que lê `sessions.lastActiveAt`.
+   */
   onlineNow: number
   activeLast7Days: number
   neverLoggedIn: number
@@ -518,6 +527,7 @@ export interface AdminUserInsights {
   topSpenders: Array<{ id: string; name: string; email: string; total: number; count: number }>
 }
 
+/** Ver a ressalva em `AdminUserInsights.onlineNow`. */
 const ONLINE_THRESHOLD_MS = 10 * 60 * 1000
 const ACTIVE_7D_MS = 7 * DAY_MS
 const NEW_30D_MS = 30 * DAY_MS
