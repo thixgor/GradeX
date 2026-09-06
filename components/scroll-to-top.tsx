@@ -43,8 +43,11 @@ function scrollToY(y: number): void {
  * rolagem por impulso continua depois do toque e engole uma rolagem
  * programada com `behavior: 'smooth'`.
  *
- * Qualquer gesto de rolagem da pessoa cancela o reforço na hora, para nunca
- * dar a sensação de página presa.
+ * Qualquer gesto de ROLAGEM da pessoa cancela o reforço na hora, para nunca
+ * dar a sensação de página presa. Repare que é `touchmove`, não `touchstart`:
+ * encostar na tela não é rolar. Cancelar no toque desarmava o reforço à toa —
+ * um toque para dispensar algo, o polegar apoiado — e devolvia justamente os
+ * casos que ele existe para cobrir.
  *
  * @param alvo posição desejada, em pixels do topo do documento. Como função,
  *   para ser remedida a cada quadro.
@@ -61,7 +64,7 @@ export function holdScrollAt(alvo: number | (() => number), durationMs = 400): (
   const teardown = () => {
     cancelAnimationFrame(frame)
     window.removeEventListener('wheel', cancel, listenerOptions)
-    window.removeEventListener('touchstart', cancel, listenerOptions)
+    window.removeEventListener('touchmove', cancel, listenerOptions)
     window.removeEventListener('keydown', cancel)
   }
 
@@ -93,7 +96,7 @@ export function holdScrollAt(alvo: number | (() => number), durationMs = 400): (
   }
 
   window.addEventListener('wheel', cancel, listenerOptions)
-  window.addEventListener('touchstart', cancel, listenerOptions)
+  window.addEventListener('touchmove', cancel, listenerOptions)
   window.addEventListener('keydown', cancel)
 
   aplicar()

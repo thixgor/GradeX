@@ -42,6 +42,7 @@ import { ExamResumeCard } from '@/components/exam/exam-resume-card'
 import { canDownloadExamPdf } from '@/lib/tier-limits'
 import { consumirCotaDoPlano } from '@/lib/plan-consume-client'
 import { holdScrollAt, useScrollToTopWhen } from '@/components/scroll-to-top'
+import { useIsomorphicLayoutEffect } from '@/hooks/use-isomorphic-layout-effect'
 import { createExamAttemptTracker, clearExamAttempt, type ExamAttemptTracker } from '@/lib/tracking/track-client'
 import {
   ROTULO_DA_FASE,
@@ -1200,7 +1201,16 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   // Enquanto a pessoa desenha, a barra de anotação ocupa o rodapé — a barra de
   // navegação sai de cena para as duas não disputarem o mesmo espaço.
   const annotationModeActive = useAnnotationModeActive()
-  useEffect(() => {
+  /*
+   * Efeito de LAYOUT, não o comum: ele corre depois de o React trocar a
+   * questão no DOM e ANTES de o navegador pintar. Com o `useEffect` normal a
+   * pintura vem primeiro, então existe uma janela — medi de 66ms num aparelho
+   * folgado a mais de 300ms num carregado — em que a questão nova já está na
+   * tela com a rolagem ANTIGA. É exatamente o sintoma relatado: a pessoa vê a
+   * questão seguinte começando pelas alternativas, e só depois a tela sobe.
+   * Quanto mais lento o aparelho, mais tempo esse quadro errado fica de pé.
+   */
+  useIsomorphicLayoutEffect(() => {
     if (!started || submitted || !isPaginatedMode) return
     if (typeof window === 'undefined') return
     // O body vira `position: fixed` quando a sidebar mobile está aberta —
@@ -1227,7 +1237,8 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     //    continua depois do toque e engolia a rolagem com `behavior: smooth`,
     //    deixando a pessoa parada nas alternativas da questão seguinte.
     //
-    // O alvo é remedido a cada quadro e qualquer gesto da pessoa cancela.
+    // O alvo é remedido a cada quadro, e só um gesto de ROLAGEM cancela — um
+    // toque solto na tela logo depois de trocar de questão não desarma nada.
     return holdScrollAt(topoDaQuestao, 600)
   }, [currentQuestionIndex, started, submitted, isPaginatedMode])
 
