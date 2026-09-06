@@ -111,6 +111,18 @@ export interface Exam {
   endTime: Date
   createdBy: string
   isHidden: boolean
+  /**
+   * As exceções da ocultação — ver `lib/provas/visibilidade-da-prova.ts`.
+   *
+   * Só tem efeito quando `isHidden` é verdadeiro. Ausente significa o
+   * comportamento de sempre: admins veem, mais ninguém.
+   */
+  hiddenExcept?: {
+    /** Admins continuam vendo a prova no catálogo do aluno. Padrão: true. */
+    admins?: boolean
+    /** Ids de quem continua vendo e podendo fazer a prova oculta. */
+    usuarios?: string[]
+  }
   // Para questões discursivas
   discursiveCorrectionMethod?: 'manual' | 'ai' | 'prompt' // manual: correção externa; ai: IA; prompt: autoavaliação pelo aluno
   aiRigor?: number // Rigor da IA (0-1) se usar correção automática
@@ -177,6 +189,18 @@ export interface Exam {
     prova?: boolean
     relatorio?: boolean
     gabarito?: boolean
+    /** A folha de respostas do aluno (só as letras que ele marcou). */
+    compacto?: boolean
+  }
+  /**
+   * Quais arquivos ficam presos até a prova terminar.
+   *
+   * Diferente de `freeDownloads`, que é sobre PLANO: isto é sobre TEMPO, e não
+   * tem exceção de assinatura. Ver `lib/provas/downloads-da-prova.ts`.
+   */
+  holdDownloads?: {
+    prova?: boolean
+    relatorio?: boolean
   }
   aiQuestionsCount?: number // Quantidade de questões geradas por IA nesta prova (para controle de limites)
   feedbackMode?: 'end' | 'immediate' // Modo de feedback para provas pessoais: 'end' (ao final) ou 'immediate' (imediato)

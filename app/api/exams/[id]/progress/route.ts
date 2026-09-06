@@ -5,7 +5,7 @@ import { getSession } from '@/lib/auth'
 import type { Exam, ExamSubmission, UserAnswer } from '@/lib/types'
 import { resolverJanelaDaProva } from '@/lib/provas/janela-da-prova'
 import { jaEntrouNaProva } from '@/lib/provas/entrada-na-prova'
-import { pessoaEstaNoPublico } from '@/lib/provas/publico-da-prova'
+import { provaExisteParaPessoa } from '@/lib/provas/visibilidade-da-prova'
 import { lerPeriodoDoAluno } from '@/lib/provas/periodo-do-aluno'
 import {
   COLECAO_DE_PROGRESSO,
@@ -90,9 +90,12 @@ async function contextoDaProva(id: string, userId: string, isAdmin: boolean) {
   const exam = await db.collection<Exam>('exams').findOne({ _id: new ObjectId(id) })
   if (!exam) return { erro: NextResponse.json({ error: 'Prova não encontrada' }, { status: 404 }) }
 
+  // Checava só o PÚBLICO: uma prova oculta continuava salvando e devolvendo
+  // rascunho de quem tivesse o id. `provaExisteParaPessoa` cobre as três
+  // regras de uma vez (pessoal, oculta, público).
   if (!isAdmin) {
     const periodo = await lerPeriodoDoAluno(db, userId)
-    if (!pessoaEstaNoPublico(exam, { userId, isAdmin, periodo })) {
+    if (!provaExisteParaPessoa(exam, { userId, isAdmin, periodo })) {
       return { erro: NextResponse.json({ error: 'Prova não encontrada' }, { status: 404 }) }
     }
   }

@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from 'react'
 import { Label } from '@/components/ui/label'
-import { Download, GraduationCap, Loader2, Lock, Shuffle, Users } from 'lucide-react'
+import { Clock, Download, GraduationCap, Loader2, Lock, Shuffle, Users } from 'lucide-react'
 import { MAX_PERIODO, MIN_PERIODO } from '@/lib/user-periodo'
 import {
+  type EsperasDeDownload,
   type LiberacoesDeDownload,
+  normalizarEsperas,
   normalizarLiberacoes,
 } from '@/lib/provas/downloads-da-prova'
 import { type PublicoDaProva, normalizarPublico } from '@/lib/provas/publico-da-prova'
@@ -31,6 +33,9 @@ interface Props {
   onPublicoChange: (publico: PublicoDaProva) => void
   liberacoes: LiberacoesDeDownload
   onLiberacoesChange: (liberacoes: LiberacoesDeDownload) => void
+  /** Quais arquivos ficam presos até o término. Ausente = prova sem término (treino). */
+  esperas?: EsperasDeDownload
+  onEsperasChange?: (esperas: EsperasDeDownload) => void
   embaralharQuestoes: boolean
   embaralharAlternativas: boolean
   onEmbaralharChange: (campo: 'questoes' | 'alternativas', valor: boolean) => void
@@ -45,6 +50,8 @@ export function PainelDeAplicacao({
   onPublicoChange,
   liberacoes,
   onLiberacoesChange,
+  esperas,
+  onEsperasChange,
   embaralharQuestoes,
   embaralharAlternativas,
   onEmbaralharChange,
@@ -55,6 +62,7 @@ export function PainelDeAplicacao({
 
   const publicoNormalizado = normalizarPublico(publico)
   const liberacoesNormalizadas = normalizarLiberacoes(liberacoes)
+  const esperasNormalizadas = normalizarEsperas(esperas)
   const porPeriodos = publicoNormalizado.modo === 'periodos'
 
   // A contagem só é buscada quando alguém abre o modo por período: numa prova
@@ -245,6 +253,14 @@ export function PainelDeAplicacao({
           disabled={desabilitado}
         />
         <Opcao
+          id="freeCompacto"
+          marcado={liberacoesNormalizadas.compacto}
+          onChange={(v) => onLiberacoesChange({ ...liberacoesNormalizadas, compacto: v })}
+          titulo="Folha de respostas do aluno"
+          descricao="Só as letras que ele marcou, uma por linha — o que se confere com os colegas na saída. Não diz o que era certo, então sai assim que ele entrega."
+          disabled={desabilitado}
+        />
+        <Opcao
           id="freeGabarito"
           marcado={liberacoesNormalizadas.gabarito}
           onChange={(v) => onLiberacoesChange({ ...liberacoesNormalizadas, gabarito: v })}
@@ -262,6 +278,49 @@ export function PainelDeAplicacao({
           </span>
         </p>
       </section>
+
+      {/* ── Espera até o término ────────────────────────────────── */}
+      {onEsperasChange && (
+        <section className="space-y-3 rounded-xl border border-border/60 bg-muted/25 p-4">
+          <div className="flex items-start gap-2.5">
+            <Clock className="mt-0.5 h-4 w-4 flex-shrink-0 text-muted-foreground" />
+            <div className="min-w-0">
+              <h3 className="text-sm font-semibold">Segurar downloads até a prova terminar</h3>
+              <p className="mt-0.5 text-xs leading-snug text-muted-foreground">
+                O gabarito já espera o término sempre. Isto é para o resto: numa janela larga, ou em
+                duas chamadas, quem faz cedo baixa o caderno e manda no grupo — e quem faz depois
+                chega tendo lido as questões, mesmo sem gabarito nenhum no arquivo.
+              </p>
+            </div>
+          </div>
+
+          <Opcao
+            id="holdProva"
+            marcado={esperasNormalizadas.prova}
+            onChange={(v) => onEsperasChange({ ...esperasNormalizadas, prova: v })}
+            titulo="PDF da prova (em branco) só depois do término"
+            descricao="O caderno de questões deixa de sair enquanto a prova está aberta."
+            disabled={desabilitado}
+          />
+          <Opcao
+            id="holdRelatorio"
+            marcado={esperasNormalizadas.relatorio}
+            onChange={(v) => onEsperasChange({ ...esperasNormalizadas, relatorio: v })}
+            titulo="Relatório do aluno só depois do término"
+            descricao="Ele continua vendo o resultado na tela; o arquivo com os enunciados é que espera."
+            disabled={desabilitado}
+          />
+
+          <p className="flex items-start gap-1.5 rounded-lg bg-background/70 p-2.5 text-[11px] leading-snug text-muted-foreground">
+            <Lock className="mt-0.5 h-3 w-3 flex-shrink-0" />
+            <span>
+              A folha de respostas não entra aqui: ela só tem as letras que o próprio aluno marcou,
+              sem enunciado nem gabarito. Segurá-la seria esconder de alguém o que ela acabou de
+              escrever.
+            </span>
+          </p>
+        </section>
+      )}
     </div>
   )
 }

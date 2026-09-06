@@ -37,7 +37,7 @@ import { eProvaSemJanela, fimDaProva } from './janela-da-prova'
  * independentes, e a de tempo é a que não tem exceção.
  */
 
-/** Os três arquivos que uma prova produz para o aluno. */
+/** Os arquivos que uma prova produz para o aluno. */
 export interface LiberacoesDeDownload {
   /** O PDF da prova em branco (enunciados e alternativas, sem gabarito). */
   prova: boolean
@@ -45,12 +45,22 @@ export interface LiberacoesDeDownload {
   relatorio: boolean
   /** Gabarito e resposta comentada — só depois do fim da prova. */
   gabarito: boolean
+  /**
+   * A folha de respostas: só as letras que o aluno marcou, uma por linha.
+   *
+   * É o arquivo que o aluno quer nos minutos seguintes à entrega — conferir o
+   * que marcou com os colegas. Não é o gabarito: não diz o que era certo, só o
+   * que ELE respondeu, e por isso pode sair antes de a prova terminar sem
+   * antecipar resposta nenhuma para ninguém.
+   */
+  compacto: boolean
 }
 
 export const LIBERACOES_PADRAO: LiberacoesDeDownload = {
   prova: false,
   relatorio: false,
   gabarito: false,
+  compacto: false,
 }
 
 /** Normaliza o bloco vindo do formulário/banco (ausente = tudo desligado). */
@@ -60,11 +70,12 @@ export function normalizarLiberacoes(valor: unknown): LiberacoesDeDownload {
     prova: bruto.prova === true,
     relatorio: bruto.relatorio === true,
     gabarito: bruto.gabarito === true,
+    compacto: bruto.compacto === true,
   }
 }
 
 export function algumaLiberacaoLigada(liberacoes: LiberacoesDeDownload): boolean {
-  return liberacoes.prova || liberacoes.relatorio || liberacoes.gabarito
+  return liberacoes.prova || liberacoes.relatorio || liberacoes.gabarito || liberacoes.compacto
 }
 
 /**
@@ -93,6 +104,49 @@ export function provaDaSubmissao(submissao: ProvaDeUmaSubmissao): Partial<Exam> 
   } as Partial<Exam>
 }
 
+/**
+ * Quais arquivos ficam presos até a prova terminar.
+ *
+ * ## O que faltava
+ *
+ * A regra de tempo era fixa e valia para um arquivo só: o gabarito espera o
+ * fim, o resto não espera nada. Isso atende a prova cujo problema é o gabarito
+ * circulando — e não atende a prova cujo problema é o ENUNCIADO circulando.
+ *
+ * Numa avaliação aplicada em janela larga (ou em duas chamadas), quem faz às
+ * 14h baixa a prova em branco às 14h05 e manda no grupo; quem faz às 17h chega
+ * tendo lido as questões. O arquivo não tem gabarito nenhum, e mesmo assim
+ * estragou a prova.
+ *
+ * Aqui o admin decide, por prova, o que espera o término. Nasce tudo desligado
+ * — é o comportamento de sempre —, e o gabarito não aparece nesta lista porque
+ * ele já espera o fim por regra, sem exceção possível.
+ *
+ * A folha de respostas (`compacto`) também não aparece: ela não contém
+ * enunciado nem gabarito, só as letras que a própria pessoa marcou. Segurá-la
+ * não protege nada de ninguém.
+ */
+export interface EsperasDeDownload {
+  /** A prova em branco só sai depois do término. */
+  prova: boolean
+  /** O relatório do aluno só sai depois do término (além de exigir a entrega). */
+  relatorio: boolean
+}
+
+export const ESPERAS_PADRAO: EsperasDeDownload = { prova: false, relatorio: false }
+
+export function normalizarEsperas(valor: unknown): EsperasDeDownload {
+  const bruto = (valor || {}) as Partial<Record<keyof EsperasDeDownload, unknown>>
+  return {
+    prova: bruto.prova === true,
+    relatorio: bruto.relatorio === true,
+  }
+}
+
+export function esperasDaProva(prova: Partial<Exam> | null | undefined): EsperasDeDownload {
+  return normalizarEsperas((prova as any)?.holdDownloads)
+}
+
 export interface ContextoDeDownload {
   accountType?: string | null
   isAdmin?: boolean
@@ -112,7 +166,7 @@ export interface VereditoDeDownload {
 const MOTIVO_PLANO =
   'O download de PDFs das provas é um recurso das contas assinantes. Assine para baixar e imprimir.'
 const MOTIVO_TEMPO =
-  'O gabarito só é liberado depois que a prova termina, para não circular enquanto a turma ainda responde.'
+  'Este arquivo é liberado depois que a prova termina, para não circular enquanto a turma ainda responde.'
 const MOTIVO_SEM_ENTREGA =
   'O relatório fica disponível depois que você entregar a prova.'
 
@@ -177,9 +231,25 @@ export function resolverDownloadsDaProva(
     return { permitido: true, motivo: null, esperandoOFim: false }
   }
 
+  /*
+   * A espera que o admin escolheu entra AQUI, e não como um quarto motivo de
+   * recusa: para quem está esperando, "o arquivo sai quando a prova terminar" é
+   * a mesma frase, tenha ela vindo da regra fixa do gabarito ou da opção da
+   * prova. O que muda é só quais arquivos a exigem.
+   */
+  const esperas = normalizarEsperas((prova as any)?.holdDownloads)
+
   return {
-    prova: veredito('prova', false, false),
-    relatorio: veredito('relatorio', false, true),
+    prova: veredito('prova', esperas.prova, false),
+    relatorio: veredito('relatorio', esperas.relatorio, true),
     gabarito: veredito('gabarito', true, false),
+    /*
+     * A folha de respostas segue a entrega, nunca o término.
+     *
+     * É o único arquivo cujo conteúdo é apenas o que a própria pessoa marcou —
+     * não tem enunciado nem gabarito. Prendê-lo até o fim seria esconder de
+     * alguém aquilo que ela mesma acabou de escrever.
+     */
+    compacto: veredito('compacto', false, true),
   }
 }

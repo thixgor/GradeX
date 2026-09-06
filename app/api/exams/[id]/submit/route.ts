@@ -4,7 +4,7 @@ import { getSession } from '@/lib/auth'
 import { Exam, ExamSubmission, UserAnswer } from '@/lib/types'
 import { ObjectId } from 'mongodb'
 import { resolverJanelaDaProva } from '@/lib/provas/janela-da-prova'
-import { pessoaEstaNoPublico } from '@/lib/provas/publico-da-prova'
+import { provaExisteParaPessoa } from '@/lib/provas/visibilidade-da-prova'
 import { lerPeriodoDoAluno } from '@/lib/provas/periodo-do-aluno'
 import { COLECAO_DE_PROGRESSO } from '@/lib/provas/retomada'
 
@@ -64,22 +64,26 @@ export async function POST(
     }
 
     /*
-     * Prova aplicada a um período não recebe entrega de fora dele.
+     * A prova que não existe para esta pessoa não recebe entrega dela.
      *
-     * Sem isto, a restrição de público seria só de exibição: quem descobrisse o
-     * id da prova entregaria por `fetch` e entraria no ranking da turma.
+     * Sem isto a restrição seria só de exibição: quem descobrisse o id
+     * entregaria por `fetch` e entraria no ranking da turma. Aqui a checagem
+     * era só de PÚBLICO — `isHidden` ficava de fora, e uma prova ocultada
+     * (inclusive uma que já foi pública e teve o link circulado) continuava
+     * aceitando entregas de qualquer um. "A prova oculta não pode ser feita" é
+     * uma frase sobre esta linha, não sobre a tela.
+     *
+     * 404, e não 403: dizer "não foi aplicada para você" confirma que a prova
+     * existe, e confirmar é metade do que ocultar deveria evitar.
      */
     if (session.role !== 'admin') {
-      const noPublico = pessoaEstaNoPublico(exam, {
+      const existe = provaExisteParaPessoa(exam, {
         userId: session.userId,
         isAdmin: false,
         periodo: await lerPeriodoDoAluno(db, session.userId),
       })
-      if (!noPublico) {
-        return NextResponse.json(
-          { error: 'Esta prova não foi aplicada para você.' },
-          { status: 403 }
-        )
+      if (!existe) {
+        return NextResponse.json({ error: 'Prova não encontrada' }, { status: 404 })
       }
     }
 

@@ -12,6 +12,8 @@ import {
   ArrowLeft,
   BarChart3,
   BookOpenCheck,
+  ClipboardCheck,
+  ClipboardList,
   Download,
   EyeOff,
   FileCheck2,
@@ -74,7 +76,7 @@ interface NormalResult {
 
 type Linha = { userId: string; userName: string; nota: number }
 
-type Arquivo = 'prova' | 'gabarito' | 'comentado' | 'meu'
+type Arquivo = 'prova' | 'gabarito' | 'comentado' | 'meu' | 'folha' | 'folhaComparada'
 
 export default function ExamResultsPage({ params }: { params: { id: string } }) {
   const { id } = params
@@ -207,14 +209,25 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
   async function baixar(arquivo: Arquivo) {
     if (!exam || gerando) return
 
+    /*
+     * A folha de respostas segue a ENTREGA (é só o que a pessoa marcou); a
+     * folha comparada mostra o gabarito ao lado, então segue a regra do
+     * gabarito — depois do término, e sem exceção.
+     */
     const veredito =
-      arquivo === 'prova' ? downloads.prova : arquivo === 'meu' ? downloads.relatorio : downloads.gabarito
+      arquivo === 'prova'
+        ? downloads.prova
+        : arquivo === 'meu'
+          ? downloads.relatorio
+          : arquivo === 'folha'
+            ? downloads.compacto
+            : downloads.gabarito
 
     if (!veredito.permitido) {
       avisar(veredito.motivo || 'Download não disponível.')
       return
     }
-    if (arquivo === 'meu' && !minhaEntrega) {
+    if ((arquivo === 'meu' || arquivo === 'folha' || arquivo === 'folhaComparada') && !minhaEntrega) {
       avisar('Não encontramos a sua entrega desta prova.')
       return
     }
@@ -238,8 +251,13 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
         return
       }
 
-      const { generateExamPDF, generateGabaritoPDF, generateExamWithAnswersPDF, downloadPDF } =
-        await import('@/lib/pdf-generator')
+      const {
+        generateExamPDF,
+        generateGabaritoPDF,
+        generateExamWithAnswersPDF,
+        generateCompactAnswersPDF,
+        downloadPDF,
+      } = await import('@/lib/pdf-generator')
 
       const receita = {
         prova: {
@@ -255,6 +273,20 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
         comentado: {
           blob: () => generateExamWithAnswersPDF(exam),
           nome: `gabarito-comentado-${nomeBase}.pdf`,
+          tipo: 'exam_answers_pdf' as const,
+        },
+        folha: {
+          blob: () =>
+            generateCompactAnswersPDF(exam, minhaEntrega!.answers || [], minhaEntrega!.userName),
+          nome: `folha-de-respostas-${nomeBase}.pdf`,
+          tipo: 'exam_answers_pdf' as const,
+        },
+        folhaComparada: {
+          blob: () =>
+            generateCompactAnswersPDF(exam, minhaEntrega!.answers || [], minhaEntrega!.userName, {
+              comparar: true,
+            }),
+          nome: `folha-de-respostas-comparada-${nomeBase}.pdf`,
           tipo: 'exam_answers_pdf' as const,
         },
       }[arquivo]
@@ -574,7 +606,7 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
             Documentos da prova
           </h2>
           <p className="mb-4 text-xs text-muted-foreground">
-            Os quatro PDFs que esta prova produz. O que estiver indisponível diz o porquê.
+            Os PDFs que esta prova produz. O que estiver indisponível diz o porquê.
           </p>
 
           <div className="grid gap-3 sm:grid-cols-2">
@@ -617,6 +649,41 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
               gerando={gerando === 'meu'}
               ocupado={!!gerando}
               onBaixar={() => baixar('meu')}
+            />
+            {/*
+              As duas folhas de respostas.
+
+              A simples é uma página com as letras que você marcou — o que se
+              confere com os colegas na saída. Ela não tem enunciado nem
+              gabarito, e por isso sai assim que você entrega, sem esperar a
+              turma terminar. A comparada põe o gabarito ao lado, então segue a
+              regra do gabarito.
+            */}
+            <CartaoDeDownload
+              icone={ClipboardList}
+              titulo="Folha de respostas"
+              descricao="Uma página com as letras que você marcou, questão a questão. Sem enunciado e sem gabarito."
+              veredito={
+                minhaEntrega
+                  ? downloads.compacto
+                  : { permitido: false, motivo: 'Você não tem uma entrega registrada nesta prova.', esperandoOFim: false }
+              }
+              gerando={gerando === 'folha'}
+              ocupado={!!gerando}
+              onBaixar={() => baixar('folha')}
+            />
+            <CartaoDeDownload
+              icone={ClipboardCheck}
+              titulo="Folha de respostas comparada"
+              descricao="As suas letras ao lado do gabarito, com o acerto marcado e a contagem."
+              veredito={
+                minhaEntrega
+                  ? downloads.gabarito
+                  : { permitido: false, motivo: 'Você não tem uma entrega registrada nesta prova.', esperandoOFim: false }
+              }
+              gerando={gerando === 'folhaComparada'}
+              ocupado={!!gerando}
+              onBaixar={() => baixar('folhaComparada')}
             />
           </div>
 

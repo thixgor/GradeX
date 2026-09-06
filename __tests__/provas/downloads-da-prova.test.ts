@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
+  esperasDaProva,
+  normalizarEsperas,
   normalizarLiberacoes,
   provaDaSubmissao,
   provaJaEncerrou,
@@ -20,7 +22,7 @@ const encerrada = agendada({ endTime: new Date('2026-05-10T14:30:00Z') })
 
 describe('normalizarLiberacoes', () => {
   it('ausente vale como tudo desligado', () => {
-    expect(normalizarLiberacoes(undefined)).toEqual({ prova: false, relatorio: false, gabarito: false })
+    expect(normalizarLiberacoes(undefined)).toEqual({ prova: false, relatorio: false, gabarito: false, compacto: false })
   })
 
   it('só o booleano true liga', () => {
@@ -28,6 +30,7 @@ describe('normalizarLiberacoes', () => {
       prova: false,
       relatorio: false,
       gabarito: true,
+      compacto: false,
     })
   })
 })
@@ -220,3 +223,86 @@ describe('provaDaSubmissao — o veredito a partir de uma prova já entregue', (
     expect(v.gabarito.permitido).toBe(true)
   })
 })
+
+const ASSINANTE = { accountType: 'plus', jaEnviou: false, agora: AGORA }
+
+describe('normalizarEsperas', () => {
+  it('ausente é o comportamento de sempre: nada espera', () => {
+    expect(normalizarEsperas(undefined)).toEqual({ prova: false, relatorio: false })
+    expect(esperasDaProva(agendada())).toEqual({ prova: false, relatorio: false })
+  })
+
+  it('só o booleano true segura', () => {
+    expect(normalizarEsperas({ prova: 'true', relatorio: true })).toEqual({
+      prova: false,
+      relatorio: true,
+    })
+  })
+})
+
+describe('segurar downloads até o término', () => {
+  it('sem a opção, a prova em branco sai durante a prova', () => {
+    const v = resolverDownloadsDaProva(agendada(), ASSINANTE)
+    expect(v.prova.permitido).toBe(true)
+  })
+
+  it('com a opção, a prova em branco espera o término', () => {
+    /*
+     * O caso que a regra fixa não cobria: numa janela larga ou em duas
+     * chamadas, quem faz às 14h baixa o caderno e manda no grupo; quem faz às
+     * 17h chega tendo lido as questões. O arquivo não tem gabarito nenhum e
+     * mesmo assim estraga a prova.
+     */
+    const presa = agendada({ holdDownloads: { prova: true } })
+    const durante = resolverDownloadsDaProva(presa, ASSINANTE)
+    expect(durante.prova.permitido).toBe(false)
+    expect(durante.prova.esperandoOFim).toBe(true)
+
+    const depois = resolverDownloadsDaProva(
+      agendada({ holdDownloads: { prova: true }, endTime: new Date('2026-05-10T14:30:00Z') }),
+      ASSINANTE,
+    )
+    expect(depois.prova.permitido).toBe(true)
+  })
+
+  it('o relatório preso continua exigindo a entrega depois do término', () => {
+    const presa = { ...encerrada, holdDownloads: { relatorio: true } }
+    expect(resolverDownloadsDaProva(presa, { ...ASSINANTE, jaEnviou: false }).relatorio.permitido).toBe(false)
+    expect(resolverDownloadsDaProva(presa, { ...ASSINANTE, jaEnviou: true }).relatorio.permitido).toBe(true)
+  })
+
+  it('a opção não alcança o admin', () => {
+    const presa = agendada({ holdDownloads: { prova: true, relatorio: true } })
+    const v = resolverDownloadsDaProva(presa, { isAdmin: true, agora: AGORA })
+    expect(v.prova.permitido).toBe(true)
+    expect(v.relatorio.permitido).toBe(true)
+  })
+})
+
+describe('folha de respostas (compacto)', () => {
+  it('sai assim que o aluno entrega, sem esperar o término', () => {
+    /*
+     * Não é gabarito: só as letras que a própria pessoa marcou. Segurá-la até
+     * o fim seria esconder de alguém o que ela mesma acabou de escrever.
+     */
+    const prova = agendada()
+    expect(resolverDownloadsDaProva(prova, { ...ASSINANTE, jaEnviou: true }).compacto.permitido).toBe(true)
+  })
+
+  it('não sai antes da entrega', () => {
+    const v = resolverDownloadsDaProva(agendada(), { ...ASSINANTE, jaEnviou: false })
+    expect(v.compacto.permitido).toBe(false)
+    expect(v.compacto.esperandoOFim).toBe(true)
+  })
+
+  it('a opção de segurar não a alcança: ela não tem enunciado nem gabarito', () => {
+    const presa = agendada({ holdDownloads: { prova: true, relatorio: true } })
+    expect(resolverDownloadsDaProva(presa, { ...ASSINANTE, jaEnviou: true }).compacto.permitido).toBe(true)
+  })
+
+  it('numa prova de treino não depende de entrega nenhuma', () => {
+    const treino = agendada({ isPracticeExam: true })
+    expect(resolverDownloadsDaProva(treino, { ...ASSINANTE, jaEnviou: false }).compacto.permitido).toBe(true)
+  })
+})
+

@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { ExcecoesDeOcultacao } from '@/components/admin/provas/excecoes-de-ocultacao'
+import { EXCECOES_PADRAO, normalizarExcecoes } from '@/lib/provas/visibilidade-da-prova'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/theme-toggle'
@@ -21,6 +23,9 @@ import {
   LIBERACOES_PADRAO,
   normalizarLiberacoes,
   type LiberacoesDeDownload,
+  ESPERAS_PADRAO,
+  type EsperasDeDownload,
+  normalizarEsperas,
 } from '@/lib/provas/downloads-da-prova'
 import { normalizarPublico, type PublicoDaProva } from '@/lib/provas/publico-da-prova'
 import { deCampoLocal, paraCampoLocal, paraInstanteLocal } from '@/lib/provas/horario-local'
@@ -47,6 +52,7 @@ export default function EditExamPage({ params }: { params: { id: string } }) {
     startTime: '',
     durationMinutes: 120, // Duração em minutos
     isHidden: false,
+    hiddenExcept: EXCECOES_PADRAO,
     // Configurações padrão para cada tipo de questão
     discursiveCorrectionMethod: 'prompt' as 'manual' | 'ai' | 'prompt',
     discursiveAiRigor: 0.45,
@@ -70,6 +76,7 @@ export default function EditExamPage({ params }: { params: { id: string } }) {
     shuffleAlternatives: false,
     audience: { modo: 'todos', periodos: [] } as PublicoDaProva,
     freeDownloads: { ...LIBERACOES_PADRAO } as LiberacoesDeDownload,
+    holdDownloads: { ...ESPERAS_PADRAO } as EsperasDeDownload,
     // Tempo por questão
     timeMode: 'none' as 'none' | 'generalized' | 'individual',
     generalizedTimeSeconds: 0,
@@ -149,6 +156,7 @@ export default function EditExamPage({ params }: { params: { id: string } }) {
         startTime: formatDateTime(exam.startTime),
         durationMinutes: duration,
         isHidden: exam.isHidden,
+        hiddenExcept: normalizarExcecoes(exam.hiddenExcept),
         discursiveCorrectionMethod: (exam as any).discursiveCorrectionMethod || 'prompt',
         discursiveAiRigor: (exam as any).aiRigor || 0.45,
         essayStyle: 'enem' as EssayStyle,
@@ -185,6 +193,7 @@ export default function EditExamPage({ params }: { params: { id: string } }) {
         // outra forma. O painel recebe sempre a mesma estrutura.
         audience: normalizarPublico((exam as any).audience),
         freeDownloads: normalizarLiberacoes((exam as any).freeDownloads),
+        holdDownloads: normalizarEsperas((exam as any).holdDownloads),
         // Tempo por questão
         timeMode: (exam as any).timeMode || 'none',
         generalizedTimeSeconds: (exam as any).generalizedTimeSeconds || 0,
@@ -706,6 +715,7 @@ export default function EditExamPage({ params }: { params: { id: string } }) {
         shuffleAlternatives: examData.shuffleAlternatives,
         audience: examData.audience,
         freeDownloads: examData.freeDownloads,
+        holdDownloads: examData.holdDownloads,
         // Campos de tempo
         timeMode: examData.timeMode,
         generalizedTimeSeconds: examData.generalizedTimeSeconds,
@@ -1202,9 +1212,17 @@ export default function EditExamPage({ params }: { params: { id: string } }) {
                   className="h-4 w-4 rounded border-input"
                 />
                 <Label htmlFor="isHidden" className="cursor-pointer">
-                  Manter prova oculta (apenas visível para você)
+                  Manter prova oculta
                 </Label>
               </div>
+
+              {/* As exceções só fazem sentido enquanto a prova está oculta. */}
+              {examData.isHidden && (
+                <ExcecoesDeOcultacao
+                  valor={examData.hiddenExcept}
+                  onChange={(hiddenExcept) => setExamData({ ...examData, hiddenExcept })}
+                />
+              )}
 
               {/* Configurações Adicionais */}
               <div className="border-t pt-4 space-y-4">
@@ -1325,6 +1343,14 @@ export default function EditExamPage({ params }: { params: { id: string } }) {
                   onPublicoChange={(audience) => setExamData({ ...examData, audience })}
                   liberacoes={examData.freeDownloads}
                   onLiberacoesChange={(freeDownloads) => setExamData({ ...examData, freeDownloads })}
+                  // Prova de treino não tem término a esperar: ela acaba quando
+                  // o dono entrega. Sem o par de props, a seção não é desenhada.
+                  esperas={examData.isPracticeExam ? undefined : examData.holdDownloads}
+                  onEsperasChange={
+                    examData.isPracticeExam
+                      ? undefined
+                      : (holdDownloads) => setExamData({ ...examData, holdDownloads })
+                  }
                   embaralharQuestoes={examData.shuffleQuestions}
                   embaralharAlternativas={examData.shuffleAlternatives}
                   onEmbaralharChange={(campo, valor) =>

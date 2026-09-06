@@ -412,6 +412,242 @@ export async function generateGabaritoPDF(exam: Exam): Promise<Blob> {
   return doc.output('blob')
 }
 
+/**
+ * A folha de respostas do aluno — só as letras que ele marcou.
+ *
+ * ## Por que este arquivo existe
+ *
+ * Os PDFs que a prova produzia eram todos pesados: o caderno inteiro em
+ * branco, o caderno com as respostas dele, o gabarito comentado. Nenhum deles
+ * atende o que o aluno quer nos cinco minutos depois de entregar — conferir
+ * com os colegas o que cada um marcou. Para isso ele precisa de uma coluna de
+ * letras, e recebia trinta páginas de enunciado.
+ *
+ * Como não tem enunciado nem gabarito, esta folha pode sair antes de a prova
+ * terminar sem antecipar nada para ninguém: ela só devolve à pessoa o que a
+ * própria pessoa acabou de escrever. É por isso que ela segue a ENTREGA, e não
+ * o término (ver `lib/provas/downloads-da-prova.ts`).
+ *
+ * ## As duas versões
+ *
+ * `comparar: false` — só as letras dele. É a versão que sai enquanto a turma
+ * ainda responde.
+ *
+ * `comparar: true` — as letras dele ao lado do gabarito oficial, com o acerto
+ * marcado. Isto é gabarito, então só sai depois do término, e quem decide isso
+ * é a regra de download, não esta função: aqui `comparar` apenas desenha o que
+ * mandarem desenhar.
+ */
+export async function generateCompactAnswersPDF(
+  exam: Exam,
+  answers: UserAnswer[],
+  userName: string,
+  opcoes: { comparar?: boolean } = {},
+): Promise<Blob> {
+  const comparar = opcoes.comparar === true
+  const questoes = questoesDaProva(exam)
+  const doc = new jsPDF()
+  await registerFonts(doc)
+  const logo = await loadLogo()
+
+  const pageWidth = doc.internal.pageSize.getWidth()
+  const pageHeight = doc.internal.pageSize.getHeight()
+  const margin = 20
+  const subtitulo = comparar ? 'Folha de Respostas — Comparada' : 'Folha de Respostas'
+
+  let y = addDomineAquiHeader(doc, pageWidth, margin, subtitulo, logo)
+
+  // === CABEÇALHO DA PROVA ===
+  doc.setDrawColor(...VERDE_MEDIO)
+  doc.setFillColor(...CINZA_CLARO)
+  doc.roundedRect(margin, y, pageWidth - 2 * margin, 20, 2, 2, 'FD')
+  doc.setTextColor(0, 0, 0)
+  doc.setFontSize(13)
+  doc.setFont(FONT, 'bold')
+  doc.text(sanitizeForPdf(exam.title), pageWidth / 2, y + 13, { align: 'center' })
+  y += 26
+
+  doc.setFontSize(10)
+  doc.setFont(FONT, 'normal')
+  doc.setTextColor(...CINZA_TEXTO)
+  doc.text(sanitizeForPdf(userName || 'Aluno'), margin, y)
+  doc.text(
+    new Date().toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+    pageWidth - margin,
+    y,
+    { align: 'right' },
+  )
+  y += 10
+
+  /*
+   * A resposta é procurada por `questionId`.
+   *
+   * Com `shuffleQuestions` ligada, a ordem em que o aluno viu as questões não é
+   * a ordem do documento — casar por índice trocaria as letras de lugar e
+   * entregaria uma folha errada com cara de certa. O número impresso é o
+   * `question.number`, o mesmo que o resto dos PDFs usa.
+   */
+  const porQuestao = new Map((answers || []).map((r) => [r.questionId, r]))
+
+  const apenasObjetivas = questoes.filter((q) => Array.isArray(q.alternatives) && q.alternatives.length > 0)
+  let acertos = 0
+  let respondidas = 0
+
+  const linhas = apenasObjetivas.map((questao) => {
+    const resposta = porQuestao.get(questao.id)
+    const marcada = questao.alternatives.find((alt) => alt.id === resposta?.selectedAlternative)
+    const correta = questao.alternatives.find((alt) => alt.isCorrect)
+    const letraMarcada = marcada?.letter || '—'
+    if (marcada) respondidas++
+    const acertou = !!marcada && !!correta && marcada.id === correta.id
+    if (acertou) acertos++
+    return {
+      numero: questao.number,
+      minha: letraMarcada,
+      certa: correta?.letter || '—',
+      acertou,
+      respondida: !!marcada,
+    }
+  })
+
+  // === RESUMO (só na versão comparada: sem gabarito não há acerto a contar) ===
+  if (comparar && linhas.length > 0) {
+    const larguraCaixa = (pageWidth - 2 * margin - 10) / 2
+    doc.setFillColor(...LARANJA_CLARO)
+    doc.roundedRect(margin, y, larguraCaixa, 22, 2, 2, 'F')
+    doc.setFontSize(8)
+    doc.setTextColor(...VERDE_ESCURO)
+    doc.setFont(FONT, 'normal')
+    doc.text('ACERTOS', margin + 5, y + 8)
+    doc.setFontSize(14)
+    doc.setFont(FONT, 'bold')
+    doc.text(`${acertos} de ${linhas.length}`, margin + 5, y + 18)
+
+    doc.setFillColor(...LARANJA_CLARO)
+    doc.roundedRect(margin + larguraCaixa + 10, y, larguraCaixa, 22, 2, 2, 'F')
+    doc.setFontSize(8)
+    doc.setTextColor(...VERDE_ESCURO)
+    doc.setFont(FONT, 'normal')
+    doc.text('RESPONDIDAS', margin + larguraCaixa + 15, y + 8)
+    doc.setFontSize(14)
+    doc.setFont(FONT, 'bold')
+    doc.text(`${respondidas} de ${linhas.length}`, margin + larguraCaixa + 15, y + 18)
+    y += 30
+  } else {
+    y += 4
+  }
+
+  // === A GRADE DE LETRAS ===
+  // Quatro colunas na versão simples, três na comparada (que precisa de duas
+  // letras e do sinal por linha).
+  const colunas = comparar ? 3 : 4
+  const larguraColuna = (pageWidth - 2 * margin) / colunas
+  const alturaLinha = 9
+  let coluna = 0
+
+  const cabecalhoDaGrade = () => {
+    doc.setFontSize(8)
+    doc.setFont(FONT, 'normal')
+    doc.setTextColor(...CINZA_TEXTO)
+    for (let c = 0; c < colunas; c++) {
+      const x = margin + c * larguraColuna
+      doc.text('Nº', x + 3, y)
+      doc.text('Sua', x + 16, y)
+      if (comparar) doc.text('Gabarito', x + 32, y)
+    }
+    y += 4
+    doc.setDrawColor(...VERDE_MEDIO)
+    doc.line(margin, y, pageWidth - margin, y)
+    y += 5
+  }
+
+  cabecalhoDaGrade()
+
+  for (let i = 0; i < linhas.length; i++) {
+    const linha = linhas[i]
+
+    if (coluna === 0 && y + alturaLinha > pageHeight - 25) {
+      doc.addPage()
+      y = addDomineAquiHeader(doc, pageWidth, margin, subtitulo, logo)
+      y += 4
+      cabecalhoDaGrade()
+    }
+
+    const x = margin + coluna * larguraColuna
+
+    // Faixa alternada para o olho não pular de linha numa coluna de números.
+    if (Math.floor(i / colunas) % 2 === 0) {
+      doc.setFillColor(250, 250, 250)
+      doc.rect(x, y - 6, larguraColuna - 2, alturaLinha, 'F')
+    }
+
+    doc.setFontSize(9)
+    doc.setFont(FONT, 'normal')
+    doc.setTextColor(...CINZA_TEXTO)
+    doc.text(`${linha.numero}.`, x + 3, y)
+
+    // A letra marcada. Em branco fica com o travessão, e não vazio: uma célula
+    // vazia numa folha de respostas parece falha de impressão.
+    doc.setFontSize(11)
+    doc.setFont(FONT, 'bold')
+    doc.setTextColor(linha.respondida ? 0 : 150, linha.respondida ? 0 : 150, linha.respondida ? 0 : 150)
+    doc.text(linha.minha, x + 17, y)
+
+    if (comparar) {
+      doc.setFontSize(11)
+      doc.setFont(FONT, 'bold')
+      doc.setTextColor(...VERDE_ESCURO)
+      doc.text(linha.certa, x + 35, y)
+
+      // O sinal, e não só a cor: daltonismo e impressão em preto e branco
+      // apagariam a única informação que esta coluna carrega.
+      doc.setFontSize(10)
+      doc.setFont(FONT, 'bold')
+      if (linha.acertou) {
+        doc.setTextColor(22, 128, 61)
+        doc.text('✓', x + 48, y)
+      } else if (linha.respondida) {
+        doc.setTextColor(190, 30, 45)
+        doc.text('✗', x + 48, y)
+      }
+    }
+
+    coluna++
+    if (coluna >= colunas) {
+      coluna = 0
+      y += alturaLinha
+    }
+  }
+
+  if (coluna !== 0) y += alturaLinha
+
+  // === QUESTÕES SEM ALTERNATIVA ===
+  // Discursiva não tem letra para marcar. Dizer isso é melhor do que deixar a
+  // pessoa contar por que a folha tem menos linhas do que a prova tem questões.
+  const semAlternativa = questoes.length - apenasObjetivas.length
+  if (semAlternativa > 0) {
+    y += 6
+    doc.setFontSize(9)
+    doc.setFont(FONT, 'normal')
+    doc.setTextColor(...CINZA_TEXTO)
+    doc.text(
+      semAlternativa === 1
+        ? '1 questão discursiva não aparece nesta folha: ela não tem alternativa para marcar.'
+        : `${semAlternativa} questões discursivas não aparecem nesta folha: elas não têm alternativa para marcar.`,
+      margin,
+      y,
+    )
+  }
+
+  const totalPages = doc.getNumberOfPages()
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i)
+    addDomineAquiFooter(doc, i, totalPages, pageWidth, pageHeight, margin)
+  }
+
+  return doc.output('blob')
+}
+
 export function downloadPDF(
   blob: Blob,
   filename: string,

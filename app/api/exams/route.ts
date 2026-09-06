@@ -13,6 +13,8 @@ import {
 import { ObjectId } from 'mongodb'
 import { podeVerGabarito, prepararProvaParaEntrega } from '@/lib/provas/sanitizar-prova'
 import { normalizarPublico, ramosDePublicoParaMongo } from '@/lib/provas/publico-da-prova'
+import { normalizarEsperas } from '@/lib/provas/downloads-da-prova'
+import { normalizarExcecoes, provaApareceNoCatalogo, ramoDeConvidadoParaMongo } from '@/lib/provas/visibilidade-da-prova'
 import { lerPeriodoDoAluno } from '@/lib/provas/periodo-do-aluno'
 import { normalizarLiberacoes } from '@/lib/provas/downloads-da-prova'
 import { COLECAO_DE_ENTRADAS, type EntradaNaProva } from '@/lib/provas/entrada-na-prova'
@@ -64,13 +66,26 @@ export async function GET(request: NextRequest) {
      */
     const ehAdmin = session.role === 'admin'
 
-    const ramoPublico: Record<string, any> = {
-      $or: [
-        { isPersonalExam: false },
-        { isPersonalExam: { $exists: false } }
-      ]
+    /*
+     * O `$and` explícito existe porque há DUAS condições que precisariam da
+     * chave `$or` neste mesmo objeto: "não é prova pessoal" e "não está oculta
+     * (ou eu fui convidado)". Escritas as duas como `$or`, a segunda apagaria
+     * a primeira em silêncio — o mesmo erro que o comentário acima descreve.
+     */
+    const condicoesDoRamoPublico: Record<string, any>[] = [
+      { $or: [{ isPersonalExam: false }, { isPersonalExam: { $exists: false } }] },
+    ]
+    if (!ehAdmin) {
+      condicoesDoRamoPublico.push({
+        $or: [
+          { isHidden: { $ne: true } },
+          // Convidado nominalmente para uma prova oculta: ver
+          // `lib/provas/visibilidade-da-prova.ts`.
+          ramoDeConvidadoParaMongo(session.userId),
+        ],
+      })
     }
-    if (!ehAdmin) ramoPublico.isHidden = { $ne: true }
+    const ramoPublico: Record<string, any> = { $and: condicoesDoRamoPublico }
 
     query = {
       isDeleted: { $ne: true }, // Extra safety filter
@@ -102,7 +117,16 @@ export async function GET(request: NextRequest) {
           query,
           // Os ramos entram achatados num `$or` só: um `$or` aninhado dentro de
           // outro é válido, mas o planner não usa índice nele.
-          { $or: [{ createdBy: session.userId }, ...ramosDePublicoParaMongo(periodo)] },
+          {
+            $or: [
+              { createdBy: session.userId },
+              // O convidado passa aqui também: ele foi chamado por nome, e
+              // nome não tem período. Sem este ramo, convidar alguém de fora
+              // do público alvo não convidaria ninguém.
+              ramoDeConvidadoParaMongo(session.userId),
+              ...ramosDePublicoParaMongo(periodo),
+            ],
+          },
         ],
       }
     }
@@ -182,6 +206,11 @@ export async function GET(request: NextRequest) {
        * indistinguível de a funcionalidade não existir.
        */
       orderInGroup: 1,
+      // Quem foi convidado para a prova oculta, e se os admins a veem no
+      // catálogo. Sem isto, /provas não tem como respeitar a opção.
+      hiddenExcept: 1,
+      // Quais downloads esperam o término: /provas desenha os botões de PDF.
+      holdDownloads: 1,
     }
 
     const projecaoEscolhida = apenasParaLista
@@ -267,7 +296,27 @@ export async function GET(request: NextRequest) {
         )
       : new Set<string>()
 
-    const provasParaEntrega = exams.map((prova) => ({
+    /*
+     * A exceção "mostrar no catálogo dos administradores".
+     *
+     * Ela vale só aqui, e só para o admin. `campos=lista` é o recorte que
+     * /provas pede — o CATÁLOGO —, enquanto /admin/exams chama a rota sem
+     * parâmetro nenhum e continua recebendo tudo. É essa diferença que permite
+     * o admin sumir a prova da vitrine sem sumir com ela da tela onde a
+     * administra: fosse um filtro geral, ele desligaria a opção e perderia o
+     * caminho de volta para a prova.
+     *
+     * Para quem não é admin isto não decide nada: o filtro da consulta já não
+     * trouxe as provas ocultas de quem não foi convidado.
+     */
+    const visiveisNoCatalogo =
+      apenasParaLista && ehAdmin
+        ? exams.filter((prova) =>
+            provaApareceNoCatalogo(prova as any, { userId: session.userId, isAdmin: true }),
+          )
+        : exams
+
+    const provasParaEntrega = visiveisNoCatalogo.map((prova) => ({
       ...prepararProvaParaEntrega(prova, contextoBase),
       // Estado desta requisição, não do documento: é por pessoa, e por isso
       // não está em `Exam`.
@@ -386,6 +435,7 @@ export async function POST(request: NextRequest) {
       startTime,
       endTime,
       isHidden = false,
+      hiddenExcept,
       discursiveCorrectionMethod,
       aiRigor,
       navigationMode = 'paginated',
@@ -657,6 +707,17 @@ export async function POST(request: NextRequest) {
       // Público e exceção de download só existem em prova pública: numa prova
       // pessoal não há a quem aplicar nem plano de terceiro a excetuar.
       audience: isPersonalExam ? undefined : normalizarPublico(audience),
+      /*
+       * As exceções só existem enquanto a prova está oculta. Guardá-las numa
+       * prova visível deixaria uma lista de nomes esperando para valer de novo
+       * na próxima vez que alguém ocultasse a prova — e ninguém lembraria de
+       * quem estava nela.
+       */
+      hiddenExcept: isHidden && !isPersonalExam ? normalizarExcecoes(hiddenExcept) : undefined,
+      // Segurar arquivos até o término só faz sentido onde existe término: a
+      // prova de treino e a pessoal acabam quando o dono entrega.
+      holdDownloads:
+        isPersonalExam || isPracticeExam ? undefined : normalizarEsperas(body.holdDownloads),
       freeDownloads: isPersonalExam ? undefined : normalizarLiberacoes(freeDownloads),
       // Novos campos
       groupId: groupId || null,

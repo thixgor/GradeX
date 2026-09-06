@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
+import { lerPeriodoDoAluno } from '@/lib/provas/periodo-do-aluno'
+import { provaExisteParaPessoa } from '@/lib/provas/visibilidade-da-prova'
 import { Exam, ExamSubmission } from '@/lib/types'
 import { ObjectId } from 'mongodb'
 import { calculateTRIScores } from '@/lib/tri-calculator'
@@ -31,6 +33,21 @@ export async function GET(
     }
 
     const isAdmin = session.role === 'admin'
+
+    /*
+     * Antes de qualquer regra de resultado: esta prova existe para esta pessoa?
+     *
+     * Esta rota não checava visibilidade nenhuma. Uma prova oculta (ou aplicada
+     * a outro período) entregava aqui o ranking, as notas e os nomes de quem a
+     * fez para qualquer conta que tivesse o id — a única barreira era "já
+     * terminou", que o tempo derruba sozinha.
+     */
+    if (!isAdmin) {
+      const periodo = await lerPeriodoDoAluno(db, session.userId)
+      if (!provaExisteParaPessoa(exam, { userId: session.userId, isAdmin, periodo })) {
+        return NextResponse.json({ error: 'Prova não encontrada' }, { status: 404 })
+      }
+    }
 
     /*
      * Quem pode ver os resultados.

@@ -3,7 +3,7 @@ import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
 import { Exam } from '@/lib/types'
 import { ObjectId } from 'mongodb'
-import { pessoaEstaNoPublico } from '@/lib/provas/publico-da-prova'
+import { provaExisteParaPessoa } from '@/lib/provas/visibilidade-da-prova'
 import { lerPeriodoDoAluno } from '@/lib/provas/periodo-do-aluno'
 import { registrarEntrada } from '@/lib/provas/entrada-na-prova'
 import { resolverJanelaDaProva } from '@/lib/provas/janela-da-prova'
@@ -47,11 +47,8 @@ export async function POST(
     // período não existe para quem não foi convocado, e o portão dela também
     // não. Sem isto, esta rota seria um jeito de descobrir que a prova existe.
     if (!isAdmin) {
-      if (exam.isHidden && exam.createdBy !== session.userId) {
-        return NextResponse.json({ error: 'Prova não encontrada' }, { status: 404 })
-      }
       const periodo = await lerPeriodoDoAluno(db, session.userId)
-      if (!pessoaEstaNoPublico(exam, { userId: session.userId, isAdmin, periodo })) {
+      if (!provaExisteParaPessoa(exam, { userId: session.userId, isAdmin, periodo })) {
         return NextResponse.json({ error: 'Prova não encontrada' }, { status: 404 })
       }
     }

@@ -5,13 +5,13 @@ import { Exam } from '@/lib/types'
 import { ObjectId } from 'mongodb'
 import { prepararProvaParaEntrega, podeVerGabarito } from '@/lib/provas/sanitizar-prova'
 import { montarProvaParaAluno, sementeDaProva } from '@/lib/provas/embaralhar'
-import { pessoaEstaNoPublico } from '@/lib/provas/publico-da-prova'
 import { lerPeriodoDoAluno } from '@/lib/provas/periodo-do-aluno'
+import { normalizarExcecoes, provaExisteParaPessoa } from '@/lib/provas/visibilidade-da-prova'
 import { resolverJanelaDaProva, validarJanelaDoFormulario } from '@/lib/provas/janela-da-prova'
 import { interpretarInstante } from '@/lib/provas/horario-local'
 import { jaEntrouNaProva } from '@/lib/provas/entrada-na-prova'
 import { normalizarPublico } from '@/lib/provas/publico-da-prova'
-import { normalizarLiberacoes } from '@/lib/provas/downloads-da-prova'
+import { normalizarEsperas, normalizarLiberacoes } from '@/lib/provas/downloads-da-prova'
 
 export const dynamic = 'force-dynamic'
 
@@ -40,31 +40,23 @@ export async function GET(
       return NextResponse.json({ error: 'Prova não encontrada' }, { status: 404 })
     }
 
-    // Verifica se a prova está oculta e se o usuário tem permissão
-    if (exam.isHidden && session.role !== 'admin' && exam.createdBy !== session.userId) {
-      return NextResponse.json({ error: 'Prova não encontrada' }, { status: 404 })
-    }
-
-    // Verifica se é uma prova pessoal e se o usuário tem permissão
-    if (exam.isPersonalExam && session.role !== 'admin' && exam.createdBy !== session.userId) {
-      return NextResponse.json({ error: 'Prova não encontrada' }, { status: 404 })
-    }
-
     const isAdmin = session.role === 'admin'
 
     /*
-     * Prova aplicada a um período só existe para esse período.
+     * A prova existe para esta pessoa?
      *
-     * O filtro de listagem (`GET /api/exams`) já esconde a prova de quem não é
-     * do público, mas esconder da lista não é proteger: o endereço da prova é
-     * um id que circula em grupo de turma. Aqui a prova simplesmente não existe
-     * para quem não foi convocado — 404, o mesmo que ela já devolve para uma
-     * prova oculta.
+     * Eram três checagens soltas aqui — pessoal, oculta e público —, cada uma
+     * escrita à mão, e as outras portas da prova (entregar, salvar rascunho,
+     * ver resultados) tinham cópias parciais ou nenhuma. Agora as três moram
+     * em `provaExisteParaPessoa`, e toda porta faz a mesma pergunta.
+     *
+     * O endereço da prova é um id que circula em grupo de turma: esconder da
+     * lista nunca foi proteger. Aqui ela simplesmente não existe — 404.
      */
     if (!isAdmin) {
       const periodoDoAluno = await lerPeriodoDoAluno(db, session.userId)
 
-      if (!pessoaEstaNoPublico(exam, { userId: session.userId, isAdmin, periodo: periodoDoAluno })) {
+      if (!provaExisteParaPessoa(exam, { userId: session.userId, isAdmin, periodo: periodoDoAluno })) {
         return NextResponse.json({ error: 'Prova não encontrada' }, { status: 404 })
       }
     }
@@ -230,6 +222,11 @@ export async function PUT(
       'isHidden', 'isPersonalExam', 'isPracticeExam',
       'groupId', 'orderInGroup',
       'audience', 'freeDownloads',
+      // Quem enxerga a prova oculta — decisão sobre os outros, como `isHidden`.
+      'hiddenExcept',
+      // Quais arquivos esperam o término: decide o que a TURMA recebe, e
+      // quando — não é uma preferência de quem montou a prova.
+      'holdDownloads',
       // `showRanking` decide se a turma inteira vê a lista de notas com nome —
       // uma decisão sobre os OUTROS, como `isHidden` e `audience`.
       'showRanking',
@@ -253,6 +250,27 @@ export async function PUT(
     }
     if ('freeDownloads' in camposEnviados) {
       camposEnviados.freeDownloads = normalizarLiberacoes(camposEnviados.freeDownloads)
+    }
+    if ('holdDownloads' in camposEnviados) {
+      camposEnviados.holdDownloads = normalizarEsperas(camposEnviados.holdDownloads)
+    }
+    if ('hiddenExcept' in camposEnviados) {
+      camposEnviados.hiddenExcept = normalizarExcecoes(camposEnviados.hiddenExcept)
+    }
+    /*
+     * Reexibir a prova apaga as exceções.
+     *
+     * Elas só significam alguma coisa enquanto a prova está oculta. Guardadas
+     * numa prova visível, ficariam esperando para valer de novo na próxima vez
+     * que alguém a ocultasse — meses depois, com uma lista de nomes que
+     * ninguém lembra de ter escrito.
+     */
+    if (camposEnviados.isHidden === false) {
+      // O padrão explícito, e não `undefined`: dentro de um `$set` o driver
+      // grava `null` para `undefined` (ver o comentário dos portões abaixo), e
+      // "apagar os nomes" precisa ser uma escrita de verdade, não um efeito
+      // colateral de como o driver trata um campo ausente.
+      camposEnviados.hiddenExcept = normalizarExcecoes(null)
     }
 
     // Para provas práticas sem datas, usar uma data muito distante no futuro
