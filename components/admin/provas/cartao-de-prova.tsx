@@ -65,7 +65,6 @@ export type AcaoNaProva =
   | 'forcar-termino'
   | 'zerar'
   | 'deletar'
-  | 'pdf'
 
 export interface AcoesDaProva {
   editar: (prova: Exam) => void
@@ -383,17 +382,24 @@ function CartaoDeProvaBase({ prova, agora, acaoEmCurso, acoes }: CartaoDeProvaPr
             Relatório e Resultados
           </Button>
 
-          <BotaoDeAcao
-            acao="pdf"
-            acaoEmCurso={acaoEmCurso}
-            icone={FileDown}
-            rotulo="Gerar PDF da Prova"
-            rotuloEmCurso="Gerando PDF…"
+          {/*
+            Abre o seletor de formato em vez de baixar direto.
+
+            O botão baixava sempre o caderno EM BRANCO, e era o único caminho
+            para PDF que o painel tinha: quem quisesse a prova com resposta
+            comentada — que o gerador sabe fazer, e que /provas oferece ao
+            aluno — não tinha onde pedir. Ver `components/admin/provas/dialogo-de-pdf.tsx`.
+          */}
+          <Button
             variant="outline"
             size="sm"
+            disabled={acaoEmCurso !== null}
             onClick={() => acoes.gerarPDF(prova)}
             className="border-blue-500 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950"
-          />
+          >
+            <FileDown className="h-4 w-4 mr-2" />
+            Gerar PDF…
+          </Button>
 
           <BotaoDeAcao
             acao="deletar"

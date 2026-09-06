@@ -200,6 +200,72 @@ function questoesDaProva(exam: Partial<Exam>): Question[] {
   return Array.isArray(exam.questions) ? exam.questions : []
 }
 
+/**
+ * A resposta comentada de UMA questão, montada com tudo o que a questão tem.
+ *
+ * ## Por que não bastava `explanation`
+ *
+ * O PDF "com gabarito comentado" lia só `question.explanation`. Só que boa
+ * parte do acervo não guarda o comentário aí: as questões geradas com feedback
+ * comentado (`app/api/exams/[id]/generate-questions`) e as sorteadas do Banco
+ * de Questões (`app/api/banco/questoes/random`) escrevem em
+ * `commentedFeedback.explanations` — um texto POR ALTERNATIVA, que é o mais
+ * rico dos dois: diz por que cada erro é erro. A tela da prova sempre mostrou
+ * esse campo; o gerador de PDF, não.
+ *
+ * O efeito era o pior possível para quem clicava: o arquivo saía, sem erro
+ * nenhum, e vinha sem uma linha de comentário — indistinguível de "esta prova
+ * não tem gabarito comentado". Daí o pedido de "não consigo gerar o PDF com
+ * resposta comentada": ele gerava, e não comentava nada.
+ *
+ * A ordem é a mesma de `montarExplicacao` (lib/banco/importar-provas.ts), que
+ * já resolvia isto na importação para o banco: a explicação avulsa primeiro, o
+ * comentário por alternativa depois e, nas discursivas, os pontos-chave que a
+ * correção usa. O `**` sai em negrito no PDF — `drawRichLine` o interpreta.
+ */
+export function montarRespostaComentada(questao: Question): string {
+  const partes: string[] = []
+
+  const avulsa = (questao.explanation || '').trim()
+  if (avulsa) partes.push(avulsa)
+
+  const porAlternativa = questao.commentedFeedback?.explanations
+  if (porAlternativa && typeof porAlternativa === 'object') {
+    // A letra certa vem do próprio feedback quando ele a declara; senão, do
+    // gabarito da questão. Uma das duas quase sempre existe, e é ela que faz o
+    // bloco de comentários dizer qual alternativa era a boa.
+    const correta =
+      questao.commentedFeedback?.correctAlternative ||
+      (questao.alternatives || []).find((alternativa) => alternativa.isCorrect)?.letter
+    const linhas = Object.entries(porAlternativa)
+      .filter(([, texto]) => String(texto || '').trim().length > 0)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([letra, texto]) => {
+        const marca = correta && letra === correta ? ' (correta)' : ''
+        return `**${letra})${marca}** ${String(texto).trim()}`
+      })
+    if (linhas.length > 0) {
+      partes.push(['**Comentário por alternativa**', ...linhas].join('\n'))
+    }
+  }
+
+  // A discursiva não tem alternativa para destacar em verde: o que existe de
+  // gabarito nela são os pontos-chave, e o cabeçalho já prometia "ver
+  // gabarito/pontos-chave abaixo" sem que nada os escrevesse.
+  const pontos = Array.isArray(questao.keyPoints) ? questao.keyPoints : []
+  const pontosValidos = pontos.filter((ponto) => String(ponto?.description || '').trim().length > 0)
+  if (pontosValidos.length > 0) {
+    const linhas = pontosValidos.map((ponto) => {
+      const peso = Number(ponto.weight)
+      const rotuloDoPeso = Number.isFinite(peso) && peso > 0 ? ` (peso ${peso})` : ''
+      return `- ${String(ponto.description).trim()}${rotuloDoPeso}`
+    })
+    partes.push(['**Pontos-chave esperados**', ...linhas].join('\n'))
+  }
+
+  return partes.join('\n\n')
+}
+
 // Pre-fetch all question images for an exam (uses session cache automatically)
 async function prefetchExamImages(questions: Question[] | undefined): Promise<Map<string, ImgData>> {
   const imageMap = new Map<string, ImgData>()
@@ -328,7 +394,9 @@ export async function generateGabaritoPDF(exam: Exam): Promise<Blob> {
       currentCol = 0
     }
 
-    const correctAlternative = question.alternatives.find(alt => alt.isCorrect)
+    // `|| []` porque discursiva e redação podem chegar sem o array: o gabarito
+    // delas é um traço, não uma exceção que derruba o arquivo inteiro.
+    const correctAlternative = (question.alternatives || []).find(alt => alt.isCorrect)
     const answerLetter = correctAlternative?.letter || '-'
 
     const x = margin + currentCol * columnWidth
@@ -882,12 +950,16 @@ export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
       y += 8
     }
 
-    // Resposta comentada / explanation
-    if (question.explanation) {
+    // Resposta comentada: explicação avulsa + comentário por alternativa +
+    // pontos-chave, na ordem de `montarRespostaComentada`. Ler só
+    // `question.explanation` aqui era o que fazia este PDF sair sem comentário
+    // nenhum nas provas cujo feedback está por alternativa.
+    const respostaComentada = montarRespostaComentada(question)
+    if (respostaComentada) {
       // Set font matching rendering before wrapText so line widths are calculated correctly
       doc.setFontSize(9)
       doc.setFont(FONT, 'normal')
-      const expLines = wrapText(doc, question.explanation, pageWidth - 2 * margin - 14)
+      const expLines = wrapText(doc, respostaComentada, pageWidth - 2 * margin - 14)
       if (expLines.length > 0) {
         const lineH = 6
         const headerH = 14
@@ -1879,9 +1951,7 @@ export async function generateGroupPDF(
       // Generate cover and content in parallel for each exam
       const [cover, content] = await Promise.all([
         generateExamCoverBlob(exam, i, exams.length, type),
-        type === 'gabarito'      ? generateGabaritoPDF(exam) :
-        type === 'with-answers'  ? generateExamWithAnswersPDF(exam) :
-                                   generateExamPDF(exam),
+        gerarPorTipo(exam, type),
       ])
       results[i] = [cover, content]
       completed++
@@ -1895,6 +1965,58 @@ export async function generateGroupPDF(
   // Flatten in order: [cover1, content1, cover2, content2, …]
   const blobs = results.flatMap(([cover, content]) => [cover, content])
   return mergeBlobs(blobs)
+}
+
+/**
+ * Vários formatos da MESMA prova num arquivo só.
+ *
+ * O caderno em branco, o caderno com gabarito comentado e a folha de gabarito
+ * são três documentos completos e independentes — cada um com o seu cabeçalho.
+ * Quem aplica a prova costuma querer os três, e baixá-los em três cliques
+ * produz três arquivos soltos na pasta de Downloads, com nomes parecidos, para
+ * juntar depois na mão.
+ *
+ * A ordem segue `tipos`, sem repetição: quem pedir duas vezes o mesmo formato
+ * recebe uma. Um `tipos` vazio não existe — a tela sempre manda pelo menos um,
+ * e o caderno em branco é o padrão razoável se algum dia mandar nada.
+ */
+export async function generateExamPackagePDF(
+  exam: Exam,
+  tipos: GroupPDFType[],
+  onProgress?: (done: number, total: number) => void,
+): Promise<Blob> {
+  const pedidos = tipos.filter((tipo, indice) => tipos.indexOf(tipo) === indice)
+  const ordem: GroupPDFType[] = pedidos.length > 0 ? pedidos : ['exam']
+
+  if (ordem.length === 1) {
+    onProgress?.(0, 1)
+    const unico = await gerarPorTipo(exam, ordem[0])
+    onProgress?.(1, 1)
+    return unico
+  }
+
+  // Fontes e logo aquecidos uma vez: os três documentos compartilham o cache.
+  await Promise.all([prewarmFontsCache(), loadLogo()])
+
+  let prontos = 0
+  onProgress?.(0, ordem.length)
+  const blobs = await Promise.all(
+    ordem.map(async (tipo) => {
+      const blob = await gerarPorTipo(exam, tipo)
+      prontos++
+      onProgress?.(prontos, ordem.length)
+      return blob
+    }),
+  )
+
+  return mergeBlobs(blobs)
+}
+
+/** O documento de um tipo. É o mesmo mapa que o PDF de grupo usa. */
+function gerarPorTipo(exam: Exam, tipo: GroupPDFType): Promise<Blob> {
+  if (tipo === 'gabarito') return generateGabaritoPDF(exam)
+  if (tipo === 'with-answers') return generateExamWithAnswersPDF(exam)
+  return generateExamPDF(exam)
 }
 
 // ── Purchase Receipt PDF ──────────────────────────────────────────

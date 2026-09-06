@@ -11,6 +11,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { useRelogioDaLista } from '@/hooks/use-relogio-da-lista'
 import { CartaoDeProva, type AcaoNaProva, type AcoesDaProva } from '@/components/admin/provas/cartao-de-prova'
+import { DialogoDePdf } from '@/components/admin/provas/dialogo-de-pdf'
+import { nomeDoArquivoDePdf, opcaoDePdf, type FormatoDePdfDaProva } from '@/lib/provas/formatos-de-pdf'
 import { Exam } from '@/lib/types'
 import { cn } from '@/lib/utils'
 // PDF generator loaded dynamically to reduce initial bundle size
@@ -62,6 +64,17 @@ export default function AdminExamsPage() {
   const [vaultEmailCode, setVaultEmailCode] = useState('')
   const [vaultPhrase, setVaultPhrase] = useState('')
   const [search, setSearch] = useState('')
+  /**
+   * O seletor de formato do PDF.
+   *
+   * `provaParaPdf` é a prova escolhida (e o próprio "o diálogo está aberto"),
+   * `formatoEmCurso` diz qual das opções está sendo montada — é o spinner de
+   * uma opção só, não da tela — e `progressoDoPacote` conta os documentos do
+   * pacote completo, que são três e demoram o que três demoram.
+   */
+  const [provaParaPdf, setProvaParaPdf] = useState<Exam | null>(null)
+  const [formatoEmCurso, setFormatoEmCurso] = useState<FormatoDePdfDaProva | null>(null)
+  const [progressoDoPacote, setProgressoDoPacote] = useState<{ feitos: number; total: number } | null>(null)
 
   /**
    * O relógio da lista.
@@ -525,20 +538,65 @@ export default function AdminExamsPage() {
     }
   }, [marcarAcao, router, showToastMessage])
 
-  const gerarPDFDaProva = useCallback(async (prova: Exam) => {
+  /**
+   * As questões da prova, mesmo quando a lista não as trouxer.
+   *
+   * `GET /api/exams` devolve o documento completo para o admin — inclusive o
+   * gabarito —, e por isso o caminho normal não faz requisição nenhuma aqui.
+   * O resguardo existe porque a projeção dessa rota já mudou uma vez (ver
+   * `campos=lista`): se mudar de novo, o PDF passa a custar uma busca em vez
+   * de sair com zero questões e parecer defeito do gerador.
+   */
+  const provaComQuestoes = useCallback(async (prova: Exam): Promise<Exam> => {
+    if (Array.isArray(prova.questions) && prova.questions.length > 0) return prova
     const id = idDaProva(prova)
-    marcarAcao(id, 'pdf')
+    if (!id) return prova
     try {
-      const { generateExamPDF, downloadPDF } = await import('@/lib/pdf-generator')
-      const blob = await generateExamPDF(prova)
-      downloadPDF(blob, `${prova.title}.pdf`, { type: 'exam_pdf', resourceId: id, resourceTitle: prova.title })
+      const res = await fetch(`/api/exams/${id}`)
+      if (!res.ok) return prova
+      const dados = await res.json()
+      return (dados?.exam as Exam) || prova
+    } catch {
+      return prova
+    }
+  }, [])
+
+  /**
+   * Gera UM dos formatos escolhidos no diálogo.
+   *
+   * O diálogo continua aberto depois do download: quem baixou o caderno em
+   * branco para imprimir quase sempre quer o gabarito comentado em seguida, e
+   * fechar a cada arquivo obrigaria a reabrir o menu do cartão toda vez.
+   */
+  const gerarPdfDaProva = useCallback(async (prova: Exam, formato: FormatoDePdfDaProva) => {
+    const opcao = opcaoDePdf(formato)
+    const id = idDaProva(prova)
+    setFormatoEmCurso(formato)
+    setProgressoDoPacote(opcao.partes.length > 1 ? { feitos: 0, total: opcao.partes.length } : null)
+    try {
+      const [{ generateExamPackagePDF, downloadPDF }, completa] = await Promise.all([
+        import('@/lib/pdf-generator'),
+        provaComQuestoes(prova),
+      ])
+      const blob = await generateExamPackagePDF(completa, opcao.partes, (feitos, total) => {
+        if (total > 1) setProgressoDoPacote({ feitos, total })
+      })
+      downloadPDF(blob, nomeDoArquivoDePdf(completa.title, formato), {
+        type: opcao.rastreio,
+        resourceId: id,
+        resourceTitle: completa.title,
+      })
+      showToastMessage(`${opcao.titulo}: PDF gerado.`, 'success')
     } catch (error: any) {
       console.error('Erro ao gerar PDF:', error)
       showToastMessage('Erro ao gerar PDF: ' + error.message)
     } finally {
-      marcarAcao(id, null)
+      setFormatoEmCurso(null)
+      setProgressoDoPacote(null)
     }
-  }, [marcarAcao, showToastMessage])
+  }, [provaComQuestoes, showToastMessage])
+
+  const abrirOpcoesDePdf = useCallback((prova: Exam) => setProvaParaPdf(prova), [])
 
   /*
    * As confirmações não são mais `window.confirm`.
@@ -609,7 +667,7 @@ export default function AdminExamsPage() {
       }),
     corrigirDiscursivas: prova => router.push(`/admin/exams/${idDaProva(prova)}/corrections`),
     verRelatorio: prova => router.push(`/admin/exams/${idDaProva(prova)}/relatorio`),
-    gerarPDF: gerarPDFDaProva,
+    gerarPDF: abrirOpcoesDePdf,
     deletar: prova =>
       pedirConfirmacao({
         titulo: 'Deletar esta prova?',
@@ -629,7 +687,7 @@ export default function AdminExamsPage() {
     deletarProva,
     duplicarProva,
     forcarHorario,
-    gerarPDFDaProva,
+    abrirOpcoesDePdf,
     pedirConfirmacao,
     router,
     zerarProva,
@@ -904,6 +962,15 @@ export default function AdminExamsPage() {
           </div>
         )}
       </main>
+
+      {/* Escolha do formato do PDF — ver components/admin/provas/dialogo-de-pdf.tsx */}
+      <DialogoDePdf
+        prova={provaParaPdf}
+        gerando={formatoEmCurso}
+        progresso={progressoDoPacote}
+        onGerar={gerarPdfDaProva}
+        onFechar={() => setProvaParaPdf(null)}
+      />
 
       {/* Confirmação das ações que não dá para desfazer */}
       <Dialog open={!!confirmacao} onOpenChange={(open) => { if (!open) setConfirmacao(null) }}>
