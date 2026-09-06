@@ -18,6 +18,7 @@ import {
   sanitizarParaPdf,
 } from './pdf/marca'
 import { carregarImagens, type ImagemParaPdf } from './pdf/imagens'
+import { fatiarCaixaEmPaginas } from './pdf/paginacao'
 
 interface UserReportData {
   exam: Exam
@@ -468,8 +469,13 @@ async function generateUserReportWithGabaritoPDFBlob(data: UserReportData): Prom
   const margin = 20
   let y = margin
 
+  // Última coordenada utilizável da página: abaixo daqui é rodapé. Uma
+  // constante só, para o `checkPage` e o fatiamento da resposta comentada não
+  // divergirem sobre onde a página acaba.
+  const limiteInferior = pageHeight - 25
+
   const checkPage = (needed: number) => {
-    if (y + needed > pageHeight - 25) {
+    if (y + needed > limiteInferior) {
       doc.addPage()
       y = addHeader(doc, pageWidth, margin, 'Relatório com Gabarito', logo)
       return true
@@ -479,6 +485,8 @@ async function generateUserReportWithGabaritoPDFBlob(data: UserReportData): Prom
 
   // === CABEÇALHO ===
   y = addHeader(doc, pageWidth, margin, 'Relatório com Gabarito', logo)
+  // O cabeçalho tem altura fixa: toda página nova recomeça daqui.
+  const yAposCabecalho = y
 
   // === TÍTULO ===
   doc.setFillColor(...LARANJA_CLARO)
@@ -723,37 +731,84 @@ async function generateUserReportWithGabaritoPDFBlob(data: UserReportData): Prom
       }
     }
 
-    // Resposta Comentada
+    /*
+     * Resposta Comentada, em tantas caixas quantas forem as páginas.
+     *
+     * Era uma caixa só, com a altura calculada a partir de TODAS as linhas de
+     * uma vez. O `checkPage` antes dela resolvia o caso de não caber no que
+     * sobrou da página — mas não o de não caber em página NENHUMA: uma
+     * explicação mais alta que a folha era desenhada inteira mesmo assim, e o
+     * jsPDF não recorta nem avisa: o que passava do fim da página
+     * simplesmente sumia. As respostas comentadas longas (a maioria, aqui)
+     * chegavam ao aluno cortadas no meio da frase.
+     *
+     * `fatiarCaixaEmPaginas` decide onde o texto quebra; aqui só se desenha o
+     * que ela mandar. O título só sai no primeiro lote, e os seguintes entram
+     * com um respiro menor no topo, para se lerem como continuação.
+     */
     if (question.explanation) {
-      checkPage(20)
-      y += 3
-
-      // Box amarelo com resposta comentada
-      doc.setFillColor(255, 251, 235) // amber-50
-      doc.setDrawColor(...LARANJA)
-      doc.setLineWidth(0.5)
-
-      const expLines = wrapText(doc, question.explanation, pageWidth - 2 * margin - 12)
-      const boxHeight = Math.max(expLines.length * 5.5 + 14, 20)
-
-      checkPage(boxHeight + 5)
-      doc.roundedRect(margin, y, pageWidth - 2 * margin, boxHeight, 2, 2, 'FD')
-
-      doc.setFontSize(9)
-      doc.setFont(FONT, 'bold')
-      doc.setTextColor(...LARANJA)
-      doc.text('RESPOSTA COMENTADA', margin + 5, y + 8)
-
+      // A fonte é definida ANTES do `wrapText`: ele mede com a fonte ativa, e
+      // medir em corpo 10 o texto que sai em 9 dá uma quebra que não é a que
+      // vai para o papel.
       doc.setFontSize(9)
       doc.setFont(FONT, 'normal')
-      doc.setTextColor(...CINZA_TEXTO)
-      let expY = y + 14
-      expLines.forEach(line => {
-        doc.text(line, margin + 5, expY)
-        expY += 5
-      })
+      const expLines = wrapText(doc, question.explanation, pageWidth - 2 * margin - 12)
 
-      y += boxHeight + 5
+      if (expLines.length > 0) {
+        y += 3
+
+        const alturaDaLinha = 5
+        const alturaDoTitulo = 14 // título em y+8, primeira linha em y+14
+        const respiroDeContinuacao = 6
+        const respiroInferior = 5
+
+        const lotes = fatiarCaixaEmPaginas({
+          totalDeLinhas: expLines.length,
+          alturaDaLinha,
+          alturaDoTitulo,
+          respiroDeContinuacao,
+          respiroInferior,
+          yInicial: y,
+          limiteInferior,
+          yAposQuebra: yAposCabecalho,
+        })
+
+        for (const lote of lotes) {
+          if (lote.novaPagina) {
+            doc.addPage()
+            addHeader(doc, pageWidth, margin, 'Relatório com Gabarito', logo)
+          }
+          y = lote.y
+
+          // Box amarelo com resposta comentada
+          doc.setFillColor(255, 251, 235) // amber-50
+          doc.setDrawColor(...LARANJA)
+          doc.setLineWidth(0.5)
+          doc.roundedRect(margin, y, pageWidth - 2 * margin, lote.altura, 2, 2, 'FD')
+
+          if (lote.primeiro) {
+            doc.setFontSize(9)
+            doc.setFont(FONT, 'bold')
+            doc.setTextColor(...LARANJA)
+            doc.text('RESPOSTA COMENTADA', margin + 5, y + 8)
+            y += alturaDoTitulo
+          } else {
+            y += respiroDeContinuacao
+          }
+
+          doc.setFontSize(9)
+          doc.setFont(FONT, 'normal')
+          doc.setTextColor(...CINZA_TEXTO)
+          for (const line of expLines.slice(lote.inicio, lote.inicio + lote.linhas)) {
+            doc.text(line, margin + 5, y)
+            y += alturaDaLinha
+          }
+
+          y += respiroInferior
+        }
+
+        y += 5
+      }
     }
 
     y += 8
