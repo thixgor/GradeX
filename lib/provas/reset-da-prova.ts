@@ -1,5 +1,6 @@
 import type { Db } from 'mongodb'
 import { ObjectId } from 'mongodb'
+import { COLECAO_DE_ENTRADAS } from './entrada-na-prova'
 import { COLECAO_DE_PROGRESSO } from './retomada'
 import { EXAM_ATTEMPTS_COLLECTION } from '@/lib/tracking/exam-attempts'
 
@@ -36,6 +37,14 @@ export interface ContagemDoReset {
   tentativas: number
   anotacoes: number
   relatosDeQuestao: number
+  /**
+   * Quem tinha passado pelo portão.
+   *
+   * Ficava de fora, e por isso o reset não devolvia a prova ao estado inicial:
+   * as entregas sumiam e a turma continuava "dentro" — pronta para começar de
+   * novo sem passar pelo portão outra vez.
+   */
+  entradas: number
 }
 
 export const TOTAL_ZERADO = (contagem: ContagemDoReset): number =>
@@ -43,7 +52,8 @@ export const TOTAL_ZERADO = (contagem: ContagemDoReset): number =>
   contagem.rascunhos +
   contagem.tentativas +
   contagem.anotacoes +
-  contagem.relatosDeQuestao
+  contagem.relatosDeQuestao +
+  contagem.entradas
 
 /**
  * Uma frase em português com o que foi apagado, para o toast do painel.
@@ -82,15 +92,19 @@ export async function zerarDadosDaProva(db: Db, examId: string): Promise<Contage
   // encontra nada, que é a forma mais silenciosa de um reset ficar pela metade.
   const examObjectId = ObjectId.isValid(examId) ? new ObjectId(examId) : null
 
-  const [submissoes, rascunhos, tentativas, anotacoes, relatosDeQuestao] = await Promise.all([
-    db.collection('submissions').deleteMany({ examId }),
-    db.collection(COLECAO_DE_PROGRESSO).deleteMany({ examId }),
-    db.collection(EXAM_ATTEMPTS_COLLECTION).deleteMany({ examId }),
-    db.collection('user_anotacoes').deleteMany({ examId }),
-    examObjectId
-      ? db.collection('banco_questoes_reports').deleteMany({ examId: examObjectId })
-      : Promise.resolve({ deletedCount: 0 }),
-  ])
+  const [submissoes, rascunhos, tentativas, anotacoes, relatosDeQuestao, entradas] =
+    await Promise.all([
+      db.collection('submissions').deleteMany({ examId }),
+      db.collection(COLECAO_DE_PROGRESSO).deleteMany({ examId }),
+      db.collection(EXAM_ATTEMPTS_COLLECTION).deleteMany({ examId }),
+      db.collection('user_anotacoes').deleteMany({ examId }),
+      examObjectId
+        ? db.collection('banco_questoes_reports').deleteMany({ examId: examObjectId })
+        : Promise.resolve({ deletedCount: 0 }),
+      // Sem isto o reset deixava a turma "dentro": as entregas sumiam e todo
+      // mundo continuava autorizado a começar sem passar pelo portão de novo.
+      db.collection(COLECAO_DE_ENTRADAS).deleteMany({ examId }),
+    ])
 
   return {
     submissoes: submissoes.deletedCount ?? 0,
@@ -98,5 +112,6 @@ export async function zerarDadosDaProva(db: Db, examId: string): Promise<Contage
     tentativas: tentativas.deletedCount ?? 0,
     anotacoes: anotacoes.deletedCount ?? 0,
     relatosDeQuestao: relatosDeQuestao.deletedCount ?? 0,
+    entradas: entradas.deletedCount ?? 0,
   }
 }

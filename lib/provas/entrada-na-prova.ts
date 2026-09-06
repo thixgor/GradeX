@@ -102,3 +102,58 @@ export async function registrarEntrada(
 
   return { dentro: true, registrouAgora: !!resultado.upsertedCount, motivo: null }
 }
+
+/**
+ * Apaga os registros de entrada de uma prova.
+ *
+ * ## Por que uma entrada pode deixar de valer
+ *
+ * O registro diz "passei pelo portão DESTA prova". Ele não guarda qual era o
+ * portão — e não precisava, enquanto a janela de uma prova fosse fixa. Quando
+ * o admin remarca a prova, o portão pelo qual a pessoa passou deixa de
+ * existir, e o registro passa a autorizar uma entrada que nunca aconteceu: a
+ * prova adiada para a semana seguinte já começa com meia turma "dentro".
+ *
+ * O sintoma que trouxe isto à tona é o do próprio admin testando: ele abre a
+ * prova enquanto o portão está aberto, remarca os horários para conferir o
+ * portão fechado, e a tela continua dizendo "Você está dentro" — porque, para
+ * o servidor, ele está mesmo.
+ *
+ * Apagar é o certo: quem for fazer a prova na janela nova passa pelo portão
+ * novo, que é o que o portão existe para registrar.
+ */
+export async function limparEntradasDaProva(db: Db, examId: string): Promise<number> {
+  const resultado = await db
+    .collection<EntradaNaProva>(COLECAO_DE_ENTRADAS)
+    .deleteMany({ examId })
+  return resultado.deletedCount || 0
+}
+
+/**
+ * A janela desta prova mudou de verdade?
+ *
+ * Comparar por instante, e não por referência ou texto: o painel reenvia os
+ * quatro campos a cada salvamento, e um `Date` novo com o mesmo milissegundo
+ * apagaria as entradas de uma prova em andamento só porque alguém corrigiu o
+ * título. Ausente dos dois lados também conta como igual.
+ */
+export function janelaMudou(
+  antes: Pick<Exam, 'gatesOpen' | 'gatesClose' | 'startTime' | 'endTime'> | null | undefined,
+  depois: Partial<Pick<Exam, 'gatesOpen' | 'gatesClose' | 'startTime' | 'endTime'>>,
+): boolean {
+  const campos = ['gatesOpen', 'gatesClose', 'startTime', 'endTime'] as const
+
+  return campos.some((campo) => {
+    if (!(campo in depois)) return false
+    const valorAntes = instanteDe(antes?.[campo])
+    const valorDepois = instanteDe(depois[campo])
+    return valorAntes !== valorDepois
+  })
+}
+
+function instanteDe(valor: unknown): number | null {
+  if (!valor) return null
+  const data = valor instanceof Date ? valor : new Date(valor as string)
+  const ms = data.getTime()
+  return Number.isFinite(ms) ? ms : null
+}

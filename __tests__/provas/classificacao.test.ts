@@ -70,6 +70,7 @@ describe('descreverReset', () => {
     tentativas: 0,
     anotacoes: 0,
     relatosDeQuestao: 0,
+    entradas: 0,
   }
 
   it('prova já limpa não vira uma lista de zeros', () => {

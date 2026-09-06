@@ -9,7 +9,7 @@ import { lerPeriodoDoAluno } from '@/lib/provas/periodo-do-aluno'
 import { normalizarExcecoes, provaExisteParaPessoa } from '@/lib/provas/visibilidade-da-prova'
 import { resolverJanelaDaProva, validarJanelaDoFormulario } from '@/lib/provas/janela-da-prova'
 import { interpretarInstante } from '@/lib/provas/horario-local'
-import { jaEntrouNaProva } from '@/lib/provas/entrada-na-prova'
+import { jaEntrouNaProva, janelaMudou, limparEntradasDaProva } from '@/lib/provas/entrada-na-prova'
 import { normalizarPublico } from '@/lib/provas/publico-da-prova'
 import { normalizarEsperas, normalizarLiberacoes } from '@/lib/provas/downloads-da-prova'
 import { normalizarTravas } from '@/lib/provas/anti-cola'
@@ -369,7 +369,24 @@ export async function PUT(
       { $set: updateData }
     )
 
-    return NextResponse.json({ success: true })
+    /*
+     * Remarcar a prova invalida quem tinha passado pelo portão.
+     *
+     * O registro de entrada diz "passei pelo portão desta prova", e não guarda
+     * qual era o portão. Enquanto a janela não muda, tudo bem; quando ela
+     * muda, o portão pelo qual a pessoa passou deixa de existir e o registro
+     * autoriza uma entrada que nunca aconteceu — a prova adiada para a semana
+     * seguinte começaria com meia turma já "dentro".
+     *
+     * Só quando a janela muda de fato: o painel reenvia os quatro campos a
+     * cada salvamento, e apagar as entradas de uma prova EM ANDAMENTO porque
+     * alguém corrigiu o título expulsaria a turma inteira da sala.
+     */
+    const entradasApagadas = janelaMudou(exam, updateData)
+      ? await limparEntradasDaProva(db, id)
+      : 0
+
+    return NextResponse.json({ success: true, entradasApagadas })
   } catch (error) {
     console.error('Update exam error:', error)
     return NextResponse.json(

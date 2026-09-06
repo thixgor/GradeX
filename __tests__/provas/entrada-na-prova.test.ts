@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { registrarEntrada } from '@/lib/provas/entrada-na-prova'
+import { janelaMudou, registrarEntrada } from '@/lib/provas/entrada-na-prova'
 
 /**
  * Um Mongo de mentira, com o suficiente para o `upsert` deste módulo: guarda
@@ -89,5 +89,53 @@ describe('registrarEntrada', () => {
     const db = bancoFalso()
     const r = await registrarEntrada(db, PROVA, 'e1', 'u1', new Date('2026-05-10T19:00:00Z'))
     expect(r.dentro).toBe(false)
+  })
+})
+
+describe('janelaMudou', () => {
+  const janela = {
+    gatesOpen: new Date('2026-09-06T01:23:00-03:00'),
+    gatesClose: new Date('2026-09-06T02:08:00-03:00'),
+    startTime: new Date('2026-09-06T02:46:00-03:00'),
+    endTime: new Date('2026-09-06T04:06:00-03:00'),
+  } as any
+
+  it('remarcar a prova conta como mudança', () => {
+    /*
+     * O registro de entrada diz "passei pelo portão desta prova" e não guarda
+     * qual era o portão. Remarcada a prova, ele autoriza uma entrada que nunca
+     * aconteceu — a prova adiada começaria com meia turma já dentro.
+     */
+    expect(janelaMudou(janela, { startTime: new Date('2026-09-13T02:46:00-03:00') })).toBe(true)
+    expect(janelaMudou(janela, { gatesClose: new Date('2026-09-06T03:00:00-03:00') })).toBe(true)
+  })
+
+  it('salvar sem mexer na janela não expulsa ninguém', () => {
+    /*
+     * O painel reenvia os quatro campos a cada salvamento. Comparar por
+     * referência (ou reagir à simples presença do campo) apagaria as entradas
+     * de uma prova EM ANDAMENTO porque alguém corrigiu o título — a turma
+     * inteira seria posta para fora da sala.
+     */
+    expect(
+      janelaMudou(janela, {
+        gatesOpen: new Date('2026-09-06T01:23:00-03:00'),
+        gatesClose: new Date('2026-09-06T02:08:00-03:00'),
+        startTime: new Date('2026-09-06T02:46:00-03:00'),
+        endTime: new Date('2026-09-06T04:06:00-03:00'),
+      }),
+    ).toBe(false)
+    expect(janelaMudou(janela, {})).toBe(false)
+  })
+
+  it('aceita texto ISO no lugar de Date', () => {
+    // O corpo da requisição chega como JSON: as datas são strings.
+    expect(janelaMudou(janela, { startTime: '2026-09-06T02:46:00-03:00' as any })).toBe(false)
+    expect(janelaMudou(janela, { startTime: '2026-09-07T02:46:00-03:00' as any })).toBe(true)
+  })
+
+  it('tirar ou pôr um portão é mudança', () => {
+    expect(janelaMudou(janela, { gatesClose: null as any })).toBe(true)
+    expect(janelaMudou({ ...janela, gatesOpen: undefined }, { gatesOpen: new Date() })).toBe(true)
   })
 })
