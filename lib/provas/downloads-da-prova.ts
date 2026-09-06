@@ -131,15 +131,32 @@ export interface EsperasDeDownload {
   prova: boolean
   /** O relatório do aluno só sai depois do término (além de exigir a entrega). */
   relatorio: boolean
+  /**
+   * A prova em branco só sai depois que ESTE aluno entregar a dele.
+   *
+   * É outra espera, e não uma versão fraca de `prova`: aquela olha o relógio
+   * da turma ("a prova acabou para todo mundo"), esta olha a pessoa ("você
+   * terminou"). Numa janela larga, quem entrega às 14h30 pode levar o caderno
+   * para casa sem que isso alcance quem só vai fazer às 17h — o arquivo saiu
+   * para quem já não tem o que copiar.
+   *
+   * As duas se somam quando ligadas juntas: espera-se o que vier por último.
+   */
+  entrega: boolean
 }
 
-export const ESPERAS_PADRAO: EsperasDeDownload = { prova: false, relatorio: false }
+export const ESPERAS_PADRAO: EsperasDeDownload = {
+  prova: false,
+  relatorio: false,
+  entrega: false,
+}
 
 export function normalizarEsperas(valor: unknown): EsperasDeDownload {
   const bruto = (valor || {}) as Partial<Record<keyof EsperasDeDownload, unknown>>
   return {
     prova: bruto.prova === true,
     relatorio: bruto.relatorio === true,
+    entrega: bruto.entrega === true,
   }
 }
 
@@ -240,7 +257,9 @@ export function resolverDownloadsDaProva(
   const esperas = normalizarEsperas((prova as any)?.holdDownloads)
 
   return {
-    prova: veredito('prova', esperas.prova, false),
+    // A prova em branco pode esperar o término da turma, a entrega desta
+    // pessoa, ou as duas — quando as duas, vale o que vier por último.
+    prova: veredito('prova', esperas.prova, esperas.entrega),
     relatorio: veredito('relatorio', esperas.relatorio, true),
     gabarito: veredito('gabarito', true, false),
     /*

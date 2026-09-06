@@ -33,7 +33,7 @@ import { useProctoring } from '@/hooks/use-proctoring'
 import { useWebSocket } from '@/hooks/use-websocket'
 import { useVisibilityDetection } from '@/hooks/use-visibility-detection'
 import { useWebRTC } from '@/hooks/use-webrtc'
-import { ArrowLeft, Check, X, Send, FileDown, Clock, User, CheckCircle2, AlertCircle, List, StickyNote, Copy, ClipboardCheck, Flag, ChevronRight, ChevronLeft, Bot, Maximize2, BookOpen, LogOut, Play, BarChart3, Trophy } from 'lucide-react'
+import { ArrowLeft, Check, X, Send, FileDown, Clock, User, CheckCircle2, AlertCircle, List, StickyNote, Copy, ClipboardCheck, ClipboardList, Flag, ChevronRight, ChevronLeft, Bot, Maximize2, BookOpen, LogOut, Play, BarChart3, Trophy } from 'lucide-react'
 import { ImageModal } from '@/components/image-modal'
 import { PremiumPdfCtaModal } from '@/components/premium-pdf-cta-modal'
 import { PdfCtaBanner } from '@/components/pdf-cta-banner'
@@ -837,6 +837,21 @@ export default function ExamPage({ params }: { params: { id: string } }) {
       setExam(examData)
       if (data.janela) setJanela(data.janela)
       if (data.jaEntrou) setJaEntrou(true)
+      /*
+       * A entrega já vem com a prova.
+       *
+       * `alreadySubmitted` dependia só de `checkExistingSubmission`, que faz
+       * três requisições em cadeia (`/auth/me`, a prova de novo, e enfim
+       * `check-submission`) e devolve em silêncio se qualquer uma falhar. Até
+       * ela terminar — ou se ela falhasse — o aluno que já entregou via o
+       * formulário de assinatura, com o botão de iniciar a prova que ele
+       * acabou de fazer.
+       *
+       * Aqui o dado chega na MESMA resposta que traz a prova, então a tela
+       * sabe disso no primeiro render. A prova de treino continua de fora: ela
+       * é feita quantas vezes a pessoa quiser.
+       */
+      if (data.jaSubmeteu && !examData?.isPracticeExam) setAlreadySubmitted(true)
 
       /*
        * Passar pelo portão.
@@ -3219,6 +3234,49 @@ ${respostaAluno}`
                   >
                     <Trophy className="h-4 w-4 mr-2" />
                     Ver resultados da turma
+                  </Button>
+                )}
+                {/*
+                  A folha de respostas dele — as letras que marcou, uma por
+                  linha.
+
+                  Fica aqui porque é este o momento em que ela serve: o aluno
+                  acabou de entregar e quer conferir com os colegas na saída.
+                  Não tem enunciado nem gabarito (só o que ele mesmo escreveu),
+                  então não espera a turma terminar.
+                */}
+                {downloads.compacto.permitido && (
+                  <Button
+                    onClick={async () => {
+                      try {
+                        setPdfGenerating('Folha')
+                        // As respostas desta sessão. Quem acabou de entregar
+                        // as tem na mão; quem reabriu a prova noutro dia usa a
+                        // mesma folha pela tela de resultado, que carrega a
+                        // entrega do servidor.
+                        const { generateCompactAnswersPDF, downloadPDF } = await import('@/lib/pdf-generator')
+                        const blob = await generateCompactAnswersPDF(exam, answers, userName || 'Aluno')
+                        downloadPDF(blob, `folha-de-respostas-${exam.title}.pdf`, {
+                          type: 'exam_answers_pdf',
+                          resourceId: id as string,
+                          resourceTitle: exam.title,
+                        })
+                      } catch (error: any) {
+                        showToastMessage('Erro ao gerar a folha: ' + error.message)
+                      } finally {
+                        setPdfGenerating(null)
+                      }
+                    }}
+                    disabled={!!pdfGenerating}
+                    variant="outline"
+                    className="w-full"
+                    size="lg"
+                  >
+                    {pdfGenerating === 'Folha' ? (
+                      <><span className="h-4 w-4 mr-2 rounded-full border-2 border-current border-t-transparent animate-spin inline-block" />Gerando…</>
+                    ) : (
+                      <><ClipboardList className="h-4 w-4 mr-2" />Minhas respostas (A, B, C…)</>
+                    )}
                   </Button>
                 )}
                 {!downloads.gabarito.esperandoOFim ? (

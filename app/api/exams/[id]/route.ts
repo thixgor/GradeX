@@ -76,12 +76,21 @@ export async function GET(
      */
     const contextoBase = { userId: session.userId, isAdmin }
 
-    let jaSubmeteu = false
-    if (!podeVerGabarito(exam, contextoBase)) {
-      jaSubmeteu = !!(await db
-        .collection('submissions')
-        .findOne({ examId: id, userId: session.userId }, { projection: { _id: 1 } }))
-    }
+    /*
+     * `jaSubmeteu` é consultado sempre, e não só quando decide o gabarito.
+     *
+     * A consulta era pulada quando o gabarito já podia ser visto (prova
+     * encerrada, treino, admin) — barata, e errada: o campo ia `false` para
+     * quem tinha entregue, e é ele que a tela usa para saber que a prova já
+     * acabou PARA ESTA PESSOA. O aluno reabria a prova encerrada e recebia o
+     * formulário de assinatura, como se pudesse fazer tudo de novo.
+     *
+     * É uma leitura indexada por (`examId`, `userId`) — a mesma que
+     * `check-submission` já fazia numa segunda viagem.
+     */
+    const jaSubmeteu = !!(await db
+      .collection('submissions')
+      .findOne({ examId: id, userId: session.userId }, { projection: { _id: 1 } }))
 
     const entregue = prepararProvaParaEntrega(exam, { ...contextoBase, jaSubmeteu })
 

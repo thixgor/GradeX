@@ -228,14 +228,15 @@ const ASSINANTE = { accountType: 'plus', jaEnviou: false, agora: AGORA }
 
 describe('normalizarEsperas', () => {
   it('ausente é o comportamento de sempre: nada espera', () => {
-    expect(normalizarEsperas(undefined)).toEqual({ prova: false, relatorio: false })
-    expect(esperasDaProva(agendada())).toEqual({ prova: false, relatorio: false })
+    expect(normalizarEsperas(undefined)).toEqual({ prova: false, relatorio: false, entrega: false })
+    expect(esperasDaProva(agendada())).toEqual({ prova: false, relatorio: false, entrega: false })
   })
 
   it('só o booleano true segura', () => {
     expect(normalizarEsperas({ prova: 'true', relatorio: true })).toEqual({
       prova: false,
       relatorio: true,
+      entrega: false,
     })
   })
 })
@@ -303,6 +304,42 @@ describe('folha de respostas (compacto)', () => {
   it('numa prova de treino não depende de entrega nenhuma', () => {
     const treino = agendada({ isPracticeExam: true })
     expect(resolverDownloadsDaProva(treino, { ...ASSINANTE, jaEnviou: false }).compacto.permitido).toBe(true)
+  })
+})
+
+describe('esperar a entrega DESTE aluno', () => {
+  /*
+   * Outra espera, não uma versão fraca da anterior: `prova` olha o relógio da
+   * turma, `entrega` olha a pessoa. Numa janela larga, quem termina às 14h30
+   * pode levar o caderno sem que isso alcance quem só vai fazer às 17h.
+   */
+  const soDepoisDeEntregar = agendada({ holdDownloads: { entrega: true } })
+
+  it('segura a prova em branco até o aluno entregar', () => {
+    const antes = resolverDownloadsDaProva(soDepoisDeEntregar, { ...ASSINANTE, jaEnviou: false })
+    expect(antes.prova.permitido).toBe(false)
+    expect(antes.prova.esperandoOFim).toBe(true)
+
+    const depois = resolverDownloadsDaProva(soDepoisDeEntregar, { ...ASSINANTE, jaEnviou: true })
+    expect(depois.prova.permitido).toBe(true)
+  })
+
+  it('não espera o término da turma: quem entregou já leva', () => {
+    // A prova continua aberta (AGORA < endTime) e mesmo assim o arquivo sai.
+    const v = resolverDownloadsDaProva(soDepoisDeEntregar, { ...ASSINANTE, jaEnviou: true })
+    expect(provaJaEncerrou(soDepoisDeEntregar, AGORA)).toBe(false)
+    expect(v.prova.permitido).toBe(true)
+  })
+
+  it('somada ao término, vale o que vier por último', () => {
+    const asDuas = agendada({ holdDownloads: { entrega: true, prova: true } })
+    // Entregou, mas a turma ainda responde: continua esperando.
+    expect(resolverDownloadsDaProva(asDuas, { ...ASSINANTE, jaEnviou: true }).prova.permitido).toBe(false)
+    // Turma terminou, mas ele não entregou: continua esperando.
+    const encerradaComEspera = { ...encerrada, holdDownloads: { entrega: true, prova: true } }
+    expect(resolverDownloadsDaProva(encerradaComEspera, { ...ASSINANTE, jaEnviou: false }).prova.permitido).toBe(false)
+    // As duas satisfeitas.
+    expect(resolverDownloadsDaProva(encerradaComEspera, { ...ASSINANTE, jaEnviou: true }).prova.permitido).toBe(true)
   })
 })
 

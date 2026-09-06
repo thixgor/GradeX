@@ -309,6 +309,14 @@ export function PainelDeAplicacao({
             disabled={desabilitado}
           />
           <Opcao
+            id="holdEntrega"
+            marcado={esperasNormalizadas.entrega}
+            onChange={(v) => onEsperasChange({ ...esperasNormalizadas, entrega: v })}
+            titulo="PDF da prova (em branco) só depois que o aluno entregar a dele"
+            descricao="Esta olha a pessoa, não o relógio da turma: quem terminou leva o caderno para casa mesmo com a prova ainda aberta para os outros. Ligada junto com a de cima, vale o que vier por último."
+            disabled={desabilitado}
+          />
+          <Opcao
             id="holdRelatorio"
             marcado={esperasNormalizadas.relatorio}
             onChange={(v) => onEsperasChange({ ...esperasNormalizadas, relatorio: v })}
