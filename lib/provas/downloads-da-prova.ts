@@ -105,59 +105,80 @@ export function provaDaSubmissao(submissao: ProvaDeUmaSubmissao): Partial<Exam> 
 }
 
 /**
- * Quais arquivos ficam presos até a prova terminar.
+ * Quando cada arquivo é liberado para o aluno.
  *
- * ## O que faltava
+ * ## O que estava confuso
  *
- * A regra de tempo era fixa e valia para um arquivo só: o gabarito espera o
- * fim, o resto não espera nada. Isso atende a prova cujo problema é o gabarito
- * circulando — e não atende a prova cujo problema é o ENUNCIADO circulando.
+ * Isto eram dois blocos de caixinhas: um dizia quem pode baixar (o plano),
+ * outro dizia o que espera o término (o tempo). Os dois listavam os MESMOS
+ * arquivos, então "PDF da prova (em branco)" aparecia duas vezes na mesma
+ * tela, com significados diferentes — e havia uma terceira caixinha, "só
+ * depois que o aluno entregar", que falava daquele mesmo arquivo por um
+ * terceiro ângulo. Marcá-la junto com a primeira gerava uma combinação que só
+ * o código sabia resolver ("vale o que vier por último"), e que ninguém
+ * conseguia ler na tela.
  *
- * Numa avaliação aplicada em janela larga (ou em duas chamadas), quem faz às
- * 14h baixa a prova em branco às 14h05 e manda no grupo; quem faz às 17h chega
- * tendo lido as questões. O arquivo não tem gabarito nenhum, e mesmo assim
- * estragou a prova.
+ * O eixo do tempo não é uma lista de coisas a segurar: é UMA pergunta por
+ * arquivo, com respostas que se excluem. Por isso agora é uma escolha, e não
+ * caixinhas que se somam.
  *
- * Aqui o admin decide, por prova, o que espera o término. Nasce tudo desligado
- * — é o comportamento de sempre —, e o gabarito não aparece nesta lista porque
- * ele já espera o fim por regra, sem exceção possível.
+ * ## Os três momentos
  *
- * A folha de respostas (`compacto`) também não aparece: ela não contém
- * enunciado nem gabarito, só as letras que a própria pessoa marcou. Segurá-la
- * não protege nada de ninguém.
+ *  - `imediato` — sai enquanto a prova acontece.
+ *  - `apos-entrega` — sai quando ESTA pessoa entrega a dela. Olha o aluno, não
+ *    a turma: quem terminou às 14h30 leva o caderno para casa sem que isso
+ *    alcance quem só vai fazer às 17h.
+ *  - `apos-termino` — sai quando a prova acaba para todo mundo.
+ *
+ * Nem todo arquivo aceita os três. A folha de respostas é sempre
+ * `apos-entrega` (antes disso não existe resposta para imprimir) e o gabarito
+ * é sempre `apos-termino` (é a regra que não tem exceção). Só a prova em
+ * branco e o relatório têm escolha — e é por isso que só eles aparecem como
+ * pergunta na tela do admin.
  */
+export type QuandoLibera = 'imediato' | 'apos-entrega' | 'apos-termino'
+
 export interface EsperasDeDownload {
-  /** A prova em branco só sai depois do término. */
-  prova: boolean
-  /** O relatório do aluno só sai depois do término (além de exigir a entrega). */
-  relatorio: boolean
+  /** A prova em branco: os três momentos são possíveis. */
+  prova: QuandoLibera
   /**
-   * A prova em branco só sai depois que ESTE aluno entregar a dele.
-   *
-   * É outra espera, e não uma versão fraca de `prova`: aquela olha o relógio
-   * da turma ("a prova acabou para todo mundo"), esta olha a pessoa ("você
-   * terminou"). Numa janela larga, quem entrega às 14h30 pode levar o caderno
-   * para casa sem que isso alcance quem só vai fazer às 17h — o arquivo saiu
-   * para quem já não tem o que copiar.
-   *
-   * As duas se somam quando ligadas juntas: espera-se o que vier por último.
+   * O relatório do aluno. Nunca é `imediato`: ele mostra as respostas dele, e
+   * antes de entregar não há o que mostrar.
    */
-  entrega: boolean
+  relatorio: Exclude<QuandoLibera, 'imediato'>
 }
 
 export const ESPERAS_PADRAO: EsperasDeDownload = {
-  prova: false,
-  relatorio: false,
-  entrega: false,
+  prova: 'imediato',
+  relatorio: 'apos-entrega',
 }
 
+const MOMENTOS: QuandoLibera[] = ['imediato', 'apos-entrega', 'apos-termino']
+
+/**
+ * Normaliza — inclusive o formato antigo.
+ *
+ * A primeira versão gravava três booleanos (`prova`, `relatorio`, `entrega`).
+ * As provas configuradas naquele formato continuam no banco, e uma leitura que
+ * as ignorasse destravaria em silêncio um download que o admin tinha travado.
+ * A conversão é direta: quem esperava o término continua esperando o término;
+ * o antigo `entrega` vira `apos-entrega` na prova em branco.
+ */
 export function normalizarEsperas(valor: unknown): EsperasDeDownload {
-  const bruto = (valor || {}) as Partial<Record<keyof EsperasDeDownload, unknown>>
-  return {
-    prova: bruto.prova === true,
-    relatorio: bruto.relatorio === true,
-    entrega: bruto.entrega === true,
-  }
+  const bruto = (valor || {}) as Record<string, unknown>
+
+  const prova: QuandoLibera = MOMENTOS.includes(bruto.prova as QuandoLibera)
+    ? (bruto.prova as QuandoLibera)
+    : bruto.prova === true
+      ? 'apos-termino'
+      : bruto.entrega === true
+        ? 'apos-entrega'
+        : 'imediato'
+
+  const relatorio: EsperasDeDownload['relatorio'] =
+    bruto.relatorio === 'apos-termino' || bruto.relatorio === true ? 'apos-termino' : 'apos-entrega'
+
+  return { prova, relatorio }
 }
 
 export function esperasDaProva(prova: Partial<Exam> | null | undefined): EsperasDeDownload {
@@ -257,10 +278,13 @@ export function resolverDownloadsDaProva(
   const esperas = normalizarEsperas((prova as any)?.holdDownloads)
 
   return {
-    // A prova em branco pode esperar o término da turma, a entrega desta
-    // pessoa, ou as duas — quando as duas, vale o que vier por último.
-    prova: veredito('prova', esperas.prova, esperas.entrega),
-    relatorio: veredito('relatorio', esperas.relatorio, true),
+    prova: veredito(
+      'prova',
+      esperas.prova === 'apos-termino',
+      esperas.prova === 'apos-entrega',
+    ),
+    // O relatório sempre exige a entrega — é a prova respondida por ele.
+    relatorio: veredito('relatorio', esperas.relatorio === 'apos-termino', true),
     gabarito: veredito('gabarito', true, false),
     /*
      * A folha de respostas segue a entrega, nunca o término.

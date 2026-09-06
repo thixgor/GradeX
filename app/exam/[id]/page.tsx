@@ -52,7 +52,7 @@ import {
 import { resolverDownloadsDaProva } from '@/lib/provas/downloads-da-prova'
 import { travasDaProva } from '@/lib/provas/anti-cola'
 import { exigeEntregaAutomatica, inicioBloqueadoPorProgresso } from '@/lib/provas/retomada'
-import { EscudoAntiCola } from '@/components/exam/escudo-anti-cola'
+import { EscudoAntiCola, ProvedorAntiCola } from '@/components/exam/escudo-anti-cola'
 import {
   INTERVALO_DE_GRAVACAO_MS,
   contarRespondidas,
@@ -3183,20 +3183,29 @@ ${respostaAluno}`
     }
   }
 
-  return (
-    <>
-      {/*
-        As travas de cópia desta prova, se o admin ligou alguma.
+  const travas = travasDaProva(exam)
+  const travasAtivas = started && !submitted
 
-        Só valem com a prova em andamento (`started`) e antes da entrega: na
-        sala de espera e na tela de resultado não há enunciado para proteger, e
-        travar ali só atrapalharia quem quer copiar o próprio resultado. O
-        aviso vai pelo mesmo toast do resto da tela — tecla que não faz nada
-        parece defeito.
-      */}
+  return (
+    /*
+      As travas de cópia desta prova, se o admin ligou alguma.
+
+      São duas camadas, porque há dois caminhos de copiar. O `EscudoAntiCola`
+      cuida do navegador (Ctrl+C, arrastar, menu do botão direito, impressão);
+      o `ProvedorAntiCola` cuida do menu do PRÓPRIO site — aquele que aparece
+      ao selecionar o enunciado, com grifo, estilos e um "Copiar" que usa
+      `navigator.clipboard` e por isso escapa de qualquer bloqueio de evento.
+      Sem a segunda camada a prova ficava com o atalho barrado e o botão de
+      copiar funcionando do lado.
+
+      As duas só valem com a prova em andamento e antes da entrega: na sala de
+      espera e na tela de resultado não há enunciado para proteger, e travar
+      ali só atrapalharia quem quer copiar o próprio resultado.
+    */
+    <ProvedorAntiCola travas={travas} ativo={travasAtivas}>
       <EscudoAntiCola
-        travas={travasDaProva(exam)}
-        ativo={started && !submitted}
+        travas={travas}
+        ativo={travasAtivas}
         aoBloquear={(mensagem) => showToastMessage(mensagem, 'info')}
       />
       {proctoringModal}
@@ -4768,6 +4777,6 @@ ${respostaAluno}`
       )}
       <PremiumPdfCtaModal open={showPdfCta} onClose={() => setShowPdfCta(false)} />
     </div>
-    </>
+    </ProvedorAntiCola>
   )
 }

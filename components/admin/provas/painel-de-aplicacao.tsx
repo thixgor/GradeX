@@ -7,6 +7,7 @@ import { MAX_PERIODO, MIN_PERIODO } from '@/lib/user-periodo'
 import {
   type EsperasDeDownload,
   type LiberacoesDeDownload,
+  type QuandoLibera,
   normalizarEsperas,
   normalizarLiberacoes,
 } from '@/lib/provas/downloads-da-prova'
@@ -47,6 +48,56 @@ interface Props {
 }
 
 const PERIODOS = Array.from({ length: MAX_PERIODO - MIN_PERIODO + 1 }, (_, i) => MIN_PERIODO + i)
+
+/** Como cada momento é dito na tela do admin. */
+const ROTULO_DO_MOMENTO: Record<QuandoLibera, string> = {
+  imediato: 'Assim que a prova abre',
+  'apos-entrega': 'Depois que o aluno entregar',
+  'apos-termino': 'Depois que a prova terminar',
+}
+
+/**
+ * Os arquivos da prova, na ordem em que fazem sentido para quem configura.
+ *
+ * `momentos` ausente significa que o arquivo não tem escolha — e `porQueFixo`
+ * diz por quê, na própria linha. Sem essa frase o admin ficaria procurando o
+ * botão que não existe.
+ */
+const ARQUIVOS: {
+  chave: keyof LiberacoesDeDownload
+  titulo: string
+  descricao: string
+  momentos?: QuandoLibera[]
+  quandoFixo?: QuandoLibera
+  porQueFixo?: string
+}[] = [
+  {
+    chave: 'prova',
+    titulo: 'Prova em branco',
+    descricao: 'O caderno de questões, sem gabarito. Serve para imprimir e refazer no papel.',
+    momentos: ['imediato', 'apos-entrega', 'apos-termino'],
+  },
+  {
+    chave: 'compacto',
+    titulo: 'Folha de respostas do aluno',
+    descricao: 'Só as letras que ele marcou — o que se confere com os colegas na saída. Sem enunciado e sem gabarito.',
+    quandoFixo: 'apos-entrega',
+    porQueFixo: 'antes disso não há resposta',
+  },
+  {
+    chave: 'relatorio',
+    titulo: 'Relatório do aluno',
+    descricao: 'A prova dele com as respostas marcadas e a nota.',
+    momentos: ['apos-entrega', 'apos-termino'],
+  },
+  {
+    chave: 'gabarito',
+    titulo: 'Gabarito e respostas comentadas',
+    descricao: 'O gabarito oficial e a explicação de cada questão.',
+    quandoFixo: 'apos-termino',
+    porQueFixo: 'não circula com a turma respondendo',
+  },
+]
 
 export function PainelDeAplicacao({
   publico,
@@ -234,107 +285,123 @@ export function PainelDeAplicacao({
         <div className="flex items-start gap-2.5">
           <Download className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-600 dark:text-amber-400" />
           <div className="min-w-0">
-            <h3 className="text-sm font-semibold">Downloads sem assinatura (exceção desta prova)</h3>
+            <h3 className="text-sm font-semibold">Arquivos que o aluno pode baixar</h3>
             <p className="mt-0.5 text-xs leading-snug text-muted-foreground">
-              Por padrão, baixar PDF de prova é um recurso das contas assinantes. Aqui você abre uma
-              exceção <strong>só nesta prova</strong> — contas gratuitas passam a baixar o que você marcar.
+              Cada arquivo tem duas decisões: <strong>quem</strong> pode baixar e <strong>quando</strong>{' '}
+              ele libera. Baixar PDF de prova é recurso de assinante — marcar "liberar" abre exceção
+              só nesta prova.
             </p>
           </div>
         </div>
 
-        <Opcao
-          id="freeProva"
-          marcado={liberacoesNormalizadas.prova}
-          onChange={(v) => onLiberacoesChange({ ...liberacoesNormalizadas, prova: v })}
-          titulo="PDF da prova (em branco)"
-          descricao="Os enunciados e alternativas, sem gabarito. Serve para imprimir e resolver no papel."
-          disabled={desabilitado}
-        />
-        <Opcao
-          id="freeRelatorio"
-          marcado={liberacoesNormalizadas.relatorio}
-          onChange={(v) => onLiberacoesChange({ ...liberacoesNormalizadas, relatorio: v })}
-          titulo="Relatório do aluno (prova respondida)"
-          descricao="A prova dele com as próprias respostas marcadas. Fica disponível depois que ele entrega."
-          disabled={desabilitado}
-        />
-        <Opcao
-          id="freeCompacto"
-          marcado={liberacoesNormalizadas.compacto}
-          onChange={(v) => onLiberacoesChange({ ...liberacoesNormalizadas, compacto: v })}
-          titulo="Folha de respostas do aluno"
-          descricao="Só as letras que ele marcou, uma por linha — o que se confere com os colegas na saída. Não diz o que era certo, então sai assim que ele entrega."
-          disabled={desabilitado}
-        />
-        <Opcao
-          id="freeGabarito"
-          marcado={liberacoesNormalizadas.gabarito}
-          onChange={(v) => onLiberacoesChange({ ...liberacoesNormalizadas, gabarito: v })}
-          titulo="Gabarito e respostas comentadas"
-          descricao="Liberado somente depois do término da prova."
-          disabled={desabilitado}
-        />
+        {/*
+          Uma linha por arquivo, com as duas decisões lado a lado.
+
+          Antes eram dois blocos de caixinhas — um de plano, outro de tempo — e
+          os dois listavam os mesmos arquivos: "PDF da prova (em branco)"
+          aparecia duas vezes na tela com significados diferentes, mais uma
+          terceira caixinha falando do mesmo arquivo por outro ângulo. Para
+          saber o que acontecia com um arquivo era preciso cruzar três lugares
+          e adivinhar como eles se somavam.
+
+          Aqui o arquivo é a unidade: tudo que decide o destino dele está na
+          mesma linha, e as opções de tempo se excluem em vez de se somar.
+        */}
+        <div className="space-y-2">
+          {ARQUIVOS.map((arquivo) => {
+            const quando = arquivo.chave === 'prova' ? esperasNormalizadas.prova
+              : arquivo.chave === 'relatorio' ? esperasNormalizadas.relatorio
+              : arquivo.quandoFixo!
+
+            return (
+              <div
+                key={arquivo.chave}
+                className="rounded-lg border border-border/50 bg-background/70 p-3"
+              >
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold">{arquivo.titulo}</p>
+                    <p className="mt-0.5 text-xs leading-snug text-muted-foreground">
+                      {arquivo.descricao}
+                    </p>
+                  </div>
+
+                  <label className="flex flex-shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border border-border/60 px-2 py-1 text-xs">
+                    <input
+                      type="checkbox"
+                      checked={liberacoesNormalizadas[arquivo.chave]}
+                      disabled={desabilitado}
+                      onChange={(e) =>
+                        onLiberacoesChange({ ...liberacoesNormalizadas, [arquivo.chave]: e.target.checked })
+                      }
+                      className="h-3.5 w-3.5 rounded border-input"
+                    />
+                    Liberar sem assinatura
+                  </label>
+                </div>
+
+                <div className="mt-2.5 flex flex-wrap items-center gap-2 border-t border-border/40 pt-2.5">
+                  <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                    Libera
+                  </span>
+
+                  {arquivo.momentos && onEsperasChange ? (
+                    <div className="flex flex-wrap gap-1">
+                      {arquivo.momentos.map((momento) => (
+                        <button
+                          key={momento}
+                          type="button"
+                          disabled={desabilitado || !onEsperasChange}
+                          onClick={() =>
+                            onEsperasChange?.({
+                              ...esperasNormalizadas,
+                              [arquivo.chave]: momento,
+                            } as EsperasDeDownload)
+                          }
+                          className={cn(
+                            'rounded-full border px-2.5 py-1 text-[11px] transition-colors disabled:opacity-50',
+                            quando === momento
+                              ? 'border-primary bg-primary text-primary-foreground'
+                              : 'border-border/60 bg-background hover:bg-muted',
+                          )}
+                        >
+                          {ROTULO_DO_MOMENTO[momento]}
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    /*
+                      Arquivo sem escolha: o momento é uma consequência do que
+                      ele é, não uma preferência. Mostrado assim mesmo — some
+                      da tela e o admin fica sem saber quando o aluno recebe.
+                    */
+                    <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-[11px] text-muted-foreground">
+                      <Lock className="h-2.5 w-2.5" />
+                      {/*
+                        Prova de treino não tem término a esperar — ela acaba
+                        quando o dono entrega. Os botões apareceriam cinzas e
+                        sem explicação; a frase resolve.
+                      */}
+                      {!onEsperasChange && arquivo.momentos
+                        ? 'Assim que a prova abre — treino não tem término'
+                        : `${ROTULO_DO_MOMENTO[quando]}${arquivo.porQueFixo ? ` — ${arquivo.porQueFixo}` : ''}`}
+                    </span>
+                  )}
+                </div>
+              </div>
+            )
+          })}
+        </div>
 
         <p className="flex items-start gap-1.5 rounded-lg bg-background/70 p-2.5 text-[11px] leading-snug text-muted-foreground">
           <Lock className="mt-0.5 h-3 w-3 flex-shrink-0" />
           <span>
-            A exceção vale para o <strong>plano</strong>, nunca para o <strong>tempo</strong>. Marcar o
-            gabarito aqui não o antecipa: ele continua saindo só depois do término, para não circular
-            enquanto a turma responde.
+            "Liberar sem assinatura" vale para o <strong>plano</strong>, nunca para o{' '}
+            <strong>tempo</strong>: liberar o gabarito não o antecipa — ele continua saindo só
+            depois do término, para não circular enquanto a turma responde.
           </span>
         </p>
       </section>
-
-      {/* ── Espera até o término ────────────────────────────────── */}
-      {onEsperasChange && (
-        <section className="space-y-3 rounded-xl border border-border/60 bg-muted/25 p-4">
-          <div className="flex items-start gap-2.5">
-            <Clock className="mt-0.5 h-4 w-4 flex-shrink-0 text-muted-foreground" />
-            <div className="min-w-0">
-              <h3 className="text-sm font-semibold">Segurar downloads até a prova terminar</h3>
-              <p className="mt-0.5 text-xs leading-snug text-muted-foreground">
-                O gabarito já espera o término sempre. Isto é para o resto: numa janela larga, ou em
-                duas chamadas, quem faz cedo baixa o caderno e manda no grupo — e quem faz depois
-                chega tendo lido as questões, mesmo sem gabarito nenhum no arquivo.
-              </p>
-            </div>
-          </div>
-
-          <Opcao
-            id="holdProva"
-            marcado={esperasNormalizadas.prova}
-            onChange={(v) => onEsperasChange({ ...esperasNormalizadas, prova: v })}
-            titulo="PDF da prova (em branco) só depois do término"
-            descricao="O caderno de questões deixa de sair enquanto a prova está aberta."
-            disabled={desabilitado}
-          />
-          <Opcao
-            id="holdEntrega"
-            marcado={esperasNormalizadas.entrega}
-            onChange={(v) => onEsperasChange({ ...esperasNormalizadas, entrega: v })}
-            titulo="PDF da prova (em branco) só depois que o aluno entregar a dele"
-            descricao="Esta olha a pessoa, não o relógio da turma: quem terminou leva o caderno para casa mesmo com a prova ainda aberta para os outros. Ligada junto com a de cima, vale o que vier por último."
-            disabled={desabilitado}
-          />
-          <Opcao
-            id="holdRelatorio"
-            marcado={esperasNormalizadas.relatorio}
-            onChange={(v) => onEsperasChange({ ...esperasNormalizadas, relatorio: v })}
-            titulo="Relatório do aluno só depois do término"
-            descricao="Ele continua vendo o resultado na tela; o arquivo com os enunciados é que espera."
-            disabled={desabilitado}
-          />
-
-          <p className="flex items-start gap-1.5 rounded-lg bg-background/70 p-2.5 text-[11px] leading-snug text-muted-foreground">
-            <Lock className="mt-0.5 h-3 w-3 flex-shrink-0" />
-            <span>
-              A folha de respostas não entra aqui: ela só tem as letras que o próprio aluno marcou,
-              sem enunciado nem gabarito. Segurá-la seria esconder de alguém o que ela acabou de
-              escrever.
-            </span>
-          </p>
-        </section>
-      )}
 
       {/* ── Anti-cola ───────────────────────────────────────────── */}
       <section className="space-y-3 rounded-xl border border-border/60 bg-muted/25 p-4">

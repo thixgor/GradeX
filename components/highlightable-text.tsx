@@ -1,5 +1,7 @@
 'use client'
 
+import { usePermiteCopiar } from '@/components/exam/escudo-anti-cola'
+
 import { useState, useRef, useEffect } from 'react'
 import { TextHighlight, HighlightColor, HighlightType } from '@/lib/types'
 import { TextHighlightMenu } from './text-highlight-menu'
@@ -35,6 +37,7 @@ export function HighlightableText({
   onHighlightsChange,
   className = '',
 }: HighlightableTextProps) {
+  const permiteCopiar = usePermiteCopiar()
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null)
   const [selectedText, setSelectedText] = useState<string>('')
   const [selectionRange, setSelectionRange] = useState<{ start: number; end: number } | null>(null)
@@ -323,7 +326,11 @@ export function HighlightableText({
           onHighlight={handleHighlight}
           onApplyStyle={handleApplyStyle}
           onRemoveHighlight={handleRemoveHighlight}
-          onCopy={handleCopy}
+          // A trava de cópia da prova chega por contexto (ver
+          // `components/exam/escudo-anti-cola.tsx`): sem ela, este menu
+          // ofereceria "Copiar" com `navigator.clipboard`, que não passa pelo
+          // evento `copy` e escapava de qualquer bloqueio de documento.
+          onCopy={permiteCopiar ? handleCopy : undefined}
           onClose={() => setContextMenu(null)}
         />
       )}

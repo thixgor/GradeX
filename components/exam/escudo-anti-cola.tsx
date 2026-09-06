@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { createContext, useContext, useEffect, useMemo } from 'react'
 import {
   algumaTravaLigada,
   ehCampoDeEscrita,
@@ -37,6 +37,48 @@ import {
  * professor depois. Cada bloqueio chama `aoBloquear`, e a tela diz o que
  * aconteceu.
  */
+
+/**
+ * A trava de cópia, para o menu de seleção do PRÓPRIO site.
+ *
+ * ## Por que um contexto, e não uma prop
+ *
+ * A área de resolução não usa o menu do navegador: ela tem o dela
+ * (`components/text-highlight-menu.tsx`), com grifo, estilos e um botão
+ * "Copiar" que chama `navigator.clipboard.writeText`. Esse caminho **não
+ * dispara o evento `copy`**, então a trava de documento não o alcançava — a
+ * prova ficava com o `Ctrl+C` barrado e um botão de copiar do lado, funcionando.
+ *
+ * O menu aparece em quatro pontos da tela da prova (enunciado, comando, texto
+ * de apoio, alternativas) e em outras três telas fora dela. Passar uma prop
+ * por todos significaria acertar sete lugares hoje e lembrar de cada lugar
+ * novo depois — e esquecer um não dá erro nenhum, só devolve o botão de
+ * copiar no meio de uma prova travada.
+ *
+ * O contexto inverte isso: a tela da prova declara a regra uma vez, e todo
+ * menu desenhado dentro dela obedece. O valor padrão é `true`, então as telas
+ * de fora (banco de questões, amostra) continuam com o copiar livre sem saber
+ * que este contexto existe.
+ */
+const ContextoDeCopia = createContext(true)
+
+export function ProvedorAntiCola({
+  travas,
+  ativo = true,
+  children,
+}: {
+  travas: TravasAntiCola
+  ativo?: boolean
+  children: React.ReactNode
+}) {
+  const permiteCopiar = !(ativo && travas.copia)
+  return <ContextoDeCopia.Provider value={permiteCopiar}>{children}</ContextoDeCopia.Provider>
+}
+
+/** O menu de seleção pode oferecer "Copiar"? */
+export function usePermiteCopiar(): boolean {
+  return useContext(ContextoDeCopia)
+}
 
 /** O id do `<style>` da folha de impressão, para não empilhar cópias dele. */
 const ID_DO_ESTILO = 'exam-anti-cola-impressao'

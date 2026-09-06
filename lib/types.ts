@@ -193,14 +193,18 @@ export interface Exam {
     compacto?: boolean
   }
   /**
-   * Quais arquivos ficam presos até a prova terminar.
+   * Quando cada arquivo é liberado — `imediato`, `apos-entrega`, `apos-termino`.
    *
    * Diferente de `freeDownloads`, que é sobre PLANO: isto é sobre TEMPO, e não
-   * tem exceção de assinatura. Ver `lib/provas/downloads-da-prova.ts`.
+   * tem exceção de assinatura. Documentos gravados na primeira versão usavam
+   * booleanos; `normalizarEsperas` converte. Ver
+   * `lib/provas/downloads-da-prova.ts`.
    */
   holdDownloads?: {
-    prova?: boolean
-    relatorio?: boolean
+    prova?: 'imediato' | 'apos-entrega' | 'apos-termino' | boolean
+    relatorio?: 'apos-entrega' | 'apos-termino' | boolean
+    /** Formato antigo: "a prova em branco espera a entrega do aluno". */
+    entrega?: boolean
   }
   /**
    * Travas de cópia da tela de resolução — ver `lib/provas/anti-cola.ts`.

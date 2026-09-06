@@ -9,7 +9,8 @@ interface TextHighlightMenuProps {
   onHighlight: (color: HighlightColor, customColor?: string) => void
   onApplyStyle: (type: HighlightType) => void
   onRemoveHighlight: () => void
-  onCopy: () => void
+  /** Ausente quando a prova não permite copiar — o botão some. */
+  onCopy?: () => void
   onClose: () => void
 }
 
@@ -68,20 +69,31 @@ export function TextHighlightMenu({ position, onHighlight, onApplyStyle, onRemov
         }}
       >
         <div className="p-1 min-w-[200px]">
-          {/* Botão Copiar */}
-          <button
-            onClick={() => {
-              onCopy()
-              onClose()
-            }}
-            className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
-          >
-            <Copy className="h-4 w-4" />
-            <span>Copiar</span>
-          </button>
+          {/*
+            Botão Copiar — some quando a prova não permite copiar.
 
-          {/* Separador */}
-          <div className="border-t border-gray-200 dark:border-gray-700 my-1" />
+            Sem `onCopy` o menu continua inteiro para grifar e estilizar: a
+            trava tira a saída do texto, não a ferramenta de estudo. Um botão
+            desabilitado no lugar do nada só chamaria atenção para o que a
+            pessoa não pode fazer, a cada seleção.
+          */}
+          {onCopy && (
+            <>
+              <button
+                onClick={() => {
+                  onCopy()
+                  onClose()
+                }}
+                className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
+              >
+                <Copy className="h-4 w-4" />
+                <span>Copiar</span>
+              </button>
+
+              {/* Separador */}
+              <div className="border-t border-gray-200 dark:border-gray-700 my-1" />
+            </>
+          )}
 
           {/* Grifar - Mostrar cores direto no menu se aberto */}
           <div className="space-y-1">

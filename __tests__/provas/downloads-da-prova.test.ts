@@ -227,17 +227,34 @@ describe('provaDaSubmissao — o veredito a partir de uma prova já entregue', (
 const ASSINANTE = { accountType: 'plus', jaEnviou: false, agora: AGORA }
 
 describe('normalizarEsperas', () => {
-  it('ausente é o comportamento de sempre: nada espera', () => {
-    expect(normalizarEsperas(undefined)).toEqual({ prova: false, relatorio: false, entrega: false })
-    expect(esperasDaProva(agendada())).toEqual({ prova: false, relatorio: false, entrega: false })
+  it('ausente é o comportamento de sempre: a prova em branco sai na hora', () => {
+    expect(normalizarEsperas(undefined)).toEqual({ prova: 'imediato', relatorio: 'apos-entrega' })
+    expect(esperasDaProva(agendada())).toEqual({ prova: 'imediato', relatorio: 'apos-entrega' })
   })
 
-  it('só o booleano true segura', () => {
-    expect(normalizarEsperas({ prova: 'true', relatorio: true })).toEqual({
-      prova: false,
-      relatorio: true,
-      entrega: false,
+  it('aceita os três momentos', () => {
+    expect(normalizarEsperas({ prova: 'apos-termino', relatorio: 'apos-termino' })).toEqual({
+      prova: 'apos-termino',
+      relatorio: 'apos-termino',
     })
+    expect(normalizarEsperas({ prova: 'apos-entrega' }).prova).toBe('apos-entrega')
+  })
+
+  it('converte o formato antigo, em vez de destravar em silêncio', () => {
+    /*
+     * A primeira versão gravava três booleanos. As provas configuradas assim
+     * continuam no banco: uma leitura que os ignorasse liberaria um download
+     * que o admin tinha travado, sem ninguém notar.
+     */
+    expect(normalizarEsperas({ prova: true }).prova).toBe('apos-termino')
+    expect(normalizarEsperas({ entrega: true }).prova).toBe('apos-entrega')
+    expect(normalizarEsperas({ relatorio: true }).relatorio).toBe('apos-termino')
+    expect(normalizarEsperas({ prova: false, relatorio: false }).prova).toBe('imediato')
+  })
+
+  it('valor estranho cai no padrão, e não numa trava acidental', () => {
+    expect(normalizarEsperas({ prova: 'qualquer-coisa' }).prova).toBe('imediato')
+    expect(normalizarEsperas({ relatorio: 'nunca' }).relatorio).toBe('apos-entrega')
   })
 })
 
@@ -254,26 +271,26 @@ describe('segurar downloads até o término', () => {
      * 17h chega tendo lido as questões. O arquivo não tem gabarito nenhum e
      * mesmo assim estraga a prova.
      */
-    const presa = agendada({ holdDownloads: { prova: true } })
+    const presa = agendada({ holdDownloads: { prova: 'apos-termino' } })
     const durante = resolverDownloadsDaProva(presa, ASSINANTE)
     expect(durante.prova.permitido).toBe(false)
     expect(durante.prova.esperandoOFim).toBe(true)
 
     const depois = resolverDownloadsDaProva(
-      agendada({ holdDownloads: { prova: true }, endTime: new Date('2026-05-10T14:30:00Z') }),
+      agendada({ holdDownloads: { prova: 'apos-termino' }, endTime: new Date('2026-05-10T14:30:00Z') }),
       ASSINANTE,
     )
     expect(depois.prova.permitido).toBe(true)
   })
 
   it('o relatório preso continua exigindo a entrega depois do término', () => {
-    const presa = { ...encerrada, holdDownloads: { relatorio: true } }
+    const presa = { ...encerrada, holdDownloads: { relatorio: 'apos-termino' } }
     expect(resolverDownloadsDaProva(presa, { ...ASSINANTE, jaEnviou: false }).relatorio.permitido).toBe(false)
     expect(resolverDownloadsDaProva(presa, { ...ASSINANTE, jaEnviou: true }).relatorio.permitido).toBe(true)
   })
 
   it('a opção não alcança o admin', () => {
-    const presa = agendada({ holdDownloads: { prova: true, relatorio: true } })
+    const presa = agendada({ holdDownloads: { prova: 'apos-termino', relatorio: 'apos-termino' } })
     const v = resolverDownloadsDaProva(presa, { isAdmin: true, agora: AGORA })
     expect(v.prova.permitido).toBe(true)
     expect(v.relatorio.permitido).toBe(true)
@@ -297,7 +314,7 @@ describe('folha de respostas (compacto)', () => {
   })
 
   it('a opção de segurar não a alcança: ela não tem enunciado nem gabarito', () => {
-    const presa = agendada({ holdDownloads: { prova: true, relatorio: true } })
+    const presa = agendada({ holdDownloads: { prova: 'apos-termino', relatorio: 'apos-termino' } })
     expect(resolverDownloadsDaProva(presa, { ...ASSINANTE, jaEnviou: true }).compacto.permitido).toBe(true)
   })
 
@@ -313,7 +330,7 @@ describe('esperar a entrega DESTE aluno', () => {
    * turma, `entrega` olha a pessoa. Numa janela larga, quem termina às 14h30
    * pode levar o caderno sem que isso alcance quem só vai fazer às 17h.
    */
-  const soDepoisDeEntregar = agendada({ holdDownloads: { entrega: true } })
+  const soDepoisDeEntregar = agendada({ holdDownloads: { prova: 'apos-entrega' } })
 
   it('segura a prova em branco até o aluno entregar', () => {
     const antes = resolverDownloadsDaProva(soDepoisDeEntregar, { ...ASSINANTE, jaEnviou: false })
@@ -331,15 +348,17 @@ describe('esperar a entrega DESTE aluno', () => {
     expect(v.prova.permitido).toBe(true)
   })
 
-  it('somada ao término, vale o que vier por último', () => {
-    const asDuas = agendada({ holdDownloads: { entrega: true, prova: true } })
+  it('os momentos se excluem: escolher um substitui o outro', () => {
+    /*
+     * No formato antigo dava para marcar "espera o término" E "espera a
+     * entrega" ao mesmo tempo, e o resultado era uma regra que só o código
+     * sabia resolver. Agora é uma escolha só, e ela diz exatamente o que
+     * acontece.
+     */
+    const ateOTermino = agendada({ holdDownloads: { prova: 'apos-termino' } })
+    expect(esperasDaProva(ateOTermino).prova).toBe('apos-termino')
     // Entregou, mas a turma ainda responde: continua esperando.
-    expect(resolverDownloadsDaProva(asDuas, { ...ASSINANTE, jaEnviou: true }).prova.permitido).toBe(false)
-    // Turma terminou, mas ele não entregou: continua esperando.
-    const encerradaComEspera = { ...encerrada, holdDownloads: { entrega: true, prova: true } }
-    expect(resolverDownloadsDaProva(encerradaComEspera, { ...ASSINANTE, jaEnviou: false }).prova.permitido).toBe(false)
-    // As duas satisfeitas.
-    expect(resolverDownloadsDaProva(encerradaComEspera, { ...ASSINANTE, jaEnviou: true }).prova.permitido).toBe(true)
+    expect(resolverDownloadsDaProva(ateOTermino, { ...ASSINANTE, jaEnviou: true }).prova.permitido).toBe(false)
   })
 })
 
