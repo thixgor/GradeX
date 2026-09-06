@@ -13,6 +13,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+import { inicioDoDiaEmBrasilia, offsetDeBrasilia, relogioBrasilia } from '@/lib/fuso-brasilia'
 import { secureApiEndpoint } from '@/lib/api-security'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
@@ -158,12 +159,17 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const userId = new ObjectId(security.session!.userId)
     const userIdString = security.session!.userId
 
-    // Datas para ranges das contagens (mês corrente + dia corrente)
-    const startOfMonth = new Date()
-    startOfMonth.setDate(1)
-    startOfMonth.setHours(0, 0, 0, 0)
-    const startOfDay = new Date()
-    startOfDay.setHours(0, 0, 0, 0)
+    /*
+     * "Hoje" e "este mês" no relógio do aluno, não no do datacenter.
+     *
+     * `setHours(0,0,0,0)` usa o fuso de quem executa — o servidor, que roda em
+     * UTC. A meia-noite dele é 21h de Brasília: das 21h à meia-noite, as
+     * provas que o aluno acabou de criar já contavam para o dia seguinte, e o
+     * contador de uso que ele vê na tela discordava do que a cota dele diz.
+     */
+    const startOfDay = inicioDoDiaEmBrasilia()
+    const { dia } = relogioBrasilia()
+    const startOfMonth = new Date(`${dia.slice(0, 7)}-01T00:00:00${offsetDeBrasilia()}`)
 
     // ── Otimização ──────────────────────────────────────────────
     // Antes: 6 roundtrips ao Mongo (users.findOne + 4 countDocuments

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { formatarEmBrasilia } from '@/lib/fuso-brasilia'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { AdminSettings, PlanConfig, User } from '@/lib/types'
@@ -13,7 +14,9 @@ type RevenueBucket = {
 }
 
 function formatMonthLabel(date: Date) {
-  return date.toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' })
+  // No fuso de Brasília: o primeiro dia do mês em UTC é o último do mês
+  // anterior aqui, e o rótulo saía um mês atrás.
+  return formatarEmBrasilia(date, { month: 'short', year: '2-digit' })
 }
 
 function normalizePlanKey(value?: string | null) {

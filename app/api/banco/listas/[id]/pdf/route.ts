@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { dataEmBrasilia } from '@/lib/fuso-brasilia'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
@@ -268,11 +269,9 @@ export async function GET(
       doc.text(`Página ${pageNum}`, pageWidth - margin - 15, footerY + 2)
 
       // Data e slogan
-      const dataGeracao = new Date().toLocaleDateString('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-      })
+      // Em Brasília, e não no fuso do servidor: gerado às 22h, o PDF saía
+      // carimbado com a data do dia seguinte.
+      const dataGeracao = dataEmBrasilia(new Date())
       doc.setFontSize(7)
       doc.setTextColor(100, 100, 100)
       doc.text(`Gerado em ${dataGeracao} | Seja o Foco. Seja a Referência.`, pageWidth / 2, footerY + 2, { align: 'center' })

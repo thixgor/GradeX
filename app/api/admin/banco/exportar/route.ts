@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { formatarEmBrasilia } from '@/lib/fuso-brasilia'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
@@ -100,7 +101,8 @@ export async function GET(request: NextRequest) {
     // Gerar TXT
     let txtContent = ''
     txtContent += '# EXPORTAÇÃO DO BANCO DE QUESTÕES - DOMINEAQUI\n'
-    txtContent += `# Data: ${new Date().toLocaleDateString('pt-BR')} ${new Date().toLocaleTimeString('pt-BR')}\n`
+    // O carimbo do arquivo é o relógio de quem exporta, não o do datacenter.
+    txtContent += `# Data: ${formatarEmBrasilia(new Date(), { dateStyle: 'short', timeStyle: 'medium' })}\n`
     txtContent += `# Total de questões: ${questoes.length}\n`
     txtContent += '#\n'
     txtContent += '# Este arquivo pode ser reimportado na plataforma.\n'

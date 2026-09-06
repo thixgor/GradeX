@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { mesmoDiaEmBrasilia } from '@/lib/fuso-brasilia'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { getTierLimits, getCronogramasLimit, getFlashcardsLimit, getPersonalExamsLifetimeLimit } from '@/lib/tier-limits'
@@ -8,27 +9,22 @@ import { contaEhPaga } from '@/lib/cargos-server'
 
 export const dynamic = 'force-dynamic'
 
-// Função para obter data atual em horário de Brasília
-function getBrasiliaDate(): Date {
-  const now = new Date()
-  // Brasília é UTC-3
-  const brasiliaTime = new Date(now.getTime() - 3 * 60 * 60 * 1000)
-  return brasiliaTime
-}
-
-// Função para verificar se passou meia-noite em Brasília
+/**
+ * O dia virou para esta pessoa?
+ *
+ * Isto era `getBrasiliaDate()` + `needsDailyReset()` copiados em três rotas,
+ * cada cópia subtraindo três horas na mão e comparando em UTC. Funcionava, mas
+ * havia uma QUARTA regra em `app/api/user/limits/route.ts` que comparava
+ * `getDate()` cru — ou seja, no fuso do servidor, que é UTC. Duas definições
+ * de "novo dia" no mesmo sistema, e a cota do aluno virava às 21h por uma
+ * delas.
+ *
+ * Agora as quatro chamam `mesmoDiaEmBrasilia`, que pergunta o dia ao `Intl` em
+ * vez de subtrair um número fixo — e continua certo se o horário de verão
+ * voltar.
+ */
 function needsDailyReset(lastReset: Date | null): boolean {
-  if (!lastReset) return true
-
-  const now = getBrasiliaDate()
-  const last = new Date(lastReset.getTime() - 3 * 60 * 60 * 1000)
-
-  // Comparar apenas a data (ano, mês, dia)
-  return (
-    now.getUTCFullYear() !== last.getUTCFullYear() ||
-    now.getUTCMonth() !== last.getUTCMonth() ||
-    now.getUTCDate() !== last.getUTCDate()
-  )
+  return !lastReset || !mesmoDiaEmBrasilia(new Date(), lastReset)
 }
 
 // GET - Obter limites de tier do usuário

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { formatarEmBrasilia, horaEmBrasilia, offsetDeBrasilia } from '@/lib/fuso-brasilia'
 import { ObjectId } from 'mongodb'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
@@ -43,12 +44,27 @@ function formatDateKey(date: Date, period: PeriodKey) {
   return weekStart.toISOString().slice(0, 10)
 }
 
+/*
+ * O rótulo do eixo, no fuso de quem lê o gráfico.
+ *
+ * `new Date(ano, mes, 1)` e `new Date("2026-05-10T00:00:00")` são lidos no fuso
+ * de quem executa — o servidor, que roda em UTC. A chave "2026-05-10" virava
+ * meia-noite UTC e o rótulo saía "09/05": o gráfico inteiro deslocado um dia
+ * para trás.
+ *
+ * A chave já é uma data de calendário; o `T00:00:00-03:00` a ancora no dia que
+ * ela realmente nomeia.
+ */
 function labelFromKey(key: string, period: PeriodKey) {
   if (period === 'month') {
     const [year, month] = key.split('-').map(Number)
-    return new Date(year, month - 1, 1).toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' })
+    const primeiroDia = new Date(`${year}-${String(month).padStart(2, '0')}-01T00:00:00${offsetDeBrasilia()}`)
+    return formatarEmBrasilia(primeiroDia, { month: 'short', year: '2-digit' })
   }
-  return new Date(`${key}T00:00:00`).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })
+  return formatarEmBrasilia(new Date(`${key}T00:00:00${offsetDeBrasilia()}`), {
+    day: '2-digit',
+    month: '2-digit',
+  })
 }
 
 function buildSeries<T>(
@@ -641,7 +657,7 @@ export async function GET() {
           startedAt: serializeDate(order.createdAt),
           lastStage: lastEvent?.event || 'order_created',
           minutesSinceAbandonment: Math.max(0, Math.round((now.getTime() - new Date(order.updatedAt || order.createdAt).getTime()) / 60_000)),
-          sentence: `${order.payerName || 'Usuário'} abriu checkout de ${product.title} às ${new Date(order.createdAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}, mas não pagou.`,
+          sentence: `${order.payerName || 'Usuário'} abriu checkout de ${product.title} às ${horaEmBrasilia(order.createdAt)}, mas não pagou.`,
         }
       }),
       ...checkoutEvents

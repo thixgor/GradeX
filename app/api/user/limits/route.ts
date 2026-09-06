@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
+import { mesmoDiaEmBrasilia } from '@/lib/fuso-brasilia'
 import clientPromise from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { isPlusAccount } from '@/lib/account-tier'
@@ -18,11 +19,19 @@ async function resetDailyLimitsIfNeeded(userId: string) {
   const now = new Date()
   const lastReset = user.lastDailyReset ? new Date(user.lastDailyReset) : null
 
-  // Verificar se precisa resetar (se passou de 1 dia desde o último reset)
-  const needsReset =
-    !lastReset ||
-    now.getTime() - lastReset.getTime() > 24 * 60 * 60 * 1000 ||
-    now.getDate() !== lastReset.getDate()
+  /*
+   * "Outro dia" é outro dia em BRASÍLIA.
+   *
+   * Era `now.getDate() !== lastReset.getDate()`, e `getDate()` usa o fuso de
+   * quem executa — o servidor, que roda em UTC. O dia virava às 00h UTC, ou
+   * seja, às 21h de Brasília: das 21h à meia-noite o aluno ganhava uma cota
+   * nova de um dia que, para ele, ainda era o mesmo. E quem usasse a cota
+   * às 20h59 a via zerar um minuto depois.
+   *
+   * `getDate()` sozinho também tratava 10 de maio e 10 de junho como o mesmo
+   * dia; a comparação por "AAAA-MM-DD" não tem esse buraco.
+   */
+  const needsReset = !lastReset || !mesmoDiaEmBrasilia(now, lastReset)
 
   if (needsReset) {
     await usersCollection.updateOne(
