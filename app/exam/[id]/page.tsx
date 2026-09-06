@@ -11,7 +11,6 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { LogoLoading } from '@/components/logo-loading'
 import { Logo } from '@/components/logo'
 import { Countdown } from '@/components/countdown'
-import { Toast } from '@/components/toast'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { BanChecker } from '@/components/ban-checker'
 import { SignaturePad } from '@/components/signature-pad'
@@ -39,6 +38,7 @@ import { PremiumPdfCtaModal } from '@/components/premium-pdf-cta-modal'
 import { PdfCtaBanner } from '@/components/pdf-cta-banner'
 import { ExamGateStatus } from '@/components/exam/exam-gate-status'
 import { ExamResumeCard } from '@/components/exam/exam-resume-card'
+import { AvisoProvaLiberada } from '@/components/exam/aviso-prova-liberada'
 import { canDownloadExamPdf } from '@/lib/tier-limits'
 import { consumirCotaDoPlano } from '@/lib/plan-consume-client'
 import { holdScrollAt, useScrollToTopWhen } from '@/components/scroll-to-top'
@@ -53,6 +53,13 @@ import {
 import { resolverDownloadsDaProva } from '@/lib/provas/downloads-da-prova'
 import { travasDaProva } from '@/lib/provas/anti-cola'
 import { exigeEntregaAutomatica, inicioBloqueadoPorProgresso } from '@/lib/provas/retomada'
+import {
+  ALVO_DA_ASSINATURA,
+  ALVO_DO_BOTAO_INICIAR,
+  deveAvisarQueLiberou,
+  estaEsperandoOInicio,
+  pendenciaParaIniciar,
+} from '@/lib/provas/aviso-de-inicio'
 import { EscudoAntiCola, ProvedorAntiCola } from '@/components/exam/escudo-anti-cola'
 import {
   INTERVALO_DE_GRAVACAO_MS,
@@ -103,7 +110,18 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   const [loggedUserName, setLoggedUserName] = useState('')
   const [themeTranscription, setThemeTranscription] = useState('')
   const [signature, setSignature] = useState('')
-  const [showToast, setShowToast] = useState(false)
+  /**
+   * O aviso modal de "a prova começou", para quem está esperando o início.
+   *
+   * Substituiu o toast do canto da tela, que sumia em cinco segundos e deixava
+   * a pessoa com um botão fora da dobra do tablet. Ver
+   * `lib/provas/aviso-de-inicio.ts`.
+   */
+  const [avisoDeInicioAberto, setAvisoDeInicioAberto] = useState(false)
+  /** Esta pessoa chegou a esperar o início — sem isso não há novidade a anunciar. */
+  const esperavaOInicioRef = useRef(false)
+  /** O aviso já apareceu nesta visita: ele anuncia uma transição, não um estado. */
+  const avisoDeInicioJaMostrado = useRef(false)
   const [answers, setAnswers] = useState<UserAnswer[]>([])
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [submitted, setSubmitted] = useState(false)
@@ -825,6 +843,48 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     const interval = setInterval(recalcular, 1000)
     return () => clearInterval(interval)
   }, [exam, jaEntrou])
+
+  /*
+   * O anúncio do início, para quem estava esperando por ele.
+   *
+   * A sala de espera avisava com um toast no canto superior direito, por cinco
+   * segundos. Quem espera vinte minutos olha a contagem regressiva, não o canto
+   * da tela — e o que restava depois era um botão verde no fim de uma página
+   * alta: num tablet em retrato, abaixo do painel de portões e da assinatura,
+   * "Iniciar Prova Agora" fica fora da dobra. A pessoa tinha de rolar para
+   * descobrir uma coisa que ninguém tinha contado a ela.
+   *
+   * O gatilho é a TRANSIÇÃO de esperando para liberado, e é por isso que o
+   * `esperavaOInicioRef` existe: quem abre a página com a prova já em andamento
+   * não recebe modal nenhum — para essa pessoa nada mudou.
+   */
+  useEffect(() => {
+    if (!exam) return
+
+    if (
+      estaEsperandoOInicio({
+        naSalaDeEspera: inWaitingRoom,
+        fase: janela?.fase,
+        liberada: canStart,
+      })
+    ) {
+      esperavaOInicioRef.current = true
+      return
+    }
+
+    if (
+      deveAvisarQueLiberou({
+        estavaEsperando: esperavaOInicioRef.current,
+        liberada: canStart,
+        emAndamento: started,
+        jaEntregou: alreadySubmitted || submitted,
+        jaAvisado: avisoDeInicioJaMostrado.current,
+      })
+    ) {
+      avisoDeInicioJaMostrado.current = true
+      setAvisoDeInicioAberto(true)
+    }
+  }, [exam, canStart, inWaitingRoom, janela?.fase, started, alreadySubmitted, submitted])
 
   async function checkExistingSubmission() {
     try {
@@ -1658,6 +1718,68 @@ ${respostaAluno}`
       screenMode={screenMode}
       onAccept={handleProctoringAccept}
       onReject={handleProctoringReject}
+    />
+  )
+
+  /*
+   * Levar a pessoa até o campo — porque o problema é justamente ela não estar
+   * vendo o campo.
+   *
+   * O aviso de início cobre a tela; fechá-lo devolve uma página que continua
+   * mais alta que um tablet em retrato. Então quem fecha não fica onde estava:
+   * a tela desce até o botão de iniciar, e quem tem uma pendência (a
+   * assinatura, na maioria das vezes) desce até ela. É o gesto que a pessoa
+   * teria de adivinhar sozinha.
+   */
+  const rolarAte = (alvo: string | null) => {
+    if (!alvo || typeof document === 'undefined') return
+    // Um quadro de espera: o modal ainda está desmontando quando isto roda, e
+    // rolar com ele na tela não move nada.
+    window.setTimeout(() => {
+      const elemento = document.getElementById(alvo)
+      if (!elemento) return
+      elemento.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      // Só campos de digitação recebem foco: puxar o foco para o canvas da
+      // assinatura ou para o botão "Limpar" não ajudaria ninguém.
+      const campo = elemento.matches('input, textarea')
+        ? (elemento as HTMLElement)
+        : elemento.querySelector<HTMLElement>('input, textarea')
+      window.setTimeout(() => campo?.focus({ preventScroll: true }), 450)
+    }, 60)
+  }
+
+  /*
+   * "A prova começou" — o aviso que a sala de espera não dava.
+   *
+   * Fica aqui, junto do modal de monitoramento, porque as duas telas de antes
+   * da prova o desenham: a sala de espera e a tela de entrada com o portão
+   * aberto. Quem espera numa ou noutra recebe o mesmo anúncio.
+   */
+  const avisoDeInicio = (
+    <AvisoProvaLiberada
+      aberto={avisoDeInicioAberto}
+      tituloDaProva={exam.title}
+      pendencia={pendenciaParaIniciar({
+        exigeAssinatura: !!exam.requireSignature,
+        assinou: !!signature,
+        nome: userName,
+        fraseTema: exam.themePhrase,
+        transcricaoDaFrase: themeTranscription,
+        retomadaBloqueia: inicioBloqueadoPorProgresso(retomada),
+        mensagemDaRetomada: retomada?.mensagem,
+      })}
+      onIniciar={() => {
+        setAvisoDeInicioAberto(false)
+        handleStartExam()
+      }}
+      onResolverPendencia={(alvo) => {
+        setAvisoDeInicioAberto(false)
+        rolarAte(alvo ?? ALVO_DO_BOTAO_INICIAR)
+      }}
+      onFechar={() => {
+        setAvisoDeInicioAberto(false)
+        rolarAte(ALVO_DO_BOTAO_INICIAR)
+      }}
     />
   )
 
@@ -2652,6 +2774,7 @@ ${respostaAluno}`
     return (
       <>
         {proctoringModal}
+        {avisoDeInicio}
         <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/40 flex items-center justify-center p-4 sm:p-6">
           <div className="max-w-3xl w-full">
             {/*
@@ -2865,11 +2988,15 @@ ${respostaAluno}`
                     janela.podeEntrar ||
                     janela.podeIniciar ||
                     (!!retomada?.temProgresso && !janela.encerrada)) && (
-                  <SignaturePad
-                    onSignatureChange={setSignature}
-                    valorInicial={signature}
-                    label={`Assinatura Digital ${exam.requireSignature ? '*' : '(opcional)'}`}
-                  />
+                  // O `id` é o destino do aviso de início: quando a prova
+                  // libera e falta assinar, o modal leva a tela até aqui.
+                  <div id={ALVO_DA_ASSINATURA}>
+                    <SignaturePad
+                      onSignatureChange={setSignature}
+                      valorInicial={signature}
+                      label={`Assinatura Digital ${exam.requireSignature ? '*' : '(opcional)'}`}
+                    />
+                  </div>
                 )}
 
                 {/*
@@ -2879,6 +3006,7 @@ ${respostaAluno}`
                   abrir para ela, e só descobria no botão seguinte.
                 */}
                 <Button
+                  id={ALVO_DO_BOTAO_INICIAR}
                   className={`relative w-full overflow-hidden rounded-xl h-12 font-semibold bg-gradient-to-r from-[#468152] to-[#3a6d44] hover:from-[#3a6d44] hover:to-[#2f5a38] text-white shadow-md shadow-emerald-500/20 disabled:bg-none ${
                     // A mesma chamada da sala de espera, no botão que a maioria
                     // de fato clica: quem chega com a prova já em andamento
@@ -2951,6 +3079,7 @@ ${respostaAluno}`
     return (
       <>
         {proctoringModal}
+        {avisoDeInicio}
         <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/40 flex items-center justify-center p-4 sm:p-6">
           <div className="max-w-3xl w-full">
             <ExamBrandHeader
@@ -3001,10 +3130,7 @@ ${respostaAluno}`
                 <div className="rounded-2xl border border-border/50 bg-gradient-to-br from-muted/40 to-background p-6">
                   <Countdown
                     targetDate={new Date(exam.startTime)}
-                    onComplete={() => {
-                      setCanStart(true)
-                      setTimeout(() => setShowToast(true), 100)
-                    }}
+                    onComplete={() => setCanStart(true)}
                   />
                 </div>
 
@@ -3026,11 +3152,13 @@ ${respostaAluno}`
 
                 {/* Campo de Assinatura - Opcional se requireSignature for false */}
                 {exam.requireSignature !== false && (
-                  <SignaturePad
-                    onSignatureChange={setSignature}
-                    valorInicial={signature}
-                    label={`Assinatura Digital ${exam.requireSignature ? '*' : '(opcional)'}`}
-                  />
+                  <div id={ALVO_DA_ASSINATURA}>
+                    <SignaturePad
+                      onSignatureChange={setSignature}
+                      valorInicial={signature}
+                      label={`Assinatura Digital ${exam.requireSignature ? '*' : '(opcional)'}`}
+                    />
+                  </div>
                 )}
 
                 {/* PDF só aparece quando a prova começar */}
@@ -3058,6 +3186,7 @@ ${respostaAluno}`
                 */}
                 <div className="flex gap-2">
                   <Button
+                    id={ALVO_DO_BOTAO_INICIAR}
                     className={`relative flex-1 overflow-hidden rounded-xl h-12 font-semibold transition-all ${
                       canStart && (!exam.requireSignature || signature)
                         ? 'exam-botao-chama bg-gradient-to-r from-[#468152] to-[#3a6d44] hover:from-[#3a6d44] hover:to-[#2f5a38] text-white'
@@ -3103,14 +3232,6 @@ ${respostaAluno}`
               </div>
             </div>
           </div>
-
-          {/* Toast de notificação quando a prova começar */}
-          {showToast && (
-            <Toast
-              message="Você já pode iniciar a prova clicando no botão abaixo."
-              onClose={() => setShowToast(false)}
-            />
-          )}
         </div>
       </>
     )
