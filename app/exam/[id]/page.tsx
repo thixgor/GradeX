@@ -41,7 +41,7 @@ import { ExamGateStatus } from '@/components/exam/exam-gate-status'
 import { ExamResumeCard } from '@/components/exam/exam-resume-card'
 import { canDownloadExamPdf } from '@/lib/tier-limits'
 import { consumirCotaDoPlano } from '@/lib/plan-consume-client'
-import { useScrollToTopWhen } from '@/components/scroll-to-top'
+import { holdScrollAt, useScrollToTopWhen } from '@/components/scroll-to-top'
 import { createExamAttemptTracker, clearExamAttempt, type ExamAttemptTracker } from '@/lib/tracking/track-client'
 import {
   ROTULO_DA_FASE,
@@ -1207,21 +1207,28 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     // mexer no scroll ali só bagunçaria a posição restaurada depois.
     if (document.body.style.position === 'fixed') return
 
-    const scrollToQuestionTop = () => {
+    const topoDaQuestao = () => {
       const card = questionCardRef.current
+      if (!card) return 0
       // O header é sticky: descontar a altura dele para o título da questão
       // não nascer escondido atrás da barra.
       const headerHeight = document.querySelector('header')?.getBoundingClientRect().height ?? 0
-      const top = card
-        ? Math.max(0, window.scrollY + card.getBoundingClientRect().top - headerHeight - 12)
-        : 0
-      const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
-      window.scrollTo({ top, behavior: prefersReducedMotion ? 'auto' : 'smooth' })
+      return window.scrollY + card.getBoundingClientRect().top - headerHeight - 12
     }
 
-    // rAF: espera o card da nova questão já estar no DOM antes de medir.
-    const frame = requestAnimationFrame(scrollToQuestionTop)
-    return () => cancelAnimationFrame(frame)
+    // Segurar por alguns quadros, em vez de um `scrollTo` só. Duas coisas
+    // desfaziam a rolagem única, as duas no caminho do feedback imediato:
+    //
+    // 1. A questão nova nasce menor do que vai ficar (a imagem ainda está
+    //    baixando, o texto rico só rende no quadro seguinte) e o navegador
+    //    reajusta o scroll sozinho enquanto ela cresce.
+    // 2. No celular, rolar dentro do modal de feedback arrasta a página de
+    //    trás junto quando o conteúdo do modal acaba; a inércia desse gesto
+    //    continua depois do toque e engolia a rolagem com `behavior: smooth`,
+    //    deixando a pessoa parada nas alternativas da questão seguinte.
+    //
+    // O alvo é remedido a cada quadro e qualquer gesto da pessoa cancela.
+    return holdScrollAt(topoDaQuestao, 600)
   }, [currentQuestionIndex, started, submitted, isPaginatedMode])
 
   // ─── Modo paginado: pré-carregar a imagem da próxima questão ───
@@ -4664,7 +4671,11 @@ ${respostaAluno}`
                 </Button>
               </div>
             </CardHeader>
-            <CardContent className="flex-1 space-y-4 overflow-y-auto p-4 sm:space-y-5 sm:p-6">
+            {/* `overscroll-contain`: sem isso, ao chegar no fim da resposta
+                comentada o gesto continua na página de trás e arrasta a prova
+                para o rodapé — a pessoa não vê, mas ao fechar o modal a tela
+                já estava lá embaixo. */}
+            <CardContent className="flex-1 space-y-4 overflow-y-auto overscroll-contain p-4 sm:space-y-5 sm:p-6">
               {/* Enunciado */}
               {feedbackData.statement && (
                 <section className="rounded-2xl border border-border/60 bg-muted/30 p-3.5 sm:p-4">
