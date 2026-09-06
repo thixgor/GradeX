@@ -15,6 +15,7 @@ import { ObjectId } from 'mongodb'
 import { podeVerGabarito, prepararProvaParaEntrega } from '@/lib/provas/sanitizar-prova'
 import { normalizarPublico, ramosDePublicoParaMongo } from '@/lib/provas/publico-da-prova'
 import { normalizarEsperas } from '@/lib/provas/downloads-da-prova'
+import { normalizarTravas } from '@/lib/provas/anti-cola'
 import { normalizarExcecoes, provaApareceNoCatalogo, ramoDeConvidadoParaMongo } from '@/lib/provas/visibilidade-da-prova'
 import { lerPeriodoDoAluno } from '@/lib/provas/periodo-do-aluno'
 import { normalizarLiberacoes } from '@/lib/provas/downloads-da-prova'
@@ -714,6 +715,9 @@ export async function POST(request: NextRequest) {
       // prova de treino e a pessoal acabam quando o dono entrega.
       holdDownloads:
         isPersonalExam || isPracticeExam ? undefined : normalizarEsperas(body.holdDownloads),
+      // As travas valem em qualquer prova — inclusive numa de treino, se o
+      // admin quiser um simulado que não se copia.
+      antiCola: normalizarTravas(body.antiCola),
       freeDownloads: isPersonalExam ? undefined : normalizarLiberacoes(freeDownloads),
       // Novos campos
       groupId: groupId || null,

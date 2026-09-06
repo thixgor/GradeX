@@ -12,6 +12,7 @@ import { interpretarInstante } from '@/lib/provas/horario-local'
 import { jaEntrouNaProva } from '@/lib/provas/entrada-na-prova'
 import { normalizarPublico } from '@/lib/provas/publico-da-prova'
 import { normalizarEsperas, normalizarLiberacoes } from '@/lib/provas/downloads-da-prova'
+import { normalizarTravas } from '@/lib/provas/anti-cola'
 
 export const dynamic = 'force-dynamic'
 
@@ -227,6 +228,8 @@ export async function PUT(
       // Quais arquivos esperam o término: decide o que a TURMA recebe, e
       // quando — não é uma preferência de quem montou a prova.
       'holdDownloads',
+      // As travas de cópia da tela de resolução.
+      'antiCola',
       // `showRanking` decide se a turma inteira vê a lista de notas com nome —
       // uma decisão sobre os OUTROS, como `isHidden` e `audience`.
       'showRanking',
@@ -253,6 +256,9 @@ export async function PUT(
     }
     if ('holdDownloads' in camposEnviados) {
       camposEnviados.holdDownloads = normalizarEsperas(camposEnviados.holdDownloads)
+    }
+    if ('antiCola' in camposEnviados) {
+      camposEnviados.antiCola = normalizarTravas(camposEnviados.antiCola)
     }
     if ('hiddenExcept' in camposEnviados) {
       camposEnviados.hiddenExcept = normalizarExcecoes(camposEnviados.hiddenExcept)

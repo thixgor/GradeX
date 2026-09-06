@@ -6967,3 +6967,29 @@ body.has-guest-notice {
   .exam-retomada-barra { transform: none; }
   .exam-botao-chama:not(:disabled)::after { display: none; }
 }
+
+/*
+ * Prova com a cópia travada.
+ *
+ * A classe entra no `<body>` enquanto a pessoa resolve uma prova cujo admin
+ * desligou a cópia (ver `components/exam/escudo-anti-cola.tsx`).
+ *
+ * Repare no que ela NÃO faz: não há `user-select: none`. A primeira versão
+ * tinha, e isso desligava o grifo — a ferramenta de estudo da prova marca o
+ * texto a partir da seleção (`components/highlightable-text.tsx`). O aluno
+ * pode perder o copiar; não pode perder o grifar.
+ *
+ * O que resta aqui é o menu de toque longo do celular, que é por onde se
+ * copia sem teclado. A seleção em si continua funcionando: `-webkit-touch-callout`
+ * governa o menuzinho, não o arrastar dos marcadores.
+ */
+body.exam-sem-copia {
+  -webkit-touch-callout: none;
+}
+
+body.exam-sem-copia input,
+body.exam-sem-copia textarea,
+body.exam-sem-copia [contenteditable='true'],
+body.exam-sem-copia [data-permite-copia] {
+  -webkit-touch-callout: default;
+}

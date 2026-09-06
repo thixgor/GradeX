@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ExcecoesDeOcultacao } from '@/components/admin/provas/excecoes-de-ocultacao'
+import { TRAVAS_PADRAO, type TravasAntiCola, normalizarTravas } from '@/lib/provas/anti-cola'
 import { EXCECOES_PADRAO, normalizarExcecoes } from '@/lib/provas/visibilidade-da-prova'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -77,6 +78,7 @@ export default function EditExamPage({ params }: { params: { id: string } }) {
     audience: { modo: 'todos', periodos: [] } as PublicoDaProva,
     freeDownloads: { ...LIBERACOES_PADRAO } as LiberacoesDeDownload,
     holdDownloads: { ...ESPERAS_PADRAO } as EsperasDeDownload,
+    antiCola: { ...TRAVAS_PADRAO } as TravasAntiCola,
     // Tempo por questão
     timeMode: 'none' as 'none' | 'generalized' | 'individual',
     generalizedTimeSeconds: 0,
@@ -194,6 +196,7 @@ export default function EditExamPage({ params }: { params: { id: string } }) {
         audience: normalizarPublico((exam as any).audience),
         freeDownloads: normalizarLiberacoes((exam as any).freeDownloads),
         holdDownloads: normalizarEsperas((exam as any).holdDownloads),
+        antiCola: normalizarTravas((exam as any).antiCola),
         // Tempo por questão
         timeMode: (exam as any).timeMode || 'none',
         generalizedTimeSeconds: (exam as any).generalizedTimeSeconds || 0,
@@ -716,6 +719,7 @@ export default function EditExamPage({ params }: { params: { id: string } }) {
         audience: examData.audience,
         freeDownloads: examData.freeDownloads,
         holdDownloads: examData.holdDownloads,
+        antiCola: examData.antiCola,
         // Campos de tempo
         timeMode: examData.timeMode,
         generalizedTimeSeconds: examData.generalizedTimeSeconds,
@@ -1346,6 +1350,8 @@ export default function EditExamPage({ params }: { params: { id: string } }) {
                   // Prova de treino não tem término a esperar: ela acaba quando
                   // o dono entrega. Sem o par de props, a seção não é desenhada.
                   esperas={examData.isPracticeExam ? undefined : examData.holdDownloads}
+                  travas={examData.antiCola}
+                  onTravasChange={(antiCola) => setExamData({ ...examData, antiCola })}
                   onEsperasChange={
                     examData.isPracticeExam
                       ? undefined

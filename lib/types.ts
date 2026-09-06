@@ -202,6 +202,17 @@ export interface Exam {
     prova?: boolean
     relatorio?: boolean
   }
+  /**
+   * Travas de cópia da tela de resolução — ver `lib/provas/anti-cola.ts`.
+   *
+   * Aumentam o atrito de tirar a prova da tela; não impedem foto de celular
+   * nem captura do sistema, e a interface do admin diz isso.
+   */
+  antiCola?: {
+    copia?: boolean
+    impressao?: boolean
+    menu?: boolean
+  }
   aiQuestionsCount?: number // Quantidade de questões geradas por IA nesta prova (para controle de limites)
   feedbackMode?: 'end' | 'immediate' // Modo de feedback para provas pessoais: 'end' (ao final) ou 'immediate' (imediato)
   createdAt: Date

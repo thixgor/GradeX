@@ -297,6 +297,48 @@ function ProvasContent() {
   const [alvoParaMover, setAlvoParaMover] = useState<AlvoDaMovimentacao | null>(null)
   const [avisoDeMovimentacao, setAvisoDeMovimentacao] = useState('')
 
+  /*
+   * ATENÇÃO: daqui para baixo só existem hooks até o primeiro `return`
+   * condicional (`if (loading) …`). Um `useMemo` colocado depois dele roda
+   * quando a lista chega e não roda enquanto ela carrega — o React conta
+   * hooks a mais no segundo render e derruba a página inteira com o erro
+   * #310. Foi exatamente o que aconteceu com `posicoesDeOrdem` abaixo.
+   */
+  /*
+   * Onde cada prova está na sua lista — uma conta só para a página inteira.
+   *
+   * O cartão precisa saber se é o primeiro (não dá para voltar), se é o último
+   * (não dá para avançar) e que posição ocupa. Calcular isso dentro de cada
+   * cartão seria reordenar a lista uma vez POR CARTÃO, a cada redesenho — e a
+   * lista é a mesma para todos eles.
+   *
+   * Só admin: quem não pode reordenar não precisa da conta.
+   */
+  const posicoesDeOrdem = useMemo(() => {
+    const posicoes = new Map<string, { indice: number; total: number }>()
+    if (user?.role !== 'admin') return posicoes
+
+    const porEscopo = new Map<string, Exam[]>()
+    for (const prova of exams) {
+      // Prova pessoal fica de fora: ela é do aluno, não do catálogo, e a
+      // ordem que o admin define é sobre o que a plataforma publica.
+      if (!participaDaOrdem(prova)) continue
+      const escopo = prova.groupId ? String(prova.groupId) : ''
+      const lista = porEscopo.get(escopo)
+      if (lista) lista.push(prova)
+      else porEscopo.set(escopo, [prova])
+    }
+
+    for (const lista of porEscopo.values()) {
+      const ordenada = ordenarProvas(lista as any) as Exam[]
+      ordenada.forEach((prova, indice) => {
+        const id = prova._id?.toString()
+        if (id) posicoes.set(id, { indice, total: ordenada.length })
+      })
+    }
+    return posicoes
+  }, [exams, user?.role])
+
   /** Quando a lista veio do servidor pela última vez — o piso da revalidação. */
   const ultimaCarga = useRef(0)
 
@@ -1120,40 +1162,6 @@ function ProvasContent() {
     )
   }
 
-  /*
-   * Onde cada prova está na sua lista — uma conta só para a página inteira.
-   *
-   * O cartão precisa saber se é o primeiro (não dá para voltar), se é o último
-   * (não dá para avançar) e que posição ocupa. Calcular isso dentro de cada
-   * cartão seria reordenar a lista uma vez POR CARTÃO, a cada redesenho — e a
-   * lista é a mesma para todos eles.
-   *
-   * Só admin: quem não pode reordenar não precisa da conta.
-   */
-  const posicoesDeOrdem = useMemo(() => {
-    const posicoes = new Map<string, { indice: number; total: number }>()
-    if (user?.role !== 'admin') return posicoes
-
-    const porEscopo = new Map<string, Exam[]>()
-    for (const prova of exams) {
-      // Prova pessoal fica de fora: ela é do aluno, não do catálogo, e a
-      // ordem que o admin define é sobre o que a plataforma publica.
-      if (!participaDaOrdem(prova)) continue
-      const escopo = prova.groupId ? String(prova.groupId) : ''
-      const lista = porEscopo.get(escopo)
-      if (lista) lista.push(prova)
-      else porEscopo.set(escopo, [prova])
-    }
-
-    for (const lista of porEscopo.values()) {
-      const ordenada = ordenarProvas(lista as any) as Exam[]
-      ordenada.forEach((prova, indice) => {
-        const id = prova._id?.toString()
-        if (id) posicoes.set(id, { indice, total: ordenada.length })
-      })
-    }
-    return posicoes
-  }, [exams, user?.role])
 
   /*
    * Reordenar com a lista filtrada na tela seria mover a prova para junto de

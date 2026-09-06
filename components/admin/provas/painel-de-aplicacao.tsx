@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { Label } from '@/components/ui/label'
-import { Clock, Download, GraduationCap, Loader2, Lock, Shuffle, Users } from 'lucide-react'
+import { Clock, Download, GraduationCap, Loader2, Lock, ShieldOff, Shuffle, Users } from 'lucide-react'
 import { MAX_PERIODO, MIN_PERIODO } from '@/lib/user-periodo'
 import {
   type EsperasDeDownload,
@@ -11,6 +11,7 @@ import {
   normalizarLiberacoes,
 } from '@/lib/provas/downloads-da-prova'
 import { type PublicoDaProva, normalizarPublico } from '@/lib/provas/publico-da-prova'
+import { type TravasAntiCola, normalizarTravas } from '@/lib/provas/anti-cola'
 import { cn } from '@/lib/utils'
 
 /**
@@ -36,6 +37,8 @@ interface Props {
   /** Quais arquivos ficam presos até o término. Ausente = prova sem término (treino). */
   esperas?: EsperasDeDownload
   onEsperasChange?: (esperas: EsperasDeDownload) => void
+  travas: TravasAntiCola
+  onTravasChange: (travas: TravasAntiCola) => void
   embaralharQuestoes: boolean
   embaralharAlternativas: boolean
   onEmbaralharChange: (campo: 'questoes' | 'alternativas', valor: boolean) => void
@@ -52,6 +55,8 @@ export function PainelDeAplicacao({
   onLiberacoesChange,
   esperas,
   onEsperasChange,
+  travas,
+  onTravasChange,
   embaralharQuestoes,
   embaralharAlternativas,
   onEmbaralharChange,
@@ -63,6 +68,7 @@ export function PainelDeAplicacao({
   const publicoNormalizado = normalizarPublico(publico)
   const liberacoesNormalizadas = normalizarLiberacoes(liberacoes)
   const esperasNormalizadas = normalizarEsperas(esperas)
+  const travasNormalizadas = normalizarTravas(travas)
   const porPeriodos = publicoNormalizado.modo === 'periodos'
 
   // A contagem só é buscada quando alguém abre o modo por período: numa prova
@@ -321,6 +327,56 @@ export function PainelDeAplicacao({
           </p>
         </section>
       )}
+
+      {/* ── Anti-cola ───────────────────────────────────────────── */}
+      <section className="space-y-3 rounded-xl border border-border/60 bg-muted/25 p-4">
+        <div className="flex items-start gap-2.5">
+          <ShieldOff className="mt-0.5 h-4 w-4 flex-shrink-0 text-muted-foreground" />
+          <div className="min-w-0">
+            <h3 className="text-sm font-semibold">Travas na tela de resolução</h3>
+            <p className="mt-0.5 text-xs leading-snug text-muted-foreground">
+              Aumentam o trabalho de tirar a prova da tela enquanto ela está sendo feita. O grifo,
+              a discursiva e a redação continuam funcionando: grifar é selecionar, e o texto que o
+              aluno escreve é dele.
+            </p>
+          </div>
+        </div>
+
+        <Opcao
+          id="antiColaCopia"
+          marcado={travasNormalizadas.copia}
+          onChange={(v) => onTravasChange({ ...travasNormalizadas, copia: v })}
+          titulo="Não permitir copiar o conteúdo"
+          descricao="Bloqueia o Ctrl+C, o arrastar do enunciado para outra janela e o copiar do toque longo. O grifo continua funcionando: selecionar é como o aluno marca o texto."
+          disabled={desabilitado}
+        />
+        <Opcao
+          id="antiColaImpressao"
+          marcado={travasNormalizadas.impressao}
+          onChange={(v) => onTravasChange({ ...travasNormalizadas, impressao: v })}
+          titulo="Não permitir imprimir a página"
+          descricao="Bloqueia o Ctrl+P e faz o papel sair só com um aviso — inclusive pelo menu do navegador."
+          disabled={desabilitado}
+        />
+        <Opcao
+          id="antiColaMenu"
+          marcado={travasNormalizadas.menu}
+          onChange={(v) => onTravasChange({ ...travasNormalizadas, menu: v })}
+          titulo="Desativar o menu do botão direito"
+          descricao="É por onde se copia imagem e se abre 'salvar como'."
+          disabled={desabilitado}
+        />
+
+        <p className="flex items-start gap-1.5 rounded-lg bg-background/70 p-2.5 text-[11px] leading-snug text-muted-foreground">
+          <Lock className="mt-0.5 h-3 w-3 flex-shrink-0" />
+          <span>
+            <strong>Isto não impede foto de celular nem print do sistema.</strong> O computador não
+            pergunta nada ao site antes de capturar a tela. Para esse caso valem a marca d'água com
+            o nome de quem baixou e o monitoramento por câmera — estas travas são o degrau mais
+            barato, e o único que não atrapalha quem está de boa-fé.
+          </span>
+        </p>
+      </section>
     </div>
   )
 }

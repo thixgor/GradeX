@@ -50,6 +50,8 @@ import {
   type JanelaDaProva,
 } from '@/lib/provas/janela-da-prova'
 import { resolverDownloadsDaProva } from '@/lib/provas/downloads-da-prova'
+import { travasDaProva } from '@/lib/provas/anti-cola'
+import { EscudoAntiCola } from '@/components/exam/escudo-anti-cola'
 import {
   INTERVALO_DE_GRAVACAO_MS,
   contarRespondidas,
@@ -3118,6 +3120,20 @@ ${respostaAluno}`
 
   return (
     <>
+      {/*
+        As travas de cópia desta prova, se o admin ligou alguma.
+
+        Só valem com a prova em andamento (`started`) e antes da entrega: na
+        sala de espera e na tela de resultado não há enunciado para proteger, e
+        travar ali só atrapalharia quem quer copiar o próprio resultado. O
+        aviso vai pelo mesmo toast do resto da tela — tecla que não faz nada
+        parece defeito.
+      */}
+      <EscudoAntiCola
+        travas={travasDaProva(exam)}
+        ativo={started && !submitted}
+        aoBloquear={(mensagem) => showToastMessage(mensagem, 'info')}
+      />
       {proctoringModal}
       <div
         className="min-h-screen bg-gradient-to-br from-background to-muted"
