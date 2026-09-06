@@ -1,9 +1,9 @@
 'use client'
 
 import { CalendarClock } from 'lucide-react'
+import { useRelogioDaLista } from '@/hooks/use-relogio-da-lista'
 import type { Exam } from '@/lib/types'
 import { horariosDaProva } from '@/lib/provas/horarios-da-prova'
-import { useRelogioDeProvas } from '@/hooks/use-relogio-de-provas'
 import { cn } from '@/lib/utils'
 
 /**
@@ -18,8 +18,19 @@ import { cn } from '@/lib/utils'
  * de `components/exam/exam-gate-status.tsx`. Lá é tarde: naquele ponto a
  * pessoa já chegou.
  *
- * O relógio que mantém estes horários vivos (e o botão do cartão destravando
- * na hora certa) é o `useRelogioDeProvas`, compartilhado por toda a lista.
+ * ## Um relógio para a lista inteira
+ *
+ * Cada cartão precisa saber que horas são para dizer "em 2 h 15 min". Um
+ * `setInterval` por cartão numa página com dezenas de provas são dezenas de
+ * timers acordando o React para, quase sempre, redesenhar o mesmo texto.
+ *
+ * `useRelogioDaLista` (hooks/use-relogio-da-lista.ts) é um relógio só, no
+ * módulo, com passo de 30 segundos: ele existe enquanto houver ao menos um
+ * inscrito e some junto com o último. O painel de `/admin/exams` usa o mesmo.
+ *
+ * Passando a prova, ele também acorda no instante EXATO do próximo marco
+ * dela — é o que faz o horário aqui e o botão do cartão virarem às 13h em
+ * ponto, e não até trinta segundos depois.
  */
 
 export function HorariosDaProva({
@@ -34,7 +45,7 @@ export function HorariosDaProva({
   variante?: 'cartao' | 'linha'
   className?: string
 }) {
-  const agora = useRelogioDeProvas(prova, { jaEntrou })
+  const agora = useRelogioDaLista(prova, { jaEntrou })
   const marcos = horariosDaProva(prova, new Date(agora), { jaEntrou })
 
   if (marcos.length === 0) return null

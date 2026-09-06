@@ -54,7 +54,15 @@ export async function POST(
           },
         }
       )
-      return NextResponse.json({ success: true, message: 'Prova forçada a iniciar' })
+      // `aplicadoEm` volta para o painel porque quem manda no horário é o
+      // relógio do SERVIDOR. Sem ele a lista teria de reler todas as provas
+      // (com as questões de cada uma) só para descobrir o instante que ela
+      // mesma acabou de pedir — ou chutar o relógio da máquina do admin.
+      return NextResponse.json({
+        success: true,
+        message: 'Prova forçada a iniciar',
+        aplicadoEm: now.toISOString(),
+      })
     } else {
       // Forçar término: define endTime como agora e gatesClose também
       await examsCollection.updateOne(
@@ -67,7 +75,11 @@ export async function POST(
           },
         }
       )
-      return NextResponse.json({ success: true, message: 'Prova forçada a terminar' })
+      return NextResponse.json({
+        success: true,
+        message: 'Prova forçada a terminar',
+        aplicadoEm: now.toISOString(),
+      })
     }
   } catch (error) {
     console.error('Force time error:', error)

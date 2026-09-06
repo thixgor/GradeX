@@ -19,7 +19,7 @@ import { canDownloadExamPdf } from '@/lib/tier-limits'
 import { provaJaEncerrou, resolverDownloadsDaProva } from '@/lib/provas/downloads-da-prova'
 import { resolverJanelaDaProva } from '@/lib/provas/janela-da-prova'
 import { HorariosDaProva } from '@/components/provas/horarios-da-prova'
-import { useRelogioDeProvas } from '@/hooks/use-relogio-de-provas'
+import { useRelogioDaLista } from '@/hooks/use-relogio-da-lista'
 import { consumirCotaDoPlano } from '@/lib/plan-consume-client'
 import { Exam } from '@/lib/types'
 import { formatDate } from '@/lib/utils'
@@ -343,7 +343,7 @@ function ProvasContent() {
    * ## O buraco que isto fecha
    *
    * `loadExamsAndGroups` rodava uma vez, no mount, e nunca mais. Para o
-   * relógio isso não bastava (resolvido no `useRelogioDeProvas`, que redesenha
+   * relógio isso não bastava (resolvido no `useRelogioDaLista`, que redesenha
    * o cartão quando a fase vira), mas sobrava a outra metade: os DADOS. Se o
    * admin adia a prova, corrige o portão ou publica uma prova nova enquanto
    * alguém espera com a página aberta, essa pessoa continua olhando o horário
@@ -1040,11 +1040,11 @@ function ProvasContent() {
      * botão travado às 13h05 — o portão abriu em todo lugar menos na tela, e o
      * único jeito de descobrir seria apertar F5.
      *
-     * `useRelogioDeProvas` acorda o cartão no instante exato do próximo marco
+     * `useRelogioDaLista` acorda o cartão no instante exato do próximo marco
      * desta prova (ver o hook), então a virada acontece na hora certa e não no
      * próximo batimento.
      */
-    const agora = useRelogioDeProvas(exam, { jaEntrou: !!(exam as any).jaEntrou })
+    const agora = useRelogioDaLista(exam, { jaEntrou: !!(exam as any).jaEntrou })
     const status = getExamStatus(exam, new Date(agora))
     const examId = exam._id?.toString() || ''
     const marcada = selecionadas.includes(examId)
