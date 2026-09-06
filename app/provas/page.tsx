@@ -976,12 +976,25 @@ function ProvasContent() {
       agora,
     )
 
+    const participou = !!(exam as any).jaEntregou || !!(exam as any).temRascunho
+
     const aparencia: Record<string, { text: string; color: string; bgColor: string; dotColor: string }> = {
       praticar: { text: 'Praticar', color: 'text-emerald-600 dark:text-emerald-400', bgColor: 'bg-emerald-500/10', dotColor: 'bg-emerald-500' },
       fazer: { text: 'Disponivel', color: 'text-emerald-600 dark:text-emerald-400', bgColor: 'bg-emerald-500/10', dotColor: 'bg-emerald-500' },
       retomar: { text: 'Retomar', color: 'text-blue-600 dark:text-blue-400', bgColor: 'bg-blue-500/10', dotColor: 'bg-blue-500' },
       'entrar-na-sala': { text: 'Portoes abertos', color: 'text-blue-600 dark:text-blue-400', bgColor: 'bg-blue-500/10', dotColor: 'bg-blue-500' },
-      'ver-resultado': { text: veredito.encerradaParaMim && !(exam as any).jaEntregou && !(exam as any).temRascunho ? 'Finalizada' : 'Entregue', color: 'text-muted-foreground', bgColor: 'bg-muted', dotColor: 'bg-gray-400' },
+      /*
+        "Entregue" quando esta pessoa entregou; "Finalizada" quando a prova
+        acabou para a turma e ela não participou. São estados diferentes e o
+        selo precisa distingui-los: "Finalizada" numa prova que a pessoa fez
+        esconde justamente o que ela quer saber.
+      */
+      'ver-resultado': {
+        text: participou ? 'Entregue' : 'Finalizada',
+        color: 'text-muted-foreground',
+        bgColor: 'bg-muted',
+        dotColor: 'bg-gray-400',
+      },
       indisponivel: { text: 'Portoes fechados', color: 'text-muted-foreground', bgColor: 'bg-muted', dotColor: 'bg-gray-400' },
       aguardar: { text: 'Aguardando', color: 'text-amber-600 dark:text-amber-400', bgColor: 'bg-amber-500/10', dotColor: 'bg-amber-500' },
     }
