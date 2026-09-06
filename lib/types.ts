@@ -485,6 +485,12 @@ export interface UserSession {
   deviceName?: string // Nome amigável derivado do user-agent (ex: "Chrome no Windows")
   createdAt: Date
   lastActiveAt: Date
+  /**
+   * Última página conhecida deste aparelho (só o pathname). Gravada junto do
+   * carimbo de atividade, a partir dos cabeçalhos da própria requisição — é o
+   * que o painel traduz em "fazendo prova", "lendo um PDF", etc.
+   */
+  lastPath?: string
   revokedAt?: Date // Quando definido, a sessão é inválida (logout no próximo request)
   revokedBy?: 'admin' | 'limit' | 'user' // Origem da revogação
 }

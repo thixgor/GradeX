@@ -155,6 +155,43 @@ describe('touchPresence', () => {
     // admin (ou o limite de aparelhos) derrubou.
     expect(updateOne.mock.calls[0][0]).toEqual({ jti, revokedAt: { $exists: false } })
   })
+
+  it('grava a página junto do carimbo, no mesmo update', async () => {
+    const updateOne = vi.fn().mockResolvedValue({})
+    const db = { collection: () => ({ updateOne }) } as unknown as Db
+
+    await touchPresence(db, `jti-${Math.random()}`, 'https://gradex.com.br/exam/e1?x=1')
+
+    const set = updateOne.mock.calls[0][1].$set
+    expect(set.lastPath).toBe('/exam/e1')
+    expect(set.lastActiveAt).toBeInstanceOf(Date)
+  })
+
+  it('sem página deduzida, não apaga a última conhecida', async () => {
+    const updateOne = vi.fn().mockResolvedValue({})
+    const db = { collection: () => ({ updateOne }) } as unknown as Db
+
+    await touchPresence(db, `jti-${Math.random()}`, '')
+    expect(updateOne.mock.calls[0][1].$set).not.toHaveProperty('lastPath')
+  })
+})
+
+describe('readOnlineDevices — última página', () => {
+  it('a página descrita é a do aparelho com o sinal mais recente', async () => {
+    const { db } = fakeDb([
+      { userId: 'u1', lastActiveAt: new Date(NOW - 3 * 60_000), lastPath: '/dashboard' } as any,
+      { userId: 'u1', lastActiveAt: new Date(NOW - 5_000), lastPath: '/exam/e1' } as any,
+    ])
+
+    const snapshot = await readOnlineDevices(db, { now: NOW })
+    expect(snapshot.byUser.get('u1')?.lastPath).toBe('/exam/e1')
+  })
+
+  it('sessão antiga sem o campo não quebra a leitura', async () => {
+    const { db } = fakeDb([session()])
+    const snapshot = await readOnlineDevices(db, { now: NOW })
+    expect(snapshot.byUser.get('u1')?.lastPath).toBe('')
+  })
 })
 
 describe('presenceWindowMs', () => {

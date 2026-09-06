@@ -3,6 +3,7 @@ import { ObjectId } from 'mongodb'
 import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
 import { presenceWindowMs, readOnlineDevices } from '@/lib/presence/server'
+import { descreverAtividade, idDoMaterialNoCaminho } from '@/lib/presence/atividade'
 import {
   ATTEMPT_STATUS_LABELS,
   EXAM_ATTEMPTS_COLLECTION,
@@ -48,7 +49,19 @@ export async function GET() {
       .filter((id) => ObjectId.isValid(id))
       .map((id) => new ObjectId(id))
 
-    const [rows, attempts] = await Promise.all([
+    // Materiais que aparecem nos caminhos de quem está online. Uma consulta
+    // por `_id` para TODO mundo de uma vez troca "Lendo um PDF" por "Lendo um
+    // PDF: Resumão de Farmacologia" — que é a pergunta que o admin faz em
+    // seguida de qualquer jeito.
+    const materialIds = [
+      ...new Set(
+        snapshot.userIds
+          .map((id) => idDoMaterialNoCaminho(snapshot.byUser.get(id)?.lastPath))
+          .filter((id): id is string => !!id),
+      ),
+    ]
+
+    const [rows, attempts, materiais] = await Promise.all([
       db
         .collection('users')
         .find(
@@ -78,7 +91,20 @@ export async function GET() {
           },
         )
         .toArray(),
+      materialIds.length
+        ? db
+            .collection('materials')
+            .find(
+              { _id: { $in: materialIds.map((id) => new ObjectId(id)) } },
+              { projection: { title: 1 } },
+            )
+            .toArray()
+        : Promise.resolve([]),
     ])
+
+    const tituloDoMaterial = new Map(
+      materiais.map((m: any) => [m._id.toString(), m.title as string | undefined]),
+    )
 
     // A prova mais recente de cada pessoa — quem abriu duas abas aparece uma vez.
     const attemptByUser = new Map<string, ExamAttempt>()
@@ -96,6 +122,28 @@ export async function GET() {
         const attempt = attemptByUser.get(id)
         const lastActiveAt = presence?.lastActiveAt ?? 0
 
+        /*
+         * O que a pessoa está fazendo. A prova em andamento tem prioridade:
+         * `exam_attempts` sabe a questão e o progresso, coisa que o caminho
+         * sozinho não conta. Fora isso, quem descreve é o caminho — e quando
+         * ele aponta para um material, o título entra no rótulo.
+         */
+        const atividade = descreverAtividade(presence?.lastPath)
+        const materialId = idDoMaterialNoCaminho(presence?.lastPath)
+        const titulo = materialId ? tituloDoMaterial.get(materialId) : undefined
+
+        const fazendo = attempt
+          ? {
+              area: 'Provas',
+              label: attempt.totalQuestions
+                ? `${ATTEMPT_STATUS_LABELS[deriveAttemptStatus(attempt, now)]}: ${attempt.examTitle || 'Prova'} · questão ${(attempt.currentQuestion ?? 0) + 1}/${attempt.totalQuestions}`
+                : `${ATTEMPT_STATUS_LABELS[deriveAttemptStatus(attempt, now)]}: ${attempt.examTitle || 'Prova'}`,
+            }
+          : {
+              area: atividade.area,
+              label: titulo ? `${atividade.label}: ${titulo}` : atividade.label,
+            }
+
         return {
           id,
           name: row.name || 'Sem nome',
@@ -108,6 +156,11 @@ export async function GET() {
           idleSeconds: lastActiveAt ? Math.round((now - lastActiveAt) / 1000) : null,
           // Mantido por compatibilidade com quem ainda mostra o último login.
           lastLoginAt: row.lastLoginAt ? new Date(row.lastLoginAt).toISOString() : undefined,
+          /** O que a pessoa está fazendo, pronto para a tela. */
+          doing: fazendo.label,
+          area: fazendo.area,
+          /** O caminho cru — o admin às vezes quer o link exato. */
+          path: presence?.lastPath || undefined,
           exam: attempt
             ? {
                 title: attempt.examTitle || 'Prova',

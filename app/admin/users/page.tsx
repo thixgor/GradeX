@@ -59,6 +59,12 @@ type OnlineUser = {
   lastActiveAt?: string
   idleSeconds?: number | null
   lastLoginAt?: string
+  /** O que a pessoa está fazendo, já em português, pronto para a tela. */
+  doing?: string
+  /** Módulo em que ela está ("Provas", "Materiais", "Histologia"...). */
+  area?: string
+  /** Caminho cru, para o admin abrir a mesma tela que ela está vendo. */
+  path?: string
   exam?: {
     title: string
     status: string
@@ -75,6 +81,8 @@ type OnlineSummary = {
   devices: number
   inExam: number
   ids: string[]
+  /** Onde essas pessoas estão, da área mais cheia para a mais vazia. */
+  byArea: Array<{ area: string; count: number }>
   windowMinutes: number
 }
 
@@ -680,6 +688,7 @@ export default function AdminUsersPage() {
         devices: typeof data.devices === 'number' ? data.devices : data.count,
         inExam: typeof data.inExam === 'number' ? data.inExam : 0,
         ids: Array.isArray(data.ids) ? data.ids : [],
+        byArea: Array.isArray(data.byArea) ? data.byArea : [],
         windowMinutes: typeof data.windowMinutes === 'number' ? data.windowMinutes : 5,
       })
     } catch {
@@ -1139,7 +1148,13 @@ export default function AdminUsersPage() {
                 value={onlineSummary ? onlineSummary.count : insights.onlineNow}
                 hint={
                   onlineSummary
-                    ? `${onlineSummary.devices} aparelho(s) · ${onlineSummary.inExam} em prova`
+                    ? [
+                        `${onlineSummary.inExam} em prova`,
+                        ...onlineSummary.byArea
+                          .filter((a) => a.area !== 'Provas')
+                          .slice(0, 2)
+                          .map((a) => `${a.count} em ${a.area}`),
+                      ].join(' · ')
                     : 'Carregando presença...'
                 }
                 onClick={openOnlineUsersDialog}
@@ -2656,34 +2671,38 @@ export default function AdminUsersPage() {
                     </div>
 
                     {/* O que a pessoa está fazendo — a pergunta que o admin
-                        realmente faz ao abrir esta lista. */}
-                    {u.exam ? (
-                      <div className="mt-3 flex items-start gap-2 text-xs text-emerald-700 dark:text-emerald-300">
+                        realmente faz ao abrir esta lista. Quem está em prova
+                        ganha destaque: é o que não pode esperar. */}
+                    <div
+                      className={`mt-3 flex items-start gap-2 text-xs ${
+                        u.exam
+                          ? 'font-medium text-emerald-700 dark:text-emerald-300'
+                          : 'text-foreground/80'
+                      }`}
+                    >
+                      {u.exam ? (
                         <FileTextIcon className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-                        <span className="break-words">
-                          {u.exam.statusLabel}: {u.exam.title}
-                          {u.exam.total > 0
-                            ? ` · questão ${u.exam.question}/${u.exam.total} (${u.exam.answered} respondida(s))`
-                            : ''}
-                        </span>
-                      </div>
-                    ) : (
-                      <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
-                        <Activity className="h-3.5 w-3.5" />
-                        Navegando pela plataforma
-                      </div>
-                    )}
+                      ) : (
+                        <Activity className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                      )}
+                      <span className="break-words">
+                        {u.doing || 'Navegando pela plataforma'}
+                        {u.exam && u.exam.total > 0
+                          ? ` (${u.exam.answered} respondida(s))`
+                          : ''}
+                      </span>
+                    </div>
 
                     <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                      {u.area && (
+                        <span className="rounded bg-muted px-1.5 py-0.5 font-medium">{u.area}</span>
+                      )}
                       <span className="inline-flex items-center gap-1">
                         <MonitorSmartphone className="h-3.5 w-3.5" />
                         {u.deviceName || 'Dispositivo desconhecido'}
                         {(u.devices ?? 1) > 1 ? ` (+${(u.devices ?? 1) - 1})` : ''}
                       </span>
-                      <span className="inline-flex items-center gap-1">
-                        <Clock className="h-3.5 w-3.5" />
-                        Entrou {formatRelativeActivity(u.lastLoginAt)}
-                      </span>
+                      {u.path && <span className="font-mono break-all opacity-70">{u.path}</span>}
                     </div>
                   </div>
                 ))}

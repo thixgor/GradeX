@@ -214,8 +214,16 @@ export async function getSession(): Promise<TokenPayload | null> {
         return null
       }
       if (state === 'active') {
-        // Atualiza atividade. Graças à cache de 60s, roda no máx. 1x/min por token.
-        touchSession(payload.jti).catch(() => {})
+        // Atualiza atividade. Graças à cache de 60s, roda no máx. 1x/min por
+        // token. Junto vai a página em que a pessoa está, deduzida dos
+        // cabeçalhos DESTA requisição — daí ela ser lida aqui, ainda dentro do
+        // escopo da requisição, e não lá dentro do update.
+        // Módulo próprio, e não `presence/server`: este import roda no
+        // cache-miss de TODA sessão, e não vale arrastar o driver do Mongo
+        // junto só para ler dois cabeçalhos.
+        const { currentPagePath } = await import('./presence/caminho')
+        const path = await currentPagePath()
+        touchSession(payload.jti, path).catch(() => {})
       }
       // 'untracked' = login legado (anterior à feature): segue válido sem enforce.
     }

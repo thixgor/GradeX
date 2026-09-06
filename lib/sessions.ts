@@ -8,6 +8,7 @@ import { invalidateSessionCache } from './auth'
 // Duas réguas diferentes para a mesma pergunta era o que fazia o ponto verde
 // do aparelho discordar do card "Online agora".
 import { PRESENCE_WINDOW_MS as ONLINE_THRESHOLD_MS } from './presence/shared'
+import { normalizarCaminho } from './presence/atividade'
 
 // Limite padrão de dispositivos logados simultaneamente por conta. Acima disso,
 // o login mais novo derruba o mais antigo (sessão deslizante). Isso transforma
@@ -171,14 +172,24 @@ export async function getSessionState(
   return session.revokedAt ? 'revoked' : 'active'
 }
 
-/** Atualiza lastActiveAt (throttle implícito: chamado no cache-miss do getSession). */
-export async function touchSession(jti: string): Promise<void> {
+/**
+ * Atualiza lastActiveAt (throttle implícito: chamado no cache-miss do
+ * getSession) e, junto, a última página conhecida.
+ *
+ * O caminho vem de carona: é deduzido dos cabeçalhos da requisição que já ia
+ * carimbar a sessão, e entra no MESMO `$set`. Nenhuma escrita, consulta ou
+ * requisição a mais — só um campo a mais no update que já existia. É ele que
+ * permite o painel dizer "lendo um PDF" em vez de "está no site".
+ */
+export async function touchSession(jti: string, path?: string): Promise<void> {
   try {
     const col = await sessionsCollection()
-    await col.updateOne(
-      { jti, revokedAt: { $exists: false } },
-      { $set: { lastActiveAt: new Date() } }
-    )
+    const set: Record<string, unknown> = { lastActiveAt: new Date() }
+    // Vazio não sobrescreve: apagaria a última página conhecida.
+    const caminho = normalizarCaminho(path)
+    if (caminho) set.lastPath = caminho
+
+    await col.updateOne({ jti, revokedAt: { $exists: false } }, { $set: set })
   } catch {
     // best-effort
   }

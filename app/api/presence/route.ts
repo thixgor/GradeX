@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { verifyToken } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
-import { touchPresence } from '@/lib/presence/server'
+import { currentPagePath, touchPresence } from '@/lib/presence/server'
 import { PRESENCE_HEADER } from '@/lib/presence/shared'
 
 export const dynamic = 'force-dynamic'
@@ -41,8 +41,13 @@ export async function POST() {
     // o que carimbar. Responde 'anon' para a aba desistir de tentar.
     if (!payload?.jti) return anon()
 
+    // O `Referer` deste próprio ping é a página em que a pessoa está parada —
+    // o dado que faltava para o painel dizer o que ela está fazendo. Vem junto
+    // com a requisição; não custa nada a mais.
+    const path = await currentPagePath()
+
     const db = await getDb()
-    await touchPresence(db, payload.jti)
+    await touchPresence(db, payload.jti, path)
 
     return new NextResponse(null, { status: 204, headers: { [PRESENCE_HEADER]: 'ok' } })
   } catch (error) {

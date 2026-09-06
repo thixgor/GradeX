@@ -1,6 +1,9 @@
 import { ObjectId, type Db } from 'mongodb'
 import { PRESENCE_WINDOW_MS } from './shared'
+import { normalizarCaminho } from './atividade'
 import { EXAM_ATTEMPTS_COLLECTION, LIVE_THRESHOLD_MS } from '@/lib/tracking/exam-attempts'
+
+export { currentPagePath } from './caminho'
 
 /**
  * ═══════════════════════════════════════════════════════════════
@@ -53,7 +56,7 @@ function sweepTouchCache(now: number): void {
  * antes: sessão revogada simplesmente não casa com o filtro e o update
  * vira no-op — é o mesmo enforcement de sempre, de graça.
  */
-export async function touchPresence(db: Db, jti: string): Promise<boolean> {
+export async function touchPresence(db: Db, jti: string, path?: string): Promise<boolean> {
   const now = Date.now()
   const last = lastTouchByJti.get(jti)
   if (last && now - last < TOUCH_THROTTLE_MS) return false
@@ -61,12 +64,16 @@ export async function touchPresence(db: Db, jti: string): Promise<boolean> {
   lastTouchByJti.set(jti, now)
   sweepTouchCache(now)
 
+  const set: Record<string, unknown> = { lastActiveAt: new Date(now) }
+  // Só grava o caminho quando ele foi de fato deduzido: sobrescrever com
+  // vazio apagaria a última página conhecida e a lista do admin voltaria a
+  // dizer só "está no site".
+  const caminho = normalizarCaminho(path)
+  if (caminho) set.lastPath = caminho
+
   await db
     .collection('sessions')
-    .updateOne(
-      { jti, revokedAt: { $exists: false } },
-      { $set: { lastActiveAt: new Date(now) } },
-    )
+    .updateOne({ jti, revokedAt: { $exists: false } }, { $set: set })
   return true
 }
 
@@ -76,12 +83,20 @@ export interface OnlineDevice {
   deviceName: string
 }
 
+export interface OnlinePresence {
+  lastActiveAt: number
+  devices: number
+  deviceName: string
+  /** Última página conhecida — o que vira "o que está fazendo" na tela. */
+  lastPath: string
+}
+
 export interface OnlineSnapshot {
   /** Ids distintos de usuários com pelo menos um aparelho vivo. */
   userIds: string[]
   /** Aparelhos vivos (uma pessoa com celular + notebook conta 2 aqui). */
   devices: number
-  byUser: Map<string, { lastActiveAt: number; devices: number; deviceName: string }>
+  byUser: Map<string, OnlinePresence>
   since: Date
 }
 
@@ -104,13 +119,22 @@ export async function readOnlineDevices(
     .collection('sessions')
     .find(
       { lastActiveAt: { $gte: since } },
-      { projection: { userId: 1, lastActiveAt: 1, deviceName: 1, revokedAt: 1, _id: 0 } },
+      {
+        projection: {
+          userId: 1,
+          lastActiveAt: 1,
+          deviceName: 1,
+          lastPath: 1,
+          revokedAt: 1,
+          _id: 0,
+        },
+      },
     )
     .sort({ lastActiveAt: -1 })
     .limit(options.limit ?? 2000)
     .toArray()
 
-  const byUser = new Map<string, { lastActiveAt: number; devices: number; deviceName: string }>()
+  const byUser = new Map<string, OnlinePresence>()
   let devices = 0
 
   for (const doc of docs) {
@@ -129,13 +153,17 @@ export async function readOnlineDevices(
         lastActiveAt: at,
         devices: 1,
         deviceName: doc.deviceName || 'Dispositivo desconhecido',
+        lastPath: typeof doc.lastPath === 'string' ? doc.lastPath : '',
       })
       continue
     }
+    // Quem tem dois aparelhos vivos é descrito pelo mais recente: é nele que
+    // a pessoa está de fato, e é lá que o admin vai encontrá-la.
     current.devices += 1
     if (at > current.lastActiveAt) {
       current.lastActiveAt = at
       current.deviceName = doc.deviceName || current.deviceName
+      if (typeof doc.lastPath === 'string' && doc.lastPath) current.lastPath = doc.lastPath
     }
   }
 

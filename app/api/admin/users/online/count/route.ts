@@ -7,6 +7,7 @@ import {
   readLiveExamUserIds,
   readOnlineDevices,
 } from '@/lib/presence/server'
+import { descreverAtividade } from '@/lib/presence/atividade'
 
 export const dynamic = 'force-dynamic'
 
@@ -49,6 +50,17 @@ export async function GET() {
     const activeIds = await filterActiveUserIds(db, snapshot.userIds)
     const activeSet = new Set(activeIds)
 
+    /*
+     * Resumo por área — de graça: o caminho de cada pessoa já veio no mesmo
+     * documento de sessão que a contagem leu. Nenhuma consulta a mais, e o
+     * admin passa a ver "8 online, 3 em prova, 2 no Manual" sem abrir a lista.
+     */
+    const porArea = new Map<string, number>()
+    for (const id of activeIds) {
+      const area = descreverAtividade(snapshot.byUser.get(id)?.lastPath).area
+      porArea.set(area, (porArea.get(area) ?? 0) + 1)
+    }
+
     return NextResponse.json({
       count: activeIds.length,
       /** Aparelhos vivos — uma pessoa com celular e notebook conta 2 aqui. */
@@ -60,6 +72,10 @@ export async function GET() {
       inExam: examUserIds.filter((id) => activeSet.has(id)).length,
       /** Ids online — a lista usa para marcar as linhas sem outra requisição. */
       ids: activeIds,
+      /** Onde essas pessoas estão, da área mais cheia para a mais vazia. */
+      byArea: [...porArea.entries()]
+        .map(([area, count]) => ({ area, count }))
+        .sort((a, b) => b.count - a.count),
       windowMinutes: Math.round(windowMs / 60000),
       generatedAt: new Date(now).toISOString(),
     })
