@@ -79,6 +79,21 @@ function assinarRelogio(avisar: (agora: number) => void): () => void {
 /**
  * O instante atual em milissegundos, atualizado a cada 30 segundos — e, quando
  * `prova` é passada, também no instante exato em que ela muda de fase.
+ *
+ * ## Este valor não pode ser impresso durante a hidratação
+ *
+ * Ele é `Date.now()`, então difere entre o HTML que o servidor gerou e o
+ * primeiro render do navegador — e o fuso piora: a Vercel roda em UTC, o
+ * aluno está em Brasília, e `toLocaleTimeString` devolve horas diferentes
+ * para o mesmo instante. Qualquer texto derivado daqui que apareça no HTML do
+ * servidor quebra a hidratação (erro #422 do React), que descarta a página
+ * inteira e redesenha no cliente.
+ *
+ * Quem imprime horário a partir deste hook espera montar antes de desenhar —
+ * ver `components/provas/horarios-da-prova.tsx`. As telas que só o usam para
+ * DECIDIR (habilitar um botão, escolher um rótulo) sobre dados que chegam por
+ * fetch não correm esse risco: no servidor a lista está vazia e não há o que
+ * imprimir.
  */
 export function useRelogioDaLista(
   prova?: Partial<Exam> | null,

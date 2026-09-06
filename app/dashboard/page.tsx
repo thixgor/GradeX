@@ -152,24 +152,36 @@ function DashboardContent() {
   // três chamadas voltarem — um "carregando" disfarçado de dado zerado, que
   // depois pulava para o valor real. Agora os números da última visita
   // aparecem na hora e são corrigidos por baixo quando a resposta chega.
-  const [stats, setStats] = useState(
-    () =>
-      readPageCache<DashboardStats>(DASHBOARD_STATS_CACHE_KEY) ?? {
-        questionsAnswered: 0,
-        examsCompleted: 0,
-        // Aproveitamento no banco de questões. Antes esse cartão mostrava
-        // "Flashcards Estudados", um campo que /api/user/statistics nunca
-        // devolveu — ou seja, um zero permanente na cara de todo mundo.
-        accuracyRate: 0,
-        streakDays: 0,
-      },
-  )
-  const [recentExams, setRecentExams] = useState<any[]>(
-    () => readPageCache<any[]>(DASHBOARD_EXAMS_CACHE_KEY) ?? [],
-  )
-  const [loading, setLoading] = useState(
-    () => readPageCache<DashboardStats>(DASHBOARD_STATS_CACHE_KEY) === null,
-  )
+  /*
+   * O cache é aplicado no efeito, e não no estado inicial: `readPageCache` lê
+   * `sessionStorage`, que existe no navegador e não no servidor. Inicializando
+   * o estado com ele, o HTML do servidor vinha zerado e o primeiro render do
+   * cliente vinha com os números da última visita — a hidratação falha e o
+   * React descarta a página (erro #422). O efeito roda antes de qualquer
+   * pintura com dados, então os números da última visita continuam aparecendo
+   * de imediato.
+   */
+  const [stats, setStats] = useState<DashboardStats>({
+    questionsAnswered: 0,
+    examsCompleted: 0,
+    // Aproveitamento no banco de questões. Antes esse cartão mostrava
+    // "Flashcards Estudados", um campo que /api/user/statistics nunca
+    // devolveu — ou seja, um zero permanente na cara de todo mundo.
+    accuracyRate: 0,
+    streakDays: 0,
+  })
+  const [recentExams, setRecentExams] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const statsEmCache = readPageCache<DashboardStats>(DASHBOARD_STATS_CACHE_KEY)
+    const provasEmCache = readPageCache<any[]>(DASHBOARD_EXAMS_CACHE_KEY)
+    if (statsEmCache) {
+      setStats(statsEmCache)
+      setLoading(false)
+    }
+    if (provasEmCache) setRecentExams(provasEmCache)
+  }, [])
 
   // Acervo de frases: começa com a semente e é trocado pelo conjunto completo
   // assim que o aparelho fica ocioso.
@@ -752,19 +764,28 @@ const TYPE_ICON_MAP: Record<string, React.ReactNode> = {
 }
 
 function MeusMaterialsWidget({ onCount }: { onCount?: (count: number) => void }) {
-  // Mesma hidratação síncrona dos contadores acima: a prateleira "Meus
-  // materiais" abria em esqueleto a cada visita à dashboard, para redesenhar
-  // exatamente os mesmos itens da visita anterior. O veredito de acesso
-  // continua sendo o do servidor — o cache só adianta o desenho.
-  const [materials, setMaterials] = useState<DashMaterial[]>(
-    () => readPageCache<DashMaterial[]>(DASHBOARD_MATERIALS_CACHE_KEY) ?? [],
-  )
-  const [loading, setLoading] = useState(
-    () => readPageCache<DashMaterial[]>(DASHBOARD_MATERIALS_CACHE_KEY) === null,
-  )
+  /*
+   * A prateleira "Meus materiais" abria em esqueleto a cada visita à dashboard
+   * para redesenhar exatamente os mesmos itens da visita anterior — por isso o
+   * cache. O veredito de acesso continua sendo o do servidor; o cache só
+   * adianta o desenho.
+   *
+   * Ele entra no efeito, e não no estado inicial: `readPageCache` lê o
+   * `sessionStorage`, que o servidor não tem, e inicializar o estado com ele
+   * faz servidor e cliente renderizarem coisas diferentes na hidratação
+   * (erro #422 do React).
+   */
+  const [materials, setMaterials] = useState<DashMaterial[]>([])
+  const [loading, setLoading] = useState(true)
   const [expanded, setExpanded] = useState(false)
 
   useEffect(() => {
+    const emCache = readPageCache<DashMaterial[]>(DASHBOARD_MATERIALS_CACHE_KEY)
+    if (emCache) {
+      setMaterials(emCache)
+      setLoading(false)
+      onCount?.(emCache.length)
+    }
     fetch('/api/materiais', { cache: 'no-store' })
       .then(r => r.ok ? r.json() : { materials: [] })
       .then(d => {

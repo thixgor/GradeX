@@ -238,17 +238,27 @@ function ProvasContent() {
   const { user, handleCreateExam, tierLimitExceeded, accountType } = useAppShell()
   const canDownloadPdf = canDownloadExamPdf(accountType, user?.role === 'admin')
 
-  // Hidrata da última visita (síncrono, no primeiro frame). Se houver cache,
-  // a página já monta com conteúdo e revalida por baixo — sem skeleton.
-  const [exams, setExams] = useState<Exam[]>(
-    () => readPageCache<Exam[]>(PROVAS_EXAMS_CACHE_KEY) ?? [],
-  )
-  const [groups, setGroups] = useState<Group[]>(
-    () => readPageCache<Group[]>(PROVAS_GROUPS_CACHE_KEY) ?? [],
-  )
-  const [loading, setLoading] = useState(
-    () => readPageCache<Exam[]>(PROVAS_EXAMS_CACHE_KEY) === null,
-  )
+  /*
+   * O cache da última visita entra no primeiro EFEITO, não no primeiro estado.
+   *
+   * Ele vinha de `useState(() => readPageCache(...))`, e isso quebra a
+   * hidratação: `readPageCache` lê o `sessionStorage`, que no servidor não
+   * existe (devolve `null`) e no navegador devolve a lista da visita anterior.
+   * O servidor então mandava o HTML do skeleton e o React encontrava a grade
+   * de provas montada no primeiro render do cliente — dois HTMLs diferentes
+   * para a mesma tela.
+   *
+   * É o erro #422 do React ("hydration failed"): ele descarta o HTML do
+   * servidor e redesenha tudo no cliente. A tela até se recompõe, mas o erro
+   * vai para o console de todo mundo e a primeira pintura é jogada fora.
+   *
+   * O efeito de carga (mais abaixo) lê o cache antes de ir à rede, então a
+   * lista da última visita continua aparecendo de imediato — o que se perde é
+   * um quadro de skeleton, não a sensação de instantâneo.
+   */
+  const [exams, setExams] = useState<Exam[]>([])
+  const [groups, setGroups] = useState<Group[]>([])
+  const [loading, setLoading] = useState(true)
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null)
   const [selectedExam, setSelectedExam] = useState<Exam | null>(null)
   const [deleteConfirmation, setDeleteConfirmation] = useState<{ examId: string; examTitle: string } | null>(null)
@@ -407,6 +417,17 @@ function ProvasContent() {
   }, [])
 
   useEffect(() => {
+    // A última visita primeiro (síncrono, sem rede), a rede depois: é o que
+    // mantém a lista aparecendo de imediato agora que o cache saiu do estado
+    // inicial. Ver o comentário na declaração de `exams`.
+    const provasEmCache = readPageCache<Exam[]>(PROVAS_EXAMS_CACHE_KEY)
+    const gruposEmCache = readPageCache<Group[]>(PROVAS_GROUPS_CACHE_KEY)
+    if (provasEmCache) {
+      setExams(provasEmCache)
+      setLoading(false)
+    }
+    if (gruposEmCache) setGroups(gruposEmCache)
+
     loadExamsAndGroups()
 
     /*

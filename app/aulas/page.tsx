@@ -184,16 +184,27 @@ export default function AulasPage() {
 const CACHE_DA_HOME = 'ensino:home'
 
 function ConteudoDaHome() {
-  const [dados, setDados] = useState<RespostaDaHome | null>(
-    () => readPageCache<RespostaDaHome>(CACHE_DA_HOME),
-  )
-  const [carregando, setCarregando] = useState(
-    () => readPageCache<RespostaDaHome>(CACHE_DA_HOME) === null,
-  )
+  /*
+   * O cache entra no efeito, não no estado inicial.
+   *
+   * `readPageCache` lê o `sessionStorage`: no servidor devolve `null`, no
+   * navegador devolve a visita anterior. Usado para inicializar o estado, isso
+   * faz o HTML do servidor (skeleton) discordar do primeiro render do cliente
+   * (conteúdo) — a hidratação falha, o React descarta a página e redesenha
+   * tudo (erro #422). O efeito abaixo aplica o cache antes de qualquer
+   * pintura com dados, então o "instantâneo" continua igual.
+   */
+  const [dados, setDados] = useState<RespostaDaHome | null>(null)
+  const [carregando, setCarregando] = useState(true)
   const semMovimento = useReducedMotion()
 
   useEffect(() => {
     let cancelado = false
+    const emCache = readPageCache<RespostaDaHome>(CACHE_DA_HOME)
+    if (emCache) {
+      setDados(emCache)
+      setCarregando(false)
+    }
     fetch('/api/ensino/home', { cache: 'no-store' })
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => {

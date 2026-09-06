@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { CalendarClock } from 'lucide-react'
 import { useRelogioDaLista } from '@/hooks/use-relogio-da-lista'
 import type { Exam } from '@/lib/types'
@@ -46,7 +47,23 @@ export function HorariosDaProva({
   className?: string
 }) {
   const agora = useRelogioDaLista(prova, { jaEntrou })
-  const marcos = horariosDaProva(prova, new Date(agora), { jaEntrou })
+  /*
+   * Nada é desenhado antes de montar.
+   *
+   * Este componente imprime hora — e hora é a única coisa que servidor e
+   * navegador nunca escrevem igual: o instante difere por milissegundos, e o
+   * fuso difere por horas (a Vercel roda em UTC, o aluno está em Brasília).
+   * Um "hoje, 13:00" no HTML do servidor contra "hoje, 10:00" no cliente
+   * quebra a hidratação e faz o React descartar a página inteira (erro #422).
+   *
+   * Ficar de fora do primeiro render resolve pela raiz: o servidor não escreve
+   * horário nenhum, e o navegador escreve o dele logo depois — no efeito
+   * seguinte, antes de qualquer pintura que a pessoa perceba.
+   */
+  const [montado, setMontado] = useState(false)
+  useEffect(() => setMontado(true), [])
+
+  const marcos = montado ? horariosDaProva(prova, new Date(agora), { jaEntrou }) : []
 
   if (marcos.length === 0) return null
 
