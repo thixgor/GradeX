@@ -9,6 +9,7 @@ import { ChevronDown, Trash2, Edit2, FolderPlus, FolderInput, MoreHorizontal, Ar
 import { Exam } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { contarQuestoes } from '@/lib/provas/arvore-grupos'
+import { ordenarProvas, participaDaOrdem } from '@/lib/provas/ordem-das-provas'
 import { HorariosDaProva } from '@/components/provas/horarios-da-prova'
 
 interface GroupData {
@@ -39,7 +40,7 @@ interface ExamGroupProps {
   onCreateSubgroup?: (parentGroupId: string) => void
   /** Abre o seletor de destino para o grupo inteiro (as provas vão junto). */
   onMoveGroup?: (group: GroupData) => void
-  onReorderExam?: (examId: string, direction: 'up' | 'down') => Promise<void>
+  onReorderExam?: (examId: string, direcao: 'antes' | 'depois') => Promise<void>
   onSortGroup?: (groupId: string) => void
   onDownloadPDF?: (exam: Exam) => void
   onGroupDownloadPDF?: (exams: Exam[], type: 'exam' | 'with-answers' | 'gabarito', groupName: string) => void
@@ -204,13 +205,28 @@ export function ExamGroup({
   const accentColor = group.color || '#3B82F6'
   const ancestors = highlighted ? ancestorChain(group, allGroups) : []
 
-  const sortedExams = [...exams]
-    .filter(exam => groupSelfMatches || examMatchesFilter(exam))
-    .sort((a, b) => {
-      const oa = (a as any).orderInGroup ?? 999
-      const ob = (b as any).orderInGroup ?? 999
-      return oa !== ob ? oa - ob : 0
-    })
+  /*
+   * A mesma ordenação da grade de cartões, e não uma cópia.
+   *
+   * Aqui havia um `orderInGroup ?? 999` próprio: prova sem posição virava 999
+   * e empatava com todas as outras sem posição, deixando o desempate por
+   * conta do que o Mongo tivesse devolvido. Uma segunda regra de ordenação é
+   * como esta funcionalidade se perdeu da primeira vez — a lista dizia uma
+   * coisa e a grade dizia outra.
+   */
+  const sortedExams = ordenarProvas(
+    exams.filter(exam => groupSelfMatches || examMatchesFilter(exam)) as any,
+  ) as Exam[]
+
+  /*
+   * Os ids que participam da ordem, na ordem — a mesma lista que o servidor
+   * vai gravar (ver `participaDaOrdem`). As setas usam o índice AQUI, e não o
+   * da lista desenhada: a desenhada pode conter prova pessoal, que não entra
+   * na ordem, e aí a seta da ponta desabilitaria na prova errada.
+   */
+  const idsOrdenaveis = sortedExams
+    .filter(participaDaOrdem)
+    .map(e => e._id?.toString() || '')
 
   const directPracticeExams = sortedExams.filter(e => e.isPracticeExam)
   const totalRows = sortedExams.length + childGroups.length
@@ -451,18 +467,18 @@ export function ExamGroup({
                 >
                   <TreeElbow isLast={isLastRow} />
                   {/* Admin reorder buttons */}
-                  {isAdmin && group.type === 'general' && onReorderExam && (
+                  {isAdmin && group.type === 'general' && onReorderExam && idsOrdenaveis.includes(examId) && (
                     <div className="flex flex-col gap-0.5 flex-shrink-0 mt-0.5 opacity-0 group-hover/exam:opacity-100 sm:flex transition-opacity" onClick={(e) => e.stopPropagation()}>
                       <button
-                        onClick={() => onReorderExam(examId, 'up')}
-                        disabled={examIdx === 0}
+                        onClick={() => onReorderExam(examId, 'antes')}
+                        disabled={idsOrdenaveis.indexOf(examId) === 0}
                         className="p-1 rounded-lg hover:bg-muted disabled:opacity-20 transition-colors"
                       >
                         <ArrowUp className="h-3 w-3 text-muted-foreground" />
                       </button>
                       <button
-                        onClick={() => onReorderExam(examId, 'down')}
-                        disabled={examIdx === sortedExams.length - 1}
+                        onClick={() => onReorderExam(examId, 'depois')}
+                        disabled={idsOrdenaveis.indexOf(examId) === idsOrdenaveis.length - 1}
                         className="p-1 rounded-lg hover:bg-muted disabled:opacity-20 transition-colors"
                       >
                         <ArrowDown className="h-3 w-3 text-muted-foreground" />

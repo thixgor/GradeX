@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState, Suspense } from 'react'
+import { useEffect, useMemo, useRef, useState, Suspense } from 'react'
 import { readPageCache, writePageCache } from '@/lib/page-cache'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { AppShell, useAppShell } from '@/components/app-shell'
@@ -18,6 +18,7 @@ import { MinhasProvasDialog } from '@/components/provas/minhas-provas-dialog'
 import { canDownloadExamPdf } from '@/lib/tier-limits'
 import { provaJaEncerrou, resolverDownloadsDaProva } from '@/lib/provas/downloads-da-prova'
 import { resolverJanelaDaProva } from '@/lib/provas/janela-da-prova'
+import { aplicarOrdem, moverNaLista, ordenarProvas, participaDaOrdem, provasDoEscopo } from '@/lib/provas/ordem-das-provas'
 import { HorariosDaProva } from '@/components/provas/horarios-da-prova'
 import { useRelogioDaLista } from '@/hooks/use-relogio-da-lista'
 import { consumirCotaDoPlano } from '@/lib/plan-consume-client'
@@ -288,6 +289,24 @@ function ProvasContent() {
 
   /** Quando a lista veio do servidor pela última vez — o piso da revalidação. */
   const ultimaCarga = useRef(0)
+
+  /*
+   * Quais cartões já entraram em cena.
+   *
+   * `ExamCard` é declarado DENTRO deste componente, então cada redesenho do
+   * pai cria uma função nova, o React vê outro tipo de componente e remonta a
+   * grade inteira. Montar de novo refaz a animação de entrada — e ela é
+   * escalonada (`delay: 0.1 + index * 0.04`), então uma grade de doze cartões
+   * gasta quase um segundo aparecendo. Isso acontecia a cada tecla digitada na
+   * busca, e passaria a acontecer a cada clique nas setas de ordenar:
+   * organizar dez provas seriam dez piscadas da página inteira, cada uma
+   * parecendo um recarregamento.
+   *
+   * O registro mora aqui, e não no cartão, justamente porque é o cartão que se
+   * perde na remontagem. Cada prova anima na primeira vez que aparece e fica
+   * quieta nas seguintes.
+   */
+  const jaEntraramEmCena = useRef(new Set<string>())
 
   // O aviso da movimentação some sozinho: ele confirma o que acabou de
   // acontecer e não é algo que precise ser descartado à mão.
@@ -678,19 +697,57 @@ function ProvasContent() {
     loadExamsAndGroups()
   }
 
-  async function handleReorderExam(examId: string, direction: 'up' | 'down') {
+  /**
+   * Mover uma prova uma casa na lista em que ela aparece. Só admin.
+   *
+   * ## Otimista, e por quê
+   *
+   * A versão anterior mandava "sobe"/"desce" e recarregava a lista inteira
+   * para ver o resultado — meio segundo de espera para um clique cujo efeito
+   * é mover um cartão uma casa. Aqui a tela se reorganiza na hora e o
+   * servidor confirma depois; se ele recusar, o estado anterior volta e o
+   * aviso diz o que aconteceu. Um cartão que anda e volta é honesto; um
+   * cartão que anda depois de meio segundo parece travado.
+   *
+   * Não há recarga no fim de propósito: a resposta do `GET` fica em cache
+   * privado por 30 s (ver a rota), então recarregar logo depois de gravar
+   * traria a ordem ANTIGA de volta e desfaria na tela o que já está no banco.
+   * A revalidação periódica (que roda com o cache já vencido) confirma sozinha.
+   *
+   * ## A sequência inteira, não o par
+   *
+   * `moverNaLista` calcula a lista nova a partir da lista COMPLETA do escopo —
+   * não da filtrada em tela — e é ela que vai para o servidor. Ver
+   * `lib/provas/ordem-das-provas.ts` para por que "troque estes dois" não
+   * sobrevive a um filtro ligado.
+   */
+  async function handleReorderExam(examId: string, direcao: 'antes' | 'depois') {
+    const alvo = exams.find(e => e._id?.toString() === examId)
+    if (!alvo) return
+
+    const escopo = alvo.groupId ? String(alvo.groupId) : null
+    const listaAtual = provasDoEscopo(exams as any, escopo).map((e: any) => String(e._id))
+    const novaOrdem = moverNaLista(listaAtual, examId, direcao)
+    // Clique na ponta: nada a fazer, e nada a pedir ao servidor.
+    if (novaOrdem.join() === listaAtual.join()) return
+
+    const anterior = exams
+    const otimista = aplicarOrdem(exams as any, novaOrdem) as Exam[]
+    setExams(otimista)
+    writePageCache(PROVAS_EXAMS_CACHE_KEY, otimista)
+
     try {
-      const res = await fetch(`/api/exams/${examId}`, {
+      const res = await fetch('/api/exams/ordem', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ direction }),
+        body: JSON.stringify({ groupId: escopo, ids: novaOrdem }),
       })
-      if (res.ok) {
-        // Reload to get updated order
-        loadExamsAndGroups()
-      }
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || 'Falha ao salvar a ordem')
     } catch (error) {
       console.error('Erro ao reordenar:', error)
+      setExams(anterior)
+      writePageCache(PROVAS_EXAMS_CACHE_KEY, anterior)
+      setAvisoDeMovimentacao('Não foi possível salvar a nova ordem. A lista voltou como estava.')
     }
   }
 
@@ -920,7 +977,17 @@ function ProvasContent() {
     if (statusFilter === 'general') return !exam.isPersonalExam
     return true
   }
-  const filteredUngrouped = ungroupedExams.filter(e => matchesSearch(e) && matchesStatus(e))
+  /*
+   * A ordem do admin vale aqui também.
+   *
+   * Esta grade — e a do drill de um grupo — nunca ordenou nada: mostrava as
+   * provas na ordem em que o Mongo as devolvia (`createdAt` decrescente).
+   * Mesmo depois de o campo passar a chegar do servidor, sem esta linha o
+   * admin continuaria arrastando provas que não saem do lugar.
+   */
+  const filteredUngrouped = ordenarProvas(
+    ungroupedExams.filter(e => matchesSearch(e) && matchesStatus(e)) as any,
+  ) as Exam[]
 
   function countGroupExams(groupId: string): number {
     return contarProvas(groups, exams as any, groupId)
@@ -1032,6 +1099,49 @@ function ProvasContent() {
     )
   }
 
+  /*
+   * Onde cada prova está na sua lista — uma conta só para a página inteira.
+   *
+   * O cartão precisa saber se é o primeiro (não dá para voltar), se é o último
+   * (não dá para avançar) e que posição ocupa. Calcular isso dentro de cada
+   * cartão seria reordenar a lista uma vez POR CARTÃO, a cada redesenho — e a
+   * lista é a mesma para todos eles.
+   *
+   * Só admin: quem não pode reordenar não precisa da conta.
+   */
+  const posicoesDeOrdem = useMemo(() => {
+    const posicoes = new Map<string, { indice: number; total: number }>()
+    if (user?.role !== 'admin') return posicoes
+
+    const porEscopo = new Map<string, Exam[]>()
+    for (const prova of exams) {
+      // Prova pessoal fica de fora: ela é do aluno, não do catálogo, e a
+      // ordem que o admin define é sobre o que a plataforma publica.
+      if (!participaDaOrdem(prova)) continue
+      const escopo = prova.groupId ? String(prova.groupId) : ''
+      const lista = porEscopo.get(escopo)
+      if (lista) lista.push(prova)
+      else porEscopo.set(escopo, [prova])
+    }
+
+    for (const lista of porEscopo.values()) {
+      const ordenada = ordenarProvas(lista as any) as Exam[]
+      ordenada.forEach((prova, indice) => {
+        const id = prova._id?.toString()
+        if (id) posicoes.set(id, { indice, total: ordenada.length })
+      })
+    }
+    return posicoes
+  }, [exams, user?.role])
+
+  /*
+   * Reordenar com a lista filtrada na tela seria mover a prova para junto de
+   * um vizinho que a pessoa NÃO está vendo: o cartão sai do lugar por um
+   * motivo invisível, ou parece não sair. Enquanto há busca ou filtro ligado
+   * os controles somem — é mais honesto do que um botão que mente.
+   */
+  const podeReordenarAgora = user?.role === 'admin' && !normalizedQuery && statusFilter === 'all'
+
   function ExamCard({ exam, index = 0 }: { exam: Exam; index?: number }) {
     /*
      * O cartão tem relógio próprio porque o estado dele é uma CONTA sobre a
@@ -1048,11 +1158,19 @@ function ProvasContent() {
     const status = getExamStatus(exam, new Date(agora))
     const examId = exam._id?.toString() || ''
     const marcada = selecionadas.includes(examId)
+    // Em modo de seleção o cartão inteiro é um alvo de marcar: um botão de
+    // ordem ali dentro seria uma armadilha de meio centímetro.
+    const ordem = podeReordenarAgora && !modoSelecao ? posicoesDeOrdem.get(examId) : undefined
+    // Ver `jaEntraramEmCena`: anima na estreia, e só nela.
+    const estreia = !!examId && !jaEntraramEmCena.current.has(examId)
+    useEffect(() => {
+      if (examId) jaEntraramEmCena.current.add(examId)
+    }, [examId])
     return (
       <motion.div
-        initial={{ opacity: 0, y: 12 }}
+        initial={estreia ? { opacity: 0, y: 12 } : false}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35, delay: 0.1 + index * 0.04 }}
+        transition={estreia ? { duration: 0.35, delay: 0.1 + index * 0.04 } : { duration: 0 }}
         className={cn(
           "glass-page-card rounded-lg overflow-hidden group cursor-pointer relative",
           "hover-glow-green hover-lift transition-all duration-300",
@@ -1129,6 +1247,51 @@ function ProvasContent() {
             {exam.isHidden && (
               <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
                 <EyeOff className="h-2.5 w-2.5" /> Oculta
+              </span>
+            )}
+
+            {/*
+              Ordenar o catálogo — só admin, e só quando a lista está inteira.
+
+              Fica na linha dos selos, e não flutuando sobre o canto do cartão:
+              sem capa, o canto superior esquerdo é onde mora o selo "Geral", e
+              um controle absoluto ali cobriria justamente o que diz que tipo de
+              prova é aquela. Aqui ele divide a linha e o layout se acomoda
+              sozinho, com ou sem capa.
+
+              Sem `opacity-0` e hover: em tela de toque não existe hover, e um
+              controle de admin invisível no tablet é um controle que não
+              existe. O número diz a posição — sem ele, mover numa grade de doze
+              cartões é tentativa e erro.
+            */}
+            {ordem && ordem.total > 1 && (
+              <span
+                className="ml-auto inline-flex items-center gap-0.5 rounded-lg border border-border/60 bg-background/80 px-0.5 py-0.5"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button
+                  type="button"
+                  title="Mover para antes"
+                  aria-label={`Mover "${exam.title}" para antes`}
+                  disabled={ordem.indice === 0}
+                  onClick={(e) => { e.stopPropagation(); handleReorderExam(examId, 'antes') }}
+                  className="p-1 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-25 disabled:hover:bg-transparent transition-colors"
+                >
+                  <ArrowLeft className="h-3 w-3" />
+                </button>
+                <span className="px-0.5 text-[9px] font-semibold tabular-nums text-muted-foreground">
+                  {ordem.indice + 1}/{ordem.total}
+                </span>
+                <button
+                  type="button"
+                  title="Mover para depois"
+                  aria-label={`Mover "${exam.title}" para depois`}
+                  disabled={ordem.indice === ordem.total - 1}
+                  onClick={(e) => { e.stopPropagation(); handleReorderExam(examId, 'depois') }}
+                  className="p-1 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-25 disabled:hover:bg-transparent transition-colors"
+                >
+                  <ArrowRight className="h-3 w-3" />
+                </button>
               </span>
             )}
           </div>
@@ -1563,7 +1726,7 @@ function ProvasContent() {
                               onExamContextMenu={handleExamContextMenu}
                               onDeleteGroup={handleDeleteGroup}
                               onEditGroup={handleEditGroup}
-                              onReorderExam={handleReorderExam}
+                              onReorderExam={podeReordenarAgora ? handleReorderExam : undefined}
                               onSortGroup={handleSortGroup}
                               onMoveGroup={(g) => setAlvoParaMover({ tipo: 'grupo', grupo: g as any })}
                               onDownloadPDF={setPdfModalExam}
@@ -1645,7 +1808,7 @@ function ProvasContent() {
                             onExamContextMenu={handleExamContextMenu}
                             onDeleteGroup={handleDeleteGroup}
                             onEditGroup={handleEditGroup}
-                            onReorderExam={handleReorderExam}
+                            onReorderExam={podeReordenarAgora ? handleReorderExam : undefined}
                             onDownloadPDF={setPdfModalExam}
                             onGroupDownloadPDF={handleGroupDownloadPDF}
                             filterQuery={groupSelfMatchesSearch(group) ? '' : searchQuery}
@@ -1946,7 +2109,7 @@ function ProvasContent() {
                     onExamContextMenu={handleExamContextMenu}
                     onDeleteGroup={handleDeleteGroup}
                     onEditGroup={handleEditGroup}
-                    onReorderExam={handleReorderExam}
+                    onReorderExam={podeReordenarAgora ? handleReorderExam : undefined}
                     onDownloadPDF={setPdfModalExam}
                     onGroupDownloadPDF={handleGroupDownloadPDF}
                     filterQuery={groupSelfMatchesSearch(group) ? '' : searchQuery}
@@ -2092,7 +2255,7 @@ function ProvasContent() {
     if (!currentGroup) return null
 
     const childGroups = groups.filter(g => g.parentGroupId === currentGroup._id)
-    const directExams = exams.filter(e => e.groupId === currentGroup._id)
+    const directExams = ordenarProvas(exams.filter(e => e.groupId === currentGroup._id) as any) as Exam[]
     const directPracticeExams = directExams.filter(e => e.isPracticeExam)
     const isCreator = currentGroup.createdBy === user?.id
     const isAdmin = user?.role === 'admin'

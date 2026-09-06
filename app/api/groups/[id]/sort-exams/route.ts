@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
-import { ObjectId } from 'mongodb'
+import { filtroDoEscopo } from '@/lib/provas/ordem-das-provas'
 
 export const dynamic = 'force-dynamic'
 
@@ -20,8 +20,15 @@ export async function PATCH(
     const db = await getDb()
     const examsCollection = db.collection('exams')
 
+    /*
+     * O mesmo escopo da reordenação manual (`PATCH /api/exams/ordem`).
+     *
+     * Aqui era `{ groupId }` cru, o que incluía prova pessoal: as duas rotas
+     * gravariam posições para conjuntos diferentes, e o "3 de 12" do cartão
+     * discordaria de uma das duas.
+     */
     const exams = await examsCollection
-      .find({ groupId } as any)
+      .find(filtroDoEscopo(groupId) as any)
       .toArray()
 
     if (exams.length === 0) {

@@ -146,6 +146,16 @@ export interface Exam {
   generalizedTimeSeconds?: number // Tempo em segundos quando timeMode = 'generalized'
   // Sistema de grupos e provas pessoais
   groupId?: string // ID do grupo ao qual a prova pertence (null = página inicial)
+  /**
+   * Posição desta prova dentro da sua lista — o grupo, ou a prateleira das que
+   * não têm grupo. Ver `lib/provas/ordem-das-provas.ts`.
+   *
+   * O campo existia no banco e era lido com `as any` em cinco arquivos, o que
+   * é a mesma coisa que não existir para quem lê o tipo: a projeção de
+   * `GET /api/exams` esquecia de pedi-lo e ninguém percebeu, porque nenhuma
+   * assinatura prometia que ele viria. Ausente = nunca posicionada.
+   */
+  orderInGroup?: number
   isPersonalExam?: boolean // Se é uma prova pessoal (criada por usuário, só visível para ele)
   // Embaralhar também as alternativas de cada questão (a letra vira posição,
   // não identidade). Ver lib/provas/embaralhar.ts.

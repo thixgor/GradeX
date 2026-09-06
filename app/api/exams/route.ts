@@ -174,6 +174,14 @@ export async function GET(request: NextRequest) {
       // desenhar; sem os dois campos ela desenha para todo mundo o mesmo.
       audience: 1,
       freeDownloads: 1,
+      /*
+       * A ordem definida pelo admin. Faltar aqui era o motivo de a
+       * reordenação de provas não funcionar em /provas: o admin clicava, o
+       * servidor gravava, a tela recarregava sem o campo e ordenava todas
+       * como "sem posição" — nada saía do lugar, e o sintoma era
+       * indistinguível de a funcionalidade não existir.
+       */
+      orderInGroup: 1,
     }
 
     const projecaoEscolhida = apenasParaLista

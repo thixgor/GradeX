@@ -101,7 +101,21 @@ export async function PATCH(request: NextRequest) {
     if (permitidas.length > 0) {
       await examsCollection.updateMany(
         { _id: { $in: permitidas } as any },
-        { $set: { groupId: groupId || null, updatedAt: new Date() } },
+        {
+          $set: { groupId: groupId || null, updatedAt: new Date() },
+          /*
+           * A posição fica para trás junto com a lista antiga.
+           *
+           * `orderInGroup` é a posição DENTRO de uma lista (ver
+           * `lib/provas/ordem-das-provas.ts`). Carregá-la para o destino faz a
+           * prova chegar já se declarando "a terceira daqui" — e uma prova que
+           * era a primeira do grupo de onde saiu apareceria no topo do grupo
+           * para onde foi, empatada com quem já estava lá. Sem posição, ela
+           * entra depois das que foram arrumadas, que é onde se vê que ela
+           * chegou.
+           */
+          $unset: { orderInGroup: '' },
+        },
       )
     }
 
