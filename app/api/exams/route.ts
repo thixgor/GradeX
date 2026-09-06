@@ -15,6 +15,7 @@ import { ObjectId } from 'mongodb'
 import { podeVerGabarito, prepararProvaParaEntrega } from '@/lib/provas/sanitizar-prova'
 import { normalizarPublico, ramosDePublicoParaMongo } from '@/lib/provas/publico-da-prova'
 import { normalizarEsperas } from '@/lib/provas/downloads-da-prova'
+import { COLECAO_DE_PROGRESSO, contarRespondidas } from '@/lib/provas/retomada'
 import { normalizarTravas } from '@/lib/provas/anti-cola'
 import { normalizarExcecoes, provaApareceNoCatalogo, ramoDeConvidadoParaMongo } from '@/lib/provas/visibilidade-da-prova'
 import { lerPeriodoDoAluno } from '@/lib/provas/periodo-do-aluno'
@@ -287,16 +288,61 @@ export async function GET(request: NextRequest) {
       .map((prova) => prova._id?.toString())
       .filter((valor): valor is string => !!valor)
 
-    const entradas = idsVisiveis.length
-      ? new Set(
-          (
-            await db
-              .collection<EntradaNaProva>(COLECAO_DE_ENTRADAS)
-              .find({ userId: session.userId, examId: { $in: idsVisiveis } }, { projection: { examId: 1 } })
-              .toArray()
-          ).map((entrada) => entrada.examId),
-        )
-      : new Set<string>()
+    /*
+     * O estado desta pessoa em cada prova da lista.
+     *
+     * Só `jaEntrou` não bastava. Quem entrou, saiu, voltou e esgotou a
+     * retomada tem a janela dizendo "em andamento" — ele passou pelo portão a
+     * tempo —, e o cartão oferecia "Realizar Prova" para quem já não tinha o
+     * que realizar. Para decidir isso o catálogo precisa saber também se a
+     * pessoa entregou e em que pé está o rascunho dela.
+     *
+     * São três consultas indexadas sobre os ids já carregados, em paralelo —
+     * não uma por prova.
+     */
+    /*
+     * Só no catálogo (`campos=lista`).
+     *
+     * O caminho `?ids=` monta o PDF de um grupo e não desenha botão nenhum —
+     * pagar três consultas ali seria custo sem uso. A rota também deixou de
+     * consultar submissões para decidir o gabarito (o veredito não depende
+     * mais disso), e esta consulta não reabre aquela porta: é UMA leitura com
+     * `$in` sobre os ids já carregados, para o cartão saber em que pé o aluno
+     * está — não uma por prova.
+     */
+    const precisaDoEstadoDoAluno = apenasParaLista && idsVisiveis.length > 0
+
+    const [entradasCru, submissoesCru, progressosCru] = precisaDoEstadoDoAluno
+      ? await Promise.all([
+          db
+            .collection<EntradaNaProva>(COLECAO_DE_ENTRADAS)
+            .find({ userId: session.userId, examId: { $in: idsVisiveis } }, { projection: { examId: 1 } })
+            .toArray(),
+          db
+            .collection('submissions')
+            .find({ userId: session.userId, examId: { $in: idsVisiveis } }, { projection: { examId: 1 } })
+            .toArray(),
+          db
+            .collection(COLECAO_DE_PROGRESSO)
+            .find(
+              { userId: session.userId, examId: { $in: idsVisiveis } },
+              { projection: { examId: 1, resumesUsed: 1, answers: 1 } },
+            )
+            .toArray(),
+        ])
+      : [[], [], []]
+
+    const entradas = new Set(entradasCru.map((entrada) => entrada.examId))
+    const entregues = new Set(submissoesCru.map((s: any) => String(s.examId)))
+    const rascunhos = new Map(
+      progressosCru.map((p: any) => [
+        String(p.examId),
+        {
+          temRascunho: contarRespondidas(p.answers) > 0,
+          retomadasUsadas: Number(p.resumesUsed) || 0,
+        },
+      ]),
+    )
 
     /*
      * A exceção "mostrar no catálogo dos administradores".
@@ -318,12 +364,20 @@ export async function GET(request: NextRequest) {
           )
         : exams
 
-    const provasParaEntrega = visiveisNoCatalogo.map((prova) => ({
-      ...prepararProvaParaEntrega(prova, contextoBase),
-      // Estado desta requisição, não do documento: é por pessoa, e por isso
-      // não está em `Exam`.
-      jaEntrou: entradas.has(prova._id?.toString() || ''),
-    }))
+    const provasParaEntrega = visiveisNoCatalogo.map((prova) => {
+      const chave = prova._id?.toString() || ''
+      const rascunho = rascunhos.get(chave)
+      return {
+        ...prepararProvaParaEntrega(prova, contextoBase),
+        // Estado desta requisição, não do documento: é por pessoa, e por isso
+        // não está em `Exam`. O cartão decide o botão a partir daqui — ver
+        // `lib/provas/acao-do-aluno.ts`.
+        jaEntrou: entradas.has(chave),
+        jaEntregou: entregues.has(chave),
+        temRascunho: !!rascunho?.temRascunho,
+        retomadasUsadas: rascunho?.retomadasUsadas ?? 0,
+      }
+    })
 
     // Cache privado curto: lista pessoal de provas raramente muda em
     // alguns segundos. SWR mantém UI responsiva sem regerar imediato.

@@ -176,7 +176,9 @@ describe('GET /api/exams?ids=', () => {
     expect(exams[0].questions[0].alternatives.some((a: any) => a.isCorrect)).toBe(true)
   })
 
-  it('nunca consulta submissões: o veredito do gabarito não depende mais delas', async () => {
+  it('o PDF do grupo não consulta submissões: o gabarito não depende delas', async () => {
+    // A otimização que este teste protege: o veredito do gabarito deixou de
+    // perguntar "já entregou?" ao banco, prova a prova.
     submissoesNoBanco = [{ examId: ID_B, userId: 'u1' }]
     await pedir(`https://x.test/api/exams?ids=${ID_A},${ID_B}`)
     expect(chamadas.filter((c) => c.colecao === 'submissions')).toHaveLength(0)
@@ -220,12 +222,27 @@ describe('GET /api/exams?ids=', () => {
     expect(chamadas.filter((c) => c.colecao === 'users')).toHaveLength(0)
   })
 
-  it('sem `ids`, a listagem segue enxuta e sem consulta de submissões', async () => {
+  it('sem `ids`, a listagem segue enxuta — sem o array de questões', async () => {
     await pedir('https://x.test/api/exams?campos=lista')
 
     const consulta = chamadas.find((c) => c.colecao === 'exams')!
     expect(consulta.opcoes.projection).toBeTruthy()
     expect(consulta.opcoes.projection.questions).toBeUndefined()
-    expect(chamadas.filter((c) => c.colecao === 'submissions')).toHaveLength(0)
+  })
+
+  it('o catálogo lê o estado do aluno UMA vez, com $in', async () => {
+    /*
+     * O cartão precisa saber se a pessoa entregou e em que pé está o rascunho
+     * dela — sem isso, quem esgotou a retomada continuava vendo "Realizar
+     * Prova" para uma prova que já tinha acabado para ele.
+     *
+     * O que não pode voltar é a consulta POR PROVA: aqui são três leituras
+     * com `$in` sobre os ids já carregados, e o teste trava esse número.
+     */
+    await pedir('https://x.test/api/exams?campos=lista')
+
+    const submissoes = chamadas.filter((c) => c.colecao === 'submissions')
+    expect(submissoes).toHaveLength(1)
+    expect(submissoes[0].query.examId.$in).toBeInstanceOf(Array)
   })
 })

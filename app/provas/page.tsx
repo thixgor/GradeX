@@ -18,6 +18,7 @@ import { MinhasProvasDialog } from '@/components/provas/minhas-provas-dialog'
 import { canDownloadExamPdf } from '@/lib/tier-limits'
 import { provaJaEncerrou, resolverDownloadsDaProva } from '@/lib/provas/downloads-da-prova'
 import { resolverJanelaDaProva } from '@/lib/provas/janela-da-prova'
+import { resolverAcaoDoAluno } from '@/lib/provas/acao-do-aluno'
 import { aplicarOrdem, moverNaLista, ordenarProvas, participaDaOrdem, provasDoEscopo } from '@/lib/provas/ordem-das-provas'
 import { HorariosDaProva } from '@/components/provas/horarios-da-prova'
 import { useRelogioDaLista } from '@/hooks/use-relogio-da-lista'
@@ -35,6 +36,7 @@ import {
   FileText,
   ClipboardList,
   Info,
+  Lock,
   Sparkles,
   Users,
   Plus,
@@ -950,45 +952,76 @@ function ProvasContent() {
    *
    * Agora as três telas leem a mesma `resolverJanelaDaProva`.
    */
+  /**
+   * O selo e o botão de cada prova na lista.
+   *
+   * Era montado a partir da FASE da janela, e a fase responde "a prova está
+   * aberta?" — não "e para mim?". Quem entrou, saiu, voltou e esgotou a
+   * retomada está em `em-andamento` (passou pelo portão a tempo), então o
+   * cartão dizia "Disponível" e oferecia "Realizar Prova" para alguém cuja
+   * prova já tinha acabado e sido entregue.
+   *
+   * As duas metades moram em `resolverAcaoDoAluno`, e a tela da prova lê a
+   * mesma função — é o que impede as duas de voltarem a discordar.
+   */
   function getExamStatus(exam: Exam, agora: Date = new Date()) {
-    if (exam.isPracticeExam) {
-      return { text: 'Praticar', color: 'text-emerald-600 dark:text-emerald-400', bgColor: 'bg-emerald-500/10', dotColor: 'bg-emerald-500', canTake: true }
+    const veredito = resolverAcaoDoAluno(
+      exam,
+      {
+        jaEntrou: !!(exam as any).jaEntrou,
+        jaEntregou: !!(exam as any).jaEntregou,
+        temRascunho: !!(exam as any).temRascunho,
+        retomadasUsadas: Number((exam as any).retomadasUsadas) || 0,
+      },
+      agora,
+    )
+
+    const aparencia: Record<string, { text: string; color: string; bgColor: string; dotColor: string }> = {
+      praticar: { text: 'Praticar', color: 'text-emerald-600 dark:text-emerald-400', bgColor: 'bg-emerald-500/10', dotColor: 'bg-emerald-500' },
+      fazer: { text: 'Disponivel', color: 'text-emerald-600 dark:text-emerald-400', bgColor: 'bg-emerald-500/10', dotColor: 'bg-emerald-500' },
+      retomar: { text: 'Retomar', color: 'text-blue-600 dark:text-blue-400', bgColor: 'bg-blue-500/10', dotColor: 'bg-blue-500' },
+      'entrar-na-sala': { text: 'Portoes abertos', color: 'text-blue-600 dark:text-blue-400', bgColor: 'bg-blue-500/10', dotColor: 'bg-blue-500' },
+      'ver-resultado': { text: veredito.encerradaParaMim && !(exam as any).jaEntregou && !(exam as any).temRascunho ? 'Finalizada' : 'Entregue', color: 'text-muted-foreground', bgColor: 'bg-muted', dotColor: 'bg-gray-400' },
+      indisponivel: { text: 'Portoes fechados', color: 'text-muted-foreground', bgColor: 'bg-muted', dotColor: 'bg-gray-400' },
+      aguardar: { text: 'Aguardando', color: 'text-amber-600 dark:text-amber-400', bgColor: 'bg-amber-500/10', dotColor: 'bg-amber-500' },
     }
 
-    // `jaEntrou` vem por pessoa em `GET /api/exams` (ver a rota): sem ele o
-    // selo diria "Portões fechados" para quem está dentro e só precisa clicar.
-    //
-    // `agora` é parâmetro, e não `new Date()` fixo aqui dentro, porque o selo
-    // precisa de duas leituras diferentes do relógio: o cartão desenha com o
-    // instante do relógio compartilhado (que o redesenha quando a fase muda),
-    // e um clique pergunta pela hora do próprio clique.
-    const janela = resolverJanelaDaProva(exam, agora, { jaEntrou: !!(exam as any).jaEntrou })
+    const visual = aparencia[veredito.acao] ?? aparencia.indisponivel
 
-    switch (janela.fase) {
-      case 'livre':
-        return { text: 'Disponivel', color: 'text-emerald-600 dark:text-emerald-400', bgColor: 'bg-emerald-500/10', dotColor: 'bg-emerald-500', canTake: true }
-      case 'encerrada':
-        return { text: 'Finalizada', color: 'text-red-500', bgColor: 'bg-red-500/10', dotColor: 'bg-red-500', canTake: false }
-      case 'antes-do-portao':
-        return { text: 'Aguardando', color: 'text-amber-600 dark:text-amber-400', bgColor: 'bg-amber-500/10', dotColor: 'bg-amber-500', canTake: false }
-      case 'sala-de-espera':
-        return { text: 'Portoes abertos', color: 'text-blue-600 dark:text-blue-400', bgColor: 'bg-blue-500/10', dotColor: 'bg-blue-500', canTake: true }
-      case 'em-andamento':
-        return { text: 'Disponivel', color: 'text-emerald-600 dark:text-emerald-400', bgColor: 'bg-emerald-500/10', dotColor: 'bg-emerald-500', canTake: true }
-      case 'portao-fechado':
-        // `canTake` segue `podeIniciar`, e não a fase: quem passou pelo portão
-        // antes de ele fechar continua com a prova aberta — a fase
-        // 'portao-fechado' só existe para quem ficou do lado de fora.
-        return {
-          text: janela.podeIniciar ? 'Em andamento' : 'Portoes fechados',
-          color: janela.podeIniciar ? 'text-emerald-600 dark:text-emerald-400' : 'text-muted-foreground',
-          bgColor: janela.podeIniciar ? 'bg-emerald-500/10' : 'bg-muted',
-          dotColor: janela.podeIniciar ? 'bg-emerald-500' : 'bg-gray-400',
-          canTake: janela.podeIniciar,
-        }
-      default:
-        return { text: 'Indisponivel', color: 'text-muted-foreground', bgColor: 'bg-muted', dotColor: 'bg-gray-400', canTake: false }
+    return {
+      ...visual,
+      canTake: veredito.clicavel && !veredito.encerradaParaMim,
+      veredito,
     }
+  }
+
+  /**
+   * Para onde o clique na prova leva.
+   *
+   * Eram quatro cópias de `if (canTake) → prova; else if (passou do fim) →
+   * resultados`, e a segunda condição olhava só o relógio da turma. Quem
+   * entregou (ou esgotou a retomada) com a prova ainda aberta não passava em
+   * nenhuma das duas: o cartão mudava de botão e o clique não fazia nada.
+   */
+  function abrirProva(exam: Exam) {
+    const status = getExamStatus(exam)
+    const id = exam._id?.toString()
+    if (!id) return
+
+    if (status.canTake) {
+      router.push(`/exam/${id}`)
+      return
+    }
+    if (!status.veredito.clicavel) return
+
+    // Prova encerrada para todos: o ranking da turma. Encerrada só para esta
+    // pessoa: o resumo dela, que é o que existe enquanto os outros respondem.
+    const encerradaParaTodos = new Date() > new Date(exam.endTime)
+    router.push(
+      encerradaParaTodos || !user?.id
+        ? `/exam/${id}/results`
+        : `/exam/${id}/user/${user.id}`,
+    )
   }
 
   // ─── Computed Data ──────────────────────────────────────────
@@ -1216,11 +1249,7 @@ function ProvasContent() {
             alternarSelecao(examId)
             return
           }
-          if (status.canTake) {
-            router.push(`/exam/${exam._id}`)
-          } else if (new Date() > new Date(exam.endTime)) {
-            router.push(`/exam/${exam._id}/results`)
-          }
+          abrirProva(exam)
         }}
       >
         {modoSelecao && (
@@ -1352,19 +1381,48 @@ function ProvasContent() {
           */}
           <HorariosDaProva prova={exam} jaEntrou={!!(exam as any).jaEntrou} />
 
+          {/*
+            A frase que explica o estado — "os portões já fecharam, você entrou
+            a tempo", "suas respostas foram entregues". Sem ela o cartão mostra
+            um botão diferente do de ontem e não diz por quê.
+          */}
+          {status.veredito.detalhe && (
+            <p className={cn(
+              'flex items-start gap-1.5 rounded-lg px-2.5 py-1.5 text-[11px] leading-snug',
+              status.veredito.portaoFechado || status.veredito.encerradaParaMim
+                ? 'bg-muted text-muted-foreground'
+                : 'bg-blue-500/5 text-blue-700 dark:text-blue-300',
+            )}>
+              {status.veredito.portaoFechado ? (
+                <Lock className="mt-0.5 h-3 w-3 flex-shrink-0" />
+              ) : status.veredito.encerradaParaMim ? (
+                <CheckCircle2 className="mt-0.5 h-3 w-3 flex-shrink-0" />
+              ) : (
+                <Info className="mt-0.5 h-3 w-3 flex-shrink-0" />
+              )}
+              <span>{status.veredito.detalhe}</span>
+            </p>
+          )}
+
           <div className="flex gap-2 pt-1">
+            {/*
+              O botão diz o que ele faz — vindo de `resolverAcaoDoAluno`, não de
+              adivinhar pelo texto do selo. Antes era `status.text.includes(…)`:
+              o rótulo do selo governava o rótulo do botão, e uma prova entregue
+              caía no ramo genérico e oferecia "Realizar Prova".
+            */}
             {status.canTake ? (
               <Button className="flex-1 btn-brand-glow text-white rounded-xl text-xs font-semibold h-9" size="sm">
                 <Play className="h-3.5 w-3.5 mr-1.5" />
-                {exam.isPracticeExam ? 'Praticar' : status.text.includes('Aguardando') ? 'Entrar na Sala' : 'Realizar Prova'}
+                {status.veredito.rotulo}
               </Button>
-            ) : new Date() > new Date(exam.endTime) ? (
+            ) : status.veredito.clicavel ? (
               <Button className="flex-1 rounded-xl text-xs h-9" variant="outline" size="sm">
-                <Eye className="h-3.5 w-3.5 mr-1.5" /> Ver Resultados
+                <Eye className="h-3.5 w-3.5 mr-1.5" /> {status.veredito.rotulo}
               </Button>
             ) : (
               <Button className="flex-1 rounded-xl text-xs h-9" variant="secondary" size="sm" disabled>
-                {status.text}
+                {status.veredito.rotulo}
               </Button>
             )}
 
@@ -1748,9 +1806,7 @@ function ProvasContent() {
                               userRole={user?.role || 'user'}
                               highlightGroupId={highlightGroupId}
                               onExamClick={(exam) => {
-                                const status = getExamStatus(exam)
-                                if (status.canTake) router.push(`/exam/${exam._id}`)
-                                else if (new Date() > new Date(exam.endTime)) router.push(`/exam/${exam._id}/results`)
+                                abrirProva(exam)
                               }}
                               onExamContextMenu={handleExamContextMenu}
                               onDeleteGroup={handleDeleteGroup}
@@ -1830,9 +1886,7 @@ function ProvasContent() {
                             userRole={user?.role || 'user'}
                             highlightGroupId={highlightGroupId}
                             onExamClick={(exam) => {
-                              const status = getExamStatus(exam)
-                              if (status.canTake) router.push(`/exam/${exam._id}`)
-                              else if (new Date() > new Date(exam.endTime)) router.push(`/exam/${exam._id}/results`)
+                              abrirProva(exam)
                             }}
                             onExamContextMenu={handleExamContextMenu}
                             onDeleteGroup={handleDeleteGroup}
@@ -2131,9 +2185,7 @@ function ProvasContent() {
                     userRole={user?.role || 'user'}
                     highlightGroupId={highlightGroupId}
                     onExamClick={(exam) => {
-                      const status = getExamStatus(exam)
-                      if (status.canTake) router.push(`/exam/${exam._id}`)
-                      else if (new Date() > new Date(exam.endTime)) router.push(`/exam/${exam._id}/results`)
+                      abrirProva(exam)
                     }}
                     onExamContextMenu={handleExamContextMenu}
                     onDeleteGroup={handleDeleteGroup}
