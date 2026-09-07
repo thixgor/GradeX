@@ -47,6 +47,103 @@ export interface EntradaNaProva {
   userId: string
   /** Instante em que o servidor autorizou a passagem. Nunca reescrito. */
   entrouEm: Date
+  /**
+   * O que a pessoa preencheu na sala de espera — a "folha de presença".
+   *
+   * ## Por que isto mora AQUI e não no rascunho da prova
+   *
+   * Nome e assinatura são preenchidos ANTES de a prova começar: é o que a sala
+   * de espera pede enquanto a contagem regressiva corre. O rascunho
+   * (`exam_progress`) só nasce quando a pessoa já está respondendo, e a rota
+   * que o grava recusa qualquer envio com a janela fechada (`podeEnviar` é
+   * falso antes do início) — de propósito, porque gravar respostas antes da
+   * hora seria responder antes da hora.
+   *
+   * Então, até esta funcionalidade existir, a assinatura feita na sala de
+   * espera vivia só no estado do React: ela chegava ao servidor junto com a
+   * primeira gravação do rascunho, isto é, depois do início. Quem assinou às
+   * 13h20 aparecia como "não assinou" até as 14h — e o painel do admin, que
+   * existe justamente para conferir a presença antes de a prova abrir, não
+   * tinha o que mostrar.
+   *
+   * O registro de entrada é o lugar certo: ele já é o fato "esta pessoa está
+   * na sala", gravado pelo servidor, e a folha de presença é um atributo desse
+   * fato.
+   */
+  nomeDeclarado?: string
+  /** A imagem da assinatura em base64 (`data:image/...`). */
+  assinatura?: string
+  /** Quando a assinatura foi gravada. Ausente = ainda não assinou. */
+  assinadoEm?: Date | null
+  /** A transcrição da frase-tema, quando a prova pede uma. */
+  transcricaoDaFrase?: string
+  /** Última vez que a folha de presença mudou. */
+  atualizadoEm?: Date
+}
+
+/** Teto da imagem da assinatura — o mesmo do rascunho da prova. */
+export const LIMITE_DA_ASSINATURA = 400_000
+
+/** O que a sala de espera manda enquanto a pessoa espera. */
+export interface FolhaDePresenca {
+  nome?: string | null
+  assinatura?: string | null
+  transcricao?: string | null
+}
+
+export interface ResultadoDoCheckIn {
+  /** Havia registro de entrada para atualizar. */
+  gravou: boolean
+  /** Há assinatura gravada depois desta chamada. */
+  assinou: boolean
+}
+
+/**
+ * Grava a folha de presença de quem está na sala.
+ *
+ * Sem `upsert`, e isso é a regra de acesso, não um detalhe: só quem já passou
+ * pelo portão tem registro para atualizar. Um POST desta rota vindo de quem
+ * nunca entrou não cria presença nenhuma — ele não encontra documento e volta
+ * `gravou: false`.
+ *
+ * A assinatura só é gravada quando de fato parece uma imagem, e `assinadoEm`
+ * acompanha o gesto: apagar a assinatura no campo apaga também a marca de
+ * quando ela existiu, senão o painel continuaria dizendo "assinou às 13h20"
+ * sobre um campo em branco.
+ */
+export async function registrarFolhaDePresenca(
+  db: Db,
+  examId: string,
+  userId: string,
+  folha: FolhaDePresenca,
+  agora: Date = new Date(),
+): Promise<ResultadoDoCheckIn> {
+  const set: Record<string, unknown> = { atualizadoEm: agora }
+  const unset: Record<string, unknown> = {}
+  let assinou = false
+
+  if (typeof folha.nome === 'string') set.nomeDeclarado = folha.nome.slice(0, 160)
+  if (typeof folha.transcricao === 'string') {
+    set.transcricaoDaFrase = folha.transcricao.slice(0, 2000)
+  }
+
+  if (typeof folha.assinatura === 'string' && folha.assinatura.startsWith('data:image/')) {
+    set.assinatura = folha.assinatura.slice(0, LIMITE_DA_ASSINATURA)
+    set.assinadoEm = agora
+    assinou = true
+  } else if (folha.assinatura === '' || folha.assinatura === null) {
+    unset.assinatura = ''
+    unset.assinadoEm = ''
+  }
+
+  const update: Record<string, unknown> = { $set: set }
+  if (Object.keys(unset).length > 0) update.$unset = unset
+
+  const resultado = await db
+    .collection<EntradaNaProva>(COLECAO_DE_ENTRADAS)
+    .updateOne({ examId, userId }, update as any)
+
+  return { gravou: resultado.matchedCount > 0, assinou }
 }
 
 /** Esta pessoa já passou pelo portão desta prova? */

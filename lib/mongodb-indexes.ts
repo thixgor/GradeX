@@ -40,6 +40,17 @@ export async function ensureIndexes(db: Db): Promise<void> {
     // API já rejeita CPF repetido antes de gravar.
     db.collection('users').createIndex({ cpf: 1 }, { sparse: true }),
     db.collection('submissions').createIndex({ userId: 1 }),
+    /*
+     * Entregas por prova.
+     *
+     * Havia índice por `userId` e nenhum por `examId`, e é por `examId` que as
+     * telas de prova perguntam: o relatório, a correção de discursivas, a
+     * classificação e o acompanhamento ao vivo do painel — este último de 15
+     * em 15 segundos enquanto a prova acontece. Sem o índice, cada volta do
+     * relógio varria a coleção de entregas inteira, de todas as provas já
+     * aplicadas, para achar as de uma.
+     */
+    db.collection('submissions').createIndex({ examId: 1 }),
     db.collection('exam_submissions').createIndex({ userId: 1 }),
     db.collection('notifications').createIndex({ userId: 1, read: 1 }),
     // ── Suporte / tickets ──

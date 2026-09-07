@@ -12,6 +12,7 @@ import { ToastAlert } from '@/components/ui/toast-alert'
 import { useRelogioDaLista } from '@/hooks/use-relogio-da-lista'
 import { CartaoDeProva, type AcaoNaProva, type AcoesDaProva } from '@/components/admin/provas/cartao-de-prova'
 import { DialogoDePdf } from '@/components/admin/provas/dialogo-de-pdf'
+import { PainelAoVivo } from '@/components/admin/provas/painel-ao-vivo'
 import { nomeDoArquivoDePdf, opcaoDePdf, type FormatoDePdfDaProva } from '@/lib/provas/formatos-de-pdf'
 import { Exam } from '@/lib/types'
 import { cn } from '@/lib/utils'
@@ -73,6 +74,16 @@ export default function AdminExamsPage() {
    * pacote completo, que são três e demoram o que três demoram.
    */
   const [provaParaPdf, setProvaParaPdf] = useState<Exam | null>(null)
+  /**
+   * A prova que está sendo acompanhada ao vivo — e, sendo `null`, o painel
+   * fechado.
+   *
+   * Guardar o ID, e não o objeto, é o que mantém o painel casado com a lista:
+   * "Forçar Início" corrige a prova dentro do estado (`aplicarNaProva`), e um
+   * painel segurando uma cópia congelada continuaria contando para um horário
+   * que não existe mais.
+   */
+  const [provaAoVivoId, setProvaAoVivoId] = useState<string | null>(null)
   const [formatoEmCurso, setFormatoEmCurso] = useState<FormatoDePdfDaProva | null>(null)
   const [progressoDoPacote, setProgressoDoPacote] = useState<{ feitos: number; total: number } | null>(null)
 
@@ -667,6 +678,7 @@ export default function AdminExamsPage() {
       }),
     corrigirDiscursivas: prova => router.push(`/admin/exams/${idDaProva(prova)}/corrections`),
     verRelatorio: prova => router.push(`/admin/exams/${idDaProva(prova)}/relatorio`),
+    acompanharAoVivo: prova => setProvaAoVivoId(idDaProva(prova)),
     gerarPDF: abrirOpcoesDePdf,
     deletar: prova =>
       pedirConfirmacao({
@@ -692,6 +704,19 @@ export default function AdminExamsPage() {
     router,
     zerarProva,
   ])
+
+  /*
+   * A prova acompanhada, buscada na lista a cada render.
+   *
+   * É de propósito que ela não seja uma cópia guardada no estado: "Forçar
+   * Início" e "Forçar Término" corrigem a prova dentro de `exams`, e o painel
+   * precisa acompanhar essa correção — senão a contagem regressiva dele
+   * continuaria mirando um horário que o admin acabou de mudar.
+   */
+  const provaAoVivo = useMemo(
+    () => (provaAoVivoId ? exams.find(e => idDaProva(e) === provaAoVivoId) ?? null : null),
+    [exams, provaAoVivoId],
+  )
 
   const q = search.trim().toLowerCase()
   const filteredExams = q
@@ -962,6 +987,9 @@ export default function AdminExamsPage() {
           </div>
         )}
       </main>
+
+      {/* Acompanhamento ao vivo — ver components/admin/provas/painel-ao-vivo.tsx */}
+      <PainelAoVivo prova={provaAoVivo} onFechar={() => setProvaAoVivoId(null)} />
 
       {/* Escolha do formato do PDF — ver components/admin/provas/dialogo-de-pdf.tsx */}
       <DialogoDePdf

@@ -639,15 +639,64 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   const gravandoRef = useRef(false)
   const inicioNoServidorRef = useRef<Date | null>(null)
 
+  /**
+   * A questão em que a pessoa está — no modo de ROLAGEM.
+   *
+   * ## O ponto cego
+   *
+   * `currentQuestionIndex` é o estado da navegação PAGINADA: ele avança quando
+   * a pessoa clica em "Próxima". No modo de rolagem não há esse clique — todas
+   * as questões estão na mesma página —, e o índice fica parado no 0 do começo
+   * ao fim. Quem só o lê conclui que a turma inteira passou três horas na
+   * questão 1: era o que o rascunho gravava, e por consequência o que o painel
+   * de acompanhamento do admin mostraria.
+   *
+   * Aqui a posição vem da tela: a questão cujo topo está mais perto do alto da
+   * janela é a que a pessoa está lendo. A conta roda junto da gravação do
+   * rascunho (uma vez a cada 12 segundos), e não a cada evento de rolagem —
+   * medir a página a 60 quadros por segundo para gravar um número duas vezes
+   * por minuto seria pagar caro por precisão que ninguém usa.
+   *
+   * Devolve `null` fora do modo de rolagem, e aí quem manda é o índice da
+   * navegação paginada, que ali está certo.
+   */
+  const questaoNoAltoDaTela = useCallback((): number | null => {
+    const prova = examRef.current
+    if (!prova || prova.navigationMode !== 'scroll') return null
+    if (typeof document === 'undefined') return null
+
+    const questoes = prova.questions || []
+    // A âncora não é o topo absoluto: o cabeçalho fixo cobre a primeira faixa
+    // da tela, e uma questão encostada nele já está fora de leitura.
+    const ANCORA = 140
+    let escolhida: number | null = null
+    let menorDistancia = Number.POSITIVE_INFINITY
+
+    for (let i = 0; i < questoes.length; i++) {
+      const elemento = document.getElementById(`question-${questoes[i].id}`)
+      if (!elemento) continue
+      const { top, bottom } = elemento.getBoundingClientRect()
+      // Só quem está de fato na tela concorre.
+      if (bottom < 0 || top > window.innerHeight) continue
+      const distancia = Math.abs(top - ANCORA)
+      if (distancia < menorDistancia) {
+        menorDistancia = distancia
+        escolhida = i
+      }
+    }
+
+    return escolhida
+  }, [])
+
   const montarRascunho = useCallback(() => ({
     answers: answersRef.current,
-    currentQuestionIndex: currentQuestionRef.current,
+    currentQuestionIndex: questaoNoAltoDaTela() ?? currentQuestionRef.current,
     questionOrder: ordemDasQuestoesRef.current,
     userName: userNameRef.current,
     themeTranscription: themeTranscriptionRef.current,
     signature: assinaturaRef.current || undefined,
     startedAt: (examStartTimeRef.current || new Date()).toISOString(),
-  }), [])
+  }), [questaoNoAltoDaTela])
 
   const gravarProgresso = useCallback(
     async (forcar = false) => {
@@ -695,6 +744,76 @@ export default function ExamPage({ params }: { params: { id: string } }) {
       window.removeEventListener('pagehide', aoEsconder)
     }
   }, [started, submitted, alreadySubmitted, exam, gravarProgresso])
+
+  /*
+   * ═══ A folha de presença da sala de espera ═══
+   *
+   * Nome e assinatura são preenchidos ANTES de a prova começar — é o que a sala
+   * de espera pede enquanto a contagem regressiva corre. Mas o único lugar onde
+   * eles eram gravados era o rascunho logo acima, que só roda depois do início
+   * (e cuja rota recusa qualquer envio com a janela fechada, de propósito).
+   *
+   * Consequência: quem assinava às 13h20 continuava "sem assinatura" para o
+   * servidor até as 14h. O painel de acompanhamento do admin — que existe
+   * justamente para conferir a presença ENQUANTO a sala enche — não tinha o que
+   * mostrar, e uma queda de energia antes do início levava a assinatura junto,
+   * porque ela vivia só no estado do React.
+   *
+   * Aqui ela vai para o registro de entrada (`PATCH /api/exams/[id]/entrada`),
+   * que já é o fato "esta pessoa está na sala".
+   *
+   * ## Uma requisição por gesto, não por segundo
+   *
+   * `janela` é recalculada a cada segundo (o efeito acima), então nada aqui
+   * pode depender do objeto dela: as dependências são booleanos, e a
+   * "impressão digital" da folha impede reenviar o que o servidor já tem. Uma
+   * pessoa na sala de espera gera duas ou três chamadas no total — digitou o
+   * nome, assinou —, e não uma a cada segundo de espera.
+   */
+  const folhaEnviadaRef = useRef<string | null>(null)
+  const podeRegistrarPresenca =
+    !!janela && janela.fase !== 'livre' && !janela.encerrada && (janela.podeEntrar || janela.jaEntrou)
+
+  useEffect(() => {
+    if (!id || !podeRegistrarPresenca) return
+    if (started || submitted || alreadySubmitted) return
+
+    const nome = userName.trim()
+    const transcricao = themeTranscription.trim()
+    const assinatura = signature || ''
+    if (!nome && !transcricao && !assinatura) return
+
+    // O tamanho e o fim da assinatura bastam para saber que ela mudou — guardar
+    // os 400 KB inteiros num ref só para comparar seria pagar duas vezes.
+    const impressao = `${nome}|${transcricao}|${assinatura.length}:${assinatura.slice(-48)}`
+    if (impressao === folhaEnviadaRef.current) return
+
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/exams/${id}/entrada`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nome, transcricao, assinatura }),
+        })
+        if (res.ok) folhaEnviadaRef.current = impressao
+      } catch {
+        // Sem alarme: a folha é uma conveniência para o painel do admin, e a
+        // próxima mudança no campo tenta de novo. A assinatura que vale para
+        // iniciar a prova continua sendo conferida na tela.
+      }
+    }, 2500)
+
+    return () => clearTimeout(timer)
+  }, [
+    id,
+    podeRegistrarPresenca,
+    started,
+    submitted,
+    alreadySubmitted,
+    userName,
+    themeTranscription,
+    signature,
+  ])
 
   /** Busca o rascunho ao abrir a prova, para oferecer "continuar". */
   const carregarRetomada = useCallback(async () => {

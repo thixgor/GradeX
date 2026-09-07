@@ -13,6 +13,7 @@ import {
   FileDown,
   Medal,
   Play,
+  Radio,
   RotateCcw,
   StopCircle,
   Trash2,
@@ -23,6 +24,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { algumaLiberacaoLigada, normalizarLiberacoes } from '@/lib/provas/downloads-da-prova'
+import { provaAcompanhavel } from '@/lib/provas/acompanhamento-ao-vivo'
 import {
   ROTULO_DA_FASE,
   eProvaSemJanela,
@@ -76,6 +78,7 @@ export interface AcoesDaProva {
   zerar: (prova: Exam) => void
   corrigirDiscursivas: (prova: Exam) => void
   verRelatorio: (prova: Exam) => void
+  acompanharAoVivo: (prova: Exam) => void
   gerarPDF: (prova: Exam) => void
   deletar: (prova: Exam) => void
   verRankingPublico: (prova: Exam) => void
@@ -149,6 +152,15 @@ function CartaoDeProvaBase({ prova, agora, acaoEmCurso, acoes }: CartaoDeProvaPr
   const publico = normalizarPublico((prova as any).audience)
   const liberaDownloads = algumaLiberacaoLigada(normalizarLiberacoes((prova as any).freeDownloads))
   const temDiscursivas = prova.questions?.some(q => q.type === 'discursive')
+  /*
+   * O acompanhamento ao vivo só existe para prova com janela.
+   *
+   * Prova de treino e prova pessoal não guardam rascunho no servidor (a tela da
+   * prova pula a gravação para elas), então o painel abriria numa lista
+   * permanentemente vazia — e uma tela que não pode ter conteúdo não deve ter
+   * botão. Ver `lib/provas/acompanhamento-ao-vivo.ts`.
+   */
+  const podeAcompanhar = provaAcompanhavel(prova)
 
   // Uma ação em curso deixa o cartão translúcido: é o aviso de que aquele
   // pedaço da tela está em movimento, no lugar do recarregamento inteiro que
@@ -363,6 +375,29 @@ function CartaoDeProvaBase({ prova, agora, acaoEmCurso, acoes }: CartaoDeProvaPr
             >
               <FileCheck className="h-4 w-4 mr-2" />
               Corrigir Discursivas
+            </Button>
+          )}
+
+          {/*
+            Acompanhar ao vivo fica ao lado do relatório porque as duas
+            respondem à mesma pergunta em tempos diferentes: esta durante a
+            prova, aquela depois. O destaque (`default`) enquanto a prova
+            acontece é deliberado — é o único botão do cartão que só serve
+            AGORA, e daqui a três horas ele não serve mais para nada.
+          */}
+          {podeAcompanhar && (
+            <Button
+              variant={
+                janela.fase === 'em-andamento' || janela.fase === 'sala-de-espera'
+                  ? 'default'
+                  : 'outline'
+              }
+              size="sm"
+              onClick={() => acoes.acompanharAoVivo(prova)}
+              title="Quem entrou, quem assinou e em que questão cada aluno está"
+            >
+              <Radio className="h-4 w-4 mr-2" />
+              Acompanhar ao vivo
             </Button>
           )}
 

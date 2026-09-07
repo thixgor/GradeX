@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { janelaMudou, registrarEntrada } from '@/lib/provas/entrada-na-prova'
+import {
+  janelaMudou,
+  registrarEntrada,
+  registrarFolhaDePresenca,
+} from '@/lib/provas/entrada-na-prova'
 
 /**
  * Um Mongo de mentira, com o suficiente para o `upsert` deste módulo: guarda
@@ -137,5 +141,100 @@ describe('janelaMudou', () => {
   it('tirar ou pôr um portão é mudança', () => {
     expect(janelaMudou(janela, { gatesClose: null as any })).toBe(true)
     expect(janelaMudou({ ...janela, gatesOpen: undefined }, { gatesOpen: new Date() })).toBe(true)
+  })
+})
+
+/**
+ * Um Mongo de mentira para a folha de presença: aqui o que importa é o
+ * `updateOne` SEM `upsert` — quem não tem registro de entrada não vira
+ * presença — e o que foi parar em `$set` e `$unset`.
+ */
+function bancoDaFolha(existentes: string[] = []) {
+  const guardadas = new Set(existentes)
+  const updates: { filtro: any; update: any }[] = []
+
+  return {
+    updates,
+    collection: () => ({
+      updateOne: async (filtro: any, update: any) => {
+        updates.push({ filtro, update })
+        const existe = guardadas.has(`${filtro.examId}:${filtro.userId}`)
+        return { matchedCount: existe ? 1 : 0, upsertedCount: 0 }
+      },
+    }),
+  } as any
+}
+
+const ASSINATURA = 'data:image/png;base64,iVBORw0KGgo='
+
+describe('registrarFolhaDePresenca', () => {
+  it('grava nome, transcrição e assinatura de quem está na sala', async () => {
+    const db = bancoDaFolha(['e1:u1'])
+    const agora = new Date('2026-05-10T13:20:00Z')
+
+    const r = await registrarFolhaDePresenca(
+      db,
+      'e1',
+      'u1',
+      { nome: 'Maria de Souza', transcricao: 'A frase', assinatura: ASSINATURA },
+      agora,
+    )
+
+    expect(r).toEqual({ gravou: true, assinou: true })
+    const { update } = db.updates[0]
+    expect(update.$set.nomeDeclarado).toBe('Maria de Souza')
+    expect(update.$set.transcricaoDaFrase).toBe('A frase')
+    expect(update.$set.assinatura).toBe(ASSINATURA)
+    expect(update.$set.assinadoEm).toEqual(agora)
+  })
+
+  it('não cria presença para quem nunca passou pelo portão', async () => {
+    // Sem `upsert`: o registro de entrada é o controle de acesso, e esta rota
+    // não pode fabricar um.
+    const db = bancoDaFolha()
+    const r = await registrarFolhaDePresenca(db, 'e1', 'u2', { nome: 'Intruso' })
+
+    expect(r.gravou).toBe(false)
+    expect(db.updates[0].update.$set).not.toHaveProperty('assinatura')
+    expect('upsert' in db.updates[0]).toBe(false)
+  })
+
+  it('ignora o que não é imagem — e não marca ninguém como assinado por isso', async () => {
+    const db = bancoDaFolha(['e1:u1'])
+    const r = await registrarFolhaDePresenca(db, 'e1', 'u1', { assinatura: 'javascript:alert(1)' })
+
+    expect(r.assinou).toBe(false)
+    expect(db.updates[0].update.$set).not.toHaveProperty('assinatura')
+    expect(db.updates[0].update).not.toHaveProperty('$unset')
+  })
+
+  it('apagar a assinatura apaga também a marca de quando ela existiu', async () => {
+    const db = bancoDaFolha(['e1:u1'])
+    const r = await registrarFolhaDePresenca(db, 'e1', 'u1', { assinatura: '' })
+
+    expect(r.assinou).toBe(false)
+    expect(db.updates[0].update.$unset).toEqual({ assinatura: '', assinadoEm: '' })
+  })
+
+  it('corta o nome e a assinatura nos limites, em vez de recusar', async () => {
+    const db = bancoDaFolha(['e1:u1'])
+    await registrarFolhaDePresenca(db, 'e1', 'u1', {
+      nome: 'x'.repeat(500),
+      assinatura: `data:image/png;base64,${'A'.repeat(500_000)}`,
+    })
+
+    const { $set } = db.updates[0].update
+    expect($set.nomeDeclarado).toHaveLength(160)
+    expect($set.assinatura.length).toBe(400_000)
+  })
+
+  it('campo ausente não é campo apagado', async () => {
+    // A tela manda só o que mudou; um `undefined` não pode virar um `$set`
+    // que zera o nome já gravado.
+    const db = bancoDaFolha(['e1:u1'])
+    await registrarFolhaDePresenca(db, 'e1', 'u1', { assinatura: ASSINATURA })
+
+    expect(db.updates[0].update.$set).not.toHaveProperty('nomeDeclarado')
+    expect(db.updates[0].update.$set).not.toHaveProperty('transcricaoDaFrase')
   })
 })
