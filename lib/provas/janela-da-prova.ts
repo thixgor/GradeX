@@ -370,3 +370,54 @@ export function prazoDeEntrega(
   if (!fim) return prazoIndividual
   return prazoIndividual.getTime() < fim.getTime() ? prazoIndividual : fim
 }
+
+/**
+ * O atraso tolerado para a ENTREGA que chega no apagar das luzes.
+ *
+ * ## Por que existe
+ *
+ * `podeEnviar` é `agora <= terminaEm`, sem folga nenhuma. Enquanto a entrega
+ * era só o clique de alguém que ainda tinha tempo, essa dureza não incomodava:
+ * quem clica às 15h59 é aceito, quem clica às 16h01 sabe que perdeu a hora.
+ *
+ * Ela passou a incomodar quando o fim do tempo virou uma ENTREGA AUTOMÁTICA
+ * (ver `app/exam/[id]/page.tsx`). Essa entrega sai no milissegundo do prazo e
+ * chega ao servidor depois da viagem de rede — sempre depois. Sem folga, a
+ * prova que o próprio sistema decidiu entregar seria recusada pelo próprio
+ * sistema, e a pessoa que ficou até o último minuto seria exatamente a que
+ * perderia tudo.
+ *
+ * ## O que ela não é
+ *
+ * Não é tempo de prova. A tela encerra no prazo, a gravação do rascunho
+ * (`PUT /progress`) continua recusando com a prova fechada e nenhuma fase muda
+ * por causa disto: `encerrada` continua sendo `agora > terminaEm` para todo o
+ * resto do sistema — gabarito, ranking, retomada. É só a porta de entrega que
+ * fica encostada por mais um minuto e meio, para a folha que já estava na mão
+ * do aluno quando o sinal tocou.
+ *
+ * E é curta de propósito: uma folga generosa seria tempo extra disfarçado para
+ * quem soubesse chamar a rota na mão.
+ */
+export const TOLERANCIA_DE_ENTREGA_MS = 90_000
+
+/**
+ * Esta entrega pode ser aceita agora?
+ *
+ * O `podeEnviar` da janela, mais a folga acima — e só para quem está entregando
+ * uma prova que já tinha começado. Entrega adiantada (antes do início) continua
+ * recusada: ali não há nada a salvar, há uma prova que ainda não aconteceu.
+ */
+export function podeEntregarNoLimite(
+  prova: Partial<Exam> | null | undefined,
+  agora: Date = new Date(),
+  pessoa: ContextoDaPessoa = {},
+): boolean {
+  const janela = resolverJanelaDaProva(prova, agora, pessoa)
+  if (janela.podeEnviar) return true
+  if (!janela.terminaEm || !janela.comecaEm) return false
+  if (agora.getTime() < janela.comecaEm.getTime()) return false
+
+  const atraso = agora.getTime() - janela.terminaEm.getTime()
+  return atraso > 0 && atraso <= TOLERANCIA_DE_ENTREGA_MS
+}

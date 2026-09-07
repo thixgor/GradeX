@@ -51,6 +51,12 @@ import {
   resolverJanelaDaProva,
   type JanelaDaProva,
 } from '@/lib/provas/janela-da-prova'
+import {
+  agoraDoServidor,
+  medirDesvio,
+  prazoVencido,
+  type MedidaDoRelogio,
+} from '@/lib/provas/relogio-da-prova'
 import { resolverDownloadsDaProva } from '@/lib/provas/downloads-da-prova'
 import { travasDaProva } from '@/lib/provas/anti-cola'
 import { exigeEntregaAutomatica, inicioBloqueadoPorProgresso } from '@/lib/provas/retomada'
@@ -625,6 +631,138 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   }, [started, submitted, alreadySubmitted])
 
   /*
+   * ═══ O relógio que vale é o do servidor ═══
+   *
+   * Tudo o que esta tela decide sobre TEMPO — a fase da janela, a contagem
+   * regressiva, o fim da prova — era decidido com `Date.now()`, o relógio do
+   * aparelho de quem responde. E esse é o único relógio desta prova que
+   * ninguém conferiu: o celular com a hora manual, o notebook que voltou do
+   * sono, o aparelho que ressincroniza com a operadora no meio da tarde e pula
+   * para a frente.
+   *
+   * Enquanto o preço era um número torto na tela, dava para conviver. O preço
+   * era outro: o cronômetro encerrava a prova. Um aparelho adiantado tirava
+   * tempo de prova de uma pessoa só, sem nada ter acontecido na sala — a prova
+   * "acabava do nada" no meio de uma questão.
+   *
+   * Agora o servidor diz que horas são (ele já responde a prova, o rascunho e
+   * a janela) e a tela guarda a diferença. O relógio local continua andando de
+   * segundo em segundo; só a origem dele passa a ser a certa. Ver
+   * `lib/provas/relogio-da-prova.ts`.
+   */
+  const desvioDoRelogioRef = useRef<number | null>(null)
+  const [desvioDoRelogio, setDesvioDoRelogio] = useState<number | null>(null)
+
+  const anotarRelogioDoServidor = useCallback((medida: MedidaDoRelogio) => {
+    const desvio = medirDesvio(medida)
+    if (desvio === null) return
+    desvioDoRelogioRef.current = desvio
+    // O estado só muda quando a correção muda de verdade. O desvio é remedido
+    // a cada gravação de rascunho (12 em 12 segundos): trocar o estado por
+    // causa de 40 ms de variação de rede seria um render a mais por gravação,
+    // sem nada de novo na tela.
+    setDesvioDoRelogio((anterior) =>
+      anterior === null || Math.abs(anterior - desvio) > 1000 ? desvio : anterior,
+    )
+  }, [])
+
+  /** `Date.now()` corrigido pelo desvio — o relógio do servidor, aqui dentro. */
+  const relogioDaProva = useCallback(() => agoraDoServidor(desvioDoRelogioRef.current), [])
+
+  /*
+   * ═══ O prazo desta pessoa, e o que acontece quando ele acaba ═══
+   *
+   * ## Onde o prazo mora
+   *
+   * Provas de treino e pessoais nascem com `endTime` um ano à frente, só para
+   * liberar o acesso. Usar essa data como prazo fazia o cabeçalho exibir uma
+   * contagem sem sentido ("17:13:38 restante") mesmo para quem escolheu "Sem
+   * limite". O cronômetro só existe quando existe prazo de verdade: o limite
+   * escolhido no treino ou o fim de uma prova agendada.
+   *
+   * `prazoDeEntrega` é o menor entre o fim da prova e a duração individual
+   * (`duration`, em minutos). Uma prova de 90 minutos dentro de uma janela de 3
+   * horas mostrava a contagem da janela — o aluno via 3 horas sobrando e o
+   * tempo dele acabava antes.
+   *
+   * Ele é calculado aqui em cima, com os outros ganchos, porque quem vigia o
+   * fim do tempo é um `useEffect` — e efeito não pode nascer depois dos
+   * `return` que a tela faz mais abaixo.
+   */
+  const isSelfPacedExam = Boolean(exam?.isPracticeExam || (exam as any)?.isPersonalExam)
+  const examDeadline: Date | null = !exam
+    ? null
+    : practiceTimeLimitMs && examStartTime
+      ? new Date(examStartTime.getTime() + practiceTimeLimitMs)
+      : isSelfPacedExam
+        ? null
+        : prazoDeEntrega(exam, examStartTime)
+
+  /*
+   * O fim do tempo — uma vigília só, e uma entrega.
+   *
+   * ## O que estava quebrado
+   *
+   * Quem avisava que o tempo tinha acabado era o próprio cronômetro do
+   * cabeçalho, por `onTimeUp`. Dois problemas moravam aí:
+   *
+   *  1. **O cronômetro aparece duas vezes** — a versão do desktop e a do
+   *     celular, uma escondida por CSS mas as duas montadas —, e o aviso não
+   *     parava no zero. Eram duas entregas por segundo, para sempre.
+   *  2. **Numa prova agendada, o aviso não entregava nada.** Mostrava um toast
+   *     e mandava a pessoa para a home dois segundos depois. As respostas
+   *     ficavam só no rascunho, que não é nota; e como a rota de entrega recusa
+   *     tudo depois do término, não havia mais como transformá-las em prova
+   *     entregue. Chegar ao fim do tempo era perder a prova inteira — e para
+   *     quem estava lendo uma questão, ela simplesmente "acabou do nada".
+   *
+   * Agora quem vigia é a tela, com o relógio do servidor, e o fim do tempo faz
+   * o que qualquer sala de prova faz quando o sinal toca: recolhe a folha.
+   */
+  const entregaPorTempoRef = useRef(false)
+  const tentativasPorTempoRef = useRef(0)
+  /*
+   * O servidor recusou a gravação do rascunho porque a prova fechou.
+   *
+   * O prazo desta tela é o melhor palpite que ela tem, mas ele foi calculado
+   * com a prova de quando a página abriu. Um admin que encerra a aplicação no
+   * meio (`force-time`) fecha a prova para o servidor e para mais ninguém: a
+   * pessoa seguia respondendo uma prova que já não seria aceita, e descobria
+   * isso no clique de entregar — quando não havia mais o que fazer. A gravação
+   * do rascunho bate de 12 em 12 segundos e a recusa dela é o aviso.
+   */
+  const [encerradaPeloServidor, setEncerradaPeloServidor] = useState(false)
+
+  // O prazo entra na vigília como número: `examDeadline` é um `Date` recriado a
+  // cada render, e comparar objetos remontaria o efeito de segundo em segundo.
+  const prazoEmMs = examDeadline ? examDeadline.getTime() : null
+
+  useEffect(() => {
+    if (!started || submitted || alreadySubmitted || submitting) return
+    if (!examDeadline) return
+
+    const conferir = () => {
+      if (entregaPorTempoRef.current) return
+      if (!encerradaPeloServidor && !prazoVencido(examDeadline, relogioDaProva())) return
+      entregaPorTempoRef.current = true
+      void encerrarPorTempoEsgotado()
+    }
+
+    conferir()
+    const relogio = setInterval(conferir, 1000)
+    return () => clearInterval(relogio)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    started,
+    submitted,
+    alreadySubmitted,
+    submitting,
+    encerradaPeloServidor,
+    prazoEmMs,
+    relogioDaProva,
+  ])
+
+  /*
    * ═══ Retomada: a prova que sobrevive à queda ═══
    *
    * Nada da prova era gravado até o clique em "Entregar". O `localStorage`
@@ -708,12 +846,34 @@ export default function ExamPage({ params }: { params: { id: string } }) {
       ultimaGravacaoRef.current = Date.now()
       setSalvandoProgresso('salvando')
       try {
+        const pedidoEm = Date.now()
         const res = await fetch(`/api/exams/${id}/progress`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(montarRascunho()),
         })
+        const respondidoEm = Date.now()
         setSalvandoProgresso(res.ok ? 'salvo' : 'erro')
+        /*
+         * A gravação do rascunho é também a batida do relógio.
+         *
+         * Ela já acontece de 12 em 12 segundos enquanto a prova corre, e a
+         * resposta traz `salvoEm` — o instante do SERVIDOR. Reconferir o desvio
+         * aqui é o que protege do aparelho cujo relógio muda no meio da prova:
+         * a correção chega na gravação seguinte, não no fim.
+         */
+        if (res.ok) {
+          const dados = await res.json().catch(() => null)
+          if (dados?.salvoEm) {
+            anotarRelogioDoServidor({ pedidoEm, respondidoEm, servidorEm: dados.salvoEm })
+          }
+        } else if (res.status === 409) {
+          // Só 'encerrada' aciona a entrega: 'ja-entregue' é o fim normal (a
+          // tela já está mostrando o resultado) e 'fora-da-janela' antes do
+          // início não é caso de entregar nada.
+          const dados = await res.json().catch(() => null)
+          if (dados?.motivo === 'encerrada') setEncerradaPeloServidor(true)
+        }
       } catch {
         // Queda de rede é exatamente o cenário desta funcionalidade: o
         // indicador avisa, e a próxima gravação tenta de novo sozinha.
@@ -722,7 +882,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
         gravandoRef.current = false
       }
     },
-    [id, montarRascunho],
+    [id, montarRascunho, anotarRelogioDoServidor],
   )
 
   // Prova em andamento: grava periodicamente e sempre que a aba some.
@@ -819,15 +979,18 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   /** Busca o rascunho ao abrir a prova, para oferecer "continuar". */
   const carregarRetomada = useCallback(async () => {
     try {
+      const pedidoEm = Date.now()
       const res = await fetch(`/api/exams/${id}/progress`)
+      const respondidoEm = Date.now()
       if (!res.ok) return
       const dados = await res.json()
+      anotarRelogioDoServidor({ pedidoEm, respondidoEm, servidorEm: dados.agora })
       setRetomada(dados.veredito || null)
       setProgressoSalvo(dados.progresso || null)
     } catch {
       // Sem rascunho a prova começa do zero — que é o comportamento antigo.
     }
-  }, [id])
+  }, [id, anotarRelogioDoServidor])
 
   /** Consome a retomada e devolve a prova de onde parou. */
   async function continuarProva() {
@@ -917,13 +1080,25 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   useEffect(() => {
     if (!retomada || !progressoSalvo) return
     if (alreadySubmitted || submitted || submitting) return
+    /*
+     * Nunca por cima de uma prova em andamento.
+     *
+     * O veredito é buscado uma vez, ao abrir a tela, e chega quando a rede
+     * deixa. Numa conexão ruim ele pode chegar DEPOIS de a pessoa já ter
+     * começado a responder — e aí esta entrega automática entregava o rascunho
+     * velho e encerrava, com o modal de "Você finalizou essa prova", a prova de
+     * alguém que estava lendo uma questão. O começo já é barrado antes, por
+     * `inicioBloqueadoPorProgresso`; se mesmo assim a prova está em andamento,
+     * quem manda é ela, e o rascunho espera a entrega normal.
+     */
+    if (started) return
     if (!exigeEntregaAutomatica(retomada)) return
     if (entregaAutomaticaDisparada.current) return
 
     entregaAutomaticaDisparada.current = true
     showToastMessage('Você não tem mais retomadas. Entregando o que ficou gravado…', 'info')
     entregarRascunho()
-  }, [retomada, progressoSalvo, alreadySubmitted, submitted, submitting])
+  }, [retomada, progressoSalvo, alreadySubmitted, submitted, submitting, started])
 
   useEffect(() => {
     checkExistingSubmission()
@@ -954,7 +1129,10 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     if (!exam) return
 
     const recalcular = () => {
-      const atual = resolverJanelaDaProva(exam, new Date(), { jaEntrou })
+      // `relogioDaProva()`, e não `new Date()`: com o relógio do aparelho
+      // adiantado, esta conta declarava a prova encerrada — e trancava a tela
+      // — para quem ainda tinha tempo pelo relógio do servidor.
+      const atual = resolverJanelaDaProva(exam, new Date(relogioDaProva()), { jaEntrou })
       setJanela(atual)
       setCanStart(atual.podeIniciar)
     }
@@ -962,7 +1140,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     recalcular()
     const interval = setInterval(recalcular, 1000)
     return () => clearInterval(interval)
-  }, [exam, jaEntrou])
+  }, [exam, jaEntrou, relogioDaProva])
 
   /*
    * O anúncio do início, para quem estava esperando por ele.
@@ -1039,10 +1217,16 @@ export default function ExamPage({ params }: { params: { id: string } }) {
 
   async function loadExam() {
     try {
+      const pedidoEm = Date.now()
       const res = await fetch(`/api/exams/${id}`)
+      const respondidoEm = Date.now()
       const data = await res.json()
 
       if (!res.ok) throw new Error(data.error)
+
+      // A primeira medida do relógio do servidor: é ela que vale enquanto a
+      // prova não começa a gravar rascunho.
+      anotarRelogioDoServidor({ pedidoEm, respondidoEm, servidorEm: data.agora })
 
       /*
        * A prova já chega embaralhada — o sorteio agora é do servidor.
@@ -1649,9 +1833,19 @@ ${respostaAluno}`
     return annotations.find(a => a.questionId === questionId)
   }
 
-  // Função para auto-submeter a prova (chamada quando o timer de câmera preta chegar a zero)
-  async function handleAutoSubmit(reason: string) {
-    if (submitting || submitted) return
+  /**
+   * A entrega que a própria tela faz — sem clique, sem validação de formulário.
+   *
+   * Dois caminhos chegam aqui: a infração de monitoramento (câmera tapada) e o
+   * fim do tempo. Devolve `true` quando o servidor aceitou; `false` quando não
+   * deu (rede caiu, prova recusada), e aí quem chamou decide se tenta de novo —
+   * a tela continua sendo a da prova, com as respostas na mão do aluno.
+   *
+   * `forcedSubmit` marca INFRAÇÃO no registro (ver lib/types.ts), então só a
+   * câmera o liga: acabar o tempo é o fim normal de uma prova, não uma falta.
+   */
+  async function handleAutoSubmit(reason: string, motivo: 'infracao' | 'tempo' = 'infracao'): Promise<boolean> {
+    if (submitting || submitted || alreadySubmitted) return false
 
     setSubmitting(true)
 
@@ -1664,7 +1858,11 @@ ${respostaAluno}`
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          userName,
+          // A rota recusa entrega sem nome (400). Num clique isso é uma
+          // validação de formulário; numa entrega automática seria a prova
+          // inteira perdida por um campo em branco — daí o nome da conta como
+          // último recurso, igual ao que a entrega do rascunho já faz.
+          userName: userName?.trim() || loggedUserName || 'Aluno',
           themeTranscription,
           answers,
           signature,
@@ -1673,7 +1871,7 @@ ${respostaAluno}`
           // numera pela ordem do banco, e a "questão 7" da reclamação não é a
           // mesma que o admin abre. Ver lib/provas/embaralhar.ts.
           questionOrder: ordemDasQuestoes,
-          forcedSubmit: true,
+          forcedSubmit: motivo === 'infracao',
           forcedSubmitReason: reason,
         }),
       })
@@ -1712,12 +1910,67 @@ ${respostaAluno}`
       cleanup()
 
       setSubmitted(true)
+      return true
     } catch (error: any) {
       console.error('Erro ao auto-submeter:', error)
       showToastMessage('Erro ao submeter prova automaticamente: ' + error.message)
+      return false
     } finally {
       setSubmitting(false)
     }
+  }
+
+  /**
+   * O sinal tocou.
+   *
+   * Prova de treino continua como sempre foi: o limite é uma escolha de quem
+   * está treinando, e a entrega passa pelo caminho normal.
+   *
+   * Prova agendada é a que mudou. Antes disto ela mandava a pessoa para a home
+   * de mãos vazias; agora a folha é recolhida — as mesmas respostas, pela mesma
+   * rota, com a mesma conferência do servidor. O que muda é quem toma a
+   * iniciativa, exatamente como na entrega automática do rascunho.
+   *
+   * ## Quando a entrega não passa
+   *
+   * A tela NÃO é trocada e nada é apagado: a prova continua na frente da
+   * pessoa, com o botão de entregar onde sempre esteve. Tentamos de novo a cada
+   * 15 segundos, dentro da folga que o servidor dá para a entrega do último
+   * minuto (`TOLERANCIA_DE_ENTREGA_MS`). Esgotadas as tentativas, o aviso diz o
+   * que fazer — e diz a verdade: as respostas ainda estão ali.
+   */
+  async function encerrarPorTempoEsgotado() {
+    if (exam?.isPracticeExam) {
+      showToastMessage('Tempo esgotado! Finalizando prova...', 'info')
+      handleSubmit()
+      return
+    }
+
+    const encerradaPorFora = encerradaPeloServidor
+    showToastMessage(
+      encerradaPorFora
+        ? 'A prova foi encerrada. Entregando suas respostas…'
+        : 'O tempo da prova acabou. Entregando suas respostas…',
+      'info',
+    )
+    const entregue = await handleAutoSubmit(
+      encerradaPorFora ? 'Prova encerrada durante a resolução' : 'Tempo esgotado',
+      'tempo',
+    )
+    if (entregue) return
+
+    tentativasPorTempoRef.current += 1
+    if (tentativasPorTempoRef.current >= 5) {
+      showToastMessage(
+        'Não conseguimos entregar automaticamente. Suas respostas continuam nesta tela — toque em "Finalizar Prova" para tentar de novo.',
+        'error',
+      )
+      return
+    }
+
+    setTimeout(() => {
+      entregaPorTempoRef.current = false
+    }, 15_000)
   }
 
   async function handleSubmit() {
@@ -3489,33 +3742,6 @@ ${respostaAluno}`
     ? (answeredCount / exam.questions.length) * 100
     : 0
 
-  // ─── Cronômetro da prova ───
-  // Provas de treino e pessoais nascem com `endTime` um ano à frente, só para
-  // liberar o acesso. Usar essa data como prazo fazia o cabeçalho exibir uma
-  // contagem sem sentido ("17:13:38 restante") mesmo para quem escolheu "Sem
-  // limite". O cronômetro agora só aparece quando existe prazo de verdade: o
-  // limite escolhido no treino ou o fim de uma prova agendada.
-  const isSelfPacedExam = Boolean(exam.isPracticeExam || (exam as any).isPersonalExam)
-  const examDeadline: Date | null =
-    practiceTimeLimitMs && examStartTime
-      ? new Date(examStartTime.getTime() + practiceTimeLimitMs)
-      : isSelfPacedExam
-      ? null
-      // `prazoDeEntrega` é o menor entre o fim da prova e a duração individual
-      // (`duration`, em minutos). Uma prova de 90 minutos dentro de uma janela
-      // de 3 horas mostrava a contagem da janela — o aluno via 3 horas
-      // sobrando e o tempo dele acabava antes.
-      : prazoDeEntrega(exam, examStartTime)
-  const handleExamTimeUp = () => {
-    if (exam.isPracticeExam) {
-      showToastMessage('Tempo esgotado! Finalizando prova...', 'info')
-      handleSubmit()
-    } else {
-      showToastMessage('O tempo da prova acabou!', 'info')
-      setTimeout(() => router.push('/'), 2000)
-    }
-  }
-
   // ─── Estado da navegação paginada ───
   const isLastQuestion = currentQuestionIndex === exam.questions.length - 1
   const showCheckAnswerButton =
@@ -3820,7 +4046,10 @@ ${respostaAluno}`
               </Button>
               <div className="hidden sm:block">
                 {examDeadline ? (
-                  <ExamTimer endTime={examDeadline} onTimeUp={handleExamTimeUp} />
+                  // Sem `onTimeUp`: quem encerra a prova é a vigília lá em
+                  // cima, uma só. Este cronômetro (e o do celular, logo abaixo)
+                  // só desenha o tempo — e desenha pelo relógio do servidor.
+                  <ExamTimer endTime={examDeadline} desvioDoRelogio={desvioDoRelogio} />
                 ) : (
                   <ExamBrandBadge />
                 )}
@@ -3833,7 +4062,7 @@ ${respostaAluno}`
             {examDeadline ? (
               <>
                 <ExamBrandBadge compact />
-                <ExamTimer endTime={examDeadline} onTimeUp={handleExamTimeUp} />
+                <ExamTimer endTime={examDeadline} desvioDoRelogio={desvioDoRelogio} />
               </>
             ) : (
               <ExamBrandBadge />

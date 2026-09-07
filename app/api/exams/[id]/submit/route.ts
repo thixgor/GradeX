@@ -3,7 +3,7 @@ import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
 import { Exam, ExamSubmission, UserAnswer } from '@/lib/types'
 import { ObjectId } from 'mongodb'
-import { resolverJanelaDaProva } from '@/lib/provas/janela-da-prova'
+import { podeEntregarNoLimite, resolverJanelaDaProva } from '@/lib/provas/janela-da-prova'
 import { provaExisteParaPessoa } from '@/lib/provas/visibilidade-da-prova'
 import { lerPeriodoDoAluno } from '@/lib/provas/periodo-do-aluno'
 import { COLECAO_DE_PROGRESSO } from '@/lib/provas/retomada'
@@ -54,9 +54,20 @@ export async function POST(
      * Fechar o PORTÃO não bloqueia a entrega: quem entrou antes dele fechar
      * continua respondendo até o término. É o término que encerra a prova.
      */
+    /*
+     * A folga do último minuto.
+     *
+     * `podeEnviar` corta no milissegundo do término, e isso recusava justamente
+     * a entrega que o próprio sistema dispara quando o tempo acaba: ela sai no
+     * instante do prazo e chega depois da viagem de rede. Quem ficou até o fim
+     * perdia a prova inteira por causa da latência. `podeEntregarNoLimite`
+     * mantém a porta encostada por mais um minuto e meio — e só a porta de
+     * ENTREGA: nenhuma outra regra da prova encerrada muda. Ver
+     * `lib/provas/janela-da-prova.ts`.
+     */
     const now = new Date()
     const janela = resolverJanelaDaProva(exam, now)
-    if (!janela.podeEnviar) {
+    if (!podeEntregarNoLimite(exam, now)) {
       return NextResponse.json(
         { error: janela.motivo || 'Prova fora do horário' },
         { status: 400 }

@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import {
+  TOLERANCIA_DE_ENTREGA_MS,
   fimDaProva,
   indiceDoProximoMarco,
   marcosDaJanela,
+  podeEntregarNoLimite,
   prazoDeEntrega,
   resolverJanelaDaProva,
 } from '@/lib/provas/janela-da-prova'
@@ -300,5 +302,45 @@ describe('marcosDaJanela', () => {
     // Sem portão, "abre" coincide com o início e "fecha" com o término.
     expect(marcos[0].ms).toBe(marcos[1].ms)
     expect(marcos[2].ms).toBe(marcos[3].ms)
+  })
+})
+
+describe('podeEntregarNoLimite', () => {
+  it('aceita a entrega dentro da prova, como sempre', () => {
+    expect(podeEntregarNoLimite(prova(), new Date('2026-05-10T15:00:00Z'))).toBe(true)
+  })
+
+  it('aceita a entrega que sai no prazo e chega depois dele', () => {
+    /*
+     * A entrega automática do fim do tempo parte no milissegundo do término e
+     * chega depois da viagem de rede — sempre depois. Sem a folga, a prova que
+     * o próprio sistema decidiu entregar era recusada pelo próprio sistema.
+     */
+    const umSegundoDepois = new Date('2026-05-10T18:00:01Z')
+    expect(resolverJanelaDaProva(prova(), umSegundoDepois).podeEnviar).toBe(false)
+    expect(podeEntregarNoLimite(prova(), umSegundoDepois)).toBe(true)
+  })
+
+  it('recusa o atraso que passa da folga', () => {
+    const depoisDaFolga = new Date('2026-05-10T18:00:00Z').getTime() + TOLERANCIA_DE_ENTREGA_MS + 1
+    expect(podeEntregarNoLimite(prova(), new Date(depoisDaFolga))).toBe(false)
+  })
+
+  it('não afrouxa a entrega adiantada', () => {
+    // Antes do início não há folha a salvar — há uma prova que ainda não
+    // aconteceu.
+    expect(podeEntregarNoLimite(prova(), new Date('2026-05-10T13:59:00Z'))).toBe(false)
+  })
+
+  it('prova de treino entrega sempre', () => {
+    expect(podeEntregarNoLimite(prova({ isPracticeExam: true }), new Date('2030-01-01T00:00:00Z'))).toBe(true)
+  })
+
+  it('a folga vale só para a porta de entrega — a prova continua encerrada', () => {
+    // Nada mais muda de lado: gabarito, ranking e retomada continuam olhando
+    // `encerrada`, que é `agora > terminaEm`, sem folga nenhuma.
+    const logoDepois = new Date('2026-05-10T18:00:30Z')
+    expect(resolverJanelaDaProva(prova(), logoDepois).encerrada).toBe(true)
+    expect(resolverJanelaDaProva(prova(), logoDepois).fase).toBe('encerrada')
   })
 })

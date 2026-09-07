@@ -2,19 +2,33 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { Clock } from 'lucide-react'
+import { agoraDoServidor, partesDaContagem, tempoRestante } from '@/lib/provas/relogio-da-prova'
 
 interface ExamTimerProps {
   endTime: Date
+  /**
+   * Quanto o relógio deste aparelho está atrasado em relação ao do servidor
+   * (ver `lib/provas/relogio-da-prova.ts`). Sem ele a contagem usa o relógio
+   * local — que é o comportamento antigo, e o motivo de uma prova acabar
+   * sozinha no aparelho com a hora errada.
+   */
+  desvioDoRelogio?: number | null
+  /**
+   * Avisa que o prazo acabou.
+   *
+   * Dispara UMA vez. Antes, o intervalo continuava rodando depois do zero e
+   * chamava este aviso a cada segundo — e como o cronômetro aparece duas vezes
+   * na tela da prova (a versão do desktop e a do celular, uma escondida por
+   * CSS mas as duas montadas), quem escutava recebia duas entregas por segundo,
+   * para sempre. Quem encerra a prova hoje é a própria tela
+   * (`app/exam/[id]/page.tsx`), com um relógio só; isto aqui sobrou para quem
+   * usar o componente fora dali.
+   */
   onTimeUp?: () => void
 }
 
-export function ExamTimer({ endTime, onTimeUp }: ExamTimerProps) {
-  const [timeLeft, setTimeLeft] = useState<{
-    hours: number
-    minutes: number
-    seconds: number
-    total: number
-  } | null>(null)
+export function ExamTimer({ endTime, desvioDoRelogio, onTimeUp }: ExamTimerProps) {
+  const [timeLeft, setTimeLeft] = useState<ReturnType<typeof partesDaContagem> | null>(null)
 
   // O prazo chega como Date recriado a cada render da prova; guardamos só o
   // instante em milissegundos para o intervalo não ser reiniciado à toa. O
@@ -22,23 +36,23 @@ export function ExamTimer({ endTime, onTimeUp }: ExamTimerProps) {
   const endMs = new Date(endTime).getTime()
   const onTimeUpRef = useRef(onTimeUp)
   onTimeUpRef.current = onTimeUp
+  const desvioRef = useRef(desvioDoRelogio)
+  desvioRef.current = desvioDoRelogio
+  const avisouRef = useRef(false)
 
   useEffect(() => {
+    avisouRef.current = false
+
     const calculateTimeLeft = () => {
-      const now = new Date().getTime()
-      const difference = endMs - now
+      const restante = tempoRestante(endMs, agoraDoServidor(desvioRef.current))
+      if (restante === null) return
 
-      if (difference <= 0) {
-        setTimeLeft({ hours: 0, minutes: 0, seconds: 0, total: 0 })
+      setTimeLeft(partesDaContagem(restante))
+
+      if (restante <= 0 && !avisouRef.current) {
+        avisouRef.current = true
         onTimeUpRef.current?.()
-        return
       }
-
-      const hours = Math.floor((difference / (1000 * 60 * 60)) % 24)
-      const minutes = Math.floor((difference / (1000 * 60)) % 60)
-      const seconds = Math.floor((difference / 1000) % 60)
-
-      setTimeLeft({ hours, minutes, seconds, total: difference })
     }
 
     calculateTimeLeft()
@@ -66,11 +80,13 @@ export function ExamTimer({ endTime, onTimeUp }: ExamTimerProps) {
     >
       <Clock className="h-4 w-4" />
       <span>
-        {timeLeft.hours > 0 && `${String(timeLeft.hours).padStart(2, '0')}:`}
-        {String(timeLeft.minutes).padStart(2, '0')}:
-        {String(timeLeft.seconds).padStart(2, '0')}
+        {timeLeft.horas > 0 && `${String(timeLeft.horas).padStart(2, '0')}:`}
+        {String(timeLeft.minutos).padStart(2, '0')}:
+        {String(timeLeft.segundos).padStart(2, '0')}
       </span>
-      <span className="text-xs opacity-75">restante{timeLeft.total === 0 && ' - Tempo esgotado!'}</span>
+      <span className="text-xs opacity-75">
+        {timeLeft.total === 0 ? 'Tempo esgotado!' : 'restante'}
+      </span>
     </div>
   )
 }
