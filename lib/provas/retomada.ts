@@ -142,13 +142,30 @@ export function avaliarRetomada(entrada: EntradaDoVeredito): VereditoDeRetomada 
     // chegou cedo com a notícia errada.
     const jaEncerrou = entrada.jaEncerrou ?? true
 
+    /*
+     * A prova encerrada fecha a RETOMADA, não a entrega.
+     *
+     * Aqui `podeEntregarOSalvo` era `false`, e isso transformava o fim da prova
+     * numa perda: quem estava respondendo quando o aplicador clicou em "Forçar
+     * Término" — ou quem caiu e voltou depois das 20h — tinha as respostas
+     * gravadas no servidor e nenhuma forma de entregá-las. O rascunho existia,
+     * completo, e virava nota zero.
+     *
+     * Continuar respondendo segue impossível (`podeRetomar: false`), e o
+     * rascunho parou de aceitar gravação no término: o que está guardado é
+     * exatamente o que a pessoa tinha feito quando a prova acabou. Entregar
+     * isso não é contornar o portão — é não jogar fora o que passou por ele.
+     * Ver `lib/provas/entrega-da-prova.ts`.
+     */
     return {
       ...base,
       podeRetomar: false,
-      podeEntregarOSalvo: false,
+      podeEntregarOSalvo: jaEncerrou && respostasGravadas > 0,
       motivo: jaEncerrou ? 'prova-encerrada' : 'prova-nao-comecou',
       mensagem: jaEncerrou
-        ? 'A prova já terminou. Não é possível continuar — o que você respondeu ficou registrado até o encerramento.'
+        ? respostasGravadas > 0
+          ? 'A prova terminou. Não dá mais para responder — o que você respondeu até o encerramento está guardado e vai ser entregue.'
+          : 'A prova já terminou. Não é possível continuar — o que você respondeu ficou registrado até o encerramento.'
         : 'A prova ainda não começou. O que você já respondeu está guardado e volta assim que ela abrir.',
     }
   }
@@ -192,7 +209,18 @@ export function avaliarRetomada(entrada: EntradaDoVeredito): VereditoDeRetomada 
  * que muda é quem toma a iniciativa.
  */
 export function exigeEntregaAutomatica(veredito: VereditoDeRetomada): boolean {
-  return veredito.motivo === 'retomadas-esgotadas' && veredito.podeEntregarOSalvo
+  /*
+   * A prova encerrada entrou na regra pelo mesmo motivo das retomadas
+   * esgotadas, e com mais urgência: depois de um "Forçar Término", quem estava
+   * com a aba escondida, sem sinal ou com o celular na mochila volta a uma
+   * prova que acabou e a um rascunho cheio de respostas. Esperar o clique dele
+   * é apostar que ele vai voltar — e o aluno que não voltar leva zero com a
+   * prova inteira gravada no banco.
+   */
+  return (
+    (veredito.motivo === 'retomadas-esgotadas' || veredito.motivo === 'prova-encerrada') &&
+    veredito.podeEntregarOSalvo
+  )
 }
 
 /**

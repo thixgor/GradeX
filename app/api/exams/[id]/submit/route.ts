@@ -3,10 +3,11 @@ import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
 import { Exam, ExamSubmission, UserAnswer } from '@/lib/types'
 import { ObjectId } from 'mongodb'
-import { podeEntregarNoLimite, resolverJanelaDaProva } from '@/lib/provas/janela-da-prova'
+import { resolverJanelaDaProva } from '@/lib/provas/janela-da-prova'
 import { provaExisteParaPessoa } from '@/lib/provas/visibilidade-da-prova'
 import { lerPeriodoDoAluno } from '@/lib/provas/periodo-do-aluno'
-import { COLECAO_DE_PROGRESSO } from '@/lib/provas/retomada'
+import { COLECAO_DE_PROGRESSO, contarRespondidas } from '@/lib/provas/retomada'
+import { avaliarEntrega } from '@/lib/provas/entrega-da-prova'
 
 export const dynamic = 'force-dynamic'
 
@@ -42,6 +43,15 @@ export async function POST(
     }
 
     /*
+     * O rascunho é lido antes de tudo: passada a carência do término, é ele —
+     * e não o corpo da requisição — que diz o que a pessoa tinha respondido.
+     * Ver `lib/provas/entrega-da-prova.ts`.
+     */
+    const progresso = await db
+      .collection(COLECAO_DE_PROGRESSO)
+      .findOne({ examId: id, userId: session.userId })
+
+    /*
      * A janela da prova, decidida pelo relógio do servidor.
      *
      * Antes a checagem era só `now > endTime`. Faltavam os dois outros lados da
@@ -53,26 +63,47 @@ export async function POST(
      *
      * Fechar o PORTÃO não bloqueia a entrega: quem entrou antes dele fechar
      * continua respondendo até o término. É o término que encerra a prova.
-     */
-    /*
-     * A folga do último minuto.
      *
-     * `podeEnviar` corta no milissegundo do término, e isso recusava justamente
-     * a entrega que o próprio sistema dispara quando o tempo acaba: ela sai no
-     * instante do prazo e chega depois da viagem de rede. Quem ficou até o fim
-     * perdia a prova inteira por causa da latência. `podeEntregarNoLimite`
-     * mantém a porta encostada por mais um minuto e meio — e só a porta de
-     * ENTREGA: nenhuma outra regra da prova encerrada muda. Ver
-     * `lib/provas/janela-da-prova.ts`.
+     * O que o término encerra é RESPONDER, não entregar — e as duas coisas são
+     * separadas por `avaliarEntrega`, em duas camadas:
+     *
+     *  - A folga do último minuto (`podeEntregarNoLimite`, um minuto e meio):
+     *    `podeEnviar` corta no milissegundo do término e recusava justamente a
+     *    entrega que o próprio sistema dispara quando o tempo acaba — ela sai no
+     *    instante do prazo e chega depois da viagem de rede.
+     *  - Depois dela, a entrega ainda é aceita, mas valendo o RASCUNHO: quem
+     *    estava com a aba escondida ou sem sinal quando o aplicador encerrou a
+     *    prova não entrega em noventa segundos, e as respostas dessa pessoa
+     *    estão gravadas no servidor de qualquer forma.
+     *
+     * Nenhuma outra regra da prova encerrada muda: gabarito, ranking, retomada
+     * e gravação de rascunho continuam cortando no término.
      */
     const now = new Date()
     const janela = resolverJanelaDaProva(exam, now)
-    if (!podeEntregarNoLimite(exam, now)) {
-      return NextResponse.json(
-        { error: janela.motivo || 'Prova fora do horário' },
-        { status: 400 }
-      )
+    const veredito = avaliarEntrega({
+      prova: exam,
+      janela,
+      agora: now,
+      respostasGravadas: contarRespondidas(progresso?.answers),
+    })
+
+    if (!veredito.aceita) {
+      return NextResponse.json({ error: veredito.motivo }, { status: 400 })
     }
+
+    /*
+     * Depois da tolerância, quem responde é o rascunho.
+     *
+     * Aceitar a entrega atrasada COM o corpo do cliente seria vender tempo
+     * extra: bastaria segurar o POST. As respostas passam a ser as que o
+     * servidor gravou enquanto a prova estava aberta — que é exatamente o que
+     * a pessoa tinha feito quando a prova acabou.
+     */
+    const respostas: UserAnswer[] =
+      veredito.origem === 'rascunho'
+        ? ((progresso?.answers as UserAnswer[]) ?? [])
+        : (answers as UserAnswer[])
 
     /*
      * A prova que não existe para esta pessoa não recebe entrega dela.
@@ -133,7 +164,7 @@ export async function POST(
     if (exam.scoringMethod === 'normal' && multipleChoiceQuestions.length > 0) {
       let correctAnswers = 0
 
-      for (const answer of answers as UserAnswer[]) {
+      for (const answer of respostas) {
         const question = exam.questions.find(q => q.id === answer.questionId)
         if (question && question.type === 'multiple-choice') {
           const correctAlt = question.alternatives.find(alt => alt.isCorrect)
@@ -167,7 +198,7 @@ export async function POST(
           let discAvgPct = 0
           let scored = 0
           for (const dq of discursiveQuestions) {
-            const ans = (answers as UserAnswer[]).find(a => a.questionId === dq.id)
+            const ans = respostas.find(a => a.questionId === dq.id)
             if (ans?.discursiveSelfScore !== undefined) {
               discAvgPct += ans.discursiveSelfScore / 100
               scored++
@@ -195,10 +226,6 @@ export async function POST(
      * reescrever o início da prova e, com ele, a duração registrada. O rascunho
      * grava o início na primeira vez e nunca o reescreve, nem numa retomada.
      */
-    const progresso = await db
-      .collection(COLECAO_DE_PROGRESSO)
-      .findOne({ examId: id, userId: session.userId })
-
     const inicioDoCliente = startedAt ? new Date(startedAt) : undefined
     const inicioConfiavel = progresso?.startedAt
       ? new Date(progresso.startedAt)
@@ -242,8 +269,11 @@ export async function POST(
       examId: id,
       userId: session.userId,
       userName,
-      themeTranscription,
-      answers,
+      themeTranscription:
+        veredito.origem === 'rascunho'
+          ? (progresso?.themeTranscription as string | undefined) ?? themeTranscription
+          : themeTranscription,
+      answers: respostas,
       signature: assinaturaDaEntrega ?? signature,
       score,
       corrections: needsCorrection ? [] : undefined,
@@ -251,11 +281,28 @@ export async function POST(
       startedAt: inicioConfiavel,
       // A ordem em que ESTE aluno viu as questões, para o relatório numerar
       // como ele viu. Ver lib/provas/embaralhar.ts.
-      questionOrder: Array.isArray(body.questionOrder) && body.questionOrder.length > 0
-        ? body.questionOrder.map((qid: unknown) => String(qid))
-        : progresso?.questionOrder,
+      // Quando as respostas vieram do rascunho, a ordem também vem: numerar
+      // as respostas gravadas pela ordem que o cliente mandou agora seria
+      // casar duas listas que podem não ser a mesma.
+      questionOrder:
+        veredito.origem === 'rascunho'
+          ? progresso?.questionOrder
+          : Array.isArray(body.questionOrder) && body.questionOrder.length > 0
+            ? body.questionOrder.map((qid: unknown) => String(qid))
+            : progresso?.questionOrder,
       resumesUsed: progresso?.resumesUsed || 0,
-      submittedFromSavedProgress: body.fromSavedProgress === true ? true : undefined,
+      submittedFromSavedProgress:
+        body.fromSavedProgress === true || veredito.origem === 'rascunho' ? true : undefined,
+      /*
+       * A entrega que chegou depois do término fica marcada, com o atraso.
+       *
+       * Ela é legítima (o término dispara a entrega automática, e o rascunho
+       * cobre quem estava fora do ar), mas o admin corrigindo a prova tem o
+       * direito de saber que aquela folha chegou às 20h00:07 e não às 19h58 —
+       * ainda mais depois de um "Forçar Término".
+       */
+      submittedAfterEnd: veredito.atrasoMs > 0 ? true : undefined,
+      submissionDelayMs: veredito.atrasoMs > 0 ? veredito.atrasoMs : undefined,
       submittedAt: new Date(),
     }
 

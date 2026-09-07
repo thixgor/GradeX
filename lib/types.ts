@@ -301,6 +301,18 @@ export interface ExamSubmission {
   resumesUsed?: number
   /** Entrega feita a partir do progresso salvo, sem a pessoa voltar à prova. */
   submittedFromSavedProgress?: boolean
+  /**
+   * A entrega chegou depois do término da prova.
+   *
+   * É legítimo — o término é o que dispara a entrega automática, e quem estava
+   * sem sinal entrega o rascunho ao voltar (ver
+   * `lib/provas/entrega-da-prova.ts`) —, mas quem corrige tem o direito de
+   * saber que a folha chegou depois do fim, ainda mais depois de um "Forçar
+   * Término".
+   */
+  submittedAfterEnd?: boolean
+  /** Quanto tempo depois do término a entrega chegou, em milissegundos. */
+  submissionDelayMs?: number
 }
 
 /**

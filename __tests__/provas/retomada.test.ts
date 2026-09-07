@@ -42,8 +42,27 @@ describe('avaliarRetomada', () => {
   it('a prova encerrada fecha a retomada — o portão não é contornável', () => {
     const v = avaliarRetomada(entrada({ janelaAberta: false, jaEncerrou: true }))
     expect(v.podeRetomar).toBe(false)
-    expect(v.podeEntregarOSalvo).toBe(false)
     expect(v.motivo).toBe('prova-encerrada')
+  })
+
+  it('mas o que ficou gravado continua entregável — o fim não zera ninguém', () => {
+    /*
+     * `podeEntregarOSalvo` era `false` aqui, e isso transformava o término
+     * numa perda: depois de um "Forçar Término", quem estava respondendo tinha
+     * as respostas gravadas no servidor e nenhuma forma de entregá-las.
+     * Continuar respondendo segue impossível; jogar fora o que foi respondido
+     * antes do fim é outra coisa. Ver `lib/provas/entrega-da-prova.ts`.
+     */
+    const v = avaliarRetomada(entrada({ janelaAberta: false, jaEncerrou: true }))
+    expect(v.podeEntregarOSalvo).toBe(true)
+    expect(v.mensagem).toMatch(/vai ser entregue/)
+  })
+
+  it('sem nada gravado, a prova encerrada não promete entrega nenhuma', () => {
+    const v = avaliarRetomada(
+      entrada({ janelaAberta: false, jaEncerrou: true, respostasGravadas: 0 }),
+    )
+    expect(v.podeEntregarOSalvo).toBe(false)
     expect(v.mensagem).toMatch(/já terminou/)
   })
 
@@ -161,11 +180,30 @@ describe('exigeEntregaAutomatica', () => {
     expect(exigeEntregaAutomatica(avaliarRetomada(entrada({ jaEntregou: true })))).toBe(false)
   })
 
-  it('prova encerrada não dispara entrega: a janela fechou para enviar', () => {
-    // O servidor recusaria a entrega, e insistir viraria um erro na cara de
-    // quem só abriu a tela para ver o que tinha ficado.
+  it('prova encerrada DISPARA a entrega do que ficou gravado', () => {
+    /*
+     * Este teste dizia o contrário, e a razão dele era o servidor: a entrega
+     * depois do término era recusada, então insistir viraria um erro na cara
+     * de quem só abriu a tela para ver o que tinha ficado. Agora o servidor
+     * aceita a entrega atrasada valendo as respostas do RASCUNHO (ver
+     * `lib/provas/entrega-da-prova.ts`), e quem não entrega sozinho é quem
+     * some: o aluno que estava sem sinal quando o aplicador encerrou a prova
+     * não pode depender de voltar para clicar num botão.
+     */
     const encerrada = avaliarRetomada(entrada({ janelaAberta: false, jaEncerrou: true }))
-    expect(exigeEntregaAutomatica(encerrada)).toBe(false)
+    expect(exigeEntregaAutomatica(encerrada)).toBe(true)
+  })
+
+  it('prova encerrada sem resposta gravada não tem o que entregar', () => {
+    const vazia = avaliarRetomada(
+      entrada({ janelaAberta: false, jaEncerrou: true, respostasGravadas: 0 }),
+    )
+    expect(exigeEntregaAutomatica(vazia)).toBe(false)
+  })
+
+  it('prova que ainda não começou nunca dispara entrega', () => {
+    const cedo = avaliarRetomada(entrada({ janelaAberta: false, jaEncerrou: false }))
+    expect(exigeEntregaAutomatica(cedo)).toBe(false)
   })
 })
 
