@@ -525,8 +525,18 @@ export function PainelAoVivo({ prova, onFechar }: Props) {
   )
 
   const acompanhamento = useAcompanhamentoAoVivo(provaId, prova ? janela.fase : null, !!prova)
-  const { retrato, carregando, erro, pausado, alternarPausa, atualizarAgora, cadencia, relogioDoServidor } =
-    acompanhamento
+  const {
+    retrato,
+    carregando,
+    erro,
+    pausado,
+    paradoPorOcio,
+    alternarPausa,
+    atualizarAgora,
+    cadencia,
+    leituras,
+    relogioDoServidor,
+  } = acompanhamento
 
   // Fechar o painel devolve a expansão ao estado inicial: reabrir noutra prova
   // com uma linha aberta de outra sala não faria sentido nenhum.
@@ -569,13 +579,23 @@ export function PainelAoVivo({ prova, onFechar }: Props) {
                   {ROTULO_DA_FASE[janela.fase]}
                 </span>
               </div>
+              {/*
+                A cadência e a contagem de leituras ficam à vista porque o
+                custo desta tela é literalmente o número de vezes que ela
+                pergunta. Escondê-lo transformaria uma aba esquecida num gasto
+                invisível — e é justamente o gasto invisível que este painel
+                foi desenhado para não ter.
+              */}
               <p className="text-xs text-muted-foreground mt-0.5">
                 Acompanhamento ao vivo
                 {cadencia
-                  ? ` · atualizando a cada ${Math.round(cadencia / 1000)}s`
-                  : pausado
-                    ? ' · pausado'
-                    : ' · sem atualização automática nesta fase'}
+                  ? ` · a cada ${Math.round(cadencia / 1000)}s`
+                  : paradoPorOcio
+                    ? ' · parado por falta de novidade'
+                    : pausado
+                      ? ' · só quando você pedir'
+                      : ' · sem atualização automática nesta fase'}
+                {leituras > 0 && ` · ${leituras} leitura${leituras > 1 ? 's' : ''}`}
               </p>
             </div>
 
@@ -584,7 +604,11 @@ export function PainelAoVivo({ prova, onFechar }: Props) {
                 variant="ghost"
                 size="sm"
                 onClick={alternarPausa}
-                title={pausado ? 'Voltar a atualizar sozinho' : 'Parar de atualizar sozinho'}
+                title={
+                  pausado
+                    ? 'Voltar a atualizar sozinho'
+                    : 'Parar de atualizar sozinho — o painel passa a ler só quando você pedir'
+                }
               >
                 {pausado ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}
               </Button>
@@ -682,6 +706,29 @@ export function PainelAoVivo({ prova, onFechar }: Props) {
             </div>
           )}
 
+          {/*
+            O ciclo desistiu sozinho.
+            
+            Meia hora sem uma única mudança não é um palpite sobre o admin: é um
+            fato sobre a sala. Enquanto alguém responde, o rascunho se move a
+            cada 12 segundos e o retrato muda junto — trinta minutos idênticos
+            significam que não há ninguém do outro lado.
+          */}
+          {paradoPorOcio && (
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border/60 bg-muted/40 p-3">
+              <div className="text-sm">
+                <p className="font-medium">O painel parou de consultar sozinho.</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Nada mudou nesta sala nos últimos 30 minutos. O retrato abaixo continua valendo.
+                </p>
+              </div>
+              <Button variant="outline" size="sm" onClick={atualizarAgora}>
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Retomar
+              </Button>
+            </div>
+          )}
+
           {erro && (
             <div className="flex items-start gap-2 rounded-xl border border-rose-500/40 bg-rose-500/10 p-3 text-sm">
               <AlertTriangle className="h-4 w-4 shrink-0 text-rose-600 dark:text-rose-400 mt-0.5" />
@@ -733,10 +780,13 @@ export function PainelAoVivo({ prova, onFechar }: Props) {
             </p>
           )}
 
-          <p className="flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground">
-            <Eye className="h-3 w-3" />
-            O andamento vem do rascunho que a prova grava a cada 12 segundos — é essa a resolução
-            máxima do que aparece aqui.
+          <p className="flex items-start justify-center gap-1.5 text-[11px] text-muted-foreground text-center">
+            <Eye className="h-3 w-3 mt-0.5 shrink-0" />
+            <span>
+              O andamento vem do rascunho que a prova grava a cada 12 segundos — é essa a resolução
+              máxima do que aparece aqui. O painel só consulta com esta janela aberta e a aba à
+              vista, afrouxa sozinho quando nada muda e para de vez depois de 30 minutos parados.
+            </span>
           </p>
         </div>
       </DialogContent>

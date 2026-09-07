@@ -14,6 +14,18 @@
       "maxDuration": 10,
       "memory": 512
     },
+    "app/api/admin/exams/[id]/ao-vivo/route.ts": {
+      "maxDuration": 10,
+      "memory": 512
+    },
+    "app/api/admin/exams/[id]/ao-vivo/[userId]/route.ts": {
+      "maxDuration": 10,
+      "memory": 512
+    },
+    "app/api/exams/[id]/entrada/route.ts": {
+      "maxDuration": 10,
+      "memory": 512
+    },
     "app/api/materiais/[id]/pdf-viewer/access/route.ts": {
       "maxDuration": 60,
       "memory": 1024

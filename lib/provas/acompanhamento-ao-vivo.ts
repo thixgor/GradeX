@@ -343,3 +343,63 @@ export function esperaComRecuo(falhasSeguidas: number, base: number): number {
   const passos = Math.min(3, Math.max(0, falhasSeguidas - 1))
   return Math.min(120_000, base * 2 ** (passos + 1))
 }
+
+/*
+ * ═══════════════════════════════════════════════════════════════════════
+ *  A sala parada — o gasto que não tem contrapartida nenhuma
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * A cadência acima é dimensionada para uma prova ACONTECENDO: 15 segundos
+ * alcançam cada gravação de rascunho. Só que o painel não fica aberto só
+ * enquanto algo acontece. Ele fica aberto porque alguém esqueceu a aba, porque
+ * a prova acabou e ninguém fechou, porque o admin abriu de manhã para conferir
+ * o portão da tarde.
+ *
+ * Nessas horas cada volta do relógio é uma invocação cobrada que devolve,
+ * palavra por palavra, o retrato anterior — e a etiqueta (`ETag`) prova isso
+ * de graça: um 304 é a própria confirmação de que nada mudou.
+ *
+ * Então o ciclo escuta essa confirmação. Duas leituras iguais ainda podem ser
+ * coincidência (a turma respondendo devagar); da terceira em diante o
+ * intervalo dobra, até um minuto. E se a meia hora inteira passar sem nenhuma
+ * novidade, o ciclo PARA — porque uma sala que não muda em trinta minutos não
+ * é uma sala que precisa ser vigiada de minuto em minuto; é uma aba esquecida.
+ *
+ * Nada disso atrasa a prova de verdade: qualquer mudança devolve a cadência
+ * cheia na mesma volta. O afrouxamento só existe onde não há o que ver.
+ */
+
+/** Leituras iguais toleradas antes de o intervalo começar a afrouxar. */
+export const LEITURAS_IGUAIS_ANTES_DE_AFROUXAR = 2
+
+/** Teto do afrouxamento por falta de novidade. */
+export const CADENCIA_MAXIMA_MS = 60_000
+
+/** Tempo sem nenhuma mudança que faz o ciclo parar de vez. */
+export const OCIO_ATE_PARAR_MS = 30 * 60_000
+
+/**
+ * A cadência corrigida pelo que está (ou não está) acontecendo.
+ *
+ * `base` vem de `cadenciaDoRetrato`; `leiturasIguais` é quantas respostas
+ * seguidas vieram sem novidade. Zero novidade nenhuma vez = cadência cheia.
+ */
+export function cadenciaComOcio(base: number | null, leiturasIguais: number): number | null {
+  if (base === null) return null
+  if (leiturasIguais <= LEITURAS_IGUAIS_ANTES_DE_AFROUXAR) return base
+  const passos = leiturasIguais - LEITURAS_IGUAIS_ANTES_DE_AFROUXAR
+  return Math.min(CADENCIA_MAXIMA_MS, base * 2 ** passos)
+}
+
+/**
+ * Já dá para parar de perguntar?
+ *
+ * Meia hora sem uma única mudança. Não é um palpite sobre o admin: é um fato
+ * sobre a sala. Enquanto alguém responde, o rascunho se move a cada 12
+ * segundos e o retrato muda junto; enquanto alguém entra ou assina, muda
+ * também. Trinta minutos idênticos significam que não há ninguém do outro
+ * lado — e continuar perguntando é gastar para ouvir o silêncio.
+ */
+export function devePararPorOcio(msDesdeAUltimaMudanca: number): boolean {
+  return msDesdeAUltimaMudanca >= OCIO_ATE_PARAR_MS
+}

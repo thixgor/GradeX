@@ -1,8 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import {
+  CADENCIA_MAXIMA_MS,
   LIMIAR_ATIVO_MS,
   LIMIAR_SUMIU_MS,
+  OCIO_ATE_PARAR_MS,
+  cadenciaComOcio,
   cadenciaDoRetrato,
+  devePararPorOcio,
   esperaComRecuo,
   estadoDoParticipante,
   ordenarParticipantes,
@@ -230,5 +234,79 @@ describe('esperaComRecuo', () => {
 
   it('nunca encurta o intervalo de sucesso', () => {
     expect(esperaComRecuo(1, 20_000)).toBeGreaterThan(20_000)
+  })
+})
+
+describe('cadenciaComOcio', () => {
+  it('não afrouxa enquanto a sala dá sinal de vida', () => {
+    // Duas leituras iguais ainda podem ser a turma respondendo devagar.
+    expect(cadenciaComOcio(15_000, 0)).toBe(15_000)
+    expect(cadenciaComOcio(15_000, 1)).toBe(15_000)
+    expect(cadenciaComOcio(15_000, 2)).toBe(15_000)
+  })
+
+  it('dobra a partir da terceira leitura igual, até um minuto', () => {
+    expect(cadenciaComOcio(15_000, 3)).toBe(30_000)
+    expect(cadenciaComOcio(15_000, 4)).toBe(60_000)
+    expect(cadenciaComOcio(15_000, 5)).toBe(CADENCIA_MAXIMA_MS)
+    expect(cadenciaComOcio(15_000, 50)).toBe(CADENCIA_MAXIMA_MS)
+  })
+
+  it('a fase sem movimento continua sem movimento', () => {
+    // Afrouxar `null` seria transformar "não pergunte" em "pergunte devagar".
+    expect(cadenciaComOcio(null, 0)).toBeNull()
+    expect(cadenciaComOcio(null, 99)).toBeNull()
+  })
+
+  it('uma novidade devolve a cadência cheia na mesma volta', () => {
+    expect(cadenciaComOcio(15_000, 6)).toBe(CADENCIA_MAXIMA_MS)
+    expect(cadenciaComOcio(15_000, 0)).toBe(15_000)
+  })
+})
+
+describe('devePararPorOcio', () => {
+  it('meia hora sem nenhuma mudança encerra o ciclo', () => {
+    expect(devePararPorOcio(0)).toBe(false)
+    expect(devePararPorOcio(OCIO_ATE_PARAR_MS - 1)).toBe(false)
+    expect(devePararPorOcio(OCIO_ATE_PARAR_MS)).toBe(true)
+    expect(devePararPorOcio(OCIO_ATE_PARAR_MS * 4)).toBe(true)
+  })
+})
+
+describe('o custo de uma aba esquecida', () => {
+  /**
+   * O teste que justifica os dois anteriores existirem.
+   *
+   * Simula meia hora de painel aberto numa sala em que nada acontece e conta
+   * quantas leituras isso custa — com e sem o afrouxamento. Sem ele, a aba
+   * esquecida cobra 120 invocações a cada meia hora, para sempre. Com ele, o
+   * total é uma ordem de grandeza menor E tem fim.
+   */
+  function leiturasEmMeiaHora(comAfrouxamento: boolean): number {
+    const BASE = 15_000
+    let decorrido = 0
+    let iguais = 0
+    let leituras = 0
+
+    while (decorrido < OCIO_ATE_PARAR_MS) {
+      leituras += 1
+      iguais += 1
+      if (comAfrouxamento && devePararPorOcio(decorrido)) break
+      decorrido += comAfrouxamento ? cadenciaComOcio(BASE, iguais)! : BASE
+    }
+
+    return leituras
+  }
+
+  it('afrouxando, a meia hora parada custa menos de um terço', () => {
+    const com = leiturasEmMeiaHora(true)
+    const sem = leiturasEmMeiaHora(false)
+
+    expect(sem).toBe(120)
+    expect(com).toBeLessThan(sem / 3)
+  })
+
+  it('e depois dela o ciclo para — o gasto tem fim, não só ritmo', () => {
+    expect(devePararPorOcio(OCIO_ATE_PARAR_MS)).toBe(true)
   })
 })
