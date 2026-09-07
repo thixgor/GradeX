@@ -59,6 +59,11 @@ import {
   medirDesvio,
   prazoVencido,
 } from '@/lib/provas/relogio-da-prova'
+import {
+  aplicarInstantes,
+  deveSincronizarAJanela,
+} from '@/lib/provas/sincronizacao-da-janela'
+import { useJanelaSincronizada } from '@/hooks/use-janela-sincronizada'
 import { resolverDownloadsDaProva } from '@/lib/provas/downloads-da-prova'
 import { travasDaProva } from '@/lib/provas/anti-cola'
 import { exigeEntregaAutomatica, inicioBloqueadoPorProgresso } from '@/lib/provas/retomada'
@@ -1169,6 +1174,69 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     const interval = setInterval(recalcular, 1000)
     return () => clearInterval(interval)
   }, [exam, jaEntrou, relogioDaProva])
+
+  /*
+   * O relógio da prova pode mudar POR FORA, enquanto a pessoa espera.
+   *
+   * O efeito acima recalcula a janela a cada segundo — mas sempre a partir do
+   * mesmo documento, o que `loadExam` buscou uma vez ao abrir a tela. Ele
+   * acerta a passagem do tempo e não tem como saber de uma coisa: o botão
+   * "Forçar Início" de `/admin/exams`, que grava `startTime` e `gatesOpen`
+   * como AGORA (`app/api/exams/[id]/force-time/route.ts`). O admin clicava, o
+   * banco mudava, e a sala de espera seguia contando para o horário antigo até
+   * alguém dar F5 — numa tela cuja única razão de existir é a pessoa não
+   * precisar ficar conferindo.
+   *
+   * Então a tela pergunta ao servidor, de tempos em tempos, só pelos quatro
+   * instantes da janela. Corrigido o documento, o resto acontece pelos
+   * caminhos que já existiam: a janela é recalculada, o botão destrava e o
+   * aviso de início abre para quem estava esperando.
+   *
+   * Quem já está respondendo não pergunta mais nada (ver
+   * `deveSincronizarAJanela`): mover o `endTime` de quem está no meio de uma
+   * questão zeraria o cronômetro da tela e descartaria o que ainda não foi
+   * gravado. O término de quem já começou é decidido na entrega, pelo
+   * servidor.
+   */
+  useJanelaSincronizada({
+    provaId: id,
+    prova: exam,
+    fase: janela?.fase,
+    ativo: deveSincronizarAJanela({
+      prova: exam,
+      emAndamento: started,
+      jaEntregou: alreadySubmitted || submitted,
+    }),
+    aoMudar: (instantes, dados) => {
+      setExam(atual => (atual ? { ...atual, ...aplicarInstantes(instantes) } : atual))
+      // A janela do servidor entra na hora, sem esperar a próxima volta do
+      // relógio de 1 s: quem está com o dedo no botão esperando o início não
+      // deve nem esse segundo.
+      setJanela(dados.janela)
+      setCanStart(dados.janela.podeIniciar)
+
+      /*
+       * Forçar o início ABRE o portão junto (`gatesOpen = agora`). Quem estava
+       * na tela de portão fechado nunca chegou a passar por ele — e sem o
+       * registro de entrada, fechar o portão de novo mais tarde a deixaria de
+       * fora. Passa agora, pelo mesmo caminho de `loadExam`, e em silêncio: a
+       * fase da janela já conta na tela o que acontecer aqui.
+       */
+      if (dados.jaEntrou) {
+        setJaEntrou(true)
+      } else if (dados.janela.podeEntrar) {
+        fetch(`/api/exams/${id}/entrada`, { method: 'POST' })
+          .then(res => (res.ok ? res.json() : null))
+          .then(entrada => {
+            if (entrada?.dentro) {
+              setJaEntrou(true)
+              if (entrada.janela) setJanela(entrada.janela)
+            }
+          })
+          .catch(() => {})
+      }
+    },
+  })
 
   /*
    * O anúncio do início, para quem estava esperando por ele.
