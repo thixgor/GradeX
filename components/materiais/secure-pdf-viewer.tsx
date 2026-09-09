@@ -118,6 +118,14 @@ import {
 } from '@/lib/pdf-viewer-zoom'
 import { fitToCanvasBudget } from '@/lib/pdf-viewer-canvas-budget'
 import {
+  MENSAGEM_DE_REDE,
+  MENSAGEM_DE_VERSAO_NOVA,
+  MENSAGEM_RECARREGANDO,
+  deveRecarregarPorVersaoNova,
+  ehFalhaDeCarregamentoDeModulo,
+  importarComRetentativa,
+} from '@/lib/carregamento-de-modulo'
+import {
   isViewportRelayout,
   measurePageIndex,
   RELAYOUT_SETTLE_MS,
@@ -488,8 +496,115 @@ const pageBytesInflight = new Map<string, Promise<{ bytes: Uint8Array; pageCount
 
 let pdfWorkerConfigured = false
 
+// ─── Trazer o pdf.js para o aparelho ────────────────────────────────────────
+//
+// O pdf.js NÃO vem no pacote inicial do site: são mais de um megabyte que só
+// faz sentido baixar quando alguém abre um material, e é este `import()` que
+// vai buscá-lo. Quando essa busca falha, o navegador lança "Loading chunk 9980
+// failed" — em inglês, com um número que não diz nada — e o leitor inteiro
+// para: sem o pdf.js não há como abrir uma única página.
+//
+// Foi exatamente o que aconteceu num iPad. Duas causas possíveis, tratadas
+// aqui (o porquê de cada uma está em lib/carregamento-de-modulo.ts):
+//
+//   rede oscilou  -> tentar de novo resolve, e o webpack não tenta sozinho;
+//   versão nova   -> só recarregar resolve, porque o arquivo pedido não existe
+//                    mais no servidor. É o caso mais comum no aplicativo
+//                    instalado, que fica aberto por dias entre um deploy e
+//                    outro.
+//
+// Em nenhum dos dois a pessoa deveria precisar saber o que é um "chunk".
+
+const CHAVE_DE_RECARGA = 'da:leitor:recarga-por-versao'
+
+function lerMarcaDeRecarga(): string | null {
+  try {
+    return window.sessionStorage.getItem(CHAVE_DE_RECARGA)
+  } catch {
+    // Safari em janela privativa lança ao ler o armazenamento. Sem marca não
+    // dá para garantir "uma recarga só", então o caminho seguro é não
+    // recarregar — ver `recuperarDeFalhaDeModulo`.
+    return null
+  }
+}
+
+function gravarMarcaDeRecarga(agora: number): boolean {
+  try {
+    window.sessionStorage.setItem(CHAVE_DE_RECARGA, String(agora))
+    return true
+  } catch {
+    return false
+  }
+}
+
+// Recarga já pedida: a página está de saída. Enquanto ela não vai, as páginas
+// do leitor continuam tentando sozinhas (cada uma tem auto-recuperação) — e
+// não faz sentido nem baixar de novo nem trocar a mensagem por outra. Este
+// sinalizador mantém as duas coisas quietas até a troca acontecer.
+let recargaAgendada = false
+
+/**
+ * Traduz a falha de carregamento e, quando cabe, recarrega a página sozinho.
+ *
+ * Devolve o erro que sobe para a interface — já em português, porque é ele que
+ * aparece no lugar do "Pagina indisponivel" e da mensagem do webpack.
+ */
+function recuperarDeFalhaDeModulo(erro: unknown): Error {
+  if (!ehFalhaDeCarregamentoDeModulo(erro)) {
+    return erro instanceof Error ? erro : new Error(MENSAGEM_DE_REDE)
+  }
+  if (recargaAgendada) return new Error(MENSAGEM_RECARREGANDO)
+  if (typeof window === 'undefined') return new Error(MENSAGEM_DE_VERSAO_NOVA)
+
+  // Sem rede o sintoma é o mesmo, mas a causa é outra e recarregar só levaria
+  // à tela de offline. Aqui o aparelho já sabe o que houve — e é ele que
+  // avisa, pelo evento `online`, quando voltar.
+  if (navigator.onLine === false) return new Error(MENSAGEM_DE_REDE)
+
+  const agora = Date.now()
+  const podeRecarregar =
+    deveRecarregarPorVersaoNova({ marca: lerMarcaDeRecarga(), agora }) &&
+    gravarMarcaDeRecarga(agora)
+
+  if (!podeRecarregar) return new Error(MENSAGEM_DE_VERSAO_NOVA)
+
+  // Antes de recarregar, joga fora o que o service worker guardou de
+  // `/_next/static/`. Numa versão nova esses arquivos já não são pedidos (o
+  // nome deles muda a cada deploy), e a limpeza cobre o caso em que a cópia
+  // local é que está corrompida — que dá o mesmo erro e a recarga sozinha não
+  // resolveria. Falhar aqui não pode impedir a recarga: é ela que conserta.
+  const limpar = (async () => {
+    if (!('caches' in window)) return
+    const nomes = await caches.keys()
+    await Promise.all(
+      nomes.map(async (nome) => {
+        const cache = await caches.open(nome)
+        const chaves = await cache.keys()
+        await Promise.all(
+          chaves
+            .filter((chave) => new URL(chave.url).pathname.startsWith('/_next/static/'))
+            .map((chave) => cache.delete(chave)),
+        )
+      }),
+    )
+  })()
+
+  recargaAgendada = true
+  limpar.catch(() => {}).then(() => window.location.reload())
+  return new Error(MENSAGEM_RECARREGANDO)
+}
+
 async function getPdfJs() {
-  const pdfjsLib = await import('pdfjs-dist')
+  // A página está prestes a recarregar: não adianta baixar de novo o que o
+  // servidor já não tem, e cada tentativa custa segundos de roda girando.
+  if (recargaAgendada) throw new Error(MENSAGEM_RECARREGANDO)
+
+  let pdfjsLib: typeof import('pdfjs-dist')
+  try {
+    pdfjsLib = await importarComRetentativa(() => import('pdfjs-dist'))
+  } catch (erro) {
+    throw recuperarDeFalhaDeModulo(erro)
+  }
   if (!pdfWorkerConfigured) {
     pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs'
     pdfWorkerConfigured = true
