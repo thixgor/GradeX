@@ -22,10 +22,20 @@ import type { Question, UserAnswer } from '@/lib/types'
  * ## O que ele NÃO carrega
  *
  * Nada que identifique alguém. A linha de uma questão diz quantos responderam,
- * quantos acertaram e quantos deixaram em branco — nunca quem. É o que permite
- * entregá-la a qualquer aluno da prova encerrada sem depender de a
- * classificação estar publicada: o ranking é sobre pessoas, isto é sobre
- * questões.
+ * quantos acertaram e quantos deixaram em branco — nunca quem.
+ *
+ * ## Duas versões, de propósito
+ *
+ * O que está aqui em cima é a versão do PROFESSOR, com as contagens. O aluno
+ * recebe `analiseParaOAluno`, mais abaixo: só o percentual de acerto por
+ * questão, sem nenhum número de cabeças. Saber que 31 de 34 erraram a questão
+ * 12 e saber que 12% acertaram a questão 12 respondem à mesma pergunta sobre a
+ * PROVA; só a primeira conta quantas pessoas fizeram a prova, e esse é um dado
+ * da turma, não da questão.
+ *
+ * É o que permite entregar a análise a qualquer aluno da prova encerrada sem
+ * depender de a classificação estar publicada: o ranking é sobre pessoas, isto
+ * é sobre questões.
  */
 
 /**
@@ -133,6 +143,85 @@ export function resumirTurmaPorQuestao(
     objetivas: listaDeQuestoes.filter((q) => q.type === 'multiple-choice').length,
     discursivas: listaDeQuestoes.filter((q) => q.type !== 'multiple-choice').length,
     entregas: listaDeEntregas.length,
+  }
+}
+
+/**
+ * ═══ O que o ALUNO recebe ═══
+ *
+ * As contagens absolutas — quantos entregaram, quantos responderam cada
+ * questão, quantos acertaram, quantos deixaram em branco — são do professor.
+ * Para o aluno sai o percentual de acerto e mais nada: ele responde "essa
+ * questão pegou a turma?" sem dizer o tamanho da turma.
+ *
+ * ## Por que a separação é aqui, e não na tela
+ *
+ * Porque esconder um número no JSX o deixa a um `fetch` de distância — no
+ * console, na aba de rede, sem ferramenta nenhuma. É a mesma decisão que
+ * `showRanking` já tinha tomado: o que a tela não mostra, a rota não manda.
+ *
+ * ## Por que o destaque é calculado aqui
+ *
+ * A mais errada e a mais acertada desempatam pela mais RESPONDIDA — e
+ * `respondidas` é justamente uma das contagens que não viajam. Se o ranking
+ * fosse feito no navegador, ou ele receberia o número que não pode receber, ou
+ * desempataria errado. Ele sai pronto do servidor, com só o número da questão e
+ * o percentual dela.
+ */
+
+/** Uma questão em destaque, reduzida ao que pode ser dito ao aluno. */
+export interface DestaqueDaTurma {
+  number: number
+  percentualDeAcerto: number
+}
+
+/** Uma questão vista pelo aluno: o percentual, sem cabeças por trás. */
+export interface LinhaPublicaDaTurma {
+  questionId: string
+  number: number
+  type: string
+  percentualDeAcerto: number | null
+}
+
+export interface AnalisePublicaDaTurma {
+  questoes: LinhaPublicaDaTurma[]
+  totalDeQuestoes: number
+  objetivas: number
+  discursivas: number
+  /**
+   * Houve alguma entrega? — e só isso.
+   *
+   * A tela precisa saber se há o que mostrar; ela não precisa saber se foram
+   * três ou trezentas pessoas. Um booleano responde a primeira pergunta sem
+   * responder a segunda.
+   */
+  temEntregas: boolean
+  maisErrada: DestaqueDaTurma | null
+  maisAcertada: DestaqueDaTurma | null
+}
+
+function destaque(linha: LinhaDaTurma | null): DestaqueDaTurma | null {
+  if (!linha || linha.percentualDeAcerto === null) return null
+  return { number: linha.number, percentualDeAcerto: linha.percentualDeAcerto }
+}
+
+export function analiseParaOAluno(
+  resumo: ResumoDaTurmaPorQuestao | null | undefined,
+): AnalisePublicaDaTurma | null {
+  if (!resumo) return null
+  return {
+    questoes: resumo.questoes.map((q) => ({
+      questionId: q.questionId,
+      number: q.number,
+      type: q.type,
+      percentualDeAcerto: q.percentualDeAcerto,
+    })),
+    totalDeQuestoes: resumo.totalDeQuestoes,
+    objetivas: resumo.objetivas,
+    discursivas: resumo.discursivas,
+    temEntregas: resumo.entregas > 0,
+    maisErrada: destaque(questaoMaisErradaDaTurma(resumo.questoes)),
+    maisAcertada: destaque(questaoMaisAcertadaDaTurma(resumo.questoes)),
   }
 }
 

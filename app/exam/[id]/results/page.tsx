@@ -18,12 +18,11 @@ import {
   Medal,
   Search,
   Trophy,
-  Users,
 } from 'lucide-react'
 import { resolverDownloadsDaProva } from '@/lib/provas/downloads-da-prova'
 import { PainelDeDownloads } from '@/components/exam/painel-de-downloads'
 import { enderecoDoTreino } from '@/lib/provas/treino-pos-termino'
-import { FAIXAS_DE_NOTA, type EstatisticasDaTurma } from '@/lib/provas/classificacao'
+import { FAIXAS_DE_NOTA, type EstatisticasPublicasDaTurma } from '@/lib/provas/classificacao'
 import { cn } from '@/lib/utils'
 
 /**
@@ -85,7 +84,15 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
   const [linhas, setLinhas] = useState<Linha[]>([])
   const [scoringMethod, setScoringMethod] = useState<'tri' | 'normal'>('normal')
   const [mostrarClassificacao, setMostrarClassificacao] = useState(true)
-  const [estatisticas, setEstatisticas] = useState<EstatisticasDaTurma | null>(null)
+  /*
+   * O resumo da turma SEM a contagem de participantes.
+   *
+   * A rota manda `EstatisticasPublicasDaTurma` para quem não é admin: média,
+   * maior, menor e a distribuição em proporção. `participantes` e as
+   * quantidades por faixa não vêm — elas dizem quantas pessoas fizeram a prova,
+   * e esse número é do professor. Ver `estatisticasParaOAluno`.
+   */
+  const [estatisticas, setEstatisticas] = useState<EstatisticasPublicasDaTurma | null>(null)
   const [minhaNota, setMinhaNota] = useState<number | null>(null)
   const [minhaColocacao, setMinhaColocacao] = useState<{ posicao: number; percentil: number } | null>(null)
   const [notaMaximaServidor, setNotaMaximaServidor] = useState<number | null>(null)
@@ -319,13 +326,17 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
                   {minhaNota}
                   <span className="ml-1 text-sm font-normal text-muted-foreground">/ {notaMaxima}</span>
                 </p>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {minhaColocacao && estatisticas && estatisticas.participantes > 1
-                    ? `Você ficou à frente de ${minhaColocacao.percentil}% da turma.`
-                    : estatisticas && estatisticas.participantes > 1
-                      ? `A média da turma foi ${estatisticas.media.toFixed(1)}.`
-                      : 'Você é a única entrega registrada até agora.'}
-                </p>
+                {/*
+                  "Você é a única entrega registrada" saiu com a contagem: era
+                  o número de participantes dito por extenso.
+                */}
+                {(minhaColocacao || estatisticas?.media !== null) && (
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {minhaColocacao
+                      ? `Você ficou à frente de ${minhaColocacao.percentil}% da turma.`
+                      : `A média da turma foi ${estatisticas!.media!.toFixed(1)}.`}
+                  </p>
+                )}
               </div>
               <Button
                 onClick={() => router.push(`/exam/${id}/user/${conta.id}`)}
@@ -417,11 +428,17 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
               Como foi a turma
             </h2>
 
-            <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-              <Numero icone={Users} rotulo="Participantes" valor={String(estatisticas.participantes)} ordem={0} />
-              <Numero rotulo="Média" valor={estatisticas.media.toFixed(1)} ordem={1} />
-              <Numero icone={Trophy} rotulo="Maior nota" valor={String(estatisticas.maior)} destaque ordem={2} />
-              <Numero rotulo="Menor nota" valor={String(estatisticas.menor)} ordem={3} />
+            {/*
+              Três números, e não quatro: "Participantes" saiu.
+
+              Ele era a contagem de entregas — quantas pessoas fizeram a prova —,
+              e isso é do painel do professor. Os três que ficam descrevem como
+              a PROVA foi, não quantos a fizeram.
+            */}
+            <div className="mb-6 grid grid-cols-3 gap-3">
+              <Numero rotulo="Média" valor={estatisticas.media?.toFixed(1) ?? '—'} ordem={1} />
+              <Numero icone={Trophy} rotulo="Maior nota" valor={String(estatisticas.maior ?? '—')} destaque ordem={2} />
+              <Numero rotulo="Menor nota" valor={String(estatisticas.menor ?? '—')} ordem={3} />
             </div>
 
             {/*
@@ -431,7 +448,9 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
             */}
             <div className="space-y-2">
               {estatisticas.distribuicao.map((faixa, i) => {
-                const proporcao = (faixa.quantidade / Math.max(1, estatisticas.participantes)) * 100
+                // A proporção já vem calculada do servidor: o cliente não
+                // recebe o número de pessoas por faixa para dividir.
+                const proporcao = faixa.proporcao
                 const ehMinhaFaixa = i === minhaFaixa
                 return (
                   <div key={faixa.rotulo} className="flex items-center gap-3">
@@ -445,13 +464,15 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
                           ehMinhaFaixa ? 'bg-emerald-500' : 'bg-slate-400/60 dark:bg-slate-500/60',
                         )}
                         style={{
-                          width: `${Math.max(proporcao, faixa.quantidade > 0 ? 4 : 0)}%`,
+                          width: `${Math.max(proporcao, proporcao > 0 ? 4 : 0)}%`,
                           animationDelay: `${0.2 + i * 0.07}s`,
                         }}
                       />
                     </div>
-                    <span className="w-8 flex-shrink-0 text-[11px] font-semibold tabular-nums text-muted-foreground">
-                      {faixa.quantidade}
+                    {/* A porcentagem da turma na faixa, no lugar do número de
+                        pessoas que estava aqui. */}
+                    <span className="w-10 flex-shrink-0 text-right text-[11px] font-semibold tabular-nums text-muted-foreground">
+                      {Math.round(proporcao)}%
                     </span>
                   </div>
                 )
@@ -623,7 +644,7 @@ function Numero({
   destaque,
   ordem = 0,
 }: {
-  icone?: typeof Users
+  icone?: typeof Trophy
   rotulo: string
   valor: string
   destaque?: boolean

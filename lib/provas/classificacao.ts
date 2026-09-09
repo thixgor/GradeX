@@ -93,6 +93,43 @@ export function resumirTurma(
 }
 
 /**
+ * ═══ O resumo, sem contar cabeças ═══
+ *
+ * `EstatisticasDaTurma` traz duas coisas que são a MESMA informação por dois
+ * caminhos: `participantes` (quantas entregas houve) e `distribuicao`, cuja
+ * soma das quantidades é exatamente esse número. As duas dizem ao aluno quantas
+ * pessoas fizeram a prova, e isso é do professor.
+ *
+ * A média, a maior e a menor nota ficam: elas descrevem como a prova foi, não
+ * quantos a fizeram. E a distribuição continua existindo — em PROPORÇÃO. A
+ * barra responde "onde a turma se concentrou?" do mesmo jeito, e a forma do
+ * gráfico é idêntica; o que sai é a régua de cabeças no eixo.
+ */
+export interface EstatisticasPublicasDaTurma {
+  media: number | null
+  maior: number | null
+  menor: number | null
+  /** Cada faixa em porcentagem da turma — nunca em número de pessoas. */
+  distribuicao: { rotulo: string; proporcao: number }[]
+}
+
+export function estatisticasParaOAluno(
+  resumo: EstatisticasDaTurma | null | undefined,
+): EstatisticasPublicasDaTurma | null {
+  if (!resumo) return null
+  const total = Math.max(1, resumo.participantes)
+  return {
+    media: resumo.media,
+    maior: resumo.maior,
+    menor: resumo.menor,
+    distribuicao: resumo.distribuicao.map((faixa) => ({
+      rotulo: faixa.rotulo,
+      proporcao: (faixa.quantidade / total) * 100,
+    })),
+  }
+}
+
+/**
  * A posição de uma pessoa na lista ordenada, com empate contando como a mesma
  * colocação (duas notas 90 são as duas em 1º, e a seguinte é 3º).
  */

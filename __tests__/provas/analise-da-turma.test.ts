@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import {
+  analiseParaOAluno,
   questaoMaisAcertadaDaTurma,
   questaoMaisErradaDaTurma,
   resumirTurmaPorQuestao,
   type EntregaParaAnalise,
 } from '@/lib/provas/analise-da-turma'
+import { estatisticasParaOAluno, resumirTurma } from '@/lib/provas/classificacao'
 import type { Question } from '@/lib/types'
 
 function objetiva(id: string, number: number): Question {
@@ -167,5 +169,99 @@ describe('as questões em destaque', () => {
     // q1: 2 de 3 acertaram (66%). q2: 1 de 3 (33%).
     expect(questaoMaisAcertadaDaTurma(resumo.questoes)?.number).toBe(1)
     expect(questaoMaisErradaDaTurma(resumo.questoes)?.number).toBe(2)
+  })
+})
+
+describe('o que o aluno recebe — nenhuma contagem de pessoas', () => {
+  const questoes = [objetiva('q1', 1), objetiva('q2', 2), discursiva('d1', 3)]
+  const entregas = [
+    entrega({ q1: 'q1-a', q2: 'q2-b' }),
+    entrega({ q1: 'q1-a', q2: 'q2-b' }),
+    entrega({ q1: 'q1-b', q2: 'q2-a' }),
+  ]
+
+  it('não vaza quantas pessoas fizeram a prova, por caminho nenhum', () => {
+    const publico = analiseParaOAluno(resumirTurmaPorQuestao(questoes, entregas))!
+
+    // O objeto inteiro, serializado: nenhuma chave de contagem sobrevive.
+    const serializado = JSON.stringify(publico)
+    expect(serializado).not.toContain('entregas')
+    expect(serializado).not.toContain('respondidas')
+    expect(serializado).not.toContain('acertos')
+    expect(serializado).not.toContain('emBranco')
+
+    for (const q of publico.questoes) {
+      expect(Object.keys(q).sort()).toEqual(
+        ['number', 'percentualDeAcerto', 'questionId', 'type'].sort(),
+      )
+    }
+  })
+
+  it('o percentual de acerto continua inteiro — é o que o aluno veio ver', () => {
+    const publico = analiseParaOAluno(resumirTurmaPorQuestao(questoes, entregas))!
+    // q1: 2 de 3 acertaram; q2: 1 de 3.
+    expect(publico.questoes[0].percentualDeAcerto).toBeCloseTo(66.666, 2)
+    expect(publico.questoes[1].percentualDeAcerto).toBeCloseTo(33.333, 2)
+  })
+
+  it('diz QUE houve entregas, sem dizer quantas', () => {
+    const comEntregas = analiseParaOAluno(resumirTurmaPorQuestao(questoes, entregas))!
+    const semEntregas = analiseParaOAluno(resumirTurmaPorQuestao(questoes, []))!
+    expect(comEntregas.temEntregas).toBe(true)
+    expect(semEntregas.temEntregas).toBe(false)
+  })
+
+  it('o destaque vem pronto, porque o desempate usa um número que não viaja', () => {
+    const publico = analiseParaOAluno(resumirTurmaPorQuestao(questoes, entregas))!
+    expect(publico.maisAcertada).toEqual({ number: 1, percentualDeAcerto: expect.any(Number) })
+    expect(publico.maisErrada?.number).toBe(2)
+    // E o destaque também não carrega contagem nenhuma.
+    expect(Object.keys(publico.maisErrada!).sort()).toEqual(['number', 'percentualDeAcerto'])
+  })
+
+  it('a contagem de QUESTÕES fica — ela é da prova, não da turma', () => {
+    const publico = analiseParaOAluno(resumirTurmaPorQuestao(questoes, entregas))!
+    expect(publico.totalDeQuestoes).toBe(3)
+    expect(publico.objetivas).toBe(2)
+    expect(publico.discursivas).toBe(1)
+  })
+
+  it('sem análise nenhuma devolve null em vez de estourar', () => {
+    expect(analiseParaOAluno(null)).toBeNull()
+    expect(analiseParaOAluno(undefined)).toBeNull()
+  })
+})
+
+describe('o resumo de notas do aluno — sem participantes', () => {
+  const resumo = resumirTurma([90, 70, 70, 30], 100)
+
+  it('participantes e as quantidades por faixa não saem', () => {
+    const publico = estatisticasParaOAluno(resumo)!
+    const serializado = JSON.stringify(publico)
+    expect(serializado).not.toContain('participantes')
+    expect(serializado).not.toContain('quantidade')
+    expect(Object.keys(publico).sort()).toEqual(['distribuicao', 'maior', 'media', 'menor'])
+  })
+
+  it('a distribuição vira proporção, e a forma do gráfico é a mesma', () => {
+    const publico = estatisticasParaOAluno(resumo)!
+    // 4 notas: uma em 20–40%, duas em 60–80%, uma em 80–100%.
+    const porFaixa = Object.fromEntries(publico.distribuicao.map((f) => [f.rotulo, f.proporcao]))
+    expect(porFaixa['20–40%']).toBe(25)
+    expect(porFaixa['60–80%']).toBe(50)
+    expect(porFaixa['80–100%']).toBe(25)
+    expect(porFaixa['0–20%']).toBe(0)
+  })
+
+  it('média, maior e menor ficam — descrevem a prova, não o tamanho da turma', () => {
+    const publico = estatisticasParaOAluno(resumo)!
+    expect(publico.media).toBe(65)
+    expect(publico.maior).toBe(90)
+    expect(publico.menor).toBe(30)
+  })
+
+  it('sem notas devolve null', () => {
+    expect(estatisticasParaOAluno(resumirTurma([], 100))).toBeNull()
+    expect(estatisticasParaOAluno(null)).toBeNull()
   })
 })

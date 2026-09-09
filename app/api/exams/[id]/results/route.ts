@@ -7,9 +7,14 @@ import { Exam, ExamSubmission } from '@/lib/types'
 import { ObjectId } from 'mongodb'
 import { calculateTRIScores } from '@/lib/tri-calculator'
 import { resolverJanelaDaProva } from '@/lib/provas/janela-da-prova'
-import { mostraClassificacao, posicaoNaTurma, resumirTurma } from '@/lib/provas/classificacao'
+import {
+  estatisticasParaOAluno,
+  mostraClassificacao,
+  posicaoNaTurma,
+  resumirTurma,
+} from '@/lib/provas/classificacao'
 import { permiteTreinoAposTermino } from '@/lib/provas/treino-pos-termino'
-import { resumirTurmaPorQuestao } from '@/lib/provas/analise-da-turma'
+import { analiseParaOAluno, resumirTurmaPorQuestao } from '@/lib/provas/analise-da-turma'
 
 export const dynamic = 'force-dynamic'
 
@@ -188,10 +193,23 @@ export async function GET(
               : { userId: r.userId, userName: r.userName, score: r.nota }))
         : [],
       mostrarClassificacao: podeVerClassificacao,
-      // O resumo vem do servidor mesmo quando a lista vai junto: sem ele, a
-      // tela com a classificação desligada não teria como calcular a média de
-      // notas que ela não recebeu.
-      estatisticas: resumirTurma(notas, notaMaxima),
+      /*
+       * O resumo da turma — e, para o aluno, sem o número de participantes.
+       *
+       * Ele vem do servidor mesmo quando a lista vai junto: sem ele, a tela com
+       * a classificação desligada não teria como calcular a média de notas que
+       * ela não recebeu.
+       *
+       * O que muda por quem pergunta é a CONTAGEM. `participantes` e as
+       * quantidades da distribuição dizem quantas pessoas fizeram a prova, e
+       * isso é do professor: no painel dele o número é o assunto ("32 de 40
+       * apareceram"), na tela do aluno é o tamanho da turma, que ele não tem
+       * por que receber. A distribuição continua indo, em proporção — a forma
+       * do gráfico é a mesma, sem a régua de cabeças no eixo.
+       */
+      estatisticas: isAdmin
+        ? resumirTurma(notas, notaMaxima)
+        : estatisticasParaOAluno(resumirTurma(notas, notaMaxima)),
       minhaNota: minhaLinha ? minhaLinha.nota : null,
       minhaPosicao: minhaLinha && podeVerClassificacao
         ? posicaoNaTurma(notas, minhaLinha.nota)
@@ -217,8 +235,16 @@ export async function GET(
        * de fato faz no grupo depois da prova.
        *
        * Sai das submissões que esta rota já carregou — nenhuma consulta a mais.
+       *
+       * Para o aluno vai a versão sem contagens (`analiseParaOAluno`): o
+       * percentual de acerto de cada questão, e nada de "31 de 34 erraram" —
+       * que é o número de pessoas por outro caminho. O destaque (a mais errada
+       * e a mais acertada) sai pronto de lá porque o desempate dele usa
+       * justamente `respondidas`, que não viaja.
        */
-      analiseDaTurma: resumirTurmaPorQuestao(exam.questions, submissions),
+      analiseDaTurma: isAdmin
+        ? resumirTurmaPorQuestao(exam.questions, submissions)
+        : analiseParaOAluno(resumirTurmaPorQuestao(exam.questions, submissions)),
       // Refazer como treino: a tela da prova encerrada e esta oferecem o mesmo
       // botão, e as duas precisam saber que ele existe.
       treinoLiberado: permiteTreinoAposTermino(exam, now),

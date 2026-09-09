@@ -56,12 +56,7 @@ import { PainelDeDownloads } from '@/components/exam/painel-de-downloads'
 import type { Exam, ExamSubmission } from '@/lib/types'
 import { provaJaEncerrou, resolverDownloadsDaProva } from '@/lib/provas/downloads-da-prova'
 import { enderecoDoTreino } from '@/lib/provas/treino-pos-termino'
-import {
-  questaoMaisAcertadaDaTurma,
-  questaoMaisErradaDaTurma,
-  type LinhaDaTurma,
-  type ResumoDaTurmaPorQuestao,
-} from '@/lib/provas/analise-da-turma'
+import type { AnalisePublicaDaTurma, DestaqueDaTurma } from '@/lib/provas/analise-da-turma'
 import { cn } from '@/lib/utils'
 
 export default function ProvaEncerradaPage({ params }: { params: { id: string } }) {
@@ -73,10 +68,15 @@ export default function ProvaEncerradaPage({ params }: { params: { id: string } 
   const [minhaEntrega, setMinhaEntrega] = useState<ExamSubmission | null>(null)
   const [participei, setParticipei] = useState<boolean | null>(null)
   const [treinoLiberado, setTreinoLiberado] = useState(false)
-  const [analise, setAnalise] = useState<ResumoDaTurmaPorQuestao | null>(null)
+  /*
+   * A análise da turma como o ALUNO a recebe: o percentual de acerto por
+   * questão, e nenhuma contagem de pessoas. Quantos entregaram, quantos
+   * responderam e quantos acertaram cada questão ficam no painel do professor —
+   * ver `analiseParaOAluno`.
+   */
+  const [analise, setAnalise] = useState<AnalisePublicaDaTurma | null>(null)
   const [minhaNota, setMinhaNota] = useState<number | null>(null)
   const [notaMaxima, setNotaMaxima] = useState<number | null>(null)
-  const [participantes, setParticipantes] = useState<number | null>(null)
   const [mediaDaTurma, setMediaDaTurma] = useState<number | null>(null)
   const [temResultados, setTemResultados] = useState(false)
 
@@ -157,7 +157,6 @@ export default function ProvaEncerradaPage({ params }: { params: { id: string } 
           setTreinoLiberado(!!dados.treinoLiberado)
           setMinhaNota(typeof dados.minhaNota === 'number' ? dados.minhaNota : null)
           setNotaMaxima(typeof dados.notaMaxima === 'number' ? dados.notaMaxima : null)
-          setParticipantes(dados.estatisticas?.participantes ?? null)
           setMediaDaTurma(dados.estatisticas?.media ?? null)
         }
 
@@ -197,8 +196,6 @@ export default function ProvaEncerradaPage({ params }: { params: { id: string } 
     downloads.gabarito.permitido ||
     (!!minhaEntrega && (downloads.relatorio.permitido || downloads.compacto.permitido))
 
-  const maisErrada = useMemo(() => questaoMaisErradaDaTurma(analise?.questoes), [analise])
-  const maisAcertada = useMemo(() => questaoMaisAcertadaDaTurma(analise?.questoes), [analise])
 
   if (loading) return <LogoLoading message="Carregando prova..." size="lg" fullscreen />
 
@@ -275,11 +272,6 @@ export default function ProvaEncerradaPage({ params }: { params: { id: string } 
               {analise?.totalDeQuestoes ?? exam.numberOfQuestions}{' '}
               {(analise?.totalDeQuestoes ?? exam.numberOfQuestions) === 1 ? 'questão' : 'questões'}
             </span>
-            {participantes !== null && (
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-muted/40 px-3 py-1.5 text-muted-foreground">
-                {participantes} {participantes === 1 ? 'entrega' : 'entregas'}
-              </span>
-            )}
           </div>
         </section>
 
@@ -356,8 +348,6 @@ export default function ProvaEncerradaPage({ params }: { params: { id: string } 
         {/* ── Análise da turma ───────────────────────────────────── */}
         <AnaliseDaTurma
           analise={analise}
-          maisErrada={maisErrada}
-          maisAcertada={maisAcertada}
           media={mediaDaTurma}
           notaMaxima={notaMaxima}
           aberta={analiseAberta}
@@ -439,22 +429,29 @@ function ItemDoMenu({
  */
 function AnaliseDaTurma({
   analise,
-  maisErrada,
-  maisAcertada,
   media,
   notaMaxima,
   aberta,
   onAlternar,
 }: {
-  analise: ResumoDaTurmaPorQuestao | null
-  maisErrada: LinhaDaTurma | null
-  maisAcertada: LinhaDaTurma | null
+  analise: AnalisePublicaDaTurma | null
   media: number | null
   notaMaxima: number | null
   aberta: boolean
   onAlternar: () => void
 }) {
-  if (!analise || analise.entregas === 0) return null
+  if (!analise || !analise.temEntregas) return null
+
+  /*
+   * O destaque vem pronto do servidor.
+   *
+   * O desempate entre duas questões com o mesmo percentual usa a mais
+   * RESPONDIDA — e esse número é uma contagem de pessoas, que não viaja até
+   * aqui. Calcular o ranking no navegador exigiria recebê-lo. Ver
+   * `analiseParaOAluno`.
+   */
+  const maisErrada: DestaqueDaTurma | null = analise.maisErrada
+  const maisAcertada: DestaqueDaTurma | null = analise.maisAcertada
 
   const objetivas = analise.questoes.filter(
     (q) => q.type === 'multiple-choice' && q.percentualDeAcerto !== null,
@@ -477,9 +474,8 @@ function AnaliseDaTurma({
           </span>
           <span className="mt-1 block text-[11px] leading-relaxed text-muted-foreground">
             {analise.totalDeQuestoes} {analise.totalDeQuestoes === 1 ? 'questão' : 'questões'}
-            {analise.discursivas > 0 && ` (${analise.objetivas} objetivas)`} ·{' '}
-            {analise.entregas} {analise.entregas === 1 ? 'entrega' : 'entregas'}
-            {media !== null && ` · média ${media.toFixed(1)}${notaMaxima ? `/${notaMaxima}` : ''}`}
+            {analise.discursivas > 0 && ` (${analise.objetivas} objetivas)`}
+            {media !== null && ` · média da turma ${media.toFixed(1)}${notaMaxima ? `/${notaMaxima}` : ''}`}
           </span>
 
           {/* A manchete, visível com o bloco fechado. */}
@@ -513,8 +509,9 @@ function AnaliseDaTurma({
           ) : (
             <>
               <p className="mb-3 text-[11px] leading-snug text-muted-foreground">
-                O percentual é sobre quem <strong>respondeu</strong> a questão. Ninguém é
-                identificado aqui — a análise é sobre as questões, não sobre as pessoas.
+                O percentual é sobre quem <strong>respondeu</strong> a questão — quem deixou em
+                branco não entra na conta. A análise é sobre as questões: ela não identifica
+                ninguém e não diz quantas pessoas fizeram a prova.
               </p>
               <ol className="space-y-1.5">
                 {objetivas.map((q) => {
@@ -539,10 +536,13 @@ function AnaliseDaTurma({
                       <span className="w-9 flex-shrink-0 text-xs font-bold tabular-nums text-muted-foreground">
                         Q{q.number}
                       </span>
+                      {/*
+                        Só o percentual. "12 de 34 acertaram" respondia a mesma
+                        pergunta sobre a questão e, de quebra, contava quantas
+                        pessoas fizeram a prova — que é o que não sai daqui.
+                      */}
                       <span className="min-w-0 flex-1 text-[11px] text-muted-foreground">
-                        {q.acertos} de {q.respondidas}{' '}
-                        {q.respondidas === 1 ? 'acertou' : 'acertaram'}
-                        {q.emBranco > 0 && ` · ${q.emBranco} em branco`}
+                        {pct}% da turma acertou
                       </span>
                       <span
                         className={cn(
