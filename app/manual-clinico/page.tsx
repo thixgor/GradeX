@@ -1383,15 +1383,13 @@ function ManualClinicoContent() {
                 <div
                   key={patologia._id}
                   data-tour={idx === 0 ? 'patologia' : undefined}
-                  onClick={() => {
-                    // Patologia grátis mas exige login: manda criar conta e volta
-                    // direto pra ela (abre de graça). Antes caía num muro de login.
-                    if (patologia.accessStatus === 'login_required') {
-                      goToFreeTrial(patologia.slug)
-                    } else {
-                      router.push(`/manual-clinico/${patologia.slug}`)
-                    }
-                  }}
+                  // Todo mundo vai para a patologia, inclusive quem não tem
+                  // conta: a página abre a prévia — a mesma que quem já gastou
+                  // as visualizações gratuitas vê — e é lá que o convite para
+                  // entrar aparece, com o valor já na tela. Desviar o visitante
+                  // para o cadastro aqui era pedir a conta antes de mostrar o
+                  // que ela abre.
+                  onClick={() => router.push(`/manual-clinico/${patologia.slug}`)}
                   className={`group relative rounded-xl border border-border bg-card
                     hover:border-primary/40 hover:shadow-sm
                     transition-colors duration-200 cursor-pointer overflow-hidden ${

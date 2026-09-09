@@ -113,17 +113,22 @@ export async function GET(request: NextRequest) {
         !!session?.userId &&
         !isFreeClaimed &&
         freeQuota.remaining > 0
-      const unlocked = access.hasFullAccess || isGlobalFree || isFreeClaimed
+      // Visitante sem conta não destranca nada aqui — nem as patologias da
+      // lista gratuita, que a página da patologia também só abre depois do
+      // login. Sem esta linha o cartão dizia "grátis, é só clicar" e a tela
+      // seguinte pedia login: promessa e porta discordando na mesma navegação.
+      const isGuest = !session?.userId
+      const unlocked = !isGuest && (access.hasFullAccess || isGlobalFree || isFreeClaimed)
       const accessStatus = access.hasFullAccess
         ? 'premium_unlocked'
-        : isGlobalFree
-          ? 'free'
-          : isFreeClaimed
-            ? 'free_claimed'
-            : canClaimFree
-              ? 'free_available'
-              : !session?.userId && config.freeAccessMode === 'quantity'
-                ? 'login_required'
+        : isGuest
+          ? (isGlobalFree || config.freeAccessMode === 'quantity') ? 'login_required' : 'locked'
+          : isGlobalFree
+            ? 'free'
+            : isFreeClaimed
+              ? 'free_claimed'
+              : canClaimFree
+                ? 'free_available'
                 : 'locked'
       return {
         ...patologia,

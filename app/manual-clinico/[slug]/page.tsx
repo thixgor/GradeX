@@ -151,10 +151,14 @@ function Section({ title, icon: Icon, children, defaultOpen = true, variant = 'd
   )
 }
 
-function PremiumPreviewCard({ patologia, onCheckout }: { patologia: ManualPatologiaResponse; onCheckout: () => void }) {
+function PremiumPreviewCard({ patologia, onCheckout, onLogin }: { patologia: ManualPatologiaResponse; onCheckout: () => void; onLogin: () => void }) {
   const product = patologia.product
   const freeQuota = patologia.access?.freeQuota
   const needsLoginForFreeChoice = patologia.accessStatus === 'login_required' && !!freeQuota?.limit
+  // Patologia da lista gratuita aberta por quem não tem conta: o Manual a dá de
+  // graça, mas só depois do login — então o convite é entrar, não comprar.
+  const isFreeButNeedsLogin = patologia.accessStatus === 'login_required' && !freeQuota?.limit && !!patologia.isFree
+  const needsLogin = needsLoginForFreeChoice || isFreeButNeedsLogin
   const hasExhaustedFreeChoices = patologia.accessStatus === 'locked' && freeQuota?.mode === 'quantity' && freeQuota.limit > 0
 
   return (
@@ -166,11 +170,20 @@ function PremiumPreviewCard({ patologia, onCheckout }: { patologia: ManualPatolo
             <Lock className="h-6 w-6" />
           </div>
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.16em] text-amber-500">Conteúdo Plus+</p>
-            <h2 className="mt-1 text-2xl font-black tracking-tight">Desbloqueie o Manual Clínico Completo</h2>
+            {/* Para quem só precisa entrar, "Conteúdo Plus+ / Desbloqueie o
+                Manual completo" contradiz o próprio texto abaixo, que diz que a
+                leitura é gratuita. O cartão é o mesmo; o título é que muda. */}
+            <p className="text-xs font-black uppercase tracking-[0.16em] text-amber-500">
+              {needsLogin ? 'Prévia' : 'Conteúdo Plus+'}
+            </p>
+            <h2 className="mt-1 text-2xl font-black tracking-tight">
+              {needsLogin ? 'Entre para ler a patologia completa' : 'Desbloqueie o Manual Clínico Completo'}
+            </h2>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
               {needsLoginForFreeChoice
                 ? `Entre para escolher esta patologia como uma das suas ${freeQuota?.limit} visualizações gratuitas.`
+                : isFreeButNeedsLogin
+                ? 'Esta patologia é gratuita: entre na sua conta para ler a versão completa.'
                 : hasExhaustedFreeChoices
                   ? `Voce ja usou suas ${freeQuota?.limit} visualizações gratuitas. O Plus+ libera o acervo completo.`
                   : product?.shortDescription || 'Acesso completo a 220+ patologias aprofundadas com diagnóstico, tratamento, diferenciais, farmacologia e fluxogramas.'}
@@ -191,8 +204,10 @@ function PremiumPreviewCard({ patologia, onCheckout }: { patologia: ManualPatolo
             <p className="text-sm font-bold">{product?.benefitText || 'Acesso completo a patologias aprofundadas'}</p>
             {product?.isActive && (
               <p className="mt-1 text-sm text-muted-foreground">
-                {needsLoginForFreeChoice ? (
-                  <span className="font-black text-primary">Escolha gratuita disponível após login</span>
+                {needsLogin ? (
+                  <span className="font-black text-primary">
+                    {needsLoginForFreeChoice ? 'Escolha gratuita disponível após login' : 'Leitura gratuita após login'}
+                  </span>
                 ) : (
                   <>
                     {product.hasActivePromotion && <span className="mr-2 line-through">{formatBRL(product.price)}</span>}
@@ -204,12 +219,16 @@ function PremiumPreviewCard({ patologia, onCheckout }: { patologia: ManualPatolo
           </div>
           <button
             type="button"
-            onClick={onCheckout}
-            disabled={!product?.isActive}
+            // O botão promete duas coisas diferentes conforme o estado, e antes
+            // levava ao checkout nos dois. Para o visitante sem conta ("Entrar e
+            // abrir grátis") o destino é o login: mandá-lo comprar seria cobrar
+            // por uma visualização que ele tem de graça, bastando entrar.
+            onClick={needsLogin ? onLogin : onCheckout}
+            disabled={!needsLogin && !product?.isActive}
             className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-primary px-5 text-sm font-black text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
           >
             <Crown className="h-4 w-4" />
-            {needsLoginForFreeChoice
+            {needsLogin
               ? 'Entrar e abrir grátis'
               : product?.isActive ? (product.ctaText || 'Desbloquear Manual Clínico Completo') : 'Produto indisponível'}
             <ArrowRight className="h-4 w-4" />
@@ -1938,6 +1957,7 @@ function PatologiaContent() {
             // (venda sem conta por Serial Key), então o destino aqui é sempre o
             // checkout do Manual.
             onCheckout={() => router.push('/manual-clinico/checkout')}
+            onLogin={() => router.push(`/auth/login?redirect=${encodeURIComponent(`/manual-clinico/${slug}`)}`)}
           />
         )}
 

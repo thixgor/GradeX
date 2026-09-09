@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { jwtVerify } from 'jose'
 import { histologiaHabilitada } from '@/lib/histologia/licenca'
+import { isManualClinicoPatologia } from '@/lib/manual-clinico-rotas'
 import {
   ADMIN_GATE_COOKIE,
   ADMIN_GATE_ERROR_CODE,
@@ -241,6 +242,16 @@ function isPublicRoute(pathname: string): boolean {
   // acervo) são consumidas pelas mesmas páginas públicas e seguem gratuitas e
   // sem login. O portão do módulo é aplicado dentro de cada handler.
   if (/^\/api\/manual-clinico\/histopatologia\//.test(pathname)) return true
+  // Prévia de patologia sem login. Público aqui significa só "não manda para o
+  // login": o que o visitante recebe é EXATAMENTE a prévia que quem já gastou as
+  // visualizações gratuitas vê — nome, sinônimos, sistema, CID-10 e um trecho —
+  // montada por `buildManualClinicoPreview`. A entrada inteira continua
+  // privativa, e quem decide é o handler, que nunca libera o texto completo a
+  // quem não tem sessão e não gasta cota de convidado (não existe cota sem
+  // conta). Sem isto o link de uma patologia — compartilhado, indexado ou
+  // colado no WhatsApp — abria no formulário de login, escondendo do visitante
+  // justamente a amostra que existe para convencê-lo a criar conta.
+  if (isManualClinicoPatologia(pathname)) return true
   if (/^\/api\/mindmaps\/[^/]+\/version$/.test(pathname)) return true
   if (
     pathname === '/api/mindmaps' ||

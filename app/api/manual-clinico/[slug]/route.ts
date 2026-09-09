@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
+import { checkRateLimit } from '@/lib/rate-limit'
 import {
   buildManualClinicoPreview,
   claimManualClinicoFreePathology,
@@ -15,6 +16,12 @@ import {
 
 export const dynamic = 'force-dynamic'
 
+function clientIp(request: NextRequest): string {
+  const fwd = request.headers.get('x-forwarded-for')
+  if (fwd) return fwd.split(',')[0].trim()
+  return request.headers.get('x-real-ip') || 'desconhecido'
+}
+
 // GET - Obter patologia por slug (freemium)
 export async function GET(
   request: NextRequest,
@@ -23,6 +30,21 @@ export async function GET(
   try {
     const { slug } = await params
     const [db, session] = await Promise.all([getDb(), getSession()])
+
+    // Visitante sem conta recebe a prévia (ver `buildManualClinicoPreview`
+    // abaixo), e é justamente por ser aberta que essa porta precisa de teto:
+    // sem sessão não há usuário para limitar, então o limite é por IP, como na
+    // amostra pública. Quem está logado segue sem teto — a cota de
+    // visualizações gratuitas já é o limite daquele lado.
+    if (!session?.userId) {
+      const rl = await checkRateLimit(clientIp(request), 'manual-clinico-previa', 60, 10 * 60 * 1000)
+      if (!rl.success) {
+        return NextResponse.json(
+          { error: 'Muitas requisições. Tente de novo em alguns minutos.' },
+          { status: 429 },
+        )
+      }
+    }
 
     const patologia = await db.collection('patologias').findOne({ slug })
 
@@ -47,15 +69,24 @@ export async function GET(
       canClaimFree = claim.allowed
     }
 
-    const unlocked = access.hasFullAccess || isGlobalFree || isFreeClaimed
+    // Sem conta, ninguém destranca a entrada inteira — nem nas patologias da
+    // lista gratuita. "Grátis" ali sempre quis dizer "grátis para quem tem
+    // conta": era o login que segurava a porta, e é a mesma régua que a amostra
+    // pública (/api/amostra) aplica ao liberar uma patologia da lista. O que o
+    // visitante recebe é a prévia, a mesma de quem já gastou as visualizações.
+    const isGuest = !session?.userId
+    const unlocked = !isGuest && (access.hasFullAccess || isGlobalFree || isFreeClaimed)
     const accessStatus = access.hasFullAccess
       ? 'premium_unlocked'
-      : isGlobalFree
-        ? 'free'
-        : isFreeClaimed
-          ? claimedNow ? 'free_claimed_now' : 'free_claimed'
-          : !session?.userId && config.freeAccessMode === 'quantity'
-            ? 'login_required'
+      : isGuest
+        // 'login_required' é o convite: existe um caminho gratuito do outro lado
+        // do login (a patologia é da lista, ou o Manual dá N aberturas por
+        // conta). Sem esse caminho, o que resta é a compra — 'locked'.
+        ? (isGlobalFree || config.freeAccessMode === 'quantity') ? 'login_required' : 'locked'
+        : isGlobalFree
+          ? 'free'
+          : isFreeClaimed
+            ? claimedNow ? 'free_claimed_now' : 'free_claimed'
             : 'locked'
 
     const payload = unlocked ? patologia : buildManualClinicoPreview(patologia)
