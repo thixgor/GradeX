@@ -108,3 +108,4 @@ export function desenharLinhaRica(
   }
   doc.setFont(fonte, estiloBase)
 }
+

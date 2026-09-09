@@ -17,6 +17,8 @@ import {
 } from './marca'
 import { carregarImagens, encaixar, type ImagemParaPdf } from './imagens'
 import { desenharImagensNoPdf } from './imagens-de-questao'
+import { fatiarCaixaEmPaginas } from './paginacao'
+import { desenharLinhaRica } from './texto'
 import {
   type ImagemDeQuestao,
   type LayoutDeImagens,
@@ -221,6 +223,15 @@ interface Pincel {
   logo: string | null
   imagens: Map<string, ImagemParaPdf>
 }
+
+/**
+ * Onde o conteúdo recomeça numa página nova.
+ *
+ * `desenharCabecalho` tem altura fixa e sempre devolve este valor; a constante
+ * existe para o fatiamento de caixas altas poder PREVER a coordenada antes de
+ * a página existir (ver `fatiarCaixaEmPaginas`).
+ */
+const Y_APOS_CABECALHO = 40
 
 function novaPagina(p: Pincel, subtitulo: string) {
   p.doc.addPage()
@@ -800,26 +811,67 @@ function desenharQuestaoEmDestaque(
   }
 
   if (detalhe.respostaComentada && questao.respostaComentada) {
-    const linhas = quebrar(p, questao.respostaComentada, util - 12)
-    const altura = linhas.length * 5.3 + 14
-    garantirEspaco(p, altura + 6, titulo)
-    p.doc.setFillColor(255, 251, 235)
-    p.doc.setDrawColor(...LARANJA)
-    p.doc.setLineWidth(0.5)
-    p.doc.roundedRect(MARGEM, p.y, util, altura, 2, 2, 'FD')
-    p.doc.setFontSize(8)
-    p.doc.setFont(p.fonte, 'bold')
-    p.doc.setTextColor(...LARANJA)
-    p.doc.text('RESPOSTA COMENTADA', MARGEM + 6, p.y + 7)
+    /*
+     * A caixa era medida INTEIRA e desenhada de uma vez.
+     *
+     * Isso resolvia "não cabe no resto desta página" (o `garantirEspaco`
+     * pulava), mas não "não cabe em página NENHUMA" — e o jsPDF não recorta
+     * nem avisa: o que passa do fim da folha some. Com a resposta comentada
+     * completa (que agora traz também o comentário POR ALTERNATIVA, não só a
+     * explicação avulsa), esse é o caso comum, não o raro.
+     *
+     * `fatiarCaixaEmPaginas` é o mesmo fatiamento do relatório do aluno.
+     */
     p.doc.setFontSize(9)
     p.doc.setFont(p.fonte, 'normal')
-    p.doc.setTextColor(...CINZA_TEXTO)
-    let comentarioY = p.y + 13
-    linhas.forEach((linha) => {
-      p.doc.text(linha, MARGEM + 6, comentarioY)
-      comentarioY += 5.3
+    const linhas = quebrar(p, questao.respostaComentada, util - 12)
+
+    const alturaDaLinha = 5.3
+    const alturaDoTitulo = 13
+    const respiroDeContinuacao = 5
+    const respiroInferior = 5
+
+    const lotes = fatiarCaixaEmPaginas({
+      totalDeLinhas: linhas.length,
+      alturaDaLinha,
+      alturaDoTitulo,
+      respiroDeContinuacao,
+      respiroInferior,
+      yInicial: p.y,
+      limiteInferior: p.altura - 26,
+      yAposQuebra: Y_APOS_CABECALHO,
     })
-    p.y += altura + 6
+
+    for (const lote of lotes) {
+      if (lote.novaPagina) novaPagina(p, titulo)
+      p.y = lote.y
+
+      p.doc.setFillColor(255, 251, 235)
+      p.doc.setDrawColor(...LARANJA)
+      p.doc.setLineWidth(0.5)
+      p.doc.roundedRect(MARGEM, p.y, util, lote.altura, 2, 2, 'FD')
+
+      if (lote.primeiro) {
+        p.doc.setFontSize(8)
+        p.doc.setFont(p.fonte, 'bold')
+        p.doc.setTextColor(...LARANJA)
+        p.doc.text('RESPOSTA COMENTADA', MARGEM + 6, p.y + 7)
+        p.y += alturaDoTitulo
+      } else {
+        p.y += respiroDeContinuacao
+      }
+
+      p.doc.setFontSize(9)
+      p.doc.setFont(p.fonte, 'normal')
+      p.doc.setTextColor(...CINZA_TEXTO)
+      for (const linha of linhas.slice(lote.inicio, lote.inicio + lote.linhas)) {
+        // `desenharLinhaRica`: o comentário por alternativa vem com `**A)**`
+        // em negrito, e `doc.text` imprimiria os asteriscos.
+        desenharLinhaRica(p.doc, p.fonte, linha, MARGEM + 6, p.y)
+        p.y += alturaDaLinha
+      }
+      p.y += respiroInferior + 6
+    }
   }
 
   p.y += 4

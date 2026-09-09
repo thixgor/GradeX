@@ -41,14 +41,31 @@ export interface ImagemCarregada {
 /**
  * A altura, em milímetros, que uma imagem de 100% pode ocupar.
  *
- * Vale como TETO, não como alvo: uma paisagem larga fica bem abaixo disso. Ele
- * existe para o retrato — uma radiografia em pé, sem teto, come a página
- * inteira e empurra as alternativas para a folha seguinte.
+ * Vale como TETO, não como alvo. Está calibrado para NÃO atrapalhar a
+ * paisagem: uma imagem 16:9 na largura inteira de uma A4 com margem de 20mm
+ * tem 95,6mm de altura, e o teto precisa ficar acima disso — senão "largura
+ * toda" não entrega a largura toda, que é o defeito que o campo de tamanho
+ * veio consertar. Quem ele existe para conter é o retrato: uma radiografia em
+ * pé, sem teto, come a página e empurra as alternativas para a folha seguinte.
  */
-export const ALTURA_MAXIMA_DA_IMAGEM = 85
+export const ALTURA_MAXIMA_DA_IMAGEM = 105
 
 /** Nenhuma imagem fica menor que isto por causa do teto de altura. */
 const ALTURA_MINIMA_DO_TETO = 30
+
+/**
+ * O quanto o teto de altura acompanha o tamanho pedido.
+ *
+ * Se o teto fosse fixo, o campo de tamanho não teria efeito nenhum sobre um
+ * retrato extremo (ele já está preso pela altura, não pela largura, em 20% e
+ * em 100%). Se acompanhasse a porcentagem de um para um, uma paisagem a 50%
+ * sairia menor do que a metade — o teto passaria a mandar onde a largura
+ * deveria mandar.
+ *
+ * A parte fixa (55%) é o que garante a paisagem; a variável (45%) é o que faz
+ * o retrato encolher junto quando se pede uma imagem menor.
+ */
+const PARTE_FIXA_DO_TETO = 0.55
 
 /** O respiro entre duas imagens lado a lado. */
 const ESPACO_ENTRE_IMAGENS = 4
@@ -91,14 +108,17 @@ interface ImagemMedida {
  * borrado. Ele só limita para cima — imagem grande continua encolhendo até
  * caber no que foi pedido.
  */
-function medirImagem(
-  carregada: ImagemCarregada,
+export function medirImagem(
+  carregada: Pick<ImagemCarregada, 'width' | 'height'>,
   porcentagem: number,
   larguraDisponivel: number,
-  tetoDeAltura: number,
+  tetoDeAltura: number = ALTURA_MAXIMA_DA_IMAGEM,
 ): { largura: number; altura: number } {
   const alvoDeLargura = (larguraDisponivel * porcentagem) / 100
-  const alvoDeAltura = Math.max(ALTURA_MINIMA_DO_TETO, (tetoDeAltura * porcentagem) / 100)
+  const alvoDeAltura = Math.max(
+    ALTURA_MINIMA_DO_TETO,
+    tetoDeAltura * (PARTE_FIXA_DO_TETO + (1 - PARTE_FIXA_DO_TETO) * (porcentagem / 100)),
+  )
   const escala = Math.min(alvoDeLargura / carregada.width, alvoDeAltura / carregada.height, 1)
   return { largura: carregada.width * escala, altura: carregada.height * escala }
 }

@@ -77,18 +77,6 @@ function drawRichLine(
   desenharLinhaRica(doc, FONT, line, x, y, baseStyle)
 }
 
-// Função para calcular dimensões proporcionais de imagem
-function calculateProportionalDimensions(
-  maxWidth: number,
-  maxHeight: number
-): { width: number; height: number } {
-  // Para imagens de questões, usar um tamanho padrão moderado
-  const standardWidth = Math.min(80, maxWidth)
-  const standardHeight = Math.min(50, maxHeight)
-
-  return { width: standardWidth, height: standardHeight }
-}
-
 // ── Session-level image cache — persists across all PDF calls in one tab ──
 type ImgData = { dataUrl: string; width: number; height: number }
 const _sessionImageCache = new Map<string, ImgData | null>()
@@ -287,8 +275,14 @@ export async function generateGabaritoPDF(exam: Exam): Promise<Blob> {
   doc.text('PONTUAÇÃO', margin + colWidth + 15, y + 8)
   doc.setFontSize(16)
   doc.setFont(FONT, 'bold')
+  // `exam.totalPoints` pode não existir (prova discursiva, prova antiga): o
+  // texto dizia "undefined pontos" no gabarito oficial, impresso.
   doc.text(
-    exam.scoringMethod === 'tri' ? '1000 pontos (TRI)' : `${exam.totalPoints} pontos`,
+    exam.scoringMethod === 'tri'
+      ? '1000 pontos (TRI)'
+      : exam.totalPoints
+        ? `${exam.totalPoints} pontos`
+        : '—',
     margin + colWidth + 15,
     y + 19
   )
@@ -391,7 +385,7 @@ export async function generateGabaritoPDF(exam: Exam): Promise<Blob> {
     doc.setFont(FONT, 'normal')
     doc.setTextColor(...CINZA_TEXTO)
     const pointsPerQuestion = (exam.totalPoints || 100) / (totalDeQuestoes || 1)
-    doc.text(`Pontuação máxima: ${exam.totalPoints} pontos`, margin + 5, y + 20)
+    doc.text(`Pontuação máxima: ${exam.totalPoints || 100} pontos`, margin + 5, y + 20)
     doc.text(`Cada questão vale: ${pointsPerQuestion.toFixed(2)} pontos`, margin + 5, y + 27)
     doc.text(`Total de questões: ${totalDeQuestoes}`, margin + 5, y + 34)
   }
@@ -597,12 +591,16 @@ export async function generateCompactAnswersPDF(
       // apagariam a única informação que esta coluna carrega.
       doc.setFontSize(10)
       doc.setFont(FONT, 'bold')
+      // Pelo sanitizador: sem a Roboto embutida, `✓` está fora do WinAnsi e o
+      // jsPDF reescreve a LINHA INTEIRA em UTF-16 com uma fonte de um byte —
+      // a folha sai soletrada. `sanitizeForPdf` o troca por `V` nesse caso e o
+      // deixa em paz quando a Roboto carregou.
       if (linha.acertou) {
         doc.setTextColor(22, 128, 61)
-        doc.text('✓', x + 48, y)
+        doc.text(sanitizeForPdf('✓'), x + 48, y)
       } else if (linha.respondida) {
         doc.setTextColor(190, 30, 45)
-        doc.text('✗', x + 48, y)
+        doc.text(sanitizeForPdf('✗'), x + 48, y)
       }
     }
 
@@ -715,7 +713,12 @@ export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
   doc.setTextColor(255, 255, 255)
   doc.setFontSize(9)
   doc.setFont(FONT, 'bold')
-  doc.text('✓  GABARITO COMENTADO  —  Alternativas corretas destacadas em verde', pageWidth / 2, y + 6, { align: 'center' })
+  doc.text(
+    sanitizeForPdf('✓  GABARITO COMENTADO  —  Alternativas corretas destacadas em verde'),
+    pageWidth / 2,
+    y + 6,
+    { align: 'center' },
+  )
   y += 16
 
   // Questões
@@ -916,7 +919,15 @@ export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
       })
     }
 
-    y += 8
+    // Separador entre questões, igual ao da prova em branco e ao do Banco.
+    y += 5
+    if (idx < questoes.length - 1) {
+      checkPage(6)
+      doc.setDrawColor(...LARANJA)
+      doc.setLineWidth(0.4)
+      doc.line(margin + 15, y, pageWidth - margin - 15, y)
+      y += 8
+    }
   })
 
   // Rodapé
@@ -980,7 +991,16 @@ export async function generateExamPDF(exam: Exam, userId?: string): Promise<Blob
   doc.setFont(FONT, 'normal')
   doc.text(`Data: ${new Date().toLocaleDateString('pt-BR')}`, pageWidth - margin, y, { align: 'right' })
   y += 5
-  doc.text(`Duração: ${exam.duration} minutos | Questões: ${totalDeQuestoes}`, pageWidth - margin, y, { align: 'right' })
+  // Sem duração o texto saía "Duração: undefined minutos" no cabeçalho da
+  // prova impressa — prova de treino não tem prazo, e isso é comum.
+  doc.text(
+    exam.duration
+      ? `Duração: ${exam.duration} minutos | Questões: ${totalDeQuestoes}`
+      : `Questões: ${totalDeQuestoes}`,
+    pageWidth - margin,
+    y,
+    { align: 'right' },
+  )
   y += 10
 
   // === IDENTIFICAÇÃO DO CANDIDATO ===
@@ -1066,8 +1086,25 @@ export async function generateExamPDF(exam: Exam, userId?: string): Promise<Blob
     doc.setTextColor(255, 255, 255)
     doc.setFontSize(11)
     doc.setFont(FONT, 'bold')
-    doc.text(`Questão ${idx + 1}`, margin + 5, y + 7)
+    // `question.number` e não o índice: o gabarito e a folha de respostas
+    // imprimem o número da questão, e os três documentos precisam concordar.
+    doc.text(`Questão ${question.number ?? idx + 1}`, margin + 5, y + 7)
+
+    // O tipo, à direita, como no gabarito comentado. Na prova em branco ele
+    // não existia, e quem folheia não sabia que a questão seguinte é uma
+    // discursiva de dez linhas até virar a página.
+    const rotuloDoTipo =
+      question.type === 'discursive' ? 'Discursiva' : question.type === 'essay' ? 'Redação' : 'Múltipla Escolha'
+    doc.setFontSize(8)
+    doc.setFont(FONT, 'normal')
+    doc.text(rotuloDoTipo, pageWidth - margin - 5, y + 7, { align: 'right' })
+
     y += 15
+
+    // Reset depois do cabeçalho branco sobre verde: sem isto o corpo herda o
+    // branco e a questão sai invisível quando algum ramo esquece de repintar.
+    doc.setTextColor(...CINZA_TEXTO)
+    doc.setFont(FONT, 'normal')
 
     // Enunciado
     if (question.statement) {
@@ -1155,22 +1192,49 @@ export async function generateExamPDF(exam: Exam, userId?: string): Promise<Blob
       doc.setFontSize(9)
       doc.setTextColor(...LARANJA)
       doc.setFont(FONT, 'bold')
-      doc.text(`Espaço para resposta (máximo ${question.maxScore} pontos):`, margin, y)
+      doc.text(
+        question.maxScore
+          ? `Espaço para resposta (máximo ${question.maxScore} pontos):`
+          : 'Espaço para resposta:',
+        margin,
+        y,
+      )
       y += 6
 
-      // Linhas para escrever
-      const numberOfLines = 10
+      /*
+       * As linhas para escrever.
+       *
+       * O `checkPage` por LINHA quebrava o bloco em qualquer ponto: o rótulo
+       * "Espaço para resposta" ficava no pé de uma página com uma ou duas
+       * linhas, e as outras oito na seguinte. Aqui a quebra acontece antes do
+       * bloco, e só se não couberem pelo menos quatro linhas — abaixo disso o
+       * espaço no pé da página não serve para escrever nada.
+       */
+      const numeroDeLinhas = 10
+      const alturaDaLinha = 6
+      const linhasQueCabem = Math.floor((pageHeight - 25 - y) / alturaDaLinha)
+      if (linhasQueCabem < Math.min(4, numeroDeLinhas)) checkPage(pageHeight)
+
       doc.setDrawColor(200, 200, 200)
       doc.setLineWidth(0.3)
-
-      for (let i = 0; i < numberOfLines; i++) {
-        checkPage(10)
+      for (let i = 0; i < numeroDeLinhas; i++) {
+        checkPage(alturaDaLinha + 2)
         doc.line(margin, y, pageWidth - margin, y)
-        y += 6
+        y += alturaDaLinha
       }
     }
 
-    y += 10
+    // Separador entre questões — o mesmo do PDF do Banco de Questões. Sem ele,
+    // o fim de uma questão e o começo da próxima ficam a dez milímetros de
+    // distância e nada mais, e numa prova de vinte questões o olho se perde.
+    y += 6
+    if (idx < questoes.length - 1) {
+      checkPage(6)
+      doc.setDrawColor(...LARANJA)
+      doc.setLineWidth(0.4)
+      doc.line(margin + 15, y, pageWidth - margin - 15, y)
+      y += 8
+    }
   })
 
   // === RODAPÉ EM TODAS AS PÁGINAS ===
@@ -1247,7 +1311,7 @@ export async function generateStudentAnswersPDF(exam: Exam, answers: UserAnswer[
     doc.setTextColor(255, 255, 255)
     doc.setFontSize(10)
     doc.setFont(FONT, 'bold')
-    doc.text('Questão ' + (idx + 1), margin + 5, y + 5.5)
+    doc.text('Questão ' + (question.number ?? idx + 1), margin + 5, y + 5.5)
     y += 12
 
     if (question.statement) {
@@ -1258,7 +1322,12 @@ export async function generateStudentAnswersPDF(exam: Exam, answers: UserAnswer[
       const lines = wrapText(doc, question.statement, pageWidth - 2 * margin)
       lines.forEach((line: string) => {
         checkPage(8)
-        doc.text(line, margin, y)
+        // `drawRichLine` e não `doc.text`: este era o único PDF de prova que
+        // imprimia os `**` do enunciado em vez de pôr o trecho em negrito.
+        doc.setFontSize(10)
+        doc.setFont(FONT, 'normal')
+        doc.setTextColor(...CINZA_TEXTO)
+        drawRichLine(doc, line, margin, y)
         y += 6
       })
       y += 3
@@ -1283,7 +1352,9 @@ export async function generateStudentAnswersPDF(exam: Exam, answers: UserAnswer[
       const commandLines = wrapText(doc, question.command, pageWidth - 2 * margin)
       commandLines.forEach((line: string) => {
         checkPage(8)
-        doc.text(line, margin, y)
+        doc.setFont(FONT, 'bold')
+        doc.setTextColor(...VERDE_ESCURO)
+        drawRichLine(doc, line, margin, y, 'bold')
         y += 6
       })
       y += 4
@@ -1334,7 +1405,7 @@ export async function generateStudentAnswersPDF(exam: Exam, answers: UserAnswer[
               doc.setTextColor(...CINZA_TEXTO)
             }
           }
-          doc.text(line, margin + 10, y)
+          drawRichLine(doc, line, margin + 10, y, isSelected ? 'bold' : 'normal')
           y += 6
         })
         y += 3
@@ -1355,6 +1426,9 @@ export async function generateStudentAnswersPDF(exam: Exam, answers: UserAnswer[
         const answerLines = wrapText(doc, answer.discursiveText, pageWidth - 2 * margin - 4)
         answerLines.forEach((line: string) => {
           checkPage(8)
+          doc.setFontSize(10)
+          doc.setFont(FONT, 'normal')
+          doc.setTextColor(...CINZA_TEXTO)
           doc.text(line, margin + 2, y)
           y += 6
         })
@@ -1366,7 +1440,15 @@ export async function generateStudentAnswersPDF(exam: Exam, answers: UserAnswer[
       }
     }
 
-    y += 10
+    // Separador entre questões, igual ao dos outros documentos da prova.
+    y += 6
+    if (idx < questoes.length - 1) {
+      checkPage(6)
+      doc.setDrawColor(...LARANJA)
+      doc.setLineWidth(0.4)
+      doc.line(margin + 15, y, pageWidth - margin - 15, y)
+      y += 8
+    }
   })
 
   // === RODAPÉ ===
@@ -1449,25 +1531,37 @@ export async function generateAnnotationsPDF(
 
       // Verificar se há canvas data URL
       if (annotation.canvasDataUrl) {
-        // Calcular dimensões para a imagem
         const maxImageWidth = pageWidth - 2 * margin
         const maxImageHeight = 150 // Altura máxima para cada anotação
 
-        // Adicionar a imagem do canvas
         try {
-          // Criar nova página se necessário para a imagem
-          checkPage(maxImageHeight + 10)
-
-          doc.addImage(
-            annotation.canvasDataUrl,
-            'PNG',
-            margin,
-            y,
-            maxImageWidth,
-            maxImageHeight
+          /*
+           * A anotação entrava esticada até 170×150mm, fosse qual fosse o
+           * formato do canvas.
+           *
+           * O canvas de uma questão é largo e baixo (a largura do enunciado
+           * por uns poucos centímetros de traço); forçá-lo num retângulo
+           * quase quadrado achatava a letra de quem escreveu à mão — o único
+           * conteúdo deste PDF — e deixava metade da caixa vazia.
+           *
+           * `getImageProperties` lê o tamanho real do dataUrl, e a escala
+           * passa a ser a mesma que o resto dos PDFs usa: o que couber na
+           * largura, sem nunca ampliar.
+           */
+          const propriedades = doc.getImageProperties(annotation.canvasDataUrl)
+          const escala = Math.min(
+            maxImageWidth / propriedades.width,
+            maxImageHeight / propriedades.height,
+            1,
           )
+          const largura = propriedades.width * escala
+          const altura = propriedades.height * escala
 
-          y += maxImageHeight + 15
+          checkPage(altura + 10)
+
+          doc.addImage(annotation.canvasDataUrl, 'PNG', margin, y, largura, altura)
+
+          y += altura + 15
         } catch (error) {
           // Se houver erro ao adicionar a imagem, mostrar mensagem
           doc.setFontSize(10)
@@ -1719,20 +1813,42 @@ async function generateExamCoverBlob(
   doc.setTextColor(255, 255, 255)
   doc.text(`PROVA ${index + 1} DE ${total}`, pillX + 18, pillY, { align: 'center', baseline: 'middle' })
 
-  // Exam title
-  const titleLines = doc.splitTextToSize(sanitizeForPdf(exam.title), W - mx * 2 - 24)
+  /*
+   * Título e descrição, presos ao cartão.
+   *
+   * O cartão tem 110mm fixos, e o título saía inteiro: uma prova com nome
+   * longo ("N1 SOI I — Sistema Cardiovascular e Respiratório — Turma B
+   * 2026/2") gastava quatro ou cinco linhas, escrevia por cima da descrição e
+   * transbordava a borda do cartão, na CAPA do pacote.
+   *
+   * Três linhas de título, e a descrição começa DEPOIS delas — não numa
+   * coordenada fixa que só funcionava com títulos curtos.
+   */
   doc.setFont(FONT, 'bold')
   doc.setFontSize(16)
   doc.setTextColor(...VERDE_ESCURO)
-  doc.text(titleLines, mx + 12, cardTop + 34)
+  const todasAsLinhasDoTitulo = doc.splitTextToSize(sanitizeForPdf(exam.title), W - mx * 2 - 24) as string[]
+  const linhasDoTitulo = todasAsLinhasDoTitulo.slice(0, 3)
+  if (todasAsLinhasDoTitulo.length > 3) {
+    linhasDoTitulo[2] = `${linhasDoTitulo[2].replace(/\s+\S*$/, '')}...`
+  }
+  const alturaDaLinhaDoTitulo = 7
+  linhasDoTitulo.forEach((linha, i) => {
+    doc.text(linha, mx + 12, cardTop + 34 + i * alturaDaLinhaDoTitulo)
+  })
 
   // Description
   if (exam.description) {
-    const descLines = doc.splitTextToSize(sanitizeForPdf(exam.description), W - mx * 2 - 24)
+    const descLines = doc.splitTextToSize(sanitizeForPdf(exam.description), W - mx * 2 - 24) as string[]
     doc.setFont(FONT, 'normal')
     doc.setFontSize(9)
     doc.setTextColor(100, 100, 100)
-    doc.text(descLines.slice(0, 3), mx + 12, cardTop + 58)
+    const yDaDescricao = cardTop + 34 + linhasDoTitulo.length * alturaDaLinhaDoTitulo + 6
+    // O que couber entre o título e o divisor do rodapé do cartão.
+    const linhasQueCabem = Math.max(0, Math.floor((cardTop + cardH - 32 - yDaDescricao) / 5))
+    descLines.slice(0, Math.min(3, linhasQueCabem)).forEach((linha, i) => {
+      doc.text(linha, mx + 12, yDaDescricao + i * 5)
+    })
   }
 
   // Divider

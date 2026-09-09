@@ -28,6 +28,10 @@ function questao(overrides: Partial<Question> = {}): Question {
       explanations: { A: 'Correta.', B: 'Incorreta.', C: 'Incorreta.' },
     },
     keyPoints: [{ description: 'citar congestão', weight: 1 }],
+    images: [{ url: 'https://exemplo/raio-x.png', tamanho: 60 }],
+    imagesLayout: 'lado-a-lado',
+    explanationImages: [{ url: 'https://exemplo/fluxograma-do-gabarito.png' }],
+    explanationImagesLayout: 'empilhado',
     ...overrides,
   } as Question
 }
@@ -55,12 +59,19 @@ describe('sanitizarQuestaoParaAluno', () => {
     expect(limpa.explanation).toBeUndefined()
     expect(limpa.commentedFeedback).toBeUndefined()
     expect((limpa as any).keyPoints).toBeUndefined()
+    // As imagens do comentário são gabarito: um fluxograma com a via correta
+    // circulada entrega a resposta tão bem quanto o texto.
+    expect(limpa.explanationImages).toBeUndefined()
+    expect(limpa.explanationImagesLayout).toBeUndefined()
   })
 
   it('preserva o que o aluno precisa para responder', () => {
     const limpa = sanitizarQuestaoParaAluno(questao())
 
     expect(limpa.statement).toContain('dispneia progressiva')
+    // As imagens do ENUNCIADO ficam: sem elas a questão não pode ser resolvida.
+    expect(limpa.images).toHaveLength(1)
+    expect(limpa.imagesLayout).toBe('lado-a-lado')
     expect(limpa.alternatives).toHaveLength(3)
     expect(limpa.alternatives.map((a) => a.text)).toEqual([
       'Insuficiência cardíaca',
@@ -73,6 +84,7 @@ describe('sanitizarQuestaoParaAluno', () => {
     const json = JSON.stringify(sanitizarProvaParaAluno(prova()))
     expect(json).not.toContain('"isCorrect":true')
     expect(json).not.toContain('A resposta é A porque')
+    expect(json).not.toContain('fluxograma-do-gabarito')
     expect(json).not.toContain('correctAlternative')
   })
 })

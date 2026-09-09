@@ -194,6 +194,29 @@ export function aquecerAssetsDePdf(): void {
   carregarLogo().catch(() => {})
 }
 
+/**
+ * Encurta o texto até caber na largura, com reticências.
+ *
+ * O rodapé de toda prova imprime o título dela centralizado, e um título como
+ * "N1 SOI I — Sistema Cardiovascular e Respiratório 2026/2" passava por cima
+ * do "Página 3 de 12" à direita. `doc.text` com `maxWidth` não serve: ele
+ * QUEBRA em várias linhas, e no rodapé a segunda linha sai fora da página.
+ */
+export function encurtarParaLargura(doc: jsPDF, texto: string, larguraMaxima: number): string {
+  const limpo = sanitizarParaPdf(String(texto || ''))
+  if (limpo.length === 0 || doc.getTextWidth(limpo) <= larguraMaxima) return limpo
+
+  const reticencias = '...'
+  const larguraDasReticencias = doc.getTextWidth(reticencias)
+  let corte = limpo.length
+
+  while (corte > 0 && doc.getTextWidth(limpo.slice(0, corte)) + larguraDasReticencias > larguraMaxima) {
+    corte -= 1
+  }
+
+  return corte > 0 ? limpo.slice(0, corte).trimEnd() + reticencias : reticencias
+}
+
 // ── Cabeçalho e rodapé ───────────────────────────────────────────
 
 /**
@@ -234,7 +257,9 @@ export function desenharCabecalho(
   if (subtitulo) {
     doc.setFontSize(9)
     doc.setFont(FAMILIA, 'normal')
-    doc.text(sanitizarParaPdf(subtitulo), textoX, 22)
+    // Preso à faixa verde: o bloco laranja começa em `pageWidth - 65`, e um
+    // subtítulo longo entrava por baixo dele.
+    doc.text(encurtarParaLargura(doc, subtitulo, pageWidth - 70 - textoX), textoX, 22)
   }
 
   doc.setFontSize(7.5)
@@ -287,9 +312,15 @@ export function desenharRodape(
   })
   doc.setFontSize(6.5)
   doc.setTextColor(100, 100, 100)
-  doc.text(sanitizarParaPdf(textoExtra || `Gerado em ${dataGeracao}`), pageWidth / 2, rodapeY - 1, {
-    align: 'center',
-  })
+  // Encurtado: aqui vai o título da prova, e "N1 SOI I — Sistema
+  // Cardiovascular e Respiratório 2026/2" passava por cima do "Página 3 de 12"
+  // à direita e do nome à esquerda, em todas as páginas.
+  doc.text(
+    encurtarParaLargura(doc, textoExtra || `Gerado em ${dataGeracao}`, pageWidth * 0.55),
+    pageWidth / 2,
+    rodapeY - 1,
+    { align: 'center' },
+  )
   doc.setFont(FAMILIA, 'italic')
   doc.text('Criado por Thiago Rodrigues', pageWidth / 2, rodapeY + 4, { align: 'center' })
 }
