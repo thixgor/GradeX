@@ -119,12 +119,16 @@ import {
 import { fitToCanvasBudget } from '@/lib/pdf-viewer-canvas-budget'
 import {
   MENSAGEM_DE_REDE,
-  MENSAGEM_DE_VERSAO_NOVA,
-  MENSAGEM_RECARREGANDO,
-  deveRecarregarPorVersaoNova,
+  MENSAGEM_LEITOR_INDISPONIVEL,
   ehFalhaDeCarregamentoDeModulo,
   importarComRetentativa,
 } from '@/lib/carregamento-de-modulo'
+import {
+  CAMINHO_PUBLICO_DO_PDFJS,
+  CAMINHO_PUBLICO_DO_WORKER,
+  importarPdfJsDoPublico,
+  urlComContornoDeCache,
+} from '@/lib/pdfjs-do-publico'
 import {
   isViewportRelayout,
   measurePageIndex,
@@ -498,118 +502,104 @@ let pdfWorkerConfigured = false
 
 // ─── Trazer o pdf.js para o aparelho ────────────────────────────────────────
 //
-// O pdf.js NÃO vem no pacote inicial do site: são mais de um megabyte que só
-// faz sentido baixar quando alguém abre um material, e é este `import()` que
-// vai buscá-lo. Quando essa busca falha, o navegador lança "Loading chunk 9980
-// failed" — em inglês, com um número que não diz nada — e o leitor inteiro
-// para: sem o pdf.js não há como abrir uma única página.
+// O pdf.js NÃO vem no pacote inicial do site: são ~330 KB de biblioteca (mais
+// o worker de 1,3 MB) que só fazem sentido baixar quando alguém abre um
+// material — é o que o `import()` abaixo vai buscar. Quando essa busca falha, o
+// navegador lança "Loading chunk 9980 failed" — em inglês, com um número que
+// não diz nada — e o leitor inteiro para: sem o pdf.js não há uma página
+// sequer para desenhar.
 //
-// Foi exatamente o que aconteceu num iPad. Duas causas possíveis, tratadas
-// aqui (o porquê de cada uma está em lib/carregamento-de-modulo.ts):
+// A primeira tentativa de conserto apostou tudo em "saiu versão nova,
+// recarregar resolve". O iPad do usuário desmentiu: recarregou sozinho e
+// falhou de novo. Recarregar não podia mesmo resolver os dois casos mais
+// prováveis — uma cópia local ruim daquele arquivo sobrevive à recarga (o
+// endereço é `immutable`, o navegador não volta a perguntar ao servidor), e
+// rede instável é sorte a cada tentativa.
 //
-//   rede oscilou  -> tentar de novo resolve, e o webpack não tenta sozinho;
-//   versão nova   -> só recarregar resolve, porque o arquivo pedido não existe
-//                    mais no servidor. É o caso mais comum no aplicativo
-//                    instalado, que fica aberto por dias entre um deploy e
-//                    outro.
+// O que resolve é não depender de um endereço só. São dois, nesta ordem:
 //
-// Em nenhum dos dois a pessoa deveria precisar saber o que é um "chunk".
-
-const CHAVE_DE_RECARGA = 'da:leitor:recarga-por-versao'
-
-function lerMarcaDeRecarga(): string | null {
-  try {
-    return window.sessionStorage.getItem(CHAVE_DE_RECARGA)
-  } catch {
-    // Safari em janela privativa lança ao ler o armazenamento. Sem marca não
-    // dá para garantir "uma recarga só", então o caminho seguro é não
-    // recarregar — ver `recuperarDeFalhaDeModulo`.
-    return null
-  }
-}
-
-function gravarMarcaDeRecarga(agora: number): boolean {
-  try {
-    window.sessionStorage.setItem(CHAVE_DE_RECARGA, String(agora))
-    return true
-  } catch {
-    return false
-  }
-}
-
-// Recarga já pedida: a página está de saída. Enquanto ela não vai, as páginas
-// do leitor continuam tentando sozinhas (cada uma tem auto-recuperação) — e
-// não faz sentido nem baixar de novo nem trocar a mensagem por outra. Este
-// sinalizador mantém as duas coisas quietas até a troca acontecer.
-let recargaAgendada = false
+//   1. `import('pdfjs-dist')`  -> o pedaço com hash no nome, o caminho normal;
+//   2. `/pdf.min.mjs`          -> a MESMA biblioteca servida de `public/`, sem
+//                                 hash, sem cache imortal e sem service worker
+//                                 no meio (ver lib/pdfjs-do-publico.ts) — e,
+//                                 se preciso, pedida de novo com um parâmetro
+//                                 que fura qualquer cópia guardada.
+//
+// Cada porta tem suas próprias retentativas. Só quando as duas falham é que
+// aparece uma mensagem — e ela não chuta a causa.
 
 /**
- * Traduz a falha de carregamento e, quando cabe, recarrega a página sozinho.
+ * O carregamento em curso ou já concluído.
  *
- * Devolve o erro que sobe para a interface — já em português, porque é ele que
- * aparece no lugar do "Pagina indisponivel" e da mensagem do webpack.
+ * Existe por dois motivos. O primeiro é memória: o leitor pede o pdf.js por
+ * várias páginas ao mesmo tempo, e sem isto cada uma dispararia a própria
+ * cascata de tentativas — no limite, baixando a biblioteca mais de uma vez e
+ * mantendo cópias distintas vivas no aparelho que menos aguenta isso. O
+ * segundo é a mensagem: uma falha vira UM aviso, não três.
+ *
+ * Em caso de erro a promessa é descartada, para o botão "Tentar novamente"
+ * poder de fato tentar de novo.
  */
-function recuperarDeFalhaDeModulo(erro: unknown): Error {
-  if (!ehFalhaDeCarregamentoDeModulo(erro)) {
-    return erro instanceof Error ? erro : new Error(MENSAGEM_DE_REDE)
-  }
-  if (recargaAgendada) return new Error(MENSAGEM_RECARREGANDO)
-  if (typeof window === 'undefined') return new Error(MENSAGEM_DE_VERSAO_NOVA)
+let pdfJsEmCarregamento: Promise<typeof import('pdfjs-dist')> | null = null
 
-  // Sem rede o sintoma é o mesmo, mas a causa é outra e recarregar só levaria
-  // à tela de offline. Aqui o aparelho já sabe o que houve — e é ele que
-  // avisa, pelo evento `online`, quando voltar.
-  if (navigator.onLine === false) return new Error(MENSAGEM_DE_REDE)
-
-  const agora = Date.now()
-  const podeRecarregar =
-    deveRecarregarPorVersaoNova({ marca: lerMarcaDeRecarga(), agora }) &&
-    gravarMarcaDeRecarga(agora)
-
-  if (!podeRecarregar) return new Error(MENSAGEM_DE_VERSAO_NOVA)
-
-  // Antes de recarregar, joga fora o que o service worker guardou de
-  // `/_next/static/`. Numa versão nova esses arquivos já não são pedidos (o
-  // nome deles muda a cada deploy), e a limpeza cobre o caso em que a cópia
-  // local é que está corrompida — que dá o mesmo erro e a recarga sozinha não
-  // resolveria. Falhar aqui não pode impedir a recarga: é ela que conserta.
-  const limpar = (async () => {
-    if (!('caches' in window)) return
-    const nomes = await caches.keys()
-    await Promise.all(
-      nomes.map(async (nome) => {
-        const cache = await caches.open(nome)
-        const chaves = await cache.keys()
-        await Promise.all(
-          chaves
-            .filter((chave) => new URL(chave.url).pathname.startsWith('/_next/static/'))
-            .map((chave) => cache.delete(chave)),
-        )
-      }),
-    )
-  })()
-
-  recargaAgendada = true
-  limpar.catch(() => {}).then(() => window.location.reload())
-  return new Error(MENSAGEM_RECARREGANDO)
-}
-
-async function getPdfJs() {
-  // A página está prestes a recarregar: não adianta baixar de novo o que o
-  // servidor já não tem, e cada tentativa custa segundos de roda girando.
-  if (recargaAgendada) throw new Error(MENSAGEM_RECARREGANDO)
-
-  let pdfjsLib: typeof import('pdfjs-dist')
-  try {
-    pdfjsLib = await importarComRetentativa(() => import('pdfjs-dist'))
-  } catch (erro) {
-    throw recuperarDeFalhaDeModulo(erro)
-  }
+function configurarWorker(pdfjsLib: typeof import('pdfjs-dist')) {
   if (!pdfWorkerConfigured) {
-    pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs'
+    pdfjsLib.GlobalWorkerOptions.workerSrc = CAMINHO_PUBLICO_DO_WORKER
     pdfWorkerConfigured = true
   }
   return pdfjsLib
+}
+
+/**
+ * A segunda porta: a cópia de `public/`, com uma tentativa a mais furando o
+ * cache. Se o problema era uma cópia local pela metade, é este parâmetro no
+ * endereço que sai de cima dela.
+ */
+async function carregarPdfJsDoPublico() {
+  try {
+    return await importarComRetentativa(() => importarPdfJsDoPublico())
+  } catch (erro) {
+    if (!ehFalhaDeCarregamentoDeModulo(erro)) throw erro
+    return importarPdfJsDoPublico(
+      urlComContornoDeCache(CAMINHO_PUBLICO_DO_PDFJS, Date.now()),
+    )
+  }
+}
+
+async function carregarPdfJs(): Promise<typeof import('pdfjs-dist')> {
+  try {
+    return configurarWorker(await importarComRetentativa(() => import('pdfjs-dist')))
+  } catch (erro) {
+    // Erro que não é de carregamento (o módulo baixou e quebrou sozinho) sobe
+    // como veio: trocar de endereço não conserta código com defeito.
+    if (!ehFalhaDeCarregamentoDeModulo(erro)) throw erro
+
+    // Fica no registro do navegador para o suporte: se isto aparecer muito, o
+    // problema é do pedaço com hash, não do aparelho de quem reclamou.
+    console.warn('[pdf-viewer] pedaço do pdf.js indisponível; usando a cópia de /public', erro)
+
+    try {
+      return configurarWorker(await carregarPdfJsDoPublico())
+    } catch (erroDoPublico) {
+      // As duas portas falharam. A cópia de `public/` não some quando sai
+      // deploy novo, então a causa não é versão nova: é rede ou aparelho.
+      console.error('[pdf-viewer] a cópia de /public também falhou', erroDoPublico)
+      if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+        throw new Error(MENSAGEM_DE_REDE)
+      }
+      throw new Error(MENSAGEM_LEITOR_INDISPONIVEL)
+    }
+  }
+}
+
+function getPdfJs() {
+  if (!pdfJsEmCarregamento) {
+    pdfJsEmCarregamento = carregarPdfJs().catch((erro) => {
+      pdfJsEmCarregamento = null
+      throw erro
+    })
+  }
+  return pdfJsEmCarregamento
 }
 
 // ─── UM worker para todos os documentos ─────────────────────────────────────

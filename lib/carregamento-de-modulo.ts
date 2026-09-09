@@ -5,9 +5,12 @@
  * em inglês, no meio do leitor de PDF, num iPad. Ela aparece quando um
  * `import()` dinâmico — no nosso caso o pacote do pdf.js, que só é baixado
  * quando alguém abre um material — não consegue trazer o arquivo JavaScript
- * correspondente.
+ * correspondente. Sem o pdf.js não há uma página sequer para mostrar.
  *
- * São duas causas, e as duas se resolvem sozinhas se a gente deixar:
+ * A primeira versão disto apostou numa causa só: "saiu um deploy novo, o
+ * arquivo com hash no nome deixou de existir, recarregar resolve". O aparelho
+ * do usuário desmentiu a aposta — recarregou sozinho, e a segunda tentativa
+ * falhou igual. Então a causa é outra, e é uma destas:
  *
  * 1. A REDE FALHOU numa requisição só. O Safari do iOS derruba requisições
  *    com facilidade quando o app volta do segundo plano, quando o Wi-Fi troca
@@ -15,18 +18,24 @@
  *    segunda tentativa passa. O webpack NÃO tenta de novo sozinho: ele guarda
  *    a falha e devolve o mesmo erro para sempre naquele carregamento.
  *
- * 2. SAIU UMA VERSÃO NOVA com a página aberta. Os arquivos têm o hash do
- *    conteúdo no nome; publicado um deploy novo, o nome que a página aberta
- *    conhece deixa de existir e a resposta é 404. Nenhuma tentativa vai
- *    consertar isso — o que conserta é recarregar a página, que busca o HTML
- *    novo e, com ele, os nomes novos. No iPad isso é MUITO mais comum do que
- *    no computador: o aplicativo instalado fica aberto por dias, e a aba
- *    congelada em segundo plano continua achando que a versão dela é a atual.
+ * 2. A CÓPIA LOCAL DAQUELE ARQUIVO ESTÁ RUIM. `/_next/static/` é servido com
+ *    `immutable` e um ano de validade — o navegador nunca mais pergunta ao
+ *    servidor. Se o que ficou guardado for uma resposta pela metade, aquele
+ *    endereço está queimado NAQUELE APARELHO, para sempre. Recarregar a página
+ *    não limpa: recarga revalida o documento, não os arquivos que ele pede. É
+ *    a explicação que casa com o sintoma "só num iPad, e a recarga não mudou
+ *    nada".
  *
- * Aqui mora só a LÓGICA das duas coisas: como reconhecer a falha, quanto
- * esperar entre as tentativas e quando recarregar é permitido (uma vez por
- * janela de tempo — recarregar em laço seria pior que o erro). Nada de DOM,
- * nada de React, nada de `window`: quem toca no navegador é quem chama.
+ * 3. O ARQUIVO REALMENTE NÃO EXISTE MAIS no servidor, porque a página aberta é
+ *    de um deploy anterior. Continua sendo possível — só não é o caso aqui.
+ *
+ * A resposta às três é a mesma, e não é recarregar: é ter um SEGUNDO ENDEREÇO
+ * para o mesmo pacote, sem hash no nome e sem cache imortal, em
+ * `lib/pdfjs-do-publico.ts`. Este módulo cuida da parte de decidir: reconhecer
+ * a falha e quanto esperar antes de tentar de novo.
+ *
+ * Lógica pura de propósito: nada de DOM, nada de React, nada de `window` —
+ * quem toca no navegador é quem chama.
  */
 
 /** Quantas vezes um `import()` é tentado antes de desistir. */
@@ -40,24 +49,26 @@ export const TENTATIVAS_DE_IMPORTACAO = 3
  */
 export const ATRASO_BASE_MS = 500
 
-/** Uma recarga automática por janela. Ver `deveRecarregarPorVersaoNova`. */
-export const JANELA_DE_RECARGA_MS = 60_000
+/**
+ * Mensagem de quando o aparelho está sem rede.
+ *
+ * Vem antes de qualquer outra hipótese: sem conexão, nada mais precisa ser
+ * explicado, e é o próprio aparelho quem sabe disso (`navigator.onLine`).
+ */
+export const MENSAGEM_DE_REDE =
+  'Sem conexão para baixar o leitor de PDF. Assim que a internet voltar, toque em "Tentar novamente".'
 
 /**
- * Mensagem quando a recarga automática não está disponível (já houve uma há
- * pouco, ou não temos onde anotar que houve). Em português, dizendo o que
- * fazer — que é o oposto do "Loading chunk 9980 failed".
+ * Mensagem de quando NENHUM dos dois endereços do pdf.js respondeu.
+ *
+ * Ela diz o que fazer, em ordem do que mais resolve. Nada de "versão nova":
+ * chegado aqui, a cópia estável de `public/` também falhou, e essa não some
+ * quando sai um deploy. O que sobra é o aparelho ou a rede — fechar o app por
+ * completo derruba a aba congelada e o cache do processo; trocar de rede
+ * contorna Wi-Fi de faculdade e hospital, que é onde isto costuma acontecer.
  */
-export const MENSAGEM_DE_VERSAO_NOVA =
-  'Saiu uma versão nova do DomineAqui enquanto esta página estava aberta. Recarregue a página para voltar a abrir o material.'
-
-/** Mensagem enquanto a recarga automática acontece (some junto com a tela). */
-export const MENSAGEM_RECARREGANDO =
-  'Saiu uma versão nova do DomineAqui. Atualizando esta página…'
-
-/** Mensagem de falha de rede que sobreviveu a todas as tentativas. */
-export const MENSAGEM_DE_REDE =
-  'Não foi possível baixar o leitor de PDF. Verifique a conexão e tente de novo.'
+export const MENSAGEM_LEITOR_INDISPONIVEL =
+  'Não foi possível baixar o leitor de PDF neste aparelho. Feche o aplicativo por completo e abra de novo; se continuar, troque de rede (Wi-Fi ou dados móveis).'
 
 function normalizar(texto: string): string {
   return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
@@ -102,37 +113,6 @@ export function ehFalhaDeCarregamentoDeModulo(erro: unknown): boolean {
 export function atrasoDaTentativa(tentativa: number, base = ATRASO_BASE_MS): number {
   if (tentativa <= 0) return 0
   return Math.min(base * 2 ** (tentativa - 1), 4000)
-}
-
-export interface JanelaDeRecarga {
-  /** O que ficou anotado da última recarga automática (ms em texto), se houve. */
-  marca?: string | null
-  /** Agora, em milissegundos. */
-  agora: number
-  janelaMs?: number
-}
-
-/**
- * Pode recarregar a página por causa de versão nova?
- *
- * A trava é o ponto todo desta função. Recarregar conserta o caso 2 de forma
- * definitiva, mas se a falha tiver OUTRA causa — o arquivo realmente fora do
- * ar, um proxy corporativo mastigando a resposta — recarregar sem limite põe o
- * aparelho num laço de recargas, que é muito pior do que uma mensagem de erro.
- * Uma recarga por janela: se o erro voltar dentro dela, quem decide é a pessoa.
- */
-export function deveRecarregarPorVersaoNova({
-  marca,
-  agora,
-  janelaMs = JANELA_DE_RECARGA_MS,
-}: JanelaDeRecarga): boolean {
-  if (!marca) return true
-  const anterior = Number(marca)
-  if (!Number.isFinite(anterior)) return true
-  // Marca no futuro (relógio do aparelho mexeu) conta como recente: no pior
-  // caso a pessoa vê a mensagem em vez da recarga, que é o lado seguro.
-  if (anterior > agora) return false
-  return agora - anterior >= janelaMs
 }
 
 export interface OpcoesDeImportacao {

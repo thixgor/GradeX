@@ -2,10 +2,8 @@ import { describe, expect, it, vi } from 'vitest'
 
 import {
   ATRASO_BASE_MS,
-  JANELA_DE_RECARGA_MS,
   TENTATIVAS_DE_IMPORTACAO,
   atrasoDaTentativa,
-  deveRecarregarPorVersaoNova,
   ehFalhaDeCarregamentoDeModulo,
   importarComRetentativa,
 } from '@/lib/carregamento-de-modulo'
@@ -17,10 +15,12 @@ import {
  * rede de proteção — falhou, acabou.
  *
  * O que estes testes protegem:
- *   1. a falha é RECONHECIDA em todas as formas que os navegadores lhe dão;
+ *   1. a falha é RECONHECIDA em todas as formas que os navegadores lhe dão —
+ *      é esse reconhecimento que faz o leitor trocar para a segunda porta
+ *      (`lib/pdfjs-do-publico.ts`) em vez de desistir;
  *   2. uma falha de rede ganha nova tentativa (a segunda quase sempre passa);
- *   3. um erro que não é de carregamento NÃO é repetido três vezes;
- *   4. a recarga automática acontece uma vez, nunca em laço.
+ *   3. um erro que não é de carregamento NÃO é repetido três vezes nem manda
+ *      trocar de endereço — código com defeito não melhora de endereço.
  */
 
 /** Erro do webpack, como ele chega: nome próprio e mensagem em inglês. */
@@ -132,32 +132,5 @@ describe('importarComRetentativa', () => {
       }),
     ).rejects.toThrow()
     expect(esperas).toEqual([atrasoDaTentativa(1), atrasoDaTentativa(2)])
-  })
-})
-
-describe('deveRecarregarPorVersaoNova', () => {
-  const agora = 1_700_000_000_000
-
-  it('recarrega quando nunca recarregou', () => {
-    expect(deveRecarregarPorVersaoNova({ marca: null, agora })).toBe(true)
-    expect(deveRecarregarPorVersaoNova({ marca: undefined, agora })).toBe(true)
-  })
-
-  it('não recarrega duas vezes seguidas — nada de laço de recarga', () => {
-    const marca = String(agora - 1_000)
-    expect(deveRecarregarPorVersaoNova({ marca, agora })).toBe(false)
-  })
-
-  it('volta a permitir depois da janela', () => {
-    const marca = String(agora - JANELA_DE_RECARGA_MS - 1)
-    expect(deveRecarregarPorVersaoNova({ marca, agora })).toBe(true)
-  })
-
-  it('marca no futuro (relógio do aparelho errado) conta como recente', () => {
-    expect(deveRecarregarPorVersaoNova({ marca: String(agora + 60_000), agora })).toBe(false)
-  })
-
-  it('marca corrompida não trava a recuperação', () => {
-    expect(deveRecarregarPorVersaoNova({ marca: 'nada disso', agora })).toBe(true)
   })
 })
