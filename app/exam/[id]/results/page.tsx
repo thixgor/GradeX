@@ -448,9 +448,17 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
             */}
             <div className="space-y-2">
               {estatisticas.distribuicao.map((faixa, i) => {
-                // A proporção já vem calculada do servidor: o cliente não
-                // recebe o número de pessoas por faixa para dividir.
-                const proporcao = faixa.proporcao
+                /*
+                 * A proporção já vem calculada do servidor: o cliente não
+                 * recebe o número de pessoas por faixa para dividir.
+                 *
+                 * O `Number.isFinite` é a rede embaixo: um payload sem
+                 * `proporcao` desenhava `NaN%` ao lado de cinco barras cheias
+                 * — `width: NaN%` é uma regra inválida, o navegador a descarta
+                 * e a div fica com a largura do trilho. Uma faixa que não sabe
+                 * seu tamanho é uma faixa vazia, não uma faixa inteira.
+                 */
+                const proporcao = Number.isFinite(faixa.proporcao) ? faixa.proporcao : 0
                 const ehMinhaFaixa = i === minhaFaixa
                 return (
                   <div key={faixa.rotulo} className="flex items-center gap-3">

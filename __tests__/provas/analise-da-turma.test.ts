@@ -1,12 +1,17 @@
 import { describe, expect, it } from 'vitest'
 import {
+  analiseParaOAdmin,
   analiseParaOAluno,
   questaoMaisAcertadaDaTurma,
   questaoMaisErradaDaTurma,
   resumirTurmaPorQuestao,
   type EntregaParaAnalise,
 } from '@/lib/provas/analise-da-turma'
-import { estatisticasParaOAluno, resumirTurma } from '@/lib/provas/classificacao'
+import {
+  estatisticasParaOAdmin,
+  estatisticasParaOAluno,
+  resumirTurma,
+} from '@/lib/provas/classificacao'
 import type { Question } from '@/lib/types'
 
 function objetiva(id: string, number: number): Question {
@@ -263,5 +268,59 @@ describe('o resumo de notas do aluno — sem participantes', () => {
   it('sem notas devolve null', () => {
     expect(estatisticasParaOAluno(resumirTurma([], 100))).toBeNull()
     expect(estatisticasParaOAluno(null)).toBeNull()
+  })
+})
+
+/*
+ * A tela de resultados é uma só para aluno e admin, e ela lê `proporcao`,
+ * `temEntregas` e os destaques. O payload do admin — que carrega as contagens
+ * — precisa ter esses campos também, ou a barra vira `NaN%` e o painel da
+ * análise não é desenhado.
+ */
+describe('o resumo do admin — as contagens MAIS o que a tela desenha', () => {
+  const resumo = resumirTurma([90, 70, 70, 30], 100)
+
+  it('a distribuição do admin traz proporção junto da quantidade', () => {
+    const admin = estatisticasParaOAdmin(resumo)!
+    const porFaixa = Object.fromEntries(admin.distribuicao.map((f) => [f.rotulo, f]))
+    expect(porFaixa['60–80%'].quantidade).toBe(2)
+    expect(porFaixa['60–80%'].proporcao).toBe(50)
+    for (const faixa of admin.distribuicao) {
+      expect(Number.isFinite(faixa.proporcao)).toBe(true)
+    }
+  })
+
+  it('as contagens que são do professor continuam lá', () => {
+    const admin = estatisticasParaOAdmin(resumo)!
+    expect(admin.participantes).toBe(4)
+    expect(admin.media).toBe(65)
+    expect(admin.maior).toBe(90)
+    expect(admin.menor).toBe(30)
+  })
+
+  it('sem notas devolve null, como a versão do aluno', () => {
+    expect(estatisticasParaOAdmin(resumirTurma([], 100))).toBeNull()
+    expect(estatisticasParaOAdmin(null)).toBeNull()
+  })
+
+  it('a análise do admin responde temEntregas e traz os destaques prontos', () => {
+    const questoes = [objetiva('q1', 1), objetiva('q2', 2)]
+    const entregas = [
+      entrega({ q1: 'q1-a', q2: 'q2-b' }),
+      entrega({ q1: 'q1-a', q2: 'q2-b' }),
+    ]
+    const admin = analiseParaOAdmin(resumirTurmaPorQuestao(questoes, entregas))!
+    expect(admin.temEntregas).toBe(true)
+    expect(admin.maisAcertada?.number).toBe(1)
+    expect(admin.maisErrada?.number).toBe(2)
+    // E as contagens do professor seguem no payload.
+    expect(admin.entregas).toBe(2)
+    expect(admin.questoes[0].acertos).toBe(2)
+  })
+
+  it('sem entregas, temEntregas é false — e não undefined', () => {
+    const admin = analiseParaOAdmin(resumirTurmaPorQuestao([objetiva('q1', 1)], []))!
+    expect(admin.temEntregas).toBe(false)
+    expect(analiseParaOAdmin(null)).toBeNull()
   })
 })

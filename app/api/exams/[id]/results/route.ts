@@ -8,13 +8,18 @@ import { ObjectId } from 'mongodb'
 import { calculateTRIScores } from '@/lib/tri-calculator'
 import { resolverJanelaDaProva } from '@/lib/provas/janela-da-prova'
 import {
+  estatisticasParaOAdmin,
   estatisticasParaOAluno,
   mostraClassificacao,
   posicaoNaTurma,
   resumirTurma,
 } from '@/lib/provas/classificacao'
 import { permiteTreinoAposTermino } from '@/lib/provas/treino-pos-termino'
-import { analiseParaOAluno, resumirTurmaPorQuestao } from '@/lib/provas/analise-da-turma'
+import {
+  analiseParaOAdmin,
+  analiseParaOAluno,
+  resumirTurmaPorQuestao,
+} from '@/lib/provas/analise-da-turma'
 
 export const dynamic = 'force-dynamic'
 
@@ -208,7 +213,7 @@ export async function GET(
        * do gráfico é a mesma, sem a régua de cabeças no eixo.
        */
       estatisticas: isAdmin
-        ? resumirTurma(notas, notaMaxima)
+        ? estatisticasParaOAdmin(resumirTurma(notas, notaMaxima))
         : estatisticasParaOAluno(resumirTurma(notas, notaMaxima)),
       minhaNota: minhaLinha ? minhaLinha.nota : null,
       minhaPosicao: minhaLinha && podeVerClassificacao
@@ -243,7 +248,7 @@ export async function GET(
        * justamente `respondidas`, que não viaja.
        */
       analiseDaTurma: isAdmin
-        ? resumirTurmaPorQuestao(exam.questions, submissions)
+        ? analiseParaOAdmin(resumirTurmaPorQuestao(exam.questions, submissions))
         : analiseParaOAluno(resumirTurmaPorQuestao(exam.questions, submissions)),
       // Refazer como treino: a tela da prova encerrada e esta oferecem o mesmo
       // botão, e as duas precisam saber que ele existe.

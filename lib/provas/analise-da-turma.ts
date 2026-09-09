@@ -258,3 +258,35 @@ export function questaoMaisAcertadaDaTurma<T extends QuestaoRanqueavel>(
     (a, b) => b.percentualDeAcerto! - a.percentualDeAcerto! || b.respondidas - a.respondidas,
   )[0]
 }
+
+/**
+ * ═══ O que o ADMIN recebe ═══
+ *
+ * Mesma história da distribuição de notas: o admin fica com as contagens, mas a
+ * tela é a mesma dos dois lados e ela pergunta por `temEntregas`, `maisErrada`
+ * e `maisAcertada` — campos que só `analiseParaOAluno` produzia. Para o admin,
+ * `temEntregas` chegava `undefined` e o painel inteiro da análise simplesmente
+ * não era desenhado, justo para quem tem mais motivo de olhar para ele.
+ *
+ * O payload do admin é o resumo completo MAIS os três campos derivados. O
+ * destaque continua saindo do servidor: o desempate usa `respondidas`, e ter
+ * duas implementações dele — uma para cada tipo de conta — é como este projeto
+ * já teve três "médias da turma" diferentes.
+ */
+export interface AnaliseDoAdmin extends ResumoDaTurmaPorQuestao {
+  temEntregas: boolean
+  maisErrada: DestaqueDaTurma | null
+  maisAcertada: DestaqueDaTurma | null
+}
+
+export function analiseParaOAdmin(
+  resumo: ResumoDaTurmaPorQuestao | null | undefined,
+): AnaliseDoAdmin | null {
+  if (!resumo) return null
+  return {
+    ...resumo,
+    temEntregas: resumo.entregas > 0,
+    maisErrada: destaque(questaoMaisErradaDaTurma(resumo.questoes)),
+    maisAcertada: destaque(questaoMaisAcertadaDaTurma(resumo.questoes)),
+  }
+}

@@ -144,3 +144,37 @@ export function posicaoNaTurma(
     percentil: Math.round(((total - melhoresQueEu - 1) / Math.max(1, total - 1)) * 100),
   }
 }
+
+/**
+ * ═══ O que o ADMIN recebe ═══
+ *
+ * O admin fica com as contagens — `participantes` e a `quantidade` de cada
+ * faixa —, porque no painel dele o tamanho da turma é o assunto. Mas a TELA de
+ * resultados é uma só para os dois, e ela desenha a barra a partir de
+ * `proporcao`. Enviar só as quantidades para o admin deixava cada faixa com
+ * `proporcao: undefined`, e o que aparecia era `NaN%` em cinco linhas com a
+ * barra inteira preenchida — `width: NaN%` é inválido, o navegador descarta a
+ * regra e a div ocupa a largura do trilho.
+ *
+ * Por isso o payload do admin é um SUPERCONJUNTO do público, e não uma forma
+ * paralela: a mesma proporção que o aluno recebe, mais as contagens que só ele
+ * pode ver. Assim a tela não precisa saber quem está olhando para desenhar o
+ * gráfico.
+ */
+export interface EstatisticasDoAdmin extends EstatisticasDaTurma {
+  distribuicao: { rotulo: string; quantidade: number; proporcao: number }[]
+}
+
+export function estatisticasParaOAdmin(
+  resumo: EstatisticasDaTurma | null | undefined,
+): EstatisticasDoAdmin | null {
+  if (!resumo) return null
+  const total = Math.max(1, resumo.participantes)
+  return {
+    ...resumo,
+    distribuicao: resumo.distribuicao.map((faixa) => ({
+      ...faixa,
+      proporcao: (faixa.quantidade / total) * 100,
+    })),
+  }
+}
