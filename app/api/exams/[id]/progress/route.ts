@@ -162,9 +162,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         : null,
       veredito,
       janela,
-      // O relógio do servidor, para a tela medir o próprio desvio antes de a
-      // prova começar a contar. Ver `lib/provas/relogio-da-prova.ts`.
-      agora: new Date().toISOString(),
     })
   } catch (error) {
     console.error('Get exam progress error:', error)
@@ -255,12 +252,6 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       { upsert: true },
     )
 
-    /*
-     * `salvoEm` é o relógio do SERVIDOR, e a tela o usa duas vezes: para dizer
-     * quando gravou e para reconferir o próprio desvio a cada 12 segundos. Um
-     * aparelho cujo relógio pula no meio da prova é corrigido na gravação
-     * seguinte, e não no fim dela.
-     */
     return NextResponse.json({ success: true, salvoEm: agora, respondidas: contarRespondidas(answers) })
   } catch (error) {
     console.error('Save exam progress error:', error)

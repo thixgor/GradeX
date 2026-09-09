@@ -52,10 +52,12 @@ import {
   type JanelaDaProva,
 } from '@/lib/provas/janela-da-prova'
 import {
-  agoraDoServidor,
+  DESVIO_QUE_MERECE_AVISO,
+  agoraEmBrasilia,
+  descreverDesvio,
+  lerHorarioDaResposta,
   medirDesvio,
   prazoVencido,
-  type MedidaDoRelogio,
 } from '@/lib/provas/relogio-da-prova'
 import { resolverDownloadsDaProva } from '@/lib/provas/downloads-da-prova'
 import { travasDaProva } from '@/lib/provas/anti-cola'
@@ -631,7 +633,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   }, [started, submitted, alreadySubmitted])
 
   /*
-   * ═══ O relógio que vale é o do servidor ═══
+   * ═══ O relógio que vale é o de Brasília ═══
    *
    * Tudo o que esta tela decide sobre TEMPO — a fase da janela, a contagem
    * regressiva, o fim da prova — era decidido com `Date.now()`, o relógio do
@@ -645,29 +647,59 @@ export default function ExamPage({ params }: { params: { id: string } }) {
    * tempo de prova de uma pessoa só, sem nada ter acontecido na sala — a prova
    * "acabava do nada" no meio de uma questão.
    *
-   * Agora o servidor diz que horas são (ele já responde a prova, o rascunho e
-   * a janela) e a tela guarda a diferença. O relógio local continua andando de
-   * segundo em segundo; só a origem dele passa a ser a certa. Ver
+   * A prova é marcada em horário de Brasília — é nesse fuso que o admin digita
+   * início, término e portões —, então é com ele que a contagem tem de
+   * concordar. A hora certa vem do cabeçalho `Date` das respostas que esta tela
+   * JÁ busca (a prova, ao abrir; o rascunho, de 12 em 12 segundos): nenhuma
+   * rota nova, nenhuma invocação a mais na conta. A tela guarda só a diferença,
+   * e o relógio local continua andando sozinho a partir da origem certa. Ver
    * `lib/provas/relogio-da-prova.ts`.
    */
   const desvioDoRelogioRef = useRef<number | null>(null)
   const [desvioDoRelogio, setDesvioDoRelogio] = useState<number | null>(null)
+  /** O aviso do desvio aparece uma vez, não a cada gravação de rascunho. */
+  const desvioAvisadoRef = useRef(false)
 
-  const anotarRelogioDoServidor = useCallback((medida: MedidaDoRelogio) => {
-    const desvio = medirDesvio(medida)
-    if (desvio === null) return
-    desvioDoRelogioRef.current = desvio
-    // O estado só muda quando a correção muda de verdade. O desvio é remedido
-    // a cada gravação de rascunho (12 em 12 segundos): trocar o estado por
-    // causa de 40 ms de variação de rede seria um render a mais por gravação,
-    // sem nada de novo na tela.
-    setDesvioDoRelogio((anterior) =>
-      anterior === null || Math.abs(anterior - desvio) > 1000 ? desvio : anterior,
-    )
-  }, [])
+  const anotarHorarioDeBrasilia = useCallback(
+    (pedidoEm: number, respondidoEm: number, cabecalhos: Headers | null | undefined) => {
+      const desvio = medirDesvio({
+        pedidoEm,
+        respondidoEm,
+        referenciaEm: lerHorarioDaResposta(cabecalhos),
+      })
+      if (desvio === null) return
+      desvioDoRelogioRef.current = desvio
+      // O estado só muda quando a correção muda de verdade. O desvio é remedido
+      // a cada gravação de rascunho: trocar o estado por causa de meio segundo
+      // de variação de rede seria um render a mais por gravação, sem nada de
+      // novo na tela.
+      setDesvioDoRelogio((anterior) =>
+        anterior === null || Math.abs(anterior - desvio) > 1000 ? desvio : anterior,
+      )
+    },
+    [],
+  )
 
-  /** `Date.now()` corrigido pelo desvio — o relógio do servidor, aqui dentro. */
-  const relogioDaProva = useCallback(() => agoraDoServidor(desvioDoRelogioRef.current), [])
+  /** `Date.now()` corrigido — o horário de Brasília, aqui dentro. */
+  const relogioDaProva = useCallback(() => agoraEmBrasilia(desvioDoRelogioRef.current), [])
+
+  /*
+   * O desvio dito em voz alta.
+   *
+   * Só quando ele é grande o bastante para APARECER: com o relógio do aparelho
+   * um minuto à frente, o cronômetro da prova discorda visivelmente do relógio
+   * do celular, e um cronômetro que "anda errado" no meio de uma prova vira "o
+   * site travou" contado ao professor depois. Corrigir três segundos, ninguém
+   * precisa saber.
+   */
+  useEffect(() => {
+    if (!started || desvioAvisadoRef.current) return
+    const aviso = descreverDesvio(desvioDoRelogio, DESVIO_QUE_MERECE_AVISO)
+    if (!aviso) return
+    desvioAvisadoRef.current = true
+    showToastMessage(aviso, 'info')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [desvioDoRelogio, started])
 
   /*
    * ═══ O prazo desta pessoa, e o que acontece quando ele acaba ═══
@@ -857,17 +889,13 @@ export default function ExamPage({ params }: { params: { id: string } }) {
         /*
          * A gravação do rascunho é também a batida do relógio.
          *
-         * Ela já acontece de 12 em 12 segundos enquanto a prova corre, e a
-         * resposta traz `salvoEm` — o instante do SERVIDOR. Reconferir o desvio
-         * aqui é o que protege do aparelho cujo relógio muda no meio da prova:
-         * a correção chega na gravação seguinte, não no fim.
+         * Ela já acontece de 12 em 12 segundos enquanto a prova corre, e o
+         * carimbo de hora vem no cabeçalho da própria resposta — de graça.
+         * Reconferir aqui é o que protege do aparelho cujo relógio muda no meio
+         * da prova: a correção chega na gravação seguinte, não no fim.
          */
-        if (res.ok) {
-          const dados = await res.json().catch(() => null)
-          if (dados?.salvoEm) {
-            anotarRelogioDoServidor({ pedidoEm, respondidoEm, servidorEm: dados.salvoEm })
-          }
-        } else if (res.status === 409) {
+        anotarHorarioDeBrasilia(pedidoEm, respondidoEm, res.headers)
+        if (res.status === 409) {
           // Só 'encerrada' aciona a entrega: 'ja-entregue' é o fim normal (a
           // tela já está mostrando o resultado) e 'fora-da-janela' antes do
           // início não é caso de entregar nada.
@@ -882,7 +910,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
         gravandoRef.current = false
       }
     },
-    [id, montarRascunho, anotarRelogioDoServidor],
+    [id, montarRascunho, anotarHorarioDeBrasilia],
   )
 
   // Prova em andamento: grava periodicamente e sempre que a aba some.
@@ -982,15 +1010,15 @@ export default function ExamPage({ params }: { params: { id: string } }) {
       const pedidoEm = Date.now()
       const res = await fetch(`/api/exams/${id}/progress`)
       const respondidoEm = Date.now()
+      anotarHorarioDeBrasilia(pedidoEm, respondidoEm, res.headers)
       if (!res.ok) return
       const dados = await res.json()
-      anotarRelogioDoServidor({ pedidoEm, respondidoEm, servidorEm: dados.agora })
       setRetomada(dados.veredito || null)
       setProgressoSalvo(dados.progresso || null)
     } catch {
       // Sem rascunho a prova começa do zero — que é o comportamento antigo.
     }
-  }, [id, anotarRelogioDoServidor])
+  }, [id, anotarHorarioDeBrasilia])
 
   /** Consome a retomada e devolve a prova de onde parou. */
   async function continuarProva() {
@@ -1224,9 +1252,9 @@ export default function ExamPage({ params }: { params: { id: string } }) {
 
       if (!res.ok) throw new Error(data.error)
 
-      // A primeira medida do relógio do servidor: é ela que vale enquanto a
+      // A primeira medida do horário de Brasília: é ela que vale enquanto a
       // prova não começa a gravar rascunho.
-      anotarRelogioDoServidor({ pedidoEm, respondidoEm, servidorEm: data.agora })
+      anotarHorarioDeBrasilia(pedidoEm, respondidoEm, res.headers)
 
       /*
        * A prova já chega embaralhada — o sorteio agora é do servidor.

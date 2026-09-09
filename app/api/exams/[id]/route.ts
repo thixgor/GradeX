@@ -137,25 +137,12 @@ export async function GET(
      */
     const jaEntrou = await jaEntrouNaProva(db, id, session.userId)
 
-    const agora = new Date()
-
     return NextResponse.json({
       exam: provaFinal,
       // A janela sai calculada pelo relógio do SERVIDOR. O cliente desenha
       // portões e contagem regressiva a partir daqui em vez de comparar datas
       // com o relógio da máquina do aluno, que ele controla.
-      janela: resolverJanelaDaProva(exam, agora, { jaEntrou }),
-      /*
-       * Que horas são, para o servidor.
-       *
-       * A janela acima é um retrato: ela diz o que valia no instante da
-       * resposta. O cronômetro da prova precisa continuar contando depois
-       * disso, e o único relógio que ele tinha para isso era o do aparelho do
-       * aluno — que atrasa, adianta e às vezes pula. Com este instante o
-       * navegador mede o próprio desvio uma vez e conta o resto do tempo por
-       * ele. Ver `lib/provas/relogio-da-prova.ts`.
-       */
-      agora: agora.toISOString(),
+      janela: resolverJanelaDaProva(exam, new Date(), { jaEntrou }),
       jaEntrou,
       jaSubmeteu,
     })

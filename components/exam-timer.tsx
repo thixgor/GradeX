@@ -2,12 +2,17 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { Clock } from 'lucide-react'
-import { agoraDoServidor, partesDaContagem, tempoRestante } from '@/lib/provas/relogio-da-prova'
+import {
+  agoraEmBrasilia,
+  horaDeBrasilia,
+  partesDaContagem,
+  tempoRestante,
+} from '@/lib/provas/relogio-da-prova'
 
 interface ExamTimerProps {
   endTime: Date
   /**
-   * Quanto o relógio deste aparelho está atrasado em relação ao do servidor
+   * Quanto o relógio deste aparelho está atrasado em relação ao de Brasília
    * (ver `lib/provas/relogio-da-prova.ts`). Sem ele a contagem usa o relógio
    * local — que é o comportamento antigo, e o motivo de uma prova acabar
    * sozinha no aparelho com a hora errada.
@@ -44,7 +49,7 @@ export function ExamTimer({ endTime, desvioDoRelogio, onTimeUp }: ExamTimerProps
     avisouRef.current = false
 
     const calculateTimeLeft = () => {
-      const restante = tempoRestante(endMs, agoraDoServidor(desvioRef.current))
+      const restante = tempoRestante(endMs, agoraEmBrasilia(desvioRef.current))
       if (restante === null) return
 
       setTimeLeft(partesDaContagem(restante))
@@ -70,6 +75,10 @@ export function ExamTimer({ endTime, desvioDoRelogio, onTimeUp }: ExamTimerProps
 
   return (
     <div
+      // O prazo por extenso, e em que fuso ele está: quem confere a contagem
+      // contra o relógio do próprio celular precisa saber qual dos dois é a
+      // referência da prova.
+      title={`A prova termina às ${horaDeBrasilia(endMs)} (horário de Brasília)`}
       className={`flex items-center gap-2 px-4 py-2 rounded-lg font-mono text-sm font-semibold ${
         isUrgent
           ? 'bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 animate-pulse'

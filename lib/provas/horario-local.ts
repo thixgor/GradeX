@@ -43,6 +43,10 @@
  * ninguém.
  */
 
+function doisDigitos(valor: number): string {
+  return String(valor).padStart(2, '0')
+}
+
 /**
  * Brasília, em minutos a somar ao horário local para chegar em UTC.
  *
@@ -50,14 +54,23 @@
  * offset fixo é o que mantém a leitura estável em qualquer máquina. Se o
  * horário de verão voltar, é aqui que se mexe.
  */
-export const OFFSET_DA_PLATAFORMA = '-03:00'
+export const OFFSET_DA_PLATAFORMA_EM_MINUTOS = -180
+
+/**
+ * O mesmo fuso, no formato que o ISO 8601 pede.
+ *
+ * Derivado do número acima de propósito: os dois precisam concordar sempre, e
+ * duas constantes escritas à mão são duas chances de discordarem no dia em que
+ * o horário de verão voltar.
+ */
+export const OFFSET_DA_PLATAFORMA = (() => {
+  const total = Math.abs(OFFSET_DA_PLATAFORMA_EM_MINUTOS)
+  const sinal = OFFSET_DA_PLATAFORMA_EM_MINUTOS <= 0 ? '-' : '+'
+  return `${sinal}${doisDigitos(Math.floor(total / 60))}:${doisDigitos(total % 60)}`
+})()
 
 /** `"2026-05-10T14:00"` — hora de parede, sem fuso. */
 const CAMPO_SEM_FUSO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d+)?)?$/
-
-function doisDigitos(valor: number): string {
-  return String(valor).padStart(2, '0')
-}
 
 /**
  * O que o `<input type="datetime-local">` deve mostrar para este instante.

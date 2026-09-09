@@ -1,5 +1,7 @@
+import { OFFSET_DA_PLATAFORMA_EM_MINUTOS } from '@/lib/provas/horario-local'
+
 /**
- * O relógio que decide o fim da prova.
+ * O relógio que decide o fim da prova: o de Brasília.
  *
  * ## O que estava quebrado
  *
@@ -16,39 +18,64 @@
  * relógio que pulou meia hora encerrava a prova *dela sozinha*, no meio de uma
  * questão, sem nada ter acontecido na sala.
  *
- * É o mesmo problema que o painel do admin já resolvia
- * (`hooks/use-acompanhamento-ao-vivo.ts`: "se 'agora' fosse o relógio do
- * computador do admin — adiantado dois minutos, como tantos são"). Lá o preço
- * era um rótulo errado; aqui é a prova.
+ * ## Por que Brasília, e não "o relógio do servidor"
  *
- * ## Como está agora
+ * A prova é marcada em horário de Brasília: é o fuso em que o admin digita
+ * início, término e portões (`lib/provas/horario-local.ts`), e é o fuso em que
+ * a turma combina "prova às 14h". O servidor roda em UTC porque datacenter roda
+ * em UTC — isso é um detalhe de hospedagem, não o relógio da prova. Aqui a
+ * referência é sempre Brasília, e o instante em UTC é só a forma de carregá-la
+ * de um lado para o outro.
  *
- * O servidor diz que horas são — ele já responde a prova, o rascunho e a
- * janela —, e o cliente guarda a DIFERENÇA entre esse instante e o dele. A
- * partir daí todo prazo é medido por `Date.now() + desvio`, que é o relógio do
- * servidor visto de dentro do navegador.
+ * ## De onde vem a hora certa — sem custar uma chamada
  *
- * Guardar a diferença (e não a hora) é o que mantém a contagem viva entre uma
- * resposta e outra: o relógio local continua andando sozinho, de segundo em
- * segundo, e só a origem dele passa a ser a certa.
+ * De um cabeçalho que **toda resposta HTTP já traz**: `Date`, obrigatório desde
+ * o HTTP/1.1, gerado por quem responde. Nenhuma rota nova, nenhum campo novo no
+ * corpo, nenhuma invocação a mais na conta da Vercel: a tela lê o carimbo das
+ * respostas que ela já ia buscar de qualquer jeito (a prova, ao abrir; o
+ * rascunho, de 12 em 12 segundos enquanto a prova corre).
  *
- * ## Por que o meio do caminho, e não a hora da chegada
+ * O que se guarda é a DIFERENÇA entre esse carimbo e o relógio local — assim a
+ * contagem continua viva entre uma resposta e outra, andando de segundo em
+ * segundo no aparelho, só que a partir da origem certa.
  *
- * Entre pedir e receber existe a rede. Se o desvio fosse `servidor - chegada`,
- * toda a viagem de ida e volta apareceria como atraso do relógio local — numa
- * conexão ruim de celular, segundos inteiros. O instante em que o servidor
- * respondeu está, em média, no MEIO da viagem, e é com esse ponto que a conta
- * é feita. Sobra um erro da ordem de metade da variação da rede, o que é ruído
- * perto do que se está corrigindo (minutos, às vezes horas).
+ * ## Os três cuidados da medida
+ *
+ * **O meio do caminho.** Entre pedir e receber existe a rede. Medir
+ * `carimbo - chegada` jogaria a viagem inteira na conta do relógio local —
+ * segundos, numa conexão ruim de celular. O carimbo foi escrito, em média, no
+ * MEIO da viagem, e é com esse ponto que a conta é feita.
+ *
+ * **O cache.** Uma resposta guardada carrega o carimbo de quando NASCEU, não de
+ * agora — e diria que o aparelho está adiantado justamente quando não está. O
+ * cabeçalho `Age` diz quanto tempo ela passou guardada, e entra na soma.
+ *
+ * **A resolução de um segundo.** O `Date` do HTTP não tem milissegundos. Um
+ * desvio abaixo de `DESVIO_MINIMO_MS` é indistinguível de ruído da medida, e
+ * corrigir por ruído é trocar um relógio bom por um palpite: abaixo dele, o
+ * relógio do aparelho fica como está.
  */
+
+/** Abaixo disto o aparelho está certo — o resto é ruído da medida. */
+export const DESVIO_MINIMO_MS = 2000
+
+/**
+ * A partir daqui vale avisar a pessoa.
+ *
+ * Corrigir três segundos é rotina e não interessa a ninguém; um minuto já
+ * aparece na tela — o cronômetro anda diferente do relógio do próprio aparelho,
+ * e quem vê isso no meio de uma prova merece a explicação antes de achar que o
+ * site está com defeito.
+ */
+export const DESVIO_QUE_MERECE_AVISO = 60_000
 
 export interface MedidaDoRelogio {
   /** `Date.now()` no instante em que a requisição saiu. */
   pedidoEm: number
   /** `Date.now()` no instante em que a resposta chegou. */
   respondidoEm: number
-  /** O "agora" que o servidor devolveu (ISO, `Date` ou milissegundos). */
-  servidorEm: unknown
+  /** O carimbo de hora da resposta (ISO, `Date` ou milissegundos). */
+  referenciaEm: unknown
 }
 
 function paraMilissegundos(valor: unknown): number | null {
@@ -61,19 +88,44 @@ function paraMilissegundos(valor: unknown): number | null {
 }
 
 /**
- * Quanto o relógio deste aparelho está atrasado em relação ao do servidor.
+ * O instante que uma resposta HTTP carimbou — `Date`, corrigido por `Age`.
  *
- * Positivo: o aparelho está ATRASADO (o servidor já está mais adiante).
+ * Aceita qualquer coisa com `get(nome)`: o `Headers` do `fetch` serve, e um
+ * objeto simples também (é assim que os testes descrevem uma resposta).
+ * Devolve `null` quando não há carimbo legível, e aí nada é corrigido.
+ */
+export function lerHorarioDaResposta(
+  cabecalhos: { get(nome: string): string | null } | null | undefined,
+): number | null {
+  if (!cabecalhos || typeof cabecalhos.get !== 'function') return null
+
+  const carimbo = paraMilissegundos(cabecalhos.get('date'))
+  if (carimbo === null) return null
+
+  // `Age` é a idade da resposta em segundos, posta por quem a guardou. Sem ela,
+  // uma resposta de cache faria o aparelho parecer adiantado pelo tempo que ela
+  // passou na prateleira.
+  const idade = Number(cabecalhos.get('age'))
+  const segundosGuardada = Number.isFinite(idade) && idade > 0 ? idade : 0
+
+  return carimbo + segundosGuardada * 1000
+}
+
+/**
+ * Quanto o relógio deste aparelho está atrasado em relação ao de Brasília.
+ *
+ * Positivo: o aparelho está ATRASADO (Brasília já está mais adiante).
  * Negativo: o aparelho está ADIANTADO — o caso que encerrava a prova antes da
  * hora.
  *
- * Devolve `null` quando não dá para medir (resposta sem instante, data
- * inválida, medida incoerente). `null` é significativo: quem chama mantém o
- * desvio anterior em vez de trocá-lo por um palpite.
+ * Devolve `null` quando não dá para medir (resposta sem carimbo, data
+ * inválida, medida incoerente) e também quando o desvio é pequeno demais para
+ * ser real. `null` é significativo: quem chama mantém o que já tinha em vez de
+ * trocá-lo por um palpite.
  */
 export function medirDesvio(medida: MedidaDoRelogio): number | null {
-  const servidor = paraMilissegundos(medida.servidorEm)
-  if (servidor === null) return null
+  const referencia = paraMilissegundos(medida.referenciaEm)
+  if (referencia === null) return null
 
   const { pedidoEm, respondidoEm } = medida
   if (!Number.isFinite(pedidoEm) || !Number.isFinite(respondidoEm)) return null
@@ -83,17 +135,63 @@ export function medirDesvio(medida: MedidaDoRelogio): number | null {
   if (respondidoEm < pedidoEm) return null
 
   const meioDaViagem = pedidoEm + (respondidoEm - pedidoEm) / 2
-  return servidor - meioDaViagem
+  const desvio = referencia - meioDaViagem
+  return Math.abs(desvio) < DESVIO_MINIMO_MS ? null : desvio
 }
 
 /**
- * O relógio do servidor, visto de dentro do navegador.
+ * O instante de agora pelo relógio de Brasília, visto de dentro do navegador.
  *
- * Sem desvio medido devolve o relógio local — que é o comportamento antigo, e
- * o único possível quando nenhuma resposta do servidor chegou ainda.
+ * Sem desvio medido devolve o relógio local — que é o comportamento antigo, e o
+ * único possível enquanto nenhuma resposta tiver chegado.
  */
-export function agoraDoServidor(desvio: number | null | undefined, agoraLocal: number = Date.now()): number {
+export function agoraEmBrasilia(desvio: number | null | undefined, agoraLocal: number = Date.now()): number {
   return agoraLocal + (Number.isFinite(desvio as number) ? (desvio as number) : 0)
+}
+
+/**
+ * A hora de parede em Brasília, para a tela: `14:35`.
+ *
+ * `toLocaleTimeString` diria a hora do FUSO DO APARELHO, que é justamente o que
+ * não vale aqui: um celular configurado em Lisboa mostraria 18:35 para o mesmo
+ * instante e a pessoa conferiria o horário da prova contra um número que não é
+ * o dela. O deslocamento fixo (`lib/provas/horario-local.ts`) é o mesmo que o
+ * formulário do admin usa para gravar a prova.
+ */
+export function horaDeBrasilia(instante: number | Date | string): string {
+  const ms = paraMilissegundos(instante)
+  if (ms === null) return '—'
+  const emBrasilia = new Date(ms + OFFSET_DA_PLATAFORMA_EM_MINUTOS * 60_000)
+  const dois = (valor: number) => String(valor).padStart(2, '0')
+  return `${dois(emBrasilia.getUTCHours())}:${dois(emBrasilia.getUTCMinutes())}`
+}
+
+/**
+ * O desvio dito em voz alta, para quem precisa entender o que houve.
+ *
+ * Um cronômetro que anda diferente do relógio da própria tela parece defeito, e
+ * defeito no meio de uma prova vira "o site travou" contado ao professor
+ * depois. Dizer "seu aparelho está 12 min adiantado; a contagem segue o horário
+ * de Brasília" encerra o assunto na hora — e é a mesma frase que o suporte vai
+ * precisar quando alguém reclamar.
+ */
+export function descreverDesvio(
+  desvio: number | null | undefined,
+  limite: number = DESVIO_MINIMO_MS,
+): string | null {
+  if (desvio === null || desvio === undefined || !Number.isFinite(desvio)) return null
+  if (Math.abs(desvio) < limite) return null
+
+  const segundos = Math.round(Math.abs(desvio) / 1000)
+  const sentido = desvio < 0 ? 'adiantado' : 'atrasado'
+  const quanto =
+    segundos < 60
+      ? `${segundos} s`
+      : segundos < 3600
+        ? `${Math.round(segundos / 60)} min`
+        : `${Math.round((segundos / 3600) * 10) / 10} h`
+
+  return `O relógio deste aparelho está ${quanto} ${sentido}. A contagem segue o horário de Brasília.`
 }
 
 /**
