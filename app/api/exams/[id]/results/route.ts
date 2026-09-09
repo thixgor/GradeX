@@ -9,6 +9,7 @@ import { calculateTRIScores } from '@/lib/tri-calculator'
 import { resolverJanelaDaProva } from '@/lib/provas/janela-da-prova'
 import { mostraClassificacao, posicaoNaTurma, resumirTurma } from '@/lib/provas/classificacao'
 import { permiteTreinoAposTermino } from '@/lib/provas/treino-pos-termino'
+import { resumirTurmaPorQuestao } from '@/lib/provas/analise-da-turma'
 
 export const dynamic = 'force-dynamic'
 
@@ -205,6 +206,19 @@ export async function GET(
        * de erro — como se algo tivesse falhado.
        */
       participei: isAdmin ? undefined : !!participou,
+      /*
+       * Como a turma foi, questão a questão — e nada além disso.
+       *
+       * Este bloco não depende de `podeVerClassificacao`: o ranking é sobre
+       * PESSOAS (nome e nota, lado a lado) e isto é sobre QUESTÕES. Uma linha
+       * daqui diz que 31 de 34 erraram a questão 12; não diz quem, e não há
+       * como derivar quem a partir dela. Esconder o percentual de acerto da
+       * turma junto com os nomes seria negar ao aluno a única pergunta que ele
+       * de fato faz no grupo depois da prova.
+       *
+       * Sai das submissões que esta rota já carregou — nenhuma consulta a mais.
+       */
+      analiseDaTurma: resumirTurmaPorQuestao(exam.questions, submissions),
       // Refazer como treino: a tela da prova encerrada e esta oferecem o mesmo
       // botão, e as duas precisam saber que ele existe.
       treinoLiberado: permiteTreinoAposTermino(exam, now),

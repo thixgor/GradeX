@@ -878,6 +878,33 @@ function ProvasContent() {
     }
   }
 
+  /**
+   * O veredito de download desta prova, para esta conta, agora.
+   *
+   * Três coisas decidem, e as três moram em `resolverDownloadsDaProva`: o
+   * PLANO (PDF de prova é o que o Quest+ vende, salvo a exceção que o admin
+   * abre em `freeDownloads`), a LIBERAÇÃO que o admin escolheu por arquivo em
+   * `/admin/exams` (`holdDownloads` — imediato, na entrega ou no término) e o
+   * TEMPO. Tanto o cartão quanto o diálogo leem daqui: o botão que aparece e o
+   * arquivo que sai precisam responder à mesma regra, senão o catálogo oferece
+   * o que a geração recusa.
+   */
+  function downloadsDaProva(exam: Exam) {
+    return resolverDownloadsDaProva(exam, {
+      accountType,
+      isAdmin: user?.role === 'admin',
+      jaEnviou: !!(exam as any).jaEntregou,
+    })
+  }
+
+  /** O veredito do arquivo que cada opção do diálogo produz. */
+  function vereditoDoFormato(exam: Exam, tipo: 'exam' | 'with-answers' | 'gabarito') {
+    const veredito = downloadsDaProva(exam)
+    // Gabarito comentado e folha de gabarito revelam a resposta: os dois seguem
+    // a regra do gabarito, que espera o término e não tem exceção de plano.
+    return tipo === 'exam' ? veredito.prova : veredito.gabarito
+  }
+
   async function handleDownloadPDF(exam: Exam, type: 'exam' | 'with-answers' | 'gabarito') {
     /*
      * Duas regras, e só uma delas se resolve assinando.
@@ -894,12 +921,7 @@ function ProvasContent() {
      * uma prova que ainda ia acontecer. A listagem já sabe quem entregou (é o
      * mesmo campo que decide o botão do cartão — ver `resolverAcaoDoAluno`).
      */
-    const veredito = resolverDownloadsDaProva(exam, {
-      accountType,
-      isAdmin: user?.role === 'admin',
-      jaEnviou: !!(exam as any).jaEntregou,
-    })
-    const arquivo = type === 'exam' ? veredito.prova : veredito.gabarito
+    const arquivo = vereditoDoFormato(exam, type)
 
     if (!arquivo.permitido) {
       setPdfModalExam(null)
@@ -1035,13 +1057,26 @@ function ProvasContent() {
     }
     if (!status.veredito.clicavel) return
 
-    // Prova encerrada para todos: o ranking da turma. Encerrada só para esta
-    // pessoa: o resumo dela, que é o que existe enquanto os outros respondem.
+    /*
+     * Prova encerrada para todos: a porta da prova encerrada.
+     *
+     * Ia direto para `/exam/<id>/results` — uma tela que abre pela colocação e
+     * desce por distribuição, ranking e oito cartões de PDF. Ela responde bem a
+     * "onde eu fiquei?" e atropela as outras coisas que a mesma pessoa quer de
+     * uma prova que acabou: o caderno em PDF, refazer como treino, e a questão
+     * que a turma inteira errou. `/exam/<id>/encerrada` é o menu entre elas —
+     * e os resultados continuam a um clique de lá.
+     *
+     * Encerrada só para ESTA pessoa (ela entregou, a turma ainda responde): o
+     * resumo dela, que é o único que existe enquanto a prova corre.
+     */
     const encerradaParaTodos = new Date() > new Date(exam.endTime)
     router.push(
-      encerradaParaTodos || !user?.id
-        ? `/exam/${id}/results`
-        : `/exam/${id}/user/${user.id}`,
+      encerradaParaTodos
+        ? `/exam/${id}/encerrada`
+        : user?.id
+          ? `/exam/${id}/user/${user.id}`
+          : `/exam/${id}/results`,
     )
   }
 
@@ -1466,7 +1501,25 @@ function ProvasContent() {
               </Button>
             )}
 
-            {exam.isPracticeExam && (
+            {/*
+              O PDF da prova ENCERRADA.
+
+              O botão só existia na prova de treino. Numa prova aplicada, o
+              caderno é justamente o que o aluno volta a procurar depois — para
+              imprimir, refazer no papel, estudar pelo gabarito comentado — e
+              o catálogo não tinha porta nenhuma para ele: era abrir a prova,
+              cair nos resultados e procurar lá dentro.
+
+              Quem decide o que sai continua sendo `/admin/exams`: o diálogo
+              desenha cada formato com o veredito de `downloadsDaProva`, então
+              um arquivo que o admin não liberou (ou que o plano não cobre)
+              aparece desligado, com o motivo, em vez de prometer e recusar no
+              clique.
+            */}
+            {(exam.isPracticeExam ||
+              // A prova pessoal fica de fora: ela nunca teve este botão aqui, e
+              // "encerrada" não quer dizer nada nela — ela não tem janela.
+              (!exam.isPersonalExam && provaJaEncerrou(exam, new Date(agora)))) && (
               <Button
                 variant="outline"
                 size="sm"
@@ -2678,18 +2731,31 @@ function ProvasContent() {
           <div className="space-y-3 py-2">
             {options.map((opt) => {
               const isLoading = pdfLoading === opt.key
+              /*
+                O motivo aparece NO cartão, e não só no clique.
+
+                O diálogo oferecia os três formatos como se os três saíssem, e
+                a recusa chegava depois — um toast, ou o convite de assinatura,
+                dependendo do caso. Quem tinha ouvido do professor "liberei o
+                gabarito comentado" clicava, era recusado e não sabia se o
+                problema era o plano, a prova ou o momento. Com o veredito
+                desenhado aqui, a resposta chega antes da tentativa.
+              */
+              const veredito = vereditoDoFormato(exam, opt.key)
+              const bloqueado = !veredito.permitido
               return (
                 <button
                   key={opt.key}
-                  disabled={!!pdfLoading}
+                  disabled={!!pdfLoading || bloqueado}
+                  title={veredito.motivo || undefined}
                   onClick={() => handleDownloadPDF(exam, opt.key)}
-                  className={`w-full text-left rounded-xl border p-4 transition-all duration-200 bg-gradient-to-br ${opt.gradient} ${opt.border}
-                    ${!!pdfLoading && !isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer active:scale-[0.98]'}
+                  className={`w-full text-left rounded-xl border p-4 transition-all duration-200 ${bloqueado ? 'border-border/40 bg-muted/10' : `bg-gradient-to-br ${opt.gradient} ${opt.border}`}
+                    ${bloqueado ? 'cursor-not-allowed' : !!pdfLoading && !isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer active:scale-[0.98]'}
                     ${isLoading ? 'ring-2 ring-primary/30' : ''}
                   `}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="flex-shrink-0">
+                    <div className={`flex-shrink-0 ${bloqueado ? 'opacity-40 grayscale' : ''}`}>
                       {isLoading ? (
                         <div className="h-7 w-7 rounded-full border-2 border-current border-t-transparent animate-spin opacity-60" />
                       ) : opt.icon}
@@ -2697,15 +2763,22 @@ function ProvasContent() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-semibold text-sm">{opt.title}</span>
-                        {opt.badge && (
+                        {opt.badge && !bloqueado && (
                           <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-blue-500/15 text-blue-600 dark:text-blue-400 font-semibold">
                             {opt.badge}
                           </span>
                         )}
+                        {bloqueado && (
+                          <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground font-semibold">
+                            {veredito.esperandoOFim ? 'Ainda não' : 'Indisponível'}
+                          </span>
+                        )}
                       </div>
-                      <p className="text-xs text-muted-foreground mt-0.5">{opt.description}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        {bloqueado ? veredito.motivo : opt.description}
+                      </p>
                     </div>
-                    {!isLoading && (
+                    {!isLoading && !bloqueado && (
                       <Download className="h-4 w-4 text-muted-foreground/50 flex-shrink-0" />
                     )}
                   </div>

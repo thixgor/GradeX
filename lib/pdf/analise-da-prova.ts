@@ -1,5 +1,9 @@
 import jsPDF from 'jspdf'
 import {
+  questaoMaisAcertadaDaTurma,
+  questaoMaisErradaDaTurma,
+} from '@/lib/provas/analise-da-turma'
+import {
   CINZA_CLARO,
   CINZA_TEXTO,
   LARANJA,
@@ -805,29 +809,24 @@ function desenharQuestaoEmDestaque(
 
 // ── A montagem ───────────────────────────────────────────────────
 
-/** As objetivas com resposta, das quais saem as questões em destaque. */
-function objetivasComResposta(dados: DadosDaAnalise) {
-  return dados.questoes.filter(
-    (q) => q.type === 'multiple-choice' && q.percentualDeAcerto !== null && q.respondidas > 0,
-  )
-}
-
+/*
+ * As questões em destaque saem de `lib/provas/analise-da-turma.ts`.
+ *
+ * O mesmo par de perguntas — a mais errada e a mais acertada — passou a ser
+ * feito também pela tela do aluno na prova encerrada. Duas implementações do
+ * mesmo desempate é como este projeto já teve três "médias da turma"
+ * diferentes: elas concordam no dia em que são escritas e divergem na primeira
+ * vez que alguém mexe numa delas.
+ *
+ * Estas duas continuam existindo porque a assinatura delas — receber o
+ * `DadosDaAnalise` inteiro — é a que o PDF e o modal do admin usam.
+ */
 export function questaoMaisErrada(dados: DadosDaAnalise) {
-  const candidatas = objetivasComResposta(dados)
-  if (candidatas.length === 0) return null
-  // Empate desempata pela mais respondida: entre duas questões com 20% de
-  // acerto, a que 40 pessoas erraram diz mais do que a que 3 erraram.
-  return [...candidatas].sort(
-    (a, b) => a.percentualDeAcerto! - b.percentualDeAcerto! || b.respondidas - a.respondidas,
-  )[0]
+  return questaoMaisErradaDaTurma(dados.questoes)
 }
 
 export function questaoMaisAcertada(dados: DadosDaAnalise) {
-  const candidatas = objetivasComResposta(dados)
-  if (candidatas.length === 0) return null
-  return [...candidatas].sort(
-    (a, b) => b.percentualDeAcerto! - a.percentualDeAcerto! || b.respondidas - a.respondidas,
-  )[0]
+  return questaoMaisAcertadaDaTurma(dados.questoes)
 }
 
 export async function gerarAnaliseDaProvaPDF(

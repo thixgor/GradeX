@@ -11,22 +11,17 @@ import { Exam, ExamSubmission, TRIResult } from '@/lib/types'
 import {
   ArrowLeft,
   BarChart3,
-  BookOpenCheck,
-  ClipboardCheck,
-  ClipboardList,
   Download,
   Dumbbell,
   EyeOff,
-  FileCheck2,
-  FileText,
-  ListChecks,
   Lock,
   Medal,
   Search,
   Trophy,
   Users,
 } from 'lucide-react'
-import { FORMATOS_DA_FOLHA, resolverDownloadsDaProva } from '@/lib/provas/downloads-da-prova'
+import { resolverDownloadsDaProva } from '@/lib/provas/downloads-da-prova'
+import { PainelDeDownloads } from '@/components/exam/painel-de-downloads'
 import { enderecoDoTreino } from '@/lib/provas/treino-pos-termino'
 import { FAIXAS_DE_NOTA, type EstatisticasDaTurma } from '@/lib/provas/classificacao'
 import { cn } from '@/lib/utils'
@@ -83,8 +78,6 @@ interface NormalResult {
 
 type Linha = { userId: string; userName: string; nota: number }
 
-type Arquivo = 'prova' | 'gabarito' | 'comentado' | 'meu' | 'folha' | 'folhaComQuestoes' | 'folhaComparada'
-
 export default function ExamResultsPage({ params }: { params: { id: string } }) {
   const { id } = params
   const router = useRouter()
@@ -112,7 +105,6 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
   const [erro, setErro] = useState<string | null>(null)
   const [conta, setConta] = useState<{ id?: string; role?: string; accountType?: string }>({})
   const [busca, setBusca] = useState('')
-  const [gerando, setGerando] = useState<Arquivo | null>(null)
   const [toastOpen, setToastOpen] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
 
@@ -204,30 +196,6 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
     [exam, conta, minhaEntrega],
   )
 
-  /**
-   * A recusa dos arquivos que dependem da entrega desta pessoa.
-   *
-   * Duas frases, porque são dois fatos diferentes: quem não fez a prova precisa
-   * saber que o arquivo não existe para ele (e não que algo falhou), e quem fez
-   * merece um "aguarde" enquanto a entrega chega, em vez de um aviso que
-   * desmente a prova que ele acabou de fazer.
-   */
-  const SEM_ENTREGA = useMemo(
-    () =>
-      participei === false
-        ? {
-            permitido: false,
-            motivo: 'Este arquivo é montado a partir das suas respostas, e você não fez esta prova.',
-            esperandoOFim: false,
-          }
-        : {
-            permitido: false,
-            motivo: 'Estamos carregando a sua entrega…',
-            esperandoOFim: false,
-          },
-    [participei],
-  )
-
   const ordenadas = useMemo(() => [...linhas].sort((a, b) => b.nota - a.nota), [linhas])
 
   const filtradas = useMemo(() => {
@@ -250,124 +218,6 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
    * forma: um botão que some não explica nada, e um que abre um PDF proibido
    * explica menos ainda.
    */
-  async function baixar(arquivo: Arquivo) {
-    if (!exam || gerando) return
-
-    /*
-     * O veredito segue o CONTEÚDO do arquivo, não o nome dele.
-     *
-     * "Minhas respostas corrigidas" passava por `downloads.relatorio`, que o
-     * admin pode liberar já na entrega — só que o arquivo é
-     * `generateUserReportWithGabaritoPDF`: ele traz a alternativa correta de
-     * cada questão e uma folha de gabarito no fim. Liberado na entrega, é o
-     * gabarito saindo pela porta do relatório, com a turma ainda respondendo.
-     * (E antes do término ele nem sairia certo: o servidor não manda
-     * `isCorrect`, então o documento sairia com todas as questões marcadas como
-     * erradas — ver `lib/provas/sanitizar-prova.ts`.)
-     *
-     * As duas folhas de respostas mostram só o que a pessoa marcou, mas uma
-     * delas imprime o enunciado junto — e é o enunciado que o admin segura
-     * quando prende o relatório. Por isso ela segue `relatorio` e a de letras
-     * segue a própria. A folha comparada põe o gabarito ao lado, então segue a
-     * regra do gabarito: depois do término, e sem exceção.
-     */
-    const veredito =
-      arquivo === 'prova'
-        ? downloads.prova
-        : arquivo === 'folha'
-          ? downloads.compacto
-          : arquivo === 'folhaComQuestoes'
-            ? downloads.relatorio
-            : downloads.gabarito
-
-    if (!veredito.permitido) {
-      avisar(veredito.motivo || 'Download não disponível.')
-      return
-    }
-    if (arquivo !== 'prova' && arquivo !== 'gabarito' && arquivo !== 'comentado' && !minhaEntrega) {
-      avisar('Não encontramos a sua entrega desta prova.')
-      return
-    }
-
-    const nomeBase = exam.title.replace(/\s+/g, '-')
-
-    try {
-      setGerando(arquivo)
-
-      if (arquivo === 'meu') {
-        const gerador = await import('@/lib/user-report-generator')
-        await gerador.generateUserReportWithGabaritoPDF({
-          exam,
-          examId: id,
-          userName: minhaEntrega!.userName,
-          signature: minhaEntrega!.signature || '',
-          answers: minhaEntrega!.answers || [],
-          submittedAt: minhaEntrega!.submittedAt,
-          score: typeof minhaEntrega!.score === 'number' ? minhaEntrega!.score : null,
-        })
-        return
-      }
-
-      const {
-        generateExamPDF,
-        generateGabaritoPDF,
-        generateExamWithAnswersPDF,
-        generateCompactAnswersPDF,
-        generateStudentAnswersPDF,
-        downloadPDF,
-      } = await import('@/lib/pdf-generator')
-
-      const receita = {
-        prova: {
-          blob: () => generateExamPDF(exam, conta.id),
-          nome: `prova-${nomeBase}.pdf`,
-          tipo: 'exam_pdf' as const,
-        },
-        gabarito: {
-          blob: () => generateGabaritoPDF(exam),
-          nome: `gabarito-${nomeBase}.pdf`,
-          tipo: 'gabarito_pdf' as const,
-        },
-        comentado: {
-          blob: () => generateExamWithAnswersPDF(exam),
-          nome: `gabarito-comentado-${nomeBase}.pdf`,
-          tipo: 'exam_answers_pdf' as const,
-        },
-        folha: {
-          blob: () =>
-            generateCompactAnswersPDF(exam, minhaEntrega!.answers || [], minhaEntrega!.userName),
-          nome: `folha-de-respostas-${nomeBase}.pdf`,
-          tipo: 'exam_answers_pdf' as const,
-        },
-        folhaComQuestoes: {
-          blob: () =>
-            generateStudentAnswersPDF(exam, minhaEntrega!.answers || [], minhaEntrega!.userName),
-          nome: `folha-de-respostas-com-questoes-${nomeBase}.pdf`,
-          tipo: 'student_answers_pdf' as const,
-        },
-        folhaComparada: {
-          blob: () =>
-            generateCompactAnswersPDF(exam, minhaEntrega!.answers || [], minhaEntrega!.userName, {
-              comparar: true,
-            }),
-          nome: `folha-de-respostas-comparada-${nomeBase}.pdf`,
-          tipo: 'exam_answers_pdf' as const,
-        },
-      }[arquivo]
-
-      const blob = await receita.blob()
-      downloadPDF(blob, receita.nome, {
-        type: receita.tipo,
-        resourceId: exam._id?.toString() || id,
-        resourceTitle: exam.title,
-      })
-    } catch (error: any) {
-      avisar('Erro ao gerar o PDF: ' + error.message)
-    } finally {
-      setGerando(null)
-    }
-  }
-
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -741,97 +591,16 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
             Os PDFs que esta prova produz. O que estiver indisponível diz o porquê.
           </p>
 
-          <div className="grid gap-3 sm:grid-cols-2">
-            <CartaoDeDownload
-              icone={FileText}
-              titulo="Prova em branco"
-              descricao="Enunciados e alternativas, sem gabarito. Para imprimir e refazer no papel."
-              veredito={downloads.prova}
-              gerando={gerando === 'prova'}
-              ocupado={!!gerando}
-              onBaixar={() => baixar('prova')}
-            />
-            <CartaoDeDownload
-              icone={ListChecks}
-              titulo="Gabarito oficial"
-              descricao="A folha de respostas certas, questão a questão."
-              veredito={downloads.gabarito}
-              gerando={gerando === 'gabarito'}
-              ocupado={!!gerando}
-              onBaixar={() => baixar('gabarito')}
-            />
-            <CartaoDeDownload
-              icone={BookOpenCheck}
-              titulo="Gabarito comentado"
-              descricao="Cada questão com a alternativa correta e a explicação dela."
-              veredito={downloads.gabarito}
-              gerando={gerando === 'comentado'}
-              ocupado={!!gerando}
-              onBaixar={() => baixar('comentado')}
-            />
-            <CartaoDeDownload
-              icone={FileCheck2}
-              titulo="Minhas respostas corrigidas"
-              descricao="A sua prova com o que você marcou, o que era certo e a sua nota."
-              veredito={
-                minhaEntrega
-                  ? downloads.gabarito
-                  : SEM_ENTREGA
-              }
-              gerando={gerando === 'meu'}
-              ocupado={!!gerando}
-              onBaixar={() => baixar('meu')}
-            />
-            {/*
-              As três folhas.
-
-              As duas primeiras vêm de `FORMATOS_DA_FOLHA` e mostram só o que
-              VOCÊ marcou — uma com o enunciado junto, outra só com as letras.
-              Nenhuma diz qual era a certa; o que muda entre elas é o caderno,
-              e é por isso que cada uma responde a uma liberação diferente. A
-              comparada põe o gabarito ao lado, então segue a do gabarito.
-            */}
-            {FORMATOS_DA_FOLHA.map((formato) => (
-              <CartaoDeDownload
-                key={formato.chave}
-                icone={formato.chave === 'com-questoes' ? FileText : ClipboardList}
-                titulo={formato.titulo}
-                descricao={formato.descricao}
-                veredito={
-                  minhaEntrega
-                    ? downloads[formato.liberacao]
-                    : SEM_ENTREGA
-                }
-                gerando={gerando === (formato.chave === 'com-questoes' ? 'folhaComQuestoes' : 'folha')}
-                ocupado={!!gerando}
-                onBaixar={() => baixar(formato.chave === 'com-questoes' ? 'folhaComQuestoes' : 'folha')}
-              />
-            ))}
-            <CartaoDeDownload
-              icone={ClipboardCheck}
-              titulo="Folha de respostas comparada"
-              descricao="As suas letras ao lado do gabarito, com o acerto marcado e a contagem."
-              veredito={
-                minhaEntrega
-                  ? downloads.gabarito
-                  : SEM_ENTREGA
-              }
-              gerando={gerando === 'folhaComparada'}
-              ocupado={!!gerando}
-              onBaixar={() => baixar('folhaComparada')}
-            />
-          </div>
-
-          {exam.pdfUrl && (
-            <Button
-              variant="outline"
-              onClick={() => window.open(exam.pdfUrl, '_blank')}
-              className="mt-3 w-full rounded-xl sm:w-auto"
-            >
-              <FileText className="mr-2 h-4 w-4" />
-              PDF original enviado pelo professor
-            </Button>
-          )}
+          <PainelDeDownloads
+            exam={exam}
+            examId={id}
+            downloads={downloads}
+            minhaEntrega={minhaEntrega}
+            participei={participei}
+            contaId={conta.id}
+            onErro={avisar}
+            semTitulo
+          />
         </section>
 
         <section className="rounded-2xl border border-border/60 bg-background/60 p-5 text-center backdrop-blur-md">
@@ -877,83 +646,6 @@ function Numero({
       >
         {valor}
       </p>
-    </div>
-  )
-}
-
-/**
- * Um documento e o motivo de ele não estar disponível.
- *
- * O botão indisponível continua na tela, desligado e com a explicação embaixo.
- * Sumir seria mais limpo e pior: o aluno que ouviu do professor "liberei o
- * gabarito comentado" precisa ver o arquivo existir para entender que o que
- * falta é o plano dele, não o arquivo.
- */
-function CartaoDeDownload({
-  icone: Icone,
-  titulo,
-  descricao,
-  veredito,
-  gerando,
-  ocupado,
-  onBaixar,
-}: {
-  icone: typeof FileText
-  titulo: string
-  descricao: string
-  veredito: { permitido: boolean; motivo: string | null; esperandoOFim: boolean }
-  gerando: boolean
-  ocupado: boolean
-  onBaixar: () => void
-}) {
-  return (
-    <div
-      className={cn(
-        'flex flex-col rounded-xl border p-4 transition-colors',
-        veredito.permitido ? 'border-border/60 bg-muted/20 hover:border-emerald-500/40' : 'border-border/40 bg-muted/10',
-      )}
-    >
-      <div className="flex items-start gap-3">
-        <span
-          className={cn(
-            'flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg',
-            veredito.permitido
-              ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-              : 'bg-muted text-muted-foreground',
-          )}
-        >
-          <Icone className="h-4 w-4" />
-        </span>
-        <div className="min-w-0 flex-1">
-          <p className="text-sm font-semibold leading-tight">{titulo}</p>
-          <p className="mt-0.5 text-[11px] leading-snug text-muted-foreground">{descricao}</p>
-        </div>
-      </div>
-
-      <Button
-        onClick={onBaixar}
-        disabled={ocupado || !veredito.permitido}
-        variant={veredito.permitido ? 'default' : 'outline'}
-        size="sm"
-        className="mt-3 w-full rounded-lg"
-        title={veredito.motivo || undefined}
-      >
-        {gerando ? (
-          <>
-            <span className="mr-2 inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" />
-            Gerando…
-          </>
-        ) : (
-          <>
-            <Download className="mr-2 h-3.5 w-3.5" />
-            {veredito.permitido ? 'Baixar PDF' : 'Indisponível'}
-          </>
-        )}
-      </Button>
-
-      {!veredito.permitido && veredito.motivo && (
-        <p className="mt-2 text-[11px] leading-snug text-muted-foreground">{veredito.motivo}</p>
-      )}
     </div>
   )
 }
