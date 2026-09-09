@@ -43,7 +43,7 @@ export async function POST(
     }
 
     /*
-     * O rascunho é lido antes de tudo: passada a carência do término, é ele —
+     * O rascunho é lido antes de tudo: passada a tolerância do término, é ele —
      * e não o corpo da requisição — que diz o que a pessoa tinha respondido.
      * Ver `lib/provas/entrega-da-prova.ts`.
      */

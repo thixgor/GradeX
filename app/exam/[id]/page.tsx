@@ -1192,11 +1192,12 @@ export default function ExamPage({ params }: { params: { id: string } }) {
    * caminhos que já existiam: a janela é recalculada, o botão destrava e o
    * aviso de início abre para quem estava esperando.
    *
-   * Quem já está respondendo não pergunta mais nada (ver
-   * `deveSincronizarAJanela`): mover o `endTime` de quem está no meio de uma
-   * questão zeraria o cronômetro da tela e descartaria o que ainda não foi
-   * gravado. O término de quem já começou é decidido na entrega, pelo
-   * servidor.
+   * Quem já está respondendo não pergunta nada aqui (ver
+   * `deveSincronizarAJanela`), e não porque o término não lhe diga respeito:
+   * ele tem um aviso melhor e mais barato. A gravação do rascunho bate de 12
+   * em 12 segundos e a recusa dela conta que a prova fechou
+   * (`encerradaPeloServidor`, mais acima) — sem nenhuma requisição a mais numa
+   * fase que dura horas. É de lá que a entrega do término sai.
    */
   useJanelaSincronizada({
     provaId: id,
@@ -1207,6 +1208,9 @@ export default function ExamPage({ params }: { params: { id: string } }) {
       emAndamento: started,
       jaEntregou: alreadySubmitted || submitted,
     }),
+    // O carimbo de hora desta resposta acerta o relógio de quem está esperando —
+    // durante a espera, nenhuma outra requisição está acontecendo para medi-lo.
+    aoResponder: anotarHorarioDeBrasilia,
     aoMudar: (instantes, dados) => {
       setExam(atual => (atual ? { ...atual, ...aplicarInstantes(instantes) } : atual))
       // A janela do servidor entra na hora, sem esperar a próxima volta do

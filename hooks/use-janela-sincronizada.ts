@@ -57,6 +57,7 @@ export function useJanelaSincronizada({
   fase,
   ativo,
   aoMudar,
+  aoResponder,
 }: {
   provaId: string
   /** O documento que a tela guarda — a base da comparação. */
@@ -66,6 +67,21 @@ export function useJanelaSincronizada({
   ativo: boolean
   /** Chamado só quando algum instante mudou de fato. */
   aoMudar: (instantes: InstantesDaJanela, resposta: RespostaDaJanela) => void
+  /**
+   * Chamado a CADA resposta, mesmo quando nada mudou.
+   *
+   * O cabeçalho `Date` desta resposta é a hora do servidor, e a tela mede o
+   * desvio do relógio do aparelho com ele (ver `lib/provas/relogio-da-prova.ts`).
+   * Na sala de espera essa medida não vinha de lugar nenhum: a gravação do
+   * rascunho, que é quem remede o desvio durante a prova, só começa depois do
+   * início. Quem esperava com o relógio do celular adiantado via a contagem
+   * regressiva discordar dele — e é justamente ali que ela é encarada.
+   */
+  aoResponder?: (
+    pedidoEm: number,
+    respondidoEm: number,
+    cabecalhos: Headers | null | undefined,
+  ) => void
 }): void {
   /*
    * Os instantes conhecidos vivem num ref, e não nas dependências do efeito:
@@ -80,6 +96,9 @@ export function useJanelaSincronizada({
 
   const aoMudarRef = useRef(aoMudar)
   aoMudarRef.current = aoMudar
+
+  const aoResponderRef = useRef(aoResponder)
+  aoResponderRef.current = aoResponder
 
   const cadencia = cadenciaDaSincronizacao(fase)
 
@@ -96,12 +115,15 @@ export function useJanelaSincronizada({
 
       emVoo = true
       controlador = new AbortController()
+      const pedidoEm = Date.now()
       try {
         const res = await fetch(`/api/exams/${provaId}/janela`, {
           cache: 'no-store',
           signal: controlador.signal,
         })
         if (!res.ok) return
+
+        aoResponderRef.current?.(pedidoEm, Date.now(), res.headers)
 
         const dados: RespostaDaJanela = await res.json()
         if (!vivo || !dados?.horarios) return

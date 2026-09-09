@@ -93,11 +93,12 @@ export interface SituacaoDaTela {
  * - **Antes de iniciar** — na sala de espera ou na tela de entrada — os
  *   horários decidem o que a pessoa vê e quando o botão destrava. É aqui que
  *   "Forçar Início" precisa chegar.
- * - **Durante a prova** a tela deixa de perguntar. Mover o `endTime` de quem
- *   está respondendo faria o cronômetro da tela zerar no meio de uma questão e
- *   descartar o que ainda não foi gravado — o término de quem já começou é
- *   decidido na ENTREGA, pelo servidor (`POST /api/exams/[id]/submit`), que é
- *   onde ninguém perde resposta por causa de um relógio.
+ * - **Durante a prova** a tela deixa de perguntar — e não por desinteresse pelo
+ *   término, mas porque ali existe um aviso melhor e de graça: a gravação do
+ *   rascunho já bate de 12 em 12 segundos, e a recusa dela diz que a prova
+ *   fechou (ver `encerradaPeloServidor` em `app/exam/[id]/page.tsx`). Repetir
+ *   essa pergunta numa fase que dura horas, para toda a turma, seria pagar
+ *   duas vezes pela mesma notícia.
  * - **Prova de treino e prova pessoal** não têm janela nenhuma
  *   (`fase: 'livre'`): não há horário para sincronizar.
  * - **Quem já entregou** não tem mais nada esperando por um horário.
