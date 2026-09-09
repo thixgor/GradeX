@@ -53,17 +53,25 @@ export async function GET(request: NextRequest) {
           examEndTime: exam.endTime, // Adicionar endTime para verificar se prova terminou
           isPracticeExam: exam.isPracticeExam || false,
           /*
-           * Os dois campos que decidem quem pode baixar os PDFs desta prova.
+           * Os campos que decidem quem pode baixar os PDFs desta prova, e
+           * quando.
            *
-           * A lista de provas feitas oferece três downloads (prova, respostas e
-           * gabarito) e os gerava sem consultar portão nenhum — nem o cargo nem
-           * a exceção que o admin abre por prova. Sem estes campos aqui, a tela
-           * não tem como aplicar `resolverDownloadsDaProva`: ela conheceria só o
-           * fim da prova, e não a natureza dela nem a liberação.
+           * A lista de provas feitas oferece downloads (prova, respostas,
+           * folha e gabarito) e os gerava sem consultar portão nenhum — nem o
+           * cargo, nem a exceção que o admin abre por prova, nem a espera que
+           * ele configurou. Sem estes campos aqui, a tela não tem como aplicar
+           * `resolverDownloadsDaProva`: ela conheceria só o fim da prova, e não
+           * a natureza dela, nem a liberação, nem o momento.
+           *
+           * `holdDownloads` era o que faltava depois da primeira correção, e a
+           * falta não dava erro nenhum: sem o campo, a tela assumia o padrão
+           * ("a prova em branco sai imediato") e devolvia por aqui os dois PDFs
+           * que o admin tinha prendido até o término.
            * Ver lib/provas/downloads-da-prova.ts.
            */
           isPersonalExam: exam.isPersonalExam || false,
           freeDownloads: (exam as any).freeDownloads || null,
+          holdDownloads: (exam as any).holdDownloads || null,
         }
       })
     )).filter(submission => submission !== null) // Remove provas deletadas

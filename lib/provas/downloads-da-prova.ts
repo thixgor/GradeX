@@ -49,12 +49,65 @@ export interface LiberacoesDeDownload {
    * A folha de respostas: só as letras que o aluno marcou, uma por linha.
    *
    * É o arquivo que o aluno quer nos minutos seguintes à entrega — conferir o
-   * que marcou com os colegas. Não é o gabarito: não diz o que era certo, só o
-   * que ELE respondeu, e por isso pode sair antes de a prova terminar sem
-   * antecipar resposta nenhuma para ninguém.
+   * que marcou com os colegas. Não é o gabarito e não é a prova: não diz o que
+   * era certo nem imprime o enunciado, só devolve à pessoa o que ela mesma
+   * acabou de escrever. Por isso pode sair antes de a prova terminar sem
+   * antecipar nada para ninguém.
+   *
+   * A folha COM as questões é o outro formato, e ela não passa por aqui: leva o
+   * caderno junto, então segue `relatorio`. Ver `FORMATOS_DA_FOLHA`.
    */
   compacto: boolean
 }
+
+/**
+ * Os dois formatos da folha de respostas — e a liberação de cada um.
+ *
+ * ## Por que dois
+ *
+ * A folha existia num formato só, uma coluna de letras, e ele serve para uma
+ * coisa: conferir com os colegas na saída. A mesma pessoa, no dia seguinte,
+ * quer olhar o que respondeu COM a questão na frente — "12: C" não diz nada
+ * quando o enunciado já saiu da cabeça. Os dois formatos existiam no código
+ * (`generateCompactAnswersPDF` e `generateStudentAnswersPDF`), mas nunca lado a
+ * lado: cada tela oferecia um deles, e o aluno recebia o que aquela tela tinha
+ * escolhido por ele.
+ *
+ * ## Por que a liberação é diferente
+ *
+ * Esta é a distinção que importa, e ela não é sobre a resposta — é sobre o
+ * ENUNCIADO. O que a pessoa marcou é dela nos dois casos; nenhum dos dois diz
+ * qual era a certa. Mas um deles imprime a prova inteira junto, e é
+ * exatamente essa a prova que o admin segura quando marca "só depois que a
+ * prova terminar": o arquivo sai da mão de quem entregou às 14h05 e chega em
+ * quem responde até as 16h.
+ *
+ * Por isso a folha COM as questões responde à liberação do relatório — é o
+ * relatório, com outro nome —, e a folha SÓ COM AS LETRAS responde à sua
+ * própria, que nasce na entrega e não espera término nenhum. Quem quer conferir
+ * o que marcou nunca fica sem arquivo; o que espera é o caderno.
+ */
+export const FORMATOS_DA_FOLHA = [
+  {
+    chave: 'com-questoes' as const,
+    titulo: 'Folha de respostas com as questões',
+    descricao:
+      'Cada questão com o enunciado, as alternativas e a que você marcou. Sem gabarito e sem nota.',
+    sufixo: 'folha-de-respostas-com-questoes',
+    /** Leva a prova inteira junto: segue a espera que o admin deu ao relatório. */
+    liberacao: 'relatorio' as const,
+  },
+  {
+    chave: 'so-letras' as const,
+    titulo: 'Folha de respostas (só as suas letras)',
+    descricao:
+      'Uma página com as letras que você marcou, questão a questão. Sem enunciado, sem gabarito.',
+    sufixo: 'folha-de-respostas',
+    liberacao: 'compacto' as const,
+  },
+]
+
+export type FormatoDaFolha = (typeof FORMATOS_DA_FOLHA)[number]['chave']
 
 export const LIBERACOES_PADRAO: LiberacoesDeDownload = {
   prova: false,
@@ -92,7 +145,20 @@ export interface ProvaDeUmaSubmissao {
   examEndTime?: Date | string | null
   isPracticeExam?: boolean
   isPersonalExam?: boolean
-  freeDownloads?: { prova?: boolean; relatorio?: boolean; gabarito?: boolean } | null
+  freeDownloads?: Exam['freeDownloads'] | null
+  /**
+   * A espera que o admin configurou nesta prova.
+   *
+   * Faltava aqui, e a falta era invisível: `normalizarEsperas(undefined)`
+   * devolve o padrão — "a prova em branco sai imediato, o relatório sai na
+   * entrega" —, que é exatamente o contrário do que o admin escolheu quando
+   * marcou "depois que a prova terminar". A lista de provas feitas (`/profile`
+   * e o diálogo de `/provas`) desenhava os botões a partir desse padrão
+   * inventado, e quem tinha acabado de entregar baixava a prova e as respostas
+   * com a turma ainda respondendo — pela porta dos fundos, enquanto a tela da
+   * prova travava a da frente.
+   */
+  holdDownloads?: Exam['holdDownloads'] | null
 }
 
 export function provaDaSubmissao(submissao: ProvaDeUmaSubmissao): Partial<Exam> {
@@ -101,6 +167,7 @@ export function provaDaSubmissao(submissao: ProvaDeUmaSubmissao): Partial<Exam> 
     isPracticeExam: !!submissao.isPracticeExam,
     isPersonalExam: !!submissao.isPersonalExam,
     freeDownloads: submissao.freeDownloads || undefined,
+    holdDownloads: submissao.holdDownloads || undefined,
   } as Partial<Exam>
 }
 

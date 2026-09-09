@@ -80,14 +80,24 @@ const ARQUIVOS: {
   {
     chave: 'compacto',
     titulo: 'Folha de respostas do aluno',
-    descricao: 'Só as letras que ele marcou — o que se confere com os colegas na saída. Sem enunciado e sem gabarito.',
+    /*
+     * A folha de respostas tem dois formatos, e só ESTE está aqui.
+     *
+     * O outro — a folha com as questões impressas — leva o caderno da prova
+     * junto, e o caderno é exatamente o que se segura numa prova aplicada em
+     * horários diferentes. Ele responde à linha "Relatório do aluno", logo
+     * abaixo. Ver `FORMATOS_DA_FOLHA` em lib/provas/downloads-da-prova.ts.
+     */
+    descricao:
+      'Só as letras que ele marcou — o que se confere com os colegas na saída. Sem enunciado, sem gabarito e sem nota. A versão COM as questões é o relatório, na linha abaixo.',
     quandoFixo: 'apos-entrega',
     porQueFixo: 'antes disso não há resposta',
   },
   {
     chave: 'relatorio',
-    titulo: 'Relatório do aluno',
-    descricao: 'A prova dele com as respostas marcadas e a nota.',
+    titulo: 'Relatório do aluno (e a folha com as questões)',
+    descricao:
+      'A prova dele com as respostas marcadas e a nota — e também a folha de respostas com os enunciados impressos, que é o mesmo caderno com outro nome. Vale para a TELA do relatório, não só para o PDF: prender aqui esconde as questões lá também.',
     momentos: ['apos-entrega', 'apos-termino'],
   },
   {

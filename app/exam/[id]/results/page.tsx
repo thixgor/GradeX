@@ -25,7 +25,7 @@ import {
   Trophy,
   Users,
 } from 'lucide-react'
-import { resolverDownloadsDaProva } from '@/lib/provas/downloads-da-prova'
+import { FORMATOS_DA_FOLHA, resolverDownloadsDaProva } from '@/lib/provas/downloads-da-prova'
 import { FAIXAS_DE_NOTA, type EstatisticasDaTurma } from '@/lib/provas/classificacao'
 import { cn } from '@/lib/utils'
 
@@ -61,11 +61,16 @@ import { cn } from '@/lib/utils'
  * a ter cabeçalho e rodapé de marca, como a tela de entrada e a sala de espera.
  *
  * E os downloads: havia UM botão, "Gabarito oficial". As liberações por prova
- * são três (`freeDownloads`: prova, relatório, gabarito) e produzem quatro
- * arquivos diferentes — o admin liberava a resposta comentada e ela não
- * aparecia em lugar nenhum, porque o botão dela não existia. Agora a seção
- * lista os quatro, cada um com o motivo da recusa quando é o caso, em vez de
+ * produzem vários arquivos diferentes — o admin liberava a resposta comentada e
+ * ela não aparecia em lugar nenhum, porque o botão dela não existia. Agora a
+ * seção lista todos, cada um com o motivo da recusa quando é o caso, em vez de
  * simplesmente não existir.
+ *
+ * Cada cartão é julgado pelo que o ARQUIVO contém, e não pelo nome da liberação
+ * que lembra o dele: "Minhas respostas corrigidas" traz a alternativa certa de
+ * cada questão e uma folha de gabarito no fim, então ele espera o término junto
+ * com o gabarito — antes disso não era só cedo, era um documento errado, porque
+ * o servidor não manda `isCorrect` com a prova correndo.
  */
 
 interface NormalResult {
@@ -76,7 +81,7 @@ interface NormalResult {
 
 type Linha = { userId: string; userName: string; nota: number }
 
-type Arquivo = 'prova' | 'gabarito' | 'comentado' | 'meu' | 'folha' | 'folhaComparada'
+type Arquivo = 'prova' | 'gabarito' | 'comentado' | 'meu' | 'folha' | 'folhaComQuestoes' | 'folhaComparada'
 
 export default function ExamResultsPage({ params }: { params: { id: string } }) {
   const { id } = params
@@ -210,24 +215,37 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
     if (!exam || gerando) return
 
     /*
-     * A folha de respostas segue a ENTREGA (é só o que a pessoa marcou); a
-     * folha comparada mostra o gabarito ao lado, então segue a regra do
-     * gabarito — depois do término, e sem exceção.
+     * O veredito segue o CONTEÚDO do arquivo, não o nome dele.
+     *
+     * "Minhas respostas corrigidas" passava por `downloads.relatorio`, que o
+     * admin pode liberar já na entrega — só que o arquivo é
+     * `generateUserReportWithGabaritoPDF`: ele traz a alternativa correta de
+     * cada questão e uma folha de gabarito no fim. Liberado na entrega, é o
+     * gabarito saindo pela porta do relatório, com a turma ainda respondendo.
+     * (E antes do término ele nem sairia certo: o servidor não manda
+     * `isCorrect`, então o documento sairia com todas as questões marcadas como
+     * erradas — ver `lib/provas/sanitizar-prova.ts`.)
+     *
+     * As duas folhas de respostas mostram só o que a pessoa marcou, mas uma
+     * delas imprime o enunciado junto — e é o enunciado que o admin segura
+     * quando prende o relatório. Por isso ela segue `relatorio` e a de letras
+     * segue a própria. A folha comparada põe o gabarito ao lado, então segue a
+     * regra do gabarito: depois do término, e sem exceção.
      */
     const veredito =
       arquivo === 'prova'
         ? downloads.prova
-        : arquivo === 'meu'
-          ? downloads.relatorio
-          : arquivo === 'folha'
-            ? downloads.compacto
+        : arquivo === 'folha'
+          ? downloads.compacto
+          : arquivo === 'folhaComQuestoes'
+            ? downloads.relatorio
             : downloads.gabarito
 
     if (!veredito.permitido) {
       avisar(veredito.motivo || 'Download não disponível.')
       return
     }
-    if ((arquivo === 'meu' || arquivo === 'folha' || arquivo === 'folhaComparada') && !minhaEntrega) {
+    if (arquivo !== 'prova' && arquivo !== 'gabarito' && arquivo !== 'comentado' && !minhaEntrega) {
       avisar('Não encontramos a sua entrega desta prova.')
       return
     }
@@ -256,6 +274,7 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
         generateGabaritoPDF,
         generateExamWithAnswersPDF,
         generateCompactAnswersPDF,
+        generateStudentAnswersPDF,
         downloadPDF,
       } = await import('@/lib/pdf-generator')
 
@@ -280,6 +299,12 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
             generateCompactAnswersPDF(exam, minhaEntrega!.answers || [], minhaEntrega!.userName),
           nome: `folha-de-respostas-${nomeBase}.pdf`,
           tipo: 'exam_answers_pdf' as const,
+        },
+        folhaComQuestoes: {
+          blob: () =>
+            generateStudentAnswersPDF(exam, minhaEntrega!.answers || [], minhaEntrega!.userName),
+          nome: `folha-de-respostas-com-questoes-${nomeBase}.pdf`,
+          tipo: 'student_answers_pdf' as const,
         },
         folhaComparada: {
           blob: () =>
@@ -643,7 +668,7 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
               descricao="A sua prova com o que você marcou, o que era certo e a sua nota."
               veredito={
                 minhaEntrega
-                  ? downloads.relatorio
+                  ? downloads.gabarito
                   : { permitido: false, motivo: 'Você não tem uma entrega registrada nesta prova.', esperandoOFim: false }
               }
               gerando={gerando === 'meu'}
@@ -651,27 +676,30 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
               onBaixar={() => baixar('meu')}
             />
             {/*
-              As duas folhas de respostas.
+              As três folhas.
 
-              A simples é uma página com as letras que você marcou — o que se
-              confere com os colegas na saída. Ela não tem enunciado nem
-              gabarito, e por isso sai assim que você entrega, sem esperar a
-              turma terminar. A comparada põe o gabarito ao lado, então segue a
-              regra do gabarito.
+              As duas primeiras vêm de `FORMATOS_DA_FOLHA` e mostram só o que
+              VOCÊ marcou — uma com o enunciado junto, outra só com as letras.
+              Nenhuma diz qual era a certa; o que muda entre elas é o caderno,
+              e é por isso que cada uma responde a uma liberação diferente. A
+              comparada põe o gabarito ao lado, então segue a do gabarito.
             */}
-            <CartaoDeDownload
-              icone={ClipboardList}
-              titulo="Folha de respostas"
-              descricao="Uma página com as letras que você marcou, questão a questão. Sem enunciado e sem gabarito."
-              veredito={
-                minhaEntrega
-                  ? downloads.compacto
-                  : { permitido: false, motivo: 'Você não tem uma entrega registrada nesta prova.', esperandoOFim: false }
-              }
-              gerando={gerando === 'folha'}
-              ocupado={!!gerando}
-              onBaixar={() => baixar('folha')}
-            />
+            {FORMATOS_DA_FOLHA.map((formato) => (
+              <CartaoDeDownload
+                key={formato.chave}
+                icone={formato.chave === 'com-questoes' ? FileText : ClipboardList}
+                titulo={formato.titulo}
+                descricao={formato.descricao}
+                veredito={
+                  minhaEntrega
+                    ? downloads[formato.liberacao]
+                    : { permitido: false, motivo: 'Você não tem uma entrega registrada nesta prova.', esperandoOFim: false }
+                }
+                gerando={gerando === (formato.chave === 'com-questoes' ? 'folhaComQuestoes' : 'folha')}
+                ocupado={!!gerando}
+                onBaixar={() => baixar(formato.chave === 'com-questoes' ? 'folhaComQuestoes' : 'folha')}
+              />
+            ))}
             <CartaoDeDownload
               icone={ClipboardCheck}
               titulo="Folha de respostas comparada"

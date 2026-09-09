@@ -12,6 +12,7 @@ import {
   ArrowLeft,
   CheckCircle2,
   ChevronRight,
+  ClipboardList,
   Clock,
   Download,
   FileDown,
@@ -23,7 +24,11 @@ import {
   XCircle,
 } from 'lucide-react'
 import { aplicarOrdemDaSubmissao } from '@/lib/provas/embaralhar'
-import { resolverDownloadsDaProva } from '@/lib/provas/downloads-da-prova'
+import {
+  FORMATOS_DA_FOLHA,
+  resolverDownloadsDaProva,
+  type FormatoDaFolha,
+} from '@/lib/provas/downloads-da-prova'
 import { resolverJanelaDaProva } from '@/lib/provas/janela-da-prova'
 import { cn } from '@/lib/utils'
 
@@ -44,6 +49,12 @@ import { cn } from '@/lib/utils'
  *    plano nem por tempo, ao contrário de todos os outros da plataforma.
  * 4. **Um `console.log` de depuração** rodava a cada carregamento, imprimindo
  *    título e horários da prova no console de quem abrisse a tela.
+ * 5. **Ignorava a espera que o admin configurou.** Com "o relatório sai depois
+ *    que a prova terminar" marcado, o botão de download obedecia — e a tela
+ *    desenhava, logo abaixo dele, a prova inteira questão a questão com as
+ *    respostas marcadas. A trava valia para o arquivo e não para o conteúdo
+ *    dele, que é o mesmo conteúdo. Agora a lista segue o mesmo veredito
+ *    (`relatorioLiberado`), e no lugar dela fica a explicação do que falta.
  *
  * ## A leitura
  *
@@ -169,6 +180,24 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
     [exam, conta],
   )
 
+  /**
+   * A tela obedece à mesma espera que o arquivo.
+   *
+   * O admin marcava "o relatório sai depois que a prova terminar", o botão de
+   * download respeitava — e esta página desenhava a prova inteira, questão a
+   * questão, com as respostas do aluno, logo abaixo do botão travado. Prender o
+   * PDF e mostrar o mesmo conteúdo na tela não prende nada: é um Ctrl+P de
+   * distância, e a pessoa nem precisa disso para ler.
+   *
+   * O que se checa aqui é só a metade de TEMPO do veredito. A metade de plano
+   * (`!permitido` sem `esperandoOFim`) continua sem efeito na tela: ver as
+   * próprias respostas nunca foi um recurso de assinatura — o que a assinatura
+   * vende é o arquivo. Como esta página é sempre lida com `jaEnviou: true`,
+   * `esperandoOFim` aqui significa exatamente uma coisa: a prova ainda não
+   * terminou e o admin prendeu o relatório até lá.
+   */
+  const relatorioLiberado = !downloads.relatorio.esperandoOFim
+
   /** A prova na ordem em que ESTE aluno a viu. */
   const questoes: Question[] = useMemo(
     () => (exam ? aplicarOrdemDaSubmissao(exam.questions || [], submission?.questionOrder) : []),
@@ -214,20 +243,45 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
     [analise, filtro],
   )
 
-  async function baixar(tipo: 'relatorio' | 'gabarito') {
+  async function baixar(tipo: 'relatorio' | 'gabarito' | FormatoDaFolha) {
     if (!exam || !submission) return
-    const veredito = tipo === 'relatorio' ? downloads.relatorio : downloads.gabarito
+    const veredito =
+      tipo === 'relatorio'
+        ? downloads.relatorio
+        : tipo === 'gabarito'
+          ? downloads.gabarito
+          : downloads[FORMATOS_DA_FOLHA.find((f) => f.chave === tipo)!.liberacao]
     if (!veredito.permitido) {
       avisar(veredito.motivo || 'Download não disponível.', 'info')
       return
     }
     try {
       setGerandoPdf(tipo)
+      // O PDF recebe a prova já na ordem do aluno: se ele reclamar da
+      // "questão 12", a folha impressa precisa concordar com a tela.
+      const provaNaOrdemDele = { ...exam, questions: questoes }
+
+      if (tipo === 'com-questoes' || tipo === 'so-letras') {
+        const { generateStudentAnswersPDF, generateCompactAnswersPDF, downloadPDF } = await import(
+          '@/lib/pdf-generator'
+        )
+        const respostas = submission.answers || []
+        const blob =
+          tipo === 'com-questoes'
+            ? await generateStudentAnswersPDF(provaNaOrdemDele, respostas, submission.userName)
+            : await generateCompactAnswersPDF(provaNaOrdemDele, respostas, submission.userName)
+        const sufixo = FORMATOS_DA_FOLHA.find((f) => f.chave === tipo)!.sufixo
+        downloadPDF(blob, `${sufixo}-${exam.title}.pdf`, {
+          type: tipo === 'com-questoes' ? 'student_answers_pdf' : 'exam_answers_pdf',
+          resourceId: id,
+          resourceTitle: exam.title,
+        })
+        return
+      }
+
       const gerador = await import('@/lib/user-report-generator')
       const dados = {
-        // O PDF recebe a prova já na ordem do aluno: se ele reclamar da
-        // "questão 12", a folha impressa precisa concordar com a tela.
-        exam: { ...exam, questions: questoes },
+        exam: provaNaOrdemDele,
         examId: id,
         userName: submission.userName,
         signature: submission.signature || '',
@@ -393,17 +447,25 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
         >
           <h2 className="mb-3 text-xs font-bold uppercase tracking-wider text-muted-foreground">Documentos</h2>
           <div className="grid gap-3 sm:grid-cols-2">
+            {/*
+              O botão dizia sempre "Minha prova respondida" e só recusava
+              DEPOIS do clique, num toast. Quando a espera é de tempo, o rótulo
+              conta o que falta — do mesmo jeito que o do gabarito ao lado.
+            */}
             <Button
               className="h-12 w-full rounded-xl bg-gradient-to-r from-[#468152] to-[#3a6d44] font-semibold text-white hover:from-[#3a6d44] hover:to-[#2f5a38] disabled:bg-none"
-              disabled={!!gerandoPdf}
+              disabled={!!gerandoPdf || downloads.relatorio.esperandoOFim}
+              title={downloads.relatorio.motivo || undefined}
               onClick={() => baixar('relatorio')}
             >
               {gerandoPdf === 'relatorio' ? (
                 <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+              ) : downloads.relatorio.esperandoOFim ? (
+                <Lock className="mr-2 h-4 w-4" />
               ) : (
                 <Download className="mr-2 h-5 w-5" />
               )}
-              Minha prova respondida
+              {downloads.relatorio.esperandoOFim ? 'Relatório após o término' : 'Minha prova respondida'}
             </Button>
 
             <Button
@@ -422,6 +484,41 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
               )}
               {downloads.gabarito.esperandoOFim ? 'Gabarito após o término' : 'Com respostas comentadas'}
             </Button>
+
+            {/*
+              As duas folhas de respostas, aqui e não só na tela de resultados.
+
+              A tela de resultados só abre depois do término (a rota recusa
+              antes), e a folha de letras é justamente o arquivo que NÃO espera
+              o término: ela devolve à pessoa o que ela mesma marcou. Oferecê-la
+              só lá era prendê-la pela regra de outro arquivo, e é ela a saída
+              de quem chega nesta página com o relatório ainda preso.
+
+              A folha COM as questões leva o caderno junto, então segue a espera
+              do relatório — ver `FORMATOS_DA_FOLHA`.
+            */}
+            {FORMATOS_DA_FOLHA.map((formato) => {
+              const veredito = downloads[formato.liberacao]
+              return (
+                <Button
+                  key={formato.chave}
+                  variant="outline"
+                  className="h-12 w-full rounded-xl font-semibold"
+                  disabled={!!gerandoPdf || !veredito.permitido}
+                  title={veredito.motivo || formato.descricao}
+                  onClick={() => baixar(formato.chave)}
+                >
+                  {gerandoPdf === formato.chave ? (
+                    <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                  ) : veredito.permitido ? (
+                    <ClipboardList className="mr-2 h-5 w-5" />
+                  ) : (
+                    <Lock className="mr-2 h-4 w-4" />
+                  )}
+                  {formato.chave === 'com-questoes' ? 'Folha com as questões' : 'Só as minhas letras'}
+                </Button>
+              )
+            })}
           </div>
           {!downloads.relatorio.permitido && !downloads.relatorio.esperandoOFim && (
             <p className="mt-2.5 text-[11px] leading-snug text-muted-foreground">{downloads.relatorio.motivo}</p>
@@ -429,6 +526,47 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
         </section>
 
         {/* ── Questão a questão ────────────────────────────────────── */}
+        {/*
+          Quando o admin prendeu o relatório até o término, a lista não é
+          desenhada — ela É o relatório, e mais completa que o PDF: traz o
+          enunciado, as alternativas e o que foi marcado. Deixá-la aberta ao
+          lado do botão travado transformava a trava num aviso decorativo.
+        */}
+        {!relatorioLiberado ? (
+          <section
+            className="exam-resultado-entra rounded-2xl border border-amber-500/25 bg-amber-500/10 p-5"
+            style={{ '--exam-ordem': 2 } as React.CSSProperties}
+          >
+            <div className="flex items-start gap-3">
+              <Lock className="mt-0.5 h-5 w-5 flex-shrink-0 text-amber-600 dark:text-amber-400" />
+              <div className="min-w-0 space-y-1.5">
+                <h2 className="text-base font-bold text-amber-900 dark:text-amber-100">
+                  A prova questão a questão fica para depois do término
+                </h2>
+                <p className="text-sm leading-relaxed text-amber-800 dark:text-amber-200">
+                  Nesta prova, quem aplica escolheu liberar o relatório completo — enunciados,
+                  alternativas e o que você marcou — só quando ela terminar para todo mundo
+                  {janela?.terminaEm
+                    ? ` (${new Date(janela.terminaEm).toLocaleString('pt-BR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })})`
+                    : ''}
+                  . Enquanto a turma responde, o caderno não circula.
+                </p>
+                {/*
+                  A folha de respostas é a saída para quem quer conferir agora:
+                  ela só devolve as letras que a própria pessoa marcou, então
+                  não espera o término. Ver `lib/provas/downloads-da-prova.ts`.
+                */}
+                {downloads.compacto.permitido && (
+                  <p className="text-sm leading-relaxed text-amber-800 dark:text-amber-200">
+                    Sua nota e o resumo acima já estão aqui, e a{' '}
+                    <strong>folha com as letras que você marcou</strong> pode ser baixada agora, nos
+                    botões acima — ela não espera o término porque não diz qual era a certa.
+                  </p>
+                )}
+              </div>
+            </div>
+          </section>
+        ) : (
         <section
           className="exam-resultado-entra space-y-3"
           style={{ '--exam-ordem': 2 } as React.CSSProperties}
@@ -661,6 +799,7 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
             )
           })}
         </section>
+        )}
 
         {/* ── Comprovante ──────────────────────────────────────────── */}
         <section className="rounded-2xl border border-border/60 bg-background/60 p-5 text-center backdrop-blur-md">

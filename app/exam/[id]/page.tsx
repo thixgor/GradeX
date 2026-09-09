@@ -39,6 +39,7 @@ import { PdfCtaBanner } from '@/components/pdf-cta-banner'
 import { ExamGateStatus } from '@/components/exam/exam-gate-status'
 import { ExamResumeCard } from '@/components/exam/exam-resume-card'
 import { AvisoProvaLiberada } from '@/components/exam/aviso-prova-liberada'
+import { ExamJaFinalizada } from '@/components/exam/exam-ja-finalizada'
 import { canDownloadExamPdf } from '@/lib/tier-limits'
 import { consumirCotaDoPlano } from '@/lib/plan-consume-client'
 import { holdScrollAt, useScrollToTopWhen } from '@/components/scroll-to-top'
@@ -1123,6 +1124,16 @@ export default function ExamPage({ params }: { params: { id: string } }) {
         setLoggedUserName(data.user.name)
         setAccountType(data.user.accountType)
         setUserRole(data.user.role)
+        /*
+         * O id também sai daqui, e não só de `checkExistingSubmission`.
+         *
+         * A tela de "você já finalizou" é montada assim que a prova chega
+         * (`jaSubmeteu` vem junto com ela), e o botão "ver meu resumo" precisa
+         * do id para montar o endereço. Ele só existia depois da cadeia de três
+         * requisições da outra função — então o botão nascia apontando para
+         * `/exam/<id>/user/`, um endereço sem dono.
+         */
+        if (data.user.id) setUserId((atual) => atual || data.user.id)
         // Se allowCustomName for false, usar nome do usuário automaticamente
         // será feito no useEffect abaixo quando exam estiver carregado
       }
@@ -2484,9 +2495,14 @@ ${respostaAluno}`
                 terminar, mesmo para quem paga.
               */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {/*
+                  O rótulo conta a espera, em vez de recusar depois do clique —
+                  o mesmo tratamento que o botão do gabarito, ao lado, já dava.
+                */}
                 <Button
                   className="w-full rounded-xl h-12 bg-gradient-to-r from-[#468152] to-[#3a6d44] hover:from-[#3a6d44] hover:to-[#2f5a38] text-white font-semibold shadow-md disabled:bg-none"
-                  disabled={!!pdfGenerating}
+                  disabled={!!pdfGenerating || downloads.relatorio.esperandoOFim}
+                  title={downloads.relatorio.motivo || undefined}
                   onClick={async () => {
                     if (!downloads.relatorio.permitido) {
                       if (downloads.relatorio.esperandoOFim) {
@@ -2517,7 +2533,9 @@ ${respostaAluno}`
                   }}
                 >
                   <FileDown className="h-5 w-5 mr-2" />
-                  Minha prova respondida (PDF)
+                  {downloads.relatorio.esperandoOFim
+                    ? 'Prova respondida após o término'
+                    : 'Minha prova respondida (PDF)'}
                 </Button>
 
                 <Button
@@ -2556,10 +2574,51 @@ ${respostaAluno}`
                 </Button>
               </div>
 
-              {downloads.gabarito.esperandoOFim && (
+              {/*
+                A folha com as letras que ele marcou.
+
+                É o arquivo dos cinco minutos seguintes à entrega — conferir com
+                os colegas na saída —, e é o único que continua saindo quando o
+                admin prendeu a prova e o relatório até o término: ele não tem
+                enunciado nem gabarito, só devolve à pessoa o que ela acabou de
+                escrever. Ver `FORMATOS_DA_FOLHA`.
+              */}
+              {downloads.compacto.permitido && (
+                <Button
+                  variant="outline"
+                  className="w-full rounded-xl"
+                  disabled={!!pdfGenerating}
+                  onClick={async () => {
+                    try {
+                      setPdfGenerating('Folha')
+                      const { generateCompactAnswersPDF, downloadPDF } = await import('@/lib/pdf-generator')
+                      const blob = await generateCompactAnswersPDF(exam, answers, userName || 'Aluno')
+                      downloadPDF(blob, `folha-de-respostas-${exam.title}.pdf`, {
+                        type: 'exam_answers_pdf',
+                        resourceId: id as string,
+                        resourceTitle: exam.title,
+                      })
+                    } catch (error: any) {
+                      showToastMessage('Erro ao gerar a folha: ' + error.message)
+                    } finally {
+                      setPdfGenerating(null)
+                    }
+                  }}
+                >
+                  {pdfGenerating === 'Folha' ? (
+                    <><span className="h-4 w-4 mr-2 rounded-full border-2 border-current border-t-transparent animate-spin inline-block" />Gerando…</>
+                  ) : (
+                    <><ClipboardList className="h-4 w-4 mr-2" />Minhas respostas (A, B, C…)</>
+                  )}
+                </Button>
+              )}
+
+              {(downloads.gabarito.esperandoOFim || downloads.relatorio.esperandoOFim) && (
                 <p className="flex items-start gap-1.5 text-[11px] leading-snug text-muted-foreground">
                   <Clock className="mt-0.5 h-3 w-3 flex-shrink-0" />
-                  {downloads.gabarito.motivo}
+                  {downloads.relatorio.esperandoOFim
+                    ? downloads.relatorio.motivo
+                    : downloads.gabarito.motivo}
                 </p>
               )}
 
@@ -2885,6 +2944,47 @@ ${respostaAluno}`
           </div>
         </div>
       )}
+      </>
+    )
+  }
+
+  /*
+   * Quem já entregou não volta para a porta da prova.
+   *
+   * Este retorno é o conserto de um buraco de ordem: o cartão "Você finalizou
+   * essa prova" era desenhado no corpo principal da página, LÁ EMBAIXO, e o
+   * corpo principal só é alcançado quando a prova está aberta. Quem abria o
+   * endereço da prova depois de entregar parava aqui — na tela inicial — e
+   * recebia o painel de portões ("Você está dentro"), o campo de assinatura e o
+   * botão **Iniciar Prova**, como se a prova estivesse por vir. A entrega já
+   * era conhecida (`data.jaSubmeteu` chega junto com a prova); ninguém
+   * perguntava por ela antes de desenhar a porta.
+   *
+   * Clicar não refazia nada — o servidor recusa a segunda entrega —, mas a tela
+   * dizia o contrário do que tinha acontecido, e numa prova valendo nota é a
+   * dúvida mais cara que uma tela pode plantar: "então minha entrega não foi
+   * registrada?".
+   *
+   * `submitted` não entra aqui: quem acabou de entregar NESTA sessão já foi
+   * atendido pela tela de conclusão, logo acima, que mostra a nota. A prova de
+   * treino também fica de fora — ela é feita quantas vezes a pessoa quiser.
+   */
+  if (alreadySubmitted && !exam.isPracticeExam && !started) {
+    return (
+      <>
+        <ExamJaFinalizada
+          variante="pagina"
+          exam={exam}
+          examId={String(id)}
+          userId={userId}
+          userName={userName || loggedUserName}
+          encerrada={!!janela?.encerrada}
+          downloads={downloads}
+          onErro={(mensagem) => showToastMessage(mensagem)}
+          onPlanoBloqueado={() => setShowPdfCta(true)}
+        />
+        <ToastAlert open={toastOpen} onOpenChange={setToastOpen} message={toastMessage} type={toastType} />
+        <PremiumPdfCtaModal open={showPdfCta} onClose={() => setShowPdfCta(false)} />
       </>
     )
   }
@@ -3499,7 +3599,12 @@ ${respostaAluno}`
       )}
 
       {/*
-        Prova já finalizada.
+        Prova já finalizada, descoberta com a prova aberta na tela.
+
+        O caminho normal de quem já entregou é o retorno antecipado lá em cima,
+        que devolve a MESMA tela sem a prova por trás. Este sobreposto atende o
+        caso em que a entrega só é conhecida depois — a verificação chega em
+        segundo plano — e aí a prova já está montada atrás dele.
 
         O cartão anunciava uma proibição — "Prova Já Realizada! Você já realizou
         esta prova. Não é possível refazê-la." —, que é a leitura mais fria
@@ -3508,142 +3613,17 @@ ${respostaAluno}`
         para onde ele quer ir, o próprio resumo.
       */}
       {alreadySubmitted && !exam?.isPracticeExam && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200">
-          <Card className="max-w-md w-full shadow-2xl">
-            <CardHeader className="text-center space-y-4">
-              <div className="exam-selo-estoura mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500/20 to-emerald-500/5">
-                <CheckCircle2 className="h-8 w-8 text-emerald-600 dark:text-emerald-400" />
-              </div>
-              <div>
-                <CardTitle className="text-2xl">Você finalizou essa prova</CardTitle>
-                <CardDescription className="mt-2">
-                  Sua entrega está registrada. Não é possível refazê-la.
-                </CardDescription>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="p-4 bg-muted rounded-lg">
-                <p className="text-sm text-center text-muted-foreground">
-                  {downloads.gabarito.esperandoOFim
-                    ? 'Seu resumo já está disponível. O gabarito é liberado quando a prova termina.'
-                    : 'Veja seu resumo com as respostas e a correção, ou baixe o gabarito da prova.'}
-                </p>
-              </div>
-              <div className="flex flex-col gap-2">
-                <Button
-                  onClick={() => router.push(`/exam/${id}/user/${userId}`)}
-                  className="exam-botao-chama relative w-full overflow-hidden bg-gradient-to-r from-[#468152] to-[#3a6d44] font-semibold text-white hover:from-[#3a6d44] hover:to-[#2f5a38]"
-                  size="lg"
-                >
-                  <BarChart3 className="h-4 w-4 mr-2" />
-                  Quero ver meu resumo
-                </Button>
-                {/*
-                  A classificação da turma só existe depois do término — antes
-                  disso o botão levaria a uma tela que recusa a entrada.
-                */}
-                {janela?.encerrada && (
-                  <Button
-                    onClick={() => router.push(`/exam/${id}/results`)}
-                    variant="outline"
-                    className="w-full"
-                    size="lg"
-                  >
-                    <Trophy className="h-4 w-4 mr-2" />
-                    Ver resultados da turma
-                  </Button>
-                )}
-                {/*
-                  A folha de respostas dele — as letras que marcou, uma por
-                  linha.
-
-                  Fica aqui porque é este o momento em que ela serve: o aluno
-                  acabou de entregar e quer conferir com os colegas na saída.
-                  Não tem enunciado nem gabarito (só o que ele mesmo escreveu),
-                  então não espera a turma terminar.
-                */}
-                {downloads.compacto.permitido && (
-                  <Button
-                    onClick={async () => {
-                      try {
-                        setPdfGenerating('Folha')
-                        // As respostas desta sessão. Quem acabou de entregar
-                        // as tem na mão; quem reabriu a prova noutro dia usa a
-                        // mesma folha pela tela de resultado, que carrega a
-                        // entrega do servidor.
-                        const { generateCompactAnswersPDF, downloadPDF } = await import('@/lib/pdf-generator')
-                        const blob = await generateCompactAnswersPDF(exam, answers, userName || 'Aluno')
-                        downloadPDF(blob, `folha-de-respostas-${exam.title}.pdf`, {
-                          type: 'exam_answers_pdf',
-                          resourceId: id as string,
-                          resourceTitle: exam.title,
-                        })
-                      } catch (error: any) {
-                        showToastMessage('Erro ao gerar a folha: ' + error.message)
-                      } finally {
-                        setPdfGenerating(null)
-                      }
-                    }}
-                    disabled={!!pdfGenerating}
-                    variant="outline"
-                    className="w-full"
-                    size="lg"
-                  >
-                    {pdfGenerating === 'Folha' ? (
-                      <><span className="h-4 w-4 mr-2 rounded-full border-2 border-current border-t-transparent animate-spin inline-block" />Gerando…</>
-                    ) : (
-                      <><ClipboardList className="h-4 w-4 mr-2" />Minhas respostas (A, B, C…)</>
-                    )}
-                  </Button>
-                )}
-                {!downloads.gabarito.esperandoOFim ? (
-                  <Button
-                    onClick={async () => {
-                      if (!downloads.gabarito.permitido) {
-                        setShowPdfCta(true)
-                        return
-                      }
-                      try {
-                        setPdfGenerating('Gabarito')
-                        const res = await fetch(`/api/exams/${id}`)
-                        if (!res.ok) throw new Error('Erro ao buscar prova')
-                        const data = await res.json()
-                        const { generateGabaritoPDF, downloadPDF } = await import('@/lib/pdf-generator')
-                        const blob = await generateGabaritoPDF(data.exam)
-                        downloadPDF(blob, `Gabarito-${data.exam.title}.pdf`, { type: 'gabarito_pdf', resourceId: id as string, resourceTitle: data.exam.title })
-                      } catch (error: any) {
-                        showToastMessage('Erro ao gerar gabarito: ' + error.message)
-                      } finally {
-                        setPdfGenerating(null)
-                      }
-                    }}
-                    disabled={!!pdfGenerating}
-                    variant="outline"
-                    className="w-full"
-                    size="lg"
-                  >
-                    {pdfGenerating === 'Gabarito' ? <><span className="h-4 w-4 mr-2 rounded-full border-2 border-current border-t-transparent animate-spin inline-block" />Gerando…</> : <><FileDown className="h-4 w-4 mr-2" />Baixar Gabarito (PDF)</>}
-                  </Button>
-                ) : (
-                  <div className="w-full p-3 bg-orange-50 dark:bg-orange-950 rounded-lg border border-orange-200 dark:border-orange-800">
-                    <p className="text-sm text-center text-orange-800 dark:text-orange-200">
-                      <Clock className="h-4 w-4 inline mr-2" />
-                      {downloads.gabarito.motivo}
-                    </p>
-                  </div>
-                )}
-                <Button
-                  onClick={() => router.push('/')}
-                  variant="ghost"
-                  className="w-full"
-                >
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Voltar para Início
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        <ExamJaFinalizada
+          variante="modal"
+          exam={exam}
+          examId={String(id)}
+          userId={userId}
+          userName={userName || loggedUserName}
+          encerrada={!!janela?.encerrada}
+          downloads={downloads}
+          onErro={(mensagem) => showToastMessage(mensagem)}
+          onPlanoBloqueado={() => setShowPdfCta(true)}
+        />
       )}
 
       {/* Popup de Aviso - Tempo por Questão (3 segundos) */}

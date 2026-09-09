@@ -886,10 +886,16 @@ function ProvasContent() {
      * circula enquanto a turma ainda responde.
      * Ver lib/provas/downloads-da-prova.ts.
      */
+    /*
+     * `jaEnviou` vinha fixo em `true`, o que anulava a espera "depois que o
+     * aluno entregar": quem nunca abriu a prova baixava o caderno em branco de
+     * uma prova que ainda ia acontecer. A listagem já sabe quem entregou (é o
+     * mesmo campo que decide o botão do cartão — ver `resolverAcaoDoAluno`).
+     */
     const veredito = resolverDownloadsDaProva(exam, {
       accountType,
       isAdmin: user?.role === 'admin',
-      jaEnviou: true,
+      jaEnviou: !!(exam as any).jaEntregou,
     })
     const arquivo = type === 'exam' ? veredito.prova : veredito.gabarito
 

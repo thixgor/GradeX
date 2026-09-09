@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  FORMATOS_DA_FOLHA,
   esperasDaProva,
   normalizarEsperas,
   normalizarLiberacoes,
@@ -362,3 +363,119 @@ describe('esperar a entrega DESTE aluno', () => {
   })
 })
 
+
+/**
+ * A espera do admin, vista de uma submissão.
+ *
+ * Este é o buraco que a lista de provas feitas (`/profile` e o diálogo de
+ * `/provas`) tinha depois de já consultar o veredito: `provaDaSubmissao` não
+ * carregava `holdDownloads`, e sem o campo `normalizarEsperas` devolve o padrão
+ * — "a prova em branco sai imediato". A tela aplicava com toda a correção uma
+ * regra que ninguém tinha configurado, e entregava, com a turma respondendo, os
+ * dois arquivos que o admin tinha prendido até o término.
+ *
+ * Nada disso dava erro: o campo ausente vira o padrão em silêncio. Por isso o
+ * teste é sobre o mapeamento, e não sobre a decisão — a decisão já estava certa.
+ */
+describe('provaDaSubmissao — a espera configurada pelo admin', () => {
+  const terminaDepois = new Date('2026-05-10T23:00:00Z')
+
+  it('carrega holdDownloads: a prova em branco presa até o término continua presa', () => {
+    const v = resolverDownloadsDaProva(
+      provaDaSubmissao({
+        examEndTime: terminaDepois,
+        holdDownloads: { prova: 'apos-termino', relatorio: 'apos-termino' },
+      }),
+      { accountType: 'quest', jaEnviou: true, agora: AGORA },
+    )
+    expect(v.prova.permitido).toBe(false)
+    expect(v.prova.esperandoOFim).toBe(true)
+    expect(v.relatorio.permitido).toBe(false)
+    expect(v.relatorio.esperandoOFim).toBe(true)
+  })
+
+  it('a mesma prova, depois do término, libera os dois', () => {
+    const v = resolverDownloadsDaProva(
+      provaDaSubmissao({
+        examEndTime: new Date('2026-05-10T14:30:00Z'),
+        holdDownloads: { prova: 'apos-termino', relatorio: 'apos-termino' },
+      }),
+      { accountType: 'quest', jaEnviou: true, agora: AGORA },
+    )
+    expect(v.prova.permitido).toBe(true)
+    expect(v.relatorio.permitido).toBe(true)
+  })
+
+  it('a espera não tem exceção de plano: liberar sem assinatura não antecipa', () => {
+    const v = resolverDownloadsDaProva(
+      provaDaSubmissao({
+        examEndTime: terminaDepois,
+        holdDownloads: { prova: 'apos-termino' },
+        freeDownloads: { prova: true },
+      }),
+      { accountType: 'gratuito', jaEnviou: true, agora: AGORA },
+    )
+    expect(v.prova.permitido).toBe(false)
+    expect(v.prova.esperandoOFim).toBe(true)
+  })
+
+  it('a folha de letras continua saindo na entrega, seja qual for a espera', () => {
+    const v = resolverDownloadsDaProva(
+      provaDaSubmissao({
+        examEndTime: terminaDepois,
+        holdDownloads: { prova: 'apos-termino', relatorio: 'apos-termino' },
+      }),
+      { accountType: 'quest', jaEnviou: true, agora: AGORA },
+    )
+    // Ela só devolve à pessoa o que a própria pessoa marcou, sem enunciado —
+    // não há o que antecipar para ninguém, e é o único arquivo dessa espera.
+    expect(v.compacto.permitido).toBe(true)
+  })
+
+  it('formato antigo (booleano) gravado no banco continua prendendo', () => {
+    const v = resolverDownloadsDaProva(
+      provaDaSubmissao({
+        examEndTime: terminaDepois,
+        holdDownloads: { prova: true, relatorio: true },
+      }),
+      { accountType: 'quest', jaEnviou: true, agora: AGORA },
+    )
+    expect(v.prova.esperandoOFim).toBe(true)
+    expect(v.relatorio.esperandoOFim).toBe(true)
+  })
+})
+
+/**
+ * Os dois formatos da folha de respostas.
+ *
+ * A lista existe para que as telas não inventem rótulo e nome de arquivo cada
+ * uma por conta própria — e para travar a regra que justifica os dois estarem
+ * sob a mesma liberação: nenhum deles revela o que era certo.
+ */
+describe('FORMATOS_DA_FOLHA', () => {
+  it('são dois: com as questões e só as letras', () => {
+    expect(FORMATOS_DA_FOLHA.map((f) => f.chave)).toEqual(['com-questoes', 'so-letras'])
+  })
+
+  /*
+   * A distinção que sustenta os dois formatos: um imprime o caderno da prova
+   * junto e o outro não. Trocar `liberacao` aqui devolve, em silêncio, o bug
+   * que este trabalho fecha — a folha com as questões saindo enquanto a turma
+   * responde, por uma prova que o admin prendeu até o término.
+   */
+  it('a folha com as questões segue o relatório; a de letras, a própria liberação', () => {
+    const porChave = Object.fromEntries(FORMATOS_DA_FOLHA.map((f) => [f.chave, f.liberacao]))
+    expect(porChave['com-questoes']).toBe('relatorio')
+    expect(porChave['so-letras']).toBe('compacto')
+  })
+
+  it('cada um tem título, descrição e um sufixo de arquivo próprio', () => {
+    for (const formato of FORMATOS_DA_FOLHA) {
+      expect(formato.titulo.length, formato.chave).toBeGreaterThan(0)
+      expect(formato.descricao.length, formato.chave).toBeGreaterThan(0)
+      expect(formato.sufixo, formato.chave).toMatch(/^[a-z0-9-]+$/)
+    }
+    const sufixos = FORMATOS_DA_FOLHA.map((f) => f.sufixo)
+    expect(new Set(sufixos).size).toBe(sufixos.length)
+  })
+})

@@ -16,6 +16,17 @@
  * resto da plataforma, e consomem a cota do plano como qualquer outro download
  * de prova.
  *
+ * ## E o portão que continuava aberto depois disso
+ *
+ * O veredito passou a ser consultado, mas ele era montado a partir de uma prova
+ * incompleta: `/api/user/submissions` mandava `freeDownloads` e esquecia
+ * `holdDownloads`. Sem esse campo, `normalizarEsperas` devolve o PADRÃO — "a
+ * prova em branco sai imediato" —, que é o contrário do que o admin escolheu
+ * quando marcou "só depois que a prova terminar". Quem entregava às 14h05
+ * baixava por aqui a prova e as respostas com a turma respondendo até as 16h,
+ * enquanto a tela da prova negava os mesmos arquivos. Nada disso dava erro: a
+ * tela aplicava, com toda a correção, uma regra que ninguém tinha configurado.
+ *
  * ## O que este portão é, e o que ele não é
  *
  * A regra de **tempo** (gabarito só depois do término) é de verdade: o servidor
@@ -30,11 +41,19 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ChevronDown, ClipboardList, Download, FileText, Lock, Printer } from 'lucide-react'
+import { ChevronDown, ClipboardCheck, ClipboardList, Download, FileText, Lock, Printer } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { QUEST_LABEL, ROTA_ASSINATURA } from '@/lib/account-tier'
 import { consumirCotaDoPlano } from '@/lib/plan-consume-client'
-import { provaDaSubmissao, resolverDownloadsDaProva } from '@/lib/provas/downloads-da-prova'
+import {
+  FORMATOS_DA_FOLHA,
+  provaDaSubmissao,
+  resolverDownloadsDaProva,
+  type FormatoDaFolha,
+  type LiberacoesDeDownload,
+  type ProvaDeUmaSubmissao,
+  type VereditoDeDownload,
+} from '@/lib/provas/downloads-da-prova'
 import { cn } from '@/lib/utils'
 
 export interface UserSubmission {
@@ -61,7 +80,9 @@ export interface UserSubmission {
   isPracticeExam?: boolean
   isPersonalExam?: boolean
   /** Exceção de download que o admin abriu nesta prova, quando houver. */
-  freeDownloads?: { prova?: boolean; relatorio?: boolean; gabarito?: boolean } | null
+  freeDownloads?: ProvaDeUmaSubmissao['freeDownloads']
+  /** Quando cada arquivo desta prova libera — a espera que o admin escolheu. */
+  holdDownloads?: ProvaDeUmaSubmissao['holdDownloads']
   examEndTime?: Date
   answers?: any[]
   exam?: any
@@ -74,6 +95,28 @@ function calculateDuration(startTime: Date, endTime: Date): string {
   const minutes = diffMins % 60
   if (hours > 0) return `${hours}h ${minutes}min`
   return `${minutes}min`
+}
+
+/**
+ * O que ESTA prova prendeu até o término, dito em uma frase.
+ *
+ * O aviso era fixo — "Gabarito e relatório liberados após o término" —, e ele
+ * mentia nos dois sentidos: numa prova cujo relatório sai na entrega, mandava a
+ * pessoa esperar por um arquivo que estava ali no botão ao lado; numa prova com
+ * a prova em branco presa, não dizia nada sobre ela.
+ */
+function frasePresos(downloads: Record<keyof LiberacoesDeDownload, VereditoDeDownload>): string {
+  const presos = [
+    downloads.prova.esperandoOFim ? 'a prova em branco' : null,
+    downloads.relatorio.esperandoOFim ? 'o relatório' : null,
+    // O gabarito é a regra sem exceção: espera sempre.
+    'o gabarito',
+  ].filter((item): item is string => item !== null)
+
+  const lista =
+    presos.length === 1 ? presos[0] : `${presos.slice(0, -1).join(', ')} e ${presos[presos.length - 1]}`
+  const verbo = presos.length === 1 ? 'é liberado' : 'são liberados'
+  return `${lista[0].toUpperCase()}${lista.slice(1)} ${verbo} após o término.`
 }
 
 function isExamFinished(submission: UserSubmission): boolean {
@@ -154,8 +197,16 @@ export function SubmissionsList({
     }
   }
 
-  async function handleDownloadAnswersPDF(submission: UserSubmission) {
-    if (!(await cotaLiberada(`${submission.examId}:respostas`))) return
+  /**
+   * A folha de respostas, nos dois formatos.
+   *
+   * O botão daqui gerava só a versão com as questões, e a chamava "Respostas
+   * PDF" — quem queria conferir as letras com um colega recebia o caderno
+   * inteiro, e quem não podia receber o caderno não recebia nada. Cada formato
+   * responde à sua liberação; ver `FORMATOS_DA_FOLHA`.
+   */
+  async function handleDownloadFolha(submission: UserSubmission, formato: FormatoDaFolha) {
+    if (!(await cotaLiberada(`${submission.examId}:folha:${formato}`))) return
     try {
       const res = await fetch(`/api/exams/${submission.examId}`)
       if (!res.ok) throw new Error('Erro ao buscar prova')
@@ -164,15 +215,22 @@ export function SubmissionsList({
       if (!submissionRes.ok) throw new Error('Erro ao buscar submissao')
       const submissionData = await submissionRes.json()
       const answers = submissionData.submission?.answers || []
-      const { generateStudentAnswersPDF, downloadPDF } = await import('@/lib/pdf-generator')
-      const blob = await generateStudentAnswersPDF(examData.exam, answers, submission.userName || userName)
-      downloadPDF(blob, `Minhas-Respostas-${examData.exam.title}.pdf`, {
-        type: 'student_answers_pdf',
+      const nome = submission.userName || userName
+      const { generateStudentAnswersPDF, generateCompactAnswersPDF, downloadPDF } = await import(
+        '@/lib/pdf-generator'
+      )
+      const blob =
+        formato === 'com-questoes'
+          ? await generateStudentAnswersPDF(examData.exam, answers, nome)
+          : await generateCompactAnswersPDF(examData.exam, answers, nome)
+      const sufixo = FORMATOS_DA_FOLHA.find((f) => f.chave === formato)!.sufixo
+      downloadPDF(blob, `${sufixo}-${examData.exam.title}.pdf`, {
+        type: formato === 'com-questoes' ? 'student_answers_pdf' : 'exam_answers_pdf',
         resourceId: submission.examId,
         resourceTitle: examData.exam.title,
       })
     } catch (error: any) {
-      onError('Erro ao gerar PDF de respostas: ' + error.message)
+      onError('Erro ao gerar a folha de respostas: ' + error.message)
     }
   }
 
@@ -320,24 +378,38 @@ export function SubmissionsList({
                     </Button>
                   )}
 
-                  {downloads.relatorio.permitido && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-7 text-xs"
-                      disabled={gerando === `${submission._id}:respostas`}
-                      onClick={async () => {
-                        setGerando(`${submission._id}:respostas`)
-                        try {
-                          await handleDownloadAnswersPDF(submission)
-                        } finally {
-                          setGerando(null)
-                        }
-                      }}
-                    >
-                      <ClipboardList className="mr-1.5 h-3 w-3" />
-                      Respostas PDF
-                    </Button>
+                  {/*
+                    As duas folhas de respostas, cada uma com a sua liberação: a
+                    que imprime as questões junto leva o caderno da prova e
+                    segue a espera do relatório; a de letras sai na entrega.
+                    Ver `FORMATOS_DA_FOLHA`.
+                  */}
+                  {FORMATOS_DA_FOLHA.filter((formato) => downloads[formato.liberacao].permitido).map(
+                    (formato) => (
+                      <Button
+                        key={formato.chave}
+                        variant="outline"
+                        size="sm"
+                        className="h-7 text-xs"
+                        title={formato.descricao}
+                        disabled={gerando === `${submission._id}:${formato.chave}`}
+                        onClick={async () => {
+                          setGerando(`${submission._id}:${formato.chave}`)
+                          try {
+                            await handleDownloadFolha(submission, formato.chave)
+                          } finally {
+                            setGerando(null)
+                          }
+                        }}
+                      >
+                        {formato.chave === 'com-questoes' ? (
+                          <ClipboardList className="mr-1.5 h-3 w-3" />
+                        ) : (
+                          <ClipboardCheck className="mr-1.5 h-3 w-3" />
+                        )}
+                        {formato.chave === 'com-questoes' ? 'Respostas + questões' : 'Só minhas letras'}
+                      </Button>
+                    ),
                   )}
 
                   {downloads.gabarito.permitido && (
@@ -365,7 +437,7 @@ export function SubmissionsList({
                     passa sozinha; a de plano precisa de uma decisão. */}
                 {!finished && (
                   <p className="text-[11px] text-orange-600 dark:text-orange-400">
-                    Prova em andamento. Gabarito e relatório liberados após o término.
+                    Prova em andamento. {frasePresos(downloads)}
                   </p>
                 )}
 
