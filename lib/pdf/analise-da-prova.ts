@@ -16,6 +16,13 @@ import {
   sanitizarParaPdf,
 } from './marca'
 import { carregarImagens, encaixar, type ImagemParaPdf } from './imagens'
+import { desenharImagensNoPdf } from './imagens-de-questao'
+import {
+  type ImagemDeQuestao,
+  type LayoutDeImagens,
+  layoutDeImagens,
+  reunirImagens,
+} from '@/lib/questoes/imagens'
 
 /**
  * O PDF de análise da prova — o que o professor manda para a turma depois.
@@ -136,6 +143,11 @@ export interface DadosDaAnalise {
     comando?: string | null
     imageUrl?: string | null
     imageSource?: string | null
+    /** Ver `lib/questoes/imagens.ts`. Ausente = só a imagem única de antes. */
+    imagens?: ImagemDeQuestao[]
+    layoutImagens?: LayoutDeImagens
+    imagensDaResposta?: ImagemDeQuestao[]
+    layoutImagensDaResposta?: LayoutDeImagens
     respostaComentada?: string | null
     respondidas: number
     acertos: number
@@ -730,23 +742,29 @@ function desenharQuestaoEmDestaque(
     }
   }
 
-  if (detalhe.imagem && questao.imageUrl) {
-    const img = p.imagens.get(questao.imageUrl)
-    if (img) {
-      const { largura, altura } = encaixar(img, util - 10, 82)
-      garantirEspaco(p, altura + 10, titulo)
-      try {
-        p.doc.addImage(img.dataUrl, 'JPEG', MARGEM + (util - largura) / 2, p.y, largura, altura)
-        p.y += altura + 4
-      } catch { /* segue sem a imagem */ }
-      if (questao.imageSource) {
-        p.doc.setFontSize(7)
-        p.doc.setTextColor(140, 140, 140)
-        p.doc.text(sanitizarParaPdf(`Fonte: ${questao.imageSource}`), MARGEM, p.y)
-        p.doc.setTextColor(...CINZA_TEXTO)
-        p.y += 6
-      }
-    }
+  if (detalhe.imagem) {
+    // Todas as imagens do enunciado, no tamanho e no arranjo configurados na
+    // questão — a versão anterior imprimia só a primeira, centrada e sempre do
+    // mesmo tamanho.
+    p.y = desenharImagensNoPdf(
+      p.doc,
+      reunirImagens(questao.imagens, questao.imageUrl, questao.imageSource),
+      layoutDeImagens(questao.layoutImagens),
+      p.imagens,
+      {
+        x: MARGEM,
+        largura: util,
+        y: p.y,
+        limiteY: p.altura - 22,
+        alturaMaxima: 82,
+        fonte: p.fonte,
+        novaPagina: () => {
+          novaPagina(p, titulo)
+          return p.y
+        },
+      },
+    )
+    p.doc.setTextColor(...CINZA_TEXTO)
   }
 
   // Como a turma se dividiu entre as alternativas — o dado que separa "a turma
@@ -842,10 +860,18 @@ export async function gerarAnaliseDaProvaPDF(
 
   // Só as imagens que este documento vai imprimir: baixar a prova inteira para
   // usar duas figuras é o tipo de espera que faz o botão parecer travado.
+  const urlsDaQuestao = (
+    questao: DadosDaAnalise['questoes'][number] | null | undefined,
+    incluir: boolean,
+  ): string[] =>
+    incluir && questao
+      ? reunirImagens(questao.imagens, questao.imageUrl, questao.imageSource).map((i) => i.url)
+      : []
+
   const imagens = await carregarImagens([
     opcoes.capa ? dados.prova.coverImage : null,
-    opcoes.questaoMaisErrada.imagem ? maisErrada?.imageUrl : null,
-    opcoes.questaoMaisAcertada.imagem ? maisAcertada?.imageUrl : null,
+    ...urlsDaQuestao(maisErrada, opcoes.questaoMaisErrada.imagem),
+    ...urlsDaQuestao(maisAcertada, opcoes.questaoMaisAcertada.imagem),
   ])
 
   const p: Pincel = {

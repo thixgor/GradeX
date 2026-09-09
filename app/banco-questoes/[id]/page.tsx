@@ -51,6 +51,13 @@ import { cn } from '@/lib/utils'
 import { BarraDoQuiz } from '@/components/banco/barra-do-quiz'
 import { CabecalhoQuiz } from '@/components/banco/cabecalho-quiz'
 import { AlternativaQuiz } from '@/components/banco/alternativa-quiz'
+import { ImagensDaQuestao } from '@/components/questoes/imagens-da-questao'
+import {
+  imagensDaExplicacaoDoBanco,
+  imagensDaQuestaoDoBanco,
+  layoutDaExplicacaoDoBanco,
+  layoutDaQuestaoDoBanco,
+} from '@/lib/questoes/imagens-da-questao'
 import { CLASSE_DA_DIFICULDADE } from '@/lib/banco/aparencia-da-questao'
 import {
   FolhaDeFeedback,
@@ -694,37 +701,16 @@ ${respostaAluno}`
                 />
               </div>
 
-              {/* Imagem da questão */}
-              {questao.imagemUrl && (
-                <div className="mt-4 flex flex-col items-center gap-1.5">
-                  <div
-                    className="group relative cursor-pointer select-none"
-                    style={{ touchAction: 'manipulation' }}
-                    onClick={() => {
-                      setModalImageUrl(questao.imagemUrl!)
-                      setShowImageModal(true)
-                    }}
-                  >
-                    <img
-                      src={questao.imagemUrl}
-                      alt="Imagem da questão"
-                      className="pointer-events-none h-auto max-h-80 w-auto max-w-full rounded-lg border object-contain transition-all group-hover:brightness-95 md:max-w-md"
-                      draggable={false}
-                    />
-                    {/* Desktop: hover overlay */}
-                    <div className="absolute inset-0 hidden items-center justify-center rounded-lg opacity-0 transition-opacity group-hover:opacity-100 sm:flex">
-                      <div className="rounded-lg bg-black/55 px-3 py-1.5 text-xs text-white backdrop-blur-sm">
-                        Clique para ampliar
-                      </div>
-                    </div>
-                    {/* Mobile/tablet: always-visible badge */}
-                    <div className="pointer-events-none absolute bottom-2 right-2 flex items-center gap-1 rounded-lg bg-black/60 px-2 py-1 text-[10px] text-white backdrop-blur-sm sm:hidden">
-                      Ampliar
-                    </div>
-                  </div>
-                  <p className="text-[11px] text-muted-foreground">Toque para ampliar a imagem</p>
-                </div>
-              )}
+              {/* Imagens do enunciado */}
+              <ImagensDaQuestao
+                className="mt-4"
+                imagens={imagensDaQuestaoDoBanco(questao)}
+                layout={layoutDaQuestaoDoBanco(questao)}
+                onAmpliar={(src) => {
+                  setModalImageUrl(src)
+                  setShowImageModal(true)
+                }}
+              />
             </CardContent>
           </Card>
 
@@ -784,6 +770,22 @@ ${respostaAluno}`
             {resultado.explicacao && (
               <TrechoDaCorrecao titulo="Explicação">
                 {formatText(resultado.explicacao)}
+              </TrechoDaCorrecao>
+            )}
+
+            {/* As imagens do comentário — o esquema, a lâmina com o achado.
+                Antes o comentário só podia descrevê-las. */}
+            {imagensDaExplicacaoDoBanco(questao).length > 0 && (
+              <TrechoDaCorrecao titulo="Imagens da explicação">
+                <ImagensDaQuestao
+                  imagens={imagensDaExplicacaoDoBanco(questao)}
+                  layout={layoutDaExplicacaoDoBanco(questao)}
+                  onAmpliar={(src) => {
+                    setModalImageUrl(src)
+                    setShowImageModal(true)
+                  }}
+                  alt="Imagem da explicação"
+                />
               </TrechoDaCorrecao>
             )}
 

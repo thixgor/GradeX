@@ -23,6 +23,7 @@ import { normalizarLiberacoes } from '@/lib/provas/downloads-da-prova'
 import { COLECAO_DE_ENTRADAS, type EntradaNaProva } from '@/lib/provas/entrada-na-prova'
 import { interpretarInstante } from '@/lib/provas/horario-local'
 import { validarJanelaDoFormulario } from '@/lib/provas/janela-da-prova'
+import { normalizarImagensDasQuestoes } from '@/lib/provas/normalizar-imagens'
 
 export const dynamic = 'force-dynamic'
 
@@ -732,7 +733,9 @@ export async function POST(request: NextRequest) {
       themePhrase,
       scoringMethod,
       totalPoints: pointsTotal,
-      questions: questions || [],
+      // Ver `lib/provas/normalizar-imagens.ts`: endereço que não é imagem fora,
+      // tamanho preso nos limites e `imageUrl` acompanhando a lista.
+      questions: normalizarImagensDasQuestoes(questions),
       pdfUrl,
       // Prova de treino não tem portão: ela é 'livre' na janela, e um portão
       // gravado nela só confundiria quem abrisse o formulário depois.

@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from 'react'
 import {
   AlertCircle,
   Check,
-  Image as ImageIcon,
   Loader2,
   Plus,
   Save,
@@ -15,6 +14,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { SeletorDeAssunto } from '@/components/admin/banco/seletor-de-assunto'
+import { EditorDeImagens } from '@/components/questoes/editor-de-imagens'
+import { sincronizarCampoLegado } from '@/lib/questoes/imagens'
 import { subtopicosDoTopico, type Catalogo } from '@/lib/banco/catalogo'
 import {
   LETRAS,
@@ -393,44 +394,25 @@ export function EditorDeQuestao({
             />
           </div>
 
-          {/* ── Imagem ──────────────────────────────────────────────────── */}
-          <div>
-            <Label className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <ImageIcon className="h-3.5 w-3.5" /> Imagem (opcional)
-            </Label>
-            <div className="mt-1 space-y-2">
-              <input
-                value={dados.imagemUrl || ''}
-                onChange={(e) => mudar({ imagemUrl: e.target.value || null })}
-                placeholder="https://i.imgur.com/…"
-                className={cn(
-                  'h-10 w-full rounded-xl border border-border bg-background px-3 text-sm outline-none focus:border-primary/50',
-                  marcado('imagemUrl'),
-                )}
-              />
-              {dados.imagemUrl ? (
-                <div className="relative inline-block">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={dados.imagemUrl}
-                    alt="Prévia da imagem da questão"
-                    className="max-h-48 max-w-full rounded-xl border border-border"
-                    onError={(e) => {
-                      ;(e.target as HTMLImageElement).style.display = 'none'
-                    }}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => mudar({ imagemUrl: null })}
-                    aria-label="Remover imagem"
-                    className="absolute right-1.5 top-1.5 rounded-lg bg-background/90 p-1 text-red-500 shadow"
-                  >
-                    <X className="h-3.5 w-3.5" />
-                  </button>
-                </div>
-              ) : null}
-            </div>
-          </div>
+          {/* ── Imagens ─────────────────────────────────────────────────────
+              Eram um campo de URL e nada mais: uma imagem, sem tamanho, sem
+              ordem, e nenhuma na explicação. O editor é o mesmo de /admin/exams
+              (components/questoes/editor-de-imagens.tsx), e o tamanho que se
+              escolhe aqui é o que sai na tela do aluno e no PDF da lista. */}
+          <EditorDeImagens
+            titulo="Imagens do enunciado"
+            descricao="Cole o link, arraste o arquivo ou dê Ctrl+V na imagem. No celular ela sempre ocupa a largura toda."
+            imagens={dados.imagens}
+            layout={dados.layoutImagens}
+            onChange={(imagens, layout) =>
+              mudar({
+                imagens,
+                layoutImagens: layout,
+                // O campo antigo acompanha a lista — ver lib/questoes/imagens.ts.
+                imagemUrl: sincronizarCampoLegado(imagens),
+              })
+            }
+          />
 
           {/* ── Alternativas ou resposta modelo ─────────────────────────── */}
           {dados.tipo === 'objetiva' ? (
@@ -509,14 +491,27 @@ export function EditorDeQuestao({
           )}
 
           {/* ── Explicação ──────────────────────────────────────────────── */}
-          <div>
-            <Label className="text-xs text-muted-foreground">Comentário (opcional)</Label>
-            <Textarea
-              value={dados.explicacao || ''}
-              onChange={(e) => mudar({ explicacao: e.target.value || null })}
-              rows={4}
-              placeholder="O que o aluno lê depois de responder…"
-              className="mt-1 rounded-xl"
+          <div className="space-y-3">
+            <div>
+              <Label className="text-xs text-muted-foreground">Comentário (opcional)</Label>
+              <Textarea
+                value={dados.explicacao || ''}
+                onChange={(e) => mudar({ explicacao: e.target.value || null })}
+                rows={4}
+                placeholder="O que o aluno lê depois de responder…"
+                className="mt-1 rounded-xl"
+              />
+            </div>
+            {/* Isto não existia: dava para descrever o achado, não para
+                mostrá-lo. Estas imagens só aparecem junto do comentário. */}
+            <EditorDeImagens
+              titulo="Imagens do comentário"
+              descricao="Aparecem junto da resposta comentada, depois que o aluno responde."
+              imagens={dados.imagensExplicacao}
+              layout={dados.layoutImagensExplicacao}
+              onChange={(imagens, layout) =>
+                mudar({ imagensExplicacao: imagens, layoutImagensExplicacao: layout })
+              }
             />
           </div>
 
@@ -655,6 +650,10 @@ function paraCorpo(dados: DadosDaQuestao) {
     enunciado: dados.enunciado,
     explicacao: dados.explicacao || '',
     imagemUrl: dados.imagemUrl || '',
+    imagens: dados.imagens || [],
+    layoutImagens: dados.layoutImagens,
+    imagensExplicacao: dados.imagensExplicacao || [],
+    layoutImagensExplicacao: dados.layoutImagensExplicacao,
     alternativas: dados.alternativas || [],
     respostaModelo: dados.respostaModelo || '',
     dificuldade: dados.dificuldade || '',

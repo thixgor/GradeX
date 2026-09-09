@@ -52,6 +52,13 @@ import { ReportQuestionModal } from '@/components/report-question-modal'
 import { generateBancoListaPDF, downloadPDF, prewarmPDFAssets } from '@/lib/pdf-generator'
 import { CabecalhoQuiz } from '@/components/banco/cabecalho-quiz'
 import { AlternativaQuiz } from '@/components/banco/alternativa-quiz'
+import { ImagensDaQuestao } from '@/components/questoes/imagens-da-questao'
+import {
+  imagensDaExplicacaoDoBanco,
+  imagensDaQuestaoDoBanco,
+  layoutDaExplicacaoDoBanco,
+  layoutDaQuestaoDoBanco,
+} from '@/lib/questoes/imagens-da-questao'
 import {
   FolhaDeFeedback,
   PainelDaExplicacao,
@@ -221,9 +228,11 @@ export default function ListaDetalhePage() {
     if (modo !== 'simulado') return
     if (typeof window === 'undefined') return
     const proxima = questoes[questaoAtual + 1]
-    if (proxima?.imagemUrl) {
+    // Todas as imagens da próxima, não só a primeira: com duas lâminas lado a
+    // lado, adiantar uma e deixar a outra para o clique é meio caminho.
+    for (const imagem of imagensDaQuestaoDoBanco(proxima)) {
       const preload = new window.Image()
-      preload.src = proxima.imagemUrl
+      preload.src = imagem.url
     }
   }, [modo, questaoAtual, questoes])
 
@@ -335,6 +344,10 @@ export default function ListaDetalhePage() {
           enunciado: q.enunciado,
           alternativas: q.alternativas,
           imagemUrl: q.imagemUrl,
+          imagens: q.imagens,
+          layoutImagens: q.layoutImagens,
+          imagensExplicacao: q.imagensExplicacao,
+          layoutImagensExplicacao: q.layoutImagensExplicacao,
           explicacao: q.explicacao,
           respostaModelo: q.respostaModelo,
           dificuldade: q.dificuldade,
@@ -907,22 +920,16 @@ ${respostaAluno}`
                   />
                 </div>
 
-                {/* Imagem */}
-                {questao.imagemUrl && (
-                  <div
-                    className="group relative flex cursor-pointer justify-center"
-                    onClick={() => {
-                      setModalImageUrl(questao.imagemUrl!)
-                      setShowImageModal(true)
-                    }}
-                  >
-                    <img
-                      src={questao.imagemUrl}
-                      alt="Imagem da questão"
-                      className="h-auto max-h-80 w-auto max-w-full rounded-lg border object-contain transition-all group-hover:scale-[1.02] group-hover:shadow-lg md:max-w-md"
-                    />
-                  </div>
-                )}
+                {/* Imagens do enunciado — quantas forem, no tamanho e no
+                    arranjo escolhidos na questão (lib/questoes/imagens.ts) */}
+                <ImagensDaQuestao
+                  imagens={imagensDaQuestaoDoBanco(questao)}
+                  layout={layoutDaQuestaoDoBanco(questao)}
+                  onAmpliar={(src) => {
+                    setModalImageUrl(src)
+                    setShowImageModal(true)
+                  }}
+                />
 
                 {/* Alternativas (objetiva) */}
                 {questao.tipo === 'objetiva' && questao.alternativas && (
@@ -982,6 +989,20 @@ ${respostaAluno}`
               {questao.explicacao && (
                 <TrechoDaCorrecao titulo="Explicação">
                   {formatText(questao.explicacao)}
+                </TrechoDaCorrecao>
+              )}
+
+              {imagensDaExplicacaoDoBanco(questao).length > 0 && (
+                <TrechoDaCorrecao titulo="Imagens da explicação">
+                  <ImagensDaQuestao
+                    imagens={imagensDaExplicacaoDoBanco(questao)}
+                    layout={layoutDaExplicacaoDoBanco(questao)}
+                    onAmpliar={(src) => {
+                      setModalImageUrl(src)
+                      setShowImageModal(true)
+                    }}
+                    alt="Imagem da explicação"
+                  />
                 </TrechoDaCorrecao>
               )}
 

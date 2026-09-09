@@ -23,6 +23,22 @@ import {
   registrarFontes,
   sanitizarParaPdf as sanitizeForPdf,
 } from './pdf/marca'
+import { ALTURA_MAXIMA_DA_IMAGEM, desenharImagensNoPdf } from './pdf/imagens-de-questao'
+import type { ImagemDeQuestao, LayoutDeImagens } from './questoes/imagens'
+import { desenharLinhaRica, quebrarTexto } from './pdf/texto'
+// Reexportado: o módulo saiu daqui (ver lib/provas/resposta-comentada.ts), e
+// os testes e o relatório do aluno continuam encontrando o nome no lugar de
+// sempre.
+export { montarRespostaComentada } from './provas/resposta-comentada'
+import { montarRespostaComentada } from './provas/resposta-comentada'
+import {
+  blocoDaQuestaoDoBanco,
+  blocoDaResposta,
+  blocoDoEnunciado,
+  imagensDaExplicacaoDoBanco,
+  layoutDaExplicacaoDoBanco,
+  urlsDaQuestao,
+} from './questoes/imagens-da-questao'
 
 /**
  * A família ativa neste arquivo.
@@ -45,54 +61,12 @@ export function prewarmPDFAssets(): void {
   aquecerAssetsDePdf()
 }
 
-// Custom text wrapping function - melhorada para preservar quebras de linha
-function wrapText(doc: jsPDF, text: string, maxWidth: number): string[] {
-  if (!text) return []
-
-  // Replace \nl and \n with actual newlines first, then sanitize
-  const cleaned = sanitizeForPdf(text.replace(/\\nl/g, '\n').replace(/\\n/g, '\n'))
-
-  // Preservar quebras de linha existentes
-  const paragraphs = cleaned.split(/\n/)
-  const allLines: string[] = []
-
-  for (const paragraph of paragraphs) {
-    if (paragraph.trim() === '') {
-      allLines.push('') // Manter linhas em branco
-      continue
-    }
-
-    // Para cada parágrafo, quebrar em palavras
-    const words = paragraph.split(' ')
-    let currentLine = ''
-
-    for (let i = 0; i < words.length; i++) {
-      const word = words[i]
-      const testLine = currentLine ? currentLine + ' ' + word : word
-
-      if (doc.getTextWidth(stripMarkdown(testLine)) > maxWidth && currentLine) {
-        allLines.push(currentLine)
-        currentLine = word
-      } else {
-        currentLine = testLine
-      }
-    }
-
-    if (currentLine) {
-      allLines.push(currentLine)
-    }
-  }
-
-  return allLines
-}
-
-// Strip **bold** / *italic* markers for width measurement (layout only)
-function stripMarkdown(text: string): string {
-  return text.replace(/\*\*(.+?)\*\*/g, '$1').replace(/\*(.+?)\*/g, '$1')
-}
+// A quebra de linha e o negrito inline moram em `lib/pdf/texto.ts` — eram duas
+// cópias divergentes (esta e a do relatório do aluno). Os nomes locais ficam
+// para não reescrever as centenas de chamadas deste arquivo.
+const wrapText = quebrarTexto
 
 // Render a line with inline **bold** and *italic* markdown support.
-// baseStyle is the fallback style for unmarked text segments.
 function drawRichLine(
   doc: jsPDF,
   line: string,
@@ -100,35 +74,7 @@ function drawRichLine(
   y: number,
   baseStyle: 'normal' | 'bold' | 'italic' = 'normal'
 ): void {
-  // Fast path: no markers → single text call
-  if (!line.includes('*')) {
-    doc.setFont(FONT, baseStyle)
-    doc.text(line, x, y)
-    return
-  }
-  const regex = /\*\*(.+?)\*\*|\*(.+?)\*/g
-  let last = 0
-  let cx = x
-  let m: RegExpExecArray | null
-  while ((m = regex.exec(line)) !== null) {
-    if (m.index > last) {
-      const plain = line.slice(last, m.index)
-      doc.setFont(FONT, baseStyle)
-      doc.text(plain, cx, y)
-      cx += doc.getTextWidth(plain)
-    }
-    const styledText = m[1] !== undefined ? m[1] : m[2]
-    const style: 'bold' | 'italic' = m[1] !== undefined ? 'bold' : 'italic'
-    doc.setFont(FONT, style)
-    doc.text(styledText, cx, y)
-    cx += doc.getTextWidth(styledText)
-    last = regex.lastIndex
-  }
-  if (last < line.length) {
-    doc.setFont(FONT, baseStyle)
-    doc.text(line.slice(last), cx, y)
-  }
-  doc.setFont(FONT, baseStyle)
+  desenharLinhaRica(doc, FONT, line, x, y, baseStyle)
 }
 
 // Função para calcular dimensões proporcionais de imagem
@@ -201,83 +147,63 @@ function questoesDaProva(exam: Partial<Exam>): Question[] {
 }
 
 /**
- * A resposta comentada de UMA questão, montada com tudo o que a questão tem.
+ * Baixa TODAS as imagens da prova de uma vez — enunciado e resposta comentada.
  *
- * ## Por que não bastava `explanation`
- *
- * O PDF "com gabarito comentado" lia só `question.explanation`. Só que boa
- * parte do acervo não guarda o comentário aí: as questões geradas com feedback
- * comentado (`app/api/exams/[id]/generate-questions`) e as sorteadas do Banco
- * de Questões (`app/api/banco/questoes/random`) escrevem em
- * `commentedFeedback.explanations` — um texto POR ALTERNATIVA, que é o mais
- * rico dos dois: diz por que cada erro é erro. A tela da prova sempre mostrou
- * esse campo; o gerador de PDF, não.
- *
- * O efeito era o pior possível para quem clicava: o arquivo saía, sem erro
- * nenhum, e vinha sem uma linha de comentário — indistinguível de "esta prova
- * não tem gabarito comentado". Daí o pedido de "não consigo gerar o PDF com
- * resposta comentada": ele gerava, e não comentava nada.
- *
- * A ordem é a mesma de `montarExplicacao` (lib/banco/importar-provas.ts), que
- * já resolvia isto na importação para o banco: a explicação avulsa primeiro, o
- * comentário por alternativa depois e, nas discursivas, os pontos-chave que a
- * correção usa. O `**` sai em negrito no PDF — `drawRichLine` o interpreta.
+ * Antes só `imageUrl` era buscado, então uma segunda imagem do enunciado ou
+ * qualquer imagem do gabarito comentado chegava na hora de desenhar sem bytes
+ * nenhum e era pulada em silêncio. A deduplicação por URL continua valendo (o
+ * `Set`), e o cache de sessão de `fetchImageAsBase64` garante que a mesma
+ * imagem usada em duas questões desça uma vez só.
  */
-export function montarRespostaComentada(questao: Question): string {
-  const partes: string[] = []
-
-  const avulsa = (questao.explanation || '').trim()
-  if (avulsa) partes.push(avulsa)
-
-  const porAlternativa = questao.commentedFeedback?.explanations
-  if (porAlternativa && typeof porAlternativa === 'object') {
-    // A letra certa vem do próprio feedback quando ele a declara; senão, do
-    // gabarito da questão. Uma das duas quase sempre existe, e é ela que faz o
-    // bloco de comentários dizer qual alternativa era a boa.
-    const correta =
-      questao.commentedFeedback?.correctAlternative ||
-      (questao.alternatives || []).find((alternativa) => alternativa.isCorrect)?.letter
-    const linhas = Object.entries(porAlternativa)
-      .filter(([, texto]) => String(texto || '').trim().length > 0)
-      .sort(([a], [b]) => a.localeCompare(b))
-      .map(([letra, texto]) => {
-        const marca = correta && letra === correta ? ' (correta)' : ''
-        return `**${letra})${marca}** ${String(texto).trim()}`
-      })
-    if (linhas.length > 0) {
-      partes.push(['**Comentário por alternativa**', ...linhas].join('\n'))
-    }
-  }
-
-  // A discursiva não tem alternativa para destacar em verde: o que existe de
-  // gabarito nela são os pontos-chave, e o cabeçalho já prometia "ver
-  // gabarito/pontos-chave abaixo" sem que nada os escrevesse.
-  const pontos = Array.isArray(questao.keyPoints) ? questao.keyPoints : []
-  const pontosValidos = pontos.filter((ponto) => String(ponto?.description || '').trim().length > 0)
-  if (pontosValidos.length > 0) {
-    const linhas = pontosValidos.map((ponto) => {
-      const peso = Number(ponto.weight)
-      const rotuloDoPeso = Number.isFinite(peso) && peso > 0 ? ` (peso ${peso})` : ''
-      return `- ${String(ponto.description).trim()}${rotuloDoPeso}`
-    })
-    partes.push(['**Pontos-chave esperados**', ...linhas].join('\n'))
-  }
-
-  return partes.join('\n\n')
-}
-
-// Pre-fetch all question images for an exam (uses session cache automatically)
 async function prefetchExamImages(questions: Question[] | undefined): Promise<Map<string, ImgData>> {
   const imageMap = new Map<string, ImgData>()
+  const urls = Array.from(new Set((questions || []).flatMap((q) => urlsDaQuestao(q))))
   await Promise.all(
-    (questions || [])
-      .filter(q => q.imageUrl)
-      .map(async (q) => {
-        const result = await fetchImageAsBase64(q.imageUrl!)
-        if (result) imageMap.set(q.imageUrl!, result)
-      })
+    urls.map(async (url) => {
+      const result = await fetchImageAsBase64(url)
+      if (result) imageMap.set(url, result)
+    })
   )
   return imageMap
+}
+
+/**
+ * O desenhador de imagens deste documento.
+ *
+ * Cada gerador tem o seu `y`, o seu subtítulo de cabeçalho e a sua margem; o
+ * que é IGUAL entre eles — a conta do tamanho, a quebra de página que não
+ * separa a figura do crédito, o lado a lado — mora em
+ * `lib/pdf/imagens-de-questao.ts`. Esta fábrica só amarra os dois.
+ */
+function criarDesenhoDeImagens(
+  doc: jsPDF,
+  imageMap: Map<string, ImgData>,
+  pageWidth: number,
+  pageHeight: number,
+  margin: number,
+  logo: string | null,
+) {
+  return (
+    bloco: { imagens: ImagemDeQuestao[]; layout: LayoutDeImagens },
+    y: number,
+    subtitulo: string,
+    opcoes: { recuo?: number; alturaMaxima?: number } = {},
+  ): number => {
+    if (bloco.imagens.length === 0) return y
+    const recuo = opcoes.recuo ?? 0
+    return desenharImagensNoPdf(doc, bloco.imagens, bloco.layout, imageMap, {
+      x: margin + recuo,
+      largura: pageWidth - 2 * margin - recuo,
+      y,
+      limiteY: pageHeight - 25,
+      alturaMaxima: opcoes.alturaMaxima,
+      fonte: FONT,
+      novaPagina: () => {
+        doc.addPage()
+        return addDomineAquiHeader(doc, pageWidth, margin, subtitulo, logo)
+      },
+    })
+  }
 }
 
 // Adiciona header padrão DomineAqui (com logo se disponível)
@@ -764,6 +690,8 @@ export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
     return false
   }
 
+  const desenharImagens = criarDesenhoDeImagens(doc, imageMap, pageWidth, pageHeight, margin, logo)
+
   y = addDomineAquiHeader(doc, pageWidth, margin, 'Prova com Gabarito', logo)
 
   // Título
@@ -842,39 +770,8 @@ export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
       y += 6
     }
 
-    // Imagem
-    if (question.imageUrl) {
-      const imgData = imageMap.get(question.imageUrl)
-      if (imgData) {
-        const maxImgWidth = pageWidth - 2 * margin - 10
-        const maxImgHeight = 80
-        const ratio = Math.min(maxImgWidth / imgData.width, maxImgHeight / imgData.height, 1)
-        const imgW = imgData.width * ratio
-        const imgH = imgData.height * ratio
-        checkPage(imgH + 8)
-        try {
-          doc.addImage(imgData.dataUrl, 'PNG', margin + 5, y, imgW, imgH)
-          y += imgH + 5
-        } catch {
-          doc.setFontSize(8)
-          doc.setTextColor(150, 150, 150)
-          doc.text(`[Imagem: ${question.imageUrl}]`, margin, y)
-          y += 6
-        }
-      }
-      if (question.imageSource) {
-        checkPage(6)
-        doc.setFontSize(7)
-        doc.setFont(FONT, 'italic')
-        doc.setTextColor(120, 120, 120)
-        const srcLines = wrapText(doc, `Fonte: ${question.imageSource}`, pageWidth - 2 * margin - 10)
-        srcLines.forEach((line: string) => {
-          doc.text(line, margin + 5, y)
-          y += 4.5
-        })
-        y += 1
-      }
-    }
+    // Imagens do enunciado
+    y = desenharImagens(blocoDoEnunciado(question), y, 'Prova com Gabarito')
 
     // Comando
     if (question.command) {
@@ -1008,6 +905,17 @@ export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
       }
     }
 
+    // As imagens da resposta comentada — o fluxograma, o esquema, a lâmina que
+    // o comentário descreve. Ficam DEPOIS do texto, com o mesmo recuo da caixa
+    // verde, para não flutuarem soltas entre uma questão e a seguinte.
+    const imagensDoComentario = blocoDaResposta(question)
+    if (imagensDoComentario.imagens.length > 0) {
+      y = desenharImagens(imagensDoComentario, y + 1, 'Prova com Gabarito', {
+        recuo: 4,
+        alturaMaxima: ALTURA_MAXIMA_DA_IMAGEM * 0.8,
+      })
+    }
+
     y += 8
   })
 
@@ -1043,6 +951,8 @@ export async function generateExamPDF(exam: Exam, userId?: string): Promise<Blob
     }
     return false
   }
+
+  const desenharImagens = criarDesenhoDeImagens(doc, imageMap, pageWidth, pageHeight, margin, logo)
 
   y = addDomineAquiHeader(doc, pageWidth, margin, 'Prova', logo)
 
@@ -1186,45 +1096,8 @@ export async function generateExamPDF(exam: Exam, userId?: string): Promise<Blob
       y += 6
     }
 
-    // Imagem da questão
-    if (question.imageUrl) {
-      const imgData = imageMap.get(question.imageUrl)
-      if (imgData) {
-        const maxImgWidth = pageWidth - 2 * margin - 10
-        const maxImgHeight = 80
-        const ratio = Math.min(maxImgWidth / imgData.width, maxImgHeight / imgData.height, 1)
-        const imgW = imgData.width * ratio
-        const imgH = imgData.height * ratio
-        checkPage(imgH + 8)
-        try {
-          doc.addImage(imgData.dataUrl, 'PNG', margin + 5, y, imgW, imgH)
-          y += imgH + 5
-        } catch {
-          doc.setFontSize(8)
-          doc.setTextColor(150, 150, 150)
-          doc.text(`[Imagem: ${question.imageUrl}]`, margin, y)
-          y += 6
-        }
-      } else {
-        checkPage(8)
-        doc.setFontSize(8)
-        doc.setTextColor(150, 150, 150)
-        doc.text(`[Imagem não carregada: ${question.imageUrl.slice(0, 60)}]`, margin, y)
-        y += 6
-      }
-      if (question.imageSource) {
-        checkPage(6)
-        doc.setFontSize(7)
-        doc.setFont(FONT, 'italic')
-        doc.setTextColor(120, 120, 120)
-        const srcLines = wrapText(doc, `Fonte: ${question.imageSource}`, pageWidth - 2 * margin - 10)
-        srcLines.forEach((line: string) => {
-          doc.text(line, margin + 5, y)
-          y += 4.5
-        })
-        y += 1
-      }
-    }
+    // Imagens do enunciado
+    y = desenharImagens(blocoDoEnunciado(question), y, 'Prova')
 
     // Comando
     if (question.command) {
@@ -1333,6 +1206,8 @@ export async function generateStudentAnswersPDF(exam: Exam, answers: UserAnswer[
     return false
   }
 
+  const desenharImagens = criarDesenhoDeImagens(doc, imageMap, pageWidth, pageHeight, margin, logo)
+
   y = addDomineAquiHeader(doc, pageWidth, margin, 'Relatório de Respostas', logo)
 
   // === TÍTULO DA PROVA ===
@@ -1397,28 +1272,8 @@ export async function generateStudentAnswersPDF(exam: Exam, answers: UserAnswer[
       y += 6
     }
 
-    // Imagem da questão
-    if (question.imageUrl) {
-      const imgData = imageMap.get(question.imageUrl)
-      if (imgData) {
-        const maxW = pageWidth - 2 * margin - 10
-        const maxH = 75
-        const ratio = Math.min(maxW / imgData.width, maxH / imgData.height, 1)
-        const imgW = imgData.width * ratio
-        const imgH = imgData.height * ratio
-        checkPage(imgH + 8)
-        try {
-          doc.addImage(imgData.dataUrl, 'PNG', margin + 5, y, imgW, imgH)
-          y += imgH + 4
-        } catch { /* skip */ }
-      }
-      if (question.imageSource) {
-        doc.setFontSize(7)
-        doc.setTextColor(120, 120, 120)
-        doc.text(`Fonte imagem: ${question.imageSource}`, margin + 5, y)
-        y += 5
-      }
-    }
+    // Imagens do enunciado
+    y = desenharImagens(blocoDoEnunciado(question), y, 'Relatório de Respostas')
 
     if (question.command) {
       checkPage(12)
@@ -2268,6 +2123,11 @@ interface BancoQuestaoPDF {
   enunciado: string
   alternativas?: BancoAlternativaPDF[]
   imagemUrl?: string
+  /** Ver `lib/questoes/imagens.ts`; `imagemUrl` continua valendo sozinho. */
+  imagens?: ImagemDeQuestao[]
+  layoutImagens?: LayoutDeImagens
+  imagensExplicacao?: ImagemDeQuestao[]
+  layoutImagensExplicacao?: LayoutDeImagens
   explicacao?: string
   respostaModelo?: string
   dificuldade?: string
@@ -2296,15 +2156,23 @@ export async function generateBancoListaPDF(
   await registerFonts(doc)
   const logo = await loadLogo()
 
-  // Pré-carregar imagens das questões (mesma cache de sessão das provas)
+  // Pré-carregar imagens das questões (mesma cache de sessão das provas).
+  // Enunciado e explicação juntos: uma imagem que só aparece no comentário
+  // também precisa dos bytes antes da hora de desenhar.
   const imageMap = new Map<string, ImgData>()
+  const urlsDasQuestoes = Array.from(
+    new Set(
+      questoes.flatMap((q) => [
+        ...blocoDaQuestaoDoBanco(q).imagens.map((i) => i.url),
+        ...imagensDaExplicacaoDoBanco(q).map((i) => i.url),
+      ]),
+    ),
+  )
   await Promise.all(
-    questoes
-      .filter(q => q.imagemUrl)
-      .map(async (q) => {
-        const result = await fetchImageAsBase64(q.imagemUrl!)
-        if (result) imageMap.set(q.imagemUrl!, result)
-      })
+    urlsDasQuestoes.map(async (url) => {
+      const result = await fetchImageAsBase64(url)
+      if (result) imageMap.set(url, result)
+    })
   )
 
   const pageWidth = doc.internal.pageSize.getWidth()
@@ -2322,6 +2190,8 @@ export async function generateBancoListaPDF(
     }
     return false
   }
+
+  const desenharImagens = criarDesenhoDeImagens(doc, imageMap, pageWidth, pageHeight, margin, logo)
 
   y = addDomineAquiHeader(doc, pageWidth, margin, subtitle, logo)
 
@@ -2412,27 +2282,8 @@ export async function generateBancoListaPDF(
       y += 2
     }
 
-    // Imagem
-    if (questao.imagemUrl) {
-      const imgData = imageMap.get(questao.imagemUrl)
-      if (imgData) {
-        const maxImgWidth = pageWidth - 2 * margin - 10
-        const maxImgHeight = 80
-        const ratio = Math.min(maxImgWidth / imgData.width, maxImgHeight / imgData.height, 1)
-        const imgW = imgData.width * ratio
-        const imgH = imgData.height * ratio
-        checkPage(imgH + 8)
-        try {
-          doc.addImage(imgData.dataUrl, 'PNG', margin + 5, y, imgW, imgH)
-          y += imgH + 5
-        } catch {
-          doc.setFontSize(8)
-          doc.setTextColor(150, 150, 150)
-          doc.text('[Imagem não disponível]', margin, y)
-          y += 6
-        }
-      }
-    }
+    // Imagens do enunciado
+    y = desenharImagens(blocoDaQuestaoDoBanco(questao), y, subtitle)
 
     // Alternativas (objetiva)
     if (questao.tipo === 'objetiva' && questao.alternativas) {
@@ -2542,6 +2393,16 @@ export async function generateBancoListaPDF(
         y += 6
       })
       y += 3
+    }
+
+    // Imagens da resposta comentada
+    if (incluirRespostas) {
+      y = desenharImagens(
+        { imagens: imagensDaExplicacaoDoBanco(questao), layout: layoutDaExplicacaoDoBanco(questao) },
+        y,
+        subtitle,
+        { recuo: 4, alturaMaxima: ALTURA_MAXIMA_DA_IMAGEM * 0.8 },
+      )
     }
 
     // Fonte

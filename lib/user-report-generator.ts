@@ -19,6 +19,11 @@ import {
 } from './pdf/marca'
 import { carregarImagens, type ImagemParaPdf } from './pdf/imagens'
 import { fatiarCaixaEmPaginas } from './pdf/paginacao'
+import { desenharLinhaRica, quebrarTexto } from './pdf/texto'
+import { ALTURA_MAXIMA_DA_IMAGEM, desenharImagensNoPdf } from './pdf/imagens-de-questao'
+import { blocoDaResposta, blocoDoEnunciado, urlsDaQuestao } from './questoes/imagens-da-questao'
+import type { ImagemDeQuestao, LayoutDeImagens } from './questoes/imagens'
+import { montarRespostaComentada } from './provas/resposta-comentada'
 
 interface UserReportData {
   exam: Exam
@@ -56,8 +61,9 @@ let FONT = 'helvetica'
 // vai-e-volta por <img>/<canvas> no projeto.
 type ImgData = ImagemParaPdf
 
-async function prefetchImages(questions: { imageUrl?: string }[]): Promise<Map<string, ImgData>> {
-  return carregarImagens(questions.map((q) => q.imageUrl))
+/** Enunciado e resposta comentada — ver `lib/questoes/imagens.ts`. */
+async function prefetchImages(questions: Exam['questions'] | undefined): Promise<Map<string, ImgData>> {
+  return carregarImagens((questions || []).flatMap((q) => urlsDaQuestao(q)))
 }
 
 // Helper: replace \nl and \n with newlines
@@ -68,32 +74,50 @@ function cleanText(text: string): string {
   return sanitizarParaPdf(text?.replace(/\\nl/g, '\n').replace(/\\n/g, '\n') || '')
 }
 
-// Custom text wrapping
-function wrapText(doc: jsPDF, text: string, maxWidth: number): string[] {
-  if (!text) return []
-  const cleaned = cleanText(text)
-  const paragraphs = cleaned.split(/\n/)
-  const allLines: string[] = []
+// A quebra passou a ser a MESMA dos PDFs de /provas (lib/pdf/texto.ts): a cópia
+// daqui media o `**` que não é desenhado, e o parágrafo quebrava antes da hora.
+const wrapText = quebrarTexto
 
-  for (const paragraph of paragraphs) {
-    if (paragraph.trim() === '') {
-      allLines.push('')
-      continue
-    }
-    const words = paragraph.split(' ')
-    let currentLine = ''
-    for (const word of words) {
-      const testLine = currentLine ? currentLine + ' ' + word : word
-      if (doc.getTextWidth(testLine) > maxWidth && currentLine) {
-        allLines.push(currentLine)
-        currentLine = word
-      } else {
-        currentLine = testLine
-      }
-    }
-    if (currentLine) allLines.push(currentLine)
+/**
+ * O desenhador de imagens deste relatório.
+ *
+ * Mesma conta de tamanho, mesma quebra de página e mesmo lado a lado dos PDFs
+ * de /provas — ver `lib/pdf/imagens-de-questao.ts`.
+ */
+function criarDesenhoDeImagens(
+  doc: jsPDF,
+  imageMap: Map<string, ImgData>,
+  pageWidth: number,
+  pageHeight: number,
+  margin: number,
+  logo: string | null,
+  subtitulo: string,
+) {
+  return (
+    bloco: { imagens: ImagemDeQuestao[]; layout: LayoutDeImagens },
+    y: number,
+    opcoes: { recuo?: number; alturaMaxima?: number } = {},
+  ): number => {
+    if (bloco.imagens.length === 0) return y
+    const recuo = opcoes.recuo ?? 0
+    return desenharImagensNoPdf(doc, bloco.imagens, bloco.layout, imageMap, {
+      x: margin + recuo,
+      largura: pageWidth - 2 * margin - recuo,
+      y,
+      limiteY: pageHeight - 25,
+      alturaMaxima: opcoes.alturaMaxima,
+      fonte: FONT,
+      novaPagina: () => {
+        doc.addPage()
+        return addHeader(doc, pageWidth, margin, subtitulo, logo)
+      },
+    })
   }
-  return allLines
+}
+
+/** Uma linha com `**negrito**` e `*itálico*`, como nos PDFs de /provas. */
+function desenharLinha(doc: jsPDF, line: string, x: number, y: number, estilo: 'normal' | 'bold' | 'italic' = 'normal'): void {
+  desenharLinhaRica(doc, FONT, line, x, y, estilo)
 }
 
 /**
@@ -157,6 +181,8 @@ export async function generateUserReportPDF(data: UserReportData): Promise<Blob>
     }
     return false
   }
+
+  const desenharImagens = criarDesenhoDeImagens(doc, imageMap, pageWidth, pageHeight, margin, logo, 'Relatório de Prova')
 
   // === CABEÇALHO ===
   y = addHeader(doc, pageWidth, margin, 'Relatório de Prova', logo)
@@ -272,11 +298,16 @@ export async function generateUserReportPDF(data: UserReportData): Promise<Blob>
       const lines = wrapText(doc, question.statement, pageWidth - 2 * margin)
       lines.forEach(line => {
         checkPage(7)
-        doc.text(line, margin, y)
+        desenharLinha(doc, line, margin, y)
         y += 5.5
       })
       y += 3
     }
+
+    // Imagens do enunciado. Este relatório era o único que as omitia por
+    // completo: o aluno recebia o enunciado de uma questão de imagem sem a
+    // imagem, e a pergunta ficava sem sentido no papel.
+    y = desenharImagens(blocoDoEnunciado(question), y)
 
     // Comando
     if (question.command) {
@@ -287,7 +318,7 @@ export async function generateUserReportPDF(data: UserReportData): Promise<Blob>
       const cmdLines = wrapText(doc, question.command, pageWidth - 2 * margin)
       cmdLines.forEach(line => {
         checkPage(7)
-        doc.text(line, margin, y)
+        desenharLinha(doc, line, margin, y, 'bold')
         y += 5.5
       })
       y += 3
@@ -301,16 +332,26 @@ export async function generateUserReportPDF(data: UserReportData): Promise<Blob>
       y += 2
 
       ;(question.alternatives || []).forEach(alt => {
-        checkPage(12)
         const isSelected = alt.id === answer?.selectedAlternative
+
+        // A fonte entra ANTES da quebra: `wrapText` mede com a fonte ativa, e a
+        // marcada sai em negrito — medir em regular dava uma linha a mais de
+        // texto do que cabia na largura.
+        doc.setFontSize(10)
+        doc.setFont(FONT, isSelected ? 'bold' : 'normal')
+
+        const altText = `${alt.letter}) ${cleanText(alt.text)}`
+        const altLines = wrapText(doc, altText, pageWidth - 2 * margin - 16)
+        // A tarja tinha 7mm fixos: numa alternativa de duas linhas, a segunda
+        // ficava para fora do laranja. Agora ela acompanha o texto.
+        const alturaDaTarja = altLines.length * 5.5 + 2.5
+        checkPage(alturaDaTarja + 4)
 
         if (isSelected) {
           doc.setFillColor(...LARANJA_CLARO)
-          doc.roundedRect(margin + 2, y - 4, pageWidth - 2 * margin - 4, 7, 1, 1, 'F')
-          doc.setFont(FONT, 'bold')
+          doc.roundedRect(margin + 2, y - 4, pageWidth - 2 * margin - 4, alturaDaTarja, 1.5, 1.5, 'F')
           doc.setTextColor(...VERDE_ESCURO)
         } else {
-          doc.setFont(FONT, 'normal')
           doc.setTextColor(...CINZA_TEXTO)
         }
 
@@ -323,14 +364,16 @@ export async function generateUserReportPDF(data: UserReportData): Promise<Blob>
           doc.roundedRect(margin + 4, y - 3.5, 4.5, 4.5, 1, 1, 'F')
         }
 
-        const altText = `${alt.letter}) ${cleanText(alt.text)}`
-        const altLines = wrapText(doc, altText, pageWidth - 2 * margin - 16)
         altLines.forEach((line, li) => {
-          if (li > 0) checkPage(6)
-          doc.text(line, margin + 12, y)
+          if (li > 0) {
+            doc.setFontSize(10)
+            doc.setFont(FONT, isSelected ? 'bold' : 'normal')
+            doc.setTextColor(isSelected ? VERDE_ESCURO[0] : CINZA_TEXTO[0], isSelected ? VERDE_ESCURO[1] : CINZA_TEXTO[1], isSelected ? VERDE_ESCURO[2] : CINZA_TEXTO[2])
+          }
+          desenharLinha(doc, line, margin + 12, y, isSelected ? 'bold' : 'normal')
           y += 5.5
         })
-        y += 2
+        y += 2.5
       })
 
       // Marcada
@@ -483,6 +526,8 @@ async function generateUserReportWithGabaritoPDFBlob(data: UserReportData): Prom
     return false
   }
 
+  const desenharImagens = criarDesenhoDeImagens(doc, imageMap, pageWidth, pageHeight, margin, logo, 'Relatório com Gabarito')
+
   // === CABEÇALHO ===
   y = addHeader(doc, pageWidth, margin, 'Relatório com Gabarito', logo)
   // O cabeçalho tem altura fixa: toda página nova recomeça daqui.
@@ -590,28 +635,8 @@ async function generateUserReportWithGabaritoPDFBlob(data: UserReportData): Prom
       y += 3
     }
 
-    // Imagem da questão
-    if (question.imageUrl) {
-      const imgData = imageMap.get(question.imageUrl)
-      if (imgData) {
-        const maxW = pageWidth - 2 * margin - 10
-        const maxH = 75
-        const ratio = Math.min(maxW / imgData.width, maxH / imgData.height, 1)
-        const imgW = imgData.width * ratio
-        const imgH = imgData.height * ratio
-        checkPage(imgH + 8)
-        try {
-          doc.addImage(imgData.dataUrl, 'PNG', margin + 5, y, imgW, imgH)
-          y += imgH + 4
-        } catch { /* skip */ }
-      }
-      if (question.imageSource) {
-        doc.setFontSize(7)
-        doc.setTextColor(120, 120, 120)
-        doc.text(`Fonte: ${question.imageSource}`, margin + 5, y)
-        y += 5
-      }
-    }
+    // Imagens do enunciado
+    y = desenharImagens(blocoDoEnunciado(question), y)
 
     // Comando
     if (question.command) {
@@ -746,13 +771,19 @@ async function generateUserReportWithGabaritoPDFBlob(data: UserReportData): Prom
      * que ela mandar. O título só sai no primeiro lote, e os seguintes entram
      * com um respiro menor no topo, para se lerem como continuação.
      */
-    if (question.explanation) {
+    // `montarRespostaComentada` e não `question.explanation`: nas provas cujo
+    // comentário está por alternativa (as geradas com feedback e as sorteadas
+    // do Banco), o campo avulso é vazio, e este relatório entregava ao aluno
+    // uma caixa "RESPOSTA COMENTADA" em branco. É a mesma montagem do PDF de
+    // gabarito comentado de /provas.
+    const respostaComentada = montarRespostaComentada(question)
+    if (respostaComentada) {
       // A fonte é definida ANTES do `wrapText`: ele mede com a fonte ativa, e
       // medir em corpo 10 o texto que sai em 9 dá uma quebra que não é a que
       // vai para o papel.
       doc.setFontSize(9)
       doc.setFont(FONT, 'normal')
-      const expLines = wrapText(doc, question.explanation, pageWidth - 2 * margin - 12)
+      const expLines = wrapText(doc, respostaComentada, pageWidth - 2 * margin - 12)
 
       if (expLines.length > 0) {
         y += 3
@@ -800,7 +831,7 @@ async function generateUserReportWithGabaritoPDFBlob(data: UserReportData): Prom
           doc.setFont(FONT, 'normal')
           doc.setTextColor(...CINZA_TEXTO)
           for (const line of expLines.slice(lote.inicio, lote.inicio + lote.linhas)) {
-            doc.text(line, margin + 5, y)
+            desenharLinha(doc, line, margin + 5, y)
             y += alturaDaLinha
           }
 
@@ -810,6 +841,12 @@ async function generateUserReportWithGabaritoPDFBlob(data: UserReportData): Prom
         y += 5
       }
     }
+
+    // As imagens da resposta comentada, logo depois da caixa amarela.
+    y = desenharImagens(blocoDaResposta(question), y, {
+      recuo: 4,
+      alturaMaxima: ALTURA_MAXIMA_DA_IMAGEM * 0.8,
+    })
 
     y += 8
   })

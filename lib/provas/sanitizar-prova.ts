@@ -51,6 +51,11 @@ export function sanitizarQuestaoParaAluno(questao: Question): QuestaoSanitizada 
     explanation: _explanation,
     commentedFeedback: _commentedFeedback,
     keyPoints: _keyPoints,
+    // As imagens da resposta comentada são resposta comentada: um fluxograma
+    // com a via correta circulada entrega o gabarito tão bem quanto o texto, e
+    // o endereço delas viajava no mesmo JSON.
+    explanationImages: _explanationImages,
+    explanationImagesLayout: _explanationImagesLayout,
     ...resto
   } = questao
 

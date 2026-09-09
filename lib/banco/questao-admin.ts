@@ -24,6 +24,13 @@ import type {
   BancoDificuldade,
   BancoQuestaoTipo,
 } from '@/lib/types/banco-questoes'
+import {
+  type ImagemDeQuestao,
+  type LayoutDeImagens,
+  layoutDeImagens,
+  normalizarImagens,
+  sincronizarCampoLegado,
+} from '@/lib/questoes/imagens'
 
 /** As letras possíveis, na ordem. O índice na lista É a letra da alternativa. */
 export const LETRAS: BancoAlternativaLetra[] = ['A', 'B', 'C', 'D', 'E']
@@ -52,7 +59,21 @@ export interface DadosDaQuestao {
   subtopicoId: string | null
   enunciado: string
   explicacao: string | null
+  /**
+   * A primeira imagem do enunciado, repetida aqui.
+   *
+   * Continua existindo — e continua sendo gravada — porque metade da
+   * plataforma lê este campo e não a lista: o cartão da listagem do admin, os
+   * importadores, as telas que ainda não passaram por aqui. Quem grava não o
+   * escreve à mão: ele sai de `imagens[0]` (ver `lib/questoes/imagens.ts`).
+   */
   imagemUrl: string | null
+  /** Todas as imagens do enunciado, na ordem, com tamanho e crédito. */
+  imagens: ImagemDeQuestao[]
+  layoutImagens: LayoutDeImagens
+  /** As imagens que acompanham a explicação (resposta comentada). */
+  imagensExplicacao: ImagemDeQuestao[]
+  layoutImagensExplicacao: LayoutDeImagens
   alternativas: BancoAlternativa[] | null
   respostaModelo: string | null
   dificuldade: BancoDificuldade | null
@@ -132,6 +153,20 @@ function lerTags(valor: unknown): string[] {
   return Array.from(vistas)
 }
 
+/**
+ * As imagens do enunciado de um documento do banco.
+ *
+ * `reunirImagens` não é importado direto para que a leitura tolere um
+ * `imagemUrl` que a validação de hoje recusaria (um caminho relativo sem
+ * barra, gravado por um importador antigo): o campo continua onde está, e a
+ * lista só nasce dele quando ele é de fato uma imagem buscável.
+ */
+function reunirImagensDoDocumento(doc: Record<string, any>): ImagemDeQuestao[] {
+  const daLista = normalizarImagens(doc?.imagens)
+  if (daLista.length > 0) return daLista
+  return normalizarImagens(doc?.imagemUrl)
+}
+
 /** O estado inicial de uma questão nova — o mesmo do formulário. */
 export function questaoVazia(): DadosDaQuestao {
   return {
@@ -142,6 +177,10 @@ export function questaoVazia(): DadosDaQuestao {
     enunciado: '',
     explicacao: null,
     imagemUrl: null,
+    imagens: [],
+    layoutImagens: 'empilhado',
+    imagensExplicacao: [],
+    layoutImagensExplicacao: 'empilhado',
     alternativas: normalizarAlternativas([{}, {}, {}, {}]),
     respostaModelo: null,
     dificuldade: null,
@@ -173,6 +212,12 @@ export function questaoDoBanco(doc: Record<string, any>): DadosDaQuestao {
     enunciado: texto(doc?.enunciado),
     explicacao: textoOuNulo(doc?.explicacao),
     imagemUrl: textoOuNulo(doc?.imagemUrl),
+    // A lista manda quando existe; a questão antiga, que só tem `imagemUrl`,
+    // entra como lista de um item. Ver `reunirImagens`.
+    imagens: reunirImagensDoDocumento(doc),
+    layoutImagens: layoutDeImagens(doc?.layoutImagens),
+    imagensExplicacao: normalizarImagens(doc?.imagensExplicacao),
+    layoutImagensExplicacao: layoutDeImagens(doc?.layoutImagensExplicacao),
     alternativas: Array.isArray(doc?.alternativas) ? normalizarAlternativas(doc.alternativas) : null,
     respostaModelo: textoOuNulo(doc?.respostaModelo),
     dificuldade: DIFICULDADES.includes(doc?.dificuldade) ? doc.dificuldade : null,
@@ -234,6 +279,33 @@ export function lerQuestao(bruto: any, anterior?: DadosDaQuestao): LeituraDaQues
       return { ok: false, erro: 'A imagem precisa ser um endereço http(s) ou um caminho do site', campo: 'imagemUrl' }
     }
     imagemUrl = lida
+  }
+
+  /*
+   * As listas de imagens.
+   *
+   * A validação é a mesma do formato compartilhado (`normalizarImagens`): o que
+   * não for imagem buscável cai fora em silêncio, em vez de derrubar a gravação
+   * inteira — diferente do campo único, que é digitado um a um e onde o erro é
+   * do dedo. Aqui a lista costuma vir de colagem e de upload, e recusar a
+   * questão toda por causa de uma URL quebrada seria perder o resto do trabalho.
+   *
+   * Quem manda a lista manda também o campo antigo: `imagemUrl` passa a ser a
+   * primeira imagem dela, sempre.
+   */
+  let imagens = base.imagens
+  let layoutImagens = base.layoutImagens
+  if (veio('imagens')) {
+    imagens = normalizarImagens(bruto.imagens)
+    imagemUrl = sincronizarCampoLegado(imagens)
+  }
+  if (veio('layoutImagens')) layoutImagens = layoutDeImagens(bruto.layoutImagens)
+
+  let imagensExplicacao = base.imagensExplicacao
+  let layoutImagensExplicacao = base.layoutImagensExplicacao
+  if (veio('imagensExplicacao')) imagensExplicacao = normalizarImagens(bruto.imagensExplicacao)
+  if (veio('layoutImagensExplicacao')) {
+    layoutImagensExplicacao = layoutDeImagens(bruto.layoutImagensExplicacao)
   }
 
   let dificuldade: BancoDificuldade | null = base.dificuldade
@@ -317,6 +389,10 @@ export function lerQuestao(bruto: any, anterior?: DadosDaQuestao): LeituraDaQues
       enunciado,
       explicacao: veio('explicacao') ? textoOuNulo(bruto.explicacao) : base.explicacao,
       imagemUrl,
+      imagens,
+      layoutImagens,
+      imagensExplicacao,
+      layoutImagensExplicacao,
       alternativas,
       respostaModelo,
       dificuldade,

@@ -5,6 +5,14 @@ import { getSession } from '@/lib/auth'
 import type { Exam, ExamSubmission } from '@/lib/types'
 import { resolverJanelaDaProva } from '@/lib/provas/janela-da-prova'
 import { normalizarPublico, rotuloDoPublico } from '@/lib/provas/publico-da-prova'
+import { montarRespostaComentada } from '@/lib/provas/resposta-comentada'
+import type { ImagemDeQuestao, LayoutDeImagens } from '@/lib/questoes/imagens'
+import {
+  imagensDaResposta,
+  imagensDoEnunciado,
+  layoutDaResposta,
+  layoutDoEnunciado,
+} from '@/lib/questoes/imagens-da-questao'
 import { COLECAO_DE_PROGRESSO } from '@/lib/provas/retomada'
 import {
   EXAM_ATTEMPTS_COLLECTION,
@@ -58,6 +66,11 @@ interface EstatisticaDeQuestao {
   comando: string | null
   imageUrl: string | null
   imageSource: string | null
+  /** Todas as imagens do enunciado — ver `lib/questoes/imagens.ts`. */
+  imagens: ImagemDeQuestao[]
+  layoutImagens: LayoutDeImagens
+  imagensDaResposta: ImagemDeQuestao[]
+  layoutImagensDaResposta: LayoutDeImagens
   respostaComentada: string | null
   respondidas: number
   acertos: number
@@ -178,7 +191,11 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
           comando: questao.command || null,
           imageUrl: questao.imageUrl || null,
           imageSource: (questao as any).imageSource || null,
-          respostaComentada: (questao as any).explanation || null,
+          imagens: imagensDoEnunciado(questao),
+          layoutImagens: layoutDoEnunciado(questao),
+          imagensDaResposta: imagensDaResposta(questao),
+          layoutImagensDaResposta: layoutDaResposta(questao),
+          respostaComentada: montarRespostaComentada(questao) || null,
           respondidas,
           acertos: 0,
           percentualDeAcerto: null,
@@ -208,7 +225,11 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         comando: questao.command || null,
         imageUrl: questao.imageUrl || null,
         imageSource: (questao as any).imageSource || null,
-        respostaComentada: (questao as any).explanation || null,
+        imagens: imagensDoEnunciado(questao),
+        layoutImagens: layoutDoEnunciado(questao),
+        imagensDaResposta: imagensDaResposta(questao),
+        layoutImagensDaResposta: layoutDaResposta(questao),
+        respostaComentada: montarRespostaComentada(questao) || null,
         respondidas,
         acertos,
         // Sobre quem RESPONDEU, não sobre quem entregou: uma questão respondida

@@ -1,3 +1,5 @@
+import type { ImagemDeQuestao, LayoutDeImagens } from '@/lib/questoes/imagens'
+
 export type ScoringMethod = 'normal' | 'tri' | 'discursive'
 export type QuestionType = 'multiple-choice' | 'discursive' | 'essay'
 export type AlternativeType = 'standard' | 'multiple-affirmative' | 'comparison' | 'assertion-reason' | 'mixed'
@@ -66,6 +68,20 @@ export interface Question {
   statementSource?: string
   imageUrl?: string
   imageSource?: string
+  /**
+   * As imagens do enunciado, quantas forem — ver `lib/questoes/imagens.ts`.
+   *
+   * `imageUrl`/`imageSource` continuam existindo e continuam sendo gravados com
+   * a PRIMEIRA imagem desta lista: é o que mantém certa toda tela e todo PDF
+   * que ainda não conhece a lista. Questão antiga não tem este campo, e a
+   * leitura (`imagensDoEnunciado`) devolve a imagem única como lista de um.
+   */
+  images?: ImagemDeQuestao[]
+  /** Uma embaixo da outra (padrão) ou uma do lado da outra. */
+  imagesLayout?: LayoutDeImagens
+  /** As imagens que acompanham a resposta comentada. */
+  explanationImages?: ImagemDeQuestao[]
+  explanationImagesLayout?: LayoutDeImagens
   command: string
   timePerQuestionSeconds?: number // Tempo máximo em segundos para responder esta questão (opcional)
   explanation?: string // Resposta comentada (para provas pessoais)

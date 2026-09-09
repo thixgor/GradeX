@@ -1,3 +1,4 @@
+import type { ImagemDeQuestao, LayoutDeImagens } from '@/lib/questoes/imagens'
 import { ObjectId } from 'mongodb'
 
 // ============================================
@@ -79,6 +80,17 @@ export interface BancoQuestao {
 
   // Imagens (URLs do imgur ou upload)
   imagemUrl?: string           // URL da imagem principal (imgur ou upload)
+  /**
+   * As imagens do enunciado, quantas forem — ver `lib/questoes/imagens.ts`.
+   *
+   * `imagemUrl` continua gravado com a PRIMEIRA imagem desta lista, para que
+   * toda tela que ainda lê só o campo antigo continue mostrando a questão.
+   */
+  imagens?: ImagemDeQuestao[]
+  layoutImagens?: LayoutDeImagens
+  /** As imagens que acompanham a explicação (resposta comentada). */
+  imagensExplicacao?: ImagemDeQuestao[]
+  layoutImagensExplicacao?: LayoutDeImagens
   imagensAlternativas?: {      // Imagens por alternativa
     letra: BancoAlternativaLetra
     url: string

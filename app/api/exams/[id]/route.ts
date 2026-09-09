@@ -13,6 +13,7 @@ import { jaEntrouNaProva, janelaMudou, limparEntradasDaProva } from '@/lib/prova
 import { normalizarPublico } from '@/lib/provas/publico-da-prova'
 import { normalizarEsperas, normalizarLiberacoes } from '@/lib/provas/downloads-da-prova'
 import { normalizarTravas } from '@/lib/provas/anti-cola'
+import { normalizarImagensDasQuestoes } from '@/lib/provas/normalizar-imagens'
 
 export const dynamic = 'force-dynamic'
 
@@ -308,12 +309,15 @@ export async function PUT(
         ? camposEnviados.isPracticeExam
         : exam.isPracticeExam
 
-    // Corrigir numeração das questões (começar em 1, não 0)
+    // Corrigir numeração das questões (começar em 1, não 0) e arrumar as
+    // imagens: endereço que não é imagem fora, tamanho fora da escala preso nos
+    // limites, e `imageUrl` acompanhando a primeira imagem da lista. Ver
+    // `lib/provas/normalizar-imagens.ts` — questão sem lista de imagens passa
+    // intacta.
     if (camposEnviados.questions && Array.isArray(camposEnviados.questions)) {
-      camposEnviados.questions = camposEnviados.questions.map((q: any, index: number) => ({
-        ...q,
-        number: index + 1
-      }))
+      camposEnviados.questions = normalizarImagensDasQuestoes(camposEnviados.questions).map(
+        (q: any, index: number) => ({ ...q, number: index + 1 }),
+      )
     }
 
     // As datas e o bloco de proctoring são derivados, não copiados: eles entram

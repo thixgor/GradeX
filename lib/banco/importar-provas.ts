@@ -1,4 +1,11 @@
 import { paraCodigo } from '@/lib/banco/hierarquia'
+import { type ImagemDeQuestao, type LayoutDeImagens, sincronizarCampoLegado } from '@/lib/questoes/imagens'
+import {
+  imagensDaResposta,
+  imagensDoEnunciado,
+  layoutDaResposta,
+  layoutDoEnunciado,
+} from '@/lib/questoes/imagens-da-questao'
 import {
   formatarPeriodoLetivo,
   lerAnoDoTitulo,
@@ -53,6 +60,11 @@ export interface QuestaoDaProva {
   statement?: string
   command?: string
   imageUrl?: string
+  imageSource?: string
+  images?: unknown
+  imagesLayout?: unknown
+  explanationImages?: unknown
+  explanationImagesLayout?: unknown
   explanation?: string
   commentedFeedback?: {
     correctAlternative?: string
@@ -84,6 +96,11 @@ export interface QuestaoImportada {
   respostaModelo?: string
   explicacao?: string
   imagemUrl?: string
+  /** Todas as imagens do enunciado — ver `lib/questoes/imagens.ts`. */
+  imagens?: ImagemDeQuestao[]
+  layoutImagens?: LayoutDeImagens
+  imagensExplicacao?: ImagemDeQuestao[]
+  layoutImagensExplicacao?: LayoutDeImagens
   fonte: string
   ano?: number
   /** 1 ou 2, quando o título da prova diz o semestre. */
@@ -250,7 +267,13 @@ export function mapearProvas(
         subtopicoNome: prova.title,
         enunciado,
         explicacao: montarExplicacao(questao),
-        imagemUrl: questao.imageUrl || undefined,
+        // As imagens inteiras, e não só a primeira: uma questão de duas lâminas
+        // entrava no Banco com uma, e as imagens do comentário não entravam.
+        imagemUrl: sincronizarCampoLegado(imagensDoEnunciado(questao)) || undefined,
+        imagens: imagensDoEnunciado(questao),
+        layoutImagens: layoutDoEnunciado(questao),
+        imagensExplicacao: imagensDaResposta(questao),
+        layoutImagensExplicacao: layoutDaResposta(questao),
         fonte: prova.title,
         ano: quando.ano,
         semestre: quando.semestre,

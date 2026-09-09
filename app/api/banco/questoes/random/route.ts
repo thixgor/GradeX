@@ -4,6 +4,7 @@ import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { isValidObjectId } from '@/lib/api-security'
 import { lerAcessoAoBanco } from '@/lib/banco/acesso-servidor'
+import { imagensDoBancoParaQuestao } from '@/lib/provas/importar-do-banco'
 
 export const dynamic = 'force-dynamic'
 
@@ -228,8 +229,13 @@ export async function GET(request: NextRequest) {
         statement: q.enunciado || '',
         statementSource: q.fonte || (sourceInfo ? `Banco de Questões — ${sourceInfo}` : 'Banco de Questões'),
         command: isObjetiva ? '' : (q.comando || ''),
-        imageUrl: q.imagemUrl || undefined,
-        imageSource: q.fonteImagem || undefined,
+        // A questão sorteada leva as imagens inteiras — a lista do enunciado, o
+        // arranjo, o tamanho e as imagens do comentário. Antes só `imagemUrl`
+        // atravessava, e a prova pessoal nascia com uma imagem de três.
+        ...imagensDoBancoParaQuestao(q),
+        // `fonteImagem` é um campo do Banco que a lista de imagens não carrega:
+        // ele continua mandando quando existe.
+        ...(q.fonteImagem ? { imageSource: q.fonteImagem } : {}),
         alternatives,
         alternativeImages: Object.keys(alternativeImages).length > 0 ? alternativeImages : undefined,
         explanation: q.explicacao || (isObjetiva ? '' : (q.respostaModelo || '')),

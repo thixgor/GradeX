@@ -12,12 +12,15 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { FileUpload } from '@/components/file-upload'
+import { ImagensDaQuestaoNoAdmin } from '@/components/admin/provas/imagens-da-questao'
+import { PreviaDaProva } from '@/components/admin/provas/previa-da-prova'
+import { imagensDoBancoParaQuestao } from '@/lib/provas/importar-do-banco'
 import { TxtImportUnified } from '@/components/txt-import-unified'
 import { AIQuestionGenerator } from '@/components/ai-question-generator'
 import { Question, Alternative, ScoringMethod, QuestionType, KeyPoint, EssayStyle, CorrectionMethod, AlternativeType } from '@/lib/types'
 import { generateRandomTRIParameters } from '@/lib/tri-calculator'
 import { v4 as uuidv4 } from 'uuid'
-import { ArrowLeft, Plus, Trash2, Shuffle, Save, ArrowUp, ArrowDown, Search, Database, Loader2 } from 'lucide-react'
+import { ArrowLeft, Plus, Trash2, Shuffle, Save, ArrowUp, ArrowDown, Search, Database, Loader2, Eye } from 'lucide-react'
 import { PainelDeAplicacao } from '@/components/admin/provas/painel-de-aplicacao'
 import { ESPERAS_PADRAO, LIBERACOES_PADRAO, type EsperasDeDownload, type LiberacoesDeDownload } from '@/lib/provas/downloads-da-prova'
 import { type PublicoDaProva } from '@/lib/provas/publico-da-prova'
@@ -28,6 +31,9 @@ export default function CreateExamPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [currentStep, setCurrentStep] = useState(1)
+  // A prévia começa fechada: ela monta a prova inteira, e numa prova de 60
+  // questões isso é trabalho que quem só quer trocar uma vírgula não pediu.
+  const [mostrarPrevia, setMostrarPrevia] = useState(false)
 
   const [examData, setExamData] = useState({
     title: '',
@@ -179,8 +185,10 @@ export default function CreateExamPage() {
           type: 'multiple-choice',
           statement: bq.enunciado || '',
           statementSource: bq.fonte || '',
-          imageUrl: bq.imagemUrl || '',
-          imageSource: '',
+          // As imagens vêm inteiras do Banco — a lista, o arranjo e o tamanho de
+          // cada uma. Antes só a primeira atravessava (`imagemUrl`), e uma
+          // questão de duas lâminas entrava na prova com uma.
+          ...imagensDoBancoParaQuestao(bq),
           command: 'Assinale a alternativa correta:',
           alternatives,
           explanation: bq.explicacao || '',
@@ -193,8 +201,7 @@ export default function CreateExamPage() {
           type: 'discursive',
           statement: bq.enunciado || '',
           statementSource: bq.fonte || '',
-          imageUrl: bq.imagemUrl || '',
-          imageSource: '',
+          ...imagensDoBancoParaQuestao(bq),
           command: '',
           alternatives: [],
           keyPoints: [],
@@ -1663,23 +1670,10 @@ export default function CreateExamPage() {
                   />
                 </div>
 
-                <FileUpload
-                  label="Imagem da Questão (opcional)"
-                  accept="image/*"
-                  value={currentQuestion.imageUrl || ''}
-                  onChange={(url) => updateQuestion(currentQuestionIndex, { imageUrl: url })}
-                  supportPaste={true}
-                  placeholder="Cole uma URL ou faça upload da imagem"
+                <ImagensDaQuestaoNoAdmin
+                  questao={currentQuestion}
+                  onChange={(parcial) => updateQuestion(currentQuestionIndex, parcial)}
                 />
-
-                <div className="space-y-2">
-                  <Label>Fonte da Imagem (opcional)</Label>
-                  <Input
-                    value={currentQuestion.imageSource || ''}
-                    onChange={(e) => updateQuestion(currentQuestionIndex, { imageSource: e.target.value })}
-                    placeholder="Ex: Wikipedia"
-                  />
-                </div>
 
                 <div className="space-y-2">
                   <Label>Comando da Questão (opcional)</Label>
@@ -2002,6 +1996,7 @@ export default function CreateExamPage() {
                   />
                   <p className="text-xs text-muted-foreground">
                     Esta explicação será mostrada ao aluno como feedback. Para questões discursivas, também é usada no prompt de correção.
+                    As imagens do comentário são configuradas junto com as do enunciado, logo acima.
                   </p>
                 </div>
 
@@ -2160,6 +2155,37 @@ export default function CreateExamPage() {
                 </Button>
               </div>
             </div>
+
+            {/* A prova como o aluno vai vê-la. Ver
+                components/admin/provas/previa-da-prova.tsx: são os mesmos
+                componentes da tela do aluno, não uma imitação. */}
+            <Card>
+              <CardHeader>
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <Eye className="h-5 w-5" />
+                      Prévia da prova
+                    </CardTitle>
+                    <CardDescription>
+                      Exatamente o que o aluno vê — inclusive as imagens no tamanho configurado.
+                    </CardDescription>
+                  </div>
+                  <Button variant="outline" size="sm" onClick={() => setMostrarPrevia((atual) => !atual)}>
+                    {mostrarPrevia ? 'Ocultar prévia' : 'Abrir prévia'}
+                  </Button>
+                </div>
+              </CardHeader>
+              {mostrarPrevia && (
+                <CardContent>
+                  <PreviaDaProva
+                    titulo={examData.title}
+                    descricao={examData.description}
+                    questoes={questions}
+                  />
+                </CardContent>
+              )}
+            </Card>
           </div>
         )}
       </main>

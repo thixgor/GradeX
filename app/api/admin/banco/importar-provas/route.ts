@@ -378,6 +378,13 @@ async function gravar(db: any, questoes: QuestaoImportada[], userId: string) {
             respostaModelo: q.respostaModelo,
             explicacao: q.explicacao,
             imagemUrl: q.imagemUrl,
+            // As listas acompanham o campo antigo. `?? []` e não `undefined`:
+            // reimportar uma prova de onde a segunda imagem foi removida
+            // precisa APAGAR a lista antiga, e `$set: undefined` não escreve.
+            imagens: q.imagens ?? [],
+            layoutImagens: q.layoutImagens ?? 'empilhado',
+            imagensExplicacao: q.imagensExplicacao ?? [],
+            layoutImagensExplicacao: q.layoutImagensExplicacao ?? 'empilhado',
             fonte: q.fonte,
             ano: q.ano ?? null,
             // `null` explícito e não `undefined`: reimportar uma prova que foi

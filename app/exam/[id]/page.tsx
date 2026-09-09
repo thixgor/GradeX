@@ -75,6 +75,14 @@ import {
   pendenciaParaIniciar,
 } from '@/lib/provas/aviso-de-inicio'
 import { EscudoAntiCola, ProvedorAntiCola } from '@/components/exam/escudo-anti-cola'
+import { ImagensDaQuestao } from '@/components/questoes/imagens-da-questao'
+import type { ImagemDeQuestao, LayoutDeImagens } from '@/lib/questoes/imagens'
+import {
+  imagensDaResposta,
+  imagensDoEnunciado,
+  layoutDaResposta,
+  layoutDoEnunciado,
+} from '@/lib/questoes/imagens-da-questao'
 import { enderecoDoTreino, pediuTreino, permiteTreinoAposTermino } from '@/lib/provas/treino-pos-termino'
 import {
   INTERVALO_DE_GRAVACAO_MS,
@@ -254,6 +262,9 @@ function ConteudoDaProva({ params }: { params: { id: string } }) {
       correctAlternative: string
       explanations: Record<string, string>
     }
+    /** As imagens da resposta comentada — ver `lib/questoes/imagens.ts`. */
+    imagensDaResposta?: ImagemDeQuestao[]
+    layoutDasImagensDaResposta?: LayoutDeImagens
   } | null>(null)
   const [lockedQuestions, setLockedQuestions] = useState<Set<string>>(new Set()) // Questões respondidas e bloqueadas
   const [showCheckButton, setShowCheckButton] = useState(false) // Mostrar botão "Check & Continue"
@@ -1942,7 +1953,9 @@ function ConteudoDaProva({ params }: { params: { id: string } }) {
           text: a.text,
           isCorrect: a.isCorrect,
         })),
-        commentedFeedback: (currentQuestion as any).commentedFeedback
+        commentedFeedback: (currentQuestion as any).commentedFeedback,
+        imagensDaResposta: imagensDaResposta(currentQuestion),
+        layoutDasImagensDaResposta: layoutDaResposta(currentQuestion),
       })
       setShowFeedbackModal(true)
       setShowCheckButton(false)
@@ -3515,12 +3528,23 @@ ${respostaAluno}`
                       </div>
                     )}
 
-                    {question.explanation && (
-                      <div className="bg-amber-50/50 dark:bg-amber-950/20 rounded-xl p-5 border border-amber-200/50 dark:border-amber-800/30">
-                        <h4 className="font-semibold text-xs text-amber-600 dark:text-amber-400 uppercase tracking-wider mb-3">
-                          {question.type === 'discursive' ? 'Resposta Comentada' : 'Resposta Comentada'}
+                    {(question.explanation || imagensDaResposta(question).length > 0) && (
+                      <div className="bg-amber-50/50 dark:bg-amber-950/20 rounded-xl p-5 border border-amber-200/50 dark:border-amber-800/30 space-y-3">
+                        <h4 className="font-semibold text-xs text-amber-600 dark:text-amber-400 uppercase tracking-wider">
+                          Resposta Comentada
                         </h4>
-                        <p className="text-sm whitespace-pre-wrap leading-relaxed">{formatText(question.explanation)}</p>
+                        {question.explanation && (
+                          <p className="text-sm whitespace-pre-wrap leading-relaxed">{formatText(question.explanation)}</p>
+                        )}
+                        {/* As imagens do comentário — o esquema, o fluxograma, a
+                            lâmina com o achado. Só chegam ao navegador depois do
+                            término (ver lib/provas/sanitizar-prova.ts). */}
+                        <ImagensDaQuestao
+                          imagens={imagensDaResposta(question)}
+                          layout={layoutDaResposta(question)}
+                          onAmpliar={(src) => setExamImageModal({ src })}
+                          alt="Imagem da resposta comentada"
+                        />
                       </div>
                     )}
 
@@ -4558,40 +4582,13 @@ ${respostaAluno}`
                       )}
                     </div>
 
-                    {/* Imagem */}
-                    {question.imageUrl && (
-                      <div className="space-y-2">
-                        <div
-                          className="group relative cursor-pointer sm:cursor-zoom-in inline-block w-full select-none"
-                          style={{ touchAction: 'manipulation' }}
-                          onClick={() => setExamImageModal({ src: question.imageUrl! })}
-                        >
-                          <img
-                            src={question.imageUrl}
-                            alt="Imagem da questão"
-                            className="max-w-full h-auto rounded-lg border transition-all group-hover:brightness-95 pointer-events-none"
-                            draggable={false}
-                          />
-                          {/* Desktop: hover overlay */}
-                          <div className="absolute inset-0 hidden sm:flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-lg">
-                            <div className="bg-black/55 text-white text-xs px-3 py-1.5 rounded-lg backdrop-blur-sm flex items-center gap-1.5">
-                              <Maximize2 className="h-3.5 w-3.5" />
-                              Clique para ampliar
-                            </div>
-                          </div>
-                          {/* Mobile/tablet: always-visible badge */}
-                          <div className="absolute bottom-2 right-2 sm:hidden bg-black/60 text-white text-[10px] px-2 py-1 rounded-lg flex items-center gap-1 backdrop-blur-sm pointer-events-none">
-                            <Maximize2 className="h-3 w-3" />
-                            Ampliar
-                          </div>
-                        </div>
-                        {question.imageSource && (
-                          <p className="text-xs text-muted-foreground italic">
-                            Fonte da imagem: {question.imageSource}
-                          </p>
-                        )}
-                      </div>
-                    )}
+                    {/* Imagens do enunciado — quantas forem, no tamanho e no
+                        arranjo escolhidos na questão (lib/questoes/imagens.ts) */}
+                    <ImagensDaQuestao
+                      imagens={imagensDoEnunciado(question)}
+                      layout={layoutDoEnunciado(question)}
+                      onAmpliar={(src) => setExamImageModal({ src })}
+                    />
 
                     {/* Comando */}
                     <div className="rounded-xl border border-primary/15 border-l-4 border-l-primary/40 bg-primary/5 p-4">
@@ -4704,10 +4701,16 @@ ${respostaAluno}`
                               <ChevronRight className={`h-4 w-4 text-amber-500 dark:text-amber-400 transition-transform duration-200 ${revealedExplanations.has(question.id) ? 'rotate-90' : ''}`} />
                             </button>
                             {revealedExplanations.has(question.id) && (
-                              <div className="px-4 py-4 border-t border-amber-200/50 dark:border-amber-700/30 bg-amber-50/30 dark:bg-amber-950/10">
+                              <div className="px-4 py-4 border-t border-amber-200/50 dark:border-amber-700/30 bg-amber-50/30 dark:bg-amber-950/10 space-y-3">
                                 <p className="text-sm text-amber-900/85 dark:text-amber-100/75 whitespace-pre-wrap leading-relaxed">
                                   {question.explanation.replace(/\\nl/g, '\n').replace(/\\n/g, '\n')}
                                 </p>
+                                <ImagensDaQuestao
+                                  imagens={imagensDaResposta(question)}
+                                  layout={layoutDaResposta(question)}
+                                  onAmpliar={(src) => setExamImageModal({ src })}
+                                  alt="Imagem da resposta comentada"
+                                />
                               </div>
                             )}
                           </div>
@@ -4960,40 +4963,12 @@ ${respostaAluno}`
               )}
             </div>
 
-            {/* Imagem */}
-            {currentQuestion.imageUrl && (
-              <div className="space-y-2">
-                <div
-                  className="group relative cursor-pointer sm:cursor-zoom-in inline-block w-full select-none"
-                  style={{ touchAction: 'manipulation' }}
-                  onClick={() => setExamImageModal({ src: currentQuestion.imageUrl! })}
-                >
-                  <img
-                    src={currentQuestion.imageUrl}
-                    alt="Imagem da questão"
-                    className="max-w-full h-auto rounded-lg border transition-all group-hover:brightness-95 pointer-events-none"
-                    draggable={false}
-                  />
-                  {/* Desktop: hover overlay */}
-                  <div className="absolute inset-0 hidden sm:flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-lg">
-                    <div className="bg-black/55 text-white text-xs px-3 py-1.5 rounded-lg backdrop-blur-sm flex items-center gap-1.5">
-                      <Maximize2 className="h-3.5 w-3.5" />
-                      Clique para ampliar
-                    </div>
-                  </div>
-                  {/* Mobile/tablet: always-visible badge */}
-                  <div className="absolute bottom-2 right-2 sm:hidden bg-black/60 text-white text-[10px] px-2 py-1 rounded-lg flex items-center gap-1 backdrop-blur-sm pointer-events-none">
-                    <Maximize2 className="h-3 w-3" />
-                    Ampliar
-                  </div>
-                </div>
-                {currentQuestion.imageSource && (
-                  <p className="text-xs text-muted-foreground italic">
-                    Fonte da imagem: {currentQuestion.imageSource}
-                  </p>
-                )}
-              </div>
-            )}
+            {/* Imagens do enunciado */}
+            <ImagensDaQuestao
+              imagens={imagensDoEnunciado(currentQuestion)}
+              layout={layoutDoEnunciado(currentQuestion)}
+              onAmpliar={(src) => setExamImageModal({ src })}
+            />
 
             {/* Comando */}
             <div className="rounded-xl border border-primary/15 border-l-4 border-l-primary/40 bg-primary/5 p-4">
@@ -5122,10 +5097,16 @@ ${respostaAluno}`
                       <ChevronRight className={`h-4 w-4 text-amber-500 dark:text-amber-400 transition-transform duration-200 ${revealedExplanations.has(currentQuestion.id) ? 'rotate-90' : ''}`} />
                     </button>
                     {revealedExplanations.has(currentQuestion.id) && (
-                      <div className="px-4 py-4 border-t border-amber-200/50 dark:border-amber-700/30 bg-amber-50/30 dark:bg-amber-950/10">
+                      <div className="px-4 py-4 border-t border-amber-200/50 dark:border-amber-700/30 bg-amber-50/30 dark:bg-amber-950/10 space-y-3">
                         <p className="text-sm text-amber-900/85 dark:text-amber-100/75 whitespace-pre-wrap leading-relaxed">
                           {currentQuestion.explanation.replace(/\\nl/g, '\n').replace(/\\n/g, '\n')}
                         </p>
+                        <ImagensDaQuestao
+                          imagens={imagensDaResposta(currentQuestion)}
+                          layout={layoutDaResposta(currentQuestion)}
+                          onAmpliar={(src) => setExamImageModal({ src })}
+                          alt="Imagem da resposta comentada"
+                        />
                       </div>
                     )}
                   </div>
@@ -5639,12 +5620,20 @@ ${respostaAluno}`
               )}
 
               {/* Explicação Geral / Resposta Comentada */}
-              {feedbackData.explanation && (
-                <section className="rounded-2xl border border-amber-500/25 bg-amber-500/10 p-3.5 sm:p-4">
-                  <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-300">Resposta comentada</h4>
-                  <div className="whitespace-pre-wrap text-sm leading-relaxed text-amber-950 dark:text-amber-50">
-                    {renderRichText(feedbackData.explanation)}
-                  </div>
+              {(feedbackData.explanation || (feedbackData.imagensDaResposta?.length || 0) > 0) && (
+                <section className="space-y-3 rounded-2xl border border-amber-500/25 bg-amber-500/10 p-3.5 sm:p-4">
+                  <h4 className="text-xs font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-300">Resposta comentada</h4>
+                  {feedbackData.explanation && (
+                    <div className="whitespace-pre-wrap text-sm leading-relaxed text-amber-950 dark:text-amber-50">
+                      {renderRichText(feedbackData.explanation)}
+                    </div>
+                  )}
+                  <ImagensDaQuestao
+                    imagens={feedbackData.imagensDaResposta || []}
+                    layout={feedbackData.layoutDasImagensDaResposta}
+                    onAmpliar={(src) => setExamImageModal({ src })}
+                    alt="Imagem da resposta comentada"
+                  />
                 </section>
               )}
             </CardContent>

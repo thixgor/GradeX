@@ -133,6 +133,12 @@ export async function PUT(
           enunciado: questao.enunciado,
           explicacao: questao.explicacao,
           imagemUrl: questao.imagemUrl,
+          // A lista completa e o arranjo — `imagemUrl` acima é a primeira delas,
+          // mantida para as telas que ainda leem só o campo único.
+          imagens: questao.imagens,
+          layoutImagens: questao.layoutImagens,
+          imagensExplicacao: questao.imagensExplicacao,
+          layoutImagensExplicacao: questao.layoutImagensExplicacao,
           alternativas: questao.alternativas,
           respostaModelo: questao.respostaModelo,
           dificuldade: questao.dificuldade,
