@@ -214,6 +214,9 @@ export async function GET(request: NextRequest) {
       hiddenExcept: 1,
       // Quais downloads esperam o término: /provas desenha os botões de PDF.
       holdDownloads: 1,
+      // O botão "Praticar" da prova encerrada — sem o campo, /provas não sabe
+      // que ele existe e a prova terminada some do alcance do aluno.
+      practiceAfterEnd: 1,
     }
 
     const projecaoEscolhida = apenasParaLista
@@ -506,6 +509,9 @@ export async function POST(request: NextRequest) {
       // Ausente = classificação visível, que é como toda prova se comportava
       // antes de o campo existir.
       showRanking = true,
+      // Ausente = desligado: a prova terminada continua fechada, como sempre
+      // esteve. Ver lib/provas/treino-pos-termino.ts.
+      practiceAfterEnd = false,
       audience,
       freeDownloads,
       // Novos campos
@@ -755,6 +761,9 @@ export async function POST(request: NextRequest) {
       shuffleQuestions,
       shuffleAlternatives,
       showRanking: showRanking !== false,
+      // Refazer como treino depois do término: só faz sentido onde existe
+      // término. Prova de treino e pessoal já são refeitas à vontade.
+      practiceAfterEnd: isPersonalExam || isPracticeExam ? undefined : practiceAfterEnd === true,
       // Público e exceção de download só existem em prova pública: numa prova
       // pessoal não há a quem aplicar nem plano de terceiro a excetuar.
       audience: isPersonalExam ? undefined : normalizarPublico(audience),

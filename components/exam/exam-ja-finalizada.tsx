@@ -36,10 +36,13 @@ import { useRouter } from 'next/navigation'
 import {
   ArrowLeft,
   BarChart3,
+  BookOpenCheck,
   CheckCircle2,
   ClipboardList,
   Clock,
+  Dumbbell,
   FileDown,
+  FileText,
   Trophy,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -52,6 +55,7 @@ import {
   type LiberacoesDeDownload,
   type VereditoDeDownload,
 } from '@/lib/provas/downloads-da-prova'
+import { enderecoDoTreino, permiteTreinoAposTermino } from '@/lib/provas/treino-pos-termino'
 
 export interface ExamJaFinalizadaProps {
   exam: Exam
@@ -170,7 +174,67 @@ export function ExamJaFinalizada({
     }
   }
 
+  /**
+   * Os dois arquivos da PROVA (não da entrega): o caderno em branco e o caderno
+   * com gabarito comentado.
+   *
+   * Faltavam nesta tela — e é esta a tela de quem abre o link da prova depois
+   * de tê-la feito. A pessoa entregava, a prova terminava, ela voltava para
+   * baixar o caderno para estudar e encontrava só as folhas de resposta dela
+   * própria: os dois arquivos que ela queria existiam, o admin os liberava em
+   * "Aplicação da prova", e não havia botão nenhum aqui.
+   *
+   * Cada um segue a liberação do que CONTÉM: o caderno em branco responde a
+   * `downloads.prova`; o comentado revela a resposta, então responde a
+   * `downloads.gabarito` — a mesma regra sem exceção do gabarito.
+   */
+  async function baixarCadernoDaProva(formato: 'branco' | 'comentado') {
+    const veredito = formato === 'branco' ? downloads.prova : downloads.gabarito
+    if (!veredito.permitido) {
+      // A recusa de tempo não se resolve assinando; a de plano, sim.
+      if (veredito.esperandoOFim) onErro(veredito.motivo || 'Ainda não liberado.')
+      else onPlanoBloqueado()
+      return
+    }
+    try {
+      setGerando(formato)
+      /*
+       * A prova completa vem do servidor, e não da prop.
+       *
+       * O `exam` desta tela pode ter sido carregado ANTES do término, e nesse
+       * caso ele chegou sanitizado — sem `isCorrect` e sem os comentários (ver
+       * `lib/provas/sanitizar-prova.ts`). Um "gabarito comentado" montado em
+       * cima dele sairia com todas as alternativas erradas e sem uma linha de
+       * explicação: um arquivo com cara de correto e conteúdo inventado.
+       */
+      const res = await fetch(`/api/exams/${examId}`)
+      if (!res.ok) throw new Error('Erro ao buscar prova')
+      const dados = await res.json()
+      const { generateExamPDF, generateExamWithAnswersPDF, downloadPDF } = await import(
+        '@/lib/pdf-generator'
+      )
+      const blob =
+        formato === 'branco'
+          ? await generateExamPDF(dados.exam, userId)
+          : await generateExamWithAnswersPDF(dados.exam)
+      downloadPDF(
+        blob,
+        `${formato === 'branco' ? 'prova' : 'gabarito-comentado'}-${dados.exam.title}.pdf`,
+        {
+          type: formato === 'branco' ? 'exam_pdf' : 'exam_answers_pdf',
+          resourceId: examId,
+          resourceTitle: dados.exam.title,
+        },
+      )
+    } catch (error: any) {
+      onErro('Erro ao gerar o PDF: ' + error.message)
+    } finally {
+      setGerando(null)
+    }
+  }
+
   const girando = (chave: string) => gerando === chave
+  const podePraticar = permiteTreinoAposTermino(exam)
 
   const cartao = (
     <Card className="w-full max-w-md shadow-2xl">
@@ -181,7 +245,15 @@ export function ExamJaFinalizada({
         <div>
           <CardTitle className="text-2xl">Você finalizou essa prova</CardTitle>
           <CardDescription className="mt-2">
-            Sua entrega está registrada. Não é possível refazê-la.
+            {/*
+              "Não é possível refazê-la" continua verdadeiro sobre a ENTREGA, e
+              vira meia verdade quando o treino está liberado: a pessoa lê que
+              não dá para refazer e logo abaixo encontra um botão "Praticar". A
+              frase passa a dizer as duas coisas.
+            */}
+            {podePraticar
+              ? 'Sua entrega está registrada e não pode ser refeita — mas a prova está liberada para treino, e treinar não altera a sua nota.'
+              : 'Sua entrega está registrada. Não é possível refazê-la.'}
           </CardDescription>
         </div>
       </CardHeader>
@@ -223,6 +295,81 @@ export function ExamJaFinalizada({
             >
               <Trophy className="mr-2 h-4 w-4" />
               Ver resultados da turma
+            </Button>
+          )}
+
+          {/*
+            Refazer como treino, quando o admin libera. Fica logo abaixo do
+            resultado porque é a mesma pergunta em ordem: primeiro como eu fui,
+            depois o que eu faço com isso. Ver lib/provas/treino-pos-termino.ts.
+          */}
+          {podePraticar && (
+            <Button
+              onClick={() => router.push(enderecoDoTreino(examId))}
+              variant="outline"
+              className="w-full border-emerald-500/40 text-emerald-700 dark:text-emerald-400"
+              size="lg"
+              title="Refazer as mesmas questões com correção na hora — não altera a sua nota nem a classificação"
+            >
+              <Dumbbell className="mr-2 h-4 w-4" />
+              Praticar esta prova
+            </Button>
+          )}
+
+          {/*
+            Os dois cadernos da prova.
+
+            Some da tela só o que ainda NÃO EXISTE — o arquivo cuja liberação
+            espera o término, numa prova que não terminou. Depois disso os dois
+            botões ficam, mesmo para quem não pode baixar: sumir sem dizer nada
+            é o que faz o aluno concluir que "não dá para baixar o PDF desta
+            prova" quando o que falta é o plano dele. O clique conta qual das
+            duas recusas é — a de tempo vira um aviso, a de plano abre o convite
+            de assinatura.
+          */}
+          {!downloads.prova.esperandoOFim && (
+            <Button
+              onClick={() => baixarCadernoDaProva('branco')}
+              disabled={!!gerando}
+              variant="outline"
+              className="w-full"
+              size="lg"
+              title="Os enunciados e as alternativas, sem gabarito"
+            >
+              {girando('branco') ? (
+                <>
+                  <span className="mr-2 inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                  Gerando…
+                </>
+              ) : (
+                <>
+                  <FileText className="mr-2 h-4 w-4" />
+                  Prova em branco (PDF)
+                </>
+              )}
+            </Button>
+          )}
+
+          {!downloads.gabarito.esperandoOFim && (
+            <Button
+              onClick={() => baixarCadernoDaProva('comentado')}
+              disabled={!!gerando}
+              variant="outline"
+              className="w-full"
+              size="lg"
+              title="A prova inteira com a alternativa correta e o comentário de cada questão"
+            >
+              {girando('comentado') ? (
+                <>
+                  <span className="mr-2 inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                  Gerando…
+                </>
+              ) : (
+                <>
+                  <BookOpenCheck className="mr-2 h-4 w-4" />
+                  Resposta comentada (PDF)
+                </>
+              )}
             </Button>
           )}
 

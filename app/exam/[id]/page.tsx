@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import React, { Suspense, useCallback, useEffect, useRef, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -75,6 +75,7 @@ import {
   pendenciaParaIniciar,
 } from '@/lib/provas/aviso-de-inicio'
 import { EscudoAntiCola, ProvedorAntiCola } from '@/components/exam/escudo-anti-cola'
+import { enderecoDoTreino, pediuTreino, permiteTreinoAposTermino } from '@/lib/provas/treino-pos-termino'
 import {
   INTERVALO_DE_GRAVACAO_MS,
   contarRespondidas,
@@ -82,9 +83,26 @@ import {
   type VereditoDeRetomada,
 } from '@/lib/provas/retomada'
 
+/*
+ * `useSearchParams` exige uma fronteira de Suspense.
+ *
+ * O modo treino chega pelo endereço (`?treino=1`), e ler a query string num
+ * componente cliente sem `<Suspense>` em volta faz o build do Next falhar na
+ * prerenderização — é a mesma casca que /provas usa. A tela em si continua
+ * sendo `ConteudoDaProva`.
+ */
 export default function ExamPage({ params }: { params: { id: string } }) {
+  return (
+    <Suspense fallback={<LogoLoading message="Carregando prova..." size="lg" fullscreen />}>
+      <ConteudoDaProva params={params} />
+    </Suspense>
+  )
+}
+
+function ConteudoDaProva({ params }: { params: { id: string } }) {
   const { id } = params
   const router = useRouter()
+  const parametrosDaUrl = useSearchParams()
   const [exam, setExam] = useState<Exam | null>(null)
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
@@ -151,6 +169,60 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   const [examStartTime, setExamStartTime] = useState<Date | null>(null)
   const [examDuration, setExamDuration] = useState<string>('')
 
+  /*
+   * ═══ O segundo tempo da prova ═══
+   *
+   * `treinoLiberado` — o admin marcou "liberar para praticar" e a prova já
+   * terminou. `emTreino` — a pessoa entrou por esse caminho
+   * (`/exam/<id>?treino=1`).
+   *
+   * Em treino esta tela é uma prova de treino em tudo, com UMA diferença que
+   * governa todo o resto: nada é entregue. A rodada é corrigida aqui mesmo e
+   * morre aqui — não vira submissão, não muda nota, não entra no ranking, não
+   * grava rascunho, não registra presença nem tentativa.
+   *
+   * E não depende só desta tela se comportar: numa prova encerrada há horas, o
+   * servidor só aceita entrega pela camada do rascunho, onde ele descarta o
+   * corpo da requisição e grava o que ELE mesmo tinha gravado durante a prova
+   * (ver `lib/provas/entrega-da-prova.ts`). Como o treino não escreve rascunho,
+   * o que se responde aqui não tem por onde virar nota. Ver
+   * `lib/provas/treino-pos-termino.ts`.
+   */
+  /*
+   * O "já terminou" passa pela janela, e não só pelo relógio do aparelho.
+   *
+   * `permiteTreinoAposTermino` compara `endTime` com o horário local, e o
+   * relógio do celular pode estar adiantado — o que abriria o segundo tempo de
+   * uma prova que a turma ainda está fazendo. `janela` não tem esse defeito:
+   * ela chega resolvida pelo servidor em `GET /api/exams/[id]`, é reconferida
+   * pela sincronização da sala de espera e, entre uma coisa e outra, é
+   * recalculada com o relógio de Brasília corrigido pelo desvio medido do
+   * aparelho (ver `lib/provas/relogio-da-prova.ts`).
+   *
+   * As duas juntas, e não uma no lugar da outra: a janela ainda não existe no
+   * primeiro render, e o campo do admin (`practiceAfterEnd`) só a função sabe
+   * ler.
+   */
+  const treinoLiberado = permiteTreinoAposTermino(exam) && (janela === null || janela.encerrada)
+  const emTreino = treinoLiberado && pediuTreino(parametrosDaUrl)
+
+  /**
+   * A entrega registrada tranca esta tela?
+   *
+   * `alreadySubmitted` responde a "existe uma entrega desta pessoa nesta
+   * prova" — um fato do banco, que continua verdadeiro no treino e é usado
+   * para decidir quais PDFs ela pode baixar. Mas quase todo lugar que o lê
+   * quer outra coisa: "esta pessoa não tem mais nada a fazer aqui". No treino
+   * ela tem — a rodada em andamento é outra coisa, que não vira entrega.
+   *
+   * Sem esta distinção, quem FEZ a prova entrava no treino e recebia uma tela
+   * pela metade: sem mapa de questões, sem os atalhos de teclado, e com o
+   * limite de tempo que ele mesmo escolheu não valendo nada. Quem faltou à
+   * prova — sem entrega registrada — recebia a tela inteira. A diferença entre
+   * os dois era invisível e não tinha razão de ser.
+   */
+  const entregaTravaATela = alreadySubmitted && !emTreino
+
   // Estados de Anotações
   const [annotations, setAnnotations] = useState<QuestionAnnotation[]>([])
 
@@ -202,7 +274,16 @@ export default function ExamPage({ params }: { params: { id: string } }) {
 
   // Verificar se a prova tem proctoring habilitado
   // Provas pessoais não suportam proctoring
-  const hasProctoring = (exam?.proctoring?.enabled || false) && !(exam as any).isPersonalExam
+  /*
+   * Treino pós-término não é monitorado.
+   *
+   * O proctoring existe para garantir a integridade de uma prova valendo nota,
+   * com hora marcada. A rodada de treino não gera entrega nenhuma: pedir câmera,
+   * microfone e captura de tela para ela seria cobrar o preço de uma vigilância
+   * que não protege coisa alguma.
+   */
+  const hasProctoring =
+    (exam?.proctoring?.enabled || false) && !(exam as any).isPersonalExam && !emTreino
   const needsCamera = exam?.proctoring?.camera || false
   const needsAudio = exam?.proctoring?.audio || false
   const needsScreen = exam?.proctoring?.screen || false
@@ -571,6 +652,56 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     }
   }
 
+  /**
+   * O caderno com o gabarito e o comentário de cada alternativa.
+   *
+   * Ele existia em `/provas` e na tela de resultados, e não aqui — que é onde
+   * chega quem tem o link da prova. O veredito é o do GABARITO (nunca o da
+   * prova em branco): o arquivo revela a resposta, então espera o término e não
+   * tem exceção de tempo. Ver lib/provas/downloads-da-prova.ts.
+   */
+  const baixarGabaritoComentado = async () => {
+    if (!downloads.gabarito.permitido) {
+      if (downloads.gabarito.esperandoOFim) {
+        showToastMessage(downloads.gabarito.motivo || 'Ainda não liberado.', 'info')
+        return
+      }
+      setShowPdfCta(true)
+      return
+    }
+    const cota = await consumirCotaDoPlano('provasPdf', `${String(id)}:comentado`)
+    if (!cota.permitido) {
+      showToastMessage(cota.mensagem || 'Limite de downloads do seu plano atingido.', 'info')
+      return
+    }
+    try {
+      setPdfGenerating('Comentado')
+      /*
+       * A prova é buscada de novo, e não reaproveitada do estado.
+       *
+       * O documento que a tela carregou pode ter vindo sanitizado (sem
+       * `isCorrect`, sem `explanation`) se ela abriu ANTES do término — e um
+       * "gabarito comentado" montado a partir dele sai com todas as
+       * alternativas marcadas como erradas e sem comentário nenhum: um arquivo
+       * com cara de correto e conteúdo inventado. Ver sanitizar-prova.ts.
+       */
+      const res = await fetch(`/api/exams/${id}`)
+      if (!res.ok) throw new Error('Erro ao buscar prova')
+      const dados = await res.json()
+      const { generateExamWithAnswersPDF, downloadPDF } = await import('@/lib/pdf-generator')
+      const blob = await generateExamWithAnswersPDF(dados.exam)
+      downloadPDF(blob, `gabarito-comentado-${dados.exam.title}.pdf`, {
+        type: 'exam_answers_pdf',
+        resourceId: String(id),
+        resourceTitle: dados.exam.title,
+      })
+    } catch (error: any) {
+      showToastMessage('Erro ao gerar o PDF: ' + error.message)
+    } finally {
+      setPdfGenerating(null)
+    }
+  }
+
   // ─── Rastreamento da tentativa (/admin/stats) ─────────────────
   // Sem isto o painel só enxerga quem ENVIA a prova. Os pings abaixo contam
   // a outra metade da história: quem abriu, quem começou, em que questão
@@ -613,6 +744,15 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   }
 
   function getAttemptTracker(): ExamAttemptTracker | null {
+    /*
+     * A rodada de treino não é uma tentativa.
+     *
+     * O painel de /admin/stats conta quem abriu, quem começou e quem sumiu no
+     * meio DESTA aplicação. Uma pessoa treinando três dias depois entraria ali
+     * como se a prova ainda estivesse acontecendo — e "12 alunos em andamento"
+     * numa prova encerrada é um número que não descreve nada.
+     */
+    if (emTreino) return null
     if (!attemptTrackerRef.current && id) {
       attemptTrackerRef.current = createExamAttemptTracker(id, examRef.current?.title)
     }
@@ -726,7 +866,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
    * fim do tempo é um `useEffect` — e efeito não pode nascer depois dos
    * `return` que a tela faz mais abaixo.
    */
-  const isSelfPacedExam = Boolean(exam?.isPracticeExam || (exam as any)?.isPersonalExam)
+  const isSelfPacedExam = Boolean(exam?.isPracticeExam || (exam as any)?.isPersonalExam || emTreino)
   const examDeadline: Date | null = !exam
     ? null
     : practiceTimeLimitMs && examStartTime
@@ -775,7 +915,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   const prazoEmMs = examDeadline ? examDeadline.getTime() : null
 
   useEffect(() => {
-    if (!started || submitted || alreadySubmitted || submitting) return
+    if (!started || submitted || entregaTravaATela || submitting) return
     if (!examDeadline) return
 
     const conferir = () => {
@@ -792,7 +932,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   }, [
     started,
     submitted,
-    alreadySubmitted,
+    entregaTravaATela,
     submitting,
     encerradaPeloServidor,
     prazoEmMs,
@@ -921,7 +1061,9 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   // Prova em andamento: grava periodicamente e sempre que a aba some.
   useEffect(() => {
     if (!started || submitted || alreadySubmitted) return
-    if (exam?.isPracticeExam || (exam as any)?.isPersonalExam) return
+    // Treino pós-término não tem rascunho a salvar: não há entrega para
+    // proteger de uma queda, e a rota de progresso recusa a prova encerrada.
+    if (exam?.isPracticeExam || (exam as any)?.isPersonalExam || emTreino) return
 
     gravarProgresso(true)
     const relogio = setInterval(() => gravarProgresso(), INTERVALO_DE_GRAVACAO_MS)
@@ -937,7 +1079,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
       document.removeEventListener('visibilitychange', aoEsconder)
       window.removeEventListener('pagehide', aoEsconder)
     }
-  }, [started, submitted, alreadySubmitted, exam, gravarProgresso])
+  }, [started, submitted, alreadySubmitted, exam, emTreino, gravarProgresso])
 
   /*
    * ═══ A folha de presença da sala de espera ═══
@@ -966,6 +1108,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
    */
   const folhaEnviadaRef = useRef<string | null>(null)
   const podeRegistrarPresenca =
+    !emTreino &&
     !!janela && janela.fase !== 'livre' && !janela.encerrada && (janela.podeEntrar || janela.jaEntrou)
 
   useEffect(() => {
@@ -1114,6 +1257,17 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     if (!retomada || !progressoSalvo) return
     if (alreadySubmitted || submitted || submitting) return
     /*
+     * E nunca a partir do treino.
+     *
+     * Aqui `started` ainda é falso enquanto a pessoa escolhe as opções da
+     * rodada, então esta guarda não é redundante com a de baixo: abrir
+     * `?treino=1` numa prova onde sobrou um rascunho sem retomadas dispararia
+     * uma ENTREGA DE VERDADE do que estava gravado, no meio de uma tela que
+     * promete não entregar nada. O rascunho da prova aplicada não é assunto do
+     * segundo tempo.
+     */
+    if (emTreino) return
+    /*
      * Nunca por cima de uma prova em andamento.
      *
      * O veredito é buscado uma vez, ao abrir a tela, e chega quando a rede
@@ -1131,7 +1285,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     entregaAutomaticaDisparada.current = true
     showToastMessage('Você não tem mais retomadas. Entregando o que ficou gravado…', 'info')
     entregarRascunho()
-  }, [retomada, progressoSalvo, alreadySubmitted, submitted, submitting, started])
+  }, [retomada, progressoSalvo, alreadySubmitted, submitted, submitting, started, emTreino])
 
   useEffect(() => {
     checkExistingSubmission()
@@ -1205,7 +1359,9 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     fase: janela?.fase,
     ativo: deveSincronizarAJanela({
       prova: exam,
-      emAndamento: started,
+      // O treino não espera horário nenhum: a prova dele já acabou, e ficar
+      // perguntando os instantes da janela é conversa sobre uma sala vazia.
+      emAndamento: started || emTreino,
       jaEntregou: alreadySubmitted || submitted,
     }),
     // O carimbo de hora desta resposta acerta o relógio de quem está esperando —
@@ -1426,16 +1582,24 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     }
   }
 
-  // Setar nome automaticamente se allowCustomName for false
+  /*
+   * Setar nome automaticamente se allowCustomName for false.
+   *
+   * `emTreino` entra na exceção: numa prova com nome livre, o campo mora na
+   * tela de entrada — a que o treino pula. Sem o nome preenchido, `handleSubmit`
+   * recusava a rodada com "preencha seu nome completo", apontando para um campo
+   * que não está em lugar nenhum. No treino ninguém assina nada, então o nome
+   * da conta serve.
+   */
   useEffect(() => {
-    if (exam && loggedUserName && !exam.allowCustomName && !userName) {
+    if (exam && loggedUserName && (!exam.allowCustomName || emTreino) && !userName) {
       setUserName(loggedUserName)
     }
-  }, [exam, loggedUserName, userName])
+  }, [exam, emTreino, loggedUserName, userName])
 
   // Atalhos de teclado durante a prova (1-5 selecionar, ←/→ navegar)
   useEffect(() => {
-    if (!started || submitted || alreadySubmitted) return
+    if (!started || submitted || entregaTravaATela) return
     if (!exam) return
 
     const onKey = (e: KeyboardEvent) => {
@@ -1478,7 +1642,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [started, submitted, alreadySubmitted, exam, currentQuestionIndex, showFeedbackModal, showUnansweredModal, showExitConfirm, reportQuestionId, lockedQuestions])
+  }, [started, submitted, entregaTravaATela, exam, currentQuestionIndex, showFeedbackModal, showUnansweredModal, showExitConfirm, reportQuestionId, lockedQuestions])
 
   // Esc fecha a confirmação de saída — o mesmo gesto que fecha os outros modais.
   useEffect(() => {
@@ -1492,10 +1656,10 @@ export default function ExamPage({ params }: { params: { id: string } }) {
 
   // Mostrar tela de configuração para provas práticas ao invés de auto-iniciar
   useEffect(() => {
-    if (exam && exam.isPracticeExam && !started && !loading && !showPracticeConfig) {
+    if (exam && (exam.isPracticeExam || emTreino) && !started && !loading && !showPracticeConfig) {
       setShowPracticeConfig(true)
     }
-  }, [exam, started, loading])
+  }, [exam, emTreino, started, loading])
 
   function handlePracticeStart(config: PracticeExamSettings) {
     if (!exam) return
@@ -1747,7 +1911,7 @@ export default function ExamPage({ params }: { params: { id: string } }) {
     )
 
     // Se for prova pessoal/prática com feedback imediato, mostrar botão "Check & Continue"
-    if (exam?.feedbackMode === 'immediate' && ((exam as any).isPersonalExam || exam.isPracticeExam)) {
+    if (exam?.feedbackMode === 'immediate' && ((exam as any).isPersonalExam || exam.isPracticeExam || emTreino)) {
       setShowCheckButton(true)
     }
   }
@@ -1934,6 +2098,21 @@ ${respostaAluno}`
   }
 
   /**
+   * Fecha a rodada de treino sem sair da tela e sem tocar no servidor.
+   *
+   * A tela de conclusão calcula a nota das objetivas a partir de `answers` e do
+   * gabarito que já veio com a prova encerrada (ver `sanitizarProvaParaAluno`:
+   * depois do término o gabarito é público). Não há entrega a criar, então não
+   * há `submissionId`, nota gravada nem tentativa a fechar — e é justamente
+   * essa ausência que mantém os resultados da aplicação intactos.
+   */
+  function encerrarRodadaDeTreino() {
+    localStorage.removeItem(`exam-${id}-start-time`)
+    cleanup()
+    setSubmitted(true)
+  }
+
+  /**
    * A entrega que a própria tela faz — sem clique, sem validação de formulário.
    *
    * Dois caminhos chegam aqui: a infração de monitoramento (câmera tapada) e o
@@ -1953,6 +2132,19 @@ ${respostaAluno}`
       const endTime = new Date()
       const duration = examStartTime ? calculateDuration(examStartTime, endTime) : ''
       setExamDuration(duration)
+
+      /*
+       * A rodada de treino nem chega ao servidor — ver `═══ O segundo tempo ═══`.
+       *
+       * `true` porque, do ponto de vista de quem chamou, a entrega ACONTECEU:
+       * a rodada fechou e a tela de resultado está na frente. Devolver `false`
+       * faria a entrega automática do fim do tempo tentar de novo, em laço,
+       * numa prova que não tem para onde entregar.
+       */
+      if (emTreino) {
+        encerrarRodadaDeTreino()
+        return true
+      }
 
       const res = await fetch(`/api/exams/${id}/submit`, {
         method: 'POST',
@@ -2040,7 +2232,13 @@ ${respostaAluno}`
    * que fazer — e diz a verdade: as respostas ainda estão ali.
    */
   async function encerrarPorTempoEsgotado() {
-    if (exam?.isPracticeExam) {
+    /*
+     * Treino — o de sempre e o de prova encerrada — fecha a rodada e mostra o
+     * resultado. Sem `emTreino` aqui, o limite de tempo que a própria pessoa
+     * escolheu caía no caminho da prova avaliativa e anunciava "Entregando
+     * suas respostas…" numa rodada que, por definição, não entrega nada.
+     */
+    if (exam?.isPracticeExam || emTreino) {
       showToastMessage('Tempo esgotado! Finalizando prova...', 'info')
       handleSubmit()
       return
@@ -2080,7 +2278,14 @@ ${respostaAluno}`
       return
     }
 
-    if (exam?.themePhrase && !themeTranscription.trim()) {
+    /*
+     * A frase-tema é a folha de presença da prova aplicada — ela existe para
+     * identificar a letra de quem entregou. No treino não há entrega a
+     * identificar, e a tela de configuração do treino nem mostra o campo:
+     * exigi-la aqui travaria a rodada num campo que a pessoa não tem como
+     * preencher.
+     */
+    if (exam?.themePhrase && !themeTranscription.trim() && !emTreino) {
       showToastMessage('Por favor, transcreva a frase-tema', 'info')
       return
     }
@@ -2111,6 +2316,12 @@ ${respostaAluno}`
       const endTime = new Date()
       const duration = examStartTime ? calculateDuration(examStartTime, endTime) : ''
       setExamDuration(duration)
+
+      // A rodada de treino nem chega ao servidor — ver `═══ O segundo tempo ═══`.
+      if (emTreino) {
+        encerrarRodadaDeTreino()
+        return
+      }
 
       const res = await fetch(`/api/exams/${id}/submit`, {
         method: 'POST',
@@ -2181,12 +2392,20 @@ ${respostaAluno}`
 
 
   // Tela de configuração para provas práticas
-  if (showPracticeConfig && exam && exam.isPracticeExam && !started) {
+  if (showPracticeConfig && exam && (exam.isPracticeExam || emTreino) && !started) {
     return (
       <PracticeExamConfig
         exam={exam}
         onStart={handlePracticeStart}
-        onBack={() => router.push('/')}
+        // Voltar do treino é voltar para a prova, não para a home: é de lá que
+        // a pessoa veio, e é lá que está o resultado dela.
+        onBack={() => router.push(emTreino ? `/exam/${id}/results` : '/')}
+        rotulo={emTreino ? 'Treino · prova encerrada' : undefined}
+        aviso={
+          emTreino
+            ? 'Esta prova já foi aplicada e encerrada. Nada do que você responder aqui é entregue: sua nota e a classificação da turma continuam como estão.'
+            : undefined
+        }
       />
     )
   }
@@ -2285,7 +2504,7 @@ ${respostaAluno}`
   // Tela de conclusão após submissão
   if (submitted) {
     // Calcular resultados para provas práticas/pessoais
-    const isPracticeOrPersonal = exam.isPracticeExam || (exam as any)?.isPersonalExam
+    const isPracticeOrPersonal = exam.isPracticeExam || (exam as any)?.isPersonalExam || emTreino
     const mcQuestions = exam.questions.filter(q => q.type === 'multiple-choice')
     const discursiveQuestions = exam.questions.filter(q => q.type === 'discursive')
     let mcCorrect = 0
@@ -2365,10 +2584,43 @@ ${respostaAluno}`
               </div>
               <div className="exam-resultado-entra" style={{ '--exam-ordem': 1 } as React.CSSProperties}>
                 <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-500 bg-clip-text text-transparent">
-                  Prova entregue
+                  {/*
+                    "Prova entregue" seria falso no treino: não houve entrega
+                    nenhuma, e essa é justamente a promessa que o modo faz.
+                  */}
+                  {emTreino ? 'Treino concluído' : 'Prova entregue'}
                 </h1>
                 <p className="text-muted-foreground mt-2 text-lg">{exam.title}</p>
               </div>
+
+              {emTreino && (
+                <div className="exam-resultado-entra mx-auto max-w-xl rounded-2xl border border-emerald-500/25 bg-emerald-500/5 px-5 py-3" style={{ '--exam-ordem': 2 } as React.CSSProperties}>
+                  <p className="text-sm leading-relaxed text-emerald-800 dark:text-emerald-300">
+                    Isto foi um treino: <strong>nada foi entregue</strong>. Sua nota na prova
+                    aplicada e a classificação da turma continuam exatamente como estavam.
+                  </p>
+                  <div className="mt-3 flex flex-wrap justify-center gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="rounded-xl"
+                      onClick={() => window.location.reload()}
+                    >
+                      <Play className="mr-1.5 h-3.5 w-3.5" />
+                      Treinar de novo
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="rounded-xl"
+                      onClick={() => router.push(`/exam/${id}/results`)}
+                    >
+                      <Trophy className="mr-1.5 h-3.5 w-3.5" />
+                      Ver resultados da prova
+                    </Button>
+                  </div>
+                </div>
+              )}
               <div className="exam-resultado-entra flex flex-wrap items-center justify-center gap-2" style={{ '--exam-ordem': 2 } as React.CSSProperties}>
                 {examDuration && (
                   <span className="inline-flex items-center gap-2 text-sm text-muted-foreground bg-muted/50 backdrop-blur-sm px-4 py-2 rounded-full border border-border/50">
@@ -3322,7 +3574,10 @@ ${respostaAluno}`
    * atendido pela tela de conclusão, logo acima, que mostra a nota. A prova de
    * treino também fica de fora — ela é feita quantas vezes a pessoa quiser.
    */
-  if (alreadySubmitted && !exam.isPracticeExam && !started) {
+  // `emTreino` fica de fora: quem já entregou também pode refazer a prova como
+  // treino, e mandá-lo de volta para a tela de "você já finalizou" seria negar
+  // exatamente o botão pelo qual ele clicou.
+  if (alreadySubmitted && !exam.isPracticeExam && !emTreino && !started) {
     return (
       <>
         <ExamJaFinalizada
@@ -3635,6 +3890,81 @@ ${respostaAluno}`
                           : 'Entrar na Sala'}
                 </Button>
 
+                {/*
+                  ═══ O que sobra de uma prova encerrada ═══
+
+                  Até aqui, nada. A tela mostrava um botão cinza escrito "Prova
+                  encerrada" e mais nada — para quem fez, para quem faltou, para
+                  quem só queria o caderno. Os arquivos existiam (o admin os
+                  libera em "Aplicação da prova") e não tinham porta nenhuma
+                  nesta tela, que é justamente onde a pessoa chega pelo link da
+                  prova.
+
+                  Os dois blocos abaixo respondem às duas coisas que ainda dá
+                  para fazer com uma prova que acabou: baixá-la e refazê-la.
+                */}
+                {janela?.encerrada && (
+                  <div className="space-y-3 rounded-2xl border border-border/50 bg-muted/20 p-4">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      A prova terminou
+                    </p>
+
+                    <div className="grid gap-2 sm:grid-cols-2">
+                      <Button
+                        variant="outline"
+                        className="w-full rounded-xl"
+                        onClick={() => router.push(`/exam/${id}/results`)}
+                      >
+                        <Trophy className="mr-2 h-4 w-4" />
+                        Ver resultados
+                      </Button>
+
+                      <Button
+                        variant="outline"
+                        className="w-full rounded-xl"
+                        disabled={!!pdfGenerating}
+                        title={downloads.prova.motivo || undefined}
+                        onClick={handleDownloadExamPDF}
+                      >
+                        <FileDown className="mr-2 h-4 w-4" />
+                        {pdfGenerating === 'Prova' ? 'Gerando…' : 'Prova em branco (PDF)'}
+                      </Button>
+
+                      <Button
+                        variant="outline"
+                        className="w-full rounded-xl"
+                        disabled={!!pdfGenerating}
+                        title={downloads.gabarito.motivo || undefined}
+                        onClick={baixarGabaritoComentado}
+                      >
+                        <BookOpen className="mr-2 h-4 w-4" />
+                        {pdfGenerating === 'Comentado' ? 'Gerando…' : 'Resposta comentada (PDF)'}
+                      </Button>
+
+                      {/*
+                        O treino só aparece quando o admin marcou. Ele é o botão
+                        colorido do bloco porque é a única AÇÃO aqui — o resto
+                        são arquivos.
+                      */}
+                      {treinoLiberado && (
+                        <Button
+                          className="w-full rounded-xl bg-gradient-to-r from-[#468152] to-[#3a6d44] font-semibold text-white hover:from-[#3a6d44] hover:to-[#2f5a38]"
+                          onClick={() => router.push(enderecoDoTreino(String(id)))}
+                        >
+                          <Play className="mr-2 h-4 w-4" />
+                          Praticar esta prova
+                        </Button>
+                      )}
+                    </div>
+
+                    <p className="text-[11px] leading-snug text-muted-foreground">
+                      {treinoLiberado
+                        ? 'Praticar refaz as mesmas questões com correção na hora, quantas vezes você quiser — sem alterar a sua nota nem a classificação da turma.'
+                        : 'Um arquivo indisponível diz o motivo ao passar o mouse: pode ser o seu plano, ou uma liberação que o professor não abriu.'}
+                    </p>
+                  </div>
+                )}
+
                 <PdfCtaBanner accountType={accountType} isAdmin={userRole === 'admin'} compact />
 
                 <ExamBrandFooter className="border-t border-border/40 pt-4" />
@@ -3846,7 +4176,7 @@ ${respostaAluno}`
   const isLastQuestion = currentQuestionIndex === exam.questions.length - 1
   const showCheckAnswerButton =
     exam?.feedbackMode === 'immediate' &&
-    ((exam as any).isPersonalExam || exam.isPracticeExam) &&
+    ((exam as any).isPersonalExam || exam.isPracticeExam || emTreino) &&
     showCheckButton
   const previousDisabled =
     !canGoBack || (exam?.feedbackMode === 'immediate' && lockedQuestions.has(currentQuestion.id))
@@ -3938,7 +4268,7 @@ ${respostaAluno}`
         terminou: a primeira frase é sobre o que ele fez, e a primeira ação é
         para onde ele quer ir, o próprio resumo.
       */}
-      {alreadySubmitted && !exam?.isPracticeExam && (
+      {alreadySubmitted && !exam?.isPracticeExam && !emTreino && (
         <ExamJaFinalizada
           variante="modal"
           exam={exam}
@@ -5034,7 +5364,7 @@ ${respostaAluno}`
       )}
 
       {/* Mapa de Questões — paleta flutuante */}
-      {started && !alreadySubmitted && (
+      {started && !entregaTravaATela && (
         <ExamQuestionPalette
           questions={paletteQuestions}
           currentIndex={currentQuestionIndex}
@@ -5067,7 +5397,8 @@ ${respostaAluno}`
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              {!exam.isPracticeExam && !(exam as any).isPersonalExam && (
+              {/* A prova já acabou: no treino não há cronômetro da turma correndo. */}
+              {!exam.isPracticeExam && !(exam as any).isPersonalExam && !emTreino && (
                 <p className="text-xs text-center text-muted-foreground bg-muted rounded-lg p-3">
                   O cronômetro da prova continua correndo enquanto você estiver fora.
                 </p>

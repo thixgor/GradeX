@@ -1,6 +1,7 @@
 import type { Exam } from '@/lib/types'
 import { resolverJanelaDaProva, type JanelaDaProva } from './janela-da-prova'
 import { RETOMADAS_PERMITIDAS } from './retomada'
+import { permiteTreinoAposTermino } from './treino-pos-termino'
 
 /**
  * O que ESTA pessoa pode fazer nesta prova, agora.
@@ -64,6 +65,13 @@ export interface VereditoDoAluno {
   encerradaParaMim: boolean
   /** O portão está fechado para quem ainda não entrou. */
   portaoFechado: boolean
+  /**
+   * A prova terminou e o admin liberou refazê-la como treino.
+   *
+   * É uma ação a MAIS, nunca a principal: quem entregou continua indo para o
+   * resultado, e o treino fica ao lado. Ver `lib/provas/treino-pos-termino.ts`.
+   */
+  podePraticar: boolean
 }
 
 /**
@@ -93,10 +101,14 @@ export function resolverAcaoDoAluno(
       clicavel: true,
       encerradaParaMim: false,
       portaoFechado: false,
+      // Prova de treino/pessoal já é refeita à vontade: o "segundo tempo" não
+      // é uma coisa separada nela.
+      podePraticar: false,
     }
   }
 
   const portaoFechado = !janela.podeEntrar && !janela.encerrada
+  const podePraticar = permiteTreinoAposTermino(prova, agora)
 
   /*
    * "Acabou para mim" vem ANTES da janela.
@@ -116,6 +128,7 @@ export function resolverAcaoDoAluno(
       clicavel: true,
       encerradaParaMim: true,
       portaoFechado,
+      podePraticar,
     }
   }
 
@@ -127,6 +140,7 @@ export function resolverAcaoDoAluno(
       clicavel: true,
       encerradaParaMim: true,
       portaoFechado: false,
+      podePraticar,
     }
   }
 
@@ -138,6 +152,7 @@ export function resolverAcaoDoAluno(
       clicavel: false,
       encerradaParaMim: false,
       portaoFechado: false,
+      podePraticar,
     }
   }
 
@@ -149,6 +164,7 @@ export function resolverAcaoDoAluno(
       clicavel: false,
       encerradaParaMim: false,
       portaoFechado: true,
+      podePraticar,
     }
   }
 
@@ -164,6 +180,7 @@ export function resolverAcaoDoAluno(
       clicavel: true,
       encerradaParaMim: false,
       portaoFechado,
+      podePraticar,
     }
   }
 
@@ -182,5 +199,6 @@ export function resolverAcaoDoAluno(
     clicavel: true,
     encerradaParaMim: false,
     portaoFechado,
+    podePraticar,
   }
 }

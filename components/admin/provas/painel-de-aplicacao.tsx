@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { Label } from '@/components/ui/label'
-import { Clock, Download, GraduationCap, Loader2, Lock, ShieldOff, Shuffle, Users } from 'lucide-react'
+import { Clock, Download, Dumbbell, GraduationCap, Loader2, Lock, ShieldOff, Shuffle, Users } from 'lucide-react'
 import { MAX_PERIODO, MIN_PERIODO } from '@/lib/user-periodo'
 import {
   type EsperasDeDownload,
@@ -38,6 +38,12 @@ interface Props {
   /** Quais arquivos ficam presos até o término. Ausente = prova sem término (treino). */
   esperas?: EsperasDeDownload
   onEsperasChange?: (esperas: EsperasDeDownload) => void
+  /**
+   * Refazer como treino depois do término. Ausente = prova sem término, onde a
+   * pergunta não existe (a de treino já é refeita à vontade).
+   */
+  treinoAposTermino?: boolean
+  onTreinoAposTerminoChange?: (valor: boolean) => void
   travas: TravasAntiCola
   onTravasChange: (travas: TravasAntiCola) => void
   embaralharQuestoes: boolean
@@ -116,6 +122,8 @@ export function PainelDeAplicacao({
   onLiberacoesChange,
   esperas,
   onEsperasChange,
+  treinoAposTermino,
+  onTreinoAposTerminoChange,
   travas,
   onTravasChange,
   embaralharQuestoes,
@@ -412,6 +420,39 @@ export function PainelDeAplicacao({
           </span>
         </p>
       </section>
+
+      {/* ── Depois do término ───────────────────────────────────── */}
+      {onTreinoAposTerminoChange && (
+        <section className="space-y-3 rounded-xl border border-emerald-200 bg-emerald-50/60 p-4 dark:border-emerald-900 dark:bg-emerald-950/20">
+          <div className="flex items-start gap-2.5">
+            <Dumbbell className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-600 dark:text-emerald-400" />
+            <div className="min-w-0">
+              <h3 className="text-sm font-semibold">Depois que a prova terminar</h3>
+              <p className="mt-0.5 text-xs leading-snug text-muted-foreground">
+                O endereço da prova encerrada é hoje uma tela de aviso. Aqui ele pode virar um
+                segundo tempo — o mesmo caderno, em modo treino.
+              </p>
+            </div>
+          </div>
+
+          <Opcao
+            id="practiceAfterEnd"
+            marcado={!!treinoAposTermino}
+            onChange={onTreinoAposTerminoChange}
+            titulo="Liberar a prova para praticar"
+            descricao="Encerrada a prova, o aluno pode refazê-la quantas vezes quiser, com correção na hora. A rodada de treino NÃO gera entrega: não muda nota, não entra no ranking e não aparece no relatório — os resultados da aplicação ficam como estão."
+          />
+
+          <p className="flex items-start gap-1.5 rounded-lg bg-background/70 p-2.5 text-[11px] leading-snug text-muted-foreground">
+            <Lock className="mt-0.5 h-3 w-3 flex-shrink-0" />
+            <span>
+              Deixe desligado se pretende <strong>reaplicar esta prova</strong> — a outra turma, à
+              segunda chamada ou no semestre que vem. Praticar mostra o gabarito de cada questão na
+              hora, então liberar aqui é publicar o caderno resolvido para quem tem o link.
+            </span>
+          </p>
+        </section>
+      )}
 
       {/* ── Anti-cola ───────────────────────────────────────────── */}
       <section className="space-y-3 rounded-xl border border-border/60 bg-muted/25 p-4">

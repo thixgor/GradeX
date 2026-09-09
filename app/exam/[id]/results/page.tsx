@@ -15,6 +15,7 @@ import {
   ClipboardCheck,
   ClipboardList,
   Download,
+  Dumbbell,
   EyeOff,
   FileCheck2,
   FileText,
@@ -26,6 +27,7 @@ import {
   Users,
 } from 'lucide-react'
 import { FORMATOS_DA_FOLHA, resolverDownloadsDaProva } from '@/lib/provas/downloads-da-prova'
+import { enderecoDoTreino } from '@/lib/provas/treino-pos-termino'
 import { FAIXAS_DE_NOTA, type EstatisticasDaTurma } from '@/lib/provas/classificacao'
 import { cn } from '@/lib/utils'
 
@@ -95,6 +97,17 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
   const [minhaColocacao, setMinhaColocacao] = useState<{ posicao: number; percentil: number } | null>(null)
   const [notaMaximaServidor, setNotaMaximaServidor] = useState<number | null>(null)
   const [minhaEntrega, setMinhaEntrega] = useState<ExamSubmission | null>(null)
+  /**
+   * Esta pessoa fez a prova?
+   *
+   * Vem do servidor, e não de `minhaEntrega !== null`: a busca da entrega é uma
+   * segunda requisição, e enquanto ela não volta os dois estados são iguais
+   * (`null`). A tela dizia "você não tem entrega registrada" no primeiro
+   * instante para quem tinha, e continuava dizendo depois para quem não tinha —
+   * a mesma frase para um carregamento e para um fato.
+   */
+  const [participei, setParticipei] = useState<boolean | null>(null)
+  const [treinoLiberado, setTreinoLiberado] = useState(false)
   const [loading, setLoading] = useState(true)
   const [erro, setErro] = useState<string | null>(null)
   const [conta, setConta] = useState<{ id?: string; role?: string; accountType?: string }>({})
@@ -147,6 +160,8 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
         setMinhaNota(typeof dados.minhaNota === 'number' ? dados.minhaNota : null)
         setMinhaColocacao(dados.minhaPosicao ?? null)
         setNotaMaximaServidor(typeof dados.notaMaxima === 'number' ? dados.notaMaxima : null)
+        setParticipei(dados.participei === undefined ? null : !!dados.participei)
+        setTreinoLiberado(!!dados.treinoLiberado)
         setLinhas(
           (dados.results || []).map((r: TRIResult | NormalResult) => ({
             userId: r.userId,
@@ -161,7 +176,7 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
          * Falha em silêncio de propósito: quem é admin e não fez a prova não
          * tem entrega nenhuma, e isso não é um erro — apenas um botão a menos.
          */
-        if (meuId) {
+        if (meuId && dados.participei !== false) {
           const resEntrega = await fetch(`/api/exams/${id}/submissions/${meuId}`)
           if (resEntrega.ok) {
             const dadosEntrega = await resEntrega.json()
@@ -187,6 +202,30 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
         jaEnviou: !!minhaEntrega,
       }),
     [exam, conta, minhaEntrega],
+  )
+
+  /**
+   * A recusa dos arquivos que dependem da entrega desta pessoa.
+   *
+   * Duas frases, porque são dois fatos diferentes: quem não fez a prova precisa
+   * saber que o arquivo não existe para ele (e não que algo falhou), e quem fez
+   * merece um "aguarde" enquanto a entrega chega, em vez de um aviso que
+   * desmente a prova que ele acabou de fazer.
+   */
+  const SEM_ENTREGA = useMemo(
+    () =>
+      participei === false
+        ? {
+            permitido: false,
+            motivo: 'Este arquivo é montado a partir das suas respostas, e você não fez esta prova.',
+            esperandoOFim: false,
+          }
+        : {
+            permitido: false,
+            motivo: 'Estamos carregando a sua entrega…',
+            esperandoOFim: false,
+          },
+    [participei],
   )
 
   const ordenadas = useMemo(() => [...linhas].sort((a, b) => b.nota - a.nota), [linhas])
@@ -449,6 +488,74 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
           </section>
         )}
 
+        {/*
+          ── Quem não fez a prova ─────────────────────────────────────
+
+          Antes esta pessoa nem chegava aqui: a rota devolvia 403 e a tela
+          mostrava "Resultados indisponíveis" com um cadeado — a mesma tela de
+          uma prova que ainda não terminou. Agora ela entra e vê a turma; o que
+          falta é dizer, uma vez e sem drama, por que a linha dela não está na
+          lista.
+        */}
+        {participei === false && (
+          <section
+            className="exam-resultado-entra flex flex-wrap items-center gap-4 rounded-2xl border border-border/60 bg-muted/30 p-5 backdrop-blur-md"
+            style={{ '--exam-ordem': 0 } as React.CSSProperties}
+          >
+            <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-muted text-muted-foreground">
+              <EyeOff className="h-5 w-5" />
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-semibold">Você não fez esta prova</p>
+              <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
+                Não há entrega sua registrada, então não há nota nem colocação para mostrar. O
+                resultado da turma está abaixo.
+              </p>
+            </div>
+            {treinoLiberado && (
+              <Button
+                onClick={() => router.push(enderecoDoTreino(id))}
+                className="rounded-xl bg-gradient-to-r from-[#468152] to-[#3a6d44] font-semibold text-white hover:from-[#3a6d44] hover:to-[#2f5a38]"
+              >
+                <Dumbbell className="mr-2 h-4 w-4" />
+                Praticar esta prova
+              </Button>
+            )}
+          </section>
+        )}
+
+        {/*
+          ── Praticar ─────────────────────────────────────────────────
+
+          Para quem FEZ a prova. Quem não fez já recebeu o botão no cartão
+          acima, junto da explicação — repetir aqui seria oferecer duas vezes a
+          mesma coisa na mesma rolagem.
+        */}
+        {treinoLiberado && participei !== false && (
+          <section
+            className="exam-resultado-entra flex flex-wrap items-center gap-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-5 backdrop-blur-md"
+            style={{ '--exam-ordem': 1 } as React.CSSProperties}
+          >
+            <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
+              <Dumbbell className="h-5 w-5" />
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-semibold">Refazer como treino</p>
+              <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
+                As mesmas questões, agora com correção na hora e quantas vezes você quiser. A rodada
+                de treino não altera a sua nota nem a classificação acima.
+              </p>
+            </div>
+            <Button
+              onClick={() => router.push(enderecoDoTreino(id))}
+              variant="outline"
+              className="rounded-xl border-emerald-500/40"
+            >
+              Praticar
+            </Button>
+          </section>
+        )}
+
         {/* ── A turma ──────────────────────────────────────────────── */}
         {estatisticas && (
           <section
@@ -669,7 +776,7 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
               veredito={
                 minhaEntrega
                   ? downloads.gabarito
-                  : { permitido: false, motivo: 'Você não tem uma entrega registrada nesta prova.', esperandoOFim: false }
+                  : SEM_ENTREGA
               }
               gerando={gerando === 'meu'}
               ocupado={!!gerando}
@@ -693,7 +800,7 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
                 veredito={
                   minhaEntrega
                     ? downloads[formato.liberacao]
-                    : { permitido: false, motivo: 'Você não tem uma entrega registrada nesta prova.', esperandoOFim: false }
+                    : SEM_ENTREGA
                 }
                 gerando={gerando === (formato.chave === 'com-questoes' ? 'folhaComQuestoes' : 'folha')}
                 ocupado={!!gerando}
@@ -707,7 +814,7 @@ export default function ExamResultsPage({ params }: { params: { id: string } }) 
               veredito={
                 minhaEntrega
                   ? downloads.gabarito
-                  : { permitido: false, motivo: 'Você não tem uma entrega registrada nesta prova.', esperandoOFim: false }
+                  : SEM_ENTREGA
               }
               gerando={gerando === 'folhaComparada'}
               ocupado={!!gerando}

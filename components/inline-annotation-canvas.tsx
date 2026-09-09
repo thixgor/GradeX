@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom'
+import { useTheme } from 'next-themes'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Pencil,
@@ -48,6 +49,72 @@ const CANVAS_BLEED_Y = 20
 
 const PEN_PRESETS = ['#0f172a', '#ffffff', '#dc2626', '#2563eb', '#16a34a', '#7c3aed', '#ea580c']
 const HIGHLIGHTER_PRESETS = ['#fde047', '#fbbf24', '#86efac', '#7dd3fc', '#fca5a5', '#c4b5fd']
+
+/**
+ * ═══ O marca-texto ═══
+ *
+ * O que ele era: o mesmo código da caneta, com `globalAlpha` menor e ponta
+ * redonda. Três defeitos vinham daí, e os três apareciam justamente no gesto
+ * para o qual a ferramenta existe — arrastar por cima de uma linha de texto.
+ *
+ *  1. **Manchas.** Cada movimento do ponteiro desenhava UM segmento por cima do
+ *     que já estava na tela, com alpha. Traço translúcido sobre traço
+ *     translúcido soma: onde a mão ia devagar (mais segmentos no mesmo lugar),
+ *     no vai-e-vem e em cada curva, a tinta escurecia até virar borrão. O grifo
+ *     saía manchado, e não era impressão — era o alpha somando dezenas de
+ *     vezes. Agora o traço em andamento é redesenhado INTEIRO a cada quadro,
+ *     numa passada só: a opacidade é a mesma do começo ao fim, doa onde a mão
+ *     parar.
+ *  2. **Ponta redonda.** Marca-texto de verdade tem ponta chanfrada; a redonda
+ *     deixava as extremidades com cara de bolinha e a linha com cara de caneta
+ *     gorda. `lineCap: 'butt'` corta reto.
+ *  3. **Tinta por cima da tinta.** Grifo desenhado depois de uma anotação a
+ *     caneta cobria a caneta. Agora o marca-texto vai por baixo de tudo (é
+ *     desenhado primeiro) e compõe com `multiply`, que é o que o papel faz:
+ *     escurece o que está embaixo em vez de apagar.
+ *
+ * E o que ele ganhou: `endireitarGrifo`. Ninguém consegue arrastar o dedo (ou o
+ * mouse) em linha reta sobre uma frase — o traço sai ondulado e cobre metade da
+ * linha de cima. Quando o gesto é claramente horizontal, ele é achatado na
+ * altura média. É o que faz o grifo parecer feito com régua.
+ */
+const HIGHLIGHTER_OPACITY = 0.38
+/** Largura padrão: cobre uma linha de texto de corpo sem invadir a de cima. */
+const HIGHLIGHTER_DEFAULT_SIZE = 22
+
+/**
+ * Achata um traço de marca-texto quase-horizontal numa faixa reta.
+ *
+ * O critério é a proporção: só endireita quando a variação vertical do gesto é
+ * pequena perto da distância percorrida na horizontal — ou seja, quando a
+ * pessoa claramente quis marcar UMA linha. Um grifo diagonal, um círculo ou
+ * uma marcação vertical na margem passam intactos.
+ */
+export function endireitarGrifo(pontos: Point[], espessura: number): Point[] {
+  if (pontos.length < 2) return pontos
+
+  let minX = pontos[0].x, maxX = pontos[0].x
+  let minY = pontos[0].y, maxY = pontos[0].y
+  for (const p of pontos) {
+    if (p.x < minX) minX = p.x
+    if (p.x > maxX) maxX = p.x
+    if (p.y < minY) minY = p.y
+    if (p.y > maxY) maxY = p.y
+  }
+
+  const larguraDoGesto = maxX - minX
+  const alturaDoGesto = maxY - minY
+
+  // Curto demais para saber o que era: um toque, um ponto. Fica como está.
+  if (larguraDoGesto < espessura * 1.5) return pontos
+  // Tolerância proporcional à espessura: com um marcador grosso a mão treme
+  // mais e ainda assim a intenção é a mesma linha.
+  if (alturaDoGesto > espessura * 0.85) return pontos
+  if (alturaDoGesto > larguraDoGesto * 0.3) return pontos
+
+  const y = pontos.reduce((soma, p) => soma + p.y, 0) / pontos.length
+  return [{ x: minX, y }, { x: maxX, y }]
+}
 
 function isShapeTool(t: ExtendedTool): t is 'line' | 'rectangle' | 'ellipse' | 'arrow' {
   return t === 'line' || t === 'rectangle' || t === 'ellipse' || t === 'arrow'
@@ -114,13 +181,16 @@ interface InlineAnnotationCanvasProps {
   children: React.ReactNode
   className?: string
   /**
-   * De que lado o botão flutuante de anotar encosta. Padrão: direita.
+   * De que lado o botão flutuante de anotar mora. Padrão: direita.
    *
-   * Ele é `sticky`, então enquanto a questão rola ele passa POR CIMA do que
-   * estiver naquela faixa — e nas telas de resolução do Banco de Questões o
-   * que está ali, do lado direito de cada alternativa, é o "X" de riscar: um
-   * alvo de 36px que o botão cobria por inteiro. Encostado à esquerda, ele
-   * passa sobre a letra da alternativa (A/B/C/D), que não é botão nenhum.
+   * Ele é `sticky`, então enquanto a questão rola ele atravessa toda a altura
+   * dela naquela faixa. No computador a faixa é RESERVADA (o conteúdo recua
+   * 3,5rem daquele lado e o botão ocupa o recuo), então ele não cobre nada —
+   * ver o comentário no `className` do wrapper. No celular não há recuo: a tela
+   * é estreita demais para gastar 56px de enunciado, e o botão volta a
+   * sobrepor. Por isso o lado ainda importa: à direita ele passaria sobre o "X"
+   * de riscar de cada alternativa (um alvo de 36px); à esquerda, sobre a letra
+   * da alternativa (A/B/C/D), que não é botão nenhum.
    */
   alinhamentoDoBotao?: 'direita' | 'esquerda'
 }
@@ -161,7 +231,7 @@ export function InlineAnnotationCanvas({
   const [penColor, setPenColor] = useState(DEFAULT_LIGHT_INK)
   const [penThickness, setPenThickness] = useState(2.5)
   const [highlighterColor, setHighlighterColor] = useState('#fde047')
-  const [highlighterSize, setHighlighterSize] = useState(18)
+  const [highlighterSize, setHighlighterSize] = useState(HIGHLIGHTER_DEFAULT_SIZE)
   const [eraserSize, setEraserSize] = useState(22)
   const [eraserType, setEraserType] = useState<EraserType>('standard')
   const [textColor, setTextColor] = useState(DEFAULT_LIGHT_INK)
@@ -171,16 +241,50 @@ export function InlineAnnotationCanvas({
   const [shapeFilled, setShapeFilled] = useState(false)
   const [selectionMode, setSelectionMode] = useState<SelectionMode>('rectangle')
 
-  // Match the pen/shape/text default ink to the current theme (white on
-  // dark, near-black on light) — only while the user hasn't picked their
-  // own color yet, so this never overrides an explicit choice.
+  /*
+   * ═══ A tinta padrão segue o tema ═══
+   *
+   * Regra: no escuro a caneta nasce BRANCA, no claro nasce PRETA. Parece óbvio,
+   * e era exatamente o que não acontecia — por dois motivos, os dois nesta
+   * função.
+   *
+   *  1. Ela lia `documentElement.classList.contains('dark')` UMA vez, no mount.
+   *     O tema é aplicado pelo `next-themes`, e num carregamento em que a
+   *     classe ainda não estava no `<html>` quando este componente montou, a
+   *     leitura dava "claro" — no escuro, com tinta quase preta sobre fundo
+   *     quase preto: a pessoa desenhava e não via nada. `resolvedTheme` não
+   *     tem esse problema: ele chega (e muda) por estado do React.
+   *  2. `if (defaultInk === DEFAULT_LIGHT_INK) return` fazia o caminho claro
+   *     não fazer nada. Quem começava no escuro (caneta branca) e trocava para
+   *     o claro continuava com a caneta branca sobre papel branco — o mesmo
+   *     desaparecimento, na direção contrária.
+   *
+   * A troca de tema atualiza a tinta nos dois sentidos, e para de fazê-lo no
+   * instante em que a pessoa escolhe uma cor: uma escolha explícita não é uma
+   * preferência de tema, e sobrescrevê-la seria pior do que o defeito original.
+   */
+  const { resolvedTheme } = useTheme()
+  const temaEscuro = resolvedTheme === 'dark'
+  const corEscolhidaNaMao = useRef(false)
+
   useEffect(() => {
-    const isDark = document.documentElement.classList.contains('dark')
-    const defaultInk = isDark ? DEFAULT_DARK_INK : DEFAULT_LIGHT_INK
-    if (defaultInk === DEFAULT_LIGHT_INK) return
-    setPenColor(prev => prev === DEFAULT_LIGHT_INK ? defaultInk : prev)
-    setShapeColor(prev => prev === DEFAULT_LIGHT_INK ? defaultInk : prev)
-    setTextColor(prev => prev === DEFAULT_LIGHT_INK ? defaultInk : prev)
+    if (corEscolhidaNaMao.current) return
+    const tinta = temaEscuro ? DEFAULT_DARK_INK : DEFAULT_LIGHT_INK
+    const outra = temaEscuro ? DEFAULT_LIGHT_INK : DEFAULT_DARK_INK
+    const trocar = (anterior: string) => (anterior === outra ? tinta : anterior)
+    setPenColor(trocar)
+    setShapeColor(trocar)
+    setTextColor(trocar)
+  }, [temaEscuro])
+
+  /**
+   * Marca a cor como escolhida à mão e aplica.
+   *
+   * A partir daqui a troca de tema não mexe mais na tinta desta questão.
+   */
+  const escolherCor = useCallback((aplicar: (cor: string) => void) => (cor: string) => {
+    corEscolhidaNaMao.current = true
+    aplicar(cor)
   }, [])
 
   const [showShapePicker, setShowShapePicker] = useState(false)
@@ -196,6 +300,15 @@ export function InlineAnnotationCanvas({
   // In-progress interaction refs (kept out of React state for perf)
   const isPointerDownRef = useRef(false)
   const freehandPointsRef = useRef<Point[]>([]) // pixel-space, current stroke
+  /**
+   * Qual ferramenta está desenhando agora — `null` quando nada está.
+   *
+   * É o que permite ao `fullRedraw` incluir o traço em andamento na mesma
+   * passada do resto, em vez de ele ser pintado por fora (que é o que fazia o
+   * marca-texto manchar).
+   */
+  const tracoEmAndamentoRef = useRef<'pen' | 'highlighter' | null>(null)
+  const quadroDoTracoRef = useRef<number | null>(null)
   const lastDrawnPointRef = useRef<Point | null>(null)
   const shapeStartRef = useRef<Point | null>(null)
   const [shapePreviewEnd, setShapePreviewEnd] = useState<Point | null>(null)
@@ -262,6 +375,11 @@ export function InlineAnnotationCanvas({
     isPointerDownRef.current = false
     freehandPointsRef.current = []
     lastDrawnPointRef.current = null
+    tracoEmAndamentoRef.current = null
+    if (quadroDoTracoRef.current !== null) {
+      cancelAnimationFrame(quadroDoTracoRef.current)
+      quadroDoTracoRef.current = null
+    }
     shapeStartRef.current = null
     dragStartRef.current = null
 
@@ -397,19 +515,42 @@ export function InlineAnnotationCanvas({
   useEffect(() => { if (isActive) resizeCanvas() }, [isActive, resizeCanvas])
 
   // ───── Drawing primitives (all operate in pixel space) ─────
-  const drawFreehandPx = useCallback((ctx: CanvasRenderingContext2D, pts: Point[], color: string, thicknessPx: number, opacity = 1) => {
+  /**
+   * Um traço à mão livre, numa passada só.
+   *
+   * `marcaTexto` muda três coisas de uma vez, e é por isso que é um parâmetro e
+   * não três: ponta chanfrada (`butt`), composição `multiply` — a tinta escurece
+   * o que está embaixo em vez de cobrir — e nenhuma bolinha nas pontas quando o
+   * traço é um toque só. Ver o bloco `═══ O marca-texto ═══` no topo.
+   */
+  const drawFreehandPx = useCallback((
+    ctx: CanvasRenderingContext2D,
+    pts: Point[],
+    color: string,
+    thicknessPx: number,
+    opacity = 1,
+    marcaTexto = false,
+  ) => {
     if (pts.length === 0) return
     ctx.save()
     ctx.globalAlpha = opacity
+    if (marcaTexto) ctx.globalCompositeOperation = 'multiply'
     ctx.strokeStyle = color
     ctx.fillStyle = color
     ctx.lineWidth = thicknessPx
-    ctx.lineCap = 'round'
+    ctx.lineCap = marcaTexto ? 'butt' : 'round'
     ctx.lineJoin = 'round'
     if (pts.length === 1) {
-      ctx.beginPath()
-      ctx.arc(pts[0].x, pts[0].y, thicknessPx / 2, 0, Math.PI * 2)
-      ctx.fill()
+      if (marcaTexto) {
+        // Um toque com o marcador é um quadradinho de tinta, não um círculo:
+        // a ponta é chanfrada, e a bolinha entregava a mentira.
+        const meio = thicknessPx / 2
+        ctx.fillRect(pts[0].x - meio, pts[0].y - meio, thicknessPx, thicknessPx)
+      } else {
+        ctx.beginPath()
+        ctx.arc(pts[0].x, pts[0].y, thicknessPx / 2, 0, Math.PI * 2)
+        ctx.fill()
+      }
     } else {
       ctx.beginPath()
       ctx.moveTo(pts[0].x, pts[0].y)
@@ -418,6 +559,9 @@ export function InlineAnnotationCanvas({
     }
     ctx.restore()
   }, [])
+
+  /** O traço é marca-texto? (traço antigo pode não ter `tool` gravado.) */
+  const eGrifo = useCallback((s: DrawingStroke) => s.tool === 'highlighter' && !s.shape, [])
 
   const strokeToPx = useCallback((s: DrawingStroke) => ({
     points: s.points.map(toPx),
@@ -500,17 +644,51 @@ export function InlineAnnotationCanvas({
     const { w, h } = sizeRef.current
     ctx.clearRect(0, 0, w, h)
 
-    strokesRef.current.forEach(s => {
+    /*
+     * O marca-texto vai por BAIXO — ele é papel, não tinta.
+     *
+     * Desenhar na ordem de criação fazia um grifo passado depois cobrir a
+     * anotação a caneta que estava embaixo dele. Grifando por cima da própria
+     * letra, o resultado era apagar a nota que se queria destacar. Separando
+     * as duas passadas, o grifo se comporta como no papel: seja qual for a
+     * ordem em que a pessoa fez, a caneta fica legível por cima.
+     */
+    const emOrdemDeCamada = [
+      ...strokesRef.current.filter(eGrifo),
+      ...strokesRef.current.filter(s => !eGrifo(s)),
+    ]
+
+    emOrdemDeCamada.forEach(s => {
       const isSel = selectedStrokeIds.includes(s.id)
       const { points, thickness } = strokeToPx(s)
       if (s.shape && points.length >= 2) {
         drawShapePx(ctx, points[0], points[points.length - 1], s.shape, s.color, thickness, !!s.filled, isSel)
       } else {
         if (isSel) drawFreehandPx(ctx, points, 'rgba(59, 130, 246, 0.45)', thickness + 6)
-        drawFreehandPx(ctx, points, s.color, thickness, s.opacity ?? 1)
+        drawFreehandPx(ctx, points, s.color, thickness, s.opacity ?? 1, eGrifo(s))
       }
     })
     textsRef.current.forEach(t => drawTextPx(ctx, t, selectedTextIds.includes(t.id)))
+
+    /*
+     * O traço EM ANDAMENTO, redesenhado inteiro a cada quadro.
+     *
+     * Era desenhado segmento a segmento direto na tela, e cada segmento somava
+     * seu alpha ao anterior: o grifo ficava manchado onde a mão desacelerava ou
+     * voltava. Aqui ele entra numa passada só, com a opacidade final, junto do
+     * resto — nada soma com nada.
+     */
+    if (tracoEmAndamentoRef.current && freehandPointsRef.current.length > 0) {
+      const emGrifo = tracoEmAndamentoRef.current === 'highlighter'
+      drawFreehandPx(
+        ctx,
+        freehandPointsRef.current,
+        emGrifo ? highlighterColor : penColor,
+        emGrifo ? highlighterSize : penThickness,
+        emGrifo ? HIGHLIGHTER_OPACITY : 1,
+        emGrifo,
+      )
+    }
 
     if (shapePreviewStart && shapePreviewEnd && isShapeTool(tool)) {
       // shapeThickness is already a raw CSS-pixel value (same convention as
@@ -539,7 +717,7 @@ export function InlineAnnotationCanvas({
       }
       ctx.restore()
     }
-  }, [selectedStrokeIds, selectedTextIds, strokeToPx, drawShapePx, drawFreehandPx, drawTextPx, shapePreviewStart, shapePreviewEnd, tool, shapeColor, shapeThickness, shapeFilled, isSelecting, selectionPath, selectionMode])
+  }, [selectedStrokeIds, selectedTextIds, strokeToPx, drawShapePx, drawFreehandPx, drawTextPx, eGrifo, shapePreviewStart, shapePreviewEnd, tool, shapeColor, shapeThickness, shapeFilled, isSelecting, selectionPath, selectionMode, highlighterColor, highlighterSize, penColor, penThickness])
 
   useEffect(() => { fullRedraw() }, [fullRedraw, strokes, texts])
 
@@ -594,7 +772,10 @@ export function InlineAnnotationCanvas({
     }
   }, [fullRedraw, drawLaserOverlay])
 
-  useEffect(() => () => { if (laserRafRef.current) cancelAnimationFrame(laserRafRef.current) }, [])
+  useEffect(() => () => {
+    if (laserRafRef.current) cancelAnimationFrame(laserRafRef.current)
+    if (quadroDoTracoRef.current !== null) cancelAnimationFrame(quadroDoTracoRef.current)
+  }, [])
 
   function snapshot(withStrokes: DrawingStroke[], withTexts: TextAnnotation[]): string | undefined {
     const { w, h } = sizeRef.current
@@ -610,11 +791,16 @@ export function InlineAnnotationCanvas({
     ctx.scale(scale, scale)
     ctx.fillStyle = '#ffffff'
     ctx.fillRect(0, 0, w, h)
-    withStrokes.forEach(s => {
+    // A mesma ordem de camada da tela: grifo por baixo, caneta por cima.
+    const emOrdemDeCamada = [
+      ...withStrokes.filter(eGrifo),
+      ...withStrokes.filter(s => !eGrifo(s)),
+    ]
+    emOrdemDeCamada.forEach(s => {
       const points = s.points.map(toPx)
       const thickness = s.thickness * w
       if (s.shape && points.length >= 2) drawShapePx(ctx, points[0], points[points.length - 1], s.shape, s.color, thickness, !!s.filled)
-      else drawFreehandPx(ctx, points, s.color, thickness, s.opacity ?? 1)
+      else drawFreehandPx(ctx, points, s.color, thickness, s.opacity ?? 1, eGrifo(s))
     })
     withTexts.forEach(t => drawTextPx(ctx, t))
     return exportCanvas.toDataURL('image/png')
@@ -638,8 +824,8 @@ export function InlineAnnotationCanvas({
       isPointerDownRef.current = true
       freehandPointsRef.current = [point]
       lastDrawnPointRef.current = point
-      const ctx = ctxRef.current
-      if (ctx) drawFreehandPx(ctx, [point], tool === 'pen' ? penColor : highlighterColor, (tool === 'pen' ? penThickness : highlighterSize), tool === 'highlighter' ? 0.32 : 1)
+      tracoEmAndamentoRef.current = tool
+      fullRedraw()
       return
     }
     if (tool === 'laser') {
@@ -681,23 +867,41 @@ export function InlineAnnotationCanvas({
     const point = getPoint(e)
 
     if ((tool === 'pen' || tool === 'highlighter') && isPointerDownRef.current) {
-      const ctx = ctxRef.current
       const last = lastDrawnPointRef.current
-      if (ctx && last) {
-        ctx.save()
-        ctx.globalAlpha = tool === 'highlighter' ? 0.32 : 1
-        ctx.strokeStyle = tool === 'pen' ? penColor : highlighterColor
-        ctx.lineWidth = tool === 'pen' ? penThickness : highlighterSize
-        ctx.lineCap = 'round'
-        ctx.lineJoin = 'round'
-        ctx.beginPath()
-        ctx.moveTo(last.x, last.y)
-        ctx.lineTo(point.x, point.y)
-        ctx.stroke()
-        ctx.restore()
-      }
       freehandPointsRef.current.push(point)
       lastDrawnPointRef.current = point
+
+      /*
+       * ═══ Duas ferramentas, dois jeitos de desenhar ═══
+       *
+       * A CANETA continua incremental: um segmento por movimento, direto na
+       * tela. Ela é opaca, então segmento sobre segmento não soma nada — e é a
+       * ferramenta mais usada, num traço que pode ficar longo. Refazer a tela
+       * inteira a cada quadro só para ela seria pagar caro por nada.
+       *
+       * O MARCA-TEXTO não pode: com alpha, cada segmento pintado por cima do
+       * anterior escurece o encontro, e o grifo sai manchado onde a mão vai
+       * devagar ou volta. Ele redesenha a tela inteira — o traço em andamento
+       * junto —, no máximo uma vez por quadro (o navegador dispara vários
+       * `pointermove` entre dois frames, e sem esta guarda o redesenho
+       * aconteceria três ou quatro vezes por quadro à toa).
+       *
+       * Nos dois casos `tracoEmAndamentoRef` está preenchido, então um
+       * `fullRedraw` disparado por outra coisa no meio do traço não apaga o que
+       * está sendo desenhado.
+       */
+      if (tool === 'pen') {
+        const ctx = ctxRef.current
+        if (ctx && last) drawFreehandPx(ctx, [last, point], penColor, penThickness)
+        return
+      }
+
+      if (quadroDoTracoRef.current === null) {
+        quadroDoTracoRef.current = requestAnimationFrame(() => {
+          quadroDoTracoRef.current = null
+          fullRedraw()
+        })
+      }
       return
     }
 
@@ -742,21 +946,33 @@ export function InlineAnnotationCanvas({
     }
 
     if (tool === 'pen' || tool === 'highlighter') {
-      const pts = freehandPointsRef.current
+      const grifo = tool === 'highlighter'
+      // O grifo quase-horizontal vira uma faixa reta: ninguém arrasta o dedo em
+      // linha reta sobre uma frase. Ver `endireitarGrifo`.
+      const pts = grifo
+        ? endireitarGrifo(freehandPointsRef.current, highlighterSize)
+        : freehandPointsRef.current
       freehandPointsRef.current = []
       lastDrawnPointRef.current = null
+      tracoEmAndamentoRef.current = null
+      if (quadroDoTracoRef.current !== null) {
+        cancelAnimationFrame(quadroDoTracoRef.current)
+        quadroDoTracoRef.current = null
+      }
       if (pts.length > 0) {
         const newStroke: DrawingStroke = {
           id: makeId('stroke'),
           tool,
           points: pts.map(toFrac),
-          color: tool === 'pen' ? penColor : highlighterColor,
-          thickness: (tool === 'pen' ? penThickness : highlighterSize) / sizeRef.current.w,
-          opacity: tool === 'highlighter' ? 0.32 : 1,
+          color: grifo ? highlighterColor : penColor,
+          thickness: (grifo ? highlighterSize : penThickness) / sizeRef.current.w,
+          opacity: grifo ? HIGHLIGHTER_OPACITY : 1,
         }
         const next = [...strokesRef.current, newStroke]
         setStrokes(next)
         pushHistory(next, textsRef.current)
+      } else {
+        fullRedraw()
       }
       return
     }
@@ -926,6 +1142,26 @@ export function InlineAnnotationCanvas({
       ref={wrapperRef}
       className={cn(
         'relative transition-shadow duration-200',
+        /*
+         * ═══ A faixa do botão de anotar ═══
+         *
+         * O FAB é `sticky bottom`: ele flutua no rodapé da janela enquanto a
+         * questão rola, encostado na borda direita DESTE bloco. E a borda
+         * direita deste bloco é, no computador, exatamente onde ficam os botões
+         * de riscar alternativa — um alvo de 36px que o botão cobria por
+         * inteiro. Quem quisesse riscar a alternativa que estivesse na altura
+         * do rodapé não conseguia: o botão de anotar estava na frente.
+         *
+         * A correção não é mover o botão para longe (ele precisa estar à mão),
+         * é dar a ele uma FAIXA PRÓPRIA. Do `md` para cima o conteúdo recua
+         * 3,5rem do lado em que o botão mora, e o botão ocupa esse recuo — nada
+         * do conteúdo passa por baixo dele, em nenhuma altura de rolagem.
+         *
+         * No celular a faixa não existe: a tela é estreita, tirar 56px de
+         * largura de enunciado custaria mais do que o encosto resolve, e lá o
+         * dedo alcança o botão de riscar antes de o polegar chegar no FAB.
+         */
+        alinhamentoDoBotao === 'esquerda' ? 'md:pl-14' : 'md:pr-14',
         // Moldura discreta enquanto o modo anotação está ligado: deixa claro
         // que a questão está "em modo desenho" e não simplesmente travada.
         isActive && 'rounded-2xl ring-2 ring-primary/30 ring-offset-4 ring-offset-background',
@@ -959,7 +1195,11 @@ export function InlineAnnotationCanvas({
         <div
           className={cn(
             'sticky bottom-[calc(0.75rem+var(--anotacao-espaco-inferior,0px))] z-30 flex pointer-events-none',
-            alinhamentoDoBotao === 'esquerda' ? 'justify-start pl-0.5' : 'justify-end pr-0.5',
+            // O negativo devolve o botão à faixa que o `md:p*-14` acima
+            // reservou: ele fica FORA do conteúdo, não por cima dele.
+            alinhamentoDoBotao === 'esquerda'
+              ? 'justify-start pl-0.5 md:-ml-14 md:pl-0'
+              : 'justify-end pr-0.5 md:-mr-14 md:pr-0',
           )}
         >
           <AnnotateFab hasInk={hasInk} onClick={activate} />
@@ -970,15 +1210,15 @@ export function InlineAnnotationCanvas({
       {typeof document !== 'undefined' && isActive && createPortal(
         <Toolbar
           tool={tool} setTool={setTool}
-          penColor={penColor} setPenColor={setPenColor}
+          penColor={penColor} setPenColor={escolherCor(setPenColor)}
           penThickness={penThickness} setPenThickness={setPenThickness}
           highlighterColor={highlighterColor} setHighlighterColor={setHighlighterColor}
           highlighterSize={highlighterSize} setHighlighterSize={setHighlighterSize}
           eraserSize={eraserSize} setEraserSize={setEraserSize}
           eraserType={eraserType} setEraserType={setEraserType}
-          textColor={textColor} setTextColor={setTextColor}
+          textColor={textColor} setTextColor={escolherCor(setTextColor)}
           textSize={textSize} setTextSize={setTextSize}
-          shapeColor={shapeColor} setShapeColor={setShapeColor}
+          shapeColor={shapeColor} setShapeColor={escolherCor(setShapeColor)}
           shapeThickness={shapeThickness} setShapeThickness={setShapeThickness}
           shapeFilled={shapeFilled} setShapeFilled={setShapeFilled}
           selectionMode={selectionMode} setSelectionMode={setSelectionMode}
@@ -1048,6 +1288,11 @@ function AnnotateFab({ hasInk, onClick }: { hasInk: boolean; onClick: () => void
       whileTap={{ scale: 0.92 }}
       className={cn(
         'pointer-events-auto relative flex items-center gap-2 h-11 pl-3.5 pr-4 rounded-full',
+        // Na faixa reservada do computador (3,5rem) o botão é redondo e só o
+        // lápis: o rótulo não caberia sem voltar a invadir o conteúdo, e ali
+        // ele já está isolado o bastante para se explicar sozinho — o `title`
+        // e o `aria-label` continuam dizendo o que ele faz.
+        'md:h-11 md:w-11 md:justify-center md:gap-0 md:px-0',
         'glass-page-card glass-rim shadow-lg backdrop-blur-md font-semibold text-xs',
         hasInk ? 'text-violet-600 dark:text-violet-300' : 'text-primary'
       )}
@@ -1067,8 +1312,10 @@ function AnnotateFab({ hasInk, onClick }: { hasInk: boolean; onClick: () => void
       >
         <Pencil className="h-4 w-4" />
       </motion.span>
-      <span className="whitespace-nowrap">{hasInk ? 'Suas notas' : 'Anotar'}</span>
-      {hasInk && <span className="h-1.5 w-1.5 rounded-full bg-violet-500 animate-pulse flex-shrink-0" />}
+      <span className="whitespace-nowrap md:hidden">{hasInk ? 'Suas notas' : 'Anotar'}</span>
+      {hasInk && (
+        <span className="h-1.5 w-1.5 rounded-full bg-violet-500 animate-pulse flex-shrink-0 md:absolute md:right-1 md:top-1" />
+      )}
     </motion.button>
   )
 }
@@ -1307,11 +1554,40 @@ function CustomizePopover(props: ToolbarProps & { onClose: () => void }) {
               <button
                 key={c}
                 onClick={() => setColor(c)}
+                title={c}
                 className={cn('aspect-square rounded-md border transition-all', color.toLowerCase() === c.toLowerCase() ? 'border-foreground/80 scale-110 ring-2 ring-primary/30' : 'border-border/40 hover:scale-105')}
-                style={{ backgroundColor: c }}
+                /*
+                  A amostra do marca-texto é pintada com a MESMA opacidade com
+                  que ele desenha. Em cheio, o amarelo do quadradinho não tinha
+                  nada a ver com o amarelo pálido que saía na questão — a pessoa
+                  escolhia uma cor e recebia outra.
+                */
+                style={{ backgroundColor: c, opacity: tool === 'highlighter' ? HIGHLIGHTER_OPACITY + 0.25 : 1 }}
               />
             ))}
           </div>
+
+          {/*
+            A prévia: a espessura e a cor escolhidas, sobre uma linha de texto
+            de verdade. É o único jeito de responder "esse marcador cobre a
+            linha ou passa por cima da de cima?" sem sair da tela e testar.
+          */}
+          {(tool === 'pen' || tool === 'highlighter') && (
+            <div className="relative mt-1 flex h-10 items-center justify-center overflow-hidden rounded-lg border border-border/40 bg-background/70 px-2">
+              <span className="text-[11px] font-medium text-foreground/80">Texto de exemplo</span>
+              <span
+                aria-hidden
+                className="pointer-events-none absolute left-2 right-2 top-1/2 -translate-y-1/2"
+                style={{
+                  height: Math.max(2, Math.min(28, size)),
+                  backgroundColor: color,
+                  opacity: tool === 'highlighter' ? HIGHLIGHTER_OPACITY : 1,
+                  mixBlendMode: tool === 'highlighter' ? 'multiply' : undefined,
+                  borderRadius: tool === 'highlighter' ? 0 : 999,
+                }}
+              />
+            </div>
+          )}
         </div>
       )}
       <div className="space-y-1">

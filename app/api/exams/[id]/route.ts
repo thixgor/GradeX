@@ -242,6 +242,10 @@ export async function PUT(
       // `showRanking` decide se a turma inteira vê a lista de notas com nome —
       // uma decisão sobre os OUTROS, como `isHidden` e `audience`.
       'showRanking',
+      // Reabrir a prova como treino depois do término publica o caderno
+      // resolvido para todo mundo que tem o link — inclusive para quem ainda
+      // vai fazê-la numa reaplicação. Decisão de quem aplica.
+      'practiceAfterEnd',
     ] as const
 
     const permitidos = new Set<string>([
@@ -271,6 +275,12 @@ export async function PUT(
     }
     if ('hiddenExcept' in camposEnviados) {
       camposEnviados.hiddenExcept = normalizarExcecoes(camposEnviados.hiddenExcept)
+    }
+    // Booleano de verdade: um "false" em texto vindo de um formulário é
+    // verdadeiro em JavaScript, e liberaria o caderno resolvido sem ninguém ter
+    // marcado nada.
+    if ('practiceAfterEnd' in camposEnviados) {
+      camposEnviados.practiceAfterEnd = camposEnviados.practiceAfterEnd === true
     }
     /*
      * Reexibir a prova apaga as exceções.

@@ -153,6 +153,18 @@ export interface Exam {
    * distância.
    */
   showRanking?: boolean
+  /**
+   * Depois que esta prova termina, o aluno pode refazê-la como treino?
+   *
+   * Ausente ou `false` = não, que é como toda prova avaliativa se comportou até
+   * aqui: terminou, o endereço vira uma tela de aviso. `true` reabre o mesmo
+   * caderno em modo treino — feedback imediato, quantas vezes quiser — sem
+   * gerar entrega nenhuma: a rodada é corrigida no navegador, não entra na
+   * coleção de submissões, não muda nota e não aparece no ranking. Nasce
+   * desligado porque a mesma prova pode ser reaplicada a outra turma.
+   * Ver `lib/provas/treino-pos-termino.ts`.
+   */
+  practiceAfterEnd?: boolean
   // Tempo por questão
   timeMode?: 'none' | 'generalized' | 'individual' // none: sem tempo, generalized: mesmo tempo para todas, individual: tempo diferente por questão
   generalizedTimeSeconds?: number // Tempo em segundos quando timeMode = 'generalized'

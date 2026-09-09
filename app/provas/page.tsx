@@ -17,6 +17,7 @@ import { PdfCtaBanner } from '@/components/pdf-cta-banner'
 import { MinhasProvasDialog } from '@/components/provas/minhas-provas-dialog'
 import { canDownloadExamPdf } from '@/lib/tier-limits'
 import { provaJaEncerrou, resolverDownloadsDaProva } from '@/lib/provas/downloads-da-prova'
+import { enderecoDoTreino } from '@/lib/provas/treino-pos-termino'
 import { resolverJanelaDaProva } from '@/lib/provas/janela-da-prova'
 import { resolverAcaoDoAluno } from '@/lib/provas/acao-do-aluno'
 import { aplicarOrdem, moverNaLista, ordenarProvas, participaDaOrdem, provasDoEscopo } from '@/lib/provas/ordem-das-provas'
@@ -55,6 +56,7 @@ import {
   ArrowLeft,
   Edit2,
   Download,
+  Dumbbell,
   FileDown,
   BookOpenCheck,
   ListChecks,
@@ -1442,6 +1444,25 @@ function ProvasContent() {
             ) : (
               <Button className="flex-1 rounded-xl text-xs h-9" variant="secondary" size="sm" disabled>
                 {status.veredito.rotulo}
+              </Button>
+            )}
+
+            {/*
+              O segundo tempo da prova encerrada.
+
+              Fica AO LADO de "Ver resultados", nunca no lugar dele: a pessoa
+              que abre uma prova terminada quer a nota primeiro. Só aparece
+              quando o admin liberou — ver lib/provas/treino-pos-termino.ts.
+            */}
+            {status.veredito.podePraticar && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-xl text-xs h-9 border-emerald-500/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10"
+                title="Refazer esta prova como treino — não altera a sua nota nem a classificação"
+                onClick={(e) => { e.stopPropagation(); router.push(enderecoDoTreino(examId)) }}
+              >
+                <Dumbbell className="h-3.5 w-3.5 mr-1" /> Praticar
               </Button>
             )}
 

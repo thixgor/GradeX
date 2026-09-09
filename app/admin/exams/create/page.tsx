@@ -63,6 +63,8 @@ export default function CreateExamPage() {
     requireSignature: false,
     // Nasce ligada: é como toda prova se comportava antes do campo existir.
     showRanking: true,
+    // Nasce desligado: ver lib/provas/treino-pos-termino.ts.
+    practiceAfterEnd: false,
     shuffleQuestions: false,
     shuffleAlternatives: false,
     // A quem a prova é aplicada e quais PDFs ela libera sem assinatura.
@@ -611,6 +613,7 @@ export default function CreateExamPage() {
         allowCustomName: examData.allowCustomName,
         requireSignature: examData.requireSignature,
         showRanking: examData.showRanking,
+        practiceAfterEnd: examData.practiceAfterEnd,
         shuffleQuestions: examData.shuffleQuestions,
         shuffleAlternatives: examData.shuffleAlternatives,
         audience: examData.audience,
@@ -1246,6 +1249,14 @@ export default function CreateExamPage() {
                   // Prova de treino não tem término a esperar: ela acaba quando
                   // o dono entrega. Sem o par de props, a seção não é desenhada.
                   esperas={examData.isPracticeExam ? undefined : examData.holdDownloads}
+                  // Prova de treino já é refeita à vontade: a pergunta não
+                  // existe para ela, e sem o par de props a seção não aparece.
+                  treinoAposTermino={examData.isPracticeExam ? undefined : examData.practiceAfterEnd}
+                  onTreinoAposTerminoChange={
+                    examData.isPracticeExam
+                      ? undefined
+                      : (practiceAfterEnd) => setExamData({ ...examData, practiceAfterEnd })
+                  }
                   travas={examData.antiCola}
                   onTravasChange={(antiCola) => setExamData({ ...examData, antiCola })}
                   onEsperasChange={

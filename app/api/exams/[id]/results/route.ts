@@ -8,6 +8,7 @@ import { ObjectId } from 'mongodb'
 import { calculateTRIScores } from '@/lib/tri-calculator'
 import { resolverJanelaDaProva } from '@/lib/provas/janela-da-prova'
 import { mostraClassificacao, posicaoNaTurma, resumirTurma } from '@/lib/provas/classificacao'
+import { permiteTreinoAposTermino } from '@/lib/provas/treino-pos-termino'
 
 export const dynamic = 'force-dynamic'
 
@@ -57,9 +58,9 @@ export async function GET(
      * 403 ("Apenas administradores podem ver os resultados") e era jogado para
      * a página inicial: a "área de resultados" era, para o aluno, um beco.
      *
-     * Agora o aluno que participou vê o resultado da prova que fez, e só depois
-     * que ela termina — que é quando o gabarito já é público de qualquer forma.
-     * Quem não fez a prova continua sem nada para ver aqui.
+     * Agora o aluno vê o resultado da prova, e só depois que ela termina — que
+     * é quando o gabarito já é público de qualquer forma. Quem NÃO participou é
+     * tratado logo abaixo, pelo que a prova publica.
      */
     const janela = resolverJanelaDaProva(exam)
     if (!isAdmin && !janela.encerrada && !exam.isPracticeExam) {
@@ -69,17 +70,47 @@ export async function GET(
       )
     }
 
-    if (!isAdmin) {
-      const participou = await submissionsCollection.findOne(
-        { examId: id, userId: session.userId },
-        { projection: { _id: 1 } },
-      )
-      if (!participou) {
-        return NextResponse.json(
-          { error: 'Só quem fez a prova vê os resultados dela.' },
-          { status: 403 }
+    /*
+     * Quem NÃO fez a prova.
+     *
+     * A regra era simples e errada: sem submissão, 403 — "Só quem fez a prova
+     * vê os resultados dela." O aluno que faltou, o que chegou depois do
+     * portão, o que entrou na turma no meio do semestre: todos clicavam em
+     * **Ver resultados** numa prova encerrada e recebiam uma tela dizendo que
+     * não havia entrega dele. A frase é verdadeira e não era a pergunta: ele
+     * não estava procurando a nota dele, estava procurando a da TURMA.
+     *
+     * E a classificação, quando o admin a deixa ligada, é justamente a parte
+     * pública deste resultado. Ela sai com nome e nota para os oitenta que
+     * fizeram a prova; esconder a mesma lista de quem faltou não protege
+     * ninguém — protege da pessoa exatamente aquilo que os colegas dela estão
+     * vendo na tela ao lado.
+     *
+     * Então o critério passa a ser o que a prova publica, não quem está
+     * pedindo: com a classificação ligada, qualquer aluno para quem a prova
+     * existe vê o resultado dela depois do término. Com a classificação
+     * desligada não há nada de público a mostrar — aí, sim, sem entrega não há
+     * o que ver, e a recusa diz isso em vez de acusar a pessoa de não ter
+     * feito a prova.
+     *
+     * `participou` continua sendo lido: ele é o que separa "a sua nota" do
+     * resto da tela.
+     */
+    const participou = isAdmin
+      ? null
+      : await submissionsCollection.findOne(
+          { examId: id, userId: session.userId },
+          { projection: { _id: 1 } },
         )
-      }
+
+    if (!isAdmin && !participou && !mostraClassificacao(exam, false)) {
+      return NextResponse.json(
+        {
+          error:
+            'Esta prova não publica a classificação da turma, e você não tem uma entrega registrada nela — não há resultado para mostrar.',
+        },
+        { status: 403 }
+      )
     }
 
     // Provas práticas não têm término a esperar; as demais, sim — inclusive
@@ -167,6 +198,16 @@ export async function GET(
       notaMaxima,
       encerrada: janela.encerrada || !!exam.isPracticeExam,
       souAdmin: isAdmin,
+      /*
+       * A tela precisa distinguir "você não fez esta prova" de "ainda estamos
+       * carregando a sua entrega". Sem este campo ela mostrava, para quem
+       * faltou, os mesmos cartões de "minhas respostas" desligados com o aviso
+       * de erro — como se algo tivesse falhado.
+       */
+      participei: isAdmin ? undefined : !!participou,
+      // Refazer como treino: a tela da prova encerrada e esta oferecem o mesmo
+      // botão, e as duas precisam saber que ele existe.
+      treinoLiberado: permiteTreinoAposTermino(exam, now),
     })
   } catch (error) {
     console.error('Get results error:', error)

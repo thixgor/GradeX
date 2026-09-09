@@ -23,6 +23,17 @@ interface PracticeExamConfigProps {
   exam: Exam
   onStart: (config: PracticeExamSettings) => void
   onBack: () => void
+  /**
+   * O selo acima do título. Padrão: "Prova Prática".
+   *
+   * Esta mesma tela abre o "segundo tempo" de uma prova AVALIATIVA que já
+   * terminou (ver `lib/provas/treino-pos-termino.ts`), e chamá-la de "Prova
+   * Prática" ali diria a coisa errada sobre a prova que a turma fez valendo
+   * nota.
+   */
+  rotulo?: string
+  /** Uma frase logo abaixo do título, quando há algo que a pessoa precisa saber antes de começar. */
+  aviso?: string
 }
 
 export interface PracticeExamSettings {
@@ -42,7 +53,7 @@ const TIME_OPTIONS = [
   { value: 240, label: '4 horas', sublabel: 'Longo', icon: Clock },
 ]
 
-export function PracticeExamConfig({ exam, onStart, onBack }: PracticeExamConfigProps) {
+export function PracticeExamConfig({ exam, onStart, onBack, rotulo, aviso }: PracticeExamConfigProps) {
   const [navigationMode, setNavigationMode] = useState<'paginated' | 'scroll'>(
     exam.navigationMode || 'paginated'
   )
@@ -74,9 +85,14 @@ export function PracticeExamConfig({ exam, onStart, onBack }: PracticeExamConfig
         {/* Header da prova */}
         <div className="text-center space-y-3">
           <Badge className="bg-gradient-to-r from-[#468152] to-[#E2A43E] text-white border-0 px-4 py-1.5 text-sm">
-            Prova Prática
+            {rotulo || 'Prova Prática'}
           </Badge>
           <h1 className="text-3xl font-bold tracking-tight">{exam.title}</h1>
+          {aviso && (
+            <p className="mx-auto max-w-lg rounded-xl border border-emerald-500/25 bg-emerald-500/5 px-4 py-2.5 text-sm leading-relaxed text-emerald-800 dark:text-emerald-300">
+              {aviso}
+            </p>
+          )}
           {exam.description && (
             <p className="text-muted-foreground max-w-lg mx-auto">{exam.description}</p>
           )}

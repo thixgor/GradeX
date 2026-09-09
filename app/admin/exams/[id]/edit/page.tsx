@@ -73,6 +73,8 @@ export default function EditExamPage({ params }: { params: { id: string } }) {
     requireSignature: false,
     // Nasce ligada: é como toda prova se comportava antes do campo existir.
     showRanking: true,
+    // Nasce desligado: ver lib/provas/treino-pos-termino.ts.
+    practiceAfterEnd: false,
     shuffleQuestions: false,
     shuffleAlternatives: false,
     audience: { modo: 'todos', periodos: [] } as PublicoDaProva,
@@ -188,6 +190,10 @@ export default function EditExamPage({ params }: { params: { id: string } }) {
         // Ausente = ligada, como em `mostraClassificacao`. O documento antigo
         // não pode perder o ranking por um clique em "Salvar".
         showRanking: exam.showRanking !== false,
+        // Ausente = desligado, ao contrário do ranking: a prova antiga não
+        // pode ganhar um "Praticar" (com gabarito na hora) por um clique em
+        // "Salvar" numa edição sobre outra coisa.
+        practiceAfterEnd: (exam as any).practiceAfterEnd === true,
         shuffleQuestions: exam.shuffleQuestions || false,
         shuffleAlternatives: (exam as any).shuffleAlternatives || false,
         // Normalizados na leitura: um documento antigo não tem os campos, e um
@@ -714,6 +720,7 @@ export default function EditExamPage({ params }: { params: { id: string } }) {
         allowCustomName: examData.allowCustomName,
         requireSignature: examData.requireSignature,
         showRanking: examData.showRanking,
+        practiceAfterEnd: examData.practiceAfterEnd,
         shuffleQuestions: examData.shuffleQuestions,
         shuffleAlternatives: examData.shuffleAlternatives,
         audience: examData.audience,
@@ -1350,6 +1357,14 @@ export default function EditExamPage({ params }: { params: { id: string } }) {
                   // Prova de treino não tem término a esperar: ela acaba quando
                   // o dono entrega. Sem o par de props, a seção não é desenhada.
                   esperas={examData.isPracticeExam ? undefined : examData.holdDownloads}
+                  // Prova de treino já é refeita à vontade: a pergunta não
+                  // existe para ela, e sem o par de props a seção não aparece.
+                  treinoAposTermino={examData.isPracticeExam ? undefined : examData.practiceAfterEnd}
+                  onTreinoAposTerminoChange={
+                    examData.isPracticeExam
+                      ? undefined
+                      : (practiceAfterEnd) => setExamData({ ...examData, practiceAfterEnd })
+                  }
                   travas={examData.antiCola}
                   onTravasChange={(antiCola) => setExamData({ ...examData, antiCola })}
                   onEsperasChange={
