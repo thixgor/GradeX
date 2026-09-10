@@ -1,41 +1,35 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { BanChecker } from '@/components/ban-checker'
 import { AppShell } from '@/components/app-shell'
 import { LogoLoading } from '@/components/logo-loading'
+import { cn } from '@/lib/utils'
 import {
+  ADMIN_GROUPS,
+  ADMIN_SECTIONS,
+  alternarFavoritoAdmin,
+  buscarSecoesAdmin,
+  grupoPorChave,
+  lerFavoritosAdmin,
+  lerRecentesAdmin,
+  secoesPorHrefs,
+  type AdminGroupKey,
+  type AdminSection,
+} from '@/lib/admin-navigation'
+import {
+  ArrowRight,
+  Clock,
+  ExternalLink,
   FileText,
   Key,
-  Users,
-  BarChart3,
-  Settings,
-  ArrowLeft,
-  Shield,
-  ShieldCheck,
-  Calendar,
-  BookOpen,
-  Sliders,
-  Database,
-  Megaphone,
-  Gamepad2 as GamepadIcon,
-  Mail,
-  ClipboardList,
-  Target,
-  Music,
-  HeartPulse,
-  ShoppingCart,
-  Package,
-  BadgeDollarSign,
-  BadgePercent,
+  LifeBuoy,
+  Search,
   Star,
-  Network,
-  Ticket,
-  MessageSquareQuote,
-  GraduationCap,
+  Users,
+  X,
 } from 'lucide-react'
 
 interface User {
@@ -45,13 +39,27 @@ interface User {
   role: 'admin' | 'user'
 }
 
+/** Ações que o admin repete todo dia — ficam antes de qualquer rolagem. */
+const ACOES_RAPIDAS = [
+  { label: 'Nova prova', hint: 'Criar do zero', href: '/admin/exams/create', icon: FileText },
+  { label: 'Gerar serial key', hint: 'Nova chave', href: '/admin/keys', icon: Key },
+  { label: 'Tickets abertos', hint: 'Fila de suporte', href: '/admin/tickets', icon: LifeBuoy },
+  { label: 'Usuários', hint: 'Buscar conta', href: '/admin/users', icon: Users },
+]
+
 export default function AdminDashboard() {
   const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
+  const [termo, setTermo] = useState('')
+  const [grupoAtivo, setGrupoAtivo] = useState<AdminGroupKey | 'todos'>('todos')
+  const [favoritos, setFavoritos] = useState<string[]>([])
+  const [recentes, setRecentes] = useState<string[]>([])
 
   useEffect(() => {
     checkAuth()
+    setFavoritos(lerFavoritosAdmin())
+    setRecentes(lerRecentesAdmin())
   }, [])
 
   async function checkAuth() {
@@ -77,6 +85,28 @@ export default function AdminDashboard() {
     }
   }
 
+  const encontradas = useMemo(() => buscarSecoesAdmin(termo), [termo])
+
+  const visiveis = useMemo(
+    () =>
+      grupoAtivo === 'todos'
+        ? encontradas
+        : encontradas.filter((secao) => secao.group === grupoAtivo),
+    [encontradas, grupoAtivo],
+  )
+
+  const buscando = termo.trim().length > 0
+
+  const secoesFavoritas = useMemo(() => secoesPorHrefs(favoritos), [favoritos])
+  const secoesRecentes = useMemo(
+    () => secoesPorHrefs(recentes).filter((secao) => !favoritos.includes(secao.href)),
+    [recentes, favoritos],
+  )
+
+  function alternarFavorito(href: string) {
+    setFavoritos(alternarFavoritoAdmin(href))
+  }
+
   if (loading) {
     return <LogoLoading message="Carregando painel admin..." size="lg" fullscreen />
   }
@@ -85,288 +115,329 @@ export default function AdminDashboard() {
     return null
   }
 
-  const adminSections = [
-    {
-      title: 'Gerenciar Provas',
-      description: 'Criar, editar e visualizar provas. Acompanhar submissões e corrigir questões discursivas.',
-      icon: FileText,
-      href: '/admin/exams',
-      color: 'from-blue-500 to-cyan-500'
-    },
-    {
-      title: 'Serial Keys',
-      description: 'Gerar e gerenciar chaves de ativação para planos Trial, Plus+ e Personalizados.',
-      icon: Key,
-      href: '/admin/keys',
-      color: 'from-purple-500 to-pink-500'
-    },
-    {
-      title: 'Gerenciar Usuários',
-      description: 'Visualizar, editar e gerenciar contas de usuários. Controlar permissões e status.',
-      icon: Users,
-      href: '/admin/users',
-      color: 'from-green-500 to-emerald-500'
-    },
-    {
-      title: 'Cargos',
-      description: 'Criar e administrar os cargos da plataforma: o que cada um abre, se é pago e como aparece.',
-      icon: ShieldCheck,
-      href: '/admin/cargos',
-      color: 'from-emerald-500 to-teal-500'
-    },
-    {
-      title: 'Estatísticas',
-      description: 'Análises e relatórios detalhados sobre provas, desempenho e uso da plataforma.',
-      icon: BarChart3,
-      href: '/admin/stats',
-      color: 'from-orange-500 to-red-500'
-    },
-    {
-      title: 'DomineAqui Analytics',
-      description: 'Dashboard financeiro de vendas, assinaturas, conversão, abandonos, pedidos e cancelamentos.',
-      icon: BadgeDollarSign,
-      href: '/admin/analytics',
-      color: 'from-emerald-500 to-teal-500'
-    },
-    {
-      title: 'Cupons',
-      description: 'Criar e gerenciar cupons para checkouts de materiais, flashcards e pacotes.',
-      icon: BadgePercent,
-      href: '/admin/coupons',
-      color: 'from-lime-500 to-emerald-500'
-    },
-    {
-      title: 'PROUNI / FIES',
-      description: 'Configurar desconto por produto para bolsistas e analisar as solicitações com os comprovantes enviados.',
-      icon: GraduationCap,
-      href: '/admin/prouni',
-      color: 'from-sky-500 to-cyan-500'
-    },
-    {
-      title: 'Cronogramas & Avaliações',
-      description: 'Marcar provas e trabalhos por seção e período, e configurar quando cada avaliação lembra os alunos.',
-      icon: Calendar,
-      href: '/admin/cronogramas',
-      color: 'from-emerald-500 to-teal-600'
-    },
-    {
-      title: 'Lotes por Evento',
-      description: 'Configurar descontos progressivos vinculados a uma prova ou evento. Quanto antes comprar, maior o desconto.',
-      icon: Calendar,
-      href: '/admin/pricing-events',
-      color: 'from-emerald-500 to-cyan-500'
-    },
-    {
-      title: 'Configurações',
-      description: 'Gerenciar configurações da landing page, vídeos e outras preferências.',
-      icon: Sliders,
-      href: '/admin/settings',
-      color: 'from-indigo-500 to-purple-500'
-    },
-    {
-      title: 'Banco de Questões',
-      description: 'Gerenciar questões, hierarquia e importar questões em massa.',
-      icon: Database,
-      href: '/admin/banco-questoes',
-      color: 'from-teal-500 to-cyan-500'
-    },
-    {
-      title: 'Anúncios',
-      description: 'Gerenciar banners e anúncios rotativos da plataforma.',
-      icon: Megaphone,
-      href: '/admin/anuncios',
-      color: 'from-amber-500 to-orange-500'
-    },
-    {
-      title: 'Games Educativos',
-      description: 'Gerenciar conteúdo dos jogos: Palavras Cruzadas, Forca e Caça aos Erros.',
-      icon: GamepadIcon,
-      href: '/admin/games',
-      color: 'from-rose-500 to-pink-500'
-    },
-    {
-      title: 'Enviar E-mails',
-      description: 'Enviar e-mails em massa para usuários. Templates prontos e editor visual.',
-      icon: Mail,
-      href: '/admin/emails',
-      color: 'from-sky-500 to-blue-500'
-    },
-    {
-      title: 'Pesquisas e Formulários',
-      description: 'Criar e gerenciar pesquisas, formulários de inscrição e feedbacks dos usuários.',
-      icon: ClipboardList,
-      href: '/admin/forms',
-      color: 'from-fuchsia-500 to-purple-600'
-    },
-    {
-      title: 'Captura de Leads',
-      description: 'Criar páginas de captura de leads com materiais gratuitos. Coletar e-mails e nomes.',
-      icon: Target,
-      href: '/admin/leads',
-      color: 'from-lime-500 to-green-500'
-    },
-    {
-      title: 'Playlists de Estudo',
-      description: 'Gerenciar playlists do YouTube para o player de música ambiente. Foco e concentração.',
-      icon: Music,
-      href: '/admin/study-playlists',
-      color: 'from-violet-500 to-purple-500'
-    },
-    {
-      title: 'Manual Clínico',
-      description: 'Gerenciar patologias do manual clínico. Importar, cadastrar e editar fichas de estudo.',
-      icon: HeartPulse,
-      href: '/admin/manual-clinico',
-      color: 'from-red-500 to-rose-500'
-    },
-    {
-      title: 'Doações Pix',
-      description: 'Gerenciar doações, aprovar pendentes, editar ranking e configurar exibição nos interstitials.',
-      icon: HeartPulse,
-      href: '/admin/doacoes',
-      color: 'from-rose-500 to-pink-500'
-    },
-    {
-      title: 'Rifas & Sorteios',
-      description: 'Criar rifas, vender números via Mercado Pago, gerenciar participantes e realizar sorteios ao vivo.',
-      icon: Ticket,
-      href: '/admin/rifas',
-      color: 'from-amber-500 to-yellow-500'
-    },
-    {
-      title: 'Materiais',
-      description: 'Marketplace de materiais. Criar materiais, pastas, pacotes. Definir preços ou gratuidade.',
-      icon: ShoppingCart,
-      href: '/admin/materiais',
-      color: 'from-emerald-500 to-teal-500'
-    },
-    {
-      title: 'Loja Física',
-      description: 'Produtos físicos/impressos, galeria de imagens, métodos de entrega, frete por região e pedidos.',
-      icon: Package,
-      href: '/admin/loja',
-      color: 'from-orange-500 to-amber-500'
-    },
-    {
-      title: 'Flashcards Manuais',
-      description: 'Gestão de decks oficiais, comerciais e da comunidade. Decks pagos vinculam-se a /materiais automaticamente.',
-      icon: BookOpen,
-      href: '/admin/flashcards/manual',
-      color: 'from-violet-500 to-fuchsia-500'
-    },
-    {
-      title: 'Avaliações',
-      description: 'Moderar avaliações de materiais e decks. Criar avaliações manuais com nome, foto e data. Travar avaliações por item.',
-      icon: Star,
-      href: '/admin/avaliacoes',
-      color: 'from-yellow-500 to-amber-600'
-    },
-    {
-      title: 'Mapas Mentais',
-      description: 'Gerenciar todos os mapas mentais da plataforma. Ver e abrir mapas privados e protegidos por senha, e excluir qualquer mapa.',
-      icon: Network,
-      href: '/mapa-mental?scope=all-admin',
-      color: 'from-emerald-500 to-green-600'
-    },
-    {
-      title: 'Depoimentos',
-      description: 'Cadastrar vídeos de depoimentos de alunos (YouTube não listado) que aparecem na landing page. Nome e descrição opcionais, com ordenação.',
-      icon: MessageSquareQuote,
-      href: '/admin/depoimentos',
-      color: 'from-amber-500 to-orange-600'
-    }
-  ]
-
   return (
     <AppShell headerTitle="Painel Administrativo" headerSubtitle={`Bem-vindo, ${user.name}`}>
       <BanChecker />
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
-        <div className="mb-8">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-2">Ferramentas de Administração</h2>
-          <p className="text-muted-foreground">
-            Selecione uma seção para gerenciar
-          </p>
-        </div>
+      <div className="container mx-auto max-w-6xl px-4 py-6 sm:py-8">
+        {/* Busca e filtros grudam logo abaixo do cabeçalho do AppShell (h-14, h-16
+            do `sm` em diante, mais a faixa de segurança do PWA). No celular era
+            preciso rolar de volta até o começo da página só para trocar de seção. */}
+        <div className="sticky top-[calc(3.5rem+env(safe-area-inset-top))] z-20 -mx-4 mb-4 border-b bg-background/95 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/80 sm:top-[calc(4rem+env(safe-area-inset-top))]">
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <input
+              value={termo}
+              onChange={(evento) => setTermo(evento.target.value)}
+              placeholder="Buscar no painel (ex.: tickets, música, cupom)"
+              aria-label="Buscar seção do painel"
+              className="h-11 w-full rounded-lg border border-input bg-background pl-9 pr-9 text-base outline-none ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring sm:text-sm"
+            />
+            {buscando && (
+              <button
+                type="button"
+                onClick={() => setTermo('')}
+                aria-label="Limpar busca"
+                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1.5 text-muted-foreground transition hover:bg-muted hover:text-foreground"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </div>
 
-        <div className="grid gap-6 md:grid-cols-2">
-          {adminSections.map((section) => (
-            <Card
-              key={section.href}
-              className="group hover:shadow-lg transition-all duration-300 cursor-pointer overflow-hidden"
-              onClick={() => router.push(section.href)}
-            >
-              <div className={`h-2 bg-gradient-to-r ${section.color}`} />
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="space-y-1 flex-1">
-                    <CardTitle className="flex items-center gap-3 text-xl">
-                      <div className={`p-2 rounded-lg bg-gradient-to-br ${section.color} bg-opacity-10`}>
-                        <section.icon className="h-6 w-6 text-white" />
-                      </div>
-                      {section.title}
-                    </CardTitle>
-                    <CardDescription className="text-sm">
-                      {section.description}
-                    </CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <Button
-                  variant="ghost"
-                  className="w-full group-hover:bg-primary/10 transition-colors"
-                >
-                  Acessar
-                  <ArrowLeft className="ml-2 h-4 w-4 rotate-180 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {/* Quick Actions */}
-        <div className="mt-12 p-6 bg-muted/50 rounded-lg border">
-          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <BookOpen className="h-5 w-5" />
-            Ações Rápidas
-          </h3>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            <Button
-              variant="outline"
-              className="justify-start h-auto py-3"
-              onClick={() => router.push('/admin/exams/create')}
-            >
-              <FileText className="mr-2 h-4 w-4" />
-              <div className="text-left">
-                <div className="font-medium">Nova Prova</div>
-                <div className="text-xs text-muted-foreground">Criar prova do zero</div>
-              </div>
-            </Button>
-            <Button
-              variant="outline"
-              className="justify-start h-auto py-3"
-              onClick={() => router.push('/admin/keys')}
-            >
-              <Key className="mr-2 h-4 w-4" />
-              <div className="text-left">
-                <div className="font-medium">Gerar Serial Key</div>
-                <div className="text-xs text-muted-foreground">Criar nova chave</div>
-              </div>
-            </Button>
-            <Button
-              variant="outline"
-              className="justify-start h-auto py-3"
-              onClick={() => router.push('/admin/exams')}
-            >
-              <Calendar className="mr-2 h-4 w-4" />
-              <div className="text-left">
-                <div className="font-medium">Ver Provas Ativas</div>
-                <div className="text-xs text-muted-foreground">Provas em andamento</div>
-              </div>
-            </Button>
+          <div className="-mx-1 mt-2 flex gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <ChipDeGrupo
+              ativo={grupoAtivo === 'todos'}
+              onClick={() => setGrupoAtivo('todos')}
+              label="Tudo"
+              contagem={encontradas.length}
+            />
+            {ADMIN_GROUPS.map((grupo) => {
+              const contagem = encontradas.filter((secao) => secao.group === grupo.key).length
+              return (
+                <ChipDeGrupo
+                  key={grupo.key}
+                  ativo={grupoAtivo === grupo.key}
+                  onClick={() => setGrupoAtivo(grupo.key)}
+                  label={grupo.labelCurto}
+                  contagem={contagem}
+                />
+              )
+            })}
           </div>
         </div>
+
+        {!buscando && (
+          <>
+            {/* Ações rápidas em linha rolável: ocupam uma faixa, não meia tela. */}
+            <div className="-mx-4 mb-5 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-3 sm:overflow-visible sm:px-0 lg:grid-cols-4 [&::-webkit-scrollbar]:hidden">
+              {ACOES_RAPIDAS.map((acao) => (
+                <button
+                  key={acao.href}
+                  type="button"
+                  onClick={() => router.push(acao.href)}
+                  className="flex min-w-[10.5rem] shrink-0 items-center gap-3 rounded-lg border bg-card px-3 py-2.5 text-left transition hover:border-primary/50 hover:bg-muted/50 sm:min-w-0"
+                >
+                  <acao.icon className="h-4 w-4 shrink-0 text-primary" />
+                  <span className="min-w-0">
+                    <span className="block truncate text-sm font-medium">{acao.label}</span>
+                    <span className="block truncate text-xs text-muted-foreground">
+                      {acao.hint}
+                    </span>
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            {secoesFavoritas.length > 0 && (
+              <FaixaDeSecoes
+                titulo="Favoritos"
+                icone={<Star className="h-4 w-4 fill-amber-400 text-amber-400" />}
+                secoes={secoesFavoritas}
+                favoritos={favoritos}
+                onAbrir={(href) => router.push(href)}
+                onFavoritar={alternarFavorito}
+              />
+            )}
+
+            {secoesRecentes.length > 0 && (
+              <FaixaDeSecoes
+                titulo="Abertos recentemente"
+                icone={<Clock className="h-4 w-4 text-muted-foreground" />}
+                secoes={secoesRecentes}
+                favoritos={favoritos}
+                onAbrir={(href) => router.push(href)}
+                onFavoritar={alternarFavorito}
+              />
+            )}
+          </>
+        )}
+
+        {visiveis.length === 0 ? (
+          <div className="rounded-lg border border-dashed p-8 text-center">
+            <p className="text-sm text-muted-foreground">
+              {grupoAtivo !== 'todos' && encontradas.length > 0
+                ? `Nada em ${grupoPorChave(grupoAtivo)?.labelCurto ?? 'neste grupo'}, mas há ${encontradas.length} resultado(s) nos outros.`
+                : `Nada encontrado para “${termo}”.`}
+            </p>
+            {grupoAtivo !== 'todos' && encontradas.length > 0 ? (
+              <Button variant="ghost" className="mt-2" onClick={() => setGrupoAtivo('todos')}>
+                Ver em todos os grupos
+              </Button>
+            ) : (
+              <Button variant="ghost" className="mt-2" onClick={() => setTermo('')}>
+                Limpar busca
+              </Button>
+            )}
+          </div>
+        ) : buscando ? (
+          <ListaDeSecoes
+            secoes={visiveis}
+            favoritos={favoritos}
+            onAbrir={(href) => router.push(href)}
+            onFavoritar={alternarFavorito}
+          />
+        ) : (
+          ADMIN_GROUPS.filter(
+            (grupo) => grupoAtivo === 'todos' || grupoAtivo === grupo.key,
+          ).map((grupo) => {
+            const secoes = visiveis.filter((secao) => secao.group === grupo.key)
+            if (secoes.length === 0) return null
+            return (
+              <section key={grupo.key} className="mb-8 scroll-mt-32" id={`grupo-${grupo.key}`}>
+                <div className="mb-3 flex items-center gap-3">
+                  <span className={cn('h-8 w-1.5 rounded-full bg-gradient-to-b', grupo.color)} />
+                  <div className="min-w-0">
+                    <h2 className="text-base font-semibold sm:text-lg">{grupo.label}</h2>
+                    <p className="line-clamp-1 text-xs text-muted-foreground">
+                      {grupo.description}
+                    </p>
+                  </div>
+                  <span className="ml-auto shrink-0 rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+                    {secoes.length}
+                  </span>
+                </div>
+                <ListaDeSecoes
+                  secoes={secoes}
+                  favoritos={favoritos}
+                  onAbrir={(href) => router.push(href)}
+                  onFavoritar={alternarFavorito}
+                />
+              </section>
+            )
+          })
+        )}
       </div>
     </AppShell>
+  )
+}
+
+function ChipDeGrupo({
+  ativo,
+  onClick,
+  label,
+  contagem,
+}: {
+  ativo: boolean
+  onClick: () => void
+  label: string
+  contagem: number
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={contagem === 0 && !ativo}
+      className={cn(
+        'flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition',
+        ativo
+          ? 'border-primary bg-primary text-primary-foreground'
+          : 'border-border bg-background text-muted-foreground hover:bg-muted',
+        contagem === 0 && !ativo && 'opacity-40',
+      )}
+    >
+      {label}
+      <span className={cn('text-[10px]', ativo ? 'opacity-80' : 'opacity-70')}>{contagem}</span>
+    </button>
+  )
+}
+
+function FaixaDeSecoes({
+  titulo,
+  icone,
+  secoes,
+  favoritos,
+  onAbrir,
+  onFavoritar,
+}: {
+  titulo: string
+  icone: React.ReactNode
+  secoes: AdminSection[]
+  favoritos: string[]
+  onAbrir: (href: string) => void
+  onFavoritar: (href: string) => void
+}) {
+  return (
+    <section className="mb-6">
+      <div className="mb-2 flex items-center gap-2">
+        {icone}
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+          {titulo}
+        </h2>
+      </div>
+      <ListaDeSecoes
+        secoes={secoes}
+        favoritos={favoritos}
+        onAbrir={onAbrir}
+        onFavoritar={onFavoritar}
+        compacta
+      />
+    </section>
+  )
+}
+
+function ListaDeSecoes({
+  secoes,
+  favoritos,
+  onAbrir,
+  onFavoritar,
+  compacta = false,
+}: {
+  secoes: AdminSection[]
+  favoritos: string[]
+  onAbrir: (href: string) => void
+  onFavoritar: (href: string) => void
+  compacta?: boolean
+}) {
+  return (
+    <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+      {secoes.map((secao) => (
+        <CartaoDeSecao
+          key={secao.href}
+          secao={secao}
+          favorito={favoritos.includes(secao.href)}
+          onAbrir={onAbrir}
+          onFavoritar={onFavoritar}
+          compacta={compacta}
+        />
+      ))}
+    </div>
+  )
+}
+
+/**
+ * Cartão de seção — linha compacta, não o bloco alto de antes.
+ *
+ * O cartão antigo tinha faixa colorida, cabeçalho, descrição inteira e um
+ * botão "Acessar": ~230px por item, 27 itens, quase 7 mil pixels de rolagem
+ * no celular. Aqui a mesma informação cabe em ~72px, com a descrição em duas
+ * linhas e os atalhos internos como chips — que também evitam abrir a seção
+ * só para clicar em "importar".
+ */
+function CartaoDeSecao({
+  secao,
+  favorito,
+  onAbrir,
+  onFavoritar,
+  compacta,
+}: {
+  secao: AdminSection
+  favorito: boolean
+  onAbrir: (href: string) => void
+  onFavoritar: (href: string) => void
+  compacta?: boolean
+}) {
+  const Icone = secao.icon
+
+  return (
+    <div className="group relative flex flex-col rounded-lg border bg-card transition hover:border-primary/50 hover:shadow-sm">
+      <button
+        type="button"
+        onClick={() => onAbrir(secao.href)}
+        className="flex flex-1 items-start gap-3 rounded-lg p-3 text-left"
+      >
+        <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted text-foreground/80 transition group-hover:bg-primary/10 group-hover:text-primary">
+          <Icone className="h-[18px] w-[18px]" />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="flex items-center gap-1.5 pr-7">
+            <span className="truncate text-sm font-semibold">{secao.title}</span>
+            {secao.externo && (
+              <ExternalLink className="h-3 w-3 shrink-0 text-muted-foreground" aria-label="Fora do /admin" />
+            )}
+          </span>
+          {!compacta && (
+            <span className="mt-0.5 line-clamp-2 block text-xs leading-snug text-muted-foreground">
+              {secao.description}
+            </span>
+          )}
+        </span>
+        <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-muted-foreground opacity-0 transition group-hover:opacity-100" />
+      </button>
+
+      <button
+        type="button"
+        onClick={() => onFavoritar(secao.href)}
+        aria-label={favorito ? `Remover ${secao.title} dos favoritos` : `Fixar ${secao.title} nos favoritos`}
+        aria-pressed={favorito}
+        className="absolute right-1.5 top-1.5 rounded-md p-1.5 text-muted-foreground transition hover:bg-muted hover:text-foreground"
+      >
+        <Star className={cn('h-3.5 w-3.5', favorito && 'fill-amber-400 text-amber-400')} />
+      </button>
+
+      {!compacta && secao.atalhos && secao.atalhos.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 border-t px-3 py-2">
+          {secao.atalhos.map((atalho) => (
+            <button
+              key={atalho.href}
+              type="button"
+              onClick={() => onAbrir(atalho.href)}
+              className="rounded-full border bg-background px-2 py-0.5 text-[11px] text-muted-foreground transition hover:border-primary/50 hover:text-foreground"
+            >
+              {atalho.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
   )
 }
