@@ -15,6 +15,8 @@ import { LogoLoading } from '@/components/logo-loading'
 import { FileUpload } from '@/components/file-upload'
 import { ImagensDaQuestaoNoAdmin } from '@/components/admin/provas/imagens-da-questao'
 import { PreviaDaProva } from '@/components/admin/provas/previa-da-prova'
+import { SeletorDeQuestoes } from '@/components/admin/provas/seletor-de-questoes'
+import { indiceDepoisDeMover, moverQuestao } from '@/lib/provas/ordem-das-questoes'
 import { imagensDoBancoParaQuestao } from '@/lib/provas/importar-do-banco'
 import { TxtImportUnified } from '@/components/txt-import-unified'
 import { AIQuestionGenerator } from '@/components/ai-question-generator'
@@ -571,22 +573,17 @@ export default function EditExamPage({ params }: { params: { id: string } }) {
     setQuestions(newQuestions)
   }
 
-  function swapQuestions(index1: number, index2: number) {
-    if (index1 < 0 || index1 >= questions.length || index2 < 0 || index2 >= questions.length) return
+  /**
+   * Leva a questão `de` para a posição `para` — o que as setas e o arraste da
+   * régua fazem. Inserir, e não trocar: ver `lib/provas/ordem-das-questoes.ts`.
+   */
+  function moveQuestion(de: number, para: number) {
+    const reordenadas = moverQuestao(questions, de, para)
+    if (reordenadas === questions) return
 
-    const newQuestions = [...questions]
-    // Trocar as questões
-    ;[newQuestions[index1], newQuestions[index2]] = [newQuestions[index2], newQuestions[index1]]
-
-    // Renumerar todas as questões
-    newQuestions.forEach((q, i) => {
-      q.number = i + 1
-    })
-
-    setQuestions(newQuestions)
-
-    // Atualizar o índice atual para seguir a questão
-    setCurrentQuestionIndex(index2)
+    setQuestions(reordenadas)
+    // A questão aberta continua aberta, tenha sido ela a arrastada ou não.
+    setCurrentQuestionIndex(indiceDepoisDeMover(currentQuestionIndex, de, para))
   }
 
   async function handleSubmit() {
@@ -1601,43 +1598,16 @@ export default function EditExamPage({ params }: { params: { id: string } }) {
                   </div>
                 </div>
 
-                {questions.length > 0 && (
-                  <div className="bg-muted p-4 rounded-lg">
-                    <p className="text-sm font-semibold mb-2">Questões adicionadas: {questions.length}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {questions.map((q, idx) => (
-                        <div
-                          key={q.id}
-                          className="inline-flex items-center gap-1 px-2 py-1 bg-background rounded text-xs hover:bg-purple-100 dark:hover:bg-purple-900 transition-colors group relative"
-                        >
-                          <button
-                            onClick={() => {
-                              setCurrentQuestionIndex(idx)
-                              setCurrentStep(2)
-                            }}
-                            className="inline-flex items-center gap-1 cursor-pointer"
-                            title={`Ir para questão ${q.number}`}
-                          >
-                            <span className="font-semibold">{q.number}.</span>
-                            <span>{q.type === 'multiple-choice' ? '📝' : q.type === 'discursive' ? '✏️' : '✍️'}</span>
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              if (confirm(`Deseja realmente excluir a questão ${q.number}?`)) {
-                                deleteQuestion(idx)
-                              }
-                            }}
-                            className="ml-1 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 opacity-0 group-hover:opacity-100 transition-opacity"
-                            title="Excluir questão"
-                          >
-                            ✕
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                <SeletorDeQuestoes
+                  questoes={questions}
+                  atual={-1}
+                  onSelecionar={(idx) => {
+                    setCurrentQuestionIndex(idx)
+                    setCurrentStep(2)
+                  }}
+                  onMover={moveQuestion}
+                  onExcluir={deleteQuestion}
+                />
               </div>
 
               <div className="border-t pt-4">
@@ -1729,6 +1699,16 @@ export default function EditExamPage({ params }: { params: { id: string } }) {
 
         {currentStep === 2 && currentQuestion && (
           <div className="space-y-6">
+            {/* A régua fica ACIMA do editor: é o índice da prova, e é por ela
+                que se troca de questão e se muda a ordem. */}
+            <SeletorDeQuestoes
+              questoes={questions}
+              atual={currentQuestionIndex}
+              onSelecionar={setCurrentQuestionIndex}
+              onMover={moveQuestion}
+              onExcluir={deleteQuestion}
+            />
+
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
@@ -1740,7 +1720,7 @@ export default function EditExamPage({ params }: { params: { id: string } }) {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => swapQuestions(currentQuestionIndex, currentQuestionIndex - 1)}
+                        onClick={() => moveQuestion(currentQuestionIndex, currentQuestionIndex - 1)}
                         disabled={currentQuestionIndex === 0}
                         title="Mover questão para cima"
                         className="h-8 w-8 p-0"
@@ -1750,7 +1730,7 @@ export default function EditExamPage({ params }: { params: { id: string } }) {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => swapQuestions(currentQuestionIndex, currentQuestionIndex + 1)}
+                        onClick={() => moveQuestion(currentQuestionIndex, currentQuestionIndex + 1)}
                         disabled={currentQuestionIndex === questions.length - 1}
                         title="Mover questão para baixo"
                         className="h-8 w-8 p-0"
