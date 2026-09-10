@@ -1534,11 +1534,17 @@ export default function CreateExamPage() {
 
               <div className="border-t pt-4">
                 <TxtImportUnified
-                  onImport={(importedQuestions) => {
-                    setQuestions(importedQuestions)
+                  onImport={(importedQuestions, modo) => {
+                    // Renumera o conjunto final: ao adicionar, as novas seguem
+                    // a contagem das que já estavam lá.
+                    const finais = (modo === 'adicionar' ? [...questions, ...importedQuestions] : importedQuestions)
+                      .map((q, idx) => ({ ...q, number: idx + 1 }))
+                    setQuestions(finais)
                     setCurrentStep(2)
-                    setCurrentQuestionIndex(0)
+                    // Abre direto na primeira questão que acabou de entrar.
+                    setCurrentQuestionIndex(modo === 'adicionar' ? questions.length : 0)
                   }}
+                  questoesExistentes={questions.length}
                   defaultAlternatives={examData.numberOfAlternatives}
                   defaultEssayStyle={examData.essayStyle}
                   defaultEssayCorrectionMethod={examData.essayCorrectionMethod}
