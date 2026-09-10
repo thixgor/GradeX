@@ -14,6 +14,12 @@
  *
  * Aqui as linhas são servidas em lotes: cada lote é o que cabe no espaço que
  * resta, e o resto continua na página seguinte, quantas forem necessárias.
+ *
+ * Depois do texto ainda podem vir BLOCOS INDIVISÍVEIS — as imagens da resposta
+ * comentada. Eles são parte da caixa, não algo que vem depois dela: desenhados
+ * fora, ficavam pendurados abaixo do retângulo colorido, órfãos do comentário
+ * que os explica. Aqui eles entram na conta da altura, e por isso o retângulo
+ * cresce para envolvê-los.
  */
 
 export interface LoteDeLinhas {
@@ -29,6 +35,16 @@ export interface LoteDeLinhas {
   y: number
   /** Altura da caixa deste lote, do topo ao respiro de baixo. */
   altura: number
+  /** Índices, em `blocosFinais`, dos blocos que entram nesta caixa. */
+  blocos: number[]
+  /**
+   * Altura reservada a esses blocos dentro da caixa.
+   *
+   * É a soma das alturas deles, salvo no caso do bloco sozinho mais alto do
+   * que a página inteira: aí é o que sobrou, e cabe a quem desenha encolher a
+   * imagem para esse espaço.
+   */
+  alturaDosBlocos: number
 }
 
 export interface MedidasDaCaixa {
@@ -48,6 +64,11 @@ export interface MedidasDaCaixa {
   limiteInferior: number
   /** Onde o conteúdo recomeça numa página nova, logo abaixo do cabeçalho. */
   yAposQuebra: number
+  /**
+   * Blocos indivisíveis que vêm DEPOIS de todo o texto e DENTRO da caixa —
+   * cada número é a altura de uma linha de imagens, em mm.
+   */
+  blocosFinais?: number[]
 }
 
 /**
@@ -56,7 +77,9 @@ export interface MedidasDaCaixa {
  * Garantias, e é o que o teste cobra:
  *
  * - nenhuma linha se perde e nenhuma se repete — os lotes, somados e em ordem,
- *   são exatamente a lista original;
+ *   são exatamente a lista original, e o mesmo vale para `blocosFinais`;
+ * - nenhum bloco final é fatiado: uma imagem que não cabe no que resta da
+ *   página inteira vai para a caixa da página seguinte;
  * - nenhuma caixa passa do `limiteInferior`, contanto que uma página vazia
  *   comporte o topo, uma linha e o respiro de baixo. Numa página que não
  *   comporte nem isso, cada lote ainda leva uma linha — sem essa saída o laço
@@ -74,33 +97,82 @@ export function fatiarCaixaEmPaginas(medidas: MedidasDaCaixa): LoteDeLinhas[] {
     yAposQuebra,
   } = medidas
 
-  if (totalDeLinhas <= 0 || alturaDaLinha <= 0) return []
+  const blocosFinais = medidas.blocosFinais ?? []
+  const temTexto = totalDeLinhas > 0 && alturaDaLinha > 0
+  if (!temTexto && blocosFinais.length === 0) return []
 
   const lotes: LoteDeLinhas[] = []
-  let restantes = totalDeLinhas
+  let restantes = temTexto ? totalDeLinhas : 0
+  let linhasFeitas = 0
+  let proximoBloco = 0
   let y = yInicial
   let primeiro = true
 
-  while (restantes > 0) {
+  while (restantes > 0 || proximoBloco < blocosFinais.length) {
     const topo = primeiro ? alturaDoTitulo : respiroDeContinuacao
 
+    // Quanto uma caixa recém-aberta numa página vazia comporta de conteúdo.
+    // É o teto do bloco indivisível: uma imagem mais alta do que isso não cabe
+    // em página nenhuma, e pedir a página seguinte por causa dela só geraria
+    // uma folha em branco atrás da outra.
+    const espacoDePaginaCheia = Math.max(1, limiteInferior - yAposQuebra - topo - respiroInferior)
+
     // Só vale ficar nesta página se couber o topo da caixa, ao menos uma
-    // linha e o respiro de baixo — uma caixa com o título e nada mais não
-    // ajuda ninguém.
-    const novaPagina = y + topo + alturaDaLinha + respiroInferior > limiteInferior
+    // linha (ou o próximo bloco inteiro) e o respiro de baixo — uma caixa com
+    // o título e nada mais não ajuda ninguém.
+    const minimo =
+      restantes > 0 ? alturaDaLinha : Math.min(blocosFinais[proximoBloco], espacoDePaginaCheia)
+    const novaPagina = y + topo + minimo + respiroInferior > limiteInferior
     if (novaPagina) y = yAposQuebra
 
-    const cabem = Math.max(
-      1,
-      Math.floor((limiteInferior - y - topo - respiroInferior) / alturaDaLinha),
-    )
-    const linhas = Math.min(cabem, restantes)
-    const altura = topo + linhas * alturaDaLinha + respiroInferior
+    // O `max` é a saída da página baixa demais: sem ele o espaço seria
+    // negativo e nenhum lote consumiria nada.
+    const espaco = Math.max(minimo, limiteInferior - y - topo - respiroInferior)
 
-    lotes.push({ inicio: totalDeLinhas - restantes, linhas, novaPagina, primeiro, y, altura })
+    let linhas = 0
+    if (restantes > 0) {
+      linhas = Math.min(Math.max(1, Math.floor(espaco / alturaDaLinha)), restantes)
+      restantes -= linhas
+    }
+
+    // As imagens comentam o que o texto diz: elas só entram depois da última
+    // linha dele, e sempre dentro da caixa.
+    const blocos: number[] = []
+    let alturaDosBlocos = 0
+    if (restantes === 0) {
+      let livre = espaco - linhas * alturaDaLinha
+      while (proximoBloco < blocosFinais.length) {
+        const altura = blocosFinais[proximoBloco]
+        if (altura > livre) {
+          // Um bloco sozinho, mais alto do que a página: entra encolhido no
+          // que sobrou, senão a fila nunca esvazia.
+          if (linhas === 0 && blocos.length === 0 && livre > 0) {
+            blocos.push(proximoBloco++)
+            alturaDosBlocos = livre
+          }
+          break
+        }
+        blocos.push(proximoBloco++)
+        alturaDosBlocos += altura
+        livre -= altura
+      }
+    }
+
+    const altura = topo + linhas * alturaDaLinha + alturaDosBlocos + respiroInferior
+
+    lotes.push({
+      inicio: linhasFeitas,
+      linhas,
+      novaPagina,
+      primeiro,
+      y,
+      altura,
+      blocos,
+      alturaDosBlocos,
+    })
 
     y += altura
-    restantes -= linhas
+    linhasFeitas += linhas
     primeiro = false
   }
 

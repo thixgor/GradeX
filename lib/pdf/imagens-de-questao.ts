@@ -134,7 +134,44 @@ function quebrarLegenda(doc: jsPDF, texto: string, largura: number, fonte: strin
 }
 
 /**
- * Desenha as imagens e devolve o novo `y`.
+ * Uma linha de imagens já medida — quanto ela ocupa e como se desenha.
+ *
+ * Existe para quem precisa saber a altura ANTES de desenhar: a caixa da
+ * resposta comentada tem de crescer para envolver a figura, e o retângulo
+ * colorido é pintado antes do conteúdo (o preenchimento cobriria a imagem se
+ * viesse depois). Sem esta medida, a imagem era desenhada abaixo da caixa
+ * fechada e ficava do lado de fora do retângulo.
+ */
+export interface LinhaDeImagens {
+  /** Altura das imagens da linha, sem as legendas. */
+  alturaDasImagens: number
+  /** Altura ocupada pelas legendas, abaixo das imagens. */
+  alturaDasLegendas: number
+  /** Altura total da linha: imagens mais legendas. */
+  altura: number
+  /**
+   * Desenha a linha com o canto superior esquerdo em (x, y).
+   *
+   * `escala` menor que 1 encolhe as imagens — as legendas não, que são texto e
+   * já estão no menor corpo do documento.
+   */
+  desenhar: (x: number, y: number, escala?: number) => void
+}
+
+export interface OpcoesDeMedida {
+  /** Largura disponível para o bloco, em mm. */
+  largura: number
+  /** Teto de altura de uma imagem de 100%. Padrão: `ALTURA_MAXIMA_DA_IMAGEM`. */
+  alturaMaxima?: number
+  /** A família de fonte ativa no documento — a legenda usa a mesma. */
+  fonte?: string
+}
+
+/** O respiro entre duas linhas de imagens. */
+export const ESPACO_ENTRE_LINHAS_DE_IMAGENS = ESPACO_ENTRE_IMAGENS
+
+/**
+ * Mede as linhas de imagens sem desenhar nada.
  *
  * Uma URL sem entrada no mapa (download falhou, imagem fora do ar) é
  * simplesmente pulada: um PDF a menos uma figura ainda é o PDF que a pessoa
@@ -142,25 +179,20 @@ function quebrarLegenda(doc: jsPDF, texto: string, largura: number, fonte: strin
  * no meio da prova era pior do que o silêncio — ele ia impresso, na prova do
  * aluno.
  */
-export function desenharImagensNoPdf(
+export function medirLinhasDeImagens(
   doc: jsPDF,
   imagens: ImagemDeQuestao[],
   layout: LayoutDeImagens,
   mapa: Map<string, ImagemCarregada>,
-  opcoes: OpcoesDeDesenho,
-): number {
+  opcoes: OpcoesDeMedida,
+): LinhaDeImagens[] {
   const disponiveis = (imagens || []).filter((imagem) => mapa.has(imagem.url))
-  if (disponiveis.length === 0) return opcoes.y
+  if (disponiveis.length === 0) return []
 
   const fonte = opcoes.fonte || 'helvetica'
   const teto = opcoes.alturaMaxima ?? ALTURA_MAXIMA_DA_IMAGEM
-  const espacoDepois = opcoes.espacoDepois ?? 4
-  let y = opcoes.y
 
-  const linhas = distribuirEmLinhas(disponiveis, layout)
-  const ultimaLinha = linhas[linhas.length - 1]
-
-  for (const linha of linhas) {
+  return distribuirEmLinhas(disponiveis, layout).map((linha) => {
     const medidas: ImagemMedida[] = linha.map((imagem) => {
       const carregada = mapa.get(imagem.url)!
       const { largura, altura } = medirImagem(
@@ -196,48 +228,89 @@ export function desenharImagensNoPdf(
       0,
       ...medidas.map((m) => (m.legenda.length > 0 ? m.legenda.length * ALTURA_DA_LINHA_DA_FONTE + 1 : 0)),
     )
-    const alturaDaLinha = alturaDasImagens + alturaDasLegendas
 
+    return {
+      alturaDasImagens,
+      alturaDasLegendas,
+      altura: alturaDasImagens + alturaDasLegendas,
+      desenhar: (x: number, y: number, escala = 1) =>
+        desenharLinha(doc, medidas, x, y, escala, fonte),
+    }
+  })
+}
+
+function desenharLinha(
+  doc: jsPDF,
+  medidas: ImagemMedida[],
+  xInicial: number,
+  y: number,
+  escala: number,
+  fonte: string,
+) {
+  let x = xInicial
+  const alturaFinal = Math.max(...medidas.map((m) => m.altura)) * escala
+  for (const m of medidas) {
+    const largura = m.largura * escala
+    const altura = m.altura * escala
+    try {
+      doc.addImage(m.carregada.dataUrl, 'JPEG', x, y, largura, altura)
+    } catch {
+      // Um dataUrl corrompido não derruba o arquivo inteiro.
+    }
+    if (m.legenda.length > 0) {
+      doc.setFont(fonte, 'italic')
+      doc.setFontSize(TAMANHO_DA_FONTE_DA_LEGENDA)
+      doc.setTextColor(120, 120, 120)
+      let yDaLegenda = y + alturaFinal + ALTURA_DA_LINHA_DA_FONTE
+      for (const texto of m.legenda) {
+        doc.text(texto, x, yDaLegenda)
+        yDaLegenda += ALTURA_DA_LINHA_DA_FONTE
+      }
+    }
+    x += largura + ESPACO_ENTRE_IMAGENS
+  }
+}
+
+/**
+ * Desenha as imagens em fluxo, quebrando página quando preciso, e devolve o
+ * novo `y`.
+ *
+ * É o caminho do enunciado, onde as figuras correm soltas pelo corpo do
+ * documento. Quem precisa das imagens DENTRO de uma caixa — a resposta
+ * comentada — mede antes com `medirLinhasDeImagens` e desenha linha a linha.
+ */
+export function desenharImagensNoPdf(
+  doc: jsPDF,
+  imagens: ImagemDeQuestao[],
+  layout: LayoutDeImagens,
+  mapa: Map<string, ImagemCarregada>,
+  opcoes: OpcoesDeDesenho,
+): number {
+  const linhas = medirLinhasDeImagens(doc, imagens, layout, mapa, opcoes)
+  if (linhas.length === 0) return opcoes.y
+
+  const espacoDepois = opcoes.espacoDepois ?? 4
+  let y = opcoes.y
+
+  linhas.forEach((linha, indice) => {
     // A figura e o seu crédito viajam juntos para a página seguinte.
-    if (y + alturaDaLinha > opcoes.limiteY) {
+    if (y + linha.altura > opcoes.limiteY) {
       y = opcoes.novaPagina()
     }
 
     // Se ainda assim não couber (imagem mais alta que uma página inteira), a
     // linha encolhe até caber: melhor menor do que cortada ao meio.
-    const espacoDaPagina = opcoes.limiteY - y - alturaDasLegendas
-    if (alturaDasImagens > espacoDaPagina && espacoDaPagina > 10) {
-      const fator = espacoDaPagina / alturaDasImagens
-      for (const m of medidas) {
-        m.largura *= fator
-        m.altura *= fator
-      }
-    }
+    const espacoDaPagina = opcoes.limiteY - y - linha.alturaDasLegendas
+    const escala =
+      linha.alturaDasImagens > espacoDaPagina && espacoDaPagina > 10
+        ? espacoDaPagina / linha.alturaDasImagens
+        : 1
 
-    let x = opcoes.x
-    const alturaFinal = Math.max(...medidas.map((m) => m.altura))
-    for (const m of medidas) {
-      try {
-        doc.addImage(m.carregada.dataUrl, 'JPEG', x, y, m.largura, m.altura)
-      } catch {
-        // Um dataUrl corrompido não derruba o arquivo inteiro.
-      }
-      if (m.legenda.length > 0) {
-        doc.setFont(fonte, 'italic')
-        doc.setFontSize(TAMANHO_DA_FONTE_DA_LEGENDA)
-        doc.setTextColor(120, 120, 120)
-        let yDaLegenda = y + alturaFinal + ALTURA_DA_LINHA_DA_FONTE
-        for (const texto of m.legenda) {
-          doc.text(texto, x, yDaLegenda)
-          yDaLegenda += ALTURA_DA_LINHA_DA_FONTE
-        }
-      }
-      x += m.largura + ESPACO_ENTRE_IMAGENS
-    }
+    linha.desenhar(opcoes.x, y, escala)
 
-    y += alturaFinal + alturaDasLegendas
-    if (linha !== ultimaLinha) y += ESPACO_ENTRE_IMAGENS
-  }
+    y += linha.alturaDasImagens * escala + linha.alturaDasLegendas
+    if (indice < linhas.length - 1) y += ESPACO_ENTRE_IMAGENS
+  })
 
   return y + espacoDepois
 }

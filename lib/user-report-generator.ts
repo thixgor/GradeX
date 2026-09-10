@@ -18,9 +18,14 @@ import {
   sanitizarParaPdf,
 } from './pdf/marca'
 import { carregarImagens, type ImagemParaPdf } from './pdf/imagens'
-import { fatiarCaixaEmPaginas } from './pdf/paginacao'
 import { desenharLinhaRica, quebrarTexto } from './pdf/texto'
-import { ALTURA_MAXIMA_DA_IMAGEM, desenharImagensNoPdf } from './pdf/imagens-de-questao'
+import {
+  ALTURA_MAXIMA_DA_IMAGEM,
+  type LinhaDeImagens,
+  desenharImagensNoPdf,
+  medirLinhasDeImagens,
+} from './pdf/imagens-de-questao'
+import { desenharCaixaDeRespostaComentada } from './pdf/caixa-de-resposta-comentada'
 import { blocoDaResposta, blocoDoEnunciado, urlsDaQuestao } from './questoes/imagens-da-questao'
 import type { ImagemDeQuestao, LayoutDeImagens } from './questoes/imagens'
 import { montarRespostaComentada } from './provas/resposta-comentada'
@@ -111,6 +116,32 @@ function criarDesenhoDeImagens(
         doc.addPage()
         return addHeader(doc, pageWidth, margin, subtitulo, logo)
       },
+    })
+  }
+}
+
+/**
+ * Mede as imagens de um bloco sem desenhar nada.
+ *
+ * A caixa da resposta comentada é um retângulo pintado antes do conteúdo: ela
+ * só envolve a figura se souber, antes, quanto a figura ocupa.
+ */
+function criarMedidaDeImagens(
+  doc: jsPDF,
+  imageMap: Map<string, ImgData>,
+  pageWidth: number,
+  margin: number,
+) {
+  return (
+    bloco: { imagens: ImagemDeQuestao[]; layout: LayoutDeImagens },
+    opcoes: { recuo?: number; alturaMaxima?: number } = {},
+  ): LinhaDeImagens[] => {
+    if (bloco.imagens.length === 0) return []
+    const recuo = opcoes.recuo ?? 0
+    return medirLinhasDeImagens(doc, bloco.imagens, bloco.layout, imageMap, {
+      largura: pageWidth - 2 * margin - 2 * recuo,
+      alturaMaxima: opcoes.alturaMaxima,
+      fonte: FONT,
     })
   }
 }
@@ -527,6 +558,7 @@ async function generateUserReportWithGabaritoPDFBlob(data: UserReportData): Prom
   }
 
   const desenharImagens = criarDesenhoDeImagens(doc, imageMap, pageWidth, pageHeight, margin, logo, 'Relatório com Gabarito')
+  const medirImagens = criarMedidaDeImagens(doc, imageMap, pageWidth, margin)
 
   // === CABEÇALHO ===
   y = addHeader(doc, pageWidth, margin, 'Relatório com Gabarito', logo)
@@ -767,9 +799,10 @@ async function generateUserReportWithGabaritoPDFBlob(data: UserReportData): Prom
      * simplesmente sumia. As respostas comentadas longas (a maioria, aqui)
      * chegavam ao aluno cortadas no meio da frase.
      *
-     * `fatiarCaixaEmPaginas` decide onde o texto quebra; aqui só se desenha o
-     * que ela mandar. O título só sai no primeiro lote, e os seguintes entram
-     * com um respiro menor no topo, para se lerem como continuação.
+     * As IMAGENS do comentário ficavam de fora do retângulo amarelo, logo
+     * abaixo dele: eram desenhadas depois, com a caixa já fechada. Agora vão
+     * medidas junto com o texto e entram DENTRO da caixa, que cresce para
+     * envolvê-las (ver `lib/pdf/caixa-de-resposta-comentada.ts`).
      */
     // `montarRespostaComentada` e não `question.explanation`: nas provas cujo
     // comentário está por alternativa (as geradas com feedback e as sorteadas
@@ -777,76 +810,52 @@ async function generateUserReportWithGabaritoPDFBlob(data: UserReportData): Prom
     // uma caixa "RESPOSTA COMENTADA" em branco. É a mesma montagem do PDF de
     // gabarito comentado de /provas.
     const respostaComentada = montarRespostaComentada(question)
-    if (respostaComentada) {
-      // A fonte é definida ANTES do `wrapText`: ele mede com a fonte ativa, e
-      // medir em corpo 10 o texto que sai em 9 dá uma quebra que não é a que
-      // vai para o papel.
-      doc.setFontSize(9)
-      doc.setFont(FONT, 'normal')
-      const expLines = wrapText(doc, respostaComentada, pageWidth - 2 * margin - 12)
-
-      if (expLines.length > 0) {
-        y += 3
-
-        const alturaDaLinha = 5
-        const alturaDoTitulo = 14 // título em y+8, primeira linha em y+14
-        const respiroDeContinuacao = 6
-        const respiroInferior = 5
-
-        const lotes = fatiarCaixaEmPaginas({
-          totalDeLinhas: expLines.length,
-          alturaDaLinha,
-          alturaDoTitulo,
-          respiroDeContinuacao,
-          respiroInferior,
-          yInicial: y,
-          limiteInferior,
-          yAposQuebra: yAposCabecalho,
-        })
-
-        for (const lote of lotes) {
-          if (lote.novaPagina) {
-            doc.addPage()
-            addHeader(doc, pageWidth, margin, 'Relatório com Gabarito', logo)
-          }
-          y = lote.y
-
-          // Box amarelo com resposta comentada
-          doc.setFillColor(255, 251, 235) // amber-50
-          doc.setDrawColor(...LARANJA)
-          doc.setLineWidth(0.5)
-          doc.roundedRect(margin, y, pageWidth - 2 * margin, lote.altura, 2, 2, 'FD')
-
-          if (lote.primeiro) {
-            doc.setFontSize(9)
-            doc.setFont(FONT, 'bold')
-            doc.setTextColor(...LARANJA)
-            doc.text('RESPOSTA COMENTADA', margin + 5, y + 8)
-            y += alturaDoTitulo
-          } else {
-            y += respiroDeContinuacao
-          }
-
-          doc.setFontSize(9)
-          doc.setFont(FONT, 'normal')
-          doc.setTextColor(...CINZA_TEXTO)
-          for (const line of expLines.slice(lote.inicio, lote.inicio + lote.linhas)) {
-            desenharLinha(doc, line, margin + 5, y)
-            y += alturaDaLinha
-          }
-
-          y += respiroInferior
-        }
-
-        y += 5
-      }
-    }
-
-    // As imagens da resposta comentada, logo depois da caixa amarela.
-    y = desenharImagens(blocoDaResposta(question), y, {
-      recuo: 4,
+    const recuoDaCaixa = 5
+    // A fonte é definida ANTES do `wrapText`: ele mede com a fonte ativa, e
+    // medir em corpo 10 o texto que sai em 9 dá uma quebra que não é a que
+    // vai para o papel.
+    doc.setFontSize(9)
+    doc.setFont(FONT, 'normal')
+    const linhasDoComentario = respostaComentada
+      ? wrapText(doc, respostaComentada, pageWidth - 2 * margin - 2 * recuoDaCaixa - 2)
+      : []
+    const linhasDeImagens = medirImagens(blocoDaResposta(question), {
+      recuo: recuoDaCaixa,
       alturaMaxima: ALTURA_MAXIMA_DA_IMAGEM * 0.8,
     })
+
+    if (linhasDoComentario.length > 0 || linhasDeImagens.length > 0) {
+      y += 3
+      y = desenharCaixaDeRespostaComentada({
+        doc,
+        fonte: FONT,
+        x: margin,
+        largura: pageWidth - 2 * margin,
+        y,
+        limiteInferior,
+        yAposQuebra: yAposCabecalho,
+        novaPagina: () => {
+          doc.addPage()
+          addHeader(doc, pageWidth, margin, 'Relatório com Gabarito', logo)
+        },
+        linhas: linhasDoComentario,
+        imagens: linhasDeImagens,
+        titulo: 'RESPOSTA COMENTADA',
+        cores: { fundo: [255, 251, 235], borda: LARANJA, titulo: LARANJA, texto: CINZA_TEXTO },
+        medidas: {
+          alturaDaLinha: 5,
+          alturaDoTitulo: 14, // título em y+8, primeira linha em y+14
+          respiroDeContinuacao: 6,
+          respiroInferior: 5,
+          recuo: recuoDaCaixa,
+          corpoDoTitulo: 9,
+          baseDoTitulo: 8,
+          corpoDoTexto: 9,
+        },
+        desenharLinha: (texto, x, yDaLinha) => desenharLinha(doc, texto, x, yDaLinha),
+      })
+      y += 5
+    }
 
     y += 8
   })

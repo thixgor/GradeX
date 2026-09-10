@@ -23,7 +23,13 @@ import {
   registrarFontes,
   sanitizarParaPdf as sanitizeForPdf,
 } from './pdf/marca'
-import { ALTURA_MAXIMA_DA_IMAGEM, desenharImagensNoPdf } from './pdf/imagens-de-questao'
+import {
+  ALTURA_MAXIMA_DA_IMAGEM,
+  type LinhaDeImagens,
+  desenharImagensNoPdf,
+  medirLinhasDeImagens,
+} from './pdf/imagens-de-questao'
+import { desenharCaixaDeRespostaComentada } from './pdf/caixa-de-resposta-comentada'
 import type { ImagemDeQuestao, LayoutDeImagens } from './questoes/imagens'
 import { desenharLinhaRica, quebrarTexto } from './pdf/texto'
 // Reexportado: o módulo saiu daqui (ver lib/provas/resposta-comentada.ts), e
@@ -193,6 +199,42 @@ function criarDesenhoDeImagens(
     })
   }
 }
+
+/**
+ * Mede as imagens de um bloco sem desenhar nada.
+ *
+ * É o par de `criarDesenhoDeImagens` para quem precisa da altura ANTES: a
+ * caixa da resposta comentada é um retângulo pintado antes do conteúdo, e ela
+ * só envolve a figura se souber quanto a figura ocupa.
+ */
+function criarMedidaDeImagens(
+  doc: jsPDF,
+  imageMap: Map<string, ImgData>,
+  pageWidth: number,
+  margin: number,
+) {
+  return (
+    bloco: { imagens: ImagemDeQuestao[]; layout: LayoutDeImagens },
+    opcoes: { recuo?: number; alturaMaxima?: number } = {},
+  ): LinhaDeImagens[] => {
+    if (bloco.imagens.length === 0) return []
+    const recuo = opcoes.recuo ?? 0
+    return medirLinhasDeImagens(doc, bloco.imagens, bloco.layout, imageMap, {
+      largura: pageWidth - 2 * margin - 2 * recuo,
+      alturaMaxima: opcoes.alturaMaxima,
+      fonte: FONT,
+    })
+  }
+}
+
+/**
+ * O `y` do corpo numa página nova.
+ *
+ * `desenharCabecalho` tem altura fixa e devolve sempre isto; a constante
+ * existe para o fatiamento de caixas altas poder PREVER a coordenada antes de
+ * a página existir (ver `fatiarCaixaEmPaginas`).
+ */
+const Y_APOS_CABECALHO = 40
 
 // Adiciona header padrão DomineAqui (com logo se disponível)
 function addDomineAquiHeader(doc: jsPDF, pageWidth: number, margin: number, subtitle?: string, logoData?: string | null) {
@@ -689,6 +731,7 @@ export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
   }
 
   const desenharImagens = criarDesenhoDeImagens(doc, imageMap, pageWidth, pageHeight, margin, logo)
+  const medirImagens = criarMedidaDeImagens(doc, imageMap, pageWidth, margin)
 
   y = addDomineAquiHeader(doc, pageWidth, margin, 'Prova com Gabarito', logo)
 
@@ -854,69 +897,54 @@ export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
     // pontos-chave, na ordem de `montarRespostaComentada`. Ler só
     // `question.explanation` aqui era o que fazia este PDF sair sem comentário
     // nenhum nas provas cujo feedback está por alternativa.
+    //
+    // As imagens do comentário — o fluxograma, o esquema, a lâmina que ele
+    // descreve — entram DENTRO da caixa verde. Desenhadas depois dela, como
+    // eram, ficavam penduradas fora do retângulo.
     const respostaComentada = montarRespostaComentada(question)
-    if (respostaComentada) {
-      // Set font matching rendering before wrapText so line widths are calculated correctly
-      doc.setFontSize(9)
-      doc.setFont(FONT, 'normal')
-      const expLines = wrapText(doc, respostaComentada, pageWidth - 2 * margin - 14)
-      if (expLines.length > 0) {
-        const lineH = 6
-        const headerH = 14
-        const paddingBot = 5
-        const boxW = pageWidth - 2 * margin
+    const recuoDaCaixa = 4
+    // A fonte é definida ANTES do `wrapText`: ele mede com a fonte ativa, e
+    // medir em corpo 10 o texto que sai em 9 dá outra quebra.
+    doc.setFontSize(9)
+    doc.setFont(FONT, 'normal')
+    const linhasDoComentario = respostaComentada
+      ? wrapText(doc, respostaComentada, pageWidth - 2 * margin - 2 * recuoDaCaixa - 6)
+      : []
+    const linhasDeImagens = medirImagens(blocoDaResposta(question), {
+      recuo: recuoDaCaixa,
+      alturaMaxima: ALTURA_MAXIMA_DA_IMAGEM * 0.8,
+    })
 
-        let remaining = [...expLines]
-        let isFirst = true
-
-        while (remaining.length > 0) {
-          // Ensure at least header (first chunk) or small top pad + 1 line + bottom fits
-          checkPage((isFirst ? headerH : 4) + lineH + paddingBot)
-
-          // Calculate how many lines fit in the available space
-          const avail = pageHeight - 25 - y
-          const linesHere = Math.max(1, Math.floor((avail - (isFirst ? headerH : 4) - paddingBot) / lineH))
-          const batch = remaining.splice(0, linesHere)
-          const batchH = (isFirst ? headerH : 4) + batch.length * lineH + paddingBot
-
-          doc.setFillColor(245, 250, 246)
-          doc.setDrawColor(70, 129, 82)
-          doc.setLineWidth(0.5)
-          doc.roundedRect(margin, y, boxW, batchH, 2, 2, 'FD')
-
-          if (isFirst) {
-            doc.setFontSize(8.5)
-            doc.setFont(FONT, 'bold')
-            doc.setTextColor(...VERDE_ESCURO)
-            doc.text('Resposta Comentada:', margin + 4, y + 9)
-            y += headerH
-          } else {
-            y += 4
-          }
-
-          doc.setFont(FONT, 'normal')
-          doc.setFontSize(9)
-          doc.setTextColor(...CINZA_TEXTO)
-          batch.forEach((line: string) => {
-            drawRichLine(doc, line, margin + 4, y)
-            y += lineH
-          })
-          y += paddingBot
-          isFirst = false
-        }
-        y += 2
-      }
-    }
-
-    // As imagens da resposta comentada — o fluxograma, o esquema, a lâmina que
-    // o comentário descreve. Ficam DEPOIS do texto, com o mesmo recuo da caixa
-    // verde, para não flutuarem soltas entre uma questão e a seguinte.
-    const imagensDoComentario = blocoDaResposta(question)
-    if (imagensDoComentario.imagens.length > 0) {
-      y = desenharImagens(imagensDoComentario, y + 1, 'Prova com Gabarito', {
-        recuo: 4,
-        alturaMaxima: ALTURA_MAXIMA_DA_IMAGEM * 0.8,
+    if (linhasDoComentario.length > 0 || linhasDeImagens.length > 0) {
+      y = desenharCaixaDeRespostaComentada({
+        doc,
+        fonte: FONT,
+        x: margin,
+        largura: pageWidth - 2 * margin,
+        y,
+        limiteInferior: pageHeight - 25,
+        yAposQuebra: Y_APOS_CABECALHO,
+        novaPagina: () => {
+          doc.addPage()
+          addDomineAquiHeader(doc, pageWidth, margin, 'Prova com Gabarito', logo)
+        },
+        linhas: linhasDoComentario,
+        imagens: linhasDeImagens,
+        titulo: 'Resposta Comentada:',
+        cores: { fundo: [245, 250, 246], borda: [70, 129, 82], titulo: VERDE_ESCURO, texto: CINZA_TEXTO },
+        medidas: {
+          alturaDaLinha: 6,
+          alturaDoTitulo: 14,
+          respiroDeContinuacao: 4,
+          respiroInferior: 5,
+          recuo: recuoDaCaixa,
+          corpoDoTitulo: 8.5,
+          baseDoTitulo: 9,
+          corpoDoTexto: 9,
+        },
+        desenharLinha: (texto, x, yDaLinha) => drawRichLine(doc, texto, x, yDaLinha),
       })
+      y += 2
     }
 
     // Separador entre questões, igual ao da prova em branco e ao do Banco.
