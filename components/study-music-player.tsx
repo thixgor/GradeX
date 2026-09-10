@@ -28,6 +28,7 @@ import {
     YT_STATE,
     type YouTubePlayer,
 } from '@/lib/youtube-iframe-api'
+import { chaveDoItem } from '@/lib/musica/link-do-youtube'
 
 /**
  * Player de música ambiente para estudo.
@@ -52,10 +53,13 @@ import {
  *    de tentar de novo, em vez de deixar os controles desabilitados.
  */
 
+/** Uma entrada do catálogo: playlist inteira ou faixa avulsa (o painel aceita
+ *  as duas — ver lib/musica/link-do-youtube.ts). */
 interface StudyPlaylist {
     _id: string
     name: string
-    youtubePlaylistId: string
+    youtubePlaylistId?: string | null
+    youtubeVideoId?: string | null
 }
 
 const PLAYBACK_RATES = [0.5, 0.75, 1, 1.25, 1.5, 2] as const
@@ -190,40 +194,52 @@ export function StudyMusicPlayer() {
         setPreferencias(lerPreferencias())
     }, [])
 
-    // ── Playlists ────────────────────────────────────────────────────────
-    useEffect(() => {
-        let cancelado = false
-        const controller = new AbortController()
+    // ── Catálogo ─────────────────────────────────────────────────────────
+    const buscarPlaylists = useCallback(async (signal?: AbortSignal) => {
+        try {
+            // `no-store`: a rota já é dinâmica, mas sem isto o cache do próprio
+            // navegador ainda serviria a lista antiga depois de um cadastro
+            // novo no painel.
+            const res = await fetch('/api/study-playlists', { signal, cache: 'no-store' })
+            if (!res.ok) return
+            const data = await res.json()
+            if (signal?.aborted || !data?.success || !Array.isArray(data.playlists)) return
 
-        async function buscar() {
-            try {
-                const res = await fetch('/api/study-playlists', { signal: controller.signal })
-                if (!res.ok) return
-                const data = await res.json()
-                if (cancelado || !data?.success || !Array.isArray(data.playlists)) return
+            // Um registro sem playlist nem vídeo (documento antigo) montaria
+            // um iframe vazio e ficaria "carregando" para sempre.
+            const lista = (data.playlists as StudyPlaylist[]).filter((p) => chaveDoItem(p))
+            setPlaylists(lista)
+            if (lista.length === 0) return
 
-                const lista = data.playlists as StudyPlaylist[]
-                setPlaylists(lista)
-                if (lista.length === 0) return
-
+            setPlaylistId((atual) => {
+                // Numa reconsulta, respeita o que já está tocando.
+                if (atual && lista.some((p) => p._id === atual)) return atual
                 const salvas = lerPreferencias()
                 const preferida = lista.find((p) => p._id === salvas.currentPlaylistId)
                 // Sem preferência salva, sorteia uma — mas apenas escolhe,
                 // nunca inicia a reprodução.
-                setPlaylistId(preferida?._id ?? lista[Math.floor(Math.random() * lista.length)]._id)
-            } catch {
-                // Rede indisponível: o player simplesmente não aparece.
-            } finally {
-                if (!cancelado) setCarregandoPlaylists(false)
-            }
-        }
-
-        buscar()
-        return () => {
-            cancelado = true
-            controller.abort()
+                return preferida?._id ?? lista[Math.floor(Math.random() * lista.length)]._id
+            })
+        } catch {
+            // Rede indisponível: o player simplesmente não aparece.
+        } finally {
+            if (!signal?.aborted) setCarregandoPlaylists(false)
         }
     }, [])
+
+    useEffect(() => {
+        const controller = new AbortController()
+        buscarPlaylists(controller.signal)
+        return () => controller.abort()
+    }, [buscarPlaylists])
+
+    // Reconsulta ao abrir o painel: sem isto, uma playlist cadastrada agora só
+    // aparecia para quem recarregasse a página. É um gesto da pessoa, então
+    // não há custo de rede em segundo plano.
+    useEffect(() => {
+        if (!isExpanded) return
+        buscarPlaylists()
+    }, [isExpanded, buscarPlaylists])
 
     // ── Persistência (debounce: o slider de volume dispara dezenas de
     //    eventos por segundo e cada gravação síncrona travava a UI) ────────
@@ -294,7 +310,11 @@ export function StudyMusicPlayer() {
             setStatus('erro')
             setIsBuffering(false)
             querTocarRef.current = false
-            setAviso('Não foi possível carregar o player do YouTube.')
+            // A causa quase sempre é um bloqueador de anúncios derrubando o
+            // script do YouTube — vale dizer, senão a pessoa fica tentando.
+            setAviso(
+                'Não foi possível carregar o player do YouTube. Se você usa bloqueador de anúncios, libere youtube.com neste site.',
+            )
             return
         }
 
@@ -318,9 +338,16 @@ export function StudyMusicPlayer() {
             playerRef.current = new api.Player(alvo, {
                 width: '1',
                 height: '1',
+                // Domínio sem cookies: corta a maior parte das chamadas de
+                // telemetria (`log_event`, `ptracking`) que os bloqueadores de
+                // anúncio derrubam com ERR_BLOCKED_BY_CLIENT no console. Elas
+                // nunca impediram a música de tocar — mas enchiam o log.
+                host: 'https://www.youtube-nocookie.com',
+                videoId: playlistFinal.youtubeVideoId || undefined,
                 playerVars: {
-                    listType: 'playlist',
-                    list: playlistFinal.youtubePlaylistId,
+                    ...(playlistFinal.youtubePlaylistId
+                        ? { listType: 'playlist', list: playlistFinal.youtubePlaylistId }
+                        : {}),
                     // Nunca começar tocando sozinho.
                     autoplay: 0,
                     controls: 0,
@@ -337,7 +364,7 @@ export function StudyMusicPlayer() {
                 events: {
                     onReady: (event) => {
                         if (desmontadoRef.current) return
-                        listaCarregadaRef.current = playlistFinal.youtubePlaylistId
+                        listaCarregadaRef.current = chaveDoItem(playlistFinal)
                         setStatus('pronto')
                         aplicarPreferencias(event.target)
                         if (querTocarRef.current) {
@@ -427,16 +454,27 @@ export function StudyMusicPlayer() {
             void criarPlayer()
             return
         }
-        // Trocou de playlist com o player já vivo.
-        if (listaCarregadaRef.current === playlistAtual.youtubePlaylistId) return
-        listaCarregadaRef.current = playlistAtual.youtubePlaylistId
+        // Trocou de seleção com o player já vivo.
+        const chave = chaveDoItem(playlistAtual)
+        if (!chave || listaCarregadaRef.current === chave) return
+        listaCarregadaRef.current = chave
         errosSeguidosRef.current = 0
-        const alvo = { list: playlistAtual.youtubePlaylistId, listType: 'playlist' as const }
         try {
-            // `cuePlaylist` carrega sem tocar; `loadPlaylist` toca na hora.
-            // Só usamos o segundo se a pessoa JÁ estava ouvindo.
-            if (tocandoRef.current) playerRef.current.loadPlaylist(alvo)
-            else playerRef.current.cuePlaylist(alvo)
+            // `cue*` carrega sem tocar; `load*` toca na hora. Só usamos o
+            // segundo se a pessoa JÁ estava ouvindo — é o que garante que
+            // nenhuma troca de faixa vire som inesperado.
+            const tocando = tocandoRef.current
+            if (playlistAtual.youtubePlaylistId) {
+                const alvo = {
+                    list: playlistAtual.youtubePlaylistId,
+                    listType: 'playlist' as const,
+                }
+                if (tocando) playerRef.current.loadPlaylist(alvo)
+                else playerRef.current.cuePlaylist(alvo)
+            } else if (playlistAtual.youtubeVideoId) {
+                if (tocando) playerRef.current.loadVideoById(playlistAtual.youtubeVideoId)
+                else playerRef.current.cueVideoById(playlistAtual.youtubeVideoId)
+            }
             aplicarPreferencias(playerRef.current)
         } catch {
             destruirPlayer()
@@ -691,6 +729,7 @@ export function StudyMusicPlayer() {
     const mudo = preferencias.muted || volume === 0
     const IconeVolume = mudo ? VolumeX : volume < 45 ? Volume1 : Volume2
     const comErro = status === 'erro'
+    const temVariasFaixas = !!playlistAtual?.youtubePlaylistId
     // O giro é só para espera REAL de reprodução. A montagem silenciosa do
     // iframe no carregamento da página não vira spinner — o botão continua
     // sendo um play tocável (a intenção fica na fila até o `onReady`).
@@ -827,16 +866,19 @@ export function StudyMusicPlayer() {
                                 </p>
                             )}
 
-                            {/* Transporte */}
+                            {/* Transporte. Numa faixa avulsa não há o que pular:
+                                os botões sumem em vez de virarem enfeite. */}
                             <div className="mb-3 flex items-center justify-center gap-3">
-                                <button
-                                    type="button"
-                                    onClick={faixaAnterior}
-                                    aria-label="Música anterior"
-                                    className="flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:scale-95"
-                                >
-                                    <SkipBack className="h-[18px] w-[18px]" />
-                                </button>
+                                {temVariasFaixas && (
+                                    <button
+                                        type="button"
+                                        onClick={faixaAnterior}
+                                        aria-label="Música anterior"
+                                        className="flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:scale-95"
+                                    >
+                                        <SkipBack className="h-[18px] w-[18px]" />
+                                    </button>
+                                )}
 
                                 <button
                                     type="button"
@@ -854,14 +896,16 @@ export function StudyMusicPlayer() {
                                     )}
                                 </button>
 
-                                <button
-                                    type="button"
-                                    onClick={proximaFaixa}
-                                    aria-label="Próxima música"
-                                    className="flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:scale-95"
-                                >
-                                    <SkipForward className="h-[18px] w-[18px]" />
-                                </button>
+                                {temVariasFaixas && (
+                                    <button
+                                        type="button"
+                                        onClick={proximaFaixa}
+                                        aria-label="Próxima música"
+                                        className="flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:scale-95"
+                                    >
+                                        <SkipForward className="h-[18px] w-[18px]" />
+                                    </button>
+                                )}
                             </div>
 
                             {/* Volume — sempre visível. Escondido atrás de um
@@ -904,7 +948,9 @@ export function StudyMusicPlayer() {
                                 >
                                     <span className="flex min-w-0 items-center gap-2">
                                         <ListMusic className="h-4 w-4 shrink-0 text-muted-foreground" />
-                                        <span className="truncate text-xs font-medium">Playlists</span>
+                                        <span className="truncate text-xs font-medium">
+                                            Trocar ({playlists.length})
+                                        </span>
                                     </span>
                                     <ChevronDown
                                         className={cn(

@@ -1,456 +1,592 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Card } from '@/components/ui/card'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import {
     Music,
-    Plus,
+    ListMusic,
+    PlusCircle,
     Trash2,
-    Edit2,
-    Save,
-    X,
+    Pencil,
     Loader2,
+    Eye,
+    EyeOff,
+    ArrowUp,
+    ArrowDown,
     ArrowLeft,
     ExternalLink,
-    GripVertical,
-    Eye,
-    EyeOff
+    CheckCircle2,
+    AlertCircle,
 } from 'lucide-react'
-import Link from 'next/link'
+import { AppShell } from '@/components/app-shell'
+import { Button, buttonVariants } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+    DialogDescription,
+} from '@/components/ui/dialog'
+import { LogoLoading } from '@/components/logo-loading'
+import { cn } from '@/lib/utils'
+import { lerLinkDoYouTube, capaDeVideo } from '@/lib/musica/link-do-youtube'
 
-interface StudyPlaylist {
+/**
+ * Cadastro das músicas de estudo.
+ *
+ * A tela anterior tinha três problemas de fundo:
+ *
+ *  - fundo `navy-950` fixo com texto em `text-foreground`: no tema claro era
+ *    letra escura sobre azul-marinho, ilegível. Era a única página do painel
+ *    que não usava o tema — agora usa o `AppShell` como as outras;
+ *  - a alça de arrastar (`GripVertical`) era decorativa: mudava o cursor e não
+ *    reordenava nada, embora a API já aceitasse `order`. Virou subir/descer,
+ *    que de fato funciona;
+ *  - qualquer erro aparecia numa faixa no TOPO da página. Editando o quinto
+ *    item da lista, a mensagem nascia fora da tela e a impressão era de que o
+ *    botão não fazia nada. Agora o erro aparece dentro do próprio diálogo, e
+ *    as confirmações viram um aviso flutuante.
+ */
+
+interface ItemDeEstudo {
     _id: string
     name: string
     youtubeUrl: string
-    youtubePlaylistId: string
+    youtubePlaylistId: string | null
+    youtubeVideoId: string | null
     isActive: boolean
     order: number
-    createdAt: string
-    updatedAt: string
 }
 
+interface Formulario {
+    name: string
+    youtubeUrl: string
+}
+
+const FORM_VAZIO: Formulario = { name: '', youtubeUrl: '' }
+
 export default function StudyPlaylistsAdminPage() {
-    const [playlists, setPlaylists] = useState<StudyPlaylist[]>([])
-    const [loading, setLoading] = useState(true)
-    const [saving, setSaving] = useState(false)
-    const [editingId, setEditingId] = useState<string | null>(null)
-    const [showAddForm, setShowAddForm] = useState(false)
+    const router = useRouter()
+    const [verificandoAcesso, setVerificandoAcesso] = useState(true)
+    const [carregando, setCarregando] = useState(true)
+    const [salvando, setSalvando] = useState(false)
+    const [itens, setItens] = useState<ItemDeEstudo[]>([])
+    const [erroDaLista, setErroDaLista] = useState<string | null>(null)
+    const [aviso, setAviso] = useState<{ tipo: 'ok' | 'erro'; texto: string } | null>(null)
 
-    // Form states
-    const [newName, setNewName] = useState('')
-    const [newUrl, setNewUrl] = useState('')
-    const [editName, setEditName] = useState('')
-    const [editUrl, setEditUrl] = useState('')
-    const [error, setError] = useState('')
-    const [success, setSuccess] = useState('')
+    const [dialogoAberto, setDialogoAberto] = useState(false)
+    const [editando, setEditando] = useState<ItemDeEstudo | null>(null)
+    const [form, setForm] = useState<Formulario>(FORM_VAZIO)
+    const [erroDoForm, setErroDoForm] = useState<string | null>(null)
+    const [paraExcluir, setParaExcluir] = useState<ItemDeEstudo | null>(null)
 
+    // A página em si não era protegida — só a API. Quem não fosse admin via a
+    // casca montar e uma lista vazia, sem explicação.
     useEffect(() => {
-        loadPlaylists()
+        ;(async () => {
+            try {
+                const me = await fetch('/api/auth/me', { cache: 'no-store' })
+                if (!me.ok) {
+                    router.push('/auth/login')
+                    return
+                }
+                const data = await me.json()
+                if (data.user?.role !== 'admin') {
+                    router.push('/')
+                    return
+                }
+            } catch {
+                router.push('/auth/login')
+                return
+            } finally {
+                setVerificandoAcesso(false)
+            }
+        })()
+    }, [router])
+
+    function mostrarAviso(tipo: 'ok' | 'erro', texto: string) {
+        setAviso({ tipo, texto })
+        setTimeout(() => setAviso(null), 3500)
+    }
+
+    const carregar = useCallback(async () => {
+        setCarregando(true)
+        setErroDaLista(null)
+        try {
+            const res = await fetch('/api/admin/study-playlists', { cache: 'no-store' })
+            const data = await res.json().catch(() => ({}))
+            if (!res.ok || !data?.success) {
+                throw new Error(data?.error || 'Não foi possível carregar a lista.')
+            }
+            setItens(data.playlists ?? [])
+        } catch (e) {
+            setErroDaLista(e instanceof Error ? e.message : 'Não foi possível carregar a lista.')
+        } finally {
+            setCarregando(false)
+        }
     }, [])
 
-    async function loadPlaylists() {
-        try {
-            const res = await fetch('/api/admin/study-playlists')
-            const data = await res.json()
-            if (data.success) {
-                setPlaylists(data.playlists)
-            }
-        } catch (err) {
-            console.error('Error loading playlists:', err)
-            setError('Erro ao carregar playlists')
-        } finally {
-            setLoading(false)
-        }
+    useEffect(() => {
+        if (!verificandoAcesso) carregar()
+    }, [verificandoAcesso, carregar])
+
+    // Conferência do link enquanto a pessoa digita: dizer "esse link é de um
+    // canal" antes de clicar em salvar vale mais do que depois.
+    const leitura = useMemo(
+        () => (form.youtubeUrl.trim() ? lerLinkDoYouTube(form.youtubeUrl) : null),
+        [form.youtubeUrl],
+    )
+
+    function abrirNovo() {
+        setEditando(null)
+        setForm(FORM_VAZIO)
+        setErroDoForm(null)
+        setDialogoAberto(true)
     }
 
-    async function handleAdd() {
-        if (!newName.trim() || !newUrl.trim()) {
-            setError('Preencha todos os campos')
+    function abrirEdicao(item: ItemDeEstudo) {
+        setEditando(item)
+        setForm({ name: item.name, youtubeUrl: item.youtubeUrl })
+        setErroDoForm(null)
+        setDialogoAberto(true)
+    }
+
+    async function salvar() {
+        const nome = form.name.trim()
+        if (!nome) {
+            setErroDoForm('Dê um nome para essa música ou playlist.')
+            return
+        }
+        if (leitura && !leitura.ok) {
+            setErroDoForm(leitura.motivo)
+            return
+        }
+        if (!leitura) {
+            setErroDoForm('Cole o link do YouTube.')
             return
         }
 
-        setSaving(true)
-        setError('')
-
+        setSalvando(true)
+        setErroDoForm(null)
         try {
+            const corpo = { name: nome, youtubeUrl: form.youtubeUrl.trim() }
             const res = await fetch('/api/admin/study-playlists', {
-                method: 'POST',
+                method: editando ? 'PATCH' : 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name: newName, youtubeUrl: newUrl })
+                body: JSON.stringify(editando ? { id: editando._id, ...corpo } : corpo),
             })
-
-            const data = await res.json()
-
-            if (data.success) {
-                setNewName('')
-                setNewUrl('')
-                setShowAddForm(false)
-                setSuccess('Playlist adicionada com sucesso!')
-                loadPlaylists()
-                setTimeout(() => setSuccess(''), 3000)
-            } else {
-                setError(data.error || 'Erro ao adicionar playlist')
+            const data = await res.json().catch(() => ({}))
+            if (!res.ok || !data?.success) {
+                throw new Error(data?.error || 'Não foi possível salvar.')
             }
-        } catch (err) {
-            setError('Erro ao adicionar playlist')
+
+            setDialogoAberto(false)
+            mostrarAviso('ok', editando ? 'Alteração salva.' : 'Adicionado ao player.')
+            carregar()
+        } catch (e) {
+            setErroDoForm(e instanceof Error ? e.message : 'Não foi possível salvar.')
         } finally {
-            setSaving(false)
+            setSalvando(false)
         }
     }
 
-    async function handleEdit(id: string) {
-        if (!editName.trim() || !editUrl.trim()) {
-            setError('Preencha todos os campos')
-            return
-        }
-
-        setSaving(true)
-        setError('')
-
+    async function alternarAtivo(item: ItemDeEstudo) {
+        // Troca otimista: a lista inteira era recarregada do servidor a cada
+        // clique no olhinho, e o item piscava.
+        setItens((prev) =>
+            prev.map((i) => (i._id === item._id ? { ...i, isActive: !i.isActive } : i)),
+        )
         try {
             const res = await fetch('/api/admin/study-playlists', {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id, name: editName, youtubeUrl: editUrl })
+                body: JSON.stringify({ id: item._id, isActive: !item.isActive }),
             })
-
-            const data = await res.json()
-
-            if (data.success) {
-                setEditingId(null)
-                setSuccess('Playlist atualizada com sucesso!')
-                loadPlaylists()
-                setTimeout(() => setSuccess(''), 3000)
-            } else {
-                setError(data.error || 'Erro ao atualizar playlist')
-            }
-        } catch (err) {
-            setError('Erro ao atualizar playlist')
-        } finally {
-            setSaving(false)
+            const data = await res.json().catch(() => ({}))
+            if (!res.ok || !data?.success) throw new Error(data?.error || 'Erro ao atualizar')
+        } catch (e) {
+            setItens((prev) =>
+                prev.map((i) => (i._id === item._id ? { ...i, isActive: item.isActive } : i)),
+            )
+            mostrarAviso('erro', e instanceof Error ? e.message : 'Erro ao atualizar')
         }
     }
 
-    async function handleDelete(id: string) {
-        if (!confirm('Tem certeza que deseja remover esta playlist?')) return
+    async function mover(item: ItemDeEstudo, direcao: -1 | 1) {
+        const indice = itens.findIndex((i) => i._id === item._id)
+        const destino = indice + direcao
+        if (indice < 0 || destino < 0 || destino >= itens.length) return
+        const outro = itens[destino]
+
+        const anterior = itens
+        const reordenado = [...itens]
+        reordenado[indice] = outro
+        reordenado[destino] = item
+        setItens(reordenado)
 
         try {
-            const res = await fetch(`/api/admin/study-playlists?id=${id}`, {
-                method: 'DELETE'
-            })
-
-            const data = await res.json()
-
-            if (data.success) {
-                setSuccess('Playlist removida com sucesso!')
-                loadPlaylists()
-                setTimeout(() => setSuccess(''), 3000)
-            } else {
-                setError(data.error || 'Erro ao remover playlist')
-            }
-        } catch (err) {
-            setError('Erro ao remover playlist')
+            const respostas = await Promise.all([
+                fetch('/api/admin/study-playlists', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: item._id, order: outro.order }),
+                }),
+                fetch('/api/admin/study-playlists', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: outro._id, order: item.order }),
+                }),
+            ])
+            if (respostas.some((r) => !r.ok)) throw new Error('Erro ao reordenar')
+            setItens((prev) =>
+                prev.map((i) =>
+                    i._id === item._id
+                        ? { ...i, order: outro.order }
+                        : i._id === outro._id
+                          ? { ...i, order: item.order }
+                          : i,
+                ),
+            )
+        } catch {
+            setItens(anterior)
+            mostrarAviso('erro', 'Não foi possível reordenar.')
         }
     }
 
-    async function toggleActive(playlist: StudyPlaylist) {
+    async function excluir() {
+        if (!paraExcluir) return
+        const alvo = paraExcluir
+        setParaExcluir(null)
+        const anterior = itens
+        setItens((prev) => prev.filter((i) => i._id !== alvo._id))
         try {
-            const res = await fetch('/api/admin/study-playlists', {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id: playlist._id, isActive: !playlist.isActive })
+            const res = await fetch(`/api/admin/study-playlists?id=${alvo._id}`, {
+                method: 'DELETE',
             })
-
-            const data = await res.json()
-
-            if (data.success) {
-                loadPlaylists()
-            }
-        } catch (err) {
-            setError('Erro ao atualizar status')
+            const data = await res.json().catch(() => ({}))
+            if (!res.ok || !data?.success) throw new Error(data?.error || 'Erro ao remover')
+            mostrarAviso('ok', `"${alvo.name}" removido.`)
+        } catch (e) {
+            setItens(anterior)
+            mostrarAviso('erro', e instanceof Error ? e.message : 'Erro ao remover')
         }
     }
 
-    function startEdit(playlist: StudyPlaylist) {
-        setEditingId(playlist._id)
-        setEditName(playlist.name)
-        setEditUrl(playlist.youtubeUrl)
-        setError('')
+    if (verificandoAcesso) {
+        return <LogoLoading message="Verificando permissões..." size="lg" fullscreen />
     }
 
-    function cancelEdit() {
-        setEditingId(null)
-        setEditName('')
-        setEditUrl('')
-        setError('')
-    }
+    const ativos = itens.filter((i) => i.isActive).length
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-navy-950 via-navy-900 to-navy-950">
-            <div className="container mx-auto px-4 py-8 max-w-4xl">
-                {/* Header */}
-                <div className="mb-8">
-                    <Link
-                        href="/admin"
-                        className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-4"
+        <AppShell headerTitle="Músicas de estudo" headerSubtitle="Playlists do player de foco">
+            <div className="container mx-auto max-w-3xl px-4 py-6">
+                <div className="mb-6 flex items-center justify-between gap-3">
+                    <Button
+                        variant="ghost"
+                        onClick={() => router.push('/admin')}
+                        className="-ml-2 rounded-xl"
                     >
-                        <ArrowLeft className="h-4 w-4" />
-                        Voltar ao Admin
-                    </Link>
-
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
-                                <Music className="h-6 w-6 text-white" />
-                            </div>
-                            <div>
-                                <h1 className="text-2xl font-bold text-foreground">Playlists de Estudo</h1>
-                                <p className="text-sm text-muted-foreground">
-                                    Gerencie as playlists do player de música
-                                </p>
-                            </div>
-                        </div>
-
-                        <Button
-                            onClick={() => setShowAddForm(true)}
-                            className="bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700"
-                        >
-                            <Plus className="h-4 w-4 mr-2" />
-                            Adicionar Playlist
-                        </Button>
-                    </div>
+                        <ArrowLeft className="mr-1 h-4 w-4" />
+                        Voltar
+                    </Button>
+                    <Button onClick={abrirNovo} className="rounded-xl">
+                        <PlusCircle className="mr-2 h-4 w-4" />
+                        Adicionar
+                    </Button>
                 </div>
 
-                {/* Messages */}
-                {error && (
-                    <div className="mb-4 p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400">
-                        {error}
-                    </div>
-                )}
-
-                {success && (
-                    <div className="mb-4 p-4 bg-green-500/10 border border-green-500/20 rounded-lg text-green-400">
-                        {success}
-                    </div>
-                )}
-
-                {/* Add Form */}
-                {showAddForm && (
-                    <Card className="mb-6 p-6 bg-white/5 backdrop-blur-xl border-white/10">
-                        <h3 className="text-lg font-semibold mb-4 text-foreground">Nova Playlist</h3>
-                        <div className="space-y-4">
-                            <div>
-                                <Label htmlFor="new-name">Nome da Playlist</Label>
-                                <Input
-                                    id="new-name"
-                                    value={newName}
-                                    onChange={(e) => setNewName(e.target.value)}
-                                    placeholder="Ex: Lo-Fi para Estudar"
-                                    className="bg-white/5 border-white/10"
-                                />
-                            </div>
-                            <div>
-                                <Label htmlFor="new-url">Link da Playlist do YouTube</Label>
-                                <Input
-                                    id="new-url"
-                                    value={newUrl}
-                                    onChange={(e) => setNewUrl(e.target.value)}
-                                    placeholder="https://www.youtube.com/playlist?list=..."
-                                    className="bg-white/5 border-white/10"
-                                />
-                                <p className="text-xs text-muted-foreground mt-1">
-                                    Cole o link completo da playlist do YouTube
-                                </p>
-                            </div>
-                            <div className="flex gap-2 justify-end">
-                                <Button
-                                    variant="outline"
-                                    onClick={() => {
-                                        setShowAddForm(false)
-                                        setNewName('')
-                                        setNewUrl('')
-                                        setError('')
-                                    }}
-                                >
-                                    <X className="h-4 w-4 mr-2" />
-                                    Cancelar
-                                </Button>
-                                <Button
-                                    onClick={handleAdd}
-                                    disabled={saving}
-                                    className="bg-gradient-to-r from-violet-500 to-purple-600"
-                                >
-                                    {saving ? (
-                                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                    ) : (
-                                        <Save className="h-4 w-4 mr-2" />
-                                    )}
-                                    Salvar
-                                </Button>
-                            </div>
-                        </div>
-                    </Card>
-                )}
-
-                {/* Loading */}
-                {loading ? (
-                    <div className="flex items-center justify-center py-12">
-                        <Loader2 className="h-8 w-8 animate-spin text-violet-500" />
-                    </div>
-                ) : playlists.length === 0 ? (
-                    /* Empty State */
-                    <Card className="p-12 text-center bg-white/5 backdrop-blur-xl border-white/10">
-                        <Music className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-50" />
-                        <h3 className="text-lg font-semibold text-foreground mb-2">
-                            Nenhuma playlist cadastrada
-                        </h3>
-                        <p className="text-muted-foreground mb-4">
-                            Adicione playlists do YouTube para que os usuários possam ouvir enquanto estudam.
+                <div className="mb-6 rounded-xl border bg-muted/40 p-4 text-sm text-muted-foreground">
+                    <p className="flex items-start gap-2">
+                        <Music className="mt-0.5 h-4 w-4 shrink-0" />
+                        <span>
+                            Cole o link de uma <strong>playlist</strong> do YouTube ou de uma{' '}
+                            <strong>música avulsa</strong> — os dois funcionam. A playlist precisa
+                            ser pública ou não listada; “Curtidos” e “Assistir mais tarde” são
+                            privadas e não tocam fora do YouTube. A ordem daqui é a ordem que o
+                            aluno vê, e o player <strong>nunca começa tocando sozinho</strong>.
+                        </span>
+                    </p>
+                    {itens.length > 0 && (
+                        <p className="mt-2 pl-6 text-xs">
+                            {itens.length} cadastrada{itens.length > 1 ? 's' : ''} · {ativos} visível
+                            {ativos > 1 ? 'eis' : ''} para os alunos
                         </p>
+                    )}
+                </div>
+
+                {carregando ? (
+                    <div className="flex items-center justify-center py-16 text-muted-foreground">
+                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                        Carregando...
+                    </div>
+                ) : erroDaLista ? (
+                    <div className="rounded-xl border border-destructive/40 bg-destructive/10 p-4 text-sm text-destructive">
+                        <p>{erroDaLista}</p>
                         <Button
-                            onClick={() => setShowAddForm(true)}
-                            className="bg-gradient-to-r from-violet-500 to-purple-600"
+                            variant="outline"
+                            size="sm"
+                            className="mt-3 rounded-lg"
+                            onClick={carregar}
                         >
-                            <Plus className="h-4 w-4 mr-2" />
-                            Adicionar Primeira Playlist
+                            Tentar de novo
                         </Button>
-                    </Card>
+                    </div>
+                ) : itens.length === 0 ? (
+                    <div className="rounded-xl border border-dashed p-10 text-center text-muted-foreground">
+                        <ListMusic className="mx-auto mb-3 h-8 w-8 opacity-50" />
+                        <p>Nenhuma música cadastrada.</p>
+                        <p className="text-sm">
+                            Sem nenhuma, o player nem aparece para os alunos.
+                        </p>
+                        <Button onClick={abrirNovo} className="mt-4 rounded-xl">
+                            <PlusCircle className="mr-2 h-4 w-4" />
+                            Adicionar a primeira
+                        </Button>
+                    </div>
                 ) : (
-                    /* Playlist List */
-                    <div className="space-y-4">
-                        {playlists.map((playlist, index) => (
-                            <Card
-                                key={playlist._id}
-                                className={`p-4 bg-white/5 backdrop-blur-xl border-white/10 transition-all ${!playlist.isActive ? 'opacity-50' : ''
-                                    }`}
-                            >
-                                {editingId === playlist._id ? (
-                                    /* Edit Mode */
-                                    <div className="space-y-4">
-                                        <div>
-                                            <Label>Nome da Playlist</Label>
-                                            <Input
-                                                value={editName}
-                                                onChange={(e) => setEditName(e.target.value)}
-                                                className="bg-white/5 border-white/10"
-                                            />
-                                        </div>
-                                        <div>
-                                            <Label>Link da Playlist do YouTube</Label>
-                                            <Input
-                                                value={editUrl}
-                                                onChange={(e) => setEditUrl(e.target.value)}
-                                                className="bg-white/5 border-white/10"
-                                            />
-                                        </div>
-                                        <div className="flex gap-2 justify-end">
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
-                                                onClick={cancelEdit}
-                                            >
-                                                <X className="h-4 w-4 mr-1" />
-                                                Cancelar
-                                            </Button>
-                                            <Button
-                                                size="sm"
-                                                onClick={() => handleEdit(playlist._id)}
-                                                disabled={saving}
-                                                className="bg-violet-600 hover:bg-violet-700"
-                                            >
-                                                {saving ? (
-                                                    <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-                                                ) : (
-                                                    <Save className="h-4 w-4 mr-1" />
-                                                )}
-                                                Salvar
-                                            </Button>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    /* View Mode */
-                                    <div className="flex items-center gap-4">
-                                        <div className="text-muted-foreground cursor-grab">
-                                            <GripVertical className="h-5 w-5" />
-                                        </div>
-
-                                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-violet-500/20 to-purple-600/20 flex items-center justify-center flex-shrink-0">
-                                            <Music className="h-5 w-5 text-violet-400" />
-                                        </div>
-
-                                        <div className="flex-1 min-w-0">
-                                            <h4 className="font-medium text-foreground truncate">{playlist.name}</h4>
-                                            <p className="text-xs text-muted-foreground truncate">
-                                                ID: {playlist.youtubePlaylistId}
-                                            </p>
-                                        </div>
-
-                                        <div className="flex items-center gap-2">
-                                            <a
-                                                href={playlist.youtubeUrl}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="p-2 rounded-lg hover:bg-white/5 transition-colors text-muted-foreground hover:text-foreground"
-                                                title="Abrir no YouTube"
-                                            >
-                                                <ExternalLink className="h-4 w-4" />
-                                            </a>
-
-                                            <button
-                                                onClick={() => toggleActive(playlist)}
-                                                className={`p-2 rounded-lg hover:bg-white/5 transition-colors ${playlist.isActive ? 'text-green-400' : 'text-muted-foreground'
-                                                    }`}
-                                                title={playlist.isActive ? 'Ativa' : 'Inativa'}
-                                            >
-                                                {playlist.isActive ? (
-                                                    <Eye className="h-4 w-4" />
-                                                ) : (
-                                                    <EyeOff className="h-4 w-4" />
-                                                )}
-                                            </button>
-
-                                            <button
-                                                onClick={() => startEdit(playlist)}
-                                                className="p-2 rounded-lg hover:bg-white/5 transition-colors text-muted-foreground hover:text-foreground"
-                                                title="Editar"
-                                            >
-                                                <Edit2 className="h-4 w-4" />
-                                            </button>
-
-                                            <button
-                                                onClick={() => handleDelete(playlist._id)}
-                                                className="p-2 rounded-lg hover:bg-red-500/10 transition-colors text-muted-foreground hover:text-red-400"
-                                                title="Remover"
-                                            >
-                                                <Trash2 className="h-4 w-4" />
-                                            </button>
-                                        </div>
-                                    </div>
+                    <div className="space-y-3">
+                        {itens.map((item, idx) => (
+                            <div
+                                key={item._id}
+                                className={cn(
+                                    'flex flex-col gap-3 rounded-xl border bg-card p-3 sm:flex-row sm:items-center',
+                                    !item.isActive && 'opacity-60',
                                 )}
-                            </Card>
+                            >
+                                <div className="flex h-14 w-full shrink-0 items-center justify-center overflow-hidden rounded-lg bg-muted sm:w-24">
+                                    {item.youtubeVideoId ? (
+                                        // eslint-disable-next-line @next/next/no-img-element
+                                        <img
+                                            src={capaDeVideo(item.youtubeVideoId)}
+                                            alt=""
+                                            className="h-full w-full object-cover"
+                                            loading="lazy"
+                                        />
+                                    ) : (
+                                        <ListMusic className="h-6 w-6 text-muted-foreground" />
+                                    )}
+                                </div>
+
+                                <div className="min-w-0 flex-1">
+                                    <div className="flex flex-wrap items-center gap-2">
+                                        <span className="font-medium">{item.name}</span>
+                                        <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] uppercase text-muted-foreground">
+                                            {item.youtubePlaylistId ? 'Playlist' : 'Faixa'}
+                                        </span>
+                                        {!item.isActive && (
+                                            <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] uppercase text-muted-foreground">
+                                                Oculta
+                                            </span>
+                                        )}
+                                    </div>
+                                    <p className="mt-0.5 truncate font-mono text-xs text-muted-foreground">
+                                        {item.youtubePlaylistId ?? item.youtubeVideoId}
+                                    </p>
+                                </div>
+
+                                <div className="flex items-center gap-0.5">
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        title="Subir"
+                                        disabled={idx === 0}
+                                        onClick={() => mover(item, -1)}
+                                    >
+                                        <ArrowUp className="h-4 w-4" />
+                                    </Button>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        title="Descer"
+                                        disabled={idx === itens.length - 1}
+                                        onClick={() => mover(item, 1)}
+                                    >
+                                        <ArrowDown className="h-4 w-4" />
+                                    </Button>
+                                    {/* Link de verdade, e não `<Button asChild>`:
+                                        o `asChild` do nosso Button é só um tipo,
+                                        não existe Slot por baixo — sairia uma
+                                        âncora dentro de um <button>. */}
+                                    <a
+                                        href={item.youtubeUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        title="Abrir no YouTube"
+                                        className={cn(
+                                            buttonVariants({ variant: 'ghost', size: 'icon' }),
+                                        )}
+                                    >
+                                        <ExternalLink className="h-4 w-4" />
+                                    </a>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        title={
+                                            item.isActive
+                                                ? 'Ocultar dos alunos'
+                                                : 'Exibir para os alunos'
+                                        }
+                                        onClick={() => alternarAtivo(item)}
+                                    >
+                                        {item.isActive ? (
+                                            <Eye className="h-4 w-4" />
+                                        ) : (
+                                            <EyeOff className="h-4 w-4" />
+                                        )}
+                                    </Button>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        title="Editar"
+                                        onClick={() => abrirEdicao(item)}
+                                    >
+                                        <Pencil className="h-4 w-4" />
+                                    </Button>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        title="Remover"
+                                        className="text-destructive"
+                                        onClick={() => setParaExcluir(item)}
+                                    >
+                                        <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                </div>
+                            </div>
                         ))}
                     </div>
                 )}
+            </div>
 
-                {/* Info */}
-                <Card className="mt-8 p-4 bg-violet-500/5 border-violet-500/10">
-                    <div className="flex gap-3">
-                        <Music className="h-5 w-5 text-violet-400 flex-shrink-0 mt-0.5" />
-                        <div>
-                            <h4 className="font-medium text-foreground mb-1">Sobre o Player de Música</h4>
-                            <p className="text-sm text-muted-foreground">
-                                O player de música aparecerá como um widget flutuante no canto inferior direito
-                                da plataforma. Os usuários poderão trocar entre as playlists cadastradas,
-                                controlar o volume e a velocidade de reprodução. A preferência é salva
-                                automaticamente para cada usuário.
+            {/* Criar / editar */}
+            <Dialog open={dialogoAberto} onOpenChange={setDialogoAberto}>
+                <DialogContent className="sm:max-w-lg">
+                    <DialogHeader>
+                        <DialogTitle>{editando ? 'Editar' : 'Adicionar música'}</DialogTitle>
+                        <DialogDescription>
+                            Playlist inteira ou uma faixa só — cole o link do YouTube.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <div className="space-y-4 py-2">
+                        <div className="space-y-1.5">
+                            <Label htmlFor="nome">
+                                Nome <span className="text-destructive">*</span>
+                            </Label>
+                            <Input
+                                id="nome"
+                                value={form.name}
+                                maxLength={100}
+                                placeholder="Ex.: Lo-Fi para estudar"
+                                onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                            />
+                            <p className="text-xs text-muted-foreground">
+                                É esse nome que o aluno vê no player.
                             </p>
                         </div>
+
+                        <div className="space-y-1.5">
+                            <Label htmlFor="link">
+                                Link do YouTube <span className="text-destructive">*</span>
+                            </Label>
+                            <Input
+                                id="link"
+                                value={form.youtubeUrl}
+                                placeholder="https://www.youtube.com/playlist?list=..."
+                                onChange={(e) =>
+                                    setForm((f) => ({ ...f, youtubeUrl: e.target.value }))
+                                }
+                            />
+                            {/* Conferência ao vivo: o cadastro antigo só avisava
+                                depois de salvar, e sempre com a mesma frase. */}
+                            {leitura?.ok ? (
+                                <p className="flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400">
+                                    <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
+                                    {leitura.item.tipo === 'playlist'
+                                        ? `Playlist reconhecida (${leitura.item.playlistId})`
+                                        : `Faixa reconhecida (${leitura.item.videoId})`}
+                                </p>
+                            ) : leitura ? (
+                                <p className="flex items-start gap-1.5 text-xs text-amber-600 dark:text-amber-400">
+                                    <AlertCircle className="mt-px h-3.5 w-3.5 shrink-0" />
+                                    {leitura.motivo}
+                                </p>
+                            ) : (
+                                <p className="text-xs text-muted-foreground">
+                                    Aceita youtube.com, youtu.be, YouTube Music, Shorts — ou só o ID.
+                                </p>
+                            )}
+                        </div>
+
+                        {erroDoForm && (
+                            <div className="flex items-start gap-2 rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
+                                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                                <span>{erroDoForm}</span>
+                            </div>
+                        )}
                     </div>
-                </Card>
-            </div>
-        </div>
+
+                    <DialogFooter>
+                        <Button
+                            variant="outline"
+                            onClick={() => setDialogoAberto(false)}
+                            disabled={salvando}
+                        >
+                            Cancelar
+                        </Button>
+                        <Button onClick={salvar} disabled={salvando || (!!leitura && !leitura.ok)}>
+                            {salvando && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            {editando ? 'Salvar' : 'Adicionar'}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Confirmação de remoção — antes era um `confirm()` do navegador. */}
+            <Dialog open={!!paraExcluir} onOpenChange={(aberto) => !aberto && setParaExcluir(null)}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>Remover do player?</DialogTitle>
+                        <DialogDescription>
+                            “{paraExcluir?.name}” sai da lista para todos os alunos. Para tirar do ar
+                            sem apagar, use o olho (Ocultar).
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setParaExcluir(null)}>
+                            Cancelar
+                        </Button>
+                        <Button variant="destructive" onClick={excluir}>
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Remover
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Aviso flutuante: fica visível mesmo com a página rolada. */}
+            {aviso && (
+                <div
+                    role="status"
+                    className={cn(
+                        'fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2 rounded-xl border px-4 py-2.5 text-sm shadow-lg',
+                        aviso.tipo === 'ok'
+                            ? 'border-emerald-500/40 bg-emerald-50 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300'
+                            : 'border-destructive/40 bg-destructive/10 text-destructive',
+                    )}
+                >
+                    {aviso.tipo === 'ok' ? (
+                        <CheckCircle2 className="h-4 w-4 shrink-0" />
+                    ) : (
+                        <AlertCircle className="h-4 w-4 shrink-0" />
+                    )}
+                    {aviso.texto}
+                </div>
+            )}
+        </AppShell>
     )
 }

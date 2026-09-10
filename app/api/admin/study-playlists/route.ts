@@ -3,8 +3,16 @@ import { getDb } from '@/lib/mongodb'
 import { cookies } from 'next/headers'
 import { jwtVerify } from 'jose'
 import { ObjectId } from 'mongodb'
+import { lerLinkDoYouTube } from '@/lib/musica/link-do-youtube'
+
+// Ver o comentário da rota pública: esta lê cookies e portanto já era dinâmica,
+// mas declarar é o padrão do projeto e protege contra regressão.
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'secret')
+
+const NOME_MAXIMO = 100
 
 async function verifyAdmin() {
     try {
@@ -23,34 +31,25 @@ async function verifyAdmin() {
     }
 }
 
-function extractPlaylistId(url: string): string | null {
-    try {
-        const urlObj = new URL(url)
+function semCache(body: unknown, init?: { status?: number }) {
+    return NextResponse.json(body, {
+        status: init?.status ?? 200,
+        headers: { 'Cache-Control': 'no-store, max-age=0' },
+    })
+}
 
-        // Handle youtube.com/playlist?list=
-        if (urlObj.searchParams.has('list')) {
-            return urlObj.searchParams.get('list')
-        }
+function erro(motivo: string, status = 400) {
+    return semCache({ success: false, error: motivo }, { status })
+}
 
-        // Handle youtu.be or youtube.com/watch with list param
-        if (urlObj.hostname === 'youtu.be') {
-            return urlObj.searchParams.get('list')
-        }
-
-        return null
-    } catch {
-        // If URL parsing fails, try to extract with regex
-        const match = url.match(/[?&]list=([^&]+)/)
-        return match ? match[1] : null
-    }
+function idValido(id: unknown): id is string {
+    return typeof id === 'string' && ObjectId.isValid(id)
 }
 
 // GET - List all playlists (admin only)
-export async function GET(request: NextRequest) {
+export async function GET() {
     const admin = await verifyAdmin()
-    if (!admin) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    if (!admin) return erro('Unauthorized', 401)
 
     try {
         const db = await getDb()
@@ -61,157 +60,129 @@ export async function GET(request: NextRequest) {
             .sort({ order: 1, createdAt: -1 })
             .toArray()
 
-        return NextResponse.json({
+        return semCache({
             success: true,
-            playlists: playlists.map(p => ({
-                ...p,
-                _id: p._id.toString()
-            }))
+            playlists: playlists.map((p) => ({
+                _id: p._id.toString(),
+                name: p.name,
+                youtubeUrl: p.youtubeUrl,
+                youtubePlaylistId: p.youtubePlaylistId ?? null,
+                youtubeVideoId: p.youtubeVideoId ?? null,
+                isActive: p.isActive !== false,
+                order: typeof p.order === 'number' ? p.order : 0,
+                createdAt: p.createdAt ?? null,
+                updatedAt: p.updatedAt ?? null,
+            })),
         })
     } catch (error) {
         console.error('Error fetching study playlists:', error)
-        return NextResponse.json(
-            { success: false, error: 'Failed to fetch playlists' },
-            { status: 500 }
-        )
+        return erro('Failed to fetch playlists', 500)
     }
 }
 
 // POST - Create new playlist (admin only)
 export async function POST(request: NextRequest) {
     const admin = await verifyAdmin()
-    if (!admin) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    if (!admin) return erro('Unauthorized', 401)
 
     try {
         const body = await request.json()
         const { name, youtubeUrl } = body
 
         if (!name || typeof name !== 'string' || name.trim().length === 0) {
-            return NextResponse.json(
-                { success: false, error: 'Nome da playlist é obrigatório' },
-                { status: 400 }
-            )
+            return erro('Dê um nome para essa música ou playlist.')
+        }
+        if (name.trim().length > NOME_MAXIMO) {
+            return erro(`Nome muito longo (máx. ${NOME_MAXIMO} caracteres).`)
+        }
+        if (typeof youtubeUrl !== 'string') {
+            return erro('Cole o link do YouTube.')
         }
 
-        if (name.length > 100) {
-            return NextResponse.json(
-                { success: false, error: 'Nome muito longo (máx. 100 caracteres)' },
-                { status: 400 }
-            )
-        }
-
-        if (!youtubeUrl || typeof youtubeUrl !== 'string') {
-            return NextResponse.json(
-                { success: false, error: 'URL do YouTube é obrigatória' },
-                { status: 400 }
-            )
-        }
-
-        const playlistId = extractPlaylistId(youtubeUrl)
-
-        if (!playlistId) {
-            return NextResponse.json(
-                { success: false, error: 'URL de playlist inválida. Use o formato: https://www.youtube.com/playlist?list=...' },
-                { status: 400 }
-            )
-        }
+        const leitura = lerLinkDoYouTube(youtubeUrl)
+        if (!leitura.ok) return erro(leitura.motivo)
 
         const db = await getDb()
 
-        // Check for duplicate
-        const existing = await db.collection('study_playlists').findOne({
-            youtubePlaylistId: playlistId
-        })
-
-        if (existing) {
-            return NextResponse.json(
-                { success: false, error: 'Esta playlist já está cadastrada' },
-                { status: 400 }
-            )
+        // Duplicidade: a mesma playlist (ou a mesma faixa) cadastrada duas vezes
+        // só faz o sorteio inicial do player repetir.
+        const jaExiste = await db.collection('study_playlists').findOne(
+            leitura.item.tipo === 'playlist'
+                ? { youtubePlaylistId: leitura.item.playlistId }
+                : { youtubeVideoId: leitura.item.videoId },
+        )
+        if (jaExiste) {
+            return erro(`"${jaExiste.name}" já usa esse mesmo link.`)
         }
 
-        // Get current max order
         const maxOrderDoc = await db
             .collection('study_playlists')
             .findOne({}, { sort: { order: -1 } })
 
-        const nextOrder = (maxOrderDoc?.order || 0) + 1
+        const nextOrder = (typeof maxOrderDoc?.order === 'number' ? maxOrderDoc.order : 0) + 1
 
         const result = await db.collection('study_playlists').insertOne({
             name: name.trim(),
-            youtubeUrl: youtubeUrl.trim(),
-            youtubePlaylistId: playlistId,
+            youtubeUrl: leitura.url,
+            youtubePlaylistId: leitura.item.playlistId,
+            youtubeVideoId: leitura.item.videoId,
             isActive: true,
             order: nextOrder,
             createdAt: new Date(),
-            updatedAt: new Date()
+            updatedAt: new Date(),
         })
 
-        return NextResponse.json({
-            success: true,
-            playlistId: result.insertedId.toString()
-        })
+        return semCache({ success: true, playlistId: result.insertedId.toString() })
     } catch (error) {
         console.error('Error creating study playlist:', error)
-        return NextResponse.json(
-            { success: false, error: 'Failed to create playlist' },
-            { status: 500 }
-        )
+        return erro('Failed to create playlist', 500)
     }
 }
 
 // PATCH - Update playlist (admin only)
 export async function PATCH(request: NextRequest) {
     const admin = await verifyAdmin()
-    if (!admin) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    if (!admin) return erro('Unauthorized', 401)
 
     try {
         const body = await request.json()
         const { id, name, youtubeUrl, isActive, order } = body
 
-        if (!id) {
-            return NextResponse.json(
-                { success: false, error: 'ID é obrigatório' },
-                { status: 400 }
-            )
-        }
+        // `new ObjectId(lixo)` lança, e a mensagem que chegava era o genérico
+        // "Failed to update playlist" — que não ajudava ninguém.
+        if (!idValido(id)) return erro('Registro inválido.')
 
         const db = await getDb()
 
-        const updateData: Record<string, unknown> = {
-            updatedAt: new Date()
-        }
+        const updateData: Record<string, unknown> = { updatedAt: new Date() }
 
         if (name !== undefined) {
             if (typeof name !== 'string' || name.trim().length === 0) {
-                return NextResponse.json(
-                    { success: false, error: 'Nome inválido' },
-                    { status: 400 }
-                )
+                return erro('Dê um nome para essa música ou playlist.')
             }
-            if (name.length > 100) {
-                return NextResponse.json(
-                    { success: false, error: 'Nome muito longo (máx. 100 caracteres)' },
-                    { status: 400 }
-                )
+            if (name.trim().length > NOME_MAXIMO) {
+                return erro(`Nome muito longo (máx. ${NOME_MAXIMO} caracteres).`)
             }
             updateData.name = name.trim()
         }
 
         if (youtubeUrl !== undefined) {
-            const playlistId = extractPlaylistId(youtubeUrl)
-            if (!playlistId) {
-                return NextResponse.json(
-                    { success: false, error: 'URL de playlist inválida' },
-                    { status: 400 }
-                )
-            }
-            updateData.youtubeUrl = youtubeUrl.trim()
-            updateData.youtubePlaylistId = playlistId
+            const leitura = lerLinkDoYouTube(String(youtubeUrl))
+            if (!leitura.ok) return erro(leitura.motivo)
+
+            // A checagem de duplicidade existia só na criação: dava para EDITAR
+            // uma playlist até ela virar cópia de outra.
+            const conflito = await db.collection('study_playlists').findOne({
+                _id: { $ne: new ObjectId(id) },
+                ...(leitura.item.tipo === 'playlist'
+                    ? { youtubePlaylistId: leitura.item.playlistId }
+                    : { youtubeVideoId: leitura.item.videoId }),
+            })
+            if (conflito) return erro(`"${conflito.name}" já usa esse mesmo link.`)
+
+            updateData.youtubeUrl = leitura.url
+            updateData.youtubePlaylistId = leitura.item.playlistId
+            updateData.youtubeVideoId = leitura.item.videoId
         }
 
         if (isActive !== undefined) {
@@ -219,54 +190,52 @@ export async function PATCH(request: NextRequest) {
         }
 
         if (order !== undefined) {
-            updateData.order = Number(order)
+            const n = Number(order)
+            if (!Number.isFinite(n)) return erro('Ordem inválida.')
+            updateData.order = n
         }
 
-        await db.collection('study_playlists').updateOne(
-            { _id: new ObjectId(id) },
-            { $set: updateData }
-        )
+        const resultado = await db
+            .collection('study_playlists')
+            .updateOne({ _id: new ObjectId(id) }, { $set: updateData })
 
-        return NextResponse.json({ success: true })
+        // Antes o painel dizia "atualizada com sucesso" mesmo quando o registro
+        // já tinha sido apagado em outra aba, e nada mudava na lista.
+        if (resultado.matchedCount === 0) {
+            return erro('Esse registro não existe mais. Atualize a página.', 404)
+        }
+
+        return semCache({ success: true })
     } catch (error) {
         console.error('Error updating study playlist:', error)
-        return NextResponse.json(
-            { success: false, error: 'Failed to update playlist' },
-            { status: 500 }
-        )
+        return erro('Failed to update playlist', 500)
     }
 }
 
 // DELETE - Remove playlist (admin only)
 export async function DELETE(request: NextRequest) {
     const admin = await verifyAdmin()
-    if (!admin) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    if (!admin) return erro('Unauthorized', 401)
 
     try {
         const { searchParams } = new URL(request.url)
         const id = searchParams.get('id')
 
-        if (!id) {
-            return NextResponse.json(
-                { success: false, error: 'ID é obrigatório' },
-                { status: 400 }
-            )
-        }
+        if (!idValido(id)) return erro('Registro inválido.')
 
         const db = await getDb()
 
-        await db.collection('study_playlists').deleteOne({
-            _id: new ObjectId(id)
-        })
+        const resultado = await db
+            .collection('study_playlists')
+            .deleteOne({ _id: new ObjectId(id) })
 
-        return NextResponse.json({ success: true })
+        if (resultado.deletedCount === 0) {
+            return erro('Esse registro não existe mais. Atualize a página.', 404)
+        }
+
+        return semCache({ success: true })
     } catch (error) {
         console.error('Error deleting study playlist:', error)
-        return NextResponse.json(
-            { success: false, error: 'Failed to delete playlist' },
-            { status: 500 }
-        )
+        return erro('Failed to delete playlist', 500)
     }
 }

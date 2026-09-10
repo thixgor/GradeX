@@ -38,6 +38,8 @@ export interface YouTubePlayer {
   getPlaybackRate: () => number
   loadPlaylist: (playlist: { list: string; listType: string; index?: number }) => void
   cuePlaylist: (playlist: { list: string; listType: string; index?: number }) => void
+  loadVideoById: (videoId: string) => void
+  cueVideoById: (videoId: string) => void
   nextVideo: () => void
   previousVideo: () => void
   getPlayerState: () => number
@@ -52,6 +54,9 @@ export interface YouTubePlayerConfig {
   width?: string | number
   height?: string | number
   videoId?: string
+  /** Domínio que serve o iframe. `www.youtube-nocookie.com` corta boa parte da
+   *  telemetria (é o que os bloqueadores derrubam com ERR_BLOCKED_BY_CLIENT). */
+  host?: string
   playerVars?: Record<string, unknown>
   events?: {
     onReady?: (event: { target: YouTubePlayer }) => void
