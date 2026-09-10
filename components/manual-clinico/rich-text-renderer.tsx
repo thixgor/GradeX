@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { Fragment, useState, useEffect, useRef, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { Volume2, VolumeX, Image as ImageIcon, Film, Play, Pause, SkipBack, SkipForward, X, Maximize2 } from 'lucide-react'
+import { comYouTubeApi } from '@/lib/youtube-iframe-api'
 
 /**
  * Parses text with inline markup:
@@ -93,36 +94,18 @@ function VideoEmbed({ embed }: { embed: Embed }) {
   )
 }
 
-// ── YouTube IFrame API loader (singleton) ────────────────────────
-let ytApiLoading = false
-let ytApiCallbacks: (() => void)[] = []
-
+/**
+ * Carrega a IFrame API do YouTube.
+ *
+ * Delega ao carregador compartilhado (`lib/youtube-iframe-api`). A versão
+ * anterior mantinha o próprio script + o próprio `onYouTubeIframeAPIReady` — e,
+ * pior, DELETAVA o callback global antes de instalar o seu. Como o player de
+ * música de estudo usa a mesma API no mesmo documento, quem montasse por último
+ * apagava o aviso de "API pronta" do outro, que ficava esperando para sempre.
+ * Era essa a origem do "às vezes toca, às vezes não".
+ */
 function ensureYTApi(cb: () => void) {
-  // Already fully loaded — call immediately
-  if ((window as any).YT?.Player) { cb(); return }
-
-  ytApiCallbacks.push(cb)
-
-  if (typeof document === 'undefined' || ytApiLoading) return
-  ytApiLoading = true
-
-  // Remove stale script tag if present (HMR / re-mount)
-  const old = document.getElementById('yt-iframe-api')
-  if (old) old.remove()
-
-  // Clear previous global callback
-  delete (window as any).onYouTubeIframeAPIReady
-
-  const tag = document.createElement('script')
-  tag.id = 'yt-iframe-api'
-  tag.src = 'https://www.youtube.com/iframe_api'
-  ;(window as any).onYouTubeIframeAPIReady = () => {
-    ytApiLoading = false
-    const cbs = [...ytApiCallbacks]
-    ytApiCallbacks = []
-    cbs.forEach(fn => fn())
-  }
-  document.head.appendChild(tag)
+  comYouTubeApi(() => cb())
 }
 
 function formatTime(s: number): string {

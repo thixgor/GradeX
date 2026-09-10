@@ -1,25 +1,56 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
-import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion'
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import {
     Play,
     Pause,
     Volume2,
+    Volume1,
     VolumeX,
     ListMusic,
     ChevronDown,
-    X,
-    Gauge,
     Check,
     Music,
     Loader2,
     SkipForward,
-    SkipBack
+    SkipBack,
+    AlertCircle,
+    RotateCcw,
+    X,
 } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { useAuthUser } from '@/hooks/use-auth-user'
 import { useFloatingDock } from '@/context/FloatingDockContext'
+import { useLiteMode } from '@/hooks/use-lite-mode'
+import { cn } from '@/lib/utils'
+import {
+    carregarYouTubeIframeApi,
+    YT_STATE,
+    type YouTubePlayer,
+} from '@/lib/youtube-iframe-api'
+
+/**
+ * Player de música ambiente para estudo.
+ *
+ * Regras que este componente leva a sério (foram todas bug de produção):
+ *
+ * 1. NUNCA toca sozinho. Som só sai depois de a pessoa apertar play. Nada de
+ *    `autoplay`, e trocar de playlist usa `cuePlaylist` (que carrega sem
+ *    tocar) em vez de `loadPlaylist` (que toca na hora). A versão anterior
+ *    chamava `loadPlaylist` + `pauseVideo` logo no carregamento da página —
+ *    uma corrida que, quando o `pause` perdia, dava um susto em quem entrava.
+ *
+ * 2. O iframe não pode ficar em `display:none`. No Safari/iOS (iPhone, iPad)
+ *    mídia dentro de um nó não renderizado não toca. O iframe vive num
+ *    quadrado de 1px transparente, dentro da viewport.
+ *
+ * 3. `playVideo()` só é chamado de dentro do gesto da pessoa (o toque no
+ *    play). É o que o iOS exige — fora do gesto ele ignora silenciosamente.
+ *
+ * 4. Nada de "carregando" eterno. Se a API não vem, se o iframe morre ou se o
+ *    play não pega em alguns segundos, o componente mostra o erro e um botão
+ *    de tentar de novo, em vez de deixar os controles desabilitados.
+ */
 
 interface StudyPlaylist {
     _id: string
@@ -27,856 +58,1019 @@ interface StudyPlaylist {
     youtubePlaylistId: string
 }
 
-type PlaybackRate = 0.5 | 0.75 | 1 | 1.25 | 1.5 | 2
+const PLAYBACK_RATES = [0.5, 0.75, 1, 1.25, 1.5, 2] as const
+type PlaybackRate = (typeof PLAYBACK_RATES)[number]
 
-interface PlayerState {
-    isExpanded: boolean
-    isPlaying: boolean
-    volume: number
-    playbackRate: PlaybackRate
-    currentPlaylistId: string | null
-    currentPlaylistName: string
-}
-
-const PLAYBACK_RATES: PlaybackRate[] = [0.5, 0.75, 1, 1.25, 1.5, 2]
+type PlayerStatus = 'ocioso' | 'carregando' | 'pronto' | 'erro'
 
 const STORAGE_KEY = 'study-music-player-state'
 
-// YouTube IFrame API types
-declare global {
-    interface Window {
-        YT: {
-            Player: new (
-                elementId: string | HTMLElement,
-                config: {
-                    width?: string | number
-                    height?: string | number
-                    playerVars?: Record<string, unknown>
-                    events?: {
-                        onReady?: (event: { target: YT.Player }) => void
-                        onStateChange?: (event: { data: number; target: YT.Player }) => void
-                        onError?: (event: { data: number }) => void
-                    }
-                }
-            ) => YT.Player
-            PlayerState: {
-                UNSTARTED: number
-                ENDED: number
-                PLAYING: number
-                PAUSED: number
-                BUFFERING: number
-                CUED: number
-            }
+/** Quanto tempo esperamos o play "pegar" antes de assumir que travou. */
+const WATCHDOG_MS = 6000
+/** Erros seguidos de faixa (vídeo removido/bloqueado) antes de desistir. */
+const MAX_ERROS_SEGUIDOS = 5
+
+interface PreferenciasSalvas {
+    currentPlaylistId: string | null
+    volume: number
+    muted: boolean
+    playbackRate: PlaybackRate
+}
+
+const PREFERENCIAS_PADRAO: PreferenciasSalvas = {
+    currentPlaylistId: null,
+    volume: 45,
+    muted: false,
+    playbackRate: 1,
+}
+
+function lerPreferencias(): PreferenciasSalvas {
+    if (typeof window === 'undefined') return PREFERENCIAS_PADRAO
+    try {
+        const bruto = window.localStorage.getItem(STORAGE_KEY)
+        if (!bruto) return PREFERENCIAS_PADRAO
+        const salvo = JSON.parse(bruto) as Partial<PreferenciasSalvas>
+        const volume =
+            typeof salvo.volume === 'number' && Number.isFinite(salvo.volume)
+                ? Math.min(100, Math.max(0, Math.round(salvo.volume)))
+                : PREFERENCIAS_PADRAO.volume
+        const rate = PLAYBACK_RATES.includes(salvo.playbackRate as PlaybackRate)
+            ? (salvo.playbackRate as PlaybackRate)
+            : 1
+        return {
+            currentPlaylistId: salvo.currentPlaylistId ?? null,
+            volume,
+            muted: salvo.muted === true,
+            playbackRate: rate,
         }
-        onYouTubeIframeAPIReady: () => void
+    } catch {
+        return PREFERENCIAS_PADRAO
     }
-    namespace YT {
-        interface Player {
-            playVideo: () => void
-            pauseVideo: () => void
-            stopVideo: () => void
-            setVolume: (volume: number) => void
-            getVolume: () => number
-            setPlaybackRate: (rate: number) => void
-            getPlaybackRate: () => number
-            loadPlaylist: (playlist: string | string[] | { list: string; listType: string }) => void
-            cuePlaylist: (playlist: string | string[] | { list: string; listType: string }) => void
-            nextVideo: () => void
-            previousVideo: () => void
-            getPlayerState: () => number
-            getCurrentTime: () => number
-            getDuration: () => number
-            destroy: () => void
-        }
-    }
+}
+
+/**
+ * Curva de volume percebido. O ouvido humano é logarítmico: no controle linear
+ * do YouTube, tudo entre 30 e 100 soa "alto" e a faixa útil de música de fundo
+ * fica espremida nos primeiros passos. Elevar a fração à 2.2 devolve precisão
+ * justamente onde a pessoa quer mexer.
+ */
+function volumeParaYouTube(volume: number): number {
+    const fracao = Math.min(1, Math.max(0, volume / 100))
+    return Math.round(Math.pow(fracao, 2.2) * 100)
+}
+
+/** Alturas fixas do visualizador. Antes eram sorteadas a cada render — o que
+ *  reiniciava as doze animações a cada mudança de estado (e a cada tique do
+ *  volume), gerando trepidação e trabalho de layout sem necessidade. */
+const BARRAS = [42, 68, 30, 86, 54, 74, 38, 92, 48, 64, 34, 78]
+
+function prefereMenosMovimento(): boolean {
+    if (typeof window === 'undefined' || !window.matchMedia) return false
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
 export function StudyMusicPlayer() {
     const pathname = usePathname()
     const { isAuthenticated, loading: authLoading } = useAuthUser()
     const dock = useFloatingDock()
+    const { liteMode } = useLiteMode()
+
     // Expansão controlada pelo dock compartilhado (um painel por vez; no mobile
     // o player é aberto pelo FAB consolidado em vez de um orbe solto na tela).
     const isExpanded = dock?.activePanel === 'music'
+
     const [playlists, setPlaylists] = useState<StudyPlaylist[]>([])
-    const [loading, setLoading] = useState(true)
-    const [playerReady, setPlayerReady] = useState(false)
-    const [showPlaylistSelector, setShowPlaylistSelector] = useState(false)
-    const [showVolumeSlider, setShowVolumeSlider] = useState(false)
-    const [isBuffering, setIsBuffering] = useState(false)
+    const [carregandoPlaylists, setCarregandoPlaylists] = useState(true)
     const [hydrated, setHydrated] = useState(false)
 
-    // Read saved state from localStorage synchronously on first render to avoid color flash
-    const [state, setState] = useState<PlayerState>(() => {
-        if (typeof window !== 'undefined') {
-            try {
-                const saved = localStorage.getItem(STORAGE_KEY)
-                if (saved) {
-                    const parsed = JSON.parse(saved)
-                    const savedRate = PLAYBACK_RATES.includes(parsed.playbackRate) ? parsed.playbackRate : 1
-                    return {
-                        isExpanded: false,
-                        isPlaying: false,
-                        volume: parsed.volume ?? 50,
-                        playbackRate: savedRate as PlaybackRate,
-                        currentPlaylistId: parsed.currentPlaylistId ?? null,
-                        currentPlaylistName: ''
-                    }
-                }
-            } catch {}
-        }
-        return {
-            isExpanded: false,
-            isPlaying: false,
-            volume: 50,
-            playbackRate: 1,
-            currentPlaylistId: null,
-            currentPlaylistName: ''
-        }
-    })
+    const [status, setStatus] = useState<PlayerStatus>('ocioso')
+    const [isPlaying, setIsPlaying] = useState(false)
+    const [isBuffering, setIsBuffering] = useState(false)
+    const [aviso, setAviso] = useState<string | null>(null)
 
-    // Mark as hydrated after first render to avoid SSR mismatch flash
+    const [preferencias, setPreferencias] = useState<PreferenciasSalvas>(PREFERENCIAS_PADRAO)
+    const [playlistId, setPlaylistId] = useState<string | null>(null)
+
+    const [mostrarPlaylists, setMostrarPlaylists] = useState(false)
+    const [mostrarVelocidade, setMostrarVelocidade] = useState(false)
+
+    const hostRef = useRef<HTMLDivElement | null>(null)
+    const playerRef = useRef<YouTubePlayer | null>(null)
+    const criandoRef = useRef(false)
+    const desmontadoRef = useRef(false)
+    const querTocarRef = useRef(false)
+    const tocandoRef = useRef(false)
+    const errosSeguidosRef = useRef(0)
+    const recriacoesRef = useRef(0)
+    const watchdogRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+    const listaCarregadaRef = useRef<string | null>(null)
+    const painelRef = useRef<HTMLDivElement | null>(null)
+
+    // Espelhos para uso dentro de callbacks do YouTube (que vivem fora do
+    // ciclo de render e enxergariam valores congelados).
+    const preferenciasRef = useRef(preferencias)
+    preferenciasRef.current = preferencias
+    tocandoRef.current = isPlaying
+
+    const playlistAtual = useMemo(
+        () => playlists.find((p) => p._id === playlistId) ?? null,
+        [playlists, playlistId],
+    )
+    const playlistAtualRef = useRef<StudyPlaylist | null>(null)
+    playlistAtualRef.current = playlistAtual
+
+    const semMovimento = liteMode || (hydrated && prefereMenosMovimento())
+
     useEffect(() => {
+        // Reposto a cada montagem de propósito: no StrictMode do desenvolvimento
+        // os efeitos rodam montar → limpar → montar, e uma flag que só é ligada
+        // na limpeza deixaria o player morto para sempre na segunda montagem.
+        desmontadoRef.current = false
         setHydrated(true)
+        setPreferencias(lerPreferencias())
     }, [])
 
-    const playerRef = useRef<YT.Player | null>(null)
-    const containerRef = useRef<HTMLDivElement>(null)
-    const apiLoadedRef = useRef(false)
-
-    // Motion values for organic floating animation
-    const floatY = useMotionValue(0)
-    const floatX = useMotionValue(0)
-    const springY = useSpring(floatY, { stiffness: 100, damping: 30 })
-    const springX = useSpring(floatX, { stiffness: 100, damping: 30 })
-
-    // Pulse animation based on playing state
-    const pulseScale = useMotionValue(1)
-    const springPulse = useSpring(pulseScale, { stiffness: 300, damping: 20 })
-
-    // Load playlists from API
+    // ── Playlists ────────────────────────────────────────────────────────
     useEffect(() => {
-        async function fetchPlaylists() {
+        let cancelado = false
+        const controller = new AbortController()
+
+        async function buscar() {
             try {
-                const res = await fetch('/api/study-playlists')
+                const res = await fetch('/api/study-playlists', { signal: controller.signal })
                 if (!res.ok) return
                 const data = await res.json()
+                if (cancelado || !data?.success || !Array.isArray(data.playlists)) return
 
-                if (data.success && data.playlists.length > 0) {
-                    console.log('[StudyMusicPlayer] Found playlists:', data.playlists.length)
-                    setPlaylists(data.playlists)
+                const lista = data.playlists as StudyPlaylist[]
+                setPlaylists(lista)
+                if (lista.length === 0) return
 
-                    // Load saved state from localStorage
-                    const savedState = localStorage.getItem(STORAGE_KEY)
-                    if (savedState) {
-                        try {
-                            const parsed = JSON.parse(savedState)
-                            const savedPlaylist = data.playlists.find(
-                                (p: StudyPlaylist) => p._id === parsed.currentPlaylistId
-                            )
-                            if (savedPlaylist) {
-                                setState(prev => ({
-                                    ...prev,
-                                    volume: parsed.volume ?? 50,
-                                    playbackRate: parsed.playbackRate ?? 1,
-                                    currentPlaylistId: savedPlaylist._id,
-                                    currentPlaylistName: savedPlaylist.name
-                                }))
-                            } else {
-                                // Use random playlist if saved one not found
-                                selectRandomPlaylist(data.playlists)
-                            }
-                        } catch {
-                            selectRandomPlaylist(data.playlists)
-                        }
-                    } else {
-                        // First time - select random playlist
-                        selectRandomPlaylist(data.playlists)
-                    }
-                }
+                const salvas = lerPreferencias()
+                const preferida = lista.find((p) => p._id === salvas.currentPlaylistId)
+                // Sem preferência salva, sorteia uma — mas apenas escolhe,
+                // nunca inicia a reprodução.
+                setPlaylistId(preferida?._id ?? lista[Math.floor(Math.random() * lista.length)]._id)
             } catch {
-                // Silently ignore — network may be unavailable
+                // Rede indisponível: o player simplesmente não aparece.
             } finally {
-                setLoading(false)
+                if (!cancelado) setCarregandoPlaylists(false)
             }
         }
 
-        fetchPlaylists()
+        buscar()
+        return () => {
+            cancelado = true
+            controller.abort()
+        }
     }, [])
 
-    function selectRandomPlaylist(playlistList: StudyPlaylist[]) {
-        const randomIndex = Math.floor(Math.random() * playlistList.length)
-        const playlist = playlistList[randomIndex]
-        setState(prev => ({
-            ...prev,
-            currentPlaylistId: playlist._id,
-            currentPlaylistName: playlist.name
-        }))
-    }
-
-    // Save state to localStorage
+    // ── Persistência (debounce: o slider de volume dispara dezenas de
+    //    eventos por segundo e cada gravação síncrona travava a UI) ────────
     useEffect(() => {
-        if (state.currentPlaylistId) {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify({
-                currentPlaylistId: state.currentPlaylistId,
-                volume: state.volume,
-                playbackRate: state.playbackRate
-            }))
+        if (!hydrated || !playlistId) return
+        const id = setTimeout(() => {
+            try {
+                window.localStorage.setItem(
+                    STORAGE_KEY,
+                    JSON.stringify({ ...preferenciasRef.current, currentPlaylistId: playlistId }),
+                )
+            } catch {
+                /* modo privado / cota cheia */
+            }
+        }, 400)
+        return () => clearTimeout(id)
+    }, [hydrated, playlistId, preferencias])
+
+    // ── Ciclo de vida do player ──────────────────────────────────────────
+    const limparWatchdog = useCallback(() => {
+        if (watchdogRef.current) {
+            clearTimeout(watchdogRef.current)
+            watchdogRef.current = null
         }
-    }, [state.currentPlaylistId, state.volume, state.playbackRate])
+    }, [])
 
-    // Load YouTube API
+    const aplicarPreferencias = useCallback((player: YouTubePlayer) => {
+        const { volume, muted, playbackRate } = preferenciasRef.current
+        try {
+            player.setVolume(volumeParaYouTube(volume))
+            if (muted) player.mute()
+            else player.unMute()
+            player.setPlaybackRate(playbackRate)
+        } catch {
+            /* o iframe pode ter sumido entre o evento e a chamada */
+        }
+    }, [])
+
+    const destruirPlayer = useCallback(() => {
+        limparWatchdog()
+        const player = playerRef.current
+        playerRef.current = null
+        listaCarregadaRef.current = null
+        try {
+            player?.destroy()
+        } catch {
+            /* já destruído */
+        }
+        if (hostRef.current) hostRef.current.innerHTML = ''
+    }, [limparWatchdog])
+
+    const criarPlayer = useCallback(async () => {
+        if (criandoRef.current || playerRef.current) return
+        const host = hostRef.current
+        const playlist = playlistAtualRef.current
+        if (!host || !playlist) return
+
+        criandoRef.current = true
+        setStatus('carregando')
+        setAviso(null)
+
+        let api
+        try {
+            api = await carregarYouTubeIframeApi()
+        } catch {
+            criandoRef.current = false
+            if (desmontadoRef.current) return
+            setStatus('erro')
+            setIsBuffering(false)
+            querTocarRef.current = false
+            setAviso('Não foi possível carregar o player do YouTube.')
+            return
+        }
+
+        if (desmontadoRef.current || playerRef.current) {
+            criandoRef.current = false
+            return
+        }
+
+        // A playlist pode ter mudado durante a espera pela API — sempre vale a
+        // seleção atual, não a que existia quando esta chamada começou.
+        const playlistFinal = playlistAtualRef.current ?? playlist
+
+        // O YouTube SUBSTITUI o nó que recebe pelo iframe. Por isso criamos um
+        // alvo descartável a cada tentativa — reaproveitar o mesmo id é o que
+        // fazia a segunda inicialização (após um erro) nunca acontecer.
+        host.innerHTML = ''
+        const alvo = document.createElement('div')
+        host.appendChild(alvo)
+
+        try {
+            playerRef.current = new api.Player(alvo, {
+                width: '1',
+                height: '1',
+                playerVars: {
+                    listType: 'playlist',
+                    list: playlistFinal.youtubePlaylistId,
+                    // Nunca começar tocando sozinho.
+                    autoplay: 0,
+                    controls: 0,
+                    disablekb: 1,
+                    fs: 0,
+                    iv_load_policy: 3,
+                    modestbranding: 1,
+                    // Essencial no iPhone/iPad: sem isto o iOS tenta abrir o
+                    // vídeo em tela cheia e a reprodução falha silenciosamente.
+                    playsinline: 1,
+                    rel: 0,
+                    origin: window.location.origin,
+                },
+                events: {
+                    onReady: (event) => {
+                        if (desmontadoRef.current) return
+                        listaCarregadaRef.current = playlistFinal.youtubePlaylistId
+                        setStatus('pronto')
+                        aplicarPreferencias(event.target)
+                        if (querTocarRef.current) {
+                            querTocarRef.current = false
+                            try {
+                                event.target.playVideo()
+                            } catch {
+                                /* ignorado: o watchdog cobre */
+                            }
+                        }
+                    },
+                    onStateChange: (event) => {
+                        if (desmontadoRef.current) return
+                        switch (event.data) {
+                            case YT_STATE.PLAYING:
+                                errosSeguidosRef.current = 0
+                                recriacoesRef.current = 0
+                                limparWatchdog()
+                                setAviso(null)
+                                setIsBuffering(false)
+                                setIsPlaying(true)
+                                break
+                            case YT_STATE.BUFFERING:
+                                setIsBuffering(true)
+                                break
+                            case YT_STATE.PAUSED:
+                                limparWatchdog()
+                                setIsBuffering(false)
+                                setIsPlaying(false)
+                                break
+                            case YT_STATE.ENDED:
+                                setIsBuffering(false)
+                                // Fim da playlist: recomeça, mas só porque a
+                                // pessoa já estava ouvindo (segue valendo o
+                                // gesto original — o iOS aceita).
+                                if (tocandoRef.current) {
+                                    try {
+                                        event.target.playVideo()
+                                    } catch {
+                                        setIsPlaying(false)
+                                    }
+                                } else {
+                                    setIsPlaying(false)
+                                }
+                                break
+                            default:
+                                setIsBuffering(false)
+                                setIsPlaying(false)
+                        }
+                    },
+                    onError: (event) => {
+                        if (desmontadoRef.current) return
+                        errosSeguidosRef.current += 1
+                        if (errosSeguidosRef.current > MAX_ERROS_SEGUIDOS) {
+                            limparWatchdog()
+                            setIsBuffering(false)
+                            setIsPlaying(false)
+                            setStatus('erro')
+                            setAviso('Esta playlist não está disponível agora.')
+                            return
+                        }
+                        // Faixa removida ou bloqueada para embed: pula.
+                        try {
+                            event.target.nextVideo()
+                        } catch {
+                            /* ignorado */
+                        }
+                    },
+                },
+            })
+        } catch {
+            setStatus('erro')
+            setAviso('Não foi possível iniciar o player.')
+            querTocarRef.current = false
+            setIsBuffering(false)
+        } finally {
+            criandoRef.current = false
+        }
+    }, [aplicarPreferencias, limparWatchdog])
+
+    // Cria o player assim que houver playlist. Fazer isso cedo (e não no
+    // primeiro toque) é o que permite ao `playVideo()` rodar dentro do gesto
+    // no iOS — quando a pessoa toca no play, o iframe já existe.
     useEffect(() => {
-        if (apiLoadedRef.current || playlists.length === 0) return
+        if (!playlistAtual) return
+        if (!playerRef.current) {
+            void criarPlayer()
+            return
+        }
+        // Trocou de playlist com o player já vivo.
+        if (listaCarregadaRef.current === playlistAtual.youtubePlaylistId) return
+        listaCarregadaRef.current = playlistAtual.youtubePlaylistId
+        errosSeguidosRef.current = 0
+        const alvo = { list: playlistAtual.youtubePlaylistId, listType: 'playlist' as const }
+        try {
+            // `cuePlaylist` carrega sem tocar; `loadPlaylist` toca na hora.
+            // Só usamos o segundo se a pessoa JÁ estava ouvindo.
+            if (tocandoRef.current) playerRef.current.loadPlaylist(alvo)
+            else playerRef.current.cuePlaylist(alvo)
+            aplicarPreferencias(playerRef.current)
+        } catch {
+            destruirPlayer()
+            void criarPlayer()
+        }
+    }, [playlistAtual, criarPlayer, aplicarPreferencias, destruirPlayer])
 
-        const existingScript = document.getElementById('youtube-iframe-api')
-        if (existingScript) {
-            if (window.YT && window.YT.Player) {
-                initializePlayer()
+    useEffect(() => {
+        return () => {
+            desmontadoRef.current = true
+            destruirPlayer()
+        }
+    }, [destruirPlayer])
+
+    // Reconcilia o estado real do iframe com a UI. O iOS pausa mídia por conta
+    // própria (ligação, outro app, aba em segundo plano) e nem sempre manda o
+    // evento — sem isto o botão continuava mostrando "pause" com tudo mudo.
+    useEffect(() => {
+        if (!isPlaying && !isBuffering) return
+        const sincronizar = () => {
+            const player = playerRef.current
+            if (!player) return
+            try {
+                const estado = player.getPlayerState()
+                const rodando = estado === YT_STATE.PLAYING || estado === YT_STATE.BUFFERING
+                setIsPlaying(estado === YT_STATE.PLAYING)
+                // Com o watchdog armado ainda estamos dentro da janela de
+                // espera do play; apagar o "carregando…" aqui faria o botão
+                // piscar de volta para ▶ com o som prestes a entrar.
+                if (!rodando && !watchdogRef.current) setIsBuffering(false)
+            } catch {
+                /* iframe indisponível no momento */
+            }
+        }
+        const id = setInterval(sincronizar, 3000)
+        document.addEventListener('visibilitychange', sincronizar)
+        return () => {
+            clearInterval(id)
+            document.removeEventListener('visibilitychange', sincronizar)
+        }
+    }, [isPlaying, isBuffering])
+
+    // ── Ações ────────────────────────────────────────────────────────────
+    const armarWatchdog = useCallback(() => {
+        limparWatchdog()
+        let reArmado = false
+        const disparar = () => {
+            watchdogRef.current = null
+            // Ainda montando o iframe (rede lenta): dá uma segunda janela em vez
+            // de derrubar uma criação que está em andamento.
+            if (criandoRef.current && !reArmado) {
+                reArmado = true
+                watchdogRef.current = setTimeout(disparar, WATCHDOG_MS)
+                return
+            }
+            const player = playerRef.current
+            let estado: number | null = null
+            try {
+                estado = player?.getPlayerState() ?? null
+            } catch {
+                estado = null
+            }
+            if (estado === YT_STATE.PLAYING || estado === YT_STATE.BUFFERING) return
+
+            setIsBuffering(false)
+            setIsPlaying(false)
+            querTocarRef.current = false
+
+            // Uma recriação silenciosa por travada: o iframe do YouTube morre
+            // sozinho de vez em quando (memória no iOS, aba dormindo). Depois
+            // disso, a pessoa fica sabendo em vez de encarar um botão morto.
+            if (recriacoesRef.current < 1) {
+                recriacoesRef.current += 1
+                destruirPlayer()
+                void criarPlayer()
+                setAviso('Reconectando… toque em play de novo.')
+            } else {
+                setStatus('erro')
+                setAviso('A reprodução não iniciou. Tente de novo.')
+            }
+        }
+        watchdogRef.current = setTimeout(disparar, WATCHDOG_MS)
+    }, [criarPlayer, destruirPlayer, limparWatchdog])
+
+    const alternarReproducao = useCallback(() => {
+        setAviso(null)
+        const player = playerRef.current
+
+        if (!player) {
+            // Player ainda não existe (API lenta ou erro anterior): registra a
+            // intenção e cria. O `onReady` dá o play.
+            querTocarRef.current = true
+            setIsBuffering(true)
+            armarWatchdog()
+            void criarPlayer()
+            return
+        }
+
+        if (tocandoRef.current) {
+            limparWatchdog()
+            setIsPlaying(false)
+            setIsBuffering(false)
+            try {
+                player.pauseVideo()
+            } catch {
+                /* ignorado */
             }
             return
         }
 
-        const tag = document.createElement('script')
-        tag.id = 'youtube-iframe-api'
-        tag.src = 'https://www.youtube.com/iframe_api'
-        const firstScriptTag = document.getElementsByTagName('script')[0]
-        firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag)
-
-        window.onYouTubeIframeAPIReady = () => {
-            apiLoadedRef.current = true
-            initializePlayer()
+        setIsBuffering(true)
+        armarWatchdog()
+        try {
+            // Chamada SÍNCRONA dentro do gesto — requisito do iOS.
+            player.playVideo()
+        } catch {
+            setIsBuffering(false)
+            setStatus('erro')
+            setAviso('A reprodução não iniciou. Tente de novo.')
         }
+    }, [armarWatchdog, criarPlayer, limparWatchdog])
 
-        return () => {
-            if (playerRef.current) {
-                playerRef.current.destroy()
-            }
+    const tentarNovamente = useCallback(() => {
+        recriacoesRef.current = 0
+        errosSeguidosRef.current = 0
+        querTocarRef.current = false
+        setAviso(null)
+        setStatus('carregando')
+        destruirPlayer()
+        void criarPlayer()
+    }, [criarPlayer, destruirPlayer])
+
+    const mudarVolume = useCallback((valor: number) => {
+        const volume = Math.min(100, Math.max(0, Math.round(valor)))
+        // Mexer no slider tira do mudo: era desconcertante arrastar até 80 e
+        // continuar em silêncio porque o botão de mudo estava ligado.
+        setPreferencias((prev) => ({ ...prev, volume, muted: volume === 0 }))
+        try {
+            playerRef.current?.setVolume(volumeParaYouTube(volume))
+            if (volume > 0) playerRef.current?.unMute()
+            else playerRef.current?.mute()
+        } catch {
+            /* ignorado */
         }
-    }, [playlists])
+    }, [])
 
-    const initializePlayer = useCallback(() => {
-        const playlist = playlists.find(p => p._id === state.currentPlaylistId)
-        if (!playlist || !window.YT) return
-
-        if (playerRef.current) {
-            playerRef.current.destroy()
-        }
-
-        playerRef.current = new window.YT.Player('youtube-player-hidden', {
-            height: '0',
-            width: '0',
-            playerVars: {
-                listType: 'playlist',
-                list: playlist.youtubePlaylistId,
-                autoplay: 0,
-                controls: 0,
-                disablekb: 1,
-                fs: 0,
-                modestbranding: 1,
-                playsinline: 1,
-                rel: 0
-            },
-            events: {
-                onReady: (event) => {
-                    setPlayerReady(true)
-                    // Apply logarithmic volume curve for better low-volume control
-                    const logVolume = Math.floor(Math.pow(state.volume / 100, 2.5) * 100)
-                    event.target.setVolume(logVolume)
-                    event.target.setPlaybackRate(state.playbackRate)
-                },
-                onStateChange: (event) => {
-                    if (event.data === window.YT.PlayerState.PLAYING) {
-                        setState(prev => ({ ...prev, isPlaying: true }))
-                        setIsBuffering(false)
-                    } else if (event.data === window.YT.PlayerState.PAUSED) {
-                        setState(prev => ({ ...prev, isPlaying: false }))
-                    } else if (event.data === window.YT.PlayerState.BUFFERING) {
-                        setIsBuffering(true)
-                    } else if (event.data === window.YT.PlayerState.ENDED) {
-                        // Playlist ended - loop
-                        playerRef.current?.playVideo()
-                    }
-                },
-                onError: (event) => {
-                    console.error('YouTube player error:', event.data)
-                    // Skip to next video on error
-                    playerRef.current?.nextVideo()
-                }
-            }
-        })
-    }, [playlists, state.currentPlaylistId, state.volume, state.playbackRate])
-
-    useEffect(() => {
-        if (playerReady && state.currentPlaylistId) {
-            const playlist = playlists.find(p => p._id === state.currentPlaylistId)
-            if (playlist && playerRef.current) {
-                playerRef.current.loadPlaylist({
-                    list: playlist.youtubePlaylistId,
-                    listType: 'playlist'
-                })
-                playerRef.current.pauseVideo()
-            }
-        }
-    }, [state.currentPlaylistId, playerReady, playlists])
-
-    // Floating animation
-    useEffect(() => {
-        if (!isExpanded) {
-            const interval = setInterval(() => {
-                floatY.set(Math.sin(Date.now() / 2000) * 3)
-                floatX.set(Math.cos(Date.now() / 3000) * 2)
-            }, 50)
-            return () => clearInterval(interval)
-        }
-    }, [isExpanded, floatY, floatX])
-
-    // Subtle pulse when playing
-    useEffect(() => {
-        if (state.isPlaying && !isExpanded) {
-            const interval = setInterval(() => {
-                pulseScale.set(1 + Math.sin(Date.now() / 800) * 0.02)
-            }, 50)
-            return () => clearInterval(interval)
-        } else {
-            pulseScale.set(1)
-        }
-    }, [state.isPlaying, isExpanded, pulseScale])
-
-    const handlePlayPause = () => {
-        if (!playerRef.current) return
-
-        if (state.isPlaying) {
-            playerRef.current.pauseVideo()
-        } else {
-            playerRef.current.playVideo()
-        }
-    }
-
-    const handleVolumeChange = (value: number) => {
-        setState(prev => ({ ...prev, volume: value }))
-        if (playerRef.current) {
-            // Apply logarithmic volume curve: (val/100)^2.5 * 100
-            // This gives much more precision at lower volumes which is better for background music
-            const logVolume = Math.floor(Math.pow(value / 100, 2.5) * 100)
-            playerRef.current.setVolume(logVolume)
-        }
-    }
-
-    const [showSpeedPicker, setShowSpeedPicker] = useState(false)
-    const isExamResolver = /^\/exams?\/[^/]+$/.test(pathname || '')
-
-    const handlePlaybackRateChange = (rate: PlaybackRate) => {
-        setState(prev => ({ ...prev, playbackRate: rate }))
-        if (playerRef.current) {
-            playerRef.current.setPlaybackRate(rate)
-        }
-        setShowSpeedPicker(false)
-    }
-
-    const handleNextTrack = () => {
-        if (!playerRef.current) return
-        playerRef.current.nextVideo()
-    }
-
-    const handlePrevTrack = () => {
-        if (!playerRef.current) return
-        playerRef.current.previousVideo()
-    }
-
-    const handlePlaylistChange = (playlist: StudyPlaylist) => {
-        setState(prev => ({
+    const alternarMudo = useCallback(() => {
+        const muted = !(preferenciasRef.current.muted || preferenciasRef.current.volume === 0)
+        setPreferencias((prev) => ({
             ...prev,
-            currentPlaylistId: playlist._id,
-            currentPlaylistName: playlist.name,
-            isPlaying: false
+            muted,
+            // Sair do mudo com o volume zerado não devolveria som nenhum.
+            volume: !muted && prev.volume === 0 ? PREFERENCIAS_PADRAO.volume : prev.volume,
         }))
-        setShowPlaylistSelector(false)
-
-        if (playerRef.current) {
-            playerRef.current.cuePlaylist({
-                list: playlist.youtubePlaylistId,
-                listType: 'playlist'
-            })
+        try {
+            if (muted) {
+                playerRef.current?.mute()
+            } else {
+                if (preferenciasRef.current.volume === 0) {
+                    playerRef.current?.setVolume(volumeParaYouTube(PREFERENCIAS_PADRAO.volume))
+                }
+                playerRef.current?.unMute()
+            }
+        } catch {
+            /* ignorado */
         }
-    }
+    }, [])
 
-    const toggleExpand = () => {
-        if (isExpanded) dock?.close()
+    const mudarVelocidade = useCallback((rate: PlaybackRate) => {
+        setPreferencias((prev) => ({ ...prev, playbackRate: rate }))
+        try {
+            playerRef.current?.setPlaybackRate(rate)
+        } catch {
+            /* ignorado */
+        }
+        setMostrarVelocidade(false)
+    }, [])
+
+    const faixaAnterior = useCallback(() => {
+        try {
+            playerRef.current?.previousVideo()
+        } catch {
+            /* ignorado */
+        }
+    }, [])
+
+    const proximaFaixa = useCallback(() => {
+        errosSeguidosRef.current = 0
+        try {
+            playerRef.current?.nextVideo()
+        } catch {
+            /* ignorado */
+        }
+    }, [])
+
+    const trocarPlaylist = useCallback((playlist: StudyPlaylist) => {
+        setPlaylistId(playlist._id)
+        setMostrarPlaylists(false)
+    }, [])
+
+    const fechar = useCallback(() => {
+        dock?.close()
+        setMostrarPlaylists(false)
+        setMostrarVelocidade(false)
+    }, [dock])
+
+    const alternarPainel = useCallback(() => {
+        if (isExpanded) fechar()
         else dock?.open('music')
-        setShowPlaylistSelector(false)
-        setShowVolumeSlider(false)
-        setShowSpeedPicker(false)
-    }
+    }, [isExpanded, fechar, dock])
 
-    // Só renderiza quando hidratado, autenticado e com playlists disponíveis.
-    const shouldRender = hydrated && !authLoading && isAuthenticated && !loading && playlists.length > 0
+    // Esc fecha o painel; os menus internos fecham primeiro.
+    useEffect(() => {
+        if (!isExpanded) return
+        const aoTeclar = (e: KeyboardEvent) => {
+            if (e.key !== 'Escape') return
+            if (mostrarVelocidade) return setMostrarVelocidade(false)
+            if (mostrarPlaylists) return setMostrarPlaylists(false)
+            fechar()
+        }
+        window.addEventListener('keydown', aoTeclar)
+        return () => window.removeEventListener('keydown', aoTeclar)
+    }, [isExpanded, mostrarPlaylists, mostrarVelocidade, fechar])
 
-    // Registra a ação "Música" no dock flutuante (mobile). `active` reflete se
-    // está tocando, para o dock exibir o indicador pulsante.
+    // Fecha o seletor de velocidade ao tocar fora dele.
+    useEffect(() => {
+        if (!mostrarVelocidade) return
+        const aoApontar = (e: PointerEvent) => {
+            const alvo = e.target as Node
+            if (painelRef.current && !painelRef.current.contains(alvo)) setMostrarVelocidade(false)
+        }
+        window.addEventListener('pointerdown', aoApontar)
+        return () => window.removeEventListener('pointerdown', aoApontar)
+    }, [mostrarVelocidade])
+
+    // ── Registro no dock ─────────────────────────────────────────────────
+    const podeRenderizar =
+        hydrated && !authLoading && isAuthenticated && !carregandoPlaylists && playlists.length > 0
+
     const register = dock?.register
     const unregister = dock?.unregister
     useEffect(() => {
-        if (!register || !unregister || !shouldRender) return
-        register({ id: 'music', label: 'Música', order: 0, active: state.isPlaying })
+        if (!register || !unregister || !podeRenderizar) return
+        register({ id: 'music', label: 'Música', order: 0, active: isPlaying })
         return () => unregister('music')
-    }, [register, unregister, shouldRender, state.isPlaying])
+    }, [register, unregister, podeRenderizar, isPlaying])
 
-    if (!shouldRender) return null
+    if (!podeRenderizar) return null
+
+    const isExamResolver = /^\/exams?\/[^/]+$/.test(pathname || '')
+    const volume = preferencias.volume
+    const mudo = preferencias.muted || volume === 0
+    const IconeVolume = mudo ? VolumeX : volume < 45 ? Volume1 : Volume2
+    const comErro = status === 'erro'
+    // O giro é só para espera REAL de reprodução. A montagem silenciosa do
+    // iframe no carregamento da página não vira spinner — o botão continua
+    // sendo um play tocável (a intenção fica na fila até o `onReady`).
+    const aguardandoSom = isBuffering && !isPlaying
+
+    const rotulo = comErro
+        ? 'Indisponível'
+        : isPlaying
+          ? 'Tocando agora'
+          : aguardandoSom
+            ? 'Carregando…'
+            : status === 'carregando'
+              ? 'Preparando…'
+              : 'Pronto para tocar'
 
     return (
         <>
-            {/* Hidden YouTube Player */}
-            <div id="youtube-player-hidden" className="hidden absolute -z-50 pointer-events-none" />
+            {/*
+              Casa do iframe do YouTube.
 
-            {/* Floating Player Widget */}
-            <motion.div
-                ref={containerRef}
-                className="fixed z-40"
+              NÃO use `hidden`, `display:none` ou `visibility:hidden` aqui: o
+              WebKit (Safari, todo navegador no iPhone/iPad) se recusa a tocar
+              mídia de um nó não renderizado. Era essa a causa do "no iPad não
+              toca". Um quadrado de 1px transparente dentro da viewport é
+              invisível para a pessoa e legítimo para o navegador.
+            */}
+            <div
+                ref={hostRef}
+                aria-hidden="true"
+                className="pointer-events-none fixed bottom-0 left-0 h-px w-px overflow-hidden opacity-0"
+                style={{ zIndex: -1 }}
+            />
+
+            <div
+                className={cn(
+                    'fixed z-40',
+                    isExamResolver ? 'left-4 sm:left-5' : 'right-4 sm:right-6',
+                    // No mobile, o painel ocupa a largura da tela (menos as
+                    // margens); no desktop tem largura fixa. Antes ele era
+                    // sempre 288px ancorado à direita e escapava da tela em
+                    // aparelhos pequenos.
+                    isExpanded && !isExamResolver && 'left-4 sm:left-auto',
+                    isExpanded && isExamResolver && 'right-4 sm:right-auto',
+                )}
                 style={{
-                    right: isExamResolver ? 'auto' : 24,
-                    left: isExamResolver ? 16 : 'auto',
-                    bottom: isExamResolver ? 20 : 96, // Above the support chat button outside the exam resolver
-                    x: springX,
-                    y: springY
-                }}
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{
-                    type: 'spring',
-                    stiffness: 260,
-                    damping: 20,
-                    delay: 0.5
+                    bottom: isExamResolver
+                        ? 'calc(5.75rem + env(safe-area-inset-bottom, 0px))'
+                        : 'calc(6rem + var(--gx-barra-inferior-h, 0px) + env(safe-area-inset-bottom, 0px))',
                 }}
             >
-                <AnimatePresence mode="wait">
-                    {isExpanded ? (
-                        /* Expanded State */
-                        <motion.div
-                            key="expanded"
-                            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                            className="relative"
-                        >
-                            {/* Glassmorphism Container - Ultra Premium */}
-                            <div
-                                className="relative w-72 rounded-3xl"
-                                style={{
-                                    background: 'linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%)',
-                                    backdropFilter: 'blur(60px) saturate(200%)',
-                                    WebkitBackdropFilter: 'blur(60px) saturate(200%)',
-                                    boxShadow: `
-                    0 8px 32px rgba(0, 0, 0, 0.4),
-                    0 16px 64px rgba(0, 0, 0, 0.2),
-                    0 0 0 1px rgba(255, 255, 255, 0.15),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.2),
-                    inset 0 -1px 0 rgba(0, 0, 0, 0.2)
-                  `
-                                }}
-                            >
-                                {/* Primary Glass Reflection Effect */}
-                                <div
-                                    className="absolute inset-0 pointer-events-none"
-                                    style={{
-                                        background: 'linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 50%)',
-                                        borderRadius: 'inherit'
-                                    }}
-                                />
-
-                                {/* Secondary Shimmer Effect */}
-                                <div
-                                    className="absolute inset-0 pointer-events-none opacity-50"
-                                    style={{
-                                        background: 'radial-gradient(circle at 30% 20%, rgba(255,255,255,0.1) 0%, transparent 50%)',
-                                        borderRadius: 'inherit'
-                                    }}
-                                />
-
-                                {/* Content */}
-                                <div className="relative p-5">
-                                    {/* Header */}
-                                    <div className="flex items-center justify-between mb-4">
-                                        <div className="flex items-center gap-3">
-                                            <div
-                                                className="w-10 h-10 rounded-xl flex items-center justify-center"
-                                                style={{
-                                                    background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(168, 85, 247, 0.2) 100%)',
-                                                    boxShadow: '0 4px 12px rgba(139, 92, 246, 0.2)'
-                                                }}
-                                            >
-                                                <Music className="w-5 h-5 text-violet-300" />
-                                            </div>
-                                            <div>
-                                                <p className="text-[10px] uppercase tracking-wider text-white/50 font-medium">
-                                                    Foco Musical
-                                                </p>
-                                                <p className="text-sm font-medium text-white/90 truncate max-w-[140px]">
-                                                    {state.currentPlaylistName}
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        <button
-                                            onClick={toggleExpand}
-                                            className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors text-white/60 hover:text-white/90"
-                                        >
-                                            <ChevronDown className="w-5 h-5" />
-                                        </button>
-                                    </div>
-
-                                    {/* Visualizer Placeholder - Organic Shape */}
-                                    <div className="relative h-16 mb-4 flex items-center justify-center overflow-hidden rounded-2xl bg-white/5">
-                                        <div className="flex items-end gap-1 h-10">
-                                            {[...Array(12)].map((_, i) => (
-                                                <motion.div
-                                                    key={i}
-                                                    className="w-1.5 rounded-full"
-                                                    style={{
-                                                        background: `linear-gradient(180deg, rgba(139, 92, 246, ${0.5 + i * 0.04}) 0%, rgba(168, 85, 247, ${0.3 + i * 0.02}) 100%)`
-                                                    }}
-                                                    animate={{
-                                                        height: state.isPlaying
-                                                            ? [8, 20 + Math.random() * 20, 8]
-                                                            : 8
-                                                    }}
-                                                    transition={{
-                                                        duration: 0.5 + Math.random() * 0.3,
-                                                        repeat: Infinity,
-                                                        repeatType: 'reverse',
-                                                        delay: i * 0.05
-                                                    }}
-                                                />
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    {/* Main Controls */}
-                                    <div className="flex items-center justify-center gap-4 mb-4">
-                                        {/* Volume Control */}
-                                        <div className="relative">
-                                            <button
-                                                onClick={() => setShowVolumeSlider(!showVolumeSlider)}
-                                                className="w-10 h-10 rounded-full flex items-center justify-center bg-white/5 hover:bg-white/20 active:bg-white/30 transition-colors duration-200 text-white/70 hover:text-white"
-                                            >
-                                                {state.volume === 0 ? (
-                                                    <VolumeX className="w-5 h-5" />
-                                                ) : (
-                                                    <Volume2 className="w-5 h-5" />
-                                                )}
-                                            </button>
-
-                                            <AnimatePresence>
-                                                {showVolumeSlider && (
-                                                    <motion.div
-                                                        initial={{ opacity: 0, y: 10 }}
-                                                        animate={{ opacity: 1, y: 0 }}
-                                                        exit={{ opacity: 0, y: 10 }}
-                                                        className="absolute bottom-14 left-1/2 -translate-x-1/2 p-3 rounded-2xl"
-                                                        style={{
-                                                            background: 'rgba(20, 20, 25, 0.8)',
-                                                            backdropFilter: 'blur(20px)',
-                                                            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255,255,255,0.1)'
-                                                        }}
-                                                    >
-                                                        <input
-                                                            type="range"
-                                                            min="0"
-                                                            max="100"
-                                                            value={state.volume}
-                                                            onChange={(e) => handleVolumeChange(parseInt(e.target.value))}
-                                                            className="w-24 h-1.5 rounded-full appearance-none cursor-pointer"
-                                                            style={{
-                                                                background: `linear-gradient(to right, rgba(139, 92, 246, 0.8) 0%, rgba(139, 92, 246, 0.8) ${state.volume}%, rgba(255,255,255,0.1) ${state.volume}%, rgba(255,255,255,0.1) 100%)`,
-                                                            }}
-                                                        />
-                                                    </motion.div>
-                                                )}
-                                            </AnimatePresence>
-                                        </div>
-
-                                        {/* Play/Pause Button */}
-                                        <div className="flex items-center gap-3">
-                                            {/* Previous Track Button */}
-                                            <button
-                                                onClick={handlePrevTrack}
-                                                disabled={!playerReady}
-                                                className="w-10 h-10 rounded-full flex items-center justify-center bg-white/5 hover:bg-white/20 active:bg-white/30 transition-colors duration-200 text-white/70 hover:text-white disabled:opacity-30"
-                                                title="Música anterior"
-                                            >
-                                                <SkipBack className="w-5 h-5" />
-                                            </button>
-
-                                            <button
-                                                onClick={handlePlayPause}
-                                                disabled={!playerReady}
-                                                className="w-16 h-16 rounded-full flex items-center justify-center transition-transform duration-200 active:scale-95 disabled:opacity-50 disabled:scale-100"
-                                                style={{
-                                                    background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.9) 0%, rgba(124, 58, 237, 0.9) 100%)',
-                                                    boxShadow: '0 8px 24px rgba(139, 92, 246, 0.3), inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(0,0,0,0.2)'
-                                                }}
-                                            >
-                                                {isBuffering ? (
-                                                    <Loader2 className="w-7 h-7 text-white animate-spin" />
-                                                ) : state.isPlaying ? (
-                                                    <Pause className="w-7 h-7 text-white" fill="white" />
-                                                ) : (
-                                                    <Play className="w-7 h-7 text-white ml-1" fill="white" />
-                                                )}
-                                            </button>
-
-                                            {/* Next Track Button */}
-                                            <button
-                                                onClick={handleNextTrack}
-                                                disabled={!playerReady}
-                                                className="w-10 h-10 rounded-full flex items-center justify-center bg-white/5 hover:bg-white/20 active:bg-white/30 transition-colors duration-200 text-white/70 hover:text-white disabled:opacity-30"
-                                                title="Próxima música"
-                                            >
-                                                <SkipForward className="w-5 h-5" />
-                                            </button>
-                                        </div>
-
-                                        {/* Playback Rate */}
-                                        <div className="relative">
-                                            <button
-                                                onClick={() => setShowSpeedPicker(!showSpeedPicker)}
-                                                className="w-10 h-10 rounded-full flex items-center justify-center bg-white/5 hover:bg-white/20 active:bg-white/30 transition-colors duration-200 text-white/70 hover:text-white"
-                                                title="Velocidade de reprodução"
-                                            >
-                                                <motion.span
-                                                    key={state.playbackRate}
-                                                    initial={{ scale: 0.6, opacity: 0 }}
-                                                    animate={{ scale: 1, opacity: 1 }}
-                                                    className="text-xs font-bold"
-                                                >
-                                                    {state.playbackRate === 1 ? '1x' : `${state.playbackRate}x`}
-                                                </motion.span>
-                                            </button>
-
-                                            <AnimatePresence>
-                                                {showSpeedPicker && (
-                                                    <motion.div
-                                                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                                                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                                                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                                        transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                                                        className="absolute bottom-14 left-1/2 -translate-x-1/2 p-2 rounded-2xl"
-                                                        style={{
-                                                            background: 'rgba(20, 20, 25, 0.85)',
-                                                            backdropFilter: 'blur(24px)',
-                                                            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255,255,255,0.1)'
-                                                        }}
-                                                    >
-                                                        <div className="flex flex-col gap-0.5 min-w-[52px]">
-                                                            {PLAYBACK_RATES.map((rate) => (
-                                                                <button
-                                                                    key={rate}
-                                                                    onClick={() => handlePlaybackRateChange(rate)}
-                                                                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 ${
-                                                                        state.playbackRate === rate
-                                                                            ? 'bg-violet-500/30 text-violet-200'
-                                                                            : 'text-white/60 hover:text-white hover:bg-white/10'
-                                                                    }`}
-                                                                >
-                                                                    {rate}x
-                                                                </button>
-                                                            ))}
-                                                        </div>
-                                                    </motion.div>
-                                                )}
-                                            </AnimatePresence>
-                                        </div>
-                                    </div>
-
-                                    {/* Playlist Selector */}
-                                    <button
-                                        onClick={() => setShowPlaylistSelector(!showPlaylistSelector)}
-                                        className="w-full py-3 px-4 rounded-xl flex items-center justify-between bg-white/5 hover:bg-white/10 active:bg-white/15 transition-colors duration-200 group border border-white/5"
-                                    >
-                                        <div className="flex items-center gap-2">
-                                            <ListMusic className="w-4 h-4 text-white/50 group-hover:text-white/80 transition-colors" />
-                                            <span className="text-sm font-medium text-white/70 group-hover:text-white/90 transition-colors">
-                                                Trocar playlist
-                                            </span>
-                                        </div>
-                                        <ChevronDown
-                                            className={`w-4 h-4 text-white/50 transition-transform duration-300 ${showPlaylistSelector ? 'rotate-180' : ''
-                                                }`}
-                                        />
-                                    </button>
-
-                                    <AnimatePresence>
-                                        {showPlaylistSelector && (
-                                            <motion.div
-                                                initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                                                animate={{ opacity: 1, height: 'auto', marginTop: 8 }}
-                                                exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                                                className="overflow-hidden"
-                                            >
-                                                <div className="space-y-1 max-h-40 overflow-y-auto custom-scrollbar p-1">
-                                                    {playlists.map((playlist) => (
-                                                        <button
-                                                            key={playlist._id}
-                                                            onClick={() => handlePlaylistChange(playlist)}
-                                                            className={`w-full py-2.5 px-3 rounded-lg flex items-center justify-between text-left transition-colors duration-200 ${state.currentPlaylistId === playlist._id
-                                                                ? 'bg-violet-500/20 text-violet-200'
-                                                                : 'hover:bg-white/10 text-white/70 hover:text-white'
-                                                                }`}
-                                                        >
-                                                            <span className="text-sm font-medium truncate">{playlist.name}</span>
-                                                            {state.currentPlaylistId === playlist._id && (
-                                                                <Check className="w-4 h-4 flex-shrink-0 text-violet-400" />
-                                                            )}
-                                                        </button>
-                                                    ))}
-                                                </div>
-                                            </motion.div>
+                {isExpanded ? (
+                    <div
+                        ref={painelRef}
+                        role="dialog"
+                        aria-label="Música para foco"
+                        className={cn(
+                            'flex w-full flex-col overflow-hidden rounded-2xl border border-border bg-card text-card-foreground shadow-2xl shadow-black/10 sm:w-[19rem] dark:shadow-black/50',
+                            !semMovimento && 'gx-music-entrada',
+                        )}
+                    >
+                        {/* Cabeçalho */}
+                        <div className="flex items-start justify-between gap-2 border-b border-border px-4 py-3">
+                            <div className="flex min-w-0 items-center gap-2.5">
+                                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-violet-600 dark:bg-violet-500/15 dark:text-violet-300">
+                                    <Music className="h-[18px] w-[18px]" />
+                                </span>
+                                <div className="min-w-0">
+                                    <p className="truncate text-sm font-semibold leading-tight">
+                                        {playlistAtual?.name ?? 'Foco Musical'}
+                                    </p>
+                                    <p
+                                        className={cn(
+                                            'truncate text-[11px] leading-tight',
+                                            comErro ? 'text-destructive' : 'text-muted-foreground',
                                         )}
-                                    </AnimatePresence>
+                                    >
+                                        {rotulo}
+                                    </p>
                                 </div>
                             </div>
-                        </motion.div>
-                    ) : (
-                        /* Minimized State - Floating Orb */
-                        <motion.button
-                            key="minimized"
-                            onClick={toggleExpand}
-                            className="relative group hidden lg:block"
-                            initial={{ opacity: 0, scale: 0.5 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.5 }}
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.95 }}
-                            style={{ scale: springPulse }}
-                        >
-                            {/* Glow Effect */}
-                            <motion.div
-                                className="absolute inset-0 rounded-full"
-                                style={{
-                                    background: state.isPlaying
-                                        ? 'radial-gradient(circle, rgba(139, 92, 246, 0.4) 0%, transparent 70%)'
-                                        : 'transparent',
-                                    filter: 'blur(12px)',
-                                    transform: 'scale(1.5)'
-                                }}
-                                animate={{
-                                    opacity: state.isPlaying ? [0.5, 0.8, 0.5] : 0
-                                }}
-                                transition={{
-                                    duration: 2,
-                                    repeat: Infinity,
-                                    ease: 'easeInOut'
-                                }}
-                            />
-
-                            {/* Main Orb - Ultra Glass */}
-                            <div
-                                className="relative w-16 h-16 rounded-full flex items-center justify-center overflow-hidden"
-                                style={{
-                                    background: 'linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%)',
-                                    backdropFilter: 'blur(30px) saturate(180%)',
-                                    WebkitBackdropFilter: 'blur(30px) saturate(180%)',
-                                    boxShadow: `
-                    0 8px 32px rgba(0, 0, 0, 0.4),
-                    0 4px 12px rgba(0,0,0,0.1),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.2),
-                    inset 0 -1px 0 rgba(0, 0, 0, 0.2),
-                    ${state.isPlaying ? '0 0 30px rgba(139, 92, 246, 0.4)' : '0 0 0 transparent'}
-                  `
-                                }}
+                            <button
+                                type="button"
+                                onClick={fechar}
+                                aria-label="Fechar player de música"
+                                className="-mr-1.5 -mt-0.5 shrink-0 rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                             >
-                                {/* Reflection */}
-                                <div
-                                    className="absolute inset-0 pointer-events-none"
-                                    style={{
-                                        background: 'linear-gradient(180deg, rgba(255,255,255,0.2) 0%, transparent 45%)',
-                                        borderRadius: '50%'
-                                    }}
-                                />
+                                <X className="h-4 w-4" />
+                            </button>
+                        </div>
 
-                                {/* Bottom Inner Light */}
-                                <div
-                                    className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-1/2 pointer-events-none opacity-30"
-                                    style={{
-                                        background: 'radial-gradient(ellipse at bottom, rgba(139, 92, 246, 0.6) 0%, transparent 70%)',
-                                        filter: 'blur(5px)'
-                                    }}
-                                />
+                        <div className="px-4 pb-4 pt-3">
+                            {/* Visualizador. Só anima tocando — e nunca no Modo
+                                Lite / com "menos movimento" ligado, onde doze
+                                animações infinitas custavam bateria à toa. */}
+                            <div className="mb-3 flex h-12 items-end justify-center gap-[3px] rounded-xl bg-muted/60 px-3 py-2">
+                                {BARRAS.map((altura, i) => (
+                                    <span
+                                        key={i}
+                                        className={cn(
+                                            'w-1.5 rounded-full bg-violet-500/70 dark:bg-violet-400/70',
+                                            isPlaying && !semMovimento && 'gx-music-barra',
+                                        )}
+                                        style={{
+                                            height: isPlaying && !semMovimento ? undefined : `${altura}%`,
+                                            ['--gx-barra-alt' as string]: `${altura}%`,
+                                            animationDelay: `${i * 90}ms`,
+                                        }}
+                                    />
+                                ))}
+                            </div>
 
-                                {/* Icon */}
-                                <div className="relative z-10 drop-shadow-md">
-                                    {isBuffering ? (
-                                        <Loader2 className="w-6 h-6 text-white/90 animate-spin" />
-                                    ) : state.isPlaying ? (
-                                        <motion.div
-                                            animate={{ scale: [1, 1.1, 1] }}
-                                            transition={{ duration: 1, repeat: Infinity }}
+                            {comErro && (
+                                <div className="mb-3 flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2">
+                                    <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-destructive" />
+                                    <div className="min-w-0 flex-1">
+                                        <p className="text-[11px] leading-snug text-destructive">
+                                            {aviso ?? 'Não foi possível tocar agora.'}
+                                        </p>
+                                        <button
+                                            type="button"
+                                            onClick={tentarNovamente}
+                                            className="mt-1 inline-flex items-center gap-1 text-[11px] font-semibold text-destructive underline-offset-2 hover:underline"
                                         >
-                                            <Music className="w-6 h-6 text-violet-300" />
-                                        </motion.div>
+                                            <RotateCcw className="h-3 w-3" />
+                                            Tentar de novo
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+
+                            {!comErro && aviso && (
+                                <p className="mb-3 rounded-lg bg-amber-50 px-3 py-2 text-[11px] leading-snug text-amber-700 dark:bg-amber-950/40 dark:text-amber-300">
+                                    {aviso}
+                                </p>
+                            )}
+
+                            {/* Transporte */}
+                            <div className="mb-3 flex items-center justify-center gap-3">
+                                <button
+                                    type="button"
+                                    onClick={faixaAnterior}
+                                    aria-label="Música anterior"
+                                    className="flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:scale-95"
+                                >
+                                    <SkipBack className="h-[18px] w-[18px]" />
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onClick={alternarReproducao}
+                                    aria-label={isPlaying ? 'Pausar música' : 'Tocar música'}
+                                    aria-pressed={isPlaying}
+                                    className="flex h-14 w-14 items-center justify-center rounded-full bg-violet-600 text-white shadow-lg shadow-violet-600/25 transition-transform hover:bg-violet-500 active:scale-95"
+                                >
+                                    {aguardandoSom ? (
+                                        <Loader2 className="h-6 w-6 animate-spin" />
+                                    ) : isPlaying ? (
+                                        <Pause className="h-6 w-6" fill="currentColor" />
                                     ) : (
-                                        <Music className="w-6 h-6 text-white/80" />
+                                        <Play className="ml-0.5 h-6 w-6" fill="currentColor" />
+                                    )}
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onClick={proximaFaixa}
+                                    aria-label="Próxima música"
+                                    className="flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:scale-95"
+                                >
+                                    <SkipForward className="h-[18px] w-[18px]" />
+                                </button>
+                            </div>
+
+                            {/* Volume — sempre visível. Escondido atrás de um
+                                popover, era o controle mais usado do player e o
+                                mais difícil de achar no celular. */}
+                            <div className="mb-3 flex items-center gap-2.5">
+                                <button
+                                    type="button"
+                                    onClick={alternarMudo}
+                                    aria-label={mudo ? 'Ativar som' : 'Silenciar'}
+                                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                                >
+                                    <IconeVolume className="h-4 w-4" />
+                                </button>
+                                <input
+                                    type="range"
+                                    min={0}
+                                    max={100}
+                                    step={1}
+                                    value={volume}
+                                    onChange={(e) => mudarVolume(Number(e.target.value))}
+                                    aria-label="Volume"
+                                    className="gx-music-range h-1.5 flex-1 cursor-pointer appearance-none rounded-full"
+                                    style={{
+                                        background: `linear-gradient(to right, hsl(258 90% 60%) 0%, hsl(258 90% 60%) ${volume}%, hsl(var(--muted)) ${volume}%, hsl(var(--muted)) 100%)`,
+                                    }}
+                                />
+                                <span className="w-8 shrink-0 text-right text-[11px] tabular-nums text-muted-foreground">
+                                    {mudo ? '—' : volume}
+                                </span>
+                            </div>
+
+                            {/* Playlist + velocidade */}
+                            <div className="flex items-stretch gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setMostrarPlaylists((v) => !v)}
+                                    aria-expanded={mostrarPlaylists}
+                                    className="flex min-w-0 flex-1 items-center justify-between gap-2 rounded-xl border border-border bg-background px-3 py-2.5 text-left transition-colors hover:bg-muted"
+                                >
+                                    <span className="flex min-w-0 items-center gap-2">
+                                        <ListMusic className="h-4 w-4 shrink-0 text-muted-foreground" />
+                                        <span className="truncate text-xs font-medium">Playlists</span>
+                                    </span>
+                                    <ChevronDown
+                                        className={cn(
+                                            'h-4 w-4 shrink-0 text-muted-foreground transition-transform',
+                                            mostrarPlaylists && 'rotate-180',
+                                        )}
+                                    />
+                                </button>
+
+                                <div className="relative shrink-0">
+                                    <button
+                                        type="button"
+                                        onClick={() => setMostrarVelocidade((v) => !v)}
+                                        aria-label="Velocidade de reprodução"
+                                        aria-expanded={mostrarVelocidade}
+                                        className="h-full rounded-xl border border-border bg-background px-3 text-xs font-semibold tabular-nums transition-colors hover:bg-muted"
+                                    >
+                                        {preferencias.playbackRate}x
+                                    </button>
+                                    {mostrarVelocidade && (
+                                        <div className="absolute bottom-[calc(100%+0.375rem)] right-0 z-10 flex flex-col gap-0.5 rounded-xl border border-border bg-popover p-1 text-popover-foreground shadow-xl">
+                                            {PLAYBACK_RATES.map((rate) => (
+                                                <button
+                                                    key={rate}
+                                                    type="button"
+                                                    onClick={() => mudarVelocidade(rate)}
+                                                    className={cn(
+                                                        'rounded-lg px-3 py-1.5 text-xs font-semibold tabular-nums transition-colors',
+                                                        preferencias.playbackRate === rate
+                                                            ? 'bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-200'
+                                                            : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+                                                    )}
+                                                >
+                                                    {rate}x
+                                                </button>
+                                            ))}
+                                        </div>
                                     )}
                                 </div>
                             </div>
 
-                            {/* Hover Tooltip */}
-                            <motion.div
-                                className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-lg whitespace-nowrap pointer-events-none"
-                                style={{
-                                    background: 'rgba(0, 0, 0, 0.7)',
-                                    backdropFilter: 'blur(10px)',
-                                    fontSize: '11px',
-                                    color: 'rgba(255, 255, 255, 0.8)'
-                                }}
-                                initial={{ opacity: 0, y: 5 }}
-                                whileHover={{ opacity: 1, y: 0 }}
-                            >
-                                {state.isPlaying ? 'Tocando...' : 'Músicas para Foco'}
-                            </motion.div>
-                        </motion.button>
-                    )}
-                </AnimatePresence>
-            </motion.div>
+                            {mostrarPlaylists && (
+                                <div className="mt-2 max-h-44 space-y-0.5 overflow-y-auto rounded-xl border border-border bg-background p-1">
+                                    {playlists.map((playlist) => {
+                                        const ativa = playlist._id === playlistId
+                                        return (
+                                            <button
+                                                key={playlist._id}
+                                                type="button"
+                                                onClick={() => trocarPlaylist(playlist)}
+                                                className={cn(
+                                                    'flex w-full items-center justify-between gap-2 rounded-lg px-2.5 py-2 text-left transition-colors',
+                                                    ativa
+                                                        ? 'bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-200'
+                                                        : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+                                                )}
+                                            >
+                                                <span className="truncate text-xs font-medium">
+                                                    {playlist.name}
+                                                </span>
+                                                {ativa && <Check className="h-3.5 w-3.5 shrink-0" />}
+                                            </button>
+                                        )
+                                    })}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                ) : (
+                    /*
+                      Gatilho minimizado (desktop; no mobile quem abre é o FAB
+                      consolidado). Fundo sólido `bg-card` com borda: a versão
+                      anterior era vidro branco translúcido com ícone branco —
+                      no tema claro ela sumia por completo dentro da página.
+                    */
+                    <button
+                        type="button"
+                        onClick={alternarPainel}
+                        aria-label={
+                            isPlaying ? 'Música tocando — abrir player' : 'Abrir músicas para foco'
+                        }
+                        className="group relative hidden h-14 w-14 items-center justify-center rounded-full border border-border bg-card text-violet-600 shadow-lg shadow-black/10 transition-transform hover:scale-105 active:scale-95 lg:flex dark:text-violet-300 dark:shadow-black/40"
+                    >
+                        {aguardandoSom ? (
+                            <Loader2 className="h-6 w-6 animate-spin" />
+                        ) : (
+                            <Music className="h-6 w-6" />
+                        )}
+                        {isPlaying && (
+                            <span className="absolute right-1 top-1 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-card">
+                                {!semMovimento && (
+                                    <span className="absolute inset-0 animate-ping rounded-full bg-emerald-500/70" />
+                                )}
+                            </span>
+                        )}
+                        <span className="pointer-events-none absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded-md bg-foreground px-2 py-1 text-[11px] font-medium text-background opacity-0 transition-opacity group-hover:opacity-100">
+                            {isPlaying ? 'Tocando' : 'Músicas para foco'}
+                        </span>
+                    </button>
+                )}
+            </div>
 
-            {/* Custom Scrollbar Styles */}
+            {/*
+              Estilos escopados por `gx-music-*`. A versão anterior estilizava
+              `input[type="range"]` globalmente — o polegar branco do slider
+              vazava para TODOS os controles deslizantes do site.
+            */}
             <style jsx global>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(255, 255, 255, 0.05);
-          border-radius: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(139, 92, 246, 0.3);
-          border-radius: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(139, 92, 246, 0.5);
-        }
-        
-        /* Volume slider custom styling */
-        input[type="range"]::-webkit-slider-thumb {
-          -webkit-appearance: none;
-          width: 12px;
-          height: 12px;
-          border-radius: 50%;
-          background: white;
-          cursor: pointer;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-        }
-        input[type="range"]::-moz-range-thumb {
-          width: 12px;
-          height: 12px;
-          border-radius: 50%;
-          background: white;
-          cursor: pointer;
-          border: none;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-        }
-      `}</style>
+                .gx-music-range::-webkit-slider-thumb {
+                    -webkit-appearance: none;
+                    appearance: none;
+                    width: 14px;
+                    height: 14px;
+                    border-radius: 9999px;
+                    background: hsl(258 90% 60%);
+                    border: 2px solid hsl(var(--card));
+                    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+                    cursor: pointer;
+                }
+                .gx-music-range::-moz-range-thumb {
+                    width: 14px;
+                    height: 14px;
+                    border-radius: 9999px;
+                    background: hsl(258 90% 60%);
+                    border: 2px solid hsl(var(--card));
+                    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+                    cursor: pointer;
+                }
+                .gx-music-range:focus-visible {
+                    outline: 2px solid hsl(258 90% 60%);
+                    outline-offset: 3px;
+                }
+                .gx-music-barra {
+                    height: var(--gx-barra-alt, 40%);
+                    animation: gx-music-pulso 1.1s ease-in-out infinite alternate;
+                    will-change: transform;
+                    transform-origin: bottom;
+                }
+                @keyframes gx-music-pulso {
+                    from {
+                        transform: scaleY(0.35);
+                    }
+                    to {
+                        transform: scaleY(1);
+                    }
+                }
+                .gx-music-entrada {
+                    animation: gx-music-subir 180ms ease-out;
+                }
+                @keyframes gx-music-subir {
+                    from {
+                        opacity: 0;
+                        transform: translateY(8px) scale(0.98);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: none;
+                    }
+                }
+                @media (prefers-reduced-motion: reduce) {
+                    .gx-music-barra,
+                    .gx-music-entrada {
+                        animation: none;
+                    }
+                }
+            `}</style>
         </>
     )
 }
