@@ -5,12 +5,30 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { FileText, Upload } from 'lucide-react'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { AlertTriangle, FileText, ListPlus, Upload } from 'lucide-react'
 import { Question, Alternative, KeyPoint } from '@/lib/types'
 import { v4 as uuidv4 } from 'uuid'
 
+/**
+ * Importar não é uma operação só: "tenho 40 questões e quero mais 10" e "quero
+ * jogar fora o que está aí" são intenções opostas. Enquanto existia um botão
+ * único que substituía tudo, a segunda acontecia por engano — e levava junto
+ * uma prova inteira já digitada.
+ */
+export type ModoDeImportacao = 'adicionar' | 'substituir'
+
 interface TxtImportUnifiedProps {
-  onImport: (questions: Question[]) => void
+  onImport: (questions: Question[], modo: ModoDeImportacao) => void
+  /** Quantas questões a prova já tem. Zero dispensa a escolha: não há o que substituir. */
+  questoesExistentes?: number
   defaultAlternatives?: number
   defaultEssayStyle?: 'enem' | 'uerj'
   defaultEssayCorrectionMethod?: 'ai' | 'manual'
@@ -19,6 +37,7 @@ interface TxtImportUnifiedProps {
 
 export function TxtImportUnified({
   onImport,
+  questoesExistentes = 0,
   defaultAlternatives = 5,
   defaultEssayStyle = 'enem',
   defaultEssayCorrectionMethod = 'ai',
@@ -26,6 +45,8 @@ export function TxtImportUnified({
 }: TxtImportUnifiedProps) {
   const [text, setText] = useState('')
   const [error, setError] = useState('')
+  // Questões já lidas do texto, esperando a confirmação da substituição.
+  const [aguardandoConfirmacao, setAguardandoConfirmacao] = useState<Question[] | null>(null)
 
   function extractField(fullText: string, field: string): string {
     const lines = fullText.split('\n')
@@ -63,13 +84,19 @@ export function TxtImportUnified({
     return ''
   }
 
-  function parseText() {
+  /**
+   * Lê o texto colado e devolve as questões. Devolve `null` (com o erro na
+   * tela) quando não dá para ler — o texto é conferido ANTES de abrir a
+   * confirmação, para ninguém encarar o aviso vermelho de substituir tudo e
+   * descobrir depois que o formato estava errado.
+   */
+  function parseText(): Question[] | null {
     try {
       setError('')
 
       if (!text.trim()) {
         setError('Cole o texto das questões')
-        return
+        return null
       }
 
       const lines = text.split('\n')
@@ -110,20 +137,40 @@ export function TxtImportUnified({
 
       if (questions.length === 0) {
         setError('Nenhuma questão válida encontrada. Verifique o formato.')
-        return
+        return null
       }
 
-      // Renumerar questões
+      // Renumerar questões. Quem recebe renumera de novo ao juntar com as que
+      // já existiam; aqui é só para o texto colado ficar coerente sozinho.
       questions.forEach((q, idx) => {
         q.number = idx + 1
       })
 
-      onImport(questions)
-      setText('')
-      setError('')
+      return questions
     } catch (error: any) {
       setError(`Erro ao processar: ${error.message}`)
+      return null
     }
+  }
+
+  function importar(modo: ModoDeImportacao) {
+    const questions = parseText()
+    if (!questions) return
+
+    // Substituir só assusta quando há trabalho a perder.
+    if (modo === 'substituir' && questoesExistentes > 0) {
+      setAguardandoConfirmacao(questions)
+      return
+    }
+
+    concluir(questions, modo)
+  }
+
+  function concluir(questions: Question[], modo: ModoDeImportacao) {
+    setAguardandoConfirmacao(null)
+    onImport(questions, modo)
+    setText('')
+    setError('')
   }
 
   function parseQuestion(lines: string[], questionNumber: number, letters: string[]): Question | null {
@@ -377,11 +424,90 @@ TEXTOS DE APOIO:"Texto 1: Dados estatísticos... --- Texto 2: Artigo científico
           </p>
         </div>
 
-        <Button onClick={parseText} className="w-full" size="lg">
-          <FileText className="h-4 w-4 mr-2" />
-          Importar Questões
-        </Button>
+        {questoesExistentes > 0 ? (
+          <div className="space-y-2">
+            <div className="grid gap-2 sm:grid-cols-2">
+              <Button onClick={() => importar('adicionar')} className="w-full" size="lg">
+                <ListPlus className="h-4 w-4 mr-2" />
+                Adicionar ao final
+              </Button>
+              <Button
+                onClick={() => importar('substituir')}
+                variant="outline"
+                size="lg"
+                className="w-full border-destructive/40 text-destructive hover:bg-destructive/10 hover:text-destructive"
+              >
+                <AlertTriangle className="h-4 w-4 mr-2" />
+                Substituir todas
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground text-center">
+              A prova tem {questoesExistentes} {questoesExistentes === 1 ? 'questão' : 'questões'}.{' '}
+              <strong>Adicionar</strong> mantém tudo e coloca as novas no final;{' '}
+              <strong>substituir</strong> apaga as atuais.
+            </p>
+          </div>
+        ) : (
+          <Button onClick={() => importar('substituir')} className="w-full" size="lg">
+            <FileText className="h-4 w-4 mr-2" />
+            Importar Questões
+          </Button>
+        )}
       </CardContent>
+
+      {/* ── Confirmação da substituição ──────────────────────────────────
+          Apagar a prova inteira não pode depender de um clique só: o texto
+          já foi lido aqui, então este diálogo diz exatamente o que sai e o
+          que entra antes de qualquer coisa ser descartada. */}
+      <Dialog
+        open={aguardandoConfirmacao !== null}
+        onOpenChange={(aberto) => !aberto && setAguardandoConfirmacao(null)}
+      >
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-destructive">
+              <AlertTriangle className="h-5 w-5" />
+              Substituir todas as questões?
+            </DialogTitle>
+            <DialogDescription>
+              Isto descarta o que já está montado na prova e não pode ser desfeito.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-3 px-6">
+            <ul className="space-y-1 rounded-lg border border-border bg-muted/40 p-3 text-xs text-muted-foreground">
+              <li>
+                • saem as <strong>{questoesExistentes}</strong>{' '}
+                {questoesExistentes === 1 ? 'questão atual' : 'questões atuais'}, com todas as edições feitas nelas
+              </li>
+              <li>
+                • entram as <strong>{aguardandoConfirmacao?.length ?? 0}</strong>{' '}
+                {(aguardandoConfirmacao?.length ?? 0) === 1 ? 'questão lida' : 'questões lidas'} do texto colado
+              </li>
+            </ul>
+
+            <p className="text-xs text-muted-foreground">
+              Se a ideia era só acrescentar, cancele e use <strong>Adicionar ao final</strong>.
+            </p>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setAguardandoConfirmacao(null)}>
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              className="gap-2"
+              onClick={() => {
+                if (aguardandoConfirmacao) concluir(aguardandoConfirmacao, 'substituir')
+              }}
+            >
+              <AlertTriangle className="h-4 w-4" />
+              Substituir todas
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   )
 }
