@@ -3,6 +3,7 @@ import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
 import { ExamSubmission, Exam } from '@/lib/types'
 import { ObjectId } from 'mongodb'
+import { prepararSubmissaoParaEntrega } from '@/lib/provas/nota-da-prova'
 
 export const dynamic = 'force-dynamic'
 
@@ -45,8 +46,24 @@ export async function GET(request: NextRequest) {
           return null
         }
 
+        /*
+         * A nota espera o término — inclusive na lista de provas feitas.
+         *
+         * Esta rota devolvia `score`, `triScore`, `discursiveScore` e as
+         * correções comentadas de TODAS as submissões da pessoa, e `/profile`
+         * as desenhava ("Pontuação 8.5") num cartão que abre com um clique.
+         * Quem entregasse às 14h05 fechava a tela da prova, abria o perfil e
+         * lia a nota pela porta dos fundos, com a turma respondendo até as 16h.
+         * Ver `lib/provas/nota-da-prova.ts`.
+         */
+        const comVeredito = prepararSubmissaoParaEntrega(submission, exam, {
+          userId: session.userId,
+          isAdmin: session.role === 'admin',
+          jaSubmeteu: true,
+        })
+
         return {
-          ...submission,
+          ...comVeredito,
           examName: exam.title,
           examTitle: exam.title,
           hasDiscursiveQuestions: exam.questions.some(q => q.type === 'discursive') || false,

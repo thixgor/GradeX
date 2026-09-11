@@ -86,6 +86,15 @@ export interface UserSubmission {
   examEndTime?: Date
   answers?: any[]
   exam?: any
+  /**
+   * O servidor removeu a nota porque a prova ainda não terminou.
+   *
+   * Ela vinha daqui: esta lista desenhava "Pontuação 8.5" num cartão que abre
+   * com um clique, e quem entregasse às 14h05 lia a nota no perfil com a turma
+   * respondendo até as 16h — a porta dos fundos da tela da prova, que já
+   * segurava o mesmo número. Ver `lib/provas/nota-da-prova.ts`.
+   */
+  notaPresaAteOTermino?: boolean
 }
 
 function calculateDuration(startTime: Date, endTime: Date): string {
@@ -300,7 +309,24 @@ export function SubmissionsList({
 
             {isExpanded && (
               <div className="animate-fade-in space-y-3 border-t border-border/50 px-4 pb-4 pt-1">
-                {isCorrected ? (
+                {submission.notaPresaAteOTermino ? (
+                  <p className="flex items-start gap-1.5 rounded-lg bg-amber-50 px-3 py-2 text-xs leading-relaxed text-amber-800 dark:bg-amber-950/40 dark:text-amber-300">
+                    <Lock className="mt-0.5 h-3 w-3 flex-shrink-0" />
+                    <span>
+                      Sua nota é liberada quando a prova terminar
+                      {submission.examEndTime
+                        ? ` (${new Date(submission.examEndTime).toLocaleString('pt-BR', {
+                            day: '2-digit',
+                            month: 'short',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })})`
+                        : ''}
+                      . Enquanto a turma responde, a nota não circula — ela diria quais eram as
+                      alternativas certas.
+                    </span>
+                  </p>
+                ) : isCorrected ? (
                   <div className="flex flex-wrap gap-4">
                     {submission.triScore != null && (
                       <div>

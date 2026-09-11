@@ -32,7 +32,7 @@ import { useProctoring } from '@/hooks/use-proctoring'
 import { useWebSocket } from '@/hooks/use-websocket'
 import { useVisibilityDetection } from '@/hooks/use-visibility-detection'
 import { useWebRTC } from '@/hooks/use-webrtc'
-import { ArrowLeft, Check, X, Send, FileDown, Clock, User, CheckCircle2, AlertCircle, List, StickyNote, Copy, ClipboardCheck, ClipboardList, Flag, ChevronRight, ChevronLeft, Bot, Maximize2, BookOpen, LogOut, Play, BarChart3, Trophy } from 'lucide-react'
+import { ArrowLeft, Check, X, Send, FileDown, Clock, User, CheckCircle2, AlertCircle, List, StickyNote, Copy, ClipboardCheck, ClipboardList, Flag, ChevronRight, ChevronLeft, Bot, Maximize2, BookOpen, LogOut, Lock, Play, BarChart3, Trophy } from 'lucide-react'
 import { ImageModal } from '@/components/image-modal'
 import { PremiumPdfCtaModal } from '@/components/premium-pdf-cta-modal'
 import { PdfCtaBanner } from '@/components/pdf-cta-banner'
@@ -166,6 +166,22 @@ function ConteudoDaProva({ params }: { params: { id: string } }) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [submitted, setSubmitted] = useState(false)
   const [submissionScore, setSubmissionScore] = useState<string>('')
+  /**
+   * A nota que o SERVIDOR liberou — em número, não em texto.
+   *
+   * `submissionScore` é uma string que às vezes é nota ("72 pontos") e às vezes
+   * é recado ("As questões discursivas serão corrigidas em breve"), e o anel de
+   * nota extraía o número dela com uma expressão regular. Isso funcionava por
+   * sorte: um recado com data ou hora dentro ("liberada às 16:30") virava
+   * percentual, e o anel desenhava uma nota que ninguém calculou.
+   *
+   * Agora o número tem o próprio lugar. Ele só existe quando o servidor manda
+   * — e, numa prova avaliativa em andamento, ele não manda: a nota espera o
+   * término, como o gabarito. Ver `lib/provas/nota-da-prova.ts`.
+   */
+  const [notaDaEntrega, setNotaDaEntrega] = useState<number | null>(null)
+  /** O servidor segurou a nota porque a prova ainda não terminou. */
+  const [notaPresaAteOTermino, setNotaPresaAteOTermino] = useState(false)
   const [alreadySubmitted, setAlreadySubmitted] = useState(false)
   const [existingSubmissionId, setExistingSubmissionId] = useState<string>('')
   const [userId, setUserId] = useState<string>('')
@@ -2205,6 +2221,8 @@ ${respostaAluno}`
       } else if (data.message) {
         setSubmissionScore(data.message)
       }
+      setNotaDaEntrega(typeof data.score === 'number' ? data.score : null)
+      setNotaPresaAteOTermino(data.notaPresaAteOTermino === true)
 
       // Salvar ID da submissão
       if (data.submissionId) {
@@ -2376,6 +2394,8 @@ ${respostaAluno}`
       } else if (data.message) {
         setSubmissionScore(data.message)
       }
+      setNotaDaEntrega(typeof data.score === 'number' ? data.score : null)
+      setNotaPresaAteOTermino(data.notaPresaAteOTermino === true)
 
       // Salvar ID da submissão para permitir auto-avaliação posterior
       if (data.submissionId) {
@@ -2571,10 +2591,17 @@ ${respostaAluno}`
         if (mcTotal > 0) return mcPercentage
         return discursiveAvg
       }
-      const pontos = Number(String(submissionScore || '').replace(/[^\d.,]/g, '').replace(',', '.'))
+      /*
+       * A nota vem do número que o servidor liberou, não do texto da tela.
+       *
+       * Aqui se lia `submissionScore` com uma expressão regular — e como essa
+       * string também carrega recados, um recado com número dentro virava
+       * percentual. Numa prova avaliativa em andamento `notaDaEntrega` é `null`
+       * de propósito: a nota espera o término.
+       */
       const total = exam.totalPoints || 100
-      if (!Number.isFinite(pontos) || total <= 0) return null
-      return Math.max(0, Math.min(100, Math.round((pontos / total) * 100)))
+      if (notaDaEntrega === null || total <= 0) return null
+      return Math.max(0, Math.min(100, Math.round((notaDaEntrega / total) * 100)))
     })()
 
     return (
@@ -2645,13 +2672,15 @@ ${respostaAluno}`
                   <User className="h-4 w-4" />
                   {userName}
                 </span>
-                {/* Numa prova avaliativa a nota não é o fim da história: a
-                    correção e o gabarito ainda dependem do término. Dizer isso
-                    aqui evita a pergunta "e agora?" logo depois da entrega. */}
+                {/* Numa prova avaliativa a entrega não é o fim da história: a
+                    nota, a correção e o gabarito dependem do término. Dizer isso
+                    aqui evita a pergunta "e agora?" logo depois da entrega — e
+                    o selo fala da NOTA junto, que é o que a pessoa está
+                    procurando nesta tela. */}
                 {!isPracticeOrPersonal && janela && !janela.encerrada && (
                   <span className="inline-flex items-center gap-2 text-sm text-amber-700 dark:text-amber-400 bg-amber-500/10 px-4 py-2 rounded-full border border-amber-500/25">
                     <Clock className="h-4 w-4" />
-                    Gabarito em {new Date(exam.endTime).toLocaleString('pt-BR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                    Nota e gabarito em {new Date(exam.endTime).toLocaleString('pt-BR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
                   </span>
                 )}
               </div>
@@ -2724,7 +2753,29 @@ ${respostaAluno}`
               <div className="exam-resultado-entra relative overflow-hidden rounded-2xl border border-border/50 bg-background/60 backdrop-blur-md p-8 text-center shadow-lg" style={{ '--exam-ordem': 3 } as React.CSSProperties}>
                 <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#468152] to-[#E2A43E]" />
 
-                {notaGeralEmPercentual !== null ? (
+                {/*
+                  ═══ A nota não é o comprovante ═══
+
+                  Esta tela mostrava a nota em letras garrafais assim que a
+                  prova era entregue — inclusive numa prova com horário marcado,
+                  que a turma ainda estava fazendo. O número vinha pronto do
+                  servidor, e "8 de 10" é o gabarito dito de outro jeito: duas
+                  notas comparadas no grupo da turma reconstroem as respostas
+                  certas por subtração.
+
+                  Agora o servidor não manda a nota antes do término (ver
+                  `lib/provas/nota-da-prova.ts`), e no lugar dela esta tela diz
+                  as duas coisas que a pessoa precisa saber: a entrega está
+                  registrada, e a nota sai quando a prova acabar para todos.
+                */}
+                {notaPresaAteOTermino ? (
+                  <div className="mx-auto mb-4 flex h-32 w-32 flex-col items-center justify-center gap-1.5 rounded-full border-2 border-dashed border-amber-500/40 bg-amber-500/5 px-4 text-center">
+                    <Lock className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+                    <span className="text-[11px] font-semibold leading-tight text-amber-700 dark:text-amber-400">
+                      Nota no término
+                    </span>
+                  </div>
+                ) : notaGeralEmPercentual !== null ? (
                   <div
                     className="exam-anel-de-nota mx-auto mb-4 flex h-32 w-32 items-center justify-center rounded-full"
                     style={{
@@ -2756,6 +2807,17 @@ ${respostaAluno}`
                 <p className="text-sm text-muted-foreground">
                   Sua prova foi registrada{examDuration ? ` em ${examDuration}` : ''}. Guarde o comprovante abaixo.
                 </p>
+                {notaPresaAteOTermino && (
+                  <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-amber-800 dark:text-amber-300">
+                    Sua nota sai quando a prova terminar
+                    {exam.endTime
+                      ? `, em ${new Date(exam.endTime).toLocaleString('pt-BR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}`
+                      : ''}
+                    . Enquanto a turma ainda responde, a nota não circula — ela diria quais
+                    alternativas eram as certas. Suas respostas já estão guardadas, e você pode
+                    baixar a folha com as letras que marcou agora mesmo.
+                  </p>
+                )}
               </div>
             )}
 

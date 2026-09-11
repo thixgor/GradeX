@@ -8,6 +8,7 @@ import { provaExisteParaPessoa } from '@/lib/provas/visibilidade-da-prova'
 import { lerPeriodoDoAluno } from '@/lib/provas/periodo-do-aluno'
 import { COLECAO_DE_PROGRESSO, contarRespondidas } from '@/lib/provas/retomada'
 import { avaliarEntrega } from '@/lib/provas/entrega-da-prova'
+import { MOTIVO_NOTA_PRESA, resolverNotaDaProva } from '@/lib/provas/nota-da-prova'
 
 export const dynamic = 'force-dynamic'
 
@@ -308,6 +309,26 @@ export async function POST(
 
     const result = await submissionsCollection.insertOne(submission)
 
+    /*
+     * A nota é GRAVADA sempre; o que espera o término é a viagem dela até o
+     * aluno.
+     *
+     * Esta rota devolvia `{ score }` no JSON da entrega, e a tela de
+     * finalização desenhava o anel com o número dentro — na prova que a turma
+     * ainda estava fazendo. Quem entregasse cedo sabia quantas tinha acertado;
+     * duas entregas comparadas no grupo da turma reconstroem o gabarito por
+     * subtração. Ver `lib/provas/nota-da-prova.ts`: o critério é o MESMO do
+     * gabarito, porque a nota é o gabarito dito em número.
+     *
+     * O admin, a correção automática e o ranking do término continuam lendo a
+     * nota da submissão, que não mudou.
+     */
+    const nota = resolverNotaDaProva(exam, {
+      userId: session.userId,
+      isAdmin: session.role === 'admin',
+      agora: now,
+    })
+
     // O rascunho existia para sobreviver à queda. Entregue a prova, ele não tem
     // mais o que guardar — e deixá-lo para trás faria a tela oferecer "continuar
     // de onde parou" numa prova que já foi entregue.
@@ -452,8 +473,11 @@ export async function POST(
 
             return NextResponse.json({
               success: true,
-              message: 'Prova submetida e corrigida automaticamente!',
-              score: finalScore,
+              message: nota.liberada
+                ? 'Prova submetida e corrigida automaticamente!'
+                : `Prova entregue! ${MOTIVO_NOTA_PRESA}`,
+              score: nota.liberada ? finalScore : undefined,
+              notaPresaAteOTermino: nota.liberada ? undefined : true,
               submissionId: result.insertedId.toString(),
             })
           }
@@ -474,7 +498,12 @@ export async function POST(
 
       return NextResponse.json({
         success: true,
-        message: `Prova submetida! ${messageType} serão corrigidas em breve. Você será notificado quando a correção estiver pronta.`,
+        // Com a prova em andamento, o que a pessoa precisa saber é quando a
+        // nota sai — e ela sai no término, não quando a correção terminar.
+        message: nota.liberada
+          ? `Prova submetida! ${messageType} serão corrigidas em breve. Você será notificado quando a correção estiver pronta.`
+          : `Prova entregue! ${MOTIVO_NOTA_PRESA}`,
+        notaPresaAteOTermino: nota.liberada ? undefined : true,
         submissionId: result.insertedId.toString(),
       })
     }
@@ -483,7 +512,9 @@ export async function POST(
     if (exam.scoringMethod === 'normal') {
       return NextResponse.json({
         success: true,
-        score,
+        score: nota.liberada ? score : undefined,
+        message: nota.liberada ? undefined : `Prova entregue! ${MOTIVO_NOTA_PRESA}`,
+        notaPresaAteOTermino: nota.liberada ? undefined : true,
         submissionId: result.insertedId.toString(),
       })
     }

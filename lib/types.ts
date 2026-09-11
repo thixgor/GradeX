@@ -341,6 +341,19 @@ export interface ExamSubmission {
   submittedAfterEnd?: boolean
   /** Quanto tempo depois do término a entrega chegou, em milissegundos. */
   submissionDelayMs?: number
+  /**
+   * A nota foi removida desta cópia porque a prova ainda não terminou.
+   *
+   * **Nunca é gravado no banco.** É uma marca de transporte: as rotas que
+   * mandam uma submissão para o próprio aluno removem `score`, `triScore`,
+   * `discursiveScore` e `corrections` enquanto a prova corre (a nota é o
+   * gabarito dito em número) e deixam isto no lugar, para a tela saber a
+   * diferença entre "a nota espera o término" e "a correção ainda não saiu" —
+   * duas esperas reais com explicações diferentes.
+   *
+   * Ver `lib/provas/nota-da-prova.ts`.
+   */
+  notaPresaAteOTermino?: boolean
 }
 
 /**

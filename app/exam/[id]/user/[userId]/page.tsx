@@ -30,6 +30,7 @@ import {
   type FormatoDaFolha,
 } from '@/lib/provas/downloads-da-prova'
 import { resolverJanelaDaProva } from '@/lib/provas/janela-da-prova'
+import { podeVerGabarito } from '@/lib/provas/sanitizar-prova'
 import { cn } from '@/lib/utils'
 
 /**
@@ -80,8 +81,22 @@ function renderRichText(text: string | undefined | null): React.ReactNode {
   })
 }
 
-type Situacao = 'certa' | 'errada' | 'branco' | 'aberta'
-type Filtro = 'todas' | 'certa' | 'errada' | 'branco'
+/**
+ * `respondida` é a situação de quem marcou uma alternativa numa prova que ainda
+ * não terminou.
+ *
+ * Sem ela, esta tela MENTIA. O gabarito não viaja até o navegador antes do
+ * término (`sanitizarProvaParaAluno` manda `isCorrect: false` em todas as
+ * alternativas), e a conta de acerto era "a que marquei é a correta?" — que com
+ * nenhuma correta dá não para todas. O relatório aberto minutos depois da
+ * entrega anunciava **"0 acertos, 12 erros"** e uma barra de "0,0% de
+ * aproveitamento", em vermelho, para uma prova que podia ser toda certa.
+ *
+ * A ausência do gabarito não é uma resposta sobre o acerto: é a ausência de
+ * resposta, e é isso que esta situação diz.
+ */
+type Situacao = 'certa' | 'errada' | 'branco' | 'aberta' | 'respondida'
+type Filtro = 'todas' | 'certa' | 'errada' | 'branco' | 'respondida'
 
 const CORES: Record<Situacao, { chip: string; borda: string; fundo: string; rotulo: string }> = {
   certa: {
@@ -107,6 +122,13 @@ const CORES: Record<Situacao, { chip: string; borda: string; fundo: string; rotu
     borda: 'border-violet-500/30',
     fundo: 'bg-violet-50/40 dark:bg-violet-950/15',
     rotulo: 'Discursiva',
+  },
+  // Neutra de propósito: nem verde nem vermelho, porque ninguém sabe ainda.
+  respondida: {
+    chip: 'bg-sky-500 text-white',
+    borda: 'border-sky-500/30',
+    fundo: 'bg-sky-50/40 dark:bg-sky-950/15',
+    rotulo: 'Respondida',
   },
 }
 
@@ -168,7 +190,29 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
   }, [id, userId, avisar])
 
   const janela = useMemo(() => (exam ? resolverJanelaDaProva(exam) : null), [exam])
-  const gabaritoLiberado = !!janela && (janela.encerrada || janela.fase === 'livre')
+  /**
+   * O gabarito CHEGOU nesta tela?
+   *
+   * A pergunta não é sobre a janela, é sobre o dado: o servidor só manda
+   * `isCorrect` para quem pode vê-lo (`podeVerGabarito`), e tudo o que esta
+   * tela calcula de acerto depende disso ter vindo. Lendo a janela por conta
+   * própria, ela errava nos dois casos em que as duas respostas divergem — o
+   * admin abrindo o relatório de um aluno durante a prova (tem o gabarito e a
+   * tela não contava os acertos) e a prova antiga sem datas (a janela diz
+   * "livre", o servidor sanitiza, e a tela mostrava tudo como erro).
+   *
+   * Mesma função que o servidor usa, então as duas não podem discordar.
+   */
+  const gabaritoLiberado = useMemo(
+    () =>
+      !!exam &&
+      podeVerGabarito(exam, {
+        userId: conta.id || '',
+        isAdmin: conta.role === 'admin',
+        jaSubmeteu: true,
+      }),
+    [exam, conta],
+  )
 
   const downloads = useMemo(
     () =>
@@ -215,10 +259,24 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
 
       const marcada = questao.alternatives?.find((a) => a.id === resposta?.selectedAlternative) || null
       const correta = questao.alternatives?.find((a) => a.isCorrect) || null
-      const situacao: Situacao = !marcada ? 'branco' : marcada.id === correta?.id ? 'certa' : 'errada'
+      /*
+       * Sem gabarito não existe acerto nem erro — existe marcação.
+       *
+       * A linha era `marcada.id === correta?.id ? 'certa' : 'errada'`, e com a
+       * prova em andamento `correta` é sempre `null` (o servidor não manda a
+       * resposta certa). Toda questão respondida caía no `else` e virava um
+       * erro na tela. Ver o comentário do tipo `Situacao`.
+       */
+      const situacao: Situacao = !marcada
+        ? 'branco'
+        : !gabaritoLiberado
+          ? 'respondida'
+          : marcada.id === correta?.id
+            ? 'certa'
+            : 'errada'
       return { questao, resposta, situacao, marcada, correta }
     })
-  }, [questoes, submission])
+  }, [questoes, submission, gabaritoLiberado])
 
   const resumo = useMemo(() => {
     const objetivas = analise.filter((a) => a.questao.type === 'multiple-choice')
@@ -231,12 +289,18 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
       certas,
       erradas,
       brancos,
+      respondidas: objetivas.filter((a) => a.situacao === 'respondida').length,
       discursivas,
       // O aproveitamento é sobre as objetivas: misturar discursiva pendente na
       // conta daria um número que muda sozinho quando a correção sai.
-      aproveitamento: objetivas.length > 0 ? (certas / objetivas.length) * 100 : null,
+      //
+      // E ele não existe antes do término: sem gabarito, `certas` é zero por
+      // falta de resposta certa, não por erro — e a barra desenhava 0,0% em
+      // vermelho numa prova que podia estar toda certa.
+      aproveitamento:
+        gabaritoLiberado && objetivas.length > 0 ? (certas / objetivas.length) * 100 : null,
     }
-  }, [analise])
+  }, [analise, gabaritoLiberado])
 
   const visiveis = useMemo(
     () => (filtro === 'todas' ? analise : analise.filter((a) => a.situacao === filtro)),
@@ -325,6 +389,16 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
 
   const notaMaxima = exam.scoringMethod === 'tri' ? 1000 : exam.totalPoints || 100
   const nota = exam.scoringMethod === 'tri' ? submission.triScore : submission.score
+  /**
+   * A nota não chegou porque a prova não terminou — e não porque falta corrigir.
+   *
+   * O servidor remove os campos de nota da submissão enquanto a prova corre
+   * (ver `lib/provas/nota-da-prova.ts`) e deixa esta marca no lugar. Sem ela o
+   * anel leria a ausência de `score` como correção pendente e anunciaria
+   * "Aguardando correção" numa prova de múltipla escolha já corrigida — uma
+   * explicação errada para uma espera real.
+   */
+  const notaPresaAteOTermino = submission.notaPresaAteOTermino === true
   const notaEmPercentual =
     typeof nota === 'number' && notaMaxima > 0 ? Math.max(0, Math.min(100, (nota / notaMaxima) * 100)) : null
   const corDaNota =
@@ -360,7 +434,7 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
               className="exam-anel-de-nota flex h-32 w-32 flex-shrink-0 items-center justify-center rounded-full"
               style={{ '--exam-nota': notaEmPercentual ?? 0, '--exam-anel-cor': corDaNota } as React.CSSProperties}
               role="img"
-              aria-label={`Nota: ${nota ?? 'aguardando correção'}`}
+              aria-label={`Nota: ${nota ?? (notaPresaAteOTermino ? 'liberada quando a prova terminar' : 'aguardando correção')}`}
             >
               <div className="flex h-[7.25rem] w-[7.25rem] flex-col items-center justify-center rounded-full bg-background">
                 {typeof nota === 'number' ? (
@@ -369,6 +443,13 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
                       {nota.toFixed(exam.scoringMethod === 'tri' ? 0 : 1)}
                     </span>
                     <span className="mt-1 text-[11px] text-muted-foreground">de {notaMaxima}</span>
+                  </>
+                ) : notaPresaAteOTermino ? (
+                  <>
+                    <Lock className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                    <span className="mt-1.5 px-3 text-center text-[11px] font-semibold leading-tight text-amber-700 dark:text-amber-400">
+                      Nota no término
+                    </span>
                   </>
                 ) : (
                   <span className="px-3 text-center text-xs font-medium leading-tight text-muted-foreground">
@@ -392,8 +473,16 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
               <div className="flex flex-wrap justify-center gap-2 sm:justify-start">
                 {resumo.objetivas > 0 && (
                   <>
-                    <Selo cor="emerald" icone={CheckCircle2} valor={resumo.certas} rotulo="acertos" />
-                    <Selo cor="rose" icone={XCircle} valor={resumo.erradas} rotulo="erros" />
+                    {/* Acerto e erro só existem com gabarito. Antes do término o
+                        selo conta o que é fato: quantas foram respondidas. */}
+                    {gabaritoLiberado ? (
+                      <>
+                        <Selo cor="emerald" icone={CheckCircle2} valor={resumo.certas} rotulo="acertos" />
+                        <Selo cor="rose" icone={XCircle} valor={resumo.erradas} rotulo="erros" />
+                      </>
+                    ) : (
+                      <Selo cor="sky" icone={ClipboardList} valor={resumo.respondidas} rotulo="respondidas" />
+                    )}
                     {resumo.brancos > 0 && (
                       <Selo cor="slate" icone={MinusCircle} valor={resumo.brancos} rotulo="em branco" />
                     )}
@@ -430,11 +519,13 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
             <div className="mt-6 flex items-start gap-2.5 rounded-xl border border-amber-500/25 bg-amber-500/10 p-3.5">
               <Lock className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-600 dark:text-amber-400" />
               <p className="text-xs leading-relaxed text-amber-800 dark:text-amber-200">
-                Suas respostas já estão aqui, mas o <strong>gabarito só aparece quando a prova terminar</strong>
+                Suas respostas já estão aqui, mas a{' '}
+                <strong>nota e o gabarito só aparecem quando a prova terminar</strong>
                 {janela?.terminaEm
                   ? ` (${new Date(janela.terminaEm).toLocaleString('pt-BR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })})`
                   : ''}
-                . Enquanto a turma responde, a resposta certa não circula.
+                . Enquanto a turma responde, a resposta certa não circula — e a nota diria qual
+                era ela.
               </p>
             </div>
           )}
@@ -558,9 +649,10 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
                 */}
                 {downloads.compacto.permitido && (
                   <p className="text-sm leading-relaxed text-amber-800 dark:text-amber-200">
-                    Sua nota e o resumo acima já estão aqui, e a{' '}
+                    O resumo da sua entrega já está acima, e a{' '}
                     <strong>folha com as letras que você marcou</strong> pode ser baixada agora, nos
                     botões acima — ela não espera o término porque não diz qual era a certa.
+                    {notaPresaAteOTermino ? ' A nota, como o gabarito, sai no término.' : ''}
                   </p>
                 )}
               </div>
@@ -579,12 +671,22 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
               inteira de novo para encontrá-las.
             */}
             <div className="flex flex-wrap gap-1.5">
-              {([
-                ['todas', `Todas (${analise.length})`],
-                ['errada', `Erros (${resumo.erradas})`],
-                ['certa', `Acertos (${resumo.certas})`],
-                ['branco', `Em branco (${resumo.brancos})`],
-              ] as [Filtro, string][]).map(([chave, rotulo]) => (
+              {(
+                // Filtrar por acerto/erro exige gabarito. Antes do término as
+                // abas seriam duas listas vazias e uma com tudo dentro.
+                (gabaritoLiberado
+                  ? [
+                      ['todas', `Todas (${analise.length})`],
+                      ['errada', `Erros (${resumo.erradas})`],
+                      ['certa', `Acertos (${resumo.certas})`],
+                      ['branco', `Em branco (${resumo.brancos})`],
+                    ]
+                  : [
+                      ['todas', `Todas (${analise.length})`],
+                      ['respondida', `Respondidas (${resumo.respondidas})`],
+                      ['branco', `Em branco (${resumo.brancos})`],
+                    ]) as [Filtro, string][]
+              ).map(([chave, rotulo]) => (
                 <button
                   key={chave}
                   onClick={() => setFiltro(chave)}
@@ -635,9 +737,7 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
                       {renderRichText((questao.statement || '').slice(0, 110))}
                     </span>
                     <span className="mt-0.5 block text-xs text-muted-foreground">
-                      {gabaritoLiberado || situacao === 'aberta' || situacao === 'branco'
-                        ? cor.rotulo
-                        : 'Respondida'}
+                      {cor.rotulo}
                       {situacao !== 'aberta' && marcada ? ` · você marcou ${marcada.letter}` : ''}
                     </span>
                   </span>
@@ -678,7 +778,11 @@ export default function UserSubmissionPage({ params }: { params: { id: string; u
                                 eACerta
                                   ? 'border-emerald-500/40 bg-emerald-500/10'
                                   : foiMarcada
-                                    ? 'border-rose-500/40 bg-rose-500/10'
+                                    ? // Sem gabarito, a marcação é azul: pintá-la de
+                                      // vermelho seria dizer que está errada.
+                                      gabaritoLiberado
+                                      ? 'border-rose-500/40 bg-rose-500/10'
+                                      : 'border-sky-500/40 bg-sky-500/10'
                                     : 'border-border/50 bg-background/50',
                               )}
                             >
@@ -841,7 +945,7 @@ function Selo({
   valor,
   rotulo,
 }: {
-  cor: 'emerald' | 'rose' | 'slate' | 'violet'
+  cor: 'emerald' | 'rose' | 'slate' | 'violet' | 'sky'
   icone: typeof CheckCircle2
   valor: number
   rotulo: string
@@ -851,6 +955,7 @@ function Selo({
     rose: 'border-rose-500/25 bg-rose-500/10 text-rose-700 dark:text-rose-400',
     slate: 'border-border bg-muted text-muted-foreground',
     violet: 'border-violet-500/25 bg-violet-500/10 text-violet-700 dark:text-violet-400',
+    sky: 'border-sky-500/25 bg-sky-500/10 text-sky-700 dark:text-sky-400',
   }[cor]
 
   return (

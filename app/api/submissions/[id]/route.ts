@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
-import { ExamSubmission } from '@/lib/types'
+import { Exam, ExamSubmission } from '@/lib/types'
 import { ObjectId } from 'mongodb'
 import { secureApiEndpoint, verifyOwnership } from '@/lib/api-security'
+import { prepararSubmissaoParaEntrega } from '@/lib/provas/nota-da-prova'
 
 export const dynamic = 'force-dynamic'
 
@@ -42,7 +43,31 @@ export async function GET(
       return NextResponse.json({ error: 'Não autorizado' }, { status: 403 })
     }
 
-    return NextResponse.json({ submission })
+    /*
+     * A nota espera o término da prova — aqui também.
+     *
+     * Esta rota devolve a submissão inteira para o dono dela, e é chamada pela
+     * lista de provas feitas (`/profile`) para montar a folha de respostas. Sem
+     * este filtro ela era a porta dos fundos da mesma informação: bastava abrir
+     * o endereço com o id da submissão para ler `score` com a turma ainda
+     * respondendo. Ver `lib/provas/nota-da-prova.ts`.
+     */
+    let exam: Exam | null = null
+    try {
+      exam = await db
+        .collection<Exam>('exams')
+        .findOne({ _id: new ObjectId(submission.examId) })
+    } catch {
+      exam = null
+    }
+
+    return NextResponse.json({
+      submission: prepararSubmissaoParaEntrega(submission, exam, {
+        userId: session.userId,
+        isAdmin: session.role === 'admin',
+        jaSubmeteu: true,
+      }),
+    })
   } catch (error) {
     console.error('Get submission error:', error)
     return NextResponse.json(
