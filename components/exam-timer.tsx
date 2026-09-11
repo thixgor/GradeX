@@ -79,7 +79,9 @@ export function ExamTimer({ endTime, desvioDoRelogio, onTimeUp }: ExamTimerProps
       // contra o relógio do próprio celular precisa saber qual dos dois é a
       // referência da prova.
       title={`A prova termina às ${horaDeBrasilia(endMs)} (horário de Brasília)`}
-      className={`flex items-center gap-2 px-4 py-2 rounded-lg font-mono text-sm font-semibold ${
+      // No celular o cronômetro divide a linha do cabeçalho com os controles
+      // e a marca, então encolhe: menos respiro nas laterais e um corpo menor.
+      className={`flex shrink-0 items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg font-mono text-xs sm:text-sm font-semibold whitespace-nowrap ${
         isUrgent
           ? 'bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 animate-pulse'
           : isWarning
@@ -93,7 +95,11 @@ export function ExamTimer({ endTime, desvioDoRelogio, onTimeUp }: ExamTimerProps
         {String(timeLeft.minutos).padStart(2, '0')}:
         {String(timeLeft.segundos).padStart(2, '0')}
       </span>
-      <span className="text-xs opacity-75">
+      {/* "restante" é a palavra que sobra quando a tela é estreita: os dois
+          pontos entre os números já dizem que aquilo é uma contagem. O aviso
+          de tempo esgotado aparece em qualquer largura — aí a palavra é a
+          informação, não o enfeite. */}
+      <span className={`text-xs opacity-75 ${timeLeft.total === 0 ? '' : 'hidden sm:inline'}`}>
         {timeLeft.total === 0 ? 'Tempo esgotado!' : 'restante'}
       </span>
     </div>

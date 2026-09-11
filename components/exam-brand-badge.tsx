@@ -24,7 +24,7 @@ const SITE = 'domineaqui.com.br'
 export function ExamBrandBadge({ compact = false, className = '' }: ExamBrandBadgeProps) {
   // O ícone tem versão clara própria para o tema escuro. A troca é por CSS
   // para o cabeçalho não depender de leitura de tema em JS.
-  const iconHeight = compact ? '!h-5' : '!h-7 sm:!h-8'
+  const iconHeight = compact ? '!h-5' : '!h-6 sm:!h-8'
   const icon = (
     <>
       <Logo variant="icon" size="sm" className={`block dark:hidden w-auto ${iconHeight}`} />
@@ -48,12 +48,12 @@ export function ExamBrandBadge({ compact = false, className = '' }: ExamBrandBad
 
   return (
     <div
-      className={`flex items-center gap-2 sm:gap-2.5 rounded-xl border border-border/60 bg-gradient-to-r from-emerald-500/10 via-transparent to-amber-500/10 px-2.5 sm:px-3 py-1.5 shadow-sm backdrop-blur-sm select-none ${className}`}
+      className={`flex shrink-0 items-center gap-1.5 sm:gap-2.5 rounded-xl border border-border/60 bg-gradient-to-r from-emerald-500/10 via-transparent to-amber-500/10 px-2 sm:px-3 py-1 sm:py-1.5 shadow-sm backdrop-blur-sm select-none ${className}`}
       title={`Domine Aqui · ${SITE}`}
     >
       {icon}
       <span className="flex flex-col leading-tight">
-        <span className="text-sm sm:text-base font-bold tracking-tight text-[#468152] dark:text-emerald-400">
+        <span className="text-[13px] sm:text-base font-bold tracking-tight text-[#468152] dark:text-emerald-400">
           Domine<span className="text-[#E2A43E] dark:text-amber-400">Aqui</span>
         </span>
         <span className="text-[9px] sm:text-[10px] font-medium tracking-wide text-muted-foreground">

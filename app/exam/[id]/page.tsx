@@ -4345,7 +4345,10 @@ ${respostaAluno}`
       <header className="sticky top-0 z-50 border-b border-border/60 bg-background/85 shadow-sm backdrop-blur-md">
         <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-3 md:py-4">
           <div className="flex items-center justify-between gap-2 sm:gap-4 flex-wrap">
-            <div className="flex items-center gap-1.5 sm:gap-3 min-w-0 flex-shrink">
+            {/* `w-full` no celular: o título fica com a primeira linha inteira
+                em vez de disputar espaço com os controles e virar reticências
+                depois da terceira palavra. */}
+            <div className="flex items-center gap-1.5 sm:gap-3 min-w-0 w-full sm:w-auto sm:flex-shrink">
               {/* Saída para a tela inicial — durante a prova ela passa pela
                   confirmação, porque sair aqui descarta o que ainda não foi enviado. */}
               <Button
@@ -4377,150 +4380,162 @@ ${respostaAluno}`
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-1 sm:gap-2 flex-wrap justify-end">
-              {/*
-                O selo de gravação automática.
+            {/*
+              A segunda linha do cabeçalho no celular.
 
-                Ele existe para uma pessoa só: a que está com a internet
-                oscilando e não sabe se perder a conexão custa a prova. Sem esse
-                sinal, a resposta honesta era "não custa, mas confie" — e no
-                meio de uma prova ninguém confia. Fica discreto enquanto tudo
-                vai bem e fica vermelho quando a gravação falha, que é o único
-                momento em que ele precisa ser lido.
-              */}
-              {salvandoProgresso && (
-                <div
-                  className={`hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium transition-colors ${
-                    salvandoProgresso === 'erro'
-                      ? 'bg-red-100 dark:bg-red-950/50 text-red-700 dark:text-red-300'
-                      : 'bg-muted text-muted-foreground'
-                  }`}
-                  title={
-                    salvandoProgresso === 'erro'
-                      ? 'A última gravação falhou. Suas respostas continuam nesta tela e a próxima tentativa é automática.'
-                      : 'Suas respostas são gravadas automaticamente. Se você cair, dá para continuar.'
-                  }
-                >
-                  <span
-                    className={`h-1.5 w-1.5 rounded-full ${
-                      salvandoProgresso === 'salvando'
-                        ? 'bg-amber-500 animate-pulse'
-                        : salvandoProgresso === 'erro'
-                          ? 'bg-red-500'
-                          : 'bg-emerald-500'
+              Antes ela terminava no meio da tela: os ícones à esquerda e um
+              vazio do tamanho de meia tela à direita, enquanto a marca (e o
+              cronômetro) iam para uma terceira linha centralizada. Três linhas
+              de cabeçalho fixo numa tela de celular são três linhas a menos de
+              enunciado — e o enunciado é a razão da tela existir. Agora os
+              controles ficam à esquerda e a marca ocupa o vazio da direita, na
+              mesma linha, que é onde ela já cabia.
+            */}
+            <div className="flex w-full sm:w-auto items-center justify-between gap-2 sm:gap-4">
+              <div className="flex items-center gap-1 sm:gap-2 min-w-0 flex-wrap">
+                {/*
+                  O selo de gravação automática.
+
+                  Ele existe para uma pessoa só: a que está com a internet
+                  oscilando e não sabe se perder a conexão custa a prova. Sem esse
+                  sinal, a resposta honesta era "não custa, mas confie" — e no
+                  meio de uma prova ninguém confia. Fica discreto enquanto tudo
+                  vai bem e fica vermelho quando a gravação falha, que é o único
+                  momento em que ele precisa ser lido.
+                */}
+                {salvandoProgresso && (
+                  <div
+                    className={`hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium transition-colors ${
+                      salvandoProgresso === 'erro'
+                        ? 'bg-red-100 dark:bg-red-950/50 text-red-700 dark:text-red-300'
+                        : 'bg-muted text-muted-foreground'
                     }`}
-                  />
-                  {salvandoProgresso === 'salvando'
-                    ? 'Salvando…'
-                    : salvandoProgresso === 'erro'
-                      ? 'Falha ao salvar'
-                      : 'Salvo'}
-                </div>
-              )}
-
-              {/* 🔥 Streak Fire Widget */}
-              {exam?.feedbackMode === 'immediate' && streak >= 3 && (
-                <div
-                  className={`streak-badge flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full select-none ${streakJustIncremented ? 'streak-pop' : ''}`}
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(251,146,60,0.15) 0%, rgba(239,68,68,0.15) 100%)',
-                    border: '1px solid rgba(251,146,60,0.35)',
-                  }}
-                >
-                  <span className="flame-icon text-base sm:text-lg leading-none">🔥</span>
-                  <span
-                    className={`font-bold tabular-nums text-orange-500 dark:text-orange-400 text-sm sm:text-base leading-none ${streakJustIncremented ? 'streak-number-in' : ''}`}
-                    style={{ textShadow: '0 0 8px rgba(251,146,60,0.6)' }}
+                    title={
+                      salvandoProgresso === 'erro'
+                        ? 'A última gravação falhou. Suas respostas continuam nesta tela e a próxima tentativa é automática.'
+                        : 'Suas respostas são gravadas automaticamente. Se você cair, dá para continuar.'
+                    }
                   >
-                    {streak}
-                  </span>
-                </div>
-              )}
-
-              {/* Timer da Questão Atual */}
-              {questionTimeRemaining !== null && questionTimerActive && (
-                <div className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-1 sm:py-2 rounded-lg font-semibold ${
-                  questionTimeRemaining <= 30
-                    ? 'bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 animate-pulse'
-                    : questionTimeRemaining <= 60
-                    ? 'bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300'
-                    : 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
-                }`}>
-                  <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
-                  <span className="text-xs sm:text-sm">
-                    {Math.floor(questionTimeRemaining / 3600) > 0 && `${Math.floor(questionTimeRemaining / 3600)}:`}
-                    {String(Math.floor((questionTimeRemaining % 3600) / 60)).padStart(2, '0')}:
-                    {String(questionTimeRemaining % 60).padStart(2, '0')}
-                  </span>
-                </div>
-              )}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowUnansweredModal(true)}
-                className="hidden md:flex h-8"
-              >
-                <AlertCircle className="h-4 w-4 mr-2" />
-                Não respondidas ({getUnansweredQuestions().length})
-              </Button>
-              {/* No mobile o botão vira ícone: sem o número ao lado, ele não
-                  contava mais quantas questões ainda faltam. */}
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setShowUnansweredModal(true)}
-                title={`Não respondidas (${getUnansweredQuestions().length})`}
-                aria-label={`Não respondidas (${getUnansweredQuestions().length})`}
-                className="md:hidden relative h-8 w-8"
-              >
-                <AlertCircle className="h-4 w-4" />
-                {getUnansweredQuestions().length > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-amber-500 text-[10px] font-bold leading-4 text-white tabular-nums">
-                    {getUnansweredQuestions().length}
-                  </span>
+                    <span
+                      className={`h-1.5 w-1.5 rounded-full ${
+                        salvandoProgresso === 'salvando'
+                          ? 'bg-amber-500 animate-pulse'
+                          : salvandoProgresso === 'erro'
+                            ? 'bg-red-500'
+                            : 'bg-emerald-500'
+                      }`}
+                    />
+                    {salvandoProgresso === 'salvando'
+                      ? 'Salvando…'
+                      : salvandoProgresso === 'erro'
+                        ? 'Falha ao salvar'
+                        : 'Salvo'}
+                  </div>
                 )}
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleDownloadExamPDF}
-                className="hidden lg:flex h-8"
-              >
-                <FileDown className="h-4 w-4 mr-2" />
-                PDF
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleDownloadExamPDF}
-                title="Baixar PDF"
-                className="lg:hidden h-8 w-8"
-              >
-                <FileDown className="h-4 w-4" />
-              </Button>
-              <div className="hidden sm:block">
+
+                {/* 🔥 Streak Fire Widget */}
+                {exam?.feedbackMode === 'immediate' && streak >= 3 && (
+                  <div
+                    className={`streak-badge flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full select-none ${streakJustIncremented ? 'streak-pop' : ''}`}
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(251,146,60,0.15) 0%, rgba(239,68,68,0.15) 100%)',
+                      border: '1px solid rgba(251,146,60,0.35)',
+                    }}
+                  >
+                    <span className="flame-icon text-base sm:text-lg leading-none">🔥</span>
+                    <span
+                      className={`font-bold tabular-nums text-orange-500 dark:text-orange-400 text-sm sm:text-base leading-none ${streakJustIncremented ? 'streak-number-in' : ''}`}
+                      style={{ textShadow: '0 0 8px rgba(251,146,60,0.6)' }}
+                    >
+                      {streak}
+                    </span>
+                  </div>
+                )}
+
+                {/* Timer da Questão Atual */}
+                {questionTimeRemaining !== null && questionTimerActive && (
+                  <div className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-1 sm:py-2 rounded-lg font-semibold ${
+                    questionTimeRemaining <= 30
+                      ? 'bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 animate-pulse'
+                      : questionTimeRemaining <= 60
+                      ? 'bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300'
+                      : 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
+                  }`}>
+                    <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
+                    <span className="text-xs sm:text-sm">
+                      {Math.floor(questionTimeRemaining / 3600) > 0 && `${Math.floor(questionTimeRemaining / 3600)}:`}
+                      {String(Math.floor((questionTimeRemaining % 3600) / 60)).padStart(2, '0')}:
+                      {String(questionTimeRemaining % 60).padStart(2, '0')}
+                    </span>
+                  </div>
+                )}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowUnansweredModal(true)}
+                  className="hidden md:flex h-8"
+                >
+                  <AlertCircle className="h-4 w-4 mr-2" />
+                  Não respondidas ({getUnansweredQuestions().length})
+                </Button>
+                {/* No mobile o botão vira ícone: sem o número ao lado, ele não
+                    contava mais quantas questões ainda faltam. */}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowUnansweredModal(true)}
+                  title={`Não respondidas (${getUnansweredQuestions().length})`}
+                  aria-label={`Não respondidas (${getUnansweredQuestions().length})`}
+                  className="md:hidden relative h-8 w-8"
+                >
+                  <AlertCircle className="h-4 w-4" />
+                  {getUnansweredQuestions().length > 0 && (
+                    <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-amber-500 text-[10px] font-bold leading-4 text-white tabular-nums">
+                      {getUnansweredQuestions().length}
+                    </span>
+                  )}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleDownloadExamPDF}
+                  className="hidden lg:flex h-8"
+                >
+                  <FileDown className="h-4 w-4 mr-2" />
+                  PDF
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleDownloadExamPDF}
+                  title="Baixar PDF"
+                  className="lg:hidden h-8 w-8"
+                >
+                  <FileDown className="h-4 w-4" />
+                </Button>
+                <ThemeToggle />
+              </div>
+
+              {/* A marca — e, quando a prova tem prazo, o cronômetro. No
+                  desktop ela fecha a linha única do cabeçalho; no celular
+                  preenche o vazio à direita dos controles, que era o espaço
+                  que sobrava justamente do tamanho dela. */}
+              <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
                 {examDeadline ? (
-                  // Sem `onTimeUp`: quem encerra a prova é a vigília lá em
-                  // cima, uma só. Este cronômetro (e o do celular, logo abaixo)
-                  // só desenha o tempo — e desenha pelo relógio do servidor.
-                  <ExamTimer endTime={examDeadline} desvioDoRelogio={desvioDoRelogio} />
+                  <>
+                    {/* No desktop a marca compacta já aparece ao lado do botão
+                        de voltar; aqui ela é só a versão do celular. */}
+                    <ExamBrandBadge compact className="sm:hidden" />
+                    {/* Sem `onTimeUp`: quem encerra a prova é a vigília lá em
+                        cima, uma só. Este cronômetro só desenha o tempo — e
+                        desenha pelo relógio do servidor. */}
+                    <ExamTimer endTime={examDeadline} desvioDoRelogio={desvioDoRelogio} />
+                  </>
                 ) : (
                   <ExamBrandBadge />
                 )}
               </div>
-              <ThemeToggle />
             </div>
-          </div>
-          {/* Cronômetro (ou, sem prazo, a marca) em linha separada no mobile */}
-          <div className="sm:hidden mt-2 flex items-center justify-center gap-2">
-            {examDeadline ? (
-              <>
-                <ExamBrandBadge compact />
-                <ExamTimer endTime={examDeadline} desvioDoRelogio={desvioDoRelogio} />
-              </>
-            ) : (
-              <ExamBrandBadge />
-            )}
           </div>
         </div>
       </header>
