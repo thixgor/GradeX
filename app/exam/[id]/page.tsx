@@ -40,6 +40,7 @@ import { ExamGateStatus } from '@/components/exam/exam-gate-status'
 import { ExamResumeCard } from '@/components/exam/exam-resume-card'
 import { AvisoProvaLiberada } from '@/components/exam/aviso-prova-liberada'
 import { ExamJaFinalizada } from '@/components/exam/exam-ja-finalizada'
+import { PitchDeVendasDaProva } from '@/components/exam/pitch-de-vendas'
 import { canDownloadExamPdf } from '@/lib/tier-limits'
 import { consumirCotaDoPlano } from '@/lib/plan-consume-client'
 import { holdScrollAt, useScrollToTopWhen } from '@/components/scroll-to-top'
@@ -3358,6 +3359,18 @@ ${respostaAluno}`
                 </Button>
               </div>
             </div>
+
+            {/*
+              O pitch de vendas fecha a tela — depois da nota, dos downloads e
+              dos botões, nunca antes. Quem acabou de entregar veio buscar o
+              resultado; o convite vem quando essa pergunta já foi respondida.
+
+              O componente decide sozinho se aparece (prova sem pitch, pitch
+              desligado ou conta que já assina não desenham nada), e o destino
+              é sempre uma seção deste site, aberta pelo roteador — sem aba
+              nova. Ver components/exam/pitch-de-vendas.tsx.
+            */}
+            <PitchDeVendasDaProva examId={id} />
           </div>
         </div>
 

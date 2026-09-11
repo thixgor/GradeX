@@ -13,6 +13,7 @@ import { jaEntrouNaProva, janelaMudou, limparEntradasDaProva } from '@/lib/prova
 import { normalizarPublico } from '@/lib/provas/publico-da-prova'
 import { normalizarEsperas, normalizarLiberacoes } from '@/lib/provas/downloads-da-prova'
 import { normalizarTravas } from '@/lib/provas/anti-cola'
+import { normalizarPitch } from '@/lib/provas/pitch-de-vendas'
 import { normalizarImagensDasQuestoes } from '@/lib/provas/normalizar-imagens'
 
 export const dynamic = 'force-dynamic'
@@ -247,6 +248,11 @@ export async function PUT(
       // resolvido para todo mundo que tem o link — inclusive para quem ainda
       // vai fazê-la numa reaplicação. Decisão de quem aplica.
       'practiceAfterEnd',
+      // O pitch de vendas do fim da prova: é uma mensagem comercial que a
+      // plataforma manda para a turma inteira, e um e-mail junto. Fica ao lado
+      // de `isHidden` pelo mesmo motivo — quem cria prova pessoal não anuncia
+      // nada para ninguém.
+      'pitchDeVendas',
     ] as const
 
     const permitidos = new Set<string>([
@@ -276,6 +282,12 @@ export async function PUT(
     }
     if ('hiddenExcept' in camposEnviados) {
       camposEnviados.hiddenExcept = normalizarExcecoes(camposEnviados.hiddenExcept)
+    }
+    // O pitch entra normalizado pelo mesmo motivo dos blocos acima: destino
+    // desconhecido é descartado (ninguém publica um botão para um 404), modelo
+    // inválido volta ao padrão e os textos entram cortados no limite.
+    if ('pitchDeVendas' in camposEnviados) {
+      camposEnviados.pitchDeVendas = normalizarPitch(camposEnviados.pitchDeVendas)
     }
     // Booleano de verdade: um "false" em texto vindo de um formulário é
     // verdadeiro em JavaScript, e liberaria o caderno resolvido sem ninguém ter

@@ -12,6 +12,7 @@ import {
   FileCheck,
   FileDown,
   Medal,
+  Megaphone,
   Play,
   Radio,
   RotateCcw,
@@ -32,6 +33,7 @@ import {
   type FaseDaProva,
 } from '@/lib/provas/janela-da-prova'
 import { normalizarPublico, rotuloDoPublico } from '@/lib/provas/publico-da-prova'
+import { pitchDaProva, pitchEstaCompleto, rotuloDoPitch } from '@/lib/provas/pitch-de-vendas'
 import type { Exam } from '@/lib/types'
 import { cn, formatDate } from '@/lib/utils'
 
@@ -82,6 +84,7 @@ export interface AcoesDaProva {
   gerarPDF: (prova: Exam) => void
   deletar: (prova: Exam) => void
   verRankingPublico: (prova: Exam) => void
+  configurarPitch: (prova: Exam) => void
 }
 
 interface CartaoDeProvaProps {
@@ -152,6 +155,10 @@ function CartaoDeProvaBase({ prova, agora, acaoEmCurso, acoes }: CartaoDeProvaPr
   const publico = normalizarPublico((prova as any).audience)
   const liberaDownloads = algumaLiberacaoLigada(normalizarLiberacoes((prova as any).freeDownloads))
   const temDiscursivas = prova.questions?.some(q => q.type === 'discursive')
+  const pitch = pitchDaProva(prova)
+  // "Ligado" aqui é ligado E completo: um pitch sem destino não aparece para
+  // aluno nenhum, e anunciá-lo na lista como ativo seria mentir para o admin.
+  const pitchLigado = pitchEstaCompleto(pitch)
   /*
    * O acompanhamento ao vivo só existe para prova com janela.
    *
@@ -227,6 +234,23 @@ function CartaoDeProvaBase({ prova, agora, acaoEmCurso, acoes }: CartaoDeProvaPr
                 >
                   <Download className="h-3 w-3" />
                   Downloads liberados
+                </span>
+              )}
+
+              {/*
+                O selo do pitch existe porque ele é a única configuração da
+                prova que fala com o aluno DEPOIS que ela acaba: sem uma marca
+                na lista, ninguém lembra em quais provas o anúncio está ligado —
+                e é justamente o tipo de coisa que fica no ar depois que a
+                campanha passou.
+              */}
+              {pitchLigado && (
+                <span
+                  className="inline-flex items-center gap-1 rounded bg-emerald-500/10 px-2 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-400"
+                  title={rotuloDoPitch(pitch)}
+                >
+                  <Megaphone className="h-3 w-3" />
+                  Pitch ligado
                 </span>
               )}
             </div>
@@ -310,6 +334,27 @@ function CartaoDeProvaBase({ prova, agora, acaoEmCurso, acoes }: CartaoDeProvaPr
                 : 'border-amber-500 text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950'
             }
           />
+
+          {/*
+            O pitch de vendas mora aqui, e não no formulário de criação, pelo
+            mesmo motivo da classificação: é uma decisão que se toma sobre uma
+            prova que já existe — normalmente depois de ver quanta gente de
+            fora fez a prova gratuita.
+          */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => acoes.configurarPitch(prova)}
+            title={rotuloDoPitch(pitch)}
+            className={
+              pitchLigado
+                ? 'border-emerald-500 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950'
+                : undefined
+            }
+          >
+            <Megaphone className="h-4 w-4 mr-2" />
+            {pitchLigado ? 'Pitch ligado' : 'Pitch de vendas'}
+          </Button>
 
           {/*
             Forçar horário só existe para prova com janela. Numa prova de treino

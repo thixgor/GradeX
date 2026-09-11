@@ -1,6 +1,7 @@
 
 import nodemailer from 'nodemailer'
-import { personalize } from '@/lib/comms/email-render'
+import { getMarketingEmailTemplate, personalize, renderEmailButton } from '@/lib/comms/email-render'
+import { partirEmNegrito } from '@/lib/provas/pitch-de-vendas'
 import { ADMIN_EMAILS } from '@/lib/constants'
 
 // Transporter compartilhado (pooled). O SMTP da Hostinger derruba conexões sob
@@ -2093,6 +2094,84 @@ export async function sendAvaliacaoLembreteEmail(input: {
     })
   } catch (err) {
     console.error('[mail] falha ao enviar lembrete de avaliação:', err)
+    throw err
+  }
+}
+
+/**
+ * A prévia do pitch de vendas, por e-mail, depois que o aluno termina a prova.
+ *
+ * ## Por que ela é PRÉVIA
+ *
+ * O pitch inteiro já está na tela que a pessoa acabou de ver. Repeti-lo aqui
+ * seria mandar por e-mail uma coisa que ela leu há um minuto — e um e-mail que
+ * entrega tudo não tem por que ser aberto depois. O que sai daqui são o título
+ * e os dois primeiros parágrafos, e o resto fica onde está: do outro lado do
+ * botão.
+ *
+ * ## O que ele diz de si mesmo
+ *
+ * O rodapé diz por que a pessoa está recebendo — porque terminou aquela prova,
+ * com o nome dela escrito. Um e-mail comercial que não explica sua própria
+ * origem é o tipo de coisa que ensina o destinatário a marcar como spam, e a
+ * caixa de entrada tem memória longa.
+ *
+ * Diferente do pitch da tela, os endereços aqui são absolutos: e-mail não tem
+ * roteador de aplicativo, e o clique precisa abrir o site. A navegação sem aba
+ * nova é uma promessa de dentro do app (ver `lib/provas/pitch-de-vendas.ts`).
+ */
+export async function sendPitchDeVendasEmail(input: {
+  email: string
+  assunto: string
+  titulo: string
+  /** Parágrafos da prévia. `**` vira negrito. */
+  paragrafos: string[]
+  chamada: string
+  /** Rota interna do destino principal (ex.: `/materiais`). */
+  destino: string
+  tituloDaProva: string
+}) {
+  const base = process.env.NEXT_PUBLIC_APP_URL || 'https://domineaqui.com.br'
+  const url = `${base}${input.destino}`
+
+  const paragrafos = input.paragrafos
+    .map(
+      (paragrafo) =>
+        `<p style="margin:0 0 18px;font-size:16px;line-height:1.65;color:#33413b;">${
+          partirEmNegrito(paragrafo)
+            .map((pedaco) =>
+              pedaco.forte
+                ? `<strong style="color:#0f3d2e;">${escapeHtml(pedaco.texto)}</strong>`
+                : escapeHtml(pedaco.texto),
+            )
+            .join('')
+        }</p>`,
+    )
+    .join('')
+
+  const content = `
+    <h1 style="margin:0 0 20px;font-size:26px;line-height:1.25;font-weight:800;color:#0f3d2e;">${escapeHtml(input.titulo)}</h1>
+    ${paragrafos}
+    ${renderEmailButton(url, escapeHtml(input.chamada))}
+    <p style="margin:28px 0 0;font-size:13px;line-height:1.6;color:#7b8a83;">
+      Você recebeu este e-mail porque concluiu a prova <strong>${escapeHtml(input.tituloDaProva)}</strong> na DomineAqui.
+    </p>
+  `
+
+  try {
+    await transporter.sendMail({
+      from: '"DomineAqui" <no-reply@domineaqui.com.br>',
+      to: input.email,
+      subject: input.assunto,
+      // O texto de prévia da caixa de entrada é o primeiro parágrafo sem
+      // marcação: sem ele, o cliente de e-mail mostra o começo do HTML.
+      html: getMarketingEmailTemplate(
+        content,
+        input.paragrafos[0]?.replace(/\*\*/g, '').slice(0, 140),
+      ),
+    })
+  } catch (err) {
+    console.error('[mail] falha ao enviar o pitch de fim de prova:', err)
     throw err
   }
 }

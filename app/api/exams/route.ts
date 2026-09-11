@@ -17,6 +17,7 @@ import { normalizarPublico, ramosDePublicoParaMongo } from '@/lib/provas/publico
 import { normalizarEsperas } from '@/lib/provas/downloads-da-prova'
 import { COLECAO_DE_PROGRESSO, contarRespondidas } from '@/lib/provas/retomada'
 import { normalizarTravas } from '@/lib/provas/anti-cola'
+import { normalizarPitch } from '@/lib/provas/pitch-de-vendas'
 import { normalizarExcecoes, provaApareceNoCatalogo, ramoDeConvidadoParaMongo } from '@/lib/provas/visibilidade-da-prova'
 import { lerPeriodoDoAluno } from '@/lib/provas/periodo-do-aluno'
 import { normalizarLiberacoes } from '@/lib/provas/downloads-da-prova'
@@ -785,6 +786,14 @@ export async function POST(request: NextRequest) {
       // admin quiser um simulado que não se copia.
       antiCola: normalizarTravas(body.antiCola),
       freeDownloads: isPersonalExam ? undefined : normalizarLiberacoes(freeDownloads),
+      /*
+       * O pitch de vendas, desligado enquanto ninguém o configura.
+       *
+       * Numa prova pessoal ele nem é gravado: a prova é do próprio aluno, e
+       * anunciar a plataforma para quem acabou de montar o próprio simulado é
+       * falar sozinho. O painel liga o pitch depois, pela lista de provas.
+       */
+      pitchDeVendas: isPersonalExam ? undefined : normalizarPitch(body.pitchDeVendas),
       // Novos campos
       groupId: groupId || null,
       isPersonalExam,

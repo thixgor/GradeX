@@ -12,8 +12,10 @@ import { ToastAlert } from '@/components/ui/toast-alert'
 import { useRelogioDaLista } from '@/hooks/use-relogio-da-lista'
 import { CartaoDeProva, type AcaoNaProva, type AcoesDaProva } from '@/components/admin/provas/cartao-de-prova'
 import { DialogoDePdf } from '@/components/admin/provas/dialogo-de-pdf'
+import { DialogoDePitch } from '@/components/admin/provas/dialogo-de-pitch'
 import { PainelAoVivo } from '@/components/admin/provas/painel-ao-vivo'
 import { nomeDoArquivoDePdf, opcaoDePdf, type FormatoDePdfDaProva } from '@/lib/provas/formatos-de-pdf'
+import { rotuloDoPitch, type PitchDeVendas } from '@/lib/provas/pitch-de-vendas'
 import { Exam } from '@/lib/types'
 import { cn } from '@/lib/utils'
 // PDF generator loaded dynamically to reduce initial bundle size
@@ -84,6 +86,14 @@ export default function AdminExamsPage() {
    * que não existe mais.
    */
   const [provaAoVivoId, setProvaAoVivoId] = useState<string | null>(null)
+  /**
+   * A prova cujo pitch está sendo configurado — e, sendo `null`, o diálogo
+   * fechado. Guardado por ID, como o painel ao vivo: salvar o pitch corrige a
+   * prova dentro do estado da lista, e um diálogo segurando uma cópia
+   * congelada continuaria mostrando a configuração anterior.
+   */
+  const [provaDoPitchId, setProvaDoPitchId] = useState<string | null>(null)
+  const [salvandoPitch, setSalvandoPitch] = useState(false)
   const [formatoEmCurso, setFormatoEmCurso] = useState<FormatoDePdfDaProva | null>(null)
   const [progressoDoPacote, setProgressoDoPacote] = useState<{ feitos: number; total: number } | null>(null)
 
@@ -609,6 +619,40 @@ export default function AdminExamsPage() {
 
   const abrirOpcoesDePdf = useCallback((prova: Exam) => setProvaParaPdf(prova), [])
 
+  /**
+   * Grava o pitch de vendas da prova.
+   *
+   * Diferente das outras chaves do cartão, esta NÃO é otimista: ocultar uma
+   * prova é um booleano que se desfaz com um clique, e o pitch é um texto
+   * inteiro que o admin acabou de escrever. Mostrá-lo como salvo antes do
+   * servidor confirmar arrisca a única coisa que não dá para refazer de
+   * cabeça — e o diálogo fica aberto, com o rascunho em mãos, quando a
+   * gravação falha.
+   */
+  const salvarPitch = useCallback(async (prova: Exam, pitch: PitchDeVendas) => {
+    const id = idDaProva(prova)
+    setSalvandoPitch(true)
+    try {
+      const res = await fetch(`/api/exams/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pitchDeVendas: pitch }),
+      })
+      if (!res.ok) {
+        const dados = await res.json().catch(() => ({}))
+        throw new Error(dados.error || 'Erro ao salvar o pitch')
+      }
+
+      aplicarNaProva(id, { pitchDeVendas: pitch })
+      setProvaDoPitchId(null)
+      showToastMessage(rotuloDoPitch(pitch), 'success')
+    } catch (error: any) {
+      showToastMessage(error.message)
+    } finally {
+      setSalvandoPitch(false)
+    }
+  }, [aplicarNaProva, showToastMessage])
+
   /*
    * As confirmações não são mais `window.confirm`.
    *
@@ -693,6 +737,7 @@ export default function AdminExamsPage() {
         aoConfirmar: () => deletarProva(prova),
       }),
     verRankingPublico: prova => router.push(`/exam/${idDaProva(prova)}/results`),
+    configurarPitch: prova => setProvaDoPitchId(idDaProva(prova)),
   }), [
     alternarClassificacao,
     alternarVisibilidade,
@@ -716,6 +761,12 @@ export default function AdminExamsPage() {
   const provaAoVivo = useMemo(
     () => (provaAoVivoId ? exams.find(e => idDaProva(e) === provaAoVivoId) ?? null : null),
     [exams, provaAoVivoId],
+  )
+
+  /** A prova do diálogo de pitch, pelo mesmo motivo de `provaAoVivo`. */
+  const provaDoPitch = useMemo(
+    () => (provaDoPitchId ? exams.find(e => idDaProva(e) === provaDoPitchId) ?? null : null),
+    [exams, provaDoPitchId],
   )
 
   const q = search.trim().toLowerCase()
@@ -990,6 +1041,14 @@ export default function AdminExamsPage() {
 
       {/* Acompanhamento ao vivo — ver components/admin/provas/painel-ao-vivo.tsx */}
       <PainelAoVivo prova={provaAoVivo} onFechar={() => setProvaAoVivoId(null)} />
+
+      {/* O pitch de fim de prova — ver components/admin/provas/dialogo-de-pitch.tsx */}
+      <DialogoDePitch
+        prova={provaDoPitch}
+        salvando={salvandoPitch}
+        onSalvar={salvarPitch}
+        onFechar={() => setProvaDoPitchId(null)}
+      />
 
       {/* Escolha do formato do PDF — ver components/admin/provas/dialogo-de-pdf.tsx */}
       <DialogoDePdf

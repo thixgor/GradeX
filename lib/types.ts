@@ -245,6 +245,14 @@ export interface Exam {
     impressao?: boolean
     menu?: boolean
   }
+  /**
+   * O pitch de vendas que a tela mostra quando o aluno termina a prova.
+   *
+   * Nasce desligado. Cada destino é uma SEÇÃO deste site (rota interna), nunca
+   * um link externo: a navegação acontece dentro do aplicativo, sem abrir aba.
+   * Ver `lib/provas/pitch-de-vendas.ts`.
+   */
+  pitchDeVendas?: import('./provas/pitch-de-vendas').PitchDeVendas
   aiQuestionsCount?: number // Quantidade de questões geradas por IA nesta prova (para controle de limites)
   feedbackMode?: 'end' | 'immediate' // Modo de feedback para provas pessoais: 'end' (ao final) ou 'immediate' (imediato)
   createdAt: Date
@@ -341,6 +349,15 @@ export interface ExamSubmission {
   submittedAfterEnd?: boolean
   /** Quanto tempo depois do término a entrega chegou, em milissegundos. */
   submissionDelayMs?: number
+  /**
+   * Quando o e-mail do pitch de vendas saiu para esta pessoa.
+   *
+   * É a trava de envio único, e ela mora na entrega de propósito: a tela de
+   * fim de prova pode ser remontada (recarregar, voltar, o efeito duplo do
+   * modo estrito do React), e sem um registro a pessoa receberia o mesmo
+   * e-mail três vezes. Ver `app/api/exams/[id]/pitch/email/route.ts`.
+   */
+  pitchEmailEnviadoEm?: Date
   /**
    * A nota foi removida desta cópia porque a prova ainda não terminou.
    *
