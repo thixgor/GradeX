@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowRight, Mail, Sparkles } from 'lucide-react'
+import { ArrowRight, Mail, Sparkles, X } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
+import { BarraInferior } from '@/components/ui/barra-inferior'
 import {
   ehDestinoInterno,
   partirEmNegrito,
@@ -22,6 +23,28 @@ import { cn } from '@/lib/utils'
  * dia, e a plataforma se despedia dela sem dizer nada. Este cartão é o que
  * passa a ser dito — e o conteúdo dele é decidido por quem aplica a prova, em
  * `/admin/exams`.
+ *
+ * ## Onde ele fica, e por que mudou de lugar
+ *
+ * Na primeira versão o cartão fechava a tela, depois de tudo. A intenção era
+ * educada — responder primeiro o que a pessoa veio buscar — e a aritmética
+ * era outra: entre a nota e o fim da página existe o gabarito comentado, que
+ * numa prova de sessenta questões são várias telas de rolagem. O convite
+ * ficava a seis arrastadas de distância de qualquer olho. **Convite que
+ * ninguém vê não é discreto, é inexistente.**
+ *
+ * Agora ele entra logo depois do resultado e antes do gabarito: a pergunta
+ * "quanto eu fiz?" já foi respondida, e a pessoa está exatamente no segundo em
+ * que decide o que fazer a seguir. Nada do que vem antes dele foi empurrado
+ * para baixo — o que vem depois é revisão, que quem quer revisar procura.
+ *
+ * ## Por que ele não é verde
+ *
+ * A tela inteira do fim de prova é verde: o selo de entregue, o anel da nota,
+ * os cartões de acerto. Um cartão verde no meio disso é mais do mesmo — o olho
+ * passa por cima porque já catalogou aquela cor como "confirmação". O âmbar é
+ * a cor de AÇÃO da marca (a mesma do botão dos e-mails), e é o que separa "deu
+ * tudo certo" de "tem uma coisa aqui para você".
  *
  * ## A regra do destino
  *
@@ -47,9 +70,7 @@ import { cn } from '@/lib/utils'
  *
  * Enquanto a resposta não chega, e sempre que ela vier vazia: prova sem pitch,
  * pitch desligado, pitch sem destino, ou uma conta que já assina. Um cartão de
- * esqueleto para um convite que talvez nem exista seria pior do que o silêncio
- * — e a chegada um instante depois do resultado é, de propósito, a ordem certa
- * da conversa: primeiro a nota que a pessoa veio buscar, depois o convite.
+ * esqueleto para um convite que talvez nem exista seria pior do que o silêncio.
  */
 
 interface PitchDeVendasDaProvaProps {
@@ -60,6 +81,23 @@ interface PitchDeVendasDaProvaProps {
 interface RespostaDoPitch {
   pitch: PitchMontado | null
   email?: boolean
+}
+
+/** Um parágrafo do pitch, com os trechos entre `**` em negrito. */
+function Paragrafo({ texto, className }: { texto: string; className?: string }) {
+  return (
+    <p className={className}>
+      {partirEmNegrito(texto).map((pedaco, posicao) =>
+        pedaco.forte ? (
+          <strong key={posicao} className="font-semibold text-foreground">
+            {pedaco.texto}
+          </strong>
+        ) : (
+          <span key={posicao}>{pedaco.texto}</span>
+        ),
+      )}
+    </p>
+  )
 }
 
 export function PitchDeVendasDaProva({ examId, className }: PitchDeVendasDaProvaProps) {
@@ -75,6 +113,15 @@ export function PitchDeVendasDaProva({ examId, className }: PitchDeVendasDaProva
    */
   const [emailSaiu, setEmailSaiu] = useState(false)
   /**
+   * O cartão saiu da tela? É o gatilho da barra de rodapé.
+   *
+   * Começa `false` — antes de o observador falar pela primeira vez, o cartão
+   * está por definição onde acabou de ser desenhado, e uma barra piscando no
+   * rodapé no instante em que o pitch chega seria a interrupção que ele não é.
+   */
+  const [foraDeVista, setForaDeVista] = useState(false)
+  const [barraDispensada, setBarraDispensada] = useState(false)
+  /**
    * O e-mail é pedido uma vez por montagem, no máximo.
    *
    * A trava de verdade é do servidor (`pitchEmailEnviadoEm` na entrega); esta
@@ -82,6 +129,7 @@ export function PitchDeVendasDaProva({ examId, className }: PitchDeVendasDaProva
    * desenvolvimento, que monta cada efeito duas vezes.
    */
   const emailPedido = useRef(false)
+  const cartaoRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     if (!examId) return
@@ -118,6 +166,37 @@ export function PitchDeVendasDaProva({ examId, className }: PitchDeVendasDaProva
     }
   }, [examId])
 
+  /*
+   * A barra do rodapé é acionada pelo próprio cartão, e não pela rolagem.
+   *
+   * Ler `scrollY` exigiria escolher um número ("depois de 600px") que estaria
+   * errado em metade das provas — a altura do que vem antes do gabarito muda
+   * com o tipo de prova, com a nota presa, com as discursivas pendentes. O
+   * observador pergunta a coisa certa: o convite ainda está onde a pessoa
+   * consegue vê-lo? Quando a página é curta o bastante para o cartão nunca
+   * sair da tela, a barra nunca aparece — sem nenhuma regra a mais.
+   */
+  useEffect(() => {
+    const cartao = cartaoRef.current
+    if (!cartao || typeof IntersectionObserver === 'undefined') return
+
+    const observador = new IntersectionObserver(
+      ([entrada]) => setForaDeVista(!entrada.isIntersecting),
+      /*
+        A margem negativa no topo sobe o gatilho: a barra entra quando sobra
+        só uma tira do cartão encostada no topo da tela, e não quando ele
+        desaparece por completo. Esperar o sumiço total abre um intervalo de
+        algumas centenas de pixels em que nem o cartão nem a barra chamam —
+        que é exatamente o buraco que esta barra existe para tapar.
+      */
+      { rootMargin: '-80px 0px 0px 0px' },
+    )
+    observador.observe(cartao)
+    return () => observador.disconnect()
+  }, [pitch])
+
+  const irPara = useCallback((href: string) => router.push(href), [router])
+
   if (!pitch) return null
 
   const destinos = pitch.destinos.filter((destino) => ehDestinoInterno(destino.href))
@@ -125,90 +204,148 @@ export function PitchDeVendasDaProva({ examId, className }: PitchDeVendasDaProva
 
   const principal = destinos[0]
   const secundarios = destinos.slice(1)
+  const chamada = pitch.chamada || `Ver ${principal.rotulo}`
 
   return (
-    <div
-      className={cn(
-        'exam-resultado-entra relative overflow-hidden rounded-2xl border border-emerald-500/25',
-        'bg-gradient-to-br from-emerald-500/10 via-background/60 to-teal-500/5 p-6 sm:p-8 backdrop-blur-md shadow-lg',
-        className,
-      )}
-    >
-      <div className="pointer-events-none absolute -top-16 -right-16 h-48 w-48 rounded-full bg-emerald-500/10 blur-2xl" />
-
-      <div className="relative space-y-4">
-        {pitch.selo && (
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-300">
-            <Sparkles className="h-3 w-3" />
-            {pitch.selo}
-          </span>
+    <>
+      <div
+        ref={cartaoRef}
+        className={cn(
+          'exam-resultado-entra relative overflow-hidden rounded-2xl shadow-lg',
+          // Âmbar, não verde: ver o cabeçalho. A borda mais forte e a barra do
+          // topo são o que separa este bloco dos cartões de resultado, que são
+          // todos `border-border/50`.
+          'border border-amber-500/40 bg-gradient-to-br from-amber-500/10 via-background/70 to-orange-500/5 backdrop-blur-md',
+          className,
         )}
+        style={{ '--exam-ordem': 0 } as React.CSSProperties}
+      >
+        <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-amber-500 to-orange-400" />
+        <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-amber-500/10 blur-2xl" />
 
-        {pitch.titulo && (
-          <h2 className="text-2xl sm:text-3xl font-bold leading-tight tracking-tight text-foreground">
-            {pitch.titulo}
-          </h2>
-        )}
+        <div className="relative space-y-4 p-6 sm:p-8">
+          {pitch.selo && (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-amber-700 dark:text-amber-300">
+              <Sparkles className="h-3 w-3" />
+              {pitch.selo}
+            </span>
+          )}
 
-        <div className="space-y-3">
-          {pitch.paragrafos.map((paragrafo, indice) => (
-            <p key={indice} className="text-[15px] leading-relaxed text-muted-foreground">
-              {partirEmNegrito(paragrafo).map((pedaco, posicao) =>
-                pedaco.forte ? (
-                  <strong key={posicao} className="font-semibold text-foreground">
-                    {pedaco.texto}
-                  </strong>
-                ) : (
-                  <span key={posicao}>{pedaco.texto}</span>
-                ),
-              )}
+          {pitch.titulo && (
+            <h2 className="text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-[1.75rem]">
+              {pitch.titulo}
+            </h2>
+          )}
+
+          <div className="space-y-3">
+            {pitch.paragrafos.map((paragrafo, indice) => (
+              <Paragrafo
+                key={indice}
+                texto={paragrafo}
+                className={cn(
+                  'leading-relaxed text-muted-foreground',
+                  // O primeiro parágrafo carrega o argumento e é o único que
+                  // muita gente vai ler inteiro. Os outros entram um ponto
+                  // menores, para a leitura ter um começo óbvio.
+                  indice === 0 ? 'text-base sm:text-[17px]' : 'text-[15px]',
+                )}
+              />
+            ))}
+          </div>
+
+          <div className="flex flex-col gap-2 pt-1 sm:flex-row sm:flex-wrap sm:items-center">
+            <Button
+              size="lg"
+              /*
+                Sem `exam-botao-chama` (o halo pulsante da tela de início): o
+                halo é verde fixo no CSS, e essa classe é do botão que a pessoa
+                está ESPERANDO — "Iniciar Prova Agora". Pulsar um convite de
+                venda é o gesto que faz o convite parecer anúncio.
+              */
+              className="w-full rounded-xl bg-amber-500 font-semibold text-amber-950 shadow-md shadow-amber-500/20 hover:bg-amber-400 sm:w-auto"
+              // `router.push`, nunca `window.open`: dentro do aplicativo, abrir
+              // aba tira a pessoa de onde ela está. Ver o cabeçalho.
+              onClick={() => irPara(principal.href)}
+            >
+              {chamada}
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+
+            {secundarios.map((destino) => (
+              <Button
+                key={destino.chave}
+                size="lg"
+                variant="outline"
+                className="w-full rounded-xl border-amber-500/30 sm:w-auto"
+                onClick={() => irPara(destino.href)}
+                title={destino.descricao}
+              >
+                {destino.rotulo}
+              </Button>
+            ))}
+          </div>
+
+          {secundarios.length === 0 && (
+            <p className="text-xs text-muted-foreground/80">{principal.descricao}</p>
+          )}
+
+          {/*
+            O aviso do e-mail é aviso, não argumento — daí o tamanho e o tom.
+            Dizer que a mensagem saiu, no instante em que ela sai, é a diferença
+            entre um e-mail esperado e um e-mail que aparece do nada na caixa de
+            entrada duas horas depois.
+          */}
+          {emailSaiu && (
+            <p className="flex items-center gap-1.5 pt-1 text-xs text-muted-foreground">
+              <Mail className="h-3.5 w-3.5 flex-shrink-0" />
+              Mandamos um resumo disto para o e-mail da sua conta.
             </p>
-          ))}
+          )}
         </div>
+      </div>
 
-        <div className="flex flex-col gap-2 pt-1 sm:flex-row sm:flex-wrap sm:items-center">
+      {/*
+        A segunda chance, para quem desceu o gabarito inteiro.
+
+        Ela não é uma repetição do cartão: é só a ação, numa faixa de uma linha,
+        e some no X. Quem leu as sessenta questões comentadas é a pessoa mais
+        interessada que esta tela vai ter — e é justamente ela que, ao terminar
+        a leitura, está a seis telas de distância do convite.
+
+        `BarraInferior` publica a própria altura em `--gx-barra-inferior-h`, e é
+        assim que o chat de suporte e os botões flutuantes sobem junto em vez de
+        ficar por baixo. Ver components/ui/barra-inferior.tsx.
+      */}
+      {foraDeVista && !barraDispensada && (
+        <BarraInferior>
+          <div className="hidden min-w-0 flex-1 sm:block">
+            <p className="truncate text-sm font-semibold text-foreground">{pitch.titulo}</p>
+            {pitch.paragrafos[0] && (
+              <p className="truncate text-xs text-muted-foreground">
+                {pitch.paragrafos[0].replace(/\*\*/g, '')}
+              </p>
+            )}
+          </div>
+
           <Button
-            size="lg"
-            className="rounded-xl bg-emerald-600 text-white hover:bg-emerald-500 sm:w-auto"
-            // `router.push`, nunca `window.open`: dentro do aplicativo, abrir
-            // aba tira a pessoa de onde ela está. Ver o cabeçalho.
-            onClick={() => router.push(principal.href)}
+            className="flex-1 rounded-xl bg-amber-500 font-semibold text-amber-950 hover:bg-amber-400 sm:flex-none"
+            onClick={() => irPara(principal.href)}
           >
-            {pitch.chamada || `Ver ${principal.rotulo}`}
+            {chamada}
             <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
 
-          {secundarios.map((destino) => (
-            <Button
-              key={destino.chave}
-              size="lg"
-              variant="outline"
-              className="rounded-xl border-emerald-500/30 sm:w-auto"
-              onClick={() => router.push(destino.href)}
-              title={destino.descricao}
-            >
-              {destino.rotulo}
-            </Button>
-          ))}
-        </div>
-
-        {secundarios.length === 0 && (
-          <p className="text-xs text-muted-foreground/80">{principal.descricao}</p>
-        )}
-
-        {/*
-          O aviso do e-mail é aviso, não argumento — daí o tamanho e o tom.
-          Dizer que a mensagem saiu, no instante em que ela sai, é a diferença
-          entre um e-mail esperado e um e-mail que aparece do nada na caixa de
-          entrada duas horas depois.
-        */}
-        {emailSaiu && (
-          <p className="flex items-center gap-1.5 pt-1 text-xs text-muted-foreground">
-            <Mail className="h-3.5 w-3.5 flex-shrink-0" />
-            Mandamos um resumo disto para o e-mail da sua conta.
-          </p>
-        )}
-      </div>
-    </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="flex-shrink-0 text-muted-foreground"
+            aria-label="Dispensar"
+            onClick={() => setBarraDispensada(true)}
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </BarraInferior>
+      )}
+    </>
   )
 }

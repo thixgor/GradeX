@@ -2609,7 +2609,18 @@ ${respostaAluno}`
       <>
         {proctoringModal}
         <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30">
-          <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
+          {/*
+            A folga do rodapé acompanha a barra fixa do pitch.
+
+            `--gx-barra-inferior-h` é publicada por `BarraInferior` enquanto ela
+            está na tela (e vale 0px quando não está). Sem somar essa altura
+            aqui, a barra cobriria os últimos botões da tela — justamente
+            "Voltar para Início", que é a saída de quem NÃO quer o convite.
+          */}
+          <div
+            className="max-w-5xl mx-auto px-4 py-8 space-y-8"
+            style={{ paddingBottom: 'calc(2rem + var(--gx-barra-inferior-h, 0px))' }}
+          >
 
             {/* ═══ HEADER ═══ */}
             <div className="text-center space-y-5 py-8">
@@ -2887,6 +2898,26 @@ ${respostaAluno}`
                 </div>
               </div>
             )}
+
+            {/*
+              ═══ PITCH DE VENDAS ═══
+
+              Depois do resultado, antes do gabarito.
+
+              Ele fechava a tela, no fim de tudo. A intenção era educada — não
+              interromper quem veio buscar a nota — mas o gabarito comentado
+              que fica entre as duas coisas são várias telas de rolagem numa
+              prova de sessenta questões, e o convite acabava a seis arrastadas
+              de qualquer olho. Aqui a pergunta "quanto eu fiz?" já está
+              respondida e a revisão, que é longa e que quem quer revisar
+              procura, continua logo abaixo.
+
+              O componente decide sozinho se aparece (prova sem pitch, pitch
+              desligado ou conta que já assina não desenham nada), e o destino
+              é sempre uma seção deste site, aberta pelo roteador — sem aba
+              nova. Ver components/exam/pitch-de-vendas.tsx.
+            */}
+            <PitchDeVendasDaProva examId={id} />
 
             {/* ═══ GABARITO COMPLETO ═══ */}
             {isPracticeOrPersonal && (
@@ -3359,18 +3390,6 @@ ${respostaAluno}`
                 </Button>
               </div>
             </div>
-
-            {/*
-              O pitch de vendas fecha a tela — depois da nota, dos downloads e
-              dos botões, nunca antes. Quem acabou de entregar veio buscar o
-              resultado; o convite vem quando essa pergunta já foi respondida.
-
-              O componente decide sozinho se aparece (prova sem pitch, pitch
-              desligado ou conta que já assina não desenham nada), e o destino
-              é sempre uma seção deste site, aberta pelo roteador — sem aba
-              nova. Ver components/exam/pitch-de-vendas.tsx.
-            */}
-            <PitchDeVendasDaProva examId={id} />
           </div>
         </div>
 
