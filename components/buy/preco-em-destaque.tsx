@@ -15,6 +15,12 @@ import { formatarBRL, linhaDeApoio, type PrecoApresentado } from '@/lib/buy/pric
  * apoio. Eram quatro linhas de texto embaixo do número, e num bloco de preço a
  * quarta linha já não é argumento, é ruído.
  *
+ * O DESCONTO É UM SELO, NÃO UM PARÁGRAFO. `descontoPercentual` já existia em
+ * `apresentarPreco` e nunca tinha chegado à tela: a economia aparecia só como
+ * texto cinza de 13px no fim do bloco, do mesmo peso do resto. É o número mais
+ * recompensador daqui — ele agora encosta no preço, em pastilha, e a economia
+ * em reais vira etiqueta verde em vez de mais uma linha de rodapé.
+ *
  * `escala`:
  *   'painel'   — o preço principal da oferta;
  *   'compacto' — o mesmo bloco onde o espaço é curto (aviso de plano ativo,
@@ -38,6 +44,7 @@ export function PrecoEmDestaque({
   className?: string
 }) {
   const compacto = escala === 'compacto'
+  const temDesconto = preco.descontoPercentual !== null && preco.descontoPercentual > 0
   const apoio =
     preco.diario !== null
       ? `${linhaDeApoio(preco)} Dá R$ ${formatarBRL(preco.diario)} por dia.`
@@ -60,6 +67,19 @@ export function PrecoEmDestaque({
         <span className="font-clinical text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
           {preco.chamada.unidade === 'unico' ? 'pagamento único' : 'por mês'}
         </span>
+        {/* O selo é derivado do mesmo par preço/preço "de" que a linha de
+            economia logo abaixo — não é um número novo, é o mesmo desconto
+            dito na unidade que se lê de relance. */}
+        {temDesconto && (
+          <span
+            className={cn(
+              'buy-selo inline-flex items-center rounded-lg bg-secondary px-2 py-1 font-black leading-none tabular-nums text-secondary-foreground shadow-sm shadow-secondary/30',
+              compacto ? 'text-[11px]' : 'text-xs sm:text-sm'
+            )}
+          >
+            −{preco.descontoPercentual}%
+          </span>
+        )}
       </p>
 
       <p
@@ -74,15 +94,19 @@ export function PrecoEmDestaque({
       {preco.ancora !== null && preco.economia !== null && (
         <p
           className={cn(
-            'mt-1.5 leading-snug text-muted-foreground',
+            'mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 leading-snug text-muted-foreground',
             compacto ? 'text-[11px]' : 'text-[13px] sm:text-sm'
           )}
         >
           De <s className="tabular-nums">R$ {formatarBRL(preco.ancora)}</s>
-          {' · '}
-          <strong className="font-semibold tabular-nums text-secondary">
-            economia de R$ {formatarBRL(preco.economia)}
-          </strong>
+          <span
+            className={cn(
+              'inline-flex items-center rounded-full bg-emerald-500/15 font-bold tabular-nums text-emerald-700 ring-1 ring-emerald-600/25 dark:text-emerald-300 dark:ring-emerald-400/30',
+              compacto ? 'px-2 py-0.5' : 'px-2.5 py-1'
+            )}
+          >
+            você economiza R$ {formatarBRL(preco.economia)}
+          </span>
         </p>
       )}
     </div>

@@ -989,10 +989,18 @@ function SubscriptionCheckout({
         </div>
       )}
 
+      {/* Mesmo tratamento do CTA de /buy (`.buy-cta`, globals.css): é o último
+          botão do funil e não podia continuar sendo o retângulo mais apagado
+          da tela justo onde o dinheiro sai. O halo só pulsa quando o botão
+          está habilitado — piscar num botão que não recebe clique é promessa
+          falsa. */}
       <button
         type="submit"
         disabled={!podeEnviar}
-        className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-secondary px-5 py-4 text-[15px] font-bold text-secondary-foreground shadow-sm transition hover:bg-secondary/90 disabled:cursor-not-allowed disabled:opacity-60"
+        className={cn(
+          'buy-cta inline-flex w-full items-center justify-center gap-2 rounded-2xl px-5 py-4 text-[15px] font-extrabold text-secondary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-60',
+          podeEnviar && 'buy-cta-halo'
+        )}
       >
         {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
         Ativar assinatura — {formatBrl(cobranca.totalAmount)}/{cicloCurto}

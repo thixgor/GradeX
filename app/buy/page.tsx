@@ -450,8 +450,17 @@ function Abertura() {
   )
 }
 
+/**
+ * O CTA. A cor, o gradiente, a varredura de brilho, o halo e o hover moram na
+ * classe `.buy-cta` (globals.css) — aqui ficam só forma e tipografia.
+ *
+ * Nada de `opacity` no texto que vive em cima dele: branco sobre `--secondary`
+ * já é o piso de contraste da página, e baixar a opacidade da linha de apoio
+ * (era `opacity-85` na barra fixa) derrubava o subtítulo do botão abaixo de
+ * qualquer leitura ao sol.
+ */
 const BOTAO_PRIMARIO =
-  'inline-flex items-center justify-center gap-2 rounded-xl bg-secondary px-5 py-3 text-sm font-bold text-secondary-foreground shadow-md shadow-secondary/25 transition hover:bg-secondary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.98] disabled:pointer-events-none disabled:opacity-60'
+  'buy-cta inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-bold text-secondary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-60'
 
 /* ─────────────────────────── Seletor ─────────────────────────── */
 
@@ -517,8 +526,8 @@ function SeletorDePlanos({
               'group relative w-[62vw] shrink-0 snap-start rounded-xl border px-3.5 py-3 text-left transition sm:w-auto',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
               ativo
-                ? 'border-secondary bg-secondary/10 shadow-sm ring-1 ring-secondary/25'
-                : 'border-border bg-card hover:border-secondary/40 hover:bg-muted/40'
+                ? 'border-secondary bg-secondary/[0.14] shadow-md shadow-secondary/20 ring-2 ring-secondary/30'
+                : 'border-border bg-card hover:-translate-y-0.5 hover:border-secondary/45 hover:bg-muted/40 hover:shadow-sm'
             )}
           >
             <span className="flex items-center gap-2">
@@ -540,8 +549,15 @@ function SeletorDePlanos({
             <span className="mt-1 block truncate text-sm font-bold text-foreground">
               {plano.name}
             </span>
-            <span className="mt-0.5 block font-clinical text-[13px] font-semibold tabular-nums text-muted-foreground">
-              {rotuloCurtoDePreco(plano.preco)}
+            <span className="mt-0.5 flex items-center gap-1.5 font-clinical text-[13px] font-semibold tabular-nums text-muted-foreground">
+              <span className="truncate">{rotuloCurtoDePreco(plano.preco)}</span>
+              {/* O percentual só existe quando o admin cadastrou preço "de":
+                  ele é o que faz a aba certa saltar entre as outras. */}
+              {plano.preco.descontoPercentual !== null && plano.preco.descontoPercentual > 0 && (
+                <span className="shrink-0 rounded bg-emerald-500/15 px-1.5 py-px text-[10px] font-black tracking-tight text-emerald-700 dark:text-emerald-300">
+                  −{plano.preco.descontoPercentual}%
+                </span>
+              )}
             </span>
           </button>
         )
@@ -660,21 +676,40 @@ function PainelDaOferta({
             </p>
           )}
 
+          {/* Duas linhas dentro do mesmo botão: a promessa em cima, o dinheiro
+              embaixo. Quem chega rolando do celular decide sem ter que subir a
+              vista até o bloco de preço de novo. */}
           <button
             type="button"
             onClick={onComprar}
             disabled={comprando}
-            className={cn(BOTAO_PRIMARIO, 'mt-5 w-full py-4 text-base')}
+            className={cn(
+              BOTAO_PRIMARIO,
+              'buy-cta-halo mt-5 w-full flex-col gap-0.5 rounded-2xl px-4 py-3.5'
+            )}
           >
-            {comprando ? 'Abrindo checkout…' : 'Assinar agora'}
-            {!comprando && <ChevronRight className="h-4 w-4" />}
+            <span className="flex items-center gap-2 text-[17px] font-extrabold tracking-tight">
+              {comprando ? 'Abrindo checkout…' : 'Quero garantir meu acesso'}
+              {!comprando && <ChevronRight className="buy-cta-seta h-5 w-5" aria-hidden />}
+            </span>
+            {!comprando && (
+              <span className="text-[11px] font-bold uppercase tracking-[0.08em]">
+                {rotuloCurtoDePreco(preco)} · acesso na hora
+              </span>
+            )}
           </button>
 
           <ProuniCta itemType="plus" itemId={plano.id} className="mt-3" />
 
-          <p className="mt-3 flex items-start gap-2 text-[12px] font-semibold leading-snug text-primary">
+          {/* A garantia deixou de ser uma linha solta embaixo do botão: virou
+              caixa, porque é ela que responde ao último medo antes do clique e
+              precisa ter peso próprio ao lado de um CTA que agora brilha. */}
+          <p className="mt-3 flex items-start gap-2 rounded-xl border border-primary/25 bg-primary/[0.07] px-3 py-2.5 text-[12px] font-semibold leading-snug text-primary">
             <Undo2 className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
-            7 dias para testar. Não serviu, devolvemos 100%.
+            <span>
+              <strong className="font-extrabold">7 dias para testar.</strong> Não serviu,
+              devolvemos 100% — sem justificar nada.
+            </span>
           </p>
 
           {/* Duas linhas, não cinco: o que sai do bolso e o que acontece
@@ -1052,19 +1087,24 @@ function BarraFixa({
         type="button"
         onClick={onComprar}
         disabled={comprando}
-        className="mx-auto flex w-full max-w-5xl items-center justify-between gap-3 rounded-xl bg-secondary px-4 py-3.5 text-left text-secondary-foreground shadow-lg shadow-secondary/25 transition active:scale-[0.99] disabled:opacity-60"
+        className="buy-cta buy-cta-halo mx-auto flex w-full max-w-5xl items-center justify-between gap-3 rounded-2xl px-4 py-3.5 text-left text-secondary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-60"
       >
         <span className="min-w-0">
-          <span className="block truncate text-[10px] font-black uppercase tracking-wide opacity-85">
+          <span className="block truncate text-[10px] font-black uppercase tracking-[0.08em]">
             {plano.name}
           </span>
-          <span className="block truncate text-base font-bold tabular-nums">
+          <span className="flex items-baseline gap-1.5 truncate text-base font-extrabold tabular-nums">
             {rotuloCurtoDePreco(preco)}
+            {preco.descontoPercentual !== null && preco.descontoPercentual > 0 && (
+              <span className="shrink-0 rounded bg-white/20 px-1.5 py-px text-[10px] font-black tabular-nums">
+                −{preco.descontoPercentual}%
+              </span>
+            )}
           </span>
         </span>
-        <span className="inline-flex shrink-0 items-center gap-1 text-sm font-bold">
-          {comprando ? 'Abrindo…' : 'Assinar'}
-          {!comprando && <ChevronRight className="h-4 w-4" />}
+        <span className="inline-flex shrink-0 items-center gap-1 rounded-xl bg-white/15 px-3 py-2 text-sm font-extrabold">
+          {comprando ? 'Abrindo…' : 'Assinar agora'}
+          {!comprando && <ChevronRight className="buy-cta-seta h-4 w-4" aria-hidden />}
         </span>
       </button>
     </div>

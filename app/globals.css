@@ -6521,6 +6521,176 @@ body.has-guest-notice {
   }
 }
 
+/* ============================================
+   /buy — o botão de compra
+   --------------------------------------------
+   Hallmark · macrostructure: Ledger · genre: editorial · tone: editorial-direto
+   accent hue: warm (secondary #CE5929) · enrichment: gradient + sweep
+   pre-emit critique: P5 H5 E5 S5 R5 V5
+   --------------------------------------------
+   O botão era um retângulo chapado de `bg-secondary`, do mesmo peso visual do
+   "Ver os outros 5 itens" logo ao lado. Numa página de venda o CTA não pode
+   empatar com os controles de apoio: ele precisa ser a única coisa da tela que
+   se move e que brilha.
+
+   Três camadas, nesta ordem de leitura:
+     1. BRASA — o preenchimento deixa de ser cor lisa e vira um gradiente que
+        escurece na diagonal, como metal quente. Dá volume sem sombra falsa.
+     2. VARREDURA — um brilho atravessa o botão a cada ~5s (≈1s de trajeto,
+        4s parado). É o único movimento cíclico da página; mais que isso vira
+        letreiro de casa de câmbio.
+     3. HALO — um `drop-shadow` que respira, na cor do próprio botão. Fica
+        fora do `overflow: hidden` porque é filtro, não caixa.
+
+   CONTRASTE — a parada dominante do gradiente é `--secondary` puro, exatamente
+   a cor que o botão já tinha; a segunda parada é MAIS ESCURA. O texto branco
+   nunca fica sobre nada mais claro do que ficava antes desta mudança, em
+   nenhum dos dois temas. Não trocar a brasa por um tom mais claro "para
+   chamar mais" — o que chama aqui é o halo e a varredura, não o fundo.
+
+   `prefers-reduced-motion` desliga varredura e halo e mantém gradiente, sombra
+   e as transições de hover/press: o botão continua sendo o elemento mais
+   pesado da tela sem nada piscando. */
+.buy-cta {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  /* A brasa: o fim escuro do gradiente. Um tom por tema, porque o
+     `--secondary` do escuro já nasce mais claro. */
+  --buy-cta-brasa: 10 62% 40%;
+  background-color: hsl(var(--secondary));
+  background-image: linear-gradient(
+    138deg,
+    hsl(var(--secondary)) 0%,
+    hsl(var(--secondary)) 38%,
+    hsl(var(--buy-cta-brasa)) 100%
+  );
+  box-shadow:
+    0 10px 26px -12px hsl(var(--secondary) / 0.85),
+    inset 0 1px 0 hsl(0 0% 100% / 0.22);
+  transition:
+    transform 0.18s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.24s ease;
+}
+
+.dark .buy-cta {
+  --buy-cta-brasa: 10 58% 42%;
+}
+
+.buy-cta:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 18px 34px -14px hsl(var(--secondary) / 0.95),
+    inset 0 1px 0 hsl(0 0% 100% / 0.28);
+}
+
+.buy-cta:active {
+  transform: translateY(0) scale(0.985);
+  box-shadow:
+    0 6px 16px -10px hsl(var(--secondary) / 0.8),
+    inset 0 1px 0 hsl(0 0% 100% / 0.18);
+}
+
+/* A varredura. `z-index: -1` a coloca ACIMA do fundo e ABAIXO do texto sem
+   precisar empilhar nada no conteúdo — o `isolation: isolate` garante que ela
+   não escape para trás do cartão. */
+.buy-cta::after {
+  content: '';
+  position: absolute;
+  inset: -30% -10%;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    transparent 38%,
+    hsl(0 0% 100% / 0.34) 50%,
+    transparent 62%
+  );
+  transform: translateX(-130%);
+  animation: buy-cta-sweep 5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes buy-cta-sweep {
+  0%,
+  62% {
+    transform: translateX(-130%);
+  }
+  86%,
+  100% {
+    transform: translateX(130%);
+  }
+}
+
+/* Só o CTA principal e a barra fixa respiram. As chamadas secundárias herdam
+   o gradiente e a varredura, mas não o halo — dois halos na mesma tela e
+   nenhum deles significa nada. */
+.buy-cta-halo {
+  animation: buy-cta-halo 3.2s ease-in-out infinite;
+}
+
+@keyframes buy-cta-halo {
+  0%,
+  100% {
+    filter: drop-shadow(0 2px 6px hsl(var(--secondary) / 0.22));
+  }
+  50% {
+    filter: drop-shadow(0 5px 16px hsl(var(--secondary) / 0.5));
+  }
+}
+
+/* A seta anda quando o ponteiro chega. É a diferença entre um ícone e uma
+   promessa de direção. */
+.buy-cta-seta {
+  transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.buy-cta:hover .buy-cta-seta {
+  transform: translateX(3px);
+}
+
+/* O selo de desconto. Entra girando de leve uma vez e para — o percentual é a
+   informação mais recompensadora do bloco de preço e precisa ser a primeira
+   coisa que o olho encontra depois do número. */
+@keyframes buy-selo-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.7) rotate(-8deg);
+  }
+  60% {
+    transform: scale(1.06) rotate(1.5deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(-2deg);
+  }
+}
+
+.buy-selo {
+  animation: buy-selo-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .buy-cta::after {
+    animation: none;
+    opacity: 0;
+  }
+
+  .buy-cta-halo {
+    animation: none;
+    filter: drop-shadow(0 4px 12px hsl(var(--secondary) / 0.38));
+  }
+
+  .buy-cta,
+  .buy-cta-seta {
+    transition: none;
+  }
+
+  .buy-selo {
+    animation: none;
+    transform: rotate(-2deg);
+  }
+}
+
 /* ── Cronogramas: transições de medida ──────────────────────────────────────
    Hallmark · pre-emit critique: P5 H5 E4 S5 R5 V4
    --------------------------------------------
