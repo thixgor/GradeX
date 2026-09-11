@@ -73,6 +73,8 @@ const STORAGE_KEY = 'study-music-player-state'
 const WATCHDOG_MS = 6000
 /** Erros seguidos de faixa (vídeo removido/bloqueado) antes de desistir. */
 const MAX_ERROS_SEGUIDOS = 5
+/** Novas tentativas de montar o iframe quando a página ainda não permite. */
+const MAX_RETOMADAS = 5
 
 interface PreferenciasSalvas {
     currentPlaylistId: string | null
@@ -169,6 +171,9 @@ export function StudyMusicPlayer() {
     const watchdogRef = useRef<ReturnType<typeof setTimeout> | null>(null)
     const listaCarregadaRef = useRef<string | null>(null)
     const painelRef = useRef<HTMLDivElement | null>(null)
+    const retomadaRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+    const retomadasRef = useRef(0)
+    const criarPlayerRef = useRef<(() => Promise<void>) | null>(null)
 
     // Espelhos para uso dentro de callbacks do YouTube (que vivem fora do
     // ciclo de render e enxergariam valores congelados).
@@ -184,6 +189,17 @@ export function StudyMusicPlayer() {
     playlistAtualRef.current = playlistAtual
 
     const semMovimento = liteMode || (hydrated && prefereMenosMovimento())
+
+    /**
+     * Enquanto isto for falso o componente devolve `null` — e a `<div>` que
+     * hospeda o iframe não existe no documento. Declarado aqui em cima porque
+     * o efeito que monta o player PRECISA depender disto: a lista de músicas
+     * costuma chegar antes de a autenticação resolver, e nesse instante não há
+     * onde montar. Sem esta dependência a montagem era abandonada em silêncio
+     * e nada a disparava de novo quando a página enfim ficava pronta.
+     */
+    const podeRenderizar =
+        hydrated && !authLoading && isAuthenticated && !carregandoPlaylists && playlists.length > 0
 
     useEffect(() => {
         // Reposto a cada montagem de propósito: no StrictMode do desenvolvimento
@@ -291,11 +307,26 @@ export function StudyMusicPlayer() {
         if (hostRef.current) hostRef.current.innerHTML = ''
     }, [limparWatchdog])
 
+    /**
+     * Tenta montar de novo daqui a pouco, quando a página ainda não está num
+     * estado em que dê para montar (o nó não está no documento, o React está
+     * no meio de refazer a árvore). Limitado, para nunca virar laço.
+     */
+    const agendarRetomada = useCallback(() => {
+        if (desmontadoRef.current) return
+        if (retomadasRef.current >= MAX_RETOMADAS) return
+        if (retomadaRef.current) return
+        retomadasRef.current += 1
+        retomadaRef.current = setTimeout(() => {
+            retomadaRef.current = null
+            if (desmontadoRef.current) return
+            void criarPlayerRef.current?.()
+        }, 600)
+    }, [])
+
     const criarPlayer = useCallback(async () => {
         if (criandoRef.current || playerRef.current) return
-        const host = hostRef.current
-        const playlist = playlistAtualRef.current
-        if (!host || !playlist) return
+        if (!hostRef.current || !playlistAtualRef.current) return
 
         criandoRef.current = true
         setStatus('carregando')
@@ -323,9 +354,27 @@ export function StudyMusicPlayer() {
             return
         }
 
-        // A playlist pode ter mudado durante a espera pela API — sempre vale a
-        // seleção atual, não a que existia quando esta chamada começou.
-        const playlistFinal = playlistAtualRef.current ?? playlist
+        /*
+         * Reler os refs DEPOIS da espera, e conferir que o nó ainda está no
+         * documento.
+         *
+         * Era esta a origem do "Não foi possível iniciar o player": entre pedir
+         * a API e recebê-la, o React pode refazer a árvore inteira — é
+         * exatamente o que ele faz quando a hidratação falha (os erros #418 e
+         * #422 no console). Quando isso acontece, a `<div>` que tínhamos na mão
+         * vira órfã: continua existindo na memória, mas fora da página. O
+         * YouTube monta o player trocando o elemento recebido pelo iframe, o
+         * que passa pelo `parentNode` — num nó órfão isso estoura na hora, e
+         * caía direto no nosso `catch`.
+         */
+        const host = hostRef.current
+        const playlistFinal = playlistAtualRef.current
+        if (!host || !host.isConnected || !playlistFinal) {
+            criandoRef.current = false
+            setStatus('ocioso')
+            agendarRetomada()
+            return
+        }
 
         // O YouTube SUBSTITUI o nó que recebe pelo iframe. Por isso criamos um
         // alvo descartável a cada tentativa — reaproveitar o mesmo id é o que
@@ -338,11 +387,6 @@ export function StudyMusicPlayer() {
             playerRef.current = new api.Player(alvo, {
                 width: '1',
                 height: '1',
-                // Domínio sem cookies: corta a maior parte das chamadas de
-                // telemetria (`log_event`, `ptracking`) que os bloqueadores de
-                // anúncio derrubam com ERR_BLOCKED_BY_CLIENT no console. Elas
-                // nunca impediram a música de tocar — mas enchiam o log.
-                host: 'https://www.youtube-nocookie.com',
                 videoId: playlistFinal.youtubeVideoId || undefined,
                 playerVars: {
                     ...(playlistFinal.youtubePlaylistId
@@ -435,21 +479,44 @@ export function StudyMusicPlayer() {
                     },
                 },
             })
-        } catch {
+        } catch (e) {
+            // Engolir isto em silêncio é o que tornava a falha impossível de
+            // diagnosticar — a pessoa via só a frase genérica.
+            console.error('[música] o YouTube recusou montar o player:', e)
+            playerRef.current = null
+            try {
+                host.innerHTML = ''
+            } catch {
+                /* o nó pode ter saído do documento no meio */
+            }
+            criandoRef.current = false
+            // Montar pode falhar por a página estar num instante ruim (árvore
+            // sendo refeita). Uma nova tentativa resolve; só depois delas é que
+            // vale dizer que não deu.
+            if (retomadasRef.current < MAX_RETOMADAS) {
+                setStatus('ocioso')
+                agendarRetomada()
+                return
+            }
             setStatus('erro')
-            setAviso('Não foi possível iniciar o player.')
+            setAviso('Não foi possível iniciar o player. Recarregue a página.')
             querTocarRef.current = false
             setIsBuffering(false)
+            return
         } finally {
             criandoRef.current = false
         }
-    }, [aplicarPreferencias, limparWatchdog])
+    }, [aplicarPreferencias, limparWatchdog, agendarRetomada])
+
+    criarPlayerRef.current = criarPlayer
 
     // Cria o player assim que houver playlist. Fazer isso cedo (e não no
     // primeiro toque) é o que permite ao `playVideo()` rodar dentro do gesto
     // no iOS — quando a pessoa toca no play, o iframe já existe.
     useEffect(() => {
-        if (!playlistAtual) return
+        // `podeRenderizar` entra aqui porque é ele que põe (ou tira) do
+        // documento a `<div>` onde o iframe nasce — ver a nota na declaração.
+        if (!playlistAtual || !podeRenderizar) return
         if (!playerRef.current) {
             void criarPlayer()
             return
@@ -480,11 +547,15 @@ export function StudyMusicPlayer() {
             destruirPlayer()
             void criarPlayer()
         }
-    }, [playlistAtual, criarPlayer, aplicarPreferencias, destruirPlayer])
+    }, [playlistAtual, podeRenderizar, criarPlayer, aplicarPreferencias, destruirPlayer])
 
     useEffect(() => {
         return () => {
             desmontadoRef.current = true
+            if (retomadaRef.current) {
+                clearTimeout(retomadaRef.current)
+                retomadaRef.current = null
+            }
             destruirPlayer()
         }
     }, [destruirPlayer])
@@ -565,7 +636,9 @@ export function StudyMusicPlayer() {
 
         if (!player) {
             // Player ainda não existe (API lenta ou erro anterior): registra a
-            // intenção e cria. O `onReady` dá o play.
+            // intenção e cria. O `onReady` dá o play. O toque é um pedido
+            // explícito, então devolve o orçamento de novas tentativas.
+            retomadasRef.current = 0
             querTocarRef.current = true
             setIsBuffering(true)
             armarWatchdog()
@@ -600,6 +673,9 @@ export function StudyMusicPlayer() {
     const tentarNovamente = useCallback(() => {
         recriacoesRef.current = 0
         errosSeguidosRef.current = 0
+        // O "tentar de novo" é um pedido explícito: devolve o orçamento de
+        // novas tentativas, senão o botão não faria nada depois da 5ª.
+        retomadasRef.current = 0
         querTocarRef.current = false
         setAviso(null)
         setStatus('carregando')
@@ -711,9 +787,6 @@ export function StudyMusicPlayer() {
     }, [mostrarVelocidade])
 
     // ── Registro no dock ─────────────────────────────────────────────────
-    const podeRenderizar =
-        hydrated && !authLoading && isAuthenticated && !carregandoPlaylists && playlists.length > 0
-
     const register = dock?.register
     const unregister = dock?.unregister
     useEffect(() => {
