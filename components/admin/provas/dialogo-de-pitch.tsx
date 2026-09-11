@@ -8,6 +8,7 @@ import {
   Eye,
   Mail,
   Megaphone,
+  Send,
   Sparkles,
   X,
 } from 'lucide-react'
@@ -68,6 +69,23 @@ interface DialogoDePitchProps {
   onFechar: () => void
 }
 
+/** Um parágrafo da prévia, com os trechos entre `**` em negrito. */
+function Paragrafo({ texto }: { texto: string }) {
+  return (
+    <p className="text-sm leading-relaxed text-muted-foreground">
+      {partirEmNegrito(texto).map((pedaco, posicao) =>
+        pedaco.forte ? (
+          <strong key={posicao} className="font-semibold text-foreground">
+            {pedaco.texto}
+          </strong>
+        ) : (
+          <span key={posicao}>{pedaco.texto}</span>
+        ),
+      )}
+    </p>
+  )
+}
+
 const CORES_DO_MODELO: Record<ChaveDeModeloDePitch, string> = {
   'prova-social': 'border-blue-500/40 bg-blue-500/5',
   autoridade: 'border-violet-500/40 bg-violet-500/5',
@@ -82,6 +100,8 @@ export function DialogoDePitch({ prova, salvando, onSalvar, onFechar }: DialogoD
   const [pitch, setPitch] = useState<PitchDeVendas>(() => pitchDaProva(prova))
   const [previa, setPrevia] = useState<PitchMontado | null>(null)
   const [montandoPrevia, setMontandoPrevia] = useState(false)
+  const [enviandoTeste, setEnviandoTeste] = useState(false)
+  const [resultadoDoTeste, setResultadoDoTeste] = useState<string | null>(null)
 
   const provaId = prova?._id?.toString() || ''
 
@@ -91,10 +111,51 @@ export function DialogoDePitch({ prova, salvando, onSalvar, onFechar }: DialogoD
   useEffect(() => {
     setPitch(pitchDaProva(prova))
     setPrevia(null)
+    setResultadoDoTeste(null)
   }, [prova])
 
   const modelo = MODELO_POR_CHAVE.get(pitch.modelo)
   const completo = pitchEstaCompleto({ ...pitch, ativo: true })
+
+  /** Corrige um campo do bloco de e-mail sem reescrever os outros quatro. */
+  const mudarEmail = useCallback((campos: Partial<PitchDeVendas['email']>) => {
+    setPitch((atual) => ({ ...atual, email: { ...atual.email, ...campos } }))
+    // O resultado do último teste fala de um texto que acabou de mudar.
+    setResultadoDoTeste(null)
+  }, [])
+
+  /**
+   * Manda o e-mail deste rascunho para o próprio admin.
+   *
+   * Vai o que está na tela, não o que está gravado: a pergunta é "como fica o
+   * que eu acabei de escrever", antes de publicar para a turma. O servidor
+   * confere que quem pediu é admin e manda para o endereço da conta dele —
+   * ver `app/api/exams/[id]/pitch/email/route.ts`.
+   */
+  const enviarTeste = useCallback(async () => {
+    if (!provaId) return
+    setEnviandoTeste(true)
+    setResultadoDoTeste(null)
+    try {
+      const res = await fetch(`/api/exams/${provaId}/pitch/email`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ teste: true, pitchDeVendas: { ...pitch, ativo: true } }),
+      })
+      const dados = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(dados.error || 'Não foi possível enviar')
+
+      setResultadoDoTeste(
+        dados.enviado
+          ? `Enviado para ${dados.destinatario || 'o e-mail da sua conta'}.`
+          : `Não saiu: ${dados.motivo || 'pitch incompleto'}.`,
+      )
+    } catch (erro: any) {
+      setResultadoDoTeste(erro.message)
+    } finally {
+      setEnviandoTeste(false)
+    }
+  }, [pitch, provaId])
 
   const alternarDestino = useCallback((chave: string) => {
     setPitch((atual) => {
@@ -376,9 +437,10 @@ export function DialogoDePitch({ prova, salvando, onSalvar, onFechar }: DialogoD
                     Mandar também por e-mail
                   </p>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Uma prévia curta — título, os dois primeiros parágrafos e o botão do primeiro
-                    destino. Sai uma única vez por aluno, logo depois da entrega, e o rodapé diz
-                    que ele recebeu por ter concluído esta prova.
+                    Uma prévia curta do pitch, com botão para o primeiro destino. Sai uma única vez
+                    por aluno, logo depois da entrega, e o rodapé diz que ele recebeu por ter
+                    concluído esta prova. Vem escrito pelo modelo — e você reescreve o que quiser
+                    abaixo.
                   </p>
                 </div>
                 <ToggleSwitch
@@ -389,21 +451,110 @@ export function DialogoDePitch({ prova, salvando, onSalvar, onFechar }: DialogoD
                 />
               </div>
 
+              {/*
+                O editor do e-mail.
+
+                Os quatro campos são SOBRESCRITAS: vazio quer dizer "escreva o
+                que o modelo escreveria", e o `placeholder` de cada um mostra
+                exatamente o que seria escrito — com os números reais, porque
+                vem da mesma prévia que o servidor monta. Quem quer mudar uma
+                frase muda aquela frase; quem não quer não vê campo nenhum
+                para preencher.
+              */}
               {pitch.email.ativo && (
-                <div className="space-y-1.5">
-                  <Label htmlFor="pitch-assunto">Assunto (opcional)</Label>
-                  <Input
-                    id="pitch-assunto"
-                    value={pitch.email.assunto}
-                    maxLength={LIMITE_DE_ASSUNTO}
-                    placeholder={previa?.email.assunto || 'Vazio = o assunto do modelo escolhido'}
-                    onChange={(evento) =>
-                      setPitch((atual) => ({
-                        ...atual,
-                        email: { ...atual.email, assunto: evento.target.value },
-                      }))
-                    }
-                  />
+                <div className="space-y-4 rounded-xl border border-dashed p-4">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="pitch-assunto">Assunto</Label>
+                    <Input
+                      id="pitch-assunto"
+                      value={pitch.email.assunto}
+                      maxLength={LIMITE_DE_ASSUNTO}
+                      placeholder={previa?.email.assunto || 'Vazio = o assunto do modelo'}
+                      onChange={(evento) => mudarEmail({ assunto: evento.target.value })}
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label htmlFor="pitch-email-titulo">Título dentro do e-mail</Label>
+                    <Input
+                      id="pitch-email-titulo"
+                      value={pitch.email.titulo}
+                      maxLength={LIMITE_DE_TITULO}
+                      placeholder={previa?.email.titulo || 'Vazio = o mesmo título do pitch'}
+                      onChange={(evento) => mudarEmail({ titulo: evento.target.value })}
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label htmlFor="pitch-email-texto">Texto</Label>
+                    <textarea
+                      id="pitch-email-texto"
+                      value={pitch.email.texto}
+                      maxLength={LIMITE_DE_TEXTO}
+                      rows={5}
+                      className="w-full rounded-xl border bg-background p-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+                      placeholder={
+                        previa?.email.paragrafos.join('\n\n') ||
+                        'Vazio = a prévia do modelo. Linha em branco separa parágrafos, **dois asteriscos** dão negrito.'
+                      }
+                      onChange={(evento) => mudarEmail({ texto: evento.target.value })}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Mantenha curto: o e-mail é a <strong className="text-foreground">prévia</strong>{' '}
+                      do pitch. Um e-mail que entrega tudo não tem por que ser clicado.
+                    </p>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label htmlFor="pitch-email-chamada">Botão</Label>
+                    <Input
+                      id="pitch-email-chamada"
+                      value={pitch.email.chamada}
+                      maxLength={LIMITE_DE_CHAMADA}
+                      placeholder={previa?.email.chamada || 'Vazio = o mesmo botão do pitch'}
+                      onChange={(evento) => mudarEmail({ chamada: evento.target.value })}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      O botão leva a{' '}
+                      <strong className="text-foreground">
+                        {previa?.destinos[0]?.rotulo || 'o primeiro destino'}
+                      </strong>
+                      . No e-mail ele é um endereço absoluto — só o pitch na tela navega por
+                      dentro do aplicativo.
+                    </p>
+                  </div>
+
+                  {/*
+                    Conferir de verdade exige receber de verdade: o HTML passa
+                    pelo template de marketing, pelo cliente de e-mail e pelo
+                    modo escuro do celular de quem lê, e nada disso cabe numa
+                    prévia desenhada aqui. O teste usa o RASCUNHO da tela, não
+                    o que está gravado.
+                  */}
+                  <div className="flex flex-wrap items-center gap-3 border-t pt-3">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      disabled={!completo || enviandoTeste}
+                      onClick={enviarTeste}
+                    >
+                      {enviandoTeste ? (
+                        <>
+                          <span className="mr-2 inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                          Enviando…
+                        </>
+                      ) : (
+                        <>
+                          <Send className="mr-2 h-3.5 w-3.5" />
+                          Enviar teste para mim
+                        </>
+                      )}
+                    </Button>
+                    {resultadoDoTeste && (
+                      <p className="text-xs text-muted-foreground">{resultadoDoTeste}</p>
+                    )}
+                  </div>
                 </div>
               )}
             </section>
@@ -435,50 +586,72 @@ export function DialogoDePitch({ prova, salvando, onSalvar, onFechar }: DialogoD
               </h3>
 
               {previa ? (
-                <div className="rounded-2xl border border-emerald-500/25 bg-gradient-to-br from-emerald-500/10 to-transparent p-5">
-                  {previa.selo && (
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-300">
-                      <Sparkles className="h-2.5 w-2.5" />
-                      {previa.selo}
-                    </span>
-                  )}
-                  <h4 className="mt-2 text-xl font-bold leading-tight">{previa.titulo}</h4>
-                  <div className="mt-2 space-y-2">
-                    {previa.paragrafos.map((paragrafo, indice) => (
-                      <p key={indice} className="text-sm leading-relaxed text-muted-foreground">
-                        {partirEmNegrito(paragrafo).map((pedaco, posicao) =>
-                          pedaco.forte ? (
-                            <strong key={posicao} className="font-semibold text-foreground">
-                              {pedaco.texto}
-                            </strong>
-                          ) : (
-                            <span key={posicao}>{pedaco.texto}</span>
-                          ),
-                        )}
-                      </p>
-                    ))}
-                  </div>
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {previa.destinos.map((destino, indice) => (
-                      <span
-                        key={destino.chave}
-                        className={cn(
-                          'inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-medium',
-                          indice === 0
-                            ? 'bg-emerald-600 text-white'
-                            : 'border border-emerald-500/30 text-foreground',
-                        )}
-                      >
-                        {indice === 0 ? previa.chamada : destino.rotulo}
-                        {indice === 0 && <ArrowRight className="h-3.5 w-3.5" />}
+                <div className="space-y-4">
+                  {/* O cartão, no mesmo âmbar que o aluno vê — ver
+                      components/exam/pitch-de-vendas.tsx. Uma prévia numa cor
+                      que a tela real não usa engana quem está decidindo. */}
+                  <div className="rounded-2xl border border-amber-500/40 bg-gradient-to-br from-amber-500/10 to-transparent p-5">
+                    {previa.selo && (
+                      <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-amber-700 dark:text-amber-300">
+                        <Sparkles className="h-2.5 w-2.5" />
+                        {previa.selo}
                       </span>
-                    ))}
+                    )}
+                    <h4 className="mt-2 text-xl font-bold leading-tight">{previa.titulo}</h4>
+                    <div className="mt-2 space-y-2">
+                      {previa.paragrafos.map((paragrafo, indice) => (
+                        <Paragrafo key={indice} texto={paragrafo} />
+                      ))}
+                    </div>
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {previa.destinos.map((destino, indice) => (
+                        <span
+                          key={destino.chave}
+                          className={cn(
+                            'inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-medium',
+                            indice === 0
+                              ? 'bg-amber-500 text-amber-950'
+                              : 'border border-amber-500/30 text-foreground',
+                          )}
+                        >
+                          {indice === 0 ? previa.chamada : destino.rotulo}
+                          {indice === 0 && <ArrowRight className="h-3.5 w-3.5" />}
+                        </span>
+                      ))}
+                    </div>
                   </div>
+
+                  {/*
+                    O e-mail, desenhado como e-mail: assunto na linha de cima,
+                    como a caixa de entrada mostra, e o corpo abaixo. Ver o
+                    assunto solto numa linha de rodapé não dizia nada sobre o
+                    que a pessoa abre.
+                  */}
                   {pitch.email.ativo && (
-                    <p className="mt-4 border-t border-emerald-500/15 pt-3 text-xs text-muted-foreground">
-                      <strong className="text-foreground">E-mail: </strong>
-                      {previa.email.assunto}
-                    </p>
+                    <div className="overflow-hidden rounded-2xl border">
+                      <div className="flex items-start gap-2 border-b bg-muted/40 px-4 py-2.5">
+                        <Mail className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-muted-foreground" />
+                        <div className="min-w-0">
+                          <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                            Assunto
+                          </p>
+                          <p className="text-sm font-semibold leading-snug">{previa.email.assunto}</p>
+                        </div>
+                      </div>
+                      <div className="space-y-2 p-4">
+                        <h4 className="text-lg font-bold leading-tight">{previa.email.titulo}</h4>
+                        {previa.email.paragrafos.map((paragrafo, indice) => (
+                          <Paragrafo key={indice} texto={paragrafo} />
+                        ))}
+                        <span className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-[#f57c00] px-4 py-2 text-sm font-bold text-white">
+                          {previa.email.chamada}
+                        </span>
+                        <p className="pt-1 text-[11px] text-muted-foreground">
+                          Rodapé: “Você recebeu este e-mail porque concluiu a prova{' '}
+                          <strong className="text-foreground">{prova.title}</strong> na DomineAqui.”
+                        </p>
+                      </div>
+                    </div>
                   )}
                 </div>
               ) : (

@@ -26,7 +26,16 @@ const DADOS = {
   estudantes: '',
 }
 
-function pitch(mudancas: Partial<PitchDeVendas> = {}): PitchDeVendas {
+/**
+ * O pitch de teste. `mudancas` aceita `email` parcial porque o bloco tem cinco
+ * campos e quase todo teste mexe em um — quem preenche os outros quatro é o
+ * normalizador, que é justamente o que está sendo exercitado.
+ */
+type Mudancas = Partial<Omit<PitchDeVendas, 'email'>> & {
+  email?: Partial<PitchDeVendas['email']>
+}
+
+function pitch(mudancas: Mudancas = {}): PitchDeVendas {
   return normalizarPitch({
     ativo: true,
     modelo: 'prova-social',
@@ -71,10 +80,30 @@ describe('normalizarPitch', () => {
   it('corta os textos no limite em vez de aceitar um documento gigante', () => {
     const normalizado = normalizarPitch({
       personalizado: { titulo: 'a'.repeat(500), texto: 'b'.repeat(5000), chamada: 'c'.repeat(200) },
+      email: {
+        assunto: 'd'.repeat(500),
+        titulo: 'e'.repeat(500),
+        texto: 'f'.repeat(5000),
+        chamada: 'g'.repeat(200),
+      },
     })
     expect(normalizado.personalizado.titulo).toHaveLength(120)
     expect(normalizado.personalizado.texto).toHaveLength(1500)
     expect(normalizado.personalizado.chamada).toHaveLength(40)
+    expect(normalizado.email.assunto).toHaveLength(120)
+    expect(normalizado.email.titulo).toHaveLength(120)
+    expect(normalizado.email.texto).toHaveLength(1500)
+    expect(normalizado.email.chamada).toHaveLength(40)
+  })
+
+  it('o bloco de e-mail nasce inteiro e vazio', () => {
+    expect(normalizarPitch({}).email).toEqual({
+      ativo: false,
+      assunto: '',
+      titulo: '',
+      texto: '',
+      chamada: '',
+    })
   })
 
   it('lê o bloco do documento da prova', () => {
@@ -238,12 +267,73 @@ describe('montarPitch', () => {
     expect(montado.paragrafos).toEqual(['Isto é o corpo.'])
   })
 
-  it('o assunto escrito pelo admin ganha do assunto do modelo', () => {
-    const montado = montarPitch(
-      pitch({ modelo: 'valores', email: { ativo: true, assunto: 'Assunto meu' } }),
+  it('o e-mail sai completo, com destino, mesmo sem o admin escrever nada', () => {
+    const montado = montarPitch(pitch({ modelo: 'valores', destinos: ['materiais'] }), DADOS)!
+
+    expect(montado.email.assunto.length).toBeGreaterThan(0)
+    // Título e botão do e-mail são os do CARTÃO quando ninguém os sobrescreve.
+    expect(montado.email.titulo).toBe(montado.titulo)
+    expect(montado.email.chamada).toBe(montado.chamada)
+    expect(montado.email.destino).toBe('/materiais')
+  })
+
+  it('cada campo escrito pelo admin ganha do que o modelo escreveria', () => {
+    const padrao = montarPitch(pitch({ modelo: 'valores' }), DADOS)!
+    const meu = montarPitch(
+      pitch({
+        modelo: 'valores',
+        email: {
+          ativo: true,
+          assunto: 'Assunto meu',
+          titulo: 'Título meu',
+          texto: 'Primeiro **meu**.\n\nSegundo meu.',
+          chamada: 'Botão meu',
+        },
+      }),
       DADOS,
     )!
-    expect(montado.email.assunto).toBe('Assunto meu')
+
+    expect(meu.email.assunto).toBe('Assunto meu')
+    expect(meu.email.titulo).toBe('Título meu')
+    expect(meu.email.paragrafos).toEqual(['Primeiro **meu**.', 'Segundo meu.'])
+    expect(meu.email.chamada).toBe('Botão meu')
+
+    // E o cartão na tela não muda por causa do e-mail: são coisas separadas.
+    expect(meu.titulo).toBe(padrao.titulo)
+    expect(meu.chamada).toBe(padrao.chamada)
+    expect(meu.paragrafos).toEqual(padrao.paragrafos)
+  })
+
+  it('campo em branco cai para o padrão, um a um', () => {
+    const montado = montarPitch(
+      pitch({
+        modelo: 'valores',
+        email: { ativo: true, titulo: 'Só o título' },
+      }),
+      DADOS,
+    )!
+    const padrao = montarPitch(pitch({ modelo: 'valores' }), DADOS)!
+
+    expect(montado.email.titulo).toBe('Só o título')
+    expect(montado.email.assunto).toBe(padrao.email.assunto)
+    expect(montado.email.paragrafos).toEqual(padrao.email.paragrafos)
+    expect(montado.email.chamada).toBe(padrao.email.chamada)
+  })
+
+  it('no modelo personalizado o e-mail também é editável por cima do texto livre', () => {
+    const montado = montarPitch(
+      pitch({
+        modelo: 'personalizado',
+        personalizado: { titulo: 'Turma de setembro', texto: 'Um.\n\nDois.\n\nTrês.', chamada: 'Quero vaga' },
+        email: { ativo: true, texto: 'Só isto no e-mail.' },
+      }),
+      DADOS,
+    )!
+
+    expect(montado.email.paragrafos).toEqual(['Só isto no e-mail.'])
+    // O que não foi escrito continua vindo do cartão personalizado.
+    expect(montado.email.titulo).toBe('Turma de setembro')
+    expect(montado.email.chamada).toBe('Quero vaga')
   })
 
   it('só entrega destinos internos, na ordem escolhida', () => {

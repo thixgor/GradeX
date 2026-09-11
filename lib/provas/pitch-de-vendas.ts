@@ -164,10 +164,25 @@ export interface PitchDeVendas {
   /** Chaves de `DESTINOS_DO_PITCH`, na ordem em que aparecem. */
   destinos: string[]
   personalizado: PitchPersonalizado
+  /**
+   * O e-mail.
+   *
+   * Os quatro campos de texto são SOBRESCRITAS, não o conteúdo: vazio
+   * significa "use o que o modelo escreveria", e é assim que ligar o e-mail
+   * continua sendo uma chave só. Quem quiser mexer em uma frase mexe naquela
+   * frase, sem ter que redigir o resto — que era a única alternativa quando
+   * apenas o assunto podia ser editado e o corpo vinha colado do cartão.
+   */
   email: {
     ativo: boolean
     /** Vazio = o assunto do modelo escolhido. */
     assunto: string
+    /** Vazio = o título do pitch. */
+    titulo: string
+    /** Vazio = a prévia do modelo. Linha em branco separa parágrafos. */
+    texto: string
+    /** Vazio = o mesmo botão do cartão. */
+    chamada: string
   }
   /**
    * Esconder de quem já paga.
@@ -185,7 +200,7 @@ export const PITCH_PADRAO: PitchDeVendas = {
   modelo: 'prova-social',
   destinos: [],
   personalizado: { titulo: '', texto: '', chamada: '' },
-  email: { ativo: false, assunto: '' },
+  email: { ativo: false, assunto: '', titulo: '', texto: '', chamada: '' },
   esconderDeAssinantes: true,
 }
 
@@ -236,6 +251,9 @@ export function normalizarPitch(valor: unknown): PitchDeVendas {
     email: {
       ativo: bruto.email?.ativo === true,
       assunto: texto(bruto.email?.assunto, LIMITE_DE_ASSUNTO),
+      titulo: texto(bruto.email?.titulo, LIMITE_DE_TITULO),
+      texto: texto(bruto.email?.texto, LIMITE_DE_TEXTO),
+      chamada: texto(bruto.email?.chamada, LIMITE_DE_CHAMADA),
     },
     esconderDeAssinantes: bruto.esconderDeAssinantes !== false,
   }
@@ -317,11 +335,37 @@ export interface PitchMontado {
   /** Rótulo do botão do primeiro destino. */
   chamada: string
   destinos: DestinoDoPitch[]
+  /**
+   * O e-mail já resolvido — tudo o que `sendPitchDeVendasEmail` precisa, sem
+   * ter que voltar ao cartão para pegar título, botão ou destino. Antes ele
+   * emprestava três campos do cartão, e por isso não havia onde editá-los sem
+   * mexer no que o aluno vê na tela.
+   */
   email: {
     assunto: string
+    titulo: string
     /** A prévia: o que o e-mail mostra antes do botão. */
     paragrafos: string[]
+    chamada: string
+    /** Rota interna do botão. O e-mail a transforma em endereço absoluto. */
+    destino: string
   }
+}
+
+/**
+ * O que um modelo escreve.
+ *
+ * Não é `Omit<PitchMontado, …>` de propósito: um modelo não sabe para onde os
+ * botões apontam nem que o admin pode ter reescrito o título do e-mail. Ele
+ * entrega o cartão e uma sugestão de assunto e prévia; `resolverEmail` decide
+ * o que sobrevive.
+ */
+export interface CartaoDoModelo {
+  selo: string
+  titulo: string
+  paragrafos: string[]
+  chamada: string
+  email: { assunto: string; paragrafos: string[] }
 }
 
 export interface ModeloDePitch {
@@ -335,7 +379,7 @@ export interface ModeloDePitch {
   comoFunciona: string
   /** Quando ESTE é o modelo certo — e quando não é. */
   quandoUsar: string
-  montar: (dados: DadosDoPitch) => Omit<PitchMontado, 'modelo' | 'destinos'>
+  montar: (dados: DadosDoPitch) => CartaoDoModelo
 }
 
 /** "Materiais", "Materiais e Planos", "Materiais, Planos e Aulas". */
@@ -637,40 +681,68 @@ export function montarPitch(
   const destinos = resolverDestinos(pitch.destinos)
   const completos: DadosDoPitch = { ...dados, destinos }
 
-  if (pitch.modelo === 'personalizado') {
-    const paragrafos = paragrafosDoTextoLivre(pitch.personalizado.texto)
-    const titulo = pitch.personalizado.titulo || paragrafos[0] || ''
-    const corpo = pitch.personalizado.titulo ? paragrafos : paragrafos.slice(1)
-    const chamada = pitch.personalizado.chamada || `${CHAMADA_PADRAO} ${primeiroDestino(completos)}`
+  const cartao =
+    pitch.modelo === 'personalizado'
+      ? montarCartaoPersonalizado(pitch.personalizado, completos)
+      : MODELO_POR_CHAVE.get(pitch.modelo)?.montar(completos)
 
-    return {
-      modelo: 'personalizado',
-      selo: SELO_PADRAO,
-      titulo,
-      paragrafos: corpo,
-      chamada,
-      destinos,
-      email: {
-        assunto: pitch.email.assunto || titulo,
-        // A prévia do e-mail é o começo do pitch, não ele inteiro: e-mail que
-        // entrega tudo não tem por que ser clicado.
-        paragrafos: corpo.slice(0, 2),
-      },
-    }
-  }
+  if (!cartao) return null
 
-  const modelo = MODELO_POR_CHAVE.get(pitch.modelo)
-  if (!modelo) return null
-
-  const montado = modelo.montar(completos)
   return {
     modelo: pitch.modelo,
-    ...montado,
+    ...cartao,
     destinos,
+    email: resolverEmail(pitch, cartao, destinos),
+  }
+}
+
+/** O cartão escrito à mão pelo admin, com as folgas de quem escreve à mão. */
+function montarCartaoPersonalizado(
+  personalizado: PitchPersonalizado,
+  completos: DadosDoPitch,
+): CartaoDoModelo {
+  const paragrafos = paragrafosDoTextoLivre(personalizado.texto)
+  // Sem título, o primeiro parágrafo vira o título — e sai do corpo, para não
+  // aparecer duas vezes.
+  const titulo = personalizado.titulo || paragrafos[0] || ''
+  const corpo = personalizado.titulo ? paragrafos : paragrafos.slice(1)
+
+  return {
+    selo: SELO_PADRAO,
+    titulo,
+    paragrafos: corpo,
+    chamada: personalizado.chamada || `${CHAMADA_PADRAO} ${primeiroDestino(completos)}`,
     email: {
-      assunto: pitch.email.assunto || montado.email.assunto,
-      paragrafos: montado.email.paragrafos,
+      assunto: titulo,
+      // A prévia do e-mail é o começo do pitch, não ele inteiro: e-mail que
+      // entrega tudo não tem por que ser clicado.
+      paragrafos: corpo.slice(0, 2),
     },
+  }
+}
+
+/**
+ * O e-mail final: o que o admin escreveu, ou o que o modelo escreveria.
+ *
+ * Campo vazio cai para o padrão, um a um — e os padrões de título e botão são
+ * os do CARTÃO, não os do bloco de e-mail do modelo, porque foi isso que o
+ * e-mail sempre usou. A diferença agora é que existe onde sobrescrever.
+ */
+function resolverEmail(
+  pitch: PitchDeVendas,
+  cartao: CartaoDoModelo,
+  destinos: DestinoDoPitch[],
+): PitchMontado['email'] {
+  const escrito = paragrafosDoTextoLivre(pitch.email.texto)
+
+  return {
+    assunto: pitch.email.assunto || cartao.email.assunto,
+    titulo: pitch.email.titulo || cartao.titulo,
+    paragrafos: escrito.length > 0 ? escrito : cartao.email.paragrafos,
+    chamada: pitch.email.chamada || cartao.chamada,
+    // O botão do e-mail leva ao primeiro destino, o mesmo do cartão: o e-mail
+    // é a prévia dele, não uma segunda oferta com outro rumo.
+    destino: destinos[0]?.href || '',
   }
 }
 

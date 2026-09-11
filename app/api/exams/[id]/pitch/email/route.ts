@@ -9,6 +9,7 @@ import { notaLiberadaParaOAluno } from '@/lib/provas/nota-da-prova'
 import {
   arredondarProvaSocial,
   montarPitch,
+  normalizarPitch,
   pitchDaProva,
   pitchVisivelPara,
 } from '@/lib/provas/pitch-de-vendas'
@@ -44,7 +45,7 @@ export const dynamic = 'force-dynamic'
  * uma denúncia de spam, e essa não se desfaz.
  */
 export async function POST(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
@@ -63,12 +64,33 @@ export async function POST(
       return NextResponse.json({ error: 'Prova não encontrada' }, { status: 404 })
     }
 
-    const config = pitchDaProva(exam)
-    if (!config.email.ativo) {
-      return NextResponse.json({ enviado: false, motivo: 'e-mail desligado nesta prova' })
+    const isAdmin = session.role === 'admin'
+
+    /*
+     * O envio de conferência do admin.
+     *
+     * Um editor de e-mail sem "mandar para mim" é um editor às cegas: o HTML
+     * final passa pelo template de marketing, pelo cliente de e-mail e pelo
+     * modo escuro do celular de quem lê, e nada disso cabe numa prévia
+     * desenhada na tela do painel.
+     *
+     * Ele usa o RASCUNHO que veio no corpo, e não o que está gravado — a
+     * pergunta que o admin faz é "como fica o que eu acabei de escrever",
+     * antes de publicar para a turma. Por isso também não passa pela trava de
+     * envio único nem exige entrega: ele vai para o endereço do próprio admin
+     * e para mais ninguém.
+     */
+    const corpo = await request.json().catch(() => ({}))
+    const ehTeste = corpo?.teste === true
+
+    if (ehTeste && !isAdmin) {
+      return NextResponse.json({ error: 'Sem permissão' }, { status: 403 })
     }
 
-    const isAdmin = session.role === 'admin'
+    const config = ehTeste ? normalizarPitch(corpo?.pitchDeVendas) : pitchDaProva(exam)
+    if (!ehTeste && !config.email.ativo) {
+      return NextResponse.json({ enviado: false, motivo: 'e-mail desligado nesta prova' })
+    }
     // `ObjectId.isValid` antes do construtor: a sessão de desenvolvimento não
     // usa id do Mongo, e um erro aqui viraria 500 num envio que ninguém pediu.
     const usuario = ObjectId.isValid(session.userId)
@@ -86,31 +108,47 @@ export async function POST(
     }
 
     const accountType = (usuario?.accountType as string | undefined) ?? null
-    if (!pitchVisivelPara(exam, { accountType, isAdmin })) {
-      return NextResponse.json({ enviado: false, motivo: 'pitch não se aplica a esta conta' })
+
+    /*
+     * As duas travas do envio de verdade — e por que o teste passa por fora.
+     *
+     * A primeira é a regra de quem recebe: `esconderDeAssinantes` nasce ligado
+     * e `isPaidAccount` conta admin como pagante, então o teste recusaria a si
+     * mesmo sempre. A segunda é a exigência de entrega, que existe para a rota
+     * não ser um disparador aberto: sem ela qualquer conta autenticada mandaria
+     * e-mail para si mesma quantas vezes quisesse, em qualquer prova.
+     *
+     * O teste é admin (conferido acima), vai para o endereço do próprio admin e
+     * não escreve nada em entrega nenhuma — ele não abre nenhuma dessas portas.
+     */
+    const submissions = db.collection<ExamSubmission>('submissions')
+
+    if (!ehTeste) {
+      if (!pitchVisivelPara(exam, { accountType, isAdmin })) {
+        return NextResponse.json({ enviado: false, motivo: 'pitch não se aplica a esta conta' })
+      }
+
+      // A marca é gravada ANTES do envio — ver o cabeçalho.
+      const marcado = await submissions.updateOne(
+        { examId: id, userId: session.userId, pitchEmailEnviadoEm: { $exists: false } },
+        { $set: { pitchEmailEnviadoEm: new Date() } },
+      )
+
+      if (marcado.matchedCount === 0) {
+        // Ou não há entrega (nada a anunciar), ou o e-mail já saiu. As duas
+        // respostas são a mesma para quem chamou: não sai nada agora.
+        return NextResponse.json({ enviado: false, motivo: 'sem entrega nova para anunciar' })
+      }
     }
 
     /*
-     * O e-mail é do fim da prova, então ele exige uma entrega.
+     * A nota sai da entrega de quem está recebendo — inclusive no teste.
      *
-     * Sem esta condição a rota vira um disparador aberto: qualquer conta
-     * autenticada chamaria o endereço de qualquer prova e mandaria e-mail para
-     * si mesma quantas vezes quisesse. Com ela, o envio é consequência de um
-     * fato gravado — esta pessoa entregou esta prova — e a marca de envio único
-     * mora nesse mesmo fato.
+     * O admin que fez a prova para conferi-la recebe o e-mail com o número
+     * dele; o que não fez recebe a versão sem número, que é exatamente o que
+     * um aluno com a nota presa até o término receberia. Inventar um valor de
+     * exemplo aqui mostraria ao admin um e-mail que ninguém vai ler.
      */
-    const submissions = db.collection<ExamSubmission>('submissions')
-    const marcado = await submissions.updateOne(
-      { examId: id, userId: session.userId, pitchEmailEnviadoEm: { $exists: false } },
-      { $set: { pitchEmailEnviadoEm: new Date() } },
-    )
-
-    if (marcado.matchedCount === 0) {
-      // Ou não há entrega (nada a anunciar), ou o e-mail já saiu. As duas
-      // respostas são a mesma para quem chamou: não sai nada agora.
-      return NextResponse.json({ enviado: false, motivo: 'sem entrega nova para anunciar' })
-    }
-
     const entrega = await submissions.findOne({ examId: id, userId: session.userId })
     const total = exam.totalPoints || 100
     const aproveitamento =
@@ -138,16 +176,16 @@ export async function POST(
     await deliverTransactionalEmails([
       sendPitchDeVendasEmail({
         email: destinatario,
-        assunto: pitch.email.assunto,
-        titulo: pitch.titulo,
-        paragrafos: pitch.email.paragrafos,
-        chamada: pitch.chamada,
-        destino: pitch.destinos[0].href,
+        // Tudo de `pitch.email`: o bloco vem resolvido do módulo, com as
+        // sobrescritas do admin já aplicadas sobre o que o modelo escreveria.
+        // Ver `resolverEmail` em lib/provas/pitch-de-vendas.ts.
+        ...pitch.email,
         tituloDaProva: exam.title,
+        teste: ehTeste,
       }),
     ])
 
-    return NextResponse.json({ enviado: true })
+    return NextResponse.json({ enviado: true, destinatario: ehTeste ? destinatario : undefined })
   } catch (error) {
     console.error('[pitch] falha ao enviar o e-mail do pitch:', error)
     return NextResponse.json({ error: 'Erro ao enviar o e-mail' }, { status: 500 })

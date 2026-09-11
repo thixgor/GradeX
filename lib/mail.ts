@@ -2130,6 +2130,8 @@ export async function sendPitchDeVendasEmail(input: {
   /** Rota interna do destino principal (ex.: `/materiais`). */
   destino: string
   tituloDaProva: string
+  /** Envio de conferência do admin — marca o assunto e troca o rodapé. */
+  teste?: boolean
 }) {
   const base = process.env.NEXT_PUBLIC_APP_URL || 'https://domineaqui.com.br'
   const url = `${base}${input.destino}`
@@ -2154,7 +2156,11 @@ export async function sendPitchDeVendasEmail(input: {
     ${paragrafos}
     ${renderEmailButton(url, escapeHtml(input.chamada))}
     <p style="margin:28px 0 0;font-size:13px;line-height:1.6;color:#7b8a83;">
-      Você recebeu este e-mail porque concluiu a prova <strong>${escapeHtml(input.tituloDaProva)}</strong> na DomineAqui.
+      ${
+        input.teste
+          ? `Envio de teste do pitch de <strong>${escapeHtml(input.tituloDaProva)}</strong>, pedido pelo painel. O aluno recebe este mesmo e-mail ao concluir a prova — com o rodapé explicando de onde ele veio.`
+          : `Você recebeu este e-mail porque concluiu a prova <strong>${escapeHtml(input.tituloDaProva)}</strong> na DomineAqui.`
+      }
     </p>
   `
 
@@ -2162,7 +2168,9 @@ export async function sendPitchDeVendasEmail(input: {
     await transporter.sendMail({
       from: '"DomineAqui" <no-reply@domineaqui.com.br>',
       to: input.email,
-      subject: input.assunto,
+      // O prefixo no teste não é enfeite: sem ele, um envio de conferência
+      // parado na caixa de entrada é indistinguível do e-mail de verdade.
+      subject: input.teste ? `[teste] ${input.assunto}` : input.assunto,
       // O texto de prévia da caixa de entrada é o primeiro parágrafo sem
       // marcação: sem ele, o cliente de e-mail mostra o começo do HTML.
       html: getMarketingEmailTemplate(
