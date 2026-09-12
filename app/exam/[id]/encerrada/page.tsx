@@ -38,6 +38,7 @@ import {
   BarChart3,
   CheckCircle2,
   ChevronDown,
+  ClipboardList,
   Download,
   Dumbbell,
   FileDown,
@@ -160,11 +161,27 @@ export default function ProvaEncerradaPage({ params }: { params: { id: string } 
           setMediaDaTurma(dados.estatisticas?.media ?? null)
         }
 
+        /*
+         * A entrega desta pessoa — e, de quebra, o fato de ela ter feito a
+         * prova.
+         *
+         * `participei` vinha só dos resultados, e os resultados podem ser
+         * recusados sem que isso diga nada sobre a pessoa: a rota devolve 400
+         * numa prova que o portão encerrou antes do `endTime` e 403 numa prova
+         * que não publica a classificação. Nesses casos quem FEZ a prova ficava
+         * sem o botão do relatório dela — o menu esperava a entrega e ninguém
+         * mais confirmava a participação. Esta rota responde a mesma pergunta
+         * de forma direta: 200 é "fez", 404 é "não fez".
+         */
         if (meuId && dados?.participei !== false) {
           const resEntrega = await fetch(`/api/exams/${id}/submissions/${meuId}`)
-          if (resEntrega.ok && ativo) {
+          if (!ativo) return
+          if (resEntrega.ok) {
             const dadosEntrega = await resEntrega.json()
             setMinhaEntrega(dadosEntrega.submission || null)
+            setParticipei(true)
+          } else if (resEntrega.status === 404) {
+            setParticipei(false)
           }
         }
       } catch (error: any) {
@@ -189,6 +206,17 @@ export default function ProvaEncerradaPage({ params }: { params: { id: string } 
       }),
     [exam, conta, minhaEntrega],
   )
+
+  /**
+   * Esta pessoa fez a prova?
+   *
+   * `minhaEntrega` é o DOCUMENTO da entrega; `participei` é o FATO de ela
+   * existir. O menu pergunta pelo fato: o relatório mora numa página própria
+   * (`/exam/[id]/user/[userId]`), que busca a entrega por conta dela. Exigir o
+   * documento aqui era esconder a porta do relatório de quem fez a prova toda
+   * vez que a entrega não chegasse até esta tela.
+   */
+  const fezAProva = participei === true || !!minhaEntrega
 
   /** Há algum arquivo que esta pessoa realmente consegue baixar agora? */
   const algumDownloadLiberado =
@@ -287,6 +315,29 @@ export default function ProvaEncerradaPage({ params }: { params: { id: string } 
             />
           )}
 
+          {/*
+            O relatório dele — a primeira coisa que quem fez a prova procura.
+
+            Ele já existia aqui como "Minhas respostas", e o nome era o problema:
+            a tela que ele abre se chama **Relatório da prova**, traz a nota, o
+            aproveitamento e a prova questão a questão, e quem foi mandado
+            procurar "o relatório" não reconhecia o botão. Agora o item diz o
+            nome do lugar onde ele leva.
+
+            Ele fica antes dos resultados da turma porque a pergunta "quanto eu
+            tirei" vem antes de "como foi a turma" — e ganha o destaque quando
+            não há treino liberado disputando a atenção.
+          */}
+          {fezAProva && conta.id && (
+            <ItemDoMenu
+              icone={ClipboardList}
+              titulo="Relatório da prova"
+              descricao="A sua nota e a sua prova questão a questão: o que você marcou, o que era certo e a correção."
+              destaque={!treinoLiberado}
+              onClick={() => router.push(`/exam/${id}/user/${conta.id}`)}
+            />
+          )}
+
           <ItemDoMenu
             icone={BarChart3}
             titulo="Resultados da turma"
@@ -298,15 +349,6 @@ export default function ProvaEncerradaPage({ params }: { params: { id: string } 
             desabilitado={!temResultados}
             onClick={() => router.push(`/exam/${id}/results`)}
           />
-
-          {minhaEntrega && (
-            <ItemDoMenu
-              icone={CheckCircle2}
-              titulo="Minhas respostas"
-              descricao="A sua prova questão a questão, com o que você marcou e a correção."
-              onClick={() => router.push(`/exam/${id}/user/${conta.id}`)}
-            />
-          )}
 
           <ItemDoMenu
             icone={FileDown}
