@@ -3,6 +3,12 @@ import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { normalizePeriodo } from '@/lib/user-periodo'
+import {
+  isValidImageUrl,
+  isValidNavigationUrl,
+  sanitizeDestino,
+  type AnuncioDestino,
+} from '@/lib/anuncio-destinos'
 
 export const dynamic = 'force-dynamic'
 
@@ -12,12 +18,19 @@ interface Anuncio {
   ativo: boolean
   ordem: number
   tipoAcao: 'link' | 'modal'
+  /** Chamada exibida no banner. Sem ela, o título é derivado do destino. */
+  titulo?: string
+  /** Texto do botão do banner ("Ver agora", "Garantir vaga"...). */
+  ctaTexto?: string
   linkUrl?: string
   linkNovaAba?: boolean
+  /** Metadados do destino de `linkUrl`: tipo e nome do item escolhido. */
+  destino?: AnuncioDestino
   modalTitulo?: string
   modalConteudo?: string
   modalBotaoTexto?: string
   modalBotaoLink?: string
+  modalBotaoDestino?: AnuncioDestino
   // Segmentação por período: vazio/ausente = exibe para todos os períodos.
   periodos?: number[]
   criadoEm: Date
@@ -25,8 +38,32 @@ interface Anuncio {
   criadoPor: ObjectId
 }
 
-function getString(value: unknown) {
-  return typeof value === 'string' ? value.trim() : ''
+const LIMITES = {
+  titulo: 120,
+  ctaTexto: 32,
+  modalTitulo: 160,
+  modalConteudo: 8000,
+  modalBotaoTexto: 60,
+} as const
+
+function getString(value: unknown, maxLength?: number) {
+  const text = typeof value === 'string' ? value.trim() : ''
+  return maxLength ? text.slice(0, maxLength) : text
+}
+
+/**
+ * Remove as chaves `undefined` antes de gravar.
+ *
+ * O driver do Mongo serializa `undefined` como `null` por padrão, e um
+ * `linkUrl: null` num anúncio de modal sujava a leitura pública (o campo existe,
+ * mas não vale nada) além de atrapalhar qualquer consulta por existência.
+ */
+function stripUndefined<T extends Record<string, any>>(obj: T): Partial<T> {
+  const out: Record<string, any> = {}
+  for (const [key, value] of Object.entries(obj)) {
+    if (value !== undefined) out[key] = value
+  }
+  return out as Partial<T>
 }
 
 /** Sanitiza uma lista de períodos: inteiros válidos (1-12), sem duplicatas, ordenados. */
@@ -38,32 +75,6 @@ function sanitizePeriodos(value: unknown): number[] {
     if (p !== null) set.add(p)
   }
   return Array.from(set).sort((a, b) => a - b)
-}
-
-function isValidImageUrl(value: string) {
-  const trimmed = value.trim()
-  if (!trimmed) return false
-  if (trimmed.startsWith('/')) return true
-
-  try {
-    const url = new URL(trimmed)
-    return url.protocol === 'http:' || url.protocol === 'https:'
-  } catch {
-    return false
-  }
-}
-
-function isValidNavigationUrl(value: string) {
-  const trimmed = value.trim()
-  if (!trimmed) return false
-  if (trimmed.startsWith('/')) return true
-
-  try {
-    const url = new URL(trimmed)
-    return ['http:', 'https:', 'mailto:', 'tel:'].includes(url.protocol)
-  } catch {
-    return false
-  }
 }
 
 // GET - Retornar todos os anuncios (admin ve todos, usuario ve apenas ativos)
@@ -107,22 +118,25 @@ export async function POST(request: NextRequest) {
 
     // Validacoes
     const imagemUrl = getString(body.imagemUrl)
+    const titulo = getString(body.titulo, LIMITES.titulo)
+    const ctaTexto = getString(body.ctaTexto, LIMITES.ctaTexto)
     const linkUrl = getString(body.linkUrl)
-    const modalTitulo = getString(body.modalTitulo)
-    const modalConteudo = typeof body.modalConteudo === 'string' ? body.modalConteudo : ''
-    const modalBotaoTexto = getString(body.modalBotaoTexto)
+    const modalTitulo = getString(body.modalTitulo, LIMITES.modalTitulo)
+    const modalConteudo =
+      typeof body.modalConteudo === 'string' ? body.modalConteudo.slice(0, LIMITES.modalConteudo) : ''
+    const modalBotaoTexto = getString(body.modalBotaoTexto, LIMITES.modalBotaoTexto)
     const modalBotaoLink = getString(body.modalBotaoLink)
 
     if (!imagemUrl) {
       return NextResponse.json(
-        { error: 'URL da imagem e obrigatoria' },
+        { error: 'A imagem do anuncio e obrigatoria' },
         { status: 400 }
       )
     }
 
     if (!isValidImageUrl(imagemUrl)) {
       return NextResponse.json(
-        { error: 'Use uma URL de imagem http(s) ou caminho interno iniciado por /' },
+        { error: 'Envie uma imagem ou use uma URL http(s) / caminho interno iniciado por /' },
         { status: 400 }
       )
     }
@@ -136,14 +150,14 @@ export async function POST(request: NextRequest) {
 
     if (body.tipoAcao === 'link' && !linkUrl) {
       return NextResponse.json(
-        { error: 'URL do link e obrigatoria quando tipo de acao e "link"' },
+        { error: 'O destino e obrigatorio quando o tipo de acao e "link"' },
         { status: 400 }
       )
     }
 
     if (body.tipoAcao === 'link' && !isValidNavigationUrl(linkUrl)) {
       return NextResponse.json(
-        { error: 'URL do link invalida' },
+        { error: 'Destino invalido. Escolha um item interno ou informe uma URL http(s)' },
         { status: 400 }
       )
     }
@@ -163,7 +177,7 @@ export async function POST(request: NextRequest) {
       }
       if (modalBotaoLink && !isValidNavigationUrl(modalBotaoLink)) {
         return NextResponse.json(
-          { error: 'URL do botao do modal invalida' },
+          { error: 'Destino do botao do modal invalido' },
           { status: 400 }
         )
       }
@@ -180,24 +194,31 @@ export async function POST(request: NextRequest) {
       .toArray()
     const novaOrdem = body.ordem ?? (ultimoAnuncio.length > 0 ? ultimoAnuncio[0].ordem + 1 : 0)
 
-    const novoAnuncio: Omit<Anuncio, '_id'> = {
+    const isLink = body.tipoAcao === 'link'
+
+    const novoAnuncio = stripUndefined({
       imagemUrl,
       ativo: body.ativo ?? true,
       ordem: novaOrdem,
-      tipoAcao: body.tipoAcao,
-      linkUrl: body.tipoAcao === 'link' ? linkUrl : undefined,
-      linkNovaAba: body.tipoAcao === 'link' ? (body.linkNovaAba ?? true) : undefined,
-      modalTitulo: body.tipoAcao === 'modal' ? modalTitulo : undefined,
-      modalConteudo: body.tipoAcao === 'modal' ? modalConteudo : undefined,
-      modalBotaoTexto: body.tipoAcao === 'modal' ? modalBotaoTexto || undefined : undefined,
-      modalBotaoLink: body.tipoAcao === 'modal' ? modalBotaoLink || undefined : undefined,
+      tipoAcao: body.tipoAcao as 'link' | 'modal',
+      titulo: titulo || undefined,
+      ctaTexto: ctaTexto || undefined,
+      linkUrl: isLink ? linkUrl : undefined,
+      linkNovaAba: isLink ? (body.linkNovaAba ?? true) : undefined,
+      destino: isLink ? sanitizeDestino(body.destino, linkUrl) : undefined,
+      modalTitulo: isLink ? undefined : modalTitulo,
+      modalConteudo: isLink ? undefined : modalConteudo,
+      modalBotaoTexto: isLink ? undefined : modalBotaoTexto || undefined,
+      modalBotaoLink: isLink ? undefined : modalBotaoLink || undefined,
+      modalBotaoDestino:
+        !isLink && modalBotaoLink ? sanitizeDestino(body.modalBotaoDestino, modalBotaoLink) : undefined,
       periodos: sanitizePeriodos(body.periodos),
       criadoEm: new Date(),
       atualizadoEm: new Date(),
-      criadoPor: new ObjectId(session.userId)
-    }
+      criadoPor: new ObjectId(session.userId),
+    }) as Anuncio
 
-    const result = await anunciosCollection.insertOne(novoAnuncio as Anuncio)
+    const result = await anunciosCollection.insertOne(novoAnuncio)
 
     return NextResponse.json({
       sucesso: true,
@@ -209,6 +230,51 @@ export async function POST(request: NextRequest) {
       { error: 'Erro ao criar anuncio' },
       { status: 500 }
     )
+  }
+}
+
+// PATCH - Reordenar a lista inteira (apenas admin)
+//
+// Trocar `ordem` entre dois documentos, como a tela fazia antes, não funciona
+// quando dois anúncios compartilham o mesmo valor — o que acontece sempre que
+// alguém cria um anúncio informando `ordem` na mão. Reescrever a sequência
+// inteira a partir da posição na lista resolve o empate e ainda troca dois PUTs
+// concorrentes (que podiam se cruzar) por uma escrita só.
+export async function PATCH(request: NextRequest) {
+  try {
+    const session = await getSession()
+    if (!session || session.role !== 'admin') {
+      return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
+    }
+
+    const body = await request.json()
+    const ids: unknown = body?.ids
+
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return NextResponse.json({ error: 'Informe a nova ordem dos anuncios' }, { status: 400 })
+    }
+
+    const validIds = ids.filter((id): id is string => typeof id === 'string' && ObjectId.isValid(id))
+    if (validIds.length !== ids.length) {
+      return NextResponse.json({ error: 'Lista de ids invalida' }, { status: 400 })
+    }
+
+    const db = await getDb()
+    const atualizadoEm = new Date()
+
+    await db.collection<Anuncio>('anuncios').bulkWrite(
+      validIds.map((id, index) => ({
+        updateOne: {
+          filter: { _id: new ObjectId(id) },
+          update: { $set: { ordem: index, atualizadoEm } },
+        },
+      })),
+    )
+
+    return NextResponse.json({ sucesso: true })
+  } catch (error) {
+    console.error('Erro ao reordenar anuncios:', error)
+    return NextResponse.json({ error: 'Erro ao reordenar anuncios' }, { status: 500 })
   }
 }
 
@@ -257,13 +323,13 @@ export async function PUT(request: NextRequest) {
       const imagemUrl = getString(body.imagemUrl)
       if (!imagemUrl) {
         return NextResponse.json(
-          { error: 'URL da imagem nao pode ser vazia' },
+          { error: 'A imagem do anuncio nao pode ficar vazia' },
           { status: 400 }
         )
       }
       if (!isValidImageUrl(imagemUrl)) {
         return NextResponse.json(
-          { error: 'Use uma URL de imagem http(s) ou caminho interno iniciado por /' },
+          { error: 'Envie uma imagem ou use uma URL http(s) / caminho interno iniciado por /' },
           { status: 400 }
         )
       }
@@ -286,6 +352,14 @@ export async function PUT(request: NextRequest) {
       updateData.periodos = sanitizePeriodos(body.periodos)
     }
 
+    if (body.titulo !== undefined) {
+      updateData.titulo = getString(body.titulo, LIMITES.titulo) || undefined
+    }
+
+    if (body.ctaTexto !== undefined) {
+      updateData.ctaTexto = getString(body.ctaTexto, LIMITES.ctaTexto) || undefined
+    }
+
     if (body.tipoAcao !== undefined) {
       if (!['link', 'modal'].includes(body.tipoAcao)) {
         return NextResponse.json(
@@ -306,19 +380,34 @@ export async function PUT(request: NextRequest) {
     if (body.linkNovaAba !== undefined) {
       updateData.linkNovaAba = Boolean(body.linkNovaAba)
     }
+    if (body.destino !== undefined) {
+      updateData.destino = sanitizeDestino(
+        body.destino,
+        updateData.linkUrl ?? anuncioExistente.linkUrl,
+      )
+    }
 
     // Campos de modal
     if (body.modalTitulo !== undefined) {
-      updateData.modalTitulo = getString(body.modalTitulo) || undefined
+      updateData.modalTitulo = getString(body.modalTitulo, LIMITES.modalTitulo) || undefined
     }
     if (body.modalConteudo !== undefined) {
-      updateData.modalConteudo = typeof body.modalConteudo === 'string' ? body.modalConteudo || undefined : undefined
+      updateData.modalConteudo =
+        typeof body.modalConteudo === 'string'
+          ? body.modalConteudo.slice(0, LIMITES.modalConteudo) || undefined
+          : undefined
     }
     if (body.modalBotaoTexto !== undefined) {
-      updateData.modalBotaoTexto = getString(body.modalBotaoTexto) || undefined
+      updateData.modalBotaoTexto = getString(body.modalBotaoTexto, LIMITES.modalBotaoTexto) || undefined
     }
     if (body.modalBotaoLink !== undefined) {
       updateData.modalBotaoLink = getString(body.modalBotaoLink) || undefined
+    }
+    if (body.modalBotaoDestino !== undefined) {
+      updateData.modalBotaoDestino = sanitizeDestino(
+        body.modalBotaoDestino,
+        updateData.modalBotaoLink ?? anuncioExistente.modalBotaoLink,
+      )
     }
 
     // Validacoes baseadas no tipoAcao final
@@ -326,13 +415,13 @@ export async function PUT(request: NextRequest) {
       const linkUrlFinal = updateData.linkUrl ?? anuncioExistente.linkUrl
       if (!linkUrlFinal || linkUrlFinal.trim() === '') {
         return NextResponse.json(
-          { error: 'URL do link e obrigatoria quando tipo de acao e "link"' },
+          { error: 'O destino e obrigatorio quando o tipo de acao e "link"' },
           { status: 400 }
         )
       }
       if (!isValidNavigationUrl(linkUrlFinal)) {
         return NextResponse.json(
-          { error: 'URL do link invalida' },
+          { error: 'Destino invalido. Escolha um item interno ou informe uma URL http(s)' },
           { status: 400 }
         )
       }
@@ -341,6 +430,7 @@ export async function PUT(request: NextRequest) {
       unsetData.modalConteudo = ''
       unsetData.modalBotaoTexto = ''
       unsetData.modalBotaoLink = ''
+      unsetData.modalBotaoDestino = ''
     }
 
     if (tipoAcaoFinal === 'modal') {
@@ -362,13 +452,30 @@ export async function PUT(request: NextRequest) {
       }
       if (modalBotaoLinkFinal && !isValidNavigationUrl(modalBotaoLinkFinal)) {
         return NextResponse.json(
-          { error: 'URL do botao do modal invalida' },
+          { error: 'Destino do botao do modal invalido' },
           { status: 400 }
         )
       }
 
       unsetData.linkUrl = ''
       unsetData.linkNovaAba = ''
+      unsetData.destino = ''
+    }
+
+    // Campo vazio quer dizer "apagar": vira $unset em vez de gravar null.
+    for (const key of Object.keys(updateData) as Array<keyof Anuncio>) {
+      if (updateData[key] === undefined) {
+        unsetData[key] = ''
+        delete updateData[key]
+      }
+    }
+
+    // Um mesmo campo em $set e $unset faz o Mongo recusar a operação inteira
+    // ("would create a conflict"), devolvendo 500 numa edição comum. Quem manda
+    // é o $unset: ele vem das regras do tipo de ação — um anúncio de link não
+    // guarda texto de modal, e vice-versa, mesmo que o corpo tenha mandado um.
+    for (const key of Object.keys(unsetData) as Array<keyof Anuncio>) {
+      delete updateData[key]
     }
 
     const updateOperation: { $set: Partial<Anuncio>; $unset?: Partial<Record<keyof Anuncio, ''>> } = {

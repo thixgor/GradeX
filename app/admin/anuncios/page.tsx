@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { useRouter } from 'next/navigation'
 import {
+  AlertTriangle,
   ArrowDown,
   ArrowLeft,
   ArrowUp,
@@ -13,6 +14,7 @@ import {
   Eye,
   EyeOff,
   Image,
+  ImageOff,
   Link2,
   Loader2,
   Megaphone,
@@ -48,6 +50,17 @@ import { ToastAlert } from '@/components/ui/toast-alert'
 import { LogoLoading } from '@/components/logo-loading'
 import { cn } from '@/lib/utils'
 import { PERIODO_OPTIONS, formatPeriodoLabel } from '@/lib/user-periodo'
+import { CampoDestino } from '@/components/admin/anuncios/campo-destino'
+import { CampoImagem } from '@/components/admin/anuncios/campo-imagem'
+import { PainelModelos } from '@/components/admin/anuncios/painel-modelos'
+import { listarPlaceholders, type AnuncioTemplate } from '@/lib/anuncio-templates'
+import {
+  ANUNCIO_DESTINO_LABEL,
+  isInternalPath,
+  isValidImageUrl,
+  isValidNavigationUrl,
+  type AnuncioDestino,
+} from '@/lib/anuncio-destinos'
 
 type TipoAcao = 'link' | 'modal'
 type StatusFilter = 'all' | 'active' | 'inactive'
@@ -59,12 +72,16 @@ interface Anuncio {
   ativo: boolean
   ordem: number
   tipoAcao: TipoAcao
+  titulo?: string
+  ctaTexto?: string
   linkUrl?: string
   linkNovaAba?: boolean
+  destino?: AnuncioDestino
   modalTitulo?: string
   modalConteudo?: string
   modalBotaoTexto?: string
   modalBotaoLink?: string
+  modalBotaoDestino?: AnuncioDestino
   periodos?: number[]
   criadoEm?: string
   atualizadoEm?: string
@@ -73,12 +90,16 @@ interface Anuncio {
 interface FormData {
   imagemUrl: string
   tipoAcao: TipoAcao
+  titulo: string
+  ctaTexto: string
   linkUrl: string
   linkNovaAba: boolean
+  destino?: AnuncioDestino
   modalTitulo: string
   modalConteudo: string
   modalBotaoTexto: string
   modalBotaoLink: string
+  modalBotaoDestino?: AnuncioDestino
   periodos: number[]
   ativo: boolean
 }
@@ -86,12 +107,16 @@ interface FormData {
 const initialFormData: FormData = {
   imagemUrl: '',
   tipoAcao: 'link',
+  titulo: '',
+  ctaTexto: '',
   linkUrl: '',
   linkNovaAba: true,
+  destino: undefined,
   modalTitulo: '',
   modalConteudo: '',
   modalBotaoTexto: '',
   modalBotaoLink: '',
+  modalBotaoDestino: undefined,
   periodos: [],
   ativo: true,
 }
@@ -115,32 +140,6 @@ function normalizeSearch(value: string) {
     .toLowerCase()
 }
 
-function isValidImageUrl(value: string) {
-  const trimmed = value.trim()
-  if (!trimmed) return false
-  if (trimmed.startsWith('/')) return true
-
-  try {
-    const url = new URL(trimmed)
-    return url.protocol === 'http:' || url.protocol === 'https:'
-  } catch {
-    return false
-  }
-}
-
-function isValidNavigationUrl(value: string) {
-  const trimmed = value.trim()
-  if (!trimmed) return false
-  if (trimmed.startsWith('/')) return true
-
-  try {
-    const url = new URL(trimmed)
-    return ['http:', 'https:', 'mailto:', 'tel:'].includes(url.protocol)
-  } catch {
-    return false
-  }
-}
-
 function formatDate(value?: string) {
   if (!value) return 'Sem data'
   const date = new Date(value)
@@ -156,6 +155,8 @@ function formatDate(value?: string) {
 }
 
 function getAdTitle(ad: Anuncio) {
+  if (ad.titulo?.trim()) return ad.titulo.trim()
+  if (ad.destino?.rotulo?.trim()) return ad.destino.rotulo.trim()
   if (ad.modalTitulo?.trim()) return ad.modalTitulo.trim()
   if (ad.tipoAcao === 'link' && ad.linkUrl?.trim()) return getDestinationLabel(ad.linkUrl)
   return `Anuncio #${ad.ordem + 1}`
@@ -195,6 +196,7 @@ function AdminAnunciosContent() {
   const [editingAnuncio, setEditingAnuncio] = useState<Anuncio | null>(null)
   const [formData, setFormData] = useState<FormData>(initialFormData)
   const [submitting, setSubmitting] = useState(false)
+  const [ignorePlaceholders, setIgnorePlaceholders] = useState(false)
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [anuncioToDelete, setAnuncioToDelete] = useState<Anuncio | null>(null)
@@ -255,6 +257,24 @@ function AdminAnunciosContent() {
     }
   }, [anuncios])
 
+  const pendingPlaceholders = useMemo(
+    () =>
+      listarPlaceholders(
+        formData.titulo,
+        formData.ctaTexto,
+        formData.modalTitulo,
+        formData.modalConteudo,
+        formData.modalBotaoTexto,
+      ),
+    [
+      formData.ctaTexto,
+      formData.modalBotaoTexto,
+      formData.modalConteudo,
+      formData.modalTitulo,
+      formData.titulo,
+    ],
+  )
+
   const filteredAnuncios = useMemo(() => {
     const query = normalizeSearch(search.trim())
 
@@ -267,6 +287,8 @@ function AdminAnunciosContent() {
       return normalizeSearch(
         [
           ad.imagemUrl,
+          ad.titulo,
+          ad.destino?.rotulo,
           ad.linkUrl,
           ad.modalTitulo,
           ad.modalConteudo,
@@ -282,24 +304,50 @@ function AdminAnunciosContent() {
   function openCreateDialog() {
     setEditingAnuncio(null)
     setFormData({ ...initialFormData })
+    setIgnorePlaceholders(false)
     setDialogOpen(true)
   }
 
   function openEditDialog(anuncio: Anuncio) {
     setEditingAnuncio(anuncio)
+    setIgnorePlaceholders(false)
     setFormData({
       imagemUrl: anuncio.imagemUrl,
       tipoAcao: anuncio.tipoAcao,
+      titulo: anuncio.titulo || '',
+      ctaTexto: anuncio.ctaTexto || '',
       linkUrl: anuncio.linkUrl || '',
       linkNovaAba: anuncio.linkNovaAba ?? true,
+      destino: anuncio.destino,
       modalTitulo: anuncio.modalTitulo || '',
       modalConteudo: anuncio.modalConteudo || '',
       modalBotaoTexto: anuncio.modalBotaoTexto || '',
       modalBotaoLink: anuncio.modalBotaoLink || '',
+      modalBotaoDestino: anuncio.modalBotaoDestino,
       periodos: Array.isArray(anuncio.periodos) ? anuncio.periodos : [],
       ativo: anuncio.ativo,
     })
     setDialogOpen(true)
+  }
+
+  /**
+   * Aplica um modelo persuasivo aos campos de texto.
+   *
+   * Preenche banner e modal de uma vez, sem trocar o tipo de acao: o mesmo
+   * modelo serve para um banner que leva direto ao material e para um que abre
+   * o modal antes: o que nao for usado simplesmente nao aparece.
+   */
+  function applyTemplate(template: AnuncioTemplate) {
+    setFormData((current) => ({
+      ...current,
+      titulo: template.titulo,
+      ctaTexto: template.ctaTexto,
+      modalTitulo: template.modalTitulo,
+      modalConteudo: template.modalConteudo,
+      modalBotaoTexto: template.modalBotaoTexto,
+    }))
+    setIgnorePlaceholders(false)
+    showToast(`Modelo "${template.nome}" aplicado. Troque os [colchetes] pelos dados reais.`, 'success')
   }
 
   async function handleSubmit() {
@@ -308,13 +356,13 @@ function AdminAnunciosContent() {
     const modalButtonLink = formData.modalBotaoLink.trim()
 
     if (!isValidImageUrl(imageUrl)) {
-      showToast('Informe uma URL de imagem http(s) ou um caminho interno iniciado por /', 'error')
+      showToast('Envie uma imagem do computador ou informe uma URL http(s) valida', 'error')
       return
     }
 
     if (formData.tipoAcao === 'link') {
       if (!isValidNavigationUrl(linkUrl)) {
-        showToast('Informe uma URL de destino valida para o link', 'error')
+        showToast('Escolha um destino interno ou informe uma URL externa valida', 'error')
         return
       }
     }
@@ -329,32 +377,53 @@ function AdminAnunciosContent() {
         return
       }
       if (modalButtonLink && !isValidNavigationUrl(modalButtonLink)) {
-        showToast('Informe uma URL valida para o botao do modal', 'error')
+        showToast('Escolha um destino valido para o botao do modal', 'error')
         return
       }
     }
 
+    // Marcador de modelo esquecido no texto ([PRODUTO], [Nº]...) publica um
+    // anuncio pela metade. O primeiro clique avisa; o segundo salva assim mesmo,
+    // porque colchete tambem pode ser texto legitimo.
+    if (pendingPlaceholders.length > 0 && !ignorePlaceholders) {
+      setIgnorePlaceholders(true)
+      showToast(
+        `Ainda ha texto de modelo sem preencher: ${pendingPlaceholders.slice(0, 3).join(', ')}${
+          pendingPlaceholders.length > 3 ? '...' : ''
+        }. Clique de novo para salvar assim mesmo.`,
+        'error',
+      )
+      return
+    }
+
     setSubmitting(true)
     try {
+      const comum = {
+        imagemUrl: imageUrl,
+        tipoAcao: formData.tipoAcao,
+        ativo: formData.ativo,
+        periodos: formData.periodos,
+        titulo: formData.titulo.trim(),
+        ctaTexto: formData.ctaTexto.trim(),
+      }
+
       const payload =
         formData.tipoAcao === 'link'
           ? {
-              imagemUrl: imageUrl,
-              tipoAcao: formData.tipoAcao,
-              ativo: formData.ativo,
-              periodos: formData.periodos,
+              ...comum,
               linkUrl,
-              linkNovaAba: formData.linkNovaAba,
+              // Caminho interno navega dentro do app; a opcao de nova aba so
+              // faz sentido para quem realmente sai da plataforma.
+              linkNovaAba: isInternalPath(linkUrl) ? false : formData.linkNovaAba,
+              destino: formData.destino,
             }
           : {
-              imagemUrl: imageUrl,
-              tipoAcao: formData.tipoAcao,
-              ativo: formData.ativo,
-              periodos: formData.periodos,
+              ...comum,
               modalTitulo: formData.modalTitulo.trim(),
               modalConteudo: formData.modalConteudo,
               modalBotaoTexto: formData.modalBotaoTexto.trim() || undefined,
               modalBotaoLink: modalButtonLink || undefined,
+              modalBotaoDestino: modalButtonLink ? formData.modalBotaoDestino : undefined,
             }
 
       const res = await fetch(
@@ -372,6 +441,7 @@ function AdminAnunciosContent() {
       }
 
       showToast(editingAnuncio ? 'Anuncio atualizado com sucesso' : 'Anuncio criado com sucesso', 'success')
+      setIgnorePlaceholders(false)
       setDialogOpen(false)
       await loadAnuncios()
     } catch (error) {
@@ -406,39 +476,41 @@ function AdminAnunciosContent() {
     }
   }
 
+  /**
+   * Move um anuncio e regrava a sequencia inteira.
+   *
+   * Trocar o valor de `ordem` entre os dois vizinhos, como era feito antes, nao
+   * movia nada quando os dois tinham o mesmo numero — situacao comum depois de
+   * criar anuncios informando `ordem` na mao. A rota PATCH reescreve a lista
+   * pela posicao, numa escrita so.
+   */
   async function moveAnuncio(anuncio: Anuncio, direction: 'up' | 'down') {
     const currentIndex = sortedAnuncios.findIndex((item) => item._id === anuncio._id)
     const targetIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1
 
     if (currentIndex < 0 || targetIndex < 0 || targetIndex >= sortedAnuncios.length) return
 
-    const targetAnuncio = sortedAnuncios[targetIndex]
+    const reordenados = [...sortedAnuncios]
+    const [movido] = reordenados.splice(currentIndex, 1)
+    reordenados.splice(targetIndex, 0, movido)
+
     setActionLoading(`${anuncio._id}-move`)
 
     try {
-      const responses = await Promise.all([
-        fetch(`/api/admin/anuncios?id=${anuncio._id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ordem: targetAnuncio.ordem }),
-        }),
-        fetch(`/api/admin/anuncios?id=${targetAnuncio._id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ordem: anuncio.ordem }),
-        }),
-      ])
+      const res = await fetch('/api/admin/anuncios', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: reordenados.map((item) => item._id) }),
+      })
 
-      if (responses.some((response) => !response.ok)) {
-        throw new Error('Erro ao reordenar anuncios')
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data.error || 'Erro ao reordenar anuncios')
       }
 
+      const novaOrdem = new Map(reordenados.map((item, index) => [item._id, index]))
       setAnuncios((previous) =>
-        previous.map((item) => {
-          if (item._id === anuncio._id) return { ...item, ordem: targetAnuncio.ordem }
-          if (item._id === targetAnuncio._id) return { ...item, ordem: anuncio.ordem }
-          return item
-        }),
+        previous.map((item) => ({ ...item, ordem: novaOrdem.get(item._id) ?? item.ordem })),
       )
       showToast('Ordem atualizada', 'success')
     } catch (error) {
@@ -604,9 +676,10 @@ function AdminAnunciosContent() {
             </div>
             <div className="space-y-3 text-sm text-muted-foreground">
               <GuidelineItem label="Imagem" value="1200 x 400 px ou proporcao 3:1" />
+              <GuidelineItem label="Envio" value="Arraste o arquivo: fica hospedado aqui, sem Imgur" />
               <GuidelineItem label="Peso" value="Use JPG/WEBP leve para nao atrasar paginas" />
-              <GuidelineItem label="Texto" value="Deixe a mensagem principal dentro da imagem" />
-              <GuidelineItem label="Modal" value="Conteudo curto, com CTA opcional" />
+              <GuidelineItem label="Destino" value="Prefira material, produto ou area do site" />
+              <GuidelineItem label="Texto" value="Chamada com numero e prazo converte mais" />
             </div>
           </div>
         </aside>
@@ -623,17 +696,39 @@ function AdminAnunciosContent() {
 
           <div className="grid max-h-[68vh] gap-5 overflow-y-auto pr-1 lg:grid-cols-[minmax(0,1fr)_280px]">
             <div className="space-y-5">
-              <div className="space-y-2">
-                <Label htmlFor="imagemUrl">URL da imagem *</Label>
-                <Input
-                  id="imagemUrl"
-                  placeholder="https://exemplo.com/banner.jpg ou /uploads/banner.jpg"
-                  value={formData.imagemUrl}
-                  onChange={(event) => setFormData({ ...formData, imagemUrl: event.target.value })}
-                />
-                <p className="text-xs text-muted-foreground">
-                  Aceita http(s) ou caminhos internos iniciados por /.
-                </p>
+              <CampoImagem
+                value={formData.imagemUrl}
+                onChange={(imagemUrl) => setFormData((current) => ({ ...current, imagemUrl }))}
+                onError={(message) => showToast(message, 'error')}
+                onSuccess={(message) => showToast(message, 'success')}
+              />
+
+              <PainelModelos onAplicar={applyTemplate} />
+
+              <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_180px]">
+                <div className="space-y-2">
+                  <Label htmlFor="titulo">Chamada do banner</Label>
+                  <Input
+                    id="titulo"
+                    placeholder="Restam 8 vagas na turma de Anatomia"
+                    value={formData.titulo}
+                    onChange={(event) => setFormData({ ...formData, titulo: event.target.value })}
+                    maxLength={120}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Sem chamada, o banner usa o nome do destino escolhido.
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="ctaTexto">Texto do botao</Label>
+                  <Input
+                    id="ctaTexto"
+                    placeholder="Ver agora"
+                    value={formData.ctaTexto}
+                    onChange={(event) => setFormData({ ...formData, ctaTexto: event.target.value })}
+                    maxLength={32}
+                  />
+                </div>
               </div>
 
               <div className="space-y-3">
@@ -662,25 +757,30 @@ function AdminAnunciosContent() {
 
               {formData.tipoAcao === 'link' ? (
                 <div className="space-y-4 rounded-lg border border-[#E2A43E]/30 bg-[#E2A43E]/5 p-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="linkUrl">URL de destino *</Label>
-                    <Input
-                      id="linkUrl"
-                      placeholder="https://exemplo.com ou /materiais"
-                      value={formData.linkUrl}
-                      onChange={(event) => setFormData({ ...formData, linkUrl: event.target.value })}
-                    />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Checkbox
-                      id="linkNovaAba"
-                      checked={formData.linkNovaAba}
-                      onCheckedChange={(checked) => setFormData({ ...formData, linkNovaAba: !!checked })}
-                    />
-                    <Label htmlFor="linkNovaAba" className="cursor-pointer text-sm">
-                      Abrir em nova aba
-                    </Label>
-                  </div>
+                  <CampoDestino
+                    key={`${editingAnuncio?._id ?? 'novo'}-link`}
+                    label="Destino do anuncio"
+                    helper="Escolha um material, produto, aula ou area do site para o usuario continuar dentro do app."
+                    value={formData.linkUrl}
+                    destino={formData.destino}
+                    onChange={(linkUrl, destino) => setFormData((current) => ({ ...current, linkUrl, destino }))}
+                  />
+                  {isInternalPath(formData.linkUrl) ? (
+                    <p className="rounded-lg bg-[#468152]/10 px-3 py-2 text-xs font-semibold text-[#468152] dark:text-emerald-300">
+                      Destino interno: o clique navega dentro da plataforma, sem abrir outra aba.
+                    </p>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <Checkbox
+                        id="linkNovaAba"
+                        checked={formData.linkNovaAba}
+                        onCheckedChange={(checked) => setFormData({ ...formData, linkNovaAba: !!checked })}
+                      />
+                      <Label htmlFor="linkNovaAba" className="cursor-pointer text-sm">
+                        Abrir em nova aba
+                      </Label>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="space-y-4 rounded-lg border border-[#468152]/30 bg-[#468152]/5 p-4">
@@ -703,29 +803,32 @@ function AdminAnunciosContent() {
                       rows={6}
                     />
                     <p className="text-xs text-muted-foreground">
-                      Tags simples como p, strong, em, ul, li e a sao aceitas na exibicao publica.
+                      Tags simples como p, strong, em, ul, ol, li, h3, blockquote, small e a sao aceitas na
+                      exibicao publica. O resto e removido.
                     </p>
                   </div>
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="modalBotaoTexto">Texto do botao</Label>
-                      <Input
-                        id="modalBotaoTexto"
-                        placeholder="Saiba mais"
-                        value={formData.modalBotaoTexto}
-                        onChange={(event) => setFormData({ ...formData, modalBotaoTexto: event.target.value })}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="modalBotaoLink">Link do botao</Label>
-                      <Input
-                        id="modalBotaoLink"
-                        placeholder="https://exemplo.com"
-                        value={formData.modalBotaoLink}
-                        onChange={(event) => setFormData({ ...formData, modalBotaoLink: event.target.value })}
-                      />
-                    </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="modalBotaoTexto">Texto do botao</Label>
+                    <Input
+                      id="modalBotaoTexto"
+                      placeholder="Saiba mais"
+                      value={formData.modalBotaoTexto}
+                      onChange={(event) => setFormData({ ...formData, modalBotaoTexto: event.target.value })}
+                      maxLength={60}
+                    />
                   </div>
+
+                  <CampoDestino
+                    key={`${editingAnuncio?._id ?? 'novo'}-modal`}
+                    label="Destino do botao"
+                    helper="Para onde o botao do modal leva. Deixe vazio para um modal apenas informativo."
+                    value={formData.modalBotaoLink}
+                    destino={formData.modalBotaoDestino}
+                    onChange={(modalBotaoLink, modalBotaoDestino) =>
+                      setFormData((current) => ({ ...current, modalBotaoLink, modalBotaoDestino }))
+                    }
+                    opcional
+                  />
                 </div>
               )}
 
@@ -807,13 +910,27 @@ function AdminAnunciosContent() {
             </div>
           </div>
 
-          <DialogFooter>
+          <DialogFooter className="flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:justify-end">
+            {pendingPlaceholders.length > 0 && (
+              <p className="mr-auto flex items-start gap-2 rounded-lg bg-amber-500/10 px-3 py-2 text-xs font-semibold text-amber-700 dark:text-amber-300">
+                <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                <span>
+                  {pendingPlaceholders.length} trecho(s) de modelo sem preencher:{' '}
+                  {pendingPlaceholders.slice(0, 3).join(', ')}
+                  {pendingPlaceholders.length > 3 ? '...' : ''}
+                </span>
+              </p>
+            )}
             <Button variant="outline" onClick={() => setDialogOpen(false)} disabled={submitting}>
               Cancelar
             </Button>
             <Button onClick={handleSubmit} disabled={submitting} className="bg-[#468152] text-white hover:bg-[#3b7045]">
               {submitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-              {editingAnuncio ? 'Salvar alteracoes' : 'Criar anuncio'}
+              {pendingPlaceholders.length > 0 && ignorePlaceholders
+                ? 'Salvar assim mesmo'
+                : editingAnuncio
+                  ? 'Salvar alteracoes'
+                  : 'Criar anuncio'}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -955,6 +1072,10 @@ function AdListItem({
   onCopy: (text: string, label: string) => void
 }) {
   const isBusy = loadingKey?.startsWith(anuncio._id)
+  const [imagemQuebrada, setImagemQuebrada] = useState(false)
+  // Trocar a arte do anuncio tem de dar outra chance a imagem.
+  useEffect(() => setImagemQuebrada(false), [anuncio.imagemUrl])
+  const destinoInterno = !!anuncio.linkUrl && isInternalPath(anuncio.linkUrl)
 
   return (
     <article
@@ -967,15 +1088,22 @@ function AdListItem({
       <div className="grid gap-4 p-4 md:grid-cols-[180px_minmax(0,1fr)_auto]">
         <div className="overflow-hidden rounded-lg border bg-muted/25">
           <div className="relative aspect-[3/1] md:aspect-[16/9]">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={anuncio.imagemUrl}
-              alt={getAdTitle(anuncio)}
-              className="h-full w-full object-cover"
-              onError={(event) => {
-                event.currentTarget.style.opacity = '0'
-              }}
-            />
+            {imagemQuebrada ? (
+              // Sumir com a imagem escondia o problema: o card ficava com um
+              // buraco branco e nada dizia que a URL parou de responder.
+              <div className="flex h-full w-full flex-col items-center justify-center gap-1 bg-muted/60 p-2 text-center">
+                <ImageOff className="h-5 w-5 text-muted-foreground" />
+                <span className="text-[10px] font-semibold text-muted-foreground">Imagem indisponivel</span>
+              </div>
+            ) : (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img
+                src={anuncio.imagemUrl}
+                alt={getAdTitle(anuncio)}
+                className="h-full w-full object-cover"
+                onError={() => setImagemQuebrada(true)}
+              />
+            )}
             <div className="absolute left-2 top-2 flex items-center gap-1">
               <Badge className={cn('border px-2 py-0.5 text-[11px]', anuncio.ativo ? 'border-emerald-500/25 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300' : 'border-slate-500/25 bg-slate-500/15 text-slate-600 dark:text-slate-300')}>
                 {anuncio.ativo ? 'Ativo' : 'Inativo'}
@@ -992,6 +1120,20 @@ function AdListItem({
             <span className="rounded-lg bg-muted px-2 py-1 text-xs font-semibold text-muted-foreground">
               Ordem {anuncio.ordem}
             </span>
+            {anuncio.tipoAcao === 'link' && anuncio.linkUrl && (
+              <Badge
+                className={cn(
+                  'border text-xs',
+                  destinoInterno
+                    ? 'border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300'
+                    : 'border-slate-500/25 bg-slate-500/10 text-slate-600 dark:text-slate-300',
+                )}
+              >
+                {destinoInterno
+                  ? `Interno · ${ANUNCIO_DESTINO_LABEL[anuncio.destino?.tipo ?? 'pagina']}`
+                  : 'Externo'}
+              </Badge>
+            )}
             {anuncio.periodos && anuncio.periodos.length > 0 && (
               <Badge className="border border-violet-500/25 bg-violet-500/10 text-xs text-violet-700 dark:text-violet-300">
                 {anuncio.periodos.map((p) => `${p}º`).join(', ')}
@@ -1126,8 +1268,16 @@ function GlobalPreview({ anuncios }: { anuncios: Anuncio[] }) {
 
 function MiniAdPreview({ anuncio, formData }: { anuncio?: Anuncio; formData?: FormData }) {
   const imageUrl = anuncio?.imagemUrl || formData?.imagemUrl || ''
-  const title = anuncio ? getAdTitle(anuncio) : formData?.modalTitulo || getDestinationLabel(formData?.linkUrl || '') || 'Titulo do anuncio'
+  const title = anuncio
+    ? getAdTitle(anuncio)
+    : formData?.titulo?.trim() ||
+      formData?.destino?.rotulo ||
+      formData?.modalTitulo ||
+      getDestinationLabel(formData?.linkUrl || '') ||
+      'Titulo do anuncio'
   const type = anuncio?.tipoAcao || formData?.tipoAcao || 'link'
+  const cta =
+    (anuncio?.ctaTexto || formData?.ctaTexto || '').trim() || (type === 'link' ? 'Ver agora' : 'Abrir modal')
 
   return (
     <div className="overflow-hidden rounded-lg border border-white/50 bg-white/80 p-2 shadow-lg backdrop-blur-2xl dark:border-white/15 dark:bg-slate-950/70">
@@ -1147,7 +1297,7 @@ function MiniAdPreview({ anuncio, formData }: { anuncio?: Anuncio; formData?: Fo
           </div>
           <p className="line-clamp-2 text-xs font-black leading-tight">{title}</p>
           <div className="mt-1 inline-flex items-center gap-1 rounded-md bg-[#468152]/10 px-2 py-0.5 text-[10px] font-bold text-[#468152]">
-            {type === 'link' ? 'Ver agora' : 'Abrir modal'}
+            {cta}
           </div>
         </div>
         {type === 'link' ? <ExternalLink className="h-4 w-4 text-muted-foreground" /> : <PanelTop className="h-4 w-4 text-muted-foreground" />}

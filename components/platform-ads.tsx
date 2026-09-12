@@ -1,7 +1,7 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { usePathname } from 'next/navigation'
+import { useCallback, useEffect, useMemo, useState, type MouseEvent } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
 import {
   ArrowRight,
   ChevronLeft,
@@ -22,6 +22,13 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { toInternalPath, type AnuncioDestinoTipo } from '@/lib/anuncio-destinos'
+
+export interface PlatformAdDestino {
+  tipo?: AnuncioDestinoTipo
+  rotulo?: string
+  refId?: string
+}
 
 export interface PlatformAd {
   _id: string
@@ -29,12 +36,16 @@ export interface PlatformAd {
   ativo: boolean
   ordem: number
   tipoAcao: 'link' | 'modal'
+  titulo?: string
+  ctaTexto?: string
+  destino?: PlatformAdDestino
   linkUrl?: string
   linkNovaAba?: boolean
   modalTitulo?: string
   modalConteudo?: string
   modalBotaoTexto?: string
   modalBotaoLink?: string
+  modalBotaoDestino?: PlatformAdDestino
 }
 
 const ROTATION_MS = 8000
@@ -101,6 +112,10 @@ function normalizeAds(payload: unknown): PlatformAd[] {
 }
 
 function getAdTitle(ad: PlatformAd) {
+  // A chamada escrita no admin vem primeiro: "Restam 8 vagas" convence mais que
+  // o nome do domínio, que era o único título possível antes.
+  if (ad.titulo?.trim()) return ad.titulo.trim()
+  if (ad.destino?.rotulo?.trim()) return ad.destino.rotulo.trim()
   if (ad.modalTitulo?.trim()) return ad.modalTitulo.trim()
 
   if (ad.linkUrl) {
@@ -115,8 +130,24 @@ function getAdTitle(ad: PlatformAd) {
   return 'Anuncio'
 }
 
+const DESTINO_ETIQUETA: Record<AnuncioDestinoTipo, string> = {
+  material: 'Material',
+  pacote: 'Pacote',
+  produto: 'Produto',
+  aula: 'Aula',
+  rifa: 'Rifa',
+  pagina: 'Na plataforma',
+  externo: '',
+}
+
 function getAdDestination(ad: PlatformAd) {
   if (!ad.linkUrl) return ''
+
+  const etiqueta = ad.destino?.tipo ? DESTINO_ETIQUETA[ad.destino.tipo] : ''
+  if (etiqueta && ad.destino?.rotulo && ad.destino.rotulo.trim() !== getAdTitle(ad)) {
+    return `${etiqueta} · ${ad.destino.rotulo}`
+  }
+  if (etiqueta && !ad.destino?.rotulo) return etiqueta
 
   try {
     const url = new URL(ad.linkUrl, window.location.origin)
@@ -135,8 +166,12 @@ function sanitizeModalHtml(html: string) {
   const allowedTags = new Set([
     'A',
     'B',
+    'BLOCKQUOTE',
     'BR',
     'EM',
+    'H3',
+    'H4',
+    'HR',
     'I',
     'LI',
     'OL',
@@ -187,8 +222,18 @@ function sanitizeModalHtml(html: string) {
     })
 
     if (element.tagName === 'A') {
-      element.setAttribute('target', '_blank')
-      element.setAttribute('rel', 'noopener noreferrer nofollow')
+      // Link para o próprio site abre na mesma aba e é interceptado no clique
+      // para virar navegação do app; só o que sai do domínio ganha aba nova.
+      const href = element.getAttribute('href') || ''
+      const interno = !!toInternalPath(href, window.location.origin)
+
+      if (interno) {
+        element.setAttribute('target', '_self')
+        element.removeAttribute('rel')
+      } else {
+        element.setAttribute('target', '_blank')
+        element.setAttribute('rel', 'noopener noreferrer nofollow')
+      }
     }
   })
 
@@ -197,6 +242,7 @@ function sanitizeModalHtml(html: string) {
 
 export function PlatformAds() {
   const pathname = usePathname()
+  const router = useRouter()
   const [ads, setAds] = useState<PlatformAd[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [dismissed, setDismissed] = useState(false)
@@ -261,6 +307,11 @@ export function PlatformAds() {
   const isLinkAd = currentAd?.tipoAcao === 'link'
   const adTitle = currentAd ? getAdTitle(currentAd) : ''
   const adDestination = currentAd ? getAdDestination(currentAd) : ''
+  const isInternalAd =
+    typeof window !== 'undefined' && !!currentAd?.linkUrl
+      ? !!toInternalPath(currentAd.linkUrl, window.location.origin)
+      : false
+  const ctaLabel = currentAd?.ctaTexto?.trim() || (isLinkAd ? 'Ver agora' : 'Abrir')
   const sanitizedModalContent = useMemo(
     () => sanitizeModalHtml(selectedAd?.modalConteudo || ''),
     [selectedAd?.modalConteudo],
@@ -287,28 +338,68 @@ export function PlatformAds() {
     }
   }, [])
 
-  const handleAdClick = useCallback((ad: PlatformAd) => {
-    if (ad.tipoAcao === 'link' && ad.linkUrl) {
-      if (ad.linkNovaAba ?? true) {
-        window.open(ad.linkUrl, '_blank', 'noopener,noreferrer')
-      } else {
-        window.location.href = ad.linkUrl
-      }
-      return
-    }
+  /**
+   * Abre o destino do anúncio.
+   *
+   * Destino DENTRO da plataforma navega com o router: abrir uma aba nova para
+   * ir de `/dashboard` a `/materiais/x` custa o carregamento inteiro do app e,
+   * no PWA instalado, ainda joga a pessoa para fora, no navegador. Só o que sai
+   * do domínio é que ganha aba nova.
+   */
+  const openDestination = useCallback(
+    (url?: string, novaAba?: boolean) => {
+      if (!url) return
 
-    if (ad.tipoAcao === 'modal') {
-      setSelectedAd(ad)
-      setModalOpen(true)
-    }
-  }, [])
+      const interno = toInternalPath(url, window.location.origin)
+      if (interno) {
+        router.push(interno)
+        return
+      }
+
+      if (novaAba ?? true) {
+        window.open(url, '_blank', 'noopener,noreferrer')
+      } else {
+        window.location.href = url
+      }
+    },
+    [router],
+  )
+
+  const handleAdClick = useCallback(
+    (ad: PlatformAd) => {
+      if (ad.tipoAcao === 'link' && ad.linkUrl) {
+        openDestination(ad.linkUrl, ad.linkNovaAba)
+        return
+      }
+
+      if (ad.tipoAcao === 'modal') {
+        setSelectedAd(ad)
+        setModalOpen(true)
+      }
+    },
+    [openDestination],
+  )
 
   const handleModalButtonClick = useCallback(() => {
-    if (selectedAd?.modalBotaoLink) {
-      window.open(selectedAd.modalBotaoLink, '_blank', 'noopener,noreferrer')
-    }
+    openDestination(selectedAd?.modalBotaoLink)
     setModalOpen(false)
-  }, [selectedAd?.modalBotaoLink])
+  }, [openDestination, selectedAd?.modalBotaoLink])
+
+  /** Link escrito no corpo do modal: mesmo tratamento do botão. */
+  const handleModalContentClick = useCallback(
+    (event: MouseEvent<HTMLDivElement>) => {
+      const anchor = (event.target as HTMLElement | null)?.closest('a')
+      if (!anchor) return
+
+      const interno = toInternalPath(anchor.getAttribute('href') || '', window.location.origin)
+      if (!interno) return
+
+      event.preventDefault()
+      setModalOpen(false)
+      router.push(interno)
+    },
+    [router],
+  )
 
   if (hiddenOnRoute || dismissed || !currentAd || ads.length === 0) {
     return null
@@ -375,7 +466,7 @@ export function PlatformAds() {
                   </span>
                   {isLinkAd && (
                     <span className="hidden rounded-full bg-[#E2A43E]/18 px-2 py-0.5 text-[10px] font-bold text-[#9A6817] dark:text-amber-200 sm:inline-flex">
-                      Clique para abrir
+                      {isInternalAd ? 'Abre aqui mesmo' : 'Abre em nova aba'}
                     </span>
                   )}
                 </span>
@@ -397,12 +488,12 @@ export function PlatformAds() {
                     : 'bg-[#468152] shadow-[#468152]/20',
                 )}
               >
-                {currentAd.tipoAcao === 'link' ? (
+                {isLinkAd && !isInternalAd ? (
                   <ExternalLink className="h-3.5 w-3.5" />
                 ) : (
                   <MousePointerClick className="h-3.5 w-3.5" />
                 )}
-                {isLinkAd ? 'Ver agora' : 'Abrir'}
+                {ctaLabel}
                 <ArrowRight className="h-3.5 w-3.5" />
               </span>
             </button>
@@ -481,7 +572,13 @@ export function PlatformAds() {
                 '[&_ul]:my-4 [&_ul]:rounded-lg [&_ul]:border [&_ul]:border-slate-200 [&_ul]:bg-slate-50 [&_ul]:py-3 [&_ul]:pl-6 [&_ul]:pr-4 dark:[&_ul]:border-emerald-300/12 dark:[&_ul]:bg-white/[0.04] sm:[&_ul]:px-5',
                 '[&_ol]:my-4 [&_ol]:rounded-lg [&_ol]:border [&_ol]:border-slate-200 [&_ol]:bg-slate-50 [&_ol]:py-3 [&_ol]:pl-6 [&_ol]:pr-4 dark:[&_ol]:border-emerald-300/12 dark:[&_ol]:bg-white/[0.04] sm:[&_ol]:px-5',
                 '[&_li]:my-1 [&_li]:text-slate-700 dark:[&_li]:text-slate-100',
+                '[&_h3]:mb-2 [&_h3]:mt-4 [&_h3]:text-base [&_h3]:font-black [&_h3]:text-slate-900 dark:[&_h3]:text-white sm:[&_h3]:text-lg',
+                '[&_h4]:mb-1 [&_h4]:mt-3 [&_h4]:text-sm [&_h4]:font-bold [&_h4]:text-slate-900 dark:[&_h4]:text-white',
+                '[&_blockquote]:my-4 [&_blockquote]:border-l-4 [&_blockquote]:border-[#468152]/50 [&_blockquote]:bg-[#468152]/5 [&_blockquote]:py-2 [&_blockquote]:pl-4 [&_blockquote]:pr-3 [&_blockquote]:italic dark:[&_blockquote]:bg-white/[0.04]',
+                '[&_hr]:my-4 [&_hr]:border-slate-200 dark:[&_hr]:border-white/10',
+                '[&_small]:text-xs [&_small]:text-slate-500 dark:[&_small]:text-slate-400',
               )}
+              onClick={handleModalContentClick}
               dangerouslySetInnerHTML={{ __html: sanitizedModalContent }}
             />
           </div>

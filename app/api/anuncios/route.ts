@@ -11,6 +11,10 @@ interface PublicAnuncio {
   ativo: boolean
   ordem: number
   tipoAcao: 'link' | 'modal'
+  titulo?: string
+  ctaTexto?: string
+  destino?: { tipo?: string; rotulo?: string; refId?: string }
+  modalBotaoDestino?: { tipo?: string; rotulo?: string; refId?: string }
   linkUrl?: string
   linkNovaAba?: boolean
   modalTitulo?: string
@@ -50,6 +54,10 @@ export async function GET() {
             ativo: 1,
             ordem: 1,
             tipoAcao: 1,
+            titulo: 1,
+            ctaTexto: 1,
+            destino: 1,
+            modalBotaoDestino: 1,
             linkUrl: 1,
             linkNovaAba: 1,
             modalTitulo: 1,
