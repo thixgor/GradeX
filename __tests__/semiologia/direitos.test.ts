@@ -1,11 +1,14 @@
+import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import {
   FONTES_LICENCIADAS,
   LISTA_DE_FONTES,
   fonteDaUrl,
   hostAutorizado,
-} from '@/lib/semiologia/direitos'
+} from '@/lib/acervos-licenciados'
 import { caminhoNoEspelho, urlDaMidia, midiasServiveis, type MidiaClinica } from '@/lib/semiologia/midia'
+import { ACERVO_DE_MIDIA } from '@/lib/semiologia/acervo.gerado'
+import { chaveDaCena, cobertura } from '@/lib/semiologia/acervo'
 import { JANELAS_ULTRASSOM } from '@/lib/semiologia/ultrassom'
 import { VISTAS } from '@/lib/semiologia/vistas'
 
@@ -165,5 +168,63 @@ describe('vínculo entre acervo e direitos', () => {
         }
       }
     }
+  })
+})
+
+describe('pipeline de curadoria', () => {
+  const script = readFileSync('scripts/semiologia/curar-acervo.mjs', 'utf8')
+
+  it('a allowlist do script não diverge da allowlist dos direitos', () => {
+    // O script roda em Node puro, sem o resolvedor de caminhos do Next, então
+    // repete a lista em vez de importá-la. A duplicação só é aceitável porque
+    // este teste a vigia: um host acrescentado num lado e esquecido no outro
+    // significa ou mídia que o script aprova e a aplicação recusa, ou o
+    // contrário — e os dois são falhas silenciosas.
+    for (const fonte of LISTA_DE_FONTES) {
+      for (const host of fonte.dominiosDeMidia) {
+        expect(script, `${fonte.id} → ${host}`).toContain(host)
+      }
+    }
+  })
+
+  it('o script nunca gera acervo parcial', () => {
+    // Gerar 12 de 40 calado faria a pessoa acreditar que curou 40.
+    expect(script).toContain('Nada foi gerado')
+    expect(script).toContain('process.exit(1)')
+  })
+})
+
+describe('acervo curado', () => {
+  it('toda chave do acervo aponta para uma cena que existe', () => {
+    // Chave com typo produz mídia que nunca aparece e ninguém nota, porque a
+    // página continua renderizando — com o esquema e sem o caso.
+    const validas = new Set(
+      [...VISTAS, ...JANELAS_ULTRASSOM].flatMap((janela) =>
+        janela.cenas.map((cena) => chaveDaCena(janela.slug, cena.id)),
+      ),
+    )
+    for (const chave of Object.keys(ACERVO_DE_MIDIA)) {
+      expect(validas.has(chave), `chave órfã no acervo: ${chave}`).toBe(true)
+    }
+  })
+
+  it('toda mídia do acervo vem de host autorizado e tem proveniência', () => {
+    for (const [chave, midias] of Object.entries(ACERVO_DE_MIDIA)) {
+      for (const midia of midias) {
+        const fonte = FONTES_LICENCIADAS[midia.fonte]
+        expect(fonte, `${chave}/${midia.id}`).toBeDefined()
+        expect(hostAutorizado(midia.urlOrigem, fonte), midia.urlOrigem).toBe(true)
+        expect(midia.urlDoCaso, `${chave}/${midia.id}`).toMatch(/^https:\/\//)
+        expect(midia.legenda.length, `${chave}/${midia.id}`).toBeGreaterThan(10)
+      }
+    }
+  })
+
+  it('a cobertura é contável sem o acervo estar povoado', () => {
+    const total = cobertura([...VISTAS, ...JANELAS_ULTRASSOM])
+    expect(total.cenas).toBe(
+      [...VISTAS, ...JANELAS_ULTRASSOM].reduce((n, j) => n + j.cenas.length, 0),
+    )
+    expect(total.comCaso).toBeLessThanOrEqual(total.cenas)
   })
 })

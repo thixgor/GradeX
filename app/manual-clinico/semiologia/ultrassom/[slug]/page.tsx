@@ -6,6 +6,7 @@ import { VisorDeCenas } from '@/components/semiologia/visor'
 import { TITULOS_DE_TRANSDUTOR } from '@/lib/semiologia/esquemas'
 import { ROTAS } from '@/lib/semiologia/rotas'
 import { JANELAS_ULTRASSOM, janelaPorSlug } from '@/lib/semiologia/ultrassom'
+import { comAcervo } from '@/lib/semiologia/acervo'
 
 export function generateStaticParams() {
   return JANELAS_ULTRASSOM.map((janela) => ({ slug: janela.slug }))
@@ -21,8 +22,10 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
 }
 
 export default function JanelaPage({ params }: { params: { slug: string } }) {
-  const janela = janelaPorSlug(params.slug)
-  if (!janela) notFound()
+  const encontrada = janelaPorSlug(params.slug)
+  if (!encontrada) notFound()
+
+  const janela = comAcervo(encontrada)
 
   return (
     <AreaSemiologia alvo={janela.nome}>

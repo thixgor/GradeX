@@ -17,7 +17,7 @@ import {
   Target,
 } from 'lucide-react'
 import type { CenaClinica, EstruturaDaVista, FonteExterna, PassoDeExame } from '@/lib/semiologia/esquemas'
-import { AVISO_EDUCACIONAL, fonteLicenciada } from '@/lib/semiologia/direitos'
+import { AVISO_EDUCACIONAL, fonteLicenciada } from '@/lib/acervos-licenciados'
 import { fonteDaMidia, midiasServiveis, urlDaMidia } from '@/lib/semiologia/midia'
 import { Ilustracao } from './ilustracoes/registro'
 

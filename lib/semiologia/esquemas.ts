@@ -319,7 +319,7 @@ export interface FonteExterna {
   /** O que especificamente procurar lá. */
   oQueProcurar: string
   /** Fonte com autorização registrada em `direitos.ts`. */
-  licenciada?: import('./direitos').FonteLicenciadaId
+  licenciada?: import('../acervos-licenciados').FonteLicenciadaId
   /** Observação de uso, quando relevante para o aluno. */
   nota?: string
 }

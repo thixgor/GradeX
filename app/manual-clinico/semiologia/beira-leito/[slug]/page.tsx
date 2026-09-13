@@ -6,6 +6,7 @@ import { VisorDeCenas } from '@/components/semiologia/visor'
 import { TITULOS_DE_INSTRUMENTO } from '@/lib/semiologia/esquemas'
 import { ROTAS } from '@/lib/semiologia/rotas'
 import { VISTAS, vistaPorSlug } from '@/lib/semiologia/vistas'
+import { comAcervo } from '@/lib/semiologia/acervo'
 
 export function generateStaticParams() {
   return VISTAS.map((vista) => ({ slug: vista.slug }))
@@ -21,8 +22,13 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
 }
 
 export default function VistaPage({ params }: { params: { slug: string } }) {
-  const vista = vistaPorSlug(params.slug)
-  if (!vista) notFound()
+  const encontrada = vistaPorSlug(params.slug)
+  if (!encontrada) notFound()
+
+  // O merge com o acervo curado acontece aqui, no servidor: o visor é um
+  // componente de cliente e deve receber só a mídia que de fato será exibida
+  // neste ambiente — nunca o acervo inteiro para uma cena que ninguém abriu.
+  const vista = comAcervo(encontrada)
 
   return (
     <AreaSemiologia alvo={vista.nome}>

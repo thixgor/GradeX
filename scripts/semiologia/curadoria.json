@@ -1,0 +1,16 @@
+{
+  "_leia": "Uma entrada por mídia. Rode: npm run semiologia:acervo:verificar",
+  "_campos": {
+    "janela": "slug da vista ou janela de ultrassom (ex.: otoscopia, pulmao-linhas)",
+    "cena": "id da cena dentro dela (ex.: otite-media-aguda, pneumotorax)",
+    "fonte": "pocus-atlas | radiopaedia",
+    "tipo": "imagem | clipe",
+    "urlOrigem": "URL direta do arquivo — ou omita e use 'caso' (só Radiopaedia)",
+    "caso": "id ou URL do caso no Radiopaedia; o script resolve as imagens",
+    "quantas": "quantas imagens do caso trazer (padrão 1)",
+    "urlDoCaso": "página do caso na fonte — obrigatória, é a proveniência",
+    "legenda": "o que a mídia mostra, em português",
+    "autoria": "autor do caso, quando a fonte identifica"
+  },
+  "midias": []
+}

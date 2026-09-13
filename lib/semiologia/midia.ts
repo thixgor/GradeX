@@ -1,4 +1,4 @@
-import { fonteLicenciada, hostAutorizado, type FonteLicenciada, type FonteLicenciadaId } from './direitos'
+import { fonteLicenciada, hostAutorizado, type FonteLicenciada, type FonteLicenciadaId } from '../acervos-licenciados'
 
 /**
  * Resolução de mídia clínica real do Manual de Semiologia.

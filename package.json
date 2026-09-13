@@ -23,6 +23,8 @@
     "radiologia:assets:sync": "node scripts/radiologia/sync-raio-x.mjs --download",
     "radiologia:casos:verify": "node scripts/radiologia/sync-casos-raio-x.mjs --verify",
     "radiologia:casos:sync": "node scripts/radiologia/sync-casos-raio-x.mjs --download",
+    "semiologia:acervo:verificar": "node scripts/semiologia/curar-acervo.mjs",
+    "semiologia:acervo:gerar": "node scripts/semiologia/curar-acervo.mjs --baixar --gerar",
     "midia:ensaio": "node --experimental-strip-types --no-warnings --env-file-if-exists=.env.local scripts/midia/sincronizar-imagens.mjs --relatorio=.midia/relatorio.json",
     "midia:sincronizar": "node --experimental-strip-types --no-warnings --env-file-if-exists=.env.local scripts/midia/sincronizar-imagens.mjs --aplicar --relatorio=.midia/relatorio.json",
     "pwa:splash": "python3 scripts/pwa/gerar-telas-de-partida.py",

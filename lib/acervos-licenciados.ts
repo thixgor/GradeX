@@ -1,5 +1,20 @@
 /**
- * Direitos, licenças e créditos do Manual de Semiologia.
+ * Acervos de terceiros licenciados para a DomineAqui.
+ *
+ * ## Por que isto não mora dentro de um módulo
+ *
+ * As duas autorizações não são concedidas ao Manual de Semiologia: são
+ * concedidas à **DomineAqui e a seus domínios e subdomínios**, e liberam o
+ * acervo completo de cada fonte — o Radiopaedia fala em "compêndio completo […]
+ * imagens, textos, casos, artigos e demais materiais educacionais"; o POCUS
+ * Atlas, em "imagens, clipes de ultrassom, infográficos, textos e demais
+ * materiais […] e projetos correlatos".
+ *
+ * Deixar esses termos dentro de `lib/semiologia/` descreveria mal o que eles
+ * são e esconderia o alcance de quem for construir o próximo módulo: a
+ * Radiologia tem uso óbvio para o acervo do Radiopaedia, e quem abrisse aquele
+ * diretório não encontraria a autorização. Direitos de plataforma ficam na
+ * raiz de `lib/`, onde qualquer módulo os encontra.
  *
  * ## O que mudou, e por que isto existe
  *

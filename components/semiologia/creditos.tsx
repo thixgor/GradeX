@@ -1,7 +1,11 @@
 import Link from 'next/link'
 import { ExternalLink, ShieldCheck } from 'lucide-react'
-import { CREDITO_BASE, LISTA_DE_FONTES } from '@/lib/semiologia/direitos'
+import { CREDITO_BASE, LISTA_DE_FONTES } from '@/lib/acervos-licenciados'
+import { cobertura } from '@/lib/semiologia/acervo'
+import { GERADO_EM } from '@/lib/semiologia/acervo.gerado'
 import { ROTAS } from '@/lib/semiologia/rotas'
+import { JANELAS_ULTRASSOM } from '@/lib/semiologia/ultrassom'
+import { VISTAS } from '@/lib/semiologia/vistas'
 
 /**
  * O crédito das fontes licenciadas.
@@ -65,6 +69,8 @@ export function RodapeDeCreditos() {
  * olhar, e um leitor que só vê "adaptado de" no rodapé merece poder chegar aqui.
  */
 export function PaginaDeCreditos() {
+  const curadoria = cobertura([...VISTAS, ...JANELAS_ULTRASSOM])
+
   return (
     <div className="space-y-8">
       <header>
@@ -158,6 +164,31 @@ export function PaginaDeCreditos() {
           </li>
         ))}
       </ul>
+
+      {/* Estado real da curadoria.
+          Publicado em vez de escondido porque a alternativa é a página anunciar
+          dois acervos licenciados e o aluno não achar um só caso real — e
+          concluir, com razão, que o crédito é decorativo. O número diz onde a
+          curadoria está, e sobe sozinho a cada execução do gerador. */}
+      <section className="rounded-xl border border-border bg-card p-5">
+        <h2 className="text-base font-semibold">Casos reais no módulo</h2>
+        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+          {curadoria.comCaso === 0 ? (
+            <>
+              As autorizações estão assinadas e o módulo já sabe exibir casos reais ao lado de cada esquema, mas a
+              curadoria ainda não começou: nenhuma das {curadoria.cenas} cenas tem caso anexado. Autorização diz o que
+              podemos usar — escolher qual caso ensina bem um achado continua sendo julgamento clínico.
+            </>
+          ) : (
+            <>
+              {curadoria.comCaso} de {curadoria.cenas} cenas têm caso real anexado, somando {curadoria.midias} mídias
+              das fontes acima. Cada uma passou por verificação automática de host autorizado, tipo de arquivo e
+              resposta da origem antes de entrar no acervo
+              {GERADO_EM ? ` (última curadoria em ${GERADO_EM})` : ''}.
+            </>
+          )}
+        </p>
+      </section>
 
       <section className="rounded-xl border border-border bg-card p-5">
         <h2 className="text-base font-semibold">Material próprio</h2>
