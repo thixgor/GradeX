@@ -22,10 +22,17 @@
  *
  * ## Modos
  *
+ *   --esboco      monta o formulário de curadoria com as cenas que faltam
  *   --verificar   (padrão) checa cada entrada e relata, sem escrever nada
  *   --gerar       escreve lib/semiologia/acervo.gerado.ts
  *   --baixar      baixa os bytes para .semiologia/midia/ e calcula o SHA-256
  *   --arquivo=X   usa outro arquivo de curadoria
+ *
+ * O `--esboco` existe porque a parte cara da curadoria não é escrever JSON: é
+ * saber, para cada uma das 29 cenas, o que procurar. Ele lê o próprio acervo,
+ * descobre quais cenas ainda não têm caso e emite uma entrada por cena, já com
+ * janela, cena e uma legenda rascunhada a partir do diagnóstico que a ficha
+ * declara. Sobra para a pessoa colar o link do caso e revisar a legenda.
  *
  * O `--verificar` sozinho não toca em disco de propósito: é o modo que roda em
  * CI para detectar link podre antes de o aluno encontrar o quadrado quebrado.
@@ -54,6 +61,7 @@ const scriptDir = path.dirname(fileURLToPath(import.meta.url))
 const raizDoProjeto = path.resolve(scriptDir, '..', '..')
 
 const args = process.argv.slice(2)
+const esboco = args.includes('--esboco')
 const gerar = args.includes('--gerar')
 const baixar = args.includes('--baixar')
 const arquivoArg = args.find((a) => a.startsWith('--arquivo='))
@@ -170,7 +178,60 @@ function exigir(condicao, mensagem) {
   if (!condicao) throw new Error(mensagem)
 }
 
+/**
+ * Formulário de curadoria: uma entrada por cena que ainda não tem caso.
+ *
+ * Carrega o corpus com `--experimental-strip-types`, como os outros pipelines
+ * do repositório — os arquivos de conteúdo só importam tipos uns dos outros, e
+ * import de tipo some na remoção, então Node os carrega sem precisar do
+ * resolvedor do Next.
+ */
+async function montarEsboco() {
+  const { VISTAS } = await import('../../lib/semiologia/vistas.ts')
+  const { JANELAS_ULTRASSOM } = await import('../../lib/semiologia/ultrassom.ts')
+  const { ACERVO_DE_MIDIA } = await import('../../lib/semiologia/acervo.gerado.ts')
+
+  const existente = new Set(Object.keys(ACERVO_DE_MIDIA ?? {}))
+  const midias = []
+
+  for (const janela of [...VISTAS, ...JANELAS_ULTRASSOM]) {
+    const ehUltrassom = 'protocolo' in janela
+    for (const cena of janela.cenas) {
+      const chave = `${janela.slug}/${cena.id}`
+      if (existente.has(chave)) continue
+      midias.push({
+        _alvo: `${janela.nome} → ${cena.titulo}`,
+        _procurar: cena.diagnostico,
+        janela: janela.slug,
+        cena: cena.id,
+        // O POCUS Atlas cobre ultrassom; o Radiopaedia cobre o resto do acervo
+        // de imagem. É palpite editorial, não regra — troque à vontade.
+        fonte: ehUltrassom ? 'pocus-atlas' : 'radiopaedia',
+        tipo: ehUltrassom && /desliza|pneumotorax|cava|pericard/i.test(chave) ? 'clipe' : 'imagem',
+        caso: '',
+        urlOrigem: '',
+        urlDoCaso: '',
+        legenda: cena.diagnostico,
+      })
+    }
+  }
+
+  const destino = path.join(scriptDir, 'curadoria.json')
+  const atual = JSON.parse(await readFile(destino, 'utf8').catch(() => '{}'))
+  const conteudo = {
+    _leia:
+      'Para cada entrada: cole "caso" (URL do caso no Radiopaedia) OU "urlOrigem" (URL direta do arquivo) e "urlDoCaso". Revise a legenda — ela vem rascunhada do diagnóstico da ficha. Apague as entradas que não for curar agora. Depois: npm run semiologia:acervo:gerar',
+    _campos: atual._campos,
+    midias,
+  }
+  await writeFile(destino, `${JSON.stringify(conteudo, null, 2)}\n`, 'utf8')
+  console.log(`Esboço com ${midias.length} cena(s) sem caso: ${path.relative(raizDoProjeto, destino)}`)
+  console.log('Cole os links, revise as legendas, apague o que não for curar agora.')
+}
+
 async function main() {
+  if (esboco) return montarEsboco()
+
   let curadoria
   try {
     curadoria = JSON.parse(await readFile(arquivoDeCuradoria, 'utf8'))
@@ -179,7 +240,13 @@ async function main() {
     process.exit(1)
   }
 
-  const entradas = Array.isArray(curadoria?.midias) ? curadoria.midias : []
+  const todas = Array.isArray(curadoria?.midias) ? curadoria.midias : []
+  // Entrada de esboço ainda sem link não é erro: é trabalho não começado. O
+  // script conta e segue, para a pessoa poder curar dez cenas hoje e vinte
+  // depois sem precisar apagar as que faltam.
+  const entradas = todas.filter((e) => e?.caso || e?.urlOrigem)
+  const pendentes = todas.length - entradas.length
+  if (pendentes) console.log(`${pendentes} cena(s) ainda sem link — ignoradas nesta passagem.\n`)
   if (!entradas.length) {
     console.log('Curadoria vazia — nada a fazer.')
     console.log(`Acrescente entradas em ${path.relative(raizDoProjeto, arquivoDeCuradoria)} e rode de novo.`)

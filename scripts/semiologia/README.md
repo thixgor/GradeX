@@ -37,9 +37,33 @@ acervo sem ter respondido 200 pelo menos uma vez.
 ## Comandos
 
 ```bash
+npm run semiologia:acervo:esboco      # monta o formulário com as cenas que faltam
 npm run semiologia:acervo:verificar   # checa e relata, sem escrever nada
 npm run semiologia:acervo:gerar       # baixa, hasheia e escreve o acervo
 ```
+
+Comece pelo esboço. Ele lê o próprio acervo, descobre quais cenas ainda não têm
+caso e escreve uma entrada por cena em `curadoria.json` — já com `janela`,
+`cena`, a fonte provável e a legenda rascunhada a partir do diagnóstico que a
+ficha declara. Cada entrada traz também `_alvo` e `_procurar`, que dizem o que
+ir buscar:
+
+```json
+{
+  "_alvo": "Otoscopia → Otite média aguda",
+  "_procurar": "Infecção bacteriana do ouvido médio com efusão sob pressão.",
+  "janela": "otoscopia",
+  "cena": "otite-media-aguda",
+  "fonte": "radiopaedia",
+  "tipo": "imagem",
+  "caso": "",
+  "urlDoCaso": "",
+  "legenda": "Infecção bacteriana do ouvido médio com efusão sob pressão."
+}
+```
+
+Sobra colar o link e revisar a legenda. Entrada sem link é ignorada, não é
+erro — dá para curar dez cenas hoje e vinte na semana que vem sem apagar nada.
 
 O modo verificação não toca em disco de propósito: é o que roda em CI para
 pegar link podre antes de o aluno encontrar o quadrado quebrado.
