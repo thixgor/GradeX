@@ -30,8 +30,14 @@ import type { Vista } from './esquemas'
  * ## Sobre as figuras
  *
  * São esquemáticas e desenhadas por nós, não fotografias (a justificativa está
- * em `esquemas.ts`). Cada vista aponta em `ondeVerFoto` onde conferir a imagem
- * real — o desenho ensina o padrão, a fotografia ensina a variação.
+ * em `esquemas.ts`). O desenho ensina o **padrão**; a fotografia ensina a
+ * **variação**, e as duas competências são necessárias — por isso `ondeVerFoto`
+ * aponta onde conferir o caso real.
+ *
+ * Onde a fonte tem autorização escrita para a DomineAqui — hoje o Radiopaedia,
+ * marcado com `licenciada` — o caso pode ser exibido aqui dentro, ao lado do
+ * esquema, com o crédito exigido. Onde não tem, o vínculo continua sendo só um
+ * ponteiro para fora, e a interface diz isso.
  */
 export const VISTAS: Vista[] = [
   {
@@ -217,7 +223,13 @@ export const VISTAS: Vista[] = [
       'Otoscopia sem pneumática em suspeita de efusão: sem testar mobilidade, o diagnóstico é chute.',
     ],
     ondeVerFoto: [
-      { titulo: 'Radiopaedia — Ear, nose and throat', url: 'https://radiopaedia.org/', oQueProcurar: 'Correlação entre achado otoscópico e imagem de mastoide/ouvido médio em tomografia.', nota: 'Conteúdo de radiologia; a otoscopia fotográfica é mais escassa lá.' },
+      {
+        titulo: 'Radiopaedia — Ear, nose and throat',
+        url: 'https://radiopaedia.org/',
+        oQueProcurar: 'Correlação entre o achado otoscópico e a tomografia de mastoide e ouvido médio — mastoidite, colesteatoma, otite crônica.',
+        licenciada: 'radiopaedia',
+        nota: 'Acervo de radiologia: a correlação é forte, mas a fotografia otoscópica em si é escassa lá.',
+      },
       { titulo: 'Open i / National Library of Medicine', url: 'https://openi.nlm.nih.gov/', oQueProcurar: 'Fotografias otoscópicas publicadas em artigos de acesso aberto — verifique a licença de cada imagem antes de reutilizar.' },
     ],
     referencias: [
@@ -396,7 +408,12 @@ export const VISTAS: Vista[] = [
       'Dilatar paciente neurológico sob vigilância pupilar sem avisar a equipe. A pupila é um dado de monitorização.',
     ],
     ondeVerFoto: [
-      { titulo: 'Radiopaedia', url: 'https://radiopaedia.org/', oQueProcurar: 'Correlação com neuroimagem em papiledema e hipertensão intracraniana idiopática.' },
+      {
+        titulo: 'Radiopaedia',
+        url: 'https://radiopaedia.org/',
+        oQueProcurar: 'Correlação com neuroimagem no papiledema e na hipertensão intracraniana idiopática — sela vazia, distensão das bainhas do nervo óptico, estenose de seio transverso.',
+        licenciada: 'radiopaedia',
+      },
       { titulo: 'Open i / National Library of Medicine', url: 'https://openi.nlm.nih.gov/', oQueProcurar: 'Retinografias publicadas em artigos de acesso aberto; confira a licença de cada imagem.' },
     ],
     referencias: [
@@ -618,7 +635,12 @@ export const VISTAS: Vista[] = [
       'Massa nasal unilateral em criança pode ser encefalocele ou glioma — imagem antes de qualquer biópsia.',
     ],
     ondeVerFoto: [
-      { titulo: 'Radiopaedia', url: 'https://radiopaedia.org/', oQueProcurar: 'Tomografia de seios paranasais correlacionando polipose e rinossinusite crônica com o achado da rinoscopia.' },
+      {
+        titulo: 'Radiopaedia',
+        url: 'https://radiopaedia.org/',
+        oQueProcurar: 'Tomografia de seios paranasais correlacionando polipose e rinossinusite crônica com o achado da rinoscopia.',
+        licenciada: 'radiopaedia',
+      },
     ],
     referencias: [
       'Fokkens WJ et al. EPOS 2020: European Position Paper on Rhinosinusitis and Nasal Polyps.',

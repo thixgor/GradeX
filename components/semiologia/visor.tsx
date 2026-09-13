@@ -11,11 +11,14 @@ import {
   ChevronRight,
   ExternalLink,
   Layers,
+  ShieldCheck,
   ListChecks,
   Pencil,
   Target,
 } from 'lucide-react'
 import type { CenaClinica, EstruturaDaVista, FonteExterna, PassoDeExame } from '@/lib/semiologia/esquemas'
+import { AVISO_EDUCACIONAL, fonteLicenciada } from '@/lib/semiologia/direitos'
+import { fonteDaMidia, midiasServiveis, urlDaMidia } from '@/lib/semiologia/midia'
 import { Ilustracao } from './ilustracoes/registro'
 
 /**
@@ -83,6 +86,10 @@ export function VisorDeCenas({
   const [marcadoresLigados, setMarcadoresLigados] = useState(true)
 
   const ehNormal = cenaAtual.id === normal.id
+
+  // Filtrado aqui e não na renderização: sem isso a interface reservaria espaço
+  // para uma galeria que pode chegar vazia (ver `estrategiaDeMidia`).
+  const reais = useMemo(() => midiasServiveis(cenaAtual.midiaReal), [cenaAtual])
 
   // Estrutura acesa não faz sentido fora da cena normal — some ao trocar.
   useEffect(() => {
@@ -205,9 +212,14 @@ export function VisorDeCenas({
           </div>
 
           <p className="rounded-lg bg-muted/50 p-2.5 text-[11px] leading-relaxed text-muted-foreground">
-            Figura esquemática desenhada a partir dos parâmetros do achado — não é fotografia clínica. Serve para
-            fixar o padrão; o olho para a variação real se treina em acervo fotográfico.
+            Figura esquemática desenhada a partir dos parâmetros do achado — não é fotografia clínica. Ela fixa o
+            padrão; a variação real se aprende no caso {reais.length > 0 ? 'ao lado' : 'fotográfico'}.
           </p>
+
+          {/* Casos reais de acervo licenciado, quando este ambiente consegue
+              servi-los. O esquema nunca sai: as duas figuras ensinam coisas
+              diferentes e a comparação entre elas é parte do que se ensina. */}
+          {reais.length > 0 && <GaleriaReal midias={reais} />}
 
           {/* Dossiê da estrutura acesa. */}
           {estrutura && (
@@ -342,17 +354,30 @@ export function VisorDeCenas({
           <ul className="space-y-3">
             {ondeVerFoto.map((fonte) => (
               <li key={fonte.url}>
-                <a
-                  href={fonte.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-sm font-medium text-sky-700 hover:underline dark:text-sky-400"
-                >
-                  {fonte.titulo}
-                  <ExternalLink className="h-3 w-3" />
-                </a>
+                <div className="flex flex-wrap items-center gap-2">
+                  <a
+                    href={fonte.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-sm font-medium text-sky-700 hover:underline dark:text-sky-400"
+                  >
+                    {fonte.titulo}
+                    <ExternalLink className="h-3 w-3" />
+                  </a>
+                  {fonte.licenciada && (
+                    <span className="inline-flex items-center gap-1 rounded bg-emerald-500/10 px-1.5 py-0.5 text-[11px] font-medium text-emerald-700 dark:text-emerald-400">
+                      <ShieldCheck className="h-3 w-3" />
+                      acervo licenciado para a DomineAqui
+                    </span>
+                  )}
+                </div>
                 <p className="mt-0.5 text-sm leading-relaxed text-muted-foreground">{fonte.oQueProcurar}</p>
                 {fonte.nota && <p className="mt-0.5 text-xs text-muted-foreground/80">{fonte.nota}</p>}
+                {fonte.licenciada && (
+                  <p className="mt-0.5 text-xs text-muted-foreground/80">
+                    {fonteLicenciada(fonte.licenciada).creditoCurto}
+                  </p>
+                )}
               </li>
             ))}
           </ul>
@@ -408,6 +433,77 @@ function Marcadores({
         )
       })}
     </div>
+  )
+}
+
+/**
+ * Casos reais, com o crédito colado na imagem.
+ *
+ * O crédito curto aparece aqui **além** do rodapé permanente da seção, e isso
+ * não contradiz a exigência de não repetir: o rodapé identifica a origem do
+ * módulo; esta linha identifica de qual acervo veio *esta* imagem, que é outra
+ * informação — sem ela, duas fontes no mesmo módulo viram uma massa
+ * indistinguível. O vínculo para o caso original acompanha por ser o que torna
+ * a proveniência verificável por quem quiser conferir.
+ */
+function GaleriaReal({ midias }: { midias: import('@/lib/semiologia/midia').MidiaClinica[] }) {
+  return (
+    <section className="space-y-2">
+      <h3 className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+        Caso real ({midias.length})
+      </h3>
+      <ul className={midias.length > 1 ? 'grid grid-cols-2 gap-2' : ''}>
+        {midias.map((midia) => {
+          const src = urlDaMidia(midia)
+          if (!src) return null
+          const fonte = fonteDaMidia(midia)
+          return (
+            <li key={midia.id} className="overflow-hidden rounded-xl border border-border bg-card">
+              {midia.tipo === 'clipe' ? (
+                // Clipe de ultrassom: sem som, em laço, e com `playsInline` para
+                // o iOS não abrir em tela cheia no meio do estudo. Deslizamento
+                // pleural e colapso de cava são achados de movimento — uma foto
+                // parada deles não é o achado.
+                <video
+                  src={src}
+                  className="aspect-square w-full bg-black object-contain"
+                  muted
+                  loop
+                  playsInline
+                  controls
+                  preload="metadata"
+                  aria-label={midia.legenda}
+                />
+              ) : (
+                <img
+                  src={src}
+                  alt={midia.legenda}
+                  loading="lazy"
+                  decoding="async"
+                  className="aspect-square w-full bg-black object-contain"
+                />
+              )}
+              <div className="space-y-1 p-3">
+                <p className="text-xs leading-relaxed">{midia.legenda}</p>
+                {midia.autoria && <p className="text-[11px] text-muted-foreground">{midia.autoria}</p>}
+                <p className="text-[11px] text-muted-foreground/80">
+                  {fonte.creditoCurto} ·{' '}
+                  <a
+                    href={midia.urlDoCaso}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline underline-offset-2 hover:text-foreground"
+                  >
+                    caso original
+                  </a>
+                </p>
+              </div>
+            </li>
+          )
+        })}
+      </ul>
+      <p className="text-[11px] leading-relaxed text-muted-foreground/80">{AVISO_EDUCACIONAL}</p>
+    </section>
   )
 }
 

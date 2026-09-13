@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { ArrowRight, Eye, Lock, Ruler, Stethoscope, Waves } from 'lucide-react'
 import { AppShell, useAppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
+import { RodapeDeCreditos } from './creditos'
 import { useAcessoSemiologia } from './use-acesso'
 
 /**
@@ -47,7 +48,15 @@ function ConteudoProtegido({ children, alvo }: { children: ReactNode; alvo?: str
     )
   }
 
-  return <>{children}</>
+  // O crédito das fontes licenciadas sai daqui, e não de cada página: as duas
+  // autorizações pedem atribuição permanente e explicitamente NÃO repetitiva.
+  // Uma vez por rota, no rodapé da seção, é exatamente o que elas descrevem.
+  return (
+    <>
+      {children}
+      <RodapeDeCreditos />
+    </>
+  )
 }
 
 function Vitrine({

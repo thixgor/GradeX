@@ -10,3 +10,5 @@ export {
 } from './ultrassom'
 export * from './catalogo'
 export * from './rotas'
+export * from './direitos'
+export * from './midia'

@@ -18,4 +18,5 @@ export const ROTAS = {
   janela: (slug: string) => `${RAIZ}/ultrassom/${slug}`,
   comparadores: `${RAIZ}/comparar`,
   comparador: (slug: string) => `${RAIZ}/comparar/${slug}`,
+  creditos: `${RAIZ}/creditos`,
 } as const

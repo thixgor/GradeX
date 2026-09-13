@@ -153,6 +153,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       '/manual-clinico/semiologia/beira-leito',
       '/manual-clinico/semiologia/ultrassom',
       '/manual-clinico/semiologia/comparar',
+      '/manual-clinico/semiologia/creditos',
     ].map((rota) => ({
       url: canonical(rota),
       lastModified: now,

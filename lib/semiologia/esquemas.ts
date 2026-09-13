@@ -1,3 +1,5 @@
+import type { MidiaClinica } from './midia'
+
 /**
  * Contratos do Manual de Semiologia.
  *
@@ -286,16 +288,39 @@ export interface CenaClinica {
   /** O que mais produz uma cena parecida. */
   diferencial: string[]
   ilustracao: IlustracaoRef
+  /**
+   * Casos reais de acervo licenciado, exibidos ao lado do esquema.
+   *
+   * O esquema ensina o padrão; a fotografia ensina a variação. São competências
+   * distintas, então a cena carrega as duas em vez de trocar uma pela outra —
+   * e o esquema nunca é removido quando uma foto chega.
+   *
+   * Só entra mídia de fonte com autorização registrada em `direitos.ts`, e o
+   * resolvedor (`midia.ts`) reaplica a allowlist antes de servir.
+   */
+  midiaReal?: MidiaClinica[]
   /** Patologia correspondente no Manual Clínico, quando existe. */
   patologia?: string
 }
 
+/**
+ * Acervo externo para conferir a imagem real.
+ *
+ * Antes das autorizações do The POCUS Atlas e do Radiopaedia, estas entradas
+ * eram apenas ponteiros — "vá ver lá, e confira a licença antes de reutilizar".
+ * Com a autorização escrita, a natureza do vínculo muda: a fonte passa a ser
+ * acervo licenciado para uso dentro da plataforma, e `licenciada` é o campo que
+ * carrega essa diferença até a interface. Sem ele, a tela continuaria mandando
+ * o aluno conferir uma licença que já foi negociada.
+ */
 export interface FonteExterna {
   titulo: string
   url: string
   /** O que especificamente procurar lá. */
   oQueProcurar: string
-  /** Licença/uso, quando relevante para o aluno. */
+  /** Fonte com autorização registrada em `direitos.ts`. */
+  licenciada?: import('./direitos').FonteLicenciadaId
+  /** Observação de uso, quando relevante para o aluno. */
   nota?: string
 }
 

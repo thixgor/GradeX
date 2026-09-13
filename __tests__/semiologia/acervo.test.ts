@@ -166,7 +166,7 @@ describe('recorte para o cliente', () => {
     const [resumo] = resumosDeSinais()
     expect(resumo).toBeDefined()
     for (const campo of ['mecanismo', 'causas', 'desempenho', 'armadilhas', 'comoProcurar', 'referencias']) {
-      expect(resumo as Record<string, unknown>).not.toHaveProperty(campo)
+      expect(resumo as unknown as Record<string, unknown>).not.toHaveProperty(campo)
     }
   })
 

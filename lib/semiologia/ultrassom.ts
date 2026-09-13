@@ -23,8 +23,13 @@ import type { JanelaUltrassom } from './esquemas'
  * setor de ultrassom com as camadas na proporção certa, as linhas A no
  * espaçamento certo, o artefato de cauda de cometa saindo da linha pleural.
  * Isso ensina o **padrão**. O olho para a variação real — ganho mal ajustado,
- * paciente obeso, janela ruim entre costelas — se treina em acervo de vídeo, e
- * cada janela indica onde (The POCUS Atlas, Radiopaedia).
+ * paciente obeso, janela ruim entre costelas — se treina em acervo de vídeo.
+ *
+ * Desde as autorizações escritas do **The POCUS Atlas** e do **Radiopaedia**,
+ * esse acervo deixou de ser apenas um ponteiro para fora: as duas fontes
+ * concederam exceção expressa à cláusula NonCommercial em favor da DomineAqui,
+ * e o caso real pode ser exibido aqui dentro, ao lado do esquema, com o crédito
+ * que elas exigem (ver `direitos.ts` e `midia.ts`).
  */
 export const JANELAS_ULTRASSOM: JanelaUltrassom[] = [
   {
@@ -150,8 +155,18 @@ export const JANELAS_ULTRASSOM: JanelaUltrassom[] = [
       'Ganho mal ajustado cria e apaga linhas B. Padronize o ganho antes de contar.',
     ],
     ondeVerFoto: [
-      { titulo: 'The POCUS Atlas', url: 'https://www.thepocusatlas.com/', oQueProcurar: 'Vídeos de lung sliding, linhas B, ponto pulmonar e derrame — o acervo de referência para o padrão em movimento.', nota: 'Acervo de terceiro; verifique a licença antes de reutilizar qualquer imagem.' },
-      { titulo: 'Radiopaedia', url: 'https://radiopaedia.org/', oQueProcurar: 'Correlação entre achados de ultrassom pulmonar e tomografia de tórax no mesmo paciente.' },
+      {
+        titulo: 'The POCUS Atlas',
+        url: 'https://www.thepocusatlas.com/',
+        oQueProcurar: 'Vídeos de lung sliding, linhas B, ponto pulmonar e derrame — o acervo de referência para o padrão em movimento.',
+        licenciada: 'pocus-atlas',
+      },
+      {
+        titulo: 'Radiopaedia',
+        url: 'https://radiopaedia.org/',
+        oQueProcurar: 'Correlação entre achados de ultrassom pulmonar e tomografia de tórax no mesmo paciente.',
+        licenciada: 'radiopaedia',
+      },
     ],
     referencias: [
       'Lichtenstein DA, Mezière GA. Relevance of Lung Ultrasound in the Diagnosis of Acute Respiratory Failure: the BLUE Protocol. Chest, 2008;134(1):117-25.',
@@ -223,8 +238,18 @@ export const JANELAS_ULTRASSOM: JanelaUltrassom[] = [
       'Exame único em paciente que se deteriora: repita.',
     ],
     ondeVerFoto: [
-      { titulo: 'The POCUS Atlas', url: 'https://www.thepocusatlas.com/', oQueProcurar: 'Casos de FAST positivo e negativo em vídeo, com variações de janela e de habitus.', nota: 'Acervo de terceiro; verifique a licença antes de reutilizar.' },
-      { titulo: 'Radiopaedia', url: 'https://radiopaedia.org/', oQueProcurar: 'Correlação entre FAST positivo e tomografia de abdome no trauma.' },
+      {
+        titulo: 'The POCUS Atlas',
+        url: 'https://www.thepocusatlas.com/',
+        oQueProcurar: 'Casos de FAST positivo e negativo em vídeo, com variações de janela e de habitus.',
+        licenciada: 'pocus-atlas',
+      },
+      {
+        titulo: 'Radiopaedia',
+        url: 'https://radiopaedia.org/',
+        oQueProcurar: 'Correlação entre FAST positivo e tomografia de abdome no trauma.',
+        licenciada: 'radiopaedia',
+      },
     ],
     referencias: [
       'Rozycki GS et al. Surgeon-performed ultrasound for the assessment of truncal injuries. Ann Surg, 1998.',
@@ -300,7 +325,12 @@ export const JANELAS_ULTRASSOM: JanelaUltrassom[] = [
       'Corte oblíquo subestima o diâmetro — alinhe o plano antes de medir.',
     ],
     ondeVerFoto: [
-      { titulo: 'The POCUS Atlas', url: 'https://www.thepocusatlas.com/', oQueProcurar: 'Vídeos de cava colabada, normal e plectórica, com a variação respiratória em tempo real.', nota: 'Acervo de terceiro; verifique a licença antes de reutilizar.' },
+      {
+        titulo: 'The POCUS Atlas',
+        url: 'https://www.thepocusatlas.com/',
+        oQueProcurar: 'Vídeos de cava colabada, normal e plectórica, com a variação respiratória em tempo real.',
+        licenciada: 'pocus-atlas',
+      },
     ],
     referencias: [
       'Perera P et al. The RUSH exam: Rapid Ultrasound in SHock. Emerg Med Clin North Am, 2010.',
@@ -369,8 +399,18 @@ export const JANELAS_ULTRASSOM: JanelaUltrassom[] = [
       'Janela subxifoide ruim não é exame negativo. Tente paraesternal e apical antes de concluir.',
     ],
     ondeVerFoto: [
-      { titulo: 'The POCUS Atlas', url: 'https://www.thepocusatlas.com/', oQueProcurar: 'Vídeos de derrame pericárdico, colapso de câmaras direitas e swinging heart.', nota: 'Acervo de terceiro; verifique a licença antes de reutilizar.' },
-      { titulo: 'Radiopaedia', url: 'https://radiopaedia.org/', oQueProcurar: 'Correlação entre derrame pericárdico no ultrassom e na tomografia de tórax.' },
+      {
+        titulo: 'The POCUS Atlas',
+        url: 'https://www.thepocusatlas.com/',
+        oQueProcurar: 'Vídeos de derrame pericárdico, colapso de câmaras direitas e swinging heart.',
+        licenciada: 'pocus-atlas',
+      },
+      {
+        titulo: 'Radiopaedia',
+        url: 'https://radiopaedia.org/',
+        oQueProcurar: 'Correlação entre derrame pericárdico no ultrassom e na tomografia de tórax.',
+        licenciada: 'radiopaedia',
+      },
     ],
     referencias: [
       'Perera P et al. The RUSH exam. Emerg Med Clin North Am, 2010.',
