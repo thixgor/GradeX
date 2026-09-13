@@ -34,6 +34,7 @@ export type IdDoModulo =
   | 'farmacologia'
   | 'eletrocardiograma'
   | 'radiologia'
+  | 'semiologia'
   | 'histologia'
   | 'anatomia'
   | 'ferramentas'
@@ -47,6 +48,7 @@ export type IconeDoModulo =
   | 'ScanLine'
   | 'Microscope'
   | 'PersonStanding'
+  | 'Stethoscope'
   | 'Sigma'
 
 export interface NumeroDoModulo {
@@ -147,6 +149,22 @@ export const MODULOS_DO_PACOTE: ModuloDoPacote[] = [
     ],
     href: '/manual-clinico/radiologia',
     icone: 'ScanLine',
+  },
+  {
+    id: 'semiologia',
+    nome: 'Manual de Semiologia',
+    nomeCurto: 'Semiologia',
+    chamada:
+      'O exame que você faz com a própria mão: cada sinal com definição operacional, manobra, mecanismo e o que muda na conduta — mais otoscopia, fundo de olho, orofaringe, rinoscopia e as janelas do ultrassom à beira do leito.',
+    destaque:
+      'As figuras são geradas por parâmetro, como os traçados do Eletro: você arrasta a bilirrubina e vê exatamente onde a icterícia nasce.',
+    numeros: [
+      { v: '12', r: 'sinais aprofundados' },
+      { v: '29', r: 'cenas normais e alteradas' },
+      { v: '3', r: 'comparadores de causa' },
+    ],
+    href: '/manual-clinico/semiologia',
+    icone: 'Stethoscope',
   },
   {
     id: 'histologia',

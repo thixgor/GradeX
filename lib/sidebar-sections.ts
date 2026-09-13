@@ -14,6 +14,7 @@ export type SidebarSectionKey =
   | 'manualHistologia'
   | 'manualExames'
   | 'manualRadiologia'
+  | 'manualSemiologia'
   | 'manualEletro'
   | 'materiais'
   | 'rifas'
@@ -139,6 +140,13 @@ export const SIDEBAR_SECTION_DEFINITIONS: SidebarSectionDefinition[] = [
     label: 'Manual de Radiologia',
     href: '/manual-clinico/radiologia',
     description: 'Tomografia e Raio-X no mesmo atlas, corte a corte.',
+    defaultEnabled: false,
+  },
+  {
+    key: 'manualSemiologia',
+    label: 'Manual de Semiologia',
+    href: '/manual-clinico/semiologia',
+    description: 'Exame físico, otoscopia, fundo de olho e ultrassom à beira do leito.',
     defaultEnabled: false,
   },
   {

@@ -27,6 +27,7 @@ export const MANUAL_CLINICO_SECOES = new Set([
   'pdf-watermark',
   'product',
   'radiologia',
+  'semiologia',
   'subscription',
   'tomografia',
 ])

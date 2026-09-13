@@ -65,6 +65,7 @@ export const DEFAULT_SECTION_GROUPS: SidebarSectionGroups = {
   manualHistologia: 'manual-clinico',
   manualExames: 'manual-clinico',
   manualRadiologia: 'manual-clinico',
+  manualSemiologia: 'manual-clinico',
   manualEletro: 'manual-clinico',
 }
 

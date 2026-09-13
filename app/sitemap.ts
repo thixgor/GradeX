@@ -5,6 +5,10 @@ import { ESTUDOS_RAIO_X } from '@/lib/radiologia/raio-x'
 import { QUIZZES_RAIO_X } from '@/lib/radiologia/quiz-raio-x'
 import { QUIZZES_CLINICOS } from '@/lib/radiologia/quiz-casos-raio-x'
 import { entradasDaHistologia } from '@/lib/histologia/sitemap'
+import { COMPARADORES } from '@/lib/semiologia/comparadores'
+import { SINAIS } from '@/lib/semiologia/sinais'
+import { JANELAS_ULTRASSOM } from '@/lib/semiologia/ultrassom'
+import { VISTAS } from '@/lib/semiologia/vistas'
 import { entradasDaHistopatologia } from '@/lib/histopatologia/sitemap'
 
 function canonical(path = '/') {
@@ -138,9 +142,53 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // para conteúdo bloqueado contornaria o próprio bloqueio.
   // A Histopatologia segue a mesma regra, com um portão a mais: só doenças com
   // revisão médica concluída entram. Hoje isso é lista vazia.
+  // O Manual de Semiologia é conteúdo próprio, escrito por nós e desenhado por
+  // nós — sem licença de terceiro pendente, entra no sitemap inteiro. As
+  // páginas ficam atrás do portão de compra, como as da Radiologia: o sitemap
+  // anuncia que existem, e a vitrine explica como abrir.
+  const semiologia: MetadataRoute.Sitemap = [
+    ...[
+      '/manual-clinico/semiologia',
+      '/manual-clinico/semiologia/sinais',
+      '/manual-clinico/semiologia/beira-leito',
+      '/manual-clinico/semiologia/ultrassom',
+      '/manual-clinico/semiologia/comparar',
+    ].map((rota) => ({
+      url: canonical(rota),
+      lastModified: now,
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    })),
+    ...SINAIS.map((sinal) => ({
+      url: canonical(`/manual-clinico/semiologia/sinais/${sinal.slug}`),
+      lastModified: now,
+      changeFrequency: 'monthly' as const,
+      priority: 0.6,
+    })),
+    ...VISTAS.map((vista) => ({
+      url: canonical(`/manual-clinico/semiologia/beira-leito/${vista.slug}`),
+      lastModified: now,
+      changeFrequency: 'monthly' as const,
+      priority: 0.6,
+    })),
+    ...JANELAS_ULTRASSOM.map((janela) => ({
+      url: canonical(`/manual-clinico/semiologia/ultrassom/${janela.slug}`),
+      lastModified: now,
+      changeFrequency: 'monthly' as const,
+      priority: 0.6,
+    })),
+    ...COMPARADORES.map((comparador) => ({
+      url: canonical(`/manual-clinico/semiologia/comparar/${comparador.slug}`),
+      lastModified: now,
+      changeFrequency: 'monthly' as const,
+      priority: 0.6,
+    })),
+  ]
+
   return [
     ...staticRoutes,
     ...radiologia,
+    ...semiologia,
     ...tomografia,
     ...entradasDaHistologia(now),
     ...entradasDaHistopatologia(now),

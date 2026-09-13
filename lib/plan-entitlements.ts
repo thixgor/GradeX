@@ -126,6 +126,7 @@ export type ManualClinicoModuleKey =
   | 'histologia'
   | 'exames'
   | 'radiologia'
+  | 'semiologia'
   | 'eletro'
   | 'pdfCompleto'
 
@@ -137,6 +138,7 @@ export const MANUAL_CLINICO_MODULE_KEYS: ManualClinicoModuleKey[] = [
   'histologia',
   'exames',
   'radiologia',
+  'semiologia',
   'eletro',
   'pdfCompleto',
 ]
@@ -299,6 +301,12 @@ export const MANUAL_CLINICO_MODULE_DEFINITIONS: ManualClinicoModuleDefinition[] 
     label: 'Manual de Radiologia',
     descricao: 'Tomografia e Raio-X, corte a corte.',
     href: '/manual-clinico/radiologia',
+  },
+  {
+    key: 'semiologia',
+    label: 'Manual de Semiologia',
+    descricao: 'Exame físico, imagem à beira do leito e POCUS.',
+    href: '/manual-clinico/semiologia',
   },
   {
     key: 'eletro',

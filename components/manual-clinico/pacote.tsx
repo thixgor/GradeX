@@ -17,6 +17,7 @@ import {
   ScanLine,
   ShieldCheck,
   Sigma,
+  Stethoscope,
   Sparkles,
   Zap,
 } from 'lucide-react'
@@ -70,6 +71,7 @@ const ICONES: Record<ModuloDoPacote['icone'], LucideIcon> = {
   ScanLine,
   Microscope,
   PersonStanding,
+  Stethoscope,
   Sigma,
 }
 

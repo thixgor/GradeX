@@ -26,6 +26,7 @@ describe('isManualClinicoPatologia', () => {
       'pdf-watermark',
       'product',
       'radiologia',
+      'semiologia',
       'subscription',
       'tomografia',
     ]) {

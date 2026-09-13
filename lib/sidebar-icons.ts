@@ -247,6 +247,7 @@ export const DEFAULT_SECTION_ICONS: Record<SidebarSectionKey, string> = {
   manualHistologia: 'microscope',
   manualExames: 'flask-conical',
   manualRadiologia: 'scan-line',
+  manualSemiologia: 'stethoscope',
   manualEletro: 'activity',
   materiais: 'book-open',
   rifas: 'ticket',
