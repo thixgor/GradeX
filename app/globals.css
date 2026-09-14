@@ -2747,6 +2747,51 @@ body.roller-dragging {
   transform-style: flat !important;
 }
 
+/* ⚠ Achatar o 3D é a economia mais rentável deste bloco — e a mais traiçoeira.
+   Achatar um flip NÃO o desliga: sem contexto 3D, `rotateY(180deg)` deixa de
+   girar no espaço e passa a ESPELHAR a imagem no eixo X. O resultado é a face
+   virada aparecendo com todo o texto ao contrário, e a face da frente — que não
+   tem rotação própria para acionar o `backface-visibility` — continuando à
+   vista por baixo. Era o bug do flashcard no Modo Lite.
+
+   Um flip de verdade precisa, no Lite, de outro MECANISMO (trocar as faces por
+   visibilidade), não de uma versão achatada do mesmo mecanismo. Quem já tem:
+     · flashcard  → components/flashcards/flashcard-card.tsx
+     · cartão do checkout → components/payments/card-terminal.tsx
+   Os dois leem `useLiteMode()` e trocam as faces sem transform nenhum.
+   O switch de tema é CSS puro, então a versão sem 3D dele está logo abaixo.
+
+   Flip novo = mesmo tratamento, ou o Modo Lite entrega conteúdo espelhado. */
+
+/* Switch de tema. No 3D o thumb gira 180° e o ícone contra-gira outros 180°,
+   somando 360° — por isso o ícone aparecia na posição certa. Achatado, o par
+   não se cancela mais; e o ícone, que tem rotação própria + `backface-
+   visibility: hidden`, virava o verso para a tela e SUMIA (thumb vazio no tema
+   escuro). Aqui o thumb só desliza, e o afundar do toque continua existindo —
+   como escala, que é 2D e não custa camada. */
+.lite-mode .theme-toggle-thumb[data-dark='true'] {
+  transform: translateX(var(--thumb-travel, 22px)) !important;
+}
+
+.lite-mode .theme-toggle-thumb[data-dark='false'] {
+  transform: none !important;
+}
+
+.lite-mode .theme-toggle-3d:active .theme-toggle-thumb[data-dark='true'] {
+  transform: translateX(var(--thumb-travel, 22px)) scale(0.92) !important;
+}
+
+.lite-mode .theme-toggle-3d:active .theme-toggle-thumb[data-dark='false'] {
+  transform: scale(0.92) !important;
+}
+
+.lite-mode .theme-toggle-thumb .theme-toggle-icon,
+.lite-mode .theme-toggle-thumb .theme-toggle-icon[data-dark='true'] {
+  transform: none !important;
+  backface-visibility: visible !important;
+  -webkit-backface-visibility: visible !important;
+}
+
 /* Elementos puramente decorativos (orbes borradas, brilhos, véus) são
    marcados com aria-hidden + pointer-events-none em todo o projeto. Some com
    eles: ninguém perde conteúdo e a GPU perde várias camadas. */

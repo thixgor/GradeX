@@ -3,8 +3,9 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import Image from 'next/image'
 import { Eye, EyeOff, Lightbulb, MessageSquare, Sparkles, X, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react'
-import { motion, AnimatePresence, useAnimationControls } from 'framer-motion'
+import { motion, AnimatePresence, useAnimationControls, useReducedMotion } from 'framer-motion'
 import { cn } from '@/lib/utils'
+import { useLiteMode } from '@/hooks/use-lite-mode'
 import type { FlashcardManualCard } from '@/lib/types'
 
 // useLayoutEffect no cliente, useEffect no SSR — evita o warning de hidratação
@@ -421,28 +422,59 @@ export function FlashcardCardView({
   const backRef = useRef<HTMLDivElement>(null)
   const flipControls = useAnimationControls()
   const flipMountedRef = useRef(false)
+  const { liteMode } = useLiteMode()
+  const reduceMotion = useReducedMotion()
 
   function stopAndCall(e: React.MouseEvent, fn: () => void) {
     e.stopPropagation()
     fn()
   }
 
-  // Giro do card. Só rotação (sem o "pop" de escala): no mobile, animar a
-  // escala de um elemento preserve-3d fica re-rasterizando as camadas a cada
-  // frame — causava travadas e flicker. A rotação sozinha compõe na GPU.
+  // O giro é uma peça 3D: o palco tem `perspective`, o card tem `preserve-3d` e
+  // o verso fica pendurado em `rotateY(180deg)` — girar o conjunto traz o verso
+  // de frente e esconde a frente pela face de trás (`backface-visibility`).
+  //
+  // O Modo Lite achata tudo isso (`transform-style: flat`, `perspective: none`,
+  // em globals.css) porque camada 3D é caro em GPU fraca. Só que achatar um
+  // flip 3D no meio do caminho não o desliga: ele vira um ESPELHO 2D. Sem
+  // contexto 3D, o `rotateY(180deg)` do card deixa de girar no espaço e passa a
+  // inverter a imagem no eixo X — e a frente, que não tem rotação própria pra
+  // acionar o `backface-visibility`, continua visível, agora com o texto todo
+  // ao contrário. Era exatamente o bug relatado: virar o card no Modo Lite
+  // deixava as letras espelhadas.
+  //
+  // Por isso o Lite não ganha uma versão "degradada" do giro: ganha outro
+  // mecanismo. As duas faces continuam empilhadas e medidas juntas, e a troca é
+  // de visibilidade — zero transform, zero camada composta, zero espelho. É
+  // também o caminho mais barato dos dois, que é o ponto do Modo Lite.
+  const flatFlip = liteMode
+
   useEffect(() => {
+    if (flatFlip) {
+      // Entrar no Lite com o card já virado deixaria o `rotateY: 180` residual
+      // preso no estilo inline do motion.div — que, sem contexto 3D, é o
+      // espelho. Zera e sai.
+      flipMountedRef.current = true
+      flipControls.set({ rotateY: 0 })
+      return
+    }
     if (!flipMountedRef.current) {
       flipMountedRef.current = true
       flipControls.set({ rotateY: flipped ? 180 : 0 })
       return
     }
+    // Só rotação (sem o "pop" de escala): no mobile, animar a escala de um
+    // elemento preserve-3d fica re-rasterizando as camadas a cada frame —
+    // causava travadas e flicker. A rotação sozinha compõe na GPU.
+    // Com "reduzir movimento" ligado a virada é instantânea: o conteúdo é o
+    // mesmo, o giro é que sai.
     flipControls.start({
       rotateY: flipped ? 180 : 0,
-      transition: {
-        rotateY: { type: 'spring', stiffness: 260, damping: 30 },
-      },
+      transition: reduceMotion
+        ? { duration: 0 }
+        : { rotateY: { type: 'spring', stiffness: 260, damping: 30 } },
     })
-  }, [flipped, flipControls])
+  }, [flipped, flipControls, flatFlip, reduceMotion])
 
   useIsomorphicLayoutEffect(() => {
     let raf = 0
@@ -493,13 +525,35 @@ export function FlashcardCardView({
         aria-hidden
         className="mx-auto -mb-6 h-8 max-w-[85%] rounded-full bg-slate-900/20 opacity-40 blur-2xl dark:bg-black/50"
       />
-      <div className="relative w-full [perspective:1100px] sm:[perspective:1500px] lg:[perspective:2200px]">
+      <div
+        className={cn(
+          'relative w-full',
+          // Sem giro, sem palco: a `perspective` no Lite só criaria um contexto
+          // 3D que o próprio Lite manda achatar logo em seguida.
+          !flatFlip && '[perspective:1100px] sm:[perspective:1500px] lg:[perspective:2200px]',
+        )}
+      >
         <motion.div
           className="relative w-full"
           animate={flipControls}
-          style={{ transformStyle: 'preserve-3d', WebkitTransformStyle: 'preserve-3d', height: cardHeight ? `${cardHeight}px` : undefined, willChange: 'transform' }}
+          style={{
+            height: cardHeight ? `${cardHeight}px` : undefined,
+            ...(flatFlip
+              ? null
+              : {
+                  transformStyle: 'preserve-3d' as const,
+                  WebkitTransformStyle: 'preserve-3d',
+                  willChange: 'transform',
+                }),
+          }}
         >
-          {/* Front — clicável para virar */}
+          {/* Front — clicável para virar.
+              No caminho achatado (Modo Lite), a face escondida sai por
+              `visibility: hidden`, e não por `display: none`, de propósito: ela
+              continua ocupando o layout, então o ResizeObserver segue medindo as
+              duas e o card não muda de tamanho ao virar. De quebra sai da árvore
+              de acessibilidade — o leitor de tela lê só a face à vista, o que a
+              versão 3D (duas faces sempre no DOM) nunca entregou. */}
           <div
             ref={frontRef}
             onClick={onFlip}
@@ -517,7 +571,11 @@ export function FlashcardCardView({
               'shadow-[0_30px_120px_-40px_rgba(15,23,42,0.18)] dark:shadow-[0_30px_120px_-40px_rgba(0,0,0,0.7)]',
               'active:scale-[0.995] transition-transform duration-100',
             )}
-            style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', transform: 'translateZ(0)' }}
+            style={
+              flatFlip
+                ? { visibility: flipped ? 'hidden' : 'visible', pointerEvents: flipped ? 'none' : 'auto' }
+                : { backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', transform: 'translateZ(0)' }
+            }
           >
             {/* Sheen de vidro — realce diagonal fixo, efeito "glassmorphism" sutil.
                 z-index negativo garante que fique atrás do conteúdo (texto/botões),
@@ -615,7 +673,11 @@ export function FlashcardCardView({
               'shadow-[0_30px_120px_-40px_rgba(6,78,59,0.6)]',
               'active:scale-[0.995] transition-transform duration-100',
             )}
-            style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', transform: 'rotateY(180deg) translateZ(0)' }}
+            style={
+              flatFlip
+                ? { visibility: flipped ? 'visible' : 'hidden', pointerEvents: flipped ? 'auto' : 'none' }
+                : { backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', transform: 'rotateY(180deg) translateZ(0)' }
+            }
           >
             <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-br from-white/25 via-white/0 to-black/10" />
             <div aria-hidden className="pointer-events-none absolute inset-x-6 top-0 -z-10 h-px bg-gradient-to-r from-transparent via-white/60 to-transparent" />

@@ -25,6 +25,7 @@
 
 import { useEffect, useMemo, useRef, type ReactNode } from 'react'
 import { CreditCard, Lock, ShieldCheck, Wifi } from 'lucide-react'
+import { useLiteMode } from '@/hooks/use-lite-mode'
 
 export interface CardFields {
   /** Número com os espaços de agrupamento, como aparece no input. */
@@ -299,11 +300,14 @@ function CardFront({
   titular,
   validade,
   brand,
+  hidden,
 }: {
   numero: string
   titular: string
   validade: string
   brand: CardBrand
+  /** Só no caminho achatado (Modo Lite): sem giro 3D, a face fora de uso some. */
+  hidden?: boolean
 }) {
   const spec = brandSpec(brand)
   const digits = numero.replace(/\D/g, '')
@@ -314,7 +318,7 @@ function CardFront({
   const restante = mascara.slice(preenchido.length).replace(/0/g, '•')
 
   return (
-    <div style={CARD_FACE}>
+    <div style={hidden ? { ...CARD_FACE, visibility: 'hidden' } : CARD_FACE}>
       {/* Brilho da marca, para o cartão não ficar um retângulo chapado. */}
       <div
         aria-hidden
@@ -409,10 +413,19 @@ const LABEL_MINI: React.CSSProperties = {
   marginBottom: 3,
 }
 
-function CardBack({ cvv, brand }: { cvv: string; brand: CardBrand }) {
+function CardBack({ cvv, brand, flat, hidden }: { cvv: string; brand: CardBrand; flat?: boolean; hidden?: boolean }) {
   const spec = brandSpec(brand)
   return (
-    <div style={{ ...CARD_FACE, transform: 'rotateY(180deg)' }}>
+    <div
+      style={{
+        ...CARD_FACE,
+        // Achatado, `rotateY(180deg)` não gira nada: vira espelho. Some a
+        // rotação junto com o palco 3D.
+        transform: flat ? undefined : 'rotateY(180deg)',
+        ...(flat ? { backfaceVisibility: 'visible' as const, WebkitBackfaceVisibility: 'visible' } : null),
+        ...(hidden ? { visibility: 'hidden' as const } : null),
+      }}
+    >
       <div style={{ height: 22 }} />
       <div style={{ height: 44, background: '#0a0b10' }} aria-hidden />
       <div style={{ flex: 1, padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -514,6 +527,12 @@ export function CardTerminal(props: CardTerminalProps) {
   }, [brand])
 
   const virado = focused === 'cvv'
+  // O Modo Lite achata o contexto 3D da página inteira (`transform-style: flat`
+  // em globals.css) para poupar GPU. Num flip 3D isso não desliga o giro: o
+  // `rotateY(180deg)` deixa de girar no espaço e passa a ESPELHAR a face — o
+  // número do cartão sairia escrito ao contrário. Então, no Lite, as faces
+  // trocam por visibilidade, sem rotação nenhuma.
+  const { liteMode } = useLiteMode()
 
   function set(patch: Partial<CardFields>) {
     onChange({ ...fields, ...patch })
@@ -595,7 +614,7 @@ export function CardTerminal(props: CardTerminalProps) {
       </div>
 
       {/* Cartão. Decorativo: quem lê por leitor de tela usa os inputs abaixo. */}
-      <div style={{ perspective: '1100px', padding: '18px 0 4px' }} aria-hidden>
+      <div style={{ perspective: liteMode ? undefined : '1100px', padding: '18px 0 4px' }} aria-hidden>
         <div
           style={{
             position: 'relative',
@@ -603,9 +622,13 @@ export function CardTerminal(props: CardTerminalProps) {
             maxWidth: 340,
             margin: '0 auto',
             aspectRatio: '1.586',
-            transformStyle: 'preserve-3d',
-            transform: virado ? 'rotateY(180deg)' : 'rotateY(0deg)',
-            transition: 'transform 0.55s cubic-bezier(0.4, 0.15, 0.2, 1)',
+            ...(liteMode
+              ? null
+              : {
+                  transformStyle: 'preserve-3d' as const,
+                  transform: virado ? 'rotateY(180deg)' : 'rotateY(0deg)',
+                  transition: 'transform 0.55s cubic-bezier(0.4, 0.15, 0.2, 1)',
+                }),
           }}
         >
           <CardFront
@@ -613,8 +636,9 @@ export function CardTerminal(props: CardTerminalProps) {
             titular={fields.holder}
             validade={fields.expiry}
             brand={brand}
+            hidden={liteMode && virado}
           />
-          <CardBack cvv={fields.cvv} brand={brand} />
+          <CardBack cvv={fields.cvv} brand={brand} flat={liteMode} hidden={liteMode && !virado} />
         </div>
       </div>
 
