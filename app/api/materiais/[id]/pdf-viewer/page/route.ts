@@ -9,6 +9,11 @@ import {
   isPreviewPageAllowed,
   validateMaterialPdfAccess,
 } from '@/lib/material-pdf-viewer'
+import {
+  buscarPaginaDerivada,
+  fonteDoPdf,
+  gravarPaginaDerivada,
+} from '@/lib/material-pdf-pages'
 import { ObjectId } from 'mongodb'
 
 export const dynamic = 'force-dynamic'
@@ -106,8 +111,25 @@ export async function GET(
     // consegue reutilizar via Cache-Control abaixo (private, max-age=300).
     const cacheWindow = Math.floor(viewedAt.getTime() / (5 * 60 * 1000))
     const auditToken = `${identityId}-${access.materialId.slice(-8)}-${requestedPage}-${cacheWindow}`
-    const pdfBytes = await fetchMaterialPdfBytes(access.material.pdfFile.blobUrl)
-    const pagePdf = await createWatermarkedSinglePagePdf(pdfBytes, {
+    // Identidade do PDF-fonte. Serve de chave tanto para as derivadas de
+    // página no Blob quanto para os caches em memória do render — e, por
+    // incluir tamanho e data do upload, um reenvio com o mesmo nome de arquivo
+    // (que produz a MESMA blobUrl) invalida os dois de uma vez.
+    const fonte = fonteDoPdf(access.material.pdfFile)
+
+    // O documento inteiro deixou de ser baixado aqui. Quando a página já tem
+    // derivada gravada, `loadFull` nunca chega a ser chamado: a requisição lê
+    // algumas centenas de KB em vez das dezenas ou centenas de MB do material.
+    // Quando não tem, o caminho é exatamente o de antes — e a página extraída
+    // fica guardada para as próximas leituras.
+    const pagePdf = await createWatermarkedSinglePagePdf({
+      knownTotalPages: cachedPageCount,
+      loadSlice: fonte ? () => buscarPaginaDerivada(fonte, requestedPage) : undefined,
+      loadFull: () => fetchMaterialPdfBytes(access.material.pdfFile.blobUrl),
+      onSliceReady: fonte
+        ? (pagina, bytes) => gravarPaginaDerivada(fonte, pagina, bytes)
+        : undefined,
+    }, {
       pageNumber: requestedPage,
       userName: session ? (access.user?.name || session.name || 'Usuario DomineAqui') : 'Visitante (previa gratuita)',
       userEmail: session ? (access.user?.email || session.email || 'email nao informado') : `previa-${identityId}`,
@@ -116,7 +138,7 @@ export async function GET(
       materialTitle: access.material.title || 'Material DomineAqui',
       viewedAt,
       auditToken,
-      sourceCacheKey: access.material.pdfFile.blobUrl,
+      sourceCacheKey: fonte?.chave || access.material.pdfFile.blobUrl,
     })
 
     if (requestedPage > pagePdf.totalPages) {

@@ -713,9 +713,15 @@ async function fetchPdfPageBytesOnce(materialId: string, pageNumber: number) {
   const controller = new AbortController()
   const timer = setTimeout(() => controller.abort(), PAGE_FETCH_TIMEOUT_MS)
   try {
+    // Sem `cache: 'no-store'`: a rota já responde com
+    // `private, max-age=300` e um auditToken alinhado à mesma janela de 5
+    // minutos, então a resposta É reaproveitável — e o no-store proibia o
+    // navegador de usar exatamente o cache que o servidor oferecia. Voltar a
+    // uma página já lida, ou recarregar a aba, disparava um render novo.
+    // O cache do HTTP cobre o que `pageBytesCache` (em memória) perde num F5.
     const response = await fetch(
       `/api/materiais/${materialId}/pdf-viewer/page?page=${pageNumber}`,
-      { cache: 'no-store', signal: controller.signal }
+      { signal: controller.signal }
     )
     if (!response.ok) {
       const data = await response.json().catch(() => ({}))

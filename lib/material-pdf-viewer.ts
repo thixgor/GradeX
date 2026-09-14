@@ -656,8 +656,103 @@ type WatermarkPageInput = {
   sourceCacheKey?: string
 }
 
+/**
+ * De onde sai a página que vai ser marcada.
+ *
+ * Existe para o render **não** precisar do documento inteiro na mão antes de
+ * começar. Baixar 200 MB do Blob para devolver 250 KB era o maior item da
+ * fatura (ver `lib/material-pdf-pages.ts`); com esta indireção, o caminho
+ * comum lê só a página derivada e o documento completo vira plano B.
+ */
+export interface FontePdfDaPagina {
+  /**
+   * A página já extraída em algum lugar mais barato, se houver. `null` quando
+   * ainda não existe — e aí o documento inteiro é carregado.
+   */
+  loadSlice?: () => Promise<ArrayBuffer | null>
+  /** O documento completo. Só é chamado quando não há derivada aproveitável. */
+  loadFull: () => Promise<ArrayBuffer>
+  /**
+   * Recebe a página recém-extraída, nua (sem marca d'água), para que a próxima
+   * leitura não precise do documento inteiro. É aguardado: a gravação é rápida
+   * perto do download que acabou de acontecer, e deixá-la solta depois da
+   * resposta arriscaria a função ser encerrada antes de ela terminar.
+   */
+  onSliceReady?: (pagina: number, bytes: Uint8Array) => Promise<void> | void
+  /**
+   * Total de páginas já conhecido (vem de `pdfFile.pageCount` no Mongo). Sem
+   * ele não dá para usar a derivada: o total é parte da resposta e só o
+   * documento completo poderia informá-lo.
+   */
+  knownTotalPages?: number
+}
+
+/**
+ * Aceita também o `ArrayBuffer` cru — o documento inteiro, como era antes.
+ * Mantém utilizáveis os chamadores que já têm os bytes em mãos.
+ */
+function normalizarFonte(entrada: ArrayBuffer | FontePdfDaPagina): FontePdfDaPagina {
+  if (entrada instanceof ArrayBuffer) {
+    const bytes = entrada
+    return { loadFull: async () => bytes }
+  }
+  return entrada
+}
+
+/**
+ * Entrega a página pedida como um PDF de uma página só, ainda sem marca
+ * d'água, junto do total de páginas do documento.
+ *
+ * Dois caminhos. O barato lê a derivada pronta e nunca toca no documento
+ * completo. O caro baixa o documento, extrai a página e **entrega a extração**
+ * para quem quiser guardá-la, de modo que a próxima leitura desta mesma página
+ * caia no caminho barato.
+ */
+async function resolverPaginaNua(
+  fonte: FontePdfDaPagina,
+  input: WatermarkPageInput
+): Promise<{ paginaNua: ArrayBuffer | Uint8Array; totalPages: number; safePageNumber: number }> {
+  const totalConhecido = fonte.knownTotalPages || 0
+
+  // A derivada só serve quando o total de páginas já é conhecido E a página
+  // pedida cabe nele. Se o pedido estivesse fora da faixa, o número seria
+  // ajustado abaixo e a derivada em mãos seria de OUTRA página — melhor
+  // recorrer ao documento completo do que servir a página errada.
+  const podeUsarDerivada =
+    !!fonte.loadSlice &&
+    totalConhecido > 0 &&
+    input.pageNumber >= 1 &&
+    input.pageNumber <= totalConhecido
+
+  if (podeUsarDerivada) {
+    const derivada = await fonte.loadSlice!()
+    if (derivada) {
+      return { paginaNua: derivada, totalPages: totalConhecido, safePageNumber: input.pageNumber }
+    }
+  }
+
+  const original = await fonte.loadFull()
+  const { doc: sourceDoc, totalPages } = await loadSourceDoc(original, input.sourceCacheKey)
+  const safePageNumber = Math.min(Math.max(input.pageNumber, 1), totalPages)
+
+  const docDaPagina = await PDFDocument.create()
+  const [copiedPage] = await docDaPagina.copyPages(sourceDoc, [safePageNumber - 1])
+  docDaPagina.addPage(copiedPage)
+  // useObjectStreams: false pelo mesmo motivo do documento final — ver o
+  // comentário no fim de renderWatermarkedSinglePagePdf.
+  const paginaNua = await docDaPagina.save({ useObjectStreams: false })
+
+  // Só guarda quando a página pedida existia de fato. Guardar uma página
+  // ajustada gravaria o conteúdo de uma página sob a chave de outra.
+  if (fonte.onSliceReady && safePageNumber === input.pageNumber) {
+    await fonte.onSliceReady(safePageNumber, paginaNua)
+  }
+
+  return { paginaNua, totalPages, safePageNumber }
+}
+
 export async function createWatermarkedSinglePagePdf(
-  originalPdfBytes: ArrayBuffer,
+  fonte: ArrayBuffer | FontePdfDaPagina,
   input: WatermarkPageInput
 ): Promise<{ bytes: Uint8Array; totalPages: number }> {
   const cacheEnabled = envBoolean('PDF_VIEWER_PAGE_CACHE_ENABLED', true)
@@ -674,7 +769,7 @@ export async function createWatermarkedSinglePagePdf(
     if (pending) return pending
   }
 
-  const render = renderWatermarkedSinglePagePdf(originalPdfBytes, input)
+  const render = renderWatermarkedSinglePagePdf(normalizarFonte(fonte), input)
 
   if (!cacheEnabled || !input.auditToken) {
     return render
@@ -704,15 +799,17 @@ export async function createWatermarkedSinglePagePdf(
 }
 
 async function renderWatermarkedSinglePagePdf(
-  originalPdfBytes: ArrayBuffer,
+  fonte: FontePdfDaPagina,
   input: WatermarkPageInput
 ): Promise<{ bytes: Uint8Array; totalPages: number }> {
-  const { doc: sourceDoc, totalPages } = await loadSourceDoc(originalPdfBytes, input.sourceCacheKey)
-  const safePageNumber = Math.min(Math.max(input.pageNumber, 1), totalPages)
+  const { paginaNua, totalPages, safePageNumber } = await resolverPaginaNua(fonte, input)
 
-  const outputDoc = await PDFDocument.create()
-  const [copiedPage] = await outputDoc.copyPages(sourceDoc, [safePageNumber - 1])
-  outputDoc.addPage(copiedPage)
+  // O documento de saída é a própria página nua, marcada no lugar. Ela já
+  // nasceu de um copyPages sobre o original — pelo caminho barato, na leitura
+  // que a gerou; pelo caro, agora mesmo — então a estrutura entregue ao aluno é
+  // a mesma dos dois lados, e continua sendo UM copyPages a partir do original,
+  // como era antes deste cache existir.
+  const outputDoc = await PDFDocument.load(paginaNua, { ignoreEncryption: true })
 
   const font = await outputDoc.embedFont(StandardFonts.HelveticaBold)
   const page = outputDoc.getPages()[0]
