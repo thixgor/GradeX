@@ -35,7 +35,8 @@
     "backfill-campaign-uuid": "node scripts/backfill-campaign-uuid.js",
     "backfill-collect-phone": "node scripts/backfill-collect-phone.js",
     "migrate-plus": "node scripts/migrate-plus-tier.js",
-    "semiologia:acervo:esboco": "node --experimental-strip-types --no-warnings scripts/semiologia/curar-acervo.mjs --esboco"
+    "semiologia:acervo:esboco": "node --experimental-strip-types --no-warnings scripts/semiologia/curar-acervo.mjs --esboco",
+    "semiologia:acervo:espelhar": "node --experimental-strip-types --no-warnings scripts/semiologia/enviar-espelho.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",

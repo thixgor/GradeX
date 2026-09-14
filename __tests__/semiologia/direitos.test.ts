@@ -192,6 +192,20 @@ describe('pipeline de curadoria', () => {
     expect(script).toContain('Nada foi gerado')
     expect(script).toContain('process.exit(1)')
   })
+
+  it('o envio ao espelho usa o mesmo caminho que a aplicação lê', () => {
+    // `enviar-espelho.mjs` repete `caminhoNoEspelho` em vez de importá-lo,
+    // pelo mesmo motivo da allowlist: roda em Node puro. Se as duas fórmulas
+    // divergissem, o script subiria os arquivos para um caminho e a interface
+    // os procuraria em outro — 16 quadrados quebrados sem nenhum erro no log.
+    const envio = readFileSync('scripts/semiologia/enviar-espelho.mjs', 'utf8')
+    const corpo = envio.match(/function caminhoNoEspelho\(sha256, ext\) \{\s*return (`[^`]+`)/)?.[1]
+    expect(corpo, 'caminhoNoEspelho não encontrada no script').toBeTruthy()
+    const doScript = new Function('sha256', 'ext', `return ${corpo}`) as (s: string, e: string) => string
+    for (const [sha, ext] of [['abcdef0123', 'jpg'], ['7e5e4a638dcf', 'gif'], ['00ff', 'mp4']]) {
+      expect(doScript(sha, ext)).toBe(caminhoNoEspelho(sha, ext))
+    }
+  })
 })
 
 describe('acervo curado', () => {

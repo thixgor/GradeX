@@ -40,6 +40,7 @@ acervo sem ter respondido 200 pelo menos uma vez.
 npm run semiologia:acervo:esboco      # monta o formulário com as cenas que faltam
 npm run semiologia:acervo:verificar   # checa e relata, sem escrever nada
 npm run semiologia:acervo:gerar       # baixa, hasheia e escreve o acervo
+npm run semiologia:acervo:espelhar    # sobe os bytes ao Vercel Blob e imprime a base
 ```
 
 Comece pelo esboço. Ele lê o próprio acervo, descobre quais cenas ainda não têm
@@ -100,6 +101,23 @@ uma mudança de URL do lado deles quebra a cena. Por isso exige opt-in explícit
 
 Os bytes baixados por `--baixar` ficam em `.semiologia/midia/`, prontos para
 subir ao espelho.
+
+## Subindo ao espelho
+
+```bash
+BLOB_READ_WRITE_TOKEN=... npm run semiologia:acervo:espelhar
+```
+
+`enviar-espelho.mjs` lê o acervo gerado, confere o SHA-256 de cada arquivo
+em `.semiologia/midia/`, envia para `semiologia/<2 hex>/<sha>.<ext>` no
+Vercel Blob (o mesmo caminho que `caminhoNoEspelho` monta na leitura) e
+confere que o objeto responde com o tamanho certo. No fim imprime o valor de
+`NEXT_PUBLIC_SEMIOLOGIA_MIDIA_BASE`.
+
+A ordem importa: **envie primeiro, configure a variável depois.** Ela é um
+interruptor sem meio-termo — assim que existe, a interface deixa de servir da
+origem e passa a montar a URL do espelho para toda mídia hasheada. Definida
+antes do envio, quebra o acervo inteiro de uma vez, em produção.
 
 ## O que o caso real acrescenta ao esquema
 
