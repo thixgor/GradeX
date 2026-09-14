@@ -19,6 +19,8 @@ import {
 import type { CenaClinica, EstruturaDaVista, FonteExterna, PassoDeExame } from '@/lib/semiologia/esquemas'
 import { AVISO_EDUCACIONAL, fonteLicenciada } from '@/lib/acervos-licenciados'
 import { fonteDaMidia, midiasServiveis, urlDaMidia } from '@/lib/semiologia/midia'
+import { Deslizador } from './deslizador'
+import { controleDaCena } from './ilustracoes/controles'
 import { Ilustracao } from './ilustracoes/registro'
 
 /**
@@ -96,6 +98,19 @@ export function VisorDeCenas({
     if (!ehNormal) setEstruturaAberta(null)
   }, [ehNormal])
 
+  // O parâmetro que o aluno varre, quando a cena tem um com limiar clínico.
+  // Começa no valor que a ficha declara e volta a ele a cada troca de cena —
+  // arrastar a aorta até 8 cm não deve contaminar a vesícula seguinte.
+  const controle = controleDaCena(cenaAtual.ilustracao)
+  const [valorDoControle, setValorDoControle] = useState<number | null>(null)
+  useEffect(() => setValorDoControle(null), [cenaAtual.id])
+  const valorAtual =
+    valorDoControle ??
+    (controle && typeof cenaAtual.ilustracao.params?.[controle.param] === 'number'
+      ? (cenaAtual.ilustracao.params[controle.param] as number)
+      : (controle?.padrao ?? 0))
+  const paramsDaCena = controle ? { ...cenaAtual.ilustracao.params, [controle.param]: valorAtual } : cenaAtual.ilustracao.params
+
   const trocarCena = useCallback(
     (id: string) => {
       const busca = new URLSearchParams(parametros.toString())
@@ -148,8 +163,18 @@ export function VisorDeCenas({
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
-        {/* Figura, com os marcadores de estrutura sobrepostos. */}
         <div className="space-y-3">
+          {/* O caso real vem primeiro quando existe. A fotografia é o que o
+              aluno vai encontrar na clínica; o esquema é o gabarito que explica
+              o que ele está vendo. A ordem diz qual é qual — e o esquema nunca
+              sai, porque a comparação entre os dois é parte do que se ensina. */}
+          {reais.length > 0 && <GaleriaReal midias={reais} />}
+
+          {reais.length > 0 && (
+            <h3 className="pt-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Esquema</h3>
+          )}
+
+          {/* Figura esquemática, com os marcadores de estrutura sobrepostos. */}
           <div className={comparando && !ehNormal ? 'grid grid-cols-2 gap-3' : ''}>
             {comparando && !ehNormal && (
               <figure className="space-y-2">
@@ -167,7 +192,7 @@ export function VisorDeCenas({
             <figure className="space-y-2">
               <Ilustracao
                 id={cenaAtual.ilustracao.id}
-                params={cenaAtual.ilustracao.params}
+                params={paramsDaCena}
                 titulo={cenaAtual.ilustracao.alt}
                 className="border border-border"
                 marcadores={
@@ -211,15 +236,20 @@ export function VisorDeCenas({
             )}
           </div>
 
+          {controle && (
+            <Deslizador
+              id="controle-cena"
+              controle={controle}
+              valor={valorAtual}
+              onMudar={setValorDoControle}
+              nota="Arraste e veja onde o achado passa a mudar a conduta. Os marcos são os limiares que a decisão usa."
+            />
+          )}
+
           <p className="rounded-lg bg-muted/50 p-2.5 text-[11px] leading-relaxed text-muted-foreground">
             Figura esquemática desenhada a partir dos parâmetros do achado — não é fotografia clínica. Ela fixa o
-            padrão; a variação real se aprende no caso {reais.length > 0 ? 'ao lado' : 'fotográfico'}.
+            padrão; a variação real se aprende no caso {reais.length > 0 ? 'acima' : 'fotográfico'}.
           </p>
-
-          {/* Casos reais de acervo licenciado, quando este ambiente consegue
-              servi-los. O esquema nunca sai: as duas figuras ensinam coisas
-              diferentes e a comparação entre elas é parte do que se ensina. */}
-          {reais.length > 0 && <GaleriaReal midias={reais} />}
 
           {/* Dossiê da estrutura acesa. */}
           {estrutura && (
@@ -452,13 +482,18 @@ function GaleriaReal({ midias }: { midias: import('@/lib/semiologia/midia').Midi
       <h3 className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
         Caso real ({midias.length})
       </h3>
-      <ul className={midias.length > 1 ? 'grid grid-cols-2 gap-2' : ''}>
-        {midias.map((midia) => {
+      {/* A primeira mídia ocupa a largura toda: é a imagem principal da cena.
+          As demais, quando existem, são variações e dividem a linha. */}
+      <ul className="grid grid-cols-2 gap-2">
+        {midias.map((midia, indice) => {
           const src = urlDaMidia(midia)
           if (!src) return null
           const fonte = fonteDaMidia(midia)
           return (
-            <li key={midia.id} className="overflow-hidden rounded-xl border border-border bg-card">
+            <li
+              key={midia.id}
+              className={`overflow-hidden rounded-xl border border-border bg-card ${indice === 0 ? 'col-span-2' : ''}`}
+            >
               {midia.tipo === 'clipe' ? (
                 // Clipe de ultrassom: sem som, em laço, e com `playsInline` para
                 // o iOS não abrir em tela cheia no meio do estudo. Deslizamento

@@ -95,3 +95,188 @@ export const CONTROLES: Record<string, ControleDeIlustracao> = {
     marcos: [{ valor: 2, rotulo: 'detectável ao exame' }],
   },
 }
+
+/**
+ * Controles por **cena**, para as figuras que servem várias cenas com o mesmo
+ * componente — o ultrassom é uma só ilustração com dezenas de janelas dentro.
+ *
+ * A chave é `id:cena`. O mesmo critério de cima vale aqui: só ganha controle o
+ * parâmetro que tem limiar clínico. Contar linhas B importa porque três por
+ * campo é o corte; o diâmetro da aorta importa porque 3 cm é aneurisma e
+ * 5,5 cm é cirurgia. Um deslizador que só deixa a figura "mais bonita" não
+ * entra.
+ */
+export const CONTROLES_DE_CENA: Record<string, ControleDeIlustracao> = {
+  'ultrassom:pulmao-linhas-b': {
+    param: 'linhasB',
+    rotulo: 'Linhas B por campo',
+    min: 0,
+    max: 10,
+    passo: 1,
+    padrao: 5,
+    formatar: (v) => `${v.toFixed(0)} linha${v === 1 ? '' : 's'} B`,
+    marcos: [{ valor: 3, rotulo: 'campo positivo' }],
+  },
+  'ultrassom:pulmao-linhas-b-focal': {
+    param: 'linhasB',
+    rotulo: 'Linhas B no campo afetado',
+    min: 0,
+    max: 10,
+    passo: 1,
+    padrao: 5,
+    formatar: (v) => `${v.toFixed(0)} linha${v === 1 ? '' : 's'} B`,
+    marcos: [{ valor: 3, rotulo: 'campo positivo' }],
+  },
+  'ultrassom:consolidacao': {
+    param: 'profundidade',
+    rotulo: 'Profundidade da consolidação',
+    min: 0.5,
+    max: 5,
+    passo: 0.5,
+    padrao: 3,
+    formatar: (v) => `${v.toFixed(1)} cm`,
+  },
+  'ultrassom:fast-positivo': {
+    param: 'liquido',
+    rotulo: 'Espessura da faixa de líquido',
+    min: 0.5,
+    max: 6,
+    passo: 0.5,
+    padrao: 3.2,
+    formatar: (v) => `${v.toFixed(1)} cm`,
+    marcos: [{ valor: 1, rotulo: 'limiar de detecção' }],
+  },
+  'ultrassom:derrame-pericardico': {
+    param: 'derrame',
+    rotulo: 'Lâmina de derrame',
+    min: 1,
+    max: 8,
+    passo: 0.5,
+    padrao: 5,
+    formatar: (v) => `${(v * 2.5).toFixed(0)} mm`,
+    marcos: [
+      { valor: 2, rotulo: 'pequeno' },
+      { valor: 4, rotulo: 'moderado' },
+      { valor: 6, rotulo: 'colapso de VD' },
+    ],
+  },
+  'ultrassom:plax-disfuncao-ve': {
+    param: 'fracaoEjecao',
+    rotulo: 'Fração de ejeção estimada',
+    min: 10,
+    max: 70,
+    passo: 5,
+    padrao: 25,
+    formatar: (v) => `${v.toFixed(0)}%`,
+    marcos: [
+      { valor: 30, rotulo: 'gravemente reduzida' },
+      { valor: 50, rotulo: 'limite inferior' },
+    ],
+  },
+  'ultrassom:psax-vd-dilatado': {
+    param: 'razaoVdVe',
+    rotulo: 'Razão VD/VE',
+    min: 0.3,
+    max: 1.5,
+    passo: 0.1,
+    padrao: 1.2,
+    formatar: (v) => v.toFixed(1),
+    marcos: [
+      { valor: 0.6, rotulo: 'normal' },
+      { valor: 1, rotulo: 'dilatação franca' },
+    ],
+  },
+  'ultrassom:aneurisma-aorta': {
+    param: 'diametro',
+    rotulo: 'Diâmetro externo',
+    min: 1,
+    max: 8,
+    passo: 0.5,
+    padrao: 5.5,
+    formatar: (v) => `${v.toFixed(1)} cm`,
+    marcos: [
+      { valor: 3, rotulo: 'aneurisma' },
+      { valor: 5.5, rotulo: 'reparo eletivo' },
+    ],
+  },
+  'ultrassom:colelitiase': {
+    param: 'calculos',
+    rotulo: 'Número de cálculos',
+    min: 0,
+    max: 10,
+    passo: 1,
+    padrao: 3,
+    formatar: (v) => (v === 0 ? 'nenhum' : `${v.toFixed(0)} cálculo${v === 1 ? '' : 's'}`),
+  },
+  'ultrassom:colecistite': {
+    param: 'parede',
+    rotulo: 'Espessura da parede',
+    min: 2,
+    max: 8,
+    passo: 1,
+    padrao: 6,
+    formatar: (v) => `${v.toFixed(0)} mm`,
+    marcos: [{ valor: 3, rotulo: 'limite superior' }],
+  },
+  'ultrassom:coledoco-dilatado': {
+    param: 'diametro',
+    rotulo: 'Diâmetro do colédoco',
+    min: 2,
+    max: 20,
+    passo: 1,
+    padrao: 11,
+    formatar: (v) => `${v.toFixed(0)} mm`,
+    marcos: [
+      { valor: 6, rotulo: 'limite superior' },
+      { valor: 10, rotulo: 'tolerado pós-colecistectomia' },
+    ],
+  },
+  'ultrassom:hidronefrose': {
+    param: 'grau',
+    rotulo: 'Grau de hidronefrose',
+    min: 0,
+    max: 4,
+    passo: 1,
+    padrao: 3,
+    formatar: (v) => ['sem dilatação', 'leve (pelve)', 'moderada (cálices)', 'acentuada', 'grave (córtex afinado)'][Math.round(v)] ?? '',
+  },
+  'ultrassom:retencao-urinaria': {
+    param: 'volume',
+    rotulo: 'Volume vesical estimado',
+    min: 0,
+    max: 1500,
+    passo: 50,
+    padrao: 800,
+    formatar: (v) => `${v.toFixed(0)} mL`,
+    marcos: [
+      { valor: 300, rotulo: 'globo palpável' },
+      { valor: 500, rotulo: 'retenção' },
+    ],
+  },
+  'ultrassom:tvp': {
+    param: 'compressibilidade',
+    rotulo: 'Quanto a veia colaba',
+    min: 0,
+    max: 100,
+    passo: 10,
+    padrao: 10,
+    formatar: (v) => `${v.toFixed(0)}%`,
+    marcos: [{ valor: 100, rotulo: 'colapso completo = normal' }],
+  },
+  'ultrassom:abscesso': {
+    param: 'diametro',
+    rotulo: 'Diâmetro da coleção',
+    min: 0.5,
+    max: 10,
+    passo: 0.5,
+    padrao: 4,
+    formatar: (v) => `${v.toFixed(1)} cm`,
+  },
+}
+
+/** O controle de uma cena, se ela tiver um — pelo par `id:cena` da ilustração. */
+export function controleDaCena(ilustracao: { id: string; params?: Record<string, unknown> }): ControleDeIlustracao | undefined {
+  const cena = ilustracao.params?.cena
+  if (typeof cena !== 'string') return undefined
+  return CONTROLES_DE_CENA[`${ilustracao.id}:${cena}`]
+}

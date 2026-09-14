@@ -38,6 +38,26 @@ type Cena =
   | 'cava-plectorica'
   | 'pericardio-normal'
   | 'derrame-pericardico'
+  | 'consolidacao'
+  | 'pulmao-linhas-b-focal'
+  | 'plax-normal'
+  | 'plax-disfuncao-ve'
+  | 'psax-normal'
+  | 'psax-vd-dilatado'
+  | 'aorta-normal'
+  | 'aneurisma-aorta'
+  | 'vesicula-normal'
+  | 'colelitiase'
+  | 'colecistite'
+  | 'coledoco-dilatado'
+  | 'rim-normal'
+  | 'hidronefrose'
+  | 'bexiga-normal'
+  | 'retencao-urinaria'
+  | 'veia-normal'
+  | 'tvp'
+  | 'partes-moles-normal'
+  | 'abscesso'
 
 const PRETO = '#07080a'
 const ANECOICO = '#0b0e12'
@@ -48,7 +68,18 @@ export function Ultrassom({ params, className, titulo, marcadores }: PropsDeIlus
   const idSpeckle = `us-spk-${sufixo}`
   const idSetor = `us-set-${sufixo}`
 
-  const setorial = cena.startsWith('fast') || cena.startsWith('cava') || cena.includes('pericardio')
+  // Leque para o convexo e o setorial; retângulo para o linear. O formato da
+  // imagem é a primeira pista de qual sonda foi usada — e ensinar a janela
+  // com o transdutor errado ensina a encostar a sonda errada.
+  const setorial = !(
+    cena.startsWith('pulmao') ||
+    cena === 'pneumotorax' ||
+    cena === 'consolidacao' ||
+    cena === 'veia-normal' ||
+    cena === 'tvp' ||
+    cena === 'partes-moles-normal' ||
+    cena === 'abscesso'
+  )
 
   return (
     <Quadro className={className} titulo={titulo} marcadores={marcadores} fundo={PRETO}>
@@ -105,9 +136,58 @@ function conteudo(cena: Cena, params: PropsDeIlustracao['params']) {
       return <Pericardio derrame={0} />
     case 'derrame-pericardico':
       return <Pericardio derrame={num(params, 'derrame', 5)} />
+    case 'consolidacao':
+      return <Consolidacao profundidade={num(params, 'profundidade', 3)} />
+    case 'pulmao-linhas-b-focal':
+      return <Pulmao linhasB={num(params, 'linhasB', 5)} desliza focal />
+    case 'plax-normal':
+      return <EixoLongo fracaoEjecao={60} />
+    case 'plax-disfuncao-ve':
+      return <EixoLongo fracaoEjecao={num(params, 'fracaoEjecao', 25)} />
+    case 'psax-normal':
+      return <EixoCurto razaoVdVe={0.6} />
+    case 'psax-vd-dilatado':
+      return <EixoCurto razaoVdVe={num(params, 'razaoVdVe', 1.2)} />
+    case 'aorta-normal':
+      return <Aorta diametro={2} />
+    case 'aneurisma-aorta':
+      return <Aorta diametro={num(params, 'diametro', 5.5)} />
+    case 'vesicula-normal':
+      return <Vesicula calculos={0} parede={2} />
+    case 'colelitiase':
+      return <Vesicula calculos={num(params, 'calculos', 3)} parede={2} />
+    case 'colecistite':
+      return <Vesicula calculos={1} parede={num(params, 'parede', 6)} impactado />
+    case 'coledoco-dilatado':
+      return <Coledoco diametro={num(params, 'diametro', 11)} />
+    case 'rim-normal':
+      return <Rim grau={0} />
+    case 'hidronefrose':
+      return <Rim grau={num(params, 'grau', 3)} />
+    case 'bexiga-normal':
+      return <Bexiga volume={150} />
+    case 'retencao-urinaria':
+      return <Bexiga volume={num(params, 'volume', 800)} />
+    case 'veia-normal':
+      return <VeiaFemoral compressibilidade={100} />
+    case 'tvp':
+      return <VeiaFemoral compressibilidade={num(params, 'compressibilidade', 10)} />
+    case 'partes-moles-normal':
+      return <PartesMoles diametro={0} />
+    case 'abscesso':
+      return <PartesMoles diametro={num(params, 'diametro', 4)} />
     default:
       return null
   }
+}
+
+/** Texto de rodapé no amarelo do aparelho — a "anotação do operador". */
+function Legenda({ children }: { children: string }) {
+  return (
+    <text x="4" y="96" fill="#f2c14e" fontSize="4" fontFamily="system-ui, sans-serif">
+      {children}
+    </text>
+  )
 }
 
 /**
@@ -117,7 +197,7 @@ function conteudo(cena: Cena, params: PropsDeIlustracao['params']) {
  * que elas fisicamente são. Mudar a profundidade da linha pleural reposiciona
  * todas elas automaticamente, como aconteceria no aparelho.
  */
-function Pulmao({ linhasB, desliza }: { linhasB: number; desliza: boolean }) {
+function Pulmao({ linhasB, desliza, focal = false }: { linhasB: number; desliza: boolean; focal?: boolean }) {
   const yPleura = 34
   const espacamento = yPleura - 6 // distância pele→pleura = período da reverberação
 
@@ -149,7 +229,10 @@ function Pulmao({ linhasB, desliza }: { linhasB: number; desliza: boolean }) {
 
       {/* Linhas B: partem da pleura, vão até o fim da tela e apagam as A. */}
       {Array.from({ length: Math.max(0, Math.round(linhasB)) }, (_, i) => {
-        const x = 30 + i * 9 + (i % 2) * 2
+        // Focal: as linhas se agrupam num só lado do espaço intercostal, com o
+        // resto do campo ainda em padrão A. É a distribuição — não a contagem —
+        // que separa pneumonia de congestão.
+        const x = focal ? 52 + i * 4.2 : 30 + i * 9 + (i % 2) * 2
         return (
           <g key={i}>
             <path d={`M ${x - 1.6} ${yPleura} L ${x + 1.6} ${yPleura} L ${x + 4.5} 100 L ${x - 4.5} 100 Z`} fill="#e7ebef" opacity="0.62" />
@@ -157,6 +240,7 @@ function Pulmao({ linhasB, desliza }: { linhasB: number; desliza: boolean }) {
           </g>
         )
       })}
+      {focal && linhasB > 0 && <Legenda>linhas B focais · padrão A ao redor</Legenda>}
     </g>
   )
 }
@@ -331,6 +415,426 @@ function Pericardio({ derrame }: { derrame: number }) {
         <text x="4" y="96" fill="#f2c14e" fontSize="4" fontFamily="system-ui, sans-serif">
           derrame circunferencial · colapso de VD
         </text>
+      )}
+    </g>
+  )
+}
+
+/**
+ * Consolidação subpleural: o pulmão "vira fígado".
+ *
+ * Ar não deixa o feixe passar; tecido deixa. Quando o alvéolo se enche de
+ * exsudato, o parênquima passa a ser atravessado como qualquer víscera e
+ * ganha textura — a "hepatização". Os pontos brilhantes dentro dela são ar
+ * residual nos brônquios: os broncogramas aéreos. A borda profunda irregular
+ * com o pulmão ainda aerado é o sinal do fragmento (shred sign); a borda lisa
+ * e regular é derrame ou atelectasia, não pneumonia.
+ */
+function Consolidacao({ profundidade }: { profundidade: number }) {
+  const yPleura = 30
+  const fundo = yPleura + Math.max(0, profundidade) * 12
+  const contorno = `M 30 ${yPleura + 1.6} L 70 ${yPleura + 1.6} L 72 ${fundo - 6} L 66 ${fundo} L 58 ${fundo - 4} L 50 ${fundo + 2} L 42 ${fundo - 3} L 34 ${fundo + 1} L 28 ${fundo - 5} Z`
+  return (
+    <g>
+      <rect x="0" y="0" width="100" height="100" fill="#2b3038" />
+      <rect x="0" y="6" width="100" height="4" fill="#3f4753" opacity="0.7" />
+      {[20, 80].map((cx) => (
+        <g key={cx}>
+          <ellipse cx={cx} cy={yPleura - 8} rx="9" ry="4.5" fill="#e8eaed" />
+          <path d={`M ${cx - 9} ${yPleura - 6} L ${cx + 9} ${yPleura - 6} L ${cx + 10} 100 L ${cx - 10} 100 Z`} fill={PRETO} opacity="0.94" />
+        </g>
+      ))}
+      <rect x="0" y={yPleura} width="100" height="1.6" fill="#f4f6f8" />
+      {/* Pulmão aerado ao fundo: linhas A continuam onde não há consolidação. */}
+      {[1, 2].map((n) => (
+        <rect key={n} x="0" y={yPleura + 24 * n} width="100" height="1" fill="#aeb6bf" opacity={0.5 - n * 0.15} />
+      ))}
+      {profundidade > 0 && (
+        <g>
+          {/* Hepatização: textura de víscera com borda profunda em fragmentos. */}
+          <path d={contorno} fill="#6b7684" />
+          <path d={contorno} fill="#7d8896" opacity="0.45" />
+          {/* Broncogramas aéreos: pontos e traços brilhantes, ramificados. */}
+          {Array.from({ length: Math.round(6 + profundidade * 3) }, (_, i) => {
+            const x = 34 + ((i * 29) % 34)
+            const y = yPleura + 5 + ((i * 17) % Math.max(4, fundo - yPleura - 8))
+            return i % 3 === 0 ? (
+              <rect key={i} x={x} y={y} width="4" height="1.1" fill="#f4f6f8" opacity="0.9" />
+            ) : (
+              <circle key={i} cx={x} cy={y} r="0.8" fill="#f4f6f8" opacity="0.9" />
+            )
+          })}
+          <Legenda>{`hepatização ${profundidade.toFixed(1)} cm · broncogramas aéreos · shred sign`}</Legenda>
+        </g>
+      )}
+    </g>
+  )
+}
+
+/**
+ * Paraesternal eixo longo. `fracaoEjecao` decide quanto a cavidade encolhe.
+ *
+ * A figura sobrepõe as duas fases: a diástole como contorno tracejado e a
+ * sístole como cavidade preenchida. A fração de ejeção **é** a diferença entre
+ * as duas — e desenhar só uma delas, como fazem os esquemas de livro, esconde
+ * exatamente o que se estima a olho. Abaixo de 35% o ventrículo também dilata:
+ * o coração que bombeia mal se enche mais para tentar compensar.
+ */
+function EixoLongo({ fracaoEjecao }: { fracaoEjecao: number }) {
+  const fe = Math.max(10, Math.min(70, fracaoEjecao)) / 100
+  const dilatacao = fe < 0.35 ? (0.35 - fe) * 30 : 0
+  const rxD = 22 + dilatacao
+  const ryD = 12 + dilatacao * 0.6
+  // Raio sistólico derivado da FE: volume ∝ área, então o fator é √(1 − FE).
+  const encolhe = Math.sqrt(1 - fe)
+  const rxS = rxD * (0.55 + encolhe * 0.45)
+  const ryS = ryD * (0.5 + encolhe * 0.5)
+  return (
+    <g>
+      <rect x="0" y="0" width="100" height="100" fill="#3a434e" />
+      {/* Ventrículo direito, anterior, em cima da tela. */}
+      <path d="M 18 10 Q 50 4 84 12 L 84 24 Q 50 20 18 26 Z" fill={ANECOICO} />
+      {/* Septo interventricular. */}
+      <path d="M 18 26 Q 50 20 84 24" stroke="#c8d0d8" strokeWidth="2.2" fill="none" />
+      {/* Aorta e átrio esquerdo, à direita. */}
+      <path d="M 66 30 L 96 26 L 96 44 L 70 46 Z" fill={ANECOICO} />
+      <path d="M 66 30 L 96 26 M 70 46 L 96 44" stroke="#e6e9ed" strokeWidth="1.2" fill="none" />
+      <ellipse cx="80" cy="66" rx="15" ry="13" fill={ANECOICO} />
+      <ellipse cx="80" cy="66" rx="15" ry="13" fill="none" stroke="#c8d0d8" strokeWidth="0.8" opacity="0.6" />
+      {/* Ventrículo esquerdo: diástole tracejada, sístole preenchida. */}
+      <ellipse cx="42" cy="50" rx={rxD} ry={ryD} fill="#262d36" />
+      <ellipse cx="42" cy="50" rx={rxS} ry={ryS} fill={ANECOICO} />
+      <ellipse cx="42" cy="50" rx={rxD} ry={ryD} fill="none" stroke="#f2c14e" strokeWidth="0.7" strokeDasharray="2 1.6" />
+      {/* Parede posterior espessa. */}
+      <path d={`M 14 ${50 + ryD + 2} Q 42 ${50 + ryD + 9} 66 ${50 + ryD + 3}`} stroke="#c8d0d8" strokeWidth="2.4" fill="none" />
+      {/* Folheto anterior da mitral, entre VE e AE. */}
+      <path d={`M 64 44 L ${52 + rxS * 0.3} ${50 - ryS * 0.4}`} stroke="#e6e9ed" strokeWidth="1.1" />
+      <Legenda>{`FE estimada ${Math.round(fe * 100)}% · tracejado = diástole`}</Legenda>
+    </g>
+  )
+}
+
+/**
+ * Paraesternal eixo curto, nível dos papilares. `razaoVdVe` é a relação de
+ * tamanhos entre as duas cavidades.
+ *
+ * O ventrículo esquerdo normal é um anel — a pressão dentro dele é maior que a
+ * do direito, então o septo abaúla para o lado direito e o VE fica redondo. Se
+ * a pressão direita sobe, o septo se achata e o VE vira um "D". Esse é o sinal
+ * que muda a conduta: é a sobrecarga de pressão do VD vista de dentro do VE.
+ */
+function EixoCurto({ razaoVdVe }: { razaoVdVe: number }) {
+  const razao = Math.max(0.3, Math.min(1.5, razaoVdVe))
+  const achatamento = razao >= 1 ? Math.min(1, (razao - 1) * 2 + 0.3) : 0
+  const rVe = 15
+  const cx = 58
+  const cy = 58
+  // O septo é o lado esquerdo do anel do VE. Normal: arco. Achatado: corda.
+  const xSepto = cx - rVe + achatamento * 9
+  const rvRx = 12 + razao * 14
+  const cavidade =
+    achatamento > 0
+      ? `M ${xSepto} ${cy - Math.sqrt(rVe * rVe - (xSepto - cx) ** 2)} A ${rVe} ${rVe} 0 1 1 ${xSepto} ${cy + Math.sqrt(rVe * rVe - (xSepto - cx) ** 2)} Z`
+      : `M ${cx - rVe} ${cy} A ${rVe} ${rVe} 0 1 1 ${cx + rVe} ${cy} A ${rVe} ${rVe} 0 1 1 ${cx - rVe} ${cy} Z`
+  return (
+    <g>
+      <rect x="0" y="0" width="100" height="100" fill="#3a434e" />
+      {/* Ventrículo direito: meia-lua anterior e à esquerda do VE, que cresce com a razão. */}
+      <path
+        d={`M ${cx - rvRx - 4} ${cy - 6} Q ${cx - rvRx * 0.4} ${cy - rVe - 10 - razao * 6} ${cx + rvRx * 0.6} ${cy - rVe - 6} Q ${cx + 4} ${cy - rVe - 2} ${xSepto - 2} ${cy - 12} L ${xSepto - 2} ${cy + 12} Q ${cx - 10} ${cy + rVe + 4} ${cx - rvRx - 2} ${cy + 10} Z`}
+        fill={ANECOICO}
+      />
+      {/* Miocárdio do VE: anel espesso. */}
+      <circle cx={cx} cy={cy} r={rVe + 7} fill="#5a6470" />
+      {/* Cavidade do VE: redonda no normal, "D" quando o septo achata. */}
+      <path d={cavidade} fill={ANECOICO} />
+      {/* Músculos papilares: dois, às 4 e 8 horas. */}
+      <circle cx={cx + 6} cy={cy + 8} r="3" fill="#8d97a3" />
+      <circle cx={cx - 6} cy={cy + 8} r="3" fill="#8d97a3" />
+      <Legenda>{`VD/VE ${razao.toFixed(1)}${achatamento > 0 ? ' · septo achatado (sinal do D)' : ''}`}</Legenda>
+    </g>
+  )
+}
+
+/**
+ * Aorta abdominal em corte transverso. `diametro` é a medida externa em cm.
+ *
+ * A referência é a sombra da vértebra: a aorta fica logo à frente dela, à
+ * esquerda da cava. Acima de 3 cm é aneurisma; acima de 5,5 cm o risco de
+ * ruptura passa a justificar cirurgia eletiva. O trombo mural aparece a partir
+ * de dilatações maiores e é a armadilha clássica: medir só a luz que o Doppler
+ * mostra é subestimar o aneurisma em centímetros.
+ */
+function Aorta({ diametro }: { diametro: number }) {
+  const d = Math.max(1, Math.min(8, diametro))
+  const r = d * 4.6
+  const trombo = d > 4 ? (d - 4) * 1.4 : 0
+  return (
+    <g>
+      <rect x="0" y="0" width="100" height="100" fill="#3a434e" />
+      {/* Alças e gordura mesentérica por cima. */}
+      <path d="M 10 10 Q 50 2 90 12 L 90 30 Q 50 22 10 32 Z" fill="#59636f" opacity="0.8" />
+      {/* Corpo vertebral: arco brilhante com sombra acústica atrás. */}
+      <path d="M 30 76 Q 50 68 70 76" stroke="#eef1f4" strokeWidth="2.4" fill="none" />
+      <path d="M 30 77 L 70 77 L 74 100 L 26 100 Z" fill={PRETO} opacity="0.92" />
+      {/* Cava, à direita do paciente (esquerda da tela), oval e achatável. */}
+      <ellipse cx="30" cy="60" rx="8" ry="5" fill={ANECOICO} />
+      {/* Aorta: circular, parede espessa e brilhante; à esquerda do paciente. */}
+      <circle cx="58" cy="56" r={r + 1.6} fill="#c8d0d8" />
+      <circle cx="58" cy="56" r={r} fill="#6b7684" />
+      <circle cx="58" cy="56" r={Math.max(2, r - trombo)} fill={ANECOICO} />
+      {/* Régua da medida externa. */}
+      <line x1={58 - r - 1.6} y1="86" x2={58 + r + 1.6} y2="86" stroke="#f2c14e" strokeWidth="0.6" />
+      <line x1={58 - r - 1.6} y1="84" x2={58 - r - 1.6} y2="88" stroke="#f2c14e" strokeWidth="0.6" />
+      <line x1={58 + r + 1.6} y1="84" x2={58 + r + 1.6} y2="88" stroke="#f2c14e" strokeWidth="0.6" />
+      <Legenda>{`${d.toFixed(1)} cm externo${d >= 3 ? ' · aneurisma' : ''}${trombo > 0 ? ' · trombo mural' : ''}`}</Legenda>
+    </g>
+  )
+}
+
+/**
+ * Vesícula em corte longitudinal. `calculos` conta as pedras; `parede` é a
+ * espessura em mm; `impactado` prende um cálculo no infundíbulo.
+ *
+ * O cálculo se reconhece por três coisas juntas: é brilhante, projeta sombra
+ * limpa e **se move** quando o paciente muda de decúbito. Pólipo é brilhante
+ * mas não sombreia nem se move; lama é móvel mas não sombreia. Na colecistite
+ * a parede engrossa e ganha uma camada intermediária escura — edema — e o
+ * cálculo que não sai do colo é o motivo de tudo.
+ */
+function Vesicula({ calculos, parede, impactado = false }: { calculos: number; parede: number; impactado?: boolean }) {
+  const p = Math.max(2, Math.min(8, parede))
+  const e = p * 0.55
+  const n = Math.max(0, Math.round(calculos))
+  return (
+    <g>
+      <rect x="0" y="0" width="100" height="100" fill="#5b6674" />
+      {/* Líquido pericolecístico na colecistite. */}
+      {p > 4 && <path d="M 22 40 Q 52 22 86 46 Q 60 74 22 62 Z" fill={ANECOICO} opacity="0.5" />}
+      {/* Parede: externa brilhante, meio escuro (edema), interna brilhante. */}
+      <path d="M 24 44 Q 54 26 84 48 Q 58 70 24 58 Z" fill="#eef1f4" />
+      {p > 3.5 && (
+        <path d={`M ${24 + e * 0.5} ${44 + e * 0.3} Q 54 ${26 + e} ${84 - e * 0.5} ${48 + e * 0.2} Q 58 ${70 - e} ${24 + e * 0.5} ${58 - e * 0.3} Z`} fill="#6b7684" />
+      )}
+      {/* Luz anecoica. */}
+      <path d={`M ${24 + e} ${44 + e * 0.6} Q 54 ${26 + e * 1.8} ${84 - e} ${48 + e * 0.4} Q 58 ${70 - e * 1.8} ${24 + e} ${58 - e * 0.6} Z`} fill={ANECOICO} />
+      {/* Reforço acústico posterior: líquido deixa passar mais som. */}
+      <path d="M 30 62 Q 56 68 80 56 L 84 100 L 26 100 Z" fill="#7d8896" opacity="0.28" />
+      {/* Cálculos: arco brilhante na parede dependente, sombra limpa atrás. */}
+      {Array.from({ length: Math.min(n, 10) }, (_, i) => {
+        const x = impactado ? 78 : 42 + ((i * 7) % 30)
+        const y = impactado ? 47 : 61 - ((i * 5) % 9) * 0.5
+        return (
+          <g key={i}>
+            <path d={`M ${x - 3} ${y} Q ${x} ${y - 3.2} ${x + 3} ${y}`} fill="#ffffff" />
+            <path d={`M ${x - 3} ${y} L ${x + 3} ${y} L ${x + 4.5} 100 L ${x - 4.5} 100 Z`} fill={PRETO} opacity="0.9" />
+          </g>
+        )
+      })}
+      <Legenda>
+        {p > 3.5
+          ? `parede ${p.toFixed(0)} mm · cálculo impactado${p > 4 ? ' · líquido pericolecístico' : ''}`
+          : n > 0
+            ? `${n} cálculo(s) com sombra acústica`
+            : 'parede fina · luz anecoica · sem cálculo'}
+      </Legenda>
+    </g>
+  )
+}
+
+/**
+ * Colédoco no hilo hepático. `diametro` em mm.
+ *
+ * A imagem clássica é o "cano duplo": veia porta atrás, colédoco à frente,
+ * correndo paralelos. O colédoco normal é fino — até 6 mm, somando 1 mm por
+ * década acima dos 60 e mais alguns após colecistectomia. Dilatado, ele se
+ * iguala à porta e o aluno confunde os dois; o Doppler resolve, porque só a
+ * porta tem fluxo.
+ */
+function Coledoco({ diametro }: { diametro: number }) {
+  const d = Math.max(2, Math.min(20, diametro))
+  const meia = d * 0.55
+  return (
+    <g>
+      <rect x="0" y="0" width="100" height="100" fill="#5b6674" />
+      {/* Veia porta: calibrosa, parede brilhante. */}
+      <path d="M 8 66 Q 50 58 92 64 L 92 76 Q 50 70 8 78 Z" fill={ANECOICO} />
+      <path d="M 8 66 Q 50 58 92 64 M 8 78 Q 50 70 92 76" stroke="#e6e9ed" strokeWidth="1.4" fill="none" />
+      {/* Colédoco: paralelo, anterior, sem fluxo. */}
+      <path d={`M 8 ${54 - meia} Q 50 ${46 - meia} 92 ${52 - meia} L 92 ${52 + meia} Q 50 ${46 + meia} 8 ${54 + meia} Z`} fill={ANECOICO} />
+      <path d={`M 8 ${54 - meia} Q 50 ${46 - meia} 92 ${52 - meia} M 8 ${54 + meia} Q 50 ${46 + meia} 92 ${52 + meia}`} stroke="#e6e9ed" strokeWidth="1" fill="none" />
+      {/* Régua. */}
+      <line x1="50" y1={49 - meia} x2="50" y2={49 + meia} stroke="#f2c14e" strokeWidth="0.6" />
+      <line x1="48" y1={49 - meia} x2="52" y2={49 - meia} stroke="#f2c14e" strokeWidth="0.6" />
+      <line x1="48" y1={49 + meia} x2="52" y2={49 + meia} stroke="#f2c14e" strokeWidth="0.6" />
+      <Legenda>{`colédoco ${d.toFixed(0)} mm${d > 6 ? ' · dilatado' : ''} · porta posterior`}</Legenda>
+    </g>
+  )
+}
+
+/**
+ * Rim em corte longitudinal. `grau` é a hidronefrose de 0 a 4.
+ *
+ * O seio renal normal é o miolo **brilhante** do rim — gordura e vasos. A
+ * hidronefrose o escurece de dentro para fora: primeiro a pelve, depois os
+ * cálices em ramos, e no grau 4 o córtex já afinou porque a pressão o
+ * comprimiu. Um cisto parapiélico simula grau 1 e engana até quem sabe.
+ */
+function Rim({ grau }: { grau: number }) {
+  const g = Math.max(0, Math.min(4, Math.round(grau)))
+  const cortex = 15 - (g >= 4 ? 4 : 0)
+  return (
+    <g>
+      <rect x="0" y="0" width="100" height="100" fill="#3a434e" />
+      {/* Fígado como janela, no alto. */}
+      <path d="M 0 0 L 100 0 L 100 28 Q 50 20 0 30 Z" fill="#5b6674" />
+      {/* Cápsula e córtex. */}
+      <ellipse cx="50" cy="60" rx="34" ry={cortex + 8} fill="#5a6572" />
+      <ellipse cx="50" cy="60" rx="34" ry={cortex + 8} fill="none" stroke="#c8d0d8" strokeWidth="0.9" opacity="0.7" />
+      {/* Pirâmides: hipoecoicas, triangulares, no córtex. */}
+      {[-22, -11, 0, 11, 22].map((dx) => (
+        <path key={dx} d={`M ${50 + dx - 3} ${60 - cortex + 2} L ${50 + dx + 3} ${60 - cortex + 2} L ${50 + dx} ${60 - 5} Z`} fill="#4a5461" opacity="0.8" />
+      ))}
+      {/* Seio renal: brilhante no normal. */}
+      <ellipse cx="50" cy="60" rx="18" ry="6.5" fill="#dfe4e9" opacity="0.85" />
+      {/* Hidronefrose: pelve e cálices anecoicos, ramificados, crescendo com o grau. */}
+      {g >= 1 && <ellipse cx="50" cy="60" rx={6 + g * 3} ry={3 + g * 1.2} fill={ANECOICO} />}
+      {g >= 2 &&
+        [-14, -7, 7, 14].map((dx) => (
+          <ellipse key={dx} cx={50 + dx} cy={60 - 4 - Math.abs(dx) * 0.15} rx={2.4 + g * 0.6} ry={1.6 + g * 0.7} fill={ANECOICO} />
+        ))}
+      {g >= 3 &&
+        [-14, -7, 7, 14].map((dx) => (
+          <path key={dx} d={`M ${50 + dx} ${60 - 3} L ${50 + dx * 0.4} 60`} stroke={ANECOICO} strokeWidth={2 + g} strokeLinecap="round" />
+        ))}
+      <Legenda>{g === 0 ? 'seio renal hiperecogênico · sem dilatação' : `hidronefrose grau ${g}${g >= 4 ? ' · córtex afinado' : ''}`}</Legenda>
+    </g>
+  )
+}
+
+/**
+ * Bexiga em corte transverso suprapúbico. `volume` em mL.
+ *
+ * Volume estimado = largura × altura × profundidade × 0,52. O que o desenho
+ * ensina não é a fórmula: é que bexiga com 150 mL é uma sombra discreta atrás
+ * do púbis, e com 800 mL é uma bola que sobe acima do umbigo — a mesma que a
+ * mão sente como "globo vesical".
+ */
+function Bexiga({ volume }: { volume: number }) {
+  const v = Math.max(0, Math.min(1500, volume))
+  const rx = 6 + Math.cbrt(v) * 3
+  const ry = rx * 0.62
+  const y = 28
+  return (
+    <g>
+      <rect x="0" y="0" width="100" height="100" fill="#3a434e" />
+      {/* Parede abdominal. */}
+      <rect x="0" y="0" width="100" height="10" fill="#59636f" />
+      {/* Bexiga: anecoica; arredondada quando pouco cheia, quadrangular sob tensão. */}
+      <rect x={50 - rx} y={y} width={rx * 2} height={ry * 2} rx={v > 400 ? 8 : rx * 0.9} fill={ANECOICO} />
+      <rect x={50 - rx} y={y} width={rx * 2} height={ry * 2} rx={v > 400 ? 8 : rx * 0.9} fill="none" stroke="#e6e9ed" strokeWidth="1" opacity="0.8" />
+      {/* Reforço acústico atrás. */}
+      <rect x={50 - rx * 0.8} y={y + ry * 2} width={rx * 1.6} height="30" fill="#7d8896" opacity="0.28" />
+      {/* Régua de largura. */}
+      <line x1={50 - rx} y1={y + ry * 2 + 5} x2={50 + rx} y2={y + ry * 2 + 5} stroke="#f2c14e" strokeWidth="0.6" />
+      <Legenda>{`≈ ${Math.round(v)} mL${v >= 300 ? ' · globo vesical' : ''}`}</Legenda>
+    </g>
+  )
+}
+
+/**
+ * Veia femoral comum, transverso, com e sem compressão. `compressibilidade`
+ * é a fração da luz que some quando se aperta.
+ *
+ * O exame de trombose é **tátil**: a pergunta não é "tem trombo?" e sim "a
+ * veia fecha quando eu aperto?". Veia normal colaba até as paredes se tocarem
+ * antes de a artéria deformar. Veia trombosada fica redonda debaixo da sonda —
+ * e o trombo em si pode ser quase anecoico nos primeiros dias, invisível.
+ * Por isso a metade direita da figura é a que decide.
+ */
+function VeiaFemoral({ compressibilidade }: { compressibilidade: number }) {
+  const c = Math.max(0, Math.min(100, compressibilidade)) / 100
+  const ryComprimida = 8 * (1 - c * 0.95)
+  const trombo = c < 0.6
+  return (
+    <g>
+      <rect x="0" y="0" width="100" height="100" fill="#3a434e" />
+      <rect x="0" y="0" width="100" height="8" fill="#59636f" />
+      <line x1="50" y1="0" x2="50" y2="100" stroke="#8d949c" strokeWidth="0.6" strokeDasharray="1.5 1.5" />
+      {[0, 1].map((lado) => {
+        const ox = lado * 50
+        const comprimida = lado === 1
+        const ry = comprimida ? ryComprimida : 8
+        return (
+          <g key={lado}>
+            {/* Artéria: lateral, parede espessa, redonda nas duas metades. */}
+            <circle cx={ox + 16} cy="44" r="6.5" fill="#c8d0d8" />
+            <circle cx={ox + 16} cy="44" r="5" fill={ANECOICO} />
+            {/* Veia: medial, parede fina; colaba à direita se estiver livre. */}
+            <ellipse cx={ox + 32} cy="44" rx="9" ry={Math.max(0.6, ry)} fill={ANECOICO} />
+            {trombo && <ellipse cx={ox + 32} cy="44" rx="7.5" ry={Math.max(0.5, ry * 0.8)} fill="#6b7684" opacity="0.9" />}
+            <ellipse cx={ox + 32} cy="44" rx="9" ry={Math.max(0.6, ry)} fill="none" stroke="#e6e9ed" strokeWidth="0.8" opacity="0.8" />
+            {comprimida && <path d={`M ${ox + 22} 12 L ${ox + 32} 22 L ${ox + 42} 12`} stroke="#f2c14e" strokeWidth="1.2" fill="none" />}
+            <text x={ox + 4} y="72" fill="#f2c14e" fontSize="3.6" fontFamily="system-ui, sans-serif">
+              {comprimida ? 'com compressão' : 'sem compressão'}
+            </text>
+          </g>
+        )
+      })}
+      <Legenda>{c >= 0.9 ? 'veia colaba por completo · sem trombo' : `veia não colaba (${Math.round(c * 100)}%)${trombo ? ' · trombo ecogênico na luz' : ''}`}</Legenda>
+    </g>
+  )
+}
+
+/**
+ * Partes moles com sonda linear. `diametro` em cm da coleção.
+ *
+ * Celulite é o subcutâneo "em pedra de calçamento": lóbulos de gordura
+ * separados por fendas de líquido, mas sem cavidade. Abscesso é cavidade —
+ * hipoecoica, irregular, com ecos que rodam quando se comprime — e é a
+ * diferença entre antibiótico e bisturi. A borda posterior mais clara é o
+ * reforço acústico: líquido deixa passar mais som que o tecido ao redor.
+ */
+function PartesMoles({ diametro }: { diametro: number }) {
+  const d = Math.max(0, Math.min(10, diametro))
+  const rx = d * 4
+  const ry = d * 2.2
+  return (
+    <g>
+      <rect x="0" y="0" width="100" height="100" fill="#3a434e" />
+      {/* Pele e subcutâneo. */}
+      <rect x="0" y="0" width="100" height="5" fill="#e6e9ed" opacity="0.9" />
+      <rect x="0" y="5" width="100" height="34" fill="#59636f" />
+      {/* Lóbulos de gordura: "pedra de calçamento" leve mesmo no normal. */}
+      {Array.from({ length: 10 }, (_, i) => (
+        <ellipse key={i} cx={8 + i * 10} cy={14 + (i % 2) * 12} rx="6" ry="4.5" fill="#66717e" opacity="0.7" />
+      ))}
+      {/* Fáscia e músculo, com o padrão estriado. */}
+      <rect x="0" y="39" width="100" height="1.4" fill="#eef1f4" />
+      {[46, 52, 58, 64, 70].map((y) => (
+        <rect key={y} x="0" y={y} width="100" height="0.9" fill="#aeb6bf" opacity="0.4" />
+      ))}
+      {d > 0 && (
+        <g>
+          {/* Coleção: irregular, hipoecoica, com ecos internos. */}
+          <path
+            d={`M ${50 - rx} 24 Q ${50 - rx * 0.6} ${24 - ry} 50 ${24 - ry * 0.8} Q ${50 + rx * 0.7} ${24 - ry * 0.9} ${50 + rx} 26 Q ${50 + rx * 0.8} ${24 + ry} 50 ${24 + ry * 0.9} Q ${50 - rx * 0.7} ${24 + ry * 1.1} ${50 - rx} 24 Z`}
+            fill="#1a2028"
+          />
+          {Array.from({ length: Math.round(d * 4) }, (_, i) => (
+            <circle
+              key={i}
+              cx={50 - rx * 0.7 + ((i * 13) % Math.max(2, rx * 1.4))}
+              cy={24 - ry * 0.5 + ((i * 7) % Math.max(2, ry))}
+              r="0.6"
+              fill="#8d97a3"
+              opacity="0.8"
+            />
+          ))}
+          {/* Reforço acústico posterior. */}
+          <rect x={50 - rx * 0.8} y={24 + ry} width={rx * 1.6} height={76 - ry} fill="#7d8896" opacity="0.22" />
+          <Legenda>{`coleção ${d.toFixed(1)} cm · ecos internos · reforço posterior`}</Legenda>
+        </g>
       )}
     </g>
   )

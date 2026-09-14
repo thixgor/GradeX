@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import type { Sinal } from '@/lib/semiologia/esquemas'
 import { ROTAS } from '@/lib/semiologia/rotas'
+import { Deslizador } from './deslizador'
 import { CONTROLES } from './ilustracoes/controles'
 import { Ilustracao } from './ilustracoes/registro'
 
@@ -75,42 +76,7 @@ export function FichaDeSinal({ sinal }: { sinal: Sinal }) {
               titulo={sinal.ilustracao.alt}
               className="border border-border"
             />
-            {controle && (
-              <div className="rounded-xl border border-border bg-card p-4">
-                <div className="flex items-baseline justify-between">
-                  <label htmlFor="controle-figura" className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                    {controle.rotulo}
-                  </label>
-                  <span className="text-sm font-semibold tabular-nums">{controle.formatar(valor)}</span>
-                </div>
-                <input
-                  id="controle-figura"
-                  type="range"
-                  min={controle.min}
-                  max={controle.max}
-                  step={controle.passo}
-                  value={valor}
-                  onChange={(e) => setValor(Number(e.target.value))}
-                  className="mt-3 w-full accent-sky-500"
-                />
-                {controle.marcos && (
-                  <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
-                    {controle.marcos.map((marco) => (
-                      <button
-                        key={marco.rotulo}
-                        onClick={() => setValor(marco.valor)}
-                        className="text-[11px] text-muted-foreground underline-offset-2 hover:text-sky-700 hover:underline dark:hover:text-sky-400"
-                      >
-                        {controle.formatar(marco.valor)} · {marco.rotulo}
-                      </button>
-                    ))}
-                  </div>
-                )}
-                <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
-                  Arraste e veja onde o sinal nasce. Figura esquemática — não é fotografia clínica.
-                </p>
-              </div>
-            )}
+            {controle && <Deslizador id="controle-figura" controle={controle} valor={valor} onMudar={setValor} />}
           </div>
         )}
 
