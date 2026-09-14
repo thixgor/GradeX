@@ -65,3 +65,10 @@ __pycache__/
 
 # Relatórios da sincronização de imagens (scripts/midia)
 .midia/
+
+# Bytes baixados pela curadoria do Manual de Semiologia
+# (scripts/semiologia/curar-acervo.mjs --baixar): mídia de terceiros
+# endereçada por hash, pronta para subir ao espelho. O acervo versionado é
+# lib/semiologia/acervo.gerado.ts, que guarda URL de origem e SHA-256 — os
+# arquivos são reproduzíveis a partir dele e vão para o CDN, não para o repositório.
+.semiologia/
