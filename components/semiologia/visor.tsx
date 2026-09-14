@@ -168,11 +168,20 @@ export function VisorDeCenas({
               aluno vai encontrar na clínica; o esquema é o gabarito que explica
               o que ele está vendo. A ordem diz qual é qual — e o esquema nunca
               sai, porque a comparação entre os dois é parte do que se ensina. */}
-          {reais.length > 0 && <GaleriaReal midias={reais} />}
+          {reais.length > 0 && <CasoReal midias={reais} cenaId={cenaAtual.id} />}
 
-          {reais.length > 0 && (
-            <h3 className="pt-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Esquema</h3>
-          )}
+          {/* Com caso real, o esquema vira referência recolhível: continua a
+              um clique, com os marcadores e o comparador intactos, mas não
+              disputa o palco com a fotografia. Sem caso real, é a figura. */}
+          <details open={reais.length === 0} className="group space-y-3">
+            <summary
+              className={`flex cursor-pointer list-none items-center gap-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground ${
+                reais.length === 0 ? 'hidden' : ''
+              }`}
+            >
+              <ChevronRight className="h-3 w-3 transition-transform group-open:rotate-90" />
+              Esquema de referência
+            </summary>
 
           {/* Figura esquemática, com os marcadores de estrutura sobrepostos. */}
           <div className={comparando && !ehNormal ? 'grid grid-cols-2 gap-3' : ''}>
@@ -250,6 +259,7 @@ export function VisorDeCenas({
             Figura esquemática desenhada a partir dos parâmetros do achado — não é fotografia clínica. Ela fixa o
             padrão; a variação real se aprende no caso {reais.length > 0 ? 'acima' : 'fotográfico'}.
           </p>
+          </details>
 
           {/* Dossiê da estrutura acesa. */}
           {estrutura && (
@@ -467,7 +477,13 @@ function Marcadores({
 }
 
 /**
- * Casos reais, com o crédito colado na imagem.
+ * O caso real — a figura principal da cena.
+ *
+ * A fotografia é o que o aluno vai encontrar na clínica, então ela ocupa o
+ * palco: uma imagem grande, na proporção original, com a legenda embaixo e
+ * as demais mídias da cena como miniaturas para trocar. O esquema desenhado
+ * vem depois, como referência — ensina o padrão, mas não é o que o olho
+ * precisa reconhecer.
  *
  * O crédito curto aparece aqui **além** do rodapé permanente da seção, e isso
  * não contradiz a exigência de não repetir: o rodapé identifica a origem do
@@ -476,67 +492,98 @@ function Marcadores({
  * indistinguível. O vínculo para o caso original acompanha por ser o que torna
  * a proveniência verificável por quem quiser conferir.
  */
-function GaleriaReal({ midias }: { midias: import('@/lib/semiologia/midia').MidiaClinica[] }) {
+function CasoReal({ midias, cenaId }: { midias: import('@/lib/semiologia/midia').MidiaClinica[]; cenaId: string }) {
+  const [escolhida, setEscolhida] = useState(0)
+  // Trocar de cena volta para a primeira mídia da nova cena.
+  useEffect(() => setEscolhida(0), [cenaId])
+  const atual = midias[Math.min(escolhida, midias.length - 1)]
+  const src = urlDaMidia(atual)
+  if (!src) return null
+  const fonte = fonteDaMidia(atual)
+
   return (
-    <section className="space-y-2">
-      <h3 className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-        Caso real ({midias.length})
-      </h3>
-      {/* A primeira mídia ocupa a largura toda: é a imagem principal da cena.
-          As demais, quando existem, são variações e dividem a linha. */}
-      <ul className="grid grid-cols-2 gap-2">
-        {midias.map((midia, indice) => {
-          const src = urlDaMidia(midia)
-          if (!src) return null
-          const fonte = fonteDaMidia(midia)
-          return (
-            <li
-              key={midia.id}
-              className={`overflow-hidden rounded-xl border border-border bg-card ${indice === 0 ? 'col-span-2' : ''}`}
+    <section className="space-y-3">
+      <div className="flex items-baseline justify-between">
+        <h3 className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Caso real</h3>
+        {midias.length > 1 && (
+          <span className="text-[11px] tabular-nums text-muted-foreground">
+            {escolhida + 1} de {midias.length}
+          </span>
+        )}
+      </div>
+
+      <figure className="overflow-hidden rounded-2xl border border-border bg-black">
+        {atual.tipo === 'clipe' ? (
+          // Clipe de ultrassom: sem som, em laço, e com `playsInline` para o
+          // iOS não abrir em tela cheia no meio do estudo. Deslizamento pleural
+          // e colapso de cava são achados de movimento — uma foto parada deles
+          // não é o achado.
+          <video
+            key={atual.id}
+            src={src}
+            className="mx-auto max-h-[70vh] w-full object-contain"
+            muted
+            loop
+            playsInline
+            controls
+            preload="metadata"
+            aria-label={atual.legenda}
+          />
+        ) : (
+          <img
+            key={atual.id}
+            src={src}
+            alt={atual.legenda}
+            decoding="async"
+            className="mx-auto max-h-[70vh] w-full object-contain"
+          />
+        )}
+        <figcaption className="space-y-1.5 bg-card p-4">
+          <p className="text-sm leading-relaxed">{atual.legenda}</p>
+          {atual.autoria && <p className="text-xs text-muted-foreground">{atual.autoria}</p>}
+          <p className="text-[11px] text-muted-foreground/80">
+            {fonte.creditoCurto} ·{' '}
+            <a
+              href={atual.urlDoCaso}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-2 hover:text-foreground"
             >
-              {midia.tipo === 'clipe' ? (
-                // Clipe de ultrassom: sem som, em laço, e com `playsInline` para
-                // o iOS não abrir em tela cheia no meio do estudo. Deslizamento
-                // pleural e colapso de cava são achados de movimento — uma foto
-                // parada deles não é o achado.
-                <video
-                  src={src}
-                  className="aspect-square w-full bg-black object-contain"
-                  muted
-                  loop
-                  playsInline
-                  controls
-                  preload="metadata"
-                  aria-label={midia.legenda}
-                />
-              ) : (
-                <img
-                  src={src}
-                  alt={midia.legenda}
-                  loading="lazy"
-                  decoding="async"
-                  className="aspect-square w-full bg-black object-contain"
-                />
-              )}
-              <div className="space-y-1 p-3">
-                <p className="text-xs leading-relaxed">{midia.legenda}</p>
-                {midia.autoria && <p className="text-[11px] text-muted-foreground">{midia.autoria}</p>}
-                <p className="text-[11px] text-muted-foreground/80">
-                  {fonte.creditoCurto} ·{' '}
-                  <a
-                    href={midia.urlDoCaso}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline underline-offset-2 hover:text-foreground"
-                  >
-                    caso original
-                  </a>
-                </p>
-              </div>
-            </li>
-          )
-        })}
-      </ul>
+              caso original
+            </a>
+          </p>
+        </figcaption>
+      </figure>
+
+      {midias.length > 1 && (
+        <ul className="flex gap-2 overflow-x-auto pb-1" role="tablist" aria-label="Mídias deste caso">
+          {midias.map((midia, indice) => {
+            const miniatura = urlDaMidia(midia)
+            if (!miniatura) return null
+            const ativa = indice === escolhida
+            return (
+              <li key={midia.id} className="shrink-0">
+                <button
+                  role="tab"
+                  aria-selected={ativa}
+                  onClick={() => setEscolhida(indice)}
+                  title={midia.legenda}
+                  className={`block h-16 w-24 overflow-hidden rounded-lg border-2 bg-black transition-colors ${
+                    ativa ? 'border-sky-500' : 'border-border hover:border-sky-500/50'
+                  }`}
+                >
+                  {midia.tipo === 'clipe' ? (
+                    <video src={miniatura} className="h-full w-full object-cover" muted playsInline preload="metadata" aria-hidden />
+                  ) : (
+                    <img src={miniatura} alt="" loading="lazy" decoding="async" className="h-full w-full object-cover" />
+                  )}
+                </button>
+              </li>
+            )
+          })}
+        </ul>
+      )}
+
       <p className="text-[11px] leading-relaxed text-muted-foreground/80">{AVISO_EDUCACIONAL}</p>
     </section>
   )
