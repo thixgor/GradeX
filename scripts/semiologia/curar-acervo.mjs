@@ -83,6 +83,7 @@ const pastaDeBytes = path.join(raizDoProjeto, '.semiologia', 'midia')
 const HOSTS = {
   'pocus-atlas': ['www.thepocusatlas.com', 'thepocusatlas.com', 'images.squarespace-cdn.com'],
   radiopaedia: ['radiopaedia.org', 'prod-images-static.radiopaedia.org', 'images.radiopaedia.org'],
+  'wikimedia-commons': ['upload.wikimedia.org', 'thumb.wikimedia.org', 'commons.wikimedia.org'],
 }
 
 const TIPOS = {
@@ -109,7 +110,7 @@ async function resolverCasoRadiopaedia(referencia) {
 
   const alvo = `https://radiopaedia.org/api/v1/cases/${id}`
   const resposta = await fetch(alvo, {
-    headers: { Accept: 'application/json', 'User-Agent': 'DomineAqui-curadoria/1.0' },
+    headers: { Accept: 'application/json', 'User-Agent': UA },
   })
   if (!resposta.ok) throw new Error(`API do Radiopaedia respondeu ${resposta.status} para ${alvo}`)
 
@@ -152,10 +153,31 @@ async function resolverCasoRadiopaedia(referencia) {
   }
 }
 
+/**
+ * Baixa com paciência: hosts públicos como o Wikimedia devolvem 429 quando
+ * dezenas de arquivos são pedidos em sequência. Um 429 não é link podre — é
+ * pressa. O script espera o que o servidor pedir (Retry-After) ou um
+ * intervalo crescente, e só desiste depois de cinco tentativas.
+ */
+const UA = 'DomineAqui-curadoria/1.0 (curadoria do Manual de Semiologia; contato: throdrigf@gmail.com)'
+async function buscarComPaciencia(url) {
+  let resposta
+  for (let tentativa = 1; tentativa <= 5; tentativa++) {
+    resposta = await fetch(url, { headers: { 'User-Agent': UA } })
+    if (resposta.status !== 429 && resposta.status !== 503) return resposta
+    const pedido = Number(resposta.headers.get('retry-after'))
+    const espera = (Number.isFinite(pedido) && pedido > 0 ? pedido : 3 * tentativa) * 1000
+    await new Promise((r) => setTimeout(r, espera))
+  }
+  return resposta
+}
+
 /** Baixa, confere o tipo e devolve hash e tamanho. */
 async function inspecionar(url, tipoEsperado) {
-  const resposta = await fetch(url, { headers: { 'User-Agent': 'DomineAqui-curadoria/1.0' } })
+  const resposta = await buscarComPaciencia(url)
   if (!resposta.ok) throw new Error(`${resposta.status} ao buscar ${url}`)
+  // Um respiro entre arquivos do mesmo host, pelo mesmo motivo.
+  await new Promise((r) => setTimeout(r, 700))
 
   const contentType = (resposta.headers.get('content-type') || '').split(';')[0].trim().toLowerCase()
   const aceitos = TIPOS[tipoEsperado] ?? []

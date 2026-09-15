@@ -55,7 +55,7 @@
  * conteúdo aberto por termos passado por ele.
  */
 
-export type FonteLicenciadaId = 'pocus-atlas' | 'radiopaedia'
+export type FonteLicenciadaId = 'pocus-atlas' | 'radiopaedia' | 'wikimedia-commons'
 
 export interface FonteLicenciada {
   id: FonteLicenciadaId
@@ -166,11 +166,59 @@ export const FONTES_LICENCIADAS: Record<FonteLicenciadaId, FonteLicenciada> = {
       sha256: 'ba02a1bf22566ecd307dfab82c445703a307f2348d4865f46b4f3ebff2328659',
     },
   },
+  /**
+   * A terceira fonte é de outra natureza: não há autorização negociada, e sim
+   * licença pública. Uma obra em domínio público ou sob Creative Commons
+   * Attribution (sem NC, sem ND) já pode ser usada em produto pago por
+   * qualquer um — o que ela exige é o crédito, imagem a imagem, com autor e
+   * licença. Por isso o `credito` desta fonte é genérico e a obrigação real
+   * mora no campo `autoria` de cada mídia, que a interface imprime junto à
+   * imagem e que a curadoria preenche a partir dos metadados do Commons.
+   *
+   * Obras CC BY-SA entram com uma condição a mais: são exibidas **sem
+   * modificação**. O ShareAlike só alcança obra derivada — recorte, anotação
+   * por cima, montagem — e nada disso acontece aqui: a foto é servida como
+   * está, com autor, licença e vínculo. O que fica de fora, por escolha: NC
+   * (a plataforma é paga) e ND (a legenda traduzida já seria um limite
+   * cinzento). Se uma obra dessas for a única disponível, a cena fica sem
+   * foto — o módulo prefere a lacuna à licença errada.
+   */
+  'wikimedia-commons': {
+    id: 'wikimedia-commons',
+    nome: 'Wikimedia Commons',
+    url: 'https://commons.wikimedia.org',
+    titular: 'Autores individuais — obras em domínio público, CC0, Creative Commons Attribution ou Attribution-ShareAlike',
+    signatarios: ['Não se aplica: licença pública. O autor de cada obra é identificado junto à própria imagem.'],
+    licencaBase:
+      'Domínio público, CC0, Creative Commons Attribution (CC BY) ou Attribution-ShareAlike (CC BY-SA), nas versões 2.0 a 4.0 — a licença exata de cada obra é a registrada ao lado dela',
+    excecao:
+      'Nenhuma é necessária. Licenças Attribution e Attribution-ShareAlike permitem uso comercial; obras em domínio público e CC0 não impõem condição. A obrigação é o crédito por imagem — e, nas BY-SA, exibir a obra sem modificação.',
+    credito:
+      'Fotografias clínicas de Wikimedia Commons (commons.wikimedia.org), em domínio público ou sob licença Creative Commons Attribution / Attribution-ShareAlike, exibidas sem modificação, com autor e licença indicados junto a cada imagem.',
+    creditoCurto: 'Wikimedia Commons · autor e licença junto à imagem',
+    permissoes: [
+      'Exibir, legendar e contextualizar obras em domínio público, CC0, CC BY ou CC BY-SA, inclusive em produto pago.',
+      'Reproduzir a obra sem modificação, com o crédito exigido pela licença: autor, licença e vínculo para a página original.',
+    ],
+    restricoes: [
+      'Só entram obras em domínio público, CC0, CC BY ou CC BY-SA. Obras CC BY-NC e CC BY-ND não são usadas, mesmo quando são a única disponível.',
+      'O crédito é por imagem e não pode ser omitido: cada mídia registra autor e licença no campo de autoria.',
+      'A obra é exibida sem alteração de conteúdo. Nas CC BY-SA isso é condição, não preferência: recorte, anotação ou montagem sobre a foto seria obra derivada e teria de ser publicada sob a mesma licença.',
+      'Para terceiros, cada obra segue exatamente a licença indicada junto a ela — o que a plataforma faz é cumprir essa licença, não substituí-la.',
+    ],
+    dominiosDeMidia: ['upload.wikimedia.org', 'thumb.wikimedia.org', 'commons.wikimedia.org'],
+    comprovante: {
+      arquivo: 'Creative Commons Attribution 4.0 International — texto legal (creativecommons.org/licenses/by/4.0/legalcode.txt)',
+      data: '2026-09-14',
+      sha256: '9ba9550ad48438d0836ddab3da480b3b69ffa0aac7b7878b5a0039e7ab429411',
+    },
+  },
 }
 
 export const LISTA_DE_FONTES: FonteLicenciada[] = [
   FONTES_LICENCIADAS['pocus-atlas'],
   FONTES_LICENCIADAS.radiopaedia,
+  FONTES_LICENCIADAS['wikimedia-commons'],
 ]
 
 /**

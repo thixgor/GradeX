@@ -214,6 +214,67 @@ export const VISTAS: Vista[] = [
         diferencial: ['Corpo estranho', 'Otomicose', 'Colesteatoma de conduto'],
         ilustracao: { id: 'otoscopia', params: { cena: 'cerume' }, alt: 'Conduto obstruído por rolha de cerume impedindo a visualização da membrana' },
       },
+      {
+        id: 'colesteatoma',
+        titulo: 'Colesteatoma',
+        estado: 'alterado',
+        diagnostico: 'Massa de queratina no ouvido médio, que erode osso e não para de crescer.',
+        achado:
+          'Massa branca, nacarada ou com detritos amarelados, na pars flaccida ou no quadrante póstero-superior, dentro de uma bolsa de retração ou de uma perfuração marginal. Frequentemente com granulação vermelha na borda e otorreia fétida. A membrana ao redor costuma estar retraída e opaca.',
+        leitura: [
+          'Vá direto à pars flaccida: é onde o colesteatoma adquirido começa, e é a região que a otoscopia apressada não olha.',
+          'Procure a bolsa de retração e o que há dentro dela — escama branca é queratina, não cerume.',
+          'Note a borda: perfuração marginal (que toca o ânulo) é suspeita; a central da otite crônica simples, não.',
+          'Pergunte por otorreia crônica fétida e hipoacusia progressiva.',
+        ],
+        diferencaDoNormal:
+          'A pars flaccida normal é lisa e discreta. Aqui ela foi sugada para dentro pela pressão negativa crônica, virou uma bolsa, e a pele que reveste a bolsa continuou descamando queratina para um espaço que não tem saída. A massa branca é essa queratina acumulada — pele no lugar errado, com enzimas que dissolvem osso. Não é infecção; é a anatomia comendo a si mesma.',
+        conduta:
+          'Encaminhamento ao otorrinolaringologista, sem urgência mas sem demora: tomografia de mastoide para a extensão, e cirurgia — não há tratamento clínico que resolva. Antibiótico tópico só para a otorreia enquanto se espera. Complicações (paralisia facial, vertigem, abscesso, meningite) mudam para urgência.',
+        diferencial: ['Otite média crônica com granulação', 'Cerume ou escama de pele na pars flaccida', 'Timpanoesclerose (placa branca, mas plana e na pars tensa)', 'Colesteatoma congênito (atrás de membrana íntegra)'],
+        ilustracao: { id: 'otoscopia', params: { cena: 'colesteatoma', area: 30 }, alt: 'Massa branca nacarada na pars flaccida, dentro de bolsa de retração, com granulação na borda' },
+      },
+      {
+        id: 'otite-media-cronica',
+        titulo: 'Otite média crônica com perfuração',
+        estado: 'alterado',
+        diagnostico: 'Perfuração timpânica persistente com otorreia intermitente.',
+        achado:
+          'Perfuração central ampla, de bordas espessadas e regulares, através da qual se vê a mucosa do promontório — rosada quando quieta, vermelha e úmida na agudização. Restos de membrana retraídos ou esclerosados. Otorreia mucoide ou purulenta sem dor.',
+        leitura: [
+          'Meça a perfuração e diga onde está: central poupa o ânulo; marginal o alcança.',
+          'Olhe o que está atrás — mucosa lisa ou pólipo e granulação.',
+          'Procure escama branca na borda: colesteatoma associado muda tudo.',
+          'Teste a audição com diapasão: hipoacusia condutiva é a regra; neurossensorial pede investigação.',
+        ],
+        diferencaDoNormal:
+          'A perfuração traumática recente tem bordas finas e irregulares e fecha sozinha. Esta não fecha: a mucosa do ouvido médio migrou para a borda e a epitelizou, e o tímpano perdeu a capacidade de regenerar. O que se vê pelo buraco é o ouvido médio ao vivo — e é por ele que a água da piscina entra e a otorreia sai.',
+        conduta:
+          'Ouvido seco: proteger da água, tratar agudizações com gotas de quinolona (não aminoglicosídeo, ototóxico com tímpano aberto). Encaminhar para timpanoplastia quando seco e sem colesteatoma. Se houver escama branca na borda ou perfuração marginal, tomografia e cirurgia mais cedo.',
+        diferencial: ['Perfuração traumática recente', 'Colesteatoma com perfuração marginal', 'Otite média crônica com granulação (polipoide)', 'Tuberculose de ouvido médio (múltiplas perfurações)'],
+        ilustracao: { id: 'otoscopia', params: { cena: 'otite-media-cronica', diametro: 7 }, alt: 'Perfuração central ampla de bordas espessadas com mucosa do promontório visível' },
+      },
+      {
+        id: 'timpano-retraido',
+        titulo: 'Tímpano retraído',
+        estado: 'alterado',
+        diagnostico: 'Disfunção da tuba auditiva com pressão negativa no ouvido médio.',
+        achado:
+          'Membrana côncava, puxada para dentro: cabo do martelo horizontalizado e encurtado, processo lateral proeminente, triângulo luminoso deslocado ou fragmentado. Sem líquido visível. Na retração mais profunda, a membrana se apoia sobre a bigorna ou o promontório.',
+        leitura: [
+          'Repare no cabo do martelo: retraído, ele parece mais curto e mais horizontal.',
+          'Procure o processo lateral — ele "salta" quando a membrana afunda.',
+          'Localize o cone de luz: fora do lugar ou quebrado é sinal de que a membrana perdeu a planura.',
+          'Veja a pars flaccida: bolsa de retração ali é o começo do colesteatoma.',
+          'Insufle: a membrana retraída mal se move.',
+        ],
+        diferencaDoNormal:
+          'A membrana normal é levemente côncava e devolve a luz num cone limpo. Quando a tuba não ventila o ouvido médio, o ar ali é absorvido, a pressão cai e a membrana é sugada — a mesma física do vácuo numa embalagem. O cone de luz se desfaz porque a superfície deixou de ser plana; e o martelo, preso à membrana, é puxado junto.',
+        conduta:
+          'Tratar a causa da disfunção tubária (rinite, adenoide na criança, refluxo), manobras de autoinsuflação, e reavaliar em semanas. Retração da pars flaccida ou bolsa que não se limpa: encaminhar, pelo risco de colesteatoma. Efusão associada segue a conduta da otite média com efusão.',
+        diferencial: ['Otite média com efusão (retraída, mas com líquido ou nível)', 'Atelectasia timpânica (retração fixa sobre o promontório)', 'Bolsa de retração com colesteatoma'],
+        ilustracao: { id: 'otoscopia', params: { cena: 'timpano-retraido', retracao: 4 }, alt: 'Membrana timpânica côncava e retraída com processo lateral do martelo proeminente' },
+      },
     ],
     armadilhas: [
       'Hiperemia isolada não é otite média aguda. Criança que chora, febril ou com o espéculo forçado fica com a membrana vermelha. **O achado é o abaulamento.**',
@@ -399,6 +460,87 @@ export const VISTAS: Vista[] = [
         ilustracao: { id: 'fundoscopia', params: { cena: 'oclusao-venosa-central' }, alt: 'Hemorragias em chama de vela nos quatro quadrantes com veias tortuosas' },
         patologia: 'oclusao-venosa-retiniana',
       },
+      {
+        id: 'descolamento-de-retina',
+        titulo: 'Descolamento de retina',
+        estado: 'alterado',
+        diagnostico: 'Separação da retina neurossensorial do epitélio pigmentar — emergência para a visão.',
+        achado:
+          'Área de retina elevada, cinza-esbranquiçada e ondulada, que perde o vermelho do fundo e treme com o movimento do olho; os vasos correm escuros por cima das dobras. Começa pela periferia, em geral temporal superior, e avança para a mácula. Rasgadura em ferradura pode ser visível na borda.',
+        leitura: [
+          'Compare o quadrante suspeito com o oposto: a retina descolada é opaca e mais clara.',
+          'Siga um vaso da papila para a periferia e veja onde ele sobe de nível.',
+          'Diga se a mácula está envolvida — muda a urgência.',
+          'Pergunte pelos sintomas: flashes, chuva de moscas volantes e a cortina que avança.',
+        ],
+        diferencaDoNormal:
+          'A retina é transparente; o vermelho que se vê é a coroide atrás dela. Descolada, ela se afasta da coroide, deixa de ser irrigada por ela e fica edemaciada e opaca — vira uma membrana cinza flutuando no vítreo. O que muda a cor não é a retina: é o que se perdeu atrás dela.',
+        conduta:
+          'Oftalmologia no mesmo dia. Mácula ainda colada é a janela de tempo: cirurgia (retinopexia, vitrectomia ou introflexão) antes que ela solte. Não instile colírio midriático se houver dúvida sobre glaucoma agudo, e não deixe o paciente esperar deitado do lado errado.',
+        diferencial: ['Retinosquise', 'Descolamento de coroide', 'Tumor de coroide (melanoma)', 'Descolamento exsudativo (sem rasgadura, líquido muda com a posição)'],
+        ilustracao: { id: 'fundoscopia', params: { cena: 'descolamento-de-retina', extensao: 45 }, alt: 'Retina elevada, cinza-esbranquiçada e ondulada na periferia temporal superior' },
+      },
+      {
+        id: 'oclusao-arterial-central',
+        titulo: 'Oclusão da artéria central da retina',
+        estado: 'alterado',
+        diagnostico: 'Infarto da retina — o AVC do olho.',
+        achado:
+          'Retina difusamente pálida e edemaciada, com as arteríolas afiladas e, às vezes, segmentadas ("em vagões de trem"). No centro, a fóvea mantém a cor da coroide e se destaca como uma mancha vermelho-cereja. Perda visual súbita, indolor e profunda; defeito pupilar aferente presente.',
+        leitura: [
+          'Veja a retina inteira, não só a mácula: a palidez é difusa.',
+          'Confirme a mancha vermelho-cereja — é a fóvea normal cercada de retina branca.',
+          'Siga as arteríolas: finas, com fluxo interrompido em segmentos.',
+          'Teste as pupilas: o defeito aferente relativo é a regra.',
+          'Procure êmbolo visível na papila ou numa bifurcação.',
+        ],
+        diferencaDoNormal:
+          'Sem sangue, a retina interna incha e fica opaca — branca. A fóvea é fina demais para inchar e é nutrida pela coroide, que não parou; por isso ela continua vermelha. A "cereja" não é um achado novo: é o único pedaço de fundo normal que sobrou, cercado de retina morta.',
+        conduta:
+          'Emergência: oftalmologia imediata (massagem ocular, redução da pressão intraocular nas primeiras horas) e, sobretudo, investigação vascular como num AVC — carótidas, ritmo cardíaco, VHS e PCR em maiores de 50 anos para arterite de células gigantes, que pode cegar o outro olho em dias.',
+        diferencial: ['Oclusão de ramo arterial (setor pálido)', 'Doenças de depósito com mancha em cereja (Tay-Sachs, Niemann-Pick)', 'Neuropatia óptica isquêmica', 'Oclusão da artéria oftálmica (sem cereja — a coroide também parou)'],
+        ilustracao: { id: 'fundoscopia', params: { cena: 'oclusao-arterial-central', palidez: 2 }, alt: 'Retina pálida e edemaciada com mancha vermelho-cereja na mácula e arteríolas afiladas' },
+      },
+      {
+        id: 'hemorragia-vitrea',
+        titulo: 'Hemorragia vítrea',
+        estado: 'alterado',
+        diagnostico: 'Sangue no vítreo obscurecendo o fundo de olho.',
+        achado:
+          'Reflexo vermelho apagado ou irregular; detalhes do fundo turvos ou totalmente invisíveis, atrás de um véu vermelho-escuro com grumos móveis. Perda visual súbita e indolor, com "chuva de pontos" ou "teia" que precede a queda da visão.',
+        leitura: [
+          'Comece pelo reflexo vermelho a 30 cm: apagado ou com sombras é o primeiro sinal.',
+          'Tente ver a papila — não conseguir, num olho sem catarata, já é o achado.',
+          'Compare com o outro olho para excluir opacidade de meios bilateral.',
+          'Pergunte pela causa provável: diabetes, trauma, descolamento posterior do vítreo, anticoagulação.',
+        ],
+        diferencaDoNormal:
+          'Nada mudou na retina — o que mudou é o meio entre ela e você. O sangue no vítreo funciona como fumaça na frente da fotografia: quanto mais denso, menos se vê. Por isso o exame que decide aqui não é a oftalmoscopia, e sim o ultrassom ocular, que enxerga através do sangue e diz se a retina está no lugar.',
+        conduta:
+          'Oftalmologia com urgência para ultrassom ocular: descolamento de retina por trás do sangue é o que não pode esperar. Sem descolamento, repouso com cabeceira elevada e reavaliação; a maioria clareia em semanas. Tratar a causa — fotocoagulação da retinopatia proliferativa, revisão da anticoagulação.',
+        diferencial: ['Catarata densa', 'Uveíte com vitreíte', 'Hemorragia sub-hialóidea (nível líquido, retina visível ao redor)', 'Descolamento de retina com hemorragia'],
+        ilustracao: { id: 'fundoscopia', params: { cena: 'hemorragia-vitrea', obscurecido: 60 }, alt: 'Fundo de olho turvo atrás de véu vermelho-escuro com grumos de sangue no vítreo' },
+      },
+      {
+        id: 'papila-palida',
+        titulo: 'Papila óptica pálida',
+        estado: 'alterado',
+        diagnostico: 'Atrofia óptica — perda de axônios do nervo óptico.',
+        achado:
+          'Disco branco, giz ou amarelado, com perda do rosa normal e bordas geralmente nítidas; escavação pode estar aumentada. Redução da acuidade, do campo visual e da visão de cores, com defeito pupilar aferente se unilateral ou assimétrico. Vasos de calibre normal ou afilados.',
+        leitura: [
+          'Compare a cor do disco com a do outro olho — a palidez unilateral é a mais fácil de ver e a mais significativa.',
+          'Diga se a palidez é difusa ou de um setor (temporal, na neurite e nas tóxicas).',
+          'Veja a borda: nítida na atrofia, borrada no papiledema atual.',
+          'Teste pupilas, cores e campo: papila pálida sem déficit funcional pede segunda opinião.',
+        ],
+        diferencaDoNormal:
+          'O rosa do disco normal vem dos capilares que correm entre os axônios. Quando os axônios morrem, os capilares somem com eles e sobra a lâmina crivosa — tecido branco. A papila não fica pálida por falta de sangue: fica pálida por falta de nervo, e o sangue foi embora depois.',
+        conduta:
+          'Investigar a causa, que quase sempre está atrás do olho: ressonância de órbitas e crânio (compressão, esclerose múltipla), história de neurite, glaucoma, tóxicos (etambutol, metanol), deficiências (B12), hereditárias. Papiledema crônico que virou atrofia significa hipertensão intracraniana antiga não tratada.',
+        diferencial: ['Disco miópico com crescente (palidez aparente)', 'Hipoplasia de nervo óptico', 'Drusas de papila', 'Glaucoma avançado (escavação, não só palidez)'],
+        ilustracao: { id: 'fundoscopia', params: { cena: 'papila-palida', palidez: 2 }, alt: 'Disco óptico esbranquiçado, de bordas nítidas, com perda da coloração rósea' },
+      },
     ],
     armadilhas: [
       'Não encontrar o disco e desistir. Siga um vaso: os ramos apontam para a papila, e a bifurcação indica a direção.',
@@ -540,6 +682,66 @@ export const VISTAS: Vista[] = [
         ilustracao: { id: 'orofaringe', params: { cena: 'candidiase' }, alt: 'Placas brancas destacáveis na língua e mucosa jugal' },
         patologia: 'candidiase-oral',
       },
+      {
+        id: 'abscesso-retrofaringeo',
+        titulo: 'Abscesso retrofaríngeo',
+        estado: 'alterado',
+        diagnostico: 'Coleção purulenta entre a faringe e a fáscia pré-vertebral — ameaça à via aérea.',
+        achado:
+          'Abaulamento assimétrico e liso da parede posterior da faringe, de um lado da linha média, com mucosa hiperemiada. Criança febril, tóxica, com rigidez de pescoço, torcicolo, disfagia, sialorreia e voz abafada; pode haver estridor. Trismo é menos comum que no peritonsilar.',
+        leitura: [
+          'Olhe a parede posterior, não as amígdalas: o abaulamento é atrás.',
+          'Compare os dois lados da linha média — a coleção é unilateral.',
+          'Não force a boca nem use o abaixador com vigor em criança com estridor.',
+          'Some os sinais de pescoço: rigidez, torcicolo, dor à mobilização.',
+        ],
+        diferencaDoNormal:
+          'A parede posterior normal é um plano liso, simétrico e discretamente rosado. O espaço retrofaríngeo, atrás dela, tem linfonodos que drenam a nasofaringe e que involuem depois dos 5 anos — por isso o abscesso é doença de criança pequena. Quando um deles supura, a coleção só tem para onde crescer: para a frente, empurrando a mucosa para dentro da via aérea.',
+        conduta:
+          'Emergência: internação, via aérea avaliada por quem sabe garanti-la, tomografia de pescoço com contraste, antibiótico endovenoso de amplo espectro (cobrindo anaeróbios e estafilococo) e drenagem cirúrgica se a coleção for grande ou houver comprometimento respiratório. Não deitar a criança nem sedar sem plano de via aérea.',
+        diferencial: ['Abscesso peritonsilar', 'Epiglotite', 'Linfadenite retrofaríngea sem supuração', 'Osteomielite ou tumor cervical'],
+        ilustracao: { id: 'orofaringe', params: { cena: 'abscesso-retrofaringeo', abaulamento: 12 }, alt: 'Abaulamento assimétrico e liso da parede posterior da faringe' },
+      },
+      {
+        id: 'epiglotite',
+        titulo: 'Epiglotite',
+        estado: 'alterado',
+        diagnostico: 'Celulite da epiglote e supraglote — obstrução iminente da via aérea.',
+        achado:
+          'Epiglote edemaciada, vermelho-cereja, que pode aparecer atrás da base da língua quando o paciente abre a boca sem esforço. Paciente sentado inclinado para a frente, queixo projetado, boca aberta, salivando, com voz abafada ("batata quente"), odinofagia intensa e estridor inspiratório de instalação rápida. A orofaringe costuma parecer desproporcionalmente normal para o quadro.',
+        leitura: [
+          'Reconheça pela postura e pela sialorreia antes de qualquer instrumento.',
+          'Não use abaixador de língua: pode precipitar obstrução completa.',
+          'Se a epiglote se mostra sozinha ao abrir a boca, não peça mais nada.',
+          'Faringe normal com dor de garganta desproporcional é o padrão — a doença está abaixo do que se vê.',
+        ],
+        diferencaDoNormal:
+          'A epiglote normal é uma lâmina fina que se esconde atrás da base da língua e não entra no exame de rotina. Inflamada, ela incha até muitas vezes o tamanho e sobe para o campo de visão — e o mesmo edema estreita a entrada da laringe. É por isso que o exame que mostra o achado é o mesmo que pode matar: qualquer estímulo pode transformar a via aérea estreita em fechada.',
+        conduta:
+          'Emergência: não deitar, não examinar a garganta, não puncionar, não agitar. Oxigênio, chamar quem garante a via aérea (anestesia ou otorrino) e preparar intubação em ambiente controlado, com material de via aérea cirúrgica à mão. Depois da via aérea segura: culturas, antibiótico endovenoso (cefalosporina de terceira geração) e, em adulto estável, laringoscopia flexível pode ser o diagnóstico.',
+        diferencial: ['Crupe (laringotraqueíte — tosse ladrante, criança menor, evolução mais lenta)', 'Abscesso retrofaríngeo', 'Corpo estranho de via aérea', 'Angioedema', 'Traqueíte bacteriana'],
+        ilustracao: { id: 'orofaringe', params: { cena: 'epiglotite', edema: 2 }, alt: 'Epiglote edemaciada e vermelho-cereja aparecendo atrás da base da língua' },
+      },
+      {
+        id: 'moniliase-extensa',
+        titulo: 'Monilíase oral extensa',
+        estado: 'alterado',
+        diagnostico: 'Candidíase pseudomembranosa difusa — quase sempre com fator predisponente por trás.',
+        achado:
+          'Placas brancas cremosas, confluentes, cobrindo grande parte da língua, palato, mucosa jugal e orofaringe, que se destacam à raspagem deixando base eritematosa e por vezes sangrante. Dor, disgeusia, e odinofagia quando desce para o esôfago.',
+        leitura: [
+          'Estime a área: placas isoladas são uma coisa; boca inteira coberta é outra.',
+          'Raspe uma placa com o abaixador — se sai e deixa vermelho, é cândida; se não sai, pense em leucoplasia ou líquen.',
+          'Pergunte pelo esôfago: odinofagia junto sugere candidíase esofágica.',
+          'Procure o motivo: corticoide inalado sem enxaguar, antibiótico, diabetes descompensado, HIV, quimioterapia, prótese.',
+        ],
+        diferencaDoNormal:
+          'A candidíase comum é focal e tem um culpado óbvio — o corticoide inalado, o antibiótico da semana passada. Quando as placas tomam a boca inteira, o fungo não está mais aproveitando um descuido: está aproveitando um hospedeiro que não se defende. A extensão é o sinal; o diagnóstico que importa é o que a permitiu.',
+        conduta:
+          'Antifúngico sistêmico (fluconazol) em vez de só tópico, especialmente se houver odinofagia. Investigar o fator predisponente: glicemia, sorologia para HIV se não conhecida, revisão de medicamentos e da técnica do inalador. Candidíase esofágica em adulto sem causa aparente é doença definidora de AIDS até prova em contrário.',
+        diferencial: ['Leucoplasia pilosa (bordas laterais da língua, não destacável)', 'Líquen plano oral', 'Leucoplasia', 'Queimadura química', 'Restos alimentares'],
+        ilustracao: { id: 'orofaringe', params: { cena: 'moniliase-extensa', area: 60 }, alt: 'Placas brancas confluentes cobrindo língua, palato e mucosa' },
+      },
     ],
     armadilhas: [
       'Exsudato não prova bactéria. Mononucleose e adenovírus produzem exsudato exuberante — e amoxicilina em mononucleose provoca exantema.',
@@ -627,6 +829,66 @@ export const VISTAS: Vista[] = [
         ilustracao: { id: 'rinoscopia', params: { cena: 'polipo' }, alt: 'Pólipo nasal translúcido emergindo do meato médio' },
         patologia: 'polipose-nasal',
       },
+      {
+        id: 'hematoma-septal',
+        titulo: 'Hematoma de septo nasal',
+        estado: 'alterado',
+        diagnostico: 'Sangue entre a cartilagem septal e o pericôndrio, após trauma — a cartilagem necrosa em dias.',
+        achado:
+          'Abaulamento mole, flutuante, azul-violáceo ou vermelho-escuro do septo, uni ou bilateral, que reduz ou fecha a fossa nasal e não diminui com vasoconstritor. Obstrução nasal completa após trauma, dor à palpação com cotonete, febre se já infectado.',
+        leitura: [
+          'Olhe as duas fossas: o abaulamento bilateral é típico.',
+          'Toque o septo com um cotonete — hematoma é mole e flutuante; septo desviado é duro.',
+          'Aplique vasoconstritor tópico: a mucosa edemaciada encolhe, o hematoma não.',
+          'Em toda fratura nasal, olhe o septo antes de mandar para casa.',
+        ],
+        diferencaDoNormal:
+          'O septo normal é uma parede fina e firme, coberta por mucosa rosada. A cartilagem não tem vasos próprios: é alimentada por difusão a partir do pericôndrio. Quando o sangue se acumula entre os dois, a cartilagem fica sem nutrição — e em três a quatro dias começa a morrer. O que se vê é um abaulamento; o que está acontecendo é uma isquemia com prazo.',
+        conduta:
+          'Drenagem urgente (incisão ou aspiração) por quem sabe, tamponamento bilateral para reaproximar o pericôndrio e antibiótico anti-estafilocócico. Não esperar: hematoma não drenado vira abscesso, perfuração e nariz em sela. Reexaminar em 24 a 48 horas.',
+        diferencial: ['Desvio de septo traumático (duro, não flutuante)', 'Edema de mucosa pós-trauma (responde ao vasoconstritor)', 'Abscesso septal (hematoma que já infectou)', 'Pólipo ou massa septal'],
+        ilustracao: { id: 'rinoscopia', params: { cena: 'hematoma-septal', reducao: 60 }, alt: 'Abaulamento violáceo e flutuante do septo reduzindo a luz da fossa nasal' },
+      },
+      {
+        id: 'desvio-septal',
+        titulo: 'Desvio importante do septo',
+        estado: 'alterado',
+        diagnostico: 'Deformidade do septo que estreita uma fossa nasal e obstrui.',
+        achado:
+          'Septo deslocado ou angulado para um lado, com crista ou esporão ântero-inferior, encostando ou quase encostando no corneto inferior e reduzindo a luz da fossa. Do lado côncavo, corneto compensatoriamente hipertrofiado. Mucosa de cor normal; a obstrução é fixa, não melhora com vasoconstritor.',
+        leitura: [
+          'Compare a luz das duas fossas — a assimetria é o achado.',
+          'Localize onde o septo toca: crista, esporão ou desvio em C.',
+          'Aplique vasoconstritor: obstrução que persiste é estrutural.',
+          'Pergunte por trauma antigo, epistaxe de repetição do lado convexo e ronco.',
+        ],
+        diferencaDoNormal:
+          'O septo normal divide a fossa em duas metades semelhantes, e a respiração alterna entre elas pelo ciclo nasal. Desviado, uma metade fica permanentemente estreita e a outra recebe o fluxo todo — o corneto de lá cresce para compensar. É o oposto da rinite: a mucosa está saudável; é o esqueleto que está fora do lugar.',
+        conduta:
+          'Só trata desvio que causa sintoma: obstrução, sinusite de repetição, epistaxe ou apneia. Primeiro afastar e tratar a rinite associada (corticoide nasal); persistindo a obstrução, septoplastia. Desvio assintomático achado ao acaso não se opera.',
+        diferencial: ['Hipertrofia de corneto por rinite (responde ao vasoconstritor)', 'Hematoma septal (mole, pós-trauma)', 'Pólipo ou massa nasal', 'Colapso de válvula nasal'],
+        ilustracao: { id: 'rinoscopia', params: { cena: 'desvio-septal', obstrucao: 60 }, alt: 'Septo desviado estreitando a fossa nasal contra o corneto inferior' },
+      },
+      {
+        id: 'epistaxe',
+        titulo: 'Epistaxe anterior ativa',
+        estado: 'alterado',
+        diagnostico: 'Sangramento do plexo de Kiesselbach, no septo anterior.',
+        achado:
+          'Ponto sangrante ou vaso proeminente na porção ântero-inferior do septo (área de Little), com sangue escorrendo pelo assoalho e pela narina. Mucosa ao redor pode estar seca, erosada ou com crosta. Sangramento que sai pela frente, não pela faringe.',
+        leitura: [
+          'Assoe o nariz para tirar os coágulos e só então olhe — o coágulo esconde o ponto.',
+          'Use vasoconstritor com anestésico e olhe o septo anterior: é onde está em 90% dos casos.',
+          'Confirme que é anterior: sangue na orofaringe sem ponto anterior sugere sangramento posterior.',
+          'Pergunte por anticoagulante, antiagregante, hipertensão e episódios prévios.',
+        ],
+        diferencaDoNormal:
+          'A área de Kiesselbach é onde quatro artérias se encontram numa mucosa fina, colada à cartilagem, na parte do nariz que o dedo alcança e o ar seco resseca. É a encruzilhada vascular mais exposta do corpo. Sangra porque foi feita para sangrar — e é por isso que a pressão local resolve: o sangramento é superficial e o vaso está contra uma parede dura.',
+        conduta:
+          'Compressão das asas do nariz por 10 a 15 minutos cronometrados, paciente sentado e inclinado para a frente. Se persistir: vasoconstritor tópico, cauterização química (nitrato de prata) do ponto visível, ou tampão anterior. Sangramento posterior, volumoso ou em anticoagulado: tampão posterior e avaliação otorrinolaringológica. Corrigir a pressão arterial e revisar a anticoagulação.',
+        diferencial: ['Epistaxe posterior (esfenopalatina)', 'Sangramento de tumor nasal ou de nasofaringe (unilateral, recorrente, em adolescente masculino: angiofibroma)', 'Telangiectasia hemorrágica hereditária', 'Coagulopatia'],
+        ilustracao: { id: 'rinoscopia', params: { cena: 'epistaxe', intensidade: 2 }, alt: 'Ponto sangrante no septo anterior com sangue escorrendo pelo assoalho da fossa nasal' },
+      },
     ],
     armadilhas: [
       'Confundir corneto inferior hipertrofiado com pólipo. O corneto é rosado, sensível ao toque e reduz com vasoconstritor; o pólipo é pálido, insensível e não reduz.',
@@ -645,6 +907,125 @@ export const VISTAS: Vista[] = [
     referencias: [
       'Fokkens WJ et al. EPOS 2020: European Position Paper on Rhinosinusitis and Nasal Polyps.',
       'Porto CC. Semiologia Médica, 8ª ed.',
+    ],
+  },
+
+  {
+    slug: 'pupilas',
+    nome: 'Pupilas',
+    instrumento: 'lanterna',
+    resumo:
+      'Dois círculos pretos que contam, em segundos, se o nervo óptico vê, se o terceiro nervo funciona e se o tronco cerebral está comprimido.',
+    paraQue:
+      'Responde perguntas que decidem urgência: a anisocoria é benigna ou é herniação? A perda visual é do olho ou do nervo? O paciente em coma tem tronco preservado? O exame leva um minuto, precisa só de uma lanterna, e o erro mais comum é não fazê-lo com a luz da sala apagada.',
+    comoFazer: [
+      {
+        passo: 'Meça as duas pupilas na luz e depois no escuro.',
+        detalhe:
+          'Anisocoria que é igual nas duas condições é fisiológica. A que aumenta no escuro é a pupila pequena que não dilata (Horner); a que aumenta na luz é a pupila grande que não contrai (terceiro nervo, farmacológica).',
+      },
+      {
+        passo: 'Ilumine cada olho por fora, de baixo, sem fazer o paciente fixar a luz.',
+        detalhe:
+          'Luz de frente induz acomodação e a pupila contrai por convergência, não por reflexo fotomotor. O paciente fixa um ponto distante enquanto a lanterna vem de lado.',
+      },
+      {
+        passo: 'Registre a resposta direta e a consensual.',
+        detalhe:
+          'A pupila do olho não iluminado deve contrair junto. Direta ausente com consensual presente aponta para a via eferente daquele olho; as duas ausentes ao iluminar um olho, para a aferente.',
+      },
+      {
+        passo: 'Faça o teste da lanterna oscilante.',
+        detalhe:
+          'Alterne a luz entre os olhos a cada 2 a 3 segundos. A pupila que dilata quando a luz chega a ela tem defeito aferente relativo: o nervo daquele lado conduz menos que o do outro.',
+      },
+    ],
+    qualidade: [
+      'Sala escurecida — no claro as pupilas já estão contraídas e a assimetria some.',
+      'Paciente olhando para longe, sem fixar a lanterna.',
+      'Medida em milímetros, não em "normal": 3 e 4 mm é anisocoria de 1 mm.',
+      'Teste feito nas duas condições de luz antes de qualquer conclusão.',
+    ],
+    estruturas: [
+      { slug: 'pupila-direita', nome: 'Pupila direita', original: 'pupilla dextra', nota: 'À esquerda da tela, como o examinador a vê. Diâmetro normal de 2 a 4 mm na luz e 4 a 8 mm no escuro.', x: 28, y: 50 },
+      { slug: 'pupila-esquerda', nome: 'Pupila esquerda', original: 'pupilla sinistra', nota: 'À direita da tela. Deve ser igual à outra em todas as condições de luz — até 0,4 mm de diferença é normal em um quinto das pessoas.', x: 72, y: 50 },
+      { slug: 'iris', nome: 'Íris', original: 'iris', nota: 'O esfíncter (parassimpático, pelo III nervo) contrai a pupila; o dilatador (simpático) a abre. Cada pupila tem dois motores, e o exame descobre qual falhou.', x: 36, y: 44 },
+      { slug: 'reflexo-corneano', nome: 'Reflexo luminoso corneano', nota: 'O brilho da lanterna na córnea. Serve para conferir o alinhamento dos olhos — se cai em pontos diferentes nos dois, há estrabismo.', x: 27, y: 47 },
+    ],
+    cenas: [
+      {
+        id: 'normal',
+        titulo: 'Pupilas isocóricas e fotorreagentes',
+        estado: 'normal',
+        diagnostico: 'Vias aferente e eferente íntegras dos dois lados.',
+        achado:
+          'Pupilas redondas, centrais, de mesmo diâmetro na luz e no escuro, que contraem prontamente à luz direta e consensual e não dilatam no teste da lanterna oscilante.',
+        leitura: ['Meça no claro e no escuro.', 'Ilumine cada olho e veja as duas pupilas.', 'Alterne a luz.'],
+        diferencaDoNormal: 'É a referência.',
+        conduta: 'Nenhuma. Em coma, pupilas iguais e reativas dizem que o mesencéfalo está preservado — o problema é difuso ou está em outro lugar.',
+        diferencial: [],
+        ilustracao: { id: 'pupilas', params: { cena: 'normal' }, alt: 'Duas pupilas iguais, redondas e reativas à luz' },
+      },
+      {
+        id: 'anisocoria-fisiologica',
+        titulo: 'Anisocoria fisiológica',
+        estado: 'alterado',
+        diagnostico: 'Diferença pupilar pequena e constante, sem doença.',
+        achado:
+          'Diferença de até 1 mm (raramente até 2 mm) entre as pupilas, que se mantém igual na luz e no escuro, com reflexos direto e consensual normais nos dois olhos, sem ptose, sem diplopia e sem alteração da motricidade ocular. Presente em cerca de 20% das pessoas; fotos antigas costumam mostrar o mesmo.',
+        leitura: [
+          'Meça a diferença na luz e no escuro: se é a mesma, é fisiológica.',
+          'Confira que as duas contraem bem à luz.',
+          'Procure ptose e olhe a motricidade — a ausência delas é parte do diagnóstico.',
+          'Peça uma foto antiga: a anisocoria já estar lá encerra a investigação.',
+        ],
+        diferencaDoNormal:
+          'Não há diferença de mecanismo — as duas pupilas têm os dois motores funcionando; apenas o ponto de equilíbrio de uma ficou um pouco diferente do da outra. O que separa isto de doença é a **constância**: a anisocoria patológica cresce numa das condições de luz, porque um dos motores de um dos lados falhou.',
+        conduta:
+          'Nenhuma investigação. Registrar a medida no prontuário para que o próximo examinador, num pronto-socorro, não confunda com sinal novo. Se a diferença mudar entre as condições de luz ou surgir ptose, o raciocínio recomeça.',
+        diferencial: ['Síndrome de Horner (diferença maior no escuro, ptose leve)', 'Paralisia do III nervo (diferença maior na luz, ptose, olho para fora e para baixo)', 'Pupila tônica de Adie', 'Midríase farmacológica'],
+        ilustracao: { id: 'pupilas', params: { cena: 'anisocoria-fisiologica', diferenca: 1 }, alt: 'Pupilas com pequena diferença de diâmetro e reflexos normais' },
+      },
+      {
+        id: 'defeito-pupilar-aferente',
+        titulo: 'Defeito pupilar aferente relativo',
+        estado: 'alterado',
+        diagnostico: 'Lesão do nervo óptico ou de retina extensa de um lado.',
+        achado:
+          'No teste da lanterna oscilante, ao passar a luz do olho sadio para o afetado, as duas pupilas dilatam em vez de contrair — ou contraem menos e relaxam depressa. Isocoria em repouso: o defeito é da via de entrada, e a saída é bilateral. Acuidade e visão de cores reduzidas do lado afetado.',
+        leitura: [
+          'Alterne a luz a cada 2 a 3 segundos, várias vezes.',
+          'Observe a pupila do olho que acabou de receber a luz: dilatar é o sinal.',
+          'Confirme que em repouso as pupilas são iguais — DPAR não causa anisocoria.',
+          'Gradue: leve (contrai e solta), moderado (não muda), grave (dilata francamente).',
+        ],
+        diferencaDoNormal:
+          'Cada pupila contrai em resposta à luz que entra pelos **dois** olhos, somada no tronco. Quando um nervo óptico conduz menos, a luz naquele olho vale menos que a luz no outro; ao mudar a lanterna do sadio para o doente, o tronco recebe menos sinal do que recebia um segundo antes — e as duas pupilas relaxam. Nenhuma pupila está doente. O que está doente é o que ela mede.',
+        conduta:
+          'Investigar o nervo óptico e a retina do lado afetado: acuidade, cores, campo, fundo de olho, e ressonância de órbitas se o fundo não explica (neurite, compressão). Perda visual aguda com DPAR é oftalmologia no mesmo dia. Catarata, por mais densa, não causa DPAR — se há DPAR, há outra coisa.',
+        diferencial: ['Neurite óptica', 'Neuropatia óptica isquêmica', 'Oclusão da artéria central da retina', 'Descolamento de retina extenso', 'Compressão do nervo óptico (tumor, orbitopatia)', 'Glaucoma assimétrico avançado'],
+        ilustracao: { id: 'pupilas', params: { cena: 'defeito-pupilar-aferente', assimetria: 70 }, alt: 'Teste da lanterna oscilante: as pupilas dilatam quando a luz passa para o olho afetado' },
+      },
+    ],
+    armadilhas: [
+      'Examinar só na luz da sala: a anisocoria de Horner some no claro, e a do III nervo se disfarça no escuro.',
+      'Confundir DPAR com anisocoria: o defeito aferente **não** deixa as pupilas diferentes em repouso.',
+      'Atribuir DPAR a catarata. Opacidade de meios não causa defeito aferente; se há, procure o nervo.',
+      'Esquecer o colírio e a planta: midríase farmacológica (tropicamida, escopolamina de adesivo, plantas da família da beladona) é a causa mais comum de pupila dilatada fixa em paciente acordado.',
+      'Em coma, pupila fixa e dilatada unilateral é herniação até prova em contrário — não é achado para anotar, é para agir.',
+    ],
+    ondeVerFoto: [
+      {
+        titulo: 'Wikimedia Commons',
+        url: 'https://commons.wikimedia.org/wiki/Category:Anisocoria',
+        oQueProcurar: 'Fotografias de anisocoria em diferentes condições de luz; procure as com licença livre e autor identificado.',
+        licenciada: 'wikimedia-commons',
+      },
+    ],
+    referencias: [
+      'Kawasaki A. Physiology, assessment, and disorders of the pupil. Curr Opin Ophthalmol, 1999.',
+      'Broadway DC. How to test for a relative afferent pupillary defect (RAPD). Community Eye Health, 2012.',
+      'Campbell WW. DeJong — O Exame Neurológico, 7ª ed.',
     ],
   },
 ]

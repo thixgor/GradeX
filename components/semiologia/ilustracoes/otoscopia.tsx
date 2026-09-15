@@ -34,6 +34,9 @@ type Cena =
   | 'perfuracao'
   | 'otite-externa'
   | 'cerume'
+  | 'colesteatoma'
+  | 'otite-media-cronica'
+  | 'timpano-retraido'
 
 interface Estado {
   /** −1 retraída · 0 plana · +1 abaulada */
@@ -48,6 +51,10 @@ interface Estado {
   nivelLiquido?: number
   perfuracao?: boolean
   cerume?: boolean
+  /** Massa branca nacarada na pars flaccida — o colesteatoma. */
+  colesteatoma?: boolean
+  /** Raio da perfuração (em unidades da figura). A central da otite crônica é larga. */
+  raioPerfuracao?: number
 }
 
 const ESTADOS: Record<Cena, Estado> = {
@@ -64,13 +71,24 @@ const ESTADOS: Record<Cena, Estado> = {
   perfuracao: { curvatura: -0.05, opacidade: 0.35, hiperemia: 0.3, conduto: 38, corMembrana: '#d2c6b6', perfuracao: true },
   'otite-externa': { curvatura: -0.1, opacidade: 0.3, hiperemia: 0.5, conduto: 17, corMembrana: '#cfc2b2' },
   cerume: { curvatura: -0.1, opacidade: 0.25, hiperemia: 0.15, conduto: 38, corMembrana: '#cfc2b2', cerume: true },
+  colesteatoma: { curvatura: -0.55, opacidade: 0.55, hiperemia: 0.35, conduto: 38, corMembrana: '#cbbcae', colesteatoma: true },
+  'otite-media-cronica': { curvatura: -0.05, opacidade: 0.45, hiperemia: 0.45, conduto: 38, corMembrana: '#c9b8a6', perfuracao: true, raioPerfuracao: 13 },
+  'timpano-retraido': { curvatura: -0.95, opacidade: 0.28, hiperemia: 0.15, conduto: 38, corMembrana: '#d3c8ba' },
 }
 
 export function Otoscopia({ params, className, titulo, marcadores }: PropsDeIlustracao) {
   const cena = txt(params, 'cena', 'normal') as Cena
   const base = ESTADOS[cena] ?? ESTADOS.normal
-  const curvatura = num(params, 'curvatura', base.curvatura)
+  // A retração é a curvatura negativa, lida em milímetros de profundidade
+  // quando a cena é a de tímpano retraído: 0 mm é plana, 5 mm é colada ao
+  // promontório. Nas demais cenas a curvatura vem do estado.
+  const retracao = cena === 'timpano-retraido' ? num(params, 'retracao', 4) : undefined
+  const curvatura = retracao !== undefined ? -Math.min(1, retracao / 5) : num(params, 'curvatura', base.curvatura)
   const raio = base.conduto
+  // Perfuração: diâmetro em mm na otite crônica (0–10), raio fixo na traumática.
+  const raioPerfuracao = base.raioPerfuracao ? Math.max(1.5, num(params, 'diametro', 7) * 1.9) : 8.5
+  // Colesteatoma: fração do campo timpânico ocupada pela massa (0–80%).
+  const areaColesteatoma = base.colesteatoma ? Math.max(0.04, num(params, 'area', 30) / 100) : 0
 
   // O triângulo luminoso é função da planura. Quanto mais a membrana se afasta
   // do plano — para fora ou para dentro —, menos o reflexo se organiza em cone.
@@ -180,13 +198,28 @@ export function Otoscopia({ params, className, titulo, marcadores }: PropsDeIlus
           </>
         )}
 
-        {/* Perfuração central: buraco com mucosa do promontório ao fundo. */}
+        {/* Perfuração central: buraco com mucosa do promontório ao fundo. Na
+            otite crônica ela é larga, de bordas espessadas, e a mucosa que se
+            vê está inflamada — o tímpano não cicatriza porque o ouvido médio
+            continua drenando por ele. */}
         {base.perfuracao && (
           <>
-            <ellipse cx="41" cy="60" rx="8.5" ry="7" fill={corDeTecido('#5d2a26')} />
-            <ellipse cx="41" cy="60" rx="8.5" ry="7" fill={corDeTecido('#a8564c')} opacity="0.55" />
-            <ellipse cx="41" cy="60" rx="8.5" ry="7" fill="none" stroke={corDeTecido('#f2e6d6')} strokeWidth="0.8" />
-            <ellipse cx="39.5" cy="58.5" rx="3.2" ry="2.4" fill={corDeTecido('#d38b7c')} opacity="0.6" />
+            <ellipse cx={base.raioPerfuracao ? 47 : 41} cy={base.raioPerfuracao ? 56 : 60} rx={raioPerfuracao} ry={raioPerfuracao * 0.82} fill={corDeTecido('#5d2a26')} />
+            <ellipse cx={base.raioPerfuracao ? 47 : 41} cy={base.raioPerfuracao ? 56 : 60} rx={raioPerfuracao} ry={raioPerfuracao * 0.82} fill={corDeTecido(base.raioPerfuracao ? '#c4574a' : '#a8564c')} opacity="0.55" />
+            <ellipse cx={base.raioPerfuracao ? 47 : 41} cy={base.raioPerfuracao ? 56 : 60} rx={raioPerfuracao} ry={raioPerfuracao * 0.82} fill="none" stroke={corDeTecido('#f2e6d6')} strokeWidth={base.raioPerfuracao ? 1.4 : 0.8} />
+            <ellipse cx={base.raioPerfuracao ? 45 : 39.5} cy={base.raioPerfuracao ? 54 : 58.5} rx={raioPerfuracao * 0.38} ry={raioPerfuracao * 0.3} fill={corDeTecido('#d38b7c')} opacity="0.6" />
+          </>
+        )}
+
+        {/* Colesteatoma: massa branca nacarada de queratina na pars flaccida,
+            dentro de uma bolsa de retração ático-posterior, com detritos e
+            granulação ao redor. Cresce para dentro — o que se vê é a ponta. */}
+        {base.colesteatoma && (
+          <>
+            <ellipse cx="54" cy={50 - raio * 0.5} rx={raio * 0.55 * Math.sqrt(areaColesteatoma) + 4} ry={raio * 0.45 * Math.sqrt(areaColesteatoma) + 3} fill={corDeTecido('#4a2320')} opacity="0.8" />
+            <ellipse cx="54" cy={50 - raio * 0.5} rx={raio * 0.5 * Math.sqrt(areaColesteatoma) + 3} ry={raio * 0.4 * Math.sqrt(areaColesteatoma) + 2.2} fill={corDeTecido('#f4f0e6')} />
+            <ellipse cx="52" cy={50 - raio * 0.54} rx={raio * 0.25 * Math.sqrt(areaColesteatoma) + 1.5} ry={raio * 0.18 * Math.sqrt(areaColesteatoma) + 1} fill="#ffffff" opacity="0.55" />
+            <ellipse cx="62" cy={50 - raio * 0.4} rx="2.6" ry="2" fill={corDeTecido('#b8362a')} opacity="0.85" />
           </>
         )}
 

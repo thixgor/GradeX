@@ -221,7 +221,7 @@ export interface CelulaComparativa {
 
 // ─── Ala 2: imagem à beira do leito ───────────────────────────────────────────
 
-export type Instrumento = 'otoscopio' | 'oftalmoscopio' | 'especulo-nasal' | 'abaixador' | 'endoscopio'
+export type Instrumento = 'otoscopio' | 'oftalmoscopio' | 'especulo-nasal' | 'abaixador' | 'endoscopio' | 'lanterna'
 
 export const TITULOS_DE_INSTRUMENTO: Record<Instrumento, string> = {
   otoscopio: 'Otoscópio',
@@ -229,6 +229,7 @@ export const TITULOS_DE_INSTRUMENTO: Record<Instrumento, string> = {
   'especulo-nasal': 'Espéculo nasal',
   abaixador: 'Abaixador de língua',
   endoscopio: 'Endoscópio',
+  lanterna: 'Lanterna clínica',
 }
 
 /**

@@ -101,6 +101,30 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "gif"
     }
   ],
+  "fundoscopia/descolamento-de-retina": [
+    {
+      "id": "wc-descolamento-nei",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/b/b0/Slit_lamp_photograph_showing_retinal_detachment_in_Von_Hippel-Lindau_disease_EDA08.JPG",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Slit_lamp_photograph_showing_retinal_detachment_in_Von_Hippel-Lindau_disease_EDA08.JPG",
+      "legenda": "Descolamento de retina visto pela pupila: a retina solta aparece como uma membrana cinza-esbranquiçada, ondulada, com os vasos correndo sobre as dobras, em paciente com doença de von Hippel-Lindau.",
+      "autoria": "National Eye Institute / NIH · domínio público",
+      "sha256": "2a34511176ebe11bbdb2a0b8fa25a700e8789df4483251c572983c551d2f8536",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-descolamento-regmatogenico",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/5/5a/Rhegmatogene_amotio_retinae.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Rhegmatogene_amotio_retinae.jpg",
+      "legenda": "Descolamento regmatogênico em imagem de campo amplo: a retina elevada e esbranquiçada, com a rasgadura em ferradura que a originou.",
+      "autoria": "Amaris5 · CC BY-SA 4.0",
+      "sha256": "48a0a1c921796ef46e57d56d5e3bd4fa837108c12f3d8453a6f5da225ca2e17c",
+      "ext": "jpg"
+    }
+  ],
   "fundoscopia/normal": [
     {
       "id": "rp-fundo-de-olho-normal",
@@ -111,6 +135,365 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Retinografia do olho direito sem alterações: mácula ao centro, disco óptico do lado nasal (à direita na imagem) com bordas nítidas, veias mais escuras e um pouco mais largas que as artérias. A pigmentação na borda temporal do disco é achado normal.",
       "autoria": "Frank Gaillard (Radiopaedia.org) — fotografia de Mikael Häggström, domínio público",
       "sha256": "7e5e4a638dcfca38415efd68f7af32ac1f0d3be65061f5046571921d456fed5f",
+      "ext": "jpg"
+    }
+  ],
+  "fundoscopia/oclusao-arterial-central": [
+    {
+      "id": "wc-oacr-cereja-bisht",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/0/07/Cherry_red_spot_in_patient_with_central_retinal_artery_occlusion_%28CRAO%29.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Cherry_red_spot_in_patient_with_central_retinal_artery_occlusion_(CRAO).jpg",
+      "legenda": "Oclusão da artéria central da retina: retina difusamente pálida e edemaciada, arteríolas afiladas e a mácula vermelho-cereja no centro — o único pedaço de fundo que ficou com a cor de antes.",
+      "autoria": "Dr. Gopal Bisht · CC BY-SA 4.0",
+      "sha256": "162812bc8af9208f69798d3e32740ba73732cdbc3e46ff2fcb8fe14850e96679",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-oacr-cereja-fiess",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/f/f6/Cherry_Red_Spot_Fiess.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Cherry_Red_Spot_Fiess.jpg",
+      "legenda": "Oclusão típica da artéria central da retina: mancha vermelho-cereja, edema retiniano e estreitamento dos vasos.",
+      "autoria": "Fieß A, Cal Ö, Kehrein S et al. · CC BY 2.0",
+      "sha256": "722b5a07acdf9a89f9eeb6f93ecd9c94d5cacf25f5ef30aabfa7e49f5e5b1cd8",
+      "ext": "jpg"
+    }
+  ],
+  "fundoscopia/oclusao-venosa-central": [
+    {
+      "id": "wc-ovcr-veias-tortuosas",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/e/ee/A_2022_case_report_of_central_retinal_vein_occlusion_was_likely_caused_by_a_four-year_history_of_e-cigarette_usage.png",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:A_2022_case_report_of_central_retinal_vein_occlusion_was_likely_caused_by_a_four-year_history_of_e-cigarette_usage.png",
+      "legenda": "Oclusão da veia central da retina: veias dilatadas e tortuosas (asteriscos), hemorragias em ponto e borrão nos quatro quadrantes e manchas de Roth, em homem de 23 anos.",
+      "autoria": "Balinski AM, Harvey RN, Ko RB et al. — Cureus, 2022 · CC BY 4.0",
+      "sha256": "188b0e2c6dfed4b961948fbd0a55d3486feade795b3f0a6a034ec96e44a510cd",
+      "ext": "png"
+    }
+  ],
+  "fundoscopia/papila-palida": [
+    {
+      "id": "wc-atrofia-optica",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/3/3e/Photographic_image_of_the_patient_right_eye_showing_optic_atrophy_without_diabetic_retinopathy_Wolfram_syndrome.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Photographic_image_of_the_patient_right_eye_showing_optic_atrophy_without_diabetic_retinopathy_Wolfram_syndrome.jpg",
+      "legenda": "Atrofia óptica: disco branco-giz, de bordas nítidas, sem o rosa da vascularização normal, em paciente com síndrome de Wolfram. A retina ao redor está preservada.",
+      "autoria": "Manaviat MR, Rashidi M, Mohammadi SM — Cases Journal, 2009 · CC BY 2.0",
+      "sha256": "023bf00e1dcf370f58d41132b9cd48fdce2e917a220312bd3de24e024952c837",
+      "ext": "jpg"
+    }
+  ],
+  "fundoscopia/papiledema": [
+    {
+      "id": "wc-papiledema-grave",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Fundal_photograph_showing_severe_papilloedema_in_the_right_eye.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Fundal_photograph_showing_severe_papilloedema_in_the_right_eye.jpg",
+      "legenda": "Papiledema grave no olho direito: disco elevado e hiperemiado, de bordas apagadas, com os vasos mergulhando na borda edemaciada e hemorragias peripapilares.",
+      "autoria": "Bansal S, Dabbs T, Long V — J Med Case Reports, 2008 · CC BY 2.0",
+      "sha256": "d6ced3265c3f7392521113f3ef21ff3cf15a94080595a46fd660f7ab3f72809a",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-papiledema-trobe",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/1/1a/Papilledema.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Papilledema.jpg",
+      "legenda": "Papiledema: o disco óptico inchado e borrado pela hipertensão intracraniana, com vasos ingurgitados e hemorragias em chama ao redor.",
+      "autoria": "Jonathan Trobe, MD — Kellogg Eye Center · CC BY 3.0",
+      "sha256": "367c722b170732af93ae5a0ae98b153de4bf9861fcf7fbf17924163b43513cfe",
+      "ext": "jpg"
+    }
+  ],
+  "fundoscopia/retinopatia-diabetica": [
+    {
+      "id": "wc-rd-exsudatos-hemorragias",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/0/00/%D0%94%D0%B8%D0%B0%D0%B1%D0%B5%D1%82%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B0%D1%8F_%D1%80%D0%B5%D1%82%D0%B8%D0%BD%D0%BE%D0%BF%D0%B0%D1%82%D0%B8%D1%8F.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:%D0%94%D0%B8%D0%B0%D0%B1%D0%B5%D1%82%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B0%D1%8F_%D1%80%D0%B5%D1%82%D0%B8%D0%BD%D0%BE%D0%BF%D0%B0%D1%82%D0%B8%D1%8F.jpg",
+      "legenda": "Retinopatia diabética com edema macular: exsudatos duros amarelos, hemorragias em borrão e microaneurismas concentrados no polo posterior.",
+      "autoria": "Mark Panin · CC BY-SA 4.0",
+      "sha256": "dc43482e7ea6d918b21c701229f8c9a256ff3800427ba4446f2a46f79cf5c2ca",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-rd-inicial",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/0/07/Fundus_-_diabetic_retinopathy.png",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Fundus_-_diabetic_retinopathy.png",
+      "legenda": "Retinopatia diabética não proliferativa: exsudatos duros dispersos (pontos amarelados), microaneurismas ao longo dos vasos e pequenas hemorragias — o estágio em que o rastreamento faz diferença.",
+      "autoria": "Hao S, Liu C, Li N et al. · CC BY 4.0",
+      "sha256": "16464305b3686e2fa318cdf56ece15d24fa5f8dd2328aaaeeb687b2c9e070ef5",
+      "ext": "png"
+    }
+  ],
+  "fundoscopia/retinopatia-hipertensiva": [
+    {
+      "id": "wc-retinopatia-hipertensiva",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/f/ff/Hypertensiveretinopathy.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Hypertensiveretinopathy.jpg",
+      "legenda": "Retinopatia hipertensiva: arteríolas estreitadas e retificadas, com aumento do reflexo dorsal e cruzamentos arteriovenosos patológicos.",
+      "autoria": "Frank Wood · CC BY 3.0",
+      "sha256": "6c0466ea0f19aedbac569c059548d18a3c2a7765f8a1eaa4e9a42fb6ba7e8b17",
+      "ext": "jpg"
+    }
+  ],
+  "orofaringoscopia/abscesso-peritonsilar": [
+    {
+      "id": "wc-abscesso-peritonsilar",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/3/39/PeritonsilarAbsess.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:PeritonsilarAbsess.jpg",
+      "legenda": "Abscesso peritonsilar à direita do paciente: abaulamento do palato mole acima da amígdala (seta), com a úvula empurrada para o lado oposto — a assimetria é o diagnóstico.",
+      "autoria": "James Heilman, MD · CC BY-SA 3.0",
+      "sha256": "780ab0c6ee9974d508313013c50a00d79a5532b8509478375a7ba7bd18d3699a",
+      "ext": "jpg"
+    }
+  ],
+  "orofaringoscopia/candidiase-oral": [
+    {
+      "id": "wc-candidiase-cdc",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/c/c1/Oral_thrush_Aphthae_Candida_albicans._PHIL_1217_lores.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Oral_thrush_Aphthae_Candida_albicans._PHIL_1217_lores.jpg",
+      "legenda": "Candidíase oral pseudomembranosa: placas brancas cremosas sobre mucosa vermelha, que se destacam à raspagem.",
+      "autoria": "CDC / Public Health Image Library · domínio público",
+      "sha256": "43ece7b83ba8bc41031b02d732cd407706e61bb217a3f5687e2c5c9352a5b95b",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-candidiase-lactente",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/3/33/Thrush2010.JPG",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Thrush2010.JPG",
+      "legenda": "Candidíase oral (\"sapinho\") em lactente: placas brancas aderidas à língua e à mucosa dos lábios.",
+      "autoria": "James Heilman, MD · CC BY-SA 3.0",
+      "sha256": "ddc29004f6041575269586cb58386f92bb8053c72155bfabe4ba3d4c8eb63dc5",
+      "ext": "jpg"
+    }
+  ],
+  "orofaringoscopia/epiglotite": [
+    {
+      "id": "wc-epiglotite-endoscopia",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/f/fe/Epiglottitis_endoscopy.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Epiglottitis_endoscopy.jpg",
+      "legenda": "Epiglotite aguda à endoscopia: a epiglote edemaciada e vermelha ocupando a entrada da laringe. Imagem obtida por quem sabe garantir a via aérea — não é exame de abaixador de língua.",
+      "autoria": "藤澤孝志 · CC BY-SA 3.0",
+      "sha256": "60cfa4c2858b69f49c53d9c2009b0d22f66cf2020b68c8a8945459fbf0fcf4ee",
+      "ext": "jpg"
+    }
+  ],
+  "orofaringoscopia/faringite-estreptococica": [
+    {
+      "id": "wc-estrepto-exsudato-heilman",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/4/4a/Pos_strep.JPG",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Pos_strep.JPG",
+      "legenda": "Faringoamigdalite estreptocócica com cultura positiva: amígdalas aumentadas e hiperemiadas, cobertas de exsudato branco-amarelado nas criptas.",
+      "autoria": "James Heilman, MD · CC BY-SA 3.0",
+      "sha256": "21427f2cdf4877e294d083c9fb43d7460f43faf78ccab25f7cf21e119f5bd05b",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-estrepto-crianca",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/4/4f/Strep_throat2010.JPG",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Strep_throat2010.JPG",
+      "legenda": "Estreptococo do grupo A em criança de 8 anos: o exsudato amigdaliano típico sobre amígdalas vermelhas e edemaciadas.",
+      "autoria": "James Heilman, MD · CC BY-SA 3.0",
+      "sha256": "10d37933978a951e106c44a837bfae2a511f44d9fadc4d26f4de7e7aa4c84117",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-estrepto-uvula-edemaciada",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/3/30/Streptococcal_pharyngitis_1.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Streptococcal_pharyngitis_1.jpg",
+      "legenda": "Faringite estreptocócica: hiperemia intensa da orofaringe com a úvula edemaciada e as amígdalas aumentadas.",
+      "autoria": "RescueFF · domínio público",
+      "sha256": "ef9c53b900360abed8925bfed48700a4c84227f330fe058ccd901126d72876ee",
+      "ext": "jpg"
+    }
+  ],
+  "orofaringoscopia/moniliase-extensa": [
+    {
+      "id": "wc-moniliase-extensa-hiv",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/2/26/CandidiasisFromCDCinJPEG03-18-06.JPG",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:CandidiasisFromCDCinJPEG03-18-06.JPG",
+      "legenda": "Candidíase pseudomembranosa extensa, cobrindo palato e orofaringe, em paciente com HIV: a extensão das placas denuncia o hospedeiro que não se defende.",
+      "autoria": "Sol Silverman Jr., DDS — CDC · domínio público",
+      "sha256": "9f908a259e284261c9d90772ca9c235454e7f8512b32d9b9fea23c38b2143e6a",
+      "ext": "jpg"
+    }
+  ],
+  "orofaringoscopia/normal": [
+    {
+      "id": "wc-orofaringe-normal",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/0/05/Throat_with_Tonsils_0012J.jpeg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Throat_with_Tonsils_0012J.jpeg",
+      "legenda": "Orofaringe normal: úvula central, pilares simétricos, amígdalas pequenas e sem exsudato, mucosa rósea e úmida.",
+      "autoria": "Klem · CC BY 3.0",
+      "sha256": "c45e69356a5af6efe2a5c280a7eda755708f4009c1316a81f1c206a013aa184a",
+      "ext": "jpg"
+    }
+  ],
+  "otoscopia/cerume-obstrutivo": [
+    {
+      "id": "wc-rolha-de-cerume",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/9/98/BouchonCerumen.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:BouchonCerumen.jpg",
+      "legenda": "Rolha de cerume ocupando o conduto auditivo externo, vista pela entrada do meato. Nada da membrana é visível: o exame ainda não foi feito.",
+      "autoria": "Didier Descouens · CC BY-SA 3.0",
+      "sha256": "8f57761e37c51fe4d283f5b54d8e16098bde98646cc0e91b041288ac587d12a0",
+      "ext": "jpg"
+    }
+  ],
+  "otoscopia/colesteatoma": [
+    {
+      "id": "wc-colesteatoma-perfuracao-ampla",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/5/52/Cholesteatoma_and_large_perforation_left_ear.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Cholesteatoma_and_large_perforation_left_ear.jpg",
+      "legenda": "Colesteatoma: a massa branca de queratina no quadrante superior do tímpano esquerdo, com uma perfuração ampla ao lado — a maior parte da membrana já não existe.",
+      "autoria": "Michael Hawke, MD · CC BY 4.0",
+      "sha256": "51907bb6ea5e11d02220ffe762dd048b42097022688261a816a16a4b55c657b1",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-colesteatoma-atico",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/8/8b/Attic_Cholesteatoma.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Attic_Cholesteatoma.jpg",
+      "legenda": "Colesteatoma de ático: a pequena massa vermelho-cereja de granulação nascendo da pars flaccida denuncia o colesteatoma escondido atrás dela. É a região que a otoscopia apressada não olha.",
+      "autoria": "Michael Hawke, MD · CC BY 4.0",
+      "sha256": "1fcf3e93ddade9804f9cef1436554e057e2dfb55fa5c2a2a2fcc369982547792",
+      "ext": "jpg"
+    }
+  ],
+  "otoscopia/normal": [
+    {
+      "id": "wc-timpano-esquerdo-normal",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/e/e2/Normal_Left_Tympanic_Membrane.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Normal_Left_Tympanic_Membrane.jpg",
+      "legenda": "Membrana timpânica esquerda normal: translúcida e cinza-perolada, com o cabo do martelo descendo até o umbo e o cone de luz ântero-inferior. O promontório se adivinha por transparência.",
+      "autoria": "Michael Hawke, MD · CC BY-SA 4.0",
+      "sha256": "cd8cd6bcc8437974779916245070085bb2b6da636473668907ed2864ef23937d",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-timpano-direito-corda-do-timpano",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/8/85/Normal_Tympanic_Membrane_Chorda_Tympani_Nerve_Visible.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Normal_Tympanic_Membrane_Chorda_Tympani_Nerve_Visible.jpg",
+      "legenda": "Tímpano direito normal, tão translúcido que se vê o nervo corda do tímpano passando lateralmente ao ramo longo da bigorna, atrás da membrana.",
+      "autoria": "Michael Hawke, MD · CC BY 4.0",
+      "sha256": "92ce51581f35c3802ebc5d6e4d98887c82fef72490d4b7faeda38c0ff893ce3d",
+      "ext": "jpg"
+    }
+  ],
+  "otoscopia/otite-externa": [
+    {
+      "id": "wc-otite-externa-grave",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/9/94/OtitisExterna10.JPG",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:OtitisExterna10.JPG",
+      "legenda": "Otite externa grave vista de fora: o meato está edemaciado e fechado, com secreção e crostas na entrada do conduto. O otoscópio não passa — e não deve ser forçado.",
+      "autoria": "James Heilman, MD · CC BY 3.0",
+      "sha256": "4a3deac96ccb642d33f1519c84f40e381a2168c140f7aed5a064d2cf4c129027",
+      "ext": "jpg"
+    }
+  ],
+  "otoscopia/otite-media-aguda": [
+    {
+      "id": "wc-oma-exsudato-abaulando",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/f/f3/Acute_Otitis_Media_Stage_of_Resolution.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Acute_Otitis_Media_Stage_of_Resolution.jpg",
+      "legenda": "Otite média aguda: o ouvido médio cheio de exsudato mucopurulento cremoso empurra a membrana para fora. Os vasos radiais estão dilatados e o cone de luz desapareceu.",
+      "autoria": "Michael Hawke, MD · CC BY 4.0",
+      "sha256": "adb7219f330ee1971137ae7f236bc05fcced403802426b705f3b1d306de1f507",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-oma-abaulada-vermelha",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/5/58/Otitis_media_entdifferenziert2.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Otitis_media_entdifferenziert2.jpg",
+      "legenda": "Otite média aguda em fase plena: membrana abaulada, vermelha e opaca, sem nenhum ponto de referência reconhecível — nem cabo do martelo, nem cone de luz.",
+      "autoria": "B. Welleschik · CC BY-SA 3.0",
+      "sha256": "c2611f8066570e00327dd9b7d199997d3fd38c479f1bd7b63ef6499d4e1bd013",
+      "ext": "jpg"
+    }
+  ],
+  "otoscopia/otite-media-com-efusao": [
+    {
+      "id": "wc-ome-serosa-adulto",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/5/5c/Adult_Serous_Otitis_Media.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Adult_Serous_Otitis_Media.jpg",
+      "legenda": "Otite média com efusão em adulto: a membrana ganha cor amarelo-dourada pelo líquido seroso, cor de palha, que enche o ouvido médio. Sem hiperemia, sem abaulamento — é líquido, não infecção.",
+      "autoria": "Michael Hawke, MD · CC BY-SA 4.0",
+      "sha256": "1b8bc0cb7c407888135de753d9f2201007f1b40a05d9ff9237b69fd47fd79e23",
+      "ext": "jpg"
+    }
+  ],
+  "otoscopia/otite-media-cronica": [
+    {
+      "id": "wc-perfuracao-subtotal",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/15/Subtotal_Perforation_of_the_right_tympanic_membrane.tif/lossy-page1-1920px-Subtotal_Perforation_of_the_right_tympanic_membrane.tif.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Subtotal_Perforation_of_the_right_tympanic_membrane.tif",
+      "legenda": "Otite média crônica: perfuração subtotal do tímpano direito, de bordas espessadas, com a cadeia ossicular e a mucosa do ouvido médio expostas — o tímpano perdeu a capacidade de fechar.",
+      "autoria": "Michael Hawke, MD · CC BY-SA 4.0",
+      "sha256": "e6dcafc4d59f368372a7bc31338f10638a6a651076f65db560d5ce799ffb2e5d",
+      "ext": "jpg"
+    }
+  ],
+  "otoscopia/perfuracao": [
+    {
+      "id": "wc-perfuracao-traumatica",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/4/4c/Traumatic_Perforation_of_the_Tympanic_Membrane.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Traumatic_Perforation_of_the_Tympanic_Membrane.jpg",
+      "legenda": "Perfuração traumática recente da pars tensa: bordas finas e irregulares, com sangue na margem. Este tipo costuma fechar sozinho em semanas.",
+      "autoria": "Michael Hawke, MD · CC BY 4.0",
+      "sha256": "bb52b616953dc163d7babb9660a013ea655f0002796e5917e4857864da30430e",
       "ext": "jpg"
     }
   ],
@@ -300,6 +683,54 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "autoria": "Robert Jones, DO, FACEP — MetroHealth Medical Center",
       "sha256": "35bd792d46b5d5c12849de273e9d22d77363f406dce098e6f082ef4e06f80f6d",
       "ext": "gif"
+    }
+  ],
+  "pupilas/anisocoria-fisiologica": [
+    {
+      "id": "wc-anisocoria",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/5/51/Anisocoria_in_human_eyes.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Anisocoria_in_human_eyes.jpg",
+      "legenda": "Anisocoria: pupilas de tamanhos diferentes na mesma condição de luz. Se a diferença for a mesma no claro e no escuro, com reflexos normais, é fisiológica.",
+      "autoria": "Avemokh · CC BY-SA 4.0",
+      "sha256": "aaae06d2f658472ab49768e3c01d9a13c5cd203b7a5f009f839c41a539b30f7f",
+      "ext": "jpg"
+    }
+  ],
+  "rinoscopia-anterior/polipo-nasal": [
+    {
+      "id": "wc-polipo-meato-medio",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/8/8b/Middle_meatus_polyp.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Middle_meatus_polyp.jpg",
+      "legenda": "Pólipo nasal à endoscopia: massa lisa, translúcida e acinzentada emergindo do meato médio, entre o corneto médio e a parede lateral.",
+      "autoria": "Mustafa Kapadia · CC BY-SA 4.0",
+      "sha256": "d40ba0478b1363c5a463ded1e2d02b733998e0dc305a1f75d59ebfb36eeab023",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-polipo-narina",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/b/b5/Polype_nasal.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Polype_nasal.jpg",
+      "legenda": "Pólipo nasal visível pela narina direita: massa pálida e brilhante que desce até o vestíbulo — é insensível ao toque, ao contrário do corneto.",
+      "autoria": "MathieuMD · CC BY-SA 3.0",
+      "sha256": "5d1db22c387be6959ba89446801f87016cbce52c0561f526f4fa62f639f8dc5d",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-polipo-coanal",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/f/fd/CHOANAL_POLYP_PerfectlyClear.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:CHOANAL_POLYP_PerfectlyClear.jpg",
+      "legenda": "Pólipo antrocoanal: visto pela endoscopia da fossa nasal esquerda, a massa redonda e lisa preenche a coana ao fundo — nasce no seio maxilar e cresce para trás.",
+      "autoria": "Michael Hawke, MD · CC BY 4.0",
+      "sha256": "e55907ecd297223efe3bde97b09261f9dfd1f02615050ccc4e59ac1b65455f89",
+      "ext": "jpg"
     }
   ],
   "rins/hidronefrose": [
@@ -540,4 +971,4 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
 }
 
 /** Quando o acervo foi gerado pela última vez. */
-export const GERADO_EM: string | null = "2026-09-14"
+export const GERADO_EM: string | null = "2026-09-15"
