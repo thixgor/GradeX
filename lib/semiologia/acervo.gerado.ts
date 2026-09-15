@@ -64,6 +64,263 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "gif"
     }
   ],
+  "colonoscopia/angiodisplasia": [
+    {
+      "id": "wc-angiodisplasia",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/f/fe/Angiodysplasie.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Angiodysplasie.jpg",
+      "legenda": "Angiodisplasia do cólon: mancha vermelho-viva com vasos finos irradiando do centro, sobre mucosa normal — a lesão que sangra sem doer.",
+      "autoria": "Joachim Guntau · CC BY-SA 3.0",
+      "sha256": "2271583ebb2c86e1f111de4f04f62157795fd3465ded5467c8aba0d8db13aed2",
+      "ext": "jpg"
+    }
+  ],
+  "colonoscopia/cancer-colorretal": [
+    {
+      "id": "wc-cancer-reto-estenosante",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/e/ee/Rektum-Ca_Stenose.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Rektum-Ca_Stenose.jpg",
+      "legenda": "Carcinoma de reto estenosante: massa irregular e friável, sangrando ao toque, que estreita o lúmen — o aparelho não passa.",
+      "autoria": "Joachim Guntau · CC BY-SA 3.0",
+      "sha256": "5d37d5f37b80b21a624d90c8b02e277d8512f846e04001e7e046531d66418044",
+      "ext": "jpg"
+    }
+  ],
+  "colonoscopia/colite-ulcerativa": [
+    {
+      "id": "wc-colite-ulcerativa-ativa",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/7/72/Ulcerative_colitis.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Ulcerative_colitis.jpg",
+      "legenda": "Retocolite ulcerativa em atividade: mucosa difusamente eritematosa, granular e friável, sem padrão vascular, com erosões e exsudato.",
+      "autoria": "Sebb · CC BY-SA 3.0",
+      "sha256": "d6b3a08c7ef2ca5097469c89352c0c67b77adb692eae44b3b9bbccdf69859de2",
+      "ext": "jpg"
+    }
+  ],
+  "colonoscopia/diverticulose": [
+    {
+      "id": "wc-diverticulose-guntau",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/5/54/Divertikel.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Divertikel.jpg",
+      "legenda": "Diverticulose do sigmoide: múltiplos orifícios escuros e arredondados na parede, cada um abrindo para uma bolsa cega — o oposto do pólipo.",
+      "autoria": "Joachim Guntau · CC BY-SA 3.0",
+      "sha256": "c969930dddf4c492287770470065600e7f331901f2b838dfb935f9a7373049e0",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-dois-diverticulos",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/f/fb/Diverticulosis_%28two_diverticula%29_02.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Diverticulosis_(two_diverticula)_02.jpg",
+      "legenda": "Dois divertículos vistos de perto: os orifícios entre os haustros, com mucosa ao redor normal — diverticulose, não diverticulite.",
+      "autoria": "Jmarchn · CC BY-SA 3.0",
+      "sha256": "049faf07b5852cf8a1ff7bc1a8e57a67356cc2610a95f4524faec8a29932dc22",
+      "ext": "jpg"
+    }
+  ],
+  "colonoscopia/normal": [
+    {
+      "id": "wc-colon-normal-flexura",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/0/04/Colonoscopy_splenic_flexure.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Colonoscopy_splenic_flexure.jpg",
+      "legenda": "Cólon normal na flexura esplênica: mucosa rosada e transparente, com o padrão vascular submucoso nítido e ramificado — o que some primeiro na colite.",
+      "autoria": "melvil · CC BY-SA 4.0",
+      "sha256": "d9db7fd638db7c62230501d3435a687710130a9d61aa48feba2ba19007a421dc",
+      "ext": "jpg"
+    }
+  ],
+  "colonoscopia/polipo-adenomatoso": [
+    {
+      "id": "wc-polipo-pediculado",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/e/ec/Colon-Polyp.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Colon-Polyp.jpg",
+      "legenda": "Pólipo pediculado do cólon: cabeça avermelhada e lobulada sobre uma haste de mucosa normal, projetando-se para o lúmen.",
+      "autoria": "邱鈺鋒 · CC BY-SA 4.0",
+      "sha256": "34c2b1d82bb7d52a693c5335af33da1127548e75df6e74b526f8218b95022d43",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-polipo-guntau",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/6/67/Polyp.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Polyp.jpg",
+      "legenda": "Pólipo colônico à colonoscopia: elevação bem delimitada, mais vermelha que a mucosa vizinha, candidata a polipectomia na mesma sessão.",
+      "autoria": "Joachim Guntau · domínio público",
+      "sha256": "25a8fe2aca7f29ec8182b3f9ddd2c56f967472c649e3bc44dcf15aeaeb53110c",
+      "ext": "jpg"
+    }
+  ],
+  "endoscopia-digestiva-alta/barrett": [
+    {
+      "id": "wc-barrett-biopsias-seattle",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/1/1d/Seattle_Protocol_Biopsies.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Seattle_Protocol_Biopsies.jpg",
+      "legenda": "Esôfago de Barrett: línguas de mucosa salmão subindo sobre o esôfago pálido, com os pontos de biópsia em quatro quadrantes do protocolo de Seattle — sem histologia o diagnóstico não existe.",
+      "autoria": "Samir · CC BY-SA 4.0",
+      "sha256": "028bb0c139646359319821ce462b86bdcbd74d979b5bd92ee89869a420151660",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-barrett-segmento-curto-cancer",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/2/23/Esophageal_cancer-2626-02.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Esophageal_cancer-2626-02.jpg",
+      "legenda": "Barrett de segmento curto na junção gastroesofágica, em mulher de 81 anos: a mucosa colunar irregular acima da junção já abrigava um adenocarcinoma — o desfecho que a vigilância existe para antecipar.",
+      "autoria": "melvil · CC BY-SA 4.0",
+      "sha256": "60c68e8d31ab2f25228743be27d4807e3c882cb28c00e6d4417d08ba031a0df2",
+      "ext": "jpg"
+    }
+  ],
+  "endoscopia-digestiva-alta/cancer-gastrico": [
+    {
+      "id": "wc-cancer-gastrico-avancado",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/1/18/Magenkrebs.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Magenkrebs.jpg",
+      "legenda": "Câncer gástrico avançado: massa ulcerada e irregular, de bordas elevadas, base necrótica e mucosa friável, deformando o estômago.",
+      "autoria": "Boreali · domínio público",
+      "sha256": "e7d96df33ffbde95750842730f583bf8ba0aa46fc6c25d807d42807130e7ced6",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-ulcera-gastrica-maligna",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/f/f2/Gastric_ulcer_3.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Gastric_ulcer_3.jpg",
+      "legenda": "Úlcera gástrica cuja biópsia revelou adenocarcinoma: a borda irregular e a base suja são o motivo de toda úlcera gástrica ser biopsiada.",
+      "autoria": "Samir · CC BY-SA 3.0",
+      "sha256": "18efd1a3ac0c650157bb36063ba67025291ba2ff6c25fc1b8c86d3b13971942c",
+      "ext": "jpg"
+    }
+  ],
+  "endoscopia-digestiva-alta/corpo-estranho-esofagico": [
+    {
+      "id": "wc-corpo-estranho-esofago",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/5/57/Foreign_Body.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Foreign_Body.jpg",
+      "legenda": "Corpo estranho no esôfago à endoscopia, em dois momentos: o objeto alojado no lúmen e sua apreensão com a pinça para retirada.",
+      "autoria": "Samir · domínio público",
+      "sha256": "5dc9f36a8eae53d09730354072974e03eab4bdd16f27da72693d5125927863af",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-bolo-alimentar-impactado",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/2/24/Food_bolus_obstruction.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Food_bolus_obstruction.jpg",
+      "legenda": "Impactação de bolo alimentar no esôfago: o alimento ocupa o lúmen e o líquido acima dele não desce — a causa costuma ser uma estenose ou anel por baixo.",
+      "autoria": "Wikimedia Commons · CC BY 3.0",
+      "sha256": "4fbf8218aee9ce1381a6483735fde923f7de97b9ac0cfa2f042ea9247cfa70fb",
+      "ext": "jpg"
+    }
+  ],
+  "endoscopia-digestiva-alta/gastrite-erosiva": [
+    {
+      "id": "wc-gastrite-erosiva",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/2/28/Gastritis_erosiva.2278.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Gastritis_erosiva.2278.jpg",
+      "legenda": "Gastrite erosiva: múltiplas erosões superficiais de centro esbranquiçado e halo vermelho, espalhadas sobre a mucosa gástrica hiperemiada.",
+      "autoria": "Amadalvarez · CC BY-SA 4.0",
+      "sha256": "ed773f716a24ac1ad8099fe227159d0dd16d258875d0a0a00076ff703306b313",
+      "ext": "jpg"
+    }
+  ],
+  "endoscopia-digestiva-alta/normal": [
+    {
+      "id": "wc-estomago-normal-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/9/9f/Stomach_endoscopy_1.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Stomach_endoscopy_1.jpg",
+      "legenda": "Estômago normal à endoscopia: rugas alaranjadas, lisas e brilhantes, com o lago mucoso claro e o lúmen se abrindo com a insuflação.",
+      "autoria": "Ignis · CC BY-SA 3.0",
+      "sha256": "77c35e2178b3fe5a4ac742b955f85bcea7fdcaec055698740179117b4382ab03",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-estomago-normal-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/9/9b/Stomach_endoscopy_3.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Stomach_endoscopy_3.jpg",
+      "legenda": "Retrovisão gástrica: o aparelho vira sobre si mesmo e mostra a cárdia abraçando o tubo, com o fundo e a pequena curvatura alta — a parte que a visão direta não alcança.",
+      "autoria": "Ignis · CC BY-SA 3.0",
+      "sha256": "802a7b5ed97589c78d022ec795dcf295bf03f257fb976a35048d545b058c2537",
+      "ext": "jpg"
+    }
+  ],
+  "endoscopia-digestiva-alta/ulcera-gastrica": [
+    {
+      "id": "wc-ulcera-antral",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/1/13/Peptic_ulcer.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Peptic_ulcer.jpg",
+      "legenda": "Úlcera péptica no antro gástrico: cratera de base branca de fibrina, bordas regulares e mucosa ao redor edemaciada — a lesão da digestão ácido-péptica.",
+      "autoria": "Dr. Gannavarapu Narasimha Murthy · CC0",
+      "sha256": "5dfcad079a3dbf14f9c3a0b60ba8e46aefda5b089798b03cd16902210cd8d43b",
+      "ext": "jpg"
+    }
+  ],
+  "endoscopia-digestiva-alta/varizes-esofagicas": [
+    {
+      "id": "wc-varizes-sangrando",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/7/7c/Bleeding_esophageal_varices.png",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Bleeding_esophageal_varices.png",
+      "legenda": "Varizes esofágicas sangrando: os cordões azulados abaulando para o lúmen e o jato de sangue vindo da variz no canto superior direito da imagem.",
+      "autoria": "Jeremias · CC BY-SA 4.0",
+      "sha256": "75f8b963113998257f532a7c6f9b8fb70702dcbeeaae3e724a7d0f7892f779e9",
+      "ext": "png"
+    },
+    {
+      "id": "wc-varizes-tortuosas",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/4/48/%E0%B0%85%E0%B0%A8%E0%B1%8D%E0%B0%A8%E0%B0%B5%E0%B0%BE%E0%B0%B9%E0%B0%BF%E0%B0%95%E0%B0%B2%E0%B1%8B_%E0%B0%89%E0%B0%AC%E0%B1%8D%E0%B0%AC%E0%B1%81%E0%B0%B8%E0%B0%BF%E0%B0%B0%E0%B0%B2%E0%B1%81_%28Esophageal_varices%29.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:%E0%B0%85%E0%B0%A8%E0%B1%8D%E0%B0%A8%E0%B0%B5%E0%B0%BE%E0%B0%B9%E0%B0%BF%E0%B0%95%E0%B0%B2%E0%B1%8B_%E0%B0%89%E0%B0%AC%E0%B1%8D%E0%B0%AC%E0%B1%81%E0%B0%B8%E0%B0%BF%E0%B0%B0%E0%B0%B2%E0%B1%81_(Esophageal_varices).jpg",
+      "legenda": "Varizes esofágicas: veias dilatadas e tortuosas serpenteando pela parede do esôfago distal, por hipertensão portal.",
+      "autoria": "Dr. Gannavarapu Narasimha Murthy · CC0",
+      "sha256": "782478984ec772af92d01b489af5e40f5e80f17c6e13cd95145340f2f66c0c45",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-varizes-sinais-vermelhos",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/b/b6/Esophageal_varices_-_wale.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Esophageal_varices_-_wale.jpg",
+      "legenda": "Varizes com sinais vermelhos (\"red wale marks\") na superfície — as estrias que marcam a variz prestes a sangrar e indicam ligadura profilática.",
+      "autoria": "Samir · domínio público",
+      "sha256": "7463d9b82f8a0ec783c612d7c79554a2f44662494892f2dc168425f57c97a999",
+      "ext": "jpg"
+    }
+  ],
   "fast-morrison/liquido-livre": [
     {
       "id": "tpa-fast-positivo-morrison",
@@ -246,6 +503,30 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Retinopatia hipertensiva: arteríolas estreitadas e retificadas, com aumento do reflexo dorsal e cruzamentos arteriovenosos patológicos.",
       "autoria": "Frank Wood · CC BY 3.0",
       "sha256": "6c0466ea0f19aedbac569c059548d18a3c2a7765f8a1eaa4e9a42fb6ba7e8b17",
+      "ext": "jpg"
+    }
+  ],
+  "laringoscopia/normal": [
+    {
+      "id": "wc-laringe-normal-welleschik",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/7/70/Larynx_normal1a.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Larynx_normal1a.jpg",
+      "legenda": "Laringe normal vista de cima: as duas pregas vocais brancas e lisas abertas em V na inspiração, a epiglote no alto e os aritenoides atrás.",
+      "autoria": "Welleschik · CC BY-SA 3.0",
+      "sha256": "01718f33232acecea99238b520bbff9f41694854530b0e2f5cbce22445985dd6",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-pregas-vocais-melvil",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/7/7c/Vocal_folds-201611.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Vocal_folds-201611.jpg",
+      "legenda": "Pregas vocais normais à videolaringoscopia: bordas retas, superfície lisa e simétrica, glote amplamente aberta.",
+      "autoria": "melvil · CC BY-SA 4.0",
+      "sha256": "5b4941ac8b51831dc491cc56f01ca9b376b921574586f8c904b1d764fae35b09",
       "ext": "jpg"
     }
   ],

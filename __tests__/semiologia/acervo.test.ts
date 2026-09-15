@@ -40,6 +40,7 @@ const IDS_REGISTRADOS = new Set([
   'orofaringe',
   'rinoscopia',
   'pupilas',
+  'endoscopia',
   'ultrassom',
 ])
 

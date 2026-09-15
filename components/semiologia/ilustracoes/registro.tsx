@@ -2,6 +2,7 @@
 
 import type { ComponentType } from 'react'
 import type { PropsDeIlustracao } from './base'
+import { Endoscopia } from './endoscopia'
 import { Fundoscopia } from './fundoscopia'
 import { Otoscopia } from './otoscopia'
 import { Pupilas } from './pupilas'
@@ -53,6 +54,7 @@ const REGISTRO: Record<string, ComponentType<PropsDeIlustracao>> = {
   orofaringe: Orofaringe,
   rinoscopia: Rinoscopia,
   pupilas: Pupilas,
+  endoscopia: Endoscopia,
   ultrassom: Ultrassom,
 }
 
