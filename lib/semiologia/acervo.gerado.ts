@@ -12,6 +12,78 @@
 import type { MidiaClinica } from './midia'
 
 export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
+  "abdome-agudo/abscesso-intra-abdominal": [
+    {
+      "id": "tpa-abscesso-intra-abdominal",
+      "tipo": "imagem",
+      "fonte": "pocus-atlas",
+      "urlOrigem": "https://images.squarespace-cdn.com/content/v1/58118909e3df282037abfad7/1611514426504-KG14GRPLUJX8CSNWPIJZ/image-asset.gif",
+      "urlDoCaso": "https://www.thepocusatlas.com/bowel/intraabdominal-abscess",
+      "legenda": "Abscesso intra-abdominal no quadrante superior direito em paciente com doença de Crohn, febre e hipotensão: coleção heterogênea de paredes definidas.",
+      "autoria": "Robert Jones, DO, FACEP — MetroHealth Medical Center",
+      "sha256": "b5c473517f7ff60342eaf319aec4ee73f97fa29342f10ab2137a73e114f160bc",
+      "ext": "gif"
+    },
+    {
+      "id": "tpa-apendice-roto-abscesso",
+      "tipo": "imagem",
+      "fonte": "pocus-atlas",
+      "urlOrigem": "https://images.squarespace-cdn.com/content/v1/58118909e3df282037abfad7/1609020860539-S5N8R8Y38EJR7B20WIFS/image-asset.gif",
+      "urlDoCaso": "https://www.thepocusatlas.com/bowel/appy-with-abscess-formation",
+      "legenda": "Apêndice roto com formação de abscesso em criança de 2 anos com uma semana de febre e dor: a coleção ao redor do apêndice destruído.",
+      "autoria": "Paul Khalil, MD — University of Louisville / Norton Children’s",
+      "sha256": "9ccc801fc94d42dd922db3381219a3041792f46f0ee35967532e6da7f8098439",
+      "ext": "gif"
+    }
+  ],
+  "abdome-agudo/apendicite": [
+    {
+      "id": "tpa-apendicite-longitudinal",
+      "tipo": "imagem",
+      "fonte": "pocus-atlas",
+      "urlOrigem": "https://images.squarespace-cdn.com/content/v1/58118909e3df282037abfad7/1537195786626-0LEH20MK19VUA36I150F/appy+longitudinal.gif",
+      "urlDoCaso": "https://www.thepocusatlas.com/bowel/dz6g2vwvbh3vtbsge8bi0rgx9n3qga",
+      "legenda": "Apendicite em longitudinal: o apêndice espessado, não compressível, sob o ponto de maior dor, em homem de 30 anos com sinais de Rovsing e do psoas.",
+      "autoria": "Dr. Robert Allen; Dr. Matthew Riscinti — Kings County Emergency Medicine",
+      "sha256": "6e0990b3dc7f2f54024ab87b4073884bd826f6f83deb8a6a13d0e93ef3a9bc16",
+      "ext": "gif"
+    },
+    {
+      "id": "tpa-apendicite-transverso",
+      "tipo": "imagem",
+      "fonte": "pocus-atlas",
+      "urlOrigem": "https://images.squarespace-cdn.com/content/v1/58118909e3df282037abfad7/1537195776171-I39NAEUGG37QWVB9KU7L/appy+transverse.gif",
+      "urlDoCaso": "https://www.thepocusatlas.com/bowel/urla61nrlo79jd5xbsl94ysl95u2qp",
+      "legenda": "O mesmo apêndice em transverso: o \"alvo\" de parede espessada que não colaba à compressão graduada.",
+      "autoria": "Dr. Robert Allen; Dr. Matthew Riscinti — Kings County Emergency Medicine",
+      "sha256": "0f0d9ba814c7e309004e8cf8fd2b8fd8a1596008155c36c61d91053a9b96eaba",
+      "ext": "gif"
+    }
+  ],
+  "abdome-agudo/normal": [
+    {
+      "id": "tpa-apendice-normal-longitudinal",
+      "tipo": "imagem",
+      "fonte": "pocus-atlas",
+      "urlOrigem": "https://images.squarespace-cdn.com/content/v1/58118909e3df282037abfad7/1497408047640-GZO6D4OL3NGJ2IABYTSH/normal+appy+comp.gif",
+      "urlDoCaso": "https://www.thepocusatlas.com/bowel/gohf1scndqxku73aaya5uohe66gr77",
+      "legenda": "Apêndice normal em longitudinal e transverso: estrutura tubular de fundo cego que se comprime com a sonda, em menina de 13 anos com dor suprapúbica.",
+      "autoria": "Dr. Sathya Subramaniam — Kings County/SUNY Downstate",
+      "sha256": "d67af64a34906139bb08b1b6236454c3d58c72a2f7a5f7fadea4feb2df84d482",
+      "ext": "gif"
+    },
+    {
+      "id": "tpa-apendice-normal-transverso",
+      "tipo": "imagem",
+      "fonte": "pocus-atlas",
+      "urlOrigem": "https://images.squarespace-cdn.com/content/v1/58118909e3df282037abfad7/1527399209026-V4XXIQ8Z9M35B2IJ38EJ/ezgif.com-optimize+%2844%29.gif",
+      "urlDoCaso": "https://www.thepocusatlas.com/bowel/zbq10oxogkeam17iyeru9u18cjosym",
+      "legenda": "Apêndice normal em corte transverso, medido em 5,1 mm: abaixo dos 6 mm, compressível e sem gordura ecogênica ao redor.",
+      "autoria": "Dr. Sathya Subramaniam — Children's Hospital of Philadelphia",
+      "sha256": "5ef5a1670e83fece67b5fa032cb0d4d5634a779e09b07ca83b0e765c8a9cbd3c",
+      "ext": "gif"
+    }
+  ],
   "aorta-abdominal/aneurisma": [
     {
       "id": "tpa-aneurisma-trombo-mural",
@@ -35,6 +107,91 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Aorta distal de calibre normal, redonda e de parede brilhante, logo à frente da sombra do corpo vertebral; ao deslizar a sonda para baixo, ela se divide nas duas ilíacas.",
       "autoria": "Dr. Felipe Urriola — Hospital de Puerto Aysén, Patagônia chilena",
       "sha256": "71a95dbca2a4748042412488859060615bf1f3e5caa5e2932e943f2388264a37",
+      "ext": "gif"
+    }
+  ],
+  "apical-quatro-camaras/colapso-atrio-direito": [
+    {
+      "id": "tpa-tamponamento-apical",
+      "tipo": "imagem",
+      "fonte": "pocus-atlas",
+      "urlOrigem": "https://images.squarespace-cdn.com/content/v1/58118909e3df282037abfad7/1515768183208-AAVKN6XWDKZ30HMUGYP3/ezgif.com-optimize+%2830%29.gif",
+      "urlDoCaso": "https://www.thepocusatlas.com/pericardial-disease/967przanbq2j2a2xb95pc3v6sumuf3",
+      "legenda": "Tamponamento na janela apical: o coração oscila dentro do derrame e a parede livre das câmaras direitas afunda na diástole — é o momento em que a pressão do pericárdio vence a de dentro.",
+      "autoria": "Justin Bowra, MBBS, FACEM, CCPU — RNSH et al. (Dr. Orr)",
+      "sha256": "39f6cf1bfc18736f6aef0646df831860f5aeeff7309a4a3a8bade6bb506db32d",
+      "ext": "gif"
+    },
+    {
+      "id": "tpa-tamponamento-colapso-ad-vd",
+      "tipo": "imagem",
+      "fonte": "pocus-atlas",
+      "urlOrigem": "https://images.squarespace-cdn.com/content/v1/58118909e3df282037abfad7/1616075126653-C8MY1A30G7C0Z7C0IX4L/image-asset.gif",
+      "urlDoCaso": "https://www.thepocusatlas.com/pericardial-disease/circumferential-pericardial-tamponade",
+      "legenda": "Derrame circunferencial com colapso dinâmico do átrio e do ventrículo direitos em paciente instável. O colapso sistólico do átrio direito costuma ser o primeiro sinal.",
+      "autoria": "Rupinder Sekhon, MD — Central Michigan University",
+      "sha256": "15dd32a62548974173fcb60d69bb79672b7f55b396aba10711b25eefd0a41405",
+      "ext": "gif"
+    }
+  ],
+  "apical-quatro-camaras/derrame-sem-tamponamento": [
+    {
+      "id": "tpa-derrame-circunferencial-sem-tamponamento",
+      "tipo": "imagem",
+      "fonte": "pocus-atlas",
+      "urlOrigem": "https://images.squarespace-cdn.com/content/v1/58118909e3df282037abfad7/1631712704017-4NE36PEQSE6HLKVXXRTS/image-asset.gif",
+      "urlDoCaso": "https://www.thepocusatlas.com/pericardial-disease/circumferential-pericardial-effusion",
+      "legenda": "Derrame pericárdico circunferencial em paciente sem repercussão hemodinâmica: a faixa anecoica contorna o coração inteiro, mas as câmaras direitas mantêm o contorno em todo o ciclo.",
+      "autoria": "Moudi Hubeishy",
+      "sha256": "5069c3787e0e356a2ce8f88ad8aa22d6e7a744cf5932fd2079c548591216ba9d",
+      "ext": "gif"
+    },
+    {
+      "id": "tpa-derrame-vs-tamponamento",
+      "tipo": "imagem",
+      "fonte": "pocus-atlas",
+      "urlOrigem": "https://images.squarespace-cdn.com/content/v1/58118909e3df282037abfad7/1609780075075-NNJT1T7MF3XX3AFCCCI7/image-asset.gif",
+      "urlDoCaso": "https://www.thepocusatlas.com/pericardial-disease/pericardial-effusion-vs-tamponade",
+      "legenda": "Derrame moderado, livre, com a cava colapsando mais de 50%: sem colapso de câmara e sem sinais clínicos, é derrame — não tamponamento.",
+      "autoria": "Shahad Al Chalaby, MD — Alameda Health System",
+      "sha256": "dbf313aff3b745bebfead6e067817ed16ab4e3385b94dd0359c25e393879c464",
+      "ext": "gif"
+    }
+  ],
+  "apical-quatro-camaras/hipovolemia": [
+    {
+      "id": "tpa-hiperdinamico-eixo-curto",
+      "tipo": "imagem",
+      "fonte": "pocus-atlas",
+      "urlOrigem": "https://images.squarespace-cdn.com/content/v1/58118909e3df282037abfad7/1515618213710-HIR5TKRE82K0JZNLX0EZ/ezgif.com-optimize+%286%29.gif",
+      "urlDoCaso": "https://www.thepocusatlas.com/left-ventricular-dysfunction/t2vg1e2le2tnlagtk03k5718roflfl",
+      "legenda": "Estado hiperdinâmico em eixo curto: a cavidade do ventrículo esquerdo quase oblitera a cada sístole — as paredes se tocam porque não há volume para encher.",
+      "autoria": "Justin Bowra, MBBS, FACEM, CCPU — RNSH et al. (Dr. Fares)",
+      "sha256": "322caaa78590344b3ceb7869c489df2b8655097e258b72bc29aa2cbd4df5195c",
+      "ext": "gif"
+    },
+    {
+      "id": "tpa-hiperdinamico-eixo-longo",
+      "tipo": "imagem",
+      "fonte": "pocus-atlas",
+      "urlOrigem": "https://images.squarespace-cdn.com/content/v1/58118909e3df282037abfad7/1515618310006-FKYMZDUWOZH4XXP5U026/ezgif.com-optimize+%288%29.gif",
+      "urlDoCaso": "https://www.thepocusatlas.com/left-ventricular-dysfunction/5gu2xgi7dswyn4ixe3f01fz547qskm",
+      "legenda": "O mesmo coração hiperdinâmico em eixo longo: contração vigorosa de uma cavidade pequena — a \"função ótima\" que denuncia hipovolemia ou vasoplegia.",
+      "autoria": "Justin Bowra, MBBS, FACEM, CCPU — RNSH et al. (Dr. Fares)",
+      "sha256": "abddb4736c3e716f79837623461b2d9ea0ba639bcd53adc1e88b41c0f16665cf",
+      "ext": "gif"
+    }
+  ],
+  "apical-quatro-camaras/normal": [
+    {
+      "id": "tpa-apical-normal",
+      "tipo": "imagem",
+      "fonte": "pocus-atlas",
+      "urlOrigem": "https://images.squarespace-cdn.com/content/v1/58118909e3df282037abfad7/1533340761896-F7CB7JOJRV4HKYLFYT5E/apical+4+normal.gif",
+      "urlDoCaso": "https://www.thepocusatlas.com/normal-cardiac-anatomy/6fk17gtvyhvcjb2h7hr5hazlbkfkia",
+      "legenda": "Apical de quatro câmaras normal: ventrículo direito e esquerdo em cima, átrios embaixo, tricúspide e mitral no mesmo plano — todas as câmaras proporcionais e sem líquido ao redor.",
+      "autoria": "Hannah Kopinski; Dr. Lindsay Davis — NYU/Bellevue Emergency Ultrasound",
+      "sha256": "cef09d295b09d90063a66987d5c328a6dc1f849cff2aa0b68de8cf21cb6e1783",
       "ext": "gif"
     }
   ],
@@ -358,6 +515,54 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "gif"
     }
   ],
+  "fast-pelve/liquido-livre": [
+    {
+      "id": "tpa-fast-pelve-positivo-utero",
+      "tipo": "imagem",
+      "fonte": "pocus-atlas",
+      "urlOrigem": "https://images.squarespace-cdn.com/content/v1/58118909e3df282037abfad7/1507764819541-30PXEQ2ZB7PG4T8QAWTG/bowra+positive+fast+pevlic+free+fluid+trans.gif",
+      "urlDoCaso": "https://www.thepocusatlas.com/trauma/uvzo98o8oaxqyzsxgavvyc8oscs8vm",
+      "legenda": "FAST positivo na pelve em trauma contuso: o útero flutua em líquido livre, com as bordas angulares do sangue se insinuando ao redor.",
+      "autoria": "Dr. Justin Bowra",
+      "sha256": "6d83c44c94f529939b7e181f133e87a55ea2bfa5d9b1f2e465194acdbccaa5bf",
+      "ext": "gif"
+    },
+    {
+      "id": "tpa-fast-pelve-positivo-sagital",
+      "tipo": "imagem",
+      "fonte": "pocus-atlas",
+      "urlOrigem": "https://images.squarespace-cdn.com/content/v1/58118909e3df282037abfad7/1527401061210-DX7EMEH7LWOIG33Z3VSP/bon+%2B+fast+3.gif",
+      "urlDoCaso": "https://www.thepocusatlas.com/trauma/pzrhzkwl950o93rsg8ozt38ho6leza",
+      "legenda": "Líquido livre acima e atrás da bexiga em sagital, em pedestre atropelado e instável — FAST positivo nas quatro janelas.",
+      "autoria": "Dr. Catharine Bon — Kings County Emergency Medicine",
+      "sha256": "b5819d96a6f352a86ddc454752a4e4ae790c38a249c3794f5b4402972ffa6bbe",
+      "ext": "gif"
+    }
+  ],
+  "fast-pelve/normal": [
+    {
+      "id": "tpa-fast-pelve-negativo-transverso",
+      "tipo": "imagem",
+      "fonte": "pocus-atlas",
+      "urlOrigem": "https://images.squarespace-cdn.com/content/v1/58118909e3df282037abfad7/1507764828853-QISFYNVGK8L7X95TCDA1/bowra+neg+fast+trans+bladder.gif",
+      "urlDoCaso": "https://www.thepocusatlas.com/trauma/vuqfvrywk4y2b6qakaewdx9kiz95bt",
+      "legenda": "FAST pélvico negativo em transverso: bexiga cheia como janela e nenhum líquido ao redor ou atrás dela.",
+      "autoria": "Dr. Justin Bowra",
+      "sha256": "93baa605b62205c5d8547d73be99a1da504f565f73f48de7098d41222934f4b5",
+      "ext": "gif"
+    },
+    {
+      "id": "tpa-fast-pelve-negativo-sagital",
+      "tipo": "imagem",
+      "fonte": "pocus-atlas",
+      "urlOrigem": "https://images.squarespace-cdn.com/content/v1/58118909e3df282037abfad7/1507764831018-4EZU465PLMIOVYHKHJ0A/bowra+fast+neg+bladder+sag.gif",
+      "urlDoCaso": "https://www.thepocusatlas.com/trauma/e8kbce8oqb8j6910ybtypd56t0dfw0",
+      "legenda": "O mesmo FAST pélvico negativo em sagital: nada de anecoico atrás da bexiga.",
+      "autoria": "Dr. Justin Bowra",
+      "sha256": "670f50d785ca7a0ec9a3eeef827aa6c49c8608b751d901dc5b76e31c32ce18fc",
+      "ext": "gif"
+    }
+  ],
   "fundoscopia/descolamento-de-retina": [
     {
       "id": "wc-descolamento-nei",
@@ -528,6 +733,78 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "autoria": "melvil · CC BY-SA 4.0",
       "sha256": "5b4941ac8b51831dc491cc56f01ca9b376b921574586f8c904b1d764fae35b09",
       "ext": "jpg"
+    }
+  ],
+  "obstetrico-primeiro-trimestre/gestacao-ectopica": [
+    {
+      "id": "tpa-ectopica-tubaria",
+      "tipo": "imagem",
+      "fonte": "pocus-atlas",
+      "urlOrigem": "https://images.squarespace-cdn.com/content/v1/58118909e3df282037abfad7/1679283181129-9FZYHC8UIS0DXZUH797J/image-asset.gif",
+      "urlDoCaso": "https://www.thepocusatlas.com/obgyn/tubal-ectopic-pregnancy",
+      "legenda": "Gestação ectópica tubária: à esquerda da tela, a massa anexial separada do ovário; no útero, o endométrio em três camadas — espessado pelos hormônios, mas vazio.",
+      "autoria": "Robert Jones, DO, FACEP — MetroHealth Medical Center",
+      "sha256": "39fd4ea33c9021016d4dded07c72e2b64ca04f7d70e6e2799b997d54b1e6c81c",
+      "ext": "gif"
+    },
+    {
+      "id": "tpa-ectopica-frisch",
+      "tipo": "imagem",
+      "fonte": "pocus-atlas",
+      "urlOrigem": "https://images.squarespace-cdn.com/content/v1/58118909e3df282037abfad7/1515084381808-13OI644ITSN8T8ALRXOS/ectopic+frisch+3.gif",
+      "urlDoCaso": "https://www.thepocusatlas.com/obgyn/av9v6nha4ufixowzgkm6u92rsns4yn",
+      "legenda": "Ectópica tubária esquerda em mulher com dor pélvica e sangramento há uma semana: a massa fora do útero levou à salpingectomia.",
+      "autoria": "Stacey Frisch, MD; Aleksandr Gleyzer, MD — Kings County/SUNY Downstate",
+      "sha256": "bdb1cefa61f0875c46a00a2973f61b926b0d8ee5b1cdc3cbc076cf1a33e15ffc",
+      "ext": "gif"
+    }
+  ],
+  "obstetrico-primeiro-trimestre/gravidez-intrauterina": [
+    {
+      "id": "tpa-gestacao-intrauterina",
+      "tipo": "imagem",
+      "fonte": "pocus-atlas",
+      "urlOrigem": "https://images.squarespace-cdn.com/content/v1/58118909e3df282037abfad7/1592324702240-MN44AMNCSTRS5VTR0HB0/image-asset.gif",
+      "urlDoCaso": "https://www.thepocusatlas.com/obgyn/iup",
+      "legenda": "Gestação intrauterina: o saco gestacional dentro do endométrio, com o embrião — o POCUS foi mais rápido que o teste de urina para fechar o diagnóstico.",
+      "autoria": "Dr. Victor Bang — Hospital das Clínicas de Marília",
+      "sha256": "02cab7f91fcd020d1c931bccc54fc76c3d83323ba3ae87278174da5b8f0c9d1a",
+      "ext": "gif"
+    },
+    {
+      "id": "tpa-embriao-batimento",
+      "tipo": "imagem",
+      "fonte": "pocus-atlas",
+      "urlOrigem": "https://images.squarespace-cdn.com/content/v1/58118909e3df282037abfad7/1631650027682-58X75A12FTQGHJ65GRN3/image-asset.gif",
+      "urlDoCaso": "https://www.thepocusatlas.com/obgyn/early-iup-with-fetal-motion-and-cardiac-activity",
+      "legenda": "Gestação de fim do primeiro trimestre em sagital: o feto se mexe e o coração bate dentro do útero — gestação intrauterina viável.",
+      "autoria": "Michael Macias, MD",
+      "sha256": "10eabb545656945cdf3b3e45f08f5998e206b11a888713613e57e920bb3bfd98",
+      "ext": "gif"
+    }
+  ],
+  "obstetrico-primeiro-trimestre/liquido-livre-gestante": [
+    {
+      "id": "tpa-ectopica-rota-fast-positivo",
+      "tipo": "imagem",
+      "fonte": "pocus-atlas",
+      "urlOrigem": "https://images.squarespace-cdn.com/content/v1/58118909e3df282037abfad7/1537196872438-T4G8JJSAKC7RLO9HDKRV/ruptured+ectopic+%2B+FAST.gif",
+      "urlDoCaso": "https://www.thepocusatlas.com/obgyn/1w9prxnuw7sm53pcvxqxab2iywjia2",
+      "legenda": "Ectópica rota com FAST positivo: sangue no recesso hepatorrenal em mulher hipotensa com beta-hCG positivo — foi direto para a laparotomia.",
+      "autoria": "Dr. Stacey Frisch — Kings County Emergency Medicine",
+      "sha256": "a09ed55207f6347f42cd822c024e024c603c45b182f931c9cf741ba9c54cad3a",
+      "ext": "gif"
+    },
+    {
+      "id": "tpa-ectopica-rota-morrison",
+      "tipo": "imagem",
+      "fonte": "pocus-atlas",
+      "urlOrigem": "https://images.squarespace-cdn.com/content/v1/58118909e3df282037abfad7/1507755132703-DP9I4I9V5C816QC6Y0E8/ruptured+ectopic.gif",
+      "urlDoCaso": "https://www.thepocusatlas.com/obgyn/5y560wlq82wlu9ym7h1uze2426mj5d",
+      "legenda": "Líquido livre no polo inferior do rim e na ponta do fígado em mulher de 40 anos com dor e síncope: 800 mL de sangue de uma ectópica rota.",
+      "autoria": "Dr. Cian McDermott — Dublin, Irlanda",
+      "sha256": "3ed1bd6e154741c58747c19d59dfb98878ce871e23f86035404c879a40b5b0c9",
+      "ext": "gif"
     }
   ],
   "orofaringoscopia/abscesso-peritonsilar": [
@@ -843,6 +1120,19 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "gif"
     }
   ],
+  "partes-moles/drenagem-guiada": [
+    {
+      "id": "tpa-drenagem-abscesso-peritonsilar",
+      "tipo": "imagem",
+      "fonte": "pocus-atlas",
+      "urlOrigem": "https://images.squarespace-cdn.com/content/v1/58118909e3df282037abfad7/1626833800379-YUMBT0U9VOC3DP1YW56H/image-asset.gif",
+      "urlDoCaso": "https://www.thepocusatlas.com/softtissuemsk/peritonsillar-abscess-drainage",
+      "legenda": "Drenagem guiada de abscesso peritonsilar: a agulha, brilhante, entra em plano e a ponta é vista dentro da coleção antes de aspirar.",
+      "autoria": "Dr. Michael Heffler — Denver Health Emergency Medicine",
+      "sha256": "bb013ef748761eaef247b02e64d562077c9ec6806b7fc7ee5fa60c466bab7c1d",
+      "ext": "gif"
+    }
+  ],
   "partes-moles/normal": [
     {
       "id": "rp-subcutaneo-normal",
@@ -854,6 +1144,30 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "autoria": "Deise Vargas (Radiopaedia.org)",
       "sha256": "29ea8f0c9f3528976e068c74490cda033d76524ba83bf163c9dd39cd986feba8",
       "ext": "jpg"
+    }
+  ],
+  "pulmao-linhas/atelectasia": [
+    {
+      "id": "tpa-atelectasia-compressiva",
+      "tipo": "imagem",
+      "fonte": "pocus-atlas",
+      "urlOrigem": "https://images.squarespace-cdn.com/content/v1/58118909e3df282037abfad7/1501946558883-GXV72A1CXUPJAU09IXLS/ezgif.com-optimize.gif",
+      "urlDoCaso": "https://www.thepocusatlas.com/lung/01qsromkfl9bed0wjavr6e2rar5kw6",
+      "legenda": "Atelectasia compressiva da base esquerda: pulmão colabado sobre o diafragma, com linhas B e um pequeno derrame — o volume perdido puxa tudo para cima.",
+      "autoria": "Dr. Justin Bowra et al.",
+      "sha256": "ba4dee417708a66e35c2db2ac5ae8a6e59f6cadf7dad3580c28242486968ad58",
+      "ext": "gif"
+    },
+    {
+      "id": "tpa-atelectasia-obstrutiva",
+      "tipo": "imagem",
+      "fonte": "pocus-atlas",
+      "urlOrigem": "https://images.squarespace-cdn.com/content/v1/58118909e3df282037abfad7/1670121643887-KKAYZ3BRNU5KOH3H9M6X/image-asset.gif",
+      "urlDoCaso": "https://www.thepocusatlas.com/lung/bronchogenic-cancer",
+      "legenda": "Consolidação densa por obstrução brônquica completa (carcinoma broncogênico), com derrame ao redor: pulmão sem ar e sem broncogramas em movimento.",
+      "autoria": "Robert Jones, DO, FACEP — MetroHealth Medical Center",
+      "sha256": "bba7b1c51e0f83b55b8dd58d0053922ea72d210c5d1c2f626d1714dcd333c156",
+      "ext": "gif"
     }
   ],
   "pulmao-linhas/consolidacao": [
@@ -890,6 +1204,19 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Coleção anecoica acima do diafragma com o pulmão atelectasiado flutuando dentro dela. A coluna vertebral continua visível acima do diafragma — o sinal da coluna.",
       "autoria": "Dimitri Livshits, DO; Jane Belyavskaya, MD; Chris Hanuscin, MD — Kings County/SUNY Downstate",
       "sha256": "f0dbc4331c91472e5f6ff61047cc470f830be0c53da10eea78f6ebd71b2f1af3",
+      "ext": "gif"
+    }
+  ],
+  "pulmao-linhas/derrame-pleural-complexo": [
+    {
+      "id": "tpa-derrame-septado",
+      "tipo": "imagem",
+      "fonte": "pocus-atlas",
+      "urlOrigem": "https://images.squarespace-cdn.com/content/v1/58118909e3df282037abfad7/1638992470246-XFRCYIFPQ8600P0AIMYJ/image-asset.gif",
+      "urlDoCaso": "https://www.thepocusatlas.com/lung/septated-pleural-effusion",
+      "legenda": "Derrame pleural volumoso e septado, com a pleura espessada e irregular junto ao diafragma: a toracocentese foi só parcialmente eficaz — os septos dividem o líquido em lojas.",
+      "autoria": "Victor Speidel — Langenthal Regional Hospital, Suíça",
+      "sha256": "0c77bc1dee208b5d291c824c19a44a239bac91138760d65b4e37b98ce2f66b62",
       "ext": "gif"
     }
   ],

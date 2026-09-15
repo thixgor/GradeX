@@ -58,6 +58,22 @@ type Cena =
   | 'tvp'
   | 'partes-moles-normal'
   | 'abscesso'
+  | 'apical-normal'
+  | 'apical-derrame'
+  | 'apical-colapso-atrial'
+  | 'apical-hipovolemia'
+  | 'atelectasia'
+  | 'derrame-pleural-complexo'
+  | 'fast-pelve-normal'
+  | 'fast-pelve-liquido'
+  | 'apendice-normal'
+  | 'apendicite'
+  | 'abscesso-abdominal'
+  | 'abdome-agudo-normal'
+  | 'gravidez-intrauterina'
+  | 'gestacao-ectopica'
+  | 'liquido-livre-gestante'
+  | 'drenagem-guiada'
 
 const PRETO = '#07080a'
 const ANECOICO = '#0b0e12'
@@ -78,7 +94,12 @@ export function Ultrassom({ params, className, titulo, marcadores }: PropsDeIlus
     cena === 'veia-normal' ||
     cena === 'tvp' ||
     cena === 'partes-moles-normal' ||
-    cena === 'abscesso'
+    cena === 'abscesso' ||
+    cena === 'atelectasia' ||
+    cena === 'derrame-pleural-complexo' ||
+    cena === 'apendice-normal' ||
+    cena === 'apendicite' ||
+    cena === 'drenagem-guiada'
   )
 
   return (
@@ -176,6 +197,37 @@ function conteudo(cena: Cena, params: PropsDeIlustracao['params']) {
       return <PartesMoles diametro={0} />
     case 'abscesso':
       return <PartesMoles diametro={num(params, 'diametro', 4)} />
+    case 'apical-normal':
+      return <ApicalQuatroCamaras derrame={0} colapsoAtrio={0} hipovolemia={0} />
+    case 'apical-derrame':
+      return <ApicalQuatroCamaras derrame={num(params, 'derrame', 15)} colapsoAtrio={0} hipovolemia={0} />
+    case 'apical-colapso-atrial':
+      return <ApicalQuatroCamaras derrame={18} colapsoAtrio={num(params, 'colapso', 40) / 100} hipovolemia={0} />
+    case 'apical-hipovolemia':
+      return <ApicalQuatroCamaras derrame={0} colapsoAtrio={0} hipovolemia={1 - (Math.max(2, Math.min(25, num(params, 'area', 8))) - 2) / 23} />
+    case 'atelectasia':
+      return <Atelectasia extensao={num(params, 'extensao', 50) / 100} />
+    case 'derrame-pleural-complexo':
+      return <DerramePleuralComplexo debris={num(params, 'debris', 2)} />
+    case 'fast-pelve-normal':
+      return <FastPelve lamina={0} />
+    case 'fast-pelve-liquido':
+      return <FastPelve lamina={num(params, 'lamina', 12)} />
+    case 'abdome-agudo-normal':
+    case 'apendice-normal':
+      return <Apendice diametro={4.5} />
+    case 'apendicite':
+      return <Apendice diametro={num(params, 'diametro', 9)} apendicolito />
+    case 'abscesso-abdominal':
+      return <AbscessoAbdominal diametro={num(params, 'diametro', 6)} />
+    case 'gravidez-intrauterina':
+      return <Obstetrico semanas={num(params, 'semanas', 7)} />
+    case 'gestacao-ectopica':
+      return <Obstetrico semanas={7} ectopica massaAnexial={num(params, 'massa', 25)} liquido={200} />
+    case 'liquido-livre-gestante':
+      return <Obstetrico semanas={7} ectopica massaAnexial={20} liquido={num(params, 'volume', 500)} />
+    case 'drenagem-guiada':
+      return <DrenagemGuiada profundidade={num(params, 'profundidade', 3)} />
     default:
       return null
   }
@@ -836,6 +888,283 @@ function PartesMoles({ diametro }: { diametro: number }) {
           <Legenda>{`coleção ${d.toFixed(1)} cm · ecos internos · reforço posterior`}</Legenda>
         </g>
       )}
+    </g>
+  )
+}
+
+/**
+ * Apical de quatro câmaras. `derrame` é a lâmina em mm, `colapsoAtrio` a
+ * fração do ciclo em que o átrio direito invagina, `hipovolemia` encolhe as
+ * cavidades e as deixa hiperdinâmicas.
+ *
+ * É a janela em que as quatro câmaras aparecem lado a lado, e por isso a
+ * melhor para comparar tamanhos: o átrio direito colabando enquanto o
+ * esquerdo se mantém é o tamponamento contado em milissegundos; os dois
+ * ventrículos pequenos com paredes que quase se tocam é a hipovolemia.
+ */
+function ApicalQuatroCamaras({ derrame, colapsoAtrio, hipovolemia }: { derrame: number; colapsoAtrio: number; hipovolemia: number }) {
+  const lamina = derrame * 0.3
+  const enc = 1 - hipovolemia * 0.45
+  const invaginacao = colapsoAtrio * 6
+  return (
+    <g>
+      <rect x="0" y="0" width="100" height="100" fill="#3a434e" />
+      {/* Saco pericárdico com a lâmina de líquido, se houver. */}
+      <path d={`M ${22 - lamina} 20 Q 50 ${6 - lamina} ${78 + lamina} 20 L ${80 + lamina} 92 Q 50 ${100 + lamina} ${20 - lamina} 92 Z`} fill={derrame > 0 ? ANECOICO : '#2b323b'} />
+      <path d={`M ${22 - lamina} 20 Q 50 ${6 - lamina} ${78 + lamina} 20 L ${80 + lamina} 92 Q 50 ${100 + lamina} ${20 - lamina} 92 Z`} fill="none" stroke="#eef1f4" strokeWidth="1.2" />
+      {/* Miocárdio. */}
+      <path d="M 22 20 Q 50 6 78 20 L 80 92 Q 50 100 20 92 Z" fill="#5a6470" />
+      {/* Ventrículos (em cima, no apical o ápice fica no topo da tela). */}
+      <ellipse cx={38} cy={38} rx={11 * enc} ry={16 * enc} fill={ANECOICO} />
+      <ellipse cx={62} cy={40} rx={9 * enc} ry={14 * enc} fill={ANECOICO} />
+      {/* Septo. */}
+      <path d="M 50 22 L 50 60" stroke="#c8d0d8" strokeWidth="2" opacity="0.9" />
+      {/* Átrios. O direito (à direita da tela) invagina na diástole quando a pressão pericárdica vence a dele. */}
+      <ellipse cx={38} cy={72} rx={10} ry={9} fill={ANECOICO} />
+      <path
+        d={`M ${52} 66 Q 62 ${60 + invaginacao} 72 66 Q 74 78 62 82 Q 50 78 52 66 Z`}
+        fill={ANECOICO}
+      />
+      {/* Válvulas mitral e tricúspide. */}
+      <path d="M 30 58 L 46 60 M 54 60 L 70 58" stroke="#e6e9ed" strokeWidth="1.2" />
+      {hipovolemia > 0.3 && (
+        <path d={`M ${38 - 11 * enc + 2} 38 L ${38 + 11 * enc - 2} 38`} stroke="#f2c14e" strokeWidth="0.6" strokeDasharray="1.5 1" />
+      )}
+      <Legenda>
+        {hipovolemia > 0.3
+          ? `cavidades pequenas · paredes se tocam na sístole (${Math.round(2 + (1 - hipovolemia) * 20)} cm²)`
+          : derrame > 0
+            ? `derrame ${derrame.toFixed(0)} mm${colapsoAtrio > 0 ? ` · AD colaba ${Math.round(colapsoAtrio * 100)}% do ciclo` : ' · sem colapso'}`
+            : 'quatro câmaras · VD menor que VE · sem derrame'}
+      </Legenda>
+    </g>
+  )
+}
+
+/**
+ * Atelectasia: o pulmão colabado tem textura de tecido como a pneumonia, mas
+ * é **menor** — perdeu volume — e os broncogramas, se existem, ficam parados,
+ * porque não há ar entrando neles. `extensao` é a fração do campo colabada.
+ */
+function Atelectasia({ extensao }: { extensao: number }) {
+  const yPleura = 30
+  const alt = 10 + extensao * 40
+  return (
+    <g>
+      <rect x="0" y="0" width="100" height="100" fill="#2b3038" />
+      {[20, 80].map((cx) => (
+        <g key={cx}>
+          <ellipse cx={cx} cy={yPleura - 8} rx="9" ry="4.5" fill="#e8eaed" />
+          <path d={`M ${cx - 9} ${yPleura - 6} L ${cx + 9} ${yPleura - 6} L ${cx + 10} 100 L ${cx - 10} 100 Z`} fill={PRETO} opacity="0.94" />
+        </g>
+      ))}
+      <rect x="0" y={yPleura} width="100" height="1.6" fill="#f4f6f8" />
+      {/* Diafragma elevado — o volume perdido puxa tudo para cima. */}
+      <path d={`M 0 ${yPleura + alt + 14} Q 50 ${yPleura + alt + 4} 100 ${yPleura + alt + 14}`} stroke="#f0f3f6" strokeWidth="1.8" fill="none" />
+      <path d={`M 0 ${yPleura + alt + 14} Q 50 ${yPleura + alt + 4} 100 ${yPleura + alt + 14} L 100 100 L 0 100 Z`} fill="#5c6672" />
+      {/* Pulmão colabado: bloco de tecido compacto, de borda lisa, colado ao diafragma. */}
+      <path d={`M 30 ${yPleura + 1.6} L 70 ${yPleura + 1.6} L 68 ${yPleura + alt + 10} Q 50 ${yPleura + alt + 4} 32 ${yPleura + alt + 10} Z`} fill="#6b7684" />
+      <path d={`M 30 ${yPleura + 1.6} L 70 ${yPleura + 1.6} L 68 ${yPleura + alt + 10} Q 50 ${yPleura + alt + 4} 32 ${yPleura + alt + 10} Z`} fill="#7d8896" opacity="0.4" />
+      {/* Broncogramas estáticos: poucos, retos, sem movimento. */}
+      {[0.3, 0.55, 0.8].map((t) => (
+        <rect key={t} x={38 + t * 20} y={yPleura + 6 + t * alt * 0.6} width="5" height="1" fill="#f4f6f8" opacity="0.8" />
+      ))}
+      {/* Pequeno derrame acompanhando. */}
+      <path d={`M 26 ${yPleura + alt + 6} Q 50 ${yPleura + alt + 12} 74 ${yPleura + alt + 6} L 74 ${yPleura + alt + 12} Q 50 ${yPleura + alt + 16} 26 ${yPleura + alt + 12} Z`} fill={ANECOICO} opacity="0.7" />
+      <Legenda>{`atelectasia · ${Math.round(extensao * 100)}% do campo · broncogramas estáticos`}</Legenda>
+    </g>
+  )
+}
+
+/** Derrame pleural complexo: septos e detritos dentro do líquido. `debris` de 0 a 3. */
+function DerramePleuralComplexo({ debris }: { debris: number }) {
+  const d = Math.max(0, Math.min(3, debris))
+  return (
+    <g>
+      <rect x="0" y="0" width="100" height="100" fill="#1a1e24" />
+      <path d="M 0 62 Q 40 56 100 64 L 100 100 L 0 100 Z" fill="#4a5360" />
+      <path d="M 0 62 Q 40 56 100 64" stroke="#f0f3f6" strokeWidth="1.8" fill="none" />
+      <path d="M 0 22 Q 40 18 100 26 L 100 63 Q 40 56 0 61 Z" fill={ANECOICO} />
+      {/* Septos: fios ecogênicos que dividem o líquido em lojas. */}
+      {d >= 1 &&
+        [
+          'M 12 30 Q 30 44 24 58',
+          'M 40 24 Q 46 40 62 56',
+          'M 70 28 Q 60 42 84 58',
+          'M 20 44 Q 50 38 80 48',
+        ].slice(0, 1 + d).map((p, i) => <path key={i} d={p} stroke="#dfe4e9" strokeWidth="0.9" fill="none" opacity="0.85" />)}
+      {/* Detritos: ecos flutuando no líquido. */}
+      {Array.from({ length: d * 18 }, (_, i) => (
+        <circle key={i} cx={8 + ((i * 31) % 84)} cy={26 + ((i * 17) % 32)} r="0.7" fill="#aeb6bf" opacity="0.7" />
+      ))}
+      {/* Pleura espessada. */}
+      {d >= 2 && <path d="M 0 22 Q 40 18 100 26" stroke="#c8d0d8" strokeWidth="2.6" fill="none" opacity="0.8" />}
+      <Legenda>{d === 0 ? 'derrame anecoico simples' : `derrame complexo · septos e detritos (${d}/3)`}</Legenda>
+    </g>
+  )
+}
+
+/** Pelve transversa: bexiga como janela e o líquido livre atrás dela. `lamina` em mm. */
+function FastPelve({ lamina }: { lamina: number }) {
+  const l = Math.max(0, Math.min(30, lamina)) * 0.5
+  return (
+    <g>
+      <rect x="0" y="0" width="100" height="100" fill="#3a434e" />
+      <rect x="0" y="0" width="100" height="10" fill="#59636f" />
+      {/* Bexiga cheia: a janela. */}
+      <rect x="22" y="22" width="56" height="30" rx="9" fill={ANECOICO} />
+      <rect x="22" y="22" width="56" height="30" rx="9" fill="none" stroke="#e6e9ed" strokeWidth="1" opacity="0.8" />
+      {/* Útero ou reto atrás. */}
+      <ellipse cx="50" cy={66 + l} rx="18" ry="9" fill="#66717e" />
+      {/* Líquido livre: faixa anecoica entre a bexiga e o útero, de bordas angulares. */}
+      {l > 0 && <path d={`M 20 52 L 80 52 L 84 ${54 + l} Q 50 ${58 + l * 1.3} 16 ${54 + l} Z`} fill={ANECOICO} />}
+      <rect x="30" y={76 + l} width="40" height="24" fill="#7d8896" opacity="0.25" />
+      <Legenda>{l > 0 ? `líquido livre retrovesical · ${lamina.toFixed(0)} mm` : 'sem líquido atrás da bexiga'}</Legenda>
+    </g>
+  )
+}
+
+/**
+ * Apêndice com sonda linear em compressão graduada. `diametro` em mm: até 6
+ * é normal; acima, com parede espessa e sem compressão, é apendicite.
+ * A estrutura é tubular, cega e sem peristalse — é isso que a distingue de
+ * uma alça.
+ */
+function Apendice({ diametro, apendicolito = false }: { diametro: number; apendicolito?: boolean }) {
+  const d = Math.max(3, Math.min(15, diametro))
+  const meia = d * 1.6
+  const inflamado = d > 6
+  return (
+    <g>
+      <rect x="0" y="0" width="100" height="100" fill="#3a434e" />
+      <rect x="0" y="0" width="100" height="6" fill="#e6e9ed" opacity="0.8" />
+      <rect x="0" y="6" width="100" height="20" fill="#59636f" />
+      {/* Gordura mesentérica: brilhante e espessa quando inflamada. */}
+      {inflamado && <ellipse cx="50" cy="52" rx="40" ry="22" fill="#9aa3ad" opacity="0.5" />}
+      {/* Apêndice em corte longitudinal: tubo cego, parede em camadas. */}
+      <path d={`M 10 ${50 - meia - 2} L 78 ${50 - meia - 2} Q ${86 + meia * 0.4} 50 78 ${50 + meia + 2} L 10 ${50 + meia + 2} Z`} fill="#c8d0d8" />
+      <path d={`M 10 ${50 - meia + (inflamado ? 1.5 : 0.6)} L 78 ${50 - meia + (inflamado ? 1.5 : 0.6)} Q ${84 + meia * 0.3} 50 78 ${50 + meia - (inflamado ? 1.5 : 0.6)} L 10 ${50 + meia - (inflamado ? 1.5 : 0.6)} Z`} fill="#5a6572" />
+      <path d={`M 10 ${50 - meia * 0.5} L 78 ${50 - meia * 0.5} Q ${82 + meia * 0.2} 50 78 ${50 + meia * 0.5} L 10 ${50 + meia * 0.5} Z`} fill={inflamado ? ANECOICO : '#8d97a3'} />
+      {/* Apendicolito com sombra. */}
+      {apendicolito && (
+        <g>
+          <path d="M 40 47 Q 45 42 50 47" fill="#ffffff" />
+          <path d="M 40 47 L 50 47 L 52 100 L 38 100 Z" fill={PRETO} opacity="0.85" />
+        </g>
+      )}
+      {/* Régua do diâmetro externo. */}
+      <line x1="30" y1={50 - meia - 2} x2="30" y2={50 + meia + 2} stroke="#f2c14e" strokeWidth="0.6" />
+      <line x1="28" y1={50 - meia - 2} x2="32" y2={50 - meia - 2} stroke="#f2c14e" strokeWidth="0.6" />
+      <line x1="28" y1={50 + meia + 2} x2="32" y2={50 + meia + 2} stroke="#f2c14e" strokeWidth="0.6" />
+      <Legenda>{`apêndice ${d.toFixed(0)} mm${inflamado ? ' · não compressível · gordura ecogênica' : ' · compressível · fundo cego'}${apendicolito ? ' · apendicolito' : ''}`}</Legenda>
+    </g>
+  )
+}
+
+/** Coleção intra-abdominal: paredes definidas, conteúdo heterogêneo, alças ao redor. `diametro` em cm. */
+function AbscessoAbdominal({ diametro }: { diametro: number }) {
+  const d = Math.max(0, Math.min(15, diametro))
+  const r = d * 2.6
+  return (
+    <g>
+      <rect x="0" y="0" width="100" height="100" fill="#3a434e" />
+      <rect x="0" y="0" width="100" height="12" fill="#59636f" />
+      {/* Alças intestinais com gás ao redor. */}
+      {[[16, 30], [84, 34], [20, 78], [82, 80]].map(([x, y]) => (
+        <g key={`${x}-${y}`}>
+          <ellipse cx={x} cy={y} rx="12" ry="7" fill="#66717e" />
+          <path d={`M ${x - 6} ${y - 2} L ${x + 6} ${y - 2}`} stroke="#f4f6f8" strokeWidth="1.4" />
+          <path d={`M ${x - 7} ${y} L ${x + 7} ${y} L ${x + 9} 100 L ${x - 9} 100 Z`} fill={PRETO} opacity="0.35" />
+        </g>
+      ))}
+      {d > 0 && (
+        <g>
+          <ellipse cx="50" cy="52" rx={r + 2} ry={r * 0.8 + 2} fill="#c8d0d8" />
+          <ellipse cx="50" cy="52" rx={r} ry={r * 0.8} fill="#1a2028" />
+          {Array.from({ length: Math.round(d * 3) }, (_, i) => (
+            <circle key={i} cx={50 - r * 0.7 + ((i * 13) % Math.max(2, r * 1.4))} cy={52 - r * 0.5 + ((i * 7) % Math.max(2, r * 1.0))} r="0.7" fill="#8d97a3" opacity="0.8" />
+          ))}
+          {d > 5 && <path d={`M ${50 - r * 0.6} ${52 - r * 0.3} Q 50 ${52 + r * 0.2} ${50 + r * 0.5} ${52 - r * 0.4}`} stroke="#dfe4e9" strokeWidth="0.8" fill="none" opacity="0.8" />}
+          <rect x={50 - r * 0.8} y={52 + r * 0.8} width={r * 1.6} height={48 - r * 0.8} fill="#7d8896" opacity="0.22" />
+        </g>
+      )}
+      <Legenda>{d > 0 ? `coleção ${d.toFixed(1)} cm · parede definida · ecos internos` : 'alças com gás · sem coleção'}</Legenda>
+    </g>
+  )
+}
+
+/**
+ * Útero em corte sagital pela bexiga. `semanas` põe saco, vesícula vitelina e
+ * embrião conforme a idade; `ectopica` esvazia o útero e põe a massa no
+ * anexo; `liquido` em mL enche o fundo de saco.
+ */
+function Obstetrico({ semanas, ectopica = false, massaAnexial = 0, liquido = 0 }: { semanas: number; ectopica?: boolean; massaAnexial?: number; liquido?: number }) {
+  const s = Math.max(4, Math.min(12, semanas))
+  const rSaco = 3 + (s - 4) * 1.6
+  const embriao = s >= 6
+  const l = Math.max(0, Math.min(1000, liquido)) / 1000
+  const m = Math.max(0, Math.min(50, massaAnexial)) * 0.3
+  return (
+    <g>
+      <rect x="0" y="0" width="100" height="100" fill="#3a434e" />
+      <rect x="0" y="0" width="100" height="8" fill="#59636f" />
+      {/* Bexiga como janela, à esquerda. */}
+      <path d="M 4 12 Q 30 10 40 22 Q 44 44 20 50 Q 4 46 4 30 Z" fill={ANECOICO} />
+      {/* Útero em sagital. */}
+      <path d="M 34 26 Q 70 14 84 40 Q 88 64 60 74 Q 36 74 30 54 Z" fill="#66717e" />
+      {/* Endométrio: a faixa brilhante central. */}
+      <path d="M 44 34 Q 64 26 74 42 Q 76 56 60 62" stroke="#dfe4e9" strokeWidth={ectopica ? 3 : 2} fill="none" opacity="0.9" strokeLinecap="round" />
+      {/* Saco gestacional dentro do endométrio, com anel ecogênico. */}
+      {!ectopica && (
+        <g>
+          <ellipse cx="60" cy="46" rx={rSaco + 1.2} ry={rSaco * 0.8 + 1.2} fill="#c8d0d8" />
+          <ellipse cx="60" cy="46" rx={rSaco} ry={rSaco * 0.8} fill={ANECOICO} />
+          {s >= 5 && <circle cx={60 - rSaco * 0.4} cy={46} r={1.2} fill="none" stroke="#f4f6f8" strokeWidth="0.7" />}
+          {embriao && <ellipse cx={60 + rSaco * 0.3} cy={46 + rSaco * 0.2} rx={0.8 + (s - 6) * 0.9} ry={0.6 + (s - 6) * 0.6} fill="#c8d0d8" />}
+        </g>
+      )}
+      {/* Massa anexial da ectópica: anel tubário ao lado do ovário, fora do útero. */}
+      {ectopica && m > 0 && (
+        <g>
+          <ellipse cx="86" cy="70" rx={m + 3} ry={m * 0.8 + 3} fill="#c8d0d8" />
+          <ellipse cx="86" cy="70" rx={m} ry={m * 0.8} fill="#1a2028" />
+          <ellipse cx="72" cy="78" rx="6" ry="4" fill="#8d97a3" />
+        </g>
+      )}
+      {/* Líquido livre no fundo de saco: atrás do útero, ecogênico se for sangue. */}
+      {l > 0 && <path d={`M 40 ${76} Q 66 ${80 + l * 10} 92 ${72} L 94 ${82 + l * 14} Q 66 ${92 + l * 8} 38 ${84 + l * 12} Z`} fill={ANECOICO} />}
+      {l > 0.3 && Array.from({ length: Math.round(l * 20) }, (_, i) => <circle key={i} cx={44 + ((i * 23) % 46)} cy={80 + ((i * 7) % Math.max(2, l * 12))} r="0.6" fill="#8d97a3" opacity="0.8" />)}
+      <Legenda>
+        {ectopica
+          ? `útero vazio · massa anexial ${massaAnexial.toFixed(0)} mm${l > 0 ? ` · líquido livre ~${Math.round(l * 1000)} mL` : ''}`
+          : l > 0
+            ? `líquido livre no fundo de saco ~${Math.round(l * 1000)} mL`
+            : `gestação intrauterina · ${s.toFixed(0)} semanas${embriao ? ' · embrião com batimento' : s >= 5 ? ' · vesícula vitelina' : ' · só o saco'}`}
+      </Legenda>
+    </g>
+  )
+}
+
+/** Drenagem guiada: a agulha brilhante entrando na coleção, em plano. `profundidade` em cm. */
+function DrenagemGuiada({ profundidade }: { profundidade: number }) {
+  const p = Math.max(0.5, Math.min(10, profundidade))
+  const y = 14 + p * 7
+  return (
+    <g>
+      <rect x="0" y="0" width="100" height="100" fill="#3a434e" />
+      <rect x="0" y="0" width="100" height="5" fill="#e6e9ed" opacity="0.9" />
+      <rect x="0" y="5" width="100" height="95" fill="#59636f" />
+      {Array.from({ length: 10 }, (_, i) => (
+        <ellipse key={i} cx={8 + i * 10} cy={14 + (i % 2) * 12} rx="6" ry="4.5" fill="#66717e" opacity="0.5" />
+      ))}
+      {/* Coleção alvo. */}
+      <ellipse cx="58" cy={y} rx="16" ry="9" fill="#1a2028" />
+      <ellipse cx="58" cy={y} rx="16" ry="9" fill="none" stroke="#c8d0d8" strokeWidth="1" opacity="0.7" />
+      {/* Agulha em plano: linha brilhante com reverberação, ponta dentro da coleção. */}
+      <path d={`M 4 4 L ${56} ${y + 2}`} stroke="#ffffff" strokeWidth="1.6" strokeLinecap="round" />
+      <path d={`M 4 6.5 L ${40} ${y * 0.6 + 4}`} stroke="#ffffff" strokeWidth="0.6" opacity="0.5" />
+      <circle cx="56" cy={y + 2} r="1.6" fill="#f2c14e" />
+      <Legenda>{`agulha em plano · ponta na coleção a ${p.toFixed(1)} cm`}</Legenda>
     </g>
   )
 }

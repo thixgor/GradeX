@@ -183,6 +183,46 @@ export const JANELAS_ULTRASSOM: JanelaUltrassom[] = [
         diferencial: ['Pneumonia em fase inicial', 'Contusão pulmonar', 'Infarto pulmonar', 'Atelectasia por hipoventilação', 'Doença intersticial localizada (fibrose, com pleura irregular)'],
         ilustracao: { id: 'ultrassom', params: { cena: 'pulmao-linhas-b-focal', linhasB: 5 }, alt: 'Linhas B agrupadas em uma região do espaço intercostal, com padrão A ao redor' },
       },
+      {
+        id: 'atelectasia',
+        titulo: 'Atelectasia',
+        estado: 'alterado',
+        diagnostico: 'Colapso alveolar — obstrução brônquica, compressão ou hipoventilação.',
+        achado:
+          'Área de pulmão compacto, com textura de tecido, de borda lisa e regular, geralmente na base e acompanhada de pequeno derrame; volume reduzido, com o diafragma elevado e as estruturas puxadas em direção ao colapso. Broncogramas aéreos escassos e estáticos — ou ausentes, na obstrução completa. Linhas B ao redor.',
+        leitura: [
+          'Confirme a textura de tecido e compare o volume com o lado oposto: o colapso encolhe.',
+          'Olhe os broncogramas por alguns ciclos: parados ou ausentes falam por atelectasia; dinâmicos, por pneumonia.',
+          'Veja a borda: lisa e regular, diferente do fragmento da consolidação.',
+          'Procure a causa: derrame que comprime, tampão que obstrui, dor que impede a respiração profunda.',
+        ],
+        diferencaDoNormal:
+          'A consolidação pneumônica e a atelectasia têm a mesma textura — pulmão sem ar parece fígado nos dois casos. A diferença é o que aconteceu com o ar: na pneumonia ele foi substituído por exsudato, e o volume se mantém; na atelectasia ele foi absorvido, e o volume some. Broncogramas que se movem são brônquios ainda ventilados; brônquios parados são brônquios fechados.',
+        conduta:
+          'Tratar a causa: fisioterapia respiratória, analgesia que permita respirar fundo, mobilização e, se houver tampão, aspiração broncoscópica. Derrame compressivo drena-se se sintomático. Atelectasia que não reexpande em dias, em fumante, pede investigação de obstrução brônquica.',
+        diferencial: ['Pneumonia (broncogramas dinâmicos, volume preservado)', 'Contusão pulmonar', 'Tumor obstrutivo com atelectasia distal', 'Derrame com pulmão colabado (a atelectasia é a consequência)'],
+        ilustracao: { id: 'ultrassom', params: { cena: 'atelectasia', extensao: 50 }, alt: 'Pulmão colabado de borda lisa sobre o diafragma elevado, com broncogramas estáticos' },
+      },
+      {
+        id: 'derrame-pleural-complexo',
+        titulo: 'Derrame pleural complexo',
+        estado: 'alterado',
+        diagnostico: 'Exsudato complicado, empiema ou hemotórax — líquido que não é só água.',
+        achado:
+          'Coleção pleural com ecos internos flutuantes, septos finos ou espessos dividindo o líquido em lojas, detritos que se depositam e se movem com a respiração, e pleura espessada ou irregular. O líquido pode ser homogeneamente ecogênico (sangue, pus).',
+        leitura: [
+          'Aumente o ganho e olhe dentro do líquido: anecoico é simples; com ecos, é complexo.',
+          'Procure septos — são o que faz a drenagem por agulha falhar.',
+          'Veja a pleura: espessada e irregular sugere empiema ou neoplasia.',
+          'Correlacione: febre e pneumonia apontam empiema; trauma, hemotórax.',
+        ],
+        diferencaDoNormal:
+          'O derrame simples é água: preto, homogêneo, com o pulmão flutuando dentro. Quando o líquido é sangue, pus ou exsudato rico em fibrina, ele carrega partículas que refletem o som — ecos — e a fibrina forma paredes que o dividem em compartimentos. Cada septo é um bolsão que uma agulha não alcança.',
+        conduta:
+          'Toracocentese diagnóstica guiada; empiema e derrame parapneumônico complicado (pH < 7,2, glicose baixa, pus) drenam com dreno torácico, com fibrinolítico intrapleural se septado, e cirurgia se falhar. Hemotórax drena-se; volume inicial e débito horário decidem a toracotomia. Antibiótico conforme a etiologia.',
+        diferencial: ['Derrame simples com artefato de ganho alto', 'Consolidação (não muda com a respiração como o líquido)', 'Tumor pleural', 'Hérnia diafragmática com conteúdo abdominal'],
+        ilustracao: { id: 'ultrassom', params: { cena: 'derrame-pleural-complexo', debris: 2 }, alt: 'Derrame pleural com septos e detritos ecogênicos dentro do líquido' },
+      },
     ],
     armadilhas: [
       'Linhas A não distinguem pulmão normal de pneumotórax. Quem distingue é o deslizamento.',
@@ -1065,6 +1105,26 @@ export const JANELAS_ULTRASSOM: JanelaUltrassom[] = [
         diferencial: ['Celulite sem coleção (cobblestoning sem cavidade)', 'Linfonodo inflamado (forma de rim, hilo brilhante, fluxo ao Doppler)', 'Cisto epidérmico infectado', 'Hematoma', 'Fasciíte necrosante (líquido e gás ao longo da fáscia — emergência cirúrgica)'],
         ilustracao: { id: 'ultrassom', params: { cena: 'abscesso', diametro: 4 }, alt: 'Coleção hipoecoica irregular no subcutâneo com ecos internos e reforço posterior' },
       },
+      {
+        id: 'drenagem-guiada',
+        titulo: 'Drenagem de coleção guiada',
+        estado: 'alterado',
+        diagnostico: 'Procedimento: agulha ou dreno dentro da coleção sob visão direta.',
+        achado:
+          'Agulha hiperecogênica atravessando o subcutâneo em plano com o feixe, com artefato de reverberação atrás dela, e a ponta — o ponto mais brilhante — dentro da coleção hipoecoica. Ao aspirar, a coleção diminui em tempo real.',
+        leitura: [
+          'Escolha o trajeto mais curto que evite vasos e nervos, e confirme com Doppler.',
+          'Mantenha a agulha inteira no plano do feixe: se só a ponta some, é a ponta que está fora do plano.',
+          'Confirme a ponta dentro da coleção antes de aspirar.',
+          'Veja a cavidade colabar — é a prova de que drenou.',
+        ],
+        diferencaDoNormal:
+          'A diferença aqui não é entre normal e doente: é entre cego e guiado. Sem imagem, a agulha vai onde a mão acha que a coleção está; com imagem, vai onde ela está — e o operador vê, ao mesmo tempo, o que não deve furar. A taxa de sucesso sobe e a de complicação cai porque a hipótese virou observação.',
+        conduta:
+          'Antissepsia, anestesia local ao longo do trajeto, agulha ou dreno conforme a viscosidade e o tamanho; cultura do material. Coleção profunda, próxima a vasos, no pescoço ou com septos: radiologia intervencionista ou cirurgia. Reavaliar em 24 a 48 horas se persistir febre.',
+        diferencial: ['Coleção não drenável (flegmão, hematoma organizado)', 'Estrutura vascular confundida com coleção (Doppler antes de furar)', 'Linfonodo necrótico', 'Cisto'],
+        ilustracao: { id: 'ultrassom', params: { cena: 'drenagem-guiada', profundidade: 3 }, alt: 'Agulha hiperecogênica em plano com a ponta dentro de uma coleção subcutânea' },
+      },
     ],
     armadilhas: [
       'Abscesso muito espesso pode ser isoecoico ao tecido ao redor e passar despercebido. A compressão que faz o conteúdo rodar é o que o revela.',
@@ -1083,6 +1143,384 @@ export const JANELAS_ULTRASSOM: JanelaUltrassom[] = [
     referencias: [
       'Subramaniam S et al. Point-of-care ultrasound for diagnosis of abscess in skin and soft tissue infections. Acad Emerg Med, 2016.',
       'Stevens DL et al. IDSA practice guidelines for the diagnosis and management of skin and soft tissue infections. Clin Infect Dis, 2014.',
+    ],
+  },
+
+  {
+    slug: 'apical-quatro-camaras',
+    nome: 'Coração — apical quatro câmaras',
+    protocolo: 'Ecocardiografia focada / RUSH',
+    transdutor: 'setorial',
+    posicao: 'Ápice cardíaco (ictus, em geral quinto espaço intercostal na linha hemiclavicular ou axilar anterior), marcador para a esquerda do paciente, sonda apontada para o ombro direito. Decúbito lateral esquerdo ajuda.',
+    pergunta: 'As quatro câmaras têm tamanho proporcional — e alguma está sendo esmagada?',
+    profundidade: '14 a 18 cm.',
+    comoFazer: [
+      { passo: 'Encontre o ictus com a mão antes de encostar a sonda.', detalhe: 'A janela apical é a mais dependente de posição: um espaço acima ou abaixo mostra um corte oblíquo que distorce os tamanhos.' },
+      { passo: 'Ajuste até ver as quatro câmaras com o septo vertical e os dois anéis valvares no mesmo plano.', detalhe: 'O ápice fica no topo da tela; ventrículos em cima, átrios embaixo; o coração direito à esquerda da tela.' },
+      { passo: 'Compare o VD com o VE e olhe os átrios ao longo do ciclo.', detalhe: 'O VD normal tem até dois terços do VE. O átrio direito que invagina durante mais de um terço do ciclo é sinal de tamponamento.' },
+      { passo: 'Estime o enchimento: as paredes do VE se tocam na sístole?', detalhe: 'Cavidade que oblitera é hipovolemia ou vasoplegia — não é o mesmo que função boa.' },
+    ],
+    estruturas: [
+      { slug: 've-apical', nome: 'Ventrículo esquerdo', original: 'ventriculus sinister', nota: 'À direita da tela, em cima. Elíptico, de parede espessa; a área diastólica ao nível dos papilares é a medida do enchimento.', x: 62, y: 40 },
+      { slug: 'vd-apical', nome: 'Ventrículo direito', original: 'ventriculus dexter', nota: 'À esquerda da tela, triangular, com a banda moderadora. Menor que o VE; igual ou maior é sobrecarga.', x: 38, y: 38 },
+      { slug: 'ad-apical', nome: 'Átrio direito', original: 'atrium dextrum', nota: 'Embaixo, à esquerda. É a câmara de menor pressão — a primeira a colabar quando o pericárdio aperta.', x: 62, y: 72 },
+      { slug: 'ae-apical', nome: 'Átrio esquerdo', original: 'atrium sinistrum', nota: 'Embaixo, à direita. Aumentado na insuficiência cardíaca crônica e na fibrilação atrial.', x: 38, y: 72 },
+      { slug: 'pericardio-apical', nome: 'Pericárdio', original: 'pericardium', nota: 'A linha brilhante que contorna o coração. O derrame é a faixa preta entre ela e o miocárdio; mede-se na diástole.', x: 22, y: 30 },
+    ],
+    cenas: [
+      {
+        id: 'normal',
+        titulo: 'Quatro câmaras normais',
+        estado: 'normal',
+        diagnostico: 'Câmaras proporcionais, sem derrame, enchimento adequado.',
+        achado: 'VD com até dois terços do VE, átrios de tamanho semelhante entre si, septo reto, valvas abrindo e fechando, sem faixa anecoica ao redor do coração. O VE encolhe pela metade na sístole sem obliterar.',
+        leitura: ['Confira o plano pelos dois anéis valvares.', 'Compare VD e VE.', 'Olhe os átrios ao longo do ciclo.', 'Veja o pericárdio em toda a volta.'],
+        diferencaDoNormal: 'É a referência.',
+        conduta: 'Nenhuma. Em choque, quatro câmaras normais afastam tamponamento, cor pulmonale agudo e falência de bomba — o problema está fora do coração.',
+        diferencial: [],
+        ilustracao: { id: 'ultrassom', params: { cena: 'apical-normal' }, alt: 'Apical de quatro câmaras normal com ventrículos e átrios proporcionais' },
+      },
+      {
+        id: 'derrame-sem-tamponamento',
+        titulo: 'Derrame pericárdico sem tamponamento',
+        estado: 'alterado',
+        diagnostico: 'Líquido no pericárdio sem repercussão hemodinâmica.',
+        achado:
+          'Faixa anecoica circundando o coração, medida na diástole: pequena (< 10 mm), moderada (10 a 20 mm) ou grande (> 20 mm). Câmaras direitas de contorno preservado ao longo de todo o ciclo, veia cava com variação respiratória normal, sem oscilação exagerada do coração.',
+        leitura: [
+          'Meça a lâmina na diástole, no ponto mais espesso.',
+          'Confirme que circunda o coração — líquido só anterior pode ser gordura epicárdica.',
+          'Olhe o átrio e o ventrículo direitos por vários ciclos: sem invaginação, sem tamponamento.',
+          'Confira a cava: colapsando normalmente, a pressão pericárdica ainda não venceu.',
+        ],
+        diferencaDoNormal:
+          'O pericárdio normal tem uma película de líquido invisível ao ultrassom. Aqui ela virou uma faixa preta ao redor do coração — mas as câmaras continuam com o formato de sempre, porque o saco pericárdico se distendeu devagar e acomodou o volume. É a velocidade, não a quantidade, que decide o tamponamento: um litro em meses não aperta; cem mililitros em minutos apertam.',
+        conduta:
+          'Investigar a causa (infecção viral, uremia, neoplasia, hipotireoidismo, autoimune, pós-infarto) e tratar; anti-inflamatório e colchicina na pericardite. Vigilância ecocardiográfica: derrame grande ou que cresce merece reavaliação em dias. Pericardiocentese só se houver repercussão, suspeita de pus ou necessidade diagnóstica.',
+        diferencial: ['Gordura epicárdica (anterior, ecogênica, move-se com o coração)', 'Derrame pleural esquerdo (passa por trás da aorta descendente; o pericárdico passa pela frente)', 'Ascite junto ao coração na janela subxifoide', 'Cisto pericárdico'],
+        ilustracao: { id: 'ultrassom', params: { cena: 'apical-derrame', derrame: 15 }, alt: 'Faixa anecoica circundando o coração sem deformar as câmaras direitas' },
+      },
+      {
+        id: 'colapso-atrio-direito',
+        titulo: 'Colapso de átrio direito',
+        estado: 'alterado',
+        diagnostico: 'Tamponamento cardíaco — a pressão pericárdica venceu a da câmara de menor pressão.',
+        achado:
+          'Derrame com a parede livre do átrio direito invaginando para dentro da cavidade no final da diástole e começo da sístole ventricular, por mais de um terço do ciclo cardíaco. Costuma vir com colapso diastólico do VD, cava plectórica sem variação e coração oscilando dentro do líquido. Taquicardia, hipotensão, pulso paradoxal.',
+        leitura: [
+          'Congele o ciclo e conte: invaginação atrial que dura mais de um terço do ciclo é específica.',
+          'Procure o colapso diastólico do VD — mais específico ainda.',
+          'Olhe a cava: plectórica e fixa fecha o quadro.',
+          'Não espere o coração oscilar para agir; o colapso vem antes.',
+        ],
+        diferencaDoNormal:
+          'O átrio direito é a câmara de pressão mais baixa do coração — três, cinco milímetros de mercúrio. Quando o pericárdio se enche depressa, a pressão dentro dele passa a desse valor primeiro, e a parede do átrio, que é fina, afunda para dentro no momento em que ele está mais vazio. É a mesma faixa preta do derrame sem tamponamento; o que mudou é que agora ela empurra.',
+        conduta:
+          'Tamponamento é diagnóstico clínico-ecocardiográfico: derrame com colapso de câmara e paciente instável. Pericardiocentese guiada por ultrassom, de urgência; volume endovenoso enquanto se prepara; evitar ventilação com pressão positiva e vasodilatador. Tamponamento por dissecção ou trauma: cirurgia, não agulha.',
+        diferencial: ['Derrame grande sem tamponamento (sem colapso)', 'Pericardite constritiva', 'Hipovolemia grave com átrio pequeno (sem derrame)', 'Cor pulmonale agudo (VD dilatado, não colabado)'],
+        ilustracao: { id: 'ultrassom', params: { cena: 'apical-colapso-atrial', colapso: 40 }, alt: 'Derrame pericárdico com a parede do átrio direito invaginando para dentro da câmara' },
+        patologia: 'tamponamento-cardiaco',
+      },
+      {
+        id: 'hipovolemia',
+        titulo: 'Hipovolemia com cavidades pequenas',
+        estado: 'alterado',
+        diagnostico: 'Volume circulante baixo — o coração bombeia bem um sangue que não existe.',
+        achado:
+          'Ventrículos pequenos, hiperdinâmicos, com as paredes do VE quase se tocando ou se tocando na sístole ("beijo dos papilares"); área diastólica do VE reduzida; átrios pequenos; sem derrame. Cava fina e colabada.',
+        leitura: [
+          'Veja a sístole: paredes que se tocam é o sinal.',
+          'Estime a área diastólica do VE — abaixo de 10 cm² no adulto é cavidade pequena.',
+          'Confirme com a cava colabada e o pulmão seco.',
+          'Diferencie de vasoplegia: a imagem é igual; a resposta ao volume e o contexto separam.',
+        ],
+        diferencaDoNormal:
+          'O ventrículo normal se enche até uma área confortável e ejeta metade. Sem volume para enchê-lo, ele parte de uma cavidade pequena e a esvazia inteira — a fração de ejeção parece excelente, e é justamente o excesso de eficiência que denuncia o vazio. Contração vigorosa com cavidade vazia é o coração pedindo sangue.',
+        conduta:
+          'Volume, guiado pela resposta: reavaliar a cava, o pulmão e o VE após cada alíquota. Em choque, cavidades pequenas e hiperdinâmicas apontam hipovolemia (hemorragia, desidratação) ou vasoplegia (sepse, anafilaxia) — procurar a fonte de perda e tratar a causa. Vasopressor quando o volume foi reposto e a pressão não sobe.',
+        diferencial: ['Sepse com vasoplegia (mesma imagem, cava variável)', 'Cardiomiopatia hipertrófica com obstrução (paredes espessas)', 'Anemia grave', 'Taquicardia extrema encurtando o enchimento'],
+        ilustracao: { id: 'ultrassom', params: { cena: 'apical-hipovolemia', area: 8 }, alt: 'Ventrículos pequenos e hiperdinâmicos com paredes do VE quase se tocando' },
+        patologia: 'choque-hipovolemico',
+      },
+    ],
+    armadilhas: [
+      'Corte oblíquo faz o VD parecer maior ou menor. Confirme o plano pelos dois anéis valvares.',
+      'Gordura epicárdica anterior simula derrame: é ecogênica, não circunda o coração e se move com ele.',
+      'Derrame grande sem colapso não é tamponamento; derrame pequeno com colapso pode ser.',
+      'Cavidade pequena hiperdinâmica não é "função ótima": é hipovolemia ou vasoplegia até prova em contrário.',
+    ],
+    ondeVerFoto: [
+      {
+        titulo: 'The POCUS Atlas',
+        url: 'https://www.thepocusatlas.com/echocardiography',
+        oQueProcurar: 'Apical de quatro câmaras normal, derrames com e sem colapso de câmaras, e o VE hiperdinâmico da hipovolemia.',
+        licenciada: 'pocus-atlas',
+      },
+    ],
+    referencias: [
+      'Klein AL et al. ASE Recommendations for Multimodality Cardiovascular Imaging of Patients with Pericardial Disease. J Am Soc Echocardiogr, 2013.',
+      'Perera P et al. The RUSH exam. Emerg Med Clin North Am, 2010.',
+    ],
+  },
+
+  {
+    slug: 'fast-pelve',
+    nome: 'FAST — pelve',
+    protocolo: 'FAST / eFAST',
+    transdutor: 'convexo',
+    posicao: 'Suprapúbico, transverso e sagital, com a bexiga cheia como janela. Se a bexiga está vazia, a janela some — pinçar a sonda vesical ajuda.',
+    pergunta: 'Há líquido livre atrás ou ao lado da bexiga?',
+    profundidade: '12 a 16 cm.',
+    comoFazer: [
+      { passo: 'Encoste acima do púbis e angule para a pelve.', detalhe: 'A bexiga cheia é a janela; sem ela, o gás das alças esconde tudo.' },
+      { passo: 'Varra em transverso e em sagital.', detalhe: 'O líquido se acumula no fundo de saco (atrás do útero na mulher, atrás da bexiga no homem) e nos lados da bexiga.' },
+      { passo: 'Procure a faixa anecoica de bordas angulares.', detalhe: 'Líquido livre se insinua entre estruturas e faz ângulos agudos; coleção com parede própria é outra coisa.' },
+      { passo: 'Não confunda a bexiga com o líquido, nem as vesículas seminais com coleção.', detalhe: 'A bexiga tem parede; o líquido livre não. As vesículas são pares e simétricas.' },
+    ],
+    estruturas: [
+      { slug: 'bexiga-fast', nome: 'Bexiga', original: 'vesica urinaria', nota: 'A janela: anecoica, com parede fina e brilhante. O líquido livre fica fora dela, atrás ou ao lado.', x: 50, y: 36 },
+      { slug: 'fundo-de-saco', nome: 'Fundo de saco (recesso retovesical ou retouterino)', original: 'excavatio rectovesicalis · rectouterina', nota: 'O ponto mais dependente da pelve em decúbito dorsal. É onde o líquido livre aparece primeiro.', x: 50, y: 60 },
+      { slug: 'utero-fast', nome: 'Útero (ou reto)', original: 'uterus · rectum', nota: 'A estrutura sólida atrás da bexiga. Na mulher, o líquido fica entre o útero e o reto — o fundo de saco de Douglas.', x: 50, y: 70 },
+    ],
+    cenas: [
+      {
+        id: 'normal',
+        titulo: 'Pelve sem líquido livre',
+        estado: 'normal',
+        diagnostico: 'FAST pélvico negativo.',
+        achado: 'Bexiga anecoica com parede fina, útero ou reto encostados nela, sem faixa anecoica entre as estruturas nem nos flancos da bexiga, em dois planos.',
+        leitura: ['Confirme a janela pela bexiga.', 'Varra transverso e sagital.', 'Olhe atrás e dos lados.'],
+        diferencaDoNormal: 'É a referência.',
+        conduta: 'Nenhuma pelo achado. FAST negativo em trauma não exclui lesão: repita se o paciente piorar, e a tomografia decide no estável.',
+        diferencial: [],
+        ilustracao: { id: 'ultrassom', params: { cena: 'fast-pelve-normal' }, alt: 'Bexiga cheia em corte transverso sem líquido livre ao redor' },
+      },
+      {
+        id: 'liquido-livre',
+        titulo: 'Líquido livre pélvico',
+        estado: 'alterado',
+        diagnostico: 'Hemoperitônio (no trauma) ou outro líquido intraperitoneal na pelve.',
+        achado: 'Faixa anecoica de bordas angulares atrás da bexiga, no fundo de saco, ou nos flancos vesicais, insinuando-se entre alças e útero. Na mulher jovem, uma lâmina mínima no fundo de saco pode ser fisiológica; mais que isso, ou em trauma, é positivo.',
+        leitura: [
+          'Diga onde está: fundo de saco, paravesical ou ambos.',
+          'Estime a lâmina em milímetros.',
+          'Confira as outras janelas do FAST — a pelve positiva isolada é possível.',
+          'Em mulher em idade fértil sem trauma, pense em ectópica rota e cisto roto.',
+        ],
+        diferencaDoNormal:
+          'Na pelve normal, as estruturas se encostam sem nada entre elas. O líquido livre é o que se coloca no meio: ele não tem parede, escorre para o ponto mais baixo e ocupa os ângulos — por isso as bordas são agudas. Sangue recente é anecoico como urina; a diferença é que a bexiga tem parede, e o sangue não.',
+        conduta:
+          'Trauma instável com FAST positivo: laparotomia. Estável: tomografia. Fora do trauma, a pelve positiva em mulher com beta-hCG positivo é gestação ectópica rota até prova em contrário; em paciente febril, abscesso ou perfuração; em cirrótico, ascite. O líquido é o sinal — a causa está no contexto.',
+        diferencial: ['Líquido fisiológico do fundo de saco (lâmina mínima, mulher jovem)', 'Bexiga (tem parede)', 'Vesículas seminais e cisto ovariano (têm parede e forma própria)', 'Ascite', 'Coleção pélvica (parede, ecos)'],
+        ilustracao: { id: 'ultrassom', params: { cena: 'fast-pelve-liquido', lamina: 12 }, alt: 'Faixa anecoica de bordas angulares atrás da bexiga, no fundo de saco' },
+        patologia: 'trauma-abdominal-fechado',
+      },
+    ],
+    armadilhas: [
+      'Bexiga vazia é janela fechada: o FAST pélvico negativo com bexiga vazia não vale.',
+      'Vesículas seminais e ovários simulam líquido; são estruturas com parede e forma constante.',
+      'Lâmina fisiológica no fundo de saco de mulher jovem não é FAST positivo; no trauma, considere positivo e reavalie.',
+      'Líquido livre não diz o que é: sangue, urina, ascite e pus têm a mesma cara.',
+    ],
+    ondeVerFoto: [
+      {
+        titulo: 'The POCUS Atlas',
+        url: 'https://www.thepocusatlas.com/trauma',
+        oQueProcurar: 'Janela pélvica do FAST negativa e positiva, em transverso e sagital.',
+        licenciada: 'pocus-atlas',
+      },
+    ],
+    referencias: [
+      'Rozycki GS et al. Surgeon-performed ultrasound for the assessment of truncal injuries. Ann Surg, 1998.',
+      'ATLS — Advanced Trauma Life Support, 10ª ed.',
+    ],
+  },
+
+  {
+    slug: 'abdome-agudo',
+    nome: 'Abdome agudo — apêndice e coleções',
+    protocolo: 'Dor abdominal / fossa ilíaca direita',
+    transdutor: 'linear',
+    posicao: 'Sobre o ponto de maior dor na fossa ilíaca direita, com compressão graduada; sonda linear no magro e na criança, convexa no obeso. Para coleções, sobre a área dolorosa ou o local da cirurgia.',
+    pergunta: 'É apendicite? Há coleção drenável?',
+    profundidade: '5 a 8 cm (linear) ou 10 a 14 cm (convexo).',
+    comoFazer: [
+      { passo: 'Peça ao paciente para apontar a dor e comece por ali.', detalhe: 'O apêndice inflamado está debaixo do dedo do paciente na maioria das vezes.' },
+      { passo: 'Comprima gradualmente até afastar as alças e ver o psoas e os vasos ilíacos.', detalhe: 'A compressão esvazia o gás das alças normais; o apêndice inflamado não comprime e dói.' },
+      { passo: 'Procure a estrutura tubular cega, sem peristalse, saindo do ceco.', detalhe: 'Meça o diâmetro externo em transverso: até 6 mm é normal. Veja a parede, a gordura ao redor e o líquido.' },
+      { passo: 'Coleção: procure parede, conteúdo e o que está ao redor.', detalhe: 'Coleção com parede definida e conteúdo heterogêneo entre alças ou junto a órgão é abscesso até prova em contrário.' },
+    ],
+    estruturas: [
+      { slug: 'apendice', nome: 'Apêndice', original: 'appendix vermiformis', nota: 'Tubo cego que sai do ceco, com parede em camadas. Normal até 6 mm, compressível, sem peristalse — e frequentemente invisível quando sadio.', x: 50, y: 50 },
+      { slug: 'gordura-mesenterica', nome: 'Gordura mesentérica', nota: 'Escura e discreta no normal. Inflamada, fica brilhante, espessa e parece abraçar o apêndice — é o sinal de que a inflamação saiu da parede.', x: 50, y: 24 },
+      { slug: 'psoas', nome: 'Músculo psoas', original: 'musculus psoas major', nota: 'A referência profunda: o apêndice fica entre a parede abdominal e ele.', x: 50, y: 84 },
+    ],
+    cenas: [
+      {
+        id: 'normal',
+        titulo: 'Apêndice normal',
+        estado: 'normal',
+        diagnostico: 'Apêndice de calibre normal, compressível, sem sinais inflamatórios.',
+        achado: 'Estrutura tubular cega, de até 6 mm de diâmetro externo, com parede em camadas, que se comprime com a sonda, sem líquido ao redor nem gordura ecogênica. Muitas vezes não é encontrado — e não encontrá-lo não é o mesmo que excluí-lo.',
+        leitura: ['Identifique o ceco e siga até o fundo cego.', 'Meça em transverso.', 'Comprima e veja colabar.'],
+        diferencaDoNormal: 'É a referência.',
+        conduta: 'Apêndice normal visualizado afasta apendicite com boa segurança. Apêndice não visualizado com dor persistente pede tomografia ou reavaliação em horas.',
+        diferencial: [],
+        ilustracao: { id: 'ultrassom', params: { cena: 'apendice-normal' }, alt: 'Apêndice normal em corte longitudinal, tubular, cego e compressível' },
+      },
+      {
+        id: 'apendicite',
+        titulo: 'Apendicite',
+        estado: 'alterado',
+        diagnostico: 'Inflamação aguda do apêndice — cirurgia na maioria dos casos.',
+        achado:
+          'Apêndice com mais de 6 mm de diâmetro externo, não compressível, doloroso sob a sonda, com parede espessada e às vezes perda das camadas; gordura mesentérica ecogênica ao redor, lâmina de líquido periapendicular, apendicolito com sombra no interior. Hiperfluxo na parede ao Doppler ("anel de fogo"). Perfurado: perda da parede, coleção e gás.',
+        leitura: [
+          'Meça o diâmetro externo em transverso: acima de 6 mm.',
+          'Comprima: não colaba e dói exatamente ali.',
+          'Olhe a gordura ao redor — brilhante é inflamação que saiu do apêndice.',
+          'Procure apendicolito, líquido e coleção: mudam o risco de perfuração.',
+        ],
+        diferencaDoNormal:
+          'O apêndice normal é um tubo mole e vazio que a sonda esmaga. Obstruído — por fecalito, hiperplasia linfoide —, ele se enche, a pressão dentro sobe, a parede incha e o sangue arterial para de entrar: o tubo fica rígido, largo e doloroso, e a gordura ao redor acende porque a inflamação já a alcançou. Cada sinal é a mesma obstrução vista de um ponto diferente.',
+        conduta:
+          'Apendicectomia (laparoscópica) na apendicite não complicada com cirurgião disponível; antibiótico isolado é alternativa em casos selecionados. Perfuração com abscesso: antibiótico, drenagem percutânea e apendicectomia de intervalo ou imediata conforme o caso. Tomografia quando o ultrassom é inconclusivo, sobretudo no adulto.',
+        diferencial: ['Adenite mesentérica (linfonodos, apêndice normal)', 'Ileíte terminal (Crohn, infecciosa)', 'Torção ou cisto ovariano, doença inflamatória pélvica, gestação ectópica', 'Diverticulite cecal ou de Meckel', 'Cólica renal direita'],
+        ilustracao: { id: 'ultrassom', params: { cena: 'apendicite', diametro: 9 }, alt: 'Apêndice espessado, não compressível, com apendicolito e gordura ecogênica ao redor' },
+      },
+      {
+        id: 'abscesso-intra-abdominal',
+        titulo: 'Abscesso intra-abdominal',
+        estado: 'alterado',
+        diagnostico: 'Coleção purulenta na cavidade ou junto a um órgão — pós-operatória, por perfuração ou diverticulite.',
+        achado:
+          'Coleção hipoecoica ou heterogênea, de paredes definidas e irregulares, com ecos internos, septos ou nível líquido-detritos, e às vezes gás (pontos brilhantes com sombra suja). Alças ao redor deslocadas; dor localizada sob a sonda. Febre, leucocitose, íleo.',
+        leitura: [
+          'Diferencie de alça cheia de líquido: a alça tem peristalse e parede em camadas.',
+          'Procure gás dentro — é o sinal mais específico de pus.',
+          'Meça e descreva a relação com os órgãos vizinhos.',
+          'Avalie se há trajeto seguro para drenagem percutânea.',
+        ],
+        diferencaDoNormal:
+          'O abdome normal é um mosaico de alças com gás e vísceras sólidas, sem coleção alguma. O abscesso é uma cavidade que o corpo construiu ao redor de uma infecção que não conseguiu resolver: parede de fibrina e tecido de granulação, conteúdo de pus e detritos. Ele desloca o que está ao redor porque ocupa um espaço que não existia.',
+        conduta:
+          'Antibiótico de amplo espectro e drenagem: percutânea guiada por ultrassom ou tomografia quando há trajeto seguro, cirúrgica quando não há, quando é multiloculada ou quando a fonte precisa de correção (perfuração, deiscência). Cultura do material. Tomografia com contraste para mapear coleções múltiplas e a fonte.',
+        diferencial: ['Alça de intestino com líquido', 'Hematoma', 'Seroma ou linfocele pós-operatórios', 'Cisto complexo', 'Tumor necrosado'],
+        ilustracao: { id: 'ultrassom', params: { cena: 'abscesso-abdominal', diametro: 6 }, alt: 'Coleção heterogênea de paredes definidas com ecos internos entre alças intestinais' },
+      },
+    ],
+    armadilhas: [
+      'Apêndice não visualizado não é apêndice normal. É exame inconclusivo.',
+      'Alça do íleo terminal comprimida simula apêndice — mas tem peristalse e não termina em fundo cego.',
+      'Apêndice retrocecal escapa da compressão graduada; use a janela lateral ou a tomografia.',
+      'Coleção pós-operatória sem febre pode ser seroma; a punção decide, não a imagem.',
+    ],
+    ondeVerFoto: [
+      {
+        titulo: 'The POCUS Atlas',
+        url: 'https://www.thepocusatlas.com/bowel',
+        oQueProcurar: 'Apêndice normal e apendicite em transverso e longitudinal, com apendicolito e anel de fogo; coleções intra-abdominais.',
+        licenciada: 'pocus-atlas',
+      },
+    ],
+    referencias: [
+      'Puylaert JB. Acute appendicitis: US evaluation using graded compression. Radiology, 1986.',
+      'Di Saverio S et al. Diagnosis and treatment of acute appendicitis: 2020 update of the WSES Jerusalem guidelines. World J Emerg Surg, 2020.',
+    ],
+  },
+
+  {
+    slug: 'obstetrico-primeiro-trimestre',
+    nome: 'Obstétrico — primeiro trimestre',
+    protocolo: 'Dor ou sangramento com beta-hCG positivo',
+    transdutor: 'convexo',
+    posicao: 'Transabdominal suprapúbico com bexiga cheia, sagital e transverso; transvaginal quando a transabdominal não define. Marcador para a cabeça no sagital.',
+    pergunta: 'A gestação está dentro do útero?',
+    profundidade: '12 a 16 cm (transabdominal).',
+    comoFazer: [
+      { passo: 'Encontre o útero atrás da bexiga, em sagital, e identifique o endométrio.', detalhe: 'A faixa brilhante central é a referência: o saco gestacional verdadeiro fica dentro dela, excêntrico, com anel ecogênico.' },
+      { passo: 'Procure o saco, a vesícula vitelina e o embrião — nessa ordem.', detalhe: 'Só a vesícula vitelina ou o embrião confirmam gestação intrauterina. Saco vazio pode ser pseudossaco de ectópica.' },
+      { passo: 'Se não há gestação intrauterina, olhe os anexos e o fundo de saco.', detalhe: 'Massa anexial separada do ovário e líquido livre, com beta-hCG positivo, é ectópica até prova em contrário.' },
+      { passo: 'Confirme a posição do útero antes de chamar de intrauterina.', detalhe: 'Gestação cornual, cervical ou em cicatriz de cesárea parece "dentro" no corte errado. Veja o miométrio ao redor do saco em todas as direções.' },
+    ],
+    estruturas: [
+      { slug: 'utero', nome: 'Útero', original: 'uterus', nota: 'Atrás da bexiga, em pera invertida no sagital. O miométrio homogêneo deve envolver o saco por todos os lados.', x: 60, y: 46 },
+      { slug: 'endometrio', nome: 'Endométrio', original: 'endometrium', nota: 'A faixa brilhante central. Espessado e sem saco, com beta-hCG positivo, é o cenário da ectópica.', x: 60, y: 40 },
+      { slug: 'saco-gestacional', nome: 'Saco gestacional', original: 'saccus gestationis', nota: 'Área anecoica excêntrica no endométrio, com anel ecogênico (sinal do duplo anel decidual). Visível a partir de 4,5 a 5 semanas.', x: 60, y: 47 },
+      { slug: 'anexo', nome: 'Anexo (tuba e ovário)', original: 'adnexa uteri', nota: 'Lateral ao útero. O ovário tem folículos; a massa da ectópica é separada dele e pode ter o próprio anel.', x: 86, y: 70 },
+      { slug: 'fundo-de-saco-ob', nome: 'Fundo de saco de Douglas', original: 'excavatio rectouterina', nota: 'Atrás do útero. Líquido ecogênico ali é sangue — a ectópica rota.', x: 66, y: 84 },
+    ],
+    cenas: [
+      {
+        id: 'gravidez-intrauterina',
+        titulo: 'Gravidez intrauterina',
+        estado: 'normal',
+        diagnostico: 'Gestação dentro do útero — afasta ectópica, salvo heterotópica.',
+        achado: 'Saco gestacional excêntrico no endométrio, com anel ecogênico, contendo vesícula vitelina (a partir de 5 semanas) e embrião com batimento (a partir de 6 semanas). Miométrio ao redor do saco em todas as direções.',
+        leitura: ['Localize o saco dentro do endométrio.', 'Procure a vesícula vitelina — é o que confirma.', 'Veja o embrião e o batimento.', 'Confirme miométrio ao redor em todos os cortes.'],
+        diferencaDoNormal: 'É a referência.',
+        conduta: 'Confirmada a gestação intrauterina, a dor ou o sangramento passam a ter outras causas (ameaça de aborto, cisto de corpo lúteo). Heterotópica é rara, mas real em fertilização assistida. Datar pelo comprimento cabeça-nádega e encaminhar ao pré-natal.',
+        diferencial: [],
+        ilustracao: { id: 'ultrassom', params: { cena: 'gravidez-intrauterina', semanas: 7 }, alt: 'Saco gestacional com vesícula vitelina e embrião dentro do endométrio' },
+      },
+      {
+        id: 'gestacao-ectopica',
+        titulo: 'Gestação ectópica',
+        estado: 'alterado',
+        diagnostico: 'Gestação fora do útero — tubária na maioria — com risco de rotura e hemorragia.',
+        achado:
+          'Útero sem saco gestacional (ou com pseudossaco central, sem anel), endométrio espessado, e massa anexial separada do ovário: anel tubário ecogênico, saco com embrião fora do útero ou massa heterogênea. Líquido livre no fundo de saco, ecogênico se já sangrou. Beta-hCG acima da zona discriminatória sem gestação intrauterina fecha a suspeita.',
+        leitura: [
+          'Confirme que o útero está vazio de verdade, em dois planos.',
+          'Procure a massa anexial e veja se ela se move separada do ovário ("sinal do deslizamento").',
+          'Olhe o fundo de saco e o recesso hepatorrenal: sangue lá é rotura.',
+          'Correlacione com o beta-hCG: acima de 1.500 a 2.000 sem saco intrauterino é ectópica até prova em contrário.',
+        ],
+        diferencaDoNormal:
+          'Na gestação normal, o embrião se implanta no endométrio e o útero cresce ao redor dele. Na ectópica, ele parou no caminho — na tuba, quase sempre — e cresce num lugar que não distende: a tuba se rompe em semanas. O útero recebe os hormônios e espessa o endométrio, mas está vazio; e é o vazio, junto com o beta-hCG, que faz o diagnóstico antes mesmo de se ver a massa.',
+        conduta:
+          'Instável ou com líquido livre abundante: cirurgia imediata (salpingectomia ou salpingostomia), com reposição volêmica e sangue. Estável, massa pequena, sem batimento e beta-hCG baixo: metotrexato com seguimento seriado. Rh negativo recebe imunoglobulina. Beta-hCG indeterminado sem instabilidade: repetir em 48 horas — a subida lenta é o padrão da ectópica.',
+        diferencial: ['Gestação intrauterina muito precoce (saco ainda invisível)', 'Aborto completo (útero vazio, beta-hCG caindo)', 'Cisto de corpo lúteo (no ovário, não separado dele)', 'Gestação heterotópica', 'Massa anexial de outra natureza'],
+        ilustracao: { id: 'ultrassom', params: { cena: 'gestacao-ectopica', massa: 25 }, alt: 'Útero vazio com endométrio espessado e massa anexial em anel fora do útero' },
+      },
+      {
+        id: 'liquido-livre-gestante',
+        titulo: 'Líquido livre em gestante com dor',
+        estado: 'alterado',
+        diagnostico: 'Hemoperitônio por gestação ectópica rota até prova em contrário.',
+        achado:
+          'Líquido no fundo de saco de Douglas, em volume maior que a lâmina fisiológica, frequentemente ecogênico ou com coágulos, e que sobe ao recesso hepatorrenal quando o volume é grande. Útero sem gestação intrauterina; massa anexial pode ou não ser visível. Dor, sangramento vaginal, síncope, taquicardia.',
+        leitura: [
+          'Estime o volume: só no fundo de saco é pouco; chegando a Morrison é muito.',
+          'Olhe a ecogenicidade: sangue com coágulo não é anecoico como a lâmina fisiológica.',
+          'Procure a gestação — dentro ou fora do útero.',
+          'Não gaste tempo procurando a massa se o paciente está instável: o líquido mais o beta-hCG já decidem.',
+        ],
+        diferencaDoNormal:
+          'Uma lâmina mínima de líquido no fundo de saco é normal em mulher jovem — é o que sobra da ovulação. O que muda tudo é o volume e o conteúdo: sangue de rotura tubária é abundante, tem coágulos e sobe pelos recessos até o fígado. Numa mulher com beta-hCG positivo, líquido em Morrison é uma tuba rota até que alguém prove o contrário.',
+        conduta:
+          'Duas veias calibrosas, tipagem e reserva de sangue, ginecologia imediata para laparoscopia ou laparotomia. Não aguardar tomografia nem beta-hCG quantitativo se instável. Imunoglobulina anti-D se Rh negativo. Estável com pouco líquido e ectópica pequena: internar e discutir conduta conservadora com vigilância rigorosa.',
+        diferencial: ['Cisto ovariano roto (com ou sem gestação)', 'Corpo lúteo hemorrágico', 'Lâmina fisiológica do fundo de saco', 'Ascite de outra causa', 'Trauma'],
+        ilustracao: { id: 'ultrassom', params: { cena: 'liquido-livre-gestante', volume: 500 }, alt: 'Líquido ecogênico no fundo de saco atrás do útero vazio' },
+      },
+    ],
+    armadilhas: [
+      'Chamar pseudossaco de gestação intrauterina: o pseudossaco é central, sem anel, sem vesícula vitelina.',
+      'Confundir gestação cornual ou cervical com intrauterina. Confirme miométrio ao redor do saco em todos os planos.',
+      'Esperar a massa anexial para diagnosticar: útero vazio com beta-hCG acima da zona discriminatória já basta para agir.',
+      'Beta-hCG abaixo da zona discriminatória não exclui ectópica — exclui apenas que ela devesse ser visível.',
+    ],
+    ondeVerFoto: [
+      {
+        titulo: 'The POCUS Atlas',
+        url: 'https://www.thepocusatlas.com/obgyn',
+        oQueProcurar: 'Gestação intrauterina com vesícula vitelina e batimento, anel tubário da ectópica, e líquido livre da ectópica rota.',
+        licenciada: 'pocus-atlas',
+      },
+    ],
+    referencias: [
+      'ACOG Practice Bulletin No. 193: Tubal Ectopic Pregnancy. Obstet Gynecol, 2018.',
+      'Doubilet PM et al. Diagnostic criteria for nonviable pregnancy early in the first trimester. N Engl J Med, 2013.',
     ],
   },
 ]
