@@ -24,7 +24,6 @@ import {
   Plus,
   RefreshCw,
   Search,
-  Sparkles,
   Trash2,
   XCircle,
   type LucideIcon,
@@ -52,7 +51,9 @@ import { cn } from '@/lib/utils'
 import { PERIODO_OPTIONS, formatPeriodoLabel } from '@/lib/user-periodo'
 import { CampoDestino } from '@/components/admin/anuncios/campo-destino'
 import { CampoImagem } from '@/components/admin/anuncios/campo-imagem'
+import { PainelDiagnostico } from '@/components/admin/anuncios/painel-diagnostico'
 import { PainelModelos } from '@/components/admin/anuncios/painel-modelos'
+import { AnuncioModal, sanitizeModalHtml } from '@/components/anuncio-modal'
 import { listarPlaceholders, type AnuncioTemplate } from '@/lib/anuncio-templates'
 import {
   ANUNCIO_DESTINO_LABEL,
@@ -197,6 +198,7 @@ function AdminAnunciosContent() {
   const [formData, setFormData] = useState<FormData>(initialFormData)
   const [submitting, setSubmitting] = useState(false)
   const [ignorePlaceholders, setIgnorePlaceholders] = useState(false)
+  const [previewAd, setPreviewAd] = useState<Anuncio | null>(null)
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [anuncioToDelete, setAnuncioToDelete] = useState<Anuncio | null>(null)
@@ -273,6 +275,13 @@ function AdminAnunciosContent() {
       formData.modalTitulo,
       formData.titulo,
     ],
+  )
+
+  // O mesmo saneamento da exibição pública: a pré-visualização tem de mostrar
+  // inclusive o que será REMOVIDO do texto, e não uma versão mais generosa.
+  const previewHtml = useMemo(
+    () => sanitizeModalHtml(previewAd?.modalConteudo || ''),
+    [previewAd?.modalConteudo],
   )
 
   const filteredAnuncios = useMemo(() => {
@@ -583,19 +592,7 @@ function AdminAnunciosContent() {
         </div>
       </div>
 
-      <div className="mb-6 overflow-hidden rounded-lg border border-[#468152]/20 bg-white/55 p-4 shadow-sm backdrop-blur-xl dark:border-emerald-400/20 dark:bg-white/[0.04]">
-        <div className="flex items-start gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[#468152]/20 bg-[#468152]/10 text-[#468152]">
-            <Sparkles className="h-5 w-5" />
-          </div>
-          <div>
-            <h2 className="text-sm font-bold">Exibicao global ativada</h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Anuncios ativos desta lista aparecem como uma peca flutuante, sucinta e com glassmorphism em toda a plataforma. Rotas com <span className="font-semibold text-foreground">/viewer</span> ficam sem exibicao.
-            </p>
-          </div>
-        </div>
-      </div>
+      <PainelDiagnostico anuncios={anuncios} tituloDe={getAdTitle} />
 
       <div className="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
         <MetricCard icon={BarChart3} label="Total" value={stats.total} helper="Cadastrados" />
@@ -659,6 +656,7 @@ function AdminAnunciosContent() {
                     onEdit={openEditDialog}
                     onDelete={confirmDelete}
                     onCopy={copyText}
+                    onPreview={setPreviewAd}
                   />
                 )
               })}
@@ -704,6 +702,30 @@ function AdminAnunciosContent() {
               />
 
               <PainelModelos onAplicar={applyTemplate} />
+
+              {formData.tipoAcao === 'modal' && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() =>
+                    setPreviewAd({
+                      _id: 'preview',
+                      imagemUrl: formData.imagemUrl,
+                      ativo: formData.ativo,
+                      ordem: 0,
+                      tipoAcao: 'modal',
+                      modalTitulo: formData.modalTitulo || 'Titulo do modal',
+                      modalConteudo: formData.modalConteudo,
+                      modalBotaoTexto: formData.modalBotaoTexto,
+                      modalBotaoLink: formData.modalBotaoLink,
+                    })
+                  }
+                  className="w-full"
+                >
+                  <Eye className="mr-2 h-4 w-4" />
+                  Ver como o modal fica para o usuario
+                </Button>
+              )}
 
               <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_180px]">
                 <div className="space-y-2">
@@ -971,6 +993,15 @@ function AdminAnunciosContent() {
         </DialogContent>
       </Dialog>
 
+      <AnuncioModal
+        ad={previewAd}
+        html={previewHtml}
+        open={!!previewAd}
+        onOpenChange={(open) => !open && setPreviewAd(null)}
+        onAcao={() => setPreviewAd(null)}
+        etiqueta="Pre-visualizacao"
+      />
+
       <ToastAlert
         open={toast.open}
         onOpenChange={(open) => setToast({ ...toast, open })}
@@ -1060,6 +1091,7 @@ function AdListItem({
   onEdit,
   onDelete,
   onCopy,
+  onPreview,
 }: {
   anuncio: Anuncio
   isFirst: boolean
@@ -1070,6 +1102,7 @@ function AdListItem({
   onEdit: (anuncio: Anuncio) => void
   onDelete: (anuncio: Anuncio) => void
   onCopy: (text: string, label: string) => void
+  onPreview: (anuncio: Anuncio) => void
 }) {
   const isBusy = loadingKey?.startsWith(anuncio._id)
   const [imagemQuebrada, setImagemQuebrada] = useState(false)
@@ -1169,6 +1202,11 @@ function AdListItem({
               <Eye className="h-4 w-4" />
             )}
           </IconButton>
+          {anuncio.tipoAcao === 'modal' && (
+            <IconButton label="Pre-visualizar modal" onClick={() => onPreview(anuncio)}>
+              <Eye className="h-4 w-4" />
+            </IconButton>
+          )}
           <IconButton label="Copiar URL da imagem" onClick={() => onCopy(anuncio.imagemUrl, 'URL da imagem')}>
             <Copy className="h-4 w-4" />
           </IconButton>

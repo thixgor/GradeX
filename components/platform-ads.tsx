@@ -12,17 +12,15 @@ import {
   Sparkles,
   X,
 } from 'lucide-react'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
+import { AnuncioModal, sanitizeModalHtml } from '@/components/anuncio-modal'
 import { cn } from '@/lib/utils'
 import { toInternalPath, type AnuncioDestinoTipo } from '@/lib/anuncio-destinos'
+import {
+  ANUNCIO_DISMISS_MS,
+  ANUNCIO_DISMISS_STORAGE_KEY,
+  lerOcultacaoDeAnuncios,
+  shouldHideAdsOnRoute,
+} from '@/lib/anuncio-exibicao'
 
 export interface PlatformAdDestino {
   tipo?: AnuncioDestinoTipo
@@ -49,46 +47,6 @@ export interface PlatformAd {
 }
 
 const ROTATION_MS = 8000
-const DISMISS_STORAGE_KEY = 'domineaqui-platform-ads-dismissed-until'
-const DISMISS_MS = 30 * 60 * 1000
-
-const AD_HIDDEN_EXACT_PATHS = new Set([
-  '/buy',
-  '/buy/checkout',
-  '/materiais/checkout',
-])
-
-const AD_HIDDEN_PREFIXES = [
-  '/admin',
-  '/auth',
-  '/exam',
-  '/exams',
-  '/forms',
-  '/lead',
-]
-
-function isSingleNestedRoute(pathname: string, basePath: string) {
-  if (!pathname.startsWith(`${basePath}/`)) return false
-
-  const rest = pathname.slice(basePath.length + 1)
-  return rest.length > 0 && !rest.includes('/')
-}
-
-function shouldHideAdsOnRoute(pathname?: string | null) {
-  if (!pathname) return false
-
-  const normalizedPath = pathname === '/' ? pathname : pathname.replace(/\/+$/, '')
-
-  return (
-    normalizedPath.includes('/viewer') ||
-    AD_HIDDEN_EXACT_PATHS.has(normalizedPath) ||
-    AD_HIDDEN_PREFIXES.some(
-      (prefix) => normalizedPath === prefix || normalizedPath.startsWith(`${prefix}/`),
-    ) ||
-    isSingleNestedRoute(normalizedPath, '/materiais') ||
-    isSingleNestedRoute(normalizedPath, '/pacotes')
-  )
-}
 
 function normalizeAds(payload: unknown): PlatformAd[] {
   const raw = Array.isArray(payload)
@@ -158,88 +116,6 @@ function getAdDestination(ad: PlatformAd) {
   }
 }
 
-function sanitizeModalHtml(html: string) {
-  if (typeof window === 'undefined' || typeof DOMParser === 'undefined') {
-    return html
-  }
-
-  const allowedTags = new Set([
-    'A',
-    'B',
-    'BLOCKQUOTE',
-    'BR',
-    'EM',
-    'H3',
-    'H4',
-    'HR',
-    'I',
-    'LI',
-    'OL',
-    'P',
-    'SMALL',
-    'SPAN',
-    'STRONG',
-    'U',
-    'UL',
-  ])
-  const parser = new DOMParser()
-  const doc = parser.parseFromString(html, 'text/html')
-
-  doc
-    .querySelectorAll('script, style, iframe, object, embed, form, input, button')
-    .forEach((node) => node.remove())
-
-  Array.from(doc.body.querySelectorAll('*')).forEach((element) => {
-    if (!allowedTags.has(element.tagName)) {
-      element.replaceWith(...Array.from(element.childNodes))
-      return
-    }
-
-    Array.from(element.attributes).forEach((attribute) => {
-      const name = attribute.name.toLowerCase()
-      const value = attribute.value
-
-      if (name.startsWith('on') || name === 'style') {
-        element.removeAttribute(attribute.name)
-        return
-      }
-
-      if (element.tagName !== 'A' || !['href', 'target', 'rel'].includes(name)) {
-        element.removeAttribute(attribute.name)
-        return
-      }
-
-      if (name === 'href') {
-        try {
-          const url = new URL(value, window.location.origin)
-          if (!['http:', 'https:', 'mailto:', 'tel:'].includes(url.protocol)) {
-            element.removeAttribute(attribute.name)
-          }
-        } catch {
-          element.removeAttribute(attribute.name)
-        }
-      }
-    })
-
-    if (element.tagName === 'A') {
-      // Link para o próprio site abre na mesma aba e é interceptado no clique
-      // para virar navegação do app; só o que sai do domínio ganha aba nova.
-      const href = element.getAttribute('href') || ''
-      const interno = !!toInternalPath(href, window.location.origin)
-
-      if (interno) {
-        element.setAttribute('target', '_self')
-        element.removeAttribute('rel')
-      } else {
-        element.setAttribute('target', '_blank')
-        element.setAttribute('rel', 'noopener noreferrer nofollow')
-      }
-    }
-  })
-
-  return doc.body.innerHTML
-}
-
 export function PlatformAds() {
   const pathname = usePathname()
   const router = useRouter()
@@ -252,28 +128,40 @@ export function PlatformAds() {
 
   const hiddenOnRoute = shouldHideAdsOnRoute(pathname)
 
+  /**
+   * Respeita o "ocultar por 30 minutos" — e volta sozinho quando o prazo passa.
+   *
+   * Antes, ocultar uma vez desligava o componente pelo resto da sessão: o
+   * estado `dismissed` não tinha quem o desfizesse e a busca dos anúncios nem
+   * chegava a rodar. Quem clicasse no "x" e continuasse navegando (o normal num
+   * app de página única) não via mais anúncio nenhum até recarregar a página.
+   */
   useEffect(() => {
     if (hiddenOnRoute) return
 
-    try {
-      const dismissedUntil = Number(localStorage.getItem(DISMISS_STORAGE_KEY) || 0)
-      if (dismissedUntil > Date.now()) {
-        setDismissed(true)
-        return
-      }
-      localStorage.removeItem(DISMISS_STORAGE_KEY)
-    } catch {
-      // LocalStorage may be blocked; ads can still render normally.
+    const dismissedUntil = lerOcultacaoDeAnuncios()
+    setDismissed(dismissedUntil > 0)
+
+    // O prazo acaba dentro da própria sessão: o temporizador traz a peça de
+    // volta sem depender de um recarregamento.
+    let timer: number | undefined
+    if (dismissedUntil > 0) {
+      timer = window.setTimeout(() => setDismissed(false), dismissedUntil - Date.now() + 500)
     }
 
     let cancelled = false
 
+    // A busca acontece mesmo com os anúncios ocultos: quando o prazo vence, o
+    // conteúdo já está em mãos e a peça aparece na hora, sem novo fetch.
     async function fetchAds() {
       try {
         const response = await fetch('/api/anuncios', {
           cache: 'no-store',
         })
-        if (!response.ok) return
+        if (!response.ok) {
+          console.error('Anuncios: resposta', response.status, 'de /api/anuncios')
+          return
+        }
 
         const data = await response.json()
         if (!cancelled) setAds(normalizeAds(data))
@@ -286,6 +174,7 @@ export function PlatformAds() {
 
     return () => {
       cancelled = true
+      if (timer !== undefined) window.clearTimeout(timer)
     }
   }, [hiddenOnRoute])
 
@@ -332,7 +221,7 @@ export function PlatformAds() {
   const handleDismiss = useCallback(() => {
     setDismissed(true)
     try {
-      localStorage.setItem(DISMISS_STORAGE_KEY, String(Date.now() + DISMISS_MS))
+      localStorage.setItem(ANUNCIO_DISMISS_STORAGE_KEY, String(Date.now() + ANUNCIO_DISMISS_MS))
     } catch {
       // Non-critical preference.
     }
@@ -522,7 +411,7 @@ export function PlatformAds() {
             <button
               type="button"
               onClick={handleDismiss}
-              className="absolute right-1.5 top-1.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/65 text-slate-500 transition hover:bg-white hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#468152] dark:bg-slate-950/55 dark:text-slate-400 dark:hover:bg-slate-900 dark:hover:text-white sm:static sm:h-8 sm:w-8 sm:bg-transparent"
+              className="absolute right-1 top-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/65 text-slate-500 transition hover:bg-white hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#468152] dark:bg-slate-950/55 dark:text-slate-400 dark:hover:bg-slate-900 dark:hover:text-white sm:static sm:h-8 sm:w-8 sm:bg-transparent"
               aria-label="Ocultar anuncios por 30 minutos"
             >
               <X className="h-4 w-4" />
@@ -531,78 +420,14 @@ export function PlatformAds() {
         </div>
       </aside>
 
-      <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-        <DialogContent className="mx-0 flex max-h-[88vh] w-[calc(100vw-24px)] max-w-2xl flex-col overflow-hidden overflow-x-hidden rounded-xl border-slate-200/80 bg-white p-0 text-slate-950 shadow-[0_30px_100px_-32px_rgba(15,23,42,0.75)] dark:border-emerald-300/15 dark:bg-[#07110d] dark:text-slate-50 sm:mx-4 sm:w-full">
-          <div className="relative min-w-0 shrink-0 overflow-hidden border-b border-slate-200 bg-[linear-gradient(135deg,rgba(70,129,82,0.12),rgba(255,255,255,0.88)_48%,rgba(226,164,62,0.18))] p-4 dark:border-emerald-300/12 dark:bg-[linear-gradient(135deg,rgba(70,129,82,0.30),rgba(7,17,13,0.98)_52%,rgba(226,164,62,0.16))] sm:p-5">
-            <div aria-hidden className="pointer-events-none absolute -right-14 -top-16 h-36 w-36 rounded-full bg-[#E2A43E]/18 blur-3xl dark:bg-[#E2A43E]/12" />
-            <div aria-hidden className="pointer-events-none absolute -bottom-20 -left-16 h-44 w-44 rounded-full bg-[#468152]/16 blur-3xl dark:bg-[#468152]/24" />
-            <DialogHeader className="relative min-w-0 p-0 pr-7">
-              <div className="mb-2 inline-flex max-w-full items-center gap-1 rounded-full border border-[#468152]/25 bg-white/70 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-[#468152] backdrop-blur-xl dark:border-emerald-300/20 dark:bg-emerald-300/10 dark:text-emerald-100">
-                <Megaphone className="h-3 w-3" />
-                Anuncio da plataforma
-              </div>
-              <DialogTitle className="break-words text-xl font-black leading-tight text-slate-950 dark:text-white sm:text-2xl">
-                {selectedAd?.modalTitulo || 'Anuncio'}
-              </DialogTitle>
-              <DialogDescription className="break-words text-sm font-medium text-slate-600 dark:text-slate-300">
-                Uma oportunidade selecionada para estudantes da DomineAqui.
-              </DialogDescription>
-            </DialogHeader>
-          </div>
-
-          <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden bg-white p-4 dark:bg-[#07110d] sm:p-6">
-            {selectedAd?.imagemUrl && (
-              <div className="mb-5 max-w-full overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-2 shadow-inner dark:border-emerald-300/12 dark:bg-[#0d1b15]">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={selectedAd.imagemUrl}
-                  alt={selectedAd.modalTitulo || 'Anuncio'}
-                  className="max-h-[240px] w-full max-w-full object-contain sm:max-h-[320px]"
-                />
-              </div>
-            )}
-            <div
-              className={cn(
-                'min-w-0 max-w-none overflow-x-hidden break-words text-sm leading-relaxed text-slate-700 [overflow-wrap:anywhere] dark:text-slate-100 sm:text-base',
-                '[&_*]:max-w-full',
-                '[&_a]:break-words [&_a]:font-bold [&_a]:text-[#2f6f3f] [&_a]:underline [&_a]:underline-offset-2 [&_a]:[overflow-wrap:anywhere] dark:[&_a]:text-emerald-300',
-                '[&_p]:mb-3 [&_p]:break-words [&_p]:leading-relaxed [&_p]:text-slate-700 [&_p]:[overflow-wrap:anywhere] dark:[&_p]:text-slate-100',
-                '[&_strong]:font-black [&_strong]:text-[#2f6f3f] dark:[&_strong]:text-emerald-200',
-                '[&_em]:text-slate-700 dark:[&_em]:text-slate-200',
-                '[&_ul]:my-4 [&_ul]:rounded-lg [&_ul]:border [&_ul]:border-slate-200 [&_ul]:bg-slate-50 [&_ul]:py-3 [&_ul]:pl-6 [&_ul]:pr-4 dark:[&_ul]:border-emerald-300/12 dark:[&_ul]:bg-white/[0.04] sm:[&_ul]:px-5',
-                '[&_ol]:my-4 [&_ol]:rounded-lg [&_ol]:border [&_ol]:border-slate-200 [&_ol]:bg-slate-50 [&_ol]:py-3 [&_ol]:pl-6 [&_ol]:pr-4 dark:[&_ol]:border-emerald-300/12 dark:[&_ol]:bg-white/[0.04] sm:[&_ol]:px-5',
-                '[&_li]:my-1 [&_li]:text-slate-700 dark:[&_li]:text-slate-100',
-                '[&_h3]:mb-2 [&_h3]:mt-4 [&_h3]:text-base [&_h3]:font-black [&_h3]:text-slate-900 dark:[&_h3]:text-white sm:[&_h3]:text-lg',
-                '[&_h4]:mb-1 [&_h4]:mt-3 [&_h4]:text-sm [&_h4]:font-bold [&_h4]:text-slate-900 dark:[&_h4]:text-white',
-                '[&_blockquote]:my-4 [&_blockquote]:border-l-4 [&_blockquote]:border-[#468152]/50 [&_blockquote]:bg-[#468152]/5 [&_blockquote]:py-2 [&_blockquote]:pl-4 [&_blockquote]:pr-3 [&_blockquote]:italic dark:[&_blockquote]:bg-white/[0.04]',
-                '[&_hr]:my-4 [&_hr]:border-slate-200 dark:[&_hr]:border-white/10',
-                '[&_small]:text-xs [&_small]:text-slate-500 dark:[&_small]:text-slate-400',
-              )}
-              onClick={handleModalContentClick}
-              dangerouslySetInnerHTML={{ __html: sanitizedModalContent }}
-            />
-          </div>
-
-          <DialogFooter className="flex-col gap-2 shrink-0 border-t border-slate-200 bg-slate-50 p-4 dark:border-emerald-300/12 dark:bg-[#09150f] sm:flex-row sm:justify-end">
-            <Button
-              variant="outline"
-              onClick={() => setModalOpen(false)}
-              className="w-full rounded-lg border-slate-300 bg-white text-slate-700 hover:bg-slate-100 dark:border-white/15 dark:bg-white/[0.04] dark:text-slate-100 dark:hover:bg-white/[0.08] sm:w-auto"
-            >
-              Fechar
-            </Button>
-            {selectedAd?.modalBotaoTexto && (
-              <Button
-                onClick={handleModalButtonClick}
-                className="w-full min-w-0 rounded-lg bg-gradient-to-r from-[#468152] to-[#E2A43E] font-black text-white shadow-lg shadow-[#468152]/20 hover:brightness-105 dark:from-emerald-600 dark:to-amber-500 sm:w-auto"
-              >
-                <span className="min-w-0 truncate">{selectedAd.modalBotaoTexto}</span>
-                <ArrowRight className="ml-2 h-4 w-4 shrink-0" />
-              </Button>
-            )}
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <AnuncioModal
+        ad={selectedAd}
+        html={sanitizedModalContent}
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+        onAcao={handleModalButtonClick}
+        onLinkNoTexto={handleModalContentClick}
+      />
 
       <style jsx>{`
         @keyframes platform-ad-progress {

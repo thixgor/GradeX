@@ -3,6 +3,7 @@ import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
 import { ObjectId } from 'mongodb'
 import { getUserCurrentPeriodo } from '@/lib/user-periodo'
+import { anuncioVisivelParaPeriodo } from '@/lib/anuncio-exibicao'
 
 export const dynamic = 'force-dynamic'
 
@@ -73,11 +74,11 @@ export async function GET() {
 
     // Filtra por período: anúncio sem `periodos` (vazio/ausente) vai para todos;
     // com `periodos`, só aparece se o período atual do usuário estiver na lista.
-    const filtered = anuncios.filter((anuncio) => {
-      const periodos = Array.isArray(anuncio.periodos) ? anuncio.periodos : []
-      if (periodos.length === 0) return true
-      return userPeriodo !== null && periodos.includes(userPeriodo)
-    })
+    // A regra vive em `lib/anuncio-exibicao` porque o diagnóstico do admin
+    // precisa explicar exatamente este descarte.
+    const filtered = anuncios.filter((anuncio) =>
+      anuncioVisivelParaPeriodo(anuncio.periodos, userPeriodo),
+    )
 
     // A resposta agora depende do usuário (período), então não pode ser
     // compartilhada entre usuários por CDN. Cache privado curto deduplica

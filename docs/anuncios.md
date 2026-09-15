@@ -64,11 +64,53 @@ ser texto legítimo.
 O conteúdo do modal aceita apenas `p, strong, em, b, i, u, small, span, br, ul,
 ol, li, h3, h4, blockquote, hr, a`; o resto é removido na exibição pública.
 
+## "Criei o anúncio e não aparece"
+
+O painel tem um **Diagnóstico de exibição** no topo que responde isso sozinho:
+ele chama `/api/anuncios` — a MESMA rota do usuário final, com a sua sessão — e
+compara o resultado com a lista de ativos. As quatro causas, em ordem de
+frequência:
+
+1. **Você está no `/admin`.** A peça não aparece em nenhuma rota administrativa,
+   então quem testa sem sair do painel nunca vê nada. O botão "Abrir a dashboard"
+   leva a uma rota que exibe.
+2. **Segmentação por período.** Anúncio com períodos marcados só chega a quem
+   está naquele período — inclusive para você. O diagnóstico lista quais ativos
+   não foram entregues para a sua conta e por quê.
+3. **Ocultado neste navegador.** O "x" da peça silencia os anúncios por 30
+   minutos naquele aparelho. O diagnóstico mostra até que horas e tem o botão
+   "Voltar a ver agora".
+4. **Nenhum anúncio ativo.**
+
+Também dá para conferir a peça sem publicar: o botão do olho na lista (e o
+"Ver como o modal fica" dentro do formulário) abre o modal **real**, com o mesmo
+saneamento de HTML da exibição pública.
+
 ## Segmentação
 
 Sem períodos marcados, o anúncio aparece para todo mundo. Com períodos, só para
 quem está em um deles (`/api/anuncios` filtra pelo período atual do usuário; a
 resposta é cache privado de 60 s justamente por depender do usuário).
+
+## O modal no celular
+
+No telefone o modal é uma folha presa ao rodapé (`components/anuncio-modal.tsx`),
+não uma caixa centralizada. Três defeitos motivaram a troca:
+
+- altura em `vh` ignora a barra de endereço do navegador móvel, e o rodapé —
+  onde fica o botão de ação — nascia fora da tela (agora `dvh`, com `vh` como
+  reserva via `@supports`);
+- a largura pedia `100vw - 24px` dentro de um contêiner com 16px de padding de
+  cada lado: 8px a mais do que cabia, o que espremia o conteúdo;
+- o botão principal ficava no fim de um conteúdo rolável, longe do polegar.
+
+Agora: largura inteira, canto arredondado só em cima, puxador que fecha, `x` com
+alvo de 36px, conteúdo rolando no meio e o botão de ação fixo no rodapé com a
+área segura do aparelho respeitada. A partir de `sm` volta a ser a caixa
+centralizada de sempre.
+
+O `Dialog` base ganhou a variante `sheet`, trava de rolagem do fundo e fechar
+com `Esc` — isso vale para todos os modais do projeto.
 
 ## Ordenação
 

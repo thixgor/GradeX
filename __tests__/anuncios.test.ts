@@ -8,6 +8,7 @@ import {
   toInternalPath,
 } from '@/lib/anuncio-destinos'
 import { ANUNCIO_TEMPLATES, listarPlaceholders } from '@/lib/anuncio-templates'
+import { anuncioVisivelParaPeriodo, shouldHideAdsOnRoute } from '@/lib/anuncio-exibicao'
 
 const ORIGEM = 'https://domineaqui.com'
 
@@ -106,5 +107,41 @@ describe('modelos persuasivos', () => {
 
   it('não acusa marcador em texto já preenchido', () => {
     expect(listarPlaceholders('Restam 8 vagas', 'Garantir vaga')).toEqual([])
+  })
+})
+
+describe('onde e para quem o anúncio aparece', () => {
+  it('não exibe nas rotas que competem com a peça', () => {
+    // O painel do admin é a rota onde o próprio anunciante testa — e por isso a
+    // que mais gera "criei e não apareceu".
+    expect(shouldHideAdsOnRoute('/admin')).toBe(true)
+    expect(shouldHideAdsOnRoute('/admin/anuncios')).toBe(true)
+    expect(shouldHideAdsOnRoute('/auth/login')).toBe(true)
+    expect(shouldHideAdsOnRoute('/exams/123')).toBe(true)
+    expect(shouldHideAdsOnRoute('/buy')).toBe(true)
+    expect(shouldHideAdsOnRoute('/materiais/abc')).toBe(true)
+    expect(shouldHideAdsOnRoute('/materiais/abc/viewer')).toBe(true)
+    expect(shouldHideAdsOnRoute('/pacotes/abc')).toBe(true)
+  })
+
+  it('exibe no resto da plataforma', () => {
+    expect(shouldHideAdsOnRoute('/dashboard')).toBe(false)
+    expect(shouldHideAdsOnRoute('/materiais')).toBe(false)
+    expect(shouldHideAdsOnRoute('/banco-questoes/historico')).toBe(false)
+    expect(shouldHideAdsOnRoute('/flashcards')).toBe(false)
+    expect(shouldHideAdsOnRoute('/')).toBe(false)
+    // Barra no fim não pode mudar a decisão.
+    expect(shouldHideAdsOnRoute('/dashboard/')).toBe(false)
+  })
+
+  it('segmenta por período sem esconder o que não foi segmentado', () => {
+    expect(anuncioVisivelParaPeriodo([], 4)).toBe(true)
+    expect(anuncioVisivelParaPeriodo(undefined, null)).toBe(true)
+
+    expect(anuncioVisivelParaPeriodo([3, 4], 4)).toBe(true)
+    expect(anuncioVisivelParaPeriodo([3, 4], 5)).toBe(false)
+
+    // Sem período definido, o usuário só vê anúncio sem segmentação.
+    expect(anuncioVisivelParaPeriodo([3], null)).toBe(false)
   })
 })
