@@ -176,6 +176,33 @@ export function lerLinkDoYouTube(entrada: string): LeituraDeLink {
     }
 }
 
+/**
+ * A parte do config do `YT.Player` que diz O QUE tocar.
+ *
+ * Isto é uma função pura — e testada — por causa de um detalhe traiçoeiro da
+ * API do YouTube: ela valida `videoId` sempre que a CHAVE existe no objeto de
+ * configuração, mesmo que o valor seja `undefined`. Um inocente
+ *
+ *     videoId: item.youtubeVideoId || undefined
+ *
+ * faz TODA playlist estourar com `Error: Invalid video id` dentro do
+ * construtor, antes de qualquer coisa acontecer. Para uma playlist a chave
+ * precisa estar ausente, não indefinida — é a diferença entre o player montar
+ * e o player nem nascer.
+ */
+export function opcoesDeMidia(item: {
+    youtubePlaylistId?: string | null
+    youtubeVideoId?: string | null
+}): { videoId?: string; playerVars: { listType?: 'playlist'; list?: string } } {
+    if (item.youtubePlaylistId) {
+        return { playerVars: { listType: 'playlist', list: item.youtubePlaylistId } }
+    }
+    if (item.youtubeVideoId) {
+        return { videoId: item.youtubeVideoId, playerVars: {} }
+    }
+    return { playerVars: {} }
+}
+
 /** Chave estável de um item, para comparar "é a mesma coisa que já está
  *  carregada?" sem confundir um vídeo com uma playlist de mesmo ID. */
 export function chaveDoItem(item: {

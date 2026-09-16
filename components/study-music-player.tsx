@@ -28,7 +28,7 @@ import {
     YT_STATE,
     type YouTubePlayer,
 } from '@/lib/youtube-iframe-api'
-import { chaveDoItem } from '@/lib/musica/link-do-youtube'
+import { chaveDoItem, opcoesDeMidia } from '@/lib/musica/link-do-youtube'
 
 /**
  * Player de música ambiente para estudo.
@@ -383,15 +383,18 @@ export function StudyMusicPlayer() {
         const alvo = document.createElement('div')
         host.appendChild(alvo)
 
+        // `videoId` só entra no objeto quando existe de verdade: a chave
+        // presente valendo `undefined` já basta para o YouTube recusar tudo
+        // com "Invalid video id". Ver `opcoesDeMidia`.
+        const midia = opcoesDeMidia(playlistFinal)
+
         try {
             playerRef.current = new api.Player(alvo, {
                 width: '1',
                 height: '1',
-                videoId: playlistFinal.youtubeVideoId || undefined,
+                ...midia,
                 playerVars: {
-                    ...(playlistFinal.youtubePlaylistId
-                        ? { listType: 'playlist', list: playlistFinal.youtubePlaylistId }
-                        : {}),
+                    ...midia.playerVars,
                     // Nunca começar tocando sozinho.
                     autoplay: 0,
                     controls: 0,

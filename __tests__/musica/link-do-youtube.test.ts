@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { lerLinkDoYouTube, chaveDoItem } from '@/lib/musica/link-do-youtube'
+import { lerLinkDoYouTube, chaveDoItem, opcoesDeMidia } from '@/lib/musica/link-do-youtube'
 
 /**
  * O leitor de links do cadastro de músicas de estudo.
@@ -105,6 +105,31 @@ describe('lerLinkDoYouTube — recusas explicam o que fazer', () => {
     it('recusa ID de vídeo truncado em vez de cadastrar algo que não toca', () => {
         const r = lerLinkDoYouTube('https://www.youtube.com/watch?v=abc')
         expect(r.ok).toBe(false)
+    })
+})
+
+describe('opcoesDeMidia', () => {
+    it('NÃO inclui a chave videoId numa playlist', () => {
+        // O detalhe que derrubou o player inteiro: a API do YouTube valida
+        // `videoId` sempre que a CHAVE existe no config, mesmo valendo
+        // `undefined`. Um `videoId: item.youtubeVideoId || undefined` fazia
+        // toda playlist estourar com "Invalid video id" no construtor, antes
+        // de qualquer coisa acontecer. Ausente ≠ indefinida.
+        const opcoes = opcoesDeMidia({ youtubePlaylistId: 'PLabc', youtubeVideoId: null })
+        expect('videoId' in opcoes).toBe(false)
+        expect(opcoes.playerVars).toEqual({ listType: 'playlist', list: 'PLabc' })
+    })
+
+    it('manda o vídeo e nenhuma playlist numa faixa avulsa', () => {
+        const opcoes = opcoesDeMidia({ youtubePlaylistId: null, youtubeVideoId: 'dQw4w9WgXcQ' })
+        expect(opcoes.videoId).toBe('dQw4w9WgXcQ')
+        expect(opcoes.playerVars).toEqual({})
+    })
+
+    it('não inventa chave nenhuma para um registro sem nada tocável', () => {
+        const opcoes = opcoesDeMidia({})
+        expect('videoId' in opcoes).toBe(false)
+        expect(opcoes.playerVars).toEqual({})
     })
 })
 
