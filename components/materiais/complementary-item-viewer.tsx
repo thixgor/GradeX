@@ -21,6 +21,7 @@ import {
   onFullscreenChange,
   requestAppFullscreen,
 } from '@/lib/fullscreen'
+import { useConviteDeAvaliacao } from '@/lib/reviews-prompt'
 
 interface ComplementaryItemViewerProps {
   materialId: string
@@ -119,9 +120,23 @@ export function ComplementaryItemViewer({ materialId, itemId }: ComplementaryIte
 
   useEffect(() => onFullscreenChange(setIsFullscreen), [])
 
+  // O item complementar não tem avaliação própria: ele pertence ao material
+  // pai, e é o pai que a pessoa comprou e vai avaliar. O título mostrado no
+  // convite é o dele, por isso — e não o do anexo que acabou de fechar.
+  const { convidar: convidarParaAvaliar } = useConviteDeAvaliacao({
+    targetType: 'material',
+    targetId: materialId,
+    titulo: meta?.parentTitle || meta?.title || 'este material',
+    origem: 'complementar',
+    href: `/materiais/${materialId}`,
+    habilitado: state === 'ready' && !!meta?.hasAccess,
+    segundosMinimos: 60,
+  })
+
   const goBack = useCallback(() => {
+    convidarParaAvaliar()
     router.push(`/materiais/${materialId}`)
-  }, [router, materialId])
+  }, [convidarParaAvaliar, router, materialId])
 
   const contentUrl = meta?.contentKind === 'pdf'
     ? `/api/materiais/${materialId}/complementary/${itemId}/content?kind=pdf`

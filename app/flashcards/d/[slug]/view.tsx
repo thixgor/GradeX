@@ -74,6 +74,7 @@ import {
 import { ReviewsSection } from '@/components/reviews/reviews-section'
 import { ReviewSummaryBlock } from '@/components/reviews/review-summary'
 import type { ReviewSummary } from '@/lib/reviews-shared'
+import { useConviteDeAvaliacao } from '@/lib/reviews-prompt'
 
 /**
  * Recusa vinda do servidor (403, 429, 404...), que já traz uma mensagem
@@ -767,6 +768,9 @@ export default function DeckPage() {
   }
 
   function exitStudy() {
+    // Fim do estudo: o melhor (e único) instante em que a opinião sobre o deck
+    // existe de verdade. O convite só aparece se houve estudo suficiente.
+    convidarParaAvaliar()
     setStudying(false)
     setStudyOrder(null)
     setVoiceEnabled(false)
@@ -857,6 +861,7 @@ export default function DeckPage() {
     if (!card) return
     const cardId = String(card._id)
     setRatings(prev => ({ ...prev, [cardId]: value }))
+    marcarCardAvaliado()
 
     let requeued = false
 
@@ -1199,6 +1204,25 @@ export default function DeckPage() {
       setDownloadingPdf(false)
     }
   }
+
+  // Convite de avaliação ao fechar o deck — ver `lib/reviews-prompt.ts`.
+  //
+  // Aqui o gatilho principal não é navegar: sair do estudo é trocar de estado,
+  // e a pessoa continua na mesma página. Por isso `exitStudy()` chama
+  // `convidarParaAvaliar()` na mão. Cada card avaliado conta como sinal, o que
+  // deixa quem de fato estudou passar do mínimo em poucos segundos — enquanto
+  // quem só abriu a página do deck para olhar precisa dos dois minutos.
+  const { registrarSinal: marcarCardAvaliado, convidar: convidarParaAvaliar } = useConviteDeAvaliacao({
+    targetType: 'flashcard_deck',
+    targetId: data?.deck?._id ? String(data.deck._id) : null,
+    titulo: data?.deck?.title || 'este deck',
+    capa: data?.deck?.coverImage || null,
+    origem: 'flashcards',
+    href: data?.deck?.slug ? `/flashcards/d/${data.deck.slug}` : null,
+    habilitado: !!data?.access?.hasAccess,
+    segundosMinimos: 120,
+    sinaisMinimos: 5,
+  })
 
   if (loading) {
     return (

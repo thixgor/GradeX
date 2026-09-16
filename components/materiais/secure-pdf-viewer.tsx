@@ -117,6 +117,7 @@ import {
   ZOOM_STEP,
 } from '@/lib/pdf-viewer-zoom'
 import { fitToCanvasBudget } from '@/lib/pdf-viewer-canvas-budget'
+import { useConviteDeAvaliacao } from '@/lib/reviews-prompt'
 import {
   MENSAGEM_DE_REDE,
   MENSAGEM_LEITOR_INDISPONIVEL,
@@ -2313,6 +2314,28 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   )
   // Painel de anotações nunca aparece na prévia (leitura apenas / não salva).
   const annotationsVisible = showAnnotations && !previewActive
+
+  // Convite de avaliação ao fechar o material. A prévia fica de fora: quem
+  // ainda não comprou não tem o que avaliar (e o servidor recusaria de todo
+  // jeito). Ver `lib/reviews-prompt.ts` — o convite só nasce se houve leitura
+  // de verdade, e quem o mostra é o chrome do app, já na tela seguinte.
+  const { registrarSinal: marcarPaginaLida } = useConviteDeAvaliacao({
+    targetType: 'material',
+    targetId: materialId,
+    titulo: access?.material?.title || 'este material',
+    capa: access?.material?.coverImage || null,
+    origem: 'pdf',
+    href: `/materiais/${materialId}`,
+    habilitado: !!access && !previewActive,
+  })
+
+  // Cada página nova que aparece é um sinal de leitura. Com poucas páginas
+  // viradas o convite já se justifica mesmo antes do tempo mínimo: virar
+  // páginas é prova de leitura melhor do que o relógio.
+  useEffect(() => {
+    if (!access || previewActive) return
+    marcarPaginaLida()
+  }, [currentPage, access, previewActive, marcarPaginaLida])
 
   // Rolagem horizontal: a fileira de páginas com encaixe nativo. Ela substitui
   // a pilha vertical INTEIRA, então o modo "uma página por vez" (que monta só a

@@ -20,6 +20,7 @@ import {
   onFullscreenChange,
   requestAppFullscreen,
 } from '@/lib/fullscreen'
+import { useConviteDeAvaliacao } from '@/lib/reviews-prompt'
 
 interface HtmlMaterialViewerProps {
   materialId: string
@@ -107,9 +108,24 @@ export function HtmlMaterialViewer({ materialId }: HtmlMaterialViewerProps) {
 
   useEffect(() => onFullscreenChange(setIsFullscreen), [])
 
+  // Convite de avaliação ao sair da experiência — ver `lib/reviews-prompt.ts`.
+  // Aqui não há página virada nem card respondido para servir de sinal: o
+  // conteúdo roda dentro do iframe e nada do que acontece lá dentro chega até
+  // aqui. Sobra o relógio, e por isso o mínimo é mais generoso.
+  const { convidar: convidarParaAvaliar } = useConviteDeAvaliacao({
+    targetType: 'material',
+    targetId: materialId,
+    titulo: meta?.title || 'esta experiência',
+    origem: 'html',
+    href: `/materiais/${materialId}`,
+    habilitado: state === 'ready' && !!meta?.hasAccess,
+    segundosMinimos: 60,
+  })
+
   const goBack = useCallback(() => {
+    convidarParaAvaliar()
     router.push(`/materiais/${materialId}`)
-  }, [router, materialId])
+  }, [convidarParaAvaliar, router, materialId])
 
   return (
     <div

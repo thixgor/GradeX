@@ -28,6 +28,14 @@ const PresenceHeartbeat = dynamic(
   () => import('@/components/presence-heartbeat').then((m) => m.PresenceHeartbeat),
   { ssr: false },
 )
+// O convite de avaliação de fim de estudo. Mora aqui — e não dentro de uma
+// página — porque fechar um material É navegar: a página que sabia do estudo
+// morre no mesmo quadro em que o convite nasce, e só o chrome sobrevive para
+// mostrá-lo na tela seguinte. Ver `lib/reviews-prompt.ts`.
+const ReviewPromptHost = dynamic(
+  () => import('@/components/reviews/review-prompt-host').then((m) => m.ReviewPromptHost),
+  { ssr: false },
+)
 
 // Em rotas sem login (landing e /auth) o player de música e o verificador de
 // trial são inúteis (exigem usuário autenticado) e só geram fetch + JS pesado.
@@ -97,6 +105,7 @@ export function AppChrome() {
   return (
     <>
       {!authless && <TrialExpirationChecker />}
+      {!authless && <ReviewPromptHost />}
       {!authless && <PresenceHeartbeat />}
       {!authless && !noMusic && showMusic && <StudyMusicPlayer />}
       {adsReady && <PlatformAds />}
