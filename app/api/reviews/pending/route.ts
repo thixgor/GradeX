@@ -126,21 +126,29 @@ export async function GET() {
 
     const deckByMaterialId = new Map<string, any>()
     for (const deck of linkedDecks) {
-      if (!deck.linkedMaterialId || deck.reviewsLocked === true || !deck.slug) continue
+      if (!deck.linkedMaterialId || !deck.slug) continue
       deckByMaterialId.set(String(deck.linkedMaterialId), deck)
     }
 
     const candidates: PendingReviewItem[] = []
+    // Deck espelhado em /materiais: o alvo canônico é o material (é lá que a
+    // avaliação é gravada), mas o convite manda para a página do deck, que é
+    // onde a pessoa de fato estuda. Ver `resolveReviewTargetGroup`.
+    const materialIdByDeckId = new Map<string, string>()
 
     for (const material of materials) {
       const materialId = String(material._id)
       const linkedDeck = deckByMaterialId.get(materialId)
       const purchasedAt = purchasedAtByMaterialId.get(materialId)
 
+      // Travar as avaliações de qualquer uma das duas páginas trava o produto.
+      if (material.reviewsLocked === true || linkedDeck?.reviewsLocked === true) continue
+
       if (linkedDeck) {
+        materialIdByDeckId.set(String(linkedDeck._id), materialId)
         candidates.push({
-          targetType: 'flashcard_deck',
-          targetId: String(linkedDeck._id),
+          targetType: 'material',
+          targetId: materialId,
           title: String(linkedDeck.title || material.title || 'Deck de flashcards'),
           coverImage: linkedDeck.coverImage || material.coverImage || null,
           kind: 'flashcard',
@@ -149,8 +157,6 @@ export async function GET() {
         })
         continue
       }
-
-      if (material.reviewsLocked === true) continue
 
       candidates.push({
         targetType: 'material',
@@ -167,12 +173,10 @@ export async function GET() {
       return NextResponse.json({ items: [], total: 0 })
     }
 
-    const materialTargetIds = candidates
-      .filter(item => item.targetType === 'material')
-      .map(item => item.targetId)
-    const deckTargetIds = candidates
-      .filter(item => item.targetType === 'flashcard_deck')
-      .map(item => item.targetId)
+    const materialTargetIds = candidates.map(item => item.targetId)
+    // Avaliações antigas, gravadas no balde do deck antes da unificação, ainda
+    // valem: quem já opinou por lá não pode ser cobrado de novo.
+    const deckTargetIds = [...materialIdByDeckId.keys()]
 
     const reviewFilters: any[] = []
     if (materialTargetIds.length > 0) {
@@ -193,9 +197,19 @@ export async function GET() {
           .toArray()
       : []
 
-    const reviewed = new Set(existingReviews.map(review => `${review.targetType}:${review.targetId}`))
+    const reviewed = new Set<string>()
+    for (const review of existingReviews) {
+      const targetId = String(review.targetId)
+      if (review.targetType === 'material') {
+        reviewed.add(targetId)
+        continue
+      }
+      const linkedMaterialId = materialIdByDeckId.get(targetId)
+      if (linkedMaterialId) reviewed.add(linkedMaterialId)
+    }
+
     const pending = candidates
-      .filter(item => !reviewed.has(`${item.targetType}:${item.targetId}`))
+      .filter(item => !reviewed.has(item.targetId))
       .sort((a, b) => new Date(b.purchasedAt || 0).getTime() - new Date(a.purchasedAt || 0).getTime())
 
     const res = NextResponse.json({

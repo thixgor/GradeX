@@ -99,13 +99,138 @@ export function toPublicReview(doc: ReviewDoc): PublicReview {
   }
 }
 
-export async function computeReviewSummary(
+/** Um alvo de avaliação: o par (tipo, id) que identifica material ou deck. */
+export interface ReviewTargetRef {
+  targetType: ReviewTargetType
+  targetId: string
+}
+
+/**
+ * Um deck pago vive em duas páginas: `/flashcards/d/<slug>` e o espelho em
+ * `/materiais/<linkedMaterialId>` criado por `syncMaterialForFlashcardDeck`.
+ * São duas portas para o mesmo produto — quem compra, estuda e opina não faz
+ * ideia de que existem duas. Logo: uma opinião só, compartilhada pelas duas.
+ *
+ * O grupo é o conjunto de alvos que dividem essa opinião. Leitura soma todos
+ * os membros (média, distribuição, lista e "já avaliei" ficam idênticos nas
+ * duas páginas); escrita vai para o canônico, para não haver dois baldes novos.
+ */
+export interface ReviewTargetGroup {
+  exists: boolean
+  /** Alvo onde novas avaliações do grupo são gravadas. */
+  canonical: ReviewTargetRef
+  /** Todos os alvos do grupo, incluindo o canônico. */
+  members: ReviewTargetRef[]
+  /** Travado se QUALQUER membro estiver travado — travar uma página trava o produto. */
+  locked: boolean
+  /** Título do alvo pedido (não do canônico): é o nome da página que perguntou. */
+  title: string | null
+}
+
+/** Filtro de coleção para um grupo: direto quando é um alvo só, `$or` quando são dois. */
+export function reviewTargetFilter(members: ReviewTargetRef[]): Record<string, unknown> {
+  if (members.length === 1) {
+    return { targetType: members[0].targetType, targetId: members[0].targetId }
+  }
+  return {
+    $or: members.map(member => ({ targetType: member.targetType, targetId: member.targetId })),
+  }
+}
+
+/**
+ * Resolve o grupo do alvo pedido. Material e deck espelhado apontam um para o
+ * outro (`linkedDeckId` / `linkedMaterialId`); materiais antigos podem não ter
+ * o `linkedDeckId` gravado, então o deck também é procurado pelo lado dele.
+ */
+export async function resolveReviewTargetGroup(
   db: Db,
   targetType: ReviewTargetType,
   targetId: string,
+): Promise<ReviewTargetGroup> {
+  const requested: ReviewTargetRef = { targetType, targetId }
+  const missing: ReviewTargetGroup = {
+    exists: false,
+    canonical: requested,
+    members: [requested],
+    locked: false,
+    title: null,
+  }
+  if (!ObjectId.isValid(targetId)) return missing
+
+  if (targetType === 'material') {
+    const material = await db.collection('materials').findOne(
+      { _id: new ObjectId(targetId) },
+      { projection: { reviewsLocked: 1, title: 1, linkedDeckId: 1 } },
+    )
+    if (!material) return missing
+
+    const linkedDeckId = String(material.linkedDeckId || '')
+    const deckOr: any[] = [{ linkedMaterialId: targetId }]
+    if (ObjectId.isValid(linkedDeckId)) deckOr.push({ _id: new ObjectId(linkedDeckId) })
+    const deck = await db.collection('flashcardManualDecks').findOne(
+      { $or: deckOr },
+      { projection: { reviewsLocked: 1 } },
+    )
+
+    return buildGroup({
+      requestedTitle: material.title ?? null,
+      material: { targetType: 'material', targetId },
+      materialLocked: material.reviewsLocked === true,
+      deck: deck ? { targetType: 'flashcard_deck', targetId: String(deck._id) } : null,
+      deckLocked: deck?.reviewsLocked === true,
+    })
+  }
+
+  const deck = await db.collection('flashcardManualDecks').findOne(
+    { _id: new ObjectId(targetId) },
+    { projection: { reviewsLocked: 1, title: 1, linkedMaterialId: 1 } },
+  )
+  if (!deck) return missing
+
+  const linkedMaterialId = String(deck.linkedMaterialId || '')
+  const material = ObjectId.isValid(linkedMaterialId)
+    ? await db.collection('materials').findOne(
+        { _id: new ObjectId(linkedMaterialId) },
+        { projection: { reviewsLocked: 1 } },
+      )
+    : null
+
+  return buildGroup({
+    requestedTitle: deck.title ?? null,
+    material: material ? { targetType: 'material', targetId: String(material._id) } : null,
+    materialLocked: material?.reviewsLocked === true,
+    deck: { targetType: 'flashcard_deck', targetId },
+    deckLocked: deck.reviewsLocked === true,
+  })
+}
+
+/**
+ * O material é o canônico quando existe: ele é a unidade de venda (compra,
+ * pacote, preço) e onde já moram as avaliações de todo o resto do catálogo.
+ */
+function buildGroup(input: {
+  requestedTitle: string | null
+  material: ReviewTargetRef | null
+  materialLocked: boolean
+  deck: ReviewTargetRef | null
+  deckLocked: boolean
+}): ReviewTargetGroup {
+  const members = [input.material, input.deck].filter(Boolean) as ReviewTargetRef[]
+  return {
+    exists: true,
+    canonical: members[0],
+    members,
+    locked: input.materialLocked || input.deckLocked,
+    title: input.requestedTitle,
+  }
+}
+
+export async function computeReviewSummary(
+  db: Db,
+  targets: ReviewTargetRef[],
 ): Promise<ReviewSummary> {
   const cursor = db.collection<ReviewDoc>(REVIEWS_COLLECTION).aggregate<{ _id: number; count: number }>([
-    { $match: { targetType, targetId } },
+    { $match: reviewTargetFilter(targets) },
     { $group: { _id: '$rating', count: { $sum: 1 } } },
   ])
 
@@ -126,18 +251,21 @@ export async function computeReviewSummary(
   return { count: total, avg, distribution }
 }
 
+/**
+ * A avaliação que esta pessoa já deixou no grupo — venha ela da página do deck
+ * ou do espelho em /materiais. É o que impede a mesma pessoa de avaliar o mesmo
+ * produto duas vezes, uma por porta de entrada.
+ */
 export async function findUserReview(
   db: Db,
-  targetType: ReviewTargetType,
-  targetId: string,
+  targets: ReviewTargetRef[],
   userId: string,
 ): Promise<ReviewDoc | null> {
   return db.collection<ReviewDoc>(REVIEWS_COLLECTION).findOne({
-    targetType,
-    targetId,
+    ...reviewTargetFilter(targets),
     userId,
     isAdminCreated: { $ne: true },
-  })
+  } as any)
 }
 
 export async function getTargetReviewsLocked(
@@ -145,22 +273,8 @@ export async function getTargetReviewsLocked(
   targetType: ReviewTargetType,
   targetId: string,
 ): Promise<{ exists: boolean; locked: boolean; title: string | null }> {
-  if (!ObjectId.isValid(targetId)) return { exists: false, locked: false, title: null }
-  if (targetType === 'material') {
-    const doc = await db.collection('materials').findOne(
-      { _id: new ObjectId(targetId) },
-      { projection: { reviewsLocked: 1, title: 1, isHidden: 1 } },
-    )
-    if (!doc) return { exists: false, locked: false, title: null }
-    return { exists: true, locked: doc.reviewsLocked === true, title: doc.title ?? null }
-  }
-  // flashcard_deck
-  const doc = await db.collection('flashcardManualDecks').findOne(
-    { _id: new ObjectId(targetId) },
-    { projection: { reviewsLocked: 1, title: 1, isHidden: 1 } },
-  )
-  if (!doc) return { exists: false, locked: false, title: null }
-  return { exists: true, locked: doc.reviewsLocked === true, title: doc.title ?? null }
+  const group = await resolveReviewTargetGroup(db, targetType, targetId)
+  return { exists: group.exists, locked: group.locked, title: group.title }
 }
 
 export function getTargetCollectionName(targetType: ReviewTargetType): 'materials' | 'flashcardManualDecks' {

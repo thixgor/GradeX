@@ -3,13 +3,14 @@ import { ObjectId } from 'mongodb'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { checkRateLimitSync, isValidObjectId } from '@/lib/api-security'
-import { hasAccessToTarget } from '@/lib/access'
+import { hasAccessToAnyTarget } from '@/lib/access'
 import {
   REVIEWS_COLLECTION,
   ReviewDoc,
   computeReviewSummary,
   findUserReview,
-  getTargetReviewsLocked,
+  resolveReviewTargetGroup,
+  reviewTargetFilter,
   isValidRating,
   isValidTargetType,
   sanitizeReviewComment,
@@ -59,8 +60,10 @@ export async function GET(request: NextRequest) {
     const session = await getSession()
     const db = await getDb()
 
-    const target = await getTargetReviewsLocked(db, targetType, targetId)
-    if (!target.exists) {
+    // O deck pago e o material que o espelha são o mesmo produto: as duas
+    // páginas leem e escrevem a mesma opinião (ver `resolveReviewTargetGroup`).
+    const group = await resolveReviewTargetGroup(db, targetType, targetId)
+    if (!group.exists) {
       return NextResponse.json({ error: 'Item não encontrado' }, { status: 404 })
     }
 
@@ -68,7 +71,10 @@ export async function GET(request: NextRequest) {
 
     // Filtro principal — para a primeira página, busca: destaques primeiro, depois cronológico.
     // Para cursor, paginamos por _id de forma estável dentro da ordenação composta.
-    const baseFilter: any = { targetType, targetId }
+    // O filtro do grupo já pode ser um `$or`, então a cláusula do cursor entra
+    // por `$and` em vez de sobrescrever o `$or` dos alvos.
+    const targetFilter = reviewTargetFilter(group.members)
+    let baseFilter: any = targetFilter
     if (cursor) {
       if (!isValidObjectId(cursor)) {
         return NextResponse.json({ error: 'cursor inválido' }, { status: 400 })
@@ -76,10 +82,17 @@ export async function GET(request: NextRequest) {
       // Paginação simples baseada em createdAt < cursorTimestamp do cursor _id
       const cursorDoc = await collection.findOne({ _id: new ObjectId(cursor) }, { projection: { createdAt: 1 } })
       if (cursorDoc) {
-        baseFilter.$or = [
-          { createdAt: { $lt: cursorDoc.createdAt } },
-          { createdAt: cursorDoc.createdAt, _id: { $lt: new ObjectId(cursor) } },
-        ]
+        baseFilter = {
+          $and: [
+            targetFilter,
+            {
+              $or: [
+                { createdAt: { $lt: cursorDoc.createdAt } },
+                { createdAt: cursorDoc.createdAt, _id: { $lt: new ObjectId(cursor) } },
+              ],
+            },
+          ],
+        }
       }
     }
 
@@ -100,10 +113,10 @@ export async function GET(request: NextRequest) {
     const nextCursor = hasMore ? String(pageItems[pageItems.length - 1]._id) : null
 
     const [summary, userReview, access] = await Promise.all([
-      computeReviewSummary(db, targetType, targetId),
-      session ? findUserReview(db, targetType, targetId, session.userId) : Promise.resolve(null),
+      computeReviewSummary(db, group.members),
+      session ? findUserReview(db, group.members, session.userId) : Promise.resolve(null),
       session
-        ? hasAccessToTarget({ session, targetType, targetId, db })
+        ? hasAccessToAnyTarget({ session, targets: group.members, db })
         : Promise.resolve({ allowed: false, reason: 'not_authenticated' as const, isPurchased: false }),
     ])
 
@@ -111,10 +124,10 @@ export async function GET(request: NextRequest) {
       reviews: pageItems.map(toPublicReview),
       summary,
       userReview: userReview ? toPublicReview(userReview) : null,
-      canReview: !!session && access.allowed && !target.locked,
+      canReview: !!session && access.allowed && !group.locked,
       hasAccess: access.allowed,
       isAuthenticated: !!session,
-      reviewsLocked: target.locked,
+      reviewsLocked: group.locked,
       nextCursor,
     })
   } catch (error) {
@@ -164,15 +177,15 @@ export async function POST(request: NextRequest) {
     const safeComment = sanitizeReviewComment(comment)
     const db = await getDb()
 
-    const target = await getTargetReviewsLocked(db, targetType, targetId)
-    if (!target.exists) {
+    const group = await resolveReviewTargetGroup(db, targetType, targetId)
+    if (!group.exists) {
       return NextResponse.json({ error: 'Item não encontrado' }, { status: 404 })
     }
-    if (target.locked) {
+    if (group.locked) {
       return NextResponse.json({ error: 'Avaliações desativadas para este item' }, { status: 423 })
     }
 
-    const access = await hasAccessToTarget({ session, targetType, targetId, db })
+    const access = await hasAccessToAnyTarget({ session, targets: group.members, db })
     if (!access.allowed) {
       return NextResponse.json(
         { error: 'Você precisa ter acesso a este conteúdo para avaliar' },
@@ -180,7 +193,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const existing = await findUserReview(db, targetType, targetId, session.userId)
+    const existing = await findUserReview(db, group.members, session.userId)
     if (existing) {
       return NextResponse.json(
         { error: 'Você já avaliou este item. Edite sua avaliação existente.' },
@@ -192,8 +205,10 @@ export async function POST(request: NextRequest) {
     const displayName = sanitizeDisplayName(session.name, 'Usuário')
 
     const doc: Omit<ReviewDoc, '_id'> = {
-      targetType,
-      targetId,
+      // Grava sempre no alvo canônico do grupo — assim o produto tem um balde
+      // só, mesmo que a avaliação tenha saído da página do deck.
+      targetType: group.canonical.targetType,
+      targetId: group.canonical.targetId,
       rating,
       comment: safeComment,
       userId: session.userId,

@@ -3,12 +3,13 @@ import { ObjectId } from 'mongodb'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { checkRateLimitSync, isValidObjectId } from '@/lib/api-security'
-import { hasAccessToTarget } from '@/lib/access'
+import { hasAccessToAnyTarget } from '@/lib/access'
 import {
   computeReviewSummary,
   findUserReview,
   getTargetCollectionName,
   isValidTargetType,
+  resolveReviewTargetGroup,
 } from '@/lib/reviews'
 
 export const dynamic = 'force-dynamic'
@@ -67,14 +68,18 @@ export async function GET(request: NextRequest) {
     if (!alvo) {
       return NextResponse.json({ podeAvaliar: false, motivo: 'nao_encontrado' })
     }
-    if (alvo.reviewsLocked === true) {
+
+    // Deck pago e material espelho dividem a mesma opinião: quem já avaliou por
+    // uma das páginas não pode ser convidado de novo pela outra.
+    const grupo = await resolveReviewTargetGroup(db, targetType, targetId)
+    if (grupo.locked) {
       return NextResponse.json({ podeAvaliar: false, motivo: 'travado' })
     }
 
     const [jaAvaliou, acesso, resumo] = await Promise.all([
-      findUserReview(db, targetType, targetId, session.userId),
-      hasAccessToTarget({ session, targetType, targetId, db }),
-      computeReviewSummary(db, targetType, targetId),
+      findUserReview(db, grupo.members, session.userId),
+      hasAccessToAnyTarget({ session, targets: grupo.members, db }),
+      computeReviewSummary(db, grupo.members),
     ])
 
     if (jaAvaliou) {

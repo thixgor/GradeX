@@ -90,9 +90,36 @@ export async function GET(
       materialDocs.map((m: any) => [String(m._id), m.title || '']),
     )
 
+    // Decks espelhados: a avaliação nova de um deck do pacote é gravada no
+    // material, mas as anteriores à unificação moram no alvo do deck. As duas
+    // contam — é a mesma opinião sobre o mesmo item do pacote.
+    const linkedDecks = await db
+      .collection('flashcardManualDecks')
+      .find({ linkedMaterialId: { $in: materialIds } })
+      .project({ _id: 1, title: 1, linkedMaterialId: 1 })
+      .toArray()
+    const deckTargetIds: string[] = []
+    for (const deck of linkedDecks) {
+      const deckId = String(deck._id)
+      deckTargetIds.push(deckId)
+      titleById.set(
+        deckId,
+        deck.title || titleById.get(String(deck.linkedMaterialId)) || '',
+      )
+    }
+
+    const targetFilter: any = deckTargetIds.length > 0
+      ? {
+          $or: [
+            { targetType: 'material', targetId: { $in: materialIds } },
+            { targetType: 'flashcard_deck', targetId: { $in: deckTargetIds } },
+          ],
+        }
+      : { targetType: 'material', targetId: { $in: materialIds } }
+
     // ── Resumo agregado (média + distribuição) ────────────────
     const summaryCursor = collection.aggregate<{ _id: number; count: number }>([
-      { $match: { targetType: 'material', targetId: { $in: materialIds } } },
+      { $match: targetFilter },
       { $group: { _id: '$rating', count: { $sum: 1 } } },
     ])
     const summary = EMPTY_SUMMARY()
@@ -110,7 +137,7 @@ export async function GET(
     summary.avg = total > 0 ? Math.round((sum / total) * 10) / 10 : 0
 
     // ── Lista paginada (destaques primeiro, depois cronológico) ─
-    const baseFilter: any = { targetType: 'material', targetId: { $in: materialIds } }
+    let baseFilter: any = targetFilter
     if (cursor) {
       if (!isValidObjectId(cursor)) {
         return NextResponse.json({ error: 'cursor inválido' }, { status: 400 })
@@ -120,10 +147,19 @@ export async function GET(
         { projection: { createdAt: 1 } },
       )
       if (cursorDoc) {
-        baseFilter.$or = [
-          { createdAt: { $lt: cursorDoc.createdAt } },
-          { createdAt: cursorDoc.createdAt, _id: { $lt: new ObjectId(cursor) } },
-        ]
+        // `targetFilter` já pode carregar um `$or` (material + deck espelho),
+        // então a cláusula do cursor entra por `$and` para não sobrescrevê-lo.
+        baseFilter = {
+          $and: [
+            targetFilter,
+            {
+              $or: [
+                { createdAt: { $lt: cursorDoc.createdAt } },
+                { createdAt: cursorDoc.createdAt, _id: { $lt: new ObjectId(cursor) } },
+              ],
+            },
+          ],
+        }
       }
     }
 

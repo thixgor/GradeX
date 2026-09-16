@@ -57,6 +57,48 @@ export async function hasAccessToTarget({
   return checkDeckAccess(database, session, targetId, isAdmin)
 }
 
+/**
+ * Acesso a um grupo de alvos de avaliação (ver `resolveReviewTargetGroup`).
+ * Um deck pago e o material que o espelha são o mesmo produto: quem entrou por
+ * uma porta entrou pelas duas, então basta ter acesso a qualquer membro.
+ *
+ * A primeira permissão encontrada define a razão; `isPurchased` (o selo de
+ * "compra verificada") vale se qualquer membro veio de uma compra.
+ */
+export async function hasAccessToAnyTarget({
+  session,
+  targets,
+  db,
+}: {
+  session: TokenPayload | null
+  targets: Array<{ targetType: ReviewTargetType; targetId: string }>
+  db?: Db
+}): Promise<AccessResult> {
+  if (targets.length === 0) {
+    return { allowed: false, reason: 'not_found', isPurchased: false }
+  }
+  const database = db ?? (await getDb())
+
+  let first: AccessResult | null = null
+  let allowed: AccessResult | null = null
+  let isPurchased = false
+
+  for (const target of targets) {
+    const result = await hasAccessToTarget({ session, ...target, db: database })
+    if (!first) first = result
+    if (result.allowed) {
+      if (!allowed) allowed = result
+      if (result.isPurchased) isPurchased = true
+      // Acesso por compra é o teto: nada que o outro membro responda muda o
+      // veredito nem o selo, e a consulta dele repetiria a mesma compra.
+      if (isPurchased) break
+    }
+  }
+
+  if (allowed) return { ...allowed, isPurchased: isPurchased || allowed.isPurchased }
+  return first as AccessResult
+}
+
 async function checkMaterialAccess(
   db: Db,
   session: TokenPayload | null,
