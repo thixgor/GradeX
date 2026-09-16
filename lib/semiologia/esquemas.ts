@@ -157,6 +157,11 @@ export interface Sinal {
   causas: GrupoDeCausas[]
   desempenho?: DesempenhoDiagnostico[]
   ilustracao?: IlustracaoRef
+  /**
+   * Casos reais de acervo licenciado, como nas cenas — fotografia de púrpura,
+   * de celulite, de mão com isquemia. Chave no acervo: `sinais/<slug>`.
+   */
+  midiaReal?: MidiaClinica[]
   /** Slug do comparador a que pertence, quando há um. */
   comparador?: string
   /** Patologias do Manual Clínico em que este sinal é peça-chave. */

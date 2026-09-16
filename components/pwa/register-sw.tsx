@@ -8,6 +8,13 @@ export function RegisterSW() {
   useEffect(() => {
     if (typeof window === 'undefined') return
     if (!('serviceWorker' in navigator)) return
+    // Em desenvolvimento os chunks de `/_next/static/` não têm hash no nome, e
+    // o cache-first do worker passa a servir JavaScript velho depois de cada
+    // edição. Fora de produção, garante que nenhum worker fique registrado.
+    if (process.env.NODE_ENV !== 'production') {
+      navigator.serviceWorker.getRegistrations().then((regs) => regs.forEach((r) => r.unregister())).catch(() => {})
+      return
+    }
 
     const register = () => {
       navigator.serviceWorker.register('/sw.js').catch(() => {

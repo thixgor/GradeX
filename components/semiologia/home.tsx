@@ -4,7 +4,8 @@ import Link from 'next/link'
 import { ArrowRight, Eye, GitCompareArrows, Stethoscope, Waves } from 'lucide-react'
 import type { CatalogoSemiologia } from '@/lib/semiologia/catalogo'
 import { ROTAS } from '@/lib/semiologia/rotas'
-import { Ilustracao } from './ilustracoes/registro'
+import { Capa } from './capa'
+import { Enfase } from './enfase'
 
 /**
  * A porta do módulo.
@@ -32,7 +33,7 @@ export function HomeSemiologia({ catalogo }: { catalogo: CatalogoSemiologia }) {
         <dl className="mt-6 flex flex-wrap gap-x-8 gap-y-3">
           {[
             [totais.sinais, 'sinais aprofundados'],
-            [totais.cenas + totais.cenasUltrassom, 'cenas desenhadas'],
+            [totais.cenas + totais.cenasUltrassom, 'cenas normal × alterado'],
             [totais.estruturas, 'estruturas marcadas'],
             [totais.comparadores, 'comparadores'],
           ].map(([valor, rotulo]) => (
@@ -56,18 +57,13 @@ export function HomeSemiologia({ catalogo }: { catalogo: CatalogoSemiologia }) {
         cta={`Abrir os ${totais.sinais} sinais`}
       >
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {catalogo.sinais.slice(0, 4).map((sinal) => (
+          {destaques(catalogo.sinais).map((sinal) => (
             <Link key={sinal.slug} href={ROTAS.sinal(sinal.slug)} className="group space-y-2">
-              {sinal.ilustracao ? (
-                <Ilustracao
-                  id={sinal.ilustracao.id}
-                  params={sinal.ilustracao.params}
-                  titulo={sinal.ilustracao.alt}
-                  className="border border-border transition-colors group-hover:border-sky-500/50"
-                />
-              ) : (
-                <div className="aspect-square rounded-xl border border-border bg-muted/40" />
-              )}
+              <Capa
+                real={sinal.capaReal}
+                ilustracao={sinal.ilustracao}
+                className="rounded-xl border border-border transition-colors group-hover:border-sky-500/50"
+              />
               <p className="text-xs font-medium leading-tight transition-colors group-hover:text-sky-700 dark:group-hover:text-sky-400">
                 {sinal.nome}
               </p>
@@ -91,7 +87,7 @@ export function HomeSemiologia({ catalogo }: { catalogo: CatalogoSemiologia }) {
               href={ROTAS.vista(vista.slug)}
               className="group overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-sky-500/50"
             >
-              <Ilustracao id={vista.capa.id} params={vista.capa.params} titulo={vista.capa.alt} />
+              <Capa real={vista.capaReal} ilustracao={vista.capa} />
               <div className="p-3">
                 <p className="text-sm font-semibold">{vista.nome}</p>
                 <p className="mt-0.5 text-[11px] text-muted-foreground">
@@ -118,7 +114,7 @@ export function HomeSemiologia({ catalogo }: { catalogo: CatalogoSemiologia }) {
               href={ROTAS.janela(janela.slug)}
               className="group overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-sky-500/50"
             >
-              <Ilustracao id={janela.capa.id} params={janela.capa.params} titulo={janela.capa.alt} />
+              <Capa real={janela.capaReal} ilustracao={janela.capa} />
               <div className="p-3">
                 <p className="text-sm font-semibold leading-tight">{janela.nome}</p>
                 <p className="mt-1 text-[11px] leading-snug text-muted-foreground">{janela.pergunta}</p>
@@ -156,6 +152,22 @@ export function HomeSemiologia({ catalogo }: { catalogo: CatalogoSemiologia }) {
   )
 }
 
+/**
+ * Os quatro sinais da vitrine: os que têm fotografia primeiro. A home vende o
+ * módulo pelo caso real, e um cartão desenhado ao lado de três fotografias
+ * diria o contrário do que o módulo quer dizer.
+ */
+const VITRINE = ['ictericia', 'purpura', 'celulite-extensa', 'turgencia-jugular']
+
+function destaques<T extends { slug: string; capaReal?: unknown }>(sinais: T[]): T[] {
+  const porSlug = new Map(sinais.map((s) => [s.slug, s]))
+  const escolhidos = VITRINE.map((slug) => porSlug.get(slug)).filter((s): s is T => Boolean(s?.capaReal))
+  const restantes = sinais.filter((s) => !escolhidos.includes(s))
+  const comFoto = restantes.filter((s) => s.capaReal)
+  const semFoto = restantes.filter((s) => !s.capaReal)
+  return [...escolhidos, ...comFoto, ...semFoto].slice(0, 4)
+}
+
 function Secao({
   icone: Icone,
   titulo,
@@ -179,7 +191,7 @@ function Secao({
             <Icone className="h-4.5 w-4.5 text-sky-600 dark:text-sky-400" />
             {titulo}
           </h2>
-          <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{descricao}</p>
+          <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground"><Enfase texto={descricao} /></p>
         </div>
         <Link
           href={href}

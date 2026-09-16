@@ -230,15 +230,22 @@ const nextConfig = {
           },
         ],
       },
-      {
-        source: '/_next/static/(.*)',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
+      // Só em produção: no `next dev` os chunks de `/_next/static/` não levam
+      // hash no nome, e um `immutable` aqui faz o navegador segurar JavaScript
+      // velho depois de cada edição.
+      ...(process.env.NODE_ENV === 'production'
+        ? [
+            {
+              source: '/_next/static/(.*)',
+              headers: [
+                {
+                  key: 'Cache-Control',
+                  value: 'public, max-age=31536000, immutable',
+                },
+              ],
+            },
+          ]
+        : []),
       // Cache para fontes
       {
         source: '/fonts/(.*)',

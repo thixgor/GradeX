@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { ChevronRight } from 'lucide-react'
 import type { JanelaResumo, VistaResumo } from '@/lib/semiologia/catalogo'
 import { ROTAS } from '@/lib/semiologia/rotas'
-import { Ilustracao } from './ilustracoes/registro'
+import { Capa } from './capa'
 
 /**
  * Grade das janelas de imagem — beira-leito e ultrassom compartilham o layout.
@@ -35,7 +35,7 @@ export function CatalogoDeImagem({
         return (
           <li key={item.slug} className="overflow-hidden rounded-xl border border-border bg-card">
             <Link href={href} className="group block">
-              <Ilustracao id={item.capa.id} params={item.capa.params} titulo={item.capa.alt} />
+              <Capa real={item.capaReal} ilustracao={item.capa} />
               <div className="p-4">
                 <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">{etiqueta}</p>
                 <h2 className="mt-1 flex items-center gap-1 text-base font-semibold transition-colors group-hover:text-sky-700 dark:group-hover:text-sky-400">
@@ -59,9 +59,12 @@ export function CatalogoDeImagem({
                           ? 'bg-emerald-500/10 text-emerald-700 hover:bg-emerald-500/20 dark:text-emerald-400'
                           : 'bg-muted text-muted-foreground hover:bg-muted/70 hover:text-foreground'
                       }`}
-                      title={cena.diagnostico}
+                      title={cena.temCasoReal ? `${cena.diagnostico} · com caso real` : cena.diagnostico}
                     >
                       {cena.titulo}
+                      {cena.temCasoReal && (
+                        <span aria-hidden className="ml-1 inline-block h-1.5 w-1.5 rounded-full bg-sky-500 align-middle" />
+                      )}
                     </Link>
                   </li>
                 ))}

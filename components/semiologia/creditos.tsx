@@ -4,6 +4,7 @@ import { CREDITO_BASE, LISTA_DE_FONTES } from '@/lib/acervos-licenciados'
 import { cobertura } from '@/lib/semiologia/acervo'
 import { GERADO_EM } from '@/lib/semiologia/acervo.gerado'
 import { ROTAS } from '@/lib/semiologia/rotas'
+import { SINAIS } from '@/lib/semiologia/sinais'
 import { JANELAS_ULTRASSOM } from '@/lib/semiologia/ultrassom'
 import { VISTAS } from '@/lib/semiologia/vistas'
 
@@ -69,7 +70,7 @@ export function RodapeDeCreditos() {
  * olhar, e um leitor que só vê "adaptado de" no rodapé merece poder chegar aqui.
  */
 export function PaginaDeCreditos() {
-  const curadoria = cobertura([...VISTAS, ...JANELAS_ULTRASSOM])
+  const curadoria = cobertura([...VISTAS, ...JANELAS_ULTRASSOM], SINAIS)
 
   return (
     <div className="space-y-8">

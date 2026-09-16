@@ -1378,6 +1378,584 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "gif"
     }
   ],
+  "sinais/angioedema-de-lingua": [
+    {
+      "id": "wc-angioedema-lingua",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/5/5c/Angioedema2013.JPG",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Angioedema2013.JPG",
+      "legenda": "Angioedema de língua: a língua aumentada, tensa e brilhante protrui além dos dentes e não cabe na boca; a mucosa está íntegra, sem urticas locais. Caso do atendimento de emergência.",
+      "autoria": "James Heilman, MD — CC BY-SA 3.0",
+      "sha256": "0192c128ed5223d6a28a6ff989acfa9b478a435e50daee388be5f706a3c5de84",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/anisocoria-nao-reativa": [
+    {
+      "id": "wc-anisocoria-jovem",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/5/55/Anisocoria.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Anisocoria.jpg",
+      "legenda": "Anisocoria em homem de 25 anos: a pupila direita nitidamente maior que a esquerda sob a mesma luz. A fotografia mostra a diferença; a reatividade à luz — o que decide entre benigno e emergência — só o exame dinâmico mostra.",
+      "autoria": "Russavia — CC BY 3.0",
+      "sha256": "1237c6da8ab568082fe01f6f1b0d79c5e47fb1f8fbe3c8530099824d908b4d6b",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-anisocoria-tropicamida",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/2/2e/Anizokoria.JPG",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Anizokoria.JPG",
+      "legenda": "Anisocoria farmacológica: pupila direita dilatada após instilação de tropicamida. É a armadilha mais comum da pupila fixa em paciente lúcido — pergunte por colírios antes de pedir a tomografia.",
+      "autoria": "Radomil — CC BY-SA 3.0",
+      "sha256": "cdae240eed1f10e581761dcbe5aa599dd393a39607b58be43f42d0d70f908530",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/ascite": [
+    {
+      "id": "wc-ascite-volumosa-cirrose",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/a/a3/Hepaticfailure.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Hepaticfailure.jpg",
+      "legenda": "Ascite volumosa por hipertensão portal em cirrose: abdome globoso e tenso, com circulação colateral visível na parede e pequenas lesões de escoriação — o quadro que a percussão de macicez móvel já não precisa confirmar.",
+      "autoria": "James Heilman, MD — CC BY-SA 3.0",
+      "sha256": "ab1203df33dfd67d7456433cbc55538d235f35f07982f2746c80a21323c36a6a",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/baqueteamento-digital": [
+    {
+      "id": "wc-baqueteamento-fibrose-cistica",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/4/4e/ClubbingCF.JPG",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:ClubbingCF.JPG",
+      "legenda": "Baqueteamento digital em fibrose cística: falanges distais alargadas, unhas convexas \"em vidro de relógio\" e perda do ângulo entre a unha e a prega ungueal.",
+      "autoria": "Jerry Nick, MD — CC BY 3.0",
+      "sha256": "75f76a0136600cc09db45c6fd891dfd3417468c4fb66d99b2be60116a86fd799",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-baqueteamento-grau-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/7/7c/Clubbed_fingers.JPG",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Clubbed_fingers.JPG",
+      "legenda": "Baqueteamento grau III/IV em homem de 51 anos com cardiopatia crônica e enfisema: as falanges distais em \"baqueta de tambor\", com a unha curvada em todas as direções.",
+      "autoria": "Bobjgalindo — CC BY-SA 4.0",
+      "sha256": "fda48963de2d8a3cd66986970ae897e665cf41093caf3089d195fed024c78186",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/celulite-extensa": [
+    {
+      "id": "wc-celulite-borda-marcada",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4e/Cellulitis_leg_%2844699140442%29.jpg/1920px-Cellulitis_leg_%2844699140442%29.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Cellulitis_leg_(44699140442).jpg",
+      "legenda": "Celulite da perna com a borda do eritema marcada à caneta: eritema, edema e brilho da pele do joelho ao pé; a linha desenhada é o que permite dizer, horas depois, se a infecção avança ou recua.",
+      "autoria": "John Campbell — CC0",
+      "sha256": "01dfbec7728c4d3b2839224154b1e753883bca9ee3e39a2927a996b9dc3b8bd3",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-celulite-24h",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/1/1b/Left_cellulitis_of_leg.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Left_cellulitis_of_leg.jpg",
+      "legenda": "Celulite da perna esquerda cerca de 24 horas após o início dos sintomas, com a margem demarcada: eritema de limites irregulares e pele edemaciada, provável porta de entrada por pequena lesão.",
+      "autoria": "Stephen Ewen — CC BY-SA 4.0",
+      "sha256": "73f1a36f8060bc7f566ebdc3e1c8eda7d224c3d98f08d8b5a8750dc459bc37a3",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/cianose": [
+    {
+      "id": "wc-cianose-polpas-digitais",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/6/6d/Cynosis2012.JPG",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Cynosis2012.JPG",
+      "legenda": "Cianose das polpas digitais: as pontas dos dedos azul-arroxeadas contra a palma rósea — cianose periférica, por dessaturação no leito capilar distal.",
+      "autoria": "James Heilman, MD — CC BY-SA 3.0",
+      "sha256": "c66c64c6c49d20a65cb4c84ca765fbfd93b72864b75509864d599f029d6b9fe6",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-cianose-mao-hipoxemia",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/dc/Cynosis.JPG/1920px-Cynosis.JPG",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Cynosis.JPG",
+      "legenda": "Cianose da mão em paciente com saturação de oxigênio baixa: coloração azulada difusa dos dedos e do leito ungueal, comparada à mão do examinador.",
+      "autoria": "James Heilman, MD — CC BY-SA 3.0",
+      "sha256": "4232b4a66860d677e3f6fa5ddc350d740824f14605e4f4f77042f0bb10ed12c3",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-cianose-baqueteamento-cardiopatia",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/f/f1/CongenitalHeartCase-133.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:CongenitalHeartCase-133.jpg",
+      "legenda": "Baqueteamento digital com leitos ungueais cianóticos em adulto jovem assintomático: a combinação é característica da cardiopatia congênita cianótica de longa data.",
+      "autoria": "Herbert L. Fred, MD e Hendrik A. van Dijk — CC BY-SA 3.0",
+      "sha256": "69e11f08878f03cacd868177e421ca0b0f0c83d7521da16090e11bc4f5429cdc",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/edema-de-membros-inferiores": [
+    {
+      "id": "wc-edema-cacifo-hepatico",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/2/21/Pitting_Edema2008.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Pitting_Edema2008.jpg",
+      "legenda": "Edema com cacifo na perna de paciente com insuficiência hepática terminal: a depressão deixada pelo dedo permanece segundos depois de retirar a pressão; a pele ao redor mostra dermatite e descamação de estase.",
+      "autoria": "James Heilman, MD — CC BY-SA 3.0",
+      "sha256": "de6b6316d32b0a0227ae1e7342e7c3fbfde2308121499ec9aea8aa39b48212f6",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/eritema-multiforme": [
+    {
+      "id": "wc-em-minor-mao",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/69/Erythema_multiforme_minor_of_the_hand.jpg/1920px-Erythema_multiforme_minor_of_the_hand.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Erythema_multiforme_minor_of_the_hand.jpg",
+      "legenda": "Eritema multiforme minor no dorso da mão e do antebraço: dezenas de pápulas e lesões em alvo com centro pálido, em distribuição acral — o padrão que o herpes simples costuma disparar.",
+      "autoria": "James Heilman, MD — CC BY-SA 3.0",
+      "sha256": "700d99b4bbc368c3f42b812aea744eb2d568523469e98ab388f5049778849cef",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-em-pernas-crianca",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/f/f0/EM_on_legs.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:EM_on_legs.jpg",
+      "legenda": "Eritema multiforme nas pernas de uma criança de 3 anos: lesões anulares e em alvo, simétricas, com anel eritematoso e centro mais escuro.",
+      "autoria": "Puppy123456 — domínio público",
+      "sha256": "5c42e35af179b00c73c9292c1ab446a5e21216c7d4d5321e2c369746974a4127",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-lesao-alvo-regua",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d1/Target_lesion_1.jpg/1920px-Target_lesion_1.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Target_lesion_1.jpg",
+      "legenda": "Lesão em alvo medida à régua: cerca de 2 cm, com centro violáceo, anel intermediário mais claro e halo eritematoso — as três zonas que definem o alvo típico.",
+      "autoria": "kilbad — CC BY-SA 3.0",
+      "sha256": "2d263cb2d3004305c1831ffebb67f3f3ceaab5bdbfcdbf6027bec9dd35826816",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/esplenomegalia": [
+    {
+      "id": "wc-esplenomegalia-malarica-marcada",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/a/af/Hyper-reactive_malarial_splenomegaly_%28gross_splenomegaly_marked_on_the_patient_skin%29_2015.png",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Hyper-reactive_malarial_splenomegaly_(gross_splenomegaly_marked_on_the_patient_skin)_2015.png",
+      "legenda": "Esplenomegalia maciça por malária hiper-reativa, com a borda do baço marcada na pele: o contorno pontilhado desce do rebordo costal esquerdo em direção à fossa ilíaca direita, cruzando a linha média.",
+      "autoria": "Stefania Leoni, Dora Buonfrate, Andrea Angheben, Federico Gobbi e Zeno Bisoffi — CC BY 4.0",
+      "sha256": "98efd41204d9a1bc8d1488f7b606147b089c7499d9f93f18b8cdb9e5b3aa4f7c",
+      "ext": "png"
+    }
+  ],
+  "sinais/estigmas-hepaticos-cutaneos": [
+    {
+      "id": "wc-aranha-vascular-gigante",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/4/42/Spider_nevus.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Spider_nevus.jpg",
+      "legenda": "Aranhas vasculares gigantes em paciente de 47 anos com icterícia e ascite de longa data: arteríola central com radiações que embranquecem à compressão e reenchem do centro para fora.",
+      "autoria": "Herbert L. Fred, MD e Hendrik A. van Dijk — CC BY 2.0",
+      "sha256": "8cf6386e67a61d500097809b7d31d0e5e0e89dd3a53850bd48e30e66e3e177a0",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-nevo-araneo-nariz",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/0/08/Nevus_araneus_01.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Nevus_araneus_01.jpg",
+      "legenda": "Nevo aracneiforme no nariz: pápula central de 1 mm de onde partem as radiações — o ponto de compressão para o teste de reenchimento.",
+      "autoria": "M. Sand, D. Sand, C. Thrandorf, V. Paech, P. Altmeyer, F. G. Bechara — CC BY 2.0",
+      "sha256": "d4c7f3e9498d3f3ca844b91d01393be96b3ca2aa4eba74d12bcdf0b3b2a7b759",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-aranhas-vasculares-multiplas",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/2/21/SpiderAngioma.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:SpiderAngioma.jpg",
+      "legenda": "Múltiplas aranhas vasculares no tronco: várias lesões em território de cava superior, o padrão que, em número acima de duas ou três, aponta hepatopatia.",
+      "autoria": "James Heilman, MD — CC BY-SA 4.0",
+      "sha256": "b4d2cc419db292e12af1869f708a950782e43881980d000f69d06dbc4f8f66a7",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/extremidade-fria-com-pulso-reduzido": [
+    {
+      "id": "wc-cianose-periferica-isquemia",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/1/1a/Peripheral_Cyanosis_due_to_Ischemia.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Peripheral_Cyanosis_due_to_Ischemia.jpg",
+      "legenda": "Cianose periférica por isquemia: dedos do pé violáceos e frios sobre um dorso pálido — o padrão de hipoperfusão distal em membro com pulso ausente.",
+      "autoria": "James Heilman, MD — CC BY-SA 4.0",
+      "sha256": "ef5c1ea6c5e6c028eb684f9846a7567b79868d612cd77c792603a2a3e695594e",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/fasciite-necrosante": [
+    {
+      "id": "wc-fasciite-preop",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/6/6a/Necrotizing_fasciitis_left_leg.JPEG",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Necrotizing_fasciitis_left_leg.JPEG",
+      "legenda": "Fasciíte necrosante da perna esquerda em homem de 43 anos, fotografia pré-operatória no dia da admissão: áreas violáceas e negras de necrose cutânea, bolhas rotas e descolamento da pele sobre a coxa e a perna.",
+      "autoria": "Piotr Smuszkiewicz, Iwona Trojanowska e Hanna Tomczak — CC BY 2.0",
+      "sha256": "f422b9f22626fec7fc8a00f386952817f861c3bf5f258c95fecd012941d7edad",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-fasciite-desbridamento",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/7/73/Necrotizing_fasciitis_left_leg_debridement.JPEG",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Necrotizing_fasciitis_left_leg_debridement.JPEG",
+      "legenda": "O mesmo paciente durante o desbridamento cirúrgico: a fáscia necrótica, acinzentada, se desprende com facilidade do plano muscular — o achado intraoperatório que confirma o diagnóstico.",
+      "autoria": "Piotr Smuszkiewicz, Iwona Trojanowska e Hanna Tomczak — CC BY 2.0",
+      "sha256": "bd3e9ce502f0f58e23c2ff429b80b77572df2c80df7ae524c98aead403ebfd21",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/hemianopsia-homonima": [
+    {
+      "id": "wc-campo-hemianopsia-homonima",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/3/35/Visual_field_homonymous_hemianopia.png",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Visual_field_homonymous_hemianopia.png",
+      "legenda": "Registro de campimetria de Goldmann com hemianopsia homônima direita: nos dois olhos, o hemicampo direito está perdido, com respeito ao meridiano vertical — a assinatura da lesão retroquiasmática esquerda.",
+      "autoria": "RobertB3009 — CC BY-SA 4.0",
+      "sha256": "ea7a783660fa2f24655c159bfc6d5de407bc52f161e7cd43197442ca2c36dbd9",
+      "ext": "png"
+    }
+  ],
+  "sinais/hepatomegalia": [
+    {
+      "id": "wc-hepatomegalia-hcc-fita",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/f/fe/Hepatomegaly2.JPG",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Hepatomegaly2.JPG",
+      "legenda": "Hepatomegalia por carcinoma hepatocelular secundário à hepatite B: abaulamento do hipocôndrio e do flanco direitos, com a fita métrica marcando a distância da borda hepática ao rebordo costal.",
+      "autoria": "Anandselvam85 — CC BY-SA 4.0",
+      "sha256": "5185d2bf4eaadeddd09727199e3d7d9ee69406b5dd7243475e3ef527884f29ac",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-hepatomegalia-hcc",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/e/e7/Hepatomegaly.JPG",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Hepatomegaly.JPG",
+      "legenda": "O mesmo paciente visto de frente: a assimetria do abdome superior, com o hemiabdome direito abaulado pelo fígado aumentado.",
+      "autoria": "Anandselvam85 — CC BY-SA 4.0",
+      "sha256": "d116f89e0c90b71afe1be409e88eb8ea57e1f54514c00acbe0a41535ce77be19",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/ictericia": [
+    {
+      "id": "wc-ictericia-escleral-hepatite",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/9/9c/Scleral_Icterus.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Scleral_Icterus.jpg",
+      "legenda": "Icterícia escleral em paciente internado por hepatite aguda: a esclera amarela nos dois olhos, com a pele ainda pouco alterada — a bilirrubina se liga à elastina da esclera antes de tingir a pele.",
+      "autoria": "Sheila J. Toro — CC BY 4.0",
+      "sha256": "e1e63f81def130c55e41d3183a0bbe1f1c9c5069cd37867864f051823fe127d2",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-ictericia-crianca",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/0/00/Jaundice.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Jaundice.jpg",
+      "legenda": "Icterícia em menino de 4 anos: escleras nitidamente amarelas contrastando com a pele; a íris escura torna o amarelo escleral mais evidente.",
+      "autoria": "Sab3el3eish — CC BY 3.0",
+      "sha256": "8ae24adf2b9a114ca4f488d5470c5bc16609473acfc871907451776466159cd1",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-ictericia-leptospirose",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/5/57/Jaundice_of_the_sclerotic_%28cropped%29.JPG",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Jaundice_of_the_sclerotic_(cropped).JPG",
+      "legenda": "Icterícia escleral em homem de 60 anos com leptospirose (urina positiva): amarelo intenso da esclera, com pequena hemorragia conjuntival — a \"icterícia rubínica\" que a leptospirose produz.",
+      "autoria": "Bobjgalindo — CC BY-SA 4.0",
+      "sha256": "c9c32a75af26196cb552201c6c63a4633b6497e7d6a7d764fbca37763cd15e14",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/isquemia-aguda-de-membro": [
+    {
+      "id": "wc-trombose-arterial-cianose",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/4/4f/Arterial_thrombosis_causing_cyanosis.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Arterial_thrombosis_causing_cyanosis.jpg",
+      "legenda": "Trombose arterial aguda da perna direita: o pé direito cianótico e marmoreado ao lado do esquerdo, rosado — a assimetria de cor é o achado de um olhar, e o pulso ausente do lado azul o confirma.",
+      "autoria": "James Heilman, MD — CC BY-SA 3.0",
+      "sha256": "b0e7f2b1803283e0cd17d2314a7ed7f6ac681308220f9e7cac90f07bdc79f451",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/purpura": [
+    {
+      "id": "wc-purpura-crianca",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/4/4d/Purpura2.JPG",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Purpura2.JPG",
+      "legenda": "Púrpura na perna direita de uma criança: máculas e placas vermelho-arroxeadas de tamanhos variados, algumas confluentes, que não desaparecem à pressão — padrão de vasculite de pequenos vasos (IgA) em área dependente.",
+      "autoria": "Okwikikim — domínio público",
+      "sha256": "16fa5467c7f78dbabd6ea546bf2143c92e66bc0c5d664e7530e29e491bb8a1d4",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-petequias-itp",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/93/Petechia_lower_leg.jpg/1920px-Petechia_lower_leg.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Petechia_lower_leg.jpg",
+      "legenda": "Petéquias na perna de paciente com plaquetas em 3 mil por púrpura trombocitopênica imune: pontos vermelhos de 1 a 2 mm, planos, dispersos, mais densos distalmente — a púrpura não palpável das plaquetas.",
+      "autoria": "James Heilman, MD — CC BY-SA 4.0",
+      "sha256": "73ddecbd5bee1c0b213aff16d903928da7f36a7acb6a84a7efb07365fa291756",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-purpura-palpavel-vasculite",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5e/Vasculitis.JPG/1920px-Vasculitis.JPG",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Vasculitis.JPG",
+      "legenda": "Púrpura palpável por vasculite medicamentosa: lesões elevadas, confluentes no terço distal da perna e no pé — a inflamação da parede do vaso é o que dá relevo à lesão.",
+      "autoria": "James Heilman, MD — CC BY-SA 3.0",
+      "sha256": "830500bf93e9cb1c8c9d1a78ac3b6613fc55b94ad607da7b10e95972720e004b",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-petequias-lingua",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/1/19/Petechia_on_the_tongue.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Petechia_on_the_tongue.jpg",
+      "legenda": "Petéquias e bolhas hemorrágicas na língua (\"púrpura úmida\") com plaquetas em 3 mil: sangramento de mucosa é o sinal que separa a trombocitopenia que pode esperar da que não pode.",
+      "autoria": "James Heilman, MD — CC BY-SA 4.0",
+      "sha256": "1c9611c653e97a66d94f932ba309642d2b146c72808b2d6a5baecb9b6df27a7a",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/sinal-de-cullen": [
+    {
+      "id": "wc-cullen-pancreatite",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/3/3e/Cullen%27s_sign.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Cullen%27s_sign.jpg",
+      "legenda": "Sinal de Cullen em pancreatite aguda: equimose periumbilical em homem de 36 anos com quatro dias de dor epigástrica intensa.",
+      "autoria": "Herbert L. Fred, MD e Hendrik A. van Dijk — CC BY 2.0",
+      "sha256": "9b67f34187ea528a2da6cc576a65b7e4096bfe2e36b0a697f9124cde87e38dbf",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/sinal-de-grey-turner": [
+    {
+      "id": "wc-grey-turner-pancreatite",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/5/5d/Hemorrhagic_pancreatitis_-_Grey_Turner%27s_sign.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Hemorrhagic_pancreatitis_-_Grey_Turner%27s_sign.jpg",
+      "legenda": "Sinal de Grey Turner em pancreatite hemorrágica: equimoses azul-arroxeadas no flanco de mulher de 40 anos com cinco dias de dor epigástrica progressiva — o sangue retroperitoneal que chegou à pele.",
+      "autoria": "Herbert L. Fred, MD e Hendrik A. van Dijk — CC BY 2.0",
+      "sha256": "28ec53ff943335fa91c7d622951c146a5df6dcef07778453f80dc1db5011165e",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/sinal-de-kernig": [
+    {
+      "id": "wc-kernig-meningite-1900",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/6/65/Kernig%27s_sign_cerebrospinal_meningitis.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Kernig%27s_sign_cerebrospinal_meningitis.jpg",
+      "legenda": "Sinal de Kernig em meningite cerebroespinhal, fotografia clínica histórica (Harlem Hospital): contratura dos isquiotibiais impedindo a extensão dos joelhos com os quadris fletidos, com rigidez de nuca e opistótono associados.",
+      "autoria": "R. G. Wiener, Harlem Hospital — domínio público",
+      "sha256": "dfac30313d3b8856c9cff640a630d407f1d17f5e7989d939c4d206deead6b539",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/turgencia-jugular": [
+    {
+      "id": "wc-jugular-turgida-icc",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/2/2b/Elevated_JVP1.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Elevated_JVP1.jpg",
+      "legenda": "Turgência jugular acentuada em paciente com insuficiência cardíaca, sentado: a jugular externa distendida por todo o pescoço (seta) — a coluna de sangue que não desce porque o átrio direito não a recebe.",
+      "autoria": "James Heilman, MD — CC BY-SA 3.0",
+      "sha256": "9ac1a73c87dbd137f31a3cac9e03b83ebc6eaf8746497e1e7dade68c73690071",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-jugular-turgida-tricuspide",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/2/20/Jugular_Venous_Distention_%28JVD%29.JPG",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Jugular_Venous_Distention_(JVD).JPG",
+      "legenda": "Distensão jugular externa evidente em paciente com insuficiência tricúspide grave: a veia desenha-se como um cordão ao longo do pescoço.",
+      "autoria": "Ferencga — CC BY-SA 3.0",
+      "sha256": "8f46ca488a2d220bcc53e85494856e3edb481d7430ff77129d5bee727b0a93c3",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/ulcera-arterial": [
+    {
+      "id": "wc-ulcera-arterial-dorso-pe",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/3/30/Arterial_ulcer_peripheral_vascular_disease.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Arterial_ulcer_peripheral_vascular_disease.jpg",
+      "legenda": "Úlcera arterial no dorso do pé de homem de 71 anos, diabético e fumante, com doença arterial periférica grave: ferida pequena, redonda, de bordas nítidas (\"em saca-bocado\"), leito pálido e sem granulação.",
+      "autoria": "Jonathan Moore — CC BY 3.0",
+      "sha256": "9d62b1af7f2dfae607aa685c80c79bc8923d534f047c1a336ddf4f8ca6f98dc1",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-ulceras-isquemicas-escara",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/4/4d/%C3%9Alceres_isqu%C3%A8miques.IMG_1996.JPG",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:%C3%9Alceres_isqu%C3%A8miques.IMG_1996.JPG",
+      "legenda": "Úlceras isquêmicas na perna com escara negra e seca sobre pele pálida e brilhante: a necrose seca é o desfecho da isquemia que não foi revascularizada.",
+      "autoria": "Amadalvarez — CC BY-SA 4.0",
+      "sha256": "7c4364fe2e547576cc30386a25932420cd7a471fb75f65846bce4b2f1b5a0b44",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-gangrena-dedos",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/6/6e/Gangrene_toes_%281%29.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Gangrene_toes_(1).jpg",
+      "legenda": "Gangrena dos dedos em doença arterial periférica com diabetes: dedos enegrecidos e mumificados, antepé violáceo com rubor de dependência — isquemia crítica no estágio final.",
+      "autoria": "Narraburra — CC0",
+      "sha256": "4ee6d7a210270c8ec90da20df3ca089800eaef5794c5e02471d79195f3b0614b",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/ulcera-venosa": [
+    {
+      "id": "wc-ulcera-venosa-insuficiencia",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/2/25/Chronic_venous_insufficiency_%26_Venous_ulcer.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Chronic_venous_insufficiency_%26_Venous_ulcer.jpg",
+      "legenda": "Insuficiência venosa crônica com úlcera supramaleolar: úlcera rasa de leito claro e bordas irregulares sobre pele endurecida e acastanhada (dermatite ocre e lipodermatoesclerose) — os estigmas da hipertensão venosa em volta da ferida.",
+      "autoria": "Ahmed Shawky Mohammedin (Ashashyou) — CC BY-SA 4.0",
+      "sha256": "0dc611c9befb3cda3828d6bdfdf018a3c10c38092c41fa59313030ba1a5b7abc",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-ulcera-varicosa-detalhe",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/59/%C3%9Alcera_varicosa_%28RPS_24-08-2020%29_en_pierna_con_insuficiencia_venosa_cr%C3%B3nica.png/1920px-%C3%9Alcera_varicosa_%28RPS_24-08-2020%29_en_pierna_con_insuficiencia_venosa_cr%C3%B3nica.png",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:%C3%9Alcera_varicosa_(RPS_24-08-2020)_en_pierna_con_insuficiencia_venosa_cr%C3%B3nica.png",
+      "legenda": "Úlcera varicosa em detalhe: leito úmido com fibrina e tecido de granulação, bordas planas e irregulares, pele perilesional espessada — a ferida da estase, que cicatriza com compressão.",
+      "autoria": "Raimundo Pastor — CC BY-SA 4.0",
+      "sha256": "091843d37ad3b2d0cbb5298c13cc2300510b5c38c77e6453802fcd4421cd945d",
+      "ext": "png"
+    },
+    {
+      "id": "wc-ulcera-venosa-dorsal",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/3/38/Venous_ulcer_dorsal_leg.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Venous_ulcer_dorsal_leg.jpg",
+      "legenda": "Ulceração venosa crônica na perna de mulher de 63 anos com diabetes e artrite reumatoide: lesões pequenas e rasas de leito vermelho — a localização atípica lembra que nem toda úlcera venosa é supramaleolar medial.",
+      "autoria": "Jonathan Moore — CC BY 3.0",
+      "sha256": "4c2fd4073c0b5001e71c9dfbdd7ab34167f7ef03570ad727dbce9f623a5bcdff",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/urticaria": [
+    {
+      "id": "wc-urticaria-crianca",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/71/Urticaria12.2024.jpg/1920px-Urticaria12.2024.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Urticaria12.2024.jpg",
+      "legenda": "Urticária aguda em criança de 9 anos: urticas róseas, elevadas, de contornos irregulares, no tronco e nos braços. Segundo o autor, a erupção surgiu de repente e desapareceu por completo em 8 horas — a fugacidade é o critério.",
+      "autoria": "מ.י.ש.הו 0 (Wikimedia Commons) — CC0",
+      "sha256": "6c220a9f2f7677d33fa23f11d863c60d7d521916554829dd93b6febb9e3cb8fc",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-urticaria-gigante",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/d/d8/Urticaire_g%C3%A9ant_dosD%C3%A9tail.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Urticaire_g%C3%A9ant_dosD%C3%A9tail.jpg",
+      "legenda": "Urticária gigante no dorso: placas edematosas confluentes, de bordas serpiginosas e centro pálido, com halo eritematoso.",
+      "autoria": "Ericalens; recorte de F. Lamiot — CC BY 3.0",
+      "sha256": "f6a9806915e68b0b9159baa2c655fb0d8575e9f9f6ac95729ee0b07fd909fdde",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-urticas-dorso",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/6/64/Hives_urticaria.jpg",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Hives_urticaria.jpg",
+      "legenda": "Urticas no dorso: pápulas e placas eritemato-edematosas de tamanhos variados, algumas coalescentes — o relevo se vê melhor em luz rasante.",
+      "autoria": "Psixtras — CC0",
+      "sha256": "52f59ef1ecf8b5d83d42ef5307bf6196c1d53716690180234324a3468c3df44c",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/uso-de-musculatura-acessoria": [
+    {
+      "id": "wc-retracoes-recem-nascido",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/4/49/Sternal_retractions.JPG",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Sternal_retractions.JPG",
+      "legenda": "Retrações intercostais e esternais em recém-nascido com dificuldade respiratória: os espaços entre as costelas afundam a cada inspiração — a pressão intratorácica muito negativa tornada visível.",
+      "autoria": "Bobjgalindo — CC BY-SA 4.0",
+      "sha256": "9148e030e94ba61691366d03e060dc8df3c505bf950b9c999a72c22d90b524c6",
+      "ext": "jpg"
+    }
+  ],
   "subxifoide-pericardio/derrame-pericardico": [
     {
       "id": "tpa-tamponamento-subxifoide",
@@ -1579,4 +2157,4 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
 }
 
 /** Quando o acervo foi gerado pela última vez. */
-export const GERADO_EM: string | null = "2026-09-15"
+export const GERADO_EM: string | null = "2026-09-16"

@@ -3,6 +3,7 @@
 import type { ComponentType } from 'react'
 import type { PropsDeIlustracao } from './base'
 import { Endoscopia } from './endoscopia'
+import { Abdome, Face, Fonocardiograma, ManobraNeurologica, MapaToracico, MembroInferior, Pele, Pulso } from './exame-fisico'
 import { Fundoscopia } from './fundoscopia'
 import { Otoscopia } from './otoscopia'
 import { Pupilas } from './pupilas'
@@ -55,6 +56,14 @@ const REGISTRO: Record<string, ComponentType<PropsDeIlustracao>> = {
   rinoscopia: Rinoscopia,
   pupilas: Pupilas,
   endoscopia: Endoscopia,
+  fonocardiograma: Fonocardiograma,
+  'mapa-toracico': MapaToracico,
+  pulso: Pulso,
+  'membro-inferior': MembroInferior,
+  pele: Pele,
+  face: Face,
+  abdome: Abdome,
+  'manobra-neurologica': ManobraNeurologica,
   ultrassom: Ultrassom,
 }
 

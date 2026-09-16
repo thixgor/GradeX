@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { Enfase } from './enfase'
 import Link from 'next/link'
 import { ChevronRight, Key, Lightbulb, Rows3, Sparkles } from 'lucide-react'
 import type { Comparador } from '@/lib/semiologia/esquemas'
@@ -44,7 +45,7 @@ export function VisorDeComparador({ comparador }: { comparador: Comparador }) {
         </Link>
         <h1 className="mt-3 text-2xl font-bold sm:text-3xl">{comparador.titulo}</h1>
         <p className="mt-2 text-base italic text-muted-foreground">“{comparador.pergunta}”</p>
-        <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">{comparador.introducao}</p>
+        <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground"><Enfase texto={comparador.introducao} /></p>
       </header>
 
       {/* As chaves: o que cada causa tem de exclusivo. */}
@@ -131,7 +132,7 @@ export function VisorDeComparador({ comparador }: { comparador: Comparador }) {
                           </span>
                           {celula.detalhe && (
                             <span className="mt-1 block text-xs leading-relaxed text-muted-foreground">
-                              {celula.detalhe}
+                              <Enfase texto={celula.detalhe} />
                             </span>
                           )}
                         </>
@@ -182,7 +183,7 @@ export function VisorDeComparador({ comparador }: { comparador: Comparador }) {
                     </dt>
                     <dd className={`mt-0.5 text-sm ${celula.decisiva ? 'font-semibold' : ''}`}>{celula.valor}</dd>
                     {celula.detalhe && (
-                      <dd className="mt-1 text-xs leading-relaxed text-muted-foreground">{celula.detalhe}</dd>
+                      <dd className="mt-1 text-xs leading-relaxed text-muted-foreground"><Enfase texto={celula.detalhe} /></dd>
                     )}
                   </div>
                 )

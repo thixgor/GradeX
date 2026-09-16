@@ -8,6 +8,48 @@ import {
   TOTAL_DE_VISTAS,
   VISTAS,
 } from './vistas'
+import { midiasDaCena, midiasDoSinal } from './acervo'
+import { urlDaMidia, type MidiaClinica } from './midia'
+import type { CenaClinica } from './esquemas'
+
+/**
+ * A capa fotográfica de um card, quando o acervo tem uma.
+ *
+ * É resolvida aqui, no servidor, pelo mesmo motivo que o resto do catálogo:
+ * `urlDaMidia` decide entre espelho e origem lendo o ambiente, e o cliente só
+ * precisa da URL final. Onde não há foto o campo fica ausente e o card cai no
+ * esquema — a lacuna é visível, não disfarçada.
+ */
+export interface CapaReal {
+  src: string
+  tipo: 'imagem' | 'clipe'
+  legenda: string
+  /** Título da cena de onde a foto veio, quando não é a cena normal. */
+  cena?: string
+}
+
+function capaDeMidias(midias: MidiaClinica[], cena?: string): CapaReal | undefined {
+  // Fotografia antes de clipe: o card é estático e um vídeo pausado no
+  // primeiro quadro costuma ser um retângulo preto.
+  const ordenadas = [...midias].sort((a, b) => Number(a.tipo === 'clipe') - Number(b.tipo === 'clipe'))
+  for (const midia of ordenadas) {
+    const src = urlDaMidia(midia)
+    if (src) return { src, tipo: midia.tipo, legenda: midia.legenda, cena }
+  }
+  return undefined
+}
+
+/** A capa de uma janela: a cena normal se tiver foto, senão a primeira que tiver. */
+function capaDaJanela(slug: string, cenas: CenaClinica[], normal: CenaClinica): CapaReal | undefined {
+  const daNormal = capaDeMidias(midiasDaCena(slug, normal))
+  if (daNormal) return daNormal
+  for (const cena of cenas) {
+    if (cena === normal) continue
+    const capa = capaDeMidias(midiasDaCena(slug, cena), cena.titulo)
+    if (capa) return capa
+  }
+  return undefined
+}
 
 /**
  * Recorte magro do acervo para as telas de navegação.
@@ -30,6 +72,7 @@ export interface SinalResumo {
   resumo: string
   /** Só o id e os parâmetros: o desenho é resolvido no componente. */
   ilustracao?: { id: string; params?: Record<string, number | string | boolean>; alt: string }
+  capaReal?: CapaReal
   comparador?: string
   temDesempenho: boolean
   totalCausas: number
@@ -44,7 +87,17 @@ export interface VistaResumo {
   totalCenas: number
   totalEstruturas: number
   capa: { id: string; params?: Record<string, number | string | boolean>; alt: string }
-  cenas: { id: string; titulo: string; estado: 'normal' | 'alterado'; diagnostico: string }[]
+  capaReal?: CapaReal
+  cenas: CenaResumo[]
+}
+
+export interface CenaResumo {
+  id: string
+  titulo: string
+  estado: 'normal' | 'alterado'
+  diagnostico: string
+  /** Há fotografia ou clipe real desta cena no acervo. */
+  temCasoReal: boolean
 }
 
 export interface JanelaResumo {
@@ -55,7 +108,8 @@ export interface JanelaResumo {
   pergunta: string
   totalCenas: number
   capa: { id: string; params?: Record<string, number | string | boolean>; alt: string }
-  cenas: { id: string; titulo: string; estado: 'normal' | 'alterado'; diagnostico: string }[]
+  capaReal?: CapaReal
+  cenas: CenaResumo[]
 }
 
 export interface ComparadorResumo {
@@ -107,6 +161,7 @@ export function resumosDeSinais(): SinalResumo[] {
     sistemaTitulo: TITULOS_DE_SISTEMA[sinal.sistema],
     resumo: sinal.resumo,
     ilustracao: sinal.ilustracao,
+    capaReal: capaDeMidias(midiasDoSinal(sinal)),
     comparador: sinal.comparador,
     temDesempenho: Boolean(sinal.desempenho?.length),
     totalCausas: sinal.causas.reduce((total, grupo) => total + grupo.itens.length, 0),
@@ -125,11 +180,13 @@ export function resumosDeVistas(): VistaResumo[] {
       totalCenas: vista.cenas.length,
       totalEstruturas: vista.estruturas.length,
       capa: normal.ilustracao,
+      capaReal: capaDaJanela(vista.slug, vista.cenas, normal),
       cenas: vista.cenas.map((cena) => ({
         id: cena.id,
         titulo: cena.titulo,
         estado: cena.estado,
         diagnostico: cena.diagnostico,
+        temCasoReal: midiasDaCena(vista.slug, cena).length > 0,
       })),
     }
   })
@@ -146,11 +203,13 @@ export function resumosDeJanelas(): JanelaResumo[] {
       pergunta: janela.pergunta,
       totalCenas: janela.cenas.length,
       capa: normal.ilustracao,
+      capaReal: capaDaJanela(janela.slug, janela.cenas, normal),
       cenas: janela.cenas.map((cena) => ({
         id: cena.id,
         titulo: cena.titulo,
         estado: cena.estado,
         diagnostico: cena.diagnostico,
+        temCasoReal: midiasDaCena(janela.slug, cena).length > 0,
       })),
     }
   })

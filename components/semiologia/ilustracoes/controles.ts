@@ -739,3 +739,235 @@ export function controleDaCena(ilustracao: { id: string; params?: Record<string,
   if (typeof cena !== 'string') return undefined
   return CONTROLES_DE_CENA[`${ilustracao.id}:${cena}`]
 }
+
+/**
+ * Controles por **sinal**, para as fichas cuja figura é compartilhada com
+ * outros sinais (um só fonocardiograma serve sopro, B3 e sibilos; um só mapa
+ * do tórax serve macicez e frêmito). A chave é o slug do sinal. Cada faixa
+ * carrega o limiar que a ficha ensina — 20 mmHg na ortostática, 10 no pulso
+ * paradoxal, 0,9 no ITB, 3 mm entre petéquia e púrpura.
+ */
+export const CONTROLES_DE_SINAL: Record<string, ControleDeIlustracao> = {
+  'pressao-arterial-ortostatica': {
+    param: 'valor', rotulo: 'Queda da PAS ao ficar em pé', min: 0, max: 60, passo: 5, padrao: 30,
+    formatar: (v) => `${v.toFixed(0)} mmHg`,
+    marcos: [{ valor: 20, rotulo: 'hipotensão ortostática' }],
+  },
+  'pulso-irregularmente-irregular': {
+    param: 'valor', rotulo: 'Variabilidade dos intervalos', min: 0, max: 100, passo: 10, padrao: 60,
+    formatar: (v) => (v === 0 ? 'ritmo regular' : `${v.toFixed(0)}%`),
+    marcos: [{ valor: 30, rotulo: 'irregularmente irregular' }],
+  },
+  'pulso-paradoxal': {
+    param: 'valor', rotulo: 'Queda inspiratória da PAS', min: 0, max: 30, passo: 2, padrao: 15,
+    formatar: (v) => `${v.toFixed(0)} mmHg`,
+    marcos: [{ valor: 10, rotulo: 'limite normal' }, { valor: 20, rotulo: 'tamponamento provável' }],
+  },
+  'refluxo-hepatojugular': {
+    param: 'altura', rotulo: 'Coluna jugular durante a compressão', min: 3, max: 20, passo: 1, padrao: 12,
+    formatar: (v) => `${v.toFixed(0)} cmH₂O`,
+    marcos: [{ valor: 8, rotulo: 'limite basal' }, { valor: 11, rotulo: 'refluxo positivo (+3 cm)' }],
+  },
+  'sopro-de-estenose-aortica': {
+    param: 'intensidade', rotulo: 'Intensidade (Levine)', min: 0, max: 6, passo: 1, padrao: 3,
+    formatar: (v) => (v === 0 ? 'sem sopro' : `${v.toFixed(0)}/6`),
+    marcos: [{ valor: 4, rotulo: 'com frêmito' }],
+  },
+  'sopro-de-insuficiencia-mitral': {
+    param: 'intensidade', rotulo: 'Intensidade (Levine)', min: 0, max: 6, passo: 1, padrao: 4,
+    formatar: (v) => (v === 0 ? 'sem sopro' : `${v.toFixed(0)}/6`),
+    marcos: [{ valor: 3, rotulo: 'regurgitação significativa' }],
+  },
+  'terceira-bulha': {
+    param: 'intensidade', rotulo: 'B3', min: 0, max: 3, passo: 1, padrao: 2,
+    formatar: (v) => ['ausente', 'discreta', 'nítida', 'galope'][Math.round(v)] ?? '',
+  },
+  'quarta-bulha': {
+    param: 'intensidade', rotulo: 'B4', min: 0, max: 3, passo: 1, padrao: 2,
+    formatar: (v) => ['ausente', 'discreta', 'nítida', 'galope'][Math.round(v)] ?? '',
+  },
+  'pulsos-assimetricos': {
+    param: 'valor', rotulo: 'Diferença de amplitude entre os lados', min: 0, max: 100, passo: 10, padrao: 70,
+    formatar: (v) => (v === 0 ? 'simétricos' : `${v.toFixed(0)}%`),
+    marcos: [{ valor: 50, rotulo: 'pulso reduzido' }, { valor: 100, rotulo: 'ausente' }],
+  },
+  'extremidade-fria-com-pulso-reduzido': {
+    param: 'valor', rotulo: 'Temperatura da pele', min: 20, max: 36, passo: 1, padrao: 26,
+    formatar: (v) => `${v.toFixed(0)} °C`,
+    marcos: [{ valor: 30, rotulo: 'fria ao dorso da mão' }],
+  },
+  'estridor-inspiratorio': {
+    param: 'intensidade', rotulo: 'Estridor', min: 0, max: 3, passo: 1, padrao: 2,
+    formatar: (v) => ['ausente', 'ao esforço', 'em repouso', 'bifásico'][Math.round(v)] ?? '',
+    marcos: [{ valor: 2, rotulo: 'via aérea crítica' }],
+  },
+  'uso-de-musculatura-acessoria': {
+    param: 'frequencia', rotulo: 'Frequência respiratória', min: 8, max: 45, passo: 1, padrao: 32,
+    formatar: (v) => `${v.toFixed(0)} irpm`,
+    marcos: [{ valor: 20, rotulo: 'limite' }, { valor: 30, rotulo: 'esforço evidente' }],
+  },
+  'sibilos-difusos': {
+    param: 'intensidade', rotulo: 'Sibilância', min: 0, max: 3, passo: 1, padrao: 2,
+    formatar: (v) => ['ausente', 'expiratória', 'bifásica', 'tórax silencioso próximo'][Math.round(v)] ?? '',
+  },
+  'sibilo-monofonico-localizado': {
+    param: 'intensidade', rotulo: 'Frequência da nota', min: 100, max: 1000, passo: 50, padrao: 400,
+    formatar: (v) => `${v.toFixed(0)} Hz`,
+  },
+  'estertores-crepitantes': {
+    param: 'intensidade', rotulo: 'Extensão dos crepitantes', min: 0, max: 3, passo: 1, padrao: 2,
+    formatar: (v) => ['ausentes', 'bases', 'até o terço médio', 'difusos'][Math.round(v)] ?? '',
+  },
+  'murmurio-vesicular-abolido': {
+    param: 'valor', rotulo: 'Redução do murmúrio no lado afetado', min: 0, max: 100, passo: 10, padrao: 80,
+    formatar: (v) => (v === 0 ? 'simétrico' : v >= 90 ? 'abolido' : `${v.toFixed(0)}%`),
+  },
+  'macicez-a-percussao': {
+    param: 'valor', rotulo: 'Altura da macicez a partir da base', min: 0, max: 20, passo: 1, padrao: 10,
+    formatar: (v) => (v === 0 ? 'som claro' : `${v.toFixed(0)} cm`),
+    marcos: [{ valor: 3, rotulo: '~300 mL' }, { valor: 10, rotulo: 'derrame moderado' }],
+  },
+  'fremito-toracovocal-aumentado': {
+    param: 'valor', rotulo: 'Aumento do frêmito', min: 0, max: 100, passo: 10, padrao: 60,
+    formatar: (v) => (v === 0 ? 'simétrico' : `+${v.toFixed(0)}%`),
+  },
+  'fremito-toracovocal-reduzido': {
+    param: 'valor', rotulo: 'Redução do frêmito', min: 0, max: 100, passo: 10, padrao: 70,
+    formatar: (v) => (v === 0 ? 'simétrico' : v >= 90 ? 'abolido' : `−${v.toFixed(0)}%`),
+  },
+  'anisocoria-nao-reativa': {
+    param: 'diferenca', rotulo: 'Diferença entre as pupilas', min: 0, max: 8, passo: 0.5, padrao: 4,
+    formatar: (v) => `${v.toFixed(1)} mm`,
+    marcos: [{ valor: 1, rotulo: 'limite fisiológico' }],
+  },
+  'deficit-de-campo-visual-por-confrontacao': {
+    param: 'valor', rotulo: 'Campo perdido', min: 0, max: 50, passo: 5, padrao: 25,
+    formatar: (v) => (v === 0 ? 'campo íntegro' : `${v.toFixed(0)}%`),
+  },
+  'hemianopsia-homonima': {
+    param: 'valor', rotulo: 'Hemicampo perdido', min: 0, max: 50, passo: 5, padrao: 45,
+    formatar: (v) => (v === 0 ? 'campo íntegro' : v >= 50 ? 'hemianopsia completa' : `${v.toFixed(0)}%`),
+  },
+  'desvio-de-lingua': {
+    param: 'valor', rotulo: 'Ângulo de desvio', min: 0, max: 30, passo: 5, padrao: 15,
+    formatar: (v) => (v === 0 ? 'linha média' : `${v.toFixed(0)}°`),
+  },
+  'pronator-drift': {
+    param: 'valor', rotulo: 'Queda do braço em 30 s', min: 0, max: 30, passo: 1, padrao: 15,
+    formatar: (v) => (v === 0 ? 'mantém' : `${v.toFixed(0)} cm`),
+    marcos: [{ valor: 5, rotulo: 'deriva sutil' }],
+  },
+  disartria: {
+    param: 'valor', rotulo: 'Inteligibilidade da fala', min: 0, max: 100, passo: 10, padrao: 50,
+    formatar: (v) => `${v.toFixed(0)}%`,
+  },
+  afasia: {
+    param: 'valor', rotulo: 'Fluência', min: 0, max: 100, passo: 10, padrao: 30,
+    formatar: (v) => (v === 0 ? 'mutismo' : `${v.toFixed(0)}%`),
+  },
+  'marcha-ataxica': {
+    param: 'valor', rotulo: 'Largura da base', min: 5, max: 30, passo: 1, padrao: 20,
+    formatar: (v) => `${v.toFixed(0)} cm`,
+    marcos: [{ valor: 10, rotulo: 'normal' }, { valor: 15, rotulo: 'marcha ebriosa' }],
+  },
+  nistagmo: {
+    param: 'valor', rotulo: 'Frequência das batidas', min: 0, max: 6, passo: 0.5, padrao: 3,
+    formatar: (v) => (v === 0 ? 'olhos estáveis' : `${v.toFixed(1)} Hz`),
+  },
+  'rigidez-de-nuca': {
+    param: 'valor', rotulo: 'Flexão do pescoço alcançada', min: 0, max: 90, passo: 5, padrao: 20,
+    formatar: (v) => `${v.toFixed(0)}°`,
+    marcos: [{ valor: 45, rotulo: 'resistência dolorosa' }],
+  },
+  'sinal-de-kernig': {
+    param: 'valor', rotulo: 'Extensão do joelho alcançada', min: 90, max: 180, passo: 5, padrao: 110,
+    formatar: (v) => `${v.toFixed(0)}°`,
+    marcos: [{ valor: 135, rotulo: 'Kernig positivo abaixo' }],
+  },
+  'sinal-de-grey-turner': {
+    param: 'valor', rotulo: 'Área da equimose', min: 0, max: 40, passo: 2, padrao: 12,
+    formatar: (v) => (v === 0 ? 'sem equimose' : `${v.toFixed(0)} cm²`),
+  },
+  'sinal-de-cullen': {
+    param: 'valor', rotulo: 'Raio do halo periumbilical', min: 0, max: 15, passo: 1, padrao: 5,
+    formatar: (v) => (v === 0 ? 'sem halo' : `${v.toFixed(0)} cm`),
+  },
+  'defesa-abdominal': {
+    param: 'valor', rotulo: 'Grau de contratura', min: 0, max: 3, passo: 1, padrao: 2,
+    formatar: (v) => ['ausente', 'leve', 'moderada', 'em tábua'][Math.round(v)] ?? '',
+  },
+  'massa-abdominal-pulsatil': {
+    param: 'valor', rotulo: 'Diâmetro da aorta', min: 1.5, max: 8, passo: 0.5, padrao: 5,
+    formatar: (v) => `${v.toFixed(1)} cm`,
+    marcos: [{ valor: 3, rotulo: 'aneurisma' }, { valor: 5.5, rotulo: 'cirurgia' }],
+  },
+  hepatomegalia: {
+    param: 'valor', rotulo: 'Borda abaixo do rebordo', min: 0, max: 15, passo: 1, padrao: 6,
+    formatar: (v) => (v === 0 ? 'não palpável' : `${v.toFixed(0)} cm`),
+    marcos: [{ valor: 2, rotulo: 'limite' }],
+  },
+  esplenomegalia: {
+    param: 'valor', rotulo: 'Borda abaixo do rebordo', min: 0, max: 20, passo: 1, padrao: 6,
+    formatar: (v) => (v === 0 ? 'não palpável' : `${v.toFixed(0)} cm`),
+    marcos: [{ valor: 8, rotulo: 'maciça' }],
+  },
+  'descompressao-dolorosa-localizada': {
+    param: 'valor', rotulo: 'Dor à descompressão', min: 0, max: 10, passo: 1, padrao: 7,
+    formatar: (v) => (v === 0 ? 'indolor' : `${v.toFixed(0)}/10`),
+  },
+  'indice-tornozelo-braquial-reduzido': {
+    param: 'valor', rotulo: 'Índice tornozelo-braquial', min: 0.3, max: 1.5, passo: 0.05, padrao: 0.7,
+    formatar: (v) => v.toFixed(2),
+    marcos: [{ valor: 0.5, rotulo: 'isquemia crítica' }, { valor: 0.9, rotulo: 'DAP' }, { valor: 1.4, rotulo: 'não compressível' }],
+  },
+  'ulcera-arterial': {
+    param: 'valor', rotulo: 'Área da úlcera', min: 0, max: 20, passo: 0.5, padrao: 3,
+    formatar: (v) => (v === 0 ? 'sem úlcera' : `${v.toFixed(1)} cm²`),
+  },
+  'ulcera-venosa': {
+    param: 'valor', rotulo: 'Área da úlcera', min: 0, max: 20, passo: 0.5, padrao: 8,
+    formatar: (v) => (v === 0 ? 'sem úlcera' : `${v.toFixed(1)} cm²`),
+  },
+  'isquemia-aguda-de-membro': {
+    param: 'valor', rotulo: 'Horas desde o início da dor', min: 0, max: 12, passo: 1, padrao: 4,
+    formatar: (v) => `${v.toFixed(0)} h`,
+    marcos: [{ valor: 6, rotulo: 'nervo e músculo em risco' }],
+  },
+  'celulite-extensa': {
+    param: 'valor', rotulo: 'Área acometida', min: 0, max: 1000, passo: 50, padrao: 500,
+    formatar: (v) => (v === 0 ? 'pele normal' : `${v.toFixed(0)} cm²`),
+    marcos: [{ valor: 450, rotulo: '~1% da superfície' }],
+  },
+  'fasciite-necrosante': {
+    param: 'valor', rotulo: 'Área de necrose', min: 0, max: 500, passo: 25, padrao: 200,
+    formatar: (v) => (v === 0 ? 'sem necrose visível' : `${v.toFixed(0)} cm²`),
+  },
+  'eritema-multiforme': {
+    param: 'valor', rotulo: 'Diâmetro das lesões', min: 0, max: 30, passo: 1, padrao: 15,
+    formatar: (v) => (v === 0 ? 'sem lesões' : `${v.toFixed(0)} mm`),
+  },
+  purpura: {
+    param: 'valor', rotulo: 'Tamanho das lesões', min: 1, max: 20, passo: 1, padrao: 2,
+    formatar: (v) => `${v.toFixed(0)} mm`,
+    marcos: [{ valor: 3, rotulo: 'petéquia | púrpura' }, { valor: 10, rotulo: 'equimose' }],
+  },
+  urticaria: {
+    param: 'valor', rotulo: 'Superfície acometida', min: 0, max: 100, passo: 10, padrao: 30,
+    formatar: (v) => (v === 0 ? 'sem urticas' : `${v.toFixed(0)}%`),
+  },
+  'angioedema-de-lingua': {
+    param: 'valor', rotulo: 'Aumento da língua', min: 0, max: 100, passo: 10, padrao: 40,
+    formatar: (v) => (v === 0 ? 'normal' : `+${v.toFixed(0)}%`),
+    marcos: [{ valor: 50, rotulo: 'voz abafada' }, { valor: 80, rotulo: 'via aérea crítica' }],
+  },
+}
+
+/**
+ * O controle de um sinal: pelo slug primeiro, pela cena da figura depois, pela
+ * figura por último. É a ordem da especificidade.
+ */
+export function controleDoSinal(sinal: { slug: string; ilustracao?: { id: string; params?: Record<string, unknown> } }): ControleDeIlustracao | undefined {
+  if (CONTROLES_DE_SINAL[sinal.slug]) return CONTROLES_DE_SINAL[sinal.slug]
+  if (!sinal.ilustracao) return undefined
+  return controleDaCena(sinal.ilustracao) ?? CONTROLES[sinal.ilustracao.id]
+}

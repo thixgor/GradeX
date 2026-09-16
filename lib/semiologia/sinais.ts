@@ -1,4 +1,7 @@
 import type { Sinal } from './esquemas'
+import { SINAIS_CARDIORRESPIRATORIOS } from './sinais-exame-cardiorrespiratorio'
+import { SINAIS_NEURO_ABDOME } from './sinais-exame-neuro-abdome'
+import { SINAIS_VASCULARES_E_DE_PELE } from './sinais-exame-vascular-pele'
 
 /**
  * O acervo de sinais do exame físico.
@@ -25,7 +28,7 @@ import type { Sinal } from './esquemas'
  * é ruim, ele está aqui **porque** é ruim: saber que o Blumberg tem razão de
  * verossimilhança perto de 2 muda o que se faz com ele.
  */
-export const SINAIS: Sinal[] = [
+const SINAIS_GERAIS: Sinal[] = [
   {
     slug: 'ictericia',
     nome: 'Icterícia',
@@ -1144,6 +1147,18 @@ export const SINAIS: Sinal[] = [
       'McGee S. Evidence-Based Physical Diagnosis, 5ª ed.',
     ],
   },
+]
+
+/**
+ * O acervo inteiro. Os sinais gerais (icterícia, edema, cianose…) abrem a
+ * lista porque são os que o aluno procura primeiro; os do exame por sistema
+ * vêm nos seus próprios arquivos, agrupados pela lógica com que se examina.
+ */
+export const SINAIS: Sinal[] = [
+  ...SINAIS_GERAIS,
+  ...SINAIS_CARDIORRESPIRATORIOS,
+  ...SINAIS_NEURO_ABDOME,
+  ...SINAIS_VASCULARES_E_DE_PELE,
 ]
 
 export const TOTAL_DE_SINAIS = SINAIS.length

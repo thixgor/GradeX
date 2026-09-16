@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { AreaSemiologia } from '@/components/semiologia/area'
 import { FichaDeSinal } from '@/components/semiologia/ficha-sinal'
+import { comAcervoSinal } from '@/lib/semiologia/acervo'
 import { SINAIS, sinalPorSlug } from '@/lib/semiologia/sinais'
 
 /** Catálogo estático em código: pré-renderizar tira o servidor do caminho. */
@@ -19,8 +20,9 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
 }
 
 export default function SinalPage({ params }: { params: { slug: string } }) {
-  const sinal = sinalPorSlug(params.slug)
-  if (!sinal) notFound()
+  const encontrado = sinalPorSlug(params.slug)
+  if (!encontrado) notFound()
+  const sinal = comAcervoSinal(encontrado)
 
   return (
     <AreaSemiologia alvo={sinal.nome}>

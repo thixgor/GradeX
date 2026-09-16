@@ -5,7 +5,8 @@ import Link from 'next/link'
 import { ChevronRight, Search, X } from 'lucide-react'
 import type { SinalResumo } from '@/lib/semiologia/catalogo'
 import { ROTAS } from '@/lib/semiologia/rotas'
-import { Ilustracao } from './ilustracoes/registro'
+import { Capa } from './capa'
+import { Enfase } from './enfase'
 
 /**
  * Catálogo dos sinais.
@@ -83,11 +84,7 @@ export function CatalogoDeSinais({ sinais }: { sinais: SinalResumo[] }) {
                 href={ROTAS.sinal(sinal.slug)}
                 className="group flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-sky-500/50"
               >
-                {sinal.ilustracao ? (
-                  <Ilustracao id={sinal.ilustracao.id} params={sinal.ilustracao.params} titulo={sinal.ilustracao.alt} />
-                ) : (
-                  <div className="aspect-square w-full bg-muted/40" />
-                )}
+                <Capa real={sinal.capaReal} ilustracao={sinal.ilustracao} />
                 <div className="flex flex-1 flex-col p-4">
                   <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
                     {sinal.sistemaTitulo}
@@ -98,7 +95,7 @@ export function CatalogoDeSinais({ sinais }: { sinais: SinalResumo[] }) {
                   {sinal.sinonimos.length > 0 && (
                     <p className="mt-0.5 text-[11px] italic text-muted-foreground">{sinal.sinonimos.join(' · ')}</p>
                   )}
-                  <p className="mt-2 flex-1 text-xs leading-relaxed text-muted-foreground">{sinal.resumo}</p>
+                  <p className="mt-2 flex-1 text-xs leading-relaxed text-muted-foreground"><Enfase texto={sinal.resumo} /></p>
                   <div className="mt-3 flex flex-wrap items-center gap-1.5 text-[11px] text-muted-foreground">
                     <span className="rounded bg-muted px-1.5 py-0.5">{sinal.totalCausas} causas</span>
                     {sinal.temDesempenho && (

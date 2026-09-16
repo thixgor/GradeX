@@ -8,7 +8,8 @@ import {
 } from '@/lib/acervos-licenciados'
 import { caminhoNoEspelho, urlDaMidia, midiasServiveis, type MidiaClinica } from '@/lib/semiologia/midia'
 import { ACERVO_DE_MIDIA } from '@/lib/semiologia/acervo.gerado'
-import { chaveDaCena, cobertura } from '@/lib/semiologia/acervo'
+import { chaveDaCena, chaveDoSinal, cobertura } from '@/lib/semiologia/acervo'
+import { SINAIS } from '@/lib/semiologia/sinais'
 import { JANELAS_ULTRASSOM } from '@/lib/semiologia/ultrassom'
 import { VISTAS } from '@/lib/semiologia/vistas'
 
@@ -212,11 +213,12 @@ describe('acervo curado', () => {
   it('toda chave do acervo aponta para uma cena que existe', () => {
     // Chave com typo produz mídia que nunca aparece e ninguém nota, porque a
     // página continua renderizando — com o esquema e sem o caso.
-    const validas = new Set(
-      [...VISTAS, ...JANELAS_ULTRASSOM].flatMap((janela) =>
+    const validas = new Set([
+      ...[...VISTAS, ...JANELAS_ULTRASSOM].flatMap((janela) =>
         janela.cenas.map((cena) => chaveDaCena(janela.slug, cena.id)),
       ),
-    )
+      ...SINAIS.map((sinal) => chaveDoSinal(sinal.slug)),
+    ])
     for (const chave of Object.keys(ACERVO_DE_MIDIA)) {
       expect(validas.has(chave), `chave órfã no acervo: ${chave}`).toBe(true)
     }

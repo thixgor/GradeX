@@ -211,6 +211,7 @@ function exigir(condicao, mensagem) {
 async function montarEsboco() {
   const { VISTAS } = await import('../../lib/semiologia/vistas.ts')
   const { JANELAS_ULTRASSOM } = await import('../../lib/semiologia/ultrassom.ts')
+  const { SINAIS } = await import('../../lib/semiologia/sinais.ts')
   const { ACERVO_DE_MIDIA } = await import('../../lib/semiologia/acervo.gerado.ts')
 
   const existente = new Set(Object.keys(ACERVO_DE_MIDIA ?? {}))
@@ -236,6 +237,26 @@ async function montarEsboco() {
         legenda: cena.diagnostico,
       })
     }
+  }
+
+  // Sinais do exame físico: a chave é `sinais/<slug>`, e a "cena" é o slug.
+  // A fonte provável é o Commons — fotografia clínica de pele, mão e face é o
+  // que ele tem e as outras duas não.
+  for (const sinal of SINAIS) {
+    const chave = `sinais/${sinal.slug}`
+    if (existente.has(chave)) continue
+    midias.push({
+      _alvo: `Sinal → ${sinal.nome}`,
+      _procurar: sinal.resumo,
+      janela: 'sinais',
+      cena: sinal.slug,
+      fonte: 'wikimedia-commons',
+      tipo: 'imagem',
+      caso: '',
+      urlOrigem: '',
+      urlDoCaso: '',
+      legenda: sinal.resumo,
+    })
   }
 
   const destino = path.join(scriptDir, 'curadoria.json')

@@ -1,5 +1,5 @@
 import { ACERVO_DE_MIDIA } from './acervo.gerado'
-import type { CenaClinica, JanelaUltrassom, Vista } from './esquemas'
+import type { CenaClinica, JanelaUltrassom, Sinal, Vista } from './esquemas'
 import { midiasServiveis, type MidiaClinica } from './midia'
 
 /**
@@ -26,6 +26,28 @@ import { midiasServiveis, type MidiaClinica } from './midia'
  */
 export function chaveDaCena(janelaSlug: string, cenaId: string): string {
   return `${janelaSlug}/${cenaId}`
+}
+
+/**
+ * A chave de um sinal do exame físico: `sinais/<slug>`.
+ *
+ * O prefixo fixo é o que impede colisão com uma vista que um dia se chame
+ * "celulite" — e mantém a ala inteira sob um mesmo namespace no acervo.
+ */
+export function chaveDoSinal(slug: string): string {
+  return `sinais/${slug}`
+}
+
+/** Mídia servível de um sinal, do acervo gerado e do que estiver inline. */
+export function midiasDoSinal(sinal: Sinal): MidiaClinica[] {
+  const doAcervo = ACERVO_DE_MIDIA[chaveDoSinal(sinal.slug)] ?? []
+  return midiasServiveis([...doAcervo, ...(sinal.midiaReal ?? [])])
+}
+
+/** O sinal com a mídia já anexada — mesmo contrato de `comAcervo`. */
+export function comAcervoSinal(sinal: Sinal): Sinal {
+  const midiaReal = midiasDoSinal(sinal)
+  return midiaReal.length ? { ...sinal, midiaReal } : { ...sinal, midiaReal: undefined }
 }
 
 /**
@@ -59,7 +81,10 @@ export function comAcervo<T extends Vista | JanelaUltrassom>(janela: T): T {
 }
 
 /** Quantas cenas já têm caso real — o número que mede o avanço da curadoria. */
-export function cobertura(janelas: (Vista | JanelaUltrassom)[]): {
+export function cobertura(
+  janelas: (Vista | JanelaUltrassom)[],
+  sinais: Sinal[] = [],
+): {
   cenas: number
   comCaso: number
   midias: number
@@ -75,6 +100,15 @@ export function cobertura(janelas: (Vista | JanelaUltrassom)[]): {
         comCaso += 1
         midias += encontradas.length
       }
+    }
+  }
+  // Um sinal conta como uma "cena": é uma ficha que pode ou não ter caso real.
+  for (const sinal of sinais) {
+    cenas += 1
+    const encontradas = midiasDoSinal(sinal)
+    if (encontradas.length) {
+      comCaso += 1
+      midias += encontradas.length
     }
   }
   return { cenas, comCaso, midias }

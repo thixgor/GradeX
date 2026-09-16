@@ -41,6 +41,14 @@ const IDS_REGISTRADOS = new Set([
   'rinoscopia',
   'pupilas',
   'endoscopia',
+  'fonocardiograma',
+  'mapa-toracico',
+  'pulso',
+  'membro-inferior',
+  'pele',
+  'face',
+  'abdome',
+  'manobra-neurologica',
   'ultrassom',
 ])
 

@@ -132,3 +132,18 @@ export function midiasServiveis(midias: MidiaClinica[] | undefined): MidiaClinic
   if (!midias?.length) return []
   return midias.filter((midia) => urlDaMidia(midia) !== null)
 }
+
+/**
+ * Se a URL pode passar pelo otimizador de imagens do Next.
+ *
+ * Só o espelho está em `images.remotePatterns`; a origem (Commons, Radiopaedia,
+ * Squarespace) não está — e não deve estar, porque otimizar a partir de lá
+ * multiplicaria o tráfego que batemos no servidor de quem nos autorizou.
+ */
+export function otimizavel(url: string): boolean {
+  try {
+    return new URL(url).hostname.endsWith('.public.blob.vercel-storage.com')
+  } catch {
+    return false
+  }
+}

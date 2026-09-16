@@ -15,8 +15,10 @@ import {
 } from 'lucide-react'
 import type { Sinal } from '@/lib/semiologia/esquemas'
 import { ROTAS } from '@/lib/semiologia/rotas'
+import { CasoReal } from './caso-real'
 import { Deslizador } from './deslizador'
-import { CONTROLES } from './ilustracoes/controles'
+import { Enfase } from './enfase'
+import { controleDoSinal } from './ilustracoes/controles'
 import { Ilustracao } from './ilustracoes/registro'
 
 /**
@@ -33,7 +35,7 @@ import { Ilustracao } from './ilustracoes/registro'
  * que o aluno precisa levar é "isto não sustenta a decisão sozinho".
  */
 export function FichaDeSinal({ sinal }: { sinal: Sinal }) {
-  const controle = sinal.ilustracao ? CONTROLES[sinal.ilustracao.id] : undefined
+  const controle = controleDoSinal(sinal)
   const [valor, setValor] = useState(() => {
     if (!controle) return 0
     const doDado = sinal.ilustracao?.params?.[controle.param]
@@ -63,34 +65,40 @@ export function FichaDeSinal({ sinal }: { sinal: Sinal }) {
         {sinal.sinonimos.length > 0 && (
           <p className="mt-1 text-sm italic text-muted-foreground">{sinal.sinonimos.join(' · ')}</p>
         )}
-        <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">{sinal.resumo}</p>
+        <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground"><Enfase texto={sinal.resumo} /></p>
       </header>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-        {/* Figura, com o controle quando o parâmetro tem significado clínico. */}
-        {sinal.ilustracao && (
+        {/* Caso real primeiro, quando existe; figura e controle depois. */}
+        {(sinal.ilustracao || sinal.midiaReal?.length) && (
           <div className="space-y-3">
+            {sinal.midiaReal && sinal.midiaReal.length > 0 && <CasoReal midias={sinal.midiaReal} cenaId={sinal.slug} />}
+            {sinal.ilustracao && sinal.midiaReal && sinal.midiaReal.length > 0 && (
+              <h3 className="pt-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Esquema de referência</h3>
+            )}
+            {sinal.ilustracao && (
             <Ilustracao
               id={sinal.ilustracao.id}
               params={params}
               titulo={sinal.ilustracao.alt}
               className="border border-border"
             />
-            {controle && <Deslizador id="controle-figura" controle={controle} valor={valor} onMudar={setValor} />}
+            )}
+            {sinal.ilustracao && controle && <Deslizador id="controle-figura" controle={controle} valor={valor} onMudar={setValor} />}
           </div>
         )}
 
         <div className="space-y-5">
           <Bloco icone={Target} titulo="O que conta como presente">
-            <p className="text-sm leading-relaxed">{sinal.definicao}</p>
+            <p className="text-sm leading-relaxed"><Enfase texto={sinal.definicao} /></p>
           </Bloco>
 
           <Bloco icone={Microscope} titulo="Por que aparece">
-            <p className="text-sm leading-relaxed text-muted-foreground">{sinal.mecanismo}</p>
+            <p className="text-sm leading-relaxed text-muted-foreground"><Enfase texto={sinal.mecanismo} /></p>
           </Bloco>
 
           <Bloco icone={BookOpen} titulo="O que muda">
-            <p className="text-sm leading-relaxed text-muted-foreground">{sinal.significado}</p>
+            <p className="text-sm leading-relaxed text-muted-foreground"><Enfase texto={sinal.significado} /></p>
           </Bloco>
 
           {sinal.comparador && (
@@ -148,7 +156,7 @@ export function FichaDeSinal({ sinal }: { sinal: Sinal }) {
                       </div>
                     ))}
                 </dl>
-                <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">{item.leitura}</p>
+                <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground"><Enfase texto={item.leitura} /></p>
                 <p className="mt-1.5 text-[11px] text-muted-foreground/80">{item.fonte}</p>
               </div>
             ))}
@@ -161,12 +169,12 @@ export function FichaDeSinal({ sinal }: { sinal: Sinal }) {
           {sinal.causas.map((grupo) => (
             <div key={grupo.titulo} className="rounded-lg border border-border p-4">
               <p className="text-sm font-semibold">{grupo.titulo}</p>
-              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{grupo.mecanismo}</p>
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground"><Enfase texto={grupo.mecanismo} /></p>
               <ul className="mt-2.5 space-y-1">
                 {grupo.itens.map((item) => (
                   <li key={item} className="flex gap-2 text-sm text-muted-foreground">
                     <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-muted-foreground/60" />
-                    <span className="leading-relaxed">{item}</span>
+                    <span className="leading-relaxed"><Enfase texto={item} /></span>
                   </li>
                 ))}
               </ul>
@@ -180,7 +188,7 @@ export function FichaDeSinal({ sinal }: { sinal: Sinal }) {
           {sinal.armadilhas.map((item) => (
             <li key={item} className="flex gap-2 text-sm text-muted-foreground">
               <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-600 dark:text-amber-400" />
-              <span className="leading-relaxed">{item}</span>
+              <span className="leading-relaxed"><Enfase texto={item} /></span>
             </li>
           ))}
         </ul>
