@@ -6,7 +6,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
  * O convite aparece por cima do que a pessoa está fazendo. Errar para o lado do
  * excesso não custa uma avaliação a menos — custa a confiança na plataforma, e
  * quem toca em "não quero avaliar" não volta. Por isso cada trava aqui é
- * testada: cota diária, teto por material, adiamento ao recusar, silêncio
+ * testada: teto por material, adiamento ao recusar, silêncio por desfecho,
  * crescente e a saída definitiva.
  *
  * `lib/reviews-prompt.ts` guarda tudo no `localStorage` e enfileira no
@@ -83,11 +83,22 @@ describe('convite de avaliação — quem pode ser convidado', () => {
     expect(podeConvidar(MATERIAL, ALVO)).toBe(true)
   })
 
-  it('cala por um dia inteiro depois de um convite — inclusive para outro material', () => {
+  it('não cala por relógio: quem estuda dois materiais seguidos é convidado nos dois', () => {
+    // Exibir um convite, por si só, não silencia nada. Não há cota por tempo —
+    // quem decide se a pessoa quer ser convidada é o DESFECHO, testado logo
+    // abaixo, e não um intervalo fixo por cima dele.
     registrarExibicao(MATERIAL, ALVO)
-    expect(podeConvidar(MATERIAL, ALVO)).toBe(false)
-    // A cota é da pessoa, não do material: estudar cinco PDFs seguidos não pode
-    // render cinco folhas de avaliação na mesma tarde.
+    expect(podeConvidar(MATERIAL, OUTRO_ALVO)).toBe(true)
+  })
+
+  it('mas cada desfecho traz o próprio silêncio', () => {
+    // Esta é a trava que sobrou no lugar da cota, e é melhor que ela: reage ao
+    // que a pessoa fez, não ao relógio.
+    registrarEnvio(MATERIAL, ALVO)
+    expect(podeConvidar(MATERIAL, OUTRO_ALVO)).toBe(false)
+
+    local.clear()
+    registrarRecusa(MATERIAL, ALVO)
     expect(podeConvidar(MATERIAL, OUTRO_ALVO)).toBe(false)
   })
 
@@ -95,8 +106,10 @@ describe('convite de avaliação — quem pode ser convidado', () => {
     vi.useFakeTimers()
     vi.setSystemTime(new Date('2026-01-01T09:00:00Z'))
     registrarExibicao(MATERIAL, ALVO)
+    // Sem cota por tempo, a segunda aparição não depende de esperar nada — mas
+    // o teto por item continua valendo, e é isso que este teste protege.
 
-    // Um mês depois: a cota diária e o adiamento do alvo já passaram.
+    // Um mês depois: o adiamento do alvo já passou.
     vi.setSystemTime(new Date('2026-02-01T09:00:00Z'))
     expect(podeConvidar(MATERIAL, ALVO)).toBe(true)
     registrarExibicao(MATERIAL, ALVO)
@@ -113,7 +126,7 @@ describe('convite de avaliação — quem pode ser convidado', () => {
     vi.setSystemTime(new Date('2026-01-01T09:00:00Z'))
     registrarRecusa(MATERIAL, ALVO)
 
-    // Passada a cota diária, outro material volta; o recusado ainda não.
+    // Passado o silêncio da recusa, outro material volta; o recusado ainda não.
     vi.setSystemTime(new Date('2026-01-06T09:00:00Z'))
     expect(podeConvidar(MATERIAL, OUTRO_ALVO)).toBe(true)
     expect(podeConvidar(MATERIAL, ALVO)).toBe(false)
@@ -264,17 +277,11 @@ describe('convite de avaliação — por que ele não apareceu', () => {
    * faltava quando "fechei o material e não apareceu nada": sem motivo, não há
    * como distinguir um bug de uma regra fazendo o trabalho dela.
    */
-  it('nomeia a cota do dia, com a hora em que libera', () => {
-    registrarExibicao(MATERIAL, ALVO)
-    const veredicto = examinarRegrasLocais(MATERIAL, OUTRO_ALVO)
-    expect(veredicto.permitido).toBe(false)
-    expect(veredicto.motivo).toBe('cota_do_dia')
-    expect(veredicto.liberaEm).toBeTruthy()
-  })
-
-  it('nomeia o silêncio por recusa', () => {
+  it('nomeia o silêncio por recusa, com a hora em que libera', () => {
     registrarRecusa(MATERIAL, ALVO)
-    expect(examinarRegrasLocais(MATERIAL, ALVO).motivo).toBe('silenciado')
+    const veredicto = examinarRegrasLocais(MATERIAL, ALVO)
+    expect(veredicto.motivo).toBe('silenciado')
+    expect(veredicto.liberaEm).toBeTruthy()
   })
 
   it('nomeia o item já avaliado', () => {

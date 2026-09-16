@@ -62,8 +62,11 @@ const MINUTO = 60_000
 const HORA = 60 * MINUTO
 const DIA = 24 * HORA
 
-/** Um convite por dia, no máximo — mesmo quem estuda cinco materiais seguidos. */
-const INTERVALO_ENTRE_CONVITES = 20 * HORA
+// Não há cota por tempo entre convites: cada DESFECHO já traz o seu silêncio
+// (enviar cala por dois dias, recusar por três), e é o desfecho que diz se a
+// pessoa quer ser convidada — não o relógio. Uma cota fixa por cima disso só
+// engolia o convite de quem estuda vários materiais numa tarde e teria
+// respondido a todos.
 /** Depois de "agora não": silêncio curto. */
 const SILENCIO_APOS_RECUSA = 3 * DIA
 /** Três recusas seguidas = a pessoa não quer avaliar. Some por dois meses. */
@@ -157,14 +160,12 @@ interface EstadoDoAlvo {
 interface EstadoLocal {
   /** Silêncio global: nenhum convite até esta data. */
   silenciadoAte: number
-  /** Último convite exibido. */
-  ultimoConviteEm: number
   /** Recusas seguidas ("agora não"). Zera a cada envio. */
   recusas: number
   porAlvo: Record<string, EstadoDoAlvo>
 }
 
-const ESTADO_VAZIO: EstadoLocal = { silenciadoAte: 0, ultimoConviteEm: 0, recusas: 0, porAlvo: {} }
+const ESTADO_VAZIO: EstadoLocal = { silenciadoAte: 0, recusas: 0, porAlvo: {} }
 
 function numero(valor: unknown): number {
   const n = typeof valor === 'number' ? valor : Number(valor)
@@ -182,7 +183,6 @@ function lerEstado(): EstadoLocal {
     const bruto = JSON.parse(cru) as Partial<EstadoLocal>
     return {
       silenciadoAte: numero(bruto?.silenciadoAte),
-      ultimoConviteEm: numero(bruto?.ultimoConviteEm),
       recusas: numero(bruto?.recusas),
       porAlvo: bruto?.porAlvo && typeof bruto.porAlvo === 'object' ? bruto.porAlvo : {},
     }
@@ -213,7 +213,6 @@ export type MotivoLocal =
   | 'ok'
   | 'sem_navegador'
   | 'silenciado'
-  | 'cota_do_dia'
   | 'ja_avaliado'
   | 'alvo_adiado'
   | 'teto_do_alvo'
@@ -265,15 +264,6 @@ export function examinarRegrasLocais(
       motivo: 'silenciado',
       explicacao: 'Convites silenciados — houve uma recusa recente ou um "não quero avaliar".',
       liberaEm: emTexto(estado.silenciadoAte),
-    }
-  }
-
-  if (agora - estado.ultimoConviteEm < INTERVALO_ENTRE_CONVITES) {
-    return {
-      permitido: false,
-      motivo: 'cota_do_dia',
-      explicacao: 'Já houve um convite nas últimas 20 horas (a cota é da pessoa, não do material).',
-      liberaEm: emTexto(estado.ultimoConviteEm + INTERVALO_ENTRE_CONVITES),
     }
   }
 
@@ -340,14 +330,17 @@ export function examinarEstudo(leitura: {
   }
 }
 
-/** Convite exibido: conta a aparição e trava a cota diária. */
+/**
+ * Convite exibido: conta a aparição para o teto por material. O silêncio global
+ * não nasce aqui — quem o define é o desfecho (`registrarEnvio`,
+ * `registrarRecusa`), porque é ele que diz se a pessoa quer ser convidada.
+ */
 export function registrarExibicao(targetType: ReviewTargetType, targetId: string) {
   const chave = chaveDoAlvo(targetType, targetId)
   alterarEstado(estado => {
     const alvo = estado.porAlvo[chave] || { vezes: 0 }
     return {
       ...estado,
-      ultimoConviteEm: Date.now(),
       porAlvo: { ...estado.porAlvo, [chave]: { ...alvo, vezes: numero(alvo.vezes) + 1 } },
     }
   })

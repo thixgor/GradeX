@@ -37,7 +37,7 @@ A partir daí o console narra cada passo (`[avaliação] …`). O modo gruda no
 navegador — a query string se perde na primeira navegação, e o convite aparece
 justamente depois de navegar. Para desligar: `?avaliacao=off`.
 
-Para conferir a folha na hora, sem esperar relógio nem cota:
+Para conferir a folha na hora, sem esperar relógio nem silêncio:
 
 ```
 https://…/materiais/<id>/viewer?avaliacao=forcar
@@ -53,10 +53,11 @@ erro no envio.
 É o motivo mais comum em teste manual. O diagnóstico diz `convite não nasceu`
 com os segundos e sinais contados.
 
-**2. Cota de 20 horas.** No máximo um convite por dia, **por pessoa** — não por
-material. Testar um PDF e logo em seguida um deck: o segundo é barrado, mesmo
-que tudo o mais esteja certo. O diagnóstico diz `cota_do_dia` e a hora em que
-libera.
+**2. Silêncio por desfecho.** Não existe cota por tempo entre convites — quem
+estuda três materiais numa tarde pode ser convidado nos três. O que cala é o
+**desfecho**: enviar a avaliação silencia por 2 dias, "agora não" por 3 (e adia
+aquele item por 14), três recusas seguidas por 2 meses, "não quero avaliar" por
+anos. O diagnóstico diz `silenciado` e a hora em que libera.
 
 **3. Rota silenciosa.** Prova, checkout, login, landing e os próprios leitores
 não exibem convite. O convite não é descartado: espera a próxima tela que
@@ -70,9 +71,8 @@ aceite. O diagnóstico diz `convite em espera`.
 - `sem_acesso` — avaliar exige ter acesso ao conteúdo.
 - `travado` — `reviewsLocked` ligado no item.
 
-**5. Histórico local.** "Agora não" adia aquele item por 14 dias e silencia tudo
-por 3 dias; três recusas seguidas silenciam por 2 meses; "não quero avaliar"
-vale anos. Cada item é oferecido no máximo 2 vezes na vida da conta.
+**5. Teto por item.** Cada material ou deck é oferecido no máximo 2 vezes na
+vida da conta, mesmo que nada mais esteja no caminho.
 
 Para limpar o histórico local e recomeçar do zero neste navegador:
 
@@ -82,6 +82,11 @@ sessionStorage.removeItem('domineaqui:avaliacao-convite-pendente')
 ```
 
 ## Regras de insistência
+
+Elas reagem ao que a pessoa FEZ, não ao relógio: exibir um convite não silencia
+nada por si só — enviar, recusar ou dispensar é que silencia. Uma cota fixa por
+cima disso existiu e foi removida, porque engolia o convite de quem estuda
+vários materiais seguidos e teria respondido a todos.
 
 Estão todas em `lib/reviews-prompt.ts`, com teste em
 `__tests__/reviews/convite-de-avaliacao.test.ts`. Mexer nelas sem atualizar o
