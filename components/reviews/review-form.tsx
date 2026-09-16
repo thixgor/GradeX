@@ -75,7 +75,9 @@ export function ReviewForm({
           disabled={submitting}
           rows={4}
           placeholder="Compartilhe sua experiência com este material..."
-          className="w-full rounded-xl border border-irish-emerald/20 bg-white/60 dark:bg-white/[0.04] backdrop-blur-sm px-3.5 py-2.5 text-sm leading-relaxed text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-irish-emerald/50 focus:ring-2 focus:ring-irish-emerald/15 transition-all resize-y min-h-[100px]"
+          // Mesmo motivo da folha de fim de estudo: 16px no dedo, senão o
+          // iOS amplia a página ao focar. Ver `.campo-sem-zoom` em globals.css.
+          className="campo-sem-zoom w-full rounded-xl border border-irish-emerald/20 bg-white/60 dark:bg-white/[0.04] backdrop-blur-sm px-3.5 py-2.5 text-sm leading-relaxed text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-irish-emerald/50 focus:ring-2 focus:ring-irish-emerald/15 transition-all resize-y min-h-[100px]"
         />
         <div className="flex items-center justify-between text-[11px]">
           <span className={overLimit ? 'text-destructive font-semibold' : 'text-muted-foreground/70'}>

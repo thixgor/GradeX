@@ -545,7 +545,11 @@ export function ReviewPrompt({
                             onChange={event => setTexto(event.target.value.slice(0, REVIEW_COMMENT_MAX))}
                             rows={2}
                             placeholder="Quer escrever mais alguma coisa?"
-                            className="mt-2.5 w-full resize-none rounded-xl border border-irish-emerald/20 bg-white/70 px-3.5 py-2.5 text-sm leading-relaxed text-foreground transition-all placeholder:text-muted-foreground/60 focus:border-irish-emerald/50 focus:outline-none focus:ring-2 focus:ring-irish-emerald/15 dark:bg-white/[0.04]"
+                            /* `campo-sem-zoom`: no dedo a fonte vai a 16px, senão o
+                               Safari do iOS amplia a página ao focar o campo — e a
+                               folha, que está presa à borda de baixo, sai do lugar
+                               com o teclado aberto. Ver globals.css. */
+                            className="campo-sem-zoom mt-2.5 w-full resize-none rounded-xl border border-irish-emerald/20 bg-white/70 px-3.5 py-2.5 text-sm leading-relaxed text-foreground transition-all placeholder:text-muted-foreground/60 focus:border-irish-emerald/50 focus:outline-none focus:ring-2 focus:ring-irish-emerald/15 dark:bg-white/[0.04]"
                           />
                           <p className="mt-1.5 text-[11px] text-muted-foreground/70">
                             Aparece publicamente só com o seu primeiro nome.

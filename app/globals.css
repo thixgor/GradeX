@@ -2165,6 +2165,37 @@ body.roller-dragging {
   }
 }
 
+/* ---- Campo de texto que não faz o iOS dar zoom ---- */
+/*
+   O Safari do iOS amplia a página inteira quando o campo que recebe o foco tem
+   fonte menor que 16px — e não desfaz ao sair: a pessoa fecha o teclado e a
+   tela continua ampliada e desalinhada.
+
+   O jeito comum de resolver isso no projeto é `text-base sm:text-sm`, que
+   funciona no telefone e FALHA no iPad: `sm:` é largura de tela (640px) e um
+   iPad tem 768px ou mais, então ele volta aos 14px e o zoom acontece do mesmo
+   jeito. O gatilho nunca foi o tamanho da tela — é o campo receber toque.
+
+   Daí a consulta por PONTEIRO. `hover: none` + `pointer: coarse` é dedo, seja
+   num celular de 360px ou num iPad Pro de 1024px. Tablet com mouse/trackpad
+   relata `hover: hover` e mantém a tipografia compacta do desktop, onde esse
+   zoom não existe.
+
+   O seletor traz o elemento junto (`textarea.campo-sem-zoom`) de propósito:
+   assim ele tem especificidade maior que a do `text-sm` do Tailwind e vence
+   sem depender da ordem em que as duas regras caem na folha.
+
+   Mexer no `<meta viewport>` com `maximum-scale=1` também calaria o zoom, e é
+   a solução errada: ela tira de TODO MUNDO a capacidade de ampliar a tela com
+   os dedos, inclusive de quem enxerga mal. Custo alto para o outro lado. */
+@media (hover: none) and (pointer: coarse) {
+  textarea.campo-sem-zoom,
+  input.campo-sem-zoom,
+  select.campo-sem-zoom {
+    font-size: 16px;
+  }
+}
+
 /* Ponteiro grosso (celular/tablet sem mouse): aqui o roller é só indicador.
    Arrastar um traço de 5px com o dedo não é gesto de celular — quem rola,
    rola o conteúdo. E uma pista clicável na borda viraria uma faixa morta
