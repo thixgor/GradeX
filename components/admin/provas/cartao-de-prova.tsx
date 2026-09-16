@@ -154,7 +154,22 @@ function CartaoDeProvaBase({ prova, agora, acaoEmCurso, acoes }: CartaoDeProvaPr
   const semJanela = eProvaSemJanela(prova)
   const publico = normalizarPublico((prova as any).audience)
   const liberaDownloads = algumaLiberacaoLigada(normalizarLiberacoes((prova as any).freeDownloads))
-  const temDiscursivas = prova.questions?.some(q => q.type === 'discursive')
+  /*
+   * "Tem discursiva?" vem pronto do servidor.
+   *
+   * A lista de /admin/exams não recebe mais o `questions[]` de cada prova
+   * (`GET /api/exams?campos=admin`): o acervo inteiro numa resposta só era o
+   * que fazia a tela falhar ao carregar. O booleano que este cartão realmente
+   * usava agora é calculado lá.
+   *
+   * A varredura fica como retaguarda para quem ainda passe a prova completa —
+   * o painel ao vivo busca as questões sob demanda e as devolve ao mesmo
+   * objeto.
+   */
+  const temDiscursivas =
+    typeof (prova as any).temDiscursivas === 'boolean'
+      ? (prova as any).temDiscursivas
+      : prova.questions?.some(q => q.type === 'discursive')
   const pitch = pitchDaProva(prova)
   // "Ligado" aqui é ligado E completo: um pitch sem destino não aparece para
   // aluno nenhum, e anunciá-lo na lista como ativo seria mentir para o admin.

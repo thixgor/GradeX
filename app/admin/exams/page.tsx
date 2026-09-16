@@ -87,6 +87,18 @@ export default function AdminExamsPage() {
    */
   const [provaAoVivoId, setProvaAoVivoId] = useState<string | null>(null)
   /**
+   * As questões da prova acompanhada ao vivo.
+   *
+   * O painel reconstrói, no navegador, a prova como CADA aluno a vê — a ordem
+   * embaralhada depende do `questions[]` (ver `painel-ao-vivo.tsx`). A lista
+   * não traz mais esse array (`campos=admin`), então ele é buscado quando o
+   * painel abre, para uma prova só.
+   *
+   * Guardado com o id ao lado para o painel nunca montar as questões de uma
+   * prova sobre os dados de outra enquanto a busca da nova não chega.
+   */
+  const [questoesAoVivo, setQuestoesAoVivo] = useState<{ id: string; questions: Exam['questions'] } | null>(null)
+  /**
    * A prova cujo pitch está sendo configurado — e, sendo `null`, o diálogo
    * fechado. Guardado por ID, como o painel ao vivo: salvar o pitch corrige a
    * prova dentro do estado da lista, e um diálogo segurando uma cópia
@@ -137,10 +149,23 @@ export default function AdminExamsPage() {
    * para a aba usam ele, e a lista só troca quando a resposta chega. O modo
    * ruidoso (a primeira carga) é o único que tem direito ao esqueleto.
    *
-   * Nenhuma ação da lista chama isto: `GET /api/exams` devolve os documentos
-   * completos, com todas as questões de todas as provas, e pedir isso de volta
-   * para confirmar um booleano que o servidor já aceitou é o que fazia a tela
-   * inteira se remontar a cada clique.
+   * Nenhuma ação da lista chama isto: reler a lista inteira para confirmar um
+   * booleano que o servidor já aceitou é o que fazia a tela se remontar a cada
+   * clique.
+   *
+   * ## `campos=admin`
+   *
+   * A chamada era `GET /api/exams` sem parâmetro, o recorte que devolve o
+   * documento COMPLETO de todas as provas — o `questions[]` de cada uma junto,
+   * com enunciados, alternativas, respostas comentadas e imagens. Com o acervo
+   * crescendo, a resposta passou do limite de corpo da função e a tela passou a
+   * abrir em "Não foi possível carregar as provas": a falha era o tamanho do
+   * que ela pedia, não a lista.
+   *
+   * `campos=admin` devolve o mesmo documento sem o `questions[]`, mais o
+   * `temDiscursivas` que o cartão usava a varredura para descobrir. Quem
+   * precisa das questões de UMA prova — o PDF e o painel ao vivo — as busca no
+   * clique, em `/api/exams/[id]`.
    */
   const carregarProvas = useCallback(async (opcoes: { silencioso?: boolean } = {}) => {
     if (buscandoRef.current) return
@@ -148,14 +173,30 @@ export default function AdminExamsPage() {
     if (opcoes.silencioso) setAtualizando(true)
 
     try {
-      const res = await fetch('/api/exams', { cache: 'no-store' })
-      if (!res.ok) throw new Error('Não foi possível carregar as provas')
+      const res = await fetch('/api/exams?campos=admin', { cache: 'no-store' })
+      if (!res.ok) {
+        /*
+         * O motivo, e não só "não deu".
+         *
+         * A mensagem fixa anterior escondia a diferença entre uma sessão que
+         * expirou (401), um erro do servidor (500) e uma resposta que a função
+         * não conseguiu devolver — e foi essa última que aconteceu aqui, sem
+         * deixar rastro no log. O status e o texto do servidor, quando houver,
+         * poupam essa investigação na próxima vez.
+         */
+        const corpo = await res.json().catch(() => null)
+        throw new Error(
+          corpo?.error
+            ? `Não foi possível carregar as provas: ${corpo.error} (HTTP ${res.status})`
+            : `Não foi possível carregar as provas (HTTP ${res.status})`,
+        )
+      }
       const data = await res.json()
       setExams(data.exams || [])
       setAtualizadoEm(Date.now())
     } catch (error: any) {
       console.error('Erro ao carregar provas:', error)
-      if (opcoes.silencioso) showToastMessage(error.message || 'Erro ao atualizar a lista')
+      showToastMessage(error.message || 'Erro ao atualizar a lista')
     } finally {
       buscandoRef.current = false
       setLoading(false)
@@ -562,11 +603,13 @@ export default function AdminExamsPage() {
   /**
    * As questões da prova, mesmo quando a lista não as trouxer.
    *
-   * `GET /api/exams` devolve o documento completo para o admin — inclusive o
-   * gabarito —, e por isso o caminho normal não faz requisição nenhuma aqui.
-   * O resguardo existe porque a projeção dessa rota já mudou uma vez (ver
-   * `campos=lista`): se mudar de novo, o PDF passa a custar uma busca em vez
-   * de sair com zero questões e parecer defeito do gerador.
+   * A lista pede `campos=admin`, que não traz `questions[]` — então este é o
+   * caminho normal, não mais o resguardo: uma busca por prova, no clique que
+   * pede o PDF, em vez do acervo inteiro em toda carga da tela.
+   *
+   * A condição continua olhando o que veio: se a prova já tiver as questões em
+   * mãos (uma lista antiga em cache, o painel ao vivo que as buscou), o PDF sai
+   * sem requisição nenhuma.
    */
   const provaComQuestoes = useCallback(async (prova: Exam): Promise<Exam> => {
     if (Array.isArray(prova.questions) && prova.questions.length > 0) return prova
@@ -751,17 +794,55 @@ export default function AdminExamsPage() {
   ])
 
   /*
+   * O painel ao vivo abriu: buscar as questões daquela prova.
+   *
+   * Uma requisição por abertura de painel, sobre uma prova — e não o
+   * `questions[]` de todas as provas em toda carga da lista, que era o arranjo
+   * anterior.
+   */
+  useEffect(() => {
+    if (!provaAoVivoId) {
+      setQuestoesAoVivo(null)
+      return
+    }
+    let cancelado = false
+    ;(async () => {
+      try {
+        const res = await fetch(`/api/exams/${provaAoVivoId}`)
+        if (!res.ok) return
+        const dados = await res.json()
+        // O painel pode ter sido fechado (ou trocado de prova) enquanto isto
+        // voltava: sem a guarda, a resposta antiga sobrescreveria a nova.
+        if (cancelado) return
+        setQuestoesAoVivo({ id: provaAoVivoId, questions: dados?.exam?.questions || [] })
+      } catch {
+        // Sem as questões o painel ainda mostra presença, progresso e relógio;
+        // só a prévia da questão do aluno fica indisponível.
+      }
+    })()
+    return () => {
+      cancelado = true
+    }
+  }, [provaAoVivoId])
+
+  /*
    * A prova acompanhada, buscada na lista a cada render.
    *
    * É de propósito que ela não seja uma cópia guardada no estado: "Forçar
    * Início" e "Forçar Término" corrigem a prova dentro de `exams`, e o painel
    * precisa acompanhar essa correção — senão a contagem regressiva dele
    * continuaria mirando um horário que o admin acabou de mudar.
+   *
+   * As questões entram por cima, vindas da busca sob demanda acima: o resto do
+   * objeto continua sendo o da lista, que é o que acompanha as correções.
    */
-  const provaAoVivo = useMemo(
-    () => (provaAoVivoId ? exams.find(e => idDaProva(e) === provaAoVivoId) ?? null : null),
-    [exams, provaAoVivoId],
-  )
+  const provaAoVivo = useMemo(() => {
+    if (!provaAoVivoId) return null
+    const daLista = exams.find(e => idDaProva(e) === provaAoVivoId) ?? null
+    if (!daLista) return null
+    if (questoesAoVivo?.id !== provaAoVivoId) return daLista
+    return { ...daLista, questions: questoesAoVivo.questions }
+  }, [exams, provaAoVivoId, questoesAoVivo])
 
   /** A prova do diálogo de pitch, pelo mesmo motivo de `provaAoVivo`. */
   const provaDoPitch = useMemo(

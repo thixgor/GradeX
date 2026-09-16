@@ -136,13 +136,18 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Sem projeção: o frontend (app/provas, app/admin/exams) lê campos
-    // como groupId, totalPoints, scoringMethod, startTime/endTime,
-    // gatesOpen/Close, isPracticeExam e questions diretamente do objeto.
-    // Restringir projection quebra agrupamento por grupo e exibição
-    // de pontos (mostrava "undefined pts"). Mantemos o documento
-    // completo aqui; a otimização de CPU vem do cache abaixo + do
-    // session cache em lib/auth.ts.
+    // Sem projeção: o documento completo, `questions[]` inclusive. Era o
+    // padrão porque as telas leem groupId, totalPoints, scoringMethod,
+    // startTime/endTime, gatesOpen/Close e isPracticeExam direto do objeto, e
+    // uma projeção curta demais quebrava o agrupamento por grupo e a exibição
+    // de pontos ("undefined pts").
+    //
+    // Hoje cada tela pede o recorte de que precisa — `campos=lista` (/provas),
+    // `campos=admin` (/admin/exams), `resumo=1` (seletores) —, e o documento
+    // completo ficou para `?ids=`, que é pedido sobre um conjunto conhecido.
+    // Chamar esta rota sem recorte nenhum devolve o catálogo inteiro com todas
+    // as questões de todas as provas: cresce com o acervo e, num certo tamanho,
+    // a resposta deixa de caber (ver `campos=admin` abaixo).
     // `?limit=` é opcional e usado por quem só precisa das mais recentes (a
     // dashboard pede 3). Antes o parâmetro era ignorado: o servidor devolvia
     // todas as provas visíveis — com o array `questions` completo — e o
@@ -221,11 +226,43 @@ export async function GET(request: NextRequest) {
       practiceAfterEnd: 1,
     }
 
-    const projecaoEscolhida = apenasParaLista
-      ? { projection: projecaoDeLista }
-      : resumo
-        ? { projection: projecao }
-        : {}
+    /*
+     * `campos=admin` — o painel de /admin/exams, sem o banco de questões.
+     *
+     * O painel chamava esta rota SEM parâmetro nenhum, e o comentário da
+     * projeção acima dizia por quê: ele lê `groupId`, `totalPoints`,
+     * `scoringMethod`, os horários, o público, o pitch — campos que nem
+     * `resumo=1` nem `campos=lista` entregam inteiros. O preço era o documento
+     * completo de TODAS as provas da plataforma numa resposta só, `questions[]`
+     * de cada uma junto: enunciado, alternativas, resposta comentada e as
+     * imagens de cada questão.
+     *
+     * Enquanto o acervo era pequeno isso passava. Passou a não passar: a
+     * resposta cresce com o catálogo inteiro e estourou o limite de corpo da
+     * função — a rota falha ANTES de chegar ao `catch` daqui (não há "Get exams
+     * error" no log), e a tela recebe um erro sem mensagem. Era exatamente o
+     * "Não foi possível carregar as provas" de /admin/exams.
+     *
+     * A exclusão é de `questions` e mais nada: todo o resto do documento
+     * continua vindo, então nenhum campo que o painel lê depende de alguém se
+     * lembrar de acrescentá-lo a uma lista de inclusão. O que a lista fazia com
+     * as questões era UMA pergunta — "esta prova tem discursiva, para mostrar
+     * 'Corrigir Discursivas'?" —, e ela é respondida abaixo por um `distinct`
+     * que devolve ids, não questões.
+     *
+     * Quem precisa das questões de uma prova (o PDF, o painel ao vivo) busca
+     * aquela prova em `/api/exams/[id]`, uma de cada vez e quando o clique
+     * acontece.
+     */
+    const apenasParaAdmin = request.nextUrl.searchParams.get('campos') === 'admin'
+
+    const projecaoEscolhida = apenasParaAdmin
+      ? { projection: { questions: 0 } }
+      : apenasParaLista
+        ? { projection: projecaoDeLista }
+        : resumo
+          ? { projection: projecao }
+          : {}
 
     /*
      * `?ids=a,b,c` — as provas completas de um conjunto conhecido, numa
@@ -317,6 +354,30 @@ export async function GET(request: NextRequest) {
      */
     const precisaDoEstadoDoAluno = apenasParaLista && idsVisiveis.length > 0
 
+    /*
+     * Quais dessas provas têm questão discursiva.
+     *
+     * O cartão de /admin/exams desenha "Corrigir Discursivas" só quando há o
+     * que corrigir, e até aqui ele descobria isso varrendo o `questions[]` que
+     * vinha junto — ou seja, o motivo de o painel baixar o acervo inteiro era
+     * um booleano por prova.
+     *
+     * `distinct` devolve só os ids que casam. A consulta é filtrada pelos ids
+     * JÁ carregados, que passaram pelo mesmo filtro de visibilidade da
+     * listagem: pedir este recorte não alcança prova nenhuma que a lista não
+     * fosse devolver.
+     */
+    const idsComDiscursiva = apenasParaAdmin && exams.length > 0
+      ? new Set(
+          (
+            await examsCollection.distinct('_id', {
+              _id: { $in: exams.map((prova) => prova._id).filter(Boolean) as ObjectId[] },
+              'questions.type': 'discursive',
+            })
+          ).map((valor) => String(valor)),
+        )
+      : new Set<string>()
+
     const [entradasCru, submissoesCru, progressosCru] = precisaDoEstadoDoAluno
       ? await Promise.all([
           db
@@ -374,6 +435,9 @@ export async function GET(request: NextRequest) {
       const rascunho = rascunhos.get(chave)
       return {
         ...prepararProvaParaEntrega(prova, contextoBase),
+        // Derivado, não armazenado: substitui a varredura que o cartão de
+        // /admin/exams fazia no `questions[]` que não viaja mais (ver acima).
+        ...(apenasParaAdmin ? { temDiscursivas: idsComDiscursiva.has(chave) } : {}),
         // Estado desta requisição, não do documento: é por pessoa, e por isso
         // não está em `Exam`. O cartão decide o botão a partir daqui — ver
         // `lib/provas/acao-do-aluno.ts`.
