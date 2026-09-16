@@ -77,11 +77,73 @@ const ADIAMENTO_DO_ALVO = 14 * DIA
 /** E, ainda assim, nunca mais de duas vezes no total. */
 const MAX_CONVITES_POR_ALVO = 2
 
-/** Estudo mínimo para o convite fazer sentido (segundos com a aba à vista). */
-export const SEGUNDOS_MINIMOS_PADRAO = 45
+/**
+ * Estudo mínimo para o convite fazer sentido (segundos com a aba à vista).
+ *
+ * Começou em 45s e era alto demais: um PDF leva alguns segundos só para abrir,
+ * e uma consulta rápida — que é leitura de verdade — terminava antes da conta
+ * fechar. O convite simplesmente não existia para quem usa o material como
+ * referência, que é boa parte das pessoas.
+ */
+export const SEGUNDOS_MINIMOS_PADRAO = 25
 /** Piso de tempo quando o conteúdo sinaliza progresso (páginas, cards…). */
-const SEGUNDOS_MINIMOS_COM_SINAL = 15
-const SINAIS_MINIMOS_PADRAO = 5
+const SEGUNDOS_MINIMOS_COM_SINAL = 8
+const SINAIS_MINIMOS_PADRAO = 3
+
+// ─── Diagnóstico: "por que o convite não apareceu?" ─────────────────────────
+//
+// Tudo o que decide o convite é local e invisível: o relógio de estudo, a cota
+// do dia, o adiamento por material. Quando ele não aparece não há o que olhar —
+// nem log de servidor, nem tela de admin. Então cada porta fechada tem um nome,
+// e `?avaliacao=debug` na URL faz o caminho inteiro sair no console.
+//
+// `?avaliacao=forcar` vai além e ignora relógio e histórico local, para conferir
+// a folha na hora. O veredito do SERVIDOR continua valendo — forçar uma folha
+// que o servidor recusaria só produziria um erro no envio.
+
+const CHAVE_DIAGNOSTICO = 'domineaqui:avaliacao-diagnostico'
+const PREFIXO = '[avaliação]'
+
+/**
+ * Lê o modo do diagnóstico. A URL manda, e o que vier por ela GRUDA no
+ * armazenamento: o convite aparece depois de navegar, e a query string se perde
+ * no caminho — sem grudar, ligar o diagnóstico o desligaria junto.
+ */
+function modoDoDiagnostico(): 'off' | 'debug' | 'forcar' {
+  if (typeof window === 'undefined') return 'off'
+  try {
+    const daUrl = new URLSearchParams(window.location.search).get('avaliacao')
+    if (daUrl === 'debug' || daUrl === 'forcar') {
+      window.localStorage.setItem(CHAVE_DIAGNOSTICO, daUrl)
+      return daUrl
+    }
+    if (daUrl === 'off') {
+      window.localStorage.removeItem(CHAVE_DIAGNOSTICO)
+      return 'off'
+    }
+    const guardado = window.localStorage.getItem(CHAVE_DIAGNOSTICO)
+    return guardado === 'debug' || guardado === 'forcar' ? guardado : 'off'
+  } catch {
+    return 'off'
+  }
+}
+
+/** `true` quando o caminho do convite deve narrar cada passo no console. */
+export function diagnosticoLigado(): boolean {
+  return modoDoDiagnostico() !== 'off'
+}
+
+/** `true` quando relógio de estudo e histórico local devem ser ignorados. */
+export function modoForcado(): boolean {
+  return modoDoDiagnostico() === 'forcar'
+}
+
+/** Uma linha do diagnóstico. Silenciosa quando ele está desligado. */
+export function relatar(etapa: string, dados?: Record<string, unknown>) {
+  if (!diagnosticoLigado()) return
+  if (dados) console.info(`${PREFIXO} ${etapa}`, dados)
+  else console.info(`${PREFIXO} ${etapa}`)
+}
 
 interface EstadoDoAlvo {
   /** Quantas vezes já convidamos por este material. */
@@ -146,26 +208,136 @@ export function chaveDoAlvo(targetType: ReviewTargetType, targetId: string): str
   return `${targetType}:${targetId}`
 }
 
+/** Por que o convite não pode aparecer agora. Cada porta tem um nome. */
+export type MotivoLocal =
+  | 'ok'
+  | 'sem_navegador'
+  | 'silenciado'
+  | 'cota_do_dia'
+  | 'ja_avaliado'
+  | 'alvo_adiado'
+  | 'teto_do_alvo'
+
+export interface VeredictoLocal {
+  permitido: boolean
+  motivo: MotivoLocal
+  /** Frase pronta para o diagnóstico — sem ela o motivo é um código solto. */
+  explicacao: string
+  /** Quando a porta volta a abrir, se for o caso. */
+  liberaEm?: string
+}
+
+function emTexto(quando: number): string {
+  try {
+    return new Date(quando).toLocaleString('pt-BR')
+  } catch {
+    return String(quando)
+  }
+}
+
 /**
  * O material pode ser oferecido agora? Roda antes de qualquer chamada de rede —
  * a maior parte dos convites morre aqui, de graça.
+ *
+ * Devolve o MOTIVO, não só um `false`: era exatamente essa informação que
+ * faltava quando "fechei o material e não apareceu nada".
  */
-export function podeConvidar(targetType: ReviewTargetType, targetId: string): boolean {
-  if (typeof window === 'undefined') return false
+export function examinarRegrasLocais(
+  targetType: ReviewTargetType,
+  targetId: string,
+): VeredictoLocal {
+  if (typeof window === 'undefined') {
+    return { permitido: false, motivo: 'sem_navegador', explicacao: 'Sem navegador (renderização no servidor).' }
+  }
+
+  // Em modo forçado o histórico local inteiro é ignorado — é o que permite
+  // conferir a folha duas vezes seguidas no mesmo material.
+  if (modoForcado()) {
+    return { permitido: true, motivo: 'ok', explicacao: 'Regras locais ignoradas (?avaliacao=forcar).' }
+  }
 
   const agora = Date.now()
   const estado = lerEstado()
 
-  if (estado.silenciadoAte > agora) return false
-  if (agora - estado.ultimoConviteEm < INTERVALO_ENTRE_CONVITES) return false
+  if (estado.silenciadoAte > agora) {
+    return {
+      permitido: false,
+      motivo: 'silenciado',
+      explicacao: 'Convites silenciados — houve uma recusa recente ou um "não quero avaliar".',
+      liberaEm: emTexto(estado.silenciadoAte),
+    }
+  }
+
+  if (agora - estado.ultimoConviteEm < INTERVALO_ENTRE_CONVITES) {
+    return {
+      permitido: false,
+      motivo: 'cota_do_dia',
+      explicacao: 'Já houve um convite nas últimas 20 horas (a cota é da pessoa, não do material).',
+      liberaEm: emTexto(estado.ultimoConviteEm + INTERVALO_ENTRE_CONVITES),
+    }
+  }
 
   const alvo = estado.porAlvo[chaveDoAlvo(targetType, targetId)]
-  if (!alvo) return true
-  if (alvo.avaliadoEm) return false
-  if (numero(alvo.adiadoAte) > agora) return false
-  if (numero(alvo.vezes) >= MAX_CONVITES_POR_ALVO) return false
+  if (!alvo) return { permitido: true, motivo: 'ok', explicacao: 'Liberado.' }
 
-  return true
+  if (alvo.avaliadoEm) {
+    return {
+      permitido: false,
+      motivo: 'ja_avaliado',
+      explicacao: 'Este item já foi avaliado (ou o servidor já disse que não cabe convite por ele).',
+    }
+  }
+  if (numero(alvo.adiadoAte) > agora) {
+    return {
+      permitido: false,
+      motivo: 'alvo_adiado',
+      explicacao: 'Este item foi adiado por um "agora não".',
+      liberaEm: emTexto(numero(alvo.adiadoAte)),
+    }
+  }
+  if (numero(alvo.vezes) >= MAX_CONVITES_POR_ALVO) {
+    return {
+      permitido: false,
+      motivo: 'teto_do_alvo',
+      explicacao: `Este item já foi oferecido ${MAX_CONVITES_POR_ALVO} vezes — o teto de uma vida.`,
+    }
+  }
+
+  return { permitido: true, motivo: 'ok', explicacao: 'Liberado.' }
+}
+
+export function podeConvidar(targetType: ReviewTargetType, targetId: string): boolean {
+  return examinarRegrasLocais(targetType, targetId).permitido
+}
+
+/** Houve estudo suficiente para o convite se justificar? */
+export function examinarEstudo(leitura: {
+  segundos: number
+  sinais: number
+  minimoDeSegundos: number
+  minimoDeSinais: number
+}): { suficiente: boolean; explicacao: string } {
+  const { segundos, sinais, minimoDeSegundos, minimoDeSinais } = leitura
+
+  // Duas portas para o mesmo lugar: tempo de leitura OU progresso concreto.
+  // Quem virou dez páginas em quinze segundos estudou; quem deixou a tela
+  // aberta meio minuto sem tocar em nada, também vale — mas nenhum dos dois
+  // passa com um toque acidental que abriu e fechou.
+  if (segundos >= minimoDeSegundos) {
+    return { suficiente: true, explicacao: `${segundos}s de estudo (mínimo ${minimoDeSegundos}s).` }
+  }
+  if (sinais >= minimoDeSinais && segundos >= SEGUNDOS_MINIMOS_COM_SINAL) {
+    return {
+      suficiente: true,
+      explicacao: `${sinais} sinais de progresso em ${segundos}s (mínimo ${minimoDeSinais} sinais + ${SEGUNDOS_MINIMOS_COM_SINAL}s).`,
+    }
+  }
+  return {
+    suficiente: false,
+    explicacao:
+      `Estudo curto demais: ${segundos}s e ${sinais} sinais. ` +
+      `Precisa de ${minimoDeSegundos}s, ou ${minimoDeSinais} sinais com ao menos ${SEGUNDOS_MINIMOS_COM_SINAL}s.`,
+  }
 }
 
 /** Convite exibido: conta a aparição e trava a cota diária. */
@@ -235,7 +407,24 @@ export function registrarInelegivel(targetType: ReviewTargetType, targetId: stri
 
 export function enfileirarConvite(convite: ConviteDeAvaliacao) {
   if (typeof window === 'undefined') return
-  if (!podeConvidar(convite.targetType, convite.targetId)) return
+
+  const veredicto = examinarRegrasLocais(convite.targetType, convite.targetId)
+  if (!veredicto.permitido) {
+    relatar('convite descartado pelas regras locais', {
+      item: convite.titulo,
+      motivo: veredicto.motivo,
+      porque: veredicto.explicacao,
+      liberaEm: veredicto.liberaEm,
+    })
+    return
+  }
+
+  relatar('convite enfileirado', {
+    item: convite.titulo,
+    origem: convite.origem,
+    segundosDeEstudo: convite.segundos,
+  })
+
   try {
     window.sessionStorage.setItem(CHAVE_PENDENTE, JSON.stringify(convite))
   } catch {
@@ -359,15 +548,17 @@ export function useConviteDeAvaliacao(config: ConfigDoConvite) {
 
     const segundos = segundosDeEstudo()
     const sinais = sinaisRef.current
-    const minimo = atual.segundosMinimos ?? SEGUNDOS_MINIMOS_PADRAO
-    const minimoDeSinais = atual.sinaisMinimos ?? SINAIS_MINIMOS_PADRAO
+    const estudo = examinarEstudo({
+      segundos,
+      sinais,
+      minimoDeSegundos: atual.segundosMinimos ?? SEGUNDOS_MINIMOS_PADRAO,
+      minimoDeSinais: atual.sinaisMinimos ?? SINAIS_MINIMOS_PADRAO,
+    })
 
-    // Duas portas para o mesmo lugar: tempo de leitura OU progresso concreto.
-    // Quem virou quinze páginas em quarenta segundos estudou; quem deixou a
-    // tela aberta por um minuto sem tocar em nada, também vale — mas nenhum
-    // dos dois passa com um toque acidental que abriu e fechou.
-    const estudou = segundos >= minimo || (sinais >= minimoDeSinais && segundos >= SEGUNDOS_MINIMOS_COM_SINAL)
-    if (!estudou) return
+    if (!estudo.suficiente && !modoForcado()) {
+      relatar('convite não nasceu', { item: atual.titulo, porque: estudo.explicacao })
+      return
+    }
 
     convidadoRef.current = true
     enfileirarConvite({

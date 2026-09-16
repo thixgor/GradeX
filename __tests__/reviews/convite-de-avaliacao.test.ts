@@ -41,6 +41,8 @@ vi.stubGlobal('sessionStorage', sessao)
 
 const {
   chaveDoAlvo,
+  examinarEstudo,
+  examinarRegrasLocais,
   enfileirarConvite,
   lerConvitePendente,
   limparConvitePendente,
@@ -245,5 +247,83 @@ describe('convite de avaliação — a fila entre duas telas', () => {
 
   it('a chave do alvo separa material de deck com o mesmo id', () => {
     expect(chaveDoAlvo('material', ALVO)).not.toBe(chaveDoAlvo('flashcard_deck', ALVO))
+  })
+})
+
+
+describe('convite de avaliação — por que ele não apareceu', () => {
+  beforeEach(() => {
+    local.clear()
+    sessao.clear()
+    eventos.length = 0
+    vi.useRealTimers()
+  })
+
+  /**
+   * Cada porta fechada precisa dizer o próprio nome. Era exatamente isso que
+   * faltava quando "fechei o material e não apareceu nada": sem motivo, não há
+   * como distinguir um bug de uma regra fazendo o trabalho dela.
+   */
+  it('nomeia a cota do dia, com a hora em que libera', () => {
+    registrarExibicao(MATERIAL, ALVO)
+    const veredicto = examinarRegrasLocais(MATERIAL, OUTRO_ALVO)
+    expect(veredicto.permitido).toBe(false)
+    expect(veredicto.motivo).toBe('cota_do_dia')
+    expect(veredicto.liberaEm).toBeTruthy()
+  })
+
+  it('nomeia o silêncio por recusa', () => {
+    registrarRecusa(MATERIAL, ALVO)
+    expect(examinarRegrasLocais(MATERIAL, ALVO).motivo).toBe('silenciado')
+  })
+
+  it('nomeia o item já avaliado', () => {
+    registrarEnvio(MATERIAL, ALVO)
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2030-01-01T00:00:00Z'))
+    expect(examinarRegrasLocais(MATERIAL, ALVO).motivo).toBe('ja_avaliado')
+    vi.useRealTimers()
+  })
+
+  it('nomeia o adiamento do item depois que o silêncio global passa', () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-01-01T09:00:00Z'))
+    registrarRecusa(MATERIAL, ALVO)
+    vi.setSystemTime(new Date('2026-01-06T09:00:00Z'))
+    const veredicto = examinarRegrasLocais(MATERIAL, ALVO)
+    expect(veredicto.motivo).toBe('alvo_adiado')
+    expect(veredicto.liberaEm).toBeTruthy()
+    vi.useRealTimers()
+  })
+
+  it('libera com motivo "ok" quando não há nada no caminho', () => {
+    expect(examinarRegrasLocais(MATERIAL, ALVO)).toMatchObject({ permitido: true, motivo: 'ok' })
+  })
+})
+
+describe('convite de avaliação — houve estudo suficiente?', () => {
+  const minimos = { minimoDeSegundos: 25, minimoDeSinais: 3 }
+
+  it('passa por tempo de leitura', () => {
+    expect(examinarEstudo({ segundos: 30, sinais: 0, ...minimos }).suficiente).toBe(true)
+  })
+
+  it('passa por progresso concreto antes de bater o tempo', () => {
+    // Quem virou quatro páginas em doze segundos leu; o relógio sozinho ainda
+    // diria que não.
+    expect(examinarEstudo({ segundos: 12, sinais: 4, ...minimos }).suficiente).toBe(true)
+  })
+
+  it('barra o toque acidental que abriu e fechou', () => {
+    const veredicto = examinarEstudo({ segundos: 4, sinais: 1, ...minimos })
+    expect(veredicto.suficiente).toBe(false)
+    // A explicação é o que aparece no console de quem está investigando.
+    expect(veredicto.explicacao).toContain('4s')
+    expect(veredicto.explicacao).toContain('25s')
+  })
+
+  it('exige o piso de tempo mesmo com muitos sinais', () => {
+    // Rolagem rápida dispara trocas de página aos montes sem ninguém ler nada.
+    expect(examinarEstudo({ segundos: 3, sinais: 40, ...minimos }).suficiente).toBe(false)
   })
 })

@@ -8,7 +8,8 @@ import {
   EVENTO_CONVITE,
   limparConvitePendente,
   lerConvitePendente,
-  podeConvidar,
+  examinarRegrasLocais,
+  relatar,
   registrarEnvio,
   registrarExibicao,
   registrarInelegivel,
@@ -46,6 +47,16 @@ interface Elegibilidade {
 
 /** Um segundo entre chegar na tela e ser interrompido. */
 const ESPERA_ANTES_DE_ABRIR = 1000
+
+/** Traduz o veredito do servidor para o diagnóstico. */
+const EXPLICACAO_DO_SERVIDOR: Record<string, string> = {
+  nao_autenticado: 'Ninguém logado nesta sessão.',
+  nao_encontrado: 'O item não existe mais (ou o id não bate).',
+  travado: 'As avaliações deste item estão desativadas no admin (reviewsLocked).',
+  ja_avaliou: 'Esta conta JÁ avaliou este item — por isso nada aparece. Apague a avaliação para testar de novo.',
+  sem_acesso: 'Esta conta não tem acesso ao item (avaliar exige acesso).',
+  erro: 'A rota de elegibilidade quebrou — ver o log do servidor.',
+}
 
 /**
  * Onde o convite nunca aparece. Prova e checkout são dinheiro e nota da pessoa;
@@ -104,7 +115,15 @@ export function ReviewPromptHost() {
   /** Confirma com o servidor e, se tudo bate, abre a folha. */
   const avaliarConvite = useCallback(async (candidato: ConviteDeAvaliacao) => {
     if (verificandoRef.current) return
-    if (!podeConvidar(candidato.targetType, candidato.targetId)) {
+
+    const veredicto = examinarRegrasLocais(candidato.targetType, candidato.targetId)
+    if (!veredicto.permitido) {
+      relatar('convite na fila barrado pelas regras locais', {
+        item: candidato.titulo,
+        motivo: veredicto.motivo,
+        porque: veredicto.explicacao,
+        liberaEm: veredicto.liberaEm,
+      })
       limparConvitePendente()
       pendenteRef.current = null
       return
@@ -119,10 +138,18 @@ export function ReviewPromptHost() {
       const res = await fetch(`/api/reviews/elegibilidade?${params.toString()}`, {
         cache: 'no-store',
       })
-      if (!res.ok) return
+      if (!res.ok) {
+        relatar('consulta de elegibilidade falhou', { status: res.status })
+        return
+      }
 
       const json = (await res.json()) as Elegibilidade & { motivo?: string }
       if (!json.podeAvaliar) {
+        relatar('servidor recusou o convite', {
+          item: candidato.titulo,
+          motivo: json.motivo,
+          porque: EXPLICACAO_DO_SERVIDOR[json.motivo || ''] || 'Motivo não informado.',
+        })
         // Motivos definitivos (já avaliou, sem acesso, travado) tiram o item da
         // fila para sempre. Erro de rede ou sessão expirada, não: pode ser só
         // um momento ruim, e o convite volta noutro dia.
@@ -135,6 +162,7 @@ export function ReviewPromptHost() {
       }
 
       limparTemporizador()
+      relatar('convite aprovado — abrindo a folha', { item: candidato.titulo })
       temporizadorRef.current = window.setTimeout(() => {
         registrarExibicao(candidato.targetType, candidato.targetId)
         setDados(json)
@@ -165,6 +193,11 @@ export function ReviewPromptHost() {
   useEffect(() => {
     if (convite) return
     if (rotaBloqueada(pathname)) {
+      // Não descarta o convite: a pessoa pode ter fechado o material e caído
+      // numa rota silenciosa. Ele espera a próxima tela que aceite convites.
+      if (pendenteRef.current || lerConvitePendente()) {
+        relatar('convite em espera: esta rota não exibe convites', { rota: pathname })
+      }
       limparTemporizador()
       return
     }

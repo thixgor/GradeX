@@ -1220,8 +1220,12 @@ export default function DeckPage() {
     origem: 'flashcards',
     href: data?.deck?.slug ? `/flashcards/d/${data.deck.slug}` : null,
     habilitado: !!data?.access?.hasAccess,
-    segundosMinimos: 120,
-    sinaisMinimos: 5,
+    // Uma sessão de estudo real passa fácil dos 45s; três cards respondidos já
+    // valem sozinhos (com 8s de piso). Os 120s originais eram um teste de
+    // paciência: quem revisa cinco cards e sai — o uso mais comum de um deck —
+    // nunca chegava lá.
+    segundosMinimos: 45,
+    sinaisMinimos: 3,
   })
 
   if (loading) {

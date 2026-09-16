@@ -119,7 +119,7 @@ export function HtmlMaterialViewer({ materialId }: HtmlMaterialViewerProps) {
     origem: 'html',
     href: `/materiais/${materialId}`,
     habilitado: state === 'ready' && !!meta?.hasAccess,
-    segundosMinimos: 60,
+    segundosMinimos: 35,
   })
 
   const goBack = useCallback(() => {

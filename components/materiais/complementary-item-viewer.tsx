@@ -130,7 +130,7 @@ export function ComplementaryItemViewer({ materialId, itemId }: ComplementaryIte
     origem: 'complementar',
     href: `/materiais/${materialId}`,
     habilitado: state === 'ready' && !!meta?.hasAccess,
-    segundosMinimos: 60,
+    segundosMinimos: 35,
   })
 
   const goBack = useCallback(() => {
