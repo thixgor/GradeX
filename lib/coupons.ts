@@ -1,6 +1,7 @@
 import { Db, ObjectId } from 'mongodb'
 import type { ManualClinicoPlanKey, ManualClinicoPurchase, MaterialPurchase, User } from '@/lib/types'
 import { MANUAL_CLINICO_PURCHASES_COLLECTION } from '@/lib/manual-clinico-product'
+import { pedidosAindaPagaveis } from '@/lib/checkout-reservations'
 
 export type CouponDiscountType = 'percentage' | 'fixed'
 export type CouponScope = 'all' | 'materials' | 'flashcards' | 'manual_clinico' | 'plus' | 'specific'
@@ -261,13 +262,22 @@ export async function validateCouponForCheckout(
   const codeNormalized = normalizeCouponCode(input.code)
   if (!codeNormalized) throw new CouponError('Informe um cupom.')
 
-  const coupon = await db.collection<Coupon>('coupons').findOne({ codeNormalized })
+  let coupon = await db.collection<Coupon>('coupons').findOne({ codeNormalized })
   if (!coupon) throw new CouponError('Cupom não encontrado.', 404)
 
   const now = input.now || new Date()
   if (!coupon.isActive) throw new CouponError('Este cupom está inativo.')
   if (isCouponExpired(coupon, now)) throw new CouponError('Este cupom expirou.')
-  if (isCouponUsageExhausted(coupon)) throw new CouponError('Este cupom atingiu o limite de uso.')
+  if (isCouponUsageExhausted(coupon)) {
+    // Antes de recusar por esgotamento, desfaz as reservas presas em pedidos
+    // que nunca vão ser pagos: cada checkout abandonado incrementou
+    // `usageCount` e nada o devolveu. Ver `releaseStaleCouponHolds`.
+    const liberadas = await releaseStaleCouponHolds(db, { couponId: String(coupon._id), now })
+    if (liberadas > 0) {
+      coupon = (await db.collection<Coupon>('coupons').findOne({ _id: coupon._id as any })) || coupon
+    }
+    if (isCouponUsageExhausted(coupon)) throw new CouponError('Este cupom atingiu o limite de uso.')
+  }
 
   const items = input.items.map((item) => ({ ...item, price: roundMoney(item.price) }))
   const amountBeforeCoupon = roundMoney(
@@ -412,11 +422,82 @@ async function validateUserCouponRules(
   }
 
   if (isCouponPerUserLimitEnabled(coupon)) {
-    const useCount = await getUserCouponUseCount(db, couponId, identity.userId, userEmail)
+    const useCount = await countUserCouponUsesAfterCleanup(db, coupon, identity.userId, userEmail)
     if (useCount >= Number(coupon.perUserLimit)) {
       throw new CouponError('Você já atingiu o limite de uso deste cupom.')
     }
   }
+}
+
+/**
+ * Usos desta pessoa, desfazendo antes as reservas que já não valem.
+ *
+ * A limpeza só roda quando o limite pareceu estourado — no caminho feliz não
+ * custa consulta nenhuma. É aqui que mora o conserto do caso mais comum: quem
+ * gerou um Pix, não pagou, e voltou para tentar de novo levava "você já
+ * atingiu o limite de uso deste cupom" por um uso que nunca existiu.
+ */
+async function countUserCouponUsesAfterCleanup(
+  db: Db,
+  coupon: Coupon,
+  userId?: string,
+  userEmail?: string
+) {
+  const couponId = String(coupon._id)
+  const useCount = await getUserCouponUseCount(db, couponId, userId, userEmail)
+  if (useCount < Number(coupon.perUserLimit)) return useCount
+
+  const liberadas = await releaseStaleCouponHolds(db, { couponId, userId, userEmail })
+  if (liberadas === 0) return useCount
+  return getUserCouponUseCount(db, couponId, userId, userEmail)
+}
+
+/** Teto de reservas examinadas por varredura — isto roda no meio do checkout. */
+export const COUPON_STALE_HOLD_SWEEP_LIMIT = 100
+
+/**
+ * Devolve as reservas de cupom presas a pedidos que já não podem ser pagos.
+ *
+ * O cupom é reservado (e `usageCount` incrementado) no instante em que o
+ * pedido nasce, e só é devolvido quando o provedor avisa que o pagamento
+ * falhou. Esse aviso pode nunca chegar: Pix não pago, aba fechada antes de o
+ * pagamento chegar a existir no Mercado Pago, webhook perdido. O resultado é
+ * um cupom que se esgota sozinho — para a pessoa, em "já atingiu o limite de
+ * uso"; para a campanha, em "restam 0 usos" com metade das vendas não feitas.
+ *
+ * Sem `userId`/`userEmail`, varre as reservas do cupom inteiro (usado quando o
+ * limite global parece estourado). Devolve quantas reservas foram desfeitas.
+ */
+export async function releaseStaleCouponHolds(
+  db: Db,
+  input: { couponId: string; userId?: string; userEmail?: string; now?: Date }
+): Promise<number> {
+  const filtro: any = {
+    couponId: input.couponId,
+    status: 'reserved',
+    orderId: { $exists: true, $nin: [null, ''] },
+  }
+  const identityOr = buildUserIdentityOr(input.userId, input.userEmail)
+  if (identityOr.length > 0) filtro.$or = identityOr
+
+  const reservas = await db
+    .collection<CouponRedemption>('coupon_redemptions')
+    .find(filtro)
+    .sort({ createdAt: 1 })
+    .limit(COUPON_STALE_HOLD_SWEEP_LIMIT)
+    .toArray()
+  if (reservas.length === 0) return 0
+
+  const vivos = await pedidosAindaPagaveis(db, reservas.map((reserva) => reserva.orderId), input.now)
+
+  let liberadas = 0
+  for (const reserva of reservas) {
+    const orderId = String(reserva.orderId || '')
+    if (!orderId || vivos.has(orderId)) continue
+    await releaseCouponRedemption(db, orderId, 'stale_hold')
+    liberadas++
+  }
+  return liberadas
 }
 
 function couponAvailabilityFilter(now: Date) {
@@ -456,9 +537,9 @@ export async function reserveCouponRedemption(
   const now = new Date()
   const couponObjectId = new ObjectId(input.validation.couponId)
   if (isCouponPerUserLimitEnabled(input.validation.coupon)) {
-    const useCount = await getUserCouponUseCount(
+    const useCount = await countUserCouponUsesAfterCleanup(
       db,
-      input.validation.couponId,
+      input.validation.coupon,
       input.userId,
       input.userEmail
     )
@@ -467,17 +548,27 @@ export async function reserveCouponRedemption(
     }
   }
 
-  const updatedCoupon = await db.collection<Coupon>('coupons').findOneAndUpdate(
-    {
-      _id: couponObjectId as any,
-      ...couponAvailabilityFilter(now),
-    },
-    {
-      $inc: { usageCount: 1 },
-      $set: { updatedAt: now },
-    },
-    { returnDocument: 'after' }
-  )
+  const tomarVaga = () =>
+    db.collection<Coupon>('coupons').findOneAndUpdate(
+      {
+        _id: couponObjectId as any,
+        ...couponAvailabilityFilter(now),
+      },
+      {
+        $inc: { usageCount: 1 },
+        $set: { updatedAt: now },
+      },
+      { returnDocument: 'after' }
+    )
+
+  let updatedCoupon = await tomarVaga()
+  if (!updatedCoupon) {
+    // O contador pode estar inflado por reservas presas em pedidos mortos;
+    // devolvê-las antes de recusar é o que impede um cupom de se esgotar em
+    // checkouts abandonados.
+    const liberadas = await releaseStaleCouponHolds(db, { couponId: input.validation.couponId, now })
+    if (liberadas > 0) updatedCoupon = await tomarVaga()
+  }
 
   if (!updatedCoupon) {
     throw new CouponError('Este cupom acabou de atingir o limite de uso.', 409)

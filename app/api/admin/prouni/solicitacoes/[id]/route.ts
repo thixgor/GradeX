@@ -178,6 +178,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
         usage: 'available',
         expiresAt,
         reservedOrderId: null,
+        reservedOrderIds: [],
         approvedBy: session.userId,
         approvedByName: session.name || '',
         approvedAt: agora,

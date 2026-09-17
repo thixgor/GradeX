@@ -1,5 +1,6 @@
 import { Db, ObjectId } from 'mongodb'
 import type { ManualClinicoPlanKey } from '@/lib/types'
+import { pedidosAindaPagaveis } from '@/lib/checkout-reservations'
 import {
   computeProuniDiscount,
   getProuniDiscountLabel,
@@ -132,8 +133,17 @@ export interface ProuniGrant {
   stackWithTier: boolean
   usage: ProuniGrantUsage
   expiresAt?: Date | null
-  /** Pedido que reservou a concessão (liberada de volta se o pagamento falhar). */
+  /** Último pedido que reservou a concessão (liberada de volta se o pagamento falhar). */
   reservedOrderId?: string | null
+  /**
+   * Todos os pedidos em aberto que carregam esta concessão agora.
+   *
+   * É lista, e não um id só, porque a mesma pessoa pode ter mais de uma
+   * tentativa de pagamento viva ao mesmo tempo — gerar um segundo Pix sem
+   * pagar o primeiro é rotina. Quem pagar primeiro gasta a concessão; os
+   * demais saem da lista sem devolvê-la. Ver `reserveProuniGrant`.
+   */
+  reservedOrderIds?: string[] | null
   reservedAt?: Date | null
   usedAt?: Date | null
   usedOrderId?: string | null
@@ -288,35 +298,104 @@ export async function findUsableProuniGrant(
 }
 
 /**
+ * Quantos pedidos em aberto podem carregar a mesma concessão ao mesmo tempo.
+ *
+ * Não é uma regra de negócio, é um teto de sanidade: passar disso significa
+ * dezenas de pedidos abertos para o mesmo item, o que já não é alguém tentando
+ * pagar.
+ */
+export const PROUNI_MAX_HOLDS = 5
+
+/** Pedidos que hoje seguram esta concessão (tolera o formato antigo, de um id só). */
+function grantHolders(grant?: ProuniGrant | null): string[] {
+  if (!grant) return []
+  const lista = Array.isArray(grant.reservedOrderIds) ? grant.reservedOrderIds.map(String) : []
+  const ultimo = grant.reservedOrderId ? String(grant.reservedOrderId) : ''
+  if (ultimo && !lista.includes(ultimo)) lista.push(ultimo)
+  return lista.filter(Boolean)
+}
+
+/**
  * Prende a concessão ao pedido recém-criado.
  *
- * O `filter` repete as condições de uso: entre a leitura e esta escrita cabe um
+ * ## Por que não basta exigir `usage: 'available'`
+ *
+ * A concessão é reservada quando o pedido nasce e só é devolvida quando chega
+ * a notícia de que o pagamento falhou. Um Pix gerado e não pago não produz
+ * notícia nenhuma por 24h — e, nesse meio tempo, a MESMA pessoa voltando para
+ * pagar de outro jeito batia em "seu desconto acabou de ser usado em outra
+ * compra". Era o caso mais comum de todos: quem desiste do QR e tenta no
+ * cartão, quem fecha a aba, quem recarrega a página.
+ *
+ * Por isso a reserva aqui é uma LISTA de pedidos, e não um id só. A pessoa
+ * pode ter mais de uma tentativa viva; quem pagar primeiro gasta a concessão
+ * (`consumeProuniGrant`) e as outras saem da lista sem devolvê-la
+ * (`releaseProuniGrant`). Pedidos que já não podem ser pagos — vencidos,
+ * recusados, ou que nunca chegaram ao provedor — são descartados da lista
+ * aqui mesmo, o que também conserta sozinho a reserva presa por um webhook
+ * perdido.
+ *
+ * O `filter` repete o estado lido: entre a leitura e esta escrita cabe um
  * segundo checkout da mesma conta em outra aba, e sem a repetição os dois
- * pedidos sairiam com o mesmo desconto de uso único.
+ * pedidos gravariam listas divergentes.
  */
 export async function reserveProuniGrant(
   db: Db,
   input: { requestId: string; userId: string; orderId: string }
 ): Promise<boolean> {
   if (!ObjectId.isValid(input.requestId)) return false
-  const now = new Date()
-  const result = await db.collection<ProuniRequest>(PROUNI_REQUESTS_COLLECTION).updateOne(
-    {
+  const collection = db.collection<ProuniRequest>(PROUNI_REQUESTS_COLLECTION)
+
+  // Até três voltas: cada fracasso de filtro significa que outra tentativa
+  // escreveu no meio do caminho, e o estado novo pode muito bem permitir a
+  // reserva. Sem o laço, uma corrida entre duas abas derrubaria a segunda.
+  for (let tentativa = 0; tentativa < 3; tentativa++) {
+    const now = new Date()
+    const request = await collection.findOne({
       _id: new ObjectId(input.requestId) as any,
       userId: String(input.userId),
       status: 'approved',
-      'grant.usage': 'available',
-    } as any,
-    {
+    } as any)
+
+    const grant = request?.grant
+    if (!grant) return false
+    // `used`/`revoked` são definitivos: a concessão foi gasta ou retirada.
+    if (grant.usage !== 'available' && grant.usage !== 'reserved') return false
+    if (!isProuniGrantUsable(request, now)) return false
+
+    const outros = grantHolders(grant).filter((id) => id !== input.orderId)
+    const vivos = outros.length > 0 ? await pedidosAindaPagaveis(db, outros, now) : new Set<string>()
+    if (vivos.size >= PROUNI_MAX_HOLDS) return false
+
+    const filtro: any = {
+      _id: new ObjectId(input.requestId),
+      userId: String(input.userId),
+      status: 'approved',
+      'grant.usage': grant.usage,
+    }
+    // Com a concessão já reservada, o último pedido a reservar é o que faz as
+    // vezes de número de versão do documento.
+    if (grant.usage === 'reserved') {
+      filtro['grant.reservedOrderId'] = grant.reservedOrderId ?? null
+    }
+
+    const result = await collection.updateOne(filtro, {
       $set: {
         'grant.usage': 'reserved',
         'grant.reservedOrderId': input.orderId,
+        'grant.reservedOrderIds': Array.from(new Set([...vivos, input.orderId])),
         'grant.reservedAt': now,
+        'grant.releaseReason': null,
         updatedAt: now,
       },
-    } as any
-  )
-  return result.modifiedCount === 1
+    } as any)
+
+    // `matchedCount` e não `modifiedCount`: o que importa é o filtro ter valido
+    // — é ele o "compare and swap" que garante que ninguém escreveu no meio.
+    if (result.matchedCount === 1) return true
+  }
+
+  return false
 }
 
 /**
@@ -330,12 +409,21 @@ export async function consumeProuniGrant(db: Db, orderId?: string) {
   if (!orderId) return
   const now = new Date()
   await db.collection<ProuniRequest>(PROUNI_REQUESTS_COLLECTION).updateMany(
-    { 'grant.reservedOrderId': orderId, 'grant.usage': 'reserved' } as any,
+    {
+      'grant.usage': 'reserved',
+      // Qualquer pedido da lista de reservas serve: quem paga primeiro gasta a
+      // concessão, mesmo não sendo a última tentativa criada.
+      $or: [{ 'grant.reservedOrderId': orderId }, { 'grant.reservedOrderIds': orderId }],
+    } as any,
     {
       $set: {
         'grant.usage': 'used',
         'grant.usedAt': now,
         'grant.usedOrderId': orderId,
+        'grant.reservedOrderId': orderId,
+        // As outras tentativas em aberto deixam de carregar a concessão: ela
+        // já foi gasta, e o vencimento delas não pode devolvê-la.
+        'grant.reservedOrderIds': [],
         updatedAt: now,
       },
     } as any
@@ -352,20 +440,56 @@ export async function consumeProuniGrant(db: Db, orderId?: string) {
 export async function releaseProuniGrant(db: Db, orderId?: string, reason = 'payment_failed') {
   if (!orderId) return
   const now = new Date()
-  await db.collection<ProuniRequest>(PROUNI_REQUESTS_COLLECTION).updateMany(
-    { 'grant.reservedOrderId': orderId, 'grant.usage': { $in: ['reserved', 'used'] } } as any,
-    {
+  const collection = db.collection<ProuniRequest>(PROUNI_REQUESTS_COLLECTION)
+  const devolvida = {
+    'grant.usage': 'available',
+    'grant.reservedOrderId': null,
+    'grant.reservedOrderIds': [],
+    'grant.reservedAt': null,
+    'grant.usedAt': null,
+    'grant.usedOrderId': null,
+    'grant.releaseReason': reason,
+    updatedAt: now,
+  }
+
+  // Estorno/chargeback do pedido que GASTOU a concessão: ela volta inteira.
+  await collection.updateMany(
+    { 'grant.usage': 'used', 'grant.usedOrderId': orderId } as any,
+    { $set: devolvida } as any
+  )
+
+  // Pedido que apenas segurava a reserva: sai da lista. A concessão só volta a
+  // ficar disponível quando nenhuma outra tentativa a carrega — senão o Pix
+  // vencido de ontem devolveria o desconto que a tentativa de agora está
+  // usando, e a pessoa levaria o benefício duas vezes.
+  const presas = await collection
+    .find({
+      'grant.usage': 'reserved',
+      $or: [{ 'grant.reservedOrderId': orderId }, { 'grant.reservedOrderIds': orderId }],
+    } as any)
+    .toArray()
+
+  for (const solicitacao of presas) {
+    const restantes = grantHolders(solicitacao.grant).filter((id) => id !== orderId)
+    const filtro = {
+      _id: solicitacao._id,
+      'grant.usage': 'reserved',
+      'grant.reservedOrderId': solicitacao.grant?.reservedOrderId ?? null,
+    } as any
+
+    if (restantes.length === 0) {
+      await collection.updateOne(filtro, { $set: devolvida } as any)
+      continue
+    }
+
+    await collection.updateOne(filtro, {
       $set: {
-        'grant.usage': 'available',
-        'grant.reservedOrderId': null,
-        'grant.reservedAt': null,
-        'grant.usedAt': null,
-        'grant.usedOrderId': null,
-        'grant.releaseReason': reason,
+        'grant.reservedOrderIds': restantes,
+        'grant.reservedOrderId': restantes[restantes.length - 1],
         updatedAt: now,
       },
-    } as any
-  )
+    } as any)
+  }
 }
 
 /**
@@ -387,13 +511,17 @@ export async function spendProuniGrantNow(
       _id: new ObjectId(input.requestId) as any,
       userId: String(input.userId),
       status: 'approved',
-      'grant.usage': 'available',
+      // `reserved` entra junto porque uma tentativa anterior abandonada não
+      // pode impedir o consumo de um item que está saindo agora por R$ 0 —
+      // sem isso, a concessão continuaria "disponível" depois da entrega.
+      'grant.usage': { $in: ['available', 'reserved'] },
     } as any,
     {
       $set: {
         'grant.usage': 'used',
         'grant.usedAt': now,
         'grant.usedOrderId': input.reference || 'free',
+        'grant.reservedOrderIds': [],
         updatedAt: now,
       },
     } as any
@@ -705,5 +833,9 @@ export async function ensureProuniIndexes(db: Db) {
     requests.createIndex({ status: 1, createdAt: -1 }),
     requests.createIndex({ userId: 1, itemType: 1, itemId: 1, status: 1 }),
     requests.createIndex({ 'grant.reservedOrderId': 1 }),
+    // O webhook chega com o id do pedido e precisa achar a concessão por ele,
+    // inclusive quando o pedido não é a última tentativa criada.
+    requests.createIndex({ 'grant.reservedOrderIds': 1 }),
+    requests.createIndex({ 'grant.usedOrderId': 1 }),
   ])
 }
