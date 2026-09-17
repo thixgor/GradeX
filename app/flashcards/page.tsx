@@ -212,7 +212,8 @@ export default function FlashcardsHubPage() {
   }, [])
 
   const selectSection = useCallback((next: Section) => {
-    if (isGuest && next !== 'store') {
+    // Loja e comunidade são públicas; a biblioteca é que exige conta.
+    if (isGuest && next === 'library') {
       router.push(`/auth/login?redirect=${encodeURIComponent('/flashcards')}`)
       return
     }
@@ -347,8 +348,17 @@ export default function FlashcardsHubPage() {
     setIsAdmin(!!bootstrapUser && bootstrapIsAdmin)
     setIsGuest(nextIsGuest)
     if (nextIsGuest) {
-      setSection('store')
-      updateUrl('store', 'all', null)
+      // Visitante começa na loja, mas continua podendo abrir a comunidade —
+      // inclusive por link direto (`?section=comunidade`). Só a biblioteca,
+      // que é pessoal, o manda de volta para a loja.
+      const urlSection = typeof window === 'undefined'
+        ? 'library'
+        : parseUrlState(new URL(window.location.href)).section
+      if (urlSection === 'library') {
+        setSection('store')
+        setLibraryTab('all')
+        updateUrl('store', 'all', null)
+      }
     }
     setAuthChecked(true)
   }, [bootstrapError, bootstrapIsAdmin, bootstrapLoading, bootstrapUser, updateUrl])
@@ -364,14 +374,13 @@ export default function FlashcardsHubPage() {
 
     let cancelled = false
     if (isGuest) {
-      // Visitante só vê a loja — não deixa os outros moldes girando à espera
-      // de requisições que nunca vão acontecer.
+      // Visitante vê loja e comunidade — não deixa os moldes da biblioteca
+      // girando à espera de requisições que nunca vão acontecer.
       setLoadingMine(false)
-      setLoadingCommunity(false)
       setLoadingShared(false)
     }
     const loaders = isGuest
-      ? [loadStore()]
+      ? [loadStore(), loadCommunity()]
       : [loadMine(), loadFolders(), loadCommunity(), loadStore(), loadShared(), loadDue()]
 
     Promise.all(loaders).finally(() => {
@@ -393,10 +402,10 @@ export default function FlashcardsHubPage() {
   }, [activeFolder, authChecked, debouncedSearch, isGuest, loadMine])
 
   useEffect(() => {
-    if (!authChecked || isGuest || !initialLoadDoneRef.current) return
+    if (!authChecked || !initialLoadDoneRef.current) return
     setLoadingCommunity(true)
     loadCommunity()
-  }, [authChecked, communitySort, debouncedSearch, isGuest, loadCommunity])
+  }, [authChecked, communitySort, debouncedSearch, loadCommunity])
 
   const deleteDeck = useCallback(async (id: string) => {
     if (!confirm('Apagar este deck e todos os cartões?')) return
@@ -678,7 +687,7 @@ export default function FlashcardsHubPage() {
             )}
 
             {/* ── Comunidade ─────────────────────────────────────────────── */}
-            {section === 'community' && !isGuest && (
+            {section === 'community' && (
               <div key="community" className="fc-enter">
                 <FilterRail>
                   <FilterPill active={communitySort === 'trending'} onClick={() => setCommunitySort('trending')}>Em alta</FilterPill>
@@ -699,7 +708,9 @@ export default function FlashcardsHubPage() {
                     action={
                       query
                         ? <GhostButton onClick={() => setSearch('')}>Limpar busca</GhostButton>
-                        : <PrimaryButton onClick={() => setCreateOpen(true)}><Plus className="h-4 w-4" /> Criar deck</PrimaryButton>
+                        : isGuest
+                          ? <PrimaryButton onClick={() => selectSection('library')}>Entrar para criar um deck</PrimaryButton>
+                          : <PrimaryButton onClick={() => setCreateOpen(true)}><Plus className="h-4 w-4" /> Criar deck</PrimaryButton>
                     }
                   />
                 ) : (
@@ -716,6 +727,7 @@ export default function FlashcardsHubPage() {
           open={createOpen}
           onOpenChange={setCreateOpen}
           isAdmin={isAdmin}
+          emailVerified={!!bootstrapUser?.emailVerified}
           folders={folders}
           onCreated={(slug) => {
             setCreateOpen(false)
@@ -1486,10 +1498,11 @@ function buildMateriaisPaths(folders: { _id: string; name: string; parentFolderI
   return folders.map(f => ({ _id: f._id, path: getPath(f._id) })).sort((a, b) => a.path.localeCompare(b.path))
 }
 
-function CreateDeckDialog({ open, onOpenChange, isAdmin, folders, onCreated }: {
+function CreateDeckDialog({ open, onOpenChange, isAdmin, emailVerified, folders, onCreated }: {
   open: boolean
   onOpenChange: (v: boolean) => void
   isAdmin: boolean
+  emailVerified: boolean
   folders: FolderWithId[]
   onCreated: (slug: string) => void
 }) {
@@ -1544,7 +1557,7 @@ function CreateDeckDialog({ open, onOpenChange, isAdmin, folders, onCreated }: {
           asAdmin: isAdmin && asAdmin,
           pricing: isAdmin && asAdmin ? pricing : 'free',
           price: pricing === 'paid' ? Number(price) || 0 : 0,
-          visibility: isAdmin ? visibility : undefined,
+          visibility,
           allowedGroups: isAdmin && asAdmin ? allowedGroups : undefined,
           materialsFolderId: isAdmin && asAdmin ? materialsFolderId || null : undefined,
         }),
@@ -1616,7 +1629,7 @@ function CreateDeckDialog({ open, onOpenChange, isAdmin, folders, onCreated }: {
               className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-muted-foreground transition hover:text-foreground"
             >
               <ChevronDown className={cn('h-4 w-4 transition-transform', showAdvanced && 'rotate-180')} />
-              {isAdmin ? 'Capa e publicação' : 'Capa do deck'}
+              Capa e publicação
             </button>
 
             {showAdvanced && (
@@ -1633,6 +1646,23 @@ function CreateDeckDialog({ open, onOpenChange, isAdmin, folders, onCreated }: {
                   <p className="mt-1 text-[11px] text-muted-foreground">Recomendado: 1280 × 720 px</p>
                 </div>
 
+                <div className="space-y-2">
+                  <FieldLabel>Visibilidade</FieldLabel>
+                  <div className="flex flex-wrap gap-1.5">
+                    <ChoicePill active={visibility === 'private'} onClick={() => setVisibility('private')} icon={<Lock className="h-3.5 w-3.5" />}>Privado</ChoicePill>
+                    <ChoicePill active={visibility === 'unlisted'} onClick={() => setVisibility('unlisted')} icon={<Eye className="h-3.5 w-3.5" />}>Não-listado</ChoicePill>
+                    <ChoicePill active={visibility === 'public'} onClick={() => setVisibility('public')} icon={<Globe className="h-3.5 w-3.5" />}>Público</ChoicePill>
+                  </div>
+                  {visibility === 'public' && (
+                    <p className="text-[11px] text-muted-foreground">Aparece na Comunidade assim que o deck é criado.</p>
+                  )}
+                  {visibility !== 'private' && !emailVerified && !isAdmin && (
+                    <p className="text-[11px] font-medium text-amber-600 dark:text-amber-400">
+                      Verifique seu e-mail para publicar o deck.
+                    </p>
+                  )}
+                </div>
+
                 {isAdmin && (
                   <>
                     <div className="space-y-2">
@@ -1640,15 +1670,6 @@ function CreateDeckDialog({ open, onOpenChange, isAdmin, folders, onCreated }: {
                       <div className="flex flex-wrap gap-1.5">
                         <ChoicePill active={!asAdmin} onClick={() => setAsAdmin(false)} icon={<Inbox className="h-3.5 w-3.5" />}>Pessoal</ChoicePill>
                         <ChoicePill active={asAdmin} onClick={() => setAsAdmin(true)} icon={<Crown className="h-3.5 w-3.5" />}>Oficial</ChoicePill>
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <FieldLabel>Visibilidade</FieldLabel>
-                      <div className="flex flex-wrap gap-1.5">
-                        <ChoicePill active={visibility === 'private'} onClick={() => setVisibility('private')} icon={<Lock className="h-3.5 w-3.5" />}>Privado</ChoicePill>
-                        <ChoicePill active={visibility === 'unlisted'} onClick={() => setVisibility('unlisted')} icon={<Eye className="h-3.5 w-3.5" />}>Não-listado</ChoicePill>
-                        <ChoicePill active={visibility === 'public'} onClick={() => setVisibility('public')} icon={<Globe className="h-3.5 w-3.5" />}>Público</ChoicePill>
                       </div>
                     </div>
 

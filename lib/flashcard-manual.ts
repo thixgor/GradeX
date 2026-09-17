@@ -50,6 +50,36 @@ export async function generateUniqueSlug(db: Db, base: string): Promise<string> 
   return slug
 }
 
+/**
+ * Um deck está publicado quando o dono escolheu uma visibilidade que não é
+ * privada. O campo `isPublished` nasceu como um segundo interruptor, mas a
+ * interface nunca expôs os dois: quem marca "Público" quer o deck publicado,
+ * e não existe tela para publicar sem tornar visível. Deixar os dois soltos
+ * fazia decks já criados como públicos (onde a criação gravava
+ * `isPublished: false`) sumirem da comunidade para sempre.
+ *
+ * A visibilidade passa a mandar, e o campo antigo continua gravado em sincronia
+ * para quem ainda lê o documento cru.
+ */
+export function isDeckPublished(deck: Pick<FlashcardManualDeck, 'visibility'>): boolean {
+  return deck.visibility === 'public' || deck.visibility === 'unlisted'
+}
+
+/** Deck escondido pelo admin. Documento antigo, sem o campo, não está escondido. */
+export function isDeckHidden(deck: Pick<FlashcardManualDeck, 'isHidden'>): boolean {
+  return deck.isHidden === true
+}
+
+/**
+ * Filtro Mongo dos decks que qualquer pessoa pode ver na comunidade e na busca.
+ * `isHidden: { $ne: true }` (e não `false`) de propósito: decks antigos foram
+ * gravados sem o campo e um `false` literal os deixava de fora.
+ */
+export const PUBLIC_DECK_LISTING_FILTER = {
+  visibility: 'public',
+  isHidden: { $ne: true },
+} as const
+
 export type DeckAccessReason =
   | 'owner'
   | 'admin'
@@ -183,17 +213,18 @@ export async function resolveDeckAccess({
   }
 
   // Visibilidade pública/unlisted
-  if (deck.visibility === 'public' && deck.isPublished) reasons.push('public')
-  if (deck.visibility === 'unlisted' && deck.isPublished) reasons.push('unlisted')
+  const isPublished = isDeckPublished(deck)
+  if (deck.visibility === 'public' && isPublished) reasons.push('public')
+  if (deck.visibility === 'unlisted' && isPublished) reasons.push('unlisted')
 
   const hasAccess =
     isOwner ||
     isAdmin ||
     isPurchased ||
     hasShareAccess ||
-    // Admin free decks: requires isPublished to prevent access to private/draft decks
-    (deck.ownerType === 'admin' && deck.pricing === 'free' && hasGroupAccess && !!deck.isPublished) ||
-    ((deck.visibility === 'public' || deck.visibility === 'unlisted') && deck.isPublished && deck.pricing !== 'paid')
+    // Deck gratuito de admin ainda exige publicação: rascunho privado não vaza.
+    (deck.ownerType === 'admin' && deck.pricing === 'free' && hasGroupAccess && isPublished) ||
+    (isPublished && deck.pricing !== 'paid')
 
   // Espelha a lógica de /materiais e /pacotes: o acervo Plus+ inclui o deck,
   // mas o acesso só é concedido depois do resgate explícito.

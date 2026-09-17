@@ -114,6 +114,11 @@ export async function ensureIndexes(db: Db): Promise<void> {
     db.collection('flashcardSpacedProgress').createIndex({ userId: 1, cardId: 1 }, { unique: true }),
     db.collection('flashcardSpacedProgress').createIndex({ userId: 1, deckId: 1, nextReviewAt: 1 }),
     db.collection('flashcardSpacedProgress').createIndex({ deckId: 1, cardId: 1 }),
+    db.collection('flashcardManualDecks').createIndex({ slug: 1 }, { unique: true }),
+    db.collection('flashcardManualDecks').createIndex({ ownerId: 1, updatedAt: -1 }),
+    // Comunidade: público, não escondido e gratuito, ordenado por curtidas.
+    db.collection('flashcardManualDecks').createIndex({ visibility: 1, isHidden: 1, pricing: 1, likeCount: -1 }),
+    db.collection('flashcardManualDecks').createIndex({ ownerType: 1, isHidden: 1, visibility: 1, createdAt: -1 }),
     db.collection('mindMaps').createIndex({ slug: 1 }, { unique: true }),
     db.collection('mindMaps').createIndex({ ownerId: 1, updatedAt: -1 }),
     db.collection('mindMaps').createIndex({ visibility: 1, isPublished: 1, isHidden: 1, likeCount: -1 }),

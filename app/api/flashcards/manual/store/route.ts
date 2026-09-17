@@ -23,7 +23,8 @@ export async function GET(request: NextRequest) {
 
     const filter: any = {
       ownerType: 'admin',
-      isHidden: false,
+      // `$ne: true` e não `false`: deck antigo foi gravado sem o campo.
+      isHidden: { $ne: true },
       visibility: { $ne: 'private' },
     }
 

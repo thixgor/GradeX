@@ -100,12 +100,18 @@ export async function POST(request: NextRequest) {
 
     const VALID_GROUPS: string[] = [...VALID_ACCESS_GROUPS]
 
-    // Visibilidade: admin pode definir qualquer valor; usuários ficam em private por padrão
+    // Visibilidade: mesma regra do PATCH — publicar exige e-mail verificado
+    // (admin não precisa). Antes o valor era ignorado para quem não é admin, e
+    // o deck nascia privado sem avisar ninguém.
     let visibility: 'private' | 'public' | 'unlisted' = 'private'
     if (['private', 'public', 'unlisted'].includes(body.visibility)) {
-      if (isAdmin || body.visibility === 'private') {
-        visibility = body.visibility
+      if (body.visibility !== 'private' && !isAdmin && !user.emailVerified) {
+        return NextResponse.json({
+          error: 'Verifique seu e-mail para tornar decks públicos ou não-listados',
+          requiresVerification: true,
+        }, { status: 403 })
       }
+      visibility = body.visibility
     }
 
     const materialsFolderId = isAdmin && body.materialsFolderId ? String(body.materialsFolderId) : null
@@ -135,7 +141,9 @@ export async function POST(request: NextRequest) {
       viewCount: 0,
       studyCount: 0,
       likeCount: 0,
-      isPublished: false,
+      // Deck que já nasce público entra publicado. Gravar `false` aqui era o que
+      // deixava o deck fora de /flashcards mesmo marcado como público.
+      isPublished: visibility !== 'private',
       isHidden: false,
       pdfDownloadEnabled: false,
       createdAt: new Date(),

@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { prepararTermoDeBusca } from '@/lib/utils/escape-regex'
-import { FLASHCARD_MANUAL_COLLECTIONS, normalizeDeckForResponse } from '@/lib/flashcard-manual'
+import { FLASHCARD_MANUAL_COLLECTIONS, normalizeDeckForResponse, PUBLIC_DECK_LISTING_FILTER } from '@/lib/flashcard-manual'
 import type { FlashcardManualDeck } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -10,9 +9,8 @@ export const dynamic = 'force-dynamic'
 // GET /api/flashcards/manual/community?q=...&sort=trending|new|featured
 export async function GET(request: NextRequest) {
   try {
-    const session = await getSession()
-    if (!session) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
-
+    // Sem exigir login: o que está público é público. A página do deck já abre
+    // em prévia para visitante, e a lista não devolve nada que não seja público.
     const { searchParams } = new URL(request.url)
     const q = searchParams.get('q')
     const sort = searchParams.get('sort') || 'trending'
@@ -20,9 +18,7 @@ export async function GET(request: NextRequest) {
 
     const db = await getDb()
     const filter: any = {
-      visibility: 'public',
-      isPublished: true,
-      isHidden: false,
+      ...PUBLIC_DECK_LISTING_FILTER,
       // Decks pagos não aparecem na comunidade gratuita; aparecem no /materiais e na "loja" do hub
       pricing: { $ne: 'paid' },
     }
@@ -50,7 +46,9 @@ export async function GET(request: NextRequest) {
       .toArray()
 
     const res = NextResponse.json({ decks: decks.map(normalizeDeckForResponse) })
-    res.headers.set('Cache-Control', 'private, max-age=60, stale-while-revalidate=120')
+    // Sem cache de resposta: publicar um deck e não vê-lo na lista pelos 60s
+    // seguintes é indistinguível do bug que este endpoint acabou de deixar de ter.
+    res.headers.set('Cache-Control', 'no-store, max-age=0, must-revalidate')
     return res
   } catch (error) {
     console.error('Erro ao listar comunidade:', error)

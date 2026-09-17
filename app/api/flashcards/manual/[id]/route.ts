@@ -12,6 +12,7 @@ import {
   sanitizeTags,
   isValidObjectId,
   getUserGroups,
+  isDeckPublished,
   FLASHCARD_MANUAL_VALID_GROUPS,
 } from '@/lib/flashcard-manual'
 import {
@@ -81,7 +82,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
     const isPublicPreviewable =
       (deck.ownerType === 'admin' && deck.visibility !== 'private') ||
-      ((deck.visibility === 'public' || deck.visibility === 'unlisted') && deck.isPublished)
+      isDeckPublished(deck)
 
     if (!isAuthenticated && !isPublicPreviewable) {
       return NextResponse.json({ error: 'Deck indisponível' }, { status: 404 })
@@ -196,13 +197,14 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
         }
       }
       updates.visibility = body.visibility
-      // Auto-publicar quando muda para público/unlisted
-      if (body.visibility !== 'private') updates.isPublished = true
-      if (body.visibility === 'private') updates.isPublished = false
     }
 
-    if (typeof body.isPublished === 'boolean' && updates.visibility !== 'private') {
-      updates.isPublished = body.isPublished
+    // `isPublished` acompanha a visibilidade: deck privado nunca fica publicado,
+    // deck público/não-listado nunca fica despublicado. Sem isso um PATCH só com
+    // `isPublished` podia publicar um deck privado — ou esconder um público.
+    const effectiveVisibility = updates.visibility ?? deck.visibility
+    if (typeof body.isPublished === 'boolean' || updates.visibility !== undefined) {
+      updates.isPublished = effectiveVisibility !== 'private'
     }
 
     // Apenas admin pode mexer em pricing/preço/grupos/destaque/hidden

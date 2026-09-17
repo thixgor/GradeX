@@ -4,7 +4,7 @@ import type { Db } from 'mongodb'
 
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
-import { FLASHCARD_MANUAL_COLLECTIONS } from '@/lib/flashcard-manual'
+import { FLASHCARD_MANUAL_COLLECTIONS, PUBLIC_DECK_LISTING_FILTER } from '@/lib/flashcard-manual'
 import { MINDMAP_COLLECTIONS } from '@/lib/mindmap'
 import { condicaoDeTexto, listaDeTextos, textoCurto } from '@/lib/busca-plataforma/mongo'
 import { indexar, ranquear } from '@/lib/busca-plataforma/motor'
@@ -206,7 +206,7 @@ const FONTES: Fonte[] = [
         condicoes.push({
           $or: [
             { ownerId: userId },
-            { visibility: 'public', isPublished: true, isHidden: { $ne: true } },
+            PUBLIC_DECK_LISTING_FILTER,
           ],
         })
       }
