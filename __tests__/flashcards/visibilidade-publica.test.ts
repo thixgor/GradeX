@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import {
   isDeckPublished,
   isDeckHidden,
+  getDeckListingStatus,
   PUBLIC_DECK_LISTING_FILTER,
   resolveDeckAccess,
 } from '@/lib/flashcard-manual'
@@ -120,5 +121,65 @@ describe('acesso a deck público', () => {
       linkedMaterialId: null,
     }))
     expect(acesso.hasAccess).toBe(false)
+  })
+})
+
+/**
+ * O diagnóstico mostrado ao dono ("não aparece porque…") tem que dizer a mesma
+ * coisa que a consulta da comunidade faz. Se um dia o filtro ganhar mais uma
+ * condição e este cálculo não, a tela volta a mentir — que é exatamente o
+ * problema original, só que com uma frase tranquilizadora por cima.
+ */
+describe('diagnóstico de listagem', () => {
+  it('confirma a listagem do deck público, gratuito e não escondido', () => {
+    const status = getDeckListingStatus(deck({ visibility: 'public' }))
+    expect(status.listedInCommunity).toBe(true)
+    expect(status.blockers).toEqual([])
+  })
+
+  it('aponta o deck privado', () => {
+    expect(getDeckListingStatus(deck({ visibility: 'private' })).blockers).toEqual(['private'])
+  })
+
+  it('aponta o não-listado, que abre por link mas não entra na lista', () => {
+    expect(getDeckListingStatus(deck({ visibility: 'unlisted' })).blockers).toEqual(['unlisted'])
+  })
+
+  it('aponta o deck escondido por um admin — o caso que dizia "Público" e sumia', () => {
+    const status = getDeckListingStatus(deck({ visibility: 'public', isHidden: true }))
+    expect(status.listedInCommunity).toBe(false)
+    expect(status.blockers).toEqual(['hidden'])
+  })
+
+  it('aponta o deck pago, que mora na Loja e não na comunidade gratuita', () => {
+    const status = getDeckListingStatus(deck({ visibility: 'public', pricing: 'paid', ownerType: 'admin' }))
+    expect(status.listedInCommunity).toBe(false)
+    expect(status.blockers).toEqual(['paid'])
+    expect(status.listedInStore).toBe(true)
+  })
+
+  it('não promete a Loja para deck que não é oficial', () => {
+    expect(getDeckListingStatus(deck({ visibility: 'public', ownerType: 'user' })).listedInStore).toBe(false)
+  })
+
+  it('concorda com o filtro da comunidade em todas as combinações', () => {
+    const visibilidades = ['private', 'public', 'unlisted'] as const
+    const ocultos = [true, false, undefined]
+    const precos = ['free', 'paid', undefined] as const
+
+    for (const visibility of visibilidades) {
+      for (const isHidden of ocultos) {
+        for (const pricing of precos) {
+          const d = deck({ visibility, isHidden, pricing } as any)
+          // O mesmo que o Mongo faria com PUBLIC_DECK_LISTING_FILTER + pricing.
+          const casaComOFiltro =
+            d.visibility === PUBLIC_DECK_LISTING_FILTER.visibility &&
+            d.isHidden !== true &&
+            d.pricing !== 'paid'
+          expect(getDeckListingStatus(d).listedInCommunity, JSON.stringify({ visibility, isHidden, pricing }))
+            .toBe(casaComOFiltro)
+        }
+      }
+    }
   })
 })

@@ -13,6 +13,7 @@ import {
   isValidObjectId,
   getUserGroups,
   isDeckPublished,
+  getDeckListingStatus,
   FLASHCARD_MANUAL_VALID_GROUPS,
 } from '@/lib/flashcard-manual'
 import {
@@ -139,6 +140,9 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         stats: spacedStats,
       },
       access: { ...access, canManage: access.isOwner || isAdmin },
+      // Só para quem administra o deck: a tela diz "Público" a partir da
+      // visibilidade, e isto conta se ele está mesmo na lista — e o que falta.
+      listing: access.isOwner || isAdmin ? getDeckListingStatus(deck) : null,
       viewer: {
         isAuthenticated,
         isAdmin,
@@ -270,7 +274,11 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     }
 
     const updatedDeck = await db.collection<FlashcardManualDeck>(FLASHCARD_MANUAL_COLLECTIONS.decks).findOne({ _id: deck._id })
-    return NextResponse.json({ deck: updatedDeck ? normalizeDeckForResponse(updatedDeck) : null })
+    return NextResponse.json({
+      deck: updatedDeck ? normalizeDeckForResponse(updatedDeck) : null,
+      // Depois de salvar, o editor mostra na hora se o deck entrou na lista.
+      listing: updatedDeck ? getDeckListingStatus(updatedDeck) : null,
+    })
   } catch (error: any) {
     console.error('Erro ao atualizar deck:', error)
     return NextResponse.json({ error: error.message || 'Erro ao atualizar deck' }, { status: 500 })

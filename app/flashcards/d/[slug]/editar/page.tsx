@@ -40,6 +40,8 @@ import { PricingEventSelector } from '@/components/pricing-events/PricingEventSe
 import { cn } from '@/lib/utils'
 import { buildImportCards, type ImageMode, type ImportFormat } from '@/lib/flashcard-import'
 import type { FlashcardManualCard, FlashcardManualDeck } from '@/lib/types'
+import { DeckListingNote } from '@/components/flashcards/deck-listing-note'
+import type { DeckListingStatus } from '@/lib/flashcard-manual'
 
 const VALID_GROUPS = ['gratuito', 'trial', 'essential', 'premium', 'monitor'] as const
 
@@ -69,6 +71,9 @@ export default function EditDeckPage() {
   const [emailVerified, setEmailVerified] = useState(false)
   const [loading, setLoading] = useState(true)
   const [savingMeta, setSavingMeta] = useState(false)
+  // Por que o deck aparece (ou não) na Comunidade — calculado no servidor a
+  // partir do documento real, não do que o formulário acha que salvou.
+  const [listing, setListing] = useState<DeckListingStatus | null>(null)
   const [savingCardIdx, setSavingCardIdx] = useState<number | null>(null)
   const [savingOrder, setSavingOrder] = useState(false)
   const [importOpen, setImportOpen] = useState(false)
@@ -84,6 +89,7 @@ export default function EditDeckPage() {
       const deckJson = await deckRes.json()
       if (!deckRes.ok) throw new Error(deckJson?.error || 'Erro ao carregar deck')
       setDeck(deckJson.deck)
+      setListing(deckJson.listing || null)
       setEmailVerified(!!deckJson.viewer?.emailVerified)
       const me = await meRes.json()
       setIsAdmin(me.user?.role === 'admin')
@@ -118,6 +124,7 @@ export default function EditDeckPage() {
       const json = await res.json()
       if (!res.ok) throw new Error(json.error || 'Erro ao salvar')
       setDeck(json.deck)
+      if (json.listing) setListing(json.listing)
       setToast({ open: true, message: 'Salvo!', type: 'success' })
     } catch (err: any) {
       setToast({ open: true, message: err.message || 'Erro', type: 'error' })
@@ -255,6 +262,7 @@ export default function EditDeckPage() {
           deck={deck}
           isAdmin={isAdmin}
           emailVerified={emailVerified}
+          listing={listing}
           saving={savingMeta}
           onSave={saveMeta}
         />
@@ -330,11 +338,12 @@ function buildMateriaisPaths(folders: { _id: string; name: string; parentFolderI
 }
 
 function DeckMetaForm({
-  deck, isAdmin, emailVerified, saving, onSave,
+  deck, isAdmin, emailVerified, listing, saving, onSave,
 }: {
   deck: any
   isAdmin: boolean
   emailVerified: boolean
+  listing: DeckListingStatus | null
   saving: boolean
   onSave: (updates: any) => void
 }) {
@@ -430,6 +439,9 @@ function DeckMetaForm({
               <AlertTriangle className="h-3.5 w-3.5 mt-0.5" /> Verifique seu e-mail para tornar este deck visível.
             </p>
           )}
+          {/* O que está salvo agora. Mudar o seletor não muda esta linha até
+              salvar — é justamente o estado real que se quer conferir aqui. */}
+          {visibility === deck.visibility && <DeckListingNote listing={listing} className="mt-2" />}
         </div>
       </div>
 

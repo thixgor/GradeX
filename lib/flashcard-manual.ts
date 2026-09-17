@@ -80,6 +80,45 @@ export const PUBLIC_DECK_LISTING_FILTER = {
   isHidden: { $ne: true },
 } as const
 
+/**
+ * Por que um deck aparece — ou não — na Comunidade e na Loja.
+ *
+ * A página do deck estampa "Público" lendo só `visibility`, mas a listagem é
+ * decidida por quatro campos. Deck oculto por um admin, ou pago, mostrava
+ * "Público" e simplesmente não estava lá, sem nada na tela explicando. Isto
+ * existe para o dono ler o motivo em vez de adivinhar.
+ *
+ * A ordem dos impedimentos importa: o primeiro é o que a interface mostra.
+ */
+export type DeckListingBlocker = 'private' | 'unlisted' | 'hidden' | 'paid'
+
+export interface DeckListingStatus {
+  /** Aparece na aba Comunidade de /flashcards? */
+  listedInCommunity: boolean
+  /** Aparece na Loja (a prateleira dos decks oficiais da equipe)? */
+  listedInStore: boolean
+  /** Vazio quando aparece; senão, o que está segurando. */
+  blockers: DeckListingBlocker[]
+}
+
+export function getDeckListingStatus(
+  deck: Pick<FlashcardManualDeck, 'visibility' | 'isHidden' | 'pricing' | 'ownerType'>,
+): DeckListingStatus {
+  const blockers: DeckListingBlocker[] = []
+  // Espelha PUBLIC_DECK_LISTING_FILTER + o `pricing` da rota da comunidade.
+  if (deck.visibility === 'private') blockers.push('private')
+  else if (deck.visibility === 'unlisted') blockers.push('unlisted')
+  if (isDeckHidden(deck)) blockers.push('hidden')
+  if (deck.pricing === 'paid') blockers.push('paid')
+
+  return {
+    listedInCommunity: blockers.length === 0,
+    // Espelha o filtro de /api/flashcards/manual/store.
+    listedInStore: deck.ownerType === 'admin' && !isDeckHidden(deck) && deck.visibility !== 'private',
+    blockers,
+  }
+}
+
 export type DeckAccessReason =
   | 'owner'
   | 'admin'

@@ -111,6 +111,8 @@ import {
   TimedAccessPill,
   type TimedAccessView,
 } from '@/components/materiais/timed-access'
+import { DeckListingNote } from '@/components/flashcards/deck-listing-note'
+import type { DeckListingStatus } from '@/lib/flashcard-manual'
 
 interface AccessFlags {
   hasAccess: boolean
@@ -134,6 +136,8 @@ interface DeckResponse {
   access: AccessFlags & { canManage: boolean }
   viewer: { isAuthenticated: boolean; isAdmin: boolean; userId: string | null; emailVerified: boolean }
   pricingEventState?: PricingEventStatePayload | null
+  /** Só vem para quem administra o deck. */
+  listing?: DeckListingStatus | null
 }
 
 type StudyMode = 'normal' | 'spaced'
@@ -1750,6 +1754,12 @@ export default function DeckPage() {
                     : <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/90 px-2.5 py-0.5"><CheckCircle2 className="h-3 w-3" /> Adquirido</span>
                 )}
               </div>
+              {/* O selo acima diz "Público" olhando só a visibilidade. Para quem
+                  administra o deck, esta linha diz se ele está mesmo na lista
+                  de /flashcards — e, quando não está, o que falta. */}
+              {access.canManage && !data.listing?.listedInCommunity && (
+                <DeckListingNote listing={data.listing} onHero className="mb-2 max-w-xl" />
+              )}
               {folderPath && (
                 <div className="mb-2 flex items-center gap-1.5 text-xs text-foreground/65">
                   <Folder className="h-3 w-3 shrink-0" />
