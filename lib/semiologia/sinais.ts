@@ -6,6 +6,7 @@ import { SINAIS_PELE_1 } from './sinais-pele-1'
 import { SINAIS_PELE_2 } from './sinais-pele-2'
 import { SINAIS_CABECA_E_OLHO } from './sinais-cabeca-olho'
 import { SINAIS_MSK_E_NEURO } from './sinais-msk-neuro'
+import { SINAIS_LEVA_3 } from './sinais-leva-3'
 
 /**
  * O acervo de sinais do exame físico.
@@ -1170,6 +1171,7 @@ export const SINAIS: Sinal[] = [
   ...SINAIS_PELE_2,
   ...SINAIS_CABECA_E_OLHO,
   ...SINAIS_MSK_E_NEURO,
+  ...SINAIS_LEVA_3,
 ]
 
 export const TOTAL_DE_SINAIS = SINAIS.length

@@ -1,5 +1,21 @@
 # Backlog de cenas com imagem
 
+## Estado em 2026-09-17 (terceira leva)
+
+Entrou: +36 cenas em broncoscopia/laringoscopia/otoscopia/fundoscopia; três
+janelas novas (dermatoscopia, segmento anterior, cavidade oral — 30 cenas);
++35 sinais. Foto curada para 21 cenas antigas que só tinham SVG.
+
+**Ficou sem foto livre no Commons** (candidatos a clipe, a outro acervo ou a
+foto própria): fossa nasal normal (rinoscopia), defeito pupilar aferente,
+leucoplasia de prega vocal, laringomalácia, sangramento/tampão/TB/aspergilose
+endobrônquicos, carina alargada, fístula traqueoesofágica, retinopatia
+falciforme, fibras mielinizadas, dermatofibroma (dermatoscopia), leucoplasia
+pilosa oral, sinal do rezador, tiragem intercostal, torcicolo congênito, sinal
+de Romaña. Abscesso retrofaríngeo e drusas do disco estão com imagem
+radiológica/tomográfica, que é como se diagnosticam.
+
+
 Ideias para os próximos lotes do Manual de Semiologia — só o que tem fotografia
 ou clipe obtível em acervo licenciado. Nada aqui está implementado; o que já
 existe está em `lib/semiologia/ultrassom.ts` e `sinais*.ts`.

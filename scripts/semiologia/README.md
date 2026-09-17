@@ -108,6 +108,10 @@ subir ao espelho.
 BLOB_READ_WRITE_TOKEN=... npm run semiologia:acervo:espelhar
 ```
 
+Com `NEXT_PUBLIC_SEMIOLOGIA_MIDIA_BASE` também definida no ambiente, o script
+pergunta ao espelho (HEAD) antes de cada envio e pula o que já está lá com o
+tamanho certo — uma leva nova sobe só o que é novo. `--forcar` reenvia tudo.
+
 `enviar-espelho.mjs` lê o acervo gerado, confere o SHA-256 de cada arquivo
 em `.semiologia/midia/`, envia para `semiologia/<2 hex>/<sha>.<ext>` no
 Vercel Blob (o mesmo caminho que `caminhoNoEspelho` monta na leitura) e

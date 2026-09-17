@@ -1,7 +1,7 @@
 import { COMPARADORES, TOTAL_DE_COMPARADORES } from './comparadores'
 import { SINAIS, TOTAL_DE_SINAIS } from './sinais'
 import { JANELAS_ULTRASSOM, TOTAL_DE_CENAS_ULTRASSOM, TOTAL_DE_JANELAS } from './ultrassom'
-import { TITULOS_DE_SISTEMA, type SistemaSemiologico } from './esquemas'
+import { TITULOS_DE_INSTRUMENTO, TITULOS_DE_SISTEMA, type SistemaSemiologico } from './esquemas'
 import {
   TOTAL_DE_CENAS,
   TOTAL_DE_ESTRUTURAS_DE_VISTA,
@@ -174,7 +174,7 @@ export function resumosDeVistas(): VistaResumo[] {
     return {
       slug: vista.slug,
       nome: vista.nome,
-      instrumento: vista.instrumento,
+      instrumento: TITULOS_DE_INSTRUMENTO[vista.instrumento],
       resumo: vista.resumo,
       paraQue: vista.paraQue,
       totalCenas: vista.cenas.length,

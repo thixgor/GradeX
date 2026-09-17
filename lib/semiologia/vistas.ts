@@ -1,3 +1,4 @@
+import { CENAS_EXTRA_DE_VISTA, VISTAS_NOVAS } from './vistas-extra'
 import type { Vista } from './esquemas'
 
 /**
@@ -39,7 +40,7 @@ import type { Vista } from './esquemas'
  * esquema, com o crédito exigido. Onde não tem, o vínculo continua sendo só um
  * ponteiro para fora, e a interface diz isso.
  */
-export const VISTAS: Vista[] = [
+const VISTAS_BASE: Vista[] = [
   {
     slug: 'otoscopia',
     nome: 'Otoscopia',
@@ -1726,6 +1727,16 @@ export const VISTAS: Vista[] = [
       'Ernst A, Herth FJF. Principles and Practice of Interventional Pulmonology. Springer, 2013.',
     ],
   },
+]
+
+/**
+ * Terceira leva: cenas extras por vista e janelas novas, em
+ * `vistas-extra.ts`. Anexadas na leitura, como no ultrassom — a prosa
+ * original fica intocada e a normal continua sendo a primeira cena.
+ */
+export const VISTAS: Vista[] = [
+  ...VISTAS_BASE.map((vista) => ({ ...vista, cenas: [...vista.cenas, ...(CENAS_EXTRA_DE_VISTA[vista.slug] ?? [])] })),
+  ...VISTAS_NOVAS,
 ]
 
 export const TOTAL_DE_VISTAS = VISTAS.length

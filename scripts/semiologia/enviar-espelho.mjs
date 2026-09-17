@@ -50,6 +50,11 @@ const raizDoProjeto = path.resolve(scriptDir, '..', '..')
 const pastaDeBytes = path.join(raizDoProjeto, '.semiologia', 'midia')
 
 const token = process.env.BLOB_READ_WRITE_TOKEN
+const args = process.argv.slice(2)
+// Com a base conhecida (a mesma variável que a aplicação lê), o script
+// pergunta ao espelho antes de enviar e pula o que já está lá. Sem ela,
+// envia tudo — é a primeira leva.
+const baseDoEspelho = (process.env.NEXT_PUBLIC_SEMIOLOGIA_MIDIA_BASE ?? '').replace(/\/$/, '')
 if (!token) {
   console.error(
     'Defina BLOB_READ_WRITE_TOKEN.\n' +
@@ -122,6 +127,7 @@ if (!plano.length) {
 /* ────────────────────────── envio ────────────────────────── */
 
 let enviados = 0
+let pulados = 0
 let bytesEnviados = 0
 const falhas = []
 let primeiraUrl
@@ -141,6 +147,18 @@ for (const item of plano) {
 
     const hash = await sha256Do(item.arquivoLocal)
     if (hash !== item.sha256) throw new Error(`hash divergente no disco: ${hash.slice(0, 12)}… ≠ ${item.sha256.slice(0, 12)}…`)
+
+    // O caminho é o hash do conteúdo: se já existe com o tamanho certo, está
+    // pronto. Sem isto, cada leva reenviava o acervo inteiro — uma hora de
+    // upload para acrescentar duzentos arquivos.
+    if (baseDoEspelho && !args.includes('--forcar')) {
+      const jaLa = await head(`${baseDoEspelho}/${item.blobPath}`, { token }).catch(() => null)
+      if (jaLa && jaLa.size === tamanho) {
+        primeiraUrl ??= jaLa.url
+        pulados += 1
+        continue
+      }
+    }
 
     // Três tentativas com espera crescente: rede instável não deveria obrigar
     // a pessoa a reiniciar o envio à mão.
@@ -183,7 +201,7 @@ for (const item of plano) {
 }
 
 console.log('')
-console.log(`Enviados : ${enviados}/${plano.length} (${(bytesEnviados / 2 ** 20).toFixed(1)} MiB)`)
+console.log(`Enviados : ${enviados}/${plano.length} (${(bytesEnviados / 2 ** 20).toFixed(1)} MiB)${pulados ? ` · ${pulados} já estavam no espelho` : ''}`)
 
 if (falhas.length) {
   console.error(`Falhas   : ${falhas.length} — corrija e rode de novo; o que já subiu não precisa subir outra vez.`)

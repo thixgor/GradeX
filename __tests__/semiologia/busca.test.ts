@@ -47,6 +47,12 @@ describe('o que o aluno digita', () => {
     expect(t).toMatch(/bócio/i)
     expect(buscar(preparado, 'graves').traduzido).toBe(true)
   })
+  it('acha as janelas novas por instrumento e gíria', () => {
+    expect(titulos('dermatoscopia', 3).join(' ')).toMatch(/dermatoscopia|nevo|melanoma/i)
+    expect(titulos('slit lamp', 3).join(' ')).toMatch(/segmento anterior|córnea|úlcera/i)
+    expect(primeiro('sapinho')?.titulo).toMatch(/candidíase/i)
+    expect(primeiro('terçol')?.titulo).toMatch(/calázio|hordéolo/i)
+  })
   it('pontua título acima de corpo', () => {
     expect(primeiro('ascite')?.titulo).toBe('Ascite')
   })

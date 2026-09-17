@@ -30,7 +30,7 @@ export function CatalogoDeImagem({
           'paraQue' in item ? (item as VistaResumo).paraQue : (item as JanelaResumo).pergunta
         const etiqueta =
           'instrumento' in item
-            ? (item as VistaResumo).instrumento.replace('-', ' ')
+            ? (item as VistaResumo).instrumento
             : `${(item as JanelaResumo).protocolo} · ${(item as JanelaResumo).transdutor}`
 
         return (
