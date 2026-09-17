@@ -46,6 +46,71 @@ export const RETOMADAS_PERMITIDAS = 1
 /** Intervalo mínimo entre gravações automáticas de progresso. */
 export const INTERVALO_DE_GRAVACAO_MS = 12_000
 
+/**
+ * De quanto em quanto tempo a prova fala com o servidor quando **nada mudou**.
+ *
+ * A gravação de rascunho acumula três papéis: salva a resposta, sincroniza o
+ * relógio de Brasília pelo cabeçalho da resposta, e carimba `ultimoSinalEm` —
+ * que é como `/admin/exams/[id]/ao-vivo` sabe que a pessoa continua na prova.
+ *
+ * Por causa dos dois últimos ela não pode simplesmente deixar de acontecer
+ * quando o rascunho está igual ao que já foi salvo. Mas de 12 em 12 segundos,
+ * por duas horas, para reenviar exatamente os mesmos bytes, ela também não
+ * precisa acontecer: quem lê um enunciado longo sem tocar em nada gasta uma
+ * requisição a cada 12s para não gravar nada.
+ *
+ * O teto vem de `LIMIAR_ATIVO_MS` (60s) em `lib/provas/acompanhamento-ao-vivo.ts`:
+ * acima dele o painel do admin classifica a pessoa como "parado". 45s deixa
+ * folga para a latência da requisição e mantém quem está com a prova aberta
+ * sempre como "respondendo" — o mesmo que o painel mostra hoje.
+ *
+ * Mudou alguma coisa? Grava na hora, no ritmo de sempre. Este intervalo só
+ * governa o caso em que não há nada novo para gravar.
+ */
+export const INTERVALO_DE_BATIMENTO_MS = 45_000
+
+/** O que a tela sabe na hora de decidir se fala com o servidor. */
+export interface EstadoDaGravacao {
+  /** Gravação pedida explicitamente (início, aba sumindo, entrega). */
+  forcar: boolean
+  agora: number
+  /** Quando saiu a última requisição de gravação. `0` = nenhuma ainda. */
+  ultimaGravacaoEm: number
+  /** O rascunho de agora, serializado. */
+  rascunhoAtual: string
+  /** O último rascunho que o servidor confirmou. `null` = nenhum. */
+  ultimoRascunhoGravado: string | null
+}
+
+/**
+ * A prova deve falar com o servidor agora?
+ *
+ * Três regras, nesta ordem:
+ *
+ * 1. **Forçada passa sempre.** Aba sumindo, início e entrega são os momentos em
+ *    que o rascunho precisa chegar inteiro, ainda que idêntico ao anterior.
+ * 2. **Nunca antes de `INTERVALO_DE_GRAVACAO_MS`.** É o piso que já existia.
+ * 3. **Rascunho igual ao último confirmado espera o batimento.** Não há nada
+ *    novo para salvar; a requisição continua acontecendo, mas só para manter o
+ *    sinal de vida do painel ao vivo e a sincronia do relógio.
+ *
+ * O que isto NÃO afrouxa: qualquer mudança de resposta, de questão ou de
+ * assinatura torna o rascunho diferente e volta ao ritmo de 12s. A proteção
+ * contra queda no meio da prova é exatamente a de antes — o que sai são as
+ * gravações que reenviavam bytes idênticos.
+ */
+export function deveGravarProgresso(estado: EstadoDaGravacao): boolean {
+  if (estado.forcar) return true
+
+  const desdeAUltima = estado.agora - estado.ultimaGravacaoEm
+  if (desdeAUltima < INTERVALO_DE_GRAVACAO_MS) return false
+
+  const mudou = estado.ultimoRascunhoGravado !== estado.rascunhoAtual
+  if (mudou) return true
+
+  return desdeAUltima >= INTERVALO_DE_BATIMENTO_MS
+}
+
 export interface ProgressoDaProva {
   examId: string
   userId: string

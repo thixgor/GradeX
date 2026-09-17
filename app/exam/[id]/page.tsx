@@ -88,6 +88,7 @@ import { enderecoDoTreino, pediuTreino, permiteTreinoAposTermino } from '@/lib/p
 import {
   INTERVALO_DE_GRAVACAO_MS,
   contarRespondidas,
+  deveGravarProgresso,
   mesclarRespostas,
   type VereditoDeRetomada,
 } from '@/lib/provas/retomada'
@@ -1042,10 +1043,34 @@ function ConteudoDaProva({ params }: { params: { id: string } }) {
     startedAt: (examStartTimeRef.current || new Date()).toISOString(),
   }), [questaoNoAltoDaTela])
 
+  /*
+   * O último rascunho que o servidor confirmou ter recebido, serializado.
+   *
+   * É o que permite saber que não há nada novo para gravar. Só é atualizado
+   * depois de uma resposta OK: gravação que falhou não conta como salva, e a
+   * seguinte tem de tentar de novo com o mesmo conteúdo.
+   */
+  const ultimoRascunhoGravadoRef = useRef<string | null>(null)
+
   const gravarProgresso = useCallback(
     async (forcar = false) => {
       if (!id || gravandoRef.current) return
-      if (!forcar && Date.now() - ultimaGravacaoRef.current < INTERVALO_DE_GRAVACAO_MS) return
+
+      const corpo = JSON.stringify(montarRascunho())
+
+      // Ver `deveGravarProgresso`: forçada passa sempre; rascunho igual ao
+      // último confirmado espera o batimento em vez de reenviar os mesmos bytes.
+      if (
+        !deveGravarProgresso({
+          forcar,
+          agora: Date.now(),
+          ultimaGravacaoEm: ultimaGravacaoRef.current,
+          rascunhoAtual: corpo,
+          ultimoRascunhoGravado: ultimoRascunhoGravadoRef.current,
+        })
+      ) {
+        return
+      }
 
       gravandoRef.current = true
       ultimaGravacaoRef.current = Date.now()
@@ -1055,10 +1080,13 @@ function ConteudoDaProva({ params }: { params: { id: string } }) {
         const res = await fetch(`/api/exams/${id}/progress`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(montarRascunho()),
+          body: corpo,
         })
         const respondidoEm = Date.now()
         setSalvandoProgresso(res.ok ? 'salvo' : 'erro')
+        // Só o que o servidor aceitou conta como gravado. Uma falha mantém o
+        // valor anterior, e a próxima volta reenvia este mesmo conteúdo.
+        if (res.ok) ultimoRascunhoGravadoRef.current = corpo
         /*
          * A gravação do rascunho é também a batida do relógio.
          *
