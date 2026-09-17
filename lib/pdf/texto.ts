@@ -71,39 +71,42 @@ export function desescaparParaPdf(texto: string): string {
       continue
     }
 
-    const proximo = texto[i + 1]
+    // A sequência INTEIRA de barras, não uma só: o comentário que passou duas
+    // vezes por um JSON chega com `\\\\"` e, tirando uma barra por vez, ainda
+    // sobraria a outra colada na aspa — que é justamente o que se vê no papel.
+    let fim = i
+    while (texto[fim] === '\\') fim += 1
+    const proximo = texto[fim]
+
     // Barra sozinha no fim do texto: não sobra nada para escapar, e imprimi-la
     // é exatamente o defeito que este arquivo corrige.
-    if (proximo === undefined) continue
+    if (proximo === undefined) break
 
     if (proximo === 'n') {
-      // `\nl` é o que os importadores de TXT gravam para "linha nova".
-      i += texto[i + 2] === 'l' ? 2 : 1
+      // `\\nl` é o que os importadores de TXT gravam para "linha nova".
+      i = texto[fim + 1] === 'l' ? fim + 1 : fim
       saida += '\n'
       continue
     }
     if (proximo === 'r') {
-      i += 1
+      i = fim
       continue
     }
     if (proximo === 't') {
-      i += 1
+      i = fim
       saida += ' '
       continue
     }
-    if (proximo === '\\') {
-      i += 1
-      saida += '\\'
-      continue
-    }
     // Letra ou número depois da barra não é escape de JSON — é notação
-    // (`\alpha`, `\SI`), e mexer nela estragaria o texto.
+    // (`\\alpha`, `\\SI`), e mexer nela estragaria o texto. A barra fica, uma só.
     if (/[A-Za-z0-9]/.test(proximo)) {
-      i += 1
-      saida += `\\${proximo}`
+      saida += '\\'
+      i = fim - 1
       continue
     }
-    i += 1
+    // Pontuação: a barra é escape (de JSON ou de Markdown) e não se imprime.
+    // É o caso das aspas, onde ela aparece quase sempre.
+    i = fim
     saida += proximo
   }
   return saida

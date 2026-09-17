@@ -55,9 +55,22 @@ describe('desescaparParaPdf', () => {
     expect(desescaparParaPdf('aspas simples: \\’')).toBe('aspas simples: ’')
   })
 
+  it('tira a barra mesmo quando o texto passou duas vezes por um JSON', () => {
+    // `\\\\"` no banco: o comentário foi escapado, guardado e escapado de novo.
+    // Tirar uma barra por vez deixaria a outra colada na aspa.
+    expect(desescaparParaPdf('o \\\\"sinal de Murphy\\\\" positivo')).toBe(
+      'o "sinal de Murphy" positivo',
+    )
+  })
+
+  it('tira a barra das aspas tipográficas, que é onde ela mais aparece', () => {
+    expect(desescaparParaPdf('o \\“sinal\\” positivo')).toBe('o “sinal” positivo')
+  })
+
   it('mantém a quebra de linha dos importadores', () => {
     expect(desescaparParaPdf('primeira\\nlsegunda')).toBe('primeira\nsegunda')
     expect(desescaparParaPdf('primeira\\nsegunda')).toBe('primeira\nsegunda')
+    expect(desescaparParaPdf('primeira\\\\nsegunda')).toBe('primeira\nsegunda')
   })
 
   it('não mexe na barra que é conteúdo', () => {
