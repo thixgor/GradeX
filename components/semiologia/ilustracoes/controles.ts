@@ -734,10 +734,10 @@ export const CONTROLES_DE_CENA: Record<string, ControleDeIlustracao> = {
 }
 
 /** O controle de uma cena, se ela tiver um — pelo par `id:cena` da ilustração. */
-export function controleDaCena(ilustracao: { id: string; params?: Record<string, unknown> }): ControleDeIlustracao | undefined {
-  const cena = ilustracao.params?.cena
+export function controleDaCena(ilustracao?: { id: string; params?: Record<string, unknown> }): ControleDeIlustracao | undefined {
+  const cena = ilustracao?.params?.cena
   if (typeof cena !== 'string') return undefined
-  return CONTROLES_DE_CENA[`${ilustracao.id}:${cena}`]
+  return CONTROLES_DE_CENA[`${ilustracao!.id}:${cena}`]
 }
 
 /**

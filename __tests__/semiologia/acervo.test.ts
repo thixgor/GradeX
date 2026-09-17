@@ -67,8 +67,8 @@ describe('integridade do acervo', () => {
   it('toda figura referenciada existe no registro', () => {
     const referencias = [
       ...SINAIS.flatMap((s) => (s.ilustracao ? [s.ilustracao.id] : [])),
-      ...VISTAS.flatMap((v) => v.cenas.map((c) => c.ilustracao.id)),
-      ...JANELAS_ULTRASSOM.flatMap((j) => j.cenas.map((c) => c.ilustracao.id)),
+      ...VISTAS.flatMap((v) => v.cenas.flatMap((c) => (c.ilustracao ? [c.ilustracao.id] : []))),
+      ...JANELAS_ULTRASSOM.flatMap((j) => j.cenas.flatMap((c) => (c.ilustracao ? [c.ilustracao.id] : []))),
       ...COMPARADORES.flatMap((c) => c.colunas.flatMap((col) => (col.ilustracao ? [col.ilustracao.id] : []))),
     ]
     for (const id of new Set(referencias)) {
@@ -79,8 +79,8 @@ describe('integridade do acervo', () => {
   it('toda figura tem texto alternativo', () => {
     const alts = [
       ...SINAIS.flatMap((s) => (s.ilustracao ? [s.ilustracao.alt] : [])),
-      ...VISTAS.flatMap((v) => v.cenas.map((c) => c.ilustracao.alt)),
-      ...JANELAS_ULTRASSOM.flatMap((j) => j.cenas.map((c) => c.ilustracao.alt)),
+      ...VISTAS.flatMap((v) => v.cenas.flatMap((c) => (c.ilustracao ? [c.ilustracao.alt] : []))),
+      ...JANELAS_ULTRASSOM.flatMap((j) => j.cenas.flatMap((c) => (c.ilustracao ? [c.ilustracao.alt] : []))),
     ]
     for (const alt of alts) expect(alt.length).toBeGreaterThan(10)
   })
@@ -184,7 +184,7 @@ describe('recorte para o cliente', () => {
     for (const resumo of resumosDeVistas()) {
       const vista = VISTAS.find((v) => v.slug === resumo.slug)!
       const normal = vista.cenas.find((c) => c.estado === 'normal')!
-      expect(resumo.capa.params).toEqual(normal.ilustracao.params)
+      expect(resumo.capa?.params).toEqual(normal.ilustracao?.params)
     }
   })
 

@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation'
 import { ArrowRight, Eye, Lock, Ruler, Stethoscope, Waves } from 'lucide-react'
 import { AppShell, useAppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
+import { ROTAS } from '@/lib/semiologia/rotas'
+import { BuscaGlobal } from './busca-global'
 import { RodapeDeCreditos } from './creditos'
 import { useAcessoSemiologia } from './use-acesso'
 
@@ -17,15 +19,26 @@ import { useAcessoSemiologia } from './use-acesso'
  * vitrine, e não uma página de vendas diferente por rota: foi exatamente o
  * problema que o pacote único veio resolver (ver `lib/manual-clinico/pacote.ts`).
  */
-export function AreaSemiologia({ children, alvo }: { children: ReactNode; alvo?: string | null }) {
+export function AreaSemiologia({
+  children,
+  alvo,
+  busca = true,
+}: {
+  children: ReactNode
+  alvo?: string | null
+  /** A barra de busca no topo. A home desliga porque tem a sua própria, no hero. */
+  busca?: boolean
+}) {
   return (
     <AppShell allowGuest showHeader={false} guestNotice={false}>
-      <ConteudoProtegido alvo={alvo}>{children}</ConteudoProtegido>
+      <ConteudoProtegido alvo={alvo} busca={busca}>
+        {children}
+      </ConteudoProtegido>
     </AppShell>
   )
 }
 
-function ConteudoProtegido({ children, alvo }: { children: ReactNode; alvo?: string | null }) {
+function ConteudoProtegido({ children, alvo, busca }: { children: ReactNode; alvo?: string | null; busca: boolean }) {
   const router = useRouter()
   const { user, loading: carregandoShell } = useAppShell()
   const { dados, carregado } = useAcessoSemiologia()
@@ -53,9 +66,35 @@ function ConteudoProtegido({ children, alvo }: { children: ReactNode; alvo?: str
   // Uma vez por rota, no rodapé da seção, é exatamente o que elas descrevem.
   return (
     <>
+      {busca && <BarraDeBusca />}
       {children}
       <RodapeDeCreditos />
     </>
+  )
+}
+
+/**
+ * A busca em toda rota interna do módulo.
+ *
+ * Fica acima do conteúdo, e não dentro de cada página, porque é a mesma
+ * caixa em todas — e porque o atalho "/" que ela registra só existe onde ela
+ * está montada. A home não a usa: lá a busca é o hero.
+ */
+function BarraDeBusca() {
+  return (
+    // Abaixo de `lg`, o AppShell sem cabeçalho põe o botão do menu e os
+    // toggles de tema flutuando em `top-3`; a barra desce para não ficar
+    // debaixo deles. Em desktop, o menu está na lateral e o topo é livre.
+    <div className="surface-page border-b border-border/60 pt-16 lg:pt-0">
+      <div className="container mx-auto flex max-w-6xl items-center gap-4 px-4 py-3">
+        <Link href={ROTAS.raiz} className="hidden shrink-0 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground transition-colors hover:text-foreground sm:block">
+          Semiologia
+        </Link>
+        <div className="min-w-0 flex-1 sm:max-w-xl">
+          <BuscaGlobal placeholder="Buscar em todo o módulo — sinal, cena, janela…" />
+        </div>
+      </div>
+    </div>
   )
 }
 

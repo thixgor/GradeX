@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { ArrowRight, Eye, GitCompareArrows, Stethoscope, Waves } from 'lucide-react'
 import type { CatalogoSemiologia } from '@/lib/semiologia/catalogo'
 import { ROTAS } from '@/lib/semiologia/rotas'
+import { BuscaGlobal } from './busca-global'
 import { Capa } from './capa'
 import { Enfase } from './enfase'
 
@@ -30,17 +31,27 @@ export function HomeSemiologia({ catalogo }: { catalogo: CatalogoSemiologia }) {
           oftalmoscópio e pela sonda à beira do leito. Cada achado com o mecanismo escrito, o que muda na conduta e
           onde ele engana.
         </p>
+        {/* A busca é a porta principal: com centenas de sinais e cenas, o
+            aluno que sabe o que procura não deve rolar três grades para
+            achar. Ela entende sinônimo, inglês, gíria e erro de digitação. */}
+        <div className="mt-6 max-w-2xl">
+          <BuscaGlobal variante="hero" placeholder="Buscar sinal, cena ou janela…" />
+          <p className="mt-2 text-[11px] text-muted-foreground">
+            Experimente <Exemplo termo="flapping" /> <Exemplo termo="linhas B" /> <Exemplo termo="joanete" />{' '}
+            <Exemplo termo="sinal do D" /> <Exemplo termo="Graves" /> — ou tecle <kbd className="rounded border border-border bg-muted px-1 font-mono">/</kbd> de qualquer página do módulo.
+          </p>
+        </div>
         <dl className="mt-6 flex flex-wrap gap-x-8 gap-y-3">
           {[
-            [totais.sinais, 'sinais aprofundados'],
-            [totais.cenas + totais.cenasUltrassom, 'cenas normal × alterado'],
-            [totais.estruturas, 'estruturas marcadas'],
+            [totais.sinais, 'sinais do exame físico'],
+            [totais.cenas + totais.cenasUltrassom, 'cenas de imagem e ultrassom'],
+            [totais.vistas + totais.janelas, 'janelas'],
             [totais.comparadores, 'comparadores'],
           ].map(([valor, rotulo]) => (
             <div key={String(rotulo)}>
               <dt className="sr-only">{rotulo}</dt>
               <dd>
-                <span className="text-2xl font-bold">{valor}</span>{' '}
+                <span className="text-2xl font-bold tabular-nums">{valor}</span>{' '}
                 <span className="text-xs text-muted-foreground">{rotulo}</span>
               </dd>
             </div>
@@ -52,12 +63,12 @@ export function HomeSemiologia({ catalogo }: { catalogo: CatalogoSemiologia }) {
       <Secao
         icone={Stethoscope}
         titulo="Sinais do exame físico"
-        descricao="Icterícia, edema, cianose, turgência jugular, baqueteamento, asterixe. Definição operacional, manobra com o detalhe que a faz funcionar, mecanismo, causas por grupo e o desempenho diagnóstico quando existe número publicado."
+        descricao="Da icterícia ao sinal de Babinski, da púrpura à fácies de Cushing. Definição operacional, manobra com o detalhe que a faz funcionar, mecanismo, causas por grupo, onde engana — e a fotografia real, porque é ela que o olho precisa reconhecer."
         href={ROTAS.sinais}
         cta={`Abrir os ${totais.sinais} sinais`}
       >
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {destaques(catalogo.sinais).map((sinal) => (
+          {destaques(catalogo.sinais, 8).map((sinal) => (
             <Link key={sinal.slug} href={ROTAS.sinal(sinal.slug)} className="group space-y-2">
               <Capa
                 real={sinal.capaReal}
@@ -103,12 +114,12 @@ export function HomeSemiologia({ catalogo }: { catalogo: CatalogoSemiologia }) {
       <Secao
         icone={Waves}
         titulo="Ultrassom à beira do leito"
-        descricao="As janelas do POCUS, cada uma com a pergunta binária que responde. Linhas A e B, deslizamento pleural, bolsa de Morrison, veia cava e pericárdio — normal e alterado, com o que separa artefato de estrutura."
+        descricao="As janelas do POCUS, cada uma com a pergunta binária que responde. Do ponto pulmonar ao sinal de McConnell, da vesícula ao olho — normal e alterado, com o clipe real do The POCUS Atlas ao lado do esquema."
         href={ROTAS.ultrassom}
         cta={`Abrir as ${totais.janelas} janelas`}
       >
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {catalogo.janelas.map((janela) => (
+          {catalogo.janelas.slice(0, 8).map((janela) => (
             <Link
               key={janela.slug}
               href={ROTAS.janela(janela.slug)}
@@ -118,10 +129,19 @@ export function HomeSemiologia({ catalogo }: { catalogo: CatalogoSemiologia }) {
               <div className="p-3">
                 <p className="text-sm font-semibold leading-tight">{janela.nome}</p>
                 <p className="mt-1 text-[11px] leading-snug text-muted-foreground">{janela.pergunta}</p>
+                <p className="mt-1.5 text-[11px] tabular-nums text-muted-foreground/80">{janela.totalCenas} cenas</p>
               </div>
             </Link>
           ))}
         </div>
+        {catalogo.janelas.length > 8 && (
+          <p className="text-xs text-muted-foreground">
+            E mais {catalogo.janelas.length - 8} janelas — {catalogo.janelas.slice(8).map((j) => j.nome.replace(/^Ultrassom /, '')).join(', ')}.{' '}
+            <Link href={ROTAS.ultrassom} className="font-medium text-sky-700 hover:underline dark:text-sky-400">
+              Ver todas
+            </Link>
+          </p>
+        )}
       </Secao>
 
       {/* Comparadores. */}
@@ -157,15 +177,36 @@ export function HomeSemiologia({ catalogo }: { catalogo: CatalogoSemiologia }) {
  * módulo pelo caso real, e um cartão desenhado ao lado de três fotografias
  * diria o contrário do que o módulo quer dizer.
  */
-const VITRINE = ['ictericia', 'purpura', 'celulite-extensa', 'turgencia-jugular']
+const VITRINE = ['ictericia', 'purpura', 'celulite-extensa', 'turgencia-jugular', 'herpes-zoster', 'rash-malar', 'bocio', 'podagra']
 
-function destaques<T extends { slug: string; capaReal?: unknown }>(sinais: T[]): T[] {
+function destaques<T extends { slug: string; capaReal?: unknown }>(sinais: T[], quantos: number): T[] {
   const porSlug = new Map(sinais.map((s) => [s.slug, s]))
   const escolhidos = VITRINE.map((slug) => porSlug.get(slug)).filter((s): s is T => Boolean(s?.capaReal))
   const restantes = sinais.filter((s) => !escolhidos.includes(s))
   const comFoto = restantes.filter((s) => s.capaReal)
   const semFoto = restantes.filter((s) => !s.capaReal)
-  return [...escolhidos, ...comFoto, ...semFoto].slice(0, 4)
+  return [...escolhidos, ...comFoto, ...semFoto].slice(0, quantos)
+}
+
+/** Um exemplo de busca clicável: preenche a caixa e mostra o que ela entende. */
+function Exemplo({ termo }: { termo: string }) {
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        const caixa = document.querySelector<HTMLInputElement>('input[role="combobox"]')
+        if (!caixa) return
+        // Preencher pelo setter nativo para o React ver a mudança.
+        const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set
+        setter?.call(caixa, termo)
+        caixa.dispatchEvent(new Event('input', { bubbles: true }))
+        caixa.focus()
+      }}
+      className="rounded border border-border bg-card px-1.5 py-0.5 font-medium text-foreground/80 transition-colors hover:border-sky-500/50 hover:text-foreground"
+    >
+      {termo}
+    </button>
+  )
 }
 
 function Secao({

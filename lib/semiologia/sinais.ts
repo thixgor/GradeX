@@ -2,6 +2,10 @@ import type { Sinal } from './esquemas'
 import { SINAIS_CARDIORRESPIRATORIOS } from './sinais-exame-cardiorrespiratorio'
 import { SINAIS_NEURO_ABDOME } from './sinais-exame-neuro-abdome'
 import { SINAIS_VASCULARES_E_DE_PELE } from './sinais-exame-vascular-pele'
+import { SINAIS_PELE_1 } from './sinais-pele-1'
+import { SINAIS_PELE_2 } from './sinais-pele-2'
+import { SINAIS_CABECA_E_OLHO } from './sinais-cabeca-olho'
+import { SINAIS_MSK_E_NEURO } from './sinais-msk-neuro'
 
 /**
  * O acervo de sinais do exame físico.
@@ -1159,6 +1163,13 @@ export const SINAIS: Sinal[] = [
   ...SINAIS_CARDIORRESPIRATORIOS,
   ...SINAIS_NEURO_ABDOME,
   ...SINAIS_VASCULARES_E_DE_PELE,
+  // Terceira leva: 150 sinais com fotografia — pele, cabeça e olho, aparelho
+  // locomotor, neurológico e pediatria. Sem figura paramétrica: o caso real
+  // do Commons é a imagem, e a ficha é o que a torna ensino.
+  ...SINAIS_PELE_1,
+  ...SINAIS_PELE_2,
+  ...SINAIS_CABECA_E_OLHO,
+  ...SINAIS_MSK_E_NEURO,
 ]
 
 export const TOTAL_DE_SINAIS = SINAIS.length

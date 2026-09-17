@@ -2,8 +2,9 @@
 
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
-import { ChevronRight, Search, X } from 'lucide-react'
+import { Camera, ChevronRight, Search, Sparkles, X } from 'lucide-react'
 import type { SinalResumo } from '@/lib/semiologia/catalogo'
+import { buscar, preparar, type EntradaDeBusca } from '@/lib/semiologia/busca-motor'
 import { ROTAS } from '@/lib/semiologia/rotas'
 import { Capa } from './capa'
 import { Enfase } from './enfase'
@@ -23,6 +24,7 @@ import { Enfase } from './enfase'
 export function CatalogoDeSinais({ sinais }: { sinais: SinalResumo[] }) {
   const [busca, setBusca] = useState('')
   const [sistema, setSistema] = useState<string | null>(null)
+  const [soComFoto, setSoComFoto] = useState(false)
 
   const sistemas = useMemo(() => {
     const mapa = new Map<string, number>()
@@ -30,15 +32,42 @@ export function CatalogoDeSinais({ sinais }: { sinais: SinalResumo[] }) {
     return [...mapa.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'pt-BR'))
   }, [sinais])
 
-  const filtrados = useMemo(() => {
-    const termo = normalizar(busca)
-    return sinais.filter((sinal) => {
-      if (sistema && sinal.sistemaTitulo !== sistema) return false
-      if (!termo) return true
-      const alvo = normalizar([sinal.nome, ...sinal.sinonimos, sinal.resumo].join(' '))
-      return alvo.includes(termo)
-    })
-  }, [sinais, busca, sistema])
+  // O mesmo motor da paleta global, sobre os resumos que já vieram por prop:
+  // sinônimo, inglês, glossário e erro de digitação valem aqui também.
+  const preparado = useMemo(
+    () =>
+      preparar(
+        sinais.map<EntradaDeBusca>((sinal) => ({
+          tipo: 'sinal',
+          id: sinal.slug,
+          titulo: sinal.nome,
+          sinonimos: sinal.sinonimos,
+          contexto: sinal.sistemaTitulo,
+          corpo: sinal.resumo,
+          href: ROTAS.sinal(sinal.slug),
+          grupo: sinal.sistemaTitulo,
+          temCasoReal: Boolean(sinal.capaReal),
+        })),
+      ),
+    [sinais],
+  )
+
+  const { filtrados, resposta } = useMemo(() => {
+    const porSlug = new Map(sinais.map((s) => [s.slug, s]))
+    const termo = busca.trim()
+    const resposta = termo.length >= 2 ? buscar(preparado, termo, { limite: sinais.length }) : null
+    const base = resposta ? resposta.resultados.map((r) => porSlug.get(r.entrada.id)!) : sinais
+    return {
+      resposta,
+      filtrados: base.filter((sinal) => {
+        if (sistema && sinal.sistemaTitulo !== sistema) return false
+        if (soComFoto && !sinal.capaReal) return false
+        return true
+      }),
+    }
+  }, [sinais, preparado, busca, sistema, soComFoto])
+
+  const totalComFoto = useMemo(() => sinais.filter((s) => s.capaReal).length, [sinais])
 
   return (
     <div className="space-y-6">
@@ -47,8 +76,9 @@ export function CatalogoDeSinais({ sinais }: { sinais: SinalResumo[] }) {
         <input
           value={busca}
           onChange={(e) => setBusca(e.target.value)}
-          placeholder="Buscar por nome ou sinônimo — flapping, spider naevi, Godet…"
-          className="w-full rounded-xl border border-border bg-card py-2.5 pl-10 pr-10 text-sm outline-none transition-colors focus:border-sky-500"
+          placeholder="Buscar por nome, sinônimo, doença ou termo em inglês — flapping, Graves, joanete…"
+          aria-label="Filtrar sinais"
+          className="w-full rounded-xl border border-border bg-card py-2.5 pl-10 pr-10 text-sm outline-none transition-[border-color,box-shadow] focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10"
         />
         {busca && (
           <button
@@ -61,7 +91,7 @@ export function CatalogoDeSinais({ sinais }: { sinais: SinalResumo[] }) {
         )}
       </div>
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <Chip ativo={sistema === null} onClick={() => setSistema(null)}>
           Todos <span className="opacity-60">({sinais.length})</span>
         </Chip>
@@ -70,11 +100,29 @@ export function CatalogoDeSinais({ sinais }: { sinais: SinalResumo[] }) {
             {titulo} <span className="opacity-60">({total})</span>
           </Chip>
         ))}
+        <span className="mx-1 hidden h-5 w-px bg-border sm:block" aria-hidden />
+        <Chip ativo={soComFoto} onClick={() => setSoComFoto((v) => !v)} tom="emerald">
+          <Camera className="mr-1 inline h-3 w-3" />
+          Com caso real <span className="opacity-60">({totalComFoto})</span>
+        </Chip>
+      </div>
+
+      <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
+        <p className="tabular-nums">
+          {filtrados.length === sinais.length ? `${sinais.length} sinais` : `${filtrados.length} de ${sinais.length} sinais`}
+          {busca.trim().length >= 2 && ' · ordenados por relevância'}
+        </p>
+        {(resposta?.traduzido || resposta?.aproximado) && (
+          <p className="flex items-center gap-1.5 text-sky-800 dark:text-sky-300">
+            <Sparkles className="h-3.5 w-3.5" />
+            {resposta.aproximado ? 'Nenhum resultado exato — mostrando os mais parecidos.' : 'Termo traduzido para o vocabulário do acervo.'}
+          </p>
+        )}
       </div>
 
       {filtrados.length === 0 ? (
         <p className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-          Nenhum sinal encontrado para “{busca}”.
+          Nenhum sinal encontrado{busca ? <> para “{busca}”</> : ''}{soComFoto ? ' com caso real' : ''}{sistema ? ` em ${sistema}` : ''}.
         </p>
       ) : (
         <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -120,22 +168,27 @@ export function CatalogoDeSinais({ sinais }: { sinais: SinalResumo[] }) {
   )
 }
 
-function Chip({ ativo, onClick, children }: { ativo: boolean; onClick: () => void; children: React.ReactNode }) {
+function Chip({
+  ativo,
+  onClick,
+  children,
+  tom = 'sky',
+}: {
+  ativo: boolean
+  onClick: () => void
+  children: React.ReactNode
+  tom?: 'sky' | 'emerald'
+}) {
+  const ligado = tom === 'emerald' ? 'border-emerald-600 bg-emerald-600 text-white' : 'border-sky-500 bg-sky-500 text-white'
   return (
     <button
       onClick={onClick}
+      aria-pressed={ativo}
       className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
-        ativo ? 'border-sky-500 bg-sky-500 text-white' : 'border-border bg-card text-muted-foreground hover:text-foreground'
+        ativo ? ligado : 'border-border bg-card text-muted-foreground hover:text-foreground'
       }`}
     >
       {children}
     </button>
   )
-}
-
-function normalizar(texto: string): string {
-  return texto
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
 }

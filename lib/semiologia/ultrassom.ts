@@ -1,4 +1,16 @@
-import type { JanelaUltrassom } from './esquemas'
+import type { CenaClinica, JanelaUltrassom } from './esquemas'
+import { CENAS_PERICARDIO, CENAS_PULMAO } from './ultrassom-torax'
+import { CENAS_APICAL, CENAS_CAVA, CENAS_PLAX, CENAS_PSAX } from './ultrassom-coracao'
+import {
+  CENAS_ABDOME_AGUDO,
+  CENAS_AORTA,
+  CENAS_BEXIGA,
+  CENAS_FAST,
+  CENAS_RINS,
+  CENAS_VEIAS,
+  CENAS_VESICULA,
+} from './ultrassom-vasos-abdome'
+import { CENAS_OBSTETRICO, CENAS_PARTES_MOLES, JANELA_OLHO } from './ultrassom-pelve-msk-olho'
 
 /**
  * As janelas do ultrassom à beira do leito.
@@ -31,7 +43,7 @@ import type { JanelaUltrassom } from './esquemas'
  * e o caso real pode ser exibido aqui dentro, ao lado do esquema, com o crédito
  * que elas exigem (ver `direitos.ts` e `midia.ts`).
  */
-export const JANELAS_ULTRASSOM: JanelaUltrassom[] = [
+const JANELAS_BASE: JanelaUltrassom[] = [
   {
     slug: 'pulmao-linhas',
     nome: 'Ultrassom pulmonar — linhas A e B',
@@ -1523,6 +1535,36 @@ export const JANELAS_ULTRASSOM: JanelaUltrassom[] = [
       'Doubilet PM et al. Diagnostic criteria for nonviable pregnancy early in the first trimester. N Engl J Med, 2013.',
     ],
   },
+]
+
+/**
+ * As cenas da segunda leva moram em arquivos próprios, por janela, e são
+ * anexadas aqui na leitura. Nenhuma tem esquema: são achados que só existem
+ * em movimento ou cuja textura o desenho não reproduz, e o caso real do
+ * The POCUS Atlas é a figura. As janelas continuam com uma cena normal só —
+ * a primeira leva — porque é ela que ancora o comparador.
+ */
+const CENAS_EXTRA: Record<string, CenaClinica[]> = {
+  'pulmao-linhas': CENAS_PULMAO,
+  'subxifoide-pericardio': CENAS_PERICARDIO,
+  'paraesternal-eixo-longo': CENAS_PLAX,
+  'paraesternal-eixo-curto': CENAS_PSAX,
+  'apical-quatro-camaras': CENAS_APICAL,
+  'veia-cava-inferior': CENAS_CAVA,
+  'veias-profundas': CENAS_VEIAS,
+  'aorta-abdominal': CENAS_AORTA,
+  'vesicula-biliar': CENAS_VESICULA,
+  rins: CENAS_RINS,
+  bexiga: CENAS_BEXIGA,
+  'abdome-agudo': CENAS_ABDOME_AGUDO,
+  'fast-morrison': CENAS_FAST,
+  'obstetrico-primeiro-trimestre': CENAS_OBSTETRICO,
+  'partes-moles': CENAS_PARTES_MOLES,
+}
+
+export const JANELAS_ULTRASSOM: JanelaUltrassom[] = [
+  ...JANELAS_BASE.map((janela) => ({ ...janela, cenas: [...janela.cenas, ...(CENAS_EXTRA[janela.slug] ?? [])] })),
+  JANELA_OLHO,
 ]
 
 export const TOTAL_DE_JANELAS = JANELAS_ULTRASSOM.length

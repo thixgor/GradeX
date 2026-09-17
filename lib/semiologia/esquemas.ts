@@ -69,6 +69,8 @@ export type SistemaSemiologico =
   | 'pele'
   | 'cabeca-pescoco'
   | 'endocrino'
+  | 'musculoesqueletico'
+  | 'pediatrico'
 
 export const TITULOS_DE_SISTEMA: Record<SistemaSemiologico, string> = {
   geral: 'Sinais gerais',
@@ -79,6 +81,8 @@ export const TITULOS_DE_SISTEMA: Record<SistemaSemiologico, string> = {
   pele: 'Pele e fâneros',
   'cabeca-pescoco': 'Cabeça e pescoço',
   endocrino: 'Endócrino',
+  musculoesqueletico: 'Musculoesquelético',
+  pediatrico: 'Pediátrico',
 }
 
 /** Um passo de manobra: o que fazer e por que fazer exatamente assim. */
@@ -293,7 +297,13 @@ export interface CenaClinica {
   conduta: string
   /** O que mais produz uma cena parecida. */
   diferencial: string[]
-  ilustracao: IlustracaoRef
+  /**
+   * Esquema paramétrico da cena. Opcional desde a segunda leva do acervo: uma
+   * cena que só existe como fotografia (o sinal de McConnell, o pólipo
+   * vesicular) entra sem esquema e o visor mostra o caso real sozinho — a
+   * lacuna honesta é não ter desenho, não deixar a cena de fora.
+   */
+  ilustracao?: IlustracaoRef
   /**
    * Casos reais de acervo licenciado, exibidos ao lado do esquema.
    *

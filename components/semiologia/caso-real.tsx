@@ -21,7 +21,16 @@ import { fonteDaMidia, otimizavel, urlDaMidia, type MidiaClinica } from '@/lib/s
  * indistinguível. O vínculo para o caso original acompanha por ser o que torna
  * a proveniência verificável por quem quiser conferir.
  */
-export function CasoReal({ midias, cenaId }: { midias: MidiaClinica[]; cenaId: string }) {
+export function CasoReal({
+  midias,
+  cenaId,
+  comparar,
+}: {
+  midias: MidiaClinica[]
+  cenaId: string
+  /** A cena normal, fotografada, para mostrar lado a lado com esta. */
+  comparar?: { midias: MidiaClinica[]; rotulo: string }
+}) {
   const [escolhida, setEscolhida] = useState(0)
   // Trocar de cena volta para a primeira mídia da nova cena.
   useEffect(() => setEscolhida(0), [cenaId])
@@ -29,6 +38,7 @@ export function CasoReal({ midias, cenaId }: { midias: MidiaClinica[]; cenaId: s
   const src = urlDaMidia(atual)
   if (!src) return null
   const fonte = fonteDaMidia(atual)
+  const normal = comparar?.midias.find((m) => urlDaMidia(m))
 
   return (
     <section className="space-y-3">
@@ -41,7 +51,17 @@ export function CasoReal({ midias, cenaId }: { midias: MidiaClinica[]; cenaId: s
         )}
       </div>
 
-      <figure className="overflow-hidden rounded-2xl border border-border bg-black">
+      {/* Lado a lado com o normal: a mesma comparação que o esquema oferece,
+          agora entre duas fotografias. O delta que o aluno precisa ver é o
+          mesmo; muda só que aqui ele vem com o ruído da vida real. */}
+      {normal && (
+        <div className="grid grid-cols-2 gap-2">
+          <Miniatura midia={normal} rotulo={comparar!.rotulo} cor="text-emerald-600 dark:text-emerald-400" />
+          <Miniatura midia={atual} rotulo="Esta cena" cor="text-muted-foreground" />
+        </div>
+      )}
+
+      <figure className={`overflow-hidden rounded-2xl border border-border bg-black ${normal ? 'hidden' : ''}`}>
         {atual.tipo === 'clipe' ? (
           // Clipe de ultrassom: sem som, em laço, e com `playsInline` para o
           // iOS não abrir em tela cheia no meio do estudo. Deslizamento pleural
@@ -125,3 +145,19 @@ export function CasoReal({ midias, cenaId }: { midias: MidiaClinica[]; cenaId: s
   )
 }
 
+function Miniatura({ midia, rotulo, cor }: { midia: MidiaClinica; rotulo: string; cor: string }) {
+  const src = urlDaMidia(midia)
+  if (!src) return null
+  return (
+    <figure className="space-y-1.5">
+      <div className="relative aspect-square overflow-hidden rounded-xl border border-border bg-black">
+        {midia.tipo === 'clipe' ? (
+          <video src={src} className="h-full w-full object-contain" muted loop playsInline autoPlay preload="metadata" aria-label={midia.legenda} />
+        ) : (
+          <Image src={src} alt={midia.legenda} fill sizes="(min-width: 1024px) 25vw, 50vw" unoptimized={!otimizavel(src)} className="object-contain" />
+        )}
+      </div>
+      <figcaption className={`text-center text-[11px] font-medium uppercase tracking-wide ${cor}`}>{rotulo}</figcaption>
+    </figure>
+  )
+}

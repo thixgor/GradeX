@@ -119,6 +119,31 @@ interruptor sem meio-termo — assim que existe, a interface deixa de servir da
 origem e passa a montar a URL do espelho para toda mídia hasheada. Definida
 antes do envio, quebra o acervo inteiro de uma vez, em produção.
 
+## Curadoria em lote: como a segunda leva foi feita
+
+A segunda leva (232 cenas de ultrassom e 150 sinais com fotografia) não foi
+curada link a link. O fluxo, reproduzível para uma próxima leva:
+
+1. **Listar a fonte.** O POCUS Atlas é Squarespace: `GET /<coleção>?format=json`
+   devolve título, `assetUrl` e autor de cada item. As coleções com galeria
+   estão em `scripts/semiologia/BACKLOG.md`. Para o Commons, a API
+   (`list=search` com `filetype:bitmap`, e `list=categorymembers` nas
+   categorias médicas) devolve candidatos com licença em `extmetadata`.
+2. **Mapear cena → título.** Um arquivo mestre por leva (cena, título PT e os
+   títulos da fonte que a ilustram, até dois). O casamento é por igualdade e
+   depois por substring; o que não casa é listado para revisão manual.
+3. **Olhar.** Folhas de contato (`grade.py`) com os 12 melhores candidatos de
+   cada sinal, filtrados por licença (PD, CC0, CC BY, CC BY-SA — nunca NC ou
+   ND), largura mínima e sem histologia, mapa ou diagrama. Cada foto escolhida
+   foi vista por uma pessoa antes de entrar. Sinais sem candidato honesto
+   ficam sem foto — a lacuna é visível no catálogo.
+4. **Gerar `curadoria.json`** a partir das escolhas, com legenda derivada da
+   primeira frase da ficha e o crédito (autor · licença) vindo da API.
+5. `npm run semiologia:acervo:gerar -- --baixar` e `espelhar`, como sempre.
+
+O Commons devolve 429 com facilidade; o script já espera. Uma leva de ~800
+arquivos leva algumas horas de download.
+
 ## O que o caso real acrescenta ao esquema
 
 Ele não substitui. As figuras esquemáticas do módulo ensinam o **padrão** —

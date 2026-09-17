@@ -86,7 +86,7 @@ export interface VistaResumo {
   paraQue: string
   totalCenas: number
   totalEstruturas: number
-  capa: { id: string; params?: Record<string, number | string | boolean>; alt: string }
+  capa?: { id: string; params?: Record<string, number | string | boolean>; alt: string }
   capaReal?: CapaReal
   cenas: CenaResumo[]
 }
@@ -107,7 +107,7 @@ export interface JanelaResumo {
   transdutor: string
   pergunta: string
   totalCenas: number
-  capa: { id: string; params?: Record<string, number | string | boolean>; alt: string }
+  capa?: { id: string; params?: Record<string, number | string | boolean>; alt: string }
   capaReal?: CapaReal
   cenas: CenaResumo[]
 }
@@ -179,7 +179,7 @@ export function resumosDeVistas(): VistaResumo[] {
       paraQue: vista.paraQue,
       totalCenas: vista.cenas.length,
       totalEstruturas: vista.estruturas.length,
-      capa: normal.ilustracao,
+      capa: normal.ilustracao ?? vista.cenas.find((cena) => cena.ilustracao)?.ilustracao,
       capaReal: capaDaJanela(vista.slug, vista.cenas, normal),
       cenas: vista.cenas.map((cena) => ({
         id: cena.id,
@@ -202,7 +202,7 @@ export function resumosDeJanelas(): JanelaResumo[] {
       transdutor: janela.transdutor,
       pergunta: janela.pergunta,
       totalCenas: janela.cenas.length,
-      capa: normal.ilustracao,
+      capa: normal.ilustracao ?? janela.cenas.find((cena) => cena.ilustracao)?.ilustracao,
       capaReal: capaDaJanela(janela.slug, janela.cenas, normal),
       cenas: janela.cenas.map((cena) => ({
         id: cena.id,

@@ -8,16 +8,19 @@ import {
   ArrowLeftRight,
   BookOpen,
   CheckCircle2,
+  ChevronLeft,
   ChevronRight,
   ExternalLink,
   Layers,
   ShieldCheck,
   ListChecks,
   Pencil,
+  Search,
   Target,
 } from 'lucide-react'
 import type { CenaClinica, EstruturaDaVista, FonteExterna, PassoDeExame } from '@/lib/semiologia/esquemas'
 import { fonteLicenciada } from '@/lib/acervos-licenciados'
+import { normalizar } from '@/lib/semiologia/busca-motor'
 import { midiasServiveis } from '@/lib/semiologia/midia'
 import { CasoReal } from './caso-real'
 import { Enfase } from './enfase'
@@ -108,10 +111,16 @@ export function VisorDeCenas({
   useEffect(() => setValorDoControle(null), [cenaAtual.id])
   const valorAtual =
     valorDoControle ??
-    (controle && typeof cenaAtual.ilustracao.params?.[controle.param] === 'number'
+    (controle && typeof cenaAtual.ilustracao?.params?.[controle.param] === 'number'
       ? (cenaAtual.ilustracao.params[controle.param] as number)
       : (controle?.padrao ?? 0))
-  const paramsDaCena = controle ? { ...cenaAtual.ilustracao.params, [controle.param]: valorAtual } : cenaAtual.ilustracao.params
+  const paramsDaCena = controle ? { ...cenaAtual.ilustracao?.params, [controle.param]: valorAtual } : cenaAtual.ilustracao?.params
+
+  // Uma cena pode existir só como fotografia. Aí o esquema não é "recolhido":
+  // não há o que recolher, e o comparador troca o desenho pela foto da normal.
+  const esquema = cenaAtual.ilustracao
+  const esquemaDaNormal = normal.ilustracao
+  const reaisDaNormal = useMemo(() => midiasServiveis(normal.midiaReal), [normal])
 
   const trocarCena = useCallback(
     (id: string) => {
@@ -125,6 +134,36 @@ export function VisorDeCenas({
   )
 
   const estrutura = estruturas.find((item) => item.slug === estruturaAberta) ?? null
+
+  // Com trinta cenas numa janela, a fileira de pílulas vira parede. A partir
+  // de dez, entra um filtro local (só sobre título e diagnóstico) e a
+  // navegação por setas: ← → trocam de cena sem tirar a mão do teclado.
+  const [filtroDeCenas, setFiltroDeCenas] = useState('')
+  const muitasCenas = cenas.length > 10
+  const cenasVisiveis = useMemo(() => {
+    const termo = normalizar(filtroDeCenas)
+    if (!termo) return cenas
+    return cenas.filter((c) => c === normal || c.id === cenaAtual.id || normalizar(`${c.titulo} ${c.diagnostico}`).includes(termo))
+  }, [cenas, filtroDeCenas, normal, cenaAtual.id])
+  const posicao = cenas.indexOf(cenaAtual)
+  const irPara = useCallback(
+    (delta: number) => {
+      const proxima = cenas[(posicao + delta + cenas.length) % cenas.length]
+      if (proxima) trocarCena(proxima.id)
+    },
+    [cenas, posicao, trocarCena],
+  )
+  useEffect(() => {
+    const aoTeclar = (evento: KeyboardEvent) => {
+      const alvo = evento.target as HTMLElement | null
+      if (alvo && (alvo.tagName === 'INPUT' || alvo.tagName === 'TEXTAREA' || alvo.isContentEditable)) return
+      if (evento.altKey || evento.ctrlKey || evento.metaKey) return
+      if (evento.key === 'ArrowRight') irPara(1)
+      else if (evento.key === 'ArrowLeft') irPara(-1)
+    }
+    window.addEventListener('keydown', aoTeclar)
+    return () => window.removeEventListener('keydown', aoTeclar)
+  }, [irPara])
 
   return (
     <div className="space-y-8">
@@ -142,26 +181,76 @@ export function VisorDeCenas({
       </header>
 
       {/* Seletor de cenas: normal primeiro, alterações depois. */}
-      <div className="flex flex-wrap gap-2" role="tablist" aria-label="Cenas desta janela">
-        {cenas.map((cena) => {
-          const ativa = cena.id === cenaAtual.id
-          return (
+      <div className="space-y-3">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-1">
             <button
-              key={cena.id}
-              role="tab"
-              aria-selected={ativa}
-              onClick={() => trocarCena(cena.id)}
-              className={`rounded-full border px-3.5 py-1.5 text-xs font-medium transition-colors ${
-                ativa
-                  ? 'border-sky-500 bg-sky-500 text-white'
-                  : 'border-border bg-card text-muted-foreground hover:border-sky-500/40 hover:text-foreground'
-              }`}
+              type="button"
+              onClick={() => irPara(-1)}
+              aria-label="Cena anterior"
+              className="rounded-lg border border-border p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             >
-              {cena.estado === 'normal' && <span aria-hidden className="mr-1.5">●</span>}
-              {cena.titulo}
+              <ChevronLeft className="h-4 w-4" />
             </button>
-          )
-        })}
+            <span className="min-w-[5.5rem] text-center text-xs tabular-nums text-muted-foreground">
+              cena {posicao + 1} de {cenas.length}
+            </span>
+            <button
+              type="button"
+              onClick={() => irPara(1)}
+              aria-label="Próxima cena"
+              className="rounded-lg border border-border p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+            <span className="ml-1 hidden text-[11px] text-muted-foreground/70 md:inline">
+              <kbd className="rounded border border-border bg-muted px-1 font-mono">←</kbd>{' '}
+              <kbd className="rounded border border-border bg-muted px-1 font-mono">→</kbd>
+            </span>
+          </div>
+          {muitasCenas && (
+            <div className="relative min-w-0 flex-1 sm:max-w-xs">
+              <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+              <input
+                value={filtroDeCenas}
+                onChange={(e) => setFiltroDeCenas(e.target.value)}
+                placeholder={`Filtrar ${cenas.length} cenas…`}
+                aria-label="Filtrar cenas desta janela"
+                className="w-full rounded-lg border border-border bg-card py-1.5 pl-8 pr-3 text-xs outline-none transition-colors focus:border-sky-500"
+              />
+            </div>
+          )}
+        </div>
+        <div className="flex flex-wrap gap-2" role="tablist" aria-label="Cenas desta janela">
+          {cenasVisiveis.map((cena) => {
+            const ativa = cena.id === cenaAtual.id
+            const comFoto = midiasServiveis(cena.midiaReal).length > 0
+            return (
+              <button
+                key={cena.id}
+                role="tab"
+                aria-selected={ativa}
+                onClick={() => trocarCena(cena.id)}
+                className={`rounded-full border px-3.5 py-1.5 text-xs font-medium transition-colors ${
+                  ativa
+                    ? 'border-sky-500 bg-sky-500 text-white'
+                    : 'border-border bg-card text-muted-foreground hover:border-sky-500/40 hover:text-foreground'
+                }`}
+              >
+                {cena.estado === 'normal' && <span aria-hidden className="mr-1.5">●</span>}
+                {cena.titulo}
+                {comFoto && !ativa && (
+                  <span aria-hidden className="ml-1.5 inline-block h-1.5 w-1.5 rounded-full bg-sky-500 align-middle" />
+                )}
+              </button>
+            )
+          })}
+          {cenasVisiveis.length < cenas.length && (
+            <span className="self-center text-[11px] text-muted-foreground">
+              {cenas.length - cenasVisiveis.length} cena(s) fora do filtro
+            </span>
+          )}
+        </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
@@ -170,11 +259,30 @@ export function VisorDeCenas({
               aluno vai encontrar na clínica; o esquema é o gabarito que explica
               o que ele está vendo. A ordem diz qual é qual — e o esquema nunca
               sai, porque a comparação entre os dois é parte do que se ensina. */}
-          {reais.length > 0 && <CasoReal midias={reais} cenaId={cenaAtual.id} />}
+          {reais.length > 0 && (
+            <CasoReal
+              midias={reais}
+              cenaId={cenaAtual.id}
+              comparar={comparando && !ehNormal && reaisDaNormal.length > 0 ? { midias: reaisDaNormal, rotulo: normal.titulo } : undefined}
+            />
+          )}
+
+          {!ehNormal && reais.length > 0 && reaisDaNormal.length > 0 && (
+            <button
+              onClick={() => setComparando((v) => !v)}
+              className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
+                comparando ? 'border-sky-500 bg-sky-500/10 text-sky-700 dark:text-sky-300' : 'border-border hover:bg-muted'
+              }`}
+            >
+              <ArrowLeftRight className="h-3.5 w-3.5" />
+              {comparando ? 'Ver só esta cena' : 'Comparar com o caso normal'}
+            </button>
+          )}
 
           {/* Com caso real, o esquema vira referência recolhível: continua a
               um clique, com os marcadores e o comparador intactos, mas não
               disputa o palco com a fotografia. Sem caso real, é a figura. */}
+          {esquema && (
           <details open={reais.length === 0} className="group space-y-3">
             <summary
               className={`flex cursor-pointer list-none items-center gap-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground ${
@@ -187,12 +295,12 @@ export function VisorDeCenas({
 
           {/* Figura esquemática, com os marcadores de estrutura sobrepostos. */}
           <div className={comparando && !ehNormal ? 'grid grid-cols-2 gap-3' : ''}>
-            {comparando && !ehNormal && (
+            {comparando && !ehNormal && esquemaDaNormal && (
               <figure className="space-y-2">
                 <Ilustracao
-                  id={normal.ilustracao.id}
-                  params={normal.ilustracao.params}
-                  titulo={normal.ilustracao.alt}
+                  id={esquemaDaNormal.id}
+                  params={esquemaDaNormal.params}
+                  titulo={esquemaDaNormal.alt}
                   className="border border-border"
                 />
                 <figcaption className="text-center text-[11px] font-medium uppercase tracking-wide text-emerald-600 dark:text-emerald-400">
@@ -202,9 +310,9 @@ export function VisorDeCenas({
             )}
             <figure className="space-y-2">
               <Ilustracao
-                id={cenaAtual.ilustracao.id}
+                id={esquema.id}
                 params={paramsDaCena}
-                titulo={cenaAtual.ilustracao.alt}
+                titulo={esquema.alt}
                 className="border border-border"
                 marcadores={
                   ehNormal && marcadoresLigados && !comparando ? (
@@ -217,13 +325,13 @@ export function VisorDeCenas({
                 }
               />
               <figcaption className="text-center text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
-                {comparando && !ehNormal ? cenaAtual.titulo : cenaAtual.ilustracao.alt}
+                {comparando && !ehNormal ? cenaAtual.titulo : esquema.alt}
               </figcaption>
             </figure>
           </div>
 
           <div className="flex flex-wrap gap-2">
-            {!ehNormal && (
+            {!ehNormal && esquemaDaNormal && (
               <button
                 onClick={() => setComparando((v) => !v)}
                 className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
@@ -282,6 +390,13 @@ export function VisorDeCenas({
             padrão; a variação real se aprende no caso {reais.length > 0 ? 'acima' : 'fotográfico'}.
           </p>
           </details>
+          )}
+
+          {!esquema && reais.length === 0 && (
+            <div className="flex aspect-square w-full items-center justify-center rounded-xl border border-dashed border-border bg-muted/30 p-6 text-center text-xs text-muted-foreground">
+              Esta cena ainda não tem caso real disponível neste ambiente.
+            </div>
+          )}
         </div>
 
         {/* Leitura da cena. */}
