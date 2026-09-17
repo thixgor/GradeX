@@ -27,6 +27,7 @@ import {
   Shuffle,
   Image as ImageIcon,
   Copy,
+  Inbox,
 } from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
@@ -352,6 +353,10 @@ function DeckMetaForm({
   const [coverImage, setCoverImage] = useState(deck.coverImage || '')
   const [tagsText, setTagsText] = useState((deck.tags || []).join(', '))
   const [visibility, setVisibility] = useState(deck.visibility)
+  // Pessoal x Oficial. A Loja só lista deck Oficial, então um deck pago criado
+  // como Pessoal fica invisível nas duas prateleiras — e até aqui não havia
+  // como corrigir sem recriar o deck.
+  const [ownerType, setOwnerType] = useState<'user' | 'admin'>(deck.ownerType === 'admin' ? 'admin' : 'user')
   const [pricing, setPricing] = useState(deck.pricing)
   const [price, setPrice] = useState(String(deck.price ?? 0))
   const [pricingEventId, setPricingEventId] = useState<string | null>(deck.pricingEventId || null)
@@ -378,6 +383,7 @@ function DeckMetaForm({
       tags: tagsText.split(',').map((s: string) => s.trim()).filter(Boolean),
       visibility,
       ...(isAdmin ? {
+        ownerType,
         pricing,
         price: pricing === 'paid' ? Number(price) || 0 : 0,
         pricingEventId: pricing === 'paid' ? pricingEventId : null,
@@ -454,6 +460,36 @@ function DeckMetaForm({
             <div className="mt-3 rounded-2xl border border-amber-200 dark:border-amber-500/20 bg-amber-50/50 dark:bg-amber-500/5 p-4 space-y-4">
               <div className="flex items-center gap-2 text-amber-700 dark:text-amber-300 text-xs font-semibold uppercase tracking-wider">
                 <Crown className="h-3.5 w-3.5" /> Modo administrador
+              </div>
+              <div>
+                <Label>Tipo</Label>
+                <div className="mt-1 grid grid-cols-2 gap-2">
+                  {([
+                    { v: 'user' as const, icon: <Inbox className="h-4 w-4" />, label: 'Pessoal', hint: 'Do autor. Vai para a Comunidade quando público e gratuito.' },
+                    { v: 'admin' as const, icon: <Crown className="h-4 w-4" />, label: 'Oficial', hint: 'Da equipe. É o único tipo que a Loja lista e que pode ser vendido.' },
+                  ]).map(opt => (
+                    <button
+                      key={opt.v}
+                      type="button"
+                      onClick={() => setOwnerType(opt.v)}
+                      className={cn(
+                        'rounded-2xl border px-3 py-2.5 text-left text-xs transition',
+                        ownerType === opt.v
+                          ? 'border-amber-500 bg-amber-500/10 text-amber-800 dark:text-amber-200'
+                          : 'border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:border-amber-400'
+                      )}
+                    >
+                      <span className="flex items-center gap-1.5 font-semibold">{opt.icon} {opt.label}</span>
+                      <span className="mt-1 block text-[11px] font-normal opacity-80">{opt.hint}</span>
+                    </button>
+                  ))}
+                </div>
+                {pricing === 'paid' && ownerType === 'user' && (
+                  <p className="mt-2 flex items-start gap-1 text-xs text-amber-700 dark:text-amber-400">
+                    <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                    Deck pago e Pessoal não aparece na Loja nem na Comunidade. Marque como Oficial para vendê-lo.
+                  </p>
+                )}
               </div>
               <div className="grid md:grid-cols-2 gap-3">
                 <div>

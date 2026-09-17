@@ -83,6 +83,10 @@ export const PUBLIC_DECK_LISTING_FILTER = {
 /**
  * Por que um deck aparece — ou não — na Comunidade e na Loja.
  *
+ * O caso mais traiçoeiro é o deck pago criado como Pessoal: a Comunidade o
+ * exclui por ser pago, a Loja o exclui por não ser Oficial, e ele some das duas
+ * sem erro nenhum.
+ *
  * A página do deck estampa "Público" lendo só `visibility`, mas a listagem é
  * decidida por quatro campos. Deck oculto por um admin, ou pago, mostrava
  * "Público" e simplesmente não estava lá, sem nada na tela explicando. Isto
@@ -90,7 +94,7 @@ export const PUBLIC_DECK_LISTING_FILTER = {
  *
  * A ordem dos impedimentos importa: o primeiro é o que a interface mostra.
  */
-export type DeckListingBlocker = 'private' | 'unlisted' | 'hidden' | 'paid'
+export type DeckListingBlocker = 'private' | 'unlisted' | 'hidden' | 'paid' | 'paid_personal'
 
 export interface DeckListingStatus {
   /** Aparece na aba Comunidade de /flashcards? */
@@ -104,17 +108,24 @@ export interface DeckListingStatus {
 export function getDeckListingStatus(
   deck: Pick<FlashcardManualDeck, 'visibility' | 'isHidden' | 'pricing' | 'ownerType'>,
 ): DeckListingStatus {
+  // Espelha o filtro de /api/flashcards/manual/store.
+  const listedInStore = deck.ownerType === 'admin' && !isDeckHidden(deck) && deck.visibility !== 'private'
+
   const blockers: DeckListingBlocker[] = []
   // Espelha PUBLIC_DECK_LISTING_FILTER + o `pricing` da rota da comunidade.
   if (deck.visibility === 'private') blockers.push('private')
   else if (deck.visibility === 'unlisted') blockers.push('unlisted')
   if (isDeckHidden(deck)) blockers.push('hidden')
-  if (deck.pricing === 'paid') blockers.push('paid')
+  if (deck.pricing === 'paid') {
+    // Deck pago sai da Comunidade porque o lugar dele é a Loja. Só que a Loja
+    // exige deck Oficial: um deck pessoal e pago não aparece em lugar nenhum —
+    // o buraco que some com o deck sem ninguém perceber.
+    blockers.push(listedInStore ? 'paid' : 'paid_personal')
+  }
 
   return {
     listedInCommunity: blockers.length === 0,
-    // Espelha o filtro de /api/flashcards/manual/store.
-    listedInStore: deck.ownerType === 'admin' && !isDeckHidden(deck) && deck.visibility !== 'private',
+    listedInStore,
     blockers,
   }
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { Globe, EyeOff, Link as LinkIcon, Lock, ShoppingCart } from 'lucide-react'
+import { Globe, EyeOff, Link as LinkIcon, Lock, ShoppingCart, AlertTriangle } from 'lucide-react'
 import type { DeckListingStatus, DeckListingBlocker } from '@/lib/flashcard-manual'
 import { cn } from '@/lib/utils'
 
@@ -30,6 +30,10 @@ const MOTIVO: Record<DeckListingBlocker, { icon: typeof Globe; texto: string }> 
   paid: {
     icon: ShoppingCart,
     texto: 'Deck pago não entra na Comunidade (que é a prateleira gratuita) — ele aparece na Loja e em /materiais.',
+  },
+  paid_personal: {
+    icon: AlertTriangle,
+    texto: 'Deck pago só entra na Loja quando é Oficial, e este está como Pessoal — então ele não aparece em lugar nenhum. Mude o tipo para Oficial nas configurações de admin, ou deixe o deck gratuito.',
   },
 }
 
@@ -67,7 +71,7 @@ export function DeckListingNote({ listing, className, onHero = false }: {
       <span>
         <span className="font-semibold">Não aparece na Comunidade.</span>{' '}
         {texto}
-        {listing.listedInStore && ' Continua visível na Loja.'}
+        {listing.listedInStore && blocker !== 'paid' && ' Continua visível na Loja.'}
       </span>
     </p>
   )

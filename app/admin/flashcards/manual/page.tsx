@@ -131,6 +131,24 @@ export default function AdminFlashcardsManualPage() {
     })
     load()
   }
+  // Pessoal ↔ Oficial. Só deck Oficial entra na Loja, então este é o
+  // interruptor que tira um deck pago do limbo (nem Loja, nem Comunidade).
+  async function toggleOwnerType(deck: DeckRow) {
+    const paraOficial = deck.ownerType !== 'admin'
+    if (!paraOficial && deck.pricing === 'paid' &&
+      !confirm(`"${deck.title}" é pago. Como Pessoal ele sai da Loja e deixa de ser vendido. Continuar?`)) return
+    await fetch(`/api/flashcards/manual/${deck._id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ownerType: paraOficial ? 'admin' : 'user' }),
+    })
+    setToast({
+      open: true,
+      message: paraOficial ? `"${deck.title}" agora é Oficial e aparece na Loja` : `"${deck.title}" voltou a ser Pessoal`,
+      type: 'success',
+    })
+    load()
+  }
   async function toggleFeatured(deck: DeckRow) {
     await fetch(`/api/flashcards/manual/${deck._id}`, {
       method: 'PATCH',
@@ -303,6 +321,13 @@ export default function AdminFlashcardsManualPage() {
                       <td className="px-4 py-3 hidden md:table-cell text-xs text-slate-500">{d.cardCount}</td>
                       <td className="px-4 py-3 text-right">
                         <div className="inline-flex items-center gap-1">
+                          <button
+                            onClick={() => toggleOwnerType(d)}
+                            title={d.ownerType === 'admin' ? 'Oficial — clique para voltar a Pessoal' : 'Pessoal — clique para tornar Oficial (entra na Loja)'}
+                            className={cn('rounded-full p-1.5 hover:bg-slate-100 dark:hover:bg-white/5', d.ownerType === 'admin' && 'text-amber-500')}
+                          >
+                            <Crown className={cn('h-3.5 w-3.5', d.ownerType === 'admin' && 'fill-current')} />
+                          </button>
                           <button onClick={() => toggleFeatured(d)} title="Destacar" className={cn('rounded-full p-1.5 hover:bg-slate-100 dark:hover:bg-white/5', d.isFeatured && 'text-amber-500')}>
                             <Star className={cn('h-3.5 w-3.5', d.isFeatured && 'fill-current')} />
                           </button>

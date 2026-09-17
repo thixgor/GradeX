@@ -245,11 +245,21 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 
     await db.collection(FLASHCARD_MANUAL_COLLECTIONS.decks).updateOne({ _id: deck._id }, { $set: updates })
 
-    // Sync com /materiais quando admin publica/atualiza um deck da loja.
-    const shouldSync = isAdmin && (
+    // Promover um deck a Oficial é o que o coloca na Loja; sem o material
+    // vinculado ele entraria lá sem poder ser comprado.
+    const ownerTypeDepois = updates.ownerType ?? deck.ownerType
+    const virouOficial = updates.ownerType === 'admin' && deck.ownerType !== 'admin'
+    const deixouDeSerOficial = updates.ownerType === 'user' && deck.ownerType === 'admin'
+
+    // Sync com /materiais quando admin publica/atualiza um deck da loja. Um deck
+    // que já tem material espelho continua sendo atualizado mesmo se for
+    // pessoal — senão o material ficaria com o título velho.
+    const temEspelho = !!deck.linkedMaterialId
+    const shouldSync = isAdmin && (ownerTypeDepois === 'admin' || temEspelho) && (
+      virouOficial ||
       updates.pricing === 'paid' ||
       updates.pricing === 'free' ||
-      (deck.linkedMaterialId && (
+      (temEspelho && (
         updates.materialsFolderId !== undefined ||
         updates.title !== undefined ||
         updates.coverImage !== undefined ||
@@ -263,6 +273,15 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     )
     if (shouldSync) {
       await syncMaterialForFlashcardDeck(db, { ...deck, ...updates, _id: deck._id })
+    }
+
+    // Rebaixado para Pessoal: sai da Loja, então o material espelho some de
+    // /materiais junto. Esconder (e não apagar) preserva o histórico de compras.
+    if (deixouDeSerOficial && deck.linkedMaterialId && isValidObjectId(deck.linkedMaterialId)) {
+      await db.collection('materials').updateOne(
+        { _id: new ObjectId(deck.linkedMaterialId) },
+        { $set: { isHidden: true, updatedAt: new Date() } }
+      )
     }
 
     // Quando deck vira privado, ocultar material vinculado automaticamente

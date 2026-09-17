@@ -151,11 +151,20 @@ describe('diagnóstico de listagem', () => {
     expect(status.blockers).toEqual(['hidden'])
   })
 
-  it('aponta o deck pago, que mora na Loja e não na comunidade gratuita', () => {
+  it('aponta o deck pago oficial, que mora na Loja e não na comunidade gratuita', () => {
     const status = getDeckListingStatus(deck({ visibility: 'public', pricing: 'paid', ownerType: 'admin' }))
     expect(status.listedInCommunity).toBe(false)
     expect(status.blockers).toEqual(['paid'])
     expect(status.listedInStore).toBe(true)
+  })
+
+  it('denuncia o deck pago e pessoal, que não aparece em prateleira nenhuma', () => {
+    // A Comunidade o exclui por ser pago; a Loja, por não ser Oficial. Era o
+    // caso real: o deck existia, abria pelo link e não estava em /flashcards.
+    const status = getDeckListingStatus(deck({ visibility: 'public', pricing: 'paid', ownerType: 'user' }))
+    expect(status.listedInCommunity).toBe(false)
+    expect(status.listedInStore).toBe(false)
+    expect(status.blockers).toEqual(['paid_personal'])
   })
 
   it('não promete a Loja para deck que não é oficial', () => {
