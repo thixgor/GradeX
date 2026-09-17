@@ -34,6 +34,10 @@
       "maxDuration": 120,
       "memory": 2048
     },
+    "app/api/materiais/[id]/pdf-viewer/thumb/route.ts": {
+      "maxDuration": 60,
+      "memory": 1024
+    },
     "app/api/webhooks/mercadopago/route.ts": {
       "maxDuration": 60
     },

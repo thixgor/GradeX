@@ -710,7 +710,11 @@ const pageFetchSleep = (ms: number) => new Promise((resolve) => setTimeout(resol
 // até a UI, que mostra uma contagem regressiva em vez de um erro vermelho.
 type PageFetchError = Error & { status?: number; retryAfterMs?: number }
 
-async function fetchPdfPageBytesOnce(materialId: string, pageNumber: number) {
+async function fetchPdfPageBytesOnce(
+  materialId: string,
+  pageNumber: number,
+  priority: FetchPriority
+) {
   const controller = new AbortController()
   const timer = setTimeout(() => controller.abort(), PAGE_FETCH_TIMEOUT_MS)
   try {
@@ -720,8 +724,13 @@ async function fetchPdfPageBytesOnce(materialId: string, pageNumber: number) {
     // navegador de usar exatamente o cache que o servidor oferecia. Voltar a
     // uma página já lida, ou recarregar a aba, disparava um render novo.
     // O cache do HTTP cobre o que `pageBytesCache` (em memória) perde num F5.
+    // A miniatura tem rota própria: devolve a página NUA, sem marca d'água e
+    // sem registro de auditoria, porque nada disso é legível a 150 px. A
+    // leitura continua na rota marcada. Ver o cabeçalho de
+    // `app/api/materiais/[id]/pdf-viewer/thumb/route.ts`.
+    const rota = priority === 'thumb' ? 'thumb' : 'page'
     const response = await fetch(
-      `/api/materiais/${materialId}/pdf-viewer/page?page=${pageNumber}`,
+      `/api/materiais/${materialId}/pdf-viewer/${rota}?page=${pageNumber}`,
       { signal: controller.signal }
     )
     if (!response.ok) {
@@ -758,13 +767,25 @@ async function fetchPdfPageBytes(
   pageNumber: number,
   priority: FetchPriority = 'reader'
 ) {
-  const key = `${materialId}:${pageNumber}`
+  // Duas famílias de bytes para a mesma página: a da leitura vem marcada com
+  // os dados de quem pediu, a da miniatura vem nua. A miniatura pode aproveitar
+  // a da leitura (a marca só não aparece em 150 px); a leitura NUNCA pode
+  // aproveitar a da miniatura, ou a página abriria sem marca d'água. Por isso
+  // os espaços são separados e a carona só corre num sentido.
+  const key = `${priority === 'thumb' ? 'thumb' : 'page'}:${materialId}:${pageNumber}`
   const now = Date.now()
   const cached = pageBytesCache.get(key)
   if (cached && cached.expiresAt > now) {
     return { bytes: cached.bytes, pageCount: cached.pageCount }
   }
   if (cached) pageBytesCache.delete(key)
+
+  if (priority === 'thumb') {
+    const daLeitura = pageBytesCache.get(`page:${materialId}:${pageNumber}`)
+    if (daLeitura && daLeitura.expiresAt > now) {
+      return { bytes: daLeitura.bytes, pageCount: daLeitura.pageCount }
+    }
+  }
 
   const pending = pageBytesInflight.get(key)
   if (pending) return pending
@@ -775,7 +796,7 @@ async function fetchPdfPageBytes(
       let lastError: unknown
       for (let attempt = 1; attempt <= PAGE_FETCH_MAX_ATTEMPTS; attempt += 1) {
         try {
-          const result = await fetchPdfPageBytesOnce(materialId, pageNumber)
+          const result = await fetchPdfPageBytesOnce(materialId, pageNumber, priority)
 
           pageBytesCache.set(key, {
             ...result,

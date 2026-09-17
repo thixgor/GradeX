@@ -751,6 +751,56 @@ async function resolverPaginaNua(
   return { paginaNua, totalPages, safePageNumber }
 }
 
+/**
+ * A página pedida, nua: sem marca d'água, sem QR de auditoria, sem fonte
+ * embutida — só o recorte de uma página do documento.
+ *
+ * ## Para que serve
+ *
+ * O painel lateral do leitor desenha miniaturas de **150 px de largura**. Até
+ * aqui elas pediam a mesma coisa que a página de leitura: o PDF marcado, com
+ * nome, e-mail, horário e QR de quem pediu. Nada disso é legível a 150 px — e
+ * cada miniatura pagava o parse do pdf-lib, a composição da marca, a geração
+ * do QR e um registro no Mongo, além de sair da função como uma resposta
+ * única por usuário, que nenhum cache consegue reaproveitar entre pessoas.
+ *
+ * A página nua é idêntica para todo mundo. Isso é o ponto: ela é imutável
+ * dentro de uma versão do material, então pode ficar guardada no navegador por
+ * muito tempo e reaproveitada à vontade.
+ *
+ * ## O que ela NÃO muda
+ *
+ * O caminho de leitura continua exatamente como era: quem abre a página para
+ * ler recebe `createWatermarkedSinglePagePdf`, com a marca d'água completa e o
+ * log de auditoria. A autorização também não se move — quem chama esta função
+ * já passou pelas mesmas checagens de acesso e de faixa liberada na prévia.
+ * O que sai daqui é o mesmo insumo que a marca d'água receberia; só não leva
+ * a marca, porque a miniatura não tem onde mostrá-la.
+ */
+export async function extractRawSinglePagePdf(
+  fonte: ArrayBuffer | FontePdfDaPagina,
+  input: Pick<WatermarkPageInput, 'pageNumber' | 'sourceCacheKey'>
+): Promise<{ bytes: Uint8Array; totalPages: number }> {
+  const { paginaNua, totalPages } = await resolverPaginaNua(normalizarFonte(fonte), {
+    pageNumber: input.pageNumber,
+    sourceCacheKey: input.sourceCacheKey,
+    // `resolverPaginaNua` só lê `pageNumber` e `sourceCacheKey`; o resto do
+    // contrato existe para a marca d'água, que aqui não acontece.
+    userName: '',
+    userEmail: '',
+    userId: '',
+    materialId: '',
+    materialTitle: '',
+    viewedAt: new Date(),
+    auditToken: '',
+  })
+
+  const bytes =
+    paginaNua instanceof Uint8Array ? paginaNua : new Uint8Array(paginaNua)
+
+  return { bytes, totalPages }
+}
+
 export async function createWatermarkedSinglePagePdf(
   fonte: ArrayBuffer | FontePdfDaPagina,
   input: WatermarkPageInput
