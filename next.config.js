@@ -329,6 +329,33 @@ const nextConfig = {
        * acontecer em segundo plano. Troca de logo se propaga em um dia sem
        * custar transferência de origem no resto do ano.
        */
+      /**
+       * `/midia/<aa>/<sha256>.<ext>` — o acervo de imagens internalizado.
+       *
+       * Este é o caminho por onde passa TODA imagem do site: capa de prova,
+       * figura de questão, ilustração de patologia, ícone de tópico. O
+       * `next.config` o reescreve para o Blob, então cada acesso que não bate
+       * num cache é egresso do Blob — e o acervo migrou do Imgur para cá neste
+       * ciclo, o que é boa parte do salto da transferência de Blob.
+       *
+       * Era a única pasta grande sem regra própria. Sem ela, a resposta depende
+       * inteiramente do que o armazenamento devolver; com ela, a borda guarda o
+       * arquivo e o Blob deixa de ser consultado a cada visita.
+       *
+       * `immutable` é literal aqui, não uma aposta: o nome do arquivo É o
+       * SHA-256 do conteúdo (ver `lib/midia/urls.ts`). Conteúdo diferente tem
+       * nome diferente, por construção — um arquivo servido sob este caminho
+       * nunca muda.
+       */
+      {
+        source: '/midia/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, s-maxage=31536000, immutable',
+          },
+        ],
+      },
       {
         source: '/:pasta(landing|pwa|shortcuts|Manual-Histologia)/(.*)',
         headers: [

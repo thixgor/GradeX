@@ -193,6 +193,11 @@ function isPublicRoute(pathname: string): boolean {
   if (/^\/materiais\/[a-fA-F0-9]{24}\/viewer$/.test(pathname)) return true
   if (/^\/api\/materiais\/[a-fA-F0-9]{24}\/pdf-viewer\/access$/.test(pathname)) return true
   if (/^\/api\/materiais\/[a-fA-F0-9]{24}\/pdf-viewer\/page$/.test(pathname)) return true
+  // Miniaturas do painel lateral. Mesma superfície pública da prévia acima: a
+  // rota devolve a página nua e aplica as mesmas checagens de acesso e de faixa
+  // liberada por dentro. Sem esta linha, o visitante da prévia teria a página
+  // grande mas nenhuma miniatura — elas cairiam no portão de login.
+  if (/^\/api\/materiais\/[a-fA-F0-9]{24}\/pdf-viewer\/thumb$/.test(pathname)) return true
   if (/^\/pacotes\/[a-fA-F0-9]{24}$/.test(pathname)) return true
   // Formulários públicos: a página e o GET/submit são acessíveis sem login por
   // padrão. Formulários com "Exigir Login" ou "Entregar Material" validam a

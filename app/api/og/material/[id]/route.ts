@@ -52,7 +52,15 @@ export async function GET(_request: NextRequest, { params }: { params: { id: str
     return new NextResponse(bytes, {
       headers: {
         'Content-Type': contentType,
-        'Cache-Control': 'public, max-age=300, s-maxage=300',
+        // Um dia na borda, com uma semana de tolerância enquanto revalida.
+        //
+        // Eram 5 minutos. A imagem de compartilhamento de um material muda
+        // quando a capa muda — evento raro — mas é buscada em rajada toda vez
+        // que o link circula num grupo: cada prévia fora da janela relia a
+        // imagem do Blob e acordava uma função de 2 GB para devolver os mesmos
+        // bytes. `stale-while-revalidate` mantém a troca de capa se propagando
+        // sozinha, sem que a espera recaia sobre quem abriu o link.
+        'Cache-Control': 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800',
       },
     })
   } catch {
