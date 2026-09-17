@@ -23,6 +23,7 @@ import { ToastAlert } from '@/components/ui/toast-alert'
 import { ExamGateStatus } from '@/components/exam/exam-gate-status'
 import { ATTEMPT_STATUS_LABELS } from '@/lib/tracking/exam-attempts'
 import { cn } from '@/lib/utils'
+import { useIntervaloVisivel } from '@/hooks/use-intervalo-visivel'
 
 /**
  * O relatório da prova para quem a aplicou.
@@ -106,11 +107,9 @@ export default function AdminExamReportPage({ params }: { params: { id: string }
    * Depois que ela encerra, os números param de mudar — e um polling eterno só
    * gastaria requisição de uma aba esquecida aberta.
    */
-  useEffect(() => {
-    if (!dados || dados.janela?.encerrada || dados.janela?.fase === 'livre') return
-    const relogio = setInterval(() => carregar(true), 30_000)
-    return () => clearInterval(relogio)
-  }, [dados, carregar])
+  const provaEmAndamento =
+    !!dados && !dados.janela?.encerrada && dados.janela?.fase !== 'livre'
+  useIntervaloVisivel(() => carregar(true), provaEmAndamento ? 30_000 : null)
 
   /**
    * O PDF de análise.

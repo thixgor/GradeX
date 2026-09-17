@@ -9,6 +9,7 @@ import { ProctoringSession } from '@/lib/types'
 import { useWebSocket } from '@/hooks/use-websocket'
 import { StudentStreamViewer } from '@/components/student-stream-viewer'
 import { ArrowLeft, Camera, Mic, Monitor, AlertTriangle, RefreshCw, Users, Eye, EyeOff, Check } from 'lucide-react'
+import { useIntervaloVisivel } from '@/hooks/use-intervalo-visivel'
 
 interface Alert {
   id: string
@@ -240,15 +241,7 @@ export default function ProctoringMonitoringPage() {
   }, [])
 
   // Auto-refresh a cada 15 segundos (changed from 5s to reduce serverless invocations)
-  useEffect(() => {
-    if (!autoRefresh) return
-
-    const interval = setInterval(() => {
-      fetchSessions()
-    }, 15000)
-
-    return () => clearInterval(interval)
-  }, [autoRefresh])
+  useIntervaloVisivel(fetchSessions, autoRefresh ? 15000 : null)
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">

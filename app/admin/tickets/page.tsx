@@ -44,6 +44,7 @@ import {
   Send,
   X as XIcon,
 } from 'lucide-react'
+import { useIntervaloVisivel } from '@/hooks/use-intervalo-visivel'
 
 /**
  * Painel de atendimento.
@@ -148,9 +149,8 @@ export default function AdminTicketsPage() {
 
   useEffect(() => {
     carregarLista()
-    const intervalo = setInterval(carregarLista, INTERVALO_LISTA)
-    return () => clearInterval(intervalo)
   }, [carregarLista])
+  useIntervaloVisivel(carregarLista, INTERVALO_LISTA)
 
   useEffect(() => {
     if (!selectedId) {
@@ -158,9 +158,11 @@ export default function AdminTicketsPage() {
       return
     }
     carregarConversa(selectedId)
-    const intervalo = setInterval(() => carregarConversa(selectedId), INTERVALO_CONVERSA)
-    return () => clearInterval(intervalo)
   }, [selectedId, carregarConversa])
+  useIntervaloVisivel(
+    () => { if (selectedId) carregarConversa(selectedId) },
+    selectedId ? INTERVALO_CONVERSA : null
+  )
 
   useEffect(() => {
     fimDaConversa.current?.scrollIntoView({ block: 'end' })

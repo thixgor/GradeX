@@ -23,6 +23,7 @@ import {
   type UserDetailPayload,
   type UsersPayload,
 } from '@/components/admin/stats/types'
+import { useIntervaloVisivel } from '@/hooks/use-intervalo-visivel'
 
 type TabKey = 'live' | 'overview' | 'exams' | 'users' | 'content'
 
@@ -109,11 +110,10 @@ export default function AdminStatsPage() {
   // `live.reload` é estável (useCallback sem dependências); usar o objeto do
   // recurso aqui recriaria o intervalo a cada render.
   const reloadLive = live.reload
-  useEffect(() => {
-    if (tab !== 'live' || !autoRefresh) return
-    const timer = setInterval(reloadLive, LIVE_REFRESH_MS)
-    return () => clearInterval(timer)
-  }, [tab, autoRefresh, reloadLive])
+  useIntervaloVisivel(
+    reloadLive,
+    tab === 'live' && autoRefresh ? LIVE_REFRESH_MS : null
+  )
 
   const active = useMemo(() => {
     switch (tab) {
