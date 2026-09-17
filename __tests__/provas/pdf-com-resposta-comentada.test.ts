@@ -140,6 +140,56 @@ describe('o PDF com gabarito comentado usa o comentário por alternativa', () =>
   })
 })
 
+/**
+ * O que sobrava no papel: `**` sem negrito e barras invertidas soltas.
+ *
+ * Os dois vinham do mesmo lugar — o texto era desenhado quase como chegava. A
+ * marcação só era interpretada DENTRO de cada linha já quebrada, então um
+ * negrito partido pela quebra ia inteiro para o papel com os asteriscos; e os
+ * escapes de JSON (`\\"`) que o comentário traz do modelo nunca eram desfeitos.
+ *
+ * Aqui o arquivo é gerado de verdade e o texto é lido do stream: é a única
+ * forma de ver o que o leitor de PDF mostraria.
+ */
+describe('a resposta comentada não imprime marcação nem escape', () => {
+  /** Tudo o que o PDF manda desenhar, na ordem, com os escapes do PDF desfeitos. */
+  function textoDesenhado(pdf: string): string {
+    const pedacos: string[] = []
+    for (const achado of pdf.matchAll(/\(((?:[^()\\]|\\.)*)\)\s*Tj/g)) {
+      pedacos.push(achado[1].replace(/\\([\\()])/g, '$1'))
+    }
+    return pedacos.join('\n')
+  }
+
+  const provaComEscape: any = {
+    _id: 'p2',
+    title: 'Prova',
+    numberOfQuestions: 1,
+    totalPoints: 10,
+    scoringMethod: 'normal',
+    questions: [
+      {
+        ...questaoObjetiva,
+        // Sem acento de proposito: sem a Roboto (que nao carrega aqui), o jsPDF
+        // escreve a linha inteira em UTF-16 e nao ha o que ler no stream.
+        explanation:
+          'o chamado \\"sinal de Murphy\\" aparece quando **o destaque em negrito e longo o bastante para nao caber numa linha so** e termina aqui.',
+      },
+    ],
+  }
+
+  it('não sai com asterisco nem com barra colada na aspa', async () => {
+    const blob = await generateExamWithAnswersPDF(provaComEscape)
+    const texto = textoDesenhado(Buffer.from(await blob.arrayBuffer()).toString('latin1'))
+
+    expect(texto).toContain('"sinal de Murphy"')
+    expect(texto).not.toContain('\\"')
+    expect(texto).not.toContain('*')
+    // E o comentario continua inteiro, palavra por palavra.
+    expect(texto.replace(/\n/g, ' ')).toContain('para nao caber numa linha so')
+  })
+})
+
 describe('formatos de PDF oferecidos ao admin', () => {
   it('oferece a prova em branco, o gabarito comentado, o gabarito e o pacote', () => {
     expect(FORMATOS_DE_PDF_DA_PROVA.map((opcao) => opcao.chave)).toEqual([

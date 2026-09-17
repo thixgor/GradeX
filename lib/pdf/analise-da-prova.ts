@@ -18,7 +18,7 @@ import {
 import { carregarImagens, encaixar, type ImagemParaPdf } from './imagens'
 import { desenharImagensNoPdf } from './imagens-de-questao'
 import { fatiarCaixaEmPaginas } from './paginacao'
-import { desenharLinhaRica } from './texto'
+import { desenharLinhaRica, quebrarTexto } from './texto'
 import {
   type ImagemDeQuestao,
   type LayoutDeImagens,
@@ -242,28 +242,18 @@ function garantirEspaco(p: Pincel, necessario: number, subtitulo: string) {
   if (p.y + necessario > p.altura - 26) novaPagina(p, subtitulo)
 }
 
+/**
+ * A quebra é a compartilhada (`lib/pdf/texto.ts`), não uma cópia local.
+ *
+ * A cópia que havia aqui media o texto COM os `**` — que não são desenhados —
+ * e quebrava o negrito no meio, deixando o marcador de abertura numa linha e o
+ * de fechamento na outra. `desenharLinhaRica`, que desenha estas linhas, não
+ * casava nem um nem outro: a resposta comentada saía com os asteriscos à
+ * mostra. E os escapes (`\\"`) que o comentário traz do modelo iam para o papel
+ * como barras soltas.
+ */
 function quebrar(p: Pincel, texto: string, larguraMax: number): string[] {
-  const limpo = sanitizarParaPdf((texto || '').replace(/\\nl/g, '\n').replace(/\\n/g, '\n'))
-  if (!limpo) return []
-  const linhas: string[] = []
-  for (const paragrafo of limpo.split('\n')) {
-    if (!paragrafo.trim()) {
-      linhas.push('')
-      continue
-    }
-    let atual = ''
-    for (const palavra of paragrafo.split(' ')) {
-      const teste = atual ? `${atual} ${palavra}` : palavra
-      if (p.doc.getTextWidth(teste) > larguraMax && atual) {
-        linhas.push(atual)
-        atual = palavra
-      } else {
-        atual = teste
-      }
-    }
-    if (atual) linhas.push(atual)
-  }
-  return linhas
+  return quebrarTexto(p.doc, texto || '', larguraMax)
 }
 
 /** O título de uma seção: barra verde, texto branco. */
