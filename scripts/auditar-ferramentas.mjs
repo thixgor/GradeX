@@ -125,14 +125,42 @@ function recortarFerramentas(texto, arquivo) {
   for (let i = 0; i < marcas.length; i++) {
     const inicio = marcas[i].index
     const fim = i + 1 < marcas.length ? marcas[i + 1].index : texto.length
+    const corpo = texto.slice(inicio, fim)
     blocos.push({
       id: marcas[i][1],
       nome: marcas[i][2].replace(/\\'/g, "'"),
       arquivo: path.basename(arquivo, '.ts'),
-      corpo: texto.slice(inicio, fim),
+      // Uma ferramenta pode delegar `campos` e `calcular` a definições
+      // compartilhadas fora do próprio objeto — é o caso do interpretador de
+      // gasometria e do DASI. O texto que o usuário lê está lá, e medir só o
+      // bloco literal reprovaria a ferramenta por onde o código mora, não por
+      // falta de conteúdo.
+      corpo: corpo + textoDasReferencias(corpo, texto),
     })
   }
   return blocos
+}
+
+/**
+ * Texto das definições que a ferramenta referencia por identificador.
+ *
+ * Procura `campos: <ident>` e `calcular: <ident>` no corpo e devolve o texto
+ * da declaração correspondente (`const <ident>` ou `function <ident>`), para
+ * que a medição alcance a ajuda dos campos e a interpretação que vivem lá.
+ */
+function textoDasReferencias(corpo, textoDoArquivo) {
+  let extra = ''
+  for (const m of corpo.matchAll(/\b(?:campos|calcular):\s*([A-Za-z_][A-Za-z0-9_]*)\s*,/g)) {
+    const ident = m[1]
+    const decl = new RegExp(`(?:^|\\n)(?:export\\s+)?(?:const|function)\\s+${ident}\\b`)
+    const achou = textoDoArquivo.match(decl)
+    if (!achou) continue
+    // Até a próxima declaração de topo, que é onde a definição termina.
+    const resto = textoDoArquivo.slice(achou.index + 1)
+    const proxima = resto.search(/\n(?:export\s+)?(?:const|function)\s+[A-Za-z_]/)
+    extra += '\n' + (proxima === -1 ? resto : resto.slice(0, proxima))
+  }
+  return extra
 }
 
 /**
@@ -159,14 +187,48 @@ function tamanhoDeString(f, prop) {
   return total
 }
 
-/** Soma o tamanho de todos os literais de texto dentro de uma propriedade-lista. */
+/**
+ * Soma o tamanho de todos os literais de texto de uma propriedade-lista.
+ *
+ * Duas formas contam. A direta, `interpretacao: [ ... ]`, e a construída em
+ * etapas, `const interpretacao: string[] = []` seguida de `interpretacao.push(...)`
+ * — que é como o interpretador de gasometria monta a leitura dos quatro passos.
+ * Medir só a primeira reprovaria a ferramenta pelo estilo do código.
+ */
 function tamanhoDeCampoDeTexto(f, prop) {
   let total = 0
   for (const m of f.corpo.matchAll(new RegExp(`\\b${prop}:\\s*(\\[|[a-zA-Z])`, 'g'))) {
     const trecho = f.corpo.slice(m.index, m.index + 4000)
     total += somarLiterais(trecho.slice(0, delimitarLista(trecho)))
   }
+  for (const m of f.corpo.matchAll(new RegExp(`\\b${prop}\\.push\\(`, 'g'))) {
+    const trecho = f.corpo.slice(m.index, m.index + 3000)
+    total += somarLiterais(trecho.slice(0, delimitarChamada(trecho)))
+  }
   return total
+}
+
+/** Encontra o fim de uma chamada a partir do `(` — equilibra parênteses. */
+function delimitarChamada(trecho) {
+  const abre = trecho.indexOf('(')
+  if (abre === -1) return Math.min(trecho.length, 600)
+  let nivel = 0
+  let dentroDeTexto = null
+  for (let i = abre; i < trecho.length; i++) {
+    const c = trecho[i]
+    if (dentroDeTexto) {
+      if (c === '\\') i++
+      else if (c === dentroDeTexto) dentroDeTexto = null
+      continue
+    }
+    if (c === "'" || c === '"' || c === '`') dentroDeTexto = c
+    else if (c === '(') nivel++
+    else if (c === ')') {
+      nivel--
+      if (nivel === 0) return i + 1
+    }
+  }
+  return trecho.length
 }
 
 /** Conta itens de uma lista de literais/objetos. */
