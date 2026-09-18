@@ -375,9 +375,9 @@ const infusao: Ferramenta = {
       { valor: 'gotas', rotulo: 'Gotas por minuto' },
       { valor: 'mlh', rotulo: 'mL/h' },
     ]),
-    campoNum('volume', 'Volume a infundir', { unidade: 'mL', min: 1, max: 10000, passo: 1, mostrarSe: (v) => opc(v, 'modo') === 'volume-tempo' }),
-    campoNum('horas', 'Tempo de infusão', { unidade: 'h', min: 0.1, max: 72, passo: 0.1, mostrarSe: (v) => opc(v, 'modo') === 'volume-tempo' }),
-    campoNum('gotasMin', 'Gotas por minuto', { unidade: 'gtt/min', min: 1, max: 300, passo: 1, mostrarSe: (v) => opc(v, 'modo') === 'gotas' }),
+    campoNum('volume', 'Volume a infundir', { unidade: 'mL', min: 1, max: 10000, passo: 1, ajuda: 'Volume total da bolsa ou do frasco a ser administrado.', mostrarSe: (v) => opc(v, 'modo') === 'volume-tempo' }),
+    campoNum('horas', 'Tempo de infusão', { unidade: 'h', min: 0.1, max: 72, passo: 0.1, ajuda: 'Em horas, aceitando fração (0,5 para 30 minutos; 0,25 para 15 minutos).', mostrarSe: (v) => opc(v, 'modo') === 'volume-tempo' }),
+    campoNum('gotasMin', 'Gotas por minuto', { unidade: 'gtt/min', min: 1, max: 300, passo: 1, ajuda: 'Conte por 60 segundos completos. Contar por 15 segundos e multiplicar por 4 amplifica o erro de contagem em quatro vezes.', mostrarSe: (v) => opc(v, 'modo') === 'gotas' }),
     campoSeg('equipo', 'Equipo', [
       { valor: '20', rotulo: 'Macrogotas (20 gtt/mL)' },
       { valor: '60', rotulo: 'Microgotas (60 gtt/mL)' },
@@ -433,6 +433,22 @@ const infusao: Ferramenta = {
         'O **fator de gotejamento** do equipo é o número de gotas necessárias para formar 1 mL. Macrogotas padrão usam 20 gotas por mL; microgotas usam 60. O fator vem impresso na embalagem e varia entre fabricantes — conferir é parte do preparo.',
         'A relação "microgotas por minuto = mL por hora" não é coincidência: 60 gotas por mL dividido por 60 minutos por hora dá exatamente 1. Por isso o equipo de microgotas é o de escolha quando se quer precisão sem bomba, sobretudo em pediatria.',
         '**Confira o gotejamento visualmente pelo menos uma vez por plantão.** Equipos por gravidade mudam de velocidade com a posição do membro, a altura do frasco e a obstrução parcial do cateter — a taxa programada não é a taxa entregue.',
+        'A física do gotejamento explica por que ele é impreciso e por que a bomba existe. Na infusão por gravidade, o fluxo obedece à lei de Hagen-Poiseuille: é proporcional à quarta potência do raio do cateter e à diferença de pressão, e inversamente proporcional à viscosidade e ao comprimento do sistema. Cada termo dessa equação é instável à beira do leito. A **diferença de pressão** depende da altura do frasco acima do átrio direito e muda quando o paciente senta, deita ou eleva o braço; ela também cai à medida que o frasco esvazia. O **raio efetivo** muda com a posição do membro (flexão do cotovelo com cateter em fossa antecubital), com encostamento da ponta na parede do vaso e com formação de fibrina. A **viscosidade** é maior em manitol, hemoderivados e nutrição parenteral, que gotejam mais devagar que o calculado. E o próprio **tamanho da gota** varia com a viscosidade e a tensão superficial do líquido, o que significa que o fator do equipo, calibrado para soluções aquosas, erra com concentrados. O somatório dessas variações produz desvios que podem passar de 20 a 30% da taxa pretendida — irrelevante para hidratação de manutenção, inaceitável para noradrenalina, insulina ou sedativo.',
+      ],
+      conduta: [
+        '**Confira o fator de gotejamento impresso na embalagem do equipo antes de calcular.** Macrogotas padrão usam 20 gotas por mL e microgotas usam 60, mas há fabricantes com 10, 15 ou 60 — usar o fator errado altera o resultado em até três vezes.',
+        'Use **bomba de infusão obrigatoriamente** para vasoativos, insulina, sedativos, opioides em infusão contínua, quimioterápicos, heparina, potássio concentrado e qualquer fármaco de janela terapêutica estreita. Gotejamento por gravidade nesses casos é erro de segurança, não economia.',
+        'Em **pediatria e neonatologia**, prefira microgotas ou bomba mesmo para hidratação, e use bureta com volume limitado ao previsto para as próximas horas — assim uma falha de gotejamento não infunde o frasco inteiro.',
+        'Memorize os dois atalhos que dispensam calculadora: **macrogotas por minuto ≈ volume ÷ (3 × horas)** e **microgotas por minuto = mL/h**. O segundo não é coincidência: 60 gotas por mL divididas por 60 minutos por hora dão exatamente 1.',
+        '**Confira visualmente pelo menos uma vez por plantão** e sempre após mobilizar o paciente. Registre o horário de início e o volume restante esperado, para que o próximo turno consiga detectar desvio sem recalcular tudo.',
+        'Ao trocar o frasco ou o equipo, recalcule e reconfira — é o momento de maior risco de erro. E rotule a bolsa com fármaco, dose, diluente, concentração final, velocidade e horário de preparo.',
+      ],
+      alertas: [
+        'Nunca use gotejamento por gravidade para **vasoativos, insulina, sedativos ou qualquer fármaco de janela estreita**. A variação inerente da infusão por gravidade pode passar de 20 a 30% da taxa pretendida.',
+        'O fator do equipo **varia entre fabricantes** e vem impresso na embalagem. Conferi-lo é parte do preparo, não detalhe.',
+        'Soluções viscosas (manitol, hemoderivados, nutrição parenteral) gotejam mais devagar que o calculado, e o tamanho da gota também muda — o fator do equipo é calibrado para soluções aquosas.',
+        'A taxa programada não é a taxa entregue: altura do frasco, posição do membro, esvaziamento da bolsa e obstrução parcial do cateter alteram o fluxo continuamente.',
+        'Em criança pequena, use bureta com volume limitado às próximas horas. É a barreira que impede que uma falha de gotejamento se transforme em sobrecarga hídrica grave.',
       ],
     }
   },
@@ -443,12 +459,21 @@ const infusao: Ferramenta = {
     'Microgotas/min = mL/h',
   ],
   fundamento:
-    'A conversão é aritmética pura, mas o erro é frequente porque envolve duas mudanças de unidade simultâneas — volume para gotas e hora para minuto. Fixar o atalho "volume dividido por três vezes as horas" para macrogotas e "microgotas igual a mL/h" cobre a esmagadora maioria das situações de beira de leito sem calculadora.',
+    'A conversão é aritmética pura, mas o erro é frequente porque envolve duas mudanças de unidade simultâneas — volume para gotas e hora para minuto. Fixar o atalho "volume dividido por três vezes as horas" para macrogotas e "microgotas igual a mL/h" cobre a esmagadora maioria das situações de beira de leito sem calculadora. O **fator de gotejamento** é o número de gotas necessárias para formar 1 mL, e vem impresso na embalagem porque depende do desenho do gotejador: macrogotas padrão usam 20 gotas por mL e microgotas usam 60. A elegância do equipo de microgotas está em que 60 gotas por mL divididas por 60 minutos por hora resultam exatamente em 1 — de modo que microgotas por minuto e mL por hora são o mesmo número, o que o torna a escolha natural quando se quer precisão sem bomba, sobretudo em pediatria. O limite da técnica, porém, é físico e não aritmético. O fluxo por gravidade segue a lei de Hagen-Poiseuille, sendo proporcional à quarta potência do raio e à diferença de pressão, e inversamente proporcional à viscosidade e ao comprimento do sistema. Todos esses termos oscilam à beira do leito: a pressão hidrostática cai conforme o frasco esvazia e muda com a posição do paciente; o raio efetivo varia com flexão do membro, encostamento da ponta do cateter e fibrina; a viscosidade é maior em manitol, hemoderivados e nutrição parenteral; e o próprio tamanho da gota depende da tensão superficial do líquido, o que faz o fator calibrado para soluções aquosas errar com concentrados. Somadas, essas variações produzem desvios que podem passar de 20 a 30% — irrelevantes para hidratação de manutenção, inaceitáveis para noradrenalina, insulina ou sedativo, e é essa diferença de tolerância ao erro que define quando a bomba deixa de ser conforto e passa a ser requisito de segurança.',
   armadilhas: [
     'Soluções viscosas (manitol, hemoderivados, nutrição parenteral) gotejam mais devagar do que o calculado por gravidade.',
     'Nunca use gotejamento por gravidade para vasoativos, insulina, sedativos ou qualquer fármaco de janela estreita — use bomba de infusão.',
+    'O fator do equipo varia entre fabricantes (10, 15, 20 ou 60 gotas/mL). Assumir 20 sem conferir a embalagem é a fonte de erro mais comum, e pode triplicar ou reduzir a um terço a velocidade real.',
+    'A taxa entregue não é a programada: altura do frasco, posição do membro, esvaziamento da bolsa e obstrução parcial alteram o fluxo continuamente. Confira visualmente.',
+    'Contar gotas por 15 segundos e multiplicar por 4 amplifica o erro de contagem em quatro vezes. Conte por 60 segundos quando a precisão importar.',
+    'Trocar frasco ou equipo é o momento de maior risco: recalcule e reconfira, e rotule a bolsa com fármaco, concentração final, velocidade e horário de preparo.',
+    'Em pediatria, use bureta com volume limitado às próximas horas — a barreira física que impede uma falha de gotejamento de virar sobrecarga hídrica.',
   ],
-  referencias: [{ texto: 'Institute for Safe Medication Practices. Guidelines for optimizing safe implementation and use of smart infusion pumps. 2020.' }],
+  referencias: [
+    { texto: 'Institute for Safe Medication Practices. Guidelines for optimizing safe implementation and use of smart infusion pumps. 2020.' },
+    { texto: 'Institute for Safe Medication Practices. ISMP List of High-Alert Medications in Acute Care Settings. 2024.' },
+    { texto: 'Agência Nacional de Vigilância Sanitária. Protocolo de segurança na prescrição, uso e administração de medicamentos. Ministério da Saúde; 2013.' },
+  ],
 }
 
 const volemia: Ferramenta = {
@@ -464,8 +489,8 @@ const volemia: Ferramenta = {
       { valor: 'trauma', rotulo: 'Trauma hemorrágico' },
       { valor: 'queimadura', rotulo: 'Queimadura' },
       { valor: 'desidratacao', rotulo: 'Desidratação / hipovolemia não hemorrágica' },
-    ]),
-    campoNum('scq', 'Superfície corporal queimada', { unidade: '%', min: 1, max: 100, passo: 1, mostrarSe: (v) => opc(v, 'cenario') === 'queimadura' }),
+    ], { ajuda: 'A estratégia muda radicalmente entre os cenários — e em trauma hemorrágico ela é OPOSTA à da sepse: aqui se limita o cristaloide e se aceita hipotensão permissiva até a hemostasia, porque elevar a pressão desloca coágulos.' }),
+    campoNum('scq', 'Superfície corporal queimada', { unidade: '%', min: 1, max: 100, passo: 1, ajuda: 'Regra dos nove: cabeça e pescoço 9%, cada membro superior 9%, cada membro inferior 18%, tronco anterior 18%, posterior 18%, períneo 1%. A palma com os dedos equivale a cerca de 1%. Queimaduras de PRIMEIRO grau (eritema simples) NÃO entram na conta. Em crianças use Lund-Browder: a cabeça chega a 19% no lactente.', mostrarSe: (v) => opc(v, 'cenario') === 'queimadura' }),
     campoNum('desidratacaoPct', 'Grau de desidratação', { unidade: '%', min: 1, max: 15, passo: 1, padrao: '8', mostrarSe: (v) => opc(v, 'cenario') === 'desidratacao' }),
     campoSeg('solucao', 'Solução', [
       { valor: 'balanceada', rotulo: 'Cristaloide balanceado (Ringer lactato, Plasma-Lyte)' },
@@ -529,7 +554,53 @@ const volemia: Ferramenta = {
       detalhes.push({ rotulo: 'Déficit de volume', valor: `${fmtInt(deficit)} mL`, nota: `${pct}% do peso corporal.` })
       detalhes.push({ rotulo: 'Metade nas primeiras 8 h', valor: `${fmtInt(deficit / 2)} mL`, nota: `Aproximadamente ${fmtInt(deficit / 16)} mL/h.` })
       detalhes.push({ rotulo: 'Manutenção diária', valor: `${fmtInt(peso * 30)} a ${fmtInt(peso * 35)} mL/dia`, nota: '30 a 35 mL/kg/dia no adulto, mais as perdas continuadas.' })
-      interp.push('Corrija o déficit de volume antes de se preocupar com a natremia: perfusão vem primeiro. Depois de estabilizada a hemodinâmica, o distúrbio do sódio se corrige na velocidade segura.')
+      interp.push(
+        'Corrija o déficit de volume antes de se preocupar com a natremia: perfusão vem primeiro. Depois de estabilizada a hemodinâmica, o distúrbio do sódio se corrige na velocidade segura.',
+        'A estimativa do déficit por percentual do peso é grosseira porque os sinais clínicos clássicos têm desempenho limitado no adulto: turgor cutâneo é pouco confiável no idoso (a pele perde elasticidade com a idade), mucosas secas ocorrem com respiração bucal, e a hipotensão é tardia. Os achados de melhor rendimento são **hipotensão ortostática**, axila seca, sulcos linguais longitudinais e enchimento capilar prolongado — e mesmo eles funcionam melhor em conjunto que isoladamente.',
+        'Vale distinguir **desidratação** de **depleção de volume**, porque o tratamento difere. Desidratação é perda predominante de água livre, com hipernatremia e desidratação intracelular — corrige-se com água livre ou solução hipotônica. Depleção de volume é perda de água **e** sódio (vômitos, diarreia, drenos, terceiro espaço), com contração do extracelular e sódio variável — corrige-se com cristaloide isotônico. Tratar uma como a outra é erro comum: dar água livre a quem perdeu sódio piora a hiponatremia, e dar salina a quem perdeu água livre não corrige a hipernatremia.',
+      )
+    }
+    /* ── Conduta por cenário ── */
+    const conduta: string[] = []
+    conduta.push(
+      '**Reavalie a cada alíquota, não ao fim do volume prescrito.** A reposição volêmica tem curva em U: pouco volume mantém a hipoperfusão, muito causa edema intersticial, disfunção de órgãos e síndrome compartimental. Nenhuma fórmula substitui a reavaliação seriada.',
+    )
+    if (cenario === 'sepse') {
+      conduta.push(
+        `Comece com **${fmtInt(peso * 30)} mL** (30 mL/kg) nas primeiras 3 horas se houver hipotensão ou lactato ≥ 4 mmol/L — mas administre em alíquotas de ${fmtInt(peso * 5)} a ${fmtInt(peso * 10)} mL com reavaliação entre elas. Em cardiopata, nefropata dialítico e cirrótico, use alíquotas de 250 a 500 mL.`,
+        '**Não espere terminar o volume para iniciar vasopressor.** Se a pressão arterial média não atingir 65 mmHg durante a expansão, comece noradrenalina em paralelo — o ensaio CLOVERS não mostrou diferença de mortalidade entre estratégia liberal de fluidos e restritiva com vasopressor precoce, e a sobrecarga hídrica associa-se independentemente a mortalidade.',
+        'Antes de expandir mais, **teste responsividade a volume**: elevação passiva das pernas com medida de débito, variação de pressão de pulso (apenas em ventilado, sem esforço espontâneo e em ritmo regular), variação do diâmetro da veia cava, ou prova de volume com alíquota pequena. Pressão venosa central isolada **não** prediz resposta e não deve ser usada para essa decisão.',
+        'Procure ativamente sinais de que já basta: estertores novos, aumento da necessidade de oxigênio, elevação da pressão intra-abdominal, edema periférico progressivo e balanço acumulado muito positivo.',
+        'Trate a causa em paralelo — antibiótico na primeira hora, controle de foco e lactato seriado a cada 2 a 4 horas. O clareamento do lactato, e não o volume infundido, é o marcador de resposta.',
+      )
+    } else if (cenario === 'trauma') {
+      conduta.push(
+        '**Limite o cristaloide a 1000 mL** e parta para hemocomponentes em proporção equilibrada 1:1:1 (hemácias, plasma e plaquetas). O excesso de cristaloide dilui fatores de coagulação, agrava a hipotermia e desloca coágulos já formados — é a tríade letal sendo alimentada pelo tratamento.',
+        '**Ácido tranexâmico 1 g em 10 minutos seguido de 1 g em 8 horas, dentro das primeiras 3 horas** do trauma. Depois desse prazo o benefício desaparece e pode haver dano — o horário do trauma, e não o da chegada, é o que conta.',
+        'Mantenha **hipotensão permissiva** com pressão sistólica de 80 a 90 mmHg até a hemostasia definitiva, **exceto em traumatismo cranioencefálico**, em que o alvo é sistólica ≥ 110 mmHg para preservar a perfusão cerebral — nesse caso a hipotensão é devastadora.',
+        'Aqueça agressivamente: fluidos aquecidos, mantas térmicas, sala aquecida. A hipotermia piora a coagulopatia de forma não linear e é frequentemente iatrogênica.',
+        'Acione o **protocolo de transfusão maciça** precocemente e leve o paciente ao controle cirúrgico ou angiográfico do sangramento — a ressuscitação é ponte, não tratamento.',
+      )
+    } else if (cenario === 'queimadura') {
+      const scqC = num(v, 'scq') ?? 0
+      conduta.push(
+        `**Conte as horas a partir do momento da queimadura**, não da chegada. Se o paciente chega 3 horas depois, o volume das primeiras 8 horas precisa ser entregue nas 5 restantes — programar a partir da admissão subestima sistematicamente a fase inicial.`,
+        `**Titule pela diurese**, que é o alvo real: 0,5 mL/kg/h no adulto (cerca de ${fmtInt(peso * 0.5)} mL/h) e 1 mL/kg/h na criança. A fórmula é ponto de partida; ajuste para cima ou para baixo a cada hora conforme o débito urinário.`,
+        'Considere iniciar pela fórmula **restritiva de 2 mL/kg/%** em vez dos 4 mL de Parkland: o reconhecimento do *fluid creep* — sobrecarga hídrica iatrogênica que gera síndrome compartimental abdominal e de extremidades — levou muitos centros a reduzir o ponto de partida.',
+        '**Avalie a via aérea antes de qualquer outra coisa** se houver queimadura em ambiente fechado, rouquidão, estridor, escarro carbonáceo ou queimadura de vibrissas e face. O edema evolui em horas: intube **antes** que a via aérea se torne impossível, não depois.',
+        scqC >= 20
+          ? 'Com superfície queimada ≥ 20% no adulto, a reposição formal está indicada e o paciente deve ser encaminhado a centro de referência em queimados. Avalie necessidade de escarotomia em queimadura circunferencial de tórax ou de membros.'
+          : 'Abaixo de 20% de superfície queimada no adulto (10 a 15% na criança), a hidratação oral costuma bastar. Reavalie a extensão com a regra dos nove ou Lund-Browder antes de descartar a reposição formal.',
+        'Monitore pressão intra-abdominal em queimaduras extensas: a síndrome compartimental abdominal é complicação da própria ressuscitação e exige reconhecimento precoce.',
+      )
+    } else {
+      conduta.push(
+        `Reponha **metade do déficit nas primeiras 8 horas** (cerca de ${fmtInt(((numOu(v, 'desidratacaoPct', 8)) / 100) * peso * 1000 / 2)} mL) e a outra metade nas 16 horas seguintes, somando a manutenção de ${fmtInt(peso * 30)} a ${fmtInt(peso * 35)} mL/dia e as perdas continuadas.`,
+        '**Corrija a perfusão antes de se preocupar com a natremia.** Restaurada a hemodinâmica, o distúrbio do sódio se corrige na velocidade segura — e respeite o teto de 8 mEq/L de elevação em 24 horas para evitar desmielinização osmótica.',
+        'Atenção à **autocorreção**: ao repor volume, a vasopressina se desliga e o rim passa a excretar água livre rapidamente, elevando o sódio além do planejado. Monitore a cada 2 a 4 horas em hiponatremia significativa.',
+        'Prefira a via oral ou enteral quando possível — soro de reidratação oral é eficaz, mais seguro e subutilizado na desidratação leve a moderada.',
+        'Identifique e trate a causa das perdas: vômitos, diarreia, poliúria osmótica, febre, drenos e ostomias de alto débito. Repor volume sem estancar a perda é enxugar gelo.',
+      )
     }
     const balanceada = opc(v, 'solucao') === 'balanceada'
     detalhes.push({
@@ -540,6 +611,7 @@ const volemia: Ferramenta = {
         : 'Cloro de 154 mEq/L, muito acima do plasmático. Em grande volume causa acidose hiperclorêmica e vasoconstrição renal. Continua indicada na hipercloremia por perda gástrica, na hiponatremia e no traumatismo cranioencefálico.',
     })
     return {
+      conduta,
       titulo: principal,
       valor,
       nivel: 'alerta',
@@ -554,7 +626,7 @@ const volemia: Ferramenta = {
     'Déficit de volume (mL) = % de desidratação × peso (kg) × 10',
   ],
   fundamento:
-    'A reposição volêmica tem uma curva em U: pouco volume mantém a hipoperfusão, muito volume causa edema intersticial, disfunção de órgãos e síndrome compartimental. O conceito atual organiza a terapia em quatro fases (ROSE): **R**essuscitação, **O**timização, **E**stabilização e **E**vacuação — sendo que a última, a fase de balanço negativo, é tão importante quanto a primeira.',
+    'A reposição volêmica tem uma curva em U: pouco volume mantém a hipoperfusão, muito volume causa edema intersticial, disfunção de órgãos e síndrome compartimental. O conceito atual organiza a terapia em quatro fases (ROSE): **R**essuscitação, **O**timização, **E**stabilização e **E**vacuação — sendo que a última, a fase de balanço negativo, é tão importante quanto a primeira. O que explica o braço descendente dessa curva é a degradação do **glicocálice endotelial**, a camada de glicoproteínas e proteoglicanos que reveste o lúmen vascular e é o verdadeiro determinante da permeabilidade capilar. A equação de Starling revisada mostrou que a pressão oncótica relevante não é a do interstício, e sim a do estreito espaço subglicocálice — de modo que, com o glicocálice íntegro, a reabsorção no extremo venoso é muito menor do que o modelo clássico previa, e o retorno do fluido extravasado se dá quase inteiramente pelos linfáticos. Inflamação, isquemia-reperfusão, cirurgia e hipervolemia degradam essa camada: a hipervolemia estira o átrio, libera **peptídeo natriurético atrial**, e o peptídeo cliva o glicocálice diretamente. Ou seja, expandir demais destrói a barreira que mantém o fluido no vaso, e o volume infundido vaza para o interstício em vez de corrigir a perfusão — um ciclo em que mais volume produz menos volume efetivo, com edema tecidual, maior distância de difusão de oxigênio e disfunção orgânica. Essa mesma fisiologia explica por que os coloides não cumpriram a promessa (os amidos aumentam lesão renal e mortalidade na sepse e estão contraindicados), por que balanço acumulado positivo é preditor independente de mortalidade, e por que a fase de evacuação — remover o excesso ativamente, com diurético ou ultrafiltração — passou a fazer parte do tratamento em vez de ser deixada à natureza.',
   armadilhas: [
     'A fórmula de Parkland conta a partir do horário da queimadura. Se o paciente chega 3 horas depois, o volume das primeiras 8 horas deve ser entregue nas 5 horas restantes.',
     'Coloides (albumina, amido) não são superiores a cristaloides na maioria dos cenários; os amidos aumentam lesão renal e mortalidade na sepse e estão contraindicados.',

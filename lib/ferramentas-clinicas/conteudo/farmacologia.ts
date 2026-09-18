@@ -203,10 +203,10 @@ const diluicao: Ferramenta = {
       { valor: 'volume', rotulo: 'Volume para uma dose' },
       { valor: 'diluir', rotulo: 'Diluir uma solução (C₁V₁ = C₂V₂)' },
     ]),
-    campoNum('massa', 'Massa do fármaco', { unidade: 'mg', min: 0.001, max: 100000, passo: 0.001, mostrarSe: (v) => opc(v, 'modo') !== 'diluir' }),
-    campoNum('volume', 'Volume da solução', { unidade: 'mL', min: 0.1, max: 5000, passo: 0.1, mostrarSe: (v) => opc(v, 'modo') !== 'diluir' }),
+    campoNum('massa', 'Massa do fármaco', { unidade: 'mg', min: 0.001, max: 100000, passo: 0.001, ajuda: 'Massa total contida na ampola ou no frasco, em miligramas. Se o rótulo traz gramas, multiplique por 1000; se traz microgramas, divida por 1000.', mostrarSe: (v) => opc(v, 'modo') !== 'diluir' }),
+    campoNum('volume', 'Volume da solução', { unidade: 'mL', min: 0.1, max: 5000, passo: 0.1, ajuda: 'Volume FINAL da solução, incluindo o diluente — não apenas o volume de diluente acrescentado. Em concentrados, o soluto ocupa volume e a diferença importa.', mostrarSe: (v) => opc(v, 'modo') !== 'diluir' }),
     campoNum('dose', 'Dose desejada', { unidade: 'mg', min: 0.001, max: 100000, passo: 0.001, mostrarSe: (v) => opc(v, 'modo') === 'volume' }),
-    campoNum('c1', 'Concentração inicial (C₁)', { unidade: 'mg/mL', min: 0.001, max: 10000, passo: 0.001, mostrarSe: (v) => opc(v, 'modo') === 'diluir' }),
+    campoNum('c1', 'Concentração inicial (C₁)', { unidade: 'mg/mL', min: 0.001, max: 10000, passo: 0.001, ajuda: 'A concentração da solução que você tem em mãos. Converta antes: uma solução a 1% tem 10 mg/mL, e adrenalina 1:1.000 tem 1 mg/mL.', mostrarSe: (v) => opc(v, 'modo') === 'diluir' }),
     campoNum('c2', 'Concentração final desejada (C₂)', { unidade: 'mg/mL', min: 0.001, max: 10000, passo: 0.001, mostrarSe: (v) => opc(v, 'modo') === 'diluir' }),
     campoNum('v2', 'Volume final desejado (V₂)', { unidade: 'mL', min: 0.1, max: 5000, passo: 0.1, mostrarSe: (v) => opc(v, 'modo') === 'diluir' }),
   ],
@@ -236,6 +236,20 @@ const diluicao: Ferramenta = {
           'A equação **C₁V₁ = C₂V₂** vale porque a massa de fármaco não muda ao se acrescentar diluente — só o volume muda. É a mesma lógica da conservação de massa em qualquer diluição.',
           'Ao preparar, **retire o volume calculado da solução original e complete até o volume final**, em vez de acrescentar o diluente ao volume original. A diferença importa em volumes pequenos e em fármacos concentrados.',
           'Diluições seriadas são preferíveis a uma única diluição extrema: medir 0,05 mL com seringa de 10 mL é uma fonte previsível de erro. Faça duas etapas.',
+        ],
+        conduta: [
+          'Acrescente **V₂ menos V₁** de diluente, não V₂ inteiro. Esse é o erro aritmético mais comum da diluição e produz solução mais diluída que a pretendida.',
+          'Escolha a seringa pelo volume a medir, não pelo que estiver à mão: medir 0,3 mL numa seringa de 20 mL tem erro percentual grande. Se o volume final ficar abaixo de 0,1 mL, **faça diluição seriada em duas etapas** em vez de uma diluição extrema.',
+          '**Rotule imediatamente** a seringa ou a bolsa com fármaco, concentração final em mg/mL, diluente, volume total, velocidade se for infusão, e horário de preparo. Seringa não rotulada é causa recorrente de erro grave, sobretudo em sala de emergência e centro cirúrgico.',
+          'Confira a **compatibilidade** do fármaco com o diluente escolhido antes de preparar: alguns exigem soro glicosado (amiodarona), outros precipitam em glicose, e vários são incompatíveis entre si na mesma via.',
+          'Faça a **dupla checagem independente** em fármacos de alta vigilância — insulina, heparina, opioides, vasoativos, potássio concentrado, quimioterápicos e diluições pediátricas. Outra pessoa recalcula sem ver a sua conta.',
+          'Antes de administrar, pergunte se o volume calculado é **plausível**. Meia ampola ou vinte ampolas para uma dose usual quase sempre denuncia erro de conversão de unidade, e essa checagem de sanidade pega o que a aritmética não pega.',
+        ],
+        alertas: [
+          '**Adrenalina 1:1.000 (1 mg/mL) e 1:10.000 (0,1 mg/mL) diferem em dez vezes.** A primeira é intramuscular na anafilaxia, a segunda é intravenosa na parada. Confirme a apresentação antes de aspirar.',
+          'Use o volume APÓS reconstituição informado no rótulo, e não o volume de diluente acrescentado — em frascos de antibiótico a diferença chega a 1 mL e altera a concentração final.',
+          'Miligrama e micrograma são confundidos em prescrição manuscrita. Escreva a unidade por extenso em fármacos de alta vigilância e evite a abreviação "µg".',
+          'Potássio concentrado nunca é administrado em bolus nem sem diluição. É um dos fármacos com maior histórico de erro fatal por diluição incorreta.',
         ],
       }
     }
@@ -290,12 +304,21 @@ const diluicao: Ferramenta = {
     'Diluição: C₁ × V₁ = C₂ × V₂',
   ],
   fundamento:
-    'A notação percentual vem da farmacotécnica: uma solução a 1% contém 1 grama de soluto em 100 mL de solução. A notação em proporção vem da era pré-métrica e sobrevive na adrenalina. Ambas são fontes de erro justamente por não expressarem diretamente a grandeza que se usa na prescrição — miligramas.',
+    'A notação percentual vem da farmacotécnica: uma solução a 1% contém 1 grama de soluto em 100 mL de solução. A notação em proporção vem da era pré-métrica e sobrevive na adrenalina. Ambas são fontes de erro justamente por não expressarem diretamente a grandeza que se usa na prescrição — miligramas. A conversão essencial cabe numa linha: **1% equivale a 10 mg/mL**, porque 1 g em 100 mL são 1000 mg em 100 mL. Daí lidocaína a 2% ter 20 mg/mL e bupivacaína a 0,5% ter 5 mg/mL. A notação em proporção segue a mesma lógica invertida: 1:1.000 significa 1 g em 1.000 mL, ou seja 1 mg/mL, enquanto 1:10.000 significa 1 g em 10.000 mL, ou 0,1 mg/mL. A adrenalina é o caso emblemático e o mais perigoso, porque as duas apresentações coexistem para indicações diferentes — 1:1.000 (1 mg/mL) para uso intramuscular na anafilaxia e 1:10.000 (0,1 mg/mL) para uso intravenoso na parada. Confundi-las significa errar a dose em dez vezes, nos dois sentidos, e por isso as agências de segurança do paciente recomendam abandonar a notação em proporção e rotular sempre em mg/mL. A equação de diluição C₁V₁ = C₂V₂ expressa apenas a conservação de massa: a quantidade de fármaco não muda ao acrescentar diluente, apenas se distribui em volume maior. Há duas sutilezas práticas nela. A primeira é que o volume de diluente a acrescentar é V₂ menos V₁, e não V₂ — erro que produz solução mais diluída do que o pretendido. A segunda é que o soluto ocupa volume: em concentrados, reconstituir um frasco de 1 g com 10 mL pode gerar 10,7 mL de solução final, e é por isso que rótulos de antibióticos informam o **volume após reconstituição**, que é o que deve ser usado no cálculo. Em diluições clínicas usuais o efeito é desprezível, mas em fármacos de janela estreita e em pediatria não é.',
   armadilhas: [
     'Porcentagem peso/volume (g/100 mL) é diferente de peso/peso e de volume/volume. Em soluções injetáveis, é sempre peso/volume.',
     'A adição de soluto altera o volume final em soluções concentradas — em diluições clínicas, o efeito é desprezível.',
+    'Adrenalina 1:1.000 (1 mg/mL, intramuscular na anafilaxia) e 1:10.000 (0,1 mg/mL, intravenosa na parada) diferem em dez vezes. É o erro de diluição com maior potencial de dano da medicina de emergência.',
+    'Na equação C₁V₁ = C₂V₂, o volume de diluente a acrescentar é V₂ menos V₁. Acrescentar V₂ inteiro produz solução mais diluída que o pretendido.',
+    'Use o volume APÓS reconstituição informado no rótulo, não o volume de diluente. Em frascos de antibiótico, a diferença chega a 0,5 a 1 mL e altera a concentração final.',
+    'Miligramas e microgramas são confundidos com frequência em prescrições manuscritas. Escreva as unidades por extenso em fármacos de alta vigilância e evite abreviações como "µg", que pode ser lida como "mg".',
+    'Verifique sempre se a dose calculada é plausível antes de administrar. Um resultado que exige metade de uma ampola inteira, ou vinte ampolas, quase sempre denuncia erro de conversão de unidade.',
   ],
-  referencias: [{ texto: 'Institute for Safe Medication Practices. ISMP List of High-Alert Medications in Acute Care Settings. 2024.' }],
+  referencias: [
+    { texto: 'Institute for Safe Medication Practices. ISMP List of High-Alert Medications in Acute Care Settings. 2024.' },
+    { texto: 'Institute for Safe Medication Practices. ISMP List of Error-Prone Abbreviations, Symbols, and Dose Designations. 2021.' },
+    { texto: 'Agência Nacional de Vigilância Sanitária. Protocolo de segurança na prescrição, uso e administração de medicamentos. Ministério da Saúde; 2013.' },
+  ],
 }
 
 const farmacocinetica: Ferramenta = {
@@ -757,6 +780,17 @@ const receita: Ferramenta = {
         '**Dose máxima e duração explícitas** evitam uso indefinido. "Se necessário" sem dose máxima diária e sem intervalo mínimo é uma prescrição incompleta.',
         '**Escreva a indicação** ("para dor", "para pressão"). Isso reduz erro de dispensação, melhora a adesão e permite que outro profissional revise a prescrição com sentido.',
         'Letra ilegível continua sendo causa de erro grave. Prescrição eletrônica com suporte à decisão é a intervenção com maior impacto documentado na redução de erros de medicação.',
+        'A lógica por trás de cada item obrigatório é a **teoria do queijo suíço** aplicada à medicação. O medicamento percorre cinco etapas até o paciente — prescrição, dispensação, preparo, administração e monitorização — e cada uma tem falhas latentes. A prescrição é a primeira camada, e é a mais eficiente de todas, porque um erro corrigido ali não precisa ser interceptado nas quatro seguintes. Cada elemento ausente abre um buraco: fármaco sem **concentração** transfere a escolha da apresentação para a farmácia; dose sem **via** permite administrar por via errada (metotrexato semanal prescrito sem "semanal" já matou pacientes; vincristina intratecal em vez de intravenosa é uniformemente fatal); "se necessário" sem **dose máxima e intervalo mínimo** transfere a titulação para quem não avaliou o paciente; e prescrição crônica sem **horizonte de revisão** é exatamente como a polifarmácia se instala. As abreviaturas proibidas seguem o mesmo raciocínio: elas não são erradas por convenção estética, são erradas porque cada uma já produziu dano documentado. "U" de unidades lido como zero transforma 10 U de insulina em 100; o zero à direita em "1,0 mg" lido como 10 mg produz overdose de dez vezes; a ausência do zero à esquerda em ".5 mg" produz o mesmo erro no sentido contrário.',
+      ],
+      conduta: [
+        'Escreva a **indicação** ao lado de cada fármaco ("para dor", "para pressão"). Isso reduz erro de dispensação, melhora a adesão e permite que outro profissional revise a prescrição com sentido — é a intervenção de maior retorno por menor esforço.',
+        'Prescreva sempre pelo **nome genérico** (denominação comum brasileira), com concentração e forma farmacêutica explícitas. Nome comercial dificulta a dispensação, favorece troca por fármaco semelhante e é obrigatório o genérico no serviço público.',
+        'Em "se necessário", especifique **para quê, dose, intervalo mínimo e dose máxima em 24 horas**. Prescrição sintomática sem teto é a origem mais comum de intoxicação por paracetamol e de sedação excessiva em idoso.',
+        'Confira as **quatro checagens de segurança** antes de assinar: alergias (com a reação descrita, não apenas "alergia a penicilina"), interações relevantes, ajuste por função renal e hepática, e adequação ao peso em criança e em obeso.',
+        'Em toda prescrição crônica, defina **data de reavaliação**. Aplique periodicamente os critérios de Beers e o STOPP/START no idoso, e pergunte-se de cada item: ainda há indicação? O benefício ainda supera o risco? Existe alternativa mais segura?',
+        'Evite as abreviaturas de risco: escreva "unidades" por extenso, "mcg" em vez de "µg", "1 mg" em vez de "1,0 mg", "0,5 mg" em vez de ",5 mg", e o intervalo por extenso em vez de "QD", "QOD" ou "TID".',
+        'Prefira **prescrição eletrônica com suporte à decisão** sempre que disponível: é a intervenção com maior impacto documentado sobre erros de medicação. Onde só houver manuscrito, escreva em letra de forma e revise a prescrição inteira antes de assinar.',
+        'Confirme o receituário correto para a classe: antimicrobiano exige duas vias com retenção; psicotrópicos da lista B exigem notificação azul; entorpecentes da lista A exigem notificação amarela; e há limites de quantidade e de validade específicos para cada um.',
       ],
       tabela: { titulo: 'Regras do receituário selecionado', colunas: ['Item', 'Regra'], linhas: regras[tipo] ?? regras.simples },
       alertas: ['As regras de receituário seguem a Portaria SVS/MS 344/1998 e suas atualizações, além das normas da Anvisa e dos conselhos profissionais. Confirme a regulamentação vigente e as normas locais.'],
@@ -768,6 +802,11 @@ const receita: Ferramenta = {
   armadilhas: [
     'Prescrever pelo nome comercial dificulta a dispensação e favorece a troca por fármaco semelhante.',
     '"Uso contínuo" sem data de reavaliação é como polifarmácia se instala. Toda prescrição crônica precisa de horizonte de revisão.',
+    '"Se necessário" sem dose máxima diária e sem intervalo mínimo transfere a titulação para quem não avaliou o paciente. É a origem mais comum de intoxicação por paracetamol e de sedação excessiva em idoso.',
+    'Omitir a via de administração permite erro fatal em fármacos de via crítica — vincristina intratecal em vez de intravenosa é uniformemente letal, e metotrexato prescrito sem "semanal" já causou mortes por administração diária.',
+    'Registrar "alergia a penicilina" sem descrever a reação faz o paciente perder acesso a betalactâmicos por décadas. Anote o que aconteceu: exantema tardio é diferente de anafilaxia.',
+    'Abreviaturas de risco têm dano documentado, não são preciosismo: "U" lido como zero, "1,0 mg" lido como 10 mg, ",5 mg" lido como 5 mg.',
+    'Prescrição de alta sem reconciliação medicamentosa é um ponto crítico de falha: fármacos suspensos na internação voltam por engano, e os iniciados no hospital seguem indefinidamente sem indicação.',
   ],
   referencias: [
     { texto: 'Brasil. Portaria SVS/MS nº 344, de 12 de maio de 1998, e atualizações.' },

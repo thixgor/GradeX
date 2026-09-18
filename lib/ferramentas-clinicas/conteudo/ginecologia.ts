@@ -119,10 +119,10 @@ const ganhoPeso: Ferramenta = {
   resumo: 'Define a faixa total e a velocidade semanal de ganho conforme o IMC pré-gestacional.',
   categorias: ['ginecologia', 'nutricao'],
   campos: [
-    campoNum('pesoPre', 'Peso pré-gestacional', { unidade: 'kg', min: 30, max: 200, passo: 0.1 }),
+    campoNum('pesoPre', 'Peso pré-gestacional', { unidade: 'kg', min: 30, max: 200, passo: 0.1, ajuda: 'Peso antes da concepção, ou o da primeira consulta se ela ocorreu até 12 semanas. Prefira SEMPRE um registro documentado ao autorrelato, que costuma ser subestimado — 3 a 4 kg de erro deslocam a faixa de IMC e mudam toda a recomendação.' }),
     campoAltura(),
-    campoNum('pesoAtual', 'Peso atual', { unidade: 'kg', min: 30, max: 220, passo: 0.1 }),
-    campoNum('semanas', 'Idade gestacional atual', { unidade: 'semanas', min: 4, max: 42, passo: 0.5 }),
+    campoNum('pesoAtual', 'Peso atual', { unidade: 'kg', min: 30, max: 220, passo: 0.1, ajuda: 'Medido na mesma balança e com roupas leves, para que a curva seja comparável entre consultas. Ganho abrupto com edema no terceiro trimestre pode ser pré-eclâmpsia, não nutrição.' }),
+    campoNum('semanas', 'Idade gestacional atual', { unidade: 'semanas', min: 4, max: 42, passo: 0.5, ajuda: 'O ganho não é linear: no primeiro trimestre espera-se apenas 0,5 a 2 kg no total, e a taxa semanal recomendada vale para o segundo e o terceiro trimestres. Aplicá-la desde a concepção superestima o esperado.' }),
     campoSeg('gemelar', 'Gestação', [
       { valor: 'unica', rotulo: 'Única' },
       { valor: 'gemelar', rotulo: 'Gemelar' },
@@ -170,15 +170,52 @@ const ganhoPeso: Ferramenta = {
         'O ganho recomendado é **menor quanto maior o IMC pré-gestacional** porque a obesidade já fornece reserva energética; ganhar muito nesse contexto acrescenta risco sem benefício fetal.',
         'Distribuição típica do ganho a termo: feto cerca de 3,5 kg, placenta 0,7 kg, líquido amniótico 0,8 kg, útero 1 kg, mamas 0,5 kg, sangue 1,5 kg, líquido extracelular 1,5 kg e reserva de gordura materna 2 a 4 kg.',
         '**Nunca recomende perda de peso durante a gestação**, mesmo em obesidade grave. A restrição calórica pode induzir cetose materna, associada a prejuízo do neurodesenvolvimento fetal.',
+        'A gestação é deliberadamente um estado de **resistência insulínica progressiva**, e entender isso explica tanto as faixas de ganho quanto o risco do excesso. A partir da segunda metade da gestação, o lactogênio placentário humano, o hormônio do crescimento placentário, a progesterona, o cortisol e o TNF-α reduzem a sensibilidade materna à insulina em 50 a 60%. O propósito é teleológico: ao dificultar a captação materna de glicose, esses hormônios mantêm a glicemia materna mais alta por mais tempo após as refeições, garantindo gradiente para a transferência placentária — que ocorre por **difusão facilitada** via GLUT1, portanto dependente apenas do gradiente de concentração. A gestante compensa hipersecretando insulina, com hiperplasia de células beta. Quando essa compensação falha, surge o **diabetes gestacional**, que é conceitualmente a mesma falência de célula beta do diabetes tipo 2, revelada por um teste de estresse fisiológico. A consequência fetal segue a **hipótese de Pedersen**: a glicose materna atravessa a placenta livremente, mas a insulina **não** atravessa; o pâncreas fetal responde à hiperglicemia com hiperinsulinemia, e a insulina é o principal hormônio anabólico do feto — daí macrossomia com deposição preferencial de gordura em tronco e ombros (que é o que causa distocia de ombro), organomegalia, e hipoglicemia neonatal quando o aporte materno cessa abruptamente ao nascimento. É por isso que o ganho excessivo não é apenas estético: ele opera sobre um sistema já programado para resistência insulínica.',
+        'A recomendação de ganho **menor quanto maior o IMC pré-gestacional** decorre diretamente disso: o tecido adiposo pré-existente já fornece reserva energética e já contribui com resistência insulínica e inflamação de baixo grau, de modo que acrescentar mais massa gorda aumenta risco sem benefício fetal. No extremo oposto, o ganho insuficiente compromete a expansão do volume plasmático (que normalmente aumenta 40 a 50% e é essencial à perfusão placentária) e a reserva energética do terceiro trimestre, quando ocorre a maior parte do crescimento fetal.',
+      ],
+      conduta: dentro || semanas < 14
+        ? [
+            'Ganho adequado. Mantenha o acompanhamento com **pesagem em toda consulta**, na mesma balança e com roupas leves, e registre a curva — é a trajetória, e não o valor isolado, que orienta.',
+            'Reforce alimentação equilibrada e **atividade física regular** (150 minutos semanais de intensidade moderada, salvo contraindicação obstétrica), que reduz diabetes gestacional, ganho excessivo e distúrbios hipertensivos.',
+            'Mantenha a suplementação: ácido fólico (iniciado idealmente antes da concepção), ferro conforme protocolo e hemoglobina, e avalie vitamina D, cálcio e iodo conforme o contexto.',
+            'Garanta o rastreio de **diabetes gestacional** entre 24 e 28 semanas com teste oral de tolerância à glicose, e antecipe-o na primeira consulta se houver fatores de risco.',
+          ]
+        : ganho > esperadoMax
+          ? [
+              '**Ganho acima do recomendado.** A abordagem é **nutricional e de atividade física, nunca restrição calórica agressiva** — e jamais perda de peso, mesmo em obesidade grave, pelo risco de cetose materna associada a prejuízo do neurodesenvolvimento fetal.',
+              'Encaminhe à nutricionista para plano individualizado com distribuição adequada de macronutrientes e fracionamento. O alvo é **desacelerar** a curva, não reverter o ganho já ocorrido.',
+              'Antecipe ou repita o rastreio de **diabetes gestacional**: ganho excessivo e diabetes gestacional compartilham a mesma base de resistência insulínica, e um frequentemente antecede o outro.',
+              'Monitore pressão arterial e pesquise proteinúria em toda consulta. **Ganho abrupto no terceiro trimestre com edema pode ser retenção hídrica de pré-eclâmpsia**, e não ganho nutricional — nesse caso a conduta é completamente outra.',
+              'Acompanhe o crescimento fetal com ultrassonografia seriada pelo risco de macrossomia, e planeje a via de parto considerando peso fetal estimado, história obstétrica e risco de distocia de ombro.',
+              'Oriente sobre o pós-parto: retenção de peso após a gestação é preditor de obesidade a longo prazo, e a amamentação favorece a perda. Programe reavaliação metabólica 6 a 12 semanas após o parto.',
+            ]
+          : [
+              '**Ganho abaixo do recomendado.** Investigue a causa antes de simplesmente orientar comer mais: náuseas e vômitos persistentes ou hiperêmese, insegurança alimentar, transtorno alimentar, tabagismo, uso de substâncias, doenças consumptivas, hipertireoidismo e má absorção.',
+              'Trate as náuseas de forma efetiva — piridoxina com doxilamina, metoclopramida, ondansetrona conforme necessidade e protocolo. Náusea mal controlada é causa frequente e subtratada de ganho insuficiente.',
+              'Encaminhe à nutricionista e avalie insegurança alimentar com pergunta direta e sem julgamento, acionando a rede de apoio social quando necessário. É uma causa comum e invisível se não for perguntada.',
+              'Monitore o **crescimento fetal** com ultrassonografia seriada e Doppler de artéria umbilical, pelo risco de restrição de crescimento. Avalie também o risco de parto pré-termo.',
+              'Rastreie anemia, deficiências nutricionais e infecções, e revise a adesão à suplementação de ferro e ácido fólico.',
+            ],
+      alertas: [
+        '**Nunca recomende perda de peso durante a gestação**, nem mesmo em obesidade grave. A restrição calórica induz cetose materna, associada a prejuízo do neurodesenvolvimento fetal.',
+        'Ganho abrupto no terceiro trimestre acompanhado de edema pode ser **retenção hídrica de pré-eclâmpsia**, não ganho nutricional. Meça a pressão arterial e pesquise proteinúria antes de atribuir à alimentação.',
+        'O peso pré-gestacional referido pela paciente costuma ser subestimado. Sempre que houver registro anterior, use-o — um erro de 3 a 4 kg desloca a faixa de IMC e muda toda a recomendação.',
+        'As faixas do Institute of Medicine foram derivadas em população norte-americana e são de aplicação individual limitada. Elas orientam a conversa, não definem conduta isolada.',
+        'Em gestação **gemelar** as faixas são outras e maiores, e não há recomendação estabelecida para obesidade grau III em gemelar.',
       ],
     }
   },
   formula: ['Faixas do Institute of Medicine por IMC pré-gestacional', 'Ganho esperado = ganho do 1º trimestre + (taxa semanal × semanas após a 13ª)'],
   fundamento:
-    'As faixas do Institute of Medicine, revisadas em 2009, foram derivadas de coortes que relacionaram ganho de peso a desfechos maternos e fetais simultaneamente — buscando o intervalo que minimiza tanto o risco de recém-nascido pequeno para a idade gestacional quanto o de macrossomia, cesariana e retenção de peso.',
+    'As faixas do Institute of Medicine, revisadas em 2009, foram derivadas de coortes que relacionaram ganho de peso a desfechos maternos e fetais simultaneamente — buscando o intervalo que minimiza tanto o risco de recém-nascido pequeno para a idade gestacional quanto o de macrossomia, cesariana e retenção de peso. O que justifica faixas **decrescentes conforme o IMC pré-gestacional** é a fisiologia metabólica da gravidez. A gestação é deliberadamente um estado de resistência insulínica progressiva: a partir da segunda metade, o lactogênio placentário humano, o hormônio do crescimento placentário, a progesterona, o cortisol e o TNF-α reduzem a sensibilidade materna à insulina em 50 a 60%. O propósito é garantir gradiente de glicose para o feto, cuja captação ocorre por difusão facilitada via GLUT1 e depende apenas da concentração materna. A gestante compensa com hiperplasia de células beta e hipersecreção; quando a compensação falha, surge o diabetes gestacional. A consequência fetal é a **hipótese de Pedersen**: a glicose atravessa a placenta livremente, a insulina não, e o pâncreas fetal responde com hiperinsulinemia — sendo a insulina o principal hormônio anabólico fetal, daí a macrossomia com deposição preferencial em tronco e ombros (que causa distocia de ombro), a organomegalia e a hipoglicemia neonatal quando o aporte cessa ao nascer. Uma gestante que já parte de obesidade tem resistência insulínica e inflamação de baixo grau prévias, além de reserva energética adequada: acrescentar massa gorda opera sobre um sistema já saturado e aumenta risco sem benefício fetal. No extremo oposto, o ganho insuficiente compromete a expansão do volume plasmático — que normalmente aumenta 40 a 50% e é essencial à perfusão placentária — e a reserva energética do terceiro trimestre, quando ocorre a maior parte do crescimento fetal. Vale registrar o que a distribuição do ganho revela: a termo, o feto responde por cerca de 3,5 kg, a placenta por 0,7, o líquido amniótico por 0,8, o útero por 1, as mamas por 0,5, o sangue por 1,5, o líquido extracelular por 1,5 e a reserva de gordura materna por 2 a 4 kg. Ou seja, boa parte do ganho recomendado **não é gordura**, e é por isso que a meta não pode ser extrapolada de recomendações de peso fora da gestação.',
   armadilhas: [
     'O peso pré-gestacional referido pela paciente costuma ser subestimado. Sempre que houver registro anterior, use-o.',
     'Ganho abrupto no terceiro trimestre com edema pode ser retenção hídrica de pré-eclâmpsia, não ganho nutricional — meça a pressão e pesquise proteinúria.',
+    'Um erro de 3 a 4 kg no peso pré-gestacional desloca a faixa de IMC e muda toda a recomendação. Vale insistir no registro anterior antes de aceitar o autorrelato.',
+    'O ganho não é linear: no primeiro trimestre espera-se de 0,5 a 2 kg no total, e a recomendação semanal se aplica ao segundo e terceiro trimestres. Aplicar a taxa semanal desde a concepção superestima.',
+    'As faixas do Institute of Medicine são de base populacional norte-americana. Elas orientam a conversa clínica; usá-las como meta rígida gera ansiedade sem benefício demonstrado.',
+    'Em gestação gemelar as faixas são maiores e distintas, e não há recomendação estabelecida para obesidade grau III nesse cenário.',
+    'Baixo ganho tratado apenas com orientação dietética, sem investigar náusea, insegurança alimentar e transtorno alimentar, tende a não funcionar — a causa quase sempre é específica e tratável.',
   ],
   referencias: [
     { texto: 'Institute of Medicine and National Research Council. Weight Gain During Pregnancy: Reexamining the Guidelines. Washington: National Academies Press; 2009.' },
@@ -509,11 +546,11 @@ const ila: Ferramenta = {
   resumo: 'Soma os quatro quadrantes e classifica oligoâmnio e polidrâmnio.',
   categorias: ['ginecologia'],
   campos: [
-    campoNum('q1', 'Quadrante superior direito', { unidade: 'cm', min: 0, max: 20, passo: 0.1 }),
+    campoNum('q1', 'Quadrante superior direito', { unidade: 'cm', min: 0, max: 20, passo: 0.1, ajuda: 'Maior bolsão VERTICAL do quadrante, com o transdutor perpendicular ao chão e sem comprimir o abdome. Pressão excessiva reduz a medida; incluir alça de cordão ou parte fetal a aumenta — use Doppler colorido para excluir cordão.' }),
     campoNum('q2', 'Quadrante superior esquerdo', { unidade: 'cm', min: 0, max: 20, passo: 0.1 }),
     campoNum('q3', 'Quadrante inferior direito', { unidade: 'cm', min: 0, max: 20, passo: 0.1 }),
     campoNum('q4', 'Quadrante inferior esquerdo', { unidade: 'cm', min: 0, max: 20, passo: 0.1 }),
-    campoNum('maiorBolsao', 'Maior bolsão vertical único', { unidade: 'cm', min: 0, max: 20, passo: 0.1, opcional: true }),
+    campoNum('maiorBolsao', 'Maior bolsão vertical único', { unidade: 'cm', min: 0, max: 20, passo: 0.1, opcional: true, ajuda: 'Opcional, mas RECOMENDADO: é o método com melhor desempenho. Cortes de menos de 2 cm para oligoâmnio e mais de 8 cm para polidrâmnio. Revisões sistemáticas mostram que usá-lo no lugar do índice reduz induções e cesarianas sem piorar o desfecho perinatal.' }),
     campoNum('semanas', 'Idade gestacional', { unidade: 'semanas', min: 16, max: 42, passo: 0.5, opcional: true }),
   ],
   calcular: (v) => {
@@ -547,12 +584,52 @@ const ila: Ferramenta = {
               : 'Volume de líquido amniótico dentro da normalidade.',
         'O líquido amniótico é produzido pela **diurese fetal** a partir do segundo trimestre e reabsorvido pela **deglutição fetal**. Essa fisiologia explica quase todo o diferencial: pouco líquido aponta para produção reduzida (hipoperfusão renal por insuficiência placentária, malformação renal) ou perda (rotura de membranas); muito líquido aponta para produção aumentada (hiperglicemia fetal) ou deglutição impedida.',
         'O volume aumenta até cerca de 33 a 34 semanas (aproximadamente 800 mL) e depois declina progressivamente até o termo, chegando a cerca de 400 mL na 42ª semana. Por isso o pós-datismo cursa fisiologicamente com menos líquido.',
+        'O líquido amniótico não é um reservatório estático: ele é **reciclado quase inteiramente a cada dia**. A termo, o feto produz cerca de 800 a 1.200 mL de urina por dia e deglute 500 a 1.000 mL, com o restante reabsorvido pela via intramembranosa (através das membranas para a circulação fetal) e uma pequena contribuição da secreção pulmonar. Como produção e reabsorção são da ordem de grandeza do volume total, **pequenos desequilíbrios produzem alterações rápidas e amplas** — é isso que torna o líquido amniótico um marcador sensível, e também volátil. A consequência diagnóstica é direta: pouco líquido significa produção reduzida (hipoperfusão renal fetal por insuficiência placentária, agenesia ou obstrução renal, inibidores da ECA ou anti-inflamatórios que reduzem a filtração fetal) ou perda (rotura de membranas). Muito líquido significa produção aumentada (hiperglicemia fetal gerando poliúria osmótica no diabetes materno) ou deglutição impedida (atresia esofágica ou duodenal, anomalias do sistema nervoso central que comprometem a deglutição, obstrução por massa cervical).',
+        'A fisiopatologia do oligoâmnio por insuficiência placentária merece destaque porque é a mais comum e a mais silenciosa. Diante de hipóxia crônica, o feto redistribui o débito cardíaco para cérebro, coração e adrenais — a chamada **centralização** — à custa de rim, intestino e musculatura. A queda do fluxo renal reduz a diurese fetal e, portanto, o líquido amniótico. Isso significa que o oligoâmnio nesse contexto não é um problema em si: é o **sinal tardio** de uma adaptação que já vinha ocorrendo, e por isso ele se associa a restrição de crescimento e a desfecho perinatal adverso. É também a razão de o líquido amniótico integrar o perfil biofísico fetal como o único componente que reflete hipóxia **crônica**, enquanto movimentos, tônus e respiração refletem o estado agudo.',
+        'A escolha entre índice de líquido amniótico e **maior bolsão vertical único** já está resolvida pela evidência, e vale aplicá-la: revisões sistemáticas mostram que usar o índice em vez do maior bolsão aumenta o diagnóstico de oligoâmnio, as induções de parto e as cesarianas, **sem melhorar desfecho perinatal**. A explicação é estatística: o índice soma quatro medidas e portanto acumula quatro vezes o erro de cada uma, além de correlacionar-se apenas moderadamente com o volume real medido por diluição de corante. Vários serviços já adotaram o maior bolsão como método padrão, com cortes de menos de 2 cm para oligoâmnio e mais de 8 cm para polidrâmnio.',
+      ],
+      conduta: ila < 5
+        ? [
+            '**Confirme antes de agir.** Reavalie com técnica cuidadosa — transdutor perpendicular sem compressão, bolsão livre de cordão (use Doppler colorido) e de partes fetais — e confira o **maior bolsão vertical único**, que tem menos falso-positivo. Oligoâmnio diagnosticado pelo índice isolado gera indução e cesariana sem ganho perinatal.',
+            'Procure **rotura prematura de membranas**, a causa mais comum: história de perda de líquido, exame especular com visualização de saída pelo orifício cervical, teste de cristalização ou pesquisa de marcadores bioquímicos. Evite toque vaginal se houver suspeita e a gestação for pré-termo.',
+            'Avalie a **placenta e o crescimento fetal**: biometria com peso fetal estimado e percentil, Doppler de artéria umbilical, de artéria cerebral média e relação cerebroplacentária. Oligoâmnio com restrição de crescimento e Doppler alterado configura insuficiência placentária e muda completamente a conduta.',
+            'Revise **fármacos maternos**: inibidores da ECA e bloqueadores do receptor de angiotensina (contraindicados na gestação) e anti-inflamatórios não esteroidais reduzem a filtração glomerular fetal e, portanto, o líquido. Suspenda-os.',
+            'Se a idade gestacional for compatível, investigue **malformação do trato urinário fetal** — agenesia renal bilateral, rins policísticos, obstrução — com ultrassonografia morfológica dirigida.',
+            'Intensifique a vigilância de bem-estar fetal (cardiotocografia e perfil biofísico) e defina o momento do parto conforme idade gestacional, causa e vitalidade. A hidratação materna, oral ou intravenosa, aumenta transitoriamente o líquido e pode ser útil na avaliação, mas não trata a causa.',
+          ]
+        : ila > 24
+          ? [
+              'Investigue a causa em três frentes. **Diabetes materno** é a mais frequente: solicite teste oral de tolerância à glicose ou revise o controle glicêmico se o diagnóstico já existe — a hiperglicemia fetal gera poliúria osmótica.',
+              '**Ultrassonografia morfológica dirigida** para malformações que impedem a deglutição: atresia esofágica (procure a ausência de bolha gástrica), atresia duodenal (sinal da dupla bolha), anomalias do sistema nervoso central, massas cervicais e defeitos de parede. Avalie também hidropisia fetal e, em gemelares monocoriônicos, síndrome de transfusão feto-fetal.',
+              'Considere **infecção congênita** (sorologias para toxoplasmose, citomegalovírus, sífilis, parvovírus B19) e aloimunização com anemia fetal, avaliando o pico de velocidade sistólica da artéria cerebral média.',
+              'Cerca de 60% dos casos leves permanecem **idiopáticos** após investigação completa — informe isso à gestante, que costuma ficar mais ansiosa com a ausência de diagnóstico do que com o achado.',
+              'Antecipe as complicações da sobredistensão uterina: parto pré-termo, apresentação anômala, **prolapso de cordão** na rotura das membranas (planeje a assistência ao parto), descolamento prematuro de placenta na descompressão súbita e hemorragia pós-parto por atonia. Tenha uterotônico preparado.',
+              'Em polidrâmnio grave e sintomático (desconforto respiratório materno, contrações), considere **amniodrenagem** e indometacina antes de 32 semanas, ambas com riscos que exigem indicação criteriosa.',
+            ]
+          : ila <= 8
+            ? [
+                'Faixa limítrofe. **Reavalie em curto prazo** (3 a 7 dias) e confira o maior bolsão vertical único antes de qualquer decisão — o índice tem alta taxa de falso-positivo nesta zona e a conduta baseada nele isoladamente aumenta intervenções.',
+                'Correlacione com **crescimento fetal e Doppler**. Líquido limítrofe com biometria e Doppler normais tem significado bem diferente de líquido limítrofe com restrição de crescimento e centralização.',
+                'Oriente hidratação materna adequada e revise medicamentos. Pesquise perda de líquido por história e exame especular se houver qualquer relato.',
+              ]
+            : [
+                'Volume dentro da normalidade. Mantenha o pré-natal de rotina com a periodicidade habitual de avaliação de crescimento e vitalidade.',
+                'Lembre que o volume **declina fisiologicamente após 33 a 34 semanas**, chegando a cerca de 400 mL na 42ª semana. Um índice menor no termo pode ser normal — interprete pela idade gestacional.',
+                'Como o líquido é reciclado quase inteiramente a cada dia, ele muda rápido: um valor normal hoje não dispensa reavaliação se surgirem restrição de crescimento, redução dos movimentos fetais ou suspeita de perda de líquido.',
+              ],
+      alertas: [
+        '**Usar o índice em vez do maior bolsão aumenta induções e cesarianas sem melhorar desfecho perinatal** — achado consistente em revisões sistemáticas. Confirme sempre com o maior bolsão vertical único (oligoâmnio abaixo de 2 cm, polidrâmnio acima de 8 cm) antes de intervir.',
+        'A técnica domina o resultado: pressão excessiva do transdutor reduz o bolsão medido, inclusão de alça de cordão ou de parte fetal o aumenta, e a posição materna altera a distribuição. Use Doppler colorido para excluir cordão.',
+        'Oligoâmnio por insuficiência placentária é **sinal tardio**: a centralização do fluxo fetal, que reduz a diurese, já vinha ocorrendo antes. Avalie crescimento e Doppler, não apenas o líquido.',
+        'Suspeita de rotura prematura de membranas contraindica toque vaginal na gestação pré-termo, pelo risco de corioamnionite. Use exame especular.',
+        'Inibidores da ECA e bloqueadores do receptor de angiotensina são contraindicados na gestação e causam oligoâmnio com disfunção renal fetal. Anti-inflamatórios não esteroidais têm efeito semelhante e também fecham o ducto arterial.',
+        'Polidrâmnio agudo ou de instalação rápida em gemelar monocoriônico sugere **síndrome de transfusão feto-fetal**, que é emergência com tratamento específico (fotocoagulação a laser) e janela terapêutica curta.',
       ],
     }
   },
   formula: ['ILA = soma dos maiores bolsões verticais dos 4 quadrantes uterinos', 'Maior bolsão vertical único: normal entre 2 e 8 cm'],
   fundamento:
-    'A técnica divide o útero em quatro quadrantes pelas linhas mediana vertical e transversa umbilical, e mede o maior bolsão vertical livre de cordão e de partes fetais em cada um. A soma correlaciona-se moderadamente com o volume real medido por diluição de corante — e essa correlação apenas moderada é a raiz das limitações do método.',
+    'A técnica divide o útero em quatro quadrantes pelas linhas mediana vertical e transversa umbilical, e mede o maior bolsão vertical livre de cordão e de partes fetais em cada um. A soma correlaciona-se moderadamente com o volume real medido por diluição de corante — e essa correlação apenas moderada é a raiz das limitações do método. O que se está tentando estimar é um compartimento notavelmente dinâmico: a termo, o feto produz 800 a 1.200 mL de urina por dia e deglute 500 a 1.000 mL, com o restante reabsorvido pela via intramembranosa e alguma contribuição da secreção pulmonar. Como a taxa de renovação é da ordem do volume total, **pequenos desequilíbrios entre produção e reabsorção geram alterações rápidas e amplas** — o que torna o líquido amniótico um marcador sensível e, ao mesmo tempo, volátil. Essa fisiologia organiza todo o diagnóstico diferencial em dois eixos. Volume baixo indica produção reduzida (hipoperfusão renal fetal na insuficiência placentária, agenesia ou obstrução renal, inibidores da ECA e anti-inflamatórios que reduzem a filtração fetal) ou perda (rotura de membranas). Volume alto indica produção aumentada (poliúria osmótica pela hiperglicemia fetal no diabetes materno) ou deglutição impedida (atresia esofágica, atresia duodenal, anomalias do sistema nervoso central). No caso particular da insuficiência placentária, o oligoâmnio é consequência da **centralização**: diante de hipóxia crônica, o feto redistribui o débito para cérebro, coração e adrenais à custa de rim, intestino e músculo, e a queda do fluxo renal reduz a diurese. Isso faz do líquido amniótico o único componente do perfil biofísico que reflete hipóxia **crônica**, enquanto movimentos, tônus e respiração refletem o estado agudo — e explica por que ele é um sinal tardio, que aparece depois de a adaptação já estar em curso. Quanto ao método em si, a evidência é desfavorável ao índice: por somar quatro medidas, ele acumula quatro vezes o erro de cada uma, e revisões sistemáticas mostram que substituí-lo pelo maior bolsão vertical único reduz diagnósticos de oligoâmnio, induções e cesarianas **sem piorar** o desfecho perinatal. Vários serviços já adotaram o maior bolsão como padrão.',
   armadilhas: [
     'O índice depende da técnica: pressão excessiva do transdutor, inclusão de alça de cordão e posição materna alteram o resultado.',
     'Revisões sistemáticas mostram que **usar o índice em vez do maior bolsão aumenta intervenções sem melhorar desfecho perinatal**. Vários serviços já adotaram o maior bolsão como método padrão.',
