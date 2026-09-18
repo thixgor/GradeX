@@ -263,19 +263,19 @@ const abcd2: Ferramenta = {
   resumo: 'Risco de AVC nos dias seguintes a um ataque isquêmico transitório.',
   categorias: ['neurologia', 'emergencia'],
   campos: [
-    campoSimNao('a', 'Idade ≥ 60 anos', 1),
-    campoSimNao('b', 'PA ≥ 140/90 mmHg na avaliação inicial', 1),
+    campoSimNao('a', 'Idade ≥ 60 anos', 1, 'Marcador de carga aterosclerótica acumulada, não de gravidade do evento atual.'),
+    campoSimNao('b', 'PA ≥ 140/90 mmHg na avaliação inicial', 1, 'A PA da primeira avaliação, não a habitual do paciente nem a de horas depois. Basta um dos dois valores atingir o corte.'),
     campoOpc('c', 'Características clínicas', [
       { valor: '2', rotulo: 'Fraqueza unilateral', pontos: 2 },
       { valor: '1', rotulo: 'Distúrbio de fala sem fraqueza', pontos: 1 },
-      { valor: '0', rotulo: 'Outros sintomas', pontos: 0 },
-    ]),
+      { valor: '0', rotulo: 'Outros sintomas', pontos: 0, descricao: 'Sintomas sensitivos isolados, tontura, alteração visual isolada. Cuidado: parte destes não é ataque isquêmico transitório, e sim enxaqueca, crise epiléptica, síncope ou vertigem periférica.' },
+    ], { ajuda: 'Fraqueza unilateral vale o dobro do distúrbio de fala porque indica território arterial maior e mecanismo mais provavelmente ateroembólico de grande vaso.' }),
     campoOpc('d', 'Duração dos sintomas', [
       { valor: '2', rotulo: '≥ 60 minutos', pontos: 2 },
       { valor: '1', rotulo: '10 a 59 minutos', pontos: 1 },
       { valor: '0', rotulo: '< 10 minutos', pontos: 0 },
-    ]),
-    campoSimNao('d2', 'Diabetes mellitus', 1),
+    ], { ajuda: 'Duração do episódio mais longo, medida pelo relato mais confiável disponível. Se os sintomas persistem no momento da avaliação, não é ataque transitório — é AVC em curso, e a via é a de trombólise, não a de escore.' }),
+    campoSimNao('d2', 'Diabetes mellitus', 1, 'Diagnóstico prévio ou em uso de hipoglicemiante. É o segundo D do acrônimo, somado à Duração.'),
   ],
   calcular: (v) => {
     const c = num(v, 'c')
@@ -299,15 +299,46 @@ const abcd2: Ferramenta = {
         'A investigação mínima e urgente inclui neuroimagem (preferencialmente ressonância com difusão, que revela infarto em até metade dos ataques transitórios "clínicos"), imagem vascular de carótidas e intracraniana, eletrocardiograma com monitorização prolongada e perfil metabólico.',
         '**Antiagregação dupla precoce** com AAS mais clopidogrel por 21 dias, iniciada nas primeiras 24 horas, reduz recorrência em ataque transitório de alto risco (ABCD² ≥ 4) e AVC menor (NIHSS ≤ 3) — resultado dos ensaios CHANCE e POINT. Depois desse período, mantém-se monoterapia.',
         'Estenose carotídea sintomática de 70 a 99% tem indicação de revascularização preferencialmente **nas primeiras duas semanas**; o benefício cai rapidamente com o tempo.',
+        'A urgência do ataque isquêmico transitório se entende pela fisiopatologia da **placa instável**. O evento transitório quase nunca é um fenômeno isolado e benigno: é a manifestação clínica de uma superfície trombogênica ativa. Quando a capa fibrosa de uma placa aterosclerótica se rompe, expõe o núcleo lipídico rico em fator tecidual e colágeno subendotelial, que ativa plaquetas e a cascata de coagulação. O trombo plaquetário que se forma sobre essa lesão é friável e se fragmenta, embolizando distalmente — e se o êmbolo é pequeno e a fibrinólise endógena o dissolve rápido, o déficit é transitório. Mas a placa continua exposta, e o processo se repete com trombos progressivamente maiores. É por isso que o risco de AVC é máximo nas primeiras 48 horas e decai depois: existe uma janela em que a lesão está ativa, e é nela que a dupla antiagregação e a revascularização carotídea produzem quase todo o seu benefício. A mesma lógica explica a hierarquia de pontos do escore — fraqueza unilateral e duração longa indicam oclusão de vaso maior, típica de embolia de grande artéria, enquanto sintomas vagos e breves são mais compatíveis com doença de pequeno vaso ou com diagnósticos alternativos. O corolário prático é o mais importante: o escore estima risco, mas o mecanismo é que define a conduta, e o mecanismo se descobre com imagem vascular e monitorização de ritmo, não com pontuação.',
       ],
+      conduta: [
+        'Investigue **com urgência, independentemente do escore**. A meta é completar a avaliação em 24 a 48 horas, em unidade de AVC, serviço de emergência ou clínica de ataque transitório de acesso rápido — os ensaios EXPRESS e SOS-TIA mostraram redução de cerca de 80% no risco de AVC subsequente com avaliação e tratamento imediatos.',
+        'Investigação mínima: **neuroimagem** (ressonância com difusão é preferível, pois revela infarto em até metade dos ataques clinicamente "transitórios"), **imagem vascular** de carótidas e circulação intracraniana (angiotomografia, angiorressonância ou dúplex), **eletrocardiograma com monitorização prolongada** (Holter de 24 a 72 horas ou mais, porque fibrilação atrial paroxística é subdiagnosticada) e perfil metabólico com glicemia, lipidograma e função renal.',
+        total >= 4
+          ? '**Antiagregação dupla precoce**: AAS 100 a 300 mg de ataque seguido de 100 mg/dia, associado a clopidogrel 300 mg de ataque e 75 mg/dia, iniciada nas primeiras 24 horas e mantida por 21 dias, depois monoterapia. O benefício vem dos ensaios CHANCE e POINT em ataque transitório de alto risco (ABCD² ≥ 4) e AVC menor (NIHSS ≤ 3), e concentra-se nas primeiras semanas — prolongar a dupla aumenta sangramento sem ganho.'
+          : 'Antiagregação simples com AAS 100 mg/dia é suficiente no escore baixo, salvo se a investigação revelar mecanismo de alto risco (estenose sintomática, fibrilação atrial, trombo intracavitário) — nesse caso a conduta segue o mecanismo, não o escore.',
+        'Trate a causa assim que ela aparecer: **estenose carotídea sintomática de 70 a 99%** tem indicação de endarterectomia ou angioplastia preferencialmente nas primeiras duas semanas, e o benefício cai rapidamente depois disso; **fibrilação atrial** indica anticoagulação plena (calcule o CHA₂DS₂-VASc e o HAS-BLED), não antiagregante.',
+        'Instale a prevenção secundária completa antes da alta, porque ela não acontece sozinha depois: estatina de alta potência com alvo de LDL abaixo de 70 mg/dL (ou 55 em alto risco), controle pressórico progressivo, controle glicêmico, cessação do tabagismo, atividade física e orientação sobre reconhecimento de sinais de AVC.',
+        'Oriente o paciente e a família explicitamente: sintoma novo é emergência e a via é o serviço de emergência, não a consulta de retorno. Um ataque transitório bem investigado e mal comunicado ainda resulta em chegada tardia no próximo evento.',
+      ],
+      alertas: [
+        'O ABCD² **não** deve ser usado para decidir quem investiga. As diretrizes atuais recomendam investigação urgente de todo ataque isquêmico transitório, e escore baixo com estenose carotídea crítica ou fibrilação atrial não é baixo risco — o escore não vê o mecanismo.',
+        'Se os sintomas persistem no momento da avaliação, não é ataque transitório: é AVC em curso, e a conduta é o protocolo de reperfusão com tempo de porta-agulha, não a aplicação de escore.',
+        'A discriminação é apenas moderada em validações externas, e pior quando aplicado por não neurologistas — parte dos casos rotulados como ataque transitório é enxaqueca com aura, crise epiléptica focal, síncope, vertigem periférica ou hipoglicemia.',
+        'Não se aplica a eventos de território posterior com sintomas atípicos, nem substitui a avaliação de dissecção arterial em paciente jovem com cervicalgia ou cefaleia associada.',
+      ],
+      tabela: {
+        titulo: 'Risco de AVC após ataque isquêmico transitório',
+        colunas: ['Pontos', 'Risco', 'Em 2 dias', 'Em 7 dias', 'Em 90 dias'],
+        linhas: [
+          ['0 – 3', 'Baixo', '1,0%', '1,2%', '3,1%'],
+          ['4 – 5', 'Moderado', '4,1%', '5,9%', '9,8%'],
+          ['6 – 7', 'Alto', '8,1%', '11,7%', '17,8%'],
+        ],
+        destaque: faixa,
+      },
     }
   },
   formula: ['A (idade ≥ 60) 1 + B (PA ≥ 140/90) 1 + C (clínica) 0–2 + D (duração) 0–2 + D (diabetes) 1'],
   fundamento:
-    'O escore foi derivado da união de duas coortes britânicas e traduz o que a fisiopatologia sugere: sintomas motores e duração longa indicam território arterial maior e mecanismo mais provavelmente ateroembólico; idade, hipertensão e diabetes indicam carga aterosclerótica. É um marcador de substrato, não de gatilho.',
+    'O escore foi derivado da união de duas coortes britânicas e traduz o que a fisiopatologia sugere: sintomas motores e duração longa indicam território arterial maior e mecanismo mais provavelmente ateroembólico; idade, hipertensão e diabetes indicam carga aterosclerótica. É um marcador de substrato, não de gatilho. Entender o substrato explica a urgência: o ataque isquêmico transitório é a manifestação de uma **placa instável ativa**. A ruptura da capa fibrosa expõe o núcleo lipídico rico em fator tecidual e o colágeno subendotelial, formando sobre a lesão um trombo plaquetário friável que se fragmenta e emboliza distalmente. Quando o êmbolo é pequeno e a fibrinólise endógena o dissolve rapidamente, o déficit regride — mas a superfície trombogênica permanece, e o processo se repete com trombos cada vez maiores. Daí o risco de AVC ser máximo nas primeiras 48 horas e decair progressivamente: existe uma janela de atividade da lesão, e é exatamente nela que a dupla antiagregação e a revascularização carotídea concentram seu benefício. Essa compreensão mudou o papel clínico do escore. Quando foi publicado, o ABCD² servia para triar quem precisava de internação e investigação imediata; depois que o EXPRESS e o SOS-TIA demonstraram redução de cerca de 80% no risco de AVC com avaliação e tratamento urgentes para todos, a triagem perdeu sentido — não há faixa de risco tão baixa que justifique esperar. O escore sobreviveu com duas funções mais modestas e ainda úteis: estimar risco para comunicar ao paciente e à equipe, e definir o limiar de ABCD² ≥ 4 que os ensaios CHANCE e POINT usaram para indicar dupla antiagregação por 21 dias.',
   armadilhas: [
     'Escore baixo com estenose carotídea crítica ou fibrilação atrial não é baixo risco. O ABCD² não vê o mecanismo.',
     'Discriminação apenas moderada em validações externas, com desempenho pior nas mãos de não neurologistas — parte dos "ataques transitórios" avaliados são, na verdade, enxaqueca, crise epiléptica ou síncope.',
+    'Usar o escore como triagem para decidir quem investiga contraria as diretrizes atuais: todo ataque isquêmico transitório merece investigação urgente, e a maior parte do benefício do tratamento está nas primeiras 48 horas.',
+    'Sintomas ainda presentes na avaliação descaracterizam o diagnóstico de evento transitório. Aplicar o escore nessa situação atrasa o protocolo de reperfusão, que é a conduta correta.',
+    'O item de pressão arterial usa a medida da avaliação inicial. Elevação reativa ao evento é comum e pontua, o que é intencional — mas não deve ser tratada agressivamente na fase aguda.',
+    'Ressonância com difusão normal não exclui o diagnóstico, e ressonância alterada reclassifica o caso como AVC isquêmico mesmo com sintomas já resolvidos, com implicações para direção de veículos, atestados e prevenção secundária.',
   ],
   referencias: [
     { texto: 'Johnston SC, Rothwell PM, Nguyen-Huynh MN, et al. Validation and refinement of scores to predict very early stroke risk after transient ischaemic attack. Lancet. 2007;369(9558):283-292.' },
@@ -464,7 +495,7 @@ const rankin: Ferramenta = {
       { valor: '4', rotulo: '4 — incapacidade moderada a grave; não caminha nem cuida de si sem assistência', pontos: 4 },
       { valor: '5', rotulo: '5 — incapacidade grave; acamado, incontinente, requer cuidado constante', pontos: 5 },
       { valor: '6', rotulo: '6 — óbito', pontos: 6 },
-    ]),
+    ], { ajuda: 'Use entrevista estruturada, não impressão de corredor: as três perguntas que resolvem a maioria dos casos são "o senhor precisa de ajuda de outra pessoa para se vestir, comer ou ir ao banheiro?" (separa 2 de 3), "consegue caminhar sozinho, mesmo com bengala?" (separa 3 de 4) e "voltou a fazer tudo o que fazia antes?" (separa 1 de 2). Bengala, andador e adaptações não contam como ajuda de pessoa. Registre também o mRS prévio ao evento — sem ele, o grau atual não é interpretável.' }),
   ],
   calcular: (v) => {
     const g = num(v, 'grau')
@@ -484,15 +515,64 @@ const rankin: Ferramenta = {
         'A **transição entre 2 e 3** é a fronteira decisiva: separa quem cuida de si de quem depende de outra pessoa. É por isso que a dicotomização 0–2 versus 3–6 é a mais usada.',
         'Análises modernas preferem o **deslocamento ordinal** (shift analysis) à dicotomização: comparam toda a distribuição da escala entre os grupos, ganhando poder estatístico e capturando benefícios que a dicotomia esconde.',
         'A concordância entre examinadores melhora muito com entrevista estruturada e treinamento certificado — a versão livre da escala tem confiabilidade apenas moderada.',
+        'A escala tem consequência clínica direta e não apenas acadêmica, porque o **mRS prévio** entra nos critérios de elegibilidade das terapias de reperfusão e nas decisões de escalonamento. Trombectomia mecânica foi validada predominantemente em pacientes com mRS prévio de 0 ou 1, e muitos protocolos usam mRS ≤ 2 como limite para indicação; craniectomia descompressiva, internação em leito intensivo e metas de reabilitação também se orientam pela função basal. Isso cria uma responsabilidade prática frequentemente negligenciada: no atendimento agudo, alguém precisa apurar com o acompanhante como o paciente vivia **antes** do evento, e registrar isso. Sem esse dado, o mRS de saída não tem denominador — um grau 3 num paciente que já era grau 3 significa ausência de dano funcional novo, e num paciente que era grau 0 significa perda de autonomia.',
+        'Vale entender por que a fronteira entre 2 e 3 é tão decisiva e ao mesmo tempo tão difícil de medir. Ela não separa gravidade de déficit, mas **dependência de outra pessoa** — e essa é uma variável que integra o déficit neurológico com a reserva cognitiva, o suporte familiar, a adaptação do domicílio e a própria personalidade do paciente. Dois pacientes com hemiparesia idêntica podem acabar em graus diferentes conforme conseguiram ou não reorganizar a vida ao redor da limitação. É isso que torna a escala clinicamente significativa (ela mede o que o paciente sente como perda) e psicometricamente difícil (ela depende de contexto), o que explica por que a confiabilidade melhora tanto com entrevista estruturada e treinamento certificado.',
       ],
+      conduta: g === 6
+        ? [
+            'Registro de óbito. Documente a causa imediata e a relação com o evento cerebrovascular, o que importa para registro epidemiológico, auditoria de qualidade da linha de cuidado e para a família.',
+            'Ofereça acolhimento e, quando pertinente, discussão sobre doação de órgãos e tecidos conforme protocolo institucional e legislação.',
+            'Revise o caso em reunião de morbimortalidade: tempo porta-agulha, tempo porta-punção, elegibilidade a reperfusão e complicações evitáveis são os pontos que mudam o próximo paciente.',
+          ]
+        : bom
+          ? [
+              'Desfecho favorável. Consolide a **prevenção secundária**, que é onde se ganha o próximo ano: antitrombótico conforme o mecanismo (antiagregante na aterosclerose e no pequeno vaso, anticoagulante na fibrilação atrial), estatina de alta potência com alvo de LDL abaixo de 70 mg/dL, controle pressórico progressivo, controle glicêmico e cessação do tabagismo.',
+              'Mantenha reabilitação ambulatorial mesmo com boa recuperação: fisioterapia, terapia ocupacional e fonoaudiologia conforme o déficit residual. Grau 1 e 2 frequentemente carregam limitações que não aparecem na escala — fadiga, disfunção executiva leve, alteração de humor.',
+              'Rastreie ativamente **depressão pós-AVC**, que atinge cerca de um terço dos pacientes, é subdiagnosticada e piora a recuperação funcional. Rastreie também déficit cognitivo vascular e apneia do sono, que é comum e tratável.',
+              'Oriente sobre retorno ao trabalho, à direção de veículos e à atividade sexual — dúvidas quase universais e quase nunca abordadas. Reforce o reconhecimento de sinais de AVC e a via de emergência.',
+            ]
+          : [
+              'Desfecho desfavorável: a prioridade passa a ser **reabilitação intensiva e precoce** em equipe multiprofissional. O ganho funcional é maior nos primeiros 3 a 6 meses, e o encaminhamento tardio perde a janela de maior neuroplasticidade.',
+              'Previna as complicações que determinam mortalidade nesta faixa e que são todas evitáveis: broncoaspiração (avaliação de disfagia antes de qualquer oferta por via oral, e sonda enteral se indicada), tromboembolismo venoso (profilaxia farmacológica e compressão), lesão por pressão (escala de Braden, mudança de decúbito, superfície adequada), infecção urinária (evitar cateter vesical de demora) e contraturas com dor de ombro.',
+              g >= 5
+                ? 'No grau 5, discuta objetivos de cuidado de forma explícita com o paciente, quando possível, e com a família: metas realistas de reabilitação, preferências sobre gastrostomia, traqueostomia, reinternação e escalonamento de suporte. Cuidados paliativos concomitantes são parte do tratamento nessa faixa, não a sua interrupção.'
+                : 'Avalie e prescreva órteses, dispositivos de marcha e adaptações do domicílio, e treine o cuidador formalmente. Aplique a escala de Zarit para sobrecarga do cuidador — cuidador exausto é fator de risco para reinternação do paciente.',
+              'Não abandone a prevenção secundária por causa da incapacidade: recorrência num paciente já dependente é catastrófica. Mantenha antitrombótico, estatina e controle pressórico, ajustando à deglutição e ao risco de queda.',
+              'Reavalie a escala em 90 dias e em 1 ano. A recuperação continua muito depois da alta, e um mRS 4 na alta hospitalar frequentemente vira 3 ou 2 com reabilitação adequada.',
+            ],
+      alertas: [
+        'Sem o **mRS prévio** registrado, o grau atual não é interpretável. Grau 3 em quem já era grau 3 significa ausência de dano funcional novo; em quem era grau 0, significa perda de autonomia.',
+        'A escala mede incapacidade global, não causa. Artrose, amputação, demência prévia, cegueira e doença pulmonar avançada elevam o grau sem qualquer relação com o AVC.',
+        'O mRS prévio entra em critérios de elegibilidade de trombectomia e de outras decisões de escalonamento. Estimá-lo de forma apressada ou generosa no atendimento agudo tem consequência terapêutica real.',
+        'Aplicada de memória, a variabilidade entre examinadores é grande, sobretudo entre os graus 2, 3 e 4 — exatamente onde está a fronteira que define desfecho favorável nos ensaios.',
+        'Um único valor não descreve a trajetória. A recuperação se estende por meses, e o mRS da alta hospitalar subestima sistematicamente o desfecho de 90 dias.',
+      ],
+      tabela: {
+        titulo: 'Graus, pergunta que os separa e prioridade clínica',
+        colunas: ['Grau', 'Definição', 'Pergunta discriminante', 'Prioridade'],
+        linhas: [
+          ['0', 'Sem sintomas', '—', 'Prevenção secundária'],
+          ['1', 'Sintomas sem incapacidade', 'Voltou a fazer tudo o que fazia?', 'Prevenção secundária e rastreio de depressão'],
+          ['2', 'Incapacidade leve, independente', 'Cuida de si sem ajuda de pessoa?', 'Reabilitação ambulatorial'],
+          ['3', 'Requer alguma ajuda, caminha só', 'Caminha sem assistência de pessoa?', 'Reabilitação intensiva'],
+          ['4', 'Não caminha nem cuida de si só', '—', 'Reabilitação e prevenção de complicações'],
+          ['5', 'Acamado, cuidado constante', '—', 'Metas de cuidado e suporte ao cuidador'],
+          ['6', 'Óbito', '—', 'Revisão de caso e acolhimento'],
+        ],
+        destaque: g,
+      },
     }
   },
   formula: ['Escala ordinal de 0 (sem sintomas) a 6 (óbito)'],
   fundamento:
-    'Rankin propôs a escala original em 1957, com cinco graus; a versão modificada, do grupo de Oxford, acrescentou o grau 0 e refinou as definições. Sua persistência por décadas se explica por medir função global — e não domínio específico —, o que a torna comparável entre estudos, entre países e entre tipos de AVC.',
+    'Rankin propôs a escala original em 1957, com cinco graus; a versão modificada, do grupo de Oxford, acrescentou o grau 0 e refinou as definições. Sua persistência por décadas se explica por medir função global — e não domínio específico —, o que a torna comparável entre estudos, entre países e entre tipos de AVC. A decisão conceitual que a tornou dominante foi medir **o que o paciente consegue fazer da vida**, e não o tamanho do déficit neurológico. As duas coisas se correlacionam apenas parcialmente, e é justamente na discrepância que está o valor da escala: um NIHSS de 4 causado por afasia de expressão pode significar mRS 3, porque impede trabalhar e resolver a própria vida, enquanto um NIHSS de 8 por hemiparesia em boa recuperação pode significar mRS 1. Nenhum escore de déficit captura isso. A fronteira entre 2 e 3 é a mais importante da escala porque separa autonomia de dependência de outra pessoa — não gravidade de lesão —, e é por isso que a dicotomização em 0–2 versus 3–6 se consolidou como desfecho favorável na maioria dos ensaios. Essa mesma fronteira é a de pior concordância entre examinadores, porque a dependência integra déficit neurológico com reserva cognitiva, suporte familiar, adaptação do domicílio e personalidade: dois pacientes com lesões idênticas podem terminar em graus diferentes conforme conseguiram reorganizar a vida ao redor da limitação. A tensão entre significado clínico e reprodutibilidade psicométrica é inerente ao que a escala escolheu medir, e explica duas evoluções metodológicas recentes: a entrevista estruturada com certificação de examinadores, que eleva substancialmente a confiabilidade, e a análise de **deslocamento ordinal** (shift analysis), que compara toda a distribuição da escala entre os grupos em vez de dicotomizá-la, ganhando poder estatístico e capturando benefícios de um grau que a dicotomia descarta.',
   armadilhas: [
     'Aplicada de memória, sem entrevista estruturada, produz variabilidade grande, sobretudo entre os graus 2, 3 e 4.',
     'Não distingue causa da incapacidade: comorbidade ortopédica ou demência prévia elevam a pontuação sem relação com o AVC. Registre sempre o mRS **prévio**.',
+    'Bengala, andador, cadeira de rodas e adaptações do domicílio **não** contam como ajuda de outra pessoa. O critério do grau 3 é assistência humana, não uso de dispositivo.',
+    'O mRS da alta hospitalar subestima o desfecho de 90 dias, porque a recuperação se estende por meses. Comparar mRS de alta com mRS de 90 dias de outro serviço é comparar medidas diferentes.',
+    'Incontinência isolada não define grau 5: o grau 5 exige o conjunto de acamado, incontinente e necessidade de cuidado constante.',
+    'Como o mRS prévio condiciona elegibilidade a trombectomia, estimá-lo com generosidade no atendimento agudo pode levar a indicar terapia de reperfusão em paciente já muito dependente, e estimá-lo com rigor excessivo pode negar tratamento a quem se beneficiaria.',
   ],
   referencias: [
     { texto: 'van Swieten JC, Koudstaal PJ, Visser MC, Schouten HJ, van Gijn J. Interobserver agreement for the assessment of handicap in stroke patients. Stroke. 1988;19(5):604-607.' },
@@ -574,7 +654,7 @@ const rass: Ferramenta = {
       { valor: '-3', rotulo: '−3 — sedação moderada: movimenta ou abre os olhos ao chamado, sem contato visual', pontos: -3 },
       { valor: '-4', rotulo: '−4 — sedação profunda: sem resposta ao chamado, mas movimenta ao estímulo físico', pontos: -4 },
       { valor: '-5', rotulo: '−5 — não desperta: sem resposta ao chamado nem ao estímulo físico', pontos: -5 },
-    ]),
+    ], { ajuda: 'Siga a sequência de três passos, sempre nesta ordem — ela é o que dá reprodutibilidade à escala. 1) OBSERVE por 10 s sem tocar nem falar: se o paciente está alerta, inquieto ou agitado, o nível está entre 0 e +4 e a avaliação termina aqui. 2) CHAME pelo nome em voz alta e peça que abra os olhos e olhe para você: contato visual mantido por mais de 10 s é −1, menos de 10 s é −2, e movimento ou abertura ocular sem contato visual é −3. 3) ESTIMULE fisicamente (sacuda o ombro e, se necessário, comprima o esterno): resposta motora é −4, ausência total é −5.' }),
   ],
   calcular: (v) => {
     const r = num(v, 'rass')
@@ -594,15 +674,67 @@ const rass: Ferramenta = {
         'A sedação leve é a recomendação padrão das diretrizes PADIS. Sedação profunda desnecessária associa-se a mais dias de ventilação, mais delirium, mais fraqueza adquirida na UTI e maior mortalidade.',
         'O pacote **ABCDEF** organiza a prática: **A**valiar e tratar dor; **B**oth (teste de despertar diário e teste de respiração espontânea); **C**hoice de sedativo e analgésico; **D**elirium — monitorizar e tratar; **E**arly mobility (mobilização precoce); **F**amily engagement (envolvimento da família).',
         'Analgesia primeiro: boa parte da agitação em UTI é dor não tratada, e a estratégia baseada em analgesia (analgosedação) reduz a necessidade de hipnótico. Propofol e dexmedetomidina são preferíveis a benzodiazepínicos, que se associam independentemente a mais delirium.',
+        'A recomendação de sedação leve não é preferência estética — cada nível desnecessário abaixo de −2 tem custo fisiopatológico mensurável em quatro sistemas. No **cérebro**, benzodiazepínico e, em menor grau, propofol favorecem delirium por desequilíbrio colinérgico-dopaminérgico, neuroinflamação com ativação microglial e disfunção da barreira hematoencefálica; o midazolam é fator de risco independente e dose-dependente, e cada dia de delirium se associa a pior desempenho cognitivo meses depois. No **diafragma**, a ventilação totalmente controlada descarrega a fibra muscular e desencadeia proteólise pela via ubiquitina-proteassoma com atrofia mensurável em cerca de 18 horas — mais rápida que na musculatura periférica, o que é a base da fraqueza diafragmática induzida pelo ventilador e do desmame difícil. No **pulmão**, abolir o esforço espontâneo elimina a contração diafragmática que ventila preferencialmente as regiões dorsais dependentes, favorecendo atelectasia e piorando a relação ventilação-perfusão. E na **hemodinâmica**, propofol e dexmedetomidina reduzem tônus simpático, pré-carga e resistência vascular sistêmica, produzindo hipotensão que costuma ser tratada com volume e vasopressor em vez de com redução da dose — trocando um problema iatrogênico por outro.',
+        r >= 3
+          ? 'Agitação de +3 ou +4 é risco imediato de autoextubação, perda de acesso e lesão à equipe. É a única faixa em que a intervenção imediata precede a investigação da causa — mas apenas precede, não substitui.'
+          : r <= -4
+            ? 'Em −4 e −5 o delirium não pode ser avaliado e o paciente não participa de nada: nem do teste de respiração espontânea, nem da mobilização, nem da comunicação com a família. Todo o pacote ABCDEF fica suspenso enquanto a sedação estiver nessa faixa.'
+            : 'Registre o valor a cada 2 a 4 horas e a cada mudança de dose. A escala só cumpre sua função quando seriada: um valor isolado não mostra a deriva progressiva para sedação mais profunda, que é o padrão quando ninguém mede.',
       ],
+      conduta: r >= 2
+        ? [
+            'Garanta a segurança primeiro em +3 e +4: risco de autoextubação, perda de acesso venoso e lesão à equipe. Intervenção farmacológica imediata é justificada nessa faixa, mas não encerra a avaliação.',
+            'Trate a **dor** antes de aumentar hipnótico — é a causa mais comum e mais subtratada de agitação em UTI. Use escala comportamental (BPS ou CPOT) no paciente sem comunicação e titule opioide; a analgosedação reduz a necessidade de sedativo.',
+            'Descarte as causas orgânicas que se apresentam como agitação: hipoxemia, hipercapnia, hipoglicemia, hipotensão, hipertensão intracraniana, retenção urinária, distensão abdominal, constipação, privação de sono, abstinência de álcool, nicotina, opioide ou benzodiazepínico, e **assincronia com o ventilador** — que se resolve ajustando o ventilador, não sedando o paciente.',
+            'Rastreie **delirium** com o CAM-ICU (avaliável com RASS ≥ −3). Se positivo, priorize medidas não farmacológicas — reorientação, óculos e aparelho auditivo, ciclo dia-noite, mobilização, presença de familiar — e evite benzodiazepínico. Para agitação que ameaça a segurança, prefira dexmedetomidina ou antipsicótico a benzodiazepínico.',
+          ]
+        : r >= -2
+          ? [
+              'Alvo atingido. Mantenha a dose mínima eficaz e reavalie a cada 2 a 4 horas, registrando nível e horário — sem registro seriado, a sedação deriva silenciosamente para mais profunda.',
+              'Execute o pacote **ABCDEF** completo: avaliar e tratar dor, despertar diário com teste de respiração espontânea, escolha de sedativo poupador de benzodiazepínico, rastreio e manejo de delirium, mobilização precoce e envolvimento da família.',
+              'Aproveite a janela: RASS 0 a −2 é exatamente a faixa em que o paciente pode ser avaliado para desmame. Aplique o teste de respiração espontânea diário e apoie a decisão com o índice ROX ou o RSBI.',
+              'Rastreie delirium com o CAM-ICU ao menos uma vez por turno. Paciente calmo e dentro do alvo pode estar em delirium hipoativo, que é a forma mais comum, a de pior prognóstico e a que passa despercebida justamente por não incomodar.',
+            ]
+          : [
+              'Sedação mais profunda que o recomendado. Reduza a infusão ativamente, a menos que haja **indicação formal**: bloqueio neuromuscular, SDRA grave em fase inicial ou em prona, hipertensão intracraniana refratária, estado de mal epiléptico ou hipotermia terapêutica. Fora dessas, sedação profunda é dano evitável.',
+              'Programe interrupção diária da sedação com reavaliação neurológica, e documente o motivo sempre que a interrupção for suspensa. A combinação de despertar diário com teste de respiração espontânea reduz dias de ventilação e de UTI.',
+              'Troque benzodiazepínico por propofol ou dexmedetomidina se a sedação for necessária por mais de 24 a 48 horas. Midazolam acumula em tecido adiposo, tem metabólito ativo de excreção renal e é fator de risco independente para delirium.',
+              r <= -4
+                ? 'Em −4 ou −5, considere que a ausência de resposta pode não ser a sedação: descarte evento neurológico novo, hipoglicemia, hipotermia, uremia, hiperamonemia e **estado de mal não convulsivo** — nesse último, só o eletroencefalograma responde, e a escala não. Se há bloqueador neuromuscular em uso, a escala é inválida e a monitorização precisa ser objetiva.'
+                : 'Vigie a síndrome de infusão de propofol em dose alta e prolongada: acidose metabólica, rabdomiólise, hipertrigliceridemia e disfunção cardíaca. Considere também a carga calórica lipídica no balanço nutricional.',
+            ],
+      alertas: [
+        'A escala é **inválida sob bloqueio neuromuscular**: sem resposta motora, um paciente desperto e curarizado é indistinguível de um profundamente sedado. Garanta sedação profunda por protocolo e considere monitorização objetiva, como o índice bispectral.',
+        'Com RASS −4 ou −5 o **CAM-ICU não é aplicável** e o delirium fica invisível. Reavalie assim que o paciente despertar; não registre "sem delirium" em paciente não avaliável.',
+        'RASS não mede dor. Paciente em 0 pode estar com dor intensa, e paciente em −2 também. Use escala numérica se houver comunicação e BPS ou CPOT se não houver.',
+        'Delirium hipoativo cursa com RASS 0 ou negativo e é a forma mais frequente e de pior prognóstico. Calma não é sinônimo de ausência de delirium — é preciso rastrear ativamente.',
+        'Em lesão neurológica estrutural (AVC extenso, TCE, pós-operatório de neurocirurgia), a resposta reduzida pode ser a doença e não a sedação. Interpretar a escala como profundidade de sedação nesse contexto pode mascarar deterioração neurológica.',
+      ],
+      tabela: {
+        titulo: 'Faixas, leitura e consequências operacionais',
+        colunas: ['RASS', 'Estado', 'CAM-ICU avaliável?', 'Conduta'],
+        linhas: [
+          ['+3 a +4', 'Muito agitado ou combativo', 'Sim', 'Segurança imediata, depois dor e causa orgânica'],
+          ['+1 a +2', 'Inquieto ou agitado', 'Sim', 'Analgesia primeiro; rastrear delirium e assincronia'],
+          ['0 a −2', 'Alerta a sedação leve', 'Sim', 'Alvo: manter, despertar diário, mobilizar'],
+          ['−3', 'Sedação moderada', 'Sim (limite)', 'Reduzir dose se não houver indicação'],
+          ['−4 a −5', 'Sedação profunda', 'Não', 'Só com indicação formal; reavaliar causa'],
+        ],
+        destaque: r >= 3 ? 0 : r >= 1 ? 1 : r >= -2 ? 2 : r === -3 ? 3 : 4,
+      },
     }
   },
   formula: ['Escala ordinal de −5 (não desperta) a +4 (combativo)'],
   fundamento:
-    'A RASS foi validada num processo de três etapas com equipes multiprofissionais e é a escala de sedação com melhor confiabilidade entre observadores. Sua estrutura é lógica: primeiro observa-se o paciente, depois estimula-se verbalmente, e só então fisicamente — cada etapa determina uma faixa da escala, o que torna a aplicação rápida e reprodutível.',
+    'A RASS foi validada num processo de três etapas com equipes multiprofissionais e é a escala de sedação com melhor confiabilidade entre observadores. Sua estrutura é lógica: primeiro observa-se o paciente, depois estimula-se verbalmente, e só então fisicamente — cada etapa determina uma faixa da escala, o que torna a aplicação rápida e reprodutível. Duas decisões de desenho explicam por que ela superou a escala de Ramsay e as demais. A primeira é a **simetria em torno do zero**, com quatro níveis de agitação acima e cinco de sedação abaixo: isso reconhece que agitação e sedação excessiva são desvios em direções opostas de um mesmo alvo, e que a diferença entre inquietação (+1) e combatividade (+4) é clinicamente enorme — no Ramsay, os dois recebem o mesmo número. A segunda é o **estímulo graduado e padronizado**, em que o nível não é uma impressão global mas o resultado de um procedimento definido: observar por dez segundos, chamar pelo nome, tocar. Isso é o que elevou a concordância entre observadores a valores altos e reprodutíveis entre médicos, enfermeiros e fisioterapeutas. O detalhe mais elegante da escala é o uso da **duração do contato visual** para separar −1 de −2: dez segundos de fixação sustentada exigem atenção mantida, que depende de córtex e de sistema reticular ativador funcionantes, e por isso é um marcador sensível da transição entre sonolência e sedação verdadeira. Esse mesmo limiar tem consequência operacional direta: com RASS ≥ −3 o paciente consegue participar do CAM-ICU, e abaixo disso o delirium se torna simplesmente não avaliável — de modo que a escala de sedação define, na prática, se é possível ou não rastrear a complicação neurológica mais comum da terapia intensiva.',
   armadilhas: [
     'Aplicada sem a sequência padronizada (observar, chamar, tocar), a escala perde reprodutibilidade.',
     'RASS não substitui avaliação de dor. Use escala numérica em paciente comunicativo e escala comportamental (BPS ou CPOT) em paciente sem comunicação.',
+    'Inválida sob bloqueio neuromuscular, situação em que nenhuma escala comportamental funciona e a monitorização precisa ser objetiva.',
+    'Com −4 ou −5, o CAM-ICU não é aplicável. Registrar "sem delirium" em paciente não avaliável é erro de documentação com consequência clínica.',
+    'Em lesão neurológica estrutural, a resposta reduzida pode ser a doença e não o sedativo — nesse contexto, atribuir o valor à sedação pode ocultar deterioração.',
+    'Delirium hipoativo ocorre com RASS 0 ou negativo. Paciente calmo dentro do alvo ainda precisa de rastreio ativo.',
+    'Um valor isolado não serve para titular. Sem registro seriado com horário e dose, a sedação deriva progressivamente para níveis mais profundos sem que ninguém decida isso.',
   ],
   referencias: [
     { texto: 'Sessler CN, Gosnell MS, Grap MJ, et al. The Richmond Agitation-Sedation Scale: validity and reliability in adult intensive care unit patients. Am J Respir Crit Care Med. 2002;166(10):1338-1344.' },
@@ -690,7 +822,7 @@ const ramsay: Ferramenta = {
       { valor: '4', rotulo: '4 — dormindo, resposta viva a estímulo glabelar ou auditivo intenso', pontos: 4 },
       { valor: '5', rotulo: '5 — dormindo, resposta lenta a estímulo glabelar ou auditivo intenso', pontos: 5 },
       { valor: '6', rotulo: '6 — dormindo, sem resposta a estímulo', pontos: 6 },
-    ]),
+    ], { ajuda: 'Avalie observando primeiro, sem tocar. Só aplique estímulo (chamado pelo nome e, se necessário, percussão glabelar) se o paciente parecer dormindo — e registre o nível junto do horário e da dose de sedativo em curso, senão o número não serve para titular nada.' }),
   ],
   calcular: (v) => {
     const n = num(v, 'nivel')
@@ -708,15 +840,66 @@ const ramsay: Ferramenta = {
       interpretacao: [
         'A escala de Ramsay é de 1974 e foi a primeira escala de sedação amplamente adotada. Hoje é considerada inferior à RASS e à SAS por dois motivos: não separa bem os níveis de agitação (todos cabem no nível 1) e mistura estados de vigília com resposta a estímulo numa progressão pouco linear.',
         'Permanece em uso por familiaridade e por aparecer em protocolos institucionais antigos. Se o serviço adota Ramsay, use-a consistentemente; se for possível migrar, a RASS é a recomendação das diretrizes atuais.',
+        'O que justifica perseguir sedação leve (Ramsay 2 a 3) não é conforto, é fisiopatologia acumulada — e vale entender o custo da sedação profunda em cada sistema. No **cérebro**, a exposição prolongada a benzodiazepínico e a propofol produz delirium, cuja fisiopatologia envolve desequilíbrio colinérgico-dopaminérgico, neuroinflamação com ativação microglial e disfunção da barreira hematoencefálica; o midazolam é fator de risco independente e dose-dependente, e cada dia de delirium se associa a pior desempenho cognitivo em longo prazo. No **músculo**, a imobilidade sob sedação profunda desencadeia a fraqueza adquirida na UTI, com proteólise pela via ubiquitina-proteassoma, e o diafragma perde massa mais rápido que a musculatura periférica — há atrofia mensurável em 18 horas de ventilação totalmente controlada, porque a fibra diafragmática descarregada entra em proteólise acelerada. No **pulmão**, a supressão do drive abole o esforço espontâneo que ventila preferencialmente as regiões dorsais dependentes, favorecendo atelectasia e piorando a relação ventilação-perfusão. E na **hemodinâmica**, propofol e dexmedetomidina reduzem tônus simpático e pré-carga, gerando hipotensão que costuma ser tratada com volume e vasopressor em vez de com redução do sedativo. A soma desses mecanismos é o que os ensaios de interrupção diária e de sedação mínima demonstraram na prática: menos dias de ventilação, menos tempo de UTI e menos delirium. O nível de Ramsay é a única forma de saber se o paciente está onde se pretendia — sem escala registrada, a sedação sempre deriva para mais profunda do que se imagina.',
       ],
+      conduta: n === 1
+        ? [
+            'Antes de sedar, procure a causa: dor é a mais comum e a mais esquecida. Aplique **analgesia primeiro** (abordagem analgo-sedação): opioide titulado para a dor resolve boa parte da agitação sem hipnótico.',
+            'Depois da dor, descarte as causas orgânicas que se manifestam como agitação — hipoxemia, hipercapnia, hipoglicemia, hipotensão, retenção urinária, distensão abdominal, abstinência de álcool, benzodiazepínico ou opioide, e assincronia com o ventilador. Sedar um paciente hipóxico apaga o sinal e não a causa.',
+            'Rastreie **delirium** com o CAM-ICU. Se positivo, priorize medidas não farmacológicas (reorientação, óculos e aparelho auditivo, mobilização, higiene do sono, presença de familiar) e evite benzodiazepínico, que agrava; se for necessário fármaco na agitação que ameaça a segurança, prefira antipsicótico ou dexmedetomidina.',
+            'O nível 1 agrupa desde inquietação leve até combatividade perigosa. Se a distinção importar para a conduta — e importa —, migre para a RASS, que separa +1 de +4.',
+          ]
+        : n <= 3
+          ? [
+              'Alvo adequado. Mantenha e reavalie a cada 2 a 4 horas e a cada mudança de dose, registrando nível e horário. Sedação sem escala registrada deriva para profunda sem que ninguém perceba.',
+              'Aplique o pacote ABCDEF: avaliação e manejo da dor, despertar diário com teste de respiração espontânea, escolha de sedativo poupador de benzodiazepínico, rastreio e manejo de delirium, mobilização precoce e envolvimento da família.',
+              'Aproveite a janela de vigília para o **teste de respiração espontânea** diário. Paciente em Ramsay 2 a 3 é justamente o que pode ser avaliado para desmame, e o índice ROX ou o RSBI ajudam a decidir.',
+              'Prefira propofol ou dexmedetomidina a midazolam quando a sedação for necessária por mais de 24 a 48 horas — o benzodiazepínico acumula em tecido adiposo, tem metabólitos ativos e é fator de risco independente para delirium.',
+            ]
+          : [
+              'Sedação mais profunda que o recomendado. Reduza a infusão ativamente — não espere o próximo turno — a menos que haja **indicação formal** de sedação profunda: hipertensão intracraniana refratária, estado de mal epiléptico, SDRA grave em prona ou bloqueio neuromuscular, assincronia grave não resolvida ou hipotermia terapêutica.',
+              'Se houver bloqueador neuromuscular em uso, a escala **não se aplica**: o paciente pode estar plenamente consciente e paralisado. Nesse cenário, garanta sedação profunda por protocolo e considere monitorização objetiva (índice bispectral), porque nenhuma escala comportamental funciona sem resposta motora.',
+              'Reavalie a dose acumulada e o risco de acúmulo: midazolam e seus metabólitos acumulam na insuficiência renal e hepática e na obesidade; propofol em dose alta e prolongada exige vigilância para síndrome de infusão de propofol (acidose metabólica, rabdomiólise, hipertrigliceridemia, disfunção cardíaca) e para sobrecarga calórica lipídica.',
+              n === 6
+                ? 'Ramsay 6 sem indicação é sedação excessiva com custo mensurável. Além de reduzir a dose, considere que ausência de resposta pode não ser sedação: descarte evento neurológico novo, hipoglicemia, hipotermia e estado de mal não convulsivo — se houver dúvida, o eletroencefalograma responde e a escala não.'
+                : 'Programe interrupção diária da sedação com reavaliação, a menos que contraindicada, e registre o motivo sempre que a interrupção for suspensa.',
+            ],
+      alertas: [
+        'A escala não se aplica sob bloqueio neuromuscular: sem resposta motora, um paciente desperto e curarizado é indistinguível de um profundamente sedado. Garanta sedação por protocolo e considere monitorização objetiva.',
+        'Ramsay não avalia dor nem delirium. Sedação adequada com dor não tratada é frequente, e o paciente calmo pode estar delirante — use uma escala de dor (comportamental se não houver comunicação) e o CAM-ICU em paralelo.',
+        'Escala nenhuma substitui a busca da causa da agitação. Hipoxemia, hipercapnia, hipoglicemia, abstinência, retenção urinária e assincronia com o ventilador se manifestam como agitação, e sedar apaga o sinal sem tratar o problema.',
+        'As diretrizes atuais (PADIS 2018) recomendam RASS ou SAS. Use Ramsay apenas se for o padrão institucional, e de forma consistente — nunca alterne escalas entre turnos no mesmo paciente.',
+      ],
+      tabela: {
+        titulo: 'Ramsay, equivalência com a RASS e leitura',
+        colunas: ['Nível', 'Descrição', 'RASS aproximada', 'Leitura'],
+        linhas: [
+          ['1', 'Ansioso, agitado ou inquieto', '+1 a +4', 'Investigar dor, causa orgânica e delirium'],
+          ['2', 'Cooperativo, orientado, tranquilo', '0', 'Alvo ideal'],
+          ['3', 'Sonolento, responde a comandos', '−1 a −2', 'Alvo aceitável'],
+          ['4', 'Resposta viva ao estímulo glabelar', '−2 a −3', 'Mais profundo que o recomendado'],
+          ['5', 'Resposta lenta ao estímulo glabelar', '−3 a −4', 'Reduzir sedação'],
+          ['6', 'Sem resposta ao estímulo', '−5', 'Só com indicação formal'],
+        ],
+        destaque: n - 1,
+      },
     }
   },
   formula: ['Escala ordinal de 1 (agitado) a 6 (sem resposta)'],
   fundamento:
-    'Ramsay e colaboradores propuseram a escala num estudo sobre alfaxalona, com o objetivo prático de titular sedação. Sua limitação estrutural é que o nível 1 agrupa toda a agitação num único degrau, o que a torna cega para a diferença entre inquietação e combatividade.',
-  armadilhas: ['Não usa estímulo padronizado nem sequência definida, o que reduz a concordância entre observadores.'],
+    'Ramsay e colaboradores propuseram a escala em 1974, num estudo sobre a alfaxalona, com o objetivo prático de titular sedação — e ela tem o mérito histórico de ter sido a primeira tentativa de transformar "o paciente está bem sedado" numa medida comunicável entre turnos. Sua limitação estrutural é que o nível 1 agrupa toda a agitação num único degrau, o que a torna cega para a diferença entre inquietação e combatividade: um paciente levemente inquieto, que só precisa de reorientação, e outro que arranca o tubo recebem o mesmo número, embora demandem condutas opostas. Há um segundo problema de construção, mais sutil: a escala mistura dois eixos diferentes numa progressão única. Os níveis 1 a 3 descrevem **estado de vigília e cooperação** observados espontaneamente, enquanto os níveis 4 a 6 descrevem **intensidade de resposta a estímulo** aplicado. Não são a mesma dimensão, e por isso a progressão não é linear nem tem intervalos comparáveis — a distância entre 2 e 3 é qualitativamente diferente da distância entre 4 e 5. A RASS resolveu exatamente isso ao adotar uma escala simétrica em torno do zero, com quatro níveis de agitação acima e cinco de sedação abaixo, e ao padronizar a sequência do exame (observar, depois chamar pelo nome, depois estimular fisicamente), o que elevou substancialmente a concordância entre observadores. É por isso que as diretrizes PADIS recomendam RASS ou SAS e não Ramsay. Ainda assim, a escala de Ramsay segue relevante por um motivo prático: ela está embutida em protocolos institucionais e em séries históricas, e o profissional precisa saber lê-la e converter para RASS quando o serviço alterna instrumentos.',
+  armadilhas: [
+    'Não usa estímulo padronizado nem sequência definida, o que reduz a concordância entre observadores.',
+    'O nível 1 acumula toda a agitação, de inquietação leve a combatividade que ameaça a via aérea. Se essa distinção muda a conduta, a escala é inadequada e a RASS é a escolha.',
+    'Mistura dois eixos — vigília espontânea nos níveis 1 a 3 e resposta a estímulo nos níveis 4 a 6 —, de modo que os intervalos não são comparáveis e a média de valores de Ramsay não tem significado.',
+    'Inválida sob bloqueio neuromuscular e de interpretação duvidosa em lesão neurológica estrutural, em que a ausência de resposta pode ser a doença e não a sedação.',
+    'Não mede dor nem delirium, e o paciente em nível 2 pode estar com dor intensa ou delirante. As três avaliações são independentes e precisam ser feitas separadamente.',
+    'Registrar o nível sem registrar a dose e o horário do sedativo torna o dado inútil para titulação — a escala existe para ajustar infusão, não para preencher planilha.',
+  ],
   referencias: [
     { texto: 'Ramsay MA, Savege TM, Simpson BR, Goodwin R. Controlled sedation with alphaxalone-alphadolone. Br Med J. 1974;2(5920):656-659.' },
+    { texto: 'Devlin JW, Skrobik Y, Gélinas C, et al. Clinical Practice Guidelines for the Prevention and Management of Pain, Agitation/Sedation, Delirium, Immobility, and Sleep Disruption in Adult Patients in the ICU (PADIS). Crit Care Med. 2018;46(9):e825-e873.' },
+    { texto: 'Sessler CN, Gosnell MS, Grap MJ, et al. The Richmond Agitation-Sedation Scale: validity and reliability in adult intensive care unit patients. Am J Respir Crit Care Med. 2002;166(10):1338-1344.' },
   ],
 }
 
@@ -728,9 +911,9 @@ const ppc: Ferramenta = {
   resumo: 'Calcula PPC a partir de PAM e PIC, com os alvos por cenário.',
   categorias: ['neurologia', 'emergencia'],
   campos: [
-    campoNum('pas', 'PA sistólica', { unidade: 'mmHg', min: 50, max: 260, passo: 1 }),
-    campoNum('pad', 'PA diastólica', { unidade: 'mmHg', min: 20, max: 160, passo: 1 }),
-    campoNum('pic', 'Pressão intracraniana', { unidade: 'mmHg', min: 0, max: 80, passo: 1, normalMin: 5, normalMax: 15 }),
+    campoNum('pas', 'PA sistólica', { unidade: 'mmHg', min: 50, max: 260, passo: 1, ajuda: 'De linha arterial, com o transdutor zerado no nível do meato acústico externo — e não no átrio direito. Cada 10 cm de diferença de altura equivale a cerca de 7,5 mmHg de erro na PPC.' }),
+    campoNum('pad', 'PA diastólica', { unidade: 'mmHg', min: 20, max: 160, passo: 1, ajuda: 'A diastólica pesa o dobro da sistólica no cálculo da PAM, porque a diástole ocupa cerca de dois terços do ciclo cardíaco.' }),
+    campoNum('pic', 'Pressão intracraniana', { unidade: 'mmHg', min: 0, max: 80, passo: 1, normalMin: 5, normalMax: 15, ajuda: 'Medida invasiva (cateter intraparenquimatoso ou ventricular). Use a média de um traçado estável, não um pico transitório de tosse, aspiração ou manipulação — esses picos sobem a PIC em dezenas de mmHg por segundos e não representam o estado basal.' }),
   ],
   calcular: (v) => {
     const pas = num(v, 'pas')
@@ -760,15 +943,62 @@ const ppc: Ferramenta = {
             : 'PPC dentro do alvo. Mantenha a monitorização contínua.',
         'Perseguir PPC acima de 70 mmHg à custa de volume e vasopressor **aumenta** o risco de síndrome do desconforto respiratório agudo, sem melhorar o desfecho neurológico. Esse foi um dos achados que motivou a revisão do alvo para baixo.',
         'Hiperventilação profilática está contraindicada: a vasoconstrição reduz a PIC ao custo de reduzir o fluxo sanguíneo cerebral, e pode causar isquemia. Reserve a hiperventilação leve e transitória para herniação iminente, como ponte até a intervenção definitiva.',
+        'A **cascata vasodilatadora** de Rosner explica por que a queda de pressão arterial é tão perigosa no cérebro lesado, e por que ela se autoalimenta. Quando a PPC cai, a arteríola cerebral responde com vasodilatação para manter o fluxo — é a autorregulação funcionando. Mas vasodilatação significa aumento do volume sanguíneo cerebral, e num crânio sem complacência restante esse volume extra eleva a PIC. A PIC mais alta reduz ainda mais a PPC, o que provoca mais vasodilatação, mais volume, mais PIC. O ciclo se fecha e a deterioração é rápida. É por isso que um episódio aparentemente modesto de hipotensão pode desencadear um pico de hipertensão intracraniana, e por que a hipotensão é um dos preditores mais fortes de mau desfecho no traumatismo cranioencefálico — mais forte, inclusive, que a hipertensão intracraniana isolada. O mesmo raciocínio funciona ao contrário e é terapêutico: restaurar a PPC induz vasoconstrição, reduz o volume sanguíneo cerebral e baixa a PIC. Daí a regra prática de que, diante de PIC alta com PPC baixa, elevar a pressão arterial frequentemente reduz a PIC em vez de aumentá-la.',
+        'Vale entender também por que o alvo tem **teto** e não só piso. Pressão de perfusão muito alta em território com barreira hematoencefálica rompida aumenta a pressão hidrostática capilar e agrava o edema vasogênico, enquanto a hiperemia eleva o volume sanguíneo cerebral. Além disso, atingir PPC acima de 70 mmHg exige volume e vasopressor em doses que produzem sobrecarga hídrica e lesão pulmonar — o achado que motivou a Brain Trauma Foundation a revisar o alvo para baixo, para a faixa de 60 a 70 mmHg.',
       ],
+      conduta: ppc < 60
+        ? [
+            'Aja nas duas alavancas simultaneamente, começando pelo que é reversível em minutos. **Reduzir a PIC**: cabeceira elevada a 30° com cabeça em posição neutra (a rotação cervical obstrui a drenagem jugular), colar cervical frouxo ou removido se já liberada a coluna, sedação e analgesia adequadas para abolir tosse e assincronia, normotermia ativa, tratamento de crise convulsiva e correção de hiponatremia.',
+            '**Terapia hiperosmolar** para PIC elevada: salina hipertônica (bolus de 3% ou de 23,4% conforme protocolo) ou manitol 0,25 a 1 g/kg. A salina hipertônica tem vantagem no paciente hipovolêmico ou hipotenso, porque expande volume enquanto reduz a PIC; o manitol causa diurese osmótica e pode agravar hipotensão. Monitore sódio, osmolaridade e função renal.',
+            '**Elevar a PAM** com volume se houver hipovolemia e com noradrenalina se não houver. Lembre a cascata vasodilatadora: elevar a pressão arterial em paciente com PPC baixa frequentemente **reduz** a PIC, por induzir vasoconstrição e diminuir o volume sanguíneo cerebral.',
+            'Se a PIC permanecer acima de 22 mmHg de forma refratária, escale conforme protocolo: drenagem liquórica por cateter ventricular, coma barbitúrico e **craniectomia descompressiva**. Nesse ponto, discuta com a neurocirurgia e considere o prognóstico global na decisão.',
+            ppc < 50
+              ? 'PPC abaixo de 50 mmHg é isquemia cerebral global em curso, com consumo de reserva metabólica. Trate como emergência imediata e reavalie a cada poucos minutos. Se houver sinal de herniação (anisocoria, postura de descerebração, tríade de Cushing), hiperventilação leve e transitória e bolus hiperosmolar são pontes aceitáveis até a intervenção definitiva — nunca terapia de manutenção.'
+              : 'Reavalie a PPC continuamente e não por medidas pontuais: a carga de tempo abaixo do alvo, e não apenas o valor mínimo, é o que se correlaciona com desfecho.',
+          ]
+        : ppc > 100
+          ? [
+              'Evite elevações desnecessárias da PAM. Reveja se há vasopressor em dose excessiva, dor não tratada, agitação, hipercapnia ou sobrecarga volêmica contribuindo, e corrija a causa em vez de introduzir anti-hipertensivo às cegas.',
+              'Se houver indicação de reduzir a pressão arterial (hemorragia intracerebral aguda com alvo sistólico definido, dissecção aórtica, pós-operatório vascular), use agente titulável de meia-vida curta — nicardipino ou labetalol — e evite nitroprussiato e nitroglicerina, que são vasodilatadores cerebrais e podem elevar a PIC.',
+              'Reduza a pressão de forma gradual e monitorizada, vigiando a PPC a cada ajuste: no cérebro com autorregulação perdida, queda rápida de PAM converte-se diretamente em queda de fluxo e isquemia.',
+            ]
+          : [
+              'PPC dentro do alvo de 60 a 70 mmHg. Mantenha a monitorização contínua e registre a **carga de tempo** fora do alvo, que se correlaciona melhor com desfecho do que valores isolados.',
+              'Sustente as medidas de base que mantêm a PIC controlada: cabeceira a 30° com cabeça neutra, normotermia, normocapnia (PaCO₂ de 35 a 40 mmHg), normoglicemia, normonatremia ou hipernatremia leve conforme protocolo, sedação adequada e profilaxia de crise convulsiva quando indicada.',
+              'Evite perseguir PPC acima de 70 mmHg com volume e vasopressor: não melhora o desfecho neurológico e aumenta o risco de síndrome do desconforto respiratório agudo.',
+              'Quando disponível, complemente com monitorização multimodal — índice de reatividade da pressão (PRx) para estimar o estado da autorregulação, oximetria tecidual cerebral, Doppler transcraniano — e individualize o alvo de PPC em vez de aplicar a faixa fixa.',
+            ],
+      alertas: [
+        'Zere o transdutor arterial no nível do **meato acústico externo** quando o alvo é PPC. Zerado no átrio direito, a PAM é superestimada em paciente com cabeceira elevada e a PPC calculada fica falsamente confortável.',
+        'Hiperventilação profilática é contraindicada. A vasoconstrição por hipocapnia reduz a PIC ao custo de reduzir o fluxo sanguíneo cerebral e pode causar isquemia — reserve-a, leve e transitória, apenas para herniação iminente como ponte.',
+        'Hipotensão é um dos preditores mais fortes de mau desfecho no traumatismo cranioencefálico, mais que a hipertensão intracraniana isolada, por causa da cascata vasodilatadora. Evitar um único episódio de hipotensão pode valer mais que otimizar a PIC.',
+        'Nitroprussiato e nitroglicerina são vasodilatadores cerebrais e elevam a PIC. Não os use para controle pressórico em paciente com hipertensão intracraniana.',
+        'A fórmula pressupõe medida invasiva de PIC. Estimativas por ultrassom da bainha do nervo óptico ou por Doppler transcraniano servem para triagem e não para titular terapia.',
+      ],
+      tabela: {
+        titulo: 'Faixas de PPC e de PIC',
+        colunas: ['Parâmetro', 'Faixa', 'Significado', 'Conduta'],
+        linhas: [
+          ['PPC', '< 50 mmHg', 'Isquemia cerebral global', 'Emergência: elevar PAM e reduzir PIC agora'],
+          ['PPC', '50 – 59 mmHg', 'Abaixo do alvo', 'Corrigir ativamente as duas alavancas'],
+          ['PPC', '60 – 70 mmHg', 'Alvo (Brain Trauma Foundation)', 'Manter e registrar tempo fora do alvo'],
+          ['PPC', '> 100 mmHg', 'Risco de edema vasogênico e hiperemia', 'Evitar elevação desnecessária da PAM'],
+          ['PIC', '> 22 mmHg', 'Hipertensão intracraniana no TCE', 'Tratar: hiperosmolar, drenagem, escalonar'],
+        ],
+        destaque: ppc < 50 ? 0 : ppc < 60 ? 1 : ppc <= 100 ? 2 : 3,
+      },
     }
   },
   formula: ['PPC = PAM − PIC', 'PAM = (PAS + 2 × PAD) / 3'],
   fundamento:
-    'O fluxo sanguíneo cerebral é autorregulado entre PAMs de aproximadamente 50 e 150 mmHg em pessoas normotensas, por vasodilatação e vasoconstrição arteriolar. Na lesão cerebral aguda essa autorregulação frequentemente se perde, e o fluxo passa a depender linearmente da pressão de perfusão — é aí que a PPC deixa de ser um número fisiológico e vira alvo terapêutico.',
+    'O fluxo sanguíneo cerebral é autorregulado entre PAMs de aproximadamente 50 e 150 mmHg em pessoas normotensas, por vasodilatação e vasoconstrição arteriolar. Na lesão cerebral aguda essa autorregulação frequentemente se perde, e o fluxo passa a depender linearmente da pressão de perfusão — é aí que a PPC deixa de ser um número fisiológico e vira alvo terapêutico. O cérebro consome cerca de 20% do oxigênio e 25% da glicose do organismo com apenas 2% da massa corporal, não estoca substrato e tolera isquemia por poucos minutos; por isso a autorregulação existe e por isso sua perda é catastrófica. Dois mecanismos organizam toda a terapêutica. O primeiro é a **doutrina de Monro-Kellie**: o crânio é uma caixa rígida com três compartimentos — parênquima, sangue e líquor — e o aumento de um exige a redução de outro. Enquanto há complacência (deslocamento de líquor para o espaço subaracnóideo espinhal e de sangue venoso para fora), a pressão sobe pouco; quando essa reserva se esgota, a relação entre volume e pressão se torna exponencial, e é por isso que os últimos mililitros de hematoma ou de edema produzem os maiores saltos de PIC. O segundo é a **cascata vasodilatadora** descrita por Rosner: a queda de PPC provoca vasodilatação arteriolar compensatória, que aumenta o volume sanguíneo cerebral, que num crânio sem complacência eleva a PIC, que reduz ainda mais a PPC — um ciclo que se autoalimenta e explica por que hipotensão é preditor de desfecho pior que hipertensão intracraniana isolada. A mesma cascata funciona como alavanca terapêutica no sentido inverso: restaurar a PPC induz vasoconstrição, reduz o volume sanguíneo cerebral e baixa a PIC. Historicamente, o alvo de PPC já foi acima de 70 mmHg, e foi revisado para 60 a 70 mmHg quando ficou claro que persegui-lo com volume e vasopressor aumentava a incidência de síndrome do desconforto respiratório agudo sem ganho neurológico.',
   armadilhas: [
     'Zere o transdutor de pressão arterial no nível do **meato acústico externo** (forame de Monro), não no átrio direito, quando o objetivo for PPC. A diferença de altura entre os dois pontos gera erro de vários mmHg.',
     'PIC estimada por ultrassom da bainha do nervo óptico ou por Doppler transcraniano é útil para triagem, mas não substitui a medida invasiva quando a decisão depende do valor.',
+    'Usar um pico transitório de PIC (tosse, aspiração, manipulação, assincronia) em vez de um traçado basal estável leva a intervenções desnecessárias. Esses picos sobem dezenas de mmHg por segundos e são fisiológicos.',
+    'O alvo de 60 a 70 mmHg é do traumatismo cranioencefálico adulto. Em hemorragia subaracnóidea com vasoespasmo, em pediatria (alvos menores, por faixa etária) e em hipertensão crônica não tratada (curva de autorregulação deslocada para a direita), o alvo é outro.',
+    'PPC adequada não garante oxigenação tecidual adequada. Anemia, hipoxemia, febre, crise convulsiva e vasoespasmo podem produzir isquemia com PPC normal — a PPC mede pressão, não entrega de oxigênio.',
+    'Calcular PPC com PAM obtida por manguito não invasivo em paciente instável introduz erro grande justamente quando a precisão importa mais.',
   ],
   referencias: [
     { texto: 'Carney N, Totten AM, O’Reilly C, et al. Guidelines for the management of severe traumatic brain injury, 4ª edição. Neurosurgery. 2017;80(1):6-15.' },
