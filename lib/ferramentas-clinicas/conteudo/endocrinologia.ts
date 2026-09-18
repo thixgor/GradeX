@@ -31,8 +31,8 @@ const imcFerramenta: Ferramenta = {
     campoPeso(),
     campoAltura(),
     campoSexo(),
-    campoNum('cintura', 'Circunferência da cintura', { unidade: 'cm', min: 40, max: 200, passo: 0.5, opcional: true }),
-    campoNum('quadril', 'Circunferência do quadril', { unidade: 'cm', min: 50, max: 200, passo: 0.5, opcional: true }),
+    campoNum('cintura', 'Circunferência da cintura', { unidade: 'cm', min: 40, max: 200, passo: 0.5, opcional: true, ajuda: 'Meça no ponto médio entre a última costela e a crista ilíaca, com a pessoa em pé, ao fim de uma expiração normal, com a fita horizontal e sem comprimir a pele. Medir sobre a roupa ou na linha do umbigo altera o resultado. Esta medida prediz risco cardiometabólico melhor que o IMC.' }),
+    campoNum('quadril', 'Circunferência do quadril', { unidade: 'cm', min: 50, max: 200, passo: 0.5, opcional: true, ajuda: 'No maior perímetro da região glútea. Opcional — serve para a relação cintura-quadril. Curiosamente, adiposidade glúteo-femoral maior associa-se a perfil metabólico MELHOR, porque esse tecido drena pela circulação sistêmica e funciona como reservatório seguro.' }),
     campoSeg('etnia', 'Ascendência', [
       { valor: 'geral', rotulo: 'Geral' },
       { valor: 'asiatica', rotulo: 'Asiática' },
@@ -98,6 +98,44 @@ const imcFerramenta: Ferramenta = {
             : bmi < 18.5
               ? 'Baixo peso: rastreie desnutrição, doença consumptiva, transtorno alimentar, má absorção e hipertireoidismo.'
               : 'IMC dentro da faixa de eutrofia. Ainda assim, avalie a distribuição da gordura — obesidade metabólica com peso normal existe.',
+        'A diferença entre gordura visceral e subcutânea é anatômica antes de ser metabólica, e explica por que a cintura prediz melhor que o peso. O tecido adiposo **visceral** drena pela circulação porta, de modo que os ácidos graxos livres da sua lipólise acelerada e as adipocinas que ele secreta (TNF-α, IL-6, resistina, com adiponectina reduzida) chegam ao fígado em primeira passagem e em concentração muito superior à sistêmica. Já o tecido **subcutâneo**, sobretudo o glúteo-femoral, drena pela circulação sistêmica, tem lipólise menos ativa e funciona como reservatório seguro — é por isso que a adiposidade de quadril e coxa se associa a perfil metabólico **melhor**, e não pior. No fígado, o fluxo portal de ácidos graxos livres ativa SREBP-1c e ChREBP, aumenta a lipogênese e a gliconeogênese, e gera metabólitos lipotóxicos (diacilglicerol, ceramidas) que interrompem a sinalização da insulina por fosforilação em serina do substrato do receptor. Daí o mesmo IMC significar coisas opostas conforme a distribuição: o conceito de **obesidade metabolicamente saudável** e o de **peso normal metabolicamente obeso** decorrem exatamente disso.',
+        'A relação **cintura-estatura** tem uma vantagem prática sobre a circunferência isolada: o corte de 0,5 vale para adultos de ambos os sexos e para crianças acima de 6 anos, dispensando tabelas por sexo e etnia. A regra memorizável é que a cintura deve medir menos da metade da altura.',
+      ],
+      conduta: bmi >= 30
+        ? [
+            '**Trate a obesidade como doença crônica**, com base neuroendócrina e forte determinação genética — não como falha de disciplina. Abordagens que responsabilizam moralmente reduzem adesão e pioram desfecho. Investigue e trate as comorbidades: hipertensão, diabetes, dislipidemia, esteatose hepática (calcule FIB-4), apneia do sono (aplique STOP-BANG), osteoartrose, refluxo e depressão.',
+            'Estabeleça meta realista: **perda de 5 a 10%** já produz melhora clinicamente relevante de pressão, glicemia, lipídios e esteatose. Perda acima de 10% é necessária para regressão de fibrose hepática e para remissão de diabetes.',
+            'Combine **mudança de estilo de vida estruturada** (déficit calórico sustentável com a dieta que o paciente consiga manter, atividade física com componente resistido para preservar massa magra, e acompanhamento regular) com **farmacoterapia**: agonistas de GLP-1 (semaglutida, liraglutida) e o agonista duplo GIP/GLP-1 tirzepatida são hoje as opções de maior eficácia.',
+            bmi >= 40
+              ? 'Com IMC ≥ 40, a **cirurgia bariátrica** está formalmente indicada, e também com IMC ≥ 35 na presença de comorbidade. Ela é o tratamento com maior efeito sobre peso, remissão de diabetes e mortalidade a longo prazo. Avalie em equipe multiprofissional, com preparo nutricional e psicológico e plano de suplementação vitamínica vitalícia.'
+              : 'Considere cirurgia bariátrica com IMC ≥ 35 na presença de comorbidade relevante (diabetes tipo 2, apneia do sono, esteato-hepatite, osteoartrose incapacitante).',
+            'Meça **cintura** e acompanhe-a junto do peso: a redução da adiposidade visceral é o que mais se correlaciona com melhora metabólica, e ela pode ocorrer com perda de peso modesta.',
+          ]
+        : bmi >= cortes[1]
+          ? [
+              'Sobrepeso. **Perda de 5 a 10% do peso** já melhora pressão arterial, glicemia, lipídios e esteatose hepática de forma clinicamente relevante — a meta não precisa ser o peso "ideal".',
+              'Meça a **circunferência da cintura**: ela decide mais que o IMC nesta faixa. Cintura aumentada com IMC de 27 tem risco maior que cintura normal com IMC de 29.',
+              'Rastreie o que já pode existir: glicemia de jejum e hemoglobina glicada (aplique o FINDRISC), lipidograma, pressão arterial, transaminases com índices de esteatose, e apneia do sono se houver roncos, sonolência ou hipertensão resistente.',
+              'Priorize intervenções sustentáveis e resistência muscular. Dietas muito restritivas produzem perda rápida com recuperação e perda de massa magra — o que piora a composição corporal a médio prazo.',
+            ]
+          : bmi < 18.5
+            ? [
+                '**Baixo peso: investigue a causa antes de prescrever ganho de peso.** Rastreie desnutrição, doença consumptiva (neoplasia, tuberculose, HIV), transtorno alimentar, má absorção (doença celíaca, doença inflamatória intestinal, insuficiência pancreática), hipertireoidismo, insuficiência adrenal e depressão.',
+                'Aplique um rastreio nutricional estruturado (MUST ou NRS-2002 conforme o cenário) e confirme desnutrição pelos critérios GLIM. Avalie massa e força muscular — força de preensão palmar é medida simples e informativa.',
+                'Se houver perda de peso **não intencional** significativa (mais de 5% em um mês, 10% em seis meses), a investigação é prioritária e não deve aguardar resposta a suplemento.',
+                'Antes de iniciar suporte nutricional em paciente muito magro ou com jejum prolongado, avalie risco de **síndrome de realimentação**: comece devagar, reponha tiamina antes da primeira caloria e monitore fósforo, potássio e magnésio.',
+              ]
+            : [
+                'IMC na faixa de eutrofia — mas isso **não** encerra a avaliação. Meça a circunferência da cintura: peso normal com adiposidade visceral e massa muscular reduzida (peso normal metabolicamente obeso) tem risco metabólico alto e passa despercebido justamente porque o número tranquiliza.',
+                'Se a relação cintura-estatura for ≥ 0,5, rastreie síndrome metabólica: glicemia, lipidograma, pressão arterial e transaminases.',
+                'Reforce manutenção: atividade física regular com componente resistido, alimentação adequada e acompanhamento do peso e da cintura ao longo do tempo. A trajetória informa mais que o valor isolado.',
+              ],
+      alertas: [
+        'O IMC mede **massa, não composição**. Não o use isoladamente em atletas, idosos com sarcopenia, gestantes, pessoas com edema ou ascite, e amputados.',
+        'Os cortes da OMS foram derivados em populações europeias. Em **ascendência asiática**, o risco começa antes: use 23 para sobrepeso e 27,5 para obesidade.',
+        'No **idoso**, IMC baixo tem mais risco que IMC levemente elevado, e a faixa de eutrofia se desloca para 22 a 27. Perseguir IMC de 22 em idoso frágil frequentemente causa dano.',
+        'Perda de peso **não intencional** é sinal de alarme em qualquer faixa de IMC, inclusive na obesidade, e exige investigação — não comemoração.',
+        'Obesidade é doença crônica de base neuroendócrina e genética. Tratá-la como questão de força de vontade é tecnicamente errado e clinicamente contraproducente.',
       ],
       tabela: {
         titulo: asiatico ? 'Classificação (pontos de corte asiáticos)' : 'Classificação da OMS',
@@ -116,10 +154,15 @@ const imcFerramenta: Ferramenta = {
   },
   formula: ['IMC = peso (kg) / altura² (m)', 'Relação cintura-estatura = cintura (cm) / altura (cm) — alvo < 0,50'],
   fundamento:
-    'O índice foi proposto por Quetelet no século XIX como ferramenta estatística para descrever populações, não indivíduos. O expoente 2 na altura é uma aproximação empírica: ele não normaliza perfeitamente o peso pela estatura, o que faz o IMC superestimar a adiposidade em pessoas altas e subestimá-la em pessoas baixas.',
+    'O índice foi proposto por Quetelet no século XIX como ferramenta estatística para descrever populações, não indivíduos. O expoente 2 na altura é uma aproximação empírica: ele não normaliza perfeitamente o peso pela estatura, o que faz o IMC superestimar a adiposidade em pessoas altas e subestimá-la em pessoas baixas. Além desse problema de escala, há uma limitação mais fundamental: o IMC mede **massa**, e o risco metabólico depende de **composição e distribuição**. Ele não distingue músculo de gordura, nem gordura visceral de subcutânea — e a diferença entre as duas é anatômica antes de ser metabólica. O tecido adiposo visceral drena pela veia porta, entregando ao fígado, em primeira passagem e em alta concentração, os ácidos graxos livres da sua lipólise acelerada e as adipocinas que secreta (TNF-α, IL-6, resistina, com adiponectina reduzida). No hepatócito, esse fluxo ativa SREBP-1c e ChREBP, aumenta lipogênese e gliconeogênese e gera diacilglicerol e ceramidas, que interrompem a sinalização da insulina por fosforilação em serina do substrato do receptor. O tecido subcutâneo glúteo-femoral, ao contrário, drena pela circulação sistêmica, tem lipólise menos ativa e funciona como reservatório seguro — daí sua associação com perfil metabólico **melhor**. É essa assimetria que sustenta os conceitos de obesidade metabolicamente saudável e de peso normal metabolicamente obeso, e é por isso que a relação **cintura-estatura** supera o IMC como rastreio: seu corte de 0,5 vale para ambos os sexos e para crianças acima de 6 anos, com a regra memorizável de que a cintura deve medir menos da metade da altura. Vale registrar, por fim, que os cortes de IMC da OMS foram derivados de populações europeias; em pessoas de ascendência asiática, o risco cardiometabólico começa em valores menores, o que motivou cortes específicos de 23 para sobrepeso e 27,5 para obesidade.',
   armadilhas: [
     'Não use IMC isoladamente em atletas, idosos com sarcopenia, gestantes, pessoas com edema ou ascite, e amputados.',
     'Meça a cintura no ponto médio entre a última costela e a crista ilíaca, com a pessoa em pé e ao final de uma expiração normal. Medir sobre a roupa ou no umbigo altera o resultado.',
+    'O IMC mede massa, não composição. Peso normal com adiposidade visceral e sarcopenia é comum e tem risco metabólico alto — obesidade com peso normal existe e passa despercebida justamente porque o número tranquiliza.',
+    'Os cortes da OMS foram derivados em populações europeias. Em ascendência asiática, use 23 para sobrepeso e 27,5 para obesidade; em outras populações, a calibração também difere.',
+    'No idoso, IMC baixo tem mais risco que IMC levemente elevado, e o corte de eutrofia se desloca para cima (22 a 27). Perseguir IMC de 22 em idoso é frequentemente prejudicial.',
+    'O expoente 2 não normaliza perfeitamente pela estatura: o IMC superestima adiposidade em pessoas altas e subestima em pessoas baixas.',
+    'Obesidade é doença crônica com base neuroendócrina e forte determinação genética, não falha de disciplina. Abordagens que responsabilizam moralmente o paciente reduzem adesão e pioram desfecho.',
   ],
   referencias: [
     { texto: 'World Health Organization. Obesity: preventing and managing the global epidemic. WHO Technical Report Series 894. 2000.' },
@@ -518,27 +561,27 @@ const findrisc: Ferramenta = {
       { valor: '2', rotulo: '45 a 54 anos', pontos: 2 },
       { valor: '3', rotulo: '55 a 64 anos', pontos: 3 },
       { valor: '4', rotulo: '65 anos ou mais', pontos: 4 },
-    ]),
+    ], { ajuda: 'Item não modificável. A idade agrega perda progressiva de função de célula beta somada a aumento de adiposidade visceral e redução de massa muscular.' }),
     campoOpc('imc', 'Índice de massa corporal', [
       { valor: '0', rotulo: 'Menos de 25 kg/m²', pontos: 0 },
       { valor: '1', rotulo: '25 a 30 kg/m²', pontos: 1 },
       { valor: '3', rotulo: 'Mais de 30 kg/m²', pontos: 3 },
-    ]),
+    ], { ajuda: 'Item modificável. Em ascendência asiática, o risco começa em valores menores (23 e 27,5), e o escore original subestima nesse grupo.' }),
     campoSexo(),
     campoOpc('cintura', 'Circunferência da cintura', [
       { valor: '0', rotulo: 'Menor que 94 cm (♂) ou 80 cm (♀)', pontos: 0 },
       { valor: '3', rotulo: '94 a 102 cm (♂) ou 80 a 88 cm (♀)', pontos: 3 },
       { valor: '4', rotulo: 'Maior que 102 cm (♂) ou 88 cm (♀)', pontos: 4 },
-    ]),
-    campoSimNao('atividade', 'Faz MENOS de 30 minutos de atividade física por dia', 2),
-    campoSimNao('vegetais', 'NÃO come frutas, vegetais ou verduras todos os dias', 1),
-    campoSimNao('antiHipertensivo', 'Já usou ou usa medicação anti-hipertensiva regularmente', 2),
-    campoSimNao('glicemiaAlta', 'Já teve glicemia elevada detectada (exame, gestação ou doença)', 5),
+    ], { ajuda: 'Meça no ponto médio entre a última costela e a crista ilíaca, ao fim de uma expiração normal — não estime. A cintura pesa mais que o IMC aqui porque mede adiposidade VISCERAL, que drena para a veia porta e é a metabolicamente ativa.' }),
+    campoSimNao('atividade', 'Faz MENOS de 30 minutos de atividade física por dia', 2, 'Item INVERTIDO: pontua quem NÃO se exercita. Inclui atividade do trabalho e do lazer. O exercício tem via própria de captação de glicose, independente de insulina (translocação de GLUT4 mediada por AMPK) — por isso funciona mesmo com resistência insulínica instalada.'),
+    campoSimNao('vegetais', 'NÃO come frutas, vegetais ou verduras todos os dias', 1, 'Também INVERTIDO: pontua a AUSÊNCIA do hábito. Item de menor peso, mas modificável e útil como gancho educativo na consulta.'),
+    campoSimNao('antiHipertensivo', 'Já usou ou usa medicação anti-hipertensiva regularmente', 2, 'Marca hipertensão, que compartilha com o diabetes a mesma base de resistência insulínica e disfunção endotelial. Alguns anti-hipertensivos (tiazídicos, betabloqueadores) também aumentam discretamente o risco.'),
+    campoSimNao('glicemiaAlta', 'Já teve glicemia elevada detectada (exame, gestação ou doença)', 5, 'Item de maior peso, junto com história familiar em primeiro grau. Inclui diabetes gestacional, hiperglicemia de estresse em doença aguda e uso de corticoide — todos revelam reserva de célula beta já limitada.'),
     campoOpc('familia', 'História familiar de diabetes', [
       { valor: '0', rotulo: 'Não', pontos: 0 },
       { valor: '3', rotulo: 'Sim: avós, tios, primos', pontos: 3 },
       { valor: '5', rotulo: 'Sim: pais, irmãos ou filhos', pontos: 5 },
-    ]),
+    ], { ajuda: 'Primeiro grau vale 5 pontos e segundo grau vale 3. O diabetes tipo 2 tem herdabilidade alta, maior que a do tipo 1 — a concordância entre gêmeos idênticos passa de 70%.' }),
   ],
   calcular: (v) => {
     const ids = ['idade', 'imc', 'cintura', 'familia']
@@ -571,15 +614,42 @@ const findrisc: Ferramenta = {
         'O grande mérito do FINDRISC é não exigir exame algum — pode ser aplicado em campanha, farmácia, unidade básica ou pelo próprio paciente. Ele identifica quem vale a pena testar.',
         'A prevenção funciona e tem evidência forte. O Diabetes Prevention Program mostrou redução de 58% na progressão de pré-diabetes para diabetes com intervenção intensiva de estilo de vida (perda de 7% do peso e 150 minutos semanais de atividade física), contra 31% com metformina. O efeito da mudança de estilo de vida persistiu por mais de 15 anos de seguimento.',
         'Note que **quatro dos oito itens são modificáveis**: IMC, cintura, atividade física e alimentação. É deliberado — o questionário é também um instrumento educativo.',
+        'A fisiopatologia explica por que esses itens específicos predizem. O diabetes tipo 2 resulta de **resistência insulínica** somada à **falência progressiva da célula beta**, e as duas coisas evoluem em ritmos diferentes. A resistência insulínica se instala cedo, sobretudo pela adiposidade visceral: o adipócito visceral hipertrofiado é resistente à insulina, tem lipólise acelerada e entrega ácidos graxos livres ao fígado pela veia porta, além de secretar TNF-α, IL-6 e resistina e reduzir adiponectina. No músculo e no fígado, o excesso de ácidos graxos gera metabólitos lipotóxicos (diacilglicerol e ceramidas) que ativam proteína quinase C e serina-quinases, fosforilando o substrato do receptor de insulina em serina em vez de tirosina e interrompendo a sinalização — daí a menor translocação de GLUT4 no músculo e a falha em suprimir a gliconeogênese hepática. Por anos a célula beta compensa aumentando a secreção, e a glicemia permanece normal. O diabetes só aparece quando ela falha, por lipotoxicidade, glicotoxicidade, estresse de retículo endoplasmático e deposição de amilina — e, quando o diagnóstico é feito, cerca de metade da função de célula beta já se perdeu. É por isso que a **atividade física** entra no escore com peso próprio: a contração muscular promove translocação de GLUT4 por via independente de insulina (mediada por AMPK), oferecendo um caminho alternativo de captação de glicose que não depende da sinalização já comprometida.',
+      ],
+      conduta: faixa >= 2
+        ? [
+            '**Solicite exame confirmatório agora**: glicemia de jejum e hemoglobina glicada; teste oral de tolerância à glicose se houver discordância ou suspeita clínica forte. O escore identifica quem vale a pena testar — ele não diagnostica nada.',
+            'Se houver **pré-diabetes** (glicemia de jejum de 100 a 125 mg/dL, glicada de 5,7 a 6,4%, ou glicemia de 140 a 199 mg/dL duas horas após sobrecarga), encaminhe a programa estruturado de mudança de estilo de vida com as metas do Diabetes Prevention Program: **perda de 7% do peso** e **150 minutos semanais de atividade física moderada**. Essa combinação reduziu a progressão para diabetes em 58%, contra 31% com metformina, e o efeito persistiu por mais de 15 anos.',
+            'Considere **metformina** como adjuvante em quem tem maior risco: menos de 60 anos, IMC acima de 35, história de diabetes gestacional, ou glicada que sobe apesar da mudança de estilo de vida. Ela não substitui a intervenção comportamental, que é mais eficaz.',
+            'Avalie o risco cardiovascular global no mesmo encontro: pressão arterial, lipidograma, tabagismo e circunferência abdominal. Pré-diabetes e diabetes compartilham fatores e desfechos com a doença aterosclerótica, e tratar só a glicemia deixa a maior parte do risco intacta.',
+            'Use os **quatro itens modificáveis** (IMC, cintura, atividade física e alimentação) como pauta da conversa: mostrar ao paciente quantos pontos ele pode reduzir com mudanças concretas transforma o questionário em instrumento educativo, que é parte do desenho original.',
+            'Reavalie anualmente com glicada ou glicemia de jejum em quem tem pré-diabetes, e a cada 3 anos em quem tem risco moderado com exames normais.',
+          ]
+        : [
+            'Risco baixo. Reforce os hábitos protetores de forma específica, não genérica: atividade física regular (a contração muscular capta glicose por via independente de insulina), consumo diário de frutas, verduras e legumes, e manutenção do peso e da circunferência abdominal.',
+            'Meça e registre a **circunferência abdominal** mesmo com IMC normal — a adiposidade central prediz melhor que o peso, e existe resistência insulínica com IMC de 24.',
+            'Reavalie o escore a cada 3 a 5 anos, ou antes se houver ganho de peso, mudança de hábitos, gestação com diabetes gestacional ou surgimento de hipertensão ou dislipidemia.',
+            'Escore baixo **não** dispensa rastreio laboratorial quando há indicação independente: história de diabetes gestacional, síndrome dos ovários policísticos, doença cardiovascular estabelecida, HIV, uso crônico de corticoide ou antipsicótico atípico, e acantose nigricans.',
+          ],
+      alertas: [
+        'O escore **não diagnostica nem exclui** diabetes. Ele estima risco de desenvolver a doença em 10 anos e identifica quem testar — pessoas com diabetes não diagnosticado podem ter escore baixo.',
+        'Foi derivado em população finlandesa e tende a **subestimar** em populações de maior prevalência, como a brasileira, e em pessoas de ascendência asiática, africana ou indígena, que desenvolvem resistência insulínica com IMC e cintura menores.',
+        'Não se aplica a quem já tem diagnóstico de diabetes, nem a gestantes — o rastreio de diabetes gestacional segue protocolo próprio, com teste oral de tolerância à glicose entre 24 e 28 semanas.',
+        'Escore baixo não afasta indicação de rastreio por outros critérios: diabetes gestacional prévio, síndrome dos ovários policísticos, doença cardiovascular, HIV, corticoterapia crônica e antipsicótico atípico justificam testar independentemente da pontuação.',
       ],
     }
   },
   formula: ['Soma ponderada de 8 itens (0 a 26 pontos)'],
   fundamento:
-    'O FINDRISC foi desenvolvido na Finlândia a partir de coortes populacionais acompanhadas por 10 anos, com o objetivo explícito de ser aplicável sem laboratório. Suas variáveis capturam os três determinantes do diabetes tipo 2: predisposição genética (história familiar), adiposidade e sua distribuição (IMC e cintura) e comportamento (atividade física e alimentação).',
+    'O FINDRISC foi desenvolvido na Finlândia a partir de coortes populacionais acompanhadas por 10 anos, com o objetivo explícito de ser aplicável sem laboratório. Suas variáveis capturam os três determinantes do diabetes tipo 2: predisposição genética (história familiar), adiposidade e sua distribuição (IMC e cintura) e comportamento (atividade física e alimentação). A doença que ele antecipa tem dois componentes que evoluem em ritmos diferentes, e é essa assimetria que torna o rastreio sem exame possível e útil. A **resistência insulínica** se instala cedo e é impulsionada sobretudo pela adiposidade visceral: o adipócito visceral hipertrofiado tem lipólise acelerada e entrega ácidos graxos livres ao fígado pela veia porta, além de secretar TNF-α, IL-6 e resistina e reduzir adiponectina. No músculo e no fígado, o excesso de lipídios gera diacilglicerol e ceramidas, que ativam proteína quinase C e serina-quinases e fosforilam o substrato do receptor de insulina em serina em vez de tirosina, interrompendo a cascata — daí a menor translocação de GLUT4 no músculo e a falha em suprimir a gliconeogênese hepática. A **falência da célula beta** vem depois: por anos ela compensa hipersecretando, e a glicemia permanece normal; o diabetes só aparece quando a compensação falha, por lipotoxicidade, glicotoxicidade, estresse de retículo endoplasmático e deposição de amilina. Quando o diagnóstico laboratorial é feito, cerca de metade da função de célula beta já se perdeu. É por isso que um escore de fatores de risco, sem nenhuma dosagem, consegue identificar pessoas anos antes: ele detecta o primeiro componente enquanto o segundo ainda compensa. Vale notar a escolha deliberada de incluir **atividade física** como item próprio: a contração muscular promove translocação de GLUT4 por via independente de insulina, mediada por AMPK, oferecendo um caminho alternativo de captação de glicose que não depende da sinalização já comprometida — mecanismo que sustenta a eficácia do exercício na prevenção. E quatro dos oito itens são modificáveis, o que torna o questionário também um instrumento educativo, como seus autores pretendiam.',
   armadilhas: [
     'Foi derivado em população finlandesa. Em populações com prevalência maior, como a brasileira, tende a subestimar — mas mantém boa capacidade de ordenar o risco.',
     'Não se aplica a quem já tem diagnóstico de diabetes.',
+    'Estima risco de DESENVOLVER diabetes, não de já tê-lo. Um paciente com diabetes não diagnosticado pode pontuar baixo, e o escore não substitui rastreio laboratorial quando há indicação independente.',
+    'Os cortes de IMC e de cintura foram calibrados para população europeia. Pessoas de ascendência asiática desenvolvem resistência insulínica com valores menores, e usar os cortes originais subestima nesse grupo.',
+    'Não vale para gestantes: o rastreio de diabetes gestacional tem protocolo próprio, com teste oral de tolerância à glicose entre 24 e 28 semanas.',
+    'A cintura precisa ser medida, não estimada — no ponto médio entre a última costela e a crista ilíaca, ao fim de uma expiração normal, sem roupa e sem comprimir.',
+    'Quando o diagnóstico é feito, cerca de metade da função de célula beta já se perdeu. Escore alto é janela de prevenção, e adiar o exame confirmatório consome justamente a fase em que a intervenção é mais eficaz.',
   ],
   referencias: [
     { texto: 'Lindström J, Tuomilehto J. The diabetes risk score: a practical tool to predict type 2 diabetes risk. Diabetes Care. 2003;26(3):725-731.' },
