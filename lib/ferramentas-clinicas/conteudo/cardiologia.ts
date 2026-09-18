@@ -56,9 +56,9 @@ const fcEcg: Ferramenta = {
       { valor: 'irregular', rotulo: 'Ritmo irregular (6 s)' },
     ]),
     campoNum('velocidade', 'Velocidade do papel', { unidade: 'mm/s', min: 12.5, max: 50, passo: 12.5, padrao: '25', ajuda: 'O padrão é 25 mm/s. A 50 mm/s todos os intervalos dobram de largura.' }),
-    campoNum('pequenos', 'Quadrados pequenos entre dois R', { min: 1, max: 200, passo: 1, mostrarSe: (v) => opc(v, 'metodo') === 'pequenos' }),
-    campoNum('grandes', 'Quadrados grandes entre dois R', { min: 0.2, max: 40, passo: 0.2, mostrarSe: (v) => opc(v, 'metodo') === 'grandes' }),
-    campoNum('qrs6s', 'QRS contados em 6 segundos (30 quadrados grandes)', { min: 0, max: 60, passo: 1, mostrarSe: (v) => opc(v, 'metodo') === 'irregular' }),
+    campoNum('pequenos', 'Quadrados pequenos entre dois R', { min: 1, max: 200, passo: 1, ajuda: 'Conte de 1 em 1 mm, do ápice de uma R ao ápice da seguinte. Método mais preciso, indicado em ritmo regular.', mostrarSe: (v) => opc(v, 'metodo') === 'pequenos' }),
+    campoNum('grandes', 'Quadrados grandes entre dois R', { min: 0.2, max: 40, passo: 0.2, ajuda: 'Quadrados de 5 mm. Aceita fração (2,4 quadrados, por exemplo) — leitura rápida de porta, menos precisa em taquicardia, onde cada fração de quadrado vale muitos bpm.', mostrarSe: (v) => opc(v, 'metodo') === 'grandes' }),
+    campoNum('qrs6s', 'QRS contados em 6 segundos (30 quadrados grandes)', { min: 0, max: 60, passo: 1, ajuda: 'Conte todos os QRS numa tira de 30 quadrados grandes, inclusive extrassístoles. Obrigatório em ritmo irregular: devolve a média, que é a única medida honesta em fibrilação atrial.', mostrarSe: (v) => opc(v, 'metodo') === 'irregular' }),
   ],
   calcular: (v) => {
     const metodo = opc(v, 'metodo')
@@ -100,15 +100,58 @@ const fcEcg: Ferramenta = {
       interpretacao: [
         nota,
         'A sequência 300, 150, 100, 75, 60, 50, 43 corresponde a 1, 2, 3, 4, 5, 6 e 7 quadrados grandes. Decorá-la resolve a leitura de ritmo regular sem calculadora, e é o que se espera de quem lê ECG na porta.',
+        'A frequência que o traçado mostra é o resultado de uma competição entre marcapassos e um balanço autonômico, e ler o número sem esse contexto perde metade da informação. O nó sinoatrial dispara espontaneamente por **despolarização diastólica lenta**, gerada sobretudo pela corrente de marcapasso I_f (canais HCN, ativados por hiperpolarização e modulados por AMP cíclico) somada à entrada de cálcio pelos canais tipo T e ao ciclo local de liberação de cálcio do retículo sarcoplasmático. Sua frequência intrínseca é de 90 a 100 bpm; a frequência de repouso de 60 a 80 bpm resulta do **tônus vagal predominante**, em que a acetilcolina ativa receptores muscarínicos M2, abre canais de potássio ativados por acetilcolina e inibe a adenilato ciclase, reduzindo o AMP cíclico e, com ele, a corrente I_f. A estimulação simpática faz o oposto, via receptores beta-1 e aumento de AMP cíclico. Essa hierarquia explica a clínica: o nó sinusal manda porque é o mais rápido, e quando ele falha assumem marcapassos subsidiários com frequências intrínsecas progressivamente menores — juncional em 40 a 60 bpm, ventricular em 20 a 40 bpm. É por isso que uma bradicardia de 35 bpm com QRS largo sugere ritmo idioventricular e instabilidade iminente, enquanto 55 bpm em atleta jovem é tônus vagal aumentado e não doença. E explica por que na taquicardia importa distinguir resposta fisiológica (dor, febre, hipovolemia, anemia, hipoxemia, tireotoxicose, abstinência) de arritmia primária: a primeira exige tratar a causa, e reduzir a frequência nela pode ser deletério, porque a taquicardia é o mecanismo compensatório que sustenta o débito cardíaco.',
       ],
+      conduta: fc < 60
+        ? [
+            'Determine primeiro se a bradicardia é **sintomática**: tontura, síncope ou pré-síncope, dispneia, angina, confusão, hipotensão, sinais de baixo débito. Bradicardia assintomática em atleta, jovem ou durante o sono é frequentemente fisiológica e não exige intervenção.',
+            'Analise o **QRS e a relação P-QRS** para localizar o problema: bradicardia sinusal com P normal antes de cada QRS aponta tônus vagal, fármaco ou disfunção do nó sinusal; ausência de relação P-QRS indica bloqueio atrioventricular completo; QRS largo com frequência de 20 a 40 bpm sugere ritmo idioventricular, que é instável.',
+            'Procure as causas reversíveis antes de pensar em marcapasso: fármacos (betabloqueador, bloqueador de canal de cálcio não di-hidropiridínico, digoxina, amiodarona, anticolinesterásico, clonidina), hipotireoidismo, hipercalemia, hipotermia, hipóxia, hipertensão intracraniana com tríade de Cushing, infarto de parede inferior (que compromete o nó sinusal e o atrioventricular por irrigação da coronária direita) e doença de Chagas.',
+            fc < 40
+              ? 'Frequência abaixo de 40 bpm com sintomas é emergência: atropina 0,5 mg intravenosa (repetível até 3 mg), e se não responder, marcapasso transcutâneo ou infusão de adrenalina ou dopamina como ponte até o marcapasso transvenoso. Em intoxicação específica, use o antídoto — glucagon ou dose alta de insulina e glicose no betabloqueador, cálcio no bloqueador de canal de cálcio, anticorpo antidigoxina na intoxicação digitálica.'
+              : 'Se houver sintomas atribuíveis e nenhuma causa reversível, o caminho é avaliação eletrofisiológica e indicação de marcapasso definitivo. Suspenda ou reduza fármacos bradicardizantes quando possível antes de indicar dispositivo.',
+          ]
+        : fc > 100
+          ? [
+              'Distinga **taquicardia sinusal apropriada** de arritmia primária, porque a conduta é oposta. Taquicardia sinusal é resposta a dor, febre, ansiedade, hipovolemia, anemia, hipoxemia, sepse, embolia pulmonar, tireotoxicose, abstinência ou fármaco — nela, trate a causa e não a frequência, já que a taquicardia sustenta o débito cardíaco.',
+              'Analise a largura do QRS e a regularidade. QRS estreito e regular sugere sinusal, taquicardia por reentrada nodal, flutter com condução fixa ou taquicardia atrial; estreito e irregular sugere fibrilação atrial; **largo** obriga a tratar como taquicardia ventricular até prova em contrário — aplique os critérios de Brugada ou de Vereckei, que é a conduta segura.',
+              'Avalie estabilidade: hipotensão, alteração do nível de consciência, dor torácica isquêmica, congestão pulmonar aguda ou sinais de choque indicam **cardioversão elétrica sincronizada** imediata, com sedação, em vez de tentativa farmacológica.',
+              'Em paciente estável, a estratégia segue o mecanismo: manobra vagal e adenosina na taquicardia supraventricular por reentrada; controle de frequência com betabloqueador ou bloqueador de canal de cálcio na fibrilação atrial, avaliando anticoagulação pelo CHA₂DS₂-VASc e pelo HAS-BLED; amiodarona ou procainamida na taquicardia ventricular estável.',
+              'Corrija sempre o que alimenta a arritmia: potássio, magnésio, hipoxemia, acidose, anemia, hipovolemia, febre e isquemia. Arritmia recorrente em eletrólito descompensado não se resolve com antiarrítmico.',
+            ]
+          : [
+              'Frequência normal. Prossiga com a leitura sistemática do traçado: ritmo e origem da P, condução (PR, QRS, QT corrigido), eixo, morfologia, sinais de sobrecarga e repolarização.',
+              'Se o motivo do exame foi palpitação, frequência normal no momento do registro não exclui arritmia paroxística — considere Holter de 24 horas, monitor de eventos ou monitorização prolongada conforme a frequência dos sintomas.',
+              'Registre o método usado e a velocidade do papel junto do valor, sobretudo se o traçado não estiver a 25 mm/s.',
+            ],
+      alertas: [
+        'Confira a **velocidade do papel** e a calibração impressas na tira antes de qualquer medida. Traçado registrado a 50 mm/s e lido como 25 mm/s dobra o erro de todos os intervalos, e o mesmo vale para o registro em meia voltagem.',
+        'Em ritmo irregular — fibrilação atrial, extrassistolia frequente, bloqueio atrioventricular variável — a contagem de quadrados entre dois R **não** representa o ritmo. Use obrigatoriamente o método dos 6 segundos, que devolve a média.',
+        'Em bloqueio atrioventricular, a frequência atrial e a ventricular são diferentes e ambas importam: meça P-P e R-R separadamente. Registrar apenas a ventricular esconde o diagnóstico.',
+        'Frequência é apenas um número: bradicardia de 35 bpm com QRS largo e frequência de 100 bpm em paciente séptico exigem condutas opostas, e nenhuma delas se deduz do valor isolado.',
+      ],
+      tabela: {
+        titulo: 'Métodos de cálculo e quando usar cada um',
+        colunas: ['Método', 'Fórmula (a 25 mm/s)', 'Indicação', 'Limite'],
+        linhas: [
+          ['Quadrados pequenos', 'FC = 1500 ÷ n', 'Ritmo regular, maior precisão', 'Exige contar 1 mm por 1 mm'],
+          ['Quadrados grandes', 'FC = 300 ÷ n', 'Ritmo regular, leitura rápida de porta', 'Menos preciso em taquicardia'],
+          ['6 segundos', 'FC = QRS × 10', 'Ritmo irregular — obrigatório', 'Devolve média, não instantânea'],
+        ],
+        destaque: metodo === 'pequenos' ? 0 : metodo === 'grandes' ? 1 : 2,
+      },
     }
   },
   formula: ['FC = 1500 ÷ (quadrados pequenos entre R-R)', 'FC = 300 ÷ (quadrados grandes entre R-R)', 'FC = QRS em 6 s × 10'],
   fundamento:
-    'A régua do ECG é temporal: a 25 mm/s, cada milímetro é 0,04 s e cada quadrado grande (5 mm) é 0,20 s. Um minuto contém 1500 milímetros de papel, ou 300 quadrados grandes — por isso as duas constantes. O método dos 6 segundos existe porque a média é a única medida honesta quando o ritmo é irregular: em fibrilação atrial, dois RR consecutivos podem sugerir 40 e 140 bpm no mesmo traçado.',
+    'A régua do ECG é temporal: a 25 mm/s, cada milímetro é 0,04 s e cada quadrado grande (5 mm) é 0,20 s. Um minuto contém 1500 milímetros de papel, ou 300 quadrados grandes — por isso as duas constantes. O método dos 6 segundos existe porque a média é a única medida honesta quando o ritmo é irregular: em fibrilação atrial, dois RR consecutivos podem sugerir 40 e 140 bpm no mesmo traçado. Compreender o que gera essa frequência dá sentido ao número. O nó sinoatrial não tem potencial de repouso estável: ele sofre **despolarização diastólica lenta**, produzida principalmente pela corrente de marcapasso I_f, que flui por canais HCN ativados por hiperpolarização e modulados diretamente por AMP cíclico, somada à entrada de cálcio por canais tipo T e ao ciclo local de liberação de cálcio do retículo sarcoplasmático. Sua frequência intrínseca, desnervado, é de 90 a 100 bpm — a frequência de repouso menor que isso é obra do **tônus vagal**, em que a acetilcolina ativa receptores muscarínicos M2, abre canais de potássio I_KACh e inibe a adenilato ciclase, reduzindo o AMP cíclico e, portanto, a corrente I_f. A estimulação simpática faz o inverso pelos receptores beta-1. Essa arquitetura explica a hierarquia dos marcapassos cardíacos: o nó sinusal comanda porque é o mais rápido, e quando falha assumem focos subsidiários de frequência intrínseca progressivamente menor — juncional em 40 a 60 bpm, ventricular em 20 a 40 bpm. Daí a leitura clínica: bradicardia de 35 bpm com QRS largo sugere ritmo idioventricular e instabilidade iminente, enquanto 55 bpm em atleta jovem é apenas tônus vagal aumentado. E explica por que, na taquicardia, distinguir resposta fisiológica de arritmia primária é a decisão mais importante: quando a taquicardia é compensatória, ela sustenta o débito cardíaco, e reduzi-la sem tratar a causa piora o paciente.',
   armadilhas: [
     'Verifique sempre a velocidade e a calibração impressas na tira. Traçado a 50 mm/s com leitura a 25 mm/s dobra o erro de todos os intervalos.',
     'Em bloqueio AV de segundo grau, a frequência ventricular e a atrial são diferentes — calcule as duas, medindo P-P e R-R separadamente.',
+    'Usar a contagem de quadrados em ritmo irregular produz qualquer número que se queira: em fibrilação atrial, dois RR consecutivos do mesmo traçado podem sugerir 40 e 140 bpm. Nesses casos o método dos 6 segundos é obrigatório.',
+    'A frequência calculada por um único intervalo RR é instantânea e não representa a média em presença de extrassistolia frequente, pausas ou variação respiratória acentuada.',
+    'Frequência normal no traçado não exclui arritmia paroxística. Palpitação com ECG normal pede monitorização prolongada, não repetição do mesmo exame.',
+    'A frequência informada automaticamente pelo eletrocardiógrafo pode errar na presença de artefato, de onda T alta contada como QRS ou de marcapasso — confira manualmente quando o valor parecer incoerente com o pulso.',
   ],
   referencias: [
     { texto: 'Surawicz B, Knilans TK. Chou’s Electrocardiography in Clinical Practice. 6ª ed. Saunders; 2008.' },
@@ -275,7 +318,7 @@ const eixo: Ferramenta = {
   categorias: ['cardiologia'],
   campos: [
     campoNum('di', 'Amplitude líquida do QRS em DI', { unidade: 'mm', min: -30, max: 30, passo: 0.5, ajuda: 'Some as deflexões positivas e subtraia as negativas: R − (Q + S).' }),
-    campoNum('avf', 'Amplitude líquida do QRS em aVF', { unidade: 'mm', min: -30, max: 30, passo: 0.5 }),
+    campoNum('avf', 'Amplitude líquida do QRS em aVF', { unidade: 'mm', min: -30, max: 30, passo: 0.5, ajuda: 'Mesma regra: R menos (Q + S), com sinal. aVF ocupa +90° no plano frontal e é perpendicular a DI, o que permite tratar as duas como coordenadas cartesianas.' }),
     campoNum('dii', 'Amplitude líquida em DII', { unidade: 'mm', min: -30, max: 30, passo: 0.5, opcional: true, ajuda: 'Opcional — usada para conferência.' }),
   ],
   calcular: (v) => {
@@ -323,7 +366,39 @@ const eixo: Ferramenta = {
       interpretacao: [
         leitura,
         'A derivação em que o QRS é mais isodifásico aponta o eixo perpendicular a ela — é o atalho de leitura visual mais rápido e dispensa medida. Se o QRS é isodifásico em aVL (−30°), o eixo está a +60°.',
+        'Por que o eixo normal aponta para baixo e para a esquerda tem explicação anatômica e elétrica. A ativação ventricular começa no endocárdio septal esquerdo, por ramos do feixe de His, e se propaga do endocárdio para o epicárdio em ambos os ventrículos ao mesmo tempo. Como a massa do ventrículo esquerdo é cerca de três vezes a do direito, os vetores de despolarização das duas câmaras se cancelam parcialmente e o **vetor resultante** é dominado pela parede livre do ventrículo esquerdo — que, na posição anatômica normal do coração, aponta para baixo, para a esquerda e para trás. Daí o eixo normal entre −30° e +90°. Essa dependência da massa explica de imediato os dois desvios: hipertrofia ou sobrecarga do ventrículo direito reduz o cancelamento e desloca o eixo para a direita, enquanto perda de massa inferior (infarto inferior prévio) ou bloqueio de condução na divisão anterossuperior do ramo esquerdo desloca para a esquerda. Vale notar que o mecanismo do desvio esquerdo mais comum não é hipertrofia e sim **bloqueio divisional**: quando a divisão anterossuperior deixa de conduzir, a ativação da parede anterolateral ocorre tardiamente, por via transeptal a partir da divisão posteroinferior, e o vetor tardio resultante aponta para cima e para a esquerda. Por isso o padrão típico é rS em DII, DIII e aVF com qR em DI e aVL — a sequência de ativação mudou, não a massa. Também por isso a posição do coração no tórax importa: obesidade e gravidez elevam o diafragma e horizontalizam o coração, deslocando o eixo para a esquerda sem doença nenhuma, enquanto o longilíneo e a criança têm eixo mais à direita por verticalização.',
       ],
+      conduta: [
+        g >= -30 && g <= 90
+          ? 'Eixo normal. Nenhuma investigação é disparada por este achado — prossiga com a leitura sistemática do restante do traçado (ritmo, frequência, intervalos, morfologia, repolarização).'
+          : g > -90 && g < -30
+            ? 'Desvio esquerdo: confira primeiro a **morfologia** para identificar bloqueio divisional anterossuperior (rS em DII, DIII e aVF com qR em DI e aVL), que é a causa mais comum e isoladamente benigna. Depois procure hipertrofia ventricular esquerda (aplique Sokolow-Lyon, Cornell e o produto de Cornell) e onda Q inferior de infarto prévio. Em paciente com fator de risco cardiovascular, o achado justifica ecocardiograma.'
+            : g > 90 && g <= 180
+              ? 'Desvio direito: **confira a posição dos eletrodos antes de qualquer conclusão** e procure as causas na ordem de probabilidade clínica — sobrecarga aguda de ventrículo direito (embolia pulmonar, com S1Q3T3, bloqueio de ramo direito novo e taquicardia), cor pulmonale, doença pulmonar crônica, bloqueio divisional posteroinferior, infarto lateral e dextrocardia. Em jovem longilíneo assintomático pode ser variação normal.'
+              : 'Eixo indeterminado (quadrante noroeste): a causa mais comum é **troca de eletrodos dos membros**, e o sinal delator é P negativa em DI com aVR positiva. Repita o traçado com o posicionamento conferido antes de investigar taquicardia ventricular, hipercalemia grave, enfisema avançado, ritmo de marcapasso ou dextrocardia.',
+        'Compare com traçados anteriores sempre que possível. Desvio de eixo **novo** tem significado inteiramente diferente de desvio antigo e estável: novo desvio direito com taquicardia e dispneia levanta embolia pulmonar, e novo desvio esquerdo pode indicar doença de condução progressiva.',
+        'Trate o eixo como pista e não como diagnóstico: ele orienta onde olhar no restante do traçado e na clínica, e praticamente nunca fecha diagnóstico isoladamente.',
+        g < -90 || g > 90
+          ? 'Se houver taquicardia com QRS largo e eixo no quadrante noroeste, considere taquicardia ventricular — aplique os critérios de Brugada ou de Vereckei e trate como ventricular até prova em contrário, que é a conduta segura.'
+          : 'Registre o valor em graus no prontuário. É um dado objetivo e comparável, ao contrário de "desvio leve para a esquerda".',
+      ],
+      alertas: [
+        'Troca de eletrodos dos membros é a causa mais frequente de eixo bizarro e de eixo noroeste. Antes de investigar dextrocardia ou arritmia, verifique P negativa em DI com aVR positiva e repita o traçado.',
+        'O eixo depende da posição do coração no tórax, e não apenas da massa: obesidade, gravidez e ascite horizontalizam e desviam para a esquerda; o longilíneo e a criança têm eixo mais à direita. Nenhuma dessas situações é doença.',
+        'Bloqueio de ramo, pré-excitação e ritmo de marcapasso alteram a sequência de ativação ventricular, e o eixo calculado deixa de refletir a orientação anatômica do vetor de massa.',
+        'Desvio direito **novo** em paciente com dispneia aguda é achado de alarme: aplique o escore de Wells ou o de Genebra e considere embolia pulmonar, sobretudo se houver bloqueio de ramo direito incompleto novo e taquicardia sinusal.',
+      ],
+      tabela: {
+        titulo: 'Quadrantes, leitura rápida e causas',
+        colunas: ['DI / aVF', 'Faixa', 'Classificação', 'Causas mais comuns'],
+        linhas: [
+          ['+ / +', '0° a +90°', 'Normal', 'Sem investigação disparada'],
+          ['+ / −', '−30° a −90°', 'Desvio esquerdo (se DII negativa)', 'Bloqueio divisional anterossuperior, HVE, infarto inferior'],
+          ['− / +', '+90° a +180°', 'Desvio direito', 'Sobrecarga de VD, embolia pulmonar, DPOC, longilíneo'],
+          ['− / −', '−90° a ±180°', 'Indeterminado (noroeste)', 'Troca de eletrodos, TV, hipercalemia, dextrocardia'],
+        ],
+        destaque: g >= -30 && g <= 90 ? 0 : g > -90 && g < -30 ? 1 : g > 90 && g <= 180 ? 2 : 3,
+      },
     }
   },
   formula: ['Eixo = arco-tangente (aVF ÷ DI), com DI em 0° e aVF em +90°'],
@@ -336,6 +411,8 @@ const eixo: Ferramenta = {
   ],
   referencias: [
     { texto: 'Surawicz B, Childers R, Deal BJ, Gettes LS. AHA/ACCF/HRS recommendations for the standardization and interpretation of the electrocardiogram: part III. Circulation. 2009;119(10):e235-e240.' },
+    { texto: 'Rautaharju PM, Surawicz B, Gettes LS. AHA/ACCF/HRS recommendations for the standardization and interpretation of the electrocardiogram: part IV — the ST segment, T and U waves, and the QT interval. Circulation. 2009;119(10):e241-e250.' },
+    { texto: 'Elizari MV, Acunzo RS, Ferreiro M. Hemiblocks revisited. Circulation. 2007;115(9):1154-1163.' },
   ],
 }
 
@@ -443,12 +520,12 @@ const sokolow: Ferramenta = {
   resumo: 'O critério de voltagem clássico para hipertrofia ventricular esquerda e direita.',
   categorias: ['cardiologia'],
   campos: [
-    campoNum('sv1', 'Onda S em V1', { unidade: 'mm', min: 0, max: 60, passo: 0.5 }),
-    campoNum('rv5', 'Onda R em V5', { unidade: 'mm', min: 0, max: 60, passo: 0.5 }),
-    campoNum('rv6', 'Onda R em V6', { unidade: 'mm', min: 0, max: 60, passo: 0.5 }),
-    campoNum('ravl', 'Onda R em aVL', { unidade: 'mm', min: 0, max: 40, passo: 0.5, opcional: true }),
+    campoNum('sv1', 'Onda S em V1', { unidade: 'mm', min: 0, max: 60, passo: 0.5, ajuda: 'Profundidade da S, em milímetros, medida da linha de base ao nadir. Confira antes que a calibração esteja em 10 mm/mV — registro em meia voltagem reduz todas as amplitudes pela metade.' }),
+    campoNum('rv5', 'Onda R em V5', { unidade: 'mm', min: 0, max: 60, passo: 0.5, ajuda: 'Altura da R, da linha de base ao ápice. O critério usa apenas a MAIOR entre V5 e V6, não a soma das duas.' }),
+    campoNum('rv6', 'Onda R em V6', { unidade: 'mm', min: 0, max: 60, passo: 0.5, ajuda: 'Informe as duas derivações: a ferramenta escolhe automaticamente a de maior amplitude, como manda o critério original.' }),
+    campoNum('ravl', 'Onda R em aVL', { unidade: 'mm', min: 0, max: 40, passo: 0.5, opcional: true, ajuda: 'Opcional. Critério independente do plano frontal, positivo isoladamente com R ≥ 11 mm — muito específico e pouco sensível.' }),
     campoNum('rv1', 'Onda R em V1', { unidade: 'mm', min: 0, max: 40, passo: 0.5, opcional: true, ajuda: 'Para o critério de hipertrofia ventricular direita.' }),
-    campoNum('sv5v6', 'Onda S em V5 ou V6', { unidade: 'mm', min: 0, max: 40, passo: 0.5, opcional: true }),
+    campoNum('sv5v6', 'Onda S em V5 ou V6', { unidade: 'mm', min: 0, max: 40, passo: 0.5, opcional: true, ajuda: 'Opcional, usada apenas com a R em V1 para o critério de hipertrofia ventricular DIREITA. Informe a mais profunda das duas.' }),
   ],
   calcular: (v) => {
     const sv1 = num(v, 'sv1')
@@ -478,17 +555,53 @@ const sokolow: Ferramenta = {
       interpretacao: [
         'Descrito em 1949, é o critério mais decorado e o menos sensível: identifica cerca de um quarto das hipertrofias documentadas em ecocardiograma, com especificidade alta. Serve para confirmar, nunca para excluir.',
         'Em adultos jovens abaixo de 35 anos, o ponto de corte convencional gera muitos falsos positivos por causa da parede torácica fina — vários autores sugerem elevar o corte para 40 a 45 mm nessa faixa.',
+        'A física por trás do critério explica todas as suas falhas. O eletrocardiograma mede a diferença de potencial na superfície do corpo gerada pela frente de despolarização do miocárdio, e o corpo funciona como um **condutor de volume**: a amplitude que chega ao eletrodo depende do momento dipolar do coração, mas também da distância até o eletrodo e da condutividade dos tecidos interpostos. Como o potencial cai aproximadamente com o quadrado da distância, alguns centímetros de gordura ou de pulmão hiperinsuflado entre o coração e a parede reduzem a voltagem muito mais do que a hipertrofia a aumenta. É por isso que obesidade e enfisema produzem falso-negativo, magreza produz falso-positivo, e derrame pericárdico ou pleural atenuam tudo. Há um segundo limite, ainda mais fundamental: na hipertrofia **concêntrica** — a que resulta de sobrecarga pressórica na hipertensão e na estenose aórtica — o sarcômero se adiciona em paralelo, a parede engrossa e a cavidade não dilata, de modo que a massa total pode aumentar bastante com pouca mudança no vetor elétrico resultante. Na hipertrofia **excêntrica**, por sobrecarga de volume, o sarcômero se adiciona em série, a cavidade dilata e o coração se aproxima da parede torácica: aí a voltagem sobe com fidelidade. O critério de voltagem é, portanto, sistematicamente melhor na hipertrofia excêntrica do que na concêntrica, o que é o inverso do que a prática clínica mais precisa. Isso tem uma consequência importante: sensibilidade baixa é uma limitação intrínseca ao método, não um defeito do ponto de corte, e nenhum ajuste de valor a resolve.',
       ],
+      conduta: [
+        positivo
+          ? 'Critério positivo: solicite **ecocardiograma** para confirmar a hipertrofia, medir a massa ventricular indexada, definir o padrão geométrico (concêntrico ou excêntrico), avaliar função sistólica e diastólica e procurar a causa — estenose aórtica, cardiomiopatia hipertrófica, cardiopatia hipertensiva. O eletrocardiograma sugere; o ecocardiograma decide.'
+          : 'Critério negativo **não exclui** hipertrofia: a sensibilidade é de cerca de 25%. Se houver hipertensão de longa data, sopro sistólico, alteração de repolarização, história familiar de cardiomiopatia hipertrófica ou morte súbita precoce, prossiga com ecocardiograma independentemente do índice.',
+        'Procure e trate a causa da sobrecarga. Na cardiopatia hipertensiva, o controle pressórico com bloqueador do sistema renina-angiotensina-aldosterona produz **regressão** da massa ventricular — o desfecho do estudo LIFE mostrou que a redução da voltagem eletrocardiográfica ao longo do tratamento se associa a menos eventos cardiovasculares, independentemente da pressão alcançada.',
+        'Integre os outros critérios em vez de decidir por um só: Cornell (que ajusta por sexo), produto de Cornell (que incorpora a duração do QRS), Romhilt-Estes (que soma alterações não voltagem) e Peguero-Lo Presti (mais sensível). A concordância entre vários critérios é mais informativa que qualquer um isolado.',
+        'Se o índice for positivo em adulto jovem magro e assintomático, sem hipertensão e com repolarização normal, considere **variação da normalidade** antes de investigar: nessa população o corte convencional de 35 mm gera muitos falsos-positivos, e vários autores sugerem 40 a 45 mm.',
+        'Registre o valor numérico no prontuário, não apenas "positivo". Acompanhar a evolução do índice ao longo dos anos é uma medida barata e útil de resposta ao tratamento anti-hipertensivo.',
+      ],
+      alertas: [
+        'Voltagem alta isolada não é diagnóstico de hipertrofia, e voltagem normal não a exclui. O padrão de referência é a massa ventricular indexada medida por ecocardiograma ou ressonância.',
+        'Bloqueio de ramo esquerdo, pré-excitação, ritmo de marcapasso e bloqueio fascicular invalidam os critérios de voltagem — a sequência de ativação ventricular está alterada e o vetor não reflete mais a massa.',
+        'Alteração de repolarização associada (sobrecarga ventricular, inversão de T nas precordiais esquerdas) agrava o significado prognóstico e não deve ser lida como achado secundário. Em adulto jovem, esse conjunto levanta cardiomiopatia hipertrófica e exige investigação.',
+        'A calibração do aparelho precisa estar em 10 mm/mV. Registro em meia voltagem, usado quando o traçado satura, reduz todas as amplitudes pela metade e produz falso-negativo sistemático — confira o pulso de calibração antes de medir.',
+      ],
+      tabela: {
+        titulo: 'Critérios de Sokolow-Lyon',
+        colunas: ['Critério', 'Cálculo', 'Corte', 'Observação'],
+        linhas: [
+          ['HVE precordial', 'S(V1) + R(V5 ou V6)', '≥ 35 mm', 'Elevar para 40–45 mm abaixo de 35 anos'],
+          ['HVE plano frontal', 'R(aVL)', '≥ 11 mm', 'Muito específico, pouco sensível'],
+          ['HVD', 'R(V1) + S(V5 ou V6)', '> 10,5 mm', 'Avaliar sobrecarga pressórica direita'],
+        ],
+        destaque: 0,
+      },
     }
   },
   formula: ['HVE: S(V1) + R(V5 ou V6) ≥ 35 mm', 'HVE: R(aVL) ≥ 11 mm', 'HVD: R(V1) + S(V5 ou V6) > 10,5 mm'],
   fundamento:
-    'A hipótese é direta: massa muscular maior gera vetor elétrico maior, e o vetor do ventrículo esquerdo aponta para a esquerda e para trás. Isso produz R alta nas precordiais esquerdas (V5-V6) e S profunda nas direitas (V1). Somar as duas amplifica o sinal e cancela parte da variação individual de posição do coração.',
+    'A hipótese é direta: massa muscular maior gera vetor elétrico maior, e o vetor do ventrículo esquerdo aponta para a esquerda e para trás. Isso produz R alta nas precordiais esquerdas (V5-V6) e S profunda nas direitas (V1). Somar as duas amplifica o sinal e cancela parte da variação individual de posição do coração. A limitação, porém, é física e não estatística. O eletrocardiograma registra a diferença de potencial na superfície de um **condutor de volume**, e a amplitude que chega ao eletrodo depende não só do momento dipolar cardíaco, mas da distância até o eletrodo e da condutividade dos tecidos interpostos — com o potencial caindo aproximadamente com o quadrado da distância. Alguns centímetros de gordura subcutânea ou de pulmão hiperinsuflado atenuam a voltagem mais do que a hipertrofia a amplifica, o que produz falso-negativo no obeso e no enfisematoso, falso-positivo no magro, e atenuação global no derrame pericárdico ou pleural. Existe ainda um limite mais profundo, ligado à geometria da hipertrofia. Na sobrecarga **pressórica** (hipertensão, estenose aórtica) o sarcômero se adiciona em paralelo, a parede engrossa e a cavidade não dilata: a massa cresce com pouca alteração do vetor resultante, e a voltagem sobe pouco. Na sobrecarga de **volume** (insuficiência aórtica ou mitral) o sarcômero se adiciona em série, a cavidade dilata e o coração se aproxima da parede torácica, e aí a voltagem acompanha fielmente. O critério é portanto melhor na hipertrofia excêntrica que na concêntrica — o oposto do que a clínica mais frequentemente precisa. Daí a sensibilidade em torno de 25% com especificidade alta, e daí a regra que resume o instrumento: serve para confirmar, nunca para excluir. Vale registrar que, apesar dessa fragilidade diagnóstica, a voltagem tem valor **prognóstico** independente: no estudo LIFE, a regressão dos critérios de voltagem ao longo do tratamento anti-hipertensivo associou-se a redução de eventos cardiovasculares, independentemente da pressão arterial alcançada.',
   armadilhas: [
     'A distância entre o coração e o eletrodo domina o resultado: obesidade e enfisema reduzem a voltagem, magreza a aumenta.',
     'Bloqueio de ramo esquerdo invalida o critério.',
+    'Sensibilidade de apenas cerca de 25%. Critério negativo em hipertenso de longa data não descarta hipertrofia e não dispensa ecocardiograma quando há suspeita clínica.',
+    'Pior desempenho justamente na hipertrofia concêntrica da hipertensão e da estenose aórtica, em que a parede engrossa sem dilatar a cavidade e o vetor resultante muda pouco.',
+    'Em jovens magros abaixo de 35 anos, o corte de 35 mm gera falso-positivo frequente. Considere 40 a 45 mm nessa faixa antes de investigar um assintomático.',
+    'Calibração fora de 10 mm/mV — sobretudo o registro em meia voltagem usado para traçado saturado — reduz todas as amplitudes e produz falso-negativo. Confira o pulso de calibração.',
+    'Posicionamento incorreto dos eletrodos precordiais, especialmente V1 e V2 colocados alto no tórax, altera significativamente as amplitudes medidas.',
+    'Alteração de repolarização associada não é detalhe: em adulto jovem, voltagem alta com inversão de T nas precordiais esquerdas levanta cardiomiopatia hipertrófica e exige investigação específica.',
   ],
-  referencias: [{ texto: 'Sokolow M, Lyon TP. The ventricular complex in left ventricular hypertrophy as obtained by unipolar precordial and limb leads. Am Heart J. 1949;37(2):161-186.' }],
+  referencias: [
+    { texto: 'Sokolow M, Lyon TP. The ventricular complex in left ventricular hypertrophy as obtained by unipolar precordial and limb leads. Am Heart J. 1949;37(2):161-186.' },
+    { texto: 'Pewsner D, Jüni P, Egger M, et al. Accuracy of electrocardiography in diagnosis of left ventricular hypertrophy in arterial hypertension: systematic review. BMJ. 2007;335(7622):711.' },
+    { texto: 'Okin PM, Devereux RB, Jern S, et al. Regression of electrocardiographic left ventricular hypertrophy during antihypertensive treatment and the prediction of major cardiovascular events (LIFE). JAMA. 2004;292(19):2343-2349.' },
+  ],
 }
 
 const cornell: Ferramenta = {
@@ -499,9 +612,9 @@ const cornell: Ferramenta = {
   categorias: ['cardiologia'],
   campos: [
     campoSexo(),
-    campoNum('ravl', 'Onda R em aVL', { unidade: 'mm', min: 0, max: 40, passo: 0.5 }),
-    campoNum('sv3', 'Onda S em V3', { unidade: 'mm', min: 0, max: 60, passo: 0.5 }),
-    campoNum('qrs', 'Duração do QRS', { unidade: 'ms', min: 60, max: 200, passo: 1, padrao: '90' }),
+    campoNum('ravl', 'Onda R em aVL', { unidade: 'mm', min: 0, max: 40, passo: 0.5, ajuda: 'Altura da R em aVL, da linha de base ao ápice. aVL registra a parede lateral alta e é a derivação de melhor desempenho isolado para hipertrofia ventricular esquerda.' }),
+    campoNum('sv3', 'Onda S em V3', { unidade: 'mm', min: 0, max: 60, passo: 0.5, ajuda: 'Profundidade da S em V3. Se a transição do QRS estiver deslocada e V3 for atípica, confira o posicionamento dos eletrodos antes de medir — V3 mal colocada é a principal fonte de erro deste critério.' }),
+    campoNum('qrs', 'Duração do QRS', { unidade: 'ms', min: 60, max: 200, passo: 1, padrao: '90', ajuda: 'Do início da primeira deflexão ao fim da última, na derivação de maior duração. Usada apenas no produto de Cornell. Acima de 120 ms há bloqueio de ramo e o critério perde validade.' }),
   ],
   calcular: (v) => {
     const sexo = opc(v, 'sexo')
@@ -527,13 +640,47 @@ const cornell: Ferramenta = {
         'Cornell usa aVL e V3 por uma razão anatômica: essas derivações registram o vetor de despolarização da parede lateral alta e do septo em direções quase opostas, de modo que a soma das duas amplitudes reflete bem a massa do ventrículo esquerdo com menos interferência da posição do coração.',
         'Os pontos de corte separados por sexo existem porque, para a mesma massa ventricular, mulheres apresentam voltagens menores — efeito da parede torácica e do tamanho cardíaco médio.',
         'O produto de Cornell foi o critério usado no estudo LIFE: a regressão do produto sob tratamento com losartana associou-se independentemente a redução de morte cardiovascular, infarto e AVC. É um dos poucos achados de ECG com valor demonstrado como alvo terapêutico.',
+        'Por que multiplicar pela duração do QRS funciona é a parte mais interessante deste critério, e envolve dois mecanismos distintos que somam informação. O primeiro é **geométrico**: a frente de despolarização se propaga pelo miocárdio a velocidade aproximadamente constante, de modo que uma parede mais espessa simplesmente leva mais tempo para ser atravessada, alargando o QRS. O segundo é **estrutural e fisiopatológico**: a hipertrofia patológica não é apenas miócito maior. Ela vem acompanhada de fibrose intersticial, com deposição de colágeno tipos I e III estimulada por angiotensina II e aldosterona, e de redução da densidade capilar por unidade de massa — o crescimento do miócito não é acompanhado por angiogênese proporcional. O tecido fibrótico conduz mal e cria zonas de condução lenta e de bloqueio local, o que fragmenta e prolonga a ativação ventricular. Ou seja, o QRS alargado não mede só espessura: mede **remodelamento elétrico adverso**, e é justamente esse componente que carrega o valor prognóstico. Isso explica por que o produto de Cornell prediz eventos melhor que a voltagem isolada e por que sua regressão sob tratamento anti-hipertensivo se traduz em redução de desfechos duros. A mesma fibrose que alarga o QRS é o substrato de arritmia ventricular, de disfunção diastólica e de isquemia por reserva coronariana reduzida — e reverter a hipertrofia com bloqueio do sistema renina-angiotensina-aldosterona reverte parcialmente a fibrose, não apenas a massa.',
       ],
+      conduta: [
+        soma > limite || produto > 2440
+          ? '**Critério positivo**: solicite ecocardiograma para confirmar hipertrofia, quantificar a massa ventricular indexada, definir o padrão geométrico (concêntrico ou excêntrico), avaliar função diastólica e sistólica e procurar a causa — cardiopatia hipertensiva, estenose aórtica, cardiomiopatia hipertrófica.'
+          : 'Ambos negativos **não excluem** hipertrofia. Se houver hipertensão de longa data, sopro, alteração de repolarização ou história familiar de cardiomiopatia hipertrófica e morte súbita precoce, solicite ecocardiograma independentemente do critério.',
+        'Se a causa for hipertensão, priorize **bloqueio do sistema renina-angiotensina-aldosterona** (inibidor da ECA ou bloqueador do receptor de angiotensina) — é a classe com maior efeito documentado de regressão de massa e de fibrose, e foi com losartana que o LIFE demonstrou o benefício de desfecho associado à regressão do produto de Cornell.',
+        'Registre o valor numérico do produto, não só "positivo". O produto de Cornell é um dos raros achados eletrocardiográficos que funcionam como **alvo terapêutico mensurável**: acompanhar sua queda ao longo dos anos de tratamento é uma medida barata de resposta, e a redução se associa a menos eventos independentemente da pressão alcançada.',
+        'Rastreie as consequências da hipertrofia mesmo com paciente assintomático: disfunção diastólica com risco de insuficiência cardíaca de fração preservada, fibrilação atrial (a hipertrofia e o remodelamento atrial andam juntos) e arritmia ventricular. Considere Holter se houver palpitação, síncope ou QRS muito alargado.',
+        'Em adulto jovem com critério positivo, repolarização alterada e sem hipertensão, investigue **cardiomiopatia hipertrófica**: ecocardiograma com atenção ao septo e ao gradiente de via de saída, ressonância cardíaca, história familiar em três gerações e avaliação de risco de morte súbita.',
+      ],
+      alertas: [
+        'O ajuste de 6 mm é exclusivo do **produto** e exclusivo do **sexo feminino**. Aplicá-lo em homens ou à voltagem simples é o erro de cálculo mais comum deste critério.',
+        'QRS acima de 120 ms indica bloqueio de ramo, e nessa condição nenhum critério de voltagem — Cornell incluído — é válido, porque a sequência de ativação ventricular está alterada.',
+        'Critério positivo não é diagnóstico. O padrão de referência da massa ventricular é o ecocardiograma ou a ressonância cardíaca; o eletrocardiograma apenas levanta a suspeita.',
+        'V3 mal posicionada compromete o critério de forma silenciosa, porque a S em V3 é muito sensível à posição do eletrodo na zona de transição. Confira o posicionamento antes de medir.',
+        'Alteração de repolarização associada agrava o significado prognóstico e, em jovem, levanta cardiomiopatia hipertrófica — não a trate como achado acessório.',
+      ],
+      tabela: {
+        titulo: 'Cornell: cortes e interpretação',
+        colunas: ['Critério', 'Cálculo', 'Corte masculino', 'Corte feminino'],
+        linhas: [
+          ['Voltagem de Cornell', 'R(aVL) + S(V3)', '> 28 mm', '> 20 mm'],
+          ['Produto de Cornell', 'Voltagem × QRS (ms)', '> 2.440 mm·ms', '> 2.440 mm·ms, somando 6 mm à voltagem'],
+        ],
+        destaque: soma > limite ? 0 : produto > 2440 ? 1 : undefined,
+      },
     }
   },
   formula: ['Cornell: R(aVL) + S(V3) > 28 mm (♂) ou > 20 mm (♀)', 'Produto: [Cornell (+6 mm se ♀)] × QRS > 2440 mm·ms'],
   fundamento:
-    'Ao acrescentar a duração do QRS, o produto de Cornell incorpora a segunda consequência elétrica da hipertrofia: o tempo maior que a frente de despolarização leva para percorrer uma parede mais espessa. Isso eleva a sensibilidade sem sacrificar a especificidade, o que raramente acontece quando se ajusta um critério diagnóstico.',
-  armadilhas: ['Não some 6 mm em homens — o ajuste é exclusivo do produto e exclusivo do sexo feminino.'],
+    'Ao acrescentar a duração do QRS, o produto de Cornell incorpora a segunda consequência elétrica da hipertrofia: o tempo maior que a frente de despolarização leva para percorrer uma parede mais espessa. Isso eleva a sensibilidade sem sacrificar a especificidade, o que raramente acontece quando se ajusta um critério diagnóstico. A explicação para esse ganho incomum é que a duração do QRS não é redundante com a voltagem — ela carrega informação de natureza diferente. Além do efeito geométrico óbvio (parede mais espessa, mais tempo de travessia a velocidade de condução constante), o QRS alargado reflete o **remodelamento estrutural** que acompanha a hipertrofia patológica: fibrose intersticial com deposição de colágeno tipos I e III estimulada por angiotensina II e aldosterona, e redução da densidade capilar por unidade de massa, já que o miócito cresce sem angiogênese proporcional. O tecido fibrótico conduz mal, cria zonas de condução lenta e de bloqueio local, e fragmenta a ativação ventricular. É por isso que o produto prediz eventos melhor do que a voltagem isolada: ele mede massa **e** o substrato elétrico adverso — o mesmo substrato que gera arritmia ventricular, disfunção diastólica e isquemia por reserva coronariana reduzida. A escolha das derivações também é deliberada: aVL e V3 registram o vetor de despolarização da parede lateral alta e do septo em direções quase opostas, de modo que somar as amplitudes reflete a massa ventricular com menos interferência da posição do coração no tórax do que o par V1-V5/V6 usado por Sokolow-Lyon. Os cortes separados por sexo, introduzidos por Casale em 1987, corrigem o fato de que, para a mesma massa ventricular indexada, mulheres apresentam voltagens menores — efeito combinado de tamanho cardíaco médio e de composição da parede torácica. Finalmente, o produto de Cornell ocupa uma posição singular na cardiologia: no estudo LIFE, sua regressão sob tratamento com losartana associou-se independentemente a redução de morte cardiovascular, infarto e AVC, o que o torna um dos pouquíssimos achados eletrocardiográficos validados como alvo terapêutico, e não apenas como marcador.',
+  armadilhas: [
+    'Não some 6 mm em homens — o ajuste é exclusivo do produto e exclusivo do sexo feminino.',
+    'QRS acima de 120 ms significa bloqueio de ramo e invalida o critério: a sequência de ativação está alterada e o produto perde sentido.',
+    'Usar os cortes masculinos em mulheres subdiagnostica sistematicamente, e o inverso superdiagnostica. O sexo não é detalhe opcional aqui.',
+    'A S em V3 é muito sensível ao posicionamento do eletrodo na zona de transição do QRS. Eletrodo deslocado altera o resultado sem qualquer sinal de erro.',
+    'Calibração fora de 10 mm/mV, sobretudo o registro em meia voltagem, reduz as amplitudes e produz falso-negativo.',
+    'Obesidade e enfisema atenuam a voltagem por aumento da distância e da impedância entre coração e eletrodo — a limitação física vale para Cornell como para qualquer critério de voltagem.',
+    'Critério negativo não exclui hipertrofia. Nenhum critério eletrocardiográfico tem sensibilidade suficiente para dispensar ecocardiograma diante de suspeita clínica consistente.',
+  ],
   referencias: [
     { texto: 'Casale PN, Devereux RB, Alonso DR, et al. Improved sex-specific criteria of left ventricular hypertrophy. Circulation. 1987;75(3):565-572.' },
     { texto: 'Okin PM, Devereux RB, Jern S, et al. Regression of electrocardiographic left ventricular hypertrophy during antihypertensive treatment and the prediction of major cardiovascular events (LIFE). JAMA. 2004;292(19):2343-2349.' },
