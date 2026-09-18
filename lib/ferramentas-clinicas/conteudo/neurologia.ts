@@ -820,6 +820,13 @@ const camIcu: Ferramenta = {
         { rotulo: '4. Pensamento desorganizado', valor: c4 ? 'Presente' : 'Ausente' },
         { rotulo: 'Regra', valor: '(1 E 2) E (3 OU 4)' },
       ],
+      conduta: [
+        '**CAM-ICU positivo** confirma delirium. A primeira ação é **procurar a causa**, não sedar: percorra a mnemônica **DIMES** — **D**rogas (benzodiazepínicos, opioides, anticolinérgicos, corticoides), **I**nfecção, **M**etabólico (hiponatremia, hipoglicemia, uremia, tireoide), **E**strutural (acidente vascular, hematoma subdural) e **S**ono, dor e retenção urinária.',
+        'Aplique o pacote **ABCDEF**, que é o que efetivamente reduz duração de delirium e mortalidade: **A**valiar e tratar dor, **B**ranqueamento de sedação com despertar diário e testes de respiração espontânea, **C**oordenar escolha de analgesia e sedação, **D**elirium monitorado, **E**xercício e mobilização precoce, **F**amília envolvida à beira do leito.',
+        'Priorize as **medidas não farmacológicas**, que têm a melhor evidência: reorientação frequente, óculos e aparelho auditivo, higiene do sono com redução de luz e ruído noturnos, mobilização precoce, remoção de cateteres e restrições desnecessárias, e presença da família.',
+        'Use **antipsicótico apenas para agitação que ameace a segurança** do paciente ou da equipe — haloperidol ou quetiapina em dose baixa, pelo menor tempo possível. Faça ECG antes, pelo risco de prolongamento do QT, e reavalie a indicação a cada 24 h em vez de manter por inércia.',
+        'Evite **benzodiazepínicos**, que são causa e não tratamento de delirium — a exceção é a abstinência alcoólica e a de benzodiazepínico. Prefira **dexmedetomidina** quando for necessária sedação em paciente com delirium hiperativo sob ventilação: ela reduz a incidência de delirium em comparação a midazolam e propofol.',
+      ],
       interpretacao: [
         positivo
           ? '**Delirium presente.** Ele é subdiagnosticado justamente porque a forma **hipoativa** — a mais comum e a de pior prognóstico — se confunde com "paciente tranquilo". O delirium associa-se independentemente a mortalidade maior, internação mais longa e declínio cognitivo persistente.'

@@ -69,6 +69,13 @@ const dosePediatrica: Ferramenta = {
       nivel: 'neutro',
       rotuloNivel: `${fmtLivre(mgkg, 3)} mg/kg × ${fmt(peso, 2)} kg`,
       detalhes,
+      conduta: [
+        'Use **dose por peso (mg/kg) para a maioria dos fármacos** e **dose por superfície corporal (mg/m²) para quimioterápicos e alguns imunossupressores**, que é onde a relação com o volume de distribuição e com o clearance é mais fiel. Misturar as duas lógicas é a origem de erros de ordem de grandeza.',
+        '**Nunca ultrapasse a dose máxima do adulto**, por maior que seja o peso da criança. Adolescentes obesos atingem rapidamente pesos que, multiplicados pela dose por quilo, geram prescrições supraterapêuticas — esse é o erro mais comum e mais perigoso da dose pediátrica.',
+        'Em **obesidade**, escolha o descritor de peso conforme a lipossolubilidade: fármacos hidrofílicos (aminoglicosídeos, betalactâmicos, bloqueadores neuromusculares) dosam-se por peso ideal ou ajustado; lipofílicos (propofol, benzodiazepínicos) aproximam-se do peso real. Usar peso real indiscriminadamente superdosa.',
+        'Confira sempre a **concentração da apresentação disponível** e prescreva em miligramas **e** em mililitros, com a concentração explícita. A maior parte dos erros graves de medicação em pediatria nasce da conversão entre mg e mL feita mentalmente por quem administra.',
+        'Adote a **dupla checagem independente** para fármacos de alto risco — insulina, opioides, quimioterápicos, eletrólitos concentrados, digoxina, anticoagulantes — e tenha à mão uma fita de emergência baseada no comprimento (tipo Broselow) para situações em que não há peso aferido. Estimar peso \'de olho\' em parada cardiorrespiratória erra em média 20% e compromete todas as doses.',
+      ],
       interpretacao: [
         '**A criança não é um adulto em escala.** A dose por quilo funciona para a maioria dos fármacos porque a depuração acompanha aproximadamente a massa corporal, mas os extremos falham: o neonato tem enzimas hepáticas imaturas e filtração glomerular reduzida (metade da do adulto ao nascer, atingindo valores de adulto por volta dos 2 anos), e o lactente tem proporcionalmente mais água corporal, o que aumenta o volume de distribuição de fármacos hidrofílicos.',
         '**Superfície corporal é preferível a peso** quando o fármaco tem janela terapêutica estreita e a depuração escala melhor com a área — é o caso da quimioterapia, de alguns imunossupressores e de reposições hidroeletrolíticas. Para a maioria dos antimicrobianos e analgésicos, o peso basta.',
@@ -145,6 +152,13 @@ const hidratacao: Ferramenta = {
       nivel: grau >= 10 ? 'critico' : grau > 0 ? 'alerta' : 'neutro',
       rotuloNivel: grau === 0 ? 'Apenas manutenção' : `Manutenção + déficit de ${grau}%`,
       detalhes,
+      conduta: [
+        'Separe as três parcelas antes de prescrever: **manutenção** (regra de Holliday-Segar: 100 mL/kg/dia até 10 kg, mais 50 mL/kg para o intervalo de 10 a 20 kg, mais 20 mL/kg acima de 20 kg), **déficit** (percentual de desidratação × peso) e **perdas em curso** (diarreia, vômito, drenos, febre).',
+        'Use **solução isotônica para manutenção** — soro fisiológico a 0,9% ou Ringer lactato com glicose —, não soluções hipotônicas. As hipotônicas causaram hiponatremia iatrogênica grave e mortes em crianças hospitalizadas, e as diretrizes mudaram por causa disso.',
+        'Prefira a **reidratação oral** na desidratação leve a moderada: 50–100 mL/kg de solução de reidratação oral em 4 horas, em pequenos volumes frequentes. Ela é tão eficaz quanto a via venosa, tem menos complicações e evita a punção — vômito não é contraindicação, e ondansetrona em dose única aumenta o sucesso.',
+        'Na desidratação **grave ou com choque**, faça **bolus de 20 mL/kg de cristaloide isotônico em 5–20 minutos**, repetindo até 2 a 3 vezes conforme a resposta (perfusão, frequência cardíaca, nível de consciência, diurese). Em desnutrição grave e em cardiopatia, reduza o volume e a velocidade — o bolus padrão pode precipitar insuficiência cardíaca.',
+        'Corrija o sódio no ritmo certo: na **hipernatremia**, não mais que 10–12 mEq/L em 24 h, pelo risco de edema cerebral; na **hiponatremia sintomática**, salina a 3% em bolus de 3–5 mL/kg. Redose eletrólitos a cada 4–6 h durante a correção e reintroduza dieta assim que possível — o jejum prolongado não tem indicação na gastroenterite.',
+      ],
       interpretacao: [
         '**A terapia de reidratação oral é a primeira escolha** na desidratação leve e moderada, inclusive com vômitos — é tão eficaz quanto a endovenosa, tem menos complicações e menos internações. Ondansetrona em dose única facilita a via oral em crianças com vômitos.',
         '**Solução isotônica é o padrão para manutenção endovenosa.** As soluções hipotônicas clássicas, derivadas do artigo original de Holliday e Segar, causam hiponatremia iatrogênica em crianças hospitalizadas — cuja secreção de hormônio antidiurético está aumentada por dor, náusea, estresse e doença. As diretrizes atuais recomendam soro isotônico (salina 0,9% ou solução balanceada) com glicose.',
@@ -225,6 +239,13 @@ const desidratacaoEscore: Ferramenta = {
         { rotulo: 'Perda de peso estimada', valor: perda },
         { rotulo: 'Enchimento capilar prolongado', valor: sim(v, 'enchimento') ? 'Sim' : 'Não', nota: 'Isoladamente, é um dos melhores preditores de desidratação de 5% ou mais.', nivel: sim(v, 'enchimento') ? 'alerta' : 'ok' },
         { rotulo: 'Turgor reduzido', valor: sim(v, 'turgor') ? 'Sim' : 'Não' },
+      ],
+      conduta: [
+        '**Escore 0 (sem desidratação)**: mantenha a alimentação habitual e ofereça solução de reidratação oral após cada evacuação líquida (10 mL/kg, ou 50–100 mL na criança menor e 100–200 mL na maior). Oriente sinais de retorno e não prescreva jejum nem dieta restritiva.',
+        '**Escore 1–4 (desidratação leve a moderada)**: reidratação oral supervisionada com 50–100 mL/kg em 4 horas, em colher ou seringa a cada poucos minutos. Reavalie ao final do período: a maioria recebe alta sem punção venosa.',
+        '**Escore 5–8 (desidratação moderada a grave)**: via intravenosa com bolus de 20 mL/kg de cristaloide isotônico, repetido conforme resposta, e reavaliação clínica frequente. Colete eletrólitos, glicemia e gasometria — hipoglicemia e acidose são comuns e muitas vezes explicam a prostração.',
+        'Não perca as **causas que imitam gastroenterite**: sepse, invaginação intestinal (dor em cólica, fezes em geleia de framboesa, massa palpável), apendicite, cetoacidose diabética de apresentação inicial, infecção urinária no lactente e erro inato do metabolismo. Vômito sem diarreia, vômito bilioso, distensão abdominal e alteração do nível de consciência devem interromper o raciocínio de gastroenterite.',
+        'Evite as intervenções sem benefício: **antibiótico** não está indicado na gastroenterite viral (a maioria dos casos) e antidiarreicos são contraindicados em crianças. **Zinco por 10 a 14 dias** reduz duração e recorrência em áreas de risco nutricional, e ondansetrona em dose única facilita a reidratação oral.',
       ],
       interpretacao: [
         faixa === 0
@@ -427,6 +448,13 @@ const apgar: Ferramenta = {
         { rotulo: 'Mnemônica', valor: 'A parência, P ulso, G esticulação (irritabilidade reflexa), A tividade (tônus), R espiração' },
         { rotulo: 'Momento', valor: momento === '1' ? '1º minuto — reflete a condição intraparto' : momento === '5' ? '5º minuto — tem maior valor prognóstico' : '10º minuto ou além — avaliado a cada 5 min enquanto o escore for menor que 7' },
       ],
+      conduta: [
+        'Use o Apgar para **descrever a transição e documentar a resposta à reanimação**, jamais para decidir se reanima. A reanimação neonatal começa pela avaliação de respiração, frequência cardíaca e tônus nos primeiros segundos — esperar o Apgar de 1 minuto para agir é erro grave.',
+        'Se o escore for **< 7 no 5º minuto**, continue registrando a cada 5 minutos até 20 minutos, e documente as intervenções em curso em cada momento. Essa série é o que permite reconstruir a evolução depois.',
+        '**Apgar baixo isoladamente não diagnostica asfixia perinatal.** O diagnóstico exige a combinação de acidose metabólica grave em sangue de cordão (pH < 7,0 ou déficit de base ≥ 12 mmol/L), encefalopatia neonatal e disfunção de múltiplos órgãos. Atribuir sequelas a um Apgar baixo, sem esses elementos, é conclusão frequentemente incorreta — inclusive em contexto médico-legal.',
+        'Diante de **encefalopatia hipóxico-isquêmica moderada a grave** em recém-nascido com 35 semanas ou mais, avalie **hipotermia terapêutica**, que deve ser iniciada nas primeiras 6 horas de vida e é a única intervenção com redução comprovada de morte e sequela neurológica. Isso torna o reconhecimento precoce uma urgência de transferência.',
+        'Interprete com cautela o Apgar em **prematuros**, sedação materna, bloqueio neuromuscular, malformações e doenças neuromusculares: tônus e resposta a estímulo estão reduzidos por motivos que nada têm a ver com asfixia. Registre a circunstância junto ao escore.',
+      ],
       interpretacao: [
         '**O Apgar não determina a necessidade de reanimação e nunca deve atrasá-la.** A decisão de reanimar se baseia em três perguntas feitas nos primeiros segundos — gestação a termo? respira ou chora? tônus bom? — e, na sequência, em frequência cardíaca e respiração. O Apgar é uma **descrição** do estado, aplicada com o cronômetro correndo em paralelo.',
         momento === '5' && total < 7
@@ -606,6 +634,13 @@ const ballard: Ferramenta = {
         { rotulo: 'Escore físico', valor: String(fis) },
         { rotulo: 'Escore total', valor: String(total), nota: 'Faixa de −10 a 50 pontos.' },
         { rotulo: 'Correspondência', valor: '−10 = 20 semanas · 0 = 24 · 20 = 32 · 35 = 38 · 50 = 44', nota: 'Cada 5 pontos correspondem a 2 semanas.' },
+      ],
+      conduta: [
+        'Aplique o New Ballard entre **12 e 24 horas de vida** para melhor acurácia (a janela vai até 96 h, e em prematuros extremos idealmente nas primeiras 12 h). A margem de erro é de cerca de ± 2 semanas — por isso ele **não substitui** a datação obstétrica por última menstruação confiável ou ultrassonografia de primeiro trimestre, e só deve prevalecer quando essas faltam ou são discordantes.',
+        'Combine a idade gestacional estimada com o **peso ao nascer** na curva de crescimento intrauterino para classificar em pequeno, adequado ou grande para a idade gestacional. É essa classificação, e não a idade isolada, que determina os riscos imediatos a rastrear.',
+        'No **pequeno para a idade gestacional**, vigie hipoglicemia (reserva hepática de glicogênio reduzida), policitemia (resposta à hipóxia crônica), hipotermia e hipocalcemia. Inicie glicemia capilar seriada nas primeiras horas e alimentação precoce.',
+        'No **grande para a idade gestacional**, procure diabetes materno não diagnosticado, e vigie hipoglicemia por hiperinsulinismo fetal, tocotraumatismo (fratura de clavícula, lesão de plexo braquial), policitemia e icterícia.',
+        'Use a idade gestacional estimada para **posicionar os rastreios e cuidados do prematuro**: surfactante, cafeína para apneia da prematuridade, triagem de retinopatia (a partir de 4–6 semanas de vida em nascidos com menos de 32 semanas ou 1.500 g), ultrassonografia transfontanela para hemorragia intraventricular, e triagem auditiva. Registre também a **idade corrigida**, que deve ser usada para avaliar desenvolvimento até os 2 anos.',
       ],
       interpretacao: [
         'O New Ballard, publicado em 1991, estendeu o escore original de 1979 para baixo, permitindo avaliar prematuros extremos a partir de 20 semanas — faixa em que o Capurro e o Dubowitz não funcionam.',
@@ -795,6 +830,13 @@ const fototerapia: Ferramenta = {
       nivel,
       rotuloNivel: `${fmtInt(horas)} h de vida · ${fmtInt(ig)} semanas${comRisco ? ' · com fator de risco' : ''}`,
       detalhes,
+      conduta: [
+        'Plote sempre o valor na curva **pela idade em horas de vida, não em dias**, e no nomograma correspondente ao risco (idade gestacional e fatores de neurotoxicidade: doença hemolítica, deficiência de glicose-6-fosfato desidrogenase, asfixia, sepse, acidose, albumina < 3,0 g/dL). Um mesmo valor pode ser normal às 72 h e indicação de fototerapia às 24 h.',
+        'Indicada a **fototerapia**, garanta que ela seja eficaz: irradiância adequada (≥ 30 µW/cm²/nm na fototerapia intensiva), distância correta, máxima superfície corporal exposta, olhos protegidos e amamentação mantida ou aumentada. Fototerapia mal montada é a causa mais comum de falha aparente.',
+        '**Icterícia nas primeiras 24 horas de vida é sempre patológica.** Investigue imediatamente com bilirrubinas total e frações, tipagem sanguínea e Coombs direto da mãe e do bebê, hemograma com reticulócitos e pesquisa de glicose-6-fosfato desidrogenase — e trate a causa, não apenas o número.',
+        'Considere **exsanguineotransfusão** quando o valor ultrapassar o limiar da curva correspondente, quando houver sinais de **encefalopatia bilirrubínica aguda** (letargia, hipotonia seguida de hipertonia, choro agudo, opistótono, febre) ou quando a bilirrubina subir apesar de fototerapia intensiva. Nesses casos, o tempo é neurônio: acione a unidade neonatal imediatamente. Imunoglobulina intravenosa pode reduzir a necessidade de exsanguineotransfusão na doença hemolítica isoimune.',
+        'Diferencie **hiperbilirrubinemia indireta** (a comum, do recém-nascido, que a fototerapia trata) de **direta ou conjugada** (bilirrubina direta > 1,0 mg/dL, ou > 20% do total). Esta última **nunca** é fisiológica e não responde à fototerapia: investigue atresia de vias biliares com urgência, porque a portoenterostomia de Kasai tem resultado muito melhor quando feita antes dos 60 dias de vida.',
+      ],
       interpretacao: [
         '⚠ **Esta ferramenta é uma aproximação didática das curvas oficiais.** A decisão real deve ser tomada sobre o nomograma da Academia Americana de Pediatria de 2022 ou o protocolo institucional, que são curvas contínuas por idade gestacional e hora de vida. Use este resultado para raciocinar, não para prescrever.',
         '**Sempre investigue a causa** quando a icterícia surge nas primeiras 24 horas de vida, quando a bilirrubina sobe mais de 0,2 mg/dL por hora, quando persiste além de 2 semanas, ou quando há colestase (bilirrubina direta acima de 1 mg/dL ou acima de 20% do total). Icterícia nas primeiras 24 horas é **sempre patológica**.',
@@ -958,6 +1000,13 @@ const percentis: Ferramenta = {
         { rotulo: 'Percentil', valor: percentil < 0.1 ? '< 0,1' : percentil > 99.9 ? '> 99,9' : fmt(percentil, 1) },
         { rotulo: 'Diferença para a mediana', valor: `${medida - mediana >= 0 ? '+' : ''}${fmt(medida - mediana, 2)}` },
         { rotulo: 'Correspondências úteis', valor: 'z = −2 → percentil 2,3 · z = −1 → 15,9 · z = 0 → 50 · z = +1 → 84,1 · z = +2 → 97,7' },
+      ],
+      conduta: [
+        'Interprete a **trajetória, não o ponto**: uma criança que cresce consistentemente no percentil 5 e mantém o canal é provavelmente normal, enquanto uma que cai do percentil 75 para o 25 em poucos meses precisa de investigação, mesmo estando \'dentro da normalidade\'. O cruzamento de dois canais principais é o sinal de alarme.',
+        'Escolha a **curva certa**: OMS de 0 a 5 anos (padrão de como crianças **devem** crescer, derivado de crianças amamentadas em condições ideais) e OMS de 5 a 19 anos depois. Use curvas específicas quando indicado — prematuros com idade corrigida até os 2 anos (ou curvas de Fenton/INTERGROWTH), síndrome de Down, acondroplasia, síndrome de Turner.',
+        'Prefira o **escore-z ao percentil** nos extremos: entre o percentil 0,1 e o 3 todos aparecem colados na mesma linha, enquanto o escore-z distingue −2 de −4 desvios padrão, diferença que muda completamente a urgência e a conduta.',
+        'Diante de **baixa estatura**, calcule a **estatura-alvo parental** e a **velocidade de crescimento** (o parâmetro mais sensível), e solicite **idade óssea**. Velocidade normal com estatura baixa e idade óssea atrasada sugere atraso constitucional; velocidade reduzida obriga investigar hipotireoidismo, doença celíaca, doença renal crônica, deficiência de hormônio de crescimento e síndrome de Turner em meninas.',
+        'Na **desnutrição aguda grave** (peso para altura com escore-z < −3, perímetro braquial < 11,5 cm entre 6 e 59 meses, ou edema bilateral), siga o protocolo da OMS: estabilização com atenção a hipoglicemia, hipotermia e infecção, reidratação com solução específica de baixo sódio e alto potássio, e realimentação **cautelosa** pelo risco de síndrome de realimentação. E não ignore o outro extremo: sobrepeso e obesidade pedem intervenção familiar precoce e rastreio de comorbidade metabólica.',
       ],
       interpretacao: [
         '**A tendência vale mais que o ponto.** Uma criança consistentemente no percentil 10 desde o nascimento provavelmente é apenas pequena; uma que cai do percentil 50 para o 10 em seis meses tem um problema, mesmo permanecendo dentro da faixa "normal". Sempre plote a curva inteira.',
@@ -1151,6 +1200,13 @@ const bronquiolite: Ferramenta = {
         { rotulo: 'Apneia', valor: sim(v, 'apneia') ? 'Presente' : 'Ausente', nota: 'Apneia é indicação de internação independentemente do escore, sobretudo abaixo de 2 meses.', nivel: sim(v, 'apneia') ? 'critico' : 'ok' },
         { rotulo: 'Decisão sugerida', valor: internar ? 'Internação' : 'Observação e possível alta', nivel: internar ? 'critico' : 'ok' },
       ],
+      conduta: [
+        'Na forma **leve**, a conduta é de suporte e desospitalização: hidratação, higiene nasal com soro fisiológico, aleitamento fracionado e orientação de sinais de alarme. **Não prescreva** broncodilatador, corticoide, antibiótico, antileucotrieno nem fisioterapia respiratória — nenhum deles alterou desfecho em bronquiolite, e todos têm efeito adverso.',
+        'Na forma **moderada**, interne e mantenha o suporte: oxigênio para manter saturação **≥ 90–92%**, hidratação por via oral, sonda ou intravenosa conforme a aceitação, e monitorização. A aspiração de vias aéreas superiores antes das mamadas melhora a aceitação alimentar mais do que qualquer fármaco.',
+        'Na forma **grave**, com desconforto importante, apneia, hipoxemia refratária ou exaustão, inicie **cânula nasal de alto fluxo (1–2 L/kg/min)** e considere ventilação não invasiva ou intubação. Transfira para unidade de terapia intensiva pediátrica com limiar baixo em lactentes de alto risco.',
+        'Identifique os **grupos de risco** que mudam o limiar de internação: idade abaixo de 12 semanas, prematuridade, cardiopatia congênita hemodinamicamente significativa, doença pulmonar crônica, imunodeficiência e doença neuromuscular. **Apneia** pode ser a primeira manifestação no lactente muito jovem e justifica internação isolada.',
+        'Lembre da **prevenção**, que é o que efetivamente reduz hospitalização: **nirsevimabe** (anticorpo monoclonal de dose única) para lactentes na primeira temporada, ou palivizumabe mensal nos grupos de alto risco onde disponível, e vacinação materna contra o vírus sincicial respiratório na gestação. Some higiene das mãos, aleitamento materno e evitar exposição a tabaco e a aglomerações.',
+      ],
       interpretacao: [
         '**O tratamento da bronquiolite é de suporte, e a lista do que NÃO fazer é mais longa que a do que fazer.** Não há benefício demonstrado para broncodilatador (nem beta-agonista, nem adrenalina inalatória em uso rotineiro), corticoide sistêmico ou inalatório, antibiótico sem infecção bacteriana documentada, fisioterapia respiratória, ou antileucotrieno.',
         '**O que funciona:** oxigênio se saturação abaixo de 90 a 92%, hidratação (oral, por sonda ou endovenosa), aspiração nasal superficial de secreções, e suporte respiratório escalonado (cateter nasal de alto fluxo ou CPAP) nos casos graves.',
@@ -1225,6 +1281,13 @@ const anestesicoLocal: Ferramenta = {
         { rotulo: 'Dose máxima sem vasoconstritor', valor: `${fmtLivre(peso * d.sem, 1)} mg (${fmtLivre((peso * d.sem) / mgPorMl, 1)} mL)` },
         { rotulo: 'Dose máxima com vasoconstritor', valor: `${fmtLivre(peso * d.com, 1)} mg (${fmtLivre((peso * d.com) / mgPorMl, 1)} mL)` },
         { rotulo: 'Características', valor: d.obs },
+      ],
+      conduta: [
+        'Calcule a dose máxima **antes** de aspirar a seringa, e converta corretamente: uma solução a **1% contém 10 mg/mL**. Os tetos usuais são lidocaína 4,5 mg/kg (7 mg/kg com adrenalina), bupivacaína 2,5 mg/kg (3 mg/kg com adrenalina) e ropivacaína 3 mg/kg. Em crianças pequenas, esses limites são atingidos com volumes surpreendentemente baixos.',
+        'Injete **sempre com aspiração prévia e de forma fracionada**, observando o paciente entre as frações. A toxicidade grave decorre quase sempre de injeção intravascular inadvertida, não da dose total — e o fracionamento é o que permite interromper antes do colapso.',
+        'Reconheça o **pródromo neurológico**: gosto metálico, dormência perioral, zumbido, tontura, agitação, fala arrastada. Ele precede convulsão e colapso cardiovascular. Ao primeiro sintoma, **pare a injeção imediatamente**, administre oxigênio e prepare o resgate — esperar para \'ver se melhora\' é o erro que transforma um susto em parada.',
+        'Tenha **emulsão lipídica a 20% disponível** onde quer que se use anestésico local em dose relevante. Na toxicidade sistêmica: bolus de 1,5 mL/kg em 1 minuto, seguido de infusão de 0,25 mL/kg/min, repetindo o bolus até duas vezes se persistir a instabilidade. Na parada associada, reduza a adrenalina para menos de 1 µg/kg e **evite** anestésicos locais, betabloqueadores, bloqueadores de canal de cálcio e vasopressina.',
+        'Reduza a dose máxima em **lactentes abaixo de 6 meses** (menor alfa-1-glicoproteína ácida, portanto maior fração livre, e metabolismo hepático imaturo), em insuficiência hepática, insuficiência cardíaca e acidose. Evite adrenalina em extremidades com circulação terminal, e lembre que a prilocaína e a benzocaína podem causar **metemoglobinemia** — risco particularmente relevante no lactente.',
       ],
       interpretacao: [
         'O vasoconstritor eleva a dose máxima porque reduz a absorção sistêmica, prolonga o efeito e melhora a hemostasia local. **A antiga proibição de adrenalina em extremidades ("dedos, nariz, orelhas, pênis") foi refutada** — não há caso documentado de necrose digital com soluções comerciais diluídas, e revisões sistemáticas apoiam o uso.',

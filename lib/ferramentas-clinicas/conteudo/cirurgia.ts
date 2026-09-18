@@ -163,6 +163,13 @@ const rcri: Ferramenta = {
         { rotulo: 'Risco em metanálise de validação', valor: riscoValidacao, nota: 'Estimativas contemporâneas, com definição de infarto por troponina de alta sensibilidade — mais altas que as originais.' },
         { rotulo: 'Limiar de risco elevado', valor: '≥ 2 pontos' },
       ],
+      conduta: [
+        '**0 a 1 fator (risco < 1%)**: prossiga para a cirurgia sem investigação cardíaca adicional. Testes funcionais nesse grupo não reduzem eventos e geram atrasos e cascatas diagnósticas.',
+        '**2 ou mais fatores**, em cirurgia de risco intermediário ou alto: avalie a **capacidade funcional** primeiro (DASI, ou capacidade de subir dois lances de escada, equivalente a ≥ 4 METs). Capacidade preservada permite prosseguir; capacidade reduzida ou desconhecida justifica teste funcional **apenas se o resultado for mudar a conduta** — ou seja, se houver disposição para revascularizar ou para mudar a estratégia cirúrgica.',
+        'Use os **biomarcadores** quando disponíveis: BNP ou NT-proBNP pré-operatórios elevados identificam risco aumentado melhor que o RCRI isolado, e indicam vigilância de troponina no 1º, 2º e 3º dias de pós-operatório para detectar **lesão miocárdica após cirurgia não cardíaca (MINS)**, que é majoritariamente assintomática e associada a mortalidade elevada.',
+        'Otimize o que é modificável: **mantenha o betabloqueador de quem já usa** (a retirada abrupta aumenta eventos), mas **não inicie betabloqueador nos dias que antecedem a cirurgia** — o ensaio POISE mostrou redução de infarto ao custo de mais acidente vascular cerebral e morte. Mantenha estatina e aspirina conforme a indicação individual, e discuta com o cirurgião o momento seguro para suspender antiagregante em paciente com stent recente.',
+        'Lembre que o RCRI **subestima o risco em cirurgia vascular aberta e em cirurgia de emergência**, e que ele não contempla idade, anemia, fragilidade nem capacidade funcional. Em idosos, combine com uma avaliação de **fragilidade** — ela prediz complicação, delirium, institucionalização e mortalidade melhor que qualquer índice cardíaco.',
+      ],
       interpretacao: [
         alto
           ? '**Risco elevado (≥ 2 pontos).** Combine com a capacidade funcional: se ela for boa (DASI acima de 34 pontos ou capacidade acima de 4 METs), a investigação adicional raramente muda conduta. Se for ruim ou desconhecida, considere dosar peptídeo natriurético (BNP ou NT-proBNP) — que é a estratégia recomendada pela diretriz canadense e melhora a discriminação.'
@@ -241,6 +248,13 @@ const gupta: Ferramenta = {
         { rotulo: 'Contribuição do procedimento', valor: fmt(proc, 2) },
         { rotulo: 'Limiar de investigação adicional', valor: '≥ 1%', nota: 'As diretrizes americana e europeia usam 1% de risco estimado como limiar acima do qual a avaliação cardiovascular adicional pode ser considerada.' },
       ],
+      conduta: [
+        '**Risco < 1%**: nenhuma investigação cardíaca adicional. O resultado apoia a decisão de prosseguir e é útil para documentar o consentimento informado com número, e não com impressão.',
+        '**Risco ≥ 1%**: é o limiar em que as diretrizes consideram o paciente de risco elevado. Avalie capacidade funcional e, se reduzida, discuta a utilidade de teste não invasivo — sempre com a pergunta prévia de se o resultado mudaria a conduta cirúrgica ou anestésica.',
+        'Prefira o Gupta MICA ao RCRI quando quiser uma **estimativa percentual contínua**: por ser derivado de uma base de mais de 200 mil pacientes do programa NSQIP, ele discrimina melhor e considera o tipo específico de procedimento, dependência funcional, idade e creatinina.',
+        'Use o número para **planejar o cuidado perioperatório**, não apenas para classificar: risco alto justifica leito monitorado no pós-operatório, vigilância de troponina seriada, controle rigoroso de anemia e de volemia, e discussão prévia sobre a possibilidade de adiar cirurgia eletiva até otimização.',
+        'Considere sempre a alternativa de **não operar ou de operar menos**: em paciente de risco muito alto, a comparação relevante não é entre teste funcional e nenhum teste, e sim entre a cirurgia proposta, uma abordagem menos invasiva e o tratamento conservador. Essa conversa pertence ao pré-operatório e frequentemente não acontece.',
+      ],
       interpretacao: [
         'O Gupta MICA foi derivado do banco NSQIP com mais de 200 mil cirurgias e superou o RCRI em discriminação (área sob a curva de 0,88 contra 0,75) — sobretudo por incluir estado funcional e uma granularidade muito maior de tipos de procedimento.',
         'Risco estimado **abaixo de 1%** dispensa investigação cardiovascular adicional na maioria das diretrizes; **acima de 1%**, a próxima pergunta é sobre capacidade funcional, e só depois sobre exames.',
@@ -304,6 +318,13 @@ const alvarado: Ferramenta = {
       detalhes: [
         { rotulo: 'Mnemônica MANTRELS', valor: 'M igração · A norexia · N áusea · T enderness (dor à palpação) · R ebound · E levação de temperatura · L eucocitose · S hift (desvio)' },
         { rotulo: 'Conduta sugerida', valor: ['Alta com orientação e retorno', 'Observação e reavaliação seriada, ou imagem', 'Imagem e avaliação cirúrgica', 'Avaliação cirúrgica'][faixa] },
+      ],
+      conduta: [
+        '**Escore 0–3 (baixo risco)**: apendicite é improvável. Considere alta com reavaliação em 12–24 h e orientação clara de sinais de retorno, ou observação seriada — a reavaliação pelo mesmo examinador tem alto valor diagnóstico e evita imagem desnecessária.',
+        '**Escore 4–6 (intermediário)**: solicite imagem. **Ultrassonografia** primeiro em crianças, jovens e gestantes (sem radiação); **tomografia** em adultos quando a ultrassonografia for inconclusiva, que é o cenário mais frequente em pacientes com maior biotipo. Ressonância é a alternativa na gestante com ultrassonografia inconclusiva.',
+        '**Escore 7–10 (alto risco)**: apendicite provável. Em homens jovens com quadro típico, alguns serviços indicam cirurgia sem imagem; na maioria dos contextos, a tomografia ainda reduz apendicectomias negativas e ajuda a identificar complicação. Acione a cirurgia e inicie antibiótico e analgesia — analgesia não mascara o exame abdominal, e negá-la é prática ultrapassada.',
+        'Considere **tratamento antibiótico exclusivo** em apendicite não complicada selecionada (sem apendicolito, sem perfuração, sem abscesso): cerca de 70% evitam a cirurgia em 1 ano, com o restante operando depois. É uma opção legítima a oferecer, especialmente quando o risco cirúrgico é alto — e uma conversa de decisão compartilhada, não uma escolha do serviço.',
+        'Saiba onde o escore **falha**: mulheres em idade fértil (grande sobreposição com doença ginecológica — peça beta-hCG sempre), idosos (apresentação atípica, maior taxa de perfuração), crianças pequenas e imunossuprimidos. Nesses grupos, o limiar para imagem deve ser mais baixo, e escores alternativos como o AIR e o AAS têm desempenho superior.',
       ],
       interpretacao: [
         faixa === 0
@@ -490,6 +511,13 @@ const tokyo: Ferramenta = {
         { rotulo: 'Critérios de grau III (disfunção orgânica)', valor: `${grauIII} presente(s)`, nivel: grauIII > 0 ? 'critico' : 'ok' },
         { rotulo: 'Critérios de grau II', valor: `${grauII} presente(s)`, nivel: grauII > 0 ? 'alerta' : 'ok' },
       ],
+      conduta: [
+        '**Grau I (leve)**: colecistectomia laparoscópica **precoce, na mesma internação**, idealmente nas primeiras 72 horas do início dos sintomas. Adiar para \'esfriar o processo\' aumenta conversão, complicação e reinternação — a conduta mudou, e a cirurgia precoce é o padrão atual.',
+        '**Grau II (moderado)**: colecistectomia precoce em serviço com experiência laparoscópica; se as condições locais ou do paciente não permitirem, faça drenagem (colecistostomia percutânea ou drenagem transpapilar) e programe a cirurgia de intervalo.',
+        '**Grau III (grave, com disfunção orgânica)**: estabilize primeiro — suporte hemodinâmico, antibiótico, correção de disfunções — e opte por **drenagem biliar** como ponte. A colecistectomia precoce nesse grupo só é aceitável em centro de alto volume, com paciente que responde rapidamente ao suporte.',
+        'Verifique sempre se há **coledocolitíase ou colangite associada**: bilirrubina elevada, dilatação de via biliar, tríade de Charcot ou pêntade de Reynolds. A colangite aguda exige **drenagem biliar urgente por colangiopancreatografia retrógrada**, e nesse cenário a descompressão tem prioridade sobre a colecistectomia.',
+        'Não perca a **colecistite alitiásica**, que ocorre em paciente crítico, em jejum prolongado, em nutrição parenteral, após grande queimadura ou trauma. Ela tem evolução mais rápida para gangrena e perfuração, o diagnóstico é mais difícil, e o tratamento inicial de escolha costuma ser a drenagem percutânea.',
+      ],
       interpretacao: [
         '**Diagnóstico:** suspeita com 1 item de A + 1 item de B; definido quando se acrescenta C (imagem). **Gravidade:** grau III (grave) na presença de qualquer disfunção orgânica; grau II (moderada) com leucócitos acima de 18.000, massa palpável, sintomas há mais de 72 horas ou inflamação local acentuada; grau I quando nenhum dos anteriores.',
         '**A colecistectomia laparoscópica precoce — nas primeiras 72 horas, e idealmente na mesma internação — é o tratamento de escolha nos graus I e II** em pacientes com risco cirúrgico aceitável. A antiga prática de "esfriar o processo" e operar em 6 semanas foi abandonada: a cirurgia precoce reduz tempo total de internação e não aumenta complicações (ensaio ACDC).',
@@ -543,6 +571,13 @@ const possum: Ferramenta = {
         { rotulo: 'Morbidade estimada (POSSUM)', valor: fmtPct(morbidade, 1), nota: 'ln(R/(1−R)) = −5,91 + 0,16 × PS + 0,19 × OS' },
         { rotulo: 'Mortalidade estimada (POSSUM)', valor: fmtPct(mortalidade, 1), nota: 'ln(R/(1−R)) = −7,04 + 0,13 × PS + 0,16 × OS. **Superestima em pacientes de baixo risco.**' },
         { rotulo: 'Mortalidade estimada (P-POSSUM)', valor: fmtPct(mortalidadeP, 1), nota: 'ln(R/(1−R)) = −9,065 + 0,1692 × PS + 0,1550 × OS. Recalibrada para corrigir a superestimativa do POSSUM original no baixo risco.' },
+      ],
+      conduta: [
+        'Use o POSSUM para **planejar recursos e informar o consentimento**, não para negar cirurgia. O número transforma \'cirurgia de risco\' numa estimativa quantitativa que o paciente e a família podem compreender, e é a base de uma conversa honesta sobre alternativas.',
+        'Prefira o **P-POSSUM** para estimar mortalidade: o POSSUM original a superestima sistematicamente em pacientes de baixo risco, por causa do modelo de regressão logística original. Para cirurgia colorretal, use o **CR-POSSUM**, e para cirurgia vascular o **V-POSSUM**.',
+        'Risco estimado **alto** deve disparar providências concretas: leito de terapia intensiva reservado, otimização pré-operatória de anemia (ferro intravenoso em vez de transfusão quando houver tempo), nutrição, controle glicêmico e cessação de tabagismo, e discussão sobre abordagem menos invasiva ou tratamento conservador.',
+        'Conheça a limitação estrutural do escore: **12 variáveis fisiológicas e 6 operatórias**, algumas das quais só são conhecidas **durante ou após a operação** (perda sanguínea, contaminação peritoneal, malignidade, urgência). Isso o torna excelente para auditoria e comparação de resultados entre serviços, e limitado para decisão pré-operatória pura.',
+        'Complemente com o que o POSSUM não mede: **fragilidade**, capacidade funcional, cognição, suporte social e preferências do paciente. Em idosos, uma avaliação geriátrica ampla antes da cirurgia reduz delirium e tempo de internação — ganho que nenhum ajuste de técnica cirúrgica produz.',
       ],
       interpretacao: [
         'O POSSUM foi criado em 1991 para **auditoria com ajuste de risco**, e não para aconselhar pacientes individualmente. Sua finalidade original é permitir que serviços comparem seus desfechos observados com os esperados, corrigindo pela gravidade da população — a razão entre observado e esperado.',
@@ -696,6 +731,13 @@ const jejum: Ferramenta = {
         { rotulo: 'Tempo exigido', valor: `${necessario} h` },
         { rotulo: 'Fator de risco para aspiração', valor: risco ? 'Presente' : 'Ausente', nota: risco ? 'Considere sequência rápida com pressão cricoide, sonda gástrica prévia, e profilaxia com antagonista H₂ ou inibidor de bomba de prótons e antiácido não particulado.' : undefined, nivel: risco ? 'alerta' : 'ok' },
       ],
+      conduta: [
+        'Aplique a regra **2–4–6–8**: líquidos claros até **2 horas** antes, leite materno até **4 horas**, fórmula infantil e refeição leve até **6 horas**, refeição gordurosa ou carne até **8 horas**. Esses são os intervalos das diretrizes atuais, e o jejum de \'nada por boca após a meia-noite\' está abandonado.',
+        '**Estimule a ingestão de líquido claro até 2 horas antes** — água, chá, café sem leite, suco sem polpa, bebida com carboidrato. O jejum prolongado causa desidratação, hipoglicemia, resistência insulínica, desconforto, irritabilidade (especialmente em crianças) e não reduz aspiração. Bebida com maltodextrina 2 h antes faz parte dos protocolos ERAS e melhora a recuperação.',
+        'Prolongue o jejum apenas em situações de **esvaziamento gástrico retardado**: gastroparesia diabética, obstrução, estenose pilórica, refluxo grave, gestação avançada, trauma recente, dor intensa, uso de opioide e **agonistas de GLP-1**, que retardam substancialmente o esvaziamento — nesses últimos, considere suspender o fármaco antes do procedimento eletivo conforme o protocolo local e avaliar o conteúdo gástrico por ultrassonografia.',
+        'Em **emergência**, presuma estômago cheio independentemente do tempo de jejum e use **indução em sequência rápida** com pressão cricoide conforme a prática do serviço. O tempo de jejum não é critério para adiar cirurgia de urgência.',
+        'Mantenha a **medicação de uso contínuo** com um gole de água: anti-hipertensivos (com a ressalva de suspender IECA e BRA na manhã da cirurgia pelo risco de hipotensão na indução), antiarrítmicos, antiepilépticos, broncodilatadores, corticoide e antirretrovirais. A suspensão indiscriminada de toda a prescrição na véspera causa mais dano do que o jejum.',
+      ],
       interpretacao: [
         urgencia
           ? '**Em urgência e emergência, o jejum não é pré-requisito.** Todo paciente é tratado como estômago cheio: sequência rápida de intubação, com material de aspiração pronto e equipe preparada.'
@@ -791,6 +833,13 @@ const volemiaCirurgica: Ferramenta = {
       nivel,
       rotuloNivel: abc >= 2 ? 'ABC ≥ 2 — acionar protocolo de transfusão maciça' : '',
       detalhes,
+      conduta: [
+        'Reconheça o **choque hemorrágico pela classe**, lembrando que a pressão arterial cai tarde: na classe I (até 15% de perda) tudo está normal; na classe II (15–30%) há taquicardia e redução da pressão de pulso; na classe III (30–40%) aparece hipotensão e confusão; na classe IV (> 40%) há colapso. Frequência cardíaca, pressão de pulso, enchimento capilar e nível de consciência mudam antes da sistólica.',
+        'Ative o **protocolo de transfusão maciça** diante de perda estimada acima de 30–40%, escore ABC ≥ 2, ou necessidade prevista de mais de 4 concentrados em 1 hora. Transfunda em proporção **1:1:1** de hemácias, plasma e plaquetas — a reposição apenas com hemácias e cristaloide produz coagulopatia dilucional e piora o sangramento.',
+        'Pratique a **reanimação de controle de danos**: hipotensão permissiva (sistólica de 80–90 mmHg, ou palpação de pulso radial) até o controle cirúrgico do sangramento, **exceto** em trauma cranioencefálico, em que a perfusão cerebral exige pressão mais alta. Minimize cristaloide, que dilui fatores e agrava a acidose.',
+        'Combata a **tríade letal — hipotermia, acidose e coagulopatia**, que se retroalimentam: aqueça o paciente e os fluidos ativamente, corrija a perfusão e reponha fatores. **Ácido tranexâmico 1 g em 10 minutos, seguido de 1 g em 8 horas, dentro das primeiras 3 horas** do trauma reduz mortalidade; depois de 3 horas ele passa a ser prejudicial.',
+        'Reponha **cálcio** durante a transfusão maciça: o citrato dos hemocomponentes quela o cálcio ionizado, e a hipocalcemia agrava a coagulopatia e a disfunção miocárdica. Monitore cálcio ionizado, fibrinogênio (alvo > 1,5–2,0 g/L) e, quando disponível, use **tromboelastografia ou tromboelastometria** para guiar a reposição em vez de proporções fixas.',
+      ],
       interpretacao: [
         '**A classificação de choque hemorrágico do ATLS ensina uma lição central: a pressão arterial cai tarde.** Um adulto jovem perde até 30% da volemia — cerca de 1,5 L — com pressão sistólica ainda normal, sustentada por taquicardia e vasoconstrição. Taquicardia com pressão de pulso estreita é o achado precoce; hipotensão já é choque avançado.',
         '**Transfusão maciça** é classicamente definida como 10 ou mais unidades de hemácias em 24 horas, ou 4 unidades em 1 hora. Definições contemporâneas privilegiam a velocidade: 3 unidades em 1 hora, ou o conceito de "sangramento crítico".',
@@ -862,6 +911,13 @@ const hidricaPerioperatoria: Ferramenta = {
         { rotulo: 'Perdas por exposição e "terceiro espaço"', valor: `${fmtInt(perdasExposicao)} mL`, nota: '**O conceito de terceiro espaço não anatômico foi refutado.** Estudos com traçadores não confirmaram sua existência; o que existe é extravasamento para o interstício por lesão do glicocálice endotelial, agravado justamente pela reposição excessiva.' },
         { rotulo: 'Reposição de perda sanguínea (3:1 com cristaloide)', valor: `${fmtInt(reposicaoSangue)} mL`, nota: 'A regra 3:1 também é hoje considerada excessiva; 1,5:1 é mais próximo do necessário quando o objetivo é apenas restaurar volume.' },
         { rotulo: 'Estimativa por abordagem restritiva', valor: `${fmtInt(restritivo)} mL`, nota: 'Manutenção + 1 a 2 mL/kg/h de perdas + reposição de sangue 1,5:1. É o que a prática contemporânea recomenda como ponto de partida.', nivel: 'ok' },
+      ],
+      conduta: [
+        'Adote a estratégia **restritiva ou zero-balance** em cirurgia de grande porte: a antiga fórmula de Holliday-Segar somada a reposição generosa de \'terceiro espaço\' produz sobrecarga, edema intestinal, deiscência de anastomose, íleo prolongado e complicação pulmonar. O alvo moderno é balanço próximo de zero, com ganho de peso pós-operatório mínimo.',
+        'Prefira a **terapia guiada por metas** em cirurgia de alto risco: reponha volume em alíquotas de 250 mL e mantenha apenas se houver aumento do volume sistólico, usando variação de pressão de pulso, monitorização de débito ou elevação passiva de pernas. Isso substitui metas fixas por resposta individual.',
+        'Escolha **cristaloide balanceado** (Ringer lactato, Plasma-Lyte) em vez de soro fisiológico a 0,9% para volumes grandes: a salina em excesso causa acidose metabólica hiperclorêmica, com vasoconstrição renal e maior necessidade de terapia de substituição renal. Evite **amidos (hidroxietilamido)**, associados a lesão renal e mortalidade.',
+        'Reduza a **perda insensível estimada**, que é historicamente superestimada: hoje se calcula em torno de 0,5 a 1 mL/kg/h mesmo em laparotomia aberta, contra os 8 a 10 mL/kg/h da literatura antiga. É esse número inflado que sustenta a hiper-hidratação tradicional.',
+        'Trate **hipotensão sob anestesia** com vasopressor, não com volume adicional: ela decorre majoritariamente da vasoplegia induzida pelos anestésicos, e não de hipovolemia. Combine com os demais elementos do protocolo ERAS — jejum abreviado com carboidrato, normotermia, analgesia multimodal poupadora de opioide, retirada precoce de sondas e mobilização no mesmo dia.',
       ],
       interpretacao: [
         '**A fluidoterapia perioperatória mudou radicalmente.** A abordagem clássica, com déficit de jejum, terceiro espaço e reposição 3:1, gerava balanços positivos de 4 a 6 litros em laparotomias — com edema intestinal, íleo prolongado, deiscência de anastomose, edema pulmonar e internação mais longa.',
