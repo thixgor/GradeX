@@ -307,11 +307,46 @@ function avaliar(f) {
   return { ...f, corpo: undefined, itens, nota, aprovada: nota >= NOTA_MINIMA }
 }
 
+/**
+ * Conferência estrutural: as chaves de cada arquivo precisam fechar.
+ *
+ * A auditoria lê texto e não compila, então um arquivo sintaticamente quebrado
+ * passaria com nota alta — já aconteceu duas vezes ao editar `conduta` no meio
+ * de um `return`, comendo o fechamento do `Resultado` e do `calcular`. Esta
+ * checagem é barata e falha alto, antes de qualquer nota ser exibida.
+ */
+function conferirChaves(texto, arquivo) {
+  let nivel = 0
+  let dentroDeTexto = null
+  for (let i = 0; i < texto.length; i++) {
+    const c = texto[i]
+    if (dentroDeTexto) {
+      if (c === '\\') i++
+      else if (c === dentroDeTexto) dentroDeTexto = null
+      continue
+    }
+    if (c === "'" || c === '"' || c === '`') dentroDeTexto = c
+    else if (c === '{') nivel++
+    else if (c === '}') nivel--
+  }
+  if (nivel !== 0) {
+    console.error(
+      `\x1b[31mERRO ESTRUTURAL\x1b[0m em ${arquivo}: saldo de chaves ${nivel > 0 ? '+' : ''}${nivel}.\n` +
+        'O arquivo não fecha. Rode `npx tsc --noEmit` para localizar — a auditoria mede conteúdo, não sintaxe.',
+    )
+    return false
+  }
+  return true
+}
+
 const ferramentas = []
+let estruturaOk = true
 for (const arquivo of fs.readdirSync(DIR_CONTEUDO).filter((a) => a.endsWith('.ts')).sort()) {
   const texto = fs.readFileSync(path.join(DIR_CONTEUDO, arquivo), 'utf8')
+  if (!conferirChaves(texto, arquivo)) estruturaOk = false
   for (const f of recortarFerramentas(texto, arquivo)) ferramentas.push(avaliar(f))
 }
+if (!estruturaOk) process.exitCode = 1
 
 /* ──────────────────────────── Relatório ──────────────────────────── */
 

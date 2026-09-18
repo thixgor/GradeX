@@ -220,13 +220,13 @@ const hidrica: Ferramenta = {
   campos: [
     campoPeso(),
     campoIdade({ min: 1 }),
-    campoNum('calorias', 'Aporte calórico diário', { unidade: 'kcal', min: 400, max: 5000, passo: 50, padrao: '2000' }),
-    campoNum('temperatura', 'Temperatura corporal', { unidade: '°C', min: 34, max: 43, passo: 0.1, padrao: '37' }),
+    campoNum('calorias', 'Aporte calórico diário', { unidade: 'kcal', min: 400, max: 5000, passo: 50, padrao: '2000', ajuda: 'Usado no método de 1 mL de água por quilocaloria metabolizada. Essa equivalência é notavelmente estável entre espécies porque a maior parte da perda hídrica é obrigatória e acompanha o metabolismo — água para excretar solutos, perdas insensíveis e fecais.' }),
+    campoNum('temperatura', 'Temperatura corporal', { unidade: '°C', min: 34, max: 43, passo: 0.1, padrao: '37', ajuda: 'Cada grau acima de 37 °C acrescenta cerca de 10 a 13% à necessidade, por aumento das perdas insensíveis pela pele e pela respiração — a febre acelera o metabolismo e a ventilação ao mesmo tempo.' }),
     campoNum('perdasExtras', 'Perdas adicionais estimadas', { unidade: 'mL/dia', min: 0, max: 5000, passo: 50, padrao: '0', ajuda: 'Drenos, fístulas, diarreia, vômitos, sudorese profusa, feridas extensas, poliúria.' }),
     campoSeg('restricao', 'Há restrição hídrica', [
       { valor: 'nao', rotulo: 'Não' },
       { valor: 'sim', rotulo: 'Sim (insuficiência cardíaca, hiponatremia, doença renal)' },
-    ]),
+    ], { ajuda: 'A restrição é conduta médica, não ajuste automático de cálculo. Em SIADH ela precisa ser menor que o volume urinário para funcionar; na insuficiência cardíaca, restrições abaixo de 1,5 L raramente se sustentam e a evidência de benefício é fraca.' }),
   ],
   calcular: (v) => {
     const peso = num(v, 'peso')
@@ -267,6 +267,31 @@ const hidrica: Ferramenta = {
         '**Nutrição enteral contém água.** Fórmulas padrão de 1,0 kcal/mL têm cerca de 80 a 85% de água; as concentradas (1,5 a 2,0 kcal/mL) têm 70 a 78%. Ao calcular o balanço, conte a água da dieta — esquecê-la é causa frequente de desidratação em pacientes com dieta concentrada.',
         'A sede é um marcador tardio no idoso: a sensibilidade dos osmorreceptores diminui com a idade, e a desidratação se instala antes de o paciente sentir sede. Ofereça líquidos ativamente.',
         '**Sinais de balanço adequado:** diurese de 0,5 a 1 mL/kg/h, peso estável, mucosas úmidas, turgor preservado, sódio e osmolalidade normais, e ureia sem elevação desproporcional à creatinina.',
+        'Vale entender por que **a sede falha justamente em quem mais precisa dela**. A sede é disparada por duas vias: os osmorreceptores do órgão vasculoso da lâmina terminal, no hipotálamo, que detectam elevações de apenas 1 a 2% na osmolalidade plasmática, e os barorreceptores arteriais e de volume, que respondem a quedas de 8 a 10% na volemia. No idoso, a sensibilidade osmorreceptora cai de forma documentada — é preciso uma osmolalidade mais alta para gerar a mesma sensação de sede —, e a isso se somam redução da capacidade renal de concentrar urina (menos néfrons, menor resposta à vasopressina, gradiente medular reduzido), menor proporção de água corporal total (de cerca de 60% no adulto jovem para 50% ou menos), e frequentemente restrição voluntária de líquidos por medo de incontinência ou por dificuldade de locomoção até o banheiro. O resultado é uma reserva menor com um alarme que toca tarde: a desidratação se instala antes de o paciente sentir sede, e por isso a oferta precisa ser **ativa e programada**, não sob demanda.',
+      ],
+      conduta: restricao
+        ? [
+            '**Restrição hídrica indicada — mas ela é conduta médica com alvo definido, não um número genérico.** Na insuficiência cardíaca sintomática, 1,5 a 2 L/dia é o usual, e restrições mais rigorosas raramente se sustentam e têm evidência fraca de benefício. Na **hiponatremia por SIADH**, a restrição precisa ser **menor que o volume urinário** para funcionar, e costuma ficar entre 800 e 1.200 mL/dia.',
+            'Na hiponatremia, calcule a **relação eletrólitos urinários / sódio sérico** antes de restringir: se (sódio + potássio urinários) dividido pelo sódio sérico for maior que 1, o rim está excretando água **negativa** e a restrição isolada não vai funcionar — nesses casos considere ureia oral, tolvaptana ou salina hipertônica conforme o contexto.',
+            'Conte **toda** a água ofertada, não só a que o paciente bebe: soro de manutenção, diluição de medicamentos, água da nutrição enteral (fórmulas de 1,0 kcal/mL têm 80 a 85% de água; as concentradas, 70 a 78%) e alimentos com alto teor hídrico. Esquecer a água da diluição de antibióticos é causa frequente de restrição que não se cumpre.',
+            'Monitore **peso diário** na mesma balança e no mesmo horário — é o marcador mais sensível de balanço —, junto de balanço hídrico registrado, sódio, ureia, creatinina e sinais clínicos de congestão ou depleção.',
+            'Oriente o paciente e a família de forma concreta: medir o volume permitido em uma jarra no início do dia, usar copos pequenos, chupar gelo ou borrifar água na boca para aliviar a sede, evitar sal (que aumenta a sede) e não compensar no dia seguinte.',
+          ]
+        : [
+            `Sem restrição. A estimativa é ponto de partida — **ajuste pela resposta**: diurese de 0,5 a 1 mL/kg/h, peso estável, mucosas úmidas, sódio e osmolalidade normais, e ureia sem elevação desproporcional à creatinina.`,
+            'Some as **perdas extraordinárias** explicitamente: febre acrescenta 10 a 13% por grau acima de 37 °C; taquipneia, ventilação com gases não umidificados, sudorese profusa, drenos, fístulas, ostomias de alto débito, diarreia, vômitos, poliúria e feridas extensas ou queimaduras aumentam a necessidade de forma que nenhuma fórmula por peso captura.',
+            'Conte a água da **nutrição enteral** no balanço: fórmulas padrão de 1,0 kcal/mL contêm 80 a 85% de água, e as concentradas de 1,5 a 2,0 kcal/mL contêm apenas 70 a 78%. Não somar essa diferença é causa frequente de desidratação em paciente com dieta concentrada — prescreva água livre em bolus pela sonda para fechar a conta.',
+            'No idoso, **ofereça líquidos ativamente e em horários programados**, sem esperar a queixa de sede: a sensibilidade osmorreceptora está reduzida e a desidratação se instala antes do sintoma. Procure e remova barreiras — dificuldade de locomoção até o banheiro, medo de incontinência, disfagia que torna líquidos finos inseguros (nesse caso, espessante e gelatina contam), demência e dependência para levar o copo à boca.',
+            'Prefira a **via oral ou enteral** sempre que possível; hidratação intravenosa em paciente que pode beber é intervenção com risco desnecessário. Em idoso frágil sem acesso venoso, a hipodermóclise é alternativa segura e subutilizada.',
+            'Reavalie a prescrição em busca de causas iatrogênicas de desequilíbrio: diurético em dose excessiva, laxante, lítio, inibidor de SGLT2 em vigência de doença aguda, e restrições dietéticas herdadas que ninguém reviu.',
+          ],
+      alertas: [
+        'Estas são **estimativas de ponto de partida**, não prescrições. O método correto é calcular, ofertar e reavaliar por diurese, peso diário, sódio e exame clínico.',
+        'Sobrecarga hídrica é tão prejudicial quanto desidratação em cardiopata, nefropata e hepatopata. Balanço positivo cumulativo é preditor independente de complicação e de mortalidade no paciente hospitalizado.',
+        'A **água da nutrição enteral** conta e é sistematicamente esquecida: fórmula concentrada entrega até 15 pontos percentuais menos água que a padrão, e a diferença aparece como desidratação inexplicada.',
+        'No idoso, a sede é marcador tardio — a sensibilidade osmorreceptora cai com a idade. Ofereça líquidos ativamente em vez de aguardar a queixa.',
+        'Correção rápida de desidratação com hiponatremia crônica pode causar **síndrome de desmielinização osmótica**. Respeite o limite de 8 mEq/L de elevação de sódio em 24 horas, e lembre que a simples reposição de volume desliga a vasopressina e acelera a correção sozinha.',
+        'Em SIADH, restringir água sem checar os eletrólitos urinários frequentemente fracassa: se a excreção de água livre for negativa, a restrição isolada não corrige o sódio.',
       ],
     }
   },
@@ -280,9 +305,16 @@ const hidrica: Ferramenta = {
   armadilhas: [
     'Idosos precisam de menos água por quilo, mas têm maior risco de desidratação por menor reserva e menor sensação de sede.',
     'Sobrecarga hídrica é tão prejudicial quanto a desidratação em cardiopatas, nefropatas e hepatopatas.',
+    'A água da nutrição enteral não é opcional no cálculo: fórmula concentrada (1,5 a 2,0 kcal/mL) tem 70 a 78% de água contra 80 a 85% da padrão, e a diferença se acumula em dias.',
+    'Fórmulas por peso não capturam perdas extraordinárias. Febre, taquipneia, drenos, ostomias de alto débito, diarreia, poliúria e queimaduras exigem soma explícita.',
+    'Peso corrigido importa: no obeso, a estimativa por peso real superestima, porque o tecido adiposo tem menos água que a massa magra. No edemaciado, o peso já contém o excesso.',
+    'Restrição hídrica prescrita sem contar soro, diluição de medicamentos e água da dieta é restrição que não acontece — e é a explicação mais comum para hiponatremia que não corrige.',
+    'Em hiponatremia crônica, repor volume desliga a vasopressina e o rim excreta água livre rapidamente, elevando o sódio além do planejado. Monitore e respeite o teto de 8 mEq/L em 24 horas.',
   ],
   referencias: [
     { texto: 'Volkert D, Beck AM, Cederholm T, et al. ESPEN guideline on clinical nutrition and hydration in geriatrics. Clin Nutr. 2019;38(1):10-47.' },
+    { texto: 'Institute of Medicine. Dietary Reference Intakes for Water, Potassium, Sodium, Chloride, and Sulfate. Washington: National Academies Press; 2005.' },
+    { texto: 'Spasovski G, Vanholder R, Allolio B, et al. Clinical practice guideline on diagnosis and treatment of hyponatraemia. Nephrol Dial Transplant. 2014;29(Suppl 2):i1-i39.' },
   ],
 }
 
@@ -369,14 +401,14 @@ const nrs: Ferramenta = {
       { valor: '1', rotulo: 'Leve: perda > 5% em 3 meses, ou ingestão de 50 a 75% da habitual na última semana', pontos: 1 },
       { valor: '2', rotulo: 'Moderado: perda > 5% em 2 meses, IMC de 18,5 a 20,5 com estado geral comprometido, ou ingestão de 25 a 50%', pontos: 2 },
       { valor: '3', rotulo: 'Grave: perda > 5% em 1 mês (ou > 15% em 3 meses), IMC < 18,5 com estado geral comprometido, ou ingestão de 0 a 25%', pontos: 3 },
-    ]),
+    ], { ajuda: 'Marque a categoria de MAIOR pontuação entre os três critérios (perda de peso, IMC e ingestão) — não some. A perda de peso precisa ser NÃO intencional, e a ingestão é a efetivamente consumida na última semana, não a prescrita. Cuidado com peso em paciente com ascite, edema ou desidratação: ele não reflete estado nutricional.' }),
     campoOpc('gravidade', 'Gravidade da doença (aumento da necessidade)', [
       { valor: '0', rotulo: 'Ausente', pontos: 0 },
       { valor: '1', rotulo: 'Leve: fratura de quadril, doença crônica com complicação aguda, cirrose, DPOC, diálise crônica, diabetes, câncer', pontos: 1 },
       { valor: '2', rotulo: 'Moderada: cirurgia abdominal de grande porte, AVC, pneumonia grave, neoplasia hematológica', pontos: 2 },
       { valor: '3', rotulo: 'Grave: traumatismo cranioencefálico, transplante de medula, paciente crítico com APACHE > 10', pontos: 3 },
-    ]),
-    campoSimNao('idade', 'Idade ≥ 70 anos', 1),
+    ], { ajuda: 'Este eixo estima o quanto a doença aumenta a necessidade e acelera o catabolismo. Ele existe porque a desnutrição associada à doença é catabólica obrigatória — citocinas, cortisol e catecolaminas degradam proteína muscular mesmo sob aporte adequado, ao contrário da inanição simples, em que o gasto energético cai e o organismo se adapta.' }),
+    campoSimNao('idade', 'Idade ≥ 70 anos', 1, 'Acrescenta 1 ponto ao total. É o ajuste mais esquecido do escore e frequentemente deixa idosos limítrofes fora do rastreio positivo.'),
   ],
   calcular: (v) => {
     const estado = num(v, 'estado')
@@ -403,15 +435,44 @@ const nrs: Ferramenta = {
         'O NRS-2002 é a ferramenta de rastreio recomendada pela ESPEN para pacientes hospitalizados. Sua característica distintiva é somar duas dimensões: o **estado nutricional atual** e a **gravidade da doença**, que aumenta a necessidade e acelera o catabolismo.',
         '**Rastreio não é diagnóstico.** O diagnóstico de desnutrição é feito pelos critérios GLIM, que exigem pelo menos um critério fenotípico (perda de peso não intencional, IMC baixo, redução de massa muscular) **e** um etiológico (redução de ingestão ou absorção, ou inflamação por doença aguda ou crônica).',
         'A **perda de peso não intencional** é o marcador isolado mais robusto: mais de 5% em um mês, 7,5% em três meses ou 10% em seis meses é clinicamente significativa.',
+        'A razão de o escore somar **gravidade da doença** ao estado nutricional está na diferença entre inanição simples e desnutrição associada à doença — são processos metabólicos distintos e responderiam de forma diferente ao mesmo aporte. Na **inanição pura**, o organismo se adapta: cai a insulina, sobe o glucagon, a lipólise fornece ácidos graxos e o fígado produz corpos cetônicos que o cérebro passa a usar, poupando proteína muscular. O gasto energético de repouso **diminui** em até 20 a 25%, a perda proteica é lenta, e a oferta de calorias reverte o quadro. Na **desnutrição associada à doença**, o quadro se inverte. As citocinas inflamatórias — TNF-α, IL-1β e IL-6 — somadas a cortisol, glucagon e catecolaminas produzem um estado catabólico obrigatório: o gasto energético **aumenta**, a resistência insulínica bloqueia a captação periférica de glicose, a via ubiquitina-proteassoma degrada proteína muscular para fornecer aminoácidos à gliconeogênese e à síntese de proteínas de fase aguda, e a síntese hepática de albumina cai enquanto a de proteína C reativa sobe. Essa proteólise é **obrigatória**: ela ocorre mesmo com aporte calórico adequado, e é por isso que nutrir um paciente séptico não interrompe a perda muscular, apenas a atenua. Compreender isso tem três consequências práticas — o aporte não deve ser agressivo na fase aguda (nutrição hipercalórica precoce no crítico piora desfechos), a albumina não serve como marcador nutricional, e o controle da doença de base é parte do tratamento nutricional.',
+      ],
+      conduta: emRisco
+        ? [
+            '**Em risco nutricional: acione o plano de cuidado em até 24 a 48 horas.** Encaminhe para avaliação completa por nutricionista, com estimativa de necessidades, definição de via e metas registradas — rastreio positivo sem plano é apenas documentação.',
+            'Confirme o diagnóstico pelos **critérios GLIM**, em duas etapas: pelo menos um critério **fenotípico** (perda de peso não intencional, IMC baixo ajustado por idade, ou redução de massa muscular) somado a pelo menos um **etiológico** (redução de ingestão ou absorção, ou inflamação por doença aguda ou crônica). Gradue a gravidade em moderada ou grave.',
+            'Estime as necessidades: 25 a 30 kcal/kg/dia como ponto de partida, e **1,2 a 1,5 g/kg/dia de proteína** (até 2,0 g/kg em crítico, queimado ou politraumatizado). No obeso, use peso ajustado. A proteína é o aporte que mais importa e o mais frequentemente subofertado.',
+            'Siga a hierarquia de vias: **via oral primeiro** com adequação de consistência, fracionamento e densidade calórica, e suplemento oral se a ingestão ficar abaixo de 60% das necessidades por mais de 3 dias. **Enteral** se o trato funciona mas a via oral é insuficiente ou insegura (disfagia, rebaixamento). **Parenteral** apenas se o trato não funciona ou a enteral não atinge as metas em 3 a 7 dias.',
+            'Avalie o risco de **síndrome de realimentação** antes de iniciar: jejum prolongado, IMC muito baixo, perda ponderal importante, alcoolismo e eletrólitos já baixos. Se houver risco, inicie com 10 a 15 kcal/kg/dia, reponha **tiamina antes da primeira caloria**, e monitore fósforo, potássio e magnésio diariamente na primeira semana.',
+            'Monitore de forma seriada com o que de fato reflete nutrição: ingestão registrada, peso, força de preensão palmar, massa muscular e evolução clínica. **Não** use albumina nem pré-albumina.',
+          ]
+        : [
+            'Sem risco nutricional pelos critérios atuais — mas **reavalie semanalmente** durante toda a internação. O risco muda com a evolução clínica, com procedimentos, com jejum para exames e com o tempo acumulado de baixa ingestão.',
+            'Registre a ingestão alimentar de fato consumida, não a prescrita. Bandeja devolvida pela metade por dias seguidos é o achado que antecede o rastreio positivo, e ninguém o anota.',
+            'Evite jejuns desnecessários: jejum prolongado para exames, dieta zero mantida por inércia após procedimento e suspensão de dieta por náusea não tratada são causas iatrogênicas comuns de risco nutricional adquirido no hospital.',
+            'Se houver internação prolongada, cirurgia de grande porte programada ou doença com alto componente inflamatório, antecipe: intervenção nutricional precoce tem mais efeito que corretiva.',
+          ],
+      alertas: [
+        '**Rastreio não é diagnóstico.** NRS-2002 positivo indica risco e dispara avaliação; o diagnóstico de desnutrição é feito pelos critérios GLIM, com um critério fenotípico somado a um etiológico.',
+        'Albumina e pré-albumina **não** são marcadores nutricionais. São proteínas de fase aguda negativas: caem com a inflamação independentemente do aporte, e sobem quando a inflamação cede, não quando o paciente é nutrido.',
+        'Peso em paciente com **ascite, edema ou desidratação** não reflete estado nutricional e distorce tanto o IMC quanto o cálculo de perda ponderal.',
+        'Antes de iniciar suporte em paciente de risco, avalie **síndrome de realimentação**: a reintrodução de carboidrato dispara insulina, que empurra fósforo, potássio e magnésio para dentro da célula e pode causar arritmia, insuficiência cardíaca e morte. Tiamina antes da primeira caloria.',
+        'Fazer o rastreio uma vez na admissão e arquivar anula a utilidade do instrumento. A recomendação é repetir semanalmente.',
+        'Em paciente crítico na fase aguda, nutrição hipercalórica precoce piora desfechos. O aporte é progressivo, e o controle da doença de base é parte do tratamento nutricional.',
       ],
     }
   },
   formula: ['NRS-2002 = estado nutricional (0 a 3) + gravidade da doença (0 a 3) + 1 se idade ≥ 70 anos'],
   fundamento:
-    'O NRS-2002 foi construído a partir de uma revisão de 128 ensaios randomizados de suporte nutricional, buscando identificar as características dos pacientes que efetivamente se beneficiaram da intervenção. É, portanto, um instrumento derivado de resposta terapêutica, e não apenas de correlação com desfecho — o que o distingue da maioria das ferramentas de rastreio.',
+    'O NRS-2002 foi construído a partir de uma revisão de 128 ensaios randomizados de suporte nutricional, buscando identificar as características dos pacientes que efetivamente se beneficiaram da intervenção. É, portanto, um instrumento derivado de resposta terapêutica, e não apenas de correlação com desfecho — o que o distingue da maioria das ferramentas de rastreio. Essa origem explica a arquitetura de dois eixos somados. O primeiro mede **estado nutricional atual**, pelos três marcadores clássicos (perda de peso, IMC e ingestão recente). O segundo mede **gravidade da doença**, e está ali porque inanição simples e desnutrição associada à doença são processos metabólicos opostos. Na inanição pura, o organismo se adapta: a insulina cai, o glucagon sobe, a lipólise fornece ácidos graxos, o fígado produz corpos cetônicos que o cérebro passa a usar, e o gasto energético de repouso **diminui** em 20 a 25%, poupando proteína muscular. Basta ofertar calorias para reverter. Na desnutrição associada à doença, TNF-α, IL-1β e IL-6, somados a cortisol, glucagon e catecolaminas, produzem catabolismo **obrigatório**: o gasto energético aumenta, a resistência insulínica bloqueia a captação periférica de glicose, e a via ubiquitina-proteassoma degrada proteína muscular para alimentar a gliconeogênese e a síntese de proteínas de fase aguda. Essa proteólise ocorre mesmo com aporte adequado — nutrir um paciente séptico atenua a perda muscular, não a interrompe. Daí três corolários que o escore embute: o aporte não deve ser agressivo na fase aguda (nutrição hipercalórica precoce no crítico piora desfechos), a albumina não serve como marcador nutricional (é proteína de fase aguda negativa, que cai com inflamação e sobe quando ela cede), e o controle da doença de base é parte do tratamento nutricional. O ponto de corte de 3 não é arbitrário: foi o limiar acima do qual os ensaios mostraram benefício real da intervenção.',
   armadilhas: [
     'O rastreio deve ser feito nas primeiras 24 a 48 horas de internação e repetido semanalmente. Fazer uma vez e arquivar anula a utilidade.',
     'Peso em paciente com ascite, edema ou desidratação não reflete o estado nutricional.',
+    'Rastreio positivo sem plano de cuidado é apenas documentação. O instrumento só tem valor se dispara avaliação, prescrição e monitorização.',
+    'Albumina e pré-albumina não medem nutrição: são proteínas de fase aguda negativas, que caem com inflamação e sobem quando ela cede, independentemente do aporte.',
+    'O escore soma gravidade da doença por um motivo fisiológico — a desnutrição associada à doença é catabólica obrigatória, com proteólise que ocorre mesmo sob aporte adequado. Tratá-la como inanição simples e ofertar calorias em excesso piora desfechos no paciente crítico.',
+    'A idade acrescenta 1 ponto apenas a partir de 70 anos, e esse ajuste é frequentemente esquecido, deixando idosos limítrofes fora do rastreio positivo.',
+    'Paciente obeso pode estar desnutrido. IMC elevado não exclui perda de massa magra, e a obesidade sarcopênica é subdiagnosticada justamente porque o peso tranquiliza.',
   ],
   referencias: [
     { texto: 'Kondrup J, Rasmussen HH, Hamberg O, Stanga Z. Nutritional risk screening (NRS 2002). Clin Nutr. 2003;22(3):321-336.' },
@@ -434,18 +495,18 @@ const must: Ferramenta = {
       { valor: '0', rotulo: 'Acima de 20 kg/m²', pontos: 0 },
       { valor: '1', rotulo: '18,5 a 20 kg/m²', pontos: 1 },
       { valor: '2', rotulo: 'Abaixo de 18,5 kg/m²', pontos: 2 },
-    ], { mostrarSe: (v) => opc(v, 'instrumento') === 'must' }),
+    ], { ajuda: 'Se não for possível pesar ou medir, o MUST prevê alternativas: comprimento do antebraço para estimar altura e circunferência do braço para estimar o IMC. Atenção — IMC elevado NÃO exclui desnutrição: a obesidade sarcopênica é subdiagnosticada justamente porque o peso tranquiliza.', mostrarSe: (v) => opc(v, 'instrumento') === 'must' }),
     campoOpc('perda', 'Perda de peso não intencional nos últimos 3 a 6 meses', [
       { valor: '0', rotulo: 'Menos de 5%', pontos: 0 },
       { valor: '1', rotulo: '5 a 10%', pontos: 1 },
       { valor: '2', rotulo: 'Mais de 10%', pontos: 2 },
-    ], { mostrarSe: (v) => opc(v, 'instrumento') === 'must' }),
-    { ...campoSimNao('doencaAguda', 'Doença aguda com ausência de ingestão prevista por mais de 5 dias', 2), mostrarSe: (v: Valores) => opc(v, 'instrumento') === 'must' },
+    ], { ajuda: 'Perda NÃO intencional — perda decorrente de dieta ou exercício não pontua. Na ausência de peso registrado, o relato subjetivo vale: roupas mais folgadas, cinto em furo diferente, anéis frouxos, prótese dentária que soltou.', mostrarSe: (v) => opc(v, 'instrumento') === 'must' }),
+    { ...campoSimNao('doencaAguda', 'Doença aguda com ausência de ingestão prevista por mais de 5 dias', 2, 'Vale 2 pontos de uma vez, e sozinho já classifica como alto risco. É o eixo prospectivo do escore: não mede o que já aconteceu, mas o que vai acontecer se nada for feito.'), mostrarSe: (v: Valores) => opc(v, 'instrumento') === 'must' },
     campoOpc('ingestaoMna', 'Redução da ingestão nos últimos 3 meses', [
       { valor: '2', rotulo: 'Sem redução', pontos: 2 },
       { valor: '1', rotulo: 'Redução moderada', pontos: 1 },
       { valor: '0', rotulo: 'Redução grave', pontos: 0 },
-    ], { mostrarSe: (v) => opc(v, 'instrumento') === 'mna' }),
+    ], { ajuda: 'No MNA a pontuação é INVERTIDA em relação ao MUST: aqui, quanto MAIS pontos, melhor o estado nutricional. Pergunte por perda de apetite, dificuldade de mastigação ou deglutição e problemas digestivos.', mostrarSe: (v) => opc(v, 'instrumento') === 'mna' }),
     campoOpc('perdaMna', 'Perda de peso nos últimos 3 meses', [
       { valor: '3', rotulo: 'Sem perda', pontos: 3 },
       { valor: '2', rotulo: 'Não sabe', pontos: 2 },
@@ -493,6 +554,33 @@ const must: Ferramenta = {
         interpretacao: [
           'O MUST é o rastreio mais usado no Reino Unido e é aplicável em qualquer cenário — comunidade, instituição de longa permanência e hospital. Sua simplicidade é o principal atributo: três perguntas, sem exame laboratorial.',
           'Quando não for possível pesar ou medir, o MUST prevê alternativas: comprimento do antebraço para estimar altura, circunferência do braço para estimar o IMC, e o relato subjetivo de perda de peso (roupas mais folgadas, anéis frouxos).',
+          'Os três itens do MUST cobrem, deliberadamente, três **tempos verbais** diferentes. O IMC é o presente: quanto de reserva ainda existe. A perda de peso é o passado recente: qual a trajetória, e é o marcador isolado mais robusto, porque um IMC de 22 em quem tinha 28 há três meses é muito mais preocupante que um IMC de 19 estável há anos. E a doença aguda com ingestão prevista ausente por mais de 5 dias é o **futuro**: o único item prospectivo, que sozinho já classifica alto risco, porque identifica quem ainda não está desnutrido mas inevitavelmente estará se nada for feito. É essa dimensão antecipatória que transforma o MUST em ferramenta de prevenção, e não apenas de detecção.',
+        ],
+        conduta: total === 0
+          ? [
+              '**Baixo risco.** Repita o rastreio conforme o cenário: semanalmente no hospital, mensalmente em instituição de longa permanência e anualmente na comunidade em grupos vulneráveis — idosos, portadores de doença crônica e pessoas em situação de vulnerabilidade social.',
+              'Registre o peso a cada contato. A trajetória do peso ao longo do tempo detecta problema antes de qualquer escore, e é o dado mais barato da consulta.',
+            ]
+          : total === 1
+            ? [
+                '**Risco médio: observe, não intervenha ainda.** Registre a ingestão alimentar por 3 dias — o que é efetivamente consumido, não o que é servido — e repita o rastreio em 1 semana no hospital, 1 mês em instituição e 2 a 3 meses na comunidade.',
+                'Se a ingestão registrada mostrar déficit, passe à conduta de alto risco. Se estiver adequada e o peso estável, siga monitorando sem intervenção.',
+                'Procure e corrija causas reversíveis de baixa ingestão que passam despercebidas: saúde bucal e próteses mal adaptadas, disfagia, constipação, depressão, isolamento social, efeito adverso de fármaco (opioide, metformina, digoxina, antidepressivo), restrições dietéticas desnecessárias e limitação financeira ou funcional para comprar e preparar alimentos.',
+              ]
+            : [
+                '**Alto risco: trate.** Encaminhe para avaliação por nutricionista com estimativa de necessidades, plano escrito e metas. Confirme o diagnóstico pelos **critérios GLIM** — um critério fenotípico (perda de peso, IMC baixo, massa muscular reduzida) somado a um etiológico (redução de ingestão ou absorção, ou inflamação).',
+                'Estabeleça metas: 25 a 30 kcal/kg/dia e **1,2 a 1,5 g/kg/dia de proteína** (até 2,0 g/kg no idoso com doença aguda). A proteína é o aporte de maior impacto sobre massa muscular e o mais subofertado.',
+                'Comece por **enriquecer a alimentação habitual** antes de partir para suplemento: aumentar densidade calórica com azeite, leite em pó, ovo e queijo, fracionar em 5 a 6 refeições, adequar consistência e respeitar preferências. Suplemento oral entra quando a ingestão fica abaixo de 60% das necessidades por mais de 3 dias.',
+                'Associe **exercício resistido** sempre que possível: aporte proteico sem estímulo mecânico produz pouco ganho de massa magra, sobretudo no idoso, em que há resistência anabólica.',
+                'Avalie risco de **síndrome de realimentação** antes de iniciar suporte em paciente com IMC muito baixo, perda ponderal importante, jejum prolongado, alcoolismo ou eletrólitos já baixos: comece com 10 a 15 kcal/kg/dia, reponha tiamina antes da primeira caloria e monitore fósforo, potássio e magnésio diariamente na primeira semana.',
+                'Monitore com o que reflete nutrição — ingestão registrada, peso, força de preensão palmar, circunferência muscular do braço e função. **Não** use albumina nem pré-albumina.',
+              ],
+        alertas: [
+          'Rastreio positivo exige **encaminhamento e plano**, não apenas registro no prontuário. Um MUST alto arquivado não mudou nada para o paciente.',
+          'Albumina e pré-albumina não são marcadores nutricionais: são proteínas de fase aguda negativas, que caem com inflamação independentemente do aporte.',
+          'IMC elevado não exclui desnutrição. A obesidade sarcopênica é frequente e subdiagnosticada, e a perda de peso não intencional em paciente obeso é tão significativa quanto no magro.',
+          'Edema, ascite, desidratação e amputação distorcem peso e IMC. Nessas situações, ancore a avaliação em perda de peso relatada, ingestão e massa muscular.',
+          'No idoso, procure a causa da baixa ingestão antes de prescrever suplemento: saúde bucal, disfagia, depressão, isolamento, polifarmácia e limitação socioeconômica respondem pela maioria dos casos e não se resolvem com lata de suplemento.',
         ],
       }
     }
