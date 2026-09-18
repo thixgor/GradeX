@@ -8,7 +8,7 @@ import { AppShell, useAppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
 import { ROTAS } from '@/lib/semiologia/rotas'
 import { BuscaGlobal } from './busca-global'
-import { RodapeDeCreditos } from './creditos'
+import { RodapeDeCreditos } from './rodape-creditos'
 import { useAcessoSemiologia } from './use-acesso'
 
 /**
