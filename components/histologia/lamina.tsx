@@ -17,7 +17,7 @@ import {
   X,
 } from 'lucide-react'
 
-import { descricaoDaLamina, type DescricaoDeLamina } from '@/lib/histologia/laminas'
+import type { DescricaoDeLamina } from '@/lib/histologia/laminas'
 import type { Overlay, Pagina } from '@/lib/histologia/esquemas'
 import { COLORACOES } from '@/lib/histologia/glossario'
 import { useProgresso } from '@/lib/histologia/progresso'
@@ -51,9 +51,28 @@ export interface LaminaProps {
   quizzes: Array<{ slug: string; titulo: string; questoes: number }>
   /** Camada a destacar na abertura, vinda de `?estrutura=` na busca. */
   estruturaInicial?: string
+  /**
+   * A descrição própria desta lâmina, resolvida no servidor.
+   *
+   * A busca em si é um acesso a um objeto — mas a tabela que ela consulta
+   * (`DESCRICOES`, em `lib/histologia/laminas.ts`) tem 700 KB e 6.600 linhas.
+   * Feita aqui dentro, ela arrastava a tabela inteira para o bundle do
+   * navegador: `descricaoDaLamina` fecha sobre `DESCRICOES`, então não há
+   * tree-shaking possível — todo aluno baixava as descrições das 1.318 lâminas
+   * do acervo para ler a de uma. Resolvida na página (componente de servidor),
+   * o que atravessa a fronteira é só o registro desta lâmina.
+   */
+  descricaoPropria: DescricaoDeLamina | null
 }
 
-export function Lamina({ pagina, vizinhas, bandeja, quizzes, estruturaInicial }: LaminaProps) {
+export function Lamina({
+  pagina,
+  vizinhas,
+  bandeja,
+  quizzes,
+  estruturaInicial,
+  descricaoPropria,
+}: LaminaProps) {
   const rota = pagina.caminho.join('/')
   const cor = tema(setorDe(pagina.caminho).cor)
 
@@ -237,7 +256,7 @@ export function Lamina({ pagina, vizinhas, bandeja, quizzes, estruturaInicial }:
       </header>
 
       {/* ── 3. Resumo orientador ── */}
-      <OQueEstaLaminaMostra pagina={pagina} />
+      <OQueEstaLaminaMostra pagina={pagina} propria={descricaoPropria} />
 
       {/* ── 4. Microscópio virtual ── */}
       <section ref={microscopioRef} className="mb-6 scroll-mt-4" aria-labelledby="secao-microscopio">
@@ -703,9 +722,13 @@ function estimarMinutos(pagina: Pagina): number {
  * acervo continua acessível mesmo quando há texto próprio: ela é a prova de
  * origem, e quem quiser conferir tem de conseguir.
  */
-function OQueEstaLaminaMostra({ pagina }: { pagina: Pagina }) {
-  const propria = descricaoDaLamina(pagina.tituloOriginal, pagina.caminho)
-
+function OQueEstaLaminaMostra({
+  pagina,
+  propria,
+}: {
+  pagina: Pagina
+  propria: DescricaoDeLamina | null
+}) {
   if (!propria && !pagina.descricaoOriginal) return null
 
   return (

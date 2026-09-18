@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { AppShell } from '@/components/app-shell'
 import { NavegacaoDoModulo } from '@/components/histologia/navegacao'
 import { Lamina } from '@/components/histologia/lamina'
+import { descricaoDaLamina } from '@/lib/histologia/laminas'
 import { SecaoDoCurriculo } from '@/components/histologia/secao'
 import { DoencasRelacionadas } from '@/components/histopatologia/doencas-relacionadas'
 import { exigirAcessoAHistologia } from '@/lib/histologia/acesso'
@@ -151,6 +152,11 @@ export default async function PaginaDoCurriculo({ params, searchParams }: Props)
         <NavegacaoDoModulo histopatologiaHabilitada={histopatologiaHabilitada()} />
         <Lamina
           pagina={pagina}
+          // Resolvido aqui, e não dentro do componente cliente: a tabela
+          // `DESCRICOES` tem 700 KB e a função de busca fecha sobre ela, então
+          // consultá-la do outro lado da fronteira significava enviar as
+          // descrições das 1.318 lâminas ao navegador para exibir uma.
+          descricaoPropria={descricaoDaLamina(pagina.tituloOriginal, pagina.caminho)}
           vizinhas={{
             anterior: anterior && { titulo: anterior.titulo, caminho: anterior.caminho },
             proxima: proxima && { titulo: proxima.titulo, caminho: proxima.caminho },
