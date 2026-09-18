@@ -288,8 +288,8 @@ const sodioCorrigido: Ferramenta = {
   resumo: 'Revela o sódio verdadeiro por trás da hiponatremia dilucional da hiperglicemia.',
   categorias: ['nefrologia', 'endocrinologia'],
   campos: [
-    campoNum('na', 'Sódio medido', { unidade: 'mEq/L', min: 90, max: 190, passo: 1, normalMin: 135, normalMax: 145 }),
-    campoNum('glicose', 'Glicemia', { unidade: 'mg/dL', min: 40, max: 2000, passo: 1, normalMin: 70, normalMax: 99 }),
+    campoNum('na', 'Sódio medido', { unidade: 'mEq/L', min: 90, max: 190, passo: 1, normalMin: 135, normalMax: 145, ajuda: 'O sódio do laboratório, sem nenhuma correção prévia. Se houver hipertrigliceridemia grave ou hiperproteinemia, o valor pode estar artificialmente baixo pelo método de potenciometria indireta — nesse caso peça potenciometria direta (gasometria), porque o erro é analítico e não se corrige por fórmula.' }),
+    campoNum('glicose', 'Glicemia', { unidade: 'mg/dL', min: 40, max: 2000, passo: 1, normalMin: 70, normalMax: 99, ajuda: 'Do mesmo momento da coleta do sódio. Acima de 400 mg/dL a relação deixa de ser linear e o fator de Katz subestima — prefira a leitura de Hillier nessa faixa.' }),
   ],
   calcular: (v) => {
     const na = num(v, 'na')
@@ -317,15 +317,56 @@ const sodioCorrigido: Ferramenta = {
           ? 'O sódio corrigido está na faixa normal: toda a hiponatremia observada se explica pela hiperglicemia. Ao tratar a glicemia, o sódio medido subirá sozinho.'
           : 'Mesmo após a correção o sódio permanece baixo: há hiponatremia verdadeira somada à dilucional, e ela precisa ser investigada e tratada por conta própria.',
         'Na cetoacidose diabética e no estado hiperglicêmico hiperosmolar, acompanhar o **sódio corrigido** é o que revela se o tratamento está indo bem: ele deve subir lentamente conforme a glicemia cai. Sódio corrigido que cai durante o tratamento é sinal de reposição hídrica excessiva e alerta para edema cerebral, sobretudo em crianças.',
+        'Vale distinguir com precisão os três conceitos que essa conta articula, porque confundi-los leva a condutas opostas. A **osmolalidade** é a concentração total de solutos; a **tonicidade** (ou osmolalidade efetiva) considera apenas os solutos que não atravessam livremente a membrana e portanto geram movimento de água. A glicose sem insulina é um osmol **efetivo**: ela permanece no extracelular, cria gradiente osmótico e puxa água de dentro das células — daí a hiponatremia dilucional com osmolalidade alta e desidratação intracelular. A ureia, ao contrário, atravessa livremente as membranas e é osmol **inefetivo**: eleva a osmolalidade medida sem gerar movimento de água, razão pela qual o urêmico não fica com célula murcha. Isso explica por que a fórmula da osmolalidade efetiva usa apenas sódio e glicose, e por que o paciente da cetoacidose está simultaneamente com hiponatremia medida, hiperosmolalidade e desidratação celular — três achados que parecem contraditórios e não são.',
+        'O risco de **edema cerebral** no tratamento tem base fisiológica que justifica o monitoramento do sódio corrigido. Durante horas ou dias de hiperglicemia, o neurônio se adapta à hipertonicidade extracelular gerando **osmóis idiogênicos** — mio-inositol, taurina, glutamina, glutamato — que restauram seu volume. Essas moléculas levam tempo para serem eliminadas quando a tonicidade externa cai. Se a glicemia despenca rapidamente e a reposição hídrica é excessiva, o extracelular fica hipotônico em relação a um neurônio ainda carregado de osmóis, e a água entra na célula. No adulto o crânio ainda acomoda algum edema; na criança, com menos espaço liquórico proporcional, o desfecho pode ser herniação. É por isso que a regra é queda de glicemia controlada (50 a 75 mg/dL por hora) e sódio corrigido que **sobe** durante o tratamento.',
       ],
+      conduta: katz >= 135
+        ? [
+            'O sódio corrigido está na faixa normal: **toda** a hiponatremia observada se explica pela hiperglicemia. Não restrinja água, não administre salina hipertônica e não investigue SIADH — ao tratar a glicemia, o sódio medido subirá sozinho.',
+            'Trate a hiperglicemia pela causa: se houver cetoacidose ou estado hiperglicêmico hiperosmolar, siga o protocolo com volume, insulina intravenosa contínua e reposição de potássio — lembrando que a insulina só entra depois de o potássio estar acima de 3,3 mEq/L.',
+            'Monitore o sódio **corrigido** a cada 2 a 4 horas durante o tratamento. Ele deve **subir** lentamente conforme a glicemia cai. Sódio corrigido que cai é sinal de reposição hídrica excessiva e alerta precoce de edema cerebral, sobretudo em crianças e adolescentes.',
+            'Controle a velocidade de queda da glicemia em 50 a 75 mg/dL por hora e acrescente glicose ao soro quando ela atingir 200 a 250 mg/dL, mantendo a insulina — o objetivo é fechar a cetogênese, não normalizar a glicemia rapidamente.',
+          ]
+        : [
+            'Mesmo após a correção o sódio permanece baixo: há **hiponatremia verdadeira somada à dilucional**, e ela precisa de investigação própria. A hiperglicemia explicava parte do quadro, não tudo.',
+            'Investigue a hiponatremia verdadeira pelo algoritmo padrão: avalie **volemia** clinicamente, e dose **osmolalidade sérica, osmolalidade urinária e sódio urinário**. Osmolalidade urinária abaixo de 100 mOsm/kg aponta polidipsia primária ou baixa ingestão de soluto; acima disso, o sódio urinário separa perda renal (acima de 30 mEq/L: diurético, insuficiência adrenal, nefropatia perdedora de sal, SIADH) de perda extrarrenal ou estado edematoso (abaixo de 30 mEq/L: vômitos, diarreia, terceiro espaço, insuficiência cardíaca, cirrose).',
+            katz < 120
+              ? '**Sódio corrigido abaixo de 120 mEq/L é emergência.** Se houver sintomas neurológicos graves (crise convulsiva, rebaixamento, vômitos incoercíveis), administre salina hipertônica a 3% em bolus de 100 a 150 mL, repetível até duas vezes, com alvo de elevação de 4 a 6 mEq/L nas primeiras horas — o suficiente para reverter o edema cerebral.'
+              : 'Trate conforme a causa e a velocidade de instalação: hiponatremia crônica (mais de 48 horas) corrige devagar; aguda e sintomática admite correção inicial mais rápida.',
+            'Respeite os **limites de velocidade de correção**: no máximo 8 mEq/L em 24 horas (6 mEq/L em pacientes de alto risco — desnutridos, alcoolistas, hipocalêmicos, hepatopatas, com sódio abaixo de 105). Ultrapassar esse limite causa **síndrome de desmielinização osmótica**, cujo quadro (tetraparesia, disartria, disfagia, síndrome do encarceramento) surge dias depois e é frequentemente irreversível.',
+            'Atenção à **autocorreção**: ao tratar a causa (repor volume na hipovolemia, suspender diurético, corrigir insuficiência adrenal), a vasopressina se desliga e o rim excreta água livre rapidamente, elevando o sódio muito além do planejado. Monitore o sódio a cada 2 a 4 horas e esteja preparado para reverter com água livre ou desmopressina se a correção acelerar demais.',
+            'Reponha potássio e magnésio em paralelo — e lembre que o potássio administrado também eleva o sódio sérico, entrando no cálculo da velocidade de correção.',
+          ],
+      alertas: [
+        'O sódio corrigido é um número para **interpretar**, não uma meta a atingir com salina. Tratar o valor corrigido com hipertônica em paciente cuja hiponatremia é puramente dilucional causa hipernatremia iatrogênica quando a glicemia normalizar.',
+        'Sódio corrigido que **cai** durante o tratamento da cetoacidose indica reposição hídrica excessiva e é sinal de alerta para edema cerebral — sobretudo em criança e adolescente, em que o desfecho pode ser herniação.',
+        'A velocidade de correção da hiponatremia verdadeira tem teto rígido: 8 mEq/L em 24 horas, ou 6 mEq/L em alto risco. A síndrome de desmielinização osmótica aparece dias depois e costuma ser irreversível.',
+        'Não confunda com **pseudo-hiponatremia** verdadeira, que ocorre em hipertrigliceridemia grave e hiperproteinemia com método de potenciometria indireta: nela a osmolalidade é **normal** e não há correção matemática a fazer — o erro é analítico e se resolve pedindo potenciometria direta (gasometria).',
+        'Em glicemias acima de 400 mg/dL a relação deixa de ser linear e o fator de Katz subestima. Use Hillier (2,4) nessa faixa.',
+      ],
+      tabela: {
+        titulo: 'Como distinguir os três padrões de hiponatremia com glicemia alta',
+        colunas: ['Padrão', 'Osmolalidade', 'Sódio corrigido', 'Conduta'],
+        linhas: [
+          ['Dilucional pela hiperglicemia', 'Alta', 'Normal', 'Tratar a glicemia; o sódio sobe sozinho'],
+          ['Verdadeira + dilucional', 'Variável', 'Ainda baixo', 'Investigar e tratar as duas, respeitando limites'],
+          ['Pseudo-hiponatremia analítica', 'Normal', 'Não se aplica', 'Repetir por potenciometria direta'],
+        ],
+        destaque: katz >= 135 ? 0 : 1,
+      },
     }
   },
   formula: ['Katz: Na corrigido = Na medido + 1,6 × (glicemia − 100)/100', 'Hillier: Na corrigido = Na medido + 2,4 × (glicemia − 100)/100'],
   fundamento:
-    'Katz derivou o fator 1,6 teoricamente, em 1973, a partir da distribuição de água entre compartimentos. Hillier e colaboradores mediram experimentalmente em 1999, infundindo glicose em voluntários, e encontraram 2,4 — com relação não linear, mais próxima de 1,6 abaixo de 400 mg/dL e maior acima disso. Na prática, use Katz como padrão e Hillier quando a glicemia for muito alta.',
+    'Katz derivou o fator 1,6 teoricamente, em 1973, a partir da distribuição de água entre compartimentos. Hillier e colaboradores mediram experimentalmente em 1999, infundindo glicose em voluntários, e encontraram 2,4 — com relação não linear, mais próxima de 1,6 abaixo de 400 mg/dL e maior acima disso. Na prática, use Katz como padrão e Hillier quando a glicemia for muito alta. O fenômeno que a fórmula descreve depende de a glicose ser um osmol **efetivo**: sem insulina ela não entra na célula, permanece no extracelular, cria gradiente osmótico e puxa água de dentro das células para fora. Esse influxo de água dilui o sódio extracelular — e a hiponatremia resultante é real na medição, mas dilucional na natureza: não há excesso de água corporal total nem indicação de restrição hídrica. Pelo contrário, o paciente da cetoacidose está desidratado, com déficit de água e de sódio corporais. A distinção entre osmol efetivo e inefetivo é o conceito central: a ureia atravessa livremente as membranas e eleva a osmolalidade medida sem gerar movimento de água (osmol inefetivo), razão pela qual o urêmico não tem desidratação celular, enquanto glicose e manitol geram movimento e são efetivos. Por isso a osmolalidade efetiva, ou tonicidade, usa apenas sódio e glicose. Clinicamente, o maior valor da correção não é diagnóstico, e sim de **monitoramento**: durante o tratamento da cetoacidose, o sódio corrigido deve subir lentamente conforme a glicemia cai. Se ele cai, a reposição hídrica está excessiva — e como o neurônio passou horas gerando osmóis idiogênicos (mio-inositol, taurina, glutamina) para se adaptar à hipertonicidade, uma queda rápida de tonicidade extracelular faz água entrar na célula e pode causar edema cerebral, complicação rara mas devastadora em crianças e adolescentes.',
   armadilhas: [
     'A "pseudo-hiponatremia" verdadeira é outra coisa: ocorre em hipertrigliceridemia grave e hiperproteinemia, com o método indireto de potenciometria, e nela a osmolalidade é normal. Na hiperglicemia a osmolalidade está alta.',
     'Não confunda correção matemática com correção terapêutica: o sódio corrigido é um número para interpretar, não uma meta a atingir com salina.',
+    'Em glicemias acima de 400 mg/dL a relação deixa de ser linear e o fator 1,6 de Katz subestima a correção. Nessa faixa, prefira Hillier (2,4).',
+    'Sódio corrigido que cai durante o tratamento da cetoacidose é reposição hídrica excessiva, não melhora. É o sinal de alerta mais precoce de edema cerebral em criança e adolescente.',
+    'A hiponatremia dilucional da hiperglicemia não exige restrição hídrica — o paciente da cetoacidose está desidratado, e restringir água piora a perfusão.',
+    'Na hiponatremia verdadeira somada, cuidado com a autocorreção: ao tratar a causa, a vasopressina se desliga e o rim excreta água livre depressa, podendo ultrapassar o limite de 8 mEq/L em 24 horas sem nenhuma salina.',
+    'A glicose é osmol efetivo (gera movimento de água) e a ureia é osmol inefetivo (não gera). Por isso a osmolalidade efetiva usa apenas sódio e glicose, e o urêmico não tem desidratação celular.',
   ],
   referencias: [
     { texto: 'Katz MA. Hyperglycemia-induced hyponatremia — calculation of expected serum sodium depression. N Engl J Med. 1973;289(16):843-844.' },
@@ -782,7 +823,7 @@ const ureiaCreatinina: Ferramenta = {
   resumo: 'Aponta azotemia pré-renal, hemorragia digestiva e catabolismo aumentado.',
   categorias: ['nefrologia', 'gastroenterologia'],
   campos: [
-    campoNum('ureia', 'Ureia', { unidade: 'mg/dL', min: 5, max: 400, passo: 1, normalMin: 15, normalMax: 45 }),
+    campoNum('ureia', 'Ureia', { unidade: 'mg/dL', min: 5, max: 400, passo: 1, normalMin: 15, normalMax: 45, ajuda: 'Informe a UREIA do laudo brasileiro, não o BUN. Se o exame vier em BUN (padrão americano), multiplique por 2,14 antes de digitar — confundir os dois é o erro mais comum desta ferramenta.' }),
     campoCreatinina(),
   ],
   calcular: (v) => {
@@ -811,7 +852,44 @@ const ureiaCreatinina: Ferramenta = {
             ? '**Relação reduzida.** Considere baixa ingestão proteica, hepatopatia avançada (a ureia é sintetizada no fígado), gestação, desnutrição, rabdomiólise (a creatinina sobe desproporcionalmente pela liberação muscular) e hemodiálise recente, que remove ureia mais eficientemente que creatinina.'
             : 'Relação dentro da faixa habitual. Não afasta pré-renal nem necrose tubular — combine com fração de excreção de sódio, sedimento urinário e história.',
         'Numa hemorragia digestiva alta, a relação BUN/creatinina acima de 30 tem razoável valor preditivo positivo para sangramento de origem alta quando o paciente não tem doença renal — e é usada como um dos itens do escore de Glasgow-Blatchford.',
+        'O mecanismo da reabsorção de ureia merece detalhe, porque é o que sustenta toda a interpretação. A ureia é filtrada livremente no glomérulo e reabsorvida de forma **passiva**, arrastada pelo gradiente osmótico criado pela reabsorção de sódio e água no túbulo proximal — cerca de 40 a 50% em condições normais. Na hipoperfusão, dois efeitos se somam. Primeiro, a angiotensina II e a queda de pressão hidrostática peritubular aumentam a reabsorção proximal de sódio e água, e a ureia acompanha por arraste. Segundo, e mais específico, a **vasopressina** (hormônio antidiurético) liberada pela hipovolemia ativa os transportadores de ureia UT-A1 e UT-A3 no ducto coletor medular interno, aumentando ativamente a reabsorção — mecanismo que existe para reciclar ureia e sustentar o gradiente osmótico medular que permite concentrar a urina. Já a creatinina é filtrada e praticamente não reabsorvida (tem até pequena secreção tubular pelo transportador OCT2). O resultado é que a hipoperfusão eleva a ureia desproporcionalmente, e a relação sobe. Entender isso explica também por que a relação **cai** na hepatopatia avançada: a ureia é sintetizada exclusivamente no fígado pelo ciclo da ornitina, e o fígado cirrótico produz menos — daí a ureia baixa com amônia alta, que é a combinação característica.',
       ],
+      conduta: alta
+        ? [
+            'Separe as três famílias de causa antes de agir, porque as condutas são opostas. **Pré-renal**: avalie volemia clinicamente (pressão, frequência, turgor, mucosas, pressão venosa jugular, variação respiratória da veia cava ao ultrassom) e reponha volume se houver hipovolemia. **Hemorragia digestiva**: procure melena, hematêmese, queda de hemoglobina — o sangue no intestino é carga proteica digerida e absorvida, e eleva a ureia sem doença renal. **Catabolismo**: revise corticoide, tetraciclina, nutrição parenteral hiperproteica, febre, sepse, trauma extenso e transfusões.',
+            'Confirme o padrão pré-renal com os exames que discriminam de verdade: **fração de excreção de sódio** abaixo de 1% (ou fração de excreção de ureia abaixo de 35% se houver diurético em uso), sódio urinário baixo, osmolaridade urinária alta e sedimento urinário sem cilindros granulosos. A relação sozinha é apenas sugestiva.',
+            'Se houver hipovolemia, reponha com cristaloide balanceado e reavalie a resposta em 6 a 12 horas — a azotemia pré-renal é, por definição, reversível com a restauração da perfusão. Ausência de resposta desloca a hipótese para necrose tubular aguda já instalada.',
+            'Suspenda ou ajuste o que agrava: anti-inflamatório não esteroidal (que bloqueia a vasodilatação da arteríola aferente), inibidor da ECA ou bloqueador de receptor de angiotensina em hipovolemia (que impede a vasoconstrição eferente compensatória), diurético e contraste iodado. A tríade anti-inflamatório + inibidor da ECA + diurético é a combinação clássica de lesão renal aguda ambulatorial.',
+            'Se a suspeita for hemorragia digestiva, aplique o **escore de Glasgow-Blatchford** (que já inclui a ureia como item) e proceda à investigação endoscópica conforme o risco.',
+          ]
+        : baixa
+          ? [
+              'Procure a causa da ureia desproporcionalmente baixa. **Hepatopatia avançada** é a mais relevante: a ureia é sintetizada exclusivamente no fígado pelo ciclo da ornitina, e o cirrótico produz menos — nesse caso, ureia baixa com amônia elevada é o padrão, e a creatinina também subestima a função renal pela massa muscular reduzida.',
+              'Considere as demais: baixa ingestão proteica e desnutrição, gestação (com hemodiluição e aumento da filtração glomerular), hemodiálise recente (a ureia é removida mais eficientemente que a creatinina) e **rabdomiólise**, em que a creatinina sobe desproporcionalmente pela liberação muscular direta.',
+              'Se houver suspeita de rabdomiólise, dose **creatinoquinase**, mioglobina urinária, potássio, fósforo e cálcio, e inicie hidratação vigorosa precoce — é a intervenção que previne a necrose tubular por mioglobina.',
+              'No cirrótico, lembre que a creatinina **superestima** a função renal: considere cistatina C ou coleta de urina de 24 horas, e esteja atento ao diagnóstico de síndrome hepatorrenal, que exige critérios próprios e conduta específica (albumina com terlipressina).',
+            ]
+          : [
+              'Relação dentro da faixa habitual. Isso **não afasta** azotemia pré-renal nem necrose tubular aguda — a relação é sugestiva, não discriminativa, e diuréticos, dieta e hepatopatia a distorcem em direções opostas que podem se cancelar.',
+              'Se houver elevação de creatinina, prossiga com a investigação que realmente discrimina: fração de excreção de sódio e de ureia, sódio e osmolaridade urinários, **sedimento urinário** (cilindros granulosos pigmentados apontam necrose tubular; hemácias dismórficas e cilindros hemáticos apontam glomerular; leucocitúria estéril com eosinofilúria aponta nefrite intersticial) e ultrassonografia renal para excluir obstrução.',
+              'Classifique a lesão renal pelos **critérios KDIGO** (variação de creatinina e débito urinário) e revise a prescrição em busca de nefrotóxicos.',
+            ],
+      alertas: [
+        'A confusão entre **ureia e BUN** é o erro mais comum e muda a interpretação por completo: a faixa de referência da relação ureia/creatinina é 20 a 40, e a de BUN/creatinina é 10 a 20. O fator de conversão é 2,14.',
+        'A relação nunca faz diagnóstico sozinha. Diurético eleva, hepatopatia reduz, dieta hiperproteica eleva, desnutrição reduz — e essas influências podem se cancelar num mesmo paciente, produzindo relação normal em pré-renal franca.',
+        'Em paciente com doença renal crônica, a relação perde valor discriminativo: a creatinina basal já está elevada e o denominador deixa de refletir mudanças agudas de perfusão.',
+        'Relação elevada com creatinina normal em paciente sem hipovolemia aparente deve levantar hemorragia digestiva alta antes de ser atribuída a dieta — sobretudo em usuário de anti-inflamatório ou antiagregante.',
+      ],
+      tabela: {
+        titulo: 'Faixas e causas, nas duas convenções de unidade',
+        colunas: ['Ureia/creatinina', 'BUN/creatinina', 'Leitura', 'Causas principais'],
+        linhas: [
+          ['> 40', '> 20', 'Elevada', 'Pré-renal, hemorragia digestiva alta, catabolismo'],
+          ['20 – 40', '10 – 20', 'Normal', 'Inespecífica — não afasta pré-renal nem NTA'],
+          ['< 20', '< 10', 'Reduzida', 'Hepatopatia, desnutrição, gestação, diálise, rabdomiólise'],
+        ],
+        destaque: alta ? 0 : baixa ? 2 : 1,
+      },
     }
   },
   formula: ['Relação = ureia ÷ creatinina (referência 20 a 40)', 'BUN = ureia ÷ 2,14'],
@@ -820,9 +898,15 @@ const ureiaCreatinina: Ferramenta = {
   armadilhas: [
     'A confusão entre ureia e BUN é o erro mais comum: as faixas de referência das duas relações diferem por um fator de 2,14.',
     'A relação é apenas sugestiva. Ela nunca faz diagnóstico sozinha, e diuréticos, dieta e hepatopatia a distorcem em direções opostas.',
+    'Em doença renal crônica a relação perde poder discriminativo, porque a creatinina basal elevada amortece o denominador e mascara mudanças agudas de perfusão.',
+    'Influências opostas podem se cancelar: cirrótico desnutrido em uso de diurético pode ter relação normal em plena azotemia pré-renal.',
+    'Relação elevada com creatinina normal, sem hipovolemia aparente, deve levantar hemorragia digestiva alta — sobretudo em usuário de anti-inflamatório ou antiagregante.',
+    'Na rabdomiólise a relação cai porque a creatinina sobe desproporcionalmente pela liberação muscular. Interpretar isso como "boa função renal" atrasa a hidratação, que é a intervenção que previne a necrose tubular.',
   ],
   referencias: [
     { texto: 'Uchino S, Bellomo R, Goldsmith D. The meaning of the blood urea nitrogen/creatinine ratio in acute kidney injury. Clin Kidney J. 2012;5(2):187-191.' },
+    { texto: 'Fenske W, Störk S, Koschker AC, et al. Value of fractional uric acid excretion in differential diagnosis of hyponatremic patients. J Clin Endocrinol Metab. 2008;93(8):2991-2997.' },
+    { texto: 'Kidney Disease: Improving Global Outcomes (KDIGO) Acute Kidney Injury Work Group. KDIGO Clinical Practice Guideline for Acute Kidney Injury. Kidney Int Suppl. 2012;2(1):1-138.' },
   ],
 }
 
@@ -909,8 +993,8 @@ const drc: Ferramenta = {
   resumo: 'Cruza TFG e albuminúria no mapa de risco e devolve a conduta de cada faixa.',
   categorias: ['nefrologia'],
   campos: [
-    campoNum('tfg', 'TFG estimada', { unidade: 'mL/min/1,73 m²', min: 1, max: 150, passo: 1 }),
-    campoNum('rac', 'Relação albumina/creatinina urinária', { unidade: 'mg/g', min: 0, max: 5000, passo: 1 }),
+    campoNum('tfg', 'TFG estimada', { unidade: 'mL/min/1,73 m²', min: 1, max: 150, passo: 1, ajuda: 'Pela CKD-EPI 2021, sem ajuste racial. Exige estabilidade por mais de 3 meses — uma TFG baixa isolada pode ser lesão renal AGUDA, e classificar como doença crônica nesse momento é erro com consequências no seguimento.' }),
+    campoNum('rac', 'Relação albumina/creatinina urinária', { unidade: 'mg/g', min: 0, max: 5000, passo: 1, ajuda: 'Amostra isolada, preferencialmente a primeira urina da manhã. Confirme em pelo menos duas de três amostras: exercício, febre, infecção urinária, insuficiência cardíaca descompensada e hiperglicemia elevam transitoriamente. Não confunda com proteína/creatinina, que mede outra coisa e tem outros cortes.' }),
   ],
   calcular: (v) => {
     const tfg = num(v, 'tfg')
@@ -947,6 +1031,31 @@ const drc: Ferramenta = {
         'O mapa de calor KDIGO cruza dois eixos porque eles carregam informação prognóstica independente: um paciente G3a A1 tem risco muito menor do que um G3a A3, apesar de ambos terem "estágio 3". A albuminúria é, isoladamente, um dos preditores mais fortes de progressão e de evento cardiovascular.',
         '**Pilares do tratamento conservador:** inibidor da ECA ou bloqueador do receptor de angiotensina em dose máxima tolerada quando há albuminúria; **inibidor de SGLT2** para todos com TFG ≥ 20 e albuminúria, com ou sem diabetes (ensaios DAPA-CKD e EMPA-KIDNEY); finerenona em doença renal do diabetes; controle pressórico com alvo de sistólica abaixo de 120 mmHg quando tolerado; estatina; restrição de sódio; e evitar anti-inflamatórios.',
         tfg < 20 ? 'TFG abaixo de 20: momento de discutir modalidade de terapia renal substitutiva, preparar acesso vascular e avaliar transplante preemptivo — que tem os melhores desfechos quando feito antes da diálise.' : 'Mantenha o rastreio anual de anemia, distúrbio mineral e ósseo, acidose metabólica e hipercalemia conforme o estágio.',
+        'A albuminúria não é apenas um marcador — ela **participa** da progressão, e entender isso muda a leitura do eixo horizontal do mapa. A barreira de filtração tem três camadas (endotélio fenestrado com glicocálice, membrana basal rica em heparan sulfato que confere seletividade de carga, e os pedicelos podocitários unidos pelo diafragma de fenda com nefrina e podocina), e a albumina é retida por tamanho e por carga simultaneamente. Quando ela escapa, o túbulo proximal a reabsorve via megalina e cubilina; a sobrecarga desse mecanismo ativa NF-κB no epitélio tubular, que passa a produzir citocinas e quimiocinas, recrutar células inflamatórias e estimular fibrose tubulointersticial. E é a fibrose tubulointersticial, não a lesão glomerular, o melhor preditor histológico de progressão para falência renal. Esse é o motivo de reduzir albuminúria ser desfecho intermediário legítimo: as classes que a reduzem — bloqueio do sistema renina-angiotensina-aldosterona, inibidores de SGLT2, finerenona, agonistas de GLP-1 — são exatamente as que retardam a diálise.',
+        'Os inibidores de SGLT2 funcionam aqui por um mecanismo hemodinâmico elegante e contraintuitivo. Na doença renal crônica, os néfrons remanescentes hiperfiltram para compensar a perda dos demais, e essa hiperfiltração — mediada por vasodilatação da arteríola aferente — eleva a pressão intraglomerular e acelera a esclerose dos néfrons que sobraram. O inibidor de SGLT2 bloqueia a reabsorção de sódio e glicose no túbulo proximal, aumentando a oferta de sódio à mácula densa; o feedback tubuloglomerular interpreta isso como fluxo excessivo e promove **vasoconstrição da arteríola aferente**, reduzindo a pressão intraglomerular. Daí a queda inicial de TFG de 3 a 5 mL/min nas primeiras semanas, que é **esperada, benéfica e não indica suspender o fármaco** — ela é a assinatura do efeito protetor, e a curva de TFG a longo prazo cruza para cima da do placebo. O bloqueio do sistema renina-angiotensina faz o mesmo por outra via, dilatando a eferente, e por isso também causa queda inicial aceitável de até 30% na creatinina.',
+      ],
+      conduta: [
+        risco >= 3
+          ? `**${rotulos[risco]}.** Encaminhe ao nefrologista e monitorize TFG e albuminúria ${frequencia.toLowerCase()}. As indicações formais de encaminhamento são TFG abaixo de 30, albuminúria ≥ 300 mg/g, progressão rápida (queda maior que 5 mL/min por ano), hematúria glomerular persistente, hipertensão refratária, distúrbio eletrolítico persistente, nefrolitíase de repetição e doença renal hereditária.`
+          : `**${rotulos[risco]}.** Monitorize TFG e albuminúria ${frequencia.toLowerCase()} e concentre o esforço na prevenção de progressão, que é mais eficaz nesta fase do que em qualquer outra.`,
+        'Instale os **quatro pilares** do tratamento conservador, que são aditivos: (1) inibidor da ECA ou bloqueador do receptor de angiotensina em dose máxima tolerada quando há albuminúria; (2) **inibidor de SGLT2** para todos com TFG ≥ 20 e albuminúria, com ou sem diabetes; (3) **finerenona** na doença renal do diabetes com albuminúria persistente apesar do bloqueio do sistema renina-angiotensina; (4) agonista de GLP-1 no diabetes com obesidade ou alto risco cardiovascular.',
+        'Não suspenda o inibidor de SGLT2 nem o bloqueador do sistema renina-angiotensina pela **queda inicial de TFG**: uma redução de 3 a 5 mL/min (ou até 30% de elevação de creatinina no caso do bloqueio do sistema renina-angiotensina) nas primeiras semanas é esperada, decorre da redução da pressão intraglomerular e é justamente o mecanismo protetor. Recheque em 2 a 4 semanas e só reavalie se a queda for maior ou progressiva.',
+        'Controle pressórico com alvo de sistólica **abaixo de 120 mmHg** quando tolerado e bem aferido, restrição de sódio a menos de 2 g por dia, estatina conforme risco cardiovascular, cessação do tabagismo, controle glicêmico individualizado e atividade física regular.',
+        'Evite nefrotóxicos de forma ativa: anti-inflamatórios não esteroidais (inclusive os de venda livre), aminoglicosídeos, contraste iodado desnecessário, e revise doses de todos os fármacos de excreção renal. Oriente **regras de dia de doença** — suspender temporariamente inibidor de SGLT2, bloqueador do sistema renina-angiotensina, diurético, metformina e anti-inflamatório durante vômitos, diarreia ou febre com desidratação.',
+        tfg < 60
+          ? 'Rastreie e trate as complicações do estágio: **anemia** (ferro e eritropoetina conforme alvos), **distúrbio mineral e ósseo** (cálcio, fósforo, PTH, vitamina D), **acidose metabólica** (bicarbonato oral se abaixo de 22 mEq/L, que reduz a progressão), **hipercalemia** (dieta, diurético, quelante moderno para permitir manter o bloqueio do sistema renina-angiotensina) e desnutrição.'
+          : 'Neste estágio, a prioridade é etiológica e preventiva: defina a causa da doença renal, trate-a especificamente quando possível, e mantenha a vigilância de albuminúria — é o marcador que muda primeiro.',
+        tfg < 20
+          ? 'TFG abaixo de 20 é o momento de **preparar o futuro, não de esperar**: discuta as modalidades (hemodiálise, diálise peritoneal, transplante, tratamento conservador não dialítico), confeccione acesso vascular com antecedência (a fístula precisa de meses para maturar) e avalie **transplante preemptivo**, que tem os melhores desfechos quando feito antes de iniciar diálise.'
+          : 'Calcule o risco de falência renal em 2 e 5 anos com a equação KFRE (Tangri) para orientar a conversa com o paciente e o momento do encaminhamento — ela discrimina melhor que o estágio isolado.',
+      ],
+      alertas: [
+        'O diagnóstico exige alterações **persistentes por mais de 3 meses**. Classificar uma TFG baixa isolada como doença renal crônica pode rotular indevidamente uma lesão renal aguda reversível.',
+        'TFG normal com albuminúria já é doença renal crônica (G1A2, G1A3) e já exige tratamento. Esperar a TFG cair perde a fase de maior eficácia da intervenção.',
+        'A queda inicial de TFG após iniciar inibidor de SGLT2 ou bloqueio do sistema renina-angiotensina é **esperada e protetora**. Suspender o fármaco por causa dela é erro comum que retira do paciente a terapia que mais adia a diálise.',
+        'Queda abrupta de TFG em paciente com doença renal crônica é lesão aguda sobreposta, não progressão. Investigue desidratação, nefrotóxico, obstrução e hipoperfusão antes de reclassificar.',
+        'A creatinina superestima a função em sarcopenia, amputação, cirrose e desnutrição, e a subestima em pessoas muito musculosas. Nessas situações, use cistatina C.',
+        'O mapa estratifica risco, mas não dispensa **diagnóstico etiológico**. Doença glomerular, obstrutiva, policística e intersticial têm condutas específicas que o estágio não revela.',
       ],
       tabela: {
         titulo: 'Mapa de risco KDIGO (linhas = TFG, colunas = albuminúria)',
@@ -965,10 +1074,15 @@ const drc: Ferramenta = {
   },
   formula: ['Estágio = categoria G (TFG) × categoria A (albuminúria)'],
   fundamento:
-    'A classificação por TFG isolada, usada até 2012, tratava como iguais pacientes com prognósticos radicalmente diferentes. O consórcio CKD-PC analisou mais de um milhão de indivíduos e demonstrou que TFG e albuminúria predizem mortalidade, evento cardiovascular e falência renal de forma **independente e multiplicativa** — daí o mapa bidimensional.',
+    'A classificação por TFG isolada, usada até 2012, tratava como iguais pacientes com prognósticos radicalmente diferentes. O consórcio CKD-PC analisou mais de um milhão de indivíduos e demonstrou que TFG e albuminúria predizem mortalidade, evento cardiovascular e falência renal de forma **independente e multiplicativa** — daí o mapa bidimensional. A razão fisiopatológica de os dois eixos serem independentes é que eles medem coisas diferentes. A **TFG** mede quanta massa de néfrons funcionantes restou, sendo portanto um marcador de perda já consumada. A **albuminúria** mede a integridade da barreira de filtração glomerular e a atividade do processo lesivo, sendo marcador de dano em curso. Essa barreira tem três camadas — endotélio fenestrado com glicocálice, membrana basal glomerular rica em proteoglicanos de heparan sulfato (que confere seletividade de carga) e os pedicelos dos podócitos unidos pelo diafragma de fenda com nefrina e podocina. A albumina, ânion de cerca de 66 kDa, é retida por barreira de tamanho e de carga simultaneamente; sua passagem denuncia lesão dessas camadas, tipicamente por perda de carga aniônica e por lesão podocitária. Mais que um marcador, a albuminúria é **causal** na progressão: a albumina filtrada é reabsorvida pelo túbulo proximal via megalina e cubilina, e a sobrecarga desse mecanismo ativa NF-κB, induz produção de citocinas e quimiocinas pelo próprio túbulo, recruta células inflamatórias e promove fibrose tubulointersticial — que é o melhor preditor histológico de progressão, melhor que a lesão glomerular. Por isso reduzir albuminúria é desfecho intermediário legítimo, e não apenas cosmético: as classes que a reduzem (inibidores do sistema renina-angiotensina-aldosterona, inibidores de SGLT2, antagonistas não esteroidais do receptor mineralocorticoide, agonistas de GLP-1) são justamente as que retardam a falência renal.',
   armadilhas: [
     'O diagnóstico exige persistência por mais de 3 meses. Uma TFG baixa isolada pode ser lesão aguda.',
     'A relação albumina/creatinina em amostra isolada deve ser confirmada em pelo menos duas de três amostras, preferencialmente da primeira urina da manhã — exercício, febre, infecção urinária e insuficiência cardíaca elevam transitoriamente.',
+    'Albuminúria e proteinúria não são a mesma medida. A relação proteína/creatinina detecta também cadeias leves e proteínas tubulares, tem cortes diferentes e é a escolhida quando se suspeita de mieloma ou de doença tubular.',
+    'TFG normal com albuminúria (estágio G1A2 ou G1A3) **já é** doença renal crônica e já exige tratamento. Aguardar a TFG cair para agir perde a fase em que a intervenção é mais eficaz.',
+    'A creatinina superestima a função renal em sarcopenia, amputação, cirrose e desnutrição, e a subestima em pessoas muito musculosas. Nessas situações, considere cistatina C.',
+    'O mapa de calor estratifica risco, não substitui o diagnóstico etiológico. Procure a causa — diabética, hipertensiva, glomerular, obstrutiva, policística, intersticial — porque algumas têm tratamento específico.',
+    'Queda abrupta de TFG num paciente com doença renal crônica é lesão aguda sobreposta, e não progressão. Investigue desidratação, nefrotóxico, obstrução e hipoperfusão antes de reclassificar o estágio.',
   ],
   referencias: [
     { texto: 'KDIGO 2024 Clinical Practice Guideline for the Evaluation and Management of Chronic Kidney Disease. Kidney Int. 2024;105(4S):S117-S314.' },
@@ -983,13 +1097,13 @@ const mehran: Ferramenta = {
   resumo: 'Estima a probabilidade de lesão renal e de diálise após intervenção coronariana.',
   categorias: ['nefrologia', 'cardiologia'],
   campos: [
-    campoSimNao('hipotensao', 'Hipotensão (PAS < 80 mmHg por ≥ 1 h com suporte inotrópico)', 5),
-    campoSimNao('balao', 'Balão intra-aórtico', 5),
-    campoSimNao('icc', 'Insuficiência cardíaca classe III/IV ou edema agudo prévio', 5),
+    campoSimNao('hipotensao', 'Hipotensão (PAS < 80 mmHg por ≥ 1 h com suporte inotrópico)', 5, 'Item de maior peso, junto com balão e insuficiência cardíaca. Reflete o eixo PERFUSÃO: a medula externa já opera com pO₂ de 10 a 20 mmHg, e qualquer queda adicional de fluxo precipita hipóxia medular.'),
+    campoSimNao('balao', 'Balão intra-aórtico', 5, 'Marca instabilidade hemodinâmica grave e acrescenta risco de ateroembolismo renal por manipulação aórtica.'),
+    campoSimNao('icc', 'Insuficiência cardíaca classe III/IV ou edema agudo prévio', 5, 'Duplo problema: reduz a perfusão renal e limita a hidratação profilática, que é a única medida eficaz. Nesses pacientes, ajuste a taxa e monitore congestão.'),
     campoSimNao('idade', 'Idade > 75 anos', 4),
-    campoSimNao('anemia', 'Anemia (hematócrito < 39% em homens, < 36% em mulheres)', 3),
-    campoSimNao('diabetes', 'Diabetes mellitus', 3),
-    campoNum('contraste', 'Volume de contraste', { unidade: 'mL', min: 0, max: 800, passo: 10, ajuda: '1 ponto a cada 100 mL.' }),
+    campoSimNao('anemia', 'Anemia (hematócrito < 39% em homens, < 36% em mulheres)', 3, 'Agrava a hipóxia medular ao reduzir o conteúdo arterial de oxigênio. Em procedimento eletivo, é fator corrigível antes do exame.'),
+    campoSimNao('diabetes', 'Diabetes mellitus', 3, 'Disfunção endotelial com reserva vasodilatadora reduzida — o rim diabético tolera pior a vasoconstrição induzida pelo contraste.'),
+    campoNum('contraste', 'Volume de contraste', { unidade: 'mL', min: 0, max: 800, passo: 10, ajuda: '1 ponto a cada 100 mL. É a ÚNICA variável modificável do escore — planeje o menor volume compatível com o objetivo diagnóstico e prefira contraste iso-osmolar ou de baixa osmolalidade.' }),
     campoSeg('funcaoRenal', 'Função renal basal', [
       { valor: 'cr', rotulo: 'Por creatinina' },
       { valor: 'tfg', rotulo: 'Por TFG' },
@@ -1037,6 +1151,27 @@ const mehran: Ferramenta = {
         'N-acetilcisteína e bicarbonato de sódio foram testados no ensaio PRESERVE, com mais de 5 mil pacientes de alto risco, e **não** reduziram desfechos clinicamente relevantes em comparação com salina e placebo. Não são recomendados.',
         'Minimize o volume de contraste, use contraste iso-osmolar ou de baixa osmolalidade, evite exames contrastados repetidos em intervalo curto e suspenda anti-inflamatórios e outros nefrotóxicos no período.',
         'A magnitude do problema vem sendo revista: estudos com grupo-controle pareado mostram que boa parte da elevação de creatinina atribuída ao contraste ocorreria de qualquer forma pela doença de base. Isso não autoriza descuido, mas desaconselha adiar exame indispensável por medo do contraste.',
+        'O contraste iodado lesa o rim por **dois mecanismos somados**, e conhecê-los explica por que a hidratação é a única medida que funciona. O primeiro é **hemodinâmico**: o contraste desencadeia vasoconstrição renal prolongada, mediada por adenosina e endotelina com redução de óxido nítrico, que reduz o fluxo sanguíneo sobretudo na medula externa. Essa região já trabalha no limite — a bomba Na⁺/K⁺-ATPase do ramo ascendente espesso da alça de Henle consome enormes quantidades de oxigênio para gerar o gradiente medular, enquanto a perfusão medular é normalmente baixa por desenho, o que mantém a pO₂ local em torno de 10 a 20 mmHg mesmo em condições normais. Qualquer redução adicional de fluxo precipita hipóxia medular. O segundo mecanismo é **tóxico direto**: o contraste, sobretudo o de alta osmolalidade, causa vacuolização e apoptose do epitélio tubular, gera espécies reativas de oxigênio e aumenta a viscosidade do fluido tubular, o que eleva a pressão intratubular e reduz ainda mais a filtração. Como o dano final é hipóxia medular somada a toxicidade tubular, a hidratação atua exatamente onde importa: expande o volume intravascular, suprime a vasopressina e a angiotensina II (reduzindo a vasoconstrição), aumenta o fluxo tubular diluindo o contraste e encurtando seu tempo de contato com o epitélio, e reduz a reabsorção de sódio no ramo ascendente — o que diminui o consumo de oxigênio medular. Nenhum antioxidante conseguiu reproduzir essa combinação, e é por isso que a N-acetilcisteína falhou.',
+      ],
+      conduta: [
+        '**Hidratação com cristaloide isotônico é a única medida com benefício consistentemente demonstrado.** Salina 0,9% a 1 a 1,5 mL/kg/h por 3 a 12 horas antes e 6 a 24 horas depois do procedimento. Em insuficiência cardíaca, reduza a taxa e considere protocolo guiado por pressão venosa central ou por pressão de oclusão — hidratar demais um cardiopata troca um problema por outro.',
+        '**Não use N-acetilcisteína nem bicarbonato de sódio.** O ensaio PRESERVE, com mais de 5 mil pacientes de alto risco, não mostrou benefício em desfechos clinicamente relevantes contra salina e placebo. Prescrevê-los dá falsa sensação de proteção e desvia a atenção da hidratação, que é o que funciona.',
+        'Minimize a **dose de contraste** — é a única variável modificável do escore. Use o menor volume compatível com o objetivo diagnóstico, prefira contraste iso-osmolar ou de baixa osmolalidade, e evite exames contrastados repetidos em intervalo menor que 48 a 72 horas.',
+        'Suspenda nefrotóxicos no período: anti-inflamatórios não esteroidais, aminoglicosídeos e diuréticos em excesso. A **metformina** não causa nefropatia por contraste — a preocupação é acidose lática se houver lesão renal —, e a orientação atual é suspendê-la no dia do exame apenas quando a TFG for inferior a 30, ou em exame arterial com TFG entre 30 e 60, reintroduzindo após 48 horas com função renal confirmada.',
+        'Quanto ao **bloqueio do sistema renina-angiotensina** e ao inibidor de SGLT2: não há consenso firme para suspensão de rotina, mas é razoável suspendê-los em pacientes de alto risco com hipovolemia ou instabilidade, retomando depois. Mantenha as estatinas, que possivelmente conferem proteção discreta.',
+        faixa >= 2
+          ? `**Risco ${faixa === 2 ? 'alto' : 'muito alto'}** (${risco} de nefropatia e ${dialise} de necessidade de diálise). Reavalie se o exame contrastado é realmente indispensável ou se há alternativa sem contraste iodado — ultrassonografia, ressonância sem gadolínio, tomografia sem contraste, cintilografia. Se for indispensável, discuta com a nefrologia, hidrate com protocolo rigoroso, use a menor dose possível e programe controle de creatinina em 48 a 72 horas.`
+          : `Risco ${faixa === 0 ? 'baixo' : 'moderado'} (${risco} de nefropatia). Hidratação padrão, dose mínima de contraste e controle de creatinina em 48 a 72 horas nos pacientes com função renal previamente alterada.`,
+        'Dose a creatinina em **48 a 72 horas** após o exame nos pacientes de risco — o pico da elevação ocorre nessa janela, e a alta antes dela pode mascarar o evento. Classifique pelos critérios KDIGO, não pela definição antiga do escore.',
+        'Não adie exame indispensável por medo do contraste. A magnitude do risco vem sendo revista para baixo em estudos com controle pareado, e postergar o diagnóstico de uma dissecção, de uma embolia pulmonar ou de uma isquemia mesentérica causa mais dano do que o contraste.',
+      ],
+      alertas: [
+        'O escore foi derivado em **cardiologia intervencionista, com contraste intra-arterial**. Tomografia com contraste intravenoso tem risco substancialmente menor, e aplicar o escore diretamente nesse cenário superestima de forma importante.',
+        'A definição usada na derivação (aumento de creatinina ≥ 25% ou ≥ 0,5 mg/dL em 48 horas) é mais frouxa que os critérios KDIGO atuais, o que infla as taxas relatadas.',
+        'N-acetilcisteína e bicarbonato **não** funcionam. Prescrevê-los não é neutro: cria falsa segurança e substitui a hidratação, que é a medida efetiva.',
+        'Hidratação agressiva em paciente com insuficiência cardíaca ou disfunção ventricular pode precipitar congestão pulmonar. Ajuste a taxa e monitore.',
+        'O risco de **nefrogênica sistêmica fibrosante** é do gadolínio, não do iodo, e diz respeito aos agentes lineares em TFG muito baixa. Não confunda as duas profilaxias.',
+        'Anemia e hipotensão são fatores de risco no escore e também são corrigíveis antes de um procedimento eletivo — otimizá-los é parte da preparação, não detalhe.',
       ],
       tabela: {
         titulo: 'Estratificação de Mehran',
@@ -1048,10 +1183,15 @@ const mehran: Ferramenta = {
   },
   formula: ['Soma de 8 variáveis; 1 ponto a cada 100 mL de contraste'],
   fundamento:
-    'O escore foi derivado de mais de 8 mil intervenções coronarianas percutâneas e valida a intuição clínica: o risco resulta da interação entre função renal prévia, perfusão renal no momento do exame (hipotensão, insuficiência cardíaca, balão intra-aórtico), suscetibilidade (idade, diabetes, anemia) e dose do agressor (volume de contraste).',
+    'O escore foi derivado de mais de 8 mil intervenções coronarianas percutâneas e valida a intuição clínica: o risco resulta da interação entre função renal prévia, perfusão renal no momento do exame (hipotensão, insuficiência cardíaca, balão intra-aórtico), suscetibilidade (idade, diabetes, anemia) e dose do agressor (volume de contraste). Essa estrutura espelha a fisiopatologia, que combina dois mecanismos. O primeiro é **hemodinâmico**: o contraste provoca vasoconstrição renal prolongada por adenosina e endotelina, com queda de óxido nítrico, reduzindo o fluxo na medula externa. Essa região é singularmente vulnerável porque opera com pO₂ de 10 a 20 mmHg mesmo em condições normais — a bomba Na⁺/K⁺-ATPase do ramo ascendente espesso consome muito oxigênio para gerar o gradiente medular, enquanto a perfusão medular é baixa por desenho anatômico. Qualquer redução adicional precipita hipóxia. O segundo é **tóxico direto**: vacuolização e apoptose do epitélio tubular, produção de espécies reativas de oxigênio e aumento da viscosidade do fluido tubular, que eleva a pressão intratubular e reduz ainda mais a filtração. Ler o escore por essa lente organiza os itens: hipotensão, insuficiência cardíaca e balão intra-aórtico são o eixo **perfusão**; idade, diabetes e anemia são o eixo **suscetibilidade** (o diabético tem disfunção endotelial e reserva vasodilatadora reduzida; a anemia agrava a hipóxia medular ao reduzir o conteúdo arterial de oxigênio); função renal prévia é o eixo **reserva**; e o volume de contraste é a **dose do agressor** — a única variável modificável. Isso também explica por que a hidratação é a única profilaxia eficaz: ela age em vários pontos de uma vez (expande volume, suprime vasopressina e angiotensina II, dilui o contraste no túbulo, encurta seu tempo de contato e reduz a reabsorção de sódio no ramo ascendente, diminuindo o consumo de oxigênio medular), enquanto antioxidantes atacam apenas um componente — e o PRESERVE mostrou que isso não basta. Vale uma ressalva de calibração: estudos posteriores com grupo-controle pareado sugerem que parte substancial da elevação de creatinina atribuída ao contraste ocorreria pela doença de base, de modo que as taxas do escore original provavelmente superestimam o risco atribuível.',
   armadilhas: [
     'O escore foi derivado em cardiologia intervencionista, com contraste intra-arterial. Tomografia com contraste intravenoso tem risco substancialmente menor, e aplicar o escore diretamente superestima.',
     'A definição usada na derivação foi aumento de creatinina ≥ 25% ou ≥ 0,5 mg/dL em 48 horas — mais frouxa que os critérios KDIGO atuais.',
+    'N-acetilcisteína e bicarbonato não funcionam (PRESERVE). Prescrevê-los cria falsa segurança e frequentemente substitui a hidratação, que é a medida efetiva.',
+    'O volume de contraste é a única variável modificável do escore, e é justamente a que mais se negligencia no planejamento do procedimento.',
+    'Metformina não causa nefropatia por contraste. A preocupação é acidose lática se houver lesão renal, e a suspensão de rotina em todos os pacientes é conduta desatualizada.',
+    'Risco de nefropatia não é motivo para adiar exame indispensável. O dano de postergar o diagnóstico de dissecção, embolia pulmonar ou isquemia mesentérica supera em muito o risco do contraste.',
+    'Nefrogênica sistêmica fibrosante é complicação do gadolínio, não do contraste iodado. Confundir as duas leva a profilaxia errada.',
   ],
   referencias: [
     { texto: 'Mehran R, Aymong ED, Nikolsky E, et al. A simple risk score for prediction of contrast-induced nephropathy after percutaneous coronary intervention. J Am Coll Cardiol. 2004;44(7):1393-1399.' },
