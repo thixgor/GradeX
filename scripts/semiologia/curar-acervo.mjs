@@ -89,7 +89,7 @@ const HOSTS = {
   youtube: ['www.youtube.com', 'youtube.com', 'youtu.be', 'www.youtube-nocookie.com', 'i.ytimg.com'],
   // Termo conjunto 1 (ausculta) e 2 (atlas), 18/09/2026.
   littmann: ['littmann.com', 'solventum.com', 'multimedia.3m.com'],
-  'umich-heart-sounds': ['med.umich.edu', 'umich.edu'],
+  'umich-heart-sounds': ['med.umich.edu', 'umich.edu', 'web.archive.org'],
   thinklabs: ['thinklabs.com'],
   easyauscultation: ['easyauscultation.com', 'practicalclinicalskills.com'],
   rale: ['rale.ca'],
@@ -243,7 +243,7 @@ async function inspecionar(url, tipoEsperado) {
     sha256: createHash('sha256').update(bytes).digest('hex'),
     bytes,
     tamanho: bytes.length,
-    ext: contentType.split('/')[1]?.replace('quicktime', 'mov').replace('pjpeg', 'jpg').replace('jpeg', 'jpg') ?? 'bin',
+    ext: contentType.split('/')[1]?.replace('quicktime', 'mov').replace('pjpeg', 'jpg').replace('jpeg', 'jpg').replace('mpeg', 'mp3').replace('x-wav', 'wav') ?? 'bin',
   }
 }
 

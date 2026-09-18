@@ -3,6 +3,18 @@ import type { CenaClinica, JanelaUltrassom, Sinal, Vista } from './esquemas'
 import { midiasServiveis, type MidiaClinica } from './midia'
 
 /**
+ * O que é nosso vem antes do que é de terceiro: áudio espelhado, foto e clipe
+ * primeiro; o vídeo incorporado do YouTube por último. Numa ficha de B3, a
+ * gravação da biblioteca de Michigan é o caso real; o vídeo é o complemento.
+ * A ordem dentro de cada grupo é a da curadoria, que é deliberada.
+ */
+const ORDEM: Record<MidiaClinica['tipo'], number> = { audio: 0, imagem: 1, clipe: 1, video: 2 }
+
+function ordenar(midias: MidiaClinica[]): MidiaClinica[] {
+  return [...midias].sort((a, b) => ORDEM[a.tipo] - ORDEM[b.tipo])
+}
+
+/**
  * Junta a prosa escrita à mão com a mídia curada pelo script.
  *
  * ## Por que os dois vivem separados
@@ -41,7 +53,7 @@ export function chaveDoSinal(slug: string): string {
 /** Mídia servível de um sinal, do acervo gerado e do que estiver inline. */
 export function midiasDoSinal(sinal: Sinal): MidiaClinica[] {
   const doAcervo = ACERVO_DE_MIDIA[chaveDoSinal(sinal.slug)] ?? []
-  return midiasServiveis([...doAcervo, ...(sinal.midiaReal ?? [])])
+  return ordenar(midiasServiveis([...doAcervo, ...(sinal.midiaReal ?? [])]))
 }
 
 /** O sinal com a mídia já anexada — mesmo contrato de `comAcervo`. */
@@ -60,7 +72,7 @@ export function comAcervoSinal(sinal: Sinal): Sinal {
 export function midiasDaCena(janelaSlug: string, cena: CenaClinica): MidiaClinica[] {
   const doAcervo = ACERVO_DE_MIDIA[chaveDaCena(janelaSlug, cena.id)] ?? []
   const inline = cena.midiaReal ?? []
-  return midiasServiveis([...doAcervo, ...inline])
+  return ordenar(midiasServiveis([...doAcervo, ...inline]))
 }
 
 /**

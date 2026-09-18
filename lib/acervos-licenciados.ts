@@ -359,9 +359,12 @@ export const FONTES_LICENCIADAS: Record<FonteLicenciadaId, FonteLicenciada> = {
     titular: 'University of Michigan Medical School',
     signatarios: ['Richard D. Judge, MD', 'Rajesh Mangrulkar, MD'],
     licencaBase: 'Creative Commons Attribution-ShareAlike 3.0 (CC BY-SA 3.0) da biblioteca aberta da University of Michigan',
-    dominiosDeMidia: ['med.umich.edu', 'umich.edu'],
+    // web.archive.org: a biblioteca saiu do ar em 2026 (os mp3 do Open Michigan
+    // dão 404). A cópia do Internet Archive é dos mesmos arquivos, publicados
+    // pela universidade sob CC BY-SA 3.0 — o host muda, a obra e a licença não.
+    dominiosDeMidia: ['med.umich.edu', 'umich.edu', 'web.archive.org'],
     comprovante: TERMO_CONJUNTO_1,
-    condicaoAcademica: 'Conteúdo acadêmico (cláusula 4.4): respeita-se a licença de uso educacional da University of Michigan, inclusive a atribuição a Judge e Mangrulkar em cada som.',
+    condicaoAcademica: 'Conteúdo acadêmico (cláusula 4.4): respeita-se a licença de uso educacional da University of Michigan, inclusive a atribuição a Judge e Mangrulkar em cada som. Os arquivos vêm da cópia do Internet Archive da biblioteca original (2012), porque o site saiu do ar.',
     natureza: 'Sons cardíacos e sopros',
   }),
   thinklabs: fonteDoTermoConjunto({

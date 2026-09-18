@@ -10,6 +10,7 @@ import { SINAIS_LEVA_3 } from './sinais-leva-3'
 import { SINAIS_LEVA_4_PELE } from './sinais-leva-4-pele'
 import { SINAIS_LEVA_4_CORPO } from './sinais-leva-4-corpo'
 import { SINAIS_LEVA_4_DINAMICOS } from './sinais-leva-4-dinamicos'
+import { SINAIS_LEVA_4_AUSCULTA } from './sinais-leva-4-ausculta'
 
 /**
  * O acervo de sinais do exame físico.
@@ -1178,6 +1179,7 @@ export const SINAIS: Sinal[] = [
   ...SINAIS_LEVA_4_PELE,
   ...SINAIS_LEVA_4_CORPO,
   ...SINAIS_LEVA_4_DINAMICOS,
+  ...SINAIS_LEVA_4_AUSCULTA,
 ]
 
 export const TOTAL_DE_SINAIS = SINAIS.length

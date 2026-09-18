@@ -9637,6 +9637,41 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/bulhas-normais": [
+    {
+      "id": "um-01",
+      "tipo": "audio",
+      "fonte": "umich-heart-sounds",
+      "urlOrigem": "https://web.archive.org/web/20120905070239id_/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/assets/media/01_Nor_S1_S2_Apex.mp3",
+      "urlDoCaso": "https://web.archive.org/web/20151114064155/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/primer_heartsound.html",
+      "legenda": "B1 e B2 normais no ápice, em decúbito dorsal, com a campânula: o tum-tá de referência — B1 mais grave e longa, B2 mais aguda e breve.",
+      "autoria": "Richard D. Judge, MD e Rajesh Mangrulkar, MD — Heart Sound & Murmur Library, University of Michigan (CC BY-SA 3.0)",
+      "sha256": "3315c47c482c5087d4b1bc3b6e253e7a6dd8fd2257fae1ceef7423e3630a3c24",
+      "ext": "mp3"
+    },
+    {
+      "id": "um-14",
+      "tipo": "audio",
+      "fonte": "umich-heart-sounds",
+      "urlOrigem": "https://web.archive.org/web/20120905065910id_/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/assets/media/14_Normal_S1S2_Aortic.mp3",
+      "urlDoCaso": "https://web.archive.org/web/20151114064155/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/primer_heartsound.html",
+      "legenda": "B1 e B2 normais no foco aórtico, paciente sentado: aqui B2 domina.",
+      "autoria": "Richard D. Judge, MD e Rajesh Mangrulkar, MD — Heart Sound & Murmur Library, University of Michigan (CC BY-SA 3.0)",
+      "sha256": "66851ab22804dc2e1e8f92dbc61ce12551f0231b528eeae244b00a2ff726a66c",
+      "ext": "mp3"
+    },
+    {
+      "id": "um-02",
+      "tipo": "audio",
+      "fonte": "umich-heart-sounds",
+      "urlOrigem": "https://web.archive.org/web/20120905070252id_/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/assets/media/02_Split_S1_Apex.mp3",
+      "urlDoCaso": "https://web.archive.org/web/20151114064155/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/primer_heartsound.html",
+      "legenda": "Desdobramento de B1 (M1 e T1), variante normal audível no ápice/borda esternal baixa.",
+      "autoria": "Richard D. Judge, MD e Rajesh Mangrulkar, MD — Heart Sound & Murmur Library, University of Michigan (CC BY-SA 3.0)",
+      "sha256": "1c3d93a8ed2ae650cf4424d3db0ff86149a110f38b63f65f931611378840f535",
+      "ext": "mp3"
+    }
+  ],
   "sinais/bursite-olecraniana-e-prepatelar": [
     {
       "id": "wc-bursite-olecraniana-e-prepatelar-1",
@@ -11229,6 +11264,52 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "autoria": "Canal Patrick Klass",
       "videoId": "TLjgNSkOG3g",
       "miniatura": "https://i.ytimg.com/vi/TLjgNSkOG3g/hqdefault.jpg"
+    }
+  ],
+  "sinais/desdobramento-de-b2": [
+    {
+      "id": "um-20",
+      "tipo": "audio",
+      "fonte": "umich-heart-sounds",
+      "urlOrigem": "https://web.archive.org/web/20120905070108id_/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/assets/media/20_Split_S2_Transient_Pulmonic.mp3",
+      "urlDoCaso": "https://web.archive.org/web/20151114064155/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/primer_heartsound.html",
+      "legenda": "Desdobramento fisiológico de B2 no foco pulmonar: A2 e P2 se separam na inspiração e se fundem na expiração.",
+      "autoria": "Richard D. Judge, MD e Rajesh Mangrulkar, MD — Heart Sound & Murmur Library, University of Michigan (CC BY-SA 3.0)",
+      "sha256": "99931fceafea4ef320cf39e5e9dc2c973aa64d1e0a205bad51c8849b18ed5d9b",
+      "ext": "mp3"
+    },
+    {
+      "id": "um-19",
+      "tipo": "audio",
+      "fonte": "umich-heart-sounds",
+      "urlOrigem": "https://web.archive.org/web/20120905070016id_/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/assets/media/19_Split_S2_Persisent_Pulmonic.mp3",
+      "urlDoCaso": "https://web.archive.org/web/20151114064155/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/primer_heartsound.html",
+      "legenda": "Desdobramento persistente (fixo) de B2 em bloqueio de ramo direito completo: A2 e P2 separados nas duas fases da respiração.",
+      "autoria": "Richard D. Judge, MD e Rajesh Mangrulkar, MD — Heart Sound & Murmur Library, University of Michigan (CC BY-SA 3.0)",
+      "sha256": "84ea73e047a6f7859899f32894299dccd709bf5a54c16cc58b168bb1ebdd0ac7",
+      "ext": "mp3"
+    },
+    {
+      "id": "um-18",
+      "tipo": "audio",
+      "fonte": "umich-heart-sounds",
+      "urlOrigem": "https://web.archive.org/web/20120905065849id_/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/assets/media/18_Single_S2_Pulmonic.mp3",
+      "urlDoCaso": "https://web.archive.org/web/20151114064155/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/primer_heartsound.html",
+      "legenda": "B2 única no foco pulmonar, normal no idoso: nenhum desdobramento audível.",
+      "autoria": "Richard D. Judge, MD e Rajesh Mangrulkar, MD — Heart Sound & Murmur Library, University of Michigan (CC BY-SA 3.0)",
+      "sha256": "81fca32e85c5e489df8e096c4924126db94bd10ce81f98c44d3b82dac9a9cf44",
+      "ext": "mp3"
+    },
+    {
+      "id": "um-22",
+      "tipo": "audio",
+      "fonte": "umich-heart-sounds",
+      "urlOrigem": "https://web.archive.org/web/20120905065933id_/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/assets/media/22_Ejection_Systolic_Murmur_Persistent_Split_S2_Pulmonic.mp3",
+      "urlDoCaso": "https://web.archive.org/web/20151114064155/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/primer_heartsound.html",
+      "legenda": "Comunicação interatrial: sopro sistólico de ejeção pulmonar suave com desdobramento fixo de B2 — o par que diagnostica a CIA.",
+      "autoria": "Richard D. Judge, MD e Rajesh Mangrulkar, MD — Heart Sound & Murmur Library, University of Michigan (CC BY-SA 3.0)",
+      "sha256": "0e4e9752d9f41ef00acfd1ca55620ab717ab1019f1762400fb849a8aa3aa1974",
+      "ext": "mp3"
     }
   ],
   "sinais/desvio-de-lingua": [
@@ -18705,6 +18786,30 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "miniatura": "https://i.ytimg.com/vi/IPoYwiB-r9w/hqdefault.jpg"
     }
   ],
+  "sinais/prolapso-mitral-click": [
+    {
+      "id": "um-04",
+      "tipo": "audio",
+      "fonte": "umich-heart-sounds",
+      "urlOrigem": "https://web.archive.org/web/20120905070303id_/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/assets/media/04_Mid_Systolic_Click_Apex.mp3",
+      "urlDoCaso": "https://web.archive.org/web/20151114064155/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/primer_heartsound.html",
+      "legenda": "Click mesossistólico isolado do prolapso mitral: o estalo agudo no meio da sístole, sem sopro.",
+      "autoria": "Richard D. Judge, MD e Rajesh Mangrulkar, MD — Heart Sound & Murmur Library, University of Michigan (CC BY-SA 3.0)",
+      "sha256": "a06c61d9eeed199c6dc86920b1e4451857463ad746f2242a8b16c0d619d5ecbb",
+      "ext": "mp3"
+    },
+    {
+      "id": "um-10",
+      "tipo": "audio",
+      "fonte": "umich-heart-sounds",
+      "urlOrigem": "https://web.archive.org/web/20120905070227id_/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/assets/media/10_Systolic_Click_Late_Systolic_Murmur_Apex.mp3",
+      "urlDoCaso": "https://web.archive.org/web/20151114064155/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/primer_heartsound.html",
+      "legenda": "Click seguido de sopro telessistólico: prolapso mitral com regurgitação.",
+      "autoria": "Richard D. Judge, MD e Rajesh Mangrulkar, MD — Heart Sound & Murmur Library, University of Michigan (CC BY-SA 3.0)",
+      "sha256": "230db0bdf2e3ee8639a23b4acce5ddab3a95955c119537b432bcb6fee44fbfc5",
+      "ext": "mp3"
+    }
+  ],
   "sinais/prolapso-retal": [
     {
       "id": "wc-prolapso-retal-1",
@@ -19206,6 +19311,28 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "autoria": "Canal MedStudy",
       "videoId": "MUNaubstdn8",
       "miniatura": "https://i.ytimg.com/vi/MUNaubstdn8/hqdefault.jpg"
+    },
+    {
+      "id": "um-03",
+      "tipo": "audio",
+      "fonte": "umich-heart-sounds",
+      "urlOrigem": "https://web.archive.org/web/20120905070211id_/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/assets/media/03_S4_Gallop_Apex.mp3",
+      "urlDoCaso": "https://web.archive.org/web/20151114064155/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/primer_heartsound.html",
+      "legenda": "Galope de B4 no ápice, decúbito lateral esquerdo: o som grave que antecede B1 — hipertrofia ventricular esquerda.",
+      "autoria": "Richard D. Judge, MD e Rajesh Mangrulkar, MD — Heart Sound & Murmur Library, University of Michigan (CC BY-SA 3.0)",
+      "sha256": "1189b3eeaa5cb6e4b6251dcb3899215f258d2b54ea5d9c41b0ca788dccde32a0",
+      "ext": "mp3"
+    },
+    {
+      "id": "um-11",
+      "tipo": "audio",
+      "fonte": "umich-heart-sounds",
+      "urlOrigem": "https://web.archive.org/web/20120905070315id_/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/assets/media/11_S4_Mid_Systolic_Murmur_Apex.mp3",
+      "urlDoCaso": "https://web.archive.org/web/20151114064155/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/primer_heartsound.html",
+      "legenda": "B4 com sopro mesossistólico: cardiomiopatia isquêmica com insuficiência mitral.",
+      "autoria": "Richard D. Judge, MD e Rajesh Mangrulkar, MD — Heart Sound & Murmur Library, University of Michigan (CC BY-SA 3.0)",
+      "sha256": "36ff0b157b658c206c4a4518c08f500f79a5c4280460ad698b699a941db6f6f4",
+      "ext": "mp3"
     }
   ],
   "sinais/queilite-angular": [
@@ -20700,6 +20827,43 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "autoria": "Canal AMBOSS: Medical Knowledge Distilled",
       "videoId": "Efqi5DLiB2w",
       "miniatura": "https://i.ytimg.com/vi/Efqi5DLiB2w/hqdefault.jpg"
+    },
+    {
+      "id": "um-15",
+      "tipo": "audio",
+      "fonte": "umich-heart-sounds",
+      "urlOrigem": "https://web.archive.org/web/20120905065948id_/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/assets/media/15_Aortic_Stenosis_Aortic.mp3",
+      "urlDoCaso": "https://web.archive.org/web/20151114064155/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/primer_heartsound.html",
+      "legenda": "Estenose aórtica grave no foco aórtico, sentado: sopro sistólico rude em diamante com B2 ausente — a valva calcificada não fecha audivelmente.",
+      "autoria": "Richard D. Judge, MD e Rajesh Mangrulkar, MD — Heart Sound & Murmur Library, University of Michigan (CC BY-SA 3.0)",
+      "sha256": "4a207c17ec1edbd2fdca1adfb807a801da68a0421834bf40cf749b6af408bee1",
+      "ext": "mp3"
+    }
+  ],
+  "sinais/sopro-de-estenose-mitral": [
+    {
+      "id": "um-13",
+      "tipo": "audio",
+      "fonte": "umich-heart-sounds",
+      "urlOrigem": "https://web.archive.org/web/20120905070054id_/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/assets/media/13_Mitral_Opening_Snap_and_Diastolic_Murmur_Apex.mp3",
+      "urlDoCaso": "https://web.archive.org/web/20151114064155/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/primer_heartsound.html",
+      "legenda": "Estenose mitral: B1 hiperfonética, estalido de abertura após B2 e ruflar diastólico com reforço pré-sistólico — ápice, campânula, decúbito lateral esquerdo.",
+      "autoria": "Richard D. Judge, MD e Rajesh Mangrulkar, MD — Heart Sound & Murmur Library, University of Michigan (CC BY-SA 3.0)",
+      "sha256": "05e69f5cb21059aa4d30b0ea21a3d1342f01ca13d59fe7f1cda82c376b0a719d",
+      "ext": "mp3"
+    }
+  ],
+  "sinais/sopro-de-insuficiencia-aortica": [
+    {
+      "id": "um-16",
+      "tipo": "audio",
+      "fonte": "umich-heart-sounds",
+      "urlOrigem": "https://web.archive.org/web/20120905070031id_/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/assets/media/16_Early_Diastoloic_Murmur_Aortic_Regurgitation_Aortic.mp3",
+      "urlDoCaso": "https://web.archive.org/web/20151114064155/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/primer_heartsound.html",
+      "legenda": "Insuficiência aórtica: sopro protodiastólico aspirativo em decrescendo logo após B2, paciente sentado.",
+      "autoria": "Richard D. Judge, MD e Rajesh Mangrulkar, MD — Heart Sound & Murmur Library, University of Michigan (CC BY-SA 3.0)",
+      "sha256": "76ea485d84b0d700b681d1d46c736c8c0b7e576e1069b3f0b8656ca0df126fe2",
+      "ext": "mp3"
     }
   ],
   "sinais/sopro-de-insuficiencia-mitral": [
@@ -20724,6 +20888,63 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "autoria": "Canal Lecturio Medical",
       "videoId": "sL9-sgn2Vk8",
       "miniatura": "https://i.ytimg.com/vi/sL9-sgn2Vk8/hqdefault.jpg"
+    },
+    {
+      "id": "um-09",
+      "tipo": "audio",
+      "fonte": "umich-heart-sounds",
+      "urlOrigem": "https://web.archive.org/web/20120905070340id_/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/assets/media/09_Holosystolic_Murmur_Apex.mp3",
+      "urlDoCaso": "https://web.archive.org/web/20151114064155/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/primer_heartsound.html",
+      "legenda": "Sopro holossistólico clássico da insuficiência mitral no ápice (ou CIV, quando na borda esternal esquerda).",
+      "autoria": "Richard D. Judge, MD e Rajesh Mangrulkar, MD — Heart Sound & Murmur Library, University of Michigan (CC BY-SA 3.0)",
+      "sha256": "9c848cea7ba75c3b2b19f356a9658480165ae8f97d984cc89c784c8637e63a4a",
+      "ext": "mp3"
+    },
+    {
+      "id": "um-06",
+      "tipo": "audio",
+      "fonte": "umich-heart-sounds",
+      "urlOrigem": "https://web.archive.org/web/20120905070328id_/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/assets/media/06_Early_Systolic_Murmur_Apex.mp3",
+      "urlDoCaso": "https://web.archive.org/web/20151114064155/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/primer_heartsound.html",
+      "legenda": "Sopro protossistólico: insuficiência mitral aguda — o átrio pequeno e rígido equaliza a pressão cedo e o sopro morre antes de B2.",
+      "autoria": "Richard D. Judge, MD e Rajesh Mangrulkar, MD — Heart Sound & Murmur Library, University of Michigan (CC BY-SA 3.0)",
+      "sha256": "88d2d0ddc3ec3c6feb9e78639028704f74af867454e35518300076a06ee224bc",
+      "ext": "mp3"
+    },
+    {
+      "id": "um-07",
+      "tipo": "audio",
+      "fonte": "umich-heart-sounds",
+      "urlOrigem": "https://web.archive.org/web/20120905070156id_/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/assets/media/07_Mid_Systolic_Murmur_Apex.mp3",
+      "urlDoCaso": "https://web.archive.org/web/20151114064155/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/primer_heartsound.html",
+      "legenda": "Sopro mesossistólico apical de insuficiência mitral isquêmica (disfunção de músculo papilar).",
+      "autoria": "Richard D. Judge, MD e Rajesh Mangrulkar, MD — Heart Sound & Murmur Library, University of Michigan (CC BY-SA 3.0)",
+      "sha256": "2f713a3ce4fabf6438ed2bef1b8b9d2644241038601c8dc8761196b18d3ef919",
+      "ext": "mp3"
+    },
+    {
+      "id": "um-08",
+      "tipo": "audio",
+      "fonte": "umich-heart-sounds",
+      "urlOrigem": "https://web.archive.org/web/20120905070119id_/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/assets/media/08_Late_Systolic_Murmur_Apex.mp3",
+      "urlDoCaso": "https://web.archive.org/web/20151114064155/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/primer_heartsound.html",
+      "legenda": "Sopro telessistólico: insuficiência mitral do prolapso, que começa tarde e cresce até B2.",
+      "autoria": "Richard D. Judge, MD e Rajesh Mangrulkar, MD — Heart Sound & Murmur Library, University of Michigan (CC BY-SA 3.0)",
+      "sha256": "e56f84bb1f339a04e695e4361d9b66ac49d010b54b1645b6de6d64ad4e8cf371",
+      "ext": "mp3"
+    }
+  ],
+  "sinais/sopro-inocente": [
+    {
+      "id": "um-23",
+      "tipo": "audio",
+      "fonte": "umich-heart-sounds",
+      "urlOrigem": "https://web.archive.org/web/20120905070134id_/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/assets/media/23_Ejection_Systolic_Murmur_Single_S2_Ejection_Click.mp3",
+      "urlDoCaso": "https://web.archive.org/web/20151114064155/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/primer_heartsound.html",
+      "legenda": "Para contraste — estenose pulmonar valvar: sopro de ejeção com click de ejeção e B2 única; o click e a B2 anormal separam do inocente.",
+      "autoria": "Richard D. Judge, MD e Rajesh Mangrulkar, MD — Heart Sound & Murmur Library, University of Michigan (CC BY-SA 3.0)",
+      "sha256": "55e8a2c29cfca28ed0f3abb52b75bac497c5e1864082652674f043f213038481",
+      "ext": "mp3"
     }
   ],
   "sinais/telangiectasias": [
@@ -20816,6 +21037,28 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "autoria": "Canal André Mansoor",
       "videoId": "9Y6bnUAYyKY",
       "miniatura": "https://i.ytimg.com/vi/9Y6bnUAYyKY/hqdefault.jpg"
+    },
+    {
+      "id": "um-05",
+      "tipo": "audio",
+      "fonte": "umich-heart-sounds",
+      "urlOrigem": "https://web.archive.org/web/20120905065836id_/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/assets/media/05_S3_Gallop_Apex.mp3",
+      "urlDoCaso": "https://web.archive.org/web/20151114064155/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/primer_heartsound.html",
+      "legenda": "Galope de B3 no ápice, decúbito lateral esquerdo, campânula: o terceiro som grave logo após B2 — normal no jovem, cardiomiopatia no adulto.",
+      "autoria": "Richard D. Judge, MD e Rajesh Mangrulkar, MD — Heart Sound & Murmur Library, University of Michigan (CC BY-SA 3.0)",
+      "sha256": "5c3a4dd7ebf0e575b077772ee7c4a4302c304076c0ca1e2409bb4b2b4d10427e",
+      "ext": "mp3"
+    },
+    {
+      "id": "um-12",
+      "tipo": "audio",
+      "fonte": "umich-heart-sounds",
+      "urlOrigem": "https://web.archive.org/web/20120905065959id_/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/assets/media/12_S3_Holosystolic_Murmur_Apex.mp3",
+      "urlDoCaso": "https://web.archive.org/web/20151114064155/http://www.med.umich.edu/lrc/psb_open/repo/primer_heartsound/primer_heartsound.html",
+      "legenda": "B3 com sopro holossistólico: cardiomiopatia dilatada com insuficiência mitral funcional.",
+      "autoria": "Richard D. Judge, MD e Rajesh Mangrulkar, MD — Heart Sound & Murmur Library, University of Michigan (CC BY-SA 3.0)",
+      "sha256": "6b1fdf763282c87f8498e2e1d4ecaa156eb578637524f399ab3a7b00b405cea0",
+      "ext": "mp3"
     }
   ],
   "sinais/teste-de-thompson": [
