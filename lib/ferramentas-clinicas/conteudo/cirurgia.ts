@@ -55,6 +55,41 @@ const asa: Ferramenta = {
         'Sua utilidade real está em três coisas: comunicação padronizada entre profissionais, ajuste de risco em pesquisa e auditoria, e gatilho para avaliação adicional. A concordância entre avaliadores é apenas moderada, sobretudo entre as classes II e III.',
         'A idade isoladamente **não** determina a classe. Um idoso hígido é ASA I ou II; um jovem com diabetes descontrolado é ASA III.',
         'A American Society of Anesthesiologists publicou em 2020 uma lista de exemplos por classe justamente para reduzir a variabilidade — os exemplos aqui apresentados derivam dela.',
+        'Por que o **estado físico** prediz desfecho perioperatório tem explicação em reserva funcional. A anestesia e a cirurgia impõem uma agressão fisiológica com três componentes. O primeiro é **farmacológico**: agentes hipnóticos e opioides deprimem a contratilidade miocárdica, reduzem o tônus vasomotor simpático e abolem o drive respiratório; o bloqueio neuroaxial acrescenta simpatectomia química com vasodilatação e queda de pré-carga. O segundo é **mecânico**: a ventilação com pressão positiva inverte o regime de pressão intratorácica, reduzindo o retorno venoso; o pneumoperitônio da laparoscopia comprime a veia cava e eleva a pressão intra-abdominal; a posição cirúrgica redistribui volume. O terceiro é a **resposta neuroendócrina e inflamatória ao trauma**, com liberação de catecolaminas, cortisol e vasopressina, elevação de fibrinogênio, fator VIII e inibidor do ativador de plasminogênio — um estado hipermetabólico, hipercoagulável e pró-inflamatório que persiste por dias. Um paciente com reserva cardíaca, pulmonar, renal e hepática íntegras absorve os três golpes sem consequência. Um paciente ASA III ou IV já opera no limite de um ou mais desses sistemas, e a mesma agressão consome a margem que restava — é aí que surgem isquemia miocárdica, insuficiência renal aguda, descompensação respiratória e delirium. É por isso que a classificação, apesar de descritiva e subjetiva, correlaciona de forma consistente com mortalidade: ela é, na prática, uma medida grosseira de **reserva fisiológica agregada**.',
+      ],
+      conduta: classe <= 2
+        ? [
+            `**ASA ${classe === 1 ? 'I' : 'II'}${emergencia ? 'E' : ''}.** Avaliação pré-anestésica de rotina. Exames complementares devem ser guiados pela história e pelo exame físico, **não** pela idade nem por protocolo fixo: exames de rotina em paciente hígido para cirurgia de pequeno porte não reduzem complicações e geram achados incidentais que atrasam procedimentos sem benefício.`,
+            'Confirme jejum conforme as diretrizes atuais (6 horas para sólidos, 2 horas para líquidos claros — incluindo bebida carboidratada, que faz parte dos protocolos ERAS e reduz resistência insulínica pós-operatória), revise medicamentos de uso contínuo e oriente quais manter e quais suspender.',
+            'Aplique o **escore de Apfel** para definir profilaxia de náusea e vômito, e avalie risco tromboembólico pelo **Caprini** para decidir profilaxia mecânica ou farmacológica.',
+            emergencia ? 'O sufixo E eleva o risco em qualquer classe. Otimize o que for possível no tempo disponível — volemia, eletrólitos, glicemia, coagulação — sem atrasar a cirurgia indicada.' : 'Em cirurgia eletiva, aproveite a consulta pré-anestésica para intervenções que melhoram desfecho: cessação do tabagismo (idealmente 4 a 8 semanas antes), controle glicêmico, tratamento de anemia e otimização nutricional.',
+          ]
+        : classe === 3
+          ? [
+              `**ASA III${emergencia ? 'E' : ''} — doença sistêmica grave com limitação funcional** (mortalidade associada em torno de 1,8% nas séries observacionais, muito dependente do porte cirúrgico). O foco passa a ser **otimização pré-operatória**, e em cirurgia eletiva vale adiar dias ou semanas para ganhar margem.`,
+              'Estratifique o risco cardíaco com o **RCRI** ou o **Gupta MICA**, e avalie capacidade funcional com o **DASI** — capacidade acima de 4 METs, medida objetivamente, dispensa boa parte da investigação cardiológica adicional. Solicite avaliação especializada apenas quando o resultado for mudar a conduta.',
+              'Avalie risco pulmonar com o **ARISCAT** e institua as medidas que reduzem complicação respiratória: cessação do tabagismo, fisioterapia respiratória pré-operatória, tratamento de broncoespasmo e rastreio de apneia do sono com STOP-BANG.',
+              'Otimize cada sistema comprometido: controle pressórico e glicêmico, compensação de insuficiência cardíaca, tratamento de anemia (ferro intravenoso quando indicado, preferível a transfusão), ajuste de diálise, correção de eletrólitos e revisão de anticoagulantes e antiagregantes com plano definido de suspensão e reintrodução.',
+              'Planeje o pós-operatório **antes** da cirurgia: leito de recuperação adequado, analgesia multimodal poupadora de opioide, mobilização precoce, profilaxia tromboembólica e de delirium. Em ASA III, a complicação costuma surgir no pós-operatório, não na sala.',
+            ]
+          : [
+              `**ASA ${['', '', '', '', 'IV', 'V', 'VI'][classe]}${emergencia ? 'E' : ''}.** ${classe === 6 ? 'Morte encefálica, doador de órgãos — a conduta segue o protocolo de manutenção do doador e a logística de captação.' : classe === 5 ? 'Paciente moribundo, sem expectativa de sobrevida sem a cirurgia. A operação é a única chance, e a decisão é de sobrevivência imediata: ressuscitação e cirurgia correm em paralelo.' : 'Doença sistêmica grave com ameaça constante à vida. Mortalidade perioperatória em torno de 7,8% e frequentemente muito maior conforme o porte.'}`,
+              classe === 6
+                ? 'Mantenha a estabilidade hemodinâmica, a normotermia e a oxigenação do doador conforme protocolo, e siga a legislação e os trâmites da central de transplantes.'
+                : '**Reavalie a indicação e as alternativas.** Há procedimento menos invasivo que resolva o problema? Radiologia intervencionista, endoscopia, cirurgia paliativa de menor porte, ou tratamento clínico? Em ASA IV e V, a escolha do procedimento pesa tanto quanto a técnica anestésica.',
+              classe === 6
+                ? 'Registre e comunique conforme as normas institucionais.'
+                : '**Discuta objetivos de cuidado explicitamente** com o paciente, quando possível, e com a família: expectativa realista, disposição quanto a suporte avançado, ventilação prolongada e reanimação. Registre a conversa. Essa discussão faz parte do preparo cirúrgico, não é sua alternativa.',
+              classe === 6
+                ? 'Equipe dedicada e coordenação com a captação.'
+                : 'Planeje leito de terapia intensiva no pós-operatório, monitorização invasiva, reserva de hemocomponentes e equipe experiente. Em cirurgia de emergência, otimize o que for possível no tempo disponível — volemia, perfusão, eletrólitos, glicemia, coagulação — sem transformar a otimização em atraso fatal.',
+            ],
+      alertas: [
+        'ASA **descreve o paciente, não a cirurgia nem o risco anestésico**. É a confusão mais comum. Uma herniorrafia num paciente ASA IV continua sendo ASA IV, e o risco final depende também do porte cirúrgico, da urgência e do serviço.',
+        'A idade isoladamente **não** define a classe. Idoso hígido é ASA I ou II; jovem com diabetes descontrolado é ASA III. Gestação normal é ASA II, não ASA I.',
+        'A concordância entre avaliadores é apenas moderada, sobretudo entre as classes II e III. Use a lista de exemplos de 2020 e registre a justificativa da classe atribuída.',
+        'O sufixo **E** é modificador, não classe própria: eleva o risco dentro de qualquer classe e deve ser registrado sempre que o atraso aumente a ameaça à vida ou a um membro.',
+        'ASA não substitui estratificação específica. Para risco cardíaco use RCRI ou Gupta MICA, para pulmonar use ARISCAT, para tromboembolismo use Caprini e para náusea e vômito use Apfel.',
       ],
       tabela: {
         titulo: 'Classes ASA',
@@ -73,13 +108,20 @@ const asa: Ferramenta = {
   },
   formula: ['Classes I a VI, com sufixo E para emergência'],
   fundamento:
-    'A classificação nasceu em 1941 com o propósito de permitir comparação estatística entre serviços, e não de prever risco individual. Sua sobrevivência por mais de oito décadas se deve à simplicidade e à correlação consistente, ainda que grosseira, com desfechos — apesar da subjetividade reconhecida.',
+    'A classificação nasceu em 1941 com o propósito de permitir comparação estatística entre serviços, e não de prever risco individual. Sua sobrevivência por mais de oito décadas se deve à simplicidade e à correlação consistente, ainda que grosseira, com desfechos — apesar da subjetividade reconhecida. O que ela captura, no fundo, é **reserva fisiológica agregada**. A anestesia e a cirurgia impõem três agressões simultâneas: farmacológica (hipnóticos e opioides deprimem contratilidade, tônus vasomotor e drive respiratório; o bloqueio neuroaxial acrescenta simpatectomia química), mecânica (a ventilação com pressão positiva inverte o regime de pressão intratorácica e reduz o retorno venoso; o pneumoperitônio comprime a cava) e neuroendócrina (catecolaminas, cortisol e vasopressina, com elevação de fibrinogênio, fator VIII e inibidor do ativador de plasminogênio, produzindo estado hipermetabólico, hipercoagulável e pró-inflamatório que dura dias). Quem tem reserva absorve os três; quem já opera no limite de um sistema consome a margem restante, e é aí que aparecem isquemia miocárdica, lesão renal aguda, descompensação respiratória e delirium. Vale insistir no que a classificação **não** é: ela não considera o porte da cirurgia, a duração, a perda sanguínea prevista, a experiência da equipe nem a estrutura do serviço — todos determinantes reais de desfecho. O risco perioperatório é o produto de estado físico, agressão cirúrgica e contexto, e o ASA descreve apenas o primeiro fator. Sua concordância entre avaliadores é apenas moderada, particularmente na fronteira entre II e III, que é justamente onde mais decisões se apoiam; foi para reduzir essa variabilidade que a sociedade americana publicou, em 2020, a lista de exemplos por classe. Na prática moderna, o ASA funciona melhor como **linguagem comum e gatilho de avaliação adicional** do que como estimador de risco: um ASA III deve disparar estratificação específica com RCRI ou Gupta MICA para o coração, ARISCAT para o pulmão, Caprini para trombose e DASI para capacidade funcional.',
   armadilhas: [
     'Não classifique pelo porte da cirurgia. Uma herniorrafia num ASA IV continua sendo ASA IV.',
     'Gestação normal é ASA II, e não ASA I.',
+    'A idade isoladamente não determina a classe: idoso hígido é ASA I ou II, jovem com diabetes descontrolado é ASA III.',
+    'A concordância entre avaliadores é moderada, sobretudo entre II e III — exatamente a fronteira em que mais decisões se apoiam. Registre a justificativa da classe.',
+    'O sufixo E é modificador de urgência, não classe própria. Omiti-lo subestima o risco registrado e prejudica a comparação em auditoria.',
+    'ASA não é escore de risco e não substitui RCRI, Gupta MICA, ARISCAT, Caprini nem DASI. Usá-lo isoladamente para decidir investigação pré-operatória é aplicação indevida.',
+    'Exames pré-operatórios de rotina guiados pela classe ASA, e não pela história e pelo exame físico, não reduzem complicações e geram achados incidentais que atrasam cirurgias sem benefício.',
   ],
   referencias: [
     { texto: 'American Society of Anesthesiologists. ASA Physical Status Classification System. Última revisão em 2020.' },
+    { texto: 'Mayhew D, Mendonca V, Murthy BVS. A review of ASA physical status — historical perspectives and modern developments. Anaesthesia. 2019;74(3):373-379.' },
+    { texto: 'Halvorsen S, Mehilli J, Cassese S, et al. 2022 ESC Guidelines on cardiovascular assessment and management of patients undergoing non-cardiac surgery. Eur Heart J. 2022;43(39):3826-3924.' },
   ],
 }
 
@@ -302,15 +344,15 @@ const air: Ferramenta = {
   resumo: 'Escore de resposta inflamatória, superior ao Alvarado em validações externas.',
   categorias: ['cirurgia', 'emergencia'],
   campos: [
-    campoSimNao('vomito', 'Vômitos', 1),
-    campoSimNao('dorFid', 'Dor em fossa ilíaca direita', 1),
+    campoSimNao('vomito', 'Vômitos', 1, 'Sintoma precoce, decorrente do estímulo peristáltico reflexo pela distensão da luz apendicular. Vômito ANTES da dor sugere gastroenterite; depois da dor, sugere apendicite.'),
+    campoSimNao('dorFid', 'Dor em fossa ilíaca direita', 1, 'Marca o momento em que a serosa inflamada atinge o peritônio parietal, inervado por fibras somáticas. A MIGRAÇÃO da dor periumbilical para a fossa ilíaca direita é o achado de maior valor preditivo da anamnese.'),
     campoOpc('defesa', 'Defesa abdominal', [
       { valor: '0', rotulo: 'Ausente', pontos: 0 },
       { valor: '1', rotulo: 'Leve', pontos: 1 },
       { valor: '2', rotulo: 'Moderada', pontos: 2 },
       { valor: '3', rotulo: 'Intensa', pontos: 3 },
     ]),
-    campoSimNao('febre', 'Temperatura ≥ 38,5 °C', 1),
+    campoSimNao('febre', 'Temperatura ≥ 38,5 °C', 1, 'Corte alto e específico. Febre baixa é comum e não pontua; febre alta precoce deve levantar outras causas, e no idoso pode faltar mesmo em quadro perfurado.'),
     campoOpc('neutrofilos', 'Neutrófilos', [
       { valor: '0', rotulo: 'Menos de 70%', pontos: 0 },
       { valor: '1', rotulo: '70 a 84%', pontos: 1 },
@@ -352,13 +394,51 @@ const air: Ferramenta = {
         'Em validações externas, o AIR discrimina melhor que o Alvarado, sobretudo em mulheres e em crianças, e reduz o uso de tomografia quando incorporado a um protocolo estruturado.',
         'A **proteína C reativa** merece atenção: ela sobe com 8 a 12 horas de atraso em relação ao início dos sintomas. Valor normal nas primeiras horas **não** exclui apendicite; valor muito alto sugere perfuração ou abscesso.',
         'Na faixa indeterminada, **reavaliação clínica seriada** em 4 a 8 horas resolve boa parte dos casos sem imagem — a apendicite é uma doença evolutiva, e o tempo é um recurso diagnóstico.',
+        'A história natural da apendicite explica por que os itens do escore aparecem em **sequência temporal**, e por que aplicá-lo cedo demais subestima. Tudo começa com obstrução da luz apendicular, por hiperplasia linfoide (a causa mais comum em crianças e adolescentes), fecalito, corpo estranho ou tumor. A mucosa continua secretando muco num compartimento fechado, a pressão intraluminal sobe e distende a parede — e a distensão visceral estimula fibras aferentes viscerais que entram na medula em T8 a T10, produzindo dor **referida periumbilical**, mal localizada, que é a queixa inicial clássica. A mesma distensão estimula o peristaltismo reflexo e o centro do vômito, daí a anorexia e os vômitos precoces. Com a pressão crescente, a drenagem venosa e linfática é comprometida, instala-se isquemia da mucosa e a flora luminal invade a parede: começa a inflamação transmural. Quando a serosa inflamada toca o **peritônio parietal**, que é inervado por fibras somáticas segmentares, a dor migra e se localiza na fossa ilíaca direita e surge a defesa — é a migração da dor, o achado de maior valor preditivo da anamnese. A resposta sistêmica vem depois: febre e leucocitose com neutrofilia em 6 a 12 horas, e proteína C reativa mais tarde ainda, com 8 a 12 horas de atraso, porque depende de síntese hepática induzida por IL-6. Se a isquemia progride, a parede necrosa e perfura, tipicamente após 48 a 72 horas, com bloqueio pelo omento (abscesso ou plastrão) ou peritonite difusa.',
+        'Essa cronologia tem três consequências práticas. Primeira: **proteína C reativa normal nas primeiras horas não exclui apendicite** — ela simplesmente ainda não teve tempo de subir. Segunda: proteína C reativa muito alta com leucócitos apenas moderadamente elevados sugere quadro já avançado, com perfuração ou abscesso, porque a leucocitose é mais precoce e pode até cair na peritonite estabelecida. Terceira, e a mais útil: num paciente com poucas horas de dor e escore indeterminado, **a reavaliação em 4 a 8 horas vale mais que a tomografia imediata** — se for apendicite, o escore sobe; se não for, os sintomas se definem em outra direção.',
+      ],
+      conduta: total <= 4
+        ? [
+            '**Baixa probabilidade.** Alta com orientação e retorno é apropriada na maioria dos casos, desde que a dor seja tolerável, o paciente esteja bem e haja acesso garantido a reavaliação.',
+            'Considere os diagnósticos alternativos mais frequentes conforme o perfil: adenite mesentérica e gastroenterite em criança; **causas ginecológicas** em mulher em idade fértil (cisto ovariano roto ou torcido, doença inflamatória pélvica, gravidez ectópica — peça beta-hCG **sempre**); cólica nefrética, infecção urinária, diverticulite (inclusive de ceco, que mimetiza apendicite), doença de Crohn e constipação.',
+            'Oriente retorno imediato se a dor **migrar** para a fossa ilíaca direita, piorar, surgir febre, vômitos persistentes ou incapacidade de andar sem dor. A migração da dor é o achado de maior valor preditivo da anamnese, e o paciente precisa saber reconhecê-la.',
+            'Evite analgesia que impeça a reavaliação? Não — esse é um mito desfeito há décadas. Analgesia adequada, inclusive com opioide, **não** mascara o diagnóstico nem aumenta o erro, e negá-la é maltrato sem benefício diagnóstico.',
+          ]
+        : total <= 8
+          ? [
+              '**Zona indeterminada**, que é onde o escore mais rende justamente por não decidir sozinho. A conduta preferencial é **reavaliação clínica seriada em 4 a 8 horas** com repetição do hemograma e da proteína C reativa — a apendicite é doença evolutiva, e o tempo é recurso diagnóstico que dispensa radiação.',
+              'Solicite imagem conforme o perfil do paciente: **ultrassonografia** primeiro em crianças, adolescentes, mulheres jovens e gestantes (sem radiação, e boa para causas ginecológicas), **tomografia** em adultos quando a ultrassonografia for inconclusiva ou o biotipo dificultar, e **ressonância** em gestantes com ultrassonografia inconclusiva.',
+              'Peça **beta-hCG** em toda mulher em idade fértil antes de qualquer imagem ou conduta cirúrgica. Gravidez ectópica rota é o diagnóstico que não pode passar.',
+              'Mantenha o paciente em observação com jejum, hidratação e analgesia. Não inicie antibiótico antes de definir a conduta, a menos que haja sinais de sepse — antibiótico precoce em quadro indefinido mascara a evolução clínica que se quer observar.',
+            ]
+          : [
+              '**Alta probabilidade.** Acione a equipe cirúrgica. Em quadro clinicamente típico com escore alto, a cirurgia pode ser indicada sem imagem adicional, sobretudo em homens jovens — a tomografia acrescenta pouco e atrasa.',
+              'Inicie **antibiótico pré-operatório** com cobertura para gram-negativos e anaeróbios, administrado na indução anestésica. Em apendicite não complicada, a antibioticoterapia se encerra em até 24 horas do pós-operatório; em complicada, prossegue por 4 a 7 dias conforme a evolução.',
+              '**Apendicectomia laparoscópica** é a abordagem preferencial: menos infecção de ferida, menos dor, retorno mais rápido. O tratamento **não operatório** com antibiótico é alternativa válida em apendicite não complicada selecionada (sem apendicolito, sem abscesso, sem perfuração), com cerca de 25 a 40% de recorrência em um ano — discuta com o paciente quando aplicável.',
+              'Se houver **abscesso ou plastrão** bem formado com sintomas de vários dias, considere a estratégia de drenagem percutânea com antibiótico e apendicectomia de intervalo, em vez de cirurgia imediata num campo inflamado e hostil.',
+              'Hidrate, corrija eletrólitos e trate a dor enquanto aguarda. Em sinais de peritonite difusa, sepse ou instabilidade, a cirurgia é urgente e a ressuscitação corre em paralelo, não antes.',
+            ],
+      alertas: [
+        'Desempenho pior em **extremos de idade e em mulheres em idade fértil** — justamente os grupos de maior morbidade. No idoso, a apresentação é frequentemente atípica, a febre pode faltar e a perfuração é mais comum; na criança pequena, o diagnóstico é tardio e a perfuração chega a 80%.',
+        'Proteína C reativa normal nas primeiras horas **não exclui** apendicite: ela leva 8 a 12 horas para subir. Um escore baixo colhido cedo demais mede o tempo de doença, não a probabilidade.',
+        'Leucocitose que **cai** com piora clínica não é melhora: pode indicar peritonite estabelecida com consumo e sequestro. Leia o hemograma junto da clínica.',
+        'Beta-hCG é obrigatório em toda mulher em idade fértil antes de imagem ou cirurgia. Gravidez ectópica rota é a armadilha clássica da fossa ilíaca direita.',
+        'Analgesia **não mascara** o diagnóstico de abdome agudo — esse mito já foi desfeito por ensaios randomizados. Negar analgesia não melhora a acurácia e prolonga sofrimento.',
+        'Escore alto em paciente idoso deve levantar também **neoplasia de ceco** obstruindo o apêndice, sobretudo se houver anemia, perda de peso ou alteração do hábito intestinal.',
       ],
     }
   },
   formula: ['Soma de 7 itens (0 a 12 pontos)'],
   fundamento:
     'O escore parte da premissa de que a apendicite é definida pela intensidade da resposta inflamatória, e não apenas pela presença de sintomas. Ao graduar a defesa abdominal em quatro níveis e incluir três marcadores laboratoriais com faixas, ele captura o contínuo entre apendicite inicial, flegmonosa e perfurada — o que os escores dicotômicos não fazem.',
-  armadilhas: ['Como todo escore de apendicite, tem desempenho pior em extremos de idade e em mulheres em idade fértil.'],
+  armadilhas: [
+    'Como todo escore de apendicite, tem desempenho pior em extremos de idade e em mulheres em idade fértil.',
+    'A proteína C reativa sobe com 8 a 12 horas de atraso. Aplicar o escore nas primeiras horas de dor mede o tempo de evolução, não a probabilidade de apendicite.',
+    'Leucocitose alta com proteína C reativa baixa sugere quadro precoce; proteína C reativa muito alta com leucócitos apenas moderados sugere quadro avançado, com perfuração ou abscesso. A dissociação entre os dois é informativa.',
+    'Escore baixo não dispensa reavaliação em paciente com poucas horas de sintomas — a apendicite é evolutiva, e a decisão correta muitas vezes é observar, não descartar.',
+    'Não distingue apendicite de outras causas cirúrgicas de fossa ilíaca direita: diverticulite de ceco, doença de Crohn, torção ovariana e neoplasia obstruindo o apêndice produzem escores semelhantes.',
+    'Antibiótico iniciado antes da definição diagnóstica mascara a evolução clínica que a reavaliação seriada pretende observar.',
+  ],
   referencias: [
     { texto: 'Andersson M, Andersson RE. The appendicitis inflammatory response score. World J Surg. 2008;32(8):1843-1849.' },
     { texto: 'Di Saverio S, Podda M, De Simone B, et al. Diagnosis and treatment of acute appendicitis: 2020 update of the WSES Jerusalem guidelines. World J Emerg Surg. 2020;15(1):27.' },
@@ -497,10 +577,10 @@ const apfel: Ferramenta = {
   resumo: 'Quatro fatores que preveem náusea e vômito no pós-operatório e definem a profilaxia.',
   categorias: ['cirurgia'],
   campos: [
-    campoSimNao('feminino', 'Sexo feminino', 1),
-    campoSimNao('naoFumante', 'Não fumante', 1),
-    campoSimNao('historia', 'História de náusea e vômito pós-operatório ou de cinetose', 1),
-    campoSimNao('opioide', 'Uso previsto de opioide no pós-operatório', 1),
+    campoSimNao('feminino', 'Sexo feminino', 1, 'O preditor isolado mais forte, com risco cerca de três vezes maior. Atribuído à modulação estrogênica da zona de gatilho quimiorreceptora — a diferença surge na puberdade e se atenua após a menopausa.'),
+    campoSimNao('naoFumante', 'Não fumante', 1, 'Item invertido: pontua quem NÃO fuma. Fumantes têm menos náusea pós-operatória, provavelmente por indução de CYP450 (que acelera o metabolismo dos anestésicos) e por dessensibilização de vias eméticas por hidrocarbonetos policíclicos. Não é motivo para fumar.'),
+    campoSimNao('historia', 'História de náusea e vômito pós-operatório ou de cinetose', 1, 'Vale qualquer um dos dois. Cinetose (enjoo de carro, barco, avião) indica sensibilidade vestibular aumentada, e a via vestibular converge para os mesmos núcleos do tronco que medeiam o vômito.'),
+    campoSimNao('opioide', 'Uso previsto de opioide no pós-operatório', 1, 'O único item MODIFICÁVEL do escore. O opioide age em receptores mu na zona de gatilho quimiorreceptora e retarda o esvaziamento gástrico — estratégias poupadoras de opioide reduzem o risco na origem.'),
   ],
   calcular: (v) => {
     const total = somaSimNao(v, [
@@ -527,6 +607,29 @@ const apfel: Ferramenta = {
         '**A anestesia também é profilaxia.** Anestesia venosa total com propofol reduz náusea e vômito de forma comparável a um antiemético; evitar óxido nitroso e anestésicos inalatônios, minimizar opioides com analgesia multimodal e evitar reversão com neostigmina em dose alta reduzem ainda mais.',
         'Se houver náusea apesar da profilaxia, **use uma classe diferente** da usada profilaticamente. Repetir a ondansetrona nas primeiras 6 horas raramente funciona.',
         'A hidratação adequada com cristaloide reduz náusea, sobretudo em cirurgias ambulatoriais — é uma medida barata e frequentemente esquecida.',
+        'A razão de a profilaxia ser multimodal está na anatomia do vômito: o centro bulbar recebe **quatro aferências paralelas**, cada uma com neurotransmissor próprio — zona de gatilho quimiorreceptora na área postrema (D₂, 5-HT₃, NK₁), aparelho vestibular (H₁, M₁), trato gastrointestinal (5-HT₃ pelas células enterocromafins e aferências vagais) e córtex (ansiedade, dor, estímulos visuais). Como as vias são redundantes, bloquear uma deixa as outras livres. Daí a eficácia ser aditiva entre **classes diferentes** e não entre doses da mesma classe, e daí a regra de uma intervenção por ponto do escore.',
+      ],
+      conduta: total === 0
+        ? [
+            'Risco basal (cerca de 10%). **Profilaxia farmacológica não é obrigatória**, mas use as medidas anestésicas que reduzem o estímulo na origem: hidratação adequada com cristaloide, analgesia multimodal poupadora de opioide e evitar óxido nitroso quando possível.',
+            'Tenha antiemético de resgate prescrito e disponível. Ausência de fatores de risco não é ausência de risco.',
+          ]
+        : [
+            `**${total} fator(es) de risco, risco estimado de ${risco} em 24 horas.** Prescreva **${antiemeticos} intervenção(ões) profilática(s) de classes diferentes** — cada uma reduz o risco relativo em cerca de 25 a 30%, e o efeito é aditivo apenas entre classes distintas.`,
+            'Combine a partir destas classes: **dexametasona** 4 a 8 mg na indução (age lentamente, por isso vai no início), **ondansetrona** 4 mg ao fim da cirurgia (age rápido, por isso vai no fim), **droperidol** 0,625 a 1,25 mg ou haloperidol em dose baixa, **aprepitanto** (antagonista NK₁, útil quando o vômito é o desfecho a evitar), **escopolamina transdérmica** aplicada antes da indução, e **dimenidrinato**. Nunca repita a mesma classe.',
+            '**A técnica anestésica é profilaxia e conta como intervenção.** Anestesia venosa total com propofol reduz náusea de forma comparável a um antiemético; evitar anestésico inalatório e óxido nitroso, minimizar opioide com analgesia multimodal (anti-inflamatório, dipirona, paracetamol, bloqueio regional, dexmedetomidina, lidocaína venosa) e evitar dose alta de neostigmina somam efeito.',
+            'Hidrate adequadamente com cristaloide — medida barata, eficaz sobretudo em cirurgia ambulatorial, e sistematicamente esquecida.',
+            'Se houver náusea apesar da profilaxia, **troque de classe**. Repetir ondansetrona nas primeiras 6 horas raramente funciona, porque os receptores 5-HT₃ já estão bloqueados. E antes de atribuir tudo à anestesia, descarte complicação: íleo, obstrução, hipotensão, hipoglicemia, dor não controlada, distensão gástrica e hipertensão intracraniana.',
+            total >= 3
+              ? 'Em risco alto (61 a 79%), considere também alta ambulatorial mais cautelosa: náusea e vômito são causa frequente de readmissão não planejada em cirurgia de day hospital. Oriente o paciente e prescreva antiemético para casa.'
+              : 'Verifique o QT antes de empilhar antieméticos: droperidol e haloperidol o prolongam, e a ondansetrona também em menor grau. Em paciente de risco, aplique o escore de Tisdale.',
+          ],
+      alertas: [
+        'O item do tabagismo é **invertido** — pontua quem NÃO fuma. Marcar o fumante como positivo inverte o escore e leva a profilaxia excessiva no paciente errado.',
+        'Náusea e vômito persistentes no pós-operatório podem ser **sinal de complicação** (íleo, obstrução, hipotensão, hipoglicemia, hipertensão intracraniana) e não apenas efeito anestésico. Reavalie o paciente antes de repetir antiemético.',
+        'Somar duas doses da mesma classe não aumenta a eficácia, apenas os efeitos adversos. A profilaxia é aditiva entre classes diferentes.',
+        'Droperidol, haloperidol e, em menor grau, ondansetrona prolongam o intervalo QT. Em paciente com QT longo ou em uso de outros fármacos prolongadores, avalie o risco antes de combinar.',
+        'O escore prevê náusea e vômito — não risco cirúrgico, nem risco anestésico global. Para isso existem ASA, RCRI e ARISCAT.',
       ],
       tabela: {
         titulo: 'Risco por número de fatores',
@@ -538,10 +641,16 @@ const apfel: Ferramenta = {
   },
   formula: ['1 ponto para cada: sexo feminino · não fumante · história de NVPO ou cinetose · opioide pós-operatório'],
   fundamento:
-    'Apfel simplificou modelos anteriores até chegar aos quatro preditores independentes mais fortes, e demonstrou que o risco cresce de forma quase linear com o número deles. O achado mais contraintuitivo é o do tabagismo: fumantes têm **menos** náusea pós-operatória, provavelmente por indução enzimática de citocromos que metabolizam anestésicos e por dessensibilização de vias eméticas.',
+    'Apfel simplificou modelos anteriores até chegar aos quatro preditores independentes mais fortes, e demonstrou que o risco cresce de forma quase linear com o número deles. O achado mais contraintuitivo é o do tabagismo: fumantes têm **menos** náusea pós-operatória, provavelmente por indução enzimática de citocromos que metabolizam anestésicos e por dessensibilização de vias eméticas. A anatomia do vômito explica por que a profilaxia precisa ser **multimodal** e por que somar antieméticos da mesma classe não funciona. O ato de vomitar é coordenado pelo centro do vômito, no bulbo, que recebe aferências de quatro vias com neurotransmissores distintos: a **zona de gatilho quimiorreceptora** na área postrema (fora da barreira hematoencefálica, sensível a substâncias circulantes, rica em receptores D₂ de dopamina, 5-HT₃ de serotonina e NK₁ de neurocinina), o **aparelho vestibular** (receptores H₁ de histamina e muscarínicos M₁), o **trato gastrointestinal** (células enterocromafins liberam serotonina que estimula aferências vagais via 5-HT₃) e o **córtex** (ansiedade, dor, estímulos visuais e olfativos). Cada antiemético bloqueia uma via: ondansetrona nos 5-HT₃, dexametasona por mecanismo ainda incerto envolvendo prostaglandinas e ação central, droperidol e haloperidol nos D₂, aprepitanto nos NK₁, escopolamina nos muscarínicos, difenidramina nos H₁. Como as vias são paralelas e redundantes, bloquear uma só deixa as outras livres — e é exatamente por isso que a eficácia é aditiva quando se combinam **classes diferentes**, e não quando se dobra a dose de uma. A regra prática das diretrizes decorre disso: um antiemético de classe distinta para cada ponto do escore, somado a estratégias que reduzem o estímulo na origem (anestesia venosa total com propofol em vez de inalatório, técnica poupadora de opioide, analgesia multimodal, hidratação adequada e evitar óxido nitroso).',
   armadilhas: [
     'O escore prevê náusea e vômito, não risco cirúrgico. Não use para outras decisões.',
     'Náusea persistente no pós-operatório pode ser sinal de complicação — íleo, obstrução, hipotensão, hipoglicemia, hipertensão intracraniana — e não apenas efeito anestésico.',
+    'O item do tabagismo é invertido: pontua quem **não** fuma. Marcar o fumante como positivo inverte o sentido do escore.',
+    'Somar dois antieméticos da mesma classe (duas doses de ondansetrona, por exemplo) não aumenta a eficácia — só o efeito adverso. A profilaxia é aditiva entre classes diferentes.',
+    'Náusea que ocorre apesar de profilaxia adequada não deve ser tratada repetindo o mesmo fármaco nas primeiras 6 horas: troque de classe.',
+    'O escore foi derivado em cirurgia sob anestesia geral com inalatório. Em bloqueio regional puro, o risco basal é muito menor e o escore superestima.',
+    'Não se aplica a náusea de quimioterapia, de gestação nem de outras causas — as vias predominantes e os fármacos de escolha são diferentes.',
+    'Droperidol e haloperidol prolongam o QT; ondansetrona também, em menor grau. Em paciente com QT longo ou em uso de outros fármacos prolongadores, aplique o escore de Tisdale antes de empilhar antieméticos.',
   ],
   referencias: [
     { texto: 'Apfel CC, Läärä E, Koivuranta M, et al. A simplified risk score for predicting postoperative nausea and vomiting. Anesthesiology. 1999;91(3):693-700.' },
