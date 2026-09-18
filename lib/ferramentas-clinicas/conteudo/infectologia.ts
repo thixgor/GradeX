@@ -26,9 +26,9 @@ const qsofa: Ferramenta = {
   resumo: 'Três sinais de beira de leito que sinalizam risco de desfecho ruim na infecção.',
   categorias: ['infectologia', 'emergencia'],
   campos: [
-    campoSimNao('fr', 'Frequência respiratória ≥ 22 irpm', 1),
-    campoSimNao('mental', 'Alteração do estado mental (Glasgow < 15)', 1),
-    campoSimNao('pas', 'PA sistólica ≤ 100 mmHg', 1),
+    campoSimNao('fr', 'Frequência respiratória ≥ 22 irpm', 1, 'Conte por 60 segundos observando o tórax. Corte mais alto que o da SIRS (que usa 20) justamente para ganhar especificidade — 22 irpm já é desvio claro, não variação de ansiedade.'),
+    campoSimNao('mental', 'Alteração do estado mental (Glasgow < 15)', 1, 'Qualquer redução em relação ao basal, inclusive Glasgow 14 por desorientação leve. No idoso é frequentemente o primeiro e único sinal de sepse — compare com o basal relatado pelo cuidador, não com a normalidade.'),
+    campoSimNao('pas', 'PA sistólica ≤ 100 mmHg', 1, 'Corte mais permissivo que o de choque (90 mmHg), porque o escore busca deterioração antes do colapso. Num hipertenso crônico, 110 mmHg já pode ser hipotensão relativa que o escore não vê.'),
   ],
   calcular: (v) => {
     const total = somaSimNao(v, [
@@ -49,15 +49,57 @@ const qsofa: Ferramenta = {
           : 'qSOFA negativo. **Não exclui sepse.** A sensibilidade do qSOFA é baixa — em torno de 50 a 60% —, e vários pacientes com sepse instalada têm qSOFA de 0 ou 1. Se a suspeita clínica é forte, prossiga com a investigação.',
         'A Surviving Sepsis Campaign de 2021 **desaconselha** o uso do qSOFA como ferramenta única de rastreio, recomendando preferencialmente SIRS, NEWS ou MEWS, que são mais sensíveis. O qSOFA continua útil como marcador prognóstico, não como triagem.',
         'A grande vantagem é operacional: três variáveis, nenhuma exige exame, e podem ser obtidas em segundos por qualquer profissional em qualquer ponto do atendimento.',
+        'Não é coincidência que os três itens sejam **respiração, consciência e pressão**: eles são as três janelas mais precoces para a disfunção orgânica da sepse, e cada um reflete um mecanismo distinto. A **taquipneia** tem dupla origem — a acidose metabólica da hipoperfusão tecidual, que estimula quimiorreceptores centrais e periféricos, somada ao aumento do espaço morto alveolar e ao shunt por lesão endotelial pulmonar mediada por citocinas. Como a ventilação é o único mecanismo compensatório com latência de segundos e capacidade de amplificar dez vezes, é o primeiro a se mover. A **alteração de consciência** é a encefalopatia séptica, cuja fisiopatologia combina redução do fluxo sanguíneo cerebral, disfunção da barreira hematoencefálica com passagem de citocinas, desequilíbrio de neurotransmissores e disfunção mitocondrial em neurônios — e ela aparece precocemente porque o cérebro não estoca substrato. A **hipotensão** é a mais tardia das três: resulta da vasodilatação por óxido nítrico induzível, da fuga capilar por lesão do glicocálice endotelial e da depressão miocárdica induzida por citocinas, mas só se manifesta depois que a vasoconstrição compensatória e a taquicardia esgotam sua capacidade de sustentar a pressão. Essa hierarquia temporal tem consequência prática direta: qSOFA de 1 ponto por taquipneia isolada, em paciente com infecção, não é escore negativo — é possivelmente o estágio inicial do mesmo processo, e merece reavaliação em curto intervalo em vez de alta.',
       ],
+      conduta: total >= 2
+        ? [
+            'Trate como paciente de alto risco **imediatamente**. qSOFA ≥ 2 com infecção suspeita associa-se a mortalidade intra-hospitalar em torno de 10 vezes maior que qSOFA 0 — é gatilho de ação, não de observação.',
+            'Colha o que define sepse e orienta o tratamento: lactato, gasometria, hemograma, creatinina, bilirrubina, plaquetas e coagulograma para calcular o **SOFA completo**. Colha hemoculturas de dois sítios antes do antibiótico, sem atrasar a primeira dose.',
+            'Aplique o **pacote de 1 hora**: antibiótico de amplo espectro conforme o foco provável, cristaloide 30 mL/kg na hipotensão ou lactato ≥ 4 mmol/L, e noradrenalina para manter PAM ≥ 65 mmHg se o volume não responder. Repita o lactato em 2 a 4 horas — clareamento é o marcador de resposta.',
+            'Procure e trate o **foco**: exame físico dirigido, urina, radiografia de tórax, imagem conforme a hipótese. Controle de foco (drenagem de abscesso, retirada de cateter, desbridamento, descompressão biliar ou urinária) é determinante de mortalidade e não pode esperar pela cultura.',
+            'Reavalie o nível de cuidado e comunique a equipe assistencial e a família. Considere leito monitorizado ou UTI — o escore foi otimizado justamente para predizer morte e permanência prolongada em terapia intensiva.',
+          ]
+        : total === 1
+          ? [
+              'Um ponto não é escore negativo em paciente com infecção: dada a hierarquia temporal dos três itens, pode ser o estágio inicial do mesmo processo. Reavalie em intervalo curto, de 1 a 2 horas, com sinais vitais completos.',
+              'Colha lactato e função orgânica se a suspeita de infecção for consistente. A decisão de investigar disfunção orgânica se baseia na suspeita clínica, não no escore.',
+              'Aplique em paralelo um instrumento mais sensível de rastreio — SIRS, NEWS2 ou MEWS —, que é o que a Surviving Sepsis Campaign de 2021 recomenda para essa finalidade.',
+              'Trate a infecção identificada e defina explicitamente o gatilho de reavaliação e quem reavalia antes de qualquer decisão de alta.',
+            ]
+          : [
+              'qSOFA negativo **não exclui sepse**. A sensibilidade é de apenas 50 a 60%, e boa parte dos pacientes com sepse instalada tem qSOFA 0 ou 1 — sobretudo idoso, imunossuprimido, neutropênico, urêmico, cirrótico e betabloqueado.',
+              'Se a suspeita clínica de infecção grave persistir, investigue independentemente do escore: lactato, função orgânica, busca de foco. Nenhum rastreio negativo encerra suspeita bem fundamentada.',
+              'Use um instrumento mais sensível para vigilância seriada (NEWS2 ou MEWS) em vez de repetir o qSOFA, que foi construído para prognóstico e não para triagem.',
+              'Trate a infecção conforme o sítio e a gravidade, e oriente sinais de alarme ao paciente e à família se a conduta for ambulatorial.',
+            ],
+      alertas: [
+        'qSOFA **não é critério diagnóstico de sepse**. Sepse é infecção suspeita com aumento de 2 ou mais pontos no SOFA. Usar o qSOFA como definição gera subdiagnóstico, porque ele é específico e pouco sensível.',
+        'A Surviving Sepsis Campaign de 2021 **desaconselha** o qSOFA como ferramenta única de rastreio, por baixa sensibilidade, recomendando SIRS, NEWS2 ou MEWS para essa função. O qSOFA permanece útil como marcador prognóstico.',
+        'Sinais atenuados em idoso, imunossuprimido, urêmico, cirrótico e em uso de betabloqueador mantêm o escore em zero até fase avançada — exatamente os grupos de maior mortalidade.',
+        'Não foi validado em pediatria, em gestantes nem em pacientes já internados em UTI, contexto em que o SOFA completo é o instrumento apropriado.',
+      ],
+      tabela: {
+        titulo: 'qSOFA e mortalidade intra-hospitalar na infecção suspeita',
+        colunas: ['Pontos', 'Interpretação', 'Mortalidade relativa', 'Conduta'],
+        linhas: [
+          ['0', 'Negativo', 'Referência', 'Não exclui sepse; seguir suspeita clínica'],
+          ['1', 'Negativo pelo corte', 'Levemente maior', 'Reavaliar em 1 a 2 h; instrumento mais sensível'],
+          ['2 – 3', 'Positivo, alto risco', 'Cerca de 10 vezes maior', 'SOFA, lactato e pacote de 1 hora agora'],
+        ],
+        destaque: total === 0 ? 0 : total === 1 ? 1 : 2,
+      },
     }
   },
   formula: ['1 ponto para cada: FR ≥ 22 | alteração mental | PAS ≤ 100 mmHg'],
   fundamento:
-    'O qSOFA nasceu com o Sepsis-3, em 2016, quando a força-tarefa buscou um substituto rápido para o SOFA fora da UTI. Derivado de mais de 1,3 milhão de registros eletrônicos, foi otimizado para **predizer mortalidade**, não para detectar infecção — e essa distinção explica sua alta especificidade com baixa sensibilidade.',
+    'O qSOFA nasceu com o Sepsis-3, em 2016, quando a força-tarefa buscou um substituto rápido para o SOFA fora da UTI. Derivado de mais de 1,3 milhão de registros eletrônicos, foi otimizado para **predizer mortalidade**, não para detectar infecção — e essa distinção explica sua alta especificidade com baixa sensibilidade. É um ponto conceitual que gera confusão persistente e vale desfazer: um modelo treinado para separar quem morre de quem sobrevive aprende a reconhecer doença **já avançada**, porque é nela que o desfecho é previsível. Um modelo treinado para detectar doença precoce aprende o oposto. Não existe instrumento que faça as duas coisas bem com três variáveis, e o qSOFA escolheu a primeira. Os três itens selecionados não são arbitrários: correspondem às três janelas mais precoces de disfunção orgânica na sepse, cada uma com mecanismo próprio. A taquipneia resulta da acidose metabólica da hipoperfusão somada ao aumento de espaço morto por lesão endotelial pulmonar, e é a primeira a aparecer porque a ventilação compensa em segundos. A alteração de consciência é a encefalopatia séptica — fluxo cerebral reduzido, barreira hematoencefálica permeável a citocinas, desequilíbrio de neurotransmissores e disfunção mitocondrial neuronal. A hipotensão é a mais tardia, porque vasoconstrição e taquicardia sustentam a pressão até o esgotamento da reserva, e resulta de vasodilatação por óxido nítrico induzível, fuga capilar por degradação do glicocálice endotelial e depressão miocárdica por citocinas. Essa hierarquia explica por que o escore é tão específico: quando dois dos três estão presentes, o processo já avançou. E explica por que, na prática, a Surviving Sepsis Campaign de 2021 o retirou da recomendação de rastreio — para rastrear é preciso sensibilidade, e o preço da especificidade do qSOFA é deixar passar cerca de metade dos casos.',
   armadilhas: [
     'qSOFA não é critério diagnóstico de sepse. Sepse é infecção suspeita com aumento de 2 pontos no SOFA.',
     'Em imunossuprimidos, idosos e pacientes em uso de betabloqueador, os sinais podem estar atenuados e o escore permanece zero até fase avançada.',
+    'Um ponto é frequentemente lido como negativo e arquivado. Em paciente com infecção, taquipneia isolada pode ser o estágio inicial do processo e merece reavaliação em curto intervalo.',
+    'A alteração de consciência exige comparação com o basal. Em demência, delirium hipoativo se manifesta como sonolência e apatia, é o mais comum no idoso e passa por "paciente tranquilo".',
+    'Os cortes são fixos e populacionais: no hipertenso crônico, 110 mmHg de sistólica pode ser hipotensão relativa e não pontua; no atleta ou no betabloqueado, a compensação é atípica.',
+    'Usá-lo para rastreio contraria a recomendação atual. Se a intenção é rastrear, use SIRS, NEWS2 ou MEWS; o qSOFA responde "qual o risco de este paciente morrer?", não "este paciente tem sepse?".',
   ],
   referencias: [
     { texto: 'Singer M, Deutschman CS, Seymour CW, et al. The Third International Consensus Definitions for Sepsis and Septic Shock (Sepsis-3). JAMA. 2016;315(8):801-810.' },
@@ -167,10 +209,10 @@ const sirs: Ferramenta = {
   resumo: 'Os quatro critérios clássicos de resposta inflamatória, e por que deixaram de definir sepse.',
   categorias: ['infectologia', 'emergencia'],
   campos: [
-    campoSimNao('temp', 'Temperatura > 38 °C ou < 36 °C', 1),
-    campoSimNao('fc', 'Frequência cardíaca > 90 bpm', 1),
-    campoSimNao('fr', 'Frequência respiratória > 20 irpm ou PaCO₂ < 32 mmHg', 1),
-    campoSimNao('leuco', 'Leucócitos > 12.000, < 4.000/mm³, ou > 10% de formas jovens', 1),
+    campoSimNao('temp', 'Temperatura > 38 °C ou < 36 °C', 1, 'Os dois extremos contam. Hipotermia é mais ominosa que febre no idoso, no urêmico e no imunossuprimido — indica falência da resposta termorreguladora, não infecção branda.'),
+    campoSimNao('fc', 'Frequência cardíaca > 90 bpm', 1, 'Corte muito baixo e, por isso, muito inespecífico: dor, ansiedade, febre, anemia, desidratação e abstinência atingem 90 bpm. Betabloqueado e cardiopata com marcapasso podem não atingir mesmo em choque.'),
+    campoSimNao('fr', 'Frequência respiratória > 20 irpm ou PaCO₂ < 32 mmHg', 1, 'Basta um dos dois. A PaCO₂ baixa é a hiperventilação já documentada em gasometria — frequentemente positiva antes de a frequência contada passar de 20.'),
+    campoSimNao('leuco', 'Leucócitos > 12.000, < 4.000/mm³, ou > 10% de formas jovens', 1, 'Três alternativas, basta uma. As "formas jovens" são os bastonetes — o desvio à esquerda. É o único critério que exige exame laboratorial, o que impede aplicar a SIRS integralmente na triagem.'),
   ],
   calcular: (v) => {
     const total = somaSimNao(v, [
@@ -190,13 +232,52 @@ const sirs: Ferramenta = {
         'Desde o Sepsis-3 (2016), SIRS **não define mais sepse**. O motivo é que ela é inespecífica — praticamente todo paciente internado com qualquer agressão preenche dois critérios — e insensível: um estudo australiano com mais de 100 mil pacientes mostrou que 1 em cada 8 pacientes com infecção e disfunção orgânica **não** preenchia dois critérios de SIRS, e a mortalidade desse grupo era igual à dos que preenchiam.',
         'Isso não a torna inútil. Justamente por ser sensível a alterações fisiológicas precoces, a SIRS funciona bem como **ferramenta de rastreio** — que é o uso recomendado pela Surviving Sepsis Campaign de 2021, ao lado de NEWS e MEWS.',
         total >= 2 ? 'Com dois ou mais critérios e suspeita de infecção, prossiga imediatamente para a avaliação de disfunção orgânica: lactato, gasometria, hemograma, função renal e hepática, coagulograma.' : 'Menos de dois critérios não exclui infecção grave, sobretudo em idoso, imunossuprimido, urêmico ou em uso de betabloqueador.',
+        'Entender **o que** a SIRS mede explica ao mesmo tempo sua sensibilidade e sua inespecificidade. Ela é a leitura clínica da resposta imune innata inicial. Padrões moleculares associados a patógenos (PAMPs — lipopolissacarídeo, peptidoglicano, RNA viral) e padrões associados a dano tecidual (DAMPs — DNA mitocondrial, HMGB1, ATP extracelular liberados por células necróticas) ativam receptores de reconhecimento de padrão, sobretudo os do tipo Toll, em macrófagos e neutrófilos. A via NF-κB é ativada e desencadeia a produção de TNF-α, IL-1β e IL-6, que produzem cada um dos quatro critérios: a IL-1β e a prostaglandina E₂ reajustam o termostato hipotalâmico (febre); a resposta adrenérgica e a vasodilatação mediada por óxido nítrico elevam a frequência cardíaca; a acidose metabólica e os mediadores centrais aumentam a ventilação; e a IL-6 com o G-CSF mobilizam o pool de reserva medular de neutrófilos, gerando leucocitose com desvio à esquerda. O ponto crucial é que **essa via é idêntica** para infecção e para dano tecidual estéril: os DAMPs de um politrauma, de uma pancreatite, de uma queimadura ou de uma cirurgia de grande porte acionam os mesmos receptores que o lipopolissacarídeo bacteriano. A SIRS, portanto, mede com razoável fidelidade que existe inflamação sistêmica — e é constitucionalmente incapaz de dizer se há infecção. Foi exatamente esse limite conceitual, e não um defeito de calibração, que levou o Sepsis-3 a substituí-la pela disfunção orgânica medida pelo SOFA.',
       ],
+      conduta: total >= 2
+        ? [
+            'Pergunte primeiro se há **suspeita de infecção**. SIRS sem foco infeccioso plausível aponta para as causas estéreis da mesma via inflamatória: trauma, pancreatite, queimadura, pós-operatório, tromboembolismo pulmonar, isquemia mesentérica, hemorragia, crise tireotóxica, síndrome de abstinência, reação a fármaco, lise tumoral.',
+            'Se houver suspeita de infecção, avance **imediatamente** para a avaliação de disfunção orgânica, que é o que define sepse hoje: lactato, gasometria, hemograma, creatinina, bilirrubina, plaquetas e coagulograma. Calcule o SOFA e o qSOFA e procure o foco com exame físico dirigido, urina, radiografia de tórax e imagem conforme a hipótese.',
+            'Com disfunção orgânica presente, aplique o **pacote de 1 hora**: lactato, hemoculturas antes do antibiótico sem atrasar a primeira dose, antibiótico de amplo espectro, cristaloide 30 mL/kg na hipotensão ou lactato ≥ 4 mmol/L, e noradrenalina para PAM ≥ 65 mmHg se o volume não responder. Repita o lactato em 2 a 4 horas.',
+            'Controle o foco assim que identificado — drenagem de abscesso, retirada de cateter infectado, desbridamento, descompressão de via biliar ou urinária. Antibiótico sem controle de foco falha, e o atraso na intervenção é determinante de mortalidade.',
+            'Se não houver disfunção orgânica, o paciente tem infecção sem sepse: trate a infecção, mantenha vigilância com reavaliação e escore de alerta precoce seriado, e não conclua que está seguro — a disfunção pode se instalar nas horas seguintes.',
+          ]
+        : [
+            'Menos de dois critérios **não** exclui infecção grave. Cerca de 1 em cada 8 pacientes com infecção e disfunção orgânica não preenche dois critérios de SIRS, e a mortalidade desse grupo é igual à dos que preenchem.',
+            'Se a suspeita clínica persistir, prossiga com a investigação independentemente do escore: colha lactato e exames de função orgânica, calcule o qSOFA e examine o paciente procurando foco. Nenhum critério de rastreio negativo encerra uma suspeita clínica bem fundamentada.',
+            'Suspeite especialmente nos grupos que não montam resposta inflamatória detectável: idoso (que frequentemente se apresenta apenas com queda ou confusão), imunossuprimido, neutropênico, urêmico, cirrótico, em uso de corticoide ou de betabloqueador, e o recém-nascido.',
+            'Aplique um escore de alerta precoce seriado (NEWS2 ou MEWS) em vez de repetir a SIRS: eles agregam mais parâmetros, detectam tendência e foram desenhados para vigilância.',
+          ],
+      alertas: [
+        'Desde o Sepsis-3 (2016), a SIRS **não define sepse**. Sepse é infecção com disfunção orgânica, medida por aumento de 2 ou mais pontos no SOFA. Registrar "SIRS positivo" como diagnóstico de sepse é erro conceitual com consequência em codificação, protocolo e conduta.',
+        'SIRS é comum e frequentemente benigna: dois critérios em paciente com dor pós-operatória, ansiedade ou desidratação não são sepse, e tratá-los como tal gera antibiótico desnecessário e resistência.',
+        'A ausência de SIRS não tranquiliza em idoso, imunossuprimido, urêmico, cirrótico ou betabloqueado — exatamente os grupos de maior mortalidade por sepse.',
+        'O critério leucocitário exige hemograma, o que impede aplicar a SIRS completa na triagem. Aplicá-la com três critérios e chamar de SIRS negativa é subestimar sistematicamente.',
+      ],
+      tabela: {
+        titulo: 'O que cada definição responde',
+        colunas: ['Instrumento', 'Pergunta que responde', 'Uso recomendado hoje'],
+        linhas: [
+          ['SIRS', 'Há inflamação sistêmica?', 'Rastreio, ao lado de NEWS e MEWS'],
+          ['qSOFA', 'Há risco de desfecho ruim fora da UTI?', 'Rastreio à beira do leito, sem exame'],
+          ['SOFA', 'Há disfunção orgânica e qual a magnitude?', 'Define sepse (Sepsis-3)'],
+          ['Lactato e PAM', 'Há choque séptico?', 'Vasopressor e lactato > 2 apesar de volume'],
+        ],
+        destaque: 0,
+      },
     }
   },
   formula: ['SIRS = 2 ou mais dos 4 critérios'],
   fundamento:
-    'Os critérios foram estabelecidos na conferência de consenso de 1991, com a intenção deliberada de serem simples e sensíveis, capturando a resposta do hospedeiro a qualquer agressão — infecciosa ou não (trauma, pancreatite, queimadura, cirurgia). O erro histórico não foi criá-los, foi transformá-los em definição de sepse, papel para o qual nunca foram desenhados.',
-  armadilhas: ['SIRS é comum e frequentemente benigna. Dois critérios num paciente com dor pós-operatória não são sepse.'],
+    'Os critérios foram estabelecidos na conferência de consenso de 1991, com a intenção deliberada de serem simples e sensíveis, capturando a resposta do hospedeiro a qualquer agressão — infecciosa ou não (trauma, pancreatite, queimadura, cirurgia). O erro histórico não foi criá-los, foi transformá-los em definição de sepse, papel para o qual nunca foram desenhados. O que a SIRS mede, mecanisticamente, é a ativação da imunidade innata: padrões moleculares associados a patógenos (lipopolissacarídeo, peptidoglicano, RNA viral) e padrões associados a dano tecidual (DNA mitocondrial, HMGB1, ATP extracelular, liberados por células necróticas) ativam receptores do tipo Toll em macrófagos e neutrófilos, disparam a via NF-κB e a produção de TNF-α, IL-1β e IL-6. Cada critério é a manifestação clínica de um desses mediadores — a IL-1β com a prostaglandina E₂ reajusta o termostato hipotalâmico, a vasodilatação por óxido nítrico e a resposta adrenérgica elevam a frequência cardíaca, a acidose e os mediadores centrais aumentam a ventilação, e a IL-6 com o G-CSF mobilizam o pool de reserva medular produzindo leucocitose com desvio à esquerda. A limitação é estrutural e não corrigível: a via é a mesma para infecção e para dano estéril, de modo que a SIRS é constitucionalmente incapaz de distinguir uma da outra. A ela somou-se um problema de calibração — os cortes são tão baixos (frequência cardíaca acima de 90 bpm, frequência respiratória acima de 20 irpm) que praticamente todo internado os atinge. O estudo de Kaukonen, com mais de 100 mil pacientes australianos e neozelandeses, mostrou o outro lado da moeda e foi decisivo: 1 em cada 8 pacientes com infecção e disfunção orgânica **não** preenchia dois critérios, e sua mortalidade era igual à dos que preenchiam. Um instrumento simultaneamente inespecífico e insensível não pode definir doença. O Sepsis-3 então redefiniu sepse como infecção com disfunção orgânica medida pelo SOFA, e a SIRS foi realocada para a função que sempre desempenhou bem e que a Surviving Sepsis Campaign de 2021 lhe reconhece: rastreio.',
+  armadilhas: [
+    'SIRS é comum e frequentemente benigna. Dois critérios num paciente com dor pós-operatória não são sepse.',
+    'Usá-la como definição de sepse é erro conceitual desde 2016, com impacto em protocolo institucional, codificação e indicação de antibiótico.',
+    'Cortes muito baixos de frequência cardíaca e respiratória tornam os critérios positivos em quase todo internado — a especificidade é próxima de inútil em enfermaria.',
+    'Insensível justamente nos grupos de maior mortalidade: idoso, imunossuprimido, neutropênico, urêmico, cirrótico e em uso de betabloqueador ou corticoide.',
+    'Exige hemograma para o quarto critério. Aplicar apenas os três clínicos e concluir "SIRS negativa" subestima o paciente.',
+    'Positividade sem foco infeccioso plausível costuma indicar causa estéril da mesma via — trauma, pancreatite, queimadura, tromboembolismo, isquemia mesentérica, abstinência, lise tumoral. Prescrever antibiótico nesses casos trata o médico.',
+  ],
   referencias: [
     { texto: 'Bone RC, Balk RA, Cerra FB, et al. Definitions for sepsis and organ failure. Chest. 1992;101(6):1644-1655.' },
     { texto: 'Kaukonen KM, Bailey M, Pilcher D, et al. Systemic inflammatory response syndrome criteria in defining severe sepsis. N Engl J Med. 2015;372(17):1629-1638.' },
@@ -302,16 +383,16 @@ const mews: Ferramenta = {
   resumo: 'A versão enxuta do alerta precoce, com cinco parâmetros e sem oximetria.',
   categorias: ['infectologia', 'emergencia'],
   campos: [
-    campoNum('pas', 'PA sistólica', { unidade: 'mmHg', min: 40, max: 260, passo: 1 }),
-    campoNum('fc', 'Frequência cardíaca', { unidade: 'bpm', min: 20, max: 220, passo: 1 }),
-    campoNum('fr', 'Frequência respiratória', { unidade: 'irpm', min: 4, max: 60, passo: 1 }),
-    campoNum('temp', 'Temperatura', { unidade: '°C', min: 30, max: 43, passo: 0.1 }),
+    campoNum('pas', 'PA sistólica', { unidade: 'mmHg', min: 40, max: 260, passo: 1, ajuda: 'A pontuação é em U: tanto hipotensão quanto sistólica acima de 199 mmHg pontuam. Compare com a pressão habitual do paciente — 100 mmHg num hipertenso crônico de 170 já é hipotensão relativa que o escore não captura.' }),
+    campoNum('fc', 'Frequência cardíaca', { unidade: 'bpm', min: 20, max: 220, passo: 1, ajuda: 'Também em U: bradicardia abaixo de 40 pontua igual a taquicardia de 111 a 129. Atenção ao betabloqueado, que não taquicardiza mesmo em choque.' }),
+    campoNum('fr', 'Frequência respiratória', { unidade: 'irpm', min: 4, max: 60, passo: 1, ajuda: 'Conte por 60 segundos completos, observando o tórax, com o paciente em repouso e sem saber que está sendo contado. É o parâmetro mais sensível do escore e o mais frequentemente estimado ou copiado da aferição anterior.' }),
+    campoNum('temp', 'Temperatura', { unidade: '°C', min: 30, max: 43, passo: 0.1, ajuda: 'Hipotermia abaixo de 35 °C pontua o mesmo que febre acima de 38,4 °C — e no idoso e no imunossuprimido é o achado mais ominoso dos dois.' }),
     campoOpc('avpu', 'Nível de consciência (AVPU)', [
       { valor: '0', rotulo: 'Alerta', pontos: 0 },
-      { valor: '1', rotulo: 'Responde a voz', pontos: 1 },
-      { valor: '2', rotulo: 'Responde a dor', pontos: 2 },
-      { valor: '3', rotulo: 'Irresponsivo', pontos: 3 },
-    ]),
+      { valor: '1', rotulo: 'Responde a voz', pontos: 1, descricao: 'Abre os olhos ou responde apenas quando chamado.' },
+      { valor: '2', rotulo: 'Responde a dor', pontos: 2, descricao: 'Só responde a estímulo doloroso. Equivale aproximadamente a Glasgow 8 a 9 — considere proteção de via aérea.' },
+      { valor: '3', rotulo: 'Irresponsivo', pontos: 3, descricao: 'Sem resposta a voz nem a dor. Via aérea em risco imediato.' },
+    ], { ajuda: 'AVPU é a versão rápida da avaliação de consciência: Alerta, responde a Voz, responde a Dor (Pain), Irresponsivo (Unresponsive). Qualquer queda em relação ao basal pontua — no idoso, alteração de consciência é frequentemente a primeira manifestação de sepse, antes da febre.' }),
   ],
   calcular: (v) => {
     const pas = num(v, 'pas')
@@ -347,15 +428,63 @@ const mews: Ferramenta = {
             : 'Baixo risco. Mantenha a rotina de monitorização.',
         'O MEWS é anterior ao NEWS e mais simples — dispensa oximetria, o que o torna aplicável em contextos de recurso limitado. Em comparações diretas, o NEWS2 discrimina melhor, mas a diferença é modesta.',
         'A frequência respiratória é o parâmetro mais sensível e o menos aferido de todos. Contar respirações por um minuto inteiro é a medida de maior rendimento diagnóstico e de menor custo em toda a enfermaria.',
+        'A razão de a frequência respiratória ser o parâmetro mais precoce é fisiológica e vale entender, porque é o que justifica insistir numa medida tão banal. A ventilação é o único mecanismo compensatório do organismo com **latência de segundos** e capacidade de amplificação de até dez vezes: os quimiorreceptores centrais do bulbo detectam a queda de pH liquórico e os periféricos, nos corpos carotídeos, detectam hipoxemia e acidemia, e a resposta é imediata. Diante de qualquer agressão que gere acidose metabólica — sepse com hipoperfusão e lactato, cetoacidose, insuficiência renal — a hiperventilação começa antes de a pressão cair, porque o sistema cardiovascular compensa por vasoconstrição e taquicardia, mecanismos que **preservam a pressão arterial até o limite** e só falham quando a reserva se esgota. É por isso que a hipotensão é um sinal tardio: ela marca o fracasso da compensação, não o início da doença. O mesmo raciocínio explica a pontuação em U de pressão e frequência cardíaca: bradicardia com hipotensão não é estabilidade, é falência da resposta adrenérgica, e pontua alto justamente por isso. E explica a alteração de consciência, que aparece quando a perfusão cerebral cai ou quando mediadores inflamatórios atravessam a barreira hematoencefálica — no idoso, cuja reserva cerebral é menor, esse é frequentemente o primeiro sinal, precedendo febre e taquicardia.',
       ],
+      conduta: total >= 5
+        ? [
+            'Acione avaliação médica **imediata** e considere ativar o time de resposta rápida. MEWS ≥ 5 associa-se independentemente a maior mortalidade e a maior necessidade de UTI — o escore alto é gatilho de ação, não de nova aferição em duas horas.',
+            'Aplique a abordagem ABCDE à beira do leito: via aérea, oxigênio com alvo de SpO₂ 92 a 96% (88 a 92% se houver retenção crônica de CO₂), acesso venoso, glicemia capilar, eletrocardiograma e exames — hemograma, lactato, função renal, eletrólitos, gasometria e hemoculturas se houver suspeita infecciosa.',
+            'Procure ativamente a causa da deterioração, porque o escore não a informa: sepse, hemorragia, tromboembolismo pulmonar, síndrome coronariana, arritmia, desidratação, efeito adverso de fármaco, abstinência e dor não controlada são as mais frequentes em enfermaria.',
+            'Se houver suspeita de sepse, aplique o **pacote de 1 hora**: lactato, hemoculturas antes do antibiótico (sem atrasar a primeira dose), antibiótico de amplo espectro, cristaloide 30 mL/kg na hipotensão ou lactato ≥ 4 mmol/L, e vasopressor se a PAM não atingir 65 mmHg após o volume. Calcule o qSOFA e o SOFA para documentar disfunção orgânica.',
+            'Discuta o nível de cuidado e, se aplicável, as diretivas antecipadas de vontade. Deterioração em enfermaria é o momento de definir se o plano é escalonar ou priorizar conforto — decidir isso depois da parada é decidir mal.',
+          ]
+        : total >= 3
+          ? [
+              'Aumente a frequência de monitorização para cada 1 a 2 horas e comunique formalmente o plantão, registrando o escore e o horário. A **tendência** é mais informativa que o valor: MEWS 3 que era 0 há duas horas é mais preocupante que MEWS 3 estável há um dia.',
+              'Reavalie à beira do leito em vez de apenas registrar o número. Procure o parâmetro que puxou a pontuação e trate a causa correspondente — taquipneia isolada pede exame do tórax e oximetria; hipotensão isolada pede avaliação de volemia, sangramento e fármaco anti-hipertensivo recém-administrado.',
+              'Garanta o básico que frequentemente explica a pontuação: dor tratada, hidratação adequada, oxigênio se necessário, controle de temperatura, correção de glicemia e revisão da prescrição — opioide, sedativo e anti-hipertensivo são causas comuns e reversíveis.',
+              'Defina e registre um gatilho explícito de reacionamento: qual valor ou qual sinal obriga a chamar o médico antes da próxima aferição programada.',
+            ]
+          : [
+              'Baixo risco. Mantenha a rotina de monitorização conforme o protocolo da unidade e a reaferição programada.',
+              'Registre o valor mesmo sendo baixo: a utilidade dos escores de alerta precoce vem da **série**, não do ponto. Sem o valor basal documentado, a elevação de amanhã não será reconhecida como deterioração.',
+              'Lembre que o MEWS não contém oximetria nem oxigênio suplementar. Se houver dispneia, dessaturação ou necessidade crescente de O₂, a avaliação é clínica e independe do escore — considere aplicar o NEWS2, que incorpora esses parâmetros.',
+            ],
+      alertas: [
+        'O MEWS não inclui saturação de oxigênio nem uso de oxigênio suplementar, e é por isso menos sensível à insuficiência respiratória inicial. Paciente em oxigênio alto com sinais vitais compensados pode ter MEWS baixo e estar grave.',
+        'Escore baixo nunca sobrepõe a impressão clínica. Preocupação da equipe de enfermagem, da família ou do próprio paciente é gatilho válido e independente para avaliação médica — em séries de eventos adversos, esse sinal precede o escore.',
+        'A pontuação compara com faixas populacionais fixas, não com o basal individual. Hipertenso crônico, atleta com bradicardia de repouso, gestante (que tem frequência e ventilação basais mais altas) e paciente betabloqueado são sistematicamente mal classificados.',
+        'É escore de rastreio de deterioração, não de diagnóstico nem de prognóstico de doença específica. Ele diz que algo vai mal, e nunca o quê.',
+      ],
+      tabela: {
+        titulo: 'Pontuação por parâmetro',
+        colunas: ['Parâmetro', '3 pontos', '2 pontos', '1 ponto', '0 ponto'],
+        linhas: [
+          ['PA sistólica (mmHg)', '≤ 70', '71 – 80 ou ≥ 200', '81 – 100', '101 – 199'],
+          ['Frequência cardíaca (bpm)', '≥ 130', '< 40 ou 111 – 129', '41 – 50 ou 101 – 110', '51 – 100'],
+          ['Frequência respiratória (irpm)', '≥ 30', '< 9 ou 21 – 29', '15 – 20', '9 – 14'],
+          ['Temperatura (°C)', '—', '< 35 ou > 38,4', '—', '35 – 38,4'],
+          ['Consciência (AVPU)', 'Irresponsivo', 'Responde a dor', 'Responde a voz', 'Alerta'],
+        ],
+      },
     }
   },
   formula: ['Soma de 5 parâmetros; ≥ 5 pontos indica alto risco'],
   fundamento:
-    'O MEWS derivou do sistema de alerta precoce original de Morgan (1997), refinado por Subbe em 2001 numa coorte de admissões clínicas agudas. Sua lógica é a mesma do NEWS: quantificar o desvio fisiológico de forma que qualquer profissional aplique e qualquer profissional entenda.',
-  armadilhas: ['Não inclui saturação nem oxigênio suplementar, o que o torna menos sensível a insuficiência respiratória inicial.'],
+    'O MEWS derivou do sistema de alerta precoce original de Morgan (1997), refinado por Subbe em 2001 numa coorte de admissões clínicas agudas. Sua lógica é a mesma do NEWS: quantificar o desvio fisiológico de forma que qualquer profissional aplique e qualquer profissional entenda. A premissa que sustenta toda a família de escores de alerta precoce vem de auditorias de parada cardiorrespiratória intra-hospitalar dos anos 1990, que mostraram algo desconfortável: na grande maioria dos casos havia deterioração documentada nos sinais vitais por **6 a 24 horas** antes do evento, registrada no prontuário e não reconhecida. O problema não era falta de dado, era falta de agregação — cada parâmetro isoladamente parecia tolerável, e a soma dos desvios não era computada por ninguém. Os escores de alerta precoce resolvem isso transformando vários desvios pequenos num número único que dispara ação. A escolha de pontuar em **U** os parâmetros cardiovasculares é o detalhe fisiologicamente mais sofisticado do escore: bradicardia abaixo de 40 bpm pontua como taquicardia de 111 a 129 bpm, e hipertensão acima de 199 mmHg pontua como hipotensão de 71 a 80 mmHg, porque o que se mede é distância da homeostase e não direção do desvio — bradicardia com hipotensão significa falência da resposta adrenérgica, que é mais ameaçadora que a taquicardia compensatória. A hierarquia temporal dos parâmetros também é intencional: a frequência respiratória é o primeiro a se alterar, porque a ventilação é o único mecanismo compensatório com latência de segundos e capacidade de amplificação de dez vezes, enquanto a pressão arterial é a última, porque vasoconstrição e taquicardia a sustentam até o esgotamento da reserva. Em comparações diretas o NEWS2 discrimina melhor, sobretudo por incluir saturação e oxigênio suplementar, mas a diferença é modesta e o MEWS mantém a vantagem de dispensar oximetria — o que importa em contextos de recurso limitado, onde a alternativa não é um escore melhor, é nenhum escore.',
+  armadilhas: [
+    'Não inclui saturação nem oxigênio suplementar, o que o torna menos sensível a insuficiência respiratória inicial.',
+    'A frequência respiratória, que é o parâmetro de maior peso preditivo, é a mais frequentemente estimada, arredondada para 20 por hábito ou copiada da aferição anterior. Um MEWS construído sobre frequência respiratória inventada não vale nada.',
+    'Faixas populacionais fixas classificam mal quem tem basal diferente: hipertenso crônico, atleta bradicárdico, gestante e paciente betabloqueado. Compare sempre com o basal individual documentado.',
+    'Um valor isolado não cumpre a função do escore, que é detectar tendência. Registre a série, com horário.',
+    'Escore normal em paciente que preocupa a equipe não descarta deterioração. A preocupação clínica é gatilho independente e, em auditorias de eventos adversos, costuma anteceder a alteração do escore.',
+    'Não foi desenvolvido nem validado para gestantes (existe o MEOWS obstétrico), para crianças (PEWS) nem para paciente em cuidado paliativo exclusivo, em que a deterioração é esperada e o escore não orienta conduta.',
+    'O escore não substitui o rastreio de sepse. qSOFA, SOFA e os critérios Sepsis-3 respondem perguntas diferentes, e um MEWS alto deve disparar essa avaliação específica quando há suspeita de infecção.',
+  ],
   referencias: [
     { texto: 'Subbe CP, Kruger M, Rutherford P, Gemmel L. Validation of a modified Early Warning Score in medical admissions. QJM. 2001;94(10):521-526.' },
+    { texto: 'Morgan RJM, Williams F, Wright MM. An early warning scoring system for detecting developing critical illness. Clin Intensive Care. 1997;8:100.' },
+    { texto: 'Smith GB, Prytherch DR, Meredith P, Schmidt PE, Featherstone PI. The ability of the National Early Warning Score (NEWS) to discriminate patients at risk of early cardiac arrest, unanticipated intensive care unit admission, and death. Resuscitation. 2013;84(4):465-470.' },
   ],
 }
 
@@ -479,15 +608,15 @@ const mcisaac: Ferramenta = {
   resumo: 'O Centor corrigido pela idade, aplicável de 3 anos em diante.',
   categorias: ['infectologia', 'pediatria'],
   campos: [
-    campoSimNao('exsudato', 'Exsudato ou hipertrofia amigdaliana', 1),
-    campoSimNao('adenopatia', 'Adenopatia cervical anterior dolorosa', 1),
-    campoSimNao('febre', 'História de febre (> 38 °C)', 1),
-    campoSimNao('semTosse', 'Ausência de tosse', 1),
+    campoSimNao('exsudato', 'Exsudato ou hipertrofia amigdaliana', 1, 'Exsudato branco-amarelado ou aumento agudo das amígdalas. Não confunda com criptas amigdalianas crônicas e cáseo, que são achado habitual e não pontuam.'),
+    campoSimNao('adenopatia', 'Adenopatia cervical anterior dolorosa', 1, 'Cadeia cervical ANTERIOR, dolorosa à palpação. Adenopatia posterior ou occipital aponta para outra etiologia, sobretudo mononucleose, rubéola ou toxoplasmose.'),
+    campoSimNao('febre', 'História de febre (> 38 °C)', 1, 'Vale a história referida, mesmo sem medida documentada — o critério original é histórico e não exige aferição na consulta.'),
+    campoSimNao('semTosse', 'Ausência de tosse', 1, 'Item invertido: a AUSÊNCIA de tosse pontua. Tosse, coriza, rouquidão, conjuntivite e diarreia apontam para etiologia viral e reduzem a probabilidade de estreptococo.'),
     campoOpc('idadeCat', 'Idade', [
       { valor: '1', rotulo: '3 a 14 anos', pontos: 1 },
       { valor: '0', rotulo: '15 a 44 anos', pontos: 0 },
       { valor: '-1', rotulo: '45 anos ou mais', pontos: -1 },
-    ]),
+    ], { ajuda: 'O único item que pode SUBTRAIR ponto, e é justamente o que McIsaac acrescentou ao Centor. A prevalência de faringite estreptocócica vai de mais de 30% em escolares a menos de 5% acima dos 45 anos.' }),
   ],
   calcular: (v) => {
     const idadeP = num(v, 'idadeCat')
@@ -520,15 +649,62 @@ const mcisaac: Ferramenta = {
             : 'Escore alto: teste e trate se positivo. Em contextos sem acesso a teste, o tratamento empírico é aceito nesta faixa por várias diretrizes.',
         'Tratamento de escolha: **penicilina V ou amoxicilina por 10 dias**. Amoxicilina 50 mg/kg/dia (máximo 1 g) em dose única diária tem eficácia equivalente e melhor adesão. Em alérgicos, cefalexina (se a alergia não for anafilática), azitromicina ou clindamicina.',
         'A resistência do estreptococo do grupo A à penicilina permanece **inexistente** — sete décadas depois. É um dos poucos casos em que a droga original continua sendo a de escolha sem qualquer erosão de eficácia.',
+        'O motivo pelo qual se trata uma doença autolimitada merece ser explícito, porque é o que justifica todo o esforço diagnóstico. A faringite estreptocócica resolve espontaneamente em 3 a 5 dias, e o antibiótico abrevia os sintomas em apenas cerca de 16 horas — um ganho modesto. O objetivo real é prevenir a **febre reumática**, que é uma doença autoimune pós-infecciosa: proteínas M de certos sorotipos do estreptococo do grupo A compartilham epítopos com miosina cardíaca, tropomiosina, laminina e proteínas do tecido sinovial e dos núcleos da base. Anticorpos e linfócitos T gerados contra a bactéria reagem de forma cruzada com esses tecidos — é o fenômeno de mimetismo molecular — produzindo cardite (com a valvite que pode evoluir para estenose mitral décadas depois), artrite migratória, coreia de Sydenham, eritema marginado e nódulos subcutâneos. A resposta autoimune leva de 2 a 3 semanas para se estabelecer, e é por isso que existe uma janela terapêutica generosa: erradicar o estreptococo da orofaringe **até o nono dia** de sintomas ainda previne a febre reumática. Isso tem duas implicações práticas importantes. Primeira: não há urgência em prescrever antibiótico na primeira consulta — é seguro aguardar o resultado do teste, e essa espera é exatamente o que evita antibiótico desnecessário na maioria dos casos, que são virais. Segunda: a glomerulonefrite pós-estreptocócica, ao contrário da febre reumática, **não** é prevenida pelo antibiótico, porque seu mecanismo é deposição de imunocomplexos que já se formaram.',
       ],
+      conduta: total <= 1
+        ? [
+            'Não teste e não prescreva antibiótico. A probabilidade de estreptococo é de 1 a 10%, e nessa faixa o teste gera mais falso-positivo (por portador assintomático) do que informação útil.',
+            'Tratamento sintomático: analgésico e antitérmico (paracetamol ou ibuprofeno, que tem melhor efeito na dor de garganta), hidratação, gargarejo com água salgada morna, pastilhas anestésicas. Oriente que a melhora esperada é em 3 a 5 dias.',
+            'Explique ao paciente ou à família por que não há antibiótico — é a conversa que evita a busca por outro atendimento e a prescrição desnecessária. Diga que a maioria das dores de garganta é viral e que o antibiótico não abrevia quadro viral nem previne complicação nele.',
+            'Oriente retorno se houver piora, febre persistente por mais de 5 dias, dificuldade para engolir saliva, trismo, voz abafada, desvio de úvula, dispneia ou abaulamento cervical — sinais de abscesso periamigdaliano, epiglotite ou infecção de espaço profundo.',
+          ]
+        : total <= 3
+          ? [
+              'Faixa intermediária: **teste rápido de antígeno** (ou cultura de orofaringe) e trate apenas se positivo. É aqui que o escore mais rende, porque a probabilidade de 11 a 35% é exatamente a faixa em que nem tratar todos nem não tratar ninguém é aceitável.',
+              'Em criança e adolescente com teste rápido negativo, faça **cultura de confirmação**: a sensibilidade do teste rápido é de cerca de 85% e a febre reumática é uma consequência que se quer evitar nessa faixa etária. Em adulto, teste rápido negativo dispensa cultura.',
+              'Se positivo, trate com **penicilina V ou amoxicilina por 10 dias** — amoxicilina 50 mg/kg/dia (máximo 1 g) em dose única diária tem eficácia equivalente e melhor adesão. Penicilina G benzatina em dose única é alternativa útil quando a adesão é duvidosa. Em alergia não anafilática, cefalexina; em alergia anafilática, azitromicina ou clindamicina.',
+              'Não há urgência em iniciar: prevenir febre reumática exige erradicação até o nono dia de sintomas, de modo que aguardar o resultado do teste é seguro e é justamente o que reduz prescrição desnecessária.',
+            ]
+          : [
+              'Escore alto (probabilidade acima de 50%): **teste e trate se positivo**. Em contextos sem acesso a teste rápido ou cultura, várias diretrizes aceitam tratamento empírico nesta faixa — registre a justificativa.',
+              'Penicilina V ou amoxicilina por 10 dias completos. Os 10 dias não são negociáveis para a prevenção da febre reumática, ainda que o paciente melhore em 48 horas: cursos curtos erradicam menos. Amoxicilina em dose única diária melhora a adesão.',
+              'Procure ativamente complicações supurativas antes de tratar como faringite simples: trismo, voz abafada, desvio de úvula, abaulamento amigdaliano unilateral e sialorreia sugerem abscesso periamigdaliano e exigem drenagem; rigidez de nuca, torcicolo e abaulamento cervical posterior sugerem abscesso retrofaríngeo.',
+              'Se houver **escarlatina** (exantema micropapular áspero em lixa, língua em framboesa, linhas de Pastia, palidez perioral), o diagnóstico está feito clinicamente e o tratamento é o mesmo, independentemente do escore ou do teste.',
+              'Oriente retorno ao trabalho ou à escola após 24 horas de antibiótico e afebril. Não faça teste de controle pós-tratamento em paciente assintomático — portador crônico é comum e não precisa de tratamento.',
+            ],
+      alertas: [
+        'O escore estima probabilidade de estreptococo, e não gravidade. Sinais de complicação supurativa — trismo, voz abafada, sialorreia, desvio de úvula, dificuldade de engolir saliva, dispneia, abaulamento cervical — indicam avaliação urgente e imagem, com qualquer pontuação.',
+        'Abaixo de 3 anos, faringite estreptocócica é rara e a febre reumática praticamente não ocorre. O escore não se aplica e não se recomenda testar rotineiramente.',
+        'Teste rápido positivo não distingue infecção de **estado de portador**, que ocorre em 5 a 20% das crianças assintomáticas. Em quadro clinicamente viral, um teste positivo pode significar portador com faringite viral concomitante.',
+        'A glomerulonefrite pós-estreptocócica **não** é prevenida pelo antibiótico — apenas a febre reumática é. Não use esse argumento para justificar prescrição.',
+        'Considere diagnósticos que mudam completamente a conduta: mononucleose (adenopatia posterior, esplenomegalia, linfocitose com atipia — e risco de exantema com amoxicilina), infecção gonocócica de orofaringe, HIV agudo, difteria em não vacinado, e síndrome de Lemierre em quadro arrastado com sepse.',
+      ],
+      tabela: {
+        titulo: 'Pontuação, probabilidade e conduta',
+        colunas: ['Pontos', 'Probabilidade de estreptococo', 'Conduta'],
+        linhas: [
+          ['≤ 0', '1 – 2,5%', 'Sem teste, sem antibiótico'],
+          ['1', '5 – 10%', 'Sem teste, sem antibiótico'],
+          ['2', '11 – 17%', 'Testar; tratar se positivo'],
+          ['3', '28 – 35%', 'Testar; tratar se positivo'],
+          ['≥ 4', '51 – 53%', 'Testar e tratar se positivo; empírico se não houver teste'],
+        ],
+        destaque: idx,
+      },
     }
   },
   formula: ['Centor (4 itens) + 1 ponto se 3–14 anos, 0 se 15–44, −1 se ≥ 45'],
   fundamento:
-    'McIsaac validou o Centor numa população de atenção primária que incluía crianças e observou que a idade é um preditor independente forte — a prevalência de faringite estreptocócica varia de menos de 5% em adultos acima de 45 anos a mais de 30% em escolares. O ajuste etário melhorou substancialmente a calibração.',
+    'McIsaac validou o Centor numa população de atenção primária que incluía crianças e observou que a idade é um preditor independente forte — a prevalência de faringite estreptocócica varia de menos de 5% em adultos acima de 45 anos a mais de 30% em escolares. O ajuste etário melhorou substancialmente a calibração. O escore original de Centor foi derivado em adultos de emergência, população com prevalência alta, e ao ser aplicado na atenção primária superestimava sistematicamente o risco; acrescentar um item que pode **subtrair** ponto foi a solução elegante para recalibrar sem refazer o modelo. Vale entender o propósito de todo esse cuidado diagnóstico, porque ele não é óbvio: a faringite estreptocócica é autolimitada e resolve em 3 a 5 dias, e o antibiótico abrevia os sintomas em cerca de 16 horas apenas. O que se quer prevenir é a **febre reumática**, doença autoimune pós-infecciosa em que proteínas M de certos sorotipos compartilham epítopos com miosina cardíaca, tropomiosina, laminina, tecido sinovial e proteínas dos núcleos da base; por mimetismo molecular, a resposta imune antiestreptocócica ataca esses tecidos e produz cardite, artrite migratória, coreia de Sydenham, eritema marginado e nódulos subcutâneos. Como essa resposta leva 2 a 3 semanas para se estabelecer, existe uma janela terapêutica de até nove dias de sintomas em que a erradicação ainda previne a doença — e é essa janela que torna legítimo aguardar o resultado do teste em vez de prescrever empiricamente, que é o comportamento que o escore existe para viabilizar. A lógica do instrumento, portanto, é probabilística e não diagnóstica: nas pontas ele dispensa o teste (embaixo porque a probabilidade é baixa demais, em cima porque é alta o suficiente para tratamento empírico onde não há teste), e no meio ele identifica exatamente quem precisa do exame. Duas advertências fecham o raciocínio: nenhum dos itens é específico o bastante isoladamente, e a glomerulonefrite pós-estreptocócica — cujo mecanismo é deposição de imunocomplexos já formados — não é prevenida pelo antibiótico.',
   armadilhas: [
     'Abaixo de 3 anos, faringite estreptocócica é rara e a febre reumática praticamente não ocorre — não se recomenda testar rotineiramente.',
     'Escarlatina (exantema micropapular áspero, língua em framboesa, linhas de Pastia) muda a conduta independentemente do escore.',
+    'O item da tosse é invertido: pontua a **ausência** dela. Marcar presença de tosse como ponto positivo é erro frequente e inverte o sentido do escore.',
+    'Adenopatia cervical **posterior** não pontua e aponta para outro diagnóstico — mononucleose, rubéola, toxoplasmose. Só a cadeia anterior dolorosa conta.',
+    'Teste rápido positivo pode refletir estado de portador, presente em 5 a 20% das crianças assintomáticas, e não infecção ativa. Em quadro claramente viral, interprete com cautela.',
+    'Cripta amigdaliana com cáseo, comum e crônica, é frequentemente confundida com exsudato agudo e infla a pontuação.',
+    'O escore não avalia gravidade nem complicação: abscesso periamigdaliano, epiglotite, abscesso retrofaríngeo e síndrome de Lemierre exigem avaliação urgente independentemente da pontuação.',
+    'Mononucleose merece consideração ativa antes de prescrever amoxicilina, que provoca exantema em grande parte desses pacientes e é frequentemente rotulado como alergia permanente à penicilina de forma equivocada.',
   ],
   referencias: [
     { texto: 'McIsaac WJ, White D, Tannenbaum D, Low DE. A clinical score to reduce unnecessary antibiotic use in patients with sore throat. CMAJ. 1998;158(1):75-83.' },
@@ -543,11 +719,11 @@ const meningite: Ferramenta = {
   resumo: 'Identifica, em crianças com pleocitose liquórica, quem tem risco muito baixo de meningite bacteriana.',
   categorias: ['infectologia', 'pediatria', 'neurologia'],
   campos: [
-    campoSimNao('gram', 'Coloração de Gram do líquor positiva', 1),
-    campoSimNao('neutroLiquor', 'Neutrófilos no líquor ≥ 1.000/µL', 1),
-    campoSimNao('proteinaLiquor', 'Proteína no líquor ≥ 80 mg/dL', 1),
-    campoSimNao('neutroSangue', 'Neutrófilos no sangue periférico ≥ 10.000/µL', 1),
-    campoSimNao('convulsao', 'Convulsão na apresentação ou antes dela', 1),
+    campoSimNao('gram', 'Coloração de Gram do líquor positiva', 1, 'Basta este item para tratar como meningite bacteriana, independentemente do restante. Gram positivo tem especificidade próxima de 100% e não admite conduta expectante.'),
+    campoSimNao('neutroLiquor', 'Neutrófilos no líquor ≥ 1.000/µL', 1, 'Neutrófilos ABSOLUTOS no líquor, não o percentual nem a celularidade total. Converta: celularidade total × percentual de neutrófilos / 100.'),
+    campoSimNao('proteinaLiquor', 'Proteína no líquor ≥ 80 mg/dL', 1, 'Proteinorraquia reflete a permeabilidade da barreira hematoencefálica. Atenção: punção traumática eleva a proteína por contaminação com sangue e pode gerar falso-positivo.'),
+    campoSimNao('neutroSangue', 'Neutrófilos no sangue periférico ≥ 10.000/µL', 1, 'Valor absoluto do hemograma periférico (segmentados + bastonetes), não o total de leucócitos. É o único item que não vem do líquor.'),
+    campoSimNao('convulsao', 'Convulsão na apresentação ou antes dela', 1, 'Crise associada ao quadro atual. Crise febril simples típica em criança de 6 meses a 5 anos, sem sinais meníngeos, é achado distinto — mas na dúvida o item conta e o escore fica positivo, que é o comportamento seguro.'),
   ],
   calcular: (v) => {
     const gram = sim(v, 'gram')
@@ -575,19 +751,68 @@ const meningite: Ferramenta = {
           : 'Pelo menos um critério presente: **trate empiricamente como meningite bacteriana** até o resultado das culturas. Ceftriaxona (ou cefotaxima) mais vancomicina, com dexametasona antes ou junto da primeira dose em crianças com suspeita de Haemophilus influenzae tipo b ou pneumococo.',
         'O escore foi derivado e validado em **crianças de 29 dias a 19 anos com pleocitose liquórica**. Não se aplica a neonatos, a quem não tem pleocitose, a imunossuprimidos, a portadores de derivação ventricular, a pós-neurocirurgia nem a quem recebeu antibiótico nas 72 horas anteriores.',
         'Não use em paciente que já parece gravemente doente, com petéquias, instabilidade ou alteração significativa do sensório — o escore existe para poupar antibiótico em quem está bem, não para postergá-lo em quem está mal.',
+        'Os cinco critérios são, na prática, cinco leituras da **intensidade da resposta inflamatória meníngea** — e entender isso mostra por que a combinação funciona melhor que qualquer item isolado. A bactéria que alcança o espaço subaracnóideo se multiplica num compartimento praticamente desprovido de imunidade humoral e de complemento; seus componentes de parede (peptidoglicano, ácido lipoteicoico no pneumococo, lipopolissacarídeo no meningococo) ativam receptores do tipo Toll em astrócitos, micróglia e células endoteliais, disparando produção local de TNF-α, IL-1β e IL-6. Essas citocinas induzem expressão de selectinas e integrinas no endotélio dos capilares meníngeos, e o resultado é migração maciça de neutrófilos — daí a **neutrofilia liquórica** — muito mais intensa do que a resposta linfocitária das meningites virais, que é mediada por interferons e quimiocinas diferentes. As mesmas citocinas abrem as junções oclusivas do endotélio, aumentando a permeabilidade da barreira hematoencefálica, o que explica a **proteinorraquia** elevada: albumina sérica extravasa para o líquor. A **neutrofilia periférica** reflete a mobilização medular sistêmica pela IL-6 e pelo G-CSF, isto é, a resposta que transborda o compartimento meníngeo. E a **convulsão** marca irritação cortical direta, vasculite das artérias que cruzam o espaço subaracnóideo e, eventualmente, hiponatremia por secreção inapropriada de vasopressina. O Gram positivo é categoricamente diferente dos demais: não é medida de inflamação, é a demonstração do agente. Por isso um único critério, o Gram, é suficiente para tratar, enquanto os outros quatro fazem sentido como conjunto.',
       ],
-      alertas: ['Antibiótico prévio pode "esterilizar" o líquor e reduzir os parâmetros inflamatórios, invalidando o escore.'],
+      conduta: gram
+        ? [
+            'Gram positivo é diagnóstico até prova em contrário: **antibiótico imediato**, na primeira hora, sem aguardar mais nenhum exame. Ceftriaxona 100 mg/kg/dia (ou cefotaxima) associada a vancomicina 60 mg/kg/dia para cobrir pneumococo com resistência intermediária à penicilina.',
+            'Ajuste a cobertura pela morfologia vista no Gram e pela faixa etária: diplococos gram-positivos sugerem pneumococo, diplococos gram-negativos sugerem meningococo, bastonetes gram-negativos em lactente pequeno ou imunossuprimido pedem cobertura ampliada, e cocobacilos gram-positivos levantam Listeria (acrescente ampicilina).',
+            '**Dexametasona** 0,15 mg/kg a cada 6 horas por 2 a 4 dias, administrada antes ou junto com a primeira dose do antibiótico, reduz perda auditiva e sequela neurológica na meningite por Haemophilus influenzae tipo b e, com evidência mais modesta, na pneumocócica. Dada depois do antibiótico, perde o benefício.',
+            'Internação, monitorização e vigilância das complicações: hipertensão intracraniana, crise convulsiva, hiponatremia por secreção inapropriada de vasopressina, choque, coagulação intravascular disseminada e coleção subdural. Programe avaliação audiológica antes da alta.',
+            'Notifique o caso e providencie **quimioprofilaxia dos contatos** quando confirmado meningococo (rifampicina, ceftriaxona ou ciprofloxacino conforme idade e disponibilidade) ou Haemophilus influenzae tipo b. Isso é responsabilidade do serviço, não da família.',
+          ]
+        : muitoBaixo
+          ? [
+              'Nenhum critério presente: risco muito baixo, com valor preditivo negativo em torno de 99,9%. Isso **permite** considerar observação sem antibiótico ou alta precoce — não obriga. A decisão é compartilhada com a família e depende de o paciente estar clinicamente bem, de haver retorno garantido e de o serviço conseguir seguir as culturas.',
+              'Antes de aplicar o resultado, confirme que o paciente está de fato **fora** dos grupos em que o escore não vale: idade entre 29 dias e 19 anos, presença de pleocitose, ausência de imunossupressão, de derivação ventricular, de neurocirurgia recente e de antibiótico nas 72 horas anteriores.',
+              'Se optar por observação sem antibiótico, mantenha o paciente em vigilância por 24 a 36 horas com reavaliações clínicas documentadas, acompanhe as culturas de líquor e de sangue e defina explicitamente quem reavalia e quando.',
+              'Trate como meningite viral: analgesia adequada (a cefaleia é intensa e frequentemente subtratada), antitérmico, hidratação e repouso. Considere aciclovir se houver suspeita de encefalite herpética — alteração de comportamento, déficit focal, crise convulsiva ou alteração de sinal em lobo temporal na imagem —, situação em que o retardo do tratamento é devastador.',
+              'Oriente retorno imediato se houver febre persistente, piora da cefaleia, vômitos, sonolência, irritabilidade progressiva, crise convulsiva ou qualquer lesão de pele nova.',
+            ]
+          : [
+              'Pelo menos um critério presente: **trate empiricamente como meningite bacteriana** até o resultado das culturas. Ceftriaxona (ou cefotaxima) mais vancomicina, com dexametasona antes ou junto da primeira dose.',
+              'Não aguarde exame para iniciar o antibiótico. Se houver indicação de tomografia antes da punção (déficit focal, papiledema, rebaixamento importante, imunossupressão), colha hemoculturas e administre o antibiótico primeiro — o rendimento da cultura de líquor cai, mas o atraso custa mais.',
+              'Internação com monitorização e vigilância ativa de hipertensão intracraniana, crise convulsiva, hiponatremia, choque e coleção subdural. Programe avaliação audiológica antes da alta, porque a perda auditiva é a sequela mais comum e é tratável quando detectada.',
+              'Reavalie o diagnóstico com as culturas em 48 a 72 horas. Cultura negativa em paciente que melhorou e cujo perfil liquórico é viral permite suspender o antibiótico — a decisão de descalonar é tão importante quanto a de iniciar.',
+              'Notifique e providencie quimioprofilaxia de contatos se o agente for meningococo ou Haemophilus influenzae tipo b.',
+            ],
+      alertas: [
+        'Antibiótico prévio pode "esterilizar" o líquor e reduzir os parâmetros inflamatórios, invalidando o escore.',
+        'O escore **não se aplica** a neonatos (até 28 dias), a quem não tem pleocitose, a imunossuprimidos, a portadores de derivação ventricular, a pós-neurocirúrgicos nem a quem usou antibiótico nas 72 horas anteriores. Fora desses limites, o valor preditivo negativo de 99,9% simplesmente não existe.',
+        'Petéquia ou púrpura indica antibiótico imediato, com qualquer pontuação: a meningococcemia pode cursar com líquor pouco alterado e evoluir para óbito em horas.',
+        'Aparência clinicamente grave, instabilidade hemodinâmica, rebaixamento do sensório ou déficit focal prevalecem sobre o escore. Ele serve para poupar antibiótico em criança que está bem, nunca para postergá-lo em criança que está mal.',
+        'Suspeita de encefalite herpética exige aciclovir empírico independentemente do escore, que foi construído para meningite bacteriana e não avalia esse risco.',
+      ],
+      tabela: {
+        titulo: 'O que cada critério mede',
+        colunas: ['Critério', 'Compartimento', 'Mecanismo'],
+        linhas: [
+          ['Gram positivo', 'Líquor', 'Demonstração do agente — não é medida de inflamação'],
+          ['Neutrófilos no líquor ≥ 1.000/µL', 'Líquor', 'Migração neutrofílica por TNF-α e IL-1β locais'],
+          ['Proteína no líquor ≥ 80 mg/dL', 'Líquor', 'Abertura de junções oclusivas da barreira'],
+          ['Neutrófilos no sangue ≥ 10.000/µL', 'Sistêmico', 'Mobilização medular por IL-6 e G-CSF'],
+          ['Convulsão', 'Córtex', 'Irritação cortical, vasculite, hiponatremia'],
+        ],
+        destaque: gram ? 0 : undefined,
+      },
     }
   },
   formula: ['Risco muito baixo = nenhum dos 5 critérios presente'],
   fundamento:
-    'Nigrovic e colaboradores partiram do problema clínico real: a maioria esmagadora das crianças com pleocitose liquórica tem meningite viral, mas quase todas recebem antibiótico e internação até as culturas ficarem prontas. O escore identifica com segurança altíssima o grupo que não precisa disso — sua utilidade está inteiramente no valor preditivo negativo.',
+    'Nigrovic e colaboradores partiram do problema clínico real: a maioria esmagadora das crianças com pleocitose liquórica tem meningite viral, mas quase todas recebem antibiótico e internação até as culturas ficarem prontas. O escore identifica com segurança altíssima o grupo que não precisa disso — sua utilidade está inteiramente no valor preditivo negativo. Essa é uma classe de instrumento diferente da maioria dos escores: ele não foi construído para graduar risco ao longo de um espectro, e sim para estabelecer um **limiar de exclusão**. Por isso tem apenas dois resultados úteis na prática — zero critérios ou pelo menos um — e por isso sua validação foi dimensionada para demonstrar valor preditivo negativo, não discriminação global. Os quatro critérios inflamatórios medem a mesma coisa por janelas diferentes: a bactéria no espaço subaracnóideo, compartimento praticamente sem imunidade humoral nem complemento, libera componentes de parede que ativam receptores do tipo Toll em micróglia, astrócitos e endotélio, desencadeando TNF-α, IL-1β e IL-6 locais; essas citocinas induzem selectinas e integrinas que recrutam neutrófilos em massa (neutrofilia liquórica), abrem as junções oclusivas do endotélio permitindo extravasamento de albumina (proteinorraquia), transbordam para a circulação mobilizando o pool medular (neutrofilia periférica) e irritam o córtex adjacente, além de provocarem vasculite e secreção inapropriada de vasopressina (convulsão). A meningite viral aciona uma cascata distinta, mediada por interferons, com predomínio linfocitário e barreira menos comprometida — e é essa diferença de mecanismo que o escore explora. O quinto critério, o Gram, não pertence à mesma categoria: não mede inflamação, demonstra o agente, e tem especificidade próxima de 100%. É por isso que ele basta sozinho. O limite mais importante do instrumento é conceitual e não estatístico: qualquer coisa que altere a relação entre bactéria e resposta inflamatória o invalida. Neonato não monta resposta comparável, imunossuprimido e neutropênico não recrutam neutrófilos, derivação ventricular e neurocirurgia alteram a barreira, e antibiótico prévio reduz a carga bacteriana e os quatro parâmetros de uma vez.',
   armadilhas: [
     'Punção traumática altera a contagem de células e a proteína. Correções (regra de 1 leucócito para cada 500 a 700 hemácias) são imprecisas — na dúvida, trate.',
     'Meningococcemia pode cursar com líquor pouco alterado e evolução fulminante. Petéquia ou púrpura é indicação de antibiótico imediato, escore nenhum.',
+    'O critério liquórico é de neutrófilos **absolutos**, não de celularidade total nem de percentual. Usar a celularidade total no lugar dos neutrófilos superestima e gera falso-positivo.',
+    'A neutrofilia periférica é do hemograma e não do líquor. É o único item extrameníngeo e é frequentemente confundido com o critério liquórico.',
+    'Aplicado fora da faixa validada — neonato, ausência de pleocitose, imunossupressão, derivação ventricular, pós-neurocirurgia, antibiótico nas 72 h prévias — o escore perde completamente o valor preditivo negativo que justifica seu uso.',
+    'Escore zero não é alta automática. É permissão para considerar observação sem antibiótico em criança clinicamente bem, com retorno garantido e culturas acompanhadas — decisão compartilhada, não protocolo.',
+    'Não avalia encefalite herpética. Alteração de comportamento, déficit focal ou crise em contexto compatível exigem aciclovir empírico, independentemente da pontuação.',
   ],
   referencias: [
     { texto: 'Nigrovic LE, Kuppermann N, Macias CG, et al. Clinical prediction rule for identifying children with cerebrospinal fluid pleocytosis at very low risk of bacterial meningitis. JAMA. 2007;297(1):52-60.' },
+    { texto: 'Nigrovic LE, Malley R, Kuppermann N. Meta-analysis of bacterial meningitis score validation studies. Arch Dis Child. 2012;97(9):799-805.' },
+    { texto: 'Brouwer MC, McIntyre P, Prasad K, van de Beek D. Corticosteroids for acute bacterial meningitis. Cochrane Database Syst Rev. 2015;(9):CD004405.' },
   ],
 }
 
