@@ -1,14 +1,14 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
-  "ignoreCommand": "git rev-parse HEAD~1 >/dev/null 2>&1 && git diff --quiet HEAD~1 HEAD -- ':(exclude)*.md' ':(exclude)*.txt' ':(exclude)docs' ':(exclude)__tests__' ':(exclude).claude' ':(exclude).windsurf' ':(exclude).github' ':(exclude)last_commit.diff' || exit 1",
+  "ignoreCommand": "base=\"$VERCEL_GIT_PREVIOUS_SHA\"; if [ -n \"$base\" ]; then git cat-file -e \"$base^{commit}\" 2>/dev/null || exit 1; else base=\"$(git rev-parse HEAD~1 2>/dev/null)\"; fi; [ -n \"$base\" ] && git diff --quiet \"$base\" HEAD -- ':(exclude)*.md' ':(exclude)*.txt' ':(exclude)docs' ':(exclude)__tests__' ':(exclude).claude' ':(exclude).windsurf' ':(exclude).github' ':(exclude)last_commit.diff' || exit 1",
   "regions": [
     "gru1"
   ],
   "functions": {
     "app/api/**/*.ts": {
       "maxDuration": 30,
-      "memory": 1024
+      "memory": 512
     },
     "app/api/presence/route.ts": {
       "maxDuration": 10,
@@ -171,7 +171,7 @@
     },
     {
       "path": "/api/cron/ticket-replies",
-      "schedule": "*/5 * * * *"
+      "schedule": "*/15 * * * *"
     }
   ],
   "redirects": [

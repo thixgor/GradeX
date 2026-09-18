@@ -365,6 +365,51 @@ const nextConfig = {
           },
         ],
       },
+      /**
+       * Os arquivos soltos na raiz de `public/` — o buraco que sobrou.
+       *
+       * Toda pasta grande ganhou regra própria, mas a raiz nunca ganhou: sem
+       * `Cache-Control`, a Vercel serve estes como
+       * `public, max-age=0, must-revalidate`. O navegador guarda e revalida a
+       * cada visita, e cada revalidação atravessa a borda até a origem.
+       *
+       * O peso está em `logo.png`: 2,7 MB, 1584x1496. Ele não é só o logo do
+       * site — é o `og:image` de `app/layout.tsx` (cada prévia de link no
+       * WhatsApp, Discord e Instagram busca os 2,7 MB) e a imagem embutida em
+       * TODO e-mail transacional, com URL absoluta fixa em `lib/mail.ts` e
+       * `lib/comms/email-render.ts`. Campanha de e-mail e link compartilhado
+       * são exatamente o tráfego que não passa por `next/image`: vai o PNG
+       * inteiro, direto da origem, toda vez.
+       *
+       * `logo3d.png` (2,5 MB) está na tela de login, e `pdf.worker.min.mjs`
+       * (1,4 MB) é baixado sempre que alguém abre um material em PDF.
+       *
+       * Prazo igual ao da marca do PWA, e pelo mesmo motivo: estes podem ser
+       * trocados no lugar — um logo redesenhado mantém o nome. `s-maxage` alto
+       * tira a origem do caminho, `max-age` de um dia deixa o navegador
+       * reconferir com a borda, e `stale-while-revalidate` faz isso em segundo
+       * plano. Troca de logo se propaga em um dia sem custar transferência de
+       * origem no resto do ano.
+       */
+      ...[
+        '/logo.png',
+        '/logo3d.png',
+        '/favicon.png',
+        '/favicon.ico',
+        '/favicon.jpg',
+        '/logo_manual_radiologia.svg',
+        '/logo_manual_tomografia.svg',
+        '/pdf.min.mjs',
+        '/pdf.worker.min.mjs',
+      ].map((source) => ({
+        source,
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=86400, s-maxage=31536000, stale-while-revalidate=604800',
+          },
+        ],
+      })),
     ]
   },
 
