@@ -25,8 +25,8 @@ const reticulocitos: Ferramenta = {
   resumo: 'Diz se a medula está respondendo à anemia — o primeiro passo da investigação.',
   categorias: ['hematologia'],
   campos: [
-    campoNum('retic', 'Reticulócitos', { unidade: '%', min: 0, max: 40, passo: 0.1, normalMin: 0.5, normalMax: 2 }),
-    campoNum('ht', 'Hematócrito', { unidade: '%', min: 5, max: 65, passo: 0.1 }),
+    campoNum('retic', 'Reticulócitos', { unidade: '%', min: 0, max: 40, passo: 0.1, normalMin: 0.5, normalMax: 2, ajuda: 'O percentual do laudo, não o absoluto. Este número sozinho engana na anemia: ele é uma fração de um denominador que encolheu.' }),
+    campoNum('ht', 'Hematócrito', { unidade: '%', min: 5, max: 65, passo: 0.1, ajuda: 'Do mesmo hemograma que forneceu os reticulócitos. Usar hematócrito de outra data invalida as duas correções.' }),
     campoNum('htNormal', 'Hematócrito de referência', { unidade: '%', min: 35, max: 50, passo: 0.5, padrao: '45', ajuda: '45% em homens, 40% em mulheres.' }),
     campoNum('reticAbs', 'Reticulócitos absolutos', { unidade: '×10⁹/L', min: 0, max: 800, passo: 1, opcional: true, ajuda: 'Se o laboratório já informa o valor absoluto, ele dispensa a correção pelo hematócrito.' }),
   ],
@@ -58,7 +58,37 @@ const reticulocitos: Ferramenta = {
           ? '**Resposta adequada (IPR ≥ 2 a 3):** a medula está produzindo. A anemia decorre de perda ou destruição — hemorragia aguda ou hemólise. Investigue com desidrogenase láctica, bilirrubina indireta, haptoglobina, esfregaço de sangue periférico (esquizócitos, esferócitos) e teste de Coombs direto.'
           : '**Resposta inadequada (IPR < 2):** a medula não está produzindo o suficiente. Investigue por volume corpuscular médio — microcítica (ferropenia, talassemia, doença crônica, sideroblástica), normocítica (doença crônica, renal, endócrina, aplasia, infiltração medular) ou macrocítica (deficiência de B12 ou folato, síndrome mielodisplásica, álcool, hipotireoidismo, medicamentos).',
         'A dupla correção existe porque o percentual de reticulócitos tem dois vieses na anemia: o denominador (hemácias totais) está reduzido, e a hipóxia estimula a eritropoetina a liberar reticulócitos imaturos, que sobrevivem mais tempo na circulação. A primeira correção resolve o denominador; o fator de maturação resolve o tempo de permanência.',
+        'Vale detalhar o segundo viés, porque é o menos intuitivo e o que mais infla resultados. O eritroblasto normalmente expulsa o núcleo e permanece cerca de **três dias maturando dentro da medula** antes de sair, passando apenas o último dia como reticulócito circulante. Na anemia, a eritropoetina — produzida pelas células intersticiais peritubulares renais em resposta à hipóxia, por estabilização do fator induzível por hipóxia HIF-2α — encurta esse tempo de residência medular e antecipa a liberação. O reticulócito sai mais imaturo, com mais RNA residual, e agora permanece dois, três ou até quatro dias no sangue em vez de um. Como a contagem é uma fotografia de quantos estão circulando, e não de quantos foram produzidos por dia, dobrar o tempo de permanência dobra a contagem sem que a medula tenha produzido uma única célula a mais. O fator de maturação (1,0 a 2,5, crescendo conforme a anemia piora) desfaz exatamente essa ilusão. É por isso que os analisadores modernos preferem informar a **fração de reticulócitos imaturos** (IRF): quanto mais imaturos na circulação, maior o estímulo eritropoetínico, e esse é o indicador mais precoce de resposta medular — sobe antes do próprio IPR.',
       ],
+      conduta: ipr >= 2
+        ? [
+            'Confirme e caracterize a hemólise: desidrogenase láctica e bilirrubina indireta elevadas com haptoglobina baixa formam o tripé laboratorial. A haptoglobina é o marcador mais específico — ela se consome ligando hemoglobina livre e cai precocemente na hemólise intravascular.',
+            'Peça **esfregaço de sangue periférico** e leia-o você mesmo ou com o hematologista. Ele frequentemente entrega o diagnóstico: esquizócitos apontam microangiopatia (PTT, SHU, CIVD, hipertensão maligna, valva mecânica), esferócitos indicam esferocitose hereditária ou hemólise autoimune, células em alvo e corpúsculos de Heinz sugerem deficiência de G6PD, e hemácias falciformes dispensam apresentação.',
+            'Teste de Coombs direto para separar hemólise autoimune de não imune. Se positivo, investigue a causa: linfoproliferativa, doença autoimune, medicamento, infecção. Se negativo com esquizócitos, **é emergência** — considere PTT e calcule o PLASMIC, porque plasmaférese precoce muda a mortalidade.',
+            'Se não houver hemólise, procure sangramento: toque retal com pesquisa de sangue oculto, investigação endoscópica, e lembre que hemorragia interna (retroperitônio, coxa, cavidade abdominal) pode não ser óbvia. Reticulocitose com ferritina baixa é hemorragia crônica já em resposta.',
+          ]
+        : [
+            'Prossiga pelo **volume corpuscular médio**, que é a segunda bifurcação. Microcítico (VCM < 80): dose ferritina, saturação de transferrina e receptor solúvel de transferrina; se o ferro estiver normal, pense em talassemia (aplique o índice de Mentzer) e em anemia de doença crônica. Normocítico: função renal, TSH, proteína C reativa, e considere doença crônica ou infiltração medular. Macrocítico (VCM > 100): B12, folato, TSH, história de álcool e revisão de medicamentos.',
+            'Verifique se há **outras linhagens acometidas**. Anemia isolada tem cardápio diferente de bicitopenia ou pancitopenia — nesta última, aplasia, mielodisplasia, leucemia, infiltração neoplásica, deficiência grave de B12 e infecção (HIV, parvovírus B19, leishmaniose visceral) entram na lista, e a indicação de mielograma com biópsia de medula fica muito mais forte.',
+            'Repita a contagem 5 a 7 dias após iniciar reposição de ferro, B12 ou folato: a **crise reticulocitária** é a confirmação diagnóstica mais elegante e mais barata que existe. Se o IPR não subir nesse prazo, o diagnóstico ou a adesão estão errados.',
+            'Não transfunda por número. Reserve a transfusão para instabilidade hemodinâmica, isquemia sintomática ou hemoglobina abaixo do gatilho institucional (habitualmente 7 g/dL, ou 8 em cardiopata) — e nunca antes de colher os exames que o diagnóstico exige, porque a transfusão apaga as pistas por semanas.',
+          ],
+      alertas: [
+        'Reticulocitose leva 3 a 5 dias para se estabelecer. Contagem baixa nas primeiras 48 horas de uma hemorragia aguda ou de uma hemólise recém-iniciada **não** significa medula incompetente — repita antes de concluir.',
+        'IPR alto com esquizócitos no esfregaço e plaquetopenia é emergência hematológica, não achado a investigar ambulatorialmente: púrpura trombocitopênica trombótica tem mortalidade acima de 90% sem plasmaférese e cerca de 10% com ela.',
+        'Se o laboratório informa reticulócitos absolutos, use esse valor e ignore as correções — elas existem apenas para contornar as limitações do percentual.',
+      ],
+      tabela: {
+        titulo: 'Fator de maturação por hematócrito',
+        colunas: ['Hematócrito', 'Fator', 'Por quê'],
+        linhas: [
+          ['≥ 35%', '1,0', 'Permanência circulante normal, cerca de 1 dia'],
+          ['25 – 34%', '1,5', 'Liberação antecipada, permanência ~1,5 dia'],
+          ['20 – 24%', '2,0', 'Estímulo eritropoetínico intenso, ~2 dias'],
+          ['< 20%', '2,5', 'Reticulócitos de estresse, até 2,5 dias em circulação'],
+        ],
+        destaque: ht >= 35 ? 0 : ht >= 25 ? 1 : ht >= 20 ? 2 : 3,
+      },
     }
   },
   formula: [
@@ -67,10 +97,15 @@ const reticulocitos: Ferramenta = {
     'Fator: Ht ≥ 35 → 1,0 | 25–34 → 1,5 | 20–24 → 2,0 | < 20 → 2,5',
   ],
   fundamento:
-    'O reticulócito é a hemácia recém-liberada, ainda com RNA ribossômico residual, e permanece cerca de 1 dia na circulação em condições normais. Contá-los mede diretamente a taxa de produção eritroide dos últimos dias — é o equivalente hematológico de olhar para a linha de produção em vez do estoque.',
+    'O reticulócito é a hemácia recém-liberada, ainda com RNA ribossômico residual, e permanece cerca de 1 dia na circulação em condições normais. Contá-los mede diretamente a taxa de produção eritroide dos últimos dias — é o equivalente hematológico de olhar para a linha de produção em vez do estoque. Essa distinção entre fluxo e estoque é o conceito central: a hemoglobina e o hematócrito são estoque, e um estoque baixo não diz se o problema está na produção, na perda ou na destruição. O reticulócito é fluxo, e responde justamente a essa pergunta. Hillman e Finch formalizaram o índice em 1967 ao perceber que o percentual bruto de reticulócitos era sistematicamente enganoso na anemia, por dois motivos somados. Primeiro, é uma razão cujo denominador encolheu: 2% de reticulócitos num hematócrito de 15% representa metade das células que 2% num hematócrito de 45%. Segundo, a eritropoetina elevada antecipa a saída do reticulócito da medula, prolongando sua permanência circulante de um para até dois e meio dias — e uma célula que fica o dobro do tempo é contada duas vezes nas fotografias sucessivas, inflando a estimativa de produção sem nenhuma produção extra. O IPR corrige os dois vieses em sequência e entrega uma estimativa de quantas vezes a produção basal a medula está entregando. O corte de 2 a 3 não é arbitrário: a medula normal tem capacidade de expandir a eritropoiese em seis a oito vezes quando o ferro, a B12, o folato e o estroma estão intactos, de modo que uma medula sadia diante de anemia estabelecida deveria estar produzindo pelo menos o dobro do basal. Não estar é, por si, uma anormalidade a explicar.',
   armadilhas: [
     'Se o laboratório informa o valor **absoluto**, use-o: ele já contorna os dois vieses e não precisa de correção.',
     'Reticulocitose leva 3 a 5 dias para aparecer após uma hemorragia aguda ou após o início do tratamento de uma carência. Contagem baixa nas primeiras 48 horas não exclui capacidade de resposta.',
+    'Reticulócitos e hematócrito precisam ser do mesmo hemograma. Combinar um percentual de hoje com um hematócrito de ontem, ou com o hematócrito pós-transfusional, produz um IPR sem significado.',
+    'Transfusão recente invalida a interpretação: as hemácias transfundidas elevam o hematócrito e diluem o percentual de reticulócitos, e além disso a correção da anemia desliga o estímulo eritropoetínico. Colha antes de transfundir.',
+    'IPR normal ou alto não exclui deficiência de ferro ou de B12 parcialmente tratada — quem já iniciou reposição está em crise reticulocitária, e a contagem alta é a resposta ao tratamento, não ausência de carência.',
+    'A contagem manual por microscopia tem imprecisão considerável em valores baixos, justamente a faixa em que a distinção entre 0,5% e 1,5% muda a conduta. Prefira contagem automatizada por citometria de fluxo quando houver.',
+    'Na doença renal crônica o IPR será baixo por deficiência de eritropoetina, e isso é esperado, não achado novo a investigar. O mesmo vale para a medula em quimioterapia recente.',
   ],
   referencias: [
     { texto: 'Hillman RS, Finch CA. Erythropoiesis: normal and abnormal. Semin Hematol. 1967;4(4):327-336.' },
@@ -770,8 +805,8 @@ const conversorHemato: Ferramenta = {
       { valor: 'ferro', rotulo: 'Ferro sérico (µg/dL ↔ µmol/L)' },
       { valor: 'b12', rotulo: 'Vitamina B12 (pg/mL ↔ pmol/L)' },
       { valor: 'folato', rotulo: 'Folato (ng/mL ↔ nmol/L)' },
-    ]),
-    campoNum('valor', 'Valor a converter', { min: 0, max: 1000000, passo: 0.01 }),
+    ], { ajuda: 'Escolha o analito primeiro: cada um tem seu próprio fator, derivado do peso molecular. Contagens celulares (plaquetas e leucócitos) não têm fator de verdade — só mudam de potência de dez.' }),
+    campoNum('valor', 'Valor a converter', { min: 0, max: 1000000, passo: 0.01, ajuda: 'Digite o número exatamente como está no laudo, sem converter mentalmente. Para plaquetas e leucócitos, informe em /mm³ (ex.: 250000, não 250).' }),
   ],
   calcular: (v) => {
     const p = opc(v, 'parametro')
@@ -838,14 +873,66 @@ const conversorHemato: Ferramenta = {
       unidade: t.linhas[1][0],
       nivel: 'neutro',
       detalhes: t.linhas.map(([u, val]) => ({ rotulo: u, valor: val })),
-      interpretacao: [t.nota, 'O sistema internacional é o padrão na Europa; o convencional predomina no Brasil e nos Estados Unidos. Sempre confira a unidade antes de comparar resultados de laboratórios diferentes ou de artigos internacionais.'],
+      interpretacao: [
+        t.nota,
+        'O sistema internacional é o padrão na Europa; o convencional predomina no Brasil e nos Estados Unidos. Sempre confira a unidade antes de comparar resultados de laboratórios diferentes ou de artigos internacionais.',
+        'Há duas naturezas distintas de conversão aqui, e confundi-las é a origem dos erros graves. **Concentrações de massa** (hemoglobina, ferritina, ferro, B12, folato) convertem para concentração molar dividindo pelo peso molecular do analito — daí os fatores quebrados como 0,179 para o ferro (peso atômico 55,85) e 0,738 para a B12 (peso molecular 1.355). Já **contagens celulares** (plaquetas, leucócitos) não são massa nem mol: são número de partículas por volume, e a passagem de /mm³ para ×10⁹/L é apenas a troca de um volume de referência por outro (1 mm³ = 1 µL = 10⁻⁶ L), ou seja, uma divisão por mil. Nenhuma química está envolvida, apenas notação — e é justamente por ser trivial que o erro passa.',
+        p === 'hb'
+          ? 'O caso da hemoglobina merece atenção especial: existem **dois** fatores de conversão para mmol/L em circulação. O fator 0,6206 usado aqui assume o monômero (peso molecular de aproximadamente 16.114 Da, um grupo heme). Alguns laboratórios europeus usam o tetrâmero (peso molecular ~64.500 Da), cujo fator é quatro vezes menor (0,1551). Uma hemoglobina de 14 g/dL vira 8,7 mmol/L pela convenção do monômero e 2,2 mmol/L pela do tetrâmero. Ao ler literatura holandesa, escandinava ou alemã, confirme qual convenção o laudo usa antes de concluir que o paciente está anêmico.'
+          : p === 'ferritina'
+            ? 'A identidade numérica entre ng/mL e µg/L não é coincidência: 1 ng/mL = 1 µg/L exatamente, porque tanto o numerador quanto o denominador foram multiplicados por mil. O mesmo vale para µg/dL e outras duplas equivalentes — quando um laudo troca de unidade sem trocar o número, geralmente é esse o motivo, e não erro.'
+            : 'Quando duas unidades diferentes exibem o mesmo número (como ng/mL e µg/L), é porque numerador e denominador foram escalados pelo mesmo fator. Não é erro de digitação do laboratório.',
+      ],
+      conduta: [
+        'Ao receber exame de fora do país ou comparar com valor de referência de artigo internacional, converta **antes** de interpretar, e registre no prontuário a unidade usada. A maioria dos erros de conduta por unidade nasce de comparar um valor convertido com uma referência não convertida.',
+        p === 'plaquetas'
+          ? 'Plaquetas: antes de agir sobre uma contagem muito baixa, descarte **pseudotrombocitopenia** por agregação plaquetária dependente de EDTA — pedindo esfregaço de sangue periférico e, se confirmada a agregação, recoleta em citrato. É a causa mais comum de "plaquetopenia grave" em paciente assintomático, e já motivou transfusões e internações desnecessárias.'
+          : p === 'b12'
+            ? 'B12 entre 200 e 350 pg/mL é zona indeterminada e não deve ser interpretada isoladamente: dose **ácido metilmalônico** e **homocisteína**, que se elevam na deficiência tecidual real antes de a dosagem sérica cair. Em paciente com manifestação neurológica compatível, trate mesmo com B12 sérica normal — o dano medular é potencialmente irreversível e a reposição é inócua.'
+            : p === 'ferro'
+              ? 'Ferro sérico isolado não diagnostica nada: tem variação circadiana de até 30% e cai em qualquer inflamação aguda por ação da hepcidina. Interprete sempre junto com ferritina, transferrina e índice de saturação, e prefira coleta matinal em jejum.'
+              : p === 'ferritina'
+                ? 'Ferritina é reagente de fase aguda e sobe na inflamação, na hepatopatia e na neoplasia, podendo mascarar deficiência de ferro real. Em contexto inflamatório, o corte de deficiência sobe de 30 para 100 ng/mL (ou até 300 com saturação de transferrina < 20%). Dose proteína C reativa junto.'
+                : p === 'folato'
+                  ? 'Folato sérico reflete ingestão recente e normaliza com uma única refeição adequada; para avaliar estoque, peça folato eritrocitário. E nunca reponha folato antes de excluir deficiência de B12: o folato corrige a anemia megaloblástica e deixa a degeneração medular progredir sem o aviso hematológico.'
+                  : 'Confira a unidade do laudo contra a faixa de referência impressa no próprio laudo — laboratórios idôneos sempre informam as duas juntas, e essa é a checagem mais rápida contra erro de escala.',
+        'Ao prescrever ou ajustar conduta com base num valor convertido, escreva as duas unidades na evolução (por exemplo, "Hb 14 g/dL = 8,7 mmol/L"). Isso torna o erro visível para o próximo leitor em vez de invisível.',
+      ],
+      alertas: [
+        'Erro de potência de dez em plaquetas é a confusão de unidade com maior potencial de dano deste conversor: ler 250 ×10⁹/L como 250/mm³ sugere plaquetopenia catastrófica onde a contagem é normal, e o inverso pode deixar passar uma trombocitopenia grave.',
+        'Este conversor faz aritmética, não interpretação laboratorial. Nenhum valor convertido substitui a faixa de referência do laboratório que realizou o exame, que varia com método, equipamento e população.',
+      ],
+      tabela: {
+        titulo: 'Fatores de conversão usados',
+        colunas: ['Analito', 'Convencional', 'SI', 'Fator'],
+        linhas: [
+          ['Hemoglobina', 'g/dL', 'g/L', '× 10'],
+          ['Hemoglobina', 'g/dL', 'mmol/L', '× 0,6206 (monômero)'],
+          ['Plaquetas e leucócitos', '/mm³', '×10⁹/L', '÷ 1000'],
+          ['Ferritina', 'ng/mL', 'µg/L', '× 1 (idênticos)'],
+          ['Ferro sérico', 'µg/dL', 'µmol/L', '× 0,179'],
+          ['Vitamina B12', 'pg/mL', 'pmol/L', '× 0,738'],
+          ['Folato', 'ng/mL', 'nmol/L', '× 2,266'],
+        ],
+        destaque: p === 'hb' ? 0 : p === 'plaquetas' || p === 'leucocitos' ? 2 : p === 'ferritina' ? 3 : p === 'ferro' ? 4 : p === 'b12' ? 5 : 6,
+      },
     }
   },
   formula: ['Hb: g/dL × 10 = g/L | g/dL × 0,6206 = mmol/L', 'Ferro: µg/dL × 0,179 = µmol/L', 'B12: pg/mL × 0,738 = pmol/L'],
   fundamento:
-    'Os fatores de conversão derivam do peso molecular de cada analito. Para grandezas que são apenas contagens — plaquetas, leucócitos —, não há conversão de fato, apenas mudança de potência de dez, o que é fonte frequente de erro de leitura de exames importados.',
-  armadilhas: ['Plaquetas de 250 ×10⁹/L são 250.000/mm³, não 250/mm³. Confundir as escalas gera pânico injustificado ou falsa tranquilidade.'],
-  referencias: [{ texto: 'Kratz A, Ferraro M, Sluss PM, Lewandrowski KB. Laboratory reference values. N Engl J Med. 2004;351(15):1548-1563.' }],
+    'Os fatores de conversão derivam do peso molecular de cada analito: converter uma concentração de massa (g/dL) em concentração molar (mmol/L) é dividir pela massa de um mol da substância, e é dessa divisão que saem os números quebrados. O ferro tem fator 0,179 porque seu peso atômico é 55,85; a vitamina B12 tem fator 0,738 porque a cianocobalamina pesa 1.355 Da. Para grandezas que são apenas contagens — plaquetas, leucócitos —, não há conversão de fato, apenas mudança de potência de dez, o que é fonte frequente de erro de leitura de exames importados: 1 mm³ é exatamente 1 µL e exatamente 10⁻⁶ L, de modo que dividir por mil é toda a operação. A razão de o sistema internacional existir é boa: expressar concentrações em mol permite comparar diretamente quantidades de moléculas que reagem entre si, o que importa em estequiometria e em fisiologia de transporte. A razão de ele não ter sido adotado universalmente também é boa: as faixas de referência, os protocolos e a memória clínica de gerações de médicos estão em unidades convencionais, e trocar a unidade sem trocar o hábito produz mais erro do que precisão. O resultado é que a medicina convive com dois sistemas, e a conversão deixou de ser curiosidade acadêmica para se tornar habilidade de segurança do paciente — sobretudo com laudos de laboratórios internacionais, literatura europeia e calculadoras online que não declaram qual convenção adotam.',
+  armadilhas: [
+    'Plaquetas de 250 ×10⁹/L são 250.000/mm³, não 250/mm³. Confundir as escalas gera pânico injustificado ou falsa tranquilidade.',
+    'Existem duas convenções para hemoglobina em mmol/L: monômero (fator 0,6206) e tetrâmero (fator 0,1551). Uma Hb de 14 g/dL é 8,7 ou 2,2 mmol/L conforme a convenção, e a diferença de quatro vezes já foi confundida com anemia grave.',
+    'ng/mL e µg/L são numericamente idênticos, assim como /mm³ e /µL. Quando o laudo troca a unidade e mantém o número, não é erro — é equivalência.',
+    'Converter não valida: um valor mal colhido, hemolisado ou de tubo errado continua errado em qualquer unidade. Ferro sérico colhido à tarde e ferritina em vigência de infecção são exemplos clássicos.',
+    'Faixas de referência não são universais. Variam com método analítico, equipamento, altitude, idade, sexo e gestação — use a do laboratório emissor, não a da memória.',
+  ],
+  referencias: [
+    { texto: 'Kratz A, Ferraro M, Sluss PM, Lewandrowski KB. Laboratory reference values. N Engl J Med. 2004;351(15):1548-1563.' },
+    { texto: 'Bureau International des Poids et Mesures. The International System of Units (SI). 9th edition, 2019.' },
+    { texto: 'Clinical and Laboratory Standards Institute. Defining, Establishing, and Verifying Reference Intervals in the Clinical Laboratory. CLSI EP28-A3c.' },
+  ],
 }
 
 const inrEstimado: Ferramenta = {
