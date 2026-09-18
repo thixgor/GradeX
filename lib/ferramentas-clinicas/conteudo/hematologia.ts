@@ -120,12 +120,12 @@ const hemogramaAbs: Ferramenta = {
   resumo: 'Converte os percentuais do leucograma em valores absolutos, que são os que importam.',
   categorias: ['hematologia', 'infectologia'],
   campos: [
-    campoNum('leucocitos', 'Leucócitos totais', { unidade: '/mm³', min: 50, max: 500000, passo: 100, normalMin: 4000, normalMax: 11000 }),
-    campoNum('neutro', 'Neutrófilos segmentados', { unidade: '%', min: 0, max: 100, passo: 0.1 }),
-    campoNum('bastoes', 'Bastonetes', { unidade: '%', min: 0, max: 60, passo: 0.1, padrao: '0' }),
-    campoNum('linfo', 'Linfócitos', { unidade: '%', min: 0, max: 100, passo: 0.1 }),
-    campoNum('mono', 'Monócitos', { unidade: '%', min: 0, max: 60, passo: 0.1, opcional: true }),
-    campoNum('eos', 'Eosinófilos', { unidade: '%', min: 0, max: 60, passo: 0.1, opcional: true }),
+    campoNum('leucocitos', 'Leucócitos totais', { unidade: '/mm³', min: 50, max: 500000, passo: 100, normalMin: 4000, normalMax: 11000, ajuda: 'Em /mm³ (equivale a /µL). Se o laudo vier em ×10⁹/L, multiplique por 1000 — 7,2 ×10⁹/L são 7.200/mm³.' }),
+    campoNum('neutro', 'Neutrófilos segmentados', { unidade: '%', min: 0, max: 100, passo: 0.1, ajuda: 'Apenas os segmentados. Os bastonetes vão no campo seguinte e são somados automaticamente para o cálculo dos neutrófilos absolutos.' }),
+    campoNum('bastoes', 'Bastonetes', { unidade: '%', min: 0, max: 60, passo: 0.1, padrao: '0', ajuda: 'Neutrófilos jovens, de núcleo não segmentado. Entram na contagem absoluta de neutrófilos porque são funcionalmente competentes — ao contrário de metamielócitos e mielócitos, que não contam.' }),
+    campoNum('linfo', 'Linfócitos', { unidade: '%', min: 0, max: 100, passo: 0.1, ajuda: 'Inclui linfócitos típicos e atípicos. Linfocitose com atipia sugere infecção viral, sobretudo mononucleose.' }),
+    campoNum('mono', 'Monócitos', { unidade: '%', min: 0, max: 60, passo: 0.1, opcional: true, ajuda: 'Opcional. Monocitose persistente é pista de leucemia mielomonocítica crônica, tuberculose e endocardite.' }),
+    campoNum('eos', 'Eosinófilos', { unidade: '%', min: 0, max: 60, passo: 0.1, opcional: true, ajuda: 'Opcional. Lembre que corticoide em uso zera os eosinófilos e pode mascarar parasitose, reação a fármaco e vasculite.' }),
   ],
   calcular: (v) => {
     const leuco = num(v, 'leucocitos')
@@ -165,12 +165,55 @@ const hemogramaAbs: Ferramenta = {
             : 'Contagem de neutrófilos adequada.',
         'A **neutropenia étnica benigna**, ligada a variantes do gene DARC/ACKR1, é comum em pessoas de ascendência africana e cursa com neutrófilos entre 1.000 e 1.500/mm³ sem qualquer risco infeccioso aumentado. Reconhecê-la evita investigações desnecessárias.',
         'A linfopenia é um marcador prognóstico subestimado: associa-se independentemente a mortalidade em sepse, em covid-19 e em várias neoplasias.',
+        'A fisiologia dos compartimentos explica quase todas as armadilhas do neutrograma. O neutrófilo existe em quatro reservatórios: o **pool proliferativo** medular (mieloblasto a mielócito, cerca de 2 dias de divisões), o **pool de reserva** medular (metamielócitos, bastonetes e segmentados maduros já formados, com aproximadamente 10 a 15 vezes a quantidade circulante), o **pool circulante** e o **pool marginado** — neutrófilos aderidos ao endotélio de capilares pulmonares e esplâncnicos, que não aparecem no hemograma e representam metade ou mais do total intravascular. O hemograma mede apenas o pool circulante, e é por isso que ele muda em minutos por redistribuição sem que nenhuma célula tenha sido produzida ou destruída. Corticoide, adrenalina, exercício e estresse causam **desmarginação**: as células soltam do endotélio e migram para o compartimento circulante, dobrando a contagem sem melhorar em nada a capacidade de defesa. Infecção bacteriana, ao contrário, esvazia o pool de reserva — e como esse pool é liberado do mais maduro para o menos maduro, o aparecimento de bastonetes (o "desvio à esquerda") indica que a reserva está sendo consumida. Quando surgem metamielócitos e mielócitos, a reserva acabou e a medula está despejando o pool proliferativo: é o achado de maior gravidade do leucograma.',
       ],
+      conduta: nAbs < 500
+        ? [
+            'Se houver febre (≥ 38,3 °C em uma medida ou ≥ 38,0 °C por uma hora), trate como **neutropenia febril**, que é emergência médica: hemoculturas de dois sítios — incluindo cada lúmen de cateter central — e antibiótico de amplo espectro com cobertura antipseudomonas na primeira hora. Cefepima, piperacilina-tazobactam ou meropeném em monoterapia. Não aguarde exame nenhum.',
+            'Estratifique com o escore **MASCC** ou o **CISNE**: MASCC ≥ 21 identifica baixo risco e permite considerar tratamento oral ambulatorial com ciprofloxacino associado a amoxicilina-clavulanato, desde que haja suporte, adesão e retorno garantido.',
+            'Acrescente vancomicina apenas com indicação definida: instabilidade hemodinâmica, suspeita de infecção de cateter, celulite, pneumonia, mucosite grave ou colonização conhecida por MRSA. Reavalie em 48 a 72 horas e descale conforme cultura — cobertura ampla indefinida seleciona resistência e favorece infecção fúngica.',
+            'Isolamento protetor, higiene rigorosa das mãos e dieta com alimentos cozidos. Fator estimulador de colônias de granulócitos (G-CSF) não é rotina no tratamento da neutropenia febril já instalada; seu papel é a profilaxia primária em esquemas com risco de neutropenia febril acima de 20%.',
+            'Suspenda ou substitua todo fármaco potencialmente causador se a neutropenia não for de quimioterapia: dipirona, metamizol, metimazol e propiltiouracila, sulfassalazina, clozapina, carbamazepina, ticlopidina e sulfas são os agentes classicamente implicados.',
+          ]
+        : nAbs < 1500
+          ? [
+              'Repita o hemograma em 1 a 2 semanas antes de investigar a fundo: neutropenia leve transitória após infecção viral é comum e se resolve sozinha. Neutropenia persistente ou progressiva é que merece investigação.',
+              'Revise a lista de medicamentos item por item — agranulocitose induzida por fármaco é a causa mais comum de neutropenia isolada relevante no adulto, e a única em que a suspensão resolve. Inclua o que o paciente não considera medicamento: dipirona em automedicação, fitoterápicos e suplementos.',
+              'Considere **neutropenia étnica benigna** em pessoas de ascendência africana com neutrófilos entre 1.000 e 1.500/mm³, sem infecções de repetição e com o restante do hemograma normal. Pesquise o histórico familiar e hemogramas antigos: se a contagem é baixa há anos sem consequência, o diagnóstico está feito e nenhuma investigação adicional é necessária.',
+              'Investigue conforme o contexto: sorologias virais (HIV, hepatites, EBV, CMV, parvovírus B19), B12 e folato, autoanticorpos, TSH e função hepática. Peça esfregaço de sangue periférico. Neutropenia acompanhada de anemia ou plaquetopenia muda o cenário e fortalece a indicação de mielograma com biópsia de medula.',
+              'Oriente o paciente a medir a temperatura e procurar atendimento imediato se houver febre — em neutropenia, o retardo do antibiótico é o que mata, e o paciente precisa saber disso antes de ficar febril.',
+            ]
+          : [
+              'Contagem de neutrófilos adequada. Se o motivo da avaliação foi leucocitose, distinga reação de doença: relação bastonetes/neutrófilos totais acima de 0,2, presença de metamielócitos e mielócitos, ou leucocitose acima de 30.000/mm³ pedem esfregaço e avaliação hematológica.',
+              'Use a **relação neutrófilo/linfócito** como marcador de inflamação sistêmica de baixo custo, mas apenas como contexto: valores acima de 6 a 9 associam-se a pior prognóstico em sepse, síndrome coronariana e neoplasia, sem definir conduta isoladamente.',
+              lAbs < 1000
+                ? 'Há linfopenia associada, que é um marcador prognóstico subestimado. Investigue HIV, corticoterapia, desnutrição, doença autoimune, linfoma e imunodeficiência; em linfopenia abaixo de 500/mm³ considere profilaxia para Pneumocystis conforme o contexto e a causa.'
+                : 'Se houver eosinofilia acima de 1.500/mm³, investigue parasitose (estrongiloidíase antes de qualquer corticoide), reação a fármaco, atopia grave, vasculite eosinofílica e neoplasia mieloide com rearranjo de PDGFRA/PDGFRB.',
+            ],
+      alertas: [
+        'Percentual não decide nada. Nenhuma conduta — nem antibiótico, nem isolamento, nem investigação — deve ser tomada sobre percentual de neutrófilos sem converter para valor absoluto.',
+        'Corticoide em uso eleva os neutrófilos por desmarginação, sem qualquer ganho de função. Um paciente corticoidado com 8.000 neutrófilos pode estar tão vulnerável quanto antes, e a leucocitose não exclui infecção grave.',
+        'Metamielócitos e mielócitos **não** entram na contagem de neutrófilos absolutos, mas a presença deles é mais grave que a de bastonetes: indica esgotamento do pool de reserva medular.',
+        nAbs < 500
+          ? 'Febre em neutropenia grave não admite espera por hemograma de controle, radiografia ou avaliação de especialista. Antibiótico na primeira hora, e depois se investiga.'
+          : 'Neutropenia com anemia ou plaquetopenia concomitantes não é neutropenia isolada: a investigação passa a incluir aplasia, mielodisplasia, leucemia e infiltração medular, com indicação forte de mielograma.',
+      ],
+      tabela: {
+        titulo: 'Graus de neutropenia e risco infeccioso',
+        colunas: ['Neutrófilos absolutos', 'Grau', 'Risco', 'Conduta na febre'],
+        linhas: [
+          ['≥ 1.500/mm³', 'Normal', 'Basal', 'Conduta habitual'],
+          ['1.000 – 1.499/mm³', 'Leve', 'Pouco aumentado', 'Investigação usual, vigilância'],
+          ['500 – 999/mm³', 'Moderada', 'Aumentado', 'Antibiótico precoce, considerar internação'],
+          ['< 500/mm³', 'Grave', 'Alto', 'Emergência: antibiótico na 1ª hora'],
+        ],
+        destaque: nAbs >= 1500 ? 0 : nAbs >= 1000 ? 1 : nAbs >= 500 ? 2 : 3,
+      },
     }
   },
   formula: ['Neutrófilos absolutos = leucócitos × (% segmentados + % bastonetes) / 100', 'Linfócitos absolutos = leucócitos × % linfócitos / 100'],
   fundamento:
-    'O leucograma diferencial é reportado em percentuais por razões históricas do método manual, mas a defesa do organismo depende do número de células, não da proporção. Converter para valor absoluto é o passo mais simples e mais frequentemente esquecido da leitura do hemograma.',
+    'O leucograma diferencial é reportado em percentuais por razões históricas do método manual, mas a defesa do organismo depende do número de células, não da proporção. Converter para valor absoluto é o passo mais simples e mais frequentemente esquecido da leitura do hemograma. A razão de o valor absoluto ser o que importa é mecanicista: a defesa contra bactérias e fungos depende de o neutrófilo chegar em número suficiente ao sítio de infecção, aderir ao endotélio, migrar pelo interstício, fagocitar e produzir a explosão respiratória. Cada uma dessas etapas consome células, e o consumo é proporcional à carga microbiana, não à fração que os neutrófilos representam no leucograma. O limiar de 500/mm³ não é convenção administrativa: abaixo dele a incidência de bacteremia sobe abruptamente e o paciente perde a capacidade de formar pus, o que tem consequência diagnóstica direta — a pneumonia pode não consolidar na radiografia, a infecção urinária pode não ter piúria, o abscesso pode não flutuar. A ausência dos sinais clássicos de inflamação em paciente neutropênico é a regra, não a exceção, e é por isso que a febre isolada basta para acionar o protocolo. A contagem também precisa ser lida em duas dimensões: o número atual e a **velocidade de queda**, porque um paciente descendo rapidamente de 3.000 para 800 tem risco diferente de outro estável em 800 há meses. Por fim, vale saber que os bastonetes entram na conta e os metamielócitos não — não por convenção, mas porque o bastonete já é funcionalmente competente para fagocitose, enquanto formas mais imaturas não são, e sua presença no sangue sinaliza esgotamento da reserva medular em vez de reforço da defesa.',
   armadilhas: [
     'Contadores automatizados podem classificar mal células imaturas. Diante de citopenia importante ou de desvio acentuado, peça revisão do esfregaço por microscopia.',
     'A contagem de neutrófilos oscila com corticoide (que a eleva por desmarginação, sem melhorar a função), com exercício, com estresse e ao longo do dia.',
@@ -277,9 +320,9 @@ const plaquetasCorrigidas: Ferramenta = {
   resumo: 'Avalia se a transfusão de plaquetas funcionou e identifica refratariedade.',
   categorias: ['hematologia'],
   campos: [
-    campoNum('pre', 'Plaquetas antes da transfusão', { unidade: '×10⁹/L', min: 0, max: 300, passo: 1 }),
-    campoNum('pos', 'Plaquetas após a transfusão', { unidade: '×10⁹/L', min: 0, max: 500, passo: 1 }),
-    campoNum('sc', 'Superfície corporal', { unidade: 'm²', min: 0.2, max: 3, passo: 0.01 }),
+    campoNum('pre', 'Plaquetas antes da transfusão', { unidade: '×10⁹/L', min: 0, max: 300, passo: 1, ajuda: 'Colhida imediatamente antes de iniciar a infusão. Usar um hemograma de horas antes já invalida o cálculo, porque a contagem pode ter caído no intervalo.' }),
+    campoNum('pos', 'Plaquetas após a transfusão', { unidade: '×10⁹/L', min: 0, max: 500, passo: 1, ajuda: 'O momento da coleta é o que define qual corte se aplica — escolha-o no campo abaixo. Coleta fora das duas janelas não é interpretável.' }),
+    campoNum('sc', 'Superfície corporal', { unidade: 'm²', min: 0.2, max: 3, passo: 0.01, ajuda: 'Normaliza pelo volume sanguíneo: a mesma dose eleva mais a contagem de uma pessoa pequena. Calcule por Mosteller — raiz de (peso × altura / 3600).' }),
     campoNum('unidades', 'Unidades transfundidas', { min: 1, max: 12, passo: 1, padrao: '1', ajuda: '1 unidade de aférese equivale a cerca de 6 unidades de plaquetas randômicas, com 3 a 4 ×10¹¹ plaquetas.' }),
     campoSeg('tipo', 'Tipo de concentrado', [
       { valor: 'aferese', rotulo: 'Aférese (3,0 ×10¹¹ por unidade)' },
@@ -320,15 +363,51 @@ const plaquetasCorrigidas: Ferramenta = {
         '**Causas não imunes** respondem por cerca de 80% da refratariedade e devem ser excluídas primeiro: febre, sepse, esplenomegalia, coagulação intravascular disseminada, sangramento ativo, anfotericina B, vancomicina, heparina, doença do enxerto contra o hospedeiro e microangiopatia. Nessas, o CCI de 1 hora costuma ser adequado e o de 24 horas cai — o consumo é periférico.',
         '**Causa imune** (aloimunização HLA ou HPA) tipicamente derruba já o CCI de 1 hora. Confirme com pesquisa de anticorpos anti-HLA e trate com plaquetas HLA-compatíveis ou compatibilizadas por prova cruzada. Leucorredução universal dos hemocomponentes reduziu muito a incidência de aloimunização.',
         'A superfície corporal entra na fórmula para normalizar pelo volume sanguíneo — a mesma dose de plaquetas eleva mais a contagem de uma pessoa pequena.',
+        'A razão de existirem **duas** coletas com dois cortes diferentes é puramente fisiológica, e é o que transforma o CCI num teste que localiza o problema. A plaqueta transfundida tem sobrevida normal de 4 a 5 dias, e cerca de um terço do total é sequestrado no baço em equilíbrio dinâmico com a circulação. A coleta de 10 minutos a 1 hora mede **recuperação**: quantas das plaquetas infundidas chegaram ao compartimento circulante. Já passou tempo suficiente para a distribuição esplênica se equilibrar, mas não para consumo significativo. Um CCI de 1 hora baixo significa, portanto, que as plaquetas foram destruídas ou sequestradas imediatamente — e destruição imediata é assinatura de mecanismo **imune**: anticorpo anti-HLA de classe I preexistente liga o antígeno na plaqueta transfundida e a remove pelo sistema retículo-endotelial em minutos. Esplenomegalia volumosa é a outra causa de recuperação baixa, por sequestro puramente mecânico. A coleta de 18 a 24 horas mede **sobrevida**: um CCI de 1 hora adequado que desaba em 24 horas indica que as plaquetas chegaram e foram consumidas depois, o que aponta para consumo periférico — febre, sepse, coagulação intravascular disseminada, sangramento ativo ou fármaco. Esse padrão de dissociação entre as duas medidas é a informação mais útil do exame, e se perde quando apenas uma coleta é feita.',
       ],
+      conduta: adequado
+        ? [
+            'Resposta adequada: mantenha o gatilho transfusional institucional. Habitualmente 10 ×10⁹/L na profilaxia do paciente estável, 20 ×10⁹/L com febre, sepse ou uso de anticoagulante, 50 ×10⁹/L para procedimento invasivo ou sangramento ativo, e 100 ×10⁹/L para neurocirurgia ou sangramento em sistema nervoso central.',
+            'Não transfunda por número em paciente estável e sem sangramento acima do gatilho: cada exposição aumenta o risco de aloimunização HLA, que é justamente o que torna as transfusões futuras ineficazes. A estratégia restritiva está bem estabelecida.',
+            'Registre o CCI no prontuário. Só com o valor anterior documentado é possível caracterizar refratariedade depois, que exige **dois** resultados consecutivos inadequados.',
+          ]
+        : [
+            'Antes de rotular como refratariedade, confirme que as condições do teste foram adequadas: concentrado ABO compatível, armazenado por menos de 72 horas, e coleta no intervalo correto. Plaqueta ABO incompatível ou próxima do fim da validade produz CCI baixo sem nenhuma aloimunização.',
+            'Exclua as **causas não imunes** primeiro — elas respondem por cerca de 80% dos casos e são as tratáveis: febre e sepse (trate a infecção), esplenomegalia, coagulação intravascular disseminada (dose fibrinogênio, D-dímero e aplique o escore ISTH), sangramento ativo, microangiopatia, doença do enxerto contra o hospedeiro e fármacos — anfotericina B, vancomicina, heparina (calcule o 4Ts), linezolida, sulfas.',
+            uma
+              ? 'O CCI de 1 hora inadequado aponta para destruição imediata: solicite **pesquisa de anticorpos anti-HLA classe I** (PRA) e, se positiva, providencie plaquetas HLA-compatíveis ou selecionadas por prova cruzada. Se a pesquisa for negativa, considere anticorpo anti-HPA, que é mais raro e exige painel específico.'
+              : 'O CCI de 1 hora adequado com queda em 24 horas indica consumo periférico, não aloimunização. A conduta é tratar a causa do consumo — pesquisa de anti-HLA nesse padrão tende a ser negativa e a transfusão HLA-compatível não resolve.',
+            'Enquanto a causa é investigada, mantenha suporte transfusional conforme o sangramento e não conforme o número, e considere antifibrinolítico (ácido tranexâmico) como adjuvante em sangramento mucoso — com a ressalva de evitá-lo em hematúria e em coagulação intravascular disseminada com trombose predominante.',
+            'Solicite avaliação do hematologista e do serviço de hemoterapia. Refratariedade confirmada muda a logística do cuidado: exige doador compatibilizado, planejamento antecipado para procedimentos e, em alguns casos, imunoglobulina ou imunossupressão.',
+          ],
+      alertas: [
+        'O CCI avalia a **eficácia da transfusão**, não a necessidade dela. Um CCI excelente não justifica transfundir um paciente estável acima do gatilho, e um CCI ruim não justifica transfundir mais em quem não sangra.',
+        'Refratariedade exige **dois** CCIs consecutivos abaixo do corte, com concentrados ABO compatíveis e frescos. Um único resultado ruim é insuficiente e costuma ter explicação técnica.',
+        'A fórmula depende do conteúdo plaquetário real do concentrado, que varia entre serviços. Os valores usados aqui (3,0 ×10¹¹ por aférese e 0,55 ×10¹¹ por randômica) são estimativas — se a bolsa informa o conteúdo medido, prefira esse dado.',
+      ],
+      tabela: {
+        titulo: 'Como o padrão das duas coletas localiza a causa',
+        colunas: ['CCI de 1 hora', 'CCI de 24 horas', 'Mecanismo', 'Conduta'],
+        linhas: [
+          ['Adequado', 'Adequado', 'Resposta normal', 'Manter gatilho transfusional'],
+          ['Adequado', 'Baixo', 'Consumo periférico', 'Tratar febre, sepse, CIVD, sangramento, fármaco'],
+          ['Baixo', 'Baixo', 'Destruição imediata ou sequestro', 'Pesquisar anti-HLA; avaliar esplenomegalia'],
+        ],
+        destaque: adequado ? 0 : uma ? 2 : 1,
+      },
     }
   },
   formula: ['CCI = [(plaquetas pós − plaquetas pré) × superfície corporal] ÷ número de plaquetas transfundidas (×10¹¹)'],
   fundamento:
-    'A contagem pós-transfusional bruta não permite comparar resposta entre pacientes nem entre doses. O CCI normaliza pelas duas variáveis que confundem a leitura — o tamanho do receptor e a dose transfundida —, permitindo dizer se a plaqueta transfundida sobreviveu ou foi destruída.',
+    'A contagem pós-transfusional bruta não permite comparar resposta entre pacientes nem entre doses. O CCI normaliza pelas duas variáveis que confundem a leitura — o tamanho do receptor e a dose transfundida —, permitindo dizer se a plaqueta transfundida sobreviveu ou foi destruída. A construção é simples e vale entendê-la: o incremento absoluto é multiplicado pela superfície corporal (que é o substituto prático do volume sanguíneo, num paciente em que medir volemia é inviável) e dividido pelo número de plaquetas efetivamente infundidas, em unidades de 10¹¹. O resultado é uma medida de eficiência da transfusão, independente do tamanho do paciente e da dose — e é por isso que um incremento de 20 ×10⁹/L pode ser excelente numa mulher de 1,5 m² recebendo uma randômica e péssimo num homem de 2,0 m² recebendo duas aféreses. A grande virtude clínica do CCI, porém, não está no número isolado, e sim no contraste entre as duas janelas de coleta. A plaqueta transfundida tem sobrevida normal de 4 a 5 dias e distribui-se com cerca de um terço sequestrado no baço; a coleta de 10 minutos a 1 hora já capta o equilíbrio esplênico mas nenhum consumo relevante, medindo portanto **recuperação**, enquanto a de 18 a 24 horas mede **sobrevida**. Recuperação baixa é destruição imediata, assinatura do mecanismo imune — o anticorpo anti-HLA de classe I preexistente liga o antígeno na plaqueta transfundida e o sistema retículo-endotelial a remove em minutos. Recuperação normal com sobrevida curta é consumo periférico, que é o padrão da febre, da sepse, da coagulação intravascular disseminada e do sangramento ativo. Historicamente, a leucorredução universal dos hemocomponentes reduziu de forma acentuada a incidência de aloimunização HLA, porque o leucócito do doador — e não a plaqueta — é o principal apresentador de antígeno de classe II que desencadeia a resposta. Isso deslocou o peso relativo das causas, e hoje aproximadamente 80% da refratariedade é não imune, o que inverte a ordem correta de investigação: procure febre, sepse, esplenomegalia e fármaco antes de pedir painel de anticorpos.',
   armadilhas: [
     'Colher a amostra pós-transfusional pelo mesmo cateter usado para transfundir contamina o resultado.',
     'Transfusão profilática de plaquetas está indicada abaixo de 10 ×10⁹/L em paciente estável; limiares maiores (20, 50 ou 100) valem conforme procedimento, sangramento e comorbidade.',
+    'Concentrado ABO incompatível ou armazenado por mais de 72 horas produz CCI baixo sem nenhuma aloimunização. Confirme as duas condições antes de rotular refratariedade — caso contrário o teste mede a logística do banco de sangue, não o paciente.',
+    'Coleta fora das duas janelas validadas não é interpretável. Entre 2 e 17 horas o resultado mistura recuperação e sobrevida e não permite distinguir mecanismo imune de consumo periférico.',
+    'Refratariedade exige dois CCIs consecutivos inadequados. Agir sobre um único resultado leva a pedidos desnecessários de plaquetas HLA-compatíveis, que são escassas e de logística difícil.',
+    'O conteúdo plaquetário usado na conta é estimado (3,0 ×10¹¹ por aférese, 0,55 ×10¹¹ por randômica) e varia entre serviços. Se a bolsa traz o conteúdo medido, use-o — a diferença altera o CCI proporcionalmente.',
+    'Pedir painel de anticorpos anti-HLA antes de excluir febre, sepse, esplenomegalia e fármaco inverte a probabilidade: cerca de 80% da refratariedade é não imune desde a leucorredução universal.',
   ],
   referencias: [
     { texto: 'Kaufman RM, Djulbegovic B, Gernsheimer T, et al. Platelet transfusion: a clinical practice guideline from the AABB. Ann Intern Med. 2015;162(3):205-213.' },
@@ -415,23 +494,23 @@ const caprini: Ferramenta = {
       { valor: '2', rotulo: '61 a 74 anos', pontos: 2 },
       { valor: '3', rotulo: '≥ 75 anos', pontos: 3 },
     ]),
-    campoSimNao('cirurgiaMenor', 'Cirurgia de pequeno porte', 1),
-    campoSimNao('cirurgiaMaior', 'Cirurgia de grande porte (> 45 min) ou laparoscópica > 45 min', 2),
-    campoSimNao('artroplastia', 'Artroplastia eletiva de membro inferior', 5),
-    campoSimNao('fraturaQuadril', 'Fratura de quadril, pelve ou membro inferior', 5),
-    campoSimNao('avcAgudo', 'AVC agudo (< 1 mês)', 5),
-    campoSimNao('medular', 'Lesão medular aguda (< 1 mês)', 5),
-    campoSimNao('tevPrevio', 'Tromboembolismo venoso prévio', 3),
+    campoSimNao('cirurgiaMenor', 'Cirurgia de pequeno porte', 1, 'Procedimento de menos de 45 minutos. Marque apenas um dos dois itens de porte cirúrgico, não os dois.'),
+    campoSimNao('cirurgiaMaior', 'Cirurgia de grande porte (> 45 min) ou laparoscópica > 45 min', 2, 'A duração é o que pesa, não a via: laparoscopia longa vale o mesmo que laparotomia, porque o pneumoperitônio também reduz o retorno venoso femoral.'),
+    campoSimNao('artroplastia', 'Artroplastia eletiva de membro inferior', 5, 'Item de 5 pontos: sem profilaxia, a incidência de trombose venosa profunda em artroplastia de quadril e joelho passa de 40% em séries históricas com flebografia.'),
+    campoSimNao('fraturaQuadril', 'Fratura de quadril, pelve ou membro inferior', 5, 'Soma lesão endotelial direta, imobilidade e resposta inflamatória — os três vértices da tríade de Virchow num só evento.'),
+    campoSimNao('avcAgudo', 'AVC agudo (< 1 mês)', 5, 'A paralisia abole a bomba muscular da panturrilha no membro plégico, onde a estase é máxima. Atenção ao risco hemorrágico no AVC hemorrágico ou pós-trombólise.'),
+    campoSimNao('medular', 'Lesão medular aguda (< 1 mês)', 5, 'É o cenário de maior risco trombótico da medicina: paralisia, perda do tônus vasomotor simpático abaixo da lesão e imobilidade prolongada.'),
+    campoSimNao('tevPrevio', 'Tromboembolismo venoso prévio', 3, 'O fator de risco isolado mais forte para recorrência. Registre se o evento anterior foi provocado ou não provocado — isso muda a duração do tratamento se houver novo evento.'),
     campoSimNao('historiaFamiliar', 'História familiar de tromboembolismo', 3),
     campoSimNao('trombofilia', 'Trombofilia laboratorial (fator V de Leiden, anticoagulante lúpico, anticardiolipina, mutação da protrombina, hiper-homocisteinemia)', 3),
-    campoSimNao('obesidade', 'IMC > 25', 1),
-    campoSimNao('imobilizacao', 'Repouso no leito por mais de 72 h', 2),
+    campoSimNao('obesidade', 'IMC > 25', 1, 'Corte baixo nesta versão do escore. Na obesidade com IMC acima de 40, além de pontuar, a dose profilática precisa ser ajustada — 40 mg de enoxaparina são insuficientes.'),
+    campoSimNao('imobilizacao', 'Repouso no leito por mais de 72 h', 2, 'Repouso efetivo, não prescrito. Paciente que senta na poltrona e caminha ao banheiro não está imobilizado.'),
     campoSimNao('gesso', 'Imobilização gessada', 2),
-    campoSimNao('cateter', 'Acesso venoso central', 2),
-    campoSimNao('cancer', 'Neoplasia maligna atual ou prévia', 2),
-    campoSimNao('varizes', 'Varizes de membros inferiores', 1),
+    campoSimNao('cateter', 'Acesso venoso central', 2, 'Inclui cateter de inserção periférica (PICC), que tem risco de trombose de membro superior maior que o cateter central de inserção central.'),
+    campoSimNao('cancer', 'Neoplasia maligna atual ou prévia', 2, 'O tumor gera fator tecidual, micropartículas circulantes e mucinas que ativam plaquetas diretamente. Em oncológico com cateter e quimioterapia, o risco supera a soma das partes — considere também o escore de Khorana.'),
+    campoSimNao('varizes', 'Varizes de membros inferiores', 1, 'Insuficiência valvar significa estase crônica nos seios valvares, que é exatamente onde a trombose venosa profunda se inicia.'),
     campoSimNao('edema', 'Edema de membros inferiores', 1),
-    campoSimNao('sepse', 'Sepse (< 1 mês)', 1),
+    campoSimNao('sepse', 'Sepse (< 1 mês)', 1, 'A sepse é pró-trombótica por ativação de fator tecidual em monócitos, consumo de anticoagulantes naturais e supressão da fibrinólise.'),
     campoSimNao('pulmonar', 'Doença pulmonar grave ou pneumonia (< 1 mês)', 1),
     campoSimNao('gestacao', 'Gestação ou puerpério (< 1 mês)', 1),
     campoSimNao('anticoncepcional', 'Contraceptivo oral ou terapia hormonal', 1),
@@ -488,6 +567,38 @@ const caprini: Ferramenta = {
         'O Caprini é o modelo de avaliação de risco mais validado em cirurgia geral, plástica, ortopédica e urológica, com dezenas de estudos de validação externa. Sua granularidade — mais de 30 fatores na versão completa — é ao mesmo tempo sua força e sua fraqueza: captura bem o risco, mas é demorado de aplicar.',
         '**A decisão final combina risco trombótico e risco hemorrágico.** Em neurocirurgia, cirurgia oftalmológica e procedimentos com anestesia neuroaxial, os prazos e as escolhas mudam substancialmente.',
         'Momento de início: enoxaparina 12 horas antes ou 12 a 24 horas após a cirurgia, conforme o protocolo. Em anestesia neuroaxial, respeite os intervalos entre a última dose e a punção ou retirada do cateter — 12 horas para dose profilática e 24 horas para dose terapêutica de heparina de baixo peso molecular.',
+        'Os itens do escore são, no fundo, a **tríade de Virchow** desdobrada em fatores contáveis, e enxergar isso torna o escore memorizável em vez de decorável. A **estase** aparece na imobilidade, no repouso prolongado, na cirurgia de mais de 45 minutos, na imobilização gessada e na paralisia — em todos, o retorno venoso deixa de contar com a bomba muscular da panturrilha, e o sangue estagna preferencialmente nos seios valvares da panturrilha, onde a trombose venosa profunda quase sempre começa. A estase causa hipóxia local no endotélio valvar, que responde expressando P-selectina e fator tecidual, transformando uma superfície antitrombótica em pró-trombótica. A **lesão endotelial** aparece no trauma, na cirurgia, no cateter venoso central e na fratura. E a **hipercoagulabilidade** aparece na neoplasia (por fator tecidual tumoral, micropartículas circulantes e mucinas que ativam plaquetas diretamente), na gravidez e no puerpério, no estrogênio exógeno, na sepse, na doença inflamatória intestinal e nas trombofilias hereditárias. A cirurgia é peculiar porque ativa os três vértices simultaneamente: imobiliza, lesa o endotélio e desencadeia resposta inflamatória sistêmica com elevação de fibrinogênio, fator VIII e inibidor do ativador de plasminogênio — ou seja, reduz também a fibrinólise. É por isso que o risco cirúrgico não termina na alta: o estado pró-trombótico persiste por semanas, e é esse fato que fundamenta a profilaxia estendida por 28 a 35 dias na artroplastia e na cirurgia oncológica abdominopélvica.',
+      ],
+      conduta: faixa === 0
+        ? [
+            'Nenhuma profilaxia farmacológica ou mecânica é necessária. A conduta é **deambulação precoce** e hidratação adequada — o que não é placebo: a contração da musculatura da panturrilha é a bomba que impede a estase nos seios valvares onde a trombose se inicia.',
+            'Reavalie o escore se algo mudar: complicação pós-operatória, infecção, reoperação, imobilização não planejada ou internação prolongada deslocam o paciente de faixa, e o Caprini da admissão não vale para sempre.',
+          ]
+        : faixa === 1
+          ? [
+              'Profilaxia **mecânica**: compressão pneumática intermitente ou meia elástica de compressão graduada, iniciada no intraoperatório e mantida enquanto houver restrição de mobilidade.',
+              'Deambulação precoce e progressiva é parte da profilaxia, não um complemento dela.',
+              'Reavalie diariamente: a maioria dos pacientes de baixo risco que desenvolve trombose mudou de faixa durante a internação e ninguém recalculou.',
+            ]
+          : faixa === 2
+            ? [
+                'Profilaxia **farmacológica ou mecânica**, conforme o risco hemorrágico. Enoxaparina 40 mg por via subcutânea uma vez ao dia é o esquema padrão; heparina não fracionada 5.000 UI a cada 8 ou 12 horas é alternativa aceitável e preferível na insuficiência renal grave.',
+                'Ajuste a dose pelo peso e pela função renal: na obesidade com IMC ≥ 40 considere enoxaparina 40 mg a cada 12 horas ou 0,5 mg/kg/dia; com clearance abaixo de 30 mL/min reduza para 20 mg/dia ou use heparina não fracionada.',
+                'Se o risco hemorrágico for proibitivo, use profilaxia mecânica e reavalie diariamente a possibilidade de introduzir a farmacológica assim que a hemostasia permitir.',
+              ]
+            : [
+                'Profilaxia **farmacológica somada à mecânica** — a combinação é superior a qualquer das duas isoladamente nesta faixa. Enoxaparina 40 mg/dia por via subcutânea mais compressão pneumática intermitente.',
+                'Início: 12 horas antes ou 12 a 24 horas após a cirurgia, conforme protocolo institucional e hemostasia. Em anestesia neuroaxial, respeite 12 horas entre a última dose profilática e a punção ou retirada do cateter, e 24 horas se a dose for terapêutica — punção com heparina circulante é a via para hematoma espinhal e paraplegia.',
+                faixa === 4
+                  ? 'Considere **profilaxia estendida** por 28 a 35 dias após a alta: é formalmente indicada em artroplastia de quadril e joelho e em cirurgia oncológica abdominopélvica, cenários em que o estado pró-trombótico persiste muito além da internação e a maioria dos eventos ocorre depois da alta.'
+                  : 'Mantenha a profilaxia durante toda a internação e reavalie a indicação de estendê-la após a alta conforme o procedimento e a mobilidade.',
+                'Investigue e trate o que é modificável antes da cirurgia eletiva quando possível: suspensão de estrogênio ou contraceptivo combinado 4 a 6 semanas antes, compensação de insuficiência cardíaca, tratamento de infecção ativa e otimização da anemia.',
+              ],
+      alertas: [
+        'O Caprini estima risco **trombótico** e não diz nada sobre risco hemorrágico. A decisão final é sempre a comparação entre os dois — e em neurocirurgia, cirurgia oftalmológica, cirurgia de grande porte com hemostasia difícil ou plaquetopenia, o risco de sangrar pode superar o de trombosar mesmo com escore alto.',
+        'O escore é da admissão, e o paciente muda. Reoperação, infecção, imobilização não prevista, internação em terapia intensiva e cateter central novo elevam a faixa — recalcule.',
+        'Existem versões de 2005, 2010 e 2013 com itens e pesos diferentes, e a comparação entre serviços que usam versões distintas não é válida. Padronize uma versão e registre qual foi usada.',
+        'Não se aplica a pacientes clínicos não cirúrgicos, para os quais o escore validado é o de Pádua, nem substitui a avaliação específica da gestante, que tem escore próprio da RCOG.',
       ],
       tabela: {
         titulo: 'Estratificação de Caprini',
@@ -505,10 +616,14 @@ const caprini: Ferramenta = {
   },
   formula: ['Soma ponderada de fatores de risco (1, 2, 3 ou 5 pontos cada)'],
   fundamento:
-    'Caprini construiu o modelo nos anos 1990 a partir da literatura de fatores de risco, atribuindo pesos proporcionais à magnitude da associação. Os itens de 5 pontos — artroplastia, fratura de quadril, AVC e lesão medular — são justamente aqueles cujo risco de trombose sem profilaxia supera 40% em séries históricas.',
+    'Caprini construiu o modelo nos anos 1990 a partir da literatura de fatores de risco, atribuindo pesos proporcionais à magnitude da associação. Os itens de 5 pontos — artroplastia, fratura de quadril, AVC e lesão medular — são justamente aqueles cujo risco de trombose sem profilaxia supera 40% em séries históricas. A lógica de agregação é a de um modelo aditivo de fatores independentes, e é aí que reside tanto sua força quanto sua limitação: o escore assume que os riscos se somam, quando na prática alguns se multiplicam — neoplasia com cateter central e quimioterapia, por exemplo, tem risco superior à soma das partes. Ainda assim o modelo funciona porque os itens mapeiam a **tríade de Virchow** de forma bastante completa. A estase entra pela imobilidade, pelo repouso, pela duração cirúrgica e pela paralisia, e importa porque o retorno venoso depende da bomba muscular da panturrilha: sem ela, o sangue estagna nos seios valvares, o endotélio local fica hipóxico e passa a expressar P-selectina e fator tecidual, convertendo uma superfície antitrombótica em pró-trombótica. A lesão endotelial entra pelo trauma, pela cirurgia, pela fratura e pelo cateter. A hipercoagulabilidade entra pela neoplasia — que gera fator tecidual tumoral, micropartículas circulantes e mucinas ativadoras de plaqueta —, pela gravidez, pelo estrogênio, pela sepse, pela doença inflamatória intestinal e pelas trombofilias. A cirurgia é o único item que aciona os três vértices ao mesmo tempo, e ainda acrescenta um quarto elemento: a resposta inflamatória sistêmica eleva fibrinogênio, fator VIII e inibidor do ativador de plasminogênio, o que reduz a fibrinólise. Esse estado persiste por semanas depois da alta, e é o fundamento fisiopatológico da profilaxia estendida por 28 a 35 dias em artroplastia e em cirurgia oncológica abdominopélvica — a maioria dos eventos nesses grupos ocorre após a saída do hospital, quando ninguém está mais olhando.',
   armadilhas: [
     'Existem múltiplas versões (2005, 2010, 2013) com itens e pesos diferentes. Padronize uma no serviço.',
     'A idade é contada uma única vez, na faixa correspondente — não é cumulativa.',
+    'O escore não mede risco hemorrágico, e a decisão de profilaxia farmacológica é sempre a comparação entre os dois riscos. Escore alto com hemostasia precária não indica anticoagulante automaticamente.',
+    'Calculado na admissão e nunca recalculado, o escore envelhece mal: reoperação, infecção, internação em UTI, cateter novo e imobilização não prevista mudam a faixa e a conduta.',
+    'É um escore de paciente **cirúrgico**. Para o paciente clínico internado o instrumento validado é o de Pádua, e aplicar Caprini nesse cenário superestima sistematicamente a indicação.',
+    'O modelo é aditivo e portanto subestima combinações sinérgicas, sobretudo neoplasia somada a cateter venoso central e quimioterapia. No paciente oncológico, considere também o escore de Khorana.',
   ],
   referencias: [
     { texto: 'Caprini JA. Thrombosis risk assessment as a guide to quality patient care. Dis Mon. 2005;51(2-3):70-78.' },
