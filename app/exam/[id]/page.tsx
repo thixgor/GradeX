@@ -21,7 +21,6 @@ import { Barcode } from '@/components/barcode'
 import { Exam, UserAnswer, TextHighlight, QuestionAnnotation } from '@/lib/types'
 import { HighlightableText } from '@/components/highlightable-text'
 import { formatDate } from '@/lib/utils'
-import { downloadUserReportPDF } from '@/lib/user-report-generator'
 import { ProctoringConsent } from '@/components/proctoring-consent'
 import { ProctoringMonitor } from '@/components/proctoring-monitor'
 import { InlineAnnotationCanvas, useAnnotationModeActive } from '@/components/inline-annotation-canvas'
@@ -3254,6 +3253,11 @@ ${respostaAluno}`
                     }
                     try {
                       setPdfGenerating('Relatório')
+                      // `jspdf` (328 KB) sob demanda: a prova é para responder,
+                      // e o relatório é um clique opcional no fim dela.
+                      const { downloadUserReportPDF } = await import(
+                        '@/lib/user-report-generator'
+                      )
                       await downloadUserReportPDF({
                         exam: { ...exam, questions: exam.questions },
                         examId: id,

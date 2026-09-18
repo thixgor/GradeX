@@ -49,7 +49,22 @@ import { InlineAnnotationCanvas } from '@/components/inline-annotation-canvas'
 import { HighlightableText } from '@/components/highlightable-text'
 import { ImageModal } from '@/components/image-modal'
 import { ReportQuestionModal } from '@/components/report-question-modal'
-import { generateBancoListaPDF, downloadPDF, prewarmPDFAssets } from '@/lib/pdf-generator'
+/**
+ * `pdf/marca` e não `pdf-generator`.
+ *
+ * `lib/pdf-generator.ts` importa `jspdf` no topo — 328 KB que, importados
+ * estaticamente aqui, entravam na carga inicial desta rota (a mais pesada do
+ * projeto no build). Ninguém precisa do jsPDF para *ler* a lista: só para
+ * exportá-la. O gerador passou a ser carregado sob demanda em
+ * `handleDownloadPdf`, como o resto do projeto já fazia (ver
+ * `components/profile/submissions-list.tsx`).
+ *
+ * O aquecimento dos assets continua estático porque é justamente a parte leve:
+ * `lib/pdf/marca.ts` tem 13 KB e sua única importação de `jspdf` é `import
+ * type`, apagada na compilação. O logo segue sendo buscado na montagem, então a
+ * exportação continua instantânea quando o aluno clica.
+ */
+import { aquecerAssetsDePdf } from '@/lib/pdf/marca'
 import { CabecalhoQuiz } from '@/components/banco/cabecalho-quiz'
 import { AlternativaQuiz } from '@/components/banco/alternativa-quiz'
 import { ImagensDaQuestao } from '@/components/questoes/imagens-da-questao'
@@ -217,7 +232,7 @@ export default function ListaDetalhePage() {
 
   useEffect(() => {
     loadLista()
-    prewarmPDFAssets()
+    aquecerAssetsDePdf()
   }, [id])
 
   // No simulado só a questão atual está no DOM, então o <img> da próxima só
@@ -337,6 +352,7 @@ export default function ListaDetalhePage() {
     if (!lista || questoes.length === 0) return
     setDownloadingPdf(true)
     try {
+      const { generateBancoListaPDF, downloadPDF } = await import('@/lib/pdf-generator')
       const blob = await generateBancoListaPDF(
         lista.nome,
         questoes.map(q => ({
