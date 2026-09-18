@@ -934,6 +934,13 @@ export const ferramentas: Ferramenta[] = [
         detalhes,
         interpretacao: interp,
         alertas: ['O ânion gap sem correção pela albumina subestima em qualquer paciente hipoalbuminêmico — o que inclui praticamente toda a UTI. Use a calculadora de ânion gap corrigido antes de descartar acidose por ânions não medidos.'],
+        conduta: [
+          'Com gap **alto**, percorra a mnemônica **GOLD MARK** e dose o que ela indica: **G**licóis (etilenoglicol, propilenoglicol), **O**xoprolina (uso crônico de paracetamol), **L**-lactato, **D**-lactato (síndrome do intestino curto), **M**etanol, **A**spirina, **R**enal (uremia) e **K**etoacidose. Peça lactato, cetonemia ou cetonúria, ureia e creatinina de imediato.',
+          'Se houver suspeita de intoxicação, calcule o **gap osmolar** na mesma amostra: gap osmolar alto com gap aniônico alto aponta metanol ou etilenoglicol, e ambos têm antídoto (fomepizol ou etanol) com janela terapêutica — não aguarde a dosagem específica para acionar o centro de intoxicações.',
+          'Prossiga obrigatoriamente para a **relação delta**: ela revela um segundo distúrbio metabólico que o gap sozinho esconde — acidose hiperclorêmica associada (razão < 0,8) ou alcalose metabólica concomitante (razão > 2).',
+          'Com gap **normal** (hiperclorêmica), separe perda gastrointestinal de renal pelo **ânion gap urinário**: negativo aponta perda intestinal (diarreia, fístula, derivação ureteral), positivo aponta acidose tubular renal. O tratamento difere completamente.',
+          'Trate a causa, não o número. Bicarbonato não está indicado de rotina na cetoacidose nem na acidose lática — reponha volume, corrija a perfusão, dê insulina e potássio conforme o caso.',
+        ],
       }
     },
     formula: ['AG = Na⁺ − (Cl⁻ + HCO₃⁻)', 'AG com potássio = (Na⁺ + K⁺) − (Cl⁻ + HCO₃⁻)'],
@@ -995,6 +1002,13 @@ export const ferramentas: Ferramenta[] = [
               ? 'Ânion gap aumentado mesmo após a correção: procure lactato, cetoácidos, uremia e as intoxicações da mnemônica GOLD MARK.'
               : 'Ânion gap normal após a correção. Se há acidose metabólica, ela é hiperclorêmica.',
           'A regra prática vale a pena decorar: **para cada 1 g/dL de albumina abaixo de 4, some 2,5 ao ânion gap**. Num paciente de UTI com albumina de 2,0, o gap "normal" de 10 é na verdade 15.',
+        ],
+        conduta: [
+          'Use **sempre** o gap corrigido em paciente crítico, cirrótico, nefrótico ou desnutrido. Cada 1 g/dL de albumina abaixo de 4 esconde cerca de 2,5 mEq/L de gap — um gap "normal" de 11 com albumina de 2 g/dL é, na verdade, 16.',
+          'Se a correção **reclassificou** o caso, trate como acidose de ânion gap alto: dose lactato, cetonas, ureia e creatinina, e considere intoxicação com gap osmolar. A acidose estava lá o tempo todo, mascarada pela hipoalbuminemia.',
+          'Calcule a **relação delta** a partir do gap corrigido, nunca do bruto — usar o gap não corrigido no numerador distorce a razão e pode inventar ou apagar um segundo distúrbio.',
+          'Considere a abordagem de **Stewart** (diferença de íons fortes e ácidos fracos totais) quando a hipoalbuminemia for grave ou o quadro não fechar: ela incorpora o efeito da albumina de forma nativa, sem precisar de fator de correção.',
+          'Repita o gap corrigido ao longo do tratamento. O fechamento do gap é o marcador de resolução da cetoacidose, mais confiável que a glicemia ou que a cetonúria, que persiste positiva por acúmulo de acetoacetato.',
         ],
       }
     },
@@ -1062,6 +1076,13 @@ export const ferramentas: Ferramenta[] = [
           razao === null ? 'Com o bicarbonato exatamente no valor de referência, a relação delta é indefinida — use o delta gap absoluto.' : leituraRelacaoDelta(razao),
           'A lógica é de conservação: se todo o ácido acrescentado foi tamponado por bicarbonato, cada mEq de ânion novo deveria ter consumido 1 mEq de bicarbonato, e a razão seria 1. Desvios revelam que algo mais mexeu no bicarbonato — para cima (alcalose associada) ou para baixo (perda adicional).',
           'Na cetoacidose diabética a razão costuma ficar próxima de 1 na chegada e cair progressivamente durante o tratamento, à medida que a salina 0,9% acrescenta cloro e os cetoânions são excretados na urina: a acidose vira hiperclorêmica com gap já normal, e isso é evolução esperada, não piora.',
+        ],
+        conduta: [
+          'Com razão **entre 0,8 e 2,0**, a acidose de ânion gap alto é pura: trate a causa identificada pelo GOLD MARK e acompanhe o fechamento do gap.',
+          'Com razão **abaixo de 0,8**, há acidose hiperclorêmica associada. Reveja a reposição volêmica — salina 0,9%, com 154 mEq/L de cloro, é causa iatrogênica frequente. Troque para cristaloide balanceado e procure perda gastrointestinal ou acidose tubular renal com o ânion gap urinário.',
+          'Com razão **acima de 2,0**, há alcalose metabólica concomitante ou acidose respiratória crônica prévia com bicarbonato basal elevado. Procure vômitos, aspiração nasogástrica, diurético e DPOC retentor — e confirme com a história e com gasometrias anteriores.',
+          'Na cetoacidose em tratamento, a queda progressiva da razão é **esperada** e não indica piora: os cetoânions são excretados na urina enquanto a salina acrescenta cloro, e a acidose de gap alto se converte em hiperclorêmica com gap já normalizado. Acompanhe pelo gap corrigido e pelo pH, não pela razão.',
+          'Registre os três números juntos (gap corrigido, bicarbonato e razão delta). É a combinação, e não qualquer um deles isolado, que revela distúrbio triplo com pH normal.',
         ],
         tabela: {
           titulo: 'Leitura da relação delta',
@@ -1194,6 +1215,14 @@ export const ferramentas: Ferramenta[] = [
           'A definição de Berlim (2012) exige quatro elementos simultâneos: início em até uma semana de um insulto conhecido ou piora respiratória; opacidades bilaterais na imagem não explicadas por derrame, colapso ou nódulos; insuficiência respiratória não explicada integralmente por insuficiência cardíaca ou sobrecarga de volume; e hipoxemia com P/F ≤ 300 sob PEEP ≥ 5.',
           'A nova definição global de SDRA (2023) ampliou o conceito para incluir pacientes em cateter nasal de alto fluxo (≥ 30 L/min) e permitir o uso da relação SpO₂/FiO₂ ≤ 315 quando a SpO₂ é ≤ 97% — mudança pensada para cenários sem gasometria disponível.',
         ],
+        conduta: [
+          'Confirme os **quatro critérios de Berlim** antes de rotular SDRA: início em até uma semana de insulto conhecido ou piora respiratória, opacidades bilaterais não explicadas por derrame, colapso ou nódulos, insuficiência respiratória não explicada por falência cardíaca ou sobrecarga hídrica, e relação PaO₂/FiO₂ medida com **PEEP ≥ 5 cmH₂O**. Sem a PEEP, a relação não classifica.',
+          'Institua **ventilação protetora** imediatamente: volume corrente de 6 mL/kg de peso predito (calcule pela altura, não pelo peso real), pressão de platô ≤ 30 cmH₂O e driving pressure ≤ 15 cmH₂O — esta última é a variável que melhor se associa a mortalidade.',
+          'Titule a PEEP por tabela PEEP-FiO₂ ou por driving pressure, e aceite **hipercapnia permissiva** em vez de violar os limites de pressão. Alvo de SpO₂ de 88 a 95%.',
+          'Com relação **abaixo de 150**, considere **posição prona por 16 horas ou mais** (reduz mortalidade de forma robusta) e bloqueio neuromuscular nas primeiras 48 horas em casos selecionados. Abaixo de 80 com falha da otimização, avalie ECMO em centro de referência e calcule o escore RESP.',
+          'Trate a causa da SDRA — pneumonia, aspiração, sepse, pancreatite, transfusão, trauma — e adote estratégia hídrica conservadora após a fase de ressuscitação: balanço positivo cumulativo piora oxigenação e prolonga a ventilação.',
+          'Repita a relação após otimizar a PEEP: a classificação de gravidade deve ser feita com o paciente já em ventilação ajustada, não com os parâmetros iniciais.',
+        ],
         alertas: alertas.length ? alertas : undefined,
         tabela: {
           titulo: 'Classificação de Berlim (com PEEP ≥ 5 cmH₂O)',
@@ -1273,6 +1302,13 @@ export const ferramentas: Ferramenta[] = [
             ? '**Gradiente alargado.** A hipoxemia vem do pulmão. Quatro mecanismos, em ordem de frequência: distúrbio de ventilação-perfusão (asma, DPOC, pneumonia, TEP), shunt verdadeiro (SDRA, atelectasia, fístula arteriovenosa, forame oval), distúrbio de difusão (fibrose, enfisema) e — raramente — baixa PvO₂ por débito cardíaco muito baixo. A resposta ao O₂ separa: shunt verdadeiro melhora pouco com FiO₂ alta, distúrbio V/Q melhora bem.'
             : '**Gradiente normal.** A troca alvéolo-capilar está preservada, então a hipoxemia, se existe, vem de fora do parênquima: hipoventilação (opioide, sedativo, doença neuromuscular, obesidade-hipoventilação) ou baixa PiO₂ (altitude, mistura gasosa pobre). Nesses casos a PaCO₂ está tipicamente elevada e a correção é ventilatória, não de oxigênio.',
           'A subida do gradiente com a idade é fisiológica: a heterogeneidade V/Q aumenta com o envelhecimento pulmonar. Por isso um gradiente de 22 é normal aos 72 anos e claramente anormal aos 20.',
+        ],
+        conduta: [
+          'Com gradiente **normal** e hipoxemia, o pulmão está preservado: procure **hipoventilação** (opioide, benzodiazepínico, doença neuromuscular, obesidade-hipoventilação, lesão de tronco) — confirme com a PaCO₂ elevada — ou **baixa PiO₂** por altitude ou mistura gasosa inadequada. A conduta é reverter a causa da hipoventilação e dar suporte ventilatório, não apenas oxigênio.',
+          'Com gradiente **alargado**, use o **teste do oxigênio a 100%** para separar os mecanismos: correção da hipoxemia aponta distúrbio de ventilação-perfusão; hipoxemia que persiste apesar de FiO₂ alta aponta **shunt verdadeiro**, que não responde a oxigênio e exige recrutamento, PEEP ou tratamento da causa anatômica.',
+          'Ordene a investigação por frequência e gravidade: distúrbio V/Q (asma, DPOC, pneumonia), embolia pulmonar (aplique Wells ou Genebra — gradiente alargado com radiografia normal é achado clássico), shunt (SDRA, atelectasia, fístula arteriovenosa, forame oval patente) e distúrbio de difusão (fibrose, enfisema).',
+          'Compare com o esperado **para a idade**: o gradiente sobe fisiologicamente com o envelhecimento pulmonar, e 22 mmHg é normal aos 72 anos e claramente anormal aos 20. Usar um corte fixo de 10 ou 15 mmHg superdiagnostica idosos.',
+          'Confira a FiO₂ realmente entregue antes de concluir. Em cateter nasal e máscara simples, a FiO₂ é estimada e varia com o padrão ventilatório — o gradiente calculado sobre uma FiO₂ inventada não significa nada.',
         ],
         alertas:
           fio2 > 0.5

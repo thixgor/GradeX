@@ -208,6 +208,13 @@ const qtc: Ferramenta = {
       nivel: st.nivel,
       rotuloNivel: st.rotulo,
       detalhes,
+      conduta: [
+        'Com QTc **normal**, o achado libera a prescrição de fármacos que prolongam o QT, mas registre o valor basal no prontuário: ele é a referência contra a qual qualquer traçado futuro será comparado, e sem basal não se sabe se um QTc de 470 ms é novo ou antigo.',
+        'Com QTc **limítrofe (450–480 ms em homens, 460–480 ms em mulheres)**, revise a lista de medicamentos em crediblemeds.org, corrija potássio para > 4,0 mEq/L e magnésio para > 2,0 mg/dL, e repita o ECG em 24–48 h ou após a próxima dose do fármaco suspeito.',
+        'Com QTc **> 500 ms** ou aumento **> 60 ms** sobre o basal, suspenda o agente causal, instale monitorização contínua, reponha magnésio mesmo com magnesemia normal e corrija potássio para 4,5–5,0 mEq/L. Esse é o limiar em que o risco de torsades deixa de ser teórico.',
+        'Em **torsades de pointes** instalada: sulfato de magnésio 2 g IV em bolus (repetir em 5–15 min se necessário), cardioversão elétrica se houver instabilidade, e aceleração da frequência para 90–110 bpm com marca-passo transvenoso ou isoproterenol — encurtar o QT pela taquicardia interrompe o circuito. Lidocaína pode ajudar; amiodarona e procainamida são proibidas, pois prolongam ainda mais o QT.',
+        'QTc persistentemente longo sem causa reversível exige investigação de **síndrome do QT longo congênito**: ECG dos familiares de primeiro grau, teste genético e encaminhamento a eletrofisiologia. Betabloqueador (nadolol ou propranolol) é a base do tratamento, e não se libera esporte competitivo antes dessa avaliação.',
+      ],
       interpretacao: [
         `Limite superior adotado: **${limite} ms** para ${sexo === 'f' ? 'mulheres' : 'homens'} (declaração AHA/ACCF/HRS). A diferença entre sexos aparece na puberdade — antes disso os valores são iguais — e reflete o efeito da testosterona sobre a repolarização.`,
         'Acima de **500 ms**, o risco de torsades de pointes cresce de forma acentuada; um aumento de **60 ms ou mais** em relação ao QTc basal após introdução de fármaco também é gatilho de suspensão, mesmo que o valor absoluto ainda pareça aceitável.',
@@ -510,6 +517,13 @@ const criteriosHVE: Ferramenta = {
         { rotulo: 'Peguero-Lo Presti (S mais profunda + S V3)', valor: peguero === null ? '—' : `${fmt(peguero, 1)} mm`, nota: `Positivo ≥ ${limitePeguero} mm. Sensibilidade em torno de 62%, a melhor entre os critérios de voltagem.`, nivel: pegueroPos ? 'alerta' : 'ok' },
         { rotulo: 'Escore de Romhilt-Estes', valor: `${romhilt} pontos`, nota: '≥ 5 pontos = HVE provável; 4 pontos = HVE possível. É o único que combina voltagem, repolarização, átrio e condução.', nivel: romhilt >= 5 ? 'alerta' : romhilt === 4 ? 'atencao' : 'ok' },
       ],
+      conduta: [
+        'Critério **positivo** não fecha diagnóstico: a sensibilidade do ECG para hipertrofia é de 20–50%. Confirme com **ecocardiograma**, que mede massa ventricular indexada e espessura parietal, e é ele que define a conduta.',
+        'Confirmada a hipertrofia, a tarefa seguinte é **descobrir a causa**, porque o tratamento diverge radicalmente: hipertensão (a mais comum), estenose aórtica, cardiomiopatia hipertrófica, amiloidose cardíaca ou doença de Fabry. Baixa voltagem periférica com padrão de hipertrofia ao ecocardiograma é a pista clássica de amiloidose e pede cintilografia com pirofosfato e pesquisa de cadeias leves.',
+        'Na hipertrofia **hipertensiva**, a meta pressórica é mais rigorosa (< 130/80 mmHg) e a escolha do fármaco importa: IECA ou BRA promovem regressão da massa ventricular além do efeito pressórico, enquanto vasodilatadores diretos regridem pouco. A regressão da hipertrofia reduz eventos de forma independente da queda da pressão.',
+        'O padrão de **sobrecarga** (infradesnivelamento de ST com T invertida assimétrica em V5–V6) marca hipertrofia de maior gravidade e deve ser tratado como marcador de risco, não como isquemia — mas só depois de afastada doença coronariana, que frequentemente coexiste.',
+        'Registre que a hipertrofia é **fator de risco independente** para fibrilação atrial, insuficiência cardíaca com fração de ejeção preservada e morte súbita. Isso muda o limiar para investigar palpitações e para rastrear apneia obstrutiva do sono, causa tratável e subdiagnosticada de hipertrofia refratária.',
+      ],
       interpretacao: [
         'Nenhum critério eletrocardiográfico de HVE é sensível. Contra o ecocardiograma como padrão, a sensibilidade dos critérios de voltagem clássicos fica entre 20 e 50%, com especificidade de 85 a 95%. Traduzindo: **ECG normal não exclui HVE**, mas critério positivo em paciente com hipertensão tem valor preditivo alto.',
         'A voltagem sofre com tudo que fica entre o coração e o eletrodo: obesidade, enfisema, derrame pericárdico e mama volumosa reduzem as amplitudes; magreza e parede torácica fina as aumentam. Um jovem magro com Sokolow de 40 mm e ecocardiograma normal é achado corriqueiro.',
@@ -765,6 +779,13 @@ const heart: Ferramenta = {
       detalhes: [
         { rotulo: 'Risco de evento cardíaco maior em 6 semanas', valor: mace, nota: 'Morte, infarto ou revascularização (coorte de validação de Backus et al., 2013).' },
       ],
+      conduta: [
+        'Escore **0–3 (baixo risco, evento em 30 dias < 2%)**: com duas troponinas negativas separadas por 3 h (ou uma troponina ultrassensível abaixo do limite de detecção na chegada, se o protocolo local validar), o paciente pode receber alta da emergência com reavaliação ambulatorial. Teste funcional de rotina antes da alta não melhora desfecho nesse grupo e gera investigação em cascata.',
+        'Escore **4–6 (risco intermediário, 12–17%)**: interne em unidade de dor torácica com troponina seriada e monitorização. Estratifique com teste provocativo ou angiotomografia de coronárias antes da alta — é justamente aqui que a imagem muda conduta, e não nos extremos.',
+        'Escore **≥ 7 (alto risco, 50–65%)**: trate como síndrome coronariana aguda até prova em contrário. Dupla antiagregação, anticoagulação e estratégia invasiva precoce (cateterismo em até 24–72 h), com discussão imediata com a cardiologia.',
+        'O HEART **não se aplica** a supra de ST, instabilidade hemodinâmica ou quando o diagnóstico já está feito — nesses casos vá direto ao protocolo de reperfusão. Também não vale para dor torácica de causa evidentemente não cardíaca.',
+        'Use o escore como **piso, não como teto**: ele não substitui o julgamento clínico. Dissecção de aorta, embolia pulmonar, pneumotórax e ruptura de esôfago não entram no cálculo e continuam sendo obrigação do avaliador afastar.',
+      ],
       interpretacao: [
         faixa === 0
           ? '**Baixo risco.** Alta da emergência é razoável, desde que a troponina de alta sensibilidade seja seriada conforme o protocolo institucional (0/1 h ou 0/3 h) e o ECG não mostre alteração dinâmica. O HEART Pathway — HEART ≤ 3 com duas troponinas negativas — permitiu alta precoce de cerca de 40% dos pacientes com dor torácica sem eventos perdidos no ensaio randomizado.'
@@ -836,6 +857,13 @@ const timi: Ferramenta = {
       nivel,
       rotuloNivel: total <= 2 ? 'Baixo risco' : total <= 4 ? 'Risco intermediário' : 'Alto risco',
       detalhes: [{ rotulo: 'Morte, infarto ou revascularização urgente em 14 dias', valor: riscos[total], nota: 'Coorte de derivação TIMI 11B / ESSENCE.' }],
+      conduta: [
+        'Escore **0–2 (baixo risco)**: estratégia conservadora com terapia antitrombótica e estratificação não invasiva. A mortalidade ou infarto em 14 dias fica em torno de 3–8%, e o cateterismo imediato não traz benefício demonstrado.',
+        'Escore **3–4 (intermediário)**: estratégia invasiva precoce (em 24–72 h) é razoável e ganha força se houver elevação de troponina ou alteração dinâmica de ST. Mantenha dupla antiagregação e anticoagulação plena enquanto aguarda.',
+        'Escore **≥ 5 (alto risco, 20–41% de eventos em 14 dias)**: cateterismo em até 24 h, com antiagregação dupla e anticoagulante. O benefício absoluto da estratégia invasiva cresce com o escore — é o grupo em que a intervenção precoce mais reduz eventos.',
+        '**Instabilidade hemodinâmica, angina refratária, arritmia ventricular sustentada ou insuficiência cardíaca aguda** determinam cateterismo imediato (< 2 h), independentemente do TIMI. O escore estratifica quem está estável, não quem está deteriorando.',
+        'Prefira o **GRACE** quando precisar de estimativa quantitativa de mortalidade intra-hospitalar e em 6 meses: o TIMI foi construído para decisão rápida à beira do leito e perde discriminação em idosos e renais crônicos, justamente os que mais concentram eventos.',
+      ],
       interpretacao: [
         total >= 3
           ? 'TIMI ≥ 3 é o ponto de corte tradicional para benefício de estratégia invasiva precoce e de terapia antitrombótica mais intensa (inibidor de glicoproteína IIb/IIIa nos estudos originais, hoje substituído por antiagregação dupla potente).'
@@ -920,6 +948,13 @@ const grace: Ferramenta = {
         { rotulo: 'Mortalidade hospitalar estimada', valor: ['< 1%', '1 a 3%', '> 3%'][faixaHosp] },
         { rotulo: 'Mortalidade em 6 meses após a alta', valor: ['< 3%', '3 a 8%', '> 8%'][faixa6m] },
       ],
+      conduta: [
+        'Risco **baixo (GRACE ≤ 108, mortalidade hospitalar < 1%)**: estratégia invasiva seletiva, guiada por isquemia recorrente ou teste funcional positivo. Não há ganho em antecipar o cateterismo.',
+        'Risco **intermediário (109–140, 1–3%)**: estratégia invasiva em até 72 h. Mantenha monitorização, antiagregação dupla e anticoagulação, e reavalie o escore se houver mudança clínica.',
+        'Risco **alto (> 140, > 3%)**: cateterismo em até 24 h. Esse é o corte que as diretrizes europeias usam para indicar invasiva precoce, e o grupo em que ela reduz morte e infarto.',
+        'Calcule também o **GRACE pós-alta (6 meses a 3 anos)**: ele orienta a intensidade do seguimento, a agressividade das metas de LDL e a duração da dupla antiagregação. Um escore alto na alta justifica reavaliação em 2–4 semanas em vez de 3 meses.',
+        'O GRACE considera **Killip, creatinina e parada cardíaca na admissão** — variáveis que o TIMI ignora. Por isso ele discrimina melhor em idosos, renais crônicos e pacientes com disfunção ventricular, e é o preferido quando o objetivo é quantificar mortalidade e não apenas classificar.',
+      ],
       interpretacao: [
         total > 140
           ? '**GRACE > 140** é o critério das diretrizes europeia e brasileira para **estratégia invasiva precoce, em até 24 horas** na síndrome coronariana aguda sem supra de ST. É o uso mais consequente do escore.'
@@ -996,6 +1031,13 @@ const chads: Ferramenta = {
       detalhes: [
         { rotulo: 'Risco anual de AVC estimado', valor: risco, nota: 'Coorte dinamarquesa de Olesen et al. (2011), sem anticoagulação.' },
         { rotulo: 'Pontuação sem o componente sexo', valor: String(semSexo), nota: 'O sexo feminino é modificador de risco, não fator de risco isolado: mulher com escore 1 apenas pelo sexo tem risco equivalente ao do homem com escore 0.' },
+      ],
+      conduta: [
+        'Escore **0 em homens e 1 em mulheres (o sexo feminino isolado não conta)**: não anticoagule. O risco anual de AVC é inferior ao risco de sangramento maior da terapia, e a recomendação é ativa de não tratar, não apenas de omitir.',
+        'Escore **1 em homens e 2 em mulheres**: anticoagulação é razoável após decisão compartilhada. Apresente números absolutos — cerca de 1 AVC evitado por ano a cada 100 pacientes tratados — e leve em conta preferência, adesão e risco de queda real (não presumido).',
+        'Escore **≥ 2 em homens e ≥ 3 em mulheres**: anticoagule. Prefira **anticoagulantes orais diretos** (apixabana, rivaroxabana, edoxabana, dabigatrana) à varfarina, exceto em **estenose mitral moderada a grave ou prótese valvar mecânica**, situações em que só a varfarina tem evidência.',
+        'Ajuste a dose pelos critérios de cada fármaco, não pela impressão de fragilidade: para apixabana, reduza a 2,5 mg 12/12 h se houver **dois** entre idade ≥ 80 anos, peso ≤ 60 kg e creatinina ≥ 1,5 mg/dL. Subdosar por medo de sangrar é a causa mais comum de falha terapêutica na prática.',
+        'Reavalie o escore **anualmente**: ele é dinâmico e sobe com a idade, com um novo diagnóstico de diabetes, hipertensão ou doença vascular. Um paciente que não tinha indicação aos 63 anos passa a ter aos 65 apenas pelo aniversário.',
       ],
       interpretacao: [
         indicado
@@ -1074,6 +1116,13 @@ const hasbled: Ferramenta = {
         { rotulo: 'Sangramentos maiores por 100 pacientes-ano', valor: taxas[Math.min(total, 9)], nota: 'Coorte de Pisters et al. (2010).' },
         { rotulo: 'Fatores modificáveis presentes', valor: modificaveis.length ? String(modificaveis.length) : 'nenhum' },
       ],
+      conduta: [
+        'O HAS-BLED **não serve para negar anticoagulação**. Esse é o erro mais frequente no seu uso: pontuação alta identifica quem precisa de vigilância mais próxima e de correção de fatores modificáveis, não quem deve ficar sem proteção contra AVC.',
+        'Ataque os fatores **modificáveis** que o escore aponta: controle a pressão para sistólica < 160 mmHg, suspenda anti-inflamatórios e antiagregantes desnecessários, trate álcool ≥ 8 doses por semana, e revise fármacos que interagem. Cada um desses itens reverte pontos de verdade.',
+        'Escore **≥ 3 (alto risco)**: mantenha a anticoagulação indicada, mas reavalie em 4 semanas em vez de 6 meses, monitore hemoglobina e função renal, e prefira o anticoagulante direto com menor sangramento gastrointestinal (apixabana) em quem tem histórico digestivo. Associe inibidor de bomba de prótons se houver antecedente de úlcera.',
+        'Compare sempre o HAS-BLED com o **CHA₂DS₂-VASc** no mesmo paciente: eles compartilham fatores de risco (idade, hipertensão, AVC prévio), de modo que quem sangra mais é geralmente quem mais se beneficia de não ter AVC. O benefício líquido costuma continuar favorável à anticoagulação.',
+        'Em sangramento **maior sob anticoagulante**, tenha o antídoto mapeado: idarucizumabe para dabigatrana, andexanet alfa (onde disponível) ou complexo protrombínico para inibidores do fator Xa, e complexo protrombínico com vitamina K para varfarina. Tratada a causa, reintroduza a anticoagulação — retomar em 1–2 semanas costuma superar o risco de não retomar.',
+      ],
       interpretacao: [
         '**O HAS-BLED nunca é motivo para não anticoagular.** Essa é a mensagem central das diretrizes atuais e o erro mais comum na prática. Os fatores de risco de sangramento e de AVC se sobrepõem muito, de modo que quem mais sangra costuma ser exatamente quem mais se beneficia da anticoagulação — o benefício absoluto continua favorável.',
         modificaveis.length
@@ -1133,6 +1182,13 @@ const wellsTep: Ferramenta = {
       detalhes: [
         { rotulo: 'Modelo de 3 níveis', valor: tresNiveis },
         { rotulo: 'Modelo dicotomizado', valor: `${dicotomica} (corte em 4)` },
+      ],
+      conduta: [
+        'Wells **≤ 4 (improvável)**: solicite **D-dímero**. Negativo, exclui embolia com segurança e encerra a investigação — sem angiotomografia. Positivo, prossiga para a angiotomografia de tórax.',
+        'Wells **> 4 (provável)**: vá direto à **angiotomografia**. D-dímero aqui não ajuda: com probabilidade pré-teste alta, um resultado negativo não reduz o risco pós-teste o bastante para liberar o paciente.',
+        'Considere o ajuste do D-dímero pela idade (**idade × 10 µg/L** acima de 50 anos) ou o protocolo **YEARS**: ambos reduzem tomografias desnecessárias sem perder embolias, e são especialmente úteis em idosos, em quem o D-dímero é quase sempre positivo por razões inespecíficas.',
+        'Se a angiotomografia estiver indisponível ou contraindicada (contraste, gestação, insuficiência renal), use **cintilografia de ventilação-perfusão** ou ultrassonografia de membros inferiores — trombose proximal confirmada em paciente com suspeita clínica autoriza tratar sem imagem torácica.',
+        'Com suspeita alta e demora prevista na imagem, **inicie a anticoagulação empírica** enquanto aguarda, desde que não haja risco de sangramento proibitivo. Confirmado o diagnóstico, estratifique a gravidade com **PESI ou sPESI** — é isso que define alta precoce, internação ou trombólise.',
       ],
       interpretacao: [
         total <= 4
@@ -1209,6 +1265,13 @@ const wellsTvp: Ferramenta = {
         { rotulo: 'Modelo de 3 níveis', valor: ['Baixa probabilidade (≈ 5%)', 'Probabilidade moderada (≈ 17%)', 'Alta probabilidade (≈ 53%)'][cat] },
         { rotulo: 'Modelo dicotomizado', valor: total >= 2 ? 'Provável (≥ 2)' : 'Improvável (< 2)' },
       ],
+      conduta: [
+        'Wells **≤ 1 (improvável)**: D-dímero negativo exclui trombose e dispensa ultrassonografia. Essa combinação tem valor preditivo negativo superior a 99% e é a rota mais custo-efetiva.',
+        'Wells **≥ 2 (provável)**: solicite **ultrassonografia com compressão** diretamente. Se vier negativa mas a suspeita persistir, repita em 5–7 dias — tromboses distais podem progredir e se tornar visíveis nesse intervalo.',
+        'Confirmada a trombose **proximal**, anticoagule por no mínimo 3 meses. Anticoagulantes diretos são a primeira escolha, exceto em síndrome antifosfolípide com tripla positividade e em gestação, situações em que se usa heparina de baixo peso molecular.',
+        'Trombose **distal isolada** em paciente sem câncer, sem trombose prévia e com sintomas leves pode ser acompanhada com ultrassonografia seriada em vez de anticoagulada — decisão que equilibra o risco de extensão contra o de sangramento.',
+        'Investigue **câncer oculto** apenas com rastreio apropriado à idade e sexo, não com tomografia de corpo inteiro: a busca extensiva não melhora a sobrevida. Trombofilia só deve ser pesquisada se o resultado for mudar a duração do tratamento — na maioria dos casos não muda.',
+      ],
       interpretacao: [
         total < 2
           ? '**TVP improvável.** D-dímero negativo exclui e encerra a investigação. D-dímero positivo indica ultrassom com compressão.'
@@ -1257,6 +1320,13 @@ const perc: Ferramenta = {
       nivel: total === 0 ? 'ok' : 'atencao',
       rotuloNivel: total === 0 ? 'PERC negativo — TEP excluído em baixo risco' : 'PERC positivo — investigação necessária',
       detalhes: [{ rotulo: 'Critérios presentes', valor: total === 0 ? 'nenhum' : String(total) }],
+      conduta: [
+        '**Todos os oito critérios negativos** em paciente com probabilidade clínica baixa (< 15%): o risco residual de embolia fica abaixo de 2%, e a investigação pode ser encerrada sem D-dímero e sem imagem. Documente explicitamente os oito itens no prontuário — é essa documentação que sustenta a decisão de não investigar.',
+        '**Qualquer critério positivo** não diagnostica embolia; apenas impede o uso do PERC como regra de exclusão. Prossiga pelo caminho habitual: Wells ou Genebra, depois D-dímero ou angiotomografia conforme a probabilidade.',
+        'O PERC só é válido quando a probabilidade pré-teste já é **baixa**. Aplicá-lo a um paciente com suspeita moderada ou alta é uso incorreto e produz falsa segurança — a regra foi desenhada para evitar investigação, não para substituí-la.',
+        'A grande utilidade prática é **reduzir D-dímeros desnecessários** na emergência. Como o D-dímero é frequentemente positivo por razões inespecíficas, pedi-lo em paciente PERC-negativo desencadeia uma cascata de tomografias com contraste, radiação e achados incidentais sem benefício.',
+        'Não use o PERC em **gestantes, em quem já usa anticoagulante** ou em situações de alta prevalência de embolia. A regra foi validada em emergência de baixa prevalência e não transporta para esses contextos.',
+      ],
       interpretacao: [
         total === 0
           ? '**Todos os oito critérios negativos.** Em paciente com probabilidade pré-teste clinicamente baixa (menor que 15%), a probabilidade de embolia cai abaixo de 2% — patamar em que o risco da investigação (radiação, contraste, achados incidentais, falso-positivo do D-dímero) supera o benefício. Nem D-dímero é necessário.'
@@ -1431,6 +1501,13 @@ const dasi: Ferramenta = {
         { rotulo: 'VO₂ de pico estimado', valor: `${fmt(vo2, 1)} mL/kg/min` },
         { rotulo: 'Equivalentes metabólicos', valor: `${fmt(mets, 1)} METs`, nota: '1 MET = 3,5 mL O₂/kg/min = consumo em repouso sentado.' },
       ],
+      conduta: [
+        'DASI convertido em **METs ≥ 4** (aproximadamente escore > 25 pontos): capacidade funcional adequada. Em cirurgia não cardíaca de risco intermediário, isso permite prosseguir sem teste cardíaco adicional — é o corte clássico das diretrizes perioperatórias.',
+        '**METs < 4** ou escore baixo: a capacidade funcional é insuficiente para estratificar clinicamente. Combine com um índice de risco (RCRI ou Gupta MICA) e considere teste funcional se o resultado for mudar a conduta — se não for mudar, não peça.',
+        'O estudo **MET-REPAIR** mostrou que o DASI prediz complicações cardíacas perioperatórias melhor que a estimativa subjetiva do médico sobre quantos lances de escada o paciente sobe. Prefira o questionário estruturado à impressão clínica.',
+        'Use o DASI também para **medir resposta terapêutica** em insuficiência cardíaca e doença coronariana estável: ele é sensível a mudança e serve de desfecho em reabilitação cardíaca, sem precisar de ergoespirometria.',
+        'Cuidado com a **limitação não cardíaca**: artrose, doença vascular periférica, obesidade e doença pulmonar reduzem o DASI sem que haja limitação cardíaca. Nesses casos o escore baixo não significa risco cardíaco alto, e o teste farmacológico (estresse com dobutamina ou dipiridamol) substitui o esforço.',
+      ],
       interpretacao: [
         mets < 4
           ? '**Menos de 4 METs.** É o limiar clássico das diretrizes perioperatórias: incapacidade de subir um lance de escadas ou caminhar dois quarteirões no plano identifica capacidade funcional ruim e motiva investigação cardiovascular adicional antes de cirurgia de risco intermediário ou alto.'
@@ -1514,6 +1591,13 @@ const debitoCardiaco: Ferramenta = {
       nivel: dc < 3 ? 'critico' : dc < 4 ? 'alerta' : dc > 8 ? 'atencao' : 'ok',
       rotuloNivel: dc < 4 ? 'Débito reduzido' : dc > 8 ? 'Débito elevado' : 'Débito normal',
       detalhes,
+      conduta: [
+        '**Índice cardíaco < 2,2 L/min/m²** com sinais de hipoperfusão (lactato alto, oligúria, extremidades frias, enchimento capilar lento) caracteriza estado de baixo débito. Determine o mecanismo antes de tratar: pré-carga insuficiente, falência de bomba, pós-carga excessiva ou arritmia.',
+        'Com **pré-carga baixa**, reponha volume de forma guiada por resposta (elevação passiva de pernas, variação de pressão de pulso), não por meta fixa. Com **falência de bomba**, introduza inotrópico (dobutamina ou milrinona). Com **pós-carga excessiva**, vasodilate. Os três erros mais comuns são dar volume a quem já está congesto, inotrópico a quem está hipovolêmico e vasopressor a quem tem bomba falha.',
+        'Índice cardíaco **alto (> 4,0 L/min/m²)** com hipotensão aponta estado hiperdinâmico: sepse, anemia grave, tireotoxicose, cirrose, fístula arteriovenosa ou beribéri. O tratamento é da causa — vasopressor sustenta a pressão enquanto isso, mas não corrige o problema.',
+        'Interprete sempre junto com **saturação venosa central de oxigênio e lactato**: débito \'normal\' pode ser insuficiente para a demanda metabólica de um paciente séptico ou febril. O número absoluto importa menos do que a adequação à demanda.',
+        'Lembre que o débito é **frequência × volume sistólico**: taquicardia extrema reduz o tempo de enchimento diastólico e derruba o débito, e bradicardia sem reserva de volume sistólico faz o mesmo. Corrigir a arritmia é, muitas vezes, a intervenção hemodinâmica mais eficaz disponível.',
+      ],
       interpretacao: [
         'O índice cardíaco é mais informativo do que o débito absoluto, porque normaliza pela superfície corporal: 4,5 L/min é excelente numa pessoa de 45 kg e insuficiente numa de 110 kg.',
         'Débito elevado com hipotensão aponta choque distributivo (sepse, anafilaxia, insuficiência hepática, tireotoxicose, beribéri, fístula arteriovenosa). Débito baixo com pressão de enchimento alta aponta choque cardiogênico; com pressão de enchimento baixa, hipovolêmico.',
@@ -1577,6 +1661,13 @@ const pam: Ferramenta = {
       nivel,
       rotuloNivel: pam < 65 ? 'Abaixo do alvo de perfusão' : pam > 110 ? 'Elevada' : 'Adequada',
       detalhes,
+      conduta: [
+        'Mantenha a **PAM ≥ 65 mmHg** como alvo inicial em choque. Alvos mais altos (80–85 mmHg) só se justificam em hipertensos crônicos, em quem a autorregulação está deslocada para a direita, e no paciente com lesão renal aguda em curso — ao custo de mais arritmias atriais.',
+        '**Pressão de pulso estreita (< 25% da sistólica)** sugere baixo volume sistólico: hipovolemia, tamponamento, estenose aórtica grave ou choque cardiogênico. **Pressão de pulso larga** aponta insuficiência aórtica, rigidez arterial do idoso, anemia, tireotoxicose ou fístula arteriovenosa. Esse é um dado de exame que orienta o diagnóstico antes de qualquer imagem.',
+        'O **duplo produto (FC × PA sistólica)** estima o consumo miocárdico de oxigênio. Em angina, o limiar em que a dor aparece é reprodutível para o mesmo paciente e serve para medir eficácia de betabloqueador: se o limiar subiu, o fármaco está funcionando.',
+        'Em **lesão cerebral aguda**, a PAM é o insumo da pressão de perfusão cerebral (PPC = PAM − PIC). Metas de PAM aqui não são genéricas — devem ser derivadas da PPC desejada (geralmente 60–70 mmHg) e da pressão intracraniana medida.',
+        'Em **hipertensão aguda grave**, a regra é reduzir a PAM em no máximo **20–25% na primeira hora**, exceto em dissecção de aorta (sistólica < 120 mmHg em 20 min), pré-eclâmpsia grave e hemorragia intracerebral com indicação específica. Quedas maiores deslocam o paciente para fora da faixa de autorregulação e causam isquemia cerebral e renal.',
+      ],
       interpretacao: [
         'A PAM é ponderada pela diástole porque, em frequência normal, o coração passa cerca de dois terços do ciclo em diástole — e é a PAM, não a sistólica, que governa a perfusão de rim, cérebro e coração.',
         'O alvo de **65 mmHg** na sepse vem do estudo SEPSISPAM, que não encontrou benefício de mortalidade em mirar 80 a 85 mmHg — exceto no subgrupo de hipertensos crônicos, que teve menos necessidade de terapia renal substitutiva com o alvo mais alto. Em traumatismo cranioencefálico o alvo é outro, ditado pela pressão de perfusão cerebral.',
@@ -1708,6 +1799,13 @@ const riscoCv: Ferramenta = {
         { rotulo: 'Colesterol não-HDL', valor: `${fmtInt(naoLigado)} mg/dL`, nota: 'Alvo geral < 130 mg/dL; em alto risco, < 100 mg/dL.' },
         { rotulo: 'Desfecho estimado', valor: 'Infarto não fatal, morte coronariana ou AVC fatal e não fatal' },
       ],
+      conduta: [
+        'Risco **< 5% (baixo)**: mudança de estilo de vida, sem estatina. Reavalie a cada 4–6 anos, ou antes se houver novo fator de risco.',
+        'Risco **5–7,5% (limítrofe)** e **7,5–20% (intermediário)**: é aqui que a decisão exige conversa. Considere fatores potencializadores — histórico familiar precoce, lipoproteína(a) elevada, LDL ≥ 160 mg/dL persistente, síndrome metabólica, doença inflamatória crônica, pré-eclâmpsia prévia, doença renal crônica. Se a decisão continuar incerta, o **escore de cálcio coronariano** resolve: zero permite adiar a estatina, e ≥ 100 (ou percentil ≥ 75) indica tratar.',
+        'Risco **≥ 20% (alto)**: estatina de alta intensidade, com meta de redução do LDL de pelo menos 50%. Não espere o escore de cálcio — nesse patamar ele não muda a conduta.',
+        'As equações **superestimam o risco** em populações contemporâneas de renda alta e **subestimam** em populações de alto risco não representadas na derivação. No Brasil, use-as como ponto de partida e não como veredito, e prefira recalibrações locais quando disponíveis.',
+        'O escore não se aplica a quem **já tem doença aterosclerótica estabelecida, LDL ≥ 190 mg/dL ou diabetes entre 40 e 75 anos** — esses três grupos já têm indicação de estatina independentemente do cálculo, e passar por ele só atrasa o tratamento.',
+      ],
       interpretacao: [
         faixa === 0
           ? 'Risco baixo: ênfase em mudança de estilo de vida. Estatina não indicada de rotina, salvo LDL ≥ 190 mg/dL, que por si só define alto risco.'
@@ -1779,6 +1877,13 @@ const duke: Ferramenta = {
         { rotulo: 'Critérios menores', valor: String(menores) },
         { rotulo: 'Regra de definida', valor: '2 maiores, ou 1 maior + 3 menores, ou 5 menores' },
         { rotulo: 'Regra de possível', valor: '1 maior + 1 menor, ou 3 menores' },
+      ],
+      conduta: [
+        '**Endocardite definida** (2 critérios maiores, ou 1 maior + 3 menores, ou 5 menores): inicie antibioticoterapia dirigida após colher pelo menos três pares de hemoculturas, e acione a **equipe multidisciplinar de endocardite** — cardiologia, cirurgia cardíaca e infectologia. A discussão precoce com o cirurgião reduz mortalidade mesmo quando não se opera.',
+        '**Endocardite possível** (1 maior + 1 menor, ou 3 menores): não descarte. Repita hemoculturas, solicite **ecocardiograma transesofágico** se o transtorácico foi negativo ou inconclusivo, e considere PET-CT com FDG ou tomografia cardíaca — os critérios de 2023 incorporaram essas imagens justamente para resgatar casos que ficavam indefinidos, especialmente em prótese valvar e dispositivo cardíaco.',
+        'Indicações de **cirurgia precoce**: insuficiência cardíaca por disfunção valvar, infecção não controlada (abscesso, fístula, febre persistente após 5–7 dias de antibiótico apropriado) e prevenção de embolia (vegetação > 10 mm com evento embólico prévio, ou > 15 mm em valva nativa). Operar antes da embolia é melhor que operar depois dela.',
+        'Hemoculturas **negativas** não excluem: considere *Coxiella burnetii*, *Bartonella*, *Brucella*, grupo HACEK e fungos, e pergunte sobre uso prévio de antibiótico, a causa mais comum de negativação. Sorologias e PCR do material valvar resolvem boa parte desses casos.',
+        'Rastreie **focos secundários** sistematicamente: ressonância de crânio (embolia silenciosa muda a conduta cirúrgica e anticoagulante), tomografia de abdome para infartos esplênicos e renais, e avaliação de coluna para espondilodiscite. Encontrar o foco muda a duração do tratamento.',
       ],
       interpretacao: [
         definida
@@ -1930,6 +2035,13 @@ const ldl: Ferramenta = {
       nivel,
       rotuloNivel: alvo >= 190 ? 'Muito elevado — investigar hipercolesterolemia familiar' : alvo >= 160 ? 'Elevado' : alvo >= 130 ? 'Limítrofe' : 'Desejável',
       detalhes,
+      conduta: [
+        'Com triglicerídeos **< 400 mg/dL e LDL ≥ 70 mg/dL**, as três fórmulas concordam e qualquer uma serve. A decisão terapêutica pode ser tomada com o valor calculado, sem custo adicional.',
+        'Com triglicerídeos **150–400 mg/dL** ou LDL calculado **< 70 mg/dL**, prefira **Martin-Hopkins ou Sampson**: Friedewald subestima sistematicamente o LDL nessa faixa e classifica erroneamente como \'na meta\' pacientes que ainda precisam de intensificação. Essa subestimação é justamente maior nos pacientes de maior risco.',
+        'Com triglicerídeos **> 400 mg/dL**, nenhuma fórmula é confiável. Solicite **LDL direto** ou, melhor, use o **colesterol não-HDL** (colesterol total − HDL), cuja meta é o LDL desejado + 30 mg/dL e que não depende de triglicerídeos.',
+        'Meça a **apolipoproteína B** quando houver triglicerídeos altos, diabetes, síndrome metabólica ou LDL discordante do quadro clínico: ela conta partículas aterogênicas diretamente e prediz risco melhor que o LDL nessas situações. Lipoproteína(a) deve ser dosada ao menos uma vez na vida, sobretudo com história familiar precoce.',
+        'Metas por risco: **< 100 mg/dL** em risco intermediário, **< 70 mg/dL** em alto risco, **< 55 mg/dL** em muito alto risco (e < 40 mg/dL em eventos recorrentes). Se a meta não for atingida com estatina de alta intensidade na dose máxima tolerada, associe ezetimiba e, persistindo a lacuna, inibidor de PCSK9 ou ácido bempedoico.',
+      ],
       interpretacao: [
         'Friedewald assume que a razão entre triglicerídeos e colesterol de VLDL é fixa em 5:1. Essa premissa é razoável em jejum, com triglicerídeos normais e LDL acima de 100 — e falha nos três cenários opostos. O erro é sistemático e no sentido perigoso: **subestima** o LDL, e portanto subtrata justamente quem tem triglicerídeos altos e LDL baixo, o perfil do diabético e do paciente já em estatina de alta intensidade.',
         'Martin-Hopkins substitui o divisor fixo por um fator ajustável, escolhido numa tabela de 180 células segundo o triglicerídeo e o colesterol não-HDL — o fator varia de cerca de 3,1 a 11,9. É a equação recomendada pelas diretrizes americanas de 2018 quando o LDL calculado é inferior a 70 mg/dL.',
