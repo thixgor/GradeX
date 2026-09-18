@@ -258,9 +258,9 @@ const pesoEstimado: Ferramenta = {
   resumo: 'Estima peso, pressão arterial mínima, tamanho de tubo e doses de emergência.',
   categorias: ['pediatria', 'emergencia'],
   campos: [
-    campoNum('idade', 'Idade', { unidade: 'anos', min: 0, max: 18, passo: 0.1 }),
-    campoNum('meses', 'Idade em meses (para menores de 1 ano)', { unidade: 'meses', min: 0, max: 12, passo: 0.5, opcional: true }),
-    campoNum('pesoReal', 'Peso real, se conhecido', { unidade: 'kg', min: 0.5, max: 120, passo: 0.1, opcional: true }),
+    campoNum('idade', 'Idade', { unidade: 'anos', min: 0, max: 18, passo: 0.1, ajuda: 'Idade em anos, usada nas fórmulas de peso, pressão mínima e calibre de tubo. Para menores de 1 ano, preencha também o campo de meses, que é mais preciso nessa faixa.' }),
+    campoNum('meses', 'Idade em meses (para menores de 1 ano)', { unidade: 'meses', min: 0, max: 12, passo: 0.5, opcional: true, ajuda: 'Se preenchido e ≤ 12, tem prioridade sobre a idade em anos: no primeiro ano o peso muda rápido demais para a fórmula anual servir.' }),
+    campoNum('pesoReal', 'Peso real, se conhecido', { unidade: 'kg', min: 0.5, max: 120, passo: 0.1, opcional: true, ajuda: 'Sempre que houver balança, informe. Peso real tem prioridade sobre qualquer estimativa, e a ferramenta mostra lado a lado o que a fórmula teria previsto — a diferença costuma surpreender.' }),
   ],
   calcular: (v) => {
     const idade = num(v, 'idade')
@@ -312,7 +312,41 @@ const pesoEstimado: Ferramenta = {
         'A **fita de Broselow**, baseada no comprimento, é mais acurada que as fórmulas de idade e traz doses pré-calculadas por faixa colorida.',
         '**Hipotensão é sinal tardio de choque na criança.** O débito cardíaco pediátrico depende sobretudo da frequência, e a vasoconstrição compensatória mantém a pressão até que a perda volêmica ultrapasse 30 a 40%. Reconheça o choque compensado: taquicardia, enchimento capilar lento, extremidades frias, pulsos periféricos finos, taquipneia e alteração do nível de consciência.',
         'A **bradicardia na criança quase sempre é hipóxia** até prova em contrário. A sequência é oxigenar e ventilar primeiro; se a frequência permanecer abaixo de 60 bpm com má perfusão apesar de ventilação adequada, inicie compressões.',
+        'Por que a hipotensão chega tão tarde tem explicação hemodinâmica precisa, e é o conceito mais importante desta ferramenta. A pressão arterial média é o produto do débito cardíaco pela resistência vascular sistêmica. O débito é volume sistólico vezes frequência, e o **volume sistólico da criança é quase fixo**: o miocárdio imaturo tem menos miofibrilas por unidade de massa, retículo sarcoplasmático menos desenvolvido (dependendo mais do cálcio extracelular) e complacência ventricular reduzida, de modo que ele responde mal ao aumento de pré-carga — a curva de Frank-Starling é curta. Sobra à criança um único recurso para aumentar débito: **frequência**. E sobra um único recurso para sustentar pressão quando o débito cai: **vasoconstrição**, que a criança faz de forma muito mais intensa e sustentada que o adulto. O resultado é o choque compensado — taquicardia progressiva, extremidades frias, enchimento capilar lento, pulsos periféricos finos e diferença crescente entre pulso central e periférico, tudo isso com pressão arterial rigorosamente normal. Quando a vasoconstrição finalmente falha, a queda é abrupta e a parada vem em minutos. Daí a regra prática: na criança, os sinais de perfusão valem mais que o número da pressão, e a pressão só entra como confirmação tardia de que se perdeu tempo.',
+        'A bradicardia segue a mesma lógica invertida. Como o débito depende da frequência, bradicardia na criança **é** baixo débito — e sua causa mais comum não é cardíaca, é hipóxia: a hipoxemia deprime diretamente o automatismo sinusal e a condução, além de aumentar o tônus vagal. Por isso a parada cardiorrespiratória pediátrica é tipicamente **asfíxica** e não arrítmica, ao contrário do adulto, evoluindo por hipoxemia progressiva até bradicardia, atividade elétrica sem pulso e assistolia. Isso explica dois pontos do protocolo pediátrico que parecem arbitrários: a ênfase absoluta em via aérea e ventilação antes de qualquer outra coisa, e o limiar de compressões torácicas em frequência abaixo de 60 bpm com má perfusão, mesmo havendo pulso — porque nessa faixa o débito já é insuficiente e aguardar a assistolia não traz benefício.',
       ],
+      conduta: [
+        pesoReal !== null
+          ? `Peso real informado (${fmt(pesoReal, 1)} kg) — use-o para todas as doses. A estimativa pela fórmula seria ${fmt(estimado, 1)} kg, e a diferença de ${fmt(Math.abs(pesoReal - estimado), 1)} kg mostra por que pesar, quando possível, é sempre melhor.`
+          : 'Use estas estimativas **apenas enquanto não houver balança**. Peça peso real na primeira oportunidade e recalcule as doses: o erro médio das fórmulas é de 10 a 20%, e elas subestimam em criança com sobrepeso. Se houver fita de Broselow disponível, ela é mais acurada que a fórmula de idade porque se baseia no comprimento.',
+        'Avalie a perfusão **antes** de olhar a pressão: frequência cardíaca, tempo de enchimento capilar (normal até 2 segundos), temperatura das extremidades, amplitude dos pulsos central e periférico, nível de consciência e débito urinário. Choque compensado é o diagnóstico que se quer fazer, e ele cursa com pressão normal.',
+        `Se houver sinais de choque, faça expansão com **${fmtInt(peso * 20)} mL** de cristaloide isotônico balanceado em bolus rápido (10 mL/kg em cardiopata, neonato e suspeita de cardiogênico) e **reavalie a perfusão após cada bolus**. Na sepse pediátrica, até 40 a 60 mL/kg podem ser necessários na primeira hora, sempre com reavaliação — procure ativamente hepatomegalia, estertores e aumento do trabalho respiratório como sinais de sobrecarga.`,
+        'Se a bradicardia estiver presente, **oxigene e ventile primeiro** — não comece por atropina nem por adrenalina. Só se a frequência permanecer abaixo de 60 bpm com má perfusão apesar de ventilação adequada, inicie compressões torácicas. Atropina fica reservada a bradicardia de tônus vagal aumentado ou bloqueio atrioventricular.',
+        `Prepare o material antes de precisar dele: tubo de ${fmt(tuboComBalao, 1)} mm com balonete (ou ${fmt(tuboSemBalao, 1)} mm sem balonete), com uma medida acima e uma abaixo à mão, fixação a ${fmt(profundidade, 1)} cm na rima labial, lâmina adequada e material de acesso intraósseo. Na criança, o intraósseo é a segunda tentativa e não o último recurso: após duas tentativas venosas falhas ou 90 segundos, puncione.`,
+        `Cheque **glicemia capilar** em toda criança grave ou com alteração de consciência. Se houver hipoglicemia, administre ${fmtInt(peso * 5)} mL de glicose a 10% (5 mL/kg) no lactente — evite glicose a 25% ou 50% em veia periférica infantil pela osmolaridade — e recheque em 15 minutos.`,
+        'Controle a temperatura e trate a dor. Hipotermia e dor aumentam a demanda metabólica e o consumo de oxigênio, e a criança pequena perde calor rapidamente pela relação superfície-massa desfavorável.',
+      ],
+      alertas: [
+        'Estas fórmulas são para emergência sem balança, com erro de 10 a 20%. **Não** as use para calcular quimioterápico, anticoagulante, aminoglicosídeo, digoxina, insulina ou qualquer fármaco de janela terapêutica estreita — nesses casos, pese a criança.',
+        'Hipotensão na criança é sinal **pré-terminal**. A pressão sistólica mínima calculada aqui é o percentil 5: abaixo dela o choque já está descompensado e a parada é iminente. Trate o choque compensado, não espere o número piorar.',
+        'Bradicardia pediátrica é hipóxia até prova em contrário, e a parada pediátrica é tipicamente asfíxica. Via aérea e ventilação vêm antes de fármaco em praticamente todos os cenários.',
+        'A fórmula do tubo é aproximação da cartilagem cricoide, a porção mais estreita da via aérea até cerca de 8 anos. Confirme a medida pela clínica — vazamento excessivo ou resistência à passagem indicam trocar de calibre.',
+        'Dose máxima existe e é frequentemente ultrapassada em adolescente grande: adrenalina na parada não passa de 1 mg por dose. Confira sempre o teto de adulto ao aplicar mg/kg.',
+        'Criança com desnutrição grave, cardiopatia, doença renal ou hepática exige ajuste de volume e de dose que estas fórmulas não contemplam.',
+      ],
+      tabela: {
+        titulo: 'Parâmetros calculados para este peso',
+        colunas: ['Parâmetro', 'Valor', 'Base do cálculo'],
+        linhas: [
+          ['Peso', `${fmt(peso, 1)} kg`, pesoReal !== null ? 'Peso real informado' : formulaUsada],
+          ['PA sistólica mínima', `${fmtInt(pasMinima)} mmHg`, 'Percentil 5 — abaixo disso é hipotensão'],
+          ['Tubo com balonete', `${fmt(tuboComBalao, 1)} mm`, '(idade / 4) + 3,5'],
+          ['Expansão volêmica', `${fmtInt(peso * 20)} mL`, '20 mL/kg de cristaloide'],
+          ['Adrenalina na parada', `${fmtLivre(peso * 0.1, 1)} mL de 1:10.000`, '0,01 mg/kg, máximo 1 mg'],
+          ['Desfibrilação inicial', `${fmtInt(peso * 2)} J`, '2 J/kg; 4 J/kg nos seguintes'],
+        ],
+        destaque: 0,
+      },
     }
   },
   formula: [
@@ -487,8 +521,42 @@ const capurro: Ferramenta = {
         'A versão **somatoneurológica** (Capurro A) substitui um dos sinais somáticos por dois sinais neurológicos (sinal do xale e posição da cabeça ao levantar o corpo) e usa a constante 200 em vez de 204. Ela é ligeiramente mais acurada, mas exige recém-nascido em boas condições.',
         'A **melhor estimativa de idade gestacional continua sendo obstétrica**: ultrassonografia do primeiro trimestre, seguida da data da última menstruação confiável. Os métodos pós-natais são estimativas de reserva, com erro de ± 1 a 2 semanas.',
         semanas < 37 ? 'Prematuridade identificada: rastreie hipoglicemia, hipotermia, dificuldade alimentar, icterícia, apneia e desconforto respiratório, e reavalie o risco de retinopatia da prematuridade conforme o protocolo.' : semanas >= 42 ? 'Pós-termo: atenção a síndrome de aspiração meconial, hipoglicemia, policitemia e insuficiência placentária.' : 'Recém-nascido a termo.',
+        'Cada um dos cinco sinais tem uma cronologia embriológica própria, e é isso que faz a soma funcionar como relógio. A **cartilagem auricular** só adquire elasticidade suficiente para manter o pavilhão encurvado quando a matriz de condroitina e o colágeno amadurecem, o que ocorre progressivamente entre 32 e 38 semanas — antes disso a orelha, dobrada, permanece dobrada. O **tecido mamário** responde ao estrogênio materno transferido pela placenta, e a transferência é cumulativa: o botão mamário só se torna palpável perto de 34 semanas e atinge mais de 10 mm no termo, razão pela qual o prematuro extremo não tem glândula palpável. A **pele** reflete a maturação da barreira epidérmica — o estrato córneo se queratiniza entre 32 e 34 semanas, e é essa queratinização que transforma a pele gelatinosa e translúcida do prematuro em pele espessa, com sulcos e descamação, no termo e no pós-termo. As **pregas plantares** aparecem no sentido anteroposterior, do terço anterior para o calcâneo, acompanhando o crescimento e a deposição de tecido conjuntivo no pé — ausência total sugere menos de 32 semanas, sulcos até o calcâneo sugerem termo ou pós-termo.',
+        'Entender esses mecanismos explica de imediato as duas grandes limitações do método. Primeiro, o **piso**: abaixo de 29 semanas praticamente todos os sinais estão no valor zero, de modo que o escore satura e não discrimina — daí a superioridade do New Ballard, que inclui itens neuromusculares (postura, ângulo de flexão do punho, ângulo poplíteo, sinal do xale) capazes de distinguir 24 de 28 semanas. Segundo, a dependência do **estado nutricional e placentário**: na restrição de crescimento intrauterino, a perda de tecido subcutâneo e a redução de tecido mamário fazem o recém-nascido parecer mais prematuro do que é, enquanto a hidropisia, a infecção congênita e a maceração alteram a pele de forma imprevisível. O método mede maturação **somática**, e assume que ela caminhou junto com o tempo — premissa que a insuficiência placentária quebra.',
       ],
-      alertas: ['A avaliação deve ser feita nas primeiras 24 horas de vida. Depois disso, a pele se descama e as características somáticas mudam, comprometendo a estimativa.'],
+      conduta: [
+        'Aplique nas **primeiras 24 horas** de vida, com o recém-nascido despido, em ambiente térmico neutro e com boa iluminação. Depois desse prazo a pele descama e as características mudam, comprometendo a estimativa de forma irreversível.',
+        'Confronte o resultado com a **datação obstétrica** antes de aceitá-lo. Ultrassonografia de primeiro trimestre é a referência; data da última menstruação confiável vem depois. Se houver divergência maior que 2 semanas, prevaleça a datação obstétrica e investigue restrição de crescimento intrauterino como explicação da discrepância.',
+        semanas < 34
+          ? 'Abaixo de 34 semanas, o Capurro perde acurácia e satura. **Use o New Ballard Score**, que inclui itens neuromusculares e foi validado de 20 a 44 semanas — abaixo de 29 semanas ele é claramente superior.'
+          : 'Nesta faixa o Capurro tem desempenho adequado, com erro esperado de ± 1 a 2 semanas. Registre a estimativa junto do método usado, para que o seguimento saiba de onde veio o número.',
+        'Classifique também o **peso para a idade gestacional** usando as curvas de Fenton ou Intergrowth-21st: pequeno, adequado ou grande para a idade gestacional. É uma informação independente da maturidade e define riscos distintos — hipoglicemia e policitemia no pequeno, hipoglicemia e tocotraumatismo no grande.',
+        semanas < 37
+          ? 'Prematuridade confirmada aciona um pacote de cuidados: controle térmico rigoroso, glicemia capilar seriada nas primeiras horas, vigilância de icterícia com bilirrubina transcutânea ou sérica, monitorização de apneia, avaliação de desconforto respiratório pelo boletim de Silverman-Andersen, apoio à amamentação com suplementação se necessário, e programação do rastreio de retinopatia da prematuridade pela idade pós-menstrual.'
+          : semanas >= 42
+            ? 'Pós-termo exige atenção à insuficiência placentária e suas consequências: síndrome de aspiração meconial, hipoglicemia por depleção de glicogênio, policitemia com risco de hiperviscosidade e hiperbilirrubinemia. Avalie líquido meconial, glicemia e hematócrito.'
+            : 'Recém-nascido a termo: cuidados de rotina, contato pele a pele, amamentação na primeira hora, vitamina K, triagem neonatal (teste do pezinho, teste do coraçãozinho, triagem auditiva e do reflexo vermelho) conforme o calendário.',
+        'Registre a idade gestacional definitiva no prontuário, porque ela governa todo o seguimento: idade corrigida para crescimento e desenvolvimento, idade pós-menstrual para rastreio de retinopatia e protocolos de terapia intensiva, e idade cronológica para vacinação.',
+      ],
+      alertas: [
+        'A avaliação deve ser feita nas primeiras 24 horas de vida. Depois disso, a pele se descama e as características somáticas mudam, comprometendo a estimativa.',
+        'Abaixo de 29 semanas o escore **satura**: quase todos os itens valem zero e o método não discrimina. Use o New Ballard Score nessa faixa.',
+        'Restrição de crescimento intrauterino, hidropisia, infecção congênita e desnutrição materna alteram os sinais somáticos e fazem o recém-nascido parecer mais prematuro do que é. O método assume que a maturação somática acompanhou o tempo gestacional.',
+        'A datação obstétrica por ultrassonografia de primeiro trimestre é superior a qualquer método pós-natal. O Capurro é estimativa de reserva, para quando não há pré-natal documentado.',
+        'Não confunda maturidade com peso: prematuro pode ser adequado para a idade gestacional e recém-nascido a termo pode ser pequeno. As duas classificações são independentes e definem riscos diferentes.',
+      ],
+      tabela: {
+        titulo: 'Cronologia embriológica dos cinco sinais',
+        colunas: ['Sinal', 'O que amadurece', 'Faixa em que discrimina'],
+        linhas: [
+          ['Orelha', 'Elasticidade da cartilagem auricular', '32 a 38 semanas'],
+          ['Glândula mamária', 'Resposta cumulativa ao estrogênio materno', '34 semanas ao termo'],
+          ['Mamilo e aréola', 'Pigmentação e elevação da borda', '34 semanas ao termo'],
+          ['Pele', 'Queratinização do estrato córneo', '32 a 34 semanas em diante'],
+          ['Pregas plantares', 'Deposição conjuntiva, do terço anterior ao calcâneo', '32 semanas ao pós-termo'],
+        ],
+        destaque: semanas < 34 ? 3 : 0,
+      },
     }
   },
   formula: ['Idade gestacional (dias) = 204 + soma dos pontos', 'Semanas = dias / 7'],
@@ -497,9 +565,15 @@ const capurro: Ferramenta = {
   armadilhas: [
     'Perde acurácia abaixo de 29 semanas, faixa em que o New Ballard é superior.',
     'Restrição de crescimento intrauterino, hidropisia e infecção congênita alteram as características somáticas.',
+    'Existem duas versões com constantes diferentes: a somática (Capurro B, constante 204, cinco sinais) e a somatoneurológica (Capurro A, constante 200, que troca um sinal somático por dois neurológicos). Usar a constante errada desloca a estimativa em cerca de meia semana.',
+    'Aplicado após 24 horas de vida, a descamação fisiológica da pele desloca o item cutâneo para valores mais altos e superestima a idade gestacional.',
+    'O escore satura na ponta inferior: abaixo de 29 semanas quase tudo vale zero, e diferenciar 24 de 28 semanas exige itens neuromusculares que o Capurro não tem.',
+    'Maturidade e peso são eixos independentes. Classifique também peso para a idade gestacional pelas curvas de Fenton ou Intergrowth-21st, porque pequeno e grande para a idade gestacional têm riscos próprios.',
   ],
   referencias: [
     { texto: 'Capurro H, Konichezky S, Fonseca D, Caldeyro-Barcia R. A simplified method for diagnosis of gestational age in the newborn infant. J Pediatr. 1978;93(1):120-122.' },
+    { texto: 'Ballard JL, Khoury JC, Wedig K, et al. New Ballard Score, expanded to include extremely premature infants. J Pediatr. 1991;119(3):417-423.' },
+    { texto: 'Committee on Obstetric Practice, AIUM, SMFM. Committee Opinion No. 700: Methods for Estimating the Due Date. Obstet Gynecol. 2017;129(5):e150-e154.' },
   ],
 }
 
@@ -565,7 +639,7 @@ const silverman: Ferramenta = {
       { valor: '0', rotulo: '0 — sincrônico', pontos: 0 },
       { valor: '1', rotulo: '1 — tórax imóvel e abdome em movimento', pontos: 1 },
       { valor: '2', rotulo: '2 — dissociação (balancim)', pontos: 2 },
-    ]),
+    ], { ajuda: 'Observe o recém-nascido despido e calmo, em decúbito dorsal, por pelo menos 30 segundos. O balancim (tórax deprime enquanto o abdome expande) reflete complacência pulmonar muito baixa somada a caixa torácica cartilaginosa que cede em vez de sustentar volume.' }),
     campoOpc('intercostal', 'Retração intercostal', [
       { valor: '0', rotulo: '0 — ausente', pontos: 0 },
       { valor: '1', rotulo: '1 — discreta', pontos: 1 },
@@ -585,7 +659,7 @@ const silverman: Ferramenta = {
       { valor: '0', rotulo: '0 — ausente', pontos: 0 },
       { valor: '1', rotulo: '1 — audível à ausculta', pontos: 1 },
       { valor: '2', rotulo: '2 — audível sem estetoscópio', pontos: 2 },
-    ]),
+    ], { ajuda: 'O sinal mais específico do boletim. É um CPAP autogerado: o recém-nascido fecha parcialmente a glote na expiração para manter pressão positiva e evitar colapso alveolar. Cuidado — o desaparecimento do gemido pode ser melhora OU exaustão da musculatura, e só o exame e a gasometria distinguem.' }),
   ],
   calcular: (v) => {
     const ids = ['toracoAbdominal', 'intercostal', 'xifoide', 'nasal', 'gemido']
@@ -614,7 +688,53 @@ const silverman: Ferramenta = {
         'O **gemido expiratório** é o sinal mais específico: o recém-nascido fecha parcialmente a glote na expiração para gerar pressão positiva no fim da expiração e evitar o colapso alveolar. É um CPAP fisiológico — e explica por que o CPAP nasal funciona tão bem nesse cenário.',
         'A **respiração em balancim** (tórax deprime enquanto o abdome expande) reflete a complacência muito baixa do pulmão somada à caixa torácica extremamente complacente do prematuro.',
         'Principais causas de desconforto respiratório neonatal: síndrome do desconforto respiratório por deficiência de surfactante (prematuros), taquipneia transitória (retenção de líquido pulmonar, mais comum em cesariana eletiva), síndrome de aspiração meconial, pneumonia e sepse precoce, pneumotórax, cardiopatia congênita e hérnia diafragmática.',
+        'Todo o boletim é a leitura clínica de um único problema: **tensão superficial alveolar não neutralizada**. O surfactante, produzido pelos pneumócitos tipo II a partir de 24 a 28 semanas e em quantidade adequada só perto de 34 a 36 semanas, é uma mistura de fosfolipídios (sobretudo dipalmitoilfosfatidilcolina) com proteínas SP-A a SP-D que se adsorve à interface ar-líquido e reduz a tensão superficial. Sem ele, a lei de Laplace passa a governar o pulmão: a pressão de colapso de um alvéolo é proporcional ao dobro da tensão superficial dividido pelo raio, de modo que **alvéolos menores colapsam primeiro** e esvaziam dentro dos maiores. O resultado é atelectasia progressiva e heterogênea, com shunt intrapulmonar, hipoxemia e queda acentuada da complacência. Para ventilar um pulmão assim, o recém-nascido precisa gerar pressões intrapleurais muito negativas — e é aí que a segunda peculiaridade entra: a caixa torácica neonatal é cartilaginosa e altamente complacente, de modo que ela cede em vez de sustentar volume. Daí as retrações intercostal e xifoide e a respiração em balancim, que não são sinais diferentes: são a mesma física vista em lugares diferentes.',
+        'O **gemido** merece destaque porque é o único item que representa uma estratégia compensatória eficaz, e não apenas o custo do esforço. Ao fechar parcialmente a glote durante a expiração, o recém-nascido cria resistência e mantém pressão positiva no fim da expiração, preservando volume residual e impedindo o colapso completo dos alvéolos. É um CPAP autogerado — e é exatamente por isso que o **CPAP nasal** funciona tão bem nesse cenário: ele faz externamente o mesmo trabalho, poupando a musculatura. Isso também explica uma armadilha grave: o desaparecimento do gemido pode significar melhora **ou** exaustão da musculatura laríngea e respiratória. Nos dois casos o escore cai, e apenas o exame e a gasometria distinguem um do outro.',
       ],
+      conduta: faixa === 0
+        ? [
+            'Sem sinais de desconforto. Mantenha em contato pele a pele com a mãe, garanta termorregulação (o recém-nascido perde calor rapidamente pela relação superfície-massa) e estimule amamentação precoce.',
+            'Reavalie de forma seriada nas primeiras horas: a taquipneia transitória e a síndrome do desconforto respiratório podem se instalar progressivamente, e o escore zero da sala de parto não garante a próxima hora.',
+          ]
+        : faixa === 1
+          ? [
+              'Desconforto leve: oximetria contínua e reavaliação frequente do boletim, registrando o valor com horário. **A tendência decide** — escore que sobe em uma hora é mais informativo que o valor isolado.',
+              'Garanta termorregulação, glicemia capilar e hidratação. Hipotermia e hipoglicemia agravam o desconforto e são causas corrigíveis em minutos.',
+              'Considere oxigênio suplementar se a saturação estiver abaixo do alvo, respeitando os alvos neonatais (habitualmente 90 a 95% no prematuro) — hiperóxia no prematuro aumenta risco de retinopatia e de displasia broncopulmonar.',
+              'Avalie a causa: idade gestacional, via de parto, bolsa rota prolongada, febre materna, líquido meconial e fatores de risco para sepse precoce definem a investigação e a necessidade de antibiótico.',
+            ]
+          : faixa === 2
+            ? [
+                '**CPAP nasal** é o suporte de escolha: ele reproduz externamente o que o gemido tenta fazer, mantendo pressão positiva no fim da expiração, recrutando alvéolos colapsados e reduzindo o trabalho respiratório. Inicie com 5 a 6 cmH₂O e titule pela resposta clínica e pela saturação.',
+                'Colha **gasometria** e radiografia de tórax. A gasometria informa o que o escore não vê (oxigenação e ventilação), e a radiografia diferencia as causas: infiltrado reticulogranular com broncograma aéreo na doença de membrana hialina, trama vascular aumentada e líquido nas cissuras na taquipneia transitória, infiltrado grosseiro na aspiração meconial, hipertransparência na síndrome de escape de ar.',
+                'Investigue e trate **sepse precoce** se houver fator de risco: hemocultura e antibiótico empírico (ampicilina com gentamicina) conforme protocolo. Desconforto respiratório é a apresentação mais comum de sepse neonatal, e a distinção clínica com doença de membrana hialina é inconfiável.',
+                'Mantenha o recém-nascido em ambiente térmico neutro, com acesso venoso, glicemia monitorizada e aporte hídrico adequado. Considere sonda gástrica e suspensão da dieta enteral enquanto o esforço respiratório for significativo, pelo risco de aspiração.',
+              ]
+            : [
+                '**Suporte ventilatório imediato.** Escore acima de 6 indica insuficiência respiratória iminente: escale para ventilação mecânica se houver apneia, acidose respiratória progressiva, hipoxemia refratária ao CPAP ou exaustão.',
+                'Considere **surfactante exógeno** precocemente se houver síndrome do desconforto respiratório do prematuro — administração precoce reduz mortalidade, pneumotórax e displasia broncopulmonar. Use a estratégia INSURE ou LISA (intubar, administrar, extubar para CPAP; ou administração menos invasiva) quando o serviço dominar a técnica.',
+                'Descarte de imediato as causas que exigem intervenção específica e não respondem a surfactante nem a CPAP: **pneumotórax** (assimetria de ausculta, desvio de traqueia, deterioração súbita — considere transiluminação e drenagem), **hérnia diafragmática** (abdome escavado, ausculta de ruídos hidroaéreos no tórax; contraindica ventilação com bolsa e máscara), **cardiopatia congênita** (teste do coraçãozinho, teste de hiperóxia, ecocardiograma) e obstrução de via aérea alta.',
+                'Acione a unidade de terapia intensiva neonatal e, se necessário, transporte em incubadora com suporte ventilatório. Nesse escore, o tempo até o suporte definitivo é o que determina o desfecho.',
+                'Gasometria seriada, radiografia, monitorização contínua e reavaliação do escore em intervalos curtos — mas lembre que, nesta faixa, o exame clínico e a gasometria prevalecem sobre o número.',
+              ],
+      alertas: [
+        'O escore avalia **esforço, não oxigenação**. Um prematuro exausto pontua baixo por já não conseguir gerar esforço, e isso é gravidade extrema disfarçada de melhora. Escore que cai junto com piora clínica, apneia ou acidose é sinal de falência iminente.',
+        'A interpretação é **inversa à do Apgar**: aqui, quanto maior a pontuação, pior. Confundir os dois na passagem de plantão já produziu conduta invertida.',
+        'Nenhum valor do boletim substitui oximetria, gasometria e radiografia. Em desconforto respiratório neonatal, hipoxemia grave pode coexistir com escore modesto.',
+        'Deterioração súbita em recém-nascido em ventilação com pressão positiva obriga a pensar em **pneumotórax** antes de ajustar parâmetros — a caixa torácica complacente e o pulmão heterogêneo favorecem escape de ar.',
+        'Alvos de saturação no prematuro são mais baixos que no termo (habitualmente 90 a 95%). Hiperóxia aumenta risco de retinopatia da prematuridade e de displasia broncopulmonar — oxigênio é fármaco com dose e teto.',
+      ],
+      tabela: {
+        titulo: 'Faixas do boletim e suporte correspondente',
+        colunas: ['Pontos', 'Gravidade', 'Suporte'],
+        linhas: [
+          ['0', 'Sem desconforto', 'Contato pele a pele, reavaliação seriada'],
+          ['1 – 3', 'Leve', 'Oximetria contínua, O₂ se necessário'],
+          ['4 – 6', 'Moderado', 'CPAP nasal, gasometria, radiografia'],
+          ['7 – 10', 'Grave', 'Ventilação mecânica, considerar surfactante'],
+        ],
+        destaque: faixa,
+      },
     }
   },
   formula: ['Soma de 5 sinais, 0 a 2 pontos cada; quanto maior, pior'],
@@ -623,6 +743,11 @@ const silverman: Ferramenta = {
   armadilhas: [
     'O escore avalia esforço, não oxigenação. Um prematuro exausto pode ter escore baixo por não conseguir mais gerar esforço — isso é sinal de gravidade extrema, não de melhora.',
     'Sempre correlacione com saturação, frequência respiratória, gasometria e radiografia.',
+    'Interpretação inversa à do Apgar: aqui a pontuação alta é ruim. É a confusão mais comum na passagem de plantão.',
+    'O desaparecimento do gemido é ambíguo — pode ser melhora ou exaustão da musculatura laríngea. Somente exame e gasometria distinguem.',
+    'Não diferencia as causas. Doença de membrana hialina, taquipneia transitória, sepse precoce, pneumotórax, hérnia diafragmática e cardiopatia congênita produzem o mesmo escore e exigem condutas distintas.',
+    'Foi derivado em prematuros com doença de membrana hialina. Em recém-nascido a termo, e sobretudo pós-termo com aspiração meconial, a calibração é menos estudada.',
+    'Um valor isolado informa pouco. Registre o boletim em série, com horário, porque é a trajetória que indica necessidade de escalar suporte.',
   ],
   referencias: [
     { texto: 'Silverman WA, Andersen DH. A controlled clinical trial of effects of water mist on obstructive respiratory signs, death rate and necropsy findings among premature infants. Pediatrics. 1956;17(1):1-10.' },
@@ -700,9 +825,9 @@ const idadeCorrigida: Ferramenta = {
   resumo: 'Corrige a idade cronológica pela prematuridade, para avaliar crescimento e desenvolvimento.',
   categorias: ['pediatria'],
   campos: [
-    campoNum('igNascimento', 'Idade gestacional ao nascer', { unidade: 'semanas', min: 22, max: 42, passo: 1 }),
-    campoNum('igDias', 'Dias adicionais na idade gestacional', { unidade: 'dias', min: 0, max: 6, passo: 1, padrao: '0' }),
-    campoNum('idadeCronologica', 'Idade cronológica atual', { unidade: 'meses', min: 0, max: 48, passo: 0.5 }),
+    campoNum('igNascimento', 'Idade gestacional ao nascer', { unidade: 'semanas', min: 22, max: 42, passo: 1, ajuda: 'Semanas completas ao nascimento, pela melhor datação disponível — ultrassonografia de primeiro trimestre é a mais confiável, seguida da data da última menstruação e, por último, dos métodos somáticos (Capurro, New Ballard).' }),
+    campoNum('igDias', 'Dias adicionais na idade gestacional', { unidade: 'dias', min: 0, max: 6, passo: 1, padrao: '0', ajuda: 'A fração de semana, de 0 a 6 dias. Um recém-nascido de 32 semanas e 5 dias tem 32 aqui e 5 neste campo — a precisão importa no prematuro extremo, em que cada semana muda a curva de referência.' }),
+    campoNum('idadeCronologica', 'Idade cronológica atual', { unidade: 'meses', min: 0, max: 48, passo: 0.5, ajuda: 'Meses desde o NASCIMENTO, não desde a alta da unidade neonatal. É esta idade, e não a corrigida, que governa o calendário vacinal.' }),
   ],
   calcular: (v) => {
     const ig = num(v, 'igNascimento')
@@ -730,7 +855,33 @@ const idadeCorrigida: Ferramenta = {
         'Sem a correção, todo prematuro parece ter atraso de crescimento e de desenvolvimento nos primeiros dois anos. Plotar um bebê de 6 meses nascido com 28 semanas na curva de 6 meses produz um diagnóstico falso de desnutrição e de atraso motor.',
         'Para prematuros, use as curvas de **Fenton** ou **Intergrowth-21st** até 50 semanas de idade pós-menstrual, e só então migre para as curvas da OMS com idade corrigida.',
         'Prematuros exigem seguimento estruturado: rastreio de retinopatia (a partir de 4 a 6 semanas de vida ou 31 semanas de idade pós-menstrual), triagem auditiva, avaliação do neurodesenvolvimento, suplementação de ferro e vitamina D, e vigilância nutricional.',
+        'Existem **três idades** diferentes em uso no prematuro, e confundi-las é a origem de quase todos os erros de seguimento. A **cronológica** conta desde o nascimento e governa o calendário vacinal, porque o sistema imune responde ao tempo de exposição ao ambiente extrauterino: a maturação de linfócitos B e T e a resposta a antígenos vacinais dependem do estímulo pós-natal, não da idade gestacional. A **corrigida** desconta as semanas de prematuridade e governa crescimento, marcos do desenvolvimento e introdução alimentar, porque a mielinização, a sinaptogênese e a poda sináptica seguem o relógio contado desde a concepção — um bebê de 6 meses nascido com 28 semanas tem cérebro de 3 meses de idade corrigida. A **pós-menstrual** soma a idade gestacional à cronológica e governa os protocolos de terapia intensiva neonatal e o rastreio de retinopatia da prematuridade, porque a vascularização retiniana progride da papila à periferia em cronologia fixa desde a concepção e só se completa em torno de 40 a 44 semanas pós-menstruais.',
+        'Há um motivo mecanístico para o prematuro precisar de mais ferro, e ele explica a suplementação de rotina. Cerca de **80% do estoque de ferro fetal é transferido no terceiro trimestre**, sobretudo após 30 semanas, de modo que o prematuro nasce com reserva proporcionalmente menor. A isso se somam crescimento pós-natal acelerado (que dilui a hemoglobina num compartimento em expansão rápida), flebotomias repetidas da internação e resposta eritropoetínica imatura — o rim fetal produz eritropoetina de forma menos eficiente e a transição hepática para renal é lenta. O resultado é a anemia da prematuridade, distinta da anemia fisiológica do lactente a termo e que justifica ferro profilático mais precoce e em dose maior.',
       ],
+      conduta: [
+        'Plote crescimento e desenvolvimento **pela idade corrigida** até os 2 anos — 3 anos em prematuro extremo, sobretudo para perímetro cefálico e marcos neurológicos. Use as curvas de **Fenton** ou **Intergrowth-21st** até 50 semanas de idade pós-menstrual e só então migre para as curvas da OMS com idade corrigida.',
+        '**Vacine pela idade cronológica**, com doses e intervalos habituais, independentemente do peso ou da idade corrigida. As exceções são pontuais e dizem respeito ao peso: BCG a partir de 2 kg e a dose de hepatite B ao nascer em recém-nascido de mãe HBsAg positiva com menos de 2 kg, que exige esquema de quatro doses com imunoglobulina. Adiar vacina em prematuro é erro comum e os deixa desprotegidos justamente quando mais vulneráveis.',
+        'Programe o **rastreio de retinopatia da prematuridade** pela idade pós-menstrual: primeiro exame com 4 a 6 semanas de vida ou 31 semanas pós-menstruais, o que vier depois, em nascidos com menos de 32 semanas ou menos de 1.500 g. Perder essa janela custa visão de forma irreversível.',
+        'Suplemente **ferro** (2 a 4 mg/kg/dia, iniciando por volta de 4 a 6 semanas de vida e mantendo até 12 meses de idade corrigida) e **vitamina D** (400 UI/dia). Ajuste a dose de ferro ao peso de nascimento — quanto mais prematuro, maior a necessidade.',
+        'Mantenha seguimento multiprofissional estruturado: triagem auditiva neonatal com reteste, avaliação oftalmológica, fisioterapia e terapia ocupacional quando indicadas, fonoaudiologia para disfagia e avaliação formal do neurodesenvolvimento em marcos definidos (6, 12, 18 e 24 meses de idade corrigida).',
+        'Explique a diferença entre as idades à família, por escrito. Pai e mãe que entendem que "o bebê tem 6 meses de vida e 3 de idade corrigida" param de comparar com o primo a termo, aderem melhor ao seguimento e param de atrasar vacina por conta própria.',
+      ],
+      alertas: [
+        'Não corrija a idade para o calendário vacinal. Adiar vacinas em prematuros é erro comum, frequente e prejudicial — eles têm maior risco de doença invasiva, não menor.',
+        'Idade corrigida negativa significa que o bebê ainda não alcançou a data provável do parto. Nessa fase, use **idade pós-menstrual** para tudo: nutrição, protocolos de terapia intensiva e rastreio de retinopatia.',
+        'A correção não é diagnóstico. Atraso de desenvolvimento persistente **pela idade corrigida**, ou perda de marco já adquirido, exige investigação e não mais desconto de prematuridade.',
+        'O rastreio de retinopatia segue a idade pós-menstrual e tem janela crítica. Nenhuma outra idade serve para programá-lo.',
+      ],
+      tabela: {
+        titulo: 'As três idades do prematuro e para que serve cada uma',
+        colunas: ['Idade', 'Como calcular', 'Para que serve'],
+        linhas: [
+          ['Cronológica', 'Tempo desde o nascimento', 'Calendário vacinal'],
+          ['Corrigida', 'Cronológica − semanas de prematuridade', 'Crescimento, marcos, introdução alimentar'],
+          ['Pós-menstrual', 'IG ao nascer + cronológica', 'Protocolos de UTI neonatal e rastreio de ROP'],
+        ],
+        destaque: 1,
+      },
     }
   },
   formula: [
@@ -743,6 +894,10 @@ const idadeCorrigida: Ferramenta = {
   armadilhas: [
     'Não corrija a idade para o calendário vacinal. Adiar vacinas em prematuros é erro comum e os deixa desprotegidos justamente quando estão mais vulneráveis.',
     'A correção é habitualmente feita para nascidos com menos de 37 semanas; o benefício é maior quanto mais prematuro.',
+    'Confundir idade corrigida com idade pós-menstrual troca o protocolo. A pós-menstrual é a que programa o rastreio de retinopatia e governa as decisões de terapia intensiva neonatal; a corrigida é a de crescimento e desenvolvimento.',
+    'Atraso que persiste pela idade corrigida não é mais efeito da prematuridade e exige investigação. Usar a correção como explicação indefinida atrasa diagnóstico de paralisia cerebral, autismo e deficiência sensorial.',
+    'A correção até 2 anos é convenção prática, não um corte biológico. Em prematuro extremo, perímetro cefálico e desenvolvimento neurológico se beneficiam de correção até 3 anos.',
+    'Introdução alimentar segue a idade corrigida, porque depende de maturação neuromuscular da deglutição e do controle cervical — oferecer sólidos aos 6 meses cronológicos de um prematuro de 28 semanas é oferecer a um bebê de 3 meses corrigidos.',
   ],
   referencias: [
     { texto: 'Engle WA; American Academy of Pediatrics Committee on Fetus and Newborn. Age terminology during the perinatal period. Pediatrics. 2004;114(5):1362-1364.' },
@@ -838,14 +993,14 @@ const glasgowPed: Ferramenta = {
       { valor: '3', rotulo: '3 — ao som ou à fala', pontos: 3 },
       { valor: '2', rotulo: '2 — à dor', pontos: 2 },
       { valor: '1', rotulo: '1 — ausente', pontos: 1 },
-    ]),
+    ], { ajuda: 'Único componente idêntico ao do adulto. Edema palpebral importante torna o item inavaliável — registre a limitação em vez de pontuar 1.' }),
     campoOpc('verbal', 'Resposta verbal (adaptada para lactentes)', [
       { valor: '5', rotulo: '5 — balbucia, palavras adequadas, sorri, segue objetos', pontos: 5 },
       { valor: '4', rotulo: '4 — choro consolável, interação reduzida', pontos: 4 },
       { valor: '3', rotulo: '3 — choro inconsolável, gemido à dor', pontos: 3 },
       { valor: '2', rotulo: '2 — agitação, irritabilidade, inquietação', pontos: 2 },
       { valor: '1', rotulo: '1 — ausente', pontos: 1 },
-    ]),
+    ], { ajuda: 'Use esta versão apenas em pré-verbais (até cerca de 4 anos). Acima disso, com linguagem estabelecida, aplique a escala do adulto — a versão de lactente superestima. Sob intubação ou sedação o item é inavaliável: registre \'V não avaliável\' em vez de atribuir 1. O divisor de águas é a consolabilidade: choro que cede ao acolhimento exige integração cortical.' }),
     campoOpc('motora', 'Melhor resposta motora', [
       { valor: '6', rotulo: '6 — movimentos espontâneos e propositais', pontos: 6 },
       { valor: '5', rotulo: '5 — retira ao toque / localiza a dor', pontos: 5 },
@@ -853,7 +1008,7 @@ const glasgowPed: Ferramenta = {
       { valor: '3', rotulo: '3 — flexão anormal (decorticação)', pontos: 3 },
       { valor: '2', rotulo: '2 — extensão anormal (descerebração)', pontos: 2 },
       { valor: '1', rotulo: '1 — ausente', pontos: 1 },
-    ]),
+    ], { ajuda: 'Pontue a MELHOR resposta de qualquer membro, não a média nem a do lado pior. No pré-verbal, movimento espontâneo proposital (levar a mão a um objeto, afastar-se do estímulo) substitui a obediência a comandos, porque exige planejamento motor cortical mesmo sem compreender a instrução. Flexão e extensão anormais indicam lesão de tronco e são achado de urgência.' }),
   ],
   calcular: (v) => {
     const o = num(v, 'ocular')
@@ -876,16 +1031,65 @@ const glasgowPed: Ferramenta = {
         'A adaptação pediátrica altera apenas os componentes **verbal** e **motor**, porque o lactente não fala nem obedece a comandos. A abertura ocular é idêntica à do adulto.',
         'Em crianças abaixo de 2 anos, o item verbal se baseia na qualidade do choro e na interação. Choro consolável e interação preservada indicam função cortical mantida.',
         'Como no adulto, registre os três componentes separadamente. E lembre que hipoglicemia, hipóxia, intoxicação e crise convulsiva não convulsiva são causas reversíveis de rebaixamento que devem ser excluídas antes de qualquer conclusão.',
+        'A criança não é um adulto pequeno, e três diferenças fisiológicas mudam completamente a urgência do rebaixamento. A primeira é a **reserva de oxigênio**: o consumo basal do lactente é de 6 a 8 mL/kg/min contra 3 a 4 no adulto, enquanto a capacidade residual funcional por quilo é menor e a complacência da caixa torácica é alta (costelas cartilaginosas, que colapsam em vez de sustentar volume). O resultado é que o tempo de apneia segura é de segundos, não minutos, e a dessaturação durante uma intubação é abrupta. A segunda é a **dinâmica intracraniana**: no lactente com fontanela aberta e suturas não fundidas existe complacência extra que atrasa a elevação da pressão intracraniana, de modo que a criança pode acumular hematoma volumoso mantendo Glasgow razoável — e depois descompensar de forma súbita quando essa reserva se esgota. A terceira é o **padrão de resposta ao choque**: a criança mantém a pressão arterial por vasoconstrição intensa e taquicardia até perder cerca de 30 a 40% da volemia, e a hipotensão é sinal pré-terminal. Por isso a alteração de consciência aparece frequentemente **antes** da hipotensão e é um dos sinais mais precoces de choque pediátrico — o que faz o Glasgow funcionar, na criança, também como monitor de perfusão.',
       ],
-      alertas: ['A causa mais comum de rebaixamento em criança pequena é infecciosa ou metabólica, não traumática. Glicemia capilar imediata é obrigatória.'],
+      conduta: total <= 8
+        ? [
+            '**Via aérea definitiva.** O limiar é o mesmo do adulto, mas o preparo não: pré-oxigene bem (a reserva é de segundos), escolha o tubo pelo peso ou pela fórmula da idade, tenha à mão uma medida acima e uma abaixo, e use lâmina e ventilador com parâmetros pediátricos calculados antes de sedar.',
+            '**Glicemia capilar agora**, antes de qualquer imagem. Hipoglicemia é a causa reversível mais frequente e mais rapidamente letal de rebaixamento em criança pequena: trate com glicose 10% 2 a 5 mL/kg no lactente (evite glicose 50%, que é hiperosmolar para veia periférica infantil) e recheque em 15 minutos.',
+            'Percorra as causas reversíveis em paralelo: hipóxia, hipercapnia, hipotensão, hipotermia, intoxicação (incluindo medicamento de adulto ingerido em casa), distúrbio eletrolítico, hiperamonemia, **estado de mal não convulsivo** e infecção do sistema nervoso central. Em criança pequena, rebaixamento de causa infecciosa ou metabólica é mais comum que traumático.',
+            'Se houver trauma, aplique a **regra PECARN** para decidir tomografia e procure sinais de hipertensão intracraniana — bradicardia com hipertensão (a tríade de Cushing é tardia na criança), anisocoria, postura anormal, abaulamento de fontanela. Mantenha cabeceira a 30° com cabeça neutra, normocapnia, normotermia e normoglicemia.',
+            'Considere **maus-tratos** diante de rebaixamento sem mecanismo de trauma compatível, sobretudo em lactente: procure hemorragia retiniana, lesões em estágios diferentes de cicatrização e incoerência entre a história e o achado. É diagnóstico de notificação obrigatória.',
+          ]
+        : total <= 12
+          ? [
+              'Monitorize continuamente e reavalie o Glasgow em intervalos curtos, registrando os três componentes com horário. **A tendência decide**: queda de 2 pontos ou mais, ou queda de qualquer magnitude no componente motor, exige reavaliação imediata da via aérea, porque a criança com fontanela aberta descompensa de forma abrupta depois de um período aparentemente estável.',
+              'Glicemia capilar, oximetria, sinais vitais completos com pressão arterial (aferida com manguito de tamanho correto) e temperatura. Procure foco infeccioso, avalie hidratação e considere punção lombar se houver suspeita de infecção do sistema nervoso central e não houver contraindicação.',
+              'Garanta acesso venoso e mantenha a criança em jejum até definir a conduta. Corrija hipoglicemia, hipovolemia e febre — todos elevam a demanda metabólica cerebral e pioram o rebaixamento.',
+              'Se houver trauma, aplique a regra PECARN e defina explicitamente quem reavalia e em quanto tempo. Rebaixamento moderado é a faixa em que a observação estruturada substitui, com segurança, a tomografia em boa parte dos casos.',
+            ]
+          : [
+              'Glasgow preservado não encerra a avaliação. Meça glicemia capilar se houver qualquer alteração de comportamento, e compare o comportamento atual com o habitual **segundo o cuidador** — quem melhor detecta a criança "diferente" é quem convive com ela.',
+              'Se houve trauma craniano, aplique a **regra PECARN** para decidir entre tomografia, observação ou alta: em criança de baixo risco, a observação estruturada por 4 a 6 horas evita irradiar um cérebro em desenvolvimento sem perder lesão clinicamente importante.',
+              'Oriente a família por escrito sobre sinais de alarme que obrigam retorno imediato: vômitos persistentes, sonolência progressiva ou dificuldade de despertar, irritabilidade que não cede, cefaleia crescente, convulsão, marcha alterada, assimetria pupilar ou saída de sangue ou líquido claro pelo nariz ou ouvido.',
+              'Registre o valor com os três componentes. Um Glasgow 14 por abertura ocular ao som é clinicamente diferente de um Glasgow 14 por resposta motora reduzida, e o total sozinho apaga essa distinção.',
+            ],
+      alertas: [
+        'A causa mais comum de rebaixamento em criança pequena é infecciosa ou metabólica, não traumática. Glicemia capilar imediata é obrigatória.',
+        'A criança dessatura em segundos, não em minutos: consumo de oxigênio por quilo quase o dobro do adulto, capacidade residual funcional menor e caixa torácica complacente. Pré-oxigenação e preparo completo antes de sedar não são opcionais.',
+        'Fontanela aberta e suturas não fundidas dão complacência intracraniana extra, e a criança pode manter Glasgow razoável com hematoma volumoso até descompensar de forma súbita. Reavalie em série; um valor isolado tranquiliza mal.',
+        'Hipotensão na criança é sinal **pré-terminal** de choque — ela compensa por taquicardia e vasoconstrição até perder 30 a 40% da volemia. Alteração de consciência costuma vir antes, e é por isso que o Glasgow também funciona como monitor de perfusão.',
+        'Rebaixamento sem mecanismo de trauma compatível em lactente exige considerar maus-tratos, com exame de fundo de olho, avaliação de lesões em estágios diferentes e notificação obrigatória.',
+        'A escala não substitui o exame pupilar, a avaliação de sinais focais nem a busca das causas reversíveis. Ela mede nível de consciência, não o que o causou.',
+      ],
+      tabela: {
+        titulo: 'Faixas de gravidade e consequência prática',
+        colunas: ['Total', 'Gravidade', 'Conduta imediata'],
+        linhas: [
+          ['13 – 15', 'Leve', 'Glicemia, PECARN se trauma, orientação de alarme'],
+          ['9 – 12', 'Moderado', 'Monitorização contínua e reavaliação em série'],
+          ['≤ 8', 'Grave', 'Via aérea definitiva, glicemia, causas reversíveis'],
+        ],
+        destaque: total >= 13 ? 0 : total >= 9 ? 1 : 2,
+      },
     }
   },
   formula: ['GCS pediátrico = ocular (1–4) + verbal adaptada (1–5) + motora adaptada (1–6)'],
   fundamento:
-    'A escala original de Glasgow pressupõe linguagem e obediência a comandos, o que a torna inaplicável abaixo de 2 anos. A adaptação pediátrica substitui esses marcadores por equivalentes desenvolvimentais: interação social e qualidade do choro no lugar da orientação verbal; movimento espontâneo proposital no lugar da obediência.',
-  armadilhas: ['Criança que dorme normalmente pode parecer rebaixada. Avalie com a criança desperta e, se possível, com o cuidador presente para julgar o comportamento habitual.'],
+    'A escala original de Glasgow pressupõe linguagem e obediência a comandos, o que a torna inaplicável abaixo de 2 anos. A adaptação pediátrica substitui esses marcadores por equivalentes desenvolvimentais: interação social e qualidade do choro no lugar da orientação verbal; movimento espontâneo proposital no lugar da obediência. A escolha desses substitutos não é arbitrária — ela segue a maturação do sistema nervoso central. A interação social do lactente (sorriso social a partir de 2 meses, seguimento visual, reconhecimento do cuidador) depende de córtex funcionante e de vias sensoriais íntegras, exatamente o que a orientação verbal testa no adulto. A qualidade do choro discrimina bem porque o choro **consolável** exige integração cortical do estímulo de acolhimento, enquanto o choro inconsolável indica processamento cortical comprometido ou dor não modulada, e o gemido sinaliza função predominantemente subcortical. No componente motor, o movimento espontâneo proposital ocupa o lugar da obediência a comandos por um motivo simples: dirigir a mão a um objeto ou afastá-la de um estímulo exige planejamento motor cortical, ainda que a criança não compreenda a instrução. Três diferenças fisiológicas fazem, porém, com que o mesmo número signifique mais urgência na criança do que no adulto. A reserva de oxigênio é menor — consumo basal de 6 a 8 mL/kg/min contra 3 a 4, capacidade residual funcional reduzida por quilo e caixa torácica cartilaginosa e complacente —, o que encurta o tempo de apneia segura a segundos. A dinâmica intracraniana é diferente, porque fontanela aberta e suturas não fundidas oferecem complacência extra que atrasa a elevação da pressão e permite descompensação súbita. E o padrão de choque é distinto: a criança sustenta a pressão arterial por taquicardia e vasoconstrição até perder 30 a 40% da volemia, de modo que a alteração de consciência frequentemente **precede** a hipotensão e o Glasgow acaba funcionando também como monitor precoce de perfusão.',
+  armadilhas: [
+    'Criança que dorme normalmente pode parecer rebaixada. Avalie com a criança desperta e, se possível, com o cuidador presente para julgar o comportamento habitual.',
+    'A adaptação verbal é para pré-verbais. Em criança acima de 4 a 5 anos, com linguagem estabelecida, use a escala do adulto — aplicar a versão de lactente superestima a pontuação.',
+    'Intubação, sedação e bloqueio neuromuscular tornam o componente verbal inavaliável. Registre "V não avaliável (tubo)" em vez de atribuir 1, e não reporte um total que embute esse zero arbitrário.',
+    'O total esconde informação clínica decisiva. Glasgow 14 por abertura ocular ao som e Glasgow 14 por queda motora têm prognósticos diferentes — sempre registre os três componentes.',
+    'Autismo, paralisia cerebral, atraso do desenvolvimento e surdez alteram a linha de base. A comparação é com o basal da criança relatado pelo cuidador, não com a normalidade para a idade.',
+    'Um valor isolado tem valor limitado, sobretudo no lactente com fontanela aberta: é a série de medidas que detecta a deterioração antes da descompensação.',
+    'Glasgow ≤ 8 não é, por si, indicação de tomografia imediata em todo trauma pediátrico — mas rebaixamento persistente é critério de alto risco na regra PECARN e praticamente sempre a indica.',
+  ],
   referencias: [
     { texto: 'Holmes JF, Palchak MJ, MacFarlane T, Kuppermann N. Performance of the pediatric Glasgow Coma Scale in children with blunt head trauma. Acad Emerg Med. 2005;12(9):814-819.' },
+    { texto: 'Kuppermann N, Holmes JF, Dayan PS, et al. Identification of children at very low risk of clinically-important brain injuries after head trauma: a prospective cohort study (PECARN). Lancet. 2009;374(9696):1160-1170.' },
+    { texto: 'Kochanek PM, Tasker RC, Carney N, et al. Guidelines for the Management of Pediatric Severe Traumatic Brain Injury, 3rd Edition. Pediatr Crit Care Med. 2019;20(3S):S1-S82.' },
   ],
 }
 
