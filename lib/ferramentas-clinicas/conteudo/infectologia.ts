@@ -182,6 +182,13 @@ const sofa: Ferramenta = {
       nivel,
       rotuloNivel: delta >= 2 ? 'Critério de sepse preenchido (Δ ≥ 2)' : 'Sem aumento de 2 pontos em relação ao basal',
       detalhes,
+      conduta: [
+        'Use o SOFA para **acompanhar a trajetória**, não apenas para pontuar uma vez: a variação do escore nas primeiras 48–72 h prediz mortalidade melhor que o valor de admissão. SOFA que sobe apesar do tratamento sinaliza falha da estratégia e obriga reavaliar foco, antimicrobiano e suporte.',
+        'Um **aumento ≥ 2 pontos** sobre o basal, em paciente com infecção suspeita ou confirmada, define **sepse** pela Sepsis-3. Em quem não tem disfunção prévia conhecida, presuma basal zero. Feito o diagnóstico, dispare o pacote de 1 hora: lactato, hemoculturas antes do antibiótico, antimicrobiano de amplo espectro, 30 mL/kg de cristaloide se houver hipotensão ou lactato ≥ 4 mmol/L, e vasopressor para manter PAM ≥ 65 mmHg.',
+        'Trate cada componente que pontua, porque cada um tem intervenção própria: **respiratório** (otimizar ventilação, ventilação protetora, posição prona se PaO₂/FiO₂ < 150), **cardiovascular** (volume, noradrenalina, vasopressina de segunda linha), **renal** (evitar nefrotóxicos, indicações de diálise), **hematológico** (transfusão de plaquetas por gatilhos, não por número isolado), **hepático** e **neurológico** (afastar causas estruturais e metabólicas do rebaixamento).',
+        'SOFA **≥ 11** associa-se a mortalidade acima de 80% e é um bom momento para **conversa sobre objetivos de cuidado** com a família. Use-o como gatilho de comunicação, nunca como critério isolado de limitação: o escore descreve populações e não determina o desfecho de um indivíduo.',
+        'Lembre das limitações que distorcem o cálculo: o componente neurológico é inválido em paciente **sedado**, o respiratório depende de gasometria arterial que nem sempre existe, e a bilirrubina e a creatinina podem estar cronicamente alteradas. Registre o SOFA basal do paciente crônico — sem ele, o critério de aumento de 2 pontos não pode ser aplicado.',
+      ],
       interpretacao: [
         '**Sepse (Sepsis-3)** = infecção suspeita ou documentada **mais** aumento de 2 ou mais pontos no SOFA. **Choque séptico** = sepse com necessidade de vasopressor para manter PAM ≥ 65 mmHg **e** lactato acima de 2 mmol/L, ambos apesar de ressuscitação volêmica adequada. A mortalidade do choque séptico assim definido supera 40%.',
         'A tendência do SOFA vale mais do que o valor isolado: SOFA que sobe nas primeiras 48 a 72 horas de UTI associa-se a mortalidade muito maior do que SOFA alto e estável.',
@@ -356,6 +363,13 @@ const news2: Ferramenta = {
         { rotulo: 'Temperatura', valor: `${pTemp} ponto(s)` },
         { rotulo: 'Algum parâmetro isolado com 3 pontos', valor: algumTres ? 'Sim' : 'Não', nota: 'Um único parâmetro em 3 já eleva a categoria para risco médio, independentemente do total.', nivel: algumTres ? 'alerta' : 'ok' },
       ],
+      conduta: [
+        '**NEWS2 0–4 (baixo risco)**: reavaliação a cada 12 horas, cuidado de rotina na enfermaria. Não há necessidade de escalar.',
+        '**NEWS2 5–6, ou qualquer parâmetro isolado valendo 3 pontos (risco médio)**: reavaliação horária e **avaliação urgente por médico** com competência em doença aguda. Um único parâmetro extremo — frequência respiratória ≥ 25, saturação ≤ 91%, sistólica ≤ 90 mmHg — é gatilho independentemente da soma.',
+        '**NEWS2 ≥ 7 (alto risco)**: monitorização contínua, avaliação imediata por equipe com competência em cuidado crítico e consideração de transferência para unidade de maior complexidade. Esse é o limiar de acionamento do time de resposta rápida.',
+        'Preste atenção especial à **frequência respiratória**: é o parâmetro que mais precocemente se altera na deterioração e o mais frequentemente não medido ou estimado à distância. Contar 60 segundos muda o escore e a conduta mais do que qualquer exame laboratorial disponível na enfermaria.',
+        'Use a **escala 2 de saturação (alvo 88–92%)** apenas em pacientes com insuficiência respiratória hipercápnica confirmada e prescrição explícita de alvo reduzido. Aplicá-la por presunção em qualquer portador de doença pulmonar obstrutiva mascara hipoxemia real e atrasa a resposta.',
+      ],
       interpretacao: [
         ['**Total 0:** monitorização mínima a cada 12 horas.', '**Total 1 a 4:** reavaliação a cada 4 a 6 horas, com decisão do enfermeiro sobre escalonamento.', '**Total 5 a 6, ou qualquer parâmetro em 3:** resposta urgente — avaliação médica em até 1 hora, monitorização de hora em hora, considerar cuidados de maior complexidade.', '**Total ≥ 7:** resposta emergencial — avaliação por equipe com competência em cuidados críticos, monitorização contínua, transferência para leito monitorizado.'][faixa],
         'A grande virtude do NEWS2 é padronizar o gatilho de escalonamento: ele transforma "achei o paciente estranho" numa linguagem comum entre enfermagem, plantão e time de resposta rápida. Sua adoção nacional no Reino Unido associou-se a redução de paradas cardíacas intra-hospitalares não previstas.',
@@ -525,6 +539,13 @@ const sepse: Ferramenta = {
       nivel,
       rotuloNivel: temChoque ? 'Mortalidade > 40%' : temSepse ? 'Mortalidade em torno de 10%' : 'Reavalie se a suspeita clínica persistir',
       detalhes,
+      conduta: [
+        'Confirmada a sepse, execute o **pacote de 1 hora**: dosar lactato, colher hemoculturas **antes** do antimicrobiano, administrar antimicrobiano de amplo espectro, iniciar 30 mL/kg de cristaloide se houver hipotensão ou lactato ≥ 4 mmol/L, e aplicar vasopressor se a pressão não responder, com alvo de PAM ≥ 65 mmHg. Cada hora de atraso no antimicrobiano aumenta a mortalidade em cerca de 4 a 8% no choque séptico.',
+        '**Controle do foco** em até 6–12 horas é tão determinante quanto o antibiótico: drenagem de abscesso, remoção de cateter infectado, desbridamento de fasciíte, descompressão de via biliar ou urinária. Nenhum esquema antimicrobiano compensa um foco não controlado, e esse é o erro que mais mata em sepse tratada \'corretamente\'.',
+        'Use **noradrenalina como vasopressor de primeira linha**, por acesso central assim que possível (mas não atrase por falta dele — a periférica é aceitável nas primeiras horas). Acrescente **vasopressina** como segundo agente, poupador de catecolamina, e **hidrocortisona 200 mg/dia** em choque refratário a doses crescentes.',
+        'Reavalie a **resposta** com lactato seriado (a depuração é melhor marcador que o valor isolado), tempo de enchimento capilar, diurese e estado mental. Depois da reposição inicial, guie volume por **resposta dinâmica** — elevação passiva de pernas, variação de volume sistólico — e não por metas fixas: balanço hídrico positivo cumulativo associa-se a maior mortalidade.',
+        '**Descalone** o antimicrobiano assim que as culturas e a evolução permitirem, e reavalie a duração — 7 dias bastam na maioria das infecções, e a procalcitonina pode apoiar a suspensão. Manter espectro largo por inércia produz resistência, *Clostridioides difficile* e disfunção orgânica sem qualquer ganho.',
+      ],
       interpretacao: [
         '**Sepse** = infecção + disfunção orgânica (ΔSOFA ≥ 2). **Choque séptico** = sepse + vasopressor para PAM ≥ 65 + lactato > 2 mmol/L, apesar de reposição volêmica adequada. Os dois critérios do choque são cumulativos, não alternativos.',
         '**Pacote de 1 hora (Surviving Sepsis Campaign):** (1) dosar lactato e repetir se > 2 mmol/L; (2) colher hemoculturas **antes** do antibiótico, desde que isso não atrase mais que 45 minutos; (3) administrar antimicrobiano de amplo espectro; (4) iniciar 30 mL/kg de cristaloide se houver hipotensão ou lactato ≥ 4; (5) iniciar vasopressor se a hipotensão persistir durante ou após a reposição, mirando PAM ≥ 65 mmHg.',
@@ -577,6 +598,13 @@ const centor: Ferramenta = {
       nivel: total >= 3 ? 'alerta' : total === 2 ? 'atencao' : 'ok',
       rotuloNivel: `Probabilidade de estreptococo do grupo A: ${prob}`,
       detalhes: [{ rotulo: 'Probabilidade de cultura positiva', valor: prob }],
+      conduta: [
+        '**Centor/McIsaac 0–1**: não teste nem trate com antibiótico. A probabilidade de faringite estreptocócica é de 1 a 10%, e o quadro é viral. Oriente sintomáticos — analgésico, anti-inflamatório, hidratação — e sinais de retorno.',
+        '**Centor/McIsaac 2–3**: faça o **teste rápido de detecção de antígeno**. Positivo, trate; negativo em criança ou adolescente, confirme com cultura de orofaringe, pois a sensibilidade do teste rápido cai nessa faixa e a febre reumática é uma consequência real.',
+        '**Centor/McIsaac ≥ 4**: a probabilidade fica em torno de 50%. Teste e trate conforme o resultado. Tratar empiricamente sem testar é aceitável apenas quando o teste for indisponível e o risco de febre reumática for alto na população atendida.',
+        'Quando indicado, o tratamento é **penicilina V ou amoxicilina por 10 dias** — a duração completa é o que previne febre reumática, mesmo com a melhora sintomática em 48 h. Em alergia, use cefalexina (se não houver anafilaxia), azitromicina ou clindamicina. O objetivo primário do antibiótico é prevenir a complicação, não abreviar a dor de garganta, que ele encurta em apenas cerca de 16 horas.',
+        '**Afaste os diagnósticos que o escore não vê**: abscesso peritonsilar (trismo, voz abafada, desvio de úvula — exige drenagem), epiglotite (estridor, sialorreia, posição de tripé), mononucleose (adenomegalia posterior, esplenomegalia, linfocitose atípica — e amoxicilina causa exantema), e angina de Ludwig. Nenhum deles se resolve com o escore.',
+      ],
       interpretacao: [
         total <= 1
           ? 'Baixa probabilidade: nem teste nem antibiótico. A causa é viral na esmagadora maioria dos casos, e tratamento sintomático é o suficiente.'
@@ -907,6 +935,13 @@ const vancomicina: Ferramenta = {
       nivel,
       rotuloNivel: razao === null ? '' : razao < 400 ? 'Abaixo do alvo — risco de falha' : razao > 600 ? 'Acima do alvo — risco de nefrotoxicidade' : 'Dentro do alvo (400 a 600)',
       detalhes,
+      conduta: [
+        'Dose pelo alvo de **AUC/CIM ≥ 400 (e < 600 para segurança renal)**, não pelo vale isolado. As diretrizes de 2020 abandonaram a meta de vale de 15–20 mg/L porque ela expõe o paciente a nefrotoxicidade sem garantir a exposição eficaz — a mudança é a mais importante dos últimos anos no uso do fármaco.',
+        'Administre **dose de ataque de 20–25 mg/kg (peso real, teto habitual de 2–3 g)** em infecção grave: sem ela, o estado de equilíbrio demora 24–48 h e as primeiras horas — justamente as mais decisivas — ficam subdosadas.',
+        'Colha os níveis de forma correta: para AUC por duas amostras, uma no pico (1–2 h após o fim da infusão) e uma no vale; para vale isolado, imediatamente antes da 4ª dose. Colher antes do equilíbrio produz decisões erradas em ambas as direções.',
+        'Infunda em **no mínimo 1 hora (60 minutos por grama)** para evitar a síndrome do homem vermelho, que é liberação direta de histamina e não alergia — trata-se com anti-histamínico e redução da velocidade, não com troca de antimicrobiano.',
+        'Monitore **creatinina a cada 2–3 dias** (diariamente em instabilidade) e reavalie a necessidade da vancomicina a cada 48–72 h. O risco de nefrotoxicidade cresce com AUC > 600, com duração acima de 7 dias e com uso concomitante de **piperacilina-tazobactam**, combinação cuja nefrotoxicidade aditiva é bem documentada. Se o agente for sensível a betalactâmico, a troca é superior em eficácia e em segurança.',
+      ],
       interpretacao: [
         'A diretriz de consenso de 2020 **abandonou o vale de 15 a 20 mg/L** como alvo. O motivo é direto: manter vales nessa faixa produzia AUCs frequentemente acima de 600, com nefrotoxicidade significativa e sem ganho de eficácia. O alvo passou a ser a AUC₂₄/CIM entre 400 e 600.',
         'A AUC pode ser estimada de duas formas: por equação populacional de primeira ordem (menos precisa, dispensa níveis) ou por dois níveis séricos com cálculo bayesiano ou trapezoidal (mais precisa, é a recomendada). Esta ferramenta implementa a versão trapezoidal analítica.',
@@ -987,6 +1022,13 @@ const conversorAtb: Ferramenta = {
         { rotulo: 'Dose pediátrica', valor: d.pediatria, nota: `Para ${fmt(peso, 1)} kg, calcule sobre este valor por quilo.` },
         { rotulo: 'Observação', valor: d.obs },
       ],
+      conduta: [
+        'Faça a **troca para via oral (terapia sequencial)** assim que o paciente preencher os critérios: estabilidade hemodinâmica por 24 h, afebril, melhora clínica, trato gastrointestinal funcionante e ausência de foco que exija concentração intravenosa. Isso reduz tempo de internação, infecção de cateter e custo, sem perda de eficácia.',
+        'Conheça os fármacos com **biodisponibilidade oral próxima de 100%**, que permitem troca sem perda de exposição: fluoroquinolonas, linezolida, metronidazol, fluconazol, doxiciclina, sulfametoxazol-trimetoprima e rifampicina. Esses podem substituir o esquema intravenoso praticamente na mesma dose.',
+        '**Não troque para via oral** em endocardite, meningite, abscesso cerebral, osteomielite em fase inicial de tratamento, neutropenia febril não resolvida, bacteremia por *Staphylococcus aureus* não controlada, ou em má absorção. Nesses casos, a concentração no sítio depende da via intravenosa.',
+        'Ao converter, **recalcule pela função renal do momento**, não pela da admissão: muitos pacientes recuperam filtração durante a internação e permanecem subdosados com a prescrição reduzida inicial — falha terapêutica silenciosa e frequente.',
+        'Aproveite a conversão para **reavaliar espectro e duração**: é o momento natural de descalonar conforme cultura e antibiograma, e de definir a data de término. Prescrever \'até reavaliação\' sem data é o que produz tratamentos de 3 semanas em infecções de 7 dias.',
+      ],
       interpretacao: [
         '**Critérios para trocar endovenoso por oral:** melhora clínica com estabilidade por 24 a 48 horas, ausência de febre por 24 horas, trato gastrointestinal funcionante e absorvendo, ausência de sítio que exija concentração elevada (endocardite, meningite, abscesso não drenado, osteomielite em fase inicial) e disponibilidade de agente oral com espectro adequado.',
         'Antimicrobianos com biodisponibilidade oral próxima de 100% — levofloxacino, moxifloxacino, linezolida, metronidazol, fluconazol, doxiciclina, sulfametoxazol-trimetoprima, rifampicina, clindamicina — não têm justificativa farmacocinética para permanecerem endovenosos em paciente que se alimenta.',
@@ -1050,6 +1092,13 @@ const antibiograma: Ferramenta = {
       valor: cat === 's' ? 'Sensível' : cat === 'i' ? 'Sensível com exposição aumentada' : 'Resistente',
       nivel,
       detalhes,
+      conduta: [
+        'Leia o antibiograma como **relação entre a CIM e o ponto de corte do agente naquele sítio**, não como valor absoluto: uma CIM de 2 µg/mL pode ser sensível para um fármaco e resistente para outro. Comparar CIMs entre antimicrobianos diferentes para escolher \'o mais potente\' é um erro conceitual comum.',
+        'Escolha pelo **espectro mais estreito que cubra o agente**, pela penetração no sítio e pela toxicidade — não pelo menor número. Betalactâmico é superior a vancomicina em *Staphylococcus aureus* sensível à oxacilina, mesmo com CIM maior em valor absoluto.',
+        'Reconheça os **fenótipos de resistência** que mudam a conduta independentemente do que o papel diz: ESBL exige carbapenêmico em infecção grave (mesmo com cefalosporina aparentemente sensível); AmpC indutível em *Enterobacter*, *Serratia* e *Citrobacter* pode emergir durante o tratamento com cefalosporina de terceira geração; resistência induzível a clindamicina em *Staphylococcus* (teste D positivo) contraindica o fármaco mesmo com sensibilidade relatada.',
+        'Use a **relação farmacodinâmica** correta para otimizar a dose: betalactâmicos são tempo-dependentes e se beneficiam de infusão estendida ou contínua e de intervalos menores; aminoglicosídeos e fluoroquinolonas são concentração-dependentes e pedem dose alta em intervalo alargado; vancomicina segue AUC/CIM.',
+        'Interprete um resultado **discordante da evolução clínica** com desconfiança do resultado, não do paciente: contaminação, colonização (especialmente em urina, traqueostomia e úlceras), coleta inadequada e foco não drenado explicam a maioria dos casos. Antes de escalar o espectro, revise se há foco a controlar.',
+      ],
       interpretacao: [
         cat === 's'
           ? '**S — sensível.** A probabilidade de sucesso terapêutico é alta com o esquema posológico padrão do fármaco no sítio em questão.'
@@ -1128,6 +1177,13 @@ const vacinal: Ferramenta = {
       unidade: lista.length === 1 ? 'vacina' : 'vacinas',
       nivel: 'neutro',
       detalhes: lista.map(([nome, obs]) => ({ rotulo: nome, valor: obs })),
+      conduta: [
+        'Aplique a regra que resolve a maior parte dos atrasos: **intervalo mínimo respeitado, esquema nunca reiniciado**. Doses aplicadas com intervalo maior que o recomendado continuam válidas; só há necessidade de reinício em situações excepcionais, como a vacina oral contra febre tifoide.',
+        'Aproveite **toda oportunidade de contato** para vacinar, inclusive durante consultas por doença leve. Febre baixa, resfriado, uso de antibiótico, prematuridade, amamentação e desnutrição **não** são contraindicações — as falsas contraindicações respondem por boa parte da cobertura perdida.',
+        'As contraindicações **verdadeiras** são poucas: anafilaxia a dose anterior ou a componente da vacina, e vacinas de vírus vivo atenuado (tríplice viral, varicela, febre amarela, rotavírus, BCG) em imunossupressão significativa e na gestação. Em imunossupressão planejada, vacine com vivos pelo menos 4 semanas antes de iniciar.',
+        'Não perca as vacinas **do adulto e do idoso**, sistematicamente esquecidas: dupla adulto a cada 10 anos (e dTpa em cada gestação, entre 20 e 36 semanas, para proteger o lactente por transferência de anticorpos), influenza anual, pneumocócica conforme faixa e comorbidade, herpes-zóster a partir dos 50 anos e hepatite B em não vacinados.',
+        'Em **situações especiais**, consulte os centros de referência para imunobiológicos especiais: asplenia (pneumococo, meningococo, *Haemophilus*), transplante, HIV conforme contagem de CD4, doença renal crônica, uso de imunobiológicos e viagem internacional. Esses pacientes têm esquemas próprios e frequentemente precisam de doses adicionais e de sorologia pós-vacinal.',
+      ],
       interpretacao: [
         '**Oportunidade perdida é o principal inimigo da cobertura vacinal.** Toda consulta, de qualquer natureza, é oportunidade de conferir a caderneta. Doença leve com ou sem febre, uso de antibiótico, prematuridade, desnutrição e amamentação **não** contraindicam vacinação.',
         'Esquema atrasado não recomeça: retome de onde parou, respeitando os intervalos mínimos. As únicas vacinas com janela rígida de idade são as de rotavírus, pela associação com invaginação intestinal fora da faixa.',
@@ -1211,6 +1267,13 @@ const ppe: Ferramenta = {
       nivel,
       rotuloNivel: `${fmtInt(horas)} h desde a exposição`,
       detalhes: [],
+      conduta: [
+        'Na exposição ao **HIV**, inicie a profilaxia em **até 2 horas** e no máximo 72 h — depois disso a eficácia é nula. O esquema preferencial é **tenofovir + lamivudina + dolutegravir por 28 dias**. Colha teste rápido do exposto antes de iniciar (mas não espere o resultado para a primeira dose) e do caso-fonte, se disponível: fonte com carga viral indetectável dispensa a profilaxia.',
+        'Na exposição à **hepatite B**, a conduta depende do estado vacinal e sorológico: não vacinado ou não respondedor recebe **imunoglobulina hiperimune (HBIG) em até 7 dias (idealmente 24 h) mais início ou complemento do esquema vacinal**. Respondedor documentado (anti-HBs ≥ 10 mUI/mL) não precisa de nada.',
+        'Para **hepatite C não há profilaxia**. A conduta é vigilância: RNA viral em 4 a 6 semanas e sorologia em 3 a 6 meses. Se houver infecção aguda, o tratamento com antivirais de ação direta tem taxa de cura acima de 95% — o valor da vigilância é justamente permitir o tratamento precoce.',
+        'Na exposição à **raiva**, classifique o acidente: lambedura em pele íntegra dispensa conduta; arranhadura ou lambedura em pele lesada indica vacina; mordedura, ferimento profundo, múltiplo ou em cabeça, pescoço e mãos, e qualquer contato com morcego indicam **vacina mais soro (ou imunoglobulina) infiltrado no local do ferimento**. Lave a ferida abundantemente com água e sabão — essa medida simples reduz substancialmente o risco.',
+        'Registre o acidente como **acidente de trabalho (CAT)** quando ocupacional, agende o seguimento sorológico (HIV em 30 e 90 dias; hepatites conforme o protocolo) e oriente medidas de barreira e não doação de sangue durante o período de janela. Aproveite para revisar tétano e para discutir **profilaxia pré-exposição** quando a exposição de risco for recorrente.',
+      ],
       interpretacao: [
         tipo === 'hiv'
           ? 'A profilaxia pós-exposição ao HIV reduz substancialmente o risco de soroconversão, e a eficácia cai rapidamente com o tempo — cada hora conta. Não espere resultado de exame para iniciar: comece e reavalie.'
@@ -1342,6 +1405,13 @@ const interacoes: Ferramenta = {
       valor: d.mecanismo,
       nivel: 'atencao',
       detalhes: [],
+      conduta: [
+        'Antes de prescrever, verifique as interações de maior impacto clínico: **rifampicina** é indutora potente do citocromo P450 3A4 e derruba a concentração de anticoncepcionais, anticoagulantes orais diretos, inibidores de protease, tacrolimo, ciclosporina, corticoides e metadona — a falha terapêutica resultante é silenciosa até virar evento.',
+        'Cuidado com os **inibidores enzimáticos**: macrolídeos (claritromicina e eritromicina, não a azitromicina) e azólicos (fluconazol, voriconazol, itraconazol) elevam a concentração de estatinas (risco de rabdomiólise), de anticoagulantes diretos, de tacrolimo e de amiodarona. A dupla claritromicina com sinvastatina é contraindicação formal.',
+        'Some o risco de **prolongamento do QT**: fluoroquinolonas, macrolídeos e azólicos somam-se a antiarrítmicos, antipsicóticos, antidepressivos, ondansetrona e metadona. Em paciente com QTc já limítrofe, faça ECG antes e durante, e corrija potássio e magnésio.',
+        'Atenção às interações com **varfarina**, que é afetada por quase todos os antimicrobianos, por inibição enzimática ou por redução da flora produtora de vitamina K. Sulfametoxazol-trimetoprima, metronidazol e fluconazol são os mais perigosos: antecipe o INR para 3 a 5 dias após o início e ajuste a dose preventivamente.',
+        'Lembre das interações **não enzimáticas**, frequentemente esquecidas: quinolonas e tetraciclinas quelam com cálcio, ferro, magnésio, zinco e antiácidos, perdendo grande parte da absorção — separe em 2 h antes ou 4–6 h depois. **Linezolida** é inibidor da monoamina oxidase e pode causar síndrome serotoninérgica com antidepressivos. E **sulfametoxazol-trimetoprima** eleva potássio e creatinina (esta por bloqueio da secreção tubular, sem queda real da filtração), o que é lido erroneamente como lesão renal.',
+      ],
       interpretacao: [
         'A maioria das interações clinicamente relevantes de antimicrobianos passa por dois mecanismos: modulação do citocromo P450 (sobretudo CYP3A4) e efeito farmacodinâmico aditivo (prolongamento do QT, nefrotoxicidade, hipercalemia).',
         '**Indutores** — rifampicina é o arquétipo — reduzem a concentração dos fármacos que metabolizam, com risco de falha terapêutica. O efeito demora dias a se instalar e dias a desaparecer após a suspensão, o que gera toxicidade tardia quando a dose foi aumentada e o indutor é retirado.',

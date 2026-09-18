@@ -75,6 +75,13 @@ const childPugh: Ferramenta = {
         { rotulo: 'Sobrevida em 2 anos', valor: ['85%', '60%', '35%'][idx] },
         { rotulo: 'Mortalidade perioperatória em cirurgia abdominal', valor: ['≈ 10%', '≈ 30%', '≈ 70 a 80%'][idx], nota: 'É o uso mais consequente do escore fora da hepatologia.', nivel },
       ],
+      conduta: [
+        '**Child A (5–6 pontos)**: função hepática preservada, sobrevida em 1 ano em torno de 100%. Cirurgia eletiva é tolerável, e o paciente é candidato a ressecção hepática e a tratamento pleno de hepatite viral. Mantenha rastreio de carcinoma hepatocelular com ultrassonografia semestral e rastreio endoscópico de varizes.',
+        '**Child B (7–9 pontos)**: reserva funcional limítrofe, sobrevida em 1 ano de 80%. Evite cirurgia eletiva, ajuste fármacos hepaticamente metabolizados e comece a discutir **transplante**. É a faixa em que a descompensação costuma se instalar e em que o manejo de ascite e encefalopatia domina o cuidado.',
+        '**Child C (10–15 pontos)**: sobrevida em 1 ano de 45%. Cirurgia eletiva é contraindicada — a mortalidade de uma colecistectomia aberta nesse grupo passa de 30%. Encaminhe para avaliação de transplante e considere cuidados paliativos concomitantes.',
+        'Use o Child-Pugh para o que ele faz melhor — **prever risco cirúrgico e anestésico, e ajustar dose de fármacos** — e o **MELD** para priorização em fila de transplante, onde ele substituiu o Child por ser objetivo e não depender de itens subjetivos.',
+        'Os dois itens subjetivos (**ascite e encefalopatia**) são a fraqueza do escore: ascite controlada por diurético pontua diferente conforme quem avalia, e encefalopatia mínima só aparece em testes psicométricos. Registre o critério usado, para que a comparação ao longo do tempo tenha sentido.',
+      ],
       interpretacao: [
         idx === 0
           ? 'Classe A: cirrose compensada. Rastreio semestral de carcinoma hepatocelular com ultrassonografia, endoscopia para varizes conforme critérios de Baveno, e vacinação para hepatites A e B.'
@@ -172,6 +179,13 @@ const meld: Ferramenta = {
       nivel,
       rotuloNivel: `Mortalidade em 90 dias de ${mortalidade}`,
       detalhes,
+      conduta: [
+        'Use o **MELD-Na ou MELD 3.0** para priorização em lista de transplante — são as versões em uso e incorporam sódio (e, no 3.0, sexo e albumina), corrigindo a desvantagem histórica das mulheres, que tinham creatinina mais baixa por menor massa muscular e pontuavam menos para a mesma gravidade.',
+        '**MELD ≥ 15** é o limiar em que o benefício de sobrevida do transplante supera o risco do procedimento. Abaixo disso, transplantar pode reduzir a sobrevida. Encaminhe para avaliação em centro transplantador quando o MELD se aproximar de 15 ou ao primeiro evento de descompensação.',
+        '**MELD ≥ 20** indica alta mortalidade em 3 meses (acima de 20%) e demanda acompanhamento intensivo, avaliação rápida em centro de transplante e discussão de prioridade. Acima de 30, a mortalidade em 3 meses passa de 50%.',
+        'Considere **pontos de exceção** para condições cuja gravidade o MELD não captura: carcinoma hepatocelular dentro dos critérios de Milão, síndrome hepatopulmonar, hipertensão portopulmonar, colangite bacteriana recorrente, polineuropatia amiloidótica familiar e prurido intratável. Sem a exceção, esses pacientes morrem com MELD baixo.',
+        'Atenção às **distorções do cálculo**: diálise recente entra como creatinina fixa de 4,0 mg/dL; anticoagulante oral distorce o INR e torna o escore não interpretável; e hemólise ou colestase extra-hepática elevam a bilirrubina por mecanismo alheio à função hepatocelular. Verifique esses três antes de aceitar o número.',
+      ],
       interpretacao: [
         'O MELD foi criado para prever mortalidade após derivação portossistêmica intra-hepática transjugular e depois validado como preditor de mortalidade em lista. Sua adoção para alocação de fígados em 2002 mudou o princípio de distribuição: da urgência baseada em tempo de espera para a urgência baseada em risco de morte — "sickest first".',
         final >= 15
@@ -252,6 +266,13 @@ const blatchford: Ferramenta = {
         { rotulo: 'Hemoglobina', valor: `${pHb} ponto(s)`, nota: 'Pontos de corte específicos por sexo.' },
         { rotulo: 'PA sistólica', valor: `${pPas} ponto(s)` },
         { rotulo: 'Necessidade de intervenção (transfusão, endoscopia terapêutica, cirurgia)', valor: baixo ? '< 1%' : total >= 6 ? '> 50%' : 'intermediária' },
+      ],
+      conduta: [
+        '**Escore 0 (ou ≤ 1, conforme o protocolo local)**: o paciente pode receber alta da emergência com endoscopia ambulatorial. Esse é o principal uso da ferramenta — identificar quem não precisa internar nem de endoscopia urgente, com valor preditivo negativo próximo de 99%.',
+        '**Escore ≥ 1 e < 7**: interne com endoscopia digestiva alta em até 24 horas, suporte transfusional conforme necessidade e inibidor de bomba de prótons intravenoso.',
+        '**Escore ≥ 7**: alto risco de necessidade de intervenção. Endoscopia em até 24 h (não antes de 12 h, pois a endoscopia ultraprecoce não melhora desfecho e piora as condições do exame), reserva de hemocomponentes e leito monitorado.',
+        'Adote a estratégia transfusional **restritiva, com gatilho de hemoglobina de 7 g/dL** (8 g/dL em doença cardiovascular): transfundir liberalmente em hemorragia varicosa aumenta a pressão portal e a ressangramento, e associou-se a maior mortalidade no ensaio de referência.',
+        'Se houver suspeita de **hemorragia varicosa** (cirrose conhecida, estigmas de hepatopatia), acrescente **terlipressina ou octreotide** e **antibiótico profilático — ceftriaxona 1 g/dia por até 7 dias**, que reduz infecção, ressangramento e mortalidade e é frequentemente esquecido. O Glasgow-Blatchford é superior ao Rockall pré-endoscópico justamente por não exigir a endoscopia para ser calculado.',
       ],
       interpretacao: [
         baixo
@@ -678,6 +699,13 @@ const atlanta: Ferramenta = {
         { rotulo: 'Gravidade', valor: gravidade, nota: 'Leve: sem disfunção orgânica nem complicação. Moderadamente grave: disfunção transitória (< 48 h) ou complicação local/sistêmica. Grave: disfunção orgânica persistente (> 48 h).' },
         { rotulo: 'Fase', valor: fase },
       ],
+      conduta: [
+        '**Pancreatite leve** (sem falência orgânica nem complicação local): a conduta é **hidratação com Ringer lactato, analgesia e dieta oral precoce**. Ringer lactato reduz a síndrome inflamatória em comparação com salina, e reintroduzir dieta em 24–48 h — mesmo com dor residual ou amilase elevada — encurta a internação. Jejum prolongado não tem respaldo.',
+        '**Pancreatite moderadamente grave** (falência orgânica transitória, menor que 48 h, ou complicação local): interne em leito monitorado, mantenha reposição volêmica guiada por diurese, ureia e hematócrito, e programe tomografia com contraste a partir do **3º ao 5º dia** — antes disso a necrose ainda não se delimita e a imagem subestima.',
+        '**Pancreatite grave** (falência orgânica persistente por mais de 48 h): UTI, suporte orgânico e **nutrição enteral por sonda**, preferível à parenteral por preservar a barreira intestinal e reduzir infecção e mortalidade. Antibiótico profilático **não** está indicado na necrose estéril.',
+        'Determine a **etiologia** desde a admissão, porque ela muda a conduta imediata: litíase biliar (a mais comum) exige **colangiopancreatografia retrógrada urgente se houver colangite**, e **colecistectomia na mesma internação** na forma leve, para evitar recidiva; álcool exige abordagem da dependência; hipertrigliceridemia acima de 1.000 mg/dL exige insulina, jejum e às vezes plasmaférese.',
+        'Na suspeita de **necrose infectada** (deterioração clínica a partir da 2ª a 4ª semana, gás na coleção à tomografia), inicie antibiótico com penetração pancreática (carbapenêmico) e adote a estratégia **step-up**: drenagem percutânea ou endoscópica primeiro, necrosectomia minimamente invasiva depois, e cirurgia aberta apenas em falha. O adiamento da intervenção para além de 4 semanas, quando possível, reduz mortalidade.',
+      ],
       interpretacao: [
         '**A disfunção orgânica persistente é o divisor de águas.** Ela define a pancreatite grave e concentra praticamente toda a mortalidade. Disfunção que se resolve em 48 horas tem prognóstico muito melhor, e essa distinção temporal é a principal contribuição da revisão de 2012.',
         'A nomenclatura das coleções foi padronizada porque a antiga era caótica — "abscesso pancreático" e "pseudocisto infectado" descreviam a mesma coisa de formas diferentes. Hoje, a classificação depende de duas perguntas: há necrose e há parede encapsulada?',
@@ -736,6 +764,13 @@ const fib4: Ferramenta = {
       nivel,
       rotuloNivel: fib4 > 2.67 ? 'Fibrose avançada provável' : fib4 < corteBaixo ? 'Fibrose avançada improvável' : 'Zona indeterminada',
       detalhes,
+      conduta: [
+        '**FIB-4 < 1,3** (ou < 2,0 acima de 65 anos): fibrose avançada é improvável. Encerre a investigação hepática específica e concentre o cuidado nos fatores metabólicos — peso, controle glicêmico, lipídios, pressão. Repita o cálculo a cada 1 a 3 anos conforme o risco.',
+        '**FIB-4 entre 1,3 e 2,67**: zona indeterminada, que abrange cerca de 30% dos pacientes. Prossiga com **elastografia hepática transitória** ou teste sorológico proprietário (ELF) — é exatamente aqui que o segundo teste muda a conduta. Rigidez < 8 kPa afasta fibrose avançada; > 12 kPa a torna provável.',
+        '**FIB-4 > 2,67**: fibrose avançada provável. Encaminhe ao hepatologista, faça rastreio de **varizes esofágicas** (endoscopia, ou critérios de Baveno para dispensá-la) e inicie **vigilância de carcinoma hepatocelular** com ultrassonografia semestral se houver cirrose.',
+        'Use o APRI como alternativa quando faltar GGT ou plaquetas em série histórica, mas saiba que ele tem desempenho inferior ao FIB-4 para fibrose avançada na doença hepática metabólica. Nenhum dos dois é validado para **monitorar resposta ao tratamento** — para isso use elastografia seriada.',
+        'Lembre das causas de **resultado falsamente alterado**: a idade entra no numerador e infla o FIB-4 em idosos; plaquetopenia por outra causa (hiperesplenismo, doença hematológica, medicamento) eleva o índice; e hepatite aguda com transaminases muito altas distorce ambos os escores. Em qualquer dessas situações, o índice não deve decidir sozinho.',
+      ],
       interpretacao: [
         fib4 < corteBaixo
           ? '**Abaixo do corte inferior:** valor preditivo negativo alto para fibrose avançada (F3-F4). Em atenção primária, isso permite dispensar encaminhamento e reavaliar em 1 a 3 anos conforme os fatores de risco metabólicos.'
@@ -908,6 +943,13 @@ const fli: Ferramenta = {
         { rotulo: 'Corte inferior', valor: '< 30 — exclui esteatose (razão de verossimilhança negativa 0,2)' },
         { rotulo: 'Corte superior', valor: '≥ 60 — indica esteatose (razão de verossimilhança positiva 4,3)' },
       ],
+      conduta: [
+        '**FLI < 30**: esteatose é improvável (valor preditivo negativo alto). Não é necessário prosseguir com imagem hepática; foque na prevenção cardiometabólica.',
+        '**FLI ≥ 60**: esteatose provável. Confirme com **ultrassonografia** e, mais importante, passe imediatamente ao **estadiamento de fibrose com FIB-4** — o que determina prognóstico na doença hepática esteatótica é a fibrose, não a quantidade de gordura. Um paciente com esteatose sem fibrose tem prognóstico hepático benigno.',
+        'Independentemente do valor, aplique a intervenção que funciona: **perda de peso**. Uma redução de 5% do peso melhora a esteatose, 7–10% resolve a esteato-hepatite e ≥ 10% pode regredir fibrose. Combine restrição calórica, atividade física (com benefício mesmo sem perda de peso) e redução de frutose e álcool.',
+        'Considere farmacoterapia quando houver esteato-hepatite com fibrose: **resmetirom** (aprovado especificamente para essa indicação), **agonistas de GLP-1** como semaglutida ou tirzepatida quando houver obesidade ou diabetes tipo 2, **pioglitazona** em diabetes tipo 2, e vitamina E em não diabéticos selecionados. Cirurgia bariátrica é a intervenção com maior efeito em obesidade grave.',
+        'Não pare no fígado: a principal causa de morte na doença hepática esteatótica associada à disfunção metabólica é **cardiovascular**, não hepática. Rastreie e trate hipertensão, dislipidemia, diabetes e apneia do sono — a estatina é segura nesses pacientes e frequentemente subprescrita por receio infundado de hepatotoxicidade.',
+      ],
       interpretacao: [
         'O índice foi derivado contra ultrassonografia numa coorte italiana de mais de 500 pessoas e é usado sobretudo em estudos epidemiológicos e em rastreio populacional, onde imagem para todos é inviável.',
         'A esteatose por si só tem prognóstico hepático benigno. O que muda o desfecho é a **fibrose** — por isso, um FLI alto deve ser seguido de estadiamento com FIB-4 e, se necessário, elastografia. Detectar gordura sem estadiar fibrose gera ansiedade sem benefício.',
@@ -979,6 +1021,13 @@ const maddrey: Ferramenta = {
       nivel: grave ? 'critico' : 'atencao',
       rotuloNivel: grave ? 'Hepatite alcoólica grave' : 'Hepatite alcoólica não grave',
       detalhes,
+      conduta: [
+        '**Função discriminante de Maddrey ≥ 32** caracteriza hepatite alcoólica grave, com mortalidade de 30–50% em 28 dias sem tratamento. É o limiar clássico para indicar **corticoide — prednisolona 40 mg/dia por 28 dias** (prednisolona, não prednisona, pois a conversão hepática está comprometida).',
+        'Antes do corticoide, **exclua ativamente as contraindicações**: infecção ativa não controlada, hemorragia digestiva em curso, insuficiência renal aguda, hepatite viral B ativa e pancreatite. Rastreie infecção com hemoculturas, urocultura, radiografia e paracentese diagnóstica — peritonite bacteriana espontânea é frequente e assintomática nesse grupo.',
+        'Aplique o **escore de Lille no 7º dia** para decidir a continuidade: **Lille ≥ 0,45** significa não resposta, com sobrevida em 6 meses de cerca de 25% — suspenda o corticoide, pois manter apenas acrescenta risco infeccioso. **Lille < 0,45** indica resposta e justifica completar os 28 dias.',
+        'Associe sempre o cuidado de suporte, que muitas vezes pesa mais que o corticoide: **abstinência absoluta de álcool** (o único fator que altera a história natural a longo prazo), **N-acetilcisteína** em associação nos primeiros dias, suporte nutricional agressivo com meta de 35–40 kcal/kg/dia, e reposição de tiamina, folato e outras vitaminas do complexo B antes de qualquer glicose.',
+        'Discuta **transplante precoce** em não respondedores selecionados: os protocolos que dispensam o período fixo de 6 meses de abstinência mostraram sobrevida muito superior em pacientes com bom suporte social e primeira descompensação. Pentoxifilina não demonstrou benefício e foi abandonada como alternativa ao corticoide.',
+      ],
       interpretacao: [
         grave
           ? '**Maddrey ≥ 32 define hepatite alcoólica grave** e é a indicação clássica de **prednisolona 40 mg/dia por 28 dias** (prednisolona, não prednisona, porque a conversão hepática está comprometida). O ensaio STOPAH mostrou redução de mortalidade em 28 dias, sem benefício em 90 dias nem em 1 ano — o corticoide compra tempo, não cura.'
@@ -1054,6 +1103,13 @@ const kings: Ferramenta = {
       nivel: preenche ? 'critico' : 'alerta',
       rotuloNivel: paracetamol ? 'Etiologia: paracetamol' : 'Outras etiologias',
       detalhes,
+      conduta: [
+        '**Critérios preenchidos** significam mortalidade próxima de 90% sem transplante. A conduta é uma só: **contato imediato com centro de transplante hepático e transferência**, não observação. O tempo entre o preenchimento dos critérios e a disponibilidade de um enxerto é o determinante de sobrevida.',
+        'Nos casos por **paracetamol**, os critérios são pH < 7,3 após reposição volêmica, **ou** a tríade de INR > 6,5, creatinina > 3,4 mg/dL e encefalopatia grau III–IV. O lactato arterial (> 3,5 mmol/L precoce ou > 3,0 após reposição) acrescenta poder discriminatório e antecipa a decisão.',
+        'Nos casos **não relacionados a paracetamol**, basta INR > 6,5 isoladamente, ou três entre: idade < 10 ou > 40 anos, etiologia desfavorável (hepatite não A não B, halotano, reação idiossincrática a fármaco), icterícia por mais de 7 dias antes da encefalopatia, INR > 3,5 e bilirrubina > 17,5 mg/dL.',
+        'Enquanto se aguarda, execute o suporte específico: **N-acetilcisteína** (útil mesmo em falência hepática não relacionada a paracetamol), controle da hipertensão intracraniana com cabeceira elevada, salina hipertônica e normotermia, correção de hipoglicemia com infusão contínua de glicose, e vigilância de infecção com limiar baixo para antibiótico.',
+        '**Não corrija o INR profilaticamente com plasma**: ele é o principal marcador prognóstico e mascará-lo cega o acompanhamento e a decisão de transplante. Reserve hemocomponentes para sangramento ativo ou procedimento invasivo programado. Lembre que esses pacientes têm hemostasia rebalanceada e não sangram tanto quanto o INR sugere.',
+      ],
       interpretacao: [
         explicacao,
         preenche
@@ -1130,6 +1186,13 @@ const roma: Ferramenta = {
       nivel: alarme ? 'critico' : preenche ? 'ok' : 'atencao',
       rotuloNivel: alarme ? '⚠ Sinal de alarme presente' : preenche ? 'Distúrbio funcional provável' : 'Reavaliar',
       detalhes: [{ rotulo: 'Critérios', valor: explicacao }],
+      conduta: [
+        'Critérios preenchidos com **ausência de sinais de alarme**: faça o diagnóstico positivo do distúrbio funcional e **diga isso ao paciente com clareza**. Nomear a doença, explicar o eixo intestino-cérebro e a hipersensibilidade visceral, e afirmar que não é \'coisa da cabeça\' nem câncer é, em si, uma intervenção terapêutica com efeito demonstrado sobre a intensidade dos sintomas.',
+        '**Sinais de alarme obrigam investigação** e afastam o diagnóstico funcional: início após os 50 anos, perda de peso não intencional, sangramento digestivo, anemia, febre, massa palpável, disfagia progressiva, vômitos persistentes, história familiar de câncer colorretal ou doença inflamatória intestinal. Nesses casos, colonoscopia e endoscopia entram antes, não depois.',
+        'Investigação mínima na síndrome do intestino irritável sem alarme: **hemograma, proteína C-reativa, sorologia para doença celíaca e calprotectina fecal**. Calprotectina normal afasta doença inflamatória intestinal com boa segurança e evita colonoscopia desnecessária em pacientes jovens.',
+        'Trate pelo subtipo predominante: com **constipação**, fibras solúveis (psyllium, não farelo de trigo, que piora distensão), polietilenoglicol, linaclotida; com **diarreia**, loperamida, rifaximina, colestiramina se houver má absorção de sais biliares; com **dor** predominante, antiespasmódico (brometo de otilônio, óleo de hortelã) e **neuromodulador em dose baixa** — amitriptilina 10–25 mg à noite para o subtipo diarreia, inibidor seletivo da recaptação de serotonina para o subtipo constipação.',
+        'Ofereça a **dieta FODMAP com orientação de nutricionista** e por tempo limitado: ela funciona na fase de restrição, mas precisa de reintrodução programada para não empobrecer a microbiota e o aporte nutricional. Acrescente **terapias dirigidas ao eixo intestino-cérebro** — terapia cognitivo-comportamental, hipnoterapia dirigida ao intestino — que têm os maiores tamanhos de efeito nos casos refratários.',
+      ],
       interpretacao: [
         alarme
           ? '**Sinal de alarme presente.** Investigue estrutural antes de rotular como funcional: colonoscopia, endoscopia, exames laboratoriais e de imagem conforme o quadro.'
@@ -1188,6 +1251,13 @@ const astAlt: Ferramenta = {
         { rotulo: 'Índice R', valor: fmt(r, 2), nota: '(ALT ÷ limite) ÷ (FA ÷ limite). R ≥ 5 hepatocelular; R ≤ 2 colestático; entre 2 e 5, misto.' },
         { rotulo: 'Relação AST/ALT (De Ritis)', valor: fmt(razao, 2) },
         { rotulo: 'ALT em múltiplos do normal', valor: `${fmt(vezesAlt, 1)}×` },
+      ],
+      conduta: [
+        'Padrão **hepatocelular** (transaminases desproporcionalmente mais elevadas que fosfatase alcalina) aponta hepatite viral, hepatite autoimune, medicamentosa, isquêmica ou tóxica. A investigação inicial é sorológica (hepatites A, B e C), autoanticorpos, ferritina e saturação de transferrina, ceruloplasmina em jovens, e revisão minuciosa de fármacos e fitoterápicos.',
+        'Padrão **colestático** (fosfatase alcalina desproporcionalmente elevada) exige **imagem das vias biliares** como primeiro passo — ultrassonografia, e colangiorressonância se houver suspeita de obstrução não vista. Confirme a origem hepática da fosfatase alcalina com GGT elevada; se a GGT for normal, a origem é óssea, placentária ou intestinal.',
+        '**Relação AST/ALT > 2**, sobretudo com GGT alta e transaminases abaixo de 300 U/L, é fortemente sugestiva de **doença hepática alcoólica** — o mecanismo é a deficiência de piridoxal-5-fosfato, cofator necessário à ALT, e a lesão mitocondrial que libera a fração mitocondrial da AST.',
+        '**Relação > 1 na doença hepática não alcoólica** sugere progressão para fibrose avançada, invertendo o padrão inicial em que a ALT predomina. Calcule FIB-4 nesse cenário. Lembre também que a AST não é específica do fígado: sobe em lesão muscular, infarto, hemólise e após exercício intenso — dose **creatinoquinase** antes de investigar o fígado quando a ALT estiver relativamente baixa.',
+        '**Transaminases acima de 1.000 U/L** restringem o diagnóstico a poucas causas: hepatite viral aguda, hepatite isquêmica (fígado de choque, em que a elevação é abrupta e cai rapidamente), paracetamol e outras toxinas, hepatite autoimune e obstrução biliar aguda por cálculo. Nessa faixa, dose **INR e bilirrubina com urgência** — é a coagulopatia, não a transaminase, que define falência hepática aguda e indica contato com centro de transplante.',
       ],
       interpretacao: [
         '**A magnitude aponta a causa melhor do que qualquer outra pista.** Elevação acima de 25 vezes o normal restringe o diagnóstico a três famílias: hepatite viral aguda, hepatite isquêmica (fígado de choque) e hepatotoxicidade — sobretudo paracetamol. Elevações leves a moderadas são inespecíficas e compatíveis com doença hepática gordurosa, hepatite crônica, álcool e medicamentos.',

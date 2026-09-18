@@ -76,6 +76,13 @@ const glasgow: Ferramenta = {
       nivel,
       rotuloNivel: `Traumatismo cranioencefálico ${gravidade.toLowerCase()}`,
       detalhes,
+      conduta: [
+        '**Glasgow ≤ 8** é indicação clássica de **via aérea definitiva**, mas a decisão não é automática: pese a causa (intoxicação reversível, pós-ictal, hipoglicemia), a trajetória e a capacidade de proteger a via aérea. Antes de intubar, corrija o que pode reverter em minutos — glicemia capilar, naloxona se houver suspeita de opioide, tiamina.',
+        'Registre sempre os **três componentes separados** (por exemplo, O2V2M4 = 8), não apenas a soma: escores iguais podem significar prognósticos muito diferentes, e o componente **motor** é o que mais pesa na predição de desfecho. A soma isolada perde a informação que mais importa.',
+        'Reavalie e documente a **tendência**: uma queda de 2 pontos ou mais exige neuroimagem imediata e reavaliação de hipertensão intracraniana. O escore é útil como monitor seriado, e uma única medida no pior momento clínico (logo após a convulsão, sob sedação) não representa o paciente.',
+        'Em trauma cranioencefálico, combine com os sinais de **herniação** — anisocoria, postura de descerebração ou decorticação, tríade de Cushing (hipertensão, bradicardia, respiração irregular). Diante deles, aplique medidas de resgate: cabeceira a 30°, cabeça neutra, salina hipertônica ou manitol, normocapnia (hiperventilação apenas por minutos, como ponte para a cirurgia) e neurocirurgia imediata.',
+        'Anote as **condições que invalidam itens**: paciente intubado (registre V como \'T\' e considere escalas alternativas como FOUR), edema palpebral que impede a abertura ocular, sedação, curarização, afasia e barreira de idioma. Pontuar como se o item fosse avaliável produz escores falsamente baixos e decisões erradas.',
+      ],
       interpretacao: [
         naoTestavel
           ? '⚠ **Componente não testável.** A recomendação atual é **relatar cada componente separadamente** com a marcação NT, e não somar atribuindo 1 ponto arbitrário — somar produz um total falsamente baixo. Registre no formato "O4 VNT M6".'
@@ -228,6 +235,13 @@ const nihss: Ferramenta = {
       detalhes: [
         { rotulo: 'Probabilidade de bom desfecho em 3 meses', valor: total <= 6 ? 'Alta (cerca de 70 a 80% com Rankin 0–1)' : total <= 15 ? 'Intermediária' : 'Baixa sem reperfusão' },
         { rotulo: 'Faixa de indicação de trombectomia', valor: 'NIHSS ≥ 6 com oclusão de grande vaso', nota: 'Critério dos ensaios de trombectomia mecânica; escores menores podem ser considerados caso a caso.' },
+      ],
+      conduta: [
+        'Aplique o NIHSS **antes e depois da trombólise**, e em horários fixos nas primeiras 24 h. É a medida que detecta deterioração precoce e que, por isso, governa a decisão de repetir a tomografia em busca de transformação hemorrágica.',
+        '**NIHSS < 6** costuma ser déficit leve, mas \'leve\' não significa \'sem tratamento\': déficit incapacitante — afasia, hemianopsia, déficit motor que impeça a profissão do paciente — justifica trombólise mesmo com escore baixo. A pergunta correta é se o déficit é incapacitante, não se o número é alto.',
+        '**NIHSS ≥ 6** com oclusão de grande vaso na angiotomografia indica **trombectomia mecânica**, cuja janela vai a 6 h por rotina e até 24 h em pacientes selecionados por perfusão ou por mismatch clínico-radiológico. Solicite a angiotomografia de vasos intracranianos na mesma sessão da tomografia inicial — sem ela, a oclusão passa despercebida.',
+        '**NIHSS > 22** marca déficit grave, com maior risco de transformação hemorrágica após trombólise. Não é contraindicação, mas exige vigilância redobrada, controle pressórico rigoroso (< 180/105 mmHg nas primeiras 24 h após trombólise) e discussão precoce sobre trajetória e objetivos.',
+        'Conheça o **viés hemisférico** da escala: o hemisfério esquerdo dominante pontua mais alto pela linguagem, de modo que um infarto direito extenso — com heminegligência grave e prognóstico funcional ruim — pode somar poucos pontos. Não deixe de tratar um território direito extenso só porque o NIHSS é modesto.',
       ],
       interpretacao: [
         '**O NIHSS não decide trombólise sozinho.** Não há limite superior de pontuação que contraindique alteplase ou tenecteplase; o limite inferior também é relativo — déficit incapacitante, ainda que com NIHSS baixo (afasia isolada, hemianopsia, déficit em mão dominante), é indicação, e essa foi a conclusão do estudo PRISMS sobre déficits leves.',
@@ -397,6 +411,13 @@ const ich: Ferramenta = {
       nivel,
       rotuloNivel: `Mortalidade em 30 dias de ${mortalidade}`,
       detalhes,
+      conduta: [
+        'Use o escore para **informar o prognóstico e a intensidade do cuidado**, nunca como profecia autorrealizável. Limitações precoces de suporte baseadas em ICH alto enviesam as estatísticas históricas; as diretrizes recomendam **adiar a decisão de não reanimar por pelo menos 48–72 h** de tratamento pleno.',
+        'Independentemente do escore, execute o que muda desfecho nas primeiras horas: **reduzir a pressão sistólica para 130–150 mmHg** de forma controlada (a queda abrupta e excessiva é prejudicial), **reverter a anticoagulação imediatamente** e **evitar a expansão do hematoma**, que ocorre nas primeiras 6 horas e é o principal determinante modificável.',
+        'A reversão depende do agente: **complexo protrombínico com vitamina K** para varfarina (mais rápido e eficaz que plasma), **idarucizumabe** para dabigatrana, **andexanet alfa** ou complexo protrombínico para inibidores do fator Xa, **protamina** para heparina. Ácido tranexâmico pode reduzir a expansão, mas não melhorou desfecho funcional.',
+        'Acione a **neurocirurgia** diante de hemorragia cerebelar > 3 cm, hidrocefalia obstrutiva (derivação ventricular externa), hematoma lobar superficial com deterioração, e hemorragia com efeito de massa significativo. A cirurgia precoce minimamente invasiva vem ganhando espaço em hematomas lobares de volume intermediário.',
+        'Investigue a **causa** com a mesma prioridade: angiotomografia ou angiografia em paciente jovem, sem hipertensão, com hemorragia lobar ou com padrão atípico, para excluir malformação arteriovenosa, aneurisma, trombose venosa e tumor. Em idoso com hemorragias lobares recorrentes, considere **angiopatia amiloide** — o que contraindica a reintrodução de anticoagulante e muda todo o planejamento.',
+      ],
       interpretacao: [
         '**Cuidado com a profecia autorrealizável.** As taxas de mortalidade da coorte original refletem uma era com limitação precoce de suporte. Estudos posteriores mostraram que a mortalidade observada é menor quando o cuidado é mantido — e por isso as diretrizes recomendam **adiar decisões de limitação de suporte por pelo menos 48 a 72 horas**. Usar o escore para justificar não tratar produz o desfecho que ele previu.',
         'Condutas com benefício demonstrado: **redução da pressão arterial sistólica para 130 a 150 mmHg**, iniciada precocemente e alcançada de forma suave (o ensaio INTERACT3, com pacote de cuidados, mostrou benefício funcional); **reversão imediata de anticoagulação** (complexo protrombínico para antagonistas da vitamina K, idarucizumabe para dabigatrana, andexanet alfa ou complexo protrombínico para inibidores do fator Xa); controle glicêmico, da temperatura e prevenção de crises.',
@@ -456,6 +477,13 @@ const huntHess: Ferramenta = {
         { rotulo: 'Mortalidade aproximada por Hunt-Hess', valor: mortalidade, nota: 'Séries históricas; os números atuais são melhores em centros com cuidado neurointensivo.' },
         { rotulo: 'Risco de vasoespasmo sintomático por Fisher modificada', valor: vasoespasmo },
         { rotulo: 'Graus favoráveis', valor: 'Hunt-Hess I a III', nota: 'Associados a melhor prognóstico funcional; graus IV e V são desfavoráveis.' },
+      ],
+      conduta: [
+        '**Hunt-Hess I–III**: candidatos a tratamento precoce do aneurisma. O tratamento definitivo — **clipagem cirúrgica ou embolização endovascular** — deve ocorrer **em até 72 horas**, porque o ressangramento tem seu pico nas primeiras 24 h e mortalidade em torno de 70%.',
+        '**Hunt-Hess IV–V**: mortalidade elevada, mas não é contraindicação automática ao tratamento. Estabilize, trate a hidrocefalia com derivação ventricular externa (que frequentemente melhora o grau em horas) e **reclassifique após a estabilização** — o grau inicial de um paciente com hidrocefalia aguda superestima a gravidade real.',
+        'Aplique o **nimodipino 60 mg por via oral a cada 4 h, por 21 dias**, em todos os pacientes: é a única medida farmacológica que comprovadamente melhora o desfecho neurológico. Ele age sobre a lesão isquêmica tardia, não sobre o calibre do vaso — e por isso deve ser mantido mesmo sem vasoespasmo documentado.',
+        'Use a **escala de Fisher modificada** para estimar o risco de vasoespasmo, que é maior com sangue cisternal espesso e com hemorragia intraventricular, e tem pico entre o **4º e o 14º dia**. Monitore com Doppler transcraniano e exame neurológico seriado, e trate a isquemia tardia com indução de hipertensão e, se necessário, angioplastia — a antiga terapia de triplo H foi abandonada em favor da euvolemia com hipertensão induzida.',
+        'Vigie as **complicações sistêmicas**, que são causa importante de morte nesses pacientes: hiponatremia (diferencie SIADH de síndrome perdedora de sal cerebral, cujas condutas são opostas — restrição hídrica versus reposição de sódio e volume), miocárdio atordoado neurogênico com alterações de ECG e troponina, edema pulmonar neurogênico, febre e convulsões.',
       ],
       interpretacao: [
         '**Conduta imediata:** tomografia sem contraste (sensibilidade próxima de 100% nas primeiras 6 horas, caindo depois); punção lombar com pesquisa de xantocromia se a tomografia for negativa e a suspeita persistir; angiotomografia ou angiografia para identificar o aneurisma; e **tratamento do aneurisma em até 72 horas** — por clipagem ou embolização — porque o ressangramento é o evento mais letal e ocorre sobretudo nas primeiras 24 horas.',
@@ -612,6 +640,13 @@ const aspects: Ferramenta = {
       detalhes: [
         { rotulo: 'Regiões comprometidas', valor: `${comprometidas} de 10` },
         { rotulo: 'Corte clássico dos ensaios de trombectomia', valor: '≥ 6' },
+      ],
+      conduta: [
+        '**ASPECTS 8–10**: pouco tecido já infartado, com grande área potencialmente salvável. São os melhores candidatos a **trombectomia** e os que mais se beneficiam de reperfusão rápida.',
+        '**ASPECTS 6–7**: benefício ainda presente, mas menor. A decisão se apoia no tempo desde o início, na presença de oclusão de grande vaso e, quando disponível, na **imagem de perfusão** com mismatch favorável entre núcleo e penumbra.',
+        '**ASPECTS < 6**: infarto extenso já estabelecido, com maior risco de transformação hemorrágica. Ensaios recentes (SELECT2, ANGEL-ASPECT, RESCUE-Japan LIMIT) mostraram benefício da trombectomia mesmo nesse grupo em pacientes selecionados, o que mudou a prática — o escore baixo deixou de ser exclusão automática e passou a exigir discussão caso a caso com o neurointervencionista.',
+        'Lembre que o ASPECTS avalia **apenas o território da artéria cerebral média**. Para circulação posterior, use o **pc-ASPECTS**, e não conclua nada sobre tronco e cerebelo a partir do escore convencional.',
+        'Interprete com cuidado a **tomografia precoce**: nas primeiras horas, os sinais de isquemia são sutis — perda da diferenciação entre substância cinzenta e branca, apagamento de sulcos, hipodensidade lentiforme, sinal da fita insular. A concordância entre observadores é limitada, e um ASPECTS calculado apressadamente pode negar tratamento a quem se beneficiaria. Na dúvida, a ressonância com difusão é muito mais sensível.',
       ],
       interpretacao: [
         total >= 6
@@ -1045,6 +1080,13 @@ const mrcForca: Ferramenta = {
       unidade: 'de 5',
       nivel: g <= 2 ? 'alerta' : g === 3 ? 'atencao' : 'ok',
       detalhes,
+      conduta: [
+        '**MRC-sum < 48 pontos** (de 60) define **fraqueza adquirida na UTI**, condição que aumenta tempo de ventilação, de internação e mortalidade, e cujos déficits persistem por anos em parte dos sobreviventes.',
+        'Confirmado o diagnóstico, a intervenção com melhor evidência é a **mobilização precoce e progressiva**: exercícios passivos e ativos no leito, cicloergômetro, sentar à beira do leito e ortostase, iniciados assim que houver estabilidade hemodinâmica e respiratória — inclusive em paciente ainda intubado.',
+        'Reduza os fatores de risco modificáveis: **minimize sedação profunda e bloqueio neuromuscular**, controle a hiperglicemia, trate a sepse com agressividade e evite corticoide sem indicação. O tempo de imobilidade e a profundidade da sedação são os determinantes mais controláveis.',
+        'Diferencie **polineuropatia do doente crítico** (déficit sensitivo associado, reflexos abolidos) de **miopatia** (poupa a sensibilidade, com creatinoquinase por vezes elevada) — a distinção exige eletroneuromiografia e muda o prognóstico, geralmente melhor na miopatia. Afaste também síndrome de Guillain-Barré, miastenia e mielopatia, que têm tratamento específico.',
+        'A escala exige **paciente cooperativo**: só é aplicável com RASS entre −1 e +1 e capacidade de seguir comandos. Em paciente sedado ou com delirium, o escore não é válido — use força de preensão, estimulação nervosa ou ultrassonografia muscular como alternativas, e registre o motivo da não aplicação.',
+      ],
       interpretacao: [
         'A escala é ordinal e assimétrica: o grau 4 abrange uma faixa enorme de força — de quase normal a mal vencendo resistência mínima — e por isso muitos serviços a subdividem em 4−, 4 e 4+. Os graus 0 a 3, ao contrário, são bem definidos porque se ancoram na gravidade.',
         'O **grau 3 é o divisor de águas funcional**: vencer a gravidade é o mínimo para qualquer atividade útil. Abaixo disso, o membro não sustenta função.',
@@ -1116,6 +1158,13 @@ const cefaleias: Ferramenta = {
       nivel: temAlarme ? 'critico' : preenche ? 'ok' : 'atencao',
       rotuloNivel: temAlarme ? '⚠ Sinal de alarme presente — investigar antes de rotular' : preenche ? 'Padrão característico' : 'Reavalie o padrão ou considere outra hipótese',
       detalhes: [{ rotulo: 'Critérios da hipótese testada', valor: texto }],
+      conduta: [
+        'Diante de **qualquer sinal de alarme (SNOOP4)** — início súbito em trovoada, sintoma neurológico focal, início após os 50 anos, alteração do padrão habitual, papiledema, piora com Valsalva, imunossupressão, câncer, gestação, febre —, interrompa o raciocínio de cefaleia primária e investigue com neuroimagem.',
+        'Na **cefaleia em trovoada** (pico em menos de 1 minuto), o diagnóstico a excluir é hemorragia subaracnóidea: **tomografia sem contraste** nas primeiras 6 horas tem sensibilidade próxima de 100%; após esse prazo, ou se a tomografia for normal com suspeita mantida, faça **punção lombar** procurando xantocromia. Considere ainda dissecção arterial, trombose venosa cerebral, apoplexia hipofisária e síndrome de vasoconstrição cerebral reversível.',
+        'Confirmada **enxaqueca**, trate a crise com anti-inflamatório ou triptano precoce (quanto mais cedo, mais eficaz), associado a antiemético. Evite opioides e butalbital, que promovem cefaleia por uso excessivo de medicação. Indique **profilaxia** quando houver 4 ou mais dias de crise por mês, ou incapacidade significativa: propranolol, topiramato, amitriptilina, candesartana, ou anticorpos anti-CGRP nos casos refratários.',
+        'Na **cefaleia em salvas**, o tratamento agudo é **oxigênio a 100% em máscara não reinalante a 12–15 L/min** e sumatriptano subcutâneo; a profilaxia de transição é verapamil em dose alta, com ECG de controle pelo risco de bloqueio. O erro comum é tratar como enxaqueca e não oferecer oxigênio, que é altamente eficaz e subutilizado.',
+        'Investigue **cefaleia por uso excessivo de medicação** em todo paciente com cefaleia crônica diária: uso de analgésico simples em 15 ou mais dias por mês, ou de triptano, ergotamínico, opioide ou combinação em 10 ou mais dias por mês. O tratamento é a retirada do agente, com profilaxia associada e aviso claro de que haverá piora transitória antes da melhora.',
+      ],
       interpretacao: [
         temAlarme
           ? '**Sinal de alarme presente.** Nenhum diagnóstico de cefaleia primária deve ser feito antes de excluir causa secundária. Neuroimagem, e conforme o caso punção lombar, velocidade de hemossedimentação e angiografia, são o próximo passo.'
@@ -1199,6 +1248,13 @@ const conversorAntiepileptico: Ferramenta = {
       nivel: 'neutro',
       rotuloNivel: `Ataque para ${fmt(peso, 1)} kg`,
       detalhes,
+      conduta: [
+        'Faça a **troca de forma cruzada e lenta**: introduza o novo fármaco até a dose-alvo antes de iniciar a retirada do anterior, que deve ser gradual ao longo de semanas. A retirada abrupta de antiepiléptico é causa frequente de estado de mal epiléptico, mesmo em paciente previamente controlado.',
+        'Ao converter entre vias, atente às **diferenças de biodisponibilidade**: fenitoína oral e fosfenitoína intravenosa não são intercambiáveis miligrama a miligrama (a fosfenitoína é dosada em equivalentes de fenitoína), e a absorção da fenitoína é errática com alimentação e com dieta enteral — suspenda a dieta 1 a 2 h antes e depois.',
+        'Corrija a **fenitoína pela albumina** antes de interpretar o nível (fórmula de Sheiner-Tozer): ela é fortemente ligada a proteína, e em hipoalbuminemia o nível total é baixo enquanto a fração livre — a ativa — está terapêutica ou tóxica. Dosar o nível livre é preferível quando disponível.',
+        'Antecipe as **interações**: fenitoína, carbamazepina, fenobarbital e primidona são indutores enzimáticos potentes e reduzem a eficácia de anticoncepcionais, anticoagulantes diretos, imunossupressores e quimioterápicos. Valproato é inibidor e eleva lamotrigina (exigindo metade da dose e titulação ainda mais lenta, pelo risco de síndrome de Stevens-Johnson) e fenobarbital.',
+        'Escolha o fármaco pelo **tipo de crise e pelo perfil do paciente**: valproato é contraindicado em mulheres em idade fértil pelo risco teratogênico e de comprometimento cognitivo fetal, e carbamazepina, oxcarbazepina e fenitoína podem **agravar** crises de ausência e mioclônicas. Em epilepsia generalizada, prefira lamotrigina ou levetiracetam nessas pacientes, com ácido fólico associado.',
+      ],
       interpretacao: [
         '**Sequência do estado de mal epiléptico convulsivo:** (1) **0 a 5 min** — via aérea, oxigênio, monitorização, glicemia capilar, acesso venoso, tiamina antes de glicose em etilista; (2) **5 a 20 min** — benzodiazepínico em dose plena: midazolam 10 mg intramuscular, lorazepam 4 mg EV ou diazepam 10 mg EV; (3) **20 a 40 min** — antiepiléptico de segunda linha: fenitoína, valproato ou levetiracetam; (4) **40 a 60 min** — repetir a segunda linha ou partir para anestésico em infusão contínua com eletroencefalograma.',
         'O ensaio **ESETT** comparou fenitoína, valproato e levetiracetam como segunda linha no estado de mal refratário a benzodiazepínico e encontrou eficácia **equivalente** entre os três, com cerca de 47% de cessação. A escolha, portanto, é guiada por contraindicação, disponibilidade e perfil de efeitos adversos — não por superioridade.',
@@ -1247,6 +1303,13 @@ const riscoConvulsao: Ferramenta = {
         { rotulo: 'Risco de recorrência em 2 anos sem fatores de risco', valor: '30 a 40%' },
         { rotulo: 'Risco com lesão estrutural ou eletroencefalograma alterado', valor: '> 60%' },
         { rotulo: 'Definição operacional de epilepsia (ILAE 2014)', valor: 'Duas crises não provocadas separadas por mais de 24 h, **ou** uma crise não provocada com risco de recorrência ≥ 60% em 10 anos, **ou** diagnóstico de síndrome epiléptica', nivel: alto ? 'alerta' : 'neutro' },
+      ],
+      conduta: [
+        'Após uma **primeira crise não provocada com investigação normal**, o risco de recorrência em 2 anos é de cerca de 30–40%. Nesse cenário, o tratamento antiepiléptico reduz o risco a curto prazo, mas **não altera o prognóstico de longo prazo** nem a chance de remissão — a decisão pode legitimamente ser de observar.',
+        'O risco sobe para **60–70%** e justifica iniciar tratamento quando há **eletroencefalograma com atividade epileptiforme**, **lesão estrutural na neuroimagem**, **crise noturna** ou **exame neurológico alterado**. Com dois desses fatores, a probabilidade de recorrência já se aproxima da definição operacional de epilepsia.',
+        'Lembre da definição vigente de **epilepsia**: duas crises não provocadas separadas por mais de 24 h, **ou uma crise com risco de recorrência ≥ 60%**, **ou** um diagnóstico de síndrome epiléptica. Isso significa que um paciente com uma única crise e lesão estrutural já tem epilepsia e deve ser tratado.',
+        'Separe **crise provocada** de não provocada, porque a conduta é inteiramente diferente: hipoglicemia, hiponatremia, abstinência alcoólica, intoxicação, eclâmpsia, infecção do sistema nervoso e trauma agudo produzem crises sintomáticas agudas, que se tratam corrigindo a causa e não indicam antiepiléptico de longo prazo.',
+        'Complete a investigação mínima e oriente: **eletroencefalograma** (preferencialmente em até 24–48 h, quando o rendimento é maior; se normal, considere registro com privação de sono), **ressonância de crânio com protocolo para epilepsia** (superior à tomografia), e exames metabólicos. Informe o paciente sobre **restrição de direção** conforme a legislação local, e sobre precauções com natação, altura e máquinas — essa orientação é parte obrigatória da conduta e é frequentemente omitida.',
       ],
       interpretacao: [
         alto
