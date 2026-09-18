@@ -27,6 +27,7 @@
  *   --gerar       escreve lib/semiologia/acervo.gerado.ts
  *   --baixar      baixa os bytes para .semiologia/midia/ e calcula o SHA-256
  *   --arquivo=X   usa outro arquivo de curadoria
+ *   --rebaixar    com --baixar, ignora o que já está em disco e baixa tudo de novo
  *
  * O `--esboco` existe porque a parte cara da curadoria não é escrever JSON: é
  * saber, para cada uma das 29 cenas, o que procurar. Ele lê o próprio acervo,
@@ -53,6 +54,7 @@
  */
 
 import { createHash } from 'node:crypto'
+import { existsSync } from 'node:fs'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -84,11 +86,60 @@ const HOSTS = {
   'pocus-atlas': ['www.thepocusatlas.com', 'thepocusatlas.com', 'images.squarespace-cdn.com'],
   radiopaedia: ['radiopaedia.org', 'prod-images-static.radiopaedia.org', 'images.radiopaedia.org'],
   'wikimedia-commons': ['upload.wikimedia.org', 'thumb.wikimedia.org', 'commons.wikimedia.org'],
+  youtube: ['www.youtube.com', 'youtube.com', 'youtu.be', 'www.youtube-nocookie.com', 'i.ytimg.com'],
+  // Termo conjunto 1 (ausculta) e 2 (atlas), 18/09/2026.
+  littmann: ['littmann.com', 'solventum.com', 'multimedia.3m.com'],
+  'umich-heart-sounds': ['med.umich.edu', 'umich.edu'],
+  thinklabs: ['thinklabs.com'],
+  easyauscultation: ['easyauscultation.com', 'practicalclinicalskills.com'],
+  rale: ['rale.ca'],
+  dermnet: ['dermnetnz.org'],
+  'atlas-dermatologico': ['atlasdermatologico.com.br'],
+  eyerounds: ['eyerounds.org', 'webeye.ophth.uiowa.edu', 'uiowa.edu'],
+  'retina-image-bank': ['imagebank.asrs.org', 'asrs.org'],
+  'hawke-library': ['hawkelibrary.com'],
+  gastrolab: ['gastrolab.net'],
+  'stanford-25': ['stanfordmedicine25.stanford.edu', 'stanford.edu'],
+  neurosigns: ['neurosigns.org'],
 }
 
 const TIPOS = {
-  imagem: ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif'],
+  imagem: ['image/jpeg', 'image/pjpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif'],
   clipe: ['video/mp4', 'video/webm', 'video/quicktime'],
+  audio: ['audio/mpeg', 'audio/mp4', 'audio/ogg', 'audio/wav', 'audio/x-wav', 'audio/webm'],
+  // Vídeo externo nunca é baixado; a lista serve só para a checagem de HEAD
+  // nos `.webm` do Commons.
+  video: ['video/webm', 'video/ogg', 'video/mp4'],
+}
+
+/**
+ * Vídeo do YouTube: nada é baixado. O oEmbed público responde 200 com título,
+ * canal e miniatura quando o vídeo existe **e** o canal permite incorporação;
+ * 401 quando a incorporação está desligada; 404 quando o vídeo não existe. É a
+ * mesma pergunta que o player vai fazer na frente do aluno, feita antes.
+ */
+async function resolverVideoDoYoutube(videoId) {
+  exigir(/^[A-Za-z0-9_-]{11}$/.test(videoId ?? ''), `videoId inválido: "${videoId}"`)
+  const assistir = `https://www.youtube.com/watch?v=${videoId}`
+  const alvo = `https://www.youtube.com/oembed?url=${encodeURIComponent(assistir)}&format=json`
+  const resposta = await fetch(alvo, { headers: { 'User-Agent': UA } })
+  if (resposta.status === 401) throw new Error(`o canal não permite incorporar ${assistir}`)
+  if (!resposta.ok) throw new Error(`oEmbed respondeu ${resposta.status} para ${assistir}`)
+  const corpo = await resposta.json()
+  return {
+    urlOrigem: assistir,
+    autoria: typeof corpo?.author_name === 'string' ? `Canal ${corpo.author_name}` : undefined,
+    titulo: typeof corpo?.title === 'string' ? corpo.title : undefined,
+    miniatura: typeof corpo?.thumbnail_url === 'string' && hostAutorizado(corpo.thumbnail_url, 'youtube') ? corpo.thumbnail_url : undefined,
+  }
+}
+
+/** Vídeo do Commons: confere que existe e que é vídeo, sem baixar. */
+async function conferirSemBaixar(url, tipoEsperado) {
+  const resposta = await fetch(url, { method: 'HEAD', headers: { 'User-Agent': UA } })
+  if (!resposta.ok) throw new Error(`${resposta.status} ao conferir ${url}`)
+  const contentType = (resposta.headers.get('content-type') || '').split(';')[0].trim().toLowerCase()
+  if (!TIPOS[tipoEsperado].includes(contentType)) throw new Error(`tipo ${contentType || '(vazio)'} não é ${tipoEsperado} em ${url}`)
 }
 
 function hostAutorizado(url, fonteId) {
@@ -192,7 +243,7 @@ async function inspecionar(url, tipoEsperado) {
     sha256: createHash('sha256').update(bytes).digest('hex'),
     bytes,
     tamanho: bytes.length,
-    ext: contentType.split('/')[1]?.replace('quicktime', 'mov').replace('jpeg', 'jpg') ?? 'bin',
+    ext: contentType.split('/')[1]?.replace('quicktime', 'mov').replace('pjpeg', 'jpg').replace('jpeg', 'jpg') ?? 'bin',
   }
 }
 
@@ -287,7 +338,7 @@ async function main() {
   // Entrada de esboço ainda sem link não é erro: é trabalho não começado. O
   // script conta e segue, para a pessoa poder curar dez cenas hoje e vinte
   // depois sem precisar apagar as que faltam.
-  const entradas = todas.filter((e) => e?.caso || e?.urlOrigem)
+  const entradas = todas.filter((e) => e?.caso || e?.urlOrigem || e?.videoId)
   const pendentes = todas.length - entradas.length
   if (pendentes) console.log(`${pendentes} cena(s) ainda sem link — ignoradas nesta passagem.\n`)
   if (!entradas.length) {
@@ -299,6 +350,7 @@ async function main() {
 
   const acervo = {}
   const falhas = []
+  const jaBaixada = baixar ? await mapaDoQueJaFoiBaixado() : new Map()
   let total = 0
 
   for (const [i, entrada] of entradas.entries()) {
@@ -307,11 +359,27 @@ async function main() {
       exigir(entrada.janela && entrada.cena, 'faltam "janela" e "cena"')
       exigir(entrada.fonte in HOSTS, `fonte desconhecida: ${entrada.fonte}`)
       exigir(typeof entrada.legenda === 'string' && entrada.legenda.length > 10, 'legenda ausente ou curta demais')
-      const tipo = entrada.tipo === 'clipe' ? 'clipe' : 'imagem'
+      const tipo = ['clipe', 'video', 'audio'].includes(entrada.tipo) ? entrada.tipo : 'imagem'
 
       let urls = entrada.urlOrigem ? [entrada.urlOrigem] : []
       let autoria = entrada.autoria
       let urlDoCaso = entrada.urlDoCaso
+      const extras = {}
+
+      if (tipo === 'video' && entrada.fonte === 'youtube') {
+        const video = await resolverVideoDoYoutube(entrada.videoId)
+        urls = [video.urlOrigem]
+        autoria ??= video.autoria
+        urlDoCaso ??= entrada.inicio ? `${video.urlOrigem}&t=${Math.floor(entrada.inicio)}s` : video.urlOrigem
+        extras.videoId = entrada.videoId
+        if (video.miniatura) extras.miniatura = video.miniatura
+        if (video.titulo) console.log(`    ↳ "${video.titulo}" — ${video.autoria ?? 'canal não identificado'}`)
+      }
+      if (tipo === 'video') {
+        if (Number.isFinite(entrada.inicio) && entrada.inicio > 0) extras.inicio = entrada.inicio
+        if (Number.isFinite(entrada.fim) && entrada.fim > 0) extras.fim = entrada.fim
+        if (entrada.miniatura) extras.miniatura = entrada.miniatura
+      }
 
       if (!urls.length) {
         exigir(entrada.caso, 'informe "urlOrigem" ou "caso"')
@@ -338,14 +406,30 @@ async function main() {
           urlDoCaso,
           legenda: entrada.legenda,
           ...(autoria ? { autoria } : {}),
+          ...extras,
         }
 
-        if (baixar) {
+        if (tipo === 'video') {
+          // Externo por definição: confere, não baixa, não espelha.
+          if (entrada.fonte !== 'youtube') await conferirSemBaixar(url, 'video')
+          if (midia.miniatura) exigir(hostAutorizado(midia.miniatura, entrada.fonte), `miniatura fora da autorização: ${midia.miniatura}`)
+          console.log(`  ✓ ${rotulo} ${url} (vídeo externo)`)
+        } else if (baixar && jaBaixada.has(url) && !args.includes('--rebaixar')) {
+          // Já passou por aqui numa rodada anterior e os bytes estão em disco:
+          // reaproveita hash e extensão em vez de bater de novo na fonte. É o
+          // que permite acrescentar 50 mídias sem rebaixar 2.000.
+          const { sha256, ext } = jaBaixada.get(url)
+          midia.sha256 = sha256
+          midia.ext = ext
+          console.log(`  ✓ ${rotulo} ${url} → ${sha256.slice(0, 12)}… (já baixada)`)
+        } else if (baixar) {
           const info = await inspecionar(url, tipo)
           midia.sha256 = info.sha256
           midia.ext = info.ext
           await mkdir(path.join(pastaDeBytes, info.sha256.slice(0, 2)), { recursive: true })
           await writeFile(path.join(pastaDeBytes, info.sha256.slice(0, 2), `${info.sha256}.${info.ext}`), info.bytes)
+          jaBaixada.set(url, { sha256: info.sha256, ext: info.ext })
+          await writeFile(arquivoDeCache, JSON.stringify(Object.fromEntries(jaBaixada)), 'utf8').catch(() => {})
           console.log(`  ✓ ${rotulo} ${url} → ${info.sha256.slice(0, 12)}… (${(info.tamanho / 1024).toFixed(0)} kB)`)
         } else {
           console.log(`  ✓ ${rotulo} ${url}`)
@@ -375,6 +459,36 @@ async function main() {
   } else {
     console.log('Modo verificação — nada foi escrito. Use --gerar para escrever o acervo.')
   }
+}
+
+/**
+ * URL de origem → { sha256, ext } das mídias do acervo gerado anterior cujos
+ * bytes ainda estão em `.semiologia/midia/`. Sem o arquivo em disco a
+ * entrada não vale: o hash sozinho não sobe para o espelho.
+ */
+const arquivoDeCache = path.join(pastaDeBytes, 'baixadas.json')
+
+async function mapaDoQueJaFoiBaixado() {
+  const mapa = new Map()
+  // O cache cobre o que foi baixado numa rodada que não chegou a gerar o
+  // acervo (uma falha no meio do lote não deve custar o lote inteiro de novo).
+  try {
+    const cache = JSON.parse(await readFile(arquivoDeCache, 'utf8'))
+    for (const [url, info] of Object.entries(cache)) {
+      if (existsSync(path.join(pastaDeBytes, info.sha256.slice(0, 2), `${info.sha256}.${info.ext}`))) mapa.set(url, info)
+    }
+  } catch {}
+  try {
+    const { ACERVO_DE_MIDIA } = await import('../../lib/semiologia/acervo.gerado.ts')
+    for (const midia of Object.values(ACERVO_DE_MIDIA ?? {}).flat()) {
+      if (!midia.sha256 || !midia.ext) continue
+      const arquivo = path.join(pastaDeBytes, midia.sha256.slice(0, 2), `${midia.sha256}.${midia.ext}`)
+      if (existsSync(arquivo)) mapa.set(midia.urlOrigem, { sha256: midia.sha256, ext: midia.ext })
+    }
+  } catch {
+    // Sem acervo anterior, baixa tudo — é o caso do primeiro uso.
+  }
+  return mapa
 }
 
 async function escrever(acervo) {

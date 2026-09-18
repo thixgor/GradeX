@@ -1,5 +1,182 @@
 # Backlog de cenas com imagem
 
+## Estado em 2026-09-18 (quarta leva)
+
+Implementado da lista abaixo: **A** inteira (62 sinais com foto), **B** inteira
+(31 sinais dinâmicos + vídeo do YouTube nos 49 sinais que existiam sem mídia),
+**D** quase inteira (bloqueios 13 cenas, procedimentos 9, partes pequenas 11,
+Doppler 6, obstétrico tardio 5, 6 cenas cardíacas; microscopia 10,
+capilaroscopia 4, luz de Wood 5) e **E** (Radiopaedia com cine mp4, DermNet
+em ~110 sinais de pele, POCUS Atlas Nerve Block Atlas). Os termos conjuntos
+assinados em 18/09 estão em `lib/acervos-licenciados.ts`.
+
+**Ficou sem foto** (cena existe, acervo vazio): bloqueios/procedimentos sem
+caso no POCUS Atlas (jugular interna, radial, periférico difícil,
+toracocentese, paracentese, punção lombar, cricotireóidea — o Radiopaedia
+não tem "procedimento" como caso), doppler-vascular/doppler-transcraniano,
+apical/vti-debito-cardiaco e funcao-diastolica, obstetrico-tardio/
+apresentacao-cefalica, -pelvica e oligoamnio, capilaroscopia ativa e tardia
+(só a precoce tem foto), e alguns sinais tropicais sem foto livre.
+
+**Sons (C)**: nenhum entrou. A UMich Heart Sound Library saiu do ar (os mp3 do
+Open Michigan dão 404 e o Deep Blue está atrás de Cloudflare); Littmann,
+Thinklabs, EasyAuscultation e R.A.L.E. não são raspáveis. O tipo `audio` e o
+player estão prontos: basta receber os arquivos dos titulares e registrar em
+`curadoria.json` com a fonte correspondente.
+
+## Ideias para a quarta leva (2026-09-17) — o que foi implementado está acima
+
+Legenda: **C** Wikimedia Commons (foto livre, provável) · **P** POCUS Atlas ·
+**R** Radiopaedia · **V** vídeo externo (YouTube/Commons `.webm`, sem espelho) ·
+**A** áudio (precisa de acervo autorizado ou gravação própria) · **CDC** PHIL,
+domínio público.
+
+### A. Sinais do exame físico com foto — 62
+
+Dermato-infecto (20): tinha do corpo (borda ativa) · tinha do pé/intertrigo
+interdigital · onicomicose · paroníquia aguda · unha encravada · verruga
+vulgar e plantar · herpes labial · furúnculo e carbúnculo · dermatite atópica
+(liquenificação flexural) · dermatite seborreica · dermatite de contato
+(padrão geométrico) · rosácea e rinofima · acne nódulo-cística · melasma ·
+pitiríase rósea (medalhão + árvore de Natal) · líquen plano cutâneo (estrias
+de Wickham) · dermografismo · queloide × cicatriz hipertrófica · pioderma
+gangrenoso · pediculose (lêndeas) — todos C.
+
+Tropical/Brasil (6): paracoccidioidomicose (estomatite moriforme) ·
+esporotricose linfangítica · cromomicose · micetoma (pé de Madura) ·
+elefantíase filarial · difteria (pseudomembrana) — C/CDC.
+
+Pediatria e genética (10): manchas café-com-leite + neurofibromas (NF1) ·
+angiofibromas e manchas hipomelanóticas (esclerose tuberosa) · hemangioma
+infantil · mancha vinho-do-porto (Sturge-Weber) · fenda labiopalatina ·
+macrocrania/hidrocefalia · microcefalia · esclera azul (osteogênese
+imperfeita) · pseudo-hipertrofia de panturrilha (Duchenne) ·
+hiperextensibilidade cutânea e articular (Ehlers-Danlos, Beighton) — C.
+
+Cabeça e pescoço (5): macroglossia · cisto branquial · higroma cístico ·
+escrófula (linfadenite TB fistulizada) · angina de Ludwig — C.
+
+Tórax, abdome, genital, proctologia (12): doença de Paget do mamilo /
+carcinoma inflamatório · hérnia inguinal · hérnia incisional · estomas
+(normal × isquêmico × prolapsado) · fimose e parafimose · balanite ·
+condiloma acuminado · herpes genital · hemorroida trombosada · fissura anal ·
+prolapso retal · abscesso perianal — C.
+
+Musculoesquelético (9): fratura exposta · fratura de clavícula (deformidade)
+· luxação interfalângica · sinal de Popeye (ruptura do bíceps) · dedo em
+martelo · espondilite anquilosante (postura em ponto de interrogação) ·
+bursite olecraniana e pré-patelar · cisto sinovial de punho ·
+Osgood-Schlatter — C.
+
+### B. Sinais dinâmicos — precisam de vídeo — 35 (V)
+
+Marchas: hemiparética (ceifante) · escarvante · em tesoura · anserina
+(miopática) · talonante (tabética) · magnética (hidrocefalia de pressão
+normal) · antálgica · Trendelenburg. (Parkinsoniana e atáxica já existem, sem
+mídia.)
+
+Movimento anormal: coreia de Sydenham e de Huntington (`coreia` existe) ·
+hemibalismo · distonia cervical · mioclonias · tiques · tremor essencial ×
+repouso × intencional (`tremor-de-repouso` existe) · fasciculações de língua
+(ELA) · asterixe (existe) · crise tônico-clônica e crise de ausência.
+
+Manobras: Romberg · índex-nariz e disdiadococinesia · Gowers · reflexos de
+Moro, preensão e sucção · Ortolani-Barlow · Dix-Hallpike com nistagmo ·
+HINTS (head impulse) · Hoffmann · clônus (existe) · Lasègue · Thompson ·
+ptose fatigável e teste do gelo (miastenia) · swinging flashlight (defeito
+pupilar aferente, cena sem foto) · paralisia do VI nervo (existe).
+
+Respiração e pulso: Kussmaul · Cheyne-Stokes · pulso venoso jugular (ondas
+a/v e sinal de Kussmaul) · tempo de enchimento capilar (existe).
+
+### C. Sons — ausculta — 28 (A)
+
+Cardíaco: B1/B2 normais · B3 (existe) · B4 (existe) · desdobramento de B2
+(fisiológico, fixo, paradoxal) · estenose aórtica (existe) · insuficiência
+mitral (existe) · estenose mitral (ruflar + estalido de abertura) ·
+insuficiência aórtica · insuficiência tricúspide com Rivero-Carvallo ·
+persistência do canal arterial (contínuo) · CIV · atrito pericárdico · click
+mesossistólico do prolapso · sopro inocente de Still · CMH com Valsalva ·
+prótese mecânica.
+
+Pulmonar: crepitações finas × grossas (existe `estertores-crepitantes`) ·
+sibilos (existe) · roncos · estridor (existe) · atrito pleural · sopro
+tubário · egofonia e pectorilóquia · murmúrio abolido (existe).
+
+Abdominal e vascular: ruídos metálicos (obstrução) · silêncio abdominal ·
+sopro carotídeo · sopro renal · frêmito/sopro de fístula AV.
+
+### D. Beira do leito — 46
+
+Bloqueios guiados (10, P — Nerve Block Atlas): interescalênico ·
+supraclavicular · axilar · femoral · fáscia ilíaca · PENG · poplíteo
+(ciático) · serrátil anterior · eretor da espinha · plano transverso do
+abdome.
+
+Procedimentos guiados (8, P): jugular interna em plano × fora de plano ·
+artéria radial · acesso periférico difícil · marcação de toracocentese ·
+paracentese · artrocentese de joelho · punção lombar guiada · membrana
+cricotireóidea.
+
+Musculoesquelético e partes pequenas (10, P/R): ruptura do manguito rotador ·
+tendinite calcária · tendão patelar · nervo mediano no túnel do carpo ·
+nódulo tireoidiano (TI-RADS) · tireoidite · linfonodo reativo × maligno ·
+mama cisto × sólido · tumor testicular · varicocele.
+
+Doppler vascular (5, P/R/C): placa carotídea · estenose carotídea
+(velocidades) · Doppler transcraniano (ACM) · índice de resistência renal ·
+fluxo portal hepatofugal.
+
+Cardíaco avançado (6, P): VTI e débito cardíaco · E/e' (função diastólica) ·
+flail mitral · Doppler colorido da IM apical · PSAP pela IT · gradiente de
+estenose aórtica (CW).
+
+Obstétrico 2º/3º trimestre (4, P/C): placenta prévia · apresentação fetal ·
+oligoâmnio/ILA · descolamento prematuro de placenta.
+
+Novas "vistas" não ultrassonográficas (3 janelas, ~30 cenas, C/CDC):
+- **Microscopia à beira do leito**: sedimento urinário (cilindros hialinos,
+  granulosos, hemáticos; hematúria dismórfica; cristais de oxalato, urato,
+  estruvita), Gram (diplococos, bacilos), KOH (hifas), exame a fresco
+  (Trichomonas, clue cells), gota espessa (Plasmodium falciparum × vivax),
+  Leishmania em aspirado, esfregaço (drepanócitos, esquizócitos).
+- **Capilaroscopia periungueal**: normal · padrão esclerodérmico precoce ·
+  ativo · tardio (megacapilares, hemorragias, áreas avasculares).
+- **Luz de Wood**: versicolor · eritrasma · vitiligo · tinha do couro
+  cabeludo · porfiria (urina).
+
+### E. Reforço do acervo existente
+
+- 182 cenas com **uma só mídia**; 49 sinais **sem mídia** — quase todos
+  dinâmicos ou de ausculta (B e C acima).
+- **Radiopaedia está subusada**: só 3 mídias. Tem caso ilustrado para
+  praticamente todas as 278 cenas de ultrassom, com stacks/cine. Prioridade
+  um da leva de reforço.
+- POCUS Atlas: pegar **todos** os clipes de cada coleção, não só o primeiro.
+- Commons: reabrir por categoria (não por busca) as cenas com 1 foto.
+
+### F. Fontes que precisam de autorização
+
+1. **Sons**: 3M Littmann, University of Michigan Heart Sound & Murmur
+   Library, Thinklabs, easyauscultation.com; pulmão: R.A.L.E. Repository
+   (Manitoba). Alternativa aberta: PhysioNet CirCor DigiScope (ODC-By) e
+   PhysioNet/CinC 2016 — reais, sem a qualidade didática das bibliotecas.
+   Melhor de todas: **gravações próprias** com estetoscópio digital.
+2. **Dermatologia**: DermNet NZ (CC BY-NC-ND), Atlas Dermatológico
+   (atlasdermatologico.com.br, Prof. Samuel Freire).
+3. **Oftalmologia**: EyeRounds (Universidade de Iowa), Retina Image Bank
+   (ASRS).
+4. **Otoscopia**: Hawke Library, ENT USA (Dr. Ted).
+5. **Endoscopia**: Gastrolab, Atlas of GI Endoscopy (Julio Murra-Saca).
+6. **Vídeos de exame**: Stanford Medicine 25, Neurosigns.org, NEJM Videos in
+   Clinical Medicine, Semiologia UFMG/UNIFESP. Embed do YouTube dispensa
+   autorização (ToS do YouTube), mas o dono pode tirar o vídeo do ar.
+7. **Sem autorização necessária**: CDC PHIL e MedPix (NIH) — domínio
+   público; entram como nova `FonteLicenciada`.
+
+---
+
+
 ## Estado em 2026-09-17 (terceira leva)
 
 Entrou: +36 cenas em broncoscopia/laringoscopia/otoscopia/fundoscopia; três

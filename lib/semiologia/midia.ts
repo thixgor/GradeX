@@ -48,10 +48,27 @@ import { fonteLicenciada, hostAutorizado, type FonteLicenciada, type FonteLicenc
  * de uso não perdoa.
  */
 
+/**
+ * Os tipos de mídia, e o que cada um implica para o resolvedor:
+ *
+ * - `imagem` e `clipe`: arquivos nossos de espelhar. Clipe é o laço curto de
+ *   ultrassom, sem som — é mídia de movimento, mas é um arquivo como outro.
+ * - `video`: **nunca espelhado**, por decisão e não por limitação. Ou é um
+ *   vídeo do YouTube, exibido pelo player oficial (a única forma que a licença
+ *   do YouTube cobre), ou é um `.webm` do Commons servido direto de lá. Um
+ *   vídeo de marcha tem dezenas de MB; o que ensina não é o arquivo, é o
+ *   trecho — e trecho é `inicio`/`fim`, não bytes.
+ * - `audio`: bulhas, sopros, ruídos. Arquivo pequeno, espelhado como imagem.
+ *   O acervo nasce vazio: as bibliotecas de ausculta que valem a pena estão
+ *   todas fora do domínio público e entram uma a uma, quando cada termo
+ *   assinado chegar.
+ */
+export type TipoDeMidia = 'imagem' | 'clipe' | 'video' | 'audio'
+
 export interface MidiaClinica {
   /** Identificador estável dentro da cena. */
   id: string
-  tipo: 'imagem' | 'clipe'
+  tipo: TipoDeMidia
   fonte: FonteLicenciadaId
   /** URL no acervo de origem. Precisa passar por `hostAutorizado`. */
   urlOrigem: string
@@ -65,6 +82,13 @@ export interface MidiaClinica {
   legenda: string
   /** Autoria do caso, quando a fonte a identifica. */
   autoria?: string
+  /** Só em `video` do YouTube: o id do vídeo (11 caracteres). */
+  videoId?: string
+  /** Só em `video`: segundo em que o trecho relevante começa/termina. */
+  inicio?: number
+  fim?: number
+  /** Só em `video`: imagem estática para capa, miniatura e índice de busca. */
+  miniatura?: string
 }
 
 export type EstrategiaDeMidia = 'espelho' | 'origem' | 'indisponivel'
@@ -107,6 +131,14 @@ export function urlDaMidia(midia: MidiaClinica): string | null {
   const fonte = fonteLicenciada(midia.fonte)
   if (!fonte) return null
 
+  // Vídeo externo não passa pelo espelho nem pela regra de "origem só fora de
+  // produção": ele é externo por definição. O YouTube vira a URL do player
+  // sem cookies, com o trecho; o Commons é servido do próprio upload.wikimedia.
+  if (midia.tipo === 'video') {
+    if (midia.fonte === 'youtube') return urlDoPlayer(midia)
+    return hostAutorizado(midia.urlOrigem, fonte) ? midia.urlOrigem : null
+  }
+
   const base = baseDoEspelho()
   if (base && midia.sha256 && midia.ext) {
     return `${base}/${caminhoNoEspelho(midia.sha256, midia.ext)}`
@@ -114,6 +146,29 @@ export function urlDaMidia(midia: MidiaClinica): string | null {
 
   if (!servirDaOrigem()) return null
   return hostAutorizado(midia.urlOrigem, fonte) ? midia.urlOrigem : null
+}
+
+function urlDoPlayer(midia: MidiaClinica): string | null {
+  if (!midia.videoId || !/^[A-Za-z0-9_-]{11}$/.test(midia.videoId)) return null
+  const parametros = new URLSearchParams({ rel: '0', modestbranding: '1', playsinline: '1' })
+  if (midia.inicio) parametros.set('start', String(Math.floor(midia.inicio)))
+  if (midia.fim) parametros.set('end', String(Math.ceil(midia.fim)))
+  return `https://www.youtube-nocookie.com/embed/${midia.videoId}?${parametros}`
+}
+
+/**
+ * Imagem estática que representa a mídia — a própria imagem, ou a miniatura
+ * de um vídeo. Clipe e áudio não têm: quem chama decide o que mostrar.
+ */
+export function miniaturaDaMidia(midia: MidiaClinica): string | null {
+  if (midia.tipo === 'imagem') return urlDaMidia(midia)
+  if (midia.tipo !== 'video') return null
+  if (midia.miniatura) {
+    const fonte = fonteLicenciada(midia.fonte)
+    return fonte && hostAutorizado(midia.miniatura, fonte) ? midia.miniatura : null
+  }
+  if (midia.fonte === 'youtube' && midia.videoId) return `https://i.ytimg.com/vi/${midia.videoId}/hqdefault.jpg`
+  return null
 }
 
 /** A fonte de uma mídia, para montar o crédito ao lado dela. */

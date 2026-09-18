@@ -69,6 +69,24 @@ erro — dá para curar dez cenas hoje e vinte na semana que vem sem apagar nada
 O modo verificação não toca em disco de propósito: é o que roda em CI para
 pegar link podre antes de o aluno encontrar o quadrado quebrado.
 
+`--baixar` reaproveita o que já está em `.semiologia/midia/`: uma URL que já
+tem hash no `acervo.gerado.ts` anterior, e cujo arquivo existe em disco, não é
+baixada de novo. Acrescentar 50 mídias custa 50 downloads, não 2.000.
+`--rebaixar` força tudo de novo.
+
+### Vídeo externo e áudio
+
+Além de `imagem` e `clipe`, a curadoria aceita:
+
+- `"tipo": "video"` com `"fonte": "youtube"` e `"videoId"`: o script confere pelo
+  oEmbed que o vídeo existe e que o canal permite incorporação, registra canal
+  e miniatura, e **não baixa nada** — o aluno vê o player oficial. `inicio` e
+  `fim` (segundos) recortam o trecho. Um `.webm` do Commons entra do mesmo
+  jeito, com `urlOrigem` direta e sem espelho.
+- `"tipo": "audio"` (bulhas, sopros, ruídos): arquivo pequeno, baixado e
+  espelhado como imagem. Só de fonte autorizada — as bibliotecas de ausculta
+  dos termos conjuntos.
+
 ## As regras que o script não abre mão
 
 - **Host autorizado.** Só os domínios que as autorizações cobrem, e só HTTPS.
@@ -147,6 +165,27 @@ curada link a link. O fluxo, reproduzível para uma próxima leva:
 
 O Commons devolve 429 com facilidade; o script já espera. Uma leva de ~800
 arquivos leva algumas horas de download.
+
+## Quarta leva: as fontes dos termos conjuntos
+
+Os dois termos de 18/09/2026 (`lib/acervos-licenciados.ts`) abriram treze
+fontes. O que já dá para colher com script:
+
+- **DermNet** (`dermnet.mjs` no scratchpad da sessão): `/topics/<slug>` e
+  `/images/<slug>-images` trazem `<img class="js-gallery-image">` com
+  `data-headline`; 640×480, curl direto.
+- **Radiopaedia**: a busca do site exige navegação (prova de trabalho), mas
+  `/articles/<slug>` lista casos e `/studies/<id>/annotated_viewer_json`
+  devolve as séries com `thumbnailed_files` (jpeg) e `encodings.video` (mp4
+  do cine). Atenção: em stacks multiframe a imagem fica em
+  `images/<frames[0].id>/…`, não em `images/<stack_root_id>/…`.
+- **POCUS Atlas — Nerve Block Atlas**: páginas (não coleções), com `data-src`
+  e legenda no parágrafo seguinte (`tpa_paginas.mjs`).
+
+O que ainda precisa de material enviado pelo titular (os sites não são
+raspáveis ou estão fora do ar): UMich Heart Sound Library, Littmann,
+Thinklabs, EasyAuscultation, R.A.L.E., Hawke Library, EyeRounds, Retina Image
+Bank, Gastrolab, Atlas Dermatológico, Stanford 25 e Neurosigns.
 
 ## O que o caso real acrescenta ao esquema
 

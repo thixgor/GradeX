@@ -239,6 +239,9 @@ export type Instrumento =
   | 'lanterna'
   | 'dermatoscopio'
   | 'lampada-de-fenda'
+  | 'microscopio'
+  | 'capilaroscopio'
+  | 'lampada-de-wood'
 
 export const TITULOS_DE_INSTRUMENTO: Record<Instrumento, string> = {
   otoscopio: 'Otoscópio',
@@ -249,6 +252,9 @@ export const TITULOS_DE_INSTRUMENTO: Record<Instrumento, string> = {
   lanterna: 'Lanterna clínica',
   dermatoscopio: 'Dermatoscópio',
   'lampada-de-fenda': 'Lâmpada de fenda',
+  microscopio: 'Microscópio',
+  capilaroscopio: 'Capilaroscópio',
+  'lampada-de-wood': 'Lâmpada de Wood',
 }
 
 /**

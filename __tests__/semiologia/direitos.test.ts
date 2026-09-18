@@ -6,7 +6,7 @@ import {
   fonteDaUrl,
   hostAutorizado,
 } from '@/lib/acervos-licenciados'
-import { caminhoNoEspelho, urlDaMidia, midiasServiveis, type MidiaClinica } from '@/lib/semiologia/midia'
+import { caminhoNoEspelho, miniaturaDaMidia, urlDaMidia, midiasServiveis, type MidiaClinica } from '@/lib/semiologia/midia'
 import { ACERVO_DE_MIDIA } from '@/lib/semiologia/acervo.gerado'
 import { chaveDaCena, chaveDoSinal, cobertura } from '@/lib/semiologia/acervo'
 import { SINAIS } from '@/lib/semiologia/sinais'
@@ -130,6 +130,64 @@ describe('resolução de mídia', () => {
     expect(midiasServiveis(undefined)).toEqual([])
     expect(midiasServiveis([])).toEqual([])
     expect(midiasServiveis([{ ...valida, urlOrigem: 'https://exemplo.com/a.jpg' }])).toEqual([])
+  })
+})
+
+describe('vídeo externo', () => {
+  const youtube: MidiaClinica = {
+    id: 'v',
+    tipo: 'video',
+    fonte: 'youtube',
+    videoId: 'dQw4w9WgXcQ',
+    inicio: 12,
+    fim: 40,
+    urlOrigem: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    urlDoCaso: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=12s',
+    legenda: 'Marcha parkinsoniana com festinação',
+  }
+
+  it('vira o player oficial sem cookies, com o trecho na URL', () => {
+    const url = urlDaMidia(youtube)!
+    expect(url.startsWith('https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?')).toBe(true)
+    expect(url).toContain('start=12')
+    expect(url).toContain('end=40')
+  })
+
+  it('recusa id que não tem cara de id', () => {
+    // Um videoId é o que vai dentro de uma URL de iframe: aceitar qualquer
+    // string seria aceitar injeção de parâmetros no player.
+    expect(urlDaMidia({ ...youtube, videoId: 'x' })).toBeNull()
+    expect(urlDaMidia({ ...youtube, videoId: 'abc?autoplay=1' })).toBeNull()
+    expect(urlDaMidia({ ...youtube, videoId: undefined })).toBeNull()
+  })
+
+  it('a miniatura é do próprio YouTube', () => {
+    expect(miniaturaDaMidia(youtube)).toBe('https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg')
+    expect(miniaturaDaMidia({ ...youtube, miniatura: 'https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg' })).toContain('maxresdefault')
+    // Miniatura de host estranho não passa, mesmo declarada.
+    expect(miniaturaDaMidia({ ...youtube, miniatura: 'https://exemplo.com/a.jpg' })).toBeNull()
+  })
+
+  it('vídeo do Commons é servido da origem, nunca do espelho', () => {
+    const webm: MidiaClinica = {
+      id: 'w',
+      tipo: 'video',
+      fonte: 'wikimedia-commons',
+      urlOrigem: 'https://upload.wikimedia.org/wikipedia/commons/a/ab/Nistagmo.webm',
+      urlDoCaso: 'https://commons.wikimedia.org/wiki/File:Nistagmo.webm',
+      legenda: 'Nistagmo horizontal ao olhar lateral',
+    }
+    expect(urlDaMidia(webm)).toBe(webm.urlOrigem)
+    expect(urlDaMidia({ ...webm, urlOrigem: 'https://exemplo.com/a.webm' })).toBeNull()
+    expect(miniaturaDaMidia(webm)).toBeNull()
+  })
+
+  it('nenhum vídeo do acervo tem hash — externo não se espelha', () => {
+    for (const midia of Object.values(ACERVO_DE_MIDIA).flat()) {
+      if (midia.tipo !== 'video') continue
+      expect(midia.sha256, midia.id).toBeUndefined()
+      if (midia.fonte === 'youtube') expect(midia.videoId, midia.id).toMatch(/^[A-Za-z0-9_-]{11}$/)
+    }
   })
 })
 

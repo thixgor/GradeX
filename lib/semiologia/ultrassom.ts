@@ -11,6 +11,14 @@ import {
   CENAS_VESICULA,
 } from './ultrassom-vasos-abdome'
 import { CENAS_OBSTETRICO, CENAS_PARTES_MOLES, JANELA_OLHO } from './ultrassom-pelve-msk-olho'
+import {
+  CENAS_CARDIO_LEVA_4,
+  JANELA_BLOQUEIOS,
+  JANELA_DOPPLER,
+  JANELA_OBSTETRICO_TARDIO,
+  JANELA_PARTES_PEQUENAS,
+  JANELA_PROCEDIMENTOS,
+} from './ultrassom-leva-4'
 
 /**
  * As janelas do ultrassom à beira do leito.
@@ -1547,9 +1555,9 @@ const JANELAS_BASE: JanelaUltrassom[] = [
 const CENAS_EXTRA: Record<string, CenaClinica[]> = {
   'pulmao-linhas': CENAS_PULMAO,
   'subxifoide-pericardio': CENAS_PERICARDIO,
-  'paraesternal-eixo-longo': CENAS_PLAX,
+  'paraesternal-eixo-longo': [...CENAS_PLAX, ...CENAS_CARDIO_LEVA_4['paraesternal-eixo-longo']],
   'paraesternal-eixo-curto': CENAS_PSAX,
-  'apical-quatro-camaras': CENAS_APICAL,
+  'apical-quatro-camaras': [...CENAS_APICAL, ...CENAS_CARDIO_LEVA_4['apical-quatro-camaras']],
   'veia-cava-inferior': CENAS_CAVA,
   'veias-profundas': CENAS_VEIAS,
   'aorta-abdominal': CENAS_AORTA,
@@ -1565,6 +1573,11 @@ const CENAS_EXTRA: Record<string, CenaClinica[]> = {
 export const JANELAS_ULTRASSOM: JanelaUltrassom[] = [
   ...JANELAS_BASE.map((janela) => ({ ...janela, cenas: [...janela.cenas, ...(CENAS_EXTRA[janela.slug] ?? [])] })),
   JANELA_OLHO,
+  JANELA_BLOQUEIOS,
+  JANELA_PROCEDIMENTOS,
+  JANELA_PARTES_PEQUENAS,
+  JANELA_DOPPLER,
+  JANELA_OBSTETRICO_TARDIO,
 ]
 
 export const TOTAL_DE_JANELAS = JANELAS_ULTRASSOM.length

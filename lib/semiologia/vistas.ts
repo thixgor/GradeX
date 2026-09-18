@@ -1,4 +1,5 @@
 import { CENAS_EXTRA_DE_VISTA, VISTAS_NOVAS } from './vistas-extra'
+import { VISTAS_LEVA_4 } from './vistas-leva-4'
 import type { Vista } from './esquemas'
 
 /**
@@ -1737,6 +1738,7 @@ const VISTAS_BASE: Vista[] = [
 export const VISTAS: Vista[] = [
   ...VISTAS_BASE.map((vista) => ({ ...vista, cenas: [...vista.cenas, ...(CENAS_EXTRA_DE_VISTA[vista.slug] ?? [])] })),
   ...VISTAS_NOVAS,
+  ...VISTAS_LEVA_4,
 ]
 
 export const TOTAL_DE_VISTAS = VISTAS.length

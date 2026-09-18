@@ -4,7 +4,7 @@ import { JANELAS_ULTRASSOM } from './ultrassom'
 import { VISTAS } from './vistas'
 import { TITULOS_DE_INSTRUMENTO, TITULOS_DE_SISTEMA, type CenaClinica } from './esquemas'
 import { midiasDaCena, midiasDoSinal } from './acervo'
-import { urlDaMidia, type MidiaClinica } from './midia'
+import { urlDaMidia, type MidiaClinica, miniaturaDaMidia } from './midia'
 import { ROTAS } from './rotas'
 import type { EntradaDeBusca } from './busca-motor'
 
@@ -21,9 +21,11 @@ import type { EntradaDeBusca } from './busca-motor'
  * lê o ambiente (espelho ou origem) e o cliente não deve saber disso.
  */
 function miniatura(midias: MidiaClinica[]): string | undefined {
-  const fotos = [...midias].sort((a, b) => Number(a.tipo === 'clipe') - Number(b.tipo === 'clipe'))
+  const ordem = { imagem: 0, video: 1, clipe: 2, audio: 3 }
+  const fotos = [...midias].sort((a, b) => ordem[a.tipo] - ordem[b.tipo])
   for (const m of fotos) {
-    const url = urlDaMidia(m)
+    if (m.tipo === 'audio') continue
+    const url = m.tipo === 'video' ? miniaturaDaMidia(m) : urlDaMidia(m)
     if (url) return url
   }
   return undefined

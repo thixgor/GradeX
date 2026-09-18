@@ -55,7 +55,26 @@
  * conteúdo aberto por termos passado por ele.
  */
 
-export type FonteLicenciadaId = 'pocus-atlas' | 'radiopaedia' | 'wikimedia-commons'
+export type FonteLicenciadaId =
+  | 'pocus-atlas'
+  | 'radiopaedia'
+  | 'wikimedia-commons'
+  | 'youtube'
+  // Termo conjunto 1 (18/09/2026) — bibliotecas de ausculta.
+  | 'littmann'
+  | 'umich-heart-sounds'
+  | 'thinklabs'
+  | 'easyauscultation'
+  | 'rale'
+  // Termo conjunto 2 (18/09/2026) — atlas de imagem e vídeo.
+  | 'dermnet'
+  | 'atlas-dermatologico'
+  | 'eyerounds'
+  | 'retina-image-bank'
+  | 'hawke-library'
+  | 'gastrolab'
+  | 'stanford-25'
+  | 'neurosigns'
 
 export interface FonteLicenciada {
   id: FonteLicenciadaId
@@ -90,6 +109,75 @@ export interface FonteLicenciada {
     versao?: string
     data: string
     sha256: string
+  }
+}
+
+
+/**
+ * Os dois termos conjuntos de 18 de setembro de 2026.
+ *
+ * Cada um é um único documento assinado por várias fontes ao mesmo tempo, com
+ * as mesmas cláusulas para todas: indexar, traduzir, aprofundar e
+ * disponibilizar de forma paga, com crédito à fonte (e ao autor, quando há) no
+ * rodapé da seção ou em página dedicada; sem exclusividade, sem sublicenciar,
+ * com remoção a pedido. Por isso as fontes de cada termo são montadas por uma
+ * fábrica — a variação entre elas é só nome, signatário, licença pública e os
+ * hosts de onde a mídia vem. O que difere de verdade entre os dois termos está
+ * na cláusula 4.4 do primeiro: conteúdo acadêmico (Michigan, Manitoba) pode
+ * carregar condições próprias de uso educacional, que a DomineAqui se
+ * compromete a respeitar.
+ */
+const TERMO_CONJUNTO_1 = {
+  arquivo: 'TermoCONJUNTO_Autorizacao_DomineAqui.pdf',
+  data: '2026-09-18',
+  sha256: '977a6c887dcb2bc0ec3264ee983442a5c4d0a3559f6cb6f880b761c39155194f',
+}
+const TERMO_CONJUNTO_2 = {
+  arquivo: 'Termo_Autorizacao_Conjunta2_DomineAqui.pdf',
+  data: '2026-09-18',
+  sha256: 'f205e72540a242ae171f9abd19f788c9675ae071885628a320ed862db56f9358',
+}
+
+function fonteDoTermoConjunto(dados: {
+  id: FonteLicenciadaId
+  nome: string
+  url: string
+  titular: string
+  signatarios: string[]
+  licencaBase: string
+  dominiosDeMidia: string[]
+  comprovante: typeof TERMO_CONJUNTO_1
+  /** Só no termo 1: condições acadêmicas a respeitar. */
+  condicaoAcademica?: string
+  /** O que a fonte tem: 'sons', 'imagens', 'vídeos'. Entra no crédito. */
+  natureza: string
+}): FonteLicenciada {
+  const restricoes = [
+    `A autorização vale apenas para a DomineAqui e seus domínios e subdomínios — para terceiros, o conteúdo segue exatamente a licença pública da fonte (${dados.licencaBase}).`,
+    'Não autoriza sublicenciamento nem uso fora do contexto da plataforma.',
+    'Qualquer adaptação preserva a precisão científica; a fonte pode pedir a remoção de material específico, e o pedido é atendido em prazo razoável.',
+  ]
+  if (dados.condicaoAcademica) restricoes.push(dados.condicaoAcademica)
+  const dataPorExtenso = dados.comprovante.data.split('-').reverse().join('/')
+  return {
+    id: dados.id,
+    nome: dados.nome,
+    url: dados.url,
+    titular: dados.titular,
+    signatarios: dados.signatarios,
+    licencaBase: dados.licencaBase,
+    excecao:
+      'Autorização escrita, não exclusiva e por prazo indeterminado, para indexar, organizar, traduzir, aprofundar e disponibilizar de forma paga os conteúdos, com crédito à fonte e ao autor quando identificado.',
+    credito: `${dados.natureza} de ${dados.nome} (${dados.url.replace(/^https?:\/\//, '')}) — ${dados.titular}. Uso autorizado à DomineAqui por termo escrito de ${dataPorExtenso}.`,
+    creditoCurto: `${dados.nome} · autorização para DomineAqui`,
+    permissoes: [
+      'Indexar e reorganizar o conteúdo de forma estruturada e didática em português brasileiro.',
+      'Traduzir, adaptar e aprofundar textos, imagens, vídeos e áudios, mantendo a integridade científica.',
+      'Disponibilizar o material em modelo pago (assinatura ou acesso premium), com os créditos mantidos.',
+    ],
+    restricoes,
+    dominiosDeMidia: dados.dominiosDeMidia,
+    comprovante: dados.comprovante,
   }
 }
 
@@ -213,12 +301,212 @@ export const FONTES_LICENCIADAS: Record<FonteLicenciadaId, FonteLicenciada> = {
       sha256: '9ba9550ad48438d0836ddab3da480b3b69ffa0aac7b7878b5a0039e7ab429411',
     },
   },
+  /**
+   * O YouTube não é um acervo, e esta entrada não é uma autorização de uso do
+   * conteúdo: o vídeo continua sendo do canal que o publicou. O que existe é a
+   * licença que os Termos de Serviço do YouTube fazem cada usuário conceder aos
+   * demais — reproduzir e **incorporar** o vídeo "conforme seja possível por um
+   * recurso do Serviço". É por isso que a mídia deste tipo nunca é baixada nem
+   * espelhada: fora do player do YouTube a licença não existe. O aluno vê o
+   * player oficial, com o crédito do canal e o link para o vídeo; o dono pode
+   * tirar o vídeo do ar quando quiser, e aí a cena volta a ser só esquema.
+   */
+  youtube: {
+    id: 'youtube',
+    nome: 'YouTube (vídeo incorporado)',
+    url: 'https://www.youtube.com',
+    titular: 'O canal que publicou cada vídeo — identificado junto ao player',
+    signatarios: ['Não se aplica: licença dos Termos de Serviço do YouTube, concedida por cada usuário aos demais.'],
+    licencaBase:
+      'Termos de Serviço do YouTube, "Licença para outros usuários": reprodução e incorporação do vídeo por meio do player oficial, quando o canal permite incorporação',
+    excecao:
+      'Nenhuma. O vídeo não é copiado nem redistribuído — é exibido pelo player do YouTube, com o canal identificado e o vínculo para o vídeo original.',
+    credito: 'Vídeo incorporado do YouTube — o canal e o vínculo para o vídeo original aparecem junto ao player. Direitos do respectivo canal.',
+    creditoCurto: 'YouTube · canal identificado junto ao vídeo',
+    permissoes: [
+      'Incorporar o player oficial de vídeos cujo canal permite incorporação, inclusive em página de acesso pago.',
+      'Indicar trecho (início e fim) e legendar o que o vídeo mostra, em português.',
+    ],
+    restricoes: [
+      'A mídia nunca é baixada, espelhada, recortada ou reencodada: fora do player do YouTube não há licença.',
+      'Só vídeos cujo canal permite incorporação (a API oEmbed confirma isso na curadoria).',
+      'O vídeo pode ser removido pelo canal a qualquer momento; a cena então volta ao esquema.',
+      'Para terceiros, cada vídeo segue os direitos do respectivo canal — a plataforma não os sublicencia.',
+    ],
+    dominiosDeMidia: ['www.youtube.com', 'youtube.com', 'youtu.be', 'www.youtube-nocookie.com', 'i.ytimg.com'],
+    comprovante: {
+      arquivo: 'Termos de Serviço do YouTube (youtube.com/t/terms, pt-BR), seção "Licença para outros usuários"',
+      data: '2026-09-18',
+      sha256: '5814c818f5429d3eb95b6d3401fe8cc7302b48c1159dacb21503e9910c353831',
+    },
+  },
+  // ── Termo conjunto 1: ausculta ─────────────────────────────────────────────
+  littmann: fonteDoTermoConjunto({
+    id: 'littmann',
+    nome: '3M Littmann (Solventum)',
+    url: 'https://www.littmann.com',
+    titular: '3M Littmann / Solventum',
+    signatarios: ['Equipe comercial e educacional da Solventum'],
+    licencaBase: 'Conteúdo proprietário da Solventum (todos os direitos reservados)',
+    dominiosDeMidia: ['littmann.com', 'solventum.com', 'multimedia.3m.com'],
+    comprovante: TERMO_CONJUNTO_1,
+    natureza: 'Sons de ausculta',
+  }),
+  'umich-heart-sounds': fonteDoTermoConjunto({
+    id: 'umich-heart-sounds',
+    nome: 'UMich Heart Sound & Murmur Library',
+    url: 'https://www.med.umich.edu/lrc/psb_open/html/repo/primer_heartsound/primer_heartsound.html',
+    titular: 'University of Michigan Medical School',
+    signatarios: ['Richard D. Judge, MD', 'Rajesh Mangrulkar, MD'],
+    licencaBase: 'Creative Commons Attribution-ShareAlike 3.0 (CC BY-SA 3.0) da biblioteca aberta da University of Michigan',
+    dominiosDeMidia: ['med.umich.edu', 'umich.edu'],
+    comprovante: TERMO_CONJUNTO_1,
+    condicaoAcademica: 'Conteúdo acadêmico (cláusula 4.4): respeita-se a licença de uso educacional da University of Michigan, inclusive a atribuição a Judge e Mangrulkar em cada som.',
+    natureza: 'Sons cardíacos e sopros',
+  }),
+  thinklabs: fonteDoTermoConjunto({
+    id: 'thinklabs',
+    nome: 'Thinklabs',
+    url: 'https://www.thinklabs.com',
+    titular: 'Thinklabs Medical LLC',
+    signatarios: ['Clive Smith'],
+    licencaBase: 'Conteúdo proprietário da Thinklabs (todos os direitos reservados)',
+    dominiosDeMidia: ['thinklabs.com'],
+    comprovante: TERMO_CONJUNTO_1,
+    natureza: 'Sons de ausculta',
+  }),
+  easyauscultation: fonteDoTermoConjunto({
+    id: 'easyauscultation',
+    nome: 'EasyAuscultation (MedEdu)',
+    url: 'https://www.easyauscultation.com',
+    titular: 'MedEdu LLC',
+    signatarios: ['Henry Blair / equipe MedEdu'],
+    licencaBase: 'Conteúdo proprietário da MedEdu LLC (todos os direitos reservados)',
+    dominiosDeMidia: ['easyauscultation.com', 'practicalclinicalskills.com'],
+    comprovante: TERMO_CONJUNTO_1,
+    natureza: 'Sons de ausculta cardíaca e pulmonar',
+  }),
+  rale: fonteDoTermoConjunto({
+    id: 'rale',
+    nome: 'R.A.L.E. Repository',
+    url: 'https://www.rale.ca',
+    titular: 'Respiratory Acoustics Laboratory, University of Manitoba / PixSoft Inc.',
+    signatarios: ['H. Pasterkamp — Respiratory Acoustics Laboratory, University of Manitoba', 'PixSoft Inc.'],
+    licencaBase: 'Conteúdo proprietário do R.A.L.E. Repository / PixSoft (todos os direitos reservados)',
+    dominiosDeMidia: ['rale.ca'],
+    comprovante: TERMO_CONJUNTO_1,
+    condicaoAcademica: 'Conteúdo acadêmico (cláusula 4.4): respeitam-se as condições de uso educacional da University of Manitoba.',
+    natureza: 'Sons respiratórios',
+  }),
+  // ── Termo conjunto 2: atlas de imagem e vídeo ──────────────────────────────
+  dermnet: fonteDoTermoConjunto({
+    id: 'dermnet',
+    nome: 'DermNet NZ',
+    url: 'https://dermnetnz.org',
+    titular: 'DermNet New Zealand Trust',
+    signatarios: ['Dr. Amanda Oakley / DermNet editorial team'],
+    licencaBase: 'Creative Commons Attribution-NonCommercial-NoDerivatives 3.0 NZ (CC BY-NC-ND 3.0 NZ)',
+    dominiosDeMidia: ['dermnetnz.org'],
+    comprovante: TERMO_CONJUNTO_2,
+    natureza: 'Fotografias dermatológicas',
+  }),
+  'atlas-dermatologico': fonteDoTermoConjunto({
+    id: 'atlas-dermatologico',
+    nome: 'Atlas Dermatológico',
+    url: 'https://www.atlasdermatologico.com.br',
+    titular: 'Prof. Samuel Freire da Silva',
+    signatarios: ['Samuel Freire'],
+    licencaBase: 'Conteúdo proprietário, de uso educacional gratuito (todos os direitos reservados ao autor)',
+    dominiosDeMidia: ['atlasdermatologico.com.br'],
+    comprovante: TERMO_CONJUNTO_2,
+    natureza: 'Fotografias dermatológicas',
+  }),
+  eyerounds: fonteDoTermoConjunto({
+    id: 'eyerounds',
+    nome: 'EyeRounds (University of Iowa)',
+    url: 'https://eyerounds.org',
+    titular: 'University of Iowa Department of Ophthalmology and Visual Sciences',
+    signatarios: ['University of Iowa / EyeRounds team'],
+    licencaBase: 'Conteúdo proprietário da University of Iowa, de uso educacional (todos os direitos reservados)',
+    dominiosDeMidia: ['eyerounds.org', 'webeye.ophth.uiowa.edu', 'uiowa.edu'],
+    comprovante: TERMO_CONJUNTO_2,
+    natureza: 'Fotografias e vídeos oftalmológicos',
+  }),
+  'retina-image-bank': fonteDoTermoConjunto({
+    id: 'retina-image-bank',
+    nome: 'Retina Image Bank',
+    url: 'https://imagebank.asrs.org',
+    titular: 'American Society of Retina Specialists (ASRS)',
+    signatarios: ['American Society of Retina Specialists (ASRS)'],
+    licencaBase: 'Conteúdo proprietário da ASRS e dos contribuidores (todos os direitos reservados)',
+    dominiosDeMidia: ['imagebank.asrs.org', 'asrs.org'],
+    comprovante: TERMO_CONJUNTO_2,
+    natureza: 'Imagens de retina',
+  }),
+  'hawke-library': fonteDoTermoConjunto({
+    id: 'hawke-library',
+    nome: 'Hawke Library',
+    url: 'https://www.hawkelibrary.com',
+    titular: 'Dr. Michael Hawke',
+    signatarios: ['Dr. Michael Hawke'],
+    licencaBase: 'Conteúdo proprietário do Dr. Michael Hawke (todos os direitos reservados)',
+    dominiosDeMidia: ['hawkelibrary.com'],
+    comprovante: TERMO_CONJUNTO_2,
+    natureza: 'Fotografias otoscópicas',
+  }),
+  gastrolab: fonteDoTermoConjunto({
+    id: 'gastrolab',
+    nome: 'Gastrolab',
+    url: 'https://www.gastrolab.net',
+    titular: 'Gastrolab — Prof. Dr. Hans T. R. Tytgat e equipe',
+    signatarios: ['Prof. Dr. Hans T. R. Tytgat / equipe do Gastrolab'],
+    licencaBase: 'Conteúdo proprietário do Gastrolab (todos os direitos reservados)',
+    dominiosDeMidia: ['gastrolab.net'],
+    comprovante: TERMO_CONJUNTO_2,
+    natureza: 'Imagens e vídeos endoscópicos',
+  }),
+  'stanford-25': fonteDoTermoConjunto({
+    id: 'stanford-25',
+    nome: 'Stanford Medicine 25',
+    url: 'https://stanfordmedicine25.stanford.edu',
+    titular: 'Stanford Medicine — Dr. Abraham Verghese',
+    signatarios: ['Stanford Medicine / Dr. Abraham Verghese'],
+    licencaBase: 'Conteúdo proprietário da Stanford University (todos os direitos reservados)',
+    dominiosDeMidia: ['stanfordmedicine25.stanford.edu', 'stanford.edu'],
+    comprovante: TERMO_CONJUNTO_2,
+    natureza: 'Fotografias e vídeos de exame físico',
+  }),
+  neurosigns: fonteDoTermoConjunto({
+    id: 'neurosigns',
+    nome: 'Neurosigns.org',
+    url: 'https://www.neurosigns.org',
+    titular: 'Neurosigns — Dr. Robert W. Baloh e equipe',
+    signatarios: ['Dr. Robert W. Baloh / equipe Neurosigns'],
+    licencaBase: 'Conteúdo proprietário do Neurosigns.org (todos os direitos reservados)',
+    dominiosDeMidia: ['neurosigns.org'],
+    comprovante: TERMO_CONJUNTO_2,
+    natureza: 'Vídeos de sinais neurológicos',
+  }),
 }
 
 export const LISTA_DE_FONTES: FonteLicenciada[] = [
   FONTES_LICENCIADAS['pocus-atlas'],
   FONTES_LICENCIADAS.radiopaedia,
   FONTES_LICENCIADAS['wikimedia-commons'],
+  FONTES_LICENCIADAS.youtube,
+  FONTES_LICENCIADAS.littmann,
+  FONTES_LICENCIADAS['umich-heart-sounds'],
+  FONTES_LICENCIADAS.thinklabs,
+  FONTES_LICENCIADAS.easyauscultation,
+  FONTES_LICENCIADAS.rale,
+  FONTES_LICENCIADAS.dermnet,
+  FONTES_LICENCIADAS['atlas-dermatologico'],
+  FONTES_LICENCIADAS.eyerounds,
+  FONTES_LICENCIADAS['retina-image-bank'],
+  FONTES_LICENCIADAS['hawke-library'],
+  FONTES_LICENCIADAS.gastrolab,
+  FONTES_LICENCIADAS['stanford-25'],
+  FONTES_LICENCIADAS.neurosigns,
 ]
 
 /**

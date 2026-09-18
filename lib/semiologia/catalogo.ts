@@ -9,7 +9,7 @@ import {
   VISTAS,
 } from './vistas'
 import { midiasDaCena, midiasDoSinal } from './acervo'
-import { urlDaMidia, type MidiaClinica } from './midia'
+import { urlDaMidia, type MidiaClinica, miniaturaDaMidia, type TipoDeMidia } from './midia'
 import type { CenaClinica } from './esquemas'
 
 /**
@@ -29,15 +29,24 @@ export interface CapaReal {
 }
 
 function capaDeMidias(midias: MidiaClinica[], cena?: string): CapaReal | undefined {
-  // Fotografia antes de clipe: o card é estático e um vídeo pausado no
-  // primeiro quadro costuma ser um retângulo preto.
-  const ordenadas = [...midias].sort((a, b) => Number(a.tipo === 'clipe') - Number(b.tipo === 'clipe'))
+  // Fotografia antes de vídeo antes de clipe: o card é estático, a miniatura
+  // de um vídeo é uma foto, e um clipe pausado no primeiro quadro costuma ser
+  // um retângulo preto. Áudio não tem cara: nunca vira capa.
+  const ordenadas = [...midias].sort((a, b) => PRIORIDADE_DE_CAPA[a.tipo] - PRIORIDADE_DE_CAPA[b.tipo])
   for (const midia of ordenadas) {
+    if (midia.tipo === 'audio') continue
+    if (midia.tipo === 'video') {
+      const miniatura = miniaturaDaMidia(midia)
+      if (miniatura) return { src: miniatura, tipo: 'imagem', legenda: midia.legenda, cena }
+      continue
+    }
     const src = urlDaMidia(midia)
     if (src) return { src, tipo: midia.tipo, legenda: midia.legenda, cena }
   }
   return undefined
 }
+
+const PRIORIDADE_DE_CAPA: Record<TipoDeMidia, number> = { imagem: 0, video: 1, clipe: 2, audio: 3 }
 
 /** A capa de uma janela: a cena normal se tiver foto, senão a primeira que tiver. */
 function capaDaJanela(slug: string, cenas: CenaClinica[], normal: CenaClinica): CapaReal | undefined {
