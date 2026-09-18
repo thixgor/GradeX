@@ -465,24 +465,24 @@ const psi: Ferramenta = {
   campos: [
     campoNum('idade', 'Idade', { unidade: 'anos', min: 18, max: 110, passo: 1 }),
     campoSexo(),
-    campoSimNao('asilo', 'Residente em instituição de longa permanência', 10),
-    campoSimNao('neoplasia', 'Doença neoplásica ativa', 30),
-    campoSimNao('hepatica', 'Doença hepática', 20),
-    campoSimNao('icc', 'Insuficiência cardíaca congestiva', 10),
-    campoSimNao('cerebrovascular', 'Doença cerebrovascular', 10),
-    campoSimNao('renal', 'Doença renal', 10),
-    campoSimNao('mental', 'Alteração do estado mental', 20),
-    campoSimNao('fr', 'Frequência respiratória ≥ 30 irpm', 20),
-    campoSimNao('pas', 'PA sistólica < 90 mmHg', 20),
-    campoSimNao('temp', 'Temperatura < 35 °C ou ≥ 40 °C', 15),
-    campoSimNao('fc', 'Frequência cardíaca ≥ 125 bpm', 10),
-    campoSimNao('ph', 'pH arterial < 7,35', 30),
-    campoSimNao('bun', 'Ureia ≥ 64 mg/dL (BUN ≥ 30 mg/dL)', 20),
-    campoSimNao('na', 'Sódio < 130 mEq/L', 20),
-    campoSimNao('glicose', 'Glicose ≥ 250 mg/dL', 10),
-    campoSimNao('ht', 'Hematócrito < 30%', 10),
-    campoSimNao('pao2', 'PaO₂ < 60 mmHg ou SaO₂ < 90%', 10),
-    campoSimNao('derrame', 'Derrame pleural na radiografia', 10),
+    campoSimNao('asilo', 'Residente em instituição de longa permanência', 10, 'Marca colonização por flora diferente, fragilidade e maior risco de aspiração.'),
+    campoSimNao('neoplasia', 'Doença neoplásica ativa', 30, 'Neoplasia ativa ou em tratamento nos últimos 12 meses, exceto câncer de pele não melanoma. É a comorbidade de maior peso do escore.'),
+    campoSimNao('hepatica', 'Doença hepática', 20, 'Cirrose ou hepatopatia crônica. A cirrose compromete opsonização, complemento e função do sistema retículo-endotelial — é imunossupressão adquirida.'),
+    campoSimNao('icc', 'Insuficiência cardíaca congestiva', 10, 'Disfunção sistólica ou diastólica documentada. Reduz a tolerância à sobrecarga hídrica do tratamento e ao aumento da demanda metabólica.'),
+    campoSimNao('cerebrovascular', 'Doença cerebrovascular', 10, 'AVC ou AIT prévios. O que pesa aqui é a disfagia orofaríngea residual e o risco de aspiração recorrente.'),
+    campoSimNao('renal', 'Doença renal', 10, 'Doença renal crônica prévia ou ureia elevada de base.'),
+    campoSimNao('mental', 'Alteração do estado mental', 20, 'Desorientação, letargia, estupor ou coma de início recente. No idoso é frequentemente a primeira manifestação da pneumonia, antes da febre e da tosse.'),
+    campoSimNao('fr', 'Frequência respiratória ≥ 30 irpm', 20, 'Conte por 60 segundos com o paciente em repouso. Reflete a resposta compensatória ao shunt intrapulmonar e à acidose metabólica.'),
+    campoSimNao('pas', 'PA sistólica < 90 mmHg', 20, 'Corte mais estrito que no CURB-65, e não considera a diastólica.'),
+    campoSimNao('temp', 'Temperatura < 35 °C ou ≥ 40 °C', 15, 'Os dois extremos pontuam. Hipotermia no idoso séptico é sinal de pior prognóstico que febre alta — indica falência da resposta termorreguladora.'),
+    campoSimNao('fc', 'Frequência cardíaca ≥ 125 bpm', 10, 'Corte alto, bem acima do habitual. Atenção ao paciente betabloqueado, que não atinge esse valor mesmo em choque.'),
+    campoSimNao('ph', 'pH arterial < 7,35', 30, 'Exige gasometria — é o item que impede aplicar o PSI na atenção primária. Empata com neoplasia como variável de maior peso, porque acidemia significa que a compensação falhou.'),
+    campoSimNao('bun', 'Ureia ≥ 64 mg/dL (BUN ≥ 30 mg/dL)', 20, 'Cuidado com a unidade: no Brasil o laboratório informa ureia (corte 64 mg/dL); a literatura usa BUN, que é a ureia dividida por 2,14 (corte 30 mg/dL).'),
+    campoSimNao('na', 'Sódio < 130 mEq/L', 20, 'Hiponatremia na pneumonia sugere SIADH, clássica na infecção por Legionella, e marca gravidade independentemente da causa.'),
+    campoSimNao('glicose', 'Glicose ≥ 250 mg/dL', 10, 'Hiperglicemia de estresse ou descompensação de diabetes — ambas pioram a função de neutrófilos.'),
+    campoSimNao('ht', 'Hematócrito < 30%', 10, 'Anemia reduz o conteúdo arterial de oxigênio e, portanto, a oferta tecidual, mesmo com saturação normal.'),
+    campoSimNao('pao2', 'PaO₂ < 60 mmHg ou SaO₂ < 90%', 10, 'Basta um dos dois. Note o peso baixo (10 pontos) para um achado clinicamente grave — é uma das inconsistências reconhecidas do escore.'),
+    campoSimNao('derrame', 'Derrame pleural na radiografia', 10, 'Qualquer derrame associado. Se for volumoso ou houver suspeita de empiema, indique toracocentese e aplique os critérios de Light, independentemente da classe do PSI.'),
   ],
   calcular: (v) => {
     const idade = num(v, 'idade')
@@ -534,18 +534,65 @@ const psi: Ferramenta = {
               : 'Classe V: **internação, com forte consideração de terapia intensiva**.',
         'O PSI discrimina melhor que o CURB-65 no extremo inferior — identifica com mais segurança quem pode ir para casa — ao custo de exigir 20 variáveis, gasometria e radiografia. Por isso a IDSA/ATS o prefere para a decisão de internar, e o CURB-65 permanece como ferramenta de triagem rápida.',
         'O peso enorme da idade é a maior limitação do PSI: um homem de 85 anos sem nenhuma outra alteração já entra na classe IV. Isso o faz superestimar risco em idosos hígidos e subestimar em jovens graves.',
+        'Os vinte itens se organizam em três blocos fisiopatológicos, e ler o escore por bloco é mais útil do que somar. O primeiro é **reserva** — idade, sexo, institucionalização e as cinco comorbidades — e responde quanto de agressão o organismo absorve antes de descompensar. O segundo é **repercussão sistêmica aguda** — estado mental, frequência respiratória, pressão, temperatura e frequência cardíaca — e mostra que a infecção deixou de ser local: são os sinais da resposta inflamatória com vasodilatação, aumento da permeabilidade capilar e redistribuição de fluxo. O terceiro é **falência bioquímica** — pH, ureia, sódio, glicemia, hematócrito, oxigenação e derrame — e é o mais grave, porque documenta órgãos já disfuncionantes: o pH baixo significa que a hiperventilação não compensa mais o lactato da hipoperfusão, a ureia alta soma queda do fluxo plasmático renal e catabolismo proteico, e a hiponatremia denuncia secreção inapropriada de vasopressina. Um escore alto concentrado no terceiro bloco é muito mais ameaçador que o mesmo escore construído sobre idade e comorbidade — e é por isso que o número isolado engana.',
       ],
+      conduta: classe <= 2
+        ? [
+            'Tratamento ambulatorial com antibiótico oral. Amoxicilina em dose alta no adulto previamente sadio; associe ou troque por macrolídeo ou doxiciclina se houver suspeita de atípicos. Em paciente com comorbidade ou uso recente de antibiótico, prefira amoxicilina-clavulanato ou cefuroxima associada a macrolídeo, ou uma quinolona respiratória em monoterapia.',
+            'Antes da alta, confirme o que o escore não mede: tolerância à via oral, ausência de vômitos, dor controlada com analgesia oral, saturação adequada em ar ambiente, suporte domiciliar e acesso garantido a retorno.',
+            'Reavaliação em 48 a 72 horas. A resposta esperada é queda da febre em 48 a 72 horas e melhora dos sinais vitais; ausência de resposta nesse prazo obriga a reconsiderar o diagnóstico, o agente (tuberculose, fungo, atípico resistente) e a existência de complicação — empiema, abscesso, obstrução brônquica.',
+            'Duração de 5 dias é suficiente na maioria dos casos não complicados, desde que o paciente esteja afebril por 48 a 72 horas e clinicamente estável. Prescrições de 10 a 14 dias por hábito aumentam efeito adverso sem benefício.',
+          ]
+        : classe === 3
+          ? [
+              'Observação em unidade de curta permanência ou internação breve é o uso correto da classe III — a decisão é genuinamente limítrofe e depende tanto do escore quanto do contexto social e da trajetória nas primeiras horas.',
+              'Inicie antibiótico parenteral (betalactâmico com inibidor de betalactamase ou cefalosporina de terceira geração, associado a macrolídeo) e reavalie em 24 a 48 horas para decidir alta ou internação plena.',
+              'Oxigênio com alvo de SpO₂ 92 a 96%, ou 88 a 92% se houver retenção crônica de CO₂. Hidratação cuidadosa: o paciente com pneumonia frequentemente está desidratado, mas o cardiopata congestiona rápido.',
+              'Se houver derrame pleural, indique toracocentese diagnóstica e aplique os critérios de Light: empiema ou derrame complicado muda completamente a conduta e o tempo de tratamento.',
+            ]
+          : [
+              'Internação hospitalar. Aplique em paralelo os **critérios ATS/IDSA de pneumonia grave** para decidir UTI: um critério maior (necessidade de ventilação mecânica ou de vasopressor) indica UTI isoladamente; três ou mais critérios menores também. O PSI estima mortalidade, não necessidade de terapia intensiva.',
+              'Antibiótico na primeira hora se houver sepse. Colha hemoculturas e, quando disponível, antígeno urinário para pneumococo e Legionella, além de painel viral respiratório. Avalie fatores de risco para Pseudomonas e para S. aureus resistente para decidir ampliação de espectro.',
+              'Acione o pacote de sepse na presença de disfunção orgânica: lactato seriado, cristaloide 30 mL/kg na hipotensão ou lactato ≥ 4 mmol/L, e noradrenalina precoce se a pressão média não responder ao volume.',
+              classe === 5
+                ? 'Classe V tem mortalidade de aproximadamente 29% em 30 dias. É a faixa em que discutir objetivos de cuidado, preferências sobre intubação e planejamento antecipado faz parte do tratamento — não do seu abandono. Faça essa conversa antes da deterioração, não durante.'
+                : 'Reavalie a resposta em 48 a 72 horas. Considere corticoide sistêmico apenas nos casos de pneumonia grave com resposta inflamatória exuberante, conforme a evidência mais recente, e não como rotina.',
+            ],
+      alertas: [
+        'O PSI foi desenhado para responder **quem não precisa internar**, e é aí que seu desempenho é melhor. Não use o escore para decidir UTI: para isso existem os critérios ATS/IDSA de pneumonia grave e o SMART-COP.',
+        'O peso da idade distorce os extremos. Idoso hígido cai em classe alta sem gravidade real, e jovem com pneumonia grave pode ficar em classe baixa — nesse caso a impressão clínica de gravidade prevalece sobre o escore, sempre.',
+        'Exige gasometria arterial e radiografia, o que o torna inaplicável na atenção primária. Nesse cenário use o CRB-65.',
+        'Não foi validado para pneumonia hospitalar, associada à ventilação, em imunossuprimido, neutropênico ou pós-transplante. Nesses grupos a microbiologia e o prognóstico são outros.',
+      ],
+      tabela: {
+        titulo: 'Classes, mortalidade e local de cuidado',
+        colunas: ['Pontos', 'Classe', 'Mortalidade em 30 dias', 'Local de cuidado'],
+        linhas: [
+          ['< 50 anos sem alterações', 'I', '0,1%', 'Ambulatorial'],
+          ['≤ 70', 'II', '0,6%', 'Ambulatorial'],
+          ['71 – 90', 'III', '2,8%', 'Observação ou internação breve'],
+          ['91 – 130', 'IV', '8,2%', 'Internação'],
+          ['> 130', 'V', '29,2%', 'Internação, considerar UTI'],
+        ],
+        destaque: classe - 1,
+      },
     }
   },
   formula: ['Classe I: < 50 anos, sem comorbidade e sem alteração ao exame', 'Classe II ≤ 70 | III 71–90 | IV 91–130 | V > 130'],
   fundamento:
-    'O PSI foi derivado da coorte PORT com mais de 14 mil pacientes hospitalizados e validado em outros 38 mil. Seu objetivo declarado não era prever mortalidade, mas identificar com segurança quem **não** precisa internar — e é nisso que ele se sustenta melhor do que qualquer alternativa: a mortalidade nas classes I e II é tão baixa que a internação raramente se justifica.',
+    'O PSI foi derivado da coorte PORT com mais de 14 mil pacientes hospitalizados e validado em outros 38 mil. Seu objetivo declarado não era prever mortalidade, mas identificar com segurança quem **não** precisa internar — e é nisso que ele se sustenta melhor do que qualquer alternativa: a mortalidade nas classes I e II é tão baixa que a internação raramente se justifica. A arquitetura em duas etapas é a parte mais elegante e mais esquecida do modelo. A classe I não é um ponto de corte numérico: é uma triagem categórica prévia, que pergunta se o paciente tem menos de 50 anos, nenhuma das cinco comorbidades e nenhuma das alterações de exame ou laboratório. Só quem falha nessa triagem é pontuado. Fine desenhou assim porque percebeu que, no adulto jovem sem comorbidade e sem alteração alguma, o risco é tão baixo que somar pontos apenas acrescenta ruído — e é por isso que existe classe I com zero ponto e classe II com setenta. A contrapartida de usar vinte variáveis é que o PSI discrimina melhor que o CURB-65 no extremo inferior, o que se traduz em menos internações desnecessárias, mas exige gasometria e radiografia e portanto não funciona fora do hospital. Historicamente, o escore fez mais do que estratificar: o ensaio de implementação de Yealy demonstrou que aplicá-lo de forma sistemática reduz internações sem aumentar mortalidade ou reinternação — evidência de que o problema que ele resolve é real, e é o excesso de internação por reflexo.',
   armadilhas: [
     'Classe I exige simultaneamente idade abaixo de 50, nenhuma comorbidade da lista e nenhuma alteração de exame físico ou laboratorial. Basta um item para sair da classe I.',
     'O escore não considera fatores sociais, adesão, capacidade de ingestão oral e acesso a retorno — que frequentemente decidem a internação na prática.',
+    'Confusão de unidade entre ureia e BUN é o erro numérico mais comum: ureia ≥ 64 mg/dL equivale a BUN ≥ 30 mg/dL (divida a ureia por 2,14). Usar 30 mg/dL de ureia pontua quase todo mundo indevidamente.',
+    'Mulheres subtraem 10 pontos da idade. Esquecer o ajuste desloca a classe de muitas pacientes na faixa limítrofe entre III e IV.',
+    'A hipoxemia vale apenas 10 pontos, peso desproporcionalmente baixo para um achado grave. Insuficiência respiratória com necessidade de oxigênio alto indica internação independentemente da classe.',
+    'Vinte variáveis cobradas de memória levam a omissão, e toda omissão subestima. Se não houver como conferir a lista inteira, use o CURB-65 ou o CRB-65 em vez de um PSI incompleto.',
   ],
   referencias: [
     { texto: 'Fine MJ, Auble TE, Yealy DM, et al. A prediction rule to identify low-risk patients with community-acquired pneumonia. N Engl J Med. 1997;336(4):243-250.' },
+    { texto: 'Yealy DM, Auble TE, Stone RA, et al. Effect of increasing the intensity of implementing pneumonia guidelines: a randomized, controlled trial. Ann Intern Med. 2005;143(12):881-894.' },
+    { texto: 'Metlay JP, Waterer GW, Long AC, et al. Diagnosis and Treatment of Adults with Community-acquired Pneumonia. An Official Clinical Practice Guideline of the ATS and IDSA. Am J Respir Crit Care Med. 2019;200(7):e45-e67.' },
   ],
 }
 
@@ -800,15 +847,50 @@ const controleAsma: Ferramenta = {
           : 'Asma não controlada. Antes de subir a etapa de tratamento, verifique os quatro pontos que respondem pela maioria dos casos: **técnica inalatória** (peça para demonstrar), **adesão**, **comorbidades** (rinite, refluxo, obesidade, apneia do sono, ansiedade) e **exposições** (tabaco, mofo, ácaro, animal, beta-bloqueador, anti-inflamatório).',
         'Desde 2019 o GINA não recomenda mais tratar asma apenas com beta-agonista de curta duração. Toda asma, inclusive a leve, deve receber corticoide inalatório — como resgate combinado com formoterol ou em uso regular. O uso isolado de salbutamol associa-se a mais exacerbações e mortes.',
         'Controle ≠ gravidade. Controle é o quanto os sintomas se manifestam agora; gravidade é a intensidade de tratamento necessária para obter controle. Um paciente pode ter asma grave bem controlada.',
+        'O que os dois instrumentos rastreiam, no fundo, é **inflamação brônquica persistente**. A asma é uma doença inflamatória crônica das vias aéreas, tipicamente do tipo 2, com eosinófilos, mastócitos e linfócitos Th2 produzindo IL-4, IL-5 e IL-13; essa inflamação gera hiper-responsividade brônquica, edema de mucosa e hipersecreção. O beta-agonista de curta duração relaxa o músculo liso e abre o brônquio em minutos, mas não toca na inflamação — o paciente melhora e continua doente. Pior: o uso repetido de beta-agonista isolado provoca dessensibilização de receptores beta-2, aumento da hiper-responsividade e possível inflamação de rebote, o que explica a associação epidemiológica entre consumo alto de salbutamol e mortalidade. Enquanto isso, a inflamação não tratada promove **remodelamento** — hipertrofia de músculo liso, fibrose subepitelial, metaplasia de células caliciformes e angiogênese — que converte obstrução reversível em obstrução fixa. É por isso que a pergunta sobre uso de resgate pesa tanto nos dois instrumentos: ela não mede sintoma, mede inflamação descoberta, e cada semana nesse estado deixa sequela estrutural.',
       ],
+      conduta: nivel === 'ok'
+        ? [
+            'Mantenha o esquema atual e reavalie em 3 a 6 meses. Considere **redução de etapa** somente após 3 meses de controle mantido, reduzindo a dose de corticoide inalatório em 25 a 50% por vez e nunca suspendendo o corticoide inalatório por completo na asma persistente.',
+            'Confirme a técnica inalatória na consulta mesmo com o controle bom — a técnica se deteriora com o tempo e é a causa mais frequente de perda de controle futura.',
+            'Reforce o plano de ação escrito: o que fazer no aumento de sintomas, quando dobrar ou quadruplicar o corticoide inalatório, quando iniciar corticoide oral e quando procurar emergência.',
+            'Revise vacinação (influenza anual, pneumocócica, COVID-19), cessação do tabagismo e controle de comorbidades, sobretudo rinite alérgica e obesidade.',
+          ]
+        : [
+            'Antes de subir a etapa, resolva os quatro pontos que respondem pela maioria das falhas: **técnica inalatória** (peça a demonstração, não pergunte se ele sabe), **adesão** (pergunte de forma não julgadora quantas doses esqueceu na semana), **comorbidades** (rinite, refluxo, obesidade, apneia do sono, ansiedade, disfunção de cordas vocais) e **exposições** (tabaco, mofo, ácaro, animal, betabloqueador, anti-inflamatório não esteroidal). Subir etapa sem checar isso trata o médico, não o paciente.',
+            'Garanta que o esquema contenha corticoide inalatório. A abordagem preferida do GINA é corticoide inalatório com formoterol como resgate (estratégia MART), que trata a inflamação no momento exato em que a inflamação se manifesta. Nunca mantenha tratamento apenas com beta-agonista de curta duração.',
+            'Se após a revisão o controle persistir inadequado, suba uma etapa e reavalie em 4 a 8 semanas. Corticoide oral de curta duração é para exacerbação, não para controle crônico.',
+            nivel === 'critico'
+              ? 'Asma não controlada em etapa alta é critério de encaminhamento ao especialista para investigar asma grave: confirme o diagnóstico com espirometria e prova broncodilatadora, dose eosinófilos, IgE total e específicas, e considere fenotipagem para terapia biológica (anti-IgE, anti-IL-5, anti-IL-4Rα). Investigue também diagnósticos alternativos ou concomitantes — DPOC, bronquiectasias, aspergilose broncopulmonar alérgica, disfunção de cordas vocais.'
+              : 'Registre o ACT numericamente para comparar na próxima consulta: variação de 3 pontos é a diferença mínima clinicamente importante, e sem o número anterior essa comparação não existe.',
+          ],
+      alertas: [
+        'Controle aparentemente bom não exclui risco de exacerbação grave. Exacerbação com corticoide oral no último ano, internação prévia por asma, VEF₁ baixo, eosinofilia e má adesão são fatores de risco independentes — avalie-os separadamente do controle sintomático.',
+        'O uso isolado de beta-agonista de curta duração não é mais tratamento aceitável para nenhuma gravidade de asma, inclusive a leve. Essa recomendação mudou em 2019 e segue sendo a prescrição inadequada mais comum.',
+        'Estes instrumentos avaliam asma **estável em ambulatório**. Na crise aguda a avaliação é outra: pico de fluxo, saturação, uso de musculatura acessória, capacidade de falar e nível de consciência — e nenhum questionário de 4 semanas ajuda ali.',
+      ],
+      tabela: {
+        titulo: 'Equivalência entre os dois instrumentos',
+        colunas: ['GINA (critérios)', 'ACT (pontos)', 'Classificação', 'Conduta'],
+        linhas: [
+          ['0', '≥ 20', 'Controlada', 'Manter; considerar redução após 3 meses'],
+          ['1 – 2', '16 – 19', 'Parcialmente controlada', 'Revisar técnica, adesão e comorbidades'],
+          ['3 – 4', '≤ 15', 'Não controlada', 'Revisar e subir etapa; avaliar asma grave'],
+        ],
+        destaque: nivel === 'ok' ? 0 : nivel === 'alerta' ? 1 : 2,
+      },
     }
   },
   formula: ['GINA: 4 perguntas — 0 controlada, 1–2 parcialmente, 3–4 não controlada', 'ACT: soma de 5 itens (1 a 5 pontos cada), total 5 a 25'],
   fundamento:
-    'Os dois instrumentos medem a mesma coisa por caminhos diferentes: o GINA usa quatro perguntas dicotômicas focadas nas últimas quatro semanas e é o padrão das diretrizes; o ACT usa uma escala contínua validada psicometricamente, com melhor sensibilidade para mudança ao longo do tempo. Aplicá-los juntos dá uma classificação e uma medida de acompanhamento.',
+    'Os dois instrumentos medem a mesma coisa por caminhos diferentes: o GINA usa quatro perguntas dicotômicas focadas nas últimas quatro semanas e é o padrão das diretrizes; o ACT usa uma escala contínua validada psicometricamente, com melhor sensibilidade para mudança ao longo do tempo. Aplicá-los juntos dá uma classificação e uma medida de acompanhamento. A diferença de construção tem consequência prática. O GINA foi desenhado para **classificar** e portanto é deliberadamente grosseiro: quatro perguntas de sim ou não, sem gradação, porque o que ele precisa produzir é uma decisão de etapa terapêutica. O ACT foi desenvolvido por Nathan e colaboradores a partir de um conjunto grande de itens candidatos, reduzidos por análise psicométrica aos cinco com maior poder discriminante, cada um em escala Likert de 5 pontos — e por isso tem resolução suficiente para detectar mudança dentro do mesmo paciente, com diferença mínima clinicamente importante estabelecida em 3 pontos. Um detalhe conceitual importante: o quinto item do ACT pede a autoavaliação global do paciente, o que introduz deliberadamente a percepção subjetiva de controle. Isso é útil porque a percepção prediz adesão e comportamento de busca de cuidado, mas também é o item que mais frequentemente discorda dos outros quatro — o paciente com asma cronicamente mal controlada recalibra a própria expectativa e passa a chamar de "bem controlada" uma vida que já foi restringida pela doença. Quando o item 5 discorda dos demais, acredite nos demais.',
   armadilhas: [
     'O uso de resgate antes do exercício, quando profilático e planejado, não conta como perda de controle.',
     'ACT não foi validado abaixo de 12 anos — para crianças de 4 a 11 anos existe o childhood ACT, com escala e pontos de corte diferentes.',
+    'Paciente com asma de longa data recalibra a própria expectativa e subnotifica sintomas. Pergunte por atividades concretas que ele deixou de fazer, não se "está bem" — e desconfie quando o item 5 for muito melhor que os outros quatro.',
+    'Os dois instrumentos medem controle de sintomas e não predizem bem risco de exacerbação. Um paciente com ACT 24 e internação por asma no último ano continua de alto risco, e isso precisa ser avaliado à parte.',
+    'Nenhum dos dois serve para a crise aguda: a janela de 4 semanas é longa e dilui o evento atual. Na emergência, avalie pico de fluxo, saturação, fala e musculatura acessória.',
+    'Controle ruim atribuído à gravidade da doença quando a causa real é técnica inalatória errada leva a escalada terapêutica desnecessária. Cerca de metade dos pacientes usa o dispositivo de forma incorreta, e a maioria acredita que usa certo.',
   ],
   referencias: [
     { texto: 'Global Initiative for Asthma. Global Strategy for Asthma Management and Prevention. 2024.' },
@@ -823,14 +905,14 @@ const rox: Ferramenta = {
   resumo: 'Prediz sucesso ou falha do cateter nasal de alto fluxo na insuficiência respiratória.',
   categorias: ['pneumologia', 'emergencia'],
   campos: [
-    campoNum('spo2', 'SpO₂', { unidade: '%', min: 50, max: 100, passo: 1 }),
-    campoNum('fio2', 'FiO₂ programada', { unidade: '%', min: 21, max: 100, passo: 1 }),
-    campoNum('fr', 'Frequência respiratória', { unidade: 'irpm', min: 5, max: 60, passo: 1 }),
+    campoNum('spo2', 'SpO₂', { unidade: '%', min: 50, max: 100, passo: 1, normalMin: 92, normalMax: 96, ajuda: 'Oximetria de pulso com curva pletismográfica confiável. Acima de 97% a relação SpO₂/FiO₂ satura e o índice perde resolução, pela porção plana da curva de dissociação da hemoglobina.' }),
+    campoNum('fio2', 'FiO₂ programada', { unidade: '%', min: 21, max: 100, passo: 1, ajuda: 'A FiO₂ ajustada no blender do alto fluxo. Só é confiável porque o fluxo (≥ 30 L/min) excede o pico inspiratório do paciente — em cateter comum a FiO₂ real é imprevisível e o ROX não se aplica.' }),
+    campoNum('fr', 'Frequência respiratória', { unidade: 'irpm', min: 5, max: 60, passo: 1, ajuda: 'Conte por 60 segundos observando o tórax, não confie no valor do monitor por impedância, que superestima com artefato de movimento.' }),
     campoSeg('tempo', 'Tempo de uso do alto fluxo', [
       { valor: '2', rotulo: '2 horas' },
       { valor: '6', rotulo: '6 horas' },
       { valor: '12', rotulo: '12 horas ou mais' },
-    ]),
+    ], { ajuda: 'O corte de falha sobe com o tempo: quanto mais horas de alto fluxo, mais se exige do índice para seguir apostando nele.' }),
   ],
   calcular: (v) => {
     const spo2 = num(v, 'spo2')
@@ -861,19 +943,59 @@ const rox: Ferramenta = {
             ? 'ROX ≥ 4,88 em qualquer dos três momentos identifica pacientes com baixa probabilidade de necessitar intubação.'
             : 'Zona intermediária: mantenha o alto fluxo com reavaliação em 1 a 2 horas e vigilância estreita — a tendência do índice importa mais do que o valor isolado.',
         'A **tendência** vale mais do que o número: ROX que sobe entre 2 e 6 horas é sinal favorável mesmo abaixo de 4,88; ROX que cai é sinal de alerta mesmo acima.',
+        'O mecanismo que o índice vigia é a **lesão pulmonar autoinfligida** (P-SILI). Na insuficiência respiratória hipoxêmica, o drive respiratório aumentado gera pressões pleurais muito negativas; como o pulmão está heterogêneo, essa pressão se distribui de forma desigual e produz *pendelluft* — ar que migra de região para região dentro do próprio pulmão — com estresse regional que amplifica o edema e a inflamação. O alto fluxo ajuda porque lava o espaço morto nasofaríngeo, oferece FiO₂ confiável, gera pressão positiva modesta e reduz o trabalho inspiratório. Mas se a taquipneia persiste, o drive não foi controlado e o paciente está piorando o próprio pulmão a cada incursão: é isso que o denominador do ROX captura, e é por isso que saturação boa com frequência alta não é sucesso.',
       ],
-      alertas: ['O índice não foi validado em DPOC exacerbada nem em insuficiência respiratória hipercápnica — nesses cenários a ventilação não invasiva tem precedência sobre o alto fluxo.'],
+      conduta: falha
+        ? [
+            'Prepare a via aérea definitiva **agora**. Nesta faixa, cada hora de retardo na intubação se associa a mortalidade maior, e a deterioração do paciente em alto fluxo costuma ser abrupta — ele compensa até não compensar mais.',
+            'Intubação em sequência rápida com pré-oxigenação mantendo o próprio alto fluxo durante a apneia (oxigenação apneica), que prolonga o tempo seguro sem dessaturação. Tenha vasopressor preparado: o colapso hemodinâmico pós-intubação é comum nesse perfil.',
+            'Após intubar, ventilação protetora imediata: volume corrente de 6 mL/kg de peso predito, pressão de platô ≤ 30 cmH₂O e driving pressure ≤ 15 cmH₂O. Reavalie a relação PaO₂/FiO₂ para classificar SDRA pelos critérios de Berlim.',
+            'Se houver decisão prévia de não intubar, o alto fluxo é tratamento de conforto legítimo — reoriente as metas para alívio da dispneia (opioide em dose baixa) em vez de perseguir o número.',
+          ]
+        : seguro
+          ? [
+              'Mantenha o alto fluxo e comece o desmame quando a FiO₂ estiver ≤ 40% com fluxo ≤ 30 L/min de forma estável: reduza primeiro a FiO₂, depois o fluxo, um parâmetro por vez.',
+              'Reavalie o ROX a cada 2 a 4 horas mesmo na faixa segura. Um valor ≥ 4,88 descreve o momento, não garante a próxima hora, e o índice existe para ser seriado.',
+              'Posição prona vígil pode ser somada em hipoxemia persistente — melhora a relação ventilação-perfusão pelo recrutamento das regiões dorsais dependentes e é bem tolerada em paciente colaborativo.',
+              'Não abandone o tratamento da causa: antibiótico se pneumonia, diurético se congestão, anticoagulação se tromboembolismo. O alto fluxo é suporte, e o ROX mede o suporte, não a doença.',
+            ]
+          : [
+              'Mantenha o alto fluxo e **reavalie em 1 a 2 horas**, registrando o valor para comparar. Nesta zona é a direção da curva que decide, não o ponto.',
+              'Otimize antes de decidir: fluxo em 50 a 60 L/min se tolerado (é o fluxo que garante a lavagem do espaço morto e a FiO₂ real), umidificação adequada, interface bem posicionada e boca fechada.',
+              'Considere prona vígil e trate agressivamente a causa de base e os fatores que inflam a frequência respiratória — dor, febre, acidose metabólica, ansiedade, distensão abdominal.',
+              'Defina explicitamente, em prontuário, o gatilho de intubação e quem reavalia. A falha do alto fluxo mata pelo retardo da decisão, e a zona intermediária é onde esse retardo acontece.',
+            ],
+      alertas: [
+        'O índice não foi validado em DPOC exacerbada nem em insuficiência respiratória hipercápnica — nesses cenários a ventilação não invasiva tem precedência sobre o alto fluxo.',
+        'Nenhum valor de ROX contraindica intubação. Rebaixamento do nível de consciência, instabilidade hemodinâmica, respiração paradoxal, exaustão da musculatura acessória ou incapacidade de proteger a via aérea indicam via aérea definitiva com ROX alto.',
+        'Foi derivado e validado em hipoxemia por pneumonia. Aplicá-lo a edema agudo cardiogênico, asma grave, obstrução de via aérea alta ou doença neuromuscular é uso fora do escopo original.',
+      ],
+      tabela: {
+        titulo: 'Cortes por tempo de uso',
+        colunas: ['Tempo em alto fluxo', 'Falha provável', 'Zona intermediária', 'Sucesso provável'],
+        linhas: [
+          ['2 horas', 'ROX < 2,85', '2,85 – 4,87', 'ROX ≥ 4,88'],
+          ['6 horas', 'ROX < 3,47', '3,47 – 4,87', 'ROX ≥ 4,88'],
+          ['12 horas ou mais', 'ROX < 3,85', '3,85 – 4,87', 'ROX ≥ 4,88'],
+        ],
+        destaque: t === '2' ? 0 : t === '6' ? 1 : 2,
+      },
     }
   },
-  formula: ['ROX = (SpO₂ / FiO₂) / frequência respiratória'],
+  formula: ['ROX = (SpO₂ / FiO₂) / frequência respiratória', 'SpO₂ em %, FiO₂ em fração decimal ou % — o resultado muda de escala, use sempre a mesma'],
   fundamento:
-    'Roca e colaboradores construíram o índice sobre a intuição de que qualquer índice de oxigenação isolado é insuficiente para decidir intubação, porque ignora o custo respiratório. Dividir a relação SpO₂/FiO₂ pela frequência respiratória penaliza justamente o paciente que mantém a saturação à custa de taquipneia — o perfil que evolui para falha.',
+    'Roca e colaboradores construíram o índice sobre a intuição de que qualquer índice de oxigenação isolado é insuficiente para decidir intubação, porque ignora o custo respiratório. Dividir a relação SpO₂/FiO₂ pela frequência respiratória penaliza justamente o paciente que mantém a saturação à custa de taquipneia — o perfil que evolui para falha. A construção é fisiologicamente elegante: o numerador é um substituto da relação PaO₂/FiO₂ que dispensa gasometria e mede a eficiência da troca, enquanto o denominador é um substituto do drive respiratório e, portanto, do esforço necessário para sustentar essa troca. A razão entre os dois é um índice de **eficiência**: quanto de oxigenação se obtém por unidade de esforço. Dois pacientes com a mesma SpO₂ de 94% em FiO₂ de 50% são clinicamente muito diferentes se um respira a 20 e o outro a 38 irpm — o primeiro tem ROX de 9,4 e o segundo 4,9, e é essa distinção que nenhum índice de oxigenação isolado faz. Os cortes crescentes no tempo (2,85 às 2 h, 3,47 às 6 h, 3,85 às 12 h) refletem que a tolerância diminui com a duração: persistir em alto fluxo por 12 horas exige mais evidência de benefício do que nas primeiras duas.',
   armadilhas: [
-    'Sedação, opioide e febre alteram a frequência respiratória por vias independentes da mecânica e distorcem o índice.',
+    'Sedação, opioide e febre alteram a frequência respiratória por vias independentes da mecânica e distorcem o índice — o opioide baixa a frequência e infla o ROX num paciente que não melhorou.',
     'Não substitui o exame clínico: uso de musculatura acessória, respiração paradoxal, alteração do nível de consciência e instabilidade hemodinâmica indicam intubação independentemente do ROX.',
+    'Com SpO₂ acima de 97% o índice perde resolução: na porção plana da curva de dissociação da hemoglobina, grandes variações de PaO₂ produzem variação mínima de saturação, e o numerador deixa de refletir a troca gasosa. Titule o alvo para 92 a 96%.',
+    'Exige fluxo alto de verdade (≥ 30 a 60 L/min) para que a FiO₂ programada corresponda à entregue. Em fluxo baixo, cateter comum ou máscara, a FiO₂ real depende do padrão ventilatório do paciente e o denominador da conta é uma ficção.',
+    'Um valor isolado é o uso mais fraco possível da ferramenta. Sem duas medidas para comparar, o ROX não informa a tendência, que é justamente o seu maior valor preditivo.',
   ],
   referencias: [
     { texto: 'Roca O, Caralt B, Messika J, et al. An index combining respiratory rate and oxygenation to predict outcome of nasal high-flow therapy. Am J Respir Crit Care Med. 2019;199(11):1368-1376.' },
+    { texto: 'Roca O, Messika J, Caralt B, et al. Predicting success of high-flow nasal cannula in pneumonia patients with hypoxemic respiratory failure: the utility of the ROX index. J Crit Care. 2016;35:200-205.' },
+    { texto: 'Brochard L, Slutsky A, Pesenti A. Mechanical ventilation to minimize progression of lung injury in acute respiratory failure. Am J Respir Crit Care Med. 2017;195(4):438-442.' },
   ],
 }
 
@@ -1021,15 +1143,15 @@ const pesi: Ferramenta = {
       { valor: 'f', rotulo: 'Feminino', pontos: 0 },
       { valor: 'm', rotulo: 'Masculino', pontos: 10 },
     ]),
-    campoSimNao('cancer', 'Neoplasia', 30),
-    campoSimNao('ic', 'Insuficiência cardíaca', 10),
-    campoSimNao('pulmonar', 'Doença pulmonar crônica', 10),
-    campoSimNao('fc', 'Frequência cardíaca ≥ 110 bpm', 20),
-    campoSimNao('pas', 'PA sistólica < 100 mmHg', 30),
-    campoSimNao('fr', 'Frequência respiratória ≥ 30 irpm', 20),
-    campoSimNao('temp', 'Temperatura < 36 °C', 20),
-    campoSimNao('mental', 'Alteração do estado mental', 60),
-    campoSimNao('sao2', 'SaO₂ < 90%', 20),
+    campoSimNao('cancer', 'Neoplasia', 30, 'Neoplasia ativa ou em tratamento. Câncer em remissão há anos não pontua — o peso reflete doença ativa, que é protrombótica e limita prognóstico.'),
+    campoSimNao('ic', 'Insuficiência cardíaca', 10, 'Diagnóstico prévio estabelecido. A reserva ventricular reduzida limita a tolerância à sobrecarga aguda do ventrículo direito.'),
+    campoSimNao('pulmonar', 'Doença pulmonar crônica', 10, 'DPOC, fibrose, doença intersticial. Pulmão com reserva reduzida tolera menos o espaço morto criado pela embolia.'),
+    campoSimNao('fc', 'Frequência cardíaca ≥ 110 bpm', 20, 'Taquicardia é a resposta compensatória ao débito reduzido pela falência do ventrículo direito — marcador precoce de repercussão hemodinâmica.'),
+    campoSimNao('pas', 'PA sistólica < 100 mmHg', 30, 'Hipotensão sem choque franco. Se houver hipotensão sustentada, choque ou parada, o paciente já é de alto risco por definição e o PESI é irrelevante.'),
+    campoSimNao('fr', 'Frequência respiratória ≥ 30 irpm', 20, 'Conte por 60 segundos. Reflete o espaço morto alveolar criado pelas áreas ventiladas e não perfundidas.'),
+    campoSimNao('temp', 'Temperatura < 36 °C', 20, 'Hipotermia, não febre. Marca hipoperfusão e má resposta sistêmica — no PESI o frio é que pontua.'),
+    campoSimNao('mental', 'Alteração do estado mental', 60, 'Desorientação, letargia, estupor ou coma. É o item de maior peso do escore: indica hipoperfusão cerebral por débito cardíaco criticamente baixo.'),
+    campoSimNao('sao2', 'SaO₂ < 90%', 20, 'Em ar ambiente. Se o paciente já está em oxigênio suplementar, considere a saturação que ele tinha antes ou a necessidade de O₂ como equivalente.'),
   ],
   calcular: (v) => {
     const idade = num(v, 'idade')
@@ -1066,6 +1188,27 @@ const pesi: Ferramenta = {
           ? '**Classes I e II identificam risco baixo.** É o principal uso clínico do PESI: selecionar quem pode ser tratado em domicílio ou receber alta precoce, com anticoagulante oral direto, desde que não haja disfunção de ventrículo direito, marcador cardíaco elevado, contraindicação social ou necessidade de oxigênio.'
           : 'Classes III a V: internação indicada, com monitorização. Avalie disfunção de ventrículo direito por ecocardiograma ou angiotomografia e dose troponina e BNP para refinar a estratificação em risco intermediário-baixo e intermediário-alto.',
         'A classificação de gravidade da diretriz europeia sobrepõe três camadas: instabilidade hemodinâmica define **alto risco** (trombólise indicada) independentemente do PESI; PESI classe I ou II ou sPESI zero define **baixo risco**; o restante é risco intermediário, subdividido pela combinação de disfunção de ventrículo direito com troponina.',
+        'Entender por que esses itens predizem morte exige seguir a **espiral do ventrículo direito**. O trombo obstrui mecanicamente o leito arterial pulmonar, e a isso soma-se vasoconstrição mediada por tromboxano e serotonina liberados das plaquetas ativadas — a resistência vascular pulmonar sobe muito além do que a obstrução anatômica explicaria. O ventrículo direito é uma câmara de parede fina, projetada para trabalhar contra resistência baixa, e não consegue gerar pressão média acima de cerca de 40 mmHg de forma aguda: ele dilata. A dilatação empurra o septo interventricular para a esquerda e, como os dois ventrículos compartilham o pericárdio, reduz a pré-carga do ventrículo esquerdo — daí a queda do débito e a hipotensão. Pior: a pressão diastólica aórtica cai enquanto a pressão intramural do ventrículo direito sobe, e a perfusão coronariana da parede direita, que só ocorre na diástole, despenca. Surge isquemia de ventrículo direito, que piora a contratilidade, que piora o débito — a espiral se fecha. Cada item do PESI é uma janela para um ponto dessa cascata: taquicardia e hipotensão para o débito, alteração mental para a perfusão cerebral, hipotermia para a perfusão periférica, taquipneia e dessaturação para o espaço morto alveolar.',
+      ],
+      conduta: classe <= 2
+        ? [
+            'Confirme que as **três** condições de baixo risco estão presentes antes de considerar alta precoce ou tratamento domiciliar: PESI classe I ou II, ausência de disfunção de ventrículo direito (ecocardiograma ou relação VD/VE na angiotomografia) e troponina normal. O escore clínico sozinho não basta.',
+            'Anticoagulação com anticoagulante oral direto: rivaroxabana 15 mg 12/12 h por 21 dias seguida de 20 mg/dia, ou apixabana 10 mg 12/12 h por 7 dias seguida de 5 mg 12/12 h. Ambas dispensam heparina de ponte, o que é justamente o que viabiliza o tratamento em casa.',
+            'Antes da alta, verifique o que o escore não vê: oxigenação adequada em ar ambiente, dor controlada com analgesia oral, ausência de sangramento ativo ou plaquetopenia, função renal compatível com o anticoagulante escolhido, suporte domiciliar, compreensão da prescrição e acesso garantido a retorno em 48 a 72 horas.',
+            'Programe a investigação etiológica ambulatorial: rastreio de neoplasia orientado por idade e sintomas, e avaliação de trombofilia apenas nos casos em que o resultado mudaria a duração do tratamento. Defina desde já se a embolia foi provocada ou não provocada, porque é isso que decide anticoagular 3 meses ou indefinidamente.',
+          ]
+        : [
+            'Internação com monitorização contínua. Estratifique o risco intermediário dosando troponina e BNP e avaliando o ventrículo direito — a combinação de disfunção ventricular **com** troponina elevada define risco intermediário-alto, que exige vigilância em ambiente de cuidado semi-intensivo.',
+            'Anticoagulação plena imediata: heparina de baixo peso molecular em dose terapêutica é a preferida no risco intermediário, porque permite suspensão rápida caso a trombólise se torne necessária. Heparina não fracionada em infusão fica reservada a instabilidade iminente, disfunção renal grave ou obesidade extrema.',
+            'Defina e registre o gatilho de resgate: hipotensão sustentada, necessidade de vasopressor ou parada cardiorrespiratória indicam trombólise sistêmica (alteplase 100 mg em 2 h, ou 0,6 mg/kg em 15 min na parada). Em contraindicação ao trombolítico, considere trombectomia por cateter ou cirúrgica conforme disponibilidade.',
+            classe >= 4
+              ? 'Nas classes IV e V a mortalidade em 30 dias chega a 25%, e boa parte dela é atribuível à comorbidade — sobretudo neoplasia — e não à embolia em si. Trate a embolia com agressividade e, em paralelo, discuta objetivos de cuidado: nessa faixa a conversa sobre prognóstico global é parte do tratamento.'
+              : 'Reavalie diariamente: melhora sustentada dos sinais vitais e da oxigenação permite transição para anticoagulante oral e alta em poucos dias.',
+          ],
+      alertas: [
+        'O PESI **não se aplica** ao paciente hemodinamicamente instável. Hipotensão sustentada, choque obstrutivo ou parada cardiorrespiratória já classificam a embolia como de alto risco, e a conduta é reperfusão imediata, sem escore.',
+        'Classe I ou II com disfunção de ventrículo direito ou troponina elevada **não é** baixo risco. Essa é a falha de aplicação mais comum e mais perigosa do escore, porque leva à alta de um paciente que vai deteriorar.',
+        'Não foi validado em gestantes, em embolia incidental descoberta em exame de rastreamento oncológico, nem em pacientes com embolia crônica ou hipertensão pulmonar tromboembólica prévia.',
       ],
       tabela: {
         titulo: 'Classes do PESI',
@@ -1083,10 +1226,14 @@ const pesi: Ferramenta = {
   },
   formula: ['Idade em pontos + 10 se masculino + soma dos 9 critérios clínicos'],
   fundamento:
-    'O PESI foi derivado de mais de 15 mil pacientes com embolia pulmonar aguda para prever mortalidade por qualquer causa em 30 dias. Diferente dos escores de probabilidade diagnóstica (Wells, Genebra), que respondem "há embolia?", o PESI responde "esta embolia é grave?" — e sua contribuição prática foi tornar possível o tratamento domiciliar de uma doença que se internava por reflexo.',
+    'O PESI foi derivado de mais de 15 mil pacientes com embolia pulmonar aguda para prever mortalidade por qualquer causa em 30 dias. Diferente dos escores de probabilidade diagnóstica (Wells, Genebra), que respondem "há embolia?", o PESI responde "esta embolia é grave?" — e sua contribuição prática foi tornar possível o tratamento domiciliar de uma doença que se internava por reflexo. A estrutura do escore revela o que ele realmente mede: a idade entra com o próprio valor numérico, o que significa que um paciente de 80 anos parte de 80 pontos e já está na classe III sem nenhum outro achado. Isso não é defeito de calibração, é a afirmação central do modelo — na embolia pulmonar, reserva fisiológica e comorbidade predizem morte em 30 dias melhor do que a carga trombótica. Um trombo pequeno num octogenário com neoplasia é mais letal do que um trombo grande num jovem, e é por isso que o PESI não contém uma única variável de extensão anatômica da embolia: nem carga de trombo na angiotomografia, nem índice de obstrução de Qanadli, nem lobo acometido. O escore aposta no hospedeiro, não no êmbolo. Complementarmente, a validação mostrou que o ganho prático maior está na ponta baixa: classes I e II têm valor preditivo negativo alto o suficiente para sustentar a decisão de não internar, e foi o ensaio HESTIA e o estudo de Aujesky de 2011 que transformaram isso em prática.',
   armadilhas: [
     'O PESI prediz mortalidade global, não mortalidade por embolia; boa parte dos óbitos nas classes altas decorre de câncer e comorbidade.',
     'Escore baixo com disfunção de ventrículo direito não é baixo risco. A avaliação do ventrículo direito é obrigatória antes de considerar alta.',
+    'A idade domina o resultado. Um paciente de 75 anos sem nenhum outro critério já soma 75 pontos e cai na classe III, o que pode levar a internação desnecessária de idoso estável — nesse cenário o sPESI, que dicotomiza a idade em > 80 anos, costuma classificar melhor.',
+    'Não há nenhuma variável de extensão anatômica no escore. Não busque coerência entre a classe do PESI e o tamanho do trombo na angiotomografia: são eixos independentes, e a repercussão funcional do ventrículo direito é que importa.',
+    'Onze variáveis cobradas de memória na porta da emergência levam a omissão de itens, e omitir é sempre subestimar. Se não houver como conferir todos os campos, o sPESI é a escolha mais segura por ter seis.',
+    'Classe baixa não autoriza alta se faltar a infraestrutura: o tratamento domiciliar da embolia depende de retorno garantido, acesso ao anticoagulante e compreensão da prescrição. O escore mede risco biológico, não viabilidade social.',
   ],
   referencias: [
     { texto: 'Aujesky D, Obrosky DS, Stone RA, et al. Derivation and validation of a prognostic model for pulmonary embolism. Am J Respir Crit Care Med. 2005;172(8):1041-1046.' },
@@ -1101,12 +1248,12 @@ const spesi: Ferramenta = {
   resumo: 'Seis variáveis dicotômicas com o mesmo poder de identificar embolia de baixo risco.',
   categorias: ['pneumologia', 'cardiologia', 'emergencia'],
   campos: [
-    campoSimNao('idade', 'Idade > 80 anos', 1),
-    campoSimNao('cancer', 'Neoplasia', 1),
-    campoSimNao('cardiopulmonar', 'Insuficiência cardíaca ou doença pulmonar crônica', 1),
-    campoSimNao('fc', 'Frequência cardíaca ≥ 110 bpm', 1),
-    campoSimNao('pas', 'PA sistólica < 100 mmHg', 1),
-    campoSimNao('sao2', 'SaO₂ < 90%', 1),
+    campoSimNao('idade', 'Idade > 80 anos', 1, 'Corte estrito: 80 anos exatos não pontua. É a principal diferença prática em relação ao PESI, onde a idade entra com o próprio valor e domina o resultado.'),
+    campoSimNao('cancer', 'Neoplasia', 1, 'Neoplasia ativa ou em tratamento. Câncer em remissão prolongada não pontua.'),
+    campoSimNao('cardiopulmonar', 'Insuficiência cardíaca ou doença pulmonar crônica', 1, 'As duas comorbidades foram fundidas num único item, porque ambas expressam a mesma coisa: reserva cardiopulmonar reduzida para absorver a sobrecarga aguda do ventrículo direito.'),
+    campoSimNao('fc', 'Frequência cardíaca ≥ 110 bpm', 1, 'Taquicardia compensatória ao débito reduzido. Atenção ao paciente betabloqueado, que pode não taquicardizar mesmo em falência ventricular direita.'),
+    campoSimNao('pas', 'PA sistólica < 100 mmHg', 1, 'Se houver hipotensão sustentada, choque ou necessidade de vasopressor, o paciente é de alto risco por definição e o escore não se aplica.'),
+    campoSimNao('sao2', 'SaO₂ < 90%', 1, 'Em ar ambiente. No PESI completo este item vale 20 pontos; aqui vale 1, como todos os outros.'),
   ],
   calcular: (v) => {
     const total = somaSimNao(v, [
@@ -1130,15 +1277,53 @@ const spesi: Ferramenta = {
           : 'Pelo menos um critério positivo: não é baixo risco. Internação e estratificação adicional com ecocardiograma e biomarcadores.',
         'O sPESI perde granularidade nas classes altas (não distingue risco alto de muito alto), mas mantém desempenho equivalente ao PESI completo para a decisão que interessa na emergência: pode ir para casa ou não.',
         'Os critérios de Hestia são uma alternativa validada, baseada em elegibilidade prática para tratamento domiciliar em vez de probabilidade estatística — e resultaram em taxas semelhantes de eventos no ensaio HoT-PE.',
+        'O escore é deliberadamente cego ao coração, e entender por quê evita o erro de aplicação mais grave. Ele mede **reserva e repercussão sistêmica**, não a função do ventrículo direito. Na embolia submaciça existe uma janela em que o ventrículo direito já está dilatado, com isquemia de parede e troponina liberada por estiramento de miócito, mas o débito cardíaco ainda está preservado à custa de taquicardia e vasoconstrição periférica: nesse momento a pressão arterial é normal, a saturação é normal, a frequência pode estar abaixo de 110, e o sPESI dá zero. O paciente parece estável porque está compensado, e a espiral do ventrículo direito não avisa antes de fechar — quando a pré-carga do ventrículo esquerdo finalmente cai, a deterioração é em minutos. É exatamente por isso que a diretriz europeia exige as três camadas (escore clínico, imagem do ventrículo direito e biomarcador) e não aceita nenhuma delas isolada para autorizar alta.',
       ],
+      conduta: total === 0
+        ? [
+            'Complete as três camadas antes de decidir alta: sPESI zero **mais** ausência de disfunção de ventrículo direito (relação VD/VE < 0,9 na angiotomografia ou ecocardiograma sem sobrecarga) **mais** troponina normal. Faltando qualquer uma, o paciente não é de baixo risco.',
+            'Anticoagulante oral direto desde a emergência, sem ponte com heparina: rivaroxabana 15 mg 12/12 h por 21 dias e depois 20 mg/dia, ou apixabana 10 mg 12/12 h por 7 dias e depois 5 mg 12/12 h. Confira função renal e interações antes de prescrever.',
+            'Aplique em paralelo os critérios de Hestia, que cobrem o que nenhum escore estatístico cobre: dor que exige opioide parenteral, necessidade de oxigênio, sangramento ativo, plaquetopenia, gravidez, trombose com indicação de trombólise e barreira social ou logística.',
+            'Garanta retorno em 48 a 72 horas, entregue a orientação por escrito e oriente procura imediata se houver dispneia progressiva, síncope, dor torácica nova ou qualquer sangramento. Defina na alta se a embolia foi provocada ou não provocada — é o que determina tratar 3 meses ou indefinidamente.',
+          ]
+        : [
+            'Pelo menos um critério positivo significa internação. Estratifique o risco intermediário com troponina, BNP e avaliação do ventrículo direito: disfunção ventricular **somada** a troponina elevada define risco intermediário-alto e justifica leito monitorizado.',
+            'Heparina de baixo peso molecular em dose terapêutica é a anticoagulação preferida no risco intermediário, porque pode ser interrompida rapidamente se a trombólise de resgate se tornar necessária.',
+            'Registre em prontuário o gatilho de resgate — hipotensão sustentada, vasopressor ou parada — e quem deve ser acionado. A mortalidade do risco intermediário-alto vem da deterioração não antecipada.',
+            'Reavalie a cada 12 a 24 horas. Estabilidade mantida por 48 a 72 horas com regressão dos critérios permite transição para anticoagulante oral e alta.',
+          ],
+      alertas: [
+        'sPESI zero **não** autoriza alta isoladamente. Disfunção de ventrículo direito, troponina elevada ou trombo em trânsito tornam o paciente de risco intermediário, e o escore não enxerga nenhum dos três.',
+        'Não se aplica ao paciente instável: hipotensão sustentada, choque obstrutivo ou parada cardiorrespiratória definem alto risco e indicam reperfusão imediata.',
+        'O corte de idade é > 80 anos, mais permissivo que no PESI. Isso torna o sPESI melhor para o idoso estável, mas exige atenção redobrada à fragilidade e à comorbidade, que o escore não mede.',
+      ],
+      tabela: {
+        titulo: 'sPESI e as três camadas da estratificação (ESC 2019)',
+        colunas: ['Camada', 'Baixo risco', 'Intermediário', 'Alto risco'],
+        linhas: [
+          ['sPESI', '0', '≥ 1', 'Irrelevante — instabilidade define'],
+          ['Ventrículo direito', 'Normal', 'Disfunção', 'Disfunção'],
+          ['Troponina', 'Normal', 'Normal ou elevada', 'Elevada'],
+          ['Conduta', 'Alta precoce ou domiciliar', 'Internação monitorizada', 'Reperfusão imediata'],
+        ],
+        destaque: total === 0 ? 0 : 1,
+      },
     }
   },
   formula: ['1 ponto por critério; sPESI = 0 identifica baixo risco'],
   fundamento:
-    'A simplificação partiu do PESI original eliminando variáveis redundantes e atribuindo peso idêntico às restantes. O resultado surpreendeu: a discriminação foi preservada, confirmando que boa parte da complexidade do escore original não acrescentava informação para a decisão dicotômica de alta.',
-  armadilhas: ['sPESI zero em paciente com trombo em trânsito, disfunção de ventrículo direito ou troponina elevada não autoriza alta — o escore não vê o coração.'],
+    'A simplificação partiu do PESI original eliminando variáveis redundantes e atribuindo peso idêntico às restantes. O resultado surpreendeu: a discriminação foi preservada, confirmando que boa parte da complexidade do escore original não acrescentava informação para a decisão dicotômica de alta. A explicação estatística é conhecida — quando as variáveis de um modelo são correlacionadas entre si, os pesos derivados por regressão são instáveis e otimizados para a coorte de derivação, e igualar os pesos frequentemente melhora a generalização. A explicação clínica é mais interessante: os seis itens sobreviventes se distribuem em dois eixos apenas. Três medem **reserva** (idade > 80 anos, neoplasia, doença cardiopulmonar) e três medem **repercussão hemodinâmica aguda** (taquicardia, hipotensão, dessaturação). Temperatura, frequência respiratória e estado mental caíram não por serem irrelevantes, mas por serem redundantes com esses dois eixos na maioria dos pacientes. O que restou é o mínimo suficiente para responder à única pergunta que o escore precisa responder na porta da emergência: este paciente pode ir para casa? Com seis itens dicotômicos contra onze variáveis ponderadas, o sPESI erra menos por omissão de campo — e um escore que se aplica corretamente vale mais que um escore teoricamente superior aplicado pela metade.',
+  armadilhas: [
+    'sPESI zero em paciente com trombo em trânsito, disfunção de ventrículo direito ou troponina elevada não autoriza alta — o escore não vê o coração.',
+    'Paciente betabloqueado pode não atingir 110 bpm mesmo em falência de ventrículo direito, e o item de taquicardia fica falsamente negativo. O mesmo vale para o atleta com frequência basal baixa.',
+    'Perde granularidade na ponta alta: não distingue risco intermediário-baixo de intermediário-alto nem de alto risco. Para isso servem a troponina, o BNP e a imagem do ventrículo direito, não mais pontos no escore.',
+    'A fusão de insuficiência cardíaca com doença pulmonar crônica num único item significa que quem tem as duas pontua apenas 1. Isso subestima o paciente com dupla comorbidade grave.',
+    'Não foi validado em gestantes, em embolia incidental de rastreamento oncológico nem em doença tromboembólica crônica.',
+  ],
   referencias: [
     { texto: 'Jiménez D, Aujesky D, Moores L, et al. Simplification of the pulmonary embolism severity index for prognostication in patients with acute symptomatic pulmonary embolism. Arch Intern Med. 2010;170(15):1383-1389.' },
+    { texto: 'Konstantinides SV, Meyer G, Becattini C, et al. 2019 ESC Guidelines for the diagnosis and management of acute pulmonary embolism developed in collaboration with the ERS. Eur Heart J. 2020;41(4):543-603.' },
+    { texto: 'Barco S, Schmidtmann I, Ageno W, et al. Early discharge and home treatment of patients with low-risk pulmonary embolism with the oral factor Xa inhibitor rivaroxaban (HoT-PE). Eur Heart J. 2020;41(4):509-518.' },
   ],
 }
 
