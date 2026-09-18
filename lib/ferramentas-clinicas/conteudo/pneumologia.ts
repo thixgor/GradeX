@@ -368,9 +368,9 @@ const crb65: Ferramenta = {
   resumo: 'A versão do CURB-65 sem exame laboratorial, para atenção primária.',
   categorias: ['pneumologia', 'infectologia'],
   campos: [
-    campoSimNao('c', 'Confusão mental de início recente', 1),
-    campoSimNao('r', 'Frequência respiratória ≥ 30 irpm', 1),
-    campoSimNao('b', 'PA sistólica < 90 mmHg ou diastólica ≤ 60 mmHg', 1),
+    campoSimNao('c', 'Confusão mental de início recente', 1, 'Desorientação em tempo, espaço ou pessoa — ou escore ≤ 8 no teste mental abreviado. Precisa ser nova: demência estável não pontua.'),
+    campoSimNao('r', 'Frequência respiratória ≥ 30 irpm', 1, 'Conte por 60 segundos com o paciente em repouso e sem saber que está sendo contado. É a variável mais subnotificada da medicina de porta.'),
+    campoSimNao('b', 'PA sistólica < 90 mmHg ou diastólica ≤ 60 mmHg', 1, 'Basta uma das duas. A diastólica ≤ 60 costuma ser esquecida e é a que mais frequentemente pontua no idoso.'),
     campoSimNao('idade', 'Idade ≥ 65 anos', 1),
   ],
   calcular: (v) => {
@@ -380,6 +380,7 @@ const crb65: Ferramenta = {
       { id: 'b', pontos: 1 },
       { id: 'idade', pontos: 1 },
     ])
+    const faixa = total === 0 ? 0 : total <= 2 ? 1 : 2
     const nivel: Nivel = total >= 3 ? 'critico' : total >= 1 ? 'alerta' : 'ok'
     return {
       titulo: 'CRB-65',
@@ -387,22 +388,72 @@ const crb65: Ferramenta = {
       unidade: 'de 4 pontos',
       nivel,
       rotuloNivel: total === 0 ? 'Baixo risco' : total <= 2 ? 'Risco intermediário' : 'Alto risco',
-      detalhes: [{ rotulo: 'Mortalidade em 30 dias', valor: ['1,2%', '8,2%', '8,2%', '31,0%', '31,0%'][total] }],
+      detalhes: [
+        { rotulo: 'Mortalidade em 30 dias', valor: ['1,2%', '8,2%', '8,2%', '31,0%', '31,0%'][total], nota: 'Coorte de derivação de Lim et al. (2003). A mortalidade salta sete vezes do escore 0 para o 1 — não há faixa "quase zero".', nivel: faixa === 0 ? 'ok' : faixa === 1 ? 'alerta' : 'critico' },
+        { rotulo: 'Local de cuidado sugerido', valor: total === 0 ? 'Ambulatorial' : total <= 2 ? 'Hospitalar' : 'Hospitalar com avaliação de UTI' },
+      ],
       interpretacao: [
         total === 0
-          ? 'Tratamento ambulatorial apropriado, com reavaliação em 48 a 72 horas.'
+          ? '**Baixo risco.** Tratamento ambulatorial apropriado, desde que haja saturação adequada em ar ambiente, tolerância à via oral, suporte domiciliar e possibilidade de retorno. O escore descreve risco de morte, não capacidade social de se tratar em casa.'
           : total <= 2
-            ? 'Considere internação ou observação hospitalar — a mortalidade já é sete vezes maior do que na faixa zero.'
-            : 'Internação urgente, com avaliação para terapia intensiva.',
+            ? '**Risco intermediário.** Considere internação ou observação hospitalar — a mortalidade já é sete vezes maior do que na faixa zero, e a curva do CRB-65 é degrau, não rampa.'
+            : '**Alto risco.** Internação urgente com avaliação para terapia intensiva. Nessa faixa, aproximadamente um em cada três pacientes morre em 30 dias.',
         'O CRB-65 existe para o consultório e para a unidade básica, onde não há ureia disponível em tempo útil. Perde um pouco de discriminação em relação ao CURB-65, mas mantém desempenho suficiente para a decisão que importa nesse cenário: encaminhar ou não.',
+        'Fisiopatologicamente, os quatro itens medem a mesma coisa por quatro janelas diferentes — o quanto a pneumonia extravasou o pulmão. **Confusão** é hipoperfusão ou hipoxemia cerebral, e no idoso costuma ser a primeira manifestação de sepse, antes da febre. **Taquipneia ≥ 30** é a resposta compensatória à acidose metabólica do choque somada ao shunt intrapulmonar, e é o sinal vital que se altera mais precocemente. **Hipotensão** marca a vasoplegia já estabelecida. **Idade** é a variável-síntese de reserva fisiológica: menos complacência pulmonar, menos resposta imune adaptativa, mais comorbidade silenciosa.',
       ],
+      conduta: total === 0
+        ? [
+            'Antibiótico ambulatorial conforme diretriz local: amoxicilina em monoterapia costuma bastar no adulto previamente sadio; considere cobertura de atípicos (macrolídeo ou doxiciclina) se o quadro é arrastado, seco e com dissociação clínico-radiológica.',
+            'Meça a saturação de oxigênio antes de decidir alta. SpO₂ < 92% em ar ambiente indica internação **independentemente** do CRB-65 — a oxigenação não está no escore.',
+            'Reavaliação clínica obrigatória em 48 a 72 horas. Oriente retorno imediato antes disso se surgir dispneia progressiva, confusão, vômito impedindo o antibiótico ou febre que não cede em 72 horas.',
+            'Verifique vacinação pneumocócica e para influenza — a consulta de pneumonia é a melhor oportunidade de prevenir a próxima.',
+          ]
+        : total <= 2
+          ? [
+              'Encaminhe ao hospital. Colha hemocultura antes do antibiótico quando isso não atrasar a primeira dose, e não atrase a primeira dose por causa da coleta.',
+              'Inicie antibiótico de cobertura hospitalar (betalactâmico com inibidor de betalactamase ou cefalosporina de terceira geração, associado a macrolídeo) na primeira hora se houver critério de sepse.',
+              'Oxigênio suplementar com alvo de SpO₂ 92 a 96%, ou 88 a 92% se houver retenção crônica de CO₂ conhecida ou suspeita.',
+              'Reavalie em 6 a 12 horas: piora da taquipneia ou necessidade crescente de O₂ antecipa a indicação de UTI, e o CRB-65 não reavalia isso sozinho.',
+            ]
+          : [
+              'Internação imediata e acionamento do pacote de sepse se houver disfunção orgânica: lactato, hemoculturas, antibiótico na primeira hora e cristaloide 30 mL/kg na hipotensão ou lactato ≥ 4 mmol/L.',
+              'Avaliação formal de UTI. Aplique os critérios ATS/IDSA de pneumonia grave: um critério maior (ventilação mecânica ou vasopressor) já indica UTI; três menores também.',
+              'Antibiótico de amplo espectro com cobertura de atípicos, ajustado a fatores de risco para Pseudomonas e para S. aureus resistente.',
+              'Discuta objetivos de cuidado precocemente com o paciente e a família: mortalidade de 31% em 30 dias é a hora de saber o que a pessoa quer, não depois da intubação.',
+            ],
+      alertas: [
+        'O CRB-65 não contém oxigenação. Hipoxemia significativa, derrame pleural volumoso, acometimento multilobar ou descompensação de comorbidade indicam internação mesmo com escore 0.',
+        total === 0
+          ? 'Escore 0 não é alta automática. Ele não avalia tolerância à via oral, adesão, suporte domiciliar nem acesso ao retorno — fatores que decidem tanto quanto o risco biológico.'
+          : 'Nenhum escore de pneumonia foi validado para decidir alta em imunossuprimido, neutropênico, pós-transplante ou gestante. Nesses grupos a conduta é individualizada e mais conservadora.',
+      ],
+      tabela: {
+        titulo: 'Estratificação e local de cuidado',
+        colunas: ['Pontos', 'Risco', 'Mortalidade em 30 dias', 'Local de cuidado'],
+        linhas: [
+          ['0', 'Baixo', '1,2%', 'Ambulatorial'],
+          ['1 – 2', 'Intermediário', '8,2%', 'Internação ou observação'],
+          ['3 – 4', 'Alto', '31,0%', 'Internação com avaliação de UTI'],
+        ],
+        destaque: faixa,
+      },
     }
   },
   formula: ['C onfusão + R espiração ≥ 30 + B pressão baixa + 65 anos'],
   fundamento:
-    'A ureia é a única variável do CURB-65 que exige laboratório, e sua remoção reduz pouco a acurácia — o que faz sentido, já que idade e pressão arterial capturam boa parte da mesma informação prognóstica (reserva fisiológica e perfusão).',
-  armadilhas: ['Um único ponto no CRB-65 já corresponde a mortalidade de 8%; não trate escore 1 como equivalente a escore 1 do CURB-65.'],
-  referencias: [{ texto: 'Lim WS, van der Eerden MM, Laing R, et al. Thorax. 2003;58(5):377-382.' }],
+    'A ureia é a única variável do CURB-65 que exige laboratório, e sua remoção reduz pouco a acurácia — o que faz sentido fisiopatologicamente, já que idade e pressão arterial capturam boa parte da mesma informação. A ureia elevada na pneumonia não é doença renal: é a soma de hipoperfusão pré-renal (queda do fluxo plasmático renal por vasoplegia e hipovolemia) e de catabolismo proteico acelerado pela resposta inflamatória, ambos já parcialmente refletidos na hipotensão e na idade. O escore derivou de uma coorte de 1.068 pacientes em três países e foi validado prospectivamente em mais de 12.000 — a escolha de quatro variáveis dicotômicas de peso igual foi deliberada: em atenção primária, um escore que exige cálculo não é usado. Vale notar o que o CRB-65 é bom em fazer: seu valor está no **valor preditivo negativo**. Escore 0 identifica com segurança quem provavelmente não morre; escore alto não é bom em predizer quem precisa de UTI, para o que existem os critérios ATS/IDSA e o SMART-COP.',
+  armadilhas: [
+    'Um único ponto no CRB-65 já corresponde a mortalidade de 8%; não trate escore 1 como equivalente a escore 1 do CURB-65, que tem cinco itens e portanto granularidade diferente.',
+    'A frequência respiratória precisa ser contada, não estimada. É a variável mais frequentemente copiada da triagem anterior ou registrada como "20" por hábito, e é justamente a que mais pesa em detectar deterioração precoce.',
+    'Confusão precisa ser de início recente. Em paciente com demência, a comparação é com o basal relatado pelo cuidador, não com a normalidade — e nesse grupo o delirium hipoativo (sonolência, apatia) é mais comum que o agitado, e passa batido.',
+    'O escore foi derivado em pneumonia adquirida na comunidade. Não se aplica a pneumonia hospitalar, associada à ventilação nem a pneumonia em imunossuprimido, contextos com microbiologia e prognóstico distintos.',
+    'Idade ≥ 65 anos dá ponto isoladamente, o que significa que todo idoso parte de escore 1. Isso é intencional, mas leva ao erro oposto: internar todo idoso com pneumonia. O julgamento clínico e o contexto social decidem a faixa intermediária.',
+  ],
+  referencias: [
+    { texto: 'Lim WS, van der Eerden MM, Laing R, et al. Defining community acquired pneumonia severity on presentation to hospital: an international derivation and validation study. Thorax. 2003;58(5):377-382.' },
+    { texto: 'Bauer TT, Ewig S, Marre R, et al. CRB-65 predicts death from community-acquired pneumonia. J Intern Med. 2006;260(1):93-101.' },
+    { texto: 'Metlay JP, Waterer GW, Long AC, et al. Diagnosis and Treatment of Adults with Community-acquired Pneumonia. An Official Clinical Practice Guideline of the ATS and IDSA. Am J Respir Crit Care Med. 2019;200(7):e45-e67.' },
+  ],
 }
 
 const psi: Ferramenta = {
@@ -506,12 +557,12 @@ const mmrc: Ferramenta = {
   categorias: ['pneumologia'],
   campos: [
     campoOpc('grau', 'Grau de dispneia', [
-      { valor: '0', rotulo: 'Grau 0 — só com exercício intenso', pontos: 0 },
-      { valor: '1', rotulo: 'Grau 1 — ao andar apressado no plano ou subir ladeira leve', pontos: 1 },
-      { valor: '2', rotulo: 'Grau 2 — anda mais devagar que pessoas da mesma idade, ou precisa parar ao andar no próprio passo', pontos: 2 },
-      { valor: '3', rotulo: 'Grau 3 — para para respirar após andar cerca de 100 m ou alguns minutos no plano', pontos: 3 },
-      { valor: '4', rotulo: 'Grau 4 — dispneia impede sair de casa, ou surge ao vestir-se e despir-se', pontos: 4 },
-    ]),
+      { valor: '0', rotulo: 'Grau 0 — só com exercício intenso', pontos: 0, descricao: 'Corrida, subir vários andares, carregar peso. A vida cotidiana não é limitada.' },
+      { valor: '1', rotulo: 'Grau 1 — ao andar apressado no plano ou subir ladeira leve', pontos: 1, descricao: 'Anda no plano no próprio ritmo sem parar, mas sente falta de ar quando acelera ou sobe.' },
+      { valor: '2', rotulo: 'Grau 2 — anda mais devagar que pessoas da mesma idade, ou precisa parar ao andar no próprio passo', pontos: 2, descricao: 'O divisor de águas da escala: é aqui que a dispneia passa a mudar o comportamento. Pergunte "o senhor consegue acompanhar alguém da sua idade andando?".' },
+      { valor: '3', rotulo: 'Grau 3 — para para respirar após andar cerca de 100 m ou alguns minutos no plano', pontos: 3, descricao: 'Ancore em referências concretas do dia a dia da pessoa: uma quadra, do portão ao ponto de ônibus, o corredor do posto.' },
+      { valor: '4', rotulo: 'Grau 4 — dispneia impede sair de casa, ou surge ao vestir-se e despir-se', pontos: 4, descricao: 'Dispneia em atividade de autocuidado. Marca doença muito avançada e justifica discutir cuidado paliativo concomitante.' },
+    ], { ajuda: 'Pergunte pela atividade que desencadeia, não pela intensidade da falta de ar. A escala mede incapacidade, e a resposta certa vem de exemplos concretos da rotina da pessoa.' }),
   ],
   calcular: (v) => {
     const g = num(v, 'grau')
@@ -528,17 +579,51 @@ const mmrc: Ferramenta = {
       interpretacao: [
         'A mMRC mede **incapacidade** por dispneia, não intensidade de falta de ar. Isso a torna estável ao longo do tempo e ótima para estratificar, mas pouco sensível a mudança aguda — para acompanhar resposta a tratamento, o CAT e a escala de Borg funcionam melhor.',
         g >= 2
-          ? 'A partir do grau 2 há indicação formal de reabilitação pulmonar na DPOC, que é a intervenção com maior efeito sobre dispneia e qualidade de vida em toda a doença.'
+          ? 'A partir do grau 2 há indicação formal de reabilitação pulmonar na DPOC, que é a intervenção com maior efeito sobre dispneia e qualidade de vida em toda a doença — maior que qualquer broncodilatador isolado.'
           : 'Nos graus 0 e 1, o foco é cessação do tabagismo, vacinação e otimização do broncodilatador.',
+        'A fisiopatologia por trás do grau explica por que ele prediz mortalidade: a dispneia da DPOC não vem principalmente da obstrução, e sim da **hiperinsuflação dinâmica**. Com o fluxo expiratório limitado, o esforço encurta o tempo de expiração antes que o pulmão volte à capacidade residual funcional; o ar aprisionado empurra o volume corrente para a porção plana da curva de complacência, o diafragma se achata e perde vantagem mecânica, e a carga inspiratória sobe justamente quando o músculo está pior posicionado. É essa dissociação entre o esforço que o cérebro comanda e o volume que o tórax entrega — o *neuromechanical uncoupling* — que a pessoa sente como falta de ar. Daí o grau mMRC refletir desempenho global, e não VEF₁.',
       ],
+      conduta: g >= 2
+        ? [
+            'Encaminhe à **reabilitação pulmonar** — indicação formal a partir de mMRC 2. O programa supervisionado de 6 a 12 semanas melhora dispneia, capacidade de exercício e qualidade de vida com magnitude maior que a de qualquer fármaco isolado, e reduz reinternação após exacerbação.',
+            'Reavalie o esquema inalatório: mMRC ≥ 2 coloca o paciente no grupo B ou E do GOLD, onde a broncodilatação dupla (LABA + LAMA) é preferida à monoterapia. Confira a técnica do dispositivo na consulta, não presuma.',
+            'Investigue e trate as causas somadas de dispneia que a escala não separa: anemia, insuficiência cardíaca, descondicionamento, obesidade, ansiedade e hipertensão pulmonar. Na DPOC avançada, a dispneia raramente tem causa única.',
+            g === 4
+              ? 'No grau 4, avalie oxigenoterapia domiciliar prolongada (se PaO₂ ≤ 55 mmHg ou ≤ 59 com cor pulmonale/policitemia), discuta cuidado paliativo concomitante e considere opioide em dose baixa para dispneia refratária, que tem evidência específica nesse cenário.'
+              : 'Registre o grau no prontuário como número: é a única forma de saber, na próxima consulta, se houve progressão real ou apenas um dia pior.',
+          ]
+        : [
+            'Cessação do tabagismo é a única intervenção que altera a inclinação da queda do VEF₁. Ofereça terapia farmacológica (vareniclina, bupropiona ou reposição de nicotina) somada a suporte comportamental — conselho isolado tem eficácia baixa.',
+            'Vacinação: influenza anual, pneumocócica, coqueluche e COVID-19 conforme o calendário vigente. Exacerbação infecciosa é o principal motor de perda funcional.',
+            'Otimize o broncodilatador de longa duração e confirme a técnica inalatória. Estimule atividade física regular mesmo sem indicação formal de reabilitação.',
+            'Reaplique a escala a cada consulta. A passagem de 1 para 2 é o gatilho de reabilitação e costuma passar despercebida se o grau não estiver registrado.',
+          ],
+      alertas: [
+        'A mMRC é um dos dois eixos da avaliação sintomática do GOLD, e é a **menos** sensível dos dois. Se o paciente pontua mMRC 0 ou 1 mas tem tosse, expectoração ou despertares noturnos, aplique o CAT: um CAT ≥ 10 já o coloca no grupo mais sintomático, mesmo com mMRC baixa.',
+        'Dispneia de início recente ou progressão rápida de grau não é para ser graduada e arquivada: investigue exacerbação, tromboembolismo pulmonar, pneumotórax, insuficiência cardíaca e anemia antes de atribuir à DPOC de base.',
+      ],
+      tabela: {
+        titulo: 'Graus, equivalência no BODE e consequência prática',
+        colunas: ['Grau', 'Atividade limitada', 'Pontos no BODE', 'Consequência'],
+        linhas: [
+          ['0', 'Só exercício intenso', '0', 'Cessação do tabagismo e vacinação'],
+          ['1', 'Andar apressado ou subir ladeira', '0', 'Broncodilatador de longa duração'],
+          ['2', 'Anda mais devagar que a própria idade', '1', 'Reabilitação pulmonar indicada'],
+          ['3', 'Para após ~100 m no plano', '2', 'Broncodilatação dupla e reavaliar O₂'],
+          ['4', 'Dispneia ao vestir-se', '3', 'Avaliar O₂ domiciliar e paliativo'],
+        ],
+        destaque: g,
+      },
     }
   },
   formula: ['Escala ordinal de 0 a 4, definida pela atividade que desencadeia a dispneia'],
   fundamento:
-    'A escala nasceu do questionário do Medical Research Council britânico dos anos 1950, criado para estudos epidemiológicos em mineradores. A versão modificada renumerou de 0 a 4 e é hoje um dos dois eixos da classificação GOLD de DPOC, ao lado do histórico de exacerbações.',
+    'A escala nasceu do questionário do Medical Research Council britânico dos anos 1950, criado por Fletcher para estudos epidemiológicos em mineradores de carvão — o objetivo era comparar populações, não tratar indivíduos, e isso explica sua construção grosseira de propósito. A versão modificada renumerou de 0 a 4 e é hoje um dos dois eixos da classificação GOLD de DPOC, ao lado do histórico de exacerbações. O que ela mede, conceitualmente, é **incapacidade** e não sensação: a pergunta não é "o quanto falta o ar" mas "o que a falta de ar impede". Essa escolha tem uma consequência importante — a mMRC é robusta entre observadores e estável no tempo, o que a torna excelente para estratificar risco e comparar coortes, mas deliberadamente insensível a mudança aguda. Bestall e colaboradores demonstraram em 1999 que o grau se correlaciona melhor com qualidade de vida, distância caminhada e mortalidade em cinco anos do que o VEF₁ isolado, resultado que parece paradoxal até se entender a hiperinsuflação dinâmica como mecanismo dominante da dispneia.',
   armadilhas: [
-    'Existem duas numerações em circulação (1 a 5 na MRC original, 0 a 4 na modificada). Registre sempre "mMRC" para evitar deslocamento de um grau.',
-    'Limitação por osteoartrose, obesidade ou doença vascular periférica eleva a pontuação sem que a dispneia seja pulmonar.',
+    'Existem duas numerações em circulação (1 a 5 na MRC original, 0 a 4 na modificada). Registre sempre "mMRC" para evitar deslocamento de um grau — um erro que muda o grupo GOLD e a indicação de reabilitação.',
+    'Limitação por osteoartrose, obesidade, doença vascular periférica ou sequela de AVC eleva a pontuação sem que a dispneia seja pulmonar. A escala mede o que a pessoa não faz, não por que não faz.',
+    'É insensível a mudança aguda por construção. Para acompanhar resposta a tratamento use o CAT ou a escala de Borg; para medir exacerbação, use os critérios clínicos, não o deslocamento de grau.',
+    'O grau depende de quanto a pessoa ainda tenta fazer. Idoso sedentário e restrito ao domicílio por escolha ou por medo pode reportar grau baixo simplesmente por nunca atingir o esforço que revelaria a limitação — pergunte pelo que ele fazia há um ano.',
   ],
   referencias: [
     { texto: 'Bestall JC, Paul EA, Garrod R, et al. Usefulness of the Medical Research Council (MRC) dyspnoea scale as a measure of disability in patients with COPD. Thorax. 1999;54(7):581-586.' },
@@ -553,15 +638,15 @@ const bode: Ferramenta = {
   resumo: 'Prognóstico multidimensional da DPOC: massa corporal, obstrução, dispneia e exercício.',
   categorias: ['pneumologia'],
   campos: [
-    campoNum('imc', 'Índice de massa corporal', { unidade: 'kg/m²', min: 10, max: 60, passo: 0.1 }),
-    campoNum('vef1', 'VEF₁ pós-broncodilatador', { unidade: '% do predito', min: 10, max: 130, passo: 1 }),
+    campoNum('imc', 'Índice de massa corporal', { unidade: 'kg/m²', min: 10, max: 60, passo: 0.1, ajuda: 'O único componente com corte invertido: IMC ≤ 21 kg/m² pontua. Magreza na DPOC é marcador de gravidade, não de saúde.' }),
+    campoNum('vef1', 'VEF₁ pós-broncodilatador', { unidade: '% do predito', min: 10, max: 130, passo: 1, ajuda: 'Use o valor pós-broncodilatador, medido fora de exacerbação. O pré-broncodilatador superestima a gravidade e infla o escore.' }),
     campoOpc('mmrc', 'Dispneia (mMRC)', [
       { valor: '0', rotulo: 'Grau 0 ou 1', pontos: 0 },
       { valor: '1', rotulo: 'Grau 2', pontos: 1 },
       { valor: '2', rotulo: 'Grau 3', pontos: 2 },
       { valor: '3', rotulo: 'Grau 4', pontos: 3 },
-    ]),
-    campoNum('tc6', 'Distância no teste de caminhada de 6 minutos', { unidade: 'm', min: 0, max: 900, passo: 5 }),
+    ], { ajuda: 'Atenção à compressão da escala: os graus 0 e 1 da mMRC valem ambos 0 ponto aqui, então o BODE só começa a contar dispneia a partir do grau 2.' }),
+    campoNum('tc6', 'Distância no teste de caminhada de 6 minutos', { unidade: 'm', min: 0, max: 900, passo: 5, ajuda: 'Teste padronizado: corredor plano de 30 m, sem aquecimento, incentivo verbal a cada minuto com frases fixas. Improvisar invalida 3 dos 10 pontos.' }),
   ],
   calcular: (v) => {
     const imc = num(v, 'imc')
@@ -593,6 +678,24 @@ const bode: Ferramenta = {
         'O BODE prediz mortalidade melhor do que o VEF₁ isolado, e essa é a razão de existir: a DPOC é uma doença sistêmica, e o pulmão sozinho não conta a história. Perda de massa magra, limitação funcional e percepção de dispneia carregam informação prognóstica independente da espirometria.',
         'O componente nutricional é contraintuitivo. Na DPOC avançada, IMC baixo reflete disfunção muscular esquelética e estado inflamatório sistêmico, e associa-se independentemente a mortalidade — a chamada "obesity paradox" da DPOC.',
         'Uso prático: BODE ≥ 7 é um dos critérios considerados para avaliação de transplante pulmonar e para discussão de cuidados paliativos concomitantes.',
+        'O mecanismo que une os quatro componentes é a **caquexia pulmonar**. A DPOC avançada mantém um estado inflamatório sistêmico de baixo grau (TNF-α, IL-6, proteína C reativa) que ativa a via ubiquitina-proteassoma no músculo esquelético; a isso somam-se o gasto energético aumentado pelo trabalho respiratório contra a hiperinsuflação, a ingestão reduzida pela dispneia durante as refeições e o descondicionamento por inatividade. O resultado é perda de massa magra — não apenas de gordura — que atinge também o diafragma e o quadríceps. Por isso o IMC baixo e a distância caminhada carregam informação prognóstica independente da espirometria: eles medem o dano sistêmico que o VEF₁ não vê.',
+      ],
+      conduta: [
+        quartil >= 2
+          ? 'Reabilitação pulmonar com treino de força e aeróbio é prioridade absoluta nesta faixa — é a única intervenção que move simultaneamente três dos quatro componentes (D, E e, pelo ganho de massa magra, o B).'
+          : 'Mantenha o paciente ativo e reaplique o índice anualmente: o BODE serve para detectar trajetória, e um único valor diz menos que a variação em 12 meses.',
+        pB === 1
+          ? 'Avalie e trate a desnutrição: aporte calórico e proteico dirigido (mínimo 1,2 a 1,5 g/kg/dia de proteína), fracionamento das refeições para reduzir dispneia pós-prandial e suplemento oral se a ingestão habitual for insuficiente. Suporte nutricional isolado tem efeito modesto; associado a treino de resistência, produz ganho real de massa magra.'
+          : 'IMC preservado não descarta sarcopenia: na DPOC existe obesidade sarcopênica, com massa magra baixa e gordura normal. Se houver dúvida, meça força de preensão palmar ou circunferência muscular do braço.',
+        'Otimize o que é reversível antes de concluir que o escore é o prognóstico: técnica inalatória, adesão, broncodilatação dupla, tratamento de comorbidade cardiovascular, oxigenoterapia se indicada e cessação do tabagismo — que segue valendo em qualquer quartil.',
+        quartil === 3
+          ? 'BODE 7 a 10 é gatilho de duas conversas: encaminhamento para avaliação de transplante pulmonar (se idade e comorbidades permitirem) e introdução de cuidados paliativos concomitantes, com planejamento antecipado de cuidados. Sobrevida de 18% em 4 anos torna essa discussão parte do tratamento, não o seu abandono.'
+          : 'Registre o BODE no prontuário com os quatro componentes separados. Saber qual deles piorou orienta a intervenção; o total isolado, não.',
+      ],
+      alertas: [
+        'O BODE é ferramenta de **prognóstico populacional**, não de decisão individual isolada. Sobrevida de 18% em 4 anos no quarto quartil descreve um grupo, e o paciente à sua frente pode estar em qualquer ponto dessa distribuição.',
+        'Não aplique durante ou até 4 a 6 semanas após uma exacerbação: VEF₁, mMRC e distância caminhada estão todos deprimidos pelo evento agudo, e o escore superestima a gravidade basal.',
+        'O índice não inclui exacerbações nem comorbidade cardiovascular, que são determinantes maiores de mortalidade na DPOC. Variantes como o BODEx (troca o teste de caminhada por exacerbações) e o ADO existem exatamente para cobrir isso.',
       ],
       tabela: {
         titulo: 'Quartis e sobrevida em 4 anos',
@@ -608,9 +711,14 @@ const bode: Ferramenta = {
   armadilhas: [
     'O teste de caminhada de 6 minutos precisa ser padronizado (corredor plano de 30 m, incentivo verbal padronizado, sem aquecimento). Improvisar o teste invalida o componente E, que pesa 3 dos 10 pontos.',
     'O VEF₁ é o pós-broncodilatador; usar o pré-broncodilatador superestima a gravidade.',
+    'Aplicado durante exacerbação, o índice mede o evento agudo e não o prognóstico de base. Espere 4 a 6 semanas de estabilidade clínica.',
+    'O componente B é o único com corte invertido (IMC ≤ 21 pontua). É erro comum pontuar o obeso, invertendo a lógica do índice.',
+    'O BODE não contempla exacerbações, e exacerbação frequente é preditor independente de mortalidade. Um paciente com BODE baixo e três exacerbações no ano não é de baixo risco — considere o BODEx nessa situação.',
   ],
   referencias: [
     { texto: 'Celli BR, Cote CG, Marin JM, et al. The body-mass index, airflow obstruction, dyspnea, and exercise capacity index in chronic obstructive pulmonary disease. N Engl J Med. 2004;350(10):1005-1012.' },
+    { texto: 'Puhan MA, Garcia-Aymerich J, Frey M, et al. Expansion of the prognostic assessment of patients with COPD: the updated BODE index and the ADO index. Lancet. 2009;374(9691):704-711.' },
+    { texto: 'Soler-Cataluña JJ, Martínez-García MA, Sánchez L, et al. Severe exacerbations and BODE index: two independent risk factors for death in male COPD patients. Respir Med. 2009;103(5):692-699.' },
   ],
 }
 
