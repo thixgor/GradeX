@@ -123,6 +123,42 @@ export async function ensureIndexes(db: Db): Promise<void> {
     db.collection('mindMaps').createIndex({ ownerId: 1, updatedAt: -1 }),
     db.collection('mindMaps').createIndex({ visibility: 1, isPublished: 1, isHidden: 1, likeCount: -1 }),
     db.collection('mindMapLikes').createIndex({ mapId: 1, userId: 1 }, { unique: true }),
+    // ── Materiais (catálogo, pastas, pacotes e posse) ──
+    // Nenhuma destas coleções tinha índice. /materiais monta a página com
+    // quatro consultas — acervo, pastas, pacotes e a posse da conta — e todas
+    // as quatro varriam a coleção inteira. `material_purchases` é a pior
+    // delas: cresce a cada compra de cada aluno, então a página ia ficando
+    // mais lenta com o tempo mesmo sem material novo.
+    //
+    // A ordem dos campos segue o `.sort()` de cada listagem, para o índice
+    // servir filtro e ordenação de uma vez (sem estágio de SORT em memória).
+    db.collection('materials').createIndex({ isHidden: 1, isFeatured: -1, order: 1, createdAt: -1 }),
+    // O admin lista o acervo sem recorte de visibilidade, então o índice acima
+    // (prefixado por isHidden) não serve à ordenação dele: sem este, a listagem
+    // do painel ordenava a coleção inteira em memória — o que, passando de
+    // 32 MB de documentos, deixa de ser lentidão e passa a ser erro.
+    db.collection('materials').createIndex({ isFeatured: -1, order: 1, createdAt: -1 }),
+    // Recorte por preço: a barra de /materiais filtra "grátis"/"pago".
+    db.collection('materials').createIndex({ isHidden: 1, pricing: 1, isFeatured: -1, order: 1, createdAt: -1 }),
+    // Pasta e módulo: sustentam ?folderId= e ?moduloId=, além do
+    // updateMany que esvazia a pasta ao apagá-la.
+    db.collection('materials').createIndex({ folderId: 1, isHidden: 1 }),
+    db.collection('materials').createIndex({ moduloId: 1, isHidden: 1 }, { sparse: true }),
+    // Deck de flashcard vinculado (propagação de preço no PUT).
+    db.collection('materials').createIndex({ linkedDeckId: 1 }, { sparse: true }),
+    db.collection('material_folders').createIndex({ isHidden: 1, order: 1, name: 1 }),
+    db.collection('material_folders').createIndex({ parentFolderId: 1, order: 1, name: 1 }),
+    db.collection('material_packages').createIndex({ isHidden: 1, isFeatured: -1, order: 1, createdAt: -1 }),
+    // Posse: as duas formas de identificar o dono do acesso (id da conta e
+    // e-mail, este último para as liberações manuais do admin).
+    db.collection('material_purchases').createIndex({ userId: 1, status: 1, itemType: 1 }),
+    db.collection('material_purchases').createIndex({ userEmail: 1, status: 1, itemType: 1 }),
+    // Relatórios do admin e a checagem "quem já tem este item".
+    db.collection('material_purchases').createIndex({ itemId: 1, status: 1, createdAt: -1 }),
+    // Deck ↔ material e a contagem de cartas por deck, ambas no caminho do
+    // catálogo quando há material do tipo flashcard_deck.
+    db.collection('flashcardManualDecks').createIndex({ linkedMaterialId: 1 }, { sparse: true }),
+    db.collection('flashcardManualCards').createIndex({ deckId: 1 }),
     db.collection('material_pdf_annotations').createIndex({ userId: 1, materialId: 1, pageNumber: 1 }),
     db.collection('material_pdf_viewer_logs').createIndex({ userId: 1, materialId: 1, createdAt: -1 }),
     db.collection('material_pdf_viewer_logs').createIndex({ materialId: 1, action: 1, createdAt: -1 }),

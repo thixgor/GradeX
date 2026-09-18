@@ -24,32 +24,73 @@ export async function GET(request: NextRequest) {
     const db = await getDb()
     const isAdmin = session?.role === 'admin'
 
-    // Fetch user groups for access control
-    let userGroups: string[] = []
-    let isPlus = false
-    if (session && !isAdmin) {
-      const user = await db.collection('users').findOne(
-        { _id: new ObjectId(session.userId) },
-        { projection: { accountType: 1, secondaryRole: 1 } }
-      )
-      if (user) {
-        // Inclui os aliases legados para que um assinante Plus+ continue
-        // enxergando itens marcados como premium/essential.
-        userGroups = expandUserAccessGroups(user.accountType, user.secondaryRole)
-        isPlus = isPlusAccount(user.accountType)
-      }
-    }
-
     const filter: any = {}
     if (!isAdmin) {
       filter.isHidden = false
     }
 
-    const packages = await db
-      .collection('material_packages')
-      .find(filter)
-      .sort({ isFeatured: -1, order: 1, createdAt: -1 })
-      .toArray()
+    // Compra por tempo vencida não conta como posse.
+    const purchaseFilter = {
+      status: 'completed',
+      itemType: { $in: ['package', 'material'] },
+      ...activeAccessFilter(),
+    }
+    const accessProjection = {
+      itemId: 1,
+      itemType: 1,
+      accessMode: 1,
+      accessVersionId: 1,
+      accessVersionLabel: 1,
+      accessDuration: 1,
+      accessDurationMinutes: 1,
+      accessStartsAt: 1,
+      accessExpiresAt: 1,
+    }
+    const loggedIn = !!session && !isAdmin
+
+    // Cargo da conta, lista de pacotes e posse são três perguntas
+    // independentes: nenhuma usa a resposta da outra. Em fila, cada uma somava
+    // sua ida ao Atlas ao tempo da página (e /materiais espera esta rota junto
+    // com o acervo e as pastas, então o atraso aqui atrasa a tela inteira).
+    //
+    // As duas buscas de posse continuam separadas de propósito: a de e-mail é
+    // a reserva para liberações manuais gravadas sem userId, e um $or entre
+    // campos diferentes não aproveita bem os índices.
+    const [user, packages, byUserId, byEmail] = await Promise.all([
+      loggedIn
+        ? db.collection('users').findOne(
+            { _id: new ObjectId(session!.userId) },
+            { projection: { accountType: 1, secondaryRole: 1 } }
+          )
+        : Promise.resolve(null),
+      db
+        .collection('material_packages')
+        .find(filter)
+        .sort({ isFeatured: -1, order: 1, createdAt: -1 })
+        .toArray(),
+      loggedIn
+        ? db
+            .collection('material_purchases')
+            .find({ ...purchaseFilter, userId: session!.userId })
+            .project(accessProjection)
+            .toArray()
+        : Promise.resolve([] as any[]),
+      loggedIn && session!.email
+        ? db
+            .collection('material_purchases')
+            .find({
+              ...purchaseFilter,
+              userEmail: { $regex: new RegExp(`^${session!.email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') },
+            })
+            .project(accessProjection)
+            .toArray()
+        : Promise.resolve([] as any[]),
+    ])
+
+    // Inclui os aliases legados para que um assinante Plus+ continue
+    // enxergando itens marcados como premium/essential.
+    const userGroups = user ? expandUserAccessGroups(user.accountType, user.secondaryRole) : []
+    const isPlus = user ? isPlusAccount(user.accountType) : false
 
     // Buscar materiais de cada pacote para exibição
     const allMaterialIds = packages.flatMap((p: any) =>
@@ -58,94 +99,50 @@ export async function GET(request: NextRequest) {
       }).filter(Boolean)
     )
 
-    const materialsInPackages = allMaterialIds.length > 0
-      ? await db.collection('materials').find({ _id: { $in: allMaterialIds } }).project({ title: 1, coverImage: 1, type: 1, pricing: 1, price: 1 }).toArray()
-      : []
+    // Resolve pricing event states (batch) for packages that have a pricingEventId
+    const pkgEventIds = packages
+      .map((p: any) => p.pricingEventId)
+      .filter((id: any): id is string => !!id)
+
+    // Ambas saem da lista de pacotes já em mãos, e nenhuma depende da outra.
+    const [materialsInPackages, pkgEventStates] = await Promise.all([
+      allMaterialIds.length > 0
+        ? db.collection('materials').find({ _id: { $in: allMaterialIds } }).project({ title: 1, coverImage: 1, type: 1, pricing: 1, price: 1 }).toArray()
+        : Promise.resolve([] as any[]),
+      pkgEventIds.length > 0
+        ? getPricingEventStatesByIds(db, pkgEventIds)
+        : Promise.resolve(new Map()),
+    ])
 
     const materialsMap: Record<string, any> = {}
     materialsInPackages.forEach((m: any) => {
       materialsMap[m._id.toString()] = m
     })
 
-    // Verificar compras do usuário
-    // Two separate queries (userId and userEmail) to avoid any $or index quirks.
-    let purchasedPackageIds: string[] = []
-    let purchasedMaterialIds: string[] = []
+    const purchases = [...byUserId, ...byEmail]
+    const packagePurchases = purchases.filter((p: any) => p.itemType === 'package')
+    const purchasedPackageIds = [...new Set(packagePurchases.map((p: any) => String(p.itemId)))]
+    const purchasedMaterialIds = [...new Set(
+      purchases
+        .filter((p: any) => p.itemType === 'material')
+        .map((p: any) => String(p.itemId))
+    )]
+
     /** packageId → prazo restante, quando a compra foi por tempo limitado. */
     const timedAccessByPackageId: Record<string, any> = {}
-    if (session && !isAdmin) {
-      // Compra por tempo vencida não conta como posse.
-      const baseFilter = { status: 'completed', ...activeAccessFilter() }
-      const accessProjection = {
-        itemId: 1,
-        itemType: 1,
-        accessMode: 1,
-        accessVersionId: 1,
-        accessVersionLabel: 1,
-        accessDuration: 1,
-        accessDurationMinutes: 1,
-        accessStartsAt: 1,
-        accessExpiresAt: 1,
-      }
-
-      const byUserId = await db
-        .collection('material_purchases')
-        .find({
-          ...baseFilter,
-          userId: session.userId,
-          itemType: { $in: ['package', 'material'] },
-        })
-        .project(accessProjection)
-        .toArray()
-
-      let byEmail: any[] = []
-      if (session.email) {
-        const emailRegex = new RegExp(`^${session.email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i')
-        byEmail = await db
-          .collection('material_purchases')
-          .find({
-            ...baseFilter,
-            userEmail: { $regex: emailRegex },
-            itemType: { $in: ['package', 'material'] },
-          })
-          .project(accessProjection)
-          .toArray()
-      }
-
-      const purchases = [...byUserId, ...byEmail]
-      purchasedPackageIds = [...new Set(
-        purchases
-          .filter((p: any) => p.itemType === 'package')
-          .map((p: any) => String(p.itemId))
-      )]
-      purchasedMaterialIds = [...new Set(
-        purchases
-          .filter((p: any) => p.itemType === 'material')
-          .map((p: any) => String(p.itemId))
-      )]
-
-      for (const purchase of purchases.filter((p: any) => p.itemType === 'package')) {
-        const status = summarizeTimedAccess(purchase)
-        if (!status) continue
-        const key = String(purchase.itemId)
-        const current = timedAccessByPackageId[key]
-        if (!current || status.remainingMs > current.remainingMs) {
-          timedAccessByPackageId[key] = status
-        }
+    for (const purchase of packagePurchases) {
+      const status = summarizeTimedAccess(purchase)
+      if (!status) continue
+      const key = String(purchase.itemId)
+      const current = timedAccessByPackageId[key]
+      if (!current || status.remainingMs > current.remainingMs) {
+        timedAccessByPackageId[key] = status
       }
     }
 
     // Server is the source of truth for access — attach flags per package
     const purchasedSet = new Set(purchasedPackageIds)
     const purchasedMaterialSet = new Set(purchasedMaterialIds)
-
-    // Resolve pricing event states (batch) for packages that have a pricingEventId
-    const pkgEventIds = packages
-      .map((p: any) => p.pricingEventId)
-      .filter((id: any): id is string => !!id)
-    const pkgEventStates = pkgEventIds.length > 0
-      ? await getPricingEventStatesByIds(db, pkgEventIds)
-      : new Map()
 
     const packagesWithMaterials = packages.map((pkg: any) => {
       const idStr = String(pkg._id)

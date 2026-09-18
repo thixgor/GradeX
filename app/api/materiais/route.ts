@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
-import { ObjectId } from 'mongodb'
+import { Db, ObjectId } from 'mongodb'
 import { getPricingEventStatesByIds, serializePricingEventState } from '@/lib/pricing-events'
 import { FLASHCARD_MANUAL_COLLECTIONS } from '@/lib/flashcard-manual'
 import { normalizePreviewRanges } from '@/lib/material-pdf-viewer'
@@ -169,6 +169,249 @@ function sanitizeComplementaryItems(raw: any, selfId: string | null, existingByI
   return out
 }
 
+/**
+ * Campos do documento de material que o catálogo não desenha e que não têm
+ * teto de tamanho.
+ *
+ * `pdfViewerConfig.summary` guarda o sumário importado do PDF — e é sem teto
+ * de propósito ("sumários de PDFs longos passavam de 500" entradas). Cada item
+ * de `complementaryItems` pode carregar até 20 000 caracteres de código embed,
+ * e são até 30 itens por material. Multiplicado pelo acervo inteiro — que é o
+ * que /materiais pede de uma vez, sem recorte de pasta — isso virava megabytes
+ * de JSON trafegados e desserializados para desenhar cards que só mostram
+ * título, capa, tipo e preço.
+ *
+ * Quem precisa desses campos busca por outro caminho: a página do material lê
+ * `/api/materiais/[id]`, que devolve `complementaryItems` resolvidos, e o
+ * visualizador lê a configuração no endpoint do PDF. O admin continua
+ * recebendo o documento inteiro aqui, porque é neste retorno que o formulário
+ * de edição se apoia.
+ */
+const CATALOG_PROJECTION = {
+  pdfViewerConfig: 0,
+  complementaryItems: 0,
+  complementaryMaterialIds: 0,
+  stripePriceId: 0,
+  excludeFromCommission: 0,
+  autoEmailPdfOnPurchase: 0,
+  createdBy: 0,
+  createdByName: 0,
+} as const
+
+/** Campos da compra que o catálogo lê para montar posse, prazo e download. */
+const ACCESS_PROJECTION = {
+  itemId: 1,
+  itemType: 1,
+  // Liberação individual de download gravada pelo admin nesse acesso.
+  pdfDownloadAllowed: 1,
+  accessMode: 1,
+  accessVersionId: 1,
+  accessVersionLabel: 1,
+  accessDuration: 1,
+  accessDurationMinutes: 1,
+  accessStartsAt: 1,
+  accessExpiresAt: 1,
+} as const
+
+/** Trata o texto digitado como texto, não como expressão regular. */
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+/**
+ * Posse e cargos da conta que está pedindo o catálogo.
+ *
+ * As quatro consultas de `material_purchases` que existiam aqui (material por
+ * id, material por e-mail, pacote por id, pacote por e-mail) são duas: o
+ * `itemType` entra como `$in` e a separação acontece em memória. Somado ao
+ * `Promise.all`, a espera deixou de ser a soma das idas ao Atlas e passou a ser
+ * a mais lenta delas.
+ */
+async function loadAccountAccess(db: Db, session: { userId: string; email?: string }) {
+  const baseFilter = {
+    status: 'completed',
+    itemType: { $in: ['material', 'package'] },
+    ...activeAccessFilter(),
+  }
+
+  const [user, byUserId, byEmail] = await Promise.all([
+    db.collection('users').findOne(
+      { _id: new ObjectId(session.userId) },
+      { projection: { accountType: 1, secondaryRole: 1 } }
+    ),
+    db
+      .collection('material_purchases')
+      .find({ ...baseFilter, userId: session.userId })
+      .project(ACCESS_PROJECTION)
+      .toArray(),
+    // Busca por e-mail como reserva: cobre os casos em que o userId não foi
+    // gravado (liberação manual feita pelo admin só com o e-mail).
+    session.email
+      ? db
+          .collection('material_purchases')
+          .find({
+            ...baseFilter,
+            userEmail: { $regex: new RegExp(`^${escapeRegExp(session.email)}$`, 'i') },
+          })
+          .project(ACCESS_PROJECTION)
+          .toArray()
+      : Promise.resolve([] as any[]),
+  ])
+
+  // Inclui os aliases legados para que um assinante Plus+ continue enxergando
+  // itens marcados como premium/essential.
+  const userGroups = user ? expandUserAccessGroups(user.accountType, user.secondaryRole) : []
+  // Plus+ libera TODO o acervo de materiais (pago ou gratuito) — é conteúdo da
+  // própria plataforma, nunca de terceiros.
+  const isPlus = user ? isPlusAccount(user.accountType) : false
+
+  const purchases = [...byUserId, ...byEmail]
+  const materialPurchases = purchases.filter((p: any) => p.itemType === 'material')
+  const packagePurchases = purchases.filter((p: any) => p.itemType === 'package')
+
+  let purchasedIds = [...new Set(materialPurchases.map((p: any) => String(p.itemId)))]
+
+  /** materialId → prazo restante, quando a compra foi por tempo limitado. */
+  const timedAccessByMaterialId: Record<string, any> = {}
+  /**
+   * materialId → liberação individual de download gravada pelo admin no
+   * registro de acesso desta conta (true = liberado, false = bloqueado).
+   * Ausente = segue o padrão do material. Ver material-download-permission.
+   */
+  const downloadOverrideByMaterialId: Record<string, boolean> = {}
+
+  for (const purchase of materialPurchases) {
+    if (typeof purchase.pdfDownloadAllowed === 'boolean') {
+      const key = String(purchase.itemId)
+      // Dois registros do mesmo material: uma liberação vale mais que um
+      // bloqueio — quem liberou para essa pessoa quis que ela baixasse.
+      downloadOverrideByMaterialId[key] =
+        downloadOverrideByMaterialId[key] === true || purchase.pdfDownloadAllowed
+    }
+    const status = summarizeTimedAccess(purchase)
+    if (!status) continue
+    const key = String(purchase.itemId)
+    // Duas compras do mesmo item: vale a que dura mais.
+    const current = timedAccessByMaterialId[key]
+    if (!current || status.remainingMs > current.remainingMs) {
+      timedAccessByMaterialId[key] = status
+    }
+  }
+
+  const purchasedPackageIds = [...new Set(packagePurchases.map((p: any) => String(p.itemId)))]
+  /** packageId → prazo, para propagar aos materiais que vêm pelo pacote. */
+  const timedByPackageId = new Map<string, any>()
+  /** packageId → liberação individual, propagada aos materiais do pacote. */
+  const downloadOverrideByPackageId = new Map<string, boolean>()
+  for (const purchase of packagePurchases) {
+    const status = summarizeTimedAccess(purchase)
+    if (status) timedByPackageId.set(String(purchase.itemId), status)
+    if (typeof purchase.pdfDownloadAllowed === 'boolean') {
+      const key = String(purchase.itemId)
+      downloadOverrideByPackageId.set(
+        key,
+        downloadOverrideByPackageId.get(key) === true || purchase.pdfDownloadAllowed
+      )
+    }
+  }
+
+  if (purchasedPackageIds.length > 0) {
+    const packageObjectIds = purchasedPackageIds
+      .map((pkgId) => {
+        try { return new ObjectId(pkgId) } catch { return null }
+      })
+      .filter(Boolean) as ObjectId[]
+
+    if (packageObjectIds.length > 0) {
+      const ownedPackages = await db.collection('material_packages')
+        .find({ _id: { $in: packageObjectIds }, isHidden: { $ne: true } })
+        .project({ materialIds: 1 })
+        .toArray()
+      const packageMaterialIds = ownedPackages.flatMap((pkg: any) =>
+        Array.isArray(pkg.materialIds) ? pkg.materialIds.map(String) : []
+      )
+      purchasedIds = [...new Set([...purchasedIds, ...packageMaterialIds])]
+
+      // Material herdado de um pacote por tempo herda o prazo do pacote —
+      // a não ser que o usuário já tenha uma posse melhor do mesmo item.
+      for (const pkg of ownedPackages as any[]) {
+        const pkgOverride = downloadOverrideByPackageId.get(String(pkg._id))
+        if (typeof pkgOverride === 'boolean') {
+          for (const materialId of (pkg.materialIds || []).map(String)) {
+            // A posse direta do material manda mais que a herdada do pacote.
+            if (typeof downloadOverrideByMaterialId[materialId] !== 'boolean') {
+              downloadOverrideByMaterialId[materialId] = pkgOverride
+            }
+          }
+        }
+        const pkgStatus = timedByPackageId.get(String(pkg._id))
+        for (const materialId of (pkg.materialIds || []).map(String)) {
+          if (!pkgStatus) {
+            delete timedAccessByMaterialId[materialId]
+            continue
+          }
+          const current = timedAccessByMaterialId[materialId]
+          if (current && current.remainingMs >= pkgStatus.remainingMs) continue
+          timedAccessByMaterialId[materialId] = pkgStatus
+        }
+      }
+    }
+  }
+
+  return {
+    userGroups,
+    isPlus,
+    purchasedIds,
+    timedAccessByMaterialId,
+    downloadOverrideByMaterialId,
+  }
+}
+
+/**
+ * Visibilidade e contagem de cartas dos decks vinculados a materiais do tipo
+ * `flashcard_deck`. Só roda quando o recorte atual tem algum.
+ */
+async function loadFlashcardDeckInfo(db: Db, materialIds: string[], isAdmin: boolean) {
+  /** materialId → quantas cartas o deck vinculado tem. */
+  const cardCountByMaterialId: Record<string, number> = {}
+  /** Materiais ligados a deck privado — não-admin não pode vê-los. */
+  const privateDeckMaterialIds = new Set<string>()
+
+  if (materialIds.length === 0) return { cardCountByMaterialId, privateDeckMaterialIds }
+
+  const linkedDecks = await db
+    .collection('flashcardManualDecks')
+    .find({ linkedMaterialId: { $in: materialIds } })
+    .project({ _id: 1, linkedMaterialId: 1, visibility: 1 })
+    .toArray()
+
+  if (linkedDecks.length === 0) return { cardCountByMaterialId, privateDeckMaterialIds }
+
+  if (!isAdmin) {
+    for (const deck of linkedDecks) {
+      if (deck.visibility === 'private') {
+        privateDeckMaterialIds.add(String(deck.linkedMaterialId))
+      }
+    }
+  }
+
+  const deckIds = linkedDecks.map((d: any) => String(d._id))
+  const counts = await db
+    .collection('flashcardManualCards')
+    .aggregate([
+      { $match: { deckId: { $in: deckIds } } },
+      { $group: { _id: '$deckId', count: { $sum: 1 } } },
+    ])
+    .toArray()
+
+  const countByDeckId = new Map(counts.map((c: any) => [c._id, c.count]))
+  for (const deck of linkedDecks) {
+    cardCountByMaterialId[String(deck.linkedMaterialId)] = countByDeckId.get(String(deck._id)) ?? 0
+  }
+
+  return { cardCountByMaterialId, privateDeckMaterialIds }
+}
+
 // GET - Listar materiais (público para usuários logados)
 export async function GET(request: NextRequest) {
   try {
@@ -184,24 +427,6 @@ export async function GET(request: NextRequest) {
     const moduloId = searchParams.get('moduloId')
 
     const isAdmin = session?.role === 'admin'
-
-    // Fetch user groups for access control
-    let userGroups: string[] = []
-    let isPlus = false
-    if (session && !isAdmin) {
-      const user = await db.collection('users').findOne(
-        { _id: new ObjectId(session.userId) },
-        { projection: { accountType: 1, secondaryRole: 1 } }
-      )
-      if (user) {
-        // Inclui os aliases legados para que um assinante Plus+ continue
-        // enxergando itens marcados como premium/essential.
-        userGroups = expandUserAccessGroups(user.accountType, user.secondaryRole)
-        // Plus+ libera TODO o acervo de materiais (pago ou gratuito) — é
-        // conteúdo da própria plataforma, nunca de terceiros.
-        isPlus = isPlusAccount(user.accountType)
-      }
-    }
 
     const filter: any = {}
 
@@ -227,217 +452,56 @@ export async function GET(request: NextRequest) {
     }
 
     if (search) {
+      // Escapado: o que vem da barra de busca é texto digitado, não padrão. Sem
+      // isto, um "(" solto já derrubava a consulta e um quantificador aninhado
+      // fazia o Mongo estourar CPU percorrendo o acervo.
+      const term = escapeRegExp(search)
       filter.$or = [
-        { title: { $regex: search, $options: 'i' } },
-        { description: { $regex: search, $options: 'i' } },
-        { tags: { $regex: search, $options: 'i' } },
+        { title: { $regex: term, $options: 'i' } },
+        { description: { $regex: term, $options: 'i' } },
+        { tags: { $regex: term, $options: 'i' } },
       ]
     }
 
-    const materials = await db
-      .collection('materials')
-      .find(filter)
-      .sort({ isFeatured: -1, order: 1, createdAt: -1 })
-      .toArray()
+    // As duas pontas são independentes: o acervo não depende do cargo da conta
+    // e a posse não depende do acervo. Em fila eram até oito idas ao Atlas uma
+    // atrás da outra (conta → acervo → quatro de posse → pacotes do dono);
+    // agora a espera é a mais lenta delas, não a soma.
+    const [access, materials] = await Promise.all([
+      session && !isAdmin
+        ? loadAccountAccess(db, session as { userId: string; email?: string })
+        : Promise.resolve(null),
+      db
+        .collection('materials')
+        .find(filter, isAdmin ? {} : { projection: CATALOG_PROJECTION })
+        .sort({ isFeatured: -1, order: 1, createdAt: -1 })
+        .toArray(),
+    ])
 
-    // Se não for admin, verificar quais o usuário já comprou.
-    // Two separate queries (userId and userEmail) then merge, to avoid any $or
-    // index quirks and ensure manual admin grants are always detected.
-    let purchasedIds: string[] = []
-    /** materialId → prazo restante, quando a compra foi por tempo limitado. */
-    const timedAccessByMaterialId: Record<string, any> = {}
-    /**
-     * materialId → liberação individual de download gravada pelo admin no
-     * registro de acesso desta conta (true = liberado, false = bloqueado).
-     * Ausente = segue o padrão do material. Ver material-download-permission.
-     */
-    const downloadOverrideByMaterialId: Record<string, boolean> = {}
-    if (session && !isAdmin) {
-      // Compras vencidas (acesso por tempo) não contam como posse — o filtro
-      // deixa passar apenas o que ainda está no prazo.
-      const baseFilter = { itemType: 'material', status: 'completed', ...activeAccessFilter() }
-      const accessProjection = {
-        itemId: 1,
-        // Liberação individual de download gravada pelo admin nesse acesso.
-        pdfDownloadAllowed: 1,
-        accessMode: 1,
-        accessVersionId: 1,
-        accessVersionLabel: 1,
-        accessDuration: 1,
-        accessDurationMinutes: 1,
-        accessStartsAt: 1,
-        accessExpiresAt: 1,
-      }
-
-      // Query by userId (primary — always present)
-      const byUserId = await db
-        .collection('material_purchases')
-        .find({ ...baseFilter, userId: session.userId })
-        .project(accessProjection)
-        .toArray()
-
-      // Query by userEmail as fallback (covers edge-cases where userId wasn't stored)
-      let byEmail: any[] = []
-      if (session.email) {
-        const emailRegex = new RegExp(`^${session.email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i')
-        byEmail = await db
-          .collection('material_purchases')
-          .find({ ...baseFilter, userEmail: { $regex: emailRegex } })
-          .project(accessProjection)
-          .toArray()
-      }
-
-      // Merge, deduplicate and normalise to plain strings
-      purchasedIds = [...new Set([...byUserId, ...byEmail].map((p: any) => String(p.itemId)))]
-      for (const purchase of [...byUserId, ...byEmail]) {
-        if (typeof purchase.pdfDownloadAllowed === 'boolean') {
-          const key = String(purchase.itemId)
-          // Dois registros do mesmo material: uma liberação vale mais que um
-          // bloqueio — quem liberou para essa pessoa quis que ela baixasse.
-          downloadOverrideByMaterialId[key] =
-            downloadOverrideByMaterialId[key] === true || purchase.pdfDownloadAllowed
-        }
-        const status = summarizeTimedAccess(purchase)
-        if (!status) continue
-        const key = String(purchase.itemId)
-        // Duas compras do mesmo item: vale a que dura mais.
-        const current = timedAccessByMaterialId[key]
-        if (!current || status.remainingMs > current.remainingMs) {
-          timedAccessByMaterialId[key] = status
-        }
-      }
-
-      const packageBaseFilter = { itemType: 'package', status: 'completed', ...activeAccessFilter() }
-      const packageByUserId = await db
-        .collection('material_purchases')
-        .find({ ...packageBaseFilter, userId: session.userId })
-        .project(accessProjection)
-        .toArray()
-
-      let packageByEmail: any[] = []
-      if (session.email) {
-        const emailRegex = new RegExp(`^${session.email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i')
-        packageByEmail = await db
-          .collection('material_purchases')
-          .find({ ...packageBaseFilter, userEmail: { $regex: emailRegex } })
-          .project(accessProjection)
-          .toArray()
-      }
-
-      const purchasedPackageIds = [...new Set([...packageByUserId, ...packageByEmail].map((p: any) => String(p.itemId)))]
-      /** packageId → prazo, para propagar aos materiais que vêm pelo pacote. */
-      const timedByPackageId = new Map<string, any>()
-      /** packageId → liberação individual, propagada aos materiais do pacote. */
-      const downloadOverrideByPackageId = new Map<string, boolean>()
-      for (const purchase of [...packageByUserId, ...packageByEmail]) {
-        const status = summarizeTimedAccess(purchase)
-        if (status) timedByPackageId.set(String(purchase.itemId), status)
-        if (typeof purchase.pdfDownloadAllowed === 'boolean') {
-          const key = String(purchase.itemId)
-          downloadOverrideByPackageId.set(
-            key,
-            downloadOverrideByPackageId.get(key) === true || purchase.pdfDownloadAllowed
-          )
-        }
-      }
-      if (purchasedPackageIds.length > 0) {
-        const packageObjectIds = purchasedPackageIds
-          .map((pkgId) => {
-            try { return new ObjectId(pkgId) } catch { return null }
-          })
-          .filter(Boolean) as ObjectId[]
-
-        if (packageObjectIds.length > 0) {
-          const ownedPackages = await db.collection('material_packages')
-            .find({ _id: { $in: packageObjectIds }, isHidden: { $ne: true } })
-            .project({ materialIds: 1 })
-            .toArray()
-          const packageMaterialIds = ownedPackages.flatMap((pkg: any) =>
-            Array.isArray(pkg.materialIds) ? pkg.materialIds.map(String) : []
-          )
-          purchasedIds = [...new Set([...purchasedIds, ...packageMaterialIds])]
-
-          // Material herdado de um pacote por tempo herda o prazo do pacote —
-          // a não ser que o usuário já tenha uma posse melhor do mesmo item.
-          for (const pkg of ownedPackages as any[]) {
-            const pkgOverride = downloadOverrideByPackageId.get(String(pkg._id))
-            if (typeof pkgOverride === 'boolean') {
-              for (const materialId of (pkg.materialIds || []).map(String)) {
-                // A posse direta do material manda mais que a herdada do pacote.
-                if (typeof downloadOverrideByMaterialId[materialId] !== 'boolean') {
-                  downloadOverrideByMaterialId[materialId] = pkgOverride
-                }
-              }
-            }
-            const pkgStatus = timedByPackageId.get(String(pkg._id))
-            for (const materialId of (pkg.materialIds || []).map(String)) {
-              if (!pkgStatus) {
-                delete timedAccessByMaterialId[materialId]
-                continue
-              }
-              const current = timedAccessByMaterialId[materialId]
-              if (current && current.remainingMs >= pkgStatus.remainingMs) continue
-              timedAccessByMaterialId[materialId] = pkgStatus
-            }
-          }
-        }
-      }
-    }
+    const userGroups = access?.userGroups ?? []
+    const isPlus = access?.isPlus ?? false
+    const purchasedIds = access?.purchasedIds ?? []
+    const timedAccessByMaterialId = access?.timedAccessByMaterialId ?? {}
+    const downloadOverrideByMaterialId = access?.downloadOverrideByMaterialId ?? {}
 
     // Build the response: explicitly stringify _id and attach access flags
     // per material so the client never has to guess. Server is the source of truth.
     const purchasedSet = new Set(purchasedIds)
 
-    // For flashcard_deck materials, fetch linked deck visibility + card counts
     const flashcardDeckMaterialIds = materials
       .filter((m: any) => m.type === 'flashcard_deck')
       .map((m: any) => String(m._id))
 
-    const cardCountByMaterialId: Record<string, number> = {}
-    // Track which material IDs belong to private decks (non-admin should not see them)
-    const privateDeckMaterialIds = new Set<string>()
-
-    if (flashcardDeckMaterialIds.length > 0) {
-      const linkedDecks = await db
-        .collection('flashcardManualDecks')
-        .find({ linkedMaterialId: { $in: flashcardDeckMaterialIds } })
-        .project({ _id: 1, linkedMaterialId: 1, visibility: 1 })
-        .toArray()
-
-      if (linkedDecks.length > 0) {
-        // Mark materials linked to private decks
-        if (!isAdmin) {
-          for (const deck of linkedDecks) {
-            if (deck.visibility === 'private') {
-              privateDeckMaterialIds.add(String(deck.linkedMaterialId))
-            }
-          }
-        }
-
-        const deckIds = linkedDecks.map((d: any) => d._id)
-        const counts = await db
-          .collection('flashcardManualCards')
-          .aggregate([
-            { $match: { deckId: { $in: deckIds.map((id: any) => String(id)) } } },
-            { $group: { _id: '$deckId', count: { $sum: 1 } } },
-          ])
-          .toArray()
-
-        const countByDeckId = new Map(counts.map((c: any) => [c._id, c.count]))
-        for (const deck of linkedDecks) {
-          const matId = String(deck.linkedMaterialId)
-          cardCountByMaterialId[matId] = countByDeckId.get(String(deck._id)) ?? 0
-        }
-      }
-    }
-
-    // Resolve pricing event states (batch) for materials that have a pricingEventId
     const eventIds = materials
       .map((m: any) => m.pricingEventId)
       .filter((id: any): id is string => !!id)
-    const eventStates = eventIds.length > 0
-      ? await getPricingEventStatesByIds(db, eventIds)
-      : new Map()
+
+    // Uma não alimenta a outra — os decks vinculados e os estados de lote de
+    // preço saem do mesmo acervo já em mãos.
+    const [{ cardCountByMaterialId, privateDeckMaterialIds }, eventStates] = await Promise.all([
+      loadFlashcardDeckInfo(db, flashcardDeckMaterialIds, isAdmin),
+      eventIds.length > 0 ? getPricingEventStatesByIds(db, eventIds) : Promise.resolve(new Map()),
+    ])
 
     const secureMaterials = materials.filter((m: any) =>
       !privateDeckMaterialIds.has(String(m._id))
@@ -487,6 +551,8 @@ export async function GET(request: NextRequest) {
 
       // Itens complementares avulsos podem ter seu próprio pdfFile/htmlFile —
       // nunca expor blobUrl; admin recebe metadados (sem URL), demais só o flag.
+      // Fora do admin eles nem vêm do banco (ver CATALOG_PROJECTION): a página
+      // do material os busca resolvidos em /api/materiais/[id].
       if (Array.isArray(rest.complementaryItems)) {
         rest.complementaryItems = rest.complementaryItems.map((it: any) => {
           if (it?.kind !== 'custom') return it

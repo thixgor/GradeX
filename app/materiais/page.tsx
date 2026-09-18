@@ -327,7 +327,11 @@ function MateriaisContent() {
 
   useEffect(() => {
     let cancelled = false
-    fetch('/api/display-settings', { cache: 'no-store' })
+    // Sem `cache: 'no-store'`: a rota se declara pública e cacheada por 5 min
+    // (é a mesma resposta para todo visitante), e o `no-store` daqui mandava o
+    // navegador ignorar isso e ir à rede a cada visita — jogando fora
+    // exatamente a otimização que a rota pediu.
+    fetch('/api/display-settings')
       .then(res => res.ok ? res.json() : null)
       .then(json => {
         if (!cancelled && json?.settings) setMetricSettings(json.settings)
@@ -372,9 +376,14 @@ function MateriaisContent() {
           if (srch) params.set('search', srch)
           if (filter !== 'all') params.set('pricing', filter)
 
+          // A árvore de pastas é igual para todo mundo que não é admin, e a rota
+          // se declara cacheada por isso (`max-age=60` + `stale-while-revalidate`).
+          // O `no-store` que estava aqui anulava esse cabeçalho e obrigava uma ida
+          // à rede a cada navegação; `force` (o botão de atualizar) continua
+          // furando o cache, que é quando isso realmente importa.
           const allFoldersPromise = allFoldersCacheRef.current && !options?.force
             ? Promise.resolve({ folders: allFoldersCacheRef.current })
-            : fetch('/api/materiais/folders?all=true', { cache: 'no-store' }).then(res => res.ok ? res.json() : { folders: [] })
+            : fetch('/api/materiais/folders?all=true', options?.force ? { cache: 'reload' } : undefined).then(res => res.ok ? res.json() : { folders: [] })
           const packagesPromise = packagesCacheRef.current && !options?.force
             ? Promise.resolve(packagesCacheRef.current)
             : fetch('/api/materiais/packages', { cache: 'no-store' }).then(res => res.ok ? res.json() : { packages: [], purchasedPackageIds: [], userGroups: [] })
