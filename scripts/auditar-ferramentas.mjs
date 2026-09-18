@@ -105,7 +105,15 @@ const CRITERIOS = [
   },
 ]
 
-const NOTA_MINIMA = 70
+/**
+ * Nota mínima para aprovação.
+ *
+ * Começou em 70, o suficiente para separar o que estava claramente incompleto.
+ * Com o catálogo inteiro acima disso, a régua subiu para 85: nessa faixa, uma
+ * ferramenta só passa se tiver de fato `conduta` e `fundamento` — que eram as
+ * duas lacunas dominantes — e não apenas resumo e interpretação.
+ */
+const NOTA_MINIMA = 85
 
 /* ──────────────────────────── Recorte do texto ──────────────────────────── */
 
