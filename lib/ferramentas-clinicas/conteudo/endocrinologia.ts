@@ -209,6 +209,13 @@ const pesoIdeal: Ferramenta = {
       unidade: 'kg',
       nivel: 'neutro',
       detalhes,
+      conduta: [
+        'Escolha o descritor de peso pela **farmacocinética do agente, não por hábito**: fármacos hidrofílicos, que se distribuem pouco no tecido adiposo (aminoglicosídeos, betalactâmicos, bloqueadores neuromusculares não despolarizantes, heparina de baixo peso molecular profilática), dosam-se por **peso ideal ou ajustado**; lipofílicos (propofol, benzodiazepínicos, fentanil, succinilcolina) aproximam-se do **peso real**.',
+        'Use o **peso ajustado (peso ideal + 0,4 × excesso de peso)** quando o índice de massa corporal ultrapassar 30: ele reconhece que o tecido adiposo contribui com alguma massa magra e alguma perfusão, sem tratar a gordura como se fosse músculo. É o descritor de escolha para a maioria dos antimicrobianos em obesos.',
+        'Aplique o **peso ideal** para calcular o **volume corrente na ventilação mecânica** (6 mL/kg de peso predito): o pulmão não cresce com o ganho de peso, e usar o peso real gera volumes que causam lesão induzida pela ventilação. Esse é um dos usos com maior impacto direto em mortalidade.',
+        'Recorra ao **peso ideal também para estimativas nutricionais** em obesidade grave e para a fórmula de Cockcroft-Gault, em que o peso real infla o clearance calculado e leva à superdosagem — o erro mais perigoso da fórmula.',
+        'Lembre das limitações das fórmulas de peso ideal (Devine, Robinson, Hamwi): foram derivadas de populações específicas, são pouco precisas em baixas estaturas e não distinguem composição corporal. Em atleta muito musculoso, em idoso sarcopênico e em amputado, o julgamento clínico e, quando disponível, a bioimpedância ou a densitometria corrigem o que a fórmula erra.',
+      ],
       interpretacao: [
         '**Qual peso usar depende do que o fármaco faz no corpo.** Fármacos **hidrofílicos** (aminoglicosídeos, betalactâmicos, heparina de baixo peso molecular, relaxantes musculares despolarizantes) distribuem-se pouco no tecido adiposo: use peso ideal ou ajustado. Fármacos **lipofílicos** (propofol, benzodiazepínicos, fentanil, anestésicos inalatórios) distribuem-se no tecido adiposo: a dose de ataque se aproxima do peso real, mas a manutenção não.',
         'O **peso ajustado** com fator 0,4 nasceu da observação de que o tecido adiposo, embora pobre em água, não é totalmente inerte: cerca de 30 a 40% da massa gorda contribui para o volume de distribuição de fármacos hidrofílicos.',
@@ -273,6 +280,13 @@ const homa: Ferramenta = {
       nivel,
       rotuloNivel: homaIr > 2.7 ? 'Resistência à insulina provável' : 'Sensibilidade preservada',
       detalhes,
+      conduta: [
+        'Use o HOMA-IR como **ferramenta epidemiológica e de pesquisa**, e com cautela na decisão individual: não há ponto de corte universalmente validado, e os valores de referência variam por etnia, idade e método de dosagem da insulina. No Brasil, valores acima de 2,7 a 3,0 são frequentemente citados, mas devem ser lidos como sinal, não como diagnóstico.',
+        'Diante de resistência insulínica sugerida, a conduta é a mesma independentemente do número: **intervenção de estilo de vida**. Perda de 5 a 10% do peso, 150 minutos semanais de atividade aeróbica somada a exercício resistido, redução de açúcar de adição e de ultraprocessados, e sono adequado — a privação de sono e a apneia obstrutiva pioram a sensibilidade à insulina de forma mensurável.',
+        'Rastreie o que costuma acompanhar a resistência insulínica: **pré-diabetes e diabetes** (glicemia de jejum e hemoglobina glicada, ou teste oral de tolerância à glicose, que é mais sensível), **dislipidemia aterogênica** (triglicerídeos altos e HDL baixo), **hipertensão**, **doença hepática esteatótica** (calcule FIB-4) e **síndrome dos ovários policísticos** em mulheres.',
+        'Considere **metformina** quando houver pré-diabetes com alto risco de progressão — especialmente abaixo de 60 anos, com índice de massa corporal ≥ 35, ou com história de diabetes gestacional. Em obesidade associada, **agonistas de GLP-1 e tirzepatida** produzem perda de peso e melhora metabólica de magnitude muito superior.',
+        'Não peça HOMA-IR em quem **já tem diabetes estabelecido**: com a falência progressiva da célula beta, a insulina cai e o índice perde sentido interpretativo. Ele também é inválido em uso de insulina exógena e tem reprodutibilidade limitada, o que torna a comparação entre dois exames pouco confiável.',
+      ],
       interpretacao: [
         'O HOMA é um modelo matemático de equilíbrio: em jejum, a glicemia é determinada pela produção hepática de glicose, que por sua vez é suprimida pela insulina. Se é preciso muita insulina para manter a glicemia normal, há resistência; se a glicemia está alta apesar de insulina normal, há falência secretora.',
         '**O HOMA-IR não é exame de rastreio e não faz diagnóstico de nada.** Não existe indicação de dosá-lo para diagnosticar síndrome metabólica ou pré-diabetes — para isso servem a glicemia de jejum, a hemoglobina glicada e o teste de tolerância oral. Seu uso principal é em pesquisa e em situações específicas como a investigação de síndrome dos ovários policísticos e de lipodistrofias.',
@@ -341,6 +355,13 @@ const hba1c: Ferramenta = {
         { rotulo: 'Glicemia média estimada', valor: `${fmtInt(gm)} mg/dL` },
         { rotulo: 'Unidade IFCC', valor: `${fmtInt(ifcc)} mmol/mol`, nota: 'Padrão europeu. Conversão: IFCC = (NGSP − 2,15) × 10,929.' },
         { rotulo: 'Alvo geral em adultos', valor: '< 7,0%', nota: 'Individualize: alvos mais rigorosos (< 6,5%) em jovens com doença recente e sem comorbidade; mais frouxos (< 8,0%) em idosos frágeis, com hipoglicemias ou expectativa de vida limitada.' },
+      ],
+      conduta: [
+        'Use a glicemia média estimada para **traduzir a hemoglobina glicada em linguagem que o paciente compreende** e para confrontá-la com o automonitoramento. Uma glicada de 8% corresponde a uma média de cerca de 183 mg/dL — quando o paciente relata glicemias de 110, a discrepância aponta hipoglicemias noturnas não percebidas, coleta seletiva ou um problema na medida.',
+        'Individualize a **meta**: < 7% para a maioria dos adultos; **< 6,5%** em jovens, diagnóstico recente, longa expectativa de vida e sem doença cardiovascular; **< 8% ou menos rigorosa** em idosos frágeis, expectativa de vida limitada, hipoglicemia grave prévia, hipoglicemia assintomática ou complicações avançadas. Meta apertada demais em idoso causa mais dano do que a hiperglicemia que evita.',
+        'Prefira o **tempo no alvo (70–180 mg/dL, meta > 70%) e o tempo abaixo do alvo (< 4%)** quando houver monitorização contínua de glicose: a glicada não enxerga variabilidade nem hipoglicemia, e dois pacientes com a mesma glicada podem ter perfis de risco opostos.',
+        'Desconfie da glicada nas condições em que ela **não é válida**: anemia hemolítica, hemorragia recente, transfusão, eritropoetina e gestação a reduzem falsamente (menor sobrevida das hemácias); deficiência de ferro, anemia por deficiência de vitamina B12 e esplenectomia a elevam; hemoglobinopatias e doença renal crônica avançada a distorcem em ambas as direções. Nesses casos, use **frutosamina, albumina glicada ou monitorização contínua**.',
+        'Reavalie a glicada a cada **3 meses** enquanto a meta não for atingida e a cada 6 meses depois disso — o intervalo reflete a meia-vida da hemácia, e repetir antes de 3 meses não informa nada novo. Lembre que os últimos 30 dias contribuem com cerca de 50% do valor, o que explica a melhora rápida após intensificação do tratamento.',
       ],
       interpretacao: [
         'A hemoglobina glicada reflete a média das glicemias dos **últimos 2 a 3 meses**, ponderada: cerca de 50% do valor vem do último mês, 25% do penúltimo e 25% dos anteriores. É por isso que ela responde a uma mudança de tratamento em cerca de 6 a 8 semanas, e não antes.',
@@ -423,6 +444,13 @@ const cetoacidose: Ferramenta = {
       nivel,
       rotuloNivel: `pH ${fmt(ph, 2)} · HCO₃⁻ ${fmt(hco3, 1)} · ânion gap ${fmt(ag, 1)}`,
       detalhes,
+      conduta: [
+        'Execute a sequência na ordem correta: **volume primeiro, potássio segundo, insulina terceiro**. Comece com 15–20 mL/kg de cristaloide isotônico na primeira hora, e **não inicie insulina se o potássio estiver abaixo de 3,3 mEq/L** — a insulina empurra potássio para dentro da célula e pode precipitar arritmia fatal. Reponha potássio primeiro.',
+        'Mantenha **insulina regular em infusão contínua de 0,1 U/kg/h** (o bolus inicial é opcional e dispensável). Quando a glicemia chegar a 200–250 mg/dL, **acrescente glicose ao soro e reduza a insulina**, mas não a suspenda: o objetivo é fechar o **ânion gap e negativar a cetonemia**, não normalizar a glicose. Suspender a insulina cedo demais é o erro que perpetua a cetoacidose.',
+        'Reponha **potássio de forma antecipada**: o déficit corporal total é de 3 a 5 mEq/kg mesmo quando a caliemia inicial parece normal ou alta, porque a acidose e a falta de insulina deslocam potássio para fora da célula. Mantenha entre 4 e 5 mEq/L durante todo o tratamento, com dosagens a cada 2–4 h.',
+        '**Não reponha bicarbonato** de rotina: ele não melhora desfecho e pode piorar a acidose intracelular e a hipocalemia. Reserve-o para pH < 6,9, e ainda assim com cautela. Fosfato também só se repõe em déficit grave com repercussão (fraqueza muscular, disfunção respiratória, hemólise).',
+        'Procure o **fator precipitante** desde a admissão — infecção, omissão de insulina, infarto, pancreatite, gestação, uso de corticoide, cocaína, ou **inibidor de SGLT2**, que causa cetoacidose euglicêmica com glicemia normal ou pouco elevada e engana o diagnóstico. E antes da alta, faça a **transição correta**: aplique a insulina subcutânea basal **1 a 2 horas antes** de desligar a bomba, sob pena de recidiva imediata.',
+      ],
       interpretacao: [
         '**Critérios de cetoacidose:** glicemia acima de 250 mg/dL (pode ser normal na cetoacidose euglicêmica), pH abaixo de 7,30, bicarbonato abaixo de 18 mEq/L, cetonemia ou cetonúria e ânion gap elevado. **Critérios do estado hiperosmolar:** glicemia acima de 600, osmolalidade efetiva acima de 320, pH acima de 7,30, bicarbonato acima de 18 e cetose mínima.',
         '**A ordem do tratamento importa e é a mesma nos dois quadros:** (1) volume, (2) potássio, (3) insulina — nunca insulina antes de checar o potássio. (4) Acrescente glicose ao soro quando a glicemia chegar a 200 mg/dL na cetoacidose ou a 300 no estado hiperosmolar, **mantendo a insulina** até o gap fechar.',
@@ -518,6 +546,13 @@ const insulina: Ferramenta = {
       nivel: 'neutro',
       rotuloNivel: dm1 ? 'Diabetes tipo 1 — basal-bolus obrigatório' : 'Diabetes tipo 2',
       detalhes,
+      conduta: [
+        'Comece com **0,4 a 0,5 U/kg/dia** de dose total diária no diabetes tipo 1 (0,2 a 0,3 U/kg/dia em idosos, magros ou com função renal reduzida), dividida em **metade basal e metade em bolus** distribuídos nas refeições. Titule a partir daí — o cálculo inicial é ponto de partida, não prescrição definitiva.',
+        'Derive os parâmetros pelas regras clássicas e **ajuste-os pela resposta real**: **fator de sensibilidade (regra de 1800 ou 1500) ÷ dose total diária** para saber quanto 1 unidade abaixa a glicemia; **relação insulina-carboidrato (regra de 500) ÷ dose total diária** para saber quantos gramas de carboidrato 1 unidade cobre. Esses números mudam ao longo do dia, com exercício, com doença e com o ciclo menstrual.',
+        'Titule a **basal pela glicemia de jejum** e os **bolus pela glicemia pós-prandial de 2 horas**. Antes de aumentar a basal por hiperglicemia matinal, exclua **hipoglicemia noturna com hiperglicemia de rebote (efeito Somogyi)** e o **fenômeno do alvorecer** — as condutas são opostas, e aumentar a basal no primeiro caso agrava o problema.',
+        'Corrija a hipoglicemia pela **regra dos 15**: 15 g de carboidrato de absorção rápida, reavaliação em 15 minutos, repetição se necessário. Em hipoglicemia grave com rebaixamento, use **glucagon (intramuscular ou nasal)** e ensine um familiar a aplicá-lo — a prescrição do glucagon é frequentemente esquecida em quem mais precisa dela.',
+        'Revise a **técnica de aplicação** sempre que houver variabilidade inexplicada: rodízio de sítios (a **lipo-hipertrofia** por aplicação repetida no mesmo ponto altera de forma imprevisível a absorção e é causa comum de descontrole), agulha de 4 mm sem prega em adultos, e conservação adequada. Em uso hospitalar, abandone a prescrição exclusivamente por escala móvel: ela trata a hiperglicemia depois do fato e produz oscilação — o esquema basal-bolus-correção é superior.',
+      ],
       interpretacao: [
         '**As três regras da terapia intensiva:** a regra dos **1800** (ou 1500 para insulina regular) dá o fator de sensibilidade — quanto 1 unidade baixa a glicemia. A regra dos **500** dá a relação insulina-carboidrato — quantos gramas 1 unidade cobre. A divisão **50/50** entre basal e bolus é o ponto de partida da distribuição.',
         'Todos esses números são **estimativas iniciais**. O ajuste real vem do padrão glicêmico: glicemias de jejum altas ajustam a basal; glicemias pós-prandiais de 2 horas ajustam a relação insulina-carboidrato; glicemias pré-prandiais fora do alvo ajustam o fator de correção.',
@@ -706,6 +741,13 @@ const corticoides: Ferramenta = {
         { rotulo: 'Atividade mineralocorticoide', valor: origem.mineralo, nota: 'Determina retenção de sódio e água, hipocalemia e hipertensão.' },
         { rotulo: 'Duração de ação', valor: origem.duracao, nota: 'Determina o grau de supressão do eixo hipotálamo-hipófise-adrenal.' },
       ],
+      conduta: [
+        'Ao converter, compare as **três propriedades separadamente**: potência anti-inflamatória, potência mineralocorticoide e meia-vida biológica. Trocar prednisona por dexametasona na \'dose equivalente\' anti-inflamatória entrega um fármaco sem efeito mineralocorticoide e com duração muito maior — o que importa, por exemplo, na insuficiência adrenal, onde a fludrocortisona é indispensável.',
+        'Em **hepatopatia**, prefira **prednisolona a prednisona**: a prednisona é um pró-fármaco que depende de conversão hepática pela 11-beta-hidroxiesteroide desidrogenase. Esse detalhe é a razão de as diretrizes de hepatite alcoólica especificarem prednisolona.',
+        'Faça o **desmame** em qualquer paciente que tenha usado dose supressora por mais de 3 semanas: o eixo hipotálamo-hipófise-adrenal leva semanas a meses para se recuperar, e a retirada abrupta causa insuficiência adrenal aguda. Reduza mais devagar abaixo de 7,5 mg de prednisona por dia, que é a faixa próxima da produção fisiológica.',
+        'Aplique a **dose de estresse** em quem usa corticoide cronicamente e enfrenta cirurgia, trauma, infecção grave ou parto: hidrocortisona 50–100 mg intravenosa, com ajuste pela magnitude do estresse. A ausência dessa cobertura produz choque refratário a vasopressor, com diagnóstico frequentemente tardio.',
+        'Antecipe os efeitos adversos previsíveis e trate-os antes de aparecerem: **profilaxia de osteoporose** (cálcio, vitamina D e bisfosfonato conforme risco) a partir de 3 meses de uso, controle glicêmico (o corticoide eleva sobretudo a glicemia pós-prandial), monitorização de pressão e potássio, e **profilaxia de pneumocistose** com sulfametoxazol-trimetoprima quando a dose equivaler a 20 mg ou mais de prednisona por 4 semanas ou mais, especialmente com outro imunossupressor associado.',
+      ],
       interpretacao: [
         '**A equivalência é apenas anti-inflamatória.** Ela não transfere as outras propriedades: dexametasona equipotente a hidrocortisona não repõe mineralocorticoide, e por isso não serve para insuficiência adrenal primária sem fludrocortisona associada.',
         '**Escolha pelo perfil, não pela potência.** Hidrocortisona para reposição fisiológica (imita o cortisol, meia-vida curta, tem ação mineralocorticoide). Prednisona/prednisolona para anti-inflamatório crônico. Dexametasona quando se quer evitar retenção hídrica ou aproveitar a passagem pela barreira hematoencefálica (edema cerebral, maturação pulmonar fetal). Metilprednisolona em pulsoterapia.',
@@ -770,6 +812,13 @@ const tireoide: Ferramenta = {
           { rotulo: 'T4 total', valor: `${fmt(t4, 1)} µg/dL` },
           { rotulo: 'Captação de T3 em resina', valor: fmtPct(capt, 1), nota: 'Mede indiretamente os sítios livres da globulina ligadora de tiroxina.' },
         ],
+        conduta: [
+          'Use o índice de tiroxina livre quando o **T4 livre não estiver disponível** ou quando houver suspeita de alteração das proteínas transportadoras: gestação, uso de estrogênio, anticoncepcional, tamoxifeno, síndrome nefrótica, hepatopatia e doenças com alteração da globulina ligadora de tiroxina.',
+          'Índice **elevado** com TSH suprimido confirma tireotoxicose: investigue a causa (doença de Graves, bócio multinodular tóxico, tireoidite, excesso de levotiroxina) com anticorpo antirreceptor de TSH e, quando necessário, cintilografia — o tratamento difere completamente entre elas.',
+          'Índice **reduzido** com TSH elevado confirma hipotireoidismo primário e indica reposição. Com TSH baixo ou inapropriadamente normal, suspeite de **hipotireoidismo central** e investigue o eixo hipofisário por inteiro, incluindo cortisol: repor hormônio tireoidiano antes de corrigir insuficiência adrenal pode precipitar crise adrenal.',
+          'Em paciente **internado e grave**, desconfie da **síndrome do doente eutireoidiano**: T3 baixo, T4 variável e TSH normal ou baixo refletem adaptação à doença aguda, não doença tireoidiana. Não trate, e reavalie 6 semanas após a recuperação.',
+          'Quando possível, prefira a dosagem direta de **T4 livre por diálise de equilíbrio ou espectrometria de massa**, que é o método de referência e não sofre interferência das proteínas transportadoras — o índice é uma aproximação histórica, útil onde esse método não existe.',
+        ],
         interpretacao: [
           'O índice de tiroxina livre existe para corrigir o T4 total pelas variações da proteína carreadora. Gestação, estrogênio e hepatite elevam a globulina ligadora de tiroxina, aumentando o T4 total sem que o hormônio livre mude; síndrome nefrótica, androgênios e desnutrição fazem o contrário.',
           'Hoje o T4 livre é medido diretamente pela maioria dos laboratórios e o índice caiu em desuso. Ele permanece útil onde a dosagem direta é indisponível ou pouco confiável, e é conceitualmente instrutivo.',
@@ -791,6 +840,13 @@ const tireoide: Ferramenta = {
           { rotulo: 'Liotironina (T3)', valor: `${fmtLivre(t3, 1)} µg/dia`, nota: 'Relação aproximada de 4:1. A liotironina tem meia-vida curta (cerca de 1 dia contra 7 do T4) e produz picos séricos — exige fracionamento e raramente é usada isolada.' },
           { rotulo: 'Tireoide dessecada', valor: `${fmtLivre(dessecada, 0)} mg`, nota: '1 grão = 60 a 65 mg ≈ 100 µg de levotiroxina. Contém T4 e T3 numa proporção não fisiológica para humanos (cerca de 4:1, enquanto a tireoide humana secreta 14:1).' },
           { rotulo: 'Levotiroxina endovenosa', valor: `${fmtInt(levo * 0.75)} µg`, nota: 'A dose endovenosa corresponde a 70 a 80% da oral, pela absorção intestinal incompleta do comprimido.' },
+        ],
+        conduta: [
+          'Ao converter entre apresentações, **redosar o TSH em 6 a 8 semanas é obrigatório**: a equivalência é uma estimativa de ponto de partida, e a bioequivalência entre marcas e entre formulações (comprimido, cápsula mole, solução) não é exata.',
+          'Evite a **combinação T4 com T3 e a tireoide dessecada** fora de protocolo: a maioria dos ensaios não mostrou superioridade sobre a levotiroxina isolada, e essas preparações produzem picos suprafisiológicos de T3, com risco de fibrilação atrial e perda de massa óssea.',
+          'Se o paciente insistir na troca por sintomas persistentes com TSH normal, **procure primeiro outras causas** — anemia, deficiência de ferro ou de vitamina B12, apneia do sono, depressão, doença celíaca. Atribuir tudo à tireoide mantém o paciente sem o diagnóstico que de fato explica o quadro.',
+          'Ao trocar de marca ou de formulação, **mantenha o paciente na mesma apresentação** depois de estabilizado: a troca repetida entre fabricantes é fonte reconhecida de oscilação do TSH.',
+          'Lembre que a levotiroxina tem **janela terapêutica estreita e meia-vida de cerca de 7 dias**: uma dose esquecida pode ser reposta no dia seguinte sem prejuízo, mas a supressão crônica do TSH aumenta o risco de fibrilação atrial e de osteoporose, sobretudo em idosos e pós-menopausa.',
         ],
         interpretacao: [
           '**Levotiroxina isolada é o tratamento de escolha** do hipotireoidismo. A conversão periférica de T4 em T3 pela deiodinase permite que o corpo regule a quantidade de hormônio ativo em cada tecido — vantagem que preparações com T3 não oferecem.',
@@ -814,6 +870,13 @@ const tireoide: Ferramenta = {
         { rotulo: 'Dose plena estimada', valor: `${fmtInt(dose)} µg/dia` },
         { rotulo: 'Dose inicial recomendada', valor: `${fmtInt(inicial)} µg/dia`, nota: perfil === 'idoso' ? 'Em idosos e coronariopatas, comece com 12,5 a 25 µg/dia e aumente a cada 4 a 6 semanas — iniciar com dose plena pode precipitar angina, arritmia e infarto.' : perfil === 'gestante' ? 'Na gestação, a necessidade aumenta 30 a 50% já no primeiro trimestre; quem já usa levotiroxina deve aumentar a dose assim que a gestação for confirmada (uma estratégia prática é acrescentar 2 doses por semana).' : 'Adulto jovem sem cardiopatia pode iniciar com a dose plena.' },
         { rotulo: 'Intervalo de reavaliação do TSH', valor: '6 a 8 semanas após qualquer ajuste', nota: 'Antes disso, o TSH ainda não refletiu a mudança — a meia-vida da levotiroxina é de 7 dias e o equilíbrio leva 5 meias-vidas.' },
+      ],
+      conduta: [
+        'Prescreva a dose cheia (**cerca de 1,6 µg/kg/dia**) em adulto jovem e hígido, mas comece com **12,5 a 25 µg/dia** em idosos e coronariopatas, titulando devagar: a reposição rápida eleva o consumo miocárdico de oxigênio e pode precipitar angina, arritmia ou infarto.',
+        'Ajuste pelo **TSH e espere 6 a 8 semanas** entre a mudança de dose e a nova dosagem — é o tempo que o eixo leva para reequilibrar. Redosar antes disso produz ajustes sucessivos sobre ruído.',
+        'Oriente a tomada **em jejum, 30 a 60 minutos antes do café** (ou ao deitar, 3 h após a última refeição), longe de cálcio, ferro, inibidor de bomba de prótons, colestiramina e soja. Absorção errática por interação é a causa mais comum de TSH alterado apesar de dose aparentemente correta.',
+        'Na **gestação**, aumente a dose em 25 a 30% assim que a gravidez for confirmada e use faixas de TSH por trimestre: a necessidade sobe já nas primeiras semanas, e o hipotireoidismo materno afeta o desenvolvimento neurológico fetal.',
+        'Antes de concluir por \'resistência à levotiroxina\', investigue adesão, interação medicamentosa e má absorção — doença celíaca, gastrite atrófica, infecção por *Helicobacter pylori*, cirurgia bariátrica — e interferência laboratorial por biotina ou anticorpos heterófilos.',
       ],
       interpretacao: [
         '**Alvo de TSH:** faixa de referência do laboratório na maioria dos casos; 0,5 a 2,5 mU/L na gestação (primeiro trimestre) e em quem planeja engravidar; alvo mais frouxo (4 a 6 mU/L) em idosos acima de 70 a 80 anos, em quem sobretratar aumenta risco de fibrilação atrial e fratura.',

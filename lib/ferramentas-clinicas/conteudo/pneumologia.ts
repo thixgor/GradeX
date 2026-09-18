@@ -62,6 +62,13 @@ const pesoPreditoFerramenta: Ferramenta = {
       unidade: 'kg',
       nivel: 'neutro',
       detalhes,
+      conduta: [
+        'Calcule o peso predito **pela altura e pelo sexo, nunca pelo peso real**: o pulmão não cresce com a obesidade. Prescrever 6 mL/kg sobre o peso real de um paciente de 120 kg entrega volumes que causam lesão induzida pela ventilação — esse é um dos erros mais consequentes da beira do leito.',
+        'Meça a **altura de verdade** (fita métrica, ou estimativa pela distância joelho-calcanhar ou pela envergadura em paciente acamado). Um erro de 10 cm na altura muda o volume corrente prescrito em cerca de 50 mL, o que é clinicamente relevante em pulmão inflamado.',
+        'Ajuste o volume corrente para **6 mL/kg de peso predito** em síndrome do desconforto respiratório agudo, com faixa aceitável de 4 a 8 mL/kg, e mantenha **pressão de platô ≤ 30 cmH₂O** e **driving pressure ≤ 15 cmH₂O**. A ventilação protetora reduziu mortalidade em termos absolutos de cerca de 9% no ensaio ARMA — poucos ajustes de parâmetro têm esse efeito.',
+        'Aplique a ventilação protetora **também em pulmão sadio**, em ventilação intraoperatória e em pacientes sem lesão pulmonar: volumes altos causam lesão mesmo em pulmão previamente normal, e a estratégia protetora reduz complicações pulmonares pós-operatórias.',
+        'Se o paciente apresentar **taquipneia ou acidose respiratória** com o volume protetor, a resposta é aumentar a frequência (até cerca de 35 irpm, vigiando auto-PEEP) e aceitar **hipercapnia permissiva** com pH até cerca de 7,20 — não é aumentar o volume corrente. Em hipoxemia refratária, escale para PEEP otimizada, bloqueio neuromuscular e **posição prona** por 16 h ou mais, que também reduz mortalidade.',
+      ],
       interpretacao: [
         'O pulmão não engorda. O volume de gás que ele comporta depende da altura, do sexo e da idade — não da massa gorda. Ventilar pelo peso real é o erro mais consequente da ventilação mecânica: entrega volumes muito acima do que o parênquima suporta em obesos, e volumes insuficientes em caquéticos.',
         'O estudo ARMA (ARDSNet, 2000) comparou 6 e 12 mL/kg de peso predito na SDRA e foi interrompido precocemente por benefício: mortalidade de 31% contra 39,8%. É um dos resultados mais robustos da medicina intensiva, e a fórmula usada aqui é exatamente a do protocolo.',
@@ -144,6 +151,13 @@ const mecanicaVentilatoria: Ferramenta = {
       nivel,
       rotuloNivel: dp > 15 ? 'Acima do limite de segurança' : dp > 13 ? 'Limítrofe' : 'Dentro do alvo',
       detalhes,
+      conduta: [
+        'Mantenha a **driving pressure (pressão de platô menos PEEP) ≤ 15 cmH₂O**: entre todas as variáveis ventilatórias, é a que melhor se correlaciona com mortalidade, porque normaliza o volume corrente pelo tamanho do pulmão efetivamente aerado — o \'baby lung\' — e não pelo tamanho do corpo.',
+        'Separe **complacência estática (volume ÷ driving pressure)** de **resistência (pressão de pico menos platô, dividida pelo fluxo)**: complacência baixa aponta problema do parênquima ou da caixa torácica (síndrome do desconforto respiratório agudo, edema, atelectasia, pneumotórax, ascite, obesidade); resistência alta aponta via aérea (broncoespasmo, secreção, tubo dobrado ou obstruído).',
+        'Diante de **pressão de pico alta com platô normal**, o problema é resistivo: aspire secreção, verifique o tubo, trate broncoespasmo. Com **pico e platô ambos altos**, o problema é de complacência: procure pneumotórax (que é emergência), atelectasia, derrame, sobredistensão por PEEP excessiva, hipertensão abdominal ou assincronia.',
+        'Titule a **PEEP pela melhor complacência ou pela melhor driving pressure**, e não apenas pela oxigenação: subir a PEEP até melhorar a saturação pode sobredistender áreas sadias e piorar o desfecho. Reavalie a mecânica a cada mudança de parâmetro e após cada manobra.',
+        'Vigie a **pressão transpulmonar** em obesos, gestantes e pacientes com hipertensão intra-abdominal, em que boa parte da pressão de platô é consumida pela parede torácica e não distende o pulmão. Quando a decisão for difícil, o **balão esofágico** permite separar os dois componentes e evita tanto a sobredistensão quanto o colapso por PEEP insuficiente.',
+      ],
       interpretacao: [
         'A driving pressure é o volume corrente normalizado pela complacência — ou seja, pelo tamanho do pulmão que ainda está aberto. É por isso que ela prediz mortalidade melhor do que o volume corrente e melhor do que a pressão de platô isoladamente: dois pacientes com 6 mL/kg podem ter driving pressures de 10 e de 22 conforme quanto pulmão lhes resta.',
         'A análise de Amato e colaboradores (2015), reunindo nove ensaios randomizados, mostrou que as intervenções ventilatórias só reduziram mortalidade quando reduziram a driving pressure. Aumentar a PEEP sem que a driving pressure caia não beneficia — pode piorar.',
@@ -216,6 +230,13 @@ const ventilacaoMinuto: Ferramenta = {
       nivel: ve > 15 ? 'alerta' : ve < 4 ? 'alerta' : 'ok',
       rotuloNivel: ve > 15 ? 'Elevada — alta demanda ventilatória' : ve < 4 ? 'Reduzida' : 'Dentro da faixa usual (5 a 8 L/min)',
       detalhes,
+      conduta: [
+        'Lembre que só a **ventilação alveolar** remove gás carbônico: a ventilação-minuto inclui o espaço morto, que não participa da troca. Isso explica por que aumentar a frequência com volume corrente baixo pode elevar o volume-minuto e **piorar** a eliminação de gás carbônico — cada ciclo passa a ter proporcionalmente mais espaço morto.',
+        'Para corrigir **hipercapnia**, prefira aumentar a frequência quando o volume corrente já estiver no limite protetor, vigiando **auto-PEEP** (verifique o fluxo expiratório no ventilador e faça pausa expiratória). Se houver aprisionamento aéreo, aumentar a frequência piora tudo: reduza a frequência e prolongue o tempo expiratório.',
+        'Investigue **aumento do espaço morto** quando a ventilação-minuto necessária subir sem mudança do quadro clínico: embolia pulmonar, hipovolemia, baixo débito e sobredistensão por PEEP excessiva. A **fração de espaço morto** e a relação entre gás carbônico expirado e arterial são marcadores prognósticos na síndrome do desconforto respiratório agudo.',
+        'Reconheça as demandas **metabólicas** que elevam a necessidade ventilatória: febre (cerca de 10% por grau), sepse, agitação, dor, tremor, convulsão, hipertireoidismo, excesso de carboidrato na nutrição e acidose metabólica. Tratar a febre e sedar adequadamente pode resolver uma \'insuficiência ventilatória\' sem tocar no ventilador.',
+        'No **desmame**, uma ventilação-minuto acima de 10 L/min para manter gás carbônico normal indica reserva limitada e prediz falha. Combine com o **índice de respiração rápida e superficial (RSBI)** e com a avaliação de força muscular e de sobrecarga cardíaca — o teste de respiração espontânea revela a soma desses fatores melhor que qualquer índice isolado.',
+      ],
       interpretacao: [
         'A PaCO₂ é inversamente proporcional à ventilação **alveolar**, não à ventilação-minuto. Isso explica um fenômeno cotidiano: o paciente taquipneico com volume corrente pequeno pode ter ventilação-minuto alta e ainda assim reter CO₂, porque quase todo o ar movimentado fica no espaço morto.',
         'Necessidade de ventilação-minuto acima de 15 L/min para manter a PaCO₂ é sinal de espaço morto grande (SDRA grave, embolia pulmonar, DPOC) ou de produção elevada de CO₂ (febre, sepse, tireotoxicose, excesso de carboidrato na dieta) — e é um dos preditores de falha de desmame.',
@@ -274,6 +295,13 @@ const indiceOxigenacao: Ferramenta = {
       nivel,
       rotuloNivel: valor >= 40 ? 'Muito grave' : valor >= 16 ? 'Grave' : valor >= 8 ? 'Moderado' : 'Leve',
       detalhes,
+      conduta: [
+        'Use o **índice de oxigenação (IO = FiO₂ × pressão média de vias aéreas × 100 ÷ PaO₂)** em vez da relação PaO₂/FiO₂ quando quiser levar em conta o **custo ventilatório** da oxigenação: dois pacientes com a mesma relação podem ter gravidades muito diferentes se um precisa de pressão média o dobro do outro.',
+        'Em pediatria e neonatologia, **IO ≥ 16** caracteriza lesão pulmonar moderada e **IO ≥ 25 a 40** indica gravidade extrema, com limiares tradicionais para **óxido nítrico inalado** e para **oxigenação por membrana extracorpórea (ECMO)**. Esses cortes orientam o momento de acionar o centro de referência, e o acionamento tardio é o principal determinante de desfecho ruim.',
+        'Empregue o **índice de saturação (ISO), que substitui a PaO₂ pela saturação de pulso**, quando não houver gasometria arterial — ele é validado em pediatria e permite estratificar à beira do leito, especialmente em transporte e em serviços sem acesso arterial.',
+        'Antes de escalar terapias de resgate, **otimize o básico**: titule a PEEP, verifique recrutabilidade, faça **posição prona** (16 h ou mais por sessão), considere bloqueio neuromuscular nas primeiras 48 h da forma grave, e trate a causa. Boa parte dos índices altos melhora com essas medidas.',
+        'Acompanhe o índice **em série**: a tendência ao longo de 6 a 12 horas discrimina melhor que qualquer valor isolado, e um índice que não melhora após prona e otimização de PEEP é o sinal para contatar o centro de ECMO — idealmente antes de o paciente se tornar intransportável.',
+      ],
       interpretacao: [
         'O índice de oxigenação responde a uma pergunta que a relação PaO₂/FiO₂ ignora: **quanto custou** essa oxigenação. Dois pacientes com a mesma relação P/F de 150 são muito diferentes se um está com pressão média de 12 e o outro com 30 cmH₂O — o segundo já esgotou a reserva de suporte.',
         'É o parâmetro de referência da pediatria e da neonatologia. A definição pediátrica de SDRA (PALICC) usa o índice de oxigenação em vez da relação P/F: leve 4 a 8, moderada 8 a 16, grave acima de 16.',
@@ -324,6 +352,13 @@ const curb65: Ferramenta = {
       nivel,
       rotuloNivel: total <= 1 ? 'Baixo risco' : total === 2 ? 'Risco intermediário' : 'Alto risco',
       detalhes: [{ rotulo: 'Mortalidade em 30 dias', valor: mortalidade, nota: 'Coorte de derivação de Lim et al. (2003).' }],
+      conduta: [
+        '**CURB-65 de 0 a 1 (mortalidade < 3%)**: tratamento ambulatorial com antibiótico por via oral, desde que haja saturação adequada, suporte social e ausência de descompensação de comorbidade. Oriente retorno em 48–72 h ou antes, se houver piora.',
+        '**CURB-65 de 2 (mortalidade cerca de 9%)**: considere internação ou observação hospitalar breve. É a faixa em que o julgamento clínico, a comorbidade e as condições sociais pesam mais que o escore.',
+        '**CURB-65 de 3 a 5 (mortalidade 15–40%)**: interne, e avalie **unidade de terapia intensiva** — use os critérios da IDSA/ATS (choque com necessidade de vasopressor ou ventilação mecânica como critérios maiores; três ou mais critérios menores) para essa decisão, porque o CURB-65 prediz mortalidade, não necessidade de UTI.',
+        'Administre o **antibiótico na primeira hora em sepse** e nas primeiras horas nos demais casos, guiado pela gravidade e pelos fatores de risco para germes resistentes. Colha hemoculturas e escarro nos casos graves, e considere antígenos urinários para pneumococo e *Legionella*. Reavalie em 48–72 h para **descalonar** e definir duração: **5 dias bastam** na maioria dos casos com boa resposta clínica.',
+        'Não se prenda ao escore quando o paciente tem **hipoxemia, derrame parapneumônico, descompensação de comorbidade ou impossibilidade de tratamento domiciliar** — todos indicam internação independentemente da pontuação. O CURB-65 também não contempla saturação de oxigênio, que é um dos dados mais decisivos à beira do leito; o **PSI/PORT** é mais completo, porém mais trabalhoso.',
+      ],
       interpretacao: [
         total <= 1
           ? '**Tratamento ambulatorial** é apropriado na maioria dos casos, desde que haja saturação adequada em ar ambiente, capacidade de ingestão oral, ausência de descompensação de comorbidade e suporte social para retorno.'
@@ -1027,6 +1062,13 @@ const rsbi: Ferramenta = {
         { rotulo: 'Ventilação-minuto espontânea', valor: `${fmt(ve, 2)} L/min`, nota: 'Acima de 15 L/min é preditor independente de falha.' },
         { rotulo: 'Valor preditivo', valor: 'VPP 0,78 | VPN 0,95', nota: 'Na coorte original: RSBI > 105 previu falha com boa acurácia; RSBI ≤ 105 previu sucesso com valor preditivo negativo alto.' },
       ],
+      conduta: [
+        '**RSBI < 105 (frequência respiratória ÷ volume corrente em litros)** prediz sucesso no desmame com boa sensibilidade e apoia a realização do **teste de respiração espontânea**. Ele é um gatilho para testar, não uma autorização para extubar.',
+        '**RSBI > 105** sugere padrão de respiração rápida e superficial, típico de fadiga ou de carga excessiva. Procure a causa antes de simplesmente adiar: sobrecarga hídrica, disfunção cardíaca desmascarada pela retirada da pressão positiva, broncoespasmo, dor, ansiedade, anemia, desnutrição, fraqueza adquirida na UTI, hipotireoidismo e sedação residual.',
+        'Meça o RSBI da forma correta: em **respiração espontânea sem pressão de suporte e sem PEEP**, por cerca de 1 minuto. Medido com pressão de suporte, o valor cai artificialmente e produz falsos positivos — é a causa mais comum de extubação prematura guiada pelo índice.',
+        'A decisão de extubar depende de **quatro perguntas além do índice**: a causa da insuficiência respiratória foi resolvida? A oxigenação é adequada com parâmetros baixos? O paciente protege a via aérea (nível de consciência, tosse eficaz, secreção manejável)? A via aérea está patente (teste de vazamento do balonete em pacientes de risco para estridor)?',
+        'Em pacientes de alto risco de falha (idosos, hipercápnicos, cardiopatas, obesos), aplique **ventilação não invasiva ou cânula de alto fluxo profiláticas imediatamente após a extubação**: essa medida reduz reintubação, e a reintubação é fator independente de mortalidade. Considere também extubação direta para não invasiva no retentor crônico de gás carbônico.',
+      ],
       interpretacao: [
         'Respiração rápida e superficial é o padrão universal de fadiga da musculatura respiratória: quando o trabalho por respiração fica alto demais, o sistema compensa reduzindo o volume e aumentando a frequência. Dividir uma pela outra transforma esse padrão num número.',
         'O RSBI foi validado como parte de uma avaliação, não como decisor isolado. O teste de respiração espontânea de 30 a 120 minutos permanece o padrão-ouro para indicar extubação, e um paciente pode falhar no RSBI e passar no teste.',
@@ -1102,6 +1144,13 @@ const light: Ferramenta = {
       nivel: exsudato ? 'alerta' : 'ok',
       rotuloNivel: exsudato ? `${[c1, c2, c3].filter(Boolean).length} de 3 critérios positivos` : 'Nenhum critério positivo',
       detalhes,
+      conduta: [
+        '**Exsudato** (qualquer um dos três critérios de Light preenchido) exige investigação etiológica: complete com citologia diferencial, glicose, pH, desidrogenase láctica, adenosina deaminase (ADA), cultura, pesquisa de bacilo álcool-ácido resistente e citologia oncótica. As causas mais frequentes são infecção, neoplasia, tuberculose e embolia pulmonar.',
+        '**Transudato**: a conduta é tratar a doença de base — insuficiência cardíaca, cirrose, síndrome nefrótica, hipoalbuminemia — e não investigar o líquido exaustivamente. Toracocentese de repetição em transudato de insuficiência cardíaca costuma significar que o tratamento da causa está insuficiente.',
+        'Corrija a **armadilha do diurético**: os critérios de Light classificam erroneamente como exsudato cerca de 25% dos transudatos em pacientes diureticados, porque a retirada de água concentra proteínas e desidrogenase láctica. Nesse cenário, calcule o **gradiente de albumina soro-líquido**: valor **> 1,2 g/dL** indica transudato, independentemente dos critérios de Light.',
+        'Diante de **derrame parapneumônico**, o pH decide: **pH < 7,20, glicose < 40 mg/dL, desidrogenase láctica muito elevada, loculação ou pus** caracterizam derrame complicado ou empiema e indicam **drenagem torácica**, não apenas antibiótico. Colha o pH em seringa de gasometria, em anaerobiose, e processe rapidamente — o atraso falseia o resultado.',
+        'Investigue com prioridade os achados que mudam o diagnóstico: **ADA elevada** (acima de 40 U/L) com predomínio linfocítico sugere tuberculose pleural em área endêmica; **amilase alta** aponta pancreatite ou rotura esofágica; **quilotórax** (triglicerídeos > 110 mg/dL) aponta lesão do ducto torácico ou linfoma; e **eosinofilia pleural** sugere pneumotórax prévio, hemotórax, fármacos ou parasitose.',
+      ],
       interpretacao: [
         exsudato
           ? '**Exsudato**: a pleura está doente. Investigue infecção (parapneumônico, empiema, tuberculose), neoplasia, embolia pulmonar, doença do tecido conjuntivo, pancreatite, quilotórax e causas medicamentosas. O painel mínimo do líquido inclui citologia total e diferencial, citologia oncótica, glicose, pH, adenosina deaminase, coloração de Gram e cultura.'

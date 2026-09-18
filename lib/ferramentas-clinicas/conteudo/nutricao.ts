@@ -90,6 +90,13 @@ const gastoEnergetico: Ferramenta = {
       nivel: 'neutro',
       rotuloNivel: `${fmtInt(principal / peso)} kcal/kg/dia`,
       detalhes,
+      conduta: [
+        'Use a estimativa como **ponto de partida**, e o padrão-ouro quando disponível é a **calorimetria indireta** — as equações preditivas erram em 20 a 30% no doente crítico, para mais ou para menos, e nenhuma delas é confiável individualmente.',
+        'Em doente crítico, aplique a **regra prática de 25 a 30 kcal/kg/dia** (peso ajustado em obesos) e adote **nutrição hipocalórica permissiva (70% da meta) na primeira semana**, avançando depois: o ensaio de alimentação plena precoce não mostrou benefício, e a superalimentação causa hiperglicemia, esteatose, retenção de gás carbônico e infecção.',
+        'Prefira a **Penn State** em pacientes ventilados (ela incorpora ventilação-minuto e temperatura, que capturam o hipermetabolismo real) e a **Mifflin-St Jeor** em ambulatório, onde tem melhor desempenho que Harris-Benedict. Em obesos ventilados acima de 60 anos, use a variante Penn State modificada.',
+        'Some os **fatores de atividade e de estresse** com parcimônia: os multiplicadores clássicos foram derivados antes da sedação, da ventilação protetora e do controle de temperatura modernos, e hoje superestimam sistematicamente. Sedação profunda e bloqueio neuromuscular **reduzem** o gasto energético.',
+        'Monitore a adequação por desfechos concretos e não pelo cálculo: **peso, balanço nitrogenado, glicemia, triglicerídeos, fosfato, função hepática e força muscular**. E lembre de descontar as **calorias não nutricionais** — propofol (1,1 kcal/mL), soluções de glicose e citrato na terapia de substituição renal contínua —, que somam centenas de calorias por dia e são sistematicamente ignoradas.',
+      ],
       interpretacao: [
         '**A calorimetria indireta é o padrão-ouro** e é o método recomendado pelas diretrizes de nutrição em terapia intensiva quando disponível. Todas as equações preditivas têm erro considerável no paciente individual: acertam dentro de 10% do valor medido em apenas metade a dois terços dos casos.',
         'Em obesidade, calcular sobre o **peso real** superestima e sobre o **peso ideal** subestima. As alternativas são usar peso ajustado ou adotar a estratégia de **nutrição hipocalórica hiperproteica**: 11 a 14 kcal/kg de peso real (ou 22 a 25 kcal/kg de peso ideal) com 2,0 a 2,5 g/kg de peso ideal de proteína.',
@@ -183,6 +190,13 @@ const proteina: Ferramenta = {
         { rotulo: 'Carboidrato (60% do restante)', valor: `${fmtInt(kcalCarbo / 4)} g = ${fmtInt(kcalCarbo)} kcal`, nota: '1 g = 4 kcal. Limite a oferta a 4 a 5 mg/kg/min no paciente crítico — acima disso predomina a lipogênese, com esteatose e produção excessiva de CO₂.' },
         { rotulo: 'Lipídio (40% do restante)', valor: `${fmtInt(kcalLipideo / 9)} g = ${fmtInt(kcalLipideo)} kcal`, nota: '1 g = 9 kcal. Limite de 1 a 1,5 g/kg/dia em nutrição parenteral.' },
         { rotulo: 'Relação caloria não proteica / nitrogênio', valor: `${fmtInt((kcalCarbo + kcalLipideo) / (proteinaMedia / 6.25))}:1`, nota: 'Referência 100:1 a 150:1 no paciente crítico; 150:1 a 200:1 em estresse leve. Relação baixa demais significa proteína usada como fonte de energia, e não para síntese.' },
+      ],
+      conduta: [
+        'Prescreva **1,2 a 2,0 g/kg/dia de proteína no doente crítico** (peso ajustado em obesos, podendo chegar a 2,0–2,5 g/kg de peso ideal em obesidade grave com nutrição hipocalórica). A proteína é o macronutriente com maior impacto em preservação de massa magra, e é justamente o mais subofertado na prática.',
+        'Aumente para **1,5 a 2,0 g/kg/dia** em grande queimado, politrauma, sepse, feridas extensas e perdas por drenos, e mantenha **1,2 a 1,5 g/kg/dia** no idoso hospitalizado para combater a sarcopenia. Não reduza proteína em doença renal aguda apenas para adiar a diálise — a restrição custa massa magra sem alterar o desfecho renal.',
+        'Distribua a proteína ao longo do dia, com **25 a 30 g por refeição**, e associe **exercício resistido** sempre que possível: a síntese proteica muscular responde ao estímulo mecânico somado à disponibilidade de aminoácidos, e a oferta isolada, sem mobilização, produz muito menos ganho funcional.',
+        'Ajuste em situações específicas: em **diálise**, aumente (1,2–1,5 g/kg/dia) por causa das perdas dialíticas; em **doença renal crônica sem diálise**, restrinja moderadamente (0,6–0,8 g/kg/dia) com acompanhamento nutricional; em **encefalopatia hepática**, **não restrinja** proteína — essa prática está abandonada e agrava a desnutrição. Use aminoácidos de cadeia ramificada se houver intolerância.',
+        'Distribua o restante das calorias entre carboidrato (45–60%, com limite de oferta de glicose em torno de 4–5 mg/kg/min para não gerar lipogênese e retenção de gás carbônico) e lipídio (25–35%), e monitore **triglicerídeos** em nutrição parenteral e em uso prolongado de propofol.',
       ],
       interpretacao: [
         meta.nota,
@@ -301,7 +315,7 @@ const hidrica: Ferramenta = {
     'Acréscimo de 10 a 12% por grau de temperatura acima de 37 °C',
   ],
   fundamento:
-    'A necessidade de água acompanha o gasto energético porque a maior parte da perda é obrigatória: água necessária para excretar a carga de solutos pelo rim (aproximadamente 500 a 800 mL/dia no mínimo), perdas insensíveis pela pele e pela respiração, e perdas fecais. Daí a equivalência aproximada entre 1 mL de água por quilocaloria metabolizada — uma relação notavelmente estável entre espécies.',
+    'A necessidade de água acompanha o gasto energético porque a maior parte da perda é obrigatória: água necessária para excretar a carga de solutos pelo rim (aproximadamente 500 a 800 mL/dia no mínimo), perdas insensíveis pela pele e pela respiração, e perdas fecais. Daí a equivalência aproximada entre 1 mL de água por quilocaloria metabolizada — uma relação notavelmente estável entre espécies. A regra de Holliday-Segar, de 1957, nasceu exatamente dessa observação: os autores derivaram os degraus de 100, 50 e 20 mL/kg a partir do gasto energético por faixa de peso, e não de medidas diretas de perda de água, o que explica por que a fórmula acompanha a superfície corporal melhor do que a massa.',
   armadilhas: [
     'Idosos precisam de menos água por quilo, mas têm maior risco de desidratação por menor reserva e menor sensação de sede.',
     'Sobrecarga hídrica é tão prejudicial quanto a desidratação em cardiopatas, nefropatas e hepatopatas.',
@@ -361,6 +375,13 @@ const enteral: Ferramenta = {
         { rotulo: 'Água contida na dieta', valor: `${fmtInt(aguaDieta)} mL/dia`, nota: 'Conte no balanço hídrico. Fórmulas concentradas têm proporcionalmente menos água.' },
         { rotulo: 'Progressão sugerida', valor: '20 a 25 mL/h inicial, aumentando 20 a 25 mL/h a cada 8 a 12 h até a meta', nota: 'Atingir a meta em 48 a 72 h é adequado na maioria dos casos. Em risco de síndrome de realimentação, progrida em 5 a 7 dias.' },
         { rotulo: 'Lavagem da sonda', valor: '20 a 30 mL de água antes e após cada medicação e a cada 4 a 6 h em infusão contínua', nota: 'Previne obstrução, que é a complicação mecânica mais comum.' },
+      ],
+      conduta: [
+        'Inicie a nutrição enteral **precocemente, em 24 a 48 horas** da admissão em terapia intensiva, desde que o paciente esteja hemodinamicamente estável. A via enteral preserva a barreira intestinal, reduz translocação bacteriana e infecção, e é superior à parenteral em desfecho.',
+        'Comece com **10 a 20 mL/h** e avance a cada 8 a 12 h conforme tolerância, até a meta. Adiar a progressão por resíduo gástrico isolado não se justifica: **a medida rotineira do resíduo gástrico foi abandonada** nas diretrizes atuais, pois não previne aspiração e leva a interrupções desnecessárias da dieta.',
+        'Reduza o risco de **broncoaspiração** com medidas que funcionam: cabeceira elevada a 30–45°, higiene oral com clorexidina, avaliação da deglutição, e **posicionamento pós-pilórico** em paciente com gastroparesia, vômitos recorrentes ou aspiração prévia. Procinético (metoclopramida, eritromicina) ajuda na intolerância gástrica.',
+        'Suspeite de **isquemia mesentérica** — e suspenda a dieta — diante de distensão abdominal progressiva, dor desproporcional, acidose lática e piora sob doses crescentes de vasopressor. Nutrição enteral em paciente com vasopressor em escalada e sinais de hipoperfusão esplâncnica é a situação clássica de necrose intestinal associada à dieta.',
+        'Antecipe a **síndrome de realimentação** em desnutridos graves: reponha **tiamina antes de qualquer aporte calórico**, comece com 25% da meta, monitore **fósforo, potássio e magnésio** diariamente nos primeiros dias e reponha antes que caiam. Mantenha as sondas permeáveis com lavagem regular e nunca administre comprimidos triturados de liberação prolongada por sonda.',
       ],
       interpretacao: [
         '**A nutrição enteral é preferível à parenteral** sempre que o trato gastrointestinal estiver funcionante — mantém o trofismo da mucosa, preserva a barreira intestinal, tem menos complicações infecciosas e custa muito menos.',
@@ -661,6 +682,13 @@ const realimentacao: Ferramenta = {
         { rotulo: 'Monitorização de eletrólitos', valor: 'Fósforo, potássio e magnésio a cada 12 h nos primeiros 3 dias', nota: 'Reponha antes e durante — não espere o valor cair para agir.' },
         { rotulo: 'Balanço hídrico e peso', valor: 'Diários', nota: 'Ganho superior a 1 kg/dia sugere retenção hídrica, não recuperação nutricional.' },
       ],
+      conduta: [
+        'Identificado o risco, **não comece com a meta calórica**: inicie com **10 a 20 kcal/kg/dia** (5–10 kcal/kg/dia no risco muito alto) e avance ao longo de 4 a 7 dias. A síndrome é causada pela realimentação, não pela desnutrição — a pressa é o que mata.',
+        'Administre **tiamina 200 a 300 mg por dia, antes de qualquer carga de glicose**, e mantenha por pelo menos 3 a 5 dias, junto com complexo B e multivitamínico. A glicose consome tiamina no metabolismo do piruvato, e a oferta sem reposição precipita **encefalopatia de Wernicke** — dano neurológico irreversível causado pelo tratamento.',
+        'Dose **fósforo, potássio e magnésio antes de iniciar e diariamente nos primeiros 3 a 7 dias**, e **reponha de forma antecipada**, sem esperar que caiam: com a liberação de insulina, esses íons entram rapidamente na célula. A **hipofosfatemia** é a marca da síndrome e causa fraqueza muscular, insuficiência respiratória, rabdomiólise, hemólise, arritmia e insuficiência cardíaca.',
+        'Restrinja **sódio e volume** na fase inicial e monitore o peso e os sinais de congestão: o miocárdio atrofiado do paciente desnutrido não tolera a expansão volêmica que acompanha a realimentação, e a insuficiência cardíaca é uma das manifestações graves da síndrome.',
+        'Reconheça os **grupos de maior risco**: índice de massa corporal < 16, perda de mais de 15% do peso em 3 a 6 meses, jejum superior a 10 dias, anorexia nervosa, alcoolismo crônico, cirurgia bariátrica, câncer avançado e uso prolongado de diuréticos, insulina, antiácidos ou quimioterápicos. Nesses pacientes, o acompanhamento diário por equipe nutricional não é opcional.',
+      ],
       interpretacao: [
         '**A fisiopatologia explica tudo.** No jejum prolongado, o organismo migra para o catabolismo de gordura e proteína, com queda da insulina e depleção intracelular de fósforo, potássio e magnésio — que não aparece no exame porque o sérico é mantido às custas do estoque celular. Quando o carboidrato retorna, a insulina dispara, empurra glicose, fósforo, potássio e magnésio para dentro das células, e os níveis séricos despencam em horas.',
         '**A hipofosfatemia é a marca da síndrome** e explica a maioria das manifestações: sem fósforo não há ATP nem 2,3-difosfoglicerato, o que compromete contratilidade miocárdica, função diafragmática, transporte de oxigênio e função neuronal. As consequências vão de fraqueza e rabdomiólise a insuficiência cardíaca, arritmia, convulsão, coma e morte.',
@@ -719,6 +747,13 @@ const balancoNitrogenado: Ferramenta = {
         { rotulo: 'Perdas adicionais', valor: `${fmt(extras, 1)} g/dia` },
         { rotulo: 'Equivalente proteico do balanço', valor: `${balanco >= 0 ? '+' : '−'}${fmtInt(proteinaEquivalente)} g de proteína/dia`, nota: balanco < 0 ? 'Massa proteica corporal sendo perdida por dia. Cada grama de nitrogênio corresponde a cerca de 30 g de tecido magro.' : 'Massa proteica sendo incorporada.' },
         { rotulo: 'Massa magra equivalente', valor: `${fmtInt(Math.abs(balanco) * 30)} g/dia`, nota: '1 g de nitrogênio ≈ 6,25 g de proteína ≈ 30 g de tecido magro hidratado.' },
+      ],
+      conduta: [
+        'Interprete o balanço **positivo** como anabolismo (o objetivo em recuperação, gestação e crescimento) e o **negativo** como catabolismo — resposta esperada na fase aguda da doença crítica, e alvo de correção na fase de recuperação.',
+        'Aceite o balanço negativo na **fase aguda**: nenhuma oferta proteica revertem completamente o catabolismo mediado por cortisol, catecolaminas e citocinas nos primeiros dias, e tentar fazê-lo com superalimentação causa dano. A meta nesse período é atenuar a perda, não zerá-la.',
+        'Use o balanço para **titular a oferta proteica na fase de recuperação**, quando ele de fato responde: um balanço persistentemente negativo após a resolução do processo agudo indica oferta insuficiente e justifica aumentar a proteína, associada a mobilização e exercício resistido.',
+        'Some às perdas urinárias as **perdas extrarrenais** que o cálculo padrão não contempla: fístulas, drenos, diarreia volumosa, grandes queimaduras (que perdem quantidades muito expressivas de nitrogênio pela pele) e feridas extensas. Ignorá-las produz um balanço falsamente favorável.',
+        'Conheça as situações em que o cálculo **não é válido**: insuficiência renal com ureia retida (o nitrogênio não aparece na urina), diálise (perdas dialíticas de aminoácidos e de ureia), coleta de urina de 24 h incompleta — a fonte de erro mais comum — e hepatopatia grave com síntese de ureia comprometida. Nesses casos, acompanhe por peso, força, pré-albumina com proteína C-reativa em paralelo, e avaliação funcional.',
       ],
       interpretacao: [
         balanco > 0
@@ -792,6 +827,13 @@ const carboidratoRefeicao: Ferramenta = {
       nivel: 'neutro',
       rotuloNivel: `${fmtInt(carboTotal)} g/dia distribuídos em ${fmtInt(refeicoes)} refeições e ${fmtInt(lanches)} lanches`,
       detalhes,
+      conduta: [
+        'Aplique a **relação insulina-carboidrato** individual (estimada pela regra de 500 ÷ dose total diária de insulina) e ajuste-a pela resposta real: ela varia ao longo do dia, sendo tipicamente menor no café da manhã por causa da resistência insulínica matinal, e muda com exercício, doença, ciclo menstrual e corticoide.',
+        'Ensine a **contagem de carboidratos** com material prático — lista de equivalentes, leitura de rótulo, medidas caseiras, balança — e reavalie a técnica periodicamente: erros de estimativa são a causa mais comum de variabilidade glicêmica em quem já domina a insulina.',
+        'Ajuste o **tempo de aplicação**: insulina ultrarrápida 10 a 15 minutos antes da refeição (e não durante ou depois) melhora substancialmente a glicemia pós-prandial. Em gastroparesia, o inverso pode ser necessário — aplicação durante ou após a refeição, ou uso de bolus estendido na bomba.',
+        'Considere **gordura e proteína** em refeições ricas nesses macronutrientes (pizza, churrasco, feijoada): elas retardam e prolongam a elevação glicêmica, exigindo bolus estendido ou dose adicional tardia. É a causa clássica de hiperglicemia 4 a 6 horas após uma refeição aparentemente bem coberta.',
+        'Planeje o **exercício** com antecedência: reduza o bolus da refeição anterior em 25 a 50%, ou consuma carboidrato adicional, conforme intensidade e duração, e vigie a **hipoglicemia tardia**, que pode ocorrer até 12 a 24 horas depois pela reposição do glicogênio muscular. Em atividade anaeróbica intensa, a glicemia pode subir — o ajuste é individual e exige registro sistemático.',
+      ],
       interpretacao: [
         '**A contagem de carboidratos é a estratégia com melhor evidência para controle glicêmico no diabetes tipo 1** e é a base da terapia insulínica flexível. Ela permite ajustar a insulina à refeição, em vez de o contrário.',
         'O sistema de **substituições** (ou equivalentes) simplifica a contagem: cada substituição corresponde a 15 g de carboidrato, e alimentos do mesmo grupo podem ser trocados livremente entre si. É mais fácil de ensinar do que a pesagem e tem eficácia comparável.',

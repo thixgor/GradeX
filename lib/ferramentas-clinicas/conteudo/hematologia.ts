@@ -295,6 +295,13 @@ const classificacaoAnemias: Ferramenta = {
       nivel,
       rotuloNivel: anemia ? `${morfologia}, RDW ${rdw > 14.5 ? 'elevado' : 'normal'}` : 'Hemoglobina dentro da referência',
       detalhes,
+      conduta: [
+        'Com anemia **microcítica**, a primeira hipótese é deficiência de ferro: dose **ferritina (< 30 ng/mL confirma; 30–100 com inflamação não exclui) e saturação de transferrina (< 20%)**. Confirmada, **procure a causa do sangramento** — em homem e em mulher pós-menopausa, isso significa endoscopia e colonoscopia, porque a anemia ferropriva é câncer colorretal até prova em contrário. Afaste também talassemia (índice de Mentzer < 13, ferritina normal, eletroforese).',
+        'Com anemia **macrocítica**, separe megaloblástica de não megaloblástica: dose **vitamina B12 e folato**, e complemente com **ácido metilmalônico e homocisteína** quando a B12 estiver na faixa cinzenta (200–400 pg/mL). Causas não megaloblásticas: alcoolismo, hipotireoidismo, hepatopatia, mielodisplasia e fármacos (hidroxiureia, metotrexato, zidovudina). Na deficiência de B12, **reponha B12 antes do folato**: o folato isolado corrige a anemia e deixa a degeneração medular subaguda progredir.',
+        'Com anemia **normocítica**, use os **reticulócitos** como divisor: elevados apontam perda ou destruição (sangramento agudo, hemólise — peça desidrogenase láctica, bilirrubina indireta, haptoglobina e Coombs direto); baixos apontam produção insuficiente (anemia de doença crônica, doença renal com deficiência de eritropoetina, infiltração medular, aplasia).',
+        'Trate a causa, não o número. **Transfunda por gatilho restritivo (hemoglobina 7 g/dL; 8 g/dL em síndrome coronariana aguda e cirurgia cardíaca)** e sobretudo por sinais de má perfusão: a estratégia liberal não melhorou desfecho e aumentou complicações na maioria dos cenários estudados.',
+        'Lembre das **anemias mistas**, frequentes na prática: deficiência de ferro somada a B12 produz volume corpuscular normal com anisocitose (RDW alto) e pode enganar. Quando o quadro não fechar, o **esfregaço de sangue periférico** resolve boa parte dos casos — esquizócitos, corpúsculos de Howell-Jolly, hipersegmentação de neutrófilos, células em alvo e rouleaux mudam o rumo da investigação imediatamente.',
+      ],
       interpretacao: hipoteses,
       alertas: hb < 7 ? ['Hemoglobina abaixo de 7 g/dL é o limiar transfusional na maioria dos contextos (8 g/dL em coronariopatia e no perioperatório ortopédico). Transfunda **uma unidade por vez** e reavalie — a estratégia restritiva é superior à liberal em praticamente todos os cenários estudados.'] : undefined,
     }
@@ -458,6 +465,13 @@ const padua: Ferramenta = {
       detalhes: [
         { rotulo: 'Ponto de corte', valor: '≥ 4 pontos' },
         { rotulo: 'Risco de tromboembolismo em 90 dias sem profilaxia', valor: alto ? '11,0%' : '0,3%', nota: 'Coorte de derivação de Barbar et al. (2010).' },
+      ],
+      conduta: [
+        '**Pádua ≥ 4 (alto risco)**: indique **tromboprofilaxia farmacológica** — heparina de baixo peso molecular, heparina não fracionada ou fondaparinux — durante toda a internação clínica, desde que não haja contraindicação. A profilaxia adequada é a intervenção isolada que mais previne morte evitável em enfermaria.',
+        '**Pádua < 4 (baixo risco)**: não indique profilaxia farmacológica. Estimule deambulação precoce e hidratação. Profilaxia indiscriminada nesse grupo causa mais sangramento do que trombose evitada.',
+        'Diante de **contraindicação ao anticoagulante** (sangramento ativo, plaquetas < 25–50 mil, coagulopatia grave, punção neuroaxial recente), use **profilaxia mecânica**: compressão pneumática intermitente, que tem evidência, de preferência às meias elásticas isoladas. Reavalie diariamente se a contraindicação persiste — ela costuma ser transitória, e a profilaxia raramente é reintroduzida quando deixa de existir.',
+        'Ajuste a dose em situações especiais: **insuficiência renal com filtração < 30 mL/min** (prefira heparina não fracionada ou reduza a enoxaparina), **obesidade com índice de massa corporal > 40** (doses profiláticas maiores) e **peso muito baixo**. A dose profilática padrão subdosa o obeso e superdosa o paciente de 40 kg.',
+        'Reavalie o escore **a cada mudança clínica** e considere **profilaxia estendida após a alta** em pacientes selecionados de alto risco com mobilidade reduzida persistente — a maioria dos eventos tromboembólicos associados à internação clínica ocorre **depois** da alta, quando a profilaxia já foi suspensa.',
       ],
       interpretacao: [
         alto
@@ -676,6 +690,13 @@ const quatroT: Ferramenta = {
       nivel: (['ok', 'alerta', 'critico'] as Nivel[])[faixa],
       rotuloNivel: ['Probabilidade baixa', 'Probabilidade intermediária', 'Probabilidade alta'][faixa],
       detalhes: [{ rotulo: 'Probabilidade de trombocitopenia induzida por heparina', valor: prob }],
+      conduta: [
+        '**4Ts 0–3 (baixa probabilidade)**: trombocitopenia induzida por heparina é improvável (valor preditivo negativo acima de 98%). **Mantenha a heparina** e procure outras causas de plaquetopenia — sepse, medicamentos, coagulação intravascular disseminada, diluição, púrpura trombocitopênica.',
+        '**4Ts 4–5 (intermediária) ou 6–8 (alta)**: **suspenda toda forma de heparina imediatamente**, incluindo heparina de baixo peso molecular, flush de cateter e cateteres impregnados, e **inicie anticoagulante alternativo em dose plena** — argatrobana, bivalirudina, fondaparinux ou um anticoagulante oral direto conforme disponibilidade. Solicite anticorpo anti-PF4 e, se positivo, teste funcional de liberação de serotonina ou agregação por heparina.',
+        '**Não espere o resultado do anticorpo para suspender.** A trombocitopenia induzida por heparina é um estado **protrombótico**, não hemorrágico: o risco de trombose nas primeiras 48 h após o diagnóstico é alto, e trombose de membros, acidente vascular e infarto podem ocorrer com plaquetas baixas.',
+        '**Não transfunda plaquetas** profilaticamente, e **não inicie varfarina** enquanto as plaquetas não recuperarem acima de 150 mil: a varfarina precoce reduz a proteína C antes dos fatores procoagulantes e precipita **gangrena venosa de membro e necrose cutânea**. Quando iniciar, faça sobreposição com o anticoagulante parenteral por pelo menos 5 dias.',
+        'Mantenha a anticoagulação por **pelo menos 4 semanas** se não houver trombose, e por **3 meses** se houver, e **registre a alergia no prontuário de forma destacada**. Investigue trombose com ultrassonografia de membros inferiores mesmo sem sintomas — ela é encontrada em parcela significativa dos casos assintomáticos e muda a duração do tratamento.',
+      ],
       interpretacao: [
         faixa === 0
           ? '**Probabilidade baixa (0 a 3 pontos).** O valor preditivo negativo é alto — próximo de 99%. Nessa faixa, o diagnóstico está praticamente excluído, a heparina pode ser mantida e a investigação laboratorial não é necessária.'
@@ -748,6 +769,13 @@ const isth: Ferramenta = {
         { rotulo: 'Condição de base presente', valor: temCondicao ? 'Sim' : 'Não', nota: 'É pré-requisito absoluto: sem doença de base compatível, o escore não deve ser aplicado.', nivel: temCondicao ? 'alerta' : 'atencao' },
         { rotulo: 'Ponto de corte', valor: '≥ 5 pontos' },
       ],
+      conduta: [
+        '**Escore ≥ 5 (CIVD manifesta)**: a prioridade absoluta é **tratar a causa** — sepse, trauma, complicação obstétrica, malignidade, grande queimadura, acidente por animal peçonhento. A coagulação intravascular disseminada é sempre secundária, e nenhum suporte hemostático resolve enquanto o gatilho persiste.',
+        '**Escore < 5**: não exclui. Repita o cálculo em 24–48 h se a suspeita clínica se mantiver — o escore foi construído para uso seriado, e a CIVD não manifesta (compensada) precede a manifesta.',
+        'Transfunda por **sangramento ou procedimento invasivo programado, não por número isolado**: plaquetas se < 50 mil com sangramento (ou < 20 mil sem sangramento), plasma fresco congelado se houver prolongamento significativo de TP/TTPa com sangramento, e **crioprecipitado ou concentrado de fibrinogênio se o fibrinogênio estiver abaixo de 1,5 g/L**. O fibrinogênio é o fator que mais se consome e o mais esquecido.',
+        'Diferencie o **fenótipo predominante**, porque o tratamento diverge: na CIVD com **predomínio trombótico** (comum na sepse, com púrpura fulminante ou isquemia digital), considere heparina em dose profilática ou terapêutica; na CIVD com **predomínio hemorrágico** (comum na leucemia promielocítica aguda e em complicações obstétricas), o suporte é transfusional, e antifibrinolíticos são geralmente contraindicados por risco de trombose.',
+        'Trate a **leucemia promielocítica aguda** como emergência à parte: inicie **ácido all-trans-retinoico (ATRA) imediatamente**, antes mesmo da confirmação citogenética, porque a coagulopatia é a principal causa de morte precoce e responde ao ATRA. Mantenha metas transfusionais mais agressivas nesse cenário (fibrinogênio > 1,5 g/L, plaquetas > 30–50 mil).',
+      ],
       interpretacao: [
         manifesta
           ? '**CIVD manifesta.** A mortalidade é alta e determinada sobretudo pela doença de base.'
@@ -807,6 +835,13 @@ const ganzoni: Ferramenta = {
         { rotulo: 'Carboximaltose férrica', valor: `${fmtInt(carboximaltose)} mg`, nota: 'Até 1000 mg por infusão, em 15 min. Habitualmente 1 a 2 aplicações resolvem. Monitorize fosfato — hipofosfatemia é efeito adverso comum e às vezes prolongado.' },
         { rotulo: 'Sacarato férrico', valor: `${sacarato} aplicações de 200 mg`, nota: 'Máximo de 200 mg por sessão, até 3 vezes por semana. Mais barato e mais disponível, ao custo de mais visitas.' },
         { rotulo: 'Ferro oral (sulfato ferroso)', valor: `${fmtInt(deficit / 0.1)} mg de ferro elementar ingeridos`, nota: 'Assumindo absorção de apenas 10%. Um comprimido de sulfato ferroso 300 mg contém 60 mg de ferro elementar.' },
+      ],
+      conduta: [
+        'Use a fórmula de Ganzoni para calcular a **dose total de ferro a repor** — déficit de hemoglobina mais estoque —, e não apenas a dose para corrigir a anemia: repor só o déficit de hemoglobina deixa o estoque vazio e a recidiva é questão de meses.',
+        'Prefira o **ferro intravenoso** quando houver intolerância ou falha do oral, má absorção (doença celíaca, gastrite atrófica, cirurgia bariátrica, doença inflamatória intestinal), necessidade de correção rápida, doença renal crônica, insuficiência cardíaca ou perda contínua que supere a absorção intestinal. As formulações modernas (carboximaltose e derisomaltose férricas) permitem dose total em uma ou duas infusões.',
+        'No **ferro oral**, prescreva 40–80 mg de ferro elementar **em dias alternados e em jejum**: a dose diária eleva a hepcidina e bloqueia a absorção das 24 h seguintes, de modo que o esquema alternado absorve mais com menos efeito adverso. Associe vitamina C e afaste de cálcio, chá e café.',
+        'Verifique a resposta com **reticulócitos em 1 semana e hemoglobina em 2 a 4 semanas** (esperado: aumento de 1 a 2 g/dL). Sem resposta, reveja adesão, sangramento oculto persistente, diagnóstico alternativo e anemia mista — e confirme que a ferritina alvo (> 100 ng/mL, ou > 200 ng/mL em insuficiência cardíaca e doença renal) foi de fato alcançada.',
+        'Na **insuficiência cardíaca com fração de ejeção reduzida**, reponha ferro intravenoso mesmo **sem anemia** quando houver ferritina < 100 ng/mL, ou 100–299 ng/mL com saturação de transferrina < 20%: a reposição melhora capacidade funcional, qualidade de vida e reduz hospitalização. E sempre **investigue a causa da perda** antes de aceitar a deficiência como isolada — em adultos, a fonte digestiva precisa ser procurada.',
       ],
       interpretacao: [
         '**A dose oral mudou.** A administração em **dias alternados e em dose única diária** absorve mais ferro total do que a dose fracionada diária: cada dose eleva a hepcidina por 24 a 48 horas, bloqueando a absorção das doses seguintes. Estudos de Moretti e Stoffel demonstraram que 60 mg de ferro elementar em dias alternados absorve mais do que 60 mg duas vezes ao dia.',
@@ -878,6 +913,13 @@ const liseTumoral: Ferramenta = {
       nivel,
       rotuloNivel: `Categoria tumoral de ${risco === 'alto' ? 'alto' : risco === 'intermediario' ? 'risco intermediário' : 'baixo'} risco`,
       detalhes,
+      conduta: [
+        'Em **alto risco** (leucemias agudas com alta contagem, linfoma de Burkitt, massa tumoral volumosa, desidrogenase láctica muito elevada, disfunção renal prévia): inicie **hidratação vigorosa (2,5–3 L/m²/dia) 24 a 48 h antes da quimioterapia** e administre **rasburicase**, que degrada o ácido úrico já formado e age em horas.',
+        'Em **risco intermediário**: hidratação plena e **alopurinol**, iniciado 1 a 2 dias antes do tratamento. Lembre que o alopurinol bloqueia a formação de ácido úrico novo, mas não remove o já existente — por isso é prevenção, não tratamento da síndrome instalada.',
+        '**Não alcalinize a urina** de rotina: a prática antiga aumenta a precipitação de fosfato de cálcio nos túbulos e agrava a lesão renal, além de piorar a hipocalcemia sintomática. A hidratação adequada, com diurese-alvo de 2 mL/kg/h, é suficiente.',
+        'Monitore **potássio, fósforo, cálcio, ácido úrico, creatinina e desidrogenase láctica a cada 4 a 8 horas** nas primeiras 48–72 h. A **hipercalemia é a alteração que mata primeiro** — trate agressivamente com gluconato de cálcio, insulina com glicose, beta-agonista e resina ou diálise. Trate a hipocalcemia **apenas se sintomática**, pois repor cálcio na vigência de hiperfosfatemia precipita cristais.',
+        'Indique **terapia de substituição renal** precocemente diante de hipercalemia refratária, hiperfosfatemia grave, sobrecarga volêmica, acidose ou oligúria persistente — o limiar aqui é mais baixo que na lesão renal aguda habitual, porque a carga de solutos continua sendo gerada pela lise tumoral em curso. Contraindique **rasburicase em deficiência de glicose-6-fosfato desidrogenase**, em que causa hemólise grave e metemoglobinemia.',
+      ],
       interpretacao: [
         '**Cairo-Bishop:** a forma **laboratorial** exige 2 ou mais alterações metabólicas (ácido úrico, potássio, fósforo ou cálcio) entre 3 dias antes e 7 dias após o início da quimioterapia. A forma **clínica** acrescenta pelo menos uma consequência: lesão renal aguda, arritmia, convulsão ou morte súbita.',
         risco === 'alto'
@@ -1102,6 +1144,13 @@ const inrEstimado: Ferramenta = {
       nivel,
       rotuloNivel: inr > 4.5 ? 'Muito acima da faixa' : inr > 3 ? 'Acima da faixa' : inr >= 2 ? 'Dentro da faixa terapêutica' : 'Abaixo da faixa',
       detalhes,
+      conduta: [
+        'Com **INR dentro da faixa terapêutica** (2,0–3,0 na maioria; 2,5–3,5 em prótese mecânica mitral), mantenha a dose e reavalie no intervalo habitual. Use o **tempo na faixa terapêutica (TTR)** como indicador de qualidade: abaixo de 65–70%, a varfarina perde boa parte do benefício e a troca por anticoagulante direto deve ser considerada, quando não houver contraindicação.',
+        'Com **INR entre 4,5 e 10 sem sangramento**, suspenda a varfarina e monitore — **não administre vitamina K de rotina**, porque isso dificulta a reanticoagulação sem reduzir eventos. Acima de 10 sem sangramento, dê **vitamina K 2,5 a 5 mg por via oral** (a via oral é preferível à subcutânea, que tem absorção errática).',
+        'Com **sangramento maior**, reverta imediatamente: **complexo protrombínico de 4 fatores (25–50 UI/kg conforme o INR) mais vitamina K 10 mg intravenosa lenta**. O complexo age em minutos, mas tem meia-vida curta; a vitamina K sustenta a reversão por horas — os dois são necessários, e usar só um deles é a causa de rebote.',
+        'Para os **anticoagulantes diretos, o INR não serve**: ele pode estar normal com anticoagulação plena. Use dosagem de **anti-Xa calibrada** (para inibidores do fator Xa) ou **tempo de trombina diluído** (para dabigatrana), e para reversão use **idarucizumabe** (dabigatrana) ou **andexanet alfa**, com complexo protrombínico como alternativa.',
+        'Antes de atribuir um INR alterado à dose, procure as causas comuns de instabilidade: **interações** (antimicrobianos, amiodarona, anti-inflamatórios, fluconazol), **mudança de ingestão de vitamina K** na dieta, doença intercorrente, hepatopatia, hipertireoidismo, insuficiência cardíaca descompensada e má adesão. Ajustar a dose sem corrigir a causa gera oscilação em ambas as direções.',
+      ],
       interpretacao: [
         ...conduta,
         'O INR foi criado para padronizar o tempo de protrombina entre laboratórios: cada lote de tromboplastina tem sensibilidade diferente, e o ISI corrige essa variação em relação a um padrão da Organização Mundial da Saúde.',

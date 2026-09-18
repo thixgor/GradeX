@@ -100,6 +100,13 @@ const apache: Ferramenta = {
         { rotulo: 'Glasgow', valor: `${pGcs} pontos`, nota: 'Contribui com 15 menos o valor da escala — pode chegar a 12 pontos, o maior peso individual.' },
         { rotulo: 'Mortalidade estimada', valor: mortalidade, nota: 'A estimativa formal usa também o peso da categoria diagnóstica e a condição cirúrgica, que variam; esta é a faixa por pontuação.' },
       ],
+      conduta: [
+        'Use o APACHE II para **comparar desempenho entre unidades, ajustar casuística em pesquisa e auditar resultados**, não para decidir o destino de um paciente. Ele estima a mortalidade de um grupo com aquelas características, e a taxa de mortalidade padronizada (observada ÷ esperada) é seu uso mais legítimo.',
+        'Calcule com os **piores valores das primeiras 24 horas** de internação em terapia intensiva, e apenas uma vez: recalculá-lo em outro momento não é APACHE II e invalida a comparação com os dados publicados.',
+        'Reconheça que o escore está **desatualizado**: foi derivado em 1985, e a mortalidade real de hoje é substancialmente menor para o mesmo escore, porque o cuidado intensivo mudou. Isso significa que ele **superestima** a mortalidade esperada — o que é aceitável para comparação relativa, e enganoso se lido como probabilidade individual.',
+        'Prefira **SAPS 3 ou APACHE IV** quando quiser estimativa prognóstica mais calibrada à prática contemporânea, e o **SOFA** quando o objetivo for acompanhar a evolução da disfunção orgânica ao longo da internação — o APACHE não foi feito para uso seriado.',
+        'Nunca use o escore isoladamente para **limitar suporte**. Decisões de fim de vida devem se basear na trajetória clínica, na reversibilidade da causa, na função prévia e nos valores do paciente, discutidos com a família. Um número derivado de coorte de quatro décadas atrás não substitui essa conversa.',
+      ],
       interpretacao: [
         'O APACHE II usa o **pior valor de cada variável nas primeiras 24 horas** de internação em terapia intensiva. Colher os valores da admissão em vez do pior valor do dia subestima sistematicamente o escore.',
         'Foi desenvolvido em 1985 e permanece o escore de gravidade mais citado da literatura, embora hoje esteja **mal calibrado** para populações contemporâneas: a mortalidade real da terapia intensiva caiu muito desde os anos 1980, e o APACHE II superestima. SAPS 3 e APACHE IV têm calibração melhor.',
@@ -241,6 +248,13 @@ const saps3: Ferramenta = {
         { rotulo: 'Soma das variáveis', valor: `${soma} pontos` },
         { rotulo: 'Mortalidade estimada (equação global)', valor: fmtPct(mortalidade, 1), nota: 'logit = −32,6659 + 7,3068 × ln(SAPS 3 + 20,5958)' },
       ],
+      conduta: [
+        'Prefira o SAPS 3 ao APACHE II para estimativa de mortalidade em terapia intensiva contemporânea: ele foi derivado de coorte multinacional recente, usa dados de **±1 hora da admissão** (o que o torna aplicável já na entrada) e possui **equação de calibração específica para a América do Sul**, que corrige o viés de aplicar modelos derivados em outras populações.',
+        'Aplique a **equação regional correta**. Usar a equação global em um serviço brasileiro distorce a mortalidade esperada e, portanto, a taxa de mortalidade padronizada — que é justamente o indicador de qualidade que se pretende medir.',
+        'Use a **taxa de mortalidade padronizada (observada ÷ esperada)** como indicador de desempenho da unidade: valor abaixo de 1 sugere desempenho melhor que o previsto pela gravidade dos pacientes; acima de 1, pior. Esse é o uso para o qual o escore foi desenhado.',
+        'Não use o SAPS 3 para **decisão individual de admissão, alta ou limitação de suporte**. A discriminação em nível individual é insuficiente para isso, e um escore alto em paciente com causa reversível não justifica negar cuidado intensivo.',
+        'Combine com **SOFA seriado** para acompanhar a evolução, e registre as variáveis de forma padronizada e auditável. A qualidade da coleta é o principal determinante da utilidade do escore: dados colhidos de forma inconsistente produzem comparações sem sentido entre períodos e entre unidades.',
+      ],
       interpretacao: [
         'O SAPS 3 rompeu com a lógica do APACHE em dois pontos importantes. Primeiro, usa os dados da **primeira hora** de admissão, e não as primeiras 24 horas — o que reduz o viés de tratamento (no APACHE, um paciente bem tratado nas primeiras horas parece menos grave e o escore "credita" isso à unidade). Segundo, foi derivado de uma coorte multinacional de mais de 16 mil pacientes de 300 unidades, com equações regionais próprias, inclusive para a América do Sul.',
         'Sua estrutura em três caixas reflete três perguntas: **quem é o paciente** (idade, comorbidade, procedência, tratamento prévio), **por que ele foi internado** (planejamento, cirurgia, infecção, motivo) e **quão grave ele está agora** (fisiologia).',
@@ -333,6 +347,13 @@ const vasoativas: Ferramenta = {
         { rotulo: 'Velocidade da bomba', valor: `${fmtLivre(velocidade!, 2)} mL/h` },
         { rotulo: 'Faixa terapêutica usual', valor: info.faixa },
         { rotulo: 'Diluição habitual', valor: info.diluicao },
+      ],
+      conduta: [
+        'Escolha o agente pelo **mecanismo do choque**: **noradrenalina** é primeira linha no choque séptico e na maioria dos choques vasoplégicos; **adrenalina** na anafilaxia e na parada cardiorrespiratória; **dobutamina** no choque cardiogênico com débito baixo e pressão preservada; **vasopressina** como segunda linha poupadora de catecolamina; **dopamina** foi abandonada como primeira escolha por causar mais arritmias.',
+        'Confira a diluição e a unidade **antes de conectar**: a maioria dos erros graves nasce da confusão entre µg/kg/min e µg/min, e entre diluições padronizadas diferentes. Prescreva a concentração explícita, use bomba de infusão dedicada e etiquete a via — nunca infunda vasopressor em via compartilhada com bolus.',
+        'Não atrase o vasopressor por falta de acesso central: a **infusão periférica é aceitável nas primeiras horas**, em veia calibrosa proximal (fossa antecubital ou acima), com vigilância rigorosa do sítio. Se houver extravasamento de noradrenalina, infiltre **fentolamina** localmente para evitar necrose.',
+        'Titule pela **perfusão, não só pela pressão**: PAM ≥ 65 mmHg é o alvo inicial, mas o que importa é lactato em queda, diurese, enchimento capilar e estado mental. Alvos pressóricos mais altos (80–85 mmHg) só em hipertensos crônicos, e ao custo de mais fibrilação atrial.',
+        'Antes de escalar a dose, **procure o que está sustentando o choque**: hipovolemia não corrigida, pneumotórax hipertensivo, tamponamento, acidose grave, hipocalcemia, **insuficiência adrenal** (considere hidrocortisona 200 mg/dia no choque refratário) e foco infeccioso não controlado. Dose crescente de vasopressor sem reavaliação diagnóstica é o padrão que precede a morte evitável.',
       ],
       interpretacao: [
         info.efeito,
@@ -683,6 +704,13 @@ const bicarbonato: Ferramenta = {
       nivel: indicado ? 'alerta' : 'atencao',
       rotuloNivel: indicado ? 'Cenário em que a reposição costuma fazer sentido' : 'Cenário em que a reposição geralmente NÃO é indicada',
       detalhes,
+      conduta: [
+        '**Não reponha bicarbonato na cetoacidose diabética nem na acidose lática** de rotina: os ensaios não mostraram benefício, e ele pode piorar a acidose intracelular (o gás carbônico gerado atravessa a membrana mais rápido que o bicarbonato), agravar a hipocalemia e deslocar a curva de dissociação da hemoglobina. O tratamento é da causa — volume, insulina, perfusão, antimicrobiano.',
+        'Reserve o bicarbonato para indicações específicas: **acidose com perda de bicarbonato** (diarreia grave, acidose tubular renal, fístula pancreática), **hipercalemia grave com acidose**, **intoxicação por antidepressivo tricíclico** (alvo de pH 7,45–7,55, para reverter o bloqueio de canal de sódio), **intoxicação por salicilato** (alcalinização urinária acelera a eliminação) e **rabdomiólise** em protocolos selecionados.',
+        'Quando repor, calcule o **déficit (0,5 × peso × [bicarbonato desejado − medido])** e administre **metade** do valor, reavaliando gasometria em 30–60 minutos. O espaço de distribuição do bicarbonato aumenta quanto mais grave a acidose, tornando o cálculo uma estimativa grosseira.',
+        'Antecipe os efeitos adversos: **hipocalemia** (o potássio entra na célula com a correção do pH — redose e reponha), **hipocalcemia ionizada** (a alcalose aumenta a ligação do cálcio à albumina, podendo causar tetania e arritmia), sobrecarga de sódio e volume, e alcalose de rebote.',
+        'Em **parada cardiorrespiratória**, o bicarbonato não é rotina: as diretrizes o reservam para hipercalemia conhecida, intoxicação por tricíclicos e acidose preexistente grave. A prioridade é compressão de qualidade e ventilação, que corrigem a acidose respiratória — que é o componente dominante na maioria das paradas.',
+      ],
       interpretacao: [
         '**Repor bicarbonato quase nunca é a resposta certa.** Trate a causa: perfusão e antibiótico na acidose lática, insulina e volume na cetoacidose, diálise na uremia. O bicarbonato tem indicação clara em poucos cenários — **perda direta de bicarbonato** (diarreia grave, acidose tubular renal), **acidose da doença renal crônica** (com bicarbonato de sódio oral, que retarda a progressão), **intoxicação por salicilato ou por antidepressivo tricíclico** (alcalinização com finalidade específica) e **hipercalemia grave com acidose**.',
         'Na **acidose lática** e na **cetoacidose**, os ensaios randomizados não mostraram benefício hemodinâmico nem de mortalidade. O ensaio BICAR-ICU sugeriu benefício apenas no subgrupo com lesão renal aguda estágio 2 ou 3.',
@@ -757,6 +785,13 @@ const anafilaxia: Ferramenta = {
       nivel: anafilaxia ? 'critico' : 'atencao',
       rotuloNivel: cardio ? 'Choque anafilático' : resp ? 'Com comprometimento respiratório' : '',
       detalhes,
+      conduta: [
+        '**Adrenalina intramuscular na face anterolateral da coxa é a primeira e imediata medida**: 0,01 mg/kg (máximo 0,5 mg em adultos, 0,3 mg em crianças) da solução 1:1000, repetível a cada 5 a 15 minutos. Não há contraindicação absoluta na anafilaxia, e o atraso na aplicação é o fator mais associado a morte.',
+        '**Não substitua a adrenalina por anti-histamínico ou corticoide.** Anti-histamínico trata urticária e prurido, não obstrução de via aérea nem choque; corticoide tem início de ação em horas e não previne comprovadamente a reação bifásica. Ambos são adjuvantes, jamais tratamento primário.',
+        'Complete o suporte: **posição supina com membros inferiores elevados** (sentar ou levantar o paciente em hipotensão pode causar colapso e morte súbita por síndrome do ventrículo vazio), oxigênio, acesso venoso calibroso, **cristaloide em bolus de 20 mL/kg** e preparo para via aérea difícil, pelo risco de edema de glote.',
+        'Em **choque refratário**, inicie **adrenalina em infusão contínua**, e lembre do paciente em uso de **betabloqueador**, que pode não responder: nesse caso, use **glucagon 1 a 5 mg intravenoso**, que ativa a adenilato ciclase por via independente do receptor beta.',
+        'Antes da alta, faça as três coisas que previnem a próxima morte: **observe por 4 a 6 horas** (mais tempo se a reação foi grave, bifásica ou houve necessidade de doses repetidas), **prescreva autoinjetor de adrenalina — dois dispositivos — e ensine a técnica**, e **encaminhe ao alergista** com orientação escrita de plano de ação e de evitação do agente. A alta sem prescrição de adrenalina é a falha mais comum e mais consequente.',
+      ],
       interpretacao: [
         '**A adrenalina intramuscular é o único tratamento que salva vidas na anafilaxia, e não tem contraindicação absoluta nesse contexto.** O erro mais comum e mais letal é atrasá-la em favor de anti-histamínico e corticoide — que não tratam a obstrução de via aérea nem o colapso circulatório e agem em horas, não em minutos.',
         '**Anti-histamínicos** aliviam prurido e urticária, nada mais. **Corticoides** não têm efeito na fase aguda e a evidência de que previnam reação bifásica é fraca. Nenhum dos dois substitui a adrenalina, e nenhum dos dois deve preceder a adrenalina.',
@@ -841,6 +876,13 @@ const sequenciaRapida: Ferramenta = {
         { rotulo: `Bloqueio — ${bloqueador}`, valor: `${fmtLivre(peso * db.mgkg, 1)} mg (${fmt(db.mgkg, 1)} mg/kg)`, nota: db.nota, nivel: 'alerta' },
         { rotulo: 'Vasopressor de resgate (push-dose)', valor: 'Adrenalina 10 a 20 µg em bolus, ou fenilefrina 50 a 200 µg', nota: 'Deixe preparado **antes** da indução em qualquer paciente com risco de colapso.' },
         { rotulo: 'Preditores de via aérea difícil', valor: sim(v, 'viaAereaDificil') ? 'Presentes' : 'Não identificados', nota: sim(v, 'viaAereaDificil') ? '**Chame ajuda antes de induzir.** Considere via aérea acordada com anestésico tópico, videolaringoscópio de primeira escolha e material de resgate aberto (dispositivo supraglótico, kit de cricotireoidostomia).' : undefined, nivel: sim(v, 'viaAereaDificil') ? 'critico' : 'ok' },
+      ],
+      conduta: [
+        'Percorra os **sete P** com disciplina: **P**reparação, **P**ré-oxigenação, **P**ré-tratamento/otimização fisiológica, **P**aralisia com indução, **P**osicionamento, **P**assagem do tubo com confirmação e **P**ós-intubação. Pular a preparação é o que transforma uma via aérea difícil prevista em uma catástrofe não prevista.',
+        'Pré-oxigene por **3 minutos com máscara não reinalante ou 8 respirações de capacidade vital**, e mantenha **oxigenação apneica com cateter nasal a 15 L/min** durante a laringoscopia — ela prolonga substancialmente o tempo até a dessaturação. Em paciente com shunt importante, use ventilação não invasiva ou alto fluxo para pré-oxigenar.',
+        'Corrija a **fisiologia antes de induzir**: hipotensão (volume e vasopressor em bomba já conectados — a indução derruba a pressão e pode causar parada peri-intubação), hipoxemia grave, acidose metabólica profunda (a apneia interrompe a compensação respiratória e o pH despenca) e hipercalemia, que contraindica succinilcolina.',
+        'Escolha os fármacos pelo perfil hemodinâmico: **etomidato ou cetamina** em instabilidade (evite propofol, que causa hipotensão); **rocurônio 1,2 mg/kg** ou **succinilcolina 1,5 mg/kg** para bloqueio. Evite succinilcolina em hipercalemia, queimadura ou trauma com mais de 48 h, doença neuromuscular, rabdomiólise e história de hipertermia maligna.',
+        '**Confirme o posicionamento com capnografia em forma de onda**, que é o padrão-ouro — ausculta e condensação no tubo não bastam. Tenha o **plano de resgate definido em voz alta antes de induzir** (dispositivo supraglótico, videolaringoscópio, cricotireoidostomia) e, na intubação difícil não prevista, verbalize a transição de plano em vez de repetir tentativas: mais de três laringoscopias aumenta muito a taxa de complicação grave.',
       ],
       interpretacao: [
         '**As quatro perguntas que indicam intubação:** o paciente consegue proteger a via aérea? A oxigenação está adequada? A ventilação está adequada? Qual é o curso clínico esperado? Uma resposta desfavorável a qualquer uma delas indica via aérea definitiva.',

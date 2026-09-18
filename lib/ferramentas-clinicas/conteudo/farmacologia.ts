@@ -82,6 +82,13 @@ const conversorOpioides: Ferramenta = {
         { rotulo: 'Redução aplicada', valor: `${fmtInt(reducao)}%`, nota: 'Tolerância cruzada entre opioides é incompleta: o receptor não reconhece a dose equianalgésica como equivalente na prática, e converter sem reduzir é a causa clássica de superdosagem na rotação.', nivel: 'alerta' },
         { rotulo: 'Dose de resgate sugerida', valor: `${fmtLivre(morfinaOralEquivalente * fator * 0.1, 1)} a ${fmtLivre(morfinaOralEquivalente * fator * 0.167, 1)} mg de morfina oral`, nota: '10 a 16% da dose diária total, a cada 1 hora se necessário por via oral, ou a cada 15 a 30 min por via parenteral.' },
       ],
+      conduta: [
+        'Aplique **redução de 25 a 50% na dose equianalgésica calculada** ao trocar de opioide, por causa da **tolerância cruzada incompleta**: os receptores não estão igualmente dessensibilizados para o novo agente, e a dose \'equivalente\' pode ser uma superdose. Essa redução é a regra de segurança mais importante da conversão.',
+        'Trate a **metadona como exceção** e não a converta por tabela linear: sua razão de conversão aumenta quanto maior a dose prévia de morfina (podendo chegar a 20:1 ou mais), tem meia-vida longa e variável (8 a 60 h), acumula-se por dias e prolonga o QT. A rotação para metadona deve ser feita por quem tem experiência, com ECG e monitorização.',
+        'Prescreva **dose de resgate de 10 a 15% da dose diária total**, disponível a cada 1 a 4 horas conforme a via. Use o consumo de resgates das últimas 24 h para titular a dose de base — essa é a lógica de ajuste, e não o aumento arbitrário da dose fixa.',
+        'Prescreva **profilaxia de constipação desde a primeira dose**: é o único efeito adverso do opioide para o qual não há tolerância. Use laxante osmótico e estimulante juntos; fibra isolada agrava. Antecipe náusea e sonolência nos primeiros dias, que costumam ceder, e oriente sobre direção de veículos.',
+        'Tenha **naloxona disponível e ensine familiares a usá-la** em pacientes de alto risco: dose diária alta (acima de 50–90 mg de equivalente de morfina), uso concomitante de benzodiazepínico, apneia do sono, insuficiência renal ou hepática, e idosos. Em insuficiência renal, evite morfina e codeína, cujos metabólitos ativos se acumulam e causam neurotoxicidade e depressão respiratória — prefira metadona, fentanil ou buprenorfina.',
+      ],
       interpretacao: [
         '**Sempre reduza 25 a 50% ao rotacionar opioide.** A tolerância cruzada é incompleta porque opioides diferentes têm perfis de ligação e de internalização de receptor distintos — o paciente tolerante à morfina não está igualmente tolerante à hidromorfona.',
         'Prescreva **dose de resgate** correspondente a 10 a 16% da dose diária total. Sem resgate, a dor irruptiva não é tratada e a dose basal acaba sendo aumentada indevidamente.',
@@ -166,6 +173,13 @@ const conversorBenzo: Ferramenta = {
         { rotulo: 'Característica', valor: origem.obs },
         { rotulo: 'Redução sugerida por etapa', valor: `${fmtLivre(reducaoSemanal, 2)} mg de diazepam`, nota: '5 a 10% da dose a cada 1 a 4 semanas, ajustando pela tolerância. Quanto mais longo o uso, mais lenta deve ser a retirada.' },
         { rotulo: 'Tempo estimado de desmame', valor: `${fmtInt(10)} a ${fmtInt(20)} etapas`, nota: 'Pode levar meses. Retiradas apressadas fracassam e reforçam a crença do paciente de que "não consegue viver sem".' },
+      ],
+      conduta: [
+        'Faça a **desprescrição de forma lenta**: reduza **10 a 25% da dose a cada 2 a 4 semanas**, desacelerando ainda mais nas últimas etapas, que são as mais difíceis. Retirada rápida ou abrupta causa síndrome de abstinência com insônia de rebote, ansiedade intensa, tremor, e pode produzir **convulsão e delirium** — potencialmente fatais.',
+        'Converta para um agente de **meia-vida longa (diazepam ou clonazepam)** antes do desmame quando o paciente usa um de meia-vida curta (alprazolam, lorazepam, midazolam): a queda de concentração entre doses é o que gera a abstinência interdose e torna a retirada insuportável. A exceção é o idoso e o hepatopata, em que o acúmulo do diazepam é problemático — nesses, prefira lorazepam, cuja metabolização é por glicuronidação e não depende do citocromo.',
+        'Associe intervenções que aumentam a taxa de sucesso: **terapia cognitivo-comportamental para insônia**, que é o tratamento de primeira linha e superior a qualquer hipnótico a longo prazo, higiene do sono, e material educativo entregue ao paciente. A simples carta explicativa ao paciente (intervenção EMPOWER) já produz descontinuação em parcela significativa.',
+        'Reconheça que os **\'Z-drugs\'** (zolpidem, zopiclona, eszopiclona) têm o mesmo problema: agem no mesmo receptor, causam dependência, quedas, fraturas e amnésia, e devem ser desprescritos pela mesma lógica. Zolpidem associa-se ainda a comportamentos complexos do sono.',
+        'Priorize a desprescrição em **idosos** — os benzodiazepínicos constam nos critérios de Beers e aumentam queda, fratura, delirium e acidente automobilístico — e em quem usa **opioide concomitante**, combinação que multiplica o risco de depressão respiratória fatal e carrega advertência formal das agências reguladoras. Em **intoxicação**, o flumazenil deve ser usado com extrema cautela: em usuário crônico ele precipita convulsão refratária.',
       ],
       interpretacao: [
         '**Benzodiazepínicos são fármacos de curto prazo** — 2 a 4 semanas, incluindo o período de retirada. O uso crônico associa-se a dependência, tolerância, quedas e fraturas em idosos, prejuízo cognitivo, acidentes de trânsito e, quando combinado a opioides, a depressão respiratória e morte.',
@@ -362,6 +376,13 @@ const farmacocinetica: Ferramenta = {
         { rotulo: 'Tempo até o estado de equilíbrio', valor: `${fmt(equilibrio, 1)} h`, nota: '4 a 5 meias-vidas, independentemente da dose. Aumentar a dose eleva a concentração final, mas **não** acelera a chegada ao equilíbrio.' },
         { rotulo: 'Fração eliminada por meia-vida', valor: '50% a cada meia-vida', nota: 'Após 1 meia-vida resta 50%; após 2, 25%; após 3, 12,5%; após 4, 6,25%; após 5, cerca de 3%.' },
       ],
+      conduta: [
+        'Use a regra das **meia-vidas**: são necessárias cerca de **4 a 5 meias-vidas** para atingir o estado de equilíbrio, e o mesmo tempo para eliminar o fármaco após a suspensão. Isso responde a duas perguntas práticas: quando dosar o nível sérico e quando esperar o efeito pleno de um ajuste.',
+        'Prescreva **dose de ataque** quando o efeito for necessário antes de 4 a 5 meias-vidas — vancomicina, amiodarona, digoxina, fenitoína. A dose de ataque depende do **volume de distribuição** (dose = volume de distribuição × concentração-alvo), enquanto a manutenção depende do **clearance**. Confundir as duas é o erro conceitual mais frequente.',
+        'Ajuste a **manutenção pelo clearance** — renal, hepático ou ambos —, e a **ataque pelo volume de distribuição**, que muda com edema, ascite, obesidade e hipoalbuminemia. Um paciente anasarcado tem volume de distribuição aumentado para fármacos hidrofílicos e precisa de ataque maior, mesmo com função renal ruim.',
+        'Colha os níveis séricos nos **momentos corretos**: vale imediatamente antes da próxima dose, pico conforme o fármaco (30 min após aminoglicosídeo intravenoso, 1–2 h após vancomicina). Nível colhido fora do momento ou antes do equilíbrio produz decisões erradas, e é uma fonte silenciosa de erro terapêutico.',
+        'Considere as **interações que mudam a cinética**: indutores enzimáticos (rifampicina, carbamazepina, fenitoína, fenobarbital, erva-de-são-joão) reduzem a concentração ao longo de dias a semanas; inibidores (macrolídeos, azólicos, inibidores de protease, suco de toranja) a elevam em horas. Ajuste também para **fármacos de janela terapêutica estreita** — digoxina, lítio, fenitoína, varfarina, teofilina, ciclosporina, tacrolimo —, em que uma variação pequena de concentração separa ineficácia de toxicidade.',
+      ],
       interpretacao: [
         '**Toda prescrição tem duas doses conceitualmente distintas, e confundi-las é o erro mais comum.** A **dose de ataque** enche o volume de distribuição e determina quão rápido a concentração alvo é atingida — depende só do Vd. A **dose de manutenção** repõe o que o corpo elimina e determina a concentração de equilíbrio — depende só do clearance.',
         'A consequência prática é importante: **na insuficiência renal ou hepática, reduza a manutenção, nunca o ataque.** Reduzir a dose de ataque de um antibiótico em paciente séptico com lesão renal atrasa a concentração terapêutica justamente em quem menos pode esperar.',
@@ -465,6 +486,13 @@ const doseHepatica: Ferramenta = {
         { rotulo: 'Vias metabólicas', valor: 'A oxidação (fase I, citocromo P450) é comprometida precocemente; a glicuronidação (fase II) é relativamente preservada até fases avançadas.', nota: 'Isso explica por que lorazepam e oxazepam são preferíveis ao diazepam na cirrose.' },
         { rotulo: 'Efeito de primeira passagem', valor: 'Reduzido pela circulação colateral portossistêmica', nota: 'Fármacos com alto efeito de primeira passagem (propranolol, morfina, midazolam, verapamil) têm biodisponibilidade oral muito **aumentada** no cirrótico — o mesmo comprimido entrega bem mais fármaco.' },
         { rotulo: 'Ligação proteica', valor: 'Reduzida pela hipoalbuminemia', nota: 'Aumenta a fração livre de fármacos muito ligados (fenitoína, varfarina, diazepam), potencializando efeito e toxicidade com nível total "normal".' },
+      ],
+      conduta: [
+        'Reconheça que **não existe fórmula equivalente à filtração glomerular para o fígado**: não há marcador que estime a capacidade metabólica hepática. O ajuste é qualitativo e se apoia no **Child-Pugh**, na gravidade clínica e no conhecimento da via de eliminação de cada fármaco.',
+        'Reduza primeiro os fármacos de **alta extração hepática (efeito de primeira passagem elevado)** — propranolol, metoprolol, verapamil, morfina, lidocaína, nitratos: na cirrose com shunt portossistêmico, a primeira passagem é contornada e a biodisponibilidade oral pode aumentar várias vezes. Comece com metade da dose ou menos.',
+        'Prefira fármacos eliminados por **glicuronidação** (lorazepam, oxazepam, temazepam) aos metabolizados por oxidação do citocromo P450, porque a glicuronidação é relativamente preservada na hepatopatia. Essa é a razão de o lorazepam ser o benzodiazepínico de escolha no cirrótico.',
+        'Evite os fármacos que precipitam descompensação: **anti-inflamatórios não esteroidais** (lesão renal, síndrome hepatorrenal, sangramento), **aminoglicosídeos**, sedativos em dose habitual (precipitam encefalopatia) e paracetamol em dose alta — embora ele seja seguro e preferível aos anti-inflamatórios até **2 g/dia** no cirrótico, contrariando a crença comum de que deva ser proibido.',
+        'Lembre da **hipoalbuminemia**, que aumenta a fração livre de fármacos altamente ligados a proteína (fenitoína, varfarina, diazepam, ceftriaxona): o nível total medido subestima a fração ativa. Monitore efeito clínico e, quando possível, nível livre. E na ascite e no edema, o **volume de distribuição** dos hidrofílicos aumenta, exigindo dose de ataque maior apesar da manutenção reduzida.',
       ],
       interpretacao: [
         '**Não existe equivalente hepático da fórmula de Cockcroft-Gault.** A função hepática não tem um marcador quantitativo que se traduza em ajuste de dose, e é por isso que as recomendações são qualitativas e baseadas na classe de Child-Pugh.',
@@ -614,6 +642,13 @@ const interacoes: Ferramenta = {
       valor: d.explicacao,
       nivel: 'atencao',
       detalhes: [],
+      conduta: [
+        'Priorize pelo **mecanismo e pela consequência clínica**, não pelo número de alertas: a maior parte dos avisos automáticos é irrelevante, e o excesso produz fadiga de alerta, que faz a equipe ignorar justamente os que importam. Pergunte sempre qual é o desfecho concreto e em quanto tempo ele aparece.',
+        'Domine as **quatro famílias de maior impacto**: (1) inibidores e indutores do **CYP3A4** e do **CYP2C9/2C19**, que alteram concentração; (2) somatórios de **prolongamento do QT**; (3) somatórios **serotoninérgicos** (inibidores da recaptação, tramadol, linezolida, triptanos, ondansetrona); e (4) somatórios de **risco hemorrágico** (anticoagulante, antiagregante, anti-inflamatório, inibidor seletivo da recaptação de serotonina).',
+        'Não esqueça as interações **farmacodinâmicas e não enzimáticas**, que os verificadores frequentemente subestimam: somatório de depressão do sistema nervoso central (opioide com benzodiazepínico), somatório de hipercalemia (IECA, espironolactona, sulfametoxazol-trimetoprima), quelação de absorção (quinolona ou tetraciclina com cálcio, ferro, magnésio, antiácido) e alteração do pH gástrico por inibidor de bomba de prótons.',
+        'Ao encontrar uma interação relevante, escolha entre quatro condutas explícitas: **substituir** um dos fármacos (a melhor opção), **ajustar a dose** preventivamente, **separar os horários** (nas interações de absorção), ou **monitorar** com um parâmetro definido e uma data — INR em 3–5 dias, potássio em 1 semana, ECG antes e depois.',
+        'Reveja a lista completa em cada transição de cuidado e aproveite para **desprescrever**: a interação mais fácil de resolver é a do medicamento que não precisava estar ali. Em polifarmácia no idoso, aplique os critérios de Beers e STOPP/START, que identificam fármacos potencialmente inapropriados e omissões terapêuticas.',
+      ],
       interpretacao: [
         d.explicacao,
         '**Pensar por mecanismo é superior a consultar listas.** As listas envelhecem e nunca são completas; o mecanismo permite antecipar interações com fármacos novos e reconhecer padrões — se um fármaco é substrato de CYP3A4 e o paciente vai iniciar rifampicina, o problema é previsível sem consultar nada.',
@@ -692,6 +727,13 @@ const compatibilidade: Ferramenta = {
       valor: 'Consulte a tabela',
       nivel: 'atencao',
       detalhes: [],
+      conduta: [
+        'Verifique a compatibilidade **antes de conectar em Y**, e prefira **vias separadas ou lúmens distintos** sempre que houver dúvida. A incompatibilidade nem sempre é visível: precipitados microscópicos causam embolia, oclusão de cateter e perda de dose sem qualquer alteração aparente no equipo.',
+        'Conheça as incompatibilidades clássicas que causam dano real: **ceftriaxona com soluções contendo cálcio** (Ringer lactato) forma precipitado de ceftriaxona-cálcio, com relatos de óbito em neonatos — em neonatos a associação é contraindicada em qualquer via; **fenitoína com glicose** precipita (use apenas salina); **furosemida** é incompatível com a maioria dos fármacos ácidos.',
+        '**Lave a linha (flush) com solução compatível entre fármacos** — salina na maioria dos casos, glicose a 5% quando o fármaco for incompatível com cloreto. Esse passo simples resolve a maior parte das incompatibilidades sequenciais e é frequentemente omitido em unidades com pouco pessoal.',
+        'Respeite as exigências de **diluente, concentração e tempo de infusão** de cada fármaco: vancomicina em pelo menos 60 minutos por grama (síndrome do homem vermelho), anfotericina B em veículo e tempo específicos, amiodarona apenas em glicose a 5% e em acesso central para infusões prolongadas, e potássio concentrado nunca em bolus.',
+        'Proteja da **luz** os fármacos fotossensíveis (nitroprussiato, anfotericina, furosemida em infusão prolongada) e observe a **estabilidade após diluição**, que limita o tempo de uso. Em dúvida, consulte a fonte de referência do serviço (Trissel ou base equivalente) e a farmácia clínica — a consulta leva menos tempo que o tratamento de uma oclusão de cateter central.',
+      ],
       interpretacao: [
         '**Compatibilidade não é uma propriedade fixa de um par de fármacos.** Ela depende da concentração de cada um, do diluente, do tempo de contato, da temperatura e da luz. Uma combinação compatível em determinada concentração pode precipitar em outra.',
         'A administração **em Y** (dois fármacos que se encontram numa conexão próxima ao paciente) tem tempo de contato de segundos, e por isso tolera combinações que seriam incompatíveis na mesma bolsa. Ainda assim, as incompatibilidades clássicas listadas ocorrem mesmo em Y.',
@@ -894,6 +936,13 @@ const doseMaxima: Ferramenta = {
       valor: `${linhas.length} fármacos`,
       nivel: 'neutro',
       detalhes,
+      conduta: [
+        'Tenha os **tetos diários** dos fármacos de uso mais amplo sempre à mão: paracetamol 4 g/dia (3 g/dia em hepatopatia, uso crônico, desnutrição ou etilismo), ibuprofeno 3,2 g/dia, dipirona 4 g/dia, tramadol 400 mg/dia (300 mg/dia em idosos). Ultrapassá-los é a causa mais comum de toxicidade evitável em ambiente ambulatorial.',
+        'Some as **fontes ocultas**: o paracetamol está em dezenas de associações para gripe, dor e tosse, e a superdose acidental por soma de produtos é a principal causa de falência hepática aguda em vários países. Pergunte explicitamente sobre medicamentos de venda livre e fitoterápicos.',
+        'Respeite o **intervalo mínimo** entre doses, que deriva da meia-vida e da janela terapêutica. Encurtá-lo produz acúmulo mesmo com dose unitária correta — problema particularmente relevante com opioides, benzodiazepínicos e anti-inflamatórios em idosos e em insuficiência renal.',
+        'Reduza o teto na **insuficiência renal e hepática** e em idosos, e reveja a dose máxima a cada mudança de função orgânica. O paciente que recebeu alta com dose reduzida e recuperou função pode passar a subdosar; o inverso, mais perigoso, ocorre quando a função piora e a prescrição não muda.',
+        'Registre a **dose acumulada** dos fármacos com toxicidade dependente de dose total: antraciclinas (cardiotoxicidade, com teto de cerca de 450–550 mg/m² para doxorrubicina), bleomicina (fibrose pulmonar), cloroquina e hidroxicloroquina (retinopatia), e amiodarona. Nesses casos, o limite não é diário — é a vida inteira do paciente, e só um registro cumulativo o protege.',
+      ],
       interpretacao: [
         '**Dose máxima não é dose alvo.** Ela marca o limite acima do qual o risco cresce sem ganho terapêutico — muitas vezes porque o efeito já atingiu um platô (curva dose-resposta) enquanto os efeitos adversos continuam lineares.',
         '**Efeito teto** é diferente de dose máxima. Anti-inflamatórios e tramadol têm efeito analgésico teto: acima de certa dose, só aumentam a toxicidade. Morfina e demais agonistas plenos não têm teto analgésico — a dose é limitada pela tolerância aos efeitos adversos.',
