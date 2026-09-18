@@ -14,6 +14,8 @@
     "lint:histologia": "next lint --dir components/histologia --dir lib/histologia --dir app/manual-clinico/histologia --dir app/api/manual-clinico/histologia --dir scripts/histologia --dir __tests__",
     "lint:histopatologia": "next lint --dir components/histopatologia --dir lib/histopatologia --dir app/manual-clinico/histologia/histopatologia --dir app/api/manual-clinico/histopatologia --dir scripts/histopatologia --dir __tests__/histopatologia",
     "test": "vitest run",
+    "ferramentas:auditar": "node scripts/auditar-ferramentas.mjs",
+    "ferramentas:fumaca": "node --experimental-strip-types --no-warnings scripts/fumaca-ferramentas.mjs",
     "test:watch": "vitest",
     "histologia:dados": "node --experimental-strip-types --no-warnings scripts/histologia/construir-dados.mjs",
     "histopatologia:catalogo": "node public/patologia/scripts/validar-catalogo.mjs",
