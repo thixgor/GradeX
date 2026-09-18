@@ -109,7 +109,7 @@ const conversorOpioides: Ferramenta = {
     'Fentanil transdérmico: mcg/h × 2 a 2,4 ≈ mg de morfina oral/dia',
   ],
   fundamento:
-    'As tabelas de equianalgesia derivam de estudos de dose única em pacientes com pouca exposição prévia a opioides, e por isso descrevem mal o uso crônico. Elas são pontos de partida, não conversões exatas: a variabilidade individual é grande, influenciada por polimorfismos de CYP2D6 e CYP3A4, função renal e hepática, e grau de tolerância.',
+    'As tabelas de equianalgesia derivam de estudos de dose única em pacientes com pouca exposição prévia a opioides, e por isso descrevem mal o uso crônico. Elas são pontos de partida, não conversões exatas: a variabilidade individual é grande, influenciada por polimorfismos de CYP2D6 e CYP3A4, função renal e hepática, e grau de tolerância. A tolerância cruzada é incompleta porque os opioides não são intercambiáveis no nível do receptor: diferem na afinidade relativa por mu, delta e kappa, no viés de sinalização entre proteína G e beta-arrestina, e no grau de internalização do receptor que causam. Um receptor dessensibilizado para morfina pode continuar plenamente responsivo a outro agonista — daí a redução obrigatória de 25 a 50% ao converter, e daí também o fenômeno clínico de um paciente refratário responder bem à rotação de opioide.',
   armadilhas: [
     'Nunca converta doses altas sem supervisão especializada. Erros de rotação de opioide estão entre os eventos adversos medicamentosos mais graves e mais frequentes.',
     'Codeína e tramadol dependem de CYP2D6 e têm resposta imprevisível. Codeína é contraindicada em menores de 12 anos e na amamentação.',
@@ -194,7 +194,7 @@ const conversorBenzo: Ferramenta = {
   },
   formula: ['Diazepam 10 mg = clonazepam 0,5 = alprazolam 0,5 = lorazepam 1 = bromazepam 6 = midazolam 7,5 = clordiazepóxido 25 = oxazepam 20 mg'],
   fundamento:
-    'Todos os benzodiazepínicos atuam no mesmo sítio — o receptor GABA-A —, aumentando a frequência de abertura do canal de cloro. As diferenças clínicas vêm da farmacocinética, não da farmacodinâmica: potência, velocidade de início, lipossolubilidade, meia-vida e presença de metabólitos ativos. É por isso que a conversão é possível, e por isso que trocar por um de meia-vida longa facilita a retirada.',
+    'Todos os benzodiazepínicos atuam no mesmo sítio — o receptor GABA-A —, aumentando a frequência de abertura do canal de cloro. As diferenças clínicas vêm da farmacocinética, não da farmacodinâmica: potência, velocidade de início, lipossolubilidade, meia-vida e presença de metabólitos ativos. É por isso que a conversão é possível, e por isso que trocar por um de meia-vida longa facilita a retirada. A dependência física se instala por **regulação para baixo do receptor GABA-A** e por alteração da composição de suas subunidades sob exposição contínua, somadas a uma regulação para cima compensatória da neurotransmissão glutamatérgica. A retirada desmascara esse desequilíbrio: o sistema excitatório amplificado fica sem o freio inibitório, e é essa hiperexcitabilidade que produz insônia de rebote, tremor, ansiedade extrema e, nos casos graves, convulsão e delirium.',
   armadilhas: [
     'As tabelas de equivalência têm variação considerável entre fontes. Use-as como ponto de partida e titule pela clínica.',
     'Em hepatopatia, prefira lorazepam, oxazepam ou temazepam — os únicos que dispensam oxidação hepática e não acumulam.',
@@ -661,7 +661,7 @@ const interacoes: Ferramenta = {
   },
   formula: [],
   fundamento:
-    'As interações medicamentosas se dividem em farmacocinéticas — quando um fármaco altera a absorção, distribuição, metabolismo ou excreção do outro — e farmacodinâmicas — quando dois fármacos atuam sobre o mesmo sistema fisiológico, somando ou antagonizando efeitos. As primeiras são previsíveis pelo conhecimento das enzimas e transportadores; as segundas, pelo conhecimento do efeito.',
+    'As interações medicamentosas se dividem em farmacocinéticas — quando um fármaco altera a absorção, distribuição, metabolismo ou excreção do outro — e farmacodinâmicas — quando dois fármacos atuam sobre o mesmo sistema fisiológico, somando ou antagonizando efeitos. As primeiras são previsíveis pelo conhecimento das enzimas e transportadores; as segundas, pelo conhecimento do efeito. A maioria das interações clinicamente relevantes passa por um de quatro mecanismos: **metabólico** (indução ou inibição de isoenzimas do citocromo P450 e de UGT, além de transportadores como a glicoproteína P), **de absorção** (quelação, alteração do pH gástrico, competição por transportador intestinal), **de excreção** (competição pela secreção tubular renal) e **farmacodinâmico** (somatório ou antagonismo de efeito no mesmo alvo fisiológico). Identificar de qual se trata define a conduta — separar horários resolve as de absorção e não resolve nenhuma das outras.',
   armadilhas: [
     'Fitoterápicos e suplementos participam de interações relevantes e raramente são relatados espontaneamente. Pergunte explicitamente.',
     'Suco de toranja (grapefruit) inibe CYP3A4 intestinal por dias, não horas — espaçar a ingestão não resolve.',
@@ -840,7 +840,7 @@ const receita: Ferramenta = {
   },
   formula: [],
   fundamento:
-    'A prescrição é um documento legal e um ato de comunicação. Erros de prescrição respondem por parcela substancial dos eventos adversos evitáveis em saúde, e a maioria decorre de omissão — dose sem via, fármaco sem concentração, "se necessário" sem limite — e não de escolha terapêutica errada.',
+    'A prescrição é um documento legal e um ato de comunicação. Erros de prescrição respondem por parcela substancial dos eventos adversos evitáveis em saúde, e a maioria decorre de omissão — dose sem via, fármaco sem concentração, "se necessário" sem limite — e não de escolha terapêutica errada. A estrutura da prescrição não é burocracia: cada elemento omitido corresponde a uma classe conhecida de erro de medicação. A ausência de **concentração** obriga quem administra a converter mg em mL mentalmente, principal origem dos erros de ordem de grandeza em pediatria; a ausência de **via** permite administração intravenosa de preparação oral; abreviaturas como \'U\' lida como zero e \'µg\' lida como mg estão entre as causas mais documentadas de dano grave, motivo pelo qual foram banidas das listas de práticas seguras.',
   armadilhas: [
     'Prescrever pelo nome comercial dificulta a dispensação e favorece a troca por fármaco semelhante.',
     '"Uso contínuo" sem data de reavaliação é como polifarmácia se instala. Toda prescrição crônica precisa de horizonte de revisão.',
@@ -955,7 +955,7 @@ const doseMaxima: Ferramenta = {
   },
   formula: [],
   fundamento:
-    'A dose máxima de um fármaco deriva de três limites: o ponto em que a curva dose-resposta satura (acima do qual não há ganho), o ponto em que a toxicidade dose-dependente se torna inaceitável, e — em alguns casos — um mecanismo específico, como o limiar convulsivo do tramadol ou o prolongamento do QT do citalopram.',
+    'A dose máxima de um fármaco deriva de três limites: o ponto em que a curva dose-resposta satura (acima do qual não há ganho), o ponto em que a toxicidade dose-dependente se torna inaceitável, e — em alguns casos — um mecanismo específico, como o limiar convulsivo do tramadol ou o prolongamento do QT do citalopram. O teto diário e o intervalo mínimo derivam de duas curvas distintas. O **intervalo** vem da meia-vida e do tempo necessário para que a concentração caia abaixo do limiar de toxicidade — encurtá-lo produz acúmulo mesmo com dose unitária correta, porque cada dose entra antes que a anterior tenha sido eliminada. O **teto diário** vem da saturação das vias de eliminação: no paracetamol, por exemplo, a glicuronidação e a sulfatação saturam e o excesso é desviado ao CYP2E1, gerando NAPQI, que consome a glutationa hepática e causa necrose centrolobular.',
   armadilhas: [
     'Idosos, hepatopatas, nefropatas e pessoas de baixo peso têm tetos menores do que os listados.',
     'Doses "máximas" em bula às vezes refletem apenas o que foi testado nos ensaios, não um limite fisiológico.',

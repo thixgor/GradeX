@@ -375,7 +375,7 @@ const vasoativas: Ferramenta = {
     'Dose (mcg/kg/min) = velocidade (mL/h) × concentração (mcg/mL) ÷ (peso × 60)',
   ],
   fundamento:
-    'Toda infusão contínua é uma conversão entre três grandezas: massa de fármaco, tempo e volume. A dose clínica é expressa por quilo e por minuto porque o efeito hemodinâmico escala com a massa corporal e a meia-vida das catecolaminas é de segundos a poucos minutos — o efeito é praticamente instantâneo e reflete a taxa de entrega, não a dose acumulada.',
+    'Toda infusão contínua é uma conversão entre três grandezas: massa de fármaco, tempo e volume. A dose clínica é expressa por quilo e por minuto porque o efeito hemodinâmico escala com a massa corporal e a meia-vida das catecolaminas é de segundos a poucos minutos — o efeito é praticamente instantâneo e reflete a taxa de entrega, não a dose acumulada. A escolha do vasoativo é uma escolha de receptor. **Alfa-1** produz vasoconstrição arteriolar e eleva a resistência periférica; **beta-1** aumenta contratilidade e frequência; **beta-2** vasodilata e broncodilata; **V1** vasoconstringe por via independente de catecolamina, útil quando a acidose dessensibiliza os receptores adrenérgicos; **dopaminérgicos** dilatam os leitos renal e esplâncnico. A noradrenalina é a primeira linha no choque vasoplégico porque é alfa-1 potente com beta-1 modesto, sustentando a pressão com menos taquiarritmia que a dopamina e a adrenalina.',
   armadilhas: [
     'Nitroglicerina e vasopressina são prescritas em dose **fixa** (mcg/min e U/min), não por quilo. Aplicar a fórmula por peso a esses fármacos gera erro grosseiro.',
     'A apresentação da noradrenalina varia entre países e fabricantes. Confirme se a rotulagem se refere à base ou ao sal.',
@@ -733,7 +733,7 @@ const bicarbonato: Ferramenta = {
     'Bicarbonato a 8,4%: 1 mL = 1 mEq',
   ],
   fundamento:
-    'O bicarbonato não é um íon confinado ao plasma: ele se distribui por um espaço que inclui o líquido extracelular e, na acidose grave, os tampões intracelulares e ósseos. É por isso que o "espaço de distribuição" aumenta conforme a acidose se aprofunda — repor com o coeficiente de acidose leve numa acidose grave subcorrige de forma previsível.',
+    'O bicarbonato não é um íon confinado ao plasma: ele se distribui por um espaço que inclui o líquido extracelular e, na acidose grave, os tampões intracelulares e ósseos. É por isso que o "espaço de distribuição" aumenta conforme a acidose se aprofunda — repor com o coeficiente de acidose leve numa acidose grave subcorrige de forma previsível. O bicarbonato não ajuda na acidose lática e na cetoacidose por um motivo físico-químico: ao tamponar o hidrogênio, ele gera **gás carbônico**, que atravessa a membrana celular muito mais rápido que o íon bicarbonato. O resultado é queda do pH intracelular justamente nos tecidos que se quer proteger — miocárdio e sistema nervoso central —, com piora da contratilidade. Soma-se o desvio da curva de dissociação da hemoglobina para a esquerda, que reduz a liberação de oxigênio aos tecidos, e a queda abrupta do potássio e do cálcio ionizado.',
   armadilhas: [
     'Não persiga a normalização do pH. O alvo é sair da faixa de risco, não chegar a 7,40.',
     'A alcalose de rebote é comum quando o ácido orgânico acumulado (lactato, cetoácido) é metabolizado e regenera bicarbonato endógeno, somando-se ao administrado.',
@@ -811,7 +811,7 @@ const anafilaxia: Ferramenta = {
   },
   formula: ['Adrenalina intramuscular: 0,01 mg/kg (máximo 0,5 mg no adulto), solução 1:1.000, no vasto lateral', 'Repetir a cada 5 a 15 minutos conforme a resposta'],
   fundamento:
-    'A adrenalina atua nos três eixos da anafilaxia simultaneamente: agonismo α₁ reverte a vasodilatação e o extravasamento capilar (e reduz o edema de via aérea), agonismo β₁ aumenta a contratilidade e a frequência, e agonismo β₂ broncodilata e inibe a liberação adicional de mediadores por mastócitos e basófilos. Nenhum outro fármaco cobre esses três mecanismos.',
+    'A adrenalina atua nos três eixos da anafilaxia simultaneamente: agonismo α₁ reverte a vasodilatação e o extravasamento capilar (e reduz o edema de via aérea), agonismo β₁ aumenta a contratilidade e a frequência, e agonismo β₂ broncodilata e inibe a liberação adicional de mediadores por mastócitos e basófilos. Nenhum outro fármaco cobre esses três mecanismos. A anafilaxia é desgranulação maciça de mastócitos e basófilos, mediada por IgE ou por via independente de IgE, com liberação de histamina, triptase, prostaglandina D2, leucotrienos e fator ativador de plaquetas. O efeito dominante é **vasodilatação com aumento extremo da permeabilidade capilar**: até 35% do volume intravascular pode migrar para o interstício em 10 minutos. Isso explica por que a adrenalina é insubstituível — só ela reverte simultaneamente a vasodilatação (alfa-1), o broncoespasmo (beta-2) e a própria desgranulação (beta-2 nos mastócitos), e por que a posição supina evita o colapso do retorno venoso.',
   armadilhas: [
     'Anafilaxia pode ocorrer **sem manifestação cutânea** em cerca de 10 a 20% dos casos — especialmente na induzida por alimento em crianças e nas reações a medicamentos endovenosos. Ausência de urticária não exclui.',
     'A via subcutânea absorve de forma errática e lenta, e não deve ser usada.',

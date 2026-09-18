@@ -411,7 +411,7 @@ const preEclampsia: Ferramenta = {
   },
   formula: ['Pré-eclâmpsia = hipertensão após 20 semanas + (proteinúria OU qualquer sinal de gravidade)'],
   fundamento:
-    'A pré-eclâmpsia é uma doença de origem placentária com manifestação sistêmica. A remoção da proteinúria como critério obrigatório, em 2013, reconheceu que a lesão renal é apenas uma das faces da disfunção endotelial difusa — e que exigir proteinúria retardava o diagnóstico de pacientes que já tinham comprometimento hepático, hematológico ou neurológico.',
+    'A pré-eclâmpsia é uma doença de origem placentária com manifestação sistêmica. A remoção da proteinúria como critério obrigatório, em 2013, reconheceu que a lesão renal é apenas uma das faces da disfunção endotelial difusa — e que exigir proteinúria retardava o diagnóstico de pacientes que já tinham comprometimento hepático, hematológico ou neurológico. A pré-eclâmpsia começa muito antes dos sintomas, com **invasão trofoblástica deficiente das artérias espiraladas**: elas não perdem a camada muscular e permanecem de alta resistência e baixo fluxo, gerando isquemia placentária intermitente. A placenta isquêmica libera fatores antiangiogênicos — sFlt-1, que sequestra VEGF e fator de crescimento placentário, e endoglina solúvel —, que produzem disfunção endotelial sistêmica. É o endotélio doente que explica todo o resto: hipertensão por perda de óxido nítrico, proteinúria por endoteliose glomerular, plaquetopenia por consumo e as alterações hepáticas e neurológicas.',
   armadilhas: [
     'Não espere proteinúria para diagnosticar. Cefaleia persistente que não cede a analgésico comum em gestante hipertensa é sinal de gravidade.',
     'A pré-eclâmpsia pode se manifestar **pela primeira vez no puerpério**, até 6 semanas após o parto. Oriente toda puérpera sobre os sinais de alarme.',
@@ -494,7 +494,7 @@ const sulfatoMagnesio: Ferramenta = {
     'Antídoto: gluconato de cálcio 1 g (10 mL a 10%) EV lento',
   ],
   fundamento:
-    'O magnésio bloqueia receptores NMDA, antagoniza canais de cálcio e reduz a excitabilidade neuronal, além de causar vasodilatação cerebral — o que atenua o vasoespasmo e o edema associados à encefalopatia da eclâmpsia. Sua excreção é exclusivamente renal, e é por isso que a diurese é um parâmetro de monitorização tão central: rim que não filtra acumula magnésio.',
+    'O magnésio bloqueia receptores NMDA, antagoniza canais de cálcio e reduz a excitabilidade neuronal, além de causar vasodilatação cerebral — o que atenua o vasoespasmo e o edema associados à encefalopatia da eclâmpsia. Sua excreção é exclusivamente renal, e é por isso que a diurese é um parâmetro de monitorização tão central: rim que não filtra acumula magnésio. O magnésio previne a eclâmpsia por mecanismo central, não anti-hipertensivo: ele **bloqueia receptores NMDA** de forma dependente de voltagem, reduzindo a excitotoxicidade glutamatérgica, promove vasodilatação cerebral que reverte o vasoespasmo associado à encefalopatia hipertensiva, e estabiliza a barreira hematoencefálica reduzindo o edema vasogênico. Perifericamente, compete com o cálcio na junção neuromuscular — daí, na mesma molécula, o efeito terapêutico e a toxicidade que se monitora pelo reflexo patelar.',
   armadilhas: [
     'A concentração das ampolas varia (10%, 20%, 50%). Erro na conversão de gramas para mililitros é a causa mais comum de superdosagem — confira sempre.',
     'Não suspenda o sulfato imediatamente após o parto: mantenha por 24 horas, período em que a maioria das eclâmpsias pós-parto ocorre.',
@@ -566,7 +566,7 @@ const choqueObstetrico: Ferramenta = {
   },
   formula: ['Índice de choque obstétrico = frequência cardíaca ÷ PA sistólica (normal 0,7 a 0,9)'],
   fundamento:
-    'A gestante a termo tem volume plasmático 40 a 50% maior e massa eritrocitária 20 a 30% maior que a não gestante — adaptação que a prepara justamente para a perda do parto. Essa reserva é também a armadilha: os sinais clássicos de choque aparecem tarde. O índice de choque captura a resposta cronotrópica compensatória, que antecede a queda pressórica.',
+    'A gestante a termo tem volume plasmático 40 a 50% maior e massa eritrocitária 20 a 30% maior que a não gestante — adaptação que a prepara justamente para a perda do parto. Essa reserva é também a armadilha: os sinais clássicos de choque aparecem tarde. O índice de choque captura a resposta cronotrópica compensatória, que antecede a queda pressórica. A gestante compensa a hemorragia melhor que a não gestante porque chega ao termo com a volemia expandida em 30 a 50% e com débito cardíaco elevado — uma reserva fisiológica construída justamente para o parto. O custo dessa vantagem é diagnóstico: a pressão arterial permanece normal até perdas da ordem de 1.500 mL, e o único sinal precoce é a **taquicardia com estreitamento da pressão de pulso**, que é exatamente o que o índice de choque captura antes que a sistólica se mova.',
   armadilhas: [
     'Analgesia peridural, betabloqueador e dor alteram a frequência e distorcem o índice.',
     'A hemorragia pós-parto pode ser tardia (após 24 horas e até 12 semanas), por restos placentários, infecção ou subinvolução do leito placentário.',
@@ -1015,7 +1015,7 @@ const tevGestacao: Ferramenta = {
   },
   formula: ['Soma ponderada de fatores; profilaxia se ≥ 4 pontos no anteparto ou ≥ 2 no pós-parto (RCOG Green-top Guideline No. 37a)'],
   fundamento:
-    'O escore do Royal College of Obstetricians and Gynaecologists é o modelo de avaliação de risco obstétrico mais usado no mundo. Ele pesa três categorias: fatores preexistentes (trombose prévia, trombofilia, comorbidade), fatores obstétricos (gestação múltipla, pré-eclâmpsia, via de parto, hemorragia) e fatores transitórios (imobilidade, infecção, hiperêmese).',
+    'O escore do Royal College of Obstetricians and Gynaecologists é o modelo de avaliação de risco obstétrico mais usado no mundo. Ele pesa três categorias: fatores preexistentes (trombose prévia, trombofilia, comorbidade), fatores obstétricos (gestação múltipla, pré-eclâmpsia, via de parto, hemorragia) e fatores transitórios (imobilidade, infecção, hiperêmese). A gestação preenche a tríade de Virchow por inteiro: **hipercoagulabilidade** (aumento dos fatores I, VII, VIII, IX e X, queda da proteína S livre e resistência adquirida à proteína C ativada, com elevação do inibidor do ativador do plasminogênio tipo 2 de origem placentária), **estase** (compressão da veia cava e das ilíacas pelo útero gravídico, com predomínio à esquerda pelo cruzamento da artéria ilíaca direita) e **lesão endotelial** no parto e na cesárea. A alteração é teleológica — prepara o organismo para a hemostasia do descolamento placentário — e o tromboembolismo é seu preço.',
   armadilhas: [
     'O tromboembolismo é uma das principais causas diretas de morte materna em países de alta renda, e o subdiagnóstico é o problema central — os sintomas se confundem com queixas fisiológicas da gestação.',
     'D-dímero tem valor limitado na gestação: sobe fisiologicamente com a idade gestacional e raramente exclui.',
@@ -1085,7 +1085,7 @@ const ferroGestacao: Ferramenta = {
   },
   formula: ['Anemia na gestação: Hb < 11 g/dL (1º e 3º trimestres) ou < 10,5 g/dL (2º trimestre)', 'Déficit de ferro (Ganzoni) = peso × (Hb alvo − Hb atual) × 2,4 + 500 mg'],
   fundamento:
-    'A queda fisiológica da hemoglobina no segundo trimestre é o motivo do ponto de corte mais baixo nesse período: a expansão plasmática atinge o pico relativo por volta de 28 a 34 semanas, quando a diluição é máxima. Ignorar essa curva leva a diagnosticar anemia em gestantes normais no segundo trimestre e a deixar de diagnosticá-la no primeiro.',
+    'A queda fisiológica da hemoglobina no segundo trimestre é o motivo do ponto de corte mais baixo nesse período: a expansão plasmática atinge o pico relativo por volta de 28 a 34 semanas, quando a diluição é máxima. Ignorar essa curva leva a diagnosticar anemia em gestantes normais no segundo trimestre e a deixar de diagnosticá-la no primeiro. A demanda de ferro na gestação sobe para cerca de 1.000 mg no total: aproximadamente 300 mg para o feto e a placenta, 500 mg para a expansão da massa eritrocitária materna e 200 mg para perdas basais. A absorção intestinal aumenta progressivamente porque a **hepcidina materna cai** ao longo da gestação, liberando a ferroportina do enterócito — mas raramente o suficiente para cobrir a demanda sem aporte adicional, sobretudo quando a gestante inicia a gravidez já com estoques baixos.',
   armadilhas: [
     'A ferritina é proteína de fase aguda e sobe na inflamação, mascarando deficiência real. Na dúvida, avalie saturação de transferrina ou receptor solúvel de transferrina.',
     'Ferro e cálcio competem pela absorção — não administre juntos.',
@@ -1156,7 +1156,7 @@ const rmi: Ferramenta = {
   },
   formula: ['RMI = U × M × CA-125', 'U = 0 (nenhuma característica), 1 (uma) ou 3 (duas ou mais)', 'M = 1 (pré-menopausa) ou 3 (pós-menopausa)'],
   fundamento:
-    'Jacobs e colaboradores propuseram o índice em 1990 combinando os três preditores independentes mais fortes de malignidade em massa anexial. A multiplicação, em vez da soma, é intencional: ela amplifica o efeito quando os três fatores se somam, refletindo a interação real entre eles — CA-125 alto em pós-menopausa com massa complexa é muito mais preocupante do que qualquer um dos três isoladamente.',
+    'Jacobs e colaboradores propuseram o índice em 1990 combinando os três preditores independentes mais fortes de malignidade em massa anexial. A multiplicação, em vez da soma, é intencional: ela amplifica o efeito quando os três fatores se somam, refletindo a interação real entre eles — CA-125 alto em pós-menopausa com massa complexa é muito mais preocupante do que qualquer um dos três isoladamente. O índice multiplica três variáveis porque cada uma corrige a fraqueza da outra. O **CA-125** é sensível mas pouco específico, sobretudo antes da menopausa, quando endometriose, miomas, doença inflamatória pélvica e a própria menstruação o elevam. O **estado menopausal** entra como multiplicador justamente para compensar essa perda de especificidade. E o **escore ultrassonográfico** acrescenta a morfologia — septos, componente sólido, bilateralidade, ascite, metástase —, que é o dado com maior valor discriminante isolado.',
   armadilhas: [
     'A avaliação ultrassonográfica é operador-dependente, e é a principal fonte de variabilidade do índice.',
     'Existem variantes do índice (RMI 1, 2, 3 e 4) com pontuações e cortes diferentes. Padronize uma no serviço.',
@@ -1222,7 +1222,7 @@ const periodoFertil: Ferramenta = {
     'Ovulação ≈ 14 dias antes da próxima menstruação',
   ],
   fundamento:
-    'O método de Ogino-Knaus parte de uma constância biológica real: a fase lútea, entre a ovulação e a menstruação, dura de forma bastante estável 13 a 15 dias em quase todas as mulheres. A fase folicular, ao contrário, varia muito — e é por isso que se conta a ovulação **de trás para frente**, a partir da próxima menstruação, e não a partir da anterior.',
+    'O método de Ogino-Knaus parte de uma constância biológica real: a fase lútea, entre a ovulação e a menstruação, dura de forma bastante estável 13 a 15 dias em quase todas as mulheres. A fase folicular, ao contrário, varia muito — e é por isso que se conta a ovulação **de trás para frente**, a partir da próxima menstruação, e não a partir da anterior. A janela fértil é assimétrica em torno da ovulação por uma razão simples de sobrevida celular: o espermatozoide permanece viável por até 5 dias nas criptas do muco cervical periovulatório, que se torna filante, aquoso e permeável sob estímulo estrogênico, enquanto o **oócito é viável por apenas 12 a 24 horas** após a ovulação. Daí a regra prática de que a relação que engravida é a que antecede a ovulação, e não a que a segue.',
   armadilhas: [
     'Estresse, doença, viagem, mudança de peso e exercício intenso deslocam a ovulação de forma imprevisível.',
     'Sangramento de escape pode ser confundido com menstruação, deslocando toda a contagem.',

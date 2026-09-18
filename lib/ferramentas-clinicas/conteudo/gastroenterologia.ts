@@ -292,7 +292,7 @@ const blatchford: Ferramenta = {
   },
   formula: ['Soma ponderada de ureia, hemoglobina (por sexo), PA sistólica, frequência, melena, síncope, hepatopatia e insuficiência cardíaca'],
   fundamento:
-    'O Blatchford foi derivado para prever **necessidade de intervenção**, e não mortalidade — e essa escolha de desfecho é o que o torna útil na triagem. Ele usa apenas dados pré-endoscópicos, disponíveis na chegada, e por isso responde à pergunta que o emergencista faz primeiro: este paciente precisa ficar?',
+    'O Blatchford foi derivado para prever **necessidade de intervenção**, e não mortalidade — e essa escolha de desfecho é o que o torna útil na triagem. Ele usa apenas dados pré-endoscópicos, disponíveis na chegada, e por isso responde à pergunta que o emergencista faz primeiro: este paciente precisa ficar? O escore foi construído para prever **necessidade de intervenção** (transfusão, endoscopia terapêutica, cirurgia), não mortalidade — e é essa escolha de desfecho que o torna útil na triagem. Ele captura tanto a magnitude da perda (hemoglobina, pressão, frequência) quanto a resposta fisiológica à digestão do sangue no intestino delgado: a **ureia sobe desproporcionalmente à creatinina** porque a hemoglobina digerida é uma carga proteica absorvida, somada à redução da perfusão renal.',
   armadilhas: [
     'Não se aplica a hemorragia digestiva baixa.',
     'Pacientes em uso de anticoagulante ou com comorbidade grave podem ter escore baixo e ainda assim exigir internação — o escore não vê antitrombóticos.',
@@ -527,7 +527,7 @@ const bisap: Ferramenta = {
   },
   formula: ['B UN > 25 | I mpaired mental status | S IRS | A ge > 60 | P leural effusion'],
   fundamento:
-    'O BISAP foi derivado de uma base com mais de 17 mil casos, buscando o menor conjunto de variáveis de primeiras 24 horas capaz de prever mortalidade. Cada item representa uma dimensão: azotemia (perfusão e prognóstico renal), estado mental (gravidade sistêmica), SIRS (resposta inflamatória), idade (reserva) e derrame pleural (extensão da inflamação retroperitoneal).',
+    'O BISAP foi derivado de uma base com mais de 17 mil casos, buscando o menor conjunto de variáveis de primeiras 24 horas capaz de prever mortalidade. Cada item representa uma dimensão: azotemia (perfusão e prognóstico renal), estado mental (gravidade sistêmica), SIRS (resposta inflamatória), idade (reserva) e derrame pleural (extensão da inflamação retroperitoneal). O BISAP foi desenhado para ser calculável nas **primeiras 24 horas** com cinco variáveis de rotina, superando a principal limitação do Ranson, que exige 48 horas e portanto chega tarde para decidir o nível de cuidado. Cada item corresponde a uma falência em curso: ureia à hipoperfusão renal, estado mental à encefalopatia da resposta inflamatória sistêmica, os critérios de SIRS à própria cascata de citocinas, o derrame pleural ao extravasamento capilar, e a idade à reserva fisiológica.',
   armadilhas: [
     'Nenhum escore substitui a reavaliação seriada. A pancreatite grave se define retrospectivamente, pela disfunção orgânica que **persiste** além de 48 horas.',
     'Tomografia com contraste nas primeiras 72 horas frequentemente subestima a necrose, que leva dias para se demarcar — e não muda a conduta inicial.',
@@ -636,7 +636,7 @@ const ranson: Ferramenta = {
   },
   formula: ['5 critérios na admissão + 6 critérios em 48 h', 'Pontos de corte diferem entre pancreatite biliar e não biliar'],
   fundamento:
-    'Ranson publicou os critérios em 1974, a partir da análise de 100 pacientes com pancreatite alcoólica. Foi o primeiro escore prognóstico da doença e organizou a compreensão fisiopatológica: a pancreatite grave é uma síndrome inflamatória sistêmica com extravasamento capilar, não uma doença localizada no pâncreas.',
+    'Ranson publicou os critérios em 1974, a partir da análise de 100 pacientes com pancreatite alcoólica. Foi o primeiro escore prognóstico da doença e organizou a compreensão fisiopatológica: a pancreatite grave é uma síndrome inflamatória sistêmica com extravasamento capilar, não uma doença localizada no pâncreas. Os critérios se dividem em dois momentos por uma razão fisiopatológica: os **da admissão** refletem a magnitude da inflamação inicial e da lise celular (leucócitos, glicose por comprometimento das ilhotas, desidrogenase láctica e transaminases pela necrose), enquanto os **das 48 horas** refletem as consequências sistêmicas — sequestro de líquido para o retroperitônio e para o terceiro espaço, queda do hematócrito, hipocalcemia por saponificação da gordura peripancreática pelos ácidos graxos livres, e hipoxemia por lesão pulmonar aguda.',
   armadilhas: [
     'Amilase e lipase **não** entram no escore e não têm valor prognóstico — o grau de elevação não se correlaciona com a gravidade.',
     'Duas listas de pontos de corte circulam (biliar e não biliar) e são frequentemente confundidas. Na biliar há 10 critérios, não 11 — a PaO₂ não entra.',
@@ -724,7 +724,7 @@ const atlanta: Ferramenta = {
   },
   formula: ['Diagnóstico: 2 de 3 critérios', 'Gravidade: leve | moderadamente grave | grave, pela disfunção orgânica e complicações'],
   fundamento:
-    'A revisão de Atlanta, publicada em 2013 após consenso internacional, substituiu a classificação de 1992 por dois motivos: a definição antiga de gravidade era baseada em escores prognósticos, não em desfechos observados, e a nomenclatura das coleções era ambígua. A nova classificação ancorou a gravidade na disfunção orgânica real e sua persistência — o que se mostrou muito mais preditivo.',
+    'A revisão de Atlanta, publicada em 2013 após consenso internacional, substituiu a classificação de 1992 por dois motivos: a definição antiga de gravidade era baseada em escores prognósticos, não em desfechos observados, e a nomenclatura das coleções era ambígua. A nova classificação ancorou a gravidade na disfunção orgânica real e sua persistência — o que se mostrou muito mais preditivo. A revisão de 2012 substituiu a classificação por gravidade presumida pela classificação por **falência orgânica documentada**, porque os desfechos mostraram que o que mata na pancreatite não é a extensão da necrose em si, e sim a resposta inflamatória sistêmica e a infecção secundária. A distinção entre falência transitória e persistente às 48 horas separa dois grupos com mortalidade muito diferente, e as coleções foram redefinidas por tempo e conteúdo porque o momento da intervenção — depois de 4 semanas, com a parede madura — determina o resultado.',
   armadilhas: [
     'Amilase e lipase normais não excluem pancreatite, sobretudo em apresentação tardia, em pancreatite crônica agudizada e em hipertrigliceridemia grave (que pode inibir o ensaio).',
     'Tomografia com contraste nas primeiras 72 horas subestima a necrose. Peça pela suspeita de complicação, não por rotina.',
@@ -1052,7 +1052,7 @@ const maddrey: Ferramenta = {
   },
   formula: ['Maddrey = 4,6 × (TP do paciente − TP do controle) + bilirrubina total'],
   fundamento:
-    'A função discriminante foi derivada nos anos 1970 combinando as duas medidas que melhor refletiam a gravidade da hepatite alcoólica: o comprometimento da síntese de fatores de coagulação e a falência excretora. O coeficiente 4,6 foi ajustado empiricamente para dar aos dois componentes pesos comparáveis.',
+    'A função discriminante foi derivada nos anos 1970 combinando as duas medidas que melhor refletiam a gravidade da hepatite alcoólica: o comprometimento da síntese de fatores de coagulação e a falência excretora. O coeficiente 4,6 foi ajustado empiricamente para dar aos dois componentes pesos comparáveis. A lógica da função discriminante é combinar os dois marcadores que refletem a **capacidade sintética e excretora do hepatócito**: o tempo de protrombina, que cai quando a síntese de fatores de coagulação falha (e que tem meia-vida curta, o que o torna sensível a mudanças agudas), e a bilirrubina, que sobe quando a conjugação e a excreção canalicular se perdem. O corticoide funciona nessa população porque a hepatite alcoólica grave é sustentada por uma resposta inflamatória mediada por TNF-alfa e por neutrófilos, e não apenas pela toxicidade direta do acetaldeído.',
   armadilhas: [
     'O tempo de protrombina depende do reagente usado; por isso a fórmula exige o **controle do mesmo laboratório**, e não o INR.',
     'Diagnóstico diferencial obrigatório: hepatite viral, medicamentosa, autoimune, isquêmica e doença de Wilson podem imitar o quadro. Biópsia transjugular é uma opção quando a dúvida persiste e o tratamento com corticoide está em jogo.',
@@ -1137,7 +1137,7 @@ const kings: Ferramenta = {
     'Outras causas: INR > 6,5, OU 3 de 5 critérios menores',
   ],
   fundamento:
-    'Os critérios foram derivados em 1989 no King’s College Hospital, a partir de 588 casos de insuficiência hepática aguda, buscando identificar quem morreria sem transplante. A separação por etiologia foi essencial: a intoxicação por paracetamol tem curso e prognóstico distintos, com potencial de recuperação espontânea muito maior quando não há acidose nem falência renal.',
+    'Os critérios foram derivados em 1989 no King’s College Hospital, a partir de 588 casos de insuficiência hepática aguda, buscando identificar quem morreria sem transplante. A separação por etiologia foi essencial: a intoxicação por paracetamol tem curso e prognóstico distintos, com potencial de recuperação espontânea muito maior quando não há acidose nem falência renal. Os critérios separam paracetamol dos demais porque as histórias naturais divergem: na intoxicação por paracetamol o dano é **agudo e potencialmente reversível** se o hepatócito sobreviver, e os marcadores que predizem morte são os da gravidade metabólica imediata (pH e lactato, que refletem hipoperfusão e falência mitocondrial). Nas demais causas, o que prediz é a **duração da icterícia antes da encefalopatia** — um curso arrastado indica que a capacidade regenerativa já foi ultrapassada.',
   armadilhas: [
     'Sensibilidade limitada — cerca de 60 a 70% nas validações. Não usar como critério para **não** encaminhar.',
     'O INR corrigido com plasma perde valor prognóstico. Não transfunda plasma sem sangramento ativo ou procedimento invasivo planejado.',
@@ -1219,7 +1219,7 @@ const roma: Ferramenta = {
   },
   formula: [],
   fundamento:
-    'Os critérios de Roma existem porque os distúrbios funcionais não têm marcador biológico, e sem definição operacional a pesquisa clínica seria impossível. Cada revisão refinou a especificidade — o custo foi tornar os critérios mais restritivos que a prática, de modo que muitos pacientes com quadro claramente funcional não os preenchem formalmente. Isso não impede o diagnóstico clínico.',
+    'Os critérios de Roma existem porque os distúrbios funcionais não têm marcador biológico, e sem definição operacional a pesquisa clínica seria impossível. Cada revisão refinou a especificidade — o custo foi tornar os critérios mais restritivos que a prática, de modo que muitos pacientes com quadro claramente funcional não os preenchem formalmente. Isso não impede o diagnóstico clínico. Os critérios de Roma IV abandonaram o termo \'funcional\' em favor de **distúrbios da interação intestino-cérebro**, refletindo a compreensão atual: há hipersensibilidade visceral com limiar reduzido de percepção de distensão, alteração da motilidade, disfunção da barreira epitelial, ativação imune de baixo grau, mudança da microbiota e processamento central alterado do sinal visceral. Não é ausência de doença — é doença de um eixo que os exames estruturais de rotina não enxergam.',
   armadilhas: [
     'Não use os critérios para negar investigação a quem tem sinal de alarme.',
     'Doença celíaca, intolerância à lactose, supercrescimento bacteriano e insuficiência pancreática exócrina imitam a síndrome do intestino irritável e são tratáveis.',

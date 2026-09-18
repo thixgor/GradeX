@@ -273,7 +273,7 @@ const gupta: Ferramenta = {
     'Risco = e^x / (1 + e^x)',
   ],
   fundamento:
-    'O modelo é uma regressão logística construída sobre o National Surgical Quality Improvement Program americano, um registro prospectivo com auditoria de qualidade dos dados. Sua superioridade sobre o RCRI vem de duas escolhas: usar variáveis contínuas (idade) em vez de dicotomizadas, e granular o tipo de procedimento em vez de agrupá-lo em "alto risco / não alto risco".',
+    'O modelo é uma regressão logística construída sobre o National Surgical Quality Improvement Program americano, um registro prospectivo com auditoria de qualidade dos dados. Sua superioridade sobre o RCRI vem de duas escolhas: usar variáveis contínuas (idade) em vez de dicotomizadas, e granular o tipo de procedimento em vez de agrupá-lo em "alto risco / não alto risco". O modelo foi derivado de mais de 200 mil pacientes do programa NSQIP e identificou apenas cinco preditores independentes de infarto ou parada cardíaca perioperatória: **tipo de cirurgia, dependência funcional, classe ASA, creatinina e idade**. A ausência de itens que o RCRI valoriza — como diabetes em insulina e doença cerebrovascular — não é omissão, e sim resultado de eles perderem significância quando o tipo específico de procedimento entra no modelo, o que mostra o peso da agressão cirúrgica sobre o perfil do paciente.',
   armadilhas: [
     'O desfecho é apenas infarto e parada cardíaca. Não estima AVC, complicação renal, pulmonar nem mortalidade global.',
     'A definição de infarto perioperatório mudou com a troponina de alta sensibilidade, e modelos antigos subestimam a incidência atual.',
@@ -459,7 +459,7 @@ const air: Ferramenta = {
   },
   formula: ['Soma de 7 itens (0 a 12 pontos)'],
   fundamento:
-    'O escore parte da premissa de que a apendicite é definida pela intensidade da resposta inflamatória, e não apenas pela presença de sintomas. Ao graduar a defesa abdominal em quatro níveis e incluir três marcadores laboratoriais com faixas, ele captura o contínuo entre apendicite inicial, flegmonosa e perfurada — o que os escores dicotômicos não fazem.',
+    'O escore parte da premissa de que a apendicite é definida pela intensidade da resposta inflamatória, e não apenas pela presença de sintomas. Ao graduar a defesa abdominal em quatro níveis e incluir três marcadores laboratoriais com faixas, ele captura o contínuo entre apendicite inicial, flegmonosa e perfurada — o que os escores dicotômicos não fazem. O AIR foi construído para corrigir a principal fraqueza do Alvarado: a dependência de itens subjetivos e a ausência de marcadores inflamatórios graduados. Ele incorpora **proteína C-reativa e percentual de neutrófilos em faixas**, porque a resposta inflamatória na apendicite evolui em cronologia previsível — neutrofilia precede a elevação de proteína C-reativa em algumas horas, e a combinação de ambas, graduada, discrimina melhor do que qualquer uma isolada ou do que a contagem total de leucócitos.',
   armadilhas: [
     'Como todo escore de apendicite, tem desempenho pior em extremos de idade e em mulheres em idade fértil.',
     'A proteína C reativa sobe com 8 a 12 horas de atraso. Aplicar o escore nas primeiras horas de dor mede o tempo de evolução, não a probabilidade de apendicite.',
@@ -538,7 +538,7 @@ const tokyo: Ferramenta = {
   },
   formula: ['Diagnóstico: A + B (suspeita) · A + B + C (definido)', 'Grau III: qualquer disfunção orgânica · Grau II: 1 dos 4 critérios · Grau I: nenhum'],
   fundamento:
-    'As Tokyo Guidelines foram criadas em 2007 e revisadas em 2013 e 2018 para padronizar diagnóstico e conduta na colecistite e na colangite — áreas em que a variabilidade de prática era enorme. A separação por gravidade é a peça central: ela define quem opera cedo, quem drena e quem precisa de terapia intensiva antes de qualquer intervenção.',
+    'As Tokyo Guidelines foram criadas em 2007 e revisadas em 2013 e 2018 para padronizar diagnóstico e conduta na colecistite e na colangite — áreas em que a variabilidade de prática era enorme. A separação por gravidade é a peça central: ela define quem opera cedo, quem drena e quem precisa de terapia intensiva antes de qualquer intervenção. A colecistite litiásica começa por obstrução do ducto cístico, que gera distensão da vesícula, isquemia da parede por aumento da pressão intraluminal acima da pressão de perfusão, e liberação de mediadores inflamatórios pela mucosa — a infecção bacteriana é secundária, e não o evento inicial. A gradação de Tóquio ordena os achados por essa progressão: inflamação local, depois repercussão sistêmica, depois falência orgânica, e é isso que a torna preditiva de dificuldade cirúrgica e de conversão.',
   armadilhas: [
     'Não confunda colecistite com colangite. Colangite tem icterícia e evidência de obstrução biliar, e a prioridade é a drenagem da via biliar.',
     'Ultrassonografia é o exame inicial (sensibilidade em torno de 80 a 90%). A cintilografia hepatobiliar tem a maior sensibilidade, mas raramente é necessária.',
@@ -602,7 +602,7 @@ const possum: Ferramenta = {
     'P-POSSUM mortalidade: ln(R/(1−R)) = −9,065 + 0,1692 × PS + 0,1550 × OS',
   ],
   fundamento:
-    'Copeland e colaboradores construíram o POSSUM sobre a intuição de que o desfecho cirúrgico é o produto de duas forças independentes: a reserva fisiológica do paciente e a agressão imposta pelo procedimento. A regressão logística com as duas somas como preditores formaliza essa intuição, e a estrutura sobreviveu a três décadas de uso e a múltiplas recalibrações.',
+    'Copeland e colaboradores construíram o POSSUM sobre a intuição de que o desfecho cirúrgico é o produto de duas forças independentes: a reserva fisiológica do paciente e a agressão imposta pelo procedimento. A regressão logística com as duas somas como preditores formaliza essa intuição, e a estrutura sobreviveu a três décadas de uso e a múltiplas recalibrações. O POSSUM nasceu de uma ideia metodológica específica: comparar resultados cirúrgicos entre serviços é injusto sem ajuste pela gravidade dos pacientes operados, e por isso o escore mistura deliberadamente variáveis **fisiológicas** (o estado do paciente) e **operatórias** (a magnitude da agressão), gerando uma mortalidade esperada contra a qual a observada é medida. A regressão logística original superestimava em baixo risco por uma limitação do modelo, o que motivou o P-POSSUM, com equação recalibrada.',
   armadilhas: [
     'Os escores mínimos são 12 (fisiológico) e 6 (operatório) — nunca zero, porque cada variável começa em 1 ponto.',
     'Aplicar o POSSUM a um paciente individual para decidir operar ou não é uso fora da finalidade original.',
@@ -868,7 +868,7 @@ const volemiaCirurgica: Ferramenta = {
     'ABC: mecanismo penetrante + PAS ≤ 90 + FC ≥ 120 + FAST positivo; ≥ 2 aciona o protocolo',
   ],
   fundamento:
-    'A fórmula da perda permitida assume que a perda é reposta por cristaloide, mantendo o volume total constante enquanto a massa eritrocitária cai — daí a proporcionalidade direta com a queda do hematócrito. É uma aproximação: na prática, a diluição não é instantânea e a redistribuição entre compartimentos leva horas.',
+    'A fórmula da perda permitida assume que a perda é reposta por cristaloide, mantendo o volume total constante enquanto a massa eritrocitária cai — daí a proporcionalidade direta com a queda do hematócrito. É uma aproximação: na prática, a diluição não é instantânea e a redistribuição entre compartimentos leva horas. A pressão arterial cai tarde porque a resposta simpática compensa: vasoconstrição arteriolar mantém a resistência periférica, a venoconstrição mobiliza o reservatório esplâncnico, que contém cerca de 25% da volemia, e a taquicardia sustenta o débito. Essa compensação é mais eficiente justamente no jovem, motivo pelo qual o politraumatizado de 20 anos pode ter perdido 1.500 mL com pressão sistólica normal — e descompensar de forma abrupta quando o mecanismo se esgota.',
   armadilhas: [
     'O hematócrito medido durante sangramento ativo não reflete a perda: a hemodiluição ainda não aconteceu. Não se tranquilize com hematócrito normal em hemorragia aguda.',
     'Em idosos, betabloqueados e atletas, a resposta taquicárdica pode estar ausente ou atenuada, mascarando a perda.',

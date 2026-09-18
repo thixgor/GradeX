@@ -87,7 +87,7 @@ const dosePediatrica: Ferramenta = {
   },
   formula: ['Dose = peso × mg/kg', 'SC (Mosteller) = √(peso × altura / 3600)', 'SC (Du Bois) = 0,007184 × peso^0,425 × altura^0,725'],
   fundamento:
-    'A superfície corporal correlaciona-se melhor com a taxa metabólica basal, o débito cardíaco e a filtração glomerular do que o peso isolado — daí seu uso em oncologia. A fórmula de Du Bois, de 1916, foi derivada de nove indivíduos com moldes de gesso; a de Mosteller, de 1987, é uma simplificação algébrica que concorda com ela dentro de poucos por cento e cabe numa calculadora simples.',
+    'A superfície corporal correlaciona-se melhor com a taxa metabólica basal, o débito cardíaco e a filtração glomerular do que o peso isolado — daí seu uso em oncologia. A fórmula de Du Bois, de 1916, foi derivada de nove indivíduos com moldes de gesso; a de Mosteller, de 1987, é uma simplificação algébrica que concorda com ela dentro de poucos por cento e cabe numa calculadora simples. A dose por quilo funciona na maior parte da infância porque o clearance de muitos fármacos acompanha aproximadamente a massa, mas a relação não é linear nos extremos: o **neonato** tem enzimas de fase I e II imaturas, barreira hematoencefálica mais permeável, maior água corporal total e menor ligação a proteínas plasmáticas, enquanto o **lactente e o pré-escolar** chegam a ter clearance por quilo **maior** que o adulto, porque fígado e rim são proporcionalmente maiores em relação ao corpo.',
   armadilhas: [
     'Em obesidade, dose por peso real pode gerar superdosagem de fármacos hidrofílicos. Considere peso ideal ou ajustado.',
     'Prematuros e neonatos exigem tabelas próprias, com intervalos alargados conforme a idade pós-menstrual.',
@@ -177,7 +177,7 @@ const hidratacao: Ferramenta = {
     'Déficit (mL) = % de desidratação × peso (kg) × 10',
   ],
   fundamento:
-    'Holliday e Segar publicaram a regra em 1957 relacionando necessidade hídrica ao gasto energético: crianças gastam cerca de 100 kcal/kg/dia nos primeiros 10 kg, 50 nos 10 kg seguintes e 20 acima disso. Como cada caloria metabolizada consome aproximadamente 1 mL de água (perdas insensíveis mais urina), os números coincidem. A regra 4-2-1 é a mesma conta dividida por 24.',
+    'Holliday e Segar publicaram a regra em 1957 relacionando necessidade hídrica ao gasto energético: crianças gastam cerca de 100 kcal/kg/dia nos primeiros 10 kg, 50 nos 10 kg seguintes e 20 acima disso. Como cada caloria metabolizada consome aproximadamente 1 mL de água (perdas insensíveis mais urina), os números coincidem. A regra 4-2-1 é a mesma conta dividida por 24. O lactente desidrata mais rápido que o adulto por três razões fisiológicas somadas: a **relação superfície corporal/massa** é muito maior, o que multiplica as perdas insensíveis; a **taxa metabólica por quilo** é mais alta, elevando a produção de calor e a demanda de água; e a **capacidade de concentrar urina é imatura** no primeiro ano, limitando a osmolalidade urinária máxima a cerca de metade da do adulto e obrigando o rim a gastar mais água para excretar a mesma carga de solutos.',
   armadilhas: [
     'A regra pressupõe criança com metabolismo, função renal e estado de hidratação normais. Não se aplica a recém-nascidos, cardiopatas, nefropatas, queimados nem a pacientes em ventilação mecânica.',
     'A estimativa clínica do grau de desidratação é imprecisa. A diferença de peso antes e depois do quadro, quando disponível, é o padrão-ouro.',
@@ -261,7 +261,7 @@ const desidratacaoEscore: Ferramenta = {
   },
   formula: ['Soma de 4 itens (0 a 2 pontos cada); 0 = sem desidratação, 1–4 = leve a moderada, 5–8 = moderada a grave'],
   fundamento:
-    'A escala foi desenvolvida e validada em crianças de 1 a 36 meses com gastroenterite, buscando substituir a estimativa subjetiva do percentual de desidratação — que tem concordância ruim entre examinadores — por um instrumento reprodutível. Os quatro sinais escolhidos refletem os dois compartimentos comprometidos: intravascular (aparência, perfusão) e intersticial (olhos, mucosas, lágrimas).',
+    'A escala foi desenvolvida e validada em crianças de 1 a 36 meses com gastroenterite, buscando substituir a estimativa subjetiva do percentual de desidratação — que tem concordância ruim entre examinadores — por um instrumento reprodutível. Os quatro sinais escolhidos refletem os dois compartimentos comprometidos: intravascular (aparência, perfusão) e intersticial (olhos, mucosas, lágrimas). Os itens do escore são consequências diretas da contração do compartimento extracelular: o **turgor** cai porque o interstício perde água, as **mucosas** secam porque a secreção salivar depende de volume, os **olhos encovados** refletem a perda de água periorbital e a **lágrima ausente** a redução da secreção lacrimal. O estado geral se altera por último porque a perfusão cerebral é preservada por vasoconstrição periférica até que a compensação se esgote — motivo pelo qual a prostração já indica desidratação significativa.',
   armadilhas: [
     'Não foi validada em crianças acima de 3 anos nem em desidratação por causas não digestivas.',
     'A desidratação hipernatrêmica preserva o volume intravascular e engana o exame: a criança pode parecer melhor do que está.',
@@ -378,7 +378,7 @@ const pesoEstimado: Ferramenta = {
     'Tubo sem balonete = (idade / 4) + 4',
   ],
   fundamento:
-    'As fórmulas do Advanced Paediatric Life Support foram derivadas de curvas de crescimento populacionais e reajustadas ao longo dos anos para acompanhar a mudança de peso das populações pediátricas. A fórmula do tubo endotraqueal, de Cole, aproxima o diâmetro da cartilagem cricoide — a porção mais estreita da via aérea pediátrica até cerca de 8 anos.',
+    'As fórmulas do Advanced Paediatric Life Support foram derivadas de curvas de crescimento populacionais e reajustadas ao longo dos anos para acompanhar a mudança de peso das populações pediátricas. A fórmula do tubo endotraqueal, de Cole, aproxima o diâmetro da cartilagem cricoide — a porção mais estreita da via aérea pediátrica até cerca de 8 anos. As fórmulas de estimativa existem porque, em parada cardiorrespiratória e em emergência, não há tempo nem condição de pesar — e porque a estimativa visual erra em média 20%, com erro que se propaga a todas as doses, joules e calibres. Os métodos baseados em **comprimento** (fita de Broselow e derivados) superam os baseados em idade porque o comprimento correlaciona-se melhor com massa magra e com volume de distribuição, que são o que de fato governa a farmacocinética.',
   armadilhas: [
     'Subestimam o peso em crianças com sobrepeso e superestimam em desnutridas.',
     'Não use para calcular dose de quimioterápico ou de fármaco com janela estreita — nesses casos, pese.',
@@ -468,7 +468,7 @@ const apgar: Ferramenta = {
   },
   formula: ['Soma de 5 itens, 0 a 2 pontos cada'],
   fundamento:
-    'Virginia Apgar propôs o escore em 1953 — ela era anestesiologista e queria um método padronizado para avaliar o efeito da anestesia obstétrica sobre o recém-nascido. Sua genialidade foi escolher cinco sinais observáveis em segundos, sem equipamento, e com gradação de três níveis cada. O acrônimo em inglês com o próprio sobrenome veio depois, proposto por outro autor.',
+    'Virginia Apgar propôs o escore em 1953 — ela era anestesiologista e queria um método padronizado para avaliar o efeito da anestesia obstétrica sobre o recém-nascido. Sua genialidade foi escolher cinco sinais observáveis em segundos, sem equipamento, e com gradação de três níveis cada. O acrônimo em inglês com o próprio sobrenome veio depois, proposto por outro autor. Virginia Apgar propôs o escore em 1953 para padronizar uma avaliação que até então era impressionista, e os cinco itens foram escolhidos por refletirem, nessa ordem de vulnerabilidade, os sistemas que a asfixia compromete: a **frequência cardíaca** é o último a falhar e o melhor indicador de gravidade, o **esforço respiratório** vem em seguida, e **tônus, irritabilidade reflexa e cor** são os mais sensíveis à hipóxia leve porque dependem de perfusão e de função de tronco encefálico.',
   armadilhas: [
     'Em prematuros, o tônus e a resposta reflexa são fisiologicamente reduzidos, e o escore subestima a vitalidade.',
     'Não existe "Apgar de 10 no primeiro minuto" na prática — a acrocianose é quase universal.',
@@ -589,7 +589,7 @@ const capurro: Ferramenta = {
   },
   formula: ['Idade gestacional (dias) = 204 + soma dos pontos', 'Semanas = dias / 7'],
   fundamento:
-    'Capurro e colaboradores derivaram o método em 1978, correlacionando sinais de maturação somática com a idade gestacional conhecida. A lógica é que a maturação da pele, da cartilagem auricular, do tecido mamário e das pregas plantares segue uma cronologia previsível no terceiro trimestre — cada estrutura "marca" um momento da gestação.',
+    'Capurro e colaboradores derivaram o método em 1978, correlacionando sinais de maturação somática com a idade gestacional conhecida. A lógica é que a maturação da pele, da cartilagem auricular, do tecido mamário e das pregas plantares segue uma cronologia previsível no terceiro trimestre — cada estrutura "marca" um momento da gestação. A base do método é que a maturação de estruturas superficiais segue um cronograma previsível independente do crescimento somático: a cartilagem da orelha enrijece, o tecido mamário prolifera sob estímulo estrogênico materno, as pregas plantares se aprofundam da porção anterior para o calcâneo e a pele perde o verniz e ganha descamação. São marcadores morfológicos de tempo, não de tamanho, o que permite datar um recém-nascido cujo peso não corresponde à idade.',
   armadilhas: [
     'Perde acurácia abaixo de 29 semanas, faixa em que o New Ballard é superior.',
     'Restrição de crescimento intrauterino, hidropisia e infecção congênita alteram as características somáticas.',
@@ -653,7 +653,7 @@ const ballard: Ferramenta = {
   },
   formula: ['Idade gestacional (semanas) = 24 + 0,4 × escore total', 'Escore total = neuromuscular (−6 a 30) + físico (−6 a 30)'],
   fundamento:
-    'O escore mede duas dimensões independentes da maturação fetal. A neuromuscular acompanha a mielinização e o desenvolvimento do tônus flexor, que é o último a se estabelecer. A física acompanha a maturação da pele, do tecido subcutâneo, da cartilagem e das estruturas anexas. Combinar as duas reduz o erro que cada uma teria isoladamente.',
+    'O escore mede duas dimensões independentes da maturação fetal. A neuromuscular acompanha a mielinização e o desenvolvimento do tônus flexor, que é o último a se estabelecer. A física acompanha a maturação da pele, do tecido subcutâneo, da cartilagem e das estruturas anexas. Combinar as duas reduz o erro que cada uma teria isoladamente. A escala combina seis sinais **físicos** de maturação tegumentar e cartilaginosa com seis sinais **neuromusculares** que refletem o tônus flexor progressivo: o feto ganha tônus em sentido caudocefálico ao longo do terceiro trimestre, à medida que a mielinização descendente avança. A dupla avaliação é o que permite estender o método a prematuros extremos, em que os sinais físicos ainda são inespecíficos e o tônus quase ausente.',
   armadilhas: [
     'Avaliar tarde demais em prematuro extremo superestima a idade, porque as características amadurecem rapidamente ex utero.',
     'Não é confiável em recém-nascido com edema importante, hidropisia ou malformação.',
@@ -775,7 +775,7 @@ const silverman: Ferramenta = {
   },
   formula: ['Soma de 5 sinais, 0 a 2 pontos cada; quanto maior, pior'],
   fundamento:
-    'Silverman e Andersen publicaram o boletim em 1956, correlacionando sinais clínicos de esforço respiratório com a gravidade da doença de membrana hialina. Os cinco sinais medem o mesmo fenômeno de ângulos diferentes: quando a complacência pulmonar cai, o recém-nascido gera pressões intratorácicas muito negativas, e a caixa torácica cartilaginosa cede — daí retrações e movimento paradoxal.',
+    'Silverman e Andersen publicaram o boletim em 1956, correlacionando sinais clínicos de esforço respiratório com a gravidade da doença de membrana hialina. Os cinco sinais medem o mesmo fenômeno de ângulos diferentes: quando a complacência pulmonar cai, o recém-nascido gera pressões intratorácicas muito negativas, e a caixa torácica cartilaginosa cede — daí retrações e movimento paradoxal. Os cinco sinais traduzem a mesma física: sem surfactante, a tensão superficial alveolar não é reduzida e, pela **lei de Laplace**, os alvéolos menores colapsam para dentro dos maiores, exigindo pressões de abertura crescentes a cada ciclo. O recém-nascido compensa recrutando musculatura acessória (tiragem intercostal e retração xifóidea), aumentando a pressão inspiratória (batimento de asa do nariz, balancim toracoabdominal) e gerando PEEP própria pelo fechamento parcial da glote na expiração — que é o gemido.',
   armadilhas: [
     'O escore avalia esforço, não oxigenação. Um prematuro exausto pode ter escore baixo por não conseguir mais gerar esforço — isso é sinal de gravidade extrema, não de melhora.',
     'Sempre correlacione com saturação, frequência respiratória, gasometria e radiografia.',
@@ -933,7 +933,7 @@ const idadeCorrigida: Ferramenta = {
     'Idade pós-menstrual = idade gestacional ao nascer + idade cronológica',
   ],
   fundamento:
-    'A correção existe porque o desenvolvimento neurológico e o crescimento seguem o relógio biológico contado desde a concepção, não desde o nascimento. Um bebê nascido com 28 semanas passou 12 semanas fora do útero fazendo o que faria dentro dele — e comparar seu desenvolvimento com o de um nascido a termo da mesma idade cronológica é comparar organismos com idades biológicas distintas.',
+    'A correção existe porque o desenvolvimento neurológico e o crescimento seguem o relógio biológico contado desde a concepção, não desde o nascimento. Um bebê nascido com 28 semanas passou 12 semanas fora do útero fazendo o que faria dentro dele — e comparar seu desenvolvimento com o de um nascido a termo da mesma idade cronológica é comparar organismos com idades biológicas distintas. A correção existe porque o desenvolvimento neurológico é contado a partir da **concepção**, não do nascimento: a mielinização, a sinaptogênese e a poda sináptica seguem um cronograma intrauterino que o parto prematuro interrompe mas não acelera. Avaliar um prematuro de 28 semanas pela idade cronológica o compara com uma criança que teve três meses a mais de maturação cerebral, e produz diagnóstico falso de atraso — motivo pelo qual a correção se mantém até os 2 a 3 anos, quando a diferença se dilui.',
   armadilhas: [
     'Não corrija a idade para o calendário vacinal. Adiar vacinas em prematuros é erro comum e os deixa desprotegidos justamente quando estão mais vulneráveis.',
     'A correção é habitualmente feita para nascidos com menos de 37 semanas; o benefício é maior quanto mais prematuro.',
@@ -1020,7 +1020,7 @@ const percentis: Ferramenta = {
   },
   formula: ['Escore-z = (medida − mediana) / desvio-padrão', 'Percentil = função de distribuição normal acumulada do escore-z'],
   fundamento:
-    'O escore-z expressa quantos desvios-padrão a medida está da mediana da população de referência. Ele é superior ao percentil nos extremos: entre os percentis 1 e 0,1 há uma diferença clínica enorme que a escala de percentis comprime, enquanto o escore-z continua discriminando (z de −2,3 contra −3,1). Por isso a OMS adota escores-z para classificação nutricional.',
+    'O escore-z expressa quantos desvios-padrão a medida está da mediana da população de referência. Ele é superior ao percentil nos extremos: entre os percentis 1 e 0,1 há uma diferença clínica enorme que a escala de percentis comprime, enquanto o escore-z continua discriminando (z de −2,3 contra −3,1). Por isso a OMS adota escores-z para classificação nutricional. A curva da OMS de 0 a 5 anos é **prescritiva**, e não descritiva: foi construída a partir de crianças amamentadas, em condições ambientais e nutricionais ideais, em seis países, e descreve como crianças **devem** crescer, não como crescem em média. Essa escolha metodológica é o que torna legítimo comparar populações diferentes contra o mesmo padrão, e é o que muda o ponto de corte em relação às curvas descritivas antigas.',
   armadilhas: [
     'A distribuição de peso e IMC é assimétrica, e as curvas oficiais usam o método LMS (com parâmetro de assimetria). A conversão simples aqui é uma aproximação — boa perto da mediana, menos precisa nos extremos.',
     'Prematuros devem ser avaliados por idade corrigida ou por curvas específicas (Fenton, Intergrowth-21st).',
@@ -1220,7 +1220,7 @@ const bronquiolite: Ferramenta = {
   },
   formula: ['Soma de 4 domínios clínicos (0 a 12 pontos), integrada à saturação, idade e comorbidades'],
   fundamento:
-    'A bronquiolite é uma inflamação e obstrução das pequenas vias aéreas, sobretudo pelo vírus sincicial respiratório. A obstrução é por edema, muco e debris celulares — não por broncoespasmo —, e é essa diferença fisiopatológica em relação à asma que explica a falha consistente dos broncodilatadores nos ensaios clínicos.',
+    'A bronquiolite é uma inflamação e obstrução das pequenas vias aéreas, sobretudo pelo vírus sincicial respiratório. A obstrução é por edema, muco e debris celulares — não por broncoespasmo —, e é essa diferença fisiopatológica em relação à asma que explica a falha consistente dos broncodilatadores nos ensaios clínicos. O mecanismo explica por que broncodilatador não funciona: a obstrução da bronquiolite é por **necrose do epitélio respiratório, edema submucoso e rolhas de debris celulares e muco**, não por broncoespasmo de musculatura lisa — que no lactente é escassa e pouco reativa. A via aérea do lactente tem raio pequeno, e pela lei de Poiseuille a resistência varia com a quarta potência do raio: 1 mm de edema circunferencial multiplica a resistência por dezesseis.',
   armadilhas: [
     'A saturação oscila muito, sobretudo durante o sono e a alimentação. Uma leitura isolada baixa não obriga internação se a criança está bem e a leitura se recupera.',
     'Radiografia de tórax de rotina não é recomendada: aumenta prescrição de antibiótico sem melhorar desfecho.',

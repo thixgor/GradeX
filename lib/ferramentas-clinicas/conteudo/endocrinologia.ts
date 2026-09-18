@@ -230,7 +230,7 @@ const pesoIdeal: Ferramenta = {
     '1 polegada = 2,54 cm; 5 pés = 152,4 cm',
   ],
   fundamento:
-    'A fórmula de Devine foi criada em 1974 especificamente para dose de gentamicina, e não para descrever o peso "saudável" de ninguém. Isso importa: ela é uma ferramenta farmacocinética que ganhou uso muito além do original. Todas as fórmulas partem de um peso base a 152,4 cm de altura e acrescentam um incremento por polegada adicional, o que as torna imprecisas nos extremos de estatura.',
+    'A fórmula de Devine foi criada em 1974 especificamente para dose de gentamicina, e não para descrever o peso "saudável" de ninguém. Isso importa: ela é uma ferramenta farmacocinética que ganhou uso muito além do original. Todas as fórmulas partem de um peso base a 152,4 cm de altura e acrescentam um incremento por polegada adicional, o que as torna imprecisas nos extremos de estatura. O fator 0,4 do peso ajustado não é arbitrário: o tecido adiposo contém aproximadamente 30% de massa magra e é perfundido, embora com fluxo por grama muito menor que o do músculo. Assim, a gordura contribui para o **volume de distribuição** de fármacos hidrofílicos com cerca de um terço da eficiência do tecido magro, e o coeficiente empírico de 0,3 a 0,4 reproduz essa contribuição parcial. Já os fármacos lipofílicos se distribuem avidamente no tecido adiposo, e para eles o peso real é o descritor apropriado.',
   armadilhas: [
     'Em pessoas muito baixas (abaixo de 150 cm) as fórmulas podem dar valores absurdos ou negativos — use o peso real com julgamento clínico.',
     'Peso ideal não é meta de tratamento. Metas realistas de perda de peso (5 a 15%) produzem benefício metabólico muito maior do que perseguir uma tabela.',
@@ -303,7 +303,7 @@ const homa: Ferramenta = {
     'TyG = ln[(triglicerídeos × glicemia) / 2]',
   ],
   fundamento:
-    'Matthews e colaboradores publicaram o modelo em 1985, resolvendo matematicamente o equilíbrio entre secreção de insulina e captação de glicose. A constante 405 (ou 22,5 quando a glicemia está em mmol/L) representa o produto glicose × insulina de um indivíduo idealmente sensível — de modo que HOMA-IR de 1,0 corresponde à sensibilidade "normal" de referência.',
+    'Matthews e colaboradores publicaram o modelo em 1985, resolvendo matematicamente o equilíbrio entre secreção de insulina e captação de glicose. A constante 405 (ou 22,5 quando a glicemia está em mmol/L) representa o produto glicose × insulina de um indivíduo idealmente sensível — de modo que HOMA-IR de 1,0 corresponde à sensibilidade "normal" de referência. O modelo parte de uma relação de retroalimentação: em jejum, glicemia e insulinemia se equilibram num ponto que depende simultaneamente da **sensibilidade periférica e hepática à insulina** e da **capacidade secretora da célula beta**. Na resistência insulínica, a célula beta compensa secretando mais, de modo que a glicemia permanece normal à custa de insulina alta — e é esse produto glicemia × insulina que o índice captura. Quando a célula beta falha e a insulina cai, o modelo perde validade, o que é exatamente o caso do diabetes estabelecido.',
   armadilhas: [
     'Exige jejum verdadeiro de 8 a 12 horas e amostras simultâneas.',
     'Insulina exógena, anticorpos anti-insulina e insuficiência renal (que reduz a depuração de insulina) distorcem o índice.',
@@ -572,7 +572,7 @@ const insulina: Ferramenta = {
     'Relação insulina-carboidrato = 500 ÷ dose total',
   ],
   fundamento:
-    'As constantes 1800, 1500 e 500 foram derivadas empiricamente de coortes de pacientes em terapia intensiva com insulina, a partir da observação de quanto cada unidade efetivamente reduzia a glicemia e cobria carboidrato. Elas funcionam porque a sensibilidade à insulina é aproximadamente inversa à dose diária total — quem precisa de mais insulina é mais resistente, e cada unidade rende menos.',
+    'As constantes 1800, 1500 e 500 foram derivadas empiricamente de coortes de pacientes em terapia intensiva com insulina, a partir da observação de quanto cada unidade efetivamente reduzia a glicemia e cobria carboidrato. Elas funcionam porque a sensibilidade à insulina é aproximadamente inversa à dose diária total — quem precisa de mais insulina é mais resistente, e cada unidade rende menos. As regras de 1800, 1500 e 500 são consequências aritméticas de um mesmo pressuposto: a dose total diária de insulina é inversamente proporcional à sensibilidade do paciente. A regra de **1800 dividida pela dose total** estima quantos mg/dL 1 unidade abaixa (1500 para insulina regular, mais lenta); a regra de **500 dividida pela dose total** estima quantos gramas de carboidrato 1 unidade cobre. A divisão em metade basal e metade prandial reproduz a secreção fisiológica, em que a célula beta mantém liberação tônica contínua entre as refeições e picos em resposta à ingestão.',
   armadilhas: [
     'Corticoide, infecção, cirurgia e gestação aumentam a necessidade de insulina de forma abrupta e substancial. Corticoide de manhã eleva sobretudo a glicemia da tarde e da noite.',
     'Doença renal crônica avançada **reduz** a necessidade de insulina (menor depuração renal) e aumenta o risco de hipoglicemia.',
@@ -896,7 +896,7 @@ const tireoide: Ferramenta = {
     'Índice de tiroxina livre = T4 total × captação de T3 em resina / 30',
   ],
   fundamento:
-    'A tireoide secreta predominantemente T4, que funciona como pró-hormônio: as deiodinases tipo 1 e 2 o convertem em T3, o hormônio ativo, em cada tecido conforme a necessidade local. Repor apenas T4 preserva esse mecanismo regulatório — é a razão farmacológica de a levotiroxina isolada ser o padrão, apesar de a tireoide fisiológica secretar também alguma quantidade de T3.',
+    'A tireoide secreta predominantemente T4, que funciona como pró-hormônio: as deiodinases tipo 1 e 2 o convertem em T3, o hormônio ativo, em cada tecido conforme a necessidade local. Repor apenas T4 preserva esse mecanismo regulatório — é a razão farmacológica de a levotiroxina isolada ser o padrão, apesar de a tireoide fisiológica secretar também alguma quantidade de T3. A levotiroxina funciona como pró-hormônio: cerca de 80% do T3 circulante vem da **desiodação periférica do T4** pelas desiodases tipo 1 e 2, em fígado, rim, músculo, tecido adiposo, hipófise e sistema nervoso central. Essa conversão local é regulada tecido a tecido, o que permite ao organismo ajustar a disponibilidade de hormônio ativo em cada órgão — e é a razão pela qual repor apenas T4 reproduz a fisiologia melhor do que impor picos exógenos de T3, além de explicar a meia-vida longa de cerca de 7 dias e o intervalo de 6 a 8 semanas para novo equilíbrio.',
   armadilhas: [
     'Não ajuste a dose antes de 6 semanas: o TSH tem inércia e ajustes precipitados geram oscilação.',
     'Síndrome do doente eutireóideo (T3 baixo, TSH normal ou baixo, em paciente crítico) **não** deve ser tratada. É adaptação, não doença — e a reposição não melhora desfechos.',

@@ -500,7 +500,7 @@ const huntHess: Ferramenta = {
   },
   formula: ['Hunt-Hess: graus I a V, clínicos', 'Fisher modificada: 0 a 4, pela distribuição do sangue na tomografia'],
   fundamento:
-    'Hunt e Hess propuseram a escala em 1968 para estimar o risco cirúrgico de aneurismas, e ela sobreviveu como marcador prognóstico geral. A Fisher original correlacionou a quantidade e a distribuição de sangue com o risco de vasoespasmo — a hipótese sendo que o sangue subaracnóideo, ao se degradar, libera produtos que induzem contração da musculatura lisa arterial e inflamação perivascular.',
+    'Hunt e Hess propuseram a escala em 1968 para estimar o risco cirúrgico de aneurismas, e ela sobreviveu como marcador prognóstico geral. A Fisher original correlacionou a quantidade e a distribuição de sangue com o risco de vasoespasmo — a hipótese sendo que o sangue subaracnóideo, ao se degradar, libera produtos que induzem contração da musculatura lisa arterial e inflamação perivascular. A gradação clínica prediz desfecho porque reflete a magnitude do **insulto cerebral global imediato** à ruptura do aneurisma: a hemorragia eleva abruptamente a pressão intracraniana até valores próximos da pressão arterial média, a perfusão cerebral cessa por segundos a minutos, e a extensão dessa isquemia global transitória determina o nível de consciência. A cefaleia em trovoada e a rigidez de nuca vêm da irritação meníngea pelo sangue; o déficit focal, do hematoma local ou do vasoespasmo precoce.',
   armadilhas: [
     'Hunt-Hess tem concordância entre observadores apenas moderada, sobretudo entre os graus II e III.',
     'Vasoespasmo angiográfico e isquemia cerebral tardia não são sinônimos: o primeiro é achado de imagem, a segunda é o desfecho clínico que importa, e nem sempre coincidem.',
@@ -664,7 +664,7 @@ const aspects: Ferramenta = {
   },
   formula: ['ASPECTS = 10 − número de regiões comprometidas'],
   fundamento:
-    'O escore foi criado em Alberta para substituir a "regra do terço do território da artéria cerebral média", que era imprecisa e pouco reprodutível. Dividir o território em dez regiões de peso igual gera uma medida ordinal simples que se correlaciona com o volume do núcleo isquêmico e com o risco de transformação hemorrágica após reperfusão.',
+    'O escore foi criado em Alberta para substituir a "regra do terço do território da artéria cerebral média", que era imprecisa e pouco reprodutível. Dividir o território em dez regiões de peso igual gera uma medida ordinal simples que se correlaciona com o volume do núcleo isquêmico e com o risco de transformação hemorrágica após reperfusão. A divisão em dez regiões não é arbitrária: ela mapeia os territórios de irrigação dos ramos da artéria cerebral média em dois cortes axiais padronizados — o do núcleo caudado e o imediatamente rostral aos ventrículos —, de modo que a perda de cada ponto corresponde a um volume aproximadamente equivalente de parênquima. Os sinais precoces que se procura (perda da diferenciação entre substância cinzenta e branca, apagamento de sulcos) são o **edema citotóxico**: a falência da bomba sódio-potássio leva água para dentro da célula, e é essa água que reduz a atenuação na tomografia.',
   armadilhas: [
     'Aplica-se apenas ao território da artéria cerebral média. Para circulação posterior existe o pc-ASPECTS, com regiões e pontuação diferentes.',
     'Nas primeiras horas, a tomografia pode ser normal mesmo com oclusão de grande vaso — ASPECTS 10 não exclui AVC.',
@@ -848,7 +848,7 @@ const camIcu: Ferramenta = {
   },
   formula: ['Delirium = (característica 1 E característica 2) E (característica 3 OU característica 4)'],
   fundamento:
-    'O CAM-ICU adapta o Confusion Assessment Method original para pacientes que não falam — intubados, traqueostomizados —, substituindo perguntas abertas por tarefas de atenção com resposta motora. Sua sensibilidade e especificidade contra avaliação psiquiátrica de referência ficam acima de 90% quando aplicado por equipe treinada.',
+    'O CAM-ICU adapta o Confusion Assessment Method original para pacientes que não falam — intubados, traqueostomizados —, substituindo perguntas abertas por tarefas de atenção com resposta motora. Sua sensibilidade e especificidade contra avaliação psiquiátrica de referência ficam acima de 90% quando aplicado por equipe treinada. O delirium é uma falência aguda da rede atencional, sustentada por três mecanismos que se somam: **desequilíbrio de neurotransmissores** (queda colinérgica e excesso dopaminérgico), **neuroinflamação** com passagem de citocinas pela barreira hematoencefálica ativando micróglia, e **disfunção da conectividade** entre a rede de modo padrão e as redes atencionais. É isso que explica por que a desatenção é a característica obrigatória do diagnóstico e por que anticolinérgicos são precipitantes tão potentes.',
   armadilhas: [
     'Requer treinamento. Aplicado informalmente, a sensibilidade despenca.',
     'Não diferencia delirium de demência nem de encefalopatia estrutural — o dado que distingue é o **basal cognitivo** do paciente, obtido com a família.',
@@ -1113,7 +1113,7 @@ const mrcForca: Ferramenta = {
   },
   formula: ['Escala de 0 a 5 por grupo muscular', 'MRC-sum = soma de 12 grupos (6 bilaterais), de 0 a 60; < 48 define fraqueza adquirida na UTI'],
   fundamento:
-    'A escala foi padronizada pelo Medical Research Council britânico durante a Segunda Guerra, para avaliar lesões de nervo periférico de forma reprodutível entre hospitais. A ancoragem na gravidade — que é a mesma em qualquer lugar do mundo — foi a solução elegante que garantiu sua sobrevivência por oitenta anos.',
+    'A escala foi padronizada pelo Medical Research Council britânico durante a Segunda Guerra, para avaliar lesões de nervo periférico de forma reprodutível entre hospitais. A ancoragem na gravidade — que é a mesma em qualquer lugar do mundo — foi a solução elegante que garantiu sua sobrevivência por oitenta anos. A fraqueza adquirida na UTI tem dois substratos que coexistem: a **polineuropatia do doente crítico**, uma axonopatia distal ligada à microcirculação endoneural comprometida pela sepse e à hiperglicemia, e a **miopatia do doente crítico**, com perda seletiva de miosina por ativação da via ubiquitina-proteassoma e da autofagia, somada à inativação muscular. A imobilidade acelera tudo: o músculo esquelético perde de 1 a 2% de massa por dia nos primeiros dez dias de repouso absoluto.',
   armadilhas: [
     'Dor, contratura, limitação articular e falta de compreensão do comando reduzem a pontuação sem que haja fraqueza neurológica.',
     'A concordância entre observadores é boa nos graus 0 a 3 e apenas moderada nos graus 4 e 5.',
@@ -1281,7 +1281,7 @@ const conversorAntiepileptico: Ferramenta = {
   },
   formula: ['Fenitoína corrigida (Sheiner-Tozer) = nível medido ÷ (0,2 × albumina + 0,1)'],
   fundamento:
-    'A fenitoína circula 90% ligada à albumina, e apenas a fração livre atravessa a barreira hematoencefálica e exerce efeito. Em hipoalbuminemia, o nível total medido subestima a fração ativa — um nível "subterapêutico" de 8 µg/mL com albumina de 2 g/dL corresponde a cerca de 16 µg/mL corrigidos, plenamente terapêutico. Aumentar a dose nessa situação causa intoxicação.',
+    'A fenitoína circula 90% ligada à albumina, e apenas a fração livre atravessa a barreira hematoencefálica e exerce efeito. Em hipoalbuminemia, o nível total medido subestima a fração ativa — um nível "subterapêutico" de 8 µg/mL com albumina de 2 g/dL corresponde a cerca de 16 µg/mL corrigidos, plenamente terapêutico. Aumentar a dose nessa situação causa intoxicação. Os antiepilépticos agem por um punhado de mecanismos, e a conversão entre eles é segura ou perigosa conforme o mecanismo: bloqueio de canais de sódio dependente de uso (fenitoína, carbamazepina, lamotrigina), potenciação gabaérgica (fenobarbital, benzodiazepínicos), bloqueio de canais de cálcio tipo T (etossuximida), ligação à proteína SV2A da vesícula sináptica (levetiracetam) e mecanismos múltiplos (valproato, topiramato). É por isso que bloqueadores de canal de sódio **agravam** ausências e mioclonias, que dependem de circuito talamocortical distinto.',
   armadilhas: [
     'Em doença renal avançada, a ligação proteica cai ainda mais e a fórmula de Sheiner-Tozer tem versão específica (denominador de 0,1 × albumina + 0,1).',
     'A fenitoína tem cinética de saturação: acima de determinado nível, o metabolismo satura e a concentração sobe de forma desproporcional à dose.',
@@ -1343,7 +1343,7 @@ const riscoConvulsao: Ferramenta = {
   },
   formula: ['Risco basal 30–40% em 2 anos; ≥ 60% com lesão estrutural ou EEG epileptiforme'],
   fundamento:
-    'A decisão de tratar após a primeira crise repousa sobre uma comparação: o risco de recorrência contra o risco e o custo do tratamento. Os estudos FIRST e MESS mostraram que o antiepiléptico reduz recorrência precoce sem alterar a chance de remissão em 5 anos — de modo que a pergunta é menos "vai ter outra crise?" e mais "quanto custaria a esta pessoa ter outra crise agora?".',
+    'A decisão de tratar após a primeira crise repousa sobre uma comparação: o risco de recorrência contra o risco e o custo do tratamento. Os estudos FIRST e MESS mostraram que o antiepiléptico reduz recorrência precoce sem alterar a chance de remissão em 5 anos — de modo que a pergunta é menos "vai ter outra crise?" e mais "quanto custaria a esta pessoa ter outra crise agora?". O risco de recorrência é governado pela existência ou não de um **substrato epileptogênico permanente**. Uma crise provocada por insulto metabólico agudo não deixa substrato e não recorre depois de corrigida a causa; uma crise que emerge de lesão estrutural, de cicatriz gliótica ou de rede cortical geneticamente hiperexcitável dispõe de um foco que permanece. É isso que os fatores preditivos medem: o eletroencefalograma epileptiforme e a lesão na imagem são a evidência direta desse substrato, e a crise noturna sugere origem focal frontal ou temporal.',
   armadilhas: [
     'Síncope convulsiva é confundida com crise epiléptica com frequência. Pródromos, palidez, duração de segundos, recuperação rápida sem confusão e contexto (ortostase, dor, calor) apontam síncope.',
     'Crise não provocada com histórico de mioclonias matinais em adolescente sugere epilepsia mioclônica juvenil, uma síndrome definida — e nesse caso o diagnóstico se faz de imediato.',

@@ -322,7 +322,7 @@ const indiceOxigenacao: Ferramenta = {
   },
   formula: ['IO = (FiO₂ × Pressão média de vias aéreas × 100) ÷ PaO₂', 'OSI = (FiO₂ × PMVA × 100) ÷ SpO₂'],
   fundamento:
-    'Multiplicar pela pressão média de vias aéreas incorpora o suporte necessário para manter aquela oxigenação, e não apenas o resultado. Quanto maior o índice, pior — ao contrário da relação P/F. A escala pediátrica do índice se estabeleceu porque em crianças a variação de pressão média entre modos e estratégias é proporcionalmente maior do que em adultos.',
+    'Multiplicar pela pressão média de vias aéreas incorpora o suporte necessário para manter aquela oxigenação, e não apenas o resultado. Quanto maior o índice, pior — ao contrário da relação P/F. A escala pediátrica do índice se estabeleceu porque em crianças a variação de pressão média entre modos e estratégias é proporcionalmente maior do que em adultos. O índice é superior à relação PaO₂/FiO₂ porque incorpora a **pressão média de vias aéreas**, ou seja, o custo ventilatório pago para obter aquela oxigenação. Dois pacientes com a mesma relação têm gravidades muito diferentes se um precisa de pressão média de 10 cmH₂O e o outro de 20: o segundo tem pulmão menos complacente, mais colapsado e mais próximo do limite, e é justamente isso que prediz a necessidade de óxido nítrico e de circulação extracorpórea.',
   armadilhas: [
     'A FiO₂ entra em percentual (por exemplo, 60), não em fração — o fator 100 da fórmula já faz a conversão.',
     'O OSI perde validade com SpO₂ acima de 97%, porque a curva de dissociação da hemoglobina achata e a saturação deixa de refletir a PaO₂.',
@@ -804,7 +804,7 @@ const bode: Ferramenta = {
   },
   formula: ['BODE = B (IMC) + O (VEF₁% predito) + D (mMRC) + E (TC6 min)'],
   fundamento:
-    'Celli e colaboradores construíram o índice em 2004 a partir da observação de que pacientes com o mesmo VEF₁ tinham sobrevidas muito diferentes. Testaram várias combinações de variáveis e chegaram às quatro que, juntas, maximizavam a discriminação de mortalidade — cada uma representando uma dimensão distinta: nutrição, função pulmonar, sintoma e desempenho.',
+    'Celli e colaboradores construíram o índice em 2004 a partir da observação de que pacientes com o mesmo VEF₁ tinham sobrevidas muito diferentes. Testaram várias combinações de variáveis e chegaram às quatro que, juntas, maximizavam a discriminação de mortalidade — cada uma representando uma dimensão distinta: nutrição, função pulmonar, sintoma e desempenho. O BODE prediz mortalidade melhor que o VEF₁ isolado porque a doença pulmonar obstrutiva crônica é sistêmica, e não apenas pulmonar. Ele soma a **obstrução** (VEF₁), a **hiperinsuflação e a desnutrição** (índice de massa corporal, que reflete a caquexia pulmonar por ativação da via ubiquitina-proteassoma sob inflamação sistêmica e por aumento do trabalho respiratório), a **percepção de limitação** (mMRC, que traduz a hiperinsuflação dinâmica) e a **capacidade funcional integrada** (teste de caminhada de 6 minutos, que mede a soma de reserva ventilatória, cardiovascular e muscular periférica).',
   armadilhas: [
     'O teste de caminhada de 6 minutos precisa ser padronizado (corredor plano de 30 m, incentivo verbal padronizado, sem aquecimento). Improvisar o teste invalida o componente E, que pesa 3 dos 10 pontos.',
     'O VEF₁ é o pós-broncodilatador; usar o pré-broncodilatador superestima a gravidade.',
@@ -1097,7 +1097,7 @@ const rsbi: Ferramenta = {
   },
   formula: ['RSBI = frequência respiratória ÷ volume corrente em litros'],
   fundamento:
-    'Yang e Tobin testaram, em 1991, vários preditores de desmame em duas coortes prospectivas e encontraram no RSBI o melhor desempenho isolado, superior à pressão inspiratória máxima, à complacência e à relação P/F. O índice sobreviveu três décadas porque mede exatamente o que importa: a estratégia respiratória que o paciente adota quando o suporte é retirado.',
+    'Yang e Tobin testaram, em 1991, vários preditores de desmame em duas coortes prospectivas e encontraram no RSBI o melhor desempenho isolado, superior à pressão inspiratória máxima, à complacência e à relação P/F. O índice sobreviveu três décadas porque mede exatamente o que importa: a estratégia respiratória que o paciente adota quando o suporte é retirado. A respiração rápida e superficial é a assinatura da **carga excessiva sobre a capacidade muscular respiratória**: diante de complacência reduzida ou resistência aumentada, o diafragma em desvantagem minimiza o trabalho por ciclo reduzindo o volume corrente, e compensa o volume-minuto com frequência. O custo é que a fração de espaço morto por ciclo aumenta, a ventilação alveolar cai apesar do volume-minuto preservado, e o gás carbônico sobe — um ciclo que termina em fadiga diafragmática e falência ventilatória.',
   armadilhas: [
     'Medir com pressão de suporte alta reduz artificialmente o índice — o suporte aumenta o volume corrente e diminui a frequência. Meça em tubo T ou com suporte mínimo (até 5 a 8 cmH₂O).',
     'Tubo endotraqueal de calibre pequeno e secreção elevam o índice sem que o paciente esteja incapaz de ser extubado.',

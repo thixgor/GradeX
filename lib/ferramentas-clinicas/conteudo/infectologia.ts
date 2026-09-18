@@ -386,7 +386,7 @@ const news2: Ferramenta = {
   },
   formula: ['Soma de 7 parâmetros; qualquer parâmetro isolado em 3 pontos eleva a categoria de risco'],
   fundamento:
-    'O NEWS foi desenvolvido pelo Royal College of Physicians a partir da constatação de que a deterioração clínica precede a parada cardíaca em horas, com alterações mensuráveis de sinais vitais que ninguém sistematizava. A versão 2, de 2017, acrescentou a escala alternativa de saturação para retentores de CO₂ e substituiu a escala AVPU por ACVPU, incluindo confusão nova.',
+    'O NEWS foi desenvolvido pelo Royal College of Physicians a partir da constatação de que a deterioração clínica precede a parada cardíaca em horas, com alterações mensuráveis de sinais vitais que ninguém sistematizava. A versão 2, de 2017, acrescentou a escala alternativa de saturação para retentores de CO₂ e substituiu a escala AVPU por ACVPU, incluindo confusão nova. O NEWS2 funciona porque a deterioração fisiológica precede a parada cardiorrespiratória em horas, e segue uma sequência previsível: a **frequência respiratória** se altera primeiro, porque a ventilação é o mecanismo de compensação mais rápido disponível para acidose metabólica e para hipóxia; em seguida vêm frequência cardíaca e nível de consciência; a pressão arterial cai por último, quando a compensação simpática se esgota. É por isso que a frequência respiratória tem o maior valor preditivo e é, na prática, o sinal vital menos medido.',
   armadilhas: [
     'Pacientes com sinais vitais cronicamente alterados (DPOC, insuficiência cardíaca avançada, doença neurológica) pontuam alto no basal. O escore mede desvio da normalidade populacional, não do basal individual.',
     'NEWS2 não substitui o julgamento clínico: preocupação da equipe ou da família é motivo suficiente para escalonar, com qualquer pontuação.',
@@ -564,7 +564,7 @@ const sepse: Ferramenta = {
   },
   formula: ['Sepse = infecção + ΔSOFA ≥ 2', 'Choque séptico = sepse + vasopressor + lactato > 2 mmol/L após volume'],
   fundamento:
-    'A definição de 2016 abandonou o conceito de "sepse grave" e reposicionou a sepse como disfunção orgânica ameaçadora à vida causada por resposta desregulada do hospedeiro à infecção. A mudança teve consequência prática direta: infecção com SIRS mas sem disfunção deixou de ser sepse, e a atenção se deslocou de "quem está inflamado" para "quem está falindo órgão".',
+    'A definição de 2016 abandonou o conceito de "sepse grave" e reposicionou a sepse como disfunção orgânica ameaçadora à vida causada por resposta desregulada do hospedeiro à infecção. A mudança teve consequência prática direta: infecção com SIRS mas sem disfunção deixou de ser sepse, e a atenção se deslocou de "quem está inflamado" para "quem está falindo órgão". A Sepsis-3 abandonou os critérios de SIRS porque eles são **sensíveis demais e inespecíficos**: qualquer inflamação os preenche, e um em cada oito pacientes com infecção grave e disfunção orgânica não os preenchia. A nova definição desloca o eixo para a **disfunção orgânica causada por resposta desregulada do hospedeiro**, e é essa desregulação que explica o quadro — ativação simultânea de vias pró e anti-inflamatórias, lesão do glicocálice endotelial, extravasamento capilar, microtrombose e disfunção mitocondrial com incapacidade de extrair oxigênio.',
   armadilhas: [
     'Nem toda hiperlactatemia é hipoperfusão: convulsão, uso de beta-agonista, metformina, insuficiência hepática e neoplasia elevam o lactato por outros mecanismos.',
     'Os 30 mL/kg são um ponto de partida, não um dogma. Em insuficiência cardíaca avançada e doença renal dialítica, avalie a resposta em alíquotas menores.',
@@ -626,7 +626,7 @@ const centor: Ferramenta = {
   },
   formula: ['1 ponto para cada: exsudato | adenopatia cervical anterior | febre | ausência de tosse'],
   fundamento:
-    'Centor derivou os critérios em 1981 numa emergência de adultos, buscando os achados clínicos que melhor discriminavam cultura positiva para estreptococo beta-hemolítico do grupo A. A lógica dos quatro itens é reconhecível: três apontam inflamação bacteriana focal e o quarto, a ausência de tosse, aponta contra infecção viral de vias aéreas.',
+    'Centor derivou os critérios em 1981 numa emergência de adultos, buscando os achados clínicos que melhor discriminavam cultura positiva para estreptococo beta-hemolítico do grupo A. A lógica dos quatro itens é reconhecível: três apontam inflamação bacteriana focal e o quarto, a ausência de tosse, aponta contra infecção viral de vias aéreas. Os quatro critérios de Centor selecionam a apresentação típica do estreptococo beta-hemolítico do grupo A e, o que é mais importante, **excluem os sinais de infecção viral**: a ausência de tosse é um item porque tosse, coriza, rouquidão e conjuntivite apontam vírus com força considerável. O ajuste de McIsaac pela idade existe porque a prevalência da faringite estreptocócica varia enormemente ao longo da vida — é alta entre 5 e 15 anos, e baixa acima dos 45, o que muda o valor preditivo dos mesmos sinais.',
   armadilhas: [
     'Derivado em adultos. Em crianças de 3 a 14 anos a prevalência é bem maior, e o ajuste de McIsaac é indispensável.',
     'Portador crônico de estreptococo com faringite viral tem teste positivo e não se beneficia de antibiótico — situação comum em crianças em idade escolar.',
@@ -1047,7 +1047,7 @@ const conversorAtb: Ferramenta = {
   },
   formula: ['Dose pediátrica = mg/kg/dia × peso, dividida pelo número de tomadas'],
   fundamento:
-    'A escolha entre via endovenosa e oral raramente é farmacológica — é cultural. Para muitos antimicrobianos a exposição plasmática por via oral é indistinguível da endovenosa, e a resistência à troca vem de hábito, não de evidência. Reconhecer os fármacos de alta biodisponibilidade é o primeiro passo para o descalonamento.',
+    'A escolha entre via endovenosa e oral raramente é farmacológica — é cultural. Para muitos antimicrobianos a exposição plasmática por via oral é indistinguível da endovenosa, e a resistência à troca vem de hábito, não de evidência. Reconhecer os fármacos de alta biodisponibilidade é o primeiro passo para o descalonamento. A troca para via oral é possível quando a **biodisponibilidade** do fármaco é alta o bastante para reproduzir a exposição intravenosa — quinolonas, linezolida, metronidazol, fluconazol e sulfametoxazol-trimetoprima chegam perto de 100% porque são bem absorvidos e sofrem pouca metabolização de primeira passagem. O que impede a troca em endocardite, meningite e osteomielite não é a absorção, e sim a **penetração no sítio**: barreiras anatômicas, vegetações avasculares e osso sequestrado exigem concentrações plasmáticas altas e sustentadas.',
   armadilhas: [
     'Absorção comprometida em choque, íleo, síndrome do intestino curto, vômitos e uso de sonda com dieta contínua invalida a premissa da troca.',
     'Interações de absorção são específicas: quinolonas e tetraciclinas quelam com cálcio, ferro, magnésio e alumínio; itraconazol cápsula exige acidez gástrica.',
@@ -1125,7 +1125,7 @@ const antibiograma: Ferramenta = {
   },
   formula: ['CIM = menor concentração que inibe o crescimento visível após 16 a 20 h de incubação'],
   fundamento:
-    'A concentração inibitória mínima é determinada por diluições sucessivas de base 2 — 0,25; 0,5; 1; 2; 4 mg/L — e por isso a resolução do método é grosseira: uma diferença de uma diluição está dentro do erro experimental. A categorização em S, I e R traduz a CIM para uma linguagem clínica, integrando a farmacocinética do fármaco no sítio de infecção e os dados de desfecho clínico disponíveis.',
+    'A concentração inibitória mínima é determinada por diluições sucessivas de base 2 — 0,25; 0,5; 1; 2; 4 mg/L — e por isso a resolução do método é grosseira: uma diferença de uma diluição está dentro do erro experimental. A categorização em S, I e R traduz a CIM para uma linguagem clínica, integrando a farmacocinética do fármaco no sítio de infecção e os dados de desfecho clínico disponíveis. A concentração inibitória mínima é uma medida de laboratório, e o ponto de corte que a traduz em \'sensível\' ou \'resistente\' é uma decisão clínica que incorpora farmacocinética, farmacodinâmica, penetração no sítio e dados de desfecho. Por isso comparar CIMs entre fármacos diferentes não faz sentido: cada uma é lida contra a sua própria régua. Os fenótipos de resistência (ESBL, AmpC indutível, resistência induzível a clindamicina) existem porque o mecanismo genético pode não se expressar no ensaio, mas se expressar sob pressão seletiva durante o tratamento.',
   armadilhas: [
     'CIM "baixa" não é sinônimo de melhor escolha: penetração no sítio, toxicidade, espectro e efeito ecológico pesam tanto quanto.',
     'Antibiograma de amostra contaminada leva a tratar o contaminante. Estafilococo coagulase-negativo em uma de duas hemoculturas é quase sempre contaminação de pele.',
@@ -1203,7 +1203,7 @@ const vacinal: Ferramenta = {
   },
   formula: [],
   fundamento:
-    'O calendário brasileiro é dos mais completos do mundo em oferta pública. Sua arquitetura segue duas lógicas: proteger o quanto antes contra as doenças cuja letalidade é maior no primeiro ano (coqueluche, meningite, pneumococo) e aproveitar janelas imunológicas em que a resposta é melhor (HPV antes da exposição, dTpa na gestação para transferência transplacentária).',
+    'O calendário brasileiro é dos mais completos do mundo em oferta pública. Sua arquitetura segue duas lógicas: proteger o quanto antes contra as doenças cuja letalidade é maior no primeiro ano (coqueluche, meningite, pneumococo) e aproveitar janelas imunológicas em que a resposta é melhor (HPV antes da exposição, dTpa na gestação para transferência transplacentária). A ordem e os intervalos do calendário não são convenção administrativa: derivam da **maturação do sistema imune** e da interferência de anticorpos maternos transferidos pela placenta, que neutralizam antígenos vivos nos primeiros meses. Vacinas polissacarídicas puras não funcionam antes dos 2 anos porque a resposta a polissacarídeos é timo-independente e imatura — daí a conjugação com proteína carreadora, que recruta linfócitos T, gera memória e permite proteger lactentes.',
   armadilhas: [
     'Prematuros seguem a **idade cronológica**, não a corrigida, para vacinação — com exceções específicas de dose e de esquema para hepatite B e BCG conforme peso.',
     'Imunossuprimidos, transplantados, asplênicos e pessoas vivendo com HIV têm calendários especiais, disponíveis nos Centros de Referência para Imunobiológicos Especiais.',
@@ -1431,7 +1431,7 @@ const interacoes: Ferramenta = {
   },
   formula: [],
   fundamento:
-    'A relevância clínica de uma interação depende de três fatores: a magnitude da alteração farmacocinética, a janela terapêutica do fármaco afetado e a gravidade do desfecho. Rifampicina com varfarina é grave porque reúne os três — indução potente, janela estreita e desfecho trombótico. Já muitas interações listadas em bula têm magnitude pequena e janela larga, e não mudam conduta.',
+    'A relevância clínica de uma interação depende de três fatores: a magnitude da alteração farmacocinética, a janela terapêutica do fármaco afetado e a gravidade do desfecho. Rifampicina com varfarina é grave porque reúne os três — indução potente, janela estreita e desfecho trombótico. Já muitas interações listadas em bula têm magnitude pequena e janela larga, e não mudam conduta. Os antimicrobianos concentram interações por três razões estruturais: muitos são **substratos, indutores ou inibidores potentes do citocromo P450** (rifampicina como indutora clássica, azólicos e macrolídeos como inibidores); vários alteram a **flora intestinal produtora de vitamina K**, desestabilizando a varfarina; e alguns interferem em alvos fisiológicos compartilhados — prolongamento do QT por bloqueio de canais de potássio hERG, inibição da monoamina oxidase pela linezolida, e bloqueio da secreção tubular de creatinina pelo trimetoprima.',
   armadilhas: [
     'Interações com fitoterápicos são subnotificadas. Erva-de-são-joão é indutor potente de CYP3A4 e reduz a eficácia de antirretrovirais, imunossupressores e anticoncepcionais.',
     'A suspensão de um indutor exige reavaliação de dose com a mesma atenção que a introdução.',
