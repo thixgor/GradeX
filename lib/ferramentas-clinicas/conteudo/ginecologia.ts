@@ -87,6 +87,13 @@ const idadeGestacional: Ferramenta = {
       nivel,
       rotuloNivel: classe,
       detalhes,
+      conduta: [
+        'Fixe a idade gestacional **uma única vez** e não a recalcule ao longo do pré-natal. A datação definida no primeiro exame confiável é a régua contra a qual todo o crescimento fetal será medido; redatar por ultrassonografia tardia apaga justamente a restrição de crescimento que se quer detectar.',
+        'Prefira a **ultrassonografia do primeiro trimestre (comprimento cabeça-nádega entre 7 e 13 semanas)**: ela erra ± 5 a 7 dias, contra ± 2 semanas no segundo trimestre e ± 3 semanas no terceiro. Corrija a data da última menstruação se a divergência for maior que 5 dias antes de 9 semanas, ou maior que 7 dias entre 9 e 13 semanas.',
+        'Use a idade gestacional para posicionar as decisões no tempo: rastreio de aneuploidias com translucência nucal entre 11 e 13 semanas e 6 dias, morfológico entre 20 e 24 semanas, rastreio de diabetes gestacional entre 24 e 28 semanas, corticoide antenatal entre 24 e 34 semanas, e *Streptococcus* do grupo B entre 35 e 37 semanas. Errar a datação faz perder todas essas janelas.',
+        '**Termo** vai de 37 a 41 semanas e 6 dias, subdividido em precoce (37–38 s 6 d), pleno (39–40 s 6 d) e tardio (41 s). Não programe parto eletivo antes de 39 semanas sem indicação médica: o termo precoce tem mais desconforto respiratório e internação neonatal.',
+        'A partir de **41 semanas**, inicie vigilância anteparto (cardiotocografia e índice de líquido amniótico duas vezes por semana) e ofereça indução — a indução em 41 semanas reduz mortalidade perinatal e cesárea em comparação com a conduta expectante até 42.',
+      ],
       interpretacao: [
         '**A ultrassonografia do primeiro trimestre é o método mais acurado de datação**, com margem de ± 5 a 7 dias quando feita pelo comprimento cabeça-nádega entre 7 e 13 semanas e 6 dias. Depois disso a variabilidade biológica do crescimento fetal cresce, e a acurácia cai progressivamente: ± 7 a 10 dias no segundo trimestre e ± 21 a 30 dias no terceiro.',
         '**Datar uma única vez e nunca mais mudar.** A data estabelecida no primeiro exame confiável vale para toda a gestação. Redatar no terceiro trimestre porque o feto "está pequeno" é o erro que transforma restrição de crescimento em "idade gestacional errada" — e retira a chance de intervir.',
@@ -279,6 +286,13 @@ const bishop: Ferramenta = {
         { rotulo: 'Ponto de corte de colo favorável', valor: '≥ 8', nota: 'Com Bishop ≥ 8, a probabilidade de parto vaginal após indução é semelhante à do trabalho de parto espontâneo.' },
         { rotulo: 'Colo desfavorável', valor: '≤ 6', nota: 'Indica necessidade de amadurecimento cervical antes da indução com ocitocina.' },
       ],
+      conduta: [
+        'Bishop **≥ 8 (colo favorável)**: a probabilidade de parto vaginal após indução é semelhante à do trabalho de parto espontâneo. Induza diretamente com **ocitocina** e amniotomia quando apropriado, sem preparo cervical prévio.',
+        'Bishop **≤ 6 (colo desfavorável)**: amadureça o colo antes. As opções são **misoprostol vaginal 25 µg a cada 6 h** (não use em cesárea prévia ou cicatriz uterina, pelo risco de rotura), **dinoprostona**, ou métodos mecânicos — sonda de Foley ou balão duplo, que são os mais seguros no útero cicatricial e têm eficácia comparável.',
+        'Bishop **7** é zona intermediária: decida pelo contexto. Multíparas frequentemente respondem à ocitocina isolada; nulíparas costumam se beneficiar do preparo cervical.',
+        'A **dilatação** é o item de maior peso do escore, e a **estação da apresentação** o de maior variabilidade entre examinadores. Quando houver dúvida na estação, prefira o Bishop simplificado (dilatação, apagamento e estação), que tem desempenho preditivo equivalente e menos ruído.',
+        'Reavalie o Bishop **após cada ciclo de preparo cervical** e antes de declarar falha de indução. Falha de indução só deve ser diagnosticada após ruptura das membranas e pelo menos 12–18 h de ocitocina em contratilidade adequada — encerrar antes disso converte em cesárea induções que ainda dariam certo.',
+      ],
       interpretacao: [
         favoravel
           ? '**Colo favorável.** A indução pode ser feita diretamente com ocitocina, com ou sem amniotomia. A chance de parto vaginal é alta.'
@@ -368,6 +382,13 @@ const preEclampsia: Ferramenta = {
       nivel,
       rotuloNivel: `${fmtInt(pas)}/${fmtInt(pad)} mmHg · ${fmt(semanas, 1)} semanas`,
       detalhes,
+      conduta: [
+        'Diagnóstico firmado: defina imediatamente se há **critérios de gravidade** (pressão ≥ 160/110 mmHg, plaquetas < 100.000, transaminases ao dobro do normal, creatinina > 1,1 mg/dL ou o dobro do basal, edema pulmonar, cefaleia ou alterações visuais refratárias). A presença de qualquer um muda a conduta de vigilância para internação e planejamento do parto.',
+        '**Crise hipertensiva (≥ 160/110 mmHg)**: trate em até 30–60 minutos com hidralazina IV, labetalol IV ou nifedipino de liberação imediata por via oral. O alvo é 140–150/90–100 mmHg — normalizar a pressão reduz a perfusão placentária e não traz benefício.',
+        '**Sulfato de magnésio** é profilaxia de eclâmpsia, não anti-hipertensivo. Indique em pré-eclâmpsia com critérios de gravidade e em toda eclâmpsia, e mantenha por 24 h após o parto ou após a última crise.',
+        'O **parto é o único tratamento definitivo**. Com ≥ 37 semanas, interrompa. Entre 34 e 37 semanas com gravidade, interrompa após estabilização. Abaixo de 34 semanas, a conduta expectante só se justifica em centro terciário, com mãe e feto estáveis, e sempre após corticoide antenatal.',
+        'Pré-eclâmpsia é **fator de risco cardiovascular vitalício**: dobra o risco de doença coronariana e acidente vascular cerebral. Encaminhe a puérpera para avaliação de pressão, lipídios e glicemia em 3 a 6 meses, e prescreva **aspirina 100–150 mg à noite, a partir de 12–16 semanas**, em toda gestação futura.',
+      ],
       interpretacao: [
         comGravidade
           ? '**Pré-eclâmpsia com sinais de gravidade.** Internação, sulfato de magnésio para profilaxia de eclâmpsia, controle pressórico e definição da via e do momento do parto. Com 34 semanas ou mais, o parto é indicado; abaixo disso, considere conduta expectante em centro terciário com corticoide para maturação pulmonar, desde que mãe e feto estejam estáveis.'
@@ -445,6 +466,13 @@ const sulfatoMagnesio: Ferramenta = {
       valor: toxicidade ? 'Sinais de toxicidade — suspender' : 'Esquema montado',
       nivel: toxicidade ? 'critico' : 'alerta',
       detalhes,
+      conduta: [
+        'Esquema de **Zuspan**: ataque de 4 g IV em 20 minutos, manutenção de 1–2 g/h em bomba de infusão. Esquema de **Pritchard** (quando não há bomba): 4 g IV mais 10 g intramuscular divididos nas nádegas, seguidos de 5 g intramuscular a cada 4 h. Mantenha por 24 h após o parto ou após a última convulsão.',
+        'Monitore de hora em hora a **tríade de segurança**: reflexo patelar presente, frequência respiratória ≥ 12–16 irpm e diurese ≥ 25–30 mL/h. O reflexo patelar é o primeiro a desaparecer e é o sinal de alarme mais precoce — sua ausência precede a depressão respiratória.',
+        'Em **intoxicação** (arreflexia, depressão respiratória, alterações de condução): suspenda a infusão e administre **gluconato de cálcio 1 g IV (10 mL a 10%) em 3 minutos**, que antagoniza diretamente o bloqueio neuromuscular. Tenha a ampola fisicamente ao lado do leito de toda paciente em sulfato.',
+        'Na **insuficiência renal**, o magnésio se acumula porque sua eliminação é exclusivamente renal. Mantenha o ataque integral, mas reduza a manutenção (1 g/h ou menos) e dose a magnesemia — alvo terapêutico de 4,8 a 8,4 mg/dL (2 a 3,5 mmol/L).',
+        'Se houver **convulsão durante a infusão**, aplique 2 g adicionais em bolus. Crises recorrentes apesar de magnesemia terapêutica pedem neuroimagem para afastar hemorragia, trombose venosa cerebral e síndrome da encefalopatia posterior reversível.',
+      ],
       interpretacao: [
         '**O sulfato de magnésio é anticonvulsivante, não anti-hipertensivo.** Ele previne e trata a eclâmpsia, mas não reduz a pressão de forma clinicamente relevante — o controle pressórico é feito com hidralazina, nifedipino ou labetalol, em paralelo.',
         'O ensaio **Magpie**, com mais de 10 mil mulheres, mostrou redução de 58% no risco de eclâmpsia. Em eclâmpsia estabelecida, o sulfato é superior a diazepam e a fenitoína para prevenir recorrência — resultado do Collaborative Eclampsia Trial.',
@@ -514,6 +542,13 @@ const choqueObstetrico: Ferramenta = {
       nivel,
       rotuloNivel: indice >= 1.7 ? 'Choque grave' : indice >= 0.9 ? 'Alerta — provável hemorragia significativa' : 'Dentro da faixa normal para a gestação',
       detalhes,
+      conduta: [
+        '**Índice de choque ≥ 0,9** é gatilho de alerta na hemorragia pós-parto: ele sobe antes da queda da pressão arterial, porque a gestante jovem compensa perdas de até 1.500 mL mantendo a sistólica normal. Não espere hipotensão para agir.',
+        '**Índice ≥ 1,7** indica perda grave e prevê necessidade de transfusão maciça. Acione o protocolo institucional, peça hemocomponentes em proporção 1:1:1 (hemácias, plasma, plaquetas) e chame a equipe cirúrgica.',
+        'Percorra os **quatro T** para achar a causa: **Tônus** (atonia, responsável por 70–80%), **Trauma** (laceração, rotura, inversão), **Tecido** (restos placentários, acretismo) e **Trombina** (coagulopatia). O tratamento é específico de cada um e o tempo perdido no diagnóstico é o que mata.',
+        'Na **atonia**, execute em sequência: massagem uterina bimanual, ocitocina, ácido tranexâmico 1 g IV (dentro das primeiras 3 horas — depois disso perde eficácia), metilergometrina (contraindicada em hipertensão), misoprostol, balão de tamponamento intrauterino e, persistindo, sutura de B-Lynch, ligadura de artérias ou histerectomia.',
+        'O índice **perde validade sob betabloqueador, anestesia raquidiana e em cardiopatia materna**, que desacoplam a frequência da volemia. Nesses casos, guie-se por lactato, diurese, perfusão periférica e perda estimada, não pelo cálculo.',
+      ],
       interpretacao: [
         '**A gestante compensa muito bem e descompensa de repente.** O aumento fisiológico de volume plasmático mascara perdas de até 1.500 mL sem hipotensão. Quando a pressão cai, a perda já é de 30 a 40% da volemia. O índice de choque detecta essa fase compensada e é superior à pressão isolada.',
         '**As quatro causas de hemorragia pós-parto (os 4 T):** **T**ônus (atonia uterina, responsável por 70 a 80% dos casos), **T**rauma (lacerações, rotura, inversão uterina), **T**ecido (restos placentários, acretismo) e **T**rombina (coagulopatia).',
@@ -677,6 +712,13 @@ const proteinuria: Ferramenta = {
         { rotulo: 'Ponto de corte', valor: gestacao ? '≥ 0,3 mg/mg (300 mg/g)' : '≥ 0,15 a 0,2 mg/mg', nota: gestacao ? 'Critério de proteinúria significativa na pré-eclâmpsia.' : 'Limiar de proteinúria em nefrologia geral.' },
         { rotulo: 'Faixa nefrótica', valor: '≥ 3,5 mg/mg (3,5 g/24 h)', nivel: razao >= 3.5 ? 'critico' : 'neutro' },
       ],
+      conduta: [
+        '**Relação ≥ 0,3 mg/mg (ou ≥ 300 mg/g)** confirma proteinúria significativa e, com hipertensão após 20 semanas, fecha o diagnóstico de pré-eclâmpsia. O resultado sai em horas, contra 24 h da coleta convencional — use-o para não atrasar a conduta.',
+        'A amostra isolada **substitui a urina de 24 horas** para diagnóstico, com concordância boa. A coleta de 24 h permanece útil apenas quando há dúvida ou quando se quer quantificar de forma mais precisa, e é frequentemente inválida por erro de coleta.',
+        '**Proteinúria não é mais critério de gravidade** desde as diretrizes de 2013: a quantidade não prediz desfecho materno ou fetal. Pré-eclâmpsia pode existir sem proteinúria alguma, desde que haja disfunção de órgão-alvo — plaquetopenia, lesão renal, hepática, neurológica ou edema pulmonar.',
+        'Colha a amostra preferencialmente na **primeira urina da manhã**, com a paciente em repouso: postura ereta e exercício aumentam a proteinúria de forma transitória e geram falsos positivos. Contaminação por sangue, secreção vaginal ou infecção urinária também eleva o resultado — confirme com sumário de urina.',
+        'Proteinúria **antes de 20 semanas** aponta doença renal prévia, não pré-eclâmpsia. Investigue com função renal, sedimento urinário, ultrassonografia de rins e sorologias, e acompanhe em conjunto com a nefrologia: essas gestantes têm risco muito alto de pré-eclâmpsia sobreposta mais adiante.',
+      ],
       interpretacao: [
         'A relação funciona porque a creatinina é excretada em ritmo razoavelmente constante ao longo do dia — cerca de 1 g por 24 horas num adulto médio. Dividir a proteína pela creatinina na mesma amostra **normaliza pela diluição urinária**, o que torna uma amostra isolada quase tão informativa quanto a coleta de 24 horas, sem os erros de coleta incompleta.',
         gestacao
@@ -754,6 +796,13 @@ const ectopica: Ferramenta = {
       nivel,
       rotuloNivel: instavel ? 'Instabilidade hemodinâmica presente' : usg === 'indeterminada' ? 'Localização ainda não definida' : '',
       detalhes,
+      conduta: [
+        'Com **hCG acima da zona discriminatória (1.500–3.500 mUI/mL, conforme o serviço) e útero vazio à ultrassonografia transvaginal**, a gravidez ectópica é o diagnóstico até prova em contrário. Abaixo dessa zona, repita hCG em 48 h antes de concluir.',
+        '**Cinética do hCG**: aumento inferior a 35–50% em 48 h sugere gravidez não tópica ou inviável. Aumento adequado com útero vazio e valor acima da zona discriminatória mantém a suspeita. Queda lenta aponta abortamento ou ectópica em resolução — nenhum padrão isolado é diagnóstico, e a imagem seriada decide.',
+        '**Metotrexato** (50 mg/m² intramuscular) é opção quando há estabilidade hemodinâmica, hCG < 5.000 mUI/mL, massa < 3,5–4 cm, ausência de atividade cardíaca embrionária e função hepática, renal e hematológica normais. Dose-chave do seguimento: o hCG deve cair **≥ 15% entre os dias 4 e 7**; se não cair, repita a dose ou opere.',
+        '**Cirurgia imediata** em instabilidade hemodinâmica, sinais de rotura, líquido livre volumoso ou contraindicação ao metotrexato. Salpingostomia preserva a trompa em paciente com trompa contralateral comprometida; salpingectomia é preferível quando a contralateral é normal, por menor risco de persistência de tecido trofoblástico.',
+        'Na **gravidez de localização indeterminada**, não há pressa em tratar paciente estável: acompanhe com hCG seriado a cada 48 h e ultrassonografia. Administrar metotrexato a uma gravidez tópica viável é um erro irreversível, e ele acontece justamente quando se trata a incerteza como se fosse diagnóstico.',
+      ],
       interpretacao: [
         instavel
           ? '**Instabilidade hemodinâmica com suspeita de ectópica é indicação de laparotomia ou laparoscopia imediata.** Não aguarde exames.'
@@ -849,6 +898,13 @@ const sangramentoUterino: Ferramenta = {
         { rotulo: 'Causas estruturais (PALM)', valor: estruturais.length ? estruturais.join(', ') : 'nenhuma identificada' },
         { rotulo: 'Causas não estruturais (COEIN)', valor: naoEstruturais.length ? naoEstruturais.join(', ') : 'nenhuma identificada' },
       ],
+      conduta: [
+        'Classifique pelo **PALM-COEIN** antes de tratar: as causas estruturais — **P**ólipo, **A**denomiose, **L**eiomioma, **M**alignidade e hiperplasia — são vistas por imagem ou histologia, e as não estruturais — **C**oagulopatia, disfunção **O**vulatória, **E**ndometrial, **I**atrogênica e **N**ão classificada — exigem investigação clínica e laboratorial. O tratamento diverge completamente entre os dois blocos.',
+        '**Biópsia endometrial** é obrigatória em toda mulher com mais de 45 anos, e antes disso quando há exposição estrogênica não oposta (obesidade, síndrome dos ovários policísticos, anovulação crônica), falha do tratamento clínico ou fator de risco para câncer endometrial, como síndrome de Lynch.',
+        'Investigue **coagulopatia** em adolescentes e em mulheres com sangramento intenso desde a menarca: até 20% têm doença de von Willebrand. Peça hemograma com plaquetas, coagulograma, fator de von Willebrand e atividade do cofator de ristocetina — o diagnóstico muda o tratamento e tem implicações familiares.',
+        'No **sangramento agudo intenso**, estabilize primeiro: acesso venoso, hemograma, tipagem, e considere estrogênio conjugado IV 25 mg a cada 4–6 h, ácido tranexâmico 1 g a cada 8 h, ou alta dose de progestagênio oral. Curetagem ou tamponamento com balão ficam para a falha do tratamento clínico.',
+        'No tratamento **crônico**, o **sistema intrauterino de levonorgestrel** é a primeira linha para sangramento intenso sem causa estrutural — reduz a perda em mais de 80% e evita histerectomia. Alternativas: anticoncepcional combinado contínuo, ácido tranexâmico nos dias de fluxo, ablação endometrial em quem completou a prole e miomectomia ou embolização quando há mioma sintomático.',
+      ],
       interpretacao: [
         'O sistema **PALM-COEIN** da FIGO organiza o diagnóstico em duas metades. **PALM** reúne as causas **estruturais**, visíveis em imagem ou histologia: Pólipo, Adenomiose, Leiomioma, Malignidade e hiperplasia. **COEIN** reúne as **não estruturais**: Coagulopatia, disfunção Ovulatória, disfunção Endometrial, Iatrogênica e Não classificada.',
         'A grande virtude do sistema é permitir **múltiplos diagnósticos simultâneos**. Uma paciente pode ter mioma e disfunção ovulatória ao mesmo tempo, e presumir que o mioma explica tudo é o erro que o sistema foi desenhado para evitar.',
@@ -935,6 +991,13 @@ const tevGestacao: Ferramenta = {
         { rotulo: 'Duração recomendada', valor: indicada ? duracao : '—' },
         { rotulo: 'Agente', valor: 'Heparina de baixo peso molecular', nota: 'Enoxaparina 40 mg/dia, com ajuste por peso: 20 mg se < 50 kg; 40 mg de 50 a 90 kg; 60 mg de 91 a 130 kg; 80 mg de 131 a 170 kg; acima disso, 0,6 mg/kg/dia.' },
       ],
+      conduta: [
+        'A gestação eleva o risco de tromboembolismo em **4 a 5 vezes**, e o puerpério em até 20 vezes, com o pico nas primeiras 3 semanas pós-parto. Por isso a estratificação deve ser refeita no anteparto e no pós-parto — são decisões separadas.',
+        '**Trombofilia de alto risco** (antitrombina deficiente, homozigose para fator V Leiden ou protrombina G20210A, dupla heterozigose, síndrome antifosfolípide) ou **tromboembolismo prévio** indicam profilaxia com **heparina de baixo peso molecular durante toda a gestação e por 6 semanas após o parto**.',
+        'Com **fatores de risco somados** — cesárea de urgência, obesidade com índice de massa corporal ≥ 30, idade > 35 anos, imobilidade, pré-eclâmpsia, hemorragia pós-parto, infecção, gestação múltipla —, indique profilaxia pós-parto por 7 a 10 dias, estendida a 6 semanas se houver dois ou mais fatores maiores.',
+        'Use **heparina de baixo peso molecular, não varfarina**: a varfarina é teratogênica no primeiro trimestre (embriopatia warfarínica) e atravessa a placenta, causando hemorragia fetal. Anticoagulantes orais diretos são contraindicados na gestação e na amamentação por falta de dados de segurança.',
+        'Programe a **suspensão periparto**: interrompa a heparina de baixo peso molecular 24 h antes do parto programado ou da anestesia neuroaxial em dose terapêutica (12 h em dose profilática) e reintroduza 6–12 h após o parto vaginal ou 12–24 h após cesárea, desde que não haja sangramento ativo. Esse intervalo é o que separa profilaxia segura de hematoma epidural.',
+      ],
       interpretacao: [
         'A gestação é um **estado protrombótico fisiológico**: aumentam os fatores I, VII, VIII, IX e X, cai a proteína S livre, surge resistência adquirida à proteína C ativada e a fibrinólise é inibida pelos inibidores do ativador de plasminogênio 1 e 2. Some-se a estase por compressão da veia cava e a lesão endotelial do parto, e a tríade de Virchow está completa.',
         'O risco é **cerca de 5 vezes maior** durante a gestação e **20 a 60 vezes maior** nas primeiras 6 semanas de puerpério — com pico nos primeiros 7 dias. É por isso que o ponto de corte pós-parto é mais baixo.',
@@ -998,6 +1061,13 @@ const ferroGestacao: Ferramenta = {
       nivel,
       rotuloNivel: `${fmtInt(trimestre)}º trimestre · ${fmt(semanas, 1)} semanas`,
       detalhes,
+      conduta: [
+        '**Anemia na gestação** é hemoglobina < 11 g/dL no primeiro e terceiro trimestres e < 10,5 g/dL no segundo — os pontos de corte diferem porque a expansão do volume plasmático dilui fisiologicamente a hemoglobina no meio da gestação.',
+        'A **ferritina** é o melhor marcador de estoque: < 30 ng/mL indica deficiência mesmo sem anemia, e nessa faixa já se repõe. Como é proteína de fase aguda, valores entre 30 e 100 ng/mL com proteína C-reativa elevada não excluem deficiência — nesse caso a saturação de transferrina < 20% confirma.',
+        '**Ferro oral**: 40–80 mg de ferro elementar, em dias alternados e em jejum. A dose em dias alternados aumenta a absorção, porque o pico de hepcidina induzido por uma dose bloqueia a absorção da dose seguinte nas 24 h subsequentes. Associe vitamina C e evite tomar com cálcio, chá ou café.',
+        '**Ferro intravenoso** (carboximaltose férrica ou sacarato) está indicado a partir do segundo trimestre quando há intolerância ao oral, má absorção, anemia moderada a grave (hemoglobina < 9 g/dL), necessidade de correção rápida perto do termo ou falha após 2–4 semanas de tratamento oral adequado. A reposta é mais rápida e a adesão, melhor.',
+        'Verifique a resposta com **reticulócitos em 1 semana e hemoglobina em 2 a 4 semanas** (esperado: +1 g/dL). Sem resposta, reveja adesão, sangramento oculto, doença celíaca, infecção por *Helicobacter pylori* e outras causas de anemia — a deficiência de ferro é comum, mas não é a única, e a anemia falciforme e as talassemias têm conduta oposta à reposição indiscriminada.',
+      ],
       interpretacao: [
         'A gestação aumenta a necessidade de ferro em cerca de **1.000 mg no total**: 300 mg para o feto e a placenta, 500 mg para a expansão da massa eritrocitária materna e 200 mg de perdas basais. Poucas mulheres iniciam a gestação com estoque suficiente para isso, e é por essa razão que a suplementação profilática é universal.',
         'A **hemodiluição fisiológica** explica a queda da hemoglobina: o volume plasmático aumenta 40 a 50%, mais do que a massa eritrocitária (20 a 30%). Essa "anemia dilucional" é adaptativa — melhora a perfusão placentária ao reduzir a viscosidade e protege contra a perda sanguínea do parto.',
@@ -1059,6 +1129,13 @@ const rmi: Ferramenta = {
         { rotulo: 'CA-125', valor: `${fmtInt(ca125)} U/mL` },
         { rotulo: 'Ponto de corte', valor: '> 200', nota: 'Sensibilidade em torno de 78% e especificidade de 87% para malignidade.' },
       ],
+      conduta: [
+        '**Índice de risco de malignidade (RMI) > 200** indica encaminhamento a um **ginecologista oncológico**. Esse é o desfecho prático mais importante da ferramenta: a cirurgia inicial feita por especialista, com estadiamento completo, melhora a sobrevida em câncer de ovário mais do que qualquer decisão subsequente.',
+        '**RMI ≤ 200**: a massa pode ser conduzida pelo ginecologista geral. Cistos simples, uniloculares, anecoicos e menores que 5 cm em qualquer idade têm risco de malignidade próximo de zero e podem ser apenas acompanhados com ultrassonografia.',
+        'Lembre que o **CA-125 sobe em muitas condições benignas**: endometriose, miomas, doença inflamatória pélvica, gestação, menstruação, cirrose com ascite, insuficiência cardíaca, tuberculose peritoneal e derrames serosos. Por isso o RMI multiplica o CA-125 pelo estado menopausal — na pré-menopausa o marcador tem especificidade baixa e não deve decidir sozinho.',
+        'Considere marcadores alternativos conforme a idade: em mulheres jovens com massa sólida, dose **alfafetoproteína, beta-hCG e desidrogenase láctica** para tumores de células germinativas, e **inibina** para tumores de células da granulosa — o CA-125 é pouco informativo nesses tipos.',
+        'Complete a avaliação com **tomografia de abdome e pelve** em RMI alto para mapear carcinomatose e planejar a citorredução. Quando a doença for irressecável de início, a discussão passa a ser quimioterapia neoadjuvante com cirurgia de intervalo — decisão que pertence à equipe oncológica, o que reforça o encaminhamento precoce.',
+      ],
       interpretacao: [
         alto
           ? '**Alto risco.** Encaminhe a um serviço de ginecologia oncológica. A cirurgia inicial realizada por ginecologista oncológico associa-se a estadiamento mais completo, maior taxa de citorredução ótima e melhor sobrevida — é um dos fatores prognósticos mais fortes e mais modificáveis do câncer de ovário.'
@@ -1116,6 +1193,13 @@ const periodoFertil: Ferramenta = {
         { rotulo: 'Ovulação estimada', valor: `${fmtInt(ovulacaoEstimada)}º dia do ciclo`, nota: 'A fase lútea é a mais constante (13 a 15 dias); a variabilidade dos ciclos vem quase toda da fase folicular.' },
         { rotulo: 'Variabilidade dos ciclos', valor: `${fmtInt(variabilidade)} dias`, nota: regular ? 'Ciclos regulares (variação ≤ 7 dias).' : '**Ciclos irregulares (variação > 7 dias): o método do calendário perde qualquer confiabilidade.**', nivel: regular ? 'ok' : 'alerta' },
         { rotulo: 'Sobrevida dos gametas', valor: 'Espermatozoide até 5 dias · óvulo 12 a 24 h', nota: 'É a sobrevida do espermatozoide que estende a janela fértil para os dias que **antecedem** a ovulação.' },
+      ],
+      conduta: [
+        'A janela fértil vai de **5 dias antes até o dia da ovulação**: o espermatozoide sobrevive até 5 dias no muco cervical, enquanto o oócito é viável por apenas 12 a 24 h. Isso significa que a relação sexual *antes* da ovulação é a que engravida, e orientar o casal a ter relação só no \'dia da ovulação\' reduz as chances.',
+        'Para **buscar gravidez**, a orientação mais eficaz é relação a cada 1 a 2 dias ao longo de todo o ciclo, ou pelo menos na janela fértil. Isso supera qualquer tentativa de cronometragem precisa e reduz a ansiedade, que por si já prejudica a frequência das relações.',
+        '**Não use esta estimativa como método contraceptivo confiável.** Os métodos baseados em calendário têm falha típica de 12 a 24% ao ano com uso comum. Ciclos irregulares, estresse, viagem, doença e amamentação deslocam a ovulação de forma imprevisível.',
+        'Sinais de ovulação mais confiáveis que o calendário: **muco cervical em clara de ovo** (o melhor preditor prospectivo), **teste de hormônio luteinizante na urina** (a ovulação ocorre 24–36 h após o pico) e elevação de 0,3–0,5 °C na temperatura basal — esta última só confirma a ovulação retrospectivamente e não serve para programar a relação.',
+        'Encaminhe para investigação de infertilidade após **12 meses de tentativas** em mulheres com menos de 35 anos, ou **6 meses** a partir dos 35, e imediatamente se houver amenorreia, oligomenorreia, endometriose conhecida, doença inflamatória pélvica prévia, cirurgia pélvica ou fator masculino suspeito.',
       ],
       interpretacao: [
         '⚠ **Esta ferramenta é educativa e não serve como método contraceptivo.** O método do calendário tem taxa de falha de **12 a 24% ao ano no uso típico** — entre os mais altos de todos os métodos. Para contracepção, use métodos com eficácia comprovada.',

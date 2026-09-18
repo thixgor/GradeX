@@ -760,6 +760,13 @@ export const ferramentas: Ferramenta[] = [
         unidade: 'mEq/L',
         nivel: hco3 === null ? 'neutro' : c.adequada ? 'ok' : 'alerta',
         detalhes,
+        conduta: [
+          'Se o bicarbonato medido **bate com o esperado**, o distúrbio é puro e a conduta é tratar a causa da hipoventilação: broncoespasmo, depressão do centro respiratório por opioide ou benzodiazepínico, fadiga muscular, doença neuromuscular, obstrução de via aérea ou pneumotórax.',
+          'Bicarbonato **acima do esperado** revela alcalose metabólica associada — quase sempre por diurético, vômito, aspiração nasogástrica ou corticoide. Corrigir essa alcalose é parte do tratamento: ela reduz o estímulo ventilatório e perpetua a retenção de gás carbônico.',
+          'Bicarbonato **abaixo do esperado** revela acidose metabólica associada, e esse é o cenário mais grave: significa que o paciente tem dois motivos para acidemia. Procure sepse, choque, hipoperfusão e intoxicação, e trate com urgência — o pH cai rápido quando a compensação metabólica falha.',
+          'Diferencie **aguda (bicarbonato sobe 1 mEq/L para cada 10 mmHg de gás carbônico)** de **crônica (sobe 3,5–4 mEq/L)**: na retenção crônica compensada do doente com doença pulmonar obstrutiva, o objetivo **não** é normalizar o gás carbônico, e sim devolvê-lo ao valor basal do paciente. Normalizar à força gera alcalose pós-hipercápnica e desmame impossível.',
+          'Indique **ventilação não invasiva** com pH < 7,35 e gás carbônico elevado na exacerbação de doença pulmonar obstrutiva ou no edema agudo — é a intervenção que mais reduz intubação e mortalidade nesse cenário. Passe à intubação se houver rebaixamento, instabilidade, incapacidade de proteger a via aérea ou falha da não invasiva após 1–2 horas.',
+        ],
         interpretacao: [
           hco3 === null ? 'Informe o bicarbonato medido para comparar.' : c.leitura,
           'A comparação entre o pH medido e os dois pHs previstos costuma ser o modo mais rápido de datar a hipercapnia: pH próximo do previsto para agudo indica retenção recente; próximo do crônico indica adaptação renal já estabelecida; entre os dois, agudização sobre crônico — o cenário típico da exacerbação de DPOC.',
@@ -819,6 +826,13 @@ export const ferramentas: Ferramenta[] = [
         unidade: 'mEq/L',
         nivel: hco3 === null ? 'neutro' : c.adequada ? 'ok' : 'alerta',
         detalhes,
+        conduta: [
+          'Encontrada a alcalose respiratória, **procure a causa antes de chamá-la de ansiedade**. Hiperventilação é sinal precoce de sepse, embolia pulmonar, dor, hipoxemia, intoxicação por salicilato, hepatopatia, gestação e lesão do sistema nervoso central. Rotular como crise de pânico sem afastar essas causas é um erro clássico e por vezes fatal.',
+          'Bicarbonato **abaixo do esperado** indica acidose metabólica concomitante. A combinação de alcalose respiratória com acidose metabólica de ânion gap alto é a assinatura clássica da **intoxicação por salicilato** e da **sepse grave** — dose salicilemia e lactato.',
+          'Bicarbonato **acima do esperado** aponta alcalose metabólica associada, tipicamente por vômito ou diurético, e produz alcalemia grave, com risco de arritmia, vasoconstrição cerebral e redução do cálcio ionizado.',
+          'Diferencie **aguda (bicarbonato cai 2 mEq/L por 10 mmHg de queda do gás carbônico)** de **crônica (cai 4–5 mEq/L)**: gestação e altitude produzem alcalose respiratória crônica plenamente compensada, que é fisiológica e não requer intervenção alguma.',
+          'Na alcalose respiratória **iatrogênica do paciente ventilado**, corrija os parâmetros — reduza a frequência ou o volume corrente — em vez de aumentar a sedação. Hipocapnia mantida reduz o fluxo sanguíneo cerebral em cerca de 2–4% por mmHg e piora a isquemia em lesão cerebral aguda, onde a hiperventilação só se justifica como medida de resgate por minutos, diante de herniação iminente.',
+        ],
         interpretacao: [
           hco3 === null ? 'Informe o bicarbonato medido para comparar.' : c.leitura,
           'A alcalose respiratória é o distúrbio ácido-base mais comum em pacientes hospitalizados e quase nunca é o problema em si — é o sinal de outro. Dor, ansiedade, febre, sepse, embolia pulmonar, hepatopatia, gestação, altitude, ventilação mecânica mal ajustada e intoxicação por salicilato cobrem a maioria dos casos. A alcalose respiratória crônica é o único distúrbio em que a compensação pode normalizar completamente o pH.',
@@ -866,6 +880,13 @@ export const ferramentas: Ferramenta[] = [
         unidade: 'mmHg',
         nivel: paco2 === null ? 'neutro' : c.adequada ? 'ok' : 'alerta',
         detalhes,
+        conduta: [
+          'Classifique pelo **cloro urinário**, que é o que decide o tratamento: **< 20 mEq/L (responsiva a cloro)** aponta vômito, aspiração nasogástrica, uso prévio de diurético ou pós-hipercapnia — e responde a **salina isotônica** com reposição de potássio. **> 20 mEq/L (resistente a cloro)** aponta hiperaldosteronismo, síndrome de Cushing, estenose de artéria renal, uso atual de diurético ou síndromes de Bartter e Gitelman — e **não** responde a volume.',
+          'Na forma **resistente a cloro**, o tratamento é dirigido ao excesso mineralocorticoide: espironolactona ou amilorida, correção de potássio e magnésio, e investigação endócrina com relação aldosterona/renina. Dar salina aqui só gera sobrecarga volêmica.',
+          'Reponha **potássio e magnésio** sempre: a hipocalemia mantém a alcalose ao estimular a reabsorção de bicarbonato e a secreção de hidrogênio no túbulo coletor. Sem corrigi-los, a alcalose se torna autoperpetuante independentemente da causa inicial.',
+          'Em alcalose grave (**pH > 7,55 ou bicarbonato > 45 mEq/L**) com repercussão — arritmia, tetania por queda do cálcio ionizado, convulsão, depressão respiratória —, considere **acetazolamida 250–500 mg** (que aumenta a bicarbonatúria, ao custo de perda de potássio), inibidor de bomba de prótons quando a origem for perda gástrica, ou hemodiálise com banho de baixo bicarbonato nos casos refratários com insuficiência renal.',
+          'Verifique se a **compensação respiratória é adequada** (gás carbônico sobe 0,7 mmHg por mEq/L de bicarbonato, com teto prático em torno de 55 mmHg): compensação insuficiente indica que algo limita a hipoventilação — estímulo hipoxêmico, dor, ventilação mecânica com parâmetros fixos — e a alcalemia resultante será mais grave.',
+        ],
         interpretacao: [
           paco2 === null ? 'Informe a PaCO₂ medida para verificar a compensação.' : c.leitura,
           'A hipoventilação compensatória tem freio: a hipoxemia que ela mesma provoca reativa o drive respiratório, e a PaCO₂ raramente ultrapassa 55 a 60 mmHg por compensação pura. PaCO₂ acima disso em alcalose metabólica praticamente sempre significa acidose respiratória associada.',
@@ -1143,6 +1164,13 @@ export const ferramentas: Ferramenta[] = [
           { rotulo: 'Diferença atual − padrão', valor: `${hco3 - bp >= 0 ? '+' : ''}${fmt(hco3 - bp, 1)} mEq/L`, nota: 'É a parcela do bicarbonato que existe apenas por causa da PaCO₂ atual.' },
           { rotulo: 'Excesso de base padrão (SBE)', valor: `${be >= 0 ? '+' : ''}${fmt(be, 1)} mEq/L`, nota: 'Referência −2 a +2. Negativo = déficit de base.' },
         ],
+        conduta: [
+          'Use o **bicarbonato padrão e o excesso de base** para isolar o componente **metabólico** puro: ambos são calculados a gás carbônico de 40 mmHg e temperatura de 37 °C, de modo que não sofrem influência da ventilação. Isso responde à pergunta prática de quanto do distúrbio é metabólico quando há dois processos simultâneos.',
+          '**Excesso de base mais negativo que −2 mEq/L** indica acidose metabólica; **mais positivo que +2**, alcalose metabólica. Na avaliação inicial do trauma, um déficit de base mais negativo que −6 mEq/L é marcador independente de gravidade e de necessidade de transfusão maciça, mesmo com pressão arterial ainda normal.',
+          'Acompanhe a **tendência**, não o valor isolado: no choque, a normalização do déficit de base nas primeiras 24 h é preditor de sobrevida, e um déficit que não melhora apesar da reposição volêmica indica hemorragia em curso ou foco isquêmico não controlado — é indicação de reexplorar, não de repetir o exame.',
+          'Lembre que o excesso de base **não diz a causa**: ele quantifica, mas não distingue lactato de cetoácido, de ânion não medido ou de perda de bicarbonato. Combine sempre com **ânion gap, lactato e cloro** para chegar ao mecanismo.',
+          'Em hipoalbuminemia — praticamente toda a UTI —, o excesso de base **subestima** a acidose por ânions não medidos, pelo mesmo motivo que o ânion gap: a albumina é o principal ácido fraco do plasma. Use o **excesso de base corrigido pela albumina** ou a abordagem de Stewart nesses pacientes.',
+        ],
         interpretacao: [
           'O bicarbonato atual mistura duas coisas: o que o metabolismo fez e o que a PaCO₂ fez. O bicarbonato padrão remove a segunda, respondendo "qual seria o bicarbonato deste sangue se a ventilação estivesse normal". Diferença grande entre atual e padrão significa que boa parte do bicarbonato observado é efeito respiratório, não metabólico.',
           be < -2
@@ -1391,6 +1419,13 @@ export const ferramentas: Ferramenta[] = [
         nivel,
         rotuloNivel: cao2 < 12 ? 'Muito reduzido' : cao2 < 16 ? 'Reduzido' : 'Adequado (referência 18 a 20)',
         detalhes,
+        conduta: [
+          'O cálculo mostra na prática que **a hemoglobina carrega quase todo o oxigênio**: cerca de 98% do conteúdo vem do oxigênio ligado (1,34 × hemoglobina × saturação) e apenas 2% da fração dissolvida (0,003 × pressão parcial). Por isso corrigir anemia grave aumenta muito mais a oferta do que subir a pressão parcial de oxigênio de 80 para 120 mmHg.',
+          'Diante de hipóxia tecidual com saturação normal, olhe para a **hemoglobina**: um paciente com hemoglobina de 6 g/dL e saturação de 100% tem conteúdo arterial menor que um com hemoglobina de 12 g/dL e saturação de 90%. Essa é a justificativa fisiológica da transfusão, que deve ser decidida por sinais de má perfusão e não apenas por um limiar numérico — o gatilho restritivo de 7 g/dL (8 g/dL em síndrome coronariana e cirurgia cardíaca) tem melhor desfecho na maioria dos cenários.',
+          'Em **intoxicação por monóxido de carbono**, a saturação do oximetria de pulso é falsamente normal porque o aparelho não distingue carboxi-hemoglobina de oxi-hemoglobina. Meça **co-oximetria** e trate com oxigênio a 100% em máscara não reinalante (ou câmara hiperbárica em casos graves) — o conteúdo real está muito abaixo do calculado pela saturação convencional.',
+          'Em **metemoglobinemia**, o mesmo problema ocorre com saturação travada em torno de 85% e sangue achocolatado que não clareia com oxigênio. O antídoto é **azul de metileno 1–2 mg/kg IV**, contraindicado em deficiência de glicose-6-fosfato desidrogenase, em que se usa vitamina C ou exsanguíneotransfusão.',
+          'Combine com **débito cardíaco** para calcular a oferta sistêmica de oxigênio e com a **saturação venosa central** para saber se a oferta está sendo suficiente para o consumo. Conteúdo arterial adequado com saturação venosa baixa significa débito insuficiente ou consumo excessivo — e a intervenção é hemodinâmica, não ventilatória.',
+        ],
         interpretacao: interp,
         alertas: [
           'Na intoxicação por monóxido de carbono, a SaO₂ do oxímetro de pulso e a PaO₂ ficam normais enquanto o conteúdo real despenca — a carboxi-hemoglobina ocupa o sítio e não é distinguida pelo oxímetro convencional. Só a co-oximetria revela.',
@@ -1467,6 +1502,13 @@ export const ferramentas: Ferramenta[] = [
         nivel: do2 < 600 ? 'critico' : do2 < 850 ? 'alerta' : 'ok',
         rotuloNivel: do2 < 600 ? 'Criticamente baixa' : do2 < 850 ? 'Reduzida' : 'Adequada',
         detalhes,
+        conduta: [
+          'A oferta sistêmica (**DO₂ = débito cardíaco × conteúdo arterial × 10**) tem valor normal de 900–1.100 mL/min (500–600 mL/min/m² indexada). Ela pode ser corrigida por três alavancas independentes: **débito cardíaco, hemoglobina e saturação arterial**. Identifique qual está deficitária antes de intervir — cada uma tem tratamento distinto e a errada não funciona.',
+          'Compare a oferta com o **consumo (VO₂)**, normalmente 200–250 mL/min: a taxa de extração fisiológica é de 20–30%. Extração acima de 50–60% significa que a oferta está no limite e qualquer aumento de demanda precipitará metabolismo anaeróbio — é o sinal de que se está próximo do ponto crítico de dependência.',
+          'A **saturação venosa central (ScvO₂) é o substituto prático à beira do leito**: abaixo de 65–70% indica oferta insuficiente para a demanda. Acima de 80% em paciente com lactato alto aponta falha de extração (sepse, intoxicação por cianeto) ou shunt microcirculatório, em que aumentar a oferta não resolve.',
+          'Não persiga **oferta supranormal**. Os ensaios que tentaram elevar a DO₂ acima de valores fisiológicos com inotrópicos em pacientes já estabelecidos em choque aumentaram mortalidade — a otimização precoce é útil, a hiperoferta tardia é danosa.',
+          'Reduza a **demanda** quando não for possível aumentar a oferta: trate febre, dor, agitação e desconforto respiratório. Sedação, analgesia, controle térmico e, em casos extremos, bloqueio neuromuscular e ventilação mecânica reduzem substancialmente o consumo — o trabalho respiratório sozinho pode consumir de 20 a 30% do oxigênio total em insuficiência respiratória grave.',
+        ],
         interpretacao: interp,
         alertas: [
           'Elevar a oferta de oxigênio a valores supranormais como meta terapêutica foi testado e não reduz mortalidade — em alguns cenários piora. A oferta serve para entender o mecanismo do choque, não como alvo a ser perseguido isoladamente.',
@@ -1576,6 +1618,13 @@ export const ferramentas: Ferramenta[] = [
         nivel: 'neutro',
         rotuloNivel: baixoFluxo ? 'Dispositivo de baixo fluxo — estimativa' : 'Dispositivo de alto fluxo — FiO₂ previsível',
         detalhes,
+        conduta: [
+          'Trate a FiO₂ estimada como **aproximação, não medida**. A regra prática (cerca de 4% por litro de cateter nasal acima dos 21% do ar ambiente) pressupõe padrão ventilatório e volume-minuto estáveis: o paciente taquipneico arrasta mais ar ambiente e diluti mais, recebendo FiO₂ bem menor que a calculada.',
+          'Escolha o dispositivo pela FiO₂ que precisa entregar: **cateter nasal** até cerca de 6 L/min (40–45%), **máscara simples** 5–10 L/min (40–60%), **máscara com reservatório não reinalante** 10–15 L/min (60–90%), **máscara de Venturi** para FiO₂ fixa e conhecida (24–50%), e **cânula nasal de alto fluxo** para FiO₂ confiável até 100% com fluxo de 30–60 L/min.',
+          'Use **Venturi** quando a precisão importar — especialmente em retentor crônico de gás carbônico, em que se busca saturação de 88–92% e a entrega imprevisível do cateter pode gerar hiperóxia e piora da hipercapnia por efeito Haldane e perda do estímulo hipóxico.',
+          'Prefira a **cânula de alto fluxo** na insuficiência respiratória hipoxêmica não hipercápnica: ela oferece FiO₂ estável, lavagem do espaço morto nasofaríngeo, discreta pressão positiva e gás aquecido e umidificado, e reduziu intubação em comparação ao oxigênio convencional. Monitore com o **índice ROX** para detectar falência antes que ela vire intubação de emergência.',
+          'Titule pela **meta de saturação**, não pelo fluxo máximo: 94–98% na maioria dos pacientes e 88–92% no retentor de gás carbônico. A hiperóxia liberal aumenta mortalidade em pacientes críticos, em parada cardíaca recuperada e em acidente vascular cerebral — dar oxigênio \'por segurança\' a quem está saturando bem é intervenção com dano demonstrado.',
+        ],
         interpretacao: [
           nota,
           baixoFluxo
@@ -1638,6 +1687,13 @@ export const ferramentas: Ferramenta[] = [
           { rotulo: 'PaCO₂ corrigida', valor: `${fmt(paco2C, 1)} mmHg`, nota: `Variação de ${fmt(paco2C - paco2, 1)} mmHg` },
           { rotulo: 'PaO₂ corrigida', valor: `${fmt(pao2C, 1)} mmHg`, nota: `Variação de ${fmt(pao2C - pao2, 1)} mmHg` },
           { rotulo: 'HCO₃⁻ (não depende da temperatura)', valor: `${fmt(hco3DeHH(ph, paco2), 1)} mEq/L`, nota: 'A concentração de bicarbonato é uma quantidade, não uma pressão — o aquecimento da amostra não a altera.' },
+        ],
+        conduta: [
+          'Saiba qual estratégia o seu serviço adota: o **alfa-stat** interpreta os valores a 37 °C, sem corrigir pela temperatura real do paciente, e o **pH-stat** corrige. As duas produzem condutas ventilatórias opostas no paciente hipotérmico, e misturar os dois raciocínios é a fonte principal de erro.',
+          'Use **alfa-stat na maioria dos adultos**, inclusive em circulação extracorpórea e hipotermia terapêutica: manter a carga elétrica constante das histidinas preserva a função enzimática, e essa estratégia associou-se a melhores desfechos neurológicos em adultos.',
+          'Use **pH-stat em crianças submetidas a parada circulatória hipotérmica profunda**: a hipercapnia relativa que ele produz promove vasodilatação cerebral, melhora o resfriamento homogêneo do cérebro e mostrou melhor desfecho neurológico nessa população específica.',
+          'Lembre-se do sentido das correções na hipotermia: o **pH real é mais alto** e as **pressões parciais de oxigênio e gás carbônico são mais baixas** que os valores informados a 37 °C. Ajustar a ventilação para \'normalizar\' um gás carbônico não corrigido leva a hiperventilação real e alcalose, com vasoconstrição cerebral.',
+          'Na **hipertermia** o erro é inverso e igualmente perigoso: no paciente febril, o gás carbônico real é maior e o pH real menor do que o relatado. Em hipertermia maligna e em golpe de calor, esse desvio agrava a subestimação da acidose, justamente quando a hiperventilação compensatória é parte central do suporte.',
         ],
         interpretacao: [
           'O gasômetro sempre aquece a amostra a 37 °C antes de medir. Se o paciente estiver a 30 °C, os valores impressos não são os que existem no corpo dele: a solubilidade dos gases aumenta com o frio, então a PaCO₂ e a PaO₂ reais são **menores** do que as medidas, e o pH real é **maior**.',
@@ -1702,6 +1758,13 @@ export const ferramentas: Ferramenta[] = [
           { rotulo: 'PaCO₂ arterial estimada', valor: `${fmt(pco2A, 1)} mmHg`, nota: `Venosa − ${fmt(dPco2, 1)} mmHg (limite de concordância amplo: até ±10)` },
           { rotulo: 'HCO₃⁻', valor: hco3 === null ? '—' : `${fmt(hco3, 1)} mEq/L`, nota: 'O bicarbonato venoso e o arterial diferem cerca de 1 a 2 mEq/L — para fins clínicos, é o parâmetro mais intercambiável dos três.' },
         ],
+        conduta: [
+          'Use a gasometria **venosa** para o que ela é boa: **pH, bicarbonato, potássio, lactato e ânion gap** correlacionam-se bem com os valores arteriais. O pH venoso fica cerca de 0,03–0,05 unidade mais baixo e o bicarbonato 1–2 mEq/L mais alto — margens irrelevantes para a maioria das decisões clínicas.',
+          '**Não use a venosa para avaliar oxigenação.** A pressão parcial de oxigênio venosa não tem relação útil com a arterial e não permite calcular relação PaO₂/FiO₂ nem gradiente alvéolo-arterial. Para oxigenação, use oximetria de pulso e, quando necessário, gasometria arterial.',
+          'Em **cetoacidose diabética**, a venosa substitui a arterial com segurança em todo o seguimento: pH, bicarbonato, ânion gap e potássio são suficientes para conduzir o tratamento, e isso evita punções arteriais repetidas e dolorosas ao longo de horas.',
+          'Interprete o **gás carbônico venoso como triagem**: abaixo de 45 mmHg praticamente exclui hipercapnia arterial significativa (valor preditivo negativo alto). Acima disso, ou em qualquer suspeita de insuficiência respiratória hipercápnica com decisão de ventilar em jogo, colha a **arterial** — a correlação individual do gás carbônico é ruim demais para titular ventilação.',
+          'Colha a amostra **sem garrote prolongado e sem bombear a mão**: estase e contração muscular elevam potássio e lactato e reduzem o pH localmente, gerando acidose e hipercalemia falsas. A amostra deve seguir ao laboratório em gelo se houver atraso previsto acima de 15 minutos, pois o metabolismo celular continua no tubo e consome glicose enquanto produz lactato.',
+        ],
         interpretacao: [
           'A gasometria venosa é adequada para responder três perguntas: há acidemia significativa, qual é o bicarbonato e qual é o ânion gap. Ela é inadequada para uma quarta: qual é a oxigenação — para isso, oximetria de pulso ou gasometria arterial.',
           'Para a PaCO₂, a concordância é boa em pacientes estáveis e ruim em choque e parada cardíaca: com fluxo baixo, o CO₂ se acumula no leito venoso e a diferença venoarterial se alarga muito (o gap venoarterial de CO₂ acima de 6 mmHg é, aliás, marcador de débito cardíaco insuficiente). Nesses cenários, a venosa subestima a gravidade arterial.',
@@ -1756,6 +1819,13 @@ export const ferramentas: Ferramenta[] = [
           { rotulo: 'Osmolalidade calculada', valor: `${fmt(calc, 1)} mOsm/kg`, nota: '2×Na + glicose/18 + ureia/6 + etanol/4,6' },
           { rotulo: 'Contribuição do etanol', valor: `${fmt(etanol / 4.6, 1)} mOsm/kg` },
           { rotulo: 'Gap osmolar', valor: `${fmt(gap, 1)} mOsm/kg`, nota: 'Referência < 10. Alguns autores aceitam até 14, mas o normal populacional é próximo de −2 a +10.' },
+        ],
+        conduta: [
+          '**Gap osmolar > 10 mOsm/kg** em paciente com acidose metabólica de ânion gap alto é indicação de acionar o centro de intoxicações e considerar tratamento empírico — não espere a dosagem específica de metanol ou etilenoglicol, que costuma levar horas ou dias e frequentemente não está disponível.',
+          'Administre **fomepizol (15 mg/kg de ataque, depois 10 mg/kg a cada 12 h)** ou, na falta dele, **etanol** com alvo de alcoolemia de 100–150 mg/dL. Ambos bloqueiam a álcool-desidrogenase e impedem a conversão do álcool-pai nos metabólitos tóxicos — ácido fórmico no metanol, ácidos glicólico e oxálico no etilenoglicol. O antídoto não trata o dano já instalado; ele impede o dano seguinte, e por isso o tempo é a variável decisiva.',
+          'Indique **hemodiálise** em acidose grave refratária, lesão renal aguda, alterações visuais no metanol, ou concentração do tóxico acima de 50 mg/dL. Ela remove tanto o álcool-pai quanto o metabólito ácido, e é o tratamento definitivo nos casos avançados.',
+          'Associe **cofatores** que desviam o metabolismo para vias atóxicas: **ácido folínico ou fólico** no metanol (acelera a oxidação do formato a gás carbônico e água), e **tiamina e piridoxina** no etilenoglicol (desviam o glioxilato para alfa-hidroxi-beta-cetoadipato e glicina, reduzindo a formação de oxalato e a nefropatia).',
+          'Atenção à **armadilha temporal**: no início da intoxicação, o gap osmolar é alto e o ânion gap é normal, porque o álcool-pai ainda não foi metabolizado. Ao final, o gap osmolar já normalizou e o ânion gap está muito alto. Um gap osmolar normal, portanto, **não exclui** intoxicação tardia — e a apresentação tardia é justamente a de pior prognóstico. Lembre também que etanol, isopropanol, propilenoglicol (veículo de lorazepam e fenitoína intravenosos), manitol e glicina de irrigação elevam o gap osmolar sem produzir metabólito ácido letal.',
         ],
         interpretacao: [
           gap > 10

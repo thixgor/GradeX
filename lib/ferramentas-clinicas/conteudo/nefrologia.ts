@@ -127,6 +127,13 @@ const tfg: Ferramenta = {
       nivel: est.nivel,
       rotuloNivel: `Estágio ${est.estagio}`,
       detalhes,
+      conduta: [
+        'Confirme a **cronicidade** antes de rotular doença renal crônica: é preciso taxa de filtração < 60 mL/min/1,73 m² ou marcador de lesão (albuminúria, alteração no sedimento, imagem, histologia) persistindo por **mais de 3 meses**. Uma única creatinina alterada pode ser lesão aguda, e as condutas são opostas.',
+        'Classifique sempre pelos **dois eixos, G e A**: o estágio da filtração (G1 a G5) e o da albuminúria (A1 < 30, A2 30–300, A3 > 300 mg/g). A albuminúria prediz progressão e evento cardiovascular de forma independente da filtração — um paciente G2/A3 tem risco maior que um G3a/A1.',
+        'Em qualquer paciente com doença renal crônica albuminúrica, o núcleo do tratamento é **IECA ou BRA na dose máxima tolerada mais inibidor de SGLT2** (dapagliflozina ou empagliflozina), com ou sem diabetes. Espere e aceite uma queda de até 30% na filtração nas primeiras semanas: ela é hemodinâmica, reversível e associa-se a melhor desfecho a longo prazo.',
+        'Use a filtração estimada para **ajustar fármacos, mas com cuidado na unidade**: a CKD-EPI sai indexada a 1,73 m², enquanto as bulas de anticoagulantes diretos e de quimioterápicos foram escritas em clearance de Cockcroft-Gault não indexado. Desindexe (multiplicando pela superfície corporal do paciente e dividindo por 1,73) antes de decidir dose em extremos de peso.',
+        '**Encaminhe ao nefrologista** com filtração < 30 mL/min/1,73 m², albuminúria > 300 mg/g, queda rápida (> 5 mL/min/ano), hematúria glomerular, cilindros celulares, hipercalemia refratária, anemia desproporcional ou doença renal de causa indefinida. O encaminhamento tardio é preditor independente de mortalidade no início da diálise.',
+      ],
       interpretacao: [
         'A creatinina depende da massa muscular, e essa é a limitação estrutural de qualquer equação baseada nela. Uma senhora de 80 anos, 45 kg e sarcopênica com creatinina de 1,0 mg/dL não tem função renal normal — tem pouca massa muscular. O mesmo vale, ao contrário, para o fisiculturista com creatinina de 1,4.',
         'O diagnóstico de doença renal crônica exige **três meses** de TFG abaixo de 60 ou de marcador de dano renal (albuminúria, alteração no sedimento, alteração estrutural na imagem, doença tubular, história de transplante). Uma medida isolada não faz diagnóstico.',
@@ -208,6 +215,13 @@ const cockcroft: Ferramenta = {
       nivel,
       rotuloNivel: recomendado < 15 ? 'Falência renal' : recomendado < 30 ? 'Comprometimento grave' : recomendado < 60 ? 'Comprometimento moderado' : 'Preservado',
       detalhes,
+      conduta: [
+        'Use Cockcroft-Gault especificamente para **ajuste de dose de fármacos**: a maior parte das bulas, inclusive as dos anticoagulantes orais diretos, teve seus cortes derivados dessa fórmula. Trocá-la por CKD-EPI na hora de dosar apixabana ou rivaroxabana pode mudar a faixa de dose e a validade da prescrição.',
+        'Para **estadiar doença renal crônica**, prefira **CKD-EPI**: Cockcroft-Gault superestima em obesos e é menos precisa nas faixas intermediárias, além de não ser indexada à superfície corporal.',
+        'Escolha o peso com critério: **peso ideal** em obesos, **peso ajustado** quando o índice de massa corporal ultrapassa 30, e **peso real** em pacientes magros. Usar o peso real em um paciente com 140 kg infla o clearance calculado e leva a superdosagem — o erro mais perigoso da fórmula.',
+        'A fórmula **não vale em lesão renal aguda**: ela pressupõe creatinina em estado de equilíbrio. Com creatinina subindo, a filtração real já é muito menor que a calculada; com creatinina caindo após recuperação, é maior. Nesses cenários, guie-se por diurese, tendência da creatinina e critérios KDIGO.',
+        'Corrija a interpretação em quem tem **massa muscular atípica**: amputados, tetraplégicos, cirróticos, idosos sarcopênicos e desnutridos têm creatinina baixa por baixa produção, não por boa filtração. Nesses casos a **cistatina C** é o marcador de escolha, pois não depende de massa muscular.',
+      ],
       interpretacao: [
         notaPeso,
         'Cockcroft-Gault sobrevive por um motivo histórico e prático: a maioria dos ensaios de farmacocinética e dos ajustes descritos em bula usou esta fórmula. Trocar por CKD-EPI ao ajustar dose de anticoagulante oral direto, por exemplo, pode reclassificar o paciente e mudar a dose indicada — as diretrizes de fibrilação atrial mantêm explicitamente Cockcroft-Gault para essa decisão.',
@@ -262,6 +276,13 @@ const schwartz: Ferramenta = {
       unidade: 'mL/min/1,73 m²',
       nivel,
       detalhes,
+      conduta: [
+        'Use a **fórmula de Schwartz atualizada (0,413 × altura em cm ÷ creatinina)** para crianças e adolescentes: a fórmula original, com constantes variando por idade e sexo, foi calibrada para métodos de creatinina antigos e superestima a filtração em cerca de 20% nos laboratórios atuais, que usam método rastreável por espectrometria de massa.',
+        'Lembre que os **valores normais são diferentes por idade**: o recém-nascido a termo filtra cerca de 20–40 mL/min/1,73 m², atinge cerca de 60 no primeiro mês e só alcança o valor adulto (aproximadamente 120) entre 1 e 2 anos. Aplicar o corte adulto de 90 a um lactente rotula como doente uma criança normal.',
+        'A **altura é a variável de maior peso** da fórmula e a mais mal medida na prática. Meça em régua horizontal até os 2 anos e em estadiômetro depois disso — estimar a altura transporta o erro diretamente para a filtração e para a dose dos fármacos.',
+        'Ajuste antimicrobianos, antivirais e quimioterápicos pela filtração calculada, e reveja o cálculo a cada mudança significativa de altura ou de creatinina. Em crianças em crescimento, uma filtração \'estável\' em mL/min/1,73 m² com altura subindo pode esconder perda funcional.',
+        '**Encaminhe ao nefrologista pediátrico** diante de filtração persistentemente baixa para a idade, proteinúria, hematúria glomerular, hipertensão, alteração ultrassonográfica do trato urinário ou história familiar de doença renal — as causas em pediatria são majoritariamente congênitas (displasia, uropatia obstrutiva, refluxo) e o diagnóstico precoce preserva função.',
+      ],
       interpretacao: [
         'A fórmula é elegante porque a altura funciona como aproximação da massa muscular na criança — a mesma variável que a creatinina reflete. A constante k incorpora essa relação e foi recalibrada em 2009, quando a dosagem de creatinina migrou do método de Jaffe para o enzimático.',
         referencia,
@@ -412,6 +433,13 @@ const calcioCorrigido: Ferramenta = {
       nivel,
       rotuloNivel: corr < 8.5 ? 'Hipocalcemia' : corr > 10.5 ? 'Hipercalcemia' : 'Normal',
       detalhes,
+      conduta: [
+        'Corrija sempre que a **albumina estiver abaixo de 4 g/dL**: cerca de 40% do cálcio circula ligado à albumina, e o laboratório dosa o cálcio total. Sem a correção, a hipoalbuminemia da UTI, da cirrose e da síndrome nefrótica faz parecer hipocalcemia onde o cálcio ionizado está normal — e leva a reposições desnecessárias.',
+        'Quando a decisão for crítica, **meça o cálcio ionizado** em vez de corrigir. A fórmula de correção é uma aproximação de desempenho limitado em doente crítico, e o ionizado é a fração biologicamente ativa. Colha em anaerobiose, pois a alcalose da amostra reduz o ionizado ao aumentar a ligação à albumina.',
+        'Em **hipocalcemia sintomática** (parestesias periorais, espasmo carpopedal, sinais de Chvostek e Trousseau, laringoespasmo, convulsão, prolongamento do QT), reponha **gluconato de cálcio 1–2 g IV diluído, em 10–20 minutos**, seguido de infusão contínua. Não use cloreto de cálcio por veia periférica — ele é esclerosante e causa necrose na extravasação.',
+        'Antes de repor, **dose o magnésio**: a hipomagnesemia causa hipocalcemia refratária por bloquear a secreção e a ação periférica do paratormônio. Repor cálcio sem corrigir o magnésio simplesmente não funciona, e essa é a causa mais comum de falha terapêutica.',
+        'Na **hipercalcemia > 14 mg/dL ou sintomática**, comece por hidratação com solução salina isotônica (200–300 mL/h), acrescente calcitonina para efeito rápido (que se esgota por taquifilaxia em 48 h) e **bisfosfonato ou denosumabe** para efeito sustentado. Furosemida só depois da reposição volêmica, e diálise em casos graves com insuficiência renal ou cardíaca. Investigue paratormônio: alto ou inapropriadamente normal aponta hiperparatireoidismo; suprimido aponta malignidade, intoxicação por vitamina D ou doença granulomatosa.',
+      ],
       interpretacao: [
         'Cerca de 40% do cálcio circulante está ligado à albumina, 10% a ânions e apenas 50% está livre — e só a fração livre é biologicamente ativa. Quando a albumina cai, o cálcio total cai junto sem que o ionizado mude, e é isso que a correção tenta desfazer.',
         '**A correção é uma aproximação frágil.** Estudos em pacientes críticos mostram concordância ruim entre o cálcio corrigido e o ionizado medido. Sempre que a decisão depender do valor — hipocalcemia sintomática, transfusão maciça, pós-tireoidectomia, doença renal crônica avançada, pancreatite —, **meça o cálcio ionizado**, que a gasometria já fornece.',
@@ -469,6 +497,13 @@ const osmolaridade: Ferramenta = {
         { rotulo: 'Contribuição do sódio', valor: `${fmt(2 * na, 1)} mOsm/kg`, nota: `${fmtPct(((2 * na) / total) * 100, 0)} do total` },
         { rotulo: 'Contribuição da glicose', valor: `${fmt(g / 18, 1)} mOsm/kg` },
         { rotulo: 'Contribuição da ureia', valor: `${fmt(u / 6, 1)} mOsm/kg`, nota: 'A ureia atravessa livremente a membrana celular e equilibra dos dois lados, por isso não gera gradiente osmótico.' },
+      ],
+      conduta: [
+        'Compare sempre a osmolaridade **calculada** com a **medida** no laboratório: a diferença é o **gap osmolar**. Um gap acima de 10 mOsm/kg indica um soluto osmoticamente ativo que a fórmula não contempla — e essa é a única forma rápida de suspeitar de intoxicação por metanol ou etilenoglicol antes que a dosagem específica fique pronta.',
+        'Separe **osmolaridade total** de **osmolalidade efetiva (tonicidade)**: a ureia atravessa livremente as membranas e não gera gradiente osmótico, de modo que o urêmico tem osmolaridade alta sem desidratação celular. É a tonicidade — sódio e glicose — que determina o movimento de água e os sintomas neurológicos.',
+        'Na **hiperglicemia**, corrija o sódio antes de interpretar: some **1,6 mEq/L ao sódio medido para cada 100 mg/dL de glicose acima de 100** (fator de 2,4 acima de 400 mg/dL). A hiponatremia da cetoacidose costuma ser dilucional e desaparece com o tratamento — tratá-la como hiponatremia verdadeira é erro grave.',
+        '**Osmolalidade efetiva > 320 mOsm/kg** com glicemia muito alta e sem cetose significativa caracteriza o **estado hiperglicêmico hiperosmolar**. A conduta é reposição volêmica agressiva primeiro, insulina depois e reposição de potássio antecipada — o déficit de água costuma passar de 8 a 10 litros.',
+        'Use a osmolaridade para avaliar a resposta ao **manitol** e à salina hipertônica em hipertensão intracraniana: a meta habitual é 300–320 mOsm/kg. Acima disso, o risco de lesão renal aguda pelo manitol cresce, e o gap osmolar serve para detectar seu acúmulo em pacientes com filtração reduzida.',
       ],
       interpretacao: [
         'A distinção entre osmolaridade **total** e **efetiva** é a que mais gera confusão e a que mais muda conduta. A ureia sobe muito na uremia e eleva a osmolaridade total sem desidratar célula nenhuma, porque atravessa a membrana. Já sódio e glicose ficam do lado de fora e puxam água.',
@@ -541,6 +576,13 @@ const fena: Ferramenta = {
       nivel: preRenal ? 'atencao' : tubular ? 'alerta' : 'neutro',
       rotuloNivel: preRenal ? 'Padrão pré-renal' : tubular ? 'Padrão de necrose tubular aguda' : 'Zona indeterminada',
       detalhes,
+      conduta: [
+        '**FENa < 1%** aponta causa pré-renal: o rim está íntegro e retendo sódio avidamente em resposta à hipoperfusão. A conduta é restaurar a perfusão — reposição volêmica na hipovolemia, otimização do débito na insuficiência cardíaca, albumina e vasoconstritor esplâncnico na síndrome hepatorrenal.',
+        '**FENa > 2%** aponta necrose tubular aguda: o túbulo lesado perdeu a capacidade de reabsorver sódio. Aqui a conduta é de suporte — evitar novos insultos, suspender nefrotóxicos, ajustar doses, manter euvolemia e vigiar indicações de diálise. Volume adicional nesse contexto só gera congestão.',
+        '**Use a FEUreia (< 35% para pré-renal) sempre que o paciente estiver em uso de diurético**: o diurético força natriurese e eleva a FENa artificialmente, transformando um quadro pré-renal em aparente necrose tubular. A ureia é reabsorvida no túbulo proximal, fora do sítio de ação dos diuréticos de alça, e mantém a validade do raciocínio.',
+        'A FENa também é **baixa em situações que não são pré-renais**: glomerulonefrite aguda, nefropatia por contraste em fase precoce, rabdomiólise inicial, síndrome hepatorrenal e obstrução urinária precoce. E é **alta** em doença renal crônica de base, porque o néfron remanescente já excreta mais sódio por unidade. O índice complementa o quadro clínico, não o substitui.',
+        'Complete a avaliação com **sedimento urinário**, que muitas vezes decide sozinho: cilindros granulosos pigmentados apontam necrose tubular, cilindros hemáticos e dismorfismo apontam glomerulonefrite, eosinofilúria sugere nefrite intersticial, e sedimento limpo favorece causa pré-renal ou obstrutiva.',
+      ],
       interpretacao: [
         usaDiuretico
           ? '**Diurético em uso.** A fração de excreção de sódio perde validade: o diurético força natriurese mesmo com hipoperfusão, e produz valores acima de 1% em pacientes francamente pré-renais. Use a fração de excreção de ureia, que reflete a reabsorção proximal — território onde os diuréticos de alça e tiazídicos não atuam.'
@@ -620,6 +662,13 @@ const deficitAgua: Ferramenta = {
         { rotulo: 'Volume total em 24 h', valor: `${fmtInt(deficit * 1000 + perdas)} mL`, nota: `Aproximadamente ${fmtInt((deficit * 1000 + perdas) / 24)} mL/h` },
         { rotulo: 'Velocidade máxima de queda do sódio', valor: `${limite} mEq/L em 24 h`, nota: cronica ? 'Hipernatremia crônica: nunca ultrapasse 8 a 10 mEq/L em 24 h. O cérebro já produziu osmólitos idiogênicos; baixar rápido causa edema cerebral.' : 'Hipernatremia aguda documentada (< 48 h): a correção pode ser mais rápida, até 1 a 2 mEq/L por hora nas primeiras horas.', nivel: 'alerta' },
         { rotulo: 'Tempo mínimo de correção', valor: `${fmtInt(horasMinimas)} h`, nota: 'Para não ultrapassar o limite de velocidade.' },
+      ],
+      conduta: [
+        'Corrija a hipernatremia **devagar**: no máximo **10 mEq/L em 24 horas** (0,5 mEq/L por hora) quando ela é crônica ou de duração desconhecida. O cérebro gerou osmólitos idiogênicos para se proteger da desidratação, e baixar o sódio rápido demais leva água para dentro da célula e causa **edema cerebral e convulsões**.',
+        'Em hipernatremia **aguda comprovada (< 48 h)** — tipicamente iatrogênica, por salina hipertônica ou erro de preparo —, a correção pode ser mais rápida, de até 1 mEq/L por hora, porque os osmólitos ainda não se acumularam.',
+        'Some ao déficit calculado as **perdas contínuas**: diurese osmótica, perdas insensíveis (aproximadamente 10 mL/kg/dia, mais se houver febre ou taquipneia), drenagens e diarreia. Repor apenas o déficit estimado e ignorar as perdas em curso é a razão mais comum de o sódio não cair como previsto.',
+        'Escolha a via e a solução pelo contexto: **água por via oral ou sonda** é a rota preferida quando possível, por ser fisiológica e segura. Por via intravenosa, use **glicose a 5%** para água livre pura, ou **salina a 0,45%** quando houver também déficit de volume. Em choque, corrija primeiro a perfusão com salina isotônica e só depois cuide da tonicidade.',
+        'Dose **sódio a cada 4–6 horas** durante a correção e recalcule: a fórmula é uma estimativa a partir da água corporal total, que ela própria é presumida (50–60% do peso, menos em idosos e mulheres). Investigue a causa em paralelo — sem acesso à água (o mecanismo mais comum em idosos e acamados), diabetes insípido central ou nefrogênico, diurese osmótica ou perdas gastrointestinais.',
       ],
       interpretacao: [
         'O déficit calculado é de **água pura**. Na prática ele é reposto com solução glicosada a 5% ou salina a 0,45%, e é preciso lembrar que a glicosada aporta água livre integralmente apenas se a glicose for metabolizada — em hiperglicemia descontrolada, ela agrava a hiperosmolaridade.',
@@ -706,6 +755,13 @@ const correcaoHipo: Ferramenta = {
         { rotulo: 'Efeito do bolus com a solução escolhida', valor: `+${fmt(bolus100, 2)} mEq/L por 100 mL` },
         { rotulo: 'Déficit total de sódio até 130 mEq/L', valor: `${fmtInt(deficitTotal)} mEq`, nota: 'Cálculo de referência (ACT × ΔNa). Serve para dimensionar, nunca para infundir de uma vez.' },
       ],
+      conduta: [
+        'Os limites de segurança valem para qualquer método: **máximo de 8 mEq/L em 24 h** (6 mEq/L em pacientes de alto risco — alcoolismo, desnutrição, hipocalemia, hepatopatia, sódio < 105 mEq/L) e 18 mEq/L em 48 h. Ultrapassar esses limites causa **síndrome de desmielinização osmótica**, que se manifesta dias depois, é irreversível e pode levar à síndrome do encarceramento.',
+        'Na hiponatremia **sintomática grave** (convulsão, rebaixamento, vômitos, parada respiratória), não espere pelo cálculo: administre **salina a 3%, 100–150 mL em bolus de 10 minutos**, repetindo até 3 vezes até obter elevação de 4–6 mEq/L ou cessação dos sintomas. Essa elevação inicial rápida é segura e salva vida — o limite de 8 mEq/L se aplica ao total das 24 horas.',
+        'Trate a **causa**, que é o que define a terapia de fundo: restrição hídrica na SIADH, salina isotônica na hipovolemia, restrição de água e sal com diurético na insuficiência cardíaca e na cirrose, reposição hormonal na insuficiência adrenal e no hipotireoidismo, e suspensão do fármaco causal (tiazídicos, inibidores seletivos da recaptação de serotonina, carbamazepina, desmopressina).',
+        'Antecipe a **autocorreção abrupta**: quando a causa da hiponatremia é removida (reposição volêmica na hipovolemia, suspensão da desmopressina, correção da insuficiência adrenal), o estímulo ao hormônio antidiurético desaparece e o paciente urina volume enorme de urina diluída, elevando o sódio muito além da meta. Vigie a diurese horária e reintroduza desmopressina ou glicose a 5% se a correção disparar.',
+        'Dose **sódio a cada 2 horas** durante a correção ativa, e não confie apenas na fórmula de Adrogué-Madias: ela considera um sistema fechado e ignora as perdas urinárias em curso, que costumam ser a maior fonte de erro. A medida seriada é o que governa o ajuste.',
+      ],
       interpretacao: [
         '**A fórmula de Adrogué-Madias prevê, ela não prescreve.** Ela assume sistema fechado, sem perdas urinárias — premissa que se rompe justamente no cenário mais comum: quando a causa da hiponatremia (hipovolemia, SIADH transitório, tiazídico, insuficiência adrenal) é corrigida, o rim despeja água livre e a natremia sobe sozinha, muito além do previsto. Este é o mecanismo clássico de correção excessiva acidental.',
         '**Dose o sódio a cada 2 a 4 horas durante a correção ativa.** É a única salvaguarda real contra a síndrome de desmielinização osmótica, que é irreversível e frequentemente devastadora — mielinólise pontina e extrapontina, com quadriparesia, disartria, disfagia e síndrome do encarceramento.',
@@ -790,6 +846,13 @@ const potassio: Ferramenta = {
       nivel,
       rotuloNivel: k < 2.5 ? 'Hipocalemia grave' : k < 3 ? 'Hipocalemia moderada' : k < 3.5 ? 'Hipocalemia leve' : k > 5.2 ? 'Hipercalemia' : 'Normal',
       detalhes,
+      conduta: [
+        'Estime a magnitude do déficit: cada **1 mEq/L abaixo de 4,0** corresponde a aproximadamente **200–400 mEq de potássio corporal total**. Esse cálculo mostra por que uma ampola isolada praticamente não move a caliemia e por que a reposição precisa ser continuada e monitorada.',
+        'Prefira a **via oral** (cloreto de potássio 40–100 mEq/dia divididos) sempre que o paciente tolerar: é mais segura, mais previsível e não depende de acesso venoso. Reserve a via intravenosa para hipocalemia grave, arritmia, intolerância digestiva ou jejum.',
+        'Respeite os limites da via intravenosa: **até 10 mEq/h e concentração de até 40 mEq/L em veia periférica**; acima disso exige **veia central e monitorização contínua**, com no máximo 20 mEq/h. Infundir potássio rápido em periférica causa dor intensa, flebite e risco de arritmia.',
+        '**Sempre reponha magnésio junto.** A hipomagnesemia aumenta a secreção de potássio pelos canais ROMK do túbulo coletor, tornando a hipocalemia refratária a qualquer dose. Sem corrigir o magnésio, a reposição de potássio simplesmente escorre pela urina.',
+        'Vigie a **hipercalemia de rebote** em quem tem função renal reduzida, usa IECA, BRA, espironolactona ou trimetoprima, e em cetoacidose diabética durante a insulinoterapia — nesta última o potássio entra na célula rapidamente e a caliemia despenca. Redose o potássio a cada 2–4 h nesses contextos, e não inicie insulina com potássio abaixo de 3,3 mEq/L.',
+      ],
       interpretacao: [
         'A via oral é preferível sempre que possível: é mais segura, mais eficaz e não causa flebite. A via venosa se reserva a hipocalemia grave, sintomática, com arritmia, ou quando não há trânsito digestivo.',
         'O potássio sérico reflete mal o estoque corporal. Alcalose, insulina, beta-agonista e catecolaminas deslocam potássio para dentro da célula sem alterar o total — nesses casos o sérico está baixo mas o déficit é pequeno, e a reposição gera hipercalemia de rebote.',
@@ -949,6 +1012,13 @@ const kdigo: Ferramenta = {
         { rotulo: 'Estágio pelo critério de creatinina', valor: String(estagioCr) },
         { rotulo: 'Estágio pelo critério de diurese', valor: String(diurese), nota: 'O estágio final é o **pior** dos dois critérios.' },
         { rotulo: 'Razão creatinina atual / basal', valor: fmt(razao, 2) },
+      ],
+      conduta: [
+        'Confirmado o diagnóstico, faça o que muda desfecho em toda lesão renal aguda: **suspenda nefrotóxicos** (anti-inflamatórios, aminoglicosídeos, vancomicina, contraste, IECA e BRA na fase aguda), **otimize a perfusão** e **ajuste a dose de todos os fármacos** à função renal atual, não à basal.',
+        'Classifique a causa em **pré-renal, renal ou pós-renal** desde a primeira hora. Solicite **ultrassonografia de vias urinárias** precocemente: a obstrução é a causa mais facilmente reversível e a mais fácil de deixar passar — uma sonda vesical ou nefrostomia recupera a função em horas.',
+        'Suba o estágio pelo pior critério, de creatinina **ou** de diurese: o critério de débito urinário costuma detectar a lesão mais cedo, porque a creatinina só sobe depois que 50% da função já se perdeu. Isso torna a medida horária da diurese em paciente de risco uma ferramenta diagnóstica, não apenas de enfermagem.',
+        'Indique **diálise** pelos critérios clássicos, memorizados como AEIOU: **A**cidose refratária, distúrbio **E**letrolítico grave (hipercalemia refratária), **I**ntoxicação dialisável (lítio, metanol, etilenoglicol, salicilatos, metformina), s**O**brecarga volêmica refratária e **U**remia sintomática (pericardite, encefalopatia, sangramento). Iniciar diálise apenas por estágio KDIGO 3, sem essas indicações, não melhorou desfecho nos ensaios de início precoce.',
+        'Programe o **seguimento após a alta**: quem teve lesão renal aguda tem risco muito aumentado de doença renal crônica, de novos episódios e de evento cardiovascular. Reavalie creatinina e albuminúria em 3 meses, reintroduza IECA ou BRA de forma programada quando indicados, e registre o episódio no prontuário — ele é um marcador de risco vitalício e costuma se perder na transição de cuidado.',
       ],
       interpretacao: [
         'A definição KDIGO unificou os critérios anteriores (RIFLE e AKIN) e fixou três gatilhos: aumento de creatinina ≥ 0,3 mg/dL em 48 horas, aumento ≥ 1,5 vez o basal em 7 dias, ou débito urinário abaixo de 0,5 mL/kg/h por 6 horas. **Um único deles basta.**',
@@ -1311,6 +1381,13 @@ const doseRenal: Ferramenta = {
       nivel,
       rotuloNivel: clcr >= 60 ? 'Sem necessidade de ajuste na maioria dos fármacos' : clcr >= 30 ? 'Ajuste necessário em vários fármacos' : clcr >= 15 ? 'Ajuste obrigatório' : 'Faixa de diálise — reveja cada prescrição',
       detalhes: [{ rotulo: 'Fórmula usada', valor: 'Cockcroft-Gault', nota: 'É a fórmula à qual as bulas se referem. Não substitua por CKD-EPI para ajuste de dose sem verificar a referência.' }],
+      conduta: [
+        'Antes de ajustar, decida **qual estimativa usar**: para a maior parte das bulas, sobretudo anticoagulantes orais diretos, o corte foi derivado do **Cockcroft-Gault não indexado**. Usar a CKD-EPI indexada a 1,73 m² em paciente muito magro ou muito obeso desloca a faixa de dose e pode gerar subdose ou superdose.',
+        '**Não ajuste pela creatinina em lesão renal aguda com função instável.** A creatinina em ascensão subestima grosseiramente a perda funcional; nesse cenário, doses devem ser conservadoras, com dosagem sérica do fármaco quando disponível (vancomicina, aminoglicosídeos, digoxina, lítio, fenitoína).',
+        'Escolha entre **reduzir a dose** e **espaçar o intervalo** conforme o mecanismo: antimicrobianos tempo-dependentes (betalactâmicos) mantêm eficácia melhor com dose reduzida em intervalo preservado, enquanto os concentração-dependentes (aminoglicosídeos) exigem dose plena com intervalo alargado, para preservar o pico bactericida e permitir o vale baixo que protege o rim.',
+        'Mantenha uma lista de **fármacos a evitar** em filtração reduzida: metformina abaixo de 30 mL/min/1,73 m², anti-inflamatórios em qualquer estágio avançado, nitrofurantoína abaixo de 30, gadolínio linear pelo risco de fibrose sistêmica nefrogênica, e enoxaparina em dose terapêutica abaixo de 30 sem monitorização de anti-Xa.',
+        'Reveja a prescrição inteira **a cada mudança de estágio**, inclusive na recuperação: o paciente que sai da diálise ou recupera função passa a subdosar se as doses reduzidas forem mantidas — falha terapêutica silenciosa que acontece com antimicrobianos e antiepilépticos com frequência.',
+      ],
       interpretacao: [
         'Duas estratégias de ajuste, e a escolha depende da farmacodinâmica: fármacos **tempo-dependentes** (beta-lactâmicos) preservam a dose e alargam o intervalo ou usam infusão estendida; fármacos **concentração-dependentes** (aminoglicosídeos, quinolonas) preservam o pico e alargam o intervalo. Reduzir a dose de um aminoglicosídeo em vez de espaçá-lo compromete a eficácia sem reduzir a toxicidade.',
         '**A dose de ataque nunca se ajusta pela função renal.** Ela depende do volume de distribuição, não do clearance. Reduzir o ataque é o erro que mais atrasa o alcance da concentração terapêutica em sepse.',
