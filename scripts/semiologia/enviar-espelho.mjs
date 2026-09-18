@@ -51,6 +51,7 @@ const pastaDeBytes = path.join(raizDoProjeto, '.semiologia', 'midia')
 
 const token = process.env.BLOB_READ_WRITE_TOKEN
 const args = process.argv.slice(2)
+const apenas = (args.find((a) => a.startsWith('--apenas='))?.slice('--apenas='.length) ?? '').split(',').filter(Boolean)
 // Com a base conhecida (a mesma variável que a aplicação lê), o script
 // pergunta ao espelho antes de enviar e pula o que já está lá. Sem ela,
 // envia tudo — é a primeira leva.
@@ -85,6 +86,10 @@ const MIME = {
   mp4: 'video/mp4',
   webm: 'video/webm',
   mov: 'video/quicktime',
+  mp3: 'audio/mpeg',
+  ogg: 'audio/ogg',
+  wav: 'audio/wav',
+  m4a: 'audio/mp4',
 }
 
 async function sha256Do(caminho) {
@@ -111,6 +116,9 @@ const plano = midias
   }))
   // A mesma mídia pode aparecer em mais de uma cena; o objeto no espelho é um só.
   .filter((item, i, todos) => todos.findIndex((o) => o.blobPath === item.blobPath) === i)
+  // --apenas=mp3,wav restringe a passagem a algumas extensões (útil com --forcar
+  // para corrigir o content-type de um tipo sem reenviar o acervo inteiro).
+  .filter((item) => !apenas.length || apenas.includes(item.ext))
 
 console.log(`Mídias no acervo  : ${midias.length}`)
 if (semHash.length) {
