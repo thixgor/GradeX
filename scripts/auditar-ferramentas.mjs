@@ -149,9 +149,16 @@ function recortarFerramentas(texto, arquivo) {
  * que a medição alcance a ajuda dos campos e a interpretação que vivem lá.
  */
 function textoDasReferencias(corpo, textoDoArquivo) {
+  const idents = new Set()
+  // `campos: interpretadorCampos` / `calcular: interpretarGasometria`
+  for (const m of corpo.matchAll(/\b(?:campos|calcular):\s*([A-Za-z_][A-Za-z0-9_]*)\s*,/g)) idents.add(m[1])
+  // `campos: [CAMPO_PH, CAMPO_PACO2, ...]` — constantes de campo compartilhadas,
+  // que carregam a própria `ajuda` e são reusadas por várias ferramentas.
+  const arr = corpo.match(/\bcampos:\s*\[([\s\S]*?)\]/)
+  if (arr) for (const m of arr[1].matchAll(/(?:^|[,[\s])([A-Z][A-Z0-9_]{2,})(?=[,\]\s])/g)) idents.add(m[1])
+
   let extra = ''
-  for (const m of corpo.matchAll(/\b(?:campos|calcular):\s*([A-Za-z_][A-Za-z0-9_]*)\s*,/g)) {
-    const ident = m[1]
+  for (const ident of idents) {
     const decl = new RegExp(`(?:^|\\n)(?:export\\s+)?(?:const|function)\\s+${ident}\\b`)
     const achou = textoDoArquivo.match(decl)
     if (!achou) continue

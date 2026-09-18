@@ -331,6 +331,7 @@ function interpretarGasometria(v: Valores): Resultado | null {
   const detalhes: Resultado['detalhes'] = []
   const interpretacao: string[] = []
   const alertas: string[] = []
+  const conduta: string[] = []
 
   interpretacao.push(
     `**Passo 1 — pH.** ${ph.toFixed(2).replace('.', ',')} caracteriza ${
@@ -455,6 +456,65 @@ function interpretarGasometria(v: Valores): Resultado | null {
   if (ph < 7.1) alertas.push('pH abaixo de 7,10: faixa em que caem a contratilidade miocárdica e a resposta às catecolaminas. Trate a causa; bicarbonato só se discute em cenários específicos e ainda assim sem benefício demonstrado em mortalidade.')
   if (paco2 > 80) alertas.push('PaCO₂ acima de 80 mmHg: narcose por CO₂ é esperada. Avalie via aérea e ventilação não invasiva imediatamente.')
 
+  /* ── Conduta: o que fazer com o diagnóstico ácido-base ── */
+
+  conduta.push(
+    '**Trate a causa, não o número.** O distúrbio ácido-base é consequência, e a gasometria serve para revelar o processo que o produziu. Corrigir o pH sem corrigir a causa troca um marcador ruim por um marcador bom e deixa a doença intacta.',
+  )
+
+  if (cls.disturbio === 'acidose-metabolica') {
+    conduta.push(
+      'Identifique o mecanismo pelo ânion gap, que divide a acidose metabólica em dois grupos com condutas distintas. **Gap alto** significa acréscimo de ácido: cetoacidose (diabética, alcoólica, de jejum), acidose lática (tipos A por hipoperfusão e B por metformina, linezolida, propofol, deficiência de tiamina), uremia e intoxicações (metanol, etilenoglicol, salicilato, propilenoglicol) — calcule também o gap osmolar se houver suspeita de intoxicação. **Gap normal** (hiperclorêmica) significa perda de bicarbonato ou ganho de cloro: diarreia, acidose tubular renal, salina em excesso, inibidor da anidrase carbônica, fístula pancreática ou ureteral.',
+      'Reponha volume com cristaloide balanceado em vez de salina 0,9% quando houver necessidade de expansão: a salina, com 154 mEq/L de cloro, agrava a acidose hiperclorêmica por reduzir a diferença de íons fortes. Trate a cetoacidose com insulina, volume e potássio, e a acidose lática restaurando a perfusão — a hiperlactatemia é sinal de oferta tecidual de oxigênio insuficiente, não uma variável a normalizar isoladamente.',
+      lactato !== null && lactato > 4
+        ? `Lactato de ${fmt(lactato, 1)} mmol/L indica hipoperfusão significativa: ressuscite volemicamente, procure foco infeccioso ou causa de choque e repita o lactato em 2 a 4 horas — o clareamento, e não o valor isolado, é o marcador de resposta.`
+        : 'Dose lactato se ainda não houver: acidose de ânion gap alto sem lactato medido deixa o diagnóstico incompleto.',
+      'Bicarbonato de sódio não é tratamento de rotina. Considere-o em acidose com pH abaixo de 7,10 refratária, em acidose hiperclorêmica com perda documentada de bicarbonato, na acidose tubular renal, na hipercalemia com acidose e na intoxicação por salicilato ou antidepressivo tricíclico (aqui por alcalinização, não por corrigir o pH). Na cetoacidose e na acidose lática, não melhora desfecho e pode piorar a acidose intracelular.',
+    )
+  } else if (cls.disturbio === 'alcalose-metabolica') {
+    conduta.push(
+      'Separe as causas pelo **cloro urinário**, que é o exame decisivo. Cloro urinário abaixo de 20 mEq/L indica alcalose responsiva a cloro — vômito, aspiração nasogástrica, diurético já suspenso, pós-hipercapnia — e o tratamento é repor cloro e volume com salina e potássio. Cloro urinário acima de 20 mEq/L indica alcalose resistente a cloro: hiperaldosteronismo, síndrome de Cushing, estenose de artéria renal, síndrome de Bartter ou Gitelman, diurético em uso, hipopotassemia grave.',
+      'Corrija o **potássio** e o **magnésio** antes de esperar melhora. A alcalose se automantém pela hipopotassemia: a perda de potássio aumenta a reabsorção de bicarbonato no túbulo proximal e a secreção de hidrogênio no distal, e a hipomagnesemia impede corrigir o potássio.',
+      'Suspenda o que alimenta o distúrbio: diurético de alça ou tiazídico, aspiração nasogástrica de alto débito (considere inibidor de bomba de prótons para reduzir a perda de ácido), reposição excessiva de bicarbonato ou de citrato. Em alcalose grave e refratária com sobrecarga de volume, a acetazolamida é útil; a cloridrato de arginina e o ácido clorídrico intravenoso são reservados a casos extremos.',
+      'Lembre que a alcalose desloca a curva de dissociação da hemoglobina para a esquerda, reduzindo a entrega tecidual de oxigênio, e reduz o cálcio ionizado por aumento da ligação à albumina — daí a parestesia, a tetania e o risco de arritmia.',
+    )
+  } else if (cls.disturbio === 'acidose-respiratoria') {
+    conduta.push(
+      cronico
+        ? 'Padrão crônico: o objetivo **não** é normalizar a PaCO₂, e sim tratar a descompensação e devolver o paciente ao seu basal. Reduzir rapidamente a PaCO₂ de um retentor crônico provoca alcalose metabólica pós-hipercápnica, porque o bicarbonato renal elevado permanece por dias.'
+        : 'Padrão agudo: a hipercapnia aguda é falência ventilatória e exige ação imediata sobre a ventilação, não sobre o pH.',
+      'Avalie a via aérea e o drive respiratório na beira do leito: nível de consciência, uso de musculatura acessória, respiração paradoxal, capacidade de completar frases. **Ventilação não invasiva** é o tratamento de primeira linha na exacerbação de DPOC com acidose respiratória e na hipercapnia do edema agudo e da obesidade-hipoventilação. Intubação está indicada em rebaixamento importante, incapacidade de proteger a via aérea, instabilidade ou falha da ventilação não invasiva.',
+      'Procure e trate a causa da hipoventilação: exacerbação de DPOC ou asma, pneumonia, opioide ou benzodiazepínico, doença neuromuscular, obesidade-hipoventilação, cifoescoliose, pneumotórax, derrame volumoso, hipotireoidismo grave. Antagonize opioide com naloxona se for a causa.',
+      'Em ventilação mecânica, aumente a ventilação-minuto com cautela: eleve preferencialmente a frequência respiratória, mantendo volume corrente protetor de 6 mL/kg de peso predito, pressão de platô até 30 cmH₂O e driving pressure até 15 cmH₂O. Em SDRA grave, a **hipercapnia permissiva** é aceitável e preferível a violar os limites de pressão.',
+      'Alvo de oxigenação no retentor crônico: SpO₂ de 88 a 92%. Oxigênio em excesso agrava a hipercapnia por três mecanismos — redução do drive hipóxico, efeito Haldane e piora do espaço morto por reversão da vasoconstrição pulmonar hipóxica.',
+    )
+  } else if (cls.disturbio === 'alcalose-respiratoria') {
+    conduta.push(
+      'Alcalose respiratória quase nunca é o problema: é sinal de que algo estimula a ventilação. **Procure a causa antes de tranquilizar**, porque a lista inclui diagnósticos graves — hipoxemia de qualquer origem, embolia pulmonar, sepse precoce, dor, febre, anemia, insuficiência hepática, intoxicação por salicilato, lesão do sistema nervoso central, gestação e ventilação mecânica excessiva.',
+      'Dose lactato e avalie oxigenação: taquipneia com alcalose respiratória e gradiente alvéolo-arterial alargado aponta doença pulmonar ou embolia; com gradiente normal, aponta estímulo central, metabólico ou psicogênico.',
+      'Trate a causa, não a hiperventilação. Reinalação em saco de papel é prática desaconselhada: mascara hipoxemia e já provocou dano em pacientes cuja taquipneia era compensatória. Síndrome de hiperventilação é diagnóstico de exclusão, e só depois de descartadas as causas orgânicas.',
+      'Em ventilação mecânica, reduza a ventilação-minuto ajustando frequência e volume corrente. Lembre que a hipocapnia reduz o fluxo sanguíneo cerebral por vasoconstrição — daí a contraindicação à hiperventilação profilática no traumatismo cranioencefálico, exceto como ponte transitória na herniação iminente.',
+    )
+  } else if (cls.disturbio === 'normal') {
+    conduta.push(
+      'pH e eixos dentro da faixa **não encerram a avaliação**. Confira o ânion gap corrigido pela albumina, a relação delta e a diferença entre o bicarbonato medido e o calculado: distúrbios triplos com pH normal existem e só aparecem nesses três cálculos.',
+      'Se a suspeita clínica for forte (paciente crítico, intoxicação, sepse, cetoacidose em tratamento), repita a gasometria com eletrólitos completos, albumina e lactato antes de concluir que não há distúrbio.',
+    )
+  } else {
+    conduta.push(
+      'Distúrbio misto: trate cada componente segundo a própria causa e não persiga um pH único. Em distúrbio misto, o pH resultante pode ser normal enquanto os dois processos subjacentes avançam — a conduta se orienta pelos mecanismos identificados nos passos 2 a 4, não pelo valor final.',
+      'Priorize pela ameaça à vida, não pela magnitude do desvio: hipoxemia e falência ventilatória vêm antes da correção metabólica, e hipoperfusão vem antes da correção do bicarbonato.',
+    )
+  }
+
+  if (k !== null && (k < 3.5 || k > 5.5)) {
+    conduta.push(
+      k < 3.5
+        ? `Potássio de ${fmt(k, 1)} mEq/L com este distúrbio exige atenção: a alcalose desloca potássio para dentro da célula e mascara o déficit corporal total, de modo que a hipopotassemia real é maior que a medida. Reponha potássio e cheque o magnésio, sem o qual a correção não se sustenta.`
+        : `Potássio de ${fmt(k, 1)} mEq/L: a acidose desloca potássio para fora da célula, e a correção do pH o fará retornar — antecipe a queda e monitorize. Faça eletrocardiograma, e trate a hipercalemia com risco eletrocardiográfico de imediato (cálcio para estabilizar a membrana, insulina com glicose e beta-agonista para deslocar, diurético, resina ou diálise para remover).`,
+    )
+  }
+
   const nivel: Nivel = ph < 7.2 || ph > 7.6 ? 'critico' : cls.acidemia || cls.alcalemia ? 'alerta' : cls.disturbio === 'normal' ? 'ok' : 'atencao'
 
   return {
@@ -464,6 +524,7 @@ function interpretarGasometria(v: Valores): Resultado | null {
     nivel,
     detalhes,
     interpretacao,
+    conduta,
     alertas: alertas.length ? alertas : undefined,
   }
 }
@@ -526,7 +587,29 @@ export const ferramentas: Ferramenta[] = [
         valor: NOME_DISTURBIO[c.disturbio],
         rotuloNivel: c.acidemia ? 'Acidemia (pH < 7,35)' : c.alcalemia ? 'Alcalemia (pH > 7,45)' : 'pH entre 7,35 e 7,45',
         nivel: c.disturbio === 'normal' ? 'ok' : c.disturbio === 'misto' ? 'alerta' : 'atencao',
-        interpretacao: [c.nota],
+        interpretacao: [
+          c.nota,
+          '**A lógica em uma frase:** o distúrbio primário é aquele cujo desvio explica o sentido do pH. Se bicarbonato e pH andam juntos (ambos baixos ou ambos altos), o distúrbio é metabólico. Se PaCO₂ e pH andam em direções opostas, é respiratório. Se os dois eixos empurram o pH para o mesmo lado, é distúrbio misto por definição — nenhum sistema fisiológico compensa piorando.',
+          'A razão fisiológica de o bicarbonato acompanhar o pH nos distúrbios metabólicos e a PaCO₂ se opor a ele nos respiratórios está na equação de Henderson-Hasselbalch: o pH depende da **razão** entre bicarbonato e PaCO₂, não dos valores absolutos. O bicarbonato é o numerador — é base, e reduzi-lo acidifica. A PaCO₂ é o denominador, porque o CO₂ se hidrata a ácido carbônico pela anidrase carbônica; elevá-la acidifica. Assim, num distúrbio primariamente metabólico o numerador se move e arrasta o pH consigo, enquanto num primariamente respiratório o denominador se move e empurra o pH no sentido oposto ao seu. Compensação é a tentativa de restaurar a razão movendo o outro termo na mesma direção — e é por isso que compensação nunca inverte o sentido do desvio, apenas o atenua.',
+          'Os dois sistemas compensatórios têm velocidades muito diferentes, e isso é o que torna a pergunta "agudo ou crônico?" indispensável nos distúrbios respiratórios. A **compensação respiratória** de um distúrbio metabólico é quase imediata: os quimiorreceptores dos corpos carotídeos e do bulbo detectam a queda de pH e ajustam a ventilação em minutos, atingindo o novo estado de equilíbrio em 12 a 24 horas. A **compensação renal** de um distúrbio respiratório é lenta porque exige mudança de expressão proteica: o túbulo proximal aumenta a atividade do trocador sódio-hidrogênio NHE3 e da anidrase carbônica, e o túbulo distal aumenta as bombas H⁺-ATPase das células intercaladas alfa e a excreção de amônio — processos que levam 12 a 24 horas para começar e 3 a 5 dias para se completar.',
+        ],
+        conduta: [
+          'Este é o **passo 2** de quatro. Identificar o primário não encerra a leitura: prossiga obrigatoriamente para a compensação esperada (passo 3) e para o ânion gap com relação delta (passo 4). Um paciente pode ter três distúrbios simultâneos com pH rigorosamente normal, e nenhum deles aparece neste passo.',
+          c.disturbio === 'misto'
+            ? '**Distúrbio misto identificado.** Trate cada componente pela própria causa e não persiga um pH único. Priorize pela ameaça imediata à vida, não pela magnitude do desvio: hipoxemia e falência ventilatória vêm antes da correção metabólica, e hipoperfusão vem antes de qualquer discussão sobre bicarbonato. Distúrbio misto quase sempre significa duas doenças ativas — procure as duas.'
+            : c.disturbio === 'normal'
+              ? 'pH e eixos na faixa **não encerram a avaliação**. Calcule o ânion gap corrigido pela albumina e a relação delta: acidose metabólica com alcalose respiratória, típica da sepse e da intoxicação por salicilato, produz pH de 7,40 com bicarbonato de 14 e PaCO₂ de 24. Se a suspeita clínica for forte, use o interpretador completo com eletrólitos, albumina e lactato.'
+              : 'Com o primário definido, calcule a **compensação esperada** para a fórmula correspondente — Winter na acidose metabólica, as regras de 1 e 4 (agudo) ou 3,5 e 5 (crônico) nos respiratórios. Compensação fora do esperado revela um segundo distúrbio, e é esse achado que muda a conduta.',
+          'Antes de agir sobre o resultado, confira a **coerência interna** dos três valores. Se o bicarbonato recalculado por Henderson-Hasselbalch divergir do informado em mais de 3 mEq/L, o problema é de amostra ou de digitação, e agir sobre um valor incoerente é pior que não ter gasometria.',
+          'Sempre datar e contextualizar: o distúrbio primário é um retrato de um instante. Em paciente instável, em ressuscitação volêmica ou sob ventilação em ajuste, repita a gasometria em 30 a 60 minutos — a trajetória informa mais que o valor.',
+        ],
+        alertas: [
+          'pH dentro da faixa de referência **não** significa ausência de distúrbio. Dois distúrbios opostos se cancelam no pH e só aparecem no bicarbonato, na PaCO₂ e no ânion gap.',
+          'Este passo não avalia oxigenação. PaO₂, relação PaO₂/FiO₂ e gradiente alvéolo-arterial são eixos independentes, e um paciente pode ter ácido-base impecável com hipoxemia grave.',
+          Math.abs(coerencia - hco3) > 3
+            ? 'O bicarbonato informado diverge em mais de 3 mEq/L do recalculado a partir do pH e da PaCO₂. Reveja a amostra (bolha de ar, heparina em excesso, demora no transporte) ou a digitação antes de usar este resultado.'
+            : 'O bicarbonato da gasometria é calculado, não medido — o aparelho mede pH e PaCO₂ e resolve Henderson-Hasselbalch. Divergências de 1 a 3 mEq/L em relação ao CO₂ total do eletrólito venoso são esperadas.',
+        ],
         detalhes: [
           { rotulo: 'pH', valor: fmt(ph, 2), nota: 'Referência 7,35 – 7,45' },
           { rotulo: 'PaCO₂', valor: `${fmt(paco2, 1)} mmHg`, nota: 'Referência 35 – 45' },
@@ -565,7 +648,7 @@ export const ferramentas: Ferramenta[] = [
     categorias: ['gasometria'],
     campos: [
       CAMPO_HCO3,
-      campoNum('paco2', 'PaCO₂ medida', { unidade: 'mmHg', min: 5, max: 150, passo: 0.5, normalMin: 35, normalMax: 45 }),
+      campoNum('paco2', 'PaCO₂ medida', { unidade: 'mmHg', min: 5, max: 150, passo: 0.5, normalMin: 35, normalMax: 45, ajuda: 'A PaCO₂ da mesma gasometria que forneceu o bicarbonato. Opcional: sem ela a ferramenta devolve apenas a faixa esperada; com ela, diz se há um segundo distúrbio. Em acidose de instalação súbita (menos de 12 a 24 horas), espere PaCO₂ acima do previsto — é tempo, não distúrbio.' }),
     ],
     calcular: (v) => {
       const hco3 = num(v, 'hco3')
@@ -603,7 +686,30 @@ export const ferramentas: Ferramenta[] = [
         nivel,
         rotuloNivel: nivel === 'ok' ? 'Compensação adequada' : nivel === 'alerta' ? 'Distúrbio respiratório associado' : undefined,
         detalhes,
-        interpretacao: interp,
+        interpretacao: [
+          ...interp,
+          'A compensação que a fórmula descreve é **hiperventilação por estímulo quimiorreceptor**, e vale entender a sequência porque ela explica o atraso de 12 a 24 horas. A queda do bicarbonato plasmático acidifica o sangue, e os quimiorreceptores periféricos dos corpos carotídeos e aórticos — sensíveis a pH e a PaO₂ — respondem em segundos, aumentando a ventilação. Os quimiorreceptores centrais, no bulbo ventrolateral, são os mais potentes, mas respondem ao pH do **líquido cefalorraquidiano**, e o íon bicarbonato atravessa a barreira hematoencefálica muito mais lentamente que o CO₂, que é lipossolúvel. Por isso a acidose metabólica aguda estimula sobretudo pela via periférica, com resposta parcial, e só quando o bicarbonato liquórico se equilibra com o plasmático a resposta central se soma e a compensação atinge o previsto por Winter. É a mesma razão pela qual a compensação, uma vez estabelecida, demora a se desfazer.',
+          'Existe um **piso** fisiológico que a fórmula ignora: por mais baixo que esteja o bicarbonato, a PaCO₂ raramente desce abaixo de 10 a 12 mmHg. Manter ventilação-minuto nessa faixa exige trabalho respiratório enorme, e o diafragma fatiga — a musculatura respiratória consome oxigênio e produz lactato, de modo que a partir de certo ponto a própria compensação passa a alimentar a acidose. É esse fenômeno que transforma uma PaCO₂ "normal" de 40 mmHg, num paciente com bicarbonato de 8, no achado mais ameaçador da gasometria: não é compensação inadequada, é exaustão iminente.',
+        ],
+        conduta: [
+          paco2 === null
+            ? 'Informe a PaCO₂ medida para completar o passo 3 da leitura ácido-base. Sem ela, a ferramenta devolve apenas o alvo fisiológico e não identifica o segundo distúrbio, que é justamente o que muda a conduta.'
+            : paco2 > max
+              ? '**PaCO₂ acima do esperado: acidose respiratória associada.** Isso é achado de via aérea, não de observação. Avalie imediatamente nível de consciência, uso de musculatura acessória, respiração paradoxal e capacidade de completar frases. Prepare suporte ventilatório — ventilação não invasiva se houver drive e proteção de via aérea preservados, intubação se houver rebaixamento, exaustão ou falha da não invasiva. Procure a causa da hipoventilação sobreposta: opioide, benzodiazepínico, doença neuromuscular, exaustão diafragmática, pneumonia, DPOC.'
+              : paco2 < min
+                ? '**PaCO₂ abaixo do esperado: alcalose respiratória associada.** Procure ativamente a causa do estímulo ventilatório extra, porque a lista inclui diagnósticos graves: sepse precoce, embolia pulmonar, dor, febre, hepatopatia com encefalopatia, gestação, lesão do sistema nervoso central e **intoxicação por salicilato** — nesta última a alcalose respiratória por estímulo central direto antecede a acidose metabólica, e reconhecer o padrão duplo é o que faz o diagnóstico. Dose salicilato se houver qualquer suspeita.'
+                : '**Compensação adequada.** Não há distúrbio respiratório associado. Siga para o passo 4: calcule o ânion gap corrigido pela albumina e a relação delta, que é onde se revela um segundo distúrbio metabólico oculto.',
+          'Trate a **acidose metabólica pela causa**, não pela PaCO₂. O valor de Winter é diagnóstico e não alvo terapêutico: em paciente ventilado, forçar a PaCO₂ até o número previsto exige volume-minuto altíssimo, com custo em pressão de platô, driving pressure e lesão induzida pelo ventilador.',
+          'Em paciente ventilado com acidose metabólica, ajuste a ventilação-minuto preferencialmente pela **frequência respiratória**, mantendo volume corrente protetor de 6 mL/kg de peso predito, platô até 30 cmH₂O e driving pressure até 15 cmH₂O. Se os limites de pressão forem alcançados antes do alvo, aceite a acidose — hipercapnia permissiva é preferível a barotrauma.',
+          'Cuidado com o momento da intubação: ao sedar e assumir a ventilação de um paciente que compensava com PaCO₂ de 15 mmHg, a abolição do drive espontâneo pode elevar a PaCO₂ rapidamente e despencar o pH. Programe ventilação-minuto alta desde o primeiro minuto e colha gasometria de controle em 15 a 30 minutos.',
+        ],
+        alertas: [
+          'A fórmula diagnostica um segundo distúrbio; não é alvo de ventilação. Perseguir o valor de Winter no ventilador troca acidose por lesão pulmonar induzida pela ventilação.',
+          'A compensação leva 12 a 24 horas para se completar. Em acidose de instalação súbita, PaCO₂ acima do previsto é tempo e não distúrbio — repita a gasometria antes de concluir.',
+          paco2 !== null && paco2 > max
+            ? 'PaCO₂ "normal" em acidose metabólica grave é sinal de exaustão respiratória e antecede a parada. Não aguarde a próxima gasometria: avalie a via aérea agora.'
+            : 'A compensação tem piso em torno de 10 a 12 mmHg de PaCO₂. Em acidose extrema, Winter prevê valores fisiologicamente inalcançáveis, e a PaCO₂ que não desce mais não é um segundo distúrbio.',
+        ],
       }
     },
     formula: ['PaCO₂ esperada = 1,5 × HCO₃⁻ + 8 ± 2', 'Atalho de beira de leito: PaCO₂ ≈ os dois últimos dígitos do pH'],
