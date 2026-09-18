@@ -260,8 +260,8 @@ const comparadorQT: Ferramenta = {
   resumo: 'Mostra como as quatro fórmulas divergem ao longo da frequência e qual escolher.',
   categorias: ['cardiologia'],
   campos: [
-    campoNum('qt', 'Intervalo QT medido', { unidade: 'ms', min: 200, max: 800, passo: 1, padrao: '400' }),
-    campoNum('fc', 'Frequência cardíaca', { unidade: 'bpm', min: 25, max: 250, passo: 1, padrao: '75' }),
+    campoNum('qt', 'Intervalo QT medido', { unidade: 'ms', min: 200, max: 800, passo: 1, padrao: '400', ajuda: 'Do início do QRS ao fim da onda T, medido pelo método da tangente: trace a tangente à porção descendente mais íngreme da T e marque onde ela cruza a linha de base. Use DII ou V5, a derivação com a T mais definida, e escolha o intervalo mais longo entre três batimentos. Onda U não entra.' }),
+    campoNum('fc', 'Frequência cardíaca', { unidade: 'bpm', min: 25, max: 250, passo: 1, padrao: '75', ajuda: 'A frequência do mesmo traçado em que o QT foi medido. Em ritmo irregular, use a média de vários intervalos RR — e saiba que em fibrilação atrial nenhuma fórmula de correção é confiável.' }),
   ],
   calcular: (v) => {
     const qt = num(v, 'qt')
@@ -292,6 +292,23 @@ const comparadorQT: Ferramenta = {
         'Todas as fórmulas coincidem exatamente a 60 bpm, porque nessa frequência RR = 1 s e todas as correções se anulam. Quanto mais longe de 60, mais elas divergem — e é aí que a escolha passa a mudar conduta.',
         'Bazett superestima o QTc em taquicardia e subestima em bradicardia. É a fórmula das bulas e dos alarmes automáticos, e responde pela maior parte dos falsos positivos de "QT longo" em pacientes febris ou taquicárdicos.',
         'Para farmacovigilância e ensaios de segurança cardíaca, o guia ICH E14 e a prática regulatória favorecem Fridericia. Para triagem populacional, Framingham e Fridericia têm desempenho semelhante. Hodges tem a melhor performance nos extremos.',
+        'O que se está corrigindo, e por quê, esclarece a controvérsia. O intervalo QT representa a duração do **potencial de ação ventricular** — despolarização mais repolarização — e essa duração encurta fisiologicamente quando a frequência aumenta, fenômeno chamado de adaptação do potencial de ação à frequência. O mecanismo é iônico: em frequências altas, os canais lentos de potássio da corrente retificadora tardia I_Ks acumulam ativação entre batimentos sucessivos (o intervalo diastólico é curto demais para a desativação completa), e essa corrente repolarizante residual encurta o potencial de ação seguinte. Somam-se a inativação dependente de cálcio da corrente I_CaL e o aumento do tônus simpático. Corrigir o QT é tentar responder: "quanto duraria este potencial de ação se a frequência fosse 60 bpm?" — de modo que dois pacientes com frequências diferentes possam ser comparados. Bazett propôs em 1920 uma raiz quadrada do intervalo RR a partir de apenas 39 indivíduos jovens e sadios, e a relação real entre QT e RR não é uma raiz quadrada: ela é mais achatada, aproximadamente uma raiz cúbica, o que é exatamente a proposta de Fridericia. Daí o erro sistemático de Bazett — superestimar em taquicardia e subestimar em bradicardia — não ser um defeito de aplicação, mas da forma da curva escolhida. Importa entender o risco que está do outro lado dessa aritmética: o QT prolongado reflete repolarização lenta e heterogênea, que permite reativação de canais de cálcio tipo L antes da repolarização completa, gerando **pós-despolarizações precoces**; em presença de dispersão transmural da repolarização, essas pós-despolarizações disparam reentrada funcional e produzem torsades de pointes. É por isso que hipopotassemia, hipomagnesemia, bradicardia e fármacos bloqueadores de I_Kr se somam de forma multiplicativa, e por que o limiar de 500 ms é tratado como alarme.',
+      ],
+      conduta: [
+        fc < 60 || fc > 100
+          ? `A frequência de ${fmtInt(fc)} bpm está fora da faixa em que as fórmulas concordam, e a divergência aqui é de ${fmtInt(amplitude)} ms. **Use Fridericia ou Hodges** e desconsidere o Bazett — que é justamente o que o aparelho costuma imprimir. Registre no prontuário qual fórmula foi usada.`
+          : 'Dentro de 60 a 100 bpm as quatro fórmulas são praticamente intercambiáveis: qualquer uma serve, e a discussão perde relevância prática. Ainda assim, registre qual foi usada para permitir comparação futura.',
+        'Antes de concluir que há QT longo, **confira a medida manualmente**. O valor automático do eletrocardiógrafo erra com frequência em presença de onda T de baixa amplitude, onda U proeminente, T bifásica, artefato ou ritmo irregular. Use o método da tangente em DII ou V5 e tome o maior de três batimentos.',
+        'Corrija os fatores que se somam ao risco, porque eles são multiplicativos e quase sempre reversíveis: **potássio** (alvo 4,0 a 4,5 mEq/L), **magnésio** (alvo acima de 2,0 mg/dL), cálcio, bradicardia, hipotireoidismo, hipotermia e desnutrição. Em QT longo com risco de arritmia, sulfato de magnésio intravenoso é tratamento mesmo com magnesemia normal.',
+        'Revise a prescrição item por item procurando fármacos que prolongam o QT — antiarrítmicos das classes IA e III, antipsicóticos (sobretudo haloperidol intravenoso e ziprasidona), macrolídeos e fluoroquinolonas, azóis, ondansetrona, metadona, antidepressivos (citalopram e escitalopram), domperidona, hidroxicloroquina. Aplique o **escore de Tisdale** para quantificar o risco quando houver vários fatores.',
+        'Se o QTc corrigido por Fridericia estiver acima de 500 ms, ou se houver aumento superior a 60 ms em relação ao basal, suspenda o fármaco suspeito, monitorize o ritmo, corrija eletrólitos e reavalie. Torsades sustentada ou com instabilidade é emergência: magnésio intravenoso, aumento da frequência por marcapasso ou isoprenalina (o QT é dependente de frequência) e cardioversão se houver degeneração para fibrilação ventricular.',
+        'QT longo persistente após correção de tudo o que é reversível, sobretudo em jovem, com síncope de esforço ou história familiar de morte súbita, exige investigação de **síndrome do QT longo congênito**: eletrocardiograma dos familiares de primeiro grau, teste ergométrico e teste genético.',
+      ],
+      alertas: [
+        'Registre sempre qual fórmula foi usada. Comparar um QTc de Bazett de hoje com um de Fridericia de ontem produz variação artificial que pode chegar a dezenas de milissegundos e motivar suspensão indevida de medicamento.',
+        'O QTc impresso automaticamente pelo aparelho é quase sempre Bazett, que é a fórmula de pior desempenho fora de 60 a 100 bpm. Em paciente febril, taquicárdico ou bradicárdico, confirme com Fridericia antes de qualquer decisão.',
+        'Nenhuma fórmula de correção é confiável em **fibrilação atrial**, em ritmo irregular, sob bloqueio de ramo ou em ritmo de marcapasso. No bloqueio de ramo, o QRS alargado infla o QT e existem correções específicas (subtrair o excesso de duração do QRS) — o QTc bruto superestima.',
+        'Corrigir o QT não corrige o risco. Um QTc de 480 ms com potássio de 2,8 mEq/L e três fármacos prolongadores é muito mais perigoso que os mesmos 480 ms sem nenhum desses fatores.',
       ],
       tabela: {
         titulo: `QTc do mesmo QT de ${fmtInt(qt)} ms em diferentes frequências`,
@@ -303,7 +320,15 @@ const comparadorQT: Ferramenta = {
   formula: ['A 60 bpm (RR = 1 s), QTc = QT em todas as fórmulas'],
   fundamento:
     'Comparar as fórmulas lado a lado é o modo mais rápido de entender por que a discussão existe. Bazett aplica uma potência de 0,5 ao RR; Fridericia, 0,33; Framingham e Hodges usam correções lineares. Quando a frequência se afasta de 60 bpm, o expoente escolhido domina o resultado, e a diferença entre Bazett e Fridericia pode passar de 40 ms — exatamente a magnitude que separa "normal" de "suspender o medicamento".',
-  armadilhas: ['Registre sempre qual fórmula foi usada. Comparar um QTc de Bazett de hoje com um de Fridericia de ontem produz uma variação artificial.'],
+  armadilhas: [
+    'Registre sempre qual fórmula foi usada. Comparar um QTc de Bazett de hoje com um de Fridericia de ontem produz uma variação artificial.',
+    'O eletrocardiógrafo imprime Bazett por padrão — a pior fórmula fora de 60 a 100 bpm. Aceitar o valor automático em paciente taquicárdico é a causa mais comum de falso "QT longo".',
+    'A medida do QT é mais frágil que a correção: onda T de baixa amplitude, T bifásica, onda U proeminente e artefato geram erro de dezenas de milissegundos. Meça pelo método da tangente, em DII ou V5, no maior de três batimentos.',
+    'Onda U não faz parte do QT. Incluí-la — erro frequente na hipopotassemia, em que a U é proeminente — prolonga artificialmente a medida justamente no paciente em que o risco real já está aumentado.',
+    'Em bloqueio de ramo ou ritmo de marcapasso, o QRS alargado infla o QT. O QTc bruto superestima e existem correções específicas que descontam o excesso de duração do QRS.',
+    'Em fibrilação atrial e em qualquer ritmo irregular, nenhuma correção é válida, porque o QT do batimento depende do RR precedente e da história recente de intervalos.',
+    'A comparação com o basal vale mais que o valor absoluto: aumento de mais de 60 ms em relação ao eletrocardiograma prévio é sinal de alarme mesmo com QTc ainda abaixo de 500 ms.',
+  ],
   referencias: [
     { texto: 'Vandenberk B, et al. Which QT correction formulae to use for QT monitoring? J Am Heart Assoc. 2016;5(6):e003264.' },
     { texto: 'ICH E14 Guideline: The clinical evaluation of QT/QTc interval prolongation. 2005 (com Q&A revisadas).' },
@@ -1262,18 +1287,18 @@ const genebra: Ferramenta = {
   resumo: 'Alternativa ao Wells, sem itens subjetivos — nas versões original e simplificada.',
   categorias: ['cardiologia', 'pneumologia', 'emergencia'],
   campos: [
-    campoSimNao('idade', 'Idade > 65 anos', 1),
-    campoSimNao('previo', 'TVP ou TEP prévios', 3),
-    campoSimNao('cirurgia', 'Cirurgia sob anestesia geral ou fratura de membro inferior no último mês', 2),
-    campoSimNao('cancer', 'Neoplasia sólida ou hematológica ativa, ou curada há menos de 1 ano', 2),
-    campoSimNao('dorUnilateral', 'Dor unilateral em membro inferior', 3),
-    campoSimNao('hemoptise', 'Hemoptise', 2),
+    campoSimNao('idade', 'Idade > 65 anos', 1, 'Corte estrito: 65 anos exatos não pontua. A idade eleva o risco trombótico por estase venosa, redução da fibrinólise e maior prevalência de comorbidade protrombótica.'),
+    campoSimNao('previo', 'TVP ou TEP prévios', 3, 'Evento documentado, não suspeita antiga. É um dos itens de maior peso: recorrência reflete trombofilia, dano valvar venoso residual ou fator de risco persistente.'),
+    campoSimNao('cirurgia', 'Cirurgia sob anestesia geral ou fratura de membro inferior no último mês', 2, 'Janela de 1 mês. Anestesia geral (não local ou regional) e fratura de membro inferior — a combinação de imobilidade, lesão endotelial e resposta inflamatória com queda da fibrinólise.'),
+    campoSimNao('cancer', 'Neoplasia sólida ou hematológica ativa, ou curada há menos de 1 ano', 2, 'O tumor libera fator tecidual, micropartículas circulantes e mucinas que ativam plaquetas diretamente. Quimioterapia e cateter central somam risco.'),
+    campoSimNao('dorUnilateral', 'Dor unilateral em membro inferior', 3, 'Dor espontânea referida, unilateral. Item distinto do achado de palpação abaixo — os dois podem coexistir e somar 7 pontos.'),
+    campoSimNao('hemoptise', 'Hemoptise', 2, 'Sugere infarto pulmonar por oclusão de ramo periférico com hemorragia alveolar. Volume habitualmente pequeno; hemoptise maciça aponta outra causa.'),
     campoOpc('fc', 'Frequência cardíaca', [
       { valor: '0', rotulo: 'Menos de 75 bpm', pontos: 0 },
       { valor: '3', rotulo: '75 a 94 bpm', pontos: 3 },
       { valor: '5', rotulo: '95 bpm ou mais', pontos: 5 },
-    ]),
-    campoSimNao('palpacao', 'Dor à palpação de trajeto venoso profundo com edema unilateral', 4),
+    ], { ajuda: 'Frequência de repouso na admissão, não a do momento da dor. É o único item graduado do escore e o de maior peso máximo: a taquicardia é a resposta compensatória ao débito reduzido pela sobrecarga aguda do ventrículo direito. Atenção ao betabloqueado, que pode não taquicardizar.' }),
+    campoSimNao('palpacao', 'Dor à palpação de trajeto venoso profundo com edema unilateral', 4, 'Exige os DOIS achados juntos: dor à palpação do trajeto venoso profundo E edema unilateral. É o item de maior peso do escore, e marcar apenas um dos dois componentes infla o resultado.'),
   ],
   calcular: (v) => {
     const fc = num(v, 'fc')
@@ -1315,15 +1340,52 @@ const genebra: Ferramenta = {
           ? 'Faixa improvável: D-dímero negativo (com corte ajustado pela idade acima de 50 anos) exclui embolia.'
           : 'Faixa provável: siga direto para angiotomografia de tórax.',
         'A versão simplificada, com 1 ponto por item (2 para frequência ≥ 95 bpm), foi validada e tem desempenho equivalente à completa — mais fácil de aplicar de cabeça.',
+        'O escore existe para resolver um problema de **probabilidade pré-teste**, e é isso que dá sentido a todo o algoritmo. O D-dímero é um produto de degradação da fibrina reticulada pela plasmina: ele tem sensibilidade alta (acima de 95% nos ensaios quantitativos) e especificidade muito baixa, porque qualquer trombo, hematoma, inflamação, infecção, neoplasia, gravidez, cirurgia recente ou idade avançada eleva o valor. Um teste com essa assinatura serve para **excluir** e nunca para confirmar — e só exclui de forma segura quando a probabilidade pré-teste é baixa o suficiente para que o valor preditivo negativo supere 98%. Daí a arquitetura: nas faixas improvável, D-dímero negativo encerra a investigação; nas faixas provável, a probabilidade pré-teste é alta demais e um D-dímero negativo deixaria um risco residual inaceitável, de modo que a conduta é ir direto à angiotomografia. A fisiopatologia dos itens segue a tríade de Virchow — estase (idade, cirurgia, fratura, imobilidade implícita), lesão endotelial (cirurgia, fratura) e hipercoagulabilidade (neoplasia, evento prévio) — somada aos achados que sugerem o trombo já formado (dor e edema unilaterais, palpação dolorosa do trajeto venoso) e à repercussão hemodinâmica da embolia instalada (taquicardia, hemoptise por infarto pulmonar). É um escore que combina, num só número, fatores de risco e sinais de doença presente.',
       ],
+      conduta: total <= 5
+        ? [
+            'Faixa **improvável**: solicite D-dímero quantitativo. Se negativo, a embolia está excluída com segurança e nenhuma imagem é necessária — encerre a investigação para tromboembolismo e procure o diagnóstico alternativo.',
+            'Use o **corte ajustado pela idade** acima de 50 anos (idade × 10 µg/L para o ensaio expresso em unidades equivalentes de fibrinogênio): isso aumenta substancialmente a proporção de pacientes em que a imagem é dispensada, sem aumento de eventos perdidos. As estratégias YEARS e PEGeD refinam ainda mais esse mesmo princípio.',
+            'Se o D-dímero for positivo, prossiga para **angiotomografia de tórax**. D-dímero positivo não faz diagnóstico: em idoso, gestante, pós-operatório ou paciente oncológico ele é positivo na maioria das vezes, por razões que nada têm a ver com embolia.',
+            'Em gestante, o algoritmo é outro: o D-dímero sobe fisiologicamente ao longo da gestação e os cortes habituais não valem. Siga protocolo específico, que costuma iniciar por ultrassom de membros inferiores e prosseguir com angiotomografia ou cintilografia de perfusão conforme achados e disponibilidade.',
+          ]
+        : [
+            'Faixa **provável**: vá direto à **angiotomografia de tórax**, sem D-dímero. Nessa faixa, o valor preditivo negativo de um D-dímero negativo é insuficiente e solicitá-lo apenas atrasa o diagnóstico.',
+            'Considere **anticoagulação empírica** enquanto aguarda a imagem, se o risco hemorrágico for aceitável e a demora prevista for relevante. Heparina de baixo peso molecular em dose terapêutica é a escolha, e a decisão deve estar registrada.',
+            'Se houver contraindicação à angiotomografia — insuficiência renal grave, alergia a contraste iodado, gestação —, use alternativas: cintilografia de ventilação-perfusão, ultrassom de membros inferiores (uma trombose venosa profunda proximal em paciente com quadro compatível já autoriza tratar) ou ecocardiograma à beira do leito em paciente instável.',
+            'Em paciente **instável** — hipotensão sustentada, choque ou parada —, não espere exame nenhum: ecocardiograma à beira do leito mostrando sobrecarga aguda de ventrículo direito autoriza trombólise sistêmica imediata, porque a mortalidade nessa apresentação é medida em minutos.',
+            'Confirmado o diagnóstico, estratifique com PESI ou sPESI, troponina e avaliação do ventrículo direito para decidir tratamento domiciliar, internação ou terapia intensiva.',
+          ],
+      alertas: [
+        'Existem três versões em circulação (original de 2001, revisada de 2006 e simplificada de 2008) com pontuações diferentes, e dois cortes distintos na versão completa (dicotômico em 5/6 e categórico em três faixas). Padronize uma no serviço e registre qual foi usada.',
+        'O escore estima **probabilidade diagnóstica**, não gravidade. Um paciente com escore baixo pode ter embolia maciça, e um com escore alto pode ter embolia subsegmentar irrelevante — gravidade se avalia com PESI, sPESI, troponina e imagem do ventrículo direito.',
+        'D-dímero negativo só exclui embolia na faixa improvável. Aplicá-lo na faixa provável é erro de algoritmo com risco de diagnóstico perdido.',
+        'Paciente instável não entra em algoritmo de probabilidade: hipotensão sustentada com suspeita de embolia é indicação de ecocardiograma imediato e de reperfusão, sem escore.',
+        'Não validado em gestantes nem em pacientes já anticoagulados, situação em que tanto o D-dímero quanto a probabilidade pré-teste se comportam de forma diferente.',
+      ],
+      tabela: {
+        titulo: 'Genebra revisado: faixas e algoritmo',
+        colunas: ['Pontos (completo)', 'Probabilidade', 'Prevalência de TEP', 'Próximo passo'],
+        linhas: [
+          ['0 – 3', 'Baixa', '≈ 8%', 'D-dímero; se negativo, exclui'],
+          ['4 – 10', 'Intermediária', '≈ 28%', 'D-dímero se ≤ 5; angiotomografia se ≥ 6'],
+          ['≥ 11', 'Alta', '≈ 74%', 'Angiotomografia direta'],
+        ],
+        destaque: cat,
+      },
     }
   },
   formula: ['Soma ponderada de 8 critérios objetivos', 'Versão simplificada: 1 ponto por item (FC ≥ 95 vale 2)'],
   fundamento:
-    'O escore de Genebra revisado foi desenhado para eliminar a maior fragilidade do Wells: o item "diagnóstico alternativo menos provável", responsável por 3 pontos e por boa parte da variabilidade interobservador. Todas as suas variáveis são objetivas e verificáveis no prontuário, o que o torna adequado a aplicação por protocolo, por enfermagem ou por sistema informatizado.',
+    'O escore de Genebra revisado foi desenhado para eliminar a maior fragilidade do Wells: o item "diagnóstico alternativo menos provável", responsável por 3 pontos e por boa parte da variabilidade interobservador. Todas as suas variáveis são objetivas e verificáveis no prontuário, o que o torna adequado a aplicação por protocolo, por enfermagem ou por sistema informatizado. A razão de existir um escore de probabilidade antes de qualquer exame está na natureza do **D-dímero**, que é o teste de triagem disponível. Ele é um produto de degradação da fibrina reticulada pela plasmina, e tem sensibilidade acima de 95% nos ensaios quantitativos com especificidade muito baixa — qualquer trombo, hematoma, inflamação, infecção, neoplasia, gravidez, cirurgia recente ou simplesmente idade avançada o eleva. Um teste assim serve para excluir e jamais para confirmar, e sua capacidade de excluir depende inteiramente da probabilidade pré-teste: com prevalência baixa, o valor preditivo negativo supera 98% e o resultado negativo encerra a investigação com segurança; com prevalência alta, o mesmo resultado negativo deixaria um risco residual inaceitável. É por isso que o algoritmo bifurca — e é por isso que aplicar D-dímero na faixa provável é erro de método, não de preferência. Quanto à composição dos itens, o escore combina duas categorias distintas de informação: fatores de risco que refletem a tríade de Virchow (idade e cirurgia ou fratura para estase e lesão endotelial, neoplasia e evento prévio para hipercoagulabilidade) e achados que sugerem doença já presente (dor e edema unilaterais, palpação dolorosa do trajeto venoso, hemoptise por infarto pulmonar e taquicardia como resposta compensatória à sobrecarga aguda do ventrículo direito). Essa mistura é deliberada e é o que permite discriminação equivalente à do Wells sem nenhum item de julgamento — em validações diretas, o desempenho dos dois é comparável, de modo que a escolha entre eles é institucional. A versão simplificada, com 1 ponto por item, confirma um achado recorrente em modelos de predição: quando as variáveis são correlacionadas, igualar os pesos costuma preservar a discriminação e melhorar a generalização, além de reduzir erro de aplicação.',
   armadilhas: [
     'Existem três versões em circulação (original de 2001, revisada de 2006 e simplificada de 2008), com pontuações diferentes. Registre qual foi usada.',
     'A frequência cardíaca é a de repouso na admissão, não a do momento da dor.',
+    'O item de palpação exige dor à palpação do trajeto venoso profundo **e** edema unilateral, simultaneamente. Marcar apenas um dos dois componentes adiciona 4 pontos indevidos e pode mudar a faixa.',
+    'A versão completa tem dois cortes em uso: dicotômico (≤ 5 improvável, ≥ 6 provável) e categórico em três faixas. Misturá-los produz conduta incoerente.',
+    'Escore alto não indica gravidade nem urgência de reperfusão, apenas probabilidade de o diagnóstico existir. Gravidade se mede com PESI, sPESI, troponina e função do ventrículo direito.',
+    'Em paciente já em uso de anticoagulante ou em gestante, o algoritmo derivado do escore não se aplica diretamente, porque o comportamento do D-dímero e a prevalência são diferentes.',
+    'Betabloqueado, atleta e paciente com marcapasso podem não atingir a faixa de taquicardia mesmo com embolia significativa, perdendo até 5 pontos do escore.',
   ],
   referencias: [
     { texto: 'Le Gal G, Righini M, Roy PM, et al. Prediction of pulmonary embolism in the emergency department: the revised Geneva score. Ann Intern Med. 2006;144(3):165-171.' },
@@ -1749,11 +1811,11 @@ const sanFrancisco: Ferramenta = {
   resumo: 'Cinco variáveis (CHESS) que identificam a síncope de alto risco na emergência.',
   categorias: ['cardiologia', 'emergencia'],
   campos: [
-    campoSimNao('c', 'História de insuficiência cardíaca congestiva', 1),
-    campoSimNao('h', 'Hematócrito < 30%', 1),
-    campoSimNao('e', 'ECG anormal', 1, 'Ritmo não sinusal, qualquer alteração nova, ou mudança em relação a traçado prévio.'),
-    campoSimNao('s', 'Queixa de dispneia', 1),
-    campoSimNao('s2', 'Pressão sistólica < 90 mmHg na triagem', 1),
+    campoSimNao('c', 'História de insuficiência cardíaca congestiva', 1, 'Diagnóstico prévio, independentemente de estar compensada. Marca cardiopatia estrutural, que é o substrato de arritmia ventricular e de obstrução ao fluxo — os dois mecanismos de síncope com risco de morte.'),
+    campoSimNao('h', 'Hematócrito < 30%', 1, 'Único item laboratorial. Aponta perda sanguínea oculta (hemorragia digestiva, aneurisma em expansão, gravidez ectópica) ou anemia que reduz o conteúdo arterial de oxigênio e a reserva para tolerar hipotensão transitória.'),
+    campoSimNao('e', 'ECG anormal', 1, 'Ritmo não sinusal, qualquer alteração nova, ou mudança em relação a traçado prévio. É o item de definição mais ampla e de maior variabilidade entre serviços — na dúvida, considere anormal, que é o comportamento seguro.'),
+    campoSimNao('s', 'Queixa de dispneia', 1, 'O S de shortness of breath. Aponta doença cardiopulmonar aguda: embolia pulmonar, insuficiência cardíaca descompensada, síndrome coronariana, anemia grave.'),
+    campoSimNao('s2', 'Pressão sistólica < 90 mmHg na triagem', 1, 'Aferida na triagem, não a menor de todo o atendimento. Hipotensão persistente após a síncope não é achado residual: indica causa ainda ativa — hemorragia, sepse, embolia, arritmia ou obstrução.'),
   ],
   calcular: (v) => {
     const positivos = ['c', 'h', 'e', 's', 's2'].filter((id) => sim(v, id))
@@ -1773,15 +1835,55 @@ const sanFrancisco: Ferramenta = {
           : 'Nenhum critério positivo: risco baixo de evento grave em 7 dias. Alta com orientação e seguimento é razoável, desde que a história não sugira síncope de esforço, síncope em decúbito, palpitações precedentes ou história familiar de morte súbita — situações que exigem investigação independentemente da regra.',
         'A regra teve validações externas com sensibilidade menor do que a original (74 a 90% em algumas coortes), o que motivou alternativas como o Canadian Syncope Risk Score, mais recente e com melhor calibração. Use-a como apoio, nunca como autorização automática de alta.',
         'Síncope de alto risco tem marcadores que a regra não captura e que devem ser buscados ativamente: síncope durante esforço, sem pródromos, em posição supina, com trauma facial, ou com ECG mostrando Brugada, QT longo, pré-excitação, hipertrofia ou bloqueio bifascicular.',
+        'Toda síncope é, por definição, **hipoperfusão cerebral global e transitória** — o cérebro não estoca substrato e perde a consciência após cerca de 6 a 8 segundos de interrupção do fluxo, ou com queda da pressão sistólica abaixo de aproximadamente 60 mmHg. O que separa a síncope banal da letal não é o sintoma, é o mecanismo pelo qual o fluxo caiu, e existem três. O primeiro é **reflexo** (vasovagal, situacional, seno carotídeo): um reflexo de Bezold-Jarisch exagerado, disparado por mecanorreceptores ventriculares em um ventrículo subitamente subpreenchido, produz retirada simpática abrupta com vasodilatação e bradicardia. É benigno e tem pródromos característicos — calor, náusea, sudorese, visão turva, palidez — porque a queda de pressão é progressiva. O segundo é **hipotensão ortostática**, por depleção de volume, disautonomia ou fármaco, e o risco é o da causa de base. O terceiro é **cardíaco**, e é o que mata: arritmia (taquicardia ventricular, bloqueio atrioventricular completo, pausa sinusal, torsades de pointes) ou obstrução mecânica ao fluxo (estenose aórtica, cardiomiopatia hipertrófica obstrutiva, embolia pulmonar maciça, tamponamento, mixoma). A síncope cardíaca tipicamente não tem pródromo, porque a queda de débito é instantânea — daí o trauma facial, que é um marcador de gravidade e não apenas de azar. A regra CHESS é, portanto, uma tentativa de detectar indiretamente o terceiro mecanismo: insuficiência cardíaca e ECG anormal apontam o substrato estrutural de arritmia, hematócrito baixo e hipotensão apontam perda sanguínea ativa, e dispneia aponta doença cardiopulmonar aguda. Ela não contém nenhuma variável de **circunstância** da síncope, e é exatamente por isso que esforço, decúbito, ausência de pródromo, palpitação precedente e história familiar de morte súbita precisam ser buscados fora dela.',
       ],
+      conduta: alto
+        ? [
+            'Pelo menos um critério positivo: **observação e investigação**, não alta. Monitorize o ritmo, repita o eletrocardiograma e reavalie após hidratação e correção do que for corrigível.',
+            'Direcione a investigação ao critério que puxou o resultado. Hematócrito baixo: procure sangramento ativo — toque retal, pesquisa de sangue oculto, avaliação de aneurisma de aorta e, em mulher em idade fértil, beta-hCG e ultrassom para gravidez ectópica. Dispneia: considere embolia pulmonar (aplique Wells ou Genebra), insuficiência cardíaca e síndrome coronariana. ECG anormal ou insuficiência cardíaca: ecocardiograma e monitorização prolongada.',
+            'Colha troponina e faça ecocardiograma se houver suspeita de cardiopatia estrutural ou isquemia. Monitorização prolongada (telemetria, Holter, monitor de eventos ou, em casos selecionados, monitor implantável) é o que rende diagnóstico quando a arritmia é paroxística e o traçado da porta é normal.',
+            'Suspenda ou reduza fármacos que contribuem: anti-hipertensivo, diurético, nitrato, alfabloqueador, antidepressivo tricíclico, e qualquer medicamento que prolongue o QT — aplique o escore de Tisdale se houver vários.',
+            'Se houver evidência de arritmia como causa, trate conforme o mecanismo: marcapasso na bradiarritmia sintomática sem causa reversível, e avaliação eletrofisiológica com eventual cardiodesfibrilador implantável na taquicardia ventricular com cardiopatia estrutural.',
+          ]
+        : [
+            'Nenhum critério positivo indica risco baixo de evento grave em 7 dias, e **permite** considerar alta com orientação e seguimento — não a determina. Antes de liberar, exclua ativamente o que a regra não vê.',
+            'Investigue independentemente da regra se houver qualquer um destes: síncope **durante esforço** (estenose aórtica, cardiomiopatia hipertrófica, taquicardia ventricular catecolaminérgica), síncope em **decúbito**, **ausência de pródromos**, **palpitação** precedendo o evento, trauma facial ou craniano por queda sem proteção, episódios recorrentes recentes, ou **história familiar de morte súbita** antes dos 50 anos.',
+            'Releia o eletrocardiograma procurando especificamente os padrões que a leitura rápida perde: Brugada tipo 1, QT longo ou curto, pré-excitação, onda épsilon ou T invertida em precordiais direitas (displasia arritmogênica), hipertrofia ventricular, bloqueio bifascicular e onda Q de infarto prévio.',
+            'Meça a **pressão em ortostase** — deitado e após 1 e 3 minutos em pé — e revise a prescrição: hipotensão ortostática por fármaco é causa comum, subdiagnosticada e imediatamente corrigível.',
+            'Oriente o paciente e a família por escrito: manobras de contrapressão física (cruzar as pernas, contrair as mãos e os braços) ao primeiro pródromo, hidratação e sal se não houver contraindicação, evitar gatilhos, deitar-se imediatamente ao sentir sintoma, e proibição temporária de direção conforme a regulamentação local. Defina retorno e sinais de alarme.',
+          ],
+      alertas: [
+        'Validações externas encontraram sensibilidade de apenas 74 a 90%, bem abaixo dos 96% da derivação. A regra é apoio à decisão e nunca autorização automática de alta — o Canadian Syncope Risk Score tem calibração melhor e é alternativa preferível onde disponível.',
+        'A regra **não contém nenhuma variável de circunstância** da síncope. Esforço, decúbito, ausência de pródromo, palpitação precedente e história familiar de morte súbita são marcadores de alto risco que precisam ser buscados fora dela.',
+        'Não se aplica a perda de consciência com causa já estabelecida — convulsão, hipoglicemia, trauma craniano, intoxicação — nem a quase-síncope isolada, para a qual não foi derivada.',
+        'A definição de "ECG anormal" é ampla e pouco padronizada, e é a maior fonte de variabilidade entre serviços. Na dúvida, classifique como anormal.',
+        'Síncope em idoso raramente tem causa única: desidratação, fármaco, disautonomia e cardiopatia frequentemente coexistem, e tratar apenas um componente não previne a recorrência.',
+      ],
+      tabela: {
+        titulo: 'CHESS: o que cada item rastreia',
+        colunas: ['Letra', 'Critério', 'Mecanismo perigoso que sugere'],
+        linhas: [
+          ['C', 'Insuficiência cardíaca congestiva', 'Cardiopatia estrutural: arritmia ou obstrução'],
+          ['H', 'Hematócrito < 30%', 'Perda sanguínea oculta ou reserva reduzida'],
+          ['E', 'ECG anormal', 'Substrato arritmogênico ou isquemia'],
+          ['S', 'Dispneia (shortness of breath)', 'Doença cardiopulmonar aguda: embolia, IC, SCA'],
+          ['S', 'Sistólica < 90 mmHg na triagem', 'Causa ainda ativa: hemorragia, sepse, arritmia'],
+        ],
+        destaque: positivos.length > 0 ? 0 : undefined,
+      },
     }
   },
   formula: ['CHESS: CHF, Hematócrito < 30%, ECG anormal, Shortness of breath, Sistólica < 90 mmHg'],
   fundamento:
-    'A regra parte do princípio de que a síncope em si raramente é o problema — o problema é a doença que a causou. As cinco variáveis funcionam como marcadores de três mecanismos perigosos: cardiopatia estrutural (insuficiência cardíaca, ECG anormal), perda sanguínea oculta (hematócrito baixo, hipotensão) e doença cardiopulmonar aguda (dispneia).',
+    'A regra parte do princípio de que a síncope em si raramente é o problema — o problema é a doença que a causou. As cinco variáveis funcionam como marcadores de três mecanismos perigosos: cardiopatia estrutural (insuficiência cardíaca, ECG anormal), perda sanguínea oculta (hematócrito baixo, hipotensão) e doença cardiopulmonar aguda (dispneia). Para entender por que essa estratégia é insuficiente, é preciso ver a fisiopatologia completa. Síncope é hipoperfusão cerebral global transitória: a consciência se perde após cerca de 6 a 8 segundos de interrupção do fluxo, ou quando a pressão sistólica cai abaixo de aproximadamente 60 mmHg. Os mecanismos são três, com prognósticos radicalmente diferentes. O **reflexo** (vasovagal, situacional, do seno carotídeo) resulta de um reflexo de Bezold-Jarisch exagerado, disparado por mecanorreceptores de um ventrículo subitamente subpreenchido, que provoca retirada simpática com vasodilatação e bradicardia — é benigno e cursa com pródromos (calor, náusea, sudorese, palidez, visão turva) justamente porque a queda de pressão é progressiva. A **hipotensão ortostática** decorre de depleção de volume, disautonomia ou fármaco, e seu risco é o da causa. A **cardíaca** é a que mata, por arritmia (taquicardia ventricular, bloqueio atrioventricular completo, pausa sinusal, torsades) ou por obstrução mecânica (estenose aórtica, cardiomiopatia hipertrófica obstrutiva, embolia maciça, tamponamento, mixoma); tipicamente não tem pródromo, porque a queda de débito é instantânea, e daí o trauma facial ser marcador de gravidade. A regra CHESS tenta detectar indiretamente esse terceiro grupo por meio de substrato e de repercussão, mas não inclui uma única variável de **circunstância** do episódio. Essa omissão é a origem tanto de sua praticidade — todos os itens são objetivos e disponíveis na primeira hora — quanto de sua limitação, confirmada nas validações externas em que a sensibilidade caiu de 96% para 74 a 90%. Foi essa queda que motivou escores posteriores, notadamente o Canadian Syncope Risk Score, que incorpora predisposição a síncope vasovagal, cardiopatia, pressão arterial, troponina, eixo do QRS, intervalo QT corrigido e o diagnóstico presumido na emergência, obtendo calibração melhor.',
   armadilhas: [
     'A definição de "ECG anormal" é ampla e pouco padronizada, e é onde a variabilidade entre serviços é maior.',
     'A regra não se aplica a perda de consciência com causa já estabelecida (convulsão, hipoglicemia, trauma craniano, intoxicação).',
+    'Sensibilidade nas validações externas foi de 74 a 90%, não os 96% da derivação. Tratar resultado negativo como autorização de alta já produziu eventos evitáveis.',
+    'Nenhum item cobre circunstância da síncope. Esforço, decúbito, ausência de pródromo, palpitação e história familiar de morte súbita ficam invisíveis ao escore.',
+    'Hematócrito normal na primeira coleta não exclui hemorragia aguda: a hemodiluição leva horas, e um sangramento ativo recente pode cursar com hematócrito ainda preservado.',
+    'Não distingue síncope de crise epiléptica. Mordedura lateral de língua, movimentos clônicos prolongados, confusão pós-ictal longa e incontinência apontam crise e mudam completamente a investigação.',
+    'Em idoso, a hipotensão ortostática por fármaco é causa frequente e não pontua no escore. Medir pressão deitado e em pé, aos 1 e 3 minutos, rende mais que qualquer exame complementar nessa população.',
   ],
   referencias: [
     { texto: 'Quinn JV, Stiell IG, McDermott DA, et al. Derivation of the San Francisco Syncope Rule to predict patients with short-term serious outcomes. Ann Emerg Med. 2004;43(2):224-232.' },
