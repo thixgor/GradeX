@@ -243,29 +243,29 @@ const bishop: Ferramenta = {
       { valor: '1', rotulo: '1 a 2 cm', pontos: 1 },
       { valor: '2', rotulo: '3 a 4 cm', pontos: 2 },
       { valor: '3', rotulo: '5 cm ou mais', pontos: 3 },
-    ]),
+    ], { ajuda: 'Dilatação em centímetros ao toque. É o item de maior peso do escore.' }),
     campoOpc('apagamento', 'Apagamento cervical', [
       { valor: '0', rotulo: '0 a 30%', pontos: 0 },
       { valor: '1', rotulo: '40 a 50%', pontos: 1 },
       { valor: '2', rotulo: '60 a 70%', pontos: 2 },
       { valor: '3', rotulo: '80% ou mais', pontos: 3 },
-    ]),
+    ], { ajuda: 'Percentual de encurtamento do colo. Colo não apagado tem cerca de 3 cm de comprimento; 100% apagado é fino como papel.' }),
     campoOpc('altura', 'Altura da apresentação (planos de De Lee)', [
       { valor: '0', rotulo: '−3', pontos: 0 },
       { valor: '1', rotulo: '−2', pontos: 1 },
       { valor: '2', rotulo: '−1 ou 0', pontos: 2 },
       { valor: '3', rotulo: '+1 ou +2', pontos: 3 },
-    ]),
+    ], { ajuda: 'Planos de De Lee, tomando as espinhas isquiáticas como zero. É o item de maior variabilidade entre examinadores — na dúvida, prefira o Bishop simplificado.' }),
     campoOpc('consistencia', 'Consistência do colo', [
       { valor: '0', rotulo: 'Firme', pontos: 0 },
       { valor: '1', rotulo: 'Média', pontos: 1 },
       { valor: '2', rotulo: 'Amolecida', pontos: 2 },
-    ]),
+    ], { ajuda: 'Firme (como a ponta do nariz), intermediária, ou amolecida (como o lábio). O amolecimento depende da remodelação do colágeno cervical.' }),
     campoOpc('posicao', 'Posição do colo', [
       { valor: '0', rotulo: 'Posterior', pontos: 0 },
       { valor: '1', rotulo: 'Central', pontos: 1 },
       { valor: '2', rotulo: 'Anterior', pontos: 2 },
-    ]),
+    ], { ajuda: 'Posterior, intermediária ou anterior em relação ao eixo vaginal. O colo migra para anterior à medida que amadurece.' }),
   ],
   calcular: (v) => {
     const ids = ['dilatacao', 'apagamento', 'altura', 'consistencia', 'posicao']
@@ -434,11 +434,11 @@ const sulfatoMagnesio: Ferramenta = {
       { valor: 'pritchard', rotulo: 'Pritchard (intramuscular)' },
       { valor: 'neuro', rotulo: 'Neuroproteção fetal' },
     ]),
-    campoNum('manutencao', 'Dose de manutenção desejada', { unidade: 'g/h', min: 1, max: 3, passo: 0.5, padrao: '1', mostrarSe: (v) => opc(v, 'esquema') === 'zuspan' }),
-    campoNum('creatinina', 'Creatinina sérica', { unidade: 'mg/dL', min: 0.2, max: 8, passo: 0.01, padrao: '0.7' }),
-    campoNum('diurese', 'Diurese na última hora', { unidade: 'mL', min: 0, max: 500, passo: 5, opcional: true }),
-    campoSimNao('reflexos', 'Reflexo patelar presente', 1),
-    campoNum('fr', 'Frequência respiratória', { unidade: 'irpm', min: 4, max: 40, passo: 1, opcional: true }),
+    campoNum('manutencao', 'Dose de manutenção desejada', { ajuda: '1 a 2 g/h no esquema de Zuspan. Reduza em insuficiência renal, já que a eliminação do magnésio é exclusivamente renal.', unidade: 'g/h', min: 1, max: 3, passo: 0.5, padrao: '1', mostrarSe: (v) => opc(v, 'esquema') === 'zuspan' }),
+    campoNum('creatinina', 'Creatinina sérica', { ajuda: 'Creatinina sérica. Com função renal reduzida, mantenha o ataque integral e reduza a manutenção, dosando a magnesemia (alvo de 4,8 a 8,4 mg/dL).', unidade: 'mg/dL', min: 0.2, max: 8, passo: 0.01, padrao: '0.7' }),
+    campoNum('diurese', 'Diurese na última hora', { ajuda: 'Diurese da última hora. Abaixo de 25 a 30 mL/h, o magnésio acumula e a manutenção precisa ser reduzida.', unidade: 'mL', min: 0, max: 500, passo: 5, opcional: true }),
+    campoSimNao('reflexos', 'Reflexo patelar presente', 1, 'O reflexo patelar é o primeiro sinal a desaparecer na intoxicação e precede a depressão respiratória — cheque de hora em hora.'),
+    campoNum('fr', 'Frequência respiratória', { ajuda: 'Frequência respiratória. Abaixo de 12 a 16 irpm, suspenda a infusão e administre gluconato de cálcio 1 g intravenoso.', unidade: 'irpm', min: 4, max: 40, passo: 1, opcional: true }),
   ],
   calcular: (v) => {
     const esquema = opc(v, 'esquema')
@@ -512,14 +512,14 @@ const choqueObstetrico: Ferramenta = {
   resumo: 'Detecta hemorragia obstétrica antes da hipotensão e organiza a conduta.',
   categorias: ['ginecologia', 'emergencia'],
   campos: [
-    campoNum('fc', 'Frequência cardíaca', { unidade: 'bpm', min: 40, max: 200, passo: 1 }),
-    campoNum('pas', 'PA sistólica', { unidade: 'mmHg', min: 40, max: 200, passo: 1 }),
-    campoNum('perda', 'Perda sanguínea estimada', { unidade: 'mL', min: 0, max: 5000, passo: 50, opcional: true }),
+    campoNum('fc', 'Frequência cardíaca', { ajuda: 'Frequência cardíaca atual. O índice sobe antes de a pressão cair, porque a gestante compensa perdas de até 1.500 mL mantendo a sistólica normal.', unidade: 'bpm', min: 40, max: 200, passo: 1 }),
+    campoNum('pas', 'PA sistólica', { ajuda: 'Sistólica atual. Betabloqueador, raquianestesia e cardiopatia materna desacoplam frequência e volemia e invalidam o índice.', unidade: 'mmHg', min: 40, max: 200, passo: 1 }),
+    campoNum('perda', 'Perda sanguínea estimada', { ajuda: 'Perda estimada em mL. Use pesagem de compressas e coletor graduado: a estimativa visual subestima em cerca de 30 a 50%.', unidade: 'mL', min: 0, max: 5000, passo: 50, opcional: true }),
     campoSeg('via', 'Via de parto', [
       { valor: 'vaginal', rotulo: 'Vaginal' },
       { valor: 'cesarea', rotulo: 'Cesariana' },
     ]),
-    campoNum('hb', 'Hemoglobina', { unidade: 'g/dL', min: 2, max: 16, passo: 0.1, opcional: true }),
+    campoNum('hb', 'Hemoglobina', { ajuda: 'Hemoglobina, que na hemorragia aguda subestima a perda até que a hemodiluição compensatória se complete.', unidade: 'g/dL', min: 2, max: 16, passo: 0.1, opcional: true }),
   ],
   calcular: (v) => {
     const fc = num(v, 'fc')
@@ -687,8 +687,8 @@ const proteinuria: Ferramenta = {
   resumo: 'Converte amostra isolada em estimativa de proteinúria de 24 horas.',
   categorias: ['ginecologia', 'nefrologia'],
   campos: [
-    campoNum('proteina', 'Proteína urinária', { unidade: 'mg/dL', min: 1, max: 2000, passo: 1 }),
-    campoNum('creatininaU', 'Creatinina urinária', { unidade: 'mg/dL', min: 5, max: 500, passo: 1 }),
+    campoNum('proteina', 'Proteína urinária', { ajuda: 'Proteína em amostra isolada, em mg/dL. Colha preferencialmente a primeira urina da manhã, com a paciente em repouso.', unidade: 'mg/dL', min: 1, max: 2000, passo: 1 }),
+    campoNum('creatininaU', 'Creatinina urinária', { ajuda: 'Creatinina **urinária** da mesma amostra, em mg/dL — não a sérica. É ela que normaliza a concentração da urina.', unidade: 'mg/dL', min: 5, max: 500, passo: 1 }),
     campoSeg('contexto', 'Contexto', [
       { valor: 'gestacao', rotulo: 'Gestação' },
       { valor: 'geral', rotulo: 'Nefrologia geral' },
@@ -754,15 +754,15 @@ const ectopica: Ferramenta = {
   resumo: 'Interpreta a curva do hCG e a zona discriminatória na gestação de localização indeterminada.',
   categorias: ['ginecologia', 'emergencia'],
   campos: [
-    campoNum('hcg1', 'β-hCG inicial', { unidade: 'mUI/mL', min: 1, max: 200000, passo: 1 }),
-    campoNum('hcg2', 'β-hCG após 48 horas', { unidade: 'mUI/mL', min: 1, max: 200000, passo: 1, opcional: true }),
-    campoNum('horas', 'Intervalo entre as dosagens', { unidade: 'h', min: 24, max: 96, passo: 1, padrao: '48', opcional: true }),
+    campoNum('hcg1', 'β-hCG inicial', { ajuda: 'β-hCG quantitativo inicial em mUI/mL. A zona discriminatória (útero vazio acima dela sugere ectópica) fica entre 1.500 e 3.500 conforme o serviço.', unidade: 'mUI/mL', min: 1, max: 200000, passo: 1 }),
+    campoNum('hcg2', 'β-hCG após 48 horas', { ajuda: 'β-hCG da segunda dosagem. Aumento menor que 35 a 50% em 48 h sugere gravidez não tópica ou inviável.', unidade: 'mUI/mL', min: 1, max: 200000, passo: 1, opcional: true }),
+    campoNum('horas', 'Intervalo entre as dosagens', { ajuda: 'Intervalo real entre as coletas, em horas — a cinética é definida sobre 48 h e precisa ser normalizada.', unidade: 'h', min: 24, max: 96, passo: 1, padrao: '48', opcional: true }),
     campoSeg('usg', 'Ultrassonografia transvaginal', [
       { valor: 'indeterminada', rotulo: 'Sem saco gestacional visível' },
       { valor: 'intrauterina', rotulo: 'Gestação intrauterina visível' },
       { valor: 'ectopica', rotulo: 'Massa anexial ou gestação ectópica visível' },
     ]),
-    campoSimNao('instabilidade', 'Instabilidade hemodinâmica ou sinais de abdome agudo', 1),
+    campoSimNao('instabilidade', 'Instabilidade hemodinâmica ou sinais de abdome agudo', 1, 'Hipotensão, taquicardia, dor intensa, sinais de irritação peritoneal ou líquido livre volumoso: indicam cirurgia imediata, sem aguardar dosagens.'),
   ],
   calcular: (v) => {
     const h1 = num(v, 'hcg1')
@@ -1033,11 +1033,11 @@ const ferroGestacao: Ferramenta = {
   resumo: 'Aplica os pontos de corte por trimestre e calcula a reposição.',
   categorias: ['ginecologia', 'hematologia', 'nutricao'],
   campos: [
-    campoNum('hb', 'Hemoglobina', { unidade: 'g/dL', min: 3, max: 16, passo: 0.1 }),
+    campoNum('hb', 'Hemoglobina', { ajuda: 'Hemoglobina em g/dL. O corte de anemia varia por trimestre: 11 no primeiro e terceiro, 10,5 no segundo, pela hemodiluição fisiológica.', unidade: 'g/dL', min: 3, max: 16, passo: 0.1 }),
     campoNum('trimestre', 'Trimestre', { min: 1, max: 3, passo: 1, padrao: '2' }),
-    campoNum('ferritina', 'Ferritina', { unidade: 'ng/mL', min: 1, max: 1000, passo: 1, opcional: true }),
+    campoNum('ferritina', 'Ferritina', { ajuda: 'Ferritina em ng/mL. Abaixo de 30 confirma deficiência mesmo sem anemia; entre 30 e 100 com proteína C-reativa alta, não exclui.', unidade: 'ng/mL', min: 1, max: 1000, passo: 1, opcional: true }),
     campoPeso(),
-    campoNum('semanas', 'Idade gestacional', { unidade: 'semanas', min: 4, max: 42, passo: 0.5 }),
+    campoNum('semanas', 'Idade gestacional', { ajuda: 'Idade gestacional em semanas. O ferro intravenoso é opção a partir do segundo trimestre.', unidade: 'semanas', min: 4, max: 42, passo: 0.5 }),
   ],
   calcular: (v) => {
     const hb = num(v, 'hb')
@@ -1104,16 +1104,16 @@ const rmi: Ferramenta = {
   resumo: 'Estima a probabilidade de malignidade de uma massa anexial e orienta o encaminhamento.',
   categorias: ['ginecologia'],
   campos: [
-    campoNum('ca125', 'CA-125', { unidade: 'U/mL', min: 1, max: 10000, passo: 1 }),
+    campoNum('ca125', 'CA-125', { ajuda: 'CA-125 em U/mL. Sobe em endometriose, miomas, doença inflamatória pélvica, gestação, menstruação, cirrose e tuberculose peritoneal — por isso o índice o multiplica pelo estado menopausal.', unidade: 'U/mL', min: 1, max: 10000, passo: 1 }),
     campoSeg('menopausa', 'Estado menopausal', [
       { valor: 'pre', rotulo: 'Pré-menopausa' },
       { valor: 'pos', rotulo: 'Pós-menopausa' },
     ], { ajuda: 'Pós-menopausa: mais de 1 ano de amenorreia, ou idade acima de 50 anos em histerectomizadas.' }),
-    campoSimNao('multilocular', 'Cisto multilocular', 1),
-    campoSimNao('solida', 'Áreas sólidas', 1),
+    campoSimNao('multilocular', 'Cisto multilocular', 1, 'Cisto com septações internas à ultrassonografia.'),
+    campoSimNao('solida', 'Áreas sólidas', 1, 'Componente sólido ou projeção papilar vascularizada — é o achado morfológico de maior peso.'),
     campoSimNao('bilateral', 'Lesão bilateral', 1),
     campoSimNao('ascite', 'Ascite', 1),
-    campoSimNao('metastases', 'Metástases intra-abdominais', 1),
+    campoSimNao('metastases', 'Metástases intra-abdominais', 1, 'Implantes peritoneais, omental cake ou linfonodomegalia à imagem.'),
   ],
   calcular: (v) => {
     const ca125 = num(v, 'ca125')
@@ -1174,9 +1174,9 @@ const periodoFertil: Ferramenta = {
   resumo: 'Estima a janela fértil pelo método do calendário — apenas como referência educativa.',
   categorias: ['ginecologia'],
   campos: [
-    campoNum('diasDesdeMenstruacao', 'Dias desde o primeiro dia da última menstruação', { unidade: 'dias', min: 0, max: 60, passo: 1 }),
-    campoNum('cicloCurto', 'Ciclo mais curto dos últimos 6 a 12 meses', { unidade: 'dias', min: 20, max: 45, passo: 1, padrao: '28' }),
-    campoNum('cicloLongo', 'Ciclo mais longo dos últimos 6 a 12 meses', { unidade: 'dias', min: 20, max: 60, passo: 1, padrao: '28' }),
+    campoNum('diasDesdeMenstruacao', 'Dias desde o primeiro dia da última menstruação', { ajuda: 'Conte a partir do **primeiro dia** do sangramento, não do último.', unidade: 'dias', min: 0, max: 60, passo: 1 }),
+    campoNum('cicloCurto', 'Ciclo mais curto dos últimos 6 a 12 meses', { ajuda: 'O menor intervalo entre menstruações nos últimos 6 a 12 meses, em dias. Variação maior que 8 dias entre o mais curto e o mais longo torna a estimativa pouco confiável.', unidade: 'dias', min: 20, max: 45, passo: 1, padrao: '28' }),
+    campoNum('cicloLongo', 'Ciclo mais longo dos últimos 6 a 12 meses', { ajuda: 'O maior intervalo entre menstruações no mesmo período, em dias.', unidade: 'dias', min: 20, max: 60, passo: 1, padrao: '28' }),
   ],
   calcular: (v) => {
     const dias = num(v, 'diasDesdeMenstruacao')

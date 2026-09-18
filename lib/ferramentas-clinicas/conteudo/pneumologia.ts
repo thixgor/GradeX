@@ -31,7 +31,7 @@ const pesoPreditoFerramenta: Ferramenta = {
   campos: [
     ...campoSexoAltura,
     campoNum('mlkg', 'Volume corrente alvo', { unidade: 'mL/kg de peso predito', min: 3, max: 10, passo: 0.5, padrao: '6', ajuda: 'A ventilação protetora usa 6 mL/kg, com faixa aceitável de 4 a 8 conforme pH e driving pressure.' }),
-    campoNum('pesoReal', 'Peso real (apenas para comparação)', { unidade: 'kg', min: 20, max: 350, passo: 0.5, opcional: true }),
+    campoNum('pesoReal', 'Peso real (apenas para comparação)', { ajuda: 'Serve apenas para comparação. O volume corrente **nunca** é calculado sobre o peso real: o pulmão não cresce com a obesidade, e 6 mL/kg de peso real causa lesão induzida pela ventilação.', unidade: 'kg', min: 20, max: 350, passo: 0.5, opcional: true }),
   ],
   calcular: (v) => {
     const sexo = opc(v, 'sexo')
@@ -826,17 +826,17 @@ const controleAsma: Ferramenta = {
   resumo: 'Avalia o controle da asma pelos dois instrumentos mais usados, lado a lado.',
   categorias: ['pneumologia'],
   campos: [
-    campoSimNao('gDia', 'Sintomas diurnos mais de 2 vezes por semana (últimas 4 semanas)', 1),
-    campoSimNao('gNoite', 'Qualquer despertar noturno por asma', 1),
+    campoSimNao('gDia', 'Sintomas diurnos mais de 2 vezes por semana (últimas 4 semanas)', 1, 'Sintomas diurnos mais de duas vezes por semana nas últimas 4 semanas — conte episódios, não dias com qualquer sintoma leve.'),
+    campoSimNao('gNoite', 'Qualquer despertar noturno por asma', 1, 'Qualquer despertar noturno por asma. Um único episódio já pontua, porque sintoma noturno marca inflamação não controlada.'),
     campoSimNao('gResgate', 'Uso de medicação de resgate mais de 2 vezes por semana', 1, 'Não conta o uso profilático antes do exercício.'),
-    campoSimNao('gAtividade', 'Qualquer limitação de atividade por asma', 1),
+    campoSimNao('gAtividade', 'Qualquer limitação de atividade por asma', 1, 'Qualquer limitação de atividade habitual por asma, inclusive a que o paciente já naturalizou e não relata espontaneamente.'),
     campoOpc('act1', 'ACT 1 — Nas últimas 4 semanas, quanto a asma impediu você de fazer suas atividades?', [
       { valor: '5', rotulo: 'Nenhuma vez', pontos: 5 },
       { valor: '4', rotulo: 'Poucas vezes', pontos: 4 },
       { valor: '3', rotulo: 'Algumas vezes', pontos: 3 },
       { valor: '2', rotulo: 'A maior parte do tempo', pontos: 2 },
       { valor: '1', rotulo: 'Todo o tempo', pontos: 1 },
-    ]),
+    ], { ajuda: 'O ACT pergunta sobre as últimas 4 semanas e é respondido pelo próprio paciente. Pontuação de 25 indica controle total; abaixo de 20, asma não controlada.' }),
     campoOpc('act2', 'ACT 2 — Com que frequência você teve falta de ar?', [
       { valor: '5', rotulo: 'Nenhuma vez', pontos: 5 },
       { valor: '4', rotulo: '1 a 2 vezes por semana', pontos: 4 },
@@ -1058,7 +1058,7 @@ const rsbi: Ferramenta = {
   categorias: ['pneumologia', 'emergencia'],
   campos: [
     campoNum('fr', 'Frequência respiratória durante o teste', { unidade: 'irpm', min: 5, max: 60, passo: 1, ajuda: 'Medida durante teste de respiração espontânea, idealmente no primeiro minuto em tubo T ou pressão de suporte mínima.' }),
-    campoNum('vt', 'Volume corrente espontâneo', { unidade: 'mL', min: 50, max: 1200, passo: 5 }),
+    campoNum('vt', 'Volume corrente espontâneo', { ajuda: 'Volume corrente espontâneo médio em litros, medido **sem pressão de suporte e sem PEEP**. Medido com suporte, o índice cai artificialmente e produz extubação prematura.', unidade: 'mL', min: 50, max: 1200, passo: 5 }),
   ],
   calcular: (v) => {
     const fr = num(v, 'fr')
@@ -1116,13 +1116,13 @@ const light: Ferramenta = {
   resumo: 'Separa exsudato de transudato e aponta as exceções que o critério erra.',
   categorias: ['pneumologia', 'gastroenterologia'],
   campos: [
-    campoNum('ptPleural', 'Proteína total no líquido pleural', { unidade: 'g/dL', min: 0, max: 10, passo: 0.1 }),
-    campoNum('ptSerica', 'Proteína total sérica', { unidade: 'g/dL', min: 2, max: 12, passo: 0.1 }),
-    campoNum('ldhPleural', 'LDH no líquido pleural', { unidade: 'U/L', min: 5, max: 5000, passo: 1 }),
-    campoNum('ldhSerica', 'LDH sérica', { unidade: 'U/L', min: 50, max: 3000, passo: 1 }),
-    campoNum('ldhLimite', 'Limite superior do normal da LDH sérica do laboratório', { unidade: 'U/L', min: 100, max: 500, passo: 1, padrao: '250' }),
+    campoNum('ptPleural', 'Proteína total no líquido pleural', { ajuda: 'Proteína total do líquido, em g/dL, da amostra da toracocentese.', unidade: 'g/dL', min: 0, max: 10, passo: 0.1 }),
+    campoNum('ptSerica', 'Proteína total sérica', { ajuda: 'Proteína total do soro colhido no mesmo dia — a razão exige as duas do mesmo momento.', unidade: 'g/dL', min: 2, max: 12, passo: 0.1 }),
+    campoNum('ldhPleural', 'LDH no líquido pleural', { ajuda: 'Desidrogenase láctica do líquido, em U/L. Valores muito elevados em derrame parapneumônico indicam derrame complicado e drenagem.', unidade: 'U/L', min: 5, max: 5000, passo: 1 }),
+    campoNum('ldhSerica', 'LDH sérica', { ajuda: 'Desidrogenase láctica do soro do mesmo dia.', unidade: 'U/L', min: 50, max: 3000, passo: 1 }),
+    campoNum('ldhLimite', 'Limite superior do normal da LDH sérica do laboratório', { ajuda: 'Limite superior do normal da desidrogenase láctica sérica no seu laboratório — o critério de Light usa dois terços desse valor.', unidade: 'U/L', min: 100, max: 500, passo: 1, padrao: '250' }),
     campoNum('albSerica', 'Albumina sérica', { unidade: 'g/dL', min: 0.5, max: 6, passo: 0.1, opcional: true, ajuda: 'Permite calcular o gradiente de albumina, útil quando há diurético em uso.' }),
-    campoNum('albPleural', 'Albumina no líquido pleural', { unidade: 'g/dL', min: 0, max: 6, passo: 0.1, opcional: true }),
+    campoNum('albPleural', 'Albumina no líquido pleural', { ajuda: 'Albumina do líquido. Com o gradiente soro-líquido acima de 1,2 g/dL, o derrame é transudato mesmo que os critérios de Light digam exsudato — é a correção da armadilha do diurético.', unidade: 'g/dL', min: 0, max: 6, passo: 0.1, opcional: true }),
   ],
   calcular: (v) => {
     const ptP = num(v, 'ptPleural')

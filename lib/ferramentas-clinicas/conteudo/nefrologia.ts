@@ -169,10 +169,10 @@ const cockcroft: Ferramenta = {
   resumo: 'A estimativa usada nas bulas para ajuste de dose, com as três variantes de peso.',
   categorias: ['nefrologia', 'farmacologia'],
   campos: [
-    campoCreatinina(),
-    campoIdade({ min: 18 }),
+    campoCreatinina({ ajuda: 'A fórmula pressupõe creatinina em estado de equilíbrio: em lesão renal aguda com creatinina subindo, a filtração real já é muito menor que a calculada.' }),
+    campoIdade({ min: 18, ajuda: 'A idade entra no numerador como estimativa da queda de massa muscular, e não de função renal — daí o erro em idosos sarcopênicos, amputados e tetraplégicos.' }),
     campoSexo(),
-    campoPeso(),
+    campoPeso({ ajuda: 'Use peso ideal em obesos e peso ajustado acima de índice de massa corporal 30. Peso real em obesidade infla o clearance calculado e leva a superdosagem — o erro mais perigoso da fórmula.' }),
     campoAltura({ opcional: true, ajuda: 'Permite calcular peso ideal e peso ajustado — os que devem ser usados em obesidade.' }),
   ],
   calcular: (v) => {
@@ -404,8 +404,8 @@ const calcioCorrigido: Ferramenta = {
   resumo: 'Ajusta o cálcio total pela albumina, e explica quando isso não basta.',
   categorias: ['nefrologia', 'endocrinologia'],
   campos: [
-    campoNum('calcio', 'Cálcio total', { unidade: 'mg/dL', min: 3, max: 20, passo: 0.1, normalMin: 8.5, normalMax: 10.5 }),
-    campoNum('albumina', 'Albumina', { unidade: 'g/dL', min: 0.5, max: 6, passo: 0.1, normalMin: 3.5, normalMax: 5 }),
+    campoNum('calcio', 'Cálcio total', { ajuda: 'Cálcio total em mg/dL. Quando a decisão for crítica, meça o cálcio ionizado em vez de corrigir — a fórmula tem desempenho limitado no doente crítico.', unidade: 'mg/dL', min: 3, max: 20, passo: 0.1, normalMin: 8.5, normalMax: 10.5 }),
+    campoNum('albumina', 'Albumina', { ajuda: 'Albumina em g/dL, colhida próxima à amostra do cálcio. A correção soma 0,8 mg/dL ao cálcio para cada 1 g/dL de albumina abaixo de 4.', unidade: 'g/dL', min: 0.5, max: 6, passo: 0.1, normalMin: 3.5, normalMax: 5 }),
     campoNum('ph', 'pH arterial', { min: 6.8, max: 7.8, passo: 0.01, opcional: true, ajuda: 'Opcional. Alcalose aumenta a ligação do cálcio à albumina e reduz o cálcio ionizado sem mudar o total.' }),
   ],
   calcular: (v) => {
@@ -477,10 +477,10 @@ const osmolaridade: Ferramenta = {
   resumo: 'Calcula a osmolaridade total e a efetiva (tonicidade), que são coisas diferentes.',
   categorias: ['nefrologia', 'endocrinologia', 'emergencia'],
   campos: [
-    campoNum('na', 'Sódio', { unidade: 'mEq/L', min: 90, max: 190, passo: 1 }),
-    campoNum('glicose', 'Glicose', { unidade: 'mg/dL', min: 20, max: 2000, passo: 1 }),
+    campoNum('na', 'Sódio', { ajuda: 'Sódio sérico. É ele, junto com a glicose, que determina a tonicidade — a ureia eleva a osmolaridade sem gerar gradiente osmótico.', unidade: 'mEq/L', min: 90, max: 190, passo: 1 }),
+    campoNum('glicose', 'Glicose', { ajuda: 'Glicemia em mg/dL. Corrija o sódio antes de interpretar: some 1,6 mEq/L para cada 100 mg/dL acima de 100.', unidade: 'mg/dL', min: 20, max: 2000, passo: 1 }),
     campoNum('ureia', 'Ureia', { unidade: 'mg/dL', min: 5, max: 400, passo: 1, ajuda: 'Se o laboratório reporta BUN, multiplique por 2,14 para obter ureia.' }),
-    campoNum('etanol', 'Etanol', { unidade: 'mg/dL', min: 0, max: 600, passo: 1, padrao: '0', opcional: true }),
+    campoNum('etanol', 'Etanol', { ajuda: 'Alcoolemia em mg/dL, para descontar do gap osmolar. O etanol é a causa mais comum de gap elevado e mascara a suspeita de metanol e etilenoglicol.', unidade: 'mg/dL', min: 0, max: 600, passo: 1, padrao: '0', opcional: true }),
   ],
   calcular: (v) => {
     const na = num(v, 'na')
@@ -637,13 +637,13 @@ const deficitAgua: Ferramenta = {
       { valor: 'nao', rotulo: 'Adulto (< 65 anos)' },
       { valor: 'sim', rotulo: 'Idoso (≥ 65 anos)' },
     ], { ajuda: 'A água corporal total cai com a idade: 60% do peso em homens jovens, 50% em idosos e mulheres jovens, 45% em idosas.' }),
-    campoNum('naAtual', 'Sódio atual', { unidade: 'mEq/L', min: 140, max: 200, passo: 1 }),
-    campoNum('naAlvo', 'Sódio alvo', { unidade: 'mEq/L', min: 130, max: 160, passo: 1, padrao: '140' }),
+    campoNum('naAtual', 'Sódio atual', { ajuda: 'Sódio atual em mEq/L, da amostra mais recente.', unidade: 'mEq/L', min: 140, max: 200, passo: 1 }),
+    campoNum('naAlvo', 'Sódio alvo', { ajuda: 'Sódio desejado ao fim de 24 h. Respeite o teto de 10 a 12 mEq/L de queda por dia na hipernatremia crônica, pelo risco de edema cerebral.', unidade: 'mEq/L', min: 130, max: 160, passo: 1, padrao: '140' }),
     campoSeg('cronico', 'Tempo de instalação', [
       { valor: 'sim', rotulo: 'Crônica ou desconhecida (> 48 h)' },
       { valor: 'nao', rotulo: 'Aguda documentada (< 48 h)' },
-    ]),
-    campoNum('perdas', 'Perdas insensíveis e urinárias estimadas em 24 h', { unidade: 'mL', min: 0, max: 6000, passo: 100, padrao: '1500', opcional: true }),
+    ], { ajuda: 'Aguda (menos de 48 h, quase sempre iatrogênica) permite correção de até 1 mEq/L por hora; crônica ou de duração desconhecida, no máximo 0,5 mEq/L por hora.' }),
+    campoNum('perdas', 'Perdas insensíveis e urinárias estimadas em 24 h', { ajuda: 'Some diurese osmótica, perdas insensíveis (cerca de 10 mL/kg/dia, mais com febre ou taquipneia), drenagens e diarreia. Ignorá-las é o motivo mais comum de o sódio não cair como previsto.', unidade: 'mL', min: 0, max: 6000, passo: 100, padrao: '1500', opcional: true }),
   ],
   calcular: (v) => {
     const peso = num(v, 'peso')
@@ -1303,7 +1303,7 @@ const doseRenal: Ferramenta = {
       { valor: 'antidiabetico', rotulo: 'Antidiabéticos' },
       { valor: 'analgesico', rotulo: 'Analgésicos e anti-inflamatórios' },
       { valor: 'antiviral', rotulo: 'Antivirais' },
-    ]),
+    ], { ajuda: 'O ajuste segue a farmacodinâmica: tempo-dependentes reduzem a dose e mantêm o intervalo; concentração-dependentes mantêm a dose e alargam o intervalo, preservando o pico e permitindo o vale baixo que protege rim e ouvido interno.' }),
   ],
   calcular: (v) => {
     const cr = num(v, 'creatinina')

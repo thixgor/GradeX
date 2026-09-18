@@ -176,7 +176,11 @@ const pesoIdeal: Ferramenta = {
   sinonimos: ['peso ideal', 'peso ajustado', 'devine', 'robinson', 'hamwi'],
   resumo: 'As quatro fórmulas de peso ideal e o peso ajustado usado em dose e nutrição.',
   categorias: ['endocrinologia', 'farmacologia', 'nutricao'],
-  campos: [campoAltura(), campoSexo(), campoPeso({ opcional: true, ajuda: 'Necessário para calcular o peso ajustado.' })],
+  campos: [
+    campoAltura({ ajuda: 'A altura é a única variável das fórmulas de peso ideal (Devine, Robinson, Hamwi). Meça de verdade: estimá-la transporta o erro direto para a dose e para o volume corrente.' }),
+    campoSexo(),
+    campoPeso({ opcional: true, ajuda: 'Necessário para o peso ajustado, que é o descritor de escolha para antimicrobianos quando o índice de massa corporal passa de 30.' }),
+  ],
   calcular: (v) => {
     const altura = num(v, 'altura')
     const peso = num(v, 'peso')

@@ -29,7 +29,7 @@ const glasgow: Ferramenta = {
       { valor: '2', rotulo: '2 — à pressão (estímulo doloroso)', pontos: 2 },
       { valor: '1', rotulo: '1 — ausente', pontos: 1 },
       { valor: '0', rotulo: 'Não testável (edema, trauma orbitário)', pontos: 0 },
-    ]),
+    ], { ajuda: 'Registre \'NT\' quando o edema palpebral impedir a avaliação, em vez de pontuar 1 — pontuar como se fosse avaliável produz escore falsamente baixo.' }),
     campoOpc('verbal', 'Resposta verbal', [
       { valor: '5', rotulo: '5 — orientada', pontos: 5 },
       { valor: '4', rotulo: '4 — confusa', pontos: 4 },
@@ -37,7 +37,7 @@ const glasgow: Ferramenta = {
       { valor: '2', rotulo: '2 — sons incompreensíveis', pontos: 2 },
       { valor: '1', rotulo: '1 — ausente', pontos: 1 },
       { valor: '0', rotulo: 'Não testável (tubo, traqueostomia)', pontos: 0 },
-    ]),
+    ], { ajuda: 'Em paciente intubado, registre \'T\'. Afasia e barreira de idioma também invalidam o item.' }),
     campoOpc('motora', 'Melhor resposta motora', [
       { valor: '6', rotulo: '6 — obedece a comandos', pontos: 6 },
       { valor: '5', rotulo: '5 — localiza a dor', pontos: 5 },
@@ -45,12 +45,12 @@ const glasgow: Ferramenta = {
       { valor: '3', rotulo: '3 — flexão anormal (decorticação)', pontos: 3 },
       { valor: '2', rotulo: '2 — extensão (descerebração)', pontos: 2 },
       { valor: '1', rotulo: '1 — ausente', pontos: 1 },
-    ]),
+    ], { ajuda: 'Use a **melhor** resposta de qualquer membro, e o estímulo doloroso central (pressão supraorbitária ou trapézio). É o componente de maior valor prognóstico.' }),
     campoOpc('pupilas', 'Reatividade pupilar (para o GCS-P)', [
       { valor: '0', rotulo: 'Ambas reativas', pontos: 0 },
       { valor: '1', rotulo: 'Uma não reativa', pontos: 1 },
       { valor: '2', rotulo: 'Nenhuma reativa', pontos: 2 },
-    ]),
+    ], { ajuda: 'Para o GCS-P, subtraia 2 pontos se ambas as pupilas forem não reativas e 1 se apenas uma for — o que estende a faixa útil do escore para baixo.' }),
   ],
   calcular: (v) => {
     const o = num(v, 'ocular')
@@ -132,41 +132,41 @@ const nihss: Ferramenta = {
       { valor: '1', rotulo: '1 — desperta com estímulo mínimo', pontos: 1 },
       { valor: '2', rotulo: '2 — requer estímulo repetido ou doloroso', pontos: 2 },
       { valor: '3', rotulo: '3 — responde apenas reflexamente ou irresponsivo', pontos: 3 },
-    ]),
+    ], { ajuda: 'Pontue o que o paciente faz, não o que você acha que ele conseguiria. Item 0 exige alerta e responsivo; 3 é resposta apenas reflexa ou ausente.' }),
     campoOpc('n1b', '1b. Perguntas (mês e idade)', [
       { valor: '0', rotulo: '0 — ambas corretas', pontos: 0 },
       { valor: '1', rotulo: '1 — uma correta', pontos: 1 },
       { valor: '2', rotulo: '2 — nenhuma correta', pontos: 2 },
-    ]),
+    ], { ajuda: 'Pergunte o mês e a idade. Afasia e intubação pontuam 2; barreira de idioma ou disartria grave, 1.' }),
     campoOpc('n1c', '1c. Comandos (abrir/fechar olhos e mão)', [
       { valor: '0', rotulo: '0 — ambos corretos', pontos: 0 },
       { valor: '1', rotulo: '1 — um correto', pontos: 1 },
       { valor: '2', rotulo: '2 — nenhum correto', pontos: 2 },
-    ]),
+    ], { ajuda: 'Abrir e fechar os olhos e a mão não parética. Se não compreender, demonstre com mímica e pontue a tentativa.' }),
     campoOpc('n2', '2. Motricidade ocular', [
       { valor: '0', rotulo: '0 — normal', pontos: 0 },
       { valor: '1', rotulo: '1 — paresia parcial do olhar', pontos: 1 },
       { valor: '2', rotulo: '2 — desvio forçado ou paresia total', pontos: 2 },
-    ]),
+    ], { ajuda: 'Teste apenas movimento horizontal voluntário ou por reflexo oculocefálico.' }),
     campoOpc('n3', '3. Campos visuais', [
       { valor: '0', rotulo: '0 — sem perda', pontos: 0 },
       { valor: '1', rotulo: '1 — hemianopsia parcial', pontos: 1 },
       { valor: '2', rotulo: '2 — hemianopsia completa', pontos: 2 },
       { valor: '3', rotulo: '3 — hemianopsia bilateral / cegueira cortical', pontos: 3 },
-    ]),
+    ], { ajuda: 'Campos visuais por confrontação, com ameaça visual se o paciente não colaborar. Hemianopsia é déficit incapacitante e justifica trombólise mesmo com escore total baixo.' }),
     campoOpc('n4', '4. Paralisia facial', [
       { valor: '0', rotulo: '0 — normal', pontos: 0 },
       { valor: '1', rotulo: '1 — paralisia menor', pontos: 1 },
       { valor: '2', rotulo: '2 — paralisia parcial (face inferior)', pontos: 2 },
       { valor: '3', rotulo: '3 — paralisia completa', pontos: 3 },
-    ]),
+    ], { ajuda: 'Peça para mostrar os dentes, levantar as sobrancelhas e fechar os olhos com força. Paralisia central poupa a testa; periférica, não.' }),
     campoOpc('n5a', '5a. Motor — braço esquerdo', [
       { valor: '0', rotulo: '0 — sem queda por 10 s', pontos: 0 },
       { valor: '1', rotulo: '1 — queda parcial antes de 10 s', pontos: 1 },
       { valor: '2', rotulo: '2 — algum esforço contra a gravidade', pontos: 2 },
       { valor: '3', rotulo: '3 — sem esforço contra a gravidade', pontos: 3 },
       { valor: '4', rotulo: '4 — nenhum movimento', pontos: 4 },
-    ]),
+    ], { ajuda: 'Braço a 90° sentado ou 45° deitado, por 10 segundos. Comece sempre pelo lado não parético.' }),
     campoOpc('n5b', '5b. Motor — braço direito', [
       { valor: '0', rotulo: '0 — sem queda por 10 s', pontos: 0 },
       { valor: '1', rotulo: '1 — queda parcial', pontos: 1 },
@@ -377,13 +377,13 @@ const ich: Ferramenta = {
       { valor: '2', rotulo: '3 a 4', pontos: 2 },
     ]),
     campoSimNao('volume', 'Volume do hematoma ≥ 30 cm³', 1, 'Estime pelo método ABC/2 na tomografia.'),
-    campoSimNao('ventricular', 'Extensão intraventricular', 1),
-    campoSimNao('infratentorial', 'Origem infratentorial', 1),
+    campoSimNao('ventricular', 'Extensão intraventricular', 1, 'Presença de sangue em qualquer ventrículo. A hidrocefalia obstrutiva associada indica derivação ventricular externa.'),
+    campoSimNao('infratentorial', 'Origem infratentorial', 1, 'Origem em tronco ou cerebelo. Hemorragia cerebelar maior que 3 cm é indicação cirúrgica independentemente do escore.'),
     campoSimNao('idade', 'Idade ≥ 80 anos', 1),
     campoNum('a', 'Maior diâmetro do hematoma (A)', { unidade: 'cm', min: 0.5, max: 15, passo: 0.1, opcional: true, ajuda: 'Para o cálculo ABC/2 do volume.' }),
-    campoNum('b', 'Diâmetro perpendicular ao maior (B)', { unidade: 'cm', min: 0.5, max: 15, passo: 0.1, opcional: true }),
-    campoNum('cortes', 'Número de cortes em que o hematoma aparece', { min: 1, max: 60, passo: 1, opcional: true }),
-    campoNum('espessura', 'Espessura do corte', { unidade: 'cm', min: 0.1, max: 1, passo: 0.1, padrao: '0.5', opcional: true }),
+    campoNum('b', 'Diâmetro perpendicular ao maior (B)', { ajuda: 'Diâmetro perpendicular ao maior, no mesmo corte, em centímetros.', unidade: 'cm', min: 0.5, max: 15, passo: 0.1, opcional: true }),
+    campoNum('cortes', 'Número de cortes em que o hematoma aparece', { ajuda: 'Número de cortes tomográficos em que o hematoma aparece, para o método ABC/2.', min: 1, max: 60, passo: 1, opcional: true }),
+    campoNum('espessura', 'Espessura do corte', { ajuda: 'Espessura do corte em milímetros, conforme o protocolo do aparelho.', unidade: 'cm', min: 0.1, max: 1, passo: 0.1, padrao: '0.5', opcional: true }),
   ],
   calcular: (v) => {
     const gcs = num(v, 'gcs')
@@ -456,14 +456,14 @@ const huntHess: Ferramenta = {
       { valor: '3', rotulo: 'III — sonolência, confusão ou déficit focal leve', pontos: 3 },
       { valor: '4', rotulo: 'IV — estupor, hemiparesia moderada a grave, rigidez de descerebração precoce', pontos: 4 },
       { valor: '5', rotulo: 'V — coma profundo, descerebração, aparência moribunda', pontos: 5 },
-    ]),
+    ], { ajuda: 'Gradue **após** a estabilização inicial: hidrocefalia aguda melhora o grau em horas com derivação ventricular, e o grau de admissão superestima a gravidade real.' }),
     campoOpc('fisher', 'Escala de Fisher modificada (tomografia)', [
       { valor: '0', rotulo: '0 — sem sangue subaracnóideo nem intraventricular', pontos: 0 },
       { valor: '1', rotulo: '1 — sangue subaracnóideo fino, sem hemorragia intraventricular', pontos: 1 },
       { valor: '2', rotulo: '2 — sangue subaracnóideo fino, com hemorragia intraventricular', pontos: 2 },
       { valor: '3', rotulo: '3 — sangue subaracnóideo espesso, sem hemorragia intraventricular', pontos: 3 },
       { valor: '4', rotulo: '4 — sangue subaracnóideo espesso, com hemorragia intraventricular', pontos: 4 },
-    ]),
+    ], { ajuda: 'Escala de Fisher modificada na tomografia, que estima o risco de vasoespasmo. Sangue cisternal espesso e hemorragia intraventricular elevam o risco, com pico entre o 4º e o 14º dia.' }),
   ],
   calcular: (v) => {
     const hh = num(v, 'hh')
@@ -619,15 +619,15 @@ const aspects: Ferramenta = {
   resumo: 'Quantifica a extensão do infarto precoce em dez regiões da artéria cerebral média.',
   categorias: ['neurologia', 'emergencia'],
   campos: [
-    campoSimNao('m1', 'M1 — córtex frontal opercular anterior (comprometido)', 1),
+    campoSimNao('m1', 'M1 — córtex frontal opercular anterior (comprometido)', 1, 'Avalie nos dois cortes padronizados: o do núcleo caudado e o imediatamente rostral aos ventrículos. Marque a região como comprometida ao ver perda da diferenciação entre substância cinzenta e branca, hipodensidade ou apagamento de sulcos.'),
     campoSimNao('m2', 'M2 — córtex lateral ao ínsula (comprometido)', 1),
     campoSimNao('m3', 'M3 — córtex posterior da ACM (comprometido)', 1),
     campoSimNao('m4', 'M4 — território anterior superior (comprometido)', 1),
     campoSimNao('m5', 'M5 — território lateral superior (comprometido)', 1),
     campoSimNao('m6', 'M6 — território posterior superior (comprometido)', 1),
-    campoSimNao('insula', 'Ínsula (comprometida)', 1),
-    campoSimNao('lentiforme', 'Núcleo lentiforme (comprometido)', 1),
-    campoSimNao('caudado', 'Núcleo caudado (comprometido)', 1),
+    campoSimNao('insula', 'Ínsula (comprometida)', 1, 'A perda da fita insular é um dos sinais precoces mais confiáveis de isquemia em território da cerebral média.'),
+    campoSimNao('lentiforme', 'Núcleo lentiforme (comprometido)', 1, 'Hipodensidade lentiforme é sinal precoce clássico e aparece antes das alterações corticais.'),
+    campoSimNao('caudado', 'Núcleo caudado (comprometido)', 1, 'Cabeça do núcleo caudado, avaliada no corte inferior. Para circulação posterior, o escore não vale — use o pc-ASPECTS.'),
     campoSimNao('capsula', 'Cápsula interna (comprometida)', 1),
   ],
   calcular: (v) => {
@@ -1136,12 +1136,12 @@ const cefaleias: Ferramenta = {
       { valor: 'tensional', rotulo: 'Tensional' },
       { valor: 'salvas', rotulo: 'Em salvas' },
     ]),
-    campoNum('crises', 'Número de crises já vividas com o padrão descrito', { min: 0, max: 100, passo: 1, padrao: '5' }),
-    campoSimNao('duracao', 'Duração compatível (migrânea 4 a 72 h; tensional 30 min a 7 dias; salvas 15 a 180 min)', 1),
+    campoNum('crises', 'Número de crises já vividas com o padrão descrito', { ajuda: 'Número de crises já vividas com esse padrão. Os critérios de migrânea exigem pelo menos cinco episódios; um primeiro episódio nunca é cefaleia primária até prova em contrário.', min: 0, max: 100, passo: 1, padrao: '5' }),
+    campoSimNao('duracao', 'Duração compatível (migrânea 4 a 72 h; tensional 30 min a 7 dias; salvas 15 a 180 min)', 1, 'Sem tratamento ou com tratamento malsucedido — crise abortada por triptano não conta para a duração.'),
     campoSimNao('unilateral', 'Dor unilateral', 1),
     campoSimNao('pulsatil', 'Caráter pulsátil', 1),
     campoSimNao('intensidade', 'Intensidade moderada a grave', 1),
-    campoSimNao('piora', 'Piora com atividade física rotineira', 1),
+    campoSimNao('piora', 'Piora com atividade física rotineira', 1, 'Piora com atividade rotineira, como subir escada. Distingue migrânea de cefaleia tensional, em que a atividade costuma aliviar.'),
     campoSimNao('nauseas', 'Náuseas ou vômitos', 1),
     campoSimNao('fotofono', 'Fotofobia e fonofobia', 1),
     campoSimNao('autonomico', 'Sinais autonômicos ipsilaterais (lacrimejamento, rinorreia, ptose, miose, edema palpebral)', 1),
@@ -1212,7 +1212,7 @@ const conversorAntiepileptico: Ferramenta = {
   resumo: 'Doses de ataque e manutenção, correção da fenitoína pela albumina e sequência do estado de mal.',
   categorias: ['neurologia', 'emergencia', 'farmacologia'],
   campos: [
-    campoNum('peso', 'Peso', { unidade: 'kg', min: 3, max: 250, passo: 0.5 }),
+    campoNum('peso', 'Peso', { ajuda: 'Peso em kg, para as doses calculadas por quilo.', unidade: 'kg', min: 3, max: 250, passo: 0.5 }),
     campoOpc('farmaco', 'Fármaco', [
       { valor: 'fenitoina', rotulo: 'Fenitoína / fosfenitoína' },
       { valor: 'levetiracetam', rotulo: 'Levetiracetam' },
@@ -1222,8 +1222,8 @@ const conversorAntiepileptico: Ferramenta = {
       { valor: 'midazolam', rotulo: 'Midazolam' },
       { valor: 'diazepam', rotulo: 'Diazepam' },
     ]),
-    campoNum('nivelFenitoina', 'Nível sérico de fenitoína', { unidade: 'µg/mL', min: 1, max: 60, passo: 0.1, opcional: true, mostrarSe: (v) => opc(v, 'farmaco') === 'fenitoina' }),
-    campoNum('albumina', 'Albumina', { unidade: 'g/dL', min: 0.5, max: 6, passo: 0.1, padrao: '4', opcional: true, mostrarSe: (v) => opc(v, 'farmaco') === 'fenitoina' }),
+    campoNum('nivelFenitoina', 'Nível sérico de fenitoína', { ajuda: 'Nível sérico **total** em µg/mL. Corrija pela albumina antes de interpretar: em hipoalbuminemia, o total é baixo enquanto a fração livre está terapêutica ou tóxica.', unidade: 'µg/mL', min: 1, max: 60, passo: 0.1, opcional: true, mostrarSe: (v) => opc(v, 'farmaco') === 'fenitoina' }),
+    campoNum('albumina', 'Albumina', { ajuda: 'Albumina em g/dL, para a correção de Sheiner-Tozer. Quando disponível, a dosagem do nível livre dispensa a fórmula.', unidade: 'g/dL', min: 0.5, max: 6, passo: 0.1, padrao: '4', opcional: true, mostrarSe: (v) => opc(v, 'farmaco') === 'fenitoina' }),
   ],
   calcular: (v) => {
     const peso = num(v, 'peso')
@@ -1300,10 +1300,10 @@ const riscoConvulsao: Ferramenta = {
   categorias: ['neurologia'],
   campos: [
     campoSimNao('lesao', 'Lesão cerebral prévia ou estrutural identificada em neuroimagem', 1, 'AVC, traumatismo, tumor, malformação, infecção do sistema nervoso central.'),
-    campoSimNao('eeg', 'Eletroencefalograma com atividade epileptiforme', 1),
-    campoSimNao('noturna', 'Crise ocorrida durante o sono', 1),
+    campoSimNao('eeg', 'Eletroencefalograma com atividade epileptiforme', 1, 'Atividade epileptiforme interictal. O rendimento é maior nas primeiras 24 a 48 h; se o primeiro exame for normal, repita com privação de sono.'),
+    campoSimNao('noturna', 'Crise ocorrida durante o sono', 1, 'Crise durante o sono sugere origem focal frontal ou temporal e associa-se a maior risco de recorrência.'),
     campoSimNao('familiar', 'História familiar de epilepsia em parente de primeiro grau', 1),
-    campoSimNao('previa', 'Evidência de crise prévia não reconhecida (mioclonias, ausências, crise focal)', 1),
+    campoSimNao('previa', 'Evidência de crise prévia não reconhecida (mioclonias, ausências, crise focal)', 1, 'Mioclonias matinais, ausências ou crises focais perceptivas que passaram despercebidas — investigue ativamente, porque mudam o diagnóstico de primeira crise para epilepsia estabelecida.'),
   ],
   calcular: (v) => {
     const fatores = ['lesao', 'eeg', 'noturna', 'familiar', 'previa'].filter((id) => sim(v, id))

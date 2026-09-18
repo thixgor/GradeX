@@ -738,7 +738,7 @@ export const ferramentas: Ferramenta[] = [
       campoSeg('tempo', 'Tempo de instalação', [
         { valor: 'agudo', rotulo: 'Agudo (< 24 h)' },
         { valor: 'cronico', rotulo: 'Crônico (> 3 dias)' },
-      ]),
+      ], { ajuda: 'Aguda (bicarbonato sobe 1 mEq/L por 10 mmHg) ou crônica (sobe 3,5 a 4). No retentor crônico, a meta não é normalizar o gás carbônico, e sim devolvê-lo ao basal do paciente.' }),
     ],
     calcular: (v) => {
       const paco2 = num(v, 'paco2')
@@ -807,7 +807,7 @@ export const ferramentas: Ferramenta[] = [
       campoSeg('tempo', 'Tempo de instalação', [
         { valor: 'agudo', rotulo: 'Agudo (< 24 h)' },
         { valor: 'cronico', rotulo: 'Crônico (> 3 dias)' },
-      ]),
+      ], { ajuda: 'Aguda (bicarbonato cai 2 mEq/L por 10 mmHg de queda) ou crônica (cai 4 a 5). Gestação e altitude produzem a forma crônica, plenamente compensada e fisiológica.' }),
     ],
     calcular: (v) => {
       const paco2 = num(v, 'paco2')
@@ -1160,7 +1160,10 @@ export const ferramentas: Ferramenta[] = [
     sinonimos: ['standard bicarbonate', 'base excess', 'BE', 'SBE', 'deficit de base'],
     resumo: 'Isola o componente metabólico puro, removendo aritmeticamente o efeito da PaCO₂.',
     categorias: ['gasometria'],
-    campos: [CAMPO_PH, CAMPO_PACO2],
+    campos: [
+      campoNum('ph', 'pH arterial', { ajuda: 'pH arterial medido. O bicarbonato padrão é recalculado para PaCO₂ de 40 mmHg, o que remove o componente respiratório e isola o metabólico.', min: 6.5, max: 8, passo: 0.01, normalMin: 7.35, normalMax: 7.45 }),
+      campoNum('paco2', 'PaCO₂', { ajuda: 'PaCO₂ arterial medida, necessária para a correção. Em hipoalbuminemia, o excesso de base subestima a acidose por ânions não medidos — use a versão corrigida pela albumina.', unidade: 'mmHg', min: 5, max: 150, passo: 0.5, normalMin: 35, normalMax: 45 }),
+    ],
     calcular: (v) => {
       const ph = num(v, 'ph')
       const paco2 = num(v, 'paco2')
@@ -1565,7 +1568,7 @@ export const ferramentas: Ferramenta[] = [
         { valor: 'mascara', rotulo: 'Máscara simples' },
         { valor: 'reservatorio', rotulo: 'Máscara com reservatório' },
         { valor: 'venturi', rotulo: 'Venturi' },
-      ]),
+      ], { ajuda: 'Cateter nasal e máscara simples entregam FiO₂ variável, dependente do padrão ventilatório; Venturi e alto fluxo entregam FiO₂ conhecida e estável.' }),
       campoNum('fluxo', 'Fluxo de O₂', {
         unidade: 'L/min',
         min: 0.5,
@@ -1579,7 +1582,7 @@ export const ferramentas: Ferramenta[] = [
         { valor: '28', rotulo: 'Amarelo 28%' },
         { valor: '35', rotulo: 'Verde 35%' },
         { valor: '50', rotulo: 'Laranja 50%' },
-      ], { mostrarSe: (v) => opc(v, 'dispositivo') === 'venturi' }),
+      ], { ajuda: 'A cor da peça define a FiO₂ fixa e o fluxo mínimo exigido. Use Venturi quando a precisão importar — sobretudo no retentor crônico, com alvo de 88 a 92%.', mostrarSe: (v) => opc(v, 'dispositivo') === 'venturi' }),
       campoNum('vm', 'Volume-minuto do paciente', {
         unidade: 'L/min',
         min: 3,

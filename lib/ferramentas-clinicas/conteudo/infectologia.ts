@@ -120,42 +120,42 @@ const sofa: Ferramenta = {
       { valor: '2', rotulo: '< 300', pontos: 2 },
       { valor: '3', rotulo: '< 200 com suporte ventilatório', pontos: 3 },
       { valor: '4', rotulo: '< 100 com suporte ventilatório', pontos: 4 },
-    ]),
+    ], { ajuda: 'Relação PaO₂/FiO₂ por gasometria arterial. Pontue com a informação de suporte ventilatório, que altera a faixa.' }),
     campoOpc('coag', 'Coagulação — plaquetas (×10³/µL)', [
       { valor: '0', rotulo: '≥ 150', pontos: 0 },
       { valor: '1', rotulo: '< 150', pontos: 1 },
       { valor: '2', rotulo: '< 100', pontos: 2 },
       { valor: '3', rotulo: '< 50', pontos: 3 },
       { valor: '4', rotulo: '< 20', pontos: 4 },
-    ]),
+    ], { ajuda: 'Plaquetas em mil/µL, do valor mais alterado das últimas 24 h.' }),
     campoOpc('figado', 'Fígado — bilirrubina (mg/dL)', [
       { valor: '0', rotulo: '< 1,2', pontos: 0 },
       { valor: '1', rotulo: '1,2 a 1,9', pontos: 1 },
       { valor: '2', rotulo: '2,0 a 5,9', pontos: 2 },
       { valor: '3', rotulo: '6,0 a 11,9', pontos: 3 },
       { valor: '4', rotulo: '≥ 12,0', pontos: 4 },
-    ]),
+    ], { ajuda: 'Bilirrubina total em mg/dL. Pode estar cronicamente elevada em hepatopata — daí a importância de registrar o SOFA basal.' }),
     campoOpc('cardio', 'Cardiovascular', [
       { valor: '0', rotulo: 'PAM ≥ 70 mmHg', pontos: 0 },
       { valor: '1', rotulo: 'PAM < 70 mmHg sem vasopressor', pontos: 1 },
       { valor: '2', rotulo: 'Dopamina ≤ 5 ou dobutamina em qualquer dose', pontos: 2 },
       { valor: '3', rotulo: 'Dopamina > 5, ou noradrenalina/adrenalina ≤ 0,1 µg/kg/min', pontos: 3 },
       { valor: '4', rotulo: 'Dopamina > 15, ou noradrenalina/adrenalina > 0,1 µg/kg/min', pontos: 4 },
-    ]),
+    ], { ajuda: 'Pontue pela PAM e pela dose de vasopressor em µg/kg/min, não pela pressão isolada.' }),
     campoOpc('snc', 'Sistema nervoso — Escala de Coma de Glasgow', [
       { valor: '0', rotulo: '15', pontos: 0 },
       { valor: '1', rotulo: '13 a 14', pontos: 1 },
       { valor: '2', rotulo: '10 a 12', pontos: 2 },
       { valor: '3', rotulo: '6 a 9', pontos: 3 },
       { valor: '4', rotulo: '< 6', pontos: 4 },
-    ]),
+    ], { ajuda: 'Glasgow. O item é inválido em paciente sedado ou curarizado — registre a limitação em vez de pontuar como se fosse avaliável.' }),
     campoOpc('renal', 'Renal — creatinina ou diurese', [
       { valor: '0', rotulo: 'Creatinina < 1,2 mg/dL', pontos: 0 },
       { valor: '1', rotulo: '1,2 a 1,9 mg/dL', pontos: 1 },
       { valor: '2', rotulo: '2,0 a 3,4 mg/dL', pontos: 2 },
       { valor: '3', rotulo: '3,5 a 4,9 mg/dL, ou diurese < 500 mL/dia', pontos: 3 },
       { valor: '4', rotulo: '≥ 5,0 mg/dL, ou diurese < 200 mL/dia', pontos: 4 },
-    ]),
+    ], { ajuda: 'Creatinina **ou** diurese: pontue pelo pior dos dois. A diurese costuma alterar-se primeiro.' }),
     campoNum('basal', 'SOFA basal conhecido', { min: 0, max: 24, passo: 1, padrao: '0', opcional: true, ajuda: 'Em paciente sem disfunção prévia conhecida, o basal é zero.' }),
   ],
   calcular: (v) => {
@@ -516,11 +516,11 @@ const sepse: Ferramenta = {
   resumo: 'Confere os critérios diagnósticos e monta o pacote de tratamento inicial.',
   categorias: ['infectologia', 'emergencia'],
   campos: [
-    campoSimNao('infeccao', 'Infecção suspeita ou documentada', 1),
-    campoSimNao('sofa2', 'Aumento de 2 ou mais pontos no SOFA', 1),
-    campoSimNao('vasopressor', 'Necessidade de vasopressor para manter PAM ≥ 65 mmHg', 1),
-    campoNum('lactato', 'Lactato', { unidade: 'mmol/L', min: 0, max: 30, passo: 0.1 }),
-    campoSimNao('volumeAdequado', 'Ressuscitação volêmica já realizada (≥ 30 mL/kg de cristaloide)', 1),
+    campoSimNao('infeccao', 'Infecção suspeita ou documentada', 1, 'Infecção suspeita é suficiente — não é preciso cultura positiva para o diagnóstico de sepse nem para iniciar o pacote.'),
+    campoSimNao('sofa2', 'Aumento de 2 ou mais pontos no SOFA', 1, 'Aumento de 2 ou mais pontos sobre o SOFA basal. Em paciente sem disfunção prévia conhecida, presuma basal zero.'),
+    campoSimNao('vasopressor', 'Necessidade de vasopressor para manter PAM ≥ 65 mmHg', 1, 'Necessidade de vasopressor para manter PAM ≥ 65 mmHg **após** reposição volêmica adequada — é o que define choque séptico junto com lactato acima de 2.'),
+    campoNum('lactato', 'Lactato', { ajuda: 'Lactato em mmol/L. A depuração seriada é melhor marcador de resposta que o valor isolado; acima de 4 indica reposição de 30 mL/kg mesmo sem hipotensão.', unidade: 'mmol/L', min: 0, max: 30, passo: 0.1 }),
+    campoSimNao('volumeAdequado', 'Ressuscitação volêmica já realizada (≥ 30 mL/kg de cristaloide)', 1, '30 mL/kg de cristaloide já infundidos. Sem isso, a necessidade de vasopressor não caracteriza choque séptico.'),
     campoPeso({ opcional: true }),
   ],
   calcular: (v) => {
@@ -585,10 +585,10 @@ const centor: Ferramenta = {
   resumo: 'Os quatro critérios originais de faringite estreptocócica em adultos.',
   categorias: ['infectologia'],
   campos: [
-    campoSimNao('exsudato', 'Exsudato ou hipertrofia amigdaliana', 1),
-    campoSimNao('adenopatia', 'Adenopatia cervical anterior dolorosa', 1),
-    campoSimNao('febre', 'História de febre (> 38 °C)', 1),
-    campoSimNao('semTosse', 'Ausência de tosse', 1),
+    campoSimNao('exsudato', 'Exsudato ou hipertrofia amigdaliana', 1, 'Exsudato purulento ou hipertrofia amigdaliana visível ao exame da orofaringe.'),
+    campoSimNao('adenopatia', 'Adenopatia cervical anterior dolorosa', 1, 'Linfonodo cervical **anterior** doloroso. Adenopatia posterior aponta mononucleose, não estreptococo.'),
+    campoSimNao('febre', 'História de febre (> 38 °C)', 1, 'História de febre acima de 38 °C, relatada ou aferida.'),
+    campoSimNao('semTosse', 'Ausência de tosse', 1, 'A ausência de tosse é o item que separa bacteriano de viral: tosse, coriza, rouquidão e conjuntivite apontam vírus com força considerável.'),
   ],
   calcular: (v) => {
     const total = somaSimNao(v, [
@@ -1000,7 +1000,7 @@ const conversorAtb: Ferramenta = {
       { valor: 'sulfa', rotulo: 'Sulfametoxazol-trimetoprima' },
       { valor: 'linezolida', rotulo: 'Linezolida' },
       { valor: 'fluconazol', rotulo: 'Fluconazol' },
-    ]),
+    ], { ajuda: 'Ao converter, recalcule pela função renal **do momento**, e não pela da admissão: quem recuperou filtração durante a internação fica subdosado se a prescrição reduzida for mantida.' }),
   ],
   calcular: (v) => {
     const peso = num(v, 'peso')
@@ -1070,13 +1070,13 @@ const antibiograma: Ferramenta = {
       { valor: 'i', rotulo: 'I — sensível com exposição aumentada (antigo intermediário)' },
       { valor: 'r', rotulo: 'R — resistente' },
     ]),
-    campoNum('cim', 'CIM reportada', { unidade: 'mg/L', min: 0.008, max: 512, passo: 0.008, opcional: true }),
-    campoNum('breakpoint', 'Ponto de corte de sensibilidade do fármaco', { unidade: 'mg/L', min: 0.008, max: 512, passo: 0.008, opcional: true }),
+    campoNum('cim', 'CIM reportada', { ajuda: 'Concentração inibitória mínima em µg/mL. Não compare CIMs entre fármacos diferentes — cada uma é lida contra o seu próprio ponto de corte.', unidade: 'mg/L', min: 0.008, max: 512, passo: 0.008, opcional: true }),
+    campoNum('breakpoint', 'Ponto de corte de sensibilidade do fármaco', { ajuda: 'Ponto de corte de sensibilidade do fármaco para aquele microrganismo e sítio, conforme CLSI ou EUCAST. Ele difere entre os dois padrões e entre sítios.', unidade: 'mg/L', min: 0.008, max: 512, passo: 0.008, opcional: true }),
     campoOpc('classe', 'Classe do antimicrobiano', [
       { valor: 'tempo', rotulo: 'Tempo-dependente (beta-lactâmicos, linezolida)' },
       { valor: 'concentracao', rotulo: 'Concentração-dependente (aminoglicosídeos, quinolonas, daptomicina)' },
       { valor: 'auc', rotulo: 'Dependente da exposição total (vancomicina, macrolídeos, tetraciclinas)' },
-    ]),
+    ], { ajuda: 'A classe define como otimizar a dose: betalactâmicos são tempo-dependentes e se beneficiam de infusão estendida; aminoglicosídeos e quinolonas são concentração-dependentes.' }),
   ],
   calcular: (v) => {
     const cat = opc(v, 'categoria')
@@ -1158,7 +1158,7 @@ const vacinal: Ferramenta = {
       { valor: 'adulto', rotulo: 'Adulto (20 a 59 anos)' },
       { valor: 'idoso', rotulo: 'Idoso (60 anos ou mais)' },
       { valor: 'gestante', rotulo: 'Gestante' },
-    ]),
+    ], { ajuda: 'Intervalo maior que o recomendado não invalida o esquema nem exige reinício. Febre baixa, resfriado, uso de antibiótico, prematuridade e amamentação não são contraindicações.' }),
   ],
   calcular: (v) => {
     const faixa = opc(v, 'faixa')
@@ -1226,7 +1226,7 @@ const ppe: Ferramenta = {
       { valor: 'raiva', rotulo: 'Raiva (mordedura, arranhadura, lambedura)' },
       { valor: 'tetano', rotulo: 'Ferimento com risco de tétano' },
     ]),
-    campoNum('horas', 'Horas desde a exposição', { unidade: 'h', min: 0, max: 400, passo: 1 }),
+    campoNum('horas', 'Horas desde a exposição', { ajuda: 'Horas desde a exposição. No HIV, a profilaxia deve começar em até 2 h e no máximo 72 h — depois disso a eficácia é nula; na hepatite B, a imunoglobulina vale até 7 dias, idealmente em 24 h.', unidade: 'h', min: 0, max: 400, passo: 1 }),
   ],
   calcular: (v) => {
     const tipo = opc(v, 'tipo')
@@ -1323,7 +1323,7 @@ const interacoes: Ferramenta = {
       { valor: 'metronidazol', rotulo: 'Metronidazol' },
       { valor: 'sulfa', rotulo: 'Sulfametoxazol-trimetoprima' },
       { valor: 'aminoglicosideos', rotulo: 'Aminoglicosídeos' },
-    ]),
+    ], { ajuda: 'Verifique também as interações não enzimáticas, que passam despercebidas: quinolonas e tetraciclinas quelam com cálcio, ferro e antiácidos, e a linezolida é inibidora da monoamina oxidase.' }),
   ],
   calcular: (v) => {
     const f = opc(v, 'farmaco')

@@ -232,13 +232,13 @@ const classificacaoAnemias: Ferramenta = {
   categorias: ['hematologia'],
   campos: [
     campoSexo(),
-    campoNum('hb', 'Hemoglobina', { unidade: 'g/dL', min: 2, max: 22, passo: 0.1 }),
-    campoNum('vcm', 'Volume corpuscular médio', { unidade: 'fL', min: 50, max: 140, passo: 0.1, normalMin: 80, normalMax: 100 }),
-    campoNum('rdw', 'RDW', { unidade: '%', min: 8, max: 35, passo: 0.1, normalMin: 11.5, normalMax: 14.5 }),
+    campoNum('hb', 'Hemoglobina', { ajuda: 'Hemoglobina em g/dL. Os cortes de anemia diferem por sexo, idade, gestação e altitude de residência.', unidade: 'g/dL', min: 2, max: 22, passo: 0.1 }),
+    campoNum('vcm', 'Volume corpuscular médio', { ajuda: 'Volume corpuscular médio em fL. É o eixo da classificação, mas pode vir falsamente normal em anemia mista, quando microcitose e macrocitose se anulam na média.', unidade: 'fL', min: 50, max: 140, passo: 0.1, normalMin: 80, normalMax: 100 }),
+    campoNum('rdw', 'RDW', { ajuda: 'Amplitude de distribuição do volume. Elevada com VCM normal é a assinatura da anemia mista e da deficiência de ferro precoce.', unidade: '%', min: 8, max: 35, passo: 0.1, normalMin: 11.5, normalMax: 14.5 }),
     campoNum('hemacias', 'Hemácias', { unidade: '×10⁶/µL', min: 1, max: 9, passo: 0.01, opcional: true, ajuda: 'Permite calcular o índice de Mentzer, que separa ferropenia de talassemia.' }),
-    campoNum('ferritina', 'Ferritina', { unidade: 'ng/mL', min: 1, max: 5000, passo: 1, opcional: true }),
-    campoNum('sat', 'Saturação de transferrina', { unidade: '%', min: 1, max: 100, passo: 1, opcional: true }),
-    campoNum('retic', 'Reticulócitos', { unidade: '%', min: 0, max: 40, passo: 0.1, opcional: true }),
+    campoNum('ferritina', 'Ferritina', { ajuda: 'Ferritina em ng/mL. É proteína de fase aguda: valores entre 30 e 100 com inflamação não excluem deficiência de ferro.', unidade: 'ng/mL', min: 1, max: 5000, passo: 1, opcional: true }),
+    campoNum('sat', 'Saturação de transferrina', { ajuda: 'Saturação de transferrina em %. Abaixo de 20% confirma deficiência de ferro mesmo com ferritina aparentemente normal.', unidade: '%', min: 1, max: 100, passo: 1, opcional: true }),
+    campoNum('retic', 'Reticulócitos', { ajuda: 'Reticulócitos. São o divisor da anemia normocítica: elevados apontam perda ou destruição, baixos apontam produção insuficiente.', unidade: '%', min: 0, max: 40, passo: 0.1, opcional: true }),
   ],
   calcular: (v) => {
     const hb = num(v, 'hb')
@@ -663,22 +663,22 @@ const quatroT: Ferramenta = {
       { valor: '2', rotulo: 'Queda > 50% e nadir ≥ 20 ×10⁹/L', pontos: 2 },
       { valor: '1', rotulo: 'Queda de 30 a 50%, ou nadir de 10 a 19 ×10⁹/L', pontos: 1 },
       { valor: '0', rotulo: 'Queda < 30% ou nadir < 10 ×10⁹/L', pontos: 0 },
-    ]),
+    ], { ajuda: 'Magnitude da queda em relação ao basal, não o valor absoluto. Queda maior que 50% com nadir acima de 20 mil é o padrão típico.' }),
     campoOpc('tempo', 'Tempo de início da queda', [
       { valor: '2', rotulo: 'Entre 5 e 10 dias, ou ≤ 1 dia com exposição a heparina nos últimos 30 dias', pontos: 2 },
       { valor: '1', rotulo: 'Compatível com 5 a 10 dias mas mal documentado, após o 10º dia, ou ≤ 1 dia com exposição entre 30 e 100 dias', pontos: 1 },
       { valor: '0', rotulo: 'Queda em ≤ 4 dias sem exposição prévia', pontos: 0 },
-    ]),
+    ], { ajuda: 'Dias desde o início da heparina. O padrão clássico é entre o 5º e o 10º dia; instalação em menos de 24 h só ocorre com exposição prévia nos últimos 30 dias.' }),
     campoOpc('trombose', 'Trombose ou outra sequela', [
       { valor: '2', rotulo: 'Nova trombose confirmada, necrose cutânea no local da injeção, ou reação sistêmica aguda após bolus endovenoso', pontos: 2 },
       { valor: '1', rotulo: 'Trombose progressiva ou recorrente, lesões cutâneas eritematosas, trombose suspeita não confirmada', pontos: 1 },
       { valor: '0', rotulo: 'Nenhuma', pontos: 0 },
-    ]),
+    ], { ajuda: 'Trombose nova, necrose cutânea no sítio de injeção, ou reação sistêmica aguda após bolus de heparina.' }),
     campoOpc('outras', 'Outras causas de trombocitopenia', [
       { valor: '2', rotulo: 'Nenhuma outra causa aparente', pontos: 2 },
       { valor: '1', rotulo: 'Possível outra causa', pontos: 1 },
       { valor: '0', rotulo: 'Outra causa definida', pontos: 0 },
-    ]),
+    ], { ajuda: 'Sepse, medicamentos, diluição, coagulação intravascular disseminada e púrpura trombocitopênica competem pelo diagnóstico e reduzem a pontuação.' }),
   ],
   calcular: (v) => {
     const ids = ['trombocitopenia', 'tempo', 'trombose', 'outras']
@@ -739,21 +739,21 @@ const isth: Ferramenta = {
       { valor: '0', rotulo: '≥ 100 ×10⁹/L', pontos: 0 },
       { valor: '1', rotulo: '50 a 99 ×10⁹/L', pontos: 1 },
       { valor: '2', rotulo: '< 50 ×10⁹/L', pontos: 2 },
-    ]),
+    ], { ajuda: 'Plaquetas em mil/mm³. A tendência importa mais que o valor isolado — o escore foi feito para uso seriado.' }),
     campoOpc('dimero', 'Marcadores de fibrina (D-dímero ou produtos de degradação)', [
       { valor: '0', rotulo: 'Sem aumento', pontos: 0 },
       { valor: '2', rotulo: 'Aumento moderado', pontos: 2 },
       { valor: '3', rotulo: 'Aumento acentuado', pontos: 3 },
-    ]),
+    ], { ajuda: 'D-dímero ou produtos de degradação da fibrina. Elevam-se também em trombose, cirurgia, gestação, câncer e infecção, sem que haja CIVD.' }),
     campoOpc('tp', 'Prolongamento do tempo de protrombina', [
       { valor: '0', rotulo: '< 3 s', pontos: 0 },
       { valor: '1', rotulo: '3 a 6 s', pontos: 1 },
       { valor: '2', rotulo: '> 6 s', pontos: 2 },
-    ]),
+    ], { ajuda: 'Prolongamento do tempo de protrombina em segundos acima do controle.' }),
     campoOpc('fibrinogenio', 'Fibrinogênio', [
       { valor: '0', rotulo: '≥ 100 mg/dL', pontos: 0 },
       { valor: '1', rotulo: '< 100 mg/dL', pontos: 1 },
-    ]),
+    ], { ajuda: 'Fibrinogênio em mg/dL. É proteína de fase aguda, e pode estar \'normal\' numa CIVD em curso justamente porque partiu de um valor muito alto.' }),
     campoSimNao('condicao', 'Existe condição de base associada a CIVD', 1, 'Sepse, trauma grave, neoplasia, complicação obstétrica, hemólise, aneurisma, hepatopatia grave, reação transfusional.'),
   ],
   calcular: (v) => {
@@ -890,12 +890,12 @@ const liseTumoral: Ferramenta = {
       { valor: 'intermediario', rotulo: 'Risco intermediário — linfomas agressivos, leucemia mieloide aguda com leucócitos de 25.000 a 100.000, tumor sólido muito quimiossensível e volumoso' },
       { valor: 'baixo', rotulo: 'Baixo risco — maioria dos tumores sólidos, linfomas indolentes, leucemias crônicas' },
     ]),
-    campoNum('acidoUrico', 'Ácido úrico', { unidade: 'mg/dL', min: 1, max: 30, passo: 0.1, normalMin: 3, normalMax: 7 }),
-    campoNum('potassio', 'Potássio', { unidade: 'mEq/L', min: 2, max: 9, passo: 0.1 }),
-    campoNum('fosforo', 'Fósforo', { unidade: 'mg/dL', min: 1, max: 15, passo: 0.1, normalMin: 2.5, normalMax: 4.5 }),
-    campoNum('calcio', 'Cálcio corrigido', { unidade: 'mg/dL', min: 3, max: 15, passo: 0.1 }),
-    campoNum('creatinina', 'Creatinina', { unidade: 'mg/dL', min: 0.1, max: 15, passo: 0.01 }),
-    campoNum('creatininaBasal', 'Creatinina basal', { unidade: 'mg/dL', min: 0.1, max: 8, passo: 0.01, padrao: '1' }),
+    campoNum('acidoUrico', 'Ácido úrico', { ajuda: 'Ácido úrico em mg/dL. Alopurinol impede a formação de ácido úrico novo mas não remove o já formado — para isso é preciso rasburicase.', unidade: 'mg/dL', min: 1, max: 30, passo: 0.1, normalMin: 3, normalMax: 7 }),
+    campoNum('potassio', 'Potássio', { ajuda: 'Potássio sérico. É a alteração que mata primeiro, e exige dosagem a cada 4 a 8 h nas primeiras 48 a 72 h.', unidade: 'mEq/L', min: 2, max: 9, passo: 0.1 }),
+    campoNum('fosforo', 'Fósforo', { ajuda: 'Fósforo sérico. A hiperfosfatemia precipita fosfato de cálcio nos túbulos e é agravada pela alcalinização urinária.', unidade: 'mg/dL', min: 1, max: 15, passo: 0.1, normalMin: 2.5, normalMax: 4.5 }),
+    campoNum('calcio', 'Cálcio corrigido', { ajuda: 'Cálcio corrigido pela albumina. Trate a hipocalcemia **apenas se sintomática**: repor cálcio com fósforo alto precipita cristais.', unidade: 'mg/dL', min: 3, max: 15, passo: 0.1 }),
+    campoNum('creatinina', 'Creatinina', { ajuda: 'Creatinina atual, para comparar com a basal e detectar lesão renal aguda.', unidade: 'mg/dL', min: 0.1, max: 15, passo: 0.01 }),
+    campoNum('creatininaBasal', 'Creatinina basal', { ajuda: 'Creatinina prévia do paciente, antes do tratamento oncológico.', unidade: 'mg/dL', min: 0.1, max: 8, passo: 0.01, padrao: '1' }),
   ],
   calcular: (v) => {
     const risco = opc(v, 'risco')
@@ -1110,7 +1110,7 @@ const inrEstimado: Ferramenta = {
   resumo: 'Converte entre INR, atividade e razão, e orienta a reversão da anticoagulação.',
   categorias: ['hematologia'],
   campos: [
-    campoNum('inr', 'INR', { min: 0.8, max: 15, passo: 0.01 }),
+    campoNum('inr', 'INR', { ajuda: 'INR do laboratório. Ele não serve para anticoagulantes orais diretos: pode estar normal com anticoagulação plena.', min: 0.8, max: 15, passo: 0.01 }),
     campoNum('isi', 'ISI do reagente', { min: 0.9, max: 2.5, passo: 0.01, padrao: '1.0', ajuda: 'Índice de sensibilidade internacional do reagente de tromboplastina usado pelo laboratório.' }),
     campoSeg('cenario', 'Cenário clínico', [
       { valor: 'sem-sangramento', rotulo: 'Sem sangramento' },

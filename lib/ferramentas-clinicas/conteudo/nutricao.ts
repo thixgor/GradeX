@@ -37,14 +37,14 @@ const gastoEnergetico: Ferramenta = {
       { valor: '1.55', rotulo: 'Moderadamente ativo — exercício moderado 3 a 5 dias', pontos: 0 },
       { valor: '1.725', rotulo: 'Muito ativo — exercício intenso 6 a 7 dias', pontos: 0 },
       { valor: '1.9', rotulo: 'Extremamente ativo — trabalho físico pesado ou atleta', pontos: 0 },
-    ]),
+    ], { ajuda: 'Os multiplicadores clássicos foram derivados antes da sedação moderna e da ventilação protetora, e hoje superestimam: sedação profunda e bloqueio neuromuscular **reduzem** o gasto.' }),
     campoSeg('contexto', 'Contexto', [
       { valor: 'ambulatorial', rotulo: 'Ambulatorial / saudável' },
       { valor: 'hospitalizado', rotulo: 'Hospitalizado' },
       { valor: 'ventilado', rotulo: 'Crítico em ventilação mecânica' },
     ]),
-    campoNum('temperaturaMax', 'Temperatura máxima nas últimas 24 h', { unidade: '°C', min: 34, max: 43, passo: 0.1, padrao: '37', mostrarSe: (v) => opc(v, 'contexto') === 'ventilado' }),
-    campoNum('volumeMinuto', 'Volume-minuto do ventilador', { unidade: 'L/min', min: 2, max: 30, passo: 0.1, padrao: '8', mostrarSe: (v) => opc(v, 'contexto') === 'ventilado' }),
+    campoNum('temperaturaMax', 'Temperatura máxima nas últimas 24 h', { ajuda: 'Temperatura máxima das últimas 24 h em °C, exigida pela equação de Penn State. Cada grau acima de 37 eleva o gasto em cerca de 10%.', unidade: '°C', min: 34, max: 43, passo: 0.1, padrao: '37', mostrarSe: (v) => opc(v, 'contexto') === 'ventilado' }),
+    campoNum('volumeMinuto', 'Volume-minuto do ventilador', { ajuda: 'Volume-minuto do ventilador em L/min, também exigido pela Penn State — é ele que captura o hipermetabolismo real do paciente crítico.', unidade: 'L/min', min: 2, max: 30, passo: 0.1, padrao: '8', mostrarSe: (v) => opc(v, 'contexto') === 'ventilado' }),
   ],
   calcular: (v) => {
     const peso = num(v, 'peso')
@@ -146,7 +146,7 @@ const proteina: Ferramenta = {
       { valor: 'hepatopatia', rotulo: 'Cirrose', pontos: 0 },
       { valor: 'obesidadeCritico', rotulo: 'Obesidade em paciente crítico', pontos: 0 },
     ]),
-    campoNum('calorias', 'Meta calórica diária', { unidade: 'kcal', min: 500, max: 5000, passo: 50, padrao: '2000' }),
+    campoNum('calorias', 'Meta calórica diária', { ajuda: 'Meta calórica diária, para distribuir os macronutrientes. Desconte as calorias não nutricionais: propofol rende 1,1 kcal/mL e o citrato da hemodiálise contínua soma centenas de kcal por dia.', unidade: 'kcal', min: 500, max: 5000, passo: 50, padrao: '2000' }),
   ],
   calcular: (v) => {
     const peso = num(v, 'peso')
@@ -655,11 +655,11 @@ const realimentacao: Ferramenta = {
   resumo: 'Estratifica o risco pelos critérios do NICE e define o esquema de reintrodução segura.',
   categorias: ['nutricao'],
   campos: [
-    campoNum('imc', 'Índice de massa corporal', { unidade: 'kg/m²', min: 8, max: 50, passo: 0.1 }),
-    campoNum('perdaPeso', 'Perda de peso não intencional nos últimos 3 a 6 meses', { unidade: '%', min: 0, max: 60, passo: 0.5, padrao: '0' }),
-    campoNum('diasJejum', 'Dias com ingestão nula ou mínima', { unidade: 'dias', min: 0, max: 60, passo: 1, padrao: '0' }),
-    campoSimNao('eletrolitosBaixos', 'Potássio, fósforo ou magnésio baixos antes de iniciar a dieta', 1),
-    campoSimNao('alcool', 'Etilismo crônico, ou uso de insulina, quimioterápicos, diuréticos ou antiácidos', 1),
+    campoNum('imc', 'Índice de massa corporal', { ajuda: 'Índice de massa corporal. Abaixo de 16 é critério de risco muito alto e exige iniciar com 5 a 10 kcal/kg/dia.', unidade: 'kg/m²', min: 8, max: 50, passo: 0.1 }),
+    campoNum('perdaPeso', 'Perda de peso não intencional nos últimos 3 a 6 meses', { ajuda: 'Percentual de perda não intencional nos últimos 3 a 6 meses. Acima de 15% é critério de alto risco.', unidade: '%', min: 0, max: 60, passo: 0.5, padrao: '0' }),
+    campoNum('diasJejum', 'Dias com ingestão nula ou mínima', { ajuda: 'Dias com ingestão nula ou mínima. Mais de 10 dias é critério de alto risco, e mais de 5 já exige cautela.', unidade: 'dias', min: 0, max: 60, passo: 1, padrao: '0' }),
+    campoSimNao('eletrolitosBaixos', 'Potássio, fósforo ou magnésio baixos antes de iniciar a dieta', 1, 'Potássio, fósforo ou magnésio baixos **antes** de iniciar a dieta. É o sinal mais específico de risco, porque indica depleção já descompensada.'),
+    campoSimNao('alcool', 'Etilismo crônico, ou uso de insulina, quimioterápicos, diuréticos ou antiácidos', 1, 'Etilismo crônico, ou uso de insulina, quimioterápicos, diuréticos ou antiácidos — todos depletam os eletrólitos intracelulares que a realimentação vai consumir.'),
   ],
   calcular: (v) => {
     const imc = num(v, 'imc')

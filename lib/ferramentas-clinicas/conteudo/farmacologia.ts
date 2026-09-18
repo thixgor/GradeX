@@ -422,7 +422,7 @@ const doseHepatica: Ferramenta = {
       { valor: 'a', rotulo: 'A (5 a 6 pontos) — cirrose compensada' },
       { valor: 'b', rotulo: 'B (7 a 9 pontos) — descompensação moderada' },
       { valor: 'c', rotulo: 'C (10 a 15 pontos) — descompensação grave' },
-    ]),
+    ], { ajuda: 'Não existe marcador de função hepática equivalente à filtração glomerular: o Child-Pugh é o substituto usado para graduar a reserva metabólica.' }),
     campoOpc('classe', 'Classe do medicamento', [
       { valor: 'analgesicos', rotulo: 'Analgésicos' },
       { valor: 'psicotropicos', rotulo: 'Psicotrópicos e sedativos' },
@@ -430,7 +430,7 @@ const doseHepatica: Ferramenta = {
       { valor: 'antimicrobianos', rotulo: 'Antimicrobianos' },
       { valor: 'anticoagulantes', rotulo: 'Anticoagulantes e antiagregantes' },
       { valor: 'outros', rotulo: 'Outros de uso comum' },
-    ]),
+    ], { ajuda: 'A via de eliminação é o que decide. Fármacos de alta extração hepática têm biodisponibilidade oral multiplicada pelo shunt portossistêmico; os de glicuronidação são relativamente preservados.' }),
   ],
   calcular: (v) => {
     const child = opc(v, 'child')
@@ -533,7 +533,7 @@ const interacoes: Ferramenta = {
       { valor: 'sangramento', rotulo: 'Risco de sangramento' },
       { valor: 'hipercalemia', rotulo: 'Hipercalemia' },
       { valor: 'depressao', rotulo: 'Depressão do sistema nervoso central' },
-    ]),
+    ], { ajuda: 'Escolher pelo mecanismo, e não pelo par de fármacos, evita a fadiga de alerta: a conduta (substituir, ajustar, separar horários ou monitorar) decorre diretamente dele.' }),
   ],
   calcular: (v) => {
     const m = opc(v, 'mecanismo')
@@ -684,7 +684,7 @@ const compatibilidade: Ferramenta = {
       { valor: 'diluentes', rotulo: 'Escolha do diluente' },
       { valor: 'nutricao', rotulo: 'Nutrição parenteral e hemocomponentes' },
       { valor: 'principios', rotulo: 'Princípios gerais e prática segura' },
-    ]),
+    ], { ajuda: 'Consulte antes de conectar em Y. A incompatibilidade nem sempre é visível: precipitados microscópicos ocluem cateter e causam perda de dose sem alterar o aspecto do equipo.' }),
   ],
   calcular: (v) => {
     const g = opc(v, 'grupo')
@@ -870,7 +870,7 @@ const doseMaxima: Ferramenta = {
       { valor: 'antihipertensivos', rotulo: 'Anti-hipertensivos' },
       { valor: 'psicotropicos', rotulo: 'Psicotrópicos' },
       { valor: 'outros', rotulo: 'Outros de uso frequente' },
-    ]),
+    ], { ajuda: 'Some as fontes ocultas antes de comparar com o teto: paracetamol está em dezenas de associações para gripe e dor, e a superdose por soma de produtos é causa importante de falência hepática aguda.' }),
     campoPeso({ opcional: true }),
   ],
   calcular: (v) => {

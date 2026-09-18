@@ -29,9 +29,9 @@ const dosePediatrica: Ferramenta = {
   campos: [
     campoPeso({ min: 0.4, max: 120 }),
     campoAltura({ min: 30, max: 200, opcional: true, ajuda: 'Necessária apenas para dose por superfície corporal.' }),
-    campoNum('mgkg', 'Dose prescrita', { unidade: 'mg/kg/dose', min: 0.001, max: 500, passo: 0.001 }),
-    campoNum('tomadas', 'Tomadas por dia', { min: 1, max: 8, passo: 1, padrao: '3' }),
-    campoNum('maxDose', 'Dose máxima por tomada (teto de adulto)', { unidade: 'mg', min: 1, max: 10000, passo: 1, opcional: true }),
+    campoNum('mgkg', 'Dose prescrita', { ajuda: 'Dose prescrita em mg/kg por tomada, conforme a referência usada. Confira se a referência dá a dose por tomada ou por dia — confundir as duas multiplica ou divide a prescrição.', unidade: 'mg/kg/dose', min: 0.001, max: 500, passo: 0.001 }),
+    campoNum('tomadas', 'Tomadas por dia', { ajuda: 'Número de tomadas por dia, para converter entre dose diária e dose por tomada.', min: 1, max: 8, passo: 1, padrao: '3' }),
+    campoNum('maxDose', 'Dose máxima por tomada (teto de adulto)', { ajuda: 'Teto de adulto por tomada. Nunca ultrapasse a dose máxima do adulto, por maior que seja o peso — é o erro mais comum e mais perigoso da dose pediátrica.', unidade: 'mg', min: 1, max: 10000, passo: 1, opcional: true }),
     campoNum('concentracao', 'Concentração da apresentação', { unidade: 'mg/mL', min: 0.1, max: 1000, passo: 0.1, opcional: true, ajuda: 'Converte a dose em mililitros da solução ou suspensão.' }),
   ],
   calcular: (v) => {
@@ -111,12 +111,12 @@ const hidratacao: Ferramenta = {
       { valor: '5', rotulo: 'Leve (3 a 5%)', pontos: 5 },
       { valor: '8', rotulo: 'Moderada (6 a 9%)', pontos: 8 },
       { valor: '12', rotulo: 'Grave (≥ 10%)', pontos: 12 },
-    ]),
+    ], { ajuda: 'Estime pelo percentual de perda de peso corporal quando houver peso prévio; na sua falta, use o escore clínico de desidratação.' }),
     campoNum('perdas', 'Perdas continuadas estimadas em 24 h', { unidade: 'mL', min: 0, max: 5000, passo: 10, padrao: '0', opcional: true, ajuda: 'Vômitos, diarreia, drenos, febre (acrescente 10 a 12% da manutenção para cada grau acima de 37,5 °C).' }),
     campoSeg('via', 'Via preferencial', [
       { valor: 'oral', rotulo: 'Oral / sonda' },
       { valor: 'ev', rotulo: 'Endovenosa' },
-    ]),
+    ], { ajuda: 'A reidratação oral é tão eficaz quanto a venosa na desidratação leve a moderada, com menos complicações. Vômito não é contraindicação.' }),
   ],
   calcular: (v) => {
     const peso = num(v, 'peso')
@@ -199,24 +199,24 @@ const desidratacaoEscore: Ferramenta = {
       { valor: '0', rotulo: 'Normal', pontos: 0 },
       { valor: '1', rotulo: 'Sedenta, inquieta ou letárgica, mas irritável ao toque', pontos: 1 },
       { valor: '2', rotulo: 'Sonolenta, flácida, fria ou sudoreica; comatosa ou não', pontos: 2 },
-    ]),
+    ], { ajuda: 'Normal, sedento ou inquieto, ou letárgico. A prostração aparece por último, quando a compensação por vasoconstrição periférica já se esgotou.' }),
     campoOpc('olhos', 'Olhos', [
       { valor: '0', rotulo: 'Normais', pontos: 0 },
       { valor: '1', rotulo: 'Discretamente encovados', pontos: 1 },
       { valor: '2', rotulo: 'Muito encovados', pontos: 2 },
-    ]),
+    ], { ajuda: 'Normais, levemente encovados ou muito encovados — reflete a perda de água do tecido periorbital.' }),
     campoOpc('mucosas', 'Mucosas (língua)', [
       { valor: '0', rotulo: 'Úmidas', pontos: 0 },
       { valor: '1', rotulo: 'Pegajosas', pontos: 1 },
       { valor: '2', rotulo: 'Secas', pontos: 2 },
-    ]),
+    ], { ajuda: 'Avalie a língua, não o lábio: respiração bucal resseca o lábio em criança bem hidratada e gera falso positivo.' }),
     campoOpc('lagrimas', 'Lágrimas', [
       { valor: '0', rotulo: 'Lágrimas presentes', pontos: 0 },
       { valor: '1', rotulo: 'Lágrimas reduzidas', pontos: 1 },
       { valor: '2', rotulo: 'Ausência de lágrimas', pontos: 2 },
-    ]),
+    ], { ajuda: 'Presentes, reduzidas ou ausentes durante o choro.' }),
     campoSimNao('enchimento', 'Tempo de enchimento capilar > 2 segundos', 0, 'Não pontua no escore, mas é um dos preditores individuais mais úteis de desidratação significativa.'),
-    campoSimNao('turgor', 'Turgor cutâneo reduzido (prega que desfaz lentamente)', 0),
+    campoSimNao('turgor', 'Turgor cutâneo reduzido (prega que desfaz lentamente)', 0, 'Prega cutânea no abdome que desfaz lentamente. Desnutrição grave e obesidade tornam o sinal pouco confiável.'),
   ],
   calcular: (v) => {
     const ids = ['aparencia', 'olhos', 'mucosas', 'lagrimas']
@@ -400,32 +400,32 @@ const apgar: Ferramenta = {
       { valor: '2', rotulo: '2 — acima de 100 bpm', pontos: 2 },
       { valor: '1', rotulo: '1 — abaixo de 100 bpm', pontos: 1 },
       { valor: '0', rotulo: '0 — ausente', pontos: 0 },
-    ]),
+    ], { ajuda: 'É o último item a falhar e o melhor indicador de gravidade. Ausculte ou palpe a base do cordão por 6 segundos e multiplique por 10.' }),
     campoOpc('respiracao', 'Esforço respiratório', [
       { valor: '2', rotulo: '2 — choro forte, respiração regular', pontos: 2 },
       { valor: '1', rotulo: '1 — irregular, lenta, choro fraco', pontos: 1 },
       { valor: '0', rotulo: '0 — ausente', pontos: 0 },
-    ]),
+    ], { ajuda: 'Ausente, irregular ou choro vigoroso. Não confunda gasping com esforço respiratório efetivo.' }),
     campoOpc('tonus', 'Tônus muscular', [
       { valor: '2', rotulo: '2 — movimentos ativos, boa flexão', pontos: 2 },
       { valor: '1', rotulo: '1 — alguma flexão de extremidades', pontos: 1 },
       { valor: '0', rotulo: '0 — flácido', pontos: 0 },
-    ]),
+    ], { ajuda: 'Flácido, alguma flexão, ou movimento ativo. Prematuridade, sedação materna e doença neuromuscular reduzem o tônus por motivos alheios à asfixia.' }),
     campoOpc('irritabilidade', 'Irritabilidade reflexa', [
       { valor: '2', rotulo: '2 — choro, tosse, espirro', pontos: 2 },
       { valor: '1', rotulo: '1 — careta', pontos: 1 },
       { valor: '0', rotulo: '0 — sem resposta', pontos: 0 },
-    ]),
+    ], { ajuda: 'Resposta à aspiração ou ao estímulo plantar: ausente, careta, ou choro e tosse.' }),
     campoOpc('cor', 'Coloração', [
       { valor: '2', rotulo: '2 — completamente rosado', pontos: 2 },
       { valor: '1', rotulo: '1 — corpo rosado com extremidades cianóticas', pontos: 1 },
       { valor: '0', rotulo: '0 — pálido ou cianótico', pontos: 0 },
-    ]),
+    ], { ajuda: 'A acrocianose isolada é normal nos primeiros minutos e vale 1 ponto — não a confunda com cianose central.' }),
     campoSeg('momento', 'Momento da avaliação', [
       { valor: '1', rotulo: '1º minuto' },
       { valor: '5', rotulo: '5º minuto' },
       { valor: '10', rotulo: '10º minuto ou depois' },
-    ]),
+    ], { ajuda: 'Registre em 1 e 5 minutos, e siga a cada 5 minutos até 20 se o escore do 5º minuto for menor que 7.' }),
   ],
   calcular: (v) => {
     const ids = ['fc', 'respiracao', 'tonus', 'irritabilidade', 'cor']
@@ -491,33 +491,33 @@ const capurro: Ferramenta = {
       { valor: '8', rotulo: '8 — pavilhão parcialmente encurvado na borda superior', pontos: 8 },
       { valor: '16', rotulo: '16 — pavilhão parcialmente encurvado em toda a borda superior', pontos: 16 },
       { valor: '24', rotulo: '24 — pavilhão totalmente encurvado', pontos: 24 },
-    ]),
+    ], { ajuda: 'Avalie o pavilhão: chato e disforme no prematuro, com incurvação progressiva da borda superior à medida que a cartilagem enrijece.' }),
     campoOpc('mamaria', 'Tamanho da glândula mamária', [
       { valor: '0', rotulo: '0 — não palpável', pontos: 0 },
       { valor: '5', rotulo: '5 — palpável, menor que 5 mm', pontos: 5 },
       { valor: '10', rotulo: '10 — entre 5 e 10 mm', pontos: 10 },
       { valor: '15', rotulo: '15 — maior que 10 mm', pontos: 15 },
-    ]),
+    ], { ajuda: 'Palpe o tecido mamário, não olhe apenas. O nódulo prolifera sob estímulo estrogênico materno no terceiro trimestre.' }),
     campoOpc('mamilo', 'Formação do mamilo', [
       { valor: '0', rotulo: '0 — apenas visível', pontos: 0 },
       { valor: '5', rotulo: '5 — aréola pigmentada, diâmetro < 7,5 mm, borda não elevada', pontos: 5 },
       { valor: '10', rotulo: '10 — aréola pigmentada, diâmetro > 7,5 mm, borda não elevada', pontos: 10 },
       { valor: '15', rotulo: '15 — borda elevada, diâmetro > 7,5 mm', pontos: 15 },
-    ]),
+    ], { ajuda: 'Apenas visível, aréola pontilhada, ou aréola elevada com borda definida.' }),
     campoOpc('pele', 'Textura da pele', [
       { valor: '0', rotulo: '0 — muito fina, gelatinosa', pontos: 0 },
       { valor: '5', rotulo: '5 — fina e lisa', pontos: 5 },
       { valor: '10', rotulo: '10 — algo mais grossa, discreta descamação superficial', pontos: 10 },
       { valor: '15', rotulo: '15 — grossa, sulcos superficiais, descamação de mãos e pés', pontos: 15 },
       { valor: '20', rotulo: '20 — grossa, apergaminhada, sulcos profundos', pontos: 20 },
-    ]),
+    ], { ajuda: 'Fina e gelatinosa no prematuro extremo; espessa, apergaminhada e com fissuras no pós-termo.' }),
     campoOpc('plantares', 'Pregas plantares', [
       { valor: '0', rotulo: '0 — ausentes', pontos: 0 },
       { valor: '5', rotulo: '5 — marcas mal definidas na metade anterior', pontos: 5 },
       { valor: '10', rotulo: '10 — marcas bem definidas na metade anterior, sulcos no terço anterior', pontos: 10 },
       { valor: '15', rotulo: '15 — sulcos na metade anterior', pontos: 15 },
       { valor: '20', rotulo: '20 — sulcos em mais da metade anterior', pontos: 20 },
-    ]),
+    ], { ajuda: 'As pregas surgem na porção anterior e avançam em direção ao calcâneo. Avalie nas primeiras horas: depois, a descamação simula pregas e superestima a idade.' }),
   ],
   calcular: (v) => {
     const ids = ['orelha', 'mamaria', 'mamilo', 'pele', 'plantares']
@@ -1155,27 +1155,27 @@ const bronquiolite: Ferramenta = {
       { valor: '1', rotulo: '1 — 31 a 45 irpm', pontos: 1 },
       { valor: '2', rotulo: '2 — 46 a 60 irpm', pontos: 2 },
       { valor: '3', rotulo: '3 — acima de 60 irpm', pontos: 3 },
-    ]),
+    ], { ajuda: 'Conte 60 segundos com a criança calma. Taquipneia é o sinal mais sensível de gravidade, e a contagem apressada é a principal fonte de erro.' }),
     campoOpc('sibilos', 'Sibilância', [
       { valor: '0', rotulo: '0 — ausente', pontos: 0 },
       { valor: '1', rotulo: '1 — apenas no fim da expiração ou com estetoscópio', pontos: 1 },
       { valor: '2', rotulo: '2 — em toda a expiração ou audível na expiração sem estetoscópio', pontos: 2 },
       { valor: '3', rotulo: '3 — inspiratória e expiratória, audível sem estetoscópio', pontos: 3 },
-    ]),
+    ], { ajuda: 'Sibilos audíveis só à ausculta, audíveis à distância, ou tórax silencioso — este último é o mais grave, porque indica fluxo insuficiente para gerar som.' }),
     campoOpc('retracao', 'Retração', [
       { valor: '0', rotulo: '0 — ausente', pontos: 0 },
       { valor: '1', rotulo: '1 — intercostal apenas', pontos: 1 },
       { valor: '2', rotulo: '2 — intercostal e supraclavicular', pontos: 2 },
       { valor: '3', rotulo: '3 — intercostal, supraclavicular e batimento de aletas nasais', pontos: 3 },
-    ]),
+    ], { ajuda: 'Subcostal, intercostal, supraesternal ou de fúrcula. A retração generalizada com batimento de asa do nariz indica esforço próximo à exaustão.' }),
     campoOpc('estado', 'Estado geral', [
       { valor: '0', rotulo: '0 — normal', pontos: 0 },
       { valor: '3', rotulo: '3 — irritado, letárgico ou com dificuldade alimentar', pontos: 3 },
     ]),
-    campoNum('spo2', 'SpO₂ em ar ambiente', { unidade: '%', min: 60, max: 100, passo: 1 }),
-    campoNum('idadeMeses', 'Idade', { unidade: 'meses', min: 0, max: 24, passo: 0.5 }),
-    campoSimNao('apneia', 'Episódios de apneia', 1),
-    campoSimNao('comorbidade', 'Prematuridade, cardiopatia, pneumopatia crônica ou imunodeficiência', 1),
+    campoNum('spo2', 'SpO₂ em ar ambiente', { ajuda: 'Medida em ar ambiente, com a criança calma. O limiar de oxigênio suplementar é 90 a 92% — não persiga saturação de 100%.', unidade: '%', min: 60, max: 100, passo: 1 }),
+    campoNum('idadeMeses', 'Idade', { ajuda: 'Abaixo de 12 semanas, o limiar de internação é mais baixo, e apneia pode ser a primeira manifestação.', unidade: 'meses', min: 0, max: 24, passo: 0.5 }),
+    campoSimNao('apneia', 'Episódios de apneia', 1, 'Apneia pode preceder qualquer outro sinal no lactente muito jovem e justifica internação isoladamente.'),
+    campoSimNao('comorbidade', 'Prematuridade, cardiopatia, pneumopatia crônica ou imunodeficiência', 1, 'Prematuridade, cardiopatia hemodinamicamente significativa, doença pulmonar crônica, imunodeficiência ou doença neuromuscular baixam o limiar de internação.'),
   ],
   calcular: (v) => {
     const ids = ['fr', 'sibilos', 'retracao', 'estado']
@@ -1245,11 +1245,11 @@ const anestesicoLocal: Ferramenta = {
       { valor: 'ropivacaina', rotulo: 'Ropivacaína' },
       { valor: 'mepivacaina', rotulo: 'Mepivacaína' },
       { valor: 'prilocaina', rotulo: 'Prilocaína' },
-    ]),
+    ], { ajuda: 'Converta a concentração corretamente: solução a 1% contém 10 mg/mL. Em lactentes abaixo de 6 meses, reduza o teto pela menor ligação a proteínas e pelo metabolismo hepático imaturo.' }),
     campoSeg('vaso', 'Com vasoconstritor (adrenalina)', [
       { valor: 'nao', rotulo: 'Não' },
       { valor: 'sim', rotulo: 'Sim' },
-    ]),
+    ], { ajuda: 'A adrenalina eleva a dose máxima por reduzir a absorção sistêmica, mas é contraindicada em extremidades de circulação terminal.' }),
     campoNum('concentracao', 'Concentração da solução', { unidade: '%', min: 0.125, max: 5, passo: 0.125, padrao: '1', ajuda: 'Uma solução a 1% contém 10 mg/mL; a 2%, 20 mg/mL; a 0,5%, 5 mg/mL.' }),
   ],
   calcular: (v) => {

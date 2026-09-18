@@ -31,27 +31,27 @@ const childPugh: Ferramenta = {
       { valor: '1', rotulo: '< 2 mg/dL', pontos: 1 },
       { valor: '2', rotulo: '2 a 3 mg/dL', pontos: 2 },
       { valor: '3', rotulo: '> 3 mg/dL', pontos: 3 },
-    ]),
+    ], { ajuda: 'Bilirrubina total em mg/dL. Na cirrose biliar primária e nas colestáticas, os pontos de corte são mais altos (4 e 10 mg/dL).' }),
     campoOpc('albumina', 'Albumina', [
       { valor: '1', rotulo: '> 3,5 g/dL', pontos: 1 },
       { valor: '2', rotulo: '2,8 a 3,5 g/dL', pontos: 2 },
       { valor: '3', rotulo: '< 2,8 g/dL', pontos: 3 },
-    ]),
+    ], { ajuda: 'Albumina sérica em g/dL. Cai também por desnutrição, síndrome nefrótica e perda enteral — no cirrótico desses grupos o item superestima a disfunção hepática.' }),
     campoOpc('inr', 'INR', [
       { valor: '1', rotulo: '< 1,7', pontos: 1 },
       { valor: '2', rotulo: '1,7 a 2,3', pontos: 2 },
       { valor: '3', rotulo: '> 2,3', pontos: 3 },
-    ]),
+    ], { ajuda: 'INR do tempo de protrombina. Anticoagulante oral em uso invalida o item.' }),
     campoOpc('ascite', 'Ascite', [
       { valor: '1', rotulo: 'Ausente', pontos: 1 },
       { valor: '2', rotulo: 'Leve, controlada com diurético', pontos: 2 },
       { valor: '3', rotulo: 'Moderada a tensa, refratária', pontos: 3 },
-    ]),
+    ], { ajuda: 'Classifique como ausente, controlada por diurético, ou refratária. É um dos dois itens subjetivos do escore — registre o critério usado.' }),
     campoOpc('encefalopatia', 'Encefalopatia hepática', [
       { valor: '1', rotulo: 'Ausente', pontos: 1 },
       { valor: '2', rotulo: 'Graus I a II (ou controlada com medicação)', pontos: 2 },
       { valor: '3', rotulo: 'Graus III a IV (ou refratária)', pontos: 3 },
-    ]),
+    ], { ajuda: 'Graus de West Haven. A encefalopatia mínima só aparece em testes psicométricos e passa despercebida ao exame de rotina.' }),
   ],
   calcular: (v) => {
     const ids = ['bilirrubina', 'albumina', 'inr', 'ascite', 'encefalopatia']
@@ -455,11 +455,11 @@ const bisap: Ferramenta = {
   resumo: 'Cinco variáveis das primeiras 24 horas que estratificam a pancreatite aguda.',
   categorias: ['gastroenterologia', 'emergencia'],
   campos: [
-    campoSimNao('bun', 'Ureia > 53 mg/dL (BUN > 25 mg/dL)', 1),
-    campoSimNao('mental', 'Alteração do estado mental', 1),
-    campoSimNao('sirs', 'SIRS (2 ou mais critérios)', 1),
+    campoSimNao('bun', 'Ureia > 53 mg/dL (BUN > 25 mg/dL)', 1, 'Ureia acima de 53 mg/dL, equivalente a BUN acima de 25 mg/dL — a divisão por 2,14 converte uma na outra.'),
+    campoSimNao('mental', 'Alteração do estado mental', 1, 'Desorientação, letargia, sonolência ou agitação; qualquer alteração serve, não é necessário Glasgow formal.'),
+    campoSimNao('sirs', 'SIRS (2 ou mais critérios)', 1, 'Dois ou mais entre: temperatura < 36 ou > 38 °C, frequência cardíaca > 90 bpm, frequência respiratória > 20 irpm ou PaCO₂ < 32 mmHg, e leucócitos < 4.000 ou > 12.000 ou mais de 10% de bastões.'),
     campoSimNao('idade', 'Idade > 60 anos', 1),
-    campoSimNao('derrame', 'Derrame pleural na imagem', 1),
+    campoSimNao('derrame', 'Derrame pleural na imagem', 1, 'Derrame pleural em radiografia ou tomografia, reflexo do extravasamento capilar e da inflamação retroperitoneal.'),
   ],
   calcular: (v) => {
     const total = somaSimNao(v, [
@@ -743,10 +743,10 @@ const fib4: Ferramenta = {
   categorias: ['gastroenterologia'],
   campos: [
     campoIdade({ min: 18 }),
-    campoNum('ast', 'AST (TGO)', { unidade: 'U/L', min: 5, max: 2000, passo: 1 }),
-    campoNum('alt', 'ALT (TGP)', { unidade: 'U/L', min: 5, max: 2000, passo: 1 }),
-    campoNum('plaquetas', 'Plaquetas', { unidade: '×10⁹/L', min: 10, max: 800, passo: 1 }),
-    campoNum('astLimite', 'Limite superior do normal da AST no laboratório', { unidade: 'U/L', min: 20, max: 60, passo: 1, padrao: '40' }),
+    campoNum('ast', 'AST (TGO)', { ajuda: 'AST em U/L. Hepatite aguda com transaminases muito altas distorce o índice e deve ser afastada antes.', unidade: 'U/L', min: 5, max: 2000, passo: 1 }),
+    campoNum('alt', 'ALT (TGP)', { ajuda: 'ALT em U/L do mesmo exame que a AST.', unidade: 'U/L', min: 5, max: 2000, passo: 1 }),
+    campoNum('plaquetas', 'Plaquetas', { ajuda: 'Plaquetas em mil/mm³. Plaquetopenia por outra causa — hiperesplenismo, doença hematológica, medicamento — infla o índice falsamente.', unidade: '×10⁹/L', min: 10, max: 800, passo: 1 }),
+    campoNum('astLimite', 'Limite superior do normal da AST no laboratório', { ajuda: 'Limite superior do normal da AST no seu laboratório, para o cálculo do APRI. Varia entre métodos e não é um valor universal.', unidade: 'U/L', min: 20, max: 60, passo: 1, padrao: '40' }),
   ],
   calcular: (v) => {
     const idade = num(v, 'idade')
@@ -1000,9 +1000,9 @@ const maddrey: Ferramenta = {
   resumo: 'Define indicação de corticoide na hepatite alcoólica grave e avalia a resposta.',
   categorias: ['gastroenterologia'],
   campos: [
-    campoNum('tp', 'Tempo de protrombina do paciente', { unidade: 's', min: 8, max: 60, passo: 0.1 }),
-    campoNum('tpControle', 'Tempo de protrombina do controle', { unidade: 's', min: 8, max: 20, passo: 0.1, padrao: '12' }),
-    campoNum('bilirrubina', 'Bilirrubina total', { unidade: 'mg/dL', min: 0.1, max: 60, passo: 0.1 }),
+    campoNum('tp', 'Tempo de protrombina do paciente', { ajuda: 'Tempo de protrombina do paciente em segundos, não o INR — a função discriminante foi derivada sobre a diferença em segundos.', unidade: 's', min: 8, max: 60, passo: 0.1 }),
+    campoNum('tpControle', 'Tempo de protrombina do controle', { ajuda: 'Tempo de protrombina do controle do mesmo laboratório e da mesma corrida. Usar um controle genérico distorce a diferença.', unidade: 's', min: 8, max: 20, passo: 0.1, padrao: '12' }),
+    campoNum('bilirrubina', 'Bilirrubina total', { ajuda: 'Bilirrubina total em mg/dL. Se estiver em µmol/L, divida por 17,1.', unidade: 'mg/dL', min: 0.1, max: 60, passo: 0.1 }),
     campoNum('bili7', 'Bilirrubina no 7º dia de corticoide', { unidade: 'mg/dL', min: 0.1, max: 60, passo: 0.1, opcional: true, ajuda: 'Permite avaliar a resposta pelo modelo de Lille simplificado.' }),
   ],
   calcular: (v) => {
@@ -1075,14 +1075,14 @@ const kings: Ferramenta = {
       { valor: 'paracetamol', rotulo: 'Paracetamol' },
       { valor: 'outras', rotulo: 'Outras causas' },
     ]),
-    campoSimNao('ph', 'pH arterial < 7,30 após ressuscitação volêmica adequada', 1),
-    campoSimNao('inr3', 'INR > 6,5 (TP > 100 s)', 1),
-    campoSimNao('creatinina', 'Creatinina > 3,4 mg/dL', 1),
-    campoSimNao('encefalopatia3', 'Encefalopatia grau III ou IV', 1),
-    campoSimNao('lactato', 'Lactato > 3,0 mmol/L após ressuscitação (critério adicional)', 1),
+    campoSimNao('ph', 'pH arterial < 7,30 após ressuscitação volêmica adequada', 1, 'pH arterial abaixo de 7,30 **após** reposição volêmica adequada. Medido antes da reposição, o critério perde validade.'),
+    campoSimNao('inr3', 'INR > 6,5 (TP > 100 s)', 1, 'INR acima de 6,5, o que corresponde a tempo de protrombina acima de 100 segundos. Não corrija com plasma profilaticamente: isso apaga o principal marcador prognóstico.'),
+    campoSimNao('creatinina', 'Creatinina > 3,4 mg/dL', 1, 'Creatinina acima de 3,4 mg/dL, refletindo a síndrome hepatorrenal ou a nefrotoxicidade direta do paracetamol.'),
+    campoSimNao('encefalopatia3', 'Encefalopatia grau III ou IV', 1, 'Grau III (sonolência, confusão acentuada, resposta a estímulo) ou IV (coma) de West Haven.'),
+    campoSimNao('lactato', 'Lactato > 3,0 mmol/L após ressuscitação (critério adicional)', 1, 'Lactato arterial acima de 3,0 mmol/L após reposição (ou acima de 3,5 na coleta precoce). Acrescenta poder discriminatório e antecipa a decisão de transplante.'),
     campoSimNao('idade', 'Idade < 10 ou > 40 anos', 1),
     campoSimNao('etiologiaDesfavoravel', 'Etiologia desfavorável (hepatite não-A não-B, medicamentosa, halotano)', 1),
-    campoSimNao('ictericia7', 'Icterícia por mais de 7 dias antes da encefalopatia', 1),
+    campoSimNao('ictericia7', 'Icterícia por mais de 7 dias antes da encefalopatia', 1, 'Icterícia presente por mais de 7 dias **antes** do início da encefalopatia. Um curso arrastado indica que a capacidade regenerativa já foi ultrapassada.'),
     campoSimNao('inr35', 'INR > 3,5', 1),
     campoSimNao('bilirrubina', 'Bilirrubina > 17,5 mg/dL', 1),
   ],
@@ -1237,11 +1237,11 @@ const astAlt: Ferramenta = {
   resumo: 'Separa lesão hepatocelular de colestática e aponta a etiologia pelo padrão.',
   categorias: ['gastroenterologia'],
   campos: [
-    campoNum('ast', 'AST (TGO)', { unidade: 'U/L', min: 5, max: 10000, passo: 1 }),
-    campoNum('alt', 'ALT (TGP)', { unidade: 'U/L', min: 5, max: 10000, passo: 1 }),
-    campoNum('fa', 'Fosfatase alcalina', { unidade: 'U/L', min: 10, max: 3000, passo: 1 }),
-    campoNum('altLimite', 'Limite superior do normal da ALT', { unidade: 'U/L', min: 15, max: 70, passo: 1, padrao: '40' }),
-    campoNum('faLimite', 'Limite superior do normal da fosfatase alcalina', { unidade: 'U/L', min: 60, max: 200, passo: 1, padrao: '120' }),
+    campoNum('ast', 'AST (TGO)', { ajuda: 'AST em U/L. Não é específica do fígado: sobe em lesão muscular, infarto, hemólise e após exercício intenso.', unidade: 'U/L', min: 5, max: 10000, passo: 1 }),
+    campoNum('alt', 'ALT (TGP)', { ajuda: 'ALT em U/L. É a mais específica do hepatócito, e sua deficiência relativa no etilista vem da falta de piridoxal-5-fosfato, cofator da enzima.', unidade: 'U/L', min: 5, max: 10000, passo: 1 }),
+    campoNum('fa', 'Fosfatase alcalina', { ajuda: 'Fosfatase alcalina em U/L. Confirme origem hepática com GGT elevada; com GGT normal, a origem é óssea, placentária ou intestinal.', unidade: 'U/L', min: 10, max: 3000, passo: 1 }),
+    campoNum('altLimite', 'Limite superior do normal da ALT', { ajuda: 'Limite superior do normal da ALT no seu laboratório, para calcular a razão R que define o padrão de lesão.', unidade: 'U/L', min: 15, max: 70, passo: 1, padrao: '40' }),
+    campoNum('faLimite', 'Limite superior do normal da fosfatase alcalina', { ajuda: 'Limite superior do normal da fosfatase alcalina no seu laboratório.', unidade: 'U/L', min: 60, max: 200, passo: 1, padrao: '120' }),
   ],
   calcular: (v) => {
     const ast = num(v, 'ast')

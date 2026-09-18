@@ -1486,11 +1486,11 @@ const genebra: Ferramenta = {
 }
 
 const dasiCampos: Campo[] = [
-  campoSimNao('a1', 'Cuidar de si mesmo: comer, vestir-se, tomar banho, usar o banheiro', 2.75),
+  campoSimNao('a1', 'Cuidar de si mesmo: comer, vestir-se, tomar banho, usar o banheiro', 2.75, 'Responda pelo que o paciente consegue fazer hoje, sem ajuda e sem sintoma limitante — não pelo que fazia antes de adoecer.'),
   campoSimNao('a2', 'Caminhar dentro de casa', 1.75),
   campoSimNao('a3', 'Caminhar 1 a 2 quarteirões no plano', 2.75),
-  campoSimNao('a4', 'Subir um lance de escadas ou uma ladeira', 5.5),
-  campoSimNao('a5', 'Correr uma distância curta', 8),
+  campoSimNao('a4', 'Subir um lance de escadas ou uma ladeira', 5.5, 'Este é o item mais próximo do limiar de 4 METs que libera a cirurgia sem investigação adicional. Pergunte se para e por quê: dispneia, dor torácica, dor nas pernas ou artrose levam a condutas diferentes.'),
+  campoSimNao('a5', 'Correr uma distância curta', 8, 'Limitação por artrose, doença vascular periférica, obesidade ou doença pulmonar reduz o DASI sem que haja limitação cardíaca — nesse caso o escore baixo não significa risco cardíaco alto.'),
   campoSimNao('a6', 'Trabalho doméstico leve: tirar pó, lavar louça', 2.7),
   campoSimNao('a7', 'Trabalho doméstico moderado: aspirar, varrer, carregar compras', 3.5),
   campoSimNao('a8', 'Trabalho doméstico pesado: esfregar o chão, mover móveis', 8),
